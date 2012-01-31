@@ -28,21 +28,26 @@
 	create.long.cutscores.sgPlot <- function(state, content_area) {
 		number.achievement.level.regions <- length(SGPstateData[[state]][["Student_Report_Information"]][["Achievement_Level_Labels"]])
 		if (!content_area %in% names(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]])) {
-		tmp.list <- list()
-		for (i in grep(content_area, names(SGPstateData[[state]][["Achievement"]][["Cutscores"]]))) {
-			tmp.grades <- as.numeric(matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]][[i]]), "_")),
-				ncol=2, byrow=TRUE)[,2])
-			tmp.cutscores <- matrix(unlist(SGPstateData[[state]][["Achievement"]][["Cutscores"]][[i]]),
-				ncol=number.achievement.level.regions-1, byrow=TRUE)
-			tmp.year <- unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]])[i], "[.]"))[2]
-			for (j in seq(number.achievement.level.regions-1)) {
-				tmp.list[[paste(i, j, sep="_")]] <- data.frame(GRADE=c(min(tmp.grades,na.rm=TRUE)-1, tmp.grades, max(tmp.grades,na.rm=TRUE)+1),
-					CUTLEVEL=rep(j, length(tmp.grades)+2),
-					CUTSCORES=c(extendrange(tmp.cutscores[,j], f=0.15)[1], tmp.cutscores[,j], extendrange(tmp.cutscores[,j], f=0.15)[2]),
-					YEAR=rep(tmp.year, length(tmp.grades)+2))
+			tmp.list <- list()
+			for (i in grep(content_area, names(SGPstateData[[state]][["Achievement"]][["Cutscores"]]))) {
+				tmp.grades <- as.numeric(matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]][[i]]), "_")),
+					ncol=2, byrow=TRUE)[,2])
+				tmp.cutscores <- matrix(unlist(SGPstateData[[state]][["Achievement"]][["Cutscores"]][[i]]),
+					ncol=number.achievement.level.regions-1, byrow=TRUE)
+				tmp.year <- unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]])[i], "[.]"))[2]
+				for (j in seq(number.achievement.level.regions-1)) {
+					tmp.list[[paste(i, j, sep="_")]] <- data.frame(GRADE=c(min(tmp.grades,na.rm=TRUE)-1, tmp.grades, max(tmp.grades,na.rm=TRUE)+1),
+						CUTLEVEL=rep(j, length(tmp.grades)+2),
+						CUTSCORES=c(extendrange(tmp.cutscores[,j], f=0.15)[1], tmp.cutscores[,j], extendrange(tmp.cutscores[,j], f=0.15)[2]),
+						YEAR=rep(tmp.year, length(tmp.grades)+2))
+				}
 			}
-		}
-		subset(do.call(rbind, tmp.list), CUTLEVEL %in% 1:(number.achievement.level.regions-1))
+			tmp.long.cutscores <- subset(do.call(rbind, tmp.list), CUTLEVEL %in% 1:(number.achievement.level.regions-1))
+			if (length(sort(tmp.year)) > 0 & !is.null(SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[content_area]])) {
+				tmp.long.cutscores <- subset(tmp.long.cutscores, as.numeric(unlist(sapply(strsplit(as.character(tmp.long.cutscores$YEAR), "_"), function(x) x[1]))) >= 
+					as.numeric(sapply(strsplit(as.character(SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[content_area]]), "_"), function(x) x[1])))
+			}
+			tmp.long.cutscores
 		} else {
 			tmp.grades <- as.numeric(matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]][[content_area]]), "_")),
 				ncol=2, byrow=TRUE)[,2])
@@ -91,7 +96,7 @@
 
 	## Districts
 
-	key(sgPlot.data) <- tmp.keys[1]
+	setkeyv(sgPlot.data, tmp.keys[1])
 
 	for (i in districts) {
 		if (reports.by.student) {
@@ -116,7 +121,7 @@
 
 	## Schools
 
-	key(tmp_district_data) <- tmp.keys[2]
+	setkeyv(tmp_district_data, tmp.keys[2])
 
 	for (j in schools) {
 		if (reports.by.student) {
@@ -152,9 +157,9 @@
 
 	## Grades
 
-	key(tmp_school_data) <- tmp.keys[2]
+	setkeyv(tmp_school_data, tmp.keys[2])
 	grades <- sort(unique(unlist(tmp_school_data[J(j), tmp.keys[3], with=FALSE]))) %w/o% NA
-	key(tmp_school_data) <- tmp.keys[3]
+	setkeyv(tmp_school_data, tmp.keys[3])
 
 	for (k in grades) {
 		if (reports.by.student) {
@@ -181,12 +186,12 @@
 
 	## Students
 
-	key(tmp_grade_data) <- tmp.keys[4:5]
+	setkeyv(tmp_grade_data, tmp.keys[4:5])
 
 	for (n in unique(tmp_grade_data[["ID"]])) {
 		tmp_student_data <- tmp_grade_data[ID==n]
-		FIRST_NAME <- gsub(" |/", "-", tmp_student_data[[tmp.keys[5]]][1]) 
-		LAST_NAME <- gsub(" |/", "-", tmp_student_data[[tmp.keys[4]]][1])
+		FIRST_NAME <- gsub(" |/", "-", sort(tmp_student_data[[tmp.keys[5]]])[1]) 
+		LAST_NAME <- gsub(" |/", "-", sort(tmp_student_data[[tmp.keys[4]]])[1])
 		if (sgPlot.anonymize) {
 			student_number <- 1234567890
 		} else {
@@ -286,7 +291,7 @@
                                   Plotting_Scale_Scores=as.numeric(subset(tmp_student_data, select=paste("TRANSFORMED_SCALE_SCORE", rev(sgPlot.years), sep="."))),
                                   Achievement_Levels=as.character(unlist(subset(tmp_student_data, select=paste("ACHIEVEMENT_LEVEL", rev(sgPlot.years), sep=".")))),
                                   SGP=as.numeric(subset(tmp_student_data, select=paste(my.sgp, rev(sgPlot.years), sep="."))),
-                                  SGP_Level=as.character(unlist(subset(tmp_student_data, select=paste(my.sgp.level, rev(sgPlot.years), sep=".")))),
+                                  SGP_Levels=as.character(unlist(subset(tmp_student_data, select=paste(my.sgp.level, rev(sgPlot.years), sep=".")))),
                                   Grades=as.numeric(subset(tmp_student_data, select=paste("GRADE", rev(sgPlot.years), sep="."))),
                                   Cuts_NY1=as.numeric(subset(tmp_student_data, select=grep("PROJ", names(tmp_student_data)))),
                                   Cutscores=Cutscores[[content_areas[vp]]],
@@ -311,7 +316,7 @@
 
               pushViewport(bottom.border.vp)
               grid.rect(gp=gpar(fill=sgPlot.header.footer.color, col=sgPlot.header.footer.color))
-              grid.text(x=0.02, y=0.70, paste("For more information please visit the", tmp.organization$Name, "at", tmp.organization$URL, "or call", tmp.organization$Phone_Number), 
+              grid.text(x=0.02, y=0.70, paste("For more information please visit the", tmp.organization$Name, "at", tmp.organization$URL, "or contact", tmp.organization$Contact), 
                         gp=gpar(cex=0.8, col="white"), default.units="native", just="left")
               copyright.text <- paste("Cooperatively developed by the ", tmp.organization$Name, " & the Center for Assessment, Inc.", sep="")
               grid.text(x=0.02, y=0.30, paste(copyright.text, " Distributed by the ", tmp.organization$Name, ".", sep=""), 

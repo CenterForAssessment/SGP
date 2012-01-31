@@ -53,6 +53,12 @@
       }
     }
 
+    if (!is.null(getOption("cores"))) {
+	require(doMC)
+	registerDoMC()
+    }
+
+
     ## Functions
 
     rbind.all <- function(.list, ...){
@@ -156,13 +162,12 @@
                                     YEAR=type.convert(unlist(strsplit(i, "[.]"))[2]))
       }
       
-      data.table(rbind.all(tmp.list), VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")),
-                 key=paste(key(tmp.dt), collapse=","))
+      data.table(rbind.all(tmp.list), VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), key=key(tmp.dt))
     }
     
     ## Prepare data
 
-    tmp.dt <- data.table(STATE=state, sgp_object@Data[CJ("VALID_CASE", content_areas, years)], key="VALID_CASE, ID, CONTENT_AREA, YEAR")
+    tmp.dt <- data.table(STATE=state, sgp_object@Data[CJ("VALID_CASE", content_areas, years)], key=c("VALID_CASE", "ID", "CONTENT_AREA", "YEAR"))
 
     if (!is.null(confidence.interval.groups) & "CSEM" %in% confidence.interval.groups$TYPE) {
       tmp.simulation.dt <- combineSims(sgp_object); gc()

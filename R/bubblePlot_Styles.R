@@ -88,7 +88,7 @@
 				tmp.names$SCHOOL_NAME <- paste("Example School", as.numeric(as.factor(tmp.names$SCHOOL_NUMBER)))
 				tmp.names$DISTRICT_NAME <- paste("Example District", as.numeric(as.factor(tmp.names$DISTRICT_NUMBER)))
 			}
-			key(tmp.data) <- "SCHOOL_NUMBER"
+			setkey(tmp.data, SCHOOL_NUMBER)
 		}
 		if ("DISTRICT_NUMBER" %in% names(tmp.data)) {
 			tmp.names <- unique(data.table(sgp_object@Data[!is.na(DISTRICT_NUMBER), 
@@ -96,7 +96,7 @@
 			if (bPlot.anonymize) {
 				tmp.names$DISTRICT_NAME <- paste("Example District", as.numeric(as.factor(tmp.names$DISTRICT_NUMBER)))
 			}
-			key(tmp.data) <- "DISTRICT_NUMBER"
+			setkey(tmp.data, DISTRICT_NUMBER)
 		}
 		tmp.names[tmp.data, mult="last"]
 	}
@@ -289,7 +289,8 @@ if (2 %in% bPlot.styles) {
 			if (!is.null(bPlot.levels)) {
 				tmp.bPlot.levels.data <- sgp_object@Data[SCHOOL_ENROLLMENT_STATUS=="Enrolled School: Yes", 
 					eval(tmp.bPlot.levels.txt), by=list(SCHOOL_NUMBER, CONTENT_AREA, YEAR)]
-				key(tmp.bPlot.data) <- key(tmp.bPlot.levels.data) <- c("SCHOOL_NUMBER", "CONTENT_AREA", "YEAR")
+				setkeyv(tmp.bPlot.data, c("SCHOOL_NUMBER", "CONTENT_AREA", "YEAR"))
+				setkeyv(tmp.bPlot.levels.data, c("SCHOOL_NUMBER", "CONTENT_AREA", "YEAR"))
 				tmp.bPlot.data <- tmp.bPlot.levels.data[tmp.bPlot.data]
 				my.level.labels <- c("Less than 20 percent", "20 to 40 percent", "40 to 60 percent", "60 to 80 percent", "More than 80 percent")
 				tmp.bPlot.data$V1 <- cut(tmp.bPlot.data$V1, seq(0,100, by=20), include.lowest=TRUE, labels=my.level.labels)
@@ -298,7 +299,8 @@ if (2 %in% bPlot.styles) {
 			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__CONTENT_AREA__YEAR"]]
 			if (!is.null(bPlot.levels)) {
 				tmp.bPlot.levels.data <- sgp_object@Data[, eval(tmp.bPlot.levels.txt), by=list(SCHOOL_NUMBER, CONTENT_AREA, YEAR)]
-				key(tmp.bPlot.data) <- key(tmp.bPlot.levels.data) <- c("SCHOOL_NUMBER", "CONTENT_AREA", "YEAR")
+				setkeyv(tmp.bPlot.data, c("SCHOOL_NUMBER", "CONTENT_AREA", "YEAR"))
+				setkeyv(tmp.bPlot.levels.data, c("SCHOOL_NUMBER", "CONTENT_AREA", "YEAR"))
 				tmp.bPlot.data <- tmp.bPlot.levels.data[tmp.bPlot.data]
 				my.level.labels <- c("Less than 20 percent", "20 to 40 percent", "40 to 60 percent", "60 to 80 percent", "More than 80 percent")
 				tmp.bPlot.data$V1 <- cut(tmp.bPlot.data$V1, seq(0,100, by=20), include.lowest=TRUE, labels=my.level.labels)
@@ -503,7 +505,8 @@ if (11 %in% bPlot.styles) {
 			if (!is.null(bPlot.levels)) {
 				tmp.bPlot.levels.data <- sgp_object@Data[SCHOOL_ENROLLMENT_STATUS=="Enrolled School: Yes", 
 					eval(tmp.bPlot.levels.txt), by=list(SCHOOL_NUMBER, CONTENT_AREA, YEAR)]
-				key(tmp.bPlot.data) <- key(tmp.bPlot.levels.data) <- c("SCHOOL_NUMBER", "CONTENT_AREA", "YEAR")
+				setkeyv(tmp.bPlot.data, c("SCHOOL_NUMBER", "CONTENT_AREA", "YEAR"))
+				setkeyv(tmp.bPlot.levels.data, c("SCHOOL_NUMBER", "CONTENT_AREA", "YEAR"))
 				tmp.bPlot.data <- tmp.bPlot.levels.data[tmp.bPlot.data]
 				my.level.labels <- c("Less than 20 percent", "20 to 40 percent", "40 to 60 percent", "60 to 80 percent", "More than 80 percent")
 				tmp.bPlot.data$V1 <- cut(tmp.bPlot.data$V1, seq(0,100, by=20), include.lowest=TRUE, labels=my.level.labels)
@@ -512,7 +515,8 @@ if (11 %in% bPlot.styles) {
 			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__CONTENT_AREA__YEAR"]]
 			if (!is.null(bPlot.levels)) {
 				tmp.bPlot.levels.data <- sgp_object@Data[, eval(tmp.bPlot.levels.txt), by=list(SCHOOL_NUMBER, CONTENT_AREA, YEAR)]
-				key(tmp.bPlot.data) <- key(tmp.bPlot.levels.data) <- c("SCHOOL_NUMBER", "CONTENT_AREA", "YEAR")
+				setkeyv(tmp.bPlot.data, c("SCHOOL_NUMBER", "CONTENT_AREA", "YEAR"))
+				setkeyv(tmp.bPlot.levels.data, c("SCHOOL_NUMBER", "CONTENT_AREA", "YEAR"))
 				tmp.bPlot.data <- tmp.bPlot.levels.data[tmp.bPlot.data]
 				my.level.labels <- c("Less than 20 percent", "20 to 40 percent", "40 to 60 percent", "60 to 80 percent", "More than 80 percent")
 				tmp.bPlot.data$V1 <- cut(tmp.bPlot.data$V1, seq(0,100, by=20), include.lowest=TRUE, labels=my.level.labels)
@@ -647,14 +651,14 @@ if (100 %in% bPlot.styles) {
 
 		if (bPlot.prior.achievement) {
 			sgp_object@Data$YEAR_INTEGER_TMP <- as.integer(sgp_object@Data$YEAR) ## To convert YEAR, when factor, to integer
-			key(sgp_object@Data) <- c("ID", "CONTENT_AREA", "YEAR_INTEGER_TMP", "VALID_CASE") ## CRITICAL that VALID_CASE is last in group
+			setkeyv(sgp_object@Data, c("ID", "CONTENT_AREA", "YEAR_INTEGER_TMP", "VALID_CASE")) ## CRITICAL that VALID_CASE is last in group
 			sgp_object@Data$SCALE_SCORE_PRIOR <- sgp_object@Data[SJ(ID, CONTENT_AREA, YEAR_INTEGER_TMP-1), mult="last"][,SCALE_SCORE]
 			sgp_object@Data$YEAR_INTEGER_TMP <- NULL
 		}
 
 		### Key @Data for fast subsetting
 
-		key(sgp_object@Data) <- c("YEAR", "CONTENT_AREA", "DISTRICT_NUMBER")
+		setkeyv(sgp_object@Data, c("YEAR", "CONTENT_AREA", "DISTRICT_NUMBER"))
 
 		### Get tmp.years, tmp.content_areas, and tmp.y.variable
 

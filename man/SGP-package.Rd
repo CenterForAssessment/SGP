@@ -20,8 +20,8 @@ growth percentile analyses.
 \tabular{ll}{
 Package: \tab SGP\cr
 Type: \tab Package\cr
-Version: \tab 0.8-0.0\cr
-Date: \tab 2012-1-4\cr
+Version: \tab 0.8-2.0\cr
+Date: \tab 2012-1-29\cr
 License: \tab CC BY-SA 3.0 US | CC BY-NC-SA 3.0 + file LICENSE\cr
 LazyLoad: \tab yes\cr
 }
@@ -33,6 +33,10 @@ provided in the examples of the \code{\link{studentGrowthPercentiles}} and \code
 \author{Damian W. Betebenner \email{dbetebenner@nciea.org}, Adam Van Iwaarden \email{Vaniwaarden@colorado.edu} and Ben Domingue \email{ben.domingue@gmail.com}} 
 
 \references{ 
+Betebenner, D. W. (2011). Growth, standards, and accountability. In G. J. Cizek,
+\emph{Setting Performance Standards: Foundations, Methods & Innovations. 2nd Edition} (pp. 450-460). 
+New York: Routledge.
+
 Betebenner, D. W. (2009). Norm- and criterion-referenced student growth. 
 Educational Measurement: Issues and Practice, 28(4):42-51.
 

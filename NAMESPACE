@@ -4,7 +4,7 @@ import("grid")
 import("methods")
 import("plyr")
 importFrom("splines", "bs")
-import(SGPstateData)
+import(SGPdata)
 
 export(
 	"abcSGP",

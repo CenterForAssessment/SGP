@@ -138,6 +138,7 @@
             my.cutscores.label <- get.my.label(state, content_area, year)
             my.knots_boundaries.label <- get.my.label(state, content_area, year, "Knots_Boundaries")
             tmp.loss.hoss <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[my.knots_boundaries.label]][[paste("loss.hoss_", grade, sep="")]]
+            scale_score[scale_score < tmp.loss.hoss[1]] <- tmp.loss.hoss[1]; scale_score[scale_score > tmp.loss.hoss[2]] <- tmp.loss.hoss[2]
             tmp.old.cuts <- c(tmp.loss.hoss[1], SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.cutscores.label]][[paste("GRADE_", grade, sep="")]], tmp.loss.hoss[2])
             tmp.new.cuts <- SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area]]
             tmp.index <- findInterval(scale_score, tmp.old.cuts, rightmost.closed=TRUE)
@@ -189,7 +190,7 @@
 
 	## Calculate Scale Transformations (if required) 
 
-	key(growthAchievementPlot.data) <- "GRADE"
+	setkey(growthAchievementPlot.data, GRADE)
 	growthAchievementPlot.data$TRANSFORMED_SCALE_SCORE <- 
 		growthAchievementPlot.data[, piecewise.transform(SCALE_SCORE, state, as.character(content_area), as.character(YEAR), as.character(GRADE)), by=list(YEAR, GRADE)]$V1
 	if (content_area %in% names(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]])) {

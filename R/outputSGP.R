@@ -60,6 +60,7 @@ if ("SchoolView_WIDE" %in% output.type) {
 				ncol=2, byrow=TRUE)[,2])) {
 
 			tmp.loss.hoss <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]][[paste("loss.hoss_", grade, sep="")]]
+                        scale_score[scale_score < tmp.loss.hoss[1]] <- tmp.loss.hoss[1]; scale_score[scale_score > tmp.loss.hoss[2]] <- tmp.loss.hoss[2]
 			my.content_area <- get.my.cutscore.year(state, content_area, year)
 			tmp.old.cuts <- c(tmp.loss.hoss[1], SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.content_area]][[paste("GRADE_", grade, sep="")]], 
 				tmp.loss.hoss[2])
@@ -78,7 +79,7 @@ if ("SchoolView_WIDE" %in% output.type) {
 	#### Set key
 
 	long.key <- c("VALID_CASE", "YEAR", "CONTENT_AREA", "DISTRICT_NUMBER", "SCHOOL_NUMBER")
-	key(sgp_object@Data) <- long.key
+	setkeyv(sgp_object@Data, long.key)
 
 
 	#### Year stuff 
@@ -108,13 +109,13 @@ if ("SchoolView_WIDE" %in% output.type) {
                                         list(VALID_CASE, YEAR, CONTENT_AREA, DISTRICT_NUMBER, SCHOOL_NUMBER)],
                                         key=key(sgp_object)))
         report.ids <- unique(sgp_object@Data[tmp.districts.and.schools][["ID"]])
-        key(sgp_object@Data) <- c("ID", "CONTENT_AREA", "YEAR")
+        setkeyv(sgp_object@Data, c("ID", "CONTENT_AREA", "YEAR"))
         tmp.table <- sgp_object@Data[CJ(report.ids, tmp.content_areas, tmp.years)]
 
 
 	### Create transformed scale scores (NOT necessary if wide data is provided)
 
-	key(tmp.table) <- c("CONTENT_AREA", "YEAR", "GRADE")
+	setkeyv(tmp.table, c("CONTENT_AREA", "YEAR", "GRADE"))
 	tmp.table$TRANSFORMED_SCALE_SCORE <- tmp.table[,
 		piecewise.transform(SCALE_SCORE, state, as.character(CONTENT_AREA[1]), as.character(YEAR[1]), as.character(GRADE[1])), 
 			by=list(CONTENT_AREA, YEAR, GRADE)]$V1
@@ -127,16 +128,16 @@ if ("SchoolView_WIDE" %in% output.type) {
                 if (!"ETHNICITY" %in% names(tmp.table)) tmp.table[["ETHNICITY"]] <- 1
                 if (!"GENDER" %in% names(tmp.table)) tmp.table[["GENDER"]] <- round(runif(dim(tmp.table)[1], min=0, max=1))
 		tmp.dt <- tmp.table[,list(ID, ETHNICITY, GENDER)]
-		key(tmp.dt) <- "ID"
+		setkey(tmp.dt, ID)
 		tmp.dt <- tmp.dt[!duplicated(tmp.dt),]
 
 		tmp.dt$LAST_NAME <- randomNames(gender=tmp.dt$GENDER, ethnicity=tmp.dt$ETHNICITY, which.names="last")
 		tmp.dt$FIRST_NAME <- randomNames(gender=tmp.dt$GENDER, ethnicity=tmp.dt$ETHNICITY, which.names="first")
 
 		names.dt <- tmp.dt[,list(ID, LAST_NAME, FIRST_NAME)]
-		key(names.dt) <- "ID"
+		setkey(names.dt, ID)
 
-		key(tmp.table) <- "ID"
+		setkey(tmp.table, ID)
 		tmp.table <- names.dt[tmp.table]
 	} ## END if (outputSGP.anonymize)
 
@@ -160,7 +161,7 @@ if ("SchoolView_WIDE" %in% output.type) {
 	for (j in 1:3) {
 		tmp.proj.names <- paste(tmp.content_areas, tmp.last.year, sep=".")
 		if (all(tmp.proj.names %in% names(sgp_object@SGP[["SGProjections"]]))) {
-			key(outputSGP.data) <- c("ID", "CONTENT_AREA")
+			setkeyv(outputSGP.data, c("ID", "CONTENT_AREA"))
 			tmp.list <- list()
 			for (i in tmp.proj.names) {
 				tmp.list[[i]] <- data.table(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
@@ -169,7 +170,7 @@ if ("SchoolView_WIDE" %in% output.type) {
 			outputSGP.data <- data.table(rbind.all(tmp.list), key=paste(key(outputSGP.data), collapse=","))[outputSGP.data]
 			tmp.grade.name <- paste("GRADE", tmp.last.year, sep=".")
 			tmp.year.name <- .year.increment(tmp.last.year, j)
-			key(outputSGP.data) <- c("CONTENT_AREA", tmp.grade.name)
+			setkeyv(outputSGP.data, c("CONTENT_AREA", tmp.grade.name))
 			for (proj.iter in grep(paste("PROJ_YEAR", j, sep="_"), names(outputSGP.data))) {
 			tmp.scale_score.name <- names(outputSGP.data)[proj.iter]
 			outputSGP.data[[proj.iter]] <- outputSGP.data[,

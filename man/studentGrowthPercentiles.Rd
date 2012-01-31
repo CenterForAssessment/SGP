@@ -162,6 +162,7 @@ Koenker, R. (2005). \emph{Quantile regression}. Cambridge: Cambridge University 
 
 
 \examples{
+\dontrun{
 ## Calculate 4th grade student growth percentiles using included sgpData
 
 sgp_g4 <- studentGrowthPercentiles(panel.data=sgpData,
@@ -195,7 +196,7 @@ sgp_g8_DEMO <- studentGrowthPercentiles(panel.data=sgpData,
                    use.my.knots.boundaries="DEMO",
                    grade.progression=c(5,6,8))
 
-\dontrun{
+
 ## NOTE: Goodness of Fit results are stored as a graphical object in the
 ## Goodness_of_Fit slot. To view or save (using any R output device) try:
 

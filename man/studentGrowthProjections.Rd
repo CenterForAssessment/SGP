@@ -23,7 +23,7 @@ studentGrowthProjections(panel.data,
                          percentile.trajectory.values=NULL, 
                          isotonize=TRUE,
                          lag.increment=0,
-                         projcuts.digits=0,
+                         projcuts.digits=NULL,
                          print.time.taken=TRUE)
 }
 
@@ -98,7 +98,7 @@ studentGrowthProjections(panel.data,
   }
   \item{lag.increment}{A non-negative integer (defaults to 0) indicating the lag assocated with the data supplied for projections. Only relevant if Cutscores or Knots and Boundares are year dependent. 
   }
-  \item{projcuts.digits}{The number of digits (defaults to 0) percentile trajectories (if requested) are formatted.
+  \item{projcuts.digits}{The number of digits (defaults to NULL/0) percentile trajectories (if requested) are formatted.
   }
   \item{print.time.taken}{Boolean argument (defaults to TRUE) indicating whether to print message indicating information on studentGrowthPercentile analysis and time taken.
   }

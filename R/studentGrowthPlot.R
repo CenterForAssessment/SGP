@@ -58,6 +58,7 @@ arrow.color <- function(sgp){
 }
 
 get.my.cutscore.year <- function(state, content_area, year) {
+	year <- tail(sort(c(SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[content_area]], year)), 1)
         tmp.cutscore.years <- sapply(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]])[grep(content_area, names(SGPstateData[[state]][["Achievement"]][["Cutscores"]]))], "[.]"),
                 function(x) x[2])
         if (year %in% tmp.cutscore.years) {
@@ -467,17 +468,20 @@ if (Connect_Points=="Arrows") {
    growth.arrow.coors.y <- c(-.2, -.2, -.5, 0, .5, .2,  seq(.2, -.2, length=11))
 
    for (i in 1:length(gp.values)){
-     if (!is.na(gp.values[i])){
-          arrow.rise <- convertY(unit(scale.scores.values[i+1], "native") - unit(scale.scores.values[i], "native"), "inches")
-          arrow.run <- convertX(unit(1, "native") - unit(0, "native"), "inches")
+     tmp.lag <- which(is.na(rev(scale.scores.values[1:i]))==FALSE)
+     if (!is.na(gp.values[i]) & length(tmp.lag) > 0){
+          lag.to.prior.score <- min(tmp.lag, na.rm=TRUE)
+          if (lag.to.prior.score == 1) my.lty <- 1 else my.lty <- 2
+          arrow.rise <- convertY(unit(scale.scores.values[i+1], "native") - unit(scale.scores.values[i+1-lag.to.prior.score], "native"), "inches")
+          arrow.run <- convertX(unit(lag.to.prior.score, "native") - unit(0, "native"), "inches")
           arrow.angle <- atan2(as.numeric(arrow.rise),as.numeric(arrow.run))*180/pi
 
      ## Arrows connecting achievement scores
 
-     pushViewport(viewport(x=unit(low.year+i-1, "native"), y=unit(scale.scores.values[i], "native"), 
-                  width=unit(0.92/cos(arrow.angle*pi/180), "native"), height=unit(0.05, "npc"), angle=arrow.angle, just=c("left", "center"),
+     pushViewport(viewport(x=unit(low.year+i-lag.to.prior.score, "native"), y=unit(scale.scores.values[i+1-lag.to.prior.score], "native"), 
+                  width=unit((lag.to.prior.score-0.08)/cos(arrow.angle*pi/180), "native"), height=unit(0.05, "npc"), angle=arrow.angle, just=c("left", "center"),
                   xscale=c(0, 1), yscale=c(-0.5, 0.5)))
-     grid.polygon(x=growth.arrow.coors.x, y=growth.arrow.coors.y, default.units="native", gp=gpar(lwd=0.3, col=border.color, fill=arrow.color(as.numeric(gp.values[i]))))
+     grid.polygon(x=growth.arrow.coors.x, y=growth.arrow.coors.y, default.units="native", gp=gpar(lwd=0.3, lty=my.lty, col=border.color, fill=arrow.color(as.numeric(gp.values[i]))))
      grid.curve(0.05, -0.2, 0.05, 0.2, curvature=0.3, ncp=11, square=FALSE, default.units="native", gp=gpar(lwd=0.3, col=border.color))
      popViewport()
 

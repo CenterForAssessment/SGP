@@ -13,7 +13,7 @@ function(sgp_object,
 	 ...) {
 
 	started.at <- proc.time()
-	message(paste("Started baselineSGP", date(), "\n"))
+	message(paste("\tStarted baselineSGP", date(), "\n"))
 
 	### Create state (if missing) from sgp_object (if possible)
 
@@ -27,7 +27,7 @@ function(sgp_object,
         ### Syncronize "return.matrices.only" and "calculate.baseline.sgps" arguments
 
         if (return.matrices.only & calculate.baseline.sgps) {
-                message("Argument 'return.matrices.only=TRUE' obviates need to calculate baseline student growth percentiles. Argument 'calculate.baseline.sgps' will be set to FALSE")
+                message("\tArgument 'return.matrices.only=TRUE' obviates need to calculate baseline student growth percentiles. Argument 'calculate.baseline.sgps' will be set to FALSE")
                 calculate.baseline.sgps <- FALSE
         }
 
@@ -64,7 +64,7 @@ function(sgp_object,
 	baselineSGP_Internal <- function(sgp_object, state, years, content_areas, grade.sequences) {
 
 	        started.at <- proc.time()
-	        message(paste("Started baselineSGP Coefficient Matrix Calculation, Content Area: ", content_areas, ", Grade Progression: ", paste(grade.sequences, collapse=", "), ". ", date(), sep=""))
+		started.date <- date()
 
 	        test.year.sequence <- function(years, grades) {
 	                grade.span <- seq(min(grades), max(grades))
@@ -79,12 +79,13 @@ function(sgp_object,
 
 	        ### Reshape data 
 
-	        key(sgp_object@Data) <- c("VALID_CASE", "YEAR", "GRADE", "CONTENT_AREA")
+	        setkeyv(sgp_object@Data, c("VALID_CASE", "YEAR", "GRADE", "CONTENT_AREA"))
 	        tmp.year.sequence <- test.year.sequence(years, grade.sequences)
 	        tmp.list <- list()
 	        for (k in seq_along(tmp.year.sequence)) {
 	                tmp.lookup <- data.table(CJ("VALID_CASE", tmp.year.sequence[[k]]), grade.sequences, content_areas)
-	                key(tmp.lookup) <- names(tmp.lookup) <- c("VALID_CASE", "YEAR", "GRADE","CONTENT_AREA")
+	                setattr(tmp.lookup, "names", c("VALID_CASE", "YEAR", "GRADE", "CONTENT_AREA"))
+			setkeyv(tmp.lookup, c("VALID_CASE", "YEAR", "GRADE", "CONTENT_AREA"))
 	                tmp.list[[k]] <- reshape(sgp_object@Data[tmp.lookup, nomatch=0],
 	                        idvar="ID",
 	                        timevar="GRADE",
@@ -108,7 +109,9 @@ function(sgp_object,
 	                exact.grade.progression.sequence=TRUE,
 			print.time.taken=FALSE)[["Coefficient_Matrices"]])
 
-	        message(paste("Finished baselineSGP Coefficient Matrix Calculation, Content Area: ", content_areas, ", Grade Progression: ", paste(grade.sequences, collapse=", "), ". ", date(), " in ", timetaken(started.at), "\n", sep=""))
+	        message(paste("\tStarted baselineSGP Coefficient Matrix Calculation:", started.date))
+		message(paste("\tContent Area: ", content_areas, ", Grade Progression: ", paste(grade.sequences, collapse=", "), ". ", sep=""))
+	        message(paste("\tFinished baselineSGP Coefficient Matrix Calculation ", date(), " in ", timetaken(started.at), ".\n", sep=""))
 
 	        return(tmp_sgp_list)
 
@@ -135,7 +138,7 @@ function(sgp_object,
                                         }
                                 }
                 } else {
-                        message("No Goodness of Fit tables available to print. No tables will be produced.")
+                        message("\tNo Goodness of Fit tables available to print. No tables will be produced.")
                 }
         }
 
@@ -296,7 +299,7 @@ function(sgp_object,
 	###
 	############################################################
 
-	message(paste("Finished baselineSGP", date(), "in", timetaken(started.at), "\n"))
+	message(paste("\tFinished baselineSGP", date(), "in", timetaken(started.at), "\n"))
 	if (return.matrices.only) {
 		tmp.list <- list()
                 for (ca in unique(sapply(sgp.baseline.config, function(x) x[["baseline.content.areas"]]))) {

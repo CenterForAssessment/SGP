@@ -15,8 +15,7 @@ combineSGP(sgp_object,
         sgp.percentiles.baseline=TRUE,
 	sgp.projections.lagged=TRUE,
         sgp.projections.lagged.baseline=TRUE,
-	max.lagged.sgp.target.years.forward=4,
-	sgp.target.to.NA=TRUE)
+	max.lagged.sgp.target.years.forward=4)
 }
 
 \arguments{
@@ -38,8 +37,6 @@ student growth percentile results.
   \item{sgp.projections.lagged.baseline}{A boolean variable indicating whether to combine lagged baseline student growth projections and calculate catch-up/keep-up values.
   }
   \item{max.lagged.sgp.target.years.forward}{A integer indicating the number of years forward from the lagged (last year's) score to project forward for growth to standard calculations. Default is 4 years from last year or 3 years from present, which is the standard in most growth to standard calculations used by state departments of education.
-  }
-  \item{sgp.target.to.NA}{A boolean variable (defaults to TRUE) indicating whether to change SGP_TARGET and SGP_TARGET_BASELINE to NA in instances where a target has been calculated but no SGP is calculated (for example, with retained students). It is generally recommended to change such values to NA so that summary comparisions of median SGP to median SGP_TARGET are based upon the same students.
   }
 }
 

@@ -1,8 +1,46 @@
+Changes in version: SGP_0.8-2.0
+
+  NEW FEATURES:
+
+  USER VISIBLE CHANGES:
+
+  o Changed "Phone Number" to "Contact" on studentGrowthPlot and made associated changes of label in SGPstateData.
+  o Updated NECAP CSEMs for 2011_2012 in SGPstateData.
+
+  BUG FIXES:
+
+  o Updated code to conform with changes in data.table 1.7.8.
+
+
+Changes in version: SGP_0.8-1.0
+
+  NEW FEATURES:
+
+  o Added Hawaii data to SGPstateData and updated Nevada transitional cutscores in Mathematics.
+  o analyzeSGP now passes projcut.digits to studentGrowthProjections to control digits based upon state level configurations.
+  o visualizeSGP now checks stateData for grades AND years to be reported in studentGrowthPlots. Default is most recent 5 years
+  o studentGrowthPlot accomodates situations where there is a gap between grades (e.g., 8 to 10) and the state calculates 2 year SGPs.
+  o Added tag to SGPstateData for earliest year reported to accomodate possibility of reporting only certain years for a state assessment system (e.g., Arizona).
+
+
+  USER VISIBLE CHANGES:
+
+  o Consolodated warning messages to provide better information, especially when working in parallel configurations.
+  o Updated Massachusetts grade 10 cutscores between proficient and advanced achievement levels.
+  o Lagged projections are only calculated for students with an SGP within analyzeSGP. This eliminates the necessity for the sgp.target.to.NA argument and feature in combineSGP.
+  o sgp.target.to.NA feature eliminated from combineSGP for reasons explicated in previous remark.
+
+  BUG FIXES:
+
+  o studentGrowthPlot in visualizeSGP now filters on GRADES that correspond to VALID_CASE.
+  o Fixed issue when projections occur across skipped grades. Made major refinements to analyzeSGP in the process.
+
 Changes in version: SGP_0.8-0.0
 
   NEW FEATURES:
 
-  o Separated stateData into new package SGPstateData. All additions to stateData now in SGPstateData.
+  o Separated sgpData and sgpData_LONG into new package SGPdata.
+  o Changed name of stateData to SGPstateData.
   o Added System_Type slot to stateData to indicate whether state uses 'Cohort Referenced', 'Baseline Referenced', or 'Cohort and Baseline Referenced'. 
   o Added Test_Vendor slot to stateData. 
   o Added California data to stateData. 

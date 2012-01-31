@@ -8,11 +8,11 @@
 	started.at <- proc.time()
 	message(paste("\nStarted prepareSGP", date()))
 
+	VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- ID <- GRADE <- SCALE_SCORE <- NULL  ## To prevent R CMD check warnings
+
 	### Utility functions
 
 	achievement_level_recode <- function(sgp_object, state=NULL, year=NULL, content_area=NULL, grade=NULL) {
-
-		CONTENT_AREA <- YEAR <- GRADE <- SCALE_SCORE <- NULL  ### To prevent R CMD check warnings
 
 	        if (is.null(state)) {
 	                tmp.name <- gsub("_", " ", deparse(substitute(sgp_object)))
@@ -20,6 +20,11 @@
 	                        state <- c(state.abb, rep("DEMO", 2))[which(sapply(c(state.name, "Demonstration", "sgpData LONG"), function(x) regexpr(x, tmp.name))==1)]
 	                }
 	        }
+
+                if (!"ACHIEVEMENT_LEVEL" %in% names(sgp_object@Data)) {
+                        sgp_object@Data$ACHIEVEMENT_LEVEL <- factor(1, levels=seq_along(SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]]),
+                                labels=SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]])
+                }
 
 	        if (is.null(year)) year <- sort(unique(sgp_object@Data$YEAR))
 	        if (is.null(content_area)) content_area <- sort(unique(sgp_object@Data$CONTENT_AREA[sgp_object@Data$YEAR %in% year]))
@@ -49,19 +54,20 @@
 	                        labels=SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]])
 	        }
 
-	        key(sgp_object@Data) <- c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE")
+		setkeyv(data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))
 	        sgp_object@Data$ACHIEVEMENT_LEVEL[sgp_object@Data[CJ("VALID_CASE", content_area, year, grade), which=TRUE, nomatch=0]] <- 
 	        sgp_object@Data[CJ("VALID_CASE", content_area, year, grade), nomatch=0][, achievement_level_recode_INTERNAL(state, as.character(CONTENT_AREA), as.character(YEAR), GRADE, SCALE_SCORE), 
 			by=list(CONTENT_AREA, YEAR, GRADE)]$V1
-	        key(sgp_object@Data) <- c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID")
+		setkeyv(data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 
 	        return(sgp_object)
 	}
 
 
 	if (is.SGP(data)) {
-
-		key(data@Data) <- c("VALID_CASE","CONTENT_AREA","YEAR","ID")
+		if(!identical(key(data@Data), c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))) {
+			setkeyv(data@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
+		}
 		if (.hasSlot(data, "Version")) {
 			data@Version <- list(SGP_Package_Version=c(data@Version[["SGP_Package_Version"]], as.character(packageVersion("SGP"))), 
 				Date_Prepared=c(data@Version[["Date_Prepared"]], date()))
@@ -140,7 +146,7 @@
 	##  Create keyed data.table and check for duplicate cases
 
 	data <- data.table(data)
-	key(data) <- c("VALID_CASE","CONTENT_AREA","YEAR","ID")
+	setkeyv(data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 
 	## Create list identifying date and SGP Package version:
 
