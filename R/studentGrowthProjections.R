@@ -250,7 +250,7 @@ function(panel.data,	## REQUIRED
 				tmp.vec <- expand.grid("P", percentile.trajectory.values, "_PROJ_YEAR_", seq_along(grade.projection.sequence))
 			}
 			tmp.vec <- tmp.vec[order(tmp.vec$Var2),]
-			setattr(trajectories, "names", c("ID", do.call(paste, c(tmp.vec, sep=""))))
+			setnames(trajectories, c("ID", do.call(paste, c(tmp.vec, sep=""))))
 			if (!cuts.tf) return(trajectories)
 		}
 		if (cuts.tf) {
@@ -278,7 +278,7 @@ function(panel.data,	## REQUIRED
 			}
 			arg <- paste("list(", paste(cuts.arg, collapse=", "), ")", sep="")
 			tmp.cuts <- eval(parse(text=paste("percentile.trajectories[,", arg, ", by=ID]", sep="")))
-			setattr(tmp.cuts, "names", c("ID", names.arg))
+			setnames(tmp.cuts, c("ID", names.arg))
 			setkey(tmp.cuts, ID)
 			if (!trajectories.tf) {
 				return(tmp.cuts)

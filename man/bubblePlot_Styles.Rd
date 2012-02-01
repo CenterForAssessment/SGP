@@ -16,7 +16,8 @@ bubblePlot_Styles(
 		bPlot.districts=NULL,
 		bPlot.schools=NULL,
 		bPlot.styles=c(1),
-		bPlot.levels=NULL, 
+		bPlot.levels=NULL,
+		bPlot.level.cuts=NULL, 
 		bPlot.full.academic.year=TRUE,
 		bPlot.minimum.n=10,
 		bPlot.anonymize=FALSE,
@@ -49,6 +50,8 @@ associated documentation for example plots.
   }
   \item{bPlot.levels}{A character vector of levels to be used to color bubbles in the \code{\link{bubblePlot}}. See  associated documentation for example plots.  
   }
+  \item{bPlot.level.cuts}{A vector of cuts to be used to distinguish levels used to color bubbles in the \code{\link{bubblePlot}}. See associated documentation for example plots.
+  } 
   \item{bPlot.full.academic.year}{A boolean argument (defaults to TRUE) indicating whether \code{\link{bubblePlot}}s should use full academic year results if available. 
   }
   \item{bPlot.minimum.n}{A positive integer (defaults to 10) indicating the minimum size for summary values to be displayed in the \code{\link{bubblePlot}}s. 

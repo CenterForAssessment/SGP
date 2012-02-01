@@ -144,6 +144,10 @@ out specific grade progressions using \code{grade.progression}. Additional uses 
 }
 
 \references{
+Betebenner, D. W. (2012). Growth, standards, and accountability. In G. J. Cizek,
+\emph{Setting Performance Standards: Foundations, Methods & Innovations. 2nd Edition} (pp. 439-450).
+New York: Routledge.
+
 Betebenner, D. W. (2009). Norm- and criterion-referenced student growth. 
 Educational Measurement: Issues and Practice, 28(4):42-51.
 

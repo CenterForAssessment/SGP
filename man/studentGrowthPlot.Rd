@@ -3,7 +3,7 @@
 \title{Create a student growth and achievement chart}
 \description{Function used to produce individual student growth and achievement timelines/plots for based upon output from student growth percentile
 analyses. Function is integrated with \code{SGPstateData} to accommodate state specific scales and nomenclature including performance
-level names.}
+level names. See Betebenner (2012) for discussion}
 \usage{
 studentGrowthPlot(Scale_Scores,
 	Plotting_Scale_Scores, 
@@ -53,3 +53,8 @@ studentGrowthPlot(Scale_Scores,
 \details{Function currently used as part of SGP package to produce student growth charts for states. More documentation to follow.}
 \value{Returns a studentGrowthPlot graphical object for the content area specified. More documentation to follow.}
 \author{Damian W. Betebenner \email{dbetebenner@nciea.org}}
+\references{
+Betebenner, D. W. (2012). Growth, standards, and accountability. In G. J. Cizek,
+\emph{Setting Performance Standards: Foundations, Methods & Innovations. 2nd Edition} (pp. 439-450).
+New York: Routledge.
+}

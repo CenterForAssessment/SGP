@@ -5,7 +5,7 @@
 Utility function to produce a variety of graphical displays associated with student growth percentile/percentile growth trajectory results. 
 Function currently includes facility to produce individual student growth and achievement plots, interactive bubble plots depicting summary growth 
 and achievement data, and growth and achievement charts showing system level growth and achievement data as shown on the cover of \emph{Educational Measurement:
-Issues and Practice} as part of Betebenner (2009).
+Issues and Practice} as part of Betebenner (2009) and Betebenner (2012).
 }
 
 \usage{
@@ -19,6 +19,7 @@ visualizeSGP(
            bPlot.schools=NULL,
            bPlot.styles=c(1),
            bPlot.levels=NULL,
+           bPlot.level.cuts=NULL,
            bPlot.full.academic.year=TRUE,
            bPlot.minimum.n=10,
            bPlot.anonymize=FALSE,
@@ -77,7 +78,9 @@ styles to determine which \code{\link{bubblePlot}} styles accept specification f
   \item{bPlot.styles}{A vector of positive integers indicating the types of \code{\link{bubblePlot}}s to produce using data available in \code{sgp_object}. See 
 associated documentation for example plots.  
   }
-  \item{bPlot.levels}{A character vector of levels to be used to color bubbles in the \code{\link{bubblePlot}}. See  associated documentation for example plots.
+  \item{bPlot.levels}{A character vector of levels to be used to color bubbles in the \code{\link{bubblePlot}}. See associated documentation for example plots.
+  }
+  \item{bPlot.level.cuts}{A vector of cuts to be used to distinguish levels used to color bubbles in the \code{\link{bubblePlot}}. See associated documentation for example plots.
   }
   \item{bPlot.full.academic.year}{A boolean argument (defaults to TRUE) indicating whether \code{\link{bubblePlot}}s should use full academic year results if available. 
   }
@@ -174,6 +177,10 @@ to the function.
 
 
 \references{
+Betebenner, D. W. (2012). Growth, standards, and accountability. In G. J. Cizek,
+\emph{Setting Performance Standards: Foundations, Methods & Innovations. 2nd Edition} (pp. 439-450).
+New York: Routledge.
+
 Betebenner, D. W. (2009). Norm- and criterion-referenced student growth. 
 Educational Measurement: Issues and Practice, 28(4):42-51.
 }

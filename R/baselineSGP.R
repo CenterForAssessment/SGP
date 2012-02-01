@@ -84,7 +84,7 @@ function(sgp_object,
 	        tmp.list <- list()
 	        for (k in seq_along(tmp.year.sequence)) {
 	                tmp.lookup <- data.table(CJ("VALID_CASE", tmp.year.sequence[[k]]), grade.sequences, content_areas)
-	                setattr(tmp.lookup, "names", c("VALID_CASE", "YEAR", "GRADE", "CONTENT_AREA"))
+	                setnames(tmp.lookup, c("VALID_CASE", "YEAR", "GRADE", "CONTENT_AREA"))
 			setkeyv(tmp.lookup, c("VALID_CASE", "YEAR", "GRADE", "CONTENT_AREA"))
 	                tmp.list[[k]] <- reshape(sgp_object@Data[tmp.lookup, nomatch=0],
 	                        idvar="ID",

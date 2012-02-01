@@ -75,6 +75,10 @@ achievement reports.
 }
 
 \author{Damian W. Betebenner \email{dbetebenner@nciea.org}}
-
+\references{
+Betebenner, D. W. (2012). Growth, standards, and accountability. In G. J. Cizek,
+\emph{Setting Performance Standards: Foundations, Methods & Innovations. 2nd Edition} (pp. 439-450).
+New York: Routledge.
+}
 \keyword{misc}
 \keyword{models}
