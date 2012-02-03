@@ -25,10 +25,17 @@ function(sgp_object,
 
 	VALID_CASE <- CONTENT_AREA <- YEAR <- GRADE <- ID <- NULL ## To prevent R CMD check warnings
 
+        if (simulate.sgps==TRUE) {
+          if (is.null(SGPstateData[[state]]$Assessment_Program_Information$CSEM)) {
+            message("NOTE: 'simulate.sgps' turned to FALSE as there are no CSEMs in SGPstateData for this state.")
+            simulate.sgps <- FALSE
+          }
+        }
+
 	### 
 	### Utility functions
 	###
-
+        
 	## Function to merge results from assorted multiple SGP function calls
 
 	.mergeSGP <- function(list_1, list_2) {
@@ -422,7 +429,8 @@ function(sgp_object,
 			for (tmp.matrix.label in grep("BASELINE", names(sgp_object@SGP$Coefficient_Matrices), value=TRUE)) {
 				eval(parse(text=paste(state, "_Baseline_Matrices[['", tmp.matrix.label, "']] <- sgp_object@SGP[['Coefficient_Matrices']][['", tmp.matrix.label, "']]", sep="")))
 			}
-			save(list=paste(state, "_Baseline_Matrices", sep=""), file=paste(state, "_Baseline_Matrices.Rdata", sep="")) 
+			save(list=paste(state, "_Baseline_Matrices", sep=""), file=paste(state, "_Baseline_Matrices.Rdata", sep=""))
+			key(sgp_object@Data) <- c() 
 			message("\n\tFinished Calculating Baseline Coefficient Matrices\n")
 		} else {
 			sgp_object@SGP <- .mergeSGP(sgp_object@SGP, SGPstateData[[state]][["Baseline_splineMatrix"]])
