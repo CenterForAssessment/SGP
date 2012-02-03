@@ -25,6 +25,14 @@ function(sgp_object,
 
 	VALID_CASE <- CONTENT_AREA <- YEAR <- GRADE <- ID <- NULL ## To prevent R CMD check warnings
 
+        #Makes sure that CSEMs exist for a state if simulate.sgps==TRUE
+        if (simulate.sgps==TRUE) {
+          if (is.null(SGPstateData[[state]]$Assessment_Program_Information$CSEM)) {
+            message("NOTE: 'simulate.sgps' turned to FALSE as there are no CSEMs in SGPstateData for this state.")
+            simulate.sgps <- FALSE
+          }
+        }
+
 	### 
 	### Utility functions
 	###
