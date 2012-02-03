@@ -49,13 +49,6 @@
 require(gridBase)
 
 
-# Test for data to plot
-
-if (length(bubble_plot_data.X)==0) {
-	return("No data supplied for plotting. No plot produced")
-}
-
-
 # Test for installation of pdf2 package 
 
 if (bubble_plot_configs.BUBBLE_TIPS) {
@@ -81,7 +74,6 @@ if (!is.null(bubble_plot_configs.BUBBLE_PLOT_PATH)) {
   
 # Calculate relevant quantities
 
-numstud.range <- c(min(bubble_plot_labels.SIZE), max(bubble_plot_labels.SIZE))
 num.sizes <- length(bubble_plot_labels.SIZE)
 if (!missing(bubble_plot_data.BUBBLE_TIPS_LINES)) num.bubble.lines <- length(bubble_plot_data.BUBBLE_TIPS_LINES)
 if (is.null(bubble_plot_data.LEVELS)) {
@@ -132,7 +124,6 @@ bubblecolor <- function(x){
 bubblesize <- function(schoolsize, numstud.range){
                       slope <- (max.cex - min.cex)/(sqrt(numstud.range)[2] - sqrt(numstud.range)[1])
                       temp <- slope*sqrt(schoolsize) - slope*sqrt(numstud.range)[2] + max.cex
-                      temp[temp<min.cex] <- min.cex; temp[temp>max.cex] <- max.cex
                       return(temp)
 }          
 
@@ -344,11 +335,11 @@ if (!is.null(bubble_plot_configs.BUBBLE_PLOT_EXTRAS)) {
 
 if (bubble_plot_configs.BUBBLE_TIPS) {
    if (!is.null(bubble_plot_data.SUBSET)) {
-      grid.circle(x=bubble_plot_data.X, y=bubble_plot_data.Y, r=unit(bubblesize(bubble_plot_data.SIZE, numstud.range), rep("inches", length(bubble_plot_data.SIZE))),
+      grid.circle(x=bubble_plot_data.X, y=bubble_plot_data.Y, r=unit(bubblesize(bubble_plot_data.SIZE, c(10,1000)), rep("inches", length(bubble_plot_data.SIZE))),
                gp=gpar(col=rgb(0.4,0.4,0.4), lwd=0.05*bubble_plot_configs.BUBBLE_MIN_MAX[2]/0.12, 
                fill=bubblecolor(unclass(tmp.LEVELS)), alpha=bubblealpha(length(bubble_plot_data.X), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Transparent)), default.units="native") 
       grid.circle(x=bubble_plot_data.X[bubble_plot_data.SUBSET], y=bubble_plot_data.Y[bubble_plot_data.SUBSET], 
-                  r=unit(bubble_plot_configs.BUBBLE_SUBSET_INCREASE+bubblesize(bubble_plot_data.SIZE[bubble_plot_data.SUBSET], numstud.range), 
+                  r=unit(bubble_plot_configs.BUBBLE_SUBSET_INCREASE+bubblesize(bubble_plot_data.SIZE[bubble_plot_data.SUBSET], c(10,1000)), 
                         rep("inches", length(bubble_plot_data.SIZE[bubble_plot_data.SUBSET]))), 
                   gp=gpar(lwd=0.750*bubble_plot_configs.BUBBLE_MIN_MAX[2]/0.12, fill=bubblecolor(unclass(tmp.LEVELS[bubble_plot_data.SUBSET])), 
                   alpha=bubblealpha(length(bubble_plot_data.X[bubble_plot_data.SUBSET]), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Opaque)), default.units="native") 
@@ -361,7 +352,7 @@ if (bubble_plot_configs.BUBBLE_TIPS) {
                             unit(bubble_plot_data.X[i], "native"), unit(bubble_plot_data.Y[i], "native"),
                             gp=gpar(lwd=0.5))
               grid.circle(x=bubble_plot_data.X[i], y=bubble_plot_data.Y[i], 
-                      r=unit(c(1.0, 0.4)*bubblesize(bubble_plot_data.SIZE[i], numstud.range), rep("inches", length(bubble_plot_data.SIZE[i]))), 
+                      r=unit(c(1.0, 0.4)*bubblesize(bubble_plot_data.SIZE[i], c(10,1000)), rep("inches", length(bubble_plot_data.SIZE[i]))), 
                       gp=gpar(lwd=c(0.5, 3.0), fill=bubblecolor(unclass(tmp.LEVELS))), default.units="native") 
               grid.rect(x=unit(indicate.coordinates$x, "npc"), y=unit(indicate.coordinates$y, "npc"), 
                              width=unit(2*text.buffer, "inches")+unit(1.0, "strwidth", bubble_plot_labels.BUBBLE_TITLES[i]), 
@@ -383,10 +374,10 @@ if (bubble_plot_configs.BUBBLE_TIPS) {
 
     if (!is.null(bubble_plot_data.BUBBLE_CENTER_LABEL)) {
             grid.text(x=bubble_plot_data.X, y=bubble_plot_data.Y, bubble_plot_data.BUBBLE_CENTER_LABEL, 
-                   gp=gpar(col=rgb(0.4,0.4,0.4), cex=bubblesize(bubble_plot_data.SIZE, numstud.range)/as.numeric(convertUnit(stringWidth(bubble_plot_data.BUBBLE_CENTER_LABEL), "inches")), 
+                   gp=gpar(col=rgb(0.4,0.4,0.4), cex=bubblesize(bubble_plot_data.SIZE, c(10,1000))/as.numeric(convertUnit(stringWidth(bubble_plot_data.BUBBLE_CENTER_LABEL), "inches")), 
                    alpha=bubblealpha(length(bubble_plot_data.X), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Transparent), font=2), default.units="native")
             grid.text(x=bubble_plot_data.X[bubble_plot_data.SUBSET], y=bubble_plot_data.Y[bubble_plot_data.SUBSET], bubble_plot_data.BUBBLE_CENTER_LABEL[bubble_plot_data.SUBSET], 
-                   gp=gpar(col=rgb(0.4,0.4,0.4), cex=bubblesize(bubble_plot_data.SIZE, numstud.range)/as.numeric(convertUnit(stringWidth(bubble_plot_data.BUBBLE_CENTER_LABEL), "inches")), 
+                   gp=gpar(col=rgb(0.4,0.4,0.4), cex=bubblesize(bubble_plot_data.SIZE, c(10,1000))/as.numeric(convertUnit(stringWidth(bubble_plot_data.BUBBLE_CENTER_LABEL), "inches")), 
                    alpha=bubblealpha(length(bubble_plot_data.X[bubble_plot_data.SUBSET]), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Opaque), font=2), default.units="native")
     }
 
@@ -401,7 +392,7 @@ if (bubble_plot_configs.BUBBLE_TIPS) {
                                                          bubble_plot_data.BUBBLE_TIPS_LINES[[j]][bubble_plot_data.SUBSET][i], sep=""))
           }
           text(0.5, 0.5, "X", col=rgb(1,0,0,0.01), popup="PLACEHOLDER", 
-               cex=10*bubblesize(bubble_plot_data.SIZE[bubble_plot_data.SUBSET][i], numstud.range),
+               cex=10*bubblesize(bubble_plot_data.SIZE[bubble_plot_data.SUBSET][i], c(10,1000)),
                annot.options=c(paste("/T (", bubble_plot_labels.BUBBLE_TITLES[bubble_plot_data.SUBSET][i], ")", sep=""), 
                         paste("/Contents (", paste(tmp.bubble.txt, collapse="\n"), ")", sep=""))) 
           popViewport()
@@ -411,7 +402,7 @@ if (bubble_plot_configs.BUBBLE_TIPS) {
    } ## End SUBSET if statement
 
    else {
-     grid.circle(x=bubble_plot_data.X, y=bubble_plot_data.Y, r=unit(bubblesize(bubble_plot_data.SIZE, numstud.range), rep("inches", length(bubble_plot_data.SIZE))), 
+     grid.circle(x=bubble_plot_data.X, y=bubble_plot_data.Y, r=unit(bubblesize(bubble_plot_data.SIZE, c(10,1000)), rep("inches", length(bubble_plot_data.SIZE))), 
                gp=gpar(col=rgb(0.2,0.2,0.2), lwd=0.05*bubble_plot_configs.BUBBLE_MIN_MAX[2]/0.12, 
                fill=bubblecolor(unclass(tmp.LEVELS)), alpha=bubblealpha(length(bubble_plot_data.X), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Opaque)), default.units="native") 
 
@@ -423,7 +414,7 @@ if (bubble_plot_configs.BUBBLE_TIPS) {
                             unit(bubble_plot_data.X[i], "native"), unit(bubble_plot_data.Y[i], "native"),
                             gp=gpar(lwd=0.5))
               grid.circle(x=bubble_plot_data.X[i], y=bubble_plot_data.Y[i], 
-                      r=unit(c(1.0, 0.4)*bubblesize(bubble_plot_data.SIZE[i], numstud.range), rep("inches", length(bubble_plot_data.SIZE[i]))), 
+                      r=unit(c(1.0, 0.4)*bubblesize(bubble_plot_data.SIZE[i], c(10,1000)), rep("inches", length(bubble_plot_data.SIZE[i]))), 
                       gp=gpar(lwd=c(0.5, 3.0), fill=bubblecolor(unclass(tmp.LEVELS))), default.units="native") 
               grid.rect(x=unit(indicate.coordinates$x, "npc"), y=unit(indicate.coordinates$y, "npc"), 
                              width=unit(2*text.buffer, "inches")+unit(1.0, "strwidth", bubble_plot_labels.BUBBLE_TITLES[i]), 
@@ -445,7 +436,7 @@ if (bubble_plot_configs.BUBBLE_TIPS) {
 
      if (!is.null(bubble_plot_data.BUBBLE_CENTER_LABEL)) {
             grid.text(x=bubble_plot_data.X, y=bubble_plot_data.Y, bubble_plot_data.BUBBLE_CENTER_LABEL, 
-                   gp=gpar(col=rgb(0.4,0.4,0.4), cex=bubblesize(bubble_plot_data.SIZE, numstud.range)/as.numeric(convertUnit(stringWidth(bubble_plot_data.BUBBLE_CENTER_LABEL), "inches")), 
+                   gp=gpar(col=rgb(0.4,0.4,0.4), cex=bubblesize(bubble_plot_data.SIZE, c(10,1000))/as.numeric(convertUnit(stringWidth(bubble_plot_data.BUBBLE_CENTER_LABEL), "inches")), 
                    alpha=bubblealpha(length(bubble_plot_data.X), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Opaque), font=2), default.units="native")
      }
 
@@ -460,7 +451,7 @@ if (bubble_plot_configs.BUBBLE_TIPS) {
                                                         bubble_plot_data.BUBBLE_TIPS_LINES[[j]][i], sep=""))
          }
          text(0.5, 0.5, "X", col=rgb(1,0,0,0.01), popup="PLACEHOLDER", 
-              cex=10*bubblesize(bubble_plot_data.SIZE[i], numstud.range),
+              cex=10*bubblesize(bubble_plot_data.SIZE[i], c(10,1000)),
               annot.options=c(paste("/T (", bubble_plot_labels.BUBBLE_TITLES[i], ")", sep=""), 
                         paste("/Contents (", paste(tmp.bubble.txt, collapse="\n"), ")", sep=""))) 
          popViewport()
@@ -473,11 +464,11 @@ if (bubble_plot_configs.BUBBLE_TIPS) {
 
 else {
    if (!is.null(bubble_plot_data.SUBSET)){
-      grid.circle(x=bubble_plot_data.X, y=bubble_plot_data.Y, r=unit(bubblesize(bubble_plot_data.SIZE, numstud.range), rep("inches", length(bubble_plot_data.SIZE))), 
+      grid.circle(x=bubble_plot_data.X, y=bubble_plot_data.Y, r=unit(bubblesize(bubble_plot_data.SIZE, c(10,1000)), rep("inches", length(bubble_plot_data.SIZE))), 
                gp=gpar(col=rgb(0.4,0.4,0.4), lwd=0.05*bubble_plot_configs.BUBBLE_MIN_MAX[2]/0.12, 
                fill=bubblecolor(unclass(tmp.LEVELS)), alpha=bubblealpha(length(bubble_plot_data.X), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Transparent)), default.units="native") 
       grid.circle(x=bubble_plot_data.X[bubble_plot_data.SUBSET], y=bubble_plot_data.Y[bubble_plot_data.SUBSET], 
-                  r=unit(bubble_plot_configs.BUBBLE_SUBSET_INCREASE+bubblesize(bubble_plot_data.SIZE[bubble_plot_data.SUBSET], numstud.range), 
+                  r=unit(bubble_plot_configs.BUBBLE_SUBSET_INCREASE+bubblesize(bubble_plot_data.SIZE[bubble_plot_data.SUBSET], c(10,1000)), 
                          rep("inches", length(bubble_plot_data.SIZE[bubble_plot_data.SUBSET]))), 
                   gp=gpar(lwd=0.75*bubble_plot_configs.BUBBLE_MIN_MAX[2]/0.12, fill=bubblecolor(unclass(tmp.LEVELS[bubble_plot_data.SUBSET])), 
                   alpha=bubblealpha(length(bubble_plot_data.X), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Opaque)), default.units="native") 
@@ -489,7 +480,7 @@ else {
                         unit(bubble_plot_data.X[bubble_plot_data.INDICATE], "native"), unit(bubble_plot_data.Y[bubble_plot_data.INDICATE], "native"),
                         gp=gpar(lwd=0.5))
           grid.circle(x=bubble_plot_data.X[bubble_plot_data.INDICATE], y=bubble_plot_data.Y[bubble_plot_data.INDICATE], 
-                  r=unit(c(1.0, 0.4)*bubblesize(bubble_plot_data.SIZE[bubble_plot_data.INDICATE], numstud.range), rep("inches", length(bubble_plot_data.SIZE[bubble_plot_data.INDICATE]))), 
+                  r=unit(c(1.0, 0.4)*bubblesize(bubble_plot_data.SIZE[bubble_plot_data.INDICATE], c(10,1000)), rep("inches", length(bubble_plot_data.SIZE[bubble_plot_data.INDICATE]))), 
                   gp=gpar(lwd=c(0.5, 3.0), fill=bubblecolor(unclass(tmp.LEVELS))), default.units="native") 
           grid.rect(x=unit(indicate.coordinates$x, "npc"), y=unit(indicate.coordinates$y, "npc"), 
                          width=unit(2*text.buffer, "inches")+unit(1.0, "strwidth", bubble_plot_labels.BUBBLE_TITLES[bubble_plot_data.INDICATE]), 
@@ -510,20 +501,20 @@ else {
 
    if (!is.null(bubble_plot_data.BUBBLE_CENTER_LABEL)) {
             grid.text(x=bubble_plot_data.X, y=bubble_plot_data.Y, bubble_plot_data.BUBBLE_CENTER_LABEL, 
-                   gp=gpar(col=rgb(0.4,0.4,0.4), cex=bubblesize(bubble_plot_data.SIZE, numstud.range)/as.numeric(convertUnit(stringWidth(bubble_plot_data.BUBBLE_CENTER_LABEL), "inches")), 
+                   gp=gpar(col=rgb(0.4,0.4,0.4), cex=bubblesize(bubble_plot_data.SIZE, c(10,1000))/as.numeric(convertUnit(stringWidth(bubble_plot_data.BUBBLE_CENTER_LABEL), "inches")), 
                    alpha=bubblealpha(length(bubble_plot_data.X), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Opaque), font=2), default.units="native")
    }
 
    if (!is.null(bubble_plot_data.BUBBLE_CENTER_LABEL)) {
             grid.text(x=bubble_plot_data.X, y=bubble_plot_data.Y, bubble_plot_data.BUBBLE_CENTER_LABEL, 
-                   gp=gpar(col=rgb(0.4,0.4,0.4), cex=bubblesize(bubble_plot_data.SIZE, numstud.range)/as.numeric(convertUnit(stringWidth(bubble_plot_data.BUBBLE_CENTER_LABEL), "inches")), 
+                   gp=gpar(col=rgb(0.4,0.4,0.4), cex=bubblesize(bubble_plot_data.SIZE, c(10,1000))/as.numeric(convertUnit(stringWidth(bubble_plot_data.BUBBLE_CENTER_LABEL), "inches")), 
                    alpha=bubblealpha(length(bubble_plot_data.X), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Transparent), font=2), default.units="native")
             grid.text(x=bubble_plot_data.X[bubble_plot_data.SUBSET], y=bubble_plot_data.Y[bubble_plot_data.SUBSET], bubble_plot_data.BUBBLE_CENTER_LABEL[bubble_plot_data.SUBSET], 
-                   gp=gpar(col=rgb(0.4,0.4,0.4), cex=bubblesize(bubble_plot_data.SIZE, numstud.range)/as.numeric(convertUnit(stringWidth(bubble_plot_data.BUBBLE_CENTER_LABEL), "inches")), 
+                   gp=gpar(col=rgb(0.4,0.4,0.4), cex=bubblesize(bubble_plot_data.SIZE, c(10,1000))/as.numeric(convertUnit(stringWidth(bubble_plot_data.BUBBLE_CENTER_LABEL), "inches")), 
                    alpha=bubblealpha(length(bubble_plot_data.X[bubble_plot_data.SUBSET]), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Opaque), font=2), default.units="native")
    }
 } else {  
-   grid.circle(x=bubble_plot_data.X, y=bubble_plot_data.Y, r=unit(bubblesize(bubble_plot_data.SIZE, numstud.range), rep("inches", length(bubble_plot_data.SIZE))), 
+   grid.circle(x=bubble_plot_data.X, y=bubble_plot_data.Y, r=unit(bubblesize(bubble_plot_data.SIZE, c(10,1000)), rep("inches", length(bubble_plot_data.SIZE))), 
                gp=gpar(col=rgb(0.2,0.2,0.2), lwd=0.05*bubble_plot_configs.BUBBLE_MIN_MAX[2]/0.12, fill=bubblecolor(unclass(tmp.LEVELS)), 
                alpha=bubblealpha(length(bubble_plot_data.X), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Opaque)), default.units="native") 
 
@@ -534,7 +525,7 @@ else {
                         unit(bubble_plot_data.X[bubble_plot_data.INDICATE], "native"), unit(bubble_plot_data.Y[bubble_plot_data.INDICATE], "native"),
                         gp=gpar(lwd=0.5))
           grid.circle(x=bubble_plot_data.X[bubble_plot_data.INDICATE], y=bubble_plot_data.Y[bubble_plot_data.INDICATE], 
-                  r=unit(c(1.0, 0.4)*bubblesize(bubble_plot_data.SIZE[bubble_plot_data.INDICATE], numstud.range), rep("inches", length(bubble_plot_data.SIZE[bubble_plot_data.INDICATE]))), 
+                  r=unit(c(1.0, 0.4)*bubblesize(bubble_plot_data.SIZE[bubble_plot_data.INDICATE], c(10,1000)), rep("inches", length(bubble_plot_data.SIZE[bubble_plot_data.INDICATE]))), 
                   gp=gpar(lwd=c(0.5, 3.0), fill=bubblecolor(unclass(tmp.LEVELS))), default.units="native") 
           grid.rect(x=unit(indicate.coordinates$x, "npc"), y=unit(indicate.coordinates$y, "npc"), 
                          width=unit(2*text.buffer, "inches")+unit(1.0, "strwidth", bubble_plot_labels.BUBBLE_TITLES[bubble_plot_data.INDICATE]), 
@@ -555,13 +546,13 @@ else {
 
    if (!is.null(bubble_plot_data.BUBBLE_CENTER_LABEL)) {
             grid.text(x=bubble_plot_data.X, y=bubble_plot_data.Y, bubble_plot_data.BUBBLE_CENTER_LABEL, 
-                   gp=gpar(col=rgb(0.4,0.4,0.4), cex=bubblesize(bubble_plot_data.SIZE, numstud.range)/as.numeric(convertUnit(stringWidth(bubble_plot_data.BUBBLE_CENTER_LABEL), "inches")), 
+                   gp=gpar(col=rgb(0.4,0.4,0.4), cex=bubblesize(bubble_plot_data.SIZE, c(10,1000))/as.numeric(convertUnit(stringWidth(bubble_plot_data.BUBBLE_CENTER_LABEL), "inches")), 
                    alpha=bubblealpha(length(bubble_plot_data.X), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Opaque), font=2), default.units="native")
    }
 
    if (!is.null(bubble_plot_data.BUBBLE_CENTER_LABEL)) {
             grid.text(x=bubble_plot_data.X, y=bubble_plot_data.Y, bubble_plot_data.BUBBLE_CENTER_LABEL, 
-                   gp=gpar(col=rgb(0.4,0.4,0.4), cex=bubblesize(bubble_plot_data.SIZE, numstud.range)/as.numeric(convertUnit(stringWidth(bubble_plot_data.BUBBLE_CENTER_LABEL), "inches")), 
+                   gp=gpar(col=rgb(0.4,0.4,0.4), cex=bubblesize(bubble_plot_data.SIZE, c(10,1000))/as.numeric(convertUnit(stringWidth(bubble_plot_data.BUBBLE_CENTER_LABEL), "inches")), 
                    alpha=bubblealpha(length(bubble_plot_data.X), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Opaque), font=2), default.units="native")
    }
 } ## End SUBSET else statement
@@ -647,7 +638,7 @@ if(!is.null(bubble_plot_data.SUBSET)) {
   bubble.legend.color <- rep(sort(my.colors)[1], length=num.sizes)
 }
 for (i in 1:num.sizes){
-grid.circle(x=0.25, y=y.coors[i], r=unit(bubblesize(bubble_plot_labels.SIZE[i], numstud.range), "inches"), 
+grid.circle(x=0.25, y=y.coors[i], r=unit(bubblesize(bubble_plot_labels.SIZE[i], c(10,1000)), "inches"), 
             gp=gpar(col="grey14", lwd=0.7, fill=bubble.legend.color[i], alpha=bubble.legend.alpha))
 grid.text(x=0.35, y=y.coors[i], paste(bubble_plot_labels.SIZE[i], "Students"), gp=gpar(col=format.colors.font[1], cex=0.9), just="left")
 }
