@@ -1,3 +1,22 @@
+Changes in version: SGP_0.8-4.0
+
+  NEW FEATURES:
+
+  USER VISIBLE CHANGES:
+
+  BUG FIXES:
+
+  o bPlot.format no case insensitive.
+
+Changes in version: SGP_0.8-3.0
+
+  NEW FEATURES:
+
+  o ACHIEVEMENT_LEVEL_PRIOR and CATCH_UP_KEEP_UP_STATUS_INITIAL, used for lagged projections, are now calculated as part of analyzeSGP and not combineSGP. This was required in order to allow for growth to standard across holes in grades progression (e.g., 8th to 10th grade).
+  o Added addition argument to summarizeSGP (growth_only_summary) that calculates summaries using only student with growth percentiles. This makes bubblePlots better for research investigations (but not as relevant for accountability displays).
+
+
+
 Changes in version: SGP_0.8-2.0
 
   NEW FEATURES:
@@ -6,6 +25,9 @@ Changes in version: SGP_0.8-2.0
 
   o Changed "Phone Number" to "Contact" on studentGrowthPlot and made associated changes of label in SGPstateData.
   o Updated NECAP CSEMs for 2011_2012 in SGPstateData.
+  o Added Hawaii baseline coefficient matrices to SGPstateData.
+  o Added test to analyzeSGP to see if CSEMs exist in SGPstateData.
+
 
   BUG FIXES:
 

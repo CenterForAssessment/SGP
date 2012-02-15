@@ -43,7 +43,7 @@ visualizeSGP(
            sgPlot.cleanup=TRUE,
            sgPlot.demo.report=FALSE,
            sgPlot.produce.plots=TRUE,
-           sgPlot.parallel.config=list(TYPE="FOREACH", OPTIONS=list(preschedule=FALSE)),
+           sgPlot.parallel.config=list(TYPE="FOREACH", OPTIONS=list(preschedule = FALSE, set.seed = FALSE)),
            sgPlot.baseline=NULL,
            gaPlot.years=NULL,
            gaPlot.content_areas=NULL,

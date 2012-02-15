@@ -189,9 +189,8 @@
 	setkeyv(tmp_grade_data, tmp.keys[4:5])
 
 	for (n in unique(tmp_grade_data[["ID"]])) {
-		tmp_student_data <- tmp_grade_data[ID==n]
-		FIRST_NAME <- gsub(" |/", "-", sort(tmp_student_data[[tmp.keys[5]]])[1]) 
-		LAST_NAME <- gsub(" |/", "-", sort(tmp_student_data[[tmp.keys[4]]])[1])
+		FIRST_NAME <- gsub(" |/", "-", sort(tmp_grade_data[ID==n][[tmp.keys[5]]])[1]) 
+		LAST_NAME <- gsub(" |/", "-", sort(tmp_grade_data[ID==n][[tmp.keys[4]]])[1])
 		if (sgPlot.anonymize) {
 			student_number <- 1234567890
 		} else {

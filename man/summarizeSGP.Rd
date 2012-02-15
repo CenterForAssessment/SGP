@@ -21,7 +21,8 @@ summarizeSGP(sgp_object,
              time="YEAR",
              institution_level="GRADE",
              demographic=c("GENDER", "ETHNICITY", "FREE_REDUCED_LUNCH_STATUS", "ELL_STATUS", "IEP_STATUS", "GIFTED_AND_TALENTED_PROGRAM_STATUS", "CATCH_UP_KEEP_UP_STATUS"),
-             institution_inclusion=list(STATE="STATE_ENROLLMENT_STATUS", DISTRICT_NUMBER="DISTRICT_ENROLLMENT_STATUS", SCHOOL_NUMBER="SCHOOL_ENROLLMENT_STATUS")),
+             institution_inclusion=list(STATE="STATE_ENROLLMENT_STATUS", DISTRICT_NUMBER="DISTRICT_ENROLLMENT_STATUS", SCHOOL_NUMBER="SCHOOL_ENROLLMENT_STATUS"),
+             growth_only_summary=list(STATE="BY_GROWTH_ONLY", DISTRICT_NUMBER="BY_GROWTH_ONLY", SCHOOL_NUMBER="BY_GROWTH_ONLY")),
            confidence.interval.groups=list(TYPE="Bootstrap",
              VARIABLES=c("SGP"),
              QUANTILES=c(0.025, 0.975),
@@ -30,7 +31,8 @@ summarizeSGP(sgp_object,
                time="YEAR",
                institution_level= NULL,
                demographic=NULL,
-               institution_inclusion=list(STATE=NULL, DISTRICT_NUMBER=NULL, SCHOOL_NUMBER="SCHOOL_ENROLLMENT_STATUS"))))
+               institution_inclusion=list(STATE=NULL, DISTRICT_NUMBER=NULL, SCHOOL_NUMBER="SCHOOL_ENROLLMENT_STATUS"),
+               growth_only_summary=list(STATE="BY_GROWTH_ONLY", DISTRICT_NUMBER="BY_GROWTH_ONLY", SCHOOL_NUMBER="BY_GROWTH_ONLY")))) 
 }
 
 \arguments{
@@ -64,6 +66,7 @@ including:
 \code{institution_level}: \tab Variable(s) indicating levels with the institution (default GRADE) if summaries by institution level is of interest.\cr
 \code{demographic}: \tab  Demographics variables if summaries by demographic subgroup are of interest.\cr 
 \code{institution_inclusion} Variables indicating inclusion for institutional calculations.\cr 
+\code{growth_only_summary} Variables indicating whether to calculate summaries only for those students with growth in addition to other analyses.\cr
 }
 All group slots MUST be included in the list, although \code{NULL} can be provided if a grouping subset is not desired. All possible combinations of the group variables are produced. Specification of \code{summary.groups} can be tested prior to use of \code{summarizeSGP} with the \code{\link{viewSummaryGroups}} function.  See that \code{\link{viewSummaryGroups}} documentation for details.
   }
@@ -78,6 +81,7 @@ All group slots MUST be included in the list, although \code{NULL} can be provid
 \code{institution_level} \tab The insitution level variables (e.g., GRADE, default is NULL) if confidence intervals by institution level are desired.\cr
 \code{demographic} \tab The demographic variables if confidence intervals by demographic subgroups are desired.\cr
 \code{institution_inclusion} \tab The institution inclusion variables if confidence intervals by institution inclusion subgroups are desired.\cr
+\code{growth_only_summary} The growth only summary variables if confidence intervals by growth only summary group are desired.\cr
 }
 For \code{CSEM} analysis this argument requires that simulated SGPs have been produced (see \code{\link{analyzeSGP}} for more information). List slots set to \code{NULL} will not produce confidence intervals. NOTE: This is currently an experimental functionality and is very memory intensive. Groups to be included should be identified selectively! The default 95\% confidence intervals are provided in the selected summary tables as two additional columns named \code{LOWER_MEDIAN_SGP_95_CONF_BOUND} and \code{UPPER_MEDIAN_SGP_95_CONF_BOUND}. Specification of \code{confidence.interval.groups} can be tested prior to use of \code{summarizeSGP} with the \code{\link{viewSummaryGroups}} function.
   }

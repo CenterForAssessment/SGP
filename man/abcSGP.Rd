@@ -36,7 +36,8 @@ abcSGP(sgp_object,
 		time="YEAR",
 		institution_level="GRADE",
 		demographic=c("GENDER", "ETHNICITY", "FREE_REDUCED_LUNCH_STATUS", "ELL_STATUS", "IEP_STATUS", "GIFTED_AND_TALENTED_PROGRAM_STATUS", "CATCH_UP_KEEP_UP_STATUS_INITIAL"),
-		institution_inclusion=list(STATE="STATE_ENROLLMENT_STATUS", DISTRICT_NUMBER="DISTRICT_ENROLLMENT_STATUS", SCHOOL_NUMBER="SCHOOL_ENROLLMENT_STATUS")),
+		institution_inclusion=list(STATE="STATE_ENROLLMENT_STATUS", DISTRICT_NUMBER="DISTRICT_ENROLLMENT_STATUS", SCHOOL_NUMBER="SCHOOL_ENROLLMENT_STATUS"),
+		growth_only_summary=list(STATE="BY_GROWTH_ONLY", DISTRICT_NUMBER="BY_GROWTH_ONLY", SCHOOL_NUMBER="BY_GROWTH_ONLY")),
         confidence.interval.groups=list(TYPE="Bootstrap",
                 VARIABLES=c("SGP"),
                 QUANTILES=c(0.025, 0.975),
@@ -44,8 +45,10 @@ abcSGP(sgp_object,
                 content="CONTENT_AREA",
                 time="YEAR",
 		institution_level= NULL,
-                demographic=NULL,
-                institution_inclusion=list(STATE=NULL, DISTRICT_NUMBER=NULL, SCHOOL_NUMBER="SCHOOL_ENROLLMENT_STATUS"))),
+		demographic=NULL,
+		institution_inclusion=list(STATE=NULL, DISTRICT_NUMBER=NULL, SCHOOL_NUMBER="SCHOOL_ENROLLMENT_STATUS"),
+		growth_only_summary=list(STATE="BY_GROWTH_ONLY", DISTRICT_NUMBER="BY_GROWTH_ONLY", SCHOOL_NUMBER="BY_GROWTH_ONLY"))),
+
 	plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot")) 
 }
 

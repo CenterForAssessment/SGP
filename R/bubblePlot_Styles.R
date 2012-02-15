@@ -35,7 +35,7 @@
         # draft message
 
         if (bPlot.draft) {
-                bPlot.message <- c("grid.text(x=unit(50, 'native'), y=unit(50, 'native'), 'DRAFT - DO NOT DISTRIBUTE', rot=-30, gp=gpar(col='grey80', cex=2.9, alpha=0.8, fontface=2))",
+                bPlot.message <- c("grid.text(x=unit(50, 'native'), y=unit(50, 'native'), 'CONFIDENTIAL DRAFT - DO NOT DISTRIBUTE', rot=-30, gp=gpar(col='grey80', cex=2.9, alpha=0.8, fontface=2))",
           "grid.lines(x=unit(50, 'native'), y=c(0,1), gp=gpar(col='grey40', lwd=1.5, lty=2, alpha=0.5))")
         } else {
                 bPlot.message <- NULL
@@ -181,14 +181,14 @@
 
 		if (is.null(bPlot.schools) & is.null(bPlot.districts)) {
 			if ("DISTRICT_NUMBER" %in% names(tmp.data)) {
-				if (my.iters$tmp.years == "All Years") {
+				if (identical(my.iters$tmp.years, "All Years")) {
 					my.iters$tmp.districts <- sort(unique(tmp.data$DISTRICT_NUMBER)) %w/o% NA
 				} else {
 					my.iters$tmp.districts <- sort(unique(tmp.data[YEAR %in% my.iters$tmp.years]$DISTRICT_NUMBER)) %w/o% NA
 				}
 			}
 			if ("SCHOOL_NUMBER" %in% names(tmp.data)) {
-				if (my.iters$tmp.years == "All Years") {
+				if (identical(my.iters$tmp.years, "All Years")) {
 					my.iters$tmp.schools <- sort(unique(tmp.data$SCHOOL_NUMBER)) %w/o% NA
 				} else {
 					my.iters$tmp.schools <- sort(unique(tmp.data[YEAR %in% my.iters$tmp.years]$SCHOOL_NUMBER)) %w/o% NA

@@ -95,7 +95,7 @@ interpolate.grades <- function(grades, data.year.span) {
                    year_span <- 0
                    return (list(interp.df = data.frame(GRADE=2:8), 
 					year_span=year_span,
-					years=rep(NA, 7)))
+					years=sapply(-5:1, function(x) .year.increment(Report_Parameters$Current_Year, x))))
             } else {
               if (last.scale.score < data.year.span) {
                   grades[(last.scale.score+1):data.year.span] <- (grades[last.scale.score]-1):(grades[last.scale.score] - (data.year.span - last.scale.score))

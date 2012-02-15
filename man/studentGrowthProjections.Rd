@@ -14,7 +14,8 @@ studentGrowthProjections(panel.data,
                          max.order.for.progression,  
                          use.my.knots.boundaries,   
                          use.my.coefficient.matrices,  
-                         panel.data.vnames,         
+                         panel.data.vnames,
+                         achievement.level.prior.vname=NULL,
                          performance.level.cutscores, 
                          chunk.size=100000,
                          calculate.sgps=TRUE,
@@ -63,6 +64,9 @@ studentGrowthProjections(panel.data,
   }
   \item{panel.data.vnames}{Vector of variables to use in percentile growth projection/trajectory calculations. If not specified, function attempts to use all available 
    variables.
+  }
+  \item{achievement.level.prior.vname}{Character vector indicating variable is supplied panel data corresponding to the prior achievement level to be added to the output. Used
+   in the production of growth to standard analyses.
   }
   \item{performance.level.cutscores}{Argument for supplying performance level cutscores to be used for determining growth-to-standard percentile growth trajectory calculations. Argument accepts a two letter state acronym (e.g., "CO") that retrieves cutscores that are automatically embedded in a data set contained in the SGP package. Argument also accepts a subject specific list of the form:
   \preformatted{

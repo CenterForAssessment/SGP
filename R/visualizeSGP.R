@@ -32,7 +32,7 @@
            sgPlot.cleanup=TRUE,
            sgPlot.demo.report=FALSE,
            sgPlot.produce.plots=TRUE,
-           sgPlot.parallel.config=list(TYPE="FOREACH", OPTIONS=list(preschedule=FALSE)),
+           sgPlot.parallel.config=list(TYPE="FOREACH", OPTIONS=list(preschedule=FALSE, set.seed=FALSE)),
            sgPlot.baseline=NULL,
            gaPlot.years=NULL,
            gaPlot.content_areas=NULL, 
@@ -78,7 +78,9 @@
       s <- strsplit(s, split=" ")[[1]]
       s <- paste(toupper(substring(s, 1,1)), tolower(substring(s, 2)), sep="", collapse=" ")
       s <- strsplit(s, split="-")[[1]]
-      paste(toupper(substring(s, 1,1)), substring(s, 2), sep="", collapse="-")
+      s <- paste(toupper(substring(s, 1,1)), substring(s, 2), sep="", collapse="-")
+      s <- strsplit(s, split="'")[[1]]
+      paste(toupper(substring(s, 1,1)), substring(s, 2), sep="", collapse="'")
     }
 
     get.max.order.for.progression <- function(year, content_area) {
@@ -260,7 +262,7 @@ if ("studentGrowthPlot" %in% plot.types) {
 			} else {
 				tmp.df <- CJ(tmp.df$GRADE, tmp.years)
 			}
-			names(tmp.df) <- c("GRADE", "YEAR") 
+			setnames(tmp.df, c("GRADE", "YEAR")) 
 			tmp.list[[i]] <- data.frame(CONTENT_AREA=i, tmp.df)
 		}
 	data.table(do.call(rbind, tmp.list), key=c("CONTENT_AREA", "GRADE", "YEAR"))
@@ -362,7 +364,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			tmp.tf <- with(tmp.districts.and.schools, 
 				eval(parse(text=paste("!is.na(DISTRICT_NUMBER.", tmp.last.year, ") & !is.na(SCHOOL_NUMBER.", tmp.last.year, ")", sep=""))))
 			tmp.districts.and.schools <- tmp.districts.and.schools[tmp.tf]
-			names(tmp.districts.and.schools) <- c("DISTRICT_NUMBER", "SCHOOL_NUMBER")
+			setnames(tmp.districts.and.schools, c("DISTRICT_NUMBER", "SCHOOL_NUMBER"))
 
 			## Get cases
 
@@ -380,7 +382,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			tmp.tf <- with(tmp.districts.and.schools, 
 				eval(parse(text=paste("!is.na(DISTRICT_NUMBER.", tmp.last.year, ") & !is.na(SCHOOL_NUMBER.", tmp.last.year, ")", sep=""))))
 			tmp.districts.and.schools <- tmp.districts.and.schools[tmp.tf]
-			names(tmp.districts.and.schools) <- c("DISTRICT_NUMBER", "SCHOOL_NUMBER")
+			setnames(tmp.districts.and.schools, c("DISTRICT_NUMBER", "SCHOOL_NUMBER"))
 		}
 } else { ### When WIDE data is NOT provided
 ###############################################
@@ -449,7 +451,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			sgp_object@Data$DISTRICT_NUMBER <- as.integer(sgp_object@Data$DISTRICT_NUMBER)
 			sgp_object@Data$DISTRICT_NUMBER[sgp_object@Data$ID %in% unlist(tmp.ids)] <- -999L
 			tmp.districts.and.schools <- CJ("VALID_CASE", tmp.last.year, tmp.content_areas, -999L, -99L)
-			names(tmp.districts.and.schools) <- c("VALID_CASE", "YEAR", "CONTENT_AREA", "DISTRICT_NUMBER", "SCHOOL_NUMBER")
+			setnames(tmp.districts.and.schools, c("VALID_CASE", "YEAR", "CONTENT_AREA", "DISTRICT_NUMBER", "SCHOOL_NUMBER"))
 			setkeyv(tmp.districts.and.schools, long.key) 
 			setkeyv(sgp_object@Data, long.key)
 		} else {
@@ -506,7 +508,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			tmp.table <- data.table(sgp_object@Data[get.years.content_areas.grades(state)], 
 				key=c("VALID_CASE", "ID", "CONTENT_AREA", "YEAR"))[CJ("VALID_CASE", report.ids, tmp.content_areas, tmp.years)]
 			setkeyv(tmp.table, c("VALID_CASE", "YEAR", "CONTENT_AREA", "DISTRICT_NUMBER", "SCHOOL_NUMBER"))
-			tmp.districts.and.schools <- unique(tmp.table[CJ("VALID_CASE", tmp.last.year, tmp.content_areas)][,list(DISTRICT_NUMBER, SCHOOL_NUMBER)])
+			tmp.districts.and.schools <- tmp.table[CJ("VALID_CASE", tmp.last.year, tmp.content_areas)][,list(DISTRICT_NUMBER, SCHOOL_NUMBER)]
 		}
 
 	#### Trim tmp.districts.and.schools
@@ -634,45 +636,53 @@ if (sgPlot.save.sgPlot.data) {
 #### studentGrowthPlot production
 
 if (sgPlot.produce.plots) {
-	if (is.null(sgPlot.students) | length(sgPlot.students) > 100) { ### Parallel processing only when lots of students
+
+	if (is.null(sgPlot.parallel.config)) { ### NO Parallel Processing
+
+                        studentGrowthPlot_Styles(
+                                sgPlot.data=sgPlot.data,
+                                state=state,
+                                last.year=tmp.last.year,
+                                content_areas=tmp.content_areas,
+                                districts=tmp.districts.and.schools[["DISTRICT_NUMBER"]],
+                                schools=tmp.districts.and.schools[["SCHOOL_NUMBER"]],
+                                reports.by.student=sgPlot.reports.by.student,
+                                sgPlot.years=tmp.years,
+                                sgPlot.folder=sgPlot.folder,
+                                sgPlot.folder.names=sgPlot.folder.names,
+                                sgPlot.demo.report=sgPlot.demo.report,
+                                sgPlot.anonymize=sgPlot.anonymize,
+                                sgPlot.front.page=sgPlot.front.page,
+                                sgPlot.header.footer.color=sgPlot.header.footer.color,
+                                sgPlot.fan=sgPlot.fan,
+                                sgPlot.cleanup=sgPlot.cleanup,
+                                sgPlot.baseline=sgPlot.baseline)
+	} else { ### Parallel Processing
+
 		tmp.iter <- list()
 		for (k in 1:dim(tmp.districts.and.schools)[1]) {
-			tmp.iter[[k]] <- list(Districts=tmp.districts.and.schools[k][["DISTRICT_NUMBER"]], Schools=tmp.districts.and.schools[k][["SCHOOL_NUMBER"]])
+			tmp.iter[[k]] <- list(DISTRICT_NUMBER=tmp.districts.and.schools[["DISTRICT_NUMBER"]][k], SCHOOL_NUMBER=tmp.districts.and.schools[["SCHOOL_NUMBER"]][k])
 		}
 
-		if (is.null(sgPlot.parallel.config)) {
-	                studentGrowthPlot_Styles(
-				sgPlot.data=sgPlot.data,
-                       		state=state,
-       	                	last.year=tmp.last.year,
-                        	content_areas=tmp.content_areas,
-                        	districts=tmp.districts.and.schools[["DISTRICT_NUMBER"]],
-                        	schools=tmp.districts.and.schools[["SCHOOL_NUMBER"]],
-                        	reports.by.student=sgPlot.reports.by.student,
-                        	sgPlot.years=tmp.years,
-                        	sgPlot.folder=sgPlot.folder,
-                        	sgPlot.folder.names=sgPlot.folder.names,
-                        	sgPlot.demo.report=sgPlot.demo.report,
-                        	sgPlot.anonymize=sgPlot.anonymize,
-                        	sgPlot.front.page=sgPlot.front.page,
-                        	sgPlot.header.footer.color=sgPlot.header.footer.color,
-                        	sgPlot.fan=sgPlot.fan,
-                        	sgPlot.cleanup=sgPlot.cleanup,
-				sgPlot.baseline=sgPlot.baseline)
-		}
+		### FOREACH flavor
 
 		if (toupper(sgPlot.parallel.config[["TYPE"]]) == "FOREACH") {
-			require(foreach)
+
+			if (!is.null(getOption("cores"))) {
+				require(doMC)
+				registerDoMC()
+			}
+
 			foreach.options <- sgPlot.parallel.config[["OPTIONS"]] # works fine if NULL
-			foreach(district.school.iter=iter(tmp.iter), .packages="SGP", .options.multicore=foreach.options, .options.mpi=foreach.options, 
-					.options.redis=foreach.options, .options.smp=foreach.options, verbose=TRUE) %dopar% {
-						studentGrowthPlot_Styles(
+			foreach(district.school.iter=iter(tmp.iter), .packages="SGP", .inorder=FALSE,
+				.options.multicore=foreach.options, .options.mpi=foreach.options, .options.redis=foreach.options, .options.smp=foreach.options, .verbose=TRUE) %dopar% {
+						invisible(studentGrowthPlot_Styles(
 							sgPlot.data=sgPlot.data,
 							state=state,
 							last.year=tmp.last.year,
 							content_areas=tmp.content_areas,
-							districts=district.school.iter$Districts,
-							schools=district.school.iter$Schools,
+							districts=district.school.iter[["DISTRICT_NUMBER"]],
+							schools=district.school.iter[["SCHOOL_NUMBER"]],
 							reports.by.student=sgPlot.reports.by.student,
 							sgPlot.years=tmp.years,
 							sgPlot.folder=sgPlot.folder,
@@ -683,29 +693,10 @@ if (sgPlot.produce.plots) {
 							sgPlot.header.footer.color=sgPlot.header.footer.color,
 							sgPlot.fan=sgPlot.fan,
 							sgPlot.cleanup=sgPlot.cleanup,
-							sgPlot.baseline=sgPlot.baseline)
-			}
-		}
-	} else {
-		studentGrowthPlot_Styles(
-			sgPlot.data=sgPlot.data,
-			state=state,
-			last.year=tmp.last.year,
-			content_areas=tmp.content_areas,
-			districts=tmp.districts.and.schools[["DISTRICT_NUMBER"]],
-			schools=tmp.districts.and.schools[["SCHOOL_NUMBER"]],
-			reports.by.student=sgPlot.reports.by.student,
-			sgPlot.years=tmp.years,
-			sgPlot.folder=sgPlot.folder,
-			sgPlot.folder.names=sgPlot.folder.names,
-			sgPlot.demo.report=sgPlot.demo.report,
-			sgPlot.anonymize=sgPlot.anonymize,
-			sgPlot.front.page=sgPlot.front.page,
-			sgPlot.header.footer.color=sgPlot.header.footer.color,
-			sgPlot.fan=sgPlot.fan,
-			sgPlot.cleanup=sgPlot.cleanup,
-			sgPlot.baseline=sgPlot.baseline)
-	}
+							sgPlot.baseline=sgPlot.baseline))
+			} ### END dopar
+		} ### END if FOREACH
+	} 
 } ## END if (sgPlot.produce.plots) 
 
 	message(paste("Finished studentGrowthPlot in visualizeSGP", date(), "in", timetaken(started.at), "\n"))

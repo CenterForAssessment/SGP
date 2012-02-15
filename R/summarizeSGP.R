@@ -14,7 +14,8 @@
              time="YEAR",
              institution_level="GRADE",
              demographic=c("GENDER", "ETHNICITY", "FREE_REDUCED_LUNCH_STATUS", "ELL_STATUS", "IEP_STATUS", "GIFTED_AND_TALENTED_PROGRAM_STATUS", "CATCH_UP_KEEP_UP_STATUS"),
-             institution_inclusion=list(STATE="STATE_ENROLLMENT_STATUS", DISTRICT_NUMBER="DISTRICT_ENROLLMENT_STATUS", SCHOOL_NUMBER="SCHOOL_ENROLLMENT_STATUS")),
+             institution_inclusion=list(STATE="STATE_ENROLLMENT_STATUS", DISTRICT_NUMBER="DISTRICT_ENROLLMENT_STATUS", SCHOOL_NUMBER="SCHOOL_ENROLLMENT_STATUS"),
+             growth_only_summary=list(STATE="BY_GROWTH_ONLY", DISTRICT_NUMBER="BY_GROWTH_ONLY", SCHOOL_NUMBER="BY_GROWTH_ONLY")),
            confidence.interval.groups=list(TYPE="Bootstrap",
              VARIABLES=c("SGP"),
              QUANTILES=c(0.025, 0.975),
@@ -23,7 +24,8 @@
                time="YEAR",
                institution_level= NULL,
                demographic=NULL,
-               institution_inclusion=list(STATE=NULL, DISTRICT_NUMBER=NULL, SCHOOL_NUMBER="SCHOOL_ENROLLMENT_STATUS")))) {
+               institution_inclusion=list(STATE=NULL, DISTRICT_NUMBER=NULL, SCHOOL_NUMBER="SCHOOL_ENROLLMENT_STATUS"),
+               growth_only_summary=list(STATE="BY_GROWTH_ONLY", DISTRICT_NUMBER="BY_GROWTH_ONLY", SCHOOL_NUMBER="BY_GROWTH_ONLY")))) {
 
     started.at <- proc.time()
     message(paste("\nStarted summarizeSGP", date()))
@@ -31,6 +33,9 @@
     if (missing(sgp_object)) {
       stop("User must supply a list containing a Student slot with long data. See documentation for details.")
     }
+
+    if (!identical(key(sgp_object@Data), c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))) setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
+
 
     ### Create state (if missing) from sgp_object (if possible)
 
@@ -40,23 +45,6 @@
                         state <- c(state.abb, "DEMO")[which(sapply(c(state.name, "Demonstration"), function(x) regexpr(x, tmp.name))==1)]
                 }
         }
-
-
-    ## If missing years and content_areas then determine year(s), and content_area(s) for summaries
-
-    if (missing(content_areas)) {
-      content_areas <- unique(sgp_object@Data["VALID_CASE"]$CONTENT_AREA)
-    }
-    if (missing(years)) {
-      for (i in content_areas) {
-        years <- sort(tail(unique(sgp_object@Data[J("VALID_CASE", content_areas)]$YEAR), 3))
-      }
-    }
-
-    if (!is.null(getOption("cores"))) {
-	require(doMC)
-	registerDoMC()
-    }
 
 
     ## Functions
@@ -148,7 +136,8 @@
                                                                                                             as.list(round(apply(.SD, 1, quantile, probs=confidence.interval.groups$QUANTILES))), by=eval(SIM_ByExpr2)]
         tmp <- data.table(merge.data.frame(tmp, tmp.sim, by = unlist(strsplit(as.character(sgp.groups.to.summarize), ", ")),all=TRUE))
       }
-      names(tmp)[-seq(length(unlist(strsplit(as.character(sgp.groups.to.summarize), ", "))))] <- sgp.summaries.names
+      setnames(tmp, (dim(tmp)[2]-length(sgp.summaries.names)+1):dim(tmp)[2], sgp.summaries.names)
+#      names(tmp)[-seq(length(unlist(strsplit(as.character(sgp.groups.to.summarize), ", "))))] <- sgp.summaries.names
       message(paste("\tFinished with", sgp.groups.to.summarize))
       return(tmp)
     }
@@ -164,10 +153,54 @@
       
       data.table(rbind.all(tmp.list), VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), key=key(tmp.dt))
     }
+
+
+    ## If missing years and content_areas then determine year(s), and content_area(s) for summaries
+    ## If growth_only_summary requested, then create BY_GROWTH_ONLY factor
+
+    if (missing(content_areas)) {
+      content_areas <- unique(sgp_object@Data["VALID_CASE"]$CONTENT_AREA)
+    }
+
+    tmp.years <- list()
+    if (missing(years)) {
+      for (i in content_areas) {
+        tmp.years[[i]] <- sort(tail(unique(sgp_object@Data[J("VALID_CASE", i)]$YEAR), 3))
+      }
+    } else {
+      if (!is.list(years)) {
+        for (i in content_areas) {
+           tmp.years[[i]] <- years 
+        }
+      } else {
+	if (!all(content_areas %in% names(years))) {
+		stop("Supplied list of years does not contain all content areas specified for summarizeSGP.")
+	} else {
+	        tmp.years <- years[content_areas]
+	}
+      }
+    }
+
+    for (i in names(tmp.years)) {
+        tmp.years[[i]] <- data.table(i, tmp.years[[i]])
+    }
+    content_areas.by.years <- rbind.all(tmp.years)
+
+    if (any(!sapply(summary.groups[["growth_only_summary"]], is.null))) {
+      sgp_object@Data[["BY_GROWTH_ONLY"]] <- factor(is.na(sgp_object@Data$SGP), levels=c(FALSE, TRUE), labels=c("Students without SGP", "Students with SGP"))
+    }
+
+    if (!is.null(getOption("cores"))) {
+	require(doMC)
+	registerDoMC()
+    }
+
+
+    ## Functions
     
     ## Prepare data
 
-    tmp.dt <- data.table(STATE=state, sgp_object@Data[CJ("VALID_CASE", content_areas, years)], key=c("VALID_CASE", "ID", "CONTENT_AREA", "YEAR"))
+    tmp.dt <- data.table(STATE=state, sgp_object@Data[J("VALID_CASE", content_areas.by.years)], key=c("VALID_CASE", "ID", "CONTENT_AREA", "YEAR"))
 
     if (!is.null(confidence.interval.groups) & "CSEM" %in% confidence.interval.groups$TYPE) {
       tmp.simulation.dt <- combineSims(sgp_object); gc()
@@ -181,7 +214,8 @@
                                                  group.format(summary.groups[["time"]]),
                                                  group.format(summary.groups[["institution_level"]]),
                                                  group.format(summary.groups[["institution_inclusion"]][[i]]),
-                                                 group.format(summary.groups[["demographic"]])), sep=""))
+                                                 group.format(summary.groups[["demographic"]]),
+                                                 group.format(summary.groups[["growth_only_summary"]][[i]])), sep=""))
 
       if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
         ci.groups <- do.call(paste, c(expand.grid(i,
@@ -189,7 +223,8 @@
                                                   group.format(confidence.interval.groups[["GROUPS"]][["time"]]),
                                                   group.format(confidence.interval.groups[["GROUPS"]][["institution_level"]]),
                                                   group.format(confidence.interval.groups[["GROUPS"]][["institution_inclusion"]][[i]]),
-                                                  group.format(confidence.interval.groups[["GROUPS"]][["demographic"]])), sep=""))
+                                                  group.format(confidence.interval.groups[["GROUPS"]][["demographic"]]),
+                                                  group.format(confidence.interval.groups[["GROUPS"]][["growth_only_summary"]][[i]])), sep=""))
       }
 
       if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
@@ -208,6 +243,12 @@
         names(sgp_object@Summary[[i]]) <- gsub(", ", "__", sgp.groups)
       }
     } ## END summary.groups$institution summary loop
+
+    ## NULL out BY_GROWTH_ONLY
+
+    if (any(!sapply(summary.groups[["growth_only_summary"]], is.null))) {
+      sgp_object@Data[["BY_GROWTH_ONLY"]] <- NULL
+    }
 
     message(paste("Finished summarizeSGP", date(), "in", timetaken(started.at), "\n"))
     return(sgp_object)

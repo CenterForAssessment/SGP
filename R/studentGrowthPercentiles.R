@@ -294,7 +294,7 @@ function(panel.data,         ## REQUIRED
 			return(gfittable)
 		}
 
-		names(data1) <- c("PRIOR_SS", "SGP"); PRIOR_SS <- SGP <- NULL
+		setnames(data1, c("PRIOR_SS", "SGP")); PRIOR_SS <- SGP <- NULL
 		tmp.table <- .sgp.fit(data1[,PRIOR_SS], data1[,SGP])
 		tmp.cuts <- .quantcut(data1[,PRIOR_SS], 0:10/10, right=FALSE)
 		tmp.colors <- .cell.color(as.vector(tmp.table))

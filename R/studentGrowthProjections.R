@@ -8,6 +8,7 @@ function(panel.data,	## REQUIRED
 	use.my.knots.boundaries,
 	use.my.coefficient.matrices,
 	panel.data.vnames,
+	achievement.level.prior.vname=NULL,
 	performance.level.cutscores,
 	chunk.size=100000,
         calculate.sgps=TRUE,
@@ -122,6 +123,13 @@ function(panel.data,	## REQUIRED
 	.unget.data.table <- function(my.data, my.lookup) {
 		setkey(my.data, ID); ORIGINAL.ID <- NULL
 		my.data[["ID"]] <- my.lookup[my.data[["ID"]], ORIGINAL.ID]
+		if (!is.null(achievement.level.prior.vname)) {
+			panel.data[["Panel_Data"]] <- as.data.table(panel.data[["Panel_Data"]])
+			setkey(panel.data[["Panel_Data"]], ID)
+			invisible(setkeyv(my.data, NULL)); setkey(my.data, ID)
+			my.data <- panel.data[["Panel_Data"]][,c("ID", achievement.level.prior.vname), with=FALSE][my.data]
+			setnames(my.data, 2, "ACHIEVEMENT_LEVEL_PRIOR")
+		}
 		return(as.data.frame(my.data))
 	}
 
@@ -379,11 +387,11 @@ function(panel.data,	## REQUIRED
 	if (!missing(performance.level.cutscores)) {
 		if (is.character(performance.level.cutscores)) {
 			if (!(performance.level.cutscores %in% names(SGPstateData))) {
-				tmp.messages <- c("\tNOTE: To use state cutscores, supply an appropriate two letter state abbreviation. \nRequested state may not be included. See help page for details.\n")
+				tmp.messages <- c(tmp.messages, "\tNOTE: To use state cutscores, supply an appropriate two letter state abbreviation. \nRequested state may not be included. See help page for details.\n")
 				tf.cutscores <- FALSE
 			}
 			if (is.null(names(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]))) {
-				tmp.messages <- c("\tNOTE:Cutscores are currently not implemented for the state indicated. \nPlease contact the SGP package administrator to have your cutscores included in the package.\n")
+				tmp.messages <- c(tmp.messages, "\tNOTE: Cutscores are currently not implemented for the state indicated. \nPlease contact the SGP package administrator to have your cutscores included in the package.\n")
 				tf.cutscores <- FALSE
 			}
 			if (!sgp.labels$my.subject %in% names(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]])) {
@@ -414,6 +422,14 @@ function(panel.data,	## REQUIRED
 	if (missing(max.order.for.progression)) {
 		max.order.for.progression <- NULL
 	}
+
+	if (!is.null(achievement.level.prior.vname)) {
+		if (!achievement.level.prior.vname %in% names(panel.data[["Panel_Data"]])) {
+			tmp.messages <- c(tmp.messages, "\tNOTE: Supplied achievement.level.prior.vname is not in supplied panel.data. No ACHIEVEMENT_LEVEL_PRIOR variable will be produced")
+			achievement.level.prior.vname <- NULL
+		}
+	}
+
 
 	########################################################
 	###
@@ -464,7 +480,7 @@ function(panel.data,	## REQUIRED
 	SS <- paste("SS", grade.progression, sep="")
 	ss.data <- .get.data.table(ss.data)
 	if (dim(.get.panel.data(ss.data, 1, by.grade, tmp.gp=grade.progression))[1] == 0) {
-                tmp.messages <- "\tNOTE: Supplied data together with grade progression contains no data. Check data, function arguments and see help page for details.\n"
+                tmp.messages <- c(tmp.messages, "\tNOTE: Supplied data together with grade progression contains no data. Check data, function arguments and see help page for details.\n")
                 message(paste("\tStarted studentGrowthProjections", started.date))
                 message(paste("\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
                 message(paste(tmp.messages, "\tFinished studentGrowthProjections: SGP Percentile Growth Trajectory/Projection Analysis", date(), "in", timetaken(started.at), "\n"))
