@@ -269,6 +269,28 @@ function(sgp_object,
 	} ## END get.panel.data
 
 
+	### Function to create knots and boundaries list.  Selects knots and boundaries according to sgp.iter content areas, but names them the same
+	### when fed into studentGrowthPercentiles.
+
+	get.knots.boundaries <- function(sgp.iter) {
+		kb <- list()
+		#  If all sgp.iter[["sgp.content.areas"]] are the same, use SGPstateData as usual:
+		if (all(sapply(sgp.iter[["sgp.content.areas"]], function(x) identical(tail(sgp.iter[["sgp.content.areas"]], 1), x)))) {
+			kb[["Knots_Boundaries"]][[paste(tail(sgp.iter[["sgp.content.areas"]], 1), tail(sgp.iter[["sgp.panel.years"]], 1), sep=".")]] <- 
+				SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]]
+		} else { # if not (e.g. "ELA", "HISTORY",  of "MATH", "ALGEBRA_I", then get the right knots and boundaries, but name them as 'my.subject')
+			tmp.kb <- list()
+			for (ca in seq_along(sgp.iter[["sgp.content.areas"]])) {
+				tmp.kb[["Knots_Boundaries"]][[paste(tail(sgp.iter[["sgp.content.areas"]], 1), tail(sgp.iter[["sgp.panel.years"]], 1), sep=".")]] <- 
+					SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[sgp.iter[["sgp.content.areas"]][ca]]][
+						grep(as.character(sgp.iter[["sgp.grade.sequences"]][[1]][ca]),
+						names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[sgp.iter[["sgp.content.areas"]][ca]]]))]
+				kb <- .mergeSGP(kb, tmp.kb)
+			}
+		}
+		return(kb[["Knots_Boundaries"]])
+	}
+
 	### Function to create vnames assocaited with panel data fed to studentGrowthPercentiles and studentGrowthProjections functions
 
 	get.panel.data.vnames <- function(sgp.type, sgp.iter) {
@@ -491,9 +513,9 @@ function(sgp_object,
 						.options.multicore=foreach.options, .options.mpi= foreach.options, .options.redis= foreach.options, .options.smp= foreach.options) %dopar% {
 						return(studentGrowthPercentiles(
 							panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
-								Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]]),,
+								Knots_Boundaries= get.knots.boundaries(sgp.iter)),
 							sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
-							use.my.knots.boundaries=state,
+							use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 							growth.levels=state,
 							calculate.confidence.intervals=calculate.confidence.intervals,
 							panel.data.vnames=get.panel.data.vnames("sgp.percentiles", sgp.iter),
@@ -507,9 +529,9 @@ function(sgp_object,
 						.options.multicore=foreach.options, .options.mpi= foreach.options, .options.redis= foreach.options, .options.smp= foreach.options) %dopar% {
 						return(studentGrowthPercentiles(
 							panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
-								Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]]),,
+								Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 							sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
-							use.my.knots.boundaries=state,
+							use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 							growth.levels=state,
 							panel.data.vnames=get.panel.data.vnames("sgp.percentiles", sgp.iter),
 							grade.progression=sgp.iter[["sgp.grade.sequences"]][[1]],
@@ -541,9 +563,9 @@ function(sgp_object,
 					}
 					tmp <- parLapply(eval(parse(text=cluster.object)), par.sgp.config, 	function(sgp.iter)	studentGrowthPercentiles( 
 						panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
-							Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]]),
+							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
-						use.my.knots.boundaries=state,
+						use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						growth.levels=state,
 						calculate.confidence.intervals=calculate.confidence.intervals,
 						panel.data.vnames=get.panel.data.vnames("sgp.percentiles", sgp.iter),
@@ -554,9 +576,9 @@ function(sgp_object,
 				} else {
 					tmp <- parLapply(eval(parse(text=cluster.object)), par.sgp.config, 	function(sgp.iter)	studentGrowthPercentiles( 
 						panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
-							Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]]),,
+							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
-						use.my.knots.boundaries=state,
+						use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						growth.levels=state,
 						panel.data.vnames=get.panel.data.vnames("sgp.percentiles", sgp.iter),
 						grade.progression=sgp.iter[["sgp.grade.sequences"]][[1]],
@@ -579,9 +601,9 @@ function(sgp_object,
 					}
 					tmp <- mclapply(par.sgp.config, function(sgp.iter)	studentGrowthPercentiles( 
 						panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
-							Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]]),
+							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
-						use.my.knots.boundaries=state,
+						use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						growth.levels=state,
 						calculate.confidence.intervals=calculate.confidence.intervals,
 						panel.data.vnames=get.panel.data.vnames("sgp.percentiles", sgp.iter),
@@ -592,9 +614,9 @@ function(sgp_object,
 				} else {
 					tmp <- mclapply(par.sgp.config, function(sgp.iter)	studentGrowthPercentiles( 
 						panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
-							Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]]),
+							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
-						use.my.knots.boundaries=state,
+						use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						growth.levels=state,
 						panel.data.vnames=get.panel.data.vnames("sgp.percentiles", sgp.iter),
 						grade.progression=sgp.iter[["sgp.grade.sequences"]][[1]],
@@ -644,10 +666,10 @@ function(sgp_object,
 					.options.multicore=foreach.options, .options.mpi= foreach.options, .options.redis= foreach.options, .options.smp= foreach.options) %dopar% {
 					return(studentGrowthPercentiles(
 						panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
-							Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]]),
+							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), 
 							my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), my.extra.label="BASELINE"),
-						use.my.knots.boundaries=state,
+						use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						growth.levels=state,
 						panel.data.vnames=get.panel.data.vnames("sgp.percentiles", sgp.iter),
@@ -676,10 +698,10 @@ function(sgp_object,
 
 				tmp <- parLapply(eval(parse(text=cluster.object)), par.sgp.config, 	function(sgp.iter)	studentGrowthPercentiles(
 					panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
-						Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]]),
+						Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), 
 						my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), my.extra.label="BASELINE"),
-					use.my.knots.boundaries=state,
+					use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 					use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 					growth.levels=state,
 					panel.data.vnames=get.panel.data.vnames("sgp.percentiles", sgp.iter),
@@ -700,10 +722,10 @@ function(sgp_object,
 
 				tmp <- mclapply(par.sgp.config, function(sgp.iter)	studentGrowthPercentiles(
 					panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
-						Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]]),
+						Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), 
 						my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), my.extra.label="BASELINE"),
-					use.my.knots.boundaries=state,
+					use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 					use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 					growth.levels=state,
 					panel.data.vnames=get.panel.data.vnames("sgp.percentiles", sgp.iter),
@@ -754,7 +776,7 @@ function(sgp_object,
 					.options.multicore=foreach.options, .options.mpi= foreach.options, .options.redis= foreach.options, .options.smp= foreach.options) %dopar% {
 					return(studentGrowthProjections(
 						panel.data=list(Panel_Data=get.panel.data("sgp.projections", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
-							Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]]),
+							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						use.my.coefficient.matrices=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
 						use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
@@ -787,7 +809,7 @@ function(sgp_object,
 
 				tmp <- parLapply(eval(parse(text=cluster.object)), par.sgp.config, 	function(sgp.iter)	studentGrowthProjections(
 					panel.data=list(Panel_Data=get.panel.data("sgp.projections", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
-						Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]]),
+						Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 					use.my.coefficient.matrices=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
 					use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
@@ -812,7 +834,7 @@ function(sgp_object,
 
 				tmp <- mclapply(par.sgp.config, function(sgp.iter)	studentGrowthProjections(
 					panel.data=list(Panel_Data=get.panel.data("sgp.projections", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
-						Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]]),
+						Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 					use.my.coefficient.matrices=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
 					use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
@@ -866,7 +888,7 @@ function(sgp_object,
 					.options.multicore=foreach.options, .options.mpi= foreach.options, .options.redis= foreach.options, .options.smp= foreach.options) %dopar% {
 					return(studentGrowthProjections(
 						panel.data=list(Panel_Data=get.panel.data("sgp.projections", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
-							Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]]),
+							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 
 							my.extra.label="BASELINE"),
 						use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
@@ -900,7 +922,7 @@ function(sgp_object,
 
 				tmp <- parLapply(eval(parse(text=cluster.object)), par.sgp.config, 	function(sgp.iter)	studentGrowthProjections(
 					panel.data=list(Panel_Data=get.panel.data("sgp.projections", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
-						Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]]),
+						Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 
 						my.extra.label="BASELINE"),
 					use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
@@ -926,7 +948,7 @@ function(sgp_object,
 
 				tmp <- mclapply(par.sgp.config, function(sgp.iter)	studentGrowthProjections(
 					panel.data=list(Panel_Data=get.panel.data("sgp.projections", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
-						Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]]),
+						Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 
 						my.extra.label="BASELINE"),
 					use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
@@ -981,7 +1003,7 @@ function(sgp_object,
 					.options.multicore=foreach.options, .options.mpi= foreach.options, .options.redis= foreach.options, .options.smp= foreach.options) %dopar% {
 					return(studentGrowthProjections(
 						panel.data=list(Panel_Data=get.panel.data("sgp.projections.lagged", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
-							Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]]),
+							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 
 							my.extra.label="LAGGED"),
 						use.my.coefficient.matrices=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
@@ -1015,7 +1037,7 @@ function(sgp_object,
 
 				tmp <- parLapply(eval(parse(text=cluster.object)), par.sgp.config, 	function(sgp.iter)	studentGrowthProjections(
 					panel.data=list(Panel_Data=get.panel.data("sgp.projections.lagged", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
-						Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]]),
+						Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 
 						my.extra.label="LAGGED"),
 					use.my.coefficient.matrices=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
@@ -1041,7 +1063,7 @@ function(sgp_object,
 
 				tmp <- mclapply(par.sgp.config, function(sgp.iter)	studentGrowthProjections(
 					panel.data=list(Panel_Data=get.panel.data("sgp.projections.lagged", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
-						Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]]),
+						Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 
 						my.extra.label="LAGGED"),
 					use.my.coefficient.matrices=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
@@ -1096,7 +1118,7 @@ function(sgp_object,
 					.options.multicore=foreach.options, .options.mpi= foreach.options, .options.redis= foreach.options, .options.smp= foreach.options) %dopar% {
 					return(studentGrowthProjections(
 						panel.data=list(Panel_Data=get.panel.data("sgp.projections.lagged", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
-							Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]]),
+							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 
 							my.extra.label="LAGGED.BASELINE"),
 						use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
@@ -1130,7 +1152,7 @@ function(sgp_object,
 
 				tmp <- parLapply(eval(parse(text=cluster.object)), par.sgp.config, 	function(sgp.iter)	studentGrowthProjections(
 					panel.data=list(Panel_Data=get.panel.data("sgp.projections.lagged", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
-						Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]]),
+						Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 
 						my.extra.label="LAGGED.BASELINE"),
 					use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
@@ -1156,7 +1178,7 @@ function(sgp_object,
 
 				tmp <- mclapply(par.sgp.config, function(sgp.iter)	studentGrowthProjections(
 					panel.data=list(Panel_Data=get.panel.data("sgp.projections.lagged", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
-						Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]]),
+						Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 
 						my.extra.label="LAGGED.BASELINE"),
 					use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
@@ -1197,14 +1219,16 @@ function(sgp_object,
 			
 		if (sgp.percentiles) {
 			for (sgp.iter in par.sgp.config) {
+				panel.data=within(tmp_sgp_object, assign("Panel_Data", get.panel.data("sgp.percentiles", sgp.iter)))
+				panel.data=within(panel.data, assign("Knots_Boundaries", get.knots.boundaries(sgp.iter))) # Get specific knots and boundaries in case course sequence
 				if (simulate.sgps) {
 					if (!exists("calculate.confidence.intervals")) {
 						calculate.confidence.intervals <- state
 					}
 					tmp_sgp_object <- studentGrowthPercentiles(
-						panel.data=within(tmp_sgp_object, assign("Panel_Data", get.panel.data("sgp.percentiles", sgp.iter))),
+						panel.data=panel.data,
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
-						use.my.knots.boundaries=state,
+						use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						growth.levels=state,
 						panel.data.vnames=get.panel.data.vnames("sgp.percentiles", sgp.iter),
 						grade.progression=sgp.iter[["sgp.grade.sequences"]][[1]],
@@ -1214,9 +1238,9 @@ function(sgp_object,
 						...)
 				} else {
 					tmp_sgp_object <- studentGrowthPercentiles(
-						panel.data=within(tmp_sgp_object, assign("Panel_Data", get.panel.data("sgp.percentiles", sgp.iter))),
+						panel.data= panel.data,
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
-						use.my.knots.boundaries=state,
+						use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						growth.levels=state,
 						panel.data.vnames=get.panel.data.vnames("sgp.percentiles", sgp.iter),
 						grade.progression=sgp.iter[["sgp.grade.sequences"]][[1]],
@@ -1237,7 +1261,7 @@ function(sgp_object,
 					panel.data=within(tmp_sgp_object, assign("Panel_Data", get.panel.data("sgp.percentiles", sgp.iter))),
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), 
 						my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), my.extra.label="BASELINE"),
-					use.my.knots.boundaries=state,
+					use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 					use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 					growth.levels=state,
 					panel.data.vnames=get.panel.data.vnames("sgp.percentiles", sgp.iter),
