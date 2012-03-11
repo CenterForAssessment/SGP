@@ -2,8 +2,8 @@ Package: SGP
 Type: Package
 Title: An R Package for the Calculation and Visualization of Student
         Growth Percentiles & Percentile Growth Trajectories.
-Version: 0.8-4.2
-Date: 2012-2-18
+Version: 0.8-4.5
+Date: 2012-3-11
 Authors@R: c(person("Damian", "Betebenner",
         email="dbetebenner@nciea.org", role=c("aut", "cre")),
         person("Adam", "Van Iwaarden",
