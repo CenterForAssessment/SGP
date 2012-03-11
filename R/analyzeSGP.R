@@ -66,9 +66,7 @@ function(sgp_object,
 			if (all(names(list_2[[j]]) %in% names(list_1[[j]]))) {
 				for (k in names(list_2[[j]])) { # merging list_2 in with list_1, so use it here
 					if (!identical(list_1[[j]][[k]], list_2[[j]][[k]])) { # keeps it from copying first set of results
-						if (dim(list_1[[j]][[k]])[2] != dim(list_2[[j]][[k]])[2]) {
-							list_1[[j]][[k]] <- rbind.fill(list_1[[j]][[k]], list_2[[j]][[k]])
-						}	else list_1[[j]][[k]] <- rbind(list_1[[j]][[k]], list_2[[j]][[k]])
+						list_1[[j]][[k]] <- rbind.fill(list_1[[j]][[k]], list_2[[j]][[k]])
 					}
 				}
 			}
