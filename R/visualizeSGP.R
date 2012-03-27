@@ -1,70 +1,70 @@
 `visualizeSGP` <- 
-  function(sgp_object,
-           plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot"),
-           state,
-           bPlot.years=NULL,
-           bPlot.content_areas=NULL,
-           bPlot.districts=NULL,
-           bPlot.schools=NULL,
-           bPlot.styles=c(1),
-           bPlot.levels=NULL,
-           bPlot.level.cuts=NULL, 
-           bPlot.full.academic.year=TRUE,
-           bPlot.minimum.n=10,
-           bPlot.anonymize=FALSE,
-           bPlot.prior.achievement=TRUE, 
-           bPlot.draft=FALSE,
-           bPlot.format="print",
-           bPlot.folder="Visualizations/bubblePlots",
-           sgPlot.save.sgPlot.data=FALSE,
-           sgPlot.years=NULL,
-           sgPlot.content_areas=NULL,
-           sgPlot.districts=NULL,
-           sgPlot.schools=NULL,
-           sgPlot.students=NULL,
-           sgPlot.reports.by.student=FALSE,
-           sgPlot.header.footer.color="#4CB9CC",
-           sgPlot.front.page=NULL,
-           sgPlot.folder="Visualizations/studentGrowthPlots",
-           sgPlot.folder.names="number",
-           sgPlot.fan=TRUE, 
-           sgPlot.anonymize=FALSE,
-           sgPlot.cleanup=TRUE,
-           sgPlot.demo.report=FALSE,
-           sgPlot.produce.plots=TRUE,
-           sgPlot.parallel.config=list(TYPE="FOREACH", OPTIONS=list(preschedule=FALSE, set.seed=FALSE)),
-           sgPlot.baseline=NULL,
-           gaPlot.years=NULL,
-           gaPlot.content_areas=NULL, 
-           gaPlot.students=NULL,
-           gaPlot.format="print",
-           gaPlot.baseline=NULL,
-           gaPlot.max.order.for.progression=NULL,
-           gaPlot.folder="Visualizations/growthAchievementPlots",
-           gaPlot.parallel.config=list(TYPE="FOREACH", OPTIONS=list(preschedule=FALSE, set.seed=FALSE))) {
+function(sgp_object,
+		plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot"),
+		state,
+		bPlot.years=NULL,
+		bPlot.content_areas=NULL,
+		bPlot.districts=NULL,
+		bPlot.schools=NULL,
+		bPlot.styles=c(1),
+		bPlot.levels=NULL,
+		bPlot.level.cuts=NULL, 
+		bPlot.full.academic.year=TRUE,
+		bPlot.minimum.n=10,
+		bPlot.anonymize=FALSE,
+		bPlot.prior.achievement=TRUE, 
+		bPlot.draft=FALSE,
+		bPlot.format="print",
+		bPlot.folder="Visualizations/bubblePlots",
+		sgPlot.save.sgPlot.data=FALSE,
+		sgPlot.years=NULL,
+		sgPlot.content_areas=NULL,
+		sgPlot.districts=NULL,
+		sgPlot.schools=NULL,
+		sgPlot.students=NULL,
+		sgPlot.reports.by.student=FALSE,
+		sgPlot.header.footer.color="#4CB9CC",
+		sgPlot.front.page=NULL,
+		sgPlot.folder="Visualizations/studentGrowthPlots",
+		sgPlot.folder.names="number",
+		sgPlot.fan=TRUE, 
+		sgPlot.anonymize=FALSE,
+		sgPlot.cleanup=TRUE,
+		sgPlot.demo.report=FALSE,
+		sgPlot.produce.plots=TRUE,
+		sgPlot.parallel.config=list(TYPE="FOREACH", OPTIONS=list(preschedule=FALSE, set.seed=FALSE)),
+		sgPlot.baseline=NULL,
+		gaPlot.years=NULL,
+		gaPlot.content_areas=NULL, 
+		gaPlot.students=NULL,
+		gaPlot.format="print",
+		gaPlot.baseline=NULL,
+		gaPlot.max.order.for.progression=NULL,
+		gaPlot.folder="Visualizations/growthAchievementPlots",
+		gaPlot.parallel.config=list(TYPE="FOREACH", OPTIONS=list(preschedule=FALSE, set.seed=FALSE))) {
 
-    started.at <- proc.time()
-    message(paste("\nStarted visualizeSGP", date(), "\n"))
+	started.at <- proc.time()
+	message(paste("\nStarted visualizeSGP", date(), "\n"))
 
-    ### Setting variables to NULL to prevent R CMD check warnings
+	### Setting variables to NULL to prevent R CMD check warnings
 
-    DISTRICT_NUMBER <- DISTRICT_NAME <- SCHOOL_NUMBER <- SCHOOL_NAME <- YEAR <- CONTENT_AREA <- NULL ## To prevent R CMD check warnings
-    ETHNICITY <- GENDER <- ID <- NULL ## To prevent R CMD check warnings
-    TEST_LEVEL <- SUBJECT_CODE <- SCALE_SCORE <- GRADE <- NULL ## To prevent R CMD check warnings
-    SCHOOL_ENROLLMENT_STATUS <- LAST_NAME <- FIRST_NAME <- NULL ## To prevent R CMD check warnings
-    MEDIAN_SGP <- MEDIAN_SGP_COUNT <- VALID_CASE <- gaPlot.iter <- sgPlot.iter <- V1 <- NULL ## To prevent R CMD check warnings
+	DISTRICT_NUMBER <- DISTRICT_NAME <- SCHOOL_NUMBER <- SCHOOL_NAME <- YEAR <- CONTENT_AREA <- NULL ## To prevent R CMD check warnings
+	ETHNICITY <- GENDER <- ID <- NULL ## To prevent R CMD check warnings
+	TEST_LEVEL <- SUBJECT_CODE <- SCALE_SCORE <- GRADE <- NULL ## To prevent R CMD check warnings
+	SCHOOL_ENROLLMENT_STATUS <- LAST_NAME <- FIRST_NAME <- NULL ## To prevent R CMD check warnings
+	MEDIAN_SGP <- MEDIAN_SGP_COUNT <- VALID_CASE <- gaPlot.iter <- sgPlot.iter <- V1 <- NULL ## To prevent R CMD check warnings
 
 
-   ### Create state (if missing) from sgp_object (if possible)
+	### Create state (if missing) from sgp_object (if possible)
 
-        if (missing(state)) {
-                tmp.name <- gsub("_", " ", deparse(substitute(sgp_object)))
-                if (any(sapply(c(state.name, "Demonstration"), function(x) regexpr(x, tmp.name)))==1) {
-                        state <- c(state.abb, "DEMO")[which(sapply(c(state.name, "Demonstration"), function(x) regexpr(x, tmp.name))==1)]
-                }
-        }
+	if (missing(state)) {
+		tmp.name <- gsub("_", " ", deparse(substitute(sgp_object)))
+		if (any(sapply(c(state.name, "Demonstration"), function(x) regexpr(x, tmp.name)))==1) {
+			state <- c(state.abb, "DEMO")[which(sapply(c(state.name, "Demonstration"), function(x) regexpr(x, tmp.name))==1)]
+		}
+	}
 
-    ### Utility functions	
+	### Utility functions	
 
 	"%w/o%" <- function(x,y) x[!x %in% y]
 	num_non_missing <- function(x) sum(!is.na(as.numeric(x)))
@@ -73,12 +73,12 @@
 		paste(as.numeric(unlist(strsplit(as.character(year), "_")))+increment, collapse="_")
 	}
 
-        pretty_year <- function(x) sub("_", "-", x)
+	pretty_year <- function(x) sub("_", "-", x)
 
-        rbind.all <- function(.list, ...) {
-                if (length(.list)==1) return (.list[[1]])
-                Recall(c(list(rbind(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), ...)
-        }
+	rbind.all <- function(.list, ...) {
+		if (length(.list)==1) return (.list[[1]])
+		Recall(c(list(rbind(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), ...)
+	}
 
 	get.max.order.for.progression <- function(year, content_area) {
 		if (is.null(gaPlot.max.order.for.progression)) {
@@ -188,12 +188,12 @@
 
 		# gaPlot.baseline stuff
 
-                if (is.null(gaPlot.baseline)) {
+		if (is.null(gaPlot.baseline)) {
 			gaPlot.baseline <- FALSE ## Default to FALSE if not set by user
-                        if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort Referenced") gaPlot.baseline <- FALSE
-                        if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Baseline Referenced") gaPlot.baseline <- TRUE
-                        if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort and Baseline Referenced") gaPlot.baseline <- FALSE
-                }
+			if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort Referenced") gaPlot.baseline <- FALSE
+			if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Baseline Referenced") gaPlot.baseline <- TRUE
+			if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort and Baseline Referenced") gaPlot.baseline <- FALSE
+		}
 
 		if (toupper(gaPlot.parallel.config[["TYPE"]]) == "FOREACH") {
 
@@ -219,8 +219,8 @@
 			} ## END dopar 
 		} ## END FOREACH
 
-    message(paste("Finished growthAchievementPlot in visualizeSGP", date(), "in", timetaken(started.at), "\n"))
-   } ## END if (growthAchievementPlot %in% plot.types)
+		message(paste("Finished growthAchievementPlot in visualizeSGP", date(), "in", timetaken(started.at), "\n"))
+	} ## END if (growthAchievementPlot %in% plot.types)
 
 
 ####################################################################################################################
@@ -239,17 +239,17 @@ if ("studentGrowthPlot" %in% plot.types) {
 			function(x) x[2])
 		if (any(!is.na(tmp.cutscore.years))) {
 		if (year %in% tmp.cutscore.years) {
-                  return(paste(content_area, year, sep="."))
-               } else {
-                  if (year==sort(c(year, tmp.cutscore.years))[1]) {
-                     return(content_area)
-                  } else {
-                     return(paste(content_area, sort(tmp.cutscore.years)[which(year==sort(c(year, tmp.cutscore.years)))-1], sep="."))
-                  }
-               }
-             } else {
-                  return(content_area)
-             }
+			return(paste(content_area, year, sep="."))
+			} else {
+				if (year==sort(c(year, tmp.cutscore.years))[1]) {
+					return(content_area)
+				} else {
+					return(paste(content_area, sort(tmp.cutscore.years)[which(year==sort(c(year, tmp.cutscore.years)))-1], sep="."))
+				}
+			}
+		} else {
+			return(content_area)
+		}
 	}
 
 	piecewise.transform <- function(scale_score, state, content_area, year, grade, output.digits=1) {
@@ -299,22 +299,22 @@ if ("studentGrowthPlot" %in% plot.types) {
 			sgPlot.demo.report <- FALSE
 		}
 
-        #### To Baseline or not to Baseline
+	#### To Baseline or not to Baseline
 
-                if (is.null(sgPlot.baseline)) {
-                        sgPlot.baseline <- FALSE ## Default to cohort referenced is not set by user
-                        if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort Referenced") sgPlot.baseline <- FALSE
-                        if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Baseline Referenced") sgPlot.baseline <- TRUE
-                        if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort and Baseline Referenced") sgPlot.baseline <- FALSE
-                }
+		if (is.null(sgPlot.baseline)) {
+			sgPlot.baseline <- FALSE ## Default to cohort referenced is not set by user
+			if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort Referenced") sgPlot.baseline <- FALSE
+			if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Baseline Referenced") sgPlot.baseline <- TRUE
+			if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort and Baseline Referenced") sgPlot.baseline <- FALSE
+		}
 
-                if (sgPlot.baseline) {
-                         my.sgp <- "SGP_BASELINE"
-                         my.sgp.level <- "SGP_LEVEL_BASELINE"
-                } else {
-                         my.sgp <- "SGP"
-                         my.sgp.level <- "SGP_LEVEL"
-                }
+		if (sgPlot.baseline) {
+			 my.sgp <- "SGP_BASELINE"
+			 my.sgp.level <- "SGP_LEVEL_BASELINE"
+		} else {
+			 my.sgp <- "SGP"
+			 my.sgp.level <- "SGP_LEVEL"
+		}
 
 ################################################
 ######## IF sgPlot.wide.data is supplied 
@@ -409,23 +409,23 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 ######## IF WIDE data is NOT supplied
 ###############################################
 
-        #### Some data prep
+	#### Some data prep
 
-        if (!is.null(sgPlot.districts)) {
-                if (is.factor(sgp_object@Data$DISTRICT_NUMBER)) {
-                        sgPlot.districts <- as.factor(sgPlot.districts)
-                } else {
-                        sgPlot.districts <- as.integer(sgPlot.districts)
-                }
-        }
+	if (!is.null(sgPlot.districts)) {
+		if (is.factor(sgp_object@Data$DISTRICT_NUMBER)) {
+			sgPlot.districts <- as.factor(sgPlot.districts)
+		} else {
+			sgPlot.districts <- as.integer(sgPlot.districts)
+		}
+	}
 
-        if (!is.null(sgPlot.schools)) {
-                if (is.factor(sgp_object@Data$SCHOOL_NUMBER)) {
-                        sgPlot.schools <- as.factor(sgPlot.schools)
-                } else {
-                        sgPlot.schools <- as.integer(sgPlot.schools)
-                }
-        }
+	if (!is.null(sgPlot.schools)) {
+		if (is.factor(sgp_object@Data$SCHOOL_NUMBER)) {
+			sgPlot.schools <- as.factor(sgPlot.schools)
+		} else {
+			sgPlot.schools <- as.integer(sgPlot.schools)
+		}
+	}
 
 	#### Set key on LONG data
 
@@ -478,8 +478,8 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 
 		#### Reconcile School and District selections
 
-                        setkeyv(sgp_object@Data, c("VALID_CASE", "YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER"))
-                        tmp.districts.and.schools.size <- sgp_object@Data[J("VALID_CASE", tmp.last.year)][,num_non_missing(ID), by=list(DISTRICT_NUMBER, SCHOOL_NUMBER)]
+			setkeyv(sgp_object@Data, c("VALID_CASE", "YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER"))
+			tmp.districts.and.schools.size <- sgp_object@Data[J("VALID_CASE", tmp.last.year)][,num_non_missing(ID), by=list(DISTRICT_NUMBER, SCHOOL_NUMBER)]
 			setkeyv(tmp.districts.and.schools.size, c("DISTRICT_NUMBER", "SCHOOL_NUMBER"))
 			setkeyv(sgp_object@Data, long.key)
 
@@ -559,7 +559,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			piecewise.transform(SCALE_SCORE, state, as.character(CONTENT_AREA), as.character(YEAR), as.character(GRADE)), by=list(CONTENT_AREA, YEAR, GRADE)]$V1
 
 	#### Anonymize (if requested) (NOT necessary if wide data is provided)
-     
+ 
 		if (sgPlot.anonymize) {
 			require(randomNames)
 			if (!"ETHNICITY" %in% names(tmp.table)) tmp.table[["ETHNICITY"]] <- 1
@@ -620,7 +620,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			paste("DISTRICT_NAME", tmp.last.year, sep="."), paste("DISTRICT_NUMBER", tmp.last.year, sep="."))
 
 		sgPlot.data <- sgPlot.data[, variables.to.keep, with=FALSE]
-      
+
 	#### Merge in 1 year projections (if requested & available) and transform using piecewise.tranform (if required) (NOT NECESSARY IF WIDE data is provided)
 
 		if (sgPlot.baseline) {

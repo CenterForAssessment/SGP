@@ -9,7 +9,7 @@
 	started.at <- proc.time()
 	message(paste("\nStarted prepareSGP", date()))
 
-	VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- ID <- GRADE <- SCALE_SCORE <- DUPLICATED_CASES <- NULL  ## To prevent R CMD check warnings
+	VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- ID <- GRADE <- SCALE_SCORE <- DUPLICATED_CASES <- NULL ## To prevent R CMD check warnings
 
 	## Get state (if possible)
 
@@ -94,7 +94,7 @@
 			names.output=SGPstateData[["DEMO"]][["Variable_Name_Lookup"]]$names.sgp.output[match(required.names, SGPstateData[["DEMO"]][["Variable_Name_Lookup"]]$names.sgp)], 
 			stringsAsFactors=FALSE)
 
-		##  Check names.provided
+		## Check names.provided
 
 		if (!is.null(var.names)) {
 			if (!class(var.names) %in% c("list", "data.frame")) {
@@ -139,7 +139,7 @@
 			variable.names[is.na(variable.names$names.type) & !is.na(variable.names$names.sgp.type),][,c("names.provided", "names.sgp.type", "names.sgp.info", "names.sgp.output")]
 		variable.names$names.sgp.type <- variable.names$names.sgp.info <- variable.names$names.sgp.output <- NULL
 	
-		## Check  see if any of the required variables are missing
+		## Check see if any of the required variables are missing
 
 		if (!all(required.names %in% variable.names$names.sgp)) {
 			stop(paste("\tThe {data} object is missing the following column name: ", required.names[(required.names %in% variable.names$names.sgp)==FALSE],

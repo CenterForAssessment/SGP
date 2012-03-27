@@ -54,7 +54,7 @@ function(sgp_object,
 		tmp.result <- list()
 		tmp <- summary(x[!is.na(x)])
 		for (i in seq(length(in.categories))) {
-			tmp.result[[i]] <-  round(100*sum(tmp[in.categories[[i]]])/sum(tmp[of.categories[[i]]]), digits=result.digits)
+			tmp.result[[i]] <- round(100*sum(tmp[in.categories[[i]]])/sum(tmp[of.categories[[i]]]), digits=result.digits)
 		}
 		return(unlist(tmp.result))
 	}
@@ -67,7 +67,7 @@ function(sgp_object,
 
 	boot.sgp <- function(dat, conf.quantiles=c(0.025, 0.975), nboot=100) {
 		out <- numeric(); CI <- c(NA,NA)
-		if (sum(is.na(dat)) != length(dat))  {
+		if (sum(is.na(dat)) != length(dat)) {
 			for (j in 1:nboot) {
 				foo <- sample(dat,length(dat), replace=TRUE)
 				out[j] <- boot.median(foo)
@@ -78,7 +78,7 @@ function(sgp_object,
 	}
 
 	sgpSummary <- function(sgp.groups.to.summarize, produce.confidence.interval) {
-		SGP_SIM <- V1 <- .SD <- NULL  ## To prevent R CMD check warning
+		SGP_SIM <- V1 <- .SD <- NULL ## To prevent R CMD check warning
 		if (produce.confidence.interval) {
 			if ("Bootstrap" %in% confidence.interval.groups$TYPE) {
 				require(boot)
@@ -125,7 +125,7 @@ function(sgp_object,
 				CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
 				YEAR=type.convert(unlist(strsplit(i, "[.]"))[2]))
 		}
-      
+ 
 		data.table(rbind.all(tmp.list), VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), key=key(tmp.dt))
 	}
 
@@ -219,7 +219,7 @@ function(sgp_object,
 			if (!all(content_areas %in% names(years))) {
 				stop("Supplied list of years does not contain all content areas specified for summarizeSGP.")
 			} else {
-			        tmp.years <- years[content_areas]
+				tmp.years <- years[content_areas]
 			}
 		}
 	}

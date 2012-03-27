@@ -18,12 +18,12 @@ function(sgp_object,
 
 	### Create state (if missing) from sgp_object (if possible)
 
-        if (is.null(state)) {
-                tmp.name <- gsub("_", " ", deparse(substitute(sgp_object)))
-                if (any(sapply(c(state.name, "Demonstration"), function(x) regexpr(x, tmp.name)))==1) {
-                        state <- c(state.abb, "DEMO")[which(sapply(c(state.name, "Demonstration"), function(x) regexpr(x, tmp.name))==1)]
-                }
-        }
+	if (is.null(state)) {
+		tmp.name <- gsub("_", " ", deparse(substitute(sgp_object)))
+		if (any(sapply(c(state.name, "Demonstration"), function(x) regexpr(x, tmp.name)))==1) {
+			state <- c(state.abb, "DEMO")[which(sapply(c(state.name, "Demonstration"), function(x) regexpr(x, tmp.name))==1)]
+		}
+	}
 
 
 	### Create relevant variables
@@ -63,23 +63,23 @@ if ("SchoolView" %in% output.type) {
 		paste(as.numeric(unlist(strsplit(as.character(year), "_")))+increment, collapse="_")
 	}
 
-        get.my.cutscore.year <- function(state, content_area, year) {
-                tmp.cutscore.years <- sapply(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]])[grep(content_area, names(SGPstateData[[state]][["Achievement"]][["Cutscores"]]))], "[.]"),
-                        function(x) x[2])
-                if (any(!is.na(tmp.cutscore.years))) {
-                if (year %in% tmp.cutscore.years) {
-                  return(paste(content_area, year, sep="."))
-               } else {
-                  if (year==sort(c(year, tmp.cutscore.years))[1]) {
-                     return(content_area)
-                  } else {
-                     return(paste(content_area, sort(tmp.cutscore.years)[which(year==sort(c(year, tmp.cutscore.years)))-1], sep="."))
-                  }
-               }
-             } else {
-                  return(content_area)
-             }
-        }
+	get.my.cutscore.year <- function(state, content_area, year) {
+		tmp.cutscore.years <- sapply(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]])[grep(content_area, names(SGPstateData[[state]][["Achievement"]][["Cutscores"]]))], "[.]"),
+			function(x) x[2])
+		if (any(!is.na(tmp.cutscore.years))) {
+			if (year %in% tmp.cutscore.years) {
+				return(paste(content_area, year, sep="."))
+			} else {
+				if (year==sort(c(year, tmp.cutscore.years))[1]) {
+					return(content_area)
+				} else {
+					return(paste(content_area, sort(tmp.cutscore.years)[which(year==sort(c(year, tmp.cutscore.years)))-1], sep="."))
+				}
+			}
+		} else {
+			return(content_area)
+		}
+	}
 
 	piecewise.transform <- function(scale_score, state, content_area, year, grade, output.digits=1) {
 		if (content_area %in% names(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]]) &
@@ -87,7 +87,7 @@ if ("SchoolView" %in% output.type) {
 				ncol=2, byrow=TRUE)[,2])) {
 
 			tmp.loss.hoss <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]][[paste("loss.hoss_", grade, sep="")]]
-                        scale_score[scale_score < tmp.loss.hoss[1]] <- tmp.loss.hoss[1]; scale_score[scale_score > tmp.loss.hoss[2]] <- tmp.loss.hoss[2]
+			scale_score[scale_score < tmp.loss.hoss[1]] <- tmp.loss.hoss[1]; scale_score[scale_score > tmp.loss.hoss[2]] <- tmp.loss.hoss[2]
 			my.content_area <- get.my.cutscore.year(state, content_area, year)
 			tmp.old.cuts <- c(tmp.loss.hoss[1], SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.content_area]][[paste("GRADE_", grade, sep="")]], 
 				tmp.loss.hoss[2])
@@ -132,12 +132,12 @@ if ("SchoolView" %in% output.type) {
 
 	### subset data
 
-        tmp.districts.and.schools <- unique(data.table(sgp_object@Data[CJ("VALID_CASE", tmp.last.year, tmp.content_areas)][,
-                                        list(VALID_CASE, YEAR, CONTENT_AREA, DISTRICT_NUMBER, SCHOOL_NUMBER)],
-                                        key=key(sgp_object)))
-        report.ids <- unique(sgp_object@Data[tmp.districts.and.schools][["ID"]])
-        setkeyv(sgp_object@Data, c("ID", "CONTENT_AREA", "YEAR"))
-        tmp.table <- sgp_object@Data[CJ(report.ids, tmp.content_areas, tmp.years)]
+	tmp.districts.and.schools <- unique(data.table(sgp_object@Data[CJ("VALID_CASE", tmp.last.year, tmp.content_areas)][,
+														list(VALID_CASE, YEAR, CONTENT_AREA, DISTRICT_NUMBER, SCHOOL_NUMBER)],
+												key=key(sgp_object)))
+	report.ids <- unique(sgp_object@Data[tmp.districts.and.schools][["ID"]])
+	setkeyv(sgp_object@Data, c("ID", "CONTENT_AREA", "YEAR"))
+	tmp.table <- sgp_object@Data[CJ(report.ids, tmp.content_areas, tmp.years)]
 
 
 	### Create transformed scale scores
@@ -149,11 +149,11 @@ if ("SchoolView" %in% output.type) {
 
 
 	#### Anonymize (if requested) (NOT necessary if wide data is provided)
-     
+ 
 	if (outputSGP.anonymize | !all(c("LAST_NAME", "FIRST_NAME") %in% names(tmp.table))) {
 		require(randomNames)
-                if (!"ETHNICITY" %in% names(tmp.table)) tmp.table[["ETHNICITY"]] <- 1
-                if (!"GENDER" %in% names(tmp.table)) tmp.table[["GENDER"]] <- round(runif(dim(tmp.table)[1], min=0, max=1))
+		if (!"ETHNICITY" %in% names(tmp.table)) tmp.table[["ETHNICITY"]] <- 1
+		if (!"GENDER" %in% names(tmp.table)) tmp.table[["GENDER"]] <- round(runif(dim(tmp.table)[1], min=0, max=1))
 		tmp.dt <- tmp.table[,list(ID, ETHNICITY, GENDER)]
 		setkey(tmp.dt, ID)
 		tmp.dt <- tmp.dt[!duplicated(tmp.dt),]
