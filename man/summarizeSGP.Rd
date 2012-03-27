@@ -101,7 +101,7 @@ Demonstration_Data <- summarizeSGP(Demonstration_Data)
 
 ###  Example uses of the parallel.config argument
 
-##  Windows users must use snow:
+##  Windows users must use snow: 
 Demonstration_Data <- summarizeSGP(Demonstration_Data,
 	parallel.config=list(
 		BACKEND=list(TYPE="SNOW", SNOW_TYPE="SOCK"),
@@ -110,39 +110,46 @@ Demonstration_Data <- summarizeSGP(Demonstration_Data,
 ##  Windows users with R version >= 2.13  may prefer the parallel package:
 #  Note the number of workers is 8, and SOCK type cluster is used.
 #  This example is would be good for a single workstation with 8 cores.
-Demonstration_Data <- summarizeSGP(Demonstration_Data,
+	. . .
 	parallel.config=list(
 		BACKEND=list(TYPE="PARALLEL", SNOW_TYPE="SOCK"),
-		ANALYSES=list(SUMMARY_WORKERS=2)))
+		ANALYSES=list(SUMMARY_WORKERS=2))
+	. . .
 
 ## FOREACH uses:
 # doMC - only available on Linux or Mac OSX
-Demonstration_Data <- summarizeSGP(Demonstration_Data,
+	. . .
 	parallel.config=list(
 		BACKEND=list(TYPE="FOREACH", FOREACH_TYPE="doMC"),
-		ANALYSES=list(SUMMARY_WORKERS=2)))
+		ANALYSES=list(SUMMARY_WORKERS=2))
+	. . .
 
 #  New doParallel package - only available with R 2.13 or newer
 #  Note the number of workers is 100, and MPI is used, 
 #  suggesting this example is for a HPC cluster usage.
-Demonstration_Data <- summarizeSGP(Demonstration_Data,
+	. . .
 	parallel.config=list(
-		BACKEND=list(TYPE="FOREACH", FOREACH_TYPE="doParallel", SNOW_TYPE="MPI"),
-		ANALYSES=list(SUMMARY_WORKERS=100)))
+		BACKEND=list(TYPE="FOREACH", FOREACH_TYPE="doParallel", 
+		    PARALLEL_TYPE="SNOW", SNOW_TYPE="MPI"),
+		ANALYSES=list(SUMMARY_WORKERS=100))
+	. . .
 
 ##  New parallel package - only available with R 2.13 or newer
 #  Note the number of workers is 50, and MPI is used, 
 #  suggesting this example is for a HPC cluster usage.
-Demonstration_Data <- summarizeSGP(Demonstration_Data,
+	. . .
 	parallel.config=list(
-		BACKEND=list(TYPE="PARALLEL", SNOW_TYPE="MPI"),
-		ANALYSES=list(SUMMARY_WORKERS=50)))
+		BACKEND=list(TYPE="PARALLEL", 
+		    PARALLEL_TYPE="SNOW", SNOW_TYPE="MPI"),
+		ANALYSES=list(SUMMARY_WORKERS=50))
+	. . .
 
 ##  Linux/Mac may use the multicore package:
-Demonstration_Data <- summarizeSGP(Demonstration_Data,
+	. . .
 	parallel.config=list(
 		BACKEND=list(TYPE="MULTICORE"),
-		ANALYSES=list(SUMMARY_WORKERS=4)))
+		ANALYSES=list(SUMMARY_WORKERS=4))
+	. . .
 
 #  NOTE:  This list of parallel.config specifications is NOT exhaustive.  
 #  See examples in analyzeSGP documentation for some others.
