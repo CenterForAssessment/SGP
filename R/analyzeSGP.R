@@ -336,15 +336,45 @@ function(sgp_object,
 						parallel.config[["BACKEND"]][["FOREACH_OPTIONS"]][["preschedule"]]=FALSE # won't override other options
 					}	else parallel.config[["BACKEND"]][["FOREACH_OPTIONS"]]=list(preschedule=FALSE)
 			}  #  ONLY NEED ONCE
+			if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doParallel") { 
+				if(is.null(parallel.config[["BACKEND"]][["PARALLEL_TYPE"]])) {
+					if (.Platform$OS.type == "unix" & is.null(par.type)) par.type <- 'MULTICORE' 
+					if (.Platform$OS.type != "unix" & is.null(par.type)) par.type <- 'SNOW'
+				} else par.type <- to.upper(parallel.config[["BACKEND"]][["PARALLEL_TYPE"]])
+				if (!par.type %in% c('MULTICORE', 'SNOW')) stop("parallel.config[['BACKEND']][['PARALLEL_TYPE']] must be set to either 'MULTICORE' or 'SNOW'.")
+				if (par.type == 'MULTICORE' & is.null(parallel.config[["BACKEND"]][["FOREACH_OPTIONS"]][["preschedule"]])) {
+					if (is.list(parallel.config[["BACKEND"]][["FOREACH_OPTIONS"]])) {
+						parallel.config[["BACKEND"]][["FOREACH_OPTIONS"]][["preschedule"]]=FALSE # won't override other options
+					}	else parallel.config[["BACKEND"]][["FOREACH_OPTIONS"]]=list(preschedule=FALSE)
+				}
+			} # END doParallel
 			foreach.options <- parallel.config[["BACKEND"]][["FOREACH_OPTIONS"]] # works fine if NULL
+		} #  END FOREACH
+
+		if (toupper(parallel.config[["BACKEND"]][["TYPE"]]) == "MULTICORE") {
+			require(multicore)
+			par.type <- 'MULTICORE'
 		}
 
-		if (toupper(parallel.config[["BACKEND"]][["TYPE"]]) == "MULTICORE") require(multicore)
+		if (toupper(parallel.config[["BACKEND"]][["TYPE"]]) == "SNOW") {
+			require(snow)
+			par.type <- 'SNOW'
+		}
 
-		if (toupper(parallel.config[["BACKEND"]][["TYPE"]]) == "SNOW") require(snow)
+		if (toupper(parallel.config[["BACKEND"]][["TYPE"]]) == "PARALLEL") {
+			require(parallel)
+			if (!is.null(parallel.config[["BACKEND"]][["PARALLEL_TYPE"]])) par.type <- to.upper(parallel.config[["BACKEND"]][["PARALLEL_TYPE"]])
+			if (.Platform$OS.type == "unix" & is.null(par.type)) par.type <- 'MULTICORE' 
+			if (.Platform$OS.type != "unix" & is.null(par.type)) par.type <- 'SNOW'
+			if (!par.type %in% c('MULTICORE', 'SNOW')) stop("parallel.config[['BACKEND']][['PARALLEL_TYPE']] must be set to either 'MULTICORE' or 'SNOW'.")
+		
+		}
+		if (par.type == 'SNOW') {
+			if (is.null(parallel.config[["BACKEND"]][["SNOW_TYPE"]])) stop("The parallel.config[['BACKEND']][['SNOW_TYPE']] must be specified ('SOCK' or 'MPI')")
+			if (!parallel.config[["BACKEND"]][["SNOW_TYPE"]] %in% c('SOCK','MPI')) stop("The parallel.config[['BACKEND']][['SNOW_TYPE']] must be 'SOCK' or 'MPI'")
+		}
 	}
 
-	
 
 	#######################################################################################################################
 	##   Baseline SGP - compute matrices first if they are not in SGPstateData or merge them into sgp_object if in SGPstateData
@@ -383,7 +413,14 @@ function(sgp_object,
 						doSNOW.cl=makeCluster(workers, type=parallel.config[["BACKEND"]][["SNOW_TYPE"]])
 						registerDoSNOW(doSNOW.cl)
 					}
-	
+					if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doParallel") {
+						if (parallel.config[["BACKEND"]][["PARALLEL_TYPE"]]=="SNOW") {
+							doPar.cl=makeCluster(workers, type=parallel.config[["BACKEND"]][["SNOW_TYPE"]])
+							registerDoParallel(doPar.cl)
+							clusterEvalQ(doPar.cl, library(SGP))
+						} else registerDoParallel(workers)
+					}
+
 					tmp <- foreach(sgp.iter=iter(sgp.baseline.config), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE,
 						.options.multicore=foreach.options, .options.mpi=foreach.options, .options.redis=foreach.options) %dopar% {
 						return(baselineSGP(
@@ -395,22 +432,21 @@ function(sgp_object,
 					}
 					sgp_object@SGP <- .mergeSGP(sgp_object@SGP, list(Coefficient_Matrices=merge.coefficient.matrices(tmp)))
 					rm(tmp)
-					if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doMPI")	closeCluster(doMPI.cl)
-					if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doRedis")	removeQueue('jobs')
-					if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doSNOW")	stopCluster(doSNOW.cl)
+					if (exists("doMPI.cl")) stopCluster(doMPI.cl)
+					if (exists("jobs")) removeQueue('jobs')
+					if (exists("doSNOW.cl")) stopCluster(doSNOW.cl)
+					if (exists("doPar.cl")) stopCluster(doPar.cl)
+					
 				} # END FOREACH
 			
-				if (toupper(parallel.config[["BACKEND"]][["TYPE"]]) == "SNOW") {
+				if (par.type=="SNOW") {
 					if (!is.null(workers)) internal.cl <- makeCluster(workers, type=parallel.config[["BACKEND"]][["SNOW_TYPE"]])
 					if (is.null(parallel.config[["BACKEND"]][["CLUSTER.OBJECT"]])) {
 						cluster.object <- "internal.cl"
 					}	else cluster.object <- parallel.config[["BACKEND"]][["CLUSTER.OBJECT"]]
 
-#					clusterExport(eval(parse(text=cluster.object)),list("sgp_object", "state")) #, "baselineSGP"
 					clusterEvalQ(eval(parse(text=cluster.object)), library(SGP))
 
-					#  Add check for having both WORKERS and [["CLUSTER.OBJECT"]] - shouldn't have both - warn and use [["CLUSTER.OBJECT"]]
-					
 					tmp <- parLapply(eval(parse(text=cluster.object)), sgp.baseline.config, function(sgp.iter) baselineSGP(
 							sgp_object,
 							state=state,
@@ -423,7 +459,7 @@ function(sgp_object,
 					rm(tmp)
 				} # END if (SNOW)
 				
-				if (toupper(parallel.config[["BACKEND"]][["TYPE"]]) == "MULTICORE") {
+				if (par.type=="MULTICORE") {
 					if (is.null(workers)) workers=getOption("cores")
 					tmp <- mclapply(sgp.baseline.config, function(sgp.iter) baselineSGP(
 								sgp_object,
@@ -481,7 +517,7 @@ function(sgp_object,
 		if (sgp.percentiles) {
 			workers <- NULL
 			if (!is.null(parallel.config[["ANALYSES"]][["PERCENTILE_WORKERS"]])) workers <- parallel.config[["ANALYSES"]][["PERCENTILE_WORKERS"]]
-#			if (!is.null(parallel.config[["ANALYSES"]][["WORKERS"]])) workers <- parallel.config[["ANALYSES"]][["WORKERS"]]
+			if (!is.null(parallel.config[["ANALYSES"]][["WORKERS"]])) workers <- parallel.config[["ANALYSES"]][["WORKERS"]]
 		
 			###  FOREACH flavor
 			if (toupper(parallel.config[["BACKEND"]][["TYPE"]]) == "FOREACH") {
@@ -497,6 +533,13 @@ function(sgp_object,
 				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doSNOW") {
 					doSNOW.cl=makeCluster(workers, type=parallel.config[["BACKEND"]][["SNOW_TYPE"]])
 					registerDoSNOW(doSNOW.cl)
+				}
+				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doParallel") {
+					if (parallel.config[["BACKEND"]][["PARALLEL_TYPE"]]=="SNOW") {
+						doPar.cl=makeCluster(workers, type=parallel.config[["BACKEND"]][["SNOW_TYPE"]])
+						registerDoParallel(doPar.cl)
+						clusterEvalQ(doPar.cl, library(SGP))
+					} else registerDoParallel(workers)
 				}
 
 				if (simulate.sgps) {
@@ -538,13 +581,14 @@ function(sgp_object,
 				}
 				sgp_object@SGP <- .mergeSGP(sgp_object@SGP, tmp)
 				rm(tmp)
-				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doMPI")	closeCluster(doMPI.cl)
-				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doRedis")	removeQueue('jobs')
-				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doSNOW")	stopCluster(doSNOW.cl)
+				if (exists("doMPI.cl")) stopCluster(doMPI.cl)
+				if (exists("jobs")) removeQueue('jobs')
+				if (exists("doSNOW.cl")) stopCluster(doSNOW.cl)
+				if (exists("doPar.cl")) stopCluster(doPar.cl)
 			} # END FOREACH
 			
 			###  SNOW flavor
-			if (toupper(parallel.config[["BACKEND"]][["TYPE"]]) == "SNOW") {
+			if (par.type == "SNOW") {
 				if (!is.null(workers)) internal.cl <- makeCluster(workers, type=parallel.config[["BACKEND"]][["SNOW_TYPE"]])
 				if (is.null(parallel.config[["BACKEND"]][["CLUSTER.OBJECT"]])) {
 					cluster.object <- "internal.cl"
@@ -589,7 +633,7 @@ function(sgp_object,
 			} # END SNOW
 			
 			###  MULTICORE flavor
-			if (toupper(parallel.config[["BACKEND"]][["TYPE"]]) == "MULTICORE") {
+			if (par.type == "MULTICORE") {
 				if (is.null(workers)) workers=getOption("cores")
 
 				if (simulate.sgps) {
@@ -654,6 +698,13 @@ function(sgp_object,
 					doSNOW.cl=makeCluster(workers, type=parallel.config[["BACKEND"]][["SNOW_TYPE"]])
 					registerDoSNOW(doSNOW.cl)
 				}
+				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doParallel") {
+					if (parallel.config[["BACKEND"]][["PARALLEL_TYPE"]]=="SNOW") {
+						doPar.cl=makeCluster(workers, type=parallel.config[["BACKEND"]][["SNOW_TYPE"]])
+						registerDoParallel(doPar.cl)
+						clusterEvalQ(doPar.cl, library(SGP))
+					} else registerDoParallel(workers)
+				}
 				
 				tmp <- foreach(sgp.iter=iter(par.sgp.config), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE,
 					.options.multicore=foreach.options, .options.mpi=foreach.options, .options.redis=foreach.options) %dopar% {
@@ -675,13 +726,14 @@ function(sgp_object,
 				}
 				sgp_object@SGP <- .mergeSGP(sgp_object@SGP, tmp)
 				rm(tmp)
-				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doMPI")	closeCluster(doMPI.cl)
-				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doRedis")	removeQueue('jobs')
-				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doSNOW")	stopCluster(doSNOW.cl)
+				if (exists("doMPI.cl")) stopCluster(doMPI.cl)
+				if (exists("jobs")) removeQueue('jobs')
+				if (exists("doSNOW.cl")) stopCluster(doSNOW.cl)
+				if (exists("doPar.cl")) stopCluster(doPar.cl)
 			} # END FOREACH
 			
 			###  SNOW flavor
-			if (toupper(parallel.config[["BACKEND"]][["TYPE"]]) == "SNOW") {
+			if (par.type == "SNOW") {
 				if (!is.null(workers)) internal.cl <- makeCluster(workers, type=parallel.config[["BACKEND"]][["SNOW_TYPE"]])
 				if (is.null(parallel.config[["BACKEND"]][["CLUSTER.OBJECT"]])) {
 					cluster.object <- "internal.cl"
@@ -711,7 +763,7 @@ function(sgp_object,
 			} # END SNOW
 			
 			###  MULTICORE flavor
-			if (toupper(parallel.config[["BACKEND"]][["TYPE"]]) == "MULTICORE") {
+			if (par.type == "MULTICORE") {
 				if (is.null(workers)) workers=getOption("cores")
 
 				tmp <- mclapply(par.sgp.config, function(sgp.iter)	studentGrowthPercentiles(
@@ -762,6 +814,13 @@ function(sgp_object,
 					doSNOW.cl=makeCluster(workers, type=parallel.config[["BACKEND"]][["SNOW_TYPE"]])
 					registerDoSNOW(doSNOW.cl)
 				}
+				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doParallel") {
+					if (parallel.config[["BACKEND"]][["PARALLEL_TYPE"]]=="SNOW") {
+						doPar.cl=makeCluster(workers, type=parallel.config[["BACKEND"]][["SNOW_TYPE"]])
+						registerDoParallel(doPar.cl)
+						clusterEvalQ(doPar.cl, library(SGP))
+					} else registerDoParallel(workers)
+				}
 
 				tmp <- foreach(sgp.iter=iter(par.sgp.config), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE,
 					.options.multicore=foreach.options, .options.mpi=foreach.options, .options.redis=foreach.options) %dopar% {
@@ -783,13 +842,14 @@ function(sgp_object,
 				}
 				sgp_object@SGP <- .mergeSGP(sgp_object@SGP, tmp)
 				rm(tmp)
-				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doMPI")	closeCluster(doMPI.cl)
-				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doRedis")	removeQueue('jobs')
-				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doSNOW")	stopCluster(doSNOW.cl)
+				if (exists("doMPI.cl")) stopCluster(doMPI.cl)
+				if (exists("jobs")) removeQueue('jobs')
+				if (exists("doSNOW.cl")) stopCluster(doSNOW.cl)
+				if (exists("doPar.cl")) stopCluster(doPar.cl)
 			} # END FOREACH
 
 			###  SNOW flavor
-			if (toupper(parallel.config[["BACKEND"]][["TYPE"]]) == "SNOW") {
+			if (par.type == "SNOW") {
 				if (!is.null(workers)) internal.cl <- makeCluster(workers, type=parallel.config[["BACKEND"]][["SNOW_TYPE"]])
 				if (is.null(parallel.config[["BACKEND"]][["CLUSTER.OBJECT"]])) {
 					cluster.object <- "internal.cl"
@@ -819,7 +879,7 @@ function(sgp_object,
 			} # END SNOW
 			
 			###  MULTICORE flavor
-			if (toupper(parallel.config[["BACKEND"]][["TYPE"]]) == "MULTICORE") {
+			if (par.type == "MULTICORE") {
 				if (is.null(workers)) workers=getOption("cores")
 
 				tmp <- mclapply(par.sgp.config, function(sgp.iter)	studentGrowthProjections(
@@ -869,6 +929,13 @@ function(sgp_object,
 					doSNOW.cl=makeCluster(workers, type=parallel.config[["BACKEND"]][["SNOW_TYPE"]])
 					registerDoSNOW(doSNOW.cl)
 				}
+				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doParallel") {
+					if (parallel.config[["BACKEND"]][["PARALLEL_TYPE"]]=="SNOW") {
+						doPar.cl=makeCluster(workers, type=parallel.config[["BACKEND"]][["SNOW_TYPE"]])
+						registerDoParallel(doPar.cl)
+						clusterEvalQ(doPar.cl, library(SGP))
+					} else registerDoParallel(workers)
+				}
 
 				tmp <- foreach(sgp.iter=iter(par.sgp.config), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE,
 					.options.multicore=foreach.options, .options.mpi=foreach.options, .options.redis=foreach.options) %dopar% {
@@ -891,13 +958,14 @@ function(sgp_object,
 				}
 				sgp_object@SGP <- .mergeSGP(sgp_object@SGP, tmp)
 				rm(tmp)
-				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doMPI")	closeCluster(doMPI.cl)
-				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doRedis")	removeQueue('jobs')
-				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doSNOW")	stopCluster(doSNOW.cl)
+				if (exists("doMPI.cl")) stopCluster(doMPI.cl)
+				if (exists("jobs")) removeQueue('jobs')
+				if (exists("doSNOW.cl")) stopCluster(doSNOW.cl)
+				if (exists("doPar.cl")) stopCluster(doPar.cl)
 			} # END FOREACH
 
 			###  SNOW flavor
-			if (toupper(parallel.config[["BACKEND"]][["TYPE"]]) == "SNOW") {
+			if (par.type == "SNOW") {
 				if (!is.null(workers)) internal.cl <- makeCluster(workers, type=parallel.config[["BACKEND"]][["SNOW_TYPE"]])
 				if (is.null(parallel.config[["BACKEND"]][["CLUSTER.OBJECT"]])) {
 					cluster.object <- "internal.cl"
@@ -928,7 +996,7 @@ function(sgp_object,
 			} # END SNOW
 			
 			###  MULTICORE flavor
-			if (toupper(parallel.config[["BACKEND"]][["TYPE"]]) == "MULTICORE") {
+			if (par.type == "MULTICORE") {
 				if (is.null(workers)) workers=getOption("cores")
 
 				tmp <- mclapply(par.sgp.config, function(sgp.iter)	studentGrowthProjections(
@@ -979,6 +1047,13 @@ function(sgp_object,
 					doSNOW.cl=makeCluster(workers, type=parallel.config[["BACKEND"]][["SNOW_TYPE"]])
 					registerDoSNOW(doSNOW.cl)
 				}
+				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doParallel") {
+					if (parallel.config[["BACKEND"]][["PARALLEL_TYPE"]]=="SNOW") {
+						doPar.cl=makeCluster(workers, type=parallel.config[["BACKEND"]][["SNOW_TYPE"]])
+						registerDoParallel(doPar.cl)
+						clusterEvalQ(doPar.cl, library(SGP))
+					} else registerDoParallel(workers)
+				}
 
 				tmp <- foreach(sgp.iter=iter(par.sgp.config), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE,
 					.options.multicore=foreach.options, .options.mpi=foreach.options, .options.redis=foreach.options) %dopar% {
@@ -1001,13 +1076,14 @@ function(sgp_object,
 				}
 				sgp_object@SGP <- .mergeSGP(sgp_object@SGP, tmp)
 				rm(tmp)
-				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doMPI")	closeCluster(doMPI.cl)
-				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doRedis")	removeQueue('jobs')
-				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doSNOW")	stopCluster(doSNOW.cl)
+				if (exists("doMPI.cl")) stopCluster(doMPI.cl)
+				if (exists("jobs")) removeQueue('jobs')
+				if (exists("doSNOW.cl")) stopCluster(doSNOW.cl)
+				if (exists("doPar.cl")) stopCluster(doPar.cl)
 			} # END FOREACH
 
 			###  SNOW flavor
-			if (toupper(parallel.config[["BACKEND"]][["TYPE"]]) == "SNOW") {
+			if (par.type == "SNOW") {
 				if (!is.null(workers)) internal.cl <- makeCluster(workers, type=parallel.config[["BACKEND"]][["SNOW_TYPE"]])
 				if (is.null(parallel.config[["BACKEND"]][["CLUSTER.OBJECT"]])) {
 					cluster.object <- "internal.cl"
@@ -1038,7 +1114,7 @@ function(sgp_object,
 			} # END SNOW
 			
 			###  MULTICORE flavor
-			if (toupper(parallel.config[["BACKEND"]][["TYPE"]]) == "MULTICORE") {
+			if (par.type == "MULTICORE") {
 				if (is.null(workers)) workers=getOption("cores")
 
 				tmp <- mclapply(par.sgp.config, function(sgp.iter)	studentGrowthProjections(
@@ -1089,6 +1165,13 @@ function(sgp_object,
 					doSNOW.cl=makeCluster(workers, type=parallel.config[["BACKEND"]][["SNOW_TYPE"]])
 					registerDoSNOW(doSNOW.cl)
 				}
+				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doParallel") {
+					if (parallel.config[["BACKEND"]][["PARALLEL_TYPE"]]=="SNOW") {
+						doPar.cl=makeCluster(workers, type=parallel.config[["BACKEND"]][["SNOW_TYPE"]])
+						registerDoParallel(doPar.cl)
+						clusterEvalQ(doPar.cl, library(SGP))
+					} else registerDoParallel(workers)
+				}
 
 				tmp <- foreach(sgp.iter=iter(par.sgp.config), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE,
 					.options.multicore=foreach.options, .options.mpi=foreach.options, .options.redis=foreach.options) %dopar% {
@@ -1111,13 +1194,14 @@ function(sgp_object,
 				}
 				sgp_object@SGP <- .mergeSGP(sgp_object@SGP, tmp)
 				rm(tmp)
-				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doMPI")	closeCluster(doMPI.cl)
-				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doRedis")	removeQueue('jobs')
-				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doSNOW")	stopCluster(doSNOW.cl)
+				if (exists("doMPI.cl")) stopCluster(doMPI.cl)
+				if (exists("jobs")) removeQueue('jobs')
+				if (exists("doSNOW.cl")) stopCluster(doSNOW.cl)
+				if (exists("doPar.cl")) stopCluster(doPar.cl)
 			} # END FOREACH
 
 			###  SNOW flavor
-			if (toupper(parallel.config[["BACKEND"]][["TYPE"]]) == "SNOW") {
+			if (par.type == "SNOW") {
 				if (!is.null(workers)) internal.cl <- makeCluster(workers, type=parallel.config[["BACKEND"]][["SNOW_TYPE"]])
 				if (is.null(parallel.config[["BACKEND"]][["CLUSTER.OBJECT"]])) {
 					cluster.object <- "internal.cl"
@@ -1148,7 +1232,7 @@ function(sgp_object,
 			} # END SNOW
 			
 			###  MULTICORE flavor
-			if (toupper(parallel.config[["BACKEND"]][["TYPE"]]) == "MULTICORE") {
+			if (par.type == "MULTICORE") {
 				if (is.null(workers)) workers=getOption("cores")
 
 				tmp <- mclapply(par.sgp.config, function(sgp.iter)	studentGrowthProjections(

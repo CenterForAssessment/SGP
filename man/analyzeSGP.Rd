@@ -73,12 +73,17 @@ Default is 3.  To utilize the maximum matrix order, set to NULL.
   \item{sgp.config.drop.nonsequential.grade.progression.variables}{Boolean variable (defaults to TRUE) indicating whether non-sequential grade progression variables should be dropped when sgp.config is processed. For example, if a grade progression of c(3,4,6) is provided, the data configuration will assume (default is TRUE) that data for a missing year needs to be dropped prior to applying \code{\link{studentGrowthPercentiles}} or \code{\link{studentGrowthProjections}} to the data. 
   }
   \item{sgp.baseline.config}{A list containing three vectors: \code{sgp.content.areas}, \code{sgp.panel.years}, \code{sgp.grade.sequences} indicating how baseline student growth percentile analyses
- are to be conducted. In almost all cases this value is calculated by default within the function but can be specified directly for advanced use cases. See source code for more detail on this confi
-guration option.
+ are to be conducted. In almost all cases this value is calculated by default within the function but can be specified directly for advanced use cases. See source code for more detail on this configuration option.
   }
-  \item{parallel.config}{A named list indicating, at a minimum, the TYPE of the back end to be used for parallel computation.  TYPE = one of \code{FOREACH}, \code{SNOW}, \code{MULTICORE}.  List may also contain WORKERS for the number of cores or nodes used in \code{foreach} or \code{multicore} packages, or the name of the CLUSTER.OBJECT created for use with \code{snow}.
+\item{parallel.config}{A named, nested list with, at a minimum, two elements indicating 1) the BACKEND list giving the package to be used for parallel computation and 2) the ANALYSES list to specify the number of workers to be used in each major analysis.  The BACKEND list should contain at a minimum the element TYPE= one of \code{FOREACH}, \code{SNOW}, \code{MULTICORE}, or \code{PARALLEL}.  Please consult the manuals and vignettes for information of these packages!
+
+If BACKEND\$TYPE="FOREACH", the \code{foreach} package will be used, and the FOREACH_TYPE element will need to be included in the list to specify the users preferred backend.  FOREACH_TYPE must be either "doMC", "doMPI", "doSNOW", "doRedis" or "doParallel".   If BACKEND\$TYPE="SNOW", the \code{snow} package will be used, and the SNOW_TYPE element will need to be included in the list to specify the users preferred cluster type (either "SOCK" for socket cluster of "MPI" for an OpenMPI cluster).  The function will create a cluster object based on these parameters and the number of workers requested (see ANALYSES list description below).  Alternatively, the name of an external CLUSTER.OBJECT set up by the user outside of the function can be used.   If BACKEND\$TYPE="PARALLEL", the \code{parallel} package will be used, and the PARALLEL_TYPE element will need to be included in the list to specify the users preferred backend.  If Windows is the operating system, this element must = "SNOW".  Otherwise "MULTICORE" is preferred to avoid prescheduling analyses. Defaults are assigned based on operating system if PARALLEL_TYPE is missing based on system OS.  If "SNOW" is uses here, the SNOW_TYPE element must also be specified as detailed above.
+
+The ANALYSES list must contain, at a minimum, the WORKERS element to specify the number of processors (nodes) desired or available.  If WORKERS is specified, then the same number of processors will be used for each analysis type (sgp.percentiles, sgp.projections, ...  sgp.projections.lagged.baseline).  Alternatively, the user may specify the numbers of processors used for each analysis type.  This allows for better memory management in systems that do not have enough RAM available per core.  The choice of the number of cores is a balance between the number of processors available, the amount of RAM a system has and the size of the data (sgp_object).  Each system will be different and will require some tailoring.  One rule of thumb used by the authors is to allow for 4GB of memory per core used for running large state data.  The SGP Demonstration (and data that size) requires more like 1-2GB per core.  As an example, PERCENTILE_WORKERS=4 and  PROJECTIONS_WORKERS=2 might be used on a quad core machine with 4 GB of RAM.  This will use all 4 cores available for the sgp.percentiles analysis and 2 cores for the sgp.projections analysis (which requires more memory than available).  The ANALYSES list accepts these elements:   PERCENTILE_WORKERS, PROJECTIONS_WORKERS (for both cohort and baseline referenced projections), LAGGED_PROJECTIONS_WORKERS (for both cohort and baseline referenced lagged projections), BASELINE_MATRICES_WORKERS (used to produce the baseline coefficient matrices when not available in SGPstateData - very computationally intensive), BASELINE_SGP_WORKERS (SGP calculation only when baseline coefficient matrices have already been produced and are available - NOT very computationally intensive).
+
+Example use cases are provided below.
   }
-  \item{...}{Arguments to be passed to \code{\link{studentGrowthPercentiles}} or \code{\link{studentGrowthProjections}} for finer control over SGP calculations. NOTE: arguments can only be passed to one lower level function at a time, and only student growth percentiles OR projections can be created but not both at the same time.
+\item{...}{Arguments to be passed to \code{\link{studentGrowthPercentiles}} or \code{\link{studentGrowthProjections}} for finer control over SGP calculations. NOTE: arguments can only be passed to one lower level function at a time, and only student growth percentiles OR projections can be created but not both at the same time.
   }
 }
 
@@ -97,10 +102,149 @@ Demonstration_Data <- sgpData_LONG
 Demonstration_Data <- prepareSGP(Demonstration_Data)
 Demonstration_Data <- analyzeSGP(Demonstration_Data)
 
-## Or (explictely pass state argument)
+## Or (explicitly pass state argument)
 
 Demonstration_Data <- prepareSGP(sgpData_LONG)
 Demonstration_Data <- analyzeSGP(Demonstration_Data, state="DEMO")
+
+###
+###  Example uses of the sgp.config argument
+###
+
+#  Use only 3 years of Data, for grades 3 to 6
+#  and only perform analyses for most recent year (2011)
+
+my.custom.config <- list(
+MATHEMATICS.2010_2011 = list(
+	sgp.content.areas=rep("MATHEMATICS", 3), # Note, this needs to be the same length as sgp.panel.years
+	sgp.panel.years=c('2008_2009', '2009_2010', '2010_2011'),
+	sgp.grade.sequences=list(3:4, 3:5, 4:6)))
+READING.2010_2011 = list(
+	sgp.content.areas=rep("READING", 3),
+	sgp.panel.years=c('2008_2009', '2009_2010', '2010_2011'),
+	sgp.grade.sequences=list(3:4, 3:5, 4:6)))
+
+Demonstration_Data <- prepareSGP(sgpData_LONG)
+Demonstration_Data <- analyzeSGP(Demonstration_Data,
+	sgp.config=my.custom.config,
+	sgp.percentiles.baseline = FALSE,
+	sgp.projections.baseline = FALSE,
+	sgp.projections.lagged.baseline = FALSE,
+	simulate.sgps=FALSE)
+
+##  Another example sgp.config list:
+
+#  Use different CONTENT_AREA priors, and only 1 year of prior data
+
+my.custom.config <- list(
+MATHEMATICS.2010_2011.READ_PRIOR = list(
+	sgp.content.areas=c("READING", "MATHEMATICS"),
+	sgp.panel.years=c('2009_2010', '2010_2011'),
+	sgp.grade.sequences=list(3:4, 4:5, 5:6)))
+READING.2010_2011.MATH_PRIOR = list(
+	sgp.content.areas=rep("MATHEMATICS", "READING"),
+	sgp.panel.years=c('2009_2010', '2010_2011'),
+	sgp.grade.sequences=list(3:4, 4:5, 5:6)))
+
+Demonstration_Data <- prepareSGP(sgpData_LONG)
+Demonstration_Data <- analyzeSGP(Demonstration_Data,
+	sgp.config=my.custom.config,
+	sgp.percentiles.baseline = FALSE,
+	sgp.projections.baseline = FALSE,
+	sgp.projections.lagged.baseline = FALSE,
+	simulate.sgps=FALSE)
+
+###
+###  Example uses of the parallel.config argument
+###
+
+##  Windows users must use snow:
+#  possibly a quad core machine with low RAM Memory
+#  4 workers for percentiles, 2 workers for projections.
+#  Note the SOCK type cluster is used for single machines.
+
+Demonstration_Data <- prepareSGP(sgpData_LONG)
+Demonstration_Data <- analyzeSGP(Demonstration_Data,
+	parallel.config=list(
+		BACKEND=list(TYPE="SNOW", SNOW_TYPE="SOCK"),
+		ANALYSES=list(PERCENTILE_WORKERS=4, 
+		    PROJECTIONS_WORKERS=2, 
+		    LAGGED_PROJECTIONS_WORKERS=2,
+		    BASELINE_SGP_WORKERS=4)))
+
+##  Windows users with R version >= 2.13  may prefer the parallel package:
+#  This example is would be good for a single workstation with 8 cores
+#  and enough RAM to use 8 workers for ALL analyses.
+	...
+	parallel.config=list(
+		BACKEND=list(TYPE="PARALLEL", 
+		   PARALLEL_TYPE="SNOW", SNOW_TYPE="SOCK"),
+		ANALYSES=list(WORKERS=8))
+	...
+
+##  Linux/Mac may use the multicore package directly:
+	...
+	parallel.config=list(
+		BACKEND=list(TYPE="MULTICORE"),
+		ANALYSES=list(SUMMARY_WORKERS=4))
+	...
+
+## FOREACH use cases:
+# doMC - only available on Linux or Mac OSX
+# doSNOW is available to Windows users with R pre-2.13
+	...
+	parallel.config=list(
+		BACKEND=list(TYPE="FOREACH",
+			FOREACH_TYPE="doSNOW",
+			SNOW_TYPE="SOCK"),
+		ANALYSES=list(WORKERS=2))
+	...
+
+#  doMPI package -  the number of workers is 100, 
+#  suggesting this example is for a HPC cluster usage.
+	...
+	parallel.config=list(
+		BACKEND=list(TYPE="FOREACH", FOREACH_TYPE="doMPI"),
+		ANALYSES=list(WORKERS=100))
+	...
+
+
+##  New parallel package - only available with R 2.13 or newer
+#  Note there are up to 16 workers, and MPI is used, 
+#  suggesting this example is for a HPC cluster, possibly Windows OS.
+	...
+	parallel.config=list(
+		BACKEND=list(TYPE="PARALLEL", 
+		    PARALLEL_TYPE="SNOW", SNOW_TYPE="MPI"),
+		ANALYSES=list(PERCENTILE_WORKERS=16, 
+		    PROJECTIONS_WORKERS=8, 
+		    LAGGED_PROJECTIONS_WORKERS=6,
+		    BASELINE_SGP_WORKERS=12))
+	...
+
+#  NOTE:  This list of parallel.config specifications is NOT exhaustive.  
+#  See examples in analyzeSGP documentation for some others.0
+
+###
+###  Advanced Example: restrict years, recalculate baseline SGP
+###  coefficient matrices, and use parallel processing
+###
+
+#  Remove existing DEMO baseline coefficient matrices from
+#  the SGPstateData object so that new ones will be computed.
+
+SGPstateData$DEMO$Baseline_splineMatrix <- NULL
+
+#  set up a customized sgp.config list
+
+	. . .
+
+#  set up a customized sgp.baseline.config list
+
+	. . .
+
+#  to be completed
+
 }  
 }
 
