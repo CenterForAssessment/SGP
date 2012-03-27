@@ -9,10 +9,11 @@ using the \cr
 \code{\link{studentGrowthProjections}} function.   
 }
 \usage{
-studentGrowthPercentiles(panel.data,                                                    
-                         sgp.labels,                                          
-                         panel.data.vnames,                                 
-                         grade.progression,                               
+studentGrowthPercentiles(panel.data,
+                         sgp.labels,
+                         panel.data.vnames,
+                         grade.progression,
+                         grade.progression.label=FALSE,
                          num.prior,
                          max.order.for.percentile=NULL,
                          subset.grade,                                     
@@ -56,6 +57,9 @@ studentGrowthPercentiles(panel.data,
   removal of columns where "holes" occur is supplied grade.progression. For example, for the grade.progression \code{c(7,8,10)}, the penultimate GRADE and SCALE_SCORE column 
   in the supplied panel.data would be removed.  Also can be combined with an appropriate \code{panel.data.vnames} argument to remove a year of data would analyze students 
   progressing from 7 to 8 to 10. 
+  }
+  \item{grade.progression.label}{A boolean variable (defaults to FALSE) indicating whether the coefficient matrix should carry an extra label indicating the exact grade progression.
+  This is an experimental feature and users not exactly familiar with how this functions should stick with the default.
   }
   \item{num.prior}{Number of prior scores one wishes to use in the analysis. Defaults to \code{num.panels-1}. 
   If \code{num.prior=1}, then only 1st order growth percentiles are computed, if \code{num.prior=2}, then 1st and 2nd order are computed, 

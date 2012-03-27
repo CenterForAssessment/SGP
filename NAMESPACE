@@ -15,6 +15,7 @@ export(
 	"bubblePlot_Styles",
 	"combineSGP",
 	"growthAchievementPlot",
+	"growthAchievementPlot_Styles",
 	"is.splineMatrix",
 	"is.SGP",
 	"outputSGP",

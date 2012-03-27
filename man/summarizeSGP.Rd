@@ -10,29 +10,9 @@ summarizeSGP(sgp_object,
            state,
            years,
            content_areas,
-           sgp.summaries=list(MEDIAN_SGP="median_na(SGP)",
-             MEDIAN_SGP_COUNT="num_non_missing(SGP)",
-             PERCENT_AT_ABOVE_PROFICIENT="percent_in_category(ACHIEVEMENT_LEVEL, list(c('Proficient', 'Advanced')), list(c('Unsatisfactory', 'Partially Proficient', 'Proficient', 'Advanced')))",
-             PERCENT_AT_ABOVE_PROFICIENT_COUNT="num_non_missing(ACHIEVEMENT_LEVEL)",
-             PERCENT_AT_ABOVE_PROFICIENT_PRIOR="percent_in_category(ACHIEVEMENT_LEVEL_PRIOR, list(c('Proficient', 'Advanced')), list(c('Unsatisfactory', 'Partially Proficient', 'Proficient', 'Advanced')))",
-             PERCENT_AT_ABOVE_PROFICIENT_PRIOR_COUNT="num_non_missing(ACHIEVEMENT_LEVEL_PRIOR)"),
-           summary.groups=list(institution=c("STATE", "DISTRICT_NUMBER", "SCHOOL_NUMBER"),
-             content="CONTENT_AREA",
-             time="YEAR",
-             institution_level="GRADE",
-             demographic=c("GENDER", "ETHNICITY", "FREE_REDUCED_LUNCH_STATUS", "ELL_STATUS", "IEP_STATUS", "GIFTED_AND_TALENTED_PROGRAM_STATUS", "CATCH_UP_KEEP_UP_STATUS"),
-             institution_inclusion=list(STATE="STATE_ENROLLMENT_STATUS", DISTRICT_NUMBER="DISTRICT_ENROLLMENT_STATUS", SCHOOL_NUMBER="SCHOOL_ENROLLMENT_STATUS"),
-             growth_only_summary=list(STATE="BY_GROWTH_ONLY", DISTRICT_NUMBER="BY_GROWTH_ONLY", SCHOOL_NUMBER="BY_GROWTH_ONLY")),
-           confidence.interval.groups=list(TYPE="Bootstrap",
-             VARIABLES=c("SGP"),
-             QUANTILES=c(0.025, 0.975),
-             GROUPS=list(institution="SCHOOL_NUMBER",
-               content="CONTENT_AREA",
-               time="YEAR",
-               institution_level= NULL,
-               demographic=NULL,
-               institution_inclusion=list(STATE=NULL, DISTRICT_NUMBER=NULL, SCHOOL_NUMBER="SCHOOL_ENROLLMENT_STATUS"),
-               growth_only_summary=list(STATE="BY_GROWTH_ONLY", DISTRICT_NUMBER="BY_GROWTH_ONLY", SCHOOL_NUMBER="BY_GROWTH_ONLY")))) 
+           sgp.summaries=NULL,
+           summary.groups=NULL,
+           confidence.interval.groups=NULL) 
 }
 
 \arguments{
@@ -46,7 +26,7 @@ function will use the data to calculate years and produce summaries for the most
   \item{content_areas}{A vector indicating content area(s) in which to produce student growth percentiles and/or student growth projections/trajectories. 
 If missing the function will use the data to infer the content area(s) available for analyses.
   }
-  \item{sgp.summaries}{A list giving the summaries requested for each group analyzed based upon the \code{summary.group} argument. The default summaries include:
+  \item{sgp.summaries}{A list giving the summaries requested for each group analyzed based upon the \code{summary.group} argument. The default (produced internal to summarizeSGP) summaries include:
 \tabular{ll}{
 \code{MEDIAN_SGP} \tab The group level median student growth percentile.\cr 
 \code{MEDIAN_SGP_COUNT} \tab The number of students used to compute the median.\cr 
@@ -55,18 +35,21 @@ If missing the function will use the data to infer the content area(s) available
 \code{PERCENT_AT_ABOVE_PROFICIENT_PRIOR} \tab The percentage of students at or above proficient in the prior year.\cr 
 \code{PERCENT_AT_ABOVE_PROFICIENT_PRIOR_COUNT} \tab The number of students used to compute the percentage at/above proficient in the prior year.\cr 
 }
-NOTE: The \code{percent_in_category()} summary function requires a variable that MUST be a factor with proficiency categories as levels. The function looks for the percent of students from the variable that are IN one or more categories that identify students that are at or above proficiency (the first list argument) OUT of all possible categories (the second list argument). For example, in the \code{\link{sgpData_LONG}} dataset \code{ACHIEVEMENT_LEVEL} has 5 levels.  Levels 3 and 4 are "Proficient" and "Advanced" respectively.
+NOTE: The internal function \code{percent_in_category()} summary function requires a variable that MUST be a factor with proficiency categories as levels. The function utilizes the SGPstateData
+with the provided state name in an attempt to identify achievement levels and whether or not they are considered proficient. 
   }
-  \item{summary.groups}{A list consisting of 5 types of groups across which all summaries are taken (Inclusion means that summaries will be calculated for levels of the associated variable) 
-including: 
+  \item{summary.groups}{A list consisting of 8 elements indicating the types of groups across which all summaries are taken (Inclusion means that summaries will be calculated for levels of the 
+associated variable). For state data, if the list is not explicitly provided, the function will attempt to determine levels based upon meta data supplied in the \code{@Names} slot of the provided
+SGP object. See \code{\link{prepareSGP}} for more information on supplied meta-data.  
 \tabular{ll}{
 \code{institution}: \tab State, District and/or School.\cr 
-\code{content area}: \tab Variable indicating content area (default CONTENT_AREA) if content area summaries are of interest.\cr 
-\code{time}: \tab Variable indicating time (defaults YEAR) if time summaries are of interest.\cr 
-\code{institution_level}: \tab Variable(s) indicating levels with the institution (default GRADE) if summaries by institution level is of interest.\cr
+\code{content area}: \tab Variable indicating content area (default is CONTENT_AREA) if content area summaries are of interest.\cr 
+\code{time}: \tab Variable indicating time (default is YEAR) if time summaries are of interest. NOTE: Cross year (i.e., multi-year) summaries default to 3 years.\cr 
+\code{institution_type}: \tab Variable(s) indicating the type of institution institution (default EMH_LEVEL) if summaries by institution type is of interest.\cr
+\code{institution_level}: \tab Variable(s) indicating levels within the institution (default GRADE) if summaries by institution level is of interest.\cr
 \code{demographic}: \tab  Demographics variables if summaries by demographic subgroup are of interest.\cr 
-\code{institution_inclusion} Variables indicating inclusion for institutional calculations.\cr 
-\code{growth_only_summary} Variables indicating whether to calculate summaries only for those students with growth in addition to other analyses.\cr
+\code{institution_inclusion}: \tab Variables indicating inclusion for institutional calculations.\cr 
+\code{growth_only_summary}: \tab Variables indicating whether to calculate summaries only for those students with growth in addition to other analyses.\cr
 }
 All group slots MUST be included in the list, although \code{NULL} can be provided if a grouping subset is not desired. All possible combinations of the group variables are produced. Specification of \code{summary.groups} can be tested prior to use of \code{summarizeSGP} with the \code{\link{viewSummaryGroups}} function.  See that \code{\link{viewSummaryGroups}} documentation for details.
   }
@@ -78,6 +61,7 @@ All group slots MUST be included in the list, although \code{NULL} can be provid
 \code{GROUP} \tab The group summaries for which confidence intervals should be constructed.\cr
 \code{content} \tab The content area variable if confidence intervals by content area are desired.\cr
 \code{time} \tab The time variable (default is YEAR) if confidence intervals by time period are desired.\cr
+\code{institution_type} \tab The insitution type variables (e.g., EMH_LEVEL, default is EMH_LEVEL) if confidence intervals by institution level are desired.\cr
 \code{institution_level} \tab The insitution level variables (e.g., GRADE, default is NULL) if confidence intervals by institution level are desired.\cr
 \code{demographic} \tab The demographic variables if confidence intervals by demographic subgroups are desired.\cr
 \code{institution_inclusion} \tab The institution inclusion variables if confidence intervals by institution inclusion subgroups are desired.\cr

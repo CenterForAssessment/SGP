@@ -6,7 +6,8 @@
 }
 
 \usage{
-prepareSGP(data, 
+prepareSGP(data,
+	state=NULL,
 	var.names=NULL, 
 	fix.duplicates="keep.all")
 }
@@ -14,7 +15,9 @@ prepareSGP(data,
 \arguments{
   \item{data}{A panel data set in long form. See embedded \code{\link{sgpData_LONG}} data set for an exemplar. 
   }
-  \item{var.names}{A list that includes all required columns that do not match the SGP conventions, as well as all secondary columns needed 
+  \item{state}{A two letter acronymn indicating the state associated with the data. If not supplied, the function will try to infer what the state is from the data object name supplied.
+  }
+  \item{var.names}{A list or a dataframe that includes all required columns that do not match the SGP conventions, as well as all secondary columns needed 
 for summarization and reporting.
   }
   \item{fix.duplicates}{Argument for future functionality intended to deal with duplicate cases in supplied long data.

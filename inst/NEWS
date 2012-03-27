@@ -1,40 +1,4 @@
-Changes in version: SGP_0.8-4.0
-
-  NEW FEATURES:
-
-  USER VISIBLE CHANGES:
-
-  BUG FIXES:
-
-  o bPlot.format no case insensitive.
-
-Changes in version: SGP_0.8-3.0
-
-  NEW FEATURES:
-
-  o ACHIEVEMENT_LEVEL_PRIOR and CATCH_UP_KEEP_UP_STATUS_INITIAL, used for lagged projections, are now calculated as part of analyzeSGP and not combineSGP. This was required in order to allow for growth to standard across holes in grades progression (e.g., 8th to 10th grade).
-  o Added addition argument to summarizeSGP (growth_only_summary) that calculates summaries using only student with growth percentiles. This makes bubblePlots better for research investigations (but not as relevant for accountability displays).
-
-
-
-Changes in version: SGP_0.8-2.0
-
-  NEW FEATURES:
-
-  USER VISIBLE CHANGES:
-
-  o Changed "Phone Number" to "Contact" on studentGrowthPlot and made associated changes of label in SGPstateData.
-  o Updated NECAP CSEMs for 2011_2012 in SGPstateData.
-  o Added Hawaii baseline coefficient matrices to SGPstateData.
-  o Added test to analyzeSGP to see if CSEMs exist in SGPstateData.
-
-
-  BUG FIXES:
-
-  o Updated code to conform with changes in data.table 1.7.8.
-
-
-Changes in version: SGP_0.8-1.0
+Changes in version: SGP_0.8-9.0
 
   NEW FEATURES:
 
@@ -43,7 +7,23 @@ Changes in version: SGP_0.8-1.0
   o visualizeSGP now checks stateData for grades AND years to be reported in studentGrowthPlots. Default is most recent 5 years
   o studentGrowthPlot accomodates situations where there is a gap between grades (e.g., 8 to 10) and the state calculates 2 year SGPs.
   o Added tag to SGPstateData for earliest year reported to accomodate possibility of reporting only certain years for a state assessment system (e.g., Arizona).
-
+  o ACHIEVEMENT_LEVEL_PRIOR and CATCH_UP_KEEP_UP_STATUS_INITIAL, used for lagged projections, are now calculated as part of analyzeSGP and not combineSGP. This was required in order to allow for growth to standard across holes in grades progression (e.g., 8th to 10th grade).
+  o Added addition argument to summarizeSGP (growth_only_summary) that calculates summaries using only student with growth percentiles. This makes bubblePlots better for research investigations (but not as relevant for accountability displays).
+  o Added parallel growthAchievementPlot figure production within visualizeSGP.
+  o Added population size to goodness of fit plots.
+  o Changed Grade to Grade Progression in goodness of fit plots to better identify groups being analyzed.
+  o Added median SGP line to Style 100 of bubblePlot_Styles.
+  o prepareSGP now accepts data.frame with arguments names.original, names.sgp, names.type, names.info to enhance analyze flow through SGP analyses.
+  o Removed doSMP parallel configuration due to removal of doSMP from CRAN.
+  o Added 'grade.progression.labels' argument to studentGrowthPercentile to faciliate coefficient matrix storage in Coefficient_Matrix list.
+  o prepareSGP now creates knots and boundaries for embedding in SGPstateData and utilizes those quantities in currently executing calculations.
+  o Added additional metadata to @Names slot: names.provided, names.sgp, names.type, names.info, names.output.
+  o prepareSGP creates @Names meta data.
+  o Added sqliteSGP to SGP package and integrated that into the outputSGP functionality.
+  o Added additional Mississippi state data to SGPstateData.
+  o For studentGrowthPlot production in parallel, jobs are submitted by school size in decreasing order to increase performance.
+  o Added analytic median SGP confidence interval calculation to bootstrap confidence interval. Analytic confidence intervals calculated by default for all groups.
+ 
 
   USER VISIBLE CHANGES:
 
@@ -51,11 +31,19 @@ Changes in version: SGP_0.8-1.0
   o Updated Massachusetts grade 10 cutscores between proficient and advanced achievement levels.
   o Lagged projections are only calculated for students with an SGP within analyzeSGP. This eliminates the necessity for the sgp.target.to.NA argument and feature in combineSGP.
   o sgp.target.to.NA feature eliminated from combineSGP for reasons explicated in previous remark.
+  o Changed "Phone Number" to "Contact" on studentGrowthPlot and made associated changes of label in SGPstateData.
+  o Updated NECAP CSEMs for 2011_2012 in SGPstateData.
+  o Added Hawaii baseline coefficient matrices to SGPstateData.
+  o Added test to analyzeSGP to see if CSEMs exist in SGPstateData.
+  o Added growthAchievementPlot_Styles to better accomodate utilization of growthAchievementPlot in parallel.
 
   BUG FIXES:
 
   o studentGrowthPlot in visualizeSGP now filters on GRADES that correspond to VALID_CASE.
   o Fixed issue when projections occur across skipped grades. Made major refinements to analyzeSGP in the process.
+  o Updated code to conform with changes in data.table 1.7.8.
+  o bPlot.format no case insensitive.
+  o Switch installed.packages to find.package to test for pdf2 installation.
 
 Changes in version: SGP_0.8-0.0
 
