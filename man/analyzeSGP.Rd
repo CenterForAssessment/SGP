@@ -98,14 +98,14 @@ Example use cases are provided below.
 \examples{
 \dontrun{
 ## analyzeSGP is Step 2 of 5 of abcSGP
-Demonstration_Data <- sgpData_LONG
-Demonstration_Data <- prepareSGP(Demonstration_Data)
-Demonstration_Data <- analyzeSGP(Demonstration_Data)
+Demonstration_SGP <- sgpData_LONG
+Demonstration_SGP <- prepareSGP(Demonstration_SGP)
+Demonstration_SGP <- analyzeSGP(Demonstration_SGP)
 
 ## Or (explicitly pass state argument)
 
-Demonstration_Data <- prepareSGP(sgpData_LONG)
-Demonstration_Data <- analyzeSGP(Demonstration_Data, state="DEMO")
+Demonstration_SGP <- prepareSGP(sgpData_LONG)
+Demonstration_SGP <- analyzeSGP(Demonstration_SGP, state="DEMO")
 
 ###
 ###  Example uses of the sgp.config argument
@@ -124,8 +124,8 @@ READING.2010_2011 = list(
 	sgp.panel.years=c('2008_2009', '2009_2010', '2010_2011'),
 	sgp.grade.sequences=list(3:4, 3:5, 4:6)))
 
-Demonstration_Data <- prepareSGP(sgpData_LONG)
-Demonstration_Data <- analyzeSGP(Demonstration_Data,
+Demonstration_SGP <- prepareSGP(sgpData_LONG)
+Demonstration_SGP <- analyzeSGP(Demonstration_SGP,
 	sgp.config=my.custom.config,
 	sgp.percentiles.baseline = FALSE,
 	sgp.projections.baseline = FALSE,
@@ -146,8 +146,8 @@ READING.2010_2011.MATH_PRIOR = list(
 	sgp.panel.years=c('2009_2010', '2010_2011'),
 	sgp.grade.sequences=list(3:4, 4:5, 5:6)))
 
-Demonstration_Data <- prepareSGP(sgpData_LONG)
-Demonstration_Data <- analyzeSGP(Demonstration_Data,
+Demonstration_SGP <- prepareSGP(sgpData_LONG)
+Demonstration_SGP <- analyzeSGP(Demonstration_SGP,
 	sgp.config=my.custom.config,
 	sgp.percentiles.baseline = FALSE,
 	sgp.projections.baseline = FALSE,
@@ -163,8 +163,8 @@ Demonstration_Data <- analyzeSGP(Demonstration_Data,
 #  4 workers for percentiles, 2 workers for projections.
 #  Note the SOCK type cluster is used for single machines.
 
-Demonstration_Data <- prepareSGP(sgpData_LONG)
-Demonstration_Data <- analyzeSGP(Demonstration_Data,
+Demonstration_SGP <- prepareSGP(sgpData_LONG)
+Demonstration_SGP <- analyzeSGP(Demonstration_SGP,
 	parallel.config=list(
 		BACKEND=list(TYPE="SNOW", SNOW_TYPE="SOCK"),
 		ANALYSES=list(PERCENTILE_WORKERS=4, 

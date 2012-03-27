@@ -93,16 +93,16 @@ Example uses are provided below.
 \examples{
 \dontrun{
 ## summarizeSGP is Step 4 of 5 of abcSGP
-Demonstration_Data <- sgpData_LONG
-Demonstration_Data <- prepareSGP(Demonstration_Data)
-Demonstration_Data <- analyzeSGP(Demonstration_Data)
-Demonstration_Data <- combineSGP(Demonstration_Data)
-Demonstration_Data <- summarizeSGP(Demonstration_Data)
+Demonstration_SGP <- sgpData_LONG
+Demonstration_SGP <- prepareSGP(Demonstration_SGP)
+Demonstration_SGP <- analyzeSGP(Demonstration_SGP)
+Demonstration_SGP <- combineSGP(Demonstration_SGP)
+Demonstration_SGP <- summarizeSGP(Demonstration_SGP)
 
 ###  Example uses of the parallel.config argument
 
 ##  Windows users must use snow: 
-Demonstration_Data <- summarizeSGP(Demonstration_Data,
+Demonstration_SGP <- summarizeSGP(Demonstration_SGP,
 	parallel.config=list(
 		BACKEND=list(TYPE="SNOW", SNOW_TYPE="SOCK"),
 		ANALYSES=list(SUMMARY_WORKERS=2)))
