@@ -3,6 +3,7 @@ function(panel.data,         ## REQUIRED
          sgp.labels,         ## REQUIRED
          panel.data.vnames,
          grade.progression,
+         grade.progression.label=FALSE,
          num.prior,
          max.order.for.percentile=NULL,
          subset.grade,
@@ -178,8 +179,8 @@ function(panel.data,         ## REQUIRED
 
 	.check.knots.boundaries <- function(names, grade) {
 		tmp <- do.call(rbind, strsplit(names, "_"))
-		if (!grade %in% tmp[tmp[,1]=="knots", 2]) stop(paste("knots_", grade, " not found in Knot_Boundaries.", sep=""))
-		if (!grade %in% tmp[tmp[,1]=="boundaries", 2]) stop(paste("boundaries_", grade, " not found in Knot_Boundaries.", sep=""))                           
+		if (!grade %in% tmp[tmp[,1]=="knots", 2]) stop(paste("knots_", grade, " not found in Knots_Boundaries.", sep=""))
+		if (!grade %in% tmp[tmp[,1]=="boundaries", 2]) stop(paste("boundaries_", grade, " not found in Knots_Boundaries.", sep=""))                           
 		}
 
 	.check.my.coefficient.matrices <- function(names, grade, order) {
@@ -205,10 +206,22 @@ function(panel.data,         ## REQUIRED
 		return(taus)
 	}
 
-	.get.percentile.predictions <- function(data, order) {
+	get.coefficient.matrix.label <- function(tmp.last, k, grade.progression.label) {
+		if (grade.progression.label) {
+			return(paste("qrmatrix_", tmp.last, "_", k, "_", paste(tmp.gp, collapse="."), sep=""))
+		} else {
+			return(paste("qrmatrix_", tmp.last, "_", k, sep=""))
+		}
+	}
+
+	.get.percentile.predictions <- function(data, order, grade.progression.label) {
 		.check.my.coefficient.matrices(matrix.names, tmp.last, order)
 		mod <- character()
-		tmp.mtx <- eval(parse(text=paste("Coefficient_Matrices[['", tmp.path.coefficient.matrices, "']][['qrmatrix_", tmp.last, "_", j, "']]", sep="")))
+		if (grade.progression.label) {
+			tmp.mtx <- eval(parse(text=paste("Coefficient_Matrices[['", tmp.path.coefficient.matrices, "']][['qrmatrix_", tmp.last, "_", j, "_", paste(tmp.gp, collapse="."), "']]", sep="")))
+		} else {
+			tmp.mtx <- eval(parse(text=paste("Coefficient_Matrices[['", tmp.path.coefficient.matrices, "']][['qrmatrix_", tmp.last, "_", j, "']]", sep="")))
+		}
 		for (k in 1:order) {
 			int <- "cbind(rep(1, dim(data)[1]),"
 			knt <- paste("tmp.mtx@Knots[['knots_", rev(tmp.gp)[k+1], "']]", sep="")
@@ -312,14 +325,15 @@ function(panel.data,         ## REQUIRED
 		viewport(layout.pos.row=2, layout.pos.col=2, xscale=c(-25,110), yscale=c(-8,130), name="qq"))
 
 		grobs <- gTree(childrenvp=layout.vp,
-			name=paste(sgp.labels$my.subject, ".", sgp.labels$my.year, ".GRADE.", tmp.last, sep=""), 
+			name=paste(sgp.labels$my.subject, ".", sgp.labels$my.year, ".GRADE.", paste(tmp.gp, collapse="-"), sep=""), 
 			children=gList(gTree(vp="layout",
 				childrenvp=components,
-				name=paste("CHILDREN.", sgp.labels$my.subject, ".", sgp.labels$my.year, ".GRADE.", tmp.last, sep=""), 
+				name=paste("CHILDREN.", sgp.labels$my.subject, ".", sgp.labels$my.year, ".GRADE.", paste(tmp.gp, collapse="-"), sep=""), 
 				children=gList(
 					rectGrob(gp=gpar(fill="grey95"), vp="title"),
 					textGrob(x=0.5, y=0.65, "Student Growth Percentile Goodness-of-Fit Descriptives", gp=gpar(cex=1.25), vp="title"),
-					textGrob(x=0.5, y=0.4, paste(capwords(sgp.labels$my.year), " ", capwords(sgp.labels$my.subject), ", Grade ", tmp.last, sep=""), vp="title"),
+					textGrob(x=0.5, y=0.4, paste(capwords(sgp.labels$my.year), " ", capwords(sgp.labels$my.subject), ", Grade Progression ", 
+						paste(tmp.gp, collapse="-"), " (N = ", format(dim(data1)[1], bigmark=","), ")", sep=""), vp="title"),
 					rectGrob(vp="table"),
 					rectGrob(x=rep(1:10,each=10), y=rep(10:1,10), width=1, height=1, default.units="native", 
 						gp=gpar(col="black", fill=tmp.colors), vp="table"),
@@ -547,6 +561,9 @@ function(panel.data,         ## REQUIRED
 		csem.tf <- FALSE
 	}
 
+	if (is.null(grade.progression.label)) {
+		grade.progression.label <- FALSE
+	}
 
 	### Create object to store the studentGrowthPercentiles objects
 
@@ -685,7 +702,7 @@ function(panel.data,         ## REQUIRED
 			coefficient.matrix.priors <- seq(num.prior)
 		}
 		for (k in coefficient.matrix.priors) {
-			Coefficient_Matrices[[tmp.path.coefficient.matrices]][[paste("qrmatrix_", tmp.last, "_", k, sep="")]] <- 
+			Coefficient_Matrices[[tmp.path.coefficient.matrices]][[get.coefficient.matrix.label(tmp.last, k, grade.progression.label)]] <- 
 			.create.coefficient.matrices(ss.data, k, by.grade) 
 		}
 	}
@@ -714,7 +731,7 @@ function(panel.data,         ## REQUIRED
 
 		for (j in orders) {
 			tmp.data <- .get.panel.data(ss.data, j, by.grade)
-			tmp.predictions <- .get.percentile.predictions(tmp.data, j)
+			tmp.predictions <- .get.percentile.predictions(tmp.data, j, grade.progression.label)
 			tmp.quantiles[[j]] <- data.table(ID=tmp.data[["ID"]], ORDER=j, SGP=.get.quantiles(tmp.predictions, tmp.data[[tail(SS,1)]]))
 			if (csem.tf) {
 				if (is.null(calculate.confidence.intervals$simulation.iterations)) calculate.confidence.intervals$simulation.iterations <- 100
@@ -810,7 +827,7 @@ function(panel.data,         ## REQUIRED
 		SGPercentiles[[tmp.path]] <- rbind.fill(.unget.data.table(quantile.data, ss.data), SGPercentiles[[tmp.path]]) 
 
 		if (goodness.of.fit) {
-			Goodness_of_Fit[[tmp.path]][[paste("GRADE_", tmp.last, sep="")]] <- .goodness.of.fit(data.table(prior.ss, quantile.data[, "SGP", with=FALSE])) 
+			Goodness_of_Fit[[tmp.path]][[paste("GRADE_", paste(tmp.gp, collapse="-"), sep="")]] <- .goodness.of.fit(data.table(prior.ss, quantile.data[, "SGP", with=FALSE])) 
 		}
 	} ## End if calculate.sgps
 

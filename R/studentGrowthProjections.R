@@ -499,6 +499,7 @@ function(panel.data,	## REQUIRED
 	### Get Coefficient_Matrices names
 
 	matrix.names <- names(panel.data[["Coefficient_Matrices"]][[tmp.path.coefficient.matrices]])
+	matrix.names <- matrix.names[sapply(strsplit(matrix.names, "_"), function(x) is.na(x[4]))] ## REMOVE names that have the grade.progression.label for now
 
 	### Calculate growth projections/trajectories 
 
