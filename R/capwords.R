@@ -1,5 +1,6 @@
 `capwords` <-
 function(x) {
+	gsub("_", " ", x)
 	special.words <- c("ELA", "EMH", "II", "III", "IV")
 	my.split <- function(words, split.character) {
 		tmp.split <- unlist(strsplit(words, split=split.character))
