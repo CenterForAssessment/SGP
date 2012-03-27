@@ -118,7 +118,7 @@ my.custom.config <- list(
 MATHEMATICS.2010_2011 = list(
 	sgp.content.areas=rep("MATHEMATICS", 3), # Note, this needs to be the same length as sgp.panel.years
 	sgp.panel.years=c('2008_2009', '2009_2010', '2010_2011'),
-	sgp.grade.sequences=list(3:4, 3:5, 4:6)))
+	sgp.grade.sequences=list(3:4, 3:5, 4:6)),
 READING.2010_2011 = list(
 	sgp.content.areas=rep("READING", 3),
 	sgp.panel.years=c('2008_2009', '2009_2010', '2010_2011'),
@@ -140,7 +140,7 @@ my.custom.config <- list(
 MATHEMATICS.2010_2011.READ_PRIOR = list(
 	sgp.content.areas=c("READING", "MATHEMATICS"),
 	sgp.panel.years=c('2009_2010', '2010_2011'),
-	sgp.grade.sequences=list(3:4, 4:5, 5:6)))
+	sgp.grade.sequences=list(3:4, 4:5, 5:6)),
 READING.2010_2011.MATH_PRIOR = list(
 	sgp.content.areas=rep("MATHEMATICS", "READING"),
 	sgp.panel.years=c('2009_2010', '2010_2011'),

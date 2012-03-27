@@ -340,7 +340,7 @@ function(sgp_object,
 				if(is.null(parallel.config[["BACKEND"]][["PARALLEL_TYPE"]])) {
 					if (.Platform$OS.type == "unix" & is.null(par.type)) par.type <- 'MULTICORE' 
 					if (.Platform$OS.type != "unix" & is.null(par.type)) par.type <- 'SNOW'
-				} else par.type <- to.upper(parallel.config[["BACKEND"]][["PARALLEL_TYPE"]])
+				} else par.type <- toupper(parallel.config[["BACKEND"]][["PARALLEL_TYPE"]])
 				if (!par.type %in% c('MULTICORE', 'SNOW')) stop("parallel.config[['BACKEND']][['PARALLEL_TYPE']] must be set to either 'MULTICORE' or 'SNOW'.")
 				if (par.type == 'MULTICORE' & is.null(parallel.config[["BACKEND"]][["FOREACH_OPTIONS"]][["preschedule"]])) {
 					if (is.list(parallel.config[["BACKEND"]][["FOREACH_OPTIONS"]])) {
@@ -363,7 +363,7 @@ function(sgp_object,
 
 		if (toupper(parallel.config[["BACKEND"]][["TYPE"]]) == "PARALLEL") {
 			require(parallel)
-			if (!is.null(parallel.config[["BACKEND"]][["PARALLEL_TYPE"]])) par.type <- to.upper(parallel.config[["BACKEND"]][["PARALLEL_TYPE"]])
+			if (!is.null(parallel.config[["BACKEND"]][["PARALLEL_TYPE"]])) par.type <- toupper(parallel.config[["BACKEND"]][["PARALLEL_TYPE"]])
 			if (.Platform$OS.type == "unix" & is.null(par.type)) par.type <- 'MULTICORE' 
 			if (.Platform$OS.type != "unix" & is.null(par.type)) par.type <- 'SNOW'
 			if (!par.type %in% c('MULTICORE', 'SNOW')) stop("parallel.config[['BACKEND']][['PARALLEL_TYPE']] must be set to either 'MULTICORE' or 'SNOW'.")
