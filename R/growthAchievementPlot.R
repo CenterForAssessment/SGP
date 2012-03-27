@@ -15,14 +15,21 @@
         pdf.folder,
 	assessment.name) { 
 
+	started.at <- proc.time()
+	started.date <- date()
+
 	CUTLEVEL <- GRADE <- YEAR <- ID <- SCALE_SCORE <- level_1_curve <- NULL ## To prevent R CMD check warnings
 	content_area <- toupper(content_area)
         number.achievement.level.regions <- length(SGPstateData[[state]][["Student_Report_Information"]][["Achievement_Level_Labels"]])
 
-        if (state %in% state.abb)  state.name.label <- state.name[state.abb==state]
-        if (state=="DEMO") state.name.label <- "Demonstration"
-	state.name.file.label <- gsub(" ", "_", state.name.label)
+        # State stuff
 
+        if (state %in% c(state.abb, "DEMO")) {
+                state.name.label <- c(state.name, "DEMONSTRATION")[state==c(state.abb, "DEMO")]
+        } else {
+                state.name.label <- test.abbreviation.label <- state
+        }
+                state.name.file.label <- gsub("_", " ", state.name.label)
 
 	## Create folder for plots
 
@@ -58,16 +65,6 @@
 	# Functions to create good endpoints for scale score axis
 
 	pretty_year <- function(x) sub("_", "-", x)
-
-	capwords <- function(x) {
-		special.words <- c("ELA", "EMH", "II", "III", "IV")
-		if (x %in% special.words) return(x)
-		s <- sub("_", " ", x)
-		s <- strsplit(s, split=" ")[[1]]
-		s <- paste(toupper(substring(s, 1,1)), tolower(substring(s, 2)), sep="", collapse=" ")
-		s <- strsplit(s, split="-")[[1]]
-		paste(toupper(substring(s, 1,1)), substring(s, 2), sep="", collapse="-")
-	}
 
 	myround_up <- function(x) {
 		temp <- x/10^floor(log(x, 10))
@@ -516,11 +513,13 @@ popViewport() ## pop title.vp
 
 
 ##
-## End Viewport Creation
+## End Viewport Creation and provide completion message
 ##
 
 popViewport()
 
+message(paste("\tStarted", year, state.name.label, content_area, "growthAchievementPlot:",  started.date))
+message(paste("\tFinished", year, state.name.label, content_area, "growthAchievementPlot:",  date(), "in", timetaken(started.at), "\n"))
 
 dev.off() 
 

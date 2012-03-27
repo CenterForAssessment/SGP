@@ -124,6 +124,10 @@
 	setkeyv(tmp_district_data, tmp.keys[2])
 
 	for (j in schools) {
+
+		started.at <- proc.time()
+		started.date <- date()
+
 		if (reports.by.student) {
 			tmp_school_name <- as.character(tmp_district_data[J(j)][[paste("SCHOOL_NAME", last.year, sep=".")]][1])
 			school_folder <- NULL
@@ -409,15 +413,15 @@
 
               ## Code to LaTeX document attaching first page/adding meta-data
 
-##              system(paste("pdflatex -interaction=batchmode student_report_", j, ".tex", sep=""))
-##              file.rename(paste("student_report_", j, ".pdf", sep=""), paste(path.to.pdfs, "/", file_name, sep=""))
+              system(paste("pdflatex -interaction=batchmode student_report_", j, ".tex", sep=""), ignore.stdout = TRUE)
+              file.rename(paste("student_report_", j, ".pdf", sep=""), paste(path.to.pdfs, "/", file_name, sep=""))
 
             } ## END for loop for STUDENTS (n)
           } ## END for loop for GRADES (k)
 	if (!reports.by.student) {
 		cat("\\end{document}", file=paste("school_catalog_", j, ".tex", sep=""), append=TRUE)
-		system(paste("pdflatex -interaction=batchmode school_catalog_", j, ".tex", sep=""))
-		system(paste("pdflatex -interaction=batchmode school_catalog_", j, ".tex", sep=""))
+		system(paste("pdflatex -interaction=batchmode school_catalog_", j, ".tex", sep=""), ignore.stdout = TRUE)
+		system(paste("pdflatex -interaction=batchmode school_catalog_", j, ".tex", sep=""), ignore.stdout = TRUE)
 		file.rename(paste("school_catalog_", j, ".pdf", sep=""), file.path(sgPlot.folder, year_folder, district_folder, 
 			paste(year_folder, "_", district_folder, "_", school_folder, "_Individual_SGP_Report_Catalog.pdf", sep="")))
 	}
@@ -425,7 +429,10 @@
 		files.to.remove <- list.files(pattern=as.character(j), all.files=TRUE)
 		lapply(files.to.remove, file.remove)
 	}
-        print(paste("Finished with School", tmp_school_name))
+
+        message(paste("\tStarted", last.year, tmp_school_name, "student growth plots:", started.date))
+        message(paste("\tFinished", last.year, tmp_school_name, "student growth plots:", date(), "in", timetaken(started.at), "\n"))
+
         } ## END for loop for SCHOOLS (j)
         #system(paste("zip -r ", pdf.folder, "/", year_folder, "/", district_folder, "_", last.year, ".zip ", pdf.folder, year_folder, district_folder, sep=""))
       } ## END for loop for DISTRICTS (i)

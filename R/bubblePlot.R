@@ -59,11 +59,11 @@ if (length(bubble_plot_data.X)==0) {
 # Test for installation of pdf2 package 
 
 if (bubble_plot_configs.BUBBLE_TIPS) {
-	if ("pdf2" %in% installed.packages() & as.numeric(version$minor) < 14) {
+	if (length(find.package("pdf2", quiet=TRUE)) > 0 & as.numeric(version$minor) < 14) {
 		require(pdf2)
 	} else {
 		bubble_plot_configs.BUBBLE_TIPS <- FALSE
-		message("Implentation of BUBBLE_TIPS requires the installation of the package pdf2 from R-Forge: install.packages('pdf2',repos='http://R-Forge.R-project.org')")
+		message("\tImplentation of BUBBLE_TIPS requires the installation of the package pdf2 from R-Forge: install.packages('pdf2',repos='http://R-Forge.R-project.org')")
 	}
 }
 
@@ -81,7 +81,11 @@ if (!is.null(bubble_plot_configs.BUBBLE_PLOT_PATH)) {
   
 # Calculate relevant quantities
 
-numstud.range <- c(min(bubble_plot_labels.SIZE), max(bubble_plot_labels.SIZE))
+if (!is.null(bubble_plot_labels.SIZE)) {
+	numstud.range <- c(min(bubble_plot_labels.SIZE), max(bubble_plot_labels.SIZE))
+} else {
+	numstud.range <- c(25, 100)
+}
 num.sizes <- length(bubble_plot_labels.SIZE)
 if (!missing(bubble_plot_data.BUBBLE_TIPS_LINES)) num.bubble.lines <- length(bubble_plot_data.BUBBLE_TIPS_LINES)
 if (is.null(bubble_plot_data.LEVELS)) {
@@ -129,12 +133,12 @@ bubblecolor <- function(x){
 
 # Custom Bubble Size Function
 
-bubblesize <- function(schoolsize, numstud.range){
-                      slope <- (max.cex - min.cex)/(sqrt(numstud.range)[2] - sqrt(numstud.range)[1])
-                      temp <- slope*sqrt(schoolsize) - slope*sqrt(numstud.range)[2] + max.cex
-                      temp[temp<min.cex] <- min.cex; temp[temp>max.cex] <- max.cex
-                      return(temp)
-}          
+bubblesize <- function(schoolsize, numstud.range) {
+		slope <- (max.cex - min.cex)/(sqrt(numstud.range)[2] - sqrt(numstud.range)[1])
+		temp <- slope*sqrt(schoolsize) - slope*sqrt(numstud.range)[2] + max.cex
+		temp[temp < min.cex] <- min.cex; temp[temp > max.cex] <- max.cex
+		return(temp)
+}
 
 
 # Custom Bubble Alpha Function
@@ -334,12 +338,13 @@ grid.text(x=0.95, y=0.92, paste("Higher",  bubble_plot_configs.BUBBLE_PLOT_BACKG
 
 # Add BUBBLE_PLOT_EXTRAS
 
+base.line <- "grid.lines(x=unit(50, 'native'), y=c(0.03,0.97), gp=gpar(col='grey40', lwd=1.25, lty=2, alpha=0.5))"
 if (!is.null(bubble_plot_configs.BUBBLE_PLOT_EXTRAS)) {
-   for (i in bubble_plot_configs.BUBBLE_PLOT_EXTRAS) {
+   for (i in c(base.line, bubble_plot_configs.BUBBLE_PLOT_EXTRAS)) {
       eval(parse(text=i))
    }
 } else {
-    grid.lines(x=unit(50, "native"), y=c(0.03,0.97), gp=gpar(col="grey40", lwd=1.5, lty=2, alpha=0.5))
+      eval(parse(text=base.line))
 }
 
 if (bubble_plot_configs.BUBBLE_TIPS) {
@@ -586,7 +591,7 @@ grid.text(x=0.4, y=unit(text.start, "inches")+unit(text.buffer, "inches")+unit(0
 grid.text(x=0.4, y=unit(text.start+3*text.buffer, "inches")+unit(1.0, "strwidth", bubble_plot_labels.Y[1])+unit(0.5, "strwidth", bubble_plot_labels.Y[2]), 
           bubble_plot_labels.Y[2], 
           gp=gpar(col=format.colors.font[1]), rot=90, just="center")
-for (i in seq_along(bubble_plot_configs.BUBBLE_Y_TICKS)) {
+for (i in 2:(length(bubble_plot_configs.BUBBLE_Y_TICKS)-1)) {
      if (is.null(bubble_plot_configs.BUBBLE_Y_TICKS_SIZE)) {
           grid.text(x=0.925, y=bubble_plot_configs.BUBBLE_Y_TICKS[i], bubble_plot_configs.BUBBLE_Y_TICKS[i], 
                     gp=gpar(col=format.colors.font[1], cex=0.65), just=c("right", "center"), default.units="native")
