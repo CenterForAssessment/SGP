@@ -40,10 +40,11 @@
            gaPlot.format="print",
            gaPlot.baseline=NULL,
            gaPlot.max.order.for.progression=NULL,
-           gaPlot.folder="Visualizations/growthAchievementPlots") {
+           gaPlot.folder="Visualizations/growthAchievementPlots",
+           gaPlot.parallel.config=list(TYPE="FOREACH", OPTIONS=list(preschedule=FALSE, set.seed=FALSE))) {
 
     started.at <- proc.time()
-    message(paste("\nStarted visualizeSGP", date()))
+    message(paste("\nStarted visualizeSGP", date(), "\n"))
 
     ### Setting variables to NULL to prevent R CMD check warnings
 
@@ -51,7 +52,7 @@
     ETHNICITY <- GENDER <- ID <- NULL ## To prevent R CMD check warnings
     TEST_LEVEL <- SUBJECT_CODE <- SCALE_SCORE <- GRADE <- NULL ## To prevent R CMD check warnings
     SCHOOL_ENROLLMENT_STATUS <- LAST_NAME <- FIRST_NAME <- NULL ## To prevent R CMD check warnings
-    MEDIAN_SGP <- MEDIAN_SGP_COUNT <- VALID_CASE <- district.school.iter <- NULL ## To prevent R CMD check warnings
+    MEDIAN_SGP <- MEDIAN_SGP_COUNT <- VALID_CASE <- gaPlot.iter <- sgPlot.iter <- V1 <- NULL ## To prevent R CMD check warnings
 
 
    ### Create state (if missing) from sgp_object (if possible)
@@ -65,38 +66,86 @@
 
     ### Utility functions	
 
-    "%w/o%" <- function(x,y) x[!x %in% y]
+	"%w/o%" <- function(x,y) x[!x %in% y]
+	num_non_missing <- function(x) sum(!is.na(as.numeric(x)))
 
-    .year.increment <- function(year, increment) {
-         paste(as.numeric(unlist(strsplit(as.character(year), "_")))+increment, collapse="_")
-    }
-
-    capwords <- function(x) {
-      special.words <- c("ELA", "EMH", "II", "III", "IV")
-      if (x %in% special.words) return(x)
-      s <- sub("_", " ", x)
-      s <- strsplit(s, split=" ")[[1]]
-      s <- paste(toupper(substring(s, 1,1)), tolower(substring(s, 2)), sep="", collapse=" ")
-      s <- strsplit(s, split="-")[[1]]
-      s <- paste(toupper(substring(s, 1,1)), substring(s, 2), sep="", collapse="-")
-      s <- strsplit(s, split="'")[[1]]
-      paste(toupper(substring(s, 1,1)), substring(s, 2), sep="", collapse="'")
-    }
-
-    get.max.order.for.progression <- function(year, content_area) {
-	if (is.null(gaPlot.max.order.for.progression)) {
-            if (is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[content_area]])) {
-                    return(NULL)
-            } else {
-                    tmp <- as.numeric(tail(unlist(strsplit(as.character(year), "_")), 1)) - as.numeric(tail(unlist(strsplit(as.character(SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[content_area]]), "_")), 1))
-                    if (tmp < 0) return(NULL)
-                    if (tmp > 0) return(as.numeric(tmp))
-                    if (tmp==0) message(paste("\tNOTE: Based upon state scale changes in ", capwords(year), ". student growth projections are not possible. No student growth projections will be generated.\n", sep=""))
-            }
-	} else {
-	   return(gaPlot.max.order.for.progression)
+	.year.increment <- function(year, increment) {
+		paste(as.numeric(unlist(strsplit(as.character(year), "_")))+increment, collapse="_")
 	}
-    }
+
+        pretty_year <- function(x) sub("_", "-", x)
+
+        rbind.all <- function(.list, ...) {
+                if (length(.list)==1) return (.list[[1]])
+                Recall(c(list(rbind(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), ...)
+        }
+
+	get.max.order.for.progression <- function(year, content_area) {
+		if (is.null(gaPlot.max.order.for.progression)) {
+			if (is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[content_area]])) {
+				return(NULL)
+			} else {
+				tmp <- as.numeric(tail(unlist(strsplit(as.character(year), "_")), 1)) - as.numeric(tail(unlist(strsplit(as.character(SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[content_area]]), "_")), 1))
+				if (tmp < 0) return(NULL)
+				if (tmp > 0) return(as.numeric(tmp))
+				if (tmp==0) message(paste("\tNOTE: Based upon state scale changes in ", pretty_year(year), 
+					". student growth projections are not possible. No student growth projections will be generated.\n", sep=""))
+			}
+		} else {
+			return(gaPlot.max.order.for.progression)
+		}
+	} ### END get.max.order.for.progression
+
+
+	get.sgPlot.iter <- function(districts.and.schools) {
+		tmp.list <- list()
+		for (k in 1:dim(districts.and.schools)[1]) {
+			tmp.list[[k]] <- list(DISTRICT_NUMBER=districts.and.schools[["DISTRICT_NUMBER"]][k], SCHOOL_NUMBER=districts.and.schools[["SCHOOL_NUMBER"]][k])
+		}
+		return(tmp.list)
+	} ### END get.sgPlot.iter
+
+
+	get.gaPlot.iter <- function(gaPlot.years, gaPlot.content_areas, gaPlot.students) {
+
+		tmp.list <- tmp.gaPlot.list <- list()
+
+		# Years 
+
+		if (is.null(gaPlot.years)) {
+			tmp.years <- tail(sort(unique(sgp_object@Data$YEAR)), 1)
+		} else {
+			tmp.years <- gaPlot.years
+		}
+
+		# Content Areas
+
+		for (year.iter in seq_along(tmp.years)) {
+
+			if (!is.null(gaPlot.content_areas)) {
+				tmp.list[[year.iter]] <- data.frame(YEAR=tmp.years[year.iter], CONTENT_AREA=gaPlot.content_areas)
+				if (is.factor(sgp_object@Data[["CONTENT_AREA"]])) {
+					tmp.list[[year.iter]][["CONTENT_AREA"]] <- as.factor(tmp.list[[year.iter]][["CONTENT_AREA"]]) ## Factor joins to Factor
+				}
+			} else {
+				tmp.list[[year.iter]] <- data.frame(YEAR=tmp.years[year.iter],
+					CONTENT_AREA=sort(unique(sgp_object@Data[YEAR==tmp.years[year.iter]][["CONTENT_AREA"]])) %w/o% NA)
+			}
+		}
+
+		tmp.df <- rbind.all(tmp.list)
+
+		if (!is.null(gaPlot.students)) {
+			 tmp.df <- expand.grid(tmp.df, ID=gaPlot.students)
+		}
+
+		for (i in seq(dim(tmp.df)[1])) {
+			tmp.gaPlot.list[[i]] <- list(YEAR=tmp.df[["YEAR"]][i], CONTENT_AREA=tmp.df[["CONTENT_AREA"]][i], ID=tmp.df[["ID"]][i])
+		}
+		return(tmp.gaPlot.list)
+
+	} ### END get.gaPlot.iter
+
 
 ##############################################################################################################
 #### bubblePlot
@@ -105,7 +154,7 @@
 	if ("bubblePlot" %in% plot.types) {
 
 		started.at <- proc.time()
-		message(paste("Started bubblePlot in visualizeSGP", date()))
+		message(paste("Started bubblePlot in visualizeSGP", date(), "\n"))
 
 		bubblePlot_Styles(sgp_object=sgp_object,
 			state=state,
@@ -135,18 +184,7 @@
 	if ("growthAchievementPlot" %in% plot.types) {
 
 		started.at <- proc.time()
-		message(paste("Started growthAchievementPlot in visualizeSGP", date()))
-
-		#### Define/Calculate relevant quantities for growthAchievementPlot
-
-		# Year stuff 
-
-		if (is.null(gaPlot.years)) {
-			tmp.years <- tail(sort(unique(sgp_object@Data$YEAR)), 1)
-		} else {
-			tmp.years <- gaPlot.years
-		}
-
+		message(paste("Started growthAchievementPlot in visualizeSGP", date(), "\n"))
 
 		# gaPlot.baseline stuff
 
@@ -157,48 +195,30 @@
                         if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort and Baseline Referenced") gaPlot.baseline <- FALSE
                 }
 
+		if (toupper(gaPlot.parallel.config[["TYPE"]]) == "FOREACH") {
 
-		# Loop over content areas and years
-
-		for (year.iter in tmp.years) {
-
-		if (!is.null(gaPlot.content_areas)) {
-			tmp.content_areas <- gaPlot.content_areas
-			if (is.factor(sgp_object@Data$CONTENT_AREA)) {
-				tmp.content_areas <- as.factor(tmp.content_areas) ## Factor joins to Factor
-			}
-		} else {
-			tmp.content_areas <- sort(unique(sgp_object@Data[YEAR==year.iter]$CONTENT_AREA)) %w/o% NA
-		}
-
-		for (content_area.iter in tmp.content_areas) {
-      
-			if (is.null(gaPlot.students)) {
-				tmp.students <- NULL
-			} else {
-				tmp.students <- gaPlot.students
+			if (!is.null(getOption("cores"))) {
+				require(doMC)
+				registerDoMC()
 			}
 
-			if (!year.iter %in% SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[content_area.iter]]) {
+			foreach.options <- gaPlot.parallel.config[["OPTIONS"]] # works fine if NULL
+			foreach(gaPlot.iter=iter(get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students)), .packages="SGP", .inorder=FALSE,
+				.options.multicore=foreach.options, .options.mpi=foreach.options, .options.redis=foreach.options) %dopar% {
+					growthAchievementPlot(
+						gaPlot.sgp_object=sgp_object,
+						gaPlot.students=gaPlot.iter[["ID"]],
+						gaPlot.max.order.for.progression=get.max.order.for.progression(gaPlot.iter[["YEAR"]], gaPlot.iter[["CONTENT_AREA"]]),
+						state=state,
+						content_area=gaPlot.iter[["CONTENT_AREA"]],
+						year=gaPlot.iter[["YEAR"]], 
+						format=gaPlot.format,
+						baseline=gaPlot.baseline,
+						pdf.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))
 
-				setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA"))
+			} ## END dopar 
+		} ## END FOREACH
 
-				growthAchievementPlot(
-					gaPlot.sgp_object=sgp_object,
-					gaPlot.students=tmp.students,
-					gaPlot.max.order.for.progression=get.max.order.for.progression(year.iter, content_area.iter),
-					state=state,
-					content_area=content_area.iter,
-					year=year.iter, 
-					format=gaPlot.format,
-					baseline=gaPlot.baseline,
-					pdf.folder=file.path(gaPlot.folder, year.iter))
-			} else {
-				message(paste("\tNOTE: Based upon state scale changes in ", capwords(year.iter), ". student growth projections are not possible. No ", capwords(year.iter), " ", content_area.iter, " growth and achievement plot will be generated.\n", sep=""))
-			}
-
-		} ## END for loop content_area.iter
-		} ## END for loop year.iter
     message(paste("Finished growthAchievementPlot in visualizeSGP", date(), "in", timetaken(started.at), "\n"))
    } ## END if (growthAchievementPlot %in% plot.types)
 
@@ -210,14 +230,9 @@
 if ("studentGrowthPlot" %in% plot.types) {
 
 	started.at <- proc.time()
-	message(paste("Started studentGrowthPlot in visualizeSGP", date()))
+	message(paste("Started studentGrowthPlot in visualizeSGP", date(), "\n"))
 
 	#### Utility functions
-
-	rbind.all <- function(.list, ...) {
-		if (length(.list)==1) return (.list[[1]])
-		Recall(c(list(rbind(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), ...)
-	}
 
 	get.my.cutscore.year <- function(state, content_area, year) {
 		tmp.cutscore.years <- sapply(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]])[grep(content_area, names(SGPstateData[[state]][["Achievement"]][["Cutscores"]]))], "[.]"),
@@ -265,7 +280,7 @@ if ("studentGrowthPlot" %in% plot.types) {
 			setnames(tmp.df, c("GRADE", "YEAR")) 
 			tmp.list[[i]] <- data.frame(CONTENT_AREA=i, tmp.df)
 		}
-	data.table(do.call(rbind, tmp.list), key=c("CONTENT_AREA", "GRADE", "YEAR"))
+	data.table(rbind.all(tmp.list), key=c("CONTENT_AREA", "GRADE", "YEAR"))
 	} ## END get.years.content_areas.grades
 
 
@@ -318,7 +333,11 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 
 		if (is.null(sgPlot.students)) { ## sgPlot.students NOT specified with WIDE data
 
-			## Set key on WIDE data (NOTE: sgp_object is a data.table)
+			## Calculate School size to order from largest to smallest and set key on WIDE data
+
+			setkeyv(sgp_object, paste(c("DISTRICT_NUMBER", "SCHOOL_NUMBER"), tmp.last.year, sep="."))
+			tmp.districts.and.schools.size <- sgp_object[,num_non_missing(ID), by=key(sgp_object)] 
+			setnames(tmp.districts.and.schools.size, 1:2, c("DISTRICT_NUMBER", "SCHOOL_NUMBER"))
 
 			setkeyv(sgp_object, c("CONTENT_AREA", paste(c("DISTRICT_NUMBER", "SCHOOL_NUMBER"), tmp.last.year, sep=".")))
 
@@ -365,6 +384,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 				eval(parse(text=paste("!is.na(DISTRICT_NUMBER.", tmp.last.year, ") & !is.na(SCHOOL_NUMBER.", tmp.last.year, ")", sep=""))))
 			tmp.districts.and.schools <- tmp.districts.and.schools[tmp.tf]
 			setnames(tmp.districts.and.schools, c("DISTRICT_NUMBER", "SCHOOL_NUMBER"))
+			tmp.districts.and.schools <- tmp.districts.and.schools.size[tmp.districts.and.schools][order(V1, decreasing=TRUE)][,list(DISTRICT_NUMBER, SCHOOL_NUMBER)]
 
 			## Get cases
 
@@ -458,6 +478,11 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 
 		#### Reconcile School and District selections
 
+                        setkeyv(sgp_object@Data, c("VALID_CASE", "YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER"))
+                        tmp.districts.and.schools.size <- sgp_object@Data[J("VALID_CASE", tmp.last.year)][,num_non_missing(ID), by=list(DISTRICT_NUMBER, SCHOOL_NUMBER)]
+			setkeyv(tmp.districts.and.schools.size, c("DISTRICT_NUMBER", "SCHOOL_NUMBER"))
+			setkeyv(sgp_object@Data, long.key)
+
 			if (is.null(sgPlot.schools) | is.null(sgPlot.districts)) {
 				tmp.districts.and.schools <- unique(data.table(sgp_object@Data[CJ("VALID_CASE", tmp.last.year, tmp.content_areas)][,
 					list(VALID_CASE, YEAR, CONTENT_AREA, DISTRICT_NUMBER, SCHOOL_NUMBER)], 
@@ -508,16 +533,15 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			tmp.table <- data.table(sgp_object@Data[get.years.content_areas.grades(state)], 
 				key=c("VALID_CASE", "ID", "CONTENT_AREA", "YEAR"))[CJ("VALID_CASE", report.ids, tmp.content_areas, tmp.years)]
 			setkeyv(tmp.table, c("VALID_CASE", "YEAR", "CONTENT_AREA", "DISTRICT_NUMBER", "SCHOOL_NUMBER"))
-			tmp.districts.and.schools <- tmp.table[CJ("VALID_CASE", tmp.last.year, tmp.content_areas)][,list(DISTRICT_NUMBER, SCHOOL_NUMBER)]
+			tmp.districts.and.schools <- tmp.table[CJ("VALID_CASE", tmp.last.year, tmp.content_areas)][, list(DISTRICT_NUMBER, SCHOOL_NUMBER)]
 		}
 
 	#### Trim tmp.districts.and.schools
 
-		tmp.districts.and.schools <- unique(data.table(tmp.districts.and.schools, 
-			key=c("DISTRICT_NUMBER", "SCHOOL_NUMBER"))[,
-			list(DISTRICT_NUMBER, SCHOOL_NUMBER)])
+		tmp.districts.and.schools <- unique(data.table(tmp.districts.and.schools[,list(DISTRICT_NUMBER, SCHOOL_NUMBER)], key=c("DISTRICT_NUMBER", "SCHOOL_NUMBER")))
 		tmp.districts.and.schools <- subset(tmp.districts.and.schools, !is.na(DISTRICT_NUMBER) & !is.na(SCHOOL_NUMBER))
-	
+		if (!sgPlot.demo.report) tmp.districts.and.schools <- tmp.districts.and.schools.size[tmp.districts.and.schools][order(V1, decreasing=TRUE)][,list(DISTRICT_NUMBER, SCHOOL_NUMBER)]
+
 	#### Invalidate bad SGPs (if necessary)
 
 		if ("VALID_SGP" %in% names(tmp.table)) {
@@ -637,32 +661,28 @@ if (sgPlot.save.sgPlot.data) {
 
 if (sgPlot.produce.plots) {
 
-	if (is.null(sgPlot.parallel.config)) { ### NO Parallel Processing
+	if (is.null(sgPlot.parallel.config) | sgPlot.demo.report) { ### NO Parallel Processing
 
-                        studentGrowthPlot_Styles(
-                                sgPlot.data=sgPlot.data,
-                                state=state,
-                                last.year=tmp.last.year,
-                                content_areas=tmp.content_areas,
-                                districts=tmp.districts.and.schools[["DISTRICT_NUMBER"]],
-                                schools=tmp.districts.and.schools[["SCHOOL_NUMBER"]],
-                                reports.by.student=sgPlot.reports.by.student,
-                                sgPlot.years=tmp.years,
-                                sgPlot.folder=sgPlot.folder,
-                                sgPlot.folder.names=sgPlot.folder.names,
-                                sgPlot.demo.report=sgPlot.demo.report,
-                                sgPlot.anonymize=sgPlot.anonymize,
-                                sgPlot.front.page=sgPlot.front.page,
-                                sgPlot.header.footer.color=sgPlot.header.footer.color,
-                                sgPlot.fan=sgPlot.fan,
-                                sgPlot.cleanup=sgPlot.cleanup,
-                                sgPlot.baseline=sgPlot.baseline)
+		studentGrowthPlot_Styles(
+			sgPlot.data=sgPlot.data,
+			state=state,
+			last.year=tmp.last.year,
+			content_areas=tmp.content_areas,
+			districts=tmp.districts.and.schools[["DISTRICT_NUMBER"]],
+			schools=tmp.districts.and.schools[["SCHOOL_NUMBER"]],
+			reports.by.student=sgPlot.reports.by.student,
+			sgPlot.years=tmp.years,
+			sgPlot.folder=sgPlot.folder,
+			sgPlot.folder.names=sgPlot.folder.names,
+			sgPlot.demo.report=sgPlot.demo.report,
+			sgPlot.anonymize=sgPlot.anonymize,
+			sgPlot.front.page=sgPlot.front.page,
+			sgPlot.header.footer.color=sgPlot.header.footer.color,
+			sgPlot.fan=sgPlot.fan,
+			sgPlot.cleanup=sgPlot.cleanup,
+			sgPlot.baseline=sgPlot.baseline)
+
 	} else { ### Parallel Processing
-
-		tmp.iter <- list()
-		for (k in 1:dim(tmp.districts.and.schools)[1]) {
-			tmp.iter[[k]] <- list(DISTRICT_NUMBER=tmp.districts.and.schools[["DISTRICT_NUMBER"]][k], SCHOOL_NUMBER=tmp.districts.and.schools[["SCHOOL_NUMBER"]][k])
-		}
 
 		### FOREACH flavor
 
@@ -674,15 +694,15 @@ if (sgPlot.produce.plots) {
 			}
 
 			foreach.options <- sgPlot.parallel.config[["OPTIONS"]] # works fine if NULL
-			foreach(district.school.iter=iter(tmp.iter), .packages="SGP", .inorder=FALSE,
-				.options.multicore=foreach.options, .options.mpi=foreach.options, .options.redis=foreach.options, .options.smp=foreach.options, .verbose=TRUE) %dopar% {
+			foreach(sgPlot.iter=iter(get.sgPlot.iter(tmp.districts.and.schools)), .packages="SGP", .inorder=FALSE,
+				.options.multicore=foreach.options, .options.mpi=foreach.options, .options.redis=foreach.options) %dopar% {
 						invisible(studentGrowthPlot_Styles(
 							sgPlot.data=sgPlot.data,
 							state=state,
 							last.year=tmp.last.year,
 							content_areas=tmp.content_areas,
-							districts=district.school.iter[["DISTRICT_NUMBER"]],
-							schools=district.school.iter[["SCHOOL_NUMBER"]],
+							districts=sgPlot.iter[["DISTRICT_NUMBER"]],
+							schools=sgPlot.iter[["SCHOOL_NUMBER"]],
 							reports.by.student=sgPlot.reports.by.student,
 							sgPlot.years=tmp.years,
 							sgPlot.folder=sgPlot.folder,
