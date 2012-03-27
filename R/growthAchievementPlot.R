@@ -59,6 +59,12 @@
 		assessment.name <- SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Abbreviation"]]
 	}
 
+	if (nchar(content_area) > 12)  {
+		content_area.label <- capwords(SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Labels"]][[content_area]])
+	} else {
+		content_area.label <- capwords(content_area)
+	}
+
 
 	## Utility functions
 
@@ -499,7 +505,7 @@
 	pushViewport(title.vp)
 	
 	grid.roundrect(width=unit(0.95, "npc"), r=unit(0.025, "snpc"), gp=gpar(col=format.colors.font, lwd=1.6))
-	grid.text(x=0.5, y=0.675, paste(state.name.label, ": ", pretty_year(year), " ", capwords(content_area), sep=""), 
+	grid.text(x=0.5, y=0.675, paste(state.name.label, ": ", pretty_year(year), " ", content_area.label, sep=""), 
 		gp=gpar(col=format.colors.font, fontface=2, fontfamily="Helvetica-Narrow", cex=3.0), default.units="native")
 	if (is.null(SGPstateData[[state]][["Achievement"]][["College_Readiness_Cutscores"]])) {
 		grid.text(x=0.5, y=0.275, "Norm & Criterion Referenced Growth & Achievement", 
