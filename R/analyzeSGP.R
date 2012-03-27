@@ -16,6 +16,7 @@ function(sgp_object,
          simulate.sgps=TRUE,
          goodness.of.fit.print=TRUE,
          sgp.config=NULL,
+         sgp.config.drop.nonsequential.grade.progression.variables=TRUE,
          sgp.baseline.config=NULL, 
          parallel.config=NULL,
          ...) {
@@ -45,12 +46,15 @@ function(sgp_object,
         ###
 
         if (simulate.sgps==TRUE) {
-                if (is.null(SGPstateData[[state]]$Assessment_Program_Information$CSEM)) {
+                if (is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
 			message("\tCSEMs are required in SGPstateData to simulate SGPs for confidence interval calculations. Confidence intervals will not be calculated.")
                         simulate.sgps <- FALSE
                 }
         }
 
+	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["sgp.config.drop.nonsequential.grade.progression.variables"]])) {
+		sgp.config.drop.nonsequential.grade.progression.variables <- SGPstateData[[state]][["SGP_Configuration"]][["sgp.config.drop.nonsequential.grade.progression.variables"]]
+	}
 
 	### 
 	### Utility functions
@@ -133,7 +137,8 @@ function(sgp_object,
 	                tmp.sgp.grade.sequences <- lapply(tmp.unique.data$GRADE[-1], function(x) tail(tmp.unique.data$GRADE[tmp.unique.data$GRADE <= x], length(tmp.unique.data$YEAR)))
 	                if (!is.null(grades)) tmp.sgp.grade.sequences <- tmp.sgp.grade.sequences[sapply(tmp.sgp.grade.sequences, function(x) tail(x,1)) %in% grades]
 	                .sgp.grade.sequences <- lapply(tmp.sgp.grade.sequences, function(x) x[(tail(x,1)-x) <= length(.sgp.panel.years)-1])
-	                list(sgp.content.areas=.sgp.content.areas, sgp.panel.years=.sgp.panel.years, sgp.grade.sequences=.sgp.grade.sequences)
+			.sgp.grade.progression.labels=rep(FALSE, length(.sgp.grade.sequences))
+	                list(sgp.content.areas=.sgp.content.areas, sgp.panel.years=.sgp.panel.years, sgp.grade.sequences=.sgp.grade.sequences, sgp.grade.progression.labels=.sgp.grade.progression.labels)
 	        }
 
                 tmp.sgp.config <- tmp.years <- list()
@@ -166,13 +171,13 @@ function(sgp_object,
                 for (a in names(sgp.config)) {
                         for (b in seq_along(sgp.config[[a]][["sgp.grade.sequences"]])) {
                                 par.sgp.config[[cnt]] <- sgp.config[[a]]
+				par.sgp.config[[cnt]][["sgp.grade.progression.labels"]] <- sgp.config[[a]][["sgp.grade.progression.labels"]][b]
                                 par.sgp.config[[cnt]][["sgp.grade.sequences"]] <- sgp.config[[a]][["sgp.grade.sequences"]][b]
-                                if (any(diff(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]])>1)) {
-                                        grade.span <- seq(min(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]]),max(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]]))
-                                        index <- match(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]], grade.span)
-                                        par.sgp.config[[cnt]][["sgp.panel.years"]] <- par.sgp.config[[cnt]][["sgp.panel.years"]][index]
-                                        par.sgp.config[[cnt]][["sgp.content.areas"]] <- par.sgp.config[[cnt]][["sgp.content.areas"]][index]
-                                }
+                                grade.span <- seq(min(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]]), max(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]]))
+                                index <- match(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]], grade.span) ## Select out proper years
+                                if (!sgp.config.drop.nonsequential.grade.progression.variables) index <- seq_along(index) ## Take most recent years
+                                par.sgp.config[[cnt]][["sgp.panel.years"]] <- tail(par.sgp.config[[cnt]][["sgp.panel.years"]], max(index))[index]
+                                par.sgp.config[[cnt]][["sgp.content.areas"]] <- tail(par.sgp.config[[cnt]][["sgp.content.areas"]], max(index))[index]
 
                                 if (sgp.percentiles.baseline) {
                                         mtx.names <- names(sgp_object@SGP[["Coefficient_Matrices"]][[paste(strsplit(a, "\\.")[[1]][1], ".BASELINE", sep="")]])
@@ -378,15 +383,9 @@ function(sgp_object,
 						doSNOW.cl=makeCluster(workers, type=parallel.config[["BACKEND"]][["SNOW_TYPE"]])
 						registerDoSNOW(doSNOW.cl)
 					}
-					if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doSMP") {
-						doSMP.workers <- startWorkers(workerCount=workers)
-						registerDoSMP(doSMP.workers)
-					}
-	
-#				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doSMP" | !is.null(sessionInfo()$otherPkgs$doSMP)) xports <- "sgp_object" else xports <- NULL
 	
 					tmp <- foreach(sgp.iter=iter(sgp.baseline.config), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE,
-						.options.multicore=foreach.options, .options.mpi= foreach.options, .options.redis= foreach.options, .options.smp= foreach.options) %dopar% {
+						.options.multicore=foreach.options, .options.mpi=foreach.options, .options.redis=foreach.options) %dopar% {
 						return(baselineSGP(
 							sgp_object,
 							state=state,
@@ -399,7 +398,6 @@ function(sgp_object,
 					if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doMPI")	closeCluster(doMPI.cl)
 					if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doRedis")	removeQueue('jobs')
 					if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doSNOW")	stopCluster(doSNOW.cl)
-					if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doSMP")	stopWorkers(doSMP.workers)
 				} # END FOREACH
 			
 				if (toupper(parallel.config[["BACKEND"]][["TYPE"]]) == "SNOW") {
@@ -500,17 +498,13 @@ function(sgp_object,
 					doSNOW.cl=makeCluster(workers, type=parallel.config[["BACKEND"]][["SNOW_TYPE"]])
 					registerDoSNOW(doSNOW.cl)
 				}
-				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doSMP") {
-					doSMP.workers <- startWorkers(workerCount=workers)
-					registerDoSMP(doSMP.workers)
-				}
 
 				if (simulate.sgps) {
 					if (!exists("calculate.confidence.intervals")) {
 						calculate.confidence.intervals <- state
 					}
 					tmp <- foreach(sgp.iter=iter(par.sgp.config), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE,
-						.options.multicore=foreach.options, .options.mpi= foreach.options, .options.redis= foreach.options, .options.smp= foreach.options) %dopar% {
+						.options.multicore=foreach.options, .options.mpi=foreach.options, .options.redis=foreach.options) %dopar% {
 						return(studentGrowthPercentiles(
 							panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
 								Knots_Boundaries= get.knots.boundaries(sgp.iter)),
@@ -522,11 +516,12 @@ function(sgp_object,
 							grade.progression=sgp.iter[["sgp.grade.sequences"]][[1]],
 							max.order.for.percentile=SGPstateData[[state]][["SGP_Configuration"]][["max.order.for.percentile"]],
 							drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
+							grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 							...))
 					}
 				} else {
 					tmp <- foreach(sgp.iter=iter(par.sgp.config), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE,
-						.options.multicore=foreach.options, .options.mpi= foreach.options, .options.redis= foreach.options, .options.smp= foreach.options) %dopar% {
+						.options.multicore=foreach.options, .options.mpi=foreach.options, .options.redis=foreach.options) %dopar% {
 						return(studentGrowthPercentiles(
 							panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
 								Knots_Boundaries=get.knots.boundaries(sgp.iter)),
@@ -537,6 +532,7 @@ function(sgp_object,
 							grade.progression=sgp.iter[["sgp.grade.sequences"]][[1]],
 							max.order.for.percentile=SGPstateData[[state]][["SGP_Configuration"]][["max.order.for.percentile"]],
 							drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
+							grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 							...))
 					}
 				}
@@ -545,7 +541,6 @@ function(sgp_object,
 				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doMPI")	closeCluster(doMPI.cl)
 				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doRedis")	removeQueue('jobs')
 				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doSNOW")	stopCluster(doSNOW.cl)
-				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doSMP")	stopWorkers(doSMP.workers)
 			} # END FOREACH
 			
 			###  SNOW flavor
@@ -572,6 +567,7 @@ function(sgp_object,
 						grade.progression=sgp.iter[["sgp.grade.sequences"]][[1]],
 						max.order.for.percentile=SGPstateData[[state]][["SGP_Configuration"]][["max.order.for.percentile"]],
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
+						grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 						...))
 				} else {
 					tmp <- parLapply(eval(parse(text=cluster.object)), par.sgp.config, 	function(sgp.iter)	studentGrowthPercentiles( 
@@ -584,6 +580,7 @@ function(sgp_object,
 						grade.progression=sgp.iter[["sgp.grade.sequences"]][[1]],
 						max.order.for.percentile=SGPstateData[[state]][["SGP_Configuration"]][["max.order.for.percentile"]],
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
+						grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 						...))
 				}
 				for (s in seq_along(tmp))	sgp_object@SGP <- .mergeSGP(sgp_object@SGP, tmp[[s]])
@@ -610,6 +607,7 @@ function(sgp_object,
 						grade.progression=sgp.iter[["sgp.grade.sequences"]][[1]],
 						max.order.for.percentile=SGPstateData[[state]][["SGP_Configuration"]][["max.order.for.percentile"]],
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
+						grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 						...), mc.cores=workers, mc.preschedule=FALSE)
 				} else {
 					tmp <- mclapply(par.sgp.config, function(sgp.iter)	studentGrowthPercentiles( 
@@ -622,6 +620,7 @@ function(sgp_object,
 						grade.progression=sgp.iter[["sgp.grade.sequences"]][[1]],
 						max.order.for.percentile=SGPstateData[[state]][["SGP_Configuration"]][["max.order.for.percentile"]],
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
+						grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 						...), mc.cores=workers, mc.preschedule=FALSE)
 				}
 				for (s in seq_along(tmp))	sgp_object@SGP <- .mergeSGP(sgp_object@SGP, tmp[[s]])
@@ -655,15 +654,9 @@ function(sgp_object,
 					doSNOW.cl=makeCluster(workers, type=parallel.config[["BACKEND"]][["SNOW_TYPE"]])
 					registerDoSNOW(doSNOW.cl)
 				}
-				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doSMP") {
-					doSMP.workers <- startWorkers(workerCount=workers)
-					registerDoSMP(doSMP.workers)
-				}
-
-#				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doSMP" | !is.null(sessionInfo()$otherPkgs$doSMP)) xports <- "sgp_object" else xports <- NULL
 				
 				tmp <- foreach(sgp.iter=iter(par.sgp.config), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE,
-					.options.multicore=foreach.options, .options.mpi= foreach.options, .options.redis= foreach.options, .options.smp= foreach.options) %dopar% {
+					.options.multicore=foreach.options, .options.mpi=foreach.options, .options.redis=foreach.options) %dopar% {
 					return(studentGrowthPercentiles(
 						panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
 							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
@@ -677,6 +670,7 @@ function(sgp_object,
 						num.prior=min(sgp.iter[["max.order"]], sgp.percentiles.baseline.max.order),
 						goodness.of.fit=TRUE,
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
+						grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 						...))
 				}
 				sgp_object@SGP <- .mergeSGP(sgp_object@SGP, tmp)
@@ -684,7 +678,6 @@ function(sgp_object,
 				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doMPI")	closeCluster(doMPI.cl)
 				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doRedis")	removeQueue('jobs')
 				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doSNOW")	stopCluster(doSNOW.cl)
-				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doSMP")	stopWorkers(doSMP.workers)
 			} # END FOREACH
 			
 			###  SNOW flavor
@@ -709,6 +702,7 @@ function(sgp_object,
 					num.prior=min(sgp.iter[["max.order"]], sgp.percentiles.baseline.max.order),
 					goodness.of.fit=TRUE,
 					drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
+					grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 					...))
 
 				for (s in seq_along(tmp))	sgp_object@SGP <- .mergeSGP(sgp_object@SGP, tmp[[s]])
@@ -733,6 +727,7 @@ function(sgp_object,
 					num.prior=min(sgp.iter[["max.order"]], sgp.percentiles.baseline.max.order),
 					goodness.of.fit=TRUE,
 					drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
+					grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 					...), mc.cores=workers, mc.preschedule=FALSE)
 
 #					sgp_object@SGP <- mclapply(tmp, .mergeSGP, sgp_object, mc.cores=workers, mc.preschedule=FALSE)
@@ -767,13 +762,9 @@ function(sgp_object,
 					doSNOW.cl=makeCluster(workers, type=parallel.config[["BACKEND"]][["SNOW_TYPE"]])
 					registerDoSNOW(doSNOW.cl)
 				}
-				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doSMP") {
-					doSMP.workers <- startWorkers(workerCount=workers)
-					registerDoSMP(doSMP.workers)
-				}
 
 				tmp <- foreach(sgp.iter=iter(par.sgp.config), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE,
-					.options.multicore=foreach.options, .options.mpi= foreach.options, .options.redis= foreach.options, .options.smp= foreach.options) %dopar% {
+					.options.multicore=foreach.options, .options.mpi=foreach.options, .options.redis=foreach.options) %dopar% {
 					return(studentGrowthProjections(
 						panel.data=list(Panel_Data=get.panel.data("sgp.projections", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
 							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
@@ -795,7 +786,6 @@ function(sgp_object,
 				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doMPI")	closeCluster(doMPI.cl)
 				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doRedis")	removeQueue('jobs')
 				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doSNOW")	stopCluster(doSNOW.cl)
-				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doSMP")	stopWorkers(doSMP.workers)
 			} # END FOREACH
 
 			###  SNOW flavor
@@ -879,13 +869,9 @@ function(sgp_object,
 					doSNOW.cl=makeCluster(workers, type=parallel.config[["BACKEND"]][["SNOW_TYPE"]])
 					registerDoSNOW(doSNOW.cl)
 				}
-				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doSMP") {
-					doSMP.workers <- startWorkers(workerCount=workers)
-					registerDoSMP(doSMP.workers)
-				}
 
 				tmp <- foreach(sgp.iter=iter(par.sgp.config), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE,
-					.options.multicore=foreach.options, .options.mpi= foreach.options, .options.redis= foreach.options, .options.smp= foreach.options) %dopar% {
+					.options.multicore=foreach.options, .options.mpi=foreach.options, .options.redis=foreach.options) %dopar% {
 					return(studentGrowthProjections(
 						panel.data=list(Panel_Data=get.panel.data("sgp.projections", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
 							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
@@ -908,7 +894,6 @@ function(sgp_object,
 				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doMPI")	closeCluster(doMPI.cl)
 				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doRedis")	removeQueue('jobs')
 				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doSNOW")	stopCluster(doSNOW.cl)
-				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doSMP")	stopWorkers(doSMP.workers)
 			} # END FOREACH
 
 			###  SNOW flavor
@@ -994,15 +979,11 @@ function(sgp_object,
 					doSNOW.cl=makeCluster(workers, type=parallel.config[["BACKEND"]][["SNOW_TYPE"]])
 					registerDoSNOW(doSNOW.cl)
 				}
-				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doSMP") {
-					doSMP.workers <- startWorkers(workerCount=workers)
-					registerDoSMP(doSMP.workers)
-				}
 
 				tmp <- foreach(sgp.iter=iter(par.sgp.config), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE,
-					.options.multicore=foreach.options, .options.mpi= foreach.options, .options.redis= foreach.options, .options.smp= foreach.options) %dopar% {
+					.options.multicore=foreach.options, .options.mpi=foreach.options, .options.redis=foreach.options) %dopar% {
 					return(studentGrowthProjections(
-						panel.data=list(Panel_Data=get.panel.data("sgp.projections.lagged", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
+						panel.data=list(get.panel.data("sgp.projections.lagged", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
 							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 
 							my.extra.label="LAGGED"),
@@ -1023,7 +1004,6 @@ function(sgp_object,
 				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doMPI")	closeCluster(doMPI.cl)
 				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doRedis")	removeQueue('jobs')
 				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doSNOW")	stopCluster(doSNOW.cl)
-				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doSMP")	stopWorkers(doSMP.workers)
 			} # END FOREACH
 
 			###  SNOW flavor
@@ -1109,13 +1089,9 @@ function(sgp_object,
 					doSNOW.cl=makeCluster(workers, type=parallel.config[["BACKEND"]][["SNOW_TYPE"]])
 					registerDoSNOW(doSNOW.cl)
 				}
-				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doSMP") {
-					doSMP.workers <- startWorkers(workerCount=workers)
-					registerDoSMP(doSMP.workers)
-				}
 
 				tmp <- foreach(sgp.iter=iter(par.sgp.config), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE,
-					.options.multicore=foreach.options, .options.mpi= foreach.options, .options.redis= foreach.options, .options.smp= foreach.options) %dopar% {
+					.options.multicore=foreach.options, .options.mpi=foreach.options, .options.redis=foreach.options) %dopar% {
 					return(studentGrowthProjections(
 						panel.data=list(Panel_Data=get.panel.data("sgp.projections.lagged", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
 							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
@@ -1138,7 +1114,6 @@ function(sgp_object,
 				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doMPI")	closeCluster(doMPI.cl)
 				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doRedis")	removeQueue('jobs')
 				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doSNOW")	stopCluster(doSNOW.cl)
-				if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doSMP")	stopWorkers(doSMP.workers)
 			} # END FOREACH
 
 			###  SNOW flavor
@@ -1209,7 +1184,7 @@ function(sgp_object,
 
 	if (is.null(parallel.config)) {
 
-		tmp_sgp_object <- list(Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]], Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]])
+		tmp_sgp_object <- list(Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]], Knots_Boundaries=get.knots.boundaries(sgp.iter))
 
 		setkey(sgp_object@Data, VALID_CASE, CONTENT_AREA, YEAR, GRADE)
 		par.sgp.config <- get.par.sgp.config(sgp.config)		
@@ -1235,10 +1210,11 @@ function(sgp_object,
 						max.order.for.percentile=SGPstateData[[state]][["SGP_Configuration"]][["max.order.for.percentile"]],
 						calculate.confidence.intervals=calculate.confidence.intervals,
 						drop.nonsequential.grade.progression.variables=FALSE,
+						grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 						...)
 				} else {
 					tmp_sgp_object <- studentGrowthPercentiles(
-						panel.data= panel.data,
+						panel.data=panel.data,
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						growth.levels=state,
@@ -1246,6 +1222,7 @@ function(sgp_object,
 						grade.progression=sgp.iter[["sgp.grade.sequences"]][[1]],
 						max.order.for.percentile=SGPstateData[[state]][["SGP_Configuration"]][["max.order.for.percentile"]],
 						drop.nonsequential.grade.progression.variables=FALSE,
+						grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 						...)
 				}
 			}
@@ -1258,7 +1235,7 @@ function(sgp_object,
 			for (sgp.iter in par.sgp.config) {
 				
 				tmp_sgp_object <- studentGrowthPercentiles(
-					panel.data=within(tmp_sgp_object, assign("Panel_Data", get.panel.data("sgp.percentiles", sgp.iter))),
+					panel.data=panel.data,
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), 
 						my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), my.extra.label="BASELINE"),
 					use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
@@ -1269,6 +1246,7 @@ function(sgp_object,
 					num.prior=min(sgp.iter[["max.order"]], sgp.percentiles.baseline.max.order),
 					goodness.of.fit=TRUE,
 					drop.nonsequential.grade.progression.variables=FALSE,
+					grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 					...)
 			}
 		} ## END if sgp.percentiles.baseline
@@ -1280,7 +1258,7 @@ function(sgp_object,
 			for (sgp.iter in par.sgp.config) {
 	
 				tmp_sgp_object <- studentGrowthProjections(
-					panel.data=within(tmp_sgp_object, assign("Panel_Data", get.panel.data("sgp.projections", sgp.iter))),
+					panel.data=panel.data,
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 					use.my.coefficient.matrices=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
 					use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
@@ -1303,7 +1281,7 @@ function(sgp_object,
 			for (sgp.iter in par.sgp.config) {
 
 				tmp_sgp_object <- studentGrowthProjections(
-					panel.data=within(tmp_sgp_object, assign("Panel_Data", get.panel.data("sgp.projections", sgp.iter))),
+					panel.data=panel.data,
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1),
 						my.extra.label="BASELINE"),
 					use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
@@ -1327,7 +1305,7 @@ function(sgp_object,
 			for (sgp.iter in par.sgp.config) {
 
 				tmp_sgp_object <- studentGrowthProjections(
-					panel.data=within(tmp_sgp_object, assign("Panel_Data", get.panel.data("sgp.projections.lagged", sgp.iter))),
+					panel.data=panel.data,
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 
 						my.extra.label="LAGGED"),
 					use.my.coefficient.matrices=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
@@ -1351,7 +1329,7 @@ function(sgp_object,
 			for (sgp.iter in par.sgp.config) {
 
 				tmp_sgp_object <- studentGrowthProjections(
-					panel.data=within(tmp_sgp_object, assign("Panel_Data", get.panel.data("sgp.projections.lagged", sgp.iter))),
+					panel.data=panel.data,
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 
 						my.extra.label="LAGGED.BASELINE"),
 					use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
