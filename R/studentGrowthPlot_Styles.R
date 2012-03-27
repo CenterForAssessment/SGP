@@ -297,7 +297,7 @@
                                   SGP_Levels=as.character(unlist(subset(tmp_student_data, select=paste(my.sgp.level, rev(sgPlot.years), sep=".")))),
                                   Grades=as.numeric(subset(tmp_student_data, select=paste("GRADE", rev(sgPlot.years), sep="."))),
                                   Cuts_NY1=as.numeric(subset(tmp_student_data, select=grep("PROJ", names(tmp_student_data)))),
-                                  Cutscores=Cutscores[[content_areas[vp]]],
+                                  Cutscores=Cutscores[[as.character(content_areas[vp])]],
                                   Report_Parameters=list(Current_Year=last.year, Content_Area=as.character(content_areas[vp]), State=state))
 
 		popViewport()
