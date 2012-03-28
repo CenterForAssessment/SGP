@@ -390,8 +390,8 @@ function(sgp_object,
 				names(sgp_object@Summary[[i]]) <- gsub(", ", "__", sgp.groups)
 			}
 		} # END FOREACH flavor
+
 		if(par.type=="SNOW") {
-#		stop("Now here")
 			if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
 	  			j <- k <- NULL ## To prevent R CMD check warnings
 	  			summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], sgp.groups[x] %in% ci.groups))
@@ -404,6 +404,7 @@ function(sgp_object,
 				names(sgp_object@Summary[[i]]) <- gsub(", ", "__", sgp.groups)
 			}
 		} # END 'SNOW' Flavor 
+
 		if(par.type=="MULTICORE") {
 			if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
 	  			j <- k <- NULL ## To prevent R CMD check warnings
@@ -417,7 +418,7 @@ function(sgp_object,
 				names(sgp_object@Summary[[i]]) <- gsub(", ", "__", sgp.groups)
 			}
 		} # END 'MULTICORE' Flavor
-    } ## END summary.groups$institution summary loop
+	} ## END summary.groups$institution summary loop
 
 	#  close parallel clusters, queue's etc. if applicable
 	if (exists("doMPI.cl")) stopCluster(doMPI.cl)
