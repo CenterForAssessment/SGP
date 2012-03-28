@@ -116,7 +116,7 @@ Demonstration_SGP <- analyzeSGP(Demonstration_SGP, state="DEMO")
 
 my.custom.config <- list(
 MATHEMATICS.2010_2011 = list(
-	sgp.content.areas=rep("MATHEMATICS", 3), # Note, this needs to be the same length as sgp.panel.years
+	sgp.content.areas=rep("MATHEMATICS", 3), # Note, must be same length as sgp.panel.years
 	sgp.panel.years=c('2008_2009', '2009_2010', '2010_2011'),
 	sgp.grade.sequences=list(3:4, 3:5, 4:6)),
 READING.2010_2011 = list(
@@ -132,10 +132,10 @@ Demonstration_SGP <- analyzeSGP(Demonstration_SGP,
 	sgp.projections.lagged.baseline = FALSE,
 	simulate.sgps=FALSE)
 
+
 ##  Another example sgp.config list:
 
 #  Use different CONTENT_AREA priors, and only 1 year of prior data
-
 my.custom.config <- list(
 MATHEMATICS.2010_2011.READ_PRIOR = list(
 	sgp.content.areas=c("READING", "MATHEMATICS"),
@@ -146,13 +146,6 @@ READING.2010_2011.MATH_PRIOR = list(
 	sgp.panel.years=c('2009_2010', '2010_2011'),
 	sgp.grade.sequences=list(3:4, 4:5, 5:6)))
 
-Demonstration_SGP <- prepareSGP(sgpData_LONG)
-Demonstration_SGP <- analyzeSGP(Demonstration_SGP,
-	sgp.config=my.custom.config,
-	sgp.percentiles.baseline = FALSE,
-	sgp.projections.baseline = FALSE,
-	sgp.projections.lagged.baseline = FALSE,
-	simulate.sgps=FALSE)
 
 ###
 ###  Example uses of the parallel.config argument
@@ -186,7 +179,7 @@ Demonstration_SGP <- analyzeSGP(Demonstration_SGP,
 	...
 	parallel.config=list(
 		BACKEND=list(TYPE="MULTICORE"),
-		ANALYSES=list(SUMMARY_WORKERS=4))
+		ANALYSES=list(WORKERS=4))
 	...
 
 ## FOREACH use cases:

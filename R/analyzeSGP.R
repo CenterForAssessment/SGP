@@ -325,7 +325,8 @@ function(sgp_object,
 
 
 	### Create parallel.config (if NULL)
-		
+
+	par.type <- NULL	
 	if (!is.null(parallel.config)) {
 		if (toupper(parallel.config[["BACKEND"]][["TYPE"]]) == "FOREACH") {
 			require(foreach)
