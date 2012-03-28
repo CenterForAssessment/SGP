@@ -70,9 +70,9 @@ All group slots MUST be included in the list, although \code{NULL} can be provid
 }
 For \code{CSEM} analysis this argument requires that simulated SGPs have been produced (see \code{\link{analyzeSGP}} for more information). List slots set to \code{NULL} will not produce confidence intervals. NOTE: This is currently an experimental functionality and is very memory intensive. Groups to be included should be identified selectively! The default 95\% confidence intervals are provided in the selected summary tables as two additional columns named \code{LOWER_MEDIAN_SGP_95_CONF_BOUND} and \code{UPPER_MEDIAN_SGP_95_CONF_BOUND}. Specification of \code{confidence.interval.groups} can be tested prior to use of \code{summarizeSGP} with the \code{\link{viewSummaryGroups}} function.
   }
-\item{parallel.config}{A named, nested list with, at a minimum, two elements indicating 1) the BACKEND list giving the package to be used for parallel computation and 2) the ANALYSES list to specify the number of workers to be used in each major analysis.  The BACKEND list should contain at a minimum the element TYPE= one of \code{FOREACH}, \code{SNOW}, \code{MULTICORE}, or \code{PARALLEL}.  Please consult the manuals and vignettes for information of these packages!
+\item{parallel.config}{A named, nested list with, at a minimum, two elements indicating 1) the BACKEND list giving the package to be used for parallel computation and 2) the ANALYSES list to specify the number of workers to be used in each major analysis.  The BACKEND list should contain at a minimum the element TYPE= one of \code{FOREACH}, \code{SNOW}, \code{MULTICORE}, or \code{PARALLEL}.  Please consult the manuals and vignettes for information on these packages!
 
-If BACKEND\$TYPE="FOREACH", the \code{foreach} package will be used, and the FOREACH_TYPE element will need to be included in the list to specify the users preferred backend.  FOREACH_TYPE must be either "doMC", "doMPI", "doSNOW", "doRedis" or "doParallel".   If BACKEND\$TYPE="SNOW", the \code{snow} package will be used, and the SNOW_TYPE element will need to be included in the list to specify the users preferred cluster type (either "SOCK" for socket cluster of "MPI" for an OpenMPI cluster).  The function will create a cluster object based on these parameters and the number of workers requested (see ANALYSES list description below).  Alternatively, the name of an external CLUSTER.OBJECT set up by the user outside of the function can be used.   If BACKEND\$TYPE="PARALLEL", the \code{parallel} package will be used, and the PARALLEL_TYPE element will need to be included in the list to specify the users preferred backend.  If Windows is the operating system, this element must = "SNOW".  Otherwise "MULTICORE" is preferred to avoid prescheduling analyses. Defaults are assigned based on operating system if PARALLEL_TYPE is missing based on system OS.  If "SNOW" is uses here, the SNOW_TYPE element must also be specified as detailed above.
+If BACKEND $ TYPE="FOREACH", the \code{foreach} package will be used, and the FOREACH_TYPE element will need to be included in the list to specify the users preferred backend.  FOREACH_TYPE must be either "doMC", "doMPI", "doSNOW", "doRedis" or "doParallel".   If BACKEND $ TYPE="SNOW", the \code{snow} package will be used, and the SNOW_TYPE element will need to be included in the list to specify the users preferred cluster type (either "SOCK" for socket cluster of "MPI" for an OpenMPI cluster).  The function will create a cluster object based on these parameters and the number of workers requested (see ANALYSES list description below).  Alternatively, the name of an external CLUSTER.OBJECT set up by the user outside of the function can be used.   If BACKEND $ TYPE="PARALLEL", the \code{parallel} package will be used, and the PARALLEL_TYPE element will need to be included in the list to specify the users preferred backend.  If Windows is the operating system, this element must = "SNOW".  Otherwise "MULTICORE" is preferred to avoid prescheduling analyses. Defaults are assigned based on operating system if PARALLEL_TYPE is missing based on system OS.  If "SNOW" is uses here, the SNOW_TYPE element must also be specified as detailed above.
 
 The ANALYSES list must contain the WORKERS or SUMMARY_WORKERS element to specify the number of processors (nodes) desired or available.  For example, SUMMARY_WORKERS=2 may be used on a dual core machine to use both cores available. (NOTE: choice of the number of cores is a balance between the number of processors available and the amount of RAM a system has; each system will be different and may require some adjustment).
 
@@ -112,7 +112,8 @@ Demonstration_SGP <- summarizeSGP(Demonstration_SGP,
 #  This example is would be good for a single workstation with 8 cores.
 	. . .
 	parallel.config=list(
-		BACKEND=list(TYPE="PARALLEL", SNOW_TYPE="SOCK"),
+		BACKEND=list(TYPE="PARALLEL", 
+		    PARALLEL_TYPE="SNOW", SNOW_TYPE="SOCK"),
 		ANALYSES=list(SUMMARY_WORKERS=2))
 	. . .
 
@@ -126,7 +127,7 @@ Demonstration_SGP <- summarizeSGP(Demonstration_SGP,
 
 #  New doParallel package - only available with R 2.13 or newer
 #  Note the number of workers is 100, and MPI is used, 
-#  suggesting this example is for a HPC cluster usage.
+#  suggesting this example for usage with a HPC cluster.
 	. . .
 	parallel.config=list(
 		BACKEND=list(TYPE="FOREACH", FOREACH_TYPE="doParallel", 
