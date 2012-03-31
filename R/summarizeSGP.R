@@ -6,7 +6,7 @@ function(sgp_object,
          sgp.summaries=NULL,
          summary.groups=NULL,
          confidence.interval.groups=NULL,
-         parallel.config=NULL) {
+         parallel.config=list(BACKEND="FOREACH", TYPE=NA, WORKERS=list(SUMMARY=1))) {
 
 	started.at <- proc.time()
 	message(paste("\nStarted summarizeSGP", date()))
@@ -275,7 +275,7 @@ function(sgp_object,
 				group.format(confidence.interval.groups[["GROUPS"]][["growth_only_summary"]][[i]])), sep=""))
 		}
 
-		if(toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
+		if(par.start$par.type=="FOREACH") {
 			if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
 	  			j <- k <- NULL ## To prevent R CMD check warnings
 	  			sgp_object@Summary[[i]] <- foreach(j=iter(sgp.groups), k=iter(sgp.groups %in% ci.groups), 
@@ -322,9 +322,9 @@ function(sgp_object,
 		} # END 'MULTICORE' Flavor
     } ## END summary.groups$institution summary loop
 
-	## NULL out BY_GROWTH_ONLY
-	if (is.null(parallel.config[["CLUSTER.OBJECT"]])) stopCluster(par.start$internal.cl)
+	stopParallel(parallel.config, par.start)
 
+	## NULL out BY_GROWTH_ONLY
 	if (any(!sapply(summary.groups[["growth_only_summary"]], is.null))) {
 		sgp_object@Data[["BY_GROWTH_ONLY"]] <- NULL
 	}

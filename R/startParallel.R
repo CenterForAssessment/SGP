@@ -21,7 +21,7 @@ function(
 				 message(paste(process, "workers not specified.", names(parallel.config[['WORKERS']][tmp.indx]), "WORKERS will be used."))
 			 }
 		} # See if still NULL and stop:
-		if (is.null(parallel.config[['WORKERS']][[process]])) stop(paste(process, "workers must be specified.  Try again dipshit."))
+		if (is.null(parallel.config[['WORKERS']][[process]])) stop(paste(process, "workers must be specified."))
 	}
 
 	
@@ -29,7 +29,9 @@ function(
 	
 	if (toupper(parallel.config[['BACKEND']]) == 'FOREACH') {
 		require(foreach)
-		eval(parse(text=paste("require(", parallel.config[['TYPE']], ")")))
+		if (!is.na(parallel.config[['TYPE']])) {
+			eval(parse(text=paste("require(", parallel.config[['TYPE']], ")")))
+		}
 
 		if (parallel.config[['TYPE']]=="doMC" & is.null(parallel.config[['OPTIONS']][["preschedule"]])) {
 			if (is.list(parallel.config[['OPTIONS']])) {
@@ -90,32 +92,36 @@ function(
 		or getOption('cores') must be specified to use MULTICORE parallel processing.")
 	
 	if (toupper(parallel.config[['BACKEND']]) == 'FOREACH') {
-		if (parallel.config[['TYPE']]=="doMC") return(registerDoMC(workers))
+		par.type='FOREACH'
+		if (is.na(parallel.config[['TYPE']])) return(list(foreach.options=foreach.options, par.type=par.type))
+		if (parallel.config[['TYPE']]=="doMC") {
+			registerDoMC(workers)
+			return(list(foreach.options=foreach.options, par.type=par.type))
 		if (parallel.config[['TYPE']]=='doMPI') {
 			doPar.cl <- startMPIcluster(count=workers)
 			registerDoMPI(doPar.cl)
-			return(list(doPar.cl=doPar.cl, foreach.options=foreach.options))
+			return(list(doPar.cl=doPar.cl, foreach.options=foreach.options, par.type=par.type))
 		}
 		if (parallel.config[['TYPE']]=='doRedis') {
 			redisWorker('jobs', port=10187) #  Doesn't seem to work.  Maybe get rid of this option/flavor?
 			registerDoRedis('jobs')
 			startLocalWorkers(n=workers, queue='jobs')
-			return(list(jobs='jobs', foreach.options=foreach.options))
+			return(list(jobs='jobs', foreach.options=foreach.options, par.type=par.type))
 		}
 		if (parallel.config[['TYPE']]=='doSNOW') {
 			doPar.cl=makeCluster(workers, type='SOCK')
 			registerDoSNOW(doPar.cl)
-			return(list(doPar.cl=doPar.cl, foreach.options=foreach.options))
+			return(list(doPar.cl=doPar.cl, foreach.options=foreach.options, par.type=par.type))
 		}
 		if (parallel.config[['TYPE']]=="doParallel") {
 			if (par.type == 'SNOW') {
 				doPar.cl <- makeCluster(workers, type='SOCK')
 				registerDoParallel(doPar.cl)
 				clusterEvalQ(doPar.cl, library(SGP))
-				return(list(doPar.cl=doPar.cl, foreach.options=foreach.options))
+				return(list(doPar.cl=doPar.cl, foreach.options=foreach.options, par.type=par.type))
 			} else {
 				registerDoParallel(workers)
-				return(list(foreach.options=foreach.options))
+				return(list(foreach.options=foreach.options, par.type=par.type))
 			}
 		}
 	} # END if (FOREACH)
