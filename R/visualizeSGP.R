@@ -799,5 +799,5 @@ if (sgPlot.produce.plots) {
 } ## END if ("studentGrowthPlot" %in% plot.types) 
 
 	message(paste("Finished visualizeSGP", date(), "in", timetaken(started.at), "\n"))
-
-} ## END visualizeSGP Function
+## END visualizeSGP Function
+}
