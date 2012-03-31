@@ -777,6 +777,7 @@ if (sgPlot.produce.plots) {
 					sgPlot.cleanup=sgPlot.cleanup,
 					sgPlot.baseline=sgPlot.baseline)), mc.cores=par.start$workers, mc.preschedule=FALSE)
 		} ### END if MULTICORE
+		
 		stopParallel(parallel.config, par.start)
 	} # END else Parallel Processing
 } ## END if (sgPlot.produce.plots) 
