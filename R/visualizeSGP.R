@@ -32,6 +32,7 @@ function(sgp_object,
 		sgPlot.cleanup=TRUE,
 		sgPlot.demo.report=FALSE,
 		sgPlot.produce.plots=TRUE,
+		sgPlot.parallel.config=list(TYPE="FOREACH", OPTIONS=list(preschedule=FALSE, set.seed=FALSE)),
 		sgPlot.baseline=NULL,
 		gaPlot.years=NULL,
 		gaPlot.content_areas=NULL, 
@@ -40,7 +41,7 @@ function(sgp_object,
 		gaPlot.baseline=NULL,
 		gaPlot.max.order.for.progression=NULL,
 		gaPlot.folder="Visualizations/growthAchievementPlots",
-		parallel.config=list(BACKEND="FOREACH", TYPE=NA, WORKERS=list(GA_PLOTS=1, SG_PLOTS=1))) {
+		gaPlot.parallel.config=list(TYPE="FOREACH", OPTIONS=list(preschedule=FALSE, set.seed=FALSE))) {
 
 	started.at <- proc.time()
 	message(paste("\nStarted visualizeSGP", date(), "\n"))
@@ -194,12 +195,16 @@ function(sgp_object,
 			if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort and Baseline Referenced") gaPlot.baseline <- FALSE
 		}
 
-		par.start <- startParallel(parallel.config, 'GA_PLOTS')
-		
-		if (par.start$par.type=="FOREACH") {
+		if (toupper(gaPlot.parallel.config[["TYPE"]]) == "FOREACH") {
 
+			if (!is.null(getOption("cores"))) {
+				require(doMC)
+				registerDoMC()
+			}
+
+			foreach.options <- gaPlot.parallel.config[["OPTIONS"]] # works fine if NULL
 			foreach(gaPlot.iter=iter(get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students)), .packages="SGP", .inorder=FALSE,
-				.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
+				.options.multicore=foreach.options, .options.mpi=foreach.options, .options.redis=foreach.options) %dopar% {
 					growthAchievementPlot(
 						gaPlot.sgp_object=sgp_object,
 						gaPlot.students=gaPlot.iter[["ID"]],
@@ -213,40 +218,6 @@ function(sgp_object,
 
 			} ## END dopar 
 		} ## END FOREACH
-		
-		if (par.start$par.type=="SNOW") {
-			
-			gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students)
-			
-			parLapply(par.start$internal.cl, gaPlot.list, function(gaPlot.iter)
-				growthAchievementPlot(
-						gaPlot.sgp_object=sgp_object,
-						gaPlot.students=gaPlot.iter[["ID"]],
-						gaPlot.max.order.for.progression=get.max.order.for.progression(gaPlot.iter[["YEAR"]], gaPlot.iter[["CONTENT_AREA"]]),
-						state=state,
-						content_area=gaPlot.iter[["CONTENT_AREA"]],
-						year=gaPlot.iter[["YEAR"]], 
-						format=gaPlot.format,
-						baseline=gaPlot.baseline,
-						pdf.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]])))
-		}
-		
-		if (par.start$par.type=="MULTICORE") {
-			gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students)
-			mclapply(gaPlot.list, function(gaPlot.iter) 
-				growthAchievementPlot(
-						gaPlot.sgp_object=sgp_object,
-						gaPlot.students=gaPlot.iter[["ID"]],
-						gaPlot.max.order.for.progression=get.max.order.for.progression(gaPlot.iter[["YEAR"]], gaPlot.iter[["CONTENT_AREA"]]),
-						state=state,
-						content_area=gaPlot.iter[["CONTENT_AREA"]],
-						year=gaPlot.iter[["YEAR"]], 
-						format=gaPlot.format,
-						baseline=gaPlot.baseline,
-						pdf.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]])), mc.cores=par.start$workers, mc.preschedule=FALSE)
-		}
-		
-		stopParallel(parallel.config, par.start)
 
 		message(paste("Finished growthAchievementPlot in visualizeSGP", date(), "in", timetaken(started.at), "\n"))
 	} ## END if (growthAchievementPlot %in% plot.types)
@@ -712,14 +683,19 @@ if (sgPlot.produce.plots) {
 			sgPlot.baseline=sgPlot.baseline)
 
 	} else { ### Parallel Processing
-		
-		par.start <- startParallel(parallel.config, 'SG_PLOTS')
 
-		if (par.start$par.type=="FOREACH") {
+		### FOREACH flavor
+
+		if (toupper(sgPlot.parallel.config[["TYPE"]]) == "FOREACH") {
+
+			if (!is.null(getOption("cores"))) {
+				require(doMC)
+				registerDoMC()
+			}
 
 			foreach.options <- sgPlot.parallel.config[["OPTIONS"]] # works fine if NULL
 			foreach(sgPlot.iter=iter(get.sgPlot.iter(tmp.districts.and.schools)), .packages="SGP", .inorder=FALSE,
-				.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
+				.options.multicore=foreach.options, .options.mpi=foreach.options, .options.redis=foreach.options) %dopar% {
 						invisible(studentGrowthPlot_Styles(
 							sgPlot.data=sgPlot.data,
 							state=state,
@@ -740,58 +716,7 @@ if (sgPlot.produce.plots) {
 							sgPlot.baseline=sgPlot.baseline))
 			} ### END dopar
 		} ### END if FOREACH
-		
-		if (par.start$par.type=="SNOW") {
-			
-			sgPlot.list <- get.sgPlot.iter(tmp.districts.and.schools)
-			parLapply(par.start$internal.cl, sgPlot.list, function(sgPlot.iter) 
-				invisible(studentGrowthPlot_Styles(
-					sgPlot.data=sgPlot.data,
-					state=state,
-					last.year=tmp.last.year,
-					content_areas=tmp.content_areas,
-					districts=sgPlot.iter[["DISTRICT_NUMBER"]],
-					schools=sgPlot.iter[["SCHOOL_NUMBER"]],
-					reports.by.student=sgPlot.reports.by.student,
-					sgPlot.years=tmp.years,
-					sgPlot.folder=sgPlot.folder,
-					sgPlot.folder.names=sgPlot.folder.names,
-					sgPlot.demo.report=sgPlot.demo.report,
-					sgPlot.anonymize=sgPlot.anonymize,
-					sgPlot.front.page=sgPlot.front.page,
-					sgPlot.header.footer.color=sgPlot.header.footer.color,
-					sgPlot.fan=sgPlot.fan,
-					sgPlot.cleanup=sgPlot.cleanup,
-					sgPlot.baseline=sgPlot.baseline)))
-		} ### END if SNOW
-		
-		if (par.start$par.type=="MULTICORE") {
-			
-			sgPlot.list <- get.sgPlot.iter(tmp.districts.and.schools)
-			mclapply(sgPlot.list, function(sgPlot.iter) 
-				invisible(studentGrowthPlot_Styles(
-					sgPlot.data=sgPlot.data,
-					state=state,
-					last.year=tmp.last.year,
-					content_areas=tmp.content_areas,
-					districts=sgPlot.iter[["DISTRICT_NUMBER"]],
-					schools=sgPlot.iter[["SCHOOL_NUMBER"]],
-					reports.by.student=sgPlot.reports.by.student,
-					sgPlot.years=tmp.years,
-					sgPlot.folder=sgPlot.folder,
-					sgPlot.folder.names=sgPlot.folder.names,
-					sgPlot.demo.report=sgPlot.demo.report,
-					sgPlot.anonymize=sgPlot.anonymize,
-					sgPlot.front.page=sgPlot.front.page,
-					sgPlot.header.footer.color=sgPlot.header.footer.color,
-					sgPlot.fan=sgPlot.fan,
-					sgPlot.cleanup=sgPlot.cleanup,
-					sgPlot.baseline=sgPlot.baseline)), mc.cores=par.start$workers, mc.preschedule=FALSE)
-		}  ### END if MULTICORE
-		
-		stopParallel(parallel.config, par.start)
-		
-	} # END else Parallel Processing
+	} 
 } ## END if (sgPlot.produce.plots) 
 
 	message(paste("Finished studentGrowthPlot in visualizeSGP", date(), "in", timetaken(started.at), "\n"))
@@ -800,4 +725,4 @@ if (sgPlot.produce.plots) {
 
 	message(paste("Finished visualizeSGP", date(), "in", timetaken(started.at), "\n"))
 
-}
+} ## END visualizeSGP Function
