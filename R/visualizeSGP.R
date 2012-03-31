@@ -689,7 +689,7 @@ if (sgPlot.save.sgPlot.data) {
 
 if (sgPlot.produce.plots) {
 
-	if (is.null(sgPlot.parallel.config) | sgPlot.demo.report) { ### NO Parallel Processing
+	if (is.null(parallel.config) | sgPlot.demo.report) { ### NO Parallel Processing
 
 		studentGrowthPlot_Styles(
 			sgPlot.data=sgPlot.data,
@@ -716,7 +716,7 @@ if (sgPlot.produce.plots) {
 
 		if (par.start$par.type=="FOREACH") {
 
-			foreach.options <- sgPlot.parallel.config[["OPTIONS"]] # works fine if NULL
+			foreach.options <- parallel.config[["OPTIONS"]] # works fine if NULL
 			foreach(sgPlot.iter=iter(get.sgPlot.iter(tmp.districts.and.schools)), .packages="SGP", .inorder=FALSE,
 				.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
 						invisible(studentGrowthPlot_Styles(
