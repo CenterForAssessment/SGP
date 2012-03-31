@@ -728,8 +728,8 @@ function(sgp_object,
 				} # End MULTICORE
 			} # END parallel flavors
 		#closeCluster(par.start$doPar.cl)
-		if (is.null(parallel.config[["CLUSTER.OBJECT"]])) stopCluster(par.start$internal.cl)
-#		stopParallel(parallel.config, par.start)
+#		if (is.null(parallel.config[["CLUSTER.OBJECT"]])) stopCluster(par.start$internal.cl)
+		stopParallel(parallel.config, par.start)
 		suppressMessages(gc()) # clean up
 		} ## END if sgp.projections
 
