@@ -118,7 +118,8 @@ function(sgp_object,
 			content_areas=content_areas, 
 			sgp.summaries=sgp.summaries, 
 			summary.groups=summary.groups, 
-			confidence.interval.groups=confidence.interval.groups)
+			confidence.interval.groups=confidence.interval.groups,
+			parallel.config=parallel.config)
 
                 if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
 	}
@@ -137,7 +138,8 @@ function(sgp_object,
 			sgPlot.demo.report=sgPlot.demo.report,
 			gaPlot.years=years,
 			bPlot.content_areas=content_areas,
-			gaPlot.content_areas=content_areas)
+			gaPlot.content_areas=content_areas,
+			parallel.config=parallel.config)
 	}
 
         message(paste("Finished abcSGP", date(), "in", timetaken(started.at), "\n"))
