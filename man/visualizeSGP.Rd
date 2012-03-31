@@ -43,7 +43,6 @@ visualizeSGP(
            sgPlot.cleanup=TRUE,
            sgPlot.demo.report=FALSE,
            sgPlot.produce.plots=TRUE,
-           sgPlot.parallel.config=list(TYPE="FOREACH", OPTIONS=list(preschedule = FALSE, set.seed = FALSE)),
            sgPlot.baseline=NULL,
            gaPlot.years=NULL,
            gaPlot.content_areas=NULL,
@@ -52,7 +51,7 @@ visualizeSGP(
            gaPlot.baseline=NULL,
            gaPlot.max.order.for.progression=NULL,
            gaPlot.folder="Visualizations/growthAchievementPlots",
-           gaPlot.parallel.config=list(TYPE="FOREACH", OPTIONS=list(preschedule=FALSE, set.seed=FALSE)))
+           parallel.config=list(BACKEND="FOREACH", TYPE=NA, WORKERS=list(GA_PLOTS=1, SG_PLOTS=1)))
 }
 
 \arguments{
@@ -150,9 +149,6 @@ visualizeSGP(
   \item{sgPlot.produce.plots}{A boolean argument (defaults to TRUE) indicating whether to produce \code{\link{studentGrowthPlot}}s. Useful when one just wants to produce
   wide formatted data without the actual student growth plots. 
   }
-  \item{sgPlot.parallel.config}{A list indicating the \code{TYPE} of back end used for the parallel computation and \code{OPTIONS} that apply to that parallel back end. 
-  Default is to use \code{FOREACH} for the back end with \code{OPTIONS=list(preschedule=FALSE)}
-  }
   \item{sgPlot.baseline}{Argument (defaults to NULL) indicating whether to use baseline referenced SGPs for student growth plot construction.  If not set by user, 
   argument will be set using \code{SGPstateData} which contains information on whether state is a cohort or baseline referenced system.
   }
@@ -175,8 +171,13 @@ visualizeSGP(
   with the coefficient matrices.}
   \item{gaPlot.folder}{Character vector indicating where \code{\link{growthAchievementPlot}}s should be placed. Default folder is "Visualizations/growthAchievementPlots".  
   }
-  \item{gaPlot.parallel.config}{A list indicating the \code{TYPE} of back end used for the parallel computation and \code{OPTIONS} that apply to that parallel back end. 
-  Default is to use \code{FOREACH} for the back end with \code{OPTIONS=list(preschedule=FALSE)}
+  \item{parallel.config}{A named list with, at a minimum, two elements indicating 1) the BACKEND package to be used for parallel computation and 2) the WORKERS list to specify the number of processors to be used to produce vizualizations.  The BACKEND element can be set = to \code{FOREACH}, \code{SNOW}, \code{MULTICORE}, or \code{PARALLEL}.  Please consult the manuals and vignettes for information of these packages!
+
+TYPE is a third element of the \code{parallel.config} list that provides necessary information when using FOREACH, SNOW or PARALLEL packages as the backend. With BACKEND="FOREACH", the TYPE element specifies the "doMC", "doMPI", "doSNOW", "doRedis" or "doParallel" flavor of foreach backends. If TYPE=NA (default), the visualizations will be produced sequentially.  If BACKEND = "SNOW", the TYPE element specifies the cluster type (either "SOCK" for socket cluster of "MPI" for an OpenMPI cluster).  The function will create a cluster object based on these parameters and the number of workers requested (see WORKERS list description below).  Alternatively, the name of an external CLUSTER.OBJECT set up by the user outside of the function can be used.   If BACKEND = "PARALLEL", the \code{parallel} package will be used, and the TYPE element specifies the SNOW type cluster to be used.  If Windows is the operating system, this element must = "SOCK".
+
+The WORKERS element is a list with GA_PLOTS (growth achievement plots) and SG_PLOTS (student growth plots) specifying the number of processors to be used.  NOTE: choice of the number of cores is a balance between the number of processors available and the amount of RAM a system has; each system will be different and may require some adjustment.
+
+Default is FOREACH as the back end, TYPE=NA and both plot WORKERS =1, which produces plots sequentially.  Examples of various parallel configurations can be found in the examples for  \code{\link{analyzeSGP}} and  \code{\link{summarizeSGP}}.
   }
 }
 
@@ -194,7 +195,7 @@ Betebenner, D. W. (2009). Norm- and criterion-referenced student growth.
 Educational Measurement: Issues and Practice, 28(4):42-51.
 }
 
-\author{Damian W. Betebenner \email{dbetebenner@nciea.org} and Adam Van Iwaarden \email{Vaniwaarden@colorado.edu}}
+\author{Damian W. Betebenner \email{dbetebenner@nciea.org} and Adam VanIwaarden \email{vaniwaarden@colorado.edu}}
 
 \seealso{\code{\link{bubblePlot}}, \code{\link{bubblePlot_Styles}}, \code{\link{studentGrowthPlot}}, \code{\link{growthAchievementPlot}}}
 
