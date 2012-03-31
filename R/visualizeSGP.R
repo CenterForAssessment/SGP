@@ -745,7 +745,7 @@ if (sgPlot.produce.plots) {
 			
 			sgPlot.list <- get.sgPlot.iter(tmp.districts.and.schools)
 			parLapply(par.start$internal.cl, sgPlot.list, 
-			function(sgPlot.iter) invisible(studentGrowthPlot_Styles(
+				function(sgPlot.iter) invisible(studentGrowthPlot_Styles(
 					sgPlot.data=sgPlot.data,
 					state=state,
 					last.year=tmp.last.year,
@@ -769,7 +769,7 @@ if (sgPlot.produce.plots) {
 			
 			sgPlot.list <- get.sgPlot.iter(tmp.districts.and.schools)
 			mclapply(sgPlot.list, 
-			function(sgPlot.iter) invisible(studentGrowthPlot_Styles(
+				function(sgPlot.iter) invisible(studentGrowthPlot_Styles(
 					sgPlot.data=sgPlot.data,
 					state=state,
 					last.year=tmp.last.year,
@@ -800,4 +800,4 @@ if (sgPlot.produce.plots) {
 
 	message(paste("Finished visualizeSGP", date(), "in", timetaken(started.at), "\n"))
 ## END visualizeSGP Function
-}
+)}
