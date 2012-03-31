@@ -214,8 +214,7 @@ function(sgp_object,
 		} ## END FOREACH
 		if(par.start$par.type=="SNOW") {
 			gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students)
-			parLapply(par.start$internal.cl, gaPlot.list, function(gaPlot.iter) 
-				growthAchievementPlot(
+			parLapply(par.start$internal.cl, gaPlot.list, function(gaPlot.iter) growthAchievementPlot(
 						gaPlot.sgp_object=sgp_object,
 						gaPlot.students=gaPlot.iter[["ID"]],
 						gaPlot.max.order.for.progression=get.max.order.for.progression(gaPlot.iter[["YEAR"]], gaPlot.iter[["CONTENT_AREA"]]),
@@ -228,8 +227,7 @@ function(sgp_object,
 		}
 		if(par.start$par.type=="MULTICORE") {
 			gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students)
-			mclapply(gaPlot.list, function(gaPlot.iter) 
-				growthAchievementPlot(
+			mclapply(gaPlot.list, function(gaPlot.iter) growthAchievementPlot(
 						gaPlot.sgp_object=sgp_object,
 						gaPlot.students=gaPlot.iter[["ID"]],
 						gaPlot.max.order.for.progression=get.max.order.for.progression(gaPlot.iter[["YEAR"]], gaPlot.iter[["CONTENT_AREA"]]),
@@ -734,8 +732,7 @@ if (sgPlot.produce.plots) {
 
 		if(par.start$par.type=="SNOW") {
 			sgPlot.list <- get.sgPlot.iter(tmp.districts.and.schools)
-			parLapply(par.start$internal.cl, sgPlot.list, function(sgPlot.iter) 
-				invisible(studentGrowthPlot_Styles(
+			parLapply(par.start$internal.cl, sgPlot.list, function(sgPlot.iter) invisible(studentGrowthPlot_Styles(
 					sgPlot.data=sgPlot.data,
 					state=state,
 					last.year=tmp.last.year,
@@ -757,8 +754,7 @@ if (sgPlot.produce.plots) {
 
 		if(par.start$par.type=="MULTICORE") {
 			sgPlot.list <- get.sgPlot.iter(tmp.districts.and.schools)
-			mclapply(sgPlot.list, function(sgPlot.iter) 
-				invisible(studentGrowthPlot_Styles(
+			mclapply(sgPlot.list, function(sgPlot.iter) invisible(studentGrowthPlot_Styles(
 					sgPlot.data=sgPlot.data,
 					state=state,
 					last.year=tmp.last.year,
