@@ -120,10 +120,11 @@ Demonstration_Data <- abcSGP(Demonstration_Data)
 Demonstration_Data <- sgpData_LONG
 Demonstration_Data <- abcSGP(Demonstration_Data,
 	parallel.config=list(
-		BACKEND=list(TYPE="SNOW", SNOW_TYPE="SOCK"),
-		ANALYSES=list(PERCENTILE_WORKERS=8, BASELINE_SGP_WORKERS=8,
-		    PROJECTIONS_WORKERS=7, LAGGED_PROJECTIONS_WORKERS=6,
-		    SUMMARY=8, GA_PLOTS=8, SG_PLOTS=8)
+	    BACKEND="PARALLEL", TYPE="SOCK",
+	    WORKERS=list(
+	       PERCENTILES=8, BASELINE_PERCENTILES=8, PROJECTIONS=7, LAGGED_PROJECTIONS=6,
+	       SUMMARY=8, 
+	       GA_PLOTS=8, SG_PLOTS=8)
 	)
 )
 
