@@ -97,6 +97,7 @@ function(
 		if (parallel.config[['TYPE']]=="doMC") {
 			registerDoMC(workers)
 			return(list(foreach.options=foreach.options, par.type=par.type))
+		}
 		if (parallel.config[['TYPE']]=='doMPI') {
 			doPar.cl <- startMPIcluster(count=workers)
 			registerDoMPI(doPar.cl)
