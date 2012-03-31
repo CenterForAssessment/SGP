@@ -195,8 +195,9 @@ function(sgp_object,
 		}
 
 		par.start <- startParallel(parallel.config, 'GA_PLOTS')
+		
+		if (par.start$par.type=="FOREACH") {
 
-		if(par.start$par.type=="FOREACH") {
 			foreach(gaPlot.iter=iter(get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students)), .packages="SGP", .inorder=FALSE,
 				.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
 					growthAchievementPlot(
@@ -212,7 +213,9 @@ function(sgp_object,
 
 			} ## END dopar 
 		} ## END FOREACH
-		if(par.start$par.type=="SNOW") {
+		
+		if (par.start$par.type=="SNOW") {
+			
 			gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students)
 			parLapply(par.start$internal.cl, gaPlot.list, function(gaPlot.iter) 
 				growthAchievementPlot(
@@ -226,7 +229,8 @@ function(sgp_object,
 						baseline=gaPlot.baseline,
 						pdf.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]])))
 		}
-		if(par.start$par.type=="MULTICORE") {
+		
+		if (par.start$par.type=="MULTICORE") {
 			gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students)
 			mclapply(gaPlot.list, function(gaPlot.iter) 
 				growthAchievementPlot(
@@ -240,7 +244,9 @@ function(sgp_object,
 						baseline=gaPlot.baseline,
 						pdf.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]])), mc.cores=par.start$workers, mc.preschedule=FALSE)
 		}
+		
 		stopParallel(parallel.config, par.start)
+
 		message(paste("Finished growthAchievementPlot in visualizeSGP", date(), "in", timetaken(started.at), "\n"))
 	} ## END if (growthAchievementPlot %in% plot.types)
 
@@ -683,7 +689,7 @@ if (sgPlot.save.sgPlot.data) {
 
 if (sgPlot.produce.plots) {
 
-	if (is.null(parallel.config) | sgPlot.demo.report) { ### NO Parallel Processing
+	if (is.null(sgPlot.parallel.config) | sgPlot.demo.report) { ### NO Parallel Processing
 
 		studentGrowthPlot_Styles(
 			sgPlot.data=sgPlot.data,
@@ -705,10 +711,12 @@ if (sgPlot.produce.plots) {
 			sgPlot.baseline=sgPlot.baseline)
 
 	} else { ### Parallel Processing
-
+		
 		par.start <- startParallel(parallel.config, 'SG_PLOTS')
 
-		if(par.start$par.type=="FOREACH") {	### FOREACH flavor
+		if (par.start$par.type=="FOREACH") {
+
+			foreach.options <- sgPlot.parallel.config[["OPTIONS"]] # works fine if NULL
 			foreach(sgPlot.iter=iter(get.sgPlot.iter(tmp.districts.and.schools)), .packages="SGP", .inorder=FALSE,
 				.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
 						invisible(studentGrowthPlot_Styles(
@@ -731,9 +739,9 @@ if (sgPlot.produce.plots) {
 							sgPlot.baseline=sgPlot.baseline))
 			} ### END dopar
 		} ### END if FOREACH
-
-		if(par.start$par.type=="SNOW") {
-
+		
+		if (par.start$par.type=="SNOW") {
+			
 			sgPlot.list <- get.sgPlot.iter(tmp.districts.and.schools)
 			parLapply(par.start$internal.cl, sgPlot.list, function(sgPlot.iter) 
 				invisible(studentGrowthPlot_Styles(
@@ -755,9 +763,9 @@ if (sgPlot.produce.plots) {
 					sgPlot.cleanup=sgPlot.cleanup,
 					sgPlot.baseline=sgPlot.baseline)))
 		} ### END if SNOW
-
-		if(par.start$par.type=="MULTICORE") {
-
+		
+		if (par.start$par.type=="MULTICORE") {
+			
 			sgPlot.list <- get.sgPlot.iter(tmp.districts.and.schools)
 			mclapply(sgPlot.list, function(sgPlot.iter) 
 				invisible(studentGrowthPlot_Styles(
@@ -778,9 +786,10 @@ if (sgPlot.produce.plots) {
 					sgPlot.fan=sgPlot.fan,
 					sgPlot.cleanup=sgPlot.cleanup,
 					sgPlot.baseline=sgPlot.baseline)), mc.cores=par.start$workers, mc.preschedule=FALSE)
-		} ### END if MULTICORE
+		}  ### END if MULTICORE
 		
 		stopParallel(parallel.config, par.start)
+		
 	} # END else Parallel Processing
 } ## END if (sgPlot.produce.plots) 
 
