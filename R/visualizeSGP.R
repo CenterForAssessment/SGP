@@ -217,7 +217,8 @@ function(sgp_object,
 		if (par.start$par.type=="SNOW") {
 			
 			gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students)
-			parLapply(par.start$internal.cl, gaPlot.list, function(gaPlot.iter) 
+			
+			parLapply(par.start$internal.cl, gaPlot.list, function(gaPlot.iter)
 				growthAchievementPlot(
 						gaPlot.sgp_object=sgp_object,
 						gaPlot.students=gaPlot.iter[["ID"]],
@@ -799,4 +800,4 @@ if (sgPlot.produce.plots) {
 
 	message(paste("Finished visualizeSGP", date(), "in", timetaken(started.at), "\n"))
 
-} ## END visualizeSGP Function
+}
