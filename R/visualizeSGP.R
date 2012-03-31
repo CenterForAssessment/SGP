@@ -800,4 +800,5 @@ if (sgPlot.produce.plots) {
 
 	message(paste("Finished visualizeSGP", date(), "in", timetaken(started.at), "\n"))
 ## END visualizeSGP Function
-)}
+}
+
