@@ -104,21 +104,21 @@ Summary slot.
 \dontrun{
 
 ## Runs all 5 steps
-Demonstration_Data <- abcSGP(sgp_object=sgpData_LONG, state="DEMO")
+Demonstration_SGP <- abcSGP(sgp_object=sgpData_LONG, state="DEMO")
 
 
 ## Or letting the function detect the state
 
-Demonstration_Data <- sgpData_LONG
-Demonstration_Data <- abcSGP(Demonstration_Data)
+Demonstration_SGP <- sgpData_LONG
+Demonstration_SGP <- abcSGP(Demonstration_SGP)
 
 
 ###
 ###  Example uses of the parallel.config argument
 ###
 
-Demonstration_Data <- sgpData_LONG
-Demonstration_Data <- abcSGP(Demonstration_Data,
+Demonstration_SGP <- sgpData_LONG
+Demonstration_SGP <- abcSGP(Demonstration_SGP,
 	parallel.config=list(
 	    BACKEND="PARALLEL", TYPE="SOCK",
 	    WORKERS=list(

@@ -35,7 +35,7 @@ for summarization and reporting.
 \examples{
 \dontrun{
 ## prepareSGP is Step 1 of 5 of abcSGP
-Demonstration_Data <- prepareSGP(sgpData_LONG)
+Demonstration_SGP <- prepareSGP(sgpData_LONG)
 }  
 }
 

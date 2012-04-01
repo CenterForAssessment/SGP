@@ -51,10 +51,10 @@ student growth percentile results.
 \examples{
 \dontrun{
 ## combineSGP is Step 3 of 5 of abcSGP
-Demonstration_Data <- sgpData_LONG
-Demonstration_Data <- prepareSGP(Demonstration_Data)
-Demonstration_Data <- analyzeSGP(Demonstration_Data)
-Demonstration_Data <- combineSGP(Demonstration_Data)
+Demonstration_SGP <- sgpData_LONG
+Demonstration_SGP <- prepareSGP(Demonstration_SGP)
+Demonstration_SGP <- analyzeSGP(Demonstration_SGP)
+Demonstration_SGP <- combineSGP(Demonstration_SGP)
 }  
 }
 
