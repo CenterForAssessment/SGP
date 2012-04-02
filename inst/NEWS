@@ -23,6 +23,7 @@ Changes in version: SGP_0.9-0.0
   o Added additional Mississippi state data to SGPstateData.
   o For studentGrowthPlot production in parallel, jobs are submitted by school size in decreasing order to increase performance.
   o Added analytic median SGP confidence interval calculation to bootstrap confidence interval. Analytic confidence intervals calculated by default for all groups.
+  o Added New Hampshire Variable Name Lookup to SGPstateData.
  
 
   USER VISIBLE CHANGES:
