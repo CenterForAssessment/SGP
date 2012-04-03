@@ -75,11 +75,11 @@ Default is 3.  To utilize the maximum matrix order, set to NULL.
   \item{sgp.baseline.config}{A list containing three vectors: \code{sgp.content.areas}, \code{sgp.panel.years}, \code{sgp.grade.sequences} indicating how baseline student growth percentile analyses
  are to be conducted. In almost all cases this value is calculated by default within the function but can be specified directly for advanced use cases. See source code for more detail on this configuration option.
   }
-\item{parallel.config}{A named, nested list with, at a minimum, two elements indicating 1) the BACKEND list giving the package to be used for parallel computation and 2) the ANALYSES list to specify the number of workers to be used in each major analysis.  The BACKEND list should contain at a minimum the element TYPE= one of \code{FOREACH}, \code{SNOW}, \code{MULTICORE}, or \code{PARALLEL}.  Please consult the manuals and vignettes for information of these packages!
+\item{parallel.config}{A named list with, at a minimum, two elements indicating 1) the BACKEND package to be used for parallel computation and 2) the WORKERS list to specify the number of processors to be used in each major analysis.  The BACKEND element can be set = to \code{FOREACH}, \code{SNOW}, \code{MULTICORE}, or \code{PARALLEL}.  Please consult the manuals and vignettes for information of these packages!
 
-If BACKEND $ TYPE="FOREACH", the \code{foreach} package will be used, and the FOREACH_TYPE element will need to be included in the list to specify the users preferred backend.  FOREACH_TYPE must be either "doMC", "doMPI", "doSNOW", "doRedis" or "doParallel".   If BACKEND $ TYPE="SNOW", the \code{snow} package will be used, and the SNOW_TYPE element will need to be included in the list to specify the users preferred cluster type (either "SOCK" for socket cluster of "MPI" for an OpenMPI cluster).  The function will create a cluster object based on these parameters and the number of workers requested (see ANALYSES list description below).  Alternatively, the name of an external CLUSTER.OBJECT set up by the user outside of the function can be used.   If BACKEND $ TYPE="PARALLEL", the \code{parallel} package will be used, and the PARALLEL_TYPE element will need to be included in the list to specify the users preferred backend.  If Windows is the operating system, this element must = "SNOW".  Otherwise "MULTICORE" is preferred to avoid prescheduling analyses. Defaults are assigned based on operating system if PARALLEL_TYPE is missing based on system OS.  If "SNOW" is uses here, the SNOW_TYPE element must also be specified as detailed above.
+TYPE is a third element of the \code{parallel.config} list that provides necessary information when using FOREACH, SNOW or PARALLEL packages as the backend. With BACKEND="FOREACH", the TYPE element specifies the "doMC", "doMPI", "doSNOW", "doRedis" or "doParallel" flavor of foreach backends.   If BACKEND = "SNOW", the TYPE element specifies the users preferred cluster type (either "SOCK" for socket cluster of "MPI" for an OpenMPI cluster).  The function will create a cluster object based on these parameters and the number of workers requested (see WORKERS list description below).  Alternatively, the name of an external CLUSTER.OBJECT set up by the user outside of the function can be used.   If BACKEND = "PARALLEL", the \code{parallel} package will be used, and the TYPE element specifies the users preferred cluster type if a SNOW type cluster is used.  If Windows is the operating system, this element must = "SOCK".  Defaults are assigned based on operating system if TYPE is missing based on system OS.  Unix/Mac OS defaults to MULTICORE to avoid presheduling.  SNOW can be chosen by specifying "SOCK" or "SNOW" in the TYPE element.
 
-The ANALYSES list must contain, at a minimum, the WORKERS element to specify the number of processors (nodes) desired or available.  If WORKERS is specified, then the same number of processors will be used for each analysis type (sgp.percentiles, sgp.projections, ...  sgp.projections.lagged.baseline).  Alternatively, the user may specify the numbers of processors used for each analysis type.  This allows for better memory management in systems that do not have enough RAM available per core.  The choice of the number of cores is a balance between the number of processors available, the amount of RAM a system has and the size of the data (sgp_object).  Each system will be different and will require some tailoring.  One rule of thumb used by the authors is to allow for 4GB of memory per core used for running large state data.  The SGP Demonstration (and data that size) requires more like 1-2GB per core.  As an example, PERCENTILE_WORKERS=4 and  PROJECTIONS_WORKERS=2 might be used on a quad core machine with 4 GB of RAM.  This will use all 4 cores available for the sgp.percentiles analysis and 2 cores for the sgp.projections analysis (which requires more memory than available).  The ANALYSES list accepts these elements:   PERCENTILE_WORKERS, PROJECTIONS_WORKERS (for both cohort and baseline referenced projections), LAGGED_PROJECTIONS_WORKERS (for both cohort and baseline referenced lagged projections), BASELINE_MATRICES_WORKERS (used to produce the baseline coefficient matrices when not available in SGPstateData - very computationally intensive), BASELINE_SGP_WORKERS (SGP calculation only when baseline coefficient matrices have already been produced and are available - NOT very computationally intensive).
+The WORKERS list must contain, at a minimum, a single number of processors (nodes) desired or available.  If WORKERS is specified in this manner, then the same number of processors will be used for each analysis type (sgp.percentiles, sgp.projections, ...  sgp.projections.lagged.baseline).  Alternatively, the user may specify the numbers of processors used for each analysis.  This allows for better memory management in systems that do not have enough RAM available per core.  The choice of the number of cores is a balance between the number of processors available, the amount of RAM a system has and the size of the data (sgp_object).  Each system will be different and will require some tailoring.  One rule of thumb used by the authors is to allow for 4GB of memory per core used for running large state data.  The SGP Demonstration (and data that size) requires more like 1-2GB per core.  As an example, PERCENTILES=4 and  PROJECTIONS=2 might be used on a quad core machine with 4 GB of RAM.  This will use all 4 cores available for the sgp.percentiles analysis and 2 cores for the sgp.projections analysis (which requires more memory than available).  The WORKERS list accepts these elements:   PERCENTILES, PROJECTIONS (for both cohort and baseline referenced projections), LAGGED_PROJECTIONS (for both cohort and baseline referenced lagged projections), BASELINE_MATRICES (used to produce the baseline coefficient matrices when not available in SGPstateData - very computationally intensive), BASELINE_PERCENTILES (SGP calculation only when baseline coefficient matrices have already been produced and are available - NOT very computationally intensive).
 
 Example use cases are provided below.
   }
@@ -91,7 +91,7 @@ Example use cases are provided below.
 \code{YEAR}, \code{ID} and the student growth percentile and/or student growth projection/trajectory results in the \code{SGP} slot. 
 }
 
-\author{Damian W. Betebenner \email{dbetebenner@nciea.org} and Adam Van Iwaarden \email{Vaniwaarden@colorado.edu}}
+\author{Damian W. Betebenner \email{dbetebenner@nciea.org} and Adam Van Iwaarden \email{vaniwaarden@colorado.edu}}
 
 \seealso{\code{\link{prepareSGP}}, \code{\link{combineSGP}}}
 
@@ -159,46 +159,49 @@ READING.2010_2011.MATH_PRIOR = list(
 Demonstration_SGP <- prepareSGP(sgpData_LONG)
 Demonstration_SGP <- analyzeSGP(Demonstration_SGP,
 	parallel.config=list(
-		BACKEND=list(TYPE="SNOW", SNOW_TYPE="SOCK"),
-		ANALYSES=list(PERCENTILE_WORKERS=4, 
-		    PROJECTIONS_WORKERS=2, 
-		    LAGGED_PROJECTIONS_WORKERS=2,
-		    BASELINE_SGP_WORKERS=4)))
+		BACKEND="SNOW", TYPE="SOCK",
+		WORKERS=list(PERCENTILES=4, 
+		    PROJECTIONS=2, 
+		    LAGGED_PROJECTIONS=2,
+		    BASELINE_PERCENTILES=4))
 
 ##  Windows users with R version >= 2.13  may prefer the parallel package:
 #  This example is would be good for a single workstation with 8 cores
 #  and enough RAM to use 8 workers for ALL analyses.
 	...
 	parallel.config=list(
-		BACKEND=list(TYPE="PARALLEL", 
-		   PARALLEL_TYPE="SNOW", SNOW_TYPE="SOCK"),
-		ANALYSES=list(WORKERS=8))
+		BACKEND="PARALLEL", TYPE="SOCK"),
+		WORKERS=8)
+	...
+
+#  A similar specification for R versions pre 2.13 using SNOW:
+	...
+	parallel.config=list(
+		BACKEND="SNOW", TYPE="SOCK"),
+		WORKERS=8)
 	...
 
 ##  Linux/Mac may use the multicore package directly:
 	...
 	parallel.config=list(
-		BACKEND=list(TYPE="MULTICORE"),
-		ANALYSES=list(WORKERS=4))
+		BACKEND="MULTICORE",
+		WORKERS=4)
 	...
 
 ## FOREACH use cases:
 # doMC - only available on Linux or Mac OSX
-# doSNOW is available to Windows users with R pre-2.13
 	...
 	parallel.config=list(
-		BACKEND=list(TYPE="FOREACH",
-			FOREACH_TYPE="doSNOW",
-			SNOW_TYPE="SOCK"),
-		ANALYSES=list(WORKERS=2))
+		BACKEND="FOREACH", TYPE="doMC",
+		WORKERS=3)
 	...
 
 #  doMPI package -  the number of workers is 100, 
 #  suggesting this example is for a HPC cluster usage.
 	...
 	parallel.config=list(
-		BACKEND=list(TYPE="FOREACH", FOREACH_TYPE="doMPI"),
-		ANALYSES=list(WORKERS=100))
+		BACKEND="FOREACH", TYPE="doMPI",
+		WORKERS=100)
 	...
 
 
@@ -207,12 +210,11 @@ Demonstration_SGP <- analyzeSGP(Demonstration_SGP,
 #  suggesting this example is for a HPC cluster, possibly Windows OS.
 	...
 	parallel.config=list(
-		BACKEND=list(TYPE="PARALLEL", 
-		    PARALLEL_TYPE="SNOW", SNOW_TYPE="MPI"),
-		ANALYSES=list(PERCENTILE_WORKERS=16, 
-		    PROJECTIONS_WORKERS=8, 
-		    LAGGED_PROJECTIONS_WORKERS=6,
-		    BASELINE_SGP_WORKERS=12))
+		BACKEND="PARALLEL", TYPE="MPI",
+		WORKERS=list(PERCENTILES=16, 
+		    PROJECTIONS=8, 
+		    LAGGED_PROJECTIONS=6,
+		    BASELINE_PERCENTILES=12))
 	...
 
 #  NOTE:  This list of parallel.config specifications is NOT exhaustive.  
