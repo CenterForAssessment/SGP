@@ -14,7 +14,7 @@ Author: Damian W. Betebenner <dbetebenner@nciea.org>, Adam Van Iwaarden <Vaniwaa
 	Juan D'Brot (West Virginia), Nate Hixson (West Virginia), Daniel Bush (Wisconsin), Justin Meyer (Wisconsin), Joseph Newton (Wisconsin), Dr. Philip Olsen (Wisconsin), 
 	Nick Stroud (Wisconsin).  
 Maintainer: Damian W. Betebenner <dbetebenner@nciea.org>
-Depends: R (>= 2.12), boot, colorspace, data.table (>= 1.7.9), foreach, grid, gridBase, methods, plyr, randomNames (>= 0.0-5), quantreg, splines, SGPdata
+Depends: R (>= 2.12), boot, colorspace, data.table (>= 1.7.9), foreach, grid, gridBase, methods, reshape2, randomNames (>= 0.0-5), quantreg, splines, SGPdata
 Suggests: doMC, doMPI, doParallel, doRedis, doSNOW, multicore, parallel, pdf2, RSQLite, sn, snow
 Description: Functions to calculate student growth percentiles and percentile growth projections/trajectories for students using large scale, 
         longitudinal assessment data.  Functions use quantile regression to estimate the conditional density associated 
