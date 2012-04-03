@@ -10,7 +10,7 @@ function(
 	###  Basic checks - default to ANY percentiles or projections WORKERS.
 	
 	if (is.numeric(parallel.config[['WORKERS']])) {
-		message(paste(process, "workers not specified.  Numeric value WORKERS will be used for all processes."))
+		message(paste(process, "workers not specified.  Numeric value from WORKERS (", parallel.config[['WORKERS']], ") will be used for all processes."))
 		parallel.config[['WORKERS']][[process]] <- parallel.config[['WORKERS']]
 	}
 	if (is.null(parallel.config[['WORKERS']][[process]])) {
@@ -18,7 +18,8 @@ function(
 			 tmp.indx <- grep(strsplit(process, "_")[[1]][2], names(parallel.config[['WORKERS']]))
 			 if (any(!is.na(tmp.indx))) {
 				 parallel.config[['WORKERS']][[process]] <- parallel.config[['WORKERS']][[tmp.indx]]
-				 message(paste(process, "workers not specified.", names(parallel.config[['WORKERS']][tmp.indx]), "WORKERS will be used."))
+				 message(paste(process, "workers not defined specifically.", names(parallel.config[['WORKERS']][tmp.indx]), 
+				 	"WORKERS will be used  (", parallel.config[['WORKERS']][tmp.indx], "worker processors)."))
 			 }
 		} # See if still NULL and stop:
 		if (is.null(parallel.config[['WORKERS']][[process]])) stop(paste(process, "workers must be specified."))
@@ -68,7 +69,7 @@ function(
 		require(parallel)
 		if (!is.null(parallel.config[['TYPE']])) {
 			if (!parallel.config[['TYPE']] %in% c('SOCK', 'MPI')) {
-				stop("The 'snow' package will be used when 'parallel.config $ TYPE' is specified and BACKEND=='PARALLEL'.  List element must be 'SOCK' or 'MPI'.")
+				stop("The 'snow' package will be used when 'parallel.config$TYPE' is specified and BACKEND=='PARALLEL'.  List element must be 'SOCK' or 'MPI'.")
 			}
 			par.type <- 'SNOW'
 		} else {
@@ -78,8 +79,8 @@ function(
 	}
 	
 	if (par.type == 'SNOW') {
-		if (is.null(parallel.config[['TYPE']])) stop("The 'parallel.config $ TYPE' must be specified ('SOCK' or 'MPI')")
-		if (!parallel.config[['TYPE']] %in% c('SOCK','MPI')) stop("The 'parallel.config $ TYPE' must be 'SOCK' or 'MPI'")
+		if (is.null(parallel.config[['TYPE']])) stop("The 'parallel.config$TYPE' must be specified ('SOCK' or 'MPI')")
+		if (!parallel.config[['TYPE']] %in% c('SOCK','MPI')) stop("The 'parallel.config$TYPE' must be 'SOCK' or 'MPI'")
 	}
 
 
@@ -89,7 +90,7 @@ function(
 		workers <- parallel.config[['WORKERS']][[process]]
 	} else workers <- parallel.config[['WORKERS']]
 	if (is.null(workers)) workers <- getOption("cores")
-	if (is.null(workers) & is.null(parallel.config[['CLUSTER.OBJECT']])) stop("parallel.config $ WORKERS must, at a minimum, contain the number of parallel workers for all processes, 
+	if (is.null(workers) & is.null(parallel.config[['CLUSTER.OBJECT']])) stop("parallel.config$WORKERS must, at a minimum, contain the number of parallel workers for all processes, 
 		or getOption('cores') must be specified to use MULTICORE parallel processing.")
 	
 	if (toupper(parallel.config[['BACKEND']]) == 'FOREACH') {
