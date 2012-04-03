@@ -292,8 +292,9 @@ function(sgp_object,
 				names(sgp_object@Summary[[i]]) <- gsub(", ", "__", sgp.groups)
 			}
 		} # END FOREACH flavor
+
 		if(par.start$par.type=="SNOW") {
-#		stop("Now here")
+
 			if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
 	  			j <- k <- NULL ## To prevent R CMD check warnings
 	  			summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], sgp.groups[x] %in% ci.groups))
@@ -320,7 +321,7 @@ function(sgp_object,
 				names(sgp_object@Summary[[i]]) <- gsub(", ", "__", sgp.groups)
 			}
 		} # END 'MULTICORE' Flavor
-    } ## END summary.groups$institution summary loop
+	} ## END summary.groups$institution summary loop
 
 	stopParallel(parallel.config, par.start)
 
