@@ -166,6 +166,7 @@ function(sgp_object,
 				time=sgp_object@Names[sgp_object@Names$names.type=="time", "names.sgp"],
 				institution_type=sgp_object@Names[sgp_object@Names$names.type=="institution_type", "names.sgp"],
 				institution_level=sgp_object@Names[sgp_object@Names$names.type=="institution_level", "names.sgp"],
+				institution_level_multiple_membership=get.multiple.membership(sgp_object@Names),
 				demographic=c(sgp_object@Names[sgp_object@Names$names.type=="demographic", "names.sgp"], "CATCH_UP_KEEP_UP_STATUS", "ACHIEVEMENT_LEVEL_PRIOR"),
 				institution_inclusion=list(STATE="STATE_ENROLLMENT_STATUS", DISTRICT_NUMBER="DISTRICT_ENROLLMENT_STATUS", SCHOOL_NUMBER="SCHOOL_ENROLLMENT_STATUS"),
 				growth_only_summary=list(STATE="BY_GROWTH_ONLY", DISTRICT_NUMBER="BY_GROWTH_ONLY", SCHOOL_NUMBER="BY_GROWTH_ONLY"))
