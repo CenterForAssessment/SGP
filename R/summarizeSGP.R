@@ -78,7 +78,7 @@ function(sgp_object,
 		CI
 	}
 
-	sgpSummary <- function(sgp.groups.to.summarize, produce.confidence.interval) {
+	sgpSummary <- function(data, sgp.groups.to.summarize, produce.confidence.interval) {
 		SGP_SIM <- V1 <- .SD <- NULL ## To prevent R CMD check warning
 		if (produce.confidence.interval) {
 			if ("Bootstrap" %in% confidence.interval.groups$TYPE) {
@@ -102,13 +102,13 @@ function(sgp_object,
  
 		ListExpr <- parse(text=paste("as.list(c(", paste(unlist(tmp.sgp.summaries), collapse=", "),"))",sep="")) 
 		ByExpr <- parse(text=paste("list(", paste(sgp.groups.to.summarize, collapse=", "), ")", sep=""))
-		tmp <- tmp.dt[, eval(ListExpr), by=eval(ByExpr)]
+		tmp <- data[, eval(ListExpr), by=eval(ByExpr)]
 		if (produce.confidence.interval & "CSEM" %in% confidence.interval.groups$TYPE) {
 			SIM_ByExpr1 <- parse(text=paste("list(", paste(unlist(strsplit(as.character(sgp.groups.to.summarize), ", "))
-				[!(unlist(strsplit(as.character(sgp.groups.to.summarize), ", "))) %in% key(tmp.dt)], collapse=", "), 
+				[!(unlist(strsplit(as.character(sgp.groups.to.summarize), ", "))) %in% key(data)], collapse=", "), 
 				", ", paste(names(tmp.simulation.dt)[grep("SGP_SIM_", names(tmp.simulation.dt))], collapse=", "), ")", sep=""))
 			SIM_ByExpr2 <- parse(text=paste("list(", paste(sgp.groups.to.summarize, collapse=", "), ")", sep=""))
-				tmp.sim <- tmp.dt[tmp.simulation.dt, eval(SIM_ByExpr1)][, -(1:2), with=FALSE][,
+				tmp.sim <- data[tmp.simulation.dt, eval(SIM_ByExpr1)][, -(1:2), with=FALSE][,
 				lapply(.SD, median_na), by=eval(SIM_ByExpr2)][, 
 				as.list(round(apply(.SD, 1, quantile, probs=confidence.interval.groups$QUANTILES))), by=eval(SIM_ByExpr2)]
 			tmp <- data.table(merge.data.frame(tmp, tmp.sim, by = unlist(strsplit(as.character(sgp.groups.to.summarize), ", ")),all=TRUE))
@@ -127,7 +127,7 @@ function(sgp_object,
 				YEAR=type.convert(unlist(strsplit(i, "[.]"))[2]))
 		}
  
-		data.table(rbind.all(tmp.list), VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), key=key(tmp.dt))
+		data.table(rbind.all(tmp.list), VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), key=key(data))
 	}
 
 	summarizeSGP.config <- function(sgp_object, config.type) {
@@ -234,7 +234,7 @@ function(sgp_object,
 		return(tmp.names)
 	} ### END get.multiple.membership
 
-	summarizeSGP_INTERNAL <- function(tmp.dt, i) {
+	summarizeSGP_INTERNAL <- function(data, i) {
 		
 		tmp.summary <- list()
 
@@ -269,14 +269,14 @@ function(sgp_object,
 	  			j <- k <- NULL ## To prevent R CMD check warnings
 	  			tmp.summary <- foreach(j=iter(sgp.groups), k=iter(sgp.groups %in% ci.groups), 
 	  				.options.multicore=list(preschedule = FALSE, set.seed = FALSE), .packages="SGP", .inorder=FALSE) %dopar% {
-						return(sgpSummary(j, k))
+						return(sgpSummary(data, j, k))
 				}
 				names(tmp.summary) <- gsub(", ", "__", sgp.groups)
 			} else {
 				j <- k <- NULL ## To prevent R CMD check warnings
 				tmp.summary <- foreach(j=iter(sgp.groups), k=iter(rep(FALSE, length(sgp.groups))), 
 					.options.multicore=list(preschedule = FALSE, set.seed = FALSE), .packages="SGP", .inorder=FALSE) %dopar% {
-						return(sgpSummary(j, k))
+						return(sgpSummary(data, j, k))
 				}
 				names(tmp.summary) <- gsub(", ", "__", sgp.groups)
 			}
@@ -287,14 +287,14 @@ function(sgp_object,
 			if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
 	  			j <- k <- NULL ## To prevent R CMD check warnings
 	  			summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], sgp.groups[x] %in% ci.groups))
-	  			tmp.summary <- parLapply(par.start$internal.cl, summary.iter, 
-	  				function(iter) sgpSummary(iter[1],eval(parse(text=iter[2]))))
+	  			tmp.summary <- clusterApplyLB(par.start$internal.cl, summary.iter, 
+	  				function(iter) sgpSummary(data, iter[1], eval(parse(text=iter[2]))))
 				names(tmp.summary) <- gsub(", ", "__", sgp.groups)
 			} else {
 				j <- k <- NULL ## To prevent R CMD check warnings
 				summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], FALSE))
-	  			tmp.summary <- parLapply(par.start$internal.cl, summary.iter, 
-	  				function(iter) sgpSummary(iter[1],eval(parse(text=iter[2]))))
+	  			tmp.summary <- clusterApplyLB(par.start$internal.cl, summary.iter, 
+	  				function(iter) sgpSummary(data, iter[1], eval(parse(text=iter[2]))))
 				names(tmp.summary) <- gsub(", ", "__", sgp.groups)
 			}
 			# if (is.null(parallel.config[['CLUSTER.OBJECT']]))	 stopCluster(internal.cl)
@@ -304,13 +304,13 @@ function(sgp_object,
 	  			j <- k <- NULL ## To prevent R CMD check warnings
 	  			summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], sgp.groups[x] %in% ci.groups))
 	  			tmp.summary <- mclapply(summary.iter, 
-	  				function(iter) sgpSummary(iter[1], eval(parse(text=iter[2]))), mc.cores=par.start$workers, mc.preschedule=FALSE)
+	  				function(iter) sgpSummary(data, iter[1], eval(parse(text=iter[2]))), mc.cores=par.start$workers, mc.preschedule=FALSE)
 				names(tmp.summary) <- gsub(", ", "__", sgp.groups)
 			} else {
 				j <- k <- NULL ## To prevent R CMD check warnings
 				summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], FALSE))
 	  			tmp.summary <- mclapply(summary.iter, 
-	  				function(iter) sgpSummary(iter[1], eval(parse(text=iter[2]))), mc.cores=par.start$workers, mc.preschedule=FALSE)	
+	  				function(iter) sgpSummary(data, iter[1], eval(parse(text=iter[2]))), mc.cores=par.start$workers, mc.preschedule=FALSE)	
 				names(tmp.summary) <- gsub(", ", "__", sgp.groups)
 			}
 		} # END 'MULTICORE' Flavor
@@ -382,9 +382,9 @@ function(sgp_object,
 	par.start <- startParallel(parallel.config, 'SUMMARY')
 
 	for (j in seq(length(summary.groups[["institution_level_multiple_membership"]])+1)) {
-		for (i in summary.groups$institution) {
+		for (i in summary.groups[["institution"]]) {
 			if (j == 1) {
-				sgp_object@Summary[[i]] <- summarizeSGP_INTERNAL(tmp.dt, i)
+				sgp_object@Summary[[i]] <- summarizeSGP_INTERNAL(data=tmp.dt, i)
 			}
 			if (j > 1) {
 
@@ -396,7 +396,7 @@ function(sgp_object,
 
 				### Aggregations will occur by this new institution_level variable
 
-				summary.groups[["institution_level"]] <- multiple.membership.variable.name
+				tmp.inst <- paste(i, multiple.membership.variable.name, "INCLUSION", sep=", ")
 
 				### Reshape data using melt
 
@@ -415,10 +415,10 @@ function(sgp_object,
 						measure.vars=summary.groups[["institution_level_multiple_membership"]][[j-1]][["INCLUSION"]])[,2]])
 					summary.groups[["institution_inclusion"]] <- lapply(summary.groups[["institution_inclusion"]], function(x) x[1] <- "INCLUSION")
 				}
-				if (par.start$par.type=="SNOW") clusterExport(par.start$internal.cl, "tmp.dt.long")
-				sgp_object@Summary[[i]] <- c(sgp_object@Summary[[i]], summarizeSGP_INTERNAL(tmp.dt.long, i))
+				# if (par.start$par.type=="SNOW") clusterExport(par.start$internal.cl, "tmp.dt.long") # Don't think we need this...
+				sgp_object@Summary[[i]] <- c(sgp_object@Summary[[i]], summarizeSGP_INTERNAL(tmp.dt.long, tmp.inst))
 			} 
-		} ### End i loop over summary.groups$institution
+		} ### End i loop over summary.groups[["institution"]]
 	} ### END j loop over multiple membership groups (if they exist)
 
 	stopParallel(parallel.config, par.start)
