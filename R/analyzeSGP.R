@@ -382,7 +382,7 @@ function(sgp_object,
 								rm(tmp)
 					} # END if (SNOW)
 					
-					if (par.type=="MULTICORE") {
+					if (par.start$par.type=="MULTICORE") {
 						tmp <- mclapply(sgp.baseline.config, function(sgp.iter) baselineSGP(
 									sgp_object,
 									state=state,
