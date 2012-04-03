@@ -6,7 +6,7 @@ function(sgp_object,
          sgp.summaries=NULL,
          summary.groups=NULL,
          confidence.interval.groups=NULL,
-         parallel.config=NULL) {
+         parallel.config=list(BACKEND="FOREACH", TYPE=NA, WORKERS=list(SUMMARY=1))) {
 
 	started.at <- proc.time()
 	message(paste("\nStarted summarizeSGP", date()))
@@ -26,65 +26,6 @@ function(sgp_object,
 			state <- c(state.abb, "DEMO")[which(sapply(c(state.name, "Demonstration"), function(x) regexpr(x, tmp.name))==1)]
 		}
 	}
-
-
-	###  Review and Set up the parallel.config if provided.  If not, dopar foreach loop is used without backend as before
-	
-	par.type <- NULL
-	if (is.null(parallel.config)) {
-		require(foreach)
-		parallel.config <- list()
-		parallel.config[["BACKEND"]][["TYPE"]] <- "FOREACH"
-		message("\n\tNo parallel.config list is provided.  Summaries will be calculated sequentially.\n\n")
-	} else {
-		if (toupper(parallel.config[["BACKEND"]][["TYPE"]]) == "FOREACH") {
-			require(foreach)
-			eval(parse(text=paste("require(", parallel.config[["BACKEND"]][["FOREACH_TYPE"]], ")")))
-			if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doMC" & 
-				is.null(parallel.config[["BACKEND"]][["FOREACH_OPTIONS"]][["preschedule"]])) {
-					if (is.list(parallel.config[["BACKEND"]][["FOREACH_OPTIONS"]])) {
-						parallel.config[["BACKEND"]][["FOREACH_OPTIONS"]][["preschedule"]]=FALSE # won't override other options
-					}	else parallel.config[["BACKEND"]][["FOREACH_OPTIONS"]]=list(preschedule=FALSE)
-			}
-			if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doParallel") { 
-				if(is.null(parallel.config[["BACKEND"]][["PARALLEL_TYPE"]])) {
-					if (.Platform$OS.type == "unix" & is.null(par.type)) par.type <- 'MULTICORE' 
-					if (.Platform$OS.type != "unix" & is.null(par.type)) par.type <- 'SNOW'
-				} else par.type <- toupper(parallel.config[["BACKEND"]][["PARALLEL_TYPE"]])
-				if (!par.type %in% c('MULTICORE', 'SNOW')) stop("parallel.config[['BACKEND']][['PARALLEL_TYPE']] must be set to either 'MULTICORE' or 'SNOW'.")
-				if (par.type == 'MULTICORE' & is.null(parallel.config[["BACKEND"]][["FOREACH_OPTIONS"]][["preschedule"]])) {
-					if (is.list(parallel.config[["BACKEND"]][["FOREACH_OPTIONS"]])) {
-						parallel.config[["BACKEND"]][["FOREACH_OPTIONS"]][["preschedule"]]=FALSE # won't override other options
-					}	else parallel.config[["BACKEND"]][["FOREACH_OPTIONS"]]=list(preschedule=FALSE)
-				}
-			}
-			foreach.options <- parallel.config[["BACKEND"]][["FOREACH_OPTIONS"]] # works fine if NULL
-		}
-
-		if (toupper(parallel.config[["BACKEND"]][["TYPE"]]) == "MULTICORE") {
-			require(multicore)
-			par.type <- 'MULTICORE'
-		}
-
-		if (toupper(parallel.config[["BACKEND"]][["TYPE"]]) == "SNOW") {
-			require(snow)
-			par.type <- 'SNOW'
-		}
-
-		if (toupper(parallel.config[["BACKEND"]][["TYPE"]]) == "PARALLEL") {
-			require(parallel)
-			if (!is.null(parallel.config[["BACKEND"]][["PARALLEL_TYPE"]])) par.type <- toupper(parallel.config[["BACKEND"]][["PARALLEL_TYPE"]])
-			if (.Platform$OS.type == "unix" & is.null(par.type)) par.type <- 'MULTICORE' 
-			if (.Platform$OS.type != "unix" & is.null(par.type)) par.type <- 'SNOW'
-			if (!par.type %in% c('MULTICORE', 'SNOW')) stop("parallel.config[['BACKEND']][['PARALLEL_TYPE']] must be set to either 'MULTICORE' or 'SNOW'.")
-		
-		}
-		if (par.type == 'SNOW') {
-			if (is.null(parallel.config[["BACKEND"]][["SNOW_TYPE"]])) stop("The parallel.config[['BACKEND']][['SNOW_TYPE']] must be specified ('SOCK' or 'MPI')")
-			if (!parallel.config[["BACKEND"]][["SNOW_TYPE"]] %in% c('SOCK','MPI')) stop("The parallel.config[['BACKEND']][['SNOW_TYPE']] must be 'SOCK' or 'MPI'")
-		}
-	} 
-	if (is.null(par.type)) par.type<-"OTHER" # can't be NULL below
 
 
 	## Utility Functions
@@ -309,46 +250,7 @@ function(sgp_object,
 
 	###  Set up parallel workers, clusters, queues, etc.  Do this after data and functions established so that SNOW clusters get them!
 
-	workers <- NULL
-	if (!is.null(parallel.config[["ANALYSES"]][["SUMMARY_WORKERS"]])) workers <- parallel.config[["ANALYSES"]][["SUMMARY_WORKERS"]]
-	if (!is.null(parallel.config[["ANALYSES"]][["WORKERS"]])) workers <- parallel.config[["ANALYSES"]][["WORKERS"]]
-	if (is.null(workers)) message("\n\tThe number of WORKERS was not specified in parallel.config[['ANALYSES']][['SUMMARY_WORKERS']].  Default numbers will be used (Possibly 1 core/worker).")
-	
-	if (toupper(parallel.config[["BACKEND"]][["TYPE"]]) == "FOREACH") {
-		if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doMC") registerDoMC(workers)
-		if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doMPI") {
-			doMPI.cl <- startMPIcluster(count=workers)
-			registerDoMPI(doMPI.cl)
-		}
-		if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doRedis") {
-			registerDoRedis('jobs')
-			startLocalWorkers(n=workers, queue='jobs')
-		}
-		if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doSNOW") {
-			doSNOW.cl=makeCluster(workers, type=parallel.config[["BACKEND"]][["SNOW_TYPE"]])
-			registerDoSNOW(doSNOW.cl)
-			clusterEvalQ(doSNOW.cl, library(SGP))
-			clusterExport(doSNOW.cl, list('rbind.all', 'group.format', 'median_na', 'boot.median', 'mean_na',
-				'num_non_missing', 'percent_in_category', 'percent_at_above_target', 'boot.sgp', 'sgpSummary', 'combineSims'), envir = sys.frames()[[1]])
-		}
-		if (parallel.config[["BACKEND"]][["FOREACH_TYPE"]]=="doParallel") {
-			if (parallel.config[["BACKEND"]][["PARALLEL_TYPE"]]=="SNOW") {
-				doPar.cl=makeCluster(workers, type=parallel.config[["BACKEND"]][["SNOW_TYPE"]])
-				registerDoParallel(doPar.cl)
-				clusterEvalQ(doPar.cl, library(SGP))
-			} else registerDoParallel(workers)
-		}
-	}
-	
-	if (par.type=="SNOW") {
-		if (!is.null(workers)) internal.cl <- makeCluster(workers, type=parallel.config[["BACKEND"]][["SNOW_TYPE"]])
-		if (is.null(parallel.config[["BACKEND"]][["CLUSTER.OBJECT"]])) {
-			cluster.object <- "internal.cl"
-		}	else cluster.object <- parallel.config[["BACKEND"]][["CLUSTER.OBJECT"]]
-
-		clusterEvalQ(eval(parse(text=cluster.object)), library(SGP))
-	}
-
+	par.start <- startParallel(parallel.config, 'SUMMARY')
 
 	### Create summary tables
 	
@@ -373,7 +275,7 @@ function(sgp_object,
 				group.format(confidence.interval.groups[["GROUPS"]][["growth_only_summary"]][[i]])), sep=""))
 		}
 
-		if(toupper(parallel.config[["BACKEND"]][["TYPE"]]) == "FOREACH") {
+		if(par.start$par.type=="FOREACH") {
 			if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
 	  			j <- k <- NULL ## To prevent R CMD check warnings
 	  			sgp_object@Summary[[i]] <- foreach(j=iter(sgp.groups), k=iter(sgp.groups %in% ci.groups), 
@@ -391,45 +293,39 @@ function(sgp_object,
 			}
 		} # END FOREACH flavor
 
-		if(par.type=="SNOW") {
+		if(par.start$par.type=="SNOW") {
+
 			if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
 	  			j <- k <- NULL ## To prevent R CMD check warnings
 	  			summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], sgp.groups[x] %in% ci.groups))
-	  			sgp_object@Summary[[i]] <- parLapply(eval(parse(text=cluster.object)), summary.iter, function(iter) sgpSummary(iter[1],eval(parse(text=iter[2]))))
+	  			sgp_object@Summary[[i]] <- parLapply(par.start$internal.cl, summary.iter, function(iter) sgpSummary(iter[1],eval(parse(text=iter[2]))))
 				names(sgp_object@Summary[[i]]) <- gsub(", ", "__", sgp.groups)
 			} else {
 				j <- k <- NULL ## To prevent R CMD check warnings
 				summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], FALSE))
-	  			sgp_object@Summary[[i]] <- parLapply(eval(parse(text=cluster.object)), summary.iter, function(iter) sgpSummary(iter[1],eval(parse(text=iter[2]))))
+	  			sgp_object@Summary[[i]] <- parLapply(par.start$internal.cl, summary.iter, function(iter) sgpSummary(iter[1],eval(parse(text=iter[2]))))
 				names(sgp_object@Summary[[i]]) <- gsub(", ", "__", sgp.groups)
 			}
+			# if (is.null(parallel.config[['CLUSTER.OBJECT']]))	 stopCluster(internal.cl)
 		} # END 'SNOW' Flavor 
-
-		if(par.type=="MULTICORE") {
+		if(par.start$par.type=="MULTICORE") {
 			if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
 	  			j <- k <- NULL ## To prevent R CMD check warnings
 	  			summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], sgp.groups[x] %in% ci.groups))
-	  			sgp_object@Summary[[i]] <- mclapply(summary.iter, function(iter) sgpSummary(iter[1], eval(parse(text=iter[2]))), mc.cores=workers, mc.preschedule=FALSE)
+	  			sgp_object@Summary[[i]] <- mclapply(summary.iter, function(iter) sgpSummary(iter[1], eval(parse(text=iter[2]))), mc.cores=par.start$workers, mc.preschedule=FALSE)
 				names(sgp_object@Summary[[i]]) <- gsub(", ", "__", sgp.groups)
 			} else {
 				j <- k <- NULL ## To prevent R CMD check warnings
 				summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], FALSE))
-	  			sgp_object@Summary[[i]] <- mclapply(summary.iter, function(iter) sgpSummary(iter[1], eval(parse(text=iter[2]))), mc.cores=workers, mc.preschedule=FALSE)	
+	  			sgp_object@Summary[[i]] <- mclapply(summary.iter, function(iter) sgpSummary(iter[1], eval(parse(text=iter[2]))), mc.cores=par.start$workers, mc.preschedule=FALSE)	
 				names(sgp_object@Summary[[i]]) <- gsub(", ", "__", sgp.groups)
 			}
 		} # END 'MULTICORE' Flavor
 	} ## END summary.groups$institution summary loop
 
-	#  close parallel clusters, queue's etc. if applicable
-	if (exists("doMPI.cl")) stopCluster(doMPI.cl)
-	if (exists("jobs")) removeQueue('jobs')
-	if (exists("doSNOW.cl")) stopCluster(doSNOW.cl)
-	if (exists("doPar.cl")) stopCluster(doPar.cl)
-	if (exists("internal.cl")) stopCluster(internal.cl)
-
+	stopParallel(parallel.config, par.start)
 
 	## NULL out BY_GROWTH_ONLY
-
 	if (any(!sapply(summary.groups[["growth_only_summary"]], is.null))) {
 		sgp_object@Data[["BY_GROWTH_ONLY"]] <- NULL
 	}

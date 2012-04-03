@@ -18,16 +18,16 @@ abcSGP(sgp_object,
 	sgp.percentiles=TRUE,
 	sgp.projections=TRUE,
 	sgp.projections.lagged=TRUE,
-        sgp.percentiles.baseline=TRUE,
-        sgp.projections.baseline=TRUE,
-        sgp.projections.lagged.baseline=TRUE,
+	sgp.percentiles.baseline=TRUE,
+	sgp.projections.baseline=TRUE,
+	sgp.projections.lagged.baseline=TRUE,
 	simulate.sgps=TRUE,
 	parallel.config=NULL,
 	save.intermediate.results=FALSE,
 	sgPlot.demo.report=FALSE,
 	sgp.summaries=NULL,
 	summary.groups=NULL,
-        confidence.interval.groups=NULL,
+	confidence.interval.groups=NULL,
 	plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot")) 
 }
 
@@ -65,8 +65,9 @@ If missing the function will use the data to infer all the grade progressions fo
   \item{simulate.sgps}{Boolean variable indicating whether to simulate SGP values for students based on test-specific Conditional Standard Errors of Measurement (CSEM). 
   Test CSEM data must be available for simulation.  Must be set to TRUE for confidence interval construction. Defaults to TRUE in \code{abcSGP} only.
   }
-  \item{parallel.config}{A named list indicating, at a minimum, the TYPE of the back end to be used for parallel computation.  TYPE = one of \code{FOREACH}, \code{SNOW}, \code{MULTICORE}.  
-  List may also contain WORKERS for the number of cores or nodes used in \code{foreach} or \code{multicore} packages, or the name of the CLUSTER.OBJECT created for use with \code{snow}.
+ \item{parallel.config}{A named list with, at a minimum, two elements indicating 1) the BACKEND package to be used for parallel computation and 2) the WORKERS list to specify the number of processors to be used in each major analysis.  The BACKEND element can be set = to \code{FOREACH}, \code{SNOW}, \code{MULTICORE}, or \code{PARALLEL}.  Please consult the manuals and vignettes for information of these packages!
+ 
+ The parallel.config list is passed to  \code{\link{analyzeSGP}},  \code{\link{summarizeSGP}} and  \code{\link{visualizeSGP}}.  The WORKERS list can accordingly contain elements for PERCENTILES, PROJECTIONS, LAGGED_PROJECTIONS, BASELINE_MATRICES, BASELINE_PERCENTILES for \code{analyzeSGP}, SUMMARY for \code{summarizeSGP} and GA_PLOTS and SG_PLOTS for \code{visualizeSGP}.  See those functions help pages for details.
   }
   \item{save.intermediate.results}{Should intermediate results of \code{abcSGP} be saved after each of \code{\link{prepareSGP}}, \code{\link{analyzeSGP}},
   \code{\link{combineSGP}}, and \code{\link{summarizeSGP}}. Default is FALSE.
@@ -103,13 +104,30 @@ Summary slot.
 \dontrun{
 
 ## Runs all 5 steps
-Demonstration_Data <- abcSGP(sgp_object=sgpData_LONG, state="DEMO")
+Demonstration_SGP <- abcSGP(sgp_object=sgpData_LONG, state="DEMO")
 
 
 ## Or letting the function detect the state
 
-Demonstration_Data <- sgpData_LONG
-Demonstration_Data <- abcSGP(Demonstration_Data)
+Demonstration_SGP <- sgpData_LONG
+Demonstration_SGP <- abcSGP(Demonstration_SGP)
+
+
+###
+###  Example uses of the parallel.config argument
+###
+
+Demonstration_SGP <- sgpData_LONG
+Demonstration_SGP <- abcSGP(Demonstration_SGP,
+	parallel.config=list(
+	    BACKEND="PARALLEL", TYPE="SOCK",
+	    WORKERS=list(
+	       PERCENTILES=8, BASELINE_PERCENTILES=8, PROJECTIONS=7, LAGGED_PROJECTIONS=6,
+	       SUMMARY=8, 
+	       GA_PLOTS=8, SG_PLOTS=8)
+	)
+)
+
 }
 }
 
