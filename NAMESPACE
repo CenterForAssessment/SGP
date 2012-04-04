@@ -2,7 +2,7 @@ import("data.table")
 import("foreach")
 import("grid")
 import("methods")
-import("plyr")
+import("reshape2")
 importFrom("splines", "bs")
 import(SGPdata)
 
