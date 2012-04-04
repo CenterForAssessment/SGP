@@ -217,7 +217,7 @@ function(sgp_object,
 		if (par.start$par.type=="SNOW") {
 			
 			gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students)
-			parLapply(par.start$internal.cl, gaPlot.list, function(gaPlot.iter) 
+			clusterApplyLB(par.start$internal.cl, gaPlot.list, function(gaPlot.iter) 
 				growthAchievementPlot(
 						gaPlot.sgp_object=sgp_object,
 						gaPlot.students=gaPlot.iter[["ID"]],
@@ -743,7 +743,7 @@ if (sgPlot.produce.plots) {
 		if (par.start$par.type=="SNOW") {
 			
 			sgPlot.list <- get.sgPlot.iter(tmp.districts.and.schools)
-			parLapply(par.start$internal.cl, sgPlot.list, function(sgPlot.iter) 
+			clusterApplyLB(par.start$internal.cl, sgPlot.list, function(sgPlot.iter) 
 				invisible(studentGrowthPlot_Styles(
 					sgPlot.data=sgPlot.data,
 					state=state,
