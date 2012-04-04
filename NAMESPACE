@@ -3,6 +3,7 @@ import("foreach")
 import("grid")
 import("methods")
 import("reshape2")
+import("plyr")
 importFrom("splines", "bs")
 import(SGPdata)
 
