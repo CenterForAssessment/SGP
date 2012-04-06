@@ -12,6 +12,7 @@
 		bPlot.full.academic.year=TRUE,
 		bPlot.minimum.n=10,
 		bPlot.anonymize=FALSE,
+		bPlot.demo=FALSE,
 		bPlot.prior.achievement=TRUE, 
 		bPlot.draft=FALSE,
 		bPlot.format="print",
@@ -19,7 +20,7 @@
 
 
 	DISTRICT_NUMBER <- DISTRICT_NAME <- SCHOOL_NUMBER <- SCHOOL_NAME <- SCHOOL_ENROLLMENT_STATUS <- YEAR <- CONTENT_AREA <- MEDIAN_SGP_COUNT <- NULL ## To prevent R CMD check warnings
-	ID <- YEAR_INTEGER_TMP <- SCALE_SCORE <- SGP <- GRADE <- NULL ## To prevent R CMD check warnings
+	ID <- YEAR_INTEGER_TMP <- SCALE_SCORE <- SGP <- SGP_TARGET <- GRADE <- NULL ## To prevent R CMD check warnings
 	INSTRUCTOR_NUMBER <- INSTRUCTOR_NAME <- INSTRUCTOR_ENROLLMENT_STATUS <- NULL
 	### Define relevant quantities
 
@@ -1283,8 +1284,8 @@ if (22 %in% bPlot.styles) {
 		### Data sets and relevant quantities used for bubblePlots
 
 		if (bPlot.full.academic.year) {
-			tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__INSTRUCTOR_1_ENROLLMENT_STATUS"]][
-				INSTRUCTOR_1_ENROLLMENT_STATUS=="Enrolled Instructor: Yes"]
+			tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__INSTRUCTOR_ENROLLMENT_STATUS"]][
+				INSTRUCTOR_ENROLLMENT_STATUS=="Enrolled Instructor: Yes"]
 		} else {
 			tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
 		}
@@ -1381,8 +1382,8 @@ if (22 %in% bPlot.styles) {
 		### Data sets and relevant quantities used for bubblePlots
 
 		if (bPlot.full.academic.year) {
-			tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__INSTRUCTOR_1_ENROLLMENT_STATUS"]][
-				INSTRUCTOR_1_ENROLLMENT_STATUS=="Enrolled Instructor: Yes"]
+			tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__INSTRUCTOR_ENROLLMENT_STATUS"]][
+				INSTRUCTOR_ENROLLMENT_STATUS=="Enrolled Instructor: Yes"]
 		} else {
 			tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
 		}
@@ -1488,10 +1489,10 @@ if (22 %in% bPlot.styles) {
 		} else bPlot.levels <- list(A=NULL)
 
 		if (bPlot.full.academic.year) {
-			tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__INSTRUCTOR_1_ENROLLMENT_STATUS"]][
-				INSTRUCTOR_1_ENROLLMENT_STATUS=="Enrolled Instructor: Yes"]
+			tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__INSTRUCTOR_ENROLLMENT_STATUS"]][
+				INSTRUCTOR_ENROLLMENT_STATUS=="Enrolled Instructor: Yes"]
 			if (!is.null(bPlot.levels)) {
-				tmp.bPlot.levels.data <- sgp_object@Data[INSTRUCTOR_1_ENROLLMENT_STATUS=="Enrolled Instructor: Yes", 
+				tmp.bPlot.levels.data <- sgp_object@Data[INSTRUCTOR_ENROLLMENT_STATUS=="Enrolled Instructor: Yes", 
 					eval(tmp.bPlot.levels.txt), by=list(INSTRUCTOR_NUMBER, CONTENT_AREA, YEAR)]
 				setkeyv(tmp.bPlot.data, c("INSTRUCTOR_NUMBER", "CONTENT_AREA", "YEAR"))
 				setkeyv(tmp.bPlot.levels.data, c("INSTRUCTOR_NUMBER", "CONTENT_AREA", "YEAR"))
@@ -1617,8 +1618,8 @@ if (22 %in% bPlot.styles) {
 		### Data sets and relevant quantities used for bubblePlots
 
 		if (bPlot.full.academic.year) {
-			tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__INSTRUCTOR_1_ENROLLMENT_STATUS"]][
-				INSTRUCTOR_1_ENROLLMENT_STATUS=="Enrolled Instructor: Yes"]
+			tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__INSTRUCTOR_ENROLLMENT_STATUS"]][
+				INSTRUCTOR_ENROLLMENT_STATUS=="Enrolled Instructor: Yes"]
 		} else {
 			tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
 		}
@@ -1724,10 +1725,10 @@ if (22 %in% bPlot.styles) {
 		} else bPlot.levels <- list(A=NULL)
 
 		if (bPlot.full.academic.year) {
-			tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__INSTRUCTOR_1_ENROLLMENT_STATUS"]][
-				INSTRUCTOR_1_ENROLLMENT_STATUS=="Enrolled Instructor: Yes"]
+			tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__INSTRUCTOR_ENROLLMENT_STATUS"]][
+				INSTRUCTOR_ENROLLMENT_STATUS=="Enrolled Instructor: Yes"]
 			if (!is.null(bPlot.levels)) {
-				tmp.bPlot.levels.data <- sgp_object@Data[INSTRUCTOR_1_ENROLLMENT_STATUS=="Enrolled Instructor: Yes", 
+				tmp.bPlot.levels.data <- sgp_object@Data[INSTRUCTOR_ENROLLMENT_STATUS=="Enrolled Instructor: Yes", 
 					eval(tmp.bPlot.levels.txt), by=list(INSTRUCTOR_NUMBER, CONTENT_AREA, YEAR)]
 				setkeyv(tmp.bPlot.data, c("INSTRUCTOR_NUMBER", "CONTENT_AREA", "YEAR"))
 				setkeyv(tmp.bPlot.levels.data, c("INSTRUCTOR_NUMBER", "CONTENT_AREA", "YEAR"))
