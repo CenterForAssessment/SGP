@@ -12,15 +12,15 @@
 		bPlot.full.academic.year=TRUE,
 		bPlot.minimum.n=10,
 		bPlot.anonymize=FALSE,
-		bPlot.demo=FALSE,
 		bPlot.prior.achievement=TRUE, 
 		bPlot.draft=FALSE,
+		bPlot.demo=FALSE,
 		bPlot.format="print",
 		bPlot.folder="Visualizations/bubblePlots") {
 
 
 	DISTRICT_NUMBER <- DISTRICT_NAME <- SCHOOL_NUMBER <- SCHOOL_NAME <- SCHOOL_ENROLLMENT_STATUS <- YEAR <- CONTENT_AREA <- MEDIAN_SGP_COUNT <- NULL ## To prevent R CMD check warnings
-	ID <- YEAR_INTEGER_TMP <- SCALE_SCORE <- SGP <- SGP_TARGET <- GRADE <- NULL ## To prevent R CMD check warnings
+	ID <- YEAR_INTEGER_TMP <- SCALE_SCORE <- SGP <- GRADE <- NULL ## To prevent R CMD check warnings
 	INSTRUCTOR_NUMBER <- INSTRUCTOR_NAME <- INSTRUCTOR_ENROLLMENT_STATUS <- NULL
 	### Define relevant quantities
 
@@ -83,105 +83,32 @@
 	names.merge <- function(tmp.data, bPlot.anonymize) {
 		if (!"INSTRUCTOR_NUMBER" %in% names(tmp.data) & !"SCHOOL_NUMBER" %in% names(tmp.data) & "DISTRICT_NUMBER" %in% names(tmp.data)) {
 			tmp.names <- unique(data.table(sgp_object@Data[!is.na(DISTRICT_NUMBER), 
-				list(DISTRICT_NUMBER, DISTRICT_NAME)], key="DISTRICT_NUMBER"))
+				list(DISTRICT_NUMBER, DISTRICT_NAME, SCHOOL_NUMBER)], key="DISTRICT_NUMBER")) # Keep other institution NUMBER to iterate over in some plots
 			if (bPlot.anonymize) {
 				tmp.names$DISTRICT_NAME <- paste("District", as.numeric(as.factor(tmp.names$DISTRICT_NUMBER)))
 			}
 			setkey(tmp.data, DISTRICT_NUMBER)
 		}
 		
-		if (!"INSTRUCTOR_NUMBER" %in% names(tmp.data)& "SCHOOL_NUMBER" %in% names(tmp.data) & !"DISTRICT_NUMBER" %in% names(tmp.data) ) {
+		if (!"INSTRUCTOR_NUMBER" %in% names(tmp.data) & "SCHOOL_NUMBER" %in% names(tmp.data) & !"DISTRICT_NUMBER" %in% names(tmp.data)) {
 			tmp.names <- unique(data.table(sgp_object@Data[!is.na(SCHOOL_NUMBER), 
-				list(SCHOOL_NUMBER, SCHOOL_NAME)], key="SCHOOL_NUMBER"))
+				list(DISTRICT_NUMBER, SCHOOL_NUMBER, SCHOOL_NAME)], key="SCHOOL_NUMBER")) # Keep other institution NUMBER to iterate over in some plots
 			if (bPlot.anonymize) {
 				tmp.names$SCHOOL_NAME <- paste("School", as.numeric(as.factor(tmp.names$SCHOOL_NUMBER)))
 			}
 			setkey(tmp.data, SCHOOL_NUMBER)
 		}
-
-		if ("INSTRUCTOR_NUMBER" %in% names(tmp.data) & !"SCHOOL_NUMBER" %in% names(tmp.data) & !"DISTRICT_NUMBER" %in% names(tmp.data)) {
-			if (!"INSTRUCTOR_NAME" %in% names(tmp.data)) {
-				tmp.num <- seq(length(grep('INSTRUCTOR_NUMBER', names(sgp_object@Data))))
-				eval(parse(text=paste("sgp_object@Data$INSTRUCTOR_NAME_", tmp.num,
-					"<- paste('Instructor', as.factor(sgp_object@Data$INSTRUCTOR_NUMBER_", tmp.num, "))", sep="")))
-			} # END construct psuedo Instructor Name if not present
-			tmp.names <- data.frame(sgp_object@Data[,c(grep('INSTRUCTOR_NUMBER', names(sgp_object@Data)),
-				grep('INSTRUCTOR_NAME', names(sgp_object@Data))), with=FALSE])
-			id.index <- grep('NUMBER', names(tmp.names))
-			name.index <- grep('NAME', names(tmp.names))
-			tmp.names<- eval(parse(text=paste("unique(data.table(INSTRUCTOR_NUMBER=c(", paste("tmp.names[,", inst.id.index, "]", collapse=","),
-				"), INSTRUCTOR_NAME=c(", paste("tmp.names[,", inst.name.index, "]", collapse=","),
-				"), key='INSTRUCTOR_NUMBER'))[!is.na(INSTRUCTOR_NUMBER)]")))
-			if (bPlot.anonymize) {
-				tmp.names$INSTRUCTOR_NAME <- paste("Instructor", as.numeric(as.factor(tmp.names$INSTRUCTOR_NUMBER)))
-			}
-			setkey(tmp.data, INSTRUCTOR_NUMBER)
-		}
 		
-		if ("INSTRUCTOR_NUMBER" %in% names(tmp.data) & "SCHOOL_NUMBER" %in% names(tmp.data) & !"DISTRICT_NUMBER" %in% names(tmp.data)) {
+		if ("INSTRUCTOR_NUMBER" %in% names(tmp.data)) { #Add both school and district number regardless of 
 			if (!"INSTRUCTOR_NAME" %in% names(tmp.data)) {
 				tmp.num <- seq(length(grep('INSTRUCTOR_NUMBER', names(sgp_object@Data))))
 				eval(parse(text=paste("sgp_object@Data$INSTRUCTOR_NAME_", tmp.num,
 					"<- paste('Instructor', as.factor(sgp_object@Data$INSTRUCTOR_NUMBER_", tmp.num, "))", sep="")))
 			}
 			tmp.names <- data.frame(sgp_object@Data[,c(grep('INSTRUCTOR_NUMBER', names(sgp_object@Data)), grep('INSTRUCTOR_NAME', names(sgp_object@Data)),
-				grep('SCHOOL_NUMBER', names(sgp_object@Data)), grep('SCHOOL_NAME', names(sgp_object@Data))), with=FALSE])
-			inst.id.index <- grep('INSTRUCTOR_NUMBER', names(tmp.names)); inst.name.index <- grep('INSTRUCTOR_NAME', names(tmp.names))
-			sch.id.index <- grep('SCHOOL_NUMBER', names(tmp.names)); sch.name.index <- grep('SCHOOL_NAME', names(tmp.names))
-			tmp.names<- eval(parse(text=paste("unique(data.table(INSTRUCTOR_NUMBER=c(", paste("tmp.names[,", inst.id.index, "]", collapse=","),
-				"), INSTRUCTOR_NAME=c(", paste("tmp.names[,", inst.name.index, "]", collapse=","),
-				"), SCHOOL_NUMBER=rep(", paste("tmp.names[,", sch.id.index, "],", length(inst.id.index), collapse=","),
-				"), SCHOOL_NAME=rep(", paste("tmp.names[,", sch.name.index, "],", length(inst.id.index), collapse=","), 
-				"), key=c('INSTRUCTOR_NUMBER', 'SCHOOL_NUMBER')))[!is.na(INSTRUCTOR_NUMBER) & !is.na(SCHOOL_NUMBER)]")))
-			if (bPlot.anonymize) {
-				tmp.names$INSTRUCTOR_NAME <- paste("Instructor", as.numeric(as.factor(tmp.names$INSTRUCTOR_NUMBER)))
-				tmp.names$SCHOOL_NAME <- paste("School", as.numeric(as.factor(tmp.names$SCHOOL_NUMBER)))
-			}
-			setkeyv(tmp.data, c("INSTRUCTOR_NUMBER", "SCHOOL_NUMBER"))
-		}
-		
-		if ("INSTRUCTOR_NUMBER" %in% names(tmp.data) & !"SCHOOL_NUMBER" %in% names(tmp.data) & "DISTRICT_NUMBER" %in% names(tmp.data)) {
-			if (!"INSTRUCTOR_NAME" %in% names(tmp.data)) {
-				tmp.num <- seq(length(grep('INSTRUCTOR_NUMBER', names(sgp_object@Data))))
-				eval(parse(text=paste("sgp_object@Data$INSTRUCTOR_NAME_", tmp.num,
-					"<- paste('Instructor', as.factor(sgp_object@Data$INSTRUCTOR_NUMBER_", tmp.num, "))", sep="")))
-			}
-			tmp.names <- data.frame(sgp_object@Data[,c(grep('INSTRUCTOR_NUMBER', names(sgp_object@Data)), grep('INSTRUCTOR_NAME', names(sgp_object@Data)),
+				grep('SCHOOL_NUMBER', names(sgp_object@Data)), grep('SCHOOL_NAME', names(sgp_object@Data)),
 				grep('DISTRICT_NUMBER', names(sgp_object@Data)), grep('DISTRICT_NAME', names(sgp_object@Data))), with=FALSE])
 			inst.id.index <- grep('INSTRUCTOR_NUMBER', names(tmp.names)); inst.name.index <- grep('INSTRUCTOR_NAME', names(tmp.names))
-			dst.id.index <- grep('DISTRICT_NUMBER', names(tmp.names)); dst.name.index <- grep('DISTRICT_NAME', names(tmp.names))
-			tmp.names<- eval(parse(text=paste("unique(data.table(INSTRUCTOR_NUMBER=c(", paste("tmp.names[,", inst.id.index, "]", collapse=","),
-				"), INSTRUCTOR_NAME=c(", paste("tmp.names[,", inst.name.index, "]", collapse=","),
-				"), DISTRICT_NUMBER=rep(", paste("tmp.names[,", dst.id.index, "],", length(inst.id.index), collapse=","),
-				"), DISTRICT_NAME=rep(", paste("tmp.names[,", dst.name.index, "],", length(inst.id.index), collapse=","), 
-				"), key=c('INSTRUCTOR_NUMBER', 'DISTRICT_NUMBER')))[!is.na(INSTRUCTOR_NUMBER) & !is.na(DISTRICT_NUMBER)]")))
-			if (bPlot.anonymize) {
-				tmp.names$INSTRUCTOR_NAME <- paste("Instructor", as.numeric(as.factor(tmp.names$INSTRUCTOR_NUMBER)))
-				tmp.names$DISTRICT_NAME <- paste("District", as.numeric(as.factor(tmp.names$DISTRICT_NUMBER)))
-			}
-			setkeyv(tmp.data, c("INSTRUCTOR_NUMBER", "DISTRICT_NUMBER"))
-		}
-
-		if (!"INSTRUCTOR_NUMBER" %in% names(tmp.data) & "SCHOOL_NUMBER" %in% names(tmp.data) & "DISTRICT_NUMBER" %in% names(tmp.data)) {
-			tmp.names <- unique(data.table(sgp_object@Data[!is.na(DISTRICT_NUMBER) & !is.na(SCHOOL_NUMBER), 
-				list(DISTRICT_NUMBER, DISTRICT_NAME, SCHOOL_NUMBER, SCHOOL_NAME)], key="SCHOOL_NUMBER"))
-			if (bPlot.anonymize) {
-				tmp.names$SCHOOL_NAME <- paste("School", as.numeric(as.factor(tmp.names$SCHOOL_NUMBER)))
-				tmp.names$DISTRICT_NAME <- paste("District", as.numeric(as.factor(tmp.names$DISTRICT_NUMBER)))
-			}
-			setkey(tmp.data, SCHOOL_NUMBER)
-		}
-		
-		if ("INSTRUCTOR_NUMBER" %in% names(tmp.data) & "SCHOOL_NUMBER" %in% names(tmp.data) & "DISTRICT_NUMBER" %in% names(tmp.data)) {
-			if (!"INSTRUCTOR_NAME" %in% names(tmp.data)) {
-				tmp.num <- seq(length(grep('INSTRUCTOR_NUMBER', names(sgp_object@Data))))
-				eval(parse(text=paste("sgp_object@Data$INSTRUCTOR_NAME_", tmp.num,
-					"<- paste('Instructor', as.factor(sgp_object@Data$INSTRUCTOR_NUMBER_", tmp.num, "))", sep="")))
-			}
-			tmp.names <- data.frame(sgp_object@Data[,c(grep('INSTRUCTOR_NUMBER', names(sgp_object@Data)), grep('INSTRUCTOR_NAME', names(sgp_object@Data)),
-				grep('DISTRICT_NUMBER', names(sgp_object@Data)), grep('DISTRICT_NAME', names(sgp_object@Data)),
-				grep('SCHOOL_NUMBER', names(sgp_object@Data)), grep('SCHOOL_NAME', names(sgp_object@Data))), with=FALSE])
-			inst.id.index <- grep('INSTRUCTOR_NUMBER', names(tmp.names)); inst.name.index <- grep('INSTRUCTOR_NAME', names(tmp.names))
 			sch.id.index <- grep('SCHOOL_NUMBER', names(tmp.names)); sch.name.index <- grep('SCHOOL_NAME', names(tmp.names))
 			dst.id.index <- grep('DISTRICT_NUMBER', names(tmp.names)); dst.name.index <- grep('DISTRICT_NAME', names(tmp.names))
 			tmp.names<- eval(parse(text=paste("unique(data.table(INSTRUCTOR_NUMBER=c(", paste("tmp.names[,", inst.id.index, "]", collapse=","),
@@ -189,17 +116,23 @@
 				"), SCHOOL_NUMBER=rep(", paste("tmp.names[,", sch.id.index, "],", length(inst.id.index), collapse=","),
 				"), SCHOOL_NAME=rep(", paste("tmp.names[,", sch.name.index, "],", length(inst.id.index), collapse=","), 
 				"), DISTRICT_NUMBER=rep(", paste("tmp.names[,", dst.id.index, "],", length(inst.id.index), collapse=","),
-				"), DISTRICT_NAME=rep(", paste("tmp.names[,", dst.name.index, "],", length(inst.id.index), collapse=","), 
-				"), key=c('INSTRUCTOR_NUMBER', 'SCHOOL_NUMBER', 'DISTRICT_NUMBER')))[!is.na(INSTRUCTOR_NUMBER) & !is.na(SCHOOL_NUMBER) & !is.na(DISTRICT_NUMBER)]")))
+				"), DISTRICT_NAME=rep(", paste("tmp.names[,", dst.name.index, "],", length(inst.id.index), collapse=","), ")))")))
 			if (bPlot.anonymize) {
 				tmp.names$INSTRUCTOR_NAME <- paste("Instructor", as.numeric(as.factor(tmp.names$INSTRUCTOR_NUMBER)))
 				tmp.names$SCHOOL_NAME <- paste("School", as.numeric(as.factor(tmp.names$SCHOOL_NUMBER)))
 				tmp.names$DISTRICT_NAME <- paste("District", as.numeric(as.factor(tmp.names$DISTRICT_NUMBER)))
 			}
-			setkeyv(tmp.data, c("INSTRUCTOR_NUMBER", "SCHOOL_NUMBER", "DISTRICT_NUMBER"))
-		}
 
-		tmp.names[tmp.data, mult="last"]
+			if ("INSTRUCTOR_NUMBER" %in% names(tmp.data) & "SCHOOL_NUMBER" %in% names(tmp.data) & !"DISTRICT_NUMBER" %in% names(tmp.data)) {
+				setkeyv(tmp.names, c("INSTRUCTOR_NUMBER", "SCHOOL_NUMBER"))
+				setkeyv(tmp.data, c("INSTRUCTOR_NUMBER", "SCHOOL_NUMBER"))
+			}
+			if ("INSTRUCTOR_NUMBER" %in% names(tmp.data) & !"SCHOOL_NUMBER" %in% names(tmp.data) & "DISTRICT_NUMBER" %in% names(tmp.data)) {
+				setkeyv(tmp.names, c("INSTRUCTOR_NUMBER", "DISTRICT_NUMBER"))
+				setkeyv(tmp.data, c("INSTRUCTOR_NUMBER", "DISTRICT_NUMBER"))
+			}
+			tmp.names[tmp.data, mult="last"][!is.na(INSTRUCTOR_NUMBER)]
+		} else tmp.names[tmp.data, mult="last"]
 	}
 
 	get.my.iters <- function(tmp.data, bubblePlot_LEVEL, ...) {
@@ -345,6 +278,47 @@
 		subset(tmp.bPlot.data, eval(parse(text=tmp)))
 	}
 
+	get.multiple.membership <- function(names.df) {
+		"%w/o%" <- function(x, y) x[!x %in% y]
+		tmp.names <- list()
+		tmp.number.variables <- unique(suppressWarnings(as.numeric(sapply(strsplit(
+			names.df[["names.type"]][grep("institution_multiple_membership", names.df[["names.type"]])], "_"), 
+			function(x) tail(x,1)))) %w/o% NA)
+		if (length(tmp.number.variables)==0) {
+			tmp.names <- NULL
+		} else {
+			for (i in seq(tmp.number.variables)) {
+				tmp.variable.names <- as.character(subset(names.df, names.type==paste("institution_multiple_membership_", i, sep=""))[["names.sgp"]])
+
+				tmp.length <- sum(paste("institution_multiple_membership_", i, sep="")==names.df[["names.type"]], na.rm=TRUE)
+				tmp.weight.length <- sum(paste("institution_multiple_membership_", i, "_weight", sep="")==names.df[["names.type"]], na.rm=TRUE)
+				tmp.inclusion.length <- sum(paste("institution_multiple_membership_", i, "_inclusion", sep="")==names.df[["names.type"]], na.rm=TRUE)
+
+				if ((tmp.weight.length != 0 & tmp.weight.length != tmp.length) | (tmp.inclusion.length != 0 & tmp.inclusion.length != tmp.length)) {
+					stop("\tNOTE: The same (non-zero) number of inclusion/weight Multiple Membership variables must exist as the number of multiple Membership variables.")
+				}
+
+				if (tmp.weight.length == 0) {
+					tmp.weights <- NULL
+				} else {
+					tmp.weights <- as.character(subset(names.df, names.type==paste("institution_multiple_membership_", i, "_weight", sep=""))[["names.sgp"]])
+				}
+				
+				if (tmp.inclusion.length != 0 & tmp.inclusion.length != tmp.length) {
+					stop("\tNOTE: The same number (or zero) of Multiple membership inclusion variables must exist as the number of multiple membership variables.")
+				}
+				if (tmp.inclusion.length == 0) {
+					tmp.inclusion <- NULL 
+				} else {
+					tmp.inclusion <- as.character(subset(names.df, names.type==paste("institution_multiple_membership_", i, "_inclusion", sep=""))[["names.sgp"]])
+				}
+
+				tmp.names[[i]] <- list(VARIABLE.NAMES=tmp.variable.names, WEIGHTS=tmp.weights, INCLUSION=tmp.inclusion)
+			}
+		}
+		return(tmp.names)
+	} ### END get.multiple.membership
+
 #################################################################################################################
 ####
 #### Summary Level bubblePlots
@@ -396,7 +370,6 @@ if (1 %in% bPlot.styles) {
 
 		bPlot.labels <- create.bPlot.labels(year.iter, y.variable.iter, bubblePlot_LEVEL) 
 
-
 		### Create bubblePlot ###
 
 		bubblePlot(
@@ -436,7 +409,8 @@ if (1 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_LEGEND="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
-			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(state.name.file.label, year.iter, capwords(content_area.iter), "State", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
+			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(state.name.file.label, year.iter, capwords(content_area.iter), 
+				"State", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
 			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "State", "Style_1"),
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 
@@ -779,7 +753,8 @@ if (10 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_LEGEND="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
-			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(district.name.label, year.iter, capwords(content_area.iter), "District", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
+			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(district.name.label, year.iter, capwords(content_area.iter), 
+				"District", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
 			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "District", "Style_10"),
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 
@@ -1284,10 +1259,9 @@ if (22 %in% bPlot.styles) {
 		### Data sets and relevant quantities used for bubblePlots
 
 		if (bPlot.full.academic.year) {
-			tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__INSTRUCTOR_ENROLLMENT_STATUS"]][
-				INSTRUCTOR_ENROLLMENT_STATUS=="Enrolled Instructor: Yes"]
+			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__INCLUSION__CONTENT_AREA__YEAR"]][!is.na(INCLUSION)]
 		} else {
-			tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
+			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
 		}
 
 		# Merge in school and district names and anonymize school names (if requested)
@@ -1307,16 +1281,16 @@ if (22 %in% bPlot.styles) {
 		for (y.variable.iter in my.iters$tmp.y.variable) {  ### Loop over CURRENT and PRIOR achievement (if requested)
 
 		# Subset data
-
+		if (is.factor(year.iter)) year.iter <- as.character(year.iter) # factor was messing up subset...
 		bPlot.data <- tmp.bPlot.data[YEAR==year.iter & SCHOOL_NUMBER==school_number.iter & CONTENT_AREA==content_area.iter & MEDIAN_SGP_COUNT >= bPlot.minimum.n]
 
-		# Create labels
+		# Create labels and file path
 
 		bPlot.labels <- create.bPlot.labels(year.iter, y.variable.iter, bubblePlot_LEVEL) 
 		school.name.label <- as.character(bPlot.data[SCHOOL_NUMBER== school_number.iter]$SCHOOL_NAME[1])
 
 		### Create bubblePlot ###
-		if (dim(bPlot.data)[1] > 0) { # some CMO's don't teach all content areas (elementary math)
+		if (dim(bPlot.data)[1] > 0) { # some institutions don't teach all content areas (elementary math)
 
 		bubblePlot(
 			bubble_plot_data.X=bPlot.data[["MEDIAN_SGP"]],
@@ -1330,7 +1304,7 @@ if (22 %in% bPlot.styles) {
 				paste(bPlot.data[[y.variable.iter]], " (", bPlot.data[[paste(y.variable.iter, "_COUNT", sep="")]], ")", sep="")),
 			bubble_plot_labels.X=c("Growth", paste(bPlot.labels$x.year.label, "Median Student Growth Percentile")),
 			bubble_plot_labels.Y=c("Achievement", bPlot.labels$y.year.label),
-			bubble_plot_labels.SIZE=c(15, 30, 60, 100),
+			bubble_plot_labels.SIZE=c(10, 25, 50, 100),
 			bubble_plot_labels.LEVELS=NULL, #levels(bubblePlot[["subset.factor"]]),
 			bubble_plot_labels.BUBBLE_TIPS_LINES=list(paste(bPlot.labels$x.year.label, "Median SGP (Count)"),
 				paste(bPlot.labels$y.year.label, " (Count)")),
@@ -1342,7 +1316,7 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_titles.LEGEND2_P1=NULL,
 			bubble_plot_titles.LEGEND2_P2=NULL,
 
-			bubble_plot_configs.BUBBLE_MIN_MAX=c(0.04, 0.31),
+			bubble_plot_configs.BUBBLE_MIN_MAX=c(0.03, 0.14),
 			bubble_plot_configs.BUBBLE_X_TICKS=seq(0,100,10),
 			bubble_plot_configs.BUBBLE_X_TICKS_SIZE=c(rep(0.6, 5), 1, rep(0.6, 5)),
 			bubble_plot_configs.BUBBLE_Y_TICKS=seq(0,100,10),
@@ -1355,8 +1329,9 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_LEGEND="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
-			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(school.name.label, year.iter, capwords(content_area.iter), "School", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
-			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "School", "Style_50", paste("District", district_number.iter, "Schools", sep="_")),
+			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(school.name.label, year.iter, capwords(content_area.iter), 
+				"School", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
+			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "Instructor", "Style_50", paste("District", district_number.iter, sep="_")),
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 		} ## END if 
 		} ## END loop over y.variable.iter
@@ -1367,7 +1342,7 @@ if (22 %in% bPlot.styles) {
 
 		message(paste("Finished bubblePlot Style 50", date(), "in", timetaken(started.at), "\n"))
 
-} ## END bubblePlot style 50
+	} ## END bubblePlot style 50
 
 
 #######################################################################################
@@ -1382,10 +1357,9 @@ if (22 %in% bPlot.styles) {
 		### Data sets and relevant quantities used for bubblePlots
 
 		if (bPlot.full.academic.year) {
-			tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__INSTRUCTOR_ENROLLMENT_STATUS"]][
-				INSTRUCTOR_ENROLLMENT_STATUS=="Enrolled Instructor: Yes"]
+			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__INCLUSION__CONTENT_AREA__YEAR"]][!is.na(INCLUSION)]
 		} else {
-			tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
+			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
 		}
 
 		# Merge in school and district names and anonymize school names (if requested)
@@ -1406,11 +1380,10 @@ if (22 %in% bPlot.styles) {
 		bPlot.data <- tmp.bPlot.data[YEAR==year.iter & CONTENT_AREA==content_area.iter & DISTRICT_NUMBER %in% my.iters$tmp.districts & MEDIAN_SGP_COUNT >= bPlot.minimum.n]
 
 		# Loop over unique schools IN DISTRICT ONLY
-		# for (school_number.iter in intersect(my.iters$tmp.schools, bPlot.data$SCHOOL_NUMBER)) {  ### Loop over schools
 		for (district_number.iter in intersect(my.iters$tmp.districts, bPlot.data$DISTRICT_NUMBER)) { ### Loop over DISTRICT NUMBERS   
 		for (y.variable.iter in my.iters$tmp.y.variable) {  ### Loop over CURRENT and PRIOR achievement (if requested)
 
-		# Create labels
+		# Create labels and file path
 
 		bPlot.labels <- create.bPlot.labels(year.iter, y.variable.iter, bubblePlot_LEVEL)
 		district.name.label <- as.character(bPlot.data[DISTRICT_NUMBER==district_number.iter]$DISTRICT_NAME[1])
@@ -1429,7 +1402,7 @@ if (22 %in% bPlot.styles) {
 				paste(bPlot.data[[y.variable.iter]], " (", bPlot.data[[paste(y.variable.iter, "_COUNT", sep="")]], ")", sep="")),
 			bubble_plot_labels.X=c("Growth", paste(bPlot.labels$x.year.label, "Median Student Growth Percentile")),
 			bubble_plot_labels.Y=c("Achievement", bPlot.labels$y.year.label),
-			bubble_plot_labels.SIZE=c(15, 30, 60, 100),
+			bubble_plot_labels.SIZE=c(10, 25, 50, 100),
 			bubble_plot_labels.LEVELS=NULL, #levels(bubblePlot[["subset.factor"]]),
 			bubble_plot_labels.BUBBLE_TIPS_LINES=list(paste(bPlot.labels$x.year.label, "Median SGP (Count)"),
 				paste(bPlot.labels$y.year.label, " (Count)")),
@@ -1441,7 +1414,7 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_titles.LEGEND2_P1=NULL,
 			bubble_plot_titles.LEGEND2_P2=NULL,
 
-			bubble_plot_configs.BUBBLE_MIN_MAX=c(0.04, 0.31),
+			bubble_plot_configs.BUBBLE_MIN_MAX=c(0.03, 0.14),
 			bubble_plot_configs.BUBBLE_X_TICKS=seq(0,100,10),
 			bubble_plot_configs.BUBBLE_X_TICKS_SIZE=c(rep(0.6, 5), 1, rep(0.6, 5)),
 			bubble_plot_configs.BUBBLE_Y_TICKS=seq(0,100,10),
@@ -1456,18 +1429,17 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
 			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(district.name.label, year.iter, 
 				capwords(content_area.iter), "State", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
-			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "State", "Style_53"),
+			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "Instructor", "Style_53", paste("District", district_number.iter, sep="_")),
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 
 		} ## END loop over y.variable.iter
-		# } ## End loop over school_number.iter
 		} ## End loop over district_number.iter
 		} ## End loop over content_area.iter
 		} ## End loop over year.iter
 
 		message(paste("Finished bubblePlot Style 53", date(), "in", timetaken(started.at), "\n"))
 
-} ## END bubblePlot style 53
+	} ## END bubblePlot style 53
 
 
 #######################################################################################
@@ -1489,11 +1461,21 @@ if (22 %in% bPlot.styles) {
 		} else bPlot.levels <- list(A=NULL)
 
 		if (bPlot.full.academic.year) {
-			tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__INSTRUCTOR_ENROLLMENT_STATUS"]][
-				INSTRUCTOR_ENROLLMENT_STATUS=="Enrolled Instructor: Yes"]
+			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__INCLUSION__CONTENT_AREA__YEAR"]][!is.na(INCLUSION)]
 			if (!is.null(bPlot.levels)) {
-				tmp.bPlot.levels.data <- sgp_object@Data[INSTRUCTOR_ENROLLMENT_STATUS=="Enrolled Instructor: Yes", 
-					eval(tmp.bPlot.levels.txt), by=list(INSTRUCTOR_NUMBER, CONTENT_AREA, YEAR)]
+				tmp.bPlot.levels.data <- data.frame(eval(parse(text=paste("sgp_object@Data[,c(grep('INSTRUCTOR_NUMBER', names(sgp_object@Data)), 
+					intersect(grep('ENROLLMENT_STATUS', names(sgp_object@Data)), grep('INSTRUCTOR', names(sgp_object@Data))),", 
+					"grep('CONTENT_AREA', names(sgp_object@Data)), grep('YEAR', names(sgp_object@Data)),",
+					paste("grep('", bPlot.levels, "', names(sgp_object@Data))", sep="", collapse=","), "), with=FALSE]"))))
+				inst.index <- grep('INSTRUCTOR_NUMBER', names(tmp.bPlot.levels.data))
+				enroll.index <- grep('ENROLLMENT_STATUS', names(tmp.bPlot.levels.data))
+				tmp.bPlot.levels.data<- eval(parse(text=paste("data.table(INSTRUCTOR_NUMBER=c(", paste("tmp.bPlot.levels.data[,", inst.index, "]", collapse=","),
+					"), INCLUSION=c(", paste("as.character(tmp.bPlot.levels.data[,", enroll.index, "])", collapse=","),
+					"), CONTENT_AREA=rep(tmp.bPlot.levels.data[, 'CONTENT_AREA'],", length(inst.index),
+					"), YEAR=rep(tmp.bPlot.levels.data[, 'YEAR'],", length(inst.index),
+					"), ", paste(bPlot.levels, "=rep(tmp.bPlot.levels.data[, '", bPlot.levels, "'],", length(inst.index), ")", sep="", collapse=","),
+					", key=c('INSTRUCTOR_NUMBER', 'INCLUSION'))[!is.na(INSTRUCTOR_NUMBER) & INCLUSION=='Enrolled Instructor: Yes']")))
+				tmp.bPlot.levels.data <- tmp.bPlot.levels.data[, eval(tmp.bPlot.levels.txt), by=list(INSTRUCTOR_NUMBER, CONTENT_AREA, YEAR)]
 				setkeyv(tmp.bPlot.data, c("INSTRUCTOR_NUMBER", "CONTENT_AREA", "YEAR"))
 				setkeyv(tmp.bPlot.levels.data, c("INSTRUCTOR_NUMBER", "CONTENT_AREA", "YEAR"))
 				tmp.bPlot.data <- tmp.bPlot.levels.data[tmp.bPlot.data]
@@ -1504,9 +1486,20 @@ if (22 %in% bPlot.styles) {
 				}
 			}
 		} else {
-			tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
+			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
 			if (!is.null(bPlot.levels)) {
-				tmp.bPlot.levels.data <- sgp_object@Data[, eval(tmp.bPlot.levels.txt), by=list(INSTRUCTOR_NUMBER, CONTENT_AREA, YEAR)]
+
+				tmp.bPlot.levels.data <- data.frame(eval(parse(text=paste("sgp_object@Data[,c(grep('INSTRUCTOR_NUMBER', names(sgp_object@Data)), 
+					grep('CONTENT_AREA', names(sgp_object@Data)), grep('YEAR', names(sgp_object@Data)),",
+					paste("grep('", bPlot.levels, "', names(sgp_object@Data))", sep="", collapse=","), "), with=FALSE]"))))
+				inst.index <- grep('INSTRUCTOR_NUMBER', names(tmp.bPlot.levels.data))
+				tmp.bPlot.levels.data<- eval(parse(text=paste("data.table(INSTRUCTOR_NUMBER=c(", paste("tmp.bPlot.levels.data[,", inst.index, "]", collapse=","),
+					"), CONTENT_AREA=rep(tmp.bPlot.levels.data[, 'CONTENT_AREA'],", length(inst.index),
+					"), YEAR=rep(tmp.bPlot.levels.data[, 'YEAR'],", length(inst.index),
+					"), ", paste(bPlot.levels, "=rep(tmp.bPlot.levels.data[, '", bPlot.levels, "'],", length(inst.index), ")", sep="", collapse=","),
+					", key='INSTRUCTOR_NUMBER')[!is.na(INSTRUCTOR_NUMBER)]")))
+				tmp.bPlot.levels.data <- tmp.bPlot.levels.data[, eval(tmp.bPlot.levels.txt), by=list(INSTRUCTOR_NUMBER, CONTENT_AREA, YEAR)]
+
 				setkeyv(tmp.bPlot.data, c("INSTRUCTOR_NUMBER", "CONTENT_AREA", "YEAR"))
 				setkeyv(tmp.bPlot.levels.data, c("INSTRUCTOR_NUMBER", "CONTENT_AREA", "YEAR"))
 				tmp.bPlot.data <- tmp.bPlot.levels.data[tmp.bPlot.data]
@@ -1520,7 +1513,7 @@ if (22 %in% bPlot.styles) {
 
 		# Merge in school and district names and anonymize school names (if requested)
 
-		tmp.bPlot.data <- names.merge(tmp.bPlot.data, bPlot.anonymize)
+		tmp.bPlot.data <- names.merge(tmp.bPlot.data[!is.na(INSTRUCTOR_NUMBER)], bPlot.anonymize)
 
 		### Get tmp.years, tmp.content_areas, and tmp.y.variable
 
@@ -1528,7 +1521,7 @@ if (22 %in% bPlot.styles) {
 
 		### Start loops for bubblePlots
 
-		for (bPlot.levels.iter in seq_along(bPlot.levels)) {  ### Loop over bPlot.levels
+		for (bPlot.levels.iter in unlist(bPlot.levels)) {  ### Loop over bPlot.levels
 		for (year.iter in my.iters$tmp.years) {  ### Loop over year
 		for (content_area.iter in my.iters$tmp.content_areas) { ### Loop over content areas
 
@@ -1537,12 +1530,11 @@ if (22 %in% bPlot.styles) {
 		bPlot.data <- get.bPlot.data(tmp.bPlot.data)[DISTRICT_NUMBER %in% my.iters$tmp.districts]
 
 		# Loop over unique schools IN DISTRICT ONLY
-		# for (school_number.iter in intersect(my.iters$tmp.schools, bPlot.data$SCHOOL_NUMBER)) {  ### Loop over schools
 		for (district_number.iter in intersect(my.iters$tmp.districts, bPlot.data$DISTRICT_NUMBER)) { ### Loop over DISTRICT NUMBERS   
 		for (levels.iter in levels(factor(eval(parse(text=paste("bPlot.data$PCT_", bPlot.levels.iter, sep="")))))) {
 		for (y.variable.iter in my.iters$tmp.y.variable) {  ### Loop over CURRENT and PRIOR achievement (if requested)
 
-		# Create labels
+		# Create labels and file path
 
 		bPlot.labels <- create.bPlot.labels(year.iter, y.variable.iter, bubblePlot_LEVEL)
 		district.name.label <- as.character(bPlot.data[DISTRICT_NUMBER==district_number.iter]$DISTRICT_NAME[1])
@@ -1563,7 +1555,7 @@ if (22 %in% bPlot.styles) {
 				paste(bPlot.data[[y.variable.iter]], " (", bPlot.data[[paste(y.variable.iter, "_COUNT", sep="")]], ")", sep="")),
 			bubble_plot_labels.X=c("Growth", paste(bPlot.labels$x.year.label, "Median Student Growth Percentile")),
 			bubble_plot_labels.Y=c("Achievement", bPlot.labels$y.year.label),
-			bubble_plot_labels.SIZE=c(15, 30, 60, 100),
+			bubble_plot_labels.SIZE=c(10, 25, 50, 100),
 			bubble_plot_labels.LEVELS=levels(bPlot.data[[paste("PCT_", bPlot.levels.iter, sep="")]]),
 			bubble_plot_labels.BUBBLE_TIPS_LINES=list(paste(bPlot.labels$x.year.label, "Median SGP (Count)"),
 				paste(bPlot.labels$y.year.label, " (Count)")),
@@ -1573,9 +1565,9 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_titles.SUB2=paste(bPlot.labels$x.year.label, test.abbreviation.label, capwords(content_area.iter)),
 			bubble_plot_titles.LEGEND1="Number of Students",
 			bubble_plot_titles.LEGEND2_P1="Percentage Students",
-			bubble_plot_titles.LEGEND2_P2=paste(sapply(head(unlist(strsplit(bPlot.levels, "_")), -1), capwords), collapse=" "),
+			bubble_plot_titles.LEGEND2_P2=paste(sapply(head(unlist(strsplit(bPlot.levels.iter, "_")), -1), capwords), collapse=" "),
 
-			bubble_plot_configs.BUBBLE_MIN_MAX=c(0.04, 0.31),
+			bubble_plot_configs.BUBBLE_MIN_MAX=c(0.03, 0.14),
 			bubble_plot_configs.BUBBLE_X_TICKS=seq(0,100,10),
 			bubble_plot_configs.BUBBLE_X_TICKS_SIZE=c(rep(0.6, 5), 1, rep(0.6, 5)),
 			bubble_plot_configs.BUBBLE_Y_TICKS=seq(0,100,10),
@@ -1590,7 +1582,8 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
 			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(district.name.label, year.iter, capwords(content_area.iter),
 				capwords(levels.iter), "State", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
-			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "State", "Style_55", bPlot.levels),
+			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "Instructor", "Style_55", 
+				paste("District", district_number.iter, sep="_"), bPlot.levels.iter),
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 			} # END if(...)
 		} ## END loop over y.variable.iter
@@ -1602,7 +1595,7 @@ if (22 %in% bPlot.styles) {
 
 		message(paste("Finished bubblePlot Style 55", date(), "in", timetaken(started.at), "\n"))
 
-} ## END bubblePlot style 55
+	} ## END bubblePlot style 55
 
 
 #######################################################################################
@@ -1618,10 +1611,9 @@ if (22 %in% bPlot.styles) {
 		### Data sets and relevant quantities used for bubblePlots
 
 		if (bPlot.full.academic.year) {
-			tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__INSTRUCTOR_ENROLLMENT_STATUS"]][
-				INSTRUCTOR_ENROLLMENT_STATUS=="Enrolled Instructor: Yes"]
+			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__INCLUSION__CONTENT_AREA__YEAR"]][!is.na(INCLUSION)]
 		} else {
-			tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
+			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
 		}
 
 		# Merge in school and district names and anonymize school names (if requested)
@@ -1643,11 +1635,10 @@ if (22 %in% bPlot.styles) {
 		bPlot.data <- tmp.bPlot.data[YEAR==year.iter & CONTENT_AREA==content_area.iter & DISTRICT_NUMBER==district_number.iter & MEDIAN_SGP_COUNT >= bPlot.minimum.n]
 
 		# Loop over unique schools IN DISTRICT ONLY
-		# for (school_number.iter in unique(bPlot.data[['SCHOOL_NUMBER']])) {  ### Loop over schools
 		for (school_number.iter in intersect(my.iters$tmp.schools, bPlot.data$SCHOOL_NUMBER)) {  ### Loop over schools
 		for (y.variable.iter in my.iters$tmp.y.variable) {  ### Loop over CURRENT and PRIOR achievement (if requested)
 
-		# Create labels
+		# Create labels and file path
 
 		bPlot.labels <- create.bPlot.labels(year.iter, y.variable.iter, bubblePlot_LEVEL)
 		school.name.label <- as.character(bPlot.data[SCHOOL_NUMBER== school_number.iter]$SCHOOL_NAME[1])
@@ -1666,7 +1657,7 @@ if (22 %in% bPlot.styles) {
 				paste(bPlot.data[[y.variable.iter]], " (", bPlot.data[[paste(y.variable.iter, "_COUNT", sep="")]], ")", sep="")),
 			bubble_plot_labels.X=c("Growth", paste(bPlot.labels$x.year.label, "Median Student Growth Percentile")),
 			bubble_plot_labels.Y=c("Achievement", bPlot.labels$y.year.label),
-			bubble_plot_labels.SIZE=c(15, 30, 60, 100),
+			bubble_plot_labels.SIZE=c(10, 25, 50, 100),
 			bubble_plot_labels.LEVELS=NULL, #levels(bubblePlot[["subset.factor"]]),
 			bubble_plot_labels.BUBBLE_TIPS_LINES=list(paste(bPlot.labels$x.year.label, "Median SGP (Count)"),
 				paste(bPlot.labels$y.year.label, " (Count)")),
@@ -1678,7 +1669,7 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_titles.LEGEND2_P1=NULL,
 			bubble_plot_titles.LEGEND2_P2=NULL,
 
-			bubble_plot_configs.BUBBLE_MIN_MAX=c(0.04, 0.31),
+			bubble_plot_configs.BUBBLE_MIN_MAX=c(0.03, 0.14),
 			bubble_plot_configs.BUBBLE_X_TICKS=seq(0,100,10),
 			bubble_plot_configs.BUBBLE_X_TICKS_SIZE=c(rep(0.6, 5), 1, rep(0.6, 5)),
 			bubble_plot_configs.BUBBLE_Y_TICKS=seq(0,100,10),
@@ -1693,7 +1684,7 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
 			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(school.name.label, year.iter, capwords(content_area.iter), 
 				"District", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
-			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "District", "Style_57", district_number.iter),
+			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "Instructor", "Style_57", paste("District", district_number.iter, sep="_")),
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 
 		} ## END loop over y.variable.iter
@@ -1725,11 +1716,21 @@ if (22 %in% bPlot.styles) {
 		} else bPlot.levels <- list(A=NULL)
 
 		if (bPlot.full.academic.year) {
-			tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__INSTRUCTOR_ENROLLMENT_STATUS"]][
-				INSTRUCTOR_ENROLLMENT_STATUS=="Enrolled Instructor: Yes"]
+			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__INCLUSION__CONTENT_AREA__YEAR"]][!is.na(INCLUSION)]
 			if (!is.null(bPlot.levels)) {
-				tmp.bPlot.levels.data <- sgp_object@Data[INSTRUCTOR_ENROLLMENT_STATUS=="Enrolled Instructor: Yes", 
-					eval(tmp.bPlot.levels.txt), by=list(INSTRUCTOR_NUMBER, CONTENT_AREA, YEAR)]
+				tmp.bPlot.levels.data <- data.frame(eval(parse(text=paste("sgp_object@Data[,c(grep('INSTRUCTOR_NUMBER', names(sgp_object@Data)), 
+					intersect(grep('ENROLLMENT_STATUS', names(sgp_object@Data)), grep('INSTRUCTOR', names(sgp_object@Data))),", 
+					"grep('CONTENT_AREA', names(sgp_object@Data)), grep('YEAR', names(sgp_object@Data)),",
+					paste("grep('", bPlot.levels, "', names(sgp_object@Data))", sep="", collapse=","), "), with=FALSE]"))))
+				inst.index <- grep('INSTRUCTOR_NUMBER', names(tmp.bPlot.levels.data))
+				enroll.index <- grep('ENROLLMENT_STATUS', names(tmp.bPlot.levels.data))
+				tmp.bPlot.levels.data<- eval(parse(text=paste("data.table(INSTRUCTOR_NUMBER=c(", paste("tmp.bPlot.levels.data[,", inst.index, "]", collapse=","),
+					"), INCLUSION=c(", paste("as.character(tmp.bPlot.levels.data[,", enroll.index, "])", collapse=","),
+					"), CONTENT_AREA=rep(tmp.bPlot.levels.data[, 'CONTENT_AREA'],", length(inst.index),
+					"), YEAR=rep(tmp.bPlot.levels.data[, 'YEAR'],", length(inst.index),
+					"), ", paste(bPlot.levels, "=rep(tmp.bPlot.levels.data[, '", bPlot.levels, "'],", length(inst.index), ")", sep="", collapse=","),
+					", key=c('INSTRUCTOR_NUMBER', 'INCLUSION'))[!is.na(INSTRUCTOR_NUMBER) & INCLUSION=='Enrolled Instructor: Yes']")))
+				tmp.bPlot.levels.data <- tmp.bPlot.levels.data[, eval(tmp.bPlot.levels.txt), by=list(INSTRUCTOR_NUMBER, CONTENT_AREA, YEAR)]
 				setkeyv(tmp.bPlot.data, c("INSTRUCTOR_NUMBER", "CONTENT_AREA", "YEAR"))
 				setkeyv(tmp.bPlot.levels.data, c("INSTRUCTOR_NUMBER", "CONTENT_AREA", "YEAR"))
 				tmp.bPlot.data <- tmp.bPlot.levels.data[tmp.bPlot.data]
@@ -1740,9 +1741,20 @@ if (22 %in% bPlot.styles) {
 				}
 			}
 		} else {
-			tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
+			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
 			if (!is.null(bPlot.levels)) {
-				tmp.bPlot.levels.data <- sgp_object@Data[, eval(tmp.bPlot.levels.txt), by=list(INSTRUCTOR_NUMBER, CONTENT_AREA, YEAR)]
+
+				tmp.bPlot.levels.data <- data.frame(eval(parse(text=paste("sgp_object@Data[,c(grep('INSTRUCTOR_NUMBER', names(sgp_object@Data)), 
+					grep('CONTENT_AREA', names(sgp_object@Data)), grep('YEAR', names(sgp_object@Data)),",
+					paste("grep('", bPlot.levels, "', names(sgp_object@Data))", sep="", collapse=","), "), with=FALSE]"))))
+				inst.index <- grep('INSTRUCTOR_NUMBER', names(tmp.bPlot.levels.data))
+				tmp.bPlot.levels.data<- eval(parse(text=paste("data.table(INSTRUCTOR_NUMBER=c(", paste("tmp.bPlot.levels.data[,", inst.index, "]", collapse=","),
+					"), CONTENT_AREA=rep(tmp.bPlot.levels.data[, 'CONTENT_AREA'],", length(inst.index),
+					"), YEAR=rep(tmp.bPlot.levels.data[, 'YEAR'],", length(inst.index),
+					"), ", paste(bPlot.levels, "=rep(tmp.bPlot.levels.data[, '", bPlot.levels, "'],", length(inst.index), ")", sep="", collapse=","),
+					", key='INSTRUCTOR_NUMBER')[!is.na(INSTRUCTOR_NUMBER)]")))
+				tmp.bPlot.levels.data <- tmp.bPlot.levels.data[, eval(tmp.bPlot.levels.txt), by=list(INSTRUCTOR_NUMBER, CONTENT_AREA, YEAR)]
+
 				setkeyv(tmp.bPlot.data, c("INSTRUCTOR_NUMBER", "CONTENT_AREA", "YEAR"))
 				setkeyv(tmp.bPlot.levels.data, c("INSTRUCTOR_NUMBER", "CONTENT_AREA", "YEAR"))
 				tmp.bPlot.data <- tmp.bPlot.levels.data[tmp.bPlot.data]
@@ -1756,7 +1768,7 @@ if (22 %in% bPlot.styles) {
 
 		# Merge in school and district names and anonymize school names (if requested)
 
-		tmp.bPlot.data <- names.merge(tmp.bPlot.data, bPlot.anonymize)
+		tmp.bPlot.data <- names.merge(tmp.bPlot.data[!is.na(INSTRUCTOR_NUMBER)], bPlot.anonymize)
 
 		### Get tmp.years, tmp.content_areas, and tmp.y.variable
 
@@ -1764,7 +1776,7 @@ if (22 %in% bPlot.styles) {
 
 		### Start loops for bubblePlots
 
-		for (bPlot.levels.iter in seq_along(bPlot.levels)) {  ### Loop over bPlot.levels
+		for (bPlot.levels.iter in unlist(bPlot.levels)) {  ### Loop over bPlot.levels
 		for (year.iter in my.iters$tmp.years) {  ### Loop over year
 		for (content_area.iter in my.iters$tmp.content_areas) { ### Loop over content areas
 		for (district_number.iter in my.iters$tmp.districts) {  ### Loop over districts
@@ -1774,12 +1786,11 @@ if (22 %in% bPlot.styles) {
 		bPlot.data <- get.bPlot.data(tmp.bPlot.data)[DISTRICT_NUMBER==district_number.iter]
 
 		# Loop over unique schools IN DISTRICT ONLY
-		# for (school_number.iter in unique(bPlot.data[['SCHOOL_NUMBER']])) {  ### Loop over schools
 		for (school_number.iter in intersect(my.iters$tmp.schools, bPlot.data$SCHOOL_NUMBER)) {  ### Loop over schools
 		for (levels.iter in levels(factor(eval(parse(text=paste("bPlot.data$PCT_", bPlot.levels.iter, sep="")))))) {
 		for (y.variable.iter in my.iters$tmp.y.variable) {  ### Loop over CURRENT and PRIOR achievement (if requested)
 
-		# Create labels
+		# Create labels and file path
 
 		bPlot.labels <- create.bPlot.labels(year.iter, y.variable.iter, bubblePlot_LEVEL)
 		school.name.label <- as.character(bPlot.data[SCHOOL_NUMBER== school_number.iter]$SCHOOL_NAME[1])
@@ -1798,7 +1809,7 @@ if (22 %in% bPlot.styles) {
 				paste(bPlot.data[[y.variable.iter]], " (", bPlot.data[[paste(y.variable.iter, "_COUNT", sep="")]], ")", sep="")),
 			bubble_plot_labels.X=c("Growth", paste(bPlot.labels$x.year.label, "Median Student Growth Percentile")),
 			bubble_plot_labels.Y=c("Achievement", bPlot.labels$y.year.label),
-			bubble_plot_labels.SIZE=c(15, 30, 60, 100),
+			bubble_plot_labels.SIZE=c(10, 25, 50, 100),
 			bubble_plot_labels.LEVELS=levels(bPlot.data[[paste("PCT_", bPlot.levels.iter, sep="")]]),
 			bubble_plot_labels.BUBBLE_TIPS_LINES=list(paste(bPlot.labels$x.year.label, "Median SGP (Count)"),
 				paste(bPlot.labels$y.year.label, " (Count)")),
@@ -1808,9 +1819,9 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_titles.SUB2=paste(bPlot.labels$x.year.label, test.abbreviation.label, capwords(content_area.iter)),
 			bubble_plot_titles.LEGEND1="Number of Students",
 			bubble_plot_titles.LEGEND2_P1="Percentage Students",
-			bubble_plot_titles.LEGEND2_P2=paste(sapply(head(unlist(strsplit(bPlot.levels, "_")), -1), capwords), collapse=" "),
+			bubble_plot_titles.LEGEND2_P2=paste(sapply(head(unlist(strsplit(bPlot.levels.iter, "_")), -1), capwords), collapse=" "),
 
-			bubble_plot_configs.BUBBLE_MIN_MAX=c(0.04, 0.31),
+			bubble_plot_configs.BUBBLE_MIN_MAX=c(0.03, 0.14),
 			bubble_plot_configs.BUBBLE_X_TICKS=seq(0,100,10),
 			bubble_plot_configs.BUBBLE_X_TICKS_SIZE=c(rep(0.6, 5), 1, rep(0.6, 5)),
 			bubble_plot_configs.BUBBLE_Y_TICKS=seq(0,100,10),
@@ -1825,7 +1836,8 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
 			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(school.name.label, year.iter, capwords(content_area.iter), 
 				capwords(levels.iter), "District", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
-			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "District", "Style_59", district_number.iter, bPlot.levels),
+			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "Instructor", "Style_59", 
+				paste("District", district_number.iter, sep="_"), bPlot.levels.iter),
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 		} ## END loop over y.variable.iter
 		} ## END loop over levels.iter
@@ -1853,6 +1865,13 @@ if (22 %in% bPlot.styles) {
 	if (any(bPlot.styles>=100)) {
 		bubblePlot_LEVEL <- "Individual"
 
+		if (any(c(150, 153) %in% bPlot.styles)) {
+			if (!bPlot.prior.achievement) {
+				message("bPlot.prior.achievement must be set to TRUE to use bubblePlot Style 150 &/or 153.  Setting bPlot.prior.achievement = TRUE internally")
+				bPlot.prior.achievement <- TRUE
+			}
+		}
+
 		### Utility functions
 
 		get.my.cutscore.year <- function(state, content_area, year) {
@@ -1879,23 +1898,27 @@ if (22 %in% bPlot.styles) {
 
 		### Create PRIOR Scale Score, SGP, SGP_TARGET and CONTENT_AREA
 
-		if (!all(c("SCALE_SCORE_PRIOR", "SGP_PRIOR", "SGP_TARGET_PRIOR", "CONTENT_AREA_PRIOR") %in% names(sgp_object@Data))) {
-			sgp_object@Data$YEAR_INTEGER_TMP <- as.integer(sgp_object@Data$YEAR) ## To convert YEAR, when factor, to integer
-			setkeyv(sgp_object@Data, c("ID", "CONTENT_AREA", "YEAR_INTEGER_TMP", "VALID_CASE")) ## CRITICAL that VALID_CASE is last in group
-			if (!"SCALE_SCORE_PRIOR" %in% names(sgp_object@Data)) {
-				sgp_object@Data$SCALE_SCORE_PRIOR <- sgp_object@Data[SJ(ID, CONTENT_AREA, YEAR_INTEGER_TMP-1), mult="last"][,SCALE_SCORE]
+		if (bPlot.prior.achievement) {
+			if (!all(c("SCALE_SCORE_PRIOR", "SGP_PRIOR", "SGP_TARGET_PRIOR", "CONTENT_AREA_PRIOR") %in% names(sgp_object@Data))) {
+				sgp_object@Data$YEAR_INTEGER_TMP <- as.integer(sgp_object@Data$YEAR) ## To convert YEAR, when factor, to integer
+				setkeyv(sgp_object@Data, c("ID", "CONTENT_AREA", "YEAR_INTEGER_TMP", "VALID_CASE")) ## CRITICAL that VALID_CASE is last in group
+				if (!"SCALE_SCORE_PRIOR" %in% names(sgp_object@Data)) {
+					sgp_object@Data$SCALE_SCORE_PRIOR <- sgp_object@Data[SJ(ID, CONTENT_AREA, YEAR_INTEGER_TMP-1), mult="last"][,SCALE_SCORE]
+				}
+				if (!"SGP_PRIOR" %in% names(sgp_object@Data)) {
+					sgp_object@Data$SGP_PRIOR <- sgp_object@Data[SJ(ID, CONTENT_AREA, YEAR_INTEGER_TMP-1), mult="last"][,SGP]
+				}
+				if (!"SGP_TARGET_PRIOR" %in% names(sgp_object@Data)) {
+					sgp_object@Data$SGP_TARGET_PRIOR <- sgp_object@Data[SJ(ID, CONTENT_AREA, YEAR_INTEGER_TMP-1), mult="last"][,SGP_TARGET]
+				}
+				if (!"CONTENT_AREA_PRIOR" %in% names(sgp_object@Data)) {
+					sgp_object@Data$CONTENT_AREA_PRIOR <- sgp_object@Data[SJ(ID, CONTENT_AREA, YEAR_INTEGER_TMP-1), mult="last"][, CONTENT_AREA]
+				}
+				sgp_object@Data$YEAR_INTEGER_TMP <- NULL
 			}
-			if (!"SGP_PRIOR" %in% names(sgp_object@Data)) {
-				sgp_object@Data$SGP_PRIOR <- sgp_object@Data[SJ(ID, CONTENT_AREA, YEAR_INTEGER_TMP-1), mult="last"][,SGP]
-			}
-			if (!"SGP_TARGET_PRIOR" %in% names(sgp_object@Data)) {
-				sgp_object@Data$SGP_TARGET_PRIOR <- sgp_object@Data[SJ(ID, CONTENT_AREA, YEAR_INTEGER_TMP-1), mult="last"][,SGP_TARGET]
-			}
-			if (!"CONTENT_AREA_PRIOR" %in% names(sgp_object@Data)) {
-				sgp_object@Data$CONTENT_AREA_PRIOR <- sgp_object@Data[SJ(ID, CONTENT_AREA, YEAR_INTEGER_TMP-1), mult="last"][, CONTENT_AREA]
-			}
-			sgp_object@Data$YEAR_INTEGER_TMP <- NULL
 		}
+		mult.memb <- get.multiple.membership(sgp_object@Names)
+		mult.memb.var.name <- paste(head(unlist(strsplit(mult.memb[[1]][["VARIABLE.NAMES"]][1], "_")), -1), collapse="_")
 	} # END Individual Plot setup
  
 
@@ -2018,8 +2041,7 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message.style.100,
 			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(gsub(" ", "_", bPlot.data$SCHOOL_NAME[1]), "Grade", grade.iter,
 				year.iter, capwords(content_area.iter), bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
-			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "Individual", "Style_100", 
-				gsub(" ", "_", bPlot.data$DISTRICT_NAME[1])),
+			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "Individual", "Style_100", gsub(" ", "_", bPlot.data$DISTRICT_NAME[1])),
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 
 		} ## END if dim(bPlot.data)[1] > 0
@@ -2045,6 +2067,7 @@ if (22 %in% bPlot.styles) {
 		if (bPlot.demo) {
 			bPlot.anonymize <- TRUE
 			setkeyv(sgp_object@Data, c("VALID_CASE", "YEAR", "CONTENT_AREA", "GRADE"))
+			my.iters$tmp.districts <- '-999'; my.iters$tmp.schools <- '-99'
 		} else setkeyv(sgp_object@Data, c("YEAR", "CONTENT_AREA", "DISTRICT_NUMBER"))
 
 
@@ -2052,7 +2075,6 @@ if (22 %in% bPlot.styles) {
 
 		for (year.iter in my.iters$tmp.years) {  ### Loop over year
 		for (content_area.iter in my.iters$tmp.content_areas) { ### Loop over content areas
-		 	if (bPlot.demo) {my.iters$tmp.districts <- '-999'; my.iters$tmp.schools <- '-99'}
 		for (district.iter in seq_along(my.iters$tmp.districts)) { ### Loop over districts (seq_along to get integer for anonymize)
 
 			# Subset data
@@ -2065,127 +2087,146 @@ if (22 %in% bPlot.styles) {
 					tmp.ids[[i]] <- as.character(sample(unique(sgp_object@Data[J("VALID_CASE", year.iter, content_area.iter, tmp.grades.reported[i])][['ID']]), 30))
 				}
 				
-				tmp.bPlot.data.1 <- sgp_object@Data[J("VALID_CASE", year.iter, content_area.iter)][ID %in% unlist(tmp.ids)]
+				tmp.bPlot.data.1.long <- sgp_object@Data[J("VALID_CASE", year.iter, content_area.iter)][ID %in% unlist(tmp.ids)]
 	
-				tmp.bPlot.data.1[['INSTRUCTOR_NUMBER']] <- factor(paste("Example_Gr_", tmp.bPlot.data.1[['GRADE']], "_Teacher", sep=""))
-				tmp.bPlot.data.1[['INSTRUCTOR_NAME']] <- factor('Psuedo-Instructor')
-				tmp.bPlot.data.1[['SCHOOL_NUMBER']] <- factor('-99')
-				tmp.bPlot.data.1[['SCHOOL_NAME']] <- factor('Psuedo School')
-				tmp.bPlot.data.1[['DISTRICT_NUMBER']] <- factor('-999')
-				tmp.bPlot.data.1[['DISTRICT_NAME']] <- factor('Psuedo District')
-			}	else tmp.bPlot.data.1 <- sgp_object@Data[J(year.iter, content_area.iter, my.iters$tmp.districts[district.iter])]
+				tmp.bPlot.data.1.long[['INSTRUCTOR_NUMBER']] <- factor(paste("Grade_", tmp.bPlot.data.1.long[['GRADE']], sep=""))
+				tmp.bPlot.data.1.long[['INSTRUCTOR_NAME']] <- factor('Psuedo-Instructor')
+				tmp.bPlot.data.1.long[['SCHOOL_NUMBER']] <- factor('-99')
+				tmp.bPlot.data.1.long[['SCHOOL_NAME']] <- factor('Psuedo School')
+				tmp.bPlot.data.1.long[['DISTRICT_NUMBER']] <- factor('-999')
+				tmp.bPlot.data.1.long[['DISTRICT_NAME']] <- factor('Psuedo District')
+				setkeyv(tmp.bPlot.data.1.long, "INSTRUCTOR_NUMBER")
+			}	else {
+				tmp.bPlot.data.1 <- sgp_object@Data[J(year.iter, content_area.iter, my.iters$tmp.districts[district.iter])]	
+					
+				tmp.bPlot.data.1.long <- data.table(melt(as.data.frame(tmp.bPlot.data.1), 
+					measure.vars=mult.memb[[1]][["VARIABLE.NAMES"]], 
+					value.name=mult.memb.var.name), key=mult.memb.var.name)
+				invisible(tmp.bPlot.data.1.long[, variable := NULL])
+				if (!is.null(mult.memb[[1]][["WEIGHTS"]])) {
+					invisible(tmp.bPlot.data.1.long[, WEIGHT := melt(as.data.frame(tmp.bPlot.data.1[, 
+						mult.memb[[1]][["WEIGHTS"]], with=FALSE]), 
+						measure.vars=mult.memb[[1]][["WEIGHTS"]])[,2]])
+				}
+				if (!is.null(mult.memb[[1]][["INCLUSION"]])) {
+					invisible(tmp.bPlot.data.1.long[, INCLUSION := melt(as.data.frame(tmp.bPlot.data.1[, 
+						mult.memb[[1]][["INCLUSION"]], with=FALSE]), 
+						measure.vars=mult.memb[[1]][["INCLUSION"]])[,2]])
+				}
+			}
 		
-			tmp.unique.schools <- my.iters$tmp.schools[my.iters$tmp.schools %in% unique(tmp.bPlot.data.1$SCHOOL_NUMBER)]
+			tmp.unique.schools <- my.iters$tmp.schools[my.iters$tmp.schools %in% unique(tmp.bPlot.data.1.long$SCHOOL_NUMBER)]
 			for (school.iter in seq_along(tmp.unique.schools)) { ### Loop over schools (seq_along to get integer for anonymize)
 	
 			# Subset data
 	
-			tmp.bPlot.data <- tmp.bPlot.data.1[SCHOOL_NUMBER==tmp.unique.schools[school.iter] & !is.na(SGP)]
-	
+			tmp.bPlot.data <- tmp.bPlot.data.1.long[SCHOOL_NUMBER==tmp.unique.schools[school.iter] & !is.na(SGP)]
+			
 			for (instructor.iter in sort(unique(tmp.bPlot.data$INSTRUCTOR_NUMBER))) { ### Loop over unique teachers in school
-			bPlot.data <- subset(tmp.bPlot.data, INSTRUCTOR_NUMBER==instructor.iter)
-	
-	
-			if (dim(bPlot.data)[1] > 0) {
-	
-			for (grade.iter in intersect(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area.iter]],
-				sort(unique(tmp.bPlot.data$GRADE)))) { ### Loop over unique grades levels for instructor (usually only one)
+				bPlot.data <- tmp.bPlot.data[J(instructor.iter)]
 		
-		# Anonymize district, school and student names (if requested)
-
-			if (bPlot.anonymize) {
-				bPlot.data$FIRST_NAME <- "Student"; bPlot.data$LAST_NAME <- seq(dim(bPlot.data)[1])
-				bPlot.data$SCHOOL_NAME <- paste("Psuedo School", school.iter); bPlot.data$DISTRICT_NAME <- paste("Psuedo District", district.iter)
-			}
-
-		# Create labels
-
-			bPlot.labels <- create.bPlot.labels(year.iter, "SCALE_SCORE", bubblePlot_LEVEL) # Only produce "Current Year" plots
-			prior.year <- paste(as.numeric(unlist(strsplit(as.character(year.iter), "_")))-1, collapse="_")
-
-		# Create cutscore ranges
-
-			my.content_area <- get.my.cutscore.year(state, content_area.iter, as.character(bPlot.labels$y.year)) 
-			tmp.y.range <- extendrange(c(bPlot.data[["SCALE_SCORE"]], 
-				SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.content_area]][[paste("GRADE", grade.iter, sep="_")]]), f=0.1)
-			tmp.loss.hoss <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area.iter]][[paste("loss.hoss", grade.iter, sep="_")]]
-			tmp.y.ticks <- sort(c(max(tmp.loss.hoss[1], tmp.y.range[1]), min(tmp.loss.hoss[2], tmp.y.range[2]),
-				SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.content_area]][[paste("GRADE", grade.iter, sep="_")]])) 
-
-		# Get median SGP for grade, school, content area combination
-
-		instructor.content_area.grade.median <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__GRADE"]][
-			INSTRUCTOR_NUMBER==tmp.unique.schools[instructor.iter] & CONTENT_AREA==content_area.iter & YEAR==year.iter & GRADE==grade.iter][["MEDIAN_SGP"]]
-
-		### Custom draft message with two median SGP lines
-
-		bPlot.message.style.150 <- c("grid.text(x=unit(50, 'native'), y=unit(50, 'native'), 'CONFIDENTIAL STUDENT DATA -\n DO NOT DISTRIBUTE', 
-				rot=-30, gp=gpar(col='grey80', cex=2.9, alpha=0.8, fontface=2))", 
-			paste("grid.lines(x=unit(", instructor.content_area.grade.median, ", 'native'), y=c(0.03,0.97), gp=gpar(col='blue', lwd=1.75, lty=2, alpha=0.75))", sep=""),
-			paste("grid.text('Grade ", grade.iter, " Median = ", instructor.content_area.grade.median, "', x=unit(", instructor.content_area.grade.median, 
-				", 'native'), y=0.005, gp=gpar(col='blue', cex=0.85))", sep=""))
-
-		### Create bubblePlot ###
-
-			bubblePlot(
-				bubble_plot_data.X=bPlot.data[['SGP']],
-				bubble_plot_data.Y=bPlot.data[['SCALE_SCORE']],
-				bubble_plot_data.SUBSET=NULL,
-				bubble_plot_data.INDICATE=NULL,
-				bubble_plot_data.BUBBLE_CENTER_LABEL=NULL,
-				bubble_plot_data.SIZE=rep(50, length(bPlot.data[['SGP']])),
-				bubble_plot_data.LEVELS=NULL, 
-
-				bubble_plot_data.BUBBLE_TIPS_LINES=list(paste(bPlot.data[['SGP']], " (", bPlot.data[['SGP_TARGET']], ")", sep=""),
-					paste(bPlot.data[['ACHIEVEMENT_LEVEL']], " (", bPlot.data[['SCALE_SCORE']], ")", sep=""),
-					paste(bPlot.data[['SGP_PRIOR']], " (", bPlot.data[['SGP_TARGET_PRIOR']], ")", sep=""),
-					paste(bPlot.data[['ACHIEVEMENT_LEVEL_PRIOR']], " (", bPlot.data[['SCALE_SCORE_PRIOR']], ")", sep="")),
-				bubble_plot_labels.BUBBLE_TIPS_LINES=list(paste(bPlot.labels$x.year.label, "Student Growth Percentile (Target)"),
-					paste(bPlot.labels$x.year.label, "Achievement Level (Scale Score)"),
-					paste(prior.year, "Prior Student Growth Percentile (Target)"),
-					paste(prior.year, "Prior Achievement Level (Scale Score)")),
-
-				bubble_plot_labels.X=c("Growth", paste(bPlot.labels$x.year.label, "Student Growth Percentile")),
-				bubble_plot_labels.Y=c("Achievement", bPlot.labels$y.year.label),
-				bubble_plot_labels.SIZE=NULL,
-				bubble_plot_labels.LEVELS=NULL, #levels(bubblePlot[["subset.factor"]]),
-				bubble_plot_labels.BUBBLE_TITLES=paste(bPlot.data$FIRST_NAME, bPlot.data$LAST_NAME),
-				bubble_plot_titles.MAIN=bPlot.labels$main.title,
-				bubble_plot_titles.SUB1=paste(bPlot.data$SCHOOL_NAME[1], "Student Performance"),
-				bubble_plot_titles.SUB2=paste(bPlot.labels$x.year.label, "Instructor", instructor.iter, capwords(content_area.iter)),
-				bubble_plot_titles.LEGEND1="",
-				bubble_plot_titles.LEGEND2_P1=NULL,
-				bubble_plot_titles.LEGEND2_P2=NULL,
+				if (dim(bPlot.data)[1] > 0) {
+		
+				for (grade.iter in intersect(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area.iter]],
+					sort(unique(bPlot.data$GRADE)))) { ### Loop over unique grades levels for instructor (usually only one)
+			
+			# Anonymize district, school and student names (if requested)
 	
-				bubble_plot_configs.BUBBLE_MIN_MAX=c(0.07, 0.07),
-				bubble_plot_configs.BUBBLE_X_TICKS=c(1, seq(10,90,10), 99),
-				bubble_plot_configs.BUBBLE_X_TICKS_SIZE=c(rep(0.7, 5), 1, rep(0.7, 5)),
-				bubble_plot_configs.BUBBLE_Y_TICKS=tmp.y.ticks,
-				bubble_plot_configs.BUBBLE_Y_BANDS=tmp.y.ticks,
-				bubble_plot_configs.BUBBLE_Y_BAND_LABELS=SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]],
-				bubble_plot_configs.BUBBLE_SUBSET_INCREASE=0.00,
-				bubble_plot_configs.BUBBLE_COLOR="blue",
-				bubble_plot_configs.BUBBLE_SUBSET_ALPHA=list(Transparent=0.3, Opaque=0.9),
-				bubble_plot_configs.BUBBLE_TIPS="TRUE",
-				bubble_plot_configs.BUBBLE_PLOT_DEVICE="PDF",
-				bubble_plot_configs.BUBBLE_PLOT_FORMAT=bPlot.format,
-				bubble_plot_configs.BUBBLE_PLOT_LEGEND="FALSE",
-				bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
-				bubble_plot_configs.BUBBLE_PLOT_BACKGROUND_LABELS=NULL,
-				bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message.style.150,
-				bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(gsub(" ", "_", bPlot.data$SCHOOL_NAME[1]), "Instructor", instructor.iter, year.iter, "Grade", grade.iter, 
-					capwords(content_area.iter), bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
-				bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "Instructor", "Style_150", 
-					gsub(" ", "_", bPlot.data$DISTRICT_NAME[1]), gsub(" ", "_", bPlot.data$SCHOOL_NAME[1])),
-				bubble_plot_pdftk.CREATE_CATALOG=FALSE)
-
-			} ## END grade.iter loop
-			} ## END if dim(bPlot.data)[1] > 0
-			} ## END instructor.iter loop
-			} ## END school.iter loop
-		} ## END district.iter loop
-		} ## END content_area.iter loop
-		} ## END year.iter loop
+				if (bPlot.anonymize) {
+					bPlot.data$FIRST_NAME <- "Student"; bPlot.data$LAST_NAME <- seq(dim(bPlot.data)[1])
+					bPlot.data$SCHOOL_NAME <- paste("Psuedo School", school.iter); bPlot.data$DISTRICT_NAME <- paste("Psuedo District", district.iter)
+				}
+	
+			# Create labels and file path
+	
+				bPlot.labels <- create.bPlot.labels(year.iter, "SCALE_SCORE", bubblePlot_LEVEL) # Only produce "Current Year" plots
+				prior.year <- paste(as.numeric(unlist(strsplit(as.character(year.iter), "_")))-1, collapse="_")
+	
+			# Create cutscore ranges
+	
+				my.content_area <- get.my.cutscore.year(state, content_area.iter, as.character(bPlot.labels$y.year)) 
+				tmp.y.range <- extendrange(c(bPlot.data[["SCALE_SCORE"]], 
+					SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.content_area]][[paste("GRADE", grade.iter, sep="_")]]), f=0.1)
+				tmp.loss.hoss <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area.iter]][[paste("loss.hoss", grade.iter, sep="_")]]
+				tmp.y.ticks <- sort(c(max(tmp.loss.hoss[1], tmp.y.range[1]), min(tmp.loss.hoss[2], tmp.y.range[2]),
+					SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.content_area]][[paste("GRADE", grade.iter, sep="_")]])) 
+	
+			# Get median SGP for grade, school, content area combination
+	
+				instructor.content_area.grade.median <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__INCLUSION__CONTENT_AREA__YEAR__GRADE"]][
+					INSTRUCTOR_NUMBER==instructor.iter & CONTENT_AREA==content_area.iter & YEAR==year.iter & GRADE==grade.iter][["MEDIAN_SGP"]]
+				if (bPlot.demo) instructor.content_area.grade.median <- median(bPlot.data$SGP, na.rm=TRUE)
+	
+			### Custom draft message with two median SGP lines
+	
+				bPlot.message.style.150 <- c("grid.text(x=unit(50, 'native'), y=unit(50, 'native'), 'CONFIDENTIAL STUDENT DATA -\n DO NOT DISTRIBUTE', 
+						rot=-30, gp=gpar(col='grey80', cex=2.9, alpha=0.8, fontface=2))", 
+					paste("grid.lines(x=unit(", instructor.content_area.grade.median, 
+						", 'native'), y=c(0.03,0.97), gp=gpar(col='blue', lwd=1.75, lty=2, alpha=0.75))", sep=""),
+					paste("grid.text('Grade ", grade.iter, " Median = ", instructor.content_area.grade.median, "', x=unit(", 
+						instructor.content_area.grade.median, ", 'native'), y=0.005, gp=gpar(col='blue', cex=0.85))", sep=""))
+	
+			### Create bubblePlot ###
+	
+				bubblePlot(
+					bubble_plot_data.X=bPlot.data[['SGP']],
+					bubble_plot_data.Y=bPlot.data[['SCALE_SCORE']],
+					bubble_plot_data.SUBSET=NULL,
+					bubble_plot_data.INDICATE=NULL,
+					bubble_plot_data.BUBBLE_CENTER_LABEL=NULL,
+					bubble_plot_data.SIZE=rep(50, length(bPlot.data[['SGP']])),
+					bubble_plot_data.LEVELS=NULL, 
+	
+					bubble_plot_data.BUBBLE_TIPS_LINES=list(paste(bPlot.data[['SGP']], " (", bPlot.data[['SGP_TARGET']], ")", sep=""),
+						paste(bPlot.data[['ACHIEVEMENT_LEVEL']], " (", bPlot.data[['SCALE_SCORE']], ")", sep=""),
+						paste(bPlot.data[['SGP_PRIOR']], " (", bPlot.data[['SGP_TARGET_PRIOR']], ")", sep=""),
+						paste(bPlot.data[['ACHIEVEMENT_LEVEL_PRIOR']], " (", bPlot.data[['SCALE_SCORE_PRIOR']], ")", sep="")),
+					bubble_plot_labels.BUBBLE_TIPS_LINES=list(paste(bPlot.labels$x.year.label, "Student Growth Percentile (Target)"),
+						paste(bPlot.labels$x.year.label, "Achievement Level (Scale Score)"),
+						paste(prior.year, "Prior Student Growth Percentile (Target)"),
+						paste(prior.year, "Prior Achievement Level (Scale Score)")),
+	
+					bubble_plot_labels.X=c("Growth", paste(bPlot.labels$x.year.label, "Student Growth Percentile")),
+					bubble_plot_labels.Y=c("Achievement", bPlot.labels$y.year.label),
+					bubble_plot_labels.SIZE=NULL,
+					bubble_plot_labels.LEVELS=NULL,
+					bubble_plot_labels.BUBBLE_TITLES=paste(bPlot.data$FIRST_NAME, bPlot.data$LAST_NAME),
+					bubble_plot_titles.MAIN=bPlot.labels$main.title,
+					bubble_plot_titles.SUB1=paste(bPlot.data$SCHOOL_NAME[1], "Student Performance"),
+					bubble_plot_titles.SUB2=paste(bPlot.labels$x.year.label, "Instructor", instructor.iter, capwords(content_area.iter)),
+					bubble_plot_titles.LEGEND1="",
+					bubble_plot_titles.LEGEND2_P1=NULL,
+					bubble_plot_titles.LEGEND2_P2=NULL,
+		
+					bubble_plot_configs.BUBBLE_MIN_MAX=c(0.07, 0.07),
+					bubble_plot_configs.BUBBLE_X_TICKS=c(1, seq(10,90,10), 99),
+					bubble_plot_configs.BUBBLE_X_TICKS_SIZE=c(rep(0.7, 5), 1, rep(0.7, 5)),
+					bubble_plot_configs.BUBBLE_Y_TICKS=tmp.y.ticks,
+					bubble_plot_configs.BUBBLE_Y_BANDS=tmp.y.ticks,
+					bubble_plot_configs.BUBBLE_Y_BAND_LABELS=SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]],
+					bubble_plot_configs.BUBBLE_SUBSET_INCREASE=0.00,
+					bubble_plot_configs.BUBBLE_COLOR="blue",
+					bubble_plot_configs.BUBBLE_SUBSET_ALPHA=list(Transparent=0.3, Opaque=0.9),
+					bubble_plot_configs.BUBBLE_TIPS="TRUE",
+					bubble_plot_configs.BUBBLE_PLOT_DEVICE="PDF",
+					bubble_plot_configs.BUBBLE_PLOT_FORMAT=bPlot.format,
+					bubble_plot_configs.BUBBLE_PLOT_LEGEND="FALSE",
+					bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
+					bubble_plot_configs.BUBBLE_PLOT_BACKGROUND_LABELS=NULL,
+					bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message.style.150,
+					bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste("Instructor", instructor.iter, year.iter, "Grade", grade.iter, 
+						capwords(content_area.iter), bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
+					bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "Instructor", "Style_150", 
+						gsub(" ", "_", bPlot.data$DISTRICT_NAME[1]), gsub(" ", "_", bPlot.data$SCHOOL_NAME[1])),
+					bubble_plot_pdftk.CREATE_CATALOG=FALSE)
+	
+				} ## END grade.iter loop
+				} ## END if dim(bPlot.data)[1] > 0
+				} ## END instructor.iter loop
+				} ## END school.iter loop
+			} ## END district.iter loop
+			} ## END content_area.iter loop
+			} ## END year.iter loop
 
 		message(paste("Finished bubblePlot Style 150", date(), "in", timetaken(started.at), "\n"))
 
@@ -2205,6 +2246,7 @@ if (22 %in% bPlot.styles) {
 		if (bPlot.demo) {
 			bPlot.anonymize <- TRUE
 			setkeyv(sgp_object@Data, c("VALID_CASE", "YEAR", "CONTENT_AREA", "GRADE"))
+			my.iters$tmp.districts <- '-999'; my.iters$tmp.schools <- '-99'
 		} else setkeyv(sgp_object@Data, c("YEAR", "CONTENT_AREA", "DISTRICT_NUMBER"))
 
 
@@ -2212,7 +2254,6 @@ if (22 %in% bPlot.styles) {
 
 		for (year.iter in my.iters$tmp.years) {  ### Loop over year
 		for (content_area.iter in my.iters$tmp.content_areas) { ### Loop over content areas
-		 	if (bPlot.demo) {my.iters$tmp.districts <- '-999'; my.iters$tmp.schools <- '-99'}
 		for (district.iter in seq_along(my.iters$tmp.districts)) { ### Loop over districts (seq_along to get integer for anonymize)
 
 			# Subset data
@@ -2225,22 +2266,39 @@ if (22 %in% bPlot.styles) {
 					tmp.ids[[i]] <- as.character(sample(unique(sgp_object@Data[J("VALID_CASE", year.iter, content_area.iter, tmp.grades.reported[i])][['ID']]), 30))
 				}
 				
-				tmp.bPlot.data.1 <- sgp_object@Data[J("VALID_CASE", year.iter, content_area.iter)][ID %in% unlist(tmp.ids)]
+				tmp.bPlot.data.1.long <- sgp_object@Data[J("VALID_CASE", year.iter, content_area.iter)][ID %in% unlist(tmp.ids)]
 	
-				tmp.bPlot.data.1[['INSTRUCTOR_NUMBER']] <- factor(paste("Example_Gr_", tmp.bPlot.data.1[['GRADE']], "_Teacher", sep=""))
-				tmp.bPlot.data.1[['INSTRUCTOR_NAME']] <- factor('Psuedo-Instructor')
-				tmp.bPlot.data.1[['SCHOOL_NUMBER']] <- factor('-99')
-				tmp.bPlot.data.1[['SCHOOL_NAME']] <- factor('Psuedo School')
-				tmp.bPlot.data.1[['DISTRICT_NUMBER']] <- factor('-999')
-				tmp.bPlot.data.1[['DISTRICT_NAME']] <- factor('Psuedo District')
-			}	else tmp.bPlot.data.1 <- sgp_object@Data[J(year.iter, content_area.iter, my.iters$tmp.districts[district.iter])]
+				tmp.bPlot.data.1.long[['INSTRUCTOR_NUMBER']] <- factor(paste("Grade_", tmp.bPlot.data.1.long[['GRADE']], sep=""))
+				tmp.bPlot.data.1.long[['INSTRUCTOR_NAME']] <- factor('Psuedo-Instructor')
+				tmp.bPlot.data.1.long[['SCHOOL_NUMBER']] <- factor('-99')
+				tmp.bPlot.data.1.long[['SCHOOL_NAME']] <- factor('Psuedo School')
+				tmp.bPlot.data.1.long[['DISTRICT_NUMBER']] <- factor('-999')
+				tmp.bPlot.data.1.long[['DISTRICT_NAME']] <- factor('Psuedo District')
+			}	else {
+				tmp.bPlot.data.1 <- sgp_object@Data[J(year.iter, content_area.iter, my.iters$tmp.districts[district.iter])]	
+					
+				tmp.bPlot.data.1.long <- data.table(melt(as.data.frame(tmp.bPlot.data.1), 
+					measure.vars=mult.memb[[1]][["VARIABLE.NAMES"]], 
+					value.name=mult.memb.var.name), key=mult.memb.var.name)
+				invisible(tmp.bPlot.data.1.long[, variable := NULL])
+				if (!is.null(mult.memb[[1]][["WEIGHTS"]])) {
+					invisible(tmp.bPlot.data.1.long[, WEIGHT := melt(as.data.frame(tmp.bPlot.data.1[, 
+						mult.memb[[1]][["WEIGHTS"]], with=FALSE]), 
+						measure.vars=mult.memb[[1]][["WEIGHTS"]])[,2]])
+				}
+				if (!is.null(mult.memb[[1]][["INCLUSION"]])) {
+					invisible(tmp.bPlot.data.1.long[, INCLUSION := melt(as.data.frame(tmp.bPlot.data.1[, 
+						mult.memb[[1]][["INCLUSION"]], with=FALSE]), 
+						measure.vars=mult.memb[[1]][["INCLUSION"]])[,2]])
+				}
+			}
 		
-			tmp.unique.schools <- my.iters$tmp.schools[my.iters$tmp.schools %in% unique(tmp.bPlot.data.1$SCHOOL_NUMBER)]
+			tmp.unique.schools <- my.iters$tmp.schools[my.iters$tmp.schools %in% unique(tmp.bPlot.data.1.long$SCHOOL_NUMBER)]
 			for (school.iter in seq_along(tmp.unique.schools)) { ### Loop over schools (seq_along to get integer for anonymize)
 	
 			# Subset data
 	
-			tmp.bPlot.data <- tmp.bPlot.data.1[SCHOOL_NUMBER==tmp.unique.schools[school.iter] & !is.na(SGP)]
+			tmp.bPlot.data <- tmp.bPlot.data.1.long[SCHOOL_NUMBER==tmp.unique.schools[school.iter] & !is.na(SGP)]
 	
 			for (instructor.iter in sort(unique(tmp.bPlot.data$INSTRUCTOR_NUMBER))) { ### Loop over unique teachers in school
 			bPlot.data <- subset(tmp.bPlot.data, INSTRUCTOR_NUMBER==instructor.iter)
@@ -2273,8 +2331,9 @@ if (22 %in% bPlot.styles) {
 
 		# Get median SGP for grade, school, content area combination
 
-		instructor.content_area.grade.median <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__GRADE"]][
-			INSTRUCTOR_NUMBER==tmp.unique.schools[instructor.iter] & CONTENT_AREA==content_area.iter & YEAR==year.iter & GRADE==grade.iter][["MEDIAN_SGP"]]
+			instructor.content_area.grade.median <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__INCLUSION__CONTENT_AREA__YEAR__GRADE"]][
+				INSTRUCTOR_NUMBER==instructor.iter & CONTENT_AREA==content_area.iter & YEAR==year.iter & GRADE==grade.iter][["MEDIAN_SGP"]]
+			if (bPlot.demo) instructor.content_area.grade.median <- median(bPlot.data$SGP, na.rm=TRUE)
 
 		### Custom message with two median SGP lines
 

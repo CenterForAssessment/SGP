@@ -30,9 +30,9 @@ function(
 	
 	if (toupper(parallel.config[['BACKEND']]) == 'FOREACH') {
 		require(foreach)
-		if (!is.na(parallel.config[['TYPE']])) {
+		if (!is.na(parallel.config[['TYPE']]) | parallel.config[['TYPE']]!="NA") {
 			eval(parse(text=paste("require(", parallel.config[['TYPE']], ")")))
-		}
+		} else parallel.config[['TYPE']] <- "NA"
 
 		if (parallel.config[['TYPE']]=="doMC" & is.null(parallel.config[['OPTIONS']][["preschedule"]])) {
 			if (is.list(parallel.config[['OPTIONS']])) {
@@ -95,7 +95,7 @@ function(
 	
 	if (toupper(parallel.config[['BACKEND']]) == 'FOREACH') {
 		par.type='FOREACH'
-		if (is.na(parallel.config[['TYPE']])) return(list(foreach.options=foreach.options, par.type=par.type))
+		if (parallel.config[['TYPE']]=="NA") return(list(foreach.options=foreach.options, par.type=par.type))
 		if (parallel.config[['TYPE']]=="doMC") {
 			registerDoMC(workers)
 			return(list(foreach.options=foreach.options, par.type=par.type))
