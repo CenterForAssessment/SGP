@@ -165,7 +165,7 @@ Demonstration_SGP <- analyzeSGP(Demonstration_SGP,
 		    LAGGED_PROJECTIONS=2,
 		    BASELINE_PERCENTILES=4))
 
-##  Windows users with R version >= 2.13  may prefer the parallel package:
+##  Windows users with R version >= 2.14.0  may prefer the parallel package:
 #  This example is would be good for a single workstation with 8 cores
 #  and enough RAM to use 8 workers for ALL analyses.
 	...
