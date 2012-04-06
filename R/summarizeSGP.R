@@ -11,6 +11,10 @@ function(sgp_object,
 	started.at <- proc.time()
 	message(paste("\nStarted summarizeSGP", date()))
 
+	### Set variables to NULL to prevent R CMD check warnings
+
+	tmp.simulation.dt <- variable <- WEIGHT <- INCLUSION <- NULL
+
 	if (missing(sgp_object)) {
 		stop("User must supply a list containing a Student slot with long data. See documentation for details.")
 	}
@@ -287,13 +291,13 @@ function(sgp_object,
 			if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
 	  			j <- k <- NULL ## To prevent R CMD check warnings
 	  			summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], sgp.groups[x] %in% ci.groups))
-	  			tmp.summary <- parLapply(par.start$internal.cl, summary.iter, 
+	  			tmp.summary <- clusterApplyLB(par.start$internal.cl, summary.iter, 
 	  				function(iter) sgpSummary(data, iter[1], eval(parse(text=iter[2]))))
 				names(tmp.summary) <- gsub(", ", "__", sgp.groups)
 			} else {
 				j <- k <- NULL ## To prevent R CMD check warnings
 				summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], FALSE))
-	  			tmp.summary <- parLapply(par.start$internal.cl, summary.iter, 
+	  			tmp.summary <- clusterApplyLB(par.start$internal.cl, summary.iter, 
 	  				function(iter) sgpSummary(data, iter[1], eval(parse(text=iter[2]))))
 				names(tmp.summary) <- gsub(", ", "__", sgp.groups)
 			}
@@ -411,12 +415,14 @@ function(sgp_object,
 					invisible(tmp.dt.long[, WEIGHT := melt(as.data.frame(tmp.dt[, 
 						summary.groups[["institution_multiple_membership"]][[j-1]][["WEIGHTS"]], with=FALSE]), 
 						measure.vars=summary.groups[["institution_multiple_membership"]][[j-1]][["WEIGHTS"]])[,2]])
+					setnames(tmp.dt.long, "WEIGHT", paste(multiple.membership.variable.name, "WEIGHT", sep="_"))
 				}
 				if (!is.null(summary.groups[["institution_multiple_membership"]][[j-1]][["INCLUSION"]])) {
 					invisible(tmp.dt.long[, INCLUSION := melt(as.data.frame(tmp.dt[, 
 						summary.groups[["institution_multiple_membership"]][[j-1]][["INCLUSION"]], with=FALSE]), 
 						measure.vars=summary.groups[["institution_multiple_membership"]][[j-1]][["INCLUSION"]])[,2]])
 					summary.groups[["institution_inclusion"]] <- lapply(summary.groups[["institution_inclusion"]], function(x) x[1] <- "INCLUSION")
+					setnames(tmp.dt.long, "INCLUSION", paste(multiple.membership.variable.name, "ENROLLMENT_STATUS", sep="_"))
 				}
 				# if (par.start$par.type=="SNOW") clusterExport(par.start$internal.cl, "tmp.dt.long") # Don't think we need this...
 				sgp_object@Summary[[i]] <- c(sgp_object@Summary[[i]], summarizeSGP_INTERNAL(tmp.dt.long, tmp.inst))

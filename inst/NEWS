@@ -24,6 +24,7 @@ Changes in version: SGP_0.9-0.0
   o For studentGrowthPlot production in parallel, jobs are submitted by school size in decreasing order to increase performance.
   o Added analytic median SGP confidence interval calculation to bootstrap confidence interval. Analytic confidence intervals calculated by default for all groups.
   o Added New Hampshire Variable Name Lookup to SGPstateData.
+  o Added startParallel and stopParallel to better externalize parallel processing implementation.
  
 
   USER VISIBLE CHANGES:
