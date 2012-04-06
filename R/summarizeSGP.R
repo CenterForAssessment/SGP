@@ -396,7 +396,10 @@ function(sgp_object,
 
 				### Aggregations will occur by this new institution_level variable
 
-				tmp.inst <- paste(i, multiple.membership.variable.name, "INCLUSION", sep=", ")
+				if (!is.null(summary.groups[["institution_multiple_membership"]][[j-1]][["INCLUSION"]])) {
+					tmp.inst <- paste(i, multiple.membership.variable.name, "INCLUSION", sep=", ")
+				} else tmp.inst <- paste(i, multiple.membership.variable.name, sep=", ")
+				
 
 				### Reshape data using melt
 

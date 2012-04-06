@@ -1283,10 +1283,9 @@ if (22 %in% bPlot.styles) {
 		### Data sets and relevant quantities used for bubblePlots
 
 		if (bPlot.full.academic.year) {
-			tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__INSTRUCTOR_1_ENROLLMENT_STATUS"]][
-				INSTRUCTOR_1_ENROLLMENT_STATUS=="Enrolled Instructor: Yes"]
+			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__INCLUSION__CONTENT_AREA__YEAR"]][!is.na(INCLUSION)]
 		} else {
-			tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
+			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
 		}
 
 		# Merge in school and district names and anonymize school names (if requested)
@@ -1381,10 +1380,9 @@ if (22 %in% bPlot.styles) {
 		### Data sets and relevant quantities used for bubblePlots
 
 		if (bPlot.full.academic.year) {
-			tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__INSTRUCTOR_1_ENROLLMENT_STATUS"]][
-				INSTRUCTOR_1_ENROLLMENT_STATUS=="Enrolled Instructor: Yes"]
+			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__INCLUSION__CONTENT_AREA__YEAR"]][!is.na(INCLUSION)]
 		} else {
-			tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
+			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
 		}
 
 		# Merge in school and district names and anonymize school names (if requested)
@@ -1487,9 +1485,10 @@ if (22 %in% bPlot.styles) {
 			bPlot.levels <- as.list(bPlot.levels)
 		} else bPlot.levels <- list(A=NULL)
 
+		### Data sets and relevant quantities used for bubblePlots
+
 		if (bPlot.full.academic.year) {
-			tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__INSTRUCTOR_1_ENROLLMENT_STATUS"]][
-				INSTRUCTOR_1_ENROLLMENT_STATUS=="Enrolled Instructor: Yes"]
+			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__INCLUSION__CONTENT_AREA__YEAR"]][!is.na(INCLUSION)]
 			if (!is.null(bPlot.levels)) {
 				tmp.bPlot.levels.data <- sgp_object@Data[INSTRUCTOR_1_ENROLLMENT_STATUS=="Enrolled Instructor: Yes", 
 					eval(tmp.bPlot.levels.txt), by=list(INSTRUCTOR_NUMBER, CONTENT_AREA, YEAR)]
@@ -1503,7 +1502,7 @@ if (22 %in% bPlot.styles) {
 				}
 			}
 		} else {
-			tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
+			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
 			if (!is.null(bPlot.levels)) {
 				tmp.bPlot.levels.data <- sgp_object@Data[, eval(tmp.bPlot.levels.txt), by=list(INSTRUCTOR_NUMBER, CONTENT_AREA, YEAR)]
 				setkeyv(tmp.bPlot.data, c("INSTRUCTOR_NUMBER", "CONTENT_AREA", "YEAR"))
@@ -1617,10 +1616,9 @@ if (22 %in% bPlot.styles) {
 		### Data sets and relevant quantities used for bubblePlots
 
 		if (bPlot.full.academic.year) {
-			tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__INSTRUCTOR_1_ENROLLMENT_STATUS"]][
-				INSTRUCTOR_1_ENROLLMENT_STATUS=="Enrolled Instructor: Yes"]
+			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__INCLUSION__CONTENT_AREA__YEAR"]][!is.na(INCLUSION)]
 		} else {
-			tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
+			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
 		}
 
 		# Merge in school and district names and anonymize school names (if requested)
@@ -1724,8 +1722,7 @@ if (22 %in% bPlot.styles) {
 		} else bPlot.levels <- list(A=NULL)
 
 		if (bPlot.full.academic.year) {
-			tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__INSTRUCTOR_1_ENROLLMENT_STATUS"]][
-				INSTRUCTOR_1_ENROLLMENT_STATUS=="Enrolled Instructor: Yes"]
+			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__INCLUSION__CONTENT_AREA__YEAR"]][!is.na(INCLUSION)]
 			if (!is.null(bPlot.levels)) {
 				tmp.bPlot.levels.data <- sgp_object@Data[INSTRUCTOR_1_ENROLLMENT_STATUS=="Enrolled Instructor: Yes", 
 					eval(tmp.bPlot.levels.txt), by=list(INSTRUCTOR_NUMBER, CONTENT_AREA, YEAR)]
@@ -1739,7 +1736,7 @@ if (22 %in% bPlot.styles) {
 				}
 			}
 		} else {
-			tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
+			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
 			if (!is.null(bPlot.levels)) {
 				tmp.bPlot.levels.data <- sgp_object@Data[, eval(tmp.bPlot.levels.txt), by=list(INSTRUCTOR_NUMBER, CONTENT_AREA, YEAR)]
 				setkeyv(tmp.bPlot.data, c("INSTRUCTOR_NUMBER", "CONTENT_AREA", "YEAR"))
@@ -1852,6 +1849,13 @@ if (22 %in% bPlot.styles) {
 	if (any(bPlot.styles>=100)) {
 		bubblePlot_LEVEL <- "Individual"
 
+		if (any(c(150, 153) %in% bPlot.styles)) {
+			if (!bPlot.prior.achievement) {
+				message("bPlot.prior.achievement must be set to TRUE to use bubblePlot Style 150 &/or 153.  Setting bPlot.prior.achievement = TRUE internally")
+				bPlot.prior.achievement <- TRUE
+			}
+		}
+
 		### Utility functions
 
 		get.my.cutscore.year <- function(state, content_area, year) {
@@ -1878,22 +1882,24 @@ if (22 %in% bPlot.styles) {
 
 		### Create PRIOR Scale Score, SGP, SGP_TARGET and CONTENT_AREA
 
-		if (!all(c("SCALE_SCORE_PRIOR", "SGP_PRIOR", "SGP_TARGET_PRIOR", "CONTENT_AREA_PRIOR") %in% names(sgp_object@Data))) {
-			sgp_object@Data$YEAR_INTEGER_TMP <- as.integer(sgp_object@Data$YEAR) ## To convert YEAR, when factor, to integer
-			setkeyv(sgp_object@Data, c("ID", "CONTENT_AREA", "YEAR_INTEGER_TMP", "VALID_CASE")) ## CRITICAL that VALID_CASE is last in group
-			if (!"SCALE_SCORE_PRIOR" %in% names(sgp_object@Data)) {
-				sgp_object@Data$SCALE_SCORE_PRIOR <- sgp_object@Data[SJ(ID, CONTENT_AREA, YEAR_INTEGER_TMP-1), mult="last"][,SCALE_SCORE]
+		if (bPlot.prior.achievement) {
+			if (!all(c("SCALE_SCORE_PRIOR", "SGP_PRIOR", "SGP_TARGET_PRIOR", "CONTENT_AREA_PRIOR") %in% names(sgp_object@Data))) {
+				sgp_object@Data$YEAR_INTEGER_TMP <- as.integer(sgp_object@Data$YEAR) ## To convert YEAR, when factor, to integer
+				setkeyv(sgp_object@Data, c("ID", "CONTENT_AREA", "YEAR_INTEGER_TMP", "VALID_CASE")) ## CRITICAL that VALID_CASE is last in group
+				if (!"SCALE_SCORE_PRIOR" %in% names(sgp_object@Data)) {
+					sgp_object@Data$SCALE_SCORE_PRIOR <- sgp_object@Data[SJ(ID, CONTENT_AREA, YEAR_INTEGER_TMP-1), mult="last"][,SCALE_SCORE]
+				}
+				if (!"SGP_PRIOR" %in% names(sgp_object@Data)) {
+					sgp_object@Data$SGP_PRIOR <- sgp_object@Data[SJ(ID, CONTENT_AREA, YEAR_INTEGER_TMP-1), mult="last"][,SGP]
+				}
+				if (!"SGP_TARGET_PRIOR" %in% names(sgp_object@Data)) {
+					sgp_object@Data$SGP_TARGET_PRIOR <- sgp_object@Data[SJ(ID, CONTENT_AREA, YEAR_INTEGER_TMP-1), mult="last"][,SGP_TARGET]
+				}
+				if (!"CONTENT_AREA_PRIOR" %in% names(sgp_object@Data)) {
+					sgp_object@Data$CONTENT_AREA_PRIOR <- sgp_object@Data[SJ(ID, CONTENT_AREA, YEAR_INTEGER_TMP-1), mult="last"][, CONTENT_AREA]
+				}
+				sgp_object@Data$YEAR_INTEGER_TMP <- NULL
 			}
-			if (!"SGP_PRIOR" %in% names(sgp_object@Data)) {
-				sgp_object@Data$SGP_PRIOR <- sgp_object@Data[SJ(ID, CONTENT_AREA, YEAR_INTEGER_TMP-1), mult="last"][,SGP]
-			}
-			if (!"SGP_TARGET_PRIOR" %in% names(sgp_object@Data)) {
-				sgp_object@Data$SGP_TARGET_PRIOR <- sgp_object@Data[SJ(ID, CONTENT_AREA, YEAR_INTEGER_TMP-1), mult="last"][,SGP_TARGET]
-			}
-			if (!"CONTENT_AREA_PRIOR" %in% names(sgp_object@Data)) {
-				sgp_object@Data$CONTENT_AREA_PRIOR <- sgp_object@Data[SJ(ID, CONTENT_AREA, YEAR_INTEGER_TMP-1), mult="last"][, CONTENT_AREA]
-			}
-			sgp_object@Data$YEAR_INTEGER_TMP <- NULL
 		}
 	} # END Individual Plot setup
  
