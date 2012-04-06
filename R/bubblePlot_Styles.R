@@ -1353,8 +1353,10 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_LEGEND="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
-			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(school.name.label, year.iter, capwords(content_area.iter), "School", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
-			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "School", "Style_50", paste("District", district_number.iter, "Schools", sep="_")),
+			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(school.name.label, year.iter, capwords(content_area.iter), 
+				"School", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
+			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "School", "Style_50", 
+				paste("District", district_number.iter, "Schools", sep="_")),
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 		} ## END if 
 		} ## END loop over y.variable.iter
@@ -1365,7 +1367,7 @@ if (22 %in% bPlot.styles) {
 
 		message(paste("Finished bubblePlot Style 50", date(), "in", timetaken(started.at), "\n"))
 
-} ## END bubblePlot style 50
+	} ## END bubblePlot style 50
 
 
 #######################################################################################
@@ -1403,7 +1405,6 @@ if (22 %in% bPlot.styles) {
 		bPlot.data <- tmp.bPlot.data[YEAR==year.iter & CONTENT_AREA==content_area.iter & DISTRICT_NUMBER %in% my.iters$tmp.districts & MEDIAN_SGP_COUNT >= bPlot.minimum.n]
 
 		# Loop over unique schools IN DISTRICT ONLY
-		# for (school_number.iter in intersect(my.iters$tmp.schools, bPlot.data$SCHOOL_NUMBER)) {  ### Loop over schools
 		for (district_number.iter in intersect(my.iters$tmp.districts, bPlot.data$DISTRICT_NUMBER)) { ### Loop over DISTRICT NUMBERS   
 		for (y.variable.iter in my.iters$tmp.y.variable) {  ### Loop over CURRENT and PRIOR achievement (if requested)
 
@@ -1464,7 +1465,7 @@ if (22 %in% bPlot.styles) {
 
 		message(paste("Finished bubblePlot Style 53", date(), "in", timetaken(started.at), "\n"))
 
-} ## END bubblePlot style 53
+	} ## END bubblePlot style 53
 
 
 #######################################################################################
@@ -1535,7 +1536,6 @@ if (22 %in% bPlot.styles) {
 		bPlot.data <- get.bPlot.data(tmp.bPlot.data)[DISTRICT_NUMBER %in% my.iters$tmp.districts]
 
 		# Loop over unique schools IN DISTRICT ONLY
-		# for (school_number.iter in intersect(my.iters$tmp.schools, bPlot.data$SCHOOL_NUMBER)) {  ### Loop over schools
 		for (district_number.iter in intersect(my.iters$tmp.districts, bPlot.data$DISTRICT_NUMBER)) { ### Loop over DISTRICT NUMBERS   
 		for (levels.iter in levels(factor(eval(parse(text=paste("bPlot.data$PCT_", bPlot.levels.iter, sep="")))))) {
 		for (y.variable.iter in my.iters$tmp.y.variable) {  ### Loop over CURRENT and PRIOR achievement (if requested)
@@ -1600,7 +1600,7 @@ if (22 %in% bPlot.styles) {
 
 		message(paste("Finished bubblePlot Style 55", date(), "in", timetaken(started.at), "\n"))
 
-} ## END bubblePlot style 55
+	} ## END bubblePlot style 55
 
 
 #######################################################################################
@@ -1640,7 +1640,6 @@ if (22 %in% bPlot.styles) {
 		bPlot.data <- tmp.bPlot.data[YEAR==year.iter & CONTENT_AREA==content_area.iter & DISTRICT_NUMBER==district_number.iter & MEDIAN_SGP_COUNT >= bPlot.minimum.n]
 
 		# Loop over unique schools IN DISTRICT ONLY
-		# for (school_number.iter in unique(bPlot.data[['SCHOOL_NUMBER']])) {  ### Loop over schools
 		for (school_number.iter in intersect(my.iters$tmp.schools, bPlot.data$SCHOOL_NUMBER)) {  ### Loop over schools
 		for (y.variable.iter in my.iters$tmp.y.variable) {  ### Loop over CURRENT and PRIOR achievement (if requested)
 
@@ -1770,7 +1769,6 @@ if (22 %in% bPlot.styles) {
 		bPlot.data <- get.bPlot.data(tmp.bPlot.data)[DISTRICT_NUMBER==district_number.iter]
 
 		# Loop over unique schools IN DISTRICT ONLY
-		# for (school_number.iter in unique(bPlot.data[['SCHOOL_NUMBER']])) {  ### Loop over schools
 		for (school_number.iter in intersect(my.iters$tmp.schools, bPlot.data$SCHOOL_NUMBER)) {  ### Loop over schools
 		for (levels.iter in levels(factor(eval(parse(text=paste("bPlot.data$PCT_", bPlot.levels.iter, sep="")))))) {
 		for (y.variable.iter in my.iters$tmp.y.variable) {  ### Loop over CURRENT and PRIOR achievement (if requested)
@@ -2050,6 +2048,7 @@ if (22 %in% bPlot.styles) {
 		if (bPlot.demo) {
 			bPlot.anonymize <- TRUE
 			setkeyv(sgp_object@Data, c("VALID_CASE", "YEAR", "CONTENT_AREA", "GRADE"))
+			my.iters$tmp.districts <- '-999'; my.iters$tmp.schools <- '-99'
 		} else setkeyv(sgp_object@Data, c("YEAR", "CONTENT_AREA", "DISTRICT_NUMBER"))
 
 
@@ -2057,7 +2056,6 @@ if (22 %in% bPlot.styles) {
 
 		for (year.iter in my.iters$tmp.years) {  ### Loop over year
 		for (content_area.iter in my.iters$tmp.content_areas) { ### Loop over content areas
-		 	if (bPlot.demo) {my.iters$tmp.districts <- '-999'; my.iters$tmp.schools <- '-99'}
 		for (district.iter in seq_along(my.iters$tmp.districts)) { ### Loop over districts (seq_along to get integer for anonymize)
 
 			# Subset data
@@ -2210,6 +2208,7 @@ if (22 %in% bPlot.styles) {
 		if (bPlot.demo) {
 			bPlot.anonymize <- TRUE
 			setkeyv(sgp_object@Data, c("VALID_CASE", "YEAR", "CONTENT_AREA", "GRADE"))
+			my.iters$tmp.districts <- '-999'; my.iters$tmp.schools <- '-99'
 		} else setkeyv(sgp_object@Data, c("YEAR", "CONTENT_AREA", "DISTRICT_NUMBER"))
 
 
@@ -2217,7 +2216,6 @@ if (22 %in% bPlot.styles) {
 
 		for (year.iter in my.iters$tmp.years) {  ### Loop over year
 		for (content_area.iter in my.iters$tmp.content_areas) { ### Loop over content areas
-		 	if (bPlot.demo) {my.iters$tmp.districts <- '-999'; my.iters$tmp.schools <- '-99'}
 		for (district.iter in seq_along(my.iters$tmp.districts)) { ### Loop over districts (seq_along to get integer for anonymize)
 
 			# Subset data
