@@ -391,10 +391,14 @@ if (1 %in% bPlot.styles) {
 
 		bPlot.data <- get.bPlot.data(tmp.bPlot.data)
 
-		# Create labels
+		# Create labels and file path
 
 		bPlot.labels <- create.bPlot.labels(year.iter, y.variable.iter, bubblePlot_LEVEL) 
 
+		tmp.file.path <- file.path(bPlot.folder, year.iter, "State", "Style_1")
+		if (is.na(file.info(tmp.file.path)$isdir)) {
+		        dir.create(tmp.file.path, recursive=TRUE, showWarnings=FALSE)
+		}
 
 		### Create bubblePlot ###
 
@@ -436,7 +440,7 @@ if (1 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
 			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(state.name.file.label, year.iter, capwords(content_area.iter), "State", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
-			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "State", "Style_1"),
+			bubble_plot_configs.BUBBLE_PLOT_PATH=tmp.file.path,
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 
 		} ## END loop over y.variable.iter
@@ -518,9 +522,14 @@ if (2 %in% bPlot.styles) {
 		for (levels.iter in levels(factor(eval(parse(text=paste("bPlot.data$PCT_", bPlot.levels.iter, sep="")))))) {
 		for (y.variable.iter in my.iters$tmp.y.variable) { 
 
-		# Create labels
+		# Create labels and file path
 
 		bPlot.labels <- create.bPlot.labels(year.iter, y.variable.iter, bubblePlot_LEVEL) 
+
+		tmp.file.path <- file.path(bPlot.folder, year.iter, "State", "Style_2", bPlot.levels)
+		if (is.na(file.info(tmp.file.path)$isdir)) {
+		        dir.create(tmp.file.path, recursive=TRUE, showWarnings=FALSE)
+		}
 
 		### Create bubblePlot ###
 
@@ -562,7 +571,7 @@ if (2 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
 			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(state.name.file.label, year.iter, capwords(content_area.iter), capwords(levels.iter), "State", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
-			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "State", "Style_2", bPlot.levels),
+			bubble_plot_configs.BUBBLE_PLOT_PATH=tmp.file.path,
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 
 		} ## END loop over y.variable.iter
@@ -637,9 +646,14 @@ if (3 %in% bPlot.styles) {
 		for (levels.iter in levels(factor(bPlot.data$V1))) {
 		for (y.variable.iter in my.iters$tmp.y.variable) { 
 
-		# Create labels
+		# Create labels and file path
 
 		bPlot.labels <- create.bPlot.labels(year.iter, y.variable.iter, bubblePlot_LEVEL) 
+
+		tmp.file.path <- file.path(bPlot.folder, year.iter, "State", "Style_3", bPlot.levels)
+		if (is.na(file.info(tmp.file.path)$isdir)) {
+		        dir.create(tmp.file.path, recursive=TRUE, showWarnings=FALSE)
+		}
 
 		### Create bubblePlot ###
 
@@ -681,7 +695,7 @@ if (3 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
 			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(state.name.file.label, year.iter, capwords(content_area.iter), capwords(levels.iter), "State", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
-			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "State", "Style_3", bPlot.levels),
+			bubble_plot_configs.BUBBLE_PLOT_PATH=tmp.file.path,
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 
 		} ## END loop over y.variable.iter
@@ -734,10 +748,15 @@ if (10 %in% bPlot.styles) {
 		for (district_number.iter in intersect(my.iters$tmp.districts, bPlot.data$DISTRICT_NUMBER)) { ### Loop over DISTRICT NUMBERS
 		for (y.variable.iter in my.iters$tmp.y.variable) {  ### Loop over CURRENT and PRIOR achievement (if requested)
 
-		# Create labels
+		# Create labels and file path
 
 		bPlot.labels <- create.bPlot.labels(year.iter, y.variable.iter, bubblePlot_LEVEL)
 		district.name.label <- as.character(bPlot.data[DISTRICT_NUMBER==district_number.iter]$DISTRICT_NAME[1])
+
+		tmp.file.path <- file.path(bPlot.folder, year.iter, "District", "Style_10")
+		if (is.na(file.info(tmp.file.path)$isdir)) {
+		        dir.create(tmp.file.path, recursive=TRUE, showWarnings=FALSE)
+		}
 
 		### Create bubblePlot ###
 
@@ -778,8 +797,9 @@ if (10 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_LEGEND="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
-			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(district.name.label, year.iter, capwords(content_area.iter), "District", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
-			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "District", "Style_10"),
+			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(district.name.label, year.iter, capwords(content_area.iter), 
+				"District", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
+			bubble_plot_configs.BUBBLE_PLOT_PATH=tmp.file.path,
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 
 		} ## END loop over y.variable.iter
@@ -867,10 +887,15 @@ if (11 %in% bPlot.styles) {
 		for (levels.iter in levels(factor(eval(parse(text=paste("bPlot.data$PCT_", bPlot.levels.iter, sep="")))))) {
 		for (y.variable.iter in my.iters$tmp.y.variable) { 
 
-		# Create labels
+		# Create labels and file path
 
 		bPlot.labels <- create.bPlot.labels(year.iter, y.variable.iter, bubblePlot_LEVEL) 
 		district.name.label <- as.character(bPlot.data[DISTRICT_NUMBER==district_number.iter]$DISTRICT_NAME[1])
+
+		tmp.file.path <- file.path(bPlot.folder, year.iter, "District", "Style_11", bPlot.levels)
+		if (is.na(file.info(tmp.file.path)$isdir)) {
+		        dir.create(tmp.file.path, recursive=TRUE, showWarnings=FALSE)
+		}
 
 		### Create bubblePlot ###
 
@@ -912,7 +937,7 @@ if (11 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
 			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(district.name.label, year.iter, capwords(content_area.iter), capwords(levels.iter), "District", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
-			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "District", "Style_11", bPlot.levels),
+			bubble_plot_configs.BUBBLE_PLOT_PATH=tmp.file.path,
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 
 		} ## END loop over y.variable.iter
@@ -967,10 +992,15 @@ if (20 %in% bPlot.styles) {
 		for (district_number.iter in intersect(my.iters$tmp.districts, bPlot.data$DISTRICT_NUMBER)) { ### Loop over DISTRICT NUMBERS
 		for (y.variable.iter in my.iters$tmp.y.variable) {  ### Loop over CURRENT and PRIOR achievement (if requested)
 
-		# Create labels
+		# Create labels and file path
 
 		bPlot.labels <- create.bPlot.labels(year.iter, y.variable.iter, bubblePlot_LEVEL)
 		district.name.label <- as.character(bPlot.data[DISTRICT_NUMBER==district_number.iter]$DISTRICT_NAME[1])
+
+		tmp.file.path <- file.path(bPlot.folder, year.iter, "District", "Style_20")
+		if (is.na(file.info(tmp.file.path)$isdir)) {
+		        dir.create(tmp.file.path, recursive=TRUE, showWarnings=FALSE)
+		}
 
 		### Create bubblePlot ###
 
@@ -1012,7 +1042,7 @@ if (20 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
 			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(district.name.label, year.iter, capwords(content_area.iter), "District", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
-			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "District", "Style_20"),
+			bubble_plot_configs.BUBBLE_PLOT_PATH=tmp.file.path,
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 
 		} ## END loop over y.variable.iter
@@ -1087,10 +1117,15 @@ if (21 %in% bPlot.styles) {
 		for (district_number.iter in intersect(my.iters$tmp.districts, bPlot.data$DISTRICT_NUMBER)) { ### Loop over DISTRICT NUMBERS
 		for (y.variable.iter in my.iters$tmp.y.variable) {  ### Loop over CURRENT and PRIOR achievement (if requested)
 
-		# Create labels
+		# Create labels and file path
 
 		bPlot.labels <- create.bPlot.labels(year.iter, y.variable.iter, bubblePlot_LEVEL)
 		district.name.label <- as.character(bPlot.data[DISTRICT_NUMBER==district_number.iter]$DISTRICT_NAME[1])
+
+		tmp.file.path <- file.path(bPlot.folder, year.iter, "District", "Style_21", bPlot.levels)
+		if (is.na(file.info(tmp.file.path)$isdir)) {
+		        dir.create(tmp.file.path, recursive=TRUE, showWarnings=FALSE)
+		}
 
 		### Create bubblePlot ###
 
@@ -1132,7 +1167,7 @@ if (21 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
 			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(district.name.label, year.iter, capwords(content_area.iter), "District", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
-			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "District", "Style_21", bPlot.levels),
+			bubble_plot_configs.BUBBLE_PLOT_PATH=tmp.file.path,
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 
 		} ## END loop over y.variable.iter
@@ -1212,10 +1247,15 @@ if (22 %in% bPlot.styles) {
 		for (levels.iter in levels(factor(bPlot.data$V1))) {
 		for (y.variable.iter in my.iters$tmp.y.variable) { 
 
-		# Create labels
+		# Create labels and file path
 
 		bPlot.labels <- create.bPlot.labels(year.iter, y.variable.iter, bubblePlot_LEVEL) 
 		district.name.label <- as.character(bPlot.data[DISTRICT_NUMBER==district_number.iter]$DISTRICT_NAME[1])
+
+		tmp.file.path <- file.path(bPlot.folder, year.iter, "District", "Style_22", bPlot.levels)
+		if (is.na(file.info(tmp.file.path)$isdir)) {
+		        dir.create(tmp.file.path, recursive=TRUE, showWarnings=FALSE)
+		}
 
 		### Create bubblePlot ###
 
@@ -1257,7 +1297,7 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
 			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(district.name.label, year.iter, capwords(content_area.iter), capwords(levels.iter), "District", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
-			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "District", "Style_22", bPlot.levels),
+			bubble_plot_configs.BUBBLE_PLOT_PATH=tmp.file.path,
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 
 		} ## END loop over y.variable.iter
@@ -1308,10 +1348,15 @@ if (22 %in% bPlot.styles) {
 
 		bPlot.data <- tmp.bPlot.data[YEAR==year.iter & SCHOOL_NUMBER==school_number.iter & CONTENT_AREA==content_area.iter & MEDIAN_SGP_COUNT >= bPlot.minimum.n]
 
-		# Create labels
+		# Create labels and file path
 
 		bPlot.labels <- create.bPlot.labels(year.iter, y.variable.iter, bubblePlot_LEVEL) 
 		school.name.label <- as.character(bPlot.data[SCHOOL_NUMBER== school_number.iter]$SCHOOL_NAME[1])
+
+		tmp.file.path <- file.path(bPlot.folder, year.iter, "School", "Style_50", paste("District", district_number.iter, "Schools", sep="_"))
+		if (is.na(file.info(tmp.file.path)$isdir)) {
+		        dir.create(tmp.file.path, recursive=TRUE, showWarnings=FALSE)
+		}
 
 		### Create bubblePlot ###
 		if (dim(bPlot.data)[1] > 0) { # some CMO's don't teach all content areas (elementary math)
@@ -1355,8 +1400,7 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
 			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(school.name.label, year.iter, capwords(content_area.iter), 
 				"School", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
-			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "School", "Style_50", 
-				paste("District", district_number.iter, "Schools", sep="_")),
+			bubble_plot_configs.BUBBLE_PLOT_PATH=tmp.file.path,
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 		} ## END if 
 		} ## END loop over y.variable.iter
@@ -1408,10 +1452,15 @@ if (22 %in% bPlot.styles) {
 		for (district_number.iter in intersect(my.iters$tmp.districts, bPlot.data$DISTRICT_NUMBER)) { ### Loop over DISTRICT NUMBERS   
 		for (y.variable.iter in my.iters$tmp.y.variable) {  ### Loop over CURRENT and PRIOR achievement (if requested)
 
-		# Create labels
+		# Create labels and file path
 
 		bPlot.labels <- create.bPlot.labels(year.iter, y.variable.iter, bubblePlot_LEVEL)
 		district.name.label <- as.character(bPlot.data[DISTRICT_NUMBER==district_number.iter]$DISTRICT_NAME[1])
+
+		tmp.file.path <- file.path(bPlot.folder, year.iter, "State", "Style_53")
+		if (is.na(file.info(tmp.file.path)$isdir)) {
+		        dir.create(tmp.file.path, recursive=TRUE, showWarnings=FALSE)
+		}
 
 		### Create bubblePlot ###
 		
@@ -1454,7 +1503,7 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
 			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(district.name.label, year.iter, 
 				capwords(content_area.iter), "State", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
-			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "State", "Style_53"),
+			bubble_plot_configs.BUBBLE_PLOT_PATH=tmp.file.path,
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 
 		} ## END loop over y.variable.iter
@@ -1491,11 +1540,14 @@ if (22 %in% bPlot.styles) {
 			if (!is.null(bPlot.levels)) {
 				tmp.bPlot.levels.data <- data.frame(eval(parse(text=paste("sgp_object@Data[,c(grep('INSTRUCTOR_NUMBER', names(sgp_object@Data)), 
 					intersect(grep('ENROLLMENT_STATUS', names(sgp_object@Data)), grep('INSTRUCTOR', names(sgp_object@Data))),", 
+					"grep('CONTENT_AREA', names(sgp_object@Data)), grep('YEAR', names(sgp_object@Data)),",
 					paste("grep('", bPlot.levels, "', names(sgp_object@Data))", sep="", collapse=","), "), with=FALSE]"))))
 				inst.index <- grep('INSTRUCTOR_NUMBER', names(tmp.bPlot.levels.data))
 				enroll.index <- grep('ENROLLMENT_STATUS', names(tmp.bPlot.levels.data))
 				tmp.bPlot.levels.data<- eval(parse(text=paste("data.table(INSTRUCTOR_NUMBER=c(", paste("tmp.bPlot.levels.data[,", inst.index, "]", collapse=","),
 					"), INCLUSION=c(", paste("as.character(tmp.bPlot.levels.data[,", enroll.index, "])", collapse=","),
+					"), CONTENT_AREA=rep(tmp.bPlot.levels.data[, 'CONTENT_AREA'],", length(inst.index),
+					"), YEAR=rep(tmp.bPlot.levels.data[, 'YEAR'],", length(inst.index),
 					"), ", paste(bPlot.levels, "=rep(tmp.bPlot.levels.data[, '", bPlot.levels, "'],", length(inst.index), ")", sep="", collapse=","),
 					", key=c('INSTRUCTOR_NUMBER', 'INCLUSION'))[!is.na(INSTRUCTOR_NUMBER) & INCLUSION=='Enrolled Instructor: Yes']")))
 				tmp.bPlot.levels.data <- tmp.bPlot.levels.data[, eval(tmp.bPlot.levels.txt), by=list(INSTRUCTOR_NUMBER, CONTENT_AREA, YEAR)]
@@ -1557,10 +1609,15 @@ if (22 %in% bPlot.styles) {
 		for (levels.iter in levels(factor(eval(parse(text=paste("bPlot.data$PCT_", bPlot.levels.iter, sep="")))))) {
 		for (y.variable.iter in my.iters$tmp.y.variable) {  ### Loop over CURRENT and PRIOR achievement (if requested)
 
-		# Create labels
+		# Create labels and file path
 
 		bPlot.labels <- create.bPlot.labels(year.iter, y.variable.iter, bubblePlot_LEVEL)
 		district.name.label <- as.character(bPlot.data[DISTRICT_NUMBER==district_number.iter]$DISTRICT_NAME[1])
+
+		tmp.file.path <- file.path(bPlot.folder, year.iter, "State", "Style_55", bPlot.levels)
+		if (is.na(file.info(tmp.file.path)$isdir)) {
+		        dir.create(tmp.file.path, recursive=TRUE, showWarnings=FALSE)
+		}
 
 		### Create bubblePlot ###
 
@@ -1605,7 +1662,7 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
 			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(district.name.label, year.iter, capwords(content_area.iter),
 				capwords(levels.iter), "State", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
-			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "State", "Style_55", bPlot.levels),
+			bubble_plot_configs.BUBBLE_PLOT_PATH=tmp.file.path,
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 			} # END if(...)
 		} ## END loop over y.variable.iter
@@ -1660,10 +1717,15 @@ if (22 %in% bPlot.styles) {
 		for (school_number.iter in intersect(my.iters$tmp.schools, bPlot.data$SCHOOL_NUMBER)) {  ### Loop over schools
 		for (y.variable.iter in my.iters$tmp.y.variable) {  ### Loop over CURRENT and PRIOR achievement (if requested)
 
-		# Create labels
+		# Create labels and file path
 
 		bPlot.labels <- create.bPlot.labels(year.iter, y.variable.iter, bubblePlot_LEVEL)
 		school.name.label <- as.character(bPlot.data[SCHOOL_NUMBER== school_number.iter]$SCHOOL_NAME[1])
+
+		tmp.file.path <- file.path(bPlot.folder, year.iter, "District", "Style_57", district_number.iter)
+		if (is.na(file.info(tmp.file.path)$isdir)) {
+		        dir.create(tmp.file.path, recursive=TRUE, showWarnings=FALSE)
+		}
 
 		### Create bubblePlot ###
 
@@ -1706,7 +1768,7 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
 			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(school.name.label, year.iter, capwords(content_area.iter), 
 				"District", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
-			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "District", "Style_57", district_number.iter),
+			bubble_plot_configs.BUBBLE_PLOT_PATH=tmp.file.path,
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 
 		} ## END loop over y.variable.iter
@@ -1742,11 +1804,14 @@ if (22 %in% bPlot.styles) {
 			if (!is.null(bPlot.levels)) {
 				tmp.bPlot.levels.data <- data.frame(eval(parse(text=paste("sgp_object@Data[,c(grep('INSTRUCTOR_NUMBER', names(sgp_object@Data)), 
 					intersect(grep('ENROLLMENT_STATUS', names(sgp_object@Data)), grep('INSTRUCTOR', names(sgp_object@Data))),", 
+					"grep('CONTENT_AREA', names(sgp_object@Data)), grep('YEAR', names(sgp_object@Data)),",
 					paste("grep('", bPlot.levels, "', names(sgp_object@Data))", sep="", collapse=","), "), with=FALSE]"))))
 				inst.index <- grep('INSTRUCTOR_NUMBER', names(tmp.bPlot.levels.data))
 				enroll.index <- grep('ENROLLMENT_STATUS', names(tmp.bPlot.levels.data))
 				tmp.bPlot.levels.data<- eval(parse(text=paste("data.table(INSTRUCTOR_NUMBER=c(", paste("tmp.bPlot.levels.data[,", inst.index, "]", collapse=","),
 					"), INCLUSION=c(", paste("as.character(tmp.bPlot.levels.data[,", enroll.index, "])", collapse=","),
+					"), CONTENT_AREA=rep(tmp.bPlot.levels.data[, 'CONTENT_AREA'],", length(inst.index),
+					"), YEAR=rep(tmp.bPlot.levels.data[, 'YEAR'],", length(inst.index),
 					"), ", paste(bPlot.levels, "=rep(tmp.bPlot.levels.data[, '", bPlot.levels, "'],", length(inst.index), ")", sep="", collapse=","),
 					", key=c('INSTRUCTOR_NUMBER', 'INCLUSION'))[!is.na(INSTRUCTOR_NUMBER) & INCLUSION=='Enrolled Instructor: Yes']")))
 				tmp.bPlot.levels.data <- tmp.bPlot.levels.data[, eval(tmp.bPlot.levels.txt), by=list(INSTRUCTOR_NUMBER, CONTENT_AREA, YEAR)]
@@ -1809,10 +1874,15 @@ if (22 %in% bPlot.styles) {
 		for (levels.iter in levels(factor(eval(parse(text=paste("bPlot.data$PCT_", bPlot.levels.iter, sep="")))))) {
 		for (y.variable.iter in my.iters$tmp.y.variable) {  ### Loop over CURRENT and PRIOR achievement (if requested)
 
-		# Create labels
+		# Create labels and file path
 
 		bPlot.labels <- create.bPlot.labels(year.iter, y.variable.iter, bubblePlot_LEVEL)
 		school.name.label <- as.character(bPlot.data[SCHOOL_NUMBER== school_number.iter]$SCHOOL_NAME[1])
+
+		tmp.file.path <- file.path(bPlot.folder, year.iter, "District", "Style_59", district_number.iter, bPlot.levels)
+		if (is.na(file.info(tmp.file.path)$isdir)) {
+		        dir.create(tmp.file.path, recursive=TRUE, showWarnings=FALSE)
+		}
 
 		### Create bubblePlot ###
 			
@@ -1855,7 +1925,7 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
 			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(school.name.label, year.iter, capwords(content_area.iter), 
 				capwords(levels.iter), "District", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
-			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "District", "Style_59", district_number.iter, bPlot.levels),
+			bubble_plot_configs.BUBBLE_PLOT_PATH=tmp.file.path,
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 		} ## END loop over y.variable.iter
 		} ## END loop over levels.iter
@@ -1982,9 +2052,14 @@ if (22 %in% bPlot.styles) {
 			bPlot.data$SCHOOL_NAME <- paste("Sample School", school.iter); bPlot.data$DISTRICT_NAME <- paste("Sample District", district.iter)
 		}
 
-		# Create labels
+		# Create labels and file path
 
 		bPlot.labels <- create.bPlot.labels(year.iter, "SCALE_SCORE_PRIOR", bubblePlot_LEVEL)
+
+		tmp.file.path <- file.path(bPlot.folder, year.iter, "Individual", "Style_100", gsub(" ", "_", bPlot.data$DISTRICT_NAME[1]))
+		if (is.na(file.info(tmp.file.path)$isdir)) {
+		        dir.create(tmp.file.path, recursive=TRUE, showWarnings=FALSE)
+		}
 
 		# Create cutscore ranges
 
@@ -2057,8 +2132,7 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message.style.100,
 			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(gsub(" ", "_", bPlot.data$SCHOOL_NAME[1]), "Grade", grade.iter,
 				year.iter, capwords(content_area.iter), bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
-			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "Individual", "Style_100", 
-				gsub(" ", "_", bPlot.data$DISTRICT_NAME[1])),
+			bubble_plot_configs.BUBBLE_PLOT_PATH=tmp.file.path,
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 
 		} ## END if dim(bPlot.data)[1] > 0
@@ -2137,11 +2211,17 @@ if (22 %in% bPlot.styles) {
 				bPlot.data$SCHOOL_NAME <- paste("Psuedo School", school.iter); bPlot.data$DISTRICT_NAME <- paste("Psuedo District", district.iter)
 			}
 
-		# Create labels
+		# Create labels and file path
 
 			bPlot.labels <- create.bPlot.labels(year.iter, "SCALE_SCORE", bubblePlot_LEVEL) # Only produce "Current Year" plots
 			prior.year <- paste(as.numeric(unlist(strsplit(as.character(year.iter), "_")))-1, collapse="_")
 
+			tmp.file.path <- file.path(bPlot.folder, year.iter, "Instructor", "Style_150", 
+				gsub(" ", "_", bPlot.data$DISTRICT_NAME[1]), gsub(" ", "_", bPlot.data$SCHOOL_NAME[1]))
+			if (is.na(file.info(tmp.file.path)$isdir)) {
+			        dir.create(tmp.file.path, recursive=TRUE, showWarnings=FALSE)
+			}
+	
 		# Create cutscore ranges
 
 			my.content_area <- get.my.cutscore.year(state, content_area.iter, as.character(bPlot.labels$y.year)) 
@@ -2214,8 +2294,7 @@ if (22 %in% bPlot.styles) {
 				bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message.style.150,
 				bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(gsub(" ", "_", bPlot.data$SCHOOL_NAME[1]), "Instructor", instructor.iter, year.iter, "Grade", grade.iter, 
 					capwords(content_area.iter), bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
-				bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "Instructor", "Style_150", 
-					gsub(" ", "_", bPlot.data$DISTRICT_NAME[1]), gsub(" ", "_", bPlot.data$SCHOOL_NAME[1])),
+				bubble_plot_configs.BUBBLE_PLOT_PATH=tmp.file.path,
 				bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 
 			} ## END grade.iter loop
@@ -2296,10 +2375,16 @@ if (22 %in% bPlot.styles) {
 				bPlot.data$SCHOOL_NAME <- paste("Psuedo School", school.iter); bPlot.data$DISTRICT_NAME <- paste("Psuedo District", district.iter)
 			}
 
-		# Create labels
+		# Create labels and file path
 
 			bPlot.labels <- create.bPlot.labels(year.iter, "SCALE_SCORE", bubblePlot_LEVEL) # Only produce "Current Year" plots
 			prior.year <- paste(as.numeric(unlist(strsplit(as.character(year.iter), "_")))-1, collapse="_")
+
+			tmp.file.path <- file.path(bPlot.folder, year.iter, "Instructor", "Style_153", 
+				gsub(" ", "_", bPlot.data$DISTRICT_NAME[1]), gsub(" ", "_", bPlot.data$SCHOOL_NAME[1]))
+			if (is.na(file.info(tmp.file.path)$isdir)) {
+			        dir.create(tmp.file.path, recursive=TRUE, showWarnings=FALSE)
+			}
 
 		# Create cutscore ranges
 
@@ -2375,8 +2460,7 @@ if (22 %in% bPlot.styles) {
 				bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message.style.153,
 				bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(gsub(" ", "_", bPlot.data$SCHOOL_NAME[1]), "Instructor", 
 					instructor.iter, year.iter, capwords(content_area.iter), bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
-				bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "Instructor", "Style_153", 
-					gsub(" ", "_", bPlot.data$DISTRICT_NAME[1]), gsub(" ", "_", bPlot.data$SCHOOL_NAME[1])),
+				bubble_plot_configs.BUBBLE_PLOT_PATH=tmp.file.path,
 				bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 
 			} ## END grade.iter loop
