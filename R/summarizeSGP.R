@@ -207,12 +207,7 @@ function(sgp_object,
 			tmp.names <- NULL
 		} else {
 			for (i in seq(tmp.number.variables)) {
-<<<<<<< HEAD
 				tmp.variable.names <- as.character(names.df[names.df$names.type==paste("institution_level_multiple_membership_", i, sep=""), "names.sgp"])
-=======
-				tmp.variable.names <- as.character(subset(names.df, names.type==paste("institution_level_multiple_membership_", i, sep=""))[["names.sgp"]])
->>>>>>> upstream/master
-
 				tmp.length <- sum(paste("institution_level_multiple_membership_", i, sep="")==names.df[["names.type"]], na.rm=TRUE)
 				tmp.weight.length <- sum(paste("institution_level_multiple_membership_", i, "_weight", sep="")==names.df[["names.type"]], na.rm=TRUE)
 				tmp.inclusion.length <- sum(paste("institution_level_multiple_membership_", i, "_inclusion", sep="")==names.df[["names.type"]], na.rm=TRUE)
@@ -224,11 +219,7 @@ function(sgp_object,
 				if (tmp.weight.length == 0) {
 					tmp.weights <- NULL
 				} else {
-<<<<<<< HEAD
 					tmp.weights <- as.character(names.df[names.df$names.type==paste("institution_level_multiple_membership_", i, "_weight", sep=""), "names.sgp"])
-=======
-					tmp.weights <- as.character(subset(names.df, names.type==paste("institution_level_multiple_membership_", i, "_weight", sep=""))[["names.sgp"]])
->>>>>>> upstream/master
 				}
 				
 				if (tmp.inclusion.length != 0 & tmp.inclusion.length != tmp.length) {
@@ -237,11 +228,7 @@ function(sgp_object,
 				if (tmp.inclusion.length == 0) {
 					tmp.inclusion <- NULL 
 				} else {
-<<<<<<< HEAD
 					tmp.inclusion <- as.character(names.df[names.df$names.type==paste("institution_level_multiple_membership_", i, "_inclusion", sep=""), "names.sgp"])
-=======
-					tmp.inclusion <- as.character(subset(names.df, names.type==paste("institution_level_multiple_membership_", i, "_inclusion", sep=""))[["names.sgp"]])
->>>>>>> upstream/master
 				}
 
 				tmp.names[[i]] <- list(VARIABLE.NAMES=tmp.variable.names, WEIGHTS=tmp.weights, INCLUSION=tmp.inclusion)
@@ -303,21 +290,13 @@ function(sgp_object,
 			if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
 	  			j <- k <- NULL ## To prevent R CMD check warnings
 	  			summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], sgp.groups[x] %in% ci.groups))
-<<<<<<< HEAD
 	  			tmp.summary <- clusterApplyLB(par.start$internal.cl, summary.iter, 
-=======
-	  			tmp.summary <- parLapply(par.start$internal.cl, summary.iter, 
->>>>>>> upstream/master
 	  				function(iter) sgpSummary(data, iter[1], eval(parse(text=iter[2]))))
 				names(tmp.summary) <- gsub(", ", "__", sgp.groups)
 			} else {
 				j <- k <- NULL ## To prevent R CMD check warnings
 				summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], FALSE))
-<<<<<<< HEAD
 	  			tmp.summary <- clusterApplyLB(par.start$internal.cl, summary.iter, 
-=======
-	  			tmp.summary <- parLapply(par.start$internal.cl, summary.iter, 
->>>>>>> upstream/master
 	  				function(iter) sgpSummary(data, iter[1], eval(parse(text=iter[2]))))
 				names(tmp.summary) <- gsub(", ", "__", sgp.groups)
 			}
@@ -425,23 +404,21 @@ function(sgp_object,
 				### Reshape data using melt
 
 				tmp.dt.long <- data.table(melt(as.data.frame(tmp.dt), 
-<<<<<<< HEAD
-					measure.var=summary.groups[["institution_level_multiple_membership"]][[j-1]][["VARIABLE.NAMES"]], 
-=======
 					measure.vars=summary.groups[["institution_level_multiple_membership"]][[j-1]][["VARIABLE.NAMES"]], 
->>>>>>> upstream/master
 					value.name=multiple.membership.variable.name))
 				invisible(tmp.dt.long[, variable := NULL])
 				if (!is.null(summary.groups[["institution_level_multiple_membership"]][[j-1]][["WEIGHTS"]])) {
 					invisible(tmp.dt.long[, WEIGHT := melt(as.data.frame(tmp.dt[, 
 						summary.groups[["institution_level_multiple_membership"]][[j-1]][["WEIGHTS"]], with=FALSE]), 
 						measure.vars=summary.groups[["institution_level_multiple_membership"]][[j-1]][["WEIGHTS"]])[,2]])
+					setnames(tmp.dt.long, "WEIGHT", paste(multiple.membership.variable.name, "WEIGHT", sep="_"))
 				}
 				if (!is.null(summary.groups[["institution_level_multiple_membership"]][[j-1]][["INCLUSION"]])) {
 					invisible(tmp.dt.long[, INCLUSION := melt(as.data.frame(tmp.dt[, 
 						summary.groups[["institution_level_multiple_membership"]][[j-1]][["INCLUSION"]], with=FALSE]), 
 						measure.vars=summary.groups[["institution_level_multiple_membership"]][[j-1]][["INCLUSION"]])[,2]])
 					summary.groups[["institution_inclusion"]] <- lapply(summary.groups[["institution_inclusion"]], function(x) x[1] <- "INCLUSION")
+					setnames(tmp.dt.long, "INCLUSION", paste(multiple.membership.variable.name, "ENROLLMENT_STATUS", sep="_"))
 				}
 				# if (par.start$par.type=="SNOW") clusterExport(par.start$internal.cl, "tmp.dt.long") # Don't think we need this...
 				sgp_object@Summary[[i]] <- c(sgp_object@Summary[[i]], summarizeSGP_INTERNAL(tmp.dt.long, tmp.inst))
