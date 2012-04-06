@@ -1486,13 +1486,19 @@ if (22 %in% bPlot.styles) {
 			bPlot.levels <- as.list(bPlot.levels)
 		} else bPlot.levels <- list(A=NULL)
 
-		### Data sets and relevant quantities used for bubblePlots
-
 		if (bPlot.full.academic.year) {
 			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__INCLUSION__CONTENT_AREA__YEAR"]][!is.na(INCLUSION)]
 			if (!is.null(bPlot.levels)) {
-				tmp.bPlot.levels.data <- sgp_object@Data[INSTRUCTOR_1_ENROLLMENT_STATUS=="Enrolled Instructor: Yes", 
-					eval(tmp.bPlot.levels.txt), by=list(INSTRUCTOR_NUMBER, CONTENT_AREA, YEAR)]
+				tmp.bPlot.levels.data <- data.frame(eval(parse(text=paste("sgp_object@Data[,c(grep('INSTRUCTOR_NUMBER', names(sgp_object@Data)), 
+					intersect(grep('ENROLLMENT_STATUS', names(sgp_object@Data)), grep('INSTRUCTOR', names(sgp_object@Data))),", 
+					paste("grep('", bPlot.levels, "', names(sgp_object@Data))", sep="", collapse=","), "), with=FALSE]"))))
+				inst.index <- grep('INSTRUCTOR_NUMBER', names(tmp.bPlot.levels.data))
+				enroll.index <- grep('ENROLLMENT_STATUS', names(tmp.bPlot.levels.data))
+				tmp.bPlot.levels.data<- eval(parse(text=paste("data.table(INSTRUCTOR_NUMBER=c(", paste("tmp.bPlot.levels.data[,", inst.index, "]", collapse=","),
+					"), INCLUSION=c(", paste("as.character(tmp.bPlot.levels.data[,", enroll.index, "])", collapse=","),
+					"), ", paste(bPlot.levels, "=rep(tmp.bPlot.levels.data[, '", bPlot.levels, "'],", length(inst.index), ")", sep="", collapse=","),
+					", key=c('INSTRUCTOR_NUMBER', 'INCLUSION'))[!is.na(INSTRUCTOR_NUMBER) & INCLUSION=='Enrolled Instructor: Yes']")))
+				tmp.bPlot.levels.data <- tmp.bPlot.levels.data[, eval(tmp.bPlot.levels.txt), by=list(INSTRUCTOR_NUMBER, CONTENT_AREA, YEAR)]
 				setkeyv(tmp.bPlot.data, c("INSTRUCTOR_NUMBER", "CONTENT_AREA", "YEAR"))
 				setkeyv(tmp.bPlot.levels.data, c("INSTRUCTOR_NUMBER", "CONTENT_AREA", "YEAR"))
 				tmp.bPlot.data <- tmp.bPlot.levels.data[tmp.bPlot.data]
@@ -1505,7 +1511,18 @@ if (22 %in% bPlot.styles) {
 		} else {
 			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
 			if (!is.null(bPlot.levels)) {
-				tmp.bPlot.levels.data <- sgp_object@Data[, eval(tmp.bPlot.levels.txt), by=list(INSTRUCTOR_NUMBER, CONTENT_AREA, YEAR)]
+
+				tmp.bPlot.levels.data <- data.frame(eval(parse(text=paste("sgp_object@Data[,c(grep('INSTRUCTOR_NUMBER', names(sgp_object@Data)), 
+					grep('CONTENT_AREA', names(sgp_object@Data)), grep('YEAR', names(sgp_object@Data)),",
+					paste("grep('", bPlot.levels, "', names(sgp_object@Data))", sep="", collapse=","), "), with=FALSE]"))))
+				inst.index <- grep('INSTRUCTOR_NUMBER', names(tmp.bPlot.levels.data))
+				tmp.bPlot.levels.data<- eval(parse(text=paste("data.table(INSTRUCTOR_NUMBER=c(", paste("tmp.bPlot.levels.data[,", inst.index, "]", collapse=","),
+					"), CONTENT_AREA=rep(tmp.bPlot.levels.data[, 'CONTENT_AREA'],", length(inst.index),
+					"), YEAR=rep(tmp.bPlot.levels.data[, 'YEAR'],", length(inst.index),
+					"), ", paste(bPlot.levels, "=rep(tmp.bPlot.levels.data[, '", bPlot.levels, "'],", length(inst.index), ")", sep="", collapse=","),
+					", key='INSTRUCTOR_NUMBER')[!is.na(INSTRUCTOR_NUMBER)]")))
+				tmp.bPlot.levels.data <- tmp.bPlot.levels.data[, eval(tmp.bPlot.levels.txt), by=list(INSTRUCTOR_NUMBER, CONTENT_AREA, YEAR)]
+
 				setkeyv(tmp.bPlot.data, c("INSTRUCTOR_NUMBER", "CONTENT_AREA", "YEAR"))
 				setkeyv(tmp.bPlot.levels.data, c("INSTRUCTOR_NUMBER", "CONTENT_AREA", "YEAR"))
 				tmp.bPlot.data <- tmp.bPlot.levels.data[tmp.bPlot.data]
@@ -1519,7 +1536,7 @@ if (22 %in% bPlot.styles) {
 
 		# Merge in school and district names and anonymize school names (if requested)
 
-		tmp.bPlot.data <- names.merge(tmp.bPlot.data, bPlot.anonymize)
+		tmp.bPlot.data <- names.merge(tmp.bPlot.data[!is.na(INSTRUCTOR_NUMBER)], bPlot.anonymize)
 
 		### Get tmp.years, tmp.content_areas, and tmp.y.variable
 
@@ -1723,8 +1740,16 @@ if (22 %in% bPlot.styles) {
 		if (bPlot.full.academic.year) {
 			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__INCLUSION__CONTENT_AREA__YEAR"]][!is.na(INCLUSION)]
 			if (!is.null(bPlot.levels)) {
-				tmp.bPlot.levels.data <- sgp_object@Data[INSTRUCTOR_1_ENROLLMENT_STATUS=="Enrolled Instructor: Yes", 
-					eval(tmp.bPlot.levels.txt), by=list(INSTRUCTOR_NUMBER, CONTENT_AREA, YEAR)]
+				tmp.bPlot.levels.data <- data.frame(eval(parse(text=paste("sgp_object@Data[,c(grep('INSTRUCTOR_NUMBER', names(sgp_object@Data)), 
+					intersect(grep('ENROLLMENT_STATUS', names(sgp_object@Data)), grep('INSTRUCTOR', names(sgp_object@Data))),", 
+					paste("grep('", bPlot.levels, "', names(sgp_object@Data))", sep="", collapse=","), "), with=FALSE]"))))
+				inst.index <- grep('INSTRUCTOR_NUMBER', names(tmp.bPlot.levels.data))
+				enroll.index <- grep('ENROLLMENT_STATUS', names(tmp.bPlot.levels.data))
+				tmp.bPlot.levels.data<- eval(parse(text=paste("data.table(INSTRUCTOR_NUMBER=c(", paste("tmp.bPlot.levels.data[,", inst.index, "]", collapse=","),
+					"), INCLUSION=c(", paste("as.character(tmp.bPlot.levels.data[,", enroll.index, "])", collapse=","),
+					"), ", paste(bPlot.levels, "=rep(tmp.bPlot.levels.data[, '", bPlot.levels, "'],", length(inst.index), ")", sep="", collapse=","),
+					", key=c('INSTRUCTOR_NUMBER', 'INCLUSION'))[!is.na(INSTRUCTOR_NUMBER) & INCLUSION=='Enrolled Instructor: Yes']")))
+				tmp.bPlot.levels.data <- tmp.bPlot.levels.data[, eval(tmp.bPlot.levels.txt), by=list(INSTRUCTOR_NUMBER, CONTENT_AREA, YEAR)]
 				setkeyv(tmp.bPlot.data, c("INSTRUCTOR_NUMBER", "CONTENT_AREA", "YEAR"))
 				setkeyv(tmp.bPlot.levels.data, c("INSTRUCTOR_NUMBER", "CONTENT_AREA", "YEAR"))
 				tmp.bPlot.data <- tmp.bPlot.levels.data[tmp.bPlot.data]
@@ -1737,7 +1762,18 @@ if (22 %in% bPlot.styles) {
 		} else {
 			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
 			if (!is.null(bPlot.levels)) {
-				tmp.bPlot.levels.data <- sgp_object@Data[, eval(tmp.bPlot.levels.txt), by=list(INSTRUCTOR_NUMBER, CONTENT_AREA, YEAR)]
+
+				tmp.bPlot.levels.data <- data.frame(eval(parse(text=paste("sgp_object@Data[,c(grep('INSTRUCTOR_NUMBER', names(sgp_object@Data)), 
+					grep('CONTENT_AREA', names(sgp_object@Data)), grep('YEAR', names(sgp_object@Data)),",
+					paste("grep('", bPlot.levels, "', names(sgp_object@Data))", sep="", collapse=","), "), with=FALSE]"))))
+				inst.index <- grep('INSTRUCTOR_NUMBER', names(tmp.bPlot.levels.data))
+				tmp.bPlot.levels.data<- eval(parse(text=paste("data.table(INSTRUCTOR_NUMBER=c(", paste("tmp.bPlot.levels.data[,", inst.index, "]", collapse=","),
+					"), CONTENT_AREA=rep(tmp.bPlot.levels.data[, 'CONTENT_AREA'],", length(inst.index),
+					"), YEAR=rep(tmp.bPlot.levels.data[, 'YEAR'],", length(inst.index),
+					"), ", paste(bPlot.levels, "=rep(tmp.bPlot.levels.data[, '", bPlot.levels, "'],", length(inst.index), ")", sep="", collapse=","),
+					", key='INSTRUCTOR_NUMBER')[!is.na(INSTRUCTOR_NUMBER)]")))
+				tmp.bPlot.levels.data <- tmp.bPlot.levels.data[, eval(tmp.bPlot.levels.txt), by=list(INSTRUCTOR_NUMBER, CONTENT_AREA, YEAR)]
+
 				setkeyv(tmp.bPlot.data, c("INSTRUCTOR_NUMBER", "CONTENT_AREA", "YEAR"))
 				setkeyv(tmp.bPlot.levels.data, c("INSTRUCTOR_NUMBER", "CONTENT_AREA", "YEAR"))
 				tmp.bPlot.data <- tmp.bPlot.levels.data[tmp.bPlot.data]
@@ -1751,7 +1787,7 @@ if (22 %in% bPlot.styles) {
 
 		# Merge in school and district names and anonymize school names (if requested)
 
-		tmp.bPlot.data <- names.merge(tmp.bPlot.data, bPlot.anonymize)
+		tmp.bPlot.data <- names.merge(tmp.bPlot.data[!is.na(INSTRUCTOR_NUMBER)], bPlot.anonymize)
 
 		### Get tmp.years, tmp.content_areas, and tmp.y.variable
 
