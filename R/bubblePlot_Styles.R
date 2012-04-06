@@ -1250,7 +1250,7 @@ if (22 %in% bPlot.styles) {
 ###################################################################
 ### BubblePlot Style 50 (School level bubblePlots by Instructors)
 ###################################################################
-stop("h")
+
 	if (50 %in% bPlot.styles) {
 
 		started.at <- proc.time()
