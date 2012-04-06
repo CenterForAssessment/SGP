@@ -15,12 +15,14 @@ bubblePlot_Styles(
 		bPlot.content_areas=NULL,
 		bPlot.districts=NULL,
 		bPlot.schools=NULL,
+		bPlot.instructors=NULL,
 		bPlot.styles=c(1),
 		bPlot.levels=NULL,
 		bPlot.level.cuts=NULL, 
 		bPlot.full.academic.year=TRUE,
 		bPlot.minimum.n=10,
 		bPlot.anonymize=FALSE,
+		bPlot.demo=FALSE,
 		bPlot.prior.achievement=TRUE, 
 		bPlot.draft=FALSE,
 		bPlot.format="print",
@@ -45,6 +47,9 @@ function will produce plots for all available districts provided in the data whe
   \item{bPlot.schools}{A vector indicating schools to produce \code{\link{bubblePlot}}s using data available in \code{sgp_object}. If missing the 
 function will produce plots for all available schools provided in the data where districts represent a relevant unit to be represented by the specific \code{bubblePlot} style. 
   }
+  \item{bPlot.instructors}{A vector indicating instructors to produce \code{\link{bubblePlot}}s using data available in \code{sgp_object}. If missing the 
+function will produce plots for all available instructors provided in the data where districts represent a relevant unit to be represented by the specific \code{bubblePlot} style. 
+  }
   \item{bPlot.styles}{A vector of positive integers indicating the types of \code{\link{bubblePlot}}s to produce using data available in \code{sgp_object}. See 
 associated documentation for example plots.  
   }
@@ -59,6 +64,8 @@ associated documentation for example plots.
   \item{bPlot.anonymize}{A boolean argument (defaults to FALSE) indicating whether to anonymize \code{\link{bubblePlot}}s school and district names that appear in the
 plots and data tips of the plots.  For student level anonymization, the function utilizes the randomNames package to produce gender and ethnic correct names based 
 upon gender and ethnicity codes available in \code{sgp_object@Data}.
+  }
+  \item{bPlot.demo}{A boolean argument indicating whether to produce sample/demonstration reports with anonymized data. Currently only used for instructor level bubble plots.
   }
   \item{bPlot.prior.achievement}{A boolean argument (defaults to TRUE) indicating whether to produce \code{\link{bubblePlot}}s using prior achievement as well as current
 achievement as the vertical dimension of the \code{\link{bubblePlot}}. 
