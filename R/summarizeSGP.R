@@ -287,13 +287,13 @@ function(sgp_object,
 			if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
 	  			j <- k <- NULL ## To prevent R CMD check warnings
 	  			summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], sgp.groups[x] %in% ci.groups))
-	  			tmp.summary <- clusterApplyLB(par.start$internal.cl, summary.iter, 
+	  			tmp.summary <- parLapply(par.start$internal.cl, summary.iter, 
 	  				function(iter) sgpSummary(data, iter[1], eval(parse(text=iter[2]))))
 				names(tmp.summary) <- gsub(", ", "__", sgp.groups)
 			} else {
 				j <- k <- NULL ## To prevent R CMD check warnings
 				summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], FALSE))
-	  			tmp.summary <- clusterApplyLB(par.start$internal.cl, summary.iter, 
+	  			tmp.summary <- parLapply(par.start$internal.cl, summary.iter, 
 	  				function(iter) sgpSummary(data, iter[1], eval(parse(text=iter[2]))))
 				names(tmp.summary) <- gsub(", ", "__", sgp.groups)
 			}
@@ -401,7 +401,7 @@ function(sgp_object,
 				### Reshape data using melt
 
 				tmp.dt.long <- data.table(melt(as.data.frame(tmp.dt), 
-					measure.var=summary.groups[["institution_level_multiple_membership"]][[j-1]][["VARIABLE.NAMES"]], 
+					measure.vars=summary.groups[["institution_level_multiple_membership"]][[j-1]][["VARIABLE.NAMES"]], 
 					value.name=multiple.membership.variable.name))
 				invisible(tmp.dt.long[, variable := NULL])
 				if (!is.null(summary.groups[["institution_level_multiple_membership"]][[j-1]][["WEIGHTS"]])) {
