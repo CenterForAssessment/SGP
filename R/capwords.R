@@ -1,7 +1,7 @@
 `capwords` <-
 function(x) {
-	gsub("_", " ", x)
-	special.words <- c("ELA", "EMH", "II", "III", "IV")
+	x <- gsub("_", " ", x)
+	special.words <- c("ELA", "II", "III", "IV", "EMH", "HS", "MS", "ES", "SES", "IEP", "ELL", "MAD", "SD", "US")
 	my.split <- function(words, split.character) {
 		tmp.split <- unlist(strsplit(words, split=split.character))
 		tmp.split.special.words.index <- which(!tmp.split %in% special.words)
