@@ -12,8 +12,10 @@ function(x) {
 	s.new <- paste(s[[1]], collapse=" ")
 	s.new <- unlist(strsplit(s.new, split="-"))
 	if (length(s.new) > 1) s.new <- paste(toupper(substring(s.new,1,1)), substring(s.new,2), sep="", collapse="-")
-	s.new <- unlist(strsplit(s.new, split="'"))
-	if (length(s.new) > 1) s.new <- paste(toupper(substring(s.new,1,1)), substring(s.new,2), sep="", collapse="'")
+	if (length(unlist(strsplit(s.new, split="'"))) > 1 & nchar(unlist(strsplit(s.new, split="'"))[2]) > 1) {
+		s.new <- unlist(strsplit(s.new, split="'"))
+		s.new <- paste(toupper(substring(s.new,1,1)), substring(s.new,2), sep="", collapse="'")
+	}
 	s.new <- unlist(strsplit(s.new, split="[.]"))
 	if (length(s.new) > 1) s.new <- paste(toupper(substring(s.new,1,1)), substring(s.new,2), sep="", collapse=".")
 	return(s.new)
