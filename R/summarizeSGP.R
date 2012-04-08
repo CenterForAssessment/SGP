@@ -207,7 +207,7 @@ function(sgp_object,
 			tmp.names <- NULL
 		} else {
 			for (i in seq(tmp.number.variables)) {
-				tmp.variable.names <- as.character(subset(names.df, names.type==paste("institution_multiple_membership_", i, sep=""))[["names.sgp"]])
+				tmp.variable.names <- as.character(names.df[names.df$names.type==paste("institution_multiple_membership_", i, sep=""), "names.sgp"])
 
 				tmp.length <- sum(paste("institution_multiple_membership_", i, sep="")==names.df[["names.type"]], na.rm=TRUE)
 				tmp.weight.length <- sum(paste("institution_multiple_membership_", i, "_weight", sep="")==names.df[["names.type"]], na.rm=TRUE)
@@ -220,7 +220,7 @@ function(sgp_object,
 				if (tmp.weight.length == 0) {
 					tmp.weights <- NULL
 				} else {
-					tmp.weights <- as.character(subset(names.df, names.type==paste("institution_multiple_membership_", i, "_weight", sep=""))[["names.sgp"]])
+					tmp.weights <- as.character(names.df[names.df$names.type==paste("institution_multiple_membership_", i, "_weight", sep=""), "names.sgp"])
 				}
 				
 				if (tmp.inclusion.length != 0 & tmp.inclusion.length != tmp.length) {
@@ -229,7 +229,7 @@ function(sgp_object,
 				if (tmp.inclusion.length == 0) {
 					tmp.inclusion <- NULL 
 				} else {
-					tmp.inclusion <- as.character(subset(names.df, names.type==paste("institution_multiple_membership_", i, "_inclusion", sep=""))[["names.sgp"]])
+					tmp.inclusion <- as.character(names.df[names.df$names.type==paste("institution_multiple_membership_", i, "_inclusion", sep=""), "names.sgp"])
 				}
 
 				tmp.names[[i]] <- list(VARIABLE.NAMES=tmp.variable.names, WEIGHTS=tmp.weights, INCLUSION=tmp.inclusion)
