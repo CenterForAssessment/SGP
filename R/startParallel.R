@@ -10,7 +10,7 @@ function(
 	###  Basic checks - default to ANY percentiles or projections WORKERS.
 	
 	if (is.numeric(parallel.config[['WORKERS']])) {
-		message(paste(process, " workers not specified.  Numeric value from WORKERS (", parallel.config[['WORKERS']], ") will be used for all processes.", sep=""))
+		message(paste("\t", process, " workers not specified.  Numeric value from WORKERS (", parallel.config[['WORKERS']], ") will be used for all processes.\n", sep=""))
 		parallel.config[['WORKERS']][[process]] <- parallel.config[['WORKERS']]
 	}
 	if (is.null(parallel.config[['WORKERS']][[process]])) {

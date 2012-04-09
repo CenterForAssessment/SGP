@@ -1069,7 +1069,7 @@ function(sgp_object,
 		if (sgp.projections) {
 			for (sgp.iter in par.sgp.config) {
 	
-				panel.data=within(tmp_sgp_object, assign("Panel_Data", get.panel.data("sgp.percentiles", sgp.iter)))
+				panel.data=within(tmp_sgp_object, assign("Panel_Data", get.panel.data("sgp.projections", sgp.iter)))
 				panel.data=within(panel.data, assign("Knots_Boundaries", get.knots.boundaries(sgp.iter))) # Get specific knots and boundaries in case course sequence
 				tmp_sgp_object <- studentGrowthProjections(
 					panel.data=panel.data,
@@ -1094,7 +1094,7 @@ function(sgp_object,
 		if (sgp.projections.baseline) {
 			for (sgp.iter in par.sgp.config) {
 
-				panel.data=within(tmp_sgp_object, assign("Panel_Data", get.panel.data("sgp.percentiles", sgp.iter)))
+				panel.data=within(tmp_sgp_object, assign("Panel_Data", get.panel.data("sgp.projections", sgp.iter)))
 				panel.data=within(panel.data, assign("Knots_Boundaries", get.knots.boundaries(sgp.iter))) # Get specific knots and boundaries in case course sequence
 				tmp_sgp_object <- studentGrowthProjections(
 					panel.data=panel.data,
@@ -1120,7 +1120,7 @@ function(sgp_object,
 		if (sgp.projections.lagged) {
 			for (sgp.iter in par.sgp.config) {
 
-				panel.data=within(tmp_sgp_object, assign("Panel_Data", get.panel.data("sgp.percentiles", sgp.iter)))
+				panel.data=within(tmp_sgp_object, assign("Panel_Data", get.panel.data("sgp.projections.lagged", sgp.iter)))
 				panel.data=within(panel.data, assign("Knots_Boundaries", get.knots.boundaries(sgp.iter))) # Get specific knots and boundaries in case course sequence
 				tmp_sgp_object <- studentGrowthProjections(
 					panel.data=panel.data,
@@ -1146,7 +1146,7 @@ function(sgp_object,
 		if (sgp.projections.lagged.baseline) {
 			for (sgp.iter in par.sgp.config) {
 
-				panel.data=within(tmp_sgp_object, assign("Panel_Data", get.panel.data("sgp.percentiles", sgp.iter)))
+				panel.data=within(tmp_sgp_object, assign("Panel_Data", get.panel.data("sgp.projections.lagged", sgp.iter)))
 				panel.data=within(panel.data, assign("Knots_Boundaries", get.knots.boundaries(sgp.iter))) # Get specific knots and boundaries in case course sequence
 				tmp_sgp_object <- studentGrowthProjections(
 					panel.data=panel.data,
