@@ -425,7 +425,7 @@ function(panel.data,	## REQUIRED
 
 	if (!is.null(achievement.level.prior.vname)) {
 		if (!achievement.level.prior.vname %in% names(panel.data[["Panel_Data"]])) {
-			tmp.messages <- c(tmp.messages, "\tNOTE: Supplied achievement.level.prior.vname is not in supplied panel.data. No ACHIEVEMENT_LEVEL_PRIOR variable will be produced")
+			tmp.messages <- c(tmp.messages, "\tNOTE: Supplied achievement.level.prior.vname is not in supplied panel.data. No ACHIEVEMENT_LEVEL_PRIOR variable will be produced.\n")
 			achievement.level.prior.vname <- NULL
 		}
 	}
