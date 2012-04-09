@@ -100,7 +100,7 @@ function(panel.data,	## REQUIRED
 				str3 <- c(rev(SS)[i], str3)
 		}}
 		if (by.grade) {
-			tmp.data <- data[eval(parse(text=paste(substring(str1, 3), str2, sep="")))][, c("ID", str3), with=FALSE]
+			tmp.data <- data[eval(parse(text=paste(str1, str2, sep="")))][, c("ID", str3), with=FALSE]
 			for (i in seq(dim(tmp.data)[2]-1)) {
 				bnd <- eval(parse(text=paste("panel.data[['Knots_Boundaries']]", get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year)), 
 					"[['loss.hoss_", tmp.gp[i], "']]", sep="")))
@@ -109,7 +109,7 @@ function(panel.data,	## REQUIRED
 			}
 			tmp.data
 		} else {
-			data[eval(parse(text=substring(str1, 3)))][, c("ID", str3), with=FALSE]
+			data[eval(parse(text=str1))][, c("ID", str3), with=FALSE]
 		}
 	}
 
