@@ -993,7 +993,7 @@ function(sgp_object,
 
 	if (is.null(parallel.config)) {
 
-		tmp_sgp_object <- list(Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]], Knots_Boundaries=get.knots.boundaries(sgp.iter))
+#		tmp_sgp_object <- list(Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]], Knots_Boundaries=get.knots.boundaries(sgp.iter))
 
 		setkey(sgp_object@Data, VALID_CASE, CONTENT_AREA, YEAR, GRADE)
 		par.sgp.config <- get.par.sgp.config(sgp.config)		
@@ -1003,6 +1003,7 @@ function(sgp_object,
 			
 		if (sgp.percentiles) {
 			for (sgp.iter in par.sgp.config) {
+				tmp_sgp_object <- list(Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]], Knots_Boundaries=get.knots.boundaries(sgp.iter))
 				panel.data=within(tmp_sgp_object, assign("Panel_Data", get.panel.data("sgp.percentiles", sgp.iter)))
 				panel.data=within(panel.data, assign("Knots_Boundaries", get.knots.boundaries(sgp.iter))) # Get specific knots and boundaries in case course sequence
 				if (simulate.sgps) {

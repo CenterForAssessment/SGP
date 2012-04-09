@@ -47,6 +47,7 @@ Changes in version: SGP_0.9-0.0
   o Updated code to conform with changes in data.table 1.7.8.
   o bPlot.format no case insensitive.
   o Switch installed.packages to find.package to test for pdf2 installation.
+  o Modified subsetting of get.panel.data inside studentGrowthPercentiles to avoid data.table seg fault.
 
 Changes in version: SGP_0.8-0.0
 
