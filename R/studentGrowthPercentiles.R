@@ -106,7 +106,7 @@ function(panel.data,         ## REQUIRED
 		names(ss.data) <- NA
 		names(ss.data)[c(1, (1+num.panels-max(num.predictors)+1):(1+num.panels), (1+2*num.panels-max(num.predictors)+1):(1+2*num.panels))] <- 
 		c("ORIGINAL.ID", GD, SS)
-		data.table(ID=seq(dim(ss.data)[1]), ss.data, key="ID")
+		return(data.table(ID=seq(dim(ss.data)[1]), ss.data, key="ID"))
 	}
 
 	.unget.data.table <- function(my.data, my.lookup) {
@@ -117,17 +117,17 @@ function(panel.data,         ## REQUIRED
 
 	.get.panel.data <- function(data, k, by.grade) {
 		str1 <- paste(" & !is.na(", tail(SS, 1), ")", sep="")
-		str2 <- paste(" & ", tail(GD, 1), "== \"", tmp.last, "\"", sep="")
+		str2 <- paste(" & ", tail(GD, 1), "=='", tmp.last, "'", sep="")
 		str3 <- tail(SS, 1)
 		for (i in 2:(k+1)) {
 			str1 <- paste(str1, " & !is.na(", rev(SS)[i], ")", sep="")
-			str2 <- paste(str2, " & ", rev(GD)[i], "== \"", rev(tmp.gp)[i], "\"", sep="")
-			str3 <- paste(rev(SS)[i], ", ", str3, sep="")
+			str2 <- paste(str2, " & ", rev(GD)[i], "=='", rev(tmp.gp)[i], "'", sep="")
+			str3 <- c(rev(SS)[i], str3)
 		}
 		if (by.grade) {
-			eval(parse(text=paste("return(subset(data,", substring(str1, 3), str2, ", select=c(ID, ", str3 ,")))", sep="")))
+			data[eval(parse(text=paste(substring(str1, 3), str2, sep="")))][, c("ID", str3), with=FALSE]
 		} else {
-			eval(parse(text=paste("return(subset(data,", substring(str1, 3), ", select=c(ID, ", str3 ,")))", sep="")))
+			data[eval(parse(text=substring(str1, 3)))][, c("ID", str3), with=FALSE]
 		}
 	}
 
@@ -654,6 +654,8 @@ function(panel.data,         ## REQUIRED
         num.panels <- (dim(ss.data)[2]-1)/2
         ss.data[,(2+num.panels):(1+2*num.panels)] <- sapply(ss.data[,(2+num.panels):(1+2*num.panels)], as.numeric)
 
+	ss.data <- .get.data.table(ss.data)
+
         if (dim(.get.panel.data(ss.data, 1, by.grade))[1] == 0) {
                 tmp.messages <- "\tNOTE: Supplied data together with grade progression contains no data. Check data, function arguments and see help page for details.\n"
                 message(paste("\tStarted studentGrowthPercentiles", started.date))
@@ -669,9 +671,7 @@ function(panel.data,         ## REQUIRED
                         SGPercentiles=SGPercentiles,
                         SGProjections=SGProjections,
                         Simulated_SGPs=Simulated_SGPs))
-        } else {
-		ss.data <- .get.data.table(ss.data)
-	}
+        } 
 
 
 	### Create Knots and Boundaries if requested (uses only grades in tmp.gp)
