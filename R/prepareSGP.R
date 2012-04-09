@@ -203,11 +203,9 @@
 
 		if (!is.null(state) & is.null(var.names)) {
 			if (!identical(data@Names, SGPstateData[[state]][["Variable_Name_Lookup"]])) data@Names <- getNames(data@Data, SGPstateData[[state]][["Variable_Name_Lookup"]])
-			setnames(data@Data, which(!is.na(data@Names$names.sgp)), data@Names$names.sgp[!is.na(data@Names$names.sgp)])
 		}
 		if (!is.null(var.names)) {
 			data@Names <- getNames(data@Data, var.names)
-			setnames(data@Data, which(!is.na(data@Names$names.sgp)), data@Names$names.sgp[!is.na(data@Names$names.sgp)])
 		}
 
 		if (!identical(key(data@Data), c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))) {
