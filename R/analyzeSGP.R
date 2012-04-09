@@ -451,7 +451,7 @@ function(sgp_object,
 						.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
 						return(studentGrowthPercentiles(
 							panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
-								Knots_Boundaries= get.knots.boundaries(sgp.iter)),
+								Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 							sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 							use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 							growth.levels=state,
@@ -993,7 +993,7 @@ function(sgp_object,
 
 	if (is.null(parallel.config)) {
 
-#		tmp_sgp_object <- list(Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]], Knots_Boundaries=get.knots.boundaries(sgp.iter))
+		tmp_sgp_object <- list(Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]], Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]])
 
 		setkey(sgp_object@Data, VALID_CASE, CONTENT_AREA, YEAR, GRADE)
 		par.sgp.config <- get.par.sgp.config(sgp.config)		
@@ -1003,7 +1003,6 @@ function(sgp_object,
 			
 		if (sgp.percentiles) {
 			for (sgp.iter in par.sgp.config) {
-				tmp_sgp_object <- list(Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]], Knots_Boundaries=get.knots.boundaries(sgp.iter))
 				panel.data=within(tmp_sgp_object, assign("Panel_Data", get.panel.data("sgp.percentiles", sgp.iter)))
 				panel.data=within(panel.data, assign("Knots_Boundaries", get.knots.boundaries(sgp.iter))) # Get specific knots and boundaries in case course sequence
 				if (simulate.sgps) {
