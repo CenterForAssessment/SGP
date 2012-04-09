@@ -97,10 +97,10 @@ function(panel.data,	## REQUIRED
 			for (i in 2:num.prior.scores) {
 				str1 <- paste(str1, " & !is.na(", rev(SS)[i], ")", sep="")
 				str2 <- paste(str2, " & ", rev(GD)[i], "==", rev(grade.progression)[i], sep="")
-				str3 <- paste(rev(SS)[i], ", ", str3, sep="")
+				str3 <- c(rev(SS)[i], str3)
 		}}
 		if (by.grade) {
-			tmp.data <- eval(parse(text=paste("subset(data,", str1, str2, ", select=c(ID, ", str3 ,"))", sep="")))
+			tmp.data <- data[eval(parse(text=paste(substring(str1, 3), str2, sep="")))][, c("ID", str3), with=FALSE]
 			for (i in seq(dim(tmp.data)[2]-1)) {
 				bnd <- eval(parse(text=paste("panel.data[['Knots_Boundaries']]", get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year)), 
 					"[['loss.hoss_", tmp.gp[i], "']]", sep="")))
@@ -109,7 +109,7 @@ function(panel.data,	## REQUIRED
 			}
 			tmp.data
 		} else {
-			eval(parse(text=paste("subset(data,", str1, ", select=c(ID, ", str3 ,"))", sep="")))
+			data[eval(parse(text=substring(str1, 3)))][, c("ID", str3), with=FALSE]
 		}
 	}
 
@@ -458,7 +458,7 @@ function(panel.data,	## REQUIRED
 	### Create ss.data from Panel_Data and rename variables in based upon grade.progression
 
 	if (!missing(panel.data.vnames)) {
-		ss.data <- subset(panel.data[["Panel_Data"]], select=panel.data.vnames)
+		ss.data <- panel.data[["Panel_Data"]][,panel.data.vnames]
 	} else {
 		ss.data <- panel.data[["Panel_Data"]]
 	}
