@@ -598,7 +598,7 @@ function(panel.data,         ## REQUIRED
 	### Create ss.data from Panel_Data
 
 	if (!missing(panel.data.vnames)) {
-		ss.data <- subset(Panel_Data, select=panel.data.vnames)
+		ss.data <- Panel_Data[,panel.data.vnames]
 	} else {
 		ss.data <- Panel_Data
 	}
