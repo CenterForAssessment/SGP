@@ -6,14 +6,14 @@ function(sgp_object,
          sgp.summaries=NULL,
          summary.groups=NULL,
          confidence.interval.groups=NULL,
-         parallel.config=list(BACKEND="FOREACH", TYPE=NA, WORKERS=list(SUMMARY=1))) {
+         parallel.config=NULL) {
 
 	started.at <- proc.time()
 	message(paste("\nStarted summarizeSGP", date()))
 
 	### Set variables to NULL to prevent R CMD check warnings
 
-	tmp.simulation.dt <- variable <- WEIGHT <- INCLUSION <- NULL
+	tmp.simulation.dt <- variable <- WEIGHT <- ENROLLMENT_STATUS <- NULL
 
 	if (missing(sgp_object)) {
 		stop("User must supply a list containing a Student slot with long data. See documentation for details.")
@@ -31,6 +31,11 @@ function(sgp_object,
 		}
 	}
 
+	## Set up parallel.config if NULL
+
+	if (is.null(parallel.config)) {
+		 parallel.config=list(BACKEND="FOREACH", TYPE=NA, WORKERS=list(SUMMARY=1))
+	}
 
 	## Utility Functions
 
@@ -232,7 +237,7 @@ function(sgp_object,
 					tmp.inclusion <- as.character(names.df[names.df$names.type==paste("institution_multiple_membership_", i, "_inclusion", sep=""), "names.sgp"])
 				}
 
-				tmp.names[[i]] <- list(VARIABLE.NAMES=tmp.variable.names, WEIGHTS=tmp.weights, INCLUSION=tmp.inclusion)
+				tmp.names[[i]] <- list(VARIABLE.NAMES=tmp.variable.names, WEIGHTS=tmp.weights, ENROLLMENT_STATUS=tmp.inclusion)
 			}
 		}
 		return(tmp.names)
@@ -400,8 +405,8 @@ function(sgp_object,
 
 				### Aggregations will occur by this new institution_level variable
 
-				if (!is.null(summary.groups[["institution_multiple_membership"]][[j-1]][["INCLUSION"]])) {
-					tmp.inst <- paste(i, multiple.membership.variable.name, "INCLUSION", sep=", ")
+				if (!is.null(summary.groups[["institution_multiple_membership"]][[j-1]][["ENROLLMENT_STATUS"]])) {
+					tmp.inst <- paste(i, multiple.membership.variable.name, "ENROLLMENT_STATUS", sep=", ")
 				} else tmp.inst <- paste(i, multiple.membership.variable.name, sep=", ")
 				
 
@@ -415,14 +420,13 @@ function(sgp_object,
 					invisible(tmp.dt.long[, WEIGHT := melt(as.data.frame(tmp.dt[, 
 						summary.groups[["institution_multiple_membership"]][[j-1]][["WEIGHTS"]], with=FALSE]), 
 						measure.vars=summary.groups[["institution_multiple_membership"]][[j-1]][["WEIGHTS"]])[,2]])
-					setnames(tmp.dt.long, "WEIGHT", paste(multiple.membership.variable.name, "WEIGHT", sep="_"))
 				}
-				if (!is.null(summary.groups[["institution_multiple_membership"]][[j-1]][["INCLUSION"]])) {
-					invisible(tmp.dt.long[, INCLUSION := melt(as.data.frame(tmp.dt[, 
-						summary.groups[["institution_multiple_membership"]][[j-1]][["INCLUSION"]], with=FALSE]), 
-						measure.vars=summary.groups[["institution_multiple_membership"]][[j-1]][["INCLUSION"]])[,2]])
-					summary.groups[["institution_inclusion"]] <- lapply(summary.groups[["institution_inclusion"]], function(x) x[1] <- "INCLUSION")
-					setnames(tmp.dt.long, "INCLUSION", paste(multiple.membership.variable.name, "ENROLLMENT_STATUS", sep="_"))
+				if (!is.null(summary.groups[["institution_multiple_membership"]][[j-1]][["ENROLLMENT_STATUS"]])) {
+					invisible(tmp.dt.long[, ENROLLMENT_STATUS := melt(as.data.frame(tmp.dt[, 
+						summary.groups[["institution_multiple_membership"]][[j-1]][["ENROLLMENT_STATUS"]], with=FALSE]), 
+						measure.vars=summary.groups[["institution_multiple_membership"]][[j-1]][["ENROLLMENT_STATUS"]])[,2]])
+					summary.groups[["institution_inclusion"]] <- 
+						lapply(summary.groups[["institution_inclusion"]], function(x) x[1] <- "ENROLLMENT_STATUS")
 				}
 				# if (par.start$par.type=="SNOW") clusterExport(par.start$internal.cl, "tmp.dt.long") # Don't think we need this...
 				sgp_object@Summary[[i]] <- c(sgp_object@Summary[[i]], summarizeSGP_INTERNAL(tmp.dt.long, tmp.inst))

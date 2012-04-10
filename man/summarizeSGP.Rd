@@ -13,7 +13,7 @@ summarizeSGP(sgp_object,
            sgp.summaries=NULL,
            summary.groups=NULL,
            confidence.interval.groups=NULL,
-           parallel.config=list(BACKEND="FOREACH", TYPE=NA, WORKERS=list(SUMMARY=1))) 
+           parallel.config=NULL) 
 }
 
 \arguments{
@@ -76,7 +76,9 @@ TYPE is a third element of the \code{parallel.config} list that provides necessa
 
 The WORKERS element is a list with SUMMARY specifying the number of processors (nodes) desired or available.  For example, SUMMARY=2 may be used on a dual core machine to use both cores available. (NOTE: choice of the number of cores is a balance between the number of processors available and the amount of RAM a system has; each system will be different and may require some adjustment).
 
-Default is FOREACH as the back end, TYPE=NA and both plot WORKERS =1, which produces summary tables sequentially.  Example parallel use cases are provided below.
+Default is FOREACH as the back end, TYPE=NA and both plot WORKERS=1, which produces summary tables sequentially: 'list(BACKEND="FOREACH", TYPE=NA, WORKERS=list(SUMMARY=1))' 
+
+Example parallel use cases are provided below.
   }
 }
 

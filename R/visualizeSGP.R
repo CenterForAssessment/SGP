@@ -42,7 +42,7 @@ function(sgp_object,
 		gaPlot.baseline=NULL,
 		gaPlot.max.order.for.progression=NULL,
 		gaPlot.folder="Visualizations/growthAchievementPlots",
-		parallel.config=list(BACKEND="FOREACH", TYPE=NA, WORKERS=list(GA_PLOTS=1, SG_PLOTS=1))) {
+		parallel.config=NULL) {
 
 	started.at <- proc.time()
 	message(paste("\nStarted visualizeSGP", date(), "\n"))
@@ -63,6 +63,12 @@ function(sgp_object,
 		if (any(sapply(c(state.name, "Demonstration"), function(x) regexpr(x, tmp.name)))==1) {
 			state <- c(state.abb, "DEMO")[which(sapply(c(state.name, "Demonstration"), function(x) regexpr(x, tmp.name))==1)]
 		}
+	}
+
+	### Set up parallel.config if NULL
+
+	if (is.null(parallel.config)) {
+		list(BACKEND="FOREACH", TYPE=NA, WORKERS=list(GA_PLOTS=1, SG_PLOTS=1))
 	}
 
 	### Utility functions	

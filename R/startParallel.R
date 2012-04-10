@@ -1,8 +1,8 @@
 `startParallel` <- 
 function(
-		parallel.config, 
-		process
-		) {
+	parallel.config, 
+	process
+	) {
 	
 	workers <- NULL; par.type <- 'OTHER'
 
