@@ -175,7 +175,7 @@ function(sgp_object,
 				time=getFromNames("time"),
 				institution_type=getFromNames("institution_type"),
 				institution_level=getFromNames("institution_level"),
-				institution_multiple_membership=get.multiple.membership(sgp_object@Names),
+				institution_multiple_membership=get.multiple.membership(sgp_object@Names[!is.na(sgp_object@Names$names.sgp),]),
 				demographic=c(getFromNames("demographic"), "CATCH_UP_KEEP_UP_STATUS", "ACHIEVEMENT_LEVEL_PRIOR"))
 				for (i in tmp.summary.groups[['institution']]) {
 					tmp.summary.groups[['institution_inclusion']][[i]] <- getFromNames("institution_inclusion")[
