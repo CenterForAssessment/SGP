@@ -343,7 +343,7 @@ function(sgp_object,
 			message("\n\tStarted Baseline Coefficient Matrix Calculation:\n")
 			
 			if (!is.null(parallel.config)) {
-				if (is.null(parallel.config[["CLUSTER.OBJECT"]])) par.start <- startParallel(parallel.config, 'BASELINE_MATRICES')
+				par.start <- startParallel(parallel.config, 'BASELINE_MATRICES')
 
 				###  FOREACH flavor
 				if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
@@ -439,7 +439,7 @@ function(sgp_object,
 	##################################
 
 		if (sgp.percentiles) {
-			if (is.null(parallel.config[["CLUSTER.OBJECT"]])) par.start <- startParallel(parallel.config, 'PERCENTILES')
+			par.start <- startParallel(parallel.config, 'PERCENTILES')
 		
 			###  FOREACH flavor
 			if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
@@ -578,7 +578,7 @@ function(sgp_object,
 	####################################
 
 		if (sgp.percentiles.baseline) {
-			if (is.null(parallel.config[["CLUSTER.OBJECT"]])) par.start <- startParallel(parallel.config, 'BASELINE_PERCENTILES')
+			par.start <- startParallel(parallel.config, 'BASELINE_PERCENTILES')
 
 			###  FOREACH flavor
 			if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
@@ -659,7 +659,7 @@ function(sgp_object,
 
 		if (sgp.projections) {
 		
-			if (is.null(parallel.config[["CLUSTER.OBJECT"]])) par.start <- startParallel(parallel.config, 'PROJECTIONS')
+			par.start <- startParallel(parallel.config, 'PROJECTIONS')
 			###  FOREACH flavor
 			if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
 				tmp <- foreach(sgp.iter=iter(par.sgp.config), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE,
@@ -739,7 +739,7 @@ function(sgp_object,
 	#######################################################
 
 		if (sgp.projections.baseline) {
-			if (is.null(parallel.config[["CLUSTER.OBJECT"]])) par.start <- startParallel(parallel.config, 'PROJECTIONS')
+			par.start <- startParallel(parallel.config, 'PROJECTIONS')
 
 			###  FOREACH flavor
 			if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
@@ -822,7 +822,7 @@ function(sgp_object,
 	#################################################
 
 		if (sgp.projections.lagged) {
-			if (is.null(parallel.config[["CLUSTER.OBJECT"]])) par.start <- startParallel(parallel.config, 'LAGGED_PROJECTIONS')
+			par.start <- startParallel(parallel.config, 'LAGGED_PROJECTIONS')
 		
 			###  FOREACH flavor
 			if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
@@ -905,7 +905,7 @@ function(sgp_object,
 	#################################################
 
 		if (sgp.projections.lagged.baseline) {
-			if (is.null(parallel.config[["CLUSTER.OBJECT"]])) par.start <- startParallel(parallel.config, 'LAGGED_PROJECTIONS')
+			par.start <- startParallel(parallel.config, 'LAGGED_PROJECTIONS')
 
 			###  FOREACH flavor
 			if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
