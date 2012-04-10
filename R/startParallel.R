@@ -8,9 +8,9 @@ function(
 
 	if (!is.null(parallel.config[['CLUSTER.OBJECT']])) {
 		clusterEvalQ(eval(parse(text=parallel.config[['CLUSTER.OBJECT']])), library(SGP))
-		par.start <- list(internal.cl=eval(parse(text=parallel.config[['CLUSTER.OBJECT']])), par.type=par.type)
+		par.start <- list(internal.cl=eval(parse(text=parallel.config[['CLUSTER.OBJECT']])), par.type='SNOW')
 		clusterExport(eval(parse(text=parallel.config[['CLUSTER.OBJECT']])), "par.start", envir=2)
-		return(list(internal.cl=eval(parse(text=parallel.config[['CLUSTER.OBJECT']])), par.type=par.type))
+		return(list(internal.cl=eval(parse(text=parallel.config[['CLUSTER.OBJECT']])), par.type='SNOW'))
 	} 
 	
 	###  Basic checks - default to ANY percentiles or projections WORKERS.
