@@ -176,10 +176,12 @@ function(sgp_object,
 				institution_type=sgp_object@Names[sgp_object@Names$names.type=="institution_type", "names.sgp"],
 				institution_level=sgp_object@Names[sgp_object@Names$names.type=="institution_level", "names.sgp"],
 				institution_multiple_membership=get.multiple.membership(sgp_object@Names),
-				demographic=c(sgp_object@Names[sgp_object@Names$names.type=="demographic", "names.sgp"], "CATCH_UP_KEEP_UP_STATUS", "ACHIEVEMENT_LEVEL_PRIOR"),
-				institution_inclusion=list(STATE="STATE_ENROLLMENT_STATUS", DISTRICT_NUMBER="DISTRICT_ENROLLMENT_STATUS", SCHOOL_NUMBER="SCHOOL_ENROLLMENT_STATUS"),
-				growth_only_summary=list(STATE="BY_GROWTH_ONLY", DISTRICT_NUMBER="BY_GROWTH_ONLY", SCHOOL_NUMBER="BY_GROWTH_ONLY"))
-
+				demographic=c(sgp_object@Names[sgp_object@Names$names.type=="demographic", "names.sgp"], "CATCH_UP_KEEP_UP_STATUS", "ACHIEVEMENT_LEVEL_PRIOR"))
+				for (i in tmp.summary.groups[['institution']]) {
+					tmp.summary.groups[['institution_inclusion']][[i]] <- sgp_object@Names[sgp_object@Names$names.type=="institution_inclusion", "names.sgp"][
+						grep(strsplit(i, "_")[[1]][1], sgp_object@Names[sgp_object@Names$names.type=="institution_inclusion", "names.sgp"])]
+					tmp.summary.groups[['growth_only_summary']][[i]] <- "BY_GROWTH_ONLY"
+				}
 			return(tmp.summary.groups)
 		}
 		
@@ -386,7 +388,7 @@ function(sgp_object,
 
 	### Loop and send to summarizeSGP_INTERNAL
 
-	tmp.dt <- data.table(STATE=state, sgp_object@Data[J("VALID_CASE", content_areas.by.years)])[, variables.for.summaries, with=FALSE]
+	tmp.dt <- data.table(STATE=state, sgp_object@Data[J("VALID_CASE", content_areas.by.years)])[, variables.for.summaries[!is.na(variables.for.summaries)], with=FALSE]
 
 	par.start <- startParallel(parallel.config, 'SUMMARY')
 
