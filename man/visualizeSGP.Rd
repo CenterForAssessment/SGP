@@ -53,7 +53,7 @@ visualizeSGP(
            gaPlot.baseline=NULL,
            gaPlot.max.order.for.progression=NULL,
            gaPlot.folder="Visualizations/growthAchievementPlots",
-           parallel.config=list(BACKEND="FOREACH", TYPE=NA, WORKERS=list(GA_PLOTS=1, SG_PLOTS=1)))
+           parallel.config=NULL)
 }
 
 \arguments{
@@ -184,7 +184,9 @@ TYPE is a third element of the \code{parallel.config} list that provides necessa
 
 The WORKERS element is a list with GA_PLOTS (growth achievement plots) and SG_PLOTS (student growth plots) specifying the number of processors to be used.  NOTE: choice of the number of cores is a balance between the number of processors available and the amount of RAM a system has; each system will be different and may require some adjustment.
 
-Default is FOREACH as the back end, TYPE=NA and both plot WORKERS =1, which produces plots sequentially.  Examples of various parallel configurations can be found in the examples for  \code{\link{analyzeSGP}} and  \code{\link{summarizeSGP}}.
+Default is FOREACH as the back end, TYPE=NA and both plot WORKERS=1, which produces plots sequentially: 'list(BACKEND="FOREACH", TYPE=NA, WORKERS=list(GA_PLOTS=1, SG_PLOTS=1))'
+
+Examples of various parallel configurations can be found in the examples for  \code{\link{analyzeSGP}} and  \code{\link{summarizeSGP}}.
   }
 }
 
