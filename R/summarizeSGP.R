@@ -170,16 +170,16 @@ function(sgp_object,
 
 		if (config.type=="summary.groups") {
 			tmp.summary.groups <- list(
-				institution=c("STATE", sort(sgp_object@Names[sgp_object@Names$names.type=="institution", "names.sgp"])),
-				content=sgp_object@Names[sgp_object@Names$names.type=="content", "names.sgp"],
-				time=sgp_object@Names[sgp_object@Names$names.type=="time", "names.sgp"],
-				institution_type=sgp_object@Names[sgp_object@Names$names.type=="institution_type", "names.sgp"],
-				institution_level=sgp_object@Names[sgp_object@Names$names.type=="institution_level", "names.sgp"],
+				institution=c("STATE", getFromNames("institution")),
+				content=getFromNames("content"),
+				time=getFromNames("time"),
+				institution_type=getFromNames("institution_type"),
+				institution_level=getFromNames("institution_level"),
 				institution_multiple_membership=get.multiple.membership(sgp_object@Names),
-				demographic=c(sgp_object@Names[sgp_object@Names$names.type=="demographic", "names.sgp"], "CATCH_UP_KEEP_UP_STATUS", "ACHIEVEMENT_LEVEL_PRIOR"))
+				demographic=c(getFromNames("demographic"), "CATCH_UP_KEEP_UP_STATUS", "ACHIEVEMENT_LEVEL_PRIOR"))
 				for (i in tmp.summary.groups[['institution']]) {
-					tmp.summary.groups[['institution_inclusion']][[i]] <- sgp_object@Names[sgp_object@Names$names.type=="institution_inclusion", "names.sgp"][
-						grep(strsplit(i, "_")[[1]][1], sgp_object@Names[sgp_object@Names$names.type=="institution_inclusion", "names.sgp"])]
+					tmp.summary.groups[['institution_inclusion']][[i]] <- getFromNames("institution_inclusion")[
+						grep(strsplit(i, "_")[[1]][1], getFromNames("institution_inclusion"))]
 					tmp.summary.groups[['growth_only_summary']][[i]] <- "BY_GROWTH_ONLY"
 				}
 			return(tmp.summary.groups)
@@ -244,6 +244,11 @@ function(sgp_object,
 		}
 		return(tmp.names)
 	} ### END get.multiple.membership
+
+	getFromNames <- function(x) {
+		tmp.names <- sgp_object@Names[!is.na(sgp_object@Names$names.sgp),]
+		return(tmp.names[tmp.names$names.type==x, "names.sgp"])
+	}
 
 	summarizeSGP_INTERNAL <- function(data, i) {
 		
