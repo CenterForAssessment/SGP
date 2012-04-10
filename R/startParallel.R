@@ -136,6 +136,8 @@ function(
 		if (!is.null(workers)) internal.cl <- makeCluster(eval(parse(text=workers)), type=parallel.config[['TYPE']]) # eval workers in case 'names' used
 		if (!is.null(parallel.config[['CLUSTER.OBJECT']])) {
 			clusterEvalQ(eval(parse(text=parallel.config[['CLUSTER.OBJECT']])), library(SGP))
+			par.start <- list(internal.cl=eval(parse(text=parallel.config[['CLUSTER.OBJECT']])), par.type=par.type)
+			clusterExport(eval(parse(text=parallel.config[['CLUSTER.OBJECT']])), "par.start")
 			return(list(internal.cl=eval(parse(text=parallel.config[['CLUSTER.OBJECT']])), par.type=par.type))
 		} else {
 			clusterEvalQ(internal.cl, library(SGP))
