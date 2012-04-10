@@ -6,7 +6,13 @@ function(
 	
 	workers <- NULL; par.type <- 'OTHER'
 
-
+	if (!is.null(parallel.config[['CLUSTER.OBJECT']])) {
+		clusterEvalQ(eval(parse(text=parallel.config[['CLUSTER.OBJECT']])), library(SGP))
+		par.start <- list(internal.cl=eval(parse(text=parallel.config[['CLUSTER.OBJECT']])), par.type=par.type)
+		clusterExport(eval(parse(text=parallel.config[['CLUSTER.OBJECT']])), "par.start")
+		return(list(internal.cl=eval(parse(text=parallel.config[['CLUSTER.OBJECT']])), par.type=par.type))
+	} 
+	
 	###  Basic checks - default to ANY percentiles or projections WORKERS.
 	
 	if (is.numeric(parallel.config[['WORKERS']])) {
@@ -90,7 +96,7 @@ function(
 		workers <- parallel.config[['WORKERS']][[process]]
 	} else workers <- parallel.config[['WORKERS']]
 	if (is.null(workers)) workers <- getOption("cores")
-	if (is.null(workers) & is.null(parallel.config[['CLUSTER.OBJECT']])) stop("parallel.config$WORKERS must, at a minimum, contain the number of parallel workers for all processes, 
+	if (is.null(workers)) stop("parallel.config$WORKERS must, at a minimum, contain the number of parallel workers for all processes, 
 		or getOption('cores') must be specified to use MULTICORE parallel processing.")
 	
 	if (toupper(parallel.config[['BACKEND']]) == 'FOREACH') {
@@ -133,16 +139,9 @@ function(
 		# if (parallel.config[['TYPE']]=='MPI') {
 			# if (exists('par.start')) return() #don't try to restart a new config
 		# }
-		if (!is.null(workers)) internal.cl <- makeCluster(eval(parse(text=workers)), type=parallel.config[['TYPE']]) # eval workers in case 'names' used
-		if (!is.null(parallel.config[['CLUSTER.OBJECT']])) {
-			clusterEvalQ(eval(parse(text=parallel.config[['CLUSTER.OBJECT']])), library(SGP))
-			par.start <- list(internal.cl=eval(parse(text=parallel.config[['CLUSTER.OBJECT']])), par.type=par.type)
-			clusterExport(eval(parse(text=parallel.config[['CLUSTER.OBJECT']])), "par.start")
-			return(list(internal.cl=eval(parse(text=parallel.config[['CLUSTER.OBJECT']])), par.type=par.type))
-		} else {
-			clusterEvalQ(internal.cl, library(SGP))
-			return(list(internal.cl=internal.cl, par.type=par.type)) #  workers=workers,
-		}
+		internal.cl <- makeCluster(eval(parse(text=workers)), type=parallel.config[['TYPE']]) # eval workers in case 'names' used
+		clusterEvalQ(internal.cl, library(SGP))
+		return(list(internal.cl=internal.cl, par.type=par.type)) #  workers=workers,
 	}
 
 	if (par.type=='MULTICORE') {
