@@ -39,6 +39,13 @@ function(sgp_object,
 
 	## Utility Functions
 
+	"%w/o%" <- function(x, y) x[!x %in% y]
+
+	getFromNames <- function(x) {
+		tmp.names <- sgp_object@Names[!is.na(sgp_object@Names$names.type),]
+		return(tmp.names[tmp.names$names.type==x, "names.sgp"])
+	}
+
 	rbind.all <- function(.list, ...){
 		if(length(.list)==1) return(.list[[1]])
 		Recall(c(list(rbind(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), ...)
@@ -156,7 +163,9 @@ function(sgp_object,
 
 			tmp.sgp.summaries <- list(
 				MEDIAN_SGP="median_na(SGP)",
+				MEDIAN_SGP_TARGET="median_na(SGP_TARGET)",
 				MEDIAN_SGP_COUNT="num_non_missing(SGP)",
+				MEDIAN_SGP_TARGET_COUNT="num_non_missing(SGP_TARGET)",
 				PERCENT_AT_ABOVE_PROFICIENT=paste("percent_in_category(ACHIEVEMENT_LEVEL, ", 
 					get.expression(proficient.achievement.levels), ", ", get.expression(all.achievement.levels), ")",sep=""),
 				PERCENT_AT_ABOVE_PROFICIENT_COUNT="num_non_missing(ACHIEVEMENT_LEVEL)",
@@ -177,12 +186,12 @@ function(sgp_object,
 				institution_level=getFromNames("institution_level"),
 				institution_multiple_membership=get.multiple.membership(sgp_object@Names[!is.na(sgp_object@Names$names.sgp),]),
 				demographic=c(getFromNames("demographic"), "CATCH_UP_KEEP_UP_STATUS", "ACHIEVEMENT_LEVEL_PRIOR"))
-				for (i in tmp.summary.groups[['institution']]) {
-					tmp.summary.groups[['institution_inclusion']][[i]] <- getFromNames("institution_inclusion")[
+				for (i in tmp.summary.groups[["institution"]]) {
+					tmp.summary.groups[["institution_inclusion"]][[i]] <- getFromNames("institution_inclusion")[
 						grep(strsplit(i, "_")[[1]][1], getFromNames("institution_inclusion"))]
-					tmp.summary.groups[['growth_only_summary']][[i]] <- "BY_GROWTH_ONLY"
+					tmp.summary.groups[["growth_only_summary"]][[i]] <- "BY_GROWTH_ONLY"
 				}
-			return(tmp.summary.groups)
+				return(tmp.summary.groups)
 		}
 		
 		if (config.type=="confidence.interval.groups") {
@@ -205,7 +214,6 @@ function(sgp_object,
 	} ### END sgpSummarize.config
 
 	get.multiple.membership <- function(names.df) {
-		"%w/o%" <- function(x, y) x[!x %in% y]
 		tmp.names <- list()
 		tmp.number.variables <- unique(suppressWarnings(as.numeric(sapply(strsplit(
 			names.df[["names.type"]][grep("institution_multiple_membership", names.df[["names.type"]])], "_"), 
@@ -214,7 +222,7 @@ function(sgp_object,
 			tmp.names <- NULL
 		} else {
 			for (i in seq(tmp.number.variables)) {
-				tmp.variable.names <- as.character(names.df[names.df$names.type==paste("institution_multiple_membership_", i, sep=""), "names.sgp"])
+				tmp.variable.names <- as.character(names.df[names.df$names.type==paste("institution_multiple_membership_", i, sep=""), "names.sgp"]) %w/o% NA
 
 				tmp.length <- sum(paste("institution_multiple_membership_", i, sep="")==names.df[["names.type"]], na.rm=TRUE)
 				tmp.weight.length <- sum(paste("institution_multiple_membership_", i, "_weight", sep="")==names.df[["names.type"]], na.rm=TRUE)
@@ -227,7 +235,7 @@ function(sgp_object,
 				if (tmp.weight.length == 0) {
 					tmp.weights <- NULL
 				} else {
-					tmp.weights <- as.character(names.df[names.df$names.type==paste("institution_multiple_membership_", i, "_weight", sep=""), "names.sgp"])
+					tmp.weights <- as.character(names.df[names.df$names.type==paste("institution_multiple_membership_", i, "_weight", sep=""), "names.sgp"]) %w/o% NA
 				}
 				
 				if (tmp.inclusion.length != 0 & tmp.inclusion.length != tmp.length) {
@@ -236,7 +244,7 @@ function(sgp_object,
 				if (tmp.inclusion.length == 0) {
 					tmp.inclusion <- NULL 
 				} else {
-					tmp.inclusion <- as.character(names.df[names.df$names.type==paste("institution_multiple_membership_", i, "_inclusion", sep=""), "names.sgp"])
+					tmp.inclusion <- as.character(names.df[names.df$names.type==paste("institution_multiple_membership_", i, "_inclusion", sep=""), "names.sgp"]) %w/o% NA
 				}
 
 				tmp.names[[i]] <- list(VARIABLE.NAMES=tmp.variable.names, WEIGHTS=tmp.weights, ENROLLMENT_STATUS=tmp.inclusion)
