@@ -114,7 +114,8 @@ function(sgp_object,
 			my.lookup <- J("VALID_CASE", sapply(strsplit(tmp.names, "[.]"), function(x) x[1]), type.convert(sapply(strsplit(tmp.names, "[.]"), function(x) x[2])))
 			sgp_object@Data[sgp_object@Data[my.lookup, which=TRUE]] <- 
 				data.table(rbind.all(tmp.list, tmp.names.not.equal), VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), key=key(sgp_object@Data))[
-				sgp_object@Data[my.lookup, names(sgp_object@Data) %w/o% ((names(tmp.list[[1]]) %w/o% c("CONTENT_AREA", "YEAR", "ID"))), with=FALSE]][, names(sgp_object@Data), with=FALSE]
+				data.table(sgp_object@Data[my.lookup, names(sgp_object@Data) %w/o% ((names(tmp.list[[1]]) %w/o% c("CONTENT_AREA", "YEAR", "ID"))), with=FALSE], 
+					key=key(sgp_object@Data))][, names(sgp_object@Data), with=FALSE]
 		}
 		setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 		rm(tmp.list); suppressWarnings(gc())
@@ -155,7 +156,8 @@ function(sgp_object,
 			my.lookup <- J("VALID_CASE", sapply(strsplit(tmp.names, "[.]"), function(x) x[1]), type.convert(sapply(strsplit(tmp.names, "[.]"), function(x) x[2])))
 			sgp_object@Data[sgp_object@Data[my.lookup, which=TRUE]] <- 
 				data.table(rbind.all(tmp.list), VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), key=key(sgp_object@Data))[
-				sgp_object@Data[my.lookup, names(sgp_object@Data) %w/o% ((names(tmp.list[[1]]) %w/o% c("CONTENT_AREA", "YEAR", "ID"))), with=FALSE]][, names(sgp_object@Data), with=FALSE]
+				data.table(sgp_object@Data[my.lookup, names(sgp_object@Data) %w/o% ((names(tmp.list[[1]]) %w/o% c("CONTENT_AREA", "YEAR", "ID"))), with=FALSE],
+					key=key(sgp_object@Data))][, names(sgp_object@Data), with=FALSE]
 		}
 		setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 		rm(tmp.list); suppressWarnings(gc())
@@ -231,8 +233,9 @@ function(sgp_object,
 			 sgp_object@Data <- tmp_object_2[sgp_object@Data]
 		} else {
 			my.lookup <- J("VALID_CASE", sapply(strsplit(tmp.names, "[.]"), function(x) x[1]), type.convert(sapply(strsplit(tmp.names, "[.]"), function(x) x[2])))
-			sgp_object@Data[sgp_object@Data[my.lookup, which=TRUE]] <- tmp_object_2[sgp_object@Data[my.lookup, 
-				names(sgp_object@Data) %w/o% ((names(tmp_object_2) %w/o% c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))), with=FALSE]][, names(sgp_object@Data), with=FALSE]
+			sgp_object@Data[sgp_object@Data[my.lookup, which=TRUE]] <- tmp_object_2[data.table(sgp_object@Data[my.lookup, 
+				names(sgp_object@Data) %w/o% ((names(tmp_object_2) %w/o% c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))), with=FALSE],
+					key=key(sgp_object@Data))][, names(sgp_object@Data), with=FALSE]
 		}
 		
 		setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
@@ -275,8 +278,9 @@ function(sgp_object,
 		} else {
 			 my.lookup <- J("VALID_CASE", sapply(strsplit(tmp.names, "[.]"), function(x) x[1]), type.convert(sapply(strsplit(tmp.names, "[.]"), function(x) x[2])))
 			 sgp_object@Data[sgp_object@Data[my.lookup, which=TRUE]] <- 
-				tmp_object_2[sgp_object@Data[my.lookup,
-				names(sgp_object@Data) %w/o% ((names(tmp_object_2) %w/o% c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))), with=FALSE]][, names(sgp_object@Data), with=FALSE]
+				tmp_object_2[data.table(sgp_object@Data[my.lookup,
+				names(sgp_object@Data) %w/o% ((names(tmp_object_2) %w/o% c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))), with=FALSE],
+					key=key(sgp_object@Data))][, names(sgp_object@Data), with=FALSE]
 		}
 
 		setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))

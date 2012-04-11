@@ -202,7 +202,7 @@
 		}
 
 		if (!is.null(state) & is.null(var.names)) {
-			if (!identical(data@Names, SGPstateData[[state]][["Variable_Name_Lookup"]])) data@Names <- getNames(data@Data, SGPstateData[[state]][["Variable_Name_Lookup"]])
+			if (!identical(data@Names, SGPstateData[[state]][["Variable_Name_Lookup"]])) data@Names <- SGPstateData[[state]][["Variable_Name_Lookup"]]
 		}
 		if (!is.null(var.names)) {
 			data@Names <- getNames(data@Data, var.names)
