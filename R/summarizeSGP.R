@@ -436,7 +436,7 @@ function(sgp_object,
 						lapply(summary.groups[["institution_inclusion"]], function(x) x[1] <- "ENROLLMENT_STATUS")
 				}
 				# if (par.start$par.type=="SNOW") clusterExport(par.start$internal.cl, "tmp.dt.long") # Don't think we need this...
-				summary.groups[["growth_only_summary"]][[i]] <- "BY_GROWTH_ONLY" # Do we have an option to NOT include "BY_GROWTH_ONLY"? (would we want this?)
+				summary.groups[["growth_only_summary"]][[tmp.inst]] <- "BY_GROWTH_ONLY" # Do we have an option to NOT include "BY_GROWTH_ONLY"? (would we want this?)
 				sgp_object@Summary[[i]] <- c(sgp_object@Summary[[i]], summarizeSGP_INTERNAL(tmp.dt.long, tmp.inst))
 			} 
 		} ### End i loop over summary.groups[["institution"]]
