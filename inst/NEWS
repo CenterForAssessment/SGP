@@ -6,6 +6,7 @@ Changes in version: SGP_1.0-0.0
 
   BUG FIXES:
 	  o Added PERCENT_CATCHING_UP_KEEPING_UP to summarizeSGP if SGP_TARGET is present.
+	  o Corrected issues with conversion of factors to characters in summarizeSGP.
 
 
 Changes in version: SGP_0.9-0.0
