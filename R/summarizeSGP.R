@@ -253,11 +253,6 @@ function(sgp_object,
 		return(tmp.names)
 	} ### END get.multiple.membership
 
-	getFromNames <- function(x) {
-		tmp.names <- sgp_object@Names[!is.na(sgp_object@Names$names.type),]
-		return(tmp.names[tmp.names$names.type==x, "names.sgp"])
-	}
-
 	summarizeSGP_INTERNAL <- function(data, i) {
 		
 		tmp.summary <- list()
