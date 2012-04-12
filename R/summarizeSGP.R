@@ -367,12 +367,13 @@ function(sgp_object,
 	tmp.years <- list()
 	if (is.null(years)) {
 		for (i in content_areas) {
-			tmp.years[[i]] <- sort(tail(unique(sgp_object@Data[J("VALID_CASE", i)]$YEAR), state.multiple.year.summary))
+			tmp.years[[i]] <- tail(sort(unique(sgp_object@Data[J("VALID_CASE", i)]$YEAR)), state.multiple.year.summary)
 		}
 	} else {
 		if (!is.list(years)) {
 			for (i in content_areas) {
-				tmp.years[[i]] <- years 
+				tmp.years[[i]] <- tail(sort(unique(sgp_object@Data[J("VALID_CASE", i)]$YEAR))[seq(which(sort(unique(sgp_object@Data[J("VALID_CASE", i)]$YEAR))==years))], 
+					state.multiple.year.summary)
 			}
 		} else {
 			if (!all(content_areas %in% names(years))) {
@@ -384,9 +385,9 @@ function(sgp_object,
 	}
 
 	for (i in names(tmp.years)) {
-		tmp.years[[i]] <- data.table(i, tmp.years[[i]])
+		tmp.years[[i]] <- data.frame(CONTENT_AREA=i, YEAR=tmp.years[[i]]) ## NOTE: data.frame necessary to treat factors correctly
 	}
-	content_areas.by.years <- rbind.all(tmp.years)
+	content_areas.by.years <- as.data.table(rbind.all(tmp.years))
 
 	if (is.null(sgp.summaries)) sgp.summaries <- summarizeSGP.config(sgp_object, "sgp.summaries")
 	if (is.null(summary.groups)) summary.groups <- summarizeSGP.config(sgp_object, "summary.groups")
@@ -408,7 +409,7 @@ function(sgp_object,
 
 	### Loop and send to summarizeSGP_INTERNAL
 
-	tmp.dt <- data.table(STATE=state, sgp_object@Data[J("VALID_CASE", content_areas.by.years)])[, variables.for.summaries[!is.na(variables.for.summaries)], with=FALSE]
+	tmp.dt <- sgp_object@Data[J("VALID_CASE", content_areas.by.years)][, variables.for.summaries, with=FALSE][, STATE:=state]
 
 	par.start <- startParallel(parallel.config, 'SUMMARY')
 
