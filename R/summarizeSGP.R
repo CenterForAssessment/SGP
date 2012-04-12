@@ -173,7 +173,12 @@ function(sgp_object,
 				MEDIAN_SGP_STANDARD_ERROR="median_sgp_standard_error(SGP)")
 
 				if ("SGP_TARGET" %in% names(sgp_object@Data)) {
-					tmp.sgp.summaries <- c(tmp.sgp.summaries, MEDIAN_SGP_TARGET="median_na(SGP_TARGET)",  MEDIAN_SGP_TARGET_COUNT="num_non_missing(SGP_TARGET)")
+					tmp.sgp.summaries <- c(
+						tmp.sgp.summaries, 
+						MEDIAN_SGP_TARGET="median_na(SGP_TARGET)",  
+						MEDIAN_SGP_TARGET_COUNT="num_non_missing(SGP_TARGET)",
+						PERCENT_CATCHING_UP_KEEPING_UP="percent_in_category(CATCH_UP_KEEP_UP_STATUS, list(c('Catch Up: Yes', 'Keep Up: Yes')), list(c('Catch Up: Yes', 'Catch Up: No', 'Keep Up: Yes', 'Keep Up: No')))"
+					)
 				}
 
 			return(tmp.sgp.summaries)
