@@ -186,11 +186,15 @@ function(sgp_object,
 				institution_level=getFromNames("institution_level"),
 				institution_multiple_membership=get.multiple.membership(sgp_object@Names[!is.na(sgp_object@Names$names.sgp),]),
 				demographic=c(getFromNames("demographic"), "CATCH_UP_KEEP_UP_STATUS", "ACHIEVEMENT_LEVEL_PRIOR"))
+
 				for (i in tmp.summary.groups[["institution"]]) {
 					tmp.summary.groups[["institution_inclusion"]][[i]] <- getFromNames("institution_inclusion")[
 						grep(strsplit(i, "_")[[1]][1], getFromNames("institution_inclusion"))]
 					tmp.summary.groups[["growth_only_summary"]][[i]] <- "BY_GROWTH_ONLY"
 				}
+				tmp.summary.groups[["institution_inclusion"]] <- as.list(tmp.summary.groups[["institution_inclusion"]])
+				tmp.summary.groups[["growth_only_summary"]] <- as.list(tmp.summary.groups[["growth_only_summary"]])
+
 				return(tmp.summary.groups)
 		}
 		
@@ -435,8 +439,7 @@ function(sgp_object,
 					invisible(tmp.dt.long[, ENROLLMENT_STATUS := melt(as.data.frame(tmp.dt[, 
 						summary.groups[["institution_multiple_membership"]][[j-1]][["ENROLLMENT_STATUS"]], with=FALSE]), 
 						measure.vars=summary.groups[["institution_multiple_membership"]][[j-1]][["ENROLLMENT_STATUS"]])[,2]])
-					summary.groups[["institution_inclusion"]] <- 
-						lapply(summary.groups[["institution_inclusion"]], function(x) x[1] <- "ENROLLMENT_STATUS")
+					summary.groups[["institution_inclusion"]][[tmp.inst]] <- "ENROLLMENT_STATUS"
 				}
 				# if (par.start$par.type=="SNOW") clusterExport(par.start$internal.cl, "tmp.dt.long") # Don't think we need this...
 				summary.groups[["growth_only_summary"]][[tmp.inst]] <- "BY_GROWTH_ONLY" # Do we have an option to NOT include "BY_GROWTH_ONLY"? (would we want this?)
