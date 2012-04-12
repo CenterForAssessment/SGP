@@ -163,9 +163,7 @@ function(sgp_object,
 
 			tmp.sgp.summaries <- list(
 				MEDIAN_SGP="median_na(SGP)",
-				MEDIAN_SGP_TARGET="median_na(SGP_TARGET)",
 				MEDIAN_SGP_COUNT="num_non_missing(SGP)",
-				MEDIAN_SGP_TARGET_COUNT="num_non_missing(SGP_TARGET)",
 				PERCENT_AT_ABOVE_PROFICIENT=paste("percent_in_category(ACHIEVEMENT_LEVEL, ", 
 					get.expression(proficient.achievement.levels), ", ", get.expression(all.achievement.levels), ")",sep=""),
 				PERCENT_AT_ABOVE_PROFICIENT_COUNT="num_non_missing(ACHIEVEMENT_LEVEL)",
@@ -173,6 +171,10 @@ function(sgp_object,
 					get.expression(proficient.achievement.levels), ", ", get.expression(all.achievement.levels), ")",sep=""),
 				PERCENT_AT_ABOVE_PROFICIENT_COUNT_PRIOR="num_non_missing(ACHIEVEMENT_LEVEL_PRIOR)",
 				MEDIAN_SGP_STANDARD_ERROR="median_sgp_standard_error(SGP)")
+
+				if ("SGP_TARGET" %in% names(sgp_object@Data)) {
+					tmp.sgp.summaries <- c(tmp.sgp.summaries, MEDIAN_SGP_TARGET="median_na(SGP_TARGET)",  MEDIAN_SGP_TARGET_COUNT="num_non_missing(SGP_TARGET)")
+				}
 
 			return(tmp.sgp.summaries)
 		}
@@ -389,7 +391,8 @@ function(sgp_object,
 		sgp_object@Data[["BY_GROWTH_ONLY"]] <- factor(is.na(sgp_object@Data$SGP), levels=c(FALSE, TRUE), labels=c("Students without SGP", "Students with SGP"))
 	}
 
-	variables.for.summaries <- c("SGP", "SGP_TARGET", "ACHIEVEMENT_LEVEL", "ACHIEVEMENT_LEVEL_PRIOR", unique(as.character(unlist(summary.groups))))
+	variables.for.summaries <- intersect(c("SGP", "SGP_TARGET", "ACHIEVEMENT_LEVEL", "ACHIEVEMENT_LEVEL_PRIOR", unique(as.character(unlist(summary.groups)))),
+					names(sgp_object@Data)) 
 
 
 	##############################################################
