@@ -306,7 +306,6 @@ function(sgp_object,
 		} # END FOREACH flavor
 
 		if(par.start$par.type=="SNOW") {
-
 			if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
 	  			j <- k <- NULL ## To prevent R CMD check warnings
 	  			summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], sgp.groups[x] %in% ci.groups))
@@ -321,8 +320,9 @@ function(sgp_object,
 				names(tmp.summary) <- gsub(", ", "__", sgp.groups)
 			}
 			# if (is.null(parallel.config[['CLUSTER.OBJECT']]))	 stopCluster(internal.cl)
-		} # END 'SNOW' Flavor 
-		if(par.start$par.type=="MULTICORE") {
+		} # END 'SNOW' Flavor
+ 
+		if (par.start$par.type=="MULTICORE") {
 			if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
 	  			j <- k <- NULL ## To prevent R CMD check warnings
 	  			summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], sgp.groups[x] %in% ci.groups))
@@ -389,7 +389,7 @@ function(sgp_object,
 		sgp_object@Data[["BY_GROWTH_ONLY"]] <- factor(is.na(sgp_object@Data$SGP), levels=c(FALSE, TRUE), labels=c("Students without SGP", "Students with SGP"))
 	}
 
-	variables.for.summaries <- c("SGP", "ACHIEVEMENT_LEVEL", "ACHIEVEMENT_LEVEL_PRIOR", unique(as.character(unlist(summary.groups))))
+	variables.for.summaries <- c("SGP", "SGP_TARGET", "ACHIEVEMENT_LEVEL", "ACHIEVEMENT_LEVEL_PRIOR", unique(as.character(unlist(summary.groups))))
 
 
 	##############################################################
