@@ -454,8 +454,8 @@ function(sgp_object,
 		tmp.EMH <- data.frame(
 			KEY_VALUE_KEY="EMH_LEVEL",
 			KEY_VALUE_CODE=c("E", "H", "M"), ## TEMP fix until EMH_LEVEL is fixed up
-#			KEY_VALUE_CODE=sort(unique(as.integer(tmp$EMH_LEVEL))),
-			KEY_VALUE_TEXT= levels(tmp$EMH_LEVEL)[sort(unique(as.integer(tmp$EMH_LEVEL)))])
+#			KEY_VALUE_CODE=sort(unique(as.integer(droplevels(tmp$EMH_LEVEL)))),
+			KEY_VALUE_TEXT= levels(droplevels(tmp$EMH_LEVEL))[sort(unique(as.integer(droplevels(tmp$EMH_LEVEL))))])
 
 		# ETHNICITY
 
