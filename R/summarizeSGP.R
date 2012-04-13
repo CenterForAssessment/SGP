@@ -13,7 +13,7 @@ function(sgp_object,
 
 	### Set variables to NULL to prevent R CMD check warnings
 
-	tmp.simulation.dt <- variable <- WEIGHT <- ENROLLMENT_STATUS <- NULL
+	tmp.simulation.dt <- variable <- WEIGHT <- ENROLLMENT_STATUS <- STATE <- NULL
 
 	if (missing(sgp_object)) {
 		stop("User must supply a list containing a Student slot with long data. See documentation for details.")
@@ -409,7 +409,7 @@ function(sgp_object,
 
 	### Loop and send to summarizeSGP_INTERNAL
 
-	tmp.dt <- sgp_object@Data[J("VALID_CASE", content_areas.by.years)][, variables.for.summaries, with=FALSE][, STATE:=state]
+	tmp.dt <- sgp_object@Data[J("VALID_CASE", content_areas.by.years)][, variables.for.summaries, with=FALSE][, STATE:=as.factor(state)]
 
 	par.start <- startParallel(parallel.config, 'SUMMARY')
 
