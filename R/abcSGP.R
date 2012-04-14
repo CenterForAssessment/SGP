@@ -24,6 +24,8 @@ function(sgp_object,
         started.at <- proc.time()
 	message(paste("\nStarted abcSGP", date()), "\n")
 
+	names.type <- names.provided <- names.output <- NULL
+
 	### Create state (if NULL) from sgp_object (if possible)
 
 	if (is.null(state)) {
@@ -153,7 +155,7 @@ function(sgp_object,
 			outputSGP_SUMMARY.content_areas=content_areas,
 			outputSGP_INDIVIDUAL.years=years,
 			outputSGP_INDIVIDUAL.content_areas=content_areas,
-			output.student.groups=intersect(names(sgp_object@Data), subset(sgp_object@Names, names.type=="demographic" & names.output==TRUE, select=names.provided, drop=TRUE)))
+			outputSGP.student.groups=intersect(names(sgp_object@Data), subset(sgp_object@Names, names.type=="demographic" & names.output==TRUE, select=names.provided, drop=TRUE)))
 	}
 
 
