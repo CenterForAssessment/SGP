@@ -372,8 +372,8 @@ function(sgp_object,
 	} else {
 		if (!is.list(years)) {
 			for (i in content_areas) {
-				tmp.years[[i]] <- tail(sort(unique(sgp_object@Data[J("VALID_CASE", i)]$YEAR))[seq(which(sort(unique(sgp_object@Data[J("VALID_CASE", i)]$YEAR))==years))], 
-					state.multiple.year.summary)
+				tmp.years[[i]] <- tail(sort(unique(sgp_object@Data[J("VALID_CASE", i)]$YEAR))[
+					seq(which(sort(unique(sgp_object@Data[J("VALID_CASE", i)]$YEAR))==tail(sort(years), 1)))], state.multiple.year.summary)
 			}
 		} else {
 			if (!all(content_areas %in% names(years))) {
