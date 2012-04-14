@@ -40,6 +40,16 @@ function(sgp_object,
 
 	## Utility functions
 
+		strtail <- function(s, n=1) {
+			if(n < 0) substring(s, 1-n) 
+			else substring(s, nchar(s)-n+1)
+		}
+
+		strhead <- function(s,n=1) {
+			if(n < 0) substr(s, 1, nchar(s)+n) 
+			else substr(s, 1, n)
+		}
+
 		.year.increment <- function(year, increment) {
 			sapply(increment, function(x) paste(as.numeric(unlist(strsplit(as.character(year), "_")))+x, collapse="_"))
 		}
@@ -456,9 +466,10 @@ function(sgp_object,
 			!is.na(SCHOOL_NUMBER) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & SCHOOL_ENROLLMENT_STATUS=="Enrolled School: Yes")
 		tmp.EMH <- data.frame(
 			KEY_VALUE_KEY="EMH_LEVEL",
-			KEY_VALUE_CODE=c("E", "H", "M"), ## TEMP fix until EMH_LEVEL is fixed up
+			KEY_VALUE_CODE=strhead(levels(tmp$EMH_LEVEL)[sort(unique(as.integer(tmp$EMH_LEVEL)))], 1), ## TEMP fix until EMH_LEVEL is fixed up
+#			KEY_VALUE_CODE=c("E", "H", "M"), ## TEMP fix until EMH_LEVEL is fixed up
 #			KEY_VALUE_CODE=sort(unique(as.integer(droplevels(tmp$EMH_LEVEL)))),
-			KEY_VALUE_TEXT= levels(droplevels(tmp$EMH_LEVEL))[sort(unique(as.integer(droplevels(tmp$EMH_LEVEL))))])
+			KEY_VALUE_TEXT= levels(tmp$EMH_LEVEL)[sort(unique(as.integer(tmp$EMH_LEVEL)))])
 
 		# ETHNICITY
 
