@@ -2,15 +2,15 @@
 \alias{abcSGP}
 \title{Perform 5 step sequence: prepareSGP, analyzeSGP, combineSGP, summarizeSGP, and visualizeSGP}
 \description{
-  Utility function to perform sequence of 5 steps going from data preparation, \code{\link{prepareSGP}}, SGP data analysis, \code{\link{analyzeSGP}},
-  data combining, \code{\link{combineSGP}}, data summarization, \code{\link{summarizeSGP}}, and data visualization \code{\link{visualizeSGP}}. Calculating and using
-  student growth percentiles is as easy as ABC.
+  Utility function to perform sequence of 6 steps going from data preparation, \code{\link{prepareSGP}}, SGP data analysis, \code{\link{analyzeSGP}},
+  data combining, \code{\link{combineSGP}}, data summarization, \code{\link{summarizeSGP}}, data visualization \code{\link{visualizeSGP}} and data output
+  \code{\link{outputSGP}}.
 }
 
 \usage{
 abcSGP(sgp_object,
 	state=NULL,
-	steps=c("prepareSGP", "analyzeSGP", "combineSGP", "summarizeSGP", "visualizeSGP"),
+	steps=c("prepareSGP", "analyzeSGP", "combineSGP", "summarizeSGP", "visualizeSGP", "outputSGP"),
 	years=NULL,
 	content_areas=NULL,
 	grades=NULL,
