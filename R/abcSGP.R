@@ -1,7 +1,7 @@
 `abcSGP` <- 
 function(sgp_object,
 	state=NULL,
-	steps=c("prepareSGP", "analyzeSGP", "combineSGP", "summarizeSGP", "visualizeSGP"),
+	steps=c("prepareSGP", "analyzeSGP", "combineSGP", "summarizeSGP", "visualizeSGP", "outputSGP"),
 	years=NULL,
 	content_areas=NULL,
 	grades=NULL,
@@ -142,7 +142,24 @@ function(sgp_object,
 			parallel.config=parallel.config)
 	}
 
+
+	### outputSGP ###
+
+	if ("outputSGP" %in% steps) {
+		outputSGP(
+			sgp_object=sgp_object,
+			state=state,
+			outputSGP_SUMMARY.years=years,
+			outputSGP_SUMMARY.content_areas=content_areas,
+			outputSGP_INDIVIDUAL.years=years,
+			outputSGP_INDIVIDUAL.content_areas=content_areas,
+			output.student.groups=intersect(names(sgp_object@Data), subset(sgp_object@Names, names.type=="demographic" & names.output==TRUE, select=names.provided, drop=TRUE)))
+	}
+
+
+	### Print finish and return SGP object
+
         message(paste("Finished abcSGP", date(), "in", timetaken(started.at), "\n"))
 	return(sgp_object)
-} ## END abcSGP Function
 
+} ## END abcSGP Function
