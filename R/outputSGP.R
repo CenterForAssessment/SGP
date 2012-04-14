@@ -11,6 +11,9 @@ function(sgp_object,
 	outputSGP.student.groups=NULL,
 	outputSGP.directory=file.path("Data", "SchoolView")) {
 
+        started.at.outputSGP <- proc.time()
+        message(paste("\nStarted outputSGP ", date(), ": Files produced from outputSGP saved in '", outputSGP.directory, "'\n", sep=""))
+
 	### Define varaibles (to prevent R CMD check warnings)
 
 	SCALE_SCORE <- CONTENT_AREA <- YEAR <- GRADE <- ID <- ETHNICITY <- GENDER <- LAST_NAME <- FIRST_NAME <- VALID_CASE <- DISTRICT_NUMBER <- SCHOOL_NUMBER <- NULL
@@ -46,11 +49,14 @@ if ("SchoolView" %in% output.type) {
 		content_areas=outputSGP_SUMMARY.content_areas,
 		other.student.groups=outputSGP.student.groups,
 		output.directory=outputSGP.directory)
-	
+
 
 	###
 	### WIDE Data
 	###
+
+        started.at <- proc.time()
+        message(paste("\tStarted WIDE data production in outputSGP", date()))
 
 	### Utility functions
 
@@ -311,10 +317,14 @@ if ("SchoolView" %in% output.type) {
 		"CUT_1_YEAR_3", "CUT_99_YEAR_3", "CUT_35_YEAR_3", "CUT_65_YEAR_3", "CUT_20_YEAR_3", "CUT_40_YEAR_3", "CUT_60_YEAR_3", "CUT_80_YEAR_3")
 
 	write.table(outputSGP.data[,tmp.variable.names, with=FALSE], file=file.path(outputSGP.directory, "SchoolView_WIDE.dat"), row.names=FALSE, na="", quote=FALSE, sep="|")
-	outputSGP.data[,tmp.variable.names, with=FALSE]
+	SchoolView_WIDE <- outputSGP.data[,tmp.variable.names, with=FALSE]
+	save(SchoolView_WIDE, file=file.path(outputSGP.directory, "SchoolView_WIDE.Rdata"))
+
+	message(paste("\tFinished WIDE data production in outputSGP", date(), "in", timetaken(started.at), "\n"))
 
 } ## End if SchoolView %in% output.type
 
+	message(paste("Finished outputSGP", date(), "in", timetaken(started.at.outputSGP), "\n"))
 
 
 } ## END outputSGP
