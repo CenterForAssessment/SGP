@@ -5,12 +5,14 @@ Changes in version: SGP_1.0-0.0
   USER VISIBLE CHANGES:
 
 	  o Updated URLs in package to github site that hosts SGP code development.
+	  o Added timing to outputSGP and sqliteSGP and integrated outputSGP into abcSGP.
 
   BUG FIXES:
 
 	  o Added PERCENT_CATCHING_UP_KEEPING_UP to summarizeSGP if SGP_TARGET is present.
 	  o Corrected issues with conversion of factors to characters in summarizeSGP.
 	  o Corrected names.type error in RI and NH lookup tables.
+	  o Corrected incorrect timing in visualizeSGP due to over writing time.started in function.
 
 
 Changes in version: SGP_0.9-0.0
