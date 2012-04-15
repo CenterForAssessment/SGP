@@ -114,7 +114,7 @@ function(sgp_object,
 			tmp.data <-  data.table(VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), rbind.all(tmp.list, tmp.names.not.equal), key=key(sgp_object@Data))
 			if (!all(names(tmp.data) %in% names(sgp_object@Data))) {
 				variables.to.create <- names(tmp.data) %w/o% names(sgp_object@Data)
-				invisible(sgp_object@Data[, variables.to.create := NA, with=FALSE]
+				invisible(sgp_object@Data[, variables.to.create := NA, with=FALSE])
 			}
 			invisible(sgp_object@Data[tmp.data[,c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE], names(tmp.data) := tmp.data, with=FALSE, mult="first"])
 		}
@@ -157,7 +157,7 @@ function(sgp_object,
 			tmp.data <-  data.table(VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), rbind.all(tmp.list, tmp.names.not.equal), key=key(sgp_object@Data))
 			if (!all(names(tmp.data) %in% names(sgp_object@Data))) {
 				variables.to.create <- names(tmp.data) %w/o% names(sgp_object@Data)
-				invisible(sgp_object@Data[, variables.to.create := NA, with=FALSE]
+				invisible(sgp_object@Data[, variables.to.create := NA, with=FALSE])
 			}
 			invisible(sgp_object@Data[tmp.data[,c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE], names(tmp.data) := tmp.data, with=FALSE, mult="first"])
 		}
@@ -236,7 +236,7 @@ function(sgp_object,
 		} else {
 			if (!all(names(tmp_object_2) %in% names(sgp_object@Data))) {
 				variables.to.create <- names(tmp_object_2) %w/o% names(sgp_object@Data)
-				invisible(sgp_object@Data[, variables.to.create := NA, with=FALSE]
+				invisible(sgp_object@Data[, variables.to.create := NA, with=FALSE])
 			}
 			invisible(sgp_object@Data[tmp_object_2[,c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE], names(tmp_object_2) := tmp_object_2, with=FALSE, mult="first"])
 		}
@@ -281,7 +281,7 @@ function(sgp_object,
 		} else {
 			if (!all(names(tmp_object_2) %in% names(sgp_object@Data))) {
 				variables.to.create <- names(tmp_object_2) %w/o% names(sgp_object@Data)
-				invisible(sgp_object@Data[, variables.to.create := NA, with=FALSE]
+				invisible(sgp_object@Data[, variables.to.create := NA, with=FALSE])
 			}
 			invisible(sgp_object@Data[tmp_object_2[,c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE], names(tmp_object_2) := tmp_object_2, with=FALSE, mult="first"])
 		}
