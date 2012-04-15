@@ -22,7 +22,7 @@
 	DISTRICT_NUMBER <- DISTRICT_NAME <- SCHOOL_NUMBER <- SCHOOL_NAME <- SCHOOL_ENROLLMENT_STATUS <- YEAR <- CONTENT_AREA <- MEDIAN_SGP_COUNT <- NULL ## To prevent R CMD check warnings
 	ID <- YEAR_INTEGER_TMP <- SCALE_SCORE <- SGP <- GRADE <- NULL ## To prevent R CMD check warnings
 	INSTRUCTOR_NUMBER <- INSTRUCTOR_NAME <- INSTRUCTOR_ENROLLMENT_STATUS <- NULL
-	SGP_TARGET <- variable <- WEIGHT <- INCLUSION <- NULL
+	SGP_TARGET <- variable <- WEIGHT <- ENROLLMENT_STATUS <- NULL
 	### Define relevant quantities
 
 	# State stuff
@@ -314,7 +314,7 @@
 					tmp.inclusion <- as.character(names.df[names.df$names.type==paste("institution_multiple_membership_", i, "_inclusion", sep=""), "names.sgp"])
 				}
 
-				tmp.names[[i]] <- list(VARIABLE.NAMES=tmp.variable.names, WEIGHTS=tmp.weights, INCLUSION=tmp.inclusion)
+				tmp.names[[i]] <- list(VARIABLE.NAMES=tmp.variable.names, WEIGHTS=tmp.weights, ENROLLMENT_STATUS=tmp.inclusion)
 			}
 		}
 		return(tmp.names)
@@ -1260,7 +1260,7 @@ if (22 %in% bPlot.styles) {
 		### Data sets and relevant quantities used for bubblePlots
 
 		if (bPlot.full.academic.year) {
-			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__INCLUSION__CONTENT_AREA__YEAR"]][!is.na(INCLUSION)]
+			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__ENROLLMENT_STATUS__CONTENT_AREA__YEAR"]][!is.na(ENROLLMENT_STATUS)]
 		} else {
 			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
 		}
@@ -1358,7 +1358,7 @@ if (22 %in% bPlot.styles) {
 		### Data sets and relevant quantities used for bubblePlots
 
 		if (bPlot.full.academic.year) {
-			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__INCLUSION__CONTENT_AREA__YEAR"]][!is.na(INCLUSION)]
+			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__ENROLLMENT_STATUS__CONTENT_AREA__YEAR"]][!is.na(ENROLLMENT_STATUS)]
 		} else {
 			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
 		}
@@ -1462,7 +1462,7 @@ if (22 %in% bPlot.styles) {
 		} else bPlot.levels <- list(A=NULL)
 
 		if (bPlot.full.academic.year) {
-			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__INCLUSION__CONTENT_AREA__YEAR"]][!is.na(INCLUSION)]
+			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__ENROLLMENT_STATUS__CONTENT_AREA__YEAR"]][!is.na(ENROLLMENT_STATUS)]
 			if (!is.null(bPlot.levels)) {
 				tmp.bPlot.levels.data <- data.frame(eval(parse(text=paste("sgp_object@Data[,c(grep('INSTRUCTOR_NUMBER', names(sgp_object@Data)), 
 					intersect(grep('ENROLLMENT_STATUS', names(sgp_object@Data)), grep('INSTRUCTOR', names(sgp_object@Data))),", 
@@ -1471,11 +1471,11 @@ if (22 %in% bPlot.styles) {
 				inst.index <- grep('INSTRUCTOR_NUMBER', names(tmp.bPlot.levels.data))
 				enroll.index <- grep('ENROLLMENT_STATUS', names(tmp.bPlot.levels.data))
 				tmp.bPlot.levels.data<- eval(parse(text=paste("data.table(INSTRUCTOR_NUMBER=c(", paste("tmp.bPlot.levels.data[,", inst.index, "]", collapse=","),
-					"), INCLUSION=c(", paste("as.character(tmp.bPlot.levels.data[,", enroll.index, "])", collapse=","),
+					"), ENROLLMENT_STATUS=c(", paste("as.character(tmp.bPlot.levels.data[,", enroll.index, "])", collapse=","),
 					"), CONTENT_AREA=rep(tmp.bPlot.levels.data[, 'CONTENT_AREA'],", length(inst.index),
 					"), YEAR=rep(tmp.bPlot.levels.data[, 'YEAR'],", length(inst.index),
 					"), ", paste(bPlot.levels, "=rep(tmp.bPlot.levels.data[, '", bPlot.levels, "'],", length(inst.index), ")", sep="", collapse=","),
-					", key=c('INSTRUCTOR_NUMBER', 'INCLUSION'))[!is.na(INSTRUCTOR_NUMBER) & INCLUSION=='Enrolled Instructor: Yes']")))
+					", key=c('INSTRUCTOR_NUMBER', 'ENROLLMENT_STATUS'))[!is.na(INSTRUCTOR_NUMBER) & ENROLLMENT_STATUS=='Enrolled Instructor: Yes']")))
 				tmp.bPlot.levels.data <- tmp.bPlot.levels.data[, eval(tmp.bPlot.levels.txt), by=list(INSTRUCTOR_NUMBER, CONTENT_AREA, YEAR)]
 				setkeyv(tmp.bPlot.data, c("INSTRUCTOR_NUMBER", "CONTENT_AREA", "YEAR"))
 				setkeyv(tmp.bPlot.levels.data, c("INSTRUCTOR_NUMBER", "CONTENT_AREA", "YEAR"))
@@ -1612,7 +1612,7 @@ if (22 %in% bPlot.styles) {
 		### Data sets and relevant quantities used for bubblePlots
 
 		if (bPlot.full.academic.year) {
-			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__INCLUSION__CONTENT_AREA__YEAR"]][!is.na(INCLUSION)]
+			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__ENROLLMENT_STATUS__CONTENT_AREA__YEAR"]][!is.na(ENROLLMENT_STATUS)]
 		} else {
 			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
 		}
@@ -1717,7 +1717,7 @@ if (22 %in% bPlot.styles) {
 		} else bPlot.levels <- list(A=NULL)
 
 		if (bPlot.full.academic.year) {
-			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__INCLUSION__CONTENT_AREA__YEAR"]][!is.na(INCLUSION)]
+			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__ENROLLMENT_STATUS__CONTENT_AREA__YEAR"]][!is.na(ENROLLMENT_STATUS)]
 			if (!is.null(bPlot.levels)) {
 				tmp.bPlot.levels.data <- data.frame(eval(parse(text=paste("sgp_object@Data[,c(grep('INSTRUCTOR_NUMBER', names(sgp_object@Data)), 
 					intersect(grep('ENROLLMENT_STATUS', names(sgp_object@Data)), grep('INSTRUCTOR', names(sgp_object@Data))),", 
@@ -1726,11 +1726,11 @@ if (22 %in% bPlot.styles) {
 				inst.index <- grep('INSTRUCTOR_NUMBER', names(tmp.bPlot.levels.data))
 				enroll.index <- grep('ENROLLMENT_STATUS', names(tmp.bPlot.levels.data))
 				tmp.bPlot.levels.data<- eval(parse(text=paste("data.table(INSTRUCTOR_NUMBER=c(", paste("tmp.bPlot.levels.data[,", inst.index, "]", collapse=","),
-					"), INCLUSION=c(", paste("as.character(tmp.bPlot.levels.data[,", enroll.index, "])", collapse=","),
+					"), ENROLLMENT_STATUS=c(", paste("as.character(tmp.bPlot.levels.data[,", enroll.index, "])", collapse=","),
 					"), CONTENT_AREA=rep(tmp.bPlot.levels.data[, 'CONTENT_AREA'],", length(inst.index),
 					"), YEAR=rep(tmp.bPlot.levels.data[, 'YEAR'],", length(inst.index),
 					"), ", paste(bPlot.levels, "=rep(tmp.bPlot.levels.data[, '", bPlot.levels, "'],", length(inst.index), ")", sep="", collapse=","),
-					", key=c('INSTRUCTOR_NUMBER', 'INCLUSION'))[!is.na(INSTRUCTOR_NUMBER) & INCLUSION=='Enrolled Instructor: Yes']")))
+					", key=c('INSTRUCTOR_NUMBER', 'ENROLLMENT_STATUS'))[!is.na(INSTRUCTOR_NUMBER) & ENROLLMENT_STATUS=='Enrolled Instructor: Yes']")))
 				tmp.bPlot.levels.data <- tmp.bPlot.levels.data[, eval(tmp.bPlot.levels.txt), by=list(INSTRUCTOR_NUMBER, CONTENT_AREA, YEAR)]
 				setkeyv(tmp.bPlot.data, c("INSTRUCTOR_NUMBER", "CONTENT_AREA", "YEAR"))
 				setkeyv(tmp.bPlot.levels.data, c("INSTRUCTOR_NUMBER", "CONTENT_AREA", "YEAR"))
@@ -2109,10 +2109,10 @@ if (22 %in% bPlot.styles) {
 						mult.memb[[1]][["WEIGHTS"]], with=FALSE]), 
 						measure.vars=mult.memb[[1]][["WEIGHTS"]])[,2]])
 				}
-				if (!is.null(mult.memb[[1]][["INCLUSION"]])) {
-					invisible(tmp.bPlot.data.1.long[, INCLUSION := melt(as.data.frame(tmp.bPlot.data.1[, 
-						mult.memb[[1]][["INCLUSION"]], with=FALSE]), 
-						measure.vars=mult.memb[[1]][["INCLUSION"]])[,2]])
+				if (!is.null(mult.memb[[1]][["ENROLLMENT_STATUS"]])) {
+					invisible(tmp.bPlot.data.1.long[, ENROLLMENT_STATUS := melt(as.data.frame(tmp.bPlot.data.1[, 
+						mult.memb[[1]][["ENROLLMENT_STATUS"]], with=FALSE]), 
+						measure.vars=mult.memb[[1]][["ENROLLMENT_STATUS"]])[,2]])
 				}
 			}
 		
@@ -2154,7 +2154,7 @@ if (22 %in% bPlot.styles) {
 	
 			# Get median SGP for grade, school, content area combination
 	
-				instructor.content_area.grade.median <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__INCLUSION__CONTENT_AREA__YEAR__GRADE"]][
+				instructor.content_area.grade.median <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__ENROLLMENT_STATUS__CONTENT_AREA__YEAR__GRADE"]][
 					INSTRUCTOR_NUMBER==instructor.iter & CONTENT_AREA==content_area.iter & YEAR==year.iter & GRADE==grade.iter][["MEDIAN_SGP"]]
 				if (bPlot.demo) instructor.content_area.grade.median <- median(bPlot.data$SGP, na.rm=TRUE)
 	
@@ -2287,10 +2287,10 @@ if (22 %in% bPlot.styles) {
 						mult.memb[[1]][["WEIGHTS"]], with=FALSE]), 
 						measure.vars=mult.memb[[1]][["WEIGHTS"]])[,2]])
 				}
-				if (!is.null(mult.memb[[1]][["INCLUSION"]])) {
-					invisible(tmp.bPlot.data.1.long[, INCLUSION := melt(as.data.frame(tmp.bPlot.data.1[, 
-						mult.memb[[1]][["INCLUSION"]], with=FALSE]), 
-						measure.vars=mult.memb[[1]][["INCLUSION"]])[,2]])
+				if (!is.null(mult.memb[[1]][["ENROLLMENT_STATUS"]])) {
+					invisible(tmp.bPlot.data.1.long[, ENROLLMENT_STATUS := melt(as.data.frame(tmp.bPlot.data.1[, 
+						mult.memb[[1]][["ENROLLMENT_STATUS"]], with=FALSE]), 
+						measure.vars=mult.memb[[1]][["ENROLLMENT_STATUS"]])[,2]])
 				}
 			}
 		
@@ -2332,7 +2332,7 @@ if (22 %in% bPlot.styles) {
 
 		# Get median SGP for grade, school, content area combination
 
-			instructor.content_area.grade.median <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__INCLUSION__CONTENT_AREA__YEAR__GRADE"]][
+			instructor.content_area.grade.median <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__ENROLLMENT_STATUS__CONTENT_AREA__YEAR__GRADE"]][
 				INSTRUCTOR_NUMBER==instructor.iter & CONTENT_AREA==content_area.iter & YEAR==year.iter & GRADE==grade.iter][["MEDIAN_SGP"]]
 			if (bPlot.demo) instructor.content_area.grade.median <- median(bPlot.data$SGP, na.rm=TRUE)
 
