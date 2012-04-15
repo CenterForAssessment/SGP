@@ -145,7 +145,7 @@ function(sgp_object,
 		tmp.list <- list() 
 		for (i in tmp.names) {
 			tmp.list[[i]] <- data.table(
-				CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
+				CONTENT_AREA=as.factor(unlist(strsplit(i, "[.]"))[1]),
 				YEAR=type.convert(unlist(strsplit(i, "[.]"))[2]),
 				sgp_object@SGP[["SGPercentiles"]][[i]])
 		}
@@ -213,7 +213,7 @@ function(sgp_object,
 			cols.to.get <- grep(paste("LEVEL_", level.to.get, sep=""), names(sgp_object@SGP[["SGProjections"]][[i]]))
 			num.cols.to.get <- min(max.lagged.sgp.target.years.forward, length(cols.to.get))
 			tmp.list[[i]] <- data.table(
-				CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
+				CONTENT_AREA=as.factor(unlist(strsplit(i, "[.]"))[1]),
 				YEAR=type.convert(unlist(strsplit(i, "[.]"))[2]),
 				CATCH_UP_KEEP_UP_STATUS_INITIAL=get.catch_up_keep_up_status_initial(sgp_object@SGP[["SGProjections"]][[i]][["ACHIEVEMENT_LEVEL_PRIOR"]]),
 				sgp_object@SGP[["SGProjections"]][[i]][,c(1,2,cols.to.get[1:num.cols.to.get])])
