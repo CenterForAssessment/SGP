@@ -825,7 +825,7 @@ function(panel.data,         ## REQUIRED
 		}
 
 		SGPercentiles[[tmp.path]] <- rbind.fill(.unget.data.table(quantile.data, ss.data), SGPercentiles[[tmp.path]])
-		if (sgp.labels[['my.extra.label']] == "BASELINE") names(SGPercentiles[[tmp.path]])[-1] <- paste(names(SGPercentiles[[tmp.path]])[-1], "BASELINE", sep="_") 
+		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) names(SGPercentiles[[tmp.path]])[-1] <- paste(names(SGPercentiles[[tmp.path]])[-1], "BASELINE", sep="_") 
 
 		if (goodness.of.fit) {
 			Goodness_of_Fit[[tmp.path]][[paste("GRADE_", paste(tmp.gp, collapse="-"), sep="")]] <- .goodness.of.fit(data.table(prior.ss, quantile.data[, "SGP", with=FALSE])) 
