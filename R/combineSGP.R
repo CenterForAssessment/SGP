@@ -144,10 +144,10 @@ function(sgp_object,
 
 		tmp.list <- list() 
 		for (i in tmp.names) {
-		tmp.list[[i]] <- data.table(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
-									YEAR=type.convert(unlist(strsplit(i, "[.]"))[2]),
-									sgp_object@SGP[["SGPercentiles"]][[i]])
-		setnames(tmp.list[[i]], 4:dim(tmp.list[[i]])[2], paste(names(tmp.list[[i]])[4:dim(tmp.list[[i]])[2]], "BASELINE", sep="_"))
+			tmp.list[[i]] <- data.table(
+				CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
+				YEAR=type.convert(unlist(strsplit(i, "[.]"))[2]),
+				sgp_object@SGP[["SGPercentiles"]][[i]])
 		}
 
 		if (!"SGP_BASELINE" %in% names(sgp_object@Data)) {
@@ -210,12 +210,13 @@ function(sgp_object,
 		tmp.list <- list()
 		setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 		for (i in tmp.names.lagged) {
-		cols.to.get <- grep(paste("LEVEL_", level.to.get, sep=""), names(sgp_object@SGP[["SGProjections"]][[i]]))
-		num.cols.to.get <- min(max.lagged.sgp.target.years.forward, length(cols.to.get))
-		tmp.list[[i]] <- data.table(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
-								 YEAR=type.convert(unlist(strsplit(i, "[.]"))[2]),
-								 CATCH_UP_KEEP_UP_STATUS_INITIAL=get.catch_up_keep_up_status_initial(sgp_object@SGP[["SGProjections"]][[i]][["ACHIEVEMENT_LEVEL_PRIOR"]]),
-								 sgp_object@SGP[["SGProjections"]][[i]][,c(1,2,cols.to.get[1:num.cols.to.get])])
+			cols.to.get <- grep(paste("LEVEL_", level.to.get, sep=""), names(sgp_object@SGP[["SGProjections"]][[i]]))
+			num.cols.to.get <- min(max.lagged.sgp.target.years.forward, length(cols.to.get))
+			tmp.list[[i]] <- data.table(
+				CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
+				YEAR=type.convert(unlist(strsplit(i, "[.]"))[2]),
+				CATCH_UP_KEEP_UP_STATUS_INITIAL=get.catch_up_keep_up_status_initial(sgp_object@SGP[["SGProjections"]][[i]][["ACHIEVEMENT_LEVEL_PRIOR"]]),
+				sgp_object@SGP[["SGProjections"]][[i]][,c(1,2,cols.to.get[1:num.cols.to.get])])
 		}
 
 		tmp_object_1 <- data.table(VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), rbind.all(tmp.list))[!is.na(CATCH_UP_KEEP_UP_STATUS_INITIAL)]
