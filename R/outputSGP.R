@@ -1,7 +1,7 @@
 `outputSGP` <- 
 function(sgp_object,
 	state=NULL,
-	output.type="SchoolView",
+	output.type=c("LONG_Data", "SchoolView"),
 	baseline.sgps=FALSE,
 	outputSGP_SUMMARY.years=NULL,
 	outputSGP_SUMMARY.content_areas=NULL,
@@ -9,7 +9,7 @@ function(sgp_object,
 	outputSGP_INDIVIDUAL.content_areas=NULL,
 	outputSGP.anonymize=FALSE,
 	outputSGP.student.groups=NULL,
-	outputSGP.directory=file.path("Data", "SchoolView")) {
+	outputSGP.directory="Data") {
 
         started.at.outputSGP <- proc.time()
         message(paste("\nStarted outputSGP ", date(), ": Files produced from outputSGP saved in '", outputSGP.directory, "'\n", sep=""))
@@ -35,6 +35,26 @@ function(sgp_object,
 		outputSGP.student.groups <- intersect(names(sgp_object@Data), subset(sgp_object@Names, names.type=="demographic" & names.output==TRUE, select=names.provided, drop=TRUE))
 	}
 
+### LONG_Data
+
+if ("LONG_Data" %in% output.type) {
+
+	### Create state name
+
+	if (state %in% c(state.abb, "DEMO")) {
+		tmp.state <- gsub(" ", "_", c(state.name, "Demonstration")[state==c(state.abb, "DEMO")])
+	} else {
+		tmp.state <- gsub(" ", "_", state)
+	}
+
+	### Write long table
+
+	write.table(sgp_object@Data, file=file.path(outputSGP.directory, paste(tmp.state, "SGP_LONG_Data.dat", sep="_")), sep="|", quote=FALSE, row.names=FALSE, na="")
+
+} ### END if LONG_Data %in% output.type
+
+
+### SchoolView tables
 
 if ("SchoolView" %in% output.type) {
 
@@ -48,7 +68,7 @@ if ("SchoolView" %in% output.type) {
 		years=outputSGP_SUMMARY.years,
 		content_areas=outputSGP_SUMMARY.content_areas,
 		other.student.groups=outputSGP.student.groups,
-		output.directory=outputSGP.directory)
+		output.directory=file.path("SchoolView", outputSGP.directory))
 
 
 	###
@@ -316,9 +336,9 @@ if ("SchoolView" %in% output.type) {
 		"CUT_1_YEAR_2", "CUT_99_YEAR_2", "CUT_35_YEAR_2", "CUT_65_YEAR_2", "CUT_20_YEAR_2", "CUT_40_YEAR_2", "CUT_60_YEAR_2", "CUT_80_YEAR_2",
 		"CUT_1_YEAR_3", "CUT_99_YEAR_3", "CUT_35_YEAR_3", "CUT_65_YEAR_3", "CUT_20_YEAR_3", "CUT_40_YEAR_3", "CUT_60_YEAR_3", "CUT_80_YEAR_3")
 
-	write.table(outputSGP.data[,tmp.variable.names, with=FALSE], file=file.path(outputSGP.directory, "SchoolView_WIDE.dat"), row.names=FALSE, na="", quote=FALSE, sep="|")
+	write.table(outputSGP.data[,tmp.variable.names, with=FALSE], file=file.path(outputSGP.directory, "SchoolView", "SchoolView_WIDE.dat"), row.names=FALSE, na="", quote=FALSE, sep="|")
 	SchoolView_WIDE <- outputSGP.data[,tmp.variable.names, with=FALSE]
-	save(SchoolView_WIDE, file=file.path(outputSGP.directory, "SchoolView_WIDE.Rdata"))
+	save(SchoolView_WIDE, file=file.path(outputSGP.directory, "SchoolView", "SchoolView_WIDE.Rdata"))
 
 	message(paste("\tFinished WIDE data production in outputSGP", date(), "in", timetaken(started.at), "\n"))
 

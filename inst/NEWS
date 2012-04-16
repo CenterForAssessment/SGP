@@ -8,6 +8,7 @@ Changes in version: SGP_1.0-0.0
 	  o Added timing to outputSGP and sqliteSGP and integrated outputSGP into abcSGP.
 	  o Baseline SGP tables embedded in SGP object have variable names appended with '_BASELINE'.
 	  o Streamlined growthAchievementPlot production by removing growthAchievementPlot_Styles and integrating its functionality elsewhere.
+	  o outputSGP now exports contents of @Data by default to 'Data' directory.
 
   BUG FIXES:
 
