@@ -807,6 +807,8 @@ if (sgPlot.produce.plots) {
 
 } ## END if ("studentGrowthPlot" %in% plot.types) 
 
+	setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
+
 	message(paste("Finished visualizeSGP", date(), "in", timetaken(started.at.visualizeSGP), "\n"))
 
 } ## END visualizeSGP Function
