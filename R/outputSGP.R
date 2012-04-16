@@ -144,7 +144,7 @@ if ("SchoolView" %in% output.type) {
 	report.ids <- unique(sgp_object@Data[tmp.districts.and.schools][["ID"]])
 	setkeyv(sgp_object@Data, c("ID", "CONTENT_AREA", "YEAR"))
 	tmp.table <- sgp_object@Data[CJ(report.ids, tmp.content_areas, tmp.years)]
-
+	setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))
 
 	### Create transformed scale scores
 
