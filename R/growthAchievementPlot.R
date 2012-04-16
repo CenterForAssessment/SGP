@@ -22,7 +22,7 @@
 	content_area <- toupper(content_area)
 	number.achievement.level.regions <- length(SGPstateData[[state]][["Student_Report_Information"]][["Achievement_Level_Labels"]])
 
-	# State stuff
+	## State stuff
 
 	if (state %in% c(state.abb, "DEMO")) {
 		state.name.label <- c(state.name, "DEMONSTRATION")[state==c(state.abb, "DEMO")]
@@ -30,6 +30,15 @@
 		state.name.label <- test.abbreviation.label <- state
 	}
 		state.name.file.label <- gsub("_", " ", state.name.label)
+
+	### Test if scale change has occured in the requested year
+
+	if (year %in% SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[content_area]]) {
+
+		message(paste("\tNOTE: Based upon state scale changes in ", capwords(year), ". student growth projections are not possible. No ",
+			capwords(year), " ", content_area, " growth and achievement plot will be generated.\n", sep=""))
+		return(NULL)
+        }
 
 	## Create folder for plots
 
@@ -50,6 +59,7 @@
 
 	tmp.smooth.grades <- seq(gaPlot.grade_range[1], gaPlot.grade_range[2], by=0.01)
 	tmp.unique.grades <- gaPlot.grade_range[1]:gaPlot.grade_range[2]
+	setkeyv(growthAchievementPlot.data, c("VALID_CASE", "CONTENT_AREA"))
 	growthAchievementPlot.data <- gaPlot.sgp_object@Data[J("VALID_CASE", content_area), list(ID, YEAR, GRADE, SCALE_SCORE)][
 		GRADE %in% tmp.unique.grades & !is.na(SCALE_SCORE)]
 
