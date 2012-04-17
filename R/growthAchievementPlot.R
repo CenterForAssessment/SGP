@@ -105,10 +105,10 @@
 			if (year %in% tmp.cutscore.years) {
 				return(paste(content_area, year, sep="."))
 			} else {
-				if (identical(year, sort(c(year, tmp.cutscore.years))[1])) {
+				if (year==sort(c(year, tmp.cutscore.years))[1]) {
 					return(content_area)
 				} else {
-					return(paste(content_area, sort(tmp.cutscore.years)[which(year==sort(c(year, tmp.cutscore.years)))-1], sep="."))
+					return(paste(content_area, rev(sort(tmp.cutscore.years))[1], sep="."))
 				}
 			}
 		} else {
@@ -238,7 +238,7 @@
 	###
 	################################################
 
-	if (identical(format, "print")) {
+	if (format=="print") {
 		format.colors.background <- rgb(0.985, 0.985, 1.0)
 		format.colors.region <- paste("grey", round(seq(62, 91, length=number.achievement.level.regions)), sep="")
 		format.colors.font <- "grey20"
