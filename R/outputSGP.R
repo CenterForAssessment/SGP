@@ -81,7 +81,7 @@ if ("SchoolView" %in% output.type) {
 	### Utility functions
 
 	rbind.all <- function(.list, ...) {
-		if (length(.list)==1) return (.list[[1]])
+		if (identical(length(.list), 1)) return (.list[[1]])
 		Recall(c(list(rbind(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), ...)
 	}
 
@@ -96,7 +96,7 @@ if ("SchoolView" %in% output.type) {
 			if (year %in% tmp.cutscore.years) {
 				return(paste(content_area, year, sep="."))
 			} else {
-				if (year==sort(c(year, tmp.cutscore.years))[1]) {
+				if (identical(year, sort(c(year, tmp.cutscore.years))[1])) {
 					return(content_area)
 				} else {
 					return(paste(content_area, sort(tmp.cutscore.years)[which(year==sort(c(year, tmp.cutscore.years)))-1], sep="."))
@@ -301,7 +301,7 @@ if ("SchoolView" %in% output.type) {
 		}
 	}	
 
-	if (length(names(outputSGP.data)[grep("YEAR_1", names(outputSGP.data))]) == 4) {
+	if (identical(length(names(outputSGP.data)[grep("YEAR_1", names(outputSGP.data))]), 4)) {
 		for (i in 1:3) {
 			setnames(outputSGP.data, grep(paste("YEAR", i, sep="_"), names(outputSGP.data)), paste("CUT", c(1, 35, 65, 99), "YEAR", i, sep="_"))
 			for (j in c(20, 40, 60, 80)) {
@@ -309,7 +309,7 @@ if ("SchoolView" %in% output.type) {
 			}
 		}
 	}
-	if (length(names(outputSGP.data)[grep("YEAR_1", names(outputSGP.data))]) == 6) {
+	if (identical(length(names(outputSGP.data)[grep("YEAR_1", names(outputSGP.data))]), 6)) {
 		for (i in 1:3) {
 			setnames(outputSGP.data, grep(paste("YEAR", i, sep="_"), names(outputSGP.data)), paste("CUT", c(1, 20, 40, 60, 80, 99), "YEAR", i, sep="_"))
 			for (j in c(35, 65)) {

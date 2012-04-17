@@ -55,7 +55,7 @@ outputSGP(sgp_object,
 
 \author{Damian W. Betebenner \email{dbetebenner@nciea.org}}
 
-\seealso{\code{\line{abcSGP}}, \code{\link{prepareSGP}}, \code{\link{analyzeSGP}}, \code{\link{combineSGP}}, \code{\link{summarizeSGP}}}
+\seealso{\code{\link{abcSGP}}, \code{\link{prepareSGP}}, \code{\link{analyzeSGP}}, \code{\link{combineSGP}}, \code{\link{summarizeSGP}}}
 
 \examples{
 \dontrun{

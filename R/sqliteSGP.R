@@ -10,7 +10,7 @@ function(sgp_object,
 	started.at <- proc.time()
 	message(paste("\tStarted sqliteSGP in outputSGP", date()))
 
-	YEAR <- DISTRICT_NUMBER <- SCHOOL_NUMBER <- CONTENT_AREA <- DISTRICT_ENROLLMENT_STATUS <- GRADE <- ETHNICITY <- STUDENTGROUP <- SCHOOL_ENROLLMENT_STATUS <- EMH_LEVEL <- NULL
+	YEAR <- DISTRICT_NUMBER <- SCHOOL_NUMBER <- CONTENT_AREA <- DISTRICT_ENROLLMENT_STATUS <- GRADE <- ETHNICITY <- STUDENT_GROUP <- SCHOOL_ENROLLMENT_STATUS <- EMH_LEVEL <- NULL
 
 	## Load packages
 
@@ -55,7 +55,7 @@ function(sgp_object,
 		}
 
 		rbind.all <- function(.list, ...){
-			if(length(.list)==1) return(.list[[1]])
+			if (identical(length(.list), 1)) return(.list[[1]])
 			Recall(c(list(rbind(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), ...)
 		}
 
@@ -83,11 +83,11 @@ function(sgp_object,
 		}
 
 		get.grade <- function(grade) {
-			if (SGPstateData[[state]][["Assessment_Program_Information"]][["Test_Season"]]=="Fall") grade-1 else grade
+			if (identical(SGPstateData[[state]][['Assessment_Program_Information']][['Test_Season']], 'Fall')) grade-1 else grade
 		}
 
 		get.year <- function(year) {
-			if (SGPstateData[[state]][["Assessment_Program_Information"]][["Test_Season"]]=="Fall") {
+			if (identical(SGPstateData[[state]][['Assessment_Program_Information']][['Test_Season']], 'Fall')) {
 				.year.increment(year, -1)				
 			} else {
 				return(year)
@@ -113,8 +113,8 @@ function(sgp_object,
 	### Table 1. DISTRICT
 
 		field.types <- c( 
-			"DISTRICT_NUMBER TEXT NOT NULL",
-			"CONTENT_AREA TEXT NOT NULL",
+			"DISTRICT_NUMBER INTEGER NOT NULL",
+			"CONTENT_AREA INTEGER NOT NULL",
 			"YEAR INTEGER NOT NULL",
 			"MEDIAN_SGP REAL",
 			"MEDIAN_SGP_TARGET REAL",
@@ -137,8 +137,8 @@ function(sgp_object,
 	### Table 2. DISTRICT_GRADE
 
 		field.types <- c( 
-			"DISTRICT_NUMBER TEXT NOT NULL",
-			"CONTENT_AREA TEXT NOT NULL",
+			"DISTRICT_NUMBER INTEGER NOT NULL",
+			"CONTENT_AREA INTEGER NOT NULL",
 			"YEAR INTEGER NOT NULL",
 			"GRADE INTEGER NOT NULL",
 			"MEDIAN_SGP REAL",
@@ -162,8 +162,8 @@ function(sgp_object,
 	### Table 3. DISTRICT_ETHNICITY
 
 		field.types <- c(
-			"DISTRICT_NUMBER TEXT NOT NULL",
-			"CONTENT_AREA TEXT NOT NULL",
+			"DISTRICT_NUMBER INTEGER NOT NULL",
+			"CONTENT_AREA INTEGER NOT NULL",
 			"YEAR INTEGER NOT NULL",
 			"ETHNICITY INTEGER NOT NULL",
 			"MEDIAN_SGP REAL",
@@ -189,11 +189,11 @@ function(sgp_object,
 	### Table 4. DISTRICT_GRADE_ETHNICITY
 
 		field.types <- c(
-			"DISTRICT_NUMBER TEXT NOT NULL",
-			"CONTENT_AREA TEXT NOT NULL",
+			"DISTRICT_NUMBER INTEGER NOT NULL",
+			"CONTENT_AREA INTEGER NOT NULL",
 			"YEAR INTEGER NOT NULL",
-			"GRADE TEXT NOT NULL",
-			"ETHNICITY TEXT NOT NULL",
+			"GRADE INTEGER NOT NULL",
+			"ETHNICITY INTEGER NOT NULL",
 			"MEDIAN_SGP REAL",
 			"MEDIAN_SGP_TARGET REAL",
 			"PERCENT_AT_ABOVE_TARGET REAL",
@@ -215,10 +215,10 @@ function(sgp_object,
 	### Table 5. DISTRICT_STUDENTGROUP
 
 		field.types <- c(
-			"DISTRICT_NUMBER TEXT NOT NULL",
-			"CONTENT_AREA TEXT NOT NULL",
+			"DISTRICT_NUMBER INTEGER NOT NULL",
+			"CONTENT_AREA INTEGER NOT NULL",
 			"YEAR INTEGER NOT NULL",
-			"STUDENTGROUP TEXT NOT NULL",
+			"STUDENT_GROUP INTEGER NOT NULL",
 			"MEDIAN_SGP REAL",
 			"MEDIAN_SGP_TARGET REAL",
 			"PERCENT_AT_ABOVE_TARGET REAL",
@@ -233,18 +233,18 @@ function(sgp_object,
 		}
 
 		for (i in seq_along(tmp.list)) {
-			setnames(tmp.list[[i]], 5, "STUDENTGROUP")
+			setnames(tmp.list[[i]], 5, "STUDENT_GROUP")
 		}
 
 		tmp <- as.data.frame(convert.variables(subset(rbind.all(tmp.list), 
-			!is.na(DISTRICT_NUMBER) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(STUDENTGROUP) & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes")))
+			!is.na(DISTRICT_NUMBER) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(STUDENT_GROUP) & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes")))
 		tmp$CONTENT_AREA <- unclass(tmp$CONTENT_AREA)
-		tmp$STUDENTGROUP <- unclass(tmp$STUDENTGROUP)
+		tmp$STUDENT_GROUP <- unclass(tmp$STUDENT_GROUP)
 		names(tmp)[names(tmp)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET"  ### TEMPORARY UNTIL NAMES ARE ALIGNED
 		tmp$ENROLLMENT_PERCENTAGE <- NA
 		tmp <- tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))]
 
-		dbGetQuery(db, sqlite.create.table("DISTRICT_STUDENTGROUP", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "STUDENTGROUP")))
+		dbGetQuery(db, sqlite.create.table("DISTRICT_STUDENTGROUP", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "STUDENT_GROUP")))
 		dbWriteTable(db, "DISTRICT_STUDENTGROUP", tmp, row.names=FALSE, append=TRUE) 
 
 		if (text.output) write.table(tmp, file=file.path(output.directory, "DISTRICT_STUDENTGROUP.dat"), row.names=FALSE, na="", quote=FALSE, sep="|")
@@ -253,11 +253,11 @@ function(sgp_object,
 	### Table 6. DISTRICT_GRADE_STUDENTGROUP
 
 		field.types <- c(
-			"DISTRICT_NUMBER TEXT NOT NULL",
-			"CONTENT_AREA TEXT NOT NULL",
+			"DISTRICT_NUMBER INTEGER NOT NULL",
+			"CONTENT_AREA INTEGER NOT NULL",
 			"YEAR INTEGER NOT NULL",
-			"GRADE TEXT NOT NULL",
-			"STUDENTGROUP TEXT NOT NULL",
+			"GRADE INTEGER NOT NULL",
+			"STUDENT_GROUP INTEGER NOT NULL",
 			"MEDIAN_SGP REAL",
 			"MEDIAN_SGP_TARGET REAL",
 			"PERCENT_AT_ABOVE_TARGET REAL",
@@ -271,17 +271,17 @@ function(sgp_object,
 		}
 
 		for (i in seq_along(tmp.list)) {
-			setnames(tmp.list[[i]], 6, "STUDENTGROUP")
+			setnames(tmp.list[[i]], 6, "STUDENT_GROUP")
 		}
 
 		tmp <- as.data.frame(convert.variables(subset(rbind.all(tmp.list), 
-			!is.na(DISTRICT_NUMBER) & YEAR %in% years & CONTENT_AREA %in% content_areas & !is.na(STUDENTGROUP) & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes")))
+			!is.na(DISTRICT_NUMBER) & YEAR %in% years & CONTENT_AREA %in% content_areas & !is.na(STUDENT_GROUP) & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes")))
 		tmp$CONTENT_AREA <- unclass(tmp$CONTENT_AREA)
-		tmp$STUDENTGROUP <- unclass(tmp$STUDENTGROUP)
+		tmp$STUDENT_GROUP <- unclass(tmp$STUDENT_GROUP)
 		names(tmp)[names(tmp)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET"  ### TEMPORARY UNTIL NAMES ARE ALIGNED
 		tmp <- tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))]
 
-		dbGetQuery(db, sqlite.create.table("DISTRICT_GRADE_STUDENTGROUP", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "GRADE", "STUDENTGROUP")))
+		dbGetQuery(db, sqlite.create.table("DISTRICT_GRADE_STUDENTGROUP", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "GRADE", "STUDENT_GROUP")))
 		dbWriteTable(db, "DISTRICT_GRADE_STUDENTGROUP", tmp, row.names=FALSE, append=TRUE) 
 
 		if (text.output) write.table(tmp, file=file.path(output.directory, "DISTRICT_GRADE_STUDENTGROUP.dat"), row.names=FALSE, na="", quote=FALSE, sep="|")
@@ -290,10 +290,10 @@ function(sgp_object,
 	## Table 7. SCHOOL
 
 		field.types <- c(
-			"DISTRICT_NUMBER TEXT NOT NULL",
-			"SCHOOL_NUMBER TEXT NOT NULL",
+			"DISTRICT_NUMBER INTEGER NOT NULL",
+			"SCHOOL_NUMBER INTEGER NOT NULL",
 			"EMH_LEVEL TEXT NOT NULL",
-			"CONTENT_AREA TEXT NOT NULL",
+			"CONTENT_AREA INTEGER NOT NULL",
 			"YEAR INTEGER NOT NULL",
 			"MEDIAN_SGP REAL",
 			"MEDIAN_SGP_TARGET REAL",
@@ -320,12 +320,12 @@ function(sgp_object,
 	## Table 8. SCHOOL_GRADE
 
 		field.types <- c(
-			"DISTRICT_NUMBER TEXT NOT NULL",
-			"SCHOOL_NUMBER TEXT NOT NULL",
+			"DISTRICT_NUMBER INTEGER NOT NULL",
+			"SCHOOL_NUMBER INTEGER NOT NULL",
 			"EMH_LEVEL TEXT NOT NULL",
-			"CONTENT_AREA TEXT NOT NULL",
+			"CONTENT_AREA INTEGER NOT NULL",
 			"YEAR INTEGER NOT NULL",
-			"GRADE TEXT NOT NULL",
+			"GRADE INTEGER NOT NULL",
 			"MEDIAN_SGP REAL",
 			"MEDIAN_SGP_TARGET REAL",
 			"PERCENT_AT_ABOVE_TARGET REAL",
@@ -351,12 +351,12 @@ function(sgp_object,
 	## Table 9. SCHOOL_ETHNICITY
 
 		field.types <- c(
-			"DISTRICT_NUMBER TEXT NOT NULL",
-			"SCHOOL_NUMBER TEXT NOT NULL",
+			"DISTRICT_NUMBER INTEGER NOT NULL",
+			"SCHOOL_NUMBER INTEGER NOT NULL",
 			"EMH_LEVEL TEXT NOT NULL",
-			"CONTENT_AREA TEXT NOT NULL",
+			"CONTENT_AREA INTEGER NOT NULL",
 			"YEAR INTEGER NOT NULL",
-			"ETHNICITY TEXT NOT NULL",
+			"ETHNICITY INTEGER NOT NULL",
 			"MEDIAN_SGP REAL",
 			"MEDIAN_SGP_TARGET REAL",
 			"PERCENT_AT_ABOVE_TARGET REAL",
@@ -385,12 +385,12 @@ function(sgp_object,
 	## Table 10. SCHOOL_STUDENTGROUP
 
 		field.types <- c(
-			"DISTRICT_NUMBER TEXT NOT NULL",
-			"SCHOOL_NUMBER TEXT NOT NULL",
+			"DISTRICT_NUMBER INTEGER NOT NULL",
+			"SCHOOL_NUMBER INTEGER NOT NULL",
 			"EMH_LEVEL TEXT NOT NULL",
-			"CONTENT_AREA TEXT NOT NULL",
+			"CONTENT_AREA INTEGER NOT NULL",
 			"YEAR INTEGER NOT NULL",
-			"STUDENTGROUP TEXT NOT NULL",
+			"STUDENT_GROUP INTEGER NOT NULL",
 			"MEDIAN_SGP REAL",
 			"MEDIAN_SGP_TARGET REAL",
 			"PERCENT_AT_ABOVE_TARGET REAL",
@@ -405,14 +405,14 @@ function(sgp_object,
 		}
 
 		for (i in seq_along(tmp.list)) {
-			setnames(tmp.list[[i]], 6, "STUDENTGROUP")
+			setnames(tmp.list[[i]], 6, "STUDENT_GROUP")
 		}
 
 		tmp <- as.data.frame(convert.variables(subset(rbind.all(tmp.list), 
-			!is.na(SCHOOL_NUMBER) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(STUDENTGROUP) & SCHOOL_ENROLLMENT_STATUS=="Enrolled School: Yes")))
+			!is.na(SCHOOL_NUMBER) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(STUDENT_GROUP) & SCHOOL_ENROLLMENT_STATUS=="Enrolled School: Yes")))
 		tmp <- as.data.frame(merge(tmp, as.data.frame(tmp.school.and.district.by.year), all.x=TRUE)) 
 		tmp$CONTENT_AREA <- unclass(tmp$CONTENT_AREA)
-		tmp$STUDENTGROUP <- unclass(tmp$STUDENTGROUP)
+		tmp$STUDENT_GROUP <- unclass(tmp$STUDENT_GROUP)
 		tmp$EMH_LEVEL <- unclass(tmp$EMH_LEVEL)
 	### Temporary stuff
 		names(tmp)[names(tmp)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET" 
@@ -422,7 +422,7 @@ function(sgp_object,
 		tmp <- tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))]
 
 		dbGetQuery(db, sqlite.create.table("SCHOOL_STUDENTGROUP", field.types, 
-			c("YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER", "EMH_LEVEL", "CONTENT_AREA", "STUDENTGROUP")))
+			c("YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER", "EMH_LEVEL", "CONTENT_AREA", "STUDENT_GROUP")))
 		dbWriteTable(db, "SCHOOL_STUDENTGROUP", tmp, row.names=FALSE, append=TRUE) 
 
 		if (text.output) write.table(tmp, file=file.path(output.directory, "SCHOOL_STUDENTGROUP.dat"), row.names=FALSE, na="", quote=FALSE, sep="|")
@@ -489,18 +489,18 @@ function(sgp_object,
 		}
 
 		for (i in seq_along(tmp.list)) {
-			setnames(tmp.list[[i]], 5, "STUDENTGROUP")
+			setnames(tmp.list[[i]], 5, "STUDENT_GROUP")
 		}
 
 
-		tmp <- as.data.frame(subset(rbind.all(tmp.list), !is.na(DISTRICT_NUMBER) & !is.na(STUDENTGROUP) & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes"))
+		tmp <- as.data.frame(subset(rbind.all(tmp.list), !is.na(DISTRICT_NUMBER) & !is.na(STUDENT_GROUP) & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes"))
 
 		tmp.STUDENTGROUP <- data.frame(
 			KEY_VALUE_KEY="STUDENT_GROUP", ### NOTE: Must have underscore. It's an older version of the table
-			KEY_VALUE_CODE=sort(unique(as.integer(tmp$STUDENTGROUP))),
-			KEY_VALUE_TEXT=levels(tmp$STUDENTGROUP)[sort(unique(as.integer(tmp$STUDENTGROUP)))])
-#			KEY_VALUE_CODE=toupper(substr(unique(as.character(tmp$STUDENTGROUP)), 1, 50)), 
-#			KEY_VALUE_TEXT=unique(as.character(tmp$STUDENTGROUP)))
+			KEY_VALUE_CODE=sort(unique(as.integer(tmp$STUDENT_GROUP))),
+			KEY_VALUE_TEXT=levels(tmp$STUDENT_GROUP)[sort(unique(as.integer(tmp$STUDENT_GROUP)))])
+#			KEY_VALUE_CODE=toupper(substr(unique(as.character(tmp$STUDENT_GROUP)), 1, 50)), 
+#			KEY_VALUE_TEXT=unique(as.character(tmp$STUDENT_GROUP)))
 
 		tmp <- rbind(tmp.CONTENT_AREA, tmp.YEAR, tmp.GRADE, tmp.EMH, tmp.ETHNICITY, tmp.STUDENTGROUP)
 		tmp <- data.frame(KEY_VALUE_ID=1:dim(tmp)[1], tmp)

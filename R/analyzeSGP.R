@@ -45,7 +45,7 @@ function(sgp_object,
 	### Tests associated with provided arguments
 	###
 
-	if (simulate.sgps==TRUE) {
+	if (identical(simulate.sgps, TRUE)) {
 		if (is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
 			message("\tCSEMs are required in SGPstateData to simulate SGPs for confidence interval calculations. Confidence intervals will not be calculated.")
 			simulate.sgps <- FALSE
@@ -235,7 +235,7 @@ function(sgp_object,
 
 	get.panel.data <- function(sgp.type, sgp.iter) {
 
-		if (sgp.type=="sgp.percentiles") {
+		if (identical(sgp.type, 'sgp.percentiles')) {
 			return(as.data.frame(reshape(
 				sgp_object@Data[J("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), 
 					tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), sgp.iter[["sgp.grade.sequences"]][[1]])],
@@ -245,7 +245,7 @@ function(sgp_object,
 			direction="wide")))
 		}
 
-		if (sgp.type=="sgp.projections") {
+		if (identical(sgp.type, 'sgp.projections')) {
 			return(as.data.frame(reshape(
 				sgp_object@Data[J("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])-1), 
 					tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])-1), head(sgp.iter[["sgp.grade.sequences"]][[1]], -1))],
@@ -255,7 +255,7 @@ function(sgp_object,
 			direction="wide")))
 		}
 
-		if (sgp.type=="sgp.projections.lagged") {
+		if (identical(sgp.type, 'sgp.projections.lagged')) {
 			return(as.data.frame(reshape(
 				data.table(
 					data.table(sgp_object@Data, key="ID")[
@@ -300,17 +300,17 @@ function(sgp_object,
 
 	get.panel.data.vnames <- function(sgp.type, sgp.iter) {
 
-		if (sgp.type=="sgp.percentiles") {
+		if (identical(sgp.type, 'sgp.percentiles')) {
 			return(c("ID", paste("GRADE", tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), sep="."), 
 				paste("SCALE_SCORE", tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), sep=".")))
 		}
 
-		if (sgp.type=="sgp.projections") {
+		if (identical(sgp.type, 'sgp.projections')) {
 			return(c("ID", paste("GRADE", tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])-1), sep="."), 
 				paste("SCALE_SCORE", tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])-1), sep=".")))
 		}
 
-		if (sgp.type=="sgp.projections.lagged") {
+		if (identical(sgp.type, 'sgp.projections.lagged')) {
 			return(c("ID", paste("GRADE", head(tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), -1), sep="."), 
 				paste("SCALE_SCORE", head(tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), -1), sep=".")))
 		}
@@ -346,7 +346,7 @@ function(sgp_object,
 				par.start <- startParallel(parallel.config, 'BASELINE_MATRICES')
 
 				###  FOREACH flavor
-				if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
+				if (identical(toupper(parallel.config[['BACKEND']]), 'FOREACH')) {
 					tmp <- foreach(sgp.iter=iter(sgp.baseline.config), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE,
 						.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
 						return(baselineSGP(
@@ -363,7 +363,7 @@ function(sgp_object,
 					# if (exists("doSNOW.cl")) stopCluster(doSNOW.cl)
 					# if (exists("doPar.cl")) stopCluster(doPar.cl)
 				} else {
-					if (par.start$par.type=="SNOW") {
+					if (identical(par.start[['par.type']], 'SNOW')) {
 						# if (!is.null(par.start$workers)) internal.cl <- makeCluster(par.start$workers, type=parallel.config[["TYPE"]])
 						# if (is.null(parallel.config[["CLUSTER.OBJECT"]])) {
 							# cluster.object <- "internal.cl"
@@ -382,7 +382,7 @@ function(sgp_object,
 								rm(tmp)
 					} # END if (SNOW)
 					
-					if (par.start$par.type=="MULTICORE") {
+					if (identical(par.start[['par.type']], 'MULTICORE')) {
 						tmp <- mclapply(sgp.baseline.config, function(sgp.iter) baselineSGP(
 									sgp_object,
 									state=state,
@@ -442,7 +442,7 @@ function(sgp_object,
 			par.start <- startParallel(parallel.config, 'PERCENTILES')
 		
 			###  FOREACH flavor
-			if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
+			if (identical(toupper(parallel.config[['BACKEND']]), 'FOREACH')) {
 				if (simulate.sgps) {
 					if (!exists("calculate.confidence.intervals")) {
 						calculate.confidence.intervals <- state
@@ -486,7 +486,7 @@ function(sgp_object,
 
 			} else { # END FOREACH
 				###    SNOW flavor
-				if (par.start$par.type == 'SNOW') {
+				if (identical(par.start[['par.type']], 'SNOW')) {
 					# if (!is.null(par.start$workers)) internal.cl <- makeCluster(par.start$workers, type=parallel.config[["TYPE"]])
 					# if (is.null(parallel.config[["CLUSTER.OBJECT"]])) {
 						# cluster.object <- "internal.cl"
@@ -530,7 +530,7 @@ function(sgp_object,
 					} # END SNOW
 				
 				###  MULTICORE flavor
-				if (par.start$par.type == 'MULTICORE') {
+				if (identical(par.start[['par.type']], 'MULTICORE')) {
 					if (simulate.sgps) {
 						if (!exists("calculate.confidence.intervals")) {
 							calculate.confidence.intervals <- state
@@ -581,7 +581,7 @@ function(sgp_object,
 			par.start <- startParallel(parallel.config, 'BASELINE_PERCENTILES')
 
 			###  FOREACH flavor
-			if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
+			if (identical(toupper(parallel.config[['BACKEND']]), 'FOREACH')) {
 				tmp <- foreach(sgp.iter=iter(par.sgp.config), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE,
 					.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
 					return(studentGrowthPercentiles(
@@ -604,7 +604,7 @@ function(sgp_object,
 				rm(tmp)
 			} else { # END FOREACH	
 				###    SNOW flavor
-				if (par.start$par.type == 'SNOW') {
+				if (identical(par.start[['par.type']], 'SNOW')) {
 					tmp <- clusterApplyLB(par.start$internal.cl, par.sgp.config, 	function(sgp.iter)	studentGrowthPercentiles(
 						panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
 							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
@@ -626,7 +626,7 @@ function(sgp_object,
 					} # END SNOW
 				
 				###  MULTICORE flavor
-				if (par.start$par.type == 'MULTICORE') {
+				if (identical(par.start[['par.type']], 'MULTICORE')) {
 					tmp <- mclapply(par.sgp.config, function(sgp.iter)	studentGrowthPercentiles(
 						panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
 							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
@@ -661,7 +661,7 @@ function(sgp_object,
 		
 			par.start <- startParallel(parallel.config, 'PROJECTIONS')
 			###  FOREACH flavor
-			if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
+			if (identical(toupper(parallel.config[['BACKEND']]), 'FOREACH')) {
 				tmp <- foreach(sgp.iter=iter(par.sgp.config), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE,
 					.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
 					return(studentGrowthProjections(
@@ -684,7 +684,7 @@ function(sgp_object,
 				rm(tmp)
 			} else {# END FOREACH
 				###   SNOW flavor
-				if (par.start$par.type == 'SNOW') {
+				if (identical(par.start[['par.type']], 'SNOW')) {
 					tmp <- clusterApplyLB(par.start$internal.cl, par.sgp.config, 	function(sgp.iter)	studentGrowthProjections(
 						panel.data=list(Panel_Data=get.panel.data("sgp.projections", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
 							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
@@ -706,7 +706,7 @@ function(sgp_object,
 					} # END SNOW
 				
 				###  MULTICORE flavor
-				if (par.start$par.type == 'MULTICORE') {
+				if (identical(par.start[['par.type']], 'MULTICORE')) {
 					tmp <- mclapply(par.sgp.config, function(sgp.iter)	studentGrowthProjections(
 						panel.data=list(Panel_Data=get.panel.data("sgp.projections", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
 							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
@@ -742,7 +742,7 @@ function(sgp_object,
 			par.start <- startParallel(parallel.config, 'PROJECTIONS')
 
 			###  FOREACH flavor
-			if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
+			if (identical(toupper(parallel.config[['BACKEND']]), "FOREACH")) {
 				tmp <- foreach(sgp.iter=iter(par.sgp.config), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE,
 					.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
 					return(studentGrowthProjections(
@@ -766,7 +766,7 @@ function(sgp_object,
 				rm(tmp)
 			} else {# END FOREACH
 				###   SNOW flavor
-				if (par.start$par.type == 'SNOW') {
+				if (identical(par.start[['par.type']], 'SNOW')) {
 					tmp <- clusterApplyLB(par.start$internal.cl, par.sgp.config, 	function(sgp.iter)	studentGrowthProjections(
 						panel.data=list(Panel_Data=get.panel.data("sgp.projections", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
 							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
@@ -789,7 +789,7 @@ function(sgp_object,
 					} # END SNOW
 				
 				###  MULTICORE flavor
-				if (par.start$par.type == 'MULTICORE') {
+				if (identical(par.start[['par.type']], 'MULTICORE')) {
 					tmp <- mclapply(par.sgp.config, function(sgp.iter)	studentGrowthProjections(
 						panel.data=list(Panel_Data=get.panel.data("sgp.projections", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
 							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
@@ -825,7 +825,7 @@ function(sgp_object,
 			par.start <- startParallel(parallel.config, 'LAGGED_PROJECTIONS')
 		
 			###  FOREACH flavor
-			if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
+			if (identical(toupper(parallel.config[['BACKEND']]), 'FOREACH')) {
 				tmp <- foreach(sgp.iter=iter(par.sgp.config), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE,
 					.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
 					return(studentGrowthProjections(
@@ -849,7 +849,7 @@ function(sgp_object,
 				rm(tmp)
 			} else {# END FOREACH
 				###   SNOW flavor
-				if (par.start$par.type == 'SNOW') {
+				if (identical(par.start[['par.type']], 'SNOW')) {
 					tmp <- clusterApplyLB(par.start$internal.cl, par.sgp.config, 	function(sgp.iter)	studentGrowthProjections(
 						panel.data=list(Panel_Data=get.panel.data("sgp.projections.lagged", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
 							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
@@ -872,7 +872,7 @@ function(sgp_object,
 					} # END SNOW
 				
 				###  MULTICORE flavor
-				if (par.start$par.type == 'MULTICORE') {
+				if (identical(par.start[['par.type']], 'MULTICORE')) {
 					tmp <- mclapply(par.sgp.config, function(sgp.iter)	studentGrowthProjections(
 						panel.data=list(Panel_Data=get.panel.data("sgp.projections.lagged", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
 							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
@@ -908,7 +908,7 @@ function(sgp_object,
 			par.start <- startParallel(parallel.config, 'LAGGED_PROJECTIONS')
 
 			###  FOREACH flavor
-			if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
+			if (identical(toupper(parallel.config[['BACKEND']]), 'FOREACH')) {
 				tmp <- foreach(sgp.iter=iter(par.sgp.config), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE,
 					.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
 					return(studentGrowthProjections(
@@ -933,7 +933,7 @@ function(sgp_object,
 			} else {# END FOREACH
 
 			###  SNOW flavor
-			if (par.start$par.type == 'SNOW') {
+			if (identical(par.start[['par.type']] == 'SNOW')) {
 				tmp <- clusterApplyLB(par.start$internal.cl, par.sgp.config, 	function(sgp.iter)	studentGrowthProjections(
 					panel.data=list(Panel_Data=get.panel.data("sgp.projections.lagged", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
 						Knots_Boundaries=get.knots.boundaries(sgp.iter)),
@@ -956,7 +956,7 @@ function(sgp_object,
 			} # END SNOW
 			
 			###  MULTICORE flavor
-			if (par.start$par.type == 'MULTICORE') {
+			if (identical(par.start[['par.type']], 'MULTICORE')) {
 				tmp <- mclapply(par.sgp.config, function(sgp.iter)	studentGrowthProjections(
 					panel.data=list(Panel_Data=get.panel.data("sgp.projections.lagged", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
 						Knots_Boundaries=get.knots.boundaries(sgp.iter)),
