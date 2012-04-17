@@ -34,22 +34,22 @@ function(
 	
 	###  Basic configuration
 	
-	if (identical(toupper(parallel.config[['BACKEND']]), 'FOREACH')) {
+	if (toupper(parallel.config[['BACKEND']]) == 'FOREACH') {
 		require(foreach)
 		if (!is.na(parallel.config[['TYPE']]) & !identical(parallel.config[['TYPE']], "NA")) {
 			eval(parse(text=paste("require(", parallel.config[['TYPE']], ")")))
 		} else parallel.config[['TYPE']] <- "NA"
 
-		if (identical(parallel.config[['TYPE']], 'doMC') & is.null(parallel.config[['OPTIONS']][["preschedule"]])) {
+		if (parallel.config[['TYPE']]=="doMC" & is.null(parallel.config[['OPTIONS']][["preschedule"]])) {
 			if (is.list(parallel.config[['OPTIONS']])) {
 				parallel.config[['OPTIONS']][["preschedule"]]=FALSE
 			}	else parallel.config[['OPTIONS']]=list(preschedule=FALSE)
 		}
 
-		if (identical(parallel.config[['TYPE']], 'doParallel')) { 
-			if (identical(.Platform$OS.type, 'unix') & is.null(par.type)) par.type <- 'MULTICORE' 
-			if (!identical(.Platform$OS.type, 'unix') & is.null(par.type)) par.type <- 'SNOW'
-			if (identical(par.type, 'MULTICORE') & is.null(parallel.config[['OPTIONS']][["preschedule"]])) {
+		if (parallel.config[['TYPE']]=="doParallel") { 
+			if (.Platform$OS.type == "unix" & is.null(par.type)) par.type <- 'MULTICORE' 
+			if (.Platform$OS.type != "unix" & is.null(par.type)) par.type <- 'SNOW'
+			if (par.type == 'MULTICORE' & is.null(parallel.config[['OPTIONS']][["preschedule"]])) {
 				if (is.list(parallel.config[['OPTIONS']])) {
 					parallel.config[['OPTIONS']][["preschedule"]]=FALSE
 				}	else parallel.config[['OPTIONS']]=list(preschedule=FALSE)
@@ -59,19 +59,19 @@ function(
 		foreach.options <- parallel.config[['OPTIONS']] # works fine if NULL
 	} #  END FOREACH
 
-	if (identical(toupper(parallel.config[['BACKEND']]), 'MULTICORE')) {
+	if (toupper(parallel.config[['BACKEND']]) == 'MULTICORE') {
 		require(multicore)
 		par.type <- 'MULTICORE'
 	}
 
-	if (identical(toupper(parallel.config[['BACKEND']]), 'SNOW')) {
+	if (toupper(parallel.config[['BACKEND']]) == 'SNOW') {
 		require(snow)
 		par.type <- 'SNOW'
 	}
 
-	if (identical(toupper(parallel.config[['BACKEND']]), 'PARALLEL')) {
+	if (toupper(parallel.config[['BACKEND']]) == 'PARALLEL') {
 		# Weird error for MPI stopCluster(...) 'Error in NextMethod() : 'NextMethod' called from an anonymous function'  load snow first removes it.
-		if (!is.null(parallel.config[['TYPE']]) && identical(parallel.config[['TYPE']], 'MPI')) require(snow) 
+		if (!is.null(parallel.config[['TYPE']]) && parallel.config[['TYPE']] == 'MPI') require(snow) 
 		require(parallel)
 		if (!is.null(parallel.config[['TYPE']])) {
 			if (!parallel.config[['TYPE']] %in% c('SOCK', 'MPI')) {
@@ -79,12 +79,12 @@ function(
 			}
 			par.type <- 'SNOW'
 		} else {
-			if (identical(.Platform$OS.type, 'unix')) par.type <- 'MULTICORE' 
+			if (.Platform$OS.type == "unix") par.type <- 'MULTICORE' 
 			if (.Platform$OS.type != "unix") par.type <- 'SNOW'
 		}
 	}
 	
-	if (identical(par.type, 'SNOW')) {
+	if (par.type == 'SNOW') {
 		if (is.null(parallel.config[['TYPE']])) stop("The 'parallel.config$TYPE' must be specified ('SOCK' or 'MPI')")
 		if (!parallel.config[['TYPE']] %in% c('SOCK','MPI')) stop("The 'parallel.config$TYPE' must be 'SOCK' or 'MPI'")
 	}
@@ -99,31 +99,31 @@ function(
 	if (is.null(workers)) stop("parallel.config$WORKERS must, at a minimum, contain the number of parallel workers for all processes, 
 		or getOption('cores') must be specified to use MULTICORE parallel processing.")
 	
-	if (identical(toupper(parallel.config[['BACKEND']]), 'FOREACH')) {
+	if (toupper(parallel.config[['BACKEND']]) == 'FOREACH') {
 		par.type='FOREACH'
-		if (identical(parallel.config[['TYPE']], 'NA')) return(list(foreach.options=foreach.options, par.type=par.type))
-		if (identical(parallel.config[['TYPE']], 'doMC')) {
+		if (parallel.config[['TYPE']]=="NA") return(list(foreach.options=foreach.options, par.type=par.type))
+		if (parallel.config[['TYPE']]=="doMC") {
 			registerDoMC(workers)
 			return(list(foreach.options=foreach.options, par.type=par.type))
 		}
-		if (identical(parallel.config[['TYPE']], 'doMPI')) {
+		if (parallel.config[['TYPE']]=='doMPI') {
 			doPar.cl <- startMPIcluster(count=workers)
 			registerDoMPI(doPar.cl)
 			return(list(doPar.cl=doPar.cl, foreach.options=foreach.options, par.type=par.type))
 		}
-		if (identical(parallel.config[['TYPE']], 'doRedis')) {
+		if (parallel.config[['TYPE']]=='doRedis') {
 			redisWorker('jobs', port=10187) #  Doesn't seem to work.  Maybe get rid of this option/flavor?
 			registerDoRedis('jobs')
 			startLocalWorkers(n=workers, queue='jobs')
 			return(list(jobs='jobs', foreach.options=foreach.options, par.type=par.type))
 		}
-		if (identical(parallel.config[['TYPE']], 'doSNOW')) {
+		if (parallel.config[['TYPE']]=='doSNOW') {
 			doPar.cl=makeCluster(workers, type='SOCK')
 			registerDoSNOW(doPar.cl)
 			return(list(doPar.cl=doPar.cl, foreach.options=foreach.options, par.type=par.type))
 		}
-		if (identical(parallel.config[['TYPE']], 'doParallel')) {
-			if (identical(par.type, 'SNOW')) {
+		if (parallel.config[['TYPE']]=="doParallel") {
+			if (par.type == 'SNOW') {
 				doPar.cl <- makeCluster(workers, type='SOCK')
 				registerDoParallel(doPar.cl)
 				clusterEvalQ(doPar.cl, library(SGP))
@@ -135,8 +135,8 @@ function(
 		}
 	} # END if (FOREACH)
 
-	if (identical(par.type, 'SNOW')) {
-		# if (identical(parallel.config[['TYPE']], 'MPI')) {
+	if (par.type=='SNOW') {
+		# if (parallel.config[['TYPE']]=='MPI') {
 			# if (exists('par.start')) return() #don't try to restart a new config
 		# }
 		internal.cl <- makeCluster(eval(parse(text=workers)), type=parallel.config[['TYPE']]) # eval workers in case 'names' used
@@ -144,7 +144,7 @@ function(
 		return(list(internal.cl=internal.cl, par.type=par.type)) #  workers=workers,
 	}
 
-	if (identical(par.type, 'MULTICORE')) {
+	if (par.type=='MULTICORE') {
 		return(list(workers=workers, par.type=par.type))
 	}
 }

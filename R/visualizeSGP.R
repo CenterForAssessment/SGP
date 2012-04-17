@@ -83,7 +83,7 @@ function(sgp_object,
 	pretty_year <- function(x) sub("_", "-", x)
 
 	rbind.all <- function(.list, ...) {
-		if (identical(length(.list), 1)) return (.list[[1]])
+		if (length(.list)==1) return (.list[[1]])
 		Recall(c(list(rbind(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), ...)
 	}
 
@@ -199,14 +199,14 @@ function(sgp_object,
 
 		if (is.null(gaPlot.baseline)) {
 			gaPlot.baseline <- FALSE ## Default to FALSE if not set by user
-			if (identical(SGPstateData[[state]][['Growth']][['System_Type']], 'Cohort Referenced')) gaPlot.baseline <- FALSE
-			if (identical(SGPstateData[[state]][['Growth']][['System_Type']], 'Baseline Referenced')) gaPlot.baseline <- TRUE
-			if (identical(SGPstateData[[state]][['Growth']][['System_Type']], 'Cohort and Baseline Referenced')) gaPlot.baseline <- FALSE
+			if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort Referenced") gaPlot.baseline <- FALSE
+			if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Baseline Referenced") gaPlot.baseline <- TRUE
+			if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort and Baseline Referenced") gaPlot.baseline <- FALSE
 		}
 
 		par.start <- startParallel(parallel.config, 'GA_PLOTS')
 		
-		if (identical(par.start[['par.type']], 'FOREACH')) {
+		if (par.start$par.type=="FOREACH") {
 
 			foreach(gaPlot.iter=iter(get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students)), .packages="SGP", .inorder=FALSE,
 				.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
@@ -224,7 +224,7 @@ function(sgp_object,
 			} ## END dopar 
 		} ## END FOREACH
 		
-		if (identical(par.start[['par.type']], 'SNOW')) {
+		if (par.start$par.type=="SNOW") {
 			
 			gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students)
 			clusterApplyLB(par.start$internal.cl, gaPlot.list, function(gaPlot.iter) 
@@ -240,8 +240,7 @@ function(sgp_object,
 						pdf.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]])))
 		}
 		
-		if (identical(par.start[['par.type']], 'MULTICORE')) {
-
+		if (par.start$par.type=="MULTICORE") {
 			gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students)
 			mclapply(gaPlot.list, function(gaPlot.iter) 
 				growthAchievementPlot(
@@ -280,7 +279,7 @@ if ("studentGrowthPlot" %in% plot.types) {
 		if (year %in% tmp.cutscore.years) {
 			return(paste(content_area, year, sep="."))
 			} else {
-				if (identical(year, sort(c(year, tmp.cutscore.years))[1])) {
+				if (year==sort(c(year, tmp.cutscore.years))[1]) {
 					return(content_area)
 				} else {
 					return(paste(content_area, sort(tmp.cutscore.years)[which(year==sort(c(year, tmp.cutscore.years)))-1], sep="."))
@@ -342,9 +341,9 @@ if ("studentGrowthPlot" %in% plot.types) {
 
 		if (is.null(sgPlot.baseline)) {
 			sgPlot.baseline <- FALSE ## Default to cohort referenced is not set by user
-			if (identical(SGPstateData[[state]][['Growth']][['System_Type']], 'Cohort Referenced')) sgPlot.baseline <- FALSE
-			if (identical(SGPstateData[[state]][['Growth']][['System_Type']], 'Baseline Referenced')) sgPlot.baseline <- TRUE
-			if (identical(SGPstateData[[state]][['Growth']][['System_Type']], 'Cohort and Baseline Referenced')) sgPlot.baseline <- FALSE
+			if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort Referenced") sgPlot.baseline <- FALSE
+			if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Baseline Referenced") sgPlot.baseline <- TRUE
+			if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort and Baseline Referenced") sgPlot.baseline <- FALSE
 		}
 
 		if (sgPlot.baseline) {
@@ -725,7 +724,7 @@ if (sgPlot.produce.plots) {
 		
 		par.start <- startParallel(parallel.config, 'SG_PLOTS')
 
-		if (identical(par.start[['par.type']], 'FOREACH')) {
+		if (par.start$par.type=="FOREACH") {
 
 			foreach.options <- parallel.config[["OPTIONS"]] # works fine if NULL
 			foreach(sgPlot.iter=iter(get.sgPlot.iter(tmp.districts.and.schools)), .packages="SGP", .inorder=FALSE,
@@ -751,7 +750,7 @@ if (sgPlot.produce.plots) {
 			} ### END dopar
 		} ### END if FOREACH
 		
-		if (identical(par.start[['par.type']], 'SNOW')) {
+		if (par.start$par.type=="SNOW") {
 			
 			sgPlot.list <- get.sgPlot.iter(tmp.districts.and.schools)
 			clusterApplyLB(par.start$internal.cl, sgPlot.list, function(sgPlot.iter) 
@@ -775,7 +774,7 @@ if (sgPlot.produce.plots) {
 					sgPlot.baseline=sgPlot.baseline)))
 		} ### END if SNOW
 		
-		if (identical(par.start[['par.type']], 'MULTICORE')) {
+		if (par.start$par.type=="MULTICORE") {
 			
 			sgPlot.list <- get.sgPlot.iter(tmp.districts.and.schools)
 			mclapply(sgPlot.list, function(sgPlot.iter) 

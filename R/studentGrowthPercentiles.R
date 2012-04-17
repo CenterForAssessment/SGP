@@ -38,7 +38,7 @@ function(panel.data,         ## REQUIRED
 	##########################################################
 
 	rbind.all <- function(.list, ...){
-		if (identical(length(.list), 1)) return(.list[[1]])
+		if(length(.list)==1) return(.list[[1]])
 		Recall(c(list(rbind(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), ...)
 	}
 
@@ -137,7 +137,7 @@ function(panel.data,         ## REQUIRED
 
         get.my.knots.boundaries.path <- function(content_area, year) {
                 tmp.knots.boundaries.names <- names(Knots_Boundaries[[tmp.path.knots.boundaries]])[grep(content_area, names(Knots_Boundaries[[tmp.path.knots.boundaries]]))]
-		if (identical(length(tmp.knots.boundaries.names), 0)) {
+		if (length(tmp.knots.boundaries.names)==0) {
 			return(paste("[['", tmp.path.knots.boundaries, "']]", sep=""))
 		} else {
                         tmp.knots.boundaries.years <- sapply(strsplit(tmp.knots.boundaries.names, "[.]"), function(x) x[2])
@@ -145,7 +145,7 @@ function(panel.data,         ## REQUIRED
                                 if (year %in% tmp.knots.boundaries.years) {
                                         return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, ".", year, "']]", sep=""))
                                 } else {
-                                        if (identical(year, sort(c(year, tmp.knots.boundaries.years))[1])) {
+                                        if (year==sort(c(year, tmp.knots.boundaries.years))[1]) {
                                                 return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, "']]", sep=""))
                                         } else {
                                                 return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, ".", rev(sort(tmp.knots.boundaries.years))[1], "']]", sep=""))
@@ -270,7 +270,7 @@ function(panel.data,         ## REQUIRED
 				uniqs <- unique(quant)
 				reposition <- function(cut) {
 					flag <- x >= cut
-					if (identical(sum(flag), 0)) return(cut) else return(min(x[flag], na.rm = na.rm))
+					if (sum(flag) == 0) return(cut) else return(min(x[flag], na.rm = na.rm))
 				}
 				newquant <- sapply(uniqs, reposition)
 				retval[!flag] <- as.character(cut(x[!flag], breaks = newquant, 
@@ -377,12 +377,12 @@ function(panel.data,         ## REQUIRED
 		if (!is.null(variable)) {
 			tmp.scale <- variable
 		}
-			if (identical(distribution, "Skew-Normal")) {
+			if(distribution=="Skew-Normal") {
 				require(sn) 
 				tmp.shape <- tan((pi/2)*((min.max[1]+min.max[2]) - 2*scale_scores)/(min.max[2]-min.max[1]))
 				tmp.score <- round_any(as.numeric(rsn(length(scale_scores), location=scale_scores, scale=tmp.scale, shape=tmp.shape)), round)
 			}
-			if (identical(distribution, "Normal")) {
+			if(distribution=="Normal") {
 				tmp.score <- round_any(as.numeric(rnorm(length(scale_scores), mean=scale_scores, sd=tmp.scale)), round)
 			}
 			tmp.score[tmp.score < min.max[1]] <- min.max[1]
@@ -656,7 +656,7 @@ function(panel.data,         ## REQUIRED
 
 	ss.data <- .get.data.table(ss.data)
 
-        if (identical(dim(.get.panel.data(ss.data, 1, by.grade))[1], 0)) {
+        if (dim(.get.panel.data(ss.data, 1, by.grade))[1] == 0) {
                 tmp.messages <- "\tNOTE: Supplied data together with grade progression contains no data. Check data, function arguments and see help page for details.\n"
                 message(paste("\tStarted studentGrowthPercentiles", started.date))
                 message(paste("\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(tmp.gp, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
@@ -748,7 +748,7 @@ function(panel.data,         ## REQUIRED
 				}
 				for (k in seq(calculate.confidence.intervals$simulation.iterations)) { 
 					set.seed(k)
-					if (identical(k, 1)) {
+					if (k==1) {
 						tmp.csem.quantiles[[j]] <- data.frame(ID=tmp.data[["ID"]],
 						SGP_SIM_1=.get.quantiles(tmp.predictions, .csem.score.simulator(
 							scale_scores=tmp.data[[tail(SS,1)]],

@@ -51,7 +51,7 @@ require(gridBase)
 
 # Test for data to plot
 
-if (identical(length(bubble_plot_data.X), 0)) {
+if (length(bubble_plot_data.X)==0) {
 	return("No data supplied for plotting. No plot produced")
 }
 
@@ -94,7 +94,7 @@ if (is.null(bubble_plot_data.LEVELS)) {
    num.levels <- length(unique(bubble_plot_labels.LEVELS)); tmp.LEVELS <- bubble_plot_data.LEVELS
 }
 if (!is.null(bubble_plot_configs.BUBBLE_COLOR)) {
-    if (identical(num.levels, 1)) {
+    if (num.levels==1) {
 	my.colors <- bubble_plot_configs.BUBBLE_COLOR
     } else {
        temp.colors <- rgb2hsv(col2rgb(bubble_plot_configs.BUBBLE_COLOR))
@@ -106,7 +106,7 @@ if (!is.null(bubble_plot_configs.BUBBLE_COLOR)) {
      my.colors <- rev(rainbow_hcl(num.levels))
 }
 
-if (identical(bubble_plot_configs.BUBBLE_PLOT_FORMAT, "print")) {
+if (bubble_plot_configs.BUBBLE_PLOT_FORMAT=="print") {
      format.colors.background <- rgb(0.985, 0.985, 1.0)
      format.colors.border <- "grey20" 
      format.colors.font <- c("grey20", rgb(0.985, 0.985, 1.0))
@@ -275,7 +275,7 @@ haxis.vp <- viewport(name="haxis.vp",
 
 # Set up device
 
-if (identical(bubble_plot_configs.BUBBLE_PLOT_DEVICE, "PDF")) {
+if (bubble_plot_configs.BUBBLE_PLOT_DEVICE == "PDF") {
       pdf(file=file.path.and.name, width=fig.width, height=8.5, bg=format.colors.background, version="1.4")
 }
 
@@ -372,12 +372,12 @@ if (bubble_plot_configs.BUBBLE_TIPS) {
                              width=unit(2*text.buffer, "inches")+unit(1.0, "strwidth", bubble_plot_labels.BUBBLE_TITLES[i]), 
                              height=unit(1.5*text.buffer, "inches")+unit(1.0, "strheight", bubble_plot_labels.BUBBLE_TITLES[i]), 
                              gp=gpar(col="grey20", lwd=0.7, fill=rgb(1.0, 0.94, 0.83, 0.6)), just=indicate.coordinates$orientation)
-              if (identical(indicate.coordinates$orientation[1], 'left')) {
+              if (indicate.coordinates$orientation[1]=="left") {
                         tmp.x <- unit(indicate.coordinates$x, "npc") + unit(text.buffer, "inches")
               } else {
                         tmp.x <- unit(indicate.coordinates$x, "npc") - unit(text.buffer, "inches")
               }
-              if (identical(indicate.coordinates$orientation[2], 'bottom')) {
+              if (indicate.coordinates$orientation[2]=="bottom") {
                         tmp.y <- unit(indicate.coordinates$y, "npc") + 0.75*unit(text.buffer, "inches")
               } else {
                         tmp.y <- unit(indicate.coordinates$y, "npc") - 0.75*unit(text.buffer, "inches")
@@ -434,12 +434,12 @@ if (bubble_plot_configs.BUBBLE_TIPS) {
                              width=unit(2*text.buffer, "inches")+unit(1.0, "strwidth", bubble_plot_labels.BUBBLE_TITLES[i]), 
                              height=unit(1.5*text.buffer, "inches")+unit(1.0, "strheight", bubble_plot_labels.BUBBLE_TITLES[i]), 
                              gp=gpar(col="grey20", lwd=0.7, fill=rgb(1.0, 0.94, 0.83, 0.6)), just=indicate.coordinates$orientation)
-              if (identical(indicate.coordinates$orientation[1], 'left')) {
+              if (indicate.coordinates$orientation[1]=="left") {
                         tmp.x <- unit(indicate.coordinates$x, "npc") + unit(text.buffer, "inches")
               } else {
                         tmp.x <- unit(indicate.coordinates$x, "npc") - unit(text.buffer, "inches")
               }
-              if (identical(indicate.coordinates$orientation[2], 'bottom')) {
+              if (indicate.coordinates$orientation[2]=="bottom") {
                         tmp.y <- unit(indicate.coordinates$y, "npc") + 0.75*unit(text.buffer, "inches")
               } else {
                         tmp.y <- unit(indicate.coordinates$y, "npc") - 0.75*unit(text.buffer, "inches")
@@ -500,12 +500,12 @@ else {
                          width=unit(2*text.buffer, "inches")+unit(1.0, "strwidth", bubble_plot_labels.BUBBLE_TITLES[bubble_plot_data.INDICATE]), 
                          height=unit(1.5*text.buffer, "inches")+unit(1.0, "strheight", bubble_plot_labels.BUBBLE_TITLES[bubble_plot_data.INDICATE]), 
                          gp=gpar(col="grey20", lwd=0.7, fill=rgb(1.0, 0.94, 0.83, 0.6)), just=indicate.coordinates$orientation)
-          if (identical(indicate.coordinates$orientation[1], 'left')) {
+          if (indicate.coordinates$orientation[1]=="left") {
                     tmp.x <- unit(indicate.coordinates$x, "npc") + unit(text.buffer, "inches")
           } else {
                     tmp.x <- unit(indicate.coordinates$x, "npc") - unit(text.buffer, "inches")
           }
-          if (identical(indicate.coordinates$orientation[2], 'bottom')) {
+          if (indicate.coordinates$orientation[2]=="bottom") {
                     tmp.y <- unit(indicate.coordinates$y, "npc") + 0.75*unit(text.buffer, "inches")
           } else {
                     tmp.y <- unit(indicate.coordinates$y, "npc") - 0.75*unit(text.buffer, "inches")
@@ -545,12 +545,12 @@ else {
                          width=unit(2*text.buffer, "inches")+unit(1.0, "strwidth", bubble_plot_labels.BUBBLE_TITLES[bubble_plot_data.INDICATE]), 
                          height=unit(1.5*text.buffer, "inches")+unit(1.0, "strheight", bubble_plot_labels.BUBBLE_TITLES[bubble_plot_data.INDICATE]), 
                          gp=gpar(col="grey20", lwd=0.7, fill=rgb(1.0, 0.94, 0.83, 0.6)), just=indicate.coordinates$orientation)
-          if (identical(indicate.coordinates$orientation[1], 'left')) {
+          if (indicate.coordinates$orientation[1]=="left") {
                     tmp.x <- unit(indicate.coordinates$x, "npc") + unit(text.buffer, "inches")
           } else {
                     tmp.x <- unit(indicate.coordinates$x, "npc") - unit(text.buffer, "inches")
           }
-          if (identical(indicate.coordinates$orientation[2], 'bottom')) {
+          if (indicate.coordinates$orientation[2]=="bottom") {
                     tmp.y <- unit(indicate.coordinates$y, "npc") + 0.75*unit(text.buffer, "inches")
           } else {
                     tmp.y <- unit(indicate.coordinates$y, "npc") - 0.75*unit(text.buffer, "inches")
@@ -696,7 +696,7 @@ popViewport()
 
 # Turn off device
 
-if (identical(bubble_plot_configs.BUBBLE_PLOT_DEVICE, "PDF")) {
+if (bubble_plot_configs.BUBBLE_PLOT_DEVICE == "PDF") {
     dev.off()
 }
 
@@ -723,7 +723,7 @@ if (bubble_plot_pdftk.CREATE_CATALOG) {
 	new.file.path.and.name <- file.path(".pdftk_tmp", 
 		paste(substr(paste("000000", as.character(tmp.page.number), sep=""), nchar(tmp.page.number), nchar(tmp.page.number)+7), ".pdf", sep=""))
 	file.rename(file.path.and.name, new.file.path.and.name)
-	if (identical(tmp.page.number, 1)) {
+	if (tmp.page.number == 1) {
 cat("InfoKey: Creator
 InfoValue: R: A language and environment for statistical computing
 InfoKey: Author
