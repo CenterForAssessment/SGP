@@ -30,17 +30,17 @@ function(sgp_object,
 	## Adjust arguments based upon state being cohort referenced, baseline referenced, or both:
 
 	if (!is.null(SGPstateData[[state]][["Growth"]][["System_Type"]])) {
-		if (identical(SGPstateData[[state]][['Growth']][['System_Type']], 'Cohort Referenced')) {
+		if (SGPstateData[[state]][["Growth"]][["System_Type"]]=="Cohort Referenced") {
 			sgp.projections.lagged.baseline <- FALSE
 			my.sgp <- "SGP"
 			my.sgp.target <- "SGP_TARGET"
 		}
-		if (identical(SGPstateData[[state]][['Growth']][['System_Type']], 'Baseline Referenced')) {
+		if (SGPstateData[[state]][["Growth"]][["System_Type"]]=="Baseline Referenced") {
 			sgp.projections.lagged <- FALSE 
 			my.sgp <- "SGP_BASELINE"
 			my.sgp.target <- "SGP_TARGET_BASELINE"
 		}
-		if (identical(SGPstateData[[state]][['Growth']][['System_Type']], 'Cohort and Baseline Referenced')) {
+		if (SGPstateData[[state]][["Growth"]][["System_Type"]]=="Cohort and Baseline Referenced") {
 			my.sgp <- "SGP"
 			my.sgp.target <- "SGP_TARGET"
 		}
@@ -51,7 +51,7 @@ function(sgp_object,
 	"%w/o%" <- function(x,y) x[!x %in% y]
 
 	rbind.all <- function(.list, names.not.equal=FALSE, ...) {
-		if(identical(length(.list), 1)) return(.list[[1]])
+		if(length(.list)==1) return(.list[[1]])
 		if (names.not.equal) {
 			Recall(c(list(rbind.fill(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), names.not.equal=TRUE, ...)
 		} else {
@@ -84,7 +84,7 @@ function(sgp_object,
 		if (length(tmp.names) > 0 & !missing(years)) tmp.names <- tmp.names[sapply(strsplit(tmp.names, "[.]"), function(x) x[2] %in% years)]
 		if (length(tmp.names) > 0 & !missing(content_areas)) tmp.names <- tmp.names[sapply(strsplit(tmp.names, "[.]"), function(x) x[1] %in% content_areas)]
 
-		if (identical(length(tmp.names), 0) & sgp.percentiles) {
+		if (length(tmp.names) == 0 & sgp.percentiles) {
 		 tmp.messages <- c(tmp.messages, "\tNOTE: No cohort referenced SGP results available in SGP slot. No cohort referenced SGP results will be merged.\n")
 		 sgp.percentiles <- FALSE
 		}
@@ -135,7 +135,7 @@ function(sgp_object,
 			 if (length(tmp.names) > 0 & !missing(years)) tmp.names <- tmp.names[sapply(strsplit(tmp.names, "[.]"), function(x) x[2] %in% years)]
 			 if (length(tmp.names) > 0 & !missing(content_areas)) tmp.names <- tmp.names[sapply(strsplit(tmp.names, "[.]"), function(x) x[1] %in% content_areas)]
 		}
-		if (identical(length(tmp.baseline.names), 0) & sgp.percentiles.baseline) {
+		if (length(tmp.baseline.names) == 0 & sgp.percentiles.baseline) {
 			 tmp.messages <- c(tmp.messages, "\tNOTE: No baseline referenced SGP results available in SGP slot. No baseline referenced SGP results will be merged.\n")
 			 sgp.percentiles.baseline=FALSE
 		}
@@ -180,7 +180,7 @@ function(sgp_object,
 			 if (length(tmp.names.lagged) > 0 & !missing(years)) tmp.names.lagged <- tmp.names.lagged[sapply(strsplit(tmp.names.lagged, "[.]"), function(x) x[2] %in% years)]
 			 if (length(tmp.names.lagged) > 0 & !missing(content_areas)) tmp.names.lagged <- tmp.names.lagged[sapply(strsplit(tmp.names.lagged, "[.]"), function(x) x[1] %in% content_areas)]
 		}
-		if (identical(length(tmp.names.lagged), 0) & sgp.projections.lagged) {
+		if (length(tmp.names.lagged) == 0 & sgp.projections.lagged) {
 			 tmp.messages <- c(tmp.messages, "\tNOTE: No SGP lagged projection results available in SGP slot. No student growth projection targets will be produced.\n")
 			 sgp.projections.lagged <- FALSE
 		}
@@ -188,7 +188,7 @@ function(sgp_object,
 			 if (length(tmp.names.lagged.baseline) > 0 & !missing(years)) tmp.names.lagged.baseline <- tmp.names.lagged.baseline[sapply(strsplit(tmp.names.lagged.baseline, "[.]"), function(x) x[2] %in% years)]
 			 if (length(tmp.names.lagged.baseline) > 0 & !missing(content_areas)) tmp.names.lagged.baseline <- tmp.names.lagged.baseline[sapply(strsplit(tmp.names.lagged.baseline, "[.]"), function(x) x[1] %in% content_areas)]
 		}
-		if (identical(length(tmp.names.lagged.baseline), 0) & sgp.projections.lagged.baseline) {
+		if (length(tmp.names.lagged.baseline) == 0 & sgp.projections.lagged.baseline) {
 			 tmp.messages <- c(tmp.messages, "\tNOTE: No baseline SGP lagged projection results available in SGP slot. No baseline referenced student growth projection targets will be produced.\n")
 			 sgp.projections.lagged.baseline <- FALSE
 		}
