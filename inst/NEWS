@@ -1,3 +1,25 @@
+Changes in version: SGP_1.0-0.0
+
+  NEW FEATURES:
+
+  USER VISIBLE CHANGES:
+
+	  o Updated URLs in package to github site that hosts SGP code development.
+	  o Added timing to outputSGP and sqliteSGP and integrated outputSGP into abcSGP.
+	  o Baseline SGP tables embedded in SGP object have variable names appended with '_BASELINE'.
+	  o Streamlined growthAchievementPlot production by removing growthAchievementPlot_Styles and integrating its functionality elsewhere.
+	  o outputSGP now exports contents of @Data by default to 'Data' directory.
+
+  BUG FIXES:
+
+	  o Added PERCENT_CATCHING_UP_KEEPING_UP to summarizeSGP if SGP_TARGET is present.
+	  o Corrected issues with conversion of factors to characters in summarizeSGP.
+	  o Corrected names.type error in RI and NH lookup tables.
+	  o Corrected incorrect timing in visualizeSGP due to over writing time.started in function.
+	  o Rewrote merge in combineSGP that adds data to @Data.
+	  o Modified most == to 'identical' to prevent weird behavior that was beginning to emerge in non-standard use cases.
+
+
 Changes in version: SGP_0.9-0.0
 
   NEW FEATURES:

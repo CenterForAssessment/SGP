@@ -7,6 +7,9 @@ function(sgp_object,
 	text.output=TRUE,
 	output.directory=file.path("Data", "SchoolView")) {
 
+	started.at <- proc.time()
+	message(paste("\tStarted sqliteSGP in outputSGP", date()))
+
 	YEAR <- DISTRICT_NUMBER <- SCHOOL_NUMBER <- CONTENT_AREA <- DISTRICT_ENROLLMENT_STATUS <- GRADE <- ETHNICITY <- STUDENTGROUP <- SCHOOL_ENROLLMENT_STATUS <- EMH_LEVEL <- NULL
 
 	## Load packages
@@ -36,6 +39,16 @@ function(sgp_object,
 
 
 	## Utility functions
+
+		strtail <- function(s, n=1) {
+			if(n < 0) substring(s, 1-n) 
+			else substring(s, nchar(s)-n+1)
+		}
+
+		strhead <- function(s,n=1) {
+			if(n < 0) substr(s, 1, nchar(s)+n) 
+			else substr(s, 1, n)
+		}
 
 		.year.increment <- function(year, increment) {
 			sapply(increment, function(x) paste(as.numeric(unlist(strsplit(as.character(year), "_")))+x, collapse="_"))
@@ -100,8 +113,8 @@ function(sgp_object,
 	### Table 1. DISTRICT
 
 		field.types <- c( 
-			"DISTRICT_NUMBER INTEGER NOT NULL",
-			"CONTENT_AREA INTEGER NOT NULL",
+			"DISTRICT_NUMBER TEXT NOT NULL",
+			"CONTENT_AREA TEXT NOT NULL",
 			"YEAR INTEGER NOT NULL",
 			"MEDIAN_SGP REAL",
 			"MEDIAN_SGP_TARGET REAL",
@@ -124,8 +137,8 @@ function(sgp_object,
 	### Table 2. DISTRICT_GRADE
 
 		field.types <- c( 
-			"DISTRICT_NUMBER INTEGER NOT NULL",
-			"CONTENT_AREA INTEGER NOT NULL",
+			"DISTRICT_NUMBER TEXT NOT NULL",
+			"CONTENT_AREA TEXT NOT NULL",
 			"YEAR INTEGER NOT NULL",
 			"GRADE INTEGER NOT NULL",
 			"MEDIAN_SGP REAL",
@@ -149,8 +162,8 @@ function(sgp_object,
 	### Table 3. DISTRICT_ETHNICITY
 
 		field.types <- c(
-			"DISTRICT_NUMBER INTEGER NOT NULL",
-			"CONTENT_AREA INTEGER NOT NULL",
+			"DISTRICT_NUMBER TEXT NOT NULL",
+			"CONTENT_AREA TEXT NOT NULL",
 			"YEAR INTEGER NOT NULL",
 			"ETHNICITY INTEGER NOT NULL",
 			"MEDIAN_SGP REAL",
@@ -176,11 +189,11 @@ function(sgp_object,
 	### Table 4. DISTRICT_GRADE_ETHNICITY
 
 		field.types <- c(
-			"DISTRICT_NUMBER INTEGER NOT NULL",
-			"CONTENT_AREA INTEGER NOT NULL",
+			"DISTRICT_NUMBER TEXT NOT NULL",
+			"CONTENT_AREA TEXT NOT NULL",
 			"YEAR INTEGER NOT NULL",
-			"GRADE INTEGER NOT NULL",
-			"ETHNICITY INTEGER NOT NULL",
+			"GRADE TEXT NOT NULL",
+			"ETHNICITY TEXT NOT NULL",
 			"MEDIAN_SGP REAL",
 			"MEDIAN_SGP_TARGET REAL",
 			"PERCENT_AT_ABOVE_TARGET REAL",
@@ -202,8 +215,8 @@ function(sgp_object,
 	### Table 5. DISTRICT_STUDENTGROUP
 
 		field.types <- c(
-			"DISTRICT_NUMBER INTEGER NOT NULL",
-			"CONTENT_AREA INTEGER NOT NULL",
+			"DISTRICT_NUMBER TEXT NOT NULL",
+			"CONTENT_AREA TEXT NOT NULL",
 			"YEAR INTEGER NOT NULL",
 			"STUDENTGROUP TEXT NOT NULL",
 			"MEDIAN_SGP REAL",
@@ -240,11 +253,11 @@ function(sgp_object,
 	### Table 6. DISTRICT_GRADE_STUDENTGROUP
 
 		field.types <- c(
-			"DISTRICT_NUMBER INTEGER NOT NULL",
-			"CONTENT_AREA INTEGER NOT NULL",
+			"DISTRICT_NUMBER TEXT NOT NULL",
+			"CONTENT_AREA TEXT NOT NULL",
 			"YEAR INTEGER NOT NULL",
-			"GRADE INTEGER NOT NULL",
-			"STUDENTGROUP INTEGER NOT NULL",
+			"GRADE TEXT NOT NULL",
+			"STUDENTGROUP TEXT NOT NULL",
 			"MEDIAN_SGP REAL",
 			"MEDIAN_SGP_TARGET REAL",
 			"PERCENT_AT_ABOVE_TARGET REAL",
@@ -277,10 +290,10 @@ function(sgp_object,
 	## Table 7. SCHOOL
 
 		field.types <- c(
-			"DISTRICT_NUMBER INTEGER NOT NULL",
-			"SCHOOL_NUMBER INTEGER NOT NULL",
+			"DISTRICT_NUMBER TEXT NOT NULL",
+			"SCHOOL_NUMBER TEXT NOT NULL",
 			"EMH_LEVEL TEXT NOT NULL",
-			"CONTENT_AREA INTEGER NOT NULL",
+			"CONTENT_AREA TEXT NOT NULL",
 			"YEAR INTEGER NOT NULL",
 			"MEDIAN_SGP REAL",
 			"MEDIAN_SGP_TARGET REAL",
@@ -307,12 +320,12 @@ function(sgp_object,
 	## Table 8. SCHOOL_GRADE
 
 		field.types <- c(
-			"DISTRICT_NUMBER INTEGER NOT NULL",
-			"SCHOOL_NUMBER INTEGER NOT NULL",
+			"DISTRICT_NUMBER TEXT NOT NULL",
+			"SCHOOL_NUMBER TEXT NOT NULL",
 			"EMH_LEVEL TEXT NOT NULL",
-			"CONTENT_AREA INTEGER NOT NULL",
+			"CONTENT_AREA TEXT NOT NULL",
 			"YEAR INTEGER NOT NULL",
-			"GRADE INTEGER NOT NULL",
+			"GRADE TEXT NOT NULL",
 			"MEDIAN_SGP REAL",
 			"MEDIAN_SGP_TARGET REAL",
 			"PERCENT_AT_ABOVE_TARGET REAL",
@@ -338,12 +351,12 @@ function(sgp_object,
 	## Table 9. SCHOOL_ETHNICITY
 
 		field.types <- c(
-			"DISTRICT_NUMBER INTEGER NOT NULL",
-			"SCHOOL_NUMBER INTEGER NOT NULL",
+			"DISTRICT_NUMBER TEXT NOT NULL",
+			"SCHOOL_NUMBER TEXT NOT NULL",
 			"EMH_LEVEL TEXT NOT NULL",
-			"CONTENT_AREA INTEGER NOT NULL",
+			"CONTENT_AREA TEXT NOT NULL",
 			"YEAR INTEGER NOT NULL",
-			"ETHNICITY INTEGER NOT NULL",
+			"ETHNICITY TEXT NOT NULL",
 			"MEDIAN_SGP REAL",
 			"MEDIAN_SGP_TARGET REAL",
 			"PERCENT_AT_ABOVE_TARGET REAL",
@@ -353,7 +366,8 @@ function(sgp_object,
 			"ENROLLMENT_PERCENTAGE REAL")
 
 		tmp <- as.data.frame(sapply(convert.variables(subset(sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__CONTENT_AREA__YEAR__EMH_LEVEL__SCHOOL_ENROLLMENT_STATUS__ETHNICITY"]],
-			!is.na(SCHOOL_NUMBER) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(ETHNICITY) & SCHOOL_ENROLLMENT_STATUS=="Enrolled School: Yes")), unclass))
+			!is.na(SCHOOL_NUMBER) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(ETHNICITY) & SCHOOL_ENROLLMENT_STATUS=="Enrolled School: Yes")), 
+			unclass))
 		tmp <- data.frame(merge(tmp, as.data.frame(tmp.school.and.district.by.year), all.x=TRUE)) 
 	### Temporary stuff
 		names(tmp)[names(tmp)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET" 
@@ -371,10 +385,10 @@ function(sgp_object,
 	## Table 10. SCHOOL_STUDENTGROUP
 
 		field.types <- c(
-			"DISTRICT_NUMBER INTEGER NOT NULL",
-			"SCHOOL_NUMBER INTEGER NOT NULL",
+			"DISTRICT_NUMBER TEXT NOT NULL",
+			"SCHOOL_NUMBER TEXT NOT NULL",
 			"EMH_LEVEL TEXT NOT NULL",
-			"CONTENT_AREA INTEGER NOT NULL",
+			"CONTENT_AREA TEXT NOT NULL",
 			"YEAR INTEGER NOT NULL",
 			"STUDENTGROUP TEXT NOT NULL",
 			"MEDIAN_SGP REAL",
@@ -395,7 +409,7 @@ function(sgp_object,
 		}
 
 		tmp <- as.data.frame(convert.variables(subset(rbind.all(tmp.list), 
-			!is.na(SCHOOL_NUMBER) & YEAR %in% years & CONTENT_AREA %in% content_areas & !is.na(STUDENTGROUP) & SCHOOL_ENROLLMENT_STATUS=="Enrolled School: Yes")))
+			!is.na(SCHOOL_NUMBER) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(STUDENTGROUP) & SCHOOL_ENROLLMENT_STATUS=="Enrolled School: Yes")))
 		tmp <- as.data.frame(merge(tmp, as.data.frame(tmp.school.and.district.by.year), all.x=TRUE)) 
 		tmp$CONTENT_AREA <- unclass(tmp$CONTENT_AREA)
 		tmp$STUDENTGROUP <- unclass(tmp$STUDENTGROUP)
@@ -453,8 +467,9 @@ function(sgp_object,
 			!is.na(SCHOOL_NUMBER) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & SCHOOL_ENROLLMENT_STATUS=="Enrolled School: Yes")
 		tmp.EMH <- data.frame(
 			KEY_VALUE_KEY="EMH_LEVEL",
-			KEY_VALUE_CODE=c("E", "H", "M"), ## TEMP fix until EMH_LEVEL is fixed up
-#			KEY_VALUE_CODE=sort(unique(as.integer(tmp$EMH_LEVEL))),
+			KEY_VALUE_CODE=strhead(levels(tmp$EMH_LEVEL)[sort(unique(as.integer(tmp$EMH_LEVEL)))], 1), ## TEMP fix until EMH_LEVEL is fixed up
+#			KEY_VALUE_CODE=c("E", "H", "M"), ## TEMP fix until EMH_LEVEL is fixed up
+#			KEY_VALUE_CODE=sort(unique(as.integer(droplevels(tmp$EMH_LEVEL)))),
 			KEY_VALUE_TEXT= levels(tmp$EMH_LEVEL)[sort(unique(as.integer(tmp$EMH_LEVEL)))])
 
 		# ETHNICITY
@@ -499,6 +514,8 @@ function(sgp_object,
 ### Disconnect database
 ###
 
-dbDisconnect(db)
+	dbDisconnect(db)
+
+	message(paste("\tFinished sqliteSGP in outputSGP", date(), "in", timetaken(started.at), "\n"))
 
 } ### END sqliteSGP

@@ -36,7 +36,7 @@ function(
 	
 	if (toupper(parallel.config[['BACKEND']]) == 'FOREACH') {
 		require(foreach)
-		if (!is.na(parallel.config[['TYPE']]) | parallel.config[['TYPE']]!="NA") {
+		if (!is.na(parallel.config[['TYPE']]) & !identical(parallel.config[['TYPE']], "NA")) {
 			eval(parse(text=paste("require(", parallel.config[['TYPE']], ")")))
 		} else parallel.config[['TYPE']] <- "NA"
 

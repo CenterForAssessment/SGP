@@ -13,7 +13,7 @@ function(sgp_object,
 
 	### Set variables to NULL to prevent R CMD check warnings
 
-	tmp.simulation.dt <- variable <- WEIGHT <- ENROLLMENT_STATUS <- NULL
+	tmp.simulation.dt <- variable <- WEIGHT <- ENROLLMENT_STATUS <- STATE <- NULL
 
 	if (missing(sgp_object)) {
 		stop("User must supply a list containing a Student slot with long data. See documentation for details.")
@@ -173,7 +173,12 @@ function(sgp_object,
 				MEDIAN_SGP_STANDARD_ERROR="median_sgp_standard_error(SGP)")
 
 				if ("SGP_TARGET" %in% names(sgp_object@Data)) {
-					tmp.sgp.summaries <- c(tmp.sgp.summaries, MEDIAN_SGP_TARGET="median_na(SGP_TARGET)",  MEDIAN_SGP_TARGET_COUNT="num_non_missing(SGP_TARGET)")
+					tmp.sgp.summaries <- c(
+						tmp.sgp.summaries, 
+						MEDIAN_SGP_TARGET="median_na(SGP_TARGET)",  
+						MEDIAN_SGP_TARGET_COUNT="num_non_missing(SGP_TARGET)",
+						PERCENT_CATCHING_UP_KEEPING_UP="percent_in_category(CATCH_UP_KEEP_UP_STATUS, list(c('Catch Up: Yes', 'Keep Up: Yes')), list(c('Catch Up: Yes', 'Catch Up: No', 'Keep Up: Yes', 'Keep Up: No')))"
+					)
 				}
 
 			return(tmp.sgp.summaries)
@@ -362,12 +367,13 @@ function(sgp_object,
 	tmp.years <- list()
 	if (is.null(years)) {
 		for (i in content_areas) {
-			tmp.years[[i]] <- sort(tail(unique(sgp_object@Data[J("VALID_CASE", i)]$YEAR), state.multiple.year.summary))
+			tmp.years[[i]] <- tail(sort(unique(sgp_object@Data[J("VALID_CASE", i)]$YEAR)), state.multiple.year.summary)
 		}
 	} else {
 		if (!is.list(years)) {
 			for (i in content_areas) {
-				tmp.years[[i]] <- years 
+				tmp.years[[i]] <- tail(sort(unique(sgp_object@Data[J("VALID_CASE", i)]$YEAR))[
+					seq(which(sort(unique(sgp_object@Data[J("VALID_CASE", i)]$YEAR))==tail(sort(years), 1)))], state.multiple.year.summary)
 			}
 		} else {
 			if (!all(content_areas %in% names(years))) {
@@ -379,9 +385,9 @@ function(sgp_object,
 	}
 
 	for (i in names(tmp.years)) {
-		tmp.years[[i]] <- data.table(i, tmp.years[[i]])
+		tmp.years[[i]] <- data.frame(CONTENT_AREA=i, YEAR=tmp.years[[i]]) ## NOTE: data.frame necessary to treat factors correctly
 	}
-	content_areas.by.years <- rbind.all(tmp.years)
+	content_areas.by.years <- as.data.table(rbind.all(tmp.years))
 
 	if (is.null(sgp.summaries)) sgp.summaries <- summarizeSGP.config(sgp_object, "sgp.summaries")
 	if (is.null(summary.groups)) summary.groups <- summarizeSGP.config(sgp_object, "summary.groups")
@@ -403,7 +409,7 @@ function(sgp_object,
 
 	### Loop and send to summarizeSGP_INTERNAL
 
-	tmp.dt <- data.table(STATE=state, sgp_object@Data[J("VALID_CASE", content_areas.by.years)])[, variables.for.summaries[!is.na(variables.for.summaries)], with=FALSE]
+	tmp.dt <- sgp_object@Data[J("VALID_CASE", content_areas.by.years)][, variables.for.summaries, with=FALSE][, STATE:=as.factor(state)]
 
 	par.start <- startParallel(parallel.config, 'SUMMARY')
 

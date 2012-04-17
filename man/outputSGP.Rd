@@ -9,7 +9,7 @@
 \usage{
 outputSGP(sgp_object,
 	state=NULL,
-        output.type="SchoolView",
+        output.type=c("LONG_Data", "SchoolView"),
         baseline.sgps=FALSE,
         outputSGP_SUMMARY.years=NULL,
         outputSGP_SUMMARY.content_areas=NULL,
@@ -17,7 +17,7 @@ outputSGP(sgp_object,
         outputSGP_INDIVIDUAL.content_areas=NULL,
         outputSGP.anonymize=FALSE,
         outputSGP.student.groups=NULL,
-        outputSGP.directory=file.path("Data", "SchoolView"))
+        outputSGP.directory="Data")
 }
 
 \arguments{
@@ -29,7 +29,8 @@ outputSGP(sgp_object,
   }
   \item{content_areas}{A vector indicating the content areas to be included in the output. Default is to use all content areas.
   }
-  \item{output.type}{A character vector indicating what output type is requested. See source code for options.
+  \item{output.type}{A character vector indicating what output type is requested. Currently \code{LONG_Data} and \code{SchoolViewr}' are supported modes of output. \code{LONG_Data} 
+  exports the contents of the @Data slot in a pipe delimited format. \code{SchoolView} exports tables used for representation in SchoolView.  
   }
   \item{baseline.sgps}{Boolean vector indicating whether to output baseline SGPs for cohorts referenced SGPs.
   }
@@ -45,7 +46,7 @@ outputSGP(sgp_object,
   }
   \item{outputSGP.student.groups}{A list of variables to be used for student groups in individual and summary tables.
   }
-  \item{outputSGP.directory}{A a file path indicating where to save output files.
+  \item{outputSGP.directory}{A a file path indicating where to save output files. Defaults to \code{Data}.
   }
 }
 
@@ -54,7 +55,7 @@ outputSGP(sgp_object,
 
 \author{Damian W. Betebenner \email{dbetebenner@nciea.org}}
 
-\seealso{\code{\link{prepareSGP}}, \code{\link{analyzeSGP}}, \code{\link{combineSGP}}, \code{\link{summarizeSGP}}}
+\seealso{\code{\link{abcSGP}}, \code{\link{prepareSGP}}, \code{\link{analyzeSGP}}, \code{\link{combineSGP}}, \code{\link{summarizeSGP}}}
 
 \examples{
 \dontrun{

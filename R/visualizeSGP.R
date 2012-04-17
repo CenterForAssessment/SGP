@@ -44,7 +44,7 @@ function(sgp_object,
 		gaPlot.folder="Visualizations/growthAchievementPlots",
 		parallel.config=NULL) {
 
-	started.at <- proc.time()
+	started.at.visualizeSGP <- proc.time()
 	message(paste("\nStarted visualizeSGP", date(), "\n"))
 
 	### Setting variables to NULL to prevent R CMD check warnings
@@ -807,6 +807,8 @@ if (sgPlot.produce.plots) {
 
 } ## END if ("studentGrowthPlot" %in% plot.types) 
 
-	message(paste("Finished visualizeSGP", date(), "in", timetaken(started.at), "\n"))
+	setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
+
+	message(paste("Finished visualizeSGP", date(), "in", timetaken(started.at.visualizeSGP), "\n"))
 
 } ## END visualizeSGP Function
