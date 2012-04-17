@@ -58,25 +58,25 @@
 		my.labels <- list()
 		my.labels$x.year.label <- pretty_year(year.iter)
 		if (length(grep("PRIOR", y.variable.iter)) > 0) {
-			if (year.iter=="All Years") {
+			if (identical(year.iter, 'All Years')) {
 				my.labels$y.year <- "All Years"
 			} else {
 				my.labels$y.year <- paste(as.numeric(unlist(strsplit(as.character(year.iter), "_")))-1, collapse="_")
 			}
-			if (bubblePlot_LEVEL=="Summary") my.labels$y.year.label <- paste(pretty_year(my.labels$y.year), "Prior Percent at/above Proficient")
-			if (bubblePlot_LEVEL=="Individual") my.labels$y.year.label <- list(PRIOR=paste(pretty_year(my.labels$y.year), "Achievement Level"), CURRENT=paste(pretty_year(year.iter), "Achievement Level"))
-			if (bubblePlot_LEVEL=="Summary") my.labels$main.title <- paste(test.abbreviation.label, "Growth & Prior Achievement")
-			if (bubblePlot_LEVEL=="Individual") my.labels$main.title <- paste(test.abbreviation.label, "Growth & Achievement")
-			if (bubblePlot_LEVEL=="Summary") my.labels$pdf.title <- "Bubble_Plot_(Prior_Achievement)"
-			if (bubblePlot_LEVEL=="Individual") my.labels$pdf.title <- "Student_Bubble_Plot"
+			if (identical(bubblePlot_LEVEL, 'Summary')) my.labels$y.year.label <- paste(pretty_year(my.labels$y.year), "Prior Percent at/above Proficient")
+			if (identical(bubblePlot_LEVEL, 'Individual')) my.labels$y.year.label <- list(PRIOR=paste(pretty_year(my.labels$y.year), "Achievement Level"), CURRENT=paste(pretty_year(year.iter), "Achievement Level"))
+			if (identical(bubblePlot_LEVEL, 'Summary')) my.labels$main.title <- paste(test.abbreviation.label, "Growth & Prior Achievement")
+			if (identical(bubblePlot_LEVEL, 'Individual')) my.labels$main.title <- paste(test.abbreviation.label, "Growth & Achievement")
+			if (identical(bubblePlot_LEVEL, 'Summary')) my.labels$pdf.title <- "Bubble_Plot_(Prior_Achievement)"
+			if (identical(bubblePlot_LEVEL, 'Individual')) my.labels$pdf.title <- "Student_Bubble_Plot"
 		} else {
 			my.labels$y.year <- year.iter
-			if (bubblePlot_LEVEL=="Summary") my.labels$y.year.label <- paste(pretty_year(my.labels$y.year), "Percent at/above Proficient")
-			if (bubblePlot_LEVEL=="Individual") my.labels$y.year.label <- paste(pretty_year(my.labels$y.year), "Achievement Level")
-			if (bubblePlot_LEVEL=="Summary") my.labels$main.title <- paste(test.abbreviation.label, "Growth and Achievement")
-			if (bubblePlot_LEVEL=="Individual") my.labels$main.title <- paste(test.abbreviation.label, "Growth and Achievement")
-			if (bubblePlot_LEVEL=="Summary") my.labels$pdf.title <- "Bubble_Plot_(Current_Achievement)"
-			if (bubblePlot_LEVEL=="Individual") my.labels$pdf.title <- "Student_Bubble_Plot_(Current_Achievement)"
+			if (identical(bubblePlot_LEVEL, 'Summary')) my.labels$y.year.label <- paste(pretty_year(my.labels$y.year), "Percent at/above Proficient")
+			if (identical(bubblePlot_LEVEL, 'Individual')) my.labels$y.year.label <- paste(pretty_year(my.labels$y.year), "Achievement Level")
+			if (identical(bubblePlot_LEVEL, 'Summary')) my.labels$main.title <- paste(test.abbreviation.label, "Growth and Achievement")
+			if (identical(bubblePlot_LEVEL, 'Individual')) my.labels$main.title <- paste(test.abbreviation.label, "Growth and Achievement")
+			if (identical(bubblePlot_LEVEL, 'Summary')) my.labels$pdf.title <- "Bubble_Plot_(Current_Achievement)"
+			if (identical(bubblePlot_LEVEL, 'Individual')) my.labels$pdf.title <- "Student_Bubble_Plot_(Current_Achievement)"
 		}
 		return(my.labels)
 	}
@@ -251,11 +251,11 @@
 		# y.variable (include/not include prior achievement)
 
 		if (bPlot.prior.achievement & length(grep("PRIOR", names(tmp.data))) > 0) {
-			if (bubblePlot_LEVEL=="Summary") my.iters$tmp.y.variable <- c("PERCENT_AT_ABOVE_PROFICIENT", "PERCENT_AT_ABOVE_PROFICIENT_PRIOR")
-			if (bubblePlot_LEVEL=="Individual") my.iters$tmp.y.variable <- c("SCALE_SCORE", "SCALE_SCORE_PRIOR")
+			if (identical(bubblePlot_LEVEL, 'Summary')) my.iters$tmp.y.variable <- c("PERCENT_AT_ABOVE_PROFICIENT", "PERCENT_AT_ABOVE_PROFICIENT_PRIOR")
+			if (identical(bubblePlot_LEVEL, 'Individual')) my.iters$tmp.y.variable <- c("SCALE_SCORE", "SCALE_SCORE_PRIOR")
 		} else {
-			if (bubblePlot_LEVEL=="Summary") my.iters$tmp.y.variable <- "PERCENT_AT_ABOVE_PROFICIENT"
-			if (bubblePlot_LEVEL=="Individual") my.iters$tmp.y.variable <- "SCALE_SCORE"
+			if (identical(bubblePlot_LEVEL, 'Summary')) my.iters$tmp.y.variable <- "PERCENT_AT_ABOVE_PROFICIENT"
+			if (identical(bubblePlot_LEVEL, 'Individual')) my.iters$tmp.y.variable <- "SCALE_SCORE"
 		}
 		return(my.iters)
 	} ## END get.my.iters
@@ -285,7 +285,7 @@
 		tmp.number.variables <- unique(suppressWarnings(as.numeric(sapply(strsplit(
 			names.df[["names.type"]][grep("institution_multiple_membership", names.df[["names.type"]])], "_"), 
 			function(x) tail(x,1)))) %w/o% NA)
-		if (length(tmp.number.variables)==0) {
+		if (identical(length(tmp.number.variables), 0)) {
 			tmp.names <- NULL
 		} else {
 			for (i in seq(tmp.number.variables)) {
@@ -299,7 +299,7 @@
 					stop("\tNOTE: The same (non-zero) number of inclusion/weight Multiple Membership variables must exist as the number of multiple Membership variables.")
 				}
 
-				if (tmp.weight.length == 0) {
+				if (identical(tmp.weight.length, 0)) {
 					tmp.weights <- NULL
 				} else {
 					tmp.weights <- as.character(names.df[names.df$names.type==paste("institution_multiple_membership_", i, "_weight", sep=""), "names.sgp"])
@@ -308,7 +308,7 @@
 				if (tmp.inclusion.length != 0 & tmp.inclusion.length != tmp.length) {
 					stop("\tNOTE: The same number (or zero) of Multiple membership inclusion variables must exist as the number of multiple membership variables.")
 				}
-				if (tmp.inclusion.length == 0) {
+				if (identical(tmp.inclusion.length, 0)) {
 					tmp.inclusion <- NULL 
 				} else {
 					tmp.inclusion <- as.character(names.df[names.df$names.type==paste("institution_multiple_membership_", i, "_inclusion", sep=""), "names.sgp"])
@@ -1288,7 +1288,7 @@ if (22 %in% bPlot.styles) {
 		# Create labels and file path
 
 		bPlot.labels <- create.bPlot.labels(year.iter, y.variable.iter, bubblePlot_LEVEL) 
-		school.name.label <- as.character(bPlot.data[SCHOOL_NUMBER== school_number.iter]$SCHOOL_NAME[1])
+		school.name.label <- as.character(bPlot.data[SCHOOL_NUMBER==school_number.iter]$SCHOOL_NAME[1])
 
 		### Create bubblePlot ###
 		if (dim(bPlot.data)[1] > 0) { # some institutions don't teach all content areas (elementary math)
@@ -1642,7 +1642,7 @@ if (22 %in% bPlot.styles) {
 		# Create labels and file path
 
 		bPlot.labels <- create.bPlot.labels(year.iter, y.variable.iter, bubblePlot_LEVEL)
-		school.name.label <- as.character(bPlot.data[SCHOOL_NUMBER== school_number.iter]$SCHOOL_NAME[1])
+		school.name.label <- as.character(bPlot.data[SCHOOL_NUMBER==school_number.iter]$SCHOOL_NAME[1])
 
 		### Create bubblePlot ###
 
@@ -1794,7 +1794,7 @@ if (22 %in% bPlot.styles) {
 		# Create labels and file path
 
 		bPlot.labels <- create.bPlot.labels(year.iter, y.variable.iter, bubblePlot_LEVEL)
-		school.name.label <- as.character(bPlot.data[SCHOOL_NUMBER== school_number.iter]$SCHOOL_NAME[1])
+		school.name.label <- as.character(bPlot.data[SCHOOL_NUMBER==school_number.iter]$SCHOOL_NAME[1])
 
 		### Create bubblePlot ###
 			

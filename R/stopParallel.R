@@ -5,34 +5,34 @@ function(
 		) {
 	
 	
-	if (toupper(parallel.config[['BACKEND']]) == 'FOREACH') {
+	if (identical(toupper(parallel.config[['BACKEND']]), 'FOREACH')) {
 
-		if (parallel.config[['TYPE']]=="doMPI") {
+		if (identical(parallel.config[['TYPE']], 'doMPI')) {
 			closeCluster(par.start$doPar.cl)
 			return()
 		}
 
-		if (parallel.config[['TYPE']]=="doParallel" & par.start$par.type=='SNOW') {
+		if (identical(parallel.config[['TYPE']], 'doParallel') & identical(par.start[['par.type']], 'SNOW')) {
 			stopCluster(par.start$doPar.cl)
 			return()
 		}
 		
-		if (parallel.config[['TYPE']]=="doSNOW") {
+		if (identical(parallel.config[['TYPE']], 'doSNOW')) {
 			stopCluster(par.start$doPar.cl)
 			return()
 		}
 		
-		if (parallel.config[['TYPE']]=="doRedis") {
+		if (identical(parallel.config[['TYPE']], 'doRedis')) {
 			removeQueue(par.start$jobs)
 			return()
 		}
 	} #  END FOREACH
 
 	# Nothing required for MULTICORE (or doMC)
-	# if (toupper(parallel.config[['BACKEND']]) == 'MULTICORE') {
+	# if (identical(toupper(parallel.config[['BACKEND']]), 'MULTICORE')) {
 	# }
 
-	if (par.start$par.type == 'SNOW') {
+	if (identical(par.start[['par.type']], 'SNOW')) {
 		if (is.null(parallel.config[['CLUSTER.OBJECT']]))	 {
 			stopCluster(par.start$internal.cl)
 		}

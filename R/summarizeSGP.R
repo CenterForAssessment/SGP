@@ -47,7 +47,7 @@ function(sgp_object,
 	}
 
 	rbind.all <- function(.list, ...){
-		if(length(.list)==1) return(.list[[1]])
+		if (identical(length(.list), 1)) return(.list[[1]])
 		Recall(c(list(rbind(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), ...)
 	}
 
@@ -148,13 +148,13 @@ function(sgp_object,
 
 	summarizeSGP.config <- function(sgp_object, config.type) {
 
-		if (config.type=="sgp.summaries") {
+		if (identical(config.type, 'sgp.summaries')) {
 			all.achievement.levels <- SGPstateData[[state]][["Achievement"]][["Levels"]][[1]][!is.na(SGPstateData[[state]][["Achievement"]][["Levels"]][[2]])]
 			proficient.achievement.levels <- SGPstateData[[state]][["Achievement"]][["Levels"]][[1]][!is.na(SGPstateData[[state]][["Achievement"]][["Levels"]][[2]]) & 
 				SGPstateData[[state]][["Achievement"]][["Levels"]][[2]]=="Proficient"]
 
 			get.expression <- function(character.vector) {
-				if (length(character.vector)==0) {
+				if (identical(length(character.vector), 0)) {
 					return(NULL)
 				} else {
 					paste("list(c(", paste("'", paste(character.vector, collapse="', '"), "'", sep=""), "))", sep="")
@@ -184,7 +184,7 @@ function(sgp_object,
 			return(tmp.sgp.summaries)
 		}
 
-		if (config.type=="summary.groups") {
+		if (identical(config.type, 'summary.groups')) {
 			tmp.summary.groups <- list(
 				institution=c("STATE", getFromNames("institution")),
 				content=getFromNames("content"),
@@ -205,7 +205,7 @@ function(sgp_object,
 				return(tmp.summary.groups)
 		}
 		
-		if (config.type=="confidence.interval.groups") {
+		if (identical(config.type, 'confidence.interval.groups')) {
 			tmp.confidence.interval.groups <- list(
 				TYPE="Bootstrap",
 				VARIABLES="SGP",
@@ -229,7 +229,7 @@ function(sgp_object,
 		tmp.number.variables <- unique(suppressWarnings(as.numeric(sapply(strsplit(
 			names.df[["names.type"]][grep("institution_multiple_membership", names.df[["names.type"]])], "_"), 
 			function(x) tail(x,1)))) %w/o% NA)
-		if (length(tmp.number.variables)==0) {
+		if (identical(length(tmp.number.variables), 0)) {
 			tmp.names <- NULL
 		} else {
 			for (i in seq(tmp.number.variables)) {
@@ -243,7 +243,7 @@ function(sgp_object,
 					stop("\tNOTE: The same (non-zero) number of inclusion/weight Multiple Membership variables must exist as the number of multiple Membership variables.")
 				}
 
-				if (tmp.weight.length == 0) {
+				if (identical(tmp.weight.length, 0)) {
 					tmp.weights <- NULL
 				} else {
 					tmp.weights <- as.character(names.df[names.df$names.type==paste("institution_multiple_membership_", i, "_weight", sep=""), "names.sgp"]) %w/o% NA
@@ -252,7 +252,7 @@ function(sgp_object,
 				if (tmp.inclusion.length != 0 & tmp.inclusion.length != tmp.length) {
 					stop("\tNOTE: The same number (or zero) of Multiple membership inclusion variables must exist as the number of multiple membership variables.")
 				}
-				if (tmp.inclusion.length == 0) {
+				if (identical(tmp.inclusion.length, 0)) {
 					tmp.inclusion <- NULL 
 				} else {
 					tmp.inclusion <- as.character(names.df[names.df$names.type==paste("institution_multiple_membership_", i, "_inclusion", sep=""), "names.sgp"]) %w/o% NA
@@ -294,7 +294,7 @@ function(sgp_object,
 				group.format(confidence.interval.groups[["GROUPS"]][["growth_only_summary"]][[i]])), sep=""))
 		}
 
-		if(par.start$par.type=="FOREACH") {
+		if (identical(par.start[['par.type']], 'FOREACH')) {
 			if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
 	  			j <- k <- NULL ## To prevent R CMD check warnings
 	  			tmp.summary <- foreach(j=iter(sgp.groups), k=iter(sgp.groups %in% ci.groups), 
@@ -312,7 +312,7 @@ function(sgp_object,
 			}
 		} # END FOREACH flavor
 
-		if(par.start$par.type=="SNOW") {
+		if (identical(par.start[['par.type']], 'SNOW')) {
 			if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
 	  			j <- k <- NULL ## To prevent R CMD check warnings
 	  			summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], sgp.groups[x] %in% ci.groups))
@@ -329,7 +329,7 @@ function(sgp_object,
 			# if (is.null(parallel.config[['CLUSTER.OBJECT']]))	 stopCluster(internal.cl)
 		} # END 'SNOW' Flavor
  
-		if (par.start$par.type=="MULTICORE") {
+		if (identical(par.start[['par.type']], 'MULTICORE')) {
 			if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
 	  			j <- k <- NULL ## To prevent R CMD check warnings
 	  			summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], sgp.groups[x] %in% ci.groups))
@@ -415,7 +415,7 @@ function(sgp_object,
 
 	for (j in seq(length(summary.groups[["institution_multiple_membership"]])+1)) {
 		for (i in summary.groups[["institution"]]) {
-			if (j == 1) {
+			if (identical(j, 1)) {
 				sgp_object@Summary[[i]] <- summarizeSGP_INTERNAL(data=tmp.dt, i)
 			}
 			if (j > 1) {
@@ -450,7 +450,7 @@ function(sgp_object,
 						measure.vars=summary.groups[["institution_multiple_membership"]][[j-1]][["ENROLLMENT_STATUS"]])[,2]])
 					summary.groups[["institution_inclusion"]][[tmp.inst]] <- "ENROLLMENT_STATUS"
 				}
-				# if (par.start$par.type=="SNOW") clusterExport(par.start$internal.cl, "tmp.dt.long") # Don't think we need this...
+				# if (identical(par.start[['par.type']], 'SNOW')) clusterExport(par.start$internal.cl, "tmp.dt.long") # Don't think we need this...
 				summary.groups[["growth_only_summary"]][[tmp.inst]] <- "BY_GROWTH_ONLY" # Do we have an option to NOT include "BY_GROWTH_ONLY"? (would we want this?)
 				sgp_object@Summary[[i]] <- c(sgp_object@Summary[[i]], summarizeSGP_INTERNAL(tmp.dt.long, tmp.inst))
 			} 
