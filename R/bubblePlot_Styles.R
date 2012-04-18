@@ -774,8 +774,8 @@ if (10 %in% bPlot.styles) {
 ### by supplied bPlot.levels factor or without bPlot.levels factor
 #######################################################################################
 
-if (11 %in% bPlot.styles) {
-
+	if (11 %in% bPlot.styles) {
+stop("11")
 		started.at <- proc.time()
 		message(paste("\tStarted bubblePlot Style 11", date()))
 
