@@ -1331,7 +1331,7 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
 			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(school.name.label, year.iter, capwords(content_area.iter), 
-				"School", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
+				"Instructor", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
 			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "Instructor", "Style_50", paste("District", district_number.iter, sep="_")),
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 		} ## END if 
@@ -1429,7 +1429,7 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
 			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(district.name.label, year.iter, 
-				capwords(content_area.iter), "State", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
+				capwords(content_area.iter), "Instructor", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
 			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "Instructor", "Style_53", paste("District", district_number.iter, sep="_")),
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 
@@ -1582,7 +1582,7 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
 			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(district.name.label, year.iter, capwords(content_area.iter),
-				capwords(levels.iter), "State", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
+				capwords(levels.iter), "Instructor", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
 			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "Instructor", "Style_55", 
 				paste("District", district_number.iter, sep="_"), bPlot.levels.iter),
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
@@ -1684,7 +1684,7 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
 			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(school.name.label, year.iter, capwords(content_area.iter), 
-				"District", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
+				"Instructor", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
 			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "Instructor", "Style_57", paste("District", district_number.iter, sep="_")),
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 
@@ -1836,7 +1836,7 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
 			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(school.name.label, year.iter, capwords(content_area.iter), 
-				capwords(levels.iter), "District", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
+				capwords(levels.iter), capwords(bPlot.levels.iter), "Instructor", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
 			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "Instructor", "Style_59", 
 				paste("District", district_number.iter, sep="_"), bPlot.levels.iter),
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
@@ -1987,7 +1987,7 @@ if (22 %in% bPlot.styles) {
 
 		### Custom draft message with two median SGP lines
 
-		bPlot.message.style.100 <- c("grid.text(x=unit(50, 'native'), y=unit(50, 'native'), 'CONFIDENTIAL STUDENT DATA -\n DO NOT DISTRIBUTE', 
+		bPlot.message.style.100 <- c("grid.text(x=unit(50, 'native'), y=unit(mean(bPlot.data[['SCALE_SCORE']]), 'native'), 'CONFIDENTIAL STUDENT DATA -\n DO NOT DISTRIBUTE', 
 				rot=-30, gp=gpar(col='grey80', cex=2.9, alpha=0.8, fontface=2))", 
 			paste("grid.lines(x=unit(", school.content_area.grade.median, ", 'native'), y=c(0.03,0.97), gp=gpar(col='blue', lwd=1.75, lty=2, alpha=0.75))", sep=""),
 			paste("grid.text('Grade ", grade.iter, " Median = ", school.content_area.grade.median, "', x=unit(", school.content_area.grade.median,
@@ -2160,7 +2160,7 @@ if (22 %in% bPlot.styles) {
 	
 			### Custom draft message with two median SGP lines
 	
-				bPlot.message.style.150 <- c("grid.text(x=unit(50, 'native'), y=unit(50, 'native'), 'CONFIDENTIAL STUDENT DATA -\n DO NOT DISTRIBUTE', 
+				bPlot.message.style.150 <- c("grid.text(x=unit(50, 'native'), y=unit(mean(bPlot.data[['SCALE_SCORE']]), 'native'), 'CONFIDENTIAL STUDENT DATA -\n DO NOT DISTRIBUTE', 
 						rot=-30, gp=gpar(col='grey80', cex=2.9, alpha=0.8, fontface=2))", 
 					paste("grid.lines(x=unit(", instructor.content_area.grade.median, 
 						", 'native'), y=c(0.03,0.97), gp=gpar(col='blue', lwd=1.75, lty=2, alpha=0.75))", sep=""),
@@ -2338,7 +2338,7 @@ if (22 %in% bPlot.styles) {
 
 		### Custom message with two median SGP lines
 
-		bPlot.message.style.153 <- c("grid.text(x=unit(50, 'native'), y=unit(50, 'native'), 'CONFIDENTIAL STUDENT DATA -\n DO NOT DISTRIBUTE', 
+		bPlot.message.style.153 <- c("grid.text(x=unit(50, 'native'), y=unit(mean(bPlot.data[['SCALE_SCORE']]), 'native'), 'CONFIDENTIAL STUDENT DATA -\n DO NOT DISTRIBUTE', 
 				rot=-30, gp=gpar(col='grey80', cex=2.9, alpha=0.8, fontface=2))", 
 			paste("grid.lines(x=unit(", instructor.content_area.grade.median, ", 'native'), y=c(0.03,0.97), gp=gpar(col='blue', lwd=1.75, lty=2, alpha=0.75))", sep=""),
 			paste("grid.text('Grade ", grade.iter, " Median = ", instructor.content_area.grade.median, "', x=unit(", instructor.content_area.grade.median, 
