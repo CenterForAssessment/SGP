@@ -261,6 +261,16 @@
               ###
               ########################################################################################################
 
+              if (length(content_areas)==1) {
+                report.vp <- viewport(layout = grid.layout(5, 4, widths = unit(c(2.5, 0.1, 8.3, 0.1), rep("inches", 4)), 
+                                        heights = unit(c(0.55, 0.2, 7, 0.25, 0.5), rep("inches", 5))))
+
+                content_area_1.vp <- viewport(layout.pos.row=3, layout.pos.col=3)
+                top.border.vp <- viewport(layout.pos.row=1, layout.pos.col=1:4)
+                bottom.border.vp <- viewport(layout.pos.row=5, layout.pos.col=1:4)
+                left.legend.vp <- viewport(layout.pos.row=2:4, layout.pos.col=1)
+              }
+
               if (length(content_areas)==2) {
                 report.vp <- viewport(layout = grid.layout(7, 4, widths = unit(c(2.5, 0.1, 8.3, 0.1), rep("inches", 4)), 
                                         heights = unit(c(0.35, 0.2, 3.55, 0.25, 3.55, 0.2, 0.4), rep("inches", 7))))
@@ -331,9 +341,9 @@
               popViewport()
 
 
-              ## Left Legend (Only with two content areas depicted)
+              ## Left Legend (Only with one or two content areas depicted)
 
-              if (length(content_areas)==2) {
+              if (length(content_areas) %in% 1:2) {
 
 		pushViewport(left.legend.vp)
 
