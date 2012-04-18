@@ -247,8 +247,8 @@
                 report.width=8.5
                 report.height=11
               }
-              if (!length(content_areas) %in% c(2,3)) {
-                stop("Individual Student Report Templates currently only available for situations with 2 or 3 content areas.")
+              if (!length(content_areas) %in% 1:3) {
+                stop("Individual Student Report Templates currently only available for situations with 1, 2 or 3 content areas.")
               }
 
               pdf(paste(path.to.pdfs, "/", file_name, sep=""), 
