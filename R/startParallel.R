@@ -35,7 +35,7 @@ function(
 	###  Basic configuration
 	
 	if (toupper(parallel.config[['BACKEND']]) == 'FOREACH') {
-		require(foreach)
+		require(foreach); require(iterators) # Have to load iterators for sequential uses
 		if (!is.na(parallel.config[['TYPE']]) & !identical(parallel.config[['TYPE']], "NA")) {
 			eval(parse(text=paste("require(", parallel.config[['TYPE']], ")")))
 		} else parallel.config[['TYPE']] <- "NA"
@@ -101,7 +101,10 @@ function(
 	
 	if (toupper(parallel.config[['BACKEND']]) == 'FOREACH') {
 		par.type='FOREACH'
-		if (parallel.config[['TYPE']]=="NA") return(list(foreach.options=foreach.options, par.type=par.type))
+		if (parallel.config[['TYPE']]=="NA") {
+			registerDoSEQ() # prevents warning message
+			return(list(foreach.options=foreach.options, par.type=par.type))
+		}
 		if (parallel.config[['TYPE']]=="doMC") {
 			registerDoMC(workers)
 			return(list(foreach.options=foreach.options, par.type=par.type))

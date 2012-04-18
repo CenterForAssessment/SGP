@@ -6,6 +6,7 @@ function(
 	
 	
 	if (toupper(parallel.config[['BACKEND']]) == 'FOREACH') {
+		if (is.na(parallel.config[['TYPE']])) parallel.config[['TYPE']] <- "NA" # Stop checks on NA below.
 
 		if (parallel.config[['TYPE']]=="doMPI") {
 			closeCluster(par.start$doPar.cl)
