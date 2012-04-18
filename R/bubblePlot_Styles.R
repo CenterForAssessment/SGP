@@ -1254,7 +1254,7 @@ if (22 %in% bPlot.styles) {
 	if (50 %in% bPlot.styles) {
 
 		started.at <- proc.time()
-		message(paste("Started bubblePlot Style 50", date()), "\n")
+		message(paste("\tStarted bubblePlot Style 50", date()), "\n")
 
 		### Data sets and relevant quantities used for bubblePlots
 
@@ -1340,7 +1340,7 @@ if (22 %in% bPlot.styles) {
 		} ## End loop over school_number.iter
 		} ## End loop over year.iter
 
-		message(paste("Finished bubblePlot Style 50", date(), "in", timetaken(started.at), "\n"))
+		message(paste("\tFinished bubblePlot Style 50", date(), "in", timetaken(started.at), "\n"))
 
 	} ## END bubblePlot style 50
 
@@ -1352,7 +1352,7 @@ if (22 %in% bPlot.styles) {
 	if (53 %in% bPlot.styles) {
 
 		started.at <- proc.time()
-		message(paste("Started bubblePlot Style 53", date()), "\n")
+		message(paste("\tStarted bubblePlot Style 53", date()), "\n")
 
 		### Data sets and relevant quantities used for bubblePlots
 
@@ -1450,7 +1450,7 @@ if (22 %in% bPlot.styles) {
 	if (55 %in% bPlot.styles) {
 
 		started.at <- proc.time()
-		message(paste("Started bubblePlot Style 55", date()), "\n")
+		message(paste("\tStarted bubblePlot Style 55", date()), "\n")
 
 		### Data sets and relevant quantities used for bubblePlots
 
@@ -1593,7 +1593,7 @@ if (22 %in% bPlot.styles) {
 		} ## End loop over year.iter
 		} ## End loop over bPlot.levels.iter
 
-		message(paste("Finished bubblePlot Style 55", date(), "in", timetaken(started.at), "\n"))
+		message(paste("\tFinished bubblePlot Style 55", date(), "in", timetaken(started.at), "\n"))
 
 	} ## END bubblePlot style 55
 
@@ -1606,7 +1606,7 @@ if (22 %in% bPlot.styles) {
 	if (57 %in% bPlot.styles) {
 
 		started.at <- proc.time()
-		message(paste("Started bubblePlot Style 57", date()), "\n")
+		message(paste("\tStarted bubblePlot Style 57", date()), "\n")
 
 		### Data sets and relevant quantities used for bubblePlots
 
@@ -1693,7 +1693,7 @@ if (22 %in% bPlot.styles) {
 		} ## End loop over content_area.iter
 		} ## End loop over year.iter
 
-		message(paste("Finished bubblePlot Style 57", date(), "in", timetaken(started.at), "\n"))
+		message(paste("\tFinished bubblePlot Style 57", date(), "in", timetaken(started.at), "\n"))
 
 	} ## END bubblePlot style 57
 
@@ -1705,7 +1705,7 @@ if (22 %in% bPlot.styles) {
 	if (59 %in% bPlot.styles) {
 
 		started.at <- proc.time()
-		message(paste("Started bubblePlot Style 59", date()), "\n")
+		message(paste("\tStarted bubblePlot Style 59", date()), "\n")
 
 		### Data sets and relevant quantities used for bubblePlots
 
@@ -1847,7 +1847,7 @@ if (22 %in% bPlot.styles) {
 		} ## End loop over year.iter
 		} ## End loop over bPlot.levels.iter
 
-		message(paste("Finished bubblePlot Style 59", date(), "in", timetaken(started.at), "\n"))
+		message(paste("\tFinished bubblePlot Style 59", date(), "in", timetaken(started.at), "\n"))
 
 } ## END bubblePlot style 59
 
@@ -2062,7 +2062,7 @@ if (22 %in% bPlot.styles) {
 	if (150 %in% bPlot.styles) {
 
 		started.at <- proc.time()
-		message(paste("Started bubblePlot Style 150", date()), "\n")
+		message(paste("\tStarted bubblePlot Style 150", date()), "\n")
 
 		if (bPlot.demo) {
 			bPlot.anonymize <- TRUE
@@ -2228,7 +2228,7 @@ if (22 %in% bPlot.styles) {
 			} ## END content_area.iter loop
 			} ## END year.iter loop
 
-		message(paste("Finished bubblePlot Style 150", date(), "in", timetaken(started.at), "\n"))
+		message(paste("\tFinished bubblePlot Style 150", date(), "in", timetaken(started.at), "\n"))
 
 	} ## END if bubblePlot style 150
 
@@ -2241,7 +2241,7 @@ if (22 %in% bPlot.styles) {
 	if (153 %in% bPlot.styles) {
 
 		started.at <- proc.time()
-		message(paste("Started bubblePlot Style 153", date()), "\n")
+		message(paste("\tStarted bubblePlot Style 153", date()), "\n")
 
 		if (bPlot.demo) {
 			bPlot.anonymize <- TRUE
@@ -2407,7 +2407,7 @@ if (22 %in% bPlot.styles) {
 		} ## END content_area.iter loop
 		} ## END year.iter loop
 
-		message(paste("Finished bubblePlot Style 153", date(), "in", timetaken(started.at), "\n"))
+		message(paste("\tFinished bubblePlot Style 153", date(), "in", timetaken(started.at), "\n"))
 
 	} ## END if bubblePlot style 153
 
