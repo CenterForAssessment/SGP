@@ -754,8 +754,7 @@ if (10 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_LEGEND="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
-			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(district.name.label, year.iter, capwords(content_area.iter), 
-				"District", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
+			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(district.name.label, year.iter, capwords(content_area.iter), bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
 			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "District", "Style_10", paste("District", district_number.iter, sep="_")),
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 
@@ -1309,7 +1308,7 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_labels.LEVELS=NULL, #levels(bubblePlot[["subset.factor"]]),
 			bubble_plot_labels.BUBBLE_TIPS_LINES=list(paste(bPlot.labels$x.year.label, "Median SGP (Count)"),
 				paste(bPlot.labels$y.year.label, " (Count)")),
-			bubble_plot_labels.BUBBLE_TITLES=paste("Instructor",bPlot.data[["INSTRUCTOR_NAME"]], "-", bPlot.data[["SCHOOL_NAME"]]),
+			bubble_plot_labels.BUBBLE_TITLES=paste(bPlot.data[["INSTRUCTOR_NAME"]], "-", bPlot.data[["SCHOOL_NAME"]]),
 			bubble_plot_titles.MAIN=bPlot.labels$main.title,
 			bubble_plot_titles.SUB1=paste(state.name.label, "Classroom Performance"),
 			bubble_plot_titles.SUB2=paste(bPlot.labels$x.year.label, test.abbreviation.label, capwords(content_area.iter)),
@@ -1331,7 +1330,7 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
 			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(school.name.label, year.iter, capwords(content_area.iter), 
-				"Instructor", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
+				"Instructors", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
 			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "Instructor", "Style_50", paste("District", district_number.iter, sep="_")),
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 		} ## END if 
@@ -1407,7 +1406,7 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_labels.LEVELS=NULL, #levels(bubblePlot[["subset.factor"]]),
 			bubble_plot_labels.BUBBLE_TIPS_LINES=list(paste(bPlot.labels$x.year.label, "Median SGP (Count)"),
 				paste(bPlot.labels$y.year.label, " (Count)")),
-			bubble_plot_labels.BUBBLE_TITLES=paste("Instructor",bPlot.data[["INSTRUCTOR_NAME"]], "-", bPlot.data[["SCHOOL_NAME"]]),
+			bubble_plot_labels.BUBBLE_TITLES=paste(bPlot.data[["INSTRUCTOR_NAME"]], "-", bPlot.data[["SCHOOL_NAME"]]),
 			bubble_plot_titles.MAIN=bPlot.labels$main.title,
 			bubble_plot_titles.SUB1=paste(district.name.label, "Classroom Performance"),
 			bubble_plot_titles.SUB2=paste(bPlot.labels$x.year.label, test.abbreviation.label, capwords(content_area.iter)),
@@ -1429,7 +1428,7 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
 			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(district.name.label, year.iter, 
-				capwords(content_area.iter), "Instructor", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
+				capwords(content_area.iter), "Instructors", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
 			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "Instructor", "Style_53", paste("District", district_number.iter, sep="_")),
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 
@@ -1560,7 +1559,7 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_labels.LEVELS=levels(bPlot.data[[paste("PCT_", bPlot.levels.iter, sep="")]]),
 			bubble_plot_labels.BUBBLE_TIPS_LINES=list(paste(bPlot.labels$x.year.label, "Median SGP (Count)"),
 				paste(bPlot.labels$y.year.label, " (Count)")),
-			bubble_plot_labels.BUBBLE_TITLES=paste("Instructor",bPlot.data[["INSTRUCTOR_NAME"]], "-", bPlot.data[["SCHOOL_NAME"]]),
+			bubble_plot_labels.BUBBLE_TITLES=paste(bPlot.data[["INSTRUCTOR_NAME"]], "-", bPlot.data[["SCHOOL_NAME"]]),
 			bubble_plot_titles.MAIN=bPlot.labels$main.title,
 			bubble_plot_titles.SUB1=paste(district.name.label, "Classroom Performance"),
 			bubble_plot_titles.SUB2=paste(bPlot.labels$x.year.label, test.abbreviation.label, capwords(content_area.iter)),
@@ -1662,7 +1661,7 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_labels.LEVELS=NULL, #levels(bubblePlot[["subset.factor"]]),
 			bubble_plot_labels.BUBBLE_TIPS_LINES=list(paste(bPlot.labels$x.year.label, "Median SGP (Count)"),
 				paste(bPlot.labels$y.year.label, " (Count)")),
-			bubble_plot_labels.BUBBLE_TITLES=paste("Instructor",bPlot.data[["INSTRUCTOR_NAME"]], "-", bPlot.data[["SCHOOL_NAME"]]),
+			bubble_plot_labels.BUBBLE_TITLES=paste(bPlot.data[["INSTRUCTOR_NAME"]], "-", bPlot.data[["SCHOOL_NAME"]]),
 			bubble_plot_titles.MAIN=bPlot.labels$main.title,
 			bubble_plot_titles.SUB1=paste(school.name.label, "Classroom Performance"),
 			bubble_plot_titles.SUB2=paste(bPlot.labels$x.year.label, test.abbreviation.label, capwords(content_area.iter)),
@@ -1814,7 +1813,7 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_labels.LEVELS=levels(bPlot.data[[paste("PCT_", bPlot.levels.iter, sep="")]]),
 			bubble_plot_labels.BUBBLE_TIPS_LINES=list(paste(bPlot.labels$x.year.label, "Median SGP (Count)"),
 				paste(bPlot.labels$y.year.label, " (Count)")),
-			bubble_plot_labels.BUBBLE_TITLES=paste("Instructor",bPlot.data[["INSTRUCTOR_NAME"]], "-", bPlot.data[["SCHOOL_NAME"]]),
+			bubble_plot_labels.BUBBLE_TITLES=paste(bPlot.data[["INSTRUCTOR_NAME"]], "-", bPlot.data[["SCHOOL_NAME"]]),
 			bubble_plot_titles.MAIN=bPlot.labels$main.title,
 			bubble_plot_titles.SUB1=paste(school.name.label, "Classroom Performance"),
 			bubble_plot_titles.SUB2=paste(bPlot.labels$x.year.label, test.abbreviation.label, capwords(content_area.iter)),
