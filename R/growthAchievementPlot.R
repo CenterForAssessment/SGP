@@ -108,7 +108,7 @@
 				if (year==sort(c(year, tmp.cutscore.years))[1]) {
 					return(content_area)
 				} else {
-					return(paste(content_area, rev(sort(tmp.cutscore.years))[1], sep="."))
+					return(paste(content_area, sort(tmp.cutscore.years)[which(year==sort(c(year, tmp.cutscore.years)))-1], sep="."))
 				}
 			}
 		} else {
