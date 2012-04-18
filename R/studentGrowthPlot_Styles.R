@@ -239,7 +239,7 @@
 
 	## Start pdf device
               
-              if (length(content_areas)==2) {
+              if (length(content_areas) %in% 1:2) {
                 report.width=11
                 report.height=8.5
               }
