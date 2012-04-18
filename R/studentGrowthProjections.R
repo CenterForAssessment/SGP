@@ -140,18 +140,18 @@ function(panel.data,	## REQUIRED
 	get.my.cutscore.year.sgprojection <- function(Cutscores, content_area, year) {
 		tmp.cutscore.years <- sapply(strsplit(names(Cutscores)[grep(content_area, names(Cutscores))], "[.]"), function(x) x[2])
 		if (any(!is.na(tmp.cutscore.years))) {
-		if (year %in% tmp.cutscore.years) {
-                  return(paste(content_area, year, sep="."))
-               } else {
-                  if (year==sort(c(year, tmp.cutscore.years))[1]) {
-                     return(content_area)
-                  } else {
-                     return(paste(content_area, sort(tmp.cutscore.years)[which(year==sort(c(year, tmp.cutscore.years)))-1], sep="."))
-                  }
-               }
-             } else {
-                  return(content_area)
-             }
+			if (year %in% tmp.cutscore.years) {
+				return(paste(content_area, year, sep="."))
+			} else {
+				if (year==sort(c(year, tmp.cutscore.years))[1]) {
+					return(content_area)
+				} else {
+					return(paste(content_area, sort(tmp.cutscore.years)[which(year==sort(c(year, tmp.cutscore.years)))-1], sep="."))
+				}
+			}
+		} else {
+			return(content_area)
+		}
 	}
 
 	.check.my.coefficient.matrices <- function(names, grade, order) {

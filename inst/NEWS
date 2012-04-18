@@ -17,7 +17,7 @@ Changes in version: SGP_1.0-0.0
 	  o Corrected names.type error in RI and NH lookup tables.
 	  o Corrected incorrect timing in visualizeSGP due to over writing time.started in function.
 	  o Rewrote merge in combineSGP that adds data to @Data.
-	  o Modified most == to 'identical' to prevent weird behavior that was beginning to emerge in non-standard use cases.
+	  o Made correction to cutscore year lookup code in growthAchievementPlot and prepareSGP.
 
 
 Changes in version: SGP_0.9-0.0
