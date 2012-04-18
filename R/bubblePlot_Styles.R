@@ -2178,13 +2178,13 @@ if (22 %in% bPlot.styles) {
 					bubble_plot_data.LEVELS=NULL, 
 	
 					bubble_plot_data.BUBBLE_TIPS_LINES=list(paste(bPlot.data[['SGP']], " (", bPlot.data[['SGP_TARGET']], ")", sep=""),
-						paste(bPlot.data[['ACHIEVEMENT_LEVEL']], " (", bPlot.data[['SCALE_SCORE']], ")", sep=""),
+						bPlot.data[['SCALE_SCORE']],
 						paste(bPlot.data[['SGP_PRIOR']], " (", bPlot.data[['SGP_TARGET_PRIOR']], ")", sep=""),
-						paste(bPlot.data[['ACHIEVEMENT_LEVEL_PRIOR']], " (", bPlot.data[['SCALE_SCORE_PRIOR']], ")", sep="")),
+						paste(bPlot.data[['SCALE_SCORE_PRIOR']], " (", bPlot.data[['ACHIEVEMENT_LEVEL_PRIOR']], ")", sep="")),
 					bubble_plot_labels.BUBBLE_TIPS_LINES=list(paste(bPlot.labels$x.year.label, "Student Growth Percentile (Target)"),
-						paste(bPlot.labels$x.year.label, "Achievement Level (Scale Score)"),
+						paste(bPlot.labels$x.year.label, "Scale Score"),
 						paste(prior.year, "Prior Student Growth Percentile (Target)"),
-						paste(prior.year, "Prior Achievement Level (Scale Score)")),
+						paste(prior.year, "Prior Scale Score (Achievement)")),
 	
 					bubble_plot_labels.X=c("Growth", paste(bPlot.labels$x.year.label, "Student Growth Percentile")),
 					bubble_plot_labels.Y=c("Achievement", bPlot.labels$y.year.label),
@@ -2354,16 +2354,15 @@ if (22 %in% bPlot.styles) {
 				bubble_plot_data.SIZE=rep(50, length(bPlot.data[['SGP']])),
 				bubble_plot_data.LEVELS=NULL, 
 
-				bubble_plot_data.BUBBLE_TIPS_LINES=list(bPlot.data[['SGP']],
-					paste(bPlot.data[['ACHIEVEMENT_LEVEL']], " (", bPlot.data[['SCALE_SCORE']], ")", sep=""),
+				bubble_plot_data.BUBBLE_TIPS_LINES=list(bPlot.data[['SGP']], bPlot.data[['SCALE_SCORE']],
 					capwords(gsub("_", " ", bPlot.data[["CONTENT_AREA_PRIOR"]])),  # capwords not working with factors with "_" in them...
 					bPlot.data[['SGP_PRIOR']],
-					paste(bPlot.data[['ACHIEVEMENT_LEVEL_PRIOR']], " (", bPlot.data[['SCALE_SCORE_PRIOR']], ")", sep="")),
+					paste(bPlot.data[['SCALE_SCORE_PRIOR']], " (", bPlot.data[['ACHIEVEMENT_LEVEL_PRIOR']], ")", sep="")),
 				bubble_plot_labels.BUBBLE_TIPS_LINES=list(paste(bPlot.labels$x.year.label, "Student Growth Percentile"),
-					paste(bPlot.labels$x.year.label, "Achievement Level (Scale Score)"),
+					paste(bPlot.labels$x.year.label, "Scale Score"),
 					paste(prior.year, "Prior Subject / Norm Group"),
 					paste(prior.year, "Prior Student Growth Percentile"),
-					paste(prior.year, "Prior Achievement Level (Scale Score)")),
+					paste(prior.year, "Prior Scale Score (Achievement)")),
 
 				bubble_plot_labels.X=c("Growth", paste(bPlot.labels$x.year.label, "Student Growth Percentile")),
 				bubble_plot_labels.Y=c("Achievement", bPlot.labels$y.year.label),
