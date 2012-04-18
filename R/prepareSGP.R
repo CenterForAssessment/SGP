@@ -47,7 +47,7 @@
 					if (year==sort(c(year, tmp.cutscore.years))[1]) {
 						return(content_area)
 					} else {
-						return(paste(content_area, rev(sort(tmp.cutscore.years))[1], sep="."))
+						return(paste(content_area, sort(tmp.cutscore.years)[which(year==sort(c(year, tmp.cutscore.years)))-1], sep="."))
 					}
 				}
 			} else {
@@ -61,11 +61,11 @@
 				labels=SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]])
 		}
 
-		setkeyv(data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))
+		setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))
 			sgp_object@Data[["ACHIEVEMENT_LEVEL"]][sgp_object@Data[CJ("VALID_CASE", content_area, year, grade), which=TRUE, nomatch=0]] <- 
 			sgp_object@Data[CJ("VALID_CASE", content_area, year, grade), nomatch=0][, achievement_level_recode_INTERNAL(state, as.character(CONTENT_AREA), as.character(YEAR), GRADE, SCALE_SCORE), 
 				by=list(CONTENT_AREA, YEAR, GRADE)][["V1"]]
-		setkeyv(data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
+		setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 
 		return(sgp_object)
 	}
