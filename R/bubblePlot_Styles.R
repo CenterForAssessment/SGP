@@ -1986,8 +1986,8 @@ if (22 %in% bPlot.styles) {
 
 		### Custom draft message with two median SGP lines
 
-		bPlot.message.style.100 <- c("grid.text(x=unit(50, 'native'), y=unit(mean(bubble_plot_data.Y), 'native'), 'CONFIDENTIAL STUDENT DATA -\n DO NOT DISTRIBUTE', 
-				rot=-30, gp=gpar(col='grey80', cex=2.9, alpha=0.8, fontface=2))", 
+		bPlot.message.style.100 <- c("grid.text(x=unit(50, 'native'), y=unit(mean(bubble_plot_data.Y), 'native'), 'CONFIDENTIAL \n STUDENT DATA -\n DO NOT DISTRIBUTE', 
+				rot=-30, gp=gpar(col='grey80', cex=2, alpha=0.8, fontface=2))", 
 			paste("grid.lines(x=unit(", school.content_area.grade.median, ", 'native'), y=c(0.03,0.97), gp=gpar(col='blue', lwd=1.75, lty=2, alpha=0.75))", sep=""),
 			paste("grid.text('Grade ", grade.iter, " Median = ", school.content_area.grade.median, "', x=unit(", school.content_area.grade.median,
 				", 'native'), y=0.005, gp=gpar(col='blue', cex=0.85))", sep=""))
@@ -2159,11 +2159,11 @@ if (22 %in% bPlot.styles) {
 	
 			### Custom draft message with two median SGP lines
 	
-				bPlot.message.style.150 <- c("grid.text(x=unit(50, 'native'), y=unit(mean(bubble_plot_data.Y), 'native'), 'CONFIDENTIAL STUDENT DATA -\n DO NOT DISTRIBUTE', 
-						rot=-30, gp=gpar(col='grey80', cex=2.9, alpha=0.8, fontface=2))", 
+				bPlot.message.style.150 <- c("grid.text(x=unit(50, 'native'), y=unit(mean(bubble_plot_data.Y), 'native'), 'CONFIDENTIAL \n STUDENT DATA -\n DO NOT DISTRIBUTE', 
+						rot=-30, gp=gpar(col='grey80', cex=2, alpha=0.8, fontface=2))", 
 					paste("grid.lines(x=unit(", instructor.content_area.grade.median, 
 						", 'native'), y=c(0.03,0.97), gp=gpar(col='blue', lwd=1.75, lty=2, alpha=0.75))", sep=""),
-					paste("grid.text('Grade ", grade.iter, " Median = ", instructor.content_area.grade.median, "', x=unit(", 
+					paste("grid.text('Classroom Median = ", instructor.content_area.grade.median, "', x=unit(", 
 						instructor.content_area.grade.median, ", 'native'), y=0.005, gp=gpar(col='blue', cex=0.85))", sep=""))
 	
 			### Create bubblePlot ###
@@ -2337,10 +2337,10 @@ if (22 %in% bPlot.styles) {
 
 		### Custom message with two median SGP lines
 
-		bPlot.message.style.153 <- c("grid.text(x=unit(50, 'native'), y=unit(mean(bubble_plot_data.Y), 'native'), 'CONFIDENTIAL STUDENT DATA -\n DO NOT DISTRIBUTE', 
-				rot=-30, gp=gpar(col='grey80', cex=2.9, alpha=0.8, fontface=2))", 
+		bPlot.message.style.153 <- c("grid.text(x=unit(50, 'native'), y=unit(mean(bubble_plot_data.Y), 'native'), 'CONFIDENTIAL \n STUDENT DATA -\n DO NOT DISTRIBUTE', 
+				rot=-30, gp=gpar(col='grey80', cex=2, alpha=0.8, fontface=2))", 
 			paste("grid.lines(x=unit(", instructor.content_area.grade.median, ", 'native'), y=c(0.03,0.97), gp=gpar(col='blue', lwd=1.75, lty=2, alpha=0.75))", sep=""),
-			paste("grid.text('Grade ", grade.iter, " Median = ", instructor.content_area.grade.median, "', x=unit(", instructor.content_area.grade.median, 
+			paste("grid.text('Classroom Median = ", instructor.content_area.grade.median, "', x=unit(", instructor.content_area.grade.median, 
 				", 'native'), y=0.005, gp=gpar(col='blue', cex=0.85))", sep=""))
 
 		### Create bubblePlot ###
