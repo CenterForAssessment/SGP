@@ -1459,7 +1459,7 @@ if (22 %in% bPlot.styles) {
 		} ## End loop over content_area.iter
 		} ## End loop over year.iter
 
-		message(paste("Finished bubblePlot Style 53", date(), "in", timetaken(started.at), "\n"))
+		message(paste("\tFinished bubblePlot Style 53", date(), "in", timetaken(started.at), "\n"))
 
 	} ## END bubblePlot style 53
 
@@ -2380,9 +2380,28 @@ if (22 %in% bPlot.styles) {
 				SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.content_area]][[paste("GRADE", grade.iter, sep="_")]])) 
 
 		# Get median SGP for grade, school, content area combination
+		# Report 'Official' Median.  Should be the same as median(bPlot.data$SGP, na.rm=TRUE).  Use that if NULL for some reason (prevents error)
 
-			instructor.content_area.grade.median <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__ENROLLMENT_STATUS__CONTENT_AREA__YEAR__GRADE"]][
-				INSTRUCTOR_NUMBER==instructor.iter & CONTENT_AREA==content_area.iter & YEAR==year.iter & GRADE==grade.iter][["MEDIAN_SGP"]]
+			if (is.null(mult.memb)) {
+				if (bPlot.full.academic.year) {
+					instructor.content_area.grade.median <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__INSTRUCTOR_ENROLLMENT_STATUS"]][
+						INSTRUCTOR_NUMBER==instructor.iter & CONTENT_AREA==content_area.iter & YEAR==year.iter & GRADE==grade.iter][["MEDIAN_SGP"]]
+
+				} else {
+					instructor.content_area.grade.median <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]][
+						INSTRUCTOR_NUMBER==instructor.iter & CONTENT_AREA==content_area.iter & YEAR==year.iter & GRADE==grade.iter][["MEDIAN_SGP"]]
+				}
+			} else {
+				if (bPlot.full.academic.year) {
+					instructor.content_area.grade.median <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__ENROLLMENT_STATUS__CONTENT_AREA__YEAR__GRADE"]][
+						INSTRUCTOR_NUMBER==instructor.iter & CONTENT_AREA==content_area.iter & YEAR==year.iter & GRADE==grade.iter][["MEDIAN_SGP"]]
+				} else {
+					instructor.content_area.grade.median <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__GRADE"]][
+						INSTRUCTOR_NUMBER==instructor.iter & CONTENT_AREA==content_area.iter & YEAR==year.iter & GRADE==grade.iter][["MEDIAN_SGP"]]
+	
+				}			
+			}
+			if (is.null(instructor.content_area.grade.median)) instructor.content_area.grade.median <- median(bPlot.data$SGP, na.rm=TRUE)
 			if (bPlot.demo) instructor.content_area.grade.median <- median(bPlot.data$SGP, na.rm=TRUE)
 
 		### Custom message with two median SGP lines
