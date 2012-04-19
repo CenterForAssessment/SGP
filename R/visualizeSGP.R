@@ -122,7 +122,7 @@ function(sgp_object,
 		if (is.null(gaPlot.years)) {
 			tmp.years <- tail(sort(unique(sgp_object@Data$YEAR)), 1)
 		} else {
-			if (is.factor(sgp_objet@Data[['YEAR']])) {
+			if (is.factor(sgp_object@Data[['YEAR']])) {
 				tmp.years <- as.factor(gaPlot.years)
 			} else {
 				tmp.years <- gaPlot.years
