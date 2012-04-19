@@ -37,13 +37,6 @@ function(sgp_object,
 		}
 	}
 
-        ### Check for consistency between simulate.sgps and existence of CSEMs ###
-
-	if (simulate.sgps & is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
-                message("\tCSEMs are required in SGPstateData to simulate SGPs for confidence interval calculations. Confidence intervals will not be calculated.")
-                simulate.sgps <- FALSE
-        }
-
 
 	### prepareSGP ###
 
