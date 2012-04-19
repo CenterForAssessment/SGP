@@ -122,7 +122,11 @@ function(sgp_object,
 		if (is.null(gaPlot.years)) {
 			tmp.years <- tail(sort(unique(sgp_object@Data$YEAR)), 1)
 		} else {
-			tmp.years <- gaPlot.years
+			if (is.factor(sgp_objet@Data[['YEAR']])) {
+				tmp.years <- as.factor(gaPlot.years)
+			} else {
+				tmp.years <- gaPlot.years
+			}
 		}
 
 		# Content Areas
