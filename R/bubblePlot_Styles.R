@@ -2265,7 +2265,7 @@ if (22 %in% bPlot.styles) {
 					bubble_plot_configs.BUBBLE_PLOT_BACKGROUND_LABELS=NULL,
 					bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message.style.150,
 					bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste("Instructor", instructor.iter, year.iter, "Grade", grade.iter, 
-						capwords(content_area.iter), bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
+						capwords(content_area.iter), "Student_Plot", sep="_"), ".pdf", sep=""),
 					bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "Instructor", "Style_150", 
 						gsub(" ", "_", bPlot.data$DISTRICT_NAME[1]), gsub(" ", "_", bPlot.data$SCHOOL_NAME[1])),
 					bubble_plot_pdftk.CREATE_CATALOG=FALSE)
@@ -2462,7 +2462,7 @@ if (22 %in% bPlot.styles) {
 				bubble_plot_configs.BUBBLE_PLOT_BACKGROUND_LABELS=NULL,
 				bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message.style.153,
 				bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(gsub(" ", "_", bPlot.data$SCHOOL_NAME[1]), "Instructor", 
-					instructor.iter, year.iter, capwords(content_area.iter), bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
+					instructor.iter, year.iter, capwords(content_area.iter), "Student_Plot", sep="_"), ".pdf", sep=""),
 				bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "Instructor", "Style_153", 
 					gsub(" ", "_", bPlot.data$DISTRICT_NAME[1]), gsub(" ", "_", bPlot.data$SCHOOL_NAME[1])),
 				bubble_plot_pdftk.CREATE_CATALOG=FALSE)
