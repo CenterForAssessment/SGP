@@ -14,6 +14,10 @@ function(sgp_object,
         started.at.outputSGP <- proc.time()
         message(paste("\nStarted outputSGP ", date(), ": Files produced from outputSGP saved in '", outputSGP.directory, "'\n", sep=""))
 
+	### Create directory
+
+	dir.create(outputSGP.directory, recursive=TRUE, showWarnings=FALSE)
+
 	### Define varaibles (to prevent R CMD check warnings)
 
 	SCALE_SCORE <- CONTENT_AREA <- YEAR <- GRADE <- ID <- ETHNICITY <- GENDER <- LAST_NAME <- FIRST_NAME <- VALID_CASE <- DISTRICT_NUMBER <- SCHOOL_NUMBER <- NULL
@@ -68,7 +72,7 @@ if ("SchoolView" %in% output.type) {
 		years=outputSGP_SUMMARY.years,
 		content_areas=outputSGP_SUMMARY.content_areas,
 		other.student.groups=outputSGP.student.groups,
-		output.directory=file.path("SchoolView", outputSGP.directory))
+		output.directory=file.path(outputSGP.directory, "SchoolView"))
 
 
 	###
