@@ -101,38 +101,40 @@
 		}
 		
 		if ("INSTRUCTOR_NUMBER" %in% names(tmp.data)) { #Add both school and district number regardless of 
+			mult.memb <- get.multiple.membership(sgp_object@Names)
 			if (!"INSTRUCTOR_NAME" %in% names(tmp.data)) {
-				tmp.num <- seq(length(grep('INSTRUCTOR_NUMBER', names(sgp_object@Data))))
-				eval(parse(text=paste("sgp_object@Data$INSTRUCTOR_NAME_", tmp.num,
-					"<- paste('Instructor', as.factor(sgp_object@Data$INSTRUCTOR_NUMBER_", tmp.num, "))", sep="")))
+				if (!is.null(mult.memb)) {
+					tmp.num <- seq(length(grep('INSTRUCTOR_NUMBER', names(sgp_object@Data))))
+					eval(parse(text=paste("sgp_object@Data$INSTRUCTOR_NAME_", tmp.num,
+						"<- paste('Instructor', as.factor(sgp_object@Data$INSTRUCTOR_NUMBER_", tmp.num, "))", sep="")))
+				} else sgp_object@Data$INSTRUCTOR_NAME <- paste('Instructor', as.factor(sgp_object@Data$INSTRUCTOR_NUMBER), sep="")
 			}
 			tmp.names <- data.frame(sgp_object@Data[,c(grep('INSTRUCTOR_NUMBER', names(sgp_object@Data)), grep('INSTRUCTOR_NAME', names(sgp_object@Data)),
 				grep('SCHOOL_NUMBER', names(sgp_object@Data)), grep('SCHOOL_NAME', names(sgp_object@Data)),
 				grep('DISTRICT_NUMBER', names(sgp_object@Data)), grep('DISTRICT_NAME', names(sgp_object@Data))), with=FALSE])
-			inst.id.index <- grep('INSTRUCTOR_NUMBER', names(tmp.names)); inst.name.index <- grep('INSTRUCTOR_NAME', names(tmp.names))
-			sch.id.index <- grep('SCHOOL_NUMBER', names(tmp.names)); sch.name.index <- grep('SCHOOL_NAME', names(tmp.names))
-			dst.id.index <- grep('DISTRICT_NUMBER', names(tmp.names)); dst.name.index <- grep('DISTRICT_NAME', names(tmp.names))
-			tmp.names<- eval(parse(text=paste("unique(data.table(INSTRUCTOR_NUMBER=c(", paste("tmp.names[,", inst.id.index, "]", collapse=","),
-				"), INSTRUCTOR_NAME=c(", paste("tmp.names[,", inst.name.index, "]", collapse=","),
-				"), SCHOOL_NUMBER=rep(", paste("tmp.names[,", sch.id.index, "],", length(inst.id.index), collapse=","),
-				"), SCHOOL_NAME=rep(", paste("tmp.names[,", sch.name.index, "],", length(inst.id.index), collapse=","), 
-				"), DISTRICT_NUMBER=rep(", paste("tmp.names[,", dst.id.index, "],", length(inst.id.index), collapse=","),
-				"), DISTRICT_NAME=rep(", paste("tmp.names[,", dst.name.index, "],", length(inst.id.index), collapse=","), ")))")))
+			if (!is.null(mult.memb)) {
+				mult.memb.var.name <- paste(head(unlist(strsplit(mult.memb[[1]][["VARIABLE.NAMES"]][1], "_")), -1), collapse="_")
+				tmp.names.long <- data.table(melt(tmp.names, measure.vars=mult.memb[[1]][["VARIABLE.NAMES"]], value.name=mult.memb.var.name))
+				invisible(tmp.names.long[, variable := NULL])
+				invisible(tmp.names.long[, INSTRUCTOR_NAME := 
+					melt(tmp.names[,grep("INSTRUCTOR_NAME", names(tmp.names))], measure.vars=names(tmp.names)[grep("INSTRUCTOR_NAME", names(tmp.names))])[,2]])
+			} else tmp.names.long <- data.table(tmp.names)
+
 			if (bPlot.anonymize) {
-				tmp.names$INSTRUCTOR_NAME <- paste("Instructor", as.numeric(as.factor(tmp.names$INSTRUCTOR_NUMBER)))
-				tmp.names$SCHOOL_NAME <- paste("School", as.numeric(as.factor(tmp.names$SCHOOL_NUMBER)))
-				tmp.names$DISTRICT_NAME <- paste("District", as.numeric(as.factor(tmp.names$DISTRICT_NUMBER)))
+				tmp.names.long$INSTRUCTOR_NAME <- paste("Instructor", as.numeric(as.factor(tmp.names.long$INSTRUCTOR_NUMBER)))
+				tmp.names.long$SCHOOL_NAME <- paste("School", as.numeric(as.factor(tmp.names.long$SCHOOL_NUMBER)))
+				tmp.names.long$DISTRICT_NAME <- paste("District", as.numeric(as.factor(tmp.names.long$DISTRICT_NUMBER)))
 			}
 
 			if ("INSTRUCTOR_NUMBER" %in% names(tmp.data) & "SCHOOL_NUMBER" %in% names(tmp.data) & !"DISTRICT_NUMBER" %in% names(tmp.data)) {
-				setkeyv(tmp.names, c("INSTRUCTOR_NUMBER", "SCHOOL_NUMBER"))
+				setkeyv(tmp.names.long, c("INSTRUCTOR_NUMBER", "SCHOOL_NUMBER"))
 				setkeyv(tmp.data, c("INSTRUCTOR_NUMBER", "SCHOOL_NUMBER"))
 			}
 			if ("INSTRUCTOR_NUMBER" %in% names(tmp.data) & !"SCHOOL_NUMBER" %in% names(tmp.data) & "DISTRICT_NUMBER" %in% names(tmp.data)) {
-				setkeyv(tmp.names, c("INSTRUCTOR_NUMBER", "DISTRICT_NUMBER"))
+				setkeyv(tmp.names.long, c("INSTRUCTOR_NUMBER", "DISTRICT_NUMBER"))
 				setkeyv(tmp.data, c("INSTRUCTOR_NUMBER", "DISTRICT_NUMBER"))
 			}
-			tmp.names[tmp.data, mult="last"][!is.na(INSTRUCTOR_NUMBER)]
+			tmp.names.long[tmp.data, mult="last"][!is.na(INSTRUCTOR_NUMBER)]
 		} else tmp.names[tmp.data, mult="last"]
 	}
 
@@ -1251,6 +1253,10 @@ if (22 %in% bPlot.styles) {
 ### BubblePlot Style 50 (School level bubblePlots by Instructors)
 ###################################################################
 
+	#  Multiple Membership check for Instructors for ALL 50's level plots
+	mult.memb <- get.multiple.membership(sgp_object@Names)
+	mult.memb.var.name <- paste(head(unlist(strsplit(mult.memb[[1]][["VARIABLE.NAMES"]][1], "_")), -1), collapse="_")
+
 	if (50 %in% bPlot.styles) {
 
 		started.at <- proc.time()
@@ -1258,10 +1264,18 @@ if (22 %in% bPlot.styles) {
 
 		### Data sets and relevant quantities used for bubblePlots
 
-		if (bPlot.full.academic.year) {
-			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__ENROLLMENT_STATUS__CONTENT_AREA__YEAR"]][!is.na(ENROLLMENT_STATUS)]
+		if (is.null(mult.memb)) {
+			if (bPlot.full.academic.year) {
+				tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__INSTRUCTOR_ENROLLMENT_STATUS"]][!is.na(INSTRUCTOR_ENROLLMENT_STATUS)]
+			} else {
+				tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
+			}
 		} else {
-			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
+			if (bPlot.full.academic.year) {
+				tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__ENROLLMENT_STATUS__CONTENT_AREA__YEAR"]][!is.na(ENROLLMENT_STATUS)]
+			} else {
+				tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
+			}			
 		}
 
 		# Merge in school and district names and anonymize school names (if requested)
@@ -1356,10 +1370,18 @@ if (22 %in% bPlot.styles) {
 
 		### Data sets and relevant quantities used for bubblePlots
 
-		if (bPlot.full.academic.year) {
-			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__ENROLLMENT_STATUS__CONTENT_AREA__YEAR"]][!is.na(ENROLLMENT_STATUS)]
+		if (is.null(mult.memb)) {
+			if (bPlot.full.academic.year) {
+				tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__INSTRUCTOR_ENROLLMENT_STATUS"]][!is.na(INSTRUCTOR_ENROLLMENT_STATUS)]
+			} else {
+				tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
+			}
 		} else {
-			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
+			if (bPlot.full.academic.year) {
+				tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__ENROLLMENT_STATUS__CONTENT_AREA__YEAR"]][!is.na(ENROLLMENT_STATUS)]
+			} else {
+				tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
+			}			
 		}
 
 		# Merge in school and district names and anonymize school names (if requested)
@@ -1610,10 +1632,18 @@ if (22 %in% bPlot.styles) {
 
 		### Data sets and relevant quantities used for bubblePlots
 
-		if (bPlot.full.academic.year) {
-			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__ENROLLMENT_STATUS__CONTENT_AREA__YEAR"]][!is.na(ENROLLMENT_STATUS)]
+		if (is.null(mult.memb)) {
+			if (bPlot.full.academic.year) {
+				tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__INSTRUCTOR_ENROLLMENT_STATUS"]][!is.na(INSTRUCTOR_ENROLLMENT_STATUS)]
+			} else {
+				tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
+			}
 		} else {
-			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
+			if (bPlot.full.academic.year) {
+				tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__ENROLLMENT_STATUS__CONTENT_AREA__YEAR"]][!is.na(ENROLLMENT_STATUS)]
+			} else {
+				tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
+			}			
 		}
 
 		# Merge in school and district names and anonymize school names (if requested)
@@ -1918,7 +1948,7 @@ if (22 %in% bPlot.styles) {
 			}
 		}
 		mult.memb <- get.multiple.membership(sgp_object@Names)
-		mult.memb.var.name <- paste(head(unlist(strsplit(mult.memb[[1]][["VARIABLE.NAMES"]][1], "_")), -1), collapse="_")
+		if (!is.null(mult.memb)) mult.memb.var.name <- paste(head(unlist(strsplit(mult.memb[[1]][["VARIABLE.NAMES"]][1], "_")), -1), collapse="_")
 	} # END Individual Plot setup
  
 
@@ -2113,6 +2143,7 @@ if (22 %in% bPlot.styles) {
 						mult.memb[[1]][["ENROLLMENT_STATUS"]], with=FALSE]), 
 						measure.vars=mult.memb[[1]][["ENROLLMENT_STATUS"]])[,2]])
 				}
+				setkeyv(tmp.bPlot.data.1.long, "INSTRUCTOR_NUMBER")
 			}
 		
 			tmp.unique.schools <- my.iters$tmp.schools[my.iters$tmp.schools %in% unique(tmp.bPlot.data.1.long$SCHOOL_NUMBER)]
@@ -2152,9 +2183,28 @@ if (22 %in% bPlot.styles) {
 					SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.content_area]][[paste("GRADE", grade.iter, sep="_")]])) 
 	
 			# Get median SGP for grade, school, content area combination
+			# Report 'Official' Median.  Should be the same as median(bPlot.data$SGP, na.rm=TRUE).  Use that if NULL for some reason (prevents error)
 	
-				instructor.content_area.grade.median <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__ENROLLMENT_STATUS__CONTENT_AREA__YEAR__GRADE"]][
-					INSTRUCTOR_NUMBER==instructor.iter & CONTENT_AREA==content_area.iter & YEAR==year.iter & GRADE==grade.iter][["MEDIAN_SGP"]]
+				if (is.null(mult.memb)) {
+					if (bPlot.full.academic.year) {
+						instructor.content_area.grade.median <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__INSTRUCTOR_ENROLLMENT_STATUS"]][
+							INSTRUCTOR_NUMBER==instructor.iter & CONTENT_AREA==content_area.iter & YEAR==year.iter & GRADE==grade.iter][["MEDIAN_SGP"]]
+
+					} else {
+						instructor.content_area.grade.median <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]][
+							INSTRUCTOR_NUMBER==instructor.iter & CONTENT_AREA==content_area.iter & YEAR==year.iter & GRADE==grade.iter][["MEDIAN_SGP"]]
+					}
+				} else {
+					if (bPlot.full.academic.year) {
+						instructor.content_area.grade.median <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__ENROLLMENT_STATUS__CONTENT_AREA__YEAR__GRADE"]][
+							INSTRUCTOR_NUMBER==instructor.iter & CONTENT_AREA==content_area.iter & YEAR==year.iter & GRADE==grade.iter][["MEDIAN_SGP"]]
+					} else {
+						instructor.content_area.grade.median <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__GRADE"]][
+							INSTRUCTOR_NUMBER==instructor.iter & CONTENT_AREA==content_area.iter & YEAR==year.iter & GRADE==grade.iter][["MEDIAN_SGP"]]
+		
+					}			
+				}
+				if (is.null(instructor.content_area.grade.median)) instructor.content_area.grade.median <- median(bPlot.data$SGP, na.rm=TRUE)
 				if (bPlot.demo) instructor.content_area.grade.median <- median(bPlot.data$SGP, na.rm=TRUE)
 	
 			### Custom draft message with two median SGP lines
