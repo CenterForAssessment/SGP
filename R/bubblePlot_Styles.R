@@ -1924,7 +1924,7 @@ if (22 %in% bPlot.styles) {
 
 		### Get tmp.years, tmp.content_areas, and tmp.y.variable
 
-		my.iters <- get.my.iters(sgp_object@Data, bubblePlot_LEVEL)
+		my.iters <- get.my.iters(sgp_object@Data[J("VALID_CASE")], bubblePlot_LEVEL)
 
 		### Create PRIOR Scale Score, SGP, SGP_TARGET and CONTENT_AREA
 
@@ -1963,7 +1963,7 @@ if (22 %in% bPlot.styles) {
 
 		### Key @Data for fast subsetting
 
-		setkeyv(sgp_object@Data, c("YEAR", "CONTENT_AREA", "DISTRICT_NUMBER"))
+		setkeyv(sgp_object@Data, c("VALID_CASE", "YEAR", "CONTENT_AREA", "DISTRICT_NUMBER"))
 
 		### Start loops for bubblePlots
 
@@ -1973,7 +1973,7 @@ if (22 %in% bPlot.styles) {
 		
 		# Subset data
 
-		tmp.bPlot.data.1 <- sgp_object@Data[J(year.iter, content_area.iter, my.iters$tmp.districts[district.iter])]
+		tmp.bPlot.data.1 <- sgp_object@Data[J("VALID_CASE", year.iter, content_area.iter, my.iters$tmp.districts[district.iter])]
 
 		tmp.unique.schools <- my.iters$tmp.schools[my.iters$tmp.schools %in% unique(tmp.bPlot.data.1$SCHOOL_NUMBER)]
 		for (school.iter in seq_along(tmp.unique.schools)) { ### Loop over schools (seq_along to get integer for anonymize)
@@ -2098,7 +2098,7 @@ if (22 %in% bPlot.styles) {
 			bPlot.anonymize <- TRUE
 			setkeyv(sgp_object@Data, c("VALID_CASE", "YEAR", "CONTENT_AREA", "GRADE"))
 			my.iters$tmp.districts <- '-999'; my.iters$tmp.schools <- '-99'
-		} else setkeyv(sgp_object@Data, c("YEAR", "CONTENT_AREA", "DISTRICT_NUMBER"))
+		} else setkeyv(sgp_object@Data, c("VALID_CASE", "YEAR", "CONTENT_AREA", "DISTRICT_NUMBER"))
 
 
 		### Start loops for bubblePlots
@@ -2126,8 +2126,8 @@ if (22 %in% bPlot.styles) {
 				tmp.bPlot.data.1.long[['DISTRICT_NUMBER']] <- factor('-999')
 				tmp.bPlot.data.1.long[['DISTRICT_NAME']] <- factor('Psuedo District')
 				setkeyv(tmp.bPlot.data.1.long, "INSTRUCTOR_NUMBER")
-			}	else {
-				tmp.bPlot.data.1 <- sgp_object@Data[J(year.iter, content_area.iter, my.iters$tmp.districts[district.iter])]	
+			} else {
+				tmp.bPlot.data.1 <- sgp_object@Data[J("VALID_CASE", year.iter, content_area.iter, my.iters$tmp.districts[district.iter])]	
 					
 				tmp.bPlot.data.1.long <- data.table(melt(as.data.frame(tmp.bPlot.data.1), 
 					measure.vars=mult.memb[[1]][["VARIABLE.NAMES"]], 
@@ -2277,7 +2277,7 @@ if (22 %in% bPlot.styles) {
 			bPlot.anonymize <- TRUE
 			setkeyv(sgp_object@Data, c("VALID_CASE", "YEAR", "CONTENT_AREA", "GRADE"))
 			my.iters$tmp.districts <- '-999'; my.iters$tmp.schools <- '-99'
-		} else setkeyv(sgp_object@Data, c("YEAR", "CONTENT_AREA", "DISTRICT_NUMBER"))
+		} else setkeyv(sgp_object@Data, c("VALID_CASE", "YEAR", "CONTENT_AREA", "DISTRICT_NUMBER"))
 
 
 		### Start loops for bubblePlots
@@ -2305,7 +2305,7 @@ if (22 %in% bPlot.styles) {
 				tmp.bPlot.data.1.long[['DISTRICT_NUMBER']] <- factor('-999')
 				tmp.bPlot.data.1.long[['DISTRICT_NAME']] <- factor('Psuedo District')
 			}	else {
-				tmp.bPlot.data.1 <- sgp_object@Data[J(year.iter, content_area.iter, my.iters$tmp.districts[district.iter])]	
+				tmp.bPlot.data.1 <- sgp_object@Data[J("VALID_CASE", year.iter, content_area.iter, my.iters$tmp.districts[district.iter])]	
 					
 				tmp.bPlot.data.1.long <- data.table(melt(as.data.frame(tmp.bPlot.data.1), 
 					measure.vars=mult.memb[[1]][["VARIABLE.NAMES"]], 
