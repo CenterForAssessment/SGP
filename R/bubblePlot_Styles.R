@@ -2354,7 +2354,7 @@ if (22 %in% bPlot.styles) {
 			bPlot.data <- subset(tmp.bPlot.data, INSTRUCTOR_NUMBER==instructor.iter)
 	
 	
-			if (dim(bPlot.data)[1] > 0) {
+			if (dim(bPlot.data)[1] > 1) { # had error when only 1 kid per teacher
 	
 			for (grade.iter in sort(unique(bPlot.data$GRADE))) { ### Loop over grades levels. Only one in course sequences
 		
