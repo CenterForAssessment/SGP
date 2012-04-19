@@ -2143,6 +2143,7 @@ if (22 %in% bPlot.styles) {
 						mult.memb[[1]][["ENROLLMENT_STATUS"]], with=FALSE]), 
 						measure.vars=mult.memb[[1]][["ENROLLMENT_STATUS"]])[,2]])
 				}
+				setkeyv(tmp.bPlot.data.1.long, "INSTRUCTOR_NUMBER")
 			}
 		
 			tmp.unique.schools <- my.iters$tmp.schools[my.iters$tmp.schools %in% unique(tmp.bPlot.data.1.long$SCHOOL_NUMBER)]
