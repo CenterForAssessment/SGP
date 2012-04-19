@@ -1251,6 +1251,10 @@ if (22 %in% bPlot.styles) {
 ### BubblePlot Style 50 (School level bubblePlots by Instructors)
 ###################################################################
 
+	#  Multiple Membership check for Instructors for ALL 50's level plots
+	mult.memb <- get.multiple.membership(sgp_object@Names)
+	mult.memb.var.name <- paste(head(unlist(strsplit(mult.memb[[1]][["VARIABLE.NAMES"]][1], "_")), -1), collapse="_")
+
 	if (50 %in% bPlot.styles) {
 
 		started.at <- proc.time()
@@ -1258,10 +1262,18 @@ if (22 %in% bPlot.styles) {
 
 		### Data sets and relevant quantities used for bubblePlots
 
-		if (bPlot.full.academic.year) {
-			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__ENROLLMENT_STATUS__CONTENT_AREA__YEAR"]][!is.na(ENROLLMENT_STATUS)]
+		if (is.null(mult.memb)) {
+			if (bPlot.full.academic.year) {
+				tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__INSTRUCTOR_ENROLLMENT_STATUS"]][!is.na(INSTRUCTOR_ENROLLMENT_STATUS)]
+			} else {
+				tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
+			}
 		} else {
-			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
+			if (bPlot.full.academic.year) {
+				tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__ENROLLMENT_STATUS__CONTENT_AREA__YEAR"]][!is.na(ENROLLMENT_STATUS)]
+			} else {
+				tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
+			}			
 		}
 
 		# Merge in school and district names and anonymize school names (if requested)
@@ -1356,10 +1368,18 @@ if (22 %in% bPlot.styles) {
 
 		### Data sets and relevant quantities used for bubblePlots
 
-		if (bPlot.full.academic.year) {
-			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__ENROLLMENT_STATUS__CONTENT_AREA__YEAR"]][!is.na(ENROLLMENT_STATUS)]
+		if (is.null(mult.memb)) {
+			if (bPlot.full.academic.year) {
+				tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__INSTRUCTOR_ENROLLMENT_STATUS"]][!is.na(INSTRUCTOR_ENROLLMENT_STATUS)]
+			} else {
+				tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
+			}
 		} else {
-			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
+			if (bPlot.full.academic.year) {
+				tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__ENROLLMENT_STATUS__CONTENT_AREA__YEAR"]][!is.na(ENROLLMENT_STATUS)]
+			} else {
+				tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
+			}			
 		}
 
 		# Merge in school and district names and anonymize school names (if requested)
@@ -1610,10 +1630,18 @@ if (22 %in% bPlot.styles) {
 
 		### Data sets and relevant quantities used for bubblePlots
 
-		if (bPlot.full.academic.year) {
-			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__ENROLLMENT_STATUS__CONTENT_AREA__YEAR"]][!is.na(ENROLLMENT_STATUS)]
+		if (is.null(mult.memb)) {
+			if (bPlot.full.academic.year) {
+				tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__INSTRUCTOR_ENROLLMENT_STATUS"]][!is.na(INSTRUCTOR_ENROLLMENT_STATUS)]
+			} else {
+				tmp.bPlot.data <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
+			}
 		} else {
-			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
+			if (bPlot.full.academic.year) {
+				tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__ENROLLMENT_STATUS__CONTENT_AREA__YEAR"]][!is.na(ENROLLMENT_STATUS)]
+			} else {
+				tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
+			}			
 		}
 
 		# Merge in school and district names and anonymize school names (if requested)
