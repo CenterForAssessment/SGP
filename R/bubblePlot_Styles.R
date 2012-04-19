@@ -114,25 +114,27 @@
 				grep('DISTRICT_NUMBER', names(sgp_object@Data)), grep('DISTRICT_NAME', names(sgp_object@Data))), with=FALSE])
 			if (!is.null(mult.memb)) {
 				mult.memb.var.name <- paste(head(unlist(strsplit(mult.memb[[1]][["VARIABLE.NAMES"]][1], "_")), -1), collapse="_")
-				tmp.names <- data.table(melt(tmp.names, measure.vars=mult.memb[[1]][["VARIABLE.NAMES"]], value.name=mult.memb.var.name))
-				invisible(tmp.names[, variable := NULL])
-			} else tmp.names <- data.table(tmp.names)
+				tmp.names.long <- data.table(melt(tmp.names, measure.vars=mult.memb[[1]][["VARIABLE.NAMES"]], value.name=mult.memb.var.name))
+				invisible(tmp.names.long[, variable := NULL])
+				invisible(tmp.names.long[, INSTRUCTOR_NAME := 
+					melt(tmp.names[,grep("INSTRUCTOR_NAME", names(tmp.names))], measure.vars=names(tmp.names)[grep("INSTRUCTOR_NAME", names(tmp.names))])[,2]])
+			} else tmp.names.long <- data.table(tmp.names)
 
 			if (bPlot.anonymize) {
-				tmp.names$INSTRUCTOR_NAME <- paste("Instructor", as.numeric(as.factor(tmp.names$INSTRUCTOR_NUMBER)))
-				tmp.names$SCHOOL_NAME <- paste("School", as.numeric(as.factor(tmp.names$SCHOOL_NUMBER)))
-				tmp.names$DISTRICT_NAME <- paste("District", as.numeric(as.factor(tmp.names$DISTRICT_NUMBER)))
+				tmp.names.long$INSTRUCTOR_NAME <- paste("Instructor", as.numeric(as.factor(tmp.names.long$INSTRUCTOR_NUMBER)))
+				tmp.names.long$SCHOOL_NAME <- paste("School", as.numeric(as.factor(tmp.names.long$SCHOOL_NUMBER)))
+				tmp.names.long$DISTRICT_NAME <- paste("District", as.numeric(as.factor(tmp.names.long$DISTRICT_NUMBER)))
 			}
 
 			if ("INSTRUCTOR_NUMBER" %in% names(tmp.data) & "SCHOOL_NUMBER" %in% names(tmp.data) & !"DISTRICT_NUMBER" %in% names(tmp.data)) {
-				setkeyv(tmp.names, c("INSTRUCTOR_NUMBER", "SCHOOL_NUMBER"))
+				setkeyv(tmp.names.long, c("INSTRUCTOR_NUMBER", "SCHOOL_NUMBER"))
 				setkeyv(tmp.data, c("INSTRUCTOR_NUMBER", "SCHOOL_NUMBER"))
 			}
 			if ("INSTRUCTOR_NUMBER" %in% names(tmp.data) & !"SCHOOL_NUMBER" %in% names(tmp.data) & "DISTRICT_NUMBER" %in% names(tmp.data)) {
-				setkeyv(tmp.names, c("INSTRUCTOR_NUMBER", "DISTRICT_NUMBER"))
+				setkeyv(tmp.names.long, c("INSTRUCTOR_NUMBER", "DISTRICT_NUMBER"))
 				setkeyv(tmp.data, c("INSTRUCTOR_NUMBER", "DISTRICT_NUMBER"))
 			}
-			tmp.names[tmp.data, mult="last"][!is.na(INSTRUCTOR_NUMBER)]
+			tmp.names.long[tmp.data, mult="last"][!is.na(INSTRUCTOR_NUMBER)]
 		} else tmp.names[tmp.data, mult="last"]
 	}
 
