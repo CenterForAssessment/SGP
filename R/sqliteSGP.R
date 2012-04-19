@@ -34,7 +34,7 @@ function(sgp_object,
 			tmp.state <- gsub(" ", "_", state)
 		}
 
-		dir.create(output.directory, showWarnings=FALSE)
+		dir.create(output.directory, recursive=TRUE, showWarnings=FALSE)
 		db <- dbConnect(SQLite(), dbname=file.path(output.directory, paste(tmp.state, "_Data_SQLITE.sqlite", sep="")))
 
 
