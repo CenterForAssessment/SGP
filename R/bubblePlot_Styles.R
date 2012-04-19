@@ -1894,7 +1894,7 @@ if (22 %in% bPlot.styles) {
 
 		### Get tmp.years, tmp.content_areas, and tmp.y.variable
 
-		my.iters <- get.my.iters(sgp_object@Data, bubblePlot_LEVEL)
+		my.iters <- get.my.iters(sgp_object@Data[J("VALID_CASE")], bubblePlot_LEVEL)
 
 		### Create PRIOR Scale Score, SGP, SGP_TARGET and CONTENT_AREA
 
