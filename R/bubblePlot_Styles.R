@@ -837,7 +837,7 @@ if (10 %in% bPlot.styles) {
 
 		# Subset data
 
-		bPlot.data <- get.bPlot.data(tmp.bPlot.data)[DISTRICT_NUMBER==district_number.iter & !is.na(eval(parse(text=paste("bPlot.data$PCT_", bPlot.levels.iter, sep=""))))]
+		bPlot.data <- get.bPlot.data(tmp.bPlot.data)[DISTRICT_NUMBER==district_number.iter & !is.na(eval(parse(text=paste("tmp.bPlot.data$PCT_", bPlot.levels.iter, sep=""))))]
 
 		# Loop over current & prior and bPlot.levels 
 
