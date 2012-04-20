@@ -213,7 +213,8 @@
 			if (any(duplicated(data@Data[J("VALID_CASE")]))) {
 				message("\tWARNING: @Data keyed by 'VALID_CASE', 'CONTENT_AREA', 'YEAR', 'ID' has duplicate cases. Subsequent merges will likely be corrupt.")
 				message("\tDuplicate cases are saved and available in current working environment as 'DUPLICATED_CASES'.")
-				assign("DUPLICATED_CASES", data[data[J("VALID_CASE")][duplicated(data[J("VALID_CASE")])][,list(VALID_CASE, CONTENT_AREA, YEAR, ID)]], envir=globalenv())
+				assign("DUPLICATED_CASES", data@Data[J("VALID_CASE")][duplicated(data@Data[J("VALID_CASE")])][,list(VALID_CASE, CONTENT_AREA, YEAR, ID)], 
+					envir=globalenv())
 				save(DUPLICATED_CASES, file="DUPLICATED_CASES.Rdata")
 			}
 		}
@@ -241,7 +242,7 @@
 		if (any(duplicated(data[J("VALID_CASE")]))) {
 			message("\tWARNING: Data keyed by 'VALID_CASE', 'CONTENT_AREA', 'YEAR', 'ID' has duplicate cases. Subsequent merges will be corrupted.")
 			message("\tDuplicate cases are saved and available in current working environment as 'DUPLICATED_CASES'.")
-			assign("DUPLICATED_CASES", data[data[J("VALID_CASE")][duplicated(data[J("VALID_CASE")])][,list(VALID_CASE, CONTENT_AREA, YEAR, ID)]], envir=globalenv())
+			assign("DUPLICATED_CASES", data[J("VALID_CASE")][duplicated(data[J("VALID_CASE")])][,list(VALID_CASE, CONTENT_AREA, YEAR, ID)], envir=globalenv())
 			save(DUPLICATED_CASES, file="DUPLICATED_CASES.Rdata")
 		}
 
