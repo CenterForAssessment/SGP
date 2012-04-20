@@ -1459,7 +1459,7 @@ if (22 %in% bPlot.styles) {
 		} ## End loop over content_area.iter
 		} ## End loop over year.iter
 
-		message(paste("Finished bubblePlot Style 53", date(), "in", timetaken(started.at), "\n"))
+		message(paste("\tFinished bubblePlot Style 53", date(), "in", timetaken(started.at), "\n"))
 
 	} ## END bubblePlot style 53
 
@@ -2265,7 +2265,7 @@ if (22 %in% bPlot.styles) {
 					bubble_plot_configs.BUBBLE_PLOT_BACKGROUND_LABELS=NULL,
 					bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message.style.150,
 					bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste("Instructor", instructor.iter, year.iter, "Grade", grade.iter, 
-						capwords(content_area.iter), bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
+						capwords(content_area.iter), "Student_Plot", sep="_"), ".pdf", sep=""),
 					bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "Instructor", "Style_150", 
 						gsub(" ", "_", bPlot.data$DISTRICT_NAME[1]), gsub(" ", "_", bPlot.data$SCHOOL_NAME[1])),
 					bubble_plot_pdftk.CREATE_CATALOG=FALSE)
@@ -2354,7 +2354,7 @@ if (22 %in% bPlot.styles) {
 			bPlot.data <- subset(tmp.bPlot.data, INSTRUCTOR_NUMBER==instructor.iter)
 	
 	
-			if (dim(bPlot.data)[1] > 0) {
+			if (dim(bPlot.data)[1] > 1) { # had error when only 1 kid per teacher
 	
 			for (grade.iter in sort(unique(bPlot.data$GRADE))) { ### Loop over grades levels. Only one in course sequences
 		
@@ -2380,9 +2380,28 @@ if (22 %in% bPlot.styles) {
 				SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.content_area]][[paste("GRADE", grade.iter, sep="_")]])) 
 
 		# Get median SGP for grade, school, content area combination
+		# Report 'Official' Median.  Should be the same as median(bPlot.data$SGP, na.rm=TRUE).  Use that if NULL for some reason (prevents error)
 
-			instructor.content_area.grade.median <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__ENROLLMENT_STATUS__CONTENT_AREA__YEAR__GRADE"]][
-				INSTRUCTOR_NUMBER==instructor.iter & CONTENT_AREA==content_area.iter & YEAR==year.iter & GRADE==grade.iter][["MEDIAN_SGP"]]
+			if (is.null(mult.memb)) {
+				if (bPlot.full.academic.year) {
+					instructor.content_area.grade.median <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__INSTRUCTOR_ENROLLMENT_STATUS"]][
+						INSTRUCTOR_NUMBER==instructor.iter & CONTENT_AREA==content_area.iter & YEAR==year.iter & GRADE==grade.iter][["MEDIAN_SGP"]]
+
+				} else {
+					instructor.content_area.grade.median <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]][
+						INSTRUCTOR_NUMBER==instructor.iter & CONTENT_AREA==content_area.iter & YEAR==year.iter & GRADE==grade.iter][["MEDIAN_SGP"]]
+				}
+			} else {
+				if (bPlot.full.academic.year) {
+					instructor.content_area.grade.median <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__ENROLLMENT_STATUS__CONTENT_AREA__YEAR__GRADE"]][
+						INSTRUCTOR_NUMBER==instructor.iter & CONTENT_AREA==content_area.iter & YEAR==year.iter & GRADE==grade.iter][["MEDIAN_SGP"]]
+				} else {
+					instructor.content_area.grade.median <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__GRADE"]][
+						INSTRUCTOR_NUMBER==instructor.iter & CONTENT_AREA==content_area.iter & YEAR==year.iter & GRADE==grade.iter][["MEDIAN_SGP"]]
+	
+				}			
+			}
+			if (is.null(instructor.content_area.grade.median)) instructor.content_area.grade.median <- median(bPlot.data$SGP, na.rm=TRUE)
 			if (bPlot.demo) instructor.content_area.grade.median <- median(bPlot.data$SGP, na.rm=TRUE)
 
 		### Custom message with two median SGP lines
@@ -2443,7 +2462,7 @@ if (22 %in% bPlot.styles) {
 				bubble_plot_configs.BUBBLE_PLOT_BACKGROUND_LABELS=NULL,
 				bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message.style.153,
 				bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(gsub(" ", "_", bPlot.data$SCHOOL_NAME[1]), "Instructor", 
-					instructor.iter, year.iter, capwords(content_area.iter), bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
+					instructor.iter, year.iter, capwords(content_area.iter), "Student_Plot", sep="_"), ".pdf", sep=""),
 				bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "Instructor", "Style_153", 
 					gsub(" ", "_", bPlot.data$DISTRICT_NAME[1]), gsub(" ", "_", bPlot.data$SCHOOL_NAME[1])),
 				bubble_plot_pdftk.CREATE_CATALOG=FALSE)
