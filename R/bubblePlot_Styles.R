@@ -484,7 +484,7 @@ if (2 %in% bPlot.styles) {
 
 		### Start loops for bubblePlots
 
-		for (bPlot.levels.iter in seq_along(bPlot.levels)) {  ### Loop over bPlot.levels
+		for (bPlot.levels.iter in unlist(bPlot.levels)) {  ### Loop over bPlot.levels
 		for (year.iter in my.iters$tmp.years) {  ### Loop over year
 		for (content_area.iter in my.iters$tmp.content_areas) { ### Loop over content areas
 
@@ -841,7 +841,7 @@ if (10 %in% bPlot.styles) {
 
 		# Loop over current & prior and bPlot.levels 
 
-		for (levels.iter in levels(factor(eval(parse(text=paste("bPlot.data$PCT_", bPlot.levels.iter, sep="")))))) {
+		# for (levels.iter in levels(factor(eval(parse(text=paste("bPlot.data$PCT_", bPlot.levels.iter, sep="")))))) { # Only one district at a time, so show all schools in one flat file.
 		for (y.variable.iter in my.iters$tmp.y.variable) { 
 
 		# Create labels
@@ -891,12 +891,12 @@ if (10 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
 			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(paste(district.name.label, year.iter, capwords(content_area.iter), 
-				capwords(levels.iter), capwords(bPlot.levels.iter), "Schools", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
+				capwords(bPlot.levels.iter), "Schools", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
 			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "District", "Style_11", paste("District", district_number.iter, sep="_"), bPlot.levels.iter),
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 			} # END if (...)
 		} ## END loop over y.variable.iter
-		} ## END loop over levels.iter
+		# } ## END loop over levels.iter
 		} ## End loop over district_number.iter
 		} ## End loop over content_area.iter
 		} ## End loop over year.iter
