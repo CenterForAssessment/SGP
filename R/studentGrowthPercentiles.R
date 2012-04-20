@@ -10,7 +10,7 @@ function(panel.data,         ## REQUIRED
          percentile.cuts,
          growth.levels, 
          use.my.knots.boundaries,
-         use.my.coefficient.matrices,
+         use.my.coefficient.matrices=NULL,
          calculate.confidence.intervals,
          print.other.gp=FALSE,
          print.sgp.order=FALSE, 
@@ -483,7 +483,7 @@ function(panel.data,         ## REQUIRED
      		tmp.path.knots.boundaries <- .create.path(sgp.labels, pieces=c("my.subject", "my.year"))
 	}
 
-	if (!missing(use.my.coefficient.matrices)) {
+	if (!is.null(use.my.coefficient.matrices) & !identical(use.my.coefficient.matrices, TRUE)) {
 		if (!identical(class(panel.data), "list")) {
 			stop("use.my.coefficient.matrices is only appropriate when panel data is of class list. See help page for details.")
 		}
@@ -694,7 +694,7 @@ function(panel.data,         ## REQUIRED
 
 	### QR Calculations: coefficient matrices are saved/read into/from panel.data[["Coefficient_Matrices"]]
 
-	if (missing(use.my.coefficient.matrices)) {
+	if (is.null(use.my.coefficient.matrices)) {
 		taus <- .create_taus(sgp.quantiles)
 		if (exact.grade.progression.sequence) {
 			coefficient.matrix.priors <- num.prior
