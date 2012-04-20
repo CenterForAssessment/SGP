@@ -837,7 +837,7 @@ if (10 %in% bPlot.styles) {
 
 		# Subset data
 
-		bPlot.data <- get.bPlot.data(tmp.bPlot.data)
+		bPlot.data <- get.bPlot.data(tmp.bPlot.data)[DISTRICT_NUMBER==district_number.iter & !is.na(eval(parse(text=paste("bPlot.data$PCT_", bPlot.levels.iter, sep=""))))]
 
 		# Loop over current & prior and bPlot.levels 
 
@@ -848,6 +848,8 @@ if (10 %in% bPlot.styles) {
 
 		bPlot.labels <- create.bPlot.labels(year.iter, y.variable.iter, bubblePlot_LEVEL) 
 		district.name.label <- as.character(bPlot.data[DISTRICT_NUMBER==district_number.iter]$DISTRICT_NAME[1])
+
+		if (nrow(bPlot.data[which(bPlot.data[[paste("PCT_", bPlot.levels.iter, sep="")]]==levels.iter & bPlot.data[["DISTRICT_NUMBER"]]==district_number.iter),]) > 0) {
 
 		### Create bubblePlot ###
 
@@ -892,7 +894,7 @@ if (10 %in% bPlot.styles) {
 				capwords(levels.iter), capwords(bPlot.levels.iter), "Schools", bPlot.labels$pdf.title, sep="_"), ".pdf", sep=""),
 			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "District", "Style_11", paste("District", district_number.iter, sep="_"), bPlot.levels.iter),
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
-
+			} # END if (...)
 		} ## END loop over y.variable.iter
 		} ## END loop over levels.iter
 		} ## End loop over district_number.iter
