@@ -856,7 +856,7 @@ if (10 %in% bPlot.styles) {
 		bubblePlot(
 			bubble_plot_data.X=bPlot.data[["MEDIAN_SGP"]],
 			bubble_plot_data.Y=bPlot.data[[y.variable.iter]],
-			bubble_plot_data.SUBSET=which(bPlot.data[[paste("PCT_", bPlot.levels.iter, sep="")]]==levels.iter & bPlot.data[["DISTRICT_NUMBER"]]==district_number.iter), 
+			bubble_plot_data.SUBSET=which(bPlot.data[["DISTRICT_NUMBER"]]==district_number.iter), 
 			bubble_plot_data.INDICATE=NULL,
 			bubble_plot_data.BUBBLE_CENTER_LABEL=NULL,
 			bubble_plot_data.SIZE=bPlot.data[["MEDIAN_SGP_COUNT"]],
