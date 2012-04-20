@@ -63,7 +63,7 @@ function(sgp_object,
 	boot.median <- function(x,i) median(x[i], na.rm=TRUE)
 	mean_na <- function(x, result.digits=1) round(mean(as.numeric(x), na.rm=TRUE), digits=result.digits)
 	num_non_missing <- function(x) sum(!is.na(as.numeric(x)))
-	median_sgp_standard_error <- function(x) 1.25*sd(x, na.rm=TRUE)/sqrt(sum(!is.na(as.numeric(x))))
+	median_sgp_standard_error <- function(x) round(1.25*sd(x, na.rm=TRUE)/sqrt(sum(!is.na(as.numeric(x)))), digits=2)
 
 	percent_in_category <- function(x, in.categories, of.categories, result.digits=1) { ## NOTE: x must be a factor and categories levels
 		if (!is.list(in.categories)) in.categories <- list(in.categories)
