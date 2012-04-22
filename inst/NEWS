@@ -9,6 +9,8 @@ Changes in version: SGP_1.0-0.0
 	  o Baseline SGP tables embedded in SGP object have variable names appended with '_BASELINE'.
 	  o Streamlined growthAchievementPlot production by removing growthAchievementPlot_Styles and integrating its functionality elsewhere.
 	  o outputSGP now exports contents of @Data by default to 'Data' directory.
+	  o Updated SGPstateData with Georgia variable name lookup table.
+	  o studentGrowthPercentiles deals better with holes in data structures where certain grade progressions yield empty data sets.
 
   BUG FIXES:
 
