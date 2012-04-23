@@ -11,6 +11,7 @@ Changes in version: SGP_1.0-0.0
 	  o outputSGP now exports contents of @Data by default to 'Data' directory.
 	  o Updated SGPstateData with Georgia variable name lookup table.
 	  o studentGrowthPercentiles deals better with holes in data structures where certain grade progressions yield empty data sets.
+	  o baselineSGP analyses from analyzeSGP now accept arguments supplied to content_areas, years, and grades if one wants to filter those for baseline SGP analyses or coefficient matrix generation.
 
   BUG FIXES:
 
