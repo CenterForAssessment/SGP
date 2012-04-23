@@ -203,9 +203,21 @@ function(sgp_object,
 
 	get.sgp.baseline.config <- function(sgp_object) {
 		sgp.baseline.config <- tmp.sgp.baseline.config <- .content_areas <- .years <- .grades <- .sgp.grade.sequences <- list()
-		.content_areas <- unique(sgp_object@Data["VALID_CASE"][["CONTENT_AREA"]])
-		.years <- sort(unique(sgp_object@Data[J("VALID_CASE", .content_areas)][["YEAR"]]))
-		.grades <- sort(unique(sgp_object@Data[J("VALID_CASE", .content_areas)][["GRADE"]]))
+		if (is.null(content_areas)) {
+			.content_areas <- unique(sgp_object@Data["VALID_CASE"][["CONTENT_AREA"]])
+		} else {
+			.content_area <- content_areas
+		}
+		if (is.null(years)) {
+			.years <- sort(unique(sgp_object@Data[J("VALID_CASE", .content_areas)][["YEAR"]]))
+		} else {
+			.years <- years
+		}
+		if (is.null(grades)) {
+			.grades <- sort(unique(sgp_object@Data[J("VALID_CASE", .content_areas)][["GRADE"]]))
+		} else {
+			.grades <- grades
+		}
 		.baseline.max.order <- length(.years)-2
 		tmp.sgp.grade.sequences <- lapply(.grades[-1], function(x) tail(.grades[.grades <= x], (.baseline.max.order+1)))
 		tmp.sgp.baseline.grade.sequences <- sapply(tmp.sgp.grade.sequences, function(x) x[(tail(x,1)-x) <= .baseline.max.order])
