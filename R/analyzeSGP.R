@@ -207,9 +207,9 @@ function(sgp_object,
 			.content_areas <- unique(sgp_object@Data["VALID_CASE"][["CONTENT_AREA"]])
 		} else {
 			if (is.factor(sgp_object@Data["VALID_CASE"][["CONTENT_AREA"]])) {
-				.content_area <- as.factor(content_areas)
+				.content_areas <- as.factor(content_areas)
 			} else {
-				.content_area <- content_areas
+				.content_areas <- content_areas
 			}
 		}
 		if (is.null(years)) {
