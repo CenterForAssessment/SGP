@@ -206,12 +206,20 @@ function(sgp_object,
 		if (is.null(content_areas)) {
 			.content_areas <- unique(sgp_object@Data["VALID_CASE"][["CONTENT_AREA"]])
 		} else {
-			.content_area <- content_areas
+			if (is.factor(sgp_object@Data["VALID_CASE"][["CONTENT_AREA"]])) {
+				.content_area <- as.factor(content_areas)
+			} else {
+				.content_area <- content_areas
+			}
 		}
 		if (is.null(years)) {
 			.years <- sort(unique(sgp_object@Data[J("VALID_CASE", .content_areas)][["YEAR"]]))
 		} else {
-			.years <- years
+			if (is.factor(sgp_object@Data["VALID_CASE"][["YEAR"]])) {
+				.years <- as.factor(years)
+			} else {
+				.years <- as.integer(years)
+			}
 		}
 		if (is.null(grades)) {
 			.grades <- sort(unique(sgp_object@Data[J("VALID_CASE", .content_areas)][["GRADE"]]))
