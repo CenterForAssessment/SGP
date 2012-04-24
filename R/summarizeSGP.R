@@ -6,6 +6,7 @@ function(sgp_object,
          sgp.summaries=NULL,
          summary.groups=NULL,
          confidence.interval.groups=NULL,
+         produce.all.summary.tables=FALSE,
          parallel.config=NULL) {
 
 	started.at <- proc.time()
@@ -13,7 +14,72 @@ function(sgp_object,
 
 	### Set variables to NULL to prevent R CMD check warnings
 
-	tmp.simulation.dt <- variable <- WEIGHT <- ENROLLMENT_STATUS <- STATE <- NULL
+	tmp.simulation.dt <- variable <- WEIGHT <- ENROLLMENT_STATUS <- STATE <- names.type <- names.sgp <- NULL
+
+	
+	### Define tables that will be calculated from all possible created by expand.grid
+
+	selected.demographic.subgroups <- subset(sgp_object@Names, names.type=="demographic" & !is.na(names.type), select=names.sgp, drop=TRUE)
+	selected.summary.tables <- unique(c(
+
+		## From bubblePlot_Styles
+
+		"SCHOOL_NUMBER__CONTENT_AREA__YEAR__SCHOOL_ENROLLMENT_STATUS",
+		"SCHOOL_NUMBER__CONTENT_AREA__YEAR",
+		"SCHOOL_NUMBER__CONTENT_AREA__SCHOOL_ENROLLMENT_STATUS",
+		"SCHOOL_NUMBER__CONTENT_AREA",
+		"STATE__INSTRUCTOR_NUMBER__INSTRUCTOR_ENROLLMENT_STATUS",
+		"STATE__INSTRUCTOR_NUMBER",
+		"STATE__INSTRUCTOR_NUMBER__INSTRUCTOR_ENROLLMENT_STATUS__CONTENT_AREA",
+		"STATE__INSTRUCTOR_NUMBER__CONTENT_AREA",
+		"STATE__INSTRUCTOR_NUMBER__INSTRUCTOR_ENROLLMENT_STATUS__YEAR",
+		"STATE__INSTRUCTOR_NUMBER__YEAR",
+		"STATE__INSTRUCTOR_NUMBER__INSTRUCTOR_ENROLLMENT_STATUS__CONTENT_AREA__YEAR",
+		"STATE__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR",
+		"DISTRICT_NUMBER__INSTRUCTOR_NUMBER__INSTRUCTOR_ENROLLMENT_STATUS",
+		"DISTRICT_NUMBER__INSTRUCTOR_NUMBER",
+		"DISTRICT_NUMBER__INSTRUCTOR_NUMBER__INSTRUCTOR_ENROLLMENT_STATUS__CONTENT_AREA",
+		"DISTRICT_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA",
+		"DISTRICT_NUMBER__INSTRUCTOR_NUMBER__INSTRUCTOR_ENROLLMENT_STATUS__YEAR",
+		"DISTRICT_NUMBER__INSTRUCTOR_NUMBER__YEAR",
+		"DISTRICT_NUMBER__INSTRUCTOR_NUMBER__INSTRUCTOR_ENROLLMENT_STATUS__CONTENT_AREA__YEAR",
+		"DISTRICT_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR",
+		"SCHOOL_NUMBER__INSTRUCTOR_NUMBER__INSTRUCTOR_ENROLLMENT_STATUS",
+		"SCHOOL_NUMBER__INSTRUCTOR_NUMBER",
+		"SCHOOL_NUMBER__INSTRUCTOR_NUMBER__INSTRUCTOR_ENROLLMENT_STATUS__CONTENT_AREA",
+		"SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA",
+		"SCHOOL_NUMBER__INSTRUCTOR_NUMBER__INSTRUCTOR_ENROLLMENT_STATUS__YEAR",
+		"SCHOOL_NUMBER__INSTRUCTOR_NUMBER__YEAR",
+		"SCHOOL_NUMBER__INSTRUCTOR_NUMBER__INSTRUCTOR_ENROLLMENT_STATUS__CONTENT_AREA__YEAR",
+		"SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR",
+		"SCHOOL_NUMBER__CONTENT_AREA__YEAR__GRADE",
+		"SCHOOL_NUMBER__INSTRUCTOR_NUMBER__ENROLLMENT_STATUS__CONTENT_AREA__YEAR__GRADE",
+
+		### From sqliteSGP
+
+		"DISTRICT_NUMBER__CONTENT_AREA__YEAR__DISTRICT_ENROLLMENT_STATUS",
+		"DISTRICT_NUMBER__CONTENT_AREA__YEAR__GRADE__DISTRICT_ENROLLMENT_STATUS",
+		"DISTRICT_NUMBER__CONTENT_AREA__YEAR__DISTRICT_ENROLLMENT_STATUS__ETHNICITY",
+		"DISTRICT_NUMBER__CONTENT_AREA__YEAR__GRADE__DISTRICT_ENROLLMENT_STATUS__ETHNICITY",
+		paste("DISTRICT_NUMBER__CONTENT_AREA__YEAR__DISTRICT_ENROLLMENT_STATUS__", selected.demographic.subgroups, sep=""),
+		paste("DISTRICT_NUMBER__CONTENT_AREA__YEAR__GRADE__DISTRICT_ENROLLMENT_STATUS__", selected.demographic.subgroups, sep=""),
+		"SCHOOL_NUMBER__CONTENT_AREA__YEAR__EMH_LEVEL__SCHOOL_ENROLLMENT_STATUS",
+		"SCHOOL_NUMBER__CONTENT_AREA__YEAR__EMH_LEVEL__GRADE__SCHOOL_ENROLLMENT_STATUS",
+		"SCHOOL_NUMBER__CONTENT_AREA__YEAR__EMH_LEVEL__SCHOOL_ENROLLMENT_STATUS__ETHNICITY",
+		paste("SCHOOL_NUMBER__CONTENT_AREA__YEAR__EMH_LEVEL__SCHOOL_ENROLLMENT_STATUS__", selected.demographic.subgroups, sep=""),
+
+		### Other good ones to have
+
+		"STATE_NUMBER__CONTENT_AREA__YEAR__STATE_ENROLLMENT_STATUS",
+		"STATE_NUMBER__CONTENT_AREA__YEAR",
+		"STATE_NUMBER__CONTENT_AREA__STATE_ENROLLMENT_STATUS",
+		"STATE_NUMBER__CONTENT_AREA",
+		"DISTRICT_NUMBER__CONTENT_AREA__YEAR",
+		"DISTRICT_NUMBER__CONTENT_AREA__DISTRICT_ENROLLMENT_STATUS",
+		"DISTRICT_NUMBER__CONTENT_AREA"
+
+	)) ### END selected.summary.tables
+
 
 	if (missing(sgp_object)) {
 		stop("User must supply a list containing a Student slot with long data. See documentation for details.")
@@ -283,6 +349,8 @@ function(sgp_object,
 			group.format(summary.groups[["demographic"]]),
 			group.format(summary.groups[["growth_only_summary"]][[i]])), sep=""))
 
+		if (!produce.all.summary.tables) sgp.groups <- intersect(sgp.groups, selected.summary.tables)
+
 		if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
 			ci.groups <- do.call(paste, c(expand.grid(i,
 				group.format(confidence.interval.groups[["GROUPS"]][["content"]]),
@@ -292,6 +360,8 @@ function(sgp_object,
 				group.format(confidence.interval.groups[["GROUPS"]][["institution_inclusion"]][[i]]),
 				group.format(confidence.interval.groups[["GROUPS"]][["demographic"]]),
 				group.format(confidence.interval.groups[["GROUPS"]][["growth_only_summary"]][[i]])), sep=""))
+
+			if (!produce.all.summary.tables) ci.groups <- intersect(ci.groups, selected.summary.tables)
 		}
 
 		if(par.start$par.type=="FOREACH") {
