@@ -15,8 +15,8 @@
 
 		if (is.null(state)) {
 			tmp.name <- gsub("_", " ", deparse(substitute(data)))
-			if (any(sapply(c(state.name, "Demonstration", "sgpData LONG"), function(x) regexpr(x, tmp.name)))==1) {
-				state <- c(state.abb, rep("DEMO", 2))[which(sapply(c(state.name, "Demonstration", "sgpData LONG"), function(x) regexpr(x, tmp.name))==1)]
+			if (any(sapply(c(state.name, "Demonstration", "sgpData LONG", "AOB"), function(x) regexpr(x, tmp.name))==1)) {
+				state <- c(state.abb, rep("DEMO", 2), "AOB")[which(sapply(c(state.name, "Demonstration", "sgpData LONG", "AOB"), function(x) regexpr(x, tmp.name))==1)]
 			} else {
 				state <- "TEMP"
 			}
@@ -219,8 +219,8 @@
 			if (any(duplicated(data@Data[J("VALID_CASE")]))) {
 				message("\tWARNING: @Data keyed by 'VALID_CASE', 'CONTENT_AREA', 'YEAR', 'ID' has duplicate cases. Subsequent merges will likely be corrupt.")
 				message("\tDuplicate cases are saved and available in current working environment as 'DUPLICATED_CASES'.")
-				assign("DUPLICATED_CASES", data@Data[J("VALID_CASE")][duplicated(data@Data[J("VALID_CASE")])][,list(VALID_CASE, CONTENT_AREA, YEAR, ID)], 
-					envir=globalenv())
+				assign("DUPLICATED_CASES", data@Data[J("VALID_CASE")][duplicated(data@Data[J("VALID_CASE")])][,list(VALID_CASE, CONTENT_AREA, YEAR, ID)], envir=globalenv())
+				assign("DUPLICATED_CASES", data@Data[J("VALID_CASE")][duplicated(data@Data[J("VALID_CASE")])][,list(VALID_CASE, CONTENT_AREA, YEAR, ID)])
 				save(DUPLICATED_CASES, file="DUPLICATED_CASES.Rdata")
 			}
 		}
@@ -249,6 +249,7 @@
 			message("\tWARNING: Data keyed by 'VALID_CASE', 'CONTENT_AREA', 'YEAR', 'ID' has duplicate cases. Subsequent merges will be corrupted.")
 			message("\tDuplicate cases are saved and available in current working environment as 'DUPLICATED_CASES'.")
 			assign("DUPLICATED_CASES", data[J("VALID_CASE")][duplicated(data[J("VALID_CASE")])][,list(VALID_CASE, CONTENT_AREA, YEAR, ID)], envir=globalenv())
+			assign("DUPLICATED_CASES", data[J("VALID_CASE")][duplicated(data[J("VALID_CASE")])][,list(VALID_CASE, CONTENT_AREA, YEAR, ID)])
 			save(DUPLICATED_CASES, file="DUPLICATED_CASES.Rdata")
 		}
 
@@ -269,7 +270,14 @@
 
 		sgp_object <- new("SGP", Data=data, Names=variable.names, Version=getVersion(data))
 
+
+		## Create ACHIEVEMENT_LEVEL is it doesn't exist
 	
+		if (!"ACHIEVEMENT_LEVEL" %in% names(sgp_object@Data)) {
+			sgp_object <- achievement_level_recode(sgp_object, state=state)
+		}
+
+
 		##  Print finish time
 		message(paste("Finished prepareSGP", date(), "in", timetaken(started.at), "\n"))
 
