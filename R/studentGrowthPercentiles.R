@@ -159,6 +159,7 @@ function(panel.data,         ## REQUIRED
         
 	.create.coefficient.matrices <- function(data, k, by.grade) {
 		tmp.data <- .get.panel.data(data, k, by.grade)
+		if (dim(tmp.data)[1]==0) return(NULL)
 		mod <- character()
 		s4Ks <- "Knots=list("
 		s4Bs <- "Boundaries=list("
@@ -551,6 +552,10 @@ function(panel.data,         ## REQUIRED
 						csem.tf <- FALSE
 					} 
 				}
+				if (!sgp.labels$my.subject %in% unique(SGPstateData[[calculate.confidence.intervals]][["Assessment_Program_Information"]][["CSEM"]][["CONTENT_AREA"]])) {
+					tmp.messages <- c(tmp.messages, paste("\tNOTE: SGPstateData does not contain content area CSEMs for requested content area '", sgp.labels$my.subject, "'. Simulated SGPs and confidence intervals will not be calculated.\n", sep=""))
+					csem.tf <- FALSE
+				}
 				calculate.confidence.intervals <- list(state=calculate.confidence.intervals)
 			}
 			if (calculate.confidence.intervals %in% names(panel.data)) {
@@ -713,7 +718,7 @@ function(panel.data,         ## REQUIRED
 	if (calculate.sgps) {
 		max.order <- .get.max.matrix.order(matrix.names, tmp.last)
 		if (max.order < num.prior) {
-			stop("Number of priors requested exceeds maximum order of supplied coefficient matrices")
+			tmp.messages <- c(tmp.messages, paste("\tNOTE: Requested number of prior scores (num.prior=", num.prior, ") exceeds maximum matrix order (max.order=", max.order, "). Only matrices of order up to max.order=", max.order, " will be used.\n", sep=""))
 		}
 		if (max.order > num.prior) {
 			tmp.messages <- c(tmp.messages, paste("\tNOTE: Maximum coefficient matrix order (max.order=", max.order, ") exceeds that of specified number of priors, (num.prior=", num.prior, "). Only matrices of order up to num.prior=", num.prior, " will be used.\n", sep=""))

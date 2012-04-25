@@ -9,6 +9,12 @@ Changes in version: SGP_1.0-0.0
 	  o Baseline SGP tables embedded in SGP object have variable names appended with '_BASELINE'.
 	  o Streamlined growthAchievementPlot production by removing growthAchievementPlot_Styles and integrating its functionality elsewhere.
 	  o outputSGP now exports contents of @Data by default to 'Data' directory.
+	  o Updated SGPstateData with Georgia variable name lookup table.
+	  o studentGrowthPercentiles deals better with holes in data structures where certain grade progressions yield empty data sets.
+	  o baselineSGP analyses from analyzeSGP now accept arguments supplied to content_areas, years, and grades if one wants to filter those for baseline SGP analyses or coefficient matrix generation.
+	  o summarizeSGP does not produces by default, all possible summary tables (controlled by the arugment 'produce.all.summary.tables'). A subset of about 70 summary tables are produced.
+	  o Added baseline coefficient matrices for Georgia to SGPstateData.
+	  o Fixed prepareSGP to better update @Names slot.
 
   BUG FIXES:
 
@@ -18,6 +24,7 @@ Changes in version: SGP_1.0-0.0
 	  o Corrected incorrect timing in visualizeSGP due to over writing time.started in function.
 	  o Rewrote merge in combineSGP that adds data to @Data.
 	  o Made correction to cutscore year lookup code in growthAchievementPlot and prepareSGP.
+	  o studentGrowthPercentiles checks for CSEMs and ensures availability by content area.
 
 
 Changes in version: SGP_0.9-0.0

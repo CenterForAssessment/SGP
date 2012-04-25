@@ -6,6 +6,7 @@ function(sgp_object,
          sgp.summaries=NULL,
          summary.groups=NULL,
          confidence.interval.groups=NULL,
+         produce.all.summary.tables=FALSE,
          parallel.config=NULL) {
 
 	started.at <- proc.time()
@@ -13,15 +14,9 @@ function(sgp_object,
 
 	### Set variables to NULL to prevent R CMD check warnings
 
-	tmp.simulation.dt <- variable <- WEIGHT <- ENROLLMENT_STATUS <- STATE <- NULL
+	tmp.simulation.dt <- variable <- WEIGHT <- ENROLLMENT_STATUS <- STATE <- names.type <- names.sgp <- NULL
 
-	if (missing(sgp_object)) {
-		stop("User must supply a list containing a Student slot with long data. See documentation for details.")
-	}
-
-	if (!identical(key(sgp_object@Data), c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))) setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
-
-
+	
 	### Create state (if NULL) from sgp_object (if possible)
 
 	if (is.null(state)) {
@@ -31,10 +26,82 @@ function(sgp_object,
 		}
 	}
 
+
+	### Define tables that will be calculated from all possible created by expand.grid
+
+	selected.demographic.subgroups <- subset(sgp_object@Names, names.type=="demographic" & !is.na(names.type), select=names.sgp, drop=TRUE)
+	selected.summary.tables <- unique(c(
+
+		## From bubblePlot_Styles
+
+		"SCHOOL_NUMBER, CONTENT_AREA, YEAR, SCHOOL_ENROLLMENT_STATUS",
+		"SCHOOL_NUMBER, CONTENT_AREA, YEAR",
+		"SCHOOL_NUMBER, CONTENT_AREA, SCHOOL_ENROLLMENT_STATUS",
+		"SCHOOL_NUMBER, CONTENT_AREA",
+		"STATE, INSTRUCTOR_NUMBER, INSTRUCTOR_ENROLLMENT_STATUS",
+		"STATE, INSTRUCTOR_NUMBER",
+		"STATE, INSTRUCTOR_NUMBER, INSTRUCTOR_ENROLLMENT_STATUS, CONTENT_AREA",
+		"STATE, INSTRUCTOR_NUMBER, CONTENT_AREA",
+		"STATE, INSTRUCTOR_NUMBER, INSTRUCTOR_ENROLLMENT_STATUS, YEAR",
+		"STATE, INSTRUCTOR_NUMBER, YEAR",
+		"STATE, INSTRUCTOR_NUMBER, INSTRUCTOR_ENROLLMENT_STATUS, CONTENT_AREA, YEAR",
+		"STATE, INSTRUCTOR_NUMBER, CONTENT_AREA, YEAR",
+		"DISTRICT_NUMBER, INSTRUCTOR_NUMBER, INSTRUCTOR_ENROLLMENT_STATUS",
+		"DISTRICT_NUMBER, INSTRUCTOR_NUMBER",
+		"DISTRICT_NUMBER, INSTRUCTOR_NUMBER, INSTRUCTOR_ENROLLMENT_STATUS, CONTENT_AREA",
+		"DISTRICT_NUMBER, INSTRUCTOR_NUMBER, CONTENT_AREA",
+		"DISTRICT_NUMBER, INSTRUCTOR_NUMBER, INSTRUCTOR_ENROLLMENT_STATUS, YEAR",
+		"DISTRICT_NUMBER, INSTRUCTOR_NUMBER, YEAR",
+		"DISTRICT_NUMBER, INSTRUCTOR_NUMBER, INSTRUCTOR_ENROLLMENT_STATUS, CONTENT_AREA, YEAR",
+		"DISTRICT_NUMBER, INSTRUCTOR_NUMBER, CONTENT_AREA, YEAR",
+		"SCHOOL_NUMBER, INSTRUCTOR_NUMBER, INSTRUCTOR_ENROLLMENT_STATUS",
+		"SCHOOL_NUMBER, INSTRUCTOR_NUMBER",
+		"SCHOOL_NUMBER, INSTRUCTOR_NUMBER, INSTRUCTOR_ENROLLMENT_STATUS, CONTENT_AREA",
+		"SCHOOL_NUMBER, INSTRUCTOR_NUMBER, CONTENT_AREA",
+		"SCHOOL_NUMBER, INSTRUCTOR_NUMBER, INSTRUCTOR_ENROLLMENT_STATUS, YEAR",
+		"SCHOOL_NUMBER, INSTRUCTOR_NUMBER, YEAR",
+		"SCHOOL_NUMBER, INSTRUCTOR_NUMBER, INSTRUCTOR_ENROLLMENT_STATUS, CONTENT_AREA, YEAR",
+		"SCHOOL_NUMBER, INSTRUCTOR_NUMBER, CONTENT_AREA, YEAR",
+		"SCHOOL_NUMBER, CONTENT_AREA, YEAR, GRADE",
+		"SCHOOL_NUMBER, INSTRUCTOR_NUMBER, ENROLLMENT_STATUS, CONTENT_AREA, YEAR, GRADE",
+
+		### From sqliteSGP
+
+		"DISTRICT_NUMBER, CONTENT_AREA, YEAR, DISTRICT_ENROLLMENT_STATUS",
+		"DISTRICT_NUMBER, CONTENT_AREA, YEAR, GRADE, DISTRICT_ENROLLMENT_STATUS",
+		"DISTRICT_NUMBER, CONTENT_AREA, YEAR, DISTRICT_ENROLLMENT_STATUS, ETHNICITY",
+		"DISTRICT_NUMBER, CONTENT_AREA, YEAR, GRADE, DISTRICT_ENROLLMENT_STATUS, ETHNICITY",
+		paste("DISTRICT_NUMBER, CONTENT_AREA, YEAR, DISTRICT_ENROLLMENT_STATUS, ", selected.demographic.subgroups, sep=""),
+		paste("DISTRICT_NUMBER, CONTENT_AREA, YEAR, GRADE, DISTRICT_ENROLLMENT_STATUS, ", selected.demographic.subgroups, sep=""),
+		"SCHOOL_NUMBER, CONTENT_AREA, YEAR, EMH_LEVEL, SCHOOL_ENROLLMENT_STATUS",
+		"SCHOOL_NUMBER, CONTENT_AREA, YEAR, EMH_LEVEL, GRADE, SCHOOL_ENROLLMENT_STATUS",
+		"SCHOOL_NUMBER, CONTENT_AREA, YEAR, EMH_LEVEL, SCHOOL_ENROLLMENT_STATUS, ETHNICITY",
+		paste("SCHOOL_NUMBER, CONTENT_AREA, YEAR, EMH_LEVEL, SCHOOL_ENROLLMENT_STATUS, ", selected.demographic.subgroups, sep=""),
+
+		### Other good ones to have
+
+		"STATE_NUMBER, CONTENT_AREA, YEAR, STATE_ENROLLMENT_STATUS",
+		"STATE_NUMBER, CONTENT_AREA, YEAR",
+		"STATE_NUMBER, CONTENT_AREA, STATE_ENROLLMENT_STATUS",
+		"STATE_NUMBER, CONTENT_AREA",
+		"DISTRICT_NUMBER, CONTENT_AREA, YEAR",
+		"DISTRICT_NUMBER, CONTENT_AREA, DISTRICT_ENROLLMENT_STATUS",
+		"DISTRICT_NUMBER, CONTENT_AREA"
+
+	)) ### END selected.summary.tables
+
+
+	if (missing(sgp_object)) {
+		stop("User must supply a list containing a Student slot with long data. See documentation for details.")
+	}
+
+	if (!identical(key(sgp_object@Data), c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))) setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
+
+
 	## Set up parallel.config if NULL
 
 	if (is.null(parallel.config)) {
-		 parallel.config=list(BACKEND="FOREACH", TYPE=NA, WORKERS=list(SUMMARY=1))
+		 parallel.config=list(BACKEND="FOREACH", TYPE="NA", WORKERS=list(SUMMARY=1))
 	}
 
 	## Utility Functions
@@ -283,6 +350,8 @@ function(sgp_object,
 			group.format(summary.groups[["demographic"]]),
 			group.format(summary.groups[["growth_only_summary"]][[i]])), sep=""))
 
+		if (!produce.all.summary.tables) sgp.groups <- intersect(sgp.groups, selected.summary.tables)
+
 		if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
 			ci.groups <- do.call(paste, c(expand.grid(i,
 				group.format(confidence.interval.groups[["GROUPS"]][["content"]]),
@@ -292,6 +361,8 @@ function(sgp_object,
 				group.format(confidence.interval.groups[["GROUPS"]][["institution_inclusion"]][[i]]),
 				group.format(confidence.interval.groups[["GROUPS"]][["demographic"]]),
 				group.format(confidence.interval.groups[["GROUPS"]][["growth_only_summary"]][[i]])), sep=""))
+
+			if (!produce.all.summary.tables) ci.groups <- intersect(ci.groups, selected.summary.tables)
 		}
 
 		if(par.start$par.type=="FOREACH") {
