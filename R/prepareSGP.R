@@ -202,8 +202,14 @@
 		}
 
 		if (!is.null(state) & is.null(var.names)) {
-			if (!identical(data@Names, SGPstateData[[state]][["Variable_Name_Lookup"]])) data@Names <- SGPstateData[[state]][["Variable_Name_Lookup"]]
+			if (!identical(state, "DEMO") & !identical(data@Names, SGPstateData[[state]][["Variable_Name_Lookup"]])) {
+				data@Names <- SGPstateData[[state]][["Variable_Name_Lookup"]]
+			} 
+			if (identical(state, "DEMO") & !identical(data@Names, SGPstateData[[state]][["Variable_Name_Lookup"]])) {
+				data@Names <- getNames(sgpData_LONG, var.names)
+			} 
 		}
+
 		if (!is.null(var.names)) {
 			data@Names <- getNames(data@Data, var.names)
 		}

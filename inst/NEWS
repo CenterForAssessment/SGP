@@ -14,6 +14,7 @@ Changes in version: SGP_1.0-0.0
 	  o baselineSGP analyses from analyzeSGP now accept arguments supplied to content_areas, years, and grades if one wants to filter those for baseline SGP analyses or coefficient matrix generation.
 	  o summarizeSGP does not produces by default, all possible summary tables (controlled by the arugment 'produce.all.summary.tables'). A subset of about 70 summary tables are produced.
 	  o Added baseline coefficient matrices for Georgia to SGPstateData.
+	  o Fixed prepareSGP to better update @Names slot.
 
   BUG FIXES:
 
