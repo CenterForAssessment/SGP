@@ -239,7 +239,7 @@
 
 	## Start pdf device
               
-              if (length(content_areas) %in% 1:2) {
+              if (length(content_areas) %in% c(1,2,4)) {
                 report.width=11
                 report.height=8.5
               }
@@ -247,8 +247,8 @@
                 report.width=8.5
                 report.height=11
               }
-              if (!length(content_areas) %in% 1:3) {
-                stop("Individual Student Report Templates currently only available for situations with 1, 2 or 3 content areas.")
+              if (!length(content_areas) %in% 1:4) {
+                stop("Individual Student Report Templates currently only available for situations with 1, 2, 3 or 4 content areas.")
               }
 
               pdf(paste(path.to.pdfs, "/", file_name, sep=""), 
@@ -291,6 +291,18 @@
                 content_area_3.vp <- viewport(layout.pos.row=7, layout.pos.col=2)
                 top.border.vp <- viewport(layout.pos.row=1, layout.pos.col=1:3)
                 bottom.border.vp <- viewport(layout.pos.row=9, layout.pos.col=1:3)
+              }
+
+              if (length(content_areas)==4) {
+                report.vp <- viewport(layout = grid.layout(7, 4, widths = unit(c(0.1, 5.325, 0.25, 5.325, 0.1), rep("inches", 5)), 
+                                        heights = unit(c(0.35, 0.2, 3.55, 0.25, 3.55, 0.2, 0.4), rep("inches", 7))))
+
+                content_area_1.vp <- viewport(layout.pos.row=3, layout.pos.col=2)
+                content_area_2.vp <- viewport(layout.pos.row=3, layout.pos.col=4)
+                content_area_3.vp <- viewport(layout.pos.row=5, layout.pos.col=2)
+                content_area_4.vp <- viewport(layout.pos.row=5, layout.pos.col=4)
+                top.border.vp <- viewport(layout.pos.row=1, layout.pos.col=1:5)
+                bottom.border.vp <- viewport(layout.pos.row=7, layout.pos.col=1:5)
               }
 
               pushViewport(report.vp)
