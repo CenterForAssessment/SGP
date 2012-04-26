@@ -21,8 +21,8 @@ function(sgp_object,
 
 	if (is.null(state)) {
 		tmp.name <- gsub("_", " ", deparse(substitute(sgp_object)))
-		if (any(sapply(c(state.name, "Demonstration"), function(x) regexpr(x, tmp.name)))==1) {
-			state <- c(state.abb, "DEMO")[which(sapply(c(state.name, "Demonstration"), function(x) regexpr(x, tmp.name))==1)]
+		if (any(sapply(c(state.name, "Demonstration", "AOB"), function(x) regexpr(x, tmp.name))==1)) {
+			state <- c(state.abb, "DEMO", "AOB")[which(sapply(c(state.name, "Demonstration", "AOB"), function(x) regexpr(x, tmp.name))==1)]
 		}
 	}
 
@@ -198,7 +198,7 @@ function(sgp_object,
 		}
 		setnames(tmp, (dim(tmp)[2]-length(sgp.summaries.names)+1):dim(tmp)[2], sgp.summaries.names)
 		message(paste("\tFinished with", sgp.groups.to.summarize))
-		return(tmp)
+		return(as.data.frme(tmp))
 	} ### END sgpSummary function
 
 	combineSims <- function(sgp_object) {

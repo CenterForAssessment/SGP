@@ -15,6 +15,9 @@ Changes in version: SGP_1.0-0.0
 	  o summarizeSGP does not produces by default, all possible summary tables (controlled by the arugment 'produce.all.summary.tables'). A subset of about 70 summary tables are produced.
 	  o Added baseline coefficient matrices for Georgia to SGPstateData.
 	  o Fixed prepareSGP to better update @Names slot.
+	  o Added Archdiocese of Baltimore to SGPstateData.
+	  o Integrated achievement_level_recode function into prepareSGP.
+	  o Added ability to print studentGrowthPlots for single content areas as well as 4 content areas.
 
   BUG FIXES:
 
@@ -25,6 +28,7 @@ Changes in version: SGP_1.0-0.0
 	  o Rewrote merge in combineSGP that adds data to @Data.
 	  o Made correction to cutscore year lookup code in growthAchievementPlot and prepareSGP.
 	  o studentGrowthPercentiles checks for CSEMs and ensures availability by content area.
+	  o Fixed bug in way state name is detected in argument supplied as part of data name.
 
 
 Changes in version: SGP_0.9-0.0
