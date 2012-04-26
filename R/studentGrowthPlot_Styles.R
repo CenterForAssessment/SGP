@@ -294,7 +294,7 @@
               }
 
               if (length(content_areas)==4) {
-                report.vp <- viewport(layout = grid.layout(7, 4, widths = unit(c(0.1, 5.325, 0.25, 5.325, 0.1), rep("inches", 5)), 
+                report.vp <- viewport(layout = grid.layout(7, 5, widths = unit(c(0.1, 5.325, 0.25, 5.325, 0.1), rep("inches", 5)), 
                                         heights = unit(c(0.35, 0.2, 3.55, 0.25, 3.55, 0.2, 0.4), rep("inches", 7))))
 
                 content_area_1.vp <- viewport(layout.pos.row=3, layout.pos.col=2)
