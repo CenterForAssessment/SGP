@@ -2,10 +2,10 @@
 \alias{studentGrowthPlot_Styles}
 \title{studentGrowth_Styles providing base templates for the core studentGrowthPlot function}
 \description{
-Function includes two "styles" associated with \code{\link{studentGrowthPlot}} to create PDF student growth plots depicting the growth and achievement for an individual
-student over time. One styles displayed two content area student growth plots on a single page and the other three content areas. These charts are currently being used in 
-multiple states to report student growth results. This function is called by \code{\link{visualizeSGP}} to generate individual student reports. This function may expand 
-in the future to incorporate other possible individual student reports.
+Function includes five "styles" associated with \code{\link{studentGrowthPlot}} to create PDF student growth plots depicting the growth and achievement for an individual
+student over time. The five styles display one to five content area student growth plots on a single page. The one, two, and three content area plots are rendered on 8.5 by 11
+pdfs and the four and five content area plots are rendered on 11 by 17 pdfs. These charts are currently being used in multiple states to report student growth results. This function 
+is called by \code{\link{visualizeSGP}} to generate individual student reports. This function may expand in the future to incorporate other possible individual student reports.
 }
 \usage{
 studentGrowthPlot_Styles(
@@ -67,7 +67,7 @@ and a summary catalog containing those reports will be produced.
   }
 }
 
-\details{\code{studentGrowthPlot_Styles} is a utility function containing a two templates for displaying \code{\link{studentGrowthPlot}}s. The templates display two or three
+\details{\code{studentGrowthPlot_Styles} is a utility function containing five templates for displaying \code{\link{studentGrowthPlot}}s. The templates display two or three
 content areas depending upon the availability of test data for the state. This function will expand in the future to allow for other types of individual growth and
 achievement reports.
 }

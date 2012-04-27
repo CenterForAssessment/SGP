@@ -17,7 +17,7 @@ Changes in version: SGP_1.0-0.0
 	  o Fixed prepareSGP to better update @Names slot.
 	  o Added Archdiocese of Baltimore to SGPstateData.
 	  o Integrated achievement_level_recode function into prepareSGP.
-	  o Added ability to print studentGrowthPlots for single content areas as well as 4 content areas.
+	  o Added ability to print studentGrowthPlots for one, four and five content areas.
 
   BUG FIXES:
 
