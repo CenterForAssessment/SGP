@@ -50,13 +50,9 @@ function(sgp_object,
 
 	"%w/o%" <- function(x,y) x[!x %in% y]
 
-	rbind.all <- function(.list, names.not.equal=FALSE, ...) {
+	rbind.all <- function(.list, ...) {
 		if(length(.list)==1) return(.list[[1]])
-		if (names.not.equal) {
-			Recall(c(list(rbind.fill(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), names.not.equal=TRUE, ...)
-		} else {
-			Recall(c(list(rbind(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), ...)
-		}
+		Recall(c(list(rbind.fill(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), ...)
 	}
 
 	get.catch_up_keep_up_status_initial <- function(achievement_level_prior) {
@@ -68,6 +64,12 @@ function(sgp_object,
 		factor(achievement_level_prior, ordered=FALSE) ## Drop ordered attribute of factor
 	}
 
+	get.rbind.all.data <- function(data.pieces, key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID")) {
+		my.rbind.all <- rbind.all(data.pieces)
+		if (is.factor(my.rbind.all[["YEAR"]])) my.rbind.all[["YEAR"]] <- as.factor(as.character(my.rbind.all[["YEAR"]]))
+		if (is.factor(my.rbind.all[["CONTENT_AREA"]])) my.rbind.all[["CONTENT_AREA"]] <- as.factor(as.character(my.rbind.all[["CONTENT_AREA"]]))
+		data.table(my.rbind.all,  VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), key=key(sgp_object@Data))
+	}
 
 	#######################################################
 	### Merge Cohort Referenced SGPs with student data
@@ -95,26 +97,22 @@ function(sgp_object,
 
 		tmp.list <- list() 
 		for (i in tmp.names) {
-		tmp.list[[i]] <- data.frame(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
-									YEAR=type.convert(unlist(strsplit(i, "[.]"))[2]),
-									sgp_object@SGP[["SGPercentiles"]][[i]])
-		}
-
-		tmp.list.names <- lapply(tmp.list, names)
-		if (length(tmp.list.names) > 1) {
-		 tmp.names.not.equal <- !all(sapply(seq(length(tmp.list.names)-1), function(x,i) identical(x[[i]], x[[i+1]]), x=tmp.list.names))
-		} else { 
-		 tmp.names.not.equal=FALSE
+		tmp.list[[i]] <- data.frame(
+					CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
+					YEAR=type.convert(unlist(strsplit(i, "[.]"))[2]),
+					sgp_object@SGP[["SGPercentiles"]][[i]])
 		}
 
 		if (!"SGP" %in% names(sgp_object@Data)) {
-			sgp_object@Data <- data.table(rbind.all(tmp.list, tmp.names.not.equal), VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")),
-				key=key(sgp_object@Data))[sgp_object@Data]
+			sgp_object@Data <- get.rbind.all.data(tmp.list)[sgp_object@Data]
 		} else {
-			tmp.data <-  data.table(VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), rbind.all(tmp.list, tmp.names.not.equal), key=key(sgp_object@Data))
+			tmp.data <- get.rbind.all.data(tmp.list) 
 			if (!all(names(tmp.data) %in% names(sgp_object@Data))) {
 				variables.to.create <- names(tmp.data) %w/o% names(sgp_object@Data)
-				invisible(sgp_object@Data[, variables.to.create := NA, with=FALSE])
+				for (k in variables.to.create) {
+					sgp_object@Data[[k]] <- NA_integer_
+					class(sgp_object@Data[[k]]) <- class(tmp.data[[k]])
+				}
 			}
 			invisible(sgp_object@Data[tmp.data[,c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE], names(tmp.data) := tmp.data, with=FALSE, mult="first"])
 		}
@@ -151,13 +149,15 @@ function(sgp_object,
 		}
 
 		if (!"SGP_BASELINE" %in% names(sgp_object@Data)) {
-			sgp_object@Data <- data.table(rbind.all(tmp.list), VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")),
-				key=key(sgp_object@Data))[sgp_object@Data]
+			sgp_object@Data <- get.rbind.all.data(tmp.list)[sgp_object@Data]
 		} else {
-			tmp.data <-  data.table(VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), rbind.all(tmp.list, tmp.names.not.equal), key=key(sgp_object@Data))
+			tmp.data <- get.rbind.all.data(tmp.list) 
 			if (!all(names(tmp.data) %in% names(sgp_object@Data))) {
 				variables.to.create <- names(tmp.data) %w/o% names(sgp_object@Data)
-				invisible(sgp_object@Data[, variables.to.create := NA, with=FALSE])
+				for (k in variables.to.create) {
+					sgp_object@Data[[k]] <- NA_integer_
+					class(sgp_object@Data[[k]]) <- class(tmp.data[[k]])
+				}
 			}
 			invisible(sgp_object@Data[tmp.data[,c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE], names(tmp.data) := tmp.data, with=FALSE, mult="first"])
 		}
@@ -237,7 +237,10 @@ function(sgp_object,
 		} else {
 			if (!all(names(tmp_object_2) %in% names(sgp_object@Data))) {
 				variables.to.create <- names(tmp_object_2) %w/o% names(sgp_object@Data)
-				invisible(sgp_object@Data[, variables.to.create := NA, with=FALSE])
+				for (k in variables.to.create) {
+					sgp_object@Data[[k]] <- NA_integer_
+					class(sgp_object@Data[[k]]) <- class(tmp.data[[k]])
+				}
 			}
 			invisible(sgp_object@Data[tmp_object_2[,c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE], names(tmp_object_2) := tmp_object_2, with=FALSE, mult="first"])
 		}
@@ -282,7 +285,10 @@ function(sgp_object,
 		} else {
 			if (!all(names(tmp_object_2) %in% names(sgp_object@Data))) {
 				variables.to.create <- names(tmp_object_2) %w/o% names(sgp_object@Data)
-				invisible(sgp_object@Data[, variables.to.create := NA, with=FALSE])
+				for (k in variables.to.create) {
+					sgp_object@Data[[k]] <- NA_integer_
+					class(sgp_object@Data[[k]]) <- class(tmp.data[[k]])
+				}
 			}
 			invisible(sgp_object@Data[tmp_object_2[,c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE], names(tmp_object_2) := tmp_object_2, with=FALSE, mult="first"])
 		}

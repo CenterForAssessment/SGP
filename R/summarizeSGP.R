@@ -198,7 +198,7 @@ function(sgp_object,
 		}
 		setnames(tmp, (dim(tmp)[2]-length(sgp.summaries.names)+1):dim(tmp)[2], sgp.summaries.names)
 		message(paste("\tFinished with", sgp.groups.to.summarize))
-		return(as.data.frme(tmp))
+		return(as.data.frame(tmp))
 	} ### END sgpSummary function
 
 	combineSims <- function(sgp_object) {
