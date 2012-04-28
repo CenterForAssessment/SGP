@@ -50,10 +50,10 @@ function(sgp_object,
 
 	"%w/o%" <- function(x,y) x[!x %in% y]
 
-	rbind.all <- function(.list, ...) {
-		if(length(.list)==1) return(.list[[1]])
-		Recall(c(list(rbind.fill(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), ...)
-	}
+#	rbind.all <- function(.list, ...) {
+#		if(length(.list)==1) return(.list[[1]])
+#		Recall(c(list(rbind.fill(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), ...)
+#	}
 
 	get.catch_up_keep_up_status_initial <- function(achievement_level_prior) {
 		if (!all(levels(achievement_level_prior) %in% SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]])) {
@@ -65,7 +65,7 @@ function(sgp_object,
 	}
 
 	get.rbind.all.data <- function(data.pieces, key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID")) {
-		my.rbind.all <- rbind.all(data.pieces)
+		my.rbind.all <- rbind.fill(data.pieces)
 		if (is.factor(my.rbind.all[["YEAR"]])) my.rbind.all[["YEAR"]] <- as.factor(as.character(my.rbind.all[["YEAR"]]))
 		if (is.factor(my.rbind.all[["CONTENT_AREA"]])) my.rbind.all[["CONTENT_AREA"]] <- as.factor(as.character(my.rbind.all[["CONTENT_AREA"]]))
 		data.table(my.rbind.all,  VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), key=key(sgp_object@Data))
@@ -219,7 +219,7 @@ function(sgp_object,
 				sgp_object@SGP[["SGProjections"]][[i]][,c(1,2,cols.to.get[1:num.cols.to.get])])
 		}
 
-		tmp_object_1 <- data.table(VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), rbind.all(tmp.list))[!is.na(CATCH_UP_KEEP_UP_STATUS_INITIAL)]
+		tmp_object_1 <- data.table(VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), rbind.fill(tmp.list))[!is.na(CATCH_UP_KEEP_UP_STATUS_INITIAL)]
 
 		## Find min/max of targets based upon CATCH_UP_KEEP_UP_STATUS_INITIAL status
 
@@ -267,7 +267,7 @@ function(sgp_object,
 										sgp_object@SGP[["SGProjections"]][[i]][,c(1,2,cols.to.get[1:num.cols.to.get])])
 		 }
 
-		tmp_object_1 <- data.table(VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), rbind.all(tmp.list))[!is.na(CATCH_UP_KEEP_UP_STATUS_INITIAL)]
+		tmp_object_1 <- data.table(VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), rbind.fill(tmp.list))[!is.na(CATCH_UP_KEEP_UP_STATUS_INITIAL)]
 
 		 ## Find min/max of targets based upon CATCH_UP_KEEP_UP_STATUS_INITIAL status
 

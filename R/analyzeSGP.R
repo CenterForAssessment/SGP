@@ -18,6 +18,7 @@ function(sgp_object,
          goodness.of.fit.print=TRUE,
          sgp.config=NULL,
          sgp.config.drop.nonsequential.grade.progression.variables=TRUE,
+         sgp.baseline.panel.years=NULL,
          sgp.baseline.config=NULL, 
          parallel.config=NULL,
          ...) {
@@ -212,13 +213,13 @@ function(sgp_object,
 				.content_areas <- content_areas
 			}
 		}
-		if (is.null(years)) {
-			.years <- sort(unique(sgp_object@Data[J("VALID_CASE", .content_areas)][["YEAR"]]))
+		if (is.null(sgp.baseline.panel.years)) {
+			.years <- head(sort(unique(sgp_object@Data[J("VALID_CASE", .content_areas)][["YEAR"]])), 5)
 		} else {
 			if (is.factor(sgp_object@Data["VALID_CASE"][["YEAR"]])) {
-				.years <- as.factor(years)
+				.years <- as.factor(sgp.baseline.panel.years)
 			} else {
-				.years <- as.integer(years)
+				.years <- as.integer(sgp.baseline.panel.years)
 			}
 		}
 		if (is.null(grades)) {

@@ -82,10 +82,10 @@ function(sgp_object,
 
 	pretty_year <- function(x) sub("_", "-", x)
 
-	rbind.all <- function(.list, ...) {
-		if (length(.list)==1) return (.list[[1]])
-		Recall(c(list(rbind(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), ...)
-	}
+#	rbind.all <- function(.list, ...) {
+#		if (length(.list)==1) return (.list[[1]])
+#		Recall(c(list(rbind(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), ...)
+#	}
 
 	get.max.order.for.progression <- function(year, content_area) {
 		if (is.null(gaPlot.max.order.for.progression)) {
@@ -144,7 +144,7 @@ function(sgp_object,
 			}
 		}
 
-		tmp.df <- rbind.all(tmp.list)
+		tmp.df <- rbind.fill(tmp.list)
 
 		if (!is.null(gaPlot.students)) {
 			 tmp.df <- expand.grid(tmp.df, ID=gaPlot.students)
@@ -322,7 +322,7 @@ if ("studentGrowthPlot" %in% plot.types) {
 			setnames(tmp.df, c("GRADE", "YEAR")) 
 			tmp.list[[i]] <- data.frame(CONTENT_AREA=i, tmp.df)
 		}
-	data.table(rbind.all(tmp.list), key=c("CONTENT_AREA", "GRADE", "YEAR"))
+	data.table(rbind.fill(tmp.list), key=c("CONTENT_AREA", "GRADE", "YEAR"))
 	} ## END get.years.content_areas.grades
 
 
@@ -677,7 +677,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 				tmp.list[[i]] <- data.table(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
 					sgp_object@SGP[["SGProjections"]][[i]][,c(1, grep("PROJ_YEAR_1", names(sgp_object@SGP[["SGProjections"]][[i]])))])
 			}
-			sgPlot.data <- data.table(rbind.all(tmp.list), key=paste(key(sgPlot.data), collapse=","))[sgPlot.data]
+			sgPlot.data <- data.table(rbind.fill(tmp.list), key=paste(key(sgPlot.data), collapse=","))[sgPlot.data]
 			tmp.grade.name <- paste("GRADE", tmp.last.year, sep=".")
 			tmp.year.name <- .year.increment(tmp.last.year, 1)
 			setkeyv(sgPlot.data, c("CONTENT_AREA", tmp.grade.name))

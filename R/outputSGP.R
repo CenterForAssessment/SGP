@@ -84,11 +84,6 @@ if ("SchoolView" %in% output.type) {
 
 	### Utility functions
 
-	rbind.all <- function(.list, ...) {
-		if (length(.list)==1) return (.list[[1]])
-		Recall(c(list(rbind(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), ...)
-	}
-
 	.year.increment <- function(year, increment) {
 		paste(as.numeric(unlist(strsplit(as.character(year), "_")))+increment, collapse="_")
 	}
@@ -224,7 +219,7 @@ if ("SchoolView" %in% output.type) {
 				tmp.list[[i]] <- data.frame(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
 					sgp_object@SGP[["SGProjections"]][[i]][,c(1, grep(paste("PROJ_YEAR", j, sep="_"), names(sgp_object@SGP[["SGProjections"]][[i]])))])
 			}
-			outputSGP.data <- data.table(rbind.all(tmp.list), key=paste(key(outputSGP.data), collapse=","))[outputSGP.data]
+			outputSGP.data <- data.table(rbind.fill(tmp.list), key=paste(key(outputSGP.data), collapse=","))[outputSGP.data]
 			tmp.grade.name <- paste("GRADE", tmp.last.year, sep=".")
 			tmp.year.name <- .year.increment(tmp.last.year, j)
 			setkeyv(outputSGP.data, c("CONTENT_AREA", tmp.grade.name))
