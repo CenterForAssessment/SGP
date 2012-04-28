@@ -113,10 +113,10 @@ function(sgp_object,
 		return(tmp.names[tmp.names$names.type==x, "names.sgp"])
 	}
 
-	rbind.all <- function(.list, ...){
-		if(length(.list)==1) return(.list[[1]])
-		Recall(c(list(rbind(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), ...)
-	}
+#	rbind.all <- function(.list, ...){
+#		if(length(.list)==1) return(.list[[1]])
+#		Recall(c(list(rbind(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), ...)
+#	}
 
 	group.format <- function(my.group) {
 		if (is.null(my.group)) {
@@ -210,7 +210,7 @@ function(sgp_object,
 				YEAR=type.convert(unlist(strsplit(i, "[.]"))[2]))
 		}
  
-		data.table(rbind.all(tmp.list), VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), key=key(data))
+		data.table(rbind.fill(tmp.list), VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), key=key(data))
 	}
 
 	summarizeSGP.config <- function(sgp_object, config.type) {
@@ -458,7 +458,7 @@ function(sgp_object,
 	for (i in names(tmp.years)) {
 		tmp.years[[i]] <- data.frame(CONTENT_AREA=i, YEAR=tmp.years[[i]]) ## NOTE: data.frame necessary to treat factors correctly
 	}
-	content_areas.by.years <- as.data.table(rbind.all(tmp.years))
+	content_areas.by.years <- as.data.table(rbind.fill(tmp.years))
 
 	if (is.null(sgp.summaries)) sgp.summaries <- summarizeSGP.config(sgp_object, "sgp.summaries")
 	if (is.null(summary.groups)) summary.groups <- summarizeSGP.config(sgp_object, "summary.groups")
