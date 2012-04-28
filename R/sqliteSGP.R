@@ -54,10 +54,10 @@ function(sgp_object,
 			sapply(increment, function(x) paste(as.numeric(unlist(strsplit(as.character(year), "_")))+x, collapse="_"))
 		}
 
-		rbind.all <- function(.list, ...){
-			if(length(.list)==1) return(.list[[1]])
-			Recall(c(list(rbind(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), ...)
-		}
+#		rbind.all <- function(.list, ...){
+#			if(length(.list)==1) return(.list[[1]])
+#			Recall(c(list(rbind(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), ...)
+#		}
 
 		sqlite.create.table <- function(table.name, field.types, primary.key) {
 			tmp.sql <- paste("CREATE TABLE ", table.name, " (", paste(field.types, collapse=", "), 
@@ -236,7 +236,7 @@ function(sgp_object,
 			setnames(tmp.list[[i]], 5, "STUDENTGROUP")
 		}
 
-		tmp <- as.data.frame(convert.variables(subset(rbind.all(tmp.list), 
+		tmp <- as.data.frame(convert.variables(subset(rbind.fill(tmp.list), 
 			!is.na(DISTRICT_NUMBER) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(STUDENTGROUP) & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes")))
 		tmp$CONTENT_AREA <- unclass(tmp$CONTENT_AREA)
 		tmp$STUDENTGROUP <- unclass(tmp$STUDENTGROUP)
@@ -274,7 +274,7 @@ function(sgp_object,
 			setnames(tmp.list[[i]], 6, "STUDENTGROUP")
 		}
 
-		tmp <- as.data.frame(convert.variables(subset(rbind.all(tmp.list), 
+		tmp <- as.data.frame(convert.variables(subset(rbind.fill(tmp.list), 
 			!is.na(DISTRICT_NUMBER) & YEAR %in% years & CONTENT_AREA %in% content_areas & !is.na(STUDENTGROUP) & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes")))
 		tmp$CONTENT_AREA <- unclass(tmp$CONTENT_AREA)
 		tmp$STUDENTGROUP <- unclass(tmp$STUDENTGROUP)
@@ -408,7 +408,7 @@ function(sgp_object,
 			setnames(tmp.list[[i]], 6, "STUDENTGROUP")
 		}
 
-		tmp <- as.data.frame(convert.variables(subset(rbind.all(tmp.list), 
+		tmp <- as.data.frame(convert.variables(subset(rbind.fill(tmp.list), 
 			!is.na(SCHOOL_NUMBER) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(STUDENTGROUP) & SCHOOL_ENROLLMENT_STATUS=="Enrolled School: Yes")))
 		tmp <- as.data.frame(merge(tmp, as.data.frame(tmp.school.and.district.by.year), all.x=TRUE)) 
 		tmp$CONTENT_AREA <- unclass(tmp$CONTENT_AREA)
@@ -493,7 +493,7 @@ function(sgp_object,
 		}
 
 
-		tmp <- as.data.frame(subset(rbind.all(tmp.list), !is.na(DISTRICT_NUMBER) & !is.na(STUDENTGROUP) & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes"))
+		tmp <- as.data.frame(subset(rbind.fill(tmp.list), !is.na(DISTRICT_NUMBER) & !is.na(STUDENTGROUP) & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes"))
 
 		tmp.STUDENTGROUP <- data.frame(
 			KEY_VALUE_KEY="STUDENT_GROUP", ### NOTE: Must have underscore. It's an older version of the table
@@ -502,7 +502,7 @@ function(sgp_object,
 #			KEY_VALUE_CODE=toupper(substr(unique(as.character(tmp$STUDENTGROUP)), 1, 50)), 
 #			KEY_VALUE_TEXT=unique(as.character(tmp$STUDENTGROUP)))
 
-		tmp <- rbind(tmp.CONTENT_AREA, tmp.YEAR, tmp.GRADE, tmp.EMH, tmp.ETHNICITY, tmp.STUDENTGROUP)
+		tmp <- rbind.fill(tmp.CONTENT_AREA, tmp.YEAR, tmp.GRADE, tmp.EMH, tmp.ETHNICITY, tmp.STUDENTGROUP)
 		tmp <- data.frame(KEY_VALUE_ID=1:dim(tmp)[1], tmp)
 
 		dbGetQuery(db, sqlite.create.table("KEY_VALUE_LOOKUP", field.types, "KEY_VALUE_ID"))
