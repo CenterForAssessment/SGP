@@ -29,7 +29,7 @@ function(sgp_object,
 
 	### Define tables that will be calculated from all possible created by expand.grid
 
-	selected.demographic.subgroups <- subset(sgp_object@Names, names.type=="demographic" & !is.na(names.type), select=names.sgp, drop=TRUE)
+	selected.demographic.subgroups <- subset(sgp_object@Names, names.type=="demographic" & !is.na(names.type) & names.output, select=names.sgp, drop=TRUE)
 	selected.summary.tables <- unique(c(
 
 		## From bubblePlot_Styles
@@ -80,10 +80,10 @@ function(sgp_object,
 
 		### Other good ones to have
 
-		"STATE_NUMBER, CONTENT_AREA, YEAR, STATE_ENROLLMENT_STATUS",
-		"STATE_NUMBER, CONTENT_AREA, YEAR",
-		"STATE_NUMBER, CONTENT_AREA, STATE_ENROLLMENT_STATUS",
-		"STATE_NUMBER, CONTENT_AREA",
+		"STATE, CONTENT_AREA, YEAR, STATE_ENROLLMENT_STATUS",
+		"STATE, CONTENT_AREA, YEAR",
+		"STATE, CONTENT_AREA, STATE_ENROLLMENT_STATUS",
+		"STATE, CONTENT_AREA",
 		"DISTRICT_NUMBER, CONTENT_AREA, YEAR",
 		"DISTRICT_NUMBER, CONTENT_AREA, DISTRICT_ENROLLMENT_STATUS",
 		"DISTRICT_NUMBER, CONTENT_AREA"
