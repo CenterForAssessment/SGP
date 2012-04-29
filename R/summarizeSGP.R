@@ -162,7 +162,7 @@ function(sgp_object,
 				foo <- sample(dat,length(dat), replace=TRUE)
 				out[j] <- boot.median(foo)
 			}
-			CI <- as.numeric(quantile(out, conf.quantiles, na.rm=TRUE))
+			CI <- round(as.numeric(quantile(out, conf.quantiles, na.rm=TRUE)), digits=1)
 		}
 		CI
 	}
@@ -204,7 +204,7 @@ function(sgp_object,
 		}
 		setnames(tmp, (dim(tmp)[2]-length(sgp.summaries.names)+1):dim(tmp)[2], sgp.summaries.names)
 		message(paste("\tFinished with", sgp.groups.to.summarize))
-		return(as.data.frame(tmp))
+		return(tmp)
 	} ### END sgpSummary function
 
 	combineSims <- function(sgp_object) {
