@@ -51,9 +51,15 @@ if ("LONG_Data" %in% output.type) {
 		tmp.state <- gsub(" ", "_", state)
 	}
 
+
 	### Write long table
 
+        started.at <- proc.time()
+        message(paste("\tStarted LONG data production in outputSGP", date()))
+
 	write.table(sgp_object@Data, file=file.path(outputSGP.directory, paste(tmp.state, "SGP_LONG_Data.dat", sep="_")), sep="|", quote=FALSE, row.names=FALSE, na="")
+
+	message(paste("\tFinished LONG data production in outputSGP", date(), "in", timetaken(started.at), "\n"))
 
 } ### END if LONG_Data %in% output.type
 
