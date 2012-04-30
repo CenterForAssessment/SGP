@@ -506,7 +506,8 @@ function(sgp_object,
 				### Aggregations will occur by this new institution_level variable
 
 				if (!is.null(summary.groups[["institution_multiple_membership"]][[j-1]][["ENROLLMENT_STATUS"]])) {
-					tmp.inst <- paste(i, multiple.membership.variable.name, "ENROLLMENT_STATUS", sep=", ")
+					enrollment.status.name <- paste(paste(paste(head(unlist(strsplit(multiple.membership.variable.name, "_")), -1), collapse="_")), "ENROLLMENT_STATUS", sep="_")
+					tmp.inst <- paste(i, multiple.membership.variable.name, enrollment.status.name, sep=", ")
 				} else tmp.inst <- paste(i, multiple.membership.variable.name, sep=", ")
 				
 
@@ -525,7 +526,8 @@ function(sgp_object,
 					invisible(tmp.dt.long[, ENROLLMENT_STATUS := melt(as.data.frame(tmp.dt[, 
 						summary.groups[["institution_multiple_membership"]][[j-1]][["ENROLLMENT_STATUS"]], with=FALSE]), 
 						measure.vars=summary.groups[["institution_multiple_membership"]][[j-1]][["ENROLLMENT_STATUS"]])[,2]])
-					summary.groups[["institution_inclusion"]][[tmp.inst]] <- "ENROLLMENT_STATUS"
+					setnames(tmp.dt.long, "ENROLLMENT_STATUS", enrollment.status.name)
+					summary.groups[["institution_inclusion"]][[tmp.inst]] <- enrollment.status.name
 				}
 				# if (par.start$par.type=="SNOW") clusterExport(par.start$internal.cl, "tmp.dt.long") # Don't think we need this...
 				summary.groups[["growth_only_summary"]][[tmp.inst]] <- "BY_GROWTH_ONLY" # Do we have an option to NOT include "BY_GROWTH_ONLY"? (would we want this?)
