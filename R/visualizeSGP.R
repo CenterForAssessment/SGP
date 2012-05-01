@@ -214,25 +214,7 @@ function(sgp_object,
 
 			foreach(gaPlot.iter=iter(get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students)), .packages="SGP", .inorder=FALSE,
 				.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
-					growthAchievementPlot(
-						gaPlot.sgp_object=sgp_object,
-						gaPlot.students=gaPlot.iter[["ID"]],
-						gaPlot.max.order.for.progression=get.max.order.for.progression(gaPlot.iter[["YEAR"]], gaPlot.iter[["CONTENT_AREA"]]),
-						state=state,
-						content_area=gaPlot.iter[["CONTENT_AREA"]],
-						year=gaPlot.iter[["YEAR"]], 
-						format=gaPlot.format,
-						baseline=gaPlot.baseline,
-						pdf.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))
-
-			} ## END dopar 
-		} ## END FOREACH
-		
-		if (par.start$par.type=="SNOW") {
-			
-			gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students)
-			clusterApplyLB(par.start$internal.cl, gaPlot.list, function(gaPlot.iter) 
-				growthAchievementPlot(
+					invisible(growthAchievementPlot(
 						gaPlot.sgp_object=sgp_object,
 						gaPlot.students=gaPlot.iter[["ID"]],
 						gaPlot.max.order.for.progression=get.max.order.for.progression(gaPlot.iter[["YEAR"]], gaPlot.iter[["CONTENT_AREA"]]),
@@ -242,12 +224,15 @@ function(sgp_object,
 						format=gaPlot.format,
 						baseline=gaPlot.baseline,
 						pdf.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]])))
-		}
+
+			} ## END dopar 
+		} ## END FOREACH
 		
-		if (par.start$par.type=="MULTICORE") {
+		if (par.start$par.type=="SNOW") {
+			
 			gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students)
-			mclapply(gaPlot.list, function(gaPlot.iter) 
-				growthAchievementPlot(
+			clusterApplyLB(par.start$internal.cl, gaPlot.list, function(gaPlot.iter) 
+				invisible(growthAchievementPlot(
 						gaPlot.sgp_object=sgp_object,
 						gaPlot.students=gaPlot.iter[["ID"]],
 						gaPlot.max.order.for.progression=get.max.order.for.progression(gaPlot.iter[["YEAR"]], gaPlot.iter[["CONTENT_AREA"]]),
@@ -256,7 +241,22 @@ function(sgp_object,
 						year=gaPlot.iter[["YEAR"]], 
 						format=gaPlot.format,
 						baseline=gaPlot.baseline,
-						pdf.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]])), mc.cores=par.start$workers, mc.preschedule=FALSE)
+						pdf.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))))
+		}
+		
+		if (par.start$par.type=="MULTICORE") {
+			gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students)
+			mclapply(gaPlot.list, function(gaPlot.iter) 
+				invisible(growthAchievementPlot(
+						gaPlot.sgp_object=sgp_object,
+						gaPlot.students=gaPlot.iter[["ID"]],
+						gaPlot.max.order.for.progression=get.max.order.for.progression(gaPlot.iter[["YEAR"]], gaPlot.iter[["CONTENT_AREA"]]),
+						state=state,
+						content_area=gaPlot.iter[["CONTENT_AREA"]],
+						year=gaPlot.iter[["YEAR"]], 
+						format=gaPlot.format,
+						baseline=gaPlot.baseline,
+						pdf.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))), mc.cores=par.start$workers, mc.preschedule=FALSE)
 		}
 		
 		stopParallel(parallel.config, par.start)
