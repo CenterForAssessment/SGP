@@ -454,7 +454,7 @@
 
               ## Turn pdf device off
 
-              dev.off()
+              invisible(dev.off())
 
               ## Code to LaTeX document attaching first page/adding meta-data
 
