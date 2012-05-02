@@ -31,6 +31,7 @@ Changes in version: SGP_1.0-0.0
 	  o studentGrowthPercentiles checks for CSEMs and ensures availability by content area.
 	  o Fixed bug in way state name is detected in argument supplied as part of data name.
 	  o Removed redundant years, content_areas specification in abcSGP.
+	  o analyzeSGP not checks for content area specific coefficient matrices and only calculates baseline referenced results for those content areas.
 
 
 Changes in version: SGP_0.9-0.0
