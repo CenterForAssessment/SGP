@@ -183,15 +183,21 @@ function(sgp_object,
 
 				if (sgp.percentiles.baseline) {
 					mtx.names <- names(sgp_object@SGP[["Coefficient_Matrices"]][[paste(strsplit(a, "\\.")[[1]][1], ".BASELINE", sep="")]])
-					max.order <- max(as.numeric(sapply(strsplit(mtx.names[grep(paste("qrmatrix_", tail(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]], 1), sep=""), mtx.names)], "_"), function(x) x[3])))
-					if (length(par.sgp.config[[cnt]][["sgp.panel.years"]])-1 < max.order) max.order <- length(par.sgp.config[[cnt]][["sgp.panel.years"]])-1
-					if (sum(diff(tail(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]], 1+max.order))) > length(par.sgp.config[[cnt]][["sgp.panel.years"]])) {
-						base.gp <- par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]][tail(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]], 1) -
-							par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]] <= max.order]
-						max.order <- length(base.gp) - 1
-					}	else base.gp <- tail(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]], 1+max.order) 
-					par.sgp.config[[cnt]][["base.gp"]] <- base.gp
-					par.sgp.config[[cnt]][["max.order"]] <- max.order
+					if (is.null(mtx.names)) {
+						par.sgp.config[[cnt]][["base.gp"]] <- "NO_BASELINE_COEFFICIENT_MATRICES"
+						par.sgp.config[[cnt]][["max.order"]] <- "NO_BASELINE_COEFFICIENT_MATRICES"
+					} else {
+						max.order <- max(as.numeric(sapply(strsplit(mtx.names[
+							grep(paste("qrmatrix_", tail(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]], 1), sep=""), mtx.names)], "_"), function(x) x[3])))
+						if (length(par.sgp.config[[cnt]][["sgp.panel.years"]])-1 < max.order) max.order <- length(par.sgp.config[[cnt]][["sgp.panel.years"]])-1
+						if (sum(diff(tail(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]], 1+max.order))) > length(par.sgp.config[[cnt]][["sgp.panel.years"]])) {
+							base.gp <- par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]][tail(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]], 1) -
+								par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]] <= max.order]
+							max.order <- length(base.gp) - 1
+						}	else base.gp <- tail(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]], 1+max.order) 
+						par.sgp.config[[cnt]][["base.gp"]] <- base.gp
+						par.sgp.config[[cnt]][["max.order"]] <- max.order
+					}
 				}
 				cnt <- cnt + 1
 			}
@@ -453,7 +459,10 @@ function(sgp_object,
 	if (!is.null(parallel.config)) {
 
 		setkey(sgp_object@Data, VALID_CASE, CONTENT_AREA, YEAR, GRADE)
-		par.sgp.config <- get.par.sgp.config(sgp.config)		
+		par.sgp.config <- get.par.sgp.config(sgp.config)
+		if (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline) {
+			par.sgp.config.baseline <- par.sgp.config[which(sapply(par.sgp.config, function(x) !identical(x[['base.gp']], "NO_BASELINE_COEFFICIENT_MATRICES")))]
+		}
 
 
 	##################################		
@@ -606,11 +615,12 @@ function(sgp_object,
 	####################################
 
 		if (sgp.percentiles.baseline) {
+
 			par.start <- startParallel(parallel.config, 'BASELINE_PERCENTILES')
 
 			###  FOREACH flavor
 			if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
-				tmp <- foreach(sgp.iter=iter(par.sgp.config), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE,
+				tmp <- foreach(sgp.iter=iter(par.sgp.config.baseline), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE,
 					.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
 					return(studentGrowthPercentiles(
 						panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
@@ -633,7 +643,7 @@ function(sgp_object,
 			} else { # END FOREACH	
 				###    SNOW flavor
 				if (par.start$par.type == 'SNOW') {
-					tmp <- clusterApplyLB(par.start$internal.cl, par.sgp.config, 	function(sgp.iter)	studentGrowthPercentiles(
+					tmp <- clusterApplyLB(par.start$internal.cl, par.sgp.config.baseline, 	function(sgp.iter)	studentGrowthPercentiles(
 						panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
 							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), 
@@ -655,7 +665,7 @@ function(sgp_object,
 				
 				###  MULTICORE flavor
 				if (par.start$par.type == 'MULTICORE') {
-					tmp <- mclapply(par.sgp.config, function(sgp.iter)	studentGrowthPercentiles(
+					tmp <- mclapply(par.sgp.config.baseline, function(sgp.iter)	studentGrowthPercentiles(
 						panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
 							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), 
@@ -771,7 +781,7 @@ function(sgp_object,
 
 			###  FOREACH flavor
 			if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
-				tmp <- foreach(sgp.iter=iter(par.sgp.config), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE,
+				tmp <- foreach(sgp.iter=iter(par.sgp.config.baseline), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE,
 					.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
 					return(studentGrowthProjections(
 						panel.data=list(Panel_Data=get.panel.data("sgp.projections", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
@@ -795,7 +805,7 @@ function(sgp_object,
 			} else {# END FOREACH
 				###   SNOW flavor
 				if (par.start$par.type == 'SNOW') {
-					tmp <- clusterApplyLB(par.start$internal.cl, par.sgp.config, 	function(sgp.iter)	studentGrowthProjections(
+					tmp <- clusterApplyLB(par.start$internal.cl, par.sgp.config.baseline, 	function(sgp.iter)	studentGrowthProjections(
 						panel.data=list(Panel_Data=get.panel.data("sgp.projections", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
 							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 
@@ -818,7 +828,7 @@ function(sgp_object,
 				
 				###  MULTICORE flavor
 				if (par.start$par.type == 'MULTICORE') {
-					tmp <- mclapply(par.sgp.config, function(sgp.iter)	studentGrowthProjections(
+					tmp <- mclapply(par.sgp.config.baseline, function(sgp.iter)	studentGrowthProjections(
 						panel.data=list(Panel_Data=get.panel.data("sgp.projections", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
 							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 
@@ -937,7 +947,7 @@ function(sgp_object,
 
 			###  FOREACH flavor
 			if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
-				tmp <- foreach(sgp.iter=iter(par.sgp.config), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE,
+				tmp <- foreach(sgp.iter=iter(par.sgp.config.baseline), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE,
 					.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
 					return(studentGrowthProjections(
 						panel.data=list(Panel_Data=get.panel.data("sgp.projections.lagged", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
@@ -962,7 +972,7 @@ function(sgp_object,
 
 			###  SNOW flavor
 			if (par.start$par.type == 'SNOW') {
-				tmp <- clusterApplyLB(par.start$internal.cl, par.sgp.config, 	function(sgp.iter)	studentGrowthProjections(
+				tmp <- clusterApplyLB(par.start$internal.cl, par.sgp.config.baseline, 	function(sgp.iter)	studentGrowthProjections(
 					panel.data=list(Panel_Data=get.panel.data("sgp.projections.lagged", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
 						Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 
@@ -985,7 +995,7 @@ function(sgp_object,
 			
 			###  MULTICORE flavor
 			if (par.start$par.type == 'MULTICORE') {
-				tmp <- mclapply(par.sgp.config, function(sgp.iter)	studentGrowthProjections(
+				tmp <- mclapply(par.sgp.config.baseline, function(sgp.iter)	studentGrowthProjections(
 					panel.data=list(Panel_Data=get.panel.data("sgp.projections.lagged", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
 						Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 
@@ -1025,6 +1035,9 @@ function(sgp_object,
 
 		setkey(sgp_object@Data, VALID_CASE, CONTENT_AREA, YEAR, GRADE)
 		par.sgp.config <- get.par.sgp.config(sgp.config)		
+		if (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline) {
+			par.sgp.config.baseline <- par.sgp.config[which(sapply(par.sgp.config, function(x) !identical(x[['base.gp']], "NO_BASELINE_COEFFICIENT_MATRICES")))]
+		}
 
 
 		## sgp.percentiles
@@ -1072,7 +1085,7 @@ function(sgp_object,
 		## sgp.percentiles.baseline
 
 		if (sgp.percentiles.baseline) {
-			for (sgp.iter in par.sgp.config) {
+			for (sgp.iter in par.sgp.config.baseline) {
 				
 				panel.data=within(tmp_sgp_object, assign("Panel_Data", get.panel.data("sgp.percentiles", sgp.iter)))
 				panel.data=within(panel.data, assign("Knots_Boundaries", get.knots.boundaries(sgp.iter))) # Get specific knots and boundaries in case course sequence
@@ -1122,7 +1135,7 @@ function(sgp_object,
 		## sgp.projections.baseline
 	
 		if (sgp.projections.baseline) {
-			for (sgp.iter in par.sgp.config) {
+			for (sgp.iter in par.sgp.config.baseline) {
 
 				panel.data=within(tmp_sgp_object, assign("Panel_Data", get.panel.data("sgp.projections", sgp.iter)))
 				panel.data=within(panel.data, assign("Knots_Boundaries", get.knots.boundaries(sgp.iter))) # Get specific knots and boundaries in case course sequence
@@ -1174,7 +1187,7 @@ function(sgp_object,
 		## sgp.projections.lagged.baseline
 	
 		if (sgp.projections.lagged.baseline) {
-			for (sgp.iter in par.sgp.config) {
+			for (sgp.iter in par.sgp.config.baseline) {
 
 				panel.data=within(tmp_sgp_object, assign("Panel_Data", get.panel.data("sgp.projections.lagged", sgp.iter)))
 				panel.data=within(panel.data, assign("Knots_Boundaries", get.knots.boundaries(sgp.iter))) # Get specific knots and boundaries in case course sequence
