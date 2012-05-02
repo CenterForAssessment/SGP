@@ -1261,7 +1261,7 @@ if (22 %in% bPlot.styles) {
 		### Data sets and relevant quantities used for bubblePlots
 
 		if (bPlot.full.academic.year) {
-			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__INSTRUCTOR_ENROLLMENT_STATUS__CONTENT_AREA__YEAR"]][!is.na(ENROLLMENT_STATUS)]
+			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__INSTRUCTOR_ENROLLMENT_STATUS__CONTENT_AREA__YEAR"]][!is.na(INSTRUCTOR_ENROLLMENT_STATUS)]
 		} else {
 			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
 		}
@@ -1359,7 +1359,7 @@ if (22 %in% bPlot.styles) {
 		### Data sets and relevant quantities used for bubblePlots
 
 		if (bPlot.full.academic.year) {
-			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__INSTRUCTOR_ENROLLMENT_STATUS__CONTENT_AREA__YEAR"]][!is.na(ENROLLMENT_STATUS)]
+			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__INSTRUCTOR_ENROLLMENT_STATUS__CONTENT_AREA__YEAR"]][!is.na(INSTRUCTOR_ENROLLMENT_STATUS)]
 		} else {
 			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
 		}
@@ -1463,7 +1463,7 @@ if (22 %in% bPlot.styles) {
 		} else bPlot.levels <- list(A=NULL)
 
 		if (bPlot.full.academic.year) {
-			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__INSTRUCTOR_ENROLLMENT_STATUS__CONTENT_AREA__YEAR"]][!is.na(ENROLLMENT_STATUS)]
+			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__INSTRUCTOR_ENROLLMENT_STATUS__CONTENT_AREA__YEAR"]][!is.na(INSTRUCTOR_ENROLLMENT_STATUS)]
 			if (!is.null(bPlot.levels)) {
 				tmp.bPlot.levels.data <- data.frame(eval(parse(text=paste("sgp_object@Data[,c(grep('INSTRUCTOR_NUMBER', names(sgp_object@Data)), 
 					intersect(grep('ENROLLMENT_STATUS', names(sgp_object@Data)), grep('INSTRUCTOR', names(sgp_object@Data))),", 
@@ -1613,7 +1613,7 @@ if (22 %in% bPlot.styles) {
 		### Data sets and relevant quantities used for bubblePlots
 
 		if (bPlot.full.academic.year) {
-			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__INSTRUCTOR_ENROLLMENT_STATUS__CONTENT_AREA__YEAR"]][!is.na(ENROLLMENT_STATUS)]
+			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__INSTRUCTOR_ENROLLMENT_STATUS__CONTENT_AREA__YEAR"]][!is.na(INSTRUCTOR_ENROLLMENT_STATUS)]
 		} else {
 			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]]
 		}
@@ -1718,7 +1718,7 @@ if (22 %in% bPlot.styles) {
 		} else bPlot.levels <- list(A=NULL)
 
 		if (bPlot.full.academic.year) {
-			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__INSTRUCTOR_ENROLLMENT_STATUS__CONTENT_AREA__YEAR"]][!is.na(ENROLLMENT_STATUS)]
+			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__INSTRUCTOR_ENROLLMENT_STATUS__CONTENT_AREA__YEAR"]][!is.na(INSTRUCTOR_ENROLLMENT_STATUS)]
 			if (!is.null(bPlot.levels)) {
 				tmp.bPlot.levels.data <- data.frame(eval(parse(text=paste("sgp_object@Data[,c(grep('INSTRUCTOR_NUMBER', names(sgp_object@Data)), 
 					intersect(grep('ENROLLMENT_STATUS', names(sgp_object@Data)), grep('INSTRUCTOR', names(sgp_object@Data))),", 
