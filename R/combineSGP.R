@@ -1,8 +1,8 @@
 `combineSGP` <- 
 function(sgp_object,
-		 state,
-		 years,
-		 content_areas,
+		 state=NULL,
+		 years=NULL,
+		 content_areas=NULL,
 		 sgp.percentiles=TRUE,
 		 sgp.percentiles.baseline=TRUE,
 		 sgp.projections.lagged=TRUE,
@@ -17,7 +17,7 @@ function(sgp_object,
 
 	### Create state (if missing) from sgp_object (if possible)
 
-	if (missing(state)) {
+	if (is.null(state)) {
 		tmp.name <- gsub("_", " ", deparse(substitute(sgp_object)))
 		if (any(sapply(c(state.name, "Demonstration", "AOB"), function(x) regexpr(x, tmp.name))==1)) {
 			state <- c(state.abb, "DEMO", "AOB")[which(sapply(c(state.name, "Demonstration", "AOB"), function(x) regexpr(x, tmp.name))==1)]
@@ -50,14 +50,10 @@ function(sgp_object,
 
 	"%w/o%" <- function(x,y) x[!x %in% y]
 
-	rbind.all <- function(.list, names.not.equal=FALSE, ...) {
-		if(length(.list)==1) return(.list[[1]])
-		if (names.not.equal) {
-			Recall(c(list(rbind.fill(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), names.not.equal=TRUE, ...)
-		} else {
-			Recall(c(list(rbind(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), ...)
-		}
-	}
+#	rbind.all <- function(.list, ...) {
+#		if(length(.list)==1) return(.list[[1]])
+#		Recall(c(list(rbind.fill(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), ...)
+#	}
 
 	get.catch_up_keep_up_status_initial <- function(achievement_level_prior) {
 		if (!all(levels(achievement_level_prior) %in% SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]])) {
@@ -68,6 +64,12 @@ function(sgp_object,
 		factor(achievement_level_prior, ordered=FALSE) ## Drop ordered attribute of factor
 	}
 
+	get.rbind.all.data <- function(data.pieces, key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID")) {
+		my.rbind.all <- rbind.fill(data.pieces)
+		if (is.factor(my.rbind.all[["YEAR"]])) my.rbind.all[["YEAR"]] <- as.factor(as.character(my.rbind.all[["YEAR"]]))
+		if (is.factor(my.rbind.all[["CONTENT_AREA"]])) my.rbind.all[["CONTENT_AREA"]] <- as.factor(as.character(my.rbind.all[["CONTENT_AREA"]]))
+		data.table(my.rbind.all,  VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), key=key(sgp_object@Data))
+	}
 
 	#######################################################
 	### Merge Cohort Referenced SGPs with student data
@@ -81,8 +83,8 @@ function(sgp_object,
 		} else {
 		 tmp.names <- names(sgp_object@SGP$SGPercentiles)
 		}
-		if (length(tmp.names) > 0 & !missing(years)) tmp.names <- tmp.names[sapply(strsplit(tmp.names, "[.]"), function(x) x[2] %in% years)]
-		if (length(tmp.names) > 0 & !missing(content_areas)) tmp.names <- tmp.names[sapply(strsplit(tmp.names, "[.]"), function(x) x[1] %in% content_areas)]
+		if (length(tmp.names) > 0 & !is.null(years)) tmp.names <- tmp.names[sapply(strsplit(tmp.names, "[.]"), function(x) x[2] %in% years)]
+		if (length(tmp.names) > 0 & !is.null(content_areas)) tmp.names <- tmp.names[sapply(strsplit(tmp.names, "[.]"), function(x) x[1] %in% content_areas)]
 
 		if (length(tmp.names) == 0 & sgp.percentiles) {
 		 tmp.messages <- c(tmp.messages, "\tNOTE: No cohort referenced SGP results available in SGP slot. No cohort referenced SGP results will be merged.\n")
@@ -95,26 +97,22 @@ function(sgp_object,
 
 		tmp.list <- list() 
 		for (i in tmp.names) {
-		tmp.list[[i]] <- data.frame(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
-									YEAR=type.convert(unlist(strsplit(i, "[.]"))[2]),
-									sgp_object@SGP[["SGPercentiles"]][[i]])
-		}
-
-		tmp.list.names <- lapply(tmp.list, names)
-		if (length(tmp.list.names) > 1) {
-		 tmp.names.not.equal <- !all(sapply(seq(length(tmp.list.names)-1), function(x,i) identical(x[[i]], x[[i+1]]), x=tmp.list.names))
-		} else { 
-		 tmp.names.not.equal=FALSE
+		tmp.list[[i]] <- data.frame(
+					CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
+					YEAR=type.convert(unlist(strsplit(i, "[.]"))[2]),
+					sgp_object@SGP[["SGPercentiles"]][[i]])
 		}
 
 		if (!"SGP" %in% names(sgp_object@Data)) {
-			sgp_object@Data <- data.table(rbind.all(tmp.list, tmp.names.not.equal), VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")),
-				key=key(sgp_object@Data))[sgp_object@Data]
+			sgp_object@Data <- get.rbind.all.data(tmp.list)[sgp_object@Data]
 		} else {
-			tmp.data <-  data.table(VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), rbind.all(tmp.list, tmp.names.not.equal), key=key(sgp_object@Data))
+			tmp.data <- get.rbind.all.data(tmp.list) 
 			if (!all(names(tmp.data) %in% names(sgp_object@Data))) {
 				variables.to.create <- names(tmp.data) %w/o% names(sgp_object@Data)
-				invisible(sgp_object@Data[, variables.to.create := NA, with=FALSE])
+				for (k in variables.to.create) {
+					sgp_object@Data[[k]] <- NA_integer_
+					class(sgp_object@Data[[k]]) <- class(tmp.data[[k]])
+				}
 			}
 			invisible(sgp_object@Data[tmp.data[,c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE], names(tmp.data) := tmp.data, with=FALSE, mult="first"])
 		}
@@ -132,8 +130,8 @@ function(sgp_object,
 		tmp.baseline.names <- grep("BASELINE", names(sgp_object@SGP$SGPercentiles), value=TRUE)
 		if (length(tmp.baseline.names) > 0) {
 			 tmp.names <- tmp.baseline.names
-			 if (length(tmp.names) > 0 & !missing(years)) tmp.names <- tmp.names[sapply(strsplit(tmp.names, "[.]"), function(x) x[2] %in% years)]
-			 if (length(tmp.names) > 0 & !missing(content_areas)) tmp.names <- tmp.names[sapply(strsplit(tmp.names, "[.]"), function(x) x[1] %in% content_areas)]
+			 if (length(tmp.names) > 0 & !is.null(years)) tmp.names <- tmp.names[sapply(strsplit(tmp.names, "[.]"), function(x) x[2] %in% years)]
+			 if (length(tmp.names) > 0 & !is.null(content_areas)) tmp.names <- tmp.names[sapply(strsplit(tmp.names, "[.]"), function(x) x[1] %in% content_areas)]
 		}
 		if (length(tmp.baseline.names) == 0 & sgp.percentiles.baseline) {
 			 tmp.messages <- c(tmp.messages, "\tNOTE: No baseline referenced SGP results available in SGP slot. No baseline referenced SGP results will be merged.\n")
@@ -151,13 +149,15 @@ function(sgp_object,
 		}
 
 		if (!"SGP_BASELINE" %in% names(sgp_object@Data)) {
-			sgp_object@Data <- data.table(rbind.all(tmp.list), VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")),
-				key=key(sgp_object@Data))[sgp_object@Data]
+			sgp_object@Data <- get.rbind.all.data(tmp.list)[sgp_object@Data]
 		} else {
-			tmp.data <-  data.table(VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), rbind.all(tmp.list, tmp.names.not.equal), key=key(sgp_object@Data))
+			tmp.data <- get.rbind.all.data(tmp.list) 
 			if (!all(names(tmp.data) %in% names(sgp_object@Data))) {
 				variables.to.create <- names(tmp.data) %w/o% names(sgp_object@Data)
-				invisible(sgp_object@Data[, variables.to.create := NA, with=FALSE])
+				for (k in variables.to.create) {
+					sgp_object@Data[[k]] <- NA_integer_
+					class(sgp_object@Data[[k]]) <- class(tmp.data[[k]])
+				}
 			}
 			invisible(sgp_object@Data[tmp.data[,c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE], names(tmp.data) := tmp.data, with=FALSE, mult="first"])
 		}
@@ -177,16 +177,16 @@ function(sgp_object,
 		tmp.names.lagged <- names(sgp_object@SGP$SGProjections)[tmp.lagged.names %w/o% tmp.baseline.names]
 		tmp.names.lagged.baseline <- names(sgp_object@SGP$SGProjections)[intersect(tmp.lagged.names, tmp.baseline.names)]
 		if (length(tmp.names.lagged) > 0) {
-			 if (length(tmp.names.lagged) > 0 & !missing(years)) tmp.names.lagged <- tmp.names.lagged[sapply(strsplit(tmp.names.lagged, "[.]"), function(x) x[2] %in% years)]
-			 if (length(tmp.names.lagged) > 0 & !missing(content_areas)) tmp.names.lagged <- tmp.names.lagged[sapply(strsplit(tmp.names.lagged, "[.]"), function(x) x[1] %in% content_areas)]
+			 if (length(tmp.names.lagged) > 0 & !is.null(years)) tmp.names.lagged <- tmp.names.lagged[sapply(strsplit(tmp.names.lagged, "[.]"), function(x) x[2] %in% years)]
+			 if (length(tmp.names.lagged) > 0 & !is.null(content_areas)) tmp.names.lagged <- tmp.names.lagged[sapply(strsplit(tmp.names.lagged, "[.]"), function(x) x[1] %in% content_areas)]
 		}
 		if (length(tmp.names.lagged) == 0 & sgp.projections.lagged) {
 			 tmp.messages <- c(tmp.messages, "\tNOTE: No SGP lagged projection results available in SGP slot. No student growth projection targets will be produced.\n")
 			 sgp.projections.lagged <- FALSE
 		}
 		if (length(tmp.names.lagged.baseline) > 0) {
-			 if (length(tmp.names.lagged.baseline) > 0 & !missing(years)) tmp.names.lagged.baseline <- tmp.names.lagged.baseline[sapply(strsplit(tmp.names.lagged.baseline, "[.]"), function(x) x[2] %in% years)]
-			 if (length(tmp.names.lagged.baseline) > 0 & !missing(content_areas)) tmp.names.lagged.baseline <- tmp.names.lagged.baseline[sapply(strsplit(tmp.names.lagged.baseline, "[.]"), function(x) x[1] %in% content_areas)]
+			 if (length(tmp.names.lagged.baseline) > 0 & !is.null(years)) tmp.names.lagged.baseline <- tmp.names.lagged.baseline[sapply(strsplit(tmp.names.lagged.baseline, "[.]"), function(x) x[2] %in% years)]
+			 if (length(tmp.names.lagged.baseline) > 0 & !is.null(content_areas)) tmp.names.lagged.baseline <- tmp.names.lagged.baseline[sapply(strsplit(tmp.names.lagged.baseline, "[.]"), function(x) x[1] %in% content_areas)]
 		}
 		if (length(tmp.names.lagged.baseline) == 0 & sgp.projections.lagged.baseline) {
 			 tmp.messages <- c(tmp.messages, "\tNOTE: No baseline SGP lagged projection results available in SGP slot. No baseline referenced student growth projection targets will be produced.\n")
@@ -219,7 +219,7 @@ function(sgp_object,
 				sgp_object@SGP[["SGProjections"]][[i]][,c(1,2,cols.to.get[1:num.cols.to.get])])
 		}
 
-		tmp_object_1 <- data.table(VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), rbind.all(tmp.list))[!is.na(CATCH_UP_KEEP_UP_STATUS_INITIAL)]
+		tmp_object_1 <- data.table(VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), rbind.fill(tmp.list))[!is.na(CATCH_UP_KEEP_UP_STATUS_INITIAL)]
 
 		## Find min/max of targets based upon CATCH_UP_KEEP_UP_STATUS_INITIAL status
 
@@ -237,7 +237,10 @@ function(sgp_object,
 		} else {
 			if (!all(names(tmp_object_2) %in% names(sgp_object@Data))) {
 				variables.to.create <- names(tmp_object_2) %w/o% names(sgp_object@Data)
-				invisible(sgp_object@Data[, variables.to.create := NA, with=FALSE])
+				for (k in variables.to.create) {
+					sgp_object@Data[[k]] <- NA_integer_
+					class(sgp_object@Data[[k]]) <- class(tmp.data[[k]])
+				}
 			}
 			invisible(sgp_object@Data[tmp_object_2[,c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE], names(tmp_object_2) := tmp_object_2, with=FALSE, mult="first"])
 		}
@@ -264,7 +267,7 @@ function(sgp_object,
 										sgp_object@SGP[["SGProjections"]][[i]][,c(1,2,cols.to.get[1:num.cols.to.get])])
 		 }
 
-		tmp_object_1 <- data.table(VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), rbind.all(tmp.list))[!is.na(CATCH_UP_KEEP_UP_STATUS_INITIAL)]
+		tmp_object_1 <- data.table(VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), rbind.fill(tmp.list))[!is.na(CATCH_UP_KEEP_UP_STATUS_INITIAL)]
 
 		 ## Find min/max of targets based upon CATCH_UP_KEEP_UP_STATUS_INITIAL status
 
@@ -282,7 +285,10 @@ function(sgp_object,
 		} else {
 			if (!all(names(tmp_object_2) %in% names(sgp_object@Data))) {
 				variables.to.create <- names(tmp_object_2) %w/o% names(sgp_object@Data)
-				invisible(sgp_object@Data[, variables.to.create := NA, with=FALSE])
+				for (k in variables.to.create) {
+					sgp_object@Data[[k]] <- NA_integer_
+					class(sgp_object@Data[[k]]) <- class(tmp.data[[k]])
+				}
 			}
 			invisible(sgp_object@Data[tmp_object_2[,c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE], names(tmp_object_2) := tmp_object_2, with=FALSE, mult="first"])
 		}

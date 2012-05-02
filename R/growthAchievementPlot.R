@@ -541,7 +541,7 @@
 	message(paste("\tStarted", year, state.name.label, content_area, "growthAchievementPlot:",  started.date))
 	message(paste("\tFinished", year, state.name.label, content_area, "growthAchievementPlot:",  date(), "in", timetaken(started.at), "\n"))
 	
-	dev.off() 
+	invisible(dev.off())
 	
 	} ## End loop over starting scores or students
 } ## End growthAchievementPlot function

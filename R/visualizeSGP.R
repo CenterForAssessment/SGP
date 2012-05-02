@@ -82,10 +82,10 @@ function(sgp_object,
 
 	pretty_year <- function(x) sub("_", "-", x)
 
-	rbind.all <- function(.list, ...) {
-		if (length(.list)==1) return (.list[[1]])
-		Recall(c(list(rbind(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), ...)
-	}
+#	rbind.all <- function(.list, ...) {
+#		if (length(.list)==1) return (.list[[1]])
+#		Recall(c(list(rbind(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), ...)
+#	}
 
 	get.max.order.for.progression <- function(year, content_area) {
 		if (is.null(gaPlot.max.order.for.progression)) {
@@ -144,7 +144,7 @@ function(sgp_object,
 			}
 		}
 
-		tmp.df <- rbind.all(tmp.list)
+		tmp.df <- rbind.fill(tmp.list)
 
 		if (!is.null(gaPlot.students)) {
 			 tmp.df <- expand.grid(tmp.df, ID=gaPlot.students)
@@ -214,25 +214,7 @@ function(sgp_object,
 
 			foreach(gaPlot.iter=iter(get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students)), .packages="SGP", .inorder=FALSE,
 				.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
-					growthAchievementPlot(
-						gaPlot.sgp_object=sgp_object,
-						gaPlot.students=gaPlot.iter[["ID"]],
-						gaPlot.max.order.for.progression=get.max.order.for.progression(gaPlot.iter[["YEAR"]], gaPlot.iter[["CONTENT_AREA"]]),
-						state=state,
-						content_area=gaPlot.iter[["CONTENT_AREA"]],
-						year=gaPlot.iter[["YEAR"]], 
-						format=gaPlot.format,
-						baseline=gaPlot.baseline,
-						pdf.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))
-
-			} ## END dopar 
-		} ## END FOREACH
-		
-		if (par.start$par.type=="SNOW") {
-			
-			gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students)
-			clusterApplyLB(par.start$internal.cl, gaPlot.list, function(gaPlot.iter) 
-				growthAchievementPlot(
+					invisible(growthAchievementPlot(
 						gaPlot.sgp_object=sgp_object,
 						gaPlot.students=gaPlot.iter[["ID"]],
 						gaPlot.max.order.for.progression=get.max.order.for.progression(gaPlot.iter[["YEAR"]], gaPlot.iter[["CONTENT_AREA"]]),
@@ -242,12 +224,15 @@ function(sgp_object,
 						format=gaPlot.format,
 						baseline=gaPlot.baseline,
 						pdf.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]])))
-		}
+
+			} ## END dopar 
+		} ## END FOREACH
 		
-		if (par.start$par.type=="MULTICORE") {
+		if (par.start$par.type=="SNOW") {
+			
 			gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students)
-			mclapply(gaPlot.list, function(gaPlot.iter) 
-				growthAchievementPlot(
+			clusterApplyLB(par.start$internal.cl, gaPlot.list, function(gaPlot.iter) 
+				invisible(growthAchievementPlot(
 						gaPlot.sgp_object=sgp_object,
 						gaPlot.students=gaPlot.iter[["ID"]],
 						gaPlot.max.order.for.progression=get.max.order.for.progression(gaPlot.iter[["YEAR"]], gaPlot.iter[["CONTENT_AREA"]]),
@@ -256,7 +241,22 @@ function(sgp_object,
 						year=gaPlot.iter[["YEAR"]], 
 						format=gaPlot.format,
 						baseline=gaPlot.baseline,
-						pdf.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]])), mc.cores=par.start$workers, mc.preschedule=FALSE)
+						pdf.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))))
+		}
+		
+		if (par.start$par.type=="MULTICORE") {
+			gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students)
+			mclapply(gaPlot.list, function(gaPlot.iter) 
+				invisible(growthAchievementPlot(
+						gaPlot.sgp_object=sgp_object,
+						gaPlot.students=gaPlot.iter[["ID"]],
+						gaPlot.max.order.for.progression=get.max.order.for.progression(gaPlot.iter[["YEAR"]], gaPlot.iter[["CONTENT_AREA"]]),
+						state=state,
+						content_area=gaPlot.iter[["CONTENT_AREA"]],
+						year=gaPlot.iter[["YEAR"]], 
+						format=gaPlot.format,
+						baseline=gaPlot.baseline,
+						pdf.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))), mc.cores=par.start$workers, mc.preschedule=FALSE)
 		}
 		
 		stopParallel(parallel.config, par.start)
@@ -322,7 +322,7 @@ if ("studentGrowthPlot" %in% plot.types) {
 			setnames(tmp.df, c("GRADE", "YEAR")) 
 			tmp.list[[i]] <- data.frame(CONTENT_AREA=i, tmp.df)
 		}
-	data.table(rbind.all(tmp.list), key=c("CONTENT_AREA", "GRADE", "YEAR"))
+	data.table(rbind.fill(tmp.list), key=c("CONTENT_AREA", "GRADE", "YEAR"))
 	} ## END get.years.content_areas.grades
 
 
@@ -677,7 +677,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 				tmp.list[[i]] <- data.table(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
 					sgp_object@SGP[["SGProjections"]][[i]][,c(1, grep("PROJ_YEAR_1", names(sgp_object@SGP[["SGProjections"]][[i]])))])
 			}
-			sgPlot.data <- data.table(rbind.all(tmp.list), key=paste(key(sgPlot.data), collapse=","))[sgPlot.data]
+			sgPlot.data <- data.table(rbind.fill(tmp.list), key=paste(key(sgPlot.data), collapse=","))[sgPlot.data]
 			tmp.grade.name <- paste("GRADE", tmp.last.year, sep=".")
 			tmp.year.name <- .year.increment(tmp.last.year, 1)
 			setkeyv(sgPlot.data, c("CONTENT_AREA", tmp.grade.name))

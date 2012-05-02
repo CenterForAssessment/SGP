@@ -14,7 +14,7 @@ function(sgp_object,
 
 	### Set variables to NULL to prevent R CMD check warnings
 
-	tmp.simulation.dt <- variable <- WEIGHT <- ENROLLMENT_STATUS <- STATE <- names.type <- names.sgp <- NULL
+	tmp.simulation.dt <- variable <- WEIGHT <- ENROLLMENT_STATUS <- STATE <- names.type <- names.sgp <- names.output <- NULL
 
 	
 	### Create state (if NULL) from sgp_object (if possible)
@@ -29,7 +29,7 @@ function(sgp_object,
 
 	### Define tables that will be calculated from all possible created by expand.grid
 
-	selected.demographic.subgroups <- subset(sgp_object@Names, names.type=="demographic" & !is.na(names.type), select=names.sgp, drop=TRUE)
+	selected.demographic.subgroups <- subset(sgp_object@Names, names.type=="demographic" & !is.na(names.type) & names.output, select=names.sgp, drop=TRUE)
 	selected.summary.tables <- unique(c(
 
 		## From bubblePlot_Styles
@@ -80,10 +80,16 @@ function(sgp_object,
 
 		### Other good ones to have
 
-		"STATE_NUMBER, CONTENT_AREA, YEAR, STATE_ENROLLMENT_STATUS",
-		"STATE_NUMBER, CONTENT_AREA, YEAR",
-		"STATE_NUMBER, CONTENT_AREA, STATE_ENROLLMENT_STATUS",
-		"STATE_NUMBER, CONTENT_AREA",
+		"STATE, CONTENT_AREA, YEAR, STATE_ENROLLMENT_STATUS",
+		"STATE, CONTENT_AREA, YEAR",
+		"STATE, CONTENT_AREA, STATE_ENROLLMENT_STATUS",
+		"STATE, CONTENT_AREA",
+		paste("STATE, CONTENT_AREA, YEAR, STATE_ENROLLMENT_STATUS, ", selected.demographic.subgroups, sep=""),
+		paste("STATE, CONTENT_AREA, YEAR, GRADE, STATE_ENROLLMENT_STATUS, ", selected.demographic.subgroups, sep=""),
+		paste("STATE, CONTENT_AREA, YEAR, EMH_LEVEL, SCHOOL_ENROLLMENT_STATUS, ", selected.demographic.subgroups, sep=""),
+		paste("STATE, CONTENT_AREA, STATE_ENROLLMENT_STATUS, ", selected.demographic.subgroups, sep=""),
+		paste("STATE, CONTENT_AREA, GRADE, STATE_ENROLLMENT_STATUS, ", selected.demographic.subgroups, sep=""),
+		paste("STATE, CONTENT_AREA, EMH_LEVEL, SCHOOL_ENROLLMENT_STATUS, ", selected.demographic.subgroups, sep=""),
 		"DISTRICT_NUMBER, CONTENT_AREA, YEAR",
 		"DISTRICT_NUMBER, CONTENT_AREA, DISTRICT_ENROLLMENT_STATUS",
 		"DISTRICT_NUMBER, CONTENT_AREA"
@@ -113,10 +119,10 @@ function(sgp_object,
 		return(tmp.names[tmp.names$names.type==x, "names.sgp"])
 	}
 
-	rbind.all <- function(.list, ...){
-		if(length(.list)==1) return(.list[[1]])
-		Recall(c(list(rbind(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), ...)
-	}
+#	rbind.all <- function(.list, ...){
+#		if(length(.list)==1) return(.list[[1]])
+#		Recall(c(list(rbind(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), ...)
+#	}
 
 	group.format <- function(my.group) {
 		if (is.null(my.group)) {
@@ -156,7 +162,7 @@ function(sgp_object,
 				foo <- sample(dat,length(dat), replace=TRUE)
 				out[j] <- boot.median(foo)
 			}
-			CI <- as.numeric(quantile(out, conf.quantiles, na.rm=TRUE))
+			CI <- round(as.numeric(quantile(out, conf.quantiles, na.rm=TRUE)), digits=1)
 		}
 		CI
 	}
@@ -198,7 +204,7 @@ function(sgp_object,
 		}
 		setnames(tmp, (dim(tmp)[2]-length(sgp.summaries.names)+1):dim(tmp)[2], sgp.summaries.names)
 		message(paste("\tFinished with", sgp.groups.to.summarize))
-		return(as.data.frme(tmp))
+		return(tmp)
 	} ### END sgpSummary function
 
 	combineSims <- function(sgp_object) {
@@ -210,7 +216,7 @@ function(sgp_object,
 				YEAR=type.convert(unlist(strsplit(i, "[.]"))[2]))
 		}
  
-		data.table(rbind.all(tmp.list), VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), key=key(data))
+		data.table(rbind.fill(tmp.list), VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), key=key(data))
 	}
 
 	summarizeSGP.config <- function(sgp_object, config.type) {
@@ -458,7 +464,7 @@ function(sgp_object,
 	for (i in names(tmp.years)) {
 		tmp.years[[i]] <- data.frame(CONTENT_AREA=i, YEAR=tmp.years[[i]]) ## NOTE: data.frame necessary to treat factors correctly
 	}
-	content_areas.by.years <- as.data.table(rbind.all(tmp.years))
+	content_areas.by.years <- as.data.table(rbind.fill(tmp.years))
 
 	if (is.null(sgp.summaries)) sgp.summaries <- summarizeSGP.config(sgp_object, "sgp.summaries")
 	if (is.null(summary.groups)) summary.groups <- summarizeSGP.config(sgp_object, "summary.groups")
@@ -500,7 +506,8 @@ function(sgp_object,
 				### Aggregations will occur by this new institution_level variable
 
 				if (!is.null(summary.groups[["institution_multiple_membership"]][[j-1]][["ENROLLMENT_STATUS"]])) {
-					tmp.inst <- paste(i, multiple.membership.variable.name, "ENROLLMENT_STATUS", sep=", ")
+					enrollment.status.name <- paste(paste(paste(head(unlist(strsplit(multiple.membership.variable.name, "_")), -1), collapse="_")), "ENROLLMENT_STATUS", sep="_")
+					tmp.inst <- paste(i, multiple.membership.variable.name, enrollment.status.name, sep=", ")
 				} else tmp.inst <- paste(i, multiple.membership.variable.name, sep=", ")
 				
 
@@ -519,7 +526,8 @@ function(sgp_object,
 					invisible(tmp.dt.long[, ENROLLMENT_STATUS := melt(as.data.frame(tmp.dt[, 
 						summary.groups[["institution_multiple_membership"]][[j-1]][["ENROLLMENT_STATUS"]], with=FALSE]), 
 						measure.vars=summary.groups[["institution_multiple_membership"]][[j-1]][["ENROLLMENT_STATUS"]])[,2]])
-					summary.groups[["institution_inclusion"]][[tmp.inst]] <- "ENROLLMENT_STATUS"
+					setnames(tmp.dt.long, "ENROLLMENT_STATUS", enrollment.status.name)
+					summary.groups[["institution_inclusion"]][[tmp.inst]] <- enrollment.status.name
 				}
 				# if (par.start$par.type=="SNOW") clusterExport(par.start$internal.cl, "tmp.dt.long") # Don't think we need this...
 				summary.groups[["growth_only_summary"]][[tmp.inst]] <- "BY_GROWTH_ONLY" # Do we have an option to NOT include "BY_GROWTH_ONLY"? (would we want this?)

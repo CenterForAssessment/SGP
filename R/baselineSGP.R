@@ -46,9 +46,7 @@ function(sgp_object,
                         if (all(names(list_2[[j]]) %in% names(list_1[[j]]))) {
                                 for (k in names(list_2[[j]])) { # merging list_2 in with list_1, so use it here
                                         if (!identical(list_1[[j]][[k]], list_2[[j]][[k]])) { # keeps it from copying first set of results
-                                                if (dim(list_1[[j]][[k]])[2] != dim(list_2[[j]][[k]])[2]) {
-                                                        list_1[[j]][[k]] <- rbind.fill(list_1[[j]][[k]], list_2[[j]][[k]])
-                                                }       else list_1[[j]][[k]] <- rbind(list_1[[j]][[k]], list_2[[j]][[k]])
+                                               list_1[[j]][[k]] <- rbind.fill(list_1[[j]][[k]], list_2[[j]][[k]])
                                         }
                                 }
                         }
@@ -91,15 +89,16 @@ function(sgp_object,
 	                        timevar="GRADE",
 	                        direction="wide",
 	                        drop=names(sgp_object@Data)[!names(sgp_object@Data) %in% c('ID', 'SCALE_SCORE', 'GRADE')])
-	                        tmp.list[[k]] <- tmp.list[[k]][!apply(is.na(tmp.list[[k]]), 1, any)]
+	                        tmp.list[[k]] <- as.data.frame(tmp.list[[k]][!apply(is.na(tmp.list[[k]]), 1, any)])
 	        }
-	        tmp.dt <- do.call(rbind, tmp.list)
+	        tmp.df <- rbind.fill(tmp.list)
+
 
 	        ## Calculate Coefficient Matrices and return list containing coefficient matrix
 
 	        tmp_sgp_list <- list(Coefficient_Matrices =
 	                studentGrowthPercentiles(
-	                panel.data=data.frame(tmp.dt[,1,with=FALSE], matrix(grade.sequences, nrow=1), tmp.dt[,-1,with=FALSE]),
+	                panel.data=data.frame(tmp.df[,1], matrix(grade.sequences, nrow=1), tmp.df[,-1]),
 	                sgp.labels=list(my.year="BASELINE", my.subject=content_areas),
 	                use.my.knots.boundaries=state,
 	                calculate.sgps=FALSE,

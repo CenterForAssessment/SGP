@@ -8,9 +8,9 @@
 
 \usage{
 combineSGP(sgp_object,
-	state,
-	years,
-	content_areas,
+	state=NULL,
+	years=NULL,
+	content_areas=NULL,
 	sgp.percentiles=TRUE,
         sgp.percentiles.baseline=TRUE,
 	sgp.projections.lagged=TRUE,

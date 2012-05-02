@@ -46,17 +46,6 @@ function(sgp_object,
 	}
 
 
-        ### Calculate Relevant Quantities ###
-
-        if (is.null(content_areas)) {
-                content_areas <- unique(sgp_object@Data["VALID_CASE"]$CONTENT_AREA)
-        }
-        if (is.null(years)) {
-                for (i in content_areas) {
-                        years <- sort(tail(unique(sgp_object@Data[J("VALID_CASE", content_areas)]$YEAR), -2))
-                }
-        }
-
 	### analyzeSGP ###
 
 	if ("analyzeSGP" %in% steps) {

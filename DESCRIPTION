@@ -1,18 +1,18 @@
 Package: SGP
 Type: Package
 Title: An R Package for the Calculation and Visualization of Student Growth Percentiles & Percentile Growth Trajectories.
-Version: 0.9-2.0
-Date: 2012-4-24
+Version: 0.9-3.0
+Date: 2012-4-30
 Authors@R: c(person("Damian", "Betebenner", email="dbetebenner@nciea.org", role=c("aut", "cre")), person("Adam", "Van Iwaarden", email="Vaniwaarden@colorado.edu", role="aut"),
                     person("Ben", "Domingue", email="ben.domingue@gmail.com", role="aut"))
 Author: Damian W. Betebenner <dbetebenner@nciea.org>, Adam Van Iwaarden <Vaniwaarden@colorado.edu> and Ben Domingue <ben.domingue@gmail.com>
         with contributions from Jonathan Weeks, John Stewart, Jinnie Choi, Xin Wei, and Hi Shin Shim. With special thanks to 
-        State Department of Education analysts: Dr. Sarah Polasky (Arizona), Rebecca Gau (Arizona), Dr. Bill Bonk (Colorado), Marie Huchton (Colorado), Glenn Hirata (Hawaii), 
-	Glenn Nochi (Hawaii), Ayaka Nukui (Idaho), Dr. Carissa Miller (Idaho), Dr. Wes Bruce (Indiana), Robert Hochsegang (Indiana), Xuewen Sheng (Kansas), Robert Lee (Massachusetts), 
-	Joe DeCastra (Mississippi), Ken Thompson (Mississippi), Soo Yeon Cho (Missouri), Jeff Halsell (Nevada), Selcuk Ozdemir (Nevada), Roger Silva (Nevada), Deb Wiswell (New Hampshire), 
-	Katya Levitan-Reiner (New Haven Public Schools), Jason Becker (Rhode Island), Jessica Brown (Rhode Island), Ana Karantonis (Rhode Island), Dr. Deborah Jonas (Virginia), 
-	Juan D'Brot (West Virginia), Nate Hixson (West Virginia), Daniel Bush (Wisconsin), Justin Meyer (Wisconsin), Joseph Newton (Wisconsin), Dr. Philip Olsen (Wisconsin), 
-	Nick Stroud (Wisconsin).  
+        State Department of Education analysts: Dr. Sarah Polasky (Arizona), Rebecca Gau (Arizona), Dr. Bill Bonk (Colorado), Marie Huchton (Colorado), Dr. Allison Timberlake (Georgia),
+	Dr. Melissa Fincher (Georgia), Kiran Athota (Georgia), Travis Allen (Georgia), Glenn Hirata (Hawaii), Glenn Nochi (Hawaii), Ayaka Nukui (Idaho), Dr. Carissa Miller (Idaho), 
+	Dr . Wes Bruce (Indiana), Robert Hochsegang (Indiana), Xuewen Sheng (Kansas), Robert Lee (Massachusetts), Joe DeCastra (Mississippi), Ken Thompson (Mississippi), 
+	Soo Yeon Cho (Missouri), Jeff Halsell (Nevada), Selcuk Ozdemir (Nevada), Roger Silva (Nevada), Deb Wiswell (New Hampshire), Katya Levitan-Reiner (New Haven Public Schools), 
+	Jason Becker (Rhode Island), Jessica Brown (Rhode Island), Ana Karantonis (Rhode Island), Dr. Deborah Jonas (Virginia), Juan D'Brot (West Virginia), Nate Hixson (West Virginia), 
+	Daniel Bush (Wisconsin), Justin Meyer (Wisconsin), Joseph Newton (Wisconsin), Dr. Philip Olsen (Wisconsin), Nick Stroud (Wisconsin).  
 Maintainer: Damian W. Betebenner <dbetebenner@nciea.org>
 Depends: R (>= 2.12), boot, colorspace, data.table (>= 1.7.9), foreach, grid, gridBase, methods, plyr, reshape2, randomNames (>= 0.0-5), quantreg, splines, SGPdata
 Suggests: doMC, doMPI, doParallel, doRedis, doSNOW, iterators, multicore, parallel, pdf2, RSQLite, sn, snow
