@@ -49,7 +49,7 @@ function(sgp_object,
 
 	if (simulate.sgps==TRUE) {
 		if (is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
-			message("\tCSEMs are required in SGPstateData to simulate SGPs for confidence interval calculations. Confidence intervals will not be calculated.")
+			message("\tNOTE: CSEMs are required in SGPstateData to simulate SGPs for confidence interval calculations. Confidence intervals will not be calculated.")
 			simulate.sgps <- FALSE
 		}
 	}
@@ -100,7 +100,7 @@ function(sgp_object,
 					}
 				}
 		} else {
-			message("No Goodness of Fit tables available to print. No tables will be produced.")
+			message("\tNOTE: No Goodness of Fit tables available to print. No tables will be produced.")
 		}
 	}
 
@@ -268,7 +268,7 @@ function(sgp_object,
 		if (sgp.type=="sgp.percentiles") {
 			return(as.data.frame(reshape(
 				sgp_object@Data[J("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), 
-					tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), sgp.iter[["sgp.grade.sequences"]][[1]])],
+					tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), sgp.iter[["sgp.grade.sequences"]][[1]]), nomatch=0],
 			idvar="ID",
 			timevar="YEAR",
 			drop=names(sgp_object@Data)[!names(sgp_object@Data) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR")],
@@ -278,7 +278,7 @@ function(sgp_object,
 		if (sgp.type=="sgp.projections") {
 			return(as.data.frame(reshape(
 				sgp_object@Data[J("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])-1), 
-					tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])-1), head(sgp.iter[["sgp.grade.sequences"]][[1]], -1))],
+					tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])-1), head(sgp.iter[["sgp.grade.sequences"]][[1]], -1)), nomatch=0],
 			idvar="ID",
 			timevar="YEAR",
 			drop=names(sgp_object@Data)[!names(sgp_object@Data) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR")],
@@ -463,6 +463,9 @@ function(sgp_object,
 		setkey(sgp_object@Data, VALID_CASE, CONTENT_AREA, YEAR, GRADE)
 		par.sgp.config <- get.par.sgp.config(sgp.config)
 		if (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline) {
+			if (any(sapply(par.sgp.config, function(x) !identical(x[['base.gp']], "NO_BASELINE_COEFFICIENT_MATRICES")))) {
+				message("\tNOTE: Baseline coefficient matrices are not available for . Baseline analyses will continue for .")
+			}
 			par.sgp.config.baseline <- par.sgp.config[which(sapply(par.sgp.config, function(x) !identical(x[['base.gp']], "NO_BASELINE_COEFFICIENT_MATRICES")))]
 		}
 

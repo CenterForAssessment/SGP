@@ -19,6 +19,8 @@ Changes in version: SGP_1.0-0.0
 	  o Integrated achievement_level_recode function into prepareSGP.
 	  o Added ability to print studentGrowthPlots for one, four and five content areas.
 	  o Added timing output to outputSGP LONG file production.
+	  o If grade.progression supplied to studentGrowthPercentiles exceeds number of panels available, function now uses the tail of the grade progression up to the number of panels supplied.
+	  o Added 'WIDE_Data' output.type to outputSGP.
 
   BUG FIXES:
 
@@ -32,6 +34,7 @@ Changes in version: SGP_1.0-0.0
 	  o Fixed bug in way state name is detected in argument supplied as part of data name.
 	  o Removed redundant years, content_areas specification in abcSGP.
 	  o analyzeSGP not checks for content area specific coefficient matrices and only calculates baseline referenced results for those content areas.
+	  o Supplied panel.data.vnames now subsets only those names in supplied panel data.
 
 
 Changes in version: SGP_0.9-0.0
