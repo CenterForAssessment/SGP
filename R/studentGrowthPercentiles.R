@@ -604,7 +604,7 @@ function(panel.data,         ## REQUIRED
 
 	if (!missing(panel.data.vnames)) {
 		if (!all(panel.data.vnames %in% names(Panel_Data))) {
-			message("\tNOTE: Supplied 'panel.data.vnames' are not all in the supplied Panel_Data. Analyses will continue with the intersection names contain in Panel_Data.")
+			tmp.messages <- c(tmp.messages, "\tNOTE: Supplied 'panel.data.vnames' are not all in the supplied Panel_Data. Analyses will continue with the intersection names contain in Panel_Data.")
 		}
 		ss.data <- Panel_Data[,intersect(panel.data.vnames, names(Panel_Data))]
 	} else {
@@ -622,7 +622,8 @@ function(panel.data,         ## REQUIRED
 		tmp.gp <- grade.progression
 		by.grade <- TRUE
 		if (length(grade.progression) > num.panels) {
-			stop(paste("Supplied grade progression, grade.progress=c(", paste(grade.progression, collapse=","), "), exceeds number of panels (", num.panels, ") in provided data.", sep=""))
+			tmp.messages <- c(tmp.messages, paste("\tNOTE: Supplied grade progression, grade.progress=c(", paste(grade.progression, collapse=","), "), exceeds number of panels (", num.panels, ") in provided data.\n\t\t Analyses will utilize maximum number of priors supplied by the data.", sep=""))
+		tmp.gp <- tail(grade.progression, num.panels)
 	}}
 	if (!missing(subset.grade) & missing(grade.progression)) {
 		tmp.gp <- (subset.grade-num.panels+1):subset.grade
