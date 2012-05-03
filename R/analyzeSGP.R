@@ -65,7 +65,7 @@ function(sgp_object,
 	## Function to merge results from assorted multiple SGP function calls
 
 	.mergeSGP <- function(list_1, list_2) {
-		if(!is.null(list_2)) {
+		if (!is.null(names(list_2))) {
 			for (j in c("Coefficient_Matrices", "Cutscores", "Goodness_of_Fit", "Knots_Boundaries", "SGPercentiles", "SGProjections", "Simulated_SGPs")) {
 				list_1[[j]] <- c(list_1[[j]], list_2[[j]])[!duplicated(names(c(list_1[[j]], list_2[[j]])))]
 			}
