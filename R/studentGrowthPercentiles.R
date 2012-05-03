@@ -639,9 +639,9 @@ function(panel.data,         ## REQUIRED
 		}
 		if (num.prior > length(tmp.gp)-1) {
 			tmp.messages <- c(tmp.messages, paste("\tNOTE: Specified argument num.prior (", num.prior, ") exceeds number of panels of data supplied. Analyses will utilize maximum number of priors possible.\n", sep=""))
+			num.prior <- length(tmp.gp)-1
 		} else {
 			tmp.gp <- tail(tmp.gp, num.prior+1)
-			num.prior <- length(tmp.gp)-1
 			
 	}} else {
 		num.prior <- length(tmp.gp)-1
