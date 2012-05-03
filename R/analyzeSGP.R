@@ -266,7 +266,7 @@ function(sgp_object,
 		if (sgp.type=="sgp.percentiles") {
 			return(as.data.frame(reshape(
 				sgp_object@Data[J("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), 
-					tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), sgp.iter[["sgp.grade.sequences"]][[1]])],
+					tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), sgp.iter[["sgp.grade.sequences"]][[1]]), nomatch=0],
 			idvar="ID",
 			timevar="YEAR",
 			drop=names(sgp_object@Data)[!names(sgp_object@Data) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR")],
@@ -276,7 +276,7 @@ function(sgp_object,
 		if (sgp.type=="sgp.projections") {
 			return(as.data.frame(reshape(
 				sgp_object@Data[J("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])-1), 
-					tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])-1), head(sgp.iter[["sgp.grade.sequences"]][[1]], -1))],
+					tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])-1), head(sgp.iter[["sgp.grade.sequences"]][[1]], -1)), nomatch=0],
 			idvar="ID",
 			timevar="YEAR",
 			drop=names(sgp_object@Data)[!names(sgp_object@Data) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR")],
