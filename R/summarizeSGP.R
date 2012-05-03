@@ -486,7 +486,7 @@ function(sgp_object,
 
 	### Loop and send to summarizeSGP_INTERNAL
 
-	tmp.dt <- sgp_object@Data[J("VALID_CASE", content_areas.by.years)][, variables.for.summaries, with=FALSE][, STATE:=as.factor(state)]
+	tmp.dt <- sgp_object@Data[J("VALID_CASE", content_areas.by.years), nomatch=0][, variables.for.summaries, with=FALSE][, STATE:=as.factor(state)]
 
 	par.start <- startParallel(parallel.config, 'SUMMARY')
 
