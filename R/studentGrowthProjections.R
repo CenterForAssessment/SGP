@@ -475,7 +475,8 @@ function(panel.data,	## REQUIRED
 	num.panels <- (dim(ss.data)[2]-1)/2
 
 	if (length(grade.progression) > num.panels) {
-		stop(paste("Supplied grade progression, grade.progression=c(", paste(grade.progression, collapse=","), "), exceeds number of panels (", num.panels, ") in provided data.", sep=""))
+		tmp.messages <- c(tmp.messages, paste("\tNOTE: Supplied grade progression, grade.progress=c(", paste(grade.progression, collapse=","), "), exceeds number of panels (", num.panels, ") in provided data.\n\t\t Analyses will utilize maximum number of priors supplied by the data.\n", sep=""))
+		grade.progression <- tail(grade.progression, num.panels)
 	}
 
 	tmp.last <- tail(grade.progression, 1)
