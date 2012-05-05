@@ -10,7 +10,7 @@ function(sgp_object,
 	started.at <- proc.time()
 	message(paste("\tStarted sqliteSGP in outputSGP", date()))
 
-	YEAR <- DISTRICT_NUMBER <- SCHOOL_NUMBER <- CONTENT_AREA <- DISTRICT_ENROLLMENT_STATUS <- GRADE <- ETHNICITY <- STUDENTGROUP <- SCHOOL_ENROLLMENT_STATUS <- EMH_LEVEL <- NULL
+	YEAR <- DISTRICT_NUMBER <- SCHOOL_NUMBER <- CONTENT_AREA <- DISTRICT_ENROLLMENT_STATUS <- GRADE <- ETHNICITY <- STUDENTGROUP <- SCHOOL_ENROLLMENT_STATUS <- EMH_LEVEL <- MEDIAN_SGP <- NULL
 
 	## Load packages
 
@@ -275,7 +275,7 @@ function(sgp_object,
 
 		tmp <- as.data.frame(convert.variables(subset(rbind.fill(tmp.list), 
 			!is.na(DISTRICT_NUMBER) & YEAR %in% years & CONTENT_AREA %in% content_areas & !is.na(STUDENTGROUP) & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes" &
-			!is.na(MEDIA_SGP))))
+			!is.na(MEDIAN_SGP))))
 		tmp$CONTENT_AREA <- unclass(tmp$CONTENT_AREA)
 		tmp$STUDENTGROUP <- unclass(tmp$STUDENTGROUP)
 		names(tmp)[names(tmp)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET"  ### TEMPORARY UNTIL NAMES ARE ALIGNED
