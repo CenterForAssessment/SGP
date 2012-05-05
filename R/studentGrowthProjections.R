@@ -461,7 +461,7 @@ function(panel.data,	## REQUIRED
 
         if (!missing(panel.data.vnames)) {
                 if (!all(panel.data.vnames %in% names(panel.data[["Panel_Data"]]))) {
-                        tmp.messages <- c(tmp.messages, "\tNOTE: Supplied 'panel.data.vnames' are not all in the supplied 'Panel_Data'. Analyses will continue with the variables contained in Panel_Data and those provided in the supplied argument 'panel.data.vnames'.\n")
+                        tmp.messages <- c(tmp.messages, "\tNOTE: Supplied 'panel.data.vnames' are not all in the supplied 'Panel_Data'.\n\t\tAnalyses will continue with the variables contained in both Panel_Data and those provided in the supplied argument 'panel.data.vnames'.\n")
                 }
                 ss.data <- panel.data[["Panel_Data"]][,intersect(panel.data.vnames, names(panel.data[["Panel_Data"]]))]
         } else {
@@ -554,7 +554,7 @@ function(panel.data,	## REQUIRED
 	if (print.time.taken) {
 	        message(paste("\tStarted studentGrowthProjections", started.date))
 		message(paste("\tContent Area: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, sep="")) 
-		message(paste(tmp.messages, "\tFinished studentGrowthProjections", date(), "in", timetaken(started.at), "\n"))
+		message(c(tmp.messages, "\tFinished studentGrowthProjections", date(), "in", timetaken(started.at), "\n"))
 	} 
 
 	list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],
