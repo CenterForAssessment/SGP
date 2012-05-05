@@ -457,11 +457,17 @@ function(panel.data,	## REQUIRED
 
 	### Create ss.data from Panel_Data and rename variables in based upon grade.progression
 
-	if (!missing(panel.data.vnames)) {
-		ss.data <- panel.data[["Panel_Data"]][,panel.data.vnames]
-	} else {
-		ss.data <- panel.data[["Panel_Data"]]
-	}
+        ### Create ss.data from Panel_Data
+
+        if (!missing(panel.data.vnames)) {
+                if (!all(panel.data.vnames %in% names(panel.data[["Panel_Data"]]))) {
+                        tmp.messages <- c(tmp.messages, "\tNOTE: Supplied 'panel.data.vnames' are not all in the supplied 'Panel_Data'. Analyses will continue with the variables contained in Panel_Data and those provided in the supplied argument 'panel.data.vnames'.\n")
+                }
+                ss.data <- panel.data[["Panel_Data"]][,intersect(panel.data.vnames, names(panel.data[["Panel_Data"]]))]
+        } else {
+                ss.data <- panel.data[["Panel_Data"]]
+        }
+
 	if (dim(ss.data)[2] %% 2 != 1) {
 		stop(paste("Number of columns of supplied panel data (", dim(ss.data)[2], ") does not conform to data requirements. See help page for details."))
 	}
