@@ -290,7 +290,7 @@ function(sgp_object,
 						J(sgp_object@Data[J("VALID_CASE", 
 						tail(sgp.iter[["sgp.content.areas"]], 1), 
 						tail(sgp.iter[["sgp.panel.years"]], 1), 
-						tail(sgp.iter[["sgp.grade.sequences"]][[1]], 1))][,"ID", with=FALSE]), nomatch=0], 
+						tail(sgp.iter[["sgp.grade.sequences"]][[1]], 1)), nomatch=0][,"ID", with=FALSE])], 
 				key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))[
 				J("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])-1),
 					tail(head(sgp.iter[["sgp.panel.years"]], -1), length(sgp.iter[["sgp.grade.sequences"]][[1]])-1), head(sgp.iter[["sgp.grade.sequences"]][[1]], -1))],
