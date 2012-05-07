@@ -10,7 +10,7 @@ function(sgp_object,
 	started.at <- proc.time()
 	message(paste("\tStarted sqliteSGP in outputSGP", date()))
 
-	YEAR <- DISTRICT_NUMBER <- SCHOOL_NUMBER <- CONTENT_AREA <- DISTRICT_ENROLLMENT_STATUS <- GRADE <- ETHNICITY <- STUDENTGROUP <- SCHOOL_ENROLLMENT_STATUS <- EMH_LEVEL <- NULL
+	YEAR <- DISTRICT_NUMBER <- SCHOOL_NUMBER <- CONTENT_AREA <- DISTRICT_ENROLLMENT_STATUS <- GRADE <- ETHNICITY <- STUDENTGROUP <- SCHOOL_ENROLLMENT_STATUS <- EMH_LEVEL <- MEDIAN_SGP <- NULL
 
 	## Load packages
 
@@ -53,11 +53,6 @@ function(sgp_object,
 		.year.increment <- function(year, increment) {
 			sapply(increment, function(x) paste(as.numeric(unlist(strsplit(as.character(year), "_")))+x, collapse="_"))
 		}
-
-#		rbind.all <- function(.list, ...){
-#			if(length(.list)==1) return(.list[[1]])
-#			Recall(c(list(rbind(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), ...)
-#		}
 
 		sqlite.create.table <- function(table.name, field.types, primary.key) {
 			tmp.sql <- paste("CREATE TABLE ", table.name, " (", paste(field.types, collapse=", "), 
@@ -124,14 +119,14 @@ function(sgp_object,
 			"PERCENT_AT_ABOVE_PROFICIENT_COUNT INTEGER")
 
 		tmp <- as.data.frame(sapply(convert.variables(subset(sgp_object@Summary[["DISTRICT_NUMBER"]][["DISTRICT_NUMBER__CONTENT_AREA__YEAR__DISTRICT_ENROLLMENT_STATUS"]],
-			!is.na(DISTRICT_NUMBER) & CONTENT_AREA %in% content_areas & YEAR %in% years & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes")), unclass))
+			!is.na(DISTRICT_NUMBER) & CONTENT_AREA %in% content_areas & YEAR %in% years & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes" & !is.na(MEDIAN_SGP))), unclass))
 		names(tmp)[names(tmp)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET"  ### TEMPORARY UNTIL NAMES ARE ALIGNED
 		tmp <- tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))]
 
 		dbGetQuery(db, sqlite.create.table("DISTRICT", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA")))
 		dbWriteTable(db, "DISTRICT", tmp, row.names=FALSE, append=TRUE) 
 
-		if (text.output) write.table(tmp, file=file.path(output.directory, "DISTRICT.dat"), row.names=FALSE, na="", quote=FALSE, sep="|")
+		if (text.output) write.table(tmp, file=file.path(output.directory, "DISTRICT.dat"), row.names=FALSE, na="(null)", quote=FALSE, sep="|")
 
 
 	### Table 2. DISTRICT_GRADE
@@ -149,14 +144,15 @@ function(sgp_object,
 			"PERCENT_AT_ABOVE_PROFICIENT_COUNT INTEGER")
 
 		tmp <- as.data.frame(sapply(convert.variables(subset(sgp_object@Summary[["DISTRICT_NUMBER"]][["DISTRICT_NUMBER__CONTENT_AREA__YEAR__GRADE__DISTRICT_ENROLLMENT_STATUS"]],
-			!is.na(DISTRICT_NUMBER) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(GRADE) & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes")), unclass))
+			!is.na(DISTRICT_NUMBER) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(GRADE) & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes" & !is.na(MEDIAN_SGP))), 
+			unclass))
 		names(tmp)[names(tmp)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET"  ### TEMPORARY UNTIL NAMES ARE ALIGNED
 		tmp <- tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))]
 
 		dbGetQuery(db, sqlite.create.table("DISTRICT_GRADE", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "GRADE")))
 		dbWriteTable(db, "DISTRICT_GRADE", tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))], row.names=FALSE, append=TRUE) 
 
-		if (text.output) write.table(tmp, file=file.path(output.directory, "DISTRICT_GRADE.dat"), row.names=FALSE, na="", quote=FALSE, sep="|")
+		if (text.output) write.table(tmp, file=file.path(output.directory, "DISTRICT_GRADE.dat"), row.names=FALSE, na="(null)", quote=FALSE, sep="|")
 
 
 	### Table 3. DISTRICT_ETHNICITY
@@ -175,7 +171,8 @@ function(sgp_object,
 			"ENROLLMENT_PERCENTAGE REAL")
 
 		tmp <- as.data.frame(sapply(convert.variables(subset(sgp_object@Summary[["DISTRICT_NUMBER"]][["DISTRICT_NUMBER__CONTENT_AREA__YEAR__DISTRICT_ENROLLMENT_STATUS__ETHNICITY"]],
-			!is.na(DISTRICT_NUMBER) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(ETHNICITY) & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes")), unclass))
+			!is.na(DISTRICT_NUMBER) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(ETHNICITY) & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes" &
+			!is.na(MEDIAN_SGP))), unclass))
 		names(tmp)[names(tmp)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET"  ### TEMPORARY UNTIL NAMES ARE ALIGNED
 		tmp$ENROLLMENT_PERCENTAGE <- NA
 		tmp <- tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))]
@@ -183,7 +180,7 @@ function(sgp_object,
 		dbGetQuery(db, sqlite.create.table("DISTRICT_ETHNICITY", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "ETHNICITY")))
 		dbWriteTable(db, "DISTRICT_ETHNICITY", tmp, row.names=FALSE, append=TRUE) 
 
-		if (text.output) write.table(tmp, file=file.path(output.directory, "DISTRICT_ETHNICITY.dat"), row.names=FALSE, na="", quote=FALSE, sep="|")
+		if (text.output) write.table(tmp, file=file.path(output.directory, "DISTRICT_ETHNICITY.dat"), row.names=FALSE, na="(null)", quote=FALSE, sep="|")
 
 
 	### Table 4. DISTRICT_GRADE_ETHNICITY
@@ -202,14 +199,15 @@ function(sgp_object,
 			"PERCENT_AT_ABOVE_PROFICIENT_COUNT INTEGER")
 
 		tmp <- as.data.frame(sapply(convert.variables(subset(sgp_object@Summary[["DISTRICT_NUMBER"]][["DISTRICT_NUMBER__CONTENT_AREA__YEAR__GRADE__DISTRICT_ENROLLMENT_STATUS__ETHNICITY"]],
-			!is.na(DISTRICT_NUMBER) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(GRADE) & !is.na(ETHNICITY) & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes")), unclass))
+			!is.na(DISTRICT_NUMBER) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(GRADE) & !is.na(ETHNICITY) & 
+			DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes" & !is.na(MEDIAN_SGP))), unclass))
 		names(tmp)[names(tmp)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET"  ### TEMPORARY UNTIL NAMES ARE ALIGNED
 		tmp <- tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))]
 
 		dbGetQuery(db, sqlite.create.table("DISTRICT_GRADE_ETHNICITY", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "GRADE", "ETHNICITY")))
 		dbWriteTable(db, "DISTRICT_GRADE_ETHNICITY", tmp, row.names=FALSE, append=TRUE) 
 
-		if (text.output) write.table(tmp, file=file.path(output.directory, "DISTRICT_GRADE_ETHNICITY.dat"), row.names=FALSE, na="", quote=FALSE, sep="|")
+		if (text.output) write.table(tmp, file=file.path(output.directory, "DISTRICT_GRADE_ETHNICITY.dat"), row.names=FALSE, na="(null)", quote=FALSE, sep="|")
 
 
 	### Table 5. DISTRICT_STUDENTGROUP
@@ -237,7 +235,8 @@ function(sgp_object,
 		}
 
 		tmp <- as.data.frame(convert.variables(subset(rbind.fill(tmp.list), 
-			!is.na(DISTRICT_NUMBER) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(STUDENTGROUP) & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes")))
+			!is.na(DISTRICT_NUMBER) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(STUDENTGROUP) & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes" &
+			!is.na(MEDIAN_SGP))))
 		tmp$CONTENT_AREA <- unclass(tmp$CONTENT_AREA)
 		tmp$STUDENTGROUP <- unclass(tmp$STUDENTGROUP)
 		names(tmp)[names(tmp)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET"  ### TEMPORARY UNTIL NAMES ARE ALIGNED
@@ -247,7 +246,7 @@ function(sgp_object,
 		dbGetQuery(db, sqlite.create.table("DISTRICT_STUDENTGROUP", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "STUDENTGROUP")))
 		dbWriteTable(db, "DISTRICT_STUDENTGROUP", tmp, row.names=FALSE, append=TRUE) 
 
-		if (text.output) write.table(tmp, file=file.path(output.directory, "DISTRICT_STUDENTGROUP.dat"), row.names=FALSE, na="", quote=FALSE, sep="|")
+		if (text.output) write.table(tmp, file=file.path(output.directory, "DISTRICT_STUDENTGROUP.dat"), row.names=FALSE, na="(null)", quote=FALSE, sep="|")
 
 
 	### Table 6. DISTRICT_GRADE_STUDENTGROUP
@@ -275,7 +274,8 @@ function(sgp_object,
 		}
 
 		tmp <- as.data.frame(convert.variables(subset(rbind.fill(tmp.list), 
-			!is.na(DISTRICT_NUMBER) & YEAR %in% years & CONTENT_AREA %in% content_areas & !is.na(STUDENTGROUP) & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes")))
+			!is.na(DISTRICT_NUMBER) & YEAR %in% years & CONTENT_AREA %in% content_areas & !is.na(STUDENTGROUP) & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes" &
+			!is.na(MEDIAN_SGP))))
 		tmp$CONTENT_AREA <- unclass(tmp$CONTENT_AREA)
 		tmp$STUDENTGROUP <- unclass(tmp$STUDENTGROUP)
 		names(tmp)[names(tmp)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET"  ### TEMPORARY UNTIL NAMES ARE ALIGNED
@@ -284,7 +284,7 @@ function(sgp_object,
 		dbGetQuery(db, sqlite.create.table("DISTRICT_GRADE_STUDENTGROUP", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "GRADE", "STUDENTGROUP")))
 		dbWriteTable(db, "DISTRICT_GRADE_STUDENTGROUP", tmp, row.names=FALSE, append=TRUE) 
 
-		if (text.output) write.table(tmp, file=file.path(output.directory, "DISTRICT_GRADE_STUDENTGROUP.dat"), row.names=FALSE, na="", quote=FALSE, sep="|")
+		if (text.output) write.table(tmp, file=file.path(output.directory, "DISTRICT_GRADE_STUDENTGROUP.dat"), row.names=FALSE, na="(null)", quote=FALSE, sep="|")
 
 
 	## Table 7. SCHOOL
@@ -303,7 +303,8 @@ function(sgp_object,
 			"PERCENT_AT_ABOVE_PROFICIENT_COUNT INTEGER")
 
 		tmp <- as.data.frame(sapply(convert.variables(subset(sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__CONTENT_AREA__YEAR__EMH_LEVEL__SCHOOL_ENROLLMENT_STATUS"]],
-			!is.na(SCHOOL_NUMBER) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & SCHOOL_ENROLLMENT_STATUS=="Enrolled School: Yes")), unclass))
+			!is.na(SCHOOL_NUMBER) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & SCHOOL_ENROLLMENT_STATUS=="Enrolled School: Yes" &
+			!is.na(MEDIAN_SGP))), unclass))
 		tmp <- as.data.frame(merge(tmp, as.data.frame(tmp.school.and.district.by.year), all.x=TRUE)) 
 	### Temporary stuff
 		names(tmp)[names(tmp)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET"
@@ -314,7 +315,7 @@ function(sgp_object,
 		dbGetQuery(db, sqlite.create.table("SCHOOL", field.types, c("YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER", "EMH_LEVEL", "CONTENT_AREA")))
 		dbWriteTable(db, "SCHOOL", tmp, row.names=FALSE, append=TRUE) 
 
-		if (text.output) write.table(tmp, file=file.path(output.directory, "SCHOOL.dat"), row.names=FALSE, na="", quote=FALSE, sep="|")
+		if (text.output) write.table(tmp, file=file.path(output.directory, "SCHOOL.dat"), row.names=FALSE, na="(null)", quote=FALSE, sep="|")
 
 
 	## Table 8. SCHOOL_GRADE
@@ -334,7 +335,8 @@ function(sgp_object,
 			"PERCENT_AT_ABOVE_PROFICIENT_COUNT INTEGER")
 
 		tmp <- as.data.frame(sapply(convert.variables(subset(sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__CONTENT_AREA__YEAR__EMH_LEVEL__GRADE__SCHOOL_ENROLLMENT_STATUS"]],
-			!is.na(SCHOOL_NUMBER) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(GRADE) & SCHOOL_ENROLLMENT_STATUS=="Enrolled School: Yes")), unclass))
+			!is.na(SCHOOL_NUMBER) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(GRADE) & SCHOOL_ENROLLMENT_STATUS=="Enrolled School: Yes" &
+			!is.na(MEDIAN_SGP))), unclass))
 		tmp <- data.frame(merge(tmp, as.data.frame(tmp.school.and.district.by.year), all.x=TRUE)) 
 	### Temporary stuff
 		names(tmp)[names(tmp)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET" 
@@ -345,7 +347,7 @@ function(sgp_object,
 		dbGetQuery(db, sqlite.create.table("SCHOOL_GRADE", field.types, c("YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER", "EMH_LEVEL", "GRADE", "CONTENT_AREA")))
 		dbWriteTable(db, "SCHOOL_GRADE", tmp, row.names=FALSE, append=TRUE) 
 
-		if (text.output) write.table(tmp, file=file.path(output.directory, "SCHOOL_GRADE.dat"), row.names=FALSE, na="", quote=FALSE, sep="|")
+		if (text.output) write.table(tmp, file=file.path(output.directory, "SCHOOL_GRADE.dat"), row.names=FALSE, na="(null)", quote=FALSE, sep="|")
 
 
 	## Table 9. SCHOOL_ETHNICITY
@@ -366,8 +368,8 @@ function(sgp_object,
 			"ENROLLMENT_PERCENTAGE REAL")
 
 		tmp <- as.data.frame(sapply(convert.variables(subset(sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__CONTENT_AREA__YEAR__EMH_LEVEL__SCHOOL_ENROLLMENT_STATUS__ETHNICITY"]],
-			!is.na(SCHOOL_NUMBER) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(ETHNICITY) & SCHOOL_ENROLLMENT_STATUS=="Enrolled School: Yes")), 
-			unclass))
+			!is.na(SCHOOL_NUMBER) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(ETHNICITY) & SCHOOL_ENROLLMENT_STATUS=="Enrolled School: Yes" &
+			!is.na(MEDIAN_SGP))), unclass))
 		tmp <- data.frame(merge(tmp, as.data.frame(tmp.school.and.district.by.year), all.x=TRUE)) 
 	### Temporary stuff
 		names(tmp)[names(tmp)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET" 
@@ -379,7 +381,7 @@ function(sgp_object,
 		dbGetQuery(db, sqlite.create.table("SCHOOL_ETHNICITY", field.types, c("YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER", "EMH_LEVEL", "CONTENT_AREA", "ETHNICITY")))
 		dbWriteTable(db, "SCHOOL_ETHNICITY", tmp, row.names=FALSE, append=TRUE) 
 
-		if (text.output) write.table(tmp, file=file.path(output.directory, "SCHOOL_ETHNICITY.dat"), row.names=FALSE, na="", quote=FALSE, sep="|")
+		if (text.output) write.table(tmp, file=file.path(output.directory, "SCHOOL_ETHNICITY.dat"), row.names=FALSE, na="(null)", quote=FALSE, sep="|")
 
 
 	## Table 10. SCHOOL_STUDENTGROUP
@@ -409,7 +411,8 @@ function(sgp_object,
 		}
 
 		tmp <- as.data.frame(convert.variables(subset(rbind.fill(tmp.list), 
-			!is.na(SCHOOL_NUMBER) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(STUDENTGROUP) & SCHOOL_ENROLLMENT_STATUS=="Enrolled School: Yes")))
+			!is.na(SCHOOL_NUMBER) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(STUDENTGROUP) & SCHOOL_ENROLLMENT_STATUS=="Enrolled School: Yes" &
+			!is.na(MEDIAN_SGP))))
 		tmp <- as.data.frame(merge(tmp, as.data.frame(tmp.school.and.district.by.year), all.x=TRUE)) 
 		tmp$CONTENT_AREA <- unclass(tmp$CONTENT_AREA)
 		tmp$STUDENTGROUP <- unclass(tmp$STUDENTGROUP)
@@ -425,7 +428,7 @@ function(sgp_object,
 			c("YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER", "EMH_LEVEL", "CONTENT_AREA", "STUDENTGROUP")))
 		dbWriteTable(db, "SCHOOL_STUDENTGROUP", tmp, row.names=FALSE, append=TRUE) 
 
-		if (text.output) write.table(tmp, file=file.path(output.directory, "SCHOOL_STUDENTGROUP.dat"), row.names=FALSE, na="", quote=FALSE, sep="|")
+		if (text.output) write.table(tmp, file=file.path(output.directory, "SCHOOL_STUDENTGROUP.dat"), row.names=FALSE, na="(null)", quote=FALSE, sep="|")
 
 
 	## Table 11. KEY_VALUE_LOOKUP (ADD CONTENT_AREA and YEAR)
@@ -508,7 +511,7 @@ function(sgp_object,
 		dbGetQuery(db, sqlite.create.table("KEY_VALUE_LOOKUP", field.types, "KEY_VALUE_ID"))
 		dbWriteTable(db, "KEY_VALUE_LOOKUP", tmp, row.names=FALSE, append=TRUE) 
 
-		if (text.output) write.table(tmp, file=file.path(output.directory, "KEY_VALUE_LOOKUP.dat"), row.names=FALSE, na="", quote=FALSE, sep="|")
+		if (text.output) write.table(tmp, file=file.path(output.directory, "KEY_VALUE_LOOKUP.dat"), row.names=FALSE, na="(null)", quote=FALSE, sep="|")
 
 ###
 ### Disconnect database

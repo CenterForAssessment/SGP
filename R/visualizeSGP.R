@@ -139,8 +139,11 @@ function(sgp_object,
 					tmp.list[[year.iter]][["CONTENT_AREA"]] <- as.factor(tmp.list[[year.iter]][["CONTENT_AREA"]]) ## Factor joins to Factor
 				}
 			} else {
-				tmp.list[[year.iter]] <- data.frame(YEAR=tmp.years[year.iter],
-					CONTENT_AREA=sort(unique(sgp_object@Data[YEAR==tmp.years[year.iter]][["CONTENT_AREA"]])) %w/o% NA)
+				setkey(sgp_object@Data, VALID_CASE, YEAR)
+				tmp.list[[year.iter]] <- data.frame(
+					YEAR=tmp.years[year.iter],
+					CONTENT_AREA=sort(unique(sgp_object@Data[J("VALID_CASE", tmp.years[year.iter]), nomatch=0][["CONTENT_AREA"]])) %w/o% NA)
+					setkey(sgp_object@Data, VALID_CASE, CONTENT_AREA, YEAR, ID)
 			}
 		}
 
@@ -246,8 +249,8 @@ function(sgp_object,
 		
 		if (par.start$par.type=="MULTICORE") {
 			gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students)
-			mclapply(gaPlot.list, function(gaPlot.iter) 
-				invisible(growthAchievementPlot(
+			mclapply(gaPlot.list, function(gaPlot.iter) {
+						invisible(growthAchievementPlot(
 						gaPlot.sgp_object=sgp_object,
 						gaPlot.students=gaPlot.iter[["ID"]],
 						gaPlot.max.order.for.progression=get.max.order.for.progression(gaPlot.iter[["YEAR"]], gaPlot.iter[["CONTENT_AREA"]]),
@@ -256,7 +259,8 @@ function(sgp_object,
 						year=gaPlot.iter[["YEAR"]], 
 						format=gaPlot.format,
 						baseline=gaPlot.baseline,
-						pdf.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))), mc.cores=par.start$workers, mc.preschedule=FALSE)
+						pdf.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]])))}, 
+				mc.cores=par.start$workers, mc.preschedule=FALSE)
 		}
 		
 		stopParallel(parallel.config, par.start)

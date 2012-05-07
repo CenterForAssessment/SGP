@@ -457,11 +457,17 @@ function(panel.data,	## REQUIRED
 
 	### Create ss.data from Panel_Data and rename variables in based upon grade.progression
 
-	if (!missing(panel.data.vnames)) {
-		ss.data <- panel.data[["Panel_Data"]][,panel.data.vnames]
-	} else {
-		ss.data <- panel.data[["Panel_Data"]]
-	}
+        ### Create ss.data from Panel_Data
+
+        if (!missing(panel.data.vnames)) {
+                if (!all(panel.data.vnames %in% names(panel.data[["Panel_Data"]]))) {
+                        tmp.messages <- c(tmp.messages, "\tNOTE: Supplied 'panel.data.vnames' are not all in the supplied 'Panel_Data'.\n\t\tAnalyses will continue with the variables contained in both Panel_Data and those provided in the supplied argument 'panel.data.vnames'.\n")
+                }
+                ss.data <- panel.data[["Panel_Data"]][,intersect(panel.data.vnames, names(panel.data[["Panel_Data"]]))]
+        } else {
+                ss.data <- panel.data[["Panel_Data"]]
+        }
+
 	if (dim(ss.data)[2] %% 2 != 1) {
 		stop(paste("Number of columns of supplied panel data (", dim(ss.data)[2], ") does not conform to data requirements. See help page for details."))
 	}
@@ -469,7 +475,8 @@ function(panel.data,	## REQUIRED
 	num.panels <- (dim(ss.data)[2]-1)/2
 
 	if (length(grade.progression) > num.panels) {
-		stop(paste("Supplied grade progression, grade.progression=c(", paste(grade.progression, collapse=","), "), exceeds number of panels (", num.panels, ") in provided data.", sep=""))
+		tmp.messages <- c(tmp.messages, paste("\tNOTE: Supplied grade progression, grade.progress=c(", paste(grade.progression, collapse=","), "), exceeds number of panels (", num.panels, ") in provided data.\n\t\t Analyses will utilize maximum number of priors supplied by the data.\n", sep=""))
+		grade.progression <- tail(grade.progression, num.panels)
 	}
 
 	tmp.last <- tail(grade.progression, 1)
@@ -547,7 +554,7 @@ function(panel.data,	## REQUIRED
 	if (print.time.taken) {
 	        message(paste("\tStarted studentGrowthProjections", started.date))
 		message(paste("\tContent Area: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, sep="")) 
-		message(paste(tmp.messages, "\tFinished studentGrowthProjections", date(), "in", timetaken(started.at), "\n"))
+		message(c(tmp.messages, "\tFinished studentGrowthProjections", date(), "in", timetaken(started.at), "\n"))
 	} 
 
 	list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],
