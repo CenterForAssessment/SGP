@@ -139,8 +139,11 @@ function(sgp_object,
 					tmp.list[[year.iter]][["CONTENT_AREA"]] <- as.factor(tmp.list[[year.iter]][["CONTENT_AREA"]]) ## Factor joins to Factor
 				}
 			} else {
-				tmp.list[[year.iter]] <- data.frame(YEAR=tmp.years[year.iter],
-					CONTENT_AREA=sort(unique(sgp_object@Data[YEAR==tmp.years[year.iter]][["CONTENT_AREA"]])) %w/o% NA)
+				setkey(sgp_object@Data, VALID_CASE, YEAR)
+				tmp.list[[year.iter]] <- data.frame(
+					YEAR=tmp.years[year.iter],
+					CONTENT_AREA=sort(unique(sgp_object@Data[J("VALID_CASE", tmp.years[year.iter]), nomatch=0][["CONTENT_AREA"]])) %w/o% NA)
+					setkey(sgp_object@Data, VALID_CASE, CONTENT_AREA, YEAR, ID)
 			}
 		}
 
