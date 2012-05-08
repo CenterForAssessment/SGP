@@ -481,4 +481,7 @@
         } ## END for loop for SCHOOLS (j)
         #system(paste("zip -r ", pdf.folder, "/", year_folder, "/", district_folder, "_", last.year, ".zip ", pdf.folder, year_folder, district_folder, sep=""))
       } ## END for loop for DISTRICTS (i)
+
+	return(NULL)
+
 } ## END studentGrowthPlot_Styles function
