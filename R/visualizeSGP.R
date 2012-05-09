@@ -691,6 +691,9 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 					by=list(CONTENT_AREA, sgPlot.data[[tmp.grade.name]])]$V1 
 			}
 		}
+
+		setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
+
 } ## END if else (sgPlot.wide.data)
 
 
@@ -814,8 +817,6 @@ if (sgPlot.produce.plots) {
 	message(paste("Finished studentGrowthPlot in visualizeSGP", date(), "in", timetaken(started.at), "\n"))
 
 } ## END if ("studentGrowthPlot" %in% plot.types) 
-
-	setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 
 	message(paste("Finished visualizeSGP", date(), "in", timetaken(started.at.visualizeSGP), "\n"))
 
