@@ -326,7 +326,10 @@ if ("studentGrowthPlot" %in% plot.types) {
 			setnames(tmp.df, c("GRADE", "YEAR")) 
 			tmp.list[[i]] <- data.frame(CONTENT_AREA=i, tmp.df)
 		}
-	data.table(rbind.fill(tmp.list), key=c("CONTENT_AREA", "GRADE", "YEAR"))
+	tmp.dt <- data.table(rbind.fill(tmp.list))
+	tmp.dt[["CONTENT_AREA"]] <- factor(tmp.dt[["CONTENT_AREA"]], levels=tmp.content_areas)
+	setkeyv(tmp.dt, c("CONTENT_AREA", "GRADE", "YEAR"))
+	return(tmp.dt[!is.na(CONTENT_AREA)])
 	} ## END get.years.content_areas.grades
 
 
