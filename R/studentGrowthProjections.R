@@ -554,7 +554,7 @@ function(panel.data,	## REQUIRED
 	if (print.time.taken) {
 	        message(paste("\tStarted studentGrowthProjections", started.date))
 		message(paste("\tContent Area: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, sep="")) 
-		message(c(tmp.messages, "\tFinished studentGrowthProjections", date(), "in", timetaken(started.at), "\n"))
+		message(c(tmp.messages, "\tFinished studentGrowthProjections", date(), " in ", timetaken(started.at), "\n"))
 	} 
 
 	list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],

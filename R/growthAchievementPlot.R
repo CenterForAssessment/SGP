@@ -37,7 +37,7 @@
 
 		message(paste("\tNOTE: Based upon state scale changes in ", capwords(year), ". student growth projections are not possible. No ",
 			capwords(year), " ", content_area, " growth and achievement plot will be generated.\n", sep=""))
-		return(NULL)
+		return("DONE")
         }
 
 	## Create folder for plots
@@ -545,6 +545,6 @@
 	
 	} ## End loop over starting scores or students
 
-	return(NULL)
+	return("DONE")
 
 } ## End growthAchievementPlot function
