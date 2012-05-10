@@ -129,7 +129,7 @@ function(sgp_object,
 		###
 
 			started.at <- proc.time()
-			message(paste("\tStarted WIDE data production in outputSGP", date()))
+			message(paste("\tStarted SchoolVIEW WIDE data production in outputSGP", date()))
 
 		### Utility functions
 
@@ -387,7 +387,7 @@ function(sgp_object,
 		SchoolView_WIDE <- outputSGP.data[,tmp.variable.names, with=FALSE]
 		save(SchoolView_WIDE, file=file.path(outputSGP.directory, "SchoolView", "SchoolView_WIDE.Rdata"))
 
-		message(paste("\tFinished WIDE data production in outputSGP", date(), "in", timetaken(started.at), "\n"))
+		message(paste("\tFinished SchoolVIEW WIDE data production in outputSGP", date(), "in", timetaken(started.at), "\n"))
 
 	} ## End if SchoolView %in% output.type
 
