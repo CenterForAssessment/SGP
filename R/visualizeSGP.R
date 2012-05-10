@@ -217,7 +217,25 @@ function(sgp_object,
 
 			foreach(gaPlot.iter=iter(get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students)), .packages="SGP", .inorder=FALSE,
 				.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
-					invisible(growthAchievementPlot(
+					growthAchievementPlot(
+						gaPlot.sgp_object=sgp_object,
+						gaPlot.students=gaPlot.iter[["ID"]],
+						gaPlot.max.order.for.progression=get.max.order.for.progression(gaPlot.iter[["YEAR"]], gaPlot.iter[["CONTENT_AREA"]]),
+						state=state,
+						content_area=gaPlot.iter[["CONTENT_AREA"]],
+						year=gaPlot.iter[["YEAR"]], 
+						format=gaPlot.format,
+						baseline=gaPlot.baseline,
+						pdf.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))
+
+			} ## END dopar 
+		} ## END FOREACH
+		
+		if (par.start$par.type=="SNOW") {
+			
+			gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students)
+			clusterApplyLB(par.start$internal.cl, gaPlot.list, function(gaPlot.iter) 
+				growthAchievementPlot(
 						gaPlot.sgp_object=sgp_object,
 						gaPlot.students=gaPlot.iter[["ID"]],
 						gaPlot.max.order.for.progression=get.max.order.for.progression(gaPlot.iter[["YEAR"]], gaPlot.iter[["CONTENT_AREA"]]),
@@ -227,30 +245,12 @@ function(sgp_object,
 						format=gaPlot.format,
 						baseline=gaPlot.baseline,
 						pdf.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]])))
-
-			} ## END dopar 
-		} ## END FOREACH
-		
-		if (par.start$par.type=="SNOW") {
-			
-			gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students)
-			clusterApplyLB(par.start$internal.cl, gaPlot.list, function(gaPlot.iter) 
-				invisible(growthAchievementPlot(
-						gaPlot.sgp_object=sgp_object,
-						gaPlot.students=gaPlot.iter[["ID"]],
-						gaPlot.max.order.for.progression=get.max.order.for.progression(gaPlot.iter[["YEAR"]], gaPlot.iter[["CONTENT_AREA"]]),
-						state=state,
-						content_area=gaPlot.iter[["CONTENT_AREA"]],
-						year=gaPlot.iter[["YEAR"]], 
-						format=gaPlot.format,
-						baseline=gaPlot.baseline,
-						pdf.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))))
 		}
 		
 		if (par.start$par.type=="MULTICORE") {
 			gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students)
 			mclapply(gaPlot.list, function(gaPlot.iter) {
-						invisible(growthAchievementPlot(
+						growthAchievementPlot(
 						gaPlot.sgp_object=sgp_object,
 						gaPlot.students=gaPlot.iter[["ID"]],
 						gaPlot.max.order.for.progression=get.max.order.for.progression(gaPlot.iter[["YEAR"]], gaPlot.iter[["CONTENT_AREA"]]),
@@ -259,7 +259,7 @@ function(sgp_object,
 						year=gaPlot.iter[["YEAR"]], 
 						format=gaPlot.format,
 						baseline=gaPlot.baseline,
-						pdf.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]])))}, 
+						pdf.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))}, 
 				mc.cores=par.start$workers, mc.preschedule=FALSE)
 		}
 		
@@ -743,7 +743,7 @@ if (sgPlot.produce.plots) {
 			foreach.options <- parallel.config[["OPTIONS"]] # works fine if NULL
 			foreach(sgPlot.iter=iter(get.sgPlot.iter(tmp.districts.and.schools)), .packages="SGP", .inorder=FALSE,
 				.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
-						invisible(studentGrowthPlot_Styles(
+						studentGrowthPlot_Styles(
 							sgPlot.data=sgPlot.data,
 							state=state,
 							last.year=tmp.last.year,
@@ -760,7 +760,7 @@ if (sgPlot.produce.plots) {
 							sgPlot.header.footer.color=sgPlot.header.footer.color,
 							sgPlot.fan=sgPlot.fan,
 							sgPlot.cleanup=sgPlot.cleanup,
-							sgPlot.baseline=sgPlot.baseline))
+							sgPlot.baseline=sgPlot.baseline)
 			} ### END dopar
 		} ### END if FOREACH
 		
@@ -768,7 +768,7 @@ if (sgPlot.produce.plots) {
 			
 			sgPlot.list <- get.sgPlot.iter(tmp.districts.and.schools)
 			clusterApplyLB(par.start$internal.cl, sgPlot.list, function(sgPlot.iter) 
-				invisible(studentGrowthPlot_Styles(
+				studentGrowthPlot_Styles(
 					sgPlot.data=sgPlot.data,
 					state=state,
 					last.year=tmp.last.year,
@@ -785,14 +785,14 @@ if (sgPlot.produce.plots) {
 					sgPlot.header.footer.color=sgPlot.header.footer.color,
 					sgPlot.fan=sgPlot.fan,
 					sgPlot.cleanup=sgPlot.cleanup,
-					sgPlot.baseline=sgPlot.baseline)))
+					sgPlot.baseline=sgPlot.baseline))
 		} ### END if SNOW
 		
 		if (par.start$par.type=="MULTICORE") {
 			
 			sgPlot.list <- get.sgPlot.iter(tmp.districts.and.schools)
 			mclapply(sgPlot.list, function(sgPlot.iter) 
-				invisible(studentGrowthPlot_Styles(
+				studentGrowthPlot_Styles(
 					sgPlot.data=sgPlot.data,
 					state=state,
 					last.year=tmp.last.year,
@@ -809,7 +809,7 @@ if (sgPlot.produce.plots) {
 					sgPlot.header.footer.color=sgPlot.header.footer.color,
 					sgPlot.fan=sgPlot.fan,
 					sgPlot.cleanup=sgPlot.cleanup,
-					sgPlot.baseline=sgPlot.baseline)), mc.cores=par.start$workers, mc.preschedule=FALSE)
+					sgPlot.baseline=sgPlot.baseline), mc.cores=par.start$workers, mc.preschedule=FALSE)
 		}  ### END if MULTICORE
 		
 		stopParallel(parallel.config, par.start)
