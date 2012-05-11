@@ -233,7 +233,7 @@ function(sgp_object,
 			if (!all(names(tmp_object_2) %in% names(sgp_object@Data))) {
 				variables.to.create <- names(tmp_object_2) %w/o% names(sgp_object@Data)
 				for (k in variables.to.create) {
-					sgp_object@Data[[k]] <- NA_integer_
+					sgp_object@Data[,k := NA_integer_, with=FALSE, mult="first"]
 					class(sgp_object@Data[[k]]) <- class(tmp_object_2[[k]])
 					if (is.factor(tmp_object_2[[k]])) levels(sgp_object@Data[[k]]) <- levels(tmp_object_2[[k]])
 				}
