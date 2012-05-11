@@ -50,11 +50,6 @@ function(sgp_object,
 
 	"%w/o%" <- function(x,y) x[!x %in% y]
 
-#	rbind.all <- function(.list, ...) {
-#		if(length(.list)==1) return(.list[[1]])
-#		Recall(c(list(rbind.fill(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), ...)
-#	}
-
 	get.catch_up_keep_up_status_initial <- function(achievement_level_prior) {
 		if (!all(levels(achievement_level_prior) %in% SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]])) {
 			levels(achievement_level_prior)[!levels(achievement_level_prior) %in% SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]]] <- NA
@@ -239,7 +234,8 @@ function(sgp_object,
 				variables.to.create <- names(tmp_object_2) %w/o% names(sgp_object@Data)
 				for (k in variables.to.create) {
 					sgp_object@Data[[k]] <- NA_integer_
-					class(sgp_object@Data[[k]]) <- class(tmp.data[[k]])
+					class(sgp_object@Data[[k]]) <- class(tmp_object_2[[k]])
+					if (is.factor(tmp_object_2[[k]])) levels(sgp_object@Data[[k]]) <- levels(tmp_object_2[[k]])
 				}
 			}
 			invisible(sgp_object@Data[tmp_object_2[,c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE], names(tmp_object_2) := tmp_object_2, with=FALSE, mult="first"])
