@@ -468,8 +468,8 @@ function(sgp_object,
 				baseline.missings <- which(sapply(par.sgp.config, function(x) identical(x[['base.gp']], "NO_BASELINE_COEFFICIENT_MATRICES")))
 				baseline.missings <- paste(unique(unlist(sapply(par.sgp.config[baseline.missings], function(x) paste(x$sgp.content.areas, x$sgp.grade.sequences)))), collapse=", ")
 				message("\tNOTE: Baseline coefficient matrices are not available for ", baseline.missings, ".", sep="")
-				par.sgp.config.baseline <- par.sgp.config[which(sapply(par.sgp.config, function(x) identical(x[['base.gp']], "NO_BASELINE_COEFFICIENT_MATRICES")))]
 			}
+			par.sgp.config.baseline <- par.sgp.config[which(sapply(par.sgp.config, function(x) !identical(x[['base.gp']], "NO_BASELINE_COEFFICIENT_MATRICES")))]
 		}
 
 
