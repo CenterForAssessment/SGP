@@ -104,11 +104,7 @@ function(sgp_object,
 			tmp.data <- get.rbind.all.data(tmp.list) 
 			if (!all(names(tmp.data) %in% names(sgp_object@Data))) {
 				variables.to.create <- names(tmp.data) %w/o% names(sgp_object@Data)
-				for (k in variables.to.create) {
-					sgp_object@Data[,k := NA_integer_, with=FALSE, mult="first"]
-					class(sgp_object@Data[[k]]) <- class(tmp.data[[k]])
-					if (is.factor(tmp.data[[k]])) levels(sgp_object@Data[[k]]) <- levels(tmp.data[[k]])
-				}
+				for (k in variables.to.create) sgp_object@Data[, k := tmp.data[[k]][NA], with=FALSE]
 			}
 			invisible(sgp_object@Data[tmp.data[,c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE], names(tmp.data) := tmp.data, with=FALSE, mult="first"])
 		}
@@ -150,11 +146,7 @@ function(sgp_object,
 			tmp.data <- get.rbind.all.data(tmp.list) 
 			if (!all(names(tmp.data) %in% names(sgp_object@Data))) {
 				variables.to.create <- names(tmp.data) %w/o% names(sgp_object@Data)
-				for (k in variables.to.create) {
-					sgp_object@Data[,k := NA_integer_, with=FALSE, mult="first"]
-					class(sgp_object@Data[[k]]) <- class(tmp.data[[k]])
-					if (is.factor(tmp.data[[k]])) levels(sgp_object@Data[[k]]) <- levels(tmp.data[[k]])
-				}
+				for (k in variables.to.create) sgp_object@Data[, k := tmp.data[[k]][NA], with=FALSE]
 			}
 			invisible(sgp_object@Data[tmp.data[,c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE], names(tmp.data) := tmp.data, with=FALSE, mult="first"])
 		}
@@ -234,11 +226,7 @@ function(sgp_object,
 		} else {
 			if (!all(names(tmp_object_2) %in% names(sgp_object@Data))) {
 				variables.to.create <- names(tmp_object_2) %w/o% names(sgp_object@Data)
-				for (k in variables.to.create) {
-					sgp_object@Data[,k := NA_integer_, with=FALSE, mult="first"]
-					class(sgp_object@Data[[k]]) <- class(tmp_object_2[[k]])
-					if (is.factor(tmp_object_2[[k]])) levels(sgp_object@Data[[k]]) <- levels(tmp_object_2[[k]])
-				}
+				for (k in variables.to.create) sgp_object@Data[, k := tmp_object_2[[k]][NA], with=FALSE]
 			}
 			invisible(sgp_object@Data[tmp_object_2[,c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE], names(tmp_object_2) := tmp_object_2, with=FALSE, mult="first"])
 		}
@@ -283,10 +271,7 @@ function(sgp_object,
 		} else {
 			if (!all(names(tmp_object_2) %in% names(sgp_object@Data))) {
 				variables.to.create <- names(tmp_object_2) %w/o% names(sgp_object@Data)
-				for (k in variables.to.create) {
-					sgp_object@Data[[k]] <- NA_integer_
-					class(sgp_object@Data[[k]]) <- class(tmp.data[[k]])
-				}
+				for (k in variables.to.create) sgp_object@Data[, k := tmp_object_2[[k]][NA], with=FALSE]
 			}
 			invisible(sgp_object@Data[tmp_object_2[,c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE], names(tmp_object_2) := tmp_object_2, with=FALSE, mult="first"])
 		}
