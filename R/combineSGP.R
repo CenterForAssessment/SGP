@@ -244,7 +244,8 @@ function(sgp_object,
 					sgp_object@SGP[["SGProjections"]][[i]][,c(1,2,cols.to.get[1:num.cols.to.get])])
 		 }
 
-		tmp_object_1 <- data.table(VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), rbind.fill(tmp.list))[!is.na(CATCH_UP_KEEP_UP_STATUS_INITIAL)]
+		tmp_object_1 <- data.table(VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), 
+			get.rbind.all.data(tmp.list))[!is.na(CATCH_UP_KEEP_UP_STATUS_INITIAL)]
 
 		 ## Find min/max of targets based upon CATCH_UP_KEEP_UP_STATUS_INITIAL status
 
