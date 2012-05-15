@@ -64,6 +64,12 @@ function(sgp_object,
 		message(paste("\tStarted LONG data production in outputSGP", date()))
 
 		write.table(sgp_object@Data, file=file.path(outputSGP.directory, paste(tmp.state, "SGP_LONG_Data.txt", sep="_")), sep="|", quote=FALSE, row.names=FALSE, na="")
+		if (.Platform$OS.type == "unix") {
+			suppressWarnings(
+				zip(file.path(outputSGP.directory, paste(tmp.state, "SGP_LONG_Data.txt.zip", sep="_")), 
+					file.path(outputSGP.directory, paste(tmp.state, "SGP_LONG_Data.txt", sep="_")))
+			)
+		}
 
 		message(paste("\tFinished LONG data production in outputSGP", date(), "in", timetaken(started.at), "\n"))
 
@@ -97,6 +103,11 @@ function(sgp_object,
 		save(list=paste(tmp.state, "SGP_WIDE_Data", sep="_"), file=file.path(outputSGP.directory, paste(tmp.state, "SGP_WIDE_Data.Rdata", sep="_")))
 		write.table(get(paste(tmp.state, "SGP_WIDE_Data", sep="_")), 
 			file=file.path(outputSGP.directory, paste(tmp.state, "SGP_WIDE_Data.txt", sep="_")), sep="|", quote=FALSE, row.names=FALSE, na="")
+
+		suppressWarnings(
+			zip(file.path(outputSGP.directory, paste(tmp.state, "SGP_WIDE_Data.txt.zip", sep="_")), 
+				file.path(outputSGP.directory, paste(tmp.state, "SGP_WIDE_Data.txt", sep="_")))
+		)
 
 		message(paste("\tFinished WIDE data production in outputSGP", date(), "in", timetaken(started.at), "\n"))
 
@@ -383,7 +394,12 @@ function(sgp_object,
 			"CUT_1_YEAR_2", "CUT_99_YEAR_2", "CUT_35_YEAR_2", "CUT_65_YEAR_2", "CUT_20_YEAR_2", "CUT_40_YEAR_2", "CUT_60_YEAR_2", "CUT_80_YEAR_2",
 			"CUT_1_YEAR_3", "CUT_99_YEAR_3", "CUT_35_YEAR_3", "CUT_65_YEAR_3", "CUT_20_YEAR_3", "CUT_40_YEAR_3", "CUT_60_YEAR_3", "CUT_80_YEAR_3")
 
-		write.table(outputSGP.data[,tmp.variable.names, with=FALSE], file=file.path(outputSGP.directory, "SchoolView", "SchoolView_WIDE.dat"), row.names=FALSE, na="", quote=FALSE, sep="|")
+		write.table(outputSGP.data[,tmp.variable.names, with=FALSE], file=file.path(outputSGP.directory, "SchoolView", "SchoolView_WIDE.txt"), row.names=FALSE, na="", quote=FALSE, sep="|")
+			suppressWarnings(
+				zip(file.path(outputSGP.directory, "SchoolView", "SchoolView_WIDE.txt.zip"), 
+					file.path(outputSGP.directory, "SchoolView", "SchoolView_WIDE.txt"))
+			)
+
 		SchoolView_WIDE <- outputSGP.data[,tmp.variable.names, with=FALSE]
 		save(SchoolView_WIDE, file=file.path(outputSGP.directory, "SchoolView", "SchoolView_WIDE.Rdata"))
 
@@ -391,6 +407,7 @@ function(sgp_object,
 
 	} ## End if SchoolView %in% output.type
 
+		setkey(sgp_object@Data, VALID_CASE, CONTENT_AREA, YEAR, ID)
 		message(paste("Finished outputSGP", date(), "in", timetaken(started.at.outputSGP), "\n"))
 
 } ## END outputSGP
