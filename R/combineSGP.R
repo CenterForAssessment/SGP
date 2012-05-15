@@ -116,7 +116,7 @@ function(sgp_object,
 		tmp.data <- get.rbind.all.data(tmp.list)
 
 		if (!all(names(tmp.data) %in% names(slot.data))) {
-			for (i in names(tmp.data)[!names(tmp.data) %in% names(slot.data)]) slot.data[, i := tmp.data[[i]][NA][1], with=FALSE]
+			for (i in names(tmp.data)[!names(tmp.data) %in% names(slot.data)]) suppressWarnings(slot.data[, i := tmp.data[[i]][NA][1], with=FALSE])
 		}
 
 		invisible(slot.data[tmp.data[,key(slot.data), with=FALSE], names(tmp.data) := tmp.data, with=FALSE, mult="first"])

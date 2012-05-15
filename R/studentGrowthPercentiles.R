@@ -182,7 +182,7 @@ function(panel.data,         ## REQUIRED
 		tmp <- do.call(rbind, strsplit(names, "_"))
 		if (!grade %in% tmp[tmp[,1]=="knots", 2]) stop(paste("knots_", grade, " not found in Knots_Boundaries.", sep=""))
 		if (!grade %in% tmp[tmp[,1]=="boundaries", 2]) stop(paste("boundaries_", grade, " not found in Knots_Boundaries.", sep=""))                           
-		}
+	}
 
 	.check.my.coefficient.matrices <- function(names, grade, order) {
 		tmp <- do.call(rbind, strsplit(names, "_"))
@@ -252,7 +252,7 @@ function(panel.data,         ## REQUIRED
 		}
 		colnames(tmp) <- paste("PERCENTILE_CUT_", percentile.cuts, sep="")
 		return(tmp)
-} 
+	} 
 
 	.goodness.of.fit <- function(data1) {
 		.cell.color <- function(x){
@@ -317,7 +317,6 @@ function(panel.data,         ## REQUIRED
 		for (i in levels(tmp.cuts)) {
 			tmp.list[[i]] <- quantile(data1$SGP[tmp.cuts==i], probs=ppoints(1:500))
 		}
-#		tmp.ppoints <- unlist(tmp.list)
 
 		layout.vp <- viewport(layout = grid.layout(2, 2, widths = unit(c(4.75, 3.5), rep("inches", 2)),
 		heights = unit(c(0.75, 3.5), rep("inches", 2))), name="layout")
@@ -389,7 +388,7 @@ function(panel.data,         ## REQUIRED
 			tmp.score[tmp.score < min.max[1]] <- min.max[1]
 			tmp.score[tmp.score > min.max[2]] <- min.max[2]
 			return(tmp.score)
-		}
+	}
 
 
 	############################################################################
