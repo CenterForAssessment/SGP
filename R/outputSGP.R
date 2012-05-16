@@ -97,8 +97,11 @@ function(sgp_object,
 		started.at <- proc.time()
 		message(paste("\tStarted WIDE data production in outputSGP", date()))
 
-		setkeyv(sgp_object@Data, c("ID", "CONTENT_AREA"))
-		assign(paste(tmp.state, "SGP_WIDE_Data", sep="_"), reshape(sgp_object@Data, idvar=c("ID", "CONTENT_AREA"), timevar="YEAR", drop=c("VALID_CASE"), direction="wide"))
+		long_data_tmp <- sgp_object@Data
+		setkeyv(long_data_tmp, c("VALID_CASE", "ID"))
+		invisible(long_data_tmp[,YEAR_BY_CONTENT_AREA := paste(YEAR, CONTENT_AREA, sep=".")])
+		assign(paste(tmp.state, "SGP_WIDE_Data", sep="_"), reshape(long_data_tmp[J("VALID_CASE")], idvar="ID", 
+			timevar="YEAR_BY_CONTENT_AREA", drop=c("VALID_CASE", "CONTENT_AREA", "YEAR"), direction="wide"))
 
 		save(list=paste(tmp.state, "SGP_WIDE_Data", sep="_"), file=file.path(outputSGP.directory, paste(tmp.state, "SGP_WIDE_Data.Rdata", sep="_")))
 		write.table(get(paste(tmp.state, "SGP_WIDE_Data", sep="_")), 
