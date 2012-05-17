@@ -242,7 +242,7 @@ function(sgp_object,
 				PERCENT_AT_ABOVE_PROFICIENT_COUNT="num_non_missing(ACHIEVEMENT_LEVEL)",
 				PERCENT_AT_ABOVE_PROFICIENT_PRIOR=paste("percent_in_category(ACHIEVEMENT_LEVEL_PRIOR, ", 
 					get.expression(proficient.achievement.levels), ", ", get.expression(all.achievement.levels), ")",sep=""),
-				PERCENT_AT_ABOVE_PROFICIENT_COUNT_PRIOR="num_non_missing(ACHIEVEMENT_LEVEL_PRIOR)",
+				PERCENT_AT_ABOVE_PROFICIENT_PRIOR_COUNT="num_non_missing(ACHIEVEMENT_LEVEL_PRIOR)",
 				MEDIAN_SGP_STANDARD_ERROR="median_sgp_standard_error(SGP)")
 
 				if ("SGP_TARGET" %in% names(sgp_object@Data)) {
