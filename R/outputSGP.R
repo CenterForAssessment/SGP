@@ -64,7 +64,7 @@ function(sgp_object,
 		message(paste("\tStarted LONG data production in outputSGP", date()))
 
 		write.table(sgp_object@Data, file=file.path(outputSGP.directory, paste(tmp.state, "SGP_LONG_Data.txt", sep="_")), sep="|", quote=FALSE, row.names=FALSE, na="")
-		if (.Platform$OS.type == "unix") {
+		if (identical(.Platform$OS.type, "unix")) {
 			suppressWarnings(
 				zip(file.path(outputSGP.directory, paste(tmp.state, "SGP_LONG_Data.txt.zip", sep="_")), 
 					file.path(outputSGP.directory, paste(tmp.state, "SGP_LONG_Data.txt", sep="_")))
@@ -107,10 +107,12 @@ function(sgp_object,
 		write.table(get(paste(tmp.state, "SGP_WIDE_Data", sep="_")), 
 			file=file.path(outputSGP.directory, paste(tmp.state, "SGP_WIDE_Data.txt", sep="_")), sep="|", quote=FALSE, row.names=FALSE, na="")
 
-		suppressWarnings(
-			zip(file.path(outputSGP.directory, paste(tmp.state, "SGP_WIDE_Data.txt.zip", sep="_")), 
-				file.path(outputSGP.directory, paste(tmp.state, "SGP_WIDE_Data.txt", sep="_")))
-		)
+		if (identical(.Platform$OS.type, "unix")) {
+			suppressWarnings(
+				zip(file.path(outputSGP.directory, paste(tmp.state, "SGP_WIDE_Data.txt.zip", sep="_")), 
+					file.path(outputSGP.directory, paste(tmp.state, "SGP_WIDE_Data.txt", sep="_")))
+			)
+		}
 
 		message(paste("\tFinished WIDE data production in outputSGP", date(), "in", timetaken(started.at), "\n"))
 
