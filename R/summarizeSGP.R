@@ -119,11 +119,6 @@ function(sgp_object,
 		return(tmp.names[tmp.names$names.type==x, "names.sgp"])
 	}
 
-#	rbind.all <- function(.list, ...){
-#		if(length(.list)==1) return(.list[[1]])
-#		Recall(c(list(rbind(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), ...)
-#	}
-
 	group.format <- function(my.group) {
 		if (is.null(my.group)) {
 			c("")
