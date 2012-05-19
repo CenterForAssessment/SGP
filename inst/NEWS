@@ -37,7 +37,7 @@ Changes in version: SGP_0.9-5.0
 	  o analyzeSGP not checks for content area specific coefficient matrices and only calculates baseline referenced results for those content areas.
 	  o Supplied panel.data.vnames now subsets only those names in supplied panel data.
 	  o Refined of merge of sgp targets in combineSGP to avoid memory copy of sgp_object.
-	  o Changed PERCENT_AT_ABOVE_PROFICIENT_COUNT_PRIOR to PERCENT_AT_ABOVE_PROFICIENT_PRIOR_COUNT in summarizeSGP.
+	  o summarizeSGP now checks for existence of ACHIEVEMENT_LEVEL_PRIOR before attempting to calculate it.
 
 
 Changes in version: SGP_0.9-0.0

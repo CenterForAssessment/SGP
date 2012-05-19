@@ -235,10 +235,16 @@ function(sgp_object,
 				PERCENT_AT_ABOVE_PROFICIENT=paste("percent_in_category(ACHIEVEMENT_LEVEL, ", 
 					get.expression(proficient.achievement.levels), ", ", get.expression(all.achievement.levels), ")",sep=""),
 				PERCENT_AT_ABOVE_PROFICIENT_COUNT="num_non_missing(ACHIEVEMENT_LEVEL)",
-				PERCENT_AT_ABOVE_PROFICIENT_PRIOR=paste("percent_in_category(ACHIEVEMENT_LEVEL_PRIOR, ", 
-					get.expression(proficient.achievement.levels), ", ", get.expression(all.achievement.levels), ")",sep=""),
-				PERCENT_AT_ABOVE_PROFICIENT_PRIOR_COUNT="num_non_missing(ACHIEVEMENT_LEVEL_PRIOR)",
 				MEDIAN_SGP_STANDARD_ERROR="median_sgp_standard_error(SGP)")
+
+				if ("ACHIEVEMENT_LEVEL_PRIOR" %in% names(sgp_object@Data)) {
+					tmp.sgp.summaries <- c(
+						tmp.sgp.summaries,
+						PERCENT_AT_ABOVE_PROFICIENT_PRIOR=paste("percent_in_category(ACHIEVEMENT_LEVEL_PRIOR, ", 
+							get.expression(proficient.achievement.levels), ", ", get.expression(all.achievement.levels), ")",sep=""),
+						PERCENT_AT_ABOVE_PROFICIENT_PRIOR_COUNT="num_non_missing(ACHIEVEMENT_LEVEL_PRIOR)"
+					)
+				}
 
 				if ("SGP_TARGET" %in% names(sgp_object@Data)) {
 					tmp.sgp.summaries <- c(
