@@ -7,6 +7,7 @@ function(sgp_object,
          summary.groups=NULL,
          confidence.interval.groups=NULL,
          produce.all.summary.tables=FALSE,
+         summarizeSGP.baseline=NULL,
          parallel.config=NULL) {
 
 	started.at <- proc.time()
@@ -26,76 +27,22 @@ function(sgp_object,
 		}
 	}
 
+	### define summarizeSGP.baseline
 
-	### Define tables that will be calculated from all possible created by expand.grid
+	if (is.null(summarizeSGP.baseline)) {
+		summarizeSGP.baseline <- FALSE ## Default to cohort referenced is not set by user
+		if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort Referenced") summarizeSGP.baseline <- FALSE
+		if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Baseline Referenced") summarizeSGP.baseline <- TRUE
+		if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort and Baseline Referenced") summarizeSGP.baseline <- FALSE
+	}
 
-	selected.demographic.subgroups <- subset(sgp_object@Names, names.type=="demographic" & !is.na(names.type) & names.output, select=names.sgp, drop=TRUE)
-	selected.summary.tables <- unique(c(
-
-		## From bubblePlot_Styles
-
-		"SCHOOL_NUMBER, CONTENT_AREA, YEAR, SCHOOL_ENROLLMENT_STATUS",
-		"SCHOOL_NUMBER, CONTENT_AREA, YEAR",
-		"SCHOOL_NUMBER, CONTENT_AREA, SCHOOL_ENROLLMENT_STATUS",
-		"SCHOOL_NUMBER, CONTENT_AREA",
-		"STATE, INSTRUCTOR_NUMBER, INSTRUCTOR_ENROLLMENT_STATUS",
-		"STATE, INSTRUCTOR_NUMBER",
-		"STATE, INSTRUCTOR_NUMBER, INSTRUCTOR_ENROLLMENT_STATUS, CONTENT_AREA",
-		"STATE, INSTRUCTOR_NUMBER, CONTENT_AREA",
-		"STATE, INSTRUCTOR_NUMBER, INSTRUCTOR_ENROLLMENT_STATUS, YEAR",
-		"STATE, INSTRUCTOR_NUMBER, YEAR",
-		"STATE, INSTRUCTOR_NUMBER, INSTRUCTOR_ENROLLMENT_STATUS, CONTENT_AREA, YEAR",
-		"STATE, INSTRUCTOR_NUMBER, CONTENT_AREA, YEAR",
-		"DISTRICT_NUMBER, INSTRUCTOR_NUMBER, INSTRUCTOR_ENROLLMENT_STATUS",
-		"DISTRICT_NUMBER, INSTRUCTOR_NUMBER",
-		"DISTRICT_NUMBER, INSTRUCTOR_NUMBER, INSTRUCTOR_ENROLLMENT_STATUS, CONTENT_AREA",
-		"DISTRICT_NUMBER, INSTRUCTOR_NUMBER, CONTENT_AREA",
-		"DISTRICT_NUMBER, INSTRUCTOR_NUMBER, INSTRUCTOR_ENROLLMENT_STATUS, YEAR",
-		"DISTRICT_NUMBER, INSTRUCTOR_NUMBER, YEAR",
-		"DISTRICT_NUMBER, INSTRUCTOR_NUMBER, INSTRUCTOR_ENROLLMENT_STATUS, CONTENT_AREA, YEAR",
-		"DISTRICT_NUMBER, INSTRUCTOR_NUMBER, CONTENT_AREA, YEAR",
-		"SCHOOL_NUMBER, INSTRUCTOR_NUMBER, INSTRUCTOR_ENROLLMENT_STATUS",
-		"SCHOOL_NUMBER, INSTRUCTOR_NUMBER",
-		"SCHOOL_NUMBER, INSTRUCTOR_NUMBER, INSTRUCTOR_ENROLLMENT_STATUS, CONTENT_AREA",
-		"SCHOOL_NUMBER, INSTRUCTOR_NUMBER, CONTENT_AREA",
-		"SCHOOL_NUMBER, INSTRUCTOR_NUMBER, INSTRUCTOR_ENROLLMENT_STATUS, YEAR",
-		"SCHOOL_NUMBER, INSTRUCTOR_NUMBER, YEAR",
-		"SCHOOL_NUMBER, INSTRUCTOR_NUMBER, INSTRUCTOR_ENROLLMENT_STATUS, CONTENT_AREA, YEAR",
-		"SCHOOL_NUMBER, INSTRUCTOR_NUMBER, CONTENT_AREA, YEAR",
-		"SCHOOL_NUMBER, CONTENT_AREA, YEAR, GRADE",
-		"SCHOOL_NUMBER, INSTRUCTOR_NUMBER, ENROLLMENT_STATUS, CONTENT_AREA, YEAR, GRADE",
-
-		### From sqliteSGP
-
-		"DISTRICT_NUMBER, CONTENT_AREA, YEAR, DISTRICT_ENROLLMENT_STATUS",
-		"DISTRICT_NUMBER, CONTENT_AREA, YEAR, GRADE, DISTRICT_ENROLLMENT_STATUS",
-		"DISTRICT_NUMBER, CONTENT_AREA, YEAR, DISTRICT_ENROLLMENT_STATUS, ETHNICITY",
-		"DISTRICT_NUMBER, CONTENT_AREA, YEAR, GRADE, DISTRICT_ENROLLMENT_STATUS, ETHNICITY",
-		paste("DISTRICT_NUMBER, CONTENT_AREA, YEAR, DISTRICT_ENROLLMENT_STATUS, ", selected.demographic.subgroups, sep=""),
-		paste("DISTRICT_NUMBER, CONTENT_AREA, YEAR, GRADE, DISTRICT_ENROLLMENT_STATUS, ", selected.demographic.subgroups, sep=""),
-		"SCHOOL_NUMBER, CONTENT_AREA, YEAR, EMH_LEVEL, SCHOOL_ENROLLMENT_STATUS",
-		"SCHOOL_NUMBER, CONTENT_AREA, YEAR, EMH_LEVEL, GRADE, SCHOOL_ENROLLMENT_STATUS",
-		"SCHOOL_NUMBER, CONTENT_AREA, YEAR, EMH_LEVEL, SCHOOL_ENROLLMENT_STATUS, ETHNICITY",
-		paste("SCHOOL_NUMBER, CONTENT_AREA, YEAR, EMH_LEVEL, SCHOOL_ENROLLMENT_STATUS, ", selected.demographic.subgroups, sep=""),
-
-		### Other good ones to have
-
-		"STATE, CONTENT_AREA, YEAR, STATE_ENROLLMENT_STATUS",
-		"STATE, CONTENT_AREA, YEAR",
-		"STATE, CONTENT_AREA, STATE_ENROLLMENT_STATUS",
-		"STATE, CONTENT_AREA",
-		paste("STATE, CONTENT_AREA, YEAR, STATE_ENROLLMENT_STATUS, ", selected.demographic.subgroups, sep=""),
-		paste("STATE, CONTENT_AREA, YEAR, GRADE, STATE_ENROLLMENT_STATUS, ", selected.demographic.subgroups, sep=""),
-		paste("STATE, CONTENT_AREA, YEAR, EMH_LEVEL, SCHOOL_ENROLLMENT_STATUS, ", selected.demographic.subgroups, sep=""),
-		paste("STATE, CONTENT_AREA, STATE_ENROLLMENT_STATUS, ", selected.demographic.subgroups, sep=""),
-		paste("STATE, CONTENT_AREA, GRADE, STATE_ENROLLMENT_STATUS, ", selected.demographic.subgroups, sep=""),
-		paste("STATE, CONTENT_AREA, EMH_LEVEL, SCHOOL_ENROLLMENT_STATUS, ", selected.demographic.subgroups, sep=""),
-		"DISTRICT_NUMBER, CONTENT_AREA, YEAR",
-		"DISTRICT_NUMBER, CONTENT_AREA, DISTRICT_ENROLLMENT_STATUS",
-		"DISTRICT_NUMBER, CONTENT_AREA"
-
-	)) ### END selected.summary.tables
-
+	if (summarizeSGP.baseline) {
+		my.sgp <- "SGP_BASELINE"
+		my.sgp.level <- "SGP_LEVEL_BASELINE"
+	} else {
+		my.sgp <- "SGP"
+		my.sgp.level <- "SGP_LEVEL"
+	}
 
 	if (missing(sgp_object)) {
 		stop("User must supply a list containing a Student slot with long data. See documentation for details.")
@@ -119,11 +66,18 @@ function(sgp_object,
 		return(tmp.names[tmp.names$names.type==x, "names.sgp"])
 	}
 
-	group.format <- function(my.group) {
-		if (is.null(my.group)) {
-			c("")
-		} else {
-			c("", unlist(lapply(my.group, function(x) paste(", ", x, sep=""))))
+	group.format <- function(my.group, add.missing=TRUE) {
+		if (is.null(my.group) & add.missing) {
+			return(c(""))
+		}
+		if (is.null(my.group) & !add.missing) {
+			return(NULL)
+		}
+		if (!is.null(my.group) & add.missing) {
+			return(c("", unlist(lapply(my.group, function(x) paste(", ", x, sep="")))))
+		}
+		if (!is.null(my.group) & !add.missing) {
+			return(unlist(lapply(my.group, function(x) paste(", ", x, sep=""))))
 		}
 	}
 
@@ -230,12 +184,12 @@ function(sgp_object,
 			}
 
 			tmp.sgp.summaries <- list(
-				MEDIAN_SGP="median_na(SGP)",
-				MEDIAN_SGP_COUNT="num_non_missing(SGP)",
+				MEDIAN_SGP=paste("median_na(", my.sgp, ")", sep=""),
+				MEDIAN_SGP_COUNT=paste("num_non_missing(", my.sgp, ")", sep=""),
 				PERCENT_AT_ABOVE_PROFICIENT=paste("percent_in_category(ACHIEVEMENT_LEVEL, ", 
 					get.expression(proficient.achievement.levels), ", ", get.expression(all.achievement.levels), ")",sep=""),
 				PERCENT_AT_ABOVE_PROFICIENT_COUNT="num_non_missing(ACHIEVEMENT_LEVEL)",
-				MEDIAN_SGP_STANDARD_ERROR="median_sgp_standard_error(SGP)")
+				MEDIAN_SGP_STANDARD_ERROR=paste("median_sgp_standard_error(", my.sgp, ")", sep=""))
 
 				if ("ACHIEVEMENT_LEVEL_PRIOR" %in% names(sgp_object@Data)) {
 					tmp.sgp.summaries <- c(
@@ -261,12 +215,12 @@ function(sgp_object,
 		if (config.type=="summary.groups") {
 			tmp.summary.groups <- list(
 				institution=c("STATE", getFromNames("institution")),
+				institution_type=getFromNames("institution_type"),
 				content=getFromNames("content"),
 				time=getFromNames("time"),
-				institution_type=getFromNames("institution_type"),
 				institution_level=getFromNames("institution_level"),
-				institution_multiple_membership=get.multiple.membership(sgp_object@Names[!is.na(sgp_object@Names$names.sgp),]),
-				demographic=c(getFromNames("demographic"), "CATCH_UP_KEEP_UP_STATUS", "ACHIEVEMENT_LEVEL_PRIOR"))
+				demographic=intersect(c(getFromNames("demographic"), "CATCH_UP_KEEP_UP_STATUS", "ACHIEVEMENT_LEVEL_PRIOR", "HIGH_NEED_STATUS"), names(sgp_object@Data)),
+				institution_multiple_membership=get.multiple.membership(sgp_object@Names[!is.na(sgp_object@Names$names.sgp),]))
 
 				for (i in tmp.summary.groups[["institution"]]) {
 					tmp.summary.groups[["institution_inclusion"]][[i]] <- getFromNames("institution_inclusion")[
@@ -286,9 +240,9 @@ function(sgp_object,
 				QUANTILES=c(0.025, 0.975),
 				GROUPS=list(
 					institution="SCHOOL_NUMBER",
+					institution_type="EMH_LEVEL",
 					content="CONTENT_AREA",
 					time="YEAR",
-					institution_type="EMH_LEVEL",
 					institution_level=NULL,
 					demographic=NULL,
 					institution_inclusion=list(STATE=NULL, DISTRICT_NUMBER=NULL, SCHOOL_NUMBER="SCHOOL_ENROLLMENT_STATUS"),
@@ -349,24 +303,24 @@ function(sgp_object,
 		### Create summary tables
 		
 		sgp.groups <- do.call(paste, c(expand.grid(i,
+			group.format(summary.groups[["institution_type"]]),
 			group.format(summary.groups[["content"]]),
 			group.format(summary.groups[["time"]]),
-			group.format(summary.groups[["institution_type"]]),
 			group.format(summary.groups[["institution_level"]]),
-			group.format(summary.groups[["institution_inclusion"]][[i]]),
 			group.format(summary.groups[["demographic"]]),
+			group.format(summary.groups[["institution_inclusion"]][[i]]),
 			group.format(summary.groups[["growth_only_summary"]][[i]])), sep=""))
 
 		if (!produce.all.summary.tables) sgp.groups <- intersect(sgp.groups, selected.summary.tables)
 
 		if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
 			ci.groups <- do.call(paste, c(expand.grid(i,
+				group.format(confidence.interval.groups[["GROUPS"]][["institution_type"]]),
 				group.format(confidence.interval.groups[["GROUPS"]][["content"]]),
 				group.format(confidence.interval.groups[["GROUPS"]][["time"]]),
-				group.format(confidence.interval.groups[["GROUPS"]][["institution_type"]]),
 				group.format(confidence.interval.groups[["GROUPS"]][["institution_level"]]),
-				group.format(confidence.interval.groups[["GROUPS"]][["institution_inclusion"]][[i]]),
 				group.format(confidence.interval.groups[["GROUPS"]][["demographic"]]),
+				group.format(confidence.interval.groups[["GROUPS"]][["institution_inclusion"]][[i]]),
 				group.format(confidence.interval.groups[["GROUPS"]][["growth_only_summary"]][[i]])), sep=""))
 
 			if (!produce.all.summary.tables) ci.groups <- intersect(ci.groups, selected.summary.tables)
@@ -479,6 +433,43 @@ function(sgp_object,
 					names(sgp_object@Data)) 
 
 
+	### Define demographic subgroups and tables that will be calculated from all possible created by expand.grid
+
+	selected.demographic.subgroups <- subset(sgp_object@Names, names.type=="demographic" & !is.na(names.type) & names.output, select=names.sgp, drop=TRUE)
+	if (is.null(SGPstateData[[state]][["Variable_Name_Lookup"]])) {
+		selected.institution.types <- c("STATE", "DISTRICT_NUMBER", "SCHOOL_NUMBER")
+	} else {
+		selected.institution.types <- c("STATE", subset(sgp_object@Names, names.type=="institution" & !is.na(names.type), select=names.sgp, drop=TRUE))
+	}
+	selected.institution.types <- c(selected.institution.types, paste(selected.institution.types, "INSTRUCTOR_NUMBER", sep=", "))
+	selected.summary.tables <- list()
+	for (k in selected.institution.types) {
+		if (length(grep("INSTRUCTOR_NUMBER", k)) > 0) {
+			selected.summary.tables[[k]] <- do.call(paste, c(expand.grid(k,
+				group.format("CONTENT_AREA"),
+				group.format("YEAR"),
+				group.format("INSTRUCTOR_ENROLLMENT_STATUS", FALSE)), sep=""))
+		} else {
+			if (length(grep("SCHOOL", k)) > 0) {
+				selected.summary.tables[[k]] <- do.call(paste, c(expand.grid(k,
+					group.format("EMH_LEVEL"),
+					group.format("CONTENT_AREA"),
+					group.format("YEAR"),
+					group.format("GRADE"),
+					group.format(selected.demographic.subgroups),
+					group.format(paste(unlist(strsplit(k, "_"))[!unlist(strsplit(k, "_"))=="NUMBER"], "ENROLLMENT_STATUS", sep="_"), FALSE)), sep=""))
+			} else {
+				selected.summary.tables[[k]] <-  do.call(paste, c(expand.grid(k,
+					group.format("CONTENT_AREA"),
+					group.format("YEAR"),
+					group.format("GRADE"),
+					group.format(selected.demographic.subgroups),
+					group.format(paste(unlist(strsplit(k, "_"))[!unlist(strsplit(k, "_"))=="NUMBER"], "ENROLLMENT_STATUS", sep="_"), FALSE)), sep=""))
+			}
+		}
+	} ### End for k
+	selected.summary.tables <- unlist(selected.summary.tables, use.names=FALSE)
+
 	##############################################################
 	###
 	### Data prep and calculation of summary tables
@@ -508,8 +499,8 @@ function(sgp_object,
 
 				if (!is.null(summary.groups[["institution_multiple_membership"]][[j-1]][["ENROLLMENT_STATUS"]])) {
 					enrollment.status.name <- paste(paste(paste(head(unlist(strsplit(multiple.membership.variable.name, "_")), -1), collapse="_")), "ENROLLMENT_STATUS", sep="_")
-					tmp.inst <- paste(i, multiple.membership.variable.name, enrollment.status.name, sep=", ")
-				} else tmp.inst <- paste(i, multiple.membership.variable.name, sep=", ")
+				}
+				tmp.inst <- paste(i, multiple.membership.variable.name, sep=", ")
 				
 
 				### Reshape data using melt

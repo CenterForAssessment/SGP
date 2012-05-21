@@ -22,6 +22,7 @@ Changes in version: SGP_0.9-5.0
 	  o If grade.progression supplied to studentGrowthPercentiles exceeds number of panels available, function now uses the tail of the grade progression up to the number of panels supplied.
 	  o Added 'WIDE_Data' output.type to outputSGP.
 	  o Added variable name lookup table for Maine.
+	  o Updated summarizeSGP to create relevant tables based upon state provided institution levels.
 
   BUG FIXES:
 
