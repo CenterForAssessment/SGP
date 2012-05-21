@@ -15,7 +15,7 @@ function(sgp_object,
 
 	### Set variables to NULL to prevent R CMD check warnings
 
-	tmp.simulation.dt <- variable <- WEIGHT <- ENROLLMENT_STATUS <- STATE <- names.type <- names.sgp <- names.output <- NULL
+	tmp.simulation.dt <- variable <- WEIGHT <- ENROLLMENT_STATUS <- STATE <- names.type <- names.sgp <- names.output <- BY_GROWTH_ONLY <- NULL
 
 	
 	### Create state (if NULL) from sgp_object (if possible)
@@ -39,9 +39,11 @@ function(sgp_object,
 	if (summarizeSGP.baseline) {
 		my.sgp <- "SGP_BASELINE"
 		my.sgp.level <- "SGP_LEVEL_BASELINE"
+		my.sgp.target <- "SGP_TARGET_BASELINE"
 	} else {
 		my.sgp <- "SGP"
 		my.sgp.level <- "SGP_LEVEL"
+		my.sgp.target <- "SGP_TARGET"
 	}
 
 	if (missing(sgp_object)) {
@@ -426,10 +428,10 @@ function(sgp_object,
 	if (is.null(confidence.interval.groups)) confidence.interval.groups <- summarizeSGP.config(sgp_object, "confidence.interval.groups")
 
 	if (any(!sapply(summary.groups[["growth_only_summary"]], is.null))) {
-		sgp_object@Data[["BY_GROWTH_ONLY"]] <- factor(is.na(sgp_object@Data$SGP), levels=c(FALSE, TRUE), labels=c("Students without SGP", "Students with SGP"))
+		sgp_object@Data[,BY_GROWTH_ONLY := factor(is.na(sgp_object@Data$SGP), levels=c(FALSE, TRUE), labels=c("Students without SGP", "Students with SGP"))]
 	}
 
-	variables.for.summaries <- intersect(c("SGP", "SGP_TARGET", "ACHIEVEMENT_LEVEL", "ACHIEVEMENT_LEVEL_PRIOR", unique(as.character(unlist(summary.groups)))),
+	variables.for.summaries <- intersect(c(my.sgp, my.sgp.target, "ACHIEVEMENT_LEVEL", "ACHIEVEMENT_LEVEL_PRIOR", unique(as.character(unlist(summary.groups)))),
 					names(sgp_object@Data)) 
 
 
