@@ -437,11 +437,11 @@ function(sgp_object,
 
 	### Define demographic subgroups and tables that will be calculated from all possible created by expand.grid
 
-	selected.demographic.subgroups <- subset(sgp_object@Names, names.type=="demographic" & !is.na(names.type) & names.output, select=names.sgp, drop=TRUE)
+	selected.demographic.subgroups <- intersect(c(getFromNames("demographic"), "CATCH_UP_KEEP_UP_STATUS", "ACHIEVEMENT_LEVEL_PRIOR", "HIGH_NEED_STATUS"), names(sgp_object@Data))
 	if (is.null(SGPstateData[[state]][["Variable_Name_Lookup"]])) {
 		selected.institution.types <- c("STATE", "DISTRICT_NUMBER", "SCHOOL_NUMBER")
 	} else {
-		selected.institution.types <- c("STATE", subset(sgp_object@Names, names.type=="institution" & !is.na(names.type), select=names.sgp, drop=TRUE))
+		selected.institution.types <- c("STATE", getFromNames("institution"))
 	}
 	selected.institution.types <- c(selected.institution.types, paste(selected.institution.types, "INSTRUCTOR_NUMBER", sep=", "))
 	selected.summary.tables <- list()
