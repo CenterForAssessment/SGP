@@ -7,7 +7,8 @@ function(sgp_object,
 		 sgp.percentiles.baseline=TRUE,
 		 sgp.projections.lagged=TRUE,
 		 sgp.projections.lagged.baseline=TRUE,
-		 max.lagged.sgp.target.years.forward=4
+		 max.lagged.sgp.target.years.forward=4,
+                 use.cohort.for.baseline.when.missing=NULL
 		 ) {
 
 	started.at <- proc.time()
@@ -51,6 +52,14 @@ function(sgp_object,
 		}
 	}
 
+	if (is.null(use.cohort.for.baseline.when.missing)) {
+		if (is.null(SGPstateData[[state]][["SGP_Configuration"]][["use.cohort.for.baseline.when.missing"]])) {
+			use.cohort.for.baseline.when.missing <- FALSE
+		} else {
+			use.cohort.for.baseline.when.missing <- SGPstateData[[state]][["SGP_Configuration"]][["use.cohort.for.baseline.when.missing"]]
+		}
+	}
+
 	## Utility functions
 
 	"%w/o%" <- function(x,y) x[!x %in% y]
@@ -73,17 +82,32 @@ function(sgp_object,
 
 	get.percentile.names <- function(sgp.type) {
 		if (sgp.type %in% c("sgp.percentiles", "sgp.percentiles.baseline")) {
+			tmp.sgp.names <- names(sgp_object@SGP$SGPercentiles)
 			tmp.baseline.names <- grep("BASELINE", names(sgp_object@SGP$SGPercentiles), value=TRUE)
-			if (sgp.type=="sgp.percentiles") tmp.names <- setdiff(names(sgp_object@SGP$SGPercentiles), tmp.baseline.names)
-			if (sgp.type=="sgp.percentiles.baseline") tmp.names <- tmp.baseline.names
+			if (sgp.type=="sgp.percentiles") tmp.names <- setdiff(tmp.sgp.names, tmp.baseline.names)
+			if (sgp.type=="sgp.percentiles.baseline") {
+				tmp.names <- tmp.baseline.names
+				tmp.content_areas.diff <- setdiff(unique(sapply(strsplit(tmp.sgp.names, "[.]"), function(x) paste(x[1:2], collapse="."))), 
+					unique(sapply(strsplit(tmp.baseline.names, "[.]"), function(x) paste(x[1:2], collapse="."))))
+				if (use.cohort.for.baseline.when.missing & length(tmp.content_areas.diff) > 0) {
+					tmp.names <- c(tmp.names, unlist(lapply(tmp.content_areas.diff, function(x) tmp.sgp.names[grep(x, tmp.sgp.names)])))
+				}
+			}
 			if (length(tmp.names) > 0 & !is.null(years)) tmp.names <- tmp.names[sapply(strsplit(tmp.names, "[.]"), function(x) x[2] %in% years)]
 			if (length(tmp.names) > 0 & !is.null(content_areas)) tmp.names <- tmp.names[sapply(strsplit(tmp.names, "[.]"), function(x) x[1] %in% content_areas)]
 		}
 		if (sgp.type %in% c("sgp.projections.lagged", "sgp.projections.lagged.baseline")) {
 			tmp.lagged.names <- grep("LAGGED", names(sgp_object@SGP$SGProjections), value=TRUE)
-			tmp.baseline.names <- grep("BASELINE", names(sgp_object@SGP$SGProjections), value=TRUE)
+			tmp.baseline.names <- intersect(tmp.lagged.names, grep("BASELINE", names(sgp_object@SGP$SGProjections), value=TRUE))
 			if (sgp.type=="sgp.projections.lagged") tmp.names <- setdiff(tmp.lagged.names, tmp.baseline.names)
-			if (sgp.type=="sgp.projections.lagged.baseline") tmp.names <- intersect(tmp.lagged.names, tmp.baseline.names)
+			if (sgp.type=="sgp.projections.lagged.baseline") {
+				tmp.names <- tmp.baseline.names
+				tmp.content_areas.diff <- setdiff(unique(sapply(strsplit(tmp.lagged.names, "[.]"), function(x) paste(x[1:2], collapse="."))), 
+					unique(sapply(strsplit(tmp.baseline.names, "[.]"), function(x) paste(x[1:2], collapse="."))))
+				if (use.cohort.for.baseline.when.missing & length(tmp.content_areas.diff) > 0) {
+					tmp.names <- c(tmp.names, unlist(lapply(tmp.content_areas.diff, function(x) tmp.lagged.names[grep(x, tmp.lagged.names)])))
+				}
+			}
 			if (length(tmp.names) > 0 & !is.null(years)) tmp.names <- tmp.names[sapply(strsplit(tmp.names, "[.]"), function(x) x[2] %in% years)]
 			if (length(tmp.names) > 0 & !is.null(content_areas)) tmp.names <- tmp.names[sapply(strsplit(tmp.names, "[.]"), function(x) x[1] %in% content_areas)]
 		}
@@ -145,6 +169,11 @@ function(sgp_object,
 				CONTENT_AREA=as.factor(unlist(strsplit(i, "[.]"))[1]),
 				YEAR=type.convert(unlist(strsplit(i, "[.]"))[2]),
 				sgp_object@SGP[["SGPercentiles"]][[i]])
+
+			if (is.na(unlist(strsplit(i, "[.]"))[3])) { ### If cohort referenced SGP are to be included in baseline SGP (e.g., Georgia)
+				names(tmp.list[[i]])[names(tmp.list[[i]])=="SGP"] <- "SGP_BASELINE"
+				if ("SGP_LEVEL" %in% names(tmp.list[[i]])) names(tmp.list[[i]])[names(tmp.list[[i]])=="SGP_LEVEL"] <- "SGP_LEVEL_BASELINE"
+			}
 		}
 
 		tmp.data <- get.rbind.all.data(tmp.list)
