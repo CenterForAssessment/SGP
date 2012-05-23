@@ -23,6 +23,7 @@ Changes in version: SGP_0.9-5.0
 	  o Added 'WIDE_Data' output.type to outputSGP.
 	  o Added variable name lookup table for Maine.
 	  o Updated summarizeSGP to create relevant tables based upon state provided institution levels.
+	  o Added 'use.cohort.for.baseline.when.missing' argument to combineSGP that allows for the use of cohort reference SGPs in place of baseline referenced SGPs when no baseline SGPs exist.
 
   BUG FIXES:
 

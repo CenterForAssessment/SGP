@@ -15,7 +15,8 @@ combineSGP(sgp_object,
         sgp.percentiles.baseline=TRUE,
 	sgp.projections.lagged=TRUE,
         sgp.projections.lagged.baseline=TRUE,
-	max.lagged.sgp.target.years.forward=4)
+	max.lagged.sgp.target.years.forward=4,
+	use.cohort.for.baseline.when.missing=NULL)
 }
 
 \arguments{
@@ -37,6 +38,9 @@ student growth percentile results.
   \item{sgp.projections.lagged.baseline}{A boolean variable indicating whether to combine lagged baseline student growth projections and calculate catch-up/keep-up values.
   }
   \item{max.lagged.sgp.target.years.forward}{A integer indicating the number of years forward from the lagged (last year's) score to project forward for growth to standard calculations. Default is 4 years from last year or 3 years from present, which is the standard in most growth to standard calculations used by state departments of education.
+  }
+  \item{use.cohort.for.baseline.when.missing}{A boolean variable defaulting to FALSE/NULL indicating whether cohort referenced SGPs are to be used in place of baseline referenced SGPs when baseline
+ referenced SGPs are not available.
   }
 }
 
