@@ -231,7 +231,7 @@ function(sgp_object,
 		}
 
 		for (i in seq_along(tmp.list)) {
-			setnames(tmp.list[[i]], 5, "STUDENTGROUP")
+			setnames(tmp.list[[i]], 4, "STUDENTGROUP")
 		}
 
 		tmp <- as.data.frame(convert.variables(subset(rbind.fill(tmp.list), 
@@ -270,7 +270,7 @@ function(sgp_object,
 		}
 
 		for (i in seq_along(tmp.list)) {
-			setnames(tmp.list[[i]], 6, "STUDENTGROUP")
+			setnames(tmp.list[[i]], 5, "STUDENTGROUP")
 		}
 
 		tmp <- as.data.frame(convert.variables(subset(rbind.fill(tmp.list), 
@@ -407,7 +407,7 @@ function(sgp_object,
 		}
 
 		for (i in seq_along(tmp.list)) {
-			setnames(tmp.list[[i]], 6, "STUDENTGROUP")
+			setnames(tmp.list[[i]], 5, "STUDENTGROUP")
 		}
 
 		tmp <- as.data.frame(convert.variables(subset(rbind.fill(tmp.list), 
@@ -492,7 +492,7 @@ function(sgp_object,
 		}
 
 		for (i in seq_along(tmp.list)) {
-			setnames(tmp.list[[i]], 5, "STUDENTGROUP")
+			setnames(tmp.list[[i]], 4, "STUDENTGROUP")
 		}
 
 
