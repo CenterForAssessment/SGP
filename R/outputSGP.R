@@ -65,10 +65,14 @@ function(sgp_object,
 
 		write.table(sgp_object@Data, file=file.path(outputSGP.directory, paste(tmp.state, "SGP_LONG_Data.txt", sep="_")), sep="|", quote=FALSE, row.names=FALSE, na="")
 		if (identical(.Platform$OS.type, "unix")) {
-			suppressWarnings(
-				zip(file.path(outputSGP.directory, paste(tmp.state, "SGP_LONG_Data.txt.zip", sep="_")), 
-					file.path(outputSGP.directory, paste(tmp.state, "SGP_LONG_Data.txt", sep="_")))
-			)
+			if (file.info(file.path(outputSGP.directory, paste(tmp.state, "SGP_LONG_Data.txt", sep="_")))$size > 4000000000) {
+				system(paste("gzip", file.path(outputSGP.directory, paste(tmp.state, "SGP_LONG_Data.txt", sep="_"))))
+			} else {
+				suppressWarnings(
+					zip(file.path(outputSGP.directory, paste(tmp.state, "SGP_LONG_Data.txt.zip", sep="_")), 
+						file.path(outputSGP.directory, paste(tmp.state, "SGP_LONG_Data.txt", sep="_")))
+				)
+			}
 		}
 
 		message(paste("\tFinished LONG data production in outputSGP", date(), "in", timetaken(started.at), "\n"))
@@ -108,10 +112,14 @@ function(sgp_object,
 			file=file.path(outputSGP.directory, paste(tmp.state, "SGP_WIDE_Data.txt", sep="_")), sep="|", quote=FALSE, row.names=FALSE, na="")
 
 		if (identical(.Platform$OS.type, "unix")) {
-			suppressWarnings(
-				zip(file.path(outputSGP.directory, paste(tmp.state, "SGP_WIDE_Data.txt.zip", sep="_")), 
-					file.path(outputSGP.directory, paste(tmp.state, "SGP_WIDE_Data.txt", sep="_")))
-			)
+			if (file.info(file.path(outputSGP.directory, paste(tmp.state, "SGP_WIDE_Data.txt", sep="_")))$size > 4000000000) {
+				system(paste("gzip", file.path(outputSGP.directory, paste(tmp.state, "SGP_WIDE_Data.txt", sep="_"))))
+			} else {
+				suppressWarnings(
+					zip(file.path(outputSGP.directory, paste(tmp.state, "SGP_WIDE_Data.txt.zip", sep="_")), 
+						file.path(outputSGP.directory, paste(tmp.state, "SGP_WIDE_Data.txt", sep="_")))
+				)
+			}
 		}
 
 		message(paste("\tFinished WIDE data production in outputSGP", date(), "in", timetaken(started.at), "\n"))
