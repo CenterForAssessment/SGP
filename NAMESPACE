@@ -25,6 +25,7 @@ export(
 	"studentGrowthPlot_Styles",
 	"studentGrowthProjections",
 	"summarizeSGP",
+	"testSGP",
 	"viewSummaryGroups",
 	"visualizeSGP"
 )

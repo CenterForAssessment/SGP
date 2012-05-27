@@ -1,4 +1,4 @@
-Changes in version: SGP_0.9-5.0
+Changes in version: SGP_0.9-6.0
 
   NEW FEATURES:
 
@@ -25,6 +25,8 @@ Changes in version: SGP_0.9-5.0
 	  o Updated summarizeSGP to create relevant tables based upon state provided institution levels.
 	  o Added 'use.cohort.for.baseline.when.missing' argument to combineSGP that allows for the use of cohort reference SGPs in place of baseline referenced SGPs when no baseline SGPs exist.
 	  o Added Variable_Name_Lookup for New Jersey to SGPstateData.
+	  o Updated list of contributors.
+	  o Added testSGP function to package to faciliate development and testing of package. 
 
   BUG FIXES:
 
