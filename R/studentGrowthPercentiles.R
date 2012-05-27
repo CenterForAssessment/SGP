@@ -815,11 +815,20 @@ function(panel.data,         ## REQUIRED
 			simulation.data <- data.table(rbind.all(tmp.csem.quantiles), key="ID")
 			simulation.data <- simulation.data[c(which(!duplicated(simulation.data))[-1]-1, nrow(simulation.data))]
 
-			if (is.character(calculate.confidence.intervals) | 
-				(is.list(calculate.confidence.intervals) & !("confidence.quantiles" %in% names(calculate.confidence.intervals)))) {
-				tmp.cq <- round(t(apply(simulation.data[, -1, with=FALSE], 1, quantile, probs = c(0.16, 0.84))))
-					colnames(tmp.cq) <- paste("SGP_", c(0.16, 0.84), "_CONFIDENCE_BOUND", sep="")
-					quantile.data <- cbind(quantile.data, tmp.cq)
+			if (is.character(calculate.confidence.intervals) | is.list(calculate.confidence.intervals)) {
+				if (is.null(calculate.confidence.intervals$confidence.quantiles) | toupper(calculate.confidence.intervals$confidence.quantiles)=="STANDARD_ERROR") {
+					tmp.cq <- round(t(apply(simulation.data[, -1, with=FALSE], 1, sd)))
+						colnames(tmp.cq) <- "SGP_STANDARD_ERROR"
+						quantile.data <- cbind(quantile.data, tmp.cq)
+				} else {
+					if (is.numeric(calculate.confidence.intervals$confidence.quantiles) & all(calculate.confidence.intervals$confidence.quantiles < 1) & 
+						all(calculate.confidence.intervals$confidence.quantiles > 0))  {
+						stop("Argument to 'calculate.confidence.intervals$confidence.quantiles' must be numeric and consist of quantiles.")
+					}
+					tmp.cq <- round(t(apply(simulation.data[, -1, with=FALSE], 1, quantile, probs = calculate.confidence.intervals$confidence.quantiles)))
+						colnames(tmp.cq) <- paste("SGP_", calculate.confidence.intervals$confidence.quantiles, "_CONFIDENCE_BOUND", sep="")
+						quantile.data <- cbind(quantile.data, tmp.cq)
+				}
 			}
 			if (!is.null(calculate.confidence.intervals$confidence.quantiles)) {
 				tmp.cq <- round(t(apply(simulation.data[, -1, with=FALSE], 1, quantile, probs = calculate.confidence.intervals$confidence.quantiles)))
