@@ -816,7 +816,7 @@ function(panel.data,         ## REQUIRED
 			simulation.data <- simulation.data[c(which(!duplicated(simulation.data))[-1]-1, nrow(simulation.data))]
 
 			if (is.character(calculate.confidence.intervals) | is.list(calculate.confidence.intervals)) {
-				if (is.null(calculate.confidence.intervals$confidence.quantiles) | toupper(calculate.confidence.intervals$confidence.quantiles)=="STANDARD_ERROR") {
+				if (is.null(calculate.confidence.intervals$confidence.quantiles) | identical(toupper(calculate.confidence.intervals$confidence.quantiles), "STANDARD_ERROR")) {
 					tmp.cq <- round(t(apply(simulation.data[, -1, with=FALSE], 1, sd)))
 						colnames(tmp.cq) <- "SGP_STANDARD_ERROR"
 						quantile.data <- cbind(quantile.data, tmp.cq)
