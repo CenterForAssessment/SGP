@@ -821,8 +821,8 @@ function(panel.data,         ## REQUIRED
 						colnames(tmp.cq) <- "SGP_STANDARD_ERROR"
 						quantile.data <- cbind(quantile.data, tmp.cq)
 				} else {
-					if (is.numeric(calculate.confidence.intervals$confidence.quantiles) & all(calculate.confidence.intervals$confidence.quantiles < 1) & 
-						all(calculate.confidence.intervals$confidence.quantiles > 0))  {
+					if (!(is.numeric(calculate.confidence.intervals$confidence.quantiles) & all(calculate.confidence.intervals$confidence.quantiles < 1) & 
+						all(calculate.confidence.intervals$confidence.quantiles > 0)))  {
 						stop("Argument to 'calculate.confidence.intervals$confidence.quantiles' must be numeric and consist of quantiles.")
 					}
 					tmp.cq <- round(t(apply(simulation.data[, -1, with=FALSE], 1, quantile, probs = calculate.confidence.intervals$confidence.quantiles)))
