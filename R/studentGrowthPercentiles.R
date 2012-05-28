@@ -572,7 +572,7 @@ function(panel.data,         ## REQUIRED
 	### Create object to store the studentGrowthPercentiles objects
 
 	tmp.objects <- c("Coefficient_Matrices", "Cutscores", "Goodness_of_Fit", "Knots_Boundaries", "Panel_Data", "SGPercentiles", "SGProjections", "Simulated_SGPs") 
-	Coefficient_Matrices <- Cutscores <- Goodness_of_Fit <- Knots_Boundaries <- Panel_Data <- SGPercentiles <- SGProjections <- Simulated_SGPs <- NULL
+	Coefficient_Matrices <- Cutscores <- Goodness_of_Fit <- Knots_Boundaries <- Panel_Data <- SGPercentiles <- SGProjections <- Simulated_SGPs <- SGP_STANDARD_ERROR <- NULL
 
 	if (identical(class(panel.data), "list")) {
 		for (i in tmp.objects) {
@@ -817,9 +817,8 @@ function(panel.data,         ## REQUIRED
 
 			if (is.character(calculate.confidence.intervals) | is.list(calculate.confidence.intervals)) {
 				if (is.null(calculate.confidence.intervals$confidence.quantiles) | identical(toupper(calculate.confidence.intervals$confidence.quantiles), "STANDARD_ERROR")) {
-					tmp.cq <- round(t(apply(simulation.data[, -1, with=FALSE], 1, sd)))
-						colnames(tmp.cq) <- "SGP_STANDARD_ERROR"
-						quantile.data <- cbind(quantile.data, tmp.cq)
+					tmp.cq <- round(apply(simulation.data[, -1, with=FALSE], 1, sd, na.rm=TRUE))
+						invisible(quantile.data[,SGP_STANDARD_ERROR := tmp.cq])
 				} else {
 					if (!(is.numeric(calculate.confidence.intervals$confidence.quantiles) & all(calculate.confidence.intervals$confidence.quantiles < 1) & 
 						all(calculate.confidence.intervals$confidence.quantiles > 0)))  {
