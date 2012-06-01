@@ -27,6 +27,9 @@ Changes in version: SGP_0.9-6.0
 	  o Added Variable_Name_Lookup for New Jersey to SGPstateData.
 	  o Updated list of contributors.
 	  o Added testSGP function to package to faciliate development and testing of package. 
+	  o Added argument 'create.additional.variables' to prepareSGP indicating whether additional variables should be added to @Data (defaults to TRUE). 
+	  o prepareSGP now adds variable HIGH_NEED_STATUS to @Data by default indicating students in top and bottom quartile by school, grade, content area and year.
+
 
   BUG FIXES:
 

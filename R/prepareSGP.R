@@ -1,7 +1,8 @@
 `prepareSGP` <- 
 	function(data,
 		state=NULL,
-		var.names=NULL, 
+		var.names=NULL,
+		create.additional.variables=TRUE,
 		fix.duplicates="keep.all") {
 
 	## Print start time
@@ -9,7 +10,7 @@
 	started.at <- proc.time()
 	message(paste("\nStarted prepareSGP", date()))
 
-	VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- ID <- GRADE <- SCALE_SCORE <- DUPLICATED_CASES <- NULL ## To prevent R CMD check warnings
+	VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- ID <- GRADE <- SCALE_SCORE <- DUPLICATED_CASES <- SCALE_SCORE_PRIOR <- GRADE_PRIOR <- SCHOOL_NUMBER <- YEAR_INT <- NULL
 
 	## Get state (if possible)
 
@@ -285,16 +286,46 @@
 		################################################################	
 		## INCLUDE CODE HERE TO HANDLE DUPLICATE CASES
 		################################################################	
-	
+
+
 		##  Create the SGP object
 
 		sgp_object <- new("SGP", Data=data, Names=variable.names, Version=getVersion(data))
 
 
+		#################################################################
+		###
+		### Add additional variables
+		###
+		#################################################################
+
 		## Create ACHIEVEMENT_LEVEL is it doesn't exist
 	
 		if (!"ACHIEVEMENT_LEVEL" %in% names(sgp_object@Data)) {
 			sgp_object <- achievement_level_recode(sgp_object, state=state)
+		}
+
+		if (create.additional.variables) {
+
+			### HIGH_NEED_STATUS
+
+			if (!"HIGH_NEED_STATUS" %in% names(sgp_object@Data)) {
+				if (is.factor(sgp_object@Data$YEAR)) {
+					sgp_object@Data[["YEAR_INT"]] <- as.integer(sgp_object@Data[["YEAR"]])
+				} else {
+					sgp_object@Data[["YEAR_INT"]] <- sgp_object@Data[["YEAR"]]
+				}
+				setkeyv(sgp_object@Data, c("ID", "CONTENT_AREA", "YEAR_INT", "VALID_CASE")) ## CRITICAL that VALID_CASE is last in group
+				sgp_object@Data$SCALE_SCORE_PRIOR <- sgp_object@Data[SJ(ID, CONTENT_AREA, YEAR_INT-1L), mult="last"][,SCALE_SCORE]
+				sgp_object@Data$GRADE_PRIOR <- sgp_object@Data[SJ(ID, CONTENT_AREA, YEAR_INT-1L), mult="last"][,GRADE]
+
+				setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR_INT", "SCHOOL_NUMBER", "GRADE_PRIOR", "ID"))
+				sgp_object@Data[["HIGH_NEED_STATUS"]] <- sgp_object@Data[,my.quantile.function(SCALE_SCORE_PRIOR, !VALID_CASE[1]=="VALID_CASE"), 
+					by=list(VALID_CASE, CONTENT_AREA, YEAR_INT, SCHOOL_NUMBER, GRADE_PRIOR)]$V1
+				sgp_object@Data[["SCALE_SCORE_PRIOR"]] <- sgp_object@Data[["GRADE_PRIOR"]] <- sgp_object@Data[["YEAR_INT"]] <- NULL
+				message("\tNOTE: Added variable HIGH_NEED_STATUS to @Data.")
+			}
+
 		}
 
 
