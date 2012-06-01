@@ -8,7 +8,8 @@
 \usage{
 prepareSGP(data,
 	state=NULL,
-	var.names=NULL, 
+	var.names=NULL,
+	create.additional.variables=TRUE,
 	fix.duplicates="keep.all")
 }
 
@@ -19,6 +20,9 @@ prepareSGP(data,
   }
   \item{var.names}{A list or a dataframe that includes all required columns that do not match the SGP conventions, as well as all secondary columns needed 
 for summarization and reporting.
+  }
+  \item{create.additional.variables}{Boolean argument indicating whether prepareSGP should create additional variables often used in analyses. For example, the function can create a variable
+  \code{HIGH_NEED_STATUS} identifying the top and bottom quartile of students in each school by year by content area by grade grouping.
   }
   \item{fix.duplicates}{Argument for future functionality intended to deal with duplicate cases in supplied long data.
   }
