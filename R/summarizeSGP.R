@@ -444,7 +444,7 @@ function(sgp_object,
 	} else {
 		selected.institution.types <- c("STATE", getFromNames("institution"))
 	}
-	selected.institution.types <- c(selected.institution.types, paste(selected.institution.types, "INSTRUCTOR_NUMBER", sep=", "))
+	selected.institution.types <- c(selected.institution.types, paste(selected.institution.types[grep("TESTING_YEAR", selected.institution.types, invert=TRUE)], "INSTRUCTOR_NUMBER", sep=", "))
 	selected.summary.tables <- list()
 	for (k in selected.institution.types) {
 		if (length(grep("INSTRUCTOR_NUMBER", k)) > 0) {
@@ -523,8 +523,9 @@ function(sgp_object,
 						measure.vars=summary.groups[["institution_multiple_membership"]][[j-1]][["ENROLLMENT_STATUS"]])[,2]])
 					setnames(tmp.dt.long, "ENROLLMENT_STATUS", enrollment.status.name)
 					summary.groups[["institution_inclusion"]][[tmp.inst]] <- enrollment.status.name
+				} else {
+					summary.groups[["institution_inclusion"]][[tmp.inst]] <- paste(i, "ENROLLMENT_STATUS", sep="_")
 				}
-				# if (par.start$par.type=="SNOW") clusterExport(par.start$internal.cl, "tmp.dt.long") # Don't think we need this...
 				summary.groups[["growth_only_summary"]][[tmp.inst]] <- "BY_GROWTH_ONLY" # Do we have an option to NOT include "BY_GROWTH_ONLY"? (would we want this?)
 				sgp_object@Summary[[i]] <- c(sgp_object@Summary[[i]], summarizeSGP_INTERNAL(tmp.dt.long, tmp.inst))
 			} 
