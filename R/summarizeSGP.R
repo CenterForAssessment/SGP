@@ -457,7 +457,8 @@ function(sgp_object,
 			if (length(grep("CURRENT", k)) > 0) {
 				selected.summary.tables[[k]] <- do.call(paste, c(expand.grid(k,
 					group.format("CONTENT_AREA"),
-					group.format("YEAR")), sep=""))
+					group.format("YEAR"),
+					group.format("GRADE")), sep=""))
 			}
 		} else {
 			if (length(grep("SCHOOL", k)) > 0) {
