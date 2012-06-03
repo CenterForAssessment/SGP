@@ -103,7 +103,7 @@ function(sgp_object,
 
 		long_data_tmp <- sgp_object@Data
 		setkeyv(long_data_tmp, c("VALID_CASE", "ID"))
-		invisible(long_data_tmp[,YEAR_BY_CONTENT_AREA := paste(YEAR, CONTENT_AREA, sep=".")])
+		suppressWarnings(invisible(long_data_tmp[,YEAR_BY_CONTENT_AREA := paste(YEAR, CONTENT_AREA, sep=".")]))
 		assign(paste(tmp.state, "SGP_WIDE_Data", sep="_"), reshape(long_data_tmp[J("VALID_CASE")], idvar="ID", 
 			timevar="YEAR_BY_CONTENT_AREA", drop=c("VALID_CASE", "CONTENT_AREA", "YEAR"), direction="wide"))
 
