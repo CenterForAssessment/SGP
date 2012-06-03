@@ -444,14 +444,22 @@ function(sgp_object,
 	} else {
 		selected.institution.types <- c("STATE", getFromNames("institution"))
 	}
-	selected.institution.types <- c(selected.institution.types, paste(selected.institution.types[grep("TESTING_YEAR", selected.institution.types, invert=TRUE)], "INSTRUCTOR_NUMBER", sep=", "))
+	selected.institution.types <- c(selected.institution.types, paste(selected.institution.types[grep("CURRENT", selected.institution.types, invert=TRUE)], "INSTRUCTOR_NUMBER", sep=", "))
 	selected.summary.tables <- list()
 	for (k in selected.institution.types) {
-		if (length(grep("INSTRUCTOR_NUMBER", k)) > 0) {
-			selected.summary.tables[[k]] <- do.call(paste, c(expand.grid(k,
-				group.format("CONTENT_AREA"),
-				group.format("YEAR"),
-				group.format("INSTRUCTOR_ENROLLMENT_STATUS", FALSE)), sep=""))
+		if (length(grep("INSTRUCTOR_NUMBER", k)) > 0 | length(grep("CURRENT", k)) > 0) {
+			if (length(grep("INSTRUCTOR_NUMBER", k)) > 0) {
+				selected.summary.tables[[k]] <- do.call(paste, c(expand.grid(k,
+					group.format("CONTENT_AREA"),
+					group.format("YEAR"),
+					group.format("INSTRUCTOR_ENROLLMENT_STATUS", FALSE)), sep=""))
+			}
+			if (length(grep("CURRENT", k)) > 0) {
+				selected.summary.tables[[k]] <- do.call(paste, c(expand.grid(k,
+					group.format("CONTENT_AREA"),
+					group.format("YEAR"),
+					group.format("INSTRUCTOR_ENROLLMENT_STATUS", FALSE)), sep=""))
+			}
 		} else {
 			if (length(grep("SCHOOL", k)) > 0) {
 				selected.summary.tables[[k]] <- do.call(paste, c(expand.grid(k,
