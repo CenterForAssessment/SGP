@@ -13,6 +13,7 @@
 
 	if (1 %in% TEST_NUMBER) {
 
+	require(parallel)
 	Demonstration_SGP <- NULL
 	number.cores <- detectCores()-1
 
