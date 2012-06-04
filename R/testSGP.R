@@ -9,13 +9,12 @@
 	if (1 %in% TEST_NUMBER) {
 
 	expression.to.evaluate <- 
-		"abcSGP(sgpData_LONG,
-			sgPlot.demo.report=TRUE,
-			save.intermediate.results=TRUE,
-			parallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=30, BASELINE_PERCENTILES=30, PROJECTIONS=14, LAGGED_PROJECTIONS=14, SUMMARY=30, GA_PLOTS=10, SG_PLOTS=1)))"
+		"abcSGP(\n\tsgp_object=sgpData_LONG,\n\tsgPlot.demo.report=TRUE,\n\tsave.intermediate.results=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=30, BASELINE_PERCENTILES=30, PROJECTIONS=14, LAGGED_PROJECTIONS=14, SUMMARY=30, GA_PLOTS=10, SG_PLOTS=1))\n)\n"
 
 
-	print("##### Beginning testSGP test number 1 #####")
+	print("##### Beginning testSGP test number 1 #####\n")
+
+	cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 
 	eval(parse(text=expression.to.evaluate))
 
