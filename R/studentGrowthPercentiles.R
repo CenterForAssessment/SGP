@@ -62,6 +62,8 @@ function(panel.data,         ## REQUIRED
                 paste(toupper(substring(s, 1,1)), substring(s, 2), sep="", collapse="-")
         }
 
+	pretty_year <- function(x) sub("_", "-", x)
+
 	.create.knots.boundaries <- function(data, by.grade) {
 		tmp.list <- list()
 		num.panels <- (dim(data)[2]-2)/2
@@ -332,8 +334,8 @@ function(panel.data,         ## REQUIRED
 				children=gList(
 					rectGrob(gp=gpar(fill="grey95"), vp="title"),
 					textGrob(x=0.5, y=0.65, "Student Growth Percentile Goodness-of-Fit Descriptives", gp=gpar(cex=1.25), vp="title"),
-					textGrob(x=0.5, y=0.4, paste(capwords(sgp.labels$my.year), " ", capwords(sgp.labels$my.subject), ", Grade Progression ", 
-						paste(tmp.gp, collapse="-"), " (N = ", format(dim(data1)[1], bigmark=","), ")", sep=""), vp="title"),
+					textGrob(x=0.5, y=0.4, paste(pretty_year(sgp.labels$my.year), " ", capwords(sgp.labels$my.subject), ", Grade Progression ", 
+						paste(tmp.gp, collapse="-"), " (N = ", format(dim(data1)[1], big.mark=","), ")", sep=""), vp="title"),
 					rectGrob(vp="table"),
 					rectGrob(x=rep(1:10,each=10), y=rep(10:1,10), width=1, height=1, default.units="native", 
 						gp=gpar(col="black", fill=tmp.colors), vp="table"),
