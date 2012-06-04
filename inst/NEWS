@@ -30,6 +30,7 @@ Changes in version: SGP_0.9-6.0
 	  o Added argument 'create.additional.variables' to prepareSGP indicating whether additional variables should be added to @Data (defaults to TRUE). 
 	  o prepareSGP now adds variable HIGH_NEED_STATUS to @Data by default indicating students in top and bottom quartile by school, grade, content area and year.
 	  o Changed naming convention between from TESTING_YEAR to CURRENT to apply to all states going forward.
+	  o Tidied up title for goodness of fit plots.
 
 
   BUG FIXES:
