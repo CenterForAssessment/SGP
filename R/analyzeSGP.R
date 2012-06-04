@@ -309,13 +309,11 @@ function(sgp_object,
 	### when fed into studentGrowthPercentiles.
 
 	get.knots.boundaries <- function(sgp.iter) {
-		kb <- list()
 		#  If all sgp.iter[["sgp.content.areas"]] are the same, use SGPstateData as usual:
 		if (all(sapply(sgp.iter[["sgp.content.areas"]], function(x) identical(tail(sgp.iter[["sgp.content.areas"]], 1), x)))) {
-			kb[["Knots_Boundaries"]][[paste(tail(sgp.iter[["sgp.content.areas"]], 1), tail(sgp.iter[["sgp.panel.years"]], 1), sep=".")]] <- 
-				SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]]
+			return(state)
 		} else { # if not (e.g. "ELA", "HISTORY",  of "MATH", "ALGEBRA_I", then get the right knots and boundaries, but name them as 'my.subject')
-			tmp.kb <- list()
+			kb <- tmp.kb <- list()
 			for (ca in seq_along(sgp.iter[["sgp.content.areas"]])) {
 				tmp.kb[["Knots_Boundaries"]][[paste(tail(sgp.iter[["sgp.content.areas"]], 1), tail(sgp.iter[["sgp.panel.years"]], 1), sep=".")]] <- 
 					SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[sgp.iter[["sgp.content.areas"]][ca]]][
@@ -323,9 +321,10 @@ function(sgp_object,
 						names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[sgp.iter[["sgp.content.areas"]][ca]]]))]
 				kb <- .mergeSGP(kb, tmp.kb)
 			}
+			return(kb[["Knots_Boundaries"]])
 		}
-		return(kb[["Knots_Boundaries"]])
 	}
+
 
 	### Function to create vnames assocaited with panel data fed to studentGrowthPercentiles and studentGrowthProjections functions
 
