@@ -12,13 +12,13 @@
 		"abcSGP(\n\tsgp_object=sgpData_LONG,\n\tsgPlot.demo.report=TRUE,\n\tsave.intermediate.results=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=30, BASELINE_PERCENTILES=30, PROJECTIONS=14, LAGGED_PROJECTIONS=14, SUMMARY=30, GA_PLOTS=10, SG_PLOTS=1))\n)\n"
 
 
-	print("##### Beginning testSGP test number 1 #####\n")
+	cat("##### Beginning testSGP test number 1 #####\n", fill=TRUE)
 
 	cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 
 	eval(parse(text=expression.to.evaluate))
 
-	print("##### End testSGP test number 1 #####")
+	cat("##### End testSGP test number 1 #####\n", fill=TRUE)
 
 	} ### End TEST_NUMBER 1
 
