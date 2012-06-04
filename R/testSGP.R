@@ -13,6 +13,8 @@
 
 	if (1 %in% TEST_NUMBER) {
 
+	Demonstration_SGP <- NULL
+
 	expression.to.evaluate <- 
 		"Demonstration_SGP <- abcSGP(\n\tsgp_object=sgpData_LONG,\n\tsgPlot.demo.report=TRUE,\n\tsave.intermediate.results=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=30, BASELINE_PERCENTILES=30, PROJECTIONS=14, LAGGED_PROJECTIONS=14, SUMMARY=30, GA_PLOTS=10, SG_PLOTS=1))\n)\n"
 
@@ -25,7 +27,7 @@
 
 	### TEST of SGP variable
 
-	if (sum(Demonstration_SGP@Data$SGP, na.rm=TRUE)==8565260) {
+	if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 8565260)) {
 		cat("Test of variable SGP: OK\n", fill=TRUE)
 	} else {
 		cat("Test of variable SGP: FAIL\n", fill=TRUE)
@@ -33,7 +35,7 @@
 
 	### TEST of SGP_BASELINE variable
 
-	if (sum(Demonstration_SGP@Data$SGP_BASELINE, na.rm=TRUE)==8573825) {
+	if (identical(sum(Demonstration_SGP@Data$SGP_BASELINE, na.rm=TRUE), 8573825)) {
 		cat("Test of variable SGP_BASELINE: OK\n", fill=TRUE)
 	} else {
 		cat("Test of variable SGP_BASELINE: FAIL\n", fill=TRUE)
@@ -41,7 +43,7 @@
 
 	### TEST of SGP_TARGET variable
 
-	if (sum(Demonstration_SGP@Data$SGP_TARGET, na.rm=TRUE)==7796624) {
+	if (identical(sum(Demonstration_SGP@Data$SGP_TARGET, na.rm=TRUE), 7796624)) {
 		cat("Test of variable SGP_TARGET: OK\n", fill=TRUE)
 	} else {
 		cat("Test of variable SGP_TARGET: FAIL\n", fill=TRUE)
@@ -49,7 +51,7 @@
 
 	### TEST of CATCH_UP_KEEP_UP_STATUS variable
 
-	if (as.numeric(table(sgp_object@Data$CATCH_UP_KEEP_UP_STATUS))=c(41099, 10837, 35560, 84390)) {
+	if (identical(as.numeric(table(Demonstration_SGP@Data$CATCH_UP_KEEP_UP_STATUS)), c(41099, 10837, 35560, 84390))) {
 		cat("Test of variable CATCH_UP_KEEP_UP_STATUS: OK\n", fill=TRUE)
 	} else {
 		cat("Test of variable CATCH_UP_KEEP_UP_STATUS: FAIL\n", fill=TRUE)
