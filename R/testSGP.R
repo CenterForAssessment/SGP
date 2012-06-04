@@ -14,9 +14,10 @@
 	if (1 %in% TEST_NUMBER) {
 
 	Demonstration_SGP <- NULL
+	number.cores <- detectCores()-1
 
 	expression.to.evaluate <- 
-		"Demonstration_SGP <- abcSGP(\n\tsgp_object=sgpData_LONG,\n\tsgPlot.demo.report=TRUE,\n\tsave.intermediate.results=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=30, BASELINE_PERCENTILES=30, PROJECTIONS=14, LAGGED_PROJECTIONS=14, SUMMARY=30, GA_PLOTS=10, SG_PLOTS=1))\n)\n"
+		paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=sgpData_LONG,\n\tsgPlot.demo.report=TRUE,\n\tsave.intermediate.results=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
 
 
 	cat("##### Beginning testSGP test number 1 #####\n", fill=TRUE)
