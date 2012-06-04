@@ -6,10 +6,17 @@
 		message("\t\t2. abcSGP test using all available years except most recent followed by an updated analysis using the most recent year's data.")
 	}
 
+
+	###
+	### TEST NUMBER 1
+	###
+
 	if (1 %in% TEST_NUMBER) {
 
+	Demonstration_SGP <- NULL
+
 	expression.to.evaluate <- 
-		"abcSGP(\n\tsgp_object=sgpData_LONG,\n\tsgPlot.demo.report=TRUE,\n\tsave.intermediate.results=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=30, BASELINE_PERCENTILES=30, PROJECTIONS=14, LAGGED_PROJECTIONS=14, SUMMARY=30, GA_PLOTS=10, SG_PLOTS=1))\n)\n"
+		"Demonstration_SGP <- abcSGP(\n\tsgp_object=sgpData_LONG,\n\tsgPlot.demo.report=TRUE,\n\tsave.intermediate.results=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=30, BASELINE_PERCENTILES=30, PROJECTIONS=14, LAGGED_PROJECTIONS=14, SUMMARY=30, GA_PLOTS=10, SG_PLOTS=1))\n)\n"
 
 
 	cat("##### Beginning testSGP test number 1 #####\n", fill=TRUE)
@@ -18,8 +25,45 @@
 
 	eval(parse(text=expression.to.evaluate))
 
+	### TEST of SGP variable
+
+	if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 8565260)) {
+		cat("Test of variable SGP: OK\n", fill=TRUE)
+	} else {
+		cat("Test of variable SGP: FAIL\n", fill=TRUE)
+	}
+
+	### TEST of SGP_BASELINE variable
+
+	if (identical(sum(Demonstration_SGP@Data$SGP_BASELINE, na.rm=TRUE), 8573825)) {
+		cat("Test of variable SGP_BASELINE: OK\n", fill=TRUE)
+	} else {
+		cat("Test of variable SGP_BASELINE: FAIL\n", fill=TRUE)
+	}
+
+	### TEST of SGP_TARGET variable
+
+	if (identical(sum(Demonstration_SGP@Data$SGP_TARGET, na.rm=TRUE), 7796624)) {
+		cat("Test of variable SGP_TARGET: OK\n", fill=TRUE)
+	} else {
+		cat("Test of variable SGP_TARGET: FAIL\n", fill=TRUE)
+	}
+
+	### TEST of CATCH_UP_KEEP_UP_STATUS variable
+
+	if (identical(as.numeric(table(Demonstration_SGP@Data$CATCH_UP_KEEP_UP_STATUS)), c(41099, 10837, 35560, 84390))) {
+		cat("Test of variable CATCH_UP_KEEP_UP_STATUS: OK\n", fill=TRUE)
+	} else {
+		cat("Test of variable CATCH_UP_KEEP_UP_STATUS: FAIL\n", fill=TRUE)
+	}
+
 	cat("##### End testSGP test number 1 #####\n", fill=TRUE)
 
 	} ### End TEST_NUMBER 1
+
+
+	###
+	### TEST NUMBER 2
+	###
 
 } ### END testSGP Function
