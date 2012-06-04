@@ -27,34 +27,34 @@
 
 	### TEST of SGP variable
 
-	if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 8565260)) {
-		cat("Test of variable SGP: OK\n", fill=TRUE)
+	if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 8565260L)) {
+		cat("Test of variable SGP: OK", fill=TRUE)
 	} else {
-		cat("Test of variable SGP: FAIL\n", fill=TRUE)
+		cat("Test of variable SGP: FAIL", fill=TRUE)
 	}
 
 	### TEST of SGP_BASELINE variable
 
-	if (identical(sum(Demonstration_SGP@Data$SGP_BASELINE, na.rm=TRUE), 8573825)) {
-		cat("Test of variable SGP_BASELINE: OK\n", fill=TRUE)
+	if (identical(sum(Demonstration_SGP@Data$SGP_BASELINE, na.rm=TRUE), 8573825L)) {
+		cat("Test of variable SGP_BASELINE: OK", fill=TRUE)
 	} else {
-		cat("Test of variable SGP_BASELINE: FAIL\n", fill=TRUE)
+		cat("Test of variable SGP_BASELINE: FAIL", fill=TRUE)
 	}
 
 	### TEST of SGP_TARGET variable
 
-	if (identical(sum(Demonstration_SGP@Data$SGP_TARGET, na.rm=TRUE), 7796624)) {
-		cat("Test of variable SGP_TARGET: OK\n", fill=TRUE)
+	if (identical(sum(Demonstration_SGP@Data$SGP_TARGET, na.rm=TRUE), 7796624L)) {
+		cat("Test of variable SGP_TARGET: OK", fill=TRUE)
 	} else {
-		cat("Test of variable SGP_TARGET: FAIL\n", fill=TRUE)
+		cat("Test of variable SGP_TARGET: FAIL", fill=TRUE)
 	}
 
 	### TEST of CATCH_UP_KEEP_UP_STATUS variable
 
 	if (identical(as.numeric(table(Demonstration_SGP@Data$CATCH_UP_KEEP_UP_STATUS)), c(41099, 10837, 35560, 84390))) {
-		cat("Test of variable CATCH_UP_KEEP_UP_STATUS: OK\n", fill=TRUE)
+		cat("Test of variable CATCH_UP_KEEP_UP_STATUS: OK", fill=TRUE)
 	} else {
-		cat("Test of variable CATCH_UP_KEEP_UP_STATUS: FAIL\n", fill=TRUE)
+		cat("Test of variable CATCH_UP_KEEP_UP_STATUS: FAIL", fill=TRUE)
 	}
 
 	cat("##### End testSGP test number 1 #####\n", fill=TRUE)
