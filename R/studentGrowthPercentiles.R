@@ -858,9 +858,9 @@ function(panel.data,         ## REQUIRED
 	### Start/Finish Message & Return SGP Object
 
 	if (print.time.taken) {
-	        message(paste("\tStarted studentGrowthPercentiles", started.date))
+	        message(paste("\tStarted studentGrowthPercentiles:", started.date))
 		message(paste("\tContent Area: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(tmp.gp, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
-		message(c(tmp.messages, "\tFinished SGP Student Growth Percentile Analysis", date(), " in ", timetaken(started.at), "\n")) 
+		message(c(tmp.messages, "\tFinished SGP Student Growth Percentile Analysis: ", date(), " in ", timetaken(started.at), "\n")) 
 	}
 
 	list(Coefficient_Matrices=Coefficient_Matrices,
