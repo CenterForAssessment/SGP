@@ -309,11 +309,15 @@ function(sgp_object,
 	### when fed into studentGrowthPercentiles.
 
 	get.knots.boundaries <- function(sgp.iter) {
+		kb <- list()
 		#  If all sgp.iter[["sgp.content.areas"]] are the same, use SGPstateData as usual:
 		if (all(sapply(sgp.iter[["sgp.content.areas"]], function(x) identical(tail(sgp.iter[["sgp.content.areas"]], 1), x)))) {
-			return(sgp_object@SGP[["Knots_Boundaries"]])
+			for (i in grep(tail(sgp.iter[["sgp.content.areas"]], 1), names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]]), value=TRUE)) {
+				kb[["Knots_Boundaries"]][[paste(tail(sgp.iter[["sgp.content.areas"]], 1), tail(sgp.iter[["sgp.panel.years"]], 1), sep=".")]][[i]] <- 
+					SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[i]]
+			}
 		} else { # if not (e.g. "ELA", "HISTORY",  of "MATH", "ALGEBRA_I", then get the right knots and boundaries, but name them as 'my.subject')
-			kb <- tmp.kb <- list()
+			tmp.kb <- list()
 			for (ca in seq_along(sgp.iter[["sgp.content.areas"]])) {
 				tmp.kb[["Knots_Boundaries"]][[paste(tail(sgp.iter[["sgp.content.areas"]], 1), tail(sgp.iter[["sgp.panel.years"]], 1), sep=".")]] <- 
 					SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[sgp.iter[["sgp.content.areas"]][ca]]][
@@ -321,8 +325,8 @@ function(sgp_object,
 						names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[sgp.iter[["sgp.content.areas"]][ca]]]))]
 				kb <- .mergeSGP(kb, tmp.kb)
 			}
-			return(kb[["Knots_Boundaries"]])
 		}
+		return(kb[["Knots_Boundaries"]])
 	}
 
 
