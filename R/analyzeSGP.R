@@ -311,7 +311,7 @@ function(sgp_object,
 	get.knots.boundaries <- function(sgp.iter) {
 		#  If all sgp.iter[["sgp.content.areas"]] are the same, use SGPstateData as usual:
 		if (all(sapply(sgp.iter[["sgp.content.areas"]], function(x) identical(tail(sgp.iter[["sgp.content.areas"]], 1), x)))) {
-			return(state)
+			return(sgp_object@SGP[["Knots_Boundaries"]])
 		} else { # if not (e.g. "ELA", "HISTORY",  of "MATH", "ALGEBRA_I", then get the right knots and boundaries, but name them as 'my.subject')
 			kb <- tmp.kb <- list()
 			for (ca in seq_along(sgp.iter[["sgp.content.areas"]])) {
