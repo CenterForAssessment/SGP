@@ -300,16 +300,16 @@
 
 	## Create ACHIEVEMENT_LEVEL is it doesn't exist
 	
-	if (!"ACHIEVEMENT_LEVEL" %in% names(sgp_object@Data)) {
+	if (!"ACHIEVEMENT_LEVEL" %in% names(sgp_object@Data) & !is.null(SGPstateData[[state]][["Achievement"]][["Cutscores"]])) {
 		sgp_object <- achievement_level_recode(sgp_object, state=state)
-		message("\tNOTE: Added variable ACHIEVEMENT_LEVEL to @Data.")
+		message(paste("\tNOTE: Added variable ACHIEVEMENT_LEVEL to @Data using", state, "cutscores embedded in SGPstateData."))
 	}
 
 	if (create.additional.variables) {
 
 		### HIGH_NEED_STATUS
 
-		if (!"HIGH_NEED_STATUS" %in% names(sgp_object@Data)) {
+		if (!"HIGH_NEED_STATUS" %in% names(sgp_object@Data) & "SCHOOL_NUMBER" %in% names(sgp_object@Data)) {
 			if (is.factor(sgp_object@Data$YEAR)) {
 				sgp_object@Data[["YEAR_INT"]] <- as.integer(sgp_object@Data[["YEAR"]])
 			} else {
