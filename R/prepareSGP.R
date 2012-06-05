@@ -26,12 +26,13 @@
 
 	### Utility functions
 
-	# achievement_level_recode (NOT YET IN USE)
+	# achievement_level_recode
 
 	achievement_level_recode <- function(sgp_object, state=NULL, year=NULL, content_area=NULL, grade=NULL) {
 		if (!"ACHIEVEMENT_LEVEL" %in% names(sgp_object@Data)) {
-			sgp_object@Data[["ACHIEVEMENT_LEVEL"]]<- factor(1, levels=seq_along(SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]]),
-				labels=SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]])
+			sgp_object@Data[["ACHIEVEMENT_LEVEL"]] <- 
+				factor(1, levels=seq_along(SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]][!is.na(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]])]),
+				labels=SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]][!is.na(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]])], ordered=TRUE)
 		}
 
 		if (is.null(year)) year <- sort(unique(sgp_object@Data$YEAR))
@@ -58,8 +59,8 @@
 
 		achievement_level_recode_INTERNAL <- function(state, content_area, year, grade, scale_score) {
 			factor(findInterval(scale_score, SGPstateData[[state]][["Achievement"]][["Cutscores"]][[get.cutscore.label(state, year, content_area)]][[paste("GRADE_", grade, sep="")]])+1,
-				levels=seq_along(SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]]),
-				labels=SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]], ordered=TRUE)
+				levels=seq_along(SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]][!is.na(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]])]),
+				labels=SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]][!is.na(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]])], ordered=TRUE)
 		}
 
 		setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))
