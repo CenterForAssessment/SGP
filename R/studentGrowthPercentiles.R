@@ -187,14 +187,24 @@ function(panel.data,         ## REQUIRED
 	}
 
 	.check.my.coefficient.matrices <- function(names, grade, order) {
-		tmp <- do.call(rbind, strsplit(names, "_"))
+		tmp <- do.call(rbind.fill, lapply(strsplit(names, "_"), function(x) as.data.frame(matrix(x, nrow=1))))
 		if (!grade %in% tmp[,2]) stop(paste("Coefficient matrix associated with grade ", grade, " not found.", sep=""))
-		if (!order %in% tmp[tmp[,2]==grade,3]) stop(paste("Coefficient matrix associated with grade ", grade, " order ", order, " not found.", sep=""))
+		if (grade.progression.label) {
+			if (!order %in% tmp[tmp[,2]==grade & tmp[,4]==paste(grade.progression, collapse="."),3]) {
+				stop(paste("Coefficient matrix associated with grade ", grade, " order ", order, " not found.", sep=""))
+			}
+		} else {
+			if (!order %in% tmp[tmp[,2]==grade,3]) stop(paste("Coefficient matrix associated with grade ", grade, " order ", order, " not found.", sep=""))
+		}
 	}
 
 	.get.max.matrix.order <- function(names, grade) {
-		tmp <- do.call(rbind, strsplit(names, "_"))
-		max(as.numeric(tmp[tmp[,2]==grade,3]), na.rm=TRUE)
+		tmp <- do.call(rbind.fill, lapply(strsplit(names, "_"), function(x) as.data.frame(matrix(x, nrow=1))))
+		if (grade.progression.label) {
+			max(as.numeric(tmp[tmp[,2]==grade & tmp[,4]==paste(grade.progression, collapse="."),3]), na.rm=TRUE)
+		} else {
+			max(as.numeric(tmp[tmp[,2]==grade,3]), na.rm=TRUE)
+		}
 	}
 
 	.create_taus <- function(sgp.quantiles) {
@@ -313,6 +323,7 @@ function(panel.data,         ## REQUIRED
 		setnames(data1, c("PRIOR_SS", "SGP")); PRIOR_SS <- SGP <- NULL
 		tmp.table <- .sgp.fit(data1[,PRIOR_SS], data1[,SGP])
 		tmp.cuts <- .quantcut(data1[,PRIOR_SS], 0:10/10, right=FALSE)
+		tmp.cuts.percentages <- round(100*table(tmp.cuts)/sum(table(tmp.cuts)), digits=1)
 		tmp.colors <- .cell.color(as.vector(tmp.table))
 		tmp.list <- list()
 
@@ -320,7 +331,7 @@ function(panel.data,         ## REQUIRED
 			tmp.list[[i]] <- quantile(data1$SGP[tmp.cuts==i], probs=ppoints(1:500))
 		}
 
-		layout.vp <- viewport(layout = grid.layout(2, 2, widths = unit(c(4.75, 3.5), rep("inches", 2)),
+		layout.vp <- viewport(layout = grid.layout(2, 2, widths = unit(c(5.0, 3.5), rep("inches", 2)),
 		heights = unit(c(0.75, 3.5), rep("inches", 2))), name="layout")
 		components <- vpList(viewport(layout.pos.row=1, layout.pos.col=1:2, name="title"),
 		viewport(layout.pos.row=2, layout.pos.col=1, xscale=c(-3,12), yscale=c(0,13), name="table"),
@@ -337,15 +348,21 @@ function(panel.data,         ## REQUIRED
 					textGrob(x=0.5, y=0.4, paste(pretty_year(sgp.labels$my.year), " ", capwords(sgp.labels$my.subject), ", Grade Progression ", 
 						paste(tmp.gp, collapse="-"), " (N = ", format(dim(data1)[1], big.mark=","), ")", sep=""), vp="title"),
 					rectGrob(vp="table"),
-					rectGrob(x=rep(1:10,each=10), y=rep(10:1,10), width=1, height=1, default.units="native", 
+					rectGrob(x=rep(1:10, each=dim(tmp.table)[1]), y=rep(10:(10-dim(tmp.table)[1]+1),10), width=1, height=1, default.units="native", 
 						gp=gpar(col="black", fill=tmp.colors), vp="table"),
-					textGrob(x=0.35, y=10:1, paste(c("1st", "2nd", "3rd", paste(4:10, "th", sep="")), dimnames(tmp.table)[[1]], sep="/"), just="right", 
-						gp=gpar(cex=0.7), default.units="native", vp="table"),
+					textGrob(x=0.35, y=10:(10-dim(tmp.table)[1]+1), paste(c("1st", "2nd", "3rd", paste(4:dim(tmp.table)[1], "th", sep="")), 
+						dimnames(tmp.table)[[1]], sep="/"), just="right", gp=gpar(cex=0.7), default.units="native", vp="table"),
+					textGrob(x=10.65, y=10:(10-dim(tmp.table)[1]+1), paste("(", tmp.cuts.percentages, "%)", sep=""), just="left", gp=gpar(cex=0.7), 
+						default.units="native", vp="table"),
 					textGrob(x=-2.5, y=5.5, "Prior Scale Score Decile/Range", gp=gpar(cex=0.8), default.units="native", rot=90, vp="table"),
 					textGrob(x=1:10, y=10.8, dimnames(tmp.table)[[2]], gp=gpar(cex=0.7), default.units="native", rot=45, just="left", vp="table"),
 					textGrob(x=5.75, y=12.5, "Student Growth Percentile Range", gp=gpar(cex=0.8), default.units="native", vp="table"),
-					textGrob(x=rep(1:10,each=10), y=rep(10:1,10), formatC(as.vector(tmp.table), format="f", digits=2), default.units="native", 
-						gp=gpar(cex=0.7), vp="table"),
+					textGrob(x=rep(1:10,each=dim(tmp.table)[1]), y=rep(10:(10-dim(tmp.table)[1]+1),10), 
+						formatC(as.vector(tmp.table), format="f", digits=2), default.units="native", gp=gpar(cex=0.7), vp="table"),
+					textGrob(x=-2.55, y=9.2, "*", default.units="native", rot=90, gp=gpar(cex=0.7), vp="table"),
+					textGrob(x=-2.05, y=0.3, "*", default.units="native", gp=gpar(cex=0.7), vp="table"),
+					textGrob(x=-2.0, y=0.25, "Prior score deciles can be uneven depending upon the prior score distribution", just="left", default.units="native",
+						gp=gpar(cex=0.5), vp="table"),
 
 					rectGrob(vp="qq"),
 					polylineGrob(unlist(tmp.list), rep(ppoints(1:500)*100, length(levels(tmp.cuts))), 
