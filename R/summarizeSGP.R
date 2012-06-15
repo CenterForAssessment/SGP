@@ -448,34 +448,40 @@ function(sgp_object,
 	selected.summary.tables <- list()
 	for (k in selected.institution.types) {
 		if (length(grep("INSTRUCTOR_NUMBER", k)) > 0 | length(grep("CURRENT", k)) > 0) {
-			if (length(grep("INSTRUCTOR_NUMBER", k)) > 0) {
-				selected.summary.tables[[k]] <- do.call(paste, c(expand.grid(k,
+			if (length(grep("CURRENT", k)) > 0 | !"INSTRUCTOR_ENROLLMENT_STATUS" %in% names(sgp_object@Data)) {
+				ENROLLMENT_STATUS_ARGUMENT <- NULL; ADD_MISSING_ARGUMENT <- TRUE
+			} 
+			if ("INSTRUCTOR_ENROLLMENT_STATUS" %in% names(sgp_object@Data)) {
+				ENROLLMENT_STATUS_ARGUMENT <- "INSTRUCTOR_ENROLLMENT_STATUS"; ADD_MISSING_ARGUMENT <- FALSE
+			}
+
+			selected.summary.tables[[k]] <- do.call(paste, c(expand.grid(k,
 					group.format("CONTENT_AREA"),
 					group.format("YEAR"),
-					group.format("INSTRUCTOR_ENROLLMENT_STATUS", FALSE)), sep=""))
-			}
-			if (length(grep("CURRENT", k)) > 0) {
-				selected.summary.tables[[k]] <- do.call(paste, c(expand.grid(k,
-					group.format("CONTENT_AREA"),
-					group.format("YEAR"),
-					group.format("GRADE")), sep=""))
-			}
+					group.format("GRADE"),
+					group.format(ENROLLMENT_STATUS_ARGUMENT, ADD_MISSING_ARGUMENT)), sep=""))
 		} else {
-			if (length(grep("SCHOOL", k)) > 0) {
+			if (!paste(unlist(strsplit(k, "_"))[!unlist(strsplit(k, "_"))=="NUMBER"], "ENROLLMENT_STATUS", sep="_") %in% names(sgp_object@Data)) {
+				ENROLLMENT_STATUS_ARGUMENT <- NULL; ADD_MISSING_ARGUMENT <- TRUE
+			} else {
+				ENROLLMENT_STATUS_ARGUMENT <- paste(unlist(strsplit(k, "_"))[!unlist(strsplit(k, "_"))=="NUMBER"], "ENROLLMENT_STATUS", sep="_"); ADD_MISSING_ARGUMENT <- FALSE
+			}
+
+			if (length(grep("SCHOOL", k)) > 0 & paste(unlist(strsplit(k, "_"))[!unlist(strsplit(k, "_"))=="NUMBER"], "ENROLLMENT_STATUS", sep="_") %in% names(sgp_object@Data)) {
 				selected.summary.tables[[k]] <- do.call(paste, c(expand.grid(k,
 					group.format("EMH_LEVEL"),
 					group.format("CONTENT_AREA"),
 					group.format("YEAR"),
 					group.format("GRADE"),
 					group.format(selected.demographic.subgroups),
-					group.format(paste(unlist(strsplit(k, "_"))[!unlist(strsplit(k, "_"))=="NUMBER"], "ENROLLMENT_STATUS", sep="_"), FALSE)), sep=""))
+					group.format(ENROLLMENT_STATUS_ARGUMENT, ADD_MISSING_ARGUMENT)), sep=""))
 			} else {
 				selected.summary.tables[[k]] <-  do.call(paste, c(expand.grid(k,
 					group.format("CONTENT_AREA"),
 					group.format("YEAR"),
 					group.format("GRADE"),
 					group.format(selected.demographic.subgroups),
-					group.format(paste(unlist(strsplit(k, "_"))[!unlist(strsplit(k, "_"))=="NUMBER"], "ENROLLMENT_STATUS", sep="_"), FALSE)), sep=""))
+					group.format(ENROLLMENT_STATUS_ARGUMENT, ADD_MISSING_ARGUMENT)), sep=""))
 			}
 		}
 	} ### End for k
@@ -502,8 +508,7 @@ function(sgp_object,
 
 				### Create variable name to be used
 
-				multiple.membership.variable.name <- 
-					paste(head(unlist(strsplit(summary.groups[["institution_multiple_membership"]][[j-1]][["VARIABLE.NAMES"]][1], "_")), -1), 
+				multiple.membership.variable.name <- paste(head(unlist(strsplit(summary.groups[["institution_multiple_membership"]][[j-1]][["VARIABLE.NAMES"]][1], "_")), -1), 
 						collapse="_")
 
 				### Aggregations will occur by this new institution_level variable
