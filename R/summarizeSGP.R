@@ -313,7 +313,10 @@ function(sgp_object,
 			group.format(summary.groups[["institution_inclusion"]][[i]]),
 			group.format(summary.groups[["growth_only_summary"]][[i]])), sep=""))
 
-		if (!produce.all.summary.tables) sgp.groups <- intersect(sgp.groups, selected.summary.tables)
+		if (!produce.all.summary.tables) {
+			sgp.groups <- intersect(sgp.groups, selected.summary.tables)
+			if (length(sgp.groups)==0) return(NULL)
+		}
 
 		if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
 			ci.groups <- do.call(paste, c(expand.grid(i,
