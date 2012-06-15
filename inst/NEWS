@@ -32,6 +32,7 @@ Changes in version: SGP_0.9-7.0
 	  o Changed naming convention between from TESTING_YEAR to CURRENT to apply to all states going forward.
 	  o Tidied up title for goodness of fit plots and modified plots to deal with edge cases where there are not 10 prior score deciles.
 	  o Added variable name lookup for Massachusetts.
+	  o Refined summarizeSGP to better detect ENROLLMENT_STATUS variable in supplied @Data.
 
 
   BUG FIXES:
