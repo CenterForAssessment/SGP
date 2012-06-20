@@ -76,7 +76,7 @@ function(sgp_object,
 	get.rbind.all.data <- function(data.pieces, key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID")) {
 		my.rbind.all <- rbind.fill(data.pieces)
 		if (is.factor(my.rbind.all[["YEAR"]])) my.rbind.all[["YEAR"]] <- as.factor(as.character(my.rbind.all[["YEAR"]]))
-		if (is.factor(my.rbind.all[["CONTENT_AREA"]])) my.rbind.all[["CONTENT_AREA"]] <- as.factor(as.character(my.rbind.all[["CONTENT_AREA"]]))
+		if (is.factor(my.rbind.all[["CONTENT_AREA"]])) my.rbind.all[["CONTENT_AREA"]] <- factor(as.character(my.rbind.all[["CONTENT_AREA"]]), levels=levels(slot.data$CONTENT_AREA))
 		data.table(my.rbind.all,  VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), key=key(slot.data))
 	}
 
