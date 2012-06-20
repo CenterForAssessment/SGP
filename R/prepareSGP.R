@@ -292,6 +292,17 @@
 		sgp_object <- new("SGP", Data=data, Names=variable.names, Version=getVersion(data))
 	} ## END else
 
+	#################################################################
+	###
+	### Tidy up variables (could be validity checks)
+	###
+	#################################################################
+
+	### CONTENT_AREA levels are better if they are alphabetized
+
+	if (levels(sgp_object@Data$CONTENT_AREA) != sort(levels(sgp_object@Data$CONTENT_AREA))) {
+		sgp_object@Data$CONTENT_AREA <- as.factor(as.character(sgp_object@Data$CONTENT_AREA))
+	}
 
 	#################################################################
 	###
