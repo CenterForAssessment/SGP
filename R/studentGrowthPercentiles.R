@@ -255,7 +255,7 @@ function(panel.data,         ## REQUIRED
 	}
 
 	.get.percentile.cuts <- function(data1) {
-		tmp <- round(data1[ , percentile.cuts+1], digits=percuts.digits)
+		tmp <- round(data1[ , percentile.cuts+1, drop=FALSE], digits=percuts.digits)
 		if (convert.using.loss.hoss) {
 			my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
 			bnd <- eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['loss.hoss_", tmp.last, "']]", sep="")))
