@@ -22,6 +22,7 @@ function(panel.data,         ## REQUIRED
          drop.nonsequential.grade.progression.variables=TRUE,
          convert.0and100=TRUE,
          sgp.quantiles="Percentiles",
+         sgp.loss.hoss.adjustment=NULL,
          percuts.digits=0,
          isotonize=TRUE,
          convert.using.loss.hoss=TRUE,
@@ -247,6 +248,14 @@ function(panel.data,         ## REQUIRED
 
 	.get.quantiles <- function(data1, data2) {
 		tmp <- apply(cbind(data1 < data2, FALSE), 1, function(x) which.min(x)-1)
+		if (!is.null(sgp.loss.hoss.adjustment)) {
+			my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
+			my.hoss <- eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['loss.hoss_", tmp.last, "']][2]", sep="")))
+			tmp.index <- which(data2==my.hoss)
+			if (length(tmp.index) > 0) {
+				tmp[tmp.index] <- apply(cbind(data1[tmp.index,] > data2[tmp.index], TRUE), 1, function(x) which.max(x)-1)
+			}
+		}
 		if (convert.0and100) {
 			tmp[tmp==0] <- 1
 			tmp[tmp==100] <- 99
