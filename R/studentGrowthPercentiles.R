@@ -253,7 +253,7 @@ function(panel.data,         ## REQUIRED
 			my.hoss <- eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['loss.hoss_", tmp.last, "']][2]", sep="")))
 			tmp.index <- which(data2==my.hoss)
 			if (length(tmp.index) > 0) {
-				tmp[tmp.index] <- apply(cbind(data1[tmp.index,] > data2[tmp.index], TRUE), 1, function(x) which.max(x)-1)
+				tmp[tmp.index] <- apply(cbind(data1 > data2, TRUE)[tmp.index,,drop=FALSE], 1, function(x) which.max(x)-1)
 			}
 		}
 		if (convert.0and100) {
