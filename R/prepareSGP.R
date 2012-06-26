@@ -300,7 +300,7 @@
 
 	### CONTENT_AREA levels are better if they are alphabetized
 
-	if (levels(sgp_object@Data$CONTENT_AREA) != sort(levels(sgp_object@Data$CONTENT_AREA))) {
+	if (any(levels(sgp_object@Data$CONTENT_AREA) != sort(levels(sgp_object@Data$CONTENT_AREA)))) {
 		sgp_object@Data$CONTENT_AREA <- as.factor(as.character(sgp_object@Data$CONTENT_AREA))
 	}
 
