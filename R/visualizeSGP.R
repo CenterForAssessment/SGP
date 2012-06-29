@@ -280,12 +280,12 @@ if ("studentGrowthPlot" %in% plot.types) {
 
 	#### Utility functions
 
-	get.my.cutscore.year <- function(state, content_area, year) {
-		tmp.cutscore.years <- sapply(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]])[grep(content_area, names(SGPstateData[[state]][["Achievement"]][["Cutscores"]]))], "[.]"),
-			function(x) x[2])
+	get.my.label <- function(state, content_area, year, label="Cutscores") {
+		tmp.cutscore.years <- sapply(strsplit(names(SGPstateData[[state]][["Achievement"]][[label]])[grep(content_area, names(SGPstateData[[state]][["Achievement"]][[label]]))], "[.]"),
+                        function(x) x[2])
 		if (any(!is.na(tmp.cutscore.years))) {
-		if (year %in% tmp.cutscore.years) {
-			return(paste(content_area, year, sep="."))
+			if (year %in% tmp.cutscore.years) {
+				return(paste(content_area, year, sep="."))
 			} else {
 				if (year==sort(c(year, tmp.cutscore.years))[1]) {
 					return(content_area)
@@ -301,9 +301,11 @@ if ("studentGrowthPlot" %in% plot.types) {
 	piecewise.transform <- function(scale_score, state, content_area, year, grade, output.digits=1) {
 		if (content_area %in% names(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]]) &
 			grade %in% as.numeric(matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]]), "_")), ncol=2, byrow=TRUE)[,2])) {
-				tmp.loss.hoss <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]][[paste("loss.hoss_", grade, sep="")]]
+				my.cutscores.label <- get.my.label(state, content_area, year)
+				my.knots_boundaries.label <- get.my.label(state, content_area, year, "Knots_Boundaries")
+				tmp.loss.hoss <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[my.knots_boundaries.label]][[paste("loss.hoss_", grade, sep="")]]
 				scale_score[scale_score < tmp.loss.hoss[1]] <- tmp.loss.hoss[1]; scale_score[scale_score > tmp.loss.hoss[2]] <- tmp.loss.hoss[2]
-				my.content_area <- get.my.cutscore.year(state, content_area, year)
+				my.content_area <- get.my.label(state, content_area, year)
 				tmp.old.cuts <- c(tmp.loss.hoss[1], SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.content_area]][[paste("GRADE_", grade, sep="")]], tmp.loss.hoss[2])
 				tmp.new.cuts <- SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area]]
 				tmp.index <- findInterval(scale_score, tmp.old.cuts, rightmost.closed=TRUE)
