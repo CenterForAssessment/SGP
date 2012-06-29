@@ -34,6 +34,7 @@ Changes in version: SGP_0.9-7.0
 	  o Added variable name lookup for Massachusetts.
 	  o Refined summarizeSGP to better detect ENROLLMENT_STATUS variable in supplied @Data.
 	  o Added argument 'sgp.loss.hoss.adjustment' to studentGrowthPercentiles to adjust SGP calculation for hoss values where ceiling effect impacts SGP calculation.
+	  o Updated loss/hoss values for Hawaii based upon apparent scale change in 2011.
 
 
   BUG FIXES:
@@ -50,6 +51,7 @@ Changes in version: SGP_0.9-7.0
 	  o analyzeSGP not checks for content area specific coefficient matrices and only calculates baseline referenced results for those content areas.
 	  o Supplied panel.data.vnames now subsets only those names in supplied panel data.
 	  o Refined of merge of sgp targets in combineSGP to avoid memory copy of sgp_object.
+	  o studentGrowthPlot function now detects year dependent loss/hoss values.
 	  o summarizeSGP now checks for existence of ACHIEVEMENT_LEVEL_PRIOR before attempting to calculate it.
 
 

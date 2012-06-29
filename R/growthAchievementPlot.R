@@ -117,50 +117,50 @@
 	}
 
 	create.long.cutscores <- function(state, content_area, year) {
-	number.achievement.level.regions <- length(SGPstateData[[state]][["Student_Report_Information"]][["Achievement_Level_Labels"]])
-	my.cutscore.label <- get.my.label(state, content_area, year)
-	if (!content_area %in% names(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]])) {
-		tmp.grades <- as.numeric(matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.cutscore.label]]), "_")),
-			ncol=2, byrow=TRUE)[,2])
-		tmp.cutscores <- matrix(unlist(SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.cutscore.label]]),
-		ncol=number.achievement.level.regions-1, byrow=TRUE)
-		tmp.list <- list()
-		for (i in seq(number.achievement.level.regions-1)) {
-			tmp.list[[i]] <- data.frame(GRADE=c(min(tmp.grades,na.rm=TRUE)-1, tmp.grades, max(tmp.grades,na.rm=TRUE)+1),
-				CUTLEVEL=rep(i, length(tmp.grades)+2),
-				CUTSCORES=c(extendrange(tmp.cutscores[,i], f=0.15)[1], tmp.cutscores[,i], extendrange(tmp.cutscores[,i], f=0.15)[2]))
-		}
-		subset(do.call(rbind, tmp.list), CUTLEVEL %in% 1:(number.achievement.level.regions-1))
-	} else {
-		tmp.grades <- as.numeric(matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.cutscore.label]]), "_")),
-			ncol=2, byrow=TRUE)[,2])
-	  tmp.list <- list()
-	  for (i in seq(number.achievement.level.regions-1)) {
-		 tmp.list[[i]] <- data.frame(GRADE=c(min(tmp.grades, na.rm=TRUE)-1, tmp.grades, max(tmp.grades, na.rm=TRUE)+1),
+		number.achievement.level.regions <- length(SGPstateData[[state]][["Student_Report_Information"]][["Achievement_Level_Labels"]])
+		my.cutscore.label <- get.my.label(state, content_area, year)
+		if (!content_area %in% names(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]])) {
+			tmp.grades <- as.numeric(matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.cutscore.label]]), "_")),
+				ncol=2, byrow=TRUE)[,2])
+			tmp.cutscores <- matrix(unlist(SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.cutscore.label]]),
+			ncol=number.achievement.level.regions-1, byrow=TRUE)
+			tmp.list <- list()
+			for (i in seq(number.achievement.level.regions-1)) {
+				tmp.list[[i]] <- data.frame(GRADE=c(min(tmp.grades,na.rm=TRUE)-1, tmp.grades, max(tmp.grades,na.rm=TRUE)+1),
 					CUTLEVEL=rep(i, length(tmp.grades)+2),
-					CUTSCORES=rep(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area]][i+1],
+					CUTSCORES=c(extendrange(tmp.cutscores[,i], f=0.15)[1], tmp.cutscores[,i], extendrange(tmp.cutscores[,i], f=0.15)[2]))
+			}
+			subset(do.call(rbind, tmp.list), CUTLEVEL %in% 1:(number.achievement.level.regions-1))
+		} else {
+			tmp.grades <- as.numeric(matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.cutscore.label]]), "_")),
+				ncol=2, byrow=TRUE)[,2])
+			tmp.list <- list()
+			for (i in seq(number.achievement.level.regions-1)) {
+			tmp.list[[i]] <- data.frame(GRADE=c(min(tmp.grades, na.rm=TRUE)-1, tmp.grades, max(tmp.grades, na.rm=TRUE)+1),
+				CUTLEVEL=rep(i, length(tmp.grades)+2),
+				CUTSCORES=rep(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area]][i+1],
 						length(tmp.grades)+2))
+			}
+			do.call(rbind, tmp.list)
 		}
-		do.call(rbind, tmp.list)
-	}
-		} ## END create.long.cutscores
+	} ## END create.long.cutscores
 
-		piecewise.transform <- function(scale_score, state, content_area, year, grade, output.digits=1) {
-	if (content_area %in% names(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]]) &
-		 grade %in% as.numeric(matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]]), "_")), ncol=2, byrow=TRUE)[,2])) {
-		 my.cutscores.label <- get.my.label(state, content_area, year)
-		 my.knots_boundaries.label <- get.my.label(state, content_area, year, "Knots_Boundaries")
-		 tmp.loss.hoss <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[my.knots_boundaries.label]][[paste("loss.hoss_", grade, sep="")]]
-		 scale_score[scale_score < tmp.loss.hoss[1]] <- tmp.loss.hoss[1]; scale_score[scale_score > tmp.loss.hoss[2]] <- tmp.loss.hoss[2]
-		 tmp.old.cuts <- c(tmp.loss.hoss[1], SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.cutscores.label]][[paste("GRADE_", grade, sep="")]], tmp.loss.hoss[2])
-		 tmp.new.cuts <- SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area]]
-		 tmp.index <- findInterval(scale_score, tmp.old.cuts, rightmost.closed=TRUE)
-		 tmp.diff <- diff(tmp.new.cuts)/diff(tmp.old.cuts)
-		 round(tmp.new.cuts[tmp.index] + (scale_score - tmp.old.cuts[tmp.index]) * (diff(tmp.new.cuts)/diff(tmp.old.cuts))[tmp.index], digits=output.digits)
-	} else {
-		 as.numeric(scale_score)
-	}
-		} ## END piecewise.transform
+	piecewise.transform <- function(scale_score, state, content_area, year, grade, output.digits=1) {
+		if (content_area %in% names(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]]) &
+			grade %in% as.numeric(matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]]), "_")), ncol=2, byrow=TRUE)[,2])) {
+				my.cutscores.label <- get.my.label(state, content_area, year)
+				my.knots_boundaries.label <- get.my.label(state, content_area, year, "Knots_Boundaries")
+				tmp.loss.hoss <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[my.knots_boundaries.label]][[paste("loss.hoss_", grade, sep="")]]
+				scale_score[scale_score < tmp.loss.hoss[1]] <- tmp.loss.hoss[1]; scale_score[scale_score > tmp.loss.hoss[2]] <- tmp.loss.hoss[2]
+				tmp.old.cuts <- c(tmp.loss.hoss[1], SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.cutscores.label]][[paste("GRADE_", grade, sep="")]], tmp.loss.hoss[2])
+				tmp.new.cuts <- SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area]]
+				tmp.index <- findInterval(scale_score, tmp.old.cuts, rightmost.closed=TRUE)
+				tmp.diff <- diff(tmp.new.cuts)/diff(tmp.old.cuts)
+				round(tmp.new.cuts[tmp.index] + (scale_score - tmp.old.cuts[tmp.index]) * (diff(tmp.new.cuts)/diff(tmp.old.cuts))[tmp.index], digits=output.digits)
+		} else {
+			as.numeric(scale_score)
+		}
+	} ## END piecewise.transform
 
 	## Function that produces a smoothed Percentile Trajectory
 
