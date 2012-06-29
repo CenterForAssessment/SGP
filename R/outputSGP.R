@@ -161,8 +161,8 @@ function(sgp_object,
 			paste(as.numeric(unlist(strsplit(as.character(year), "_")))+increment, collapse="_")
 		}
 
-		get.my.cutscore.year <- function(state, content_area, year) {
-			tmp.cutscore.years <- sapply(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]])[grep(content_area, names(SGPstateData[[state]][["Achievement"]][["Cutscores"]]))], "[.]"),
+		get.my.label <- function(state, content_area, year, label="Cutscores") {
+			tmp.cutscore.years <- sapply(strsplit(names(SGPstateData[[state]][["Achievement"]][[label]])[grep(content_area, names(SGPstateData[[state]][["Achievement"]][[label]]))], "[.]"),
 				function(x) x[2])
 			if (any(!is.na(tmp.cutscore.years))) {
 				if (year %in% tmp.cutscore.years) {
@@ -183,10 +183,10 @@ function(sgp_object,
 			if (content_area %in% names(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]]) &
 				grade %in% as.numeric(matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]]), "_")), 
 					ncol=2, byrow=TRUE)[,2])) {
-
-				tmp.loss.hoss <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]][[paste("loss.hoss_", grade, sep="")]]
+				my.knots_boundaries.label <- get.my.label(state, content_area, year, "Knots_Boundaries")
+				tmp.loss.hoss <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[my.knots_boundaries.label]][[paste("loss.hoss_", grade, sep="")]]
 				scale_score[scale_score < tmp.loss.hoss[1]] <- tmp.loss.hoss[1]; scale_score[scale_score > tmp.loss.hoss[2]] <- tmp.loss.hoss[2]
-				my.content_area <- get.my.cutscore.year(state, content_area, year)
+				my.content_area <- get.my.label(state, content_area, year)
 				tmp.old.cuts <- c(tmp.loss.hoss[1], SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.content_area]][[paste("GRADE_", grade, sep="")]], 
 					tmp.loss.hoss[2])
 				tmp.new.cuts <- SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area]]
