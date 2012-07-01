@@ -35,6 +35,7 @@ Changes in version: SGP_0.9-7.0
 	  o Refined summarizeSGP to better detect ENROLLMENT_STATUS variable in supplied @Data.
 	  o Added argument 'sgp.loss.hoss.adjustment' to studentGrowthPercentiles to adjust SGP calculation for hoss values where ceiling effect impacts SGP calculation.
 	  o Updated loss/hoss values for Hawaii based upon apparent scale change in 2011.
+	  o Modified .year.increment in studentGrowthPercentiles to accomodate baseline SGP analyses.
 
 
   BUG FIXES:
