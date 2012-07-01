@@ -135,7 +135,11 @@ function(panel.data,         ## REQUIRED
 	}
 
         .year.increment <- function(year, increment) {
-                sapply(increment, function(x) paste(as.numeric(unlist(strsplit(as.character(year), "_")))+x, collapse="_"))
+		if (identical(year, "BASELINE")) {
+			return("BASELINE")
+		} else {
+			sapply(increment, function(x) paste(as.numeric(unlist(strsplit(as.character(year), "_")))+x, collapse="_"))
+		}
         }
 
         get.my.knots.boundaries.path <- function(content_area, year) {
