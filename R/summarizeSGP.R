@@ -87,7 +87,7 @@ function(sgp_object,
 	boot.median <- function(x,i) median(x[i], na.rm=TRUE)
 	mean_na <- function(x, result.digits=1) round(mean(as.numeric(x), na.rm=TRUE), digits=result.digits)
 	num_non_missing <- function(x) sum(!is.na(as.numeric(x)))
-	median_sgp_standard_error <- function(x) round(1.25*sd(x, na.rm=TRUE)/sqrt(sum(!is.na(as.numeric(x)))), digits=2)
+	sgp_standard_error <- function(x,y=1) round(y*sd(x, na.rm=TRUE)/sqrt(sum(!is.na(as.numeric(x)))), digits=2)
 
 	percent_in_category <- function(x, in.categories, of.categories, result.digits=1) { ## NOTE: x must be a factor and categories levels
 		if (!is.list(in.categories)) in.categories <- list(in.categories)
@@ -186,12 +186,14 @@ function(sgp_object,
 			}
 
 			tmp.sgp.summaries <- list(
+				MEAN_SGP=paste("mean_na(", my.sgp, ")", sep=""),
 				MEDIAN_SGP=paste("median_na(", my.sgp, ")", sep=""),
 				MEDIAN_SGP_COUNT=paste("num_non_missing(", my.sgp, ")", sep=""),
 				PERCENT_AT_ABOVE_PROFICIENT=paste("percent_in_category(ACHIEVEMENT_LEVEL, ", 
 					get.expression(proficient.achievement.levels), ", ", get.expression(all.achievement.levels), ")",sep=""),
 				PERCENT_AT_ABOVE_PROFICIENT_COUNT="num_non_missing(ACHIEVEMENT_LEVEL)",
-				MEDIAN_SGP_STANDARD_ERROR=paste("median_sgp_standard_error(", my.sgp, ")", sep=""))
+				MEAN_SGP_STANDARD_ERROR=paste("sgp_standard_error(", my.sgp, ")", sep=""),
+				MEDIAN_SGP_STANDARD_ERROR=paste("sgp_standard_error(", my.sgp, ",1.25)", sep=""))
 
 				if ("ACHIEVEMENT_LEVEL_PRIOR" %in% names(sgp_object@Data)) {
 					tmp.sgp.summaries <- c(
@@ -225,8 +227,8 @@ function(sgp_object,
 				institution_multiple_membership=get.multiple.membership(sgp_object@Names[!is.na(sgp_object@Names$names.sgp),]))
 
 				for (i in tmp.summary.groups[["institution"]]) {
-					tmp.summary.groups[["institution_inclusion"]][[i]] <- getFromNames("institution_inclusion")[
-						grep(strsplit(i, "_")[[1]][1], getFromNames("institution_inclusion"))]
+					tmp.split <- paste(c(head(unlist(strsplit(i, "_")), -1), "ENROLLMENT_STATUS"), collapse="_")
+					tmp.summary.groups[["institution_inclusion"]][[i]] <- intersect(tmp.split, getFromNames("institution_inclusion"))
 					tmp.summary.groups[["growth_only_summary"]][[i]] <- "BY_GROWTH_ONLY"
 				}
 				tmp.summary.groups[["institution_inclusion"]] <- as.list(tmp.summary.groups[["institution_inclusion"]])
