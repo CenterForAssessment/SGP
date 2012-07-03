@@ -227,7 +227,7 @@ function(sgp_object,
 				institution_multiple_membership=get.multiple.membership(sgp_object@Names[!is.na(sgp_object@Names$names.sgp),]))
 
 				for (i in tmp.summary.groups[["institution"]]) {
-					tmp.split <- paste(c(head(unlist(strsplit(i, "_")), -1), "ENROLLMENT_STATUS"), collapse="_")
+					tmp.split <- paste(c(unlist(strsplit(i, "_"))[!unlist(strsplit(i, "_"))=="NUMBER"], "ENROLLMENT_STATUS"), collapse="_")
 					tmp.summary.groups[["institution_inclusion"]][[i]] <- intersect(tmp.split, getFromNames("institution_inclusion"))
 					tmp.summary.groups[["growth_only_summary"]][[i]] <- "BY_GROWTH_ONLY"
 				}
@@ -466,7 +466,7 @@ function(sgp_object,
 					group.format("GRADE"),
 					group.format(ENROLLMENT_STATUS_ARGUMENT, ADD_MISSING_ARGUMENT)), sep=""))
 		} else {
-			if (!paste(unlist(strsplit(k, "_"))[!unlist(strsplit(k, "_"))=="NUMBER"], "ENROLLMENT_STATUS", sep="_") %in% names(sgp_object@Data)) {
+			if (!paste(c(unlist(strsplit(k, "_"))[!unlist(strsplit(k, "_"))=="NUMBER"], "ENROLLMENT_STATUS"), collapse="_") %in% names(sgp_object@Data)) {
 				ENROLLMENT_STATUS_ARGUMENT <- NULL; ADD_MISSING_ARGUMENT <- TRUE
 			} else {
 				ENROLLMENT_STATUS_ARGUMENT <- paste(unlist(strsplit(k, "_"))[!unlist(strsplit(k, "_"))=="NUMBER"], "ENROLLMENT_STATUS", sep="_"); ADD_MISSING_ARGUMENT <- FALSE
