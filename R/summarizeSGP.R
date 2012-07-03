@@ -467,12 +467,14 @@ function(sgp_object,
 					group.format(ENROLLMENT_STATUS_ARGUMENT, ADD_MISSING_ARGUMENT)), sep=""))
 		} else {
 			if (!paste(c(unlist(strsplit(k, "_"))[!unlist(strsplit(k, "_"))=="NUMBER"], "ENROLLMENT_STATUS"), collapse="_") %in% names(sgp_object@Data)) {
-				ENROLLMENT_STATUS_ARGUMENT <- NULL; ADD_MISSING_ARGUMENT <- TRUE
+				ENROLLMENT_STATUS_ARGUMENT <- NULL
+				ADD_MISSING_ARGUMENT <- TRUE
 			} else {
-				ENROLLMENT_STATUS_ARGUMENT <- paste(unlist(strsplit(k, "_"))[!unlist(strsplit(k, "_"))=="NUMBER"], "ENROLLMENT_STATUS", sep="_"); ADD_MISSING_ARGUMENT <- FALSE
+				ENROLLMENT_STATUS_ARGUMENT <- paste(c(unlist(strsplit(k, "_"))[!unlist(strsplit(k, "_"))=="NUMBER"], "ENROLLMENT_STATUS"), collapse="_")
+				ADD_MISSING_ARGUMENT <- FALSE
 			}
 
-			if (length(grep("SCHOOL", k)) > 0 & paste(unlist(strsplit(k, "_"))[!unlist(strsplit(k, "_"))=="NUMBER"], "ENROLLMENT_STATUS", sep="_") %in% names(sgp_object@Data)) {
+			if (length(grep("SCHOOL", k)) > 0 & paste(c(unlist(strsplit(k, "_"))[!unlist(strsplit(k, "_"))=="NUMBER"], "ENROLLMENT_STATUS"), collapse="_") %in% names(sgp_object@Data)) {
 				selected.summary.tables[[k]] <- do.call(paste, c(expand.grid(k,
 					group.format("EMH_LEVEL"),
 					group.format("CONTENT_AREA"),
