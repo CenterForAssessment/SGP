@@ -59,6 +59,9 @@
 
 	tmp.smooth.grades <- seq(gaPlot.grade_range[1], gaPlot.grade_range[2], by=0.01)
 	tmp.unique.grades <- gaPlot.grade_range[1]:gaPlot.grade_range[2]
+	if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])) {
+		tmp.unique.grades <- intersect(tmp.unique.grades, SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])
+	}
 	setkeyv(gaPlot.sgp_object@Data, c("VALID_CASE", "CONTENT_AREA"))
 	growthAchievementPlot.data <- gaPlot.sgp_object@Data[J("VALID_CASE", content_area), list(ID, YEAR, GRADE, SCALE_SCORE)][
 		GRADE %in% tmp.unique.grades & !is.na(SCALE_SCORE)]
@@ -81,6 +84,8 @@
 	# Functions to create good endpoints for scale score axis
 
 	pretty_year <- function(x) sub("_", "-", x)
+
+	"%w/o%" <- function(x, y) x[!x %in% y]
 
 	myround_up <- function(x) {
 		temp <- x/10^floor(log(x, 10))
@@ -353,7 +358,7 @@
 ##
 
 	for (i in 1:max(temp_cutscores$CUTLEVEL)){
-		assign(paste("level_", i, "_curve", sep=""), splinefun(gaPlot.grade_range[1]:gaPlot.grade_range[2], subset(temp_cutscores, CUTLEVEL==i)$CUTSCORES))
+		assign(paste("level_", i, "_curve", sep=""), splinefun(tmp.unique.grades, subset(temp_cutscores, CUTLEVEL==i)$CUTSCORES))
 	}
 	
 
@@ -389,7 +394,6 @@
 			gp=gpar(fill=format.colors.region[i], lwd=0.1, col="grey85"))
 	}
 
-
 	## Code for producing the achievement percentile curves
 
 	if (!is.null(gaPlot.achievement_percentiles)){
@@ -407,6 +411,17 @@
 		for (i in gaPlot.percentile_trajectories) {
 			grid.lines(tmp.smooth.grades, (smoothPercentileTrajectory(tmp.df, i, content_area, year, state))(tmp.smooth.grades), 
 				gp=gpar(lwd=1.2, col="black"), default.units="native")
+		}
+	}
+
+	## Code for producing skipped grade region
+
+	skipped.grades <- gaPlot.grade_range[1]:gaPlot.grade_range[2] %w/o% tmp.unique.grades
+	if (length(skipped.grades) > 0) {
+		for (i in skipped.grades) {
+			grid.polygon(x=c(i-0.4, i-0.4, i+0.4, i+0.4), y=c(yscale.range, rev(yscale.range)), default.units="native", 
+				gp=gpar(fill=rgb(1,1,1,0.4), lwd=1, col=rgb(1,1,1,0.4)))
+				grid.text(x=unit(i, "native"), y=0.5, paste("No Grade", i, "Assessment"), gp=gpar(col="grey20", cex=2.0), rot=90)
 		}
 	}
 
@@ -504,9 +519,9 @@
 	pushViewport(bottom.axis.vp)
 	
 	grid.lines(gaPlot.grade_range, 0.8, gp=gpar(lwd=1.5, col=format.colors.font), default.units="native")
-	for (i in gaPlot.grade_range[1]:gaPlot.grade_range[2]){
-	grid.lines(i, c(0.5, 0.8), gp=gpar(lwd=1.5, col=format.colors.font), default.units="native")
-	grid.text(x=i, y=0.25, paste("Grade", i), gp=gpar(col=format.colors.font, cex=1.0), default.units="native")
+	for (i in tmp.unique.grades){
+		grid.lines(i, c(0.5, 0.8), gp=gpar(lwd=1.5, col=format.colors.font), default.units="native")
+		grid.text(x=i, y=0.25, paste("Grade", i), gp=gpar(col=format.colors.font, cex=1.0), default.units="native")
 	}
 	
 	popViewport() ## pop bottom.axis.vp
