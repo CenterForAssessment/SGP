@@ -37,6 +37,7 @@ Changes in version: SGP_0.9-7.0
 	  o Updated loss/hoss values for Hawaii based upon apparent scale change in 2011.
 	  o Modified .year.increment in studentGrowthPercentiles to accomodate baseline SGP analyses.
 	  o Added Washington data to SGPstateData.
+	  o growthAchievementPlot not accomodates gaps in years tested if coefficient matrices are available across that gap.
 
 
   BUG FIXES:
