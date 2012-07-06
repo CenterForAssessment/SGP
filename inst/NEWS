@@ -38,6 +38,7 @@ Changes in version: SGP_0.9-7.0
 	  o Modified .year.increment in studentGrowthPercentiles to accomodate baseline SGP analyses.
 	  o Added Washington data to SGPstateData including basseline coefficient matrices.
 	  o growthAchievementPlot not accomodates gaps in years tested if coefficient matrices are available across that gap.
+	  o Updated Idaho knots and boundaries to accomodate 2011 scale scores.
 
 
   BUG FIXES:
