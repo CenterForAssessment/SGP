@@ -392,19 +392,8 @@ function(sgp_object,
 					}
 					sgp_object@SGP <- .mergeSGP(sgp_object@SGP, list(Coefficient_Matrices=merge.coefficient.matrices(tmp)))
 					rm(tmp)
-					#if (!is.null(par.start$doPar.cl)) #closeCluster(par.start$doPar.cl)
-					# if (exists("jobs")) removeQueue('jobs')
-					# if (exists("doSNOW.cl")) stopCluster(doSNOW.cl)
-					# if (exists("doPar.cl")) stopCluster(doPar.cl)
 				} else {
 					if (par.start$par.type=="SNOW") {
-						# if (!is.null(par.start$workers)) internal.cl <- makeCluster(par.start$workers, type=parallel.config[["TYPE"]])
-						# if (is.null(parallel.config[["CLUSTER.OBJECT"]])) {
-							# cluster.object <- "internal.cl"
-						# }	else cluster.object <- parallel.config[["CLUSTER.OBJECT"]]
-	
-						# clusterEvalQ(par.start$internal.cl, library(SGP))
-	
 						tmp <- clusterApplyLB(par.start$internal.cl, sgp.baseline.config, function(sgp.iter) baselineSGP(
 								sgp_object,
 								state=state,
@@ -427,7 +416,6 @@ function(sgp_object,
 						sgp_object@SGP <- .mergeSGP(sgp_object@SGP, list(Coefficient_Matrices=merge.coefficient.matrices(tmp)))
 						rm(tmp)
 					} # END if (MULTICORE)
-					#closeCluster(par.start$doPar.cl)
 					stopParallel(parallel.config, par.start)
 				} #  END  if parallel
 			} else { # process sequentially
@@ -526,18 +514,9 @@ function(sgp_object,
 				}
 				sgp_object@SGP <- .mergeSGP(sgp_object@SGP, tmp)
 				rm(tmp)
-				# if (!is.null(par.start$doPar.cl)) closeCluster(par.start$doPar.cl)
-
 			} else { # END FOREACH
 				###    SNOW flavor
 				if (par.start$par.type == 'SNOW') {
-					# if (!is.null(par.start$workers)) internal.cl <- makeCluster(par.start$workers, type=parallel.config[["TYPE"]])
-					# if (is.null(parallel.config[["CLUSTER.OBJECT"]])) {
-						# cluster.object <- "internal.cl"
-					# }	else cluster.object <- parallel.config[["CLUSTER.OBJECT"]]
-	
-					# clusterEvalQ(eval(parse(text=cluster.object)), library(SGP))
-	
 					if (simulate.sgps) {
 						if (!exists("calculate.confidence.intervals")) {
 							calculate.confidence.intervals <- state
@@ -571,7 +550,7 @@ function(sgp_object,
 							grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 							...))
 					}
-					for (s in seq_along(tmp))	sgp_object@SGP <- .mergeSGP(sgp_object@SGP, tmp[[s]])
+					sgp_object@SGP <- .mergeSGP(sgp_object@SGP, Reduce(.mergeSGP, tmp))
 					rm(tmp)
 					} # END SNOW
 				
@@ -610,12 +589,10 @@ function(sgp_object,
 							grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 							...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 					}
-					for (s in seq_along(tmp))	sgp_object@SGP <- .mergeSGP(sgp_object@SGP, tmp[[s]])
+					sgp_object@SGP <- .mergeSGP(sgp_object@SGP, Reduce(.mergeSGP, tmp))
 					rm(tmp)
 				} # End MULTICORE
 			} # #END not FOREACH
-			#closeCluster(par.start$doPar.cl)
-#			if (is.null(parallel.config[["CLUSTER.OBJECT"]])) stopCluster(eval(parse(text=cluster.object)))
 			stopParallel(parallel.config, par.start)
 			suppressMessages(gc()) # clean up
 		} #END if (sgp.percentiles)
@@ -670,7 +647,7 @@ function(sgp_object,
 						grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 						...))
 	
-					for (s in seq_along(tmp))	sgp_object@SGP <- .mergeSGP(sgp_object@SGP, tmp[[s]])
+					sgp_object@SGP <- .mergeSGP(sgp_object@SGP, Reduce(.mergeSGP, tmp))
 					rm(tmp)
 					} # END SNOW
 				
@@ -692,11 +669,10 @@ function(sgp_object,
 						grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
-					for (s in seq_along(tmp))	sgp_object@SGP <- .mergeSGP(sgp_object@SGP, tmp[[s]])
+					sgp_object@SGP <- .mergeSGP(sgp_object@SGP, Reduce(.mergeSGP, tmp))
 					rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
-		#closeCluster(par.start$doPar.cl)
 		stopParallel(parallel.config, par.start)
 		suppressMessages(gc()) # clean up
 		} ## END if sgp.percentiles.baseline
@@ -750,7 +726,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...))
 	
-					for (s in seq_along(tmp))	sgp_object@SGP <- .mergeSGP(sgp_object@SGP, tmp[[s]])
+					sgp_object@SGP <- .mergeSGP(sgp_object@SGP, Reduce(.mergeSGP, tmp))
 					rm(tmp)
 					} # END SNOW
 				
@@ -772,12 +748,10 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
-					for (s in seq_along(tmp))	sgp_object@SGP <- .mergeSGP(sgp_object@SGP, tmp[[s]])
+					sgp_object@SGP <- .mergeSGP(sgp_object@SGP, Reduce(.mergeSGP, tmp))
 					rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
-		#closeCluster(par.start$doPar.cl)
-#		if (is.null(parallel.config[["CLUSTER.OBJECT"]])) stopCluster(par.start$internal.cl)
 		stopParallel(parallel.config, par.start)
 		suppressMessages(gc()) # clean up
 		} ## END if sgp.projections
@@ -833,7 +807,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...))
 	
-					for (s in seq_along(tmp))	sgp_object@SGP <- .mergeSGP(sgp_object@SGP, tmp[[s]])
+					sgp_object@SGP <- .mergeSGP(sgp_object@SGP, Reduce(.mergeSGP, tmp))
 					rm(tmp)
 					} # END SNOW
 				
@@ -856,11 +830,10 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
-					for (s in seq_along(tmp))	sgp_object@SGP <- .mergeSGP(sgp_object@SGP, tmp[[s]])
+					sgp_object@SGP <- .mergeSGP(sgp_object@SGP, Reduce(.mergeSGP, tmp))
 					rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
-		#closeCluster(par.start$doPar.cl)
 		stopParallel(parallel.config, par.start)
 		suppressMessages(gc()) # clean up
 		} ## END if sgp.projections.baseline
@@ -916,7 +889,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...))
 	
-					for (s in seq_along(tmp))	sgp_object@SGP <- .mergeSGP(sgp_object@SGP, tmp[[s]])
+					sgp_object@SGP <- .mergeSGP(sgp_object@SGP, Reduce(.mergeSGP, tmp))
 					rm(tmp)
 					} # END SNOW
 				
@@ -939,11 +912,10 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
-					for (s in seq_along(tmp))	sgp_object@SGP <- .mergeSGP(sgp_object@SGP, tmp[[s]])
+					sgp_object@SGP <- .mergeSGP(sgp_object@SGP, Reduce(.mergeSGP, tmp))
 					rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
-		#closeCluster(par.start$doPar.cl)
 		stopParallel(parallel.config, par.start)
 		suppressMessages(gc()) # clean up
 		} ## END if sgp.projections.lagged
@@ -1000,7 +972,7 @@ function(sgp_object,
 					projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 					...))
 
-				for (s in seq_along(tmp))	sgp_object@SGP <- .mergeSGP(sgp_object@SGP, tmp[[s]])
+				sgp_object@SGP <- .mergeSGP(sgp_object@SGP, Reduce(.mergeSGP, tmp))
 				rm(tmp)
 			} # END SNOW
 			
@@ -1023,11 +995,10 @@ function(sgp_object,
 					projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 					...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 
-				for (s in seq_along(tmp))	sgp_object@SGP <- .mergeSGP(sgp_object@SGP, tmp[[s]])
+				sgp_object@SGP <- .mergeSGP(sgp_object@SGP, Reduce(.mergeSGP, tmp))
 				rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
-		#closeCluster(par.start$doPar.cl)
 		stopParallel(parallel.config, par.start)
 		suppressMessages(gc()) # clean up
 		} ## END if sgp.projections.lagged.baseline
