@@ -61,6 +61,7 @@ Changes in version: SGP_0.9-8.0
 	  o summarizeSGP now checks for existence of ACHIEVEMENT_LEVEL_PRIOR before attempting to calculate it.
 	  o summarizeSGP better checks for inclusion variables.
 	  o Corrected various bugs in bubblePlot Style 100 introduced with @Names data.frame.
+	  o Modified analyzeSGP to work with data.table changes in 1.8.2.
 
 
 Changes in version: SGP_0.9-0.0
