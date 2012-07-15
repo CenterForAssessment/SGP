@@ -1920,7 +1920,7 @@ if (22 %in% bPlot.styles) {
 			}
 		}
 		mult.memb <- get.multiple.membership(sgp_object@Names)
-		mult.memb.var.name <- paste(head(unlist(strsplit(mult.memb[[1]][["VARIABLE.NAMES"]][1], "_")), -1), collapse="_")
+		if (!is.null(mult.memb)) mult.memb.var.name <- paste(head(unlist(strsplit(mult.memb[[1]][["VARIABLE.NAMES"]][1], "_")), -1), collapse="_")
 	} # END Individual Plot setup
  
 
