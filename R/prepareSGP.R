@@ -223,11 +223,6 @@
 			}
 		}
 
-		## VALID_CASE converted to a character if a factor
-
-		if (is.factor(sgp_object@Data$VALID_CASE)) sgp_object@Data$VALID_CASE <- as.character(sgp_object@Data$VALID_CASE)
-
-
 		if (!is.null(state) & is.null(var.names)) {
 			if (!identical(state, "DEMO") & !identical(data@Names, SGPstateData[[state]][["Variable_Name_Lookup"]])) {
 				data@Names <- SGPstateData[[state]][["Variable_Name_Lookup"]]
@@ -240,6 +235,10 @@
 		if (!is.null(var.names)) {
 			data@Names <- getNames(data@Data, var.names)
 		}
+
+		## VALID_CASE converted to a character if a factor
+
+		if (is.factor(data@Data$VALID_CASE)) data@Data$VALID_CASE <- as.character(data@Data$VALID_CASE)
 
 		if (!identical(key(data@Data), c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))) {
 			setkeyv(data@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
@@ -267,7 +266,7 @@
 	
 		## VALID_CASE converted to a character if a factor
 
-		if (is.factor(sgp_object@Data$VALID_CASE)) sgp_object@Data$VALID_CASE <- as.character(sgp_object@Data$VALID_CASE)
+		if (is.factor(data$VALID_CASE)) data$VALID_CASE <- as.character(data$VALID_CASE)
 
 		##  Create keyed data.table and check for duplicate cases
 
