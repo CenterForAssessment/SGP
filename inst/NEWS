@@ -1,4 +1,4 @@
-Changes in version: SGP_0.9-7.0
+Changes in version: SGP_0.9-8.0
 
   NEW FEATURES:
 
@@ -40,6 +40,7 @@ Changes in version: SGP_0.9-7.0
 	  o growthAchievementPlot not accomodates gaps in years tested if coefficient matrices are available across that gap.
 	  o Updated Idaho knots and boundaries to accomodate 2011 scale scores.
 	  o Added West Virginia variable name lookup table.
+	  o Changed implementation of VALID_CASE to character from factor to better coincide with data.table 1.8.2 requirements.
 
 
   BUG FIXES:
