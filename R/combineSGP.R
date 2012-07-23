@@ -77,7 +77,7 @@ function(sgp_object,
 		my.rbind.all <- rbind.fill(data.pieces)
 		if (is.factor(my.rbind.all[["YEAR"]])) my.rbind.all[["YEAR"]] <- as.factor(as.character(my.rbind.all[["YEAR"]]))
 		if (is.factor(my.rbind.all[["CONTENT_AREA"]])) my.rbind.all[["CONTENT_AREA"]] <- factor(as.character(my.rbind.all[["CONTENT_AREA"]]), levels=levels(slot.data$CONTENT_AREA))
-		data.table(my.rbind.all,  VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), key=key(slot.data))
+		data.table(my.rbind.all,  VALID_CASE="VALID_CASE", key=key(slot.data))
 	}
 
 	get.percentile.names <- function(sgp.type) {
@@ -228,8 +228,7 @@ function(sgp_object,
 					sgp_object@SGP[["SGProjections"]][[i]][,c(1,2,cols.to.get[1:num.cols.to.get])])
 			}
 
-			tmp_object_1 <- data.table(VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), 
-				get.rbind.all.data(tmp.list))[!is.na(CATCH_UP_KEEP_UP_STATUS_INITIAL)]
+			tmp_object_1 <- data.table(VALID_CASE="VALID_CASE", get.rbind.all.data(tmp.list))[!is.na(CATCH_UP_KEEP_UP_STATUS_INITIAL)]
 
 			## Find min/max of targets based upon CATCH_UP_KEEP_UP_STATUS_INITIAL status
 
@@ -275,8 +274,7 @@ function(sgp_object,
 					sgp_object@SGP[["SGProjections"]][[i]][,c(1,2,cols.to.get[1:num.cols.to.get])])
 		 }
 
-		tmp_object_1 <- data.table(VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), 
-			get.rbind.all.data(tmp.list))[!is.na(CATCH_UP_KEEP_UP_STATUS_INITIAL)]
+		tmp_object_1 <- data.table(VALID_CASE="VALID_CASE", get.rbind.all.data(tmp.list))[!is.na(CATCH_UP_KEEP_UP_STATUS_INITIAL)]
 
 		 ## Find min/max of targets based upon CATCH_UP_KEEP_UP_STATUS_INITIAL status
 

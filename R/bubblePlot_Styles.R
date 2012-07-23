@@ -1920,7 +1920,7 @@ if (22 %in% bPlot.styles) {
 			}
 		}
 		mult.memb <- get.multiple.membership(sgp_object@Names)
-		mult.memb.var.name <- paste(head(unlist(strsplit(mult.memb[[1]][["VARIABLE.NAMES"]][1], "_")), -1), collapse="_")
+		if (!is.null(mult.memb)) mult.memb.var.name <- paste(head(unlist(strsplit(mult.memb[[1]][["VARIABLE.NAMES"]][1], "_")), -1), collapse="_")
 	} # END Individual Plot setup
  
 
@@ -1983,8 +1983,15 @@ if (22 %in% bPlot.styles) {
 
 		# Get median SGP for grade, school, content area combination
 
-		school.content_area.grade.median <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__CONTENT_AREA__YEAR__GRADE"]][
-			SCHOOL_NUMBER==tmp.unique.schools[school.iter] & CONTENT_AREA==content_area.iter & YEAR==year.iter & GRADE==grade.iter][["MEDIAN_SGP"]]
+		if (bPlot.full.academic.year) {
+			school.content_area.grade.median <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__CONTENT_AREA__YEAR__GRADE__SCHOOL_ENROLLMENT_STATUS"]][
+				SCHOOL_ENROLLMENT_STATUS=="Enrolled School: Yes" & SCHOOL_NUMBER==tmp.unique.schools[school.iter] & 
+				CONTENT_AREA==content_area.iter & YEAR==year.iter & GRADE==grade.iter][["MEDIAN_SGP"]]
+		} else {
+			school.content_area.grade.median <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__CONTENT_AREA__YEAR__GRADE"]][
+				SCHOOL_NUMBER==tmp.unique.schools[school.iter] & CONTENT_AREA==content_area.iter & YEAR==year.iter & GRADE==grade.iter][["MEDIAN_SGP"]]
+		}
+
 
 		### Custom draft message with two median SGP lines
 

@@ -1,4 +1,4 @@
-Changes in version: SGP_0.9-7.0
+Changes in version: SGP_0.9-8.0
 
   NEW FEATURES:
 
@@ -39,6 +39,8 @@ Changes in version: SGP_0.9-7.0
 	  o Added Washington data to SGPstateData including basseline coefficient matrices.
 	  o growthAchievementPlot not accomodates gaps in years tested if coefficient matrices are available across that gap.
 	  o Updated Idaho knots and boundaries to accomodate 2011 scale scores.
+	  o Added West Virginia variable name lookup table.
+	  o Changed implementation of VALID_CASE to character from factor to better coincide with data.table 1.8.2 requirements.
 
 
   BUG FIXES:
@@ -58,6 +60,8 @@ Changes in version: SGP_0.9-7.0
 	  o studentGrowthPlot function now detects year dependent loss/hoss values.
 	  o summarizeSGP now checks for existence of ACHIEVEMENT_LEVEL_PRIOR before attempting to calculate it.
 	  o summarizeSGP better checks for inclusion variables.
+	  o Corrected various bugs in bubblePlot Style 100 introduced with @Names data.frame.
+	  o Modified analyzeSGP to work with data.table changes in 1.8.2.
 
 
 Changes in version: SGP_0.9-0.0

@@ -289,12 +289,12 @@ function(sgp_object,
 			return(as.data.frame(reshape(
 				data.table(
 					data.table(sgp_object@Data, key="ID")[
-						J(sgp_object@Data[J("VALID_CASE", 
+						sgp_object@Data[SJ("VALID_CASE", 
 						tail(sgp.iter[["sgp.content.areas"]], 1), 
 						tail(sgp.iter[["sgp.panel.years"]], 1), 
-						tail(sgp.iter[["sgp.grade.sequences"]][[1]], 1))][,"ID", with=FALSE])], 
+						tail(sgp.iter[["sgp.grade.sequences"]][[1]], 1))][,"ID", with=FALSE]], 
 				key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))[
-				J("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])-1),
+				SJ("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])-1),
 					tail(head(sgp.iter[["sgp.panel.years"]], -1), length(sgp.iter[["sgp.grade.sequences"]][[1]])-1),
 					head(sgp.iter[["sgp.grade.sequences"]][[1]], -1)), nomatch=0],
 			idvar="ID",

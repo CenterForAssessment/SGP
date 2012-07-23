@@ -167,7 +167,7 @@ function(sgp_object,
 				YEAR=type.convert(unlist(strsplit(i, "[.]"))[2]))
 		}
  
-		data.table(rbind.fill(tmp.list), VALID_CASE=factor(1, levels=1:2, labels=c("VALID_CASE", "INVALID_CASE")), key=key(data))
+		data.table(rbind.fill(tmp.list), VALID_CASE="VALID_CASE", key=key(data))
 	}
 
 	summarizeSGP.config <- function(sgp_object, config.type) {

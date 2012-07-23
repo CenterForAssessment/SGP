@@ -178,12 +178,12 @@
 			tmp.grade.list[[my.list.label]] <- unique(tmp.data[J("VALID_CASE", as.character(my.list.label))][["GRADE"]])
 			for (j in seq_along(tmp.grade.list[[my.list.label]])) {
 				tmp.list[[my.list.label]][[3*j-2]] <-
-					round(as.vector(quantile(subset(tmp.data, VALID_CASE=="VALID_CASE" & GRADE==tmp.grade.list[[my.list.label]][j], select="SCALE_SCORE"), 
+					round(as.vector(quantile(subset(tmp.data, VALID_CASE=="VALID_CASE" & CONTENT_AREA==my.list.label & GRADE==tmp.grade.list[[my.list.label]][j], select="SCALE_SCORE"), 
 						probs=c(0.2,0.4,0.6,0.8), na.rm=TRUE)), digits=3)
 				tmp.list[[my.list.label]][[3*j-1]] <-
-					round(as.vector(extendrange(subset(tmp.data, VALID_CASE=="VALID_CASE" & GRADE==tmp.grade.list[[my.list.label]][j], select="SCALE_SCORE"), f=0.1)), digits=3)
+					round(as.vector(extendrange(subset(tmp.data, VALID_CASE=="VALID_CASE" & CONTENT_AREA==my.list.label & GRADE==tmp.grade.list[[my.list.label]][j], select="SCALE_SCORE"), f=0.1)), digits=3)
 				tmp.list[[my.list.label]][[3*j]] <-
-					round(as.vector(extendrange(subset(tmp.data, VALID_CASE=="VALID_CASE" & GRADE==tmp.grade.list[[my.list.label]][j], select="SCALE_SCORE"), f=0.0)), digits=3)
+					round(as.vector(extendrange(subset(tmp.data, VALID_CASE=="VALID_CASE" & CONTENT_AREA==my.list.label & GRADE==tmp.grade.list[[my.list.label]][j], select="SCALE_SCORE"), f=0.0)), digits=3)
 			}
 			names(tmp.list[[my.list.label]]) <- paste(rep(c("knots_", "boundaries_", "loss.hoss_"), length(tmp.grade.list[[my.list.label]])), 
 				rep(tmp.grade.list[[my.list.label]], each=3), sep="")
@@ -236,6 +236,10 @@
 			data@Names <- getNames(data@Data, var.names)
 		}
 
+		## VALID_CASE converted to a character if a factor
+
+		if (is.factor(data@Data$VALID_CASE)) data@Data$VALID_CASE <- as.character(data@Data$VALID_CASE)
+
 		if (!identical(key(data@Data), c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))) {
 			setkeyv(data@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 			if (any(duplicated(data@Data[J("VALID_CASE")]))) {
@@ -260,6 +264,10 @@
 	} else {
 		variable.names <- getNames(data, var.names)
 	
+		## VALID_CASE converted to a character if a factor
+
+		if (is.factor(data$VALID_CASE)) data$VALID_CASE <- as.character(data$VALID_CASE)
+
 		##  Create keyed data.table and check for duplicate cases
 
 		data <- as.data.table(data)
@@ -303,6 +311,7 @@
 	if (any(levels(sgp_object@Data$CONTENT_AREA) != sort(levels(sgp_object@Data$CONTENT_AREA)))) {
 		sgp_object@Data$CONTENT_AREA <- as.factor(as.character(sgp_object@Data$CONTENT_AREA))
 	}
+
 
 	#################################################################
 	###
