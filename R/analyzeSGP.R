@@ -374,6 +374,12 @@ function(sgp_object,
 
 
 	#######################################################################################################################
+	##   Set up the temporary sgp list object.  Fill with necessary old results if they exist first.
+	#######################################################################################################################
+
+	tmp_sgp_object <- list(Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]], Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]])
+
+	#######################################################################################################################
 	##   Baseline SGP - compute matrices first if they are not in SGPstateData or merge them into sgp_object if in SGPstateData
 	#######################################################################################################################
 
@@ -405,7 +411,7 @@ function(sgp_object,
 							return.matrices.only=TRUE,
 							calculate.baseline.sgps=FALSE))
 					}
-					sgp_object@SGP <- .mergeSGP(sgp_object@SGP, list(Coefficient_Matrices=merge.coefficient.matrices(tmp)))
+					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp)))
 					rm(tmp)
 				} else {
 					if (par.start$par.type=="SNOW") {
@@ -416,7 +422,7 @@ function(sgp_object,
 								return.matrices.only=TRUE,
 								calculate.baseline.sgps=FALSE))
 						
-						sgp_object@SGP <- .mergeSGP(sgp_object@SGP, list(Coefficient_Matrices=merge.coefficient.matrices(tmp)))
+						tmp_sgp_object <- .mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp)))
 								rm(tmp)
 					} # END if (SNOW)
 					
@@ -428,7 +434,7 @@ function(sgp_object,
 									return.matrices.only=TRUE,
 									calculate.baseline.sgps=FALSE),
 								mc.cores=par.start$workers, mc.preschedule=FALSE)
-						sgp_object@SGP <- .mergeSGP(sgp_object@SGP, list(Coefficient_Matrices=merge.coefficient.matrices(tmp)))
+						tmp_sgp_object <- .mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp)))
 						rm(tmp)
 					} # END if (MULTICORE)
 					stopParallel(parallel.config, par.start)
@@ -443,17 +449,17 @@ function(sgp_object,
 						return.matrices.only=TRUE,
 						calculate.baseline.sgps=FALSE)
 				}
-			sgp_object@SGP <- .mergeSGP(sgp_object@SGP, list(Coefficient_Matrices=merge.coefficient.matrices(tmp)))
+			tmp_sgp_object <- .mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp)))
 			}
 
 			assign(paste(state, "_Baseline_Matrices", sep=""), list())
-			for (tmp.matrix.label in grep("BASELINE", names(sgp_object@SGP$Coefficient_Matrices), value=TRUE)) {
-				eval(parse(text=paste(state, "_Baseline_Matrices[['", tmp.matrix.label, "']] <- sgp_object@SGP[['Coefficient_Matrices']][['", tmp.matrix.label, "']]", sep="")))
+			for (tmp.matrix.label in grep("BASELINE", names(tmp_sgp_object$Coefficient_Matrices), value=TRUE)) {
+				eval(parse(text=paste(state, "_Baseline_Matrices[['", tmp.matrix.label, "']] <- tmp_sgp_object[['Coefficient_Matrices']][['", tmp.matrix.label, "']]", sep="")))
 			}
 			save(list=paste(state, "_Baseline_Matrices", sep=""), file=paste(state, "_Baseline_Matrices.Rdata", sep=""))
 			message("\n\tFinished Calculating Baseline Coefficient Matrices\n")
 		} else {
-			sgp_object@SGP <- .mergeSGP(sgp_object@SGP, SGPstateData[[state]][["Baseline_splineMatrix"]])
+			tmp_sgp_object <- .mergeSGP(tmp_sgp_object, SGPstateData[[state]][["Baseline_splineMatrix"]])
 		}
 	suppressMessages(gc()) # clean up
 	} # END Get/Compute baseline coefficient matrices
@@ -495,7 +501,7 @@ function(sgp_object,
 					tmp <- foreach(sgp.iter=iter(par.sgp.config), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE,
 						.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
 						return(studentGrowthPercentiles(
-							panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
+							panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]],
 								Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 							sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 							use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
@@ -513,7 +519,7 @@ function(sgp_object,
 					tmp <- foreach(sgp.iter=iter(par.sgp.config), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE,
 						.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
 						return(studentGrowthPercentiles(
-							panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
+							panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]],
 								Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 							sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 							use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
@@ -527,7 +533,7 @@ function(sgp_object,
 							...))
 					}
 				}
-				sgp_object@SGP <- .mergeSGP(sgp_object@SGP, tmp)
+				tmp_sgp_object <- .mergeSGP(tmp_sgp_object, tmp)
 				rm(tmp)
 			} else { # END FOREACH
 				###    SNOW flavor
@@ -537,7 +543,7 @@ function(sgp_object,
 							calculate.confidence.intervals <- state
 						}
 						tmp <- clusterApplyLB(par.start$internal.cl, par.sgp.config, 	function(sgp.iter)	studentGrowthPercentiles( 
-							panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
+							panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]],
 								Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 							sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 							use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
@@ -552,7 +558,7 @@ function(sgp_object,
 							...))
 					} else {
 						tmp <- clusterApplyLB(par.start$internal.cl, par.sgp.config, 	function(sgp.iter)	studentGrowthPercentiles( 
-							panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
+							panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]],
 								Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 							sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 							use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
@@ -565,7 +571,7 @@ function(sgp_object,
 							grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 							...))
 					}
-					sgp_object@SGP <- .mergeSGP(sgp_object@SGP, Reduce(.mergeSGP, tmp))
+					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
 					rm(tmp)
 					} # END SNOW
 				
@@ -576,7 +582,7 @@ function(sgp_object,
 							calculate.confidence.intervals <- state
 						}
 						tmp <- mclapply(par.sgp.config, function(sgp.iter)	studentGrowthPercentiles( 
-							panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
+							panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]],
 								Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 							sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 							use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
@@ -591,7 +597,7 @@ function(sgp_object,
 							...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 					} else {
 						tmp <- mclapply(par.sgp.config, function(sgp.iter)	studentGrowthPercentiles( 
-							panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
+							panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]],
 								Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 							sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 							use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
@@ -604,7 +610,7 @@ function(sgp_object,
 							grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 							...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 					}
-					sgp_object@SGP <- .mergeSGP(sgp_object@SGP, Reduce(.mergeSGP, tmp))
+					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
 					rm(tmp)
 				} # End MULTICORE
 			} # #END not FOREACH
@@ -626,7 +632,7 @@ function(sgp_object,
 				tmp <- foreach(sgp.iter=iter(par.sgp.config.baseline), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE,
 					.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
 					return(studentGrowthPercentiles(
-						panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
+						panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]],
 							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), 
 							my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), my.extra.label="BASELINE"),
@@ -641,13 +647,13 @@ function(sgp_object,
 						grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 						...))
 				}
-				sgp_object@SGP <- .mergeSGP(sgp_object@SGP, tmp)
+				tmp_sgp_object <- .mergeSGP(tmp_sgp_object, tmp)
 				rm(tmp)
 			} else { # END FOREACH	
 				###    SNOW flavor
 				if (par.start$par.type == 'SNOW') {
 					tmp <- clusterApplyLB(par.start$internal.cl, par.sgp.config.baseline, 	function(sgp.iter)	studentGrowthPercentiles(
-						panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
+						panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]],
 							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), 
 							my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), my.extra.label="BASELINE"),
@@ -662,14 +668,14 @@ function(sgp_object,
 						grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 						...))
 	
-					sgp_object@SGP <- .mergeSGP(sgp_object@SGP, Reduce(.mergeSGP, tmp))
+					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
 					rm(tmp)
 					} # END SNOW
 				
 				###  MULTICORE flavor
 				if (par.start$par.type == 'MULTICORE') {
 					tmp <- mclapply(par.sgp.config.baseline, function(sgp.iter)	studentGrowthPercentiles(
-						panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
+						panel.data=list(Panel_Data=get.panel.data("sgp.percentiles", sgp.iter), Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]],
 							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), 
 							my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), my.extra.label="BASELINE"),
@@ -684,7 +690,7 @@ function(sgp_object,
 						grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
-					sgp_object@SGP <- .mergeSGP(sgp_object@SGP, Reduce(.mergeSGP, tmp))
+					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
 					rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
@@ -705,7 +711,7 @@ function(sgp_object,
 				tmp <- foreach(sgp.iter=iter(par.sgp.config), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE,
 					.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
 					return(studentGrowthProjections(
-						panel.data=list(Panel_Data=get.panel.data("sgp.projections", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
+						panel.data=list(Panel_Data=get.panel.data("sgp.projections", sgp.iter), Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]],
 							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						use.my.coefficient.matrices=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
@@ -720,13 +726,13 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...))
 				}
-				sgp_object@SGP <- .mergeSGP(sgp_object@SGP, tmp)
+				tmp_sgp_object <- .mergeSGP(tmp_sgp_object, tmp)
 				rm(tmp)
 			} else {# END FOREACH
 				###   SNOW flavor
 				if (par.start$par.type == 'SNOW') {
 					tmp <- clusterApplyLB(par.start$internal.cl, par.sgp.config, 	function(sgp.iter)	studentGrowthProjections(
-						panel.data=list(Panel_Data=get.panel.data("sgp.projections", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
+						panel.data=list(Panel_Data=get.panel.data("sgp.projections", sgp.iter), Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]],
 							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						use.my.coefficient.matrices=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
@@ -741,14 +747,14 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...))
 	
-					sgp_object@SGP <- .mergeSGP(sgp_object@SGP, Reduce(.mergeSGP, tmp))
+					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
 					rm(tmp)
 					} # END SNOW
 				
 				###  MULTICORE flavor
 				if (par.start$par.type == 'MULTICORE') {
 					tmp <- mclapply(par.sgp.config, function(sgp.iter)	studentGrowthProjections(
-						panel.data=list(Panel_Data=get.panel.data("sgp.projections", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
+						panel.data=list(Panel_Data=get.panel.data("sgp.projections", sgp.iter), Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]],
 							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						use.my.coefficient.matrices=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
@@ -763,7 +769,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
-					sgp_object@SGP <- .mergeSGP(sgp_object@SGP, Reduce(.mergeSGP, tmp))
+					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
 					rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
@@ -784,7 +790,7 @@ function(sgp_object,
 				tmp <- foreach(sgp.iter=iter(par.sgp.config.baseline), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE,
 					.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
 					return(studentGrowthProjections(
-						panel.data=list(Panel_Data=get.panel.data("sgp.projections", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
+						panel.data=list(Panel_Data=get.panel.data("sgp.projections", sgp.iter), Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]],
 							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 
 							my.extra.label="BASELINE"),
@@ -800,13 +806,13 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...))
 				}
-				sgp_object@SGP <- .mergeSGP(sgp_object@SGP, tmp)
+				tmp_sgp_object <- .mergeSGP(tmp_sgp_object, tmp)
 				rm(tmp)
 			} else {# END FOREACH
 				###   SNOW flavor
 				if (par.start$par.type == 'SNOW') {
 					tmp <- clusterApplyLB(par.start$internal.cl, par.sgp.config.baseline, 	function(sgp.iter)	studentGrowthProjections(
-						panel.data=list(Panel_Data=get.panel.data("sgp.projections", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
+						panel.data=list(Panel_Data=get.panel.data("sgp.projections", sgp.iter), Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]],
 							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 
 							my.extra.label="BASELINE"),
@@ -822,14 +828,14 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...))
 	
-					sgp_object@SGP <- .mergeSGP(sgp_object@SGP, Reduce(.mergeSGP, tmp))
+					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
 					rm(tmp)
 					} # END SNOW
 				
 				###  MULTICORE flavor
 				if (par.start$par.type == 'MULTICORE') {
 					tmp <- mclapply(par.sgp.config.baseline, function(sgp.iter)	studentGrowthProjections(
-						panel.data=list(Panel_Data=get.panel.data("sgp.projections", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
+						panel.data=list(Panel_Data=get.panel.data("sgp.projections", sgp.iter), Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]],
 							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 
 							my.extra.label="BASELINE"),
@@ -845,7 +851,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
-					sgp_object@SGP <- .mergeSGP(sgp_object@SGP, Reduce(.mergeSGP, tmp))
+					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
 					rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
@@ -866,7 +872,7 @@ function(sgp_object,
 				tmp <- foreach(sgp.iter=iter(par.sgp.config), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE,
 					.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
 					return(studentGrowthProjections(
-						panel.data=list(Panel_Data=get.panel.data("sgp.projections.lagged", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
+						panel.data=list(Panel_Data=get.panel.data("sgp.projections.lagged", sgp.iter), Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]],
 							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 
 							my.extra.label="LAGGED"),
@@ -882,13 +888,13 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...))
 				}
-				sgp_object@SGP <- .mergeSGP(sgp_object@SGP, tmp)
+				tmp_sgp_object <- .mergeSGP(tmp_sgp_object, tmp)
 				rm(tmp)
 			} else {# END FOREACH
 				###   SNOW flavor
 				if (par.start$par.type == 'SNOW') {
 					tmp <- clusterApplyLB(par.start$internal.cl, par.sgp.config, 	function(sgp.iter)	studentGrowthProjections(
-						panel.data=list(Panel_Data=get.panel.data("sgp.projections.lagged", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
+						panel.data=list(Panel_Data=get.panel.data("sgp.projections.lagged", sgp.iter), Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]],
 							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 
 							my.extra.label="LAGGED"),
@@ -904,14 +910,14 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...))
 	
-					sgp_object@SGP <- .mergeSGP(sgp_object@SGP, Reduce(.mergeSGP, tmp))
+					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
 					rm(tmp)
 					} # END SNOW
 				
 				###  MULTICORE flavor
 				if (par.start$par.type == 'MULTICORE') {
 					tmp <- mclapply(par.sgp.config, function(sgp.iter)	studentGrowthProjections(
-						panel.data=list(Panel_Data=get.panel.data("sgp.projections.lagged", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
+						panel.data=list(Panel_Data=get.panel.data("sgp.projections.lagged", sgp.iter), Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]],
 							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 
 							my.extra.label="LAGGED"),
@@ -927,7 +933,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
-					sgp_object@SGP <- .mergeSGP(sgp_object@SGP, Reduce(.mergeSGP, tmp))
+					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
 					rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
@@ -948,7 +954,7 @@ function(sgp_object,
 				tmp <- foreach(sgp.iter=iter(par.sgp.config.baseline), .packages="SGP", .combine=".mergeSGP", .inorder=FALSE,
 					.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
 					return(studentGrowthProjections(
-						panel.data=list(Panel_Data=get.panel.data("sgp.projections.lagged", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
+						panel.data=list(Panel_Data=get.panel.data("sgp.projections.lagged", sgp.iter), Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]],
 							Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 
 							my.extra.label="LAGGED.BASELINE"),
@@ -964,14 +970,14 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...))
 				}
-				sgp_object@SGP <- .mergeSGP(sgp_object@SGP, tmp)
+				tmp_sgp_object <- .mergeSGP(tmp_sgp_object, tmp)
 				rm(tmp)
 			} else {# END FOREACH
 
 			###  SNOW flavor
 			if (par.start$par.type == 'SNOW') {
 				tmp <- clusterApplyLB(par.start$internal.cl, par.sgp.config.baseline, 	function(sgp.iter)	studentGrowthProjections(
-					panel.data=list(Panel_Data=get.panel.data("sgp.projections.lagged", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
+					panel.data=list(Panel_Data=get.panel.data("sgp.projections.lagged", sgp.iter), Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]],
 						Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 
 						my.extra.label="LAGGED.BASELINE"),
@@ -987,14 +993,14 @@ function(sgp_object,
 					projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 					...))
 
-				sgp_object@SGP <- .mergeSGP(sgp_object@SGP, Reduce(.mergeSGP, tmp))
+				tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
 				rm(tmp)
 			} # END SNOW
 			
 			###  MULTICORE flavor
 			if (par.start$par.type == 'MULTICORE') {
 				tmp <- mclapply(par.sgp.config.baseline, function(sgp.iter)	studentGrowthProjections(
-					panel.data=list(Panel_Data=get.panel.data("sgp.projections.lagged", sgp.iter), Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]],
+					panel.data=list(Panel_Data=get.panel.data("sgp.projections.lagged", sgp.iter), Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]],
 						Knots_Boundaries=get.knots.boundaries(sgp.iter)),
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 
 						my.extra.label="LAGGED.BASELINE"),
@@ -1010,7 +1016,7 @@ function(sgp_object,
 					projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 					...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 
-				sgp_object@SGP <- .mergeSGP(sgp_object@SGP, Reduce(.mergeSGP, tmp))
+				tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
 				rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
@@ -1028,14 +1034,11 @@ function(sgp_object,
 
 	if (is.null(parallel.config)) {
 
-		tmp_sgp_object <- list(Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]], Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]])
-
 		setkey(sgp_object@Data, VALID_CASE, CONTENT_AREA, YEAR, GRADE)
 		par.sgp.config <- get.par.sgp.config(sgp.config)		
 		if (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline) {
 			par.sgp.config.baseline <- par.sgp.config[which(sapply(par.sgp.config, function(x) !identical(x[['base.gp']], "NO_BASELINE_COEFFICIENT_MATRICES")))]
 		}
-
 
 		## sgp.percentiles
 			
@@ -1205,9 +1208,9 @@ function(sgp_object,
 					...)
 			}
 		} ## END sgp.projections.lagged.baseline
-		
-	sgp_object@SGP <- .mergeSGP(sgp_object@SGP, tmp_sgp_object)
 	} ## END sequential analyzeSGP
+
+	sgp_object@SGP <- .mergeSGP(sgp_object@SGP, tmp_sgp_object)
 
 	if (goodness.of.fit.print) gof.print(sgp_object)
 	setkey(sgp_object@Data, VALID_CASE, CONTENT_AREA, YEAR, ID) # re-key data for combineSGP, etc.
