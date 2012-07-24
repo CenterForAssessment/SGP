@@ -104,7 +104,7 @@ function(sgp_object,
 		long_data_tmp <- sgp_object@Data
 		setkeyv(long_data_tmp, c("VALID_CASE", "ID"))
 		suppressWarnings(invisible(long_data_tmp[,YEAR_BY_CONTENT_AREA := paste(YEAR, CONTENT_AREA, sep=".")]))
-		assign(paste(tmp.state, "SGP_WIDE_Data", sep="_"), reshape(long_data_tmp[J("VALID_CASE")], idvar="ID", 
+		assign(paste(tmp.state, "SGP_WIDE_Data", sep="_"), reshape(long_data_tmp["VALID_CASE"], idvar="ID", 
 			timevar="YEAR_BY_CONTENT_AREA", drop=c("VALID_CASE", "CONTENT_AREA", "YEAR"), direction="wide"))
 
 		save(list=paste(tmp.state, "SGP_WIDE_Data", sep="_"), file=file.path(outputSGP.directory, paste(tmp.state, "SGP_WIDE_Data.Rdata", sep="_")))
@@ -210,10 +210,10 @@ function(sgp_object,
 		#### Year stuff 
 
 		if (is.null(outputSGP_INDIVIDUAL.years)) {
-			tmp.years <- sort(unique(sgp_object@Data[J("VALID_CASE")][["YEAR"]]))
+			tmp.years <- sort(unique(sgp_object@Data["VALID_CASE"][["YEAR"]]))
 			tmp.last.year <- tail(tmp.years, 1)
 		} else {
-			tmp.all.years <- sort(unique(sgp_object@Data[J("VALID_CASE")][["YEAR"]])) 
+			tmp.all.years <- sort(unique(sgp_object@Data["VALID_CASE"][["YEAR"]])) 
 			tmp.years <- tmp.all.years[1:which(tmp.all.years==tail(sort(outputSGP_INDIVIDUAL.years), 1))]
 			tmp.last.year <- tail(tmp.years, 1)
 		}
@@ -222,7 +222,7 @@ function(sgp_object,
 		#### Content area stuff 
 
 		if (is.null(outputSGP_INDIVIDUAL.content_areas)) {
-			tmp.content_areas <- sort(unique(sgp_object@Data[J("VALID_CASE", tmp.last.year)][["CONTENT_AREA"]]))
+			tmp.content_areas <- sort(unique(sgp_object@Data[SJ("VALID_CASE", tmp.last.year)][["CONTENT_AREA"]]))
 		} else {
 			tmp.content_areas <- as.factor(outputSGP_INDIVIDUAL.content_areas)
 		}

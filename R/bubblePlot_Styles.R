@@ -149,7 +149,6 @@
 			}
 		} else {
 			my.iters$tmp.years <- bPlot.years
-			if (is.factor(tmp.data$YEAR)) my.iters$tmp.years <- as.factor(my.iters$tmp.years)
 		}
 
 		# Content Area Stuff
@@ -162,7 +161,6 @@
 			}
 		} else {
 			my.iters$tmp.content_areas <- bPlot.content_areas
-			if (is.factor(tmp.data$CONTENT_AREA)) my.iters$tmp.content_areas <- as.factor(my.iters$tmp.content_areas)
 		}
 
 		# Reconcile choice of District and Schools
@@ -193,21 +191,18 @@
 
 		if (is.null(bPlot.instructors) & is.null(bPlot.schools) & !is.null(bPlot.districts)) {
 	 		my.iters$tmp.districts <- bPlot.districts
-	 		if (is.factor(tmp.data$DISTRICT_NUMBER)) my.iters$tmp.districts <- as.factor(my.iters$tmp.districts)
 			if ("SCHOOL_NUMBER" %in% names(tmp.data)) my.iters$tmp.schools <- unique(tmp.data$SCHOOL_NUMBER[tmp.data$DISTRICT_NUMBER %in% my.iters$tmp.districts]) %w/o% NA
 			if ("INSTRUCTOR_NUMBER" %in% names(tmp.data)) my.iters$tmp.instructors <- unique(tmp.data$INSTRUCTOR_NUMBER[tmp.data$INSTRUCTOR_NUMBER %in% my.iters$tmp.districts]) %w/o% NA
 		}
 
 		if (is.null(bPlot.instructors) & !is.null(bPlot.schools) & is.null(bPlot.districts)) {
 	 		my.iters$tmp.schools <- bPlot.schools 
-			if (is.factor(tmp.data$SCHOOL_NUMBER)) my.iters$tmp.schools <- as.factor(my.iters$tmp.schools)
 			if ("DISTRICT_NUMBER" %in% names(tmp.data)) my.iters$tmp.districts <- unique(tmp.data$DISTRICT_NUMBER[tmp.data$SCHOOL_NUMBER %in% my.iters$tmp.schools]) %w/o% NA
 			if ("INSTRUCTOR_NUMBER" %in% names(tmp.data)) my.iters$tmp.instructors <- unique(tmp.data$INSTRUCTOR_NUMBER[tmp.data$INSTRUCTOR_NUMBER %in% my.iters$tmp.districts]) %w/o% NA
 		}
 
 		if (!is.null(bPlot.instructors) & is.null(bPlot.schools) & is.null(bPlot.districts)) {
-         	my.iters$tmp.instructors <- bPlot.instructors 
-			if (is.factor(tmp.data$INSTRUCTOR_NUMBER)) my.iters$tmp.instructors <- as.factor(my.iters$tmp.instructors)
+			my.iters$tmp.instructors <- bPlot.instructors 
 			if ("DISTRICT_NUMBER" %in% names(tmp.data)) my.iters$tmp.districts <- unique(tmp.data$DISTRICT_NUMBER[tmp.data$SCHOOL_NUMBER %in% my.iters$tmp.schools]) %w/o% NA
 			if ("SCHOOL_NUMBER" %in% names(tmp.data)) my.iters$tmp.schools <- unique(tmp.data$SCHOOL_NUMBER[tmp.data$DISTRICT_NUMBER %in% my.iters$tmp.districts]) %w/o% NA
 		}
@@ -215,24 +210,18 @@
 		if (is.null(bPlot.instructors) & !is.null(bPlot.schools) & !is.null(bPlot.districts)) {
 	 		my.iters$tmp.districts <- bPlot.districts
 	 		my.iters$tmp.schools <- bPlot.schools 
-	 		if (is.factor(tmp.data$DISTRICT_NUMBER)) my.iters$tmp.districts <- as.factor(my.iters$tmp.districts)
-			if (is.factor(tmp.data$SCHOOL_NUMBER)) my.iters$tmp.schools <- as.factor(my.iters$tmp.schools)
 			if ("INSTRUCTOR_NUMBER" %in% names(tmp.data)) my.iters$tmp.instructors <- unique(tmp.data$INSTRUCTOR_NUMBER[tmp.data$INSTRUCTOR_NUMBER %in% my.iters$tmp.districts]) %w/o% NA
 		}
 
 		if (!is.null(bPlot.instructors) & !is.null(bPlot.schools) & is.null(bPlot.districts)) {
 	 		my.iters$tmp.schools <- bPlot.schools 
-         	my.iters$tmp.instructors <- bPlot.instructors 
-			if (is.factor(tmp.data$SCHOOL_NUMBER)) my.iters$tmp.schools <- as.factor(my.iters$tmp.schools)
-			if (is.factor(tmp.data$INSTRUCTOR_NUMBER)) my.iters$tmp.instructors <- as.factor(my.iters$tmp.instructors)
+			my.iters$tmp.instructors <- bPlot.instructors 
 			if ("DISTRICT_NUMBER" %in% names(tmp.data)) my.iters$tmp.districts <- unique(tmp.data$DISTRICT_NUMBER[tmp.data$SCHOOL_NUMBER %in% my.iters$tmp.schools]) %w/o% NA
 		}
 
 		if (!is.null(bPlot.instructors) & is.null(bPlot.schools) & !is.null(bPlot.districts)) {
 	 		my.iters$tmp.districts <- bPlot.districts
-         	my.iters$tmp.instructors <- bPlot.instructors 
-	 		if (is.factor(tmp.data$DISTRICT_NUMBER)) my.iters$tmp.districts <- as.factor(my.iters$tmp.districts)
-			if (is.factor(tmp.data$INSTRUCTOR_NUMBER)) my.iters$tmp.instructors <- as.factor(my.iters$tmp.instructors)
+			my.iters$tmp.instructors <- bPlot.instructors 
 			if ("SCHOOL_NUMBER" %in% names(tmp.data)) my.iters$tmp.schools <- unique(tmp.data$SCHOOL_NUMBER[tmp.data$DISTRICT_NUMBER %in% my.iters$tmp.districts]) %w/o% NA
 		}
 
@@ -243,9 +232,6 @@
 			my.iters$tmp.instructors <- unique(c(my.iters$tmp.instructors, tmp.data$INSTRUCTOR_NUMBER[tmp.data$SCHOOL_NUMBER %in% my.iters$tmp.schools])) %w/o% NA
 			my.iters$tmp.schools <- unique(c(my.iters$tmp.schools, tmp.data$SCHOOL_NUMBER[tmp.data$DISTRICT_NUMBER %in% my.iters$tmp.districts])) %w/o% NA
 			my.iters$tmp.districts <- unique(c(my.iters$tmp.districts, tmp.data$DISTRICT_NUMBER[tmp.data$SCHOOL_NUMBER %in% my.iters$tmp.schools])) %w/o% NA
-	 		if (is.factor(tmp.data$DISTRICT_NUMBER)) my.iters$tmp.districts <- as.factor(my.iters$tmp.districts)
-			if (is.factor(tmp.data$SCHOOL_NUMBER)) my.iters$tmp.schools <- as.factor(my.iters$tmp.schools)
-			if (is.factor(tmp.data$INSTRUCTOR_NUMBER)) my.iters$tmp.instructors <- as.factor(my.iters$tmp.instructors)
 		}
 
 		# y.variable (include/not include prior achievement)
@@ -1283,7 +1269,7 @@ if (22 %in% bPlot.styles) {
 		for (y.variable.iter in my.iters$tmp.y.variable) {  ### Loop over CURRENT and PRIOR achievement (if requested)
 
 		# Subset data
-		if (is.factor(year.iter)) year.iter <- as.character(year.iter) # factor was messing up subset...
+
 		bPlot.data <- tmp.bPlot.data[YEAR==year.iter & SCHOOL_NUMBER==school_number.iter & CONTENT_AREA==content_area.iter & MEDIAN_SGP_COUNT >= bPlot.minimum.n]
 
 		# Create labels and file path
@@ -1896,7 +1882,7 @@ if (22 %in% bPlot.styles) {
 
 		### Get tmp.years, tmp.content_areas, and tmp.y.variable
 
-		my.iters <- get.my.iters(sgp_object@Data[J("VALID_CASE")], bubblePlot_LEVEL)
+		my.iters <- get.my.iters(sgp_object@Data["VALID_CASE"], bubblePlot_LEVEL)
 
 		### Create PRIOR Scale Score, SGP, SGP_TARGET and CONTENT_AREA
 
@@ -1945,7 +1931,7 @@ if (22 %in% bPlot.styles) {
 		
 		# Subset data
 
-		tmp.bPlot.data.1 <- sgp_object@Data[J("VALID_CASE", year.iter, content_area.iter, my.iters$tmp.districts[district.iter])]
+		tmp.bPlot.data.1 <- sgp_object@Data[SJ("VALID_CASE", year.iter, content_area.iter, my.iters$tmp.districts[district.iter])]
 
 		tmp.unique.schools <- my.iters$tmp.schools[my.iters$tmp.schools %in% unique(tmp.bPlot.data.1$SCHOOL_NUMBER)]
 		for (school.iter in seq_along(tmp.unique.schools)) { ### Loop over schools (seq_along to get integer for anonymize)
@@ -2093,10 +2079,10 @@ if (22 %in% bPlot.styles) {
 				tmp.grades.reported <- SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area.iter]][-1]
 				tmp.grades.reported <- tmp.grades.reported[tmp.grades.reported %in% unique(sgp_object@Data)["VALID_CASE"][["GRADE"]]]
 				for (i in seq_along(tmp.grades.reported)) {
-					tmp.ids[[i]] <- as.character(sample(unique(sgp_object@Data[J("VALID_CASE", year.iter, content_area.iter, tmp.grades.reported[i])][['ID']]), 30))
+					tmp.ids[[i]] <- as.character(sample(unique(sgp_object@Data[SJ("VALID_CASE", year.iter, content_area.iter, tmp.grades.reported[i])][['ID']]), 30))
 				}
 				
-				tmp.bPlot.data.1.long <- sgp_object@Data[J("VALID_CASE", year.iter, content_area.iter)][ID %in% unlist(tmp.ids)]
+				tmp.bPlot.data.1.long <- sgp_object@Data[SJ("VALID_CASE", year.iter, content_area.iter)][ID %in% unlist(tmp.ids)]
 	
 				tmp.bPlot.data.1.long[['INSTRUCTOR_NUMBER']] <- factor(paste("Grade_", tmp.bPlot.data.1.long[['GRADE']], sep=""))
 				tmp.bPlot.data.1.long[['INSTRUCTOR_NAME']] <- factor('Psuedo-Instructor')
@@ -2106,7 +2092,7 @@ if (22 %in% bPlot.styles) {
 				tmp.bPlot.data.1.long[['DISTRICT_NAME']] <- factor('Psuedo District')
 				setkeyv(tmp.bPlot.data.1.long, "INSTRUCTOR_NUMBER")
 			} else {
-				tmp.bPlot.data.1 <- sgp_object@Data[J("VALID_CASE", year.iter, content_area.iter, my.iters$tmp.districts[district.iter])]	
+				tmp.bPlot.data.1 <- sgp_object@Data[SJ("VALID_CASE", year.iter, content_area.iter, my.iters$tmp.districts[district.iter])]	
 					
 				tmp.bPlot.data.1.long <- data.table(melt(as.data.frame(tmp.bPlot.data.1), 
 					measure.vars=mult.memb[[1]][["VARIABLE.NAMES"]], 
@@ -2132,7 +2118,7 @@ if (22 %in% bPlot.styles) {
 			tmp.bPlot.data <- tmp.bPlot.data.1.long[SCHOOL_NUMBER==tmp.unique.schools[school.iter] & !is.na(SGP)]
 			
 			for (instructor.iter in sort(unique(tmp.bPlot.data$INSTRUCTOR_NUMBER))) { ### Loop over unique teachers in school
-				bPlot.data <- tmp.bPlot.data[J(instructor.iter)]
+				bPlot.data <- tmp.bPlot.data[SJ(instructor.iter)]
 		
 				if (dim(bPlot.data)[1] > 0) {
 		
@@ -2272,10 +2258,10 @@ if (22 %in% bPlot.styles) {
 				tmp.grades.reported <- SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area.iter]][-1]
 				tmp.grades.reported <- tmp.grades.reported[tmp.grades.reported %in% unique(sgp_object@Data)["VALID_CASE"][["GRADE"]]]
 				for (i in seq_along(tmp.grades.reported)) {
-					tmp.ids[[i]] <- as.character(sample(unique(sgp_object@Data[J("VALID_CASE", year.iter, content_area.iter, tmp.grades.reported[i])][['ID']]), 30))
+					tmp.ids[[i]] <- as.character(sample(unique(sgp_object@Data[SJ("VALID_CASE", year.iter, content_area.iter, tmp.grades.reported[i])][['ID']]), 30))
 				}
 				
-				tmp.bPlot.data.1.long <- sgp_object@Data[J("VALID_CASE", year.iter, content_area.iter)][ID %in% unlist(tmp.ids)]
+				tmp.bPlot.data.1.long <- sgp_object@Data[SJ("VALID_CASE", year.iter, content_area.iter)][ID %in% unlist(tmp.ids)]
 	
 				tmp.bPlot.data.1.long[['INSTRUCTOR_NUMBER']] <- factor(paste("Grade_", tmp.bPlot.data.1.long[['GRADE']], sep=""))
 				tmp.bPlot.data.1.long[['INSTRUCTOR_NAME']] <- factor('Psuedo-Instructor')
@@ -2284,7 +2270,7 @@ if (22 %in% bPlot.styles) {
 				tmp.bPlot.data.1.long[['DISTRICT_NUMBER']] <- factor('-999')
 				tmp.bPlot.data.1.long[['DISTRICT_NAME']] <- factor('Psuedo District')
 			}	else {
-				tmp.bPlot.data.1 <- sgp_object@Data[J("VALID_CASE", year.iter, content_area.iter, my.iters$tmp.districts[district.iter])]	
+				tmp.bPlot.data.1 <- sgp_object@Data[SJ("VALID_CASE", year.iter, content_area.iter, my.iters$tmp.districts[district.iter])]	
 					
 				tmp.bPlot.data.1.long <- data.table(melt(as.data.frame(tmp.bPlot.data.1), 
 					measure.vars=mult.memb[[1]][["VARIABLE.NAMES"]], 

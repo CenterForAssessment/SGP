@@ -63,15 +63,9 @@ function(sgp_object,
 		"%w/o%" <- function(x, y) x[!x %in% y]
 
 		convert.variables <- function(tmp.df) {
-			if (is.factor(tmp.df$YEAR)) {
+			if (is.character(tmp.df$YEAR)) {
 				tmp1 <- unlist(strsplit(as.character(tmp.df$YEAR), "_"))
 				tmp.df$YEAR <- as.integer(tmp1[seq(length(tmp1)) %% 2 == 0])
-			}
-			if (is.factor(tmp.df$DISTRICT_NUMBER)) {
-				tmp.df$DISTRICT_NUMBER <- as.character(tmp.df$DISTRICT_NUMBER)
-			}
-			if (is.factor(tmp.df$SCHOOL_NUMBER)) {
-				tmp.df$SCHOOL_NUMBER <- as.character(tmp.df$SCHOOL_NUMBER)
 			}
 			tmp.df[sapply(tmp.df, is.nan)] <- NA
 			return(tmp.df)

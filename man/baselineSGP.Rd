@@ -74,10 +74,9 @@ DEMO_Baseline_Matrices <- baselineSGP(Demonstration_SGP, return.matrices.only=TR
 
 SGPstateData[["DEMO"]][["Baseline_splineMatrix"]] <- NULL
 
-sgpData_LONG_0910 <- subset(sgpData_LONG, YEAR!="2010_2011")
-sgpData_LONG_0910$YEAR <- factor(sgpData_LONG_0910$YEAR) ### To remove "2010_2011" level from factor
+sgpData_LONG_1011 <- subset(sgpData_LONG, YEAR!="2011_2012")
 
-Demonstration_SGP <- prepareSGP(sgpData_LONG_0910)
+Demonstration_SGP <- prepareSGP(sgpData_LONG_1011)
 Demonstration_SGP <- baselineSGP(Demonstration_SGP)
 }  
 }
