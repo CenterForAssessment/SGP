@@ -124,7 +124,7 @@ function(panel.data,         ## REQUIRED
 		str3 <- tail(SS, 1)
 		for (i in 2:(k+1)) {
 			str1 <- paste(str1, " & !is.na(", rev(SS)[i], ")", sep="")
-			str2 <- paste(str2, " & ", rev(GD)[i], "=='", rev(tmp.gp)[i], "'", sep="")
+			str2 <- paste(str2, " & ", rev(GD)[i], "=='", strsplit(rev(as.character(tmp.gp))[i], "[.]")[[1]][1], "'", sep="") # AVI change to deal with repeat grades
 			str3 <- c(rev(SS)[i], str3)
 		}
 		if (by.grade) {
