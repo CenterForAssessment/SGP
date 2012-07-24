@@ -267,17 +267,18 @@ function(sgp_object,
 
 		if (sgp.type=="sgp.percentiles") {
 			return(as.data.frame(reshape(
-				sgp_object@Data[J("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), 
-					tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), sgp.iter[["sgp.grade.sequences"]][[1]]), nomatch=0],
+				sgp_object@Data[SJ("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), 
+					tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), sgp.iter[["sgp.grade.sequences"]][[1]]), nomatch=0][,
+					'tmp.timevar' := paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
 			idvar="ID",
-			timevar="YEAR",
-			drop=names(sgp_object@Data)[!names(sgp_object@Data) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR")],
+			timevar="tmp.timevar",
+			drop=names(sgp_object@Data)[!names(sgp_object@Data) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar")],
 			direction="wide")))
 		}
 
 		if (sgp.type=="sgp.projections") {
 			return(as.data.frame(reshape(
-				sgp_object@Data[J("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])-1), 
+				sgp_object@Data[SJ("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])-1), 
 					tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])-1), head(sgp.iter[["sgp.grade.sequences"]][[1]], -1)), nomatch=0],
 			idvar="ID",
 			timevar="YEAR",
@@ -310,6 +311,18 @@ function(sgp_object,
 
 	get.knots.boundaries <- function(sgp.iter) {
 		kb <- list()
+		tmp.gp <- sgp.iter[["sgp.grade.sequences"]][[1]]
+		num.prior <- length(tmp.gp)-1
+		
+		#  Check for repeat grades - either held back, multiple grade/subject priors, etc.  Add .1, .2 , etc.
+		if (any(duplicated(tmp.gp[1:num.prior]))) {
+			while(any(duplicated(tmp.gp[1:num.prior]))) {
+				tmp.gp[which(duplicated(tmp.gp[1:num.prior]))] <- tmp.gp[which(duplicated(tmp.gp[1:num.prior]))] + 0.1
+			}
+			tmp.gp[1:num.prior] <- tmp.gp[1:num.prior]+0.1
+		}
+		tmp.gp <- as.character(tmp.gp)
+		
 		#  If all sgp.iter[["sgp.content.areas"]] are the same, use SGPstateData as usual:
 		if (all(sapply(sgp.iter[["sgp.content.areas"]], function(x) identical(tail(sgp.iter[["sgp.content.areas"]], 1), x)))) {
 			for (i in grep(tail(sgp.iter[["sgp.content.areas"]], 1), names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]]), value=TRUE)) {
@@ -317,13 +330,13 @@ function(sgp_object,
 					SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[i]]
 			}
 		} else { # if not (e.g. "ELA", "HISTORY",  of "MATH", "ALGEBRA_I", then get the right knots and boundaries, but name them as 'my.subject')
-			tmp.kb <- list()
-			for (ca in seq_along(sgp.iter[["sgp.content.areas"]])) {
-				tmp.kb[["Knots_Boundaries"]][[paste(tail(sgp.iter[["sgp.content.areas"]], 1), tail(sgp.iter[["sgp.panel.years"]], 1), sep=".")]] <- 
-					SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[sgp.iter[["sgp.content.areas"]][ca]]][
-						grep(as.character(sgp.iter[["sgp.grade.sequences"]][[1]][ca]),
-						names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[sgp.iter[["sgp.content.areas"]][ca]]]))]
-				kb <- .mergeSGP(kb, tmp.kb)
+			for (ca in seq_along(head(sgp.iter[["sgp.content.areas"]], -1))) {
+				for (j in c('boundaries_', 'knots_', 'loss.hoss_')) {
+					kb[["Knots_Boundaries"]][[paste(tail(sgp.iter[["sgp.content.areas"]], 1), tail(sgp.iter[["sgp.panel.years"]], 1), sep=".")]][[paste(j, tmp.gp[ca], sep="")]] <- 
+						SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[sgp.iter[["sgp.content.areas"]][ca]]][
+							grep(paste(j, strsplit(tmp.gp, "[.]")[[ca]][1], sep=""), 
+							names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[sgp.iter[["sgp.content.areas"]][ca]]]))][[1]]
+					}
 			}
 		}
 		return(kb[["Knots_Boundaries"]])
@@ -335,8 +348,10 @@ function(sgp_object,
 	get.panel.data.vnames <- function(sgp.type, sgp.iter) {
 
 		if (sgp.type=="sgp.percentiles") {
-			return(c("ID", paste("GRADE", tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), sep="."), 
-				paste("SCALE_SCORE", tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), sep=".")))
+			return(c("ID", paste("GRADE", tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), 
+				tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), sep="."), 
+				paste("SCALE_SCORE", tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), 
+				tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), sep=".")))
 		}
 
 		if (sgp.type=="sgp.projections") {

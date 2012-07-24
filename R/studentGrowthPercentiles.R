@@ -677,6 +677,12 @@ function(panel.data,         ## REQUIRED
 	}} else {
 		num.prior <- length(tmp.gp)-1
 	}
+	if (any(duplicated(tmp.gp[1:num.prior]))) {  #  Check for repeat grades - either held back, multiple grade/subject priors, etc.  Add .1, .2 , etc.
+		while(any(duplicated(tmp.gp[1:num.prior]))) {
+			tmp.gp[which(duplicated(tmp.gp[1:num.prior]))] <- tmp.gp[which(duplicated(tmp.gp[1:num.prior]))] + 0.1
+		}
+		tmp.gp[1:num.prior] <- tmp.gp[1:num.prior]+0.1
+	}
 
 	if (!is.null(max.order.for.percentile)) {
 		tmp.gp <- tail(tmp.gp, max.order.for.percentile+1)
