@@ -64,7 +64,7 @@ function(sgp_object,
 
 		convert.variables <- function(tmp.df) {
 			if (is.character(tmp.df$YEAR)) {
-				tmp1 <- unlist(strsplit(as.character(tmp.df$YEAR), "_"))
+				tmp1 <- unlist(strsplit(tmp.df$YEAR, "_"))
 				tmp.df$YEAR <- as.integer(tmp1[seq(length(tmp1)) %% 2 == 0])
 			}
 			tmp.df[sapply(tmp.df, is.nan)] <- NA
@@ -439,8 +439,8 @@ function(sgp_object,
 			!is.na(DISTRICT_NUMBER) & CONTENT_AREA %in% content_areas & YEAR %in% years & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes")))
 		tmp.CONTENT_AREA <- data.frame(
 			KEY_VALUE_KEY="CONTENT_AREA", 
-			KEY_VALUE_CODE=sort(unique(as.integer(tmp$CONTENT_AREA))), 
-			KEY_VALUE_TEXT=unlist(lapply(levels(tmp$CONTENT_AREA)[sort(unique(as.integer(tmp$CONTENT_AREA)))], capwords)))
+			KEY_VALUE_CODE=seq_along(unique(tmp$CONTENT_AREA)),
+			KEY_VALUE_TEXT=sapply(sort(unique(tmp$CONTENT_AREA)), capwords))
 
 		# YEAR
 
