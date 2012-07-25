@@ -63,15 +63,9 @@ function(sgp_object,
 		"%w/o%" <- function(x, y) x[!x %in% y]
 
 		convert.variables <- function(tmp.df) {
-			if (is.factor(tmp.df$YEAR)) {
-				tmp1 <- unlist(strsplit(as.character(tmp.df$YEAR), "_"))
+			if (is.character(tmp.df$YEAR) | is.factor(tmp.df$YEAR)) {
+				tmp1 <- unlist(strsplit(tmp.df$YEAR, "_"))
 				tmp.df$YEAR <- as.integer(tmp1[seq(length(tmp1)) %% 2 == 0])
-			}
-			if (is.factor(tmp.df$DISTRICT_NUMBER)) {
-				tmp.df$DISTRICT_NUMBER <- as.character(tmp.df$DISTRICT_NUMBER)
-			}
-			if (is.factor(tmp.df$SCHOOL_NUMBER)) {
-				tmp.df$SCHOOL_NUMBER <- as.character(tmp.df$SCHOOL_NUMBER)
 			}
 			tmp.df[sapply(tmp.df, is.nan)] <- NA
 			return(tmp.df)
@@ -98,7 +92,7 @@ function(sgp_object,
 	## Create tmp.school.and.district.by.year table
 
 		setkeyv(sgp_object@Data, c("YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER"))
-		tmp.school.and.district.by.year  <- as.data.frame(sapply(convert.variables(unique(sgp_object@Data)[, list(YEAR, DISTRICT_NUMBER, SCHOOL_NUMBER)]), unclass))
+		tmp.school.and.district.by.year  <- as.data.frame(lapply(convert.variables(unique(sgp_object@Data)[, list(YEAR, DISTRICT_NUMBER, SCHOOL_NUMBER)]), unclass))
 
 
 	###
@@ -118,7 +112,7 @@ function(sgp_object,
 			"MEDIAN_SGP_COUNT INTEGER",
 			"PERCENT_AT_ABOVE_PROFICIENT_COUNT INTEGER")
 
-		tmp <- as.data.frame(sapply(convert.variables(subset(sgp_object@Summary[["DISTRICT_NUMBER"]][["DISTRICT_NUMBER__CONTENT_AREA__YEAR__DISTRICT_ENROLLMENT_STATUS"]],
+		tmp <- as.data.frame(lapply(convert.variables(subset(sgp_object@Summary[["DISTRICT_NUMBER"]][["DISTRICT_NUMBER__CONTENT_AREA__YEAR__DISTRICT_ENROLLMENT_STATUS"]],
 			!is.na(DISTRICT_NUMBER) & CONTENT_AREA %in% content_areas & YEAR %in% years & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes" & !is.na(MEDIAN_SGP))), unclass))
 		names(tmp)[names(tmp)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET"  ### TEMPORARY UNTIL NAMES ARE ALIGNED
 		tmp <- tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))]
@@ -143,7 +137,7 @@ function(sgp_object,
 			"MEDIAN_SGP_COUNT INTEGER",
 			"PERCENT_AT_ABOVE_PROFICIENT_COUNT INTEGER")
 
-		tmp <- as.data.frame(sapply(convert.variables(subset(sgp_object@Summary[["DISTRICT_NUMBER"]][["DISTRICT_NUMBER__CONTENT_AREA__YEAR__GRADE__DISTRICT_ENROLLMENT_STATUS"]],
+		tmp <- as.data.frame(lapply(convert.variables(subset(sgp_object@Summary[["DISTRICT_NUMBER"]][["DISTRICT_NUMBER__CONTENT_AREA__YEAR__GRADE__DISTRICT_ENROLLMENT_STATUS"]],
 			!is.na(DISTRICT_NUMBER) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(GRADE) & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes" & !is.na(MEDIAN_SGP))), 
 			unclass))
 		names(tmp)[names(tmp)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET"  ### TEMPORARY UNTIL NAMES ARE ALIGNED
@@ -170,7 +164,7 @@ function(sgp_object,
 			"PERCENT_AT_ABOVE_PROFICIENT_COUNT INTEGER",
 			"ENROLLMENT_PERCENTAGE REAL")
 
-		tmp <- as.data.frame(sapply(convert.variables(subset(sgp_object@Summary[["DISTRICT_NUMBER"]][["DISTRICT_NUMBER__CONTENT_AREA__YEAR__ETHNICITY__DISTRICT_ENROLLMENT_STATUS"]],
+		tmp <- as.data.frame(lapply(convert.variables(subset(sgp_object@Summary[["DISTRICT_NUMBER"]][["DISTRICT_NUMBER__CONTENT_AREA__YEAR__ETHNICITY__DISTRICT_ENROLLMENT_STATUS"]],
 			!is.na(DISTRICT_NUMBER) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(ETHNICITY) & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes" &
 			!is.na(MEDIAN_SGP))), unclass))
 		names(tmp)[names(tmp)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET"  ### TEMPORARY UNTIL NAMES ARE ALIGNED
@@ -198,7 +192,7 @@ function(sgp_object,
 			"MEDIAN_SGP_COUNT INTEGER",
 			"PERCENT_AT_ABOVE_PROFICIENT_COUNT INTEGER")
 
-		tmp <- as.data.frame(sapply(convert.variables(subset(sgp_object@Summary[["DISTRICT_NUMBER"]][["DISTRICT_NUMBER__CONTENT_AREA__YEAR__GRADE__ETHNICITY__DISTRICT_ENROLLMENT_STATUS"]],
+		tmp <- as.data.frame(lapply(convert.variables(subset(sgp_object@Summary[["DISTRICT_NUMBER"]][["DISTRICT_NUMBER__CONTENT_AREA__YEAR__GRADE__ETHNICITY__DISTRICT_ENROLLMENT_STATUS"]],
 			!is.na(DISTRICT_NUMBER) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(GRADE) & !is.na(ETHNICITY) & 
 			DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes" & !is.na(MEDIAN_SGP))), unclass))
 		names(tmp)[names(tmp)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET"  ### TEMPORARY UNTIL NAMES ARE ALIGNED
@@ -302,14 +296,14 @@ function(sgp_object,
 			"MEDIAN_SGP_COUNT INTEGER",
 			"PERCENT_AT_ABOVE_PROFICIENT_COUNT INTEGER")
 
-		tmp <- as.data.frame(sapply(convert.variables(subset(sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__EMH_LEVEL__CONTENT_AREA__YEAR__SCHOOL_ENROLLMENT_STATUS"]],
+		tmp <- as.data.frame(lapply(convert.variables(subset(sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__EMH_LEVEL__CONTENT_AREA__YEAR__SCHOOL_ENROLLMENT_STATUS"]],
 			!is.na(SCHOOL_NUMBER) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & SCHOOL_ENROLLMENT_STATUS=="Enrolled School: Yes" &
 			!is.na(MEDIAN_SGP))), unclass))
 		tmp <- as.data.frame(merge(tmp, as.data.frame(tmp.school.and.district.by.year), all.x=TRUE)) 
 	### Temporary stuff
 		names(tmp)[names(tmp)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET"
 		tmp$EMH_LEVEL <- as.character(factor(tmp$EMH_LEVEL, levels=1:3, labels=c("E", "H", "M")))
-	###
+	##
 		tmp <- tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))]
 
 		dbGetQuery(db, sqlite.create.table("SCHOOL", field.types, c("YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER", "EMH_LEVEL", "CONTENT_AREA")))
@@ -334,7 +328,7 @@ function(sgp_object,
 			"MEDIAN_SGP_COUNT INTEGER",
 			"PERCENT_AT_ABOVE_PROFICIENT_COUNT INTEGER")
 
-		tmp <- as.data.frame(sapply(convert.variables(subset(sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__EMH_LEVEL__CONTENT_AREA__YEAR__GRADE__SCHOOL_ENROLLMENT_STATUS"]],
+		tmp <- as.data.frame(lapply(convert.variables(subset(sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__EMH_LEVEL__CONTENT_AREA__YEAR__GRADE__SCHOOL_ENROLLMENT_STATUS"]],
 			!is.na(SCHOOL_NUMBER) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(GRADE) & SCHOOL_ENROLLMENT_STATUS=="Enrolled School: Yes" &
 			!is.na(MEDIAN_SGP))), unclass))
 		tmp <- data.frame(merge(tmp, as.data.frame(tmp.school.and.district.by.year), all.x=TRUE)) 
@@ -367,7 +361,7 @@ function(sgp_object,
 			"PERCENT_AT_ABOVE_PROFICIENT_COUNT INTEGER",
 			"ENROLLMENT_PERCENTAGE REAL")
 
-		tmp <- as.data.frame(sapply(convert.variables(subset(sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__EMH_LEVEL__CONTENT_AREA__YEAR__ETHNICITY__SCHOOL_ENROLLMENT_STATUS"]],
+		tmp <- as.data.frame(lapply(convert.variables(subset(sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__EMH_LEVEL__CONTENT_AREA__YEAR__ETHNICITY__SCHOOL_ENROLLMENT_STATUS"]],
 			!is.na(SCHOOL_NUMBER) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(ETHNICITY) & SCHOOL_ENROLLMENT_STATUS=="Enrolled School: Yes" &
 			!is.na(MEDIAN_SGP))), unclass))
 		tmp <- data.frame(merge(tmp, as.data.frame(tmp.school.and.district.by.year), all.x=TRUE)) 
@@ -445,8 +439,8 @@ function(sgp_object,
 			!is.na(DISTRICT_NUMBER) & CONTENT_AREA %in% content_areas & YEAR %in% years & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes")))
 		tmp.CONTENT_AREA <- data.frame(
 			KEY_VALUE_KEY="CONTENT_AREA", 
-			KEY_VALUE_CODE=sort(unique(as.integer(tmp$CONTENT_AREA))), 
-			KEY_VALUE_TEXT=unlist(lapply(levels(tmp$CONTENT_AREA)[sort(unique(as.integer(tmp$CONTENT_AREA)))], capwords)))
+			KEY_VALUE_CODE=seq_along(unique(tmp$CONTENT_AREA)),
+			KEY_VALUE_TEXT=sapply(sort(unique(tmp$CONTENT_AREA)), capwords))
 
 		# YEAR
 

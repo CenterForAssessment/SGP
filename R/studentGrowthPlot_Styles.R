@@ -72,7 +72,7 @@
 		number.achievement.level.regions <- length(SGPstateData[[state]][["Student_Report_Information"]][["Achievement_Level_Labels"]])
 		Cutscores <- list()
 		for (i in content_areas) {
-			Cutscores[[i]] <- create.long.cutscores.sgPlot(state, as.character(i))
+			Cutscores[[i]] <- create.long.cutscores.sgPlot(state, i)
 		}
 	} else {
 		stop("Construction of student growth plots requires state meta-data to be included in the embedded SGPstateData set.\nPlease augment the SGPstateData set with your data or contact the SGP package maintainer to have your data added to the SGP package.")
@@ -100,7 +100,7 @@
 
 	for (i in districts) {
 		if (reports.by.student) {
-			tmp_district_name <- as.character(sgPlot.data[J(i)][[paste("DISTRICT_NAME", last.year, sep=".")]][1])
+			tmp_district_name <- as.character(sgPlot.data[i][[paste("DISTRICT_NAME", last.year, sep=".")]][1])
 			district_folder <- "Uncollated_Student_Reports"
 		} else {
 			if (sgPlot.demo.report) {
@@ -108,15 +108,15 @@
 				district_folder <- "Sample_District"
 			} else {
 				if (sgPlot.folder.names=="name") {
-					tmp_district_name <- as.character(sgPlot.data[J(i)][[paste("DISTRICT_NAME", last.year, sep=".")]][1])
+					tmp_district_name <- as.character(sgPlot.data[i][[paste("DISTRICT_NAME", last.year, sep=".")]][1])
 						district_folder <- gsub(" ", "_", paste(tmp_district_name, " (", i, ")", sep=""))
 				} else {
-					tmp_district_name <- as.character(sgPlot.data[J(i)][[paste("DISTRICT_NAME", last.year, sep=".")]][1])
+					tmp_district_name <- as.character(sgPlot.data[i][[paste("DISTRICT_NAME", last.year, sep=".")]][1])
 						district_folder <- as.character(i)
 				}
 			}
 		}
-		tmp_district_ids <- unique(sgPlot.data[J(i)]$ID)
+		tmp_district_ids <- unique(sgPlot.data[SJ(i)]$ID) ## NOTE: SJ needed because i is possibly an integer
 		tmp_district_data <- subset(sgPlot.data, ID %in% tmp_district_ids)
 
 	## Schools
@@ -129,7 +129,7 @@
 		started.date <- date()
 
 		if (reports.by.student) {
-			tmp_school_name <- as.character(tmp_district_data[J(j)][[paste("SCHOOL_NAME", last.year, sep=".")]][1])
+			tmp_school_name <- as.character(tmp_district_data[j][[paste("SCHOOL_NAME", last.year, sep=".")]][1])
 			school_folder <- NULL
 		} else {
 			if (sgPlot.demo.report) {
@@ -137,10 +137,10 @@
 				school_folder <- "Sample_School"
 			} else {
 				if (sgPlot.folder.names=="name") {
-					tmp_school_name <- as.character(tmp_district_data[J(j)][[paste("SCHOOL_NAME", last.year, sep=".")]][1])
+					tmp_school_name <- as.character(tmp_district_data[j][[paste("SCHOOL_NAME", last.year, sep=".")]][1])
 					school_folder <- gsub(" ", "_", paste(tmp_school_name, " (", j, ")", sep=""))
 				} else {
-					tmp_school_name <- as.character(tmp_district_data[J(j)][[paste("SCHOOL_NAME", last.year, sep=".")]][1])
+					tmp_school_name <- as.character(tmp_district_data[j][[paste("SCHOOL_NAME", last.year, sep=".")]][1])
 					school_folder <- as.character(j)
 				}
 			}
@@ -156,13 +156,13 @@
 			cat(paste("\\pdfbookmark[0]{", tmp_school_name, "}{", j, "}\n", sep=""), file=paste("school_catalog_", j, ".tex", sep=""), append=TRUE)
 			##############################################################################################################################################
 		}
-		tmp_school_ids <- unique(tmp_district_data[J(j)]$ID)
+		tmp_school_ids <- unique(tmp_district_data[SJ(j)]$ID) ## NOTE: SJ needed because j is a possibly an integer
 		tmp_school_data <- subset(tmp_district_data, ID %in% tmp_school_ids)
 
 	## Grades
 
 	setkeyv(tmp_school_data, tmp.keys[2])
-	grades <- sort(unique(unlist(tmp_school_data[J(j), tmp.keys[3], with=FALSE]))) %w/o% NA
+	grades <- sort(unique(unlist(tmp_school_data[SJ(j), tmp.keys[3], with=FALSE]))) %w/o% NA
 	setkeyv(tmp_school_data, tmp.keys[3])
 
 	for (k in grades) {
@@ -180,7 +180,7 @@
 				file=paste("school_catalog_", j, ".tex", sep=""), append=TRUE) ## NOTE: j, k included in anchor for uniqueness
 			###########################################################################################################################
 		}
-		tmp_grade_ids <- unique(tmp_school_data[J(k)]$ID)
+		tmp_grade_ids <- unique(tmp_school_data[SJ(k)]$ID) ## NOTE: SJ needed because k is an integer
 		tmp_grade_data <- subset(tmp_school_data, ID %in% tmp_grade_ids)
 
 	### Create path to pdf files
@@ -342,8 +342,8 @@
                                   SGP_Levels=as.character(unlist(subset(tmp_student_data, select=paste(my.sgp.level, rev(sgPlot.years), sep=".")))),
                                   Grades=as.numeric(subset(tmp_student_data, select=paste("GRADE", rev(sgPlot.years), sep="."))),
                                   Cuts_NY1=as.numeric(subset(tmp_student_data, select=grep("PROJ", names(tmp_student_data)))),
-                                  Cutscores=Cutscores[[as.character(content_areas[vp])]],
-                                  Report_Parameters=list(Current_Year=last.year, Content_Area=as.character(content_areas[vp]), State=state))
+                                  Cutscores=Cutscores[[content_areas[vp]]],
+                                  Report_Parameters=list(Current_Year=last.year, Content_Area=content_areas[vp], State=state))
 
 		popViewport()
 

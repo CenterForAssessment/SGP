@@ -63,7 +63,7 @@
 		tmp.unique.grades <- intersect(tmp.unique.grades, SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])
 	}
 	setkeyv(gaPlot.sgp_object@Data, c("VALID_CASE", "CONTENT_AREA"))
-	growthAchievementPlot.data <- gaPlot.sgp_object@Data[J("VALID_CASE", content_area), list(ID, YEAR, GRADE, SCALE_SCORE)][
+	growthAchievementPlot.data <- gaPlot.sgp_object@Data[SJ("VALID_CASE", content_area), list(ID, YEAR, GRADE, SCALE_SCORE)][
 		GRADE %in% tmp.unique.grades & !is.na(SCALE_SCORE)]
 
 	if (missing(assessment.name) & missing(state)) {
@@ -230,8 +230,8 @@
 
 		setkey(growthAchievementPlot.data, YEAR)
 		for (i in gaPlot.achievement_percentiles) {
-			temp_achievement_curve <- splinefun(tmp.unique.grades, as.vector(by(growthAchievementPlot.data[J(year)]$TRANSFORMED_SCALE_SCORE, 
-				growthAchievementPlot.data[J(year)]$GRADE, quantile, probs=i, na.rm=TRUE)), method="monoH.FC")
+			temp_achievement_curve <- splinefun(tmp.unique.grades, as.vector(by(growthAchievementPlot.data[year]$TRANSFORMED_SCALE_SCORE, 
+				growthAchievementPlot.data[year]$GRADE, quantile, probs=i, na.rm=TRUE)), method="monoH.FC")
 			temp_uncond_frame[as.character(i),] <- temp_achievement_curve(tmp.smooth.grades)
 		}
 	}
@@ -267,7 +267,7 @@
 			SCALE_SCORE=start.cuts[[1]])
 	} else {
 		setkey(growthAchievementPlot.data, ID)
-		tmp1.df <- growthAchievementPlot.data[J(gaPlot.students)]
+		tmp1.df <- growthAchievementPlot.data[gaPlot.students]
 	}
 
 	## Start loop over students or starting scores
@@ -284,8 +284,8 @@
 	setkey(growthAchievementPlot.data, YEAR)
 	gp.axis.range <- c(smoothPercentileTrajectory(tmp.df, min(gaPlot.percentile_trajectories), content_area, year, state)(gaPlot.grade_range[2]),
 		smoothPercentileTrajectory(tmp.df, max(gaPlot.percentile_trajectories), content_area, year, state)(gaPlot.grade_range[2]))
-	yscale.range <- c(min(gp.axis.range[1], quantile(growthAchievementPlot.data[J(year)]$TRANSFORMED_SCALE_SCORE, prob=.005, na.rm=TRUE)), 
-		max(gp.axis.range[2], quantile(growthAchievementPlot.data[J(year)]$TRANSFORMED_SCALE_SCORE, prob=.995, na.rm=TRUE)))
+	yscale.range <- c(min(gp.axis.range[1], quantile(growthAchievementPlot.data[year]$TRANSFORMED_SCALE_SCORE, prob=.005, na.rm=TRUE)), 
+		max(gp.axis.range[2], quantile(growthAchievementPlot.data[year]$TRANSFORMED_SCALE_SCORE, prob=.995, na.rm=TRUE)))
 	ach.per.axis.range <- (temp_uncond_frame[,1])[temp_uncond_frame[,1] >= yscale.range[1] & temp_uncond_frame[,1] <= yscale.range[2]]
 	ach.per.axis.labels <- formatC(100*as.numeric(rownames(temp_uncond_frame)[temp_uncond_frame[,1] >= yscale.range[1] & temp_uncond_frame[,1] <= yscale.range[2]]), 
 		digits=0, format="f")
@@ -460,7 +460,7 @@
 	}
 
 	setkey(growthAchievementPlot.data, GRADE)
-	grid.text(x=unit(0.8, "native"), y=unit(median(growthAchievementPlot.data[J(tmp.unique.grades[1])]$TRANSFORMED_SCALE_SCORE), "native"), 
+	grid.text(x=unit(0.8, "native"), y=unit(median(growthAchievementPlot.data[tmp.unique.grades[1]]$TRANSFORMED_SCALE_SCORE), "native"), 
 		paste(pretty_year(year), "Achievement Percentile"), gp=gpar(col=format.colors.font, cex=0.9), rot=90)
 	
 	popViewport() ## pop left.axis.vp
