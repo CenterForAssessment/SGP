@@ -1,4 +1,4 @@
-Changes in version: SGP_0.9-8.0
+Changes in version: SGP_0.9-9.0
 
   NEW FEATURES:
 
@@ -41,6 +41,7 @@ Changes in version: SGP_0.9-8.0
 	  o Updated Idaho knots and boundaries to accomodate 2011 scale scores.
 	  o Added West Virginia variable name lookup table.
 	  o Changed implementation of VALID_CASE to character from factor to better coincide with data.table 1.8.2 requirements.
+	  o Added argument return.prior.scale.score to studentGrowthPercentiles to incorporate the return of the prior scale score for the student.
 
 
   BUG FIXES:

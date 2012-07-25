@@ -118,16 +118,16 @@ Demonstration_SGP <- analyzeSGP(Demonstration_SGP, state="DEMO")
 ###
 
 #  Use only 3 years of Data, for grades 3 to 6
-#  and only perform analyses for most recent year (2011)
+#  and only perform analyses for most recent year (2012)
 
 my.custom.config <- list(
-MATHEMATICS.2010_2011 = list(
+MATHEMATICS.2011_2012 = list(
 	sgp.content.areas=rep("MATHEMATICS", 3), # Note, must be same length as sgp.panel.years
-	sgp.panel.years=c('2008_2009', '2009_2010', '2010_2011'),
+	sgp.panel.years=c('2009_2010', '2010_2011', '2011_2012'),
 	sgp.grade.sequences=list(3:4, 3:5, 4:6)),
-READING.2010_2011 = list(
+READING.2011_2012 = list(
 	sgp.content.areas=rep("READING", 3),
-	sgp.panel.years=c('2008_2009', '2009_2010', '2010_2011'),
+	sgp.panel.years=c('2009_2010', '2010_2011', '2011_2012'),
 	sgp.grade.sequences=list(3:4, 3:5, 4:6)))
 
 Demonstration_SGP <- prepareSGP(sgpData_LONG)
@@ -143,13 +143,13 @@ Demonstration_SGP <- analyzeSGP(Demonstration_SGP,
 
 #  Use different CONTENT_AREA priors, and only 1 year of prior data
 my.custom.config <- list(
-MATHEMATICS.2010_2011.READ_PRIOR = list(
+MATHEMATICS.2011_2012.READ_PRIOR = list(
 	sgp.content.areas=c("READING", "MATHEMATICS"),
-	sgp.panel.years=c('2009_2010', '2010_2011'),
+	sgp.panel.years=c('2010_2011', '2011_2012'),
 	sgp.grade.sequences=list(3:4, 4:5, 5:6)),
-READING.2010_2011.MATH_PRIOR = list(
+READING.2011_2012.MATH_PRIOR = list(
 	sgp.content.areas=c("MATHEMATICS", "READING"),
-	sgp.panel.years=c('2009_2010', '2010_2011'),
+	sgp.panel.years=c('2010_2011', '2011_2012'),
 	sgp.grade.sequences=list(3:4, 4:5, 5:6)))
 
 

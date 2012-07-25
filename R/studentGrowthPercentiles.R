@@ -27,6 +27,7 @@ function(panel.data,         ## REQUIRED
          isotonize=TRUE,
          convert.using.loss.hoss=TRUE,
          goodness.of.fit=TRUE,
+         return.prior.scale.score=TRUE,
          print.time.taken=TRUE) {
 
 	started.at <- proc.time()
@@ -358,8 +359,8 @@ function(panel.data,         ## REQUIRED
 				children=gList(
 					rectGrob(gp=gpar(fill="grey95"), vp="title"),
 					textGrob(x=0.5, y=0.65, "Student Growth Percentile Goodness-of-Fit Descriptives", gp=gpar(cex=1.25), vp="title"),
-					textGrob(x=0.5, y=0.4, paste(pretty_year(sgp.labels$my.year), " ", capwords(sgp.labels$my.subject), ", Grade Progression ", 
-						paste(tmp.gp, collapse="-"), " (N = ", format(dim(data1)[1], big.mark=","), ")", sep=""), vp="title"),
+					textGrob(x=0.5, y=0.4, paste(pretty_year(sgp.labels$my.year), " ", sub(' +$', '', capwords(paste(sgp.labels$my.subject, sgp.labels$my.extra.label))),
+						", Grade Progression ", paste(tmp.gp, collapse="-"), " (N = ", format(dim(data1)[1], big.mark=","), ")", sep=""), vp="title"),
 					rectGrob(vp="table"),
 					rectGrob(x=rep(1:10, each=dim(tmp.table)[1]), y=rep(10:(10-dim(tmp.table)[1]+1),10), width=1, height=1, default.units="native", 
 						gp=gpar(col="black", fill=tmp.colors), vp="table"),
@@ -500,7 +501,7 @@ function(panel.data,         ## REQUIRED
 				!identical(names(use.my.knots.boundaries), c("my.year", "my.subject", "my.extra.label"))) {
 					stop("Please specify an appropriate list for use.my.knots.boundaries. See help page for details.")
 			}
-			tmp.path.knots.boundaries <- .create.path(sgp.labels, pieces=c("my.subject", "my.year"))
+			tmp.path.knots.boundaries <- .create.path(use.my.knots.boundaries, pieces=c("my.subject", "my.year"))
 			if (is.null(panel.data[["Knots_Boundaries"]]) | is.null(panel.data[["Knots_Boundaries"]][[tmp.path.knots.boundaries]])) {
 				stop("Knots and Boundaries indicated by use.my.knots.boundaries are not included.")
 			}
@@ -509,7 +510,6 @@ function(panel.data,         ## REQUIRED
 			if (is.null(SGPstateData[[use.my.knots.boundaries]][["Achievement"]][["Knots_Boundaries"]])) { 
 				tmp.messages <- c(tmp.messages, paste("\tNOTE: Knots and Boundaries are currently not implemented for the state indicated (", use.my.knots.boundaries, "). Knots and boundaries will be calculated from the data. Please contact the SGP package administrator to have your Knots and Boundaries included in the package\n", sep=""))
 			}
-     		tmp.path.knots.boundaries <- .create.path(sgp.labels, pieces=c("my.subject", "my.year"))    
 		}
 	} else {
      		tmp.path.knots.boundaries <- .create.path(sgp.labels, pieces=c("my.subject", "my.year"))
@@ -879,6 +879,11 @@ function(panel.data,         ## REQUIRED
 			cuts.best <- data.table(rbind.all(tmp.percentile.cuts), key="ID")
 			cuts.best <- cuts.best[c(which(!duplicated(cuts.best))[-1]-1, nrow(cuts.best))][,-1, with=FALSE]
 			quantile.data <- cbind(quantile.data, cuts.best)
+		}
+
+		if (return.prior.scale.score) {
+			PRIOR_SCALE_SCORE <- NULL
+			quantile.data[, PRIOR_SCALE_SCORE:=prior.ss]
 		}
 
 		if (goodness.of.fit) {

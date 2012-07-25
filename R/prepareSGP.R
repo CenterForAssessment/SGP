@@ -65,7 +65,7 @@
 
 		setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))
 			sgp_object@Data[["ACHIEVEMENT_LEVEL"]][sgp_object@Data[CJ("VALID_CASE", content_area, year, grade), which=TRUE, nomatch=0]] <- 
-			sgp_object@Data[CJ("VALID_CASE", content_area, year, grade), nomatch=0][, achievement_level_recode_INTERNAL(state, as.character(CONTENT_AREA), as.character(YEAR), GRADE, SCALE_SCORE), 
+			sgp_object@Data[CJ("VALID_CASE", content_area, year, grade), nomatch=0][, achievement_level_recode_INTERNAL(state, CONTENT_AREA, YEAR, GRADE, SCALE_SCORE), 
 				by=list(CONTENT_AREA, YEAR, GRADE)][["V1"]]
 		setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 
@@ -174,8 +174,8 @@
 
 	create.knots.boundaries <- function(tmp.data) {
 		tmp.grade.list <- tmp.list <- list()
-		for (my.list.label in unique(tmp.data[J("VALID_CASE")][["CONTENT_AREA"]])) {
-			tmp.grade.list[[my.list.label]] <- unique(tmp.data[J("VALID_CASE", as.character(my.list.label))][["GRADE"]])
+		for (my.list.label in unique(tmp.data["VALID_CASE"][["CONTENT_AREA"]])) {
+			tmp.grade.list[[my.list.label]] <- unique(tmp.data[SJ("VALID_CASE", my.list.label)][["GRADE"]])
 			for (j in seq_along(tmp.grade.list[[my.list.label]])) {
 				tmp.list[[my.list.label]][[3*j-2]] <-
 					round(as.vector(quantile(subset(tmp.data, VALID_CASE=="VALID_CASE" & CONTENT_AREA==my.list.label & GRADE==tmp.grade.list[[my.list.label]][j], select="SCALE_SCORE"), 
@@ -202,6 +202,26 @@
 		}
 	} ## END getVersion
 
+
+	## checkVariableClass
+
+	checkVariableClass <- function(my.data) {
+		for (my.variable in c("VALID_CASE", "CONTENT_AREA", "YEAR")) {
+			if (is.SGP(my.data)) {
+				if (is.factor(data@Data[[my.variable]])) {
+					my.data@Data[[my.variable]] <- as.character(my.data@Data[[my.variable]])
+					message(paste("\tNOTE:", my.variable, "converted from class factor to class character to accomodate data.table 1.8.0 changes."))
+				}
+			}
+			if (is.data.frame(my.data)) {
+				if (is.factor(data[[my.variable]])) {
+					my.data[[my.variable]] <- as.character(my.data[[my.variable]])
+					message(paste("\tNOTE:", my.variable, "converted from class factor to class character to accomodate data.table 1.8.0 changes."))
+				}
+			}
+		}
+		return(my.data)
+	}
 
 	###################################################################
 	###
@@ -236,17 +256,18 @@
 			data@Names <- getNames(data@Data, var.names)
 		}
 
-		## VALID_CASE converted to a character if a factor
+		## Check class values of fields
 
-		if (is.factor(data@Data$VALID_CASE)) data@Data$VALID_CASE <- as.character(data@Data$VALID_CASE)
+		data <- checkVariableClass(data)
+
 
 		if (!identical(key(data@Data), c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))) {
 			setkeyv(data@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
-			if (any(duplicated(data@Data[J("VALID_CASE")]))) {
+			if (any(duplicated(data@Data["VALID_CASE"]))) {
 				message("\tWARNING: @Data keyed by 'VALID_CASE', 'CONTENT_AREA', 'YEAR', 'ID' has duplicate cases. Subsequent merges will likely be corrupt.")
 				message("\tDuplicate cases are saved and available in current working environment as 'DUPLICATED_CASES'.")
-				assign("DUPLICATED_CASES", data@Data[J("VALID_CASE")][duplicated(data@Data[J("VALID_CASE")])][,list(VALID_CASE, CONTENT_AREA, YEAR, ID)], envir=globalenv())
-				assign("DUPLICATED_CASES", data@Data[J("VALID_CASE")][duplicated(data@Data[J("VALID_CASE")])][,list(VALID_CASE, CONTENT_AREA, YEAR, ID)])
+				assign("DUPLICATED_CASES", data@Data["VALID_CASE"][duplicated(data@Data["VALID_CASE"])][,list(VALID_CASE, CONTENT_AREA, YEAR, ID)], envir=globalenv())
+				assign("DUPLICATED_CASES", data@Data["VALID_CASE"][duplicated(data@Data["VALID_CASE"])][,list(VALID_CASE, CONTENT_AREA, YEAR, ID)])
 				save(DUPLICATED_CASES, file="DUPLICATED_CASES.Rdata")
 			}
 		}
@@ -264,20 +285,20 @@
 	} else {
 		variable.names <- getNames(data, var.names)
 	
-		## VALID_CASE converted to a character if a factor
+		## Check class values of fields
 
-		if (is.factor(data$VALID_CASE)) data$VALID_CASE <- as.character(data$VALID_CASE)
+		data <- checkVariableClass(data)
 
 		##  Create keyed data.table and check for duplicate cases
 
 		data <- as.data.table(data)
 		setnames(data, which(!is.na(variable.names$names.sgp)), variable.names$names.sgp[!is.na(variable.names$names.sgp)])
 		setkeyv(data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
-		if (any(duplicated(data[J("VALID_CASE")]))) {
+		if (any(duplicated(data["VALID_CASE"]))) {
 			message("\tWARNING: Data keyed by 'VALID_CASE', 'CONTENT_AREA', 'YEAR', 'ID' has duplicate cases. Subsequent merges will be corrupted.")
 			message("\tDuplicate cases are saved and available in current working environment as 'DUPLICATED_CASES'.")
-			assign("DUPLICATED_CASES", data[J("VALID_CASE")][duplicated(data[J("VALID_CASE")])][,list(VALID_CASE, CONTENT_AREA, YEAR, ID)], envir=globalenv())
-			assign("DUPLICATED_CASES", data[J("VALID_CASE")][duplicated(data[J("VALID_CASE")])][,list(VALID_CASE, CONTENT_AREA, YEAR, ID)])
+			assign("DUPLICATED_CASES", data["VALID_CASE"][duplicated(data["VALID_CASE"])][,list(VALID_CASE, CONTENT_AREA, YEAR, ID)], envir=globalenv())
+			assign("DUPLICATED_CASES", data["VALID_CASE"][duplicated(data["VALID_CASE"])][,list(VALID_CASE, CONTENT_AREA, YEAR, ID)])
 			save(DUPLICATED_CASES, file="DUPLICATED_CASES.Rdata")
 		}
 
@@ -306,11 +327,6 @@
 	###
 	#################################################################
 
-	### CONTENT_AREA levels are better if they are alphabetized
-
-	if (any(levels(sgp_object@Data$CONTENT_AREA) != sort(levels(sgp_object@Data$CONTENT_AREA)))) {
-		sgp_object@Data$CONTENT_AREA <- as.factor(as.character(sgp_object@Data$CONTENT_AREA))
-	}
 
 
 	#################################################################
@@ -331,11 +347,7 @@
 		### HIGH_NEED_STATUS
 
 		if (!"HIGH_NEED_STATUS" %in% names(sgp_object@Data) & "SCHOOL_NUMBER" %in% names(sgp_object@Data)) {
-			if (is.factor(sgp_object@Data$YEAR)) {
-				sgp_object@Data[["YEAR_INT"]] <- as.integer(sgp_object@Data[["YEAR"]])
-			} else {
-				sgp_object@Data[["YEAR_INT"]] <- sgp_object@Data[["YEAR"]]
-			}
+			sgp_object@Data[["YEAR_INT"]] <- as.integer(factor(sgp_object@Data[["YEAR"]]))
 			setkeyv(sgp_object@Data, c("ID", "CONTENT_AREA", "YEAR_INT", "VALID_CASE")) ## CRITICAL that VALID_CASE is last in group
 			sgp_object@Data$SCALE_SCORE_PRIOR <- sgp_object@Data[SJ(ID, CONTENT_AREA, YEAR_INT-1L), mult="last"][,SCALE_SCORE]
 			sgp_object@Data$GRADE_PRIOR <- sgp_object@Data[SJ(ID, CONTENT_AREA, YEAR_INT-1L), mult="last"][,GRADE]

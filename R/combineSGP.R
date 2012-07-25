@@ -75,8 +75,7 @@ function(sgp_object,
 
 	get.rbind.all.data <- function(data.pieces, key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID")) {
 		my.rbind.all <- rbind.fill(data.pieces)
-		if (is.factor(my.rbind.all[["YEAR"]])) my.rbind.all[["YEAR"]] <- as.factor(as.character(my.rbind.all[["YEAR"]]))
-		if (is.factor(my.rbind.all[["CONTENT_AREA"]])) my.rbind.all[["CONTENT_AREA"]] <- factor(as.character(my.rbind.all[["CONTENT_AREA"]]), levels=levels(slot.data$CONTENT_AREA))
+		if (is.integer(sgp_object@Data[["YEAR"]])) my.rbind.all[["YEAR"]] <- as.integer(my.rbind.all[["YEAR"]])
 		data.table(my.rbind.all,  VALID_CASE="VALID_CASE", key=key(slot.data))
 	}
 
@@ -133,13 +132,14 @@ function(sgp_object,
 
 		tmp.list <- list()
 		for (i in tmp.names) {
-		tmp.list[[i]] <- data.frame(
+		tmp.list[[i]] <- data.table(
 					CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
-					YEAR=type.convert(unlist(strsplit(i, "[.]"))[2]),
+					YEAR=type.convert(unlist(strsplit(i, "[.]"))[2], as.is=TRUE),
 					sgp_object@SGP[["SGPercentiles"]][[i]])
 		}
 
-		tmp.data <- get.rbind.all.data(tmp.list)
+		tmp.data <- data.table(rbind.fill(tmp.list), VALID_CASE="VALID_CASE", key=key(slot.data))
+
 
 		if (!all(names(tmp.data) %in% names(slot.data))) {
 			for (i in names(tmp.data)[!names(tmp.data) %in% names(slot.data)]) suppressWarnings(slot.data[, i := tmp.data[[i]][NA][1], with=FALSE])
@@ -167,9 +167,9 @@ function(sgp_object,
 
 		tmp.list <- list() 
 		for (i in tmp.names) {
-			tmp.list[[i]] <- data.frame(
-				CONTENT_AREA=as.factor(unlist(strsplit(i, "[.]"))[1]),
-				YEAR=type.convert(unlist(strsplit(i, "[.]"))[2]),
+			tmp.list[[i]] <- data.table(
+				CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
+				YEAR=type.convert(unlist(strsplit(i, "[.]"))[2], as.is=TRUE),
 				sgp_object@SGP[["SGPercentiles"]][[i]])
 
 			if (is.na(unlist(strsplit(i, "[.]"))[3])) { ### If cohort referenced SGP are to be included in baseline SGP (e.g., Georgia)
@@ -178,7 +178,7 @@ function(sgp_object,
 			}
 		}
 
-		tmp.data <- get.rbind.all.data(tmp.list)
+		tmp.data <- data.table(rbind.fill(tmp.list), VALID_CASE="VALID_CASE", key=key(slot.data))
 
 		if (!all(names(tmp.data) %in% names(slot.data))) {
 			for (i in names(tmp.data)[!names(tmp.data) %in% names(slot.data)]) slot.data[, i := tmp.data[[i]][NA][1], with=FALSE]
@@ -221,14 +221,15 @@ function(sgp_object,
 			for (i in tmp.names) {
 				cols.to.get <- grep(paste("LEVEL_", level.to.get, sep=""), names(sgp_object@SGP[["SGProjections"]][[i]]))
 				num.cols.to.get <- min(max.lagged.sgp.target.years.forward, length(cols.to.get))
-				tmp.list[[i]] <- data.frame(
-					CONTENT_AREA=as.factor(unlist(strsplit(i, "[.]"))[1]),
-					YEAR=type.convert(unlist(strsplit(i, "[.]"))[2]),
+				tmp.list[[i]] <- data.table(
+					CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
+					YEAR=type.convert(unlist(strsplit(i, "[.]"))[2], as.is=TRUE),
 					CATCH_UP_KEEP_UP_STATUS_INITIAL=get.catch_up_keep_up_status_initial(sgp_object@SGP[["SGProjections"]][[i]][["ACHIEVEMENT_LEVEL_PRIOR"]]),
 					sgp_object@SGP[["SGProjections"]][[i]][,c(1,2,cols.to.get[1:num.cols.to.get])])
 			}
 
-			tmp_object_1 <- data.table(VALID_CASE="VALID_CASE", get.rbind.all.data(tmp.list))[!is.na(CATCH_UP_KEEP_UP_STATUS_INITIAL)]
+##			tmp_object_1 <- data.table(VALID_CASE="VALID_CASE", get.rbind.all.data(tmp.list))[!is.na(CATCH_UP_KEEP_UP_STATUS_INITIAL)]
+			tmp_object_1 <- data.table(rbind.fill(tmp.list), VALID_CASE="VALID_CASE", key=key(slot.data))[!is.na(CATCH_UP_KEEP_UP_STATUS_INITIAL)]
 
 			## Find min/max of targets based upon CATCH_UP_KEEP_UP_STATUS_INITIAL status
 
@@ -268,8 +269,9 @@ function(sgp_object,
 			 for (i in tmp.names) {
 				 cols.to.get <- grep(paste("LEVEL_", level.to.get, sep=""), names(sgp_object@SGP[["SGProjections"]][[i]]))
 				 num.cols.to.get <- min(max.lagged.sgp.target.years.forward, length(cols.to.get))
-				 tmp.list[[i]] <-data.frame(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
-					YEAR=type.convert(unlist(strsplit(i, "[.]"))[2]),
+				 tmp.list[[i]] <-data.table(
+					CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
+					YEAR=type.convert(unlist(strsplit(i, "[.]"))[2], as.is=TRUE),
 					CATCH_UP_KEEP_UP_STATUS_INITIAL=get.catch_up_keep_up_status_initial(sgp_object@SGP[["SGProjections"]][[i]][,2]),
 					sgp_object@SGP[["SGProjections"]][[i]][,c(1,2,cols.to.get[1:num.cols.to.get])])
 		 }

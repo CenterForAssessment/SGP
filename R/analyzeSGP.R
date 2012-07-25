@@ -135,7 +135,7 @@ function(sgp_object,
 	get.sgp.config <- function(content_areas, years, grades) {
 
 		.get.config <- function(content_area, year, grades) {
-			tmp.unique.data <- lapply(sgp_object@Data[J("VALID_CASE", content_area), c("YEAR", "GRADE"), with=FALSE], function(x) sort(unique(x)))
+			tmp.unique.data <- lapply(sgp_object@Data[SJ("VALID_CASE", content_area), c("YEAR", "GRADE"), with=FALSE], function(x) sort(unique(x)))
 			.sgp.panel.years <- tmp.unique.data$YEAR[1:which(tmp.unique.data$YEAR==year)]
 			.sgp.content.areas <- rep(content_area, length(.sgp.panel.years))
 			tmp.sgp.grade.sequences <- lapply(tmp.unique.data$GRADE[-1], function(x) tail(tmp.unique.data$GRADE[tmp.unique.data$GRADE <= x], length(tmp.unique.data$YEAR)))
@@ -151,7 +151,7 @@ function(sgp_object,
 		}
 		if (is.null(years)) {
 			for (i in content_areas) {
-				tmp.years[[i]] <- sort(tail(unique(sgp_object@Data[J("VALID_CASE", i)][["YEAR"]]), -2), decreasing=TRUE)
+				tmp.years[[i]] <- sort(tail(unique(sgp_object@Data[SJ("VALID_CASE", i)][["YEAR"]]), -2), decreasing=TRUE)
 			}
 		} else {
 			for (i in content_areas) {
@@ -215,23 +215,15 @@ function(sgp_object,
 		if (is.null(content_areas)) {
 			.content_areas <- unique(sgp_object@Data["VALID_CASE"][["CONTENT_AREA"]])
 		} else {
-			if (is.factor(sgp_object@Data["VALID_CASE"][["CONTENT_AREA"]])) {
-				.content_areas <- as.factor(content_areas)
-			} else {
-				.content_areas <- content_areas
-			}
+			.content_areas <- content_areas
 		}
 		if (is.null(sgp.baseline.panel.years)) {
-			.years <- head(sort(unique(sgp_object@Data[J("VALID_CASE", .content_areas)][["YEAR"]])), 5)
+			.years <- head(sort(unique(sgp_object@Data[SJ("VALID_CASE", .content_areas)][["YEAR"]])), 5)
 		} else {
-			if (is.factor(sgp_object@Data["VALID_CASE"][["YEAR"]])) {
-				.years <- as.factor(sgp.baseline.panel.years)
-			} else {
-				.years <- as.integer(sgp.baseline.panel.years)
-			}
+			.years <- sgp.baseline.panel.years
 		}
 		if (is.null(grades)) {
-			.grades <- sort(unique(sgp_object@Data[J("VALID_CASE", .content_areas)][["GRADE"]]))
+			.grades <- sort(unique(sgp_object@Data[SJ("VALID_CASE", .content_areas)][["GRADE"]]))
 		} else {
 			.grades <- grades
 		}
@@ -1046,7 +1038,9 @@ function(sgp_object,
 			for (sgp.iter in par.sgp.config) {
 
 				panel.data=within(tmp_sgp_object, assign("Panel_Data", get.panel.data("sgp.percentiles", sgp.iter)))
-				panel.data=within(panel.data, assign("Knots_Boundaries", get.knots.boundaries(sgp.iter))) # Get specific knots and boundaries in case course sequence
+				tmp.knots.boundaries <- get.knots.boundaries(sgp.iter) # Get specific knots and boundaries in case course sequence is different
+				panel.data[["Knots_Boundaries"]][[names(tmp.knots.boundaries)]] <- tmp.knots.boundaries[[names(tmp.knots.boundaries)]]
+
 				if (simulate.sgps) {
 					if (!exists("calculate.confidence.intervals")) {
 						calculate.confidence.intervals <- state
@@ -1088,7 +1082,9 @@ function(sgp_object,
 			for (sgp.iter in par.sgp.config.baseline) {
 				
 				panel.data=within(tmp_sgp_object, assign("Panel_Data", get.panel.data("sgp.percentiles", sgp.iter)))
-				panel.data=within(panel.data, assign("Knots_Boundaries", get.knots.boundaries(sgp.iter))) # Get specific knots and boundaries in case course sequence
+				tmp.knots.boundaries <- get.knots.boundaries(sgp.iter) # Get specific knots and boundaries in case course sequence is different
+				panel.data[["Knots_Boundaries"]][[names(tmp.knots.boundaries)]] <- tmp.knots.boundaries[[names(tmp.knots.boundaries)]]
+
 				tmp_sgp_object <- studentGrowthPercentiles(
 					panel.data=panel.data,
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), 
@@ -1113,7 +1109,9 @@ function(sgp_object,
 			for (sgp.iter in par.sgp.config) {
 	
 				panel.data=within(tmp_sgp_object, assign("Panel_Data", get.panel.data("sgp.projections", sgp.iter)))
-				panel.data=within(panel.data, assign("Knots_Boundaries", get.knots.boundaries(sgp.iter))) # Get specific knots and boundaries in case course sequence
+				tmp.knots.boundaries <- get.knots.boundaries(sgp.iter) # Get specific knots and boundaries in case course sequence is different
+				panel.data[["Knots_Boundaries"]][[names(tmp.knots.boundaries)]] <- tmp.knots.boundaries[[names(tmp.knots.boundaries)]]
+
 				tmp_sgp_object <- studentGrowthProjections(
 					panel.data=panel.data,
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
@@ -1138,7 +1136,9 @@ function(sgp_object,
 			for (sgp.iter in par.sgp.config.baseline) {
 
 				panel.data=within(tmp_sgp_object, assign("Panel_Data", get.panel.data("sgp.projections", sgp.iter)))
-				panel.data=within(panel.data, assign("Knots_Boundaries", get.knots.boundaries(sgp.iter))) # Get specific knots and boundaries in case course sequence
+				tmp.knots.boundaries <- get.knots.boundaries(sgp.iter) # Get specific knots and boundaries in case course sequence is different
+				panel.data[["Knots_Boundaries"]][[names(tmp.knots.boundaries)]] <- tmp.knots.boundaries[[names(tmp.knots.boundaries)]]
+
 				tmp_sgp_object <- studentGrowthProjections(
 					panel.data=panel.data,
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1),
@@ -1164,7 +1164,9 @@ function(sgp_object,
 			for (sgp.iter in par.sgp.config) {
 
 				panel.data=within(tmp_sgp_object, assign("Panel_Data", get.panel.data("sgp.projections.lagged", sgp.iter)))
-				panel.data=within(panel.data, assign("Knots_Boundaries", get.knots.boundaries(sgp.iter))) # Get specific knots and boundaries in case course sequence
+				tmp.knots.boundaries <- get.knots.boundaries(sgp.iter) # Get specific knots and boundaries in case course sequence is different
+				panel.data[["Knots_Boundaries"]][[names(tmp.knots.boundaries)]] <- tmp.knots.boundaries[[names(tmp.knots.boundaries)]]
+
 				tmp_sgp_object <- studentGrowthProjections(
 					panel.data=panel.data,
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 
@@ -1190,7 +1192,9 @@ function(sgp_object,
 			for (sgp.iter in par.sgp.config.baseline) {
 
 				panel.data=within(tmp_sgp_object, assign("Panel_Data", get.panel.data("sgp.projections.lagged", sgp.iter)))
-				panel.data=within(panel.data, assign("Knots_Boundaries", get.knots.boundaries(sgp.iter))) # Get specific knots and boundaries in case course sequence
+				tmp.knots.boundaries <- get.knots.boundaries(sgp.iter) # Get specific knots and boundaries in case course sequence is different
+				panel.data[["Knots_Boundaries"]][[names(tmp.knots.boundaries)]] <- tmp.knots.boundaries[[names(tmp.knots.boundaries)]]
+
 				tmp_sgp_object <- studentGrowthProjections(
 					panel.data=panel.data,
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 

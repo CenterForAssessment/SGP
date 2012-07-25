@@ -1,5 +1,6 @@
 `capwords` <-
 function(x) {
+	if (is.null(x)) return(NULL)
 	x <- gsub("_", " ", x)
 	special.words <- c("ELA", "II", "III", "IV", "EMH", "HS", "MS", "ES", "SES", "IEP", "ELL", "MAD", "SD", "US")
 	my.split <- function(words, split.character) {
