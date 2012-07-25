@@ -63,7 +63,7 @@ function(sgp_object,
 		"%w/o%" <- function(x, y) x[!x %in% y]
 
 		convert.variables <- function(tmp.df) {
-			if (is.character(tmp.df$YEAR)) {
+			if (is.character(tmp.df$YEAR) | is.factor(tmp.df$YEAR)) {
 				tmp1 <- unlist(strsplit(tmp.df$YEAR, "_"))
 				tmp.df$YEAR <- as.integer(tmp1[seq(length(tmp1)) %% 2 == 0])
 			}
@@ -303,7 +303,7 @@ function(sgp_object,
 	### Temporary stuff
 		names(tmp)[names(tmp)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET"
 		tmp$EMH_LEVEL <- as.character(factor(tmp$EMH_LEVEL, levels=1:3, labels=c("E", "H", "M")))
-	###
+	##
 		tmp <- tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))]
 
 		dbGetQuery(db, sqlite.create.table("SCHOOL", field.types, c("YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER", "EMH_LEVEL", "CONTENT_AREA")))
