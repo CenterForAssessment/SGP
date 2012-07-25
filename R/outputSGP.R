@@ -288,7 +288,7 @@ function(sgp_object,
 				setkeyv(outputSGP.data, c("ID", "CONTENT_AREA"))
 				tmp.list <- list()
 				for (i in tmp.proj.names) {
-					tmp.list[[i]] <- data.frame(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
+					tmp.list[[i]] <- data.table(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
 						sgp_object@SGP[["SGProjections"]][[i]][,c(1, grep(paste("PROJ_YEAR", j, sep="_"), names(sgp_object@SGP[["SGProjections"]][[i]])))])
 				}
 				outputSGP.data <- data.table(rbind.fill(tmp.list), key=paste(key(outputSGP.data), collapse=","))[outputSGP.data]
