@@ -125,7 +125,7 @@ function(panel.data,         ## REQUIRED
 		str3 <- tail(SS, 1)
 		for (i in 2:(k+1)) {
 			str1 <- paste(str1, " & !is.na(", rev(SS)[i], ")", sep="")
-			str2 <- paste(str2, " & ", rev(GD)[i], "=='", rev(tmp.gp)[i], "'", sep="")
+			str2 <- paste(str2, " & ", rev(GD)[i], "=='", strsplit(rev(as.character(tmp.gp))[i], "[.]")[[1]][1], "'", sep="") # AVI change to deal with repeat grades
 			str3 <- c(rev(SS)[i], str3)
 		}
 		if (by.grade) {
@@ -676,6 +676,12 @@ function(panel.data,         ## REQUIRED
 			
 	}} else {
 		num.prior <- length(tmp.gp)-1
+	}
+	if (any(duplicated(tmp.gp[1:num.prior]))) {  #  Check for repeat grades - either held back, multiple grade/subject priors, etc.  Add .1, .2 , etc.
+		while(any(duplicated(tmp.gp[1:num.prior]))) {
+			tmp.gp[which(duplicated(tmp.gp[1:num.prior]))] <- tmp.gp[which(duplicated(tmp.gp[1:num.prior]))] + 0.1
+		}
+		tmp.gp[1:num.prior] <- tmp.gp[1:num.prior]+0.1
 	}
 
 	if (!is.null(max.order.for.percentile)) {
