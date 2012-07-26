@@ -135,7 +135,7 @@ function(sgp_object,
 	get.sgp.config <- function(content_areas, years, grades) {
 
 		.get.config <- function(content_area, year, grades) {
-			tmp.unique.data <- lapply(sgp_object@Data[SJ("VALID_CASE", content_area), c("YEAR", "GRADE"), with=FALSE], function(x) sort(unique(x)))
+			tmp.unique.data <- lapply(sgp_object@Data[SJ("VALID_CASE", content_area), nomatch=0][, c("YEAR", "GRADE"), with=FALSE], function(x) sort(unique(x)))
 			.sgp.panel.years <- tmp.unique.data$YEAR[1:which(tmp.unique.data$YEAR==year)]
 			.sgp.content.areas <- rep(content_area, length(.sgp.panel.years))
 			tmp.sgp.grade.sequences <- lapply(tmp.unique.data$GRADE[-1], function(x) tail(tmp.unique.data$GRADE[tmp.unique.data$GRADE <= x], length(tmp.unique.data$YEAR)))
