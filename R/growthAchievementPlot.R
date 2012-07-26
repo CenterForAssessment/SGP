@@ -63,7 +63,7 @@
 		tmp.unique.grades <- intersect(tmp.unique.grades, SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])
 	}
 	setkeyv(gaPlot.sgp_object@Data, c("VALID_CASE", "CONTENT_AREA"))
-	growthAchievementPlot.data <- gaPlot.sgp_object@Data[SJ("VALID_CASE", content_area), list(ID, YEAR, GRADE, SCALE_SCORE)][
+	growthAchievementPlot.data <- gaPlot.sgp_object@Data[SJ("VALID_CASE", content_area)][, list(ID, YEAR, GRADE, SCALE_SCORE)][
 		GRADE %in% tmp.unique.grades & !is.na(SCALE_SCORE)]
 
 	if (missing(assessment.name) & missing(state)) {
