@@ -82,11 +82,6 @@ function(sgp_object,
 
 	pretty_year <- function(x) sub("_", "-", x)
 
-#	rbind.all <- function(.list, ...) {
-#		if (length(.list)==1) return (.list[[1]])
-#		Recall(c(list(rbind(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), ...)
-#	}
-
 	get.max.order.for.progression <- function(year, content_area) {
 		if (is.null(gaPlot.max.order.for.progression)) {
 			if (is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[content_area]])) {
@@ -135,7 +130,9 @@ function(sgp_object,
 				setkey(sgp_object@Data, VALID_CASE, YEAR)
 				tmp.list[[year.iter]] <- data.table(
 					YEAR=tmp.years[year.iter],
-					CONTENT_AREA=sort(unique(sgp_object@Data[SJ("VALID_CASE", tmp.years[year.iter]), nomatch=0][["CONTENT_AREA"]])) %w/o% NA)
+					CONTENT_AREA=sort(intersect(
+						unique(sgp_object@Data[SJ("VALID_CASE", tmp.years[year.iter]), nomatch=0][["CONTENT_AREA"]]),
+						names(SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Labels"]]))))
 					setkey(sgp_object@Data, VALID_CASE, CONTENT_AREA, YEAR, ID)
 			}
 		}
@@ -488,7 +485,9 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 	#### Content area stuff (NECESSARY regardless of whether sgPlot.students is provided)
 
 	if (is.null(sgPlot.content_areas)) {
-		tmp.content_areas <- sort(unique(sgp_object@Data[SJ("VALID_CASE", tmp.last.year)][["CONTENT_AREA"]]))
+		tmp.content_areas <- sort(intersect(
+						unique(sgp_object@Data[SJ("VALID_CASE", tmp.last.year), nomatch=0][["CONTENT_AREA"]]),
+						names(SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Labels"]])))
 	} else {
 		tmp.content_areas <- sgPlot.content_areas
 	}

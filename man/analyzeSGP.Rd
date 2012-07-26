@@ -153,6 +153,30 @@ READING.2011_2012.MATH_PRIOR = list(
 	sgp.grade.sequences=list(3:4, 4:5, 5:6)))
 
 
+## An example showing multiple priors within a single year
+
+Demonstration_SGP <- prepareSGP(sgpData_LONG)
+ 
+DEMO.config <- list(
+READING.2010_2011 = list(
+	sgp.content.areas=c("MATHEMATICS", "READING", "MATHEMATICS", "READING", "READING"),
+	sgp.panel.years=c('2008_2009', '2008_2009', '2009_2010', '2009_2010', '2010_2011'),
+	sgp.grade.sequences=list(c(3,3,4,4,5), c(4,4,5,5,6), c(5,5,6,6,7), c(6,6,7,7,8))),
+MATHEMATICS.2010_2011 = list(
+	sgp.content.areas=c("READING", "MATHEMATICS", "READING", "MATHEMATICS", "MATHEMATICS"),
+	sgp.panel.years=c('2008_2009', '2008_2009', '2009_2010', '2009_2010', '2010_2011'),
+	sgp.grade.sequences=list(c(3,3,4,4,5), c(4,4,5,5,6), c(5,5,6,6,7), c(6,6,7,7,8))))
+
+Demonstration_SGP <- analyzeSGP(Demonstration_SGP,
+                                          sgp.config=DEMO.config,
+                                          sgp.projections=FALSE,
+                                          sgp.projections.lagged=FALSE,
+                                          sgp.percentiles.baseline=FALSE,
+                                          sgp.projections.baseline=FALSE,
+                                          sgp.projections.lagged.baseline=FALSE,
+                                          sgp.config.drop.nonsequential.grade.progression.variables=FALSE)
+
+
 ###
 ###  Example uses of the parallel.config argument
 ###
