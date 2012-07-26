@@ -230,8 +230,8 @@
 
 		setkey(growthAchievementPlot.data, YEAR)
 		for (i in gaPlot.achievement_percentiles) {
-			temp_achievement_curve <- splinefun(tmp.unique.grades, as.vector(by(growthAchievementPlot.data[year]$TRANSFORMED_SCALE_SCORE, 
-				growthAchievementPlot.data[year]$GRADE, quantile, probs=i, na.rm=TRUE)), method="monoH.FC")
+			temp_achievement_curve <- splinefun(tmp.unique.grades, as.vector(by(growthAchievementPlot.data[data.table(year)]$TRANSFORMED_SCALE_SCORE, 
+				growthAchievementPlot.data[data.table(year)]$GRADE, quantile, probs=i, na.rm=TRUE)), method="monoH.FC")
 			temp_uncond_frame[as.character(i),] <- temp_achievement_curve(tmp.smooth.grades)
 		}
 	}
