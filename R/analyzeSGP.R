@@ -62,6 +62,12 @@ function(sgp_object,
 	### Utility functions
 	###
 
+	## year.increment function
+
+	year.increment <- function(year, increment, lag) {
+                paste(as.numeric(unlist(strsplit(as.character(year), "_")))+increment-lag, collapse="_")
+        }
+
 	## Function to merge results from assorted multiple SGP function calls
 
 	.mergeSGP <- function(list_1, list_2) {
@@ -272,7 +278,9 @@ function(sgp_object,
 		if (sgp.type=="sgp.projections") {
 			return(as.data.frame(reshape(
 				sgp_object@Data[SJ("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])-1), 
-					tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])-1), head(sgp.iter[["sgp.grade.sequences"]][[1]], -1)), nomatch=0],
+					sapply(head(sgp.iter[["sgp.grade.sequences"]][[1]], -1)-tail(head(sgp.iter[["sgp.grade.sequences"]][[1]], -1), 1), 
+						year.increment, year=tail(sgp.iter[["sgp.panel.years"]], 1), lag=0),
+					head(sgp.iter[["sgp.grade.sequences"]][[1]], -1)), nomatch=0],
 			idvar="ID",
 			timevar="YEAR",
 			drop=names(sgp_object@Data)[!names(sgp_object@Data) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR")],
