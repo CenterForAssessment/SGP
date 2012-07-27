@@ -203,26 +203,6 @@
 	} ## END getVersion
 
 
-	## checkVariableClass
-
-	checkVariableClass <- function(my.data) {
-		for (my.variable in c("VALID_CASE", "CONTENT_AREA", "YEAR")) {
-			if (is.SGP(my.data)) {
-				if (is.factor(data@Data[[my.variable]])) {
-					my.data@Data[[my.variable]] <- as.character(my.data@Data[[my.variable]])
-					message(paste("\tNOTE:", my.variable, "converted from class factor to class character to accomodate data.table 1.8.0 changes."))
-				}
-			}
-			if (is.data.frame(my.data)) {
-				if (is.factor(data[[my.variable]])) {
-					my.data[[my.variable]] <- as.character(my.data[[my.variable]])
-					message(paste("\tNOTE:", my.variable, "converted from class factor to class character to accomodate data.table 1.8.0 changes."))
-				}
-			}
-		}
-		return(my.data)
-	}
-
 	###################################################################
 	###
 	### prepare object depending upon whether it is of class SGP
@@ -258,7 +238,7 @@
 
 		## Check class values of fields
 
-		data <- checkVariableClass(data)
+		data <- checkSGP(data)
 
 
 		if (!identical(key(data@Data), c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))) {
@@ -287,7 +267,7 @@
 	
 		## Check class values of fields
 
-		data <- checkVariableClass(data)
+		data <- checkSGP(data)
 
 		##  Create keyed data.table and check for duplicate cases
 
