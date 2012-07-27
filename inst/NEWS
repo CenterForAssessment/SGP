@@ -46,6 +46,7 @@ Changes in version: SGP_0.9-9.0
           o Updated Kansas metadata in SGPstateData.
           o Fixed bug in get.panel.data and get.panel.data.vnames that didn't accomodate missing grades in state testing programs correctly.
           o Added function (internal) checkSGP to externalize checks on SGP object confirming it is up to date.
+          o Added Colorado variable name lookup table to SGPstateData.
 
 
   BUG FIXES:
