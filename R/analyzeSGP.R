@@ -356,8 +356,9 @@ function(sgp_object,
 		}
 
 		if (sgp.type=="sgp.projections") {
-			return(c("ID", paste("GRADE", tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])-1), sep="."), 
-				paste("SCALE_SCORE", tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])-1), sep=".")))
+			tmp.years <- sapply(head(sgp.iter[["sgp.grade.sequences"]][[1]], -1)-tail(head(sgp.iter[["sgp.grade.sequences"]][[1]], -1), 1),
+				year.increment, year=tail(sgp.iter[["sgp.panel.years"]], 1), lag=0)
+			return(c("ID", paste("GRADE", tmp.years, sep="."), paste("SCALE_SCORE", tmp.years, sep=".")))
 		}
 
 		if (sgp.type=="sgp.projections.lagged") {
