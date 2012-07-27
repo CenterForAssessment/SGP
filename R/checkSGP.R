@@ -6,7 +6,7 @@ function(sgp_object) {
 	## checkVariableClass
 
 	checkVariableClass <- function(my.data) {
-		for (my.variable in c("VALID_CASE", "CONTENT_AREA", "YEAR")) {
+		for (my.variable in c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID")) {
 			if (is.SGP(my.data)) {
 				if (is.factor(my.data@Data[[my.variable]])) {
 					my.data@Data[[my.variable]] <- as.character(my.data@Data[[my.variable]])
