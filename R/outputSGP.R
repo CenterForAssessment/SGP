@@ -1,7 +1,7 @@
 `outputSGP` <- 
 function(sgp_object,
 	state=NULL,
-	output.type=c("LONG_Data", "WIDE_Data", "SchoolView"),
+	output.type=c("LONG_Data", "WIDE_Data"),
 	baseline.sgps=FALSE,
 	outputSGP_SUMMARY.years=NULL,
 	outputSGP_SUMMARY.content_areas=NULL,
