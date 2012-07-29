@@ -278,8 +278,8 @@ function(sgp_object,
 		if (sgp.type=="sgp.projections") {
 			return(as.data.frame(reshape(
 				sgp_object@Data[SJ("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])-1), 
-					sapply(head(sgp.iter[["sgp.grade.sequences"]][[1]], -1)-tail(head(sgp.iter[["sgp.grade.sequences"]][[1]], -1), 1), 
-						year.increment, year=tail(sgp.iter[["sgp.panel.years"]], 1), lag=0),
+					type.convert(sapply(head(sgp.iter[["sgp.grade.sequences"]][[1]], -1)-tail(head(sgp.iter[["sgp.grade.sequences"]][[1]], -1), 1), 
+						year.increment, year=tail(sgp.iter[["sgp.panel.years"]], 1), lag=0), as.is=TRUE),
 					head(sgp.iter[["sgp.grade.sequences"]][[1]], -1)), nomatch=0],
 			idvar="ID",
 			timevar="YEAR",
