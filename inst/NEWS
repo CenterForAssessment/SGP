@@ -48,6 +48,7 @@ Changes in version: SGP_0.9-9.0
           o Added function (internal) checkSGP to externalize checks on SGP object confirming it is up to date.
           o Added Colorado variable name lookup table to SGPstateData.
           o Changed default of outputSGP to export LONG and WIDE data.
+          o Added CO baseline matrices based upon 5 years of panel data from 2005 to 2009.
 
 
   BUG FIXES:
