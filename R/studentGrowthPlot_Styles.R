@@ -228,7 +228,7 @@
 		cat(paste("pdfproducer={", tmp.organization$Name, "/Center for Assessment Inc.}}\n", sep=""), file=paste("student_report_", j, ".tex", sep=""), append=TRUE) 
 		cat("\\begin{document}\n", file=paste("student_report_", j, ".tex", sep=""), append=TRUE)
 		if (!is.null(sgPlot.front.page)) {
-			cat("\\includepdf[fitpaper=true]{", sgPlot.front.page, "}\n", file=paste("student_report_", j, ".tex", sep=""), append=TRUE)
+			cat(paste("\\includepdf[fitpaper=true]{", sgPlot.front.page, "}\n", sep=""), file=paste("student_report_", j, ".tex", sep=""), append=TRUE)
 		}
 		cat(paste("\\includepdf[fitpaper=true]{", path.to.pdfs, "/", file_name, "}\n", sep=""), 
 			file=paste("student_report_", j, ".tex", sep=""), append=TRUE)
