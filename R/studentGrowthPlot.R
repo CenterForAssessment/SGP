@@ -31,7 +31,11 @@ test.abbreviation <- SGPstateData[[Report_Parameters$State]][["Assessment_Progra
 
 achievement.level.region.colors <- paste("grey", round(seq(62, 91, length=number.achievement.level.regions)), sep="")
 border.color <- "grey25"
-arrow.legend.color <- rev(diverge_hcl(number.growth.levels, h = c(180, 40), c = 255, l = c(20, 100)))
+if (is.null(SGPstateData[["CO"]][["SGP_Configuration"]][["arrow.legend.color"]])) {
+	arrow.legend.color <- rev(diverge_hcl(number.growth.levels, h = c(180, 40), c = 255, l = c(20, 100)))
+} else {
+	arrow.legend.color <- SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["arrow.legend.color"]]
+}
 missing.data.symbol <- "--"
 
 

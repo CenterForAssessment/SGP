@@ -1,3 +1,14 @@
+Changes in version: SGP_0.9-9.1
+
+  NEW FEATURES:
+
+	  o studentGrowthPlot allows arrow.legend.color to be specified in a state specific fashion and controlled from SGPstateData.
+
+  USER VISIBLE CHANGES:
+
+  BUG FIXES:
+
+
 Changes in version: SGP_0.9-9.0
 
   NEW FEATURES:
