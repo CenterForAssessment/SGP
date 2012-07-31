@@ -2,15 +2,15 @@ Package: SGP
 Type: Package
 Title: An R Package for the Calculation and Visualization of Student Growth Percentiles & Percentile Growth Trajectories.
 Version: 0.9-9.0
-Date: 2012-7-25
+Date: 2012-8-1
 Authors@R: c(person("Damian", "Betebenner", email="dbetebenner@nciea.org", role=c("aut", "cre")), person("Adam", "Van Iwaarden", email="Vaniwaarden@colorado.edu", role="aut"),
                     person("Ben", "Domingue", email="ben.domingue@gmail.com", role="aut"))
 Author: Damian W. Betebenner <dbetebenner@nciea.org>, Adam Van Iwaarden <Vaniwaarden@colorado.edu> and Ben Domingue <ben.domingue@gmail.com>
         with contributions from Dr. Jonathan Weeks, John Stewart, Dr. Jinnie Choi, Dr. Xin Wei, and Hi Shin Shim. With special thanks to 
         State Department of Education analysts: Dr. Sarah Polasky (Arizona), Rebecca Gau (Arizona), Dr. Bill Bonk (Colorado), Marie Huchton (Colorado), Dr. Allison Timberlake (Georgia),
 	Dr. Melissa Fincher (Georgia), Kiran Athota (Georgia), Travis Allen (Georgia), Glenn Hirata (Hawaii), Glenn Nochi (Hawaii), Ayaka Nukui (Idaho), Dr. Carissa Miller (Idaho), 
-	Dr . Wes Bruce (Indiana), Robert Hochsegang (Indiana), Xuewen Sheng (Kansas), Dr. Kathy Flanagan (Massachusetts), Robert Lee (Massachusetts), Joe DeCastra (Mississippi), 
-	Ken Thompson (Mississippi), Soo Yeon Cho (Missouri), Jeff Halsell (Nevada), Selcuk Ozdemir (Nevada), Roger Silva (Nevada), Deb Wiswell (New Hampshire), 
+	Dr . Wes Bruce (Indiana), Robert Hochsegang (Indiana), Tony Moss (Kansas), Dr. Xuewen Sheng (Kansas), Dr. Kathy Flanagan (Massachusetts), Robert Lee (Massachusetts), 
+	Joe DeCastra (Mississippi), Ken Thompson (Mississippi), Soo Yeon Cho (Missouri), Jeff Halsell (Nevada), Dr. Selcuk Ozdemir (Nevada), Roger Silva (Nevada), Deb Wiswell (New Hampshire), 
 	Katya Levitan-Reiner (New Haven Public Schools), Jason Becker (Rhode Island), Dr. Jessica Brown (Rhode Island), Ana Karantonis (Rhode Island), 
 	Dr. Deborah Jonas (Virginia), Juan D'Brot (West Virginia), Nate Hixson (West Virginia), Daniel Bush (Wisconsin), Justin Meyer (Wisconsin), Joseph Newton (Wisconsin), 
 	Dr. Philip Olsen (Wisconsin), Nick Stroud (Wisconsin).  
