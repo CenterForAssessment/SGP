@@ -364,10 +364,10 @@
 
               pushViewport(bottom.border.vp)
               grid.rect(gp=gpar(fill=sgPlot.header.footer.color, col=sgPlot.header.footer.color))
-              grid.text(x=0.02, y=0.70, paste("For more information please visit the", tmp.organization$Name, "at", tmp.organization$URL, "or contact", tmp.organization$Contact), 
+              grid.text(x=0.02, y=0.70, paste("For more information please visit the", tmp.organization$Name, paste("(", tmp.organization$Abbreviation, ")", sep=""), "at", tmp.organization$URL, "or contact", tmp.organization$Contact), 
                         gp=gpar(cex=0.8, col="white"), default.units="native", just="left")
-              copyright.text <- paste("Cooperatively developed by the ", tmp.organization$Name, " & the Center for Assessment, Inc.", sep="")
-              grid.text(x=0.02, y=0.30, paste(copyright.text, " Distributed by the ", tmp.organization$Name, ".", sep=""), 
+              copyright.text <- paste("Cooperatively developed by the ", tmp.organization$Abbreviation, " & the Center for Assessment, Inc.", sep="")
+              grid.text(x=0.02, y=0.30, paste(copyright.text, " Distributed by the ", tmp.organization$Abbreviation, ".", sep=""), 
                         gp=gpar(cex=0.8, col="white"), default.units="native", just="left")
 
 #              grid.text(x=0.995, y=0.18, copyright.text, gp=gpar(col="white", cex=0.45), default.units="native", just="right")
