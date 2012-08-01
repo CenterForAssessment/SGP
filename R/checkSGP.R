@@ -1,5 +1,14 @@
 `checkSGP` <-
-function(sgp_object) {
+function(sgp_object, state=NULL) {
+
+        ### Create state (if NULL) from sgp_object (if possible)
+
+        if (is.null(state)) {
+                tmp.name <- gsub("_", " ", deparse(substitute(sgp_object)))
+                if (any(sapply(c(state.name, "Demonstration", "sgpData LONG", "AOB"), function(x) regexpr(x, tmp.name)))==1) {
+                        state <- c(state.abb, rep("DEMO", 2), "AOB")[which(sapply(c(state.name, "Demonstration", "sgpData LONG", "AOB"), function(x) regexpr(x, tmp.name))==1)]
+                }
+        }
 
 	### Utility functions
 
@@ -24,9 +33,35 @@ function(sgp_object) {
 	}
 
 
+	###########################################
+	###
 	### Perform checks
+	###
+	###########################################
+
+	### Check class of variables used with data.table keys
 
 	sgp_object <- checkVariableClass(sgp_object)
+
+
+	### Check is ACHIEVEMENT_LEVEL levels are in SGPstateData
+
+	if (!is.null(state)) {
+		if (is.SGP(sgp_object)) {
+			if (!all(levels(sgp_object@Data$ACHIEVEMENT_LEVEL) %in% SGPstateData[[state]][['Achievement']][['Levels']][['Labels']])) {
+				missing.achievement.levels <- 
+					levels(sgp_object@Data$ACHIEVEMENT_LEVEL)[!levels(sgp_object@Data$ACHIEVEMENT_LEVEL) %in% SGPstateData[[state]][['Achievement']][['Levels']][['Labels']]]
+				message(paste("\tNOTE: Achievement level(s):", missing.achievement.levels, "in supplied data are not contained in 'SGPstateData'."))
+			}
+		}
+		if (is.data.frame(sgp_object)) {
+			if (!all(levels(sgp_object$ACHIEVEMENT_LEVEL) %in% SGPstateData[[state]][['Achievement']][['Levels']][['Labels']])) {
+				missing.achievement.levels <- 
+					levels(sgp_object$ACHIEVEMENT_LEVEL)[!levels(sgp_object$ACHIEVEMENT_LEVEL) %in% SGPstateData[[state]][['Achievement']][['Levels']][['Labels']]]
+				message(paste("\tNOTE: Achievement level(s):", missing.achievement.levels, "in supplied data are not contained in 'SGPstateData'."))
+			}
+		}
+	}
 
 
 	### Return sgp_object
