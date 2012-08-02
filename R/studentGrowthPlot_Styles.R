@@ -212,7 +212,7 @@
 			cat(paste("\\pdfbookmark[2]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", student_number, ")", sep=""), "}{", n , "}\n\\includepdf[fitpaper=true]{", 
 				path.to.pdfs, "/", file_name, "}\n", sep=""), file=paste("school_catalog_", j, ".tex", sep=""), append=TRUE)
 			} else {
-				cat(paste("\\include{", sgPlot.front.page, "}\n\\pdfbookmark[2]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", 
+				cat(paste("\\includepdf[fitpaper=true]{", sgPlot.front.page, "}\n\\pdfbookmark[2]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", 
 				student_number, ")", sep=""), "}{", n , "}\n\\includepdf[fitpaper=true,pages=2]{", path.to.pdfs, "/", file_name, "}\n", sep=""), 
 					file=paste("school_catalog_", j, ".tex", sep=""), append=TRUE)
 			}
