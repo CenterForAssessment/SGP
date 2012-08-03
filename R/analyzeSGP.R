@@ -184,9 +184,18 @@ function(sgp_object,
 				par.sgp.config[[cnt]] <- sgp.config[[a]]
 				par.sgp.config[[cnt]][["sgp.grade.progression.labels"]] <- sgp.config[[a]][["sgp.grade.progression.labels"]][b]
 				par.sgp.config[[cnt]][["sgp.grade.sequences"]] <- sgp.config[[a]][["sgp.grade.sequences"]][b]
+				
+				###  Use exact grade progression if using multiple content areas in a single year as priors.  (Could add in override argument later???)
+				if (any(duplicated(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]]))) {  
+					par.sgp.config[[cnt]][["exact.grade.progression.tf"]] <- TRUE
+					tmp.scdngpv <- FALSE
+				} else {
+					par.sgp.config[[cnt]][["exact.grade.progression.tf"]] <- FALSE
+					tmp.scdngpv <- sgp.config.drop.nonsequential.grade.progression.variables
+				}
 				grade.span <- seq(min(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]]), max(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]]))
 				index <- match(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]], grade.span) ## Select out proper years
-				if (!sgp.config.drop.nonsequential.grade.progression.variables) index <- seq_along(index) ## Take most recent years
+				if (!tmp.scdngpv) index <- seq_along(index) ## Take most recent years, OR, take years and subjects as specified in custom sgp.config
 				par.sgp.config[[cnt]][["sgp.panel.years"]] <- tail(par.sgp.config[[cnt]][["sgp.panel.years"]], max(index))[index]
 				par.sgp.config[[cnt]][["sgp.content.areas"]] <- tail(par.sgp.config[[cnt]][["sgp.content.areas"]], length(index))
 
@@ -208,10 +217,11 @@ function(sgp_object,
 						par.sgp.config[[cnt]][["max.order"]] <- max.order
 					}
 				}
+				
 				cnt <- cnt + 1
 			}
 		}
-	par.sgp.config
+        par.sgp.config
 	} ## END get.par.sgp.config
 
 
@@ -515,6 +525,7 @@ function(sgp_object,
 							max.order.for.percentile=SGPstateData[[state]][["SGP_Configuration"]][["max.order.for.percentile"]],
 							drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 							grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
+							exact.grade.progression.sequence=sgp.iter[["exact.grade.progression.tf"]],
 							...))
 					}
 				} else {
@@ -532,6 +543,7 @@ function(sgp_object,
 							max.order.for.percentile=SGPstateData[[state]][["SGP_Configuration"]][["max.order.for.percentile"]],
 							drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 							grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
+							exact.grade.progression.sequence=sgp.iter[["exact.grade.progression.tf"]],
 							...))
 					}
 				}
@@ -557,6 +569,7 @@ function(sgp_object,
 							max.order.for.percentile=SGPstateData[[state]][["SGP_Configuration"]][["max.order.for.percentile"]],
 							drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 							grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
+							exact.grade.progression.sequence=sgp.iter[["exact.grade.progression.tf"]],
 							...))
 					} else {
 						tmp <- clusterApplyLB(par.start$internal.cl, par.sgp.config, 	function(sgp.iter)	studentGrowthPercentiles( 
@@ -571,6 +584,7 @@ function(sgp_object,
 							max.order.for.percentile=SGPstateData[[state]][["SGP_Configuration"]][["max.order.for.percentile"]],
 							drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 							grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
+							exact.grade.progression.sequence=sgp.iter[["exact.grade.progression.tf"]],
 							...))
 					}
 					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
@@ -596,6 +610,7 @@ function(sgp_object,
 							max.order.for.percentile=SGPstateData[[state]][["SGP_Configuration"]][["max.order.for.percentile"]],
 							drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 							grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
+							exact.grade.progression.sequence=sgp.iter[["exact.grade.progression.tf"]],
 							...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 					} else {
 						tmp <- mclapply(par.sgp.config, function(sgp.iter)	studentGrowthPercentiles( 
@@ -610,6 +625,7 @@ function(sgp_object,
 							max.order.for.percentile=SGPstateData[[state]][["SGP_Configuration"]][["max.order.for.percentile"]],
 							drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 							grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
+							exact.grade.progression.sequence=sgp.iter[["exact.grade.progression.tf"]],
 							...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 					}
 					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
@@ -647,6 +663,7 @@ function(sgp_object,
 						goodness.of.fit=TRUE,
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 						grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
+						exact.grade.progression.sequence=sgp.iter[["exact.grade.progression.tf"]],
 						...))
 				}
 				tmp_sgp_object <- .mergeSGP(tmp_sgp_object, tmp)
@@ -668,6 +685,7 @@ function(sgp_object,
 						goodness.of.fit=TRUE,
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 						grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
+						exact.grade.progression.sequence=sgp.iter[["exact.grade.progression.tf"]],
 						...))
 	
 					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
@@ -690,6 +708,7 @@ function(sgp_object,
 						goodness.of.fit=TRUE,
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 						grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
+						exact.grade.progression.sequence=sgp.iter[["exact.grade.progression.tf"]],
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
 					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
@@ -1067,6 +1086,7 @@ function(sgp_object,
 						calculate.confidence.intervals=calculate.confidence.intervals,
 						drop.nonsequential.grade.progression.variables=FALSE,
 						grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
+						exact.grade.progression.sequence=sgp.iter[["exact.grade.progression.tf"]],
 						...)
 				} else {
 					tmp_sgp_object <- studentGrowthPercentiles(
@@ -1080,6 +1100,7 @@ function(sgp_object,
 						max.order.for.percentile=SGPstateData[[state]][["SGP_Configuration"]][["max.order.for.percentile"]],
 						drop.nonsequential.grade.progression.variables=FALSE,
 						grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
+						exact.grade.progression.sequence=sgp.iter[["exact.grade.progression.tf"]],
 						...)
 				}
 			}
@@ -1108,6 +1129,7 @@ function(sgp_object,
 					goodness.of.fit=TRUE,
 					drop.nonsequential.grade.progression.variables=FALSE,
 					grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
+					exact.grade.progression.sequence=sgp.iter[["exact.grade.progression.tf"]],
 					...)
 			}
 		} ## END if sgp.percentiles.baseline

@@ -196,7 +196,7 @@ function(panel.data,         ## REQUIRED
 		tmp <- do.call(rbind.fill, lapply(strsplit(names, "_"), function(x) as.data.frame(matrix(x, nrow=1))))
 		if (!grade %in% tmp[,2]) stop(paste("Coefficient matrix associated with grade ", grade, " not found.", sep=""))
 		if (grade.progression.label) {
-			if (!order %in% tmp[tmp[,2]==grade & tmp[,4]==paste(grade.progression, collapse="."),3]) {
+			if (!order %in% tmp[tmp[,2]==grade & tmp[,4]==paste(tmp.gp, collapse="."),3]) {
 				stop(paste("Coefficient matrix associated with grade ", grade, " order ", order, " not found.", sep=""))
 			}
 		} else {
@@ -207,9 +207,9 @@ function(panel.data,         ## REQUIRED
 	.get.max.matrix.order <- function(names, grade) {
 		tmp <- do.call(rbind.fill, lapply(strsplit(names, "_"), function(x) as.data.frame(matrix(x, nrow=1))))
 		if (grade.progression.label) {
-			max(as.numeric(tmp[tmp[,2]==grade & tmp[,4]==paste(grade.progression, collapse="."),3]), na.rm=TRUE)
+			max(as.numeric(as.character(tmp[tmp[,2]==grade & tmp[,4]==paste(tmp.gp, collapse="."),3])), na.rm=TRUE)
 		} else {
-			max(as.numeric(tmp[tmp[,2]==grade,3]), na.rm=TRUE)
+			max(as.numeric(as.character(tmp[tmp[,2]==grade,3])), na.rm=TRUE)
 		}
 	}
 
@@ -827,7 +827,8 @@ function(panel.data,         ## REQUIRED
 			if (!missing(percentile.cuts)) {
 				tmp.percentile.cuts[[j]] <- data.table(ID=tmp.data[["ID"]], .get.percentile.cuts(tmp.predictions))
 			}
-			if (goodness.of.fit & j==1) prior.ss <- tmp.data[, tail(head(SS, -1),1), with=FALSE]
+			if (goodness.of.fit | return.prior.scale.score & j==1) prior.ss <- tmp.data[, tail(head(SS, -1),1), with=FALSE]
+			if (exact.grade.progression.sequence & !goodness.of.fit & return.prior.scale.score) prior.ss <- tmp.data[, tail(head(SS, -1),1), with=FALSE]
 		} ## END j loop
 
 		quantile.data <- data.table(rbind.all(tmp.quantiles), key="ID")
