@@ -13,7 +13,7 @@ function(sgp_object,
      ...) {
 
     started.at <- proc.time()
-    message(paste("\tStarted baselineSGP", date(), "\n"))
+    message(paste("\n\tStarted baselineSGP", date(), "\n"))
 
     ### Create state (if missing) from sgp_object (if possible)
 
@@ -61,7 +61,7 @@ function(sgp_object,
     list_1
     }
 
-    baselineSGP_Internal <- function(sgp_object, state, years, content_areas, grade.sequences) {
+    baselineSGP_Internal <- function(sgp_object, state, years, content_areas, grade.sequences, knots.boundaries.iter) {
 
         started.at <- proc.time()
         started.date <- date()
@@ -86,11 +86,11 @@ function(sgp_object,
             tmp.lookup <- data.table(CJ("VALID_CASE", tmp.year.sequence[[k]]), grade.sequences, content_areas)
             setnames(tmp.lookup, c("VALID_CASE", "YEAR", "GRADE", "CONTENT_AREA"))
             setkeyv(tmp.lookup, c("VALID_CASE", "YEAR", "GRADE", "CONTENT_AREA"))
-            tmp.list[[k]] <- reshape(sgp_object@Data[tmp.lookup, nomatch=0],
+            tmp.list[[k]] <- reshape(sgp_object@Data[tmp.lookup, nomatch=0][,'tmp.timevar' := paste(GRADE, CONTENT_AREA, sep="."), with=FALSE],
                 idvar="ID",
-                timevar="GRADE",
+                timevar="tmp.timevar",
                 direction="wide",
-                drop=names(sgp_object@Data)[!names(sgp_object@Data) %in% c('ID', 'SCALE_SCORE', 'GRADE')])
+                drop=names(sgp_object@Data)[!names(sgp_object@Data) %in% c('ID', 'SCALE_SCORE', 'tmp.timevar')])
                 tmp.list[[k]] <- as.data.frame(tmp.list[[k]][!apply(is.na(tmp.list[[k]]), 1, any)])
         }
         tmp.df <- rbind.fill(tmp.list)
@@ -100,18 +100,20 @@ function(sgp_object,
 
         tmp_sgp_list <- list(Coefficient_Matrices =
             studentGrowthPercentiles(
-                panel.data=data.frame(tmp.df[,1], matrix(grade.sequences, nrow=1), tmp.df[,-1]),
-                sgp.labels=list(my.year="BASELINE", my.subject=content_areas),
-                use.my.knots.boundaries=state,
+                panel.data=list(Panel_Data=data.frame(tmp.df[,1], matrix(grade.sequences, nrow=1), tmp.df[,-1]), 
+                    Knots_Boundaries=get.knots.boundaries(knots.boundaries.iter)),
+                sgp.labels=list(my.year="BASELINE", my.subject=tail(content_areas, 1)),
+                use.my.knots.boundaries=list(my.year="BASELINE", my.subject=tail(content_areas, 1)),
                 calculate.sgps=FALSE,
                 goodness.of.fit=FALSE,
                 drop.nonsequential.grade.progression.variables=FALSE, # taken care of in data reshape above.
                 grade.progression=grade.sequences,
                 exact.grade.progression.sequence=TRUE,
-                print.time.taken=FALSE)[["Coefficient_Matrices"]])
+                print.time.taken=FALSE,
+                ...)[["Coefficient_Matrices"]])
 
         message(paste("\tStarted baselineSGP Coefficient Matrix Calculation:", started.date))
-        message(paste("\tContent Area: ", content_areas, ", Grade Progression: ", paste(grade.sequences, collapse=", "), ". ", sep=""))
+        message(paste("\tContent Area: ", tail(content_areas, 1), ", Grade Progression: ", paste(grade.sequences, collapse=", "), ". ", sep=""))
         message(paste("\tFinished baselineSGP Coefficient Matrix Calculation ", date(), " in ", timetaken(started.at), ".\n", sep=""))
 
         return(tmp_sgp_list)
@@ -143,7 +145,62 @@ function(sgp_object,
         }
     }
 
+    ### Function to create knots and boundaries list.  Selects knots and boundaries according to
+    ### baseline.iter content areas, but names them the same when fed into studentGrowthPercentiles.
 
+    get.knots.boundaries <- function(baseline.iter, matrices=TRUE) {
+        kb <- list()
+        if (matrices) tmp.gp <- baseline.iter[["baseline.grade.sequences"]] else tmp.gp <- baseline.iter[["sgp.grade.sequences"]] 
+        num.prior <- length(tmp.gp)-1
+        
+        #  Check for repeat grades - either held back, multiple grade/subject priors, etc.  Add .1, .2 , etc.
+        if (any(duplicated(tmp.gp[1:num.prior]))) {
+            while(any(duplicated(tmp.gp[1:num.prior]))) {
+                tmp.gp[which(duplicated(tmp.gp[1:num.prior]))] <- tmp.gp[which(duplicated(tmp.gp[1:num.prior]))] + 0.1
+            }
+            tmp.gp[1:num.prior] <- tmp.gp[1:num.prior]+0.1
+        }
+        tmp.gp <- as.character(tmp.gp)
+        
+        if (matrices) {
+            #  If all knots.boundaries.iter[["baseline.content.areas"]] are the same, use SGPstateData as usual:
+            if (all(sapply(baseline.iter[["baseline.content.areas"]], function(x) identical(tail(baseline.iter[["baseline.content.areas"]], 1), x)))) {
+                for (i in grep(tail(baseline.iter[["baseline.content.areas"]], 1), names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]]), value=TRUE)) {
+                    kb[["Knots_Boundaries"]][[paste(tail(baseline.iter[["baseline.content.areas"]], 1), "BASELINE", sep=".")]][[i]] <- 
+                        SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[i]]
+                }
+            } else { # if not (e.g. "ELA", "HISTORY",  of "MATH", "ALGEBRA_I", then get the right knots and boundaries, but name them as 'my.subject')
+                for (ca in seq_along(head(baseline.iter[["baseline.content.areas"]], -1))) {
+                    for (j in c('boundaries_', 'knots_', 'loss.hoss_')) {
+                        kb[["Knots_Boundaries"]][[paste(tail(baseline.iter[["baseline.content.areas"]], 1), "BASELINE", sep=".")]][[paste(j, tmp.gp[ca], sep="")]] <- 
+                            SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[baseline.iter[["baseline.content.areas"]][ca]]][
+                                grep(paste(j, strsplit(tmp.gp, "[.]")[[ca]][1], sep=""), 
+                                names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[baseline.iter[["baseline.content.areas"]][ca]]]))][[1]]
+                        }
+                }
+            }
+        } else {
+            #  If all baseline.iter[["sgp.content.areas"]] are the same, use SGPstateData as usual:
+            if (all(sapply(baseline.iter[["sgp.content.areas"]], function(x) identical(tail(baseline.iter[["sgp.content.areas"]], 1), x)))) {
+                for (i in grep(tail(baseline.iter[["sgp.content.areas"]], 1), names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]]), value=TRUE)) {
+                    kb[["Knots_Boundaries"]][[paste(tail(baseline.iter[["sgp.content.areas"]], 1), tail(baseline.iter[["sgp.panel.years"]], 1), sep=".")]][[i]] <- 
+                        SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[i]]
+                }
+            } else { # if not (e.g. "ELA", "HISTORY",  of "MATH", "ALGEBRA_I", then get the right knots and boundaries, but name them as 'my.subject')
+                for (ca in seq_along(head(baseline.iter[["sgp.content.areas"]], -1))) {
+                    for (j in c('boundaries_', 'knots_', 'loss.hoss_')) {
+                        kb[["Knots_Boundaries"]][[paste(tail(baseline.iter[["sgp.content.areas"]], 1), tail(baseline.iter[["sgp.panel.years"]], 1), sep=".")]][[paste(j, tmp.gp[ca], sep="")]] <- 
+                            SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[baseline.iter[["sgp.content.areas"]][ca]]][
+                                grep(paste(j, strsplit(tmp.gp, "[.]")[[ca]][1], sep=""), 
+                                names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[baseline.iter[["sgp.content.areas"]][ca]]]))][[1]]
+                        }
+                }
+            }
+        }
+        return(kb[["Knots_Boundaries"]])
+    }
+
+# stop("cok$")
     #################################################################################
     ###
     ### Calculate/retrieve baseline coefficient matrices if requested
@@ -193,7 +250,8 @@ function(sgp_object,
                     state=state,
                     years=sgp.baseline.config[[sgp.iter]][["baseline.panel.years"]],
                     content_areas=sgp.baseline.config[[sgp.iter]][["baseline.content.areas"]],
-                    grade.sequences=sgp.baseline.config[[sgp.iter]][["baseline.grade.sequences"]])
+                    grade.sequences=sgp.baseline.config[[sgp.iter]][["baseline.grade.sequences"]],
+                    knots.boundaries.iter=sgp.baseline.config[[sgp.iter]])
             }
             sgp_object@SGP <- .mergeSGP(sgp_object@SGP, Reduce(.mergeSGP, tmp))
         } else {
@@ -271,13 +329,13 @@ function(sgp_object,
             if (any(diff(tail(k, 1+max.order)) > 1)) {      # deals with 'holes'
                 base.gp <- k[tail(k, 1)-k <= max.order]
                 max.order <- length(base.gp) - 1
-            }	else base.gp <- tail(k, 1+max.order)
+            }    else base.gp <- tail(k, 1+max.order)
 
             tmp_sgp_object <- studentGrowthPercentiles(
                 panel.data=tmp_sgp_object,
                 sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1),
                 my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), my.extra.label="BASELINE"),
-                use.my.knots.boundaries=state,
+                use.my.knots.boundaries=get.knots.boundaries(sgp.iter, matrices=FALSE),
                 use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
                 growth.levels=state,
                 panel.data.vnames=sgp.vnames,
@@ -303,9 +361,9 @@ function(sgp_object,
     message(paste("\tFinished baselineSGP", date(), "in", timetaken(started.at), "\n"))
     if (return.matrices.only) {
         tmp.list <- list()
-                for (ca in unique(sapply(sgp.baseline.config, function(x) x[["baseline.content.areas"]]))) {
-                        tmp.list[[paste(ca, ".BASELINE", sep="")]] <- sgp_object@SGP[["Coefficient_Matrices"]][[paste(ca, ".BASELINE", sep="")]]
-                }
+        for (ca in unique(sapply(sgp.baseline.config, function(x) tail(x[["baseline.content.areas"]],1)))) {
+            tmp.list[[paste(ca, ".BASELINE", sep="")]] <- sgp_object@SGP[["Coefficient_Matrices"]][[paste(ca, ".BASELINE", sep="")]]
+        }
         return(tmp.list)
     } else {
         return(sgp_object)
