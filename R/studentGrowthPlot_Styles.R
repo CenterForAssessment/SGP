@@ -212,7 +212,7 @@
 			cat(paste("\\pdfbookmark[2]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", student_number, ")", sep=""), "}{", n , "}\n\\includepdf[fitpaper=true]{", 
 				path.to.pdfs, "/", file_name, "}\n", sep=""), file=paste("school_catalog_", j, ".tex", sep=""), append=TRUE)
 			} else {
-				cat(paste("\\include{", sgPlot.front.page, "}\n\\pdfbookmark[2]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", 
+				cat(paste("\\includepdf[fitpaper=true]{", sgPlot.front.page, "}\n\\pdfbookmark[2]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", 
 				student_number, ")", sep=""), "}{", n , "}\n\\includepdf[fitpaper=true,pages=2]{", path.to.pdfs, "/", file_name, "}\n", sep=""), 
 					file=paste("school_catalog_", j, ".tex", sep=""), append=TRUE)
 			}
@@ -228,7 +228,7 @@
 		cat(paste("pdfproducer={", tmp.organization$Name, "/Center for Assessment Inc.}}\n", sep=""), file=paste("student_report_", j, ".tex", sep=""), append=TRUE) 
 		cat("\\begin{document}\n", file=paste("student_report_", j, ".tex", sep=""), append=TRUE)
 		if (!is.null(sgPlot.front.page)) {
-			cat("\\includepdf[fitpaper=true]{", sgPlot.front.page, "}\n", file=paste("student_report_", j, ".tex", sep=""), append=TRUE)
+			cat(paste("\\includepdf[fitpaper=true]{", sgPlot.front.page, "}\n", sep=""), file=paste("student_report_", j, ".tex", sep=""), append=TRUE)
 		}
 		cat(paste("\\includepdf[fitpaper=true]{", path.to.pdfs, "/", file_name, "}\n", sep=""), 
 			file=paste("student_report_", j, ".tex", sep=""), append=TRUE)
@@ -364,10 +364,10 @@
 
               pushViewport(bottom.border.vp)
               grid.rect(gp=gpar(fill=sgPlot.header.footer.color, col=sgPlot.header.footer.color))
-              grid.text(x=0.02, y=0.70, paste("For more information please visit the", tmp.organization$Name, "at", tmp.organization$URL, "or contact", tmp.organization$Contact), 
+              grid.text(x=0.02, y=0.70, paste("For more information please visit the", tmp.organization$Name, paste("(", tmp.organization$Abbreviation, ")", sep=""), "at", tmp.organization$URL, "or contact", tmp.organization$Contact), 
                         gp=gpar(cex=0.8, col="white"), default.units="native", just="left")
-              copyright.text <- paste("Cooperatively developed by the ", tmp.organization$Name, " & the Center for Assessment, Inc.", sep="")
-              grid.text(x=0.02, y=0.30, paste(copyright.text, " Distributed by the ", tmp.organization$Name, ".", sep=""), 
+              copyright.text <- paste("Cooperatively developed by the ", tmp.organization$Abbreviation, " & the Center for Assessment, Inc.", sep="")
+              grid.text(x=0.02, y=0.30, paste(copyright.text, " Distributed by the ", tmp.organization$Abbreviation, ".", sep=""), 
                         gp=gpar(cex=0.8, col="white"), default.units="native", just="left")
 
 #              grid.text(x=0.995, y=0.18, copyright.text, gp=gpar(col="white", cex=0.45), default.units="native", just="right")

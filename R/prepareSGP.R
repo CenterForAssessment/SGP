@@ -238,7 +238,7 @@
 
 		## Check class values of fields
 
-		data <- checkSGP(data)
+		data <- checkSGP(data, state=state)
 
 
 		if (!identical(key(data@Data), c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))) {
@@ -264,11 +264,8 @@
 		sgp_object <- data
 	} else {
 		variable.names <- getNames(data, var.names)
+
 	
-		## Check class values of fields
-
-		data <- checkSGP(data)
-
 		##  Create keyed data.table and check for duplicate cases
 
 		data <- as.data.table(data)
@@ -295,10 +292,14 @@
 		## INCLUDE CODE HERE TO HANDLE DUPLICATE CASES
 		################################################################	
 
+		## Check class values of fields
+
+		data <- checkSGP(data, state=state)
 
 		##  Create the SGP object
 
 		sgp_object <- new("SGP", Data=data, Names=variable.names, Version=getVersion(data))
+
 	} ## END else
 
 	#################################################################
