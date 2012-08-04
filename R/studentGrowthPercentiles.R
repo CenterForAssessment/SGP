@@ -827,7 +827,7 @@ function(panel.data,         ## REQUIRED
 			if (!missing(percentile.cuts)) {
 				tmp.percentile.cuts[[j]] <- data.table(ID=tmp.data[["ID"]], .get.percentile.cuts(tmp.predictions))
 			}
-			if (goodness.of.fit | return.prior.scale.score & j==1) prior.ss <- tmp.data[, tail(head(SS, -1),1), with=FALSE]
+			if ((goodness.of.fit | return.prior.scale.score) & j==1) prior.ss <- tmp.data[, tail(head(SS, -1),1), with=FALSE]
 			if (exact.grade.progression.sequence & !goodness.of.fit & return.prior.scale.score) prior.ss <- tmp.data[, tail(head(SS, -1),1), with=FALSE]
 		} ## END j loop
 
