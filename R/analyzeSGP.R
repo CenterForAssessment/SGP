@@ -71,6 +71,7 @@ function(sgp_object,
 	## Function to merge results from assorted multiple SGP function calls
 
 	.mergeSGP <- function(list_1, list_2) {
+		if (is.null(names(list_1))) return(list_2)
 		if (!is.null(names(list_2))) {
 			for (j in c("Coefficient_Matrices", "Cutscores", "Goodness_of_Fit", "Knots_Boundaries", "SGPercentiles", "SGProjections", "Simulated_SGPs")) {
 				list_1[[j]] <- c(list_1[[j]], list_2[[j]])[!duplicated(names(c(list_1[[j]], list_2[[j]])))]
@@ -188,14 +189,11 @@ function(sgp_object,
 				###  Use exact grade progression if using multiple content areas in a single year as priors.  (Could add in override argument later???)
 				if (any(duplicated(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]]))) {  
 					par.sgp.config[[cnt]][["exact.grade.progression.tf"]] <- TRUE
-					tmp.scdngpv <- FALSE
-				} else {
-					par.sgp.config[[cnt]][["exact.grade.progression.tf"]] <- FALSE
-					tmp.scdngpv <- sgp.config.drop.nonsequential.grade.progression.variables
-				}
+				} else par.sgp.config[[cnt]][["exact.grade.progression.tf"]] <- FALSE
+				
 				grade.span <- seq(min(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]]), max(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]]))
 				index <- match(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]], grade.span) ## Select out proper years
-				if (!tmp.scdngpv) index <- seq_along(index) ## Take most recent years, OR, take years and subjects as specified in custom sgp.config
+				if (!sgp.config.drop.nonsequential.grade.progression.variables) index <- seq_along(index) ## Take most recent years, OR, take years and subjects as specified in custom sgp.config
 				par.sgp.config[[cnt]][["sgp.panel.years"]] <- tail(par.sgp.config[[cnt]][["sgp.panel.years"]], max(index))[index]
 				par.sgp.config[[cnt]][["sgp.content.areas"]] <- tail(par.sgp.config[[cnt]][["sgp.content.areas"]], length(index))
 
