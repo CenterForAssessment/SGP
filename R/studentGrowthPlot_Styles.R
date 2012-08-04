@@ -103,7 +103,7 @@
 			tmp_district_name <- as.character(sgPlot.data[i][[paste("DISTRICT_NAME", last.year, sep=".")]][1])
 			district_folder <- "Uncollated_Student_Reports"
 		} else {
-			if (sgPlot.demo.report) {
+			if (sgPlot.demo.report | identical(i, -999L)) {
 				tmp_district_name <- "Sample District"
 				district_folder <- "Sample_District"
 			} else {
@@ -132,7 +132,7 @@
 			tmp_school_name <- as.character(tmp_district_data[j][[paste("SCHOOL_NAME", last.year, sep=".")]][1])
 			school_folder <- NULL
 		} else {
-			if (sgPlot.demo.report) {
+			if (sgPlot.demo.report | identical(j, -99L)) {
 				tmp_school_name <- "Sample School"
 				school_folder <- "Sample_School"
 			} else {
@@ -201,9 +201,9 @@
 			student_number <- n
 		}
 		if (sgPlot.folder.names=="name" | sgPlot.anonymize) {
-			file_name <- paste(paste(FIRST_NAME, LAST_NAME, student_number, year_folder, sep="_"), ".pdf", sep="")
+			file_name <- paste(paste(FIRST_NAME, LAST_NAME, student_number, year_folder, "REPORT", sep="_"), ".pdf", sep="")
 		} else {
-			file_name <- paste(n, ".pdf", sep="")
+			file_name <- paste(n, "_REPORT.pdf", sep="")
 		}
 
 		if (!reports.by.student) {
@@ -213,7 +213,7 @@
 				path.to.pdfs, "/", file_name, "}\n", sep=""), file=paste("school_catalog_", j, ".tex", sep=""), append=TRUE)
 			} else {
 				cat(paste("\\includepdf[fitpaper=true]{", sgPlot.front.page, "}\n\\pdfbookmark[2]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", 
-				student_number, ")", sep=""), "}{", n , "}\n\\includepdf[fitpaper=true,pages=2]{", path.to.pdfs, "/", file_name, "}\n", sep=""), 
+				student_number, ")", sep=""), "}{", n , "}\n\\includepdf[fitpaper=true]{", path.to.pdfs, "/", file_name, "}\n", sep=""), 
 					file=paste("school_catalog_", j, ".tex", sep=""), append=TRUE)
 			}
 			#####################################################################################################################################################
@@ -459,7 +459,7 @@
               ## Code to LaTeX document attaching first page/adding meta-data
 
               system(paste("pdflatex -interaction=batchmode student_report_", j, ".tex", sep=""), ignore.stdout = TRUE)
-              file.rename(paste("student_report_", j, ".pdf", sep=""), paste(path.to.pdfs, "/", file_name, sep=""))
+              file.rename(paste("student_report_", j, ".pdf", sep=""), paste(path.to.pdfs, "/", paste(head(unlist(strsplit(file_name, "_")), -1), collapse="_"), ".pdf", sep=""))
 
             } ## END for loop for STUDENTS (n)
           } ## END for loop for GRADES (k)
@@ -472,6 +472,8 @@
 	}
 	if (sgPlot.cleanup) {
 		files.to.remove <- list.files(pattern=as.character(j), all.files=TRUE)
+		lapply(files.to.remove, file.remove)
+		files.to.remove <- list.files(path=path.to.pdfs, pattern="REPORT", all.files=TRUE, full.names=TRUE, recursive=TRUE)
 		lapply(files.to.remove, file.remove)
 	}
 
