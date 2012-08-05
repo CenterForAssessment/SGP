@@ -770,10 +770,10 @@ function(panel.data,         ## REQUIRED
 		}
 		if (exact.grade.progression.sequence) {
 			tmp.quantiles <- tmp.percentile.cuts <- tmp.csem.quantiles <- list(); orders <- max.order
-			if (goodness.of.fit) { # either switch goodness.of.fit to false or change creation of prior.ss
-				tmp.messages <- c(tmp.messages, "\tNOTE: Goodness of Fit plots will not be produced when exact.grade.progression.sequence = TRUE.\n")
-				goodness.of.fit <- FALSE
-			}
+			# if (goodness.of.fit) { # either switch goodness.of.fit to false or change creation of prior.ss
+				# tmp.messages <- c(tmp.messages, "\tNOTE: Goodness of Fit plots will not be produced when exact.grade.progression.sequence = TRUE.\n")
+				# goodness.of.fit <- FALSE
+			# }
 		} else {
 			tmp.quantiles <- tmp.percentile.cuts <- tmp.csem.quantiles <- list(); orders <- 1:max.order
 		}
@@ -828,7 +828,7 @@ function(panel.data,         ## REQUIRED
 				tmp.percentile.cuts[[j]] <- data.table(ID=tmp.data[["ID"]], .get.percentile.cuts(tmp.predictions))
 			}
 			if ((goodness.of.fit | return.prior.scale.score) & j==1) prior.ss <- tmp.data[, tail(head(SS, -1),1), with=FALSE]
-			if (exact.grade.progression.sequence & !goodness.of.fit & return.prior.scale.score) prior.ss <- tmp.data[, tail(head(SS, -1),1), with=FALSE]
+			if (exact.grade.progression.sequence & return.prior.scale.score) prior.ss <- tmp.data[, tail(head(SS, -1),1), with=FALSE]
 		} ## END j loop
 
 		quantile.data <- data.table(rbind.all(tmp.quantiles), key="ID")
