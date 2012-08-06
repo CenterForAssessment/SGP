@@ -237,7 +237,7 @@ function(panel.data,         ## REQUIRED
 		.check.my.coefficient.matrices(matrix.names, tmp.last, order)
 		mod <- character()
 		if (grade.progression.label) {
-			tmp.mtx <- eval(parse(text=paste("Coefficient_Matrices[['", tmp.path.coefficient.matrices, "']][['qrmatrix_", tmp.last, "_", j, "_", paste(tmp.gp, collapse="."), "']]", sep="")))
+			tmp.mtx <- eval(parse(text=paste("Coefficient_Matrices[['", tmp.path.coefficient.matrices, "']][['qrmatrix_", tmp.last, "_", j, "_", paste(c(tail(tmp.gp[1:num.prior], order), tmp.last), collapse="."), "']]", sep="")))
 		} else {
 			tmp.mtx <- eval(parse(text=paste("Coefficient_Matrices[['", tmp.path.coefficient.matrices, "']][['qrmatrix_", tmp.last, "_", j, "']]", sep="")))
 		}
