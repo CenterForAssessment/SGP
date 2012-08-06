@@ -184,10 +184,10 @@ function(sgp_object,
 			for (b in seq_along(sgp.config[[a]][["sgp.grade.sequences"]])) {
 				par.sgp.config[[cnt]] <- sgp.config[[a]]
 				par.sgp.config[[cnt]][["sgp.grade.progression.labels"]] <- sgp.config[[a]][["sgp.grade.progression.labels"]][b]
-				par.sgp.config[[cnt]][["sgp.grade.sequences"]] <- sgp.config[[a]][["sgp.grade.sequences"]][b]
+				par.sgp.config[[cnt]][["sgp.grade.sequences"]] <- tmp.gp <- sgp.config[[a]][["sgp.grade.sequences"]][b]
 				
 				###  Use exact grade progression if using multiple content areas in a single year as priors.  (Could add in override argument later???)
-				if (any(duplicated(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]]))) {  
+				if (any(duplicated(tmp.gp[[1]]))) {  
 					par.sgp.config[[cnt]][["exact.grade.progression.tf"]] <- TRUE
 				} else par.sgp.config[[cnt]][["exact.grade.progression.tf"]] <- FALSE
 				
@@ -213,6 +213,21 @@ function(sgp_object,
 						}	else base.gp <- tail(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]], 1+max.order) 
 						par.sgp.config[[cnt]][["base.gp"]] <- base.gp
 						par.sgp.config[[cnt]][["max.order"]] <- max.order
+
+						if (par.sgp.config[[cnt]][["sgp.grade.progression.labels"]]) { # from studentGrowthPercentiles / .check.my.coefficient.matrices
+							tmp <- do.call(rbind.fill, lapply(strsplit(mtx.names, "_"), function(x) as.data.frame(matrix(x, nrow=1))))
+							num.prior <- length(tmp.gp[[1]])-1
+							if (any(duplicated(tmp.gp[[1]][1:num.prior]))) {
+								while(any(duplicated(tmp.gp[[1]][1:num.prior]))) {
+									tmp.gp[[1]][which(duplicated(tmp.gp[[1]][1:num.prior]))] <- tmp.gp[[1]][which(duplicated(tmp.gp[[1]][1:num.prior]))] + 0.1
+								}
+								tmp.gp[[1]][1:num.prior] <- tmp.gp[[1]][1:num.prior]+0.1
+							}
+							if (!paste(tmp.gp[[1]], collapse=".") %in% tmp[tmp[,2]==tail(tmp.gp[[1]],1),4]) {
+								par.sgp.config[[cnt]][["base.gp"]] <- "NO_BASELINE_COEFFICIENT_MATRICES"
+								par.sgp.config[[cnt]][["max.order"]] <- "NO_BASELINE_COEFFICIENT_MATRICES"
+							}
+						}
 					}
 				}
 				
