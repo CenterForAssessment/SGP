@@ -657,10 +657,6 @@ function(panel.data,         ## REQUIRED
 			tmp.messages <- c(tmp.messages, paste("\tNOTE: Supplied grade progression, grade.progress=c(", paste(grade.progression, collapse=","), "), exceeds number of panels (", num.panels, ") in provided data.\n\t\t Analyses will utilize maximum number of priors supplied by the data.\n", sep=""))
 		tmp.gp <- tail(grade.progression, num.panels)
 	}}
-	if (exact.grade.progression.sequence){
-		tmp.gp <- grade.progression
-		by.grade <- TRUE
-	}
 	if (!missing(subset.grade) & missing(grade.progression)) {
 		tmp.gp <- (subset.grade-num.panels+1):subset.grade
 		by.grade <- TRUE
@@ -680,6 +676,12 @@ function(panel.data,         ## REQUIRED
 			tmp.gp <- tail(tmp.gp, num.prior+1)
 			
 	}} else {
+		num.prior <- length(tmp.gp)-1
+	}
+
+	if (exact.grade.progression.sequence){
+		tmp.gp <- grade.progression
+		by.grade <- TRUE
 		num.prior <- length(tmp.gp)-1
 	}
 	if (any(duplicated(tmp.gp[1:num.prior]))) {  #  Check for repeat grades - either held back, multiple grade/subject priors, etc.  Add .1, .2 , etc.
