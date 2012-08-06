@@ -196,7 +196,7 @@ function(panel.data,         ## REQUIRED
 		tmp <- do.call(rbind.fill, lapply(strsplit(names, "_"), function(x) as.data.frame(matrix(x, nrow=1))))
 		if (!grade %in% tmp[,2]) stop(paste("Coefficient matrix associated with grade ", grade, " not found.", sep=""))
 		if (grade.progression.label) {
-			if (!order %in% tmp[tmp[,2]==grade & tmp[,4]==paste(tmp.gp, collapse="."),3]) {
+			if (!order %in% tmp[tmp[,2]==grade & tmp[,4]==paste(c(tail(tmp.gp[1:num.prior], order), tmp.last), collapse="."),3]) {
 				stop(paste("Coefficient matrix associated with grade ", grade, " order ", order, " not found.", sep=""))
 			}
 		} else {
