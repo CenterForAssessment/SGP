@@ -657,6 +657,10 @@ function(panel.data,         ## REQUIRED
 			tmp.messages <- c(tmp.messages, paste("\tNOTE: Supplied grade progression, grade.progress=c(", paste(grade.progression, collapse=","), "), exceeds number of panels (", num.panels, ") in provided data.\n\t\t Analyses will utilize maximum number of priors supplied by the data.\n", sep=""))
 		tmp.gp <- tail(grade.progression, num.panels)
 	}}
+	if (exact.grade.progression.sequence){
+		tmp.gp <- grade.progression
+		by.grade <- TRUE
+	}
 	if (!missing(subset.grade) & missing(grade.progression)) {
 		tmp.gp <- (subset.grade-num.panels+1):subset.grade
 		by.grade <- TRUE
