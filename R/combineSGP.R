@@ -240,7 +240,7 @@ function(
 			for (i in tmp.names) {
 				cols.to.get.names <- names(sgp_object@SGP[["SGProjections"]][[i]])[
 					grep(paste("LEVEL_", level.to.get.cu, sep=""), names(sgp_object@SGP[["SGProjections"]][[i]]))]
-				num.years.to.get <- min(max.lagged.sgp.target.years.forward, length(cols.to.get.names)/sum(!is.null(level.to.get.cu), !is.null(level.to.get.mu)))
+				num.years.to.get <- min(max.lagged.sgp.target.years.forward, length(cols.to.get.names))
 				cols.to.get.names <- cols.to.get.names[as.integer(sapply(sapply(cols.to.get.names, strsplit, "_"), tail, 1) ) <= num.years.to.get]
 				cols.to.get <- sapply(cols.to.get.names, function(x) which(x==names(sgp_object@SGP[["SGProjections"]][[i]])))
 				tmp.list[[i]] <- data.table(
@@ -278,7 +278,7 @@ function(
 			for (i in tmp.names) {
 				cols.to.get.names <- names(sgp_object@SGP[["SGProjections"]][[i]])[
 					grep(paste("LEVEL_", level.to.get.mu, sep=""), names(sgp_object@SGP[["SGProjections"]][[i]]))]
-				num.years.to.get <- min(max.lagged.sgp.target.years.forward, length(cols.to.get.names)/sum(!is.null(level.to.get.cu), !is.null(level.to.get.mu)))
+				num.years.to.get <- min(max.lagged.sgp.target.years.forward, length(cols.to.get.names))
 				cols.to.get.names <- cols.to.get.names[as.integer(sapply(sapply(cols.to.get.names, strsplit, "_"), tail, 1) ) <= num.years.to.get]
 				cols.to.get <- sapply(cols.to.get.names, function(x) which(x==names(sgp_object@SGP[["SGProjections"]][[i]])))
 				tmp.list[[i]] <- data.table(
@@ -365,7 +365,7 @@ function(
 			for (i in tmp.names) {
 				cols.to.get.names <- names(sgp_object@SGP[["SGProjections"]][[i]])[
 					grep(paste("LEVEL_", level.to.get.mu, sep=""), names(sgp_object@SGP[["SGProjections"]][[i]]))]
-				num.years.to.get <- min(max.lagged.sgp.target.years.forward, length(cols.to.get.names)/sum(!is.null(level.to.get.cu), !is.null(level.to.get.mu)))
+				num.years.to.get <- min(max.lagged.sgp.target.years.forward, length(cols.to.get.names))
 				cols.to.get.names <- cols.to.get.names[as.integer(sapply(sapply(cols.to.get.names, strsplit, "_"), tail, 1) ) <= num.years.to.get]
 				cols.to.get <- sapply(cols.to.get.names, function(x) which(x==names(sgp_object@SGP[["SGProjections"]][[i]])))
 				tmp.list[[i]] <- data.table(
