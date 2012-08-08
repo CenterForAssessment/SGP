@@ -234,7 +234,7 @@ function(sgp_object,
 			gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students)
 			clusterApplyLB(par.start$internal.cl, gaPlot.list, function(gaPlot.iter) 
 				growthAchievementPlot(
-						gaPlot.sgp_object=get.gaPlot.sgp_object,
+						gaPlot.sgp_object=gaPlot.sgp_object,
 						gaPlot.students=gaPlot.iter[["ID"]],
 						gaPlot.max.order.for.progression=get.max.order.for.progression(gaPlot.iter[["YEAR"]], gaPlot.iter[["CONTENT_AREA"]]),
 						state=state,
@@ -249,7 +249,7 @@ function(sgp_object,
 			gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students)
 			mclapply(gaPlot.list, function(gaPlot.iter) {
 						growthAchievementPlot(
-						gaPlot.sgp_object=get.gaPlot.sgp_object,
+						gaPlot.sgp_object=gaPlot.sgp_object,
 						gaPlot.students=gaPlot.iter[["ID"]],
 						gaPlot.max.order.for.progression=get.max.order.for.progression(gaPlot.iter[["YEAR"]], gaPlot.iter[["CONTENT_AREA"]]),
 						state=state,
