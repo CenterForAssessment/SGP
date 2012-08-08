@@ -6,6 +6,7 @@ Changes in version: SGP_0.9-9.2
 	  o checkSGP checks for match between levels in ACHIEVEMENT_LEVEL and SGPstateData.
 	  o Added organization abbreviation to SGPstateData.
 	  o Added Move Up Calculations to combineSGP.
+	  o Made major refinements to growthAchievementPlot and visualizeSGP that speeds up the creation of growth and achievement plots.
 
   USER VISIBLE CHANGES:
 

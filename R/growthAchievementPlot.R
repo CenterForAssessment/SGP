@@ -15,9 +15,6 @@
 	pdf.folder,
 	assessment.name) { 
 
-	started.at <- proc.time()
-	started.date <- date()
-
 	CUTLEVEL <- GRADE <- YEAR <- ID <- SCALE_SCORE <- level_1_curve <- NULL ## To prevent R CMD check warnings
 	content_area <- toupper(content_area)
 	number.achievement.level.regions <- length(SGPstateData[[state]][["Student_Report_Information"]][["Achievement_Level_Labels"]])
@@ -273,17 +270,27 @@
 	## Start loop over students or starting scores
 
 	for (j in unique(tmp1.df$ID)) {
+
+		started.at <- proc.time()
+		started.date <- date()
+
 		tmp2.df <- subset(tmp1.df, ID==j)
 		tmp.df <- data.frame(matrix(c(as.numeric(as.character(tmp2.df$ID[1])), tmp2.df$GRADE, tmp2.df$SCALE_SCORE), nrow=1))
 		pdf(file=paste(pdf.folder, "/", state.name.file.label, "_State_Growth_and_Achievement_Plot_", capwords(content_area), "_", year, "_Level_", j, ".pdf", sep=""), 
 			width=8.5, height=11, bg=format.colors.background)
 
+	## Create Percentile Trajectory functions
+
+	smoothPercentileTrajectory_Functions <- list()
+	for (i in sort(gaPlot.percentile_trajectories)) {
+		smoothPercentileTrajectory_Functions[[as.character(i)]] <- smoothPercentileTrajectory(tmp.df, i, content_area, year, state)		
+	}
 
 	## Define axis ranges based (ranges contingent upon starting score)
 
 	setkey(growthAchievementPlot.data, YEAR)
-	gp.axis.range <- c(smoothPercentileTrajectory(tmp.df, min(gaPlot.percentile_trajectories), content_area, year, state)(gaPlot.grade_range[2]),
-		smoothPercentileTrajectory(tmp.df, max(gaPlot.percentile_trajectories), content_area, year, state)(gaPlot.grade_range[2]))
+	gp.axis.range <- c(smoothPercentileTrajectory_Functions[[1]](gaPlot.grade_range[[2]]), 
+		smoothPercentileTrajectory_Functions[[length(gaPlot.percentile_trajectories)]](gaPlot.grade_range[[2]]))
 	yscale.range <- c(min(gp.axis.range[1], quantile(growthAchievementPlot.data[year]$TRANSFORMED_SCALE_SCORE, prob=.005, na.rm=TRUE)), 
 		max(gp.axis.range[2], quantile(growthAchievementPlot.data[year]$TRANSFORMED_SCALE_SCORE, prob=.995, na.rm=TRUE)))
 	ach.per.axis.range <- (temp_uncond_frame[,1])[temp_uncond_frame[,1] >= yscale.range[1] & temp_uncond_frame[,1] <= yscale.range[2]]
@@ -409,7 +416,7 @@
 	if (!is.null(gaPlot.percentile_trajectories)){
 
 		for (i in gaPlot.percentile_trajectories) {
-			grid.lines(tmp.smooth.grades, (smoothPercentileTrajectory(tmp.df, i, content_area, year, state))(tmp.smooth.grades), 
+			grid.lines(tmp.smooth.grades, smoothPercentileTrajectory_Functions[[as.character(i)]](tmp.smooth.grades), 
 				gp=gpar(lwd=1.2, col="black"), default.units="native")
 		}
 	}
@@ -476,9 +483,9 @@
 		grid.lines(0.1, gp.axis.range, gp=gpar(lwd=1.5, col=format.colors.font), default.units="native")
 	
 		for (i in gaPlot.percentile_trajectories){
-			grid.lines(c(-0.1, 0.1), smoothPercentileTrajectory(tmp.df, i, content_area, year, state)(gaPlot.grade_range[2]), 
+			grid.lines(c(-0.1, 0.1), smoothPercentileTrajectory_Functions[[as.character(i)]](gaPlot.grade_range[2]), 
 				gp=gpar(lwd=1.5, col=format.colors.font), default.units="native")
-			grid.text(x=unit(-0.55, "native"), y=smoothPercentileTrajectory(tmp.df, i, content_area, year, state)(gaPlot.grade_range[2]), i, 
+			grid.text(x=unit(-0.55, "native"), y=smoothPercentileTrajectory_Functions[[as.character(i)]](gaPlot.grade_range[2]), i, 
 				gp=gpar(col=format.colors.font, cex=0.8), just="left", default.units="native")
 		}
 	
@@ -499,14 +506,12 @@
 		grid.text(x=0.2, y=(gp.axis.range[2]+tmp.cut)/2, "College Ready", gp=gpar(col=format.colors.font, cex=0.5), rot=90, default.units="native")
 	
 		for (i in gaPlot.percentile_trajectories){
-			grid.lines(c(-0.15, 0.05), smoothPercentileTrajectory(tmp.df, i, content_area, year, state)(gaPlot.grade_range[2]), 
+			grid.lines(c(-0.15, 0.05), smoothPercentileTrajectory_Functions[[as.character(i)]](gaPlot.grade_range[2]), 
 				gp=gpar(lwd=1.5, col=format.colors.font), default.units="native")
-			grid.text(x=unit(-0.5, "native"), y=smoothPercentileTrajectory(tmp.df, i, content_area, year, state)(gaPlot.grade_range[2]), i, 
+			grid.text(x=unit(-0.5, "native"), y=smoothPercentileTrajectory_Functions[[as.character(i)]](gaPlot.grade_range[2]), i, 
 				gp=gpar(col=format.colors.font, cex=0.8), just="left", default.units="native")
 		}
 	
-	#	grid.text(x=0.65, y=smoothPercentileTrajectory(tmp.df, 50, content_area, year, state)(gaPlot.grade_range[2]), "Percentile Growth Trajectory to College Readiness", 
-	#		gp=gpar(col=format.colors.font, cex=1.0), rot=90, default.units="native")
 		grid.text(x=0.65, y=(gp.axis.range[1]+gp.axis.range[2])/2, "Percentile Growth Trajectory to College Readiness", 
 			gp=gpar(col=format.colors.font, cex=1.0), rot=90, default.units="native")
 	}
