@@ -150,6 +150,12 @@ function(sgp_object,
 
 	} ### END get.gaPlot.iter
 
+	get.gaPlot.object <- function(sgp_object) {
+		tmp.sgp <- new("SGP")
+		tmp.sgp@Data <- sgp_object@Data
+		tmp.sgp@SGP <- sgp_object@SGP[c("Coefficient_Matrices", "Knots_Boundaries")]
+		return(tmp.sgp)
+	} ### END get.gaPlot.object
 
 ##############################################################################################################
 #### bubblePlot
@@ -202,13 +208,15 @@ function(sgp_object,
 		}
 
 		par.start <- startParallel(parallel.config, 'GA_PLOTS')
+
+		gaPlot.sgp_object <- get.gaPlot.object(sgp_object)
 		
 		if (par.start$par.type=="FOREACH") {
 
 			foreach(gaPlot.iter=iter(get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students)), .packages="SGP", .inorder=FALSE,
 				.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
 					growthAchievementPlot(
-						gaPlot.sgp_object=sgp_object,
+						gaPlot.sgp_object=gaPlot.sgp_object,
 						gaPlot.students=gaPlot.iter[["ID"]],
 						gaPlot.max.order.for.progression=get.max.order.for.progression(gaPlot.iter[["YEAR"]], gaPlot.iter[["CONTENT_AREA"]]),
 						state=state,
@@ -226,7 +234,7 @@ function(sgp_object,
 			gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students)
 			clusterApplyLB(par.start$internal.cl, gaPlot.list, function(gaPlot.iter) 
 				growthAchievementPlot(
-						gaPlot.sgp_object=sgp_object,
+						gaPlot.sgp_object=gaPlot.sgp_object,
 						gaPlot.students=gaPlot.iter[["ID"]],
 						gaPlot.max.order.for.progression=get.max.order.for.progression(gaPlot.iter[["YEAR"]], gaPlot.iter[["CONTENT_AREA"]]),
 						state=state,
@@ -241,7 +249,7 @@ function(sgp_object,
 			gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students)
 			mclapply(gaPlot.list, function(gaPlot.iter) {
 						growthAchievementPlot(
-						gaPlot.sgp_object=sgp_object,
+						gaPlot.sgp_object=gaPlot.sgp_object,
 						gaPlot.students=gaPlot.iter[["ID"]],
 						gaPlot.max.order.for.progression=get.max.order.for.progression(gaPlot.iter[["YEAR"]], gaPlot.iter[["CONTENT_AREA"]]),
 						state=state,
