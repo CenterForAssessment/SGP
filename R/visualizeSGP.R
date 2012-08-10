@@ -438,11 +438,10 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			setkeyv(sgp_object, c("CONTENT_AREA", paste("SCHOOL_NUMBER", tmp.last.year, sep=".")))
 			tmp.ids <- unique(sgp_object[CJ(tmp.content_areas, tmp.districts.and.schools[["SCHOOL_NUMBER"]]), nomatch=0][["ID"]])
 			setkey(sgp_object, ID)
-			sgPlot.data <- sgp_object[tmp.ids]
+			sgPlot.data <- sgp_object[list(tmp.ids)]
 		} else { ## sgPlot.students specified with WIDE data
 			setkey(sgp_object, ID)
-			if (is.factor(sgp_object$ID)) sgPlot.students <- as.factor(sgPlot.students)
-			sgPlot.data <- sgp_object[sgPlot.students]
+			sgPlot.data <- sgp_object[list(sgPlot.students)]
 			tmp.districts.and.schools <- unique(data.table(sgPlot.data, 
 				key=paste(c("DISTRICT_NUMBER", "SCHOOL_NUMBER"), tmp.last.year, sep=".")))[,
 				c(paste(c("DISTRICT_NUMBER", "SCHOOL_NUMBER"), tmp.last.year, sep=".")), with=FALSE]
