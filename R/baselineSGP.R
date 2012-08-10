@@ -15,6 +15,8 @@ function(sgp_object,
     started.at <- proc.time()
     message(paste("\n\tStarted baselineSGP", date(), "\n"))
 
+	GRADE <- CONTENT_AREA <- NULL ### To prevent R CMD check warnings
+
     ### Create state (if missing) from sgp_object (if possible)
 
     if (missing(state)) {

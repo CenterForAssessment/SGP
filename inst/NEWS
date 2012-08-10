@@ -1,4 +1,4 @@
-Changes in version: SGP_0.9-9.2
+Changes in version: SGP_0.9-9.3
 
   NEW FEATURES:
 
@@ -7,6 +7,7 @@ Changes in version: SGP_0.9-9.2
 	  o Added organization abbreviation to SGPstateData.
 	  o Added Move Up Calculations to combineSGP.
 	  o Made major refinements to growthAchievementPlot and visualizeSGP that speeds up the creation of growth and achievement plots.
+	  o Improved baselineSGP configuration for dealing with non-standard content area progressions.
 
   USER VISIBLE CHANGES:
 
