@@ -196,7 +196,7 @@ function(panel.data,         ## REQUIRED
 		tmp <- do.call(rbind.fill, lapply(strsplit(names, "_"), function(x) as.data.frame(matrix(x, nrow=1))))
 		if (!grade %in% tmp[,2]) stop(paste("Coefficient matrix associated with grade ", grade, " not found.", sep=""))
 		if (grade.progression.label) {
-			if (!order %in% tmp[tmp[,2]==grade & tmp[,4]==paste(grade.progression, collapse="."),3]) {
+			if (!order %in% tmp[tmp[,2]==grade & tmp[,4]==paste(c(tail(tmp.gp[1:num.prior], order), tmp.last), collapse="."),3]) {
 				stop(paste("Coefficient matrix associated with grade ", grade, " order ", order, " not found.", sep=""))
 			}
 		} else {
@@ -207,9 +207,9 @@ function(panel.data,         ## REQUIRED
 	.get.max.matrix.order <- function(names, grade) {
 		tmp <- do.call(rbind.fill, lapply(strsplit(names, "_"), function(x) as.data.frame(matrix(x, nrow=1))))
 		if (grade.progression.label) {
-			max(as.numeric(tmp[tmp[,2]==grade & tmp[,4]==paste(grade.progression, collapse="."),3]), na.rm=TRUE)
+			max(as.numeric(as.character(tmp[tmp[,2]==grade & tmp[,4]==paste(tmp.gp, collapse="."),3])), na.rm=TRUE)
 		} else {
-			max(as.numeric(tmp[tmp[,2]==grade,3]), na.rm=TRUE)
+			max(as.numeric(as.character(tmp[tmp[,2]==grade,3])), na.rm=TRUE)
 		}
 	}
 
@@ -227,7 +227,7 @@ function(panel.data,         ## REQUIRED
 
 	get.coefficient.matrix.label <- function(tmp.last, k, grade.progression.label) {
 		if (grade.progression.label) {
-			return(paste("qrmatrix_", tmp.last, "_", k, "_", paste(tmp.gp, collapse="."), sep=""))
+			return(paste("qrmatrix_", tmp.last, "_", k, "_", paste(c(tail(tmp.gp[1:num.prior], k), tmp.last), collapse="."), sep=""))
 		} else {
 			return(paste("qrmatrix_", tmp.last, "_", k, sep=""))
 		}
@@ -237,7 +237,8 @@ function(panel.data,         ## REQUIRED
 		.check.my.coefficient.matrices(matrix.names, tmp.last, order)
 		mod <- character()
 		if (grade.progression.label) {
-			tmp.mtx <- eval(parse(text=paste("Coefficient_Matrices[['", tmp.path.coefficient.matrices, "']][['qrmatrix_", tmp.last, "_", j, "_", paste(tmp.gp, collapse="."), "']]", sep="")))
+			tmp.mtx <- eval(parse(text=paste("Coefficient_Matrices[['", tmp.path.coefficient.matrices, "']][['qrmatrix_", tmp.last, "_", j, "_", 
+				paste(c(tail(tmp.gp[1:num.prior], order), tmp.last), collapse="."), "']]", sep="")))
 		} else {
 			tmp.mtx <- eval(parse(text=paste("Coefficient_Matrices[['", tmp.path.coefficient.matrices, "']][['qrmatrix_", tmp.last, "_", j, "']]", sep="")))
 		}
@@ -678,6 +679,12 @@ function(panel.data,         ## REQUIRED
 	}} else {
 		num.prior <- length(tmp.gp)-1
 	}
+
+	if (exact.grade.progression.sequence){
+		tmp.gp <- grade.progression
+		by.grade <- TRUE
+		num.prior <- length(tmp.gp)-1
+	}
 	if (any(duplicated(tmp.gp[1:num.prior]))) {  #  Check for repeat grades - either held back, multiple grade/subject priors, etc.  Add .1, .2 , etc.
 		while(any(duplicated(tmp.gp[1:num.prior]))) {
 			tmp.gp[which(duplicated(tmp.gp[1:num.prior]))] <- tmp.gp[which(duplicated(tmp.gp[1:num.prior]))] + 0.1
@@ -770,10 +777,10 @@ function(panel.data,         ## REQUIRED
 		}
 		if (exact.grade.progression.sequence) {
 			tmp.quantiles <- tmp.percentile.cuts <- tmp.csem.quantiles <- list(); orders <- max.order
-			if (goodness.of.fit) { # either switch goodness.of.fit to false or change creation of prior.ss
-				tmp.messages <- c(tmp.messages, "\tNOTE: Goodness of Fit plots will not be produced when exact.grade.progression.sequence = TRUE.\n")
-				goodness.of.fit <- FALSE
-			}
+			# if (goodness.of.fit) { # either switch goodness.of.fit to false or change creation of prior.ss
+				# tmp.messages <- c(tmp.messages, "\tNOTE: Goodness of Fit plots will not be produced when exact.grade.progression.sequence = TRUE.\n")
+				# goodness.of.fit <- FALSE
+			# }
 		} else {
 			tmp.quantiles <- tmp.percentile.cuts <- tmp.csem.quantiles <- list(); orders <- 1:max.order
 		}
@@ -827,7 +834,8 @@ function(panel.data,         ## REQUIRED
 			if (!missing(percentile.cuts)) {
 				tmp.percentile.cuts[[j]] <- data.table(ID=tmp.data[["ID"]], .get.percentile.cuts(tmp.predictions))
 			}
-			if (goodness.of.fit & j==1) prior.ss <- tmp.data[, tail(head(SS, -1),1), with=FALSE]
+			if ((goodness.of.fit | return.prior.scale.score) & j==1) prior.ss <- tmp.data[, tail(head(SS, -1),1), with=FALSE]
+			if (exact.grade.progression.sequence & return.prior.scale.score) prior.ss <- tmp.data[, tail(head(SS, -1),1), with=FALSE]
 		} ## END j loop
 
 		quantile.data <- data.table(rbind.all(tmp.quantiles), key="ID")
