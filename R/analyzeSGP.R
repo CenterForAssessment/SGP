@@ -189,7 +189,7 @@ function(sgp_object,
 				###  Use exact grade progression if using multiple content areas in a single year as priors.  (Could add in override argument later???)
 				if (any(duplicated(tmp.gp[[1]]))) {  
 					par.sgp.config[[cnt]][["exact.grade.progression.tf"]] <- TRUE
-				} else par.sgp.config[[cnt]][["exact.grade.progression.tf"]] <- FALSE
+				} else if (!exists("exact.grade.progression.sequence")) par.sgp.config[[cnt]][["exact.grade.progression.tf"]] <- FALSE
 				
 				grade.span <- seq(min(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]]), max(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]]))
 				index <- match(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]], grade.span) ## Select out proper years
