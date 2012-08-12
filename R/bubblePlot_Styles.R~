@@ -2109,8 +2109,7 @@ if (22 %in% bPlot.styles) {
 						measure.vars=mult.memb[[1]][["ENROLLMENT_STATUS"]])[,2]])
 				}
 			}
-
-			setkeyv(tmp.bPlot.data.1.long, "INSTRUCTOR_NUMBER")
+		
 			tmp.unique.schools <- my.iters$tmp.schools[my.iters$tmp.schools %in% unique(tmp.bPlot.data.1.long$SCHOOL_NUMBER)]
 			for (school.iter in seq_along(tmp.unique.schools)) { ### Loop over schools (seq_along to get integer for anonymize)
 	
