@@ -681,7 +681,7 @@ function(sgp_object,
 						panel.data.vnames=get.panel.data.vnames("sgp.percentiles", sgp.iter),
 						grade.progression=sgp.iter[["base.gp"]],
 						num.prior=min(sgp.iter[["max.order"]], sgp.percentiles.baseline.max.order),
-						goodness.of.fit=TRUE,
+						# goodness.of.fit=TRUE, # already the default.
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 						grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
@@ -703,7 +703,7 @@ function(sgp_object,
 						panel.data.vnames=get.panel.data.vnames("sgp.percentiles", sgp.iter),
 						grade.progression=sgp.iter[["base.gp"]],
 						num.prior=min(sgp.iter[["max.order"]], sgp.percentiles.baseline.max.order),
-						goodness.of.fit=TRUE,
+						# goodness.of.fit=TRUE, # already the default.
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 						grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
@@ -726,7 +726,7 @@ function(sgp_object,
 						panel.data.vnames=get.panel.data.vnames("sgp.percentiles", sgp.iter),
 						grade.progression=sgp.iter[["base.gp"]],
 						num.prior=min(sgp.iter[["max.order"]], sgp.percentiles.baseline.max.order),
-						goodness.of.fit=TRUE,
+						# goodness.of.fit=TRUE, # already the default.
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 						grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
@@ -1147,7 +1147,7 @@ function(sgp_object,
 					panel.data.vnames=get.panel.data.vnames("sgp.percentiles", sgp.iter),
 					grade.progression=sgp.iter[["base.gp"]],
 					num.prior=min(sgp.iter[["max.order"]], sgp.percentiles.baseline.max.order),
-					goodness.of.fit=TRUE,
+					# goodness.of.fit=TRUE, # already the default.
 					drop.nonsequential.grade.progression.variables=FALSE,
 					grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 					exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
@@ -1265,6 +1265,8 @@ function(sgp_object,
 					...)
 			}
 		} ## END sgp.projections.lagged.baseline
+	for (n in names(tmp_sgp_object)) if (is.null(tmp_sgp_object[[n]])) tmp_sgp_object[[n]] <- NULL
+	tmp_sgp_object[['Panel_Data']] <- NULL
 	} ## END sequential analyzeSGP
 
 	sgp_object@SGP <- .mergeSGP(sgp_object@SGP, tmp_sgp_object)
