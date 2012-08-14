@@ -1,4 +1,6 @@
-# SGP Student Growth Percentiles and Percentile Growth Trajectories/Projections
+# SGP 
+
+## Student Growth Percentiles & Percentile Growth Trajectories/Projections
 
 Functions to calculate student growth percentiles and percentile growth projections/trajectories for students using large scale, longitudinal assessment 
 data. Functions use quantile regression to estimate the conditional density associated with each student's 
