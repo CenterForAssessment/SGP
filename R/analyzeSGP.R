@@ -1265,6 +1265,8 @@ function(sgp_object,
 					...)
 			}
 		} ## END sgp.projections.lagged.baseline
+	for (n in names(tmp_sgp_object)) if (is.null(tmp_sgp_object[[n]])) tmp_sgp_object[[n]] <- NULL
+	tmp_sgp_object[['Panel_Data']] <- NULL
 	} ## END sequential analyzeSGP
 
 	sgp_object@SGP <- .mergeSGP(sgp_object@SGP, tmp_sgp_object)
