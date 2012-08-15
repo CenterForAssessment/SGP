@@ -185,7 +185,7 @@
 
 	### Create path to pdf files
 
-	path.to.pdfs <- paste(c(sgPlot.folder, year_folder, district_folder, school_folder, grade_folder), collapse="/")
+	path.to.pdfs <- file.path(sgPlot.folder, year_folder, district_folder, school_folder, grade_folder)
 	dir.create(path.to.pdfs, recursive=TRUE, showWarnings=FALSE)
 
 	## Students
@@ -473,7 +473,7 @@
 	if (sgPlot.cleanup) {
 		files.to.remove <- list.files(pattern=as.character(j), all.files=TRUE)
 		lapply(files.to.remove, file.remove)
-		files.to.remove <- list.files(path=path.to.pdfs, pattern="REPORT", all.files=TRUE, full.names=TRUE, recursive=TRUE)
+		files.to.remove <- list.files(path=file.path(sgPlot.folder, year_folder, district_folder, school_folder), pattern="REPORT", all.files=TRUE, full.names=TRUE, recursive=TRUE)
 		lapply(files.to.remove, file.remove)
 	}
 
