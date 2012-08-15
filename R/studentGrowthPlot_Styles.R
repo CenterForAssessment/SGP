@@ -467,7 +467,7 @@
 		cat("\\end{document}", file=paste("school_catalog_", j, ".tex", sep=""), append=TRUE)
 		system(paste("pdflatex -interaction=batchmode school_catalog_", j, ".tex", sep=""), ignore.stdout = TRUE)
 		system(paste("pdflatex -interaction=batchmode school_catalog_", j, ".tex", sep=""), ignore.stdout = TRUE)
-		file.rename(paste("school_catalog_", j, ".pdf", sep=""), file.path(sgPlot.folder, year_folder, district_folder, 
+		file.rename(paste("school_catalog_", j, ".pdf", sep=""), file.path(sgPlot.folder, year_folder, district_folder, school_folder,
 			paste(year_folder, "_", district_folder, "_", school_folder, "_Individual_SGP_Report_Catalog.pdf", sep="")))
 	}
 	if (sgPlot.cleanup) {
@@ -477,11 +477,22 @@
 		lapply(files.to.remove, file.remove)
 	}
 
+	if (identical(.Platform$OS.type, "unix")) {
+		if (1000*as.numeric(unlist(strsplit(system(paste("du -s", file.path(sgPlot.folder, year_folder, district_folder, school_folder)), intern=TRUE), "\t"))[1]) > 4000000000) {
+			system(paste("tar cfz", file.path(sgPlot.folder, year_folder, district_folder, paste(school_folder, ".tar.gz", sep="")), 
+				 file.path(sgPlot.folder, year_folder, district_folder, school_folder), sep=" "))
+		} else {
+			suppressWarnings(
+				system(paste("zip -rq", file.path(sgPlot.folder, year_folder, district_folder, paste(school_folder, ".zip", sep="")), 
+					 file.path(sgPlot.folder, year_folder, district_folder, school_folder), sep=" "))
+			)
+		}
+	}
+
         message(paste("\tStarted", last.year, tmp_school_name, "student growth plots:", started.date))
         message(paste("\tFinished", last.year, tmp_school_name, "student growth plots:", date(), "in", timetaken(started.at), "\n"))
 
         } ## END for loop for SCHOOLS (j)
-        #system(paste("zip -r ", pdf.folder, "/", year_folder, "/", district_folder, "_", last.year, ".zip ", pdf.folder, year_folder, district_folder, sep=""))
       } ## END for loop for DISTRICTS (i)
 
 	return("DONE")
