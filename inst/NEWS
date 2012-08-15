@@ -8,6 +8,7 @@ Changes in version: SGP_0.9-9.3
 	  o Added Move Up Calculations to combineSGP.
 	  o Made major refinements to growthAchievementPlot and visualizeSGP that speeds up the creation of growth and achievement plots.
 	  o Improved baselineSGP configuration for dealing with non-standard content area progressions.
+	  o On *NIX OS types studentGrowthPlot directories are zipped/gzipped.
 
   USER VISIBLE CHANGES:
 
