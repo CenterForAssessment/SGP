@@ -15,6 +15,7 @@ Changes in version: SGP_0.9-9.3
   BUG FIXES:
 
 	  o Fixed spacing bug for attaching front page to studentGrowthPlots.
+	  o Corrected logic bug in combineSGP leading to the creation of SGP_TARGET when no projections exist.
 
 
 Changes in version: SGP_0.9-9.0

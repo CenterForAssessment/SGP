@@ -213,6 +213,15 @@ function(
 	### Create SGP targets (Cohort and Baseline referenced) and merge with student data
 	######################################################################################
 
+	if (length(get.percentile.names("sgp.projections.lagged")) == 0) {
+		 tmp.messages <- c(tmp.messages, "\tNOTE: No SGP lagged projections available in SGP slot. No student growth projection targets will be produced.\n")
+		 sgp.projections.lagged <- FALSE
+	}
+	if (length(get.percentile.names("sgp.projections.lagged.baseline")) == 0) {
+		tmp.messages <- c(tmp.messages, "\tNOTE: No SGP lagged baseline projections available in SGP slot. No baseline referenced student growth projection targets will be produced.\n")
+		sgp.projections.lagged.baseline <- FALSE
+	}
+
 	### Calculate Targets
  
 	if (sgp.projections.lagged | sgp.projections.lagged.baseline) { 
@@ -225,16 +234,9 @@ function(
 		## Cohort referenced lagged SGP targets and Catch Up Keep Up Status Variable
 		#################################################################################
 
-		## Determine names of lagged projections
-
-		tmp.names <- get.percentile.names("sgp.projections.lagged")	
-		if (length(tmp.names) == 0 & sgp.projections.lagged) {
-			 tmp.messages <- c(tmp.messages, "\tNOTE: No SGP lagged projection results available in SGP slot. No student growth projection targets will be produced.\n")
-			 sgp.projections.lagged <- FALSE
-		}
-
 		if (sgp.projections.lagged) {
 
+			tmp.names <- get.percentile.names("sgp.projections.lagged")	
 			tmp.list <- list()
 			setkeyv(slot.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 			for (i in tmp.names) {
@@ -317,17 +319,12 @@ function(
 		### Lagged Baseline Student Growth Projection Targets and Catch Up Keep Up Variable
 		##############################################################################################
 
-		tmp.names <- get.percentile.names("sgp.projections.lagged.baseline")	
-		if (length(tmp.names) == 0 & sgp.projections.lagged.baseline) {
-			tmp.messages <- c(tmp.messages, "\tNOTE: No SGP lagged baseline projection results available in SGP slot. No baseline referenced student growth projection targets will be produced.\n")
-			sgp.projections.lagged.baseline <- FALSE
-		}
-
 		if (sgp.projections.lagged.baseline) {
 
-			 tmp.list <- list()
-			 setkeyv(slot.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
-			 for (i in tmp.names) {
+			tmp.names <- get.percentile.names("sgp.projections.lagged.baseline")	
+			tmp.list <- list()
+			setkeyv(slot.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
+			for (i in tmp.names) {
 				 cols.to.get <- grep(paste("LEVEL_", level.to.get.cu, sep=""), names(sgp_object@SGP[["SGProjections"]][[i]]))
 				 num.cols.to.get <- min(max.lagged.sgp.target.years.forward, length(cols.to.get))
 				 tmp.list[[i]] <-data.table(
@@ -398,7 +395,7 @@ function(
 			} ### END Move up calculations
 
 
-	} ## End if (sgp.projections.lagged.baseline)
+		} ## End if (sgp.projections.lagged.baseline)
 
 
 		#################################################
@@ -486,7 +483,7 @@ function(
 	setkeyv(slot.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 	sgp_object@Data <- slot.data
 
-	message(paste(tmp.messages, paste("Finished combineSGP", date(), "in", timetaken(started.at), "\n"), sep=""))
+	message(c(tmp.messages, paste("Finished combineSGP", date(), "in", timetaken(started.at), "\n"), sep=""))
 
 	return(sgp_object)
 
