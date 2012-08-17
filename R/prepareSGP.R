@@ -295,7 +295,7 @@
 		##  Create the SGP object
 
 		sgp_object <- new("SGP", Data=data, Names=variable.names, Version=getVersion(data))
-		sgp_object <- checkSGP(sgp_object)
+		sgp_object <- checkSGP(sgp_object, state=state)
 
 	} ## END else
 
