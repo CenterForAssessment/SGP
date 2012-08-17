@@ -63,7 +63,8 @@ function(sgp_object,
 		started.at <- proc.time()
 		message(paste("\tStarted LONG data production in outputSGP", date()))
 
-		setnames(sgp_object@Data, sgp_object@Names[['names.sgp']], sgp_object@Names[['names.provided']])
+		names.in.data <- which(sgp_object@Names[['names.sgp']] %in% names(sgp_object@Data))
+		setnames(sgp_object@Data, sgp_object@Names[['names.sgp']][names.in.data], sgp_object@Names[['names.provided']][names.in.data])
 		write.table(sgp_object@Data, file=file.path(outputSGP.directory, paste(tmp.state, "SGP_LONG_Data.txt", sep="_")), sep="|", quote=FALSE, row.names=FALSE, na="")
 		if (identical(.Platform$OS.type, "unix")) {
 			if (file.info(file.path(outputSGP.directory, paste(tmp.state, "SGP_LONG_Data.txt", sep="_")))$size > 4000000000) {
@@ -75,7 +76,7 @@ function(sgp_object,
 				)
 			}
 		}
-		setnames(sgp_object@Data, sgp_object@Names[['names.provide']], sgp_object@Names[['names.sgp']])
+		setnames(sgp_object@Data, sgp_object@Names[['names.provide']][names.in.data], sgp_object@Names[['names.sgp']][names.in.data])
 
 		message(paste("\tFinished LONG data production in outputSGP", date(), "in", timetaken(started.at), "\n"))
 
