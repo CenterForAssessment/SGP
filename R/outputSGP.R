@@ -76,7 +76,7 @@ function(sgp_object,
 				)
 			}
 		}
-		setnames(sgp_object@Data, sgp_object@Names[['names.provide']][names.in.data], sgp_object@Names[['names.sgp']][names.in.data])
+		setnames(sgp_object@Data, sgp_object@Names[['names.provided']][names.in.data], sgp_object@Names[['names.sgp']][names.in.data])
 
 		message(paste("\tFinished LONG data production in outputSGP", date(), "in", timetaken(started.at), "\n"))
 
