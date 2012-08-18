@@ -23,9 +23,9 @@ function(sgp_object, state=NULL) {
 	checkVariableClass <- function(my.data) {
 
 		for (my.variable in c("ID")) {
-			if (my.variable %in% names(my.data) && !is.numeric(my.data[[my.variable]])) {
-				my.data[[my.variable]] <- as.numeric(my.data[[my.variable]])
-				message(paste("\tNOTE:", my.variable, "converted to class numeric to take advantage of data.table 1.8.0 improvement."))
+			if (my.variable %in% names(my.data) && !is.character(my.data[[my.variable]])) {
+				my.data[[my.variable]] <- as.character(my.data[[my.variable]])
+				message(paste("\tNOTE:", my.variable, "converted to class character to take advantage of data.table 1.8.0 improvement."))
 			}
 		}
 

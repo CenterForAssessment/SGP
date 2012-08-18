@@ -487,7 +487,7 @@
 					 file.path(sgPlot.folder, year_folder, district_folder, school_folder), sep=" "))
 			)
 		}
-		system(paste("rm -r", file.path(sgPlot.folder, year_folder, district_folder, school_folder)))
+		unlink(file.path(sgPlot.folder, year_folder, district_folder, school_folder), recursive=TRUE)
 	}
 
         message(paste("\tStarted", last.year, tmp_school_name, "student growth plots:", started.date))
