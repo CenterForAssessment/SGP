@@ -146,14 +146,14 @@
 			}
 
 			######################## SCHOOL Report Catalog LaTeX Header #################################################################################
-			cat("\\documentclass[pdftex]{book}\n\\usepackage{hyperref,pdfpages}\n\\hypersetup{%\n", file=paste("school_catalog_", j, ".tex", sep=""))
+			cat("\\documentclass[pdftex]{book}\n\\usepackage{hyperref,pdfpages}\n\\hypersetup{%\n", file=paste("school_catalog_", i, "_", j, ".tex", sep=""))
 			cat(paste("pdftitle={", tmp_school_name, ": ", pretty_year(last.year), " ", tmp.state, " Growth and Achievement Reports},\n", sep=""), 
-				file=paste("school_catalog_", j, ".tex", sep=""), append=TRUE)
+				file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE)
 			cat(paste("pdfauthor={", tmp.organization$Name, "/Center for Assessment Inc.},\n", sep=""), "pdfcreator={pdfLaTeX},\n", 
 			paste("pdfproducer={", tmp.organization$Name, "/Center for Assessment Inc.}}\n", sep=""), 
-				"\\begin{document}\n", sep="", file=paste("school_catalog_", j, ".tex", sep=""), append=TRUE)
-			cat(paste("\\pdfbookmark[-1]{", tmp_district_name, "}{", i, "}\n", sep=""), file=paste("school_catalog_", j, ".tex", sep=""), append=TRUE)
-			cat(paste("\\pdfbookmark[0]{", tmp_school_name, "}{", j, "}\n", sep=""), file=paste("school_catalog_", j, ".tex", sep=""), append=TRUE)
+				"\\begin{document}\n", sep="", file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE)
+			cat(paste("\\pdfbookmark[-1]{", tmp_district_name, "}{", i, "}\n", sep=""), file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE)
+			cat(paste("\\pdfbookmark[0]{", tmp_school_name, "}{", j, "}\n", sep=""), file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE)
 			##############################################################################################################################################
 		}
 		tmp_school_ids <- unique(tmp_district_data[list(j)]$ID) ## NOTE: SJ needed because j is a possibly an integer
@@ -177,7 +177,7 @@
 
 			################################ SCHOOL Report Catalog LaTeX Code #########################################################
 			cat(paste("\\pdfbookmark[1]{Grade ", k, "}{", j, k, "}\n", sep=""), 
-				file=paste("school_catalog_", j, ".tex", sep=""), append=TRUE) ## NOTE: j, k included in anchor for uniqueness
+				file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE) ## NOTE: j, k included in anchor for uniqueness
 			###########################################################################################################################
 		}
 		tmp_grade_ids <- unique(tmp_school_data[list(k)]$ID) ## NOTE: SJ needed because k is an integer
@@ -210,30 +210,30 @@
 			################################ SCHOOL Report Catalog LaTeX Code ###################################################################################
 			if (is.null(sgPlot.front.page)) {
 			cat(paste("\\pdfbookmark[2]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", student_number, ")", sep=""), "}{", n , "}\n\\includepdf[fitpaper=true]{", 
-				path.to.pdfs, "/", file_name, "}\n", sep=""), file=paste("school_catalog_", j, ".tex", sep=""), append=TRUE)
+				path.to.pdfs, "/", file_name, "}\n", sep=""), file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE)
 			} else {
 				cat(paste("\\includepdf[fitpaper=true]{", sgPlot.front.page, "}\n\\pdfbookmark[2]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", 
 				student_number, ")", sep=""), "}{", n , "}\n\\includepdf[fitpaper=true]{", path.to.pdfs, "/", file_name, "}\n", sep=""), 
-					file=paste("school_catalog_", j, ".tex", sep=""), append=TRUE)
+					file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE)
 			}
 			#####################################################################################################################################################
 		}
 
 		################################ STUDENT Report Front Page Attach LaTeX Code ########################################################################
-		cat("\\documentclass[pdftex]{article}\n\\usepackage{hyperref,pdfpages}\n\\hypersetup{%\n", file=paste("student_report_", j, ".tex", sep=""))
+		cat("\\documentclass[pdftex]{article}\n\\usepackage{hyperref,pdfpages}\n\\hypersetup{%\n", file=paste("student_report_", i, "_", j, ".tex", sep=""))
 		cat(paste("pdftitle={", FIRST_NAME, " ", LAST_NAME, " (", student_number, ")", ": ", pretty_year(last.year), " ", 
-			tmp.state, " Growth and Achievement Report},\n", sep=""), file=paste("student_report_", j, ".tex", sep=""), append=TRUE)
-		cat(paste("pdfauthor={", tmp.organization$Name, "/Center for Assessment Inc.},\n", sep=""), file=paste("student_report_", j, ".tex", sep=""), append=TRUE)
-		cat("pdfcreator={pdfLaTeX},\n", file=paste("student_report_", j, ".tex", sep=""), append=TRUE)
-		cat(paste("pdfproducer={", tmp.organization$Name, "/Center for Assessment Inc.}}\n", sep=""), file=paste("student_report_", j, ".tex", sep=""), append=TRUE) 
-		cat("\\begin{document}\n", file=paste("student_report_", j, ".tex", sep=""), append=TRUE)
+			tmp.state, " Growth and Achievement Report},\n", sep=""), file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
+		cat(paste("pdfauthor={", tmp.organization$Name, "/Center for Assessment Inc.},\n", sep=""), file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
+		cat("pdfcreator={pdfLaTeX},\n", file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
+		cat(paste("pdfproducer={", tmp.organization$Name, "/Center for Assessment Inc.}}\n", sep=""), file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE) 
+		cat("\\begin{document}\n", file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
 		if (!is.null(sgPlot.front.page)) {
-			cat(paste("\\includepdf[fitpaper=true]{", sgPlot.front.page, "}\n", sep=""), file=paste("student_report_", j, ".tex", sep=""), append=TRUE)
+			cat(paste("\\includepdf[fitpaper=true]{", sgPlot.front.page, "}\n", sep=""), file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
 		}
 		cat(paste("\\includepdf[fitpaper=true]{", path.to.pdfs, "/", file_name, "}\n", sep=""), 
-			file=paste("student_report_", j, ".tex", sep=""), append=TRUE)
+			file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
 
-		cat("\\end{document}", file=paste("student_report_", j, ".tex", sep=""), append=TRUE)
+		cat("\\end{document}", file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
 		####################################################################################################################################################
 
 
@@ -458,20 +458,20 @@
 
               ## Code to LaTeX document attaching first page/adding meta-data
 
-              system(paste("pdflatex -interaction=batchmode student_report_", j, ".tex", sep=""), ignore.stdout = TRUE)
-              file.rename(paste("student_report_", j, ".pdf", sep=""), paste(path.to.pdfs, "/", paste(head(unlist(strsplit(file_name, "_")), -1), collapse="_"), ".pdf", sep=""))
+              system(paste("pdflatex -interaction=batchmode student_report_", i, "_", j, ".tex", sep=""), ignore.stdout = TRUE)
+              file.rename(paste("student_report_", i, "_", j, ".pdf", sep=""), paste(path.to.pdfs, "/", paste(head(unlist(strsplit(file_name, "_")), -1), collapse="_"), ".pdf", sep=""))
 
             } ## END for loop for STUDENTS (n)
           } ## END for loop for GRADES (k)
 	if (!reports.by.student) {
-		cat("\\end{document}", file=paste("school_catalog_", j, ".tex", sep=""), append=TRUE)
-		system(paste("pdflatex -interaction=batchmode school_catalog_", j, ".tex", sep=""), ignore.stdout = TRUE)
-		system(paste("pdflatex -interaction=batchmode school_catalog_", j, ".tex", sep=""), ignore.stdout = TRUE)
-		file.rename(paste("school_catalog_", j, ".pdf", sep=""), file.path(sgPlot.folder, year_folder, district_folder, school_folder,
+		cat("\\end{document}", file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE)
+		system(paste("pdflatex -interaction=batchmode school_catalog_", i, "_", j, ".tex", sep=""), ignore.stdout = TRUE)
+		system(paste("pdflatex -interaction=batchmode school_catalog_", i, "_", j, ".tex", sep=""), ignore.stdout = TRUE)
+		file.rename(paste("school_catalog_", i, "_", j, ".pdf", sep=""), file.path(sgPlot.folder, year_folder, district_folder, school_folder,
 			paste(year_folder, "_", district_folder, "_", school_folder, "_Individual_SGP_Report_Catalog.pdf", sep="")))
 	}
 	if (sgPlot.cleanup) {
-		files.to.remove <- list.files(pattern=as.character(j), all.files=TRUE)
+		files.to.remove <- list.files(pattern=paste(i, j, sep="_"), all.files=TRUE)
 		lapply(files.to.remove, file.remove)
 		files.to.remove <- list.files(path=file.path(sgPlot.folder, year_folder, district_folder, school_folder), pattern="REPORT", all.files=TRUE, full.names=TRUE, recursive=TRUE)
 		lapply(files.to.remove, file.remove)
