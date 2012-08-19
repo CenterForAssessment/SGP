@@ -128,6 +128,11 @@
 		started.at <- proc.time()
 		started.date <- date()
 
+		if (!is.null(sgPlot.front.page)) {
+			sgPlot.front.page.ij <- paste(sgPlot.front.page, i, j, sep="_")
+			file.copy(sgPlot.front.page, sgPlot.front.page.ij)
+		}
+
 		if (reports.by.student) {
 			tmp_school_name <- as.character(tmp_district_data[list(j)][[paste("SCHOOL_NAME", last.year, sep=".")]][1])
 			school_folder <- NULL
@@ -212,7 +217,7 @@
 			cat(paste("\\pdfbookmark[2]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", student_number, ")", sep=""), "}{", n , "}\n\\includepdf[fitpaper=true]{", 
 				path.to.pdfs, "/", file_name, "}\n", sep=""), file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE)
 			} else {
-				cat(paste("\\includepdf[fitpaper=true]{", sgPlot.front.page, "}\n\\pdfbookmark[2]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", 
+				cat(paste("\\includepdf[fitpaper=true]{", sgPlot.front.page.ij, "}\n\\pdfbookmark[2]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", 
 				student_number, ")", sep=""), "}{", n , "}\n\\includepdf[fitpaper=true]{", path.to.pdfs, "/", file_name, "}\n", sep=""), 
 					file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE)
 			}
@@ -228,7 +233,7 @@
 		cat(paste("pdfproducer={", tmp.organization$Name, "/Center for Assessment Inc.}}\n", sep=""), file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE) 
 		cat("\\begin{document}\n", file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
 		if (!is.null(sgPlot.front.page)) {
-			cat(paste("\\includepdf[fitpaper=true]{", sgPlot.front.page, "}\n", sep=""), file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
+			cat(paste("\\includepdf[fitpaper=true]{", sgPlot.front.page.ij, "}\n", sep=""), file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
 		}
 		cat(paste("\\includepdf[fitpaper=true]{", path.to.pdfs, "/", file_name, "}\n", sep=""), 
 			file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
