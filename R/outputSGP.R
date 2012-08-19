@@ -76,7 +76,7 @@ function(sgp_object,
 				)
 			}
 		}
-		setnames(sgp_object@Data, sgp_object@Names[['names.provide']][names.in.data], sgp_object@Names[['names.sgp']][names.in.data])
+		setnames(sgp_object@Data, sgp_object@Names[['names.provided']][names.in.data], sgp_object@Names[['names.sgp']][names.in.data])
 
 		message(paste("\tFinished LONG data production in outputSGP", date(), "in", timetaken(started.at), "\n"))
 
@@ -105,10 +105,11 @@ function(sgp_object,
 		message(paste("\tStarted WIDE data production in outputSGP", date()))
 
 		long_data_tmp <- sgp_object@Data
-		setkeyv(long_data_tmp, c("VALID_CASE", "ID"))
+		setkeyv(long_data_tmp, c("VALID_CASE", "YEAR", "CONTENT_AREA", "ID"))
 		suppressWarnings(invisible(long_data_tmp[,YEAR_BY_CONTENT_AREA := paste(YEAR, CONTENT_AREA, sep=".")]))
 		assign(paste(tmp.state, "SGP_WIDE_Data", sep="_"), reshape(long_data_tmp["VALID_CASE"], idvar="ID", 
 			timevar="YEAR_BY_CONTENT_AREA", drop=c("VALID_CASE", "CONTENT_AREA", "YEAR"), direction="wide"))
+		eval(parse(text=paste("setkey(", tmp.state, "_SGP_WIDE_Data, ID)", sep="")))
 
 		save(list=paste(tmp.state, "SGP_WIDE_Data", sep="_"), file=file.path(outputSGP.directory, paste(tmp.state, "SGP_WIDE_Data.Rdata", sep="_")))
 		write.table(get(paste(tmp.state, "SGP_WIDE_Data", sep="_")), 
