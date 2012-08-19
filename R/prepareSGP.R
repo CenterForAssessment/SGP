@@ -292,13 +292,10 @@
 		## INCLUDE CODE HERE TO HANDLE DUPLICATE CASES
 		################################################################	
 
-		## Check class values of fields
-
-		data <- checkSGP(data, state=state)
-
 		##  Create the SGP object
 
 		sgp_object <- new("SGP", Data=data, Names=variable.names, Version=getVersion(data))
+		sgp_object <- checkSGP(sgp_object, state=state)
 
 	} ## END else
 

@@ -3,6 +3,7 @@ Changes in version: SGP_0.9-9.3
   NEW FEATURES:
 
 	  o studentGrowthPlot allows arrow.legend.color to be specified in a state specific fashion and controlled from SGPstateData.
+	  o checkSGP converts ID to numeric to take advantage of data.table improvements.
 	  o checkSGP checks for match between levels in ACHIEVEMENT_LEVEL and SGPstateData.
 	  o Added organization abbreviation to SGPstateData.
 	  o Added Move Up Calculations to combineSGP.
