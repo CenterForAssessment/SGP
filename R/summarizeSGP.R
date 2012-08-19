@@ -433,8 +433,8 @@ function(sgp_object,
 	if (is.null(confidence.interval.groups)) confidence.interval.groups <- summarizeSGP.config(sgp_object, "confidence.interval.groups")
 
 	if (any(!sapply(summary.groups[["growth_only_summary"]], is.null))) {
-#		sgp_object@Data[,BY_GROWTH_ONLY := factor(is.na(sgp_object@Data$SGP), levels=c(FALSE, TRUE), labels=c("Students without SGP", "Students with SGP"))]
-		sgp_object@Data[["BY_GROWTH_ONLY"]] <- factor(is.na(sgp_object@Data$SGP), levels=c(FALSE, TRUE), labels=c("Students without SGP", "Students with SGP"))
+#		sgp_object@Data[,BY_GROWTH_ONLY := factor(is.na(sgp_object@Data[[my.sgp]]), levels=c(FALSE, TRUE), labels=c("Students without SGP", "Students with SGP"))]
+		sgp_object@Data[["BY_GROWTH_ONLY"]] <- factor(is.na(sgp_object@Data[[my.sgp]]), levels=c(FALSE, TRUE), labels=c("Students without SGP", "Students with SGP"))
 	}
 
 	variables.for.summaries <- intersect(c(my.sgp, my.sgp.target, "ACHIEVEMENT_LEVEL", "ACHIEVEMENT_LEVEL_PRIOR", unique(as.character(unlist(summary.groups)))),
