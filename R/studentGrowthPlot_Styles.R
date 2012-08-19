@@ -129,7 +129,7 @@
 		started.date <- date()
 
 		if (!is.null(sgPlot.front.page)) {
-			sgPlot.front.page.ij <- paste(sgPlot.front.page, i, j, sep="_")
+			sgPlot.front.page.ij <- paste(unlist(strsplit(sgPlot.front.page, "[.]"))[1], i, j, sep="_")
 			file.copy(sgPlot.front.page, sgPlot.front.page.ij)
 		}
 
@@ -404,9 +404,9 @@
                 grid.text(x=0.325, y=interpretation.y-0.0925, "Scale Score", gp=gpar(cex=0.9), default.units="native", just="left")
 
                 tmp.rect.height <- 0.125/number.achievement.level.regions
-                for (i in seq(number.achievement.level.regions)) {
-                    grid.rect(x=unit(0.2, "native"), y=unit(interpretation.y-0.125-(i-1)*tmp.rect.height, "native"), width=unit(0.1, "native"), height=unit(tmp.rect.height, "native"),
-                               gp=gpar(fill=rev(achievement.level.region.colors)[i], col="white", lwd=1), just=c("center", "top"))
+                for (l in seq(number.achievement.level.regions)) {
+                    grid.rect(x=unit(0.2, "native"), y=unit(interpretation.y-0.125-(l-1)*tmp.rect.height, "native"), width=unit(0.1, "native"), height=unit(tmp.rect.height, "native"),
+                               gp=gpar(fill=rev(achievement.level.region.colors)[l], col="white", lwd=1), just=c("center", "top"))
                 } 
                 grid.roundrect(x=unit(0.2, "native"), y=interpretation.y-0.125, width=unit(0.1, "native"), height=unit(0.125, "native"), r=unit(0.02, "inches"),
                                gp=gpar(col="black", lwd=1.5), just=c("center", "top"))
