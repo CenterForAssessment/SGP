@@ -129,7 +129,7 @@
 		started.date <- date()
 
 		if (!is.null(sgPlot.front.page)) {
-			sgPlot.front.page.ij <- paste(unlist(strsplit(sgPlot.front.page, "[.]"))[1], i, j, sep="_")
+			sgPlot.front.page.ij <- paste(paste(unlist(strsplit(sgPlot.front.page, "[.]"))[1], i, j, sep="_"), ".pdf", sep="")
 			file.copy(sgPlot.front.page, sgPlot.front.page.ij)
 		}
 
