@@ -128,6 +128,11 @@
 		started.at <- proc.time()
 		started.date <- date()
 
+		if (!is.null(sgPlot.front.page)) {
+			sgPlot.front.page.ij <- paste(paste(unlist(strsplit(sgPlot.front.page, "[.]"))[1], i, j, sep="_"), ".pdf", sep="")
+			file.copy(sgPlot.front.page, sgPlot.front.page.ij)
+		}
+
 		if (reports.by.student) {
 			tmp_school_name <- as.character(tmp_district_data[list(j)][[paste("SCHOOL_NAME", last.year, sep=".")]][1])
 			school_folder <- NULL
@@ -212,7 +217,7 @@
 			cat(paste("\\pdfbookmark[2]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", student_number, ")", sep=""), "}{", n , "}\n\\includepdf[fitpaper=true]{", 
 				path.to.pdfs, "/", file_name, "}\n", sep=""), file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE)
 			} else {
-				cat(paste("\\includepdf[fitpaper=true]{", sgPlot.front.page, "}\n\\pdfbookmark[2]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", 
+				cat(paste("\\includepdf[fitpaper=true]{", sgPlot.front.page.ij, "}\n\\pdfbookmark[2]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", 
 				student_number, ")", sep=""), "}{", n , "}\n\\includepdf[fitpaper=true]{", path.to.pdfs, "/", file_name, "}\n", sep=""), 
 					file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE)
 			}
@@ -228,7 +233,7 @@
 		cat(paste("pdfproducer={", tmp.organization$Name, "/Center for Assessment Inc.}}\n", sep=""), file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE) 
 		cat("\\begin{document}\n", file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
 		if (!is.null(sgPlot.front.page)) {
-			cat(paste("\\includepdf[fitpaper=true]{", sgPlot.front.page, "}\n", sep=""), file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
+			cat(paste("\\includepdf[fitpaper=true]{", sgPlot.front.page.ij, "}\n", sep=""), file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
 		}
 		cat(paste("\\includepdf[fitpaper=true]{", path.to.pdfs, "/", file_name, "}\n", sep=""), 
 			file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
@@ -399,9 +404,9 @@
                 grid.text(x=0.325, y=interpretation.y-0.0925, "Scale Score", gp=gpar(cex=0.9), default.units="native", just="left")
 
                 tmp.rect.height <- 0.125/number.achievement.level.regions
-                for (i in seq(number.achievement.level.regions)) {
-                    grid.rect(x=unit(0.2, "native"), y=unit(interpretation.y-0.125-(i-1)*tmp.rect.height, "native"), width=unit(0.1, "native"), height=unit(tmp.rect.height, "native"),
-                               gp=gpar(fill=rev(achievement.level.region.colors)[i], col="white", lwd=1), just=c("center", "top"))
+                for (l in seq(number.achievement.level.regions)) {
+                    grid.rect(x=unit(0.2, "native"), y=unit(interpretation.y-0.125-(l-1)*tmp.rect.height, "native"), width=unit(0.1, "native"), height=unit(tmp.rect.height, "native"),
+                               gp=gpar(fill=rev(achievement.level.region.colors)[l], col="white", lwd=1), just=c("center", "top"))
                 } 
                 grid.roundrect(x=unit(0.2, "native"), y=interpretation.y-0.125, width=unit(0.1, "native"), height=unit(0.125, "native"), r=unit(0.02, "inches"),
                                gp=gpar(col="black", lwd=1.5), just=c("center", "top"))
