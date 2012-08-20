@@ -74,7 +74,7 @@ function(sgp_object,
 	### Utility functions	
 
 	"%w/o%" <- function(x,y) x[!x %in% y]
-	num_non_missing <- function(x) sum(!is.na(as.numeric(x)))
+	num_non_missing <- function(x) sum(!is.na(x))
 
 	.year.increment <- function(year, increment) {
 		paste(as.numeric(unlist(strsplit(as.character(year), "_")))+increment, collapse="_")
