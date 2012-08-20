@@ -432,12 +432,12 @@ function(
 		slot.data$CATCH_UP_KEEP_UP_STATUS[slot.data$CATCH_UP_KEEP_UP_STATUS_INITIAL == "Catching Up" &
 												slot.data$CATCH_UP_KEEP_UP_STATUS == "Catch Up: Yes" &
 												as.numeric(slot.data$ACHIEVEMENT_LEVEL) <= level.to.get.cu &
-												slot.data$GRADE == max(slot.data$GRADE[!is.na(slot.data$SGP_TARGET)])] <- "Catch Up: No"
+												slot.data$GRADE == max(slot.data$GRADE[!is.na(slot.data[[my.sgp.target]])])] <- "Catch Up: No"
 
 		slot.data$CATCH_UP_KEEP_UP_STATUS[slot.data$CATCH_UP_KEEP_UP_STATUS_INITIAL == "Keeping Up" &
 												slot.data$CATCH_UP_KEEP_UP_STATUS == "Keep Up: No" &
 												as.numeric(slot.data$ACHIEVEMENT_LEVEL) > level.to.get.cu &
-												slot.data$GRADE == max(slot.data$GRADE[!is.na(slot.data$SGP_TARGET)])] <- "Keep Up: Yes"
+												slot.data$GRADE == max(slot.data$GRADE[!is.na(slot.data[[my.sgp.target]])])] <- "Keep Up: Yes"
 
 		slot.data$CATCH_UP_KEEP_UP_STATUS <- as.factor(slot.data$CATCH_UP_KEEP_UP_STATUS)
 
@@ -464,7 +464,8 @@ function(
 
 			slot.data$MOVE_UP_STATUS[slot.data$MOVE_UP_STATUS_INITIAL == "Moving Up" &
 												slot.data$MOVE_UP_STATUS == "Move Up: Yes" &
-												as.numeric(slot.data$ACHIEVEMENT_LEVEL) <= level.to.get.mu] <- "Move Up: No"
+												as.numeric(slot.data$ACHIEVEMENT_LEVEL) <= level.to.get.mu &
+												slot.data$GRADE == max(slot.data$GRADE[!is.na(slot.data[[my.sgp.target.mu]])])] <- "Move Up: No"
 
 			slot.data$MOVE_UP_STATUS[slot.data$MOVE_UP_STATUS_INITIAL == "Moving Up" &
 												slot.data$MOVE_UP_STATUS == "Move Up: No" &
