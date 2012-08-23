@@ -336,10 +336,10 @@
 			sgp_object@Data[["SCALE_SCORE_PRIOR"]] <- sgp_object@Data[["GRADE_PRIOR"]] <- sgp_object@Data[["YEAR_INT"]] <- NULL
 			message("\tNOTE: Added variable HIGH_NEED_STATUS to @Data.")
 			sgp_object@Names <- rbind(sgp_object@Names, c("HIGH_NEED_STATUS", "HIGH_NEED_STATUS", "demographic", "High need status flag", TRUE))
+			setkey(sgp_object@Data, VALID_CASE, CONTENT_AREA, YEAR, ID)
 		}
 
 	}
-
 
 	##  Print finish time
 	message(paste("Finished prepareSGP", date(), "in", timetaken(started.at), "\n"))
