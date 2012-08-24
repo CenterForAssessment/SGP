@@ -116,7 +116,7 @@
 				}
 			}
 		}
-		tmp_district_ids <- unique(sgPlot.data[list(i)]$ID) ## NOTE: SJ needed because i is possibly an integer
+		tmp_district_ids <- unique(sgPlot.data[list(i)]$ID)
 		tmp_district_data <- subset(sgPlot.data, ID %in% tmp_district_ids)
 
 	## Schools
@@ -161,7 +161,7 @@
 			cat(paste("\\pdfbookmark[0]{", tmp_school_name, "}{", j, "}\n", sep=""), file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE)
 			##############################################################################################################################################
 		}
-		tmp_school_ids <- unique(tmp_district_data[list(j)]$ID) ## NOTE: SJ needed because j is a possibly an integer
+		tmp_school_ids <- unique(tmp_district_data[list(j)]$ID)
 		tmp_school_data <- subset(tmp_district_data, ID %in% tmp_school_ids)
 
 	## Grades
@@ -185,7 +185,7 @@
 				file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE) ## NOTE: j, k included in anchor for uniqueness
 			###########################################################################################################################
 		}
-		tmp_grade_ids <- unique(tmp_school_data[list(k)]$ID) ## NOTE: SJ needed because k is an integer
+		tmp_grade_ids <- unique(tmp_school_data[list(k)]$ID)
 		tmp_grade_data <- subset(tmp_school_data, ID %in% tmp_grade_ids)
 
 	### Create path to pdf files
@@ -264,7 +264,7 @@
                 stop("Individual Student Report Templates currently only available for situations with 1, 2, 3, 4 or 5 content areas.")
               }
 
-              pdf(paste(path.to.pdfs, "/", file_name, sep=""), 
+              pdf(file.path(path.to.pdfs, file_name), 
                   width=report.width, height=report.height, version="1.4")
 
 
