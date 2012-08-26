@@ -37,6 +37,7 @@ if (is.null(SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["arr
 	arrow.legend.color <- SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["arrow.legend.color"]]
 }
 missing.data.symbol <- "--"
+studentGrowthPlot.year.span <- 5
 
 
 ### Utility functions
@@ -78,124 +79,64 @@ get.my.cutscore.year <- function(state, content_area, year) {
 
 interpolate.grades <- function(grades, data.year.span) {
 
-            last.number <- function (x) {
-               if (sum(!is.na(x)) > 0) return(max(which(!is.na(x))))
-               else return (0)
-            }
+	last.number <- function (x) {
+		if (sum(!is.na(x)) > 0) return(max(which(!is.na(x)))) else return (0)
+	}
 
-            first.number <- function (x) {
-               if (sum(!is.na(x)) > 0 ) return(min(which(!is.na(x))))
-               else return (0)
-            }
+	first.number <- function (x) {
+		if (sum(!is.na(x)) > 0 ) return(min(which(!is.na(x)))) else return (0)
+	}
 
-            extend.grades <- function (x) {
-                return(c(head(x,1)-1, x, tail(x,1)+1))
-            }
+	extend.grades <- function (x) {
+		return(c(head(x,1)-1, x, tail(x,1)+1))
+	}
 
-            first.scale.score <- first.number(head(grades, data.year.span-1))
-            last.scale.score <- last.number(grades)
+	first.scale.score <- first.number(head(grades, data.year.span-1))
+	last.scale.score <- last.number(grades)
 
-            if (first.scale.score == 0) {
-                   year_span <- 0
-                   return (list(interp.df = data.frame(GRADE=2:8), 
-					year_span=year_span,
-					years=sapply(-5:1, function(x) .year.increment(Report_Parameters$Current_Year, x))))
-            } else {
-              if (last.scale.score < data.year.span) {
-                  grades[(last.scale.score+1):data.year.span] <- (grades[last.scale.score]-1):(grades[last.scale.score] - (data.year.span - last.scale.score))
-                  grades[grades < 3] <- 3
-              }
+	if (first.scale.score == 0) {
+		year_span <- 0
+		return (list(
+			interp.df = data.frame(GRADE=2:8), 
+			year_span=year_span,
+			years=sapply(-5:1, function(x) .year.increment(Report_Parameters$Current_Year, x))))
+	} else {
+		if (last.scale.score < data.year.span) {
+			grades[(last.scale.score+1):data.year.span] <- (grades[last.scale.score]-1):(grades[last.scale.score] - (data.year.span - last.scale.score))
+			grades[grades < min(grades.reported.in.state)] <- min(grades.reported.in.state)
+		}
                     
-              if (first.scale.score > 1) {
-                  grades[1:(first.scale.score-1)] <- (grades[first.scale.score] + (first.scale.score - 1)):(grades[first.scale.score]+1)
-                  grades[grades > 10] <- 10
-              }
+		if (first.scale.score > 1) {
+			grades[1:(first.scale.score-1)] <- (grades[first.scale.score] + (first.scale.score - 1)):(grades[first.scale.score]+1)
+			grades[grades > max(grades.reported.in.state)] <- max(grades.reported.in.state)
+		}
                        
-              grades[which(is.na(grades))] <- approx(grades, xout=which(is.na(grades)))$y
+		if (any(is.na(grades))) grades[which(is.na(grades))] <- approx(grades, xout=which(is.na(grades)))$y
 
-              if (grades[1] == max(grades.reported.in.state)) {
-                  year_span <- 5
-                  temp.grades <- extend.grades(rev(grades))
-                  return (list(interp.df = data.frame(GRADE=temp.grades), 
-				year_span=year_span, 
-				years=sapply(seq(1-max(which(grades[1]==temp.grades)), length=length(temp.grades)), function(x) .year.increment(Report_Parameters$Current_Year, x))))
-              } else {
-                  if (grades[1] == 11) {
-                     year_span <- 4
-                     temp.grades <- extend.grades(c(rev(head(grades, -1)), 12))
-                     return (list(interp.df = data.frame(GRADE=temp.grades), 
-				year_span=year_span, 
-				years=sapply(seq(1-max(which(grades[1]==temp.grades)), length=length(temp.grades)), function(x) .year.increment(Report_Parameters$Current_Year, x))))
-                  }
 
-                  if (grades[1] == 10) {
-                     year_span <- 4
-                     temp.grades <- extend.grades(c(rev(head(grades, -1)), 11))
-                     return (list(interp.df = data.frame(GRADE=temp.grades), 
+		if (grades[1] == max(grades.reported.in.state)) {
+			year_span <- data.year.span
+			temp.grades <- extend.grades(rev(grades))
+			return (list(
+				interp.df = data.frame(GRADE=temp.grades), 
 				year_span=year_span, 
-				years=sapply(seq(1-max(which(grades[1]==temp.grades)), length=length(temp.grades)), function(x) .year.increment(Report_Parameters$Current_Year, x))))
-                  }
-
-                  if (grades[1] == 9) {
-                     year_span <- 4
-                     temp.grades <- extend.grades(c(rev(head(grades, -1)), 10))
-                     return (list(interp.df = data.frame(GRADE=temp.grades), 
-				year_span=year_span, 
-				years=sapply(seq(1-max(which(grades[1]==temp.grades)), length=length(temp.grades)), function(x) .year.increment(Report_Parameters$Current_Year, x))))
-                  }
-             
-                  if (grades[1] == 8) {
-                     year_span <- 4
-                     temp.grades <- extend.grades(c(rev(head(grades, -1)), 9))
-                     return (list(interp.df = data.frame(GRADE=temp.grades), 
-				year_span=year_span, 
-				years=sapply(seq(1-max(which(grades[1]==temp.grades)), length=length(temp.grades)), function(x) .year.increment(Report_Parameters$Current_Year, x))))
-                  }
-
-                  if (grades[1] == 7) {
-                     year_span <- 4
-                     temp.grades <- extend.grades(c(rev(head(grades, -1)), 8))
-                     return (list(interp.df = data.frame(GRADE=temp.grades), 
-				year_span=year_span, 
-				years=sapply(seq(1-max(which(grades[1]==temp.grades)), length=length(temp.grades)), function(x) .year.increment(Report_Parameters$Current_Year, x))))
-                  }
-
-                  if (grades[1] == 6) {
-                     year_span <- 4
-                     temp.grades <- extend.grades(c(rev(head(grades, -1)), 7))
-                     return (list(interp.df = data.frame(GRADE=temp.grades), 
-				year_span=year_span, 
-				years=sapply(seq(1-max(which(grades[1]==temp.grades)), length=length(temp.grades)), function(x) .year.increment(Report_Parameters$Current_Year, x))))
-                  }
-
-                  if (grades[1] == 5) {
-                     year_span <- max(min(last.scale.score, 4), 3)
-                     grades <- head(grades, year_span)
-                     temp.grades <- extend.grades(c(rev(grades), head(6:7, data.year.span-year_span)))
-                     return (list(interp.df = data.frame(GRADE=temp.grades), 
-				year_span=year_span, 
-				years=sapply(seq(1-max(which(grades[1]==temp.grades)), length=length(temp.grades)), function(x) .year.increment(Report_Parameters$Current_Year, x))))
-                  }
-
-                  if (grades[1] == 4) {
-                     year_span <- max(min(last.scale.score, 4), 2)
-                     grades <- head(grades, year_span)
-                     temp.grades <- extend.grades(c(rev(grades), head(5:7, data.year.span-year_span)))
-                     return (list(interp.df = data.frame(GRADE=temp.grades), 
-				year_span=year_span, 
-				years=sapply(seq(1-max(which(grades[1]==temp.grades)), length=length(temp.grades)), function(x) .year.increment(Report_Parameters$Current_Year, x))))
-                  }
-
-                  if (grades[1] == 3) {
-                     year_span <- max(min(last.scale.score, 4), 1)
-                     grades <- head(grades, year_span)
-                     temp.grades <- extend.grades(c(rev(grades), head(4:7, data.year.span-year_span)))
-                     return (list(interp.df = data.frame(GRADE=temp.grades), 
-				year_span=year_span, 
-				years=sapply(seq(1-max(which(grades[1]==temp.grades)), length=length(temp.grades)), function(x) .year.increment(Report_Parameters$Current_Year, x))))
-                  }
-              } 
-       }
+				increment_for_projection=0,
+				years=sapply(seq(1-max(which(grades[1]==temp.grades)), length=length(temp.grades)), 
+					function(x) .year.increment(Report_Parameters$Current_Year, x))))
+		} else {
+			year.increment.for.projection <- grades.reported.in.state[which(grades[1]==grades.reported.in.state)+1]-grades[1]
+			year_span <- max(min(last.scale.score, data.year.span-1), min(grades[1]-min(grades.reported.in.state)+1, data.year.span-1))-
+				(year.increment.for.projection-1)
+			temp.grades <- head(grades, year_span)
+			temp.grades <- extend.grades(c(rev(temp.grades), head(seq(grades[1]+1, length=4), data.year.span-year_span)))
+			return (list(
+				interp.df = data.frame(GRADE=temp.grades), 
+				year_span=year_span,
+				increment_for_projection=year.increment.for.projection,
+				years=sapply(seq(1-max(which(grades[1]==temp.grades)), length=length(temp.grades)), 
+					function(x) .year.increment(Report_Parameters$Current_Year, x))))
+		}
+	} 
 } 
 
 year.function <- function(year, add.sub, vec.length, output.type="numeric") {
@@ -212,140 +153,79 @@ year.function <- function(year, add.sub, vec.length, output.type="numeric") {
 }
 
 
-grade.values <- interpolate.grades(Grades, 5)
+grade.values <- interpolate.grades(Grades, studentGrowthPlot.year.span)
 
-if (grade.values$year_span == 5) {
-                    low.year <- year.function(Report_Parameters$Current_Year, -4, 1)
-                    high.year <- year.function(Report_Parameters$Current_Year, 0, 1)
-                    year.text <- year.function(Report_Parameters$Current_Year, -4, 5, "character")
+if (grade.values$year_span > 0) {
+	low.year <- year.function(Report_Parameters$Current_Year, (1-grade.values$year_span), 1)
+	high.year <- year.function(Report_Parameters$Current_Year, studentGrowthPlot.year.span-grade.values$year_span, 1)
+	year.text <- c(year.function(Report_Parameters$Current_Year, (1-grade.values$year_span), grade.values$year_span+grade.values$increment_for_projection, "character"), 
+		rep(" ", studentGrowthPlot.year.span))
+	year.text <- head(year.text, studentGrowthPlot.year.span)
 
-                    grades.text <- paste("Grade", Grades[5:1])
-                    grades.text[which(is.na(Grades[5:1]))] <- missing.data.symbol 
-    
-                    scale.scores.values <- Plotting_Scale_Scores[5:1]
-                    scale.scores.text <- as.character(Scale_Scores[5:1])
-                    scale.scores.text[which(is.na(Scale_Scores[5:1]))] <- missing.data.symbol
+	if (grade.values$increment_for_projection > 0) {
+		grades.text.numbers <- c(Grades[grade.values$year_span:1], Grades[1]+seq(grade.values$increment_for_projection))
+		tmp.grades.text.numbers <- rev(grade.values$interp.df$GRADE[seq(which(grade.values$interp.df==tail(grades.text.numbers, 1)), length=length(grades.text.numbers), by=-1)])
+	} else {
+		grades.text.numbers <- Grades[grade.values$year_span:1]
+		tmp.grades.text.numbers <- rev(grade.values$interp.df$GRADE[seq(which(grade.values$interp.df==tail(grades.text.numbers, 1)), length=length(grades.text.numbers), by=-1)])
+	}
+	grades.text.numbers.missing <- which(is.na(grades.text.numbers))
+	grades.text.numbers.non.tested <- which(!tmp.grades.text.numbers %in% grades.reported.in.state)
+	grades.text <- c(paste("Grade", grades.text.numbers), rep(" ", studentGrowthPlot.year.span))
+	grades.text[grades.text.numbers.missing] <- missing.data.symbol
+	grades.text[grades.text.numbers.non.tested] <- "Non-tested Grade"
+	grades.text <- head(grades.text, studentGrowthPlot.year.span)
 
-                    ach.levels.text <- ach.level.labels(Achievement_Levels[5:1])
+	scale.scores.values <- c(Plotting_Scale_Scores[grade.values$year_span:1], rep(NA, studentGrowthPlot.year.span))
+	scale.scores.values <- head(scale.scores.values, studentGrowthPlot.year.span)
 
-                    gp.values <- SGP[4:1]
-                    gp.text <- SGP[4:1]
-                    gp.text[which(is.na(SGP[4:1]))] <- missing.data.symbol
+	scale.scores.text <- c(Scale_Scores[grade.values$year_span:1], rep(" ", studentGrowthPlot.year.span))
+	scale.scores.text[which(is.na(Scale_Scores[grade.values$year_span:1]))] <- missing.data.symbol
+	scale.scores.text <- head(scale.scores.text, studentGrowthPlot.year.span)
 
-                    gp.levels.text <- sgp.level.labels(SGP_Levels[4:1])
+	ach.levels.text <- c(ach.level.labels(Achievement_Levels[grade.values$year_span:1]), rep(" ", studentGrowthPlot.year.span))
+	ach.levels.text <- head(ach.levels.text, studentGrowthPlot.year.span)
 
-                    cuts.ny1.text <- rep(NA, number.growth.levels)
-}
+	if (grade.values$year_span > 1) {
+		gp.values <- c(SGP[(grade.values$year_span-1):1], rep(NA, studentGrowthPlot.year.span))
+		gp.values <- head(gp.values, studentGrowthPlot.year.span-1)
 
-if (grade.values$year_span == 4) {
-                    low.year <- year.function(Report_Parameters$Current_Year, -3, 1)
-                    high.year <- year.function(Report_Parameters$Current_Year, 1, 1) 
-                    year.text <- c(year.function(Report_Parameters$Current_Year, -3, 4, "character"), " ")
+		gp.text <- c(SGP[(grade.values$year_span-1):1], rep(" ", studentGrowthPlot.year.span))
+		gp.text[which(is.na(SGP[(grade.values$year_span-1):1]))] <- missing.data.symbol
+		gp.text <- head(gp.text, studentGrowthPlot.year.span-1)
 
-                    grades.text <- c(paste("Grade", Grades[4:1]), "Next Year")
-                    grades.text[which(is.na(Grades[4:1]))] <- missing.data.symbol
+		gp.levels.text <- c(sgp.level.labels(SGP_Levels[(grade.values$year_span-1):1]), rep(" ", studentGrowthPlot.year.span))
+		gp.levels.text <- head(gp.levels.text, studentGrowthPlot.year.span-1)
+	} else {
+		gp.values <- rep(NA, studentGrowthPlot.year.span-1)
+		gp.text <- rep(" ", studentGrowthPlot.year.span-1)
 
-                    scale.scores.values <- c(Plotting_Scale_Scores[4:1], NA)
-                    scale.scores.text <- c(Scale_Scores[4:1], " ")
-                    scale.scores.text[which(is.na(Scale_Scores[4:1]))] <- missing.data.symbol
+		gp.levels.text <- rep(" ", studentGrowthPlot.year.span-1)
+	}
 
-                    ach.levels.text <- c(ach.level.labels(Achievement_Levels[4:1]), " ")
-
-                    gp.values <- c(SGP[3:1], NA)
-                    gp.text <- c(SGP[3:1], " ")
-                    gp.text[which(is.na(SGP[3:1]))] <- missing.data.symbol
-
-                    gp.levels.text <- c(sgp.level.labels(SGP_Levels[3:1]), " ")
-
-                    cuts.ny1.text <- Cuts_NY1
-}
-
-if (grade.values$year_span == 3) {
-                    low.year <- year.function(Report_Parameters$Current_Year, -2, 1)
-                    high.year <- year.function(Report_Parameters$Current_Year, 2, 1) 
-                    year.text <- c(year.function(Report_Parameters$Current_Year, -2, 3, "character"), rep(" ", 2))
-
-                    grades.text <- c(paste("Grade", Grades[3:1]), "Next Year", " ")
-                    grades.text[which(is.na(Grades[3:1]))] <- missing.data.symbol
-                     
-                    scale.scores.values <- c(Plotting_Scale_Scores[3:1], rep(NA, 2))
-                    scale.scores.text <- c(Scale_Scores[3:1], rep(" ", 2)) 
-                    scale.scores.text[which(is.na(Scale_Scores[3:1]))] <- missing.data.symbol
-         
-                    ach.levels.text <- c(ach.level.labels(Achievement_Levels[3:1]), rep(" ", 2))
-
-                    gp.values <- c(SGP[2:1], rep(NA, 2))
-                    gp.text <- c(SGP[2:1], rep(" ", 2))
-                    gp.text[which(is.na(SGP[2:1]))] <- missing.data.symbol
-
-                    gp.levels.text <- c(sgp.level.labels(SGP_Levels[2:1]), rep(" ", 2))
-
-                    cuts.ny1.text <- Cuts_NY1
-}
-
-if (grade.values$year_span == 2) {
-                    low.year <- year.function(Report_Parameters$Current_Year, -1, 1)
-                    high.year <- year.function(Report_Parameters$Current_Year, 3, 1) 
-                    year.text <- c(year.function(Report_Parameters$Current_Year, -1, 2, "character"), rep(" ", 3))
-
-                    grades.text <- c(paste("Grade", Grades[2:1]), "Next Year", rep(" ", 2))
-                    grades.text[which(is.na(Grades[2:1]))] <- missing.data.symbol                     
-
-                    scale.scores.values <- c(Plotting_Scale_Scores[2:1], rep(NA, 3))
-                    scale.scores.text <- c(Scale_Scores[2:1], rep(" ", 3)) 
-                    scale.scores.text[which(is.na(Scale_Scores[2:1]))] <- missing.data.symbol
-
-                    ach.levels.text <- c(ach.level.labels(Achievement_Levels[2:1]), rep(" ", 3))
-
-                    gp.values <- c(SGP[1], rep(NA, 3))
-                    gp.text <- c(SGP[1], rep(" ", 3))
-                    gp.text[which(is.na(SGP[1]))] <- missing.data.symbol
-
-                    gp.levels.text <- c(sgp.level.labels(SGP_Levels[1]), rep(" ", 3))
-
-                    cuts.ny1.text <- Cuts_NY1
-}
-
-if (grade.values$year_span == 1) {
-                    low.year <- year.function(Report_Parameters$Current_Year, 0, 1)
-                    high.year <- year.function(Report_Parameters$Current_Year, 4, 1) 
-                    year.text <- c(year.function(Report_Parameters$Current_Year, 0, 1, "character"), rep(" ", 4))
-
-                    grades.text <- c(paste("Grade", Grades[1]), "Next Year", rep(" ", 3))
-
-                    scale.scores.values <- c(Plotting_Scale_Scores[1], rep(NA, 4))
-                    scale.scores.text <- c(Scale_Scores[1], rep(" ", 4)) 
-                    scale.scores.text[which(is.na(Scale_Scores[1]))] <- missing.data.symbol
-
-                    ach.levels.text <- c(ach.level.labels(Achievement_Levels[1]), rep(" ", 4))
-
-                    gp.values <- rep(NA, 4)
-                    gp.text <- rep(" ", 4)
-
-                    gp.levels.text <- rep(" ", 4)
-
-                    cuts.ny1.text <- Cuts_NY1
+	cuts.ny1.text <- Cuts_NY1
 }
 
 if (grade.values$year_span == 0) {
-                    low.year <- year.function(Report_Parameters$Current_Year, 0, 1)
-                    high.year <- year.function(Report_Parameters$Current_Year, 4, 1) 
-                    year.text <- rep(" ", 5)
+	low.year <- year.function(Report_Parameters$Current_Year, 0, 1)
+	high.year <- year.function(Report_Parameters$Current_Year, studentGrowthPlot.year.span-1, 1) 
+	year.text <- rep(" ", studentGrowthPlot.year.span)
 
-                    grades.text <- rep(" ", 5)
+	grades.text <- rep(" ", studentGrowthPlot.year.span)
 
-                    scale.scores.values <- rep(NA, 5)
-                    scale.scores.text <- rep(" ", 5) 
+	scale.scores.values <- rep(NA, studentGrowthPlot.year.span)
+	scale.scores.text <- rep(" ", studentGrowthPlot.year.span) 
 
-                    ach.levels.text <- rep(" ", 5)
+	ach.levels.text <- rep(" ", studentGrowthPlot.year.span)
 
-                    gp.values <- rep(NA, 4)
-                    gp.text <- rep(" ", 4)
+	gp.values <- rep(NA, studentGrowthPlot.year.span-1)
+	gp.text <- rep(" ", studentGrowthPlot.year.span-1)
 
-                    gp.levels.text <- rep(" ", 4)
+	gp.levels.text <- rep(" ", studentGrowthPlot.year.span-1)
 
-                    cuts.ny1.text <- rep(NA, number.growth.levels)
+        cuts.ny1.text <- rep(NA, number.growth.levels)
 }
+
 
 current.year <- year.function(Report_Parameters$Current_Year, 0, 1)
 xscale.range <- range(low.year,high.year) + c(-0.075, 0.1)*diff(range(low.year,high.year))
@@ -502,18 +382,20 @@ if (Connect_Points=="Arrows") {
 
 if (Grades[1] != max(grades.reported.in.state) & !is.na(cuts.ny1.text[1])){
 
-for (i in seq(number.growth.levels)) {
-   grid.polygon(x=c(current.year, rep(current.year+1, 2), current.year), 
-                y=c(scale.scores.values[which(current.year==low.year:high.year)], max(yscale.range[1], cuts.ny1.text[i]), 
+	for (i in seq(number.growth.levels)) {
+		grid.polygon(x=c(current.year, rep(current.year+grade.values$increment_for_projection, 2), current.year), 
+			y=c(scale.scores.values[which(current.year==low.year:high.year)], max(yscale.range[1], cuts.ny1.text[i]), 
 			min(yscale.range[2], cuts.ny1.text[i+1]), scale.scores.values[which(current.year==low.year:high.year)]),
 			default.units="native", gp=gpar(col=NA, lwd=0, fill=arrow.legend.color[i], alpha=0.45))
-   grid.roundrect(x=unit(current.year+1, "native"), y=unit((max(yscale.range[1], cuts.ny1.text[i])+min(yscale.range[2], cuts.ny1.text[i+1]))/2, "native"), 
-               height=unit(min(yscale.range[2], as.numeric(cuts.ny1.text[i+1])) - max(yscale.range[1], as.numeric(cuts.ny1.text[i])), "native"), width=unit(0.04, "native"), 
-               r=unit(0.45, "snpc"), gp=gpar(lwd=0.3, col=border.color, fill=arrow.legend.color[i]))
+		grid.roundrect(x=unit(current.year+grade.values$increment_for_projection, "native"), 
+			y=unit((max(yscale.range[1], cuts.ny1.text[i])+min(yscale.range[2], cuts.ny1.text[i+1]))/2, "native"), 
+			height=unit(min(yscale.range[2], as.numeric(cuts.ny1.text[i+1])) - max(yscale.range[1], as.numeric(cuts.ny1.text[i])), "native"), 
+			width=unit(0.04, "native"), r=unit(0.45, "snpc"), gp=gpar(lwd=0.3, col=border.color, fill=arrow.legend.color[i]))
 
-   grid.text(x=current.year+1+.05, y=(max(yscale.range[1], cuts.ny1.text[i])+min(yscale.range[2], cuts.ny1.text[i+1]))/2, growth.level.labels[i],
-             default.units="native", just="left", gp=gpar(cex=.4, col=border.color))
-   }
+		grid.text(x=current.year+grade.values$increment_for_projection+.05, 
+			y=(max(yscale.range[1], cuts.ny1.text[i])+min(yscale.range[2], cuts.ny1.text[i+1]))/2, growth.level.labels[i],
+			default.units="native", just="left", gp=gpar(cex=.4, col=border.color))
+	}
 }
 
 grid.circle(x=low.year:high.year, y=scale.scores.values, r=unit(0.04, "inches"),

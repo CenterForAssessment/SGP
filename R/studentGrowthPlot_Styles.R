@@ -484,13 +484,17 @@
 
 	if (identical(.Platform$OS.type, "unix")) {
 		if (1000*as.numeric(unlist(strsplit(system(paste("du -s", file.path(sgPlot.folder, year_folder, district_folder, school_folder)), intern=TRUE), "\t"))[1]) > 4000000000) {
-			system(paste("tar cfz", file.path(sgPlot.folder, year_folder, district_folder, paste(school_folder, ".tar.gz", sep="")), 
-				 file.path(sgPlot.folder, year_folder, district_folder, school_folder), sep=" "))
+			tmp.working.directory <- getwd()
+			setwd(file.path(sgPlot.folder, year_folder, district_folder))
+			system(paste("tar cfz", paste(school_folder, ".tar.gz", sep=""), school_folder, sep=" "))
+			setwd(tmp.working.directory)
 		} else {
+			tmp.working.directory <- getwd()
+			setwd(file.path(sgPlot.folder, year_folder, district_folder))
 			suppressWarnings(
-				system(paste("zip -rq", file.path(sgPlot.folder, year_folder, district_folder, paste(school_folder, ".zip", sep="")), 
-					 file.path(sgPlot.folder, year_folder, district_folder, school_folder), sep=" "))
+				system(paste("zip -rq", paste(school_folder, ".zip", sep=""), school_folder, sep=" "))
 			)
+			setwd(tmp.working.directory)
 		}
 		unlink(file.path(sgPlot.folder, year_folder, district_folder, school_folder), recursive=TRUE)
 	}

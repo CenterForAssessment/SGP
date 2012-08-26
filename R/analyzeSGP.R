@@ -182,21 +182,36 @@ function(sgp_object,
 		par.sgp.config <- list(); cnt <- 1
 		for (a in names(sgp.config)) {
 			for (b in seq_along(sgp.config[[a]][["sgp.grade.sequences"]])) {
+
+				### Create a per sgp.grade.sequence branch in par.sgp.config list
+
 				par.sgp.config[[cnt]] <- sgp.config[[a]]
 				par.sgp.config[[cnt]][["sgp.grade.progression.labels"]] <- sgp.config[[a]][["sgp.grade.progression.labels"]][b]
 				par.sgp.config[[cnt]][["sgp.grade.sequences"]] <- tmp.gp <- sgp.config[[a]][["sgp.grade.sequences"]][b]
 				par.sgp.config[[cnt]][["sgp.exact.grade.progression"]] <- sgp.config[[a]][["sgp.exact.grade.progression"]][b]
 				
-				###  Use exact grade progression if using multiple content areas in a single year as priors.  (Could add in override argument later???)
-				if (any(duplicated(tmp.gp[[1]]))) {  
+				###  Set sgp.exact.grade.progression=TRUE if using multiple content areas in a single year as priors.
+
+				if (any(duplicated(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]]))) {  
 					par.sgp.config[[cnt]][["sgp.exact.grade.progression"]] <- TRUE
 				} else if (is.null(par.sgp.config[[cnt]][["sgp.exact.grade.progression"]])) par.sgp.config[[cnt]][["sgp.exact.grade.progression"]] <- FALSE
+
+				### Set sgp.grade.progression.labels=TRUE if the grade sequence repeats or skips
+
+				if (any(duplicated(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]])) | any(diff(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]])!=1)) {
+					par.sgp.config[[cnt]][["sgp.grade.progression.labels"]] <- TRUE
+				} else if (is.null(par.sgp.config[[cnt]][["sgp.grade.progression.labels"]])) par.sgp.config[[cnt]][["sgp.grade.progression.labels"]] <- FALSE
+				
+				### Create index and identify years from sgp.panel.years
 				
 				grade.span <- seq(min(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]]), max(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]]))
 				index <- match(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]], grade.span) ## Select out proper years
 				if (!sgp.config.drop.nonsequential.grade.progression.variables) index <- seq_along(index) ## Take most recent years, OR, take years and subjects as specified in custom sgp.config
 				par.sgp.config[[cnt]][["sgp.panel.years"]] <- tail(par.sgp.config[[cnt]][["sgp.panel.years"]], max(index))[index]
 				par.sgp.config[[cnt]][["sgp.content.areas"]] <- tail(par.sgp.config[[cnt]][["sgp.content.areas"]], length(index))
+
+
+				### Additional arguments associated with baseline analyses
 
 				if (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline) {
 					mtx.names <- names(tmp_sgp_object[["Coefficient_Matrices"]][[paste(strsplit(a, "\\.")[[1]][1], ".BASELINE", sep="")]])
