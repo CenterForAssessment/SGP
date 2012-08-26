@@ -164,13 +164,13 @@ if (grade.values$year_span > 0) {
 
 	if (grade.values$increment_for_projection > 0) {
 		grades.text.numbers <- c(Grades[grade.values$year_span:1], Grades[1]+seq(grade.values$increment_for_projection))
-		tmp.grades.text.numbers <- rev(grade.values$interp.df$GRADE[seq(which(grade.values$interp.df==tail(grades.text.numbers, 1)), length=length(grades.text.numbers), by=-1)])
+		tmp.grades.text.numbers <- rev(grade.values$interp.df$GRADE[seq(max(which(grade.values$interp.df==tail(grades.text.numbers, 1))), length=length(grades.text.numbers), by=-1)])
 	} else {
 		grades.text.numbers <- Grades[grade.values$year_span:1]
-		tmp.grades.text.numbers <- rev(grade.values$interp.df$GRADE[seq(which(grade.values$interp.df==tail(grades.text.numbers, 1)), length=length(grades.text.numbers), by=-1)])
+		tmp.grades.text.numbers <- rev(grade.values$interp.df$GRADE[seq(max(which(grade.values$interp.df==tail(grades.text.numbers, 1))), length=length(grades.text.numbers), by=-1)])
 	}
 	grades.text.numbers.missing <- which(is.na(grades.text.numbers))
-	grades.text.numbers.non.tested <- which(!tmp.grades.text.numbers %in% grades.reported.in.state)
+	grades.text.numbers.non.tested <- which(!as.integer(tmp.grades.text.numbers) %in% grades.reported.in.state)
 	grades.text <- c(paste("Grade", grades.text.numbers), rep(" ", studentGrowthPlot.year.span))
 	grades.text[grades.text.numbers.missing] <- missing.data.symbol
 	grades.text[grades.text.numbers.non.tested] <- "Non-tested Grade"
