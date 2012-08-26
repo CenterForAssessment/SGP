@@ -486,11 +486,13 @@
 		if (1000*as.numeric(unlist(strsplit(system(paste("du -s", file.path(sgPlot.folder, year_folder, district_folder, school_folder)), intern=TRUE), "\t"))[1]) > 4000000000) {
 			tmp.working.directory <- getwd()
 			setwd(file.path(sgPlot.folder, year_folder, district_folder))
+			if (paste(school_folder, ".tar.gz", sep="") %in% list.files()) file.remove(paste(school_folder, ".tar.gz", sep=""))
 			system(paste("tar cfz", paste(school_folder, ".tar.gz", sep=""), school_folder, sep=" "))
 			setwd(tmp.working.directory)
 		} else {
 			tmp.working.directory <- getwd()
 			setwd(file.path(sgPlot.folder, year_folder, district_folder))
+			if (paste(school_folder, ".zip", sep="") %in% list.files()) file.remove(paste(school_folder, ".zip", sep=""))
 			suppressWarnings(
 				system(paste("zip -rq", paste(school_folder, ".zip", sep=""), school_folder, sep=" "))
 			)
