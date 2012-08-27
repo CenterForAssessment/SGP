@@ -278,8 +278,13 @@ if ("studentGrowthPlot" %in% plot.types) {
 
 	#### Utility functions
 
-	get.next.grade <- function(grade) {
-		c(tmp.grades.reported, NA)[match(grade, tmp.grades.reported)+1]
+	get.next.grade <- function(grade, content_area) {
+		if (is.na(grade)) {
+			return(NA)
+		} else {
+			tmp.grades.reported <- SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]]
+			c(tmp.grades.reported, NA)[match(grade, tmp.grades.reported)+1]
+		}
 	}
 
 	get.my.label <- function(state, content_area, year, label="Cutscores") {
@@ -693,7 +698,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			setkeyv(sgPlot.data, c("CONTENT_AREA", tmp.grade.name))
 			for (proj.iter in grep("PROJ_YEAR_1", names(sgPlot.data))) {
 				tmp.scale_score.name <- names(sgPlot.data)[proj.iter]
-				sgPlot.data[[proj.iter]] <- sgPlot.data[,piecewise.transform(get(tmp.scale_score.name), state, CONTENT_AREA, tmp.year.name, get.next.grade(tmp.grade.name)), 
+				sgPlot.data[[proj.iter]] <- sgPlot.data[,piecewise.transform(get(tmp.scale_score.name), state, CONTENT_AREA, tmp.year.name, get.next.grade(get(tmp.grade.name)[1], CONTENT_AREA[1])), 
 					by=list(CONTENT_AREA, sgPlot.data[[tmp.grade.name]])]$V1 
 			}
 		}
