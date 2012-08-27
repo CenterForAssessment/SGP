@@ -109,6 +109,15 @@ interpolate.grades <- function(grades, data.year.span) {
 		if (first.scale.score > 1) {
 			grades[1:(first.scale.score-1)] <- (grades[first.scale.score] + (first.scale.score - 1)):(grades[first.scale.score]+1)
 			grades[grades > max(grades.reported.in.state)] <- max(grades.reported.in.state)
+			if (any(is.na(grades))) {
+				grades[which(is.na(grades))] <- approx(grades, xout=which(is.na(grades)))$y
+				grades <- as.integer(grades)
+			}
+			if (any(!grades %in% grades.reported.in.state)) {
+				for (tmp.missing.grades in which(!grades %in% grades.reported.in.state)) {
+					grades[tmp.missing.grades] <- grades.reported.in.state[which.min(grades[tmp.missing.grades] > grades.reported.in.state)-1]
+				}
+			}
 		}
                        
 		if (any(is.na(grades))) grades[which(is.na(grades))] <- approx(grades, xout=which(is.na(grades)))$y
