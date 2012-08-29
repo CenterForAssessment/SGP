@@ -12,11 +12,13 @@ Changes in version: SGP_0.9-9.4
 	  o On *NIX OS types studentGrowthPlot directories are zipped/gzipped and directory removed to minimize space requirements.
 	  o outputSGP converts names back to @Names$name.original.
 	  o Projection fan in student growth plots now projects across multiple year spans.
+	  o Internal capwords function now exported and available for use.
 
   USER VISIBLE CHANGES:
 
 	  o Updated Hawaii variable name lookup table.
 	  o Zipped files for studentGrowthPlots no longer include full file path. 
+	  o Internal capwords function now exported and available for use.
 
   BUG FIXES:
 
