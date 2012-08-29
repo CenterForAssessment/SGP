@@ -357,6 +357,26 @@ function(sgp_object,
 	### when fed into studentGrowthPercentiles.
 
 	get.knots.boundaries <- function(sgp.iter) {
+
+		get.my.knots.boundaries.path <- function(content_area, year) {
+			tmp.knots.boundaries.names <- names(SGPstateData[[state]][['Achievement']][['Knots_Boundaries']])
+			tmp.knots.boundaries.names <- tmp.knots.boundaries.names[content_area, tmp.knots.boundaries.names]
+			tmp.knots.boundaries.years <- sapply(strsplit(tmp.knots.boundaries.names, "[.]"), function(x) x[2])
+			if (any(!is.na(tmp.knots.boundaries.years))) {
+				if (year %in% tmp.knots.boundaries.years) {
+					return(paste(content_area, ".", year, sep=""))
+				} else {
+					if (year==sort(c(year, tmp.knots.boundaries.years))[1]) {
+						return(content_area)
+					} else {
+						return(paste(content_area, ".", rev(sort(tmp.knots.boundaries.years))[1], sep=""))
+					}
+				}
+			} else {
+				return(content_area)
+			}
+		}
+	
 		kb <- list()
 		tmp.gp <- sgp.iter[["sgp.grade.sequences"]][[1]]
 		num.prior <- length(tmp.gp)-1
@@ -380,7 +400,7 @@ function(sgp_object,
 			for (ca in seq_along(head(sgp.iter[["sgp.content.areas"]], -1))) {
 				for (j in c('boundaries_', 'knots_', 'loss.hoss_')) {
 					kb[["Knots_Boundaries"]][[paste(tail(sgp.iter[["sgp.content.areas"]], 1), tail(sgp.iter[["sgp.panel.years"]], 1), sep=".")]][[paste(j, tmp.gp[ca], sep="")]] <- 
-						SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[sgp.iter[["sgp.content.areas"]][ca]]][
+						SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[get.my.knots.boundaries.path(sgp.iter[["sgp.content.areas"]][ca], sgp.iter[['sgp.panel.years']][ca])]][
 							grep(paste(j, strsplit(tmp.gp, "[.]")[[ca]][1], sep=""), 
 							names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[sgp.iter[["sgp.content.areas"]][ca]]]))][[1]]
 					}
