@@ -25,7 +25,8 @@ studentGrowthPlot_Styles(
            sgPlot.header.footer.color,
            sgPlot.fan,
            sgPlot.cleanup,
-           sgPlot.baseline)
+           sgPlot.baseline,
+           sgPlot.zip)
 }
 
 \arguments{
@@ -64,6 +65,8 @@ and a summary catalog containing those reports will be produced.
   \item{sgPlot.cleanup}{A boolean argument indicating whether to cleanup/remove files produced as part of pdfLaTeX build.
   }
   \item{sgPlot.baseline}{A boolean argument indicating whether to use baseline referenced student growth percentiles in student growth plots.
+  }
+  \item{sgPlot.zip}{A boolean argument indicating whether to school folders.
   }
 }
 

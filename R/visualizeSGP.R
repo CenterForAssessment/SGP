@@ -35,6 +35,7 @@ function(sgp_object,
 		sgPlot.demo.report=FALSE,
 		sgPlot.produce.plots=TRUE,
 		sgPlot.baseline=NULL,
+		sgPlot.zip=TRUE,
 		gaPlot.years=NULL,
 		gaPlot.content_areas=NULL, 
 		gaPlot.students=NULL,
@@ -740,7 +741,8 @@ if (sgPlot.produce.plots) {
 			sgPlot.header.footer.color=sgPlot.header.footer.color,
 			sgPlot.fan=sgPlot.fan,
 			sgPlot.cleanup=sgPlot.cleanup,
-			sgPlot.baseline=sgPlot.baseline)
+			sgPlot.baseline=sgPlot.baseline,
+			sgPlot.zip=sgPlot.zip)
 
 	} else { ### Parallel Processing
 		
