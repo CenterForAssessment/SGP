@@ -360,7 +360,7 @@ function(sgp_object,
 
 		get.my.knots.boundaries.path <- function(content_area, year) {
 			tmp.knots.boundaries.names <- names(SGPstateData[[state]][['Achievement']][['Knots_Boundaries']])
-			tmp.knots.boundaries.names <- tmp.knots.boundaries.names[content_area, tmp.knots.boundaries.names]
+			tmp.knots.boundaries.names <- tmp.knots.boundaries.names[content_area==tmp.knots.boundaries.names]
 			tmp.knots.boundaries.years <- sapply(strsplit(tmp.knots.boundaries.names, "[.]"), function(x) x[2])
 			if (any(!is.na(tmp.knots.boundaries.years))) {
 				if (year %in% tmp.knots.boundaries.years) {
