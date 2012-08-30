@@ -770,7 +770,8 @@ if (sgPlot.produce.plots) {
 							sgPlot.header.footer.color=sgPlot.header.footer.color,
 							sgPlot.fan=sgPlot.fan,
 							sgPlot.cleanup=sgPlot.cleanup,
-							sgPlot.baseline=sgPlot.baseline)
+							sgPlot.baseline=sgPlot.baseline,
+							sgPlot.zip=sgPlot.zip)
 			} ### END dopar
 		} ### END if FOREACH
 		
@@ -795,7 +796,8 @@ if (sgPlot.produce.plots) {
 					sgPlot.header.footer.color=sgPlot.header.footer.color,
 					sgPlot.fan=sgPlot.fan,
 					sgPlot.cleanup=sgPlot.cleanup,
-					sgPlot.baseline=sgPlot.baseline))
+					sgPlot.baseline=sgPlot.baseline,
+					sgPlot.zip=sgPlot.zip))
 		} ### END if SNOW
 		
 		if (par.start$par.type=="MULTICORE") {
@@ -819,7 +821,8 @@ if (sgPlot.produce.plots) {
 					sgPlot.header.footer.color=sgPlot.header.footer.color,
 					sgPlot.fan=sgPlot.fan,
 					sgPlot.cleanup=sgPlot.cleanup,
-					sgPlot.baseline=sgPlot.baseline), mc.cores=par.start$workers, mc.preschedule=FALSE)
+					sgPlot.baseline=sgPlot.baseline,
+					sgPlot.zip=sgPlot.zip), mc.cores=par.start$workers, mc.preschedule=FALSE)
 		}  ### END if MULTICORE
 		
 		stopParallel(parallel.config, par.start)
