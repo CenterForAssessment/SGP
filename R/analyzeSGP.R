@@ -198,7 +198,7 @@ function(sgp_object,
 
 				### Set sgp.grade.progression.labels=TRUE if the grade sequence repeats or skips
 
-				if (any(duplicated(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]])) | any(diff(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]])!=1)) {
+				if (any(duplicated(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]]))) {
 					par.sgp.config[[cnt]][["sgp.grade.progression.labels"]] <- TRUE
 				} else if (is.null(par.sgp.config[[cnt]][["sgp.grade.progression.labels"]])) par.sgp.config[[cnt]][["sgp.grade.progression.labels"]] <- FALSE
 				
