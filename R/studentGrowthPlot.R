@@ -113,6 +113,9 @@ interpolate.grades <- function(grades, data.year.span) {
 				grades[which(is.na(grades))] <- approx(grades, xout=which(is.na(grades)))$y
 				grades <- as.integer(grades)
 			}
+			if (!grades[1] %in% grades.reported.in.state) {
+				grades[1] <- grades.reported.in.state[which.min(grades[1] > grades.reported.in.state)-1]
+			}
 			if (any(!grades %in% grades.reported.in.state)) {
 				for (tmp.missing.grades in which(!grades %in% grades.reported.in.state)) {
 					grades[tmp.missing.grades] <- grades.reported.in.state[which.min(grades[tmp.missing.grades] > grades.reported.in.state)-1]
@@ -173,10 +176,10 @@ if (grade.values$year_span > 0) {
 
 	if (grade.values$increment_for_projection > 0) {
 		grades.text.numbers <- c(Grades[grade.values$year_span:1], Grades[1]+seq(grade.values$increment_for_projection))
-		tmp.grades.text.numbers <- rev(grade.values$interp.df$GRADE[seq(max(which(grade.values$interp.df==tail(grades.text.numbers, 1))), length=length(grades.text.numbers), by=-1)])
+		tmp.grades.text.numbers <- head(grade.values$interp.df$GRADE[-1], studentGrowthPlot.year.span)
 	} else {
 		grades.text.numbers <- Grades[grade.values$year_span:1]
-		tmp.grades.text.numbers <- rev(grade.values$interp.df$GRADE[seq(max(which(grade.values$interp.df==tail(grades.text.numbers, 1))), length=length(grades.text.numbers), by=-1)])
+		tmp.grades.text.numbers <- head(grade.values$interp.df$GRADE[-1], studentGrowthPlot.year.span)
 	}
 	grades.text.numbers.missing <- which(is.na(grades.text.numbers))
 	grades.text.numbers.non.tested <- which(!as.integer(tmp.grades.text.numbers) %in% grades.reported.in.state)

@@ -15,7 +15,8 @@
            sgPlot.header.footer.color,
            sgPlot.fan,
            sgPlot.cleanup,
-           sgPlot.baseline) {
+           sgPlot.baseline,
+           sgPlot.zip) {
 
 	CUTLEVEL <- ID <- CONTENT_AREA <- NULL ## To prevent R CMD check warnings
 
@@ -482,7 +483,7 @@
 		lapply(files.to.remove, file.remove)
 	}
 
-	if (identical(.Platform$OS.type, "unix")) {
+	if (identical(.Platform$OS.type, "unix") & sgPlot.zip) {
 		if (1000*as.numeric(unlist(strsplit(system(paste("du -s", file.path(sgPlot.folder, year_folder, district_folder, school_folder)), intern=TRUE), "\t"))[1]) > 4000000000) {
 			tmp.working.directory <- getwd()
 			setwd(file.path(sgPlot.folder, year_folder, district_folder))

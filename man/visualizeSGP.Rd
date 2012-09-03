@@ -46,6 +46,7 @@ visualizeSGP(
            sgPlot.demo.report=FALSE,
            sgPlot.produce.plots=TRUE,
            sgPlot.baseline=NULL,
+           sgPlot.zip=TRUE,
            gaPlot.years=NULL,
            gaPlot.content_areas=NULL,
            gaPlot.students=NULL,
@@ -158,6 +159,8 @@ function will produce plots for all available instructors provided in the data w
   }
   \item{sgPlot.baseline}{Argument (defaults to NULL) indicating whether to use baseline referenced SGPs for student growth plot construction.  If not set by user, 
   argument will be set using \code{SGPstateData} which contains information on whether state is a cohort or baseline referenced system.
+  }
+  \item{sgPlot.zip}{A boolean argument (defaults to TRUE) indicating whether to zip school folders containing \code{\link{studentGrowthPlot}}s. 
   }
   \item{gaPlot.years}{A vector indicating year for which to produce \code{\link{growthAchievementPlot}}s. If missing the function will use the last year available 
   in the data to produce \code{\link{growthAchievementPlot}}s.
