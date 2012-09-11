@@ -1,4 +1,4 @@
-Changes in version: SGP_0.9-9.4
+Changes in version: SGP_0.9-9.5
 
   NEW FEATURES:
 
@@ -18,7 +18,7 @@ Changes in version: SGP_0.9-9.4
   USER VISIBLE CHANGES:
 
 	  o Updated Hawaii variable name lookup table.
-	  o Zipped files for studentGrowthPlots no longer include full file path. 
+	  o Zipped files for studentGrowthPlots and outputSGP no longer include full file path. 
 	  o Internal capwords function now exported and available for use.
 	  o Removed parentheses in naming of folders when sgPlot.folder.names='name' is supplied.
 

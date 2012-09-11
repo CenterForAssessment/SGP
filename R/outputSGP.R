@@ -68,12 +68,19 @@ function(sgp_object,
 		write.table(sgp_object@Data, file=file.path(outputSGP.directory, paste(tmp.state, "SGP_LONG_Data.txt", sep="_")), sep="|", quote=FALSE, row.names=FALSE, na="")
 		if (identical(.Platform$OS.type, "unix")) {
 			if (file.info(file.path(outputSGP.directory, paste(tmp.state, "SGP_LONG_Data.txt", sep="_")))$size > 4000000000) {
-				system(paste("gzip", file.path(outputSGP.directory, paste(tmp.state, "SGP_LONG_Data.txt", sep="_"))))
+				tmp.working.directory <- getwd()
+				setwd(file.path(outputSGP.directory))
+				if (paste(tmp.state, "SGP_LONG_Data.txt.gz", sep="_") %in% list.files()) file.remove(paste(tmp.state, "SGP_LONG_Data.txt.gz", sep="_"))
+				system(paste("gzip", paste(tmp.state, "SGP_LONG_Data.txt", sep="_")))
+				setwd(tmp.working.directory)
 			} else {
+				tmp.working.directory <- getwd()
+				setwd(file.path(outputSGP.directory))
+				if (paste(tmp.state, "SGP_LONG_Data.txt.zip", sep="_") %in% list.files()) file.remove(paste(tmp.state, "SGP_LONG_Data.txt.zip", sep="_"))
 				suppressWarnings(
-					zip(file.path(outputSGP.directory, paste(tmp.state, "SGP_LONG_Data.txt.zip", sep="_")), 
-						file.path(outputSGP.directory, paste(tmp.state, "SGP_LONG_Data.txt", sep="_")))
+					zip(paste(tmp.state, "SGP_LONG_Data.txt.zip", sep="_"), paste(tmp.state, "SGP_LONG_Data.txt", sep="_"))
 				)
+				setwd(tmp.working.directory)
 			}
 		}
 		setnames(sgp_object@Data, sgp_object@Names[['names.provided']][names.in.data], sgp_object@Names[['names.sgp']][names.in.data])
@@ -117,12 +124,19 @@ function(sgp_object,
 
 		if (identical(.Platform$OS.type, "unix")) {
 			if (file.info(file.path(outputSGP.directory, paste(tmp.state, "SGP_WIDE_Data.txt", sep="_")))$size > 4000000000) {
-				system(paste("gzip", file.path(outputSGP.directory, paste(tmp.state, "SGP_WIDE_Data.txt", sep="_"))))
+				tmp.working.directory <- getwd()
+				setwd(file.path(outputSGP.directory))
+				if (paste(tmp.state, "SGP_WIDE_Data.txt.zip", sep="_") %in% list.files()) file.remove(paste(tmp.state, "SGP_WIDE_Data.txt.zip", sep="_"))
+				system(paste("gzip", paste(tmp.state, "SGP_WIDE_Data.txt", sep="_")))
+				setwd(tmp.working.directory)
 			} else {
+				tmp.working.directory <- getwd()
+				setwd(file.path(outputSGP.directory))
+				if (paste(tmp.state, "SGP_WIDE_Data.txt.zip", sep="_") %in% list.files()) file.remove(paste(tmp.state, "SGP_WIDE_Data.txt.zip", sep="_"))
 				suppressWarnings(
-					zip(file.path(outputSGP.directory, paste(tmp.state, "SGP_WIDE_Data.txt.zip", sep="_")), 
-						file.path(outputSGP.directory, paste(tmp.state, "SGP_WIDE_Data.txt", sep="_")))
+					zip(paste(tmp.state, "SGP_WIDE_Data.txt.zip", sep="_"), paste(tmp.state, "SGP_WIDE_Data.txt", sep="_"))
 				)
+				setwd(tmp.working.directory)
 			}
 		}
 
@@ -157,7 +171,7 @@ function(sgp_object,
 		###
 
 			started.at <- proc.time()
-			message(paste("\tStarted SchoolVIEW WIDE data production in outputSGP", date()))
+			message(paste("\tStarted SchoolView STUDENT_GROWTH data production in outputSGP", date()))
 
 		### Utility functions
 
@@ -204,6 +218,38 @@ function(sgp_object,
 
 		"%w/o%" <- function(x,y) x[!x %in% y]
 
+		convert.variables <- function(tmp.df) {
+			if ("YEAR" %in% names(tmp.df) && is.character(tmp.df$YEAR)) {
+				tmp.df$YEAR <- as.integer(sapply(strsplit(tmp.df$YEAR, "_"), '[', 2))
+			}
+			if ("CONTENT_AREA" %in% names(tmp.df) && is.character(tmp.df$CONTENT_AREA)) {
+				tmp.df$CONTENT_AREA <- as.integer(as.factor(tmp.df$CONTENT_AREA))
+			}
+			if ("LAST_NAME" %in% names(tmp.df) && is.factor(tmp.df$LAST_NAME)) {
+				tmp.df$LAST_NAME <- as.character(tmp.df$LAST_NAME)
+			}
+			if ("FIRST_NAME" %in% names(tmp.df) && is.factor(tmp.df$FIRST_NAME)) {
+				tmp.df$FIRST_NAME <- as.character(tmp.df$FIRST_NAME)
+			}
+			if ("EMH_LEVEL" %in% names(tmp.df) && is.factor(tmp.df$EMH_LEVEL)) {
+				tmp.df[['EMH_LEVEL']] <- substr(tmp.df$EMH_LEVEL, 1, 1)
+			}
+			if ("GENDER" %in% names(tmp.df) && is.factor(tmp.df$GENDER)) {
+				tmp.df[['GENDER']] <- substr(tmp.df$GENDER, 1, 1)
+			}
+			for (names.iter in c(outputSGP.student.groups, "SCHOOL_ENROLLMENT_STATUS", "DISTRICT_ENROLLMENT_STATUS", "STATE_ENROLLMENT_STATUS") %w/o% "ETHNICITY") {
+				if (names.iter %in% names(tmp.df) && is.factor(tmp.df[[names.iter]])) {
+					tmp.df[[names.iter]] <- as.character(tmp.df[[names.iter]])
+					tmp.df[[names.iter]][grep("Yes", tmp.df[[names.iter]])] <- "Y"
+					tmp.df[[names.iter]][grep("No", tmp.df[[names.iter]])] <- "N"
+				}
+			}
+			return(tmp.df)
+		}
+
+		unclass.data.table <- function(my.data.table) {
+			as.data.table(lapply(convert.variables(subset(my.data.table, VALID_CASE=="VALID_CASE")), unclass))
+		}
 
 		#### Set key
 
@@ -216,10 +262,14 @@ function(sgp_object,
 		if (is.null(outputSGP_INDIVIDUAL.years)) {
 			tmp.years <- sort(unique(sgp_object@Data["VALID_CASE"][["YEAR"]]))
 			tmp.last.year <- tail(tmp.years, 1)
+			tmp.years.short <- sapply(strsplit(tmp.years, "_"), '[', 2)
+			tmp.last.year.short <- tail(unlist(strsplit(tail(tmp.years, 1), "_")), 1)
 		} else {
 			tmp.all.years <- sort(unique(sgp_object@Data["VALID_CASE"][["YEAR"]])) 
 			tmp.years <- tmp.all.years[1:which(tmp.all.years==tail(sort(outputSGP_INDIVIDUAL.years), 1))]
 			tmp.last.year <- tail(tmp.years, 1)
+			tmp.years.short <- sapply(strsplit(tmp.years, "_"), '[', 2)
+			tmp.last.year.short <- tail(unlist(strsplit(tail(tmp.years, 1), "_")), 1)
 		}
 
 
@@ -228,7 +278,7 @@ function(sgp_object,
 		if (is.null(outputSGP_INDIVIDUAL.content_areas)) {
 			tmp.content_areas <- sort(unique(sgp_object@Data[SJ("VALID_CASE", tmp.last.year)][["CONTENT_AREA"]]))
 		} else {
-			tmp.content_areas <- as.factor(outputSGP_INDIVIDUAL.content_areas)
+			tmp.content_areas <- sort(outputSGP_INDIVIDUAL.content_areas)
 		}
 
 
@@ -277,7 +327,7 @@ function(sgp_object,
 			outputSGP.student.groups,
 			"SCHOOL_ENROLLMENT_STATUS", "DISTRICT_ENROLLMENT_STATUS", "STATE_ENROLLMENT_STATUS")
 
-		outputSGP.data <- reshape(tmp.table[VALID_CASE=="VALID_CASE", variables.to.keep, with=FALSE],
+		outputSGP.data <- reshape(unclass.data.table(tmp.table)[, variables.to.keep, with=FALSE],
 			idvar=c("ID", "CONTENT_AREA"),
 			timevar="YEAR",
 			drop=c("VALID_CASE"),
@@ -295,15 +345,15 @@ function(sgp_object,
 					tmp.list[[i]] <- data.table(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
 						sgp_object@SGP[["SGProjections"]][[i]][,c(1, grep(paste("PROJ_YEAR", j, sep="_"), names(sgp_object@SGP[["SGProjections"]][[i]])))])
 				}
-				outputSGP.data <- data.table(rbind.fill(tmp.list), key=paste(key(outputSGP.data), collapse=","))[outputSGP.data]
-				tmp.grade.name <- paste("GRADE", tmp.last.year, sep=".")
-				tmp.year.name <- .year.increment(tmp.last.year, j)
+				outputSGP.data <- data.table(convert.variables(rbind.fill(tmp.list)), key=paste(key(outputSGP.data), collapse=","))[outputSGP.data]
+				tmp.grade.name <- paste("GRADE", tmp.last.year.short, sep=".")
+				tmp.year.name <- .year.increment(tmp.last.year.short, j)
 				setkeyv(outputSGP.data, c("CONTENT_AREA", tmp.grade.name))
 				for (proj.iter in grep(paste("PROJ_YEAR", j, sep="_"), names(outputSGP.data))) {
-				tmp.scale_score.name <- names(outputSGP.data)[proj.iter]
-				outputSGP.data[[proj.iter]] <- outputSGP.data[,
-					piecewise.transform(get(tmp.scale_score.name), state, as.character(CONTENT_AREA[1]), tmp.year.name, get(tmp.grade.name)[1]+1), 
-					by=list(CONTENT_AREA, outputSGP.data[[tmp.grade.name]])]$V1 
+					tmp.scale_score.name <- names(outputSGP.data)[proj.iter]
+					outputSGP.data[[proj.iter]] <- outputSGP.data[,
+						piecewise.transform(get(tmp.scale_score.name), state, tmp.content_areas[CONTENT_AREA[1]], tmp.year.name, get(tmp.grade.name)[1]+1), 
+						by=list(CONTENT_AREA, outputSGP.data[[tmp.grade.name]])]$V1 
 				}
 			}
 		}
@@ -317,32 +367,32 @@ function(sgp_object,
 		## Rename variables to keep
 
 		setnames(outputSGP.data, which(names(outputSGP.data)=="ID"), "STATE_ASSIGNED_ID")
-		setnames(outputSGP.data, which(names(outputSGP.data)==paste("LAST_NAME", tmp.last.year, sep=".")), "LAST_NAME")
-		setnames(outputSGP.data, which(names(outputSGP.data)==paste("FIRST_NAME", tmp.last.year, sep=".")), "FIRST_NAME")
-		setnames(outputSGP.data, which(names(outputSGP.data)==paste("DISTRICT_NUMBER", tmp.last.year, sep=".")), "DISTRICT_NUMBER")
-		setnames(outputSGP.data, which(names(outputSGP.data)==paste("SCHOOL_NUMBER", tmp.last.year, sep=".")), "SCHOOL_NUMBER")
-		setnames(outputSGP.data, which(names(outputSGP.data)==paste("EMH_LEVEL", tmp.last.year, sep=".")), "EMH_LEVEL")
+		setnames(outputSGP.data, which(names(outputSGP.data)==paste("LAST_NAME", tmp.last.year.short, sep=".")), "LAST_NAME")
+		setnames(outputSGP.data, which(names(outputSGP.data)==paste("FIRST_NAME", tmp.last.year.short, sep=".")), "FIRST_NAME")
+		setnames(outputSGP.data, which(names(outputSGP.data)==paste("DISTRICT_NUMBER", tmp.last.year.short, sep=".")), "DISTRICT_NUMBER")
+		setnames(outputSGP.data, which(names(outputSGP.data)==paste("SCHOOL_NUMBER", tmp.last.year.short, sep=".")), "SCHOOL_NUMBER")
+		setnames(outputSGP.data, which(names(outputSGP.data)==paste("EMH_LEVEL", tmp.last.year.short, sep=".")), "EMH_LEVEL")
 		for (i in outputSGP.student.groups) {
-			setnames(outputSGP.data, which(names(outputSGP.data)==paste(i, tmp.last.year, sep=".")), i)
+			setnames(outputSGP.data, which(names(outputSGP.data)==paste(i, tmp.last.year.short, sep=".")), i)
 		}
-		setnames(outputSGP.data, which(names(outputSGP.data)==paste("SCHOOL_ENROLLMENT_STATUS", tmp.last.year, sep=".")), "SCHOOL_ENROLLMENT_STATUS")
-		setnames(outputSGP.data, which(names(outputSGP.data)==paste("DISTRICT_ENROLLMENT_STATUS", tmp.last.year, sep=".")), "DISTRICT_ENROLLMENT_STATUS")
-		setnames(outputSGP.data, which(names(outputSGP.data)==paste("STATE_ENROLLMENT_STATUS", tmp.last.year, sep=".")), "STATE_ENROLLMENT_STATUS")
+		setnames(outputSGP.data, which(names(outputSGP.data)==paste("SCHOOL_ENROLLMENT_STATUS", tmp.last.year.short, sep=".")), "SCHOOL_ENROLLMENT_STATUS")
+		setnames(outputSGP.data, which(names(outputSGP.data)==paste("DISTRICT_ENROLLMENT_STATUS", tmp.last.year.short, sep=".")), "DISTRICT_ENROLLMENT_STATUS")
+		setnames(outputSGP.data, which(names(outputSGP.data)==paste("STATE_ENROLLMENT_STATUS", tmp.last.year.short, sep=".")), "STATE_ENROLLMENT_STATUS")
 
-		for (i in seq_along(tmp.years)) {	
-			setnames(outputSGP.data, grep(paste("GRADE", rev(tmp.years)[i], sep="."), names(outputSGP.data)), paste("GRADE_LEVEL", tmp.order[i], sep="_"))
-			setnames(outputSGP.data, grep(paste("SCALE_SCORE", rev(tmp.years)[i], sep="."), names(outputSGP.data)) %w/o% 
-				grep(paste("TRANSFORMED_SCALE_SCORE", rev(tmp.years)[i], sep="."), names(outputSGP.data)), 
+		for (i in seq_along(tmp.years.short)) {	
+			setnames(outputSGP.data, grep(paste("GRADE", rev(tmp.years.short)[i], sep="."), names(outputSGP.data)), paste("GRADE_LEVEL", tmp.order[i], sep="_"))
+			setnames(outputSGP.data, grep(paste("SCALE_SCORE", rev(tmp.years.short)[i], sep="."), names(outputSGP.data)) %w/o% 
+				grep(paste("TRANSFORMED_SCALE_SCORE", rev(tmp.years.short)[i], sep="."), names(outputSGP.data)), 
 				paste("SCALE_SCORE", tmp.order[i], sep="_"))
-			setnames(outputSGP.data, grep(paste("TRANSFORMED_SCALE_SCORE", rev(tmp.years)[i], sep="."), names(outputSGP.data)), paste("TRANSFORMED_SCALE_SCORE", tmp.order[i], sep="_"))
-			setnames(outputSGP.data, grep(paste("SGP_TARGET", rev(tmp.years)[i], sep="."), names(outputSGP.data)), paste("GROWTH_TARGET", tmp.order[i], sep="_"))
-			setnames(outputSGP.data, grep(paste("SGP", rev(tmp.years)[i], sep="."), names(outputSGP.data)), paste("GROWTH_PERCENTILE", tmp.order[i], sep="_"))
-			setnames(outputSGP.data, grep(paste("ACHIEVEMENT_LEVEL", rev(tmp.years)[i], sep="."), names(outputSGP.data)), paste("PERFORMANCE_LEVEL", tmp.order[i], sep="_"))
+			setnames(outputSGP.data, grep(paste("TRANSFORMED_SCALE_SCORE", rev(tmp.years.short)[i], sep="."), names(outputSGP.data)), paste("TRANSFORMED_SCALE_SCORE", tmp.order[i], sep="_"))
+			setnames(outputSGP.data, grep(paste("SGP_TARGET", rev(tmp.years.short)[i], sep="."), names(outputSGP.data)), paste("GROWTH_TARGET", tmp.order[i], sep="_"))
+			setnames(outputSGP.data, grep(paste("SGP", rev(tmp.years.short)[i], sep="."), names(outputSGP.data)), paste("GROWTH_PERCENTILE", tmp.order[i], sep="_"))
+			setnames(outputSGP.data, grep(paste("ACHIEVEMENT_LEVEL", rev(tmp.years.short)[i], sep="."), names(outputSGP.data)), paste("PERFORMANCE_LEVEL", tmp.order[i], sep="_"))
 		}
 	
 		## NULLify variable to be removed
 
-		for (i in head(tmp.years, -1)) {
+		for (i in head(tmp.years.short, -1)) {
 			outputSGP.data[[paste("LAST_NAME", i, sep=".")]] <- NULL
 			outputSGP.data[[paste("FIRST_NAME", i, sep=".")]] <- NULL
 			outputSGP.data[[paste("DISTRICT_NUMBER", i, sep=".")]] <- NULL
@@ -359,14 +409,14 @@ function(sgp_object,
 
 		## Create missing variables
 
-		outputSGP.data[["YEAR"]] <- tmp.last.year
+		outputSGP.data[["YEAR"]] <- tmp.last.year.short
 		outputSGP.data[["STUDENT_GROWTH_ID"]] <- seq(dim(outputSGP.data)[1])
 		outputSGP.data[["MIDDLE_NAME"]] <- as.character(NA)
 		outputSGP.data[["HLS_CODE"]] <- as.character(NA)
 		outputSGP.data[["OCTOBER_ENROLLMENT_STATUS"]] <- as.character(NA)
 
-		if (length(tmp.years) < length(tmp.order)) {
-			for (i in tmp.order[(length(tmp.years)+1):length(tmp.order)]) {
+		if (length(tmp.years.short) < length(tmp.order)) {
+			for (i in tmp.order[(length(tmp.years.short)+1):length(tmp.order)]) {
 				outputSGP.data[[paste("GRADE_LEVEL", i, sep="_")]] <- NA
 				outputSGP.data[[paste("SCALE_SCORE", i, sep="_")]] <- NA
 				outputSGP.data[[paste("TRANSFORMED_SCALE_SCORE", i, sep="_")]] <- NA
@@ -411,16 +461,19 @@ function(sgp_object,
 			"CUT_1_YEAR_2", "CUT_99_YEAR_2", "CUT_35_YEAR_2", "CUT_65_YEAR_2", "CUT_20_YEAR_2", "CUT_40_YEAR_2", "CUT_60_YEAR_2", "CUT_80_YEAR_2",
 			"CUT_1_YEAR_3", "CUT_99_YEAR_3", "CUT_35_YEAR_3", "CUT_65_YEAR_3", "CUT_20_YEAR_3", "CUT_40_YEAR_3", "CUT_60_YEAR_3", "CUT_80_YEAR_3")
 
-		write.table(outputSGP.data[,tmp.variable.names, with=FALSE], file=file.path(outputSGP.directory, "SchoolView", "SchoolView_WIDE.txt"), row.names=FALSE, na="", quote=FALSE, sep="|")
+		write.table(outputSGP.data[,tmp.variable.names, with=FALSE], file=file.path(outputSGP.directory, "SchoolView", "STUDENT_GROWTH.dat"), row.names=FALSE, na="", quote=FALSE, sep="|")
+			tmp.working.directory <- getwd()
+			setwd(file.path(outputSGP.directory, "SchoolView"))
+			if ("STUDENT_GROWTH.dat.zip" %in% list.files()) file.remove("STUDENT_GROWTH.dat.zip")
 			suppressWarnings(
-				zip(file.path(outputSGP.directory, "SchoolView", "SchoolView_WIDE.txt.zip"), 
-					file.path(outputSGP.directory, "SchoolView", "SchoolView_WIDE.txt"))
+				zip("STUDENT_GROWTH.dat.zip", "STUDENT_GROWTH.dat")
 			)
+			setwd(tmp.working.directory)
 
-		SchoolView_WIDE <- outputSGP.data[,tmp.variable.names, with=FALSE]
-		save(SchoolView_WIDE, file=file.path(outputSGP.directory, "SchoolView", "SchoolView_WIDE.Rdata"))
+		STUDENT_GROWTH <- outputSGP.data[,tmp.variable.names, with=FALSE]
+		save(STUDENT_GROWTH, file=file.path(outputSGP.directory, "SchoolView", "STUDENT_GROWTH.Rdata"))
 
-		message(paste("\tFinished SchoolVIEW WIDE data production in outputSGP", date(), "in", timetaken(started.at), "\n"))
+		message(paste("\tFinished SchoolView STUDENT_GROWTH data production in outputSGP", date(), "in", timetaken(started.at), "\n"))
 
 	} ## End if SchoolView %in% output.type
 
