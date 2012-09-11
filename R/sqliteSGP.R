@@ -67,6 +67,9 @@ function(sgp_object,
 				tmp1 <- unlist(strsplit(tmp.df$YEAR, "_"))
 				tmp.df$YEAR <- as.integer(tmp1[seq(length(tmp1)) %% 2 == 0])
 			}
+			if (is.character(tmp.df$CONTENT_AREA)) {
+				tmp.df$CONTENT_AREA <- as.factor(tmp.df$CONTENT_AREA)
+			}
 			tmp.df[sapply(tmp.df, is.nan)] <- NA
 			return(tmp.df)
 		}

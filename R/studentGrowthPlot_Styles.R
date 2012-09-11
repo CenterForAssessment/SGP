@@ -110,7 +110,7 @@
 			} else {
 				if (sgPlot.folder.names=="name") {
 					tmp_district_name <- as.character(sgPlot.data[list(i)][[paste("DISTRICT_NAME", last.year, sep=".")]][1])
-						district_folder <- gsub(" ", "_", paste(tmp_district_name, " (", i, ")", sep=""))
+						district_folder <- gsub(" ", "_", paste(tmp_district_name, i))
 				} else {
 					tmp_district_name <- as.character(sgPlot.data[list(i)][[paste("DISTRICT_NAME", last.year, sep=".")]][1])
 						district_folder <- as.character(i)
@@ -144,7 +144,7 @@
 			} else {
 				if (sgPlot.folder.names=="name") {
 					tmp_school_name <- as.character(tmp_district_data[list(j)][[paste("SCHOOL_NAME", last.year, sep=".")]][1])
-					school_folder <- gsub(" ", "_", paste(tmp_school_name, " (", j, ")", sep=""))
+					school_folder <- gsub(" ", "_", paste(tmp_school_name, j))
 				} else {
 					tmp_school_name <- as.character(tmp_district_data[list(j)][[paste("SCHOOL_NAME", last.year, sep=".")]][1])
 					school_folder <- as.character(j)
