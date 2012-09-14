@@ -177,7 +177,7 @@ function(panel.data,	## REQUIRED
 		tmp.index <- grep(tmp.mtx.name, matrix.names)
 		tmp.tf <- tmp.index2 <- NULL
 		for (i in tmp.index) {
-			if ("Content_Areas" %in% slotNames(panel.data[['Coefficient_Matrices']][[tmp.path.coefficient.matrices]][[i]])) {
+			if (!identical(class(try(Coefficient_Matrices[[tmp.path.coefficient.matrices]][[i]]@Content_Areas, silent=TRUE)), "try-error")) {
 				tmp.tf <- c(tmp.tf, TRUE); tmp.index2 <- c(tmp.index2, i)
 			} else tmp.tf <- c(tmp.tf, FALSE)
 		}
