@@ -86,8 +86,24 @@ function(sgp_object,
 				}
 			}
 			for (j in c("Coefficient_Matrices", "Goodness_of_Fit", "Knots_Boundaries")) {
-				for (k in names(list_1[[j]])) {
-					list_1[[j]][[k]] <- c(list_1[[j]][[k]], list_2[[j]][[k]])[!duplicated(names(c(list_1[[j]][[k]], list_2[[j]][[k]])))]
+				for (k in names(list_2[[j]])) {
+					names.list <- names(c(list_1[[j]][[k]], list_2[[j]][[k]]))
+					list_1[[j]][[k]] <- c(list_1[[j]][[k]], list_2[[j]][[k]])[!duplicated(names.list)]
+					if (any(duplicated(names.list))) {
+						if (!identical(list_1[[j]][[k]], list_2[[j]][[k]])) {
+							for (l in names.list[which(duplicated(names.list))]) {
+								if (j == "Coefficient_Matrices") {
+									eval("if (!identical(list_1[[j]][[k]][[l]]@.Data, list_2[[j]][[k]][[l]]@.Data)) {") 
+								} else {
+								 	eval("if (!identical(list_1[[j]][[k]][[l]], list_2[[j]][[k]][[l]])) {") # could be same matrices, different @Version (???)
+								 }
+									x <- length(names(list_1[[j]][[k]]))+1
+									list_1[[j]][[k]][x] <- list_2[[j]][[k]][l]
+									names(list_1[[j]][[k]]) <- c(names(list_1[[j]][[k]])[-x], l)
+								eval("}")
+							}
+						}
+					}
 				}
 			}
 		}
