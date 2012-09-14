@@ -738,7 +738,7 @@ function(sgp_object,
 						growth.levels=state,
 						panel.data.vnames=get.panel.data.vnames("sgp.percentiles", sgp.iter),
 						grade.progression=sgp.iter[["base.gp"]],
-						content.area.sequence=sgp.iter[["sgp.content.areas"]],
+						content.area.sequence=tail(sgp.iter[["sgp.content.areas"]], sgp.iter[["max.order"]]+1), #not really needed since not producing coef matrix...
 						num.prior=min(sgp.iter[["max.order"]], sgp.percentiles.baseline.max.order),
 						# goodness.of.fit=TRUE, # already the default.
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
@@ -761,7 +761,7 @@ function(sgp_object,
 						growth.levels=state,
 						panel.data.vnames=get.panel.data.vnames("sgp.percentiles", sgp.iter),
 						grade.progression=sgp.iter[["base.gp"]],
-						content.area.sequence=sgp.iter[["sgp.content.areas"]],
+						content.area.sequence=tail(sgp.iter[["sgp.content.areas"]], sgp.iter[["max.order"]]+1), #not really needed since not producing coef matrix...
 						num.prior=min(sgp.iter[["max.order"]], sgp.percentiles.baseline.max.order),
 						# goodness.of.fit=TRUE, # already the default.
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
@@ -785,7 +785,7 @@ function(sgp_object,
 						growth.levels=state,
 						panel.data.vnames=get.panel.data.vnames("sgp.percentiles", sgp.iter),
 						grade.progression=sgp.iter[["base.gp"]],
-						content.area.sequence=sgp.iter[["sgp.content.areas"]],
+						content.area.sequence=tail(sgp.iter[["sgp.content.areas"]], sgp.iter[["max.order"]]+1), #not really needed since not producing coef matrix...
 						num.prior=min(sgp.iter[["max.order"]], sgp.percentiles.baseline.max.order),
 						# goodness.of.fit=TRUE, # already the default.
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
@@ -1209,7 +1209,7 @@ function(sgp_object,
 					growth.levels=state,
 					panel.data.vnames=get.panel.data.vnames("sgp.percentiles", sgp.iter),
 					grade.progression=sgp.iter[["base.gp"]],
-					content.area.sequence=sgp.iter[["sgp.content.areas"]],
+					content.area.sequence=tail(sgp.iter[["sgp.content.areas"]], sgp.iter[["max.order"]]+1), #not really needed since not producing coef matrix...
 					num.prior=min(sgp.iter[["max.order"]], sgp.percentiles.baseline.max.order),
 					# goodness.of.fit=TRUE, # already the default.
 					drop.nonsequential.grade.progression.variables=FALSE,
