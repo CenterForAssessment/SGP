@@ -664,7 +664,7 @@ function(sgp_object,
 							exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 							...))
 					}
-					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
+					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp, right=TRUE), tmp_sgp_object)
 					rm(tmp)
 					} # END SNOW
 				
@@ -707,7 +707,7 @@ function(sgp_object,
 							exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 							...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 					}
-					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
+					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp, right=TRUE), tmp_sgp_object)
 					rm(tmp)
 				} # End MULTICORE
 			} # #END not FOREACH
@@ -769,7 +769,7 @@ function(sgp_object,
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 						...))
 	
-					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
+					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp, right=TRUE), tmp_sgp_object)
 					rm(tmp)
 					} # END SNOW
 				
@@ -793,7 +793,7 @@ function(sgp_object,
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
-					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
+					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp, right=TRUE), tmp_sgp_object)
 					rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
@@ -850,7 +850,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...))
 	
-					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
+					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp, right=TRUE), tmp_sgp_object)
 					rm(tmp)
 					} # END SNOW
 				
@@ -872,7 +872,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
-					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
+					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp, right=TRUE), tmp_sgp_object)
 					rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
@@ -931,7 +931,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...))
 	
-					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
+					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp, right=TRUE), tmp_sgp_object)
 					rm(tmp)
 					} # END SNOW
 				
@@ -954,7 +954,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
-					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
+					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp, right=TRUE), tmp_sgp_object)
 					rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
@@ -1013,7 +1013,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...))
 	
-					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
+					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp, right=TRUE), tmp_sgp_object)
 					rm(tmp)
 					} # END SNOW
 				
@@ -1036,7 +1036,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
-					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
+					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp, right=TRUE), tmp_sgp_object)
 					rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
@@ -1096,7 +1096,7 @@ function(sgp_object,
 					projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 					...))
 
-				tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
+				tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp, right=TRUE), tmp_sgp_object)
 				rm(tmp)
 			} # END SNOW
 			
@@ -1119,7 +1119,7 @@ function(sgp_object,
 					projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 					...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 
-				tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
+				tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp, right=TRUE), tmp_sgp_object)
 				rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
