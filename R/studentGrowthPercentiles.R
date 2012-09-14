@@ -235,14 +235,14 @@ function(panel.data,         ## REQUIRED
 		}
 	}
 
-	get.coefficient.matrix <- function(tmp.last, j, content.areas, grade.prog, grade.progression.label) {
+	.get.coefficient.matrix <- function(tmp.last, j, content.areas, grade.prog, grade.progression.label) {
 		if (grade.progression.label) {
 			tmp.mtx.name <- paste("qrmatrix", tmp.last, j, paste(c(tail(tmp.gp[1:num.prior], j), tmp.last), collapse="."), sep="_") 
 		} else tmp.mtx.name <- paste("qrmatrix", tmp.last, j, sep="_") 
 		tmp.index <- grep(tmp.mtx.name, matrix.names)
 		tmp.tf <- tmp.index2 <- NULL
 		for (i in tmp.index) {
-			if ("Content_Areas" %in% slotNames(Coefficient_Matrices[[tmp.path.coefficient.matrices]][[i]])) {
+			if (!identical(class(try(Coefficient_Matrices[[tmp.path.coefficient.matrices]][[i]]@Content_Areas, silent=TRUE)), "try-error")) {
 				tmp.tf <- c(tmp.tf, TRUE); tmp.index2 <- c(tmp.index2, i)
 			} else tmp.tf <- c(tmp.tf, FALSE)
 		}
@@ -253,7 +253,7 @@ function(panel.data,         ## REQUIRED
 					tmp.mtx <- Coefficient_Matrices[[tmp.path.coefficient.matrices]][[i]]	
 				}
 			}
-		} else {
+		} else { # if not a newer version of splineMatrix, get coef matrix the "old" way (by name alone).
 			tmp.mtx <- Coefficient_Matrices[[tmp.path.coefficient.matrices]][[tmp.mtx.name]]
 		}
 		return(tmp.mtx)
@@ -262,7 +262,7 @@ function(panel.data,         ## REQUIRED
 	.get.percentile.predictions <- function(data, order, grade.progression.label) {
 		.check.my.coefficient.matrices(matrix.names, tmp.last, order)
 		mod <- character()
-		tmp.mtx <- get.coefficient.matrix(tmp.last, j, content.areas=tail(content.area.sequence, j+1), grade.prog = tail(tmp.gp, j+1), grade.progression.label=grade.progression.label)
+		tmp.mtx <- .get.coefficient.matrix(tmp.last, j, content.areas=tail(content.area.sequence, j+1), grade.prog = tail(tmp.gp, j+1), grade.progression.label=grade.progression.label)
 		for (k in 1:order) {
 			int <- "cbind(rep(1, dim(data)[1]),"
 			knt <- paste("tmp.mtx@Knots[['knots_", rev(tmp.gp)[k+1], "']]", sep="")
