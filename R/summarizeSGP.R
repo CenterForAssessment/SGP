@@ -554,6 +554,17 @@ function(sgp_object,
 
 	stopParallel(parallel.config, par.start)
 
+	### Create shrinkage estimates
+
+	for (i in names(sgp_object@Summary)) {
+		for (j in names(sgp_object@Summary[[i]])) {
+			constant <- var(sgp_object@Summary[[i]][[j]][["MEDIAN_SGP"]], na.rm=TRUE) - mean(sgp_object@Summary[[i]][[j]][["MEDIAN_SGP_STANDARD_ERROR"]]^2, na.rm=TRUE)
+			sgp_object@Summary[[i]][[j]][["MEDIAN_SGP_with_SHRINKAGE"]] <- 
+				round(50 + ((sgp_object@Summary[[i]][[j]][["MEDIAN_SGP"]]-50) * (constant/(constant+sgp_object@Summary[[i]][[j]][["MEDIAN_SGP_STANDARD_ERROR"]]^2))))
+		}
+	}
+
+
 	## NULL out BY_GROWTH_ONLY
 	if (any(!sapply(summary.groups[["growth_only_summary"]], is.null))) {
 		sgp_object@Data[["BY_GROWTH_ONLY"]] <- NULL

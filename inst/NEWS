@@ -14,6 +14,7 @@ Changes in version: SGP_0.9-9.5
 	  o Projection fan in student growth plots now projects across multiple year spans.
 	  o Internal capwords function now exported and available for use.
 	  o Added argument sgPlot.zip to visualizeSGP and studentGrowthPlot_Styles to control zip compression of school studentGrowthPlot folders.
+	  o Added shrinkage estimator calculation to summarizeSGP.
 
   USER VISIBLE CHANGES:
 
