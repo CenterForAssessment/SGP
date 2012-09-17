@@ -232,9 +232,7 @@ function(sgp_object,
 					tmp.split <- paste(c(unlist(strsplit(i, "_"))[!unlist(strsplit(i, "_"))=="NUMBER"], "ENROLLMENT_STATUS"), collapse="_")
 					if (tmp.split %in% getFromNames("institution_inclusion")) {
 						tmp.summary.groups[["institution_inclusion"]][[i]] <- tmp.split
-					} else {
-						tmp.summary.groups[["institution_inclusion"]][[i]] <- NULL
-					}
+					} 
 					tmp.summary.groups[["growth_only_summary"]][[i]] <- "BY_GROWTH_ONLY"
 				}
 				tmp.summary.groups[["institution_inclusion"]] <- as.list(tmp.summary.groups[["institution_inclusion"]])
