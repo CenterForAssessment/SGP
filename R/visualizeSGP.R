@@ -36,6 +36,7 @@ function(sgp_object,
 		sgPlot.produce.plots=TRUE,
 		sgPlot.baseline=NULL,
 		sgPlot.zip=TRUE,
+		sgPlot.output.format="PDF",
 		gaPlot.years=NULL,
 		gaPlot.content_areas=NULL, 
 		gaPlot.students=NULL,
@@ -742,7 +743,8 @@ if (sgPlot.produce.plots) {
 			sgPlot.fan=sgPlot.fan,
 			sgPlot.cleanup=sgPlot.cleanup,
 			sgPlot.baseline=sgPlot.baseline,
-			sgPlot.zip=sgPlot.zip)
+			sgPlot.zip=sgPlot.zip,
+			sgPlot.output.format=sgPlot.output.format)
 
 	} else { ### Parallel Processing
 		
@@ -771,7 +773,8 @@ if (sgPlot.produce.plots) {
 							sgPlot.fan=sgPlot.fan,
 							sgPlot.cleanup=sgPlot.cleanup,
 							sgPlot.baseline=sgPlot.baseline,
-							sgPlot.zip=sgPlot.zip)
+							sgPlot.zip=sgPlot.zip,
+							sgPlot.output.format=sgPlot.output.format)
 			} ### END dopar
 		} ### END if FOREACH
 		
@@ -797,7 +800,8 @@ if (sgPlot.produce.plots) {
 					sgPlot.fan=sgPlot.fan,
 					sgPlot.cleanup=sgPlot.cleanup,
 					sgPlot.baseline=sgPlot.baseline,
-					sgPlot.zip=sgPlot.zip))
+					sgPlot.zip=sgPlot.zip,
+					sgPlot.output.format=sgPlot.output.format))
 		} ### END if SNOW
 		
 		if (par.start$par.type=="MULTICORE") {
@@ -822,7 +826,8 @@ if (sgPlot.produce.plots) {
 					sgPlot.fan=sgPlot.fan,
 					sgPlot.cleanup=sgPlot.cleanup,
 					sgPlot.baseline=sgPlot.baseline,
-					sgPlot.zip=sgPlot.zip), mc.cores=par.start$workers, mc.preschedule=FALSE)
+					sgPlot.zip=sgPlot.zip,
+					sgPlot.output.format=sgPlot.output.format), mc.cores=par.start$workers, mc.preschedule=FALSE)
 		}  ### END if MULTICORE
 		
 		stopParallel(parallel.config, par.start)
