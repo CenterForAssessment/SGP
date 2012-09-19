@@ -87,20 +87,16 @@ function(sgp_object,
 			}
 			for (j in c("Coefficient_Matrices", "Goodness_of_Fit", "Knots_Boundaries")) {
 				for (k in names(list_2[[j]])) {
-					names.list <- names(c(list_1[[j]][[k]], list_2[[j]][[k]]))
-					list_1[[j]][[k]] <- c(list_1[[j]][[k]], list_2[[j]][[k]])[!duplicated(names.list)]
-					if (any(duplicated(names.list))) {
-						if (!identical(list_1[[j]][[k]], list_2[[j]][[k]])) {
+					if (!identical(list_1[[j]][[k]], list_2[[j]][[k]])) {
+						names.list <- names(c(list_1[[j]][[k]], list_2[[j]][[k]])) # Get list of names first.
+						list_1[[j]][[k]] <- c(list_1[[j]][[k]], list_2[[j]][[k]][!names(list_2[[j]][[k]]) %in% names(list_1[[j]][[k]])]) #new.elements
+						if (any(duplicated(names.list))) {
 							for (l in names.list[which(duplicated(names.list))]) {
-								if (j == "Coefficient_Matrices") {
-									eval("if (!identical(list_1[[j]][[k]][[l]]@.Data, list_2[[j]][[k]][[l]]@.Data)) {") 
-								} else {
-								 	eval("if (!identical(list_1[[j]][[k]][[l]], list_2[[j]][[k]][[l]])) {") # could be same matrices, different @Version (???)
-								 }
-									x <- length(names(list_1[[j]][[k]]))+1
-									list_1[[j]][[k]][x] <- list_2[[j]][[k]][l]
+								if (!identical(list_1[[j]][[k]][[l]], list_2[[j]][[k]][[l]])) { # could be same matrices, different @Version (???)
+									x <- length(list_1[[j]][[k]])+1
+									list_1[[j]][[k]][[x]] <- list_2[[j]][[k]][[l]]
 									names(list_1[[j]][[k]]) <- c(names(list_1[[j]][[k]])[-x], l)
-								eval("}")
+								}
 							}
 						}
 					}
@@ -666,7 +662,7 @@ function(sgp_object,
 							exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 							...))
 					}
-					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp, right=TRUE), tmp_sgp_object)
+					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
 					rm(tmp)
 					} # END SNOW
 				
@@ -709,7 +705,7 @@ function(sgp_object,
 							exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 							...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 					}
-					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp, right=TRUE), tmp_sgp_object)
+					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
 					rm(tmp)
 				} # End MULTICORE
 			} # #END not FOREACH
@@ -771,7 +767,7 @@ function(sgp_object,
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 						...))
 	
-					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp, right=TRUE), tmp_sgp_object)
+					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
 					rm(tmp)
 					} # END SNOW
 				
@@ -795,7 +791,7 @@ function(sgp_object,
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
-					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp, right=TRUE), tmp_sgp_object)
+					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
 					rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
@@ -852,7 +848,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...))
 	
-					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp, right=TRUE), tmp_sgp_object)
+					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
 					rm(tmp)
 					} # END SNOW
 				
@@ -874,7 +870,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
-					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp, right=TRUE), tmp_sgp_object)
+					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
 					rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
@@ -933,7 +929,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...))
 	
-					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp, right=TRUE), tmp_sgp_object)
+					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
 					rm(tmp)
 					} # END SNOW
 				
@@ -956,7 +952,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
-					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp, right=TRUE), tmp_sgp_object)
+					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
 					rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
@@ -1015,7 +1011,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...))
 	
-					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp, right=TRUE), tmp_sgp_object)
+					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
 					rm(tmp)
 					} # END SNOW
 				
@@ -1038,7 +1034,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
-					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp, right=TRUE), tmp_sgp_object)
+					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
 					rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
@@ -1098,7 +1094,7 @@ function(sgp_object,
 					projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 					...))
 
-				tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp, right=TRUE), tmp_sgp_object)
+				tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
 				rm(tmp)
 			} # END SNOW
 			
@@ -1121,7 +1117,7 @@ function(sgp_object,
 					projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 					...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 
-				tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp, right=TRUE), tmp_sgp_object)
+				tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
 				rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
