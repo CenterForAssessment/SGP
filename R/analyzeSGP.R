@@ -546,7 +546,7 @@ function(sgp_object,
 			save(list=paste(state, "_Baseline_Matrices", sep=""), file=paste(state, "_Baseline_Matrices.Rdata", sep=""))
 			message("\n\tFinished Calculating Baseline Coefficient Matrices\n")
 		} else {
-			tmp_sgp_object <- .mergeSGP(SGPstateData[[state]][["Baseline_splineMatrix"]], tmp_sgp_object)
+			tmp_sgp_object <- .mergeSGP(tmp_sgp_object, SGPstateData[[state]][["Baseline_splineMatrix"]])
 		}
 	suppressMessages(gc()) # clean up
 	} # END Get/Compute baseline coefficient matrices
@@ -624,7 +624,7 @@ function(sgp_object,
 							...))
 					}
 				}
-				tmp_sgp_object <- .mergeSGP(tmp, tmp_sgp_object)
+				tmp_sgp_object <- .mergeSGP(tmp_sgp_object, tmp)
 				rm(tmp)
 			} else { # END FOREACH
 				###    SNOW flavor
@@ -748,7 +748,7 @@ function(sgp_object,
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 						...))
 				}
-				tmp_sgp_object <- .mergeSGP(tmp, tmp_sgp_object)
+				tmp_sgp_object <- .mergeSGP(tmp_sgp_object, tmp)
 				rm(tmp)
 			} else { # END FOREACH	
 				###    SNOW flavor
@@ -831,7 +831,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...))
 				}
-				tmp_sgp_object <- .mergeSGP(tmp, tmp_sgp_object)
+				tmp_sgp_object <- .mergeSGP(tmp_sgp_object, tmp)
 				rm(tmp)
 			} else {# END FOREACH
 				###   SNOW flavor
@@ -911,7 +911,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...))
 				}
-				tmp_sgp_object <- .mergeSGP(tmp, tmp_sgp_object)
+				tmp_sgp_object <- .mergeSGP(tmp_sgp_object, tmp)
 				rm(tmp)
 			} else {# END FOREACH
 				###   SNOW flavor
@@ -993,7 +993,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...))
 				}
-				tmp_sgp_object <- .mergeSGP(tmp, tmp_sgp_object)
+				tmp_sgp_object <- .mergeSGP(tmp_sgp_object, tmp)
 				rm(tmp)
 			} else {# END FOREACH
 				###   SNOW flavor
@@ -1075,7 +1075,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...))
 				}
-				tmp_sgp_object <- .mergeSGP(tmp, tmp_sgp_object)
+				tmp_sgp_object <- .mergeSGP(tmp_sgp_object, tmp)
 				rm(tmp)
 			} else {# END FOREACH
 
