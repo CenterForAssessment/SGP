@@ -154,6 +154,8 @@ function(sgp_object,
 			tmp <- data.table(merge.data.frame(tmp, tmp.sim, by = unlist(strsplit(as.character(sgp.groups.to.summarize), ", ")),all=TRUE))
 		}
 		setnames(tmp, (dim(tmp)[2]-length(sgp.summaries.names)+1):dim(tmp)[2], sgp.summaries.names)
+		constant <- var(tmp[['MEDIAN_SGP']], na.rm=TRUE) - mean(tmp[['MEDIAN_SGP_STANDARD_ERROR']]^2, na.rm=TRUE)
+		tmp[['MEDIAN_SGP_with_SHRINKAGE']] <- round(50 + ((tmp[['MEDIAN_SGP']]-50) * (constant/(constant+tmp[['MEDIAN_SGP_STANDARD_ERROR']]^2))))
 		message(paste("\tFinished with", sgp.groups.to.summarize))
 		return(tmp)
 	} ### END sgpSummary function
@@ -228,7 +230,9 @@ function(sgp_object,
 
 				for (i in tmp.summary.groups[["institution"]]) {
 					tmp.split <- paste(c(unlist(strsplit(i, "_"))[!unlist(strsplit(i, "_"))=="NUMBER"], "ENROLLMENT_STATUS"), collapse="_")
-					tmp.summary.groups[["institution_inclusion"]][[i]] <- intersect(tmp.split, getFromNames("institution_inclusion"))
+					if (tmp.split %in% getFromNames("institution_inclusion")) {
+						tmp.summary.groups[["institution_inclusion"]][[i]] <- tmp.split
+					} 
 					tmp.summary.groups[["growth_only_summary"]][[i]] <- "BY_GROWTH_ONLY"
 				}
 				tmp.summary.groups[["institution_inclusion"]] <- as.list(tmp.summary.groups[["institution_inclusion"]])
@@ -553,6 +557,7 @@ function(sgp_object,
 	} ### END j loop over multiple membership groups (if they exist)
 
 	stopParallel(parallel.config, par.start)
+
 
 	## NULL out BY_GROWTH_ONLY
 	if (any(!sapply(summary.groups[["growth_only_summary"]], is.null))) {
