@@ -787,37 +787,27 @@ function(panel.data,         ## REQUIRED
 
 		for (j in orders) {
 			tmp.data <- .get.panel.data(ss.data, j, by.grade)
-			tmp.predictions <- .get.percentile.predictions(tmp.data, j, grade.progression.label)
-			tmp.quantiles[[j]] <- data.table(ID=tmp.data[["ID"]], ORDER=j, SGP=.get.quantiles(tmp.predictions, tmp.data[[tail(SS,1)]]))
-			if (csem.tf) {
-				if (is.null(calculate.confidence.intervals$simulation.iterations)) calculate.confidence.intervals$simulation.iterations <- 100
-				if (!is.null(calculate.confidence.intervals$variable)) {
-					if (missing(panel.data.vnames)) {
-						tmp.csem.variable <- Panel_Data[Panel_Data[,1] %in% 
-							ss.data[tmp.data[["ID"]]][["ORIGINAL.ID"]],calculate.confidence.intervals$variable] 
+			if (dim(tmp.data)[1] > 0) {
+				tmp.predictions <- .get.percentile.predictions(tmp.data, j, grade.progression.label)
+				tmp.quantiles[[j]] <- data.table(ID=tmp.data[["ID"]], ORDER=j, SGP=.get.quantiles(tmp.predictions, tmp.data[[tail(SS,1)]]))
+				if (csem.tf) {
+					if (is.null(calculate.confidence.intervals$simulation.iterations)) calculate.confidence.intervals$simulation.iterations <- 100
+					if (!is.null(calculate.confidence.intervals$variable)) {
+						if (missing(panel.data.vnames)) {
+							tmp.csem.variable <- Panel_Data[Panel_Data[,1] %in% 
+								ss.data[tmp.data[["ID"]]][["ORIGINAL.ID"]],calculate.confidence.intervals$variable] 
+						} else {
+							tmp.csem.variable <- Panel_Data[Panel_Data[,panel.data.vnames[1]] %in% 
+								ss.data[tmp.data[["ID"]]][["ORIGINAL.ID"]],calculate.confidence.intervals$variable] 
+						}
 					} else {
-						tmp.csem.variable <- Panel_Data[Panel_Data[,panel.data.vnames[1]] %in% 
-							ss.data[tmp.data[["ID"]]][["ORIGINAL.ID"]],calculate.confidence.intervals$variable] 
+						tmp.csem.variable <- NULL
 					}
-				} else {
-					tmp.csem.variable <- NULL
-				}
-				for (k in seq(calculate.confidence.intervals$simulation.iterations)) { 
-					set.seed(k)
-					if (k==1) {
-						tmp.csem.quantiles[[j]] <- data.frame(ID=tmp.data[["ID"]],
-						SGP_SIM_1=.get.quantiles(tmp.predictions, .csem.score.simulator(
-							scale_scores=tmp.data[[tail(SS,1)]],
-							grade=tmp.last,
-							content_area=sgp.labels$my.subject,
-							year=sgp.labels$my.year,
-							state=calculate.confidence.intervals$state,
-							variable=tmp.csem.variable,
-							distribution=calculate.confidence.intervals$distribution,
-							round=calculate.confidence.intervals$round)))
-					} else {
-						tmp.csem.quantiles[[j]] <- cbind(tmp.csem.quantiles[[j]], 
-							.get.quantiles(tmp.predictions, .csem.score.simulator(
+					for (k in seq(calculate.confidence.intervals$simulation.iterations)) { 
+						set.seed(k)
+						if (k==1) {
+							tmp.csem.quantiles[[j]] <- data.frame(ID=tmp.data[["ID"]],
+							SGP_SIM_1=.get.quantiles(tmp.predictions, .csem.score.simulator(
 								scale_scores=tmp.data[[tail(SS,1)]],
 								grade=tmp.last,
 								content_area=sgp.labels$my.subject,
@@ -826,16 +816,28 @@ function(panel.data,         ## REQUIRED
 								variable=tmp.csem.variable,
 								distribution=calculate.confidence.intervals$distribution,
 								round=calculate.confidence.intervals$round)))
-								names(tmp.csem.quantiles[[j]])[k+1] <- paste("SGP_SIM", k, sep="_")
-					}
-				} ## END k loop
-			} ## END CSEM analysis
+						} else {
+							tmp.csem.quantiles[[j]] <- cbind(tmp.csem.quantiles[[j]], 
+								.get.quantiles(tmp.predictions, .csem.score.simulator(
+									scale_scores=tmp.data[[tail(SS,1)]],
+									grade=tmp.last,
+									content_area=sgp.labels$my.subject,
+									year=sgp.labels$my.year,
+									state=calculate.confidence.intervals$state,
+									variable=tmp.csem.variable,
+									distribution=calculate.confidence.intervals$distribution,
+									round=calculate.confidence.intervals$round)))
+									names(tmp.csem.quantiles[[j]])[k+1] <- paste("SGP_SIM", k, sep="_")
+						}
+					} ## END k loop
+				} ## END CSEM analysis
 
-			if (!missing(percentile.cuts)) {
-				tmp.percentile.cuts[[j]] <- data.table(ID=tmp.data[["ID"]], .get.percentile.cuts(tmp.predictions))
-			}
-			if ((goodness.of.fit | return.prior.scale.score) & j==1) prior.ss <- tmp.data[, tail(head(SS, -1),1), with=FALSE]
-			if (exact.grade.progression.sequence & return.prior.scale.score) prior.ss <- tmp.data[, tail(head(SS, -1),1), with=FALSE]
+				if (!missing(percentile.cuts)) {
+					tmp.percentile.cuts[[j]] <- data.table(ID=tmp.data[["ID"]], .get.percentile.cuts(tmp.predictions))
+				}
+				if ((goodness.of.fit | return.prior.scale.score) & j==1) prior.ss <- tmp.data[, tail(head(SS, -1),1), with=FALSE]
+				if (exact.grade.progression.sequence & return.prior.scale.score) prior.ss <- tmp.data[, tail(head(SS, -1),1), with=FALSE]
+			} ### END if (dim(tmp.data)[1] > 0)
 		} ## END j loop
 
 		quantile.data <- data.table(rbind.all(tmp.quantiles), key="ID")
@@ -893,6 +895,11 @@ function(panel.data,         ## REQUIRED
 		if (return.prior.scale.score) {
 			PRIOR_SCALE_SCORE <- NULL
 			quantile.data[, PRIOR_SCALE_SCORE:=prior.ss]
+		}
+
+		if (dim(quantile.data)[1] <= 250) {
+			message("\tNOTE: Due to small number of cases (", dim(quantile.data)[1], ") no goodness of fit plots produced.")
+			goodness.of.fit <- FALSE
 		}
 
 		if (goodness.of.fit) {

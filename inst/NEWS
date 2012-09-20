@@ -1,4 +1,4 @@
-Changes in version: SGP_0.9-9.5
+Changes in version: SGP_0.9-9.6
 
   NEW FEATURES:
 
@@ -29,6 +29,7 @@ Changes in version: SGP_0.9-9.5
 	  o Fixed spacing bug for attaching front page to studentGrowthPlots.
 	  o Corrected logic bug in combineSGP leading to the creation of SGP_TARGET when no projections exist.
 	  o Projection fan cuts calculated across a gap year using a piecewise transformation corrected to accomodate corect increase in years.
+	  o studentGrowthPercentiles and studentGrowthProjections better checks for empty data.
 
 
 Changes in version: SGP_0.9-9.0
