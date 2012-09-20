@@ -16,9 +16,17 @@
            sgPlot.fan,
            sgPlot.cleanup,
            sgPlot.baseline,
-           sgPlot.zip) {
+           sgPlot.zip,
+           sgPlot.output.format) {
 
 	CUTLEVEL <- ID <- CONTENT_AREA <- NULL ## To prevent R CMD check warnings
+
+	### Load packages
+
+	if ("PNG" %in% sgPlot.output.format) {
+		require("Cairo")
+	}
+
 
 	### Utility functions
 
@@ -91,6 +99,11 @@
                  my.sgp.level <- "SGP_LEVEL"
         }
 
+	if (sgPlot.output.format=="PNG") {
+		sgPlot.folder <- file.path(sgPlot.folder, "PNG")
+	}
+
+
 	### Loop over unique DISTRICTS, SCHOOLS, GRADES and then STUDENTS
 
 	tmp.keys <- paste(c("DISTRICT_NUMBER", "SCHOOL_NUMBER", "GRADE", "LAST_NAME", "FIRST_NAME"), last.year, sep=".")
@@ -151,6 +164,7 @@
 				}
 			}
 
+			if ("PDF" %in% sgPlot.output.format) {
 			######################## SCHOOL Report Catalog LaTeX Header #################################################################################
 			cat("\\documentclass[pdftex]{book}\n\\usepackage{hyperref,pdfpages}\n\\hypersetup{%\n", file=paste("school_catalog_", i, "_", j, ".tex", sep=""))
 			cat(paste("pdftitle={", tmp_school_name, ": ", pretty_year(last.year), " ", tmp.state, " Growth and Achievement Reports},\n", sep=""), 
@@ -161,6 +175,7 @@
 			cat(paste("\\pdfbookmark[-1]{", tmp_district_name, "}{", i, "}\n", sep=""), file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE)
 			cat(paste("\\pdfbookmark[0]{", tmp_school_name, "}{", j, "}\n", sep=""), file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE)
 			##############################################################################################################################################
+			}
 		}
 		tmp_school_ids <- unique(tmp_district_data[list(j)]$ID)
 		tmp_school_data <- subset(tmp_district_data, ID %in% tmp_school_ids)
@@ -181,10 +196,12 @@
 				grade_folder <- substr(paste("0", as.character(k), sep=""), nchar(k), nchar(k)+1)
 			}
 
+			if ("PDF" %in% sgPlot.output.format) {
 			################################ SCHOOL Report Catalog LaTeX Code #########################################################
 			cat(paste("\\pdfbookmark[1]{Grade ", k, "}{", j, k, "}\n", sep=""), 
 				file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE) ## NOTE: j, k included in anchor for uniqueness
 			###########################################################################################################################
+			}
 		}
 		tmp_grade_ids <- unique(tmp_school_data[list(k)]$ID)
 		tmp_grade_data <- subset(tmp_school_data, ID %in% tmp_grade_ids)
@@ -212,6 +229,7 @@
 			file_name <- paste(n, "_REPORT.pdf", sep="")
 		}
 
+	if ("PDF" %in% sgPlot.output.format) {
 		if (!reports.by.student) {
 			################################ SCHOOL Report Catalog LaTeX Code ###################################################################################
 			if (is.null(sgPlot.front.page)) {
@@ -466,17 +484,42 @@
 
               system(paste("pdflatex -interaction=batchmode student_report_", i, "_", j, ".tex", sep=""), ignore.stdout = TRUE)
               file.rename(paste("student_report_", i, "_", j, ".pdf", sep=""), paste(path.to.pdfs, "/", paste(head(unlist(strsplit(file_name, "_")), -1), collapse="_"), ".pdf", sep=""))
+	} ### END "PDF" %in% sgPlot.output.format
+
+	if ("PNG" %in% sgPlot.output.format) {
+		report.png.vp <- viewport(width = unit(8.1, "inches"), height = unit(3.64, "inches"))
+
+		for (vp in seq_along(content_areas)) {
+#			png(file.path(path.to.pdfs, paste(paste(n, vp, sep="_"), "png", sep=".")), width=8.2, height=3.74, units="in", pointsize=24, res=144, bg="transparent", type="cairo-png")
+			Cairo(file.path(path.to.pdfs, paste(paste(n, vp, sep="_"), "png", sep=".")), width=8.2, height=3.74, units="in", dpi=144, pointsize=24, bg="transparent")
+
+			tmp_student_data <- as.data.frame(tmp_grade_data[ID==n & CONTENT_AREA==content_areas[vp]])
+			pushViewport(report.png.vp)
+        	        studentGrowthPlot(
+				Scale_Scores=as.numeric(subset(tmp_student_data, select=paste("SCALE_SCORE", rev(sgPlot.years), sep="."))),
+				Plotting_Scale_Scores=as.numeric(subset(tmp_student_data, select=paste("TRANSFORMED_SCALE_SCORE", rev(sgPlot.years), sep="."))),
+				Achievement_Levels=as.character(unlist(subset(tmp_student_data, select=paste("ACHIEVEMENT_LEVEL", rev(sgPlot.years), sep=".")))),
+				SGP=as.numeric(subset(tmp_student_data, select=paste(my.sgp, rev(sgPlot.years), sep="."))),
+				SGP_Levels=as.character(unlist(subset(tmp_student_data, select=paste(my.sgp.level, rev(sgPlot.years), sep=".")))),
+				Grades=as.numeric(subset(tmp_student_data, select=paste("GRADE", rev(sgPlot.years), sep="."))),
+				Cuts_NY1=as.numeric(subset(tmp_student_data, select=grep("PROJ", names(tmp_student_data)))),
+				Cutscores=Cutscores[[content_areas[vp]]],
+				Report_Parameters=list(Current_Year=last.year, Content_Area=content_areas[vp], State=state))
+			popViewport()
+			dev.off()
+		} ## END loop over content_areas
+	} ### END if ("PNG" %in% sgPlot.output.format)
 
             } ## END for loop for STUDENTS (n)
           } ## END for loop for GRADES (k)
-	if (!reports.by.student) {
+	if (!reports.by.student & "PDF" %in% sgPlot.output.format) {
 		cat("\\end{document}", file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE)
 		system(paste("pdflatex -interaction=batchmode school_catalog_", i, "_", j, ".tex", sep=""), ignore.stdout = TRUE)
 		system(paste("pdflatex -interaction=batchmode school_catalog_", i, "_", j, ".tex", sep=""), ignore.stdout = TRUE)
 		file.rename(paste("school_catalog_", i, "_", j, ".pdf", sep=""), file.path(sgPlot.folder, year_folder, district_folder, school_folder,
 			paste(year_folder, "_", district_folder, "_", school_folder, "_Individual_SGP_Report_Catalog.pdf", sep="")))
 	}
-	if (sgPlot.cleanup) {
+	if (sgPlot.cleanup & "PDF" %in% sgPlot.output.format) {
 		files.to.remove <- list.files(pattern=paste(i, j, sep="_"), all.files=TRUE)
 		lapply(files.to.remove, file.remove)
 		files.to.remove <- list.files(path=file.path(sgPlot.folder, year_folder, district_folder, school_folder), pattern="REPORT", all.files=TRUE, full.names=TRUE, recursive=TRUE)

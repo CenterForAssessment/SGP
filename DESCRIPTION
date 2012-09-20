@@ -1,8 +1,8 @@
 Package: SGP
 Type: Package
 Title: An R Package for the Calculation and Visualization of Student Growth Percentiles & Percentile Growth Trajectories.
-Version: 0.9-9.5
-Date: 2012-9-12
+Version: 0.9-9.6
+Date: 2012-9-20
 Authors@R: c(person("Damian", "Betebenner", email="dbetebenner@nciea.org", role=c("aut", "cre")), person("Adam", "Van Iwaarden", email="Vaniwaarden@colorado.edu", role="aut"),
                     person("Ben", "Domingue", email="ben.domingue@gmail.com", role="aut"))
 Author: Damian W. Betebenner <dbetebenner@nciea.org>, Adam Van Iwaarden <Vaniwaarden@colorado.edu> and Ben Domingue <ben.domingue@gmail.com>
@@ -16,7 +16,7 @@ Author: Damian W. Betebenner <dbetebenner@nciea.org>, Adam Van Iwaarden <Vaniwaa
 	Dr. Philip Olsen (Wisconsin), Nick Stroud (Wisconsin).  
 Maintainer: Damian W. Betebenner <dbetebenner@nciea.org>
 Depends: R (>= 2.12), boot, colorspace, data.table (>= 1.8.0), foreach, grid, gridBase, methods, plyr, reshape2, randomNames (>= 0.0-5), quantreg, splines, SGPdata (>= 2.0-0)
-Suggests: doMC, doMPI, doParallel, doRedis, doSNOW, iterators, multicore, parallel, pdf2, RSQLite, sn, snow
+Suggests: Cairo, doMC, doMPI, doParallel, doRedis, doSNOW, iterators, multicore, parallel, pdf2, RSQLite, sn, snow
 Description: Functions to calculate student growth percentiles and percentile growth projections/trajectories for students using large scale, 
         longitudinal assessment data.  Functions use quantile regression to estimate the conditional density associated 
         with each student's achievement history.  Percentile growth projections/trajectories are calculated using the coefficient matrices derived from 
@@ -27,4 +27,3 @@ URL: https://github.com/StudentGrowthPercentiles/SGP, http://studentgrowthpercen
 LazyLoad: Yes
 LazyData: Yes
 License: CC BY-SA 3.0 US | CC BY-NC-SA 3.0 + file LICENSE
-Packaged: 2012-03-26 09:40:58 UTC; damian

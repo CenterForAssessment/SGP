@@ -181,55 +181,57 @@ function(panel.data,	## REQUIRED
 			tmp.gp <- tail(grade.progression, grade.projection.sequence.priors[[i]][1])
 			if (any(!ss.data[["ID"]] %in% completed.ids)) {
 				tmp.dim <- dim(.get.panel.data(ss.data, grade.projection.sequence.priors[[i]][1], by.grade, subset.tf=!(ss.data[["ID"]] %in% completed.ids), tmp.gp=tmp.gp))
-				tmp.storage.matrix <- matrix(nrow=100*tmp.dim[1], ncol=length(grade.projection.sequence)+tmp.dim[2])
-				tmp.storage.matrix[,seq(tmp.dim[2])] <- as.matrix(sapply(.get.panel.data(ss.data, 
-					grade.projection.sequence.priors[[i]][1], by.grade, subset.tf=!(ss.data[["ID"]] %in% completed.ids), tmp.gp=tmp.gp), rep, each=100))
-				colnames(tmp.storage.matrix) <- c("ID", paste("SS", c(tmp.gp, grade.projection.sequence), sep=""))
-				completed.ids <- c(unique(tmp.storage.matrix[,"ID"]), completed.ids)
-				missing.taus=FALSE; na.replace=NULL # put these outside of j loop so that stay's true/non-null if only SOME of coef matrices have missing column/taus.
+				if (tmp.dim[1] > 0) {
+					tmp.storage.matrix <- matrix(nrow=100*tmp.dim[1], ncol=length(grade.projection.sequence)+tmp.dim[2])
+					tmp.storage.matrix[,seq(tmp.dim[2])] <- as.matrix(sapply(.get.panel.data(ss.data, 
+						grade.projection.sequence.priors[[i]][1], by.grade, subset.tf=!(ss.data[["ID"]] %in% completed.ids), tmp.gp=tmp.gp), rep, each=100))
+					colnames(tmp.storage.matrix) <- c("ID", paste("SS", c(tmp.gp, grade.projection.sequence), sep=""))
+					completed.ids <- c(unique(tmp.storage.matrix[,"ID"]), completed.ids)
+					missing.taus=FALSE; na.replace=NULL # put these outside of j loop so that stay's true/non-null if only SOME of coef matrices have missing column/taus.
 
-				for (j in seq_along(grade.projection.sequence.priors[[i]])) {
-					mod <- character()
-					int <- "cbind(rep(1, 100*tmp.dim[1]),"
-					for (k in 1:grade.projection.sequence.priors[[i]][j]) {
-						knt <- paste("panel.data[['Coefficient_Matrices']][['", tmp.path.coefficient.matrices, "']][['qrmatrix_", grade.projection.sequence[j], "_", grade.projection.sequence.priors[[i]][j], "']]@Knots[['knots_", rev(tmp.gp)[k], "']]", sep="")
-						bnd <- paste("panel.data[['Coefficient_Matrices']][['", tmp.path.coefficient.matrices, "']][['qrmatrix_", grade.projection.sequence[j], "_", grade.projection.sequence.priors[[i]][j], "']]@Boundaries[['boundaries_", rev(tmp.gp)[k], "']]", sep="")
-						mod <- paste(mod, ", bs(tmp.storage.matrix[,'SS", rev(tmp.gp)[k], "'], knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
-					}
-					mat <- paste("panel.data[['Coefficient_Matrices']][['", tmp.path.coefficient.matrices, "']][['qrmatrix_", grade.projection.sequence[j], "_", k, "']]", sep="")
-					.check.my.coefficient.matrices(matrix.names, grade.projection.sequence[j], k)
-					tmp.scores <- eval(parse(text=paste(int, substring(mod, 2), ")", sep="")))
-					tmp.matrix <- eval(parse(text=mat))
-					if (dim(tmp.matrix)[2] != 100) {
-						tau.num <- ceiling(as.numeric(substr(colnames(tmp.matrix), 6, nchar(colnames(tmp.matrix))))*100)
-						na.replace <- 1:100 %in% tau.num
-						na.mtx <- matrix(NA, nrow=nrow(tmp.matrix), ncol=100)
-						na.mtx[,na.replace] <- tmp.matrix
-						tmp.matrix <- na.mtx
-						missing.taus=TRUE
-					}
-					if (identical(floor(tmp.dim[1]/chunk.size), tmp.dim[1]/chunk.size)) {
-						num.chunks <- floor(tmp.dim[1]/chunk.size) - 1
-					} else {
-						num.chunks <- floor(tmp.dim[1]/chunk.size)
-					} 
-					chunk.list <- vector("list", num.chunks+1)
-					for (chunk in 0:num.chunks) {
-						lower.index <- chunk*chunk.size
-						upper.index <- min((chunk+1)*chunk.size, tmp.dim[1])
-						quantile.list <- vector("list", 100)
-						for (m in 1:100) {
-							quantile.list[[m]] <-  tmp.scores[m+lower.index:(upper.index-1)*100,] %*% tmp.matrix[,m] 
+					for (j in seq_along(grade.projection.sequence.priors[[i]])) {
+						mod <- character()
+						int <- "cbind(rep(1, 100*tmp.dim[1]),"
+						for (k in 1:grade.projection.sequence.priors[[i]][j]) {
+							knt <- paste("panel.data[['Coefficient_Matrices']][['", tmp.path.coefficient.matrices, "']][['qrmatrix_", grade.projection.sequence[j], "_", grade.projection.sequence.priors[[i]][j], "']]@Knots[['knots_", rev(tmp.gp)[k], "']]", sep="")
+							bnd <- paste("panel.data[['Coefficient_Matrices']][['", tmp.path.coefficient.matrices, "']][['qrmatrix_", grade.projection.sequence[j], "_", grade.projection.sequence.priors[[i]][j], "']]@Boundaries[['boundaries_", rev(tmp.gp)[k], "']]", sep="")
+							mod <- paste(mod, ", bs(tmp.storage.matrix[,'SS", rev(tmp.gp)[k], "'], knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
 						}
-						chunk.list[[chunk+1]] <- apply(matrix(unlist(quantile.list), ncol=100), 1, 
-							function(x) .smooth.bound.iso.row(x, grade.projection.sequence[j], .year.increment(sgp.labels$my.year, j, lag.increment),
-								missing.taus=missing.taus, na.replace=na.replace))
-					}
-					tmp.storage.matrix[,tmp.dim[2]+j] <- as.vector(do.call(cbind, chunk.list))
-					tmp.gp <- c(tmp.gp, grade.projection.sequence[j])
-					rm(list=c("tmp.scores", "chunk.list", "quantile.list")); suppressMessages(gc())
-				} ## END j loop
-				tmp.percentile.trajectories[[i]] <- tmp.storage.matrix[,-(1:grade.projection.sequence.priors[[i]][1]+1)]
+						mat <- paste("panel.data[['Coefficient_Matrices']][['", tmp.path.coefficient.matrices, "']][['qrmatrix_", grade.projection.sequence[j], "_", k, "']]", sep="")
+						.check.my.coefficient.matrices(matrix.names, grade.projection.sequence[j], k)
+						tmp.scores <- eval(parse(text=paste(int, substring(mod, 2), ")", sep="")))
+						tmp.matrix <- eval(parse(text=mat))
+						if (dim(tmp.matrix)[2] != 100) {
+							tau.num <- ceiling(as.numeric(substr(colnames(tmp.matrix), 6, nchar(colnames(tmp.matrix))))*100)
+							na.replace <- 1:100 %in% tau.num
+							na.mtx <- matrix(NA, nrow=nrow(tmp.matrix), ncol=100)
+							na.mtx[,na.replace] <- tmp.matrix
+							tmp.matrix <- na.mtx
+							missing.taus=TRUE
+						}
+						if (identical(floor(tmp.dim[1]/chunk.size), tmp.dim[1]/chunk.size)) {
+							num.chunks <- floor(tmp.dim[1]/chunk.size) - 1
+						} else {
+							num.chunks <- floor(tmp.dim[1]/chunk.size)
+						} 
+						chunk.list <- vector("list", num.chunks+1)
+						for (chunk in 0:num.chunks) {
+							lower.index <- chunk*chunk.size
+							upper.index <- min((chunk+1)*chunk.size, tmp.dim[1])
+							quantile.list <- vector("list", 100)
+							for (m in 1:100) {
+								quantile.list[[m]] <-  tmp.scores[m+lower.index:(upper.index-1)*100,] %*% tmp.matrix[,m] 
+							}
+							chunk.list[[chunk+1]] <- apply(matrix(unlist(quantile.list), ncol=100), 1, 
+								function(x) .smooth.bound.iso.row(x, grade.projection.sequence[j], .year.increment(sgp.labels$my.year, j, lag.increment),
+									missing.taus=missing.taus, na.replace=na.replace))
+						}
+						tmp.storage.matrix[,tmp.dim[2]+j] <- as.vector(do.call(cbind, chunk.list))
+						tmp.gp <- c(tmp.gp, grade.projection.sequence[j])
+						rm(list=c("tmp.scores", "chunk.list", "quantile.list")); suppressMessages(gc())
+					} ## END j loop
+					tmp.percentile.trajectories[[i]] <- tmp.storage.matrix[,-(1:grade.projection.sequence.priors[[i]][1]+1)]
+				} ## END if (tmp.dim[1] > 0)
 			} ## END if statement
 		} ## END i loop
 		as.data.frame(do.call(rbind, tmp.percentile.trajectories))
