@@ -486,12 +486,15 @@
               file.rename(paste("student_report_", i, "_", j, ".pdf", sep=""), paste(path.to.pdfs, "/", paste(head(unlist(strsplit(file_name, "_")), -1), collapse="_"), ".pdf", sep=""))
 	} ### END "PDF" %in% sgPlot.output.format
 
-	if ("PNG" %in% sgPlot.output.format) {
+	if (any(c("PNG", "PDF_PIECES") %in% sgPlot.output.format)) {
 		report.png.vp <- viewport(width = unit(8.1, "inches"), height = unit(3.64, "inches"))
 
 		for (vp in seq_along(content_areas)) {
-#			png(file.path(path.to.pdfs, paste(paste(n, vp, sep="_"), "png", sep=".")), width=8.2, height=3.74, units="in", pointsize=24, res=144, bg="transparent", type="cairo-png")
-			Cairo(file.path(path.to.pdfs, paste(paste(n, vp, sep="_"), "png", sep=".")), width=8.2, height=3.74, units="in", dpi=144, pointsize=24, bg="transparent")
+			if ("PNG" %in% sgPlot.output.format) {
+				Cairo(file.path(path.to.pdfs, paste(paste(n, vp, sep="_"), "png", sep=".")), width=8.2, height=3.74, units="in", dpi=144, pointsize=24, bg="transparent")
+			} else {
+				pdf(file.path(path.to.pdfs, paste(paste(n, vp, sep="_"), "pdf", sep=".")), width=8.2, height=3.74, version="1.4") 
+			}
 
 			tmp_student_data <- as.data.frame(tmp_grade_data[ID==n & CONTENT_AREA==content_areas[vp]])
 			pushViewport(report.png.vp)
