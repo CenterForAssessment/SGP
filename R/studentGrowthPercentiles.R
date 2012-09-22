@@ -4,6 +4,7 @@ function(panel.data,         ## REQUIRED
          panel.data.vnames,
          grade.progression,
          grade.progression.label=FALSE,
+         content.area.sequence,
          num.prior,
          max.order.for.percentile=NULL,
          subset.grade,
@@ -51,7 +52,7 @@ function(panel.data,         ## REQUIRED
 	}
 
         .create.path <- function(labels, pieces=c("my.subject", "my.year", "my.extra.label")) {
-                sub(' ', '_', toupper(sub('\\.+$', '', paste(unlist(sapply(labels[pieces], as.character)), collapse="."))))
+            sub(' ', '_', toupper(sub('\\.+$', '', paste(unlist(sapply(labels[pieces], as.character)), collapse="."))))
         }
 
         capwords <- function(x) {
@@ -143,22 +144,22 @@ function(panel.data,         ## REQUIRED
 		}
         }
 
-        get.my.knots.boundaries.path <- function(content_area, year) {
-                tmp.knots.boundaries.names <- names(Knots_Boundaries[[tmp.path.knots.boundaries]])[grep(content_area, names(Knots_Boundaries[[tmp.path.knots.boundaries]]))]
+	get.my.knots.boundaries.path <- function(content_area, year) {
+		tmp.knots.boundaries.names <- names(Knots_Boundaries[[tmp.path.knots.boundaries]])[grep(content_area, names(Knots_Boundaries[[tmp.path.knots.boundaries]]))]
 		if (length(tmp.knots.boundaries.names)==0) {
 			return(paste("[['", tmp.path.knots.boundaries, "']]", sep=""))
 		} else {
-                        tmp.knots.boundaries.years <- sapply(strsplit(tmp.knots.boundaries.names, "[.]"), function(x) x[2])
-                        if (any(!is.na(tmp.knots.boundaries.years))) {
-                                if (year %in% tmp.knots.boundaries.years) {
-                                        return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, ".", year, "']]", sep=""))
-                                } else {
-                                        if (year==sort(c(year, tmp.knots.boundaries.years))[1]) {
-                                                return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, "']]", sep=""))
-                                        } else {
-                                                return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, ".", rev(sort(tmp.knots.boundaries.years))[1], "']]", sep=""))
-                                        }
-                                }
+			tmp.knots.boundaries.years <- sapply(strsplit(tmp.knots.boundaries.names, "[.]"), function(x) x[2])
+			if (any(!is.na(tmp.knots.boundaries.years))) {
+				if (year %in% tmp.knots.boundaries.years) {
+					return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, ".", year, "']]", sep=""))
+				} else {
+					if (year==sort(c(year, tmp.knots.boundaries.years))[1]) {
+						return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, "']]", sep=""))
+					} else {
+						return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, ".", rev(sort(tmp.knots.boundaries.years))[1], "']]", sep=""))
+					}
+				}
 			} else {
 				return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, "']]", sep=""))
 			}
@@ -173,7 +174,7 @@ function(panel.data,         ## REQUIRED
 		s4Bs <- "Boundaries=list("
 		tmp.gp.iter <- rev(tmp.gp)[2:(k+1)]
 		for (i in seq_along(tmp.gp.iter)) {
-			my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, .year.increment(sgp.labels$my.year, -i))
+			my.path.knots.boundaries <- get.my.knots.boundaries.path(content.area.sequence[match(tmp.gp.iter[i], tmp.gp)], .year.increment(sgp.labels$my.year, -i))
 			.check.knots.boundaries(names(eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, sep="")))), tmp.gp.iter[i])
 			knt <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['knots_", tmp.gp.iter[i], "']]", sep="")
 			bnd <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['boundaries_", tmp.gp.iter[i], "']]", sep="")
@@ -183,7 +184,8 @@ function(panel.data,         ## REQUIRED
 		}
 		tmp.mtx <- eval(parse(text=paste("rq(SS", tmp.last, " ~ ", substring(mod,4), ", tau=taus, data=tmp.data, method=rq.method)[['coefficients']]", sep="")))
 		version <- list(SGP_Package_Version=as.character(packageVersion("SGP")), Date_Prepared=date())
-		eval(parse(text=paste("new('splineMatrix', tmp.mtx, ", substring(s4Ks, 1, nchar(s4Ks)-1), "), ", substring(s4Bs, 1, nchar(s4Bs)-1), "), ", "Version=version)", sep="")))
+		eval(parse(text=paste("new('splineMatrix', tmp.mtx, ", substring(s4Ks, 1, nchar(s4Ks)-1), "), ", substring(s4Bs, 1, nchar(s4Bs)-1), "), ",
+			"Content_Areas=list(tail(content.area.sequence, k+1)), Grade_Progression=list(tail(tmp.gp, k+1)), Version=version)", sep="")))
 	}
 
 	.check.knots.boundaries <- function(names, grade) {
@@ -233,15 +235,34 @@ function(panel.data,         ## REQUIRED
 		}
 	}
 
+	.get.coefficient.matrix <- function(tmp.last, j, content.areas, grade.prog, grade.progression.label) {
+		if (grade.progression.label) {
+			tmp.mtx.name <- paste("qrmatrix", tmp.last, j, paste(c(tail(tmp.gp[1:num.prior], j), tmp.last), collapse="."), sep="_") 
+		} else tmp.mtx.name <- paste("qrmatrix", tmp.last, j, sep="_") 
+		tmp.index <- grep(tmp.mtx.name, matrix.names)
+		tmp.tf <- tmp.index2 <- NULL
+		for (i in tmp.index) {
+			if (!identical(class(try(Coefficient_Matrices[[tmp.path.coefficient.matrices]][[i]]@Content_Areas, silent=TRUE)), "try-error")) {
+				tmp.tf <- c(tmp.tf, TRUE); tmp.index2 <- c(tmp.index2, i)
+			} else tmp.tf <- c(tmp.tf, FALSE)
+		}
+		if (any(tmp.tf)) {
+			for (i in tmp.index2) {
+				if (all(Coefficient_Matrices[[tmp.path.coefficient.matrices]][[i]]@Content_Areas[[1]] == content.areas) & 
+				    all(Coefficient_Matrices[[tmp.path.coefficient.matrices]][[i]]@Grade_Progression[[1]] == grade.prog)) {
+					tmp.mtx <- Coefficient_Matrices[[tmp.path.coefficient.matrices]][[i]]	
+				}
+			}
+		} else { # if not a newer version of splineMatrix, get coef matrix the "old" way (by name alone).
+			tmp.mtx <- Coefficient_Matrices[[tmp.path.coefficient.matrices]][[tmp.mtx.name]]
+		}
+		return(tmp.mtx)
+	}
+
 	.get.percentile.predictions <- function(data, order, grade.progression.label) {
 		.check.my.coefficient.matrices(matrix.names, tmp.last, order)
 		mod <- character()
-		if (grade.progression.label) {
-			tmp.mtx <- eval(parse(text=paste("Coefficient_Matrices[['", tmp.path.coefficient.matrices, "']][['qrmatrix_", tmp.last, "_", j, "_", 
-				paste(c(tail(tmp.gp[1:num.prior], order), tmp.last), collapse="."), "']]", sep="")))
-		} else {
-			tmp.mtx <- eval(parse(text=paste("Coefficient_Matrices[['", tmp.path.coefficient.matrices, "']][['qrmatrix_", tmp.last, "_", j, "']]", sep="")))
-		}
+		tmp.mtx <- .get.coefficient.matrix(tmp.last, j, content.areas=tail(content.area.sequence, j+1), grade.prog = tail(tmp.gp, j+1), grade.progression.label=grade.progression.label)
 		for (k in 1:order) {
 			int <- "cbind(rep(1, dim(data)[1]),"
 			knt <- paste("tmp.mtx@Knots[['knots_", rev(tmp.gp)[k+1], "']]", sep="")
@@ -730,6 +751,20 @@ function(panel.data,         ## REQUIRED
         } 
 
 
+	if (missing(content.area.sequence)) {
+		content.area.sequence <- rep(sgp.labels$my.subject, length(tmp.gp))
+	} else {
+		if (!identical(class(content.area.sequence), "character")) {
+			stop("content.area.sequence should be a character vector of class list. See help page for details.")
+		}
+		if (!identical(tail(content.area.sequence, 1), sgp.labels$my.subject)) {
+			stop("The last element in the content.area.sequence must be identical to 'my.subject' of the sgp.labels. See help page for details.")
+		}
+		if (length(content.area.sequence) != length(tmp.gp)) {
+			stop("The content.area.sequence vector must the same number of elements as the grade.progression vector. See help page for details.")
+		}
+	}
+
 	### Create Knots and Boundaries if requested (uses only grades in tmp.gp)
 
 	if (missing(use.my.knots.boundaries)) {
@@ -738,13 +773,15 @@ function(panel.data,         ## REQUIRED
 	} else {
 		if (is.character(use.my.knots.boundaries)) {
 			if (!is.null(SGPstateData[[use.my.knots.boundaries]][["Achievement"]][["Knots_Boundaries"]])) {
-				for (i in grep(sgp.labels$my.subject, names(SGPstateData[[use.my.knots.boundaries]][["Achievement"]][["Knots_Boundaries"]]), value=TRUE)) {
-					Knots_Boundaries[[tmp.path.knots.boundaries]][[i]] <- SGPstateData[[use.my.knots.boundaries]][["Achievement"]][["Knots_Boundaries"]][[i]]
+				for (h in unique(content.area.sequence)) {
+					for (i in grep(h, names(SGPstateData[[use.my.knots.boundaries]][["Achievement"]][["Knots_Boundaries"]]), value=TRUE)) {
+						Knots_Boundaries[[tmp.path.knots.boundaries]][[i]] <- SGPstateData[[use.my.knots.boundaries]][["Achievement"]][["Knots_Boundaries"]][[i]]
+					}
 				}
-			} else {
-				tmp.knots <- c(Knots_Boundaries[[tmp.path.knots.boundaries]], .create.knots.boundaries(ss.data, by.grade))
-				Knots_Boundaries[[tmp.path.knots.boundaries]] <- tmp.knots[!duplicated(names(tmp.knots))]
 			}
+		} else {
+			tmp.knots <- c(Knots_Boundaries[[tmp.path.knots.boundaries]], .create.knots.boundaries(ss.data, by.grade))
+			Knots_Boundaries[[tmp.path.knots.boundaries]] <- tmp.knots[!duplicated(names(tmp.knots))]
 		}
 	}
 
@@ -915,7 +952,7 @@ function(panel.data,         ## REQUIRED
 	### Start/Finish Message & Return SGP Object
 
 	if (print.time.taken) {
-	        message(paste("\tStarted studentGrowthPercentiles:", started.date))
+		message(paste("\tStarted studentGrowthPercentiles:", started.date))
 		message(paste("\tContent Area: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(tmp.gp, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
 		message(c(tmp.messages, "\tFinished SGP Student Growth Percentile Analysis: ", date(), " in ", timetaken(started.at), "\n")) 
 	}

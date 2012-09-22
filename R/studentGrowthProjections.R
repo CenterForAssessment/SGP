@@ -47,7 +47,7 @@ function(panel.data,	## REQUIRED
                 sub(' ', '_', toupper(sub('\\.+$', '', paste(unlist(sapply(labels[pieces], as.character)), collapse="."))))
         }
 
-        get.my.knots.boundaries.path <- function(content_area, year) {
+	get.my.knots.boundaries.path <- function(content_area, year) {
 		tmp.knots.boundaries.names <- names(panel.data[["Knots_Boundaries"]][[tmp.path.knots.boundaries]])[
 			grep(content_area, names(panel.data[["Knots_Boundaries"]][[tmp.path.knots.boundaries]]))]
 		if (length(tmp.knots.boundaries.names)==0) {
@@ -63,12 +63,12 @@ function(panel.data,	## REQUIRED
 					} else {
 						return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, ".", rev(sort(tmp.knots.boundaries.years))[1], "']]", sep=""))
 					}
-                                }
-                        } else {
-                                return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, "']]", sep=""))
-                        }
+				}
+			} else {
+				return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, "']]", sep=""))
+			}
 		}
-        }
+	}
 
 	.get.max.matrix.order <- function(names, grade) {
 		tmp <- do.call(rbind, strsplit(names, "_"))
@@ -172,6 +172,28 @@ function(panel.data,	## REQUIRED
 		return(rev(tmp.list[!duplicated(tmp.list)]))
 	}
 
+	.get.coefficient.matrix <- function(grade, order, content.areas, grade.prog) { #, grade.progression.label {Not used in projections...}
+		tmp.mtx.name <- paste("qrmatrix", grade, order, sep="_") 
+		tmp.index <- grep(tmp.mtx.name, matrix.names)
+		tmp.tf <- tmp.index2 <- NULL
+		for (i in tmp.index) {
+			if (!identical(class(try(Coefficient_Matrices[[tmp.path.coefficient.matrices]][[i]]@Content_Areas, silent=TRUE)), "try-error")) {
+				tmp.tf <- c(tmp.tf, TRUE); tmp.index2 <- c(tmp.index2, i)
+			} else tmp.tf <- c(tmp.tf, FALSE)
+		}
+		if (any(tmp.tf)) {
+			for (i in tmp.index2) {
+				if (all(panel.data[['Coefficient_Matrices']][[tmp.path.coefficient.matrices]][[i]]@Content_Areas[[1]] == content.areas) & 
+				    all(panel.data[['Coefficient_Matrices']][[tmp.path.coefficient.matrices]][[i]]@Grade_Progression[[1]] == grade.prog)) {
+					tmp.mtx <- panel.data[['Coefficient_Matrices']][[tmp.path.coefficient.matrices]][[i]]	
+				}
+			}
+		} else {
+			tmp.mtx <- panel.data[['Coefficient_Matrices']][[tmp.path.coefficient.matrices]][[tmp.mtx.name]]
+		}
+		return(tmp.mtx)
+	}
+
 	.get.percentile.trajectories <- function(ss.data) {
 
 		tmp.percentile.trajectories <- vector("list", length(grade.projection.sequence.priors))
@@ -193,14 +215,14 @@ function(panel.data,	## REQUIRED
 						mod <- character()
 						int <- "cbind(rep(1, 100*tmp.dim[1]),"
 						for (k in 1:grade.projection.sequence.priors[[i]][j]) {
-							knt <- paste("panel.data[['Coefficient_Matrices']][['", tmp.path.coefficient.matrices, "']][['qrmatrix_", grade.projection.sequence[j], "_", grade.projection.sequence.priors[[i]][j], "']]@Knots[['knots_", rev(tmp.gp)[k], "']]", sep="")
-							bnd <- paste("panel.data[['Coefficient_Matrices']][['", tmp.path.coefficient.matrices, "']][['qrmatrix_", grade.projection.sequence[j], "_", grade.projection.sequence.priors[[i]][j], "']]@Boundaries[['boundaries_", rev(tmp.gp)[k], "']]", sep="")
+							knt <- paste("tmp.matrix@Knots[['knots_", rev(tmp.gp)[k], "']]", sep="")
+							bnd <- paste("tmp.matrix@Boundaries[['boundaries_", rev(tmp.gp)[k], "']]", sep="")
 							mod <- paste(mod, ", bs(tmp.storage.matrix[,'SS", rev(tmp.gp)[k], "'], knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
 						}
-						mat <- paste("panel.data[['Coefficient_Matrices']][['", tmp.path.coefficient.matrices, "']][['qrmatrix_", grade.projection.sequence[j], "_", k, "']]", sep="")
 						.check.my.coefficient.matrices(matrix.names, grade.projection.sequence[j], k)
+						tmp.grd <- grade.projection.sequence[j]
+						tmp.matrix <-  .get.coefficient.matrix(tmp.grd, order=grade.projection.sequence.priors[[i]][j], content.areas=sgp.labels$my.subject, grade.prog = tail(c(tmp.gp,tmp.grd), k+1))
 						tmp.scores <- eval(parse(text=paste(int, substring(mod, 2), ")", sep="")))
-						tmp.matrix <- eval(parse(text=mat))
 						if (dim(tmp.matrix)[2] != 100) {
 							tau.num <- ceiling(as.numeric(substr(colnames(tmp.matrix), 6, nchar(colnames(tmp.matrix))))*100)
 							na.replace <- 1:100 %in% tau.num
