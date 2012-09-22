@@ -69,7 +69,7 @@ and a summary catalog containing those reports will be produced.
   }
   \item{sgPlot.zip}{A boolean argument indicating whether to school folders.
   }
-  \item{sgPlot.output.format}{Argument indicating the desired type of output format for student growth plots. Either 'PDF' or 'PNG'.
+  \item{sgPlot.output.format}{Argument indicating the desired type of output format for student growth plots. Either 'PDF', 'PNG', or 'PDF_PIECES'.
   }
 }
 
