@@ -88,14 +88,15 @@ function(sgp_object,
 			for (j in c("Coefficient_Matrices", "Goodness_of_Fit", "Knots_Boundaries")) {
 				for (k in names(list_2[[j]])) {
 					if (!identical(list_1[[j]][[k]], list_2[[j]][[k]])) {
-						names.list <- names(c(list_1[[j]][[k]], list_2[[j]][[k]])) # Get list of names first.
+ 						names.list <- c(unique(names(list_1[[j]][[k]])), unique(names(list_2[[j]][[k]]))) # Get list of (unique) names first.
 						list_1[[j]][[k]] <- c(list_1[[j]][[k]], list_2[[j]][[k]][!names(list_2[[j]][[k]]) %in% names(list_1[[j]][[k]])]) #new.elements
 						if (any(duplicated(names.list))) {
-							for (l in names.list[which(duplicated(names.list))]) {
-								if (!identical(list_1[[j]][[k]][[l]], list_2[[j]][[k]][[l]])) { # could be same matrices, different @Version (???)
+							dups <- names.list[which(duplicated(names.list))]
+							for (l in seq(dups)) {
+								if (!identical(list_1[[j]][[k]][[dups[l]]], list_2[[j]][[k]][[dups[l]]])) { # could be same matrices, different @Version (???)
 									x <- length(list_1[[j]][[k]])+1
-									list_1[[j]][[k]][[x]] <- list_2[[j]][[k]][[l]]
-									names(list_1[[j]][[k]]) <- c(names(list_1[[j]][[k]])[-x], l)
+									list_1[[j]][[k]][[x]] <- list_2[[j]][[k]][[dups[l]]]
+									names(list_1[[j]][[k]]) <- c(names(list_1[[j]][[k]])[-x], dups[l])
 								}
 							}
 						}
@@ -208,12 +209,6 @@ function(sgp_object,
 					par.sgp.config[[cnt]][["sgp.exact.grade.progression"]] <- TRUE
 				} else if (is.null(par.sgp.config[[cnt]][["sgp.exact.grade.progression"]])) par.sgp.config[[cnt]][["sgp.exact.grade.progression"]] <- FALSE
 
-				### Set sgp.grade.progression.labels=TRUE if the grade sequence repeats or skips
-
-				# if (any(duplicated(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]]))) {
-					# par.sgp.config[[cnt]][["sgp.grade.progression.labels"]] <- TRUE
-				# } else if (is.null(par.sgp.config[[cnt]][["sgp.grade.progression.labels"]])) par.sgp.config[[cnt]][["sgp.grade.progression.labels"]] <- FALSE
-				
 				### Create index and identify years from sgp.panel.years
 				
 				grade.span <- seq(min(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]]), max(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]]))
@@ -221,7 +216,6 @@ function(sgp_object,
 				if (!sgp.config.drop.nonsequential.grade.progression.variables) index <- seq_along(index) ## Take most recent years, OR, take years and subjects as specified in custom sgp.config
 				par.sgp.config[[cnt]][["sgp.panel.years"]] <- tail(par.sgp.config[[cnt]][["sgp.panel.years"]], max(index))[index]
 				par.sgp.config[[cnt]][["sgp.content.areas"]] <- tail(par.sgp.config[[cnt]][["sgp.content.areas"]], length(index))
-
 
 				### Additional arguments associated with baseline analyses
 
@@ -241,28 +235,6 @@ function(sgp_object,
 						}	else base.gp <- tail(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]], 1+max.order) 
 						par.sgp.config[[cnt]][["base.gp"]] <- base.gp
 						par.sgp.config[[cnt]][["max.order"]] <- max.order
-						
-						#  Not enough to just match on grade if using grade.progression.labels.  Check to see if (any) grade progression 
-						# if (par.sgp.config[[cnt]][["sgp.grade.progression.labels"]]) { # from studentGrowthPercentiles / .check.my.coefficient.matrices
-							# tmp <- do.call(rbind.fill, lapply(strsplit(mtx.names, "_"), function(x) as.data.frame(matrix(x, nrow=1))))
-							# num.prior <- length(tmp.gp[[1]])-1
-							# if (any(duplicated(tmp.gp[[1]][1:num.prior]))) {
-								# while(any(duplicated(tmp.gp[[1]][1:num.prior]))) {
-									# tmp.gp[[1]][which(duplicated(tmp.gp[[1]][1:num.prior]))] <- tmp.gp[[1]][which(duplicated(tmp.gp[[1]][1:num.prior]))] + 0.1
-								# }
-								# tmp.gp[[1]][1:num.prior] <- tmp.gp[[1]][1:num.prior]+0.1
-							# }
-							# if (!paste(tmp.gp[[1]], collapse=".") %in% tmp[tmp[,2]==tail(tmp.gp[[1]],1),4]) {
-								# any.matrices<-NULL
-								# for (g in tmp[tmp[,2]==tail(tmp.gp[[1]],1),4]) {
-									# any.matrices<- c(any.matrices, grepl(as.character(g), paste(tmp.gp[[1]], collapse=".")))
-								# }
-								# if (!any(any.matrices)) {
-									# par.sgp.config[[cnt]][["base.gp"]] <- "NO_BASELINE_COEFFICIENT_MATRICES"
-									# par.sgp.config[[cnt]][["max.order"]] <- "NO_BASELINE_COEFFICIENT_MATRICES"
-								# }
-							# }
-						# } #  END check for multiple content areas in a single year as prior
 					}
 				}
 				
@@ -662,7 +634,7 @@ function(sgp_object,
 							exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 							...))
 					}
-					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
+					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp), tmp_sgp_object)
 					rm(tmp)
 					} # END SNOW
 				
@@ -705,7 +677,7 @@ function(sgp_object,
 							exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 							...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 					}
-					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
+					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp), tmp_sgp_object)
 					rm(tmp)
 				} # End MULTICORE
 			} # #END not FOREACH
@@ -767,7 +739,7 @@ function(sgp_object,
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 						...))
 	
-					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
+					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp), tmp_sgp_object)
 					rm(tmp)
 					} # END SNOW
 				
@@ -791,7 +763,7 @@ function(sgp_object,
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
-					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
+					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp), tmp_sgp_object)
 					rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
@@ -848,7 +820,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...))
 	
-					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
+					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp), tmp_sgp_object)
 					rm(tmp)
 					} # END SNOW
 				
@@ -870,7 +842,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
-					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
+					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp), tmp_sgp_object)
 					rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
@@ -929,7 +901,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...))
 	
-					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
+					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp), tmp_sgp_object)
 					rm(tmp)
 					} # END SNOW
 				
@@ -952,7 +924,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
-					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
+					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp), tmp_sgp_object)
 					rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
@@ -1011,7 +983,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...))
 	
-					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
+					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp), tmp_sgp_object)
 					rm(tmp)
 					} # END SNOW
 				
@@ -1034,7 +1006,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
-					tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
+					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp), tmp_sgp_object)
 					rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
@@ -1094,7 +1066,7 @@ function(sgp_object,
 					projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 					...))
 
-				tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
+				tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp), tmp_sgp_object)
 				rm(tmp)
 			} # END SNOW
 			
@@ -1117,7 +1089,7 @@ function(sgp_object,
 					projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 					...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 
-				tmp_sgp_object <- .mergeSGP(tmp_sgp_object, Reduce(.mergeSGP, tmp))
+				tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp), tmp_sgp_object)
 				rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
@@ -1331,7 +1303,7 @@ function(sgp_object,
 	tmp_sgp_object[['Panel_Data']] <- NULL
 	} ## END sequential analyzeSGP
 
-	sgp_object@SGP <- .mergeSGP(sgp_object@SGP, tmp_sgp_object)
+	sgp_object@SGP <- .mergeSGP(tmp_sgp_object, sgp_object@SGP)
 
 	if (goodness.of.fit.print) gof.print(sgp_object)
 	setkey(sgp_object@Data, VALID_CASE, CONTENT_AREA, YEAR, ID) # re-key data for combineSGP, etc.
