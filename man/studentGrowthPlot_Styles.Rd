@@ -26,7 +26,8 @@ studentGrowthPlot_Styles(
            sgPlot.fan,
            sgPlot.cleanup,
            sgPlot.baseline,
-           sgPlot.zip)
+           sgPlot.zip,
+           sgPlot.output.format)
 }
 
 \arguments{
@@ -67,6 +68,8 @@ and a summary catalog containing those reports will be produced.
   \item{sgPlot.baseline}{A boolean argument indicating whether to use baseline referenced student growth percentiles in student growth plots.
   }
   \item{sgPlot.zip}{A boolean argument indicating whether to school folders.
+  }
+  \item{sgPlot.output.format}{Argument indicating the desired type of output format for student growth plots. Either 'PDF', 'PNG', or 'PDF_PIECES'.
   }
 }
 
