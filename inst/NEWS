@@ -16,6 +16,7 @@ Changes in version: SGP_0.9-9.6
 	  o Added argument sgPlot.zip to visualizeSGP and studentGrowthPlot_Styles to control zip compression of school studentGrowthPlot folders.
 	  o Added shrinkage estimator calculation to summarizeSGP.
 	  o Added PNG and PDF_PIECES output of student growth plots via the visualizeSGP option sgPlot.output.format='PNG' or sgPlot.output.format='PDF_PIECES'.
+	  o splineMatrix class now includes slots for 'Content_Areas' and 'Grade_Progresssion' to accomodate more varied prior score combinations.
 
   USER VISIBLE CHANGES:
 
