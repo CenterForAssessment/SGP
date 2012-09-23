@@ -11,6 +11,7 @@ function(sgp_object,
 	message(paste("\tStarted sqliteSGP in outputSGP", date()))
 
 	YEAR <- DISTRICT_NUMBER <- SCHOOL_NUMBER <- CONTENT_AREA <- DISTRICT_ENROLLMENT_STATUS <- GRADE <- ETHNICITY <- STUDENTGROUP <- SCHOOL_ENROLLMENT_STATUS <- EMH_LEVEL <- MEDIAN_SGP <- NULL
+	INSTRUCTOR_NUMBER <- INSTRUCTOR_ENROLLMENT_STATUS <- NULL
 
 	## Load packages
 
@@ -428,7 +429,55 @@ function(sgp_object,
 		if (text.output) write.table(tmp, file=file.path(output.directory, "SCHOOL_STUDENTGROUP.dat"), row.names=FALSE, na="(null)", quote=FALSE, sep="|")
 
 
-	## Table 11. KEY_VALUE_LOOKUP (ADD CONTENT_AREA and YEAR)
+	## Table 11. SCHOOL_TEACHER
+
+	if ("SCHOOL_NUMBER__INSTRUCTOR_NUMBER__EMH_LEVEL__CONTENT_AREA__YEAR" | "SCHOOL_NUMBER__INSTRUCTOR_NUMBER__EMH_LEVEL__CONTENT_AREA__YEAR__INSTRUCTOR_ENROLLMENT_STATUS" %in%
+		 names(sgp_object@Summary[['SCHOOL_NUMBER']])) {
+
+		field.types <- c(
+			"DISTRICT_NUMBER TEXT NOT NULL",
+			"SCHOOL_NUMBER TEXT NOT NULL",
+			"EMH_LEVEL TEXT NOT NULL",
+			"TEACHER_USID TEXT NOT NULL",
+			"CONTENT_AREA TEXT NOT NULL",
+			"YEAR INTEGER NOT NULL",
+			"MEDIAN_SGP REAL",
+			"MEDIAN_SGP_TARGET REAL",
+			"PERCENT_AT_ABOVE_TARGET REAL",
+			"PERCENT_AT_ABOVE_PROFICIENT REAL",
+			"MEDIAN_SGP_COUNT INTEGER",
+			"PERCENT_AT_ABOVE_PROFICIENT_COUNT INTEGER")
+	
+		if ("SCHOOL_NUMBER__INSTRUCTOR_NUMBER__EMH_LEVEL__CONTENT_AREA__YEAR__INSTRUCTOR_ENROLLMENT_STATUS" %in% names(sgp_object@Summary[['SCHOOL_NUMBER']])) {	
+			tmp.table.name <- "SCHOOL_NUMBER__INSTRUCTOR_NUMBER__EMH_LEVEL__CONTENT_AREA__YEAR__INSTRUCTOR_ENROLLMENT_STATUS"
+			tmp <- as.data.frame(lapply(convert.variables(subset(sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__EMH_LEVEL__CONTENT_AREA__YEAR"]],
+				!is.na(SCHOOL_NUMBER) & !is.na(INSTRUCTOR_NUMBER) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & 
+				INSTRUCTOR_ENROLLMENT_STATUS=="Enrolled School: Yes" & !is.na(MEDIAN_SGP))), unclass))
+		} else {
+			tmp.table.name <- "SCHOOL_NUMBER__INSTRUCTOR_NUMBER__EMH_LEVEL__CONTENT_AREA__YEAR"
+			tmp <- as.data.frame(lapply(convert.variables(subset(sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__EMH_LEVEL__CONTENT_AREA__YEAR"]],
+				!is.na(SCHOOL_NUMBER) & !is.na(INSTRUCTOR_NUMBER) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & 
+				!is.na(MEDIAN_SGP))), unclass))
+		}
+
+		tmp <- data.frame(merge(tmp, as.data.frame(tmp.school.and.district.by.year), all.x=TRUE))
+
+	### Temporary stuff
+		names(tmp)[names(tmp)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET" 
+		names(tmp)[names(tmp)=="INSTRUCTOR_NUMBER"] <- "TEACHER_USID" 
+		tmp$EMH_LEVEL <- as.character(factor(tmp$EMH_LEVEL, levels=1:3, labels=c("E", "H", "M")))
+	###
+		tmp <- tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))]
+
+		dbGetQuery(db, sqlite.create.table("SCHOOL_TEACHER", field.types, c("YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER", "TEACHER_USID", "EMH_LEVEL", "CONTENT_AREA")))
+		dbWriteTable(db, "SCHOOL_TEACHER", tmp, row.names=FALSE, append=TRUE) 
+
+		if (text.output) write.table(tmp, file=file.path(output.directory, "SCHOOL_TEACHER.dat"), row.names=FALSE, na="(null)", quote=FALSE, sep="|")
+
+	} ### END SCHOOL_TEACHER table
+
+
+	## Table 12. KEY_VALUE_LOOKUP (ADD CONTENT_AREA and YEAR)
 
 		field.types <- c(
 			"KEY_VALUE_ID INTEGER NOT NULL",
