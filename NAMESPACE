@@ -1,0 +1,37 @@
+import("data.table")
+import("foreach")
+import("grid")
+import("methods")
+import("reshape2")
+import("plyr")
+importFrom("splines", "bs")
+import(SGPdata)
+
+export(
+	"abcSGP",
+	"analyzeSGP",
+	"as.splineMatrix",
+	"baselineSGP",
+	"bubblePlot",
+	"bubblePlot_Styles",
+	"capwords",
+	"combineSGP",
+	"growthAchievementPlot",
+	"is.splineMatrix",
+	"is.SGP",
+	"outputSGP",
+	"prepareSGP",
+	"studentGrowthPercentiles",
+	"studentGrowthPlot",
+	"studentGrowthPlot_Styles",
+	"studentGrowthProjections",
+	"summarizeSGP",
+	"testSGP",
+	"viewSummaryGroups",
+	"visualizeSGP"
+)
+
+exportClasses(
+	"SGP",
+	"splineMatrix"
+)
