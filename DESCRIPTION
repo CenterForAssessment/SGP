@@ -23,7 +23,7 @@ Description: Functions to calculate student growth percentiles and percentile gr
 	the quantile regression analyses and specify what percentile growth is required for students to reach future achievement targets.
 SystemRequirements: (PDF)LaTeX (http://www.latex-project.org/) with pdfpages package for studentGrowthPlot option in visualizeSGP to bind together student growth plots into school
                     catalogs.
-URL: https://github.com/StudentGrowthPercentiles/SGP, http://studentgrowthpercentiles.github.com/SGP/, http://cran.r-project.org/web/packages/SGP/
+URL: https://github.com/SchoolView/SGP, http://schoolview.github.com/SGP/, http://cran.r-project.org/web/packages/SGP/
 LazyLoad: Yes
 LazyData: Yes
 License: CC BY-SA 3.0 US | CC BY-NC-SA 3.0 + file LICENSE
