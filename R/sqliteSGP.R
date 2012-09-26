@@ -227,7 +227,7 @@ function(sgp_object,
 			"ENROLLMENT_PERCENTAGE REAL")
 
 		tmp.list <- list()
-		for (i in other.student.groups %w/o% c("ETHNICITY", "GENDER")) {
+		for (i in other.student.groups %w/o% c("ETHNICITY")) {
 			tmp.list[[i]] <- sgp_object@Summary[["DISTRICT_NUMBER"]][[paste("DISTRICT_NUMBER__CONTENT_AREA__YEAR__", i, "__DISTRICT_ENROLLMENT_STATUS", sep="")]]
 		}
 
@@ -238,8 +238,10 @@ function(sgp_object,
 		tmp <- as.data.frame(convert.variables(subset(rbind.fill(tmp.list), 
 			!is.na(DISTRICT_NUMBER) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(STUDENTGROUP) & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes" &
 			!is.na(MEDIAN_SGP))))
+
 		names(tmp)[names(tmp)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET"  ### TEMPORARY UNTIL NAMES ARE ALIGNED
 		tmp$ENROLLMENT_PERCENTAGE <- NA
+		tmp$STUDENTGROUP[tmp$STUDENTGROUP=="Female"] <- "F"; tmp$STUDENTGROUP[tmp$STUDENTGROUP=="Male"] <- "M" 
 		tmp <- tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))]
 
 		dbGetQuery(db, sqlite.create.table("DISTRICT_STUDENTGROUP", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "STUDENTGROUP")))
@@ -264,7 +266,7 @@ function(sgp_object,
 			"PERCENT_AT_ABOVE_PROFICIENT_COUNT INTEGER")
 
 		tmp.list <- list()
-		for (i in other.student.groups %w/o% c("ETHNICITY", "GENDER")) {
+		for (i in other.student.groups %w/o% c("ETHNICITY")) {
 			tmp.list[[i]] <- sgp_object@Summary[["DISTRICT_NUMBER"]][[paste("DISTRICT_NUMBER__CONTENT_AREA__YEAR__GRADE__", i, "__DISTRICT_ENROLLMENT_STATUS", sep="")]]
 		}
 
@@ -276,6 +278,7 @@ function(sgp_object,
 			!is.na(DISTRICT_NUMBER) & YEAR %in% years & CONTENT_AREA %in% content_areas & !is.na(STUDENTGROUP) & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes" &
 			!is.na(MEDIAN_SGP))))
 		names(tmp)[names(tmp)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET"  ### TEMPORARY UNTIL NAMES ARE ALIGNED
+		tmp$STUDENTGROUP[tmp$STUDENTGROUP=="Female"] <- "F"; tmp$STUDENTGROUP[tmp$STUDENTGROUP=="Male"] <- "M"
 		tmp <- tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))]
 
 		dbGetQuery(db, sqlite.create.table("DISTRICT_GRADE_STUDENTGROUP", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "GRADE", "STUDENTGROUP")))
@@ -399,7 +402,7 @@ function(sgp_object,
 			"ENROLLMENT_PERCENTAGE REAL")
 
 		tmp.list <- list()
-		for (i in other.student.groups %w/o% c("ETHNICITY", "GENDER")) {
+		for (i in other.student.groups %w/o% c("ETHNICITY")) {
 			tmp.list[[i]] <- sgp_object@Summary[["SCHOOL_NUMBER"]][[paste("SCHOOL_NUMBER__EMH_LEVEL__CONTENT_AREA__YEAR__", i, "__SCHOOL_ENROLLMENT_STATUS", sep="")]]
 		}
 
@@ -414,6 +417,7 @@ function(sgp_object,
 		tmp$CONTENT_AREA <- unclass(tmp$CONTENT_AREA)
 		tmp$STUDENTGROUP <- unclass(tmp$STUDENTGROUP)
 		tmp$EMH_LEVEL <- unclass(tmp$EMH_LEVEL)
+		tmp$STUDENTGROUP[tmp$STUDENTGROUP=="Female"] <- "F"; tmp$STUDENTGROUP[tmp$STUDENTGROUP=="Male"] <- "M"
 	### Temporary stuff
 		names(tmp)[names(tmp)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET" 
 		tmp$EMH_LEVEL <- as.character(factor(tmp$EMH_LEVEL, levels=1:3, labels=c("E", "H", "M")))
@@ -537,7 +541,7 @@ function(sgp_object,
 		# STUDENTGROUP
 
 		tmp.list <- list()
-		for (i in other.student.groups %w/o% c("GENDER", "ETHNICITY")) {
+		for (i in other.student.groups %w/o% c("ETHNICITY")) {
 			tmp.list[[i]] <- sgp_object@Summary[["DISTRICT_NUMBER"]][[paste("DISTRICT_NUMBER__CONTENT_AREA__YEAR__", i, "__DISTRICT_ENROLLMENT_STATUS", sep="")]]
 		}
 
@@ -555,7 +559,7 @@ function(sgp_object,
 #			KEY_VALUE_TEXT=unique(as.character(tmp$STUDENTGROUP)))
 
 
-		tmp <- rbind.fill(tmp.CONTENT_AREA, tmp.YEAR, tmp.GRADE, tmp.EMH, tmp.ETHNICITY, tmp.STUDENTGROUP)
+		tmp <- rbind(tmp.CONTENT_AREA, tmp.YEAR, tmp.GRADE, tmp.EMH, tmp.ETHNICITY, tmp.STUDENTGROUP)
 		tmp <- data.frame(KEY_VALUE_ID=1:dim(tmp)[1], tmp)
 
 		dbGetQuery(db, sqlite.create.table("KEY_VALUE_LOOKUP", field.types, "KEY_VALUE_ID"))
