@@ -58,6 +58,12 @@ function(sgp_object,
 		sgp.config.drop.nonsequential.grade.progression.variables <- SGPstateData[[state]][["SGP_Configuration"]][["sgp.config.drop.nonsequential.grade.progression.variables"]]
 	}
 
+	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["sgp.loss.hoss.adjustment"]])) {
+		sgp.loss.hoss.adjustment <- SGPstateData[[state]][["SGP_Configuration"]][["sgp.loss.hoss.adjustment"]]
+	} else {
+		sgp.loss.hoss.adjustment <- NULL
+	}
+
 	### 
 	### Utility functions
 	###
@@ -581,6 +587,7 @@ function(sgp_object,
 							drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 							grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 							exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
+							sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 							...))
 					}
 				} else {
@@ -600,6 +607,7 @@ function(sgp_object,
 							drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 							grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 							exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
+							sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 							...))
 					}
 				}
@@ -627,6 +635,7 @@ function(sgp_object,
 							drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 							grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 							exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
+							sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 							...))
 					} else {
 						tmp <- clusterApplyLB(par.start$internal.cl, par.sgp.config, 	function(sgp.iter)	studentGrowthPercentiles( 
@@ -643,6 +652,7 @@ function(sgp_object,
 							drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 							grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 							exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
+							sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 							...))
 					}
 					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp), tmp_sgp_object)
@@ -670,6 +680,7 @@ function(sgp_object,
 							drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 							grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 							exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
+							sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 							...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 					} else {
 						tmp <- mclapply(par.sgp.config, function(sgp.iter)	studentGrowthPercentiles( 
@@ -686,6 +697,7 @@ function(sgp_object,
 							drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 							grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 							exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
+							sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 							...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 					}
 					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp), tmp_sgp_object)
@@ -725,6 +737,7 @@ function(sgp_object,
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 						grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
+						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 						...))
 				}
 				tmp_sgp_object <- .mergeSGP(tmp_sgp_object, tmp)
@@ -748,6 +761,7 @@ function(sgp_object,
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 						grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
+						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 						...))
 	
 					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp), tmp_sgp_object)
@@ -772,6 +786,7 @@ function(sgp_object,
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 						grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
+						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
 					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp), tmp_sgp_object)
@@ -1151,6 +1166,7 @@ function(sgp_object,
 						drop.nonsequential.grade.progression.variables=FALSE,
 						grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
+						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 						...)
 				} else {
 					tmp_sgp_object <- studentGrowthPercentiles(
@@ -1166,6 +1182,7 @@ function(sgp_object,
 						drop.nonsequential.grade.progression.variables=FALSE,
 						grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
+						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 						...)
 				}
 			}
@@ -1196,6 +1213,7 @@ function(sgp_object,
 					drop.nonsequential.grade.progression.variables=FALSE,
 					grade.progression.label=sgp.iter[["sgp.grade.progression.labels"]],
 					exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
+					sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 					...)
 			}
 		} ## END if sgp.percentiles.baseline
