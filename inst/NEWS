@@ -32,6 +32,7 @@ Changes in version: SGP_0.9-9.6
 	  o Corrected logic bug in combineSGP leading to the creation of SGP_TARGET when no projections exist.
 	  o Projection fan cuts calculated across a gap year using a piecewise transformation corrected to accomodate corect increase in years.
 	  o studentGrowthPercentiles and studentGrowthProjections better checks for empty data.
+	  o Corrected naming of baseline coefficient matrices for New Jersey.
 
 
 Changes in version: SGP_0.9-9.0
