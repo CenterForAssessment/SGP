@@ -36,9 +36,9 @@ function(sgp_object,
 	### Create state (if NULL) from sgp_object (if possible)
 
 	if (is.null(state)) {
-		tmp.name <- gsub("_", " ", deparse(substitute(sgp_object)))
-		if (any(sapply(c(state.name, "Demonstration", "AOB"), function(x) regexpr(x, tmp.name))==1)) {
-			state <- c(state.abb, "DEMO", "AOB")[which(sapply(c(state.name, "Demonstration", "AOB"), function(x) regexpr(x, tmp.name))==1)]
+		tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
+		if (any(sapply(c(state.name, "Demonstration", "AOB"), function(x) regexpr(toupper(x), tmp.name))!=-1)) {
+			state <- c(state.abb, "DEMO", "AOB")[which(sapply(c(state.name, "Demonstration", "AOB"), function(x) regexpr(toupper(x), tmp.name))!=-1)[1]]
 		}
 	}
 
@@ -314,31 +314,37 @@ function(sgp_object,
 
 		if (sgp.type=="sgp.percentiles") {
 			return(as.data.frame(reshape(
-				sgp_object@Data[SJ("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), 
+				tmp_sgp_data_for_analysis[SJ("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), 
+#				sgp_object@Data[SJ("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), 
 					tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), sgp.iter[["sgp.grade.sequences"]][[1]]), nomatch=0][,
 					'tmp.timevar' := paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
 			idvar="ID",
 			timevar="tmp.timevar",
-			drop=names(sgp_object@Data)[!names(sgp_object@Data) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar")],
+			drop=names(tmp_sgp_data_for_analysis)[!names(tmp_sgp_data_for_analysis) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar")],
+#			drop=names(sgp_object@Data)[!names(sgp_object@Data) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar")],
 			direction="wide")))
 		}
 
 		if (sgp.type=="sgp.projections") {
 			return(as.data.frame(reshape(
-				sgp_object@Data[SJ("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.projection.grade.sequences"]][[1]])),
+				tmp_sgp_data_for_analysis[SJ("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.projection.grade.sequences"]][[1]])),
+#				sgp_object@Data[SJ("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.projection.grade.sequences"]][[1]])),
 					tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.projection.grade.sequences"]][[1]])),
 					sgp.iter[["sgp.projection.grade.sequences"]][[1]]), nomatch=0],
 			idvar="ID",
 			timevar="YEAR",
-			drop=names(sgp_object@Data)[!names(sgp_object@Data) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR")],
+			drop=names(tmp_sgp_data_for_analysis)[!names(tmp_sgp_data_for_analysis) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR")],
+#			drop=names(sgp_object@Data)[!names(sgp_object@Data) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR")],
 			direction="wide")))
 		}
 
 		if (sgp.type=="sgp.projections.lagged") {
 			return(as.data.frame(reshape(
 				data.table(
-					data.table(sgp_object@Data, key="ID")[
-						sgp_object@Data[SJ("VALID_CASE", 
+					data.table(tmp_sgp_data_for_analysis, key="ID")[
+						tmp_sgp_data_for_analysis[SJ("VALID_CASE", 
+#					data.table(sgp_object@Data, key="ID")[
+#						sgp_object@Data[SJ("VALID_CASE", 
 						tail(sgp.iter[["sgp.content.areas"]], 1), 
 						tail(sgp.iter[["sgp.panel.years"]], 1), 
 						tail(sgp.iter[["sgp.grade.sequences"]][[1]], 1))][,"ID", with=FALSE]], 
@@ -348,7 +354,8 @@ function(sgp_object,
 					head(sgp.iter[["sgp.grade.sequences"]][[1]], -1)), nomatch=0],
 			idvar="ID",
 			timevar="YEAR",
-			drop=names(sgp_object@Data)[!names(sgp_object@Data) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR", "ACHIEVEMENT_LEVEL")],
+			drop=names(tmp_sgp_data_for_analysis)[!names(tmp_sgp_data_for_analysis) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR", "ACHIEVEMENT_LEVEL")],
+#			drop=names(sgp_object@Data)[!names(sgp_object@Data) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR", "ACHIEVEMENT_LEVEL")],
 			direction="wide")))
 		}
 	} ## END get.panel.data
@@ -447,9 +454,14 @@ function(sgp_object,
 
 	#######################################################################################################################
 	##   Set up the temporary sgp list object.  Fill with necessary old results if they exist first.
+	##   Create subset of @Data containing essential data elements for analyses
 	#######################################################################################################################
 
 	tmp_sgp_object <- list(Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]], Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]])
+
+	tmp_sgp_data_for_analysis <- sgp_object@Data[,c("VALID_CASE", "YEAR", "CONTENT_AREA", "GRADE", "ID", "SCALE_SCORE", "ACHIEVEMENT_LEVEL"), with=FALSE]
+	setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, ID)
+
 
 	#######################################################################################################################
 	##   Baseline SGP - compute matrices first if they are not in SGPstateData or merge them into sgp_object if in SGPstateData
