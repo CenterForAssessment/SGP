@@ -24,9 +24,9 @@ function(
 	### Create state (if missing) from sgp_object (if possible)
 
 	if (is.null(state)) {
-		tmp.name <- gsub("_", " ", deparse(substitute(sgp_object)))
-		if (any(sapply(c(state.name, "Demonstration", "AOB"), function(x) regexpr(x, tmp.name))==1)) {
-			state <- c(state.abb, "DEMO", "AOB")[which(sapply(c(state.name, "Demonstration", "AOB"), function(x) regexpr(x, tmp.name))==1)]
+		tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
+		if (any(sapply(c(state.name, "Demonstration", "AOB"), function(x) regexpr(toupper(x), tmp.name))!=-1)) {
+			state <- c(state.abb, "DEMO", "AOB")[which(sapply(c(state.name, "Demonstration", "AOB"), function(x) regexpr(toupper(x), tmp.name))!=-1)[1]]
 		} else {
 			tmp.messages <- c(tmp.messages, "\tNOTE: argument 'state' required for target SGP calculation. Target SGPs will not be calculated.\n")
 			sgp.projections.lagged <- sgp.projections.lagged.baseline <- FALSE
@@ -40,18 +40,18 @@ function(
 			sgp.projections.lagged.baseline <- FALSE
 			my.sgp <- "SGP"
 			my.sgp.target <- "SGP_TARGET"
-			my.sgp.target.mu <- "SGP_TARGET_MU"
+			my.sgp.target.move.up.stay.up <- "SGP_TARGET_MOVE_UP_STAY_UP"
 		}
 		if (SGPstateData[[state]][["Growth"]][["System_Type"]]=="Baseline Referenced") {
 			sgp.projections.lagged <- FALSE 
 			my.sgp <- "SGP_BASELINE"
 			my.sgp.target <- "SGP_TARGET_BASELINE"
-			my.sgp.target.mu <- "SGP_TARGET_MU_BASELINE"
+			my.sgp.target.move.up.stay.up <- "SGP_TARGET_MOVE_UP_STAY_UP_BASELINE"
 		}
 		if (SGPstateData[[state]][["Growth"]][["System_Type"]]=="Cohort and Baseline Referenced") {
 			my.sgp <- "SGP"
 			my.sgp.target <- "SGP_TARGET"
-			my.sgp.target.mu <- "SGP_TARGET_MU"
+			my.sgp.target.move.up.stay.up <- "SGP_TARGET_MOVE_UP_STAY_UP"
 		}
 	}
 
@@ -82,13 +82,13 @@ function(
 			return(factor(achievement_level_prior, ordered=FALSE))
 		}
 
-		if (status.type=="Move Up") {
+		if (status.type=="Move Up/Stay Up") {
 			achievement.level.for.start <- SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]][
-				which.max(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")]
-			achievement_level_prior[achievement_level_prior != achievement.level.for.start] <- NA 
-			achievement_level_prior <- factor(achievement_level_prior)
-			levels(achievement_level_prior) <- "Moving Up"
-			return(factor(achievement_level_prior, ordered=FALSE))
+				which(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")]
+			achievement_level_prior[!achievement_level_prior %in% achievement.level.for.start] <- NA 
+			achievement_level_prior <- unclass(factor(achievement_level_prior))
+			achievement_level_prior[achievement_level_prior > 2] <- 2
+			return(factor(achievement_level_prior, levels=1:2, labels=c("Moving Up", "Staying Up"), ordered=FALSE))
 		}
 	} ### END get.initial_status
 
@@ -226,9 +226,13 @@ function(
  
 	if (sgp.projections.lagged | sgp.projections.lagged.baseline) { 
 
-		ID <- CONTENT_AREA <- YEAR <- YEAR_INTEGER_TMP <- ACHIEVEMENT_LEVEL <- CATCH_UP_KEEP_UP_STATUS_INITIAL <- MOVE_UP_STATUS_INITIAL <- VALID_CASE <- NULL
-		level.to.get.cu <- which.max(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")-1
-		if (length(which(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")) > 1) level.to.get.mu <- level.to.get.cu+1 else level.to.get.mu <- NULL
+		ID <- CONTENT_AREA <- YEAR <- YEAR_INTEGER_TMP <- ACHIEVEMENT_LEVEL <- CATCH_UP_KEEP_UP_STATUS_INITIAL <- MOVE_UP_STAY_UP_STATUS_INITIAL <- VALID_CASE <- NULL
+		level.to.get.catch.up.keep.up <- which.max(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")-1
+		if (length(which(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")) > 1) {
+			level.to.get.move.up.stay.up <- level.to.get.catch.up.keep.up+1
+		} else {
+			level.to.get.move.up.stay.up <- NULL
+		}
 
 		#################################################################################
 		## Cohort referenced lagged SGP targets and Catch Up Keep Up Status Variable
@@ -241,7 +245,7 @@ function(
 			setkeyv(slot.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 			for (i in tmp.names) {
 				cols.to.get.names <- names(sgp_object@SGP[["SGProjections"]][[i]])[
-					grep(paste("LEVEL_", level.to.get.cu, sep=""), names(sgp_object@SGP[["SGProjections"]][[i]]))]
+					grep(paste("LEVEL_", level.to.get.catch.up.keep.up, sep=""), names(sgp_object@SGP[["SGProjections"]][[i]]))]
 				num.years.to.get <- min(max.lagged.sgp.target.years.forward, length(cols.to.get.names))
 				cols.to.get.names <- cols.to.get.names[as.integer(sapply(sapply(cols.to.get.names, strsplit, "_"), tail, 1) ) <= num.years.to.get]
 				cols.to.get <- sapply(cols.to.get.names, function(x) which(x==names(sgp_object@SGP[["SGProjections"]][[i]])))
@@ -271,34 +275,34 @@ function(
 			setkeyv(slot.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 			rm(tmp.list); suppressWarnings(gc())
 
-			### Move up calculations (if possible)
+			### Move Up/Stay Up Calculations (if possible)
 
-			if (!is.null(level.to.get.mu)) {
+			if (!is.null(level.to.get.move.up.stay.up)) {
 
 			tmp.list <- list()
 			setkeyv(slot.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 			for (i in tmp.names) {
 				cols.to.get.names <- names(sgp_object@SGP[["SGProjections"]][[i]])[
-					grep(paste("LEVEL_", level.to.get.mu, sep=""), names(sgp_object@SGP[["SGProjections"]][[i]]))]
+					grep(paste("LEVEL_", level.to.get.move.up.stay.up, sep=""), names(sgp_object@SGP[["SGProjections"]][[i]]))]
 				num.years.to.get <- min(max.lagged.sgp.target.years.forward, length(cols.to.get.names))
 				cols.to.get.names <- cols.to.get.names[as.integer(sapply(sapply(cols.to.get.names, strsplit, "_"), tail, 1) ) <= num.years.to.get]
 				cols.to.get <- sapply(cols.to.get.names, function(x) which(x==names(sgp_object@SGP[["SGProjections"]][[i]])))
 				tmp.list[[i]] <- data.table(
 					CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
 					YEAR=type.convert(unlist(strsplit(i, "[.]"))[2], as.is=TRUE),
-					MOVE_UP_STATUS_INITIAL=get.initial_status(sgp_object@SGP[["SGProjections"]][[i]][["ACHIEVEMENT_LEVEL_PRIOR"]], "Move Up"),
+					MOVE_UP_STAY_UP_STATUS_INITIAL=get.initial_status(sgp_object@SGP[["SGProjections"]][[i]][["ACHIEVEMENT_LEVEL_PRIOR"]], "Move Up/Stay Up"),
 					sgp_object@SGP[["SGProjections"]][[i]][,c(1,2,cols.to.get)])
 			}
 
-			tmp_object_1 <- data.table(rbind.fill(tmp.list), VALID_CASE="VALID_CASE", key=key(slot.data))[!is.na(MOVE_UP_STATUS_INITIAL)]
+			tmp_object_1 <- data.table(rbind.fill(tmp.list), VALID_CASE="VALID_CASE", key=key(slot.data))[!is.na(MOVE_UP_STAY_UP_STATUS_INITIAL)]
 
-			## Find min/max of targets based upon MOVE_UP_STATUS_INITIAL status
+			## Find min/max of targets based upon MOVE_UP_STAY_UP_STATUS_INITIAL status
 
-			jExpression <- parse(text=paste("{catch_keep_move_functions[[unclass(MOVE_UP_STATUS_INITIAL)]](",paste(names(tmp_object_1)[grep("LEVEL", names(tmp_object_1)) %w/o% 
+			jExpression <- parse(text=paste("{catch_keep_move_functions[[unclass(MOVE_UP_STAY_UP_STATUS_INITIAL)]](",paste(names(tmp_object_1)[grep("LEVEL", names(tmp_object_1)) %w/o% 
 				grep("ACHIEVEMENT_LEVEL_PRIOR", names(tmp_object_1))], collapse=", "),", na.rm=TRUE)}", sep=""))
 			tmp_object_2 <- tmp_object_1[, eval(jExpression), by=list(ID, CONTENT_AREA, YEAR, VALID_CASE)]
-			setnames(tmp_object_2, dim(tmp_object_2)[2], "SGP_TARGET_MU")
-			invisible(tmp_object_2[,c("ACHIEVEMENT_LEVEL_PRIOR", "MOVE_UP_STATUS_INITIAL") := list(tmp_object_1[["ACHIEVEMENT_LEVEL_PRIOR"]], tmp_object_1[["MOVE_UP_STATUS_INITIAL"]]), with=FALSE])
+			setnames(tmp_object_2, dim(tmp_object_2)[2], "SGP_TARGET_MOVE_UP_STAY_UP")
+			invisible(tmp_object_2[,c("ACHIEVEMENT_LEVEL_PRIOR", "MOVE_UP_STAY_UP_STATUS_INITIAL") := list(tmp_object_1[["ACHIEVEMENT_LEVEL_PRIOR"]], tmp_object_1[["MOVE_UP_STAY_UP_STATUS_INITIAL"]]), with=FALSE])
 			setkeyv(tmp_object_2, key(slot.data))
 
 			if (!all(names(tmp_object_2) %in% names(slot.data))) {
@@ -309,8 +313,7 @@ function(
 			setkeyv(slot.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 			rm(tmp.list); suppressWarnings(gc())
 
-
-			} ### END Move up calculations
+			} ### END Move Up/Stay Up calculations
 
 		} ## END if (sgp.projections.lagged)
 
@@ -325,7 +328,7 @@ function(
 			tmp.list <- list()
 			setkeyv(slot.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 			for (i in tmp.names) {
-				 cols.to.get <- grep(paste("LEVEL_", level.to.get.cu, sep=""), names(sgp_object@SGP[["SGProjections"]][[i]]))
+				 cols.to.get <- grep(paste("LEVEL_", level.to.get.catch.up.keep.up, sep=""), names(sgp_object@SGP[["SGProjections"]][[i]]))
 				 num.cols.to.get <- min(max.lagged.sgp.target.years.forward, length(cols.to.get))
 				 tmp.list[[i]] <-data.table(
 					CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
@@ -355,32 +358,32 @@ function(
 
 			### Move up calculations (if possible)
 
-			if (!is.null(level.to.get.mu)) {
+			if (!is.null(level.to.get.move.up.stay.up)) {
 
 			tmp.list <- list()
 			setkeyv(slot.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 			for (i in tmp.names) {
 				cols.to.get.names <- names(sgp_object@SGP[["SGProjections"]][[i]])[
-					grep(paste("LEVEL_", level.to.get.mu, sep=""), names(sgp_object@SGP[["SGProjections"]][[i]]))]
+					grep(paste("LEVEL_", level.to.get.move.up.stay.up, sep=""), names(sgp_object@SGP[["SGProjections"]][[i]]))]
 				num.years.to.get <- min(max.lagged.sgp.target.years.forward, length(cols.to.get.names))
 				cols.to.get.names <- cols.to.get.names[as.integer(sapply(sapply(cols.to.get.names, strsplit, "_"), tail, 1) ) <= num.years.to.get]
 				cols.to.get <- sapply(cols.to.get.names, function(x) which(x==names(sgp_object@SGP[["SGProjections"]][[i]])))
 				tmp.list[[i]] <- data.table(
 					CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
 					YEAR=type.convert(unlist(strsplit(i, "[.]"))[2], as.is=TRUE),
-					MOVE_UP_STATUS_INITIAL=get.initial_status(sgp_object@SGP[["SGProjections"]][[i]][["ACHIEVEMENT_LEVEL_PRIOR"]], "Move Up"),
+					MOVE_UP_STAY_UP_STATUS_INITIAL=get.initial_status(sgp_object@SGP[["SGProjections"]][[i]][["ACHIEVEMENT_LEVEL_PRIOR"]], "Move Up"),
 					sgp_object@SGP[["SGProjections"]][[i]][,c(1,2,cols.to.get)])
 			}
 
-			tmp_object_1 <- data.table(rbind.fill(tmp.list), VALID_CASE="VALID_CASE", key=key(slot.data))[!is.na(MOVE_UP_STATUS_INITIAL)]
+			tmp_object_1 <- data.table(rbind.fill(tmp.list), VALID_CASE="VALID_CASE", key=key(slot.data))[!is.na(MOVE_UP_STAY_UP_STATUS_INITIAL)]
 
-			## Find min/max of targets based upon MOVE_UP_STATUS_INITIAL status
+			## Find min/max of targets based upon MOVE_UP_STAY_UP_STATUS_INITIAL status
 
-			jExpression <- parse(text=paste("{catch_keep_move_functions[[unclass(MOVE_UP_STATUS_INITIAL)]](",paste(names(tmp_object_1)[grep("LEVEL", names(tmp_object_1)) %w/o% 
+			jExpression <- parse(text=paste("{catch_keep_move_functions[[unclass(MOVE_UP_STAY_UP_STATUS_INITIAL)]](",paste(names(tmp_object_1)[grep("LEVEL", names(tmp_object_1)) %w/o% 
 				grep("ACHIEVEMENT_LEVEL_PRIOR", names(tmp_object_1))], collapse=", "),", na.rm=TRUE)}", sep=""))
 			tmp_object_2 <- tmp_object_1[, eval(jExpression), by=list(ID, CONTENT_AREA, YEAR, VALID_CASE)]
-			setnames(tmp_object_2, dim(tmp_object_2)[2], "SGP_TARGET_MU_BASELINE")
-			invisible(tmp_object_2[,c("ACHIEVEMENT_LEVEL_PRIOR", "MOVE_UP_STATUS_INITIAL") := list(tmp_object_1[["ACHIEVEMENT_LEVEL_PRIOR"]], tmp_object_1[["MOVE_UP_STATUS_INITIAL"]]), with=FALSE])
+			setnames(tmp_object_2, dim(tmp_object_2)[2], "SGP_TARGET_MOVE_UP_STAY_UP_BASELINE")
+			invisible(tmp_object_2[,c("ACHIEVEMENT_LEVEL_PRIOR", "MOVE_UP_STAY_UP_STATUS_INITIAL") := list(tmp_object_1[["ACHIEVEMENT_LEVEL_PRIOR"]], tmp_object_1[["MOVE_UP_STAY_UP_STATUS_INITIAL"]]), with=FALSE])
 			setkeyv(tmp_object_2, key(slot.data))
 
 			if (!all(names(tmp_object_2) %in% names(slot.data))) {
@@ -407,77 +410,109 @@ function(
 
 		### CATCH_UP_KEEP_UP BASED UPON SGP versus SGP_TARGET
 
-		slot.data$CATCH_UP_KEEP_UP_STATUS[slot.data$CATCH_UP_KEEP_UP_STATUS_INITIAL == "Keeping Up" &
-												slot.data[[my.sgp]] >= slot.data[[my.sgp.target]]] <- "Keep Up: Yes"
+		slot.data$CATCH_UP_KEEP_UP_STATUS[
+			slot.data$CATCH_UP_KEEP_UP_STATUS_INITIAL == "Keeping Up" &
+			slot.data[[my.sgp]] >= slot.data[[my.sgp.target]]] <- "Keep Up: Yes"
 
-		slot.data$CATCH_UP_KEEP_UP_STATUS[slot.data$CATCH_UP_KEEP_UP_STATUS_INITIAL == "Keeping Up" &
-												slot.data[[my.sgp]] < slot.data[[my.sgp.target]]] <- "Keep Up: No"
+		slot.data$CATCH_UP_KEEP_UP_STATUS[
+			slot.data$CATCH_UP_KEEP_UP_STATUS_INITIAL == "Keeping Up" &
+			slot.data[[my.sgp]] < slot.data[[my.sgp.target]]] <- "Keep Up: No"
 
-		slot.data$CATCH_UP_KEEP_UP_STATUS[slot.data$CATCH_UP_KEEP_UP_STATUS_INITIAL == "Catching Up" &
-												slot.data[[my.sgp]] >= slot.data[[my.sgp.target]]] <- "Catch Up: Yes"
+		slot.data$CATCH_UP_KEEP_UP_STATUS[
+			slot.data$CATCH_UP_KEEP_UP_STATUS_INITIAL == "Catching Up" &
+			slot.data[[my.sgp]] >= slot.data[[my.sgp.target]]] <- "Catch Up: Yes"
 
-		slot.data$CATCH_UP_KEEP_UP_STATUS[slot.data$CATCH_UP_KEEP_UP_STATUS_INITIAL == "Catching Up" &
-												slot.data[[my.sgp]] < slot.data[[my.sgp.target]]] <- "Catch Up: No"
+		slot.data$CATCH_UP_KEEP_UP_STATUS[
+			slot.data$CATCH_UP_KEEP_UP_STATUS_INITIAL == "Catching Up" &
+			slot.data[[my.sgp]] < slot.data[[my.sgp.target]]] <- "Catch Up: No"
+
 
 		### CATCH_UP_KEEP_UP clean up based upon reality
 
-		slot.data$CATCH_UP_KEEP_UP_STATUS[slot.data$CATCH_UP_KEEP_UP_STATUS_INITIAL == "Keeping Up" &
-												slot.data$CATCH_UP_KEEP_UP_STATUS == "Keep Up: Yes" &
-												as.numeric(slot.data$ACHIEVEMENT_LEVEL) <= level.to.get.cu] <- "Keep Up: No"
+		slot.data$CATCH_UP_KEEP_UP_STATUS[
+			slot.data$CATCH_UP_KEEP_UP_STATUS_INITIAL == "Keeping Up" &
+			slot.data$CATCH_UP_KEEP_UP_STATUS == "Keep Up: Yes" &
+			as.numeric(slot.data$ACHIEVEMENT_LEVEL) <= level.to.get.catch.up.keep.up] <- "Keep Up: No"
 
-		slot.data$CATCH_UP_KEEP_UP_STATUS[slot.data$CATCH_UP_KEEP_UP_STATUS_INITIAL == "Catching Up" &
-												slot.data$CATCH_UP_KEEP_UP_STATUS == "Catch Up: No" &
-												as.numeric(slot.data$ACHIEVEMENT_LEVEL) > level.to.get.cu] <- "Catch Up: Yes"
+		slot.data$CATCH_UP_KEEP_UP_STATUS[
+			slot.data$CATCH_UP_KEEP_UP_STATUS_INITIAL == "Catching Up" &
+			slot.data$CATCH_UP_KEEP_UP_STATUS == "Catch Up: No" &
+			as.numeric(slot.data$ACHIEVEMENT_LEVEL) > level.to.get.catch.up.keep.up] <- "Catch Up: Yes"
 
-		slot.data$CATCH_UP_KEEP_UP_STATUS[slot.data$CATCH_UP_KEEP_UP_STATUS_INITIAL == "Catching Up" &
-												slot.data$CATCH_UP_KEEP_UP_STATUS == "Catch Up: Yes" &
-												as.numeric(slot.data$ACHIEVEMENT_LEVEL) <= level.to.get.cu &
-												slot.data$GRADE == max(slot.data$GRADE[!is.na(slot.data[[my.sgp.target]])])] <- "Catch Up: No"
+		slot.data$CATCH_UP_KEEP_UP_STATUS[
+			slot.data$CATCH_UP_KEEP_UP_STATUS_INITIAL == "Catching Up" &
+			slot.data$CATCH_UP_KEEP_UP_STATUS == "Catch Up: Yes" &
+			as.numeric(slot.data$ACHIEVEMENT_LEVEL) <= level.to.get.catch.up.keep.up &
+			slot.data$GRADE == max(slot.data$GRADE[!is.na(slot.data[[my.sgp.target]])])] <- "Catch Up: No"
 
-		slot.data$CATCH_UP_KEEP_UP_STATUS[slot.data$CATCH_UP_KEEP_UP_STATUS_INITIAL == "Keeping Up" &
-												slot.data$CATCH_UP_KEEP_UP_STATUS == "Keep Up: No" &
-												as.numeric(slot.data$ACHIEVEMENT_LEVEL) > level.to.get.cu &
-												slot.data$GRADE == max(slot.data$GRADE[!is.na(slot.data[[my.sgp.target]])])] <- "Keep Up: Yes"
+		slot.data$CATCH_UP_KEEP_UP_STATUS[
+			slot.data$CATCH_UP_KEEP_UP_STATUS_INITIAL == "Keeping Up" &
+			slot.data$CATCH_UP_KEEP_UP_STATUS == "Keep Up: No" &
+			as.numeric(slot.data$ACHIEVEMENT_LEVEL) > level.to.get.catch.up.keep.up &
+			slot.data$GRADE == max(slot.data$GRADE[!is.na(slot.data[[my.sgp.target]])])] <- "Keep Up: Yes"
 
 		slot.data$CATCH_UP_KEEP_UP_STATUS <- as.factor(slot.data$CATCH_UP_KEEP_UP_STATUS)
 
 
 		#################################################
-		## Create MOVE_UP_STATUS variable
+		## Create MOVE_UP_STAY_UP_STATUS variable
 		#################################################
 
-		if (!is.null(level.to.get.mu)) {
+		if (!is.null(level.to.get.move.up.stay.up)) {
 
-			if ("MOVE_UP_STATUS" %in% names(slot.data)) slot.data$MOVE_UP_STATUS <- NULL 
-			slot.data$MOVE_UP_STATUS <- NA
+			if ("MOVE_UP_STAY_UP_STATUS" %in% names(slot.data)) slot.data$MOVE_UP_STAY_UP_STATUS <- NULL 
+			slot.data$MOVE_UP_STAY_UP_STATUS <- NA
 
-			### MOVE_UP BASED UPON SGP versus SGP_TARGET
+			### MOVE_UP_STAY_UP BASED UPON SGP versus SGP_TARGET
 
-			slot.data$MOVE_UP_STATUS[slot.data$MOVE_UP_STATUS_INITIAL == "Moving Up" &
-												slot.data[[my.sgp]] >= slot.data[[my.sgp.target.mu]]] <- "Move Up: Yes"
+			slot.data$MOVE_UP_STAY_UP_STATUS[
+				slot.data$MOVE_UP_STAY_UP_STATUS_INITIAL == "Staying Up" &
+				slot.data[[my.sgp]] >= slot.data[[my.sgp.target.move.up.stay.up]]] <- "Stay Up: Yes"
 
-			slot.data$MOVE_UP_STATUS[slot.data$MOVE_UP_STATUS_INITIAL == "Moving Up" &
-												slot.data[[my.sgp]] < slot.data[[my.sgp.target.mu]]] <- "Move Up: No"
+			slot.data$MOVE_UP_STAY_UP_STATUS[
+				slot.data$MOVE_UP_STAY_UP_STATUS_INITIAL == "Staying Up" &
+				slot.data[[my.sgp]] < slot.data[[my.sgp.target.move.up.stay.up]]] <- "Stay Up: No"
+
+			slot.data$MOVE_UP_STAY_UP_STATUS[
+				slot.data$MOVE_UP_STAY_UP_STATUS_INITIAL == "Moving Up" &
+				slot.data[[my.sgp]] >= slot.data[[my.sgp.target.move.up.stay.up]]] <- "Move Up: Yes"
+
+			slot.data$MOVE_UP_STAY_UP_STATUS[
+				slot.data$MOVE_UP_STAY_UP_STATUS_INITIAL == "Moving Up" &
+				slot.data[[my.sgp]] < slot.data[[my.sgp.target.move.up.stay.up]]] <- "Move Up: No"
 
 
-			### MOVE_UP clean up based upon reality
+			### MOVE_UP_STAY_UP clean up based upon reality
 
-			slot.data$MOVE_UP_STATUS[slot.data$MOVE_UP_STATUS_INITIAL == "Moving Up" &
-												slot.data$MOVE_UP_STATUS == "Move Up: Yes" &
-												as.numeric(slot.data$ACHIEVEMENT_LEVEL) <= level.to.get.mu &
-												slot.data$GRADE == max(slot.data$GRADE[!is.na(slot.data[[my.sgp.target.mu]])])] <- "Move Up: No"
+			slot.data$MOVE_UP_STAY_UP_STATUS[
+				slot.data$MOVE_UP_STAY_UP_STATUS_INITIAL == "Staying Up" &
+				slot.data$MOVE_UP_STAY_UP_STATUS == "Stay Up: Yes" &
+				as.numeric(slot.data$ACHIEVEMENT_LEVEL) <= level.to.get.move.up.stay.up] <- "Stay Up: No"
 
-			slot.data$MOVE_UP_STATUS[slot.data$MOVE_UP_STATUS_INITIAL == "Moving Up" &
-												slot.data$MOVE_UP_STATUS == "Move Up: No" &
-												as.numeric(slot.data$ACHIEVEMENT_LEVEL) > level.to.get.mu] <- "Move Up: Yes"
+			slot.data$MOVE_UP_STAY_UP_STATUS[
+				slot.data$MOVE_UP_STAY_UP_STATUS_INITIAL == "Moving Up" &
+				slot.data$MOVE_UP_STAY_UP_STATUS == "Move Up: No" &
+				as.numeric(slot.data$ACHIEVEMENT_LEVEL) > level.to.get.move.up.stay.up] <- "Move Up: Yes"
 
-			slot.data$MOVE_UP_STATUS <- as.factor(slot.data$MOVE_UP_STATUS)
+			slot.data$MOVE_UP_STAY_UP_STATUS[
+				slot.data$MOVE_UP_STAY_UP_STATUS_INITIAL == "Moving Up" &
+				slot.data$MOVE_UP_STAY_UP_STATUS == "Move Up: Yes" &
+				as.numeric(slot.data$ACHIEVEMENT_LEVEL) <= level.to.get.move.up.stay.up &
+				slot.data$GRADE == max(slot.data$GRADE[!is.na(slot.data[[my.sgp.target.move.up.stay.up]])])] <- "Move Up: No"
+
+			slot.data$MOVE_UP_STAY_UP_STATUS[
+				slot.data$MOVE_UP_STAY_UP_STATUS_INITIAL == "Staying Up" &
+				slot.data$MOVE_UP_STAY_UP_STATUS == "Stay Up: No" &
+				as.numeric(slot.data$ACHIEVEMENT_LEVEL) > level.to.get.move.up.stay.up &
+				slot.data$GRADE == max(slot.data$GRADE[!is.na(slot.data[[my.sgp.target.move.up.stay.up]])])] <- "Stay Up: Yes"
+
+			slot.data$MOVE_UP_STAY_UP_STATUS <- as.factor(slot.data$MOVE_UP_STAY_UP_STATUS)
 
 			} ### END Move up calculations
 
 	} ## END sgp.projections.lagged | sgp.projections.lagged.baseline
 
-	for (i in intersect(names(slot.data), c("CATCH_UP_KEEP_UP_STATUS_INITIAL", "MOVE_UP_STATUS_INITIAL"))) {
+	for (i in intersect(names(slot.data), c("CATCH_UP_KEEP_UP_STATUS_INITIAL", "MOVE_UP_STAY_UP_STATUS_INITIAL"))) {
 		slot.data[[i]] <- NULL
 	}
 

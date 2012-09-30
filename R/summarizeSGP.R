@@ -40,10 +40,12 @@ function(sgp_object,
 		my.sgp <- "SGP_BASELINE"
 		my.sgp.level <- "SGP_LEVEL_BASELINE"
 		my.sgp.target <- "SGP_TARGET_BASELINE"
+		if ("SGP_TARGET_MOVE_UP_STAY_UP_BASELINE" %in% names(sgp_object@Data)) my.sgp.target.musu <- "SGP_TARGET_MOVE_UP_STAY_UP_BASELINE" else my.sgp.target.musu <- NULL
 	} else {
 		my.sgp <- "SGP"
 		my.sgp.level <- "SGP_LEVEL"
 		my.sgp.target <- "SGP_TARGET"
+		if ("SGP_TARGET_MOVE_UP_STAY_UP" %in% names(sgp_object@Data)) my.sgp.target.musu <- "SGP_TARGET_MOVE_UP_STAY_UP" else my.sgp.target.musu <- NULL
 	}
 
 	if (missing(sgp_object)) {
@@ -215,6 +217,15 @@ function(sgp_object,
 					)
 				}
 
+				if ("SGP_TARGET_MOVE_UP_STAY_UP" %in% names(sgp_object@Data)) {
+					tmp.sgp.summaries <- c(
+						tmp.sgp.summaries, 
+						MEDIAN_SGP_TARGET_MOVE_UP_STAY_UP="median_na(SGP_TARGET_MOVE_UP_STAY_UP)",  
+						MEDIAN_SGP_TARGET_MOVE_UP_STAY_UP_COUNT="num_non_missing(SGP_TARGET_MOVE_UP_STAY_UP)",
+						PERCENT_MOVING_UP_STAYING_UP="percent_in_category(MOVE_UP_STAY_UP_STATUS, list(c('Move Up: Yes', 'Stay Up: Yes')), list(c('Move Up: Yes', 'Move Up: No', 'Stay Up: Yes', 'Stay Up: No')))"
+					)
+				}
+
 			return(tmp.sgp.summaries)
 		}
 
@@ -225,7 +236,7 @@ function(sgp_object,
 				content=getFromNames("content"),
 				time=getFromNames("time"),
 				institution_level=getFromNames("institution_level"),
-				demographic=intersect(c(getFromNames("demographic"), "CATCH_UP_KEEP_UP_STATUS", "ACHIEVEMENT_LEVEL_PRIOR", "HIGH_NEED_STATUS"), names(sgp_object@Data)),
+				demographic=intersect(c(getFromNames("demographic"), "CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STAY_UP_STATUS", "ACHIEVEMENT_LEVEL_PRIOR", "HIGH_NEED_STATUS"), names(sgp_object@Data)),
 				institution_multiple_membership=get.multiple.membership(sgp_object@Names[!is.na(sgp_object@Names$names.sgp),]))
 
 				for (i in tmp.summary.groups[["institution"]]) {
@@ -441,13 +452,13 @@ function(sgp_object,
 		sgp_object@Data[["BY_GROWTH_ONLY"]] <- factor(is.na(sgp_object@Data[[my.sgp]]), levels=c(FALSE, TRUE), labels=c("Students without SGP", "Students with SGP"))
 	}
 
-	variables.for.summaries <- intersect(c(my.sgp, my.sgp.target, "ACHIEVEMENT_LEVEL", "ACHIEVEMENT_LEVEL_PRIOR", unique(as.character(unlist(summary.groups)))),
+	variables.for.summaries <- intersect(c(my.sgp, my.sgp.target, my.sgp.target.musu, "ACHIEVEMENT_LEVEL", "ACHIEVEMENT_LEVEL_PRIOR", unique(as.character(unlist(summary.groups)))),
 					names(sgp_object@Data)) 
 
 
 	### Define demographic subgroups and tables that will be calculated from all possible created by expand.grid
 
-	selected.demographic.subgroups <- intersect(c(getFromNames("demographic"), "CATCH_UP_KEEP_UP_STATUS", "ACHIEVEMENT_LEVEL_PRIOR", "HIGH_NEED_STATUS"), names(sgp_object@Data))
+	selected.demographic.subgroups <- intersect(c(getFromNames("demographic"), "CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STAY_UP_STATUS", "ACHIEVEMENT_LEVEL_PRIOR", "HIGH_NEED_STATUS"), names(sgp_object@Data))
 	if (is.null(SGPstateData[[state]][["Variable_Name_Lookup"]])) {
 		selected.institution.types <- c("STATE", "DISTRICT_NUMBER", "SCHOOL_NUMBER")
 	} else {
