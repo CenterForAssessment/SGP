@@ -371,7 +371,7 @@ function(
 				tmp.list[[i]] <- data.table(
 					CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
 					YEAR=type.convert(unlist(strsplit(i, "[.]"))[2], as.is=TRUE),
-					MOVE_UP_STAY_UP_STATUS_INITIAL=get.initial_status(sgp_object@SGP[["SGProjections"]][[i]][["ACHIEVEMENT_LEVEL_PRIOR"]], "Move Up"),
+					MOVE_UP_STAY_UP_STATUS_INITIAL=get.initial_status(sgp_object@SGP[["SGProjections"]][[i]][["ACHIEVEMENT_LEVEL_PRIOR"]], "Move Up/Stay Up"),
 					sgp_object@SGP[["SGProjections"]][[i]][,c(1,2,cols.to.get)])
 			}
 
