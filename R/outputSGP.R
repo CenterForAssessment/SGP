@@ -242,6 +242,9 @@ function(sgp_object,
 					tmp.df[[names.iter]] <- as.character(tmp.df[[names.iter]])
 					tmp.df[[names.iter]][grep("Yes", tmp.df[[names.iter]])] <- "Y"
 					tmp.df[[names.iter]][grep("No", tmp.df[[names.iter]])] <- "N"
+					tmp.df[[names.iter]][tmp.df[[names.iter]]=="Students with Disabilities (IEP)"] <- "Y"
+					tmp.df[[names.iter]][tmp.df[[names.iter]]=="Economically Disadvantaged"] <- "Y"
+					tmp.df[[names.iter]][tmp.df[[names.iter]]=="English Language Learners (ELL)"] <- "N"
 				}
 			}
 			return(tmp.df)
