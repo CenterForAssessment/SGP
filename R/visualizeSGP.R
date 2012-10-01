@@ -537,9 +537,6 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 
 		#### Reconcile School and District selections
 
-			setkeyv(sgp_object@Data, c("VALID_CASE", "YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER"))
-			tmp.districts.and.schools.size <- sgp_object@Data[SJ("VALID_CASE", tmp.last.year)][,num_non_missing(ID), by=list(DISTRICT_NUMBER, SCHOOL_NUMBER)]
-			setkeyv(tmp.districts.and.schools.size, c("DISTRICT_NUMBER", "SCHOOL_NUMBER"))
 			setkeyv(sgp_object@Data, long.key)
 
 			if (is.null(sgPlot.schools) | is.null(sgPlot.districts)) {
@@ -580,6 +577,11 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 	} ## END if (is.null(sgPlot.students))
 
 	#### Subset data (NOT NECESSARY IF WIDE data is provided)
+
+		setkeyv(sgp_object@Data, c("VALID_CASE", "YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER"))
+		tmp.districts.and.schools.size <- sgp_object@Data[SJ("VALID_CASE", tmp.last.year)][,num_non_missing(ID), by=list(DISTRICT_NUMBER, SCHOOL_NUMBER)]
+		setkeyv(tmp.districts.and.schools.size, c("DISTRICT_NUMBER", "SCHOOL_NUMBER"))
+		setkeyv(sgp_object@Data, long.key)
 
 		if (is.null(sgPlot.students)) {
 			report.ids <- unique(sgp_object@Data[tmp.districts.and.schools][["ID"]])
