@@ -4,7 +4,7 @@ function(panel.data,         ## REQUIRED
          panel.data.vnames,
          grade.progression,
          grade.progression.label=FALSE,
-         content.area.sequence,
+         content.area.progression,
          num.prior,
          max.order.for.percentile=NULL,
          subset.grade,
@@ -174,7 +174,7 @@ function(panel.data,         ## REQUIRED
 		s4Bs <- "Boundaries=list("
 		tmp.gp.iter <- rev(tmp.gp)[2:(k+1)]
 		for (i in seq_along(tmp.gp.iter)) {
-			my.path.knots.boundaries <- get.my.knots.boundaries.path(content.area.sequence[match(tmp.gp.iter[i], tmp.gp)], .year.increment(sgp.labels$my.year, -i))
+			my.path.knots.boundaries <- get.my.knots.boundaries.path(content.area.progression[match(tmp.gp.iter[i], tmp.gp)], .year.increment(sgp.labels$my.year, -i))
 			.check.knots.boundaries(names(eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, sep="")))), tmp.gp.iter[i])
 			knt <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['knots_", tmp.gp.iter[i], "']]", sep="")
 			bnd <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['boundaries_", tmp.gp.iter[i], "']]", sep="")
@@ -185,7 +185,7 @@ function(panel.data,         ## REQUIRED
 		tmp.mtx <- eval(parse(text=paste("rq(SS", tmp.last, " ~ ", substring(mod,4), ", tau=taus, data=tmp.data, method=rq.method)[['coefficients']]", sep="")))
 		version <- list(SGP_Package_Version=as.character(packageVersion("SGP")), Date_Prepared=date())
 		eval(parse(text=paste("new('splineMatrix', tmp.mtx, ", substring(s4Ks, 1, nchar(s4Ks)-1), "), ", substring(s4Bs, 1, nchar(s4Bs)-1), "), ",
-			"Content_Areas=list(tail(content.area.sequence, k+1)), Grade_Progression=list(tail(tmp.gp, k+1)), Version=version)", sep="")))
+			"Content_Areas=list(tail(content.area.progression, k+1)), Grade_Progression=list(tail(tmp.gp, k+1)), Version=version)", sep="")))
 	}
 
 	.check.knots.boundaries <- function(names, grade) {
@@ -262,7 +262,7 @@ function(panel.data,         ## REQUIRED
 	.get.percentile.predictions <- function(data, order, grade.progression.label) {
 		.check.my.coefficient.matrices(matrix.names, tmp.last, order)
 		mod <- character()
-		tmp.mtx <- .get.coefficient.matrix(tmp.last, j, content.areas=tail(content.area.sequence, j+1), grade.prog = tail(tmp.gp, j+1), grade.progression.label=grade.progression.label)
+		tmp.mtx <- .get.coefficient.matrix(tmp.last, j, content.areas=tail(content.area.progression, j+1), grade.prog = tail(tmp.gp, j+1), grade.progression.label=grade.progression.label)
 		for (k in 1:order) {
 			int <- "cbind(rep(1, dim(data)[1]),"
 			knt <- paste("tmp.mtx@Knots[['knots_", rev(tmp.gp)[k+1], "']]", sep="")
@@ -751,17 +751,17 @@ function(panel.data,         ## REQUIRED
         } 
 
 
-	if (missing(content.area.sequence)) {
-		content.area.sequence <- rep(sgp.labels$my.subject, length(tmp.gp))
+	if (missing(content.area.progression)) {
+		content.area.progression <- rep(sgp.labels$my.subject, length(tmp.gp))
 	} else {
-		if (!identical(class(content.area.sequence), "character")) {
-			stop("content.area.sequence should be a character vector of class list. See help page for details.")
+		if (!identical(class(content.area.progression), "character")) {
+			stop("content.area.progression should be a character vector of class list. See help page for details.")
 		}
-		if (!identical(tail(content.area.sequence, 1), sgp.labels$my.subject)) {
-			stop("The last element in the content.area.sequence must be identical to 'my.subject' of the sgp.labels. See help page for details.")
+		if (!identical(tail(content.area.progression, 1), sgp.labels$my.subject)) {
+			stop("The last element in the content.area.progression must be identical to 'my.subject' of the sgp.labels. See help page for details.")
 		}
-		if (length(content.area.sequence) != length(tmp.gp)) {
-			stop("The content.area.sequence vector must the same number of elements as the grade.progression vector. See help page for details.")
+		if (length(content.area.progression) != length(tmp.gp)) {
+			stop("The content.area.progression vector must the same number of elements as the grade.progression vector. See help page for details.")
 		}
 	}
 
@@ -773,7 +773,7 @@ function(panel.data,         ## REQUIRED
 	} else {
 		if (is.character(use.my.knots.boundaries)) {
 			if (!is.null(SGPstateData[[use.my.knots.boundaries]][["Achievement"]][["Knots_Boundaries"]])) {
-				for (h in unique(content.area.sequence)) {
+				for (h in unique(content.area.progression)) {
 					for (i in grep(h, names(SGPstateData[[use.my.knots.boundaries]][["Achievement"]][["Knots_Boundaries"]]), value=TRUE)) {
 						Knots_Boundaries[[tmp.path.knots.boundaries]][[i]] <- SGPstateData[[use.my.knots.boundaries]][["Achievement"]][["Knots_Boundaries"]][[i]]
 					}
