@@ -110,7 +110,7 @@ function(sgp_object,
 				}
 			}
 		}
-	list_1
+	list_1[which(names(list_1) != "Panel_Data")]
 	}
 
 	## Function to export/print goodness of fit results as pdf files to directory Goodness_of_Fit
