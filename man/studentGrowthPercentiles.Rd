@@ -14,7 +14,7 @@ studentGrowthPercentiles(panel.data,
                          panel.data.vnames,
                          grade.progression,
                          grade.progression.label=FALSE,
-                         content.area.sequence,
+                         content.area.progression,
                          num.prior,
                          max.order.for.percentile=NULL,
                          subset.grade,                                     
@@ -64,7 +64,7 @@ studentGrowthPercentiles(panel.data,
   \item{grade.progression.label}{A boolean variable (defaults to FALSE) indicating whether the coefficient matrix should carry an extra label indicating the exact grade progression.
   This is an experimental feature and users not exactly familiar with how this functions should stick with the default.
   }
-  \item{content.area.sequence}{Character vector of content area names of same length as grade.progression to be provided if not all identical to 'my.subject' in sgp.labels list.  Vector will be used to populate the @Content_Areas slot of the splineMatrix class coefficient matrices.  If missing, 'my.subject' is repeated in a vector length equal to grade.progression.
+  \item{content.area.progression}{Character vector of content area names of same length as grade.progression to be provided if not all identical to 'my.subject' in sgp.labels list.  Vector will be used to populate the @Content_Areas slot of the splineMatrix class coefficient matrices.  If missing, 'sgp.labels$my.subject' is repeated in a vector length equal to grade.progression.
   }
   \item{num.prior}{Number of prior scores one wishes to use in the analysis. Defaults to \code{num.panels-1}. 
   If \code{num.prior=1}, then only 1st order growth percentiles are computed, if \code{num.prior=2}, then 1st and 2nd order are computed, 

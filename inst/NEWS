@@ -1,4 +1,4 @@
-Changes in version: SGP_0.9-9.6
+Changes in version: SGP_0.9-9.7
 
   NEW FEATURES:
 
@@ -17,6 +17,9 @@ Changes in version: SGP_0.9-9.6
 	  o Added shrinkage estimator calculation to summarizeSGP.
 	  o Added PNG and PDF_PIECES output of student growth plots via the visualizeSGP option sgPlot.output.format='PNG' or sgPlot.output.format='PDF_PIECES'.
 	  o splineMatrix class now includes slots for 'Content_Areas' and 'Grade_Progresssion' to accomodate more varied prior score combinations.
+	  o Added argument 'content.area.progression' to studentGrowthPercentiles to accomodate non-uniform content area progressions as priors to be included in the coefficient matrices produced/used.
+	  o Integrated sgp.loss.hoss.adjustment into analyzeSGP.
+	  o Added STAY_UP as part of previous MOVE_UP analyses. combineSGP now calculates CATCH_UP/KEEP_UP/MOVE_UP/STAY_UP.
 
   USER VISIBLE CHANGES:
 

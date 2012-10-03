@@ -29,9 +29,9 @@ function(sgp_object,
 	### Create state (if NULL) from sgp_object (if possible)
 
 	if (is.null(state)) {
-		tmp.name <- gsub("_", " ", deparse(substitute(sgp_object)))
-		if (any(sapply(c(state.name, "Demonstration", "sgpData LONG", "AOB"), function(x) regexpr(x, tmp.name)))==1) {
-			state <- c(state.abb, rep("DEMO", 2), "AOB")[which(sapply(c(state.name, "Demonstration", "sgpData LONG", "AOB"), function(x) regexpr(x, tmp.name))==1)]
+		tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
+		if (any(sapply(c(state.name, "Demonstration", "sgpData LONG", "AOB"), function(x) regexpr(toupper(x), tmp.name)))!=-1) {
+			state <- c(state.abb, rep("DEMO", 2), "AOB")[which(sapply(c(state.name, "Demonstration", "sgpData LONG", "AOB"), function(x) regexpr(toupper(x), tmp.name))!=-1)[1]]
 		} else {
 			message("\tNOTE: Use of the higher level 'abcSGP' function requires extensive metadata embedded in the 'SGPstateData' list object. Please add your state's data to 'SGPstateData' by examining a state that is currently embedded. For example, SGPstateData[['DEMO']]. Please contact the package administrator with further questions.")
 		}

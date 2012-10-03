@@ -13,19 +13,22 @@
 
 	if (1 %in% TEST_NUMBER) {
 
+	options(error=recover)
 	require(parallel)
 	Demonstration_SGP <- NULL
 	number.cores <- detectCores()-1
 
 	expression.to.evaluate <- 
-		paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=sgpData_LONG,\n\tsgPlot.demo.report=TRUE,\n\tsave.intermediate.results=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
+		paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=sgpData_LONG,\n\tsgPlot.demo.report=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
 
 
 	cat("##### Beginning testSGP test number 1 #####\n", fill=TRUE)
 
 	cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 
+	Rprof("testSGP(1)_Memory_Profile.out", memory.profiling=TRUE)
 	eval(parse(text=expression.to.evaluate))
+	Rprof(NULL)
 
 	### TEST of SGP variable
 
