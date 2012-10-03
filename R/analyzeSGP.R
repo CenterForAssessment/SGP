@@ -398,10 +398,10 @@ function(sgp_object,
 						SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[get.my.knots.boundaries.path(sgp.iter[["sgp.content.areas"]][ca], sgp.iter[['sgp.panel.years']][ca])]][
 							grep(paste(j, strsplit(tmp.gp, "[.]")[[ca]][1], sep=""), 
 							names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[sgp.iter[["sgp.content.areas"]][ca]]]))][[1]]
-					kb[["Knots_Boundaries"]][[paste(tail(sgp.iter[["sgp.content.areas"]], 1), tail(sgp.iter[["sgp.panel.years"]], 1), sep=".")]][[tail(sgp.iter[["sgp.content.areas"]], 1)]] <- 
-						kb[["Knots_Boundaries"]][[paste(tail(sgp.iter[["sgp.content.areas"]], 1), tail(sgp.iter[["sgp.panel.years"]], 1), sep=".")]]
-					}
+				}
 			}
+			kb[["Knots_Boundaries"]][[paste(tail(sgp.iter[["sgp.content.areas"]], 1), tail(sgp.iter[["sgp.panel.years"]], 1), sep=".")]][[tail(sgp.iter[["sgp.content.areas"]], 1)]] <- 
+				kb[["Knots_Boundaries"]][[paste(tail(sgp.iter[["sgp.content.areas"]], 1), tail(sgp.iter[["sgp.panel.years"]], 1), sep=".")]]
 		}
 		return(kb[["Knots_Boundaries"]])
 
