@@ -45,4 +45,4 @@ function(
 	} ## END summary.groups$institution
 	if(confidence.interval.groups.only) groups.to.summarize <- groups.to.summarize[groups.to.summarize$Confidence_Interval_Calculated==TRUE,]
 return(groups.to.summarize)
-} ## END summarizeSGP Function
+} ## END viewSummaryGroups Function

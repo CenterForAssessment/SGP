@@ -10,7 +10,7 @@ data. Functions use quantile regression to estimate the conditional density asso
 achievement history. Percentile growth projections/trajectories are calculated using the coefficient matrices derived from the quantile 
 regression analyses and specify what percentile growth is required for students to reach future achievement targets.
 
-* Web site: http://studentgrowthpercentiles.github.com/SGP/
+* Web site: http://SchoolView.github.com/SGP/
 * CRAN Web site: http://cran.r-project.org/web/packages/SGP/
 
 
