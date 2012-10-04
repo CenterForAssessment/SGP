@@ -387,6 +387,8 @@ function(sgp_object,
 	
 		kb <- list()
 		tmp.gp <- sgp.iter[["sgp.grade.sequences"]][[1]]
+		tmp.ca <- tail(	sgp.iter[["sgp.content.areas"]], 1)
+		tmp.yr <- tail(sgp.iter[["sgp.panel.years"]], 1)
 		num.prior <- length(tmp.gp)-1
 		
 		#  Check for repeat grades - either held back, multiple grade/subject priors, etc.  Add .1, .2 , etc.
@@ -399,22 +401,24 @@ function(sgp_object,
 		tmp.gp <- as.character(tmp.gp)
 		
 		#  If all sgp.iter[["sgp.content.areas"]] are the same, use SGPstateData as usual:
-		if (all(sapply(sgp.iter[["sgp.content.areas"]], function(x) identical(tail(sgp.iter[["sgp.content.areas"]], 1), x)))) {
-			for (i in grep(tail(sgp.iter[["sgp.content.areas"]], 1), names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]]), value=TRUE)) {
-				kb[["Knots_Boundaries"]][[paste(tail(sgp.iter[["sgp.content.areas"]], 1), tail(sgp.iter[["sgp.panel.years"]], 1), sep=".")]][[i]] <- 
+		if (all(sapply(sgp.iter[["sgp.content.areas"]], function(x) identical(tmp.ca, x)))) {
+			for (i in grep(tmp.ca, names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]]), value=TRUE)) {
+				kb[["Knots_Boundaries"]][[paste(tmp.ca, tmp.yr, sep=".")]][[i]] <- 
 					SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[i]]
 			}
 		} else { # if not (e.g. "ELA", "HISTORY",  of "MATH", "ALGEBRA_I", then get the right knots and boundaries, but name them as 'my.subject')
 			for (ca in seq_along(head(sgp.iter[["sgp.content.areas"]], -1))) {
 				for (j in c('boundaries_', 'knots_', 'loss.hoss_')) {
-					kb[["Knots_Boundaries"]][[paste(tail(sgp.iter[["sgp.content.areas"]], 1), tail(sgp.iter[["sgp.panel.years"]], 1), sep=".")]][[paste(j, tmp.gp[ca], sep="")]] <- 
+					kb[["Knots_Boundaries"]][[paste(tmp.ca, tmp.yr, sep=".")]][[paste(j, tmp.gp[ca], sep="")]] <- 
 						SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[get.my.knots.boundaries.path(sgp.iter[["sgp.content.areas"]][ca], sgp.iter[['sgp.panel.years']][ca])]][
 							grep(paste(j, strsplit(tmp.gp, "[.]")[[ca]][1], sep=""), 
 							names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[sgp.iter[["sgp.content.areas"]][ca]]]))][[1]]
 				}
 			}
-			kb[["Knots_Boundaries"]][[paste(tail(sgp.iter[["sgp.content.areas"]], 1), tail(sgp.iter[["sgp.panel.years"]], 1), sep=".")]][[tail(sgp.iter[["sgp.content.areas"]], 1)]] <- 
-				kb[["Knots_Boundaries"]][[paste(tail(sgp.iter[["sgp.content.areas"]], 1), tail(sgp.iter[["sgp.panel.years"]], 1), sep=".")]]
+			#  Add additional slot in Knots_Boundaries if same content area is used as one of the priors to coincide with how studentGrowthPercentiles works.
+			if (!is.na(match(tmp.ca, head(sgp.iter[["sgp.content.areas"]], -1)))) { # must be exact match, not grep (which catches things like 'MATH' and 'EOC_MATH')
+				kb[["Knots_Boundaries"]][[paste(tmp.ca, tmp.yr, sep=".")]][[tmp.ca]] <- kb[["Knots_Boundaries"]][[paste(tmp.ca, tmp.yr, sep=".")]]
+			}
 		}
 		return(kb[["Knots_Boundaries"]])
 
