@@ -1,5 +1,5 @@
 `as.splineMatrix` <- 
-	function(matrix, sgp_object, knots, boundaries) {
+	function(matrix, sgp_object, knots, boundaries, content_areas=NULL, grade_progression=NULL, version) {
 		if (class(matrix) != "matrix") stop("Supplied object must be of class 'matrix'.")
 	
 		if (!missing(knots) & !missing(boundaries) & !missing(sgp_object)) stop("Only supply either the sgp_object or the list of knots and boundaries.")
@@ -36,6 +36,10 @@
                         }
 			names(boundaries) <- paste("boundaries", sapply(rn.bounds2, function(x) x[1]), sep="_")
 		}
-		version <- list(SGP_Package_Version=as.character(packageVersion("SGP")), Date_Prepared=date())
-		new("splineMatrix", matrix, Knots=knots, Boundaries=boundaries, Version=version)
+
+		if (missing(version)) {
+			version <- list(SGP_Package_Version=paste('Unknown - Converted with', as.character(packageVersion("SGP"))), Date_Prepared=paste('Unknown - Coverted', date()))
+		}
+
+		new("splineMatrix", matrix, Knots=knots, Boundaries=boundaries, Content_Areas=content_areas, Grade_Progression=grade_progression, Version=version)
 }
