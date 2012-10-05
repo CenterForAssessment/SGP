@@ -1,4 +1,4 @@
-`testSGP` <- function(TEST_NUMBER) {
+`testSGP` <- function(TEST_NUMBER, memory.profile=FALSE) {
 
 	if (missing(TEST_NUMBER)) {
 		message("\ttestSGP carries out testing of SGP package. Tests currently included in testSGP:\n")
@@ -26,7 +26,10 @@
 
 	cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 
-	Rprof("testSGP(1)_Memory_Profile.out", memory.profiling=TRUE)
+	if(memory.profile) {
+		Rprof("testSGP(1)_Memory_Profile.out", memory.profiling=TRUE)
+	}
+	
 	eval(parse(text=expression.to.evaluate))
 	Rprof(NULL)
 

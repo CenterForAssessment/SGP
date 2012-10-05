@@ -6,38 +6,44 @@ function(sgp_object, state=NULL) {
 	if (!is.SGP(sgp_object)) stop("NOTE: Check SGP accepts only objects of class SGP. See manual pages for details.")
 
 
-        ### Create state (if NULL) from sgp_object (if possible)
+	### Create state (if NULL) from sgp_object (if possible)
 
-        if (is.null(state)) {
-                tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
-                if (any(sapply(c(state.name, "Demonstration", "sgpData LONG", "AOB"), function(x) regexpr(toupper(x), tmp.name)))!=1) {
-                        state <- c(state.abb, rep("DEMO", 2), "AOB")[which(sapply(c(state.name, "Demonstration", "sgpData LONG", "AOB"), function(x) regexpr(toupper(x), tmp.name))!=1)[1]]
-                }
-        }
+	if (is.null(state)) {
+		tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
+		if (any(sapply(c(state.name, "Demonstration", "sgpData LONG", "AOB"), function(x) regexpr(toupper(x), tmp.name)))!=1) {
+			state <- c(state.abb, rep("DEMO", 2), "AOB")[which(sapply(c(state.name, "Demonstration", "sgpData LONG", "AOB"), function(x) regexpr(toupper(x), tmp.name))!=1)[1]]
+		}
+	}
 
-
+	###
 	### Utility functions
+	###
 
 	## checkVariableClass
 
-	checkVariableClass <- function(my.data) {
-
-		for (my.variable in c("ID")) {
-			if (my.variable %in% names(my.data) && !is.character(my.data[[my.variable]])) {
-				my.data[[my.variable]] <- as.character(my.data[[my.variable]])
-				message(paste("\tNOTE:", my.variable, "converted to class character to take advantage of data.table 1.8.0 improvement."))
-			}
+	checkVariableClass <- function(my.data, id.only=TRUE) {
+		if (id.only){
+			return("ID" %in% names(my.data) && !is.character(my.data[["ID"]]))
+		} else {
+			tmp.vars <- c("ID", "VALID_CASE", "CONTENT_AREA", "YEAR")
+			return(sapply(tmp.vars, function(x) x %in% names(my.data) && !is.character(my.data[[x]]), USE.NAMES=FALSE))
 		}
+	}
 
-		for (my.variable in c("VALID_CASE", "CONTENT_AREA", "YEAR")) {
-			if (my.variable %in% names(my.data) && is.factor(my.data[[my.variable]])) {
+	## checkchangeVariableClassVariableClass
+
+	changeVariableClass <- function(my.data, convert.tf, data.slot) {
+		if (!data.slot=="@Data") {
+			message(paste("\tNOTE: ID in", data.slot, "converted from class factor to character to accomodate data.table >= 1.8.0 changes."))
+			my.data[["ID"]] <- as.character(my.data[["ID"]])			
+		} else {
+			for (my.variable in c("ID", "VALID_CASE", "CONTENT_AREA", "YEAR")[convert.tf]) {
+				message(paste("\tNOTE:", my.variable, "in", data.slot, "converted from class factor to character to accomodate data.table >= 1.8.0 changes."))
 				my.data[[my.variable]] <- as.character(my.data[[my.variable]])
-				message(paste("\tNOTE:", my.variable, "converted from class factor to class character to accomodate data.table 1.8.0 changes."))
 			}
 		}
 		return(my.data)
 	}
-
 
 	###########################################
 	###
@@ -47,18 +53,27 @@ function(sgp_object, state=NULL) {
 
 	### Check class of variables in @Data
 
-	sgp_object@Data <- checkVariableClass(sgp_object@Data)
+	if (any(tmp.check <- checkVariableClass(sgp_object@Data, id.only=FALSE))) {
+		sgp_object@Data <- changeVariableClass(sgp_object@Data, convert.tf=tmp.check, data.slot="@Data")
+	}
 
 	### Check class of variables in @SGP$SGPercentiles and @SGP$SGProjections
 
-	for (i in names(sgp_object@SGP$SGPercentiles)) {
-		sgp_object@SGP[['SGPercentiles']][[i]] <- checkVariableClass(sgp_object@SGP[['SGPercentiles']][[i]])
+	if (any(SGPctls.tf <- sapply(sgp_object@SGP[['SGPercentiles']], checkVariableClass))) {
+		tmp.data <- sgp_object@SGP[['SGPercentiles']]
+		for (i in which(SGPctls.tf)) {
+			tmp.data[[i]] <- changeVariableClass(tmp.data[[i]], data.slot=paste('SGPercentiles', names(sgp_object@SGP[['SGPercentiles']])[i]))
+		}
+		tmp.data -> sgp_object@SGP[['SGPercentiles']]
 	}
 
-	for (i in names(sgp_object@SGP$SGProjections)) {
-		sgp_object@SGP[['SGProjections']][[i]] <- checkVariableClass(sgp_object@SGP[['SGProjections']][[i]])
+	if (any(SGPrjns.tf <- sapply(sgp_object@SGP[['SGProjections']], checkVariableClass))) {
+		tmp.data <- sgp_object@SGP[['SGProjections']]
+		for (i in which(SGPrjns.tf)) {
+			tmp.data[[i]] <- changeVariableClass(tmp.data[[i]], data.slot=paste('SGProjections', names(sgp_object@SGP[['SGProjections']])[i]))
+		}
+		tmp.data -> sgp_object@SGP[['SGProjections']]
 	}
-
 
 	### Check if ACHIEVEMENT_LEVEL levels are in SGPstateData
 
