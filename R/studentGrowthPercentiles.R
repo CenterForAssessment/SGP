@@ -716,6 +716,7 @@ function(panel.data,         ## REQUIRED
 	if (!is.null(max.order.for.percentile)) {
 		tmp.gp <- tail(tmp.gp, max.order.for.percentile+1)
 		num.prior <- min(num.prior, max.order.for.percentile)
+		if (!missing(content.area.progression)) content.area.progression <- tail(content.area.progression, length(tmp.gp))
 	}
 
 	tmp.last <- tail(tmp.gp, 1)
