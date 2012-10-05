@@ -212,14 +212,72 @@
 	if (is.SGP(data)) {
 
 		## Fix matrices if they aren't of splineMatrix class
+		tmp.changes <- FALSE
 
+		# Convert to splineMatrix class if not already
 		if (!is.null(data@SGP[["Coefficient_Matrices"]])) {
-			for (i in names(data@SGP[["Coefficient_Matrices"]])) {
-				splineMatrix.tf <- sapply(data@SGP[["Coefficient_Matrices"]][[i]], is.splineMatrix)
+			tmp.matrices <- data@SGP[["Coefficient_Matrices"]]
+			for (i in names(tmp.matrices)) {
+				splineMatrix.tf <- sapply(tmp.matrices[[i]], is.splineMatrix)
 				if (!any(splineMatrix.tf)) {
-					data@SGP[["Coefficient_Matrices"]][[i]][!splineMatrix.tf] <- 
-						lapply(data@SGP[["Coefficient_Matrices"]][[i]][!splineMatrix.tf], function(x) as.splineMatrix(matrix=x, sgp_object=data))
+					tmp.changes <- TRUE
+					message("Updating Existing Coefficient Matrices to new splineMatrix class.")
+					tmp.matrices[[i]][!splineMatrix.tf] <- 
+						lapply(tmp.matrices[[i]][!splineMatrix.tf], function(x) as.splineMatrix(matrix=x, sgp_object=data))
 				}
+			}
+			
+			#  Attempt to populat Content_Areas and Grade_Progression slots if NULL according to @SGP$Coefficient_Matrices naming conventions
+			for (j in names(tmp.matrices)) {
+				j.txt <- paste("tmp.matrices[['", j, "']]", sep="")
+				tmp.ca <- strsplit(j, "[.]")[[1]][1]
+				official.gp <- SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[tmp.ca]]
+				for (q in seq_along(names(eval(parse(text=j.txt))))) {
+					qmat <- names(eval(parse(text=j.txt)))[q]
+					grd <- as.numeric(strsplit(qmat, "_")[[1]][2]); priors <- as.numeric(strsplit(qmat, "_")[[1]][3])
+					if (!is.null(official.gp) & grd %in% official.gp) {
+						gp <- official.gp[(match(grd, official.gp)-priors):match(grd, official.gp)]
+					} else {
+						gp <- c(as.numeric(strsplit(strsplit(qmat, "_")[[1]][4], "[.]")[[1]]))
+						if (length(gp)==0) {
+							gp <- (grd-priors):grd 
+						}
+					}
+
+					#  For splineMatrices created without Content_Areas, Grade_Progression or Version
+					if (identical(class(try(eval(parse(text=paste(j.txt, "$", qmat, "@Content_Areas"))), silent=TRUE)), "try-error")) {
+						eval(parse(text=paste(j.txt, "$", qmat, "@Content_Areas <- list(rep(tmp.ca, length(gp)))")))
+						message("Updating new splineMatrix class Coefficient Matrices to include @Content_Areas slot."); tmp.changes <- TRUE
+					} 
+					if (identical(class(try(eval(parse(text=paste(j.txt, "$", qmat, "@Grade_Progression"))), silent=TRUE)), "try-error")) {
+						eval(parse(text=paste(j.txt, "$", qmat, "@Grade_Progression <- list(gp)")))
+						message("Updating new splineMatrix class Coefficient Matrices to include @Grade_Progression slot."); tmp.changes <- TRUE
+					} 
+					if (identical(class(try(eval(parse(text=paste(j.txt, "$", qmat, "@Version"))), silent=TRUE)), "try-error")) {
+						eval(parse(text=paste(j.txt, "$", qmat, "@Version <- list(SGP_Package_Version=", paste("'Unknown - Converted with", 
+							as.character(packageVersion("SGP")), "', ", sep=""), "Date_Prepared=", paste("'Unknown - Coverted,", date(), "')", sep=""), sep="")))
+						tmp.changes <- TRUE
+					}
+
+					#  For recently converted (using as.splineMatrix above) splineMatrices
+					if (is.null(eval(parse(text=paste(j.txt, "$", qmat, "@Content_Areas", sep=""))))) {
+						eval(parse(text=paste(j.txt, "$", qmat, "@Content_Areas <- list(rep(tmp.ca, length(gp)))")))
+						message("Updating new splineMatrix class Coefficient Matrices to include @Content_Areas slot."); tmp.changes <- TRUE
+					} 
+					if (is.null(eval(parse(text=paste(j.txt, "$", qmat, "@Grade_Progression"))))) {
+						eval(parse(text=paste(j.txt, "$", qmat, "@Grade_Progression <- list(gp)")))
+						message("Updating new splineMatrix class Coefficient Matrices to include @Grade_Progression slot."); tmp.changes <- TRUE
+					} 
+					
+					#  For splineMatrices created with grade progression lables
+					if (!is.na(strsplit(qmat, "_")[[1]][4])) {
+						eval(parse(text=paste("names(", j.txt, ")[", q, "] <- paste(strsplit(qmat, '_')[[1]][-4], collapse='_')", sep="")))
+						message("Renaming splineMatrix class Coefficient Matrices to EXCLUDE grade progression labels."); tmp.changes <- TRUE
+					}
+				}
+			}
+			if (tmp.changes) {
+				data@SGP[["Coefficient_Matrices"]] <- tmp.matrices
 			}
 		}
 
@@ -239,7 +297,6 @@
 		## Check class values of fields
 
 		data <- checkSGP(data, state=state)
-
 
 		if (!identical(key(data@Data), c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))) {
 			setkeyv(data@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))

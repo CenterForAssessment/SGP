@@ -12,6 +12,8 @@ testSGP(TEST_NUMBER)
 \arguments{
   \item{TEST_NUMBER}{An integer indicating the test to be run. Type 'testSGP()' to see list and descritpion of available tests. 
   }
+  \item{memory.profile}{Boolean variable indicating whether to use memory profiling via \code{Rprof}.  Experimental. Defaults to FALSE. 
+  }
 }
 
 \value{Returns output associated with functions being run.
