@@ -8,7 +8,7 @@ SGP contains classes and functions to calculate student growth percentiles and p
 The package contains two primary functions, \code{\link{studentGrowthPercentiles}} and \code{\link{studentGrowthProjections}}, and numerous higher level functions
 that make use of them including: \code{prepareSGP}, \code{\link{analyzeSGP}}, \code{\link{combineSGP}}, \code{\link{summarizeSGP}}, and \code{\link{visualizeSGP}}. These 
 functions are used to calculate and visualize student growth percentiles and percentile growth projections/trajectories for students using large scale, longitudinal assessment data. 
-These norm- and criterion-referenced growth values are currently used in a number of states for many puropses including diagnositic and accountability. The functions employ quantile 
+These norm- and criterion-referenced growth values are currently used in a number of states for many purpses including diagnostic and accountability. The functions employ quantile 
 regression (using the \code{quantreg} package) to estimate the conditional density for current achievement using each student's achievement history. 
 Percentile growth projections/trajectories are calculated using the coefficient matrices derived from the student growth percentile analyses. These quantities
 are summarized in a variety of ways to describe student growth. As of the 0.2-0.0 release, the package also includes the graphics functions 
