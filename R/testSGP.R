@@ -19,7 +19,7 @@
 	number.cores <- detectCores()-1
 
 	expression.to.evaluate <- 
-		paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=sgpData_LONG,\n\tsgPlot.demo.report=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
+		paste("Demonstration_SGP <= abcSGP(\n\tsgp_object=sgpData_LONG,\n\tsgPlot.demo.report=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
 
 
 	cat("##### Beginning testSGP test number 1 #####\n", fill=TRUE)
@@ -31,7 +31,10 @@
 	}
 	
 	eval(parse(text=expression.to.evaluate))
-	Rprof(NULL)
+
+	if(memory.profile) {
+		Rprof(NULL)
+	}
 
 	### TEST of SGP variable
 
@@ -47,6 +50,14 @@
 		cat("Test of variable SGP_BASELINE: OK", fill=TRUE)
 	} else {
 		cat("Test of variable SGP_BASELINE: FAIL", fill=TRUE)
+	}
+
+	### TEST of SGP_TARGET variable
+
+	if (identical(sum(Demonstration_SGP@Data$SGP_TARGET, na.rm=TRUE), 7796624L)) {
+		cat("Test of variable SGP_TARGET: OK", fill=TRUE)
+	} else {
+		cat("Test of variable SGP_TARGET: FAIL", fill=TRUE)
 	}
 
 	### TEST of SGP_TARGET variable
