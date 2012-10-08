@@ -26,12 +26,15 @@
 
 	cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 
-	if(memory.profile) {
+	if (memory.profile) {
 		Rprof("testSGP(1)_Memory_Profile.out", memory.profiling=TRUE)
 	}
 	
 	eval(parse(text=expression.to.evaluate))
-	Rprof(NULL)
+
+	if (memory.profile) {
+		Rprof(NULL)
+	}
 
 	### TEST of SGP variable
 
@@ -57,12 +60,28 @@
 		cat("Test of variable SGP_TARGET: FAIL", fill=TRUE)
 	}
 
+	### TEST of SGP_TARGET_MOVE_UP_STAY_UP variable
+
+	if (identical(sum(Demonstration_SGP@Data$SGP_TARGET_MOVE_UP_STAY_UP, na.rm=TRUE), 9201802L)) {
+		cat("Test of variable SGP_TARGET_MOVE_UP_STAY_UP: OK", fill=TRUE)
+	} else {
+		cat("Test of variable SGP_TARGET_MOVE_UP_STAY_UP: FAIL", fill=TRUE)
+	}
+
 	### TEST of CATCH_UP_KEEP_UP_STATUS variable
 
 	if (identical(as.numeric(table(Demonstration_SGP@Data$CATCH_UP_KEEP_UP_STATUS)), c(41099, 10837, 35560, 84390))) {
 		cat("Test of variable CATCH_UP_KEEP_UP_STATUS: OK", fill=TRUE)
 	} else {
 		cat("Test of variable CATCH_UP_KEEP_UP_STATUS: FAIL", fill=TRUE)
+	}
+
+	### TEST of MOVE_UP_STAY_UP_STATUS variable
+
+	if (identical(as.numeric(table(Demonstration_SGP@Data$MOVE_UP_STAY_UP_STATUS)), c(72953, 15043, 18336, 13618))) {
+		cat("Test of variable MOVE_UP_STAY_UP_STATUS: OK", fill=TRUE)
+	} else {
+		cat("Test of variable MOVE_UP_STAY_UP_STATUS: FAIL", fill=TRUE)
 	}
 
 	cat("##### End testSGP test number 1 #####\n", fill=TRUE)
