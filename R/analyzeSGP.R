@@ -79,7 +79,7 @@ function(sgp_object,
 	.mergeSGP <- function(list_1, list_2) {
 		if (is.null(names(list_1))) return(list_2)
 		if (!is.null(names(list_2))) {
-			for (j in c("Coefficient_Matrices", "Cutscores", "Goodness_of_Fit", "Knots_Boundaries", "SGPercentiles", "SGProjections", "Simulated_SGPs")) {
+			for (j in c("Coefficient_Matrices", "Cutscores", "Goodness_of_Fit", "Knots_Boundaries", "SGPercentiles", "SGProjections", "Simulated_SGPs", "Error_Reports")) {
 				list_1[[j]] <- c(list_1[[j]], list_2[[j]])[!duplicated(names(c(list_1[[j]], list_2[[j]])))]
 			}
 			for (j in c("SGPercentiles", "SGProjections", "Simulated_SGPs")) {
@@ -448,6 +448,17 @@ function(sgp_object,
 		}
 	} ## END get.panel.data.vnames
 
+	
+	# Function to get error messages and specific sgp.iter when errors thrown in mclapply (MULTICORE parallel)
+	
+	get.error.reports <- function() {
+		tmp.errors <- tmp[tmp.tf]
+		tmp.config <- par.sgp.config[tmp.tf]
+		tmp.error.report <- list()
+		for (i in 1:length(tmp.errors)) tmp.error.report[[i]] <- list(Error=tmp.errors[[i]], Analysis=tmp.config[[i]])
+		return(tmp.error.report)
+	}
+
 
 	### Create sgp.config (if NULL) 
 
@@ -717,6 +728,9 @@ function(sgp_object,
 							...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 					}
 					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp), tmp_sgp_object)
+					if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
+						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], sgp.percentiles.=get.error.reports())
+					}
 					rm(tmp)
 				} # End MULTICORE
 			} # #END not FOREACH
@@ -806,6 +820,9 @@ function(sgp_object,
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
 					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp), tmp_sgp_object)
+					if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
+						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], sgp.percentiles.baseline.=get.error.reports())
+					}
 					rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
@@ -885,6 +902,9 @@ function(sgp_object,
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
 					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp), tmp_sgp_object)
+					if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
+						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], sgp.projections.=get.error.reports())
+					}
 					rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
@@ -967,6 +987,9 @@ function(sgp_object,
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
 					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp), tmp_sgp_object)
+					if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
+						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], sgp.projections.baseline.=get.error.reports())
+					}
 					rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
@@ -1049,6 +1072,9 @@ function(sgp_object,
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
 					tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp), tmp_sgp_object)
+					if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
+						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], sgp.projections.lagged.=get.error.reports())
+					}
 					rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
@@ -1132,6 +1158,9 @@ function(sgp_object,
 					...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 
 				tmp_sgp_object <- .mergeSGP(Reduce(.mergeSGP, tmp), tmp_sgp_object)
+				if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
+					tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], sgp.projections.lagged.baseline.=get.error.reports())
+				}
 				rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
