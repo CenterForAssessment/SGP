@@ -931,8 +931,8 @@ function(panel.data,         ## REQUIRED
 		}
 
 		if (return.prior.scale.score) {
-			PRIOR_SCALE_SCORE <- NULL
-			quantile.data[, PRIOR_SCALE_SCORE:=prior.ss]
+			SCALE_SCORE_PRIOR <- NULL
+			quantile.data[, SCALE_SCORE_PRIOR:=prior.ss]
 		}
 
 		if (dim(quantile.data)[1] <= 250) {

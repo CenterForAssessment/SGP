@@ -383,8 +383,8 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 	#### Calculate years and content area from data
  
 		tmp.all.years <- sort(unique(sapply(strsplit(names(sgp_object), "[.]"), function(x) x[2])))
-		tmp.years <- type.convert(tail(tmp.all.years, 5))
-		tmp.last.year <- type.convert(tail(tmp.all.years, 1))
+		tmp.years <- tail(tmp.all.years, 5)
+		tmp.last.year <- tail(tmp.all.years, 1)
 		tmp.content_areas <- unique(sgp_object[["CONTENT_AREA"]])
 
 	#### Reconcile School and District selections

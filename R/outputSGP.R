@@ -126,7 +126,7 @@ function(sgp_object,
 			if (file.info(file.path(outputSGP.directory, paste(tmp.state, "SGP_WIDE_Data.txt", sep="_")))$size > 4000000000) {
 				tmp.working.directory <- getwd()
 				setwd(file.path(outputSGP.directory))
-				if (paste(tmp.state, "SGP_WIDE_Data.txt.zip", sep="_") %in% list.files()) file.remove(paste(tmp.state, "SGP_WIDE_Data.txt.zip", sep="_"))
+				if (paste(tmp.state, "SGP_WIDE_Data.txt.gz", sep="_") %in% list.files()) file.remove(paste(tmp.state, "SGP_WIDE_Data.txt.gz", sep="_"))
 				system(paste("gzip", paste(tmp.state, "SGP_WIDE_Data.txt", sep="_")))
 				setwd(tmp.working.directory)
 			} else {
