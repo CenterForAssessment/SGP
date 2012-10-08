@@ -85,8 +85,21 @@ function(sgp_object, state=NULL) {
 		}
 	}
 
+	### Correct SCALE_SCORE_PRIOR/PRIOR_SCALE_SCORE mixup
 
-	### Return sgp_object
+	if ("PRIOR_SCALE_SCORE" %in% names(sgp_object@Data)) {
+		message("\tNOTE: Changing name 'PRIOR_SCALE_SCORE' to 'SCALE_SCORE_PRIOR' in @Data")
+		setnames(sgp_object@Data, "PRIOR_SCALE_SCORE", "SCALE_SCORE_PRIOR")
+	}
+
+	for (i in names(sgp_object@SGP[['SGPercentiles']])) {
+		if ("PRIOR_SCALE_SCORE" %in% names(sgp_object@SGP[['SGPercentiles']][[i]])) {
+			message(paste("\tNOTE: Changing name 'PRIOR_SCALE_SCORE' to 'SCALE_SCORE_PRIOR' in", i, "table of '@SGP$SGPercentiles'"))
+			names(sgp_object@SGP[['SGPercentiles']][[i]])[which(names(sgp_object@SGP[['SGPercentiles']][[i]])=="PRIOR_SCALE_SCORE")] <- "SCALE_SCORE_PRIOR"
+		}
+	}
+
+	### Return sgp_object	
 
 	return(sgp_object)
 

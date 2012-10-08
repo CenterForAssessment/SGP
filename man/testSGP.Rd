@@ -6,7 +6,8 @@ testSGP runs large scale tests of the SGP package to test for consistent perform
 }
 
 \usage{
-testSGP(TEST_NUMBER)
+testSGP(TEST_NUMBER,
+	memory.profile=FALSE)
 }
 
 \arguments{

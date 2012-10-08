@@ -168,7 +168,7 @@ function(sgp_object,
 		for (i in tmp.names) {
 			tmp.list[[i]] <- data.frame(sgp_object@SGP[["Simulated_SGPs"]][[i]],
 				CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
-				YEAR=type.convert(unlist(strsplit(i, "[.]"))[2]))
+				YEAR=unlist(strsplit(i, "[.]"))[2])
 		}
  
 		data.table(rbind.fill(tmp.list), VALID_CASE="VALID_CASE", key=key(data))

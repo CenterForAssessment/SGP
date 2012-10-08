@@ -153,7 +153,7 @@ function(
 		for (i in tmp.names) {
 		tmp.list[[i]] <- data.table(
 					CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
-					YEAR=type.convert(unlist(strsplit(i, "[.]"))[2], as.is=TRUE),
+					YEAR=unlist(strsplit(i, "[.]"))[2],
 					sgp_object@SGP[["SGPercentiles"]][[i]])
 		}
 
@@ -188,7 +188,7 @@ function(
 		for (i in tmp.names) {
 			tmp.list[[i]] <- data.table(
 				CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
-				YEAR=type.convert(unlist(strsplit(i, "[.]"))[2], as.is=TRUE),
+				YEAR=unlist(strsplit(i, "[.]"))[2],
 				sgp_object@SGP[["SGPercentiles"]][[i]])
 
 			if (is.na(unlist(strsplit(i, "[.]"))[3])) { ### If cohort referenced SGP are to be included in baseline SGP (e.g., Georgia)
@@ -251,7 +251,7 @@ function(
 				cols.to.get <- sapply(cols.to.get.names, function(x) which(x==names(sgp_object@SGP[["SGProjections"]][[i]])))
 				tmp.list[[i]] <- data.table(
 					CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
-					YEAR=type.convert(unlist(strsplit(i, "[.]"))[2], as.is=TRUE),
+					YEAR=unlist(strsplit(i, "[.]"))[2],
 					CATCH_UP_KEEP_UP_STATUS_INITIAL=get.initial_status(sgp_object@SGP[["SGProjections"]][[i]][["ACHIEVEMENT_LEVEL_PRIOR"]]),
 					sgp_object@SGP[["SGProjections"]][[i]][,c(1,2,cols.to.get)])
 			}
@@ -289,7 +289,7 @@ function(
 				cols.to.get <- sapply(cols.to.get.names, function(x) which(x==names(sgp_object@SGP[["SGProjections"]][[i]])))
 				tmp.list[[i]] <- data.table(
 					CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
-					YEAR=type.convert(unlist(strsplit(i, "[.]"))[2], as.is=TRUE),
+					YEAR=unlist(strsplit(i, "[.]"))[2],
 					MOVE_UP_STAY_UP_STATUS_INITIAL=get.initial_status(sgp_object@SGP[["SGProjections"]][[i]][["ACHIEVEMENT_LEVEL_PRIOR"]], "Move Up/Stay Up"),
 					sgp_object@SGP[["SGProjections"]][[i]][,c(1,2,cols.to.get)])
 			}
@@ -332,7 +332,7 @@ function(
 				 num.cols.to.get <- min(max.lagged.sgp.target.years.forward, length(cols.to.get))
 				 tmp.list[[i]] <-data.table(
 					CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
-					YEAR=type.convert(unlist(strsplit(i, "[.]"))[2], as.is=TRUE),
+					YEAR=unlist(strsplit(i, "[.]"))[2],
 					CATCH_UP_KEEP_UP_STATUS_INITIAL=get.initial_status(sgp_object@SGP[["SGProjections"]][[i]][,2]),
 					sgp_object@SGP[["SGProjections"]][[i]][,c(1,2,cols.to.get[1:num.cols.to.get])])
 			 }
@@ -370,7 +370,7 @@ function(
 				cols.to.get <- sapply(cols.to.get.names, function(x) which(x==names(sgp_object@SGP[["SGProjections"]][[i]])))
 				tmp.list[[i]] <- data.table(
 					CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
-					YEAR=type.convert(unlist(strsplit(i, "[.]"))[2], as.is=TRUE),
+					YEAR=unlist(strsplit(i, "[.]"))[2],
 					MOVE_UP_STAY_UP_STATUS_INITIAL=get.initial_status(sgp_object@SGP[["SGProjections"]][[i]][["ACHIEVEMENT_LEVEL_PRIOR"]], "Move Up/Stay Up"),
 					sgp_object@SGP[["SGProjections"]][[i]][,c(1,2,cols.to.get)])
 			}
