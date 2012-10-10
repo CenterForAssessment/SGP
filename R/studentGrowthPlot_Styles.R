@@ -682,7 +682,7 @@ if (reports.by.instructor) {
 		if (sgPlot.folder.names=="name") {
 			grade_folder <- paste("Grade", l, sep="_")
 		} else {
-			grade_folder <- substr(paste("0", as.character(k), sep=""), nchar(l), nchar(l)+1)
+			grade_folder <- substr(paste("0", as.character(l), sep=""), nchar(l), nchar(l)+1)
 		}
 
 		if ("PDF" %in% sgPlot.output.format) {
@@ -692,8 +692,8 @@ if (reports.by.instructor) {
 		###########################################################################################################################
 		}
 
-		tmp_grade_ids <- unique(tmp_school_data[list(l)]$ID)
-		tmp_grade_data <- subset(tmp_school_data, ID %in% tmp_grade_ids)
+		tmp_grade_ids <- unique(tmp_instructor_data[list(l)]$ID)
+		tmp_grade_data <- subset(tmp_instructor_data, ID %in% tmp_grade_ids)
 
 	### Create path to pdf files
 
