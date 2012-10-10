@@ -632,8 +632,8 @@ if (reports.by.instructor) {
 
 	## Instructor
 
-	setkeyv(tmp_school_data, tmp.keys[3])
-	instructors <- sort(unique(unlist(tmp_school_data[list(j), tmp.keys[4], with=FALSE]))) %w/o% NA
+	setkeyv(tmp_school_data, tmp.keys[2])
+	instructors <- sort(unique(unlist(tmp_school_data[list(j), tmp.keys[3], with=FALSE]))) %w/o% NA
 	setkeyv(tmp_school_data, tmp.keys[4])
 
 	for (k in instructors) {
