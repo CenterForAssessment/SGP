@@ -152,16 +152,16 @@ interpolate.grades <- function(grades, data.year.span) {
 } 
 
 year.function <- function(year, add.sub, vec.length, output.type="numeric") {
-        if (is.numeric(year)) {
-		return(seq(from=year+add.sub, length=vec.length))
-	} else { 
+	if (length(grep("_", year) > 0)) {
                 tmp <- as.numeric(unlist(strsplit(as.character(year), "_")))+add.sub
 		if (output.type=="numeric") {
 			return(seq(from=tmp[2], length=vec.length))
 		} else {
 			return(paste(seq(from=tmp[1], length=vec.length), "-", seq(from=tmp[2], length=vec.length), sep=""))
 		}
-        }
+	} else {
+		return(seq(from=as.numeric(year)+add.sub, length=vec.length))
+	}
 }
 
 
