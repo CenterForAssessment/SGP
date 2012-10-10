@@ -669,7 +669,7 @@ if (reports.by.instructor) {
 		##############################################################################################################################################
 		}
 		tmp_instructor_ids <- unique(tmp_school_data[list(k)]$ID)
-		tmp_instructor_data <- subset(tmp_school_data, ID %in% tmp_grade_ids)
+		tmp_instructor_data <- subset(tmp_school_data, ID %in% tmp_instructor_ids)
 
 
 	## Grades
@@ -692,7 +692,7 @@ if (reports.by.instructor) {
 		###########################################################################################################################
 		}
 
-		tmp_grade_ids <- unique(tmp_school_data[list(k)]$ID)
+		tmp_grade_ids <- unique(tmp_school_data[list(l)]$ID)
 		tmp_grade_data <- subset(tmp_school_data, ID %in% tmp_grade_ids)
 
 	### Create path to pdf files
