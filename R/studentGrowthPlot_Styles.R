@@ -611,9 +611,6 @@ if (reports.by.instructor) {
 
 	for (j in schools) {
 
-		started.at <- proc.time()
-		started.date <- date()
-
 		if (sgPlot.demo.report | identical(j, -99L)) {
 			tmp_school_name <- "Sample School"
 			school_folder <- "Sample_School"
@@ -634,7 +631,7 @@ if (reports.by.instructor) {
 
 	setkeyv(tmp_school_data, tmp.keys[2])
 	instructors <- sort(unique(unlist(tmp_school_data[list(j), tmp.keys[3], with=FALSE]))) %w/o% NA
-	setkeyv(tmp_school_data, tmp.keys[4])
+	setkeyv(tmp_school_data, tmp.keys[3])
 
 	for (k in instructors) {
 
@@ -651,10 +648,10 @@ if (reports.by.instructor) {
 			instructor_folder <- "Instructor_School"
 		} else {
 			if (sgPlot.folder.names=="name") {
-				tmp_instructor_name <- as.character(tmp_district_data[list(k)][[paste("INSTRUCTOR_NAME", last.year, sep=".")]][1])
+				tmp_instructor_name <- as.character(tmp_school_data[list(k)][[paste("INSTRUCTOR_NAME", last.year, sep=".")]][1])
 				instructor_folder <- gsub(" ", "_", paste(tmp_instructor_name, k))
 			} else {
-				tmp_instructor_name <- as.character(tmp_district_data[list(k)][[paste("INSTRUCTOR_NAME", last.year, sep=".")]][1])
+				tmp_instructor_name <- as.character(tmp_school_data[list(k)][[paste("INSTRUCTOR_NAME", last.year, sep=".")]][1])
 				instructor_folder <- as.character(k)
 			}
 		}
