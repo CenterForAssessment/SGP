@@ -969,8 +969,8 @@ if (reports.by.instructor) {
 
               ## Code to LaTeX document attaching first page/adding meta-data
 
-              system(paste("pdflatex -interaction=batchmode student_report_", i, "_", j, ".tex", sep=""), ignore.stdout = TRUE)
-              file.rename(paste("student_report_", i, "_", j, ".pdf", sep=""), paste(path.to.pdfs, "/", paste(head(unlist(strsplit(file_name, "_")), -1), collapse="_"), ".pdf", sep=""))
+              system(paste("pdflatex -interaction=batchmode student_report_", i, "_", j, "_", k, ".tex", sep=""), ignore.stdout = TRUE)
+              file.rename(paste("student_report_", i, "_", j, "_", k, ".pdf", sep=""), paste(path.to.pdfs, "/", paste(head(unlist(strsplit(file_name, "_")), -1), collapse="_"), ".pdf", sep=""))
 	} ### END "PDF" %in% sgPlot.output.format
 
 	if (any(c("PNG", "PDF_PIECES") %in% sgPlot.output.format)) {
