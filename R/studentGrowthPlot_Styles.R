@@ -107,9 +107,6 @@
                  my.sgp.level <- "SGP_LEVEL"
         }
 
-	if (sgPlot.output.format=="PNG") {
-		sgPlot.folder <- file.path(sgPlot.folder, "PNG")
-	}
 
 #############################################################################################################################
 ###
@@ -118,6 +115,15 @@
 #############################################################################################################################
 
 if (reports.by.school) {
+
+	### Extend sgPlot.folder
+
+	sgPlot.folder <- file.path(sgPlot.folder, "School")
+
+	if (sgPlot.output.format=="PNG") {
+		sgPlot.folder <- file.path(sgPlot.folder, "PNG")
+	}
+
 
 	### Loop over unique DISTRICTS, SCHOOLS, GRADES and then STUDENTS
 
@@ -580,6 +586,11 @@ if (reports.by.school) {
 #############################################################################################################################
 
 if (reports.by.instructor) {
+
+	### Extend sgPlot.folder
+
+	sgPlot.folder <- file.path(sgPlot.folder, "Instructor")
+
 
 	### Loop over unique DISTRICTS, SCHOOLS, INSTRUCTORS, GRADES and then STUDENTS
 
