@@ -687,7 +687,7 @@ if (reports.by.instructor) {
 
 		if ("PDF" %in% sgPlot.output.format) {
 		################################ INSTRUCTOR Report Catalog LaTeX Code #########################################################
-		cat(paste("\\pdfbookmark[2]{Grade ", k, "}{", j, k, l, "}\n", sep=""), 
+		cat(paste("\\pdfbookmark[2]{Grade ", l, "}{", j, k, l, "}\n", sep=""), 
 			file=paste("instructor_catalog_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE) ## NOTE: j, k, l included in anchor for uniqueness
 		###########################################################################################################################
 		}
