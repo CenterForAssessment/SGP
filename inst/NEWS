@@ -20,6 +20,7 @@ Changes in version: SGP_0.9-9.7
 	  o Added argument 'content.area.progression' to studentGrowthPercentiles to accomodate non-uniform content area progressions as priors to be included in the coefficient matrices produced/used.
 	  o Integrated sgp.loss.hoss.adjustment into analyzeSGP.
 	  o Added STAY_UP as part of previous MOVE_UP analyses. combineSGP now calculates CATCH_UP/KEEP_UP/MOVE_UP/STAY_UP.
+	  o Added additional functionality to 'studentGrowthPlot_Styles' allowing for the construction of student growth plot catalogs by instructor.
 
   USER VISIBLE CHANGES:
 

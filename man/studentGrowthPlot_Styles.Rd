@@ -16,6 +16,8 @@ studentGrowthPlot_Styles(
            districts,
            schools,
            reports.by.student,
+           reports.by.instructor,
+           reports.by.school,
            sgPlot.years,
            sgPlot.demo.report,
            sgPlot.folder,
@@ -44,8 +46,13 @@ studentGrowthPlot_Styles(
   }
   \item{schools}{A vector of school numbers indicating which schools student growth plots should be produce for.
   }
-  \item{reports.by.student}{A boolean variables passed to \code{studentGrowthPlot_Styles} indicating whether separate individual plots will be produced or separate reports
+  \item{reports.by.student}{A boolean variable passed to \code{studentGrowthPlot_Styles} indicating whether separate individual plots will be produced or separate reports
 and a summary catalog containing those reports will be produced. 
+  }
+  \item{reports.by.instructor}{A boolean variable passed to \code{studentGrowthPlot_Styles} indicating whether individual plots will be collated and bundled as a summary catalog by instructor.
+  }
+  \item{reports.by.school}{A boolean variable passed to \code{studentGrowthPlot_Styles} indicating whether individual plots will be collated and bundled as a summary catalog by school. Prior
+to version 0.9-9.7, this was the only way of bundling reports and was thus the default.
   }
   \item{sgPlot.years}{A vector of all years over which student growth plots are being produced.  
   }
