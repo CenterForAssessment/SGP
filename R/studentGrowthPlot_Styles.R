@@ -656,13 +656,13 @@ if (reports.by.instructor) {
 
 		if (sgPlot.demo.report | identical(k, -9L)) {
 			tmp_instructor_name <- "Sample Instructor"
-			instructor_folder <- "Instructor_School"
+			instructor_folder <- "Sample Instructor"
 		} else {
 			if (sgPlot.folder.names=="name") {
 				tmp_instructor_name <- as.character(tmp_school_data[list(k)][[paste("INSTRUCTOR_NAME", last.year, sep=".")]][1])
 				instructor_folder <- gsub(" ", "_", paste(tmp_instructor_name, k))
 			} else {
-				tmp_instructor_name <- as.character(tmp_school_data[list(k)][[paste("INSTRUCTOR_NAME", last.year, sep=".")]][1])
+				tmp_instructor_name <- as.character(tmp_school_data[list(k)][[paste("INSTRUCTOR_NUMBER", last.year, sep=".")]][1])
 				instructor_folder <- as.character(k)
 			}
 		}
@@ -1044,8 +1044,8 @@ if (reports.by.instructor) {
 		unlink(file.path(sgPlot.folder, year_folder, district_folder, school_folder, instructor_folder), recursive=TRUE)
 	}
 
-        message(paste("\tStarted", last.year, tmp_school_name, tmp_instructor_name, "student growth plots:", started.date))
-        message(paste("\tFinished", last.year, tmp_school_name, tmp_instructor_name, "student growth plots:", date(), "in", timetaken(started.at), "\n"))
+        message(paste("\tStarted", last.year, tmp_school_name, "Instructor:", tmp_instructor_name, "student growth plots:", started.date))
+        message(paste("\tFinished", last.year, tmp_school_name, "Instructor:", tmp_instructor_name, "student growth plots:", date(), "in", timetaken(started.at), "\n"))
 
 	  } ## END for loop for INSTRUCTORS (k)
         } ## END for loop for SCHOOLS (j)
