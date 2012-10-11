@@ -548,6 +548,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 		}
 		tmp.district.and.schools.instructors <- unique(data.table(student.teacher.lookup, key=long.key)[,district.and.school.variable.names, with=FALSE])
 		student.teacher.lookup <- student.teacher.lookup[,list(ID, CONTENT_AREA, INSTRUCTOR_NUMBER, INSTRUCTOR_NAME)]
+		invisible(student.teacher.lookup[,CONTENT_AREA_RESPONSIBILITY:=factor(1, levels=0:1, labels=c("Content Area Responsibility: No", "Content Area Responsibility: Yes"))])
 		setnames(student.teacher.lookup, c("INSTRUCTOR_NUMBER", "INSTRUCTOR_NAME"), paste(c("INSTRUCTOR_NUMBER", "INSTRUCTOR_NAME"), tmp.last.year, sep="."))
 	}
 
@@ -760,9 +761,14 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 		### Merge in INSTRUCTOR_NAME if requested
 
 		if (sgPlot.reports.by.instructor) {
-			#setkey(sgPlot.data, ID, CONTENT_AREA); setkey(student.teacher.lookup, ID, CONTENT_AREA)
-			setkey(sgPlot.data, ID); setkey(student.teacher.lookup, ID)
-			sgPlot.data <- sgPlot.data[student.teacher.lookup]	
+			setkeyv(student.teacher.lookup, c("ID", paste("INSTRUCTOR_NUMBER", tmp.last.year, sep=".")))
+			unique.teacher.lookup <- unique(student.teacher.lookup)
+			setkey(sgPlot.data, ID); setkey(unique.teacher.lookup)
+			sgPlot.data <- sgPlot.data[unique.teacher.lookup]
+			tmp.key <- c("ID", paste("INSTRUCTOR_NUMBER", tmp.last.year, sep="."), "CONTENT_AREA")
+			setkeyv(sgPlot.data, tmp.key)
+			sgPlot.data <- data.table(student.teacher.lookup[,c(tmp.key, "CONTENT_AREA_RESPONSIBILITY"), with=FALSE], key=tmp.key)[sgPlot.data]
+			sgPlot.data[['CONTENT_AREA_RESPONSIBILITY']][is.na( sgPlot.data[['CONTENT_AREA_RESPONSIBILITY']])] <- "Content Area Responsibility: No"
 		}
 
 		### Rekey @Data
