@@ -1044,8 +1044,8 @@ if (reports.by.instructor) {
 		unlink(file.path(sgPlot.folder, year_folder, district_folder, school_folder, instructor_folder), recursive=TRUE)
 	}
 
-        message(paste("\tStarted", last.year, tmp_school_name, "student growth plots:", started.date))
-        message(paste("\tFinished", last.year, tmp_school_name, "student growth plots:", date(), "in", timetaken(started.at), "\n"))
+        message(paste("\tStarted", last.year, tmp_school_name, tmp_instructor_name, "student growth plots:", started.date))
+        message(paste("\tFinished", last.year, tmp_school_name, tmp_instructor_name, "student growth plots:", date(), "in", timetaken(started.at), "\n"))
 
 	  } ## END for loop for INSTRUCTORS (k)
         } ## END for loop for SCHOOLS (j)
