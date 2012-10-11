@@ -38,7 +38,11 @@ if (is.null(SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["arr
 }
 missing.data.symbol <- "--"
 studentGrowthPlot.year.span <- 5
-
+if (Report_Parameters$Denote_Content_Area==TRUE) {
+	legend.fill.color <- "white"
+} else {
+	legend.fill.color <- rgb(0,0,1,0.25)
+}
 
 ### Utility functions
 
@@ -512,7 +516,7 @@ popViewport()
 
 pushViewport(right.vp)
 
-grid.roundrect(width=unit(0.95, "native"), r=unit(.02, "snpc"), gp=gpar(lwd=1.8, col=border.color), just="center")
+grid.roundrect(width=unit(0.95, "native"), r=unit(.02, "snpc"), gp=gpar(lwd=1.8, col=border.color, fill=legend.fill.color), just="center")
 
 grid.text(x=.5, y=.875, content.area.label, gp=gpar(col=border.color, cex=1.8, fontface=2, fontfamily="Helvetica-Narrow"), 
           default.units="native") ## For PDF Versions

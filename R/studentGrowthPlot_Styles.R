@@ -657,7 +657,11 @@ if (reports.by.instructor) {
 		if (sgPlot.demo.report | identical(k, -9L)) {
 			tmp_instructor_name <- "Sample Instructor"
 			instructor_folder <- "Sample Instructor"
+			FIRST_NAME_TEACHER <- "Sample"
+			LAST_NAME_TEACHER <- "Teacher"
 		} else {
+			FIRST_NAME_TEACHER <- unlist(strsplit(as.character(tmp_school_data[list(k)][[paste("INSTRUCTOR_NAME", last.year, sep=".")]][1]), ", "))[2]
+			LAST_NAME_TEACHER <- unlist(strsplit(as.character(tmp_school_data[list(k)][[paste("INSTRUCTOR_NAME", last.year, sep=".")]][1]), ", "))[1]
 			if (sgPlot.folder.names=="name") {
 				tmp_instructor_name <- as.character(tmp_school_data[list(k)][[paste("INSTRUCTOR_NAME", last.year, sep=".")]][1])
 				instructor_folder <- gsub(" ", "_", paste(tmp_instructor_name, k))
@@ -878,7 +882,8 @@ if (reports.by.instructor) {
               grid.rect(gp=gpar(fill=sgPlot.header.footer.color, col=sgPlot.header.footer.color))
               grid.text(x=0.025, y=0.5, paste(FIRST_NAME, " ", LAST_NAME, sep="") , 
                         gp=gpar(fontface="bold", fontfamily="Helvetica-Narrow", col="white", cex=1.65), just="left", default.units="native")
-              grid.text(x=0.975, y=0.5, tmp_school_name, gp=gpar(fontface="bold", fontfamily="Helvetica-Narrow", col="white", cex=1.65), just="right", default.units="native")
+              grid.text(x=0.975, y=0.5, paste(tmp_school_name, ": ", FIRST_NAME_TEACHER, " ", LAST_NAME_TEACHER, sep=""), 
+			gp=gpar(fontface="bold", fontfamily="Helvetica-Narrow", col="white", cex=1.65), just="right", default.units="native")
               popViewport()
 
 
@@ -1005,7 +1010,8 @@ if (reports.by.instructor) {
 				Grades=as.numeric(subset(tmp_student_data, select=paste("GRADE", rev(sgPlot.years), sep="."))),
 				Cuts_NY1=as.numeric(subset(tmp_student_data, select=grep("PROJ", names(tmp_student_data)))),
 				Cutscores=Cutscores[[content_areas[vp]]],
-				Report_Parameters=list(Current_Year=last.year, Content_Area=content_areas[vp], State=state))
+				Report_Parameters=list(Current_Year=last.year, Content_Area=content_areas[vp], State=state, 
+					Denote_Content_Area=tmp_student_data[['CONTENT_AREA_RESPONSIBILITY']]=="Content Area Responsibility: Yes"))
 			popViewport()
 			dev.off()
 		} ## END loop over content_areas
