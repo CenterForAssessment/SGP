@@ -38,9 +38,10 @@ if (is.null(SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["arr
 }
 missing.data.symbol <- "--"
 studentGrowthPlot.year.span <- 5
-if (Report_Parameters$Denote_Content_Area) {
+if (is.null(Report_Parameters$Denote_Content_Area | Report_Parameters$Denote_Content_Area==FALSE)) {
 	legend.fill.color <- "white"
-} else {
+}
+if (Report_Parameters$Denote_Content_Area) {
 	legend.fill.color <- rgb(0,0,1,0.25)
 }
 

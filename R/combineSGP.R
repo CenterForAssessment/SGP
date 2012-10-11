@@ -9,7 +9,8 @@ function(
 	sgp.projections.lagged=TRUE,
 	sgp.projections.lagged.baseline=TRUE,
 	max.lagged.sgp.target.years.forward=4,
-	use.cohort.for.baseline.when.missing=NULL) {
+	use.cohort.for.baseline.when.missing=NULL,
+	update.all.years=FALSE) {
 
 	started.at <- proc.time()
 	message(paste("Started combineSGP", date()))
@@ -133,6 +134,21 @@ function(
 		}
 		return(tmp.names)
 	} ## END get.percentile.names
+
+
+	############################################################################
+	### Check update.all.years
+	############################################################################
+
+
+	if (update.all.years) {
+		variables.to.null.out <- c("SGP", "SGP_LEVEL", "SGP_STANDARD_ERROR", "SCALE_SCORE_PRIOR", "SGP_BASELINE", "SGP_LEVEL_BASELINE", "SGP_TARGET", "SGP_TARGET_MU",
+			"SGP_TARGET_MOVE_UP_STAY_UP", "SGP_TARGET_MOVE_UP_STAY_UP_BASELINE", "ACHIEVEMENT_LEVEL_PRIOR", "CATCH_UP_KEEP_UP_STATUS_INITIAL", "SGP_TARGET_BASELINE", 
+			"CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STATUS", "MOVE_UP_STAY_UP_STATUS", "SGP_0.16_CONFIDENCE_BOUND", "SGP_0.84_CONFIDENCE_BOUND")
+		for (tmp.variables.to.null.out in intersect(names(slot.data), variables.to.null.out)) {
+			slot.data[,tmp.variables.to.null.out:=NULL, with=FALSE]
+		}
+	}
 
 
 	############################################################################
