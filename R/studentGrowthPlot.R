@@ -9,7 +9,7 @@ function(Scale_Scores,               ## List of Scale Scores
 	Cuts_NY1,                    ## Vector of NY1 cutscores
 	Connect_Points="Arrows",     ## Current "Arrows" or "None"
 	Cutscores,                   ## data.frame of long formatted achievement level cutscores
-	Report_Parameters) {         ## list containing Current_Year, Content_Area, State
+	Report_Parameters) {         ## list containing Current_Year, Content_Area, State, Denote_Content_Area
 
 ### Load packages
 
@@ -38,7 +38,7 @@ if (is.null(SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["arr
 }
 missing.data.symbol <- "--"
 studentGrowthPlot.year.span <- 5
-if (Report_Parameters$Denote_Content_Area==TRUE) {
+if (Report_Parameters$Denote_Content_Area) {
 	legend.fill.color <- "white"
 } else {
 	legend.fill.color <- rgb(0,0,1,0.25)

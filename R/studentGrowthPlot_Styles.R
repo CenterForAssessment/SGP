@@ -388,7 +388,7 @@ if (reports.by.school) {
                                   Grades=as.numeric(subset(tmp_student_data, select=paste("GRADE", rev(sgPlot.years), sep="."))),
                                   Cuts_NY1=as.numeric(subset(tmp_student_data, select=grep("PROJ", names(tmp_student_data)))),
                                   Cutscores=Cutscores[[content_areas[vp]]],
-                                  Report_Parameters=list(Current_Year=last.year, Content_Area=content_areas[vp], State=state))
+                                  Report_Parameters=list(Current_Year=last.year, Content_Area=content_areas[vp], State=state, Denote_Content_Area=FALSE))
 
 		popViewport()
 
@@ -528,7 +528,7 @@ if (reports.by.school) {
 				Grades=as.numeric(subset(tmp_student_data, select=paste("GRADE", rev(sgPlot.years), sep="."))),
 				Cuts_NY1=as.numeric(subset(tmp_student_data, select=grep("PROJ", names(tmp_student_data)))),
 				Cutscores=Cutscores[[content_areas[vp]]],
-				Report_Parameters=list(Current_Year=last.year, Content_Area=content_areas[vp], State=state))
+				Report_Parameters=list(Current_Year=last.year, Content_Area=content_areas[vp], State=state, Denote_Content_Area=FALSE))
 			popViewport()
 			dev.off()
 		} ## END loop over content_areas
@@ -869,7 +869,8 @@ if (reports.by.instructor) {
                                   Grades=as.numeric(subset(tmp_student_data, select=paste("GRADE", rev(sgPlot.years), sep="."))),
                                   Cuts_NY1=as.numeric(subset(tmp_student_data, select=grep("PROJ", names(tmp_student_data)))),
                                   Cutscores=Cutscores[[content_areas[vp]]],
-                                  Report_Parameters=list(Current_Year=last.year, Content_Area=content_areas[vp], State=state))
+                                  Report_Parameters=list(Current_Year=last.year, Content_Area=content_areas[vp], State=state,
+					Denote_Content_Area=tmp_student_data[['CONTENT_AREA_RESPONSIBILITY']]=="Content Area Responsibility: Yes"))
 
 		popViewport()
 
