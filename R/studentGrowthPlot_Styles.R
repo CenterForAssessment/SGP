@@ -680,7 +680,7 @@ if (reports.by.instructor) {
 		##############################################################################################################################################
 		}
 		tmp_instructor_ids <- unique(tmp_school_data[list(k)]$ID)
-		tmp_instructor_data <- subset(tmp_school_data, ID %in% tmp_instructor_ids)
+		tmp_instructor_data <- subset(tmp_school_data[list(k)], ID %in% tmp_instructor_ids) ### NOTE: possible that students have multiple instructors so need list(k)
 
 
 	## Grades
@@ -921,9 +921,9 @@ if (reports.by.instructor) {
                 grid.text(x=0.325, y=interpretation.y-0.0925, "Scale Score", gp=gpar(cex=0.9), default.units="native", just="left")
 
                 tmp.rect.height <- 0.125/number.achievement.level.regions
-                for (l in seq(number.achievement.level.regions)) {
-                    grid.rect(x=unit(0.2, "native"), y=unit(interpretation.y-0.125-(l-1)*tmp.rect.height, "native"), width=unit(0.1, "native"), height=unit(tmp.rect.height, "native"),
-                               gp=gpar(fill=rev(achievement.level.region.colors)[l], col="white", lwd=1), just=c("center", "top"))
+                for (p in seq(number.achievement.level.regions)) {
+                    grid.rect(x=unit(0.2, "native"), y=unit(interpretation.y-0.125-(p-1)*tmp.rect.height, "native"), width=unit(0.1, "native"), height=unit(tmp.rect.height, "native"),
+                               gp=gpar(fill=rev(achievement.level.region.colors)[p], col="white", lwd=1), just=c("center", "top"))
                 } 
                 grid.roundrect(x=unit(0.2, "native"), y=interpretation.y-0.125, width=unit(0.1, "native"), height=unit(0.125, "native"), r=unit(0.02, "inches"),
                                gp=gpar(col="black", lwd=1.5), just=c("center", "top"))
