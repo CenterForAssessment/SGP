@@ -760,7 +760,8 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 		### Merge in INSTRUCTOR_NAME if requested
 
 		if (sgPlot.reports.by.instructor) {
-			setkey(sgPlot.data, ID, CONTENT_AREA); setkey(student.teacher.lookup, ID, CONTENT_AREA)
+			#setkey(sgPlot.data, ID, CONTENT_AREA); setkey(student.teacher.lookup, ID, CONTENT_AREA)
+			setkey(sgPlot.data, ID); setkey(student.teacher.lookup, ID)
 			sgPlot.data <- sgPlot.data[student.teacher.lookup]	
 		}
 
