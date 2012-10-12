@@ -15,6 +15,7 @@ function(
 	started.at <- proc.time()
 	message(paste("Started combineSGP", date()))
 
+	variables.to.merges <- NULL
 	tmp.messages <- NULL
 
 	### Create slot.data from sgp_object@Data
@@ -144,7 +145,7 @@ function(
 	if (update.all.years) {
 		variables.to.null.out <- c("SGP", "SGP_LEVEL", "SGP_STANDARD_ERROR", "SCALE_SCORE_PRIOR", "SGP_BASELINE", "SGP_LEVEL_BASELINE", "SGP_TARGET", "SGP_TARGET_MU",
 			"SGP_TARGET_MOVE_UP_STAY_UP", "SGP_TARGET_MOVE_UP_STAY_UP_BASELINE", "ACHIEVEMENT_LEVEL_PRIOR", "CATCH_UP_KEEP_UP_STATUS_INITIAL", "SGP_TARGET_BASELINE", 
-			"CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STATUS", "MOVE_UP_STAY_UP_STATUS", "SGP_0.16_CONFIDENCE_BOUND", "SGP_0.84_CONFIDENCE_BOUND")
+			"CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STATUS", "MOVE_UP_STAY_UP_STATUS")
 		for (tmp.variables.to.null.out in intersect(names(slot.data), variables.to.null.out)) {
 			slot.data[,tmp.variables.to.null.out:=NULL, with=FALSE]
 		}
@@ -175,12 +176,10 @@ function(
 
 		tmp.data <- data.table(rbind.fill(tmp.list), VALID_CASE="VALID_CASE", key=key(slot.data))
 
-
-		if (!all(names(tmp.data) %in% names(slot.data))) {
-			for (i in names(tmp.data)[!names(tmp.data) %in% names(slot.data)]) suppressWarnings(slot.data[, i := tmp.data[[i]][NA][1], with=FALSE])
+		variables.to.merge <- names(tmp.data) %w/o% key(slot.data)
+		for (tmp.merge.variable in variables.to.merge) {
+			invisible(slot.data[tmp.data[,key(slot.data), with=FALSE], tmp.merge.variable := tmp.data[, tmp.merge.variable, with=FALSE], with=FALSE, mult="first"])
 		}
-
-		invisible(slot.data[tmp.data[,key(slot.data), with=FALSE], names(tmp.data) := tmp.data, with=FALSE, mult="first"])
 		setkeyv(slot.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 		rm(tmp.list); suppressWarnings(gc())
 	}
@@ -215,11 +214,10 @@ function(
 
 		tmp.data <- data.table(rbind.fill(tmp.list), VALID_CASE="VALID_CASE", key=key(slot.data))
 
-		if (!all(names(tmp.data) %in% names(slot.data))) {
-			for (i in names(tmp.data)[!names(tmp.data) %in% names(slot.data)]) slot.data[, i := tmp.data[[i]][NA][1], with=FALSE]
+		variables.to.merge <- names(tmp.data) %w/o% key(slot.data)
+		for (tmp.merge.variable in variables.to.merge) {
+			invisible(slot.data[tmp.data[,key(slot.data), with=FALSE], tmp.merge.variable := tmp.data[, tmp.merge.variable, with=FALSE], with=FALSE, mult="first"])
 		}
-
-		invisible(slot.data[tmp.data[,key(slot.data), with=FALSE], names(tmp.data) := tmp.data, with=FALSE, mult="first"])
 		setkeyv(slot.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 		rm(tmp.list); suppressWarnings(gc())
 	}
@@ -283,11 +281,10 @@ function(
 			invisible(tmp_object_2[,c("ACHIEVEMENT_LEVEL_PRIOR", "CATCH_UP_KEEP_UP_STATUS_INITIAL") := list(tmp_object_1[["ACHIEVEMENT_LEVEL_PRIOR"]], tmp_object_1[["CATCH_UP_KEEP_UP_STATUS_INITIAL"]]), with=FALSE])
 			setkeyv(tmp_object_2, key(slot.data))
 
-			if (!all(names(tmp_object_2) %in% names(slot.data))) {
-				for (i in names(tmp_object_2)[!names(tmp_object_2) %in% names(slot.data)]) slot.data[, i := tmp_object_2[[i]][NA][1], with=FALSE]
+			variables.to.merge <- names(tmp_object_2) %w/o% key(slot.data)
+			for (tmp.merge.variable in variables.to.merge) {
+				invisible(slot.data[tmp_object_2[,key(slot.data), with=FALSE], tmp.merge.variable := tmp_object_2[, tmp.merge.variable, with=FALSE], with=FALSE, mult="first"])
 			}
-
-			invisible(slot.data[tmp_object_2[,key(slot.data), with=FALSE], names(tmp_object_2) := tmp_object_2, with=FALSE, mult="first"])
 			setkeyv(slot.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 			rm(tmp.list); suppressWarnings(gc())
 
@@ -321,11 +318,10 @@ function(
 			invisible(tmp_object_2[,c("ACHIEVEMENT_LEVEL_PRIOR", "MOVE_UP_STAY_UP_STATUS_INITIAL") := list(tmp_object_1[["ACHIEVEMENT_LEVEL_PRIOR"]], tmp_object_1[["MOVE_UP_STAY_UP_STATUS_INITIAL"]]), with=FALSE])
 			setkeyv(tmp_object_2, key(slot.data))
 
-			if (!all(names(tmp_object_2) %in% names(slot.data))) {
-				for (i in names(tmp_object_2)[!names(tmp_object_2) %in% names(slot.data)]) slot.data[, i := tmp_object_2[[i]][NA][1], with=FALSE]
+			variables.to.merge <- names(tmp_object_2) %w/o% key(slot.data)
+			for (tmp.merge.variable in variables.to.merge) {
+				invisible(slot.data[tmp_object_2[,key(slot.data), with=FALSE], tmp.merge.variable := tmp_object_2[, tmp.merge.variable, with=FALSE], with=FALSE, mult="first"])
 			}
-
-			invisible(slot.data[tmp_object_2[,key(slot.data), with=FALSE], names(tmp_object_2) := tmp_object_2, with=FALSE, mult="first"])
 			setkeyv(slot.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 			rm(tmp.list); suppressWarnings(gc())
 
@@ -364,11 +360,10 @@ function(
 			invisible(tmp_object_2[,c("ACHIEVEMENT_LEVEL_PRIOR", "CATCH_UP_KEEP_UP_STATUS_INITIAL") := list(tmp_object_1[["ACHIEVEMENT_LEVEL_PRIOR"]], tmp_object_1[["CATCH_UP_KEEP_UP_STATUS_INITIAL"]]), with=FALSE])
 			setkeyv(tmp_object_2, key(slot.data))
 
-			if (!all(names(tmp_object_2) %in% names(slot.data))) {
-				for (i in names(tmp_object_2)[!names(tmp_object_2) %in% names(slot.data)]) slot.data[, i := tmp_object_2[[i]][NA][1], with=FALSE]
+			variables.to.merge <- names(tmp_object_2) %w/o% key(slot.data)
+			for (tmp.merge.variable in variables.to.merge) {
+				invisible(slot.data[tmp_object_2[,key(slot.data), with=FALSE], tmp.merge.variable := tmp_object_2[, tmp.merge.variable, with=FALSE], with=FALSE, mult="first"])
 			}
-
-			invisible(slot.data[tmp_object_2[,key(slot.data), with=FALSE], names(tmp_object_2) := tmp_object_2, with=FALSE, mult="first"])
 			setkeyv(slot.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 			rm(tmp.list); suppressWarnings(gc())
 
@@ -402,11 +397,10 @@ function(
 			invisible(tmp_object_2[,c("ACHIEVEMENT_LEVEL_PRIOR", "MOVE_UP_STAY_UP_STATUS_INITIAL") := list(tmp_object_1[["ACHIEVEMENT_LEVEL_PRIOR"]], tmp_object_1[["MOVE_UP_STAY_UP_STATUS_INITIAL"]]), with=FALSE])
 			setkeyv(tmp_object_2, key(slot.data))
 
-			if (!all(names(tmp_object_2) %in% names(slot.data))) {
-				for (i in names(tmp_object_2)[!names(tmp_object_2) %in% names(slot.data)]) slot.data[, i := tmp_object_2[[i]][NA][1], with=FALSE]
+			variables.to.merge <- names(tmp_object_2) %w/o% key(slot.data)
+			for (tmp.merge.variable in variables.to.merge) {
+				invisible(slot.data[tmp_object_2[,key(slot.data), with=FALSE], tmp.merge.variable := tmp_object_2[, tmp.merge.variable, with=FALSE], with=FALSE, mult="first"])
 			}
-
-			invisible(slot.data[tmp_object_2[,key(slot.data), with=FALSE], names(tmp_object_2) := tmp_object_2, with=FALSE, mult="first"])
 			setkeyv(slot.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 			rm(tmp.list); suppressWarnings(gc())
 
