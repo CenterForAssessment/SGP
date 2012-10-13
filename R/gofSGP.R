@@ -4,7 +4,8 @@
 		content_areas=NULL,
 		grades=NULL,
 		use.sgp="SGP",
-		format="PDF") {
+		output.format="PDF",
+		color.scale="red") {
 
 	### To prevent R CMD check warnings
 
@@ -13,7 +14,7 @@
 
 	### Setup
 
-	if (format=="PNG") require("Cairo")
+	if (output.format=="PNG") require("Cairo")
 
 		
 	### Utility functions
@@ -23,19 +24,25 @@
 	gof.draw <- function(content_area.year.grade.data, content_area, year, grade) {
 		file.path <- file.path("Goodness_of_Fit", "gofSGP", my.extra.label, paste(content_area, year, sep="."))
 		dir.create(file.path, showWarnings=FALSE, recursive=TRUE)
-		if (format=="PDF") pdf(file=paste(file.path, paste("/gofSGP_Grade", grade, sep="_"), ".pdf", sep=""), width=8.5, height=4.5)
-		if (format=="PNG") Cairo(file=paste(file.path, paste("/gofSGP_Grade", grade, sep="_"), ".png", sep=""), width=8.5, height=4.5, units="in", dpi=144, pointsize=24, bg="transparent")
-		grid.draw(.goodness.of.fit(content_area.year.grade.data, content_area, year, grade))
+		if (output.format=="PDF") pdf(file=paste(file.path, paste("/gofSGP_Grade", grade, sep="_"), ".pdf", sep=""), width=8.5, height=4.5)
+		if (output.format=="PNG") Cairo(file=paste(file.path, paste("/gofSGP_Grade", grade, sep="_"), ".png", sep=""), width=8.5, height=4.5, units="in", dpi=144, pointsize=24, bg="transparent")
+		grid.draw(.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale))
 		dev.off()
 	}
 
 	.goodness.of.fit <- 
-		function(data1, content_area, year, grade) {
+		function(data1, content_area, year, grade, color.scale="reds") {
 
 		.cell.color <- function(x){
+		my.blues.and.reds <- diverge_hcl(21, c = 100, l = c(50, 100))
 		my.reds <- c("#FFFFFF", "#FEF1E1", "#FBD9CA", "#F9C1B4", "#F7A99E", "#F59188", "#F27972", "#F0615C", "#EE4946", "#EC3130", "#EA1A1A")
-		tmp.cell.color <- my.reds[findInterval(abs(x - 10), 1:10)+1]
-		tmp.cell.color[is.na(tmp.cell.color)] <- "#000000"	
+		if (color.scale=="reds") {
+			tmp.cell.color <- my.reds[findInterval(abs(x - 10), 1:10)+1]
+			tmp.cell.color[is.na(tmp.cell.color)] <- "#000000"
+		} else {
+			tmp.cell.color <- my.blues.and.reds[findInterval(x-10, -10:11, all.inside=TRUE)]
+			tmp.cell.color[is.na(tmp.cell.color)] <- "#000000"
+		}
 		return(tmp.cell.color)
 		}
 
@@ -173,7 +180,7 @@
 				grades <- sort(unique(tmp.data[!is.na(tmp.data[[use.sgp]]),][['GRADE']]))
 			}
 			for (grades.iter in grades) {
-				tmp.data.final <- tmp.data[tmp.data[['GRADE']]==grades.iter & !is.na(tmp.data[[use.sgp]]),]
+				tmp.data.final <- tmp.data[tmp.data[['GRADE']]==grades.iter & !is.na(tmp.data[[use.sgp]]) & !is.na(SCALE_SCORE_PRIOR),]
 				gof.draw(data.frame(PRIOR_SS=tmp.data.final[['SCALE_SCORE_PRIOR']], SGP=tmp.data.final[[use.sgp]]), content_area=content_areas.iter, year=years.iter, grade=grades.iter)
 
 			}
