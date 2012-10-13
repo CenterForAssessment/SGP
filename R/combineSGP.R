@@ -15,7 +15,6 @@ function(
 	started.at <- proc.time()
 	message(paste("Started combineSGP", date()))
 
-	variables.to.merges <- NULL
 	tmp.messages <- NULL
 
 	### Create slot.data from sgp_object@Data
