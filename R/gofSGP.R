@@ -9,7 +9,7 @@
 
 	### To prevent R CMD check warnings
 
-	VALID_CASE <- CONTENT_AREA <- YEAR <- NULL
+	VALID_CASE <- CONTENT_AREA <- YEAR <- SCALE_SCORE_PRIOR <- NULL
 
 
 	### Setup
