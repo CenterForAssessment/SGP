@@ -34,6 +34,9 @@ visualizeSGP(
            sgPlot.content_areas=NULL,
            sgPlot.districts=NULL,
            sgPlot.schools=NULL,
+           sgPlot.reports.by.school=TRUE,
+           sgPlot.instructors=NULL,
+           sgPlot.reports.by.instructor=FALSE,
            sgPlot.students=NULL,
            sgPlot.reports.by.student=FALSE,
            sgPlot.header.footer.color="#4CB9CC",
@@ -124,6 +127,16 @@ function will produce plots for all available instructors provided in the data w
   \item{sgPlot.schools}{A vector indicating which schools to produce \code{\link{studentGrowthPlot}}s for. If missing the function will use \emph{all} available 
   schools in the data to produce \code{\link{studentGrowthPlot}}s. If both \code{sgPlot.districts} and \code{sgPlot.schools} are provided the function produces 
   \code{\link{studentGrowthPlot}}s for ALL students in the districts and schools provided. 
+  }
+  \item{sgPlot.reports.by.school}{A boolean variable indicating whether the reports should be collated as single reports in a single folder by school and deposited into a 
+  \code{district/school/grade folder} hierarchy. The default is TRUE which puts the reports into their appropriate \code{district/school/grade} folder. 
+  }
+  \item{sgPlot.instructors}{A vector indicating which instructors to produce \code{\link{studentGrowthPlot}}s for. If NULL and the argument \code{sgPlot.reports.by.instructor} is TRUE,
+the argument function will use \emph{all} available instructors in the data to produce \code{\link{studentGrowthPlot}}s. If \code{sgPlot.districts} and/or \code{sgPlot.schools} are 
+provided the function produces \code{\link{studentGrowthPlot}}s for ALL students in the districts and/or schools provided. 
+  }
+  \item{sgPlot.reports.by.instructor}{A boolean variable indicating whether the reports should be collated as single reports in a single folder by school and deposited into a 
+  \code{district/school/grade folder} hierarchy. The default is TRUE which puts the reports into their appropriate \code{district/school/grade} folder. 
   }
   \item{sgPlot.students}{A vector of student \code{ID}s indicating which students to produce \code{\link{studentGrowthPlot}}s for. If missing the function will 
   use \emph{all} available students in the data to produce \code{\link{studentGrowthPlot}}s. 
