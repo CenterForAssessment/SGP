@@ -9,7 +9,7 @@ function(Scale_Scores,               ## List of Scale Scores
 	Cuts_NY1,                    ## Vector of NY1 cutscores
 	Connect_Points="Arrows",     ## Current "Arrows" or "None"
 	Cutscores,                   ## data.frame of long formatted achievement level cutscores
-	Report_Parameters) {         ## list containing Current_Year, Content_Area, State
+	Report_Parameters) {         ## list containing Current_Year, Content_Area, State, Denote_Content_Area
 
 ### Load packages
 
@@ -38,7 +38,12 @@ if (is.null(SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["arr
 }
 missing.data.symbol <- "--"
 studentGrowthPlot.year.span <- 5
-
+if (is.null(Report_Parameters$Denote_Content_Area) | Report_Parameters$Denote_Content_Area==FALSE) {
+	legend.fill.color <- "white"
+}
+if (Report_Parameters$Denote_Content_Area) {
+	legend.fill.color <- rgb(0,0,1,0.25)
+}
 
 ### Utility functions
 
@@ -152,16 +157,16 @@ interpolate.grades <- function(grades, data.year.span) {
 } 
 
 year.function <- function(year, add.sub, vec.length, output.type="numeric") {
-        if (is.numeric(year)) {
-		return(seq(from=year+add.sub, length=vec.length))
-	} else { 
+	if (length(grep("_", year) > 0)) {
                 tmp <- as.numeric(unlist(strsplit(as.character(year), "_")))+add.sub
 		if (output.type=="numeric") {
 			return(seq(from=tmp[2], length=vec.length))
 		} else {
 			return(paste(seq(from=tmp[1], length=vec.length), "-", seq(from=tmp[2], length=vec.length), sep=""))
 		}
-        }
+	} else {
+		return(seq(from=as.numeric(year)+add.sub, length=vec.length))
+	}
 }
 
 
@@ -512,7 +517,7 @@ popViewport()
 
 pushViewport(right.vp)
 
-grid.roundrect(width=unit(0.95, "native"), r=unit(.02, "snpc"), gp=gpar(lwd=1.8, col=border.color), just="center")
+grid.roundrect(width=unit(0.95, "native"), r=unit(.02, "snpc"), gp=gpar(lwd=1.8, col=border.color, fill=legend.fill.color), just="center")
 
 grid.text(x=.5, y=.875, content.area.label, gp=gpar(col=border.color, cex=1.8, fontface=2, fontfamily="Helvetica-Narrow"), 
           default.units="native") ## For PDF Versions

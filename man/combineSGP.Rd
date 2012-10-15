@@ -17,7 +17,8 @@ combineSGP(sgp_object,
 	sgp.projections.lagged=TRUE,
         sgp.projections.lagged.baseline=TRUE,
 	max.lagged.sgp.target.years.forward=4,
-	use.cohort.for.baseline.when.missing=NULL)
+	use.cohort.for.baseline.when.missing=NULL,
+	update.all.years=FALSE)
 }
 
 \arguments{
@@ -42,6 +43,9 @@ student growth percentile results.
   }
   \item{use.cohort.for.baseline.when.missing}{A boolean variable defaulting to FALSE/NULL indicating whether cohort referenced SGPs are to be used in place of baseline referenced SGPs when baseline
  referenced SGPs are not available.
+  }
+  \item{update.all.years}{A boolean argument defaulting to FALSE indicating whether \code{combineSGP} should delete previously merged variables calculated in \code{\link{analyzeSGP}} and 
+remerge all available data.
   }
 }
 

@@ -9,7 +9,8 @@ function(sgp_object,
 	outputSGP_INDIVIDUAL.content_areas=NULL,
 	outputSGP.anonymize=FALSE,
 	outputSGP.student.groups=NULL,
-	outputSGP.directory="Data") {
+	outputSGP.directory="Data",
+	outputSGP.translate.names=TRUE) {
 
         started.at.outputSGP <- proc.time()
         message(paste("\nStarted outputSGP ", date(), ": Files produced from outputSGP saved in '", outputSGP.directory, "'\n", sep=""))
@@ -64,7 +65,7 @@ function(sgp_object,
 		message(paste("\tStarted LONG data production in outputSGP", date()))
 
 		names.in.data <- which(sgp_object@Names[['names.sgp']] %in% names(sgp_object@Data))
-		setnames(sgp_object@Data, sgp_object@Names[['names.sgp']][names.in.data], sgp_object@Names[['names.provided']][names.in.data])
+		if (outputSGP.translate.names) setnames(sgp_object@Data, sgp_object@Names[['names.sgp']][names.in.data], sgp_object@Names[['names.provided']][names.in.data])
 		write.table(sgp_object@Data, file=file.path(outputSGP.directory, paste(tmp.state, "SGP_LONG_Data.txt", sep="_")), sep="|", quote=FALSE, row.names=FALSE, na="")
 		if (identical(.Platform$OS.type, "unix")) {
 			if (file.info(file.path(outputSGP.directory, paste(tmp.state, "SGP_LONG_Data.txt", sep="_")))$size > 4000000000) {
@@ -83,7 +84,7 @@ function(sgp_object,
 				setwd(tmp.working.directory)
 			}
 		}
-		setnames(sgp_object@Data, sgp_object@Names[['names.provided']][names.in.data], sgp_object@Names[['names.sgp']][names.in.data])
+		if (outputSGP.translate.names) setnames(sgp_object@Data, sgp_object@Names[['names.provided']][names.in.data], sgp_object@Names[['names.sgp']][names.in.data])
 
 		message(paste("\tFinished LONG data production in outputSGP", date(), "in", timetaken(started.at), "\n"))
 
