@@ -40,8 +40,7 @@ missing.data.symbol <- "--"
 studentGrowthPlot.year.span <- 5
 if (is.null(Report_Parameters$Denote_Content_Area) || Report_Parameters$Denote_Content_Area==FALSE) {
 	legend.fill.color <- "white"
-}
-if (Report_Parameters$Denote_Content_Area) {
+} else {
 	legend.fill.color <- rgb(0,0,1,0.25)
 }
 
