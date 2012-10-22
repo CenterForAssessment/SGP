@@ -2157,9 +2157,7 @@ if (22 %in% bPlot.styles) {
 	
 			# Get median SGP for grade, school, content area combination
 	
-				instructor.content_area.grade.median <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__GRADE__INSTRUCTOR_ENROLLMENT_STATUS"]][
-					INSTRUCTOR_NUMBER==instructor.iter & CONTENT_AREA==content_area.iter & YEAR==year.iter & GRADE==grade.iter][["MEDIAN_SGP"]]
-				if (bPlot.demo) instructor.content_area.grade.median <- median(bPlot.data$SGP, na.rm=TRUE)
+				instructor.content_area.grade.median <- median(bPlot.data$SGP, na.rm=TRUE)
 	
 			### Custom draft message with two median SGP lines
 	
