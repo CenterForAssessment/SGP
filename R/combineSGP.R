@@ -27,7 +27,7 @@ function(
 	if (is.null(state)) {
 		tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
 		if (any(sapply(c(state.name, "Demonstration", "AOB"), function(x) regexpr(toupper(x), tmp.name))!=-1)) {
-			state <- c(state.abb, "DEMO", "AOB")[which(sapply(c(state.name, "Demonstration", "AOB"), function(x) regexpr(toupper(x), tmp.name))!=-1)[1]]
+			state <- c(state.abb, "AOB", "DEMO")[which(sort(sapply(c(state.name, "Demonstration", "AOB"), function(x) regexpr(toupper(x), tmp.name)))!=-1)[1]]
 		} else {
 			tmp.messages <- c(tmp.messages, "\tNOTE: argument 'state' required for target SGP calculation. Target SGPs will not be calculated.\n")
 			sgp.projections.lagged <- sgp.projections.lagged.baseline <- FALSE

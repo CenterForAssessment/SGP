@@ -1,5 +1,6 @@
 `gofSGP` <- function(
 		sgp_object,
+		state=NULL,
 		years=NULL,
 		content_areas=NULL,
 		grades=NULL,
@@ -10,6 +11,16 @@
 	### To prevent R CMD check warnings
 
 	VALID_CASE <- CONTENT_AREA <- YEAR <- SCALE_SCORE_PRIOR <- NULL
+
+
+        ### Create state (if NULL) from sgp_object (if possible)
+
+        if (is.null(state)) {
+                tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
+                if (any(sapply(c(state.name, "Demonstration", "AOB"), function(x) regexpr(toupper(x), tmp.name))!=-1)) {
+                        state <- c(state.abb, "AOB", "DEMO")[which(sort(sapply(c(state.name, "Demonstration", "AOB"), function(x) regexpr(toupper(x), tmp.name)))!=-1)[1]]
+                }
+        }
 
 
 	### Setup
@@ -108,7 +119,11 @@
 		tmp.prior.achievement.level.percentages <- table(factor(data1[['ACHIEVEMENT_LEVEL_PRIOR']]))/(dim(data1)[1])
 		tmp.prior.achievement.level.colors <- rev(diverge_hcl(length(tmp.prior.achievement.level.percentages), h = c(180, 40), c = 255, l = c(20, 100)))
 		tmp.prior.achievement.level.percentages.labels <- paste("(", round(100*table(factor(data1[['ACHIEVEMENT_LEVEL_PRIOR']]))/(dim(data1)[1]), digits=1), "%)", sep="")
-		tmp.prior.achievement.level.labels <- row.names(tmp.prior.achievement.level.percentages)
+		if (is.null(state)) {
+			tmp.prior.achievement.level.labels <- row.names(tmp.prior.achievement.level.percentages)
+		} else {
+			tmp.prior.achievement.level.labels <- names(SGPstateData[[state]][['Student_Report_Information']][['Achievement_Level_Labels']])
+		}
 		tmp.prior.achievement.level.base.points <- cumsum(tmp.prior.achievement.level.percentages)+(seq_along(tmp.prior.achievement.level.percentages)-1)/100
 		tmp.prior.achievement.level.centers <- tmp.prior.achievement.level.base.points-tmp.prior.achievement.level.percentages/2
 		tmp.prior.achievement.level.quantiles <- tapply(data1[['SGP']], factor(data1[['ACHIEVEMENT_LEVEL_PRIOR']]), quantile, probs=1:9/10, simplify=FALSE)
@@ -137,7 +152,7 @@
 
 				### prior_achievement_level
 
-				textGrob(x=unit(0.5, "npc"), y=unit(1.15, "native"), "Median SGP Deciles by Prior Achievement Level", gp=gpar(cex=1.7), vp="prior_achievement_level"),
+				textGrob(x=unit(0.5, "npc"), y=unit(1.15, "native"), "SGP Deciles by Prior Achievement Level", gp=gpar(cex=1.7), vp="prior_achievement_level"),
 				roundrectGrob(width=0.98, r=unit(2, "mm"), vp="prior_achievement_level"),
 				rectGrob(x=rep(50, length(tmp.prior.achievement.level.base.points)), y=tmp.prior.achievement.level.base.points, 
 					width=rep(100, length(tmp.prior.achievement.level.base.points)), height=tmp.prior.achievement.level.percentages, 
@@ -155,7 +170,7 @@
 				polylineGrob(x=rep(unlist(tmp.prior.achievement.level.quantiles), each=2), 
 					y=as.numeric(rbind(rep(tmp.prior.achievement.level.base.points, each=9), rep(tmp.prior.achievement.level.base.points-tmp.prior.achievement.level.percentages, each=9))),
 					id=rep(1:length(unlist(tmp.prior.achievement.level.quantiles)), each=2), 
-					gp=gpar(lwd=c(rep(0.4,4),1.2,rep(0.4,4)), col=c(rep("grey",4),"white",rep("grey",4)), lty=c(rep(2,4),1,rep(2,4))), 
+					gp=gpar(lwd=c(rep(0.4,4),1.4,rep(0.4,4)), col=c(rep("grey75",4),"white",rep("grey75",4)), lty=c(rep(2,4),1,rep(2,4))), 
 					vp="prior_achievement_level", default.units="native"),
 
 				### table
