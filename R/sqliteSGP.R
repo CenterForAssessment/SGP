@@ -19,12 +19,13 @@ function(sgp_object,
 
         ## Create state (if NULL) from sgp_object (if possible)
 
-		if (is.null(state)) {
-			tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
-			if (any(sapply(c(state.name, "Demonstration", "AOB"), function(x) regexpr(toupper(x), tmp.name))!=1)) {
-				state <- c(state.abb, "AOB", "DEMO")[which(sort(sapply(c(state.name, "Demonstration", "AOB"), function(x) regexpr(toupper(x), tmp.name)))!=1)[1]]
-			}
-		}
+	        if (is.null(state)) {
+	                tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
+	                tmp.name.position <- sapply(c(state.name, "AOB", "DEMONSTRATION"), function(x) regexpr(toupper(x), tmp.name))
+	                if (any(tmp.name.position!=-1)) {
+	                        state <- c(state.abb, "AOB", "DEMO")[which(names(sort(tmp.name.position[tmp.name.position!=-1])[1])==c(state.name, "AOB", "DEMONSTRATION"))]
+	                }
+	        }
 
 
 	## Create/Set database
