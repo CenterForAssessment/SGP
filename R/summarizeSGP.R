@@ -452,7 +452,9 @@ function(sgp_object,
 		sgp_object@Data[["BY_GROWTH_ONLY"]] <- factor(is.na(sgp_object@Data[[my.sgp]]), levels=c(FALSE, TRUE), labels=c("Students without SGP", "Students with SGP"))
 	}
 
-	variables.for.summaries <- intersect(c(my.sgp, my.sgp.target, my.sgp.target.musu, "ACHIEVEMENT_LEVEL", "ACHIEVEMENT_LEVEL_PRIOR", unique(as.character(unlist(summary.groups)))),
+	variables.for.summaries <- intersect(c(my.sgp, my.sgp.target, my.sgp.target.musu, 
+						"ACHIEVEMENT_LEVEL", "ACHIEVEMENT_LEVEL_PRIOR", "CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STAY_UP_STATUS",
+						unique(as.character(unlist(summary.groups)))),
 					names(sgp_object@Data)) 
 
 
