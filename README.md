@@ -5,10 +5,11 @@ SGP
 Student Growth Percentiles & Percentile Growth Trajectories/Projections
 -----------------------------------------------------------------------
 
-Functions to calculate student growth percentiles and percentile growth projections/trajectories for students using large scale, longitudinal assessment 
-data. Functions use quantile regression to estimate the conditional density associated with each student's 
-achievement history. Percentile growth projections/trajectories are calculated using the coefficient matrices derived from the quantile 
-regression analyses and specify what percentile growth is required for students to reach future achievement targets.
+The **SGP** Package is an open source package built for the open source **R** software environment. The functions and data within the **SGP** pacakge are
+used to calculate student growth percentiles and percentile growth projections/trajectories for students using large scale, longitudinal assessment 
+data. Functions use quantile regression to estimate the conditional density associated with each student's achievement history. Percentile growth 
+projections/trajectories are calculated using the coefficient matrices derived from the quantile regression analyses and specify what percentile growth 
+is required for students to reach future achievement targets.
 
 * Web site: http://SchoolView.github.com/SGP/
 * CRAN Web site: http://cran.r-project.org/web/packages/SGP/
@@ -21,8 +22,6 @@ Install stable CRAN release
 install.packages("SGP")
 require(SGP)
 ```
-
-
 
 Install latest development release from Github
 ----------------------------------------------
@@ -38,8 +37,8 @@ To install from Github you might need: Windows: Rtools (http://cran.r-project.or
 Linux: apt-get install r-base-dev (or similar)
 
 
-This document provides data formatting/preparation specifications for
-utilizing the utility function of the package \cite{SGP:2011}. To help
+The following provides thorough **SGP** data formatting/preparation specifications for
+utilizing the utility function of the package (SGP:2012). To help
 illustrate these specifications there is an embedded data set, , within
 the package. The development team uses this data set frequently to test
 new features included in the package. Ensuring your data is set up in
