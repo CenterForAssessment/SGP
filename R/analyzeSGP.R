@@ -1280,7 +1280,7 @@ function(sgp_object,
 					max.order.for.progression=sgp.projections.baseline.max.order,
 					percentile.trajectory.values=c(1, SGPstateData[[state]][["Growth"]][["Cutscores"]][["Cuts"]], 99),
 					panel.data.vnames=get.panel.data.vnames("sgp.projections", sgp.iter),
-					grade.progression=sgp.iter[["sgp.grade.sequences"]][[1]],
+					grade.progression=sgp.iter[["sgp.projection.grade.sequences"]][[1]],
 					calculate.sgps=!(tail(sgp.iter[["sgp.panel.years"]], 1) %in% SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]]),
 					projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 					...)
