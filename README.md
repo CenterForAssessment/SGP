@@ -75,12 +75,14 @@ would contain all available information for a single student. For
 example, here are the first four rows (only the first 8 columns) of the
 sample data:
 
+```R
     > sgpData_LONG[1:4,1:7]
         ID LAST_NAME FIRST_NAME CONTENT_AREA   YEAR GRADE SCALE_SCORE
     1 1000079   Nixon  Daniela MATHEMATICS 2006_2007   8     463
     2 1000079   Nixon  Daniela MATHEMATICS 2007_2008   9     519
     3 1000079   Nixon  Daniela   READING 2006_2007   8     587
     4 1000079   Nixon  Daniela   READING 2007_2008   9     614
+```
 
 Notice that the same student is in each row, but that the rows represent
 different grades and content area combinations.
