@@ -5,11 +5,7 @@ SGP
 Student Growth Percentiles & Percentile Growth Trajectories/Projections
 -----------------------------------------------------------------------
 
-The **SGP** Package is an open source package built for the open source **R** software environment. The functions and data within the **SGP** pacakge are
-used to calculate student growth percentiles and percentile growth projections/trajectories for students using large scale, longitudinal assessment 
-data. Functions use quantile regression to estimate the conditional density associated with each student's achievement history. Percentile growth 
-projections/trajectories are calculated using the coefficient matrices derived from the quantile regression analyses and specify what percentile growth 
-is required for students to reach future achievement targets.
+The **SGP** Package (SGP, 2012) is an open source package built for the open source **R** software environment (R Development Core Team, 2012). The functions and data within the **SGP** pacakge are used to calculate student growth percentiles and percentile growth projections/trajectories for students using large scale, longitudinal assessment data. Functions use quantile regression to estimate the conditional density associated with each student's achievement history. Percentile growth projections/trajectories are calculated using the coefficient matrices derived from the quantile regression analyses and specify what percentile growth is required for students to reach future achievement targets.
 
 * Web site: http://SchoolView.github.com/SGP/
 * CRAN Web site: http://cran.r-project.org/web/packages/SGP/
@@ -199,3 +195,10 @@ of fit and visualization folders containing files on those two topics.
 The `state` option in the call is used to get state-specific assessment
 information (such as profiency thresholds).
 
+Bibliography
+------------
+
+Betebenner, D. W., Iwaarden, A. V., and Domingue, B. (2012). SGP: An R Package for the Calculation and Visualization of Student Growth Percentiles & Percentile Growth Trajectories.
+
+R Development Core Team (2012). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria.
+3-900051-07-0.
