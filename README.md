@@ -1,11 +1,11 @@
-SGP 
-===
+The SGP Package 
+===============
 
 
 Student Growth Percentiles & Percentile Growth Trajectories/Projections
 -----------------------------------------------------------------------
 
-The **SGP** Package (SGP, 2012) is an open source package built for the open source **R** software environment (R Development Core Team, 2012). The functions and data within the **SGP** pacakge are used to calculate student growth percentiles and percentile growth projections/trajectories for students using large scale, longitudinal assessment data. Functions use quantile regression to estimate the conditional density associated with each student's achievement history. Percentile growth projections/trajectories are calculated using the coefficient matrices derived from the quantile regression analyses and specify what percentile growth is required for students to reach future achievement targets.
+The **SGP** Package (SGP, 2012) is an open source package built for the open source **R** software environment (R Development Core Team, 2012). The classes, functions and data within the **SGP** package are used to calculate student growth percentiles and percentile growth projections/trajectories using large scale, longitudinal assessment data. The methodology uses quantile regression to estimate the conditional density associated associated with each student's achievement history. Percentile growth projections/trajectories are calculated using the coefficient matrices derived from the quantile regression analyses and specify the percentile growth required for students to reach future achievement targets.
 
 * Web site: http://SchoolView.github.com/SGP/
 * CRAN Web site: http://cran.r-project.org/web/packages/SGP/
@@ -19,6 +19,7 @@ install.packages("SGP")
 require(SGP)
 ```
 
+
 Install latest development release from Github
 ----------------------------------------------
 
@@ -30,7 +31,20 @@ require(SGP)
 ```
 
 To install from Github you might need: Windows: Rtools (http://cran.r-project.org/bin/windows/Rtools/), OS X: xcode (from the app store),
-Linux: apt-get install r-base-dev (or similar)
+Linux: apt-get install r-base-dev (or similar).
+
+Analysis of data utilizing the **SGP** methodology requires, broadly, two steps: Data Preparation and Data Analysis with these two steps consisting of several substeps:
+
+* Data Preparation
+	* Preparation of data into *LONG* format.
+
+* Data Analysis
+	* **prepareSGP**
+    * **analyzeSGP**
+    * **combineSGP**
+    * **summarizeSGP**
+    * **visualizeSGP**
+    * **outputSGP**
 
 
 The following provides thorough **SGP** data formatting/preparation specifications for
@@ -41,6 +55,10 @@ new features included in the package. Ensuring your data is set up in
 the proper format will minimize later efforts to run analyses. The goal,
 if you supply properly formatted data, is to make generation of student
 growth data and associated visualizations as easy as *abc*.
+
+
+Data Preparation
+================
 
 Data must be in long format
 ---------------------------
@@ -74,10 +92,10 @@ The following list gives the columns that are requires for the
 calculation of Student Growth Percentiles and how they should be
 formatted (if applicable).
 
--   `ID`—This column contains the unique student identifiers. Values may
-    be of either `integer` or `factor` class.
+-   `ID` This column contains the unique student identifiers. Values will be set to
+	class *character*.
 
--   `CONTENT_AREA`—This column describes the content area for a given
+-   `CONTENT_AREA` This column describes the content area for a given
     row. Most datasets would presumably contain `MATHEMATICS` and
     `READING`, but other values are possible. These values must be
     capitalized and match the states’ assessment information contained
@@ -85,23 +103,23 @@ formatted (if applicable).
     `dbetebenner@nciea.org` to have assessment data added to this
     object. These values should be a `factor`.
 
--   `YEAR`: This column gives either the academic year (e.g., `2006_2007`
+-   `YEAR` This column gives either the academic year (e.g., `2006_2007`
     as in the sample data) or the year in which the assessment took
     place (e.g., `2007`). If the latter form is used, the class of this
     column should be set to `integer`. Hyphens may NOT be used (e.g.,
     `2006-07`).
 
--   `GRADE`: The grade in which the assessment was administered. The
+-   `GRADE` The grade in which the assessment was administered. The
     column of this class should be set to `integer`.
 
--   `SCALE_SCORE`: The assessment scale score for each observation. This
+-   `SCALE_SCORE` The assessment scale score for each observation. This
     column’s class should be set to `integer` or `numeric`.
 
--   `VALID_CASE`: This column identifies those students who should be
-    included in subsequent analyses (value set to `VALID_CASE`) and
-    those that should not be included (value set to `INVALID_CASE`.
+-   `VALID_CASE` This column identifies those students who should be
+    included in subsequent analyses (value set to *VALID_CASE*) and
+    those that should not be included (value set to *INVALID_CASE*.
     Duplicate cases are often left in the data and flagged as an
-    `INVALID_CASE`.
+    *INVALID_CASE*.
 
 Secondary Columns
 -----------------
