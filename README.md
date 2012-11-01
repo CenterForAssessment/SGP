@@ -85,10 +85,10 @@ ID LAST_NAME FIRST_NAME CONTENT_AREA   YEAR GRADE SCALE_SCORE
 ```
 
 Notice that the same student is in each row, but that the rows represent
-different grades and content area combinations.
+different grades and content area combinations. This is what is meant by *long* formatted data.
 
-Required Columns
-----------------
+Required Variables
+------------------
 
 The following list gives the columns that are requires for the
 calculation of Student Growth Percentiles and how they should be
@@ -105,17 +105,17 @@ formatted (if applicable).
     Please contact @dbetebenner to have assessment data added to this
     object. These values should be of class *character*.
 
--   `YEAR` This column gives either the academic year (e.g., `2006_2007`
+-   `YEAR` This column gives either the academic year (e.g., *2006_2007*
     as in the sample data) or the year in which the assessment took
-    place (e.g., `2007`). If the latter form is used, the class of this
-    column should be set to `integer`. Hyphens may NOT be used (e.g.,
-    `2006-07`).
+    place (e.g., *2007*). If the latter form is used, the class of this
+    column should be set to *integer*. Hyphens may NOT be used (e.g.,
+    *2006-07*).
 
 -   `GRADE` The grade in which the assessment was administered. The
-    column of this class should be set to `integer`.
+    column of this class should be set to *integer*.
 
 -   `SCALE_SCORE` The assessment scale score for each observation. This
-    column’s class should be set to `integer` or `numeric`.
+    column’s class should be set to *integer* or *numeric*.
 
 -   `VALID_CASE` This column identifies those students who should be
     included in subsequent analyses (value set to *VALID_CASE*) and
@@ -132,17 +132,17 @@ visualization and reporting functionality:
 
 -   `ACHIEVEMENT_LEVEL` The achievement or proficiency category
     associated with each observed scale score. Values in this column
-    should be set to `factor`, and should match the assessment program
-    information included in contained in the `stateData` object. These
-    should be `factor` class values.
+    should be set to *factor*, and should match the assessment program
+    information included in contained in the *SGPstateData* object.
+    `ACHIEVEMENT_LEVEL` should be a *factor*.
 
--   `FIRST_NAME` Student first name. A character string or `factor`.
+-   `FIRST_NAME` Student first name. A *character* or a *factor*.
 
--   `LAST_NAME` Student last name. A character string or `factor`.
+-   `LAST_NAME` Student last name. A *character* or a *factor*.
 
 -   `SCHOOL_NUMBER` Unique identifier for the school/institution in
-    which a student is enrolled in a given year. Either an `integer` or
-    `factor` .
+    which a student is enrolled in a given year. Either an *integer* or
+    *factor*.
 
 -   `SCHOOL_NAME` Name of the school/institution in which a student is
     enrolled in a given year. A character string or `factor`.
