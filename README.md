@@ -37,15 +37,18 @@ Analysis of data utilizing the **SGP** methodology requires, broadly, two steps:
 
 * Data Preparation
 	* Preparation of data into *LONG* format.
-
 * Data Analysis
-	* **prepareSGP**
-    * **analyzeSGP**
-    * **combineSGP**
-    * **summarizeSGP**
-    * **visualizeSGP**
-    * **outputSGP**
+	* prepareSGP
+    * analyzeSGP
+    * combineSGP
+    * summarizeSGP
+    * visualizeSGP
+    * outputSGP
 
+
+
+Data Preparation
+================
 
 The following provides thorough **SGP** data formatting/preparation specifications for
 utilizing the utility function of the package (SGP:2012). To help
@@ -56,9 +59,6 @@ the proper format will minimize later efforts to run analyses. The goal,
 if you supply properly formatted data, is to make generation of student
 growth data and associated visualizations as easy as *abc*.
 
-
-Data Preparation
-================
 
 Data must be in long format
 ---------------------------
@@ -73,7 +73,7 @@ long file, each student, by content area by year by valid case
 identifier must be unique. By contrast, a row in the wide data format
 would contain all available information for a single student. For
 example, here are the first four rows (only the first 8 columns) of the
-sample data, :
+sample data:
 
     > sgpData_LONG[1:4,1:7]
         ID LAST_NAME FIRST_NAME CONTENT_AREA   YEAR GRADE SCALE_SCORE
@@ -96,12 +96,12 @@ formatted (if applicable).
 	class *character*.
 
 -   `CONTENT_AREA` This column describes the content area for a given
-    row. Most datasets would presumably contain `MATHEMATICS` and
-    `READING`, but other values are possible. These values must be
+    row. Most datasets would presumably contain *MATHEMATICS* and
+    *READING*, but other values are possible. These values must be
     capitalized and match the states’ assessment information contained
-    in the `stateData` object that comes with `SGP`. Please contact
-    `dbetebenner@nciea.org` to have assessment data added to this
-    object. These values should be a `factor`.
+    in the **SGPstateData** object that comes embedded within the **SGP** package.
+    Please contact @dbetebenner to have assessment data added to this
+    object. These values should be of class *character*.
 
 -   `YEAR` This column gives either the academic year (e.g., `2006_2007`
     as in the sample data) or the year in which the assessment took
@@ -198,20 +198,18 @@ The `var.names` list *must* include all required columns that do not
 match the conventions, as well as all secondary columns needed for
 summarization and reporting.
 
-Processing
-----------
+Data Analysis
+-------------
 
 Once a dataset is properly formatted, a comprehensive analysis can be
-conducted using `abcSGP`. An example of the call using the sample data
+conducted using **abcSGP**. An example of the call using the sample data
 is below.
 
-    DEMO_Data <- abcSGP(sgp_object=sgpData_LONG, state="DEMO")
+    Demonstration_SGP <- abcSGP(sgpData_LONG)
 
-This call not only returns the `DEMO_Data` object which contains student
-growth percentiles and other information, but it also produces goodness
-of fit and visualization folders containing files on those two topics.
-The `state` option in the call is used to get state-specific assessment
-information (such as profiency thresholds).
+This call returns an object of class *SGP* named `Demonstration_SGP` object which contains student growth percentiles and other information, but it also produces goodness of fit and visualization folders containing files on those two topics.
+The function accepts multiple arguments detailed in the 
+[documentation](https://github.com/dbetebenner/SGP/blob/master/man/abcSGP.Rd).
 
 Bibliography
 ------------
