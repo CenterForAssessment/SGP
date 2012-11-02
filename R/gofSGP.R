@@ -6,7 +6,7 @@
 		grades=NULL,
 		use.sgp="SGP",
 		output.format="PDF",
-		color.scale="red") {
+		color.scale="reds") {
 
 	### To prevent R CMD check warnings
 
@@ -17,9 +17,7 @@
 
         if (is.null(state)) {
                 tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
-                if (any(sapply(c(state.name, "Demonstration", "AOB"), function(x) regexpr(toupper(x), tmp.name))!=-1)) {
-                        state <- c(state.abb, "AOB", "DEMO")[which(sort(sapply(c(state.name, "Demonstration", "AOB"), function(x) regexpr(toupper(x), tmp.name)))!=-1)[1]]
-                }
+                state <- getStateAbbreviation(tmp.name, "gofSGP")
         }
 
 

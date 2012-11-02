@@ -26,12 +26,10 @@ function(sgp_object,
 
 	### Create state (if missing) from sgp_object (if possible)
 
-	if (is.null(state)) {
-		tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
-		if (any(sapply(c(state.name, "Demonstration", "AOB"), function(x) regexpr(toupper(x), tmp.name))!=-1)) {
-			state <- c(state.abb, "AOB", "DEMO")[which(sort(sapply(c(state.name, "Demonstration", "AOB"), function(x) regexpr(toupper(x), tmp.name)))!=-1)[1]]
-		}
-	}
+        if (is.null(state)) {
+                tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
+                state <- getStateAbbreviation(tmp.name, "outputSGP")
+        }
 
 
 	### Create relevant variables
