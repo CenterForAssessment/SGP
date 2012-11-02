@@ -1,4 +1,7 @@
-`testSGP` <- function(TEST_NUMBER, memory.profile=FALSE) {
+`testSGP` <- 
+function(
+	TEST_NUMBER, 
+	memory.profile=FALSE) {
 
 	if (missing(TEST_NUMBER)) {
 		message("\ttestSGP carries out testing of SGP package. Tests currently included in testSGP:\n")

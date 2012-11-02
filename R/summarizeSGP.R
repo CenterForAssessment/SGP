@@ -20,12 +20,11 @@ function(sgp_object,
 	
 	### Create state (if NULL) from sgp_object (if possible)
 
-	if (is.null(state)) {
-		tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
-		if (any(sapply(c(state.name, "Demonstration", "AOB"), function(x) regexpr(toupper(x), tmp.name))!=-1)) {
-			state <- c(state.abb, "AOB", "DEMO")[which(sort(sapply(c(state.name, "Demonstration", "AOB"), function(x) regexpr(toupper(x), tmp.name)))!=-1)[1]]
-		}
-	}
+        if (is.null(state)) {
+                tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
+                state <- getStateAbbreviation(tmp.name, "summarizeSGP")
+        }
+
 
 	### define summarizeSGP.baseline
 
@@ -452,7 +451,9 @@ function(sgp_object,
 		sgp_object@Data[["BY_GROWTH_ONLY"]] <- factor(is.na(sgp_object@Data[[my.sgp]]), levels=c(FALSE, TRUE), labels=c("Students without SGP", "Students with SGP"))
 	}
 
-	variables.for.summaries <- intersect(c(my.sgp, my.sgp.target, my.sgp.target.musu, "ACHIEVEMENT_LEVEL", "ACHIEVEMENT_LEVEL_PRIOR", unique(as.character(unlist(summary.groups)))),
+	variables.for.summaries <- intersect(c(my.sgp, my.sgp.target, my.sgp.target.musu, 
+						"ACHIEVEMENT_LEVEL", "ACHIEVEMENT_LEVEL_PRIOR", "CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STAY_UP_STATUS",
+						unique(as.character(unlist(summary.groups)))),
 					names(sgp_object@Data)) 
 
 
