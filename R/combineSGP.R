@@ -19,7 +19,7 @@ function(
 
 	### Create slot.data from sgp_object@Data
 
-	slot.data <- sgp_object@Data
+	slot.data <- copy(sgp_object@Data)
 
 
 	### Create state (if missing) from sgp_object (if possible)
