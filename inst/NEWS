@@ -24,6 +24,7 @@ Changes in version: SGP_0.9-9.7
 	  o Refinements of merges in 'combineSGP' to maximize speed and efficiency.
 	  o Created internal function 'getStateAbbreviation' to handle calculation of state abbreviation with SGP functions based upon supplied sgp_object argument name.
 	  o Added gofSGP function to create more thorough goodness-of-fit plots including results distributed by prior achievement level.
+	  o Added Indiana baseline coefficient matrices to SGPstateData.
 
   USER VISIBLE CHANGES:
 
