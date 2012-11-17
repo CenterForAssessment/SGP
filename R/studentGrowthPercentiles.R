@@ -762,7 +762,7 @@ function(panel.data,         ## REQUIRED
 			stop("The last element in the content.area.progression must be identical to 'my.subject' of the sgp.labels. See help page for details.")
 		}
 		if (length(content.area.progression) != length(tmp.gp)) {
-			stop("The content.area.progression vector must the same number of elements as the grade.progression vector. See help page for details.")
+			message("NOTE: The content.area.progression vector does not have the same number of elements as the grade.progression vector.")
 		}
 	}
 
