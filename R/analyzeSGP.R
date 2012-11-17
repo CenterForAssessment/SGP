@@ -1379,6 +1379,7 @@ function(sgp_object,
 
 	if (goodness.of.fit.print) gof.print(sgp_object)
 	setkey(sgp_object@Data, VALID_CASE, CONTENT_AREA, YEAR, ID) # re-key data for combineSGP, etc.
+	sgp_object@Version[["analyzeSGP"]][[as.character(gsub("-", "_", Sys.Date()))]] <- as.character(packageVersion("SGP"))
 	message(paste("Finished analyzeSGP", date(), "in", timetaken(started.at), "\n"))
 	return(sgp_object)
 } ## END analyzeSGP Function
