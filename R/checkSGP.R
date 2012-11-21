@@ -98,6 +98,15 @@ function(sgp_object, state=NULL) {
 		}
 	}
 
+	### Change SGP_TARGET names to indicate number of years
+
+	names.to.change <- c("SGP_TARGET", "SGP_TARGET_BASELINE", "SGP_TARGET_MOVE_UP_STAY_UP", "SGP_TARGET_BASELINE_MOVE_UP_STAY_UP")
+	for (i in intersect(names(sgp_object@Data), names.to.change)) {
+		message(paste("\tNOTE: Changing name '", i, "' to '", paste(i, "3_YEAR", sep="_"), "' in @Data", sep=""))
+		setnames(sgp_object@Data, i, paste(i, "3_YEAR", sep="_"))
+	}
+
+
 	### Return sgp_object	
 
 	return(sgp_object)

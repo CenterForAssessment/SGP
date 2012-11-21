@@ -8,7 +8,7 @@ function(panel.data,         ## REQUIRED
          num.prior,
          max.order.for.percentile=NULL,
          subset.grade,
-         percentile.cuts,
+         percentile.cuts=NULL,
          growth.levels, 
          use.my.knots.boundaries,
          use.my.coefficient.matrices=NULL,
@@ -53,16 +53,6 @@ function(panel.data,         ## REQUIRED
 
         .create.path <- function(labels, pieces=c("my.subject", "my.year", "my.extra.label")) {
             sub(' ', '_', toupper(sub('\\.+$', '', paste(unlist(sapply(labels[pieces], as.character)), collapse="."))))
-        }
-
-        capwords <- function(x) {
-                special.words <- c("ELA", "EMH", "II", "III", "IV")
-                if (x %in% special.words) return(x)
-                s <- gsub("_", " ", x)
-                s <- strsplit(s, split=" ")[[1]]
-                s <- paste(toupper(substring(s, 1,1)), tolower(substring(s, 2)), sep="", collapse=" ")
-                s <- strsplit(s, split="-")[[1]]
-                paste(toupper(substring(s, 1,1)), substring(s, 2), sep="", collapse="-")
         }
 
 	pretty_year <- function(x) sub("_", "-", x)
@@ -566,7 +556,7 @@ function(panel.data,         ## REQUIRED
 		if (!(all(sgp.quantiles > 0 & sgp.quantiles < 1))) {
 			stop("Specify sgp.quantiles as as a vector of probabilities between 0 and 1.")
 	}}
-	if (!missing(percentile.cuts)) {
+	if (!is.null(percentile.cuts)) {
 		if (sgp.quantiles != "PERCENTILES") {
 			stop("percentile.cuts only appropriate for growth percentiles. Set sgp.quantiles to Percentiles to produce requested percentile.cuts.")
 		}
@@ -762,7 +752,7 @@ function(panel.data,         ## REQUIRED
 			stop("The last element in the content.area.progression must be identical to 'my.subject' of the sgp.labels. See help page for details.")
 		}
 		if (length(content.area.progression) != length(tmp.gp)) {
-			message("NOTE: The content.area.progression vector does not have the same number of elements as the grade.progression vector.")
+			stop("The content.area.progression vector must the same number of elements as the grade.progression vector. See help page for details.")
 		}
 	}
 
@@ -870,7 +860,7 @@ function(panel.data,         ## REQUIRED
 					} ## END k loop
 				} ## END CSEM analysis
 
-				if (!missing(percentile.cuts)) {
+				if (!is.null(percentile.cuts)) {
 					tmp.percentile.cuts[[j]] <- data.table(ID=tmp.data[["ID"]], .get.percentile.cuts(tmp.predictions))
 				}
 				if ((goodness.of.fit | return.prior.scale.score) & j==1) prior.ss <- tmp.data[, tail(head(SS, -1),1), with=FALSE]
@@ -924,7 +914,7 @@ function(panel.data,         ## REQUIRED
 			Simulated_SGPs[[tmp.path]] <- rbind.fill(Simulated_SGPs[[tmp.path]], .unget.data.table(simulation.data, ss.data)) 
 		}
 
-		if (!missing(percentile.cuts)){
+		if (!is.null(percentile.cuts)){
 			cuts.best <- data.table(rbind.all(tmp.percentile.cuts), key="ID")
 			cuts.best <- cuts.best[c(which(!duplicated(cuts.best))[-1]-1, nrow(cuts.best))][,-1, with=FALSE]
 			quantile.data <- cbind(quantile.data, cuts.best)

@@ -6,13 +6,14 @@ The function capwords converts characters to mixed case character as intelligent
 }
 
 \usage{
-capwords(x, special.words)
+capwords(x,
+	 special.words = c("ELA", "II", "III", "IV", "EMH", "HS", "MS", "ES", "SES", "IEP", "ELL", "MAD", "SD", "US", "SGP"))
 }
 
 \arguments{
   \item{x}{A character string to be converted to mixed case.  
   }
-  \item{special.words}{A character string of words, abbreviations or other text fragments to be ignored in the conversion.   Defaults are "ELA", "II", "III", "IV", "EMH", "HS", "MS", "ES", "SES", "IEP", "ELL", "MAD", "SD", "US" and "SGP".
+  \item{special.words}{A character vector (see default above), specifying words to not convert to mixed case.  
   }
 }
 

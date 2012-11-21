@@ -369,7 +369,7 @@
 	## Create ACHIEVEMENT_LEVEL is it doesn't exist
 	
 	if (!"ACHIEVEMENT_LEVEL" %in% names(sgp_object@Data) & !is.null(SGPstateData[[state]][["Achievement"]][["Cutscores"]])) {
-		sgp_object <- achievement_level_recode(sgp_object, state=state)
+		sgp_object@Data <- getAchievementLevel(sgp_object@Data, state=state)
 		message(paste("\tNOTE: Added variable ACHIEVEMENT_LEVEL to @Data using", state, "cutscores embedded in SGPstateData."))
 	}
 

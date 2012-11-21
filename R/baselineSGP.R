@@ -201,7 +201,7 @@ function(sgp_object,
         return(kb[["Knots_Boundaries"]])
     }
 
-# stop("cok$")
+
     #################################################################################
     ###
     ### Calculate/retrieve baseline coefficient matrices if requested

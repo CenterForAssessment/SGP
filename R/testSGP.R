@@ -57,10 +57,10 @@ function(
 
 	### TEST of SGP_TARGET variable
 
-	if (identical(sum(Demonstration_SGP@Data$SGP_TARGET, na.rm=TRUE), 7796624L)) {
-		cat("Test of variable SGP_TARGET: OK", fill=TRUE)
+	if (identical(sum(Demonstration_SGP@Data$SGP_TARGET_3_YEAR, na.rm=TRUE), 7796624L)) {
+		cat("Test of variable SGP_TARGET_3_YEAR: OK", fill=TRUE)
 	} else {
-		cat("Test of variable SGP_TARGET: FAIL", fill=TRUE)
+		cat("Test of variable SGP_TARGET_3_YEAR: FAIL", fill=TRUE)
 	}
 
 	### TEST of SGP_TARGET_MOVE_UP_STAY_UP variable
