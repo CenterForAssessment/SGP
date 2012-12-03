@@ -331,7 +331,7 @@ if ("studentGrowthPlot" %in% plot.types) {
 	get.years.content_areas.grades <- function(state) {
 		tmp.list <- list()
 		for (i in names(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]])) {
-			tmp.df <- data.frame(GRADE=SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[i]])
+			tmp.df <- data.frame(GRADE=as.character(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[i]]), stringsAsFactors=FALSE)
 			if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[i]])) {
 				tmp.df <- CJ(tmp.df$GRADE, SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[i]]:tmp.last.year)
 			} else {
@@ -577,7 +577,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			tmp.ids <- list()
 			setkeyv(sgp_object@Data, c("VALID_CASE", "YEAR", "GRADE"))
 			tmp.grades.reported <- unique(unlist(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]]))
-			tmp.grades.reported <- tmp.grades.reported[tmp.grades.reported %in% unique(sgp_object@Data)["VALID_CASE"][["GRADE"]]]
+			tmp.grades.reported <- as.character(tmp.grades.reported[tmp.grades.reported %in% unique(sgp_object@Data)["VALID_CASE"][["GRADE"]]])
 			for (i in seq_along(tmp.grades.reported)) {
 				tmp.ids[[i]] <- as.character(sample(unique(sgp_object@Data[SJ("VALID_CASE", tmp.last.year, tmp.grades.reported[i])]$ID), 10))
 			}

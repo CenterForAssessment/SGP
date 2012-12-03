@@ -36,5 +36,4 @@ function(list_1,
 		}
 	}
 	list_1[which(names(list_1) != "Panel_Data")]
-
 } ### END mergeSGP

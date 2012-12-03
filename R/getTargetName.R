@@ -28,5 +28,4 @@ function(target.type="sgp.projections.lagged",
 	if (target.type=="sgp.projections.lagged.baseline" & target.level=="MOVE_UP_STAY_UP") {
 		return(paste(target.label, "BASELINE_MOVE_UP_STAY_UP", target.years, "YEAR", sep="_"))
 	}
-
-} ### END get.my.sgp.target
+} ### END getTargetName

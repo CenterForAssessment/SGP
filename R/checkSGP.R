@@ -1,5 +1,6 @@
 `checkSGP` <-
-function(sgp_object, state=NULL) {
+function(sgp_object, 
+	state=NULL) {
 
 	### Check if sgp_object is of class SGP
 
@@ -24,7 +25,7 @@ function(sgp_object, state=NULL) {
 		if (id.only){
 			return("ID" %in% names(my.data) && !is.character(my.data[["ID"]]))
 		} else {
-			tmp.vars <- c("ID", "VALID_CASE", "CONTENT_AREA", "YEAR")
+			tmp.vars <- c("ID", "VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE")
 			return(sapply(tmp.vars, function(x) x %in% names(my.data) && !is.character(my.data[[x]]), USE.NAMES=FALSE))
 		}
 	}
@@ -36,8 +37,8 @@ function(sgp_object, state=NULL) {
 			message(paste("\tNOTE: ID in", data.slot, "converted from class factor to character to accomodate data.table >= 1.8.0 changes."))
 			my.data[["ID"]] <- as.character(my.data[["ID"]])			
 		} else {
-			for (my.variable in c("ID", "VALID_CASE", "CONTENT_AREA", "YEAR")[convert.tf]) {
-				message(paste("\tNOTE:", my.variable, "in", data.slot, "converted from class factor to character to accomodate data.table >= 1.8.0 changes."))
+			for (my.variable in c("ID", "VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE")[convert.tf]) {
+				message(paste("\tNOTE:", my.variable, "in", data.slot, "converted from class ", class(my.data[[my.variable]]), " to character to accomodate data.table >= 1.8.0 changes."))
 				my.data[[my.variable]] <- as.character(my.data[[my.variable]])
 			}
 		}

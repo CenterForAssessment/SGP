@@ -77,7 +77,7 @@ function(sgp_object,
 				tmp.working.directory <- getwd()
 				setwd(file.path(outputSGP.directory))
 				if (paste(tmp.state, "SGP_LONG_Data.txt.zip", sep="_") %in% list.files()) file.remove(paste(tmp.state, "SGP_LONG_Data.txt.zip", sep="_"))
-				suppressWarnings(
+				suppressMessages(
 					zip(paste(tmp.state, "SGP_LONG_Data.txt.zip", sep="_"), paste(tmp.state, "SGP_LONG_Data.txt", sep="_"))
 				)
 				setwd(tmp.working.directory)
@@ -111,9 +111,9 @@ function(sgp_object,
 		started.at <- proc.time()
 		message(paste("\tStarted WIDE data production in outputSGP", date()))
 
-		long_data_tmp <- sgp_object@Data
+		long_data_tmp <- copy(sgp_object@Data)
 		setkeyv(long_data_tmp, c("VALID_CASE", "YEAR", "CONTENT_AREA", "ID"))
-		suppressWarnings(invisible(long_data_tmp[,YEAR_BY_CONTENT_AREA := paste(YEAR, CONTENT_AREA, sep=".")]))
+		suppressMessages(invisible(long_data_tmp[,YEAR_BY_CONTENT_AREA := paste(YEAR, CONTENT_AREA, sep=".")]))
 		assign(paste(tmp.state, "SGP_WIDE_Data", sep="_"), reshape(long_data_tmp["VALID_CASE"], idvar="ID", 
 			timevar="YEAR_BY_CONTENT_AREA", drop=c("VALID_CASE", "CONTENT_AREA", "YEAR"), direction="wide"))
 		eval(parse(text=paste("setkey(", tmp.state, "_SGP_WIDE_Data, ID)", sep="")))
@@ -133,7 +133,7 @@ function(sgp_object,
 				tmp.working.directory <- getwd()
 				setwd(file.path(outputSGP.directory))
 				if (paste(tmp.state, "SGP_WIDE_Data.txt.zip", sep="_") %in% list.files()) file.remove(paste(tmp.state, "SGP_WIDE_Data.txt.zip", sep="_"))
-				suppressWarnings(
+				suppressMessages(
 					zip(paste(tmp.state, "SGP_WIDE_Data.txt.zip", sep="_"), paste(tmp.state, "SGP_WIDE_Data.txt", sep="_"))
 				)
 				setwd(tmp.working.directory)
@@ -470,7 +470,7 @@ function(sgp_object,
 			tmp.working.directory <- getwd()
 			setwd(file.path(outputSGP.directory, "SchoolView"))
 			if ("STUDENT_GROWTH.dat.zip" %in% list.files()) file.remove("STUDENT_GROWTH.dat.zip")
-			suppressWarnings(
+			suppressMessages(
 				zip("STUDENT_GROWTH.dat.zip", "STUDENT_GROWTH.dat")
 			)
 			setwd(tmp.working.directory)

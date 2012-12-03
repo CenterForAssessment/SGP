@@ -166,27 +166,6 @@
 		return(data.frame(variable.names[order(variable.names$column.provided),][,c("names.provided", "names.sgp", "names.type", "names.info", "names.output")], row.names=NULL, stringsAsFactors=FALSE))
 	} ## END getNames
 
-	## create.knots.boundaries
-
-	create.knots.boundaries <- function(tmp.data) {
-		tmp.grade.list <- tmp.list <- list()
-		for (my.list.label in unique(tmp.data["VALID_CASE"][["CONTENT_AREA"]])) {
-			tmp.grade.list[[my.list.label]] <- unique(tmp.data[SJ("VALID_CASE", my.list.label)][["GRADE"]])
-			for (j in seq_along(tmp.grade.list[[my.list.label]])) {
-				tmp.list[[my.list.label]][[3*j-2]] <-
-					round(as.vector(quantile(subset(tmp.data, VALID_CASE=="VALID_CASE" & CONTENT_AREA==my.list.label & GRADE==tmp.grade.list[[my.list.label]][j], select="SCALE_SCORE"), 
-						probs=c(0.2,0.4,0.6,0.8), na.rm=TRUE)), digits=3)
-				tmp.list[[my.list.label]][[3*j-1]] <-
-					round(as.vector(extendrange(subset(tmp.data, VALID_CASE=="VALID_CASE" & CONTENT_AREA==my.list.label & GRADE==tmp.grade.list[[my.list.label]][j], select="SCALE_SCORE"), f=0.1)), digits=3)
-				tmp.list[[my.list.label]][[3*j]] <-
-					round(as.vector(extendrange(subset(tmp.data, VALID_CASE=="VALID_CASE" & CONTENT_AREA==my.list.label & GRADE==tmp.grade.list[[my.list.label]][j], select="SCALE_SCORE"), f=0.0)), digits=3)
-			}
-			names(tmp.list[[my.list.label]]) <- paste(rep(c("knots_", "boundaries_", "loss.hoss_"), length(tmp.grade.list[[my.list.label]])), 
-				rep(tmp.grade.list[[my.list.label]], each=3), sep="")
-		}
-		return(tmp.list)
-	} ## END create.knots.boundaries
-
 	## getVersion
 	
 	getVersion <- function(data) {
@@ -306,7 +285,7 @@
 		}
 
 		if (is.null(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]])) {
-			SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]] <- create.knots.boundaries(data@Data)
+			SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]] <- createKnotsBoundaries(data@Data)
 			assign("SGPstateData", SGPstateData, envir=globalenv())
 			assign(paste(state, "Knots_Boundaries", sep="_"), SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]])
 			save(list=paste(state, "Knots_Boundaries", sep="_"), file=paste(state, "Knots_Boundaries.Rdata", sep="_"))
@@ -333,7 +312,7 @@
 		}
 
 		if (is.null(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]])) {
-			SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]] <- create.knots.boundaries(data)
+			SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]] <- createKnotsBoundaries(data)
 			assign("SGPstateData", SGPstateData, envir=globalenv())
 			assign(paste(state, "Knots_Boundaries", sep="_"), SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]])
 			save(list=paste(state, "Knots_Boundaries", sep="_"), file=paste(state, "Knots_Boundaries.Rdata", sep="_"))

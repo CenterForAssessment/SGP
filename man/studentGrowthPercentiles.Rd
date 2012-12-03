@@ -13,8 +13,9 @@ studentGrowthPercentiles(panel.data,
                          sgp.labels,
                          panel.data.vnames,
                          grade.progression,
-                         grade.progression.label=FALSE,
                          content.area.progression,
+                         year.progression,
+                         year.progression.lags=NULL,
                          num.prior,
                          max.order.for.percentile=NULL,
                          subset.grade,                                     
@@ -39,7 +40,8 @@ studentGrowthPercentiles(panel.data,
                          convert.using.loss.hoss=TRUE,                
                          goodness.of.fit=TRUE,
                          return.prior.scale.score=TRUE,
-                         print.time.taken=TRUE)
+                         print.time.taken=TRUE,
+                         parallel.config=NULL)
 }
 
 \arguments{
@@ -61,10 +63,13 @@ studentGrowthPercentiles(panel.data,
   in the supplied panel.data would be removed.  Also can be combined with an appropriate \code{panel.data.vnames} argument to remove a year of data would analyze students 
   progressing from 7 to 8 to 10. 
   }
-  \item{grade.progression.label}{A boolean variable (defaults to FALSE) indicating whether the coefficient matrix should carry an extra label indicating the exact grade progression.
-  This is an experimental feature and users not exactly familiar with how this functions should stick with the default.
-  }
   \item{content.area.progression}{Character vector of content area names of same length as grade.progression to be provided if not all identical to 'my.subject' in sgp.labels list.  Vector will be used to populate the @Content_Areas slot of the splineMatrix class coefficient matrices.  If missing, 'sgp.labels$my.subject' is repeated in a vector length equal to grade.progression.
+  }
+  \item{year.progression}{Character vector of years associated with grade and content area progressions. If missing then the year.progression is assumed to end in 'my.year' provided in
+sgp.labels and be of the same length as grade.progression.  Vector will be used to populate the @Years slot of the splineMatrix class coefficient matrices.
+  }
+  \item{year.progression.lags}{A numeric vector indicating the time lags/span between observations in the columns supplied to 'studentGrowthPercentiles'. The default, NULL, allows the function
+to calculate the lags/differences based upon the supplied years.
   }
   \item{num.prior}{Number of prior scores one wishes to use in the analysis. Defaults to \code{num.panels-1}. 
   If \code{num.prior=1}, then only 1st order growth percentiles are computed, if \code{num.prior=2}, then 1st and 2nd order are computed, 
@@ -145,6 +150,8 @@ studentGrowthPercentiles(panel.data,
    achievement and student growth.
   }
   \item{print.time.taken}{Boolean argument (defaults to TRUE) indicating whether to print message indicating information on studentGrowthPercentile analysis and time taken.
+  }
+  \item{parallel.config}{parallel configuration argument allowing for parallel analysis by 'tau'. Defaults to NULL.
   }
 } 
 
