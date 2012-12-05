@@ -66,17 +66,7 @@ function(sgp_object,
 			}
 
 			grades <- type.convert(as.character(grades), as.is=TRUE)
-
-			### Calculate 'baseline.grade.sequences.lags' if not supplied (NULL)
-
-			if (is.null(baseline.grade.sequences.lags)) {
-				if (is.numeric(grades)) {
-					baseline.grade.sequences.lags <- diff(grades)
-				} else {
-					message("\tNOTE: No 'baseline.grade.sequences.lags' supplied with 'sgp.baseline.config'. Lags for supplied character 'baseline.grade.sequences' will be assumed to be 1 year.")
-					baseline.grade.sequences.lags <- rep(1, length(grades)-1)
-				}
-			} ### END if (is.null(baseline.grade.sequences.lags))
+			if (is.null(baseline.grade.sequences.lags)) baseline.grade.sequences.lags <- rep(1, length(grades)-1)
 
 			tmp.years.sequence <- list()
 			tmp.years.sequence <- lapply(years, function(x) year.increment(year=x, increment=c(0,cumsum(baseline.grade.sequences.lags))))
@@ -155,16 +145,13 @@ function(sgp_object,
 
 	if (is.null(SGPstateData[[state]][["Baseline_splineMatrix"]])) {
 		
-		tmp.list <- list()
-
 		if (is.null(sgp.baseline.config)) {
 			sgp.baseline.config <- getSGPBaselineConfig(sgp_object, content_areas, grades, sgp.baseline.panel.years)
 		} else {
-			if (!all(sapply(lapply(sgp.baseline.config, names), 
-				function(x) x %in% c("baseline.content.areas", "baseline.panel.years", "baseline.grade.sequences", "baseline.grade.sequences.lags")))) {
-					stop("Please specify an appropriate list of SGP function labels (sgp.baseline.config).  See help page for details.")
-			}
+			sgp.baseline.config <- checkConfig(sgp.baseline.config, "Baseline")
 		}
+
+		tmp.list <- list()
 
 		for (sgp.iter in seq_along(sgp.baseline.config)) {
 			tmp.list[[sgp.iter]] <- baselineSGP_Internal(

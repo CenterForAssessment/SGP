@@ -17,7 +17,7 @@ function(sgp_object,
 	if (!is.null(grades)) {
 		grades <- type.convert(as.character(grades), as.is=TRUE)
 		if (!is.numeric(grades)) {
-			stop("\tNOTE: Automatic configuration of analyses is currently only available for integer grade levels. Manual specification of 'sgp.config' is required for non-traditional grade and course progressions.")
+			stop("\tNOTE: Automatic configuration of analyses is currently only available for integer grade levels. Manual specification of 'sgp.config' is required for non-traditional End of Course grade and course progressions.")
 		} 
 	}
 
@@ -33,7 +33,7 @@ function(sgp_object,
 		tmp.sgp.projection.grade.sequences <- lapply(head(tmp.last.year.grades, -1), function(x) tail(tmp.unique.data$GRADE[tmp.unique.data$GRADE <= x], length(tmp.unique.data$YEAR)))
 		if (!is.null(grades)) {
 			tmp.sgp.grade.sequences <- tmp.sgp.grade.sequences[sapply(tmp.sgp.grade.sequences, function(x) tail(x,1)) %in% grades]
-			tmp.sgp.projection.grade.sequences <- tmp.sgp.projection.grade.sequences[sapply(tmp.sgp.grade.sequences, function(x) tail(x,1)) %in% grades]
+			tmp.sgp.projection.grade.sequences <- tmp.sgp.projection.grade.sequences[sapply(tmp.sgp.projection.grade.sequences, function(x) tail(x,1)) %in% grades]
 		}
 		.sgp.grade.sequences <- lapply(tmp.sgp.grade.sequences, function(x) if (length(x) > 1) x[(tail(x,1)-x) <= length(.sgp.panel.years)-1])
 		.sgp.projection.grade.sequences <- lapply(tmp.sgp.projection.grade.sequences, function(x) if (length(x) > 1) x[(tail(x,1)-x) <= length(.sgp.panel.years)-1] else x)
@@ -59,27 +59,38 @@ function(sgp_object,
 		par.sgp.config <- list(); cnt <- 1
 		for (a in names(sgp.config)) {
 
-			tmp.matrices <- tmp_sgp_object[["Coefficient_Matrices"]][[paste(strsplit(a, "\\.")[[1]][1], ".BASELINE", sep="")]]
+			tmp.matrices <- tmp_sgp_object[['Coefficient_Matrices']][[paste(strsplit(a, "\\.")[[1]][1], ".BASELINE", sep="")]]
 			tmp.matrices.content.areas.by.grades <- lapply(tmp.matrices, getsplineMatrixInfo)
 
-			for (b in seq_along(sgp.config[[a]][["sgp.grade.sequences"]])) {
+			for (b in seq_along(sgp.config[[a]][['sgp.grade.sequences']])) {
 
 				### Create a per sgp.grade.sequence branch in par.sgp.config list
 
 				par.sgp.config[[cnt]] <- sgp.config[[a]]
-				par.sgp.config[[cnt]][["sgp.grade.sequences"]] <- tmp.gp <- sgp.config[[a]][["sgp.grade.sequences"]][b]
-				par.sgp.config[[cnt]][["sgp.projection.grade.sequences"]] <- sgp.config[[a]][["sgp.projection.grade.sequences"]][b]
-				par.sgp.config[[cnt]][["sgp.exact.grade.progression"]] <- sgp.config[[a]][["sgp.exact.grade.progression"]][b]
-				par.sgp.config[[cnt]][["sgp.panel.years"]] <- tail(par.sgp.config[[cnt]][["sgp.panel.years"]], length(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]]))
-				par.sgp.config[[cnt]][["sgp.content.areas"]] <- tail(par.sgp.config[[cnt]][["sgp.content.areas"]], length(par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]]))
+				par.sgp.config[[cnt]][['sgp.grade.sequences']] <- tmp.gp <- sgp.config[[a]][['sgp.grade.sequences']][b]
+				par.sgp.config[[cnt]][['sgp.projection.grade.sequences']] <- sgp.config[[a]][['sgp.projection.grade.sequences']][b]
+				par.sgp.config[[cnt]][['sgp.exact.grade.progression']] <- sgp.config[[a]][['sgp.exact.grade.progression']][b]
 				
 				###  Set sgp.exact.grade.progression=TRUE if using multiple content areas in a single year as priors.
 
-				if (any(duplicated(paste(par.sgp.config[[cnt]][["sgp.panel.years"]][[1]], par.sgp.config[[cnt]][["sgp.grade.sequences"]][[1]], sep=".")))) {  
-					par.sgp.config[[cnt]][["sgp.exact.grade.progression"]] <- TRUE
+				if (any(duplicated(paste(par.sgp.config[[cnt]][['sgp.panel.years']][[1]], par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]], sep=".")))) {  
+					par.sgp.config[[cnt]][['sgp.exact.grade.progression']] <- TRUE
 				} else {
-					if (is.null(par.sgp.config[[cnt]][["sgp.exact.grade.progression"]])) par.sgp.config[[cnt]][["sgp.exact.grade.progression"]] <- FALSE
+					if (is.null(par.sgp.config[[cnt]][['sgp.exact.grade.progression']])) par.sgp.config[[cnt]][['sgp.exact.grade.progression']] <- FALSE
 				}
+
+				### Create index and identify years and content areas from sgp.panel.years
+
+				if (is.numeric(type.convert(as.character(par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]])))) {
+					grade.span <- seq(min(par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]]), max(par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]]))
+					index <- match(par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]], grade.span) 
+					if (!sgp.config.drop.nonsequential.grade.progression.variables)  index <- seq_along(index) 
+					par.sgp.config[[cnt]][['sgp.panel.years']] <- tail(par.sgp.config[[cnt]][['sgp.panel.years']], max(index))[index]
+					par.sgp.config[[cnt]][['sgp.content.areas']] <- tail(par.sgp.config[[cnt]][['sgp.content.areas']], max(index))[index]
+				}
+
+				par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]] <- as.character(par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]])
+
 
 				### Additional arguments associated with baseline analyses
 
@@ -118,11 +129,11 @@ function(sgp_object,
 	if (is.null(sgp.config)) {
 		tmp.sgp.config <- tmp.years <- list()
 		if (is.null(content_areas)) {
-			content_areas <- unique(sgp_object@Data["VALID_CASE"][["CONTENT_AREA"]])
+			content_areas <- unique(sgp_object@Data["VALID_CASE"][['CONTENT_AREA']])
 		}
 		if (is.null(years)) {
 			for (i in content_areas) {
-				tmp.years[[i]] <- sort(tail(unique(sgp_object@Data[SJ("VALID_CASE", i)][["YEAR"]]), -2), decreasing=TRUE)
+				tmp.years[[i]] <- sort(tail(unique(sgp_object@Data[SJ("VALID_CASE", i)][['YEAR']]), -2), decreasing=TRUE)
 			}
 		} else {
 			for (i in content_areas) {

@@ -178,7 +178,7 @@ function(panel.data,         ## REQUIRED
 
 		if (is.null(year.progression.lags)) {		
 			if (year.progression[1] != "BASELINE") {
-				year.progression.lags <- list(diff(as.numeric(sapply(strsplit(tail(year.progression, k+1), '_'), '[', 1))))
+				year.progression.lags <- diff(as.numeric(sapply(strsplit(tail(year.progression, k+1), '_'), '[', 1)))
 			} else {
 				year.progression.lags <- rep(1, k)
 			}
@@ -781,10 +781,6 @@ function(panel.data,         ## REQUIRED
 				}
 			}
 		} 
-##else {
-##			tmp.knots <- c(Knots_Boundaries[[tmp.path.knots.boundaries]], .get.knots.boundaries(ss.data, by.grade))
-##			Knots_Boundaries[[tmp.path.knots.boundaries]] <- tmp.knots[!duplicated(names(tmp.knots))]
-##		}
 	}
 
 	### QR Calculations: coefficient matrices are saved/read into/from panel.data[["Coefficient_Matrices"]]
@@ -797,10 +793,64 @@ function(panel.data,         ## REQUIRED
 			coefficient.matrix.priors <- seq(num.prior)
 		}
 		for (k in coefficient.matrix.priors) {
-			Coefficient_Matrices[[tmp.path.coefficient.matrices]][[get.coefficient.matrix.label(tmp.last, k)]] <- .create.coefficient.matrices(ss.data, k, by.grade) 
+			Coefficient_Matrices[[tmp.path.coefficient.matrices]][['TMP_NAME']] <- .create.coefficient.matrices(ss.data, k, by.grade)
+			names(Coefficient_Matrices[[tmp.path.coefficient.matrices]])[length(Coefficient_Matrices[[tmp.path.coefficient.matrices]])] <- get.coefficient.matrix.label(tmp.last, k)
 		}
 	}
 	matrix.names <- names(Coefficient_Matrices[[tmp.path.coefficient.matrices]])
+
+
+#########################################################################################
+###
+### Construction zone
+###
+#########################################################################################
+
+
+getsplineMatrix <- function(
+			my.matrices,
+			my.matrix.order,
+			my.matrix.content.area.progression,
+			my.matrix.grade.progression,
+			my.matrix.time.progression,
+			my.matrix.time.progression.lags,
+			return.only.orders=FALSE) {
+
+	Matrix_TF <- Order <- NULL
+
+	splineMatrix_equality <- function(my.matrices, my.order=NULL) {
+		tmp.df <- data.frame()
+		if (is.null(my.order)) my.order <- 2:length(year.progression)
+		for (i in seq_along(my.order)) {
+			tmp.df[i,1] <- identical(my.matrices@Content_Areas[[1]], tail(content.area.progression, my.order[i])) & 
+					identical(my.matrices@Grade_Progression[[1]], tail(grade.progression, my.order[i])) & 
+					identical(my.matrices@Time[[1]], tail(year.progression, my.order[i]))
+			tmp.df[i,2] <-	my.order[i]-1
+		}
+		names(tmp.df) <- c("Matrix_TF", "Order")
+		return(tmp.df)
+	}
+
+	if (return.only.orders) {
+		tmp.list <- lapply(my.matrices, splineMatrix_equality)
+		tmp.orders <- as.numeric(subset(tmp.list[sapply(tmp.list, function(x) any(x[['Matrix_TF']]))[1]][[1]], Matrix_TF==TRUE, select=Order))
+		return(tmp.orders)
+	} else {
+		my.tmp.index <- which(sapply(lapply(my.matrices, splineMatrix_equality, my.iter=length(year.progression)), function(x) x[['Matrix_TF']]))
+		if (length(my.tmp.index)==0) {
+			stop(paste("\tNOTE: No splineMatrix exists with designated content.area.progression:", content.area.progression, "year.progression:", year.progression, "and grade.progression", grade.progression))
+		} else {
+			return(my.matrices[[my.tmp.index]])
+		}
+	}
+
+} ### END getsplineMatrix
+
+########################################################################################################
+###
+### END Construction zone
+###
+########################################################################################################
 
 	### Calculate growth percentiles (if requested),  percentile cuts (if requested), and simulated confidence intervals (if requested)
 
@@ -814,14 +864,12 @@ function(panel.data,         ## REQUIRED
 			max.order <- num.prior
 		}
 		if (exact.grade.progression.sequence) {
-			tmp.quantiles <- tmp.percentile.cuts <- tmp.csem.quantiles <- list(); orders <- max.order
-			# if (goodness.of.fit) { # either switch goodness.of.fit to false or change creation of prior.ss
-				# tmp.messages <- c(tmp.messages, "\tNOTE: Goodness of Fit plots will not be produced when exact.grade.progression.sequence = TRUE.\n")
-				# goodness.of.fit <- FALSE
-			# }
+			orders <- max.order
 		} else {
-			tmp.quantiles <- tmp.percentile.cuts <- tmp.csem.quantiles <- list(); orders <- 1:max.order
+			orders <- seq(max.order)
 		}
+
+		tmp.quantiles <- tmp.percentile.cuts <- tmp.csem.quantiles <- list()
 
 		for (j in orders) {
 			tmp.data <- .get.panel.data(ss.data, j, by.grade)

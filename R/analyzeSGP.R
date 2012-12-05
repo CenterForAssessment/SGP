@@ -126,18 +126,14 @@ function(sgp_object,
 	#######################################################################################################################
 
 	if (sgp.percentiles.baseline) {
+
 		if (is.null(SGPstateData[[state]][["Baseline_splineMatrix"]])) {
 			if (is.null(sgp.baseline.config)) {
 				sgp.baseline.config <- getSGPBaselineConfig(sgp_object, content_areas, grades, sgp.baseline.panel.years)
 			} else {
-				for (i in names(sgp.baseline.config)) {
-					if (!identical(names(sgp.baseline.config[[i]]), c("baseline.content.areas", "baseline.panel.years", "baseline.grade.sequences"))) {
-						stop("Please specify an appropriate list of SGP function labels (sgp.baseline.config).	See help page for details.")
-					}
-				}
 				sgp.baseline.config <- checkConfig(sgp.baseline.config, "Baseline")
 			}
-
+		
 			message("\n\tStarted Baseline Coefficient Matrix Calculation:\n")
 			
 			if (!is.null(parallel.config)) { ### PARALLEL BASELINE COEFFICIENT MATRIX CONSTRUCTION
@@ -164,11 +160,11 @@ function(sgp_object,
 								sgp.baseline.config=list(sgp.iter), ## NOTE: list of sgp.iter must be passed for proper iteration
 								return.matrices.only=TRUE,
 								calculate.baseline.sgps=FALSE))
-						
-						tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp)))
-								rm(tmp)
-					} # END if (SNOW)
 					
+						tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp)))
+						rm(tmp)
+					} # END if (SNOW)
+						
 					if (par.start$par.type=="MULTICORE") {
 						tmp <- mclapply(sgp.baseline.config, function(sgp.iter) baselineSGP(
 									sgp_object,
@@ -192,7 +188,7 @@ function(sgp_object,
 						return.matrices.only=TRUE,
 						calculate.baseline.sgps=FALSE)
 				}
-			tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp)))
+				tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp)))
 			}
 
 			assign(paste(state, "_Baseline_Matrices", sep=""), list())
@@ -204,7 +200,7 @@ function(sgp_object,
 		} else {
 			tmp_sgp_object <- mergeSGP(tmp_sgp_object, SGPstateData[[state]][["Baseline_splineMatrix"]])
 		}
-	suppressMessages(gc()) # clean up
+		suppressMessages(gc()) # clean up
 	} # END Get/Compute baseline coefficient matrices
 
 
@@ -829,19 +825,18 @@ function(sgp_object,
 
 		setkey(sgp_object@Data, VALID_CASE, CONTENT_AREA, YEAR, GRADE)
 		par.sgp.config <- getSGPConfig(sgp_object, tmp_sgp_object, content_areas, years, grades, sgp.config, 
-			sgp.percentiles.baseline, sgp.projections.baseline, sgp.projections.lagged.baseline,
-			sgp.config.drop.nonsequential.grade.progression.variables)
+			sgp.percentiles.baseline, sgp.projections.baseline, sgp.projections.lagged.baseline, sgp.config.drop.nonsequential.grade.progression.variables)
+
 		if (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline) {
 			par.sgp.config.baseline <- par.sgp.config[which(sapply(par.sgp.config, function(x) !identical(x[['base.gp']], "NO_BASELINE_COEFFICIENT_MATRICES")))]
 		}
 
-		## sgp.percentiles
+		### sgp.percentiles
 			
 		if (sgp.percentiles) {
 			for (sgp.iter in par.sgp.config) {
 
 				panel.data=within(tmp_sgp_object, assign("Panel_Data", getPanelData(tmp_sgp_data_for_analysis, "sgp.percentiles", sgp.iter)))
-#				panel.data=within(tmp_sgp_object, assign("Panel_Data", getPanelData(tmp_sgp_data_for_analysis, "sgp.percentiles", sgp.iter)))
 				tmp.knots.boundaries <- getKnotsBoundaries(sgp.iter, state) # Get specific knots and boundaries in case course sequence is different
 				panel.data[["Knots_Boundaries"]][[names(tmp.knots.boundaries)]] <- tmp.knots.boundaries[[names(tmp.knots.boundaries)]]
 

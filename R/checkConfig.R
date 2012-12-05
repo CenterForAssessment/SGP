@@ -10,7 +10,7 @@ function(my.config,
 			my.config[[i]][['sgp.panel.years']] <- as.character(my.config[[i]][['sgp.panel.years']])
 			my.config[[i]][['sgp.grade.sequences']][[1]] <- my.config[[i]][['sgp.grade.sequences']][[1]][!is.na(my.config[[i]][['sgp.grade.sequences']])]
 			my.config[[i]][['sgp.grade.sequences']][[1]] <- as.character(my.config[[i]][['sgp.grade.sequences']][[1]])
-			if (!is.null(my.config[[i]][['sgp.projection.grade.sequences']])) {
+			if (length(my.config[[i]][['sgp.projection.grade.sequences']][[1]]) > 0) {
 				my.config[[i]][['sgp.projection.grade.sequences']][[1]] <- my.config[[i]][['sgp.projection.grade.sequences']][[1]][!is.na(my.config[[i]][['sgp.projection.grade.sequences']])]
 				my.config[[i]][['sgp.projection.grade.sequences']][[1]] <- as.character(my.config[[i]][['sgp.projection.grade.sequences']][[1]])
 			}
@@ -27,6 +27,11 @@ function(my.config,
 	}
 
 	if (config.type=="Baseline") {
+
+		if (!all(unlist(sapply(lapply(my.config, names),
+			function(x) x %in% c("baseline.content.areas", "baseline.panel.years", "baseline.grade.sequences", "baseline.grade.sequences.lags"))))) {
+				stop("Please specify an appropriate list of SGP function labels (sgp.baseline.config).  See help page for details.")
+		}       
 
 		for (i in seq_along(my.config)) {
 			my.config[[i]][['baseline.content.areas']] <- my.config[[i]][['baseline.content.areas']][!is.na(my.config[[i]][['baseline.content.areas']])]
