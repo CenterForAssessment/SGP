@@ -5,7 +5,7 @@ function(panel.data,         ## REQUIRED
          grade.progression,
          content.area.progression,
          year.progression,
-         year.progression.lags=NULL,
+         year.progression.lags,
          num.prior,
          max.order.for.percentile=NULL,
          subset.grade,
@@ -176,19 +176,11 @@ function(panel.data,         ## REQUIRED
 
 		tmp.version <- list(SGP_Package_Version=as.character(packageVersion("SGP")), Date_Prepared=date())
 
-		if (is.null(year.progression.lags)) {		
-			if (year.progression[1] != "BASELINE") {
-				year.progression.lags <- diff(as.numeric(sapply(strsplit(tail(year.progression, k+1), '_'), '[', 1)))
-			} else {
-				year.progression.lags <- rep(1, k)
-			}
-		}
-
 		eval(parse(text=paste("new('splineMatrix', tmp.mtx, ", substring(s4Ks, 1, nchar(s4Ks)-1), "), ", substring(s4Bs, 1, nchar(s4Bs)-1), "), ",
 			"Content_Areas=list(tail(content.area.progression, k+1)), ",
 			"Grade_Progression=list(tail(tmp.slot.gp, k+1)), ",
 			"Time=list(tail(year.progression, k+1)), ",
-			"Time_Lags=list(year.progression.lags), ",
+			"Time_Lags=list(tail(year.progression.lags, k)), ",
 			"Version=tmp.version)", sep="")))
 
 	} ### END .create.coefficient.matrices
@@ -197,17 +189,6 @@ function(panel.data,         ## REQUIRED
 		tmp <- do.call(rbind, strsplit(names, "_"))
 		if (!grade %in% tmp[tmp[,1]=="knots", 2]) stop(paste("knots_", grade, " not found in Knots_Boundaries.", sep=""))
 		if (!grade %in% tmp[tmp[,1]=="boundaries", 2]) stop(paste("boundaries_", grade, " not found in Knots_Boundaries.", sep=""))                           
-	}
-
-	.check.my.coefficient.matrices <- function(names, grade, order) {
-		tmp <- do.call(rbind.fill, lapply(strsplit(names, "_"), function(x) as.data.frame(matrix(x, nrow=1))))
-		if (!grade %in% tmp[,2]) stop(paste("Coefficient matrix associated with grade ", grade, " not found.", sep=""))
-		if (!order %in% tmp[tmp[,2]==grade,3]) stop(paste("Coefficient matrix associated with grade ", grade, " order ", order, " not found.", sep=""))
-	}
-
-	.get.max.matrix.order <- function(names, grade) {
-		tmp <- do.call(rbind.fill, lapply(strsplit(names, "_"), function(x) as.data.frame(matrix(x, nrow=1))))
-		max(as.numeric(as.character(tmp[tmp[,2]==grade,3])), na.rm=TRUE)
 	}
 
 	.create_taus <- function(sgp.quantiles) {
@@ -248,18 +229,16 @@ function(panel.data,         ## REQUIRED
 		return(tmp.mtx)
 	}
 
-	.get.percentile.predictions <- function(data, order) {
-		.check.my.coefficient.matrices(matrix.names, tmp.last, order)
-		tmp.num.variables <- dim(data)[2]
+	.get.percentile.predictions <- function(my.data, my.matrix) {
+		tmp.num.variables <- dim(my.data)[2]
 		mod <- character()
-		tmp.mtx <- .get.coefficient.matrix(tmp.last, order, grade.prog=tail(tmp.slot.gp, order+1), content.areas=tail(content.area.progression, order+1))
-		for (k in seq(order)) {
-			int <- "cbind(rep(1, dim(data)[1]),"
-			knt <- paste("tmp.mtx@Knots[[", k, "]]", sep="")
-			bnd <- paste("tmp.mtx@Boundaries[[", k, "]]", sep="")
-			mod <- paste(mod, ", bs(data[[", tmp.num.variables-k, "]], knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
+		int <- "cbind(rep(1, dim(my.data)[1]),"
+		for (k in seq(length(my.matrix@Time_Lags[[1]]))) {
+			knt <- paste("my.matrix@Knots[[", k, "]]", sep="")
+			bnd <- paste("my.matrix@Boundaries[[", k, "]]", sep="")
+			mod <- paste(mod, ", bs(my.data[[", tmp.num.variables-k, "]], knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
 		}	
-		tmp <- eval(parse(text=paste(int, substring(mod, 2), ") %*% tmp.mtx", sep="")))
+		tmp <- eval(parse(text=paste(int, substring(mod, 2), ") %*% my.matrix", sep="")))
 		return(round(t(apply(tmp, 1, function(x) .smooth.isotonize.row(x))), digits=5))
 	}
 
@@ -766,6 +745,14 @@ function(panel.data,         ## REQUIRED
 		}
 	}
 
+	if (missing(year.progression.lags)) {
+		if (year.progression[1] == "BASELINE") {
+			year.progression.lags <- rep(1, length(year.progression)-1)
+		} else {
+			year.progression.lags <- diff(as.numeric(sapply(strsplit(year.progression, '_'), '[', 1)))
+		}
+	}
+
 	### Create Knots and Boundaries if requested (uses only grades in tmp.gp)
 
 	if (missing(use.my.knots.boundaries)) {
@@ -799,68 +786,24 @@ function(panel.data,         ## REQUIRED
 	}
 	matrix.names <- names(Coefficient_Matrices[[tmp.path.coefficient.matrices]])
 
-
-#########################################################################################
-###
-### Construction zone
-###
-#########################################################################################
-
-
-getsplineMatrix <- function(
-			my.matrices,
-			my.matrix.order,
-			my.matrix.content.area.progression,
-			my.matrix.grade.progression,
-			my.matrix.time.progression,
-			my.matrix.time.progression.lags,
-			return.only.orders=FALSE) {
-
-	Matrix_TF <- Order <- NULL
-
-	splineMatrix_equality <- function(my.matrices, my.order=NULL) {
-		tmp.df <- data.frame()
-		if (is.null(my.order)) my.order <- 2:length(year.progression)
-		for (i in seq_along(my.order)) {
-			tmp.df[i,1] <- identical(my.matrices@Content_Areas[[1]], tail(content.area.progression, my.order[i])) & 
-					identical(my.matrices@Grade_Progression[[1]], tail(grade.progression, my.order[i])) & 
-					identical(my.matrices@Time[[1]], tail(year.progression, my.order[i]))
-			tmp.df[i,2] <-	my.order[i]-1
-		}
-		names(tmp.df) <- c("Matrix_TF", "Order")
-		return(tmp.df)
-	}
-
-	if (return.only.orders) {
-		tmp.list <- lapply(my.matrices, splineMatrix_equality)
-		tmp.orders <- as.numeric(subset(tmp.list[sapply(tmp.list, function(x) any(x[['Matrix_TF']]))[1]][[1]], Matrix_TF==TRUE, select=Order))
-		return(tmp.orders)
-	} else {
-		my.tmp.index <- which(sapply(lapply(my.matrices, splineMatrix_equality, my.iter=length(year.progression)), function(x) x[['Matrix_TF']]))
-		if (length(my.tmp.index)==0) {
-			stop(paste("\tNOTE: No splineMatrix exists with designated content.area.progression:", content.area.progression, "year.progression:", year.progression, "and grade.progression", grade.progression))
-		} else {
-			return(my.matrices[[my.tmp.index]])
-		}
-	}
-
-} ### END getsplineMatrix
-
-########################################################################################################
-###
-### END Construction zone
-###
-########################################################################################################
-
 	### Calculate growth percentiles (if requested),  percentile cuts (if requested), and simulated confidence intervals (if requested)
 
 	if (calculate.sgps) {
-		max.order <- .get.max.matrix.order(matrix.names, tmp.last)
+		max.order <- max(getsplineMatrix(
+					Coefficient_Matrices[[tmp.path.coefficient.matrices]], 
+					content.area.progression, 
+					grade.progression, 
+					year.progression,
+					year.progression.lags, 
+					return.only.orders=TRUE))
+
 		if (max.order < num.prior) {
-			tmp.messages <- c(tmp.messages, paste("\tNOTE: Requested number of prior scores (num.prior=", num.prior, ") exceeds maximum matrix order (max.order=", max.order, "). Only matrices of order up to max.order=", max.order, " will be used.\n", sep=""))
+			tmp.messages <- c(tmp.messages, paste("\tNOTE: Requested number of prior scores (num.prior=", num.prior, ") exceeds maximum matrix order (max.order=", max.order, "). 
+				Only matrices of order up to max.order=", max.order, " will be used.\n", sep=""))
 		}
 		if (max.order > num.prior) {
-			tmp.messages <- c(tmp.messages, paste("\tNOTE: Maximum coefficient matrix order (max.order=", max.order, ") exceeds that of specified number of priors, (num.prior=", num.prior, "). Only matrices of order up to num.prior=", num.prior, " will be used.\n", sep=""))
+			tmp.messages <- c(tmp.messages, paste("\tNOTE: Maximum coefficient matrix order (max.order=", max.order, ") exceeds that of specified number of priors, 
+				(num.prior=", num.prior, "). Only matrices of order up to num.prior=", num.prior, " will be used.\n", sep=""))
 			max.order <- num.prior
 		}
 		if (exact.grade.progression.sequence) {
@@ -874,7 +817,16 @@ getsplineMatrix <- function(
 		for (j in orders) {
 			tmp.data <- .get.panel.data(ss.data, j, by.grade)
 			if (dim(tmp.data)[1] > 0) {
-				tmp.predictions <- .get.percentile.predictions(tmp.data, j)
+
+				tmp.matrix <- getsplineMatrix(
+					Coefficient_Matrices[[tmp.path.coefficient.matrices]], 
+					tail(content.area.progression, j+1), 
+					tail(grade.progression, j+1),
+					tail(year.progression, j+1),
+					tail(year.progression.lags, j),
+					my.matrix.order=j)
+
+				tmp.predictions <- .get.percentile.predictions(tmp.data, tmp.matrix)
 				tmp.quantiles[[j]] <- data.table(ID=tmp.data[["ID"]], ORDER=j, SGP=.get.quantiles(tmp.predictions, tmp.data[[dim(tmp.data)[2]]]))
 				if (csem.tf) {
 					if (is.null(calculate.confidence.intervals$simulation.iterations)) calculate.confidence.intervals$simulation.iterations <- 100
