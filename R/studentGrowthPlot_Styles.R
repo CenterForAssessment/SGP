@@ -204,7 +204,7 @@ if (reports.by.school) {
 	## Grades
 
 	setkeyv(tmp_school_data, tmp.keys[2])
-	grades <- sort(type.convert(unique(unlist(tmp_school_data[list(j), tmp.keys[3], with=FALSE])), as.is=TRUE)) %w/o% NA
+	grades <- as.character(sort(type.convert(unique(unlist(tmp_school_data[list(j), tmp.keys[3], with=FALSE])), as.is=TRUE)) %w/o% NA)
 	setkeyv(tmp_school_data, tmp.keys[3])
 
 	for (k in grades) {
