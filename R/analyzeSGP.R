@@ -216,6 +216,7 @@ function(sgp_object,
 		par.sgp.config <- getSGPConfig(sgp_object, tmp_sgp_object, content_areas, years, grades, sgp.config, 
 			sgp.percentiles.baseline, sgp.projections.baseline, sgp.projections.lagged.baseline,
 			sgp.config.drop.nonsequential.grade.progression.variables)
+
 		if (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline) {
 			if (any(sapply(par.sgp.config, function(x) identical(x[['base.gp']], "NO_BASELINE_COEFFICIENT_MATRICES")))) {
 				baseline.missings <- which(sapply(par.sgp.config, function(x) identical(x[['base.gp']], "NO_BASELINE_COEFFICIENT_MATRICES")))

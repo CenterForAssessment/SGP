@@ -1,5 +1,11 @@
 `as.splineMatrix` <- 
-	function(matrix, sgp_object, knots, boundaries, content_areas=NULL, grade_progression=NULL, version) {
+function(matrix, 
+	sgp_object,
+	knots,
+	boundaries,
+	content_areas=NULL,
+	grade_progression=NULL,
+	version) {
 		if (class(matrix) != "matrix") stop("Supplied object must be of class 'matrix'.")
 	
 		if (!missing(knots) & !missing(boundaries) & !missing(sgp_object)) stop("Only supply either the sgp_object or the list of knots and boundaries.")
