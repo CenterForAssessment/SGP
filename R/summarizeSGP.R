@@ -549,7 +549,7 @@ function(sgp_object,
 
 	### Loop and send to summarizeSGP_INTERNAL
 
-	tmp.dt <- sgp_object@Data[data.table("VALID_CASE", content_areas.by.years), nomatch=0][, variables.for.summaries, with=FALSE][, STATE:=as.factor(state)]
+	tmp.dt <- sgp_object@Data[data.table("VALID_CASE", content_areas.by.years), nomatch=0][, variables.for.summaries, with=FALSE][, STATE:=state]
 
 	par.start <- startParallel(parallel.config, 'SUMMARY')
 
@@ -577,7 +577,7 @@ function(sgp_object,
 
 				tmp.dt.long <- data.table(melt(as.data.frame(tmp.dt), 
 					measure.vars=summary.groups[["institution_multiple_membership"]][[j-1]][["VARIABLE.NAMES"]], 
-					value.name=multiple.membership.variable.name))
+					value.name=multiple.membership.variable.name))[!is.na(get(multiple.membership.variable.name))]
 				invisible(tmp.dt.long[, variable := NULL])
 				if (!is.null(summary.groups[["institution_multiple_membership"]][[j-1]][["WEIGHTS"]])) {
 					invisible(tmp.dt.long[, WEIGHT := melt(as.data.frame(tmp.dt[, 
