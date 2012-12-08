@@ -48,19 +48,11 @@ function(sgp_object,
 	} ### END get.config 
 
 	get.par.sgp.config <- function(sgp.config) {
-
-		### Utility Function
-
-		getsplineMatrixInfo <- function(tmp.splineMatrix) {
-			paste(unlist(tmp.splineMatrix@Content_Areas), unlist(tmp.splineMatrix@Grade_Progression), sep=".")
-		}
-
-			
+		
 		par.sgp.config <- list(); cnt <- 1
 		for (a in names(sgp.config)) {
 
 			tmp.matrices <- tmp_sgp_object[['Coefficient_Matrices']][[paste(strsplit(a, "\\.")[[1]][1], ".BASELINE", sep="")]]
-			tmp.matrices.content.areas.by.grades <- lapply(tmp.matrices, getsplineMatrixInfo)
 
 			for (b in seq_along(sgp.config[[a]][['sgp.grade.sequences']])) {
 
@@ -73,7 +65,7 @@ function(sgp_object,
 				
 				###  Set sgp.exact.grade.progression=TRUE if using multiple content areas in a single year as priors.
 
-				if (any(duplicated(paste(par.sgp.config[[cnt]][['sgp.panel.years']][[1]], par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]], sep=".")))) {  
+				if (any(duplicated(paste(par.sgp.config[[cnt]][['sgp.panel.years']], par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]], sep=".")))) {  
 					par.sgp.config[[cnt]][['sgp.exact.grade.progression']] <- TRUE
 				} else {
 					if (is.null(par.sgp.config[[cnt]][['sgp.exact.grade.progression']])) par.sgp.config[[cnt]][['sgp.exact.grade.progression']] <- FALSE
@@ -98,19 +90,20 @@ function(sgp_object,
 
 					### Check to see if a BASELINE splineMatrix exists for the element par.sgp.config[[cnt]]
 
-					tmp.par.sgp.config.content.areas.by.grades <- 
-						paste(par.sgp.config[[cnt]][['sgp.content.areas']][[1]], par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]], sep=".")
-					tmp.matrices.tf <- any(sapply(tmp.matrices.content.areas.by.grades, identical, 
-						y=tail(tmp.par.sgp.config.content.areas.by.grades, max(sapply(tmp.matrices.content.areas.by.grades, length)))))
+					if (paste(strsplit(a, "\\.")[[1]][1], ".BASELINE", sep="") %in% names(tmp_sgp_object[["Coefficient_Matrices"]])) {
+						tmp.matrices.tf <- 	length(tmp.max.order <- getsplineMatrix(
+							my.matrices=tmp.matrices, 
+							my.matrix.content.area.progression=par.sgp.config[[cnt]][['sgp.content.areas']], 
+							my.matrix.grade.progression=par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]], 
+							my.matrix.time.progression=par.sgp.config[[cnt]][['sgp.panel.years']] ,
+							my.matrix.time.progression.lags=diff(as.numeric(sapply(strsplit(par.sgp.config[[cnt]][['sgp.panel.years']], '_'), '[', 2))), 
+							return.only.orders=TRUE)) > 0
+					} else tmp.matrices.tf <- FALSE
 
 					if (!tmp.matrices.tf) {
 						par.sgp.config[[cnt]][['base.gp']] <- "NO_BASELINE_COEFFICIENT_MATRICES"
 						par.sgp.config[[cnt]][['max.order']] <- "NO_BASELINE_COEFFICIENT_MATRICES"
 					} else {
-						tmp.matrices.tf.index <- min(which(sapply(tmp.matrices.content.areas.by.grades, identical, 
-							y=tail(tmp.par.sgp.config.content.areas.by.grades, max(sapply(tmp.matrices.content.areas.by.grades, length))))))
-						tmp.max.order <- as.numeric(unlist(strsplit(names(tmp.matrices)[tmp.matrices.tf.index], "_"))[3])
-
 						if (length(par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]])-1 < tmp.max.order) {
 							tmp.max.order <- length(par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]])-1
 						}
