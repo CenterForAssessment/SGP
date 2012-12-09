@@ -46,6 +46,8 @@ function(sgp_object,
 			sgp.projection.grade.sequences=.sgp.projection.grade.sequences)
 
 	} ### END get.config 
+	
+	split.location <- function(years) sapply(strsplit(years, '_'), length)[1]
 
 	get.par.sgp.config <- function(sgp.config) {
 		
@@ -96,7 +98,8 @@ function(sgp_object,
 							my.matrix.content.area.progression=par.sgp.config[[cnt]][['sgp.content.areas']], 
 							my.matrix.grade.progression=par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]], 
 							my.matrix.time.progression=par.sgp.config[[cnt]][['sgp.panel.years']] ,
-							my.matrix.time.progression.lags=diff(as.numeric(sapply(strsplit(par.sgp.config[[cnt]][['sgp.panel.years']], '_'), '[', 2))), 
+							my.matrix.time.progression.lags=diff(as.numeric(sapply(strsplit(par.sgp.config[[cnt]][['sgp.panel.years']], '_'), '[', 
+								split.location(par.sgp.config[[cnt]][['sgp.panel.years']])))),
 							return.only.orders=TRUE)) > 0
 					} else tmp.matrices.tf <- FALSE
 
