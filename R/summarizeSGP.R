@@ -8,6 +8,8 @@ function(sgp_object,
          confidence.interval.groups=NULL,
          produce.all.summary.tables=FALSE,
          summarizeSGP.baseline=NULL,
+         projection.years.for.target=3,
+         save.old.summaries=FALSE,
          parallel.config=NULL) {
 
 	started.at <- proc.time()
@@ -25,6 +27,18 @@ function(sgp_object,
                 state <- getStateAbbreviation(tmp.name, "summarizeSGP")
         }
 
+	### Export/Overwrite old summaries
+
+	if (!is.null(sgp_object@Summary)) {
+		if (save.old.summaries) {
+			tmp.year <- tail(sort(sgp_object@Summary[['STATE']][['STATE__YEAR__STATE_ENROLLMENT_STATUS']][['YEAR']]), 1)
+			message(paste("\tNOTE: Saving @Summary slot to", paste(gsub(" ", "_", toupper(state.name[state.abb=="WV"])), "SGP", tmp.year, "Summary_Slot.Rdata", sep="_")))
+			save(sgp_object@Summary, file=paste(gsub(" ", "_", toupper(state.name[state.abb=="WV"])), "SGP", tmp.year, "Summary_Slot.Rdata", sep="_"))
+		} else {
+			message("\tNOTE: Deleting @Summary slot")
+			sgp_object@Summary <- NULL
+		}
+	}
 
 	### define summarizeSGP.baseline
 
@@ -38,13 +52,17 @@ function(sgp_object,
 	if (summarizeSGP.baseline) {
 		my.sgp <- "SGP_BASELINE"
 		my.sgp.level <- "SGP_LEVEL_BASELINE"
-		my.sgp.target <- "SGP_TARGET_BASELINE"
-		if ("SGP_TARGET_MOVE_UP_STAY_UP_BASELINE" %in% names(sgp_object@Data)) my.sgp.target.musu <- "SGP_TARGET_MOVE_UP_STAY_UP_BASELINE" else my.sgp.target.musu <- NULL
+		my.sgp.target <- paste("SGP_TARGET_BASELINE", projection.years.for.target, "YEAR", sep="_")
+		my.sgp.target.musu <- paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", projection.years.for.target, "YEAR", sep="_")
+		if (!my.sgp.target %in% names(sgp_object@Data)) my.sgp.target <- NULL
+		if (!my.sgp.target.musu %in% names(sgp_object@Data)) my.sgp.target.musu <- NULL
 	} else {
 		my.sgp <- "SGP"
 		my.sgp.level <- "SGP_LEVEL"
-		my.sgp.target <- "SGP_TARGET"
-		if ("SGP_TARGET_MOVE_UP_STAY_UP" %in% names(sgp_object@Data)) my.sgp.target.musu <- "SGP_TARGET_MOVE_UP_STAY_UP" else my.sgp.target.musu <- NULL
+		my.sgp.target <- paste("SGP_TARGET", projection.years.for.target, "YEAR", sep="_")
+		my.sgp.target.musu <- paste("SGP_TARGET_MOVE_UP_STAY_UP", projection.years.for.target, "YEAR", sep="_")
+		if (!my.sgp.target %in% names(sgp_object@Data)) my.sgp.target <- NULL
+		if (!my.sgp.target.musu %in% names(sgp_object@Data)) my.sgp.target.musu <- NULL
 	}
 
 	if (missing(sgp_object)) {
@@ -207,22 +225,26 @@ function(sgp_object,
 					)
 				}
 
-				if ("SGP_TARGET" %in% names(sgp_object@Data)) {
+				if (!is.null(my.sgp.target)) {
 					tmp.sgp.summaries <- c(
 						tmp.sgp.summaries, 
-						MEDIAN_SGP_TARGET="median_na(SGP_TARGET)",  
-						MEDIAN_SGP_TARGET_COUNT="num_non_missing(SGP_TARGET)",
+						M1=paste("median_na(", my.sgp.target, ")", sep=""),  
+						M2=paste("num_non_missing(", my.sgp.target, ")", sep=""),
 						PERCENT_CATCHING_UP_KEEPING_UP="percent_in_category(CATCH_UP_KEEP_UP_STATUS, list(c('Catch Up: Yes', 'Keep Up: Yes')), list(c('Catch Up: Yes', 'Catch Up: No', 'Keep Up: Yes', 'Keep Up: No')))"
 					)
+					names(tmp.sgp.summaries)[sapply(c("M1", "M2"), function(x) which(names(tmp.sgp.summaries)==x))] <- 
+						c(paste("MEDIAN", my.sgp.target, sep="_"), paste("MEDIAN", my.sgp.target, "COUNT", sep="_"))
 				}
 
-				if ("SGP_TARGET_MOVE_UP_STAY_UP" %in% names(sgp_object@Data)) {
+				if (!is.null(my.sgp.target.musu)) {
 					tmp.sgp.summaries <- c(
 						tmp.sgp.summaries, 
-						MEDIAN_SGP_TARGET_MOVE_UP_STAY_UP="median_na(SGP_TARGET_MOVE_UP_STAY_UP)",  
-						MEDIAN_SGP_TARGET_MOVE_UP_STAY_UP_COUNT="num_non_missing(SGP_TARGET_MOVE_UP_STAY_UP)",
+						M1=paste("median_na(", my.sgp.target.musu, ")", sep=""),  
+						M2=paste("num_non_missing(", my.sgp.target.musu, ")", sep=""),
 						PERCENT_MOVING_UP_STAYING_UP="percent_in_category(MOVE_UP_STAY_UP_STATUS, list(c('Move Up: Yes', 'Stay Up: Yes')), list(c('Move Up: Yes', 'Move Up: No', 'Stay Up: Yes', 'Stay Up: No')))"
 					)
+					names(tmp.sgp.summaries)[sapply(c("M1", "M2"), function(x) which(names(tmp.sgp.summaries)==x))] <- 
+						c(paste("MEDIAN", my.sgp.target.musu, sep="_"), paste("MEDIAN", my.sgp.target.musu, "COUNT", sep="_"))
 				}
 
 			return(tmp.sgp.summaries)
@@ -527,7 +549,7 @@ function(sgp_object,
 
 	### Loop and send to summarizeSGP_INTERNAL
 
-	tmp.dt <- sgp_object@Data[data.table("VALID_CASE", content_areas.by.years), nomatch=0][, variables.for.summaries, with=FALSE][, STATE:=as.factor(state)]
+	tmp.dt <- sgp_object@Data[data.table("VALID_CASE", content_areas.by.years), nomatch=0][, variables.for.summaries, with=FALSE][, STATE:=state]
 
 	par.start <- startParallel(parallel.config, 'SUMMARY')
 
@@ -555,7 +577,7 @@ function(sgp_object,
 
 				tmp.dt.long <- data.table(melt(as.data.frame(tmp.dt), 
 					measure.vars=summary.groups[["institution_multiple_membership"]][[j-1]][["VARIABLE.NAMES"]], 
-					value.name=multiple.membership.variable.name))
+					value.name=multiple.membership.variable.name))[!is.na(get(multiple.membership.variable.name))]
 				invisible(tmp.dt.long[, variable := NULL])
 				if (!is.null(summary.groups[["institution_multiple_membership"]][[j-1]][["WEIGHTS"]])) {
 					invisible(tmp.dt.long[, WEIGHT := melt(as.data.frame(tmp.dt[, 

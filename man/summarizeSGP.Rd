@@ -15,6 +15,8 @@ summarizeSGP(sgp_object,
            confidence.interval.groups=NULL,
            produce.all.summary.tables=FALSE,
            summarizeSGP.baseline=NULL,
+           projection.years.for.target=3,
+           save.old.summaries=FALSE,
            parallel.config=NULL) 
 }
 
@@ -75,6 +77,12 @@ For \code{CSEM} analysis this argument requires that simulated SGPs have been pr
 \item{produce.all.summary.tables}{A boolean variable, defaults to FALSE, indicating whether the function should produce ALL possible summary table. By default, a set of approximately 70 tables are produced that are used in other parts of the packages (e.g., bubblePlots).}
 \item{summarizeSGP.baseline}{A boolean variable, defaults to FALSE, indicating whether the function should utilize baseline sgp for summary table production. By default, 
 a set of approximately 100 tables are produced that are used in other parts of the packages (e.g., bubblePlots).}
+\item{projection.years.for.target}{An integer argument indicating \code{SGP_TARGET} variables to summarize based upon years projected forward. Default is 3 years which is what is generally used by
+most states.
+}
+\item{save.old.summaries}{A boolean argument, defaults to FALSE, indicating whether to save the @Summary slot (if not NULL) prior to calculating new summaries. By defaulting to FALSE, the function
+overwrites previous (e.g., last year's summaries) summaries.
+}
 \item{parallel.config}{A named list with, at a minimum, two elements indicating 1) the BACKEND package to be used for parallel computation and 2) the WORKERS list to specify the number of processors to be used in each major analysis.  The BACKEND element can be set = to \code{FOREACH}, \code{SNOW}, \code{MULTICORE}, or \code{PARALLEL}.  Please consult the manuals and vignettes for information of these packages!
 
 TYPE is a third element of the \code{parallel.config} list that provides necessary information when using FOREACH, SNOW or PARALLEL packages as the backend. With BACKEND="FOREACH", the TYPE element specifies the "doMC", "doMPI", "doSNOW", "doRedis" or "doParallel" flavor of foreach backends.  TYPE=NA (default) produces summaries sequentially.  If BACKEND = "SNOW", the TYPE element specifies the cluster type (either "SOCK" for socket cluster of "MPI" for an OpenMPI cluster).  The function will create a cluster object based on these parameters and the number of workers requested (see WORKERS list description below).  Alternatively, the name of an external CLUSTER.OBJECT set up by the user outside of the function can be used.   If BACKEND = "PARALLEL", the \code{parallel} package will be used, and the TYPE element specifies the SNOW type cluster to be used.  If Windows is the operating system, this element must = "SOCK".  Defaults are assigned based on operating system if TYPE is missing based on system OS.  Unix/Mac OS defaults to MULTICORE to avoid prescheduling.  SNOW can be chosen in the systems by specifying "SOCK" or "SNOW" in the TYPE element.

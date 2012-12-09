@@ -5,6 +5,7 @@ function(sgp_object,
 	content_areas=NULL,
 	other.student.groups,
 	text.output=TRUE,
+	projection.years.for.target=3,
 	output.directory=file.path("Data", "SchoolView")) {
 
 	started.at <- proc.time()
@@ -89,6 +90,18 @@ function(sgp_object,
 			}
 		}
 
+		convert.names <- function(my.data) {
+			names(my.data)[names(my.data)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET"
+			names(my.data)[names(my.data)==paste("MEDIAN_SGP_TARGET", projection.years.for.target, "YEAR", sep="_")] <- "MEDIAN_SGP_TARGET"
+			if ("EMH_LEVEL" %in% names(my.data)) my.data[['EMH_LEVEL']] <- as.character(factor(my.data[['EMH_LEVEL']], levels=1:3, labels=c("E", "H", "M")))
+			if ("GENDER" %in% names(my.data)) {
+				my.data[['STUDENTGROUP']][my.data[['STUDENTGROUP']]=="Female"] <- "F"
+				my.data[['STUDENTGROUP']][my.data[['STUDENTGROUP']]=="Male"] <- "M"
+			}
+			if ("INSTRUCTOR_NUMBER" %in% names(my.data)) names(my.data)[names(my.data)=="INSTRUCTOR_NUMBER"] <- "TEACHER_USID"
+			return(my.data)
+		}
+
 	## Create relevant variables
 
 		if (is.null(years)) years <- unique(sgp_object@Data$YEAR) %w/o% NA
@@ -120,7 +133,7 @@ function(sgp_object,
 
 		tmp <- as.data.frame(convert.variables(subset(sgp_object@Summary[["DISTRICT_NUMBER"]][["DISTRICT_NUMBER__CONTENT_AREA__YEAR__DISTRICT_ENROLLMENT_STATUS"]],
 			!is.na(DISTRICT_NUMBER) & CONTENT_AREA %in% content_areas & YEAR %in% years & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes" & !is.na(MEDIAN_SGP))))
-		names(tmp)[names(tmp)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET"  ### TEMPORARY UNTIL NAMES ARE ALIGNED
+		tmp <- convert.names(tmp)
 		tmp <- tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))]
 
 		dbGetQuery(db, sqlite.create.table("DISTRICT", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA")))
@@ -145,7 +158,7 @@ function(sgp_object,
 
 		tmp <- as.data.frame(convert.variables(subset(sgp_object@Summary[["DISTRICT_NUMBER"]][["DISTRICT_NUMBER__CONTENT_AREA__YEAR__GRADE__DISTRICT_ENROLLMENT_STATUS"]],
 			!is.na(DISTRICT_NUMBER) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(GRADE) & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes" & !is.na(MEDIAN_SGP))))
-		names(tmp)[names(tmp)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET"  ### TEMPORARY UNTIL NAMES ARE ALIGNED
+		tmp <- convert.names(tmp)
 		tmp <- tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))]
 
 		dbGetQuery(db, sqlite.create.table("DISTRICT_GRADE", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "GRADE")))
@@ -172,7 +185,7 @@ function(sgp_object,
 		tmp <- as.data.frame(convert.variables(subset(sgp_object@Summary[["DISTRICT_NUMBER"]][["DISTRICT_NUMBER__CONTENT_AREA__YEAR__ETHNICITY__DISTRICT_ENROLLMENT_STATUS"]],
 			!is.na(DISTRICT_NUMBER) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(ETHNICITY) & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes" &
 			!is.na(MEDIAN_SGP))))
-		names(tmp)[names(tmp)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET"  ### TEMPORARY UNTIL NAMES ARE ALIGNED
+		tmp <- convert.names(tmp)
 		tmp$ENROLLMENT_PERCENTAGE <- NA
 		tmp <- tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))]
 
@@ -200,7 +213,7 @@ function(sgp_object,
 		tmp <- as.data.frame(convert.variables(subset(sgp_object@Summary[["DISTRICT_NUMBER"]][["DISTRICT_NUMBER__CONTENT_AREA__YEAR__GRADE__ETHNICITY__DISTRICT_ENROLLMENT_STATUS"]],
 			!is.na(DISTRICT_NUMBER) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(GRADE) & !is.na(ETHNICITY) & 
 			DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes" & !is.na(MEDIAN_SGP))))
-		names(tmp)[names(tmp)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET"  ### TEMPORARY UNTIL NAMES ARE ALIGNED
+		tmp <- convert.names(tmp)
 		tmp <- tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))]
 
 		dbGetQuery(db, sqlite.create.table("DISTRICT_GRADE_ETHNICITY", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "GRADE", "ETHNICITY")))
@@ -237,9 +250,8 @@ function(sgp_object,
 			!is.na(DISTRICT_NUMBER) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(STUDENTGROUP) & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes" &
 			!is.na(MEDIAN_SGP))))
 
-		names(tmp)[names(tmp)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET"  ### TEMPORARY UNTIL NAMES ARE ALIGNED
+		tmp <- convert.names(tmp)
 		tmp$ENROLLMENT_PERCENTAGE <- NA
-		tmp$STUDENTGROUP[tmp$STUDENTGROUP=="Female"] <- "F"; tmp$STUDENTGROUP[tmp$STUDENTGROUP=="Male"] <- "M" 
 		tmp <- tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))]
 
 		dbGetQuery(db, sqlite.create.table("DISTRICT_STUDENTGROUP", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "STUDENTGROUP")))
@@ -275,8 +287,7 @@ function(sgp_object,
 		tmp <- as.data.frame(convert.variables(subset(rbind.fill(tmp.list), 
 			!is.na(DISTRICT_NUMBER) & YEAR %in% years & CONTENT_AREA %in% content_areas & !is.na(STUDENTGROUP) & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes" &
 			!is.na(MEDIAN_SGP))))
-		names(tmp)[names(tmp)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET"  ### TEMPORARY UNTIL NAMES ARE ALIGNED
-		tmp$STUDENTGROUP[tmp$STUDENTGROUP=="Female"] <- "F"; tmp$STUDENTGROUP[tmp$STUDENTGROUP=="Male"] <- "M"
+		tmp <- convert.names(tmp)
 		tmp <- tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))]
 
 		dbGetQuery(db, sqlite.create.table("DISTRICT_GRADE_STUDENTGROUP", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "GRADE", "STUDENTGROUP")))
@@ -304,10 +315,7 @@ function(sgp_object,
 			!is.na(SCHOOL_NUMBER) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & SCHOOL_ENROLLMENT_STATUS=="Enrolled School: Yes" &
 			!is.na(MEDIAN_SGP))))
 		tmp <- as.data.frame(merge(tmp, as.data.frame(tmp.school.and.district.by.year), all.x=TRUE)) 
-	### Temporary stuff
-		names(tmp)[names(tmp)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET"
-		tmp$EMH_LEVEL <- as.character(factor(tmp$EMH_LEVEL, levels=1:3, labels=c("E", "H", "M")))
-	##
+		tmp <- convert.names(tmp)
 		tmp <- tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))]
 
 		dbGetQuery(db, sqlite.create.table("SCHOOL", field.types, c("YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER", "EMH_LEVEL", "CONTENT_AREA")))
@@ -336,10 +344,7 @@ function(sgp_object,
 			!is.na(SCHOOL_NUMBER) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(GRADE) & SCHOOL_ENROLLMENT_STATUS=="Enrolled School: Yes" &
 			!is.na(MEDIAN_SGP))))
 		tmp <- data.frame(merge(tmp, as.data.frame(tmp.school.and.district.by.year), all.x=TRUE)) 
-	### Temporary stuff
-		names(tmp)[names(tmp)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET" 
-		tmp$EMH_LEVEL <- as.character(factor(tmp$EMH_LEVEL, levels=1:3, labels=c("E", "H", "M")))
-	###
+		tmp <- convert.names(tmp)
 		tmp <- tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))]
 
 		dbGetQuery(db, sqlite.create.table("SCHOOL_GRADE", field.types, c("YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER", "EMH_LEVEL", "GRADE", "CONTENT_AREA")))
@@ -369,11 +374,8 @@ function(sgp_object,
 			!is.na(SCHOOL_NUMBER) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(ETHNICITY) & SCHOOL_ENROLLMENT_STATUS=="Enrolled School: Yes" &
 			!is.na(MEDIAN_SGP))))
 		tmp <- data.frame(merge(tmp, as.data.frame(tmp.school.and.district.by.year), all.x=TRUE)) 
-	### Temporary stuff
-		names(tmp)[names(tmp)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET" 
-		tmp$EMH_LEVEL <- as.character(factor(tmp$EMH_LEVEL, levels=1:3, labels=c("E", "H", "M")))
+		tmp <- convert.names(tmp)
 		tmp$ENROLLMENT_PERCENTAGE <- NA
-	###
 		tmp <- tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))]
 
 		dbGetQuery(db, sqlite.create.table("SCHOOL_ETHNICITY", field.types, c("YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER", "EMH_LEVEL", "CONTENT_AREA", "ETHNICITY")))
@@ -412,15 +414,8 @@ function(sgp_object,
 			!is.na(SCHOOL_NUMBER) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(STUDENTGROUP) & SCHOOL_ENROLLMENT_STATUS=="Enrolled School: Yes" &
 			!is.na(MEDIAN_SGP))))
 		tmp <- as.data.frame(merge(tmp, as.data.frame(tmp.school.and.district.by.year), all.x=TRUE)) 
-		tmp$CONTENT_AREA <- unclass(tmp$CONTENT_AREA)
-		tmp$STUDENTGROUP <- unclass(tmp$STUDENTGROUP)
-		tmp$EMH_LEVEL <- unclass(tmp$EMH_LEVEL)
-		tmp$STUDENTGROUP[tmp$STUDENTGROUP=="Female"] <- "F"; tmp$STUDENTGROUP[tmp$STUDENTGROUP=="Male"] <- "M"
-	### Temporary stuff
-		names(tmp)[names(tmp)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET" 
-		tmp$EMH_LEVEL <- as.character(factor(tmp$EMH_LEVEL, levels=1:3, labels=c("E", "H", "M")))
+		tmp <- convert.names(tmp)
 		tmp$ENROLLMENT_PERCENTAGE <- NA
-	###
 		tmp <- tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))]
 
 		dbGetQuery(db, sqlite.create.table("SCHOOL_STUDENTGROUP", field.types, 
@@ -465,12 +460,7 @@ function(sgp_object,
 		}
 
 		tmp <- data.frame(merge(tmp, as.data.frame(tmp.school.and.district.by.year), all.x=TRUE))
-
-	### Temporary stuff
-		names(tmp)[names(tmp)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET" 
-		names(tmp)[names(tmp)=="INSTRUCTOR_NUMBER"] <- "TEACHER_USID" 
-		tmp$EMH_LEVEL <- as.character(factor(tmp$EMH_LEVEL, levels=1:3, labels=c("E", "H", "M")))
-	###
+		tmp <- convert.names(tmp)
 		tmp <- tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))]
 
 		dbGetQuery(db, sqlite.create.table("SCHOOL_TEACHER", field.types, c("YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER", "TEACHER_USID", "EMH_LEVEL", "CONTENT_AREA")))
@@ -523,8 +513,6 @@ function(sgp_object,
 		tmp.EMH <- data.frame(
 			KEY_VALUE_KEY="EMH_LEVEL",
 			KEY_VALUE_CODE=strhead(levels(tmp$EMH_LEVEL)[sort(unique(as.integer(tmp$EMH_LEVEL)))], 1), ## TEMP fix until EMH_LEVEL is fixed up
-#			KEY_VALUE_CODE=c("E", "H", "M"), ## TEMP fix until EMH_LEVEL is fixed up
-#			KEY_VALUE_CODE=sort(unique(as.integer(droplevels(tmp$EMH_LEVEL)))),
 			KEY_VALUE_TEXT= levels(tmp$EMH_LEVEL)[sort(unique(as.integer(tmp$EMH_LEVEL)))])
 
 		# ETHNICITY
@@ -553,8 +541,6 @@ function(sgp_object,
 			KEY_VALUE_KEY="STUDENT_GROUP", ### NOTE: Must have underscore. It's an older version of the table
 			KEY_VALUE_CODE=sort(unique(as.integer(tmp$STUDENTGROUP))),
 			KEY_VALUE_TEXT=levels(tmp$STUDENTGROUP)[sort(unique(as.integer(tmp$STUDENTGROUP)))])
-#			KEY_VALUE_CODE=toupper(substr(unique(as.character(tmp$STUDENTGROUP)), 1, 50)), 
-#			KEY_VALUE_TEXT=unique(as.character(tmp$STUDENTGROUP)))
 
 
 		tmp <- rbind(tmp.CONTENT_AREA, tmp.YEAR, tmp.GRADE, tmp.EMH, tmp.ETHNICITY, tmp.STUDENTGROUP)

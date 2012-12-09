@@ -1,5 +1,6 @@
 `checkSGP` <-
-function(sgp_object, state=NULL) {
+function(sgp_object, 
+	state=NULL) {
 
 	### Check if sgp_object is of class SGP
 
@@ -24,7 +25,7 @@ function(sgp_object, state=NULL) {
 		if (id.only){
 			return("ID" %in% names(my.data) && !is.character(my.data[["ID"]]))
 		} else {
-			tmp.vars <- c("ID", "VALID_CASE", "CONTENT_AREA", "YEAR")
+			tmp.vars <- c("ID", "VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE")
 			return(sapply(tmp.vars, function(x) x %in% names(my.data) && !is.character(my.data[[x]]), USE.NAMES=FALSE))
 		}
 	}
@@ -36,8 +37,8 @@ function(sgp_object, state=NULL) {
 			message(paste("\tNOTE: ID in", data.slot, "converted from class factor to character to accomodate data.table >= 1.8.0 changes."))
 			my.data[["ID"]] <- as.character(my.data[["ID"]])			
 		} else {
-			for (my.variable in c("ID", "VALID_CASE", "CONTENT_AREA", "YEAR")[convert.tf]) {
-				message(paste("\tNOTE:", my.variable, "in", data.slot, "converted from class factor to character to accomodate data.table >= 1.8.0 changes."))
+			for (my.variable in c("ID", "VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE")[convert.tf]) {
+				message(paste("\tNOTE:", my.variable, "in", data.slot, "converted from class ", class(my.data[[my.variable]]), " to character to accomodate data.table >= 1.8.0 changes."))
 				my.data[[my.variable]] <- as.character(my.data[[my.variable]])
 			}
 		}
@@ -97,6 +98,15 @@ function(sgp_object, state=NULL) {
 			names(sgp_object@SGP[['SGPercentiles']][[i]])[which(names(sgp_object@SGP[['SGPercentiles']][[i]])=="PRIOR_SCALE_SCORE")] <- "SCALE_SCORE_PRIOR"
 		}
 	}
+
+	### Change SGP_TARGET names to indicate number of years
+
+	names.to.change <- c("SGP_TARGET", "SGP_TARGET_BASELINE", "SGP_TARGET_MOVE_UP_STAY_UP", "SGP_TARGET_BASELINE_MOVE_UP_STAY_UP")
+	for (i in intersect(names(sgp_object@Data), names.to.change)) {
+		message(paste("\tNOTE: Changing name '", i, "' to '", paste(i, "3_YEAR", sep="_"), "' in @Data", sep=""))
+		setnames(sgp_object@Data, i, paste(i, "3_YEAR", sep="_"))
+	}
+
 
 	### Return sgp_object	
 

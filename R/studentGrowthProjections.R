@@ -172,7 +172,7 @@ function(panel.data,	## REQUIRED
 		return(rev(tmp.list[!duplicated(tmp.list)]))
 	}
 
-	.get.coefficient.matrix <- function(grade, order, content.areas, grade.prog) { #, grade.progression.label {Not used in projections...}
+	.get.coefficient.matrix <- function(grade, order, content.areas, grade.prog) {
 		tmp.mtx.name <- paste("qrmatrix", grade, order, sep="_") 
 		tmp.index <- grep(tmp.mtx.name, matrix.names)
 		tmp.tf <- tmp.index2 <- NULL
@@ -365,6 +365,11 @@ function(panel.data,	## REQUIRED
 		stop("User must supply a grade progression from which projections/trajectories will be derived. See help page for details.")
 	}
 
+	if (!is.numeric(type.convert(as.character(grade.progression)))) {
+		stop("The current implementation of studentGrowthProjections does not allcw for non-numeric grades. Stay tuned for a better implementation.")
+	}
+	grade.progression <- type.convert(as.character(grade.progression))
+
 	if (!missing(use.my.knots.boundaries)) {
 		if (!is.list(use.my.knots.boundaries) & !is.character(use.my.knots.boundaries)) {
 			stop("use.my.knots.boundaries must be supplied as a list or character abbreviation. See help page for details.")
@@ -530,7 +535,7 @@ function(panel.data,	## REQUIRED
 	### Get Coefficient_Matrices names
 
 	matrix.names <- names(panel.data[["Coefficient_Matrices"]][[tmp.path.coefficient.matrices]])
-	matrix.names <- matrix.names[sapply(strsplit(matrix.names, "_"), function(x) is.na(x[4]))] ## REMOVE names that have the grade.progression.label for now
+
 
 	### Calculate growth projections/trajectories 
 
