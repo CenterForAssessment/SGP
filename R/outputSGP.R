@@ -10,7 +10,8 @@ function(sgp_object,
 	outputSGP.anonymize=FALSE,
 	outputSGP.student.groups=NULL,
 	outputSGP.directory="Data",
-	outputSGP.translate.names=TRUE) {
+	outputSGP.translate.names=TRUE,
+	outputSGP.projection.years.for.target=3) {
 
         started.at.outputSGP <- proc.time()
         message(paste("\nStarted outputSGP ", date(), ": Files produced from outputSGP saved in '", outputSGP.directory, "'\n", sep=""))
@@ -76,7 +77,7 @@ function(sgp_object,
 				tmp.working.directory <- getwd()
 				setwd(file.path(outputSGP.directory))
 				if (paste(tmp.state, "SGP_LONG_Data.txt.zip", sep="_") %in% list.files()) file.remove(paste(tmp.state, "SGP_LONG_Data.txt.zip", sep="_"))
-				suppressWarnings(
+				suppressMessages(
 					zip(paste(tmp.state, "SGP_LONG_Data.txt.zip", sep="_"), paste(tmp.state, "SGP_LONG_Data.txt", sep="_"))
 				)
 				setwd(tmp.working.directory)
@@ -110,9 +111,9 @@ function(sgp_object,
 		started.at <- proc.time()
 		message(paste("\tStarted WIDE data production in outputSGP", date()))
 
-		long_data_tmp <- sgp_object@Data
+		long_data_tmp <- copy(sgp_object@Data)
 		setkeyv(long_data_tmp, c("VALID_CASE", "YEAR", "CONTENT_AREA", "ID"))
-		suppressWarnings(invisible(long_data_tmp[,YEAR_BY_CONTENT_AREA := paste(YEAR, CONTENT_AREA, sep=".")]))
+		suppressMessages(invisible(long_data_tmp[,YEAR_BY_CONTENT_AREA := paste(YEAR, CONTENT_AREA, sep=".")]))
 		assign(paste(tmp.state, "SGP_WIDE_Data", sep="_"), reshape(long_data_tmp["VALID_CASE"], idvar="ID", 
 			timevar="YEAR_BY_CONTENT_AREA", drop=c("VALID_CASE", "CONTENT_AREA", "YEAR"), direction="wide"))
 		eval(parse(text=paste("setkey(", tmp.state, "_SGP_WIDE_Data, ID)", sep="")))
@@ -132,7 +133,7 @@ function(sgp_object,
 				tmp.working.directory <- getwd()
 				setwd(file.path(outputSGP.directory))
 				if (paste(tmp.state, "SGP_WIDE_Data.txt.zip", sep="_") %in% list.files()) file.remove(paste(tmp.state, "SGP_WIDE_Data.txt.zip", sep="_"))
-				suppressWarnings(
+				suppressMessages(
 					zip(paste(tmp.state, "SGP_WIDE_Data.txt.zip", sep="_"), paste(tmp.state, "SGP_WIDE_Data.txt", sep="_"))
 				)
 				setwd(tmp.working.directory)
@@ -325,9 +326,8 @@ function(sgp_object,
 	### Reshape data set
 
 		variables.to.keep <- c("VALID_CASE", "ID", "LAST_NAME", "FIRST_NAME", "CONTENT_AREA", "YEAR", "GRADE", "EMH_LEVEL", 
-			"SCALE_SCORE", "TRANSFORMED_SCALE_SCORE", "ACHIEVEMENT_LEVEL", "SGP", "SGP_TARGET", "SCHOOL_NUMBER", "DISTRICT_NUMBER",
-			outputSGP.student.groups,
-			"SCHOOL_ENROLLMENT_STATUS", "DISTRICT_ENROLLMENT_STATUS", "STATE_ENROLLMENT_STATUS")
+			"SCALE_SCORE", "TRANSFORMED_SCALE_SCORE", "ACHIEVEMENT_LEVEL", "SGP", getTargetName(target.years=outputSGP.projection.years.for.target),
+			"SCHOOL_NUMBER", "DISTRICT_NUMBER", outputSGP.student.groups, "SCHOOL_ENROLLMENT_STATUS", "DISTRICT_ENROLLMENT_STATUS", "STATE_ENROLLMENT_STATUS")
 
 		outputSGP.data <- reshape(unclass.data.table(tmp.table)[, variables.to.keep, with=FALSE],
 			idvar=c("ID", "CONTENT_AREA"),
@@ -387,7 +387,9 @@ function(sgp_object,
 				grep(paste("TRANSFORMED_SCALE_SCORE", rev(tmp.years.short)[i], sep="."), names(outputSGP.data)), 
 				paste("SCALE_SCORE", tmp.order[i], sep="_"))
 			setnames(outputSGP.data, grep(paste("TRANSFORMED_SCALE_SCORE", rev(tmp.years.short)[i], sep="."), names(outputSGP.data)), paste("TRANSFORMED_SCALE_SCORE", tmp.order[i], sep="_"))
-			setnames(outputSGP.data, grep(paste("SGP_TARGET", rev(tmp.years.short)[i], sep="."), names(outputSGP.data)), paste("GROWTH_TARGET", tmp.order[i], sep="_"))
+			setnames(outputSGP.data, grep(paste(getTargetName(target.years=outputSGP.projection.years.for.target), 
+				rev(tmp.years.short)[i], sep="."), names(outputSGP.data)), paste(getTargetName(target.years=outputSGP.projection.years.for.target, target.label="GROWTH_TARGET"),
+				tmp.order[i], sep="_"))
 			setnames(outputSGP.data, grep(paste("SGP", rev(tmp.years.short)[i], sep="."), names(outputSGP.data)), paste("GROWTH_PERCENTILE", tmp.order[i], sep="_"))
 			setnames(outputSGP.data, grep(paste("ACHIEVEMENT_LEVEL", rev(tmp.years.short)[i], sep="."), names(outputSGP.data)), paste("PERFORMANCE_LEVEL", tmp.order[i], sep="_"))
 		}
@@ -422,7 +424,7 @@ function(sgp_object,
 				outputSGP.data[[paste("GRADE_LEVEL", i, sep="_")]] <- NA
 				outputSGP.data[[paste("SCALE_SCORE", i, sep="_")]] <- NA
 				outputSGP.data[[paste("TRANSFORMED_SCALE_SCORE", i, sep="_")]] <- NA
-				outputSGP.data[[paste("GROWTH_TARGET", i, sep="_")]] <- NA
+				outputSGP.data[[paste(getTargetName(target.years=outputSGP.projection.years.for.target, target.label="GROWTH_TARGET"), i, sep="_")]] <- NA
 				outputSGP.data[[paste("GROWTH_PERCENTILE", i, sep="_")]] <- NA
 				outputSGP.data[[paste("PERFORMANCE_LEVEL", i, sep="_")]] <- NA
 			}
@@ -447,18 +449,19 @@ function(sgp_object,
 
 		## Rearrange variables
 
+		tmp.gt.name <- getTargetName(target.years=outputSGP.projection.years.for.target, target.label="GROWTH_TARGET")
 		tmp.variable.names <- c("STUDENT_GROWTH_ID", "STATE_ASSIGNED_ID", "LAST_NAME", "FIRST_NAME", "MIDDLE_NAME", 
 			"CONTENT_AREA", "YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER", "EMH_LEVEL",
 			outputSGP.student.groups,
 			"OCTOBER_ENROLLMENT_STATUS", "SCHOOL_ENROLLMENT_STATUS", "DISTRICT_ENROLLMENT_STATUS", "STATE_ENROLLMENT_STATUS",
-			"GRADE_LEVEL_CY", "SCALE_SCORE_CY", "TRANSFORMED_SCALE_SCORE_CY", "PERFORMANCE_LEVEL_CY", "GROWTH_PERCENTILE_CY", "GROWTH_TARGET_CY",
-			"GRADE_LEVEL_PY1", "SCALE_SCORE_PY1", "TRANSFORMED_SCALE_SCORE_PY1", "PERFORMANCE_LEVEL_PY1", "GROWTH_PERCENTILE_PY1", "GROWTH_TARGET_PY1",
-			"GRADE_LEVEL_PY2", "SCALE_SCORE_PY2", "TRANSFORMED_SCALE_SCORE_PY2", "PERFORMANCE_LEVEL_PY2", "GROWTH_PERCENTILE_PY2", "GROWTH_TARGET_PY2",
-			"GRADE_LEVEL_PY3", "SCALE_SCORE_PY3", "TRANSFORMED_SCALE_SCORE_PY3", "PERFORMANCE_LEVEL_PY3", "GROWTH_PERCENTILE_PY3", "GROWTH_TARGET_PY3",
-			"GRADE_LEVEL_PY4", "SCALE_SCORE_PY4", "TRANSFORMED_SCALE_SCORE_PY4", "PERFORMANCE_LEVEL_PY4", "GROWTH_PERCENTILE_PY4", "GROWTH_TARGET_PY4",
-			"GRADE_LEVEL_PY5", "SCALE_SCORE_PY5", "TRANSFORMED_SCALE_SCORE_PY5", "PERFORMANCE_LEVEL_PY5", "GROWTH_PERCENTILE_PY5", "GROWTH_TARGET_PY5",
-			"GRADE_LEVEL_PY6", "SCALE_SCORE_PY6", "TRANSFORMED_SCALE_SCORE_PY6", "PERFORMANCE_LEVEL_PY6", "GROWTH_PERCENTILE_PY6", "GROWTH_TARGET_PY6",
-			"GRADE_LEVEL_PY7", "SCALE_SCORE_PY7", "TRANSFORMED_SCALE_SCORE_PY7", "PERFORMANCE_LEVEL_PY7", "GROWTH_PERCENTILE_PY7", "GROWTH_TARGET_PY7",
+			"GRADE_LEVEL_CY", "SCALE_SCORE_CY", "TRANSFORMED_SCALE_SCORE_CY", "PERFORMANCE_LEVEL_CY", "GROWTH_PERCENTILE_CY", paste(tmp.gt.name, "CY", sep="_"),
+			"GRADE_LEVEL_PY1", "SCALE_SCORE_PY1", "TRANSFORMED_SCALE_SCORE_PY1", "PERFORMANCE_LEVEL_PY1", "GROWTH_PERCENTILE_PY1", paste(tmp.gt.name, "PY1", sep="_"),
+			"GRADE_LEVEL_PY2", "SCALE_SCORE_PY2", "TRANSFORMED_SCALE_SCORE_PY2", "PERFORMANCE_LEVEL_PY2", "GROWTH_PERCENTILE_PY2", paste(tmp.gt.name, "PY2", sep="_"),
+			"GRADE_LEVEL_PY3", "SCALE_SCORE_PY3", "TRANSFORMED_SCALE_SCORE_PY3", "PERFORMANCE_LEVEL_PY3", "GROWTH_PERCENTILE_PY3", paste(tmp.gt.name, "PY3", sep="_"),
+			"GRADE_LEVEL_PY4", "SCALE_SCORE_PY4", "TRANSFORMED_SCALE_SCORE_PY4", "PERFORMANCE_LEVEL_PY4", "GROWTH_PERCENTILE_PY4", paste(tmp.gt.name, "PY4", sep="_"),
+			"GRADE_LEVEL_PY5", "SCALE_SCORE_PY5", "TRANSFORMED_SCALE_SCORE_PY5", "PERFORMANCE_LEVEL_PY5", "GROWTH_PERCENTILE_PY5", paste(tmp.gt.name, "PY5", sep="_"),
+			"GRADE_LEVEL_PY6", "SCALE_SCORE_PY6", "TRANSFORMED_SCALE_SCORE_PY6", "PERFORMANCE_LEVEL_PY6", "GROWTH_PERCENTILE_PY6", paste(tmp.gt.name, "PY6", sep="_"),
+			"GRADE_LEVEL_PY7", "SCALE_SCORE_PY7", "TRANSFORMED_SCALE_SCORE_PY7", "PERFORMANCE_LEVEL_PY7", "GROWTH_PERCENTILE_PY7", paste(tmp.gt.name, "PY7", sep="_"),
 			"CUT_1_YEAR_1", "CUT_99_YEAR_1", "CUT_35_YEAR_1", "CUT_65_YEAR_1", "CUT_20_YEAR_1", "CUT_40_YEAR_1", "CUT_60_YEAR_1", "CUT_80_YEAR_1",
 			"CUT_1_YEAR_2", "CUT_99_YEAR_2", "CUT_35_YEAR_2", "CUT_65_YEAR_2", "CUT_20_YEAR_2", "CUT_40_YEAR_2", "CUT_60_YEAR_2", "CUT_80_YEAR_2",
 			"CUT_1_YEAR_3", "CUT_99_YEAR_3", "CUT_35_YEAR_3", "CUT_65_YEAR_3", "CUT_20_YEAR_3", "CUT_40_YEAR_3", "CUT_60_YEAR_3", "CUT_80_YEAR_3")
@@ -467,7 +470,7 @@ function(sgp_object,
 			tmp.working.directory <- getwd()
 			setwd(file.path(outputSGP.directory, "SchoolView"))
 			if ("STUDENT_GROWTH.dat.zip" %in% list.files()) file.remove("STUDENT_GROWTH.dat.zip")
-			suppressWarnings(
+			suppressMessages(
 				zip("STUDENT_GROWTH.dat.zip", "STUDENT_GROWTH.dat")
 			)
 			setwd(tmp.working.directory)

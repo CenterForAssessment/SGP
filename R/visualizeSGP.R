@@ -1,7 +1,7 @@
 `visualizeSGP` <- 
 function(sgp_object,
 		plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot"),
-		state,
+		state=NULL,
 		bPlot.years=NULL,
 		bPlot.content_areas=NULL,
 		bPlot.districts=NULL,
@@ -40,6 +40,7 @@ function(sgp_object,
 		sgPlot.baseline=NULL,
 		sgPlot.zip=TRUE,
 		sgPlot.output.format="PDF",
+		sgPlot.show.targets.years.forward=NULL,
 		gaPlot.years=NULL,
 		gaPlot.content_areas=NULL, 
 		gaPlot.students=NULL,
@@ -73,7 +74,7 @@ function(sgp_object,
 	### Set up parallel.config if NULL
 
 	if (is.null(parallel.config)) {
-		parallel.config = list(BACKEND="FOREACH", TYPE=NA, WORKERS=list(GA_PLOTS=1, SG_PLOTS=1))
+		parallel.config = list(BACKEND="FOREACH", TYPE=NA, WORKERS=list(GA_PLOTS=1, SG_PLOTS=1, SG_PLOTS_TARGETS=1))
 	}
 
 	### Utility functions	
@@ -330,7 +331,7 @@ if ("studentGrowthPlot" %in% plot.types) {
 	get.years.content_areas.grades <- function(state) {
 		tmp.list <- list()
 		for (i in names(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]])) {
-			tmp.df <- data.frame(GRADE=SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[i]])
+			tmp.df <- data.frame(GRADE=as.character(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[i]]), stringsAsFactors=FALSE)
 			if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[i]])) {
 				tmp.df <- CJ(tmp.df$GRADE, SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[i]]:tmp.last.year)
 			} else {
@@ -374,11 +375,21 @@ if ("studentGrowthPlot" %in% plot.types) {
 		}
 
 		if (sgPlot.baseline) {
-			 my.sgp <- "SGP_BASELINE"
-			 my.sgp.level <- "SGP_LEVEL_BASELINE"
+			my.sgp <- "SGP_BASELINE"
+			my.sgp.level <- "SGP_LEVEL_BASELINE"
+			if (!is.null(sgPlot.show.targets.years.forward)) my.target.types <- c("sgp.projections.baseline", "sgp.projections.lagged.baseline")
 		} else {
-			 my.sgp <- "SGP"
-			 my.sgp.level <- "SGP_LEVEL"
+			my.sgp <- "SGP"
+			my.sgp.level <- "SGP_LEVEL"
+			if (!is.null(sgPlot.show.targets.years.forward)) my.target.types <- c("sgp.projections", "sgp.projections.lagged")
+		}
+
+	#### Which targets
+
+		if (length(which(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")) <= 1) {
+			my.target.levels <- "CATCH_UP_KEEP_UP"
+		} else {
+			my.target.levels <- c("CATCH_UP_KEEP_UP", "MOVE_UP_STAY_UP")
 		}
 
 
@@ -566,7 +577,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			tmp.ids <- list()
 			setkeyv(sgp_object@Data, c("VALID_CASE", "YEAR", "GRADE"))
 			tmp.grades.reported <- unique(unlist(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]]))
-			tmp.grades.reported <- tmp.grades.reported[tmp.grades.reported %in% unique(sgp_object@Data)["VALID_CASE"][["GRADE"]]]
+			tmp.grades.reported <- as.character(tmp.grades.reported[tmp.grades.reported %in% unique(sgp_object@Data)["VALID_CASE"][["GRADE"]]])
 			for (i in seq_along(tmp.grades.reported)) {
 				tmp.ids[[i]] <- as.character(sample(unique(sgp_object@Data[SJ("VALID_CASE", tmp.last.year, tmp.grades.reported[i])]$ID), 10))
 			}
@@ -756,9 +767,57 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 				sgPlot.data[[proj.iter]] <- sgPlot.data[,piecewise.transform(get(tmp.scale_score.name), state, CONTENT_AREA, tmp.year.name, get.next.grade(get(tmp.grade.name)[1], CONTENT_AREA[1])), 
 					by=list(CONTENT_AREA, sgPlot.data[[tmp.grade.name]])]$V1 
 			}
-		}
+		} ### END if (sgPlot.baseline)
 
-		### Merge in INSTRUCTOR_NAME if requested
+
+
+
+
+##############################################################################################################
+	#### BEGIN CONSTRUCTION ZONE: Calculate and Merge in lagged targets if requested
+##############################################################################################################
+
+		if (!is.null(sgPlot.show.targets.years.forward)) {
+
+			setkey(sgPlot.data, ID, CONTENT_AREA)
+
+			for (target.type in my.target.types) {
+				for (target.level in my.target.levels) {
+					sgPlot.data <- data.table(getTargetSGP(sgp_object, tmp.content_areas, state, tmp.last.year, 
+						target.type, target.level, sgPlot.show.targets.years.forward, unique(sgPlot.data[['ID']]), FALSE), key=c("ID", "CONTENT_AREA"))[sgPlot.data]
+					invisible(sgPlot.data[,VALID_CASE := NULL]); invisible(sgPlot.data[,YEAR := NULL])
+				}
+			} 
+
+
+browser()
+
+			for (target.type in my.target.types) {
+				for (target.level in my.target.levels) {
+					my.sgp.target <- getTargetName(target.type, target.level, sgPlot.show.targets.years.forward)
+					getTargetScaleScore(
+						sgp_object, 
+						state, 
+						sgPlot.data[, c("ID", my.sgp.target), with=FALSE], 
+						target.type, 
+						target.level, 
+						subset(get.years.content_areas.grades(state), YEAR==tmp.last.year),
+						parallel.config=parallel.config)
+
+				}
+			}
+
+		} ### if (!is.null(sgPlot.show.targets.years.forward))
+
+
+##############################################################################################################
+	#### END CONSTRUCTION ZONE: Calculate and Merge in lagged targets if requested
+##############################################################################################################
+
+
+
+
+	### Merge in INSTRUCTOR_NAME if requested
 
 		if (sgPlot.reports.by.instructor) {
 			setkeyv(student.teacher.lookup, c("ID", paste("INSTRUCTOR_NUMBER", tmp.last.year, sep=".")))

@@ -204,7 +204,7 @@ if (reports.by.school) {
 	## Grades
 
 	setkeyv(tmp_school_data, tmp.keys[2])
-	grades <- sort(unique(unlist(tmp_school_data[list(j), tmp.keys[3], with=FALSE]))) %w/o% NA
+	grades <- as.character(sort(type.convert(unique(unlist(tmp_school_data[list(j), tmp.keys[3], with=FALSE])), as.is=TRUE)) %w/o% NA)
 	setkeyv(tmp_school_data, tmp.keys[3])
 
 	for (k in grades) {
@@ -561,7 +561,7 @@ if (reports.by.school) {
 			tmp.working.directory <- getwd()
 			setwd(file.path(sgPlot.folder, year_folder, district_folder))
 			if (paste(school_folder, ".zip", sep="") %in% list.files()) file.remove(paste(school_folder, ".zip", sep=""))
-			suppressWarnings(
+			suppressMessages(
 				system(paste("zip -rq", paste(school_folder, ".zip", sep=""), school_folder, sep=" "))
 			)
 			setwd(tmp.working.directory)
@@ -1043,7 +1043,7 @@ if (reports.by.instructor) {
 			tmp.working.directory <- getwd()
 			setwd(file.path(sgPlot.folder, year_folder, district_folder, school_folder))
 			if (paste(instructor_folder, ".zip", sep="") %in% list.files()) file.remove(paste(instructor_folder, ".zip", sep=""))
-			suppressWarnings(
+			suppressMessages(
 				system(paste("zip -rq", paste(instructor_folder, ".zip", sep=""), instructor_folder, sep=" "))
 			)
 			setwd(tmp.working.directory)

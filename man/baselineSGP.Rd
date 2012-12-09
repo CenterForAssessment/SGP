@@ -7,12 +7,13 @@
 
 \usage{
  baselineSGP(sgp_object,
-        state,
-        years,
-        content_areas,
-        grades,
-	sgp.config,
-	sgp.baseline.config,
+        state=NULL,
+        years=NULL,
+        content_areas=NULL,
+        grades=NULL,
+	sgp.config=NULL,
+	sgp.baseline.config=NULL,
+	sgp.baseline.panel.years=NULL,
 	sgp.percentiles.baseline.max.order=3,
 	return.matrices.only=FALSE,
 	calculate.baseline.sgps=TRUE,
@@ -34,6 +35,8 @@
   \item{sgp.config}{If \code{years}, \code{content_areas}, and \code{grades} are missing, user can directly specify a list containing three vectors: \code{baseline.content.areas}, \code{baseline.panel.years}, and \code{baseline.grade.sequences}. This advanced option is helpful for analysis of non-traditional grade progressions and other special cases. See \code{\link{analyzeSGP}} for use cases.
   }
   \item{sgp.baseline.config}{A list containing three vectors: \code{sgp.content.areas}, \code{sgp.panel.years}, \code{sgp.grade.sequences} indicating how baseline student growth percentile analyses are to be conducted. In most cases this value will be calculated by default within the function but can be specified directly for advanced use cases. See source code for more detail on this configuration option.
+  }
+  \item{sgp.baseline.panel.years}{A character vector indicating the years to be used for the calculation of baseline SGPs. Default is to use most recent five years of data.
   }
   \item{sgp.percentiles.baseline.max.order}{Integer indicating the maximum order to calculate baseline student growth percentiles (regardless of maximum coefficient matrix order). Default is 3.
 To utilize the maximum matrix order, set to NULL.
