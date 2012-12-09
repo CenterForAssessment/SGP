@@ -1,17 +1,28 @@
 `startParallel` <- 
 function(
 	parallel.config, 
-	process
-	) {
+	process,
+	qr.taus) {
 	
-	workers <- NULL; par.type <- 'OTHER'
+	workers <- NULL; par.type <- 'OTHER'; TAUS.LIST <- NULL
 
 	if (!is.null(parallel.config[['CLUSTER.OBJECT']])) {
+		if (!missing(qr.taus)) {
+			workers <- length(eval(parse(text=parallel.config[['CLUSTER.OBJECT']])))
+			chunk.size <- ceiling(length(qr.taus) / workers)
+			TAUS.LIST <- vector("list", workers)
+			for (chunk in 0:(workers-1)) {
+				lower.index <- chunk*chunk.size+1
+				upper.index <- min((chunk+1)*chunk.size, length(qr.taus))
+				TAUS.LIST[[chunk+1]] <- qr.taus[lower.index:upper.index]
+			}
+		}
 		clusterEvalQ(eval(parse(text=parallel.config[['CLUSTER.OBJECT']])), library(SGP))
 		par.start <- list(internal.cl=eval(parse(text=parallel.config[['CLUSTER.OBJECT']])), par.type='SNOW')
 		clusterExport(eval(parse(text=parallel.config[['CLUSTER.OBJECT']])), "par.start", envir=2)
-		return(list(internal.cl=eval(parse(text=parallel.config[['CLUSTER.OBJECT']])), par.type='SNOW'))
-	} 
+		return(list(internal.cl=eval(parse(text=parallel.config[['CLUSTER.OBJECT']])), 
+			par.type='SNOW', TAUS.LIST=TAUS.LIST))
+	}
 	
 	###  Basic checks - default to ANY percentiles or projections WORKERS.
 	
@@ -30,8 +41,10 @@ function(
 		} # See if still NULL and stop:
 		if (is.null(parallel.config[['WORKERS']][[process]])) stop(paste(process, "workers must be specified."))
 	}
-
 	
+	if (all(c("PERCENTILES", "TAUS") %in% names(parallel.config[['WORKERS']]))) stop("Both TAUS and PERCENTILES can not be executed in Parallel at the same time.")
+
+	# parallel.config=list(BACKEND="PARALLEL", WORKERS=list(PERCENTILES=8, PROJ=5, BASE=7, TAUS=3))
 	###  Basic configuration
 	
 	if (toupper(parallel.config[['BACKEND']]) == 'FOREACH') {
@@ -71,7 +84,7 @@ function(
 
 	if (toupper(parallel.config[['BACKEND']]) == 'PARALLEL') {
 		# Weird error for MPI stopCluster(...) 'Error in NextMethod() : 'NextMethod' called from an anonymous function'  load snow first removes it.
-		# if (!is.null(parallel.config[['TYPE']]) && parallel.config[['TYPE']] == 'MPI') require(snow) 
+		# if (!is.null(parallel.config[['TYPE']]) && parallel.config[['TYPE']] == 'MPI') require(snow)  #  Don't think this is a problem any more... 08/03/12
 		require(parallel)
 		if (!is.null(parallel.config[['TYPE']])) {
 			if (!parallel.config[['TYPE']] %in% c('SOCK', 'MPI')) {
@@ -98,6 +111,23 @@ function(
 	if (is.null(workers)) workers <- getOption("cores")
 	if (is.null(workers)) stop("parallel.config$WORKERS must, at a minimum, contain the number of parallel workers for all processes, 
 		or getOption('cores') must be specified to use MULTICORE parallel processing.")
+
+	###
+	###  Need this for all flavors - move to startParallel
+	###
+	if (process=='TAUS') {
+		chunk.size <- ceiling(length(qr.taus) / workers)
+		TAUS.LIST <- vector("list", workers)
+		for (chunk in 0:(workers-1)) {
+			lower.index <- chunk*chunk.size+1
+			upper.index <- min((chunk+1)*chunk.size, length(qr.taus))
+			TAUS.LIST[[chunk+1]] <- qr.taus[lower.index:upper.index]
+		}
+	}
+	
+	###
+	### END to startParallel
+	###
 	
 	if (toupper(parallel.config[['BACKEND']]) == 'FOREACH') {
 		par.type='FOREACH'
@@ -133,7 +163,7 @@ function(
 				return(list(doPar.cl=doPar.cl, foreach.options=foreach.options, par.type=par.type))
 			} else {
 				registerDoParallel(workers)
-				return(list(foreach.options=foreach.options, par.type=par.type))
+				return(list(foreach.options=foreach.options, par.type=par.type, TAUS.LIST=TAUS.LIST))
 			}
 		}
 	} # END if (FOREACH)
@@ -144,10 +174,10 @@ function(
 		# }
 		internal.cl <- makeCluster(eval(parse(text=workers)), type=parallel.config[['TYPE']]) # eval workers in case 'names' used
 		clusterEvalQ(internal.cl, library(SGP))
-		return(list(internal.cl=internal.cl, par.type=par.type)) #  workers=workers,
+		return(list(internal.cl=internal.cl, par.type=par.type, TAUS.LIST=TAUS.LIST)) #  workers=workers,
 	}
 
 	if (par.type=='MULTICORE') {
-		return(list(workers=workers, par.type=par.type))
+		return(list(workers=workers, par.type=par.type, TAUS.LIST=TAUS.LIST))
 	}
 }

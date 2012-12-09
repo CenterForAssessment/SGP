@@ -1,3 +1,11 @@
+Changes in version: SGP_0.9-9.8
+
+  NEW FEATURES:
+
+	  o Major re-factoring of package involving externalization of previously internal functions for better unit testing.
+
+
+
 Changes in version: SGP_0.9-9.7
 
   NEW FEATURES:

@@ -18,7 +18,8 @@ outputSGP(sgp_object,
         outputSGP.anonymize=FALSE,
         outputSGP.student.groups=NULL,
         outputSGP.directory="Data",
-	outputSGP.translate.names=TRUE)
+	outputSGP.translate.names=TRUE,
+	outputSGP.projection.years.for.target=3)
 }
 
 \arguments{
@@ -51,6 +52,8 @@ outputSGP(sgp_object,
   \item{outputSGP.directory}{A a file path indicating where to save output files. Defaults to \code{Data}.
   }
   \item{outputSGP.translate.names}{A boolean argument, defaults to TRUE, indicating whether data output should refer to 'names.provided' or 'names.sgp' in @Names slot of supplied SGP object.
+  }
+  \item{outputSGP.projection.years.for.target}{An integer argument indicating what projection to supply with regard to the number of years projected forward.
   }
 }
 
