@@ -177,9 +177,9 @@ function(panel.data,         ## REQUIRED
 		tmp.version <- list(SGP_Package_Version=as.character(packageVersion("SGP")), Date_Prepared=date())
 
 		eval(parse(text=paste("new('splineMatrix', tmp.mtx, ", substring(s4Ks, 1, nchar(s4Ks)-1), "), ", substring(s4Bs, 1, nchar(s4Bs)-1), "), ",
-			"Content_Areas=list(tail(content.area.progression, k+1)), ",
-			"Grade_Progression=list(tail(tmp.slot.gp, k+1)), ",
-			"Time=list(tail(year.progression, k+1)), ",
+			"Content_Areas=list(as.character(tail(content.area.progression, k+1))), ",
+			"Grade_Progression=list(as.character(tail(tmp.slot.gp, k+1))), ",
+			"Time=list(as.character(tail(year.progression, k+1))), ",
 			"Time_Lags=list(tail(year.progression.lags, k)), ",
 			"Version=tmp.version)", sep="")))
 
