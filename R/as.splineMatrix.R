@@ -103,12 +103,12 @@ function(matrix_argument,
 
 			new("splineMatrix", 
 				.Data=tmp.matrix, 
-				Knots=knots, 
+				Knots=listknots, 
 				Boundaries=boundaries, 
-				Content_Areas=content_areas, 
-				Grade_Progression=grade_progression,
-				Time=time,
-				Time_Lags=time_lags, 
+				Content_Areas=list(content_areas), 
+				Grade_Progression=list(grade_progression),
+				Time=list(time),
+				Time_Lags=list(time_lags), 
 				Version=version)
 
 		} ### END if class(matrix_argument)=="matrix"
@@ -125,7 +125,7 @@ function(matrix_argument,
 			### Grade Progression
 
 			if (.hasSlot(matrix_argument, "Grade_Progression")) {
-				grade_progression <- as.character(matrix_argument@Grade_Progression)
+				grade_progression <- as.character(matrix_argument@Grade_Progression[[1]])
 			} else {
 				grade_progression <- as.character(c(rev(sapply(rn.knots2, function(x) x[1])), tmp.last.grade))
 				if (!is.numeric(type.convert(grade_progression))) {
@@ -137,7 +137,7 @@ function(matrix_argument,
 			### Content Areas
 
 			if (.hasSlot(matrix_argument, "Content_Areas")) {
-				content_areas <- matrix_argument@Content_Areas
+				content_areas <- matrix_argument@Content_Areas[[1]]
 			} else {
 				content_areas <- rep(unlist(strsplit(gsub("'|]]", "", strsplit(rn, "\\[\\[")[[1]][2]), "[.]"))[1], length(grade_progression))
 			}
@@ -146,7 +146,7 @@ function(matrix_argument,
 			### Time Lag
 
 			if (.hasSlot(matrix_argument, "Time")) {
-				time_lags <- matrix_argument@Time
+				time_lags <- matrix_argument@Time_Lags[[1]]
 			} else {
 				time_lag <- diff(type.convert(grade_progression))
 			}
@@ -155,7 +155,7 @@ function(matrix_argument,
 			### Time
 
 			if (.hasSlot(matrix_argument, "Time")) {
-				time <- matrix_argument@Time
+				time <- matrix_argument@Time[[1]]
 			} else {
 				time <- rev(year.increment(tmp.time, -cumsum(c(0, time_lag))))
 			}
@@ -172,10 +172,10 @@ function(matrix_argument,
 				.Data=tmp.matrix, 
 				Knots=knots, 
 				Boundaries=boundaries, 
-				Content_Areas=content_areas, 
-				Grade_Progression=grade_progression,
-				Time=time,
-				Time_Lags=time_lags, 
+				Content_Areas=list(content_areas), 
+				Grade_Progression=list(grade_progression),
+				Time=list(time),
+				Time_Lags=list(time_lags), 
 				Version=version)
 
 		} ### END if class(matrix_argument)=="splineMatrix"
