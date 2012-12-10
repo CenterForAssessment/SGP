@@ -81,7 +81,7 @@ function(matrix_argument,
 
 			### Time Lag
 
-			time_lag <- diff(type.convert(grade_progression))
+			time_lags <- diff(type.convert(grade_progression))
 
 
 			### Time
@@ -90,7 +90,7 @@ function(matrix_argument,
 			if (tmp.time == "BASELINE") {
 				time <- rep("BASELINE", length(grade_progression))
 			} else {
-				time <- rev(year.increment(tmp.time, -cumsum(c(0, time_lag))))
+				time <- rev(year.increment(tmp.time, -cumsum(c(0, time_lags))))
 			}
 
 
@@ -103,7 +103,7 @@ function(matrix_argument,
 
 			new("splineMatrix", 
 				.Data=tmp.matrix, 
-				Knots=listknots, 
+				Knots=knots, 
 				Boundaries=boundaries, 
 				Content_Areas=list(content_areas), 
 				Grade_Progression=list(grade_progression),
@@ -148,7 +148,7 @@ function(matrix_argument,
 			if (.hasSlot(matrix_argument, "Time")) {
 				time_lags <- matrix_argument@Time_Lags[[1]]
 			} else {
-				time_lag <- diff(type.convert(grade_progression))
+				time_lags <- diff(type.convert(grade_progression))
 			}
 
 
@@ -157,7 +157,12 @@ function(matrix_argument,
 			if (.hasSlot(matrix_argument, "Time")) {
 				time <- matrix_argument@Time[[1]]
 			} else {
-				time <- rev(year.increment(tmp.time, -cumsum(c(0, time_lag))))
+				tmp.time <- unlist(strsplit(gsub("'|]]", "", strsplit(rn, "\\[\\[")[[1]][2]), "[.]"))[2]
+				if (tmp.time == "BASELINE") {
+					time <- rep("BASELINE", length(grade_progression))
+				} else {
+					time <- rev(year.increment(tmp.time, -cumsum(c(0, time_lags))))
+				}
 			}
 
 
