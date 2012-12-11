@@ -577,7 +577,7 @@ function(sgp_object,
 
 				tmp.dt.long <- data.table(melt(as.data.frame(tmp.dt), 
 					measure.vars=summary.groups[["institution_multiple_membership"]][[j-1]][["VARIABLE.NAMES"]], 
-					value.name=multiple.membership.variable.name))[!is.na(get(multiple.membership.variable.name))]
+					value.name=multiple.membership.variable.name))
 				invisible(tmp.dt.long[, variable := NULL])
 				if (!is.null(summary.groups[["institution_multiple_membership"]][[j-1]][["WEIGHTS"]])) {
 					invisible(tmp.dt.long[, WEIGHT := melt(as.data.frame(tmp.dt[, 
@@ -594,7 +594,7 @@ function(sgp_object,
 					summary.groups[["institution_inclusion"]][[tmp.inst]] <- paste(i, "ENROLLMENT_STATUS", sep="_")
 				}
 				summary.groups[["growth_only_summary"]][[tmp.inst]] <- "BY_GROWTH_ONLY" # Do we have an option to NOT include "BY_GROWTH_ONLY"? (would we want this?)
-				sgp_object@Summary[[i]] <- c(sgp_object@Summary[[i]], summarizeSGP_INTERNAL(tmp.dt.long, tmp.inst))
+				sgp_object@Summary[[i]] <- c(sgp_object@Summary[[i]], summarizeSGP_INTERNAL(tmp.dt.long[!is.na(get(multiple.membership.variable.name))], tmp.inst))
 			} 
 		} ### End i loop over summary.groups[["institution"]]
 	} ### END j loop over multiple membership groups (if they exist)

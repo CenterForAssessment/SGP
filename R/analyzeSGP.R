@@ -204,6 +204,22 @@ function(sgp_object,
 	} # END Get/Compute baseline coefficient matrices
 
 
+	### Create par.sgp.config (for both parallel and sequential implementations)
+
+	setkey(sgp_object@Data, VALID_CASE, CONTENT_AREA, YEAR, GRADE)
+	par.sgp.config <- getSGPConfig(sgp_object, tmp_sgp_object, content_areas, years, grades, sgp.config, sgp.percentiles.baseline, sgp.projections.baseline, sgp.projections.lagged.baseline,
+		sgp.config.drop.nonsequential.grade.progression.variables)
+
+	if (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline) {
+		if (any(sapply(par.sgp.config, function(x) identical(x[['base.gp']], "NO_BASELINE_COEFFICIENT_MATRICES")))) {
+			baseline.missings <- which(sapply(par.sgp.config, function(x) identical(x[['base.gp']], "NO_BASELINE_COEFFICIENT_MATRICES")))
+			baseline.missings <- paste(unique(unlist(sapply(par.sgp.config[baseline.missings], function(x) paste(x$sgp.content.areas, x$sgp.grade.sequences)))), collapse=", ")
+			message("\tNOTE: Baseline coefficient matrices are not available for ", baseline.missings, ".", sep="")
+		}
+		par.sgp.config.baseline <- par.sgp.config[which(sapply(par.sgp.config, function(x) !identical(x[['base.gp']], "NO_BASELINE_COEFFICIENT_MATRICES")))]
+	}
+
+
 	#######################################################################################################################
 	#######################################################################################################################
 	##   Percentiles, Baseline Percentiles, Projections, Lagged Projections -  PARALLEL FLAVORS FIRST
@@ -211,21 +227,6 @@ function(sgp_object,
 	#######################################################################################################################
 
 	if (!is.null(parallel.config)) {
-
-		setkey(sgp_object@Data, VALID_CASE, CONTENT_AREA, YEAR, GRADE)
-		par.sgp.config <- getSGPConfig(sgp_object, tmp_sgp_object, content_areas, years, grades, sgp.config, 
-			sgp.percentiles.baseline, sgp.projections.baseline, sgp.projections.lagged.baseline,
-			sgp.config.drop.nonsequential.grade.progression.variables)
-
-		if (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline) {
-			if (any(sapply(par.sgp.config, function(x) identical(x[['base.gp']], "NO_BASELINE_COEFFICIENT_MATRICES")))) {
-				baseline.missings <- which(sapply(par.sgp.config, function(x) identical(x[['base.gp']], "NO_BASELINE_COEFFICIENT_MATRICES")))
-				baseline.missings <- paste(unique(unlist(sapply(par.sgp.config[baseline.missings], function(x) paste(x$sgp.content.areas, x$sgp.grade.sequences)))), collapse=", ")
-				message("\tNOTE: Baseline coefficient matrices are not available for ", baseline.missings, ".", sep="")
-			}
-			par.sgp.config.baseline <- par.sgp.config[which(sapply(par.sgp.config, function(x) !identical(x[['base.gp']], "NO_BASELINE_COEFFICIENT_MATRICES")))]
-		}
-
 
 	##################################		
 	###  PERCENTILES
@@ -823,14 +824,6 @@ function(sgp_object,
 	################################################################
 
 	if (is.null(parallel.config)) {
-
-		setkey(sgp_object@Data, VALID_CASE, CONTENT_AREA, YEAR, GRADE)
-		par.sgp.config <- getSGPConfig(sgp_object, tmp_sgp_object, content_areas, years, grades, sgp.config, 
-			sgp.percentiles.baseline, sgp.projections.baseline, sgp.projections.lagged.baseline, sgp.config.drop.nonsequential.grade.progression.variables)
-
-		if (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline) {
-			par.sgp.config.baseline <- par.sgp.config[which(sapply(par.sgp.config, function(x) !identical(x[['base.gp']], "NO_BASELINE_COEFFICIENT_MATRICES")))]
-		}
 
 		### sgp.percentiles
 			

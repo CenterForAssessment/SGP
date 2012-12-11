@@ -45,19 +45,39 @@ function(sgp_object,
 		return(my.data)
 	}
 
+
 	###########################################
 	###
 	### Perform checks
 	###
 	###########################################
 
-	### Check class of variables in @Data
+	## Check class of variables in @Data
 
 	if (any(tmp.check <- checkVariableClass(sgp_object@Data, id.only=FALSE))) {
 		sgp_object@Data <- changeVariableClass(sgp_object@Data, convert.tf=tmp.check, data.slot="@Data")
 	}
 
-	### Check class of variables in @SGP$SGPercentiles and @SGP$SGProjections
+	## Check class and construction of coefficient matrices
+
+	if (!is.null(sgp_object@SGP[["Coefficient_Matrices"]])) {
+		tmp.matrices <- sgp_object@SGP[["Coefficient_Matrices"]]
+		for (i in names(tmp.matrices)) {
+			splineMatrix.tf <- sapply(tmp.matrices[[i]], validObject, test=TRUE)==TRUE
+			if (!any(splineMatrix.tf)) {
+				tmp.changes <- TRUE
+				message("Updating Existing Coefficient Matrices to new splineMatrix class.")
+				for (j in names(tmp.matrices[[i]])[!splineMatrix.tf]) {
+					tmp.matrices[[i]][[j]] <- as.splineMatrix(matrix_argument=tmp.matrices[[i]][[j]], matrix_argument_name=j, sgp_object=sgp_object)
+				}
+			}
+		}
+		if (tmp.changes) {
+			sgp_object@SGP[["Coefficient_Matrices"]] <- tmp.matrices
+		}
+	}
+
+	## Check class of variables in @SGP$SGPercentiles and @SGP$SGProjections
 
 	if (any(SGPctls.tf <- sapply(sgp_object@SGP[['SGPercentiles']], checkVariableClass))) {
 		tmp.data <- sgp_object@SGP[['SGPercentiles']]
@@ -75,7 +95,7 @@ function(sgp_object,
 		tmp.data -> sgp_object@SGP[['SGProjections']]
 	}
 
-	### Check if ACHIEVEMENT_LEVEL levels are in SGPstateData
+	## Check if ACHIEVEMENT_LEVEL levels are in SGPstateData
 
 	if (!is.null(state)) {
 		if (!all(levels(sgp_object@Data$ACHIEVEMENT_LEVEL) %in% SGPstateData[[state]][['Achievement']][['Levels']][['Labels']])) {
@@ -85,7 +105,7 @@ function(sgp_object,
 		}
 	}
 
-	### Correct SCALE_SCORE_PRIOR/PRIOR_SCALE_SCORE mixup
+	## Correct SCALE_SCORE_PRIOR/PRIOR_SCALE_SCORE mixup
 
 	if ("PRIOR_SCALE_SCORE" %in% names(sgp_object@Data)) {
 		message("\tNOTE: Changing name 'PRIOR_SCALE_SCORE' to 'SCALE_SCORE_PRIOR' in @Data")
@@ -99,7 +119,7 @@ function(sgp_object,
 		}
 	}
 
-	### Change SGP_TARGET names to indicate number of years
+	## Change SGP_TARGET names to indicate number of years
 
 	names.to.change <- c("SGP_TARGET", "SGP_TARGET_BASELINE", "SGP_TARGET_MOVE_UP_STAY_UP", "SGP_TARGET_BASELINE_MOVE_UP_STAY_UP")
 	for (i in intersect(names(sgp_object@Data), names.to.change)) {
@@ -108,7 +128,7 @@ function(sgp_object,
 	}
 
 
-	### Return sgp_object	
+	## Return sgp_object	
 
 	return(sgp_object)
 

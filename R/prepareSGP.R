@@ -1,9 +1,9 @@
 `prepareSGP` <- 
-	function(data,
-		state=NULL,
-		var.names=NULL,
-		create.additional.variables=TRUE,
-		fix.duplicates="keep.all") {
+function(data,
+	state=NULL,
+	var.names=NULL,
+	create.additional.variables=TRUE,
+	fix.duplicates="keep.all") {
 
 	## Print start time
 
@@ -21,52 +21,6 @@
 
 
 	### Utility functions
-
-	# achievement_level_recode
-
-	achievement_level_recode <- function(sgp_object, state=NULL, year=NULL, content_area=NULL, grade=NULL) {
-		if (!"ACHIEVEMENT_LEVEL" %in% names(sgp_object@Data)) {
-			sgp_object@Data[["ACHIEVEMENT_LEVEL"]] <- 
-				factor(1, levels=seq_along(SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]][!is.na(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]])]),
-				labels=SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]][!is.na(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]])], ordered=TRUE)
-		}
-
-		if (is.null(year)) year <- sort(unique(sgp_object@Data$YEAR))
-		if (is.null(content_area)) content_area <- sort(unique(sgp_object@Data$CONTENT_AREA[sgp_object@Data$YEAR %in% year]))
-		if (is.null(grade)) grade <- sort(unique(sgp_object@Data$GRADE[sgp_object@Data$YEAR %in% year & sgp_object@Data$CONTENT_AREA %in% content_area]))
-
-		get.cutscore.label <- function(state, year, content_area) {
-			tmp.cutscore.names <- names(SGPstateData[[state]][["Achievement"]][["Cutscores"]])
-			tmp.cutscore.years <- sapply(strsplit(tmp.cutscore.names[grep(content_area, tmp.cutscore.names)], "[.]"), function(x) x[2])
-			if (any(!is.na(tmp.cutscore.years))) {
-				if (year %in% tmp.cutscore.years) {
-					return(paste(content_area, year, sep="."))
-				} else {
-					if (year==sort(c(year, tmp.cutscore.years))[1]) {
-						return(content_area)
-					} else {
-						return(paste(content_area, sort(tmp.cutscore.years)[which(year==sort(c(year, tmp.cutscore.years)))-1], sep="."))
-					}
-				}
-			} else {
-				return(content_area)
-			}
-		}
-
-		achievement_level_recode_INTERNAL <- function(state, content_area, year, grade, scale_score) {
-			factor(findInterval(scale_score, SGPstateData[[state]][["Achievement"]][["Cutscores"]][[get.cutscore.label(state, year, content_area)]][[paste("GRADE_", grade, sep="")]])+1,
-				levels=seq_along(SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]][!is.na(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]])]),
-				labels=SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]][!is.na(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]])], ordered=TRUE)
-		}
-
-		setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))
-			sgp_object@Data[["ACHIEVEMENT_LEVEL"]][sgp_object@Data[CJ("VALID_CASE", content_area, year, grade), which=TRUE, nomatch=0]] <- 
-			sgp_object@Data[CJ("VALID_CASE", content_area, year, grade), nomatch=0][, achievement_level_recode_INTERNAL(state, CONTENT_AREA, YEAR, GRADE, SCALE_SCORE), 
-				by=list(CONTENT_AREA, YEAR, GRADE)][["V1"]]
-		setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
-
-		return(sgp_object)
-	}
 
 	# Function producing HIGH_NEED_STATUS variable (not yet in use)
 
@@ -186,76 +140,6 @@
 
 	if (is.SGP(data)) {
 
-		## Fix matrices if they aren't of splineMatrix class
-		tmp.changes <- FALSE
-
-		# Convert to splineMatrix class if not already
-		if (!is.null(data@SGP[["Coefficient_Matrices"]])) {
-			tmp.matrices <- data@SGP[["Coefficient_Matrices"]]
-			for (i in names(tmp.matrices)) {
-				splineMatrix.tf <- sapply(tmp.matrices[[i]], is.splineMatrix)
-				if (!any(splineMatrix.tf)) {
-					tmp.changes <- TRUE
-					message("Updating Existing Coefficient Matrices to new splineMatrix class.")
-					tmp.matrices[[i]][!splineMatrix.tf] <- 
-						lapply(tmp.matrices[[i]][!splineMatrix.tf], function(x) as.splineMatrix(matrix=x, sgp_object=data))
-				}
-			}
-			
-			#  Attempt to populat Content_Areas and Grade_Progression slots if NULL according to @SGP$Coefficient_Matrices naming conventions
-			for (j in names(tmp.matrices)) {
-				j.txt <- paste("tmp.matrices[['", j, "']]", sep="")
-				tmp.ca <- strsplit(j, "[.]")[[1]][1]
-				official.gp <- SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[tmp.ca]]
-				for (q in seq_along(names(eval(parse(text=j.txt))))) {
-					qmat <- names(eval(parse(text=j.txt)))[q]
-					grd <- as.numeric(strsplit(qmat, "_")[[1]][2]); priors <- as.numeric(strsplit(qmat, "_")[[1]][3])
-					if (!is.null(official.gp) & grd %in% official.gp) {
-						gp <- official.gp[(match(grd, official.gp)-priors):match(grd, official.gp)]
-					} else {
-						gp <- c(as.numeric(strsplit(strsplit(qmat, "_")[[1]][4], "[.]")[[1]]))
-						if (length(gp)==0) {
-							gp <- (grd-priors):grd 
-						}
-					}
-
-					#  For splineMatrices created without Content_Areas, Grade_Progression or Version
-					if (identical(class(try(eval(parse(text=paste(j.txt, "$", qmat, "@Content_Areas"))), silent=TRUE)), "try-error")) {
-						eval(parse(text=paste(j.txt, "$", qmat, "@Content_Areas <- list(rep(tmp.ca, length(gp)))")))
-						message("Updating new splineMatrix class Coefficient Matrices to include @Content_Areas slot."); tmp.changes <- TRUE
-					} 
-					if (identical(class(try(eval(parse(text=paste(j.txt, "$", qmat, "@Grade_Progression"))), silent=TRUE)), "try-error")) {
-						eval(parse(text=paste(j.txt, "$", qmat, "@Grade_Progression <- list(gp)")))
-						message("Updating new splineMatrix class Coefficient Matrices to include @Grade_Progression slot."); tmp.changes <- TRUE
-					} 
-					if (identical(class(try(eval(parse(text=paste(j.txt, "$", qmat, "@Version"))), silent=TRUE)), "try-error")) {
-						eval(parse(text=paste(j.txt, "$", qmat, "@Version <- list(SGP_Package_Version=", paste("'Unknown - Converted with", 
-							as.character(packageVersion("SGP")), "', ", sep=""), "Date_Prepared=", paste("'Unknown - Coverted,", date(), "')", sep=""), sep="")))
-						tmp.changes <- TRUE
-					}
-
-					#  For recently converted (using as.splineMatrix above) splineMatrices
-					if (is.null(eval(parse(text=paste(j.txt, "$", qmat, "@Content_Areas", sep=""))))) {
-						eval(parse(text=paste(j.txt, "$", qmat, "@Content_Areas <- list(rep(tmp.ca, length(gp)))")))
-						message("Updating new splineMatrix class Coefficient Matrices to include @Content_Areas slot."); tmp.changes <- TRUE
-					} 
-					if (is.null(eval(parse(text=paste(j.txt, "$", qmat, "@Grade_Progression"))))) {
-						eval(parse(text=paste(j.txt, "$", qmat, "@Grade_Progression <- list(gp)")))
-						message("Updating new splineMatrix class Coefficient Matrices to include @Grade_Progression slot."); tmp.changes <- TRUE
-					} 
-					
-					#  For splineMatrices created with grade progression lables
-					if (!is.na(strsplit(qmat, "_")[[1]][4])) {
-						eval(parse(text=paste("names(", j.txt, ")[", q, "] <- paste(strsplit(qmat, '_')[[1]][-4], collapse='_')", sep="")))
-						message("Renaming splineMatrix class Coefficient Matrices to EXCLUDE grade progression labels."); tmp.changes <- TRUE
-					}
-				}
-			}
-			if (tmp.changes) {
-				data@SGP[["Coefficient_Matrices"]] <- tmp.matrices
-			}
-		}
-
 		if (!is.null(state) & is.null(var.names)) {
 			if (!identical(state, "DEMO") & !identical(data@Names, SGPstateData[[state]][["Variable_Name_Lookup"]])) {
 				data@Names <- SGPstateData[[state]][["Variable_Name_Lookup"]]
@@ -269,9 +153,11 @@
 			data@Names <- getNames(data@Data, var.names)
 		}
 
-		## Check class values of fields
+		## run checkSGP
 
 		data <- checkSGP(data, state=state)
+
+		## Key data.table and check for duplicate cases
 
 		if (!identical(key(data@Data), c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))) {
 			setkeyv(data@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
@@ -283,6 +169,8 @@
 				save(DUPLICATED_CASES, file="DUPLICATED_CASES.Rdata")
 			}
 		}
+
+		## Check for knots and boundaries
 
 		if (is.null(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]])) {
 			SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]] <- createKnotsBoundaries(data@Data)
@@ -311,6 +199,8 @@
 			save(DUPLICATED_CASES, file="DUPLICATED_CASES.Rdata")
 		}
 
+		## Check for knots and boundaries
+
 		if (is.null(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]])) {
 			SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]] <- createKnotsBoundaries(data)
 			assign("SGPstateData", SGPstateData, envir=globalenv())
@@ -319,11 +209,6 @@
 			message(paste("\tKnots and Boundaries do not exist for state provided but have been produced, embedded in a working copy of SGPstateData (using state=", state, ") for subsequent analyses and saved to your working directory '", getwd(), "'.", sep=""))
 		}
 
-
-		################################################################	
-		## INCLUDE CODE HERE TO HANDLE DUPLICATE CASES
-		################################################################	
-
 		##  Create the SGP object
 
 		sgp_object <- new("SGP", Data=data, Names=variable.names, Version=getVersion(data))
@@ -331,11 +216,12 @@
 
 	} ## END else
 
-	#################################################################
+
+	#########################################################################
 	###
-	### Tidy up variables (could be validity checks)
+	### Tidy up variables (could be validity checks, e.g., duplicate cases)
 	###
-	#################################################################
+	#########################################################################
 
 
 
