@@ -30,6 +30,7 @@ function(panel.data,         ## REQUIRED
          convert.using.loss.hoss=TRUE,
          goodness.of.fit=TRUE,
          return.prior.scale.score=TRUE,
+         return.norm.group.identifier=TRUE,
          print.time.taken=TRUE,
          parallel.config=NULL) {
 
@@ -884,7 +885,7 @@ function(panel.data,         ## REQUIRED
 			quantile.data <- data.table(reshape(quantile.data, idvar="ID", timevar="ORDER", direction="wide"),
 				SGP=quantile.data[c(which(!duplicated(quantile.data))[-1]-1L, nrow(quantile.data))][["SGP"]])
 		} else {
-			if (print.sgp.order) {
+			if (print.sgp.order | return.norm.group.identifier) {
 				quantile.data <- quantile.data[c(which(!duplicated(quantile.data))[-1]-1L, nrow(quantile.data))]
 			} else {
 				quantile.data <- quantile.data[c(which(!duplicated(quantile.data))[-1]-1L, nrow(quantile.data)), c("ID", "SGP"), with=FALSE]
@@ -933,6 +934,15 @@ function(panel.data,         ## REQUIRED
 		if (return.prior.scale.score) {
 			SCALE_SCORE_PRIOR <- NULL
 			quantile.data[, SCALE_SCORE_PRIOR:=prior.ss]
+		}
+
+		if (return.norm.group.identifier) {
+			norm.groups <- sapply(seq_along(year.progression)[-1], function(x) paste(tail(paste(year.progression, content.area.progression, sep="/"), x), collapse=" "))
+			norm.var.name <- paste(c("SGP_NORM_GROUP", sgp.labels[['my.extra.label']]), collapse="_")
+			if (!print.sgp.order) {
+				quantile.data[, ORDER:=factor(ORDER, labels=norm.groups)]
+				setnames(quantile.data, "ORDER", norm.var.name)
+			} else quantile.data[, norm.var.name:=factor(ORDER, labels=norm.groups), with=FALSE]
 		}
 
 		if (dim(quantile.data)[1] <= 250) {
