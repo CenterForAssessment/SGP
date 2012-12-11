@@ -1,3 +1,9 @@
+Changes in version: SGP_0.9-9.9
+
+  NEW FEATURES:
+
+	  o Update of splineMatrix class to include a validity check and update of as.splineMatrix to convert older splineMatrices to current version.
+
 Changes in version: SGP_0.9-9.8
 
   NEW FEATURES:
