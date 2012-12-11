@@ -91,11 +91,11 @@ function(sgp_object,
 					### Check to see if a BASELINE splineMatrix exists for the element par.sgp.config[[cnt]]
 
 					if (paste(strsplit(a, "\\.")[[1]][1], ".BASELINE", sep="") %in% names(tmp_sgp_object[["Coefficient_Matrices"]])) {
-						tmp.matrices.tf <- 	length(tmp.max.order <- getsplineMatrix(
+						tmp.matrices.tf <- length(tmp.max.order <- getsplineMatrix(
 							my.matrices=tmp.matrices, 
 							my.matrix.content.area.progression=par.sgp.config[[cnt]][['sgp.content.areas']], 
 							my.matrix.grade.progression=par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]], 
-							my.matrix.time.progression=par.sgp.config[[cnt]][['sgp.panel.years']] ,
+							my.matrix.time.progression=rep("BASELINE", length(par.sgp.config[[cnt]][['sgp.panel.years']])),
 							my.matrix.time.progression.lags=diff(as.numeric(sapply(strsplit(par.sgp.config[[cnt]][['sgp.panel.years']], '_'), '[', 2))), 
 							return.only.orders=TRUE)) > 0
 					} else tmp.matrices.tf <- FALSE

@@ -177,10 +177,10 @@ function(panel.data,         ## REQUIRED
 		tmp.version <- list(SGP_Package_Version=as.character(packageVersion("SGP")), Date_Prepared=date())
 
 		eval(parse(text=paste("new('splineMatrix', tmp.mtx, ", substring(s4Ks, 1, nchar(s4Ks)-1), "), ", substring(s4Bs, 1, nchar(s4Bs)-1), "), ",
-			"Content_Areas=list(tail(content.area.progression, k+1)), ",
-			"Grade_Progression=list(tail(tmp.slot.gp, k+1)), ",
-			"Time=list(tail(year.progression, k+1)), ",
-			"Time_Lags=list(tail(year.progression.lags, k)), ",
+			"Content_Areas=list(as.character(tail(content.area.progression, k+1))), ",
+			"Grade_Progression=list(as.character(tail(tmp.slot.gp, k+1))), ",
+			"Time=list(as.character(tail(year.progression, k+1))), ",
+			"Time_Lags=list(as.integer(tail(year.progression.lags, k))), ",
 			"Version=tmp.version)", sep="")))
 
 	} ### END .create.coefficient.matrices
@@ -728,16 +728,16 @@ function(panel.data,         ## REQUIRED
 		}
 	}
 
-	if (missing(year.progression) & sgp.labels[['my.year']]!="BASELINE") {
+	if (missing(year.progression) & !identical(sgp.labels[['my.extra.label']], "BASELINE")) {
 		year.progression <- .year.increment(sgp.labels[['my.year']], rev(seq(0, length=length(tmp.gp), by=-1)))
 	} else {
-		if (sgp.labels[['my.year']]=="BASELINE") {
+		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) {
 			year.progression <- rep("BASELINE", length(tmp.gp))
 		}
 		if (!identical(class(year.progression), "character")) {
 			stop("year.area.progression should be a character vector. See help page for details.")
 		}
-		if (!identical(tail(year.progression, 1), sgp.labels[['my.year']])) {
+		if (!identical(sgp.labels[['my.extra.label']], "BASELINE") & !identical(tail(year.progression, 1), sgp.labels[['my.year']])) {
 			stop("The last element in the year.progression must be identical to 'my.year' of the sgp.labels. See help page for details.")
 		}
 		if (length(year.progression) != length(tmp.gp)) {
