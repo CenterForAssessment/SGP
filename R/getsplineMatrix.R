@@ -17,7 +17,7 @@ function(
 			tmp.df[i,1] <- identical(my.matrices@Content_Areas[[1]], tail(my.matrix.content.area.progression, my.order[i]+1)) & 
 					identical(my.matrices@Grade_Progression[[1]], as.character(tail(my.matrix.grade.progression, my.order[i]+1))) & 
 					identical(my.matrices@Time[[1]], as.character(tail(my.matrix.time.progression, my.order[i]+1))) &
-					identical(my.matrices@Time_Lags[[1]], tail(my.matrix.time.progression.lags, my.order[i]+1))
+					identical(my.matrices@Time_Lags[[1]], as.integer(tail(my.matrix.time.progression.lags, my.order[i]+1)))
 			tmp.df[i,2] <-	my.order[i]
 		}
 		names(tmp.df) <- c("Matrix_TF", "Order")

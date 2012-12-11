@@ -137,7 +137,7 @@ function(matrix_argument,
 			### Content Areas
 
 			if (.hasSlot(matrix_argument, "Content_Areas")) {
-				content_areas <- matrix_argument@Content_Areas[[1]]
+				content_areas <- as.character(matrix_argument@Content_Areas[[1]])
 			} else {
 				content_areas <- rep(unlist(strsplit(gsub("'|]]", "", strsplit(rn, "\\[\\[")[[1]][2]), "[.]"))[1], length(grade_progression))
 			}
@@ -146,22 +146,22 @@ function(matrix_argument,
 			### Time Lag
 
 			if (.hasSlot(matrix_argument, "Time")) {
-				time_lags <- matrix_argument@Time_Lags[[1]]
+				time_lags <- as.integer(matrix_argument@Time_Lags[[1]])
 			} else {
-				time_lags <- diff(type.convert(grade_progression))
+				time_lags <- as.integer(diff(type.convert(grade_progression)))
 			}
 
 
 			### Time
 
 			if (.hasSlot(matrix_argument, "Time")) {
-				time <- matrix_argument@Time[[1]]
+				time <- as.character(matrix_argument@Time[[1]])
 			} else {
 				tmp.time <- unlist(strsplit(gsub("'|]]", "", strsplit(rn, "\\[\\[")[[1]][2]), "[.]"))[2]
 				if (tmp.time == "BASELINE") {
 					time <- rep("BASELINE", length(grade_progression))
 				} else {
-					time <- rev(year.increment(tmp.time, -cumsum(c(0, time_lags))))
+					time <- as.character(rev(year.increment(tmp.time, -cumsum(c(0, time_lags)))))
 				}
 			}
 
