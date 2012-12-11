@@ -26,7 +26,7 @@ function(
 
 	if (return.only.orders) {
 		tmp.list <- lapply(my.matrices, splineMatrix_equality)
-		tmp.orders <- as.numeric(subset(tmp.list[sapply(tmp.list, function(x) any(x[['Matrix_TF']]))][1][[1]], Matrix_TF==TRUE, select=Order))
+		tmp.orders <-  as.numeric(unlist(sapply(tmp.list[sapply(tmp.list, function(x) any(x[['Matrix_TF']]))], subset, Matrix_TF==TRUE, select=Order)))
 		return(tmp.orders)
 	} else {
 		if (is.null(my.matrix.order)) my.matrix.order <- length(my.matrix.time.progression.lags)
