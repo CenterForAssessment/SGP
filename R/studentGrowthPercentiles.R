@@ -728,16 +728,16 @@ function(panel.data,         ## REQUIRED
 		}
 	}
 
-	if (missing(year.progression) & sgp.labels[['my.extra.label']]!="BASELINE") {
+	if (missing(year.progression) & !identical(sgp.labels[['my.extra.label']], "BASELINE")) {
 		year.progression <- .year.increment(sgp.labels[['my.year']], rev(seq(0, length=length(tmp.gp), by=-1)))
 	} else {
-		if (sgp.labels[['my.extra.label']]=="BASELINE") {
+		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) {
 			year.progression <- rep("BASELINE", length(tmp.gp))
 		}
 		if (!identical(class(year.progression), "character")) {
 			stop("year.area.progression should be a character vector. See help page for details.")
 		}
-		if (sgp.labels[['my.extra.label']]!="BASELINE" & !identical(tail(year.progression, 1), sgp.labels[['my.year']])) {
+		if (!identical(sgp.labels[['my.extra.label']], "BASELINE") & !identical(tail(year.progression, 1), sgp.labels[['my.year']])) {
 			stop("The last element in the year.progression must be identical to 'my.year' of the sgp.labels. See help page for details.")
 		}
 		if (length(year.progression) != length(tmp.gp)) {
