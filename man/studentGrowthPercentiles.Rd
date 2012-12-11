@@ -40,6 +40,7 @@ studentGrowthPercentiles(panel.data,
                          convert.using.loss.hoss=TRUE,                
                          goodness.of.fit=TRUE,
                          return.prior.scale.score=TRUE,
+                         return.norm.group.identifier=TRUE,
                          print.time.taken=TRUE,
                          parallel.config=NULL)
 }
@@ -148,6 +149,8 @@ to calculate the lags/differences based upon the supplied years.
   }
   \item{return.prior.scale.score}{Boolean argument (default to TRUE) indicating whether to include the prior scale score in the SGP data output. Useful for examining relationship between prior 
    achievement and student growth.
+  }
+  \item{return.norm.group.identifier}{Boolean argument (default to TRUE) indicating whether to include the content areas and years that form students' specific norm group in the SGP data output.
   }
   \item{print.time.taken}{Boolean argument (defaults to TRUE) indicating whether to print message indicating information on studentGrowthPercentile analysis and time taken.
   }
