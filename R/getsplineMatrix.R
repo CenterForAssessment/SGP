@@ -10,15 +10,22 @@ function(
 
 	Matrix_TF <- Order <- NULL
 
-	splineMatrix_equality <- function(my.matrices, my.order=NULL) {
+	splineMatrix_equality <- function(my.matrix, my.order=NULL) {
 		tmp.df <- data.frame()
 		if (is.null(my.order)) my.order <- (2:length(my.matrix.time.progression))-1
 		for (i in seq_along(my.order)) {
-			tmp.df[i,1] <- identical(my.matrices@Content_Areas[[1]], tail(my.matrix.content.area.progression, my.order[i]+1)) & 
-					identical(my.matrices@Grade_Progression[[1]], as.character(tail(my.matrix.grade.progression, my.order[i]+1))) & 
-					identical(my.matrices@Time[[1]], as.character(tail(my.matrix.time.progression, my.order[i]+1))) &
-					identical(my.matrices@Time_Lags[[1]], as.integer(tail(my.matrix.time.progression.lags, my.order[i]+1)))
-			tmp.df[i,2] <-	my.order[i]
+			if (my.matrix@Time[[1]][1] == "BASELINE") {
+				tmp.df[i,1] <- identical(my.matrix@Content_Areas[[1]], tail(my.matrix.content.area.progression, my.order[i]+1)) & 
+					identical(my.matrix@Grade_Progression[[1]], tail(my.matrix.grade.progression, my.order[i]+1)) & 
+					identical(as.numeric(my.matrix@Time_Lags[[1]]), as.numeric(tail(my.matrix.time.progression.lags, my.order[i]+1)))
+				tmp.df[i,2] <-	my.order[i]
+			} else {
+				tmp.df[i,1] <- identical(my.matrix@Content_Areas[[1]], tail(my.matrix.content.area.progression, my.order[i]+1)) & 
+					identical(my.matrix@Grade_Progression[[1]], tail(my.matrix.grade.progression, my.order[i]+1)) & 
+					identical(my.matrix@Time[[1]], tail(my.matrix.time.progression, my.order[i]+1)) &
+					identical(as.numeric(my.matrix@Time_Lags[[1]]), as.numeric(tail(my.matrix.time.progression.lags, my.order[i]+1)))
+				tmp.df[i,2] <-	my.order[i]
+			}
 		}
 		names(tmp.df) <- c("Matrix_TF", "Order")
 		return(tmp.df)
