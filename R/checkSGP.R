@@ -61,7 +61,7 @@ function(sgp_object,
 	## Check class and construction of coefficient matrices
 
 	if (!is.null(sgp_object@SGP[["Coefficient_Matrices"]])) {
-		tmp.matrices <- sgp_object@SGP[["Coefficient_Matrices"]]
+		tmp.matrices <- sgp_object@SGP[["Coefficient_Matrices"]]; tmp.changes <- FALSE
 		for (i in names(tmp.matrices)) {
 			splineMatrix.tf <- sapply(tmp.matrices[[i]], validObject, test=TRUE)==TRUE
 			if (!any(splineMatrix.tf)) {
