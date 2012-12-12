@@ -922,7 +922,7 @@ function(panel.data,         ## REQUIRED
 					colnames(tmp.cq) <- paste("SGP_", calculate.confidence.intervals$confidence.quantiles, "_CONFIDENCE_BOUND", sep="")
 					quantile.data <- cbind(quantile.data, tmp.cq)
 			}
-			Simulated_SGPs[[tmp.path]] <- rbind.fill(as.data.frame(Simulated_SGPs[[tmp.path]]), as.data.frame(simulation.data)) 
+			Simulated_SGPs[[tmp.path]] <- rbind.fill(as.data.frame(Simulated_SGPs[[tmp.path]]), simulation.data) 
 		}
 
 		if (!is.null(percentile.cuts)){
@@ -953,7 +953,7 @@ function(panel.data,         ## REQUIRED
 
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, "SGP", "SGP_BASELINE")
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & tf.growth.levels) setnames(quantile.data, "SGP_LEVEL", "SGP_LEVEL_BASELINE")
-		SGPercentiles[[tmp.path]] <- rbind.fill(quantile.data, SGPercentiles[[tmp.path]])
+		SGPercentiles[[tmp.path]] <- rbind.fill(quantile.data, as.data.frame(SGPercentiles[[tmp.path]]))
 
 	} ## End if calculate.sgps
 
