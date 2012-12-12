@@ -422,7 +422,7 @@ function(panel.data,         ## REQUIRED
 	###
 	############################################################################
 
-	ID <- tmp.messages <- NULL
+	ID <- tmp.messages <- ORDER <- NULL
 
 	if (missing(panel.data)) {
 		stop("User must supply student achievement data for student growth percentile calculations. NOTE: data is now supplied to function using panel.data argument. See help page for details.")
@@ -922,7 +922,7 @@ function(panel.data,         ## REQUIRED
 					colnames(tmp.cq) <- paste("SGP_", calculate.confidence.intervals$confidence.quantiles, "_CONFIDENCE_BOUND", sep="")
 					quantile.data <- cbind(quantile.data, tmp.cq)
 			}
-			Simulated_SGPs[[tmp.path]] <- rbind.fill(Simulated_SGPs[[tmp.path]], simulation.data) 
+			Simulated_SGPs[[tmp.path]] <- rbind.fill(as.data.frame(Simulated_SGPs[[tmp.path]]), simulation.data) 
 		}
 
 		if (!is.null(percentile.cuts)){
@@ -937,12 +937,9 @@ function(panel.data,         ## REQUIRED
 		}
 
 		if (return.norm.group.identifier) {
-			norm.groups <- sapply(seq_along(year.progression)[-1], function(x) paste(tail(paste(year.progression, content.area.progression, sep="/"), x), collapse=" "))
+			norm.groups <- sapply(seq_along(year.progression)[-1], function(x) paste(tail(paste(year.progression, paste(content.area.progression, grade.progression, sep="_"), sep="/"), x), collapse="; "))
 			norm.var.name <- paste(c("SGP_NORM_GROUP", sgp.labels[['my.extra.label']]), collapse="_")
-			if (!print.sgp.order) {
-				quantile.data[, ORDER:=factor(ORDER, labels=norm.groups)]
-				setnames(quantile.data, "ORDER", norm.var.name)
-			} else quantile.data[, norm.var.name:=factor(ORDER, labels=norm.groups), with=FALSE]
+			quantile.data[, norm.var.name:=factor(ORDER, labels=norm.groups), with=FALSE]
 		}
 
 		if (dim(quantile.data)[1] <= 250) {
@@ -956,7 +953,7 @@ function(panel.data,         ## REQUIRED
 
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, "SGP", "SGP_BASELINE")
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & tf.growth.levels) setnames(quantile.data, "SGP_LEVEL", "SGP_LEVEL_BASELINE")
-		SGPercentiles[[tmp.path]] <- rbind.fill(quantile.data, SGPercentiles[[tmp.path]])
+		SGPercentiles[[tmp.path]] <- rbind.fill(quantile.data, as.data.frame(SGPercentiles[[tmp.path]]))
 
 	} ## End if calculate.sgps
 
