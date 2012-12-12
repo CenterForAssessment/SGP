@@ -937,9 +937,13 @@ function(panel.data,         ## REQUIRED
 		}
 
 		if (return.norm.group.identifier) {
-			norm.groups <- sapply(seq_along(year.progression)[-1], function(x) paste(tail(paste(year.progression, paste(content.area.progression, grade.progression, sep="_"), sep="/"), x), collapse="; "))
+			norm.groups <- sapply(seq_along(year.progression)[-1][1:(num.panels-1)], 
+				function(x) paste(tail(paste(year.progression, paste(content.area.progression, grade.progression, sep="_"), sep="/"), x), collapse="; "))
 			norm.var.name <- paste(c("SGP_NORM_GROUP", sgp.labels[['my.extra.label']]), collapse="_")
-			quantile.data[, norm.var.name:=factor(ORDER, labels=norm.groups), with=FALSE]
+			if (!print.sgp.order) { # Return only SGP_NORM_GROUP
+				quantile.data[, ORDER:=factor(ORDER, labels=norm.groups)]
+				setnames(quantile.data, "ORDER", norm.var.name)
+			} else quantile.data[, norm.var.name:=factor(ORDER, labels=norm.groups), with=FALSE] # Return both ORDER and SGP_NORM_GROUP
 		}
 
 		if (dim(quantile.data)[1] <= 250) {
