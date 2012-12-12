@@ -922,7 +922,7 @@ function(panel.data,         ## REQUIRED
 					colnames(tmp.cq) <- paste("SGP_", calculate.confidence.intervals$confidence.quantiles, "_CONFIDENCE_BOUND", sep="")
 					quantile.data <- cbind(quantile.data, tmp.cq)
 			}
-			Simulated_SGPs[[tmp.path]] <- rbind.fill(Simulated_SGPs[[tmp.path]], simulation.data) 
+			Simulated_SGPs[[tmp.path]] <- rbind.fill(as.data.frame(Simulated_SGPs[[tmp.path]]), as.data.frame(simulation.data)) 
 		}
 
 		if (!is.null(percentile.cuts)){
