@@ -100,12 +100,15 @@ function(sgp_object,
 						mtx.index <- which(sapply(mtx.names, function(x) strsplit(x, "_")[[1]][2]) == tail(par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]], 1))
 						if (length(mtx.index) !=0) { # Cases where content area has some BASELINE coef matrices, but not with the present grade prog
 							tmp.max.order <- max(as.numeric(sapply(strsplit(mtx.names[mtx.index], "_"), function(x) x[3])))
+							if (length(par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]])-1 < tmp.max.order) {
+								tmp.max.order <- length(par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]])-1
+							}
 							tmp.matrices.tf <- length(getsplineMatrix(
 								my.matrices=tmp.matrices[mtx.index], 
 								my.matrix.content.area.progression=tail(par.sgp.config[[cnt]][['sgp.content.areas']], tmp.max.order+1), 
 								my.matrix.grade.progression=tail(par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]], tmp.max.order+1), 
 								my.matrix.time.progression=rep("BASELINE", tmp.max.order+1),
-								my.matrix.time.progression.lags=diff(as.numeric(sapply(strsplit(tail(par.sgp.config[[cnt]][['sgp.panel.years']], tmp.max.order+1), '_'), '[', 
+								my.matrix.time.progression.lags=diff(as.integer(sapply(strsplit(tail(par.sgp.config[[cnt]][['sgp.panel.years']], tmp.max.order+1), '_'), '[', 
 									split.location(par.sgp.config[[cnt]][['sgp.panel.years']])))),
 								return.only.orders=TRUE)) > 0 # Cases where content area has some BASELINE coef matrices, but not for this particular config (Time, Lag, etc off)
 						} else tmp.matrices.tf <- FALSE
@@ -115,11 +118,7 @@ function(sgp_object,
 						par.sgp.config[[cnt]][['base.gp']] <- "NO_BASELINE_COEFFICIENT_MATRICES"
 						par.sgp.config[[cnt]][['max.order']] <- "NO_BASELINE_COEFFICIENT_MATRICES"
 					} else {
-						if (length(par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]])-1 < tmp.max.order) {
-							tmp.max.order <- length(par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]])-1
-						}
 						tmp.base.gp <- tail(par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]], tmp.max.order+1)
-
 						par.sgp.config[[cnt]][['base.gp']] <- as.character(tmp.base.gp)
 						par.sgp.config[[cnt]][['max.order']] <- tmp.max.order
 					}
