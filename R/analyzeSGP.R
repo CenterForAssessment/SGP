@@ -828,7 +828,7 @@ function(sgp_object,
 		### sgp.percentiles
 			
 		if (sgp.percentiles) {
-			for (sgp.iter in rev(par.sgp.config) {
+			for (sgp.iter in rev(par.sgp.config)) {
 
 				panel.data=within(tmp_sgp_object, assign("Panel_Data", getPanelData(tmp_sgp_data_for_analysis, "sgp.percentiles", sgp.iter)))
 				tmp.knots.boundaries <- getKnotsBoundaries(sgp.iter, state) # Get specific knots and boundaries in case course sequence is different
