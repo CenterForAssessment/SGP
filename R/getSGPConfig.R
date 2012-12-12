@@ -77,17 +77,17 @@ function(sgp_object,
 
 				### Create index and identify years and content areas from sgp.panel.years
 
-				if (is.numeric(type.convert(as.character(par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]])))) {
+				#  Coerce sgp.grade.sequence to character first to deal with mixed config cases (some numeric/integer, some character)
+				par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]] <- as.character(par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]])
+
+				if (is.numeric(type.convert(par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]]))) {
 					grade.span <- seq(min(type.convert(par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]])),
 						max(type.convert(par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]])))
-					index <- match(par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]], grade.span) 
+					index <- match(type.convert(par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]]), grade.span)
 					if (!sgp.config.drop.nonsequential.grade.progression.variables)  index <- seq_along(index) 
 					par.sgp.config[[cnt]][['sgp.panel.years']] <- tail(par.sgp.config[[cnt]][['sgp.panel.years']], max(index))[index]
 					par.sgp.config[[cnt]][['sgp.content.areas']] <- tail(par.sgp.config[[cnt]][['sgp.content.areas']], max(index))[index]
 				}
-
-				par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]] <- as.character(par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]])
-
 
 				### Additional arguments associated with baseline analyses
 
