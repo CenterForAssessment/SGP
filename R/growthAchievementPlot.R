@@ -475,7 +475,7 @@
 	}
 
 	setkey(growthAchievementPlot.data, GRADE)
-	grid.text(x=unit(0.8, "native"), y=unit(median(growthAchievementPlot.data[data.table(tmp.unique.grades[1])]$TRANSFORMED_SCALE_SCORE), "native"), 
+	grid.text(x=unit(0.8, "native"), y=unit(median(growthAchievementPlot.data[data.table(as.character(tmp.unique.grades[1]))]$TRANSFORMED_SCALE_SCORE), "native"), 
 		paste(pretty_year(year), "Achievement Percentile"), gp=gpar(col=format.colors.font, cex=0.9), rot=90)
 	
 	popViewport() ## pop left.axis.vp
