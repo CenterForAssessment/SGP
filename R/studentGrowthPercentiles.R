@@ -939,7 +939,8 @@ function(panel.data,         ## REQUIRED
 		if (return.norm.group.identifier) {
 			norm.groups <- sapply(seq_along(year.progression)[-1], function(x) paste(tail(paste(year.progression, paste(content.area.progression, grade.progression, sep="_"), sep="/"), x), collapse="; "))
 			norm.var.name <- paste(c("SGP_NORM_GROUP", sgp.labels[['my.extra.label']]), collapse="_")
-			quantile.data[, norm.var.name:=factor(ORDER, labels=norm.groups), with=FALSE]
+			quantile.data[, norm.var.name:=factor(factor(ORDER, levels=seq_along(norm.groups), labels=norm.groups)), with=FALSE] ### double factor to wipe unused levels
+			quantile.dat[, ORDER:=NULL]
 		}
 
 		if (dim(quantile.data)[1] <= 250) {
