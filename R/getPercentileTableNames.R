@@ -71,5 +71,4 @@ function(sgp_object,
 		if (length(tmp.names) > 0 & !is.null(content_areas)) tmp.names <- tmp.names[sapply(strsplit(tmp.names, "[.]"), function(x) x[1] %in% content_areas)]
 		return(tmp.names)
 	}
-
 } ## END getPercentileTableNames

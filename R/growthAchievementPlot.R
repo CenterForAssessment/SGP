@@ -15,7 +15,7 @@
 	pdf.folder,
 	assessment.name) { 
 
-	CUTLEVEL <- GRADE <- YEAR <- ID <- SCALE_SCORE <- level_1_curve <- NULL ## To prevent R CMD check warnings
+	CUTLEVEL <- GRADE <- YEAR <- ID <- SCALE_SCORE <- level_1_curve <- V1 <- TRANSFORMED_SCALE_SCORE <- PERCENTILE <- NULL ## To prevent R CMD check warnings
 	content_area <- toupper(content_area)
 	number.achievement.level.regions <- length(SGPstateData[[state]][["Student_Report_Information"]][["Achievement_Level_Labels"]])
 
@@ -214,7 +214,7 @@
 
 	setkey(growthAchievementPlot.data, GRADE)
 	growthAchievementPlot.data$TRANSFORMED_SCALE_SCORE <- 
-		growthAchievementPlot.data[, piecewise.transform(SCALE_SCORE, state, as.character(content_area), as.character(YEAR), as.character(GRADE)), by=list(YEAR, GRADE)]$V1
+		growthAchievementPlot.data[, piecewise.transform(SCALE_SCORE, state, as.character(content_area), as.character(YEAR), as.character(GRADE)), by=list(YEAR, GRADE)][['V1']]
 	if (content_area %in% names(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]])) {
 		gaPlot.show.scale.transformations <- FALSE
 	}
@@ -227,17 +227,27 @@
 
 		## Creating the points used by lines to construct unconditional percentile curves
 
-		temp_uncond_frame <- matrix(nrow=length(gaPlot.achievement_percentiles), ncol=length(tmp.smooth.grades))
+		setkey(growthAchievementPlot.data, YEAR, GRADE)
+		my.tmp <- growthAchievementPlot.data[list(year)][,quantile(TRANSFORMED_SCALE_SCORE, probs=gaPlot.achievement_percentiles, na.rm=TRUE), by=GRADE][
+			as.character(tmp.unique.grades)][,PERCENTILE:=rep(gaPlot.achievement_percentiles, length(tmp.unique.grades))]
+		temp_uncond_frame <- matrix(my.tmp[,splinefun(GRADE, V1)(tmp.smooth.grades), by=PERCENTILE][['V1']], nrow=length(gaPlot.achievement_percentiles), byrow=TRUE)
 		rownames(temp_uncond_frame) <- gaPlot.achievement_percentiles
 		colnames(temp_uncond_frame) <- tmp.smooth.grades
-		temp_uncond_frame <- as.data.frame(temp_uncond_frame)
 
-		setkey(growthAchievementPlot.data, YEAR)
-		for (i in gaPlot.achievement_percentiles) {
-			temp_achievement_curve <- splinefun(tmp.unique.grades, as.vector(by(growthAchievementPlot.data[data.table(year)]$TRANSFORMED_SCALE_SCORE, 
-				growthAchievementPlot.data[data.table(year)]$GRADE, quantile, probs=i, na.rm=TRUE)), method="monoH.FC")
-			temp_uncond_frame[as.character(i),] <- temp_achievement_curve(tmp.smooth.grades)
-		}
+
+#		## Creating the points used by lines to construct unconditional percentile curves
+#
+#		temp_uncond_frame <- matrix(nrow=length(gaPlot.achievement_percentiles), ncol=length(tmp.smooth.grades))
+#		rownames(temp_uncond_frame) <- gaPlot.achievement_percentiles
+#		colnames(temp_uncond_frame) <- tmp.smooth.grades
+#		temp_uncond_frame <- as.data.frame(temp_uncond_frame)
+#
+#		setkey(growthAchievementPlot.data, YEAR)
+#		for (i in gaPlot.achievement_percentiles) {
+#			temp_achievement_curve <- splinefun(tmp.unique.grades, as.vector(by(growthAchievementPlot.data[data.table(year)]$TRANSFORMED_SCALE_SCORE, 
+#				growthAchievementPlot.data[data.table(year)]$GRADE, quantile, probs=i, na.rm=TRUE)), method="monoH.FC")
+#			temp_uncond_frame[as.character(i),] <- temp_achievement_curve(tmp.smooth.grades)
+#		}
 	}
 
 
