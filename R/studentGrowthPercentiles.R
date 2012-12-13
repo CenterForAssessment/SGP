@@ -936,11 +936,22 @@ function(panel.data,         ## REQUIRED
 			quantile.data[, SCALE_SCORE_PRIOR:=prior.ss]
 		}
 
-		if (return.norm.group.identifier) {
-			norm.groups <- sapply(seq_along(year.progression)[-1], function(x) paste(tail(paste(year.progression, paste(content.area.progression, grade.progression, sep="_"), sep="/"), x), collapse="; "))
+		if (print.sgp.order | return.norm.group.identifier) {
+			if (exact.grade.progression.sequence) {
+				norm.groups <- paste(paste(year.progression, paste(content.area.progression, grade.progression, sep="_"), sep="/"), collapse="; ")
+			} else {
+				norm.groups <- sapply(seq_along(year.progression)[-1][1:(num.panels-1)], 
+				 function(x) paste(tail(paste(year.progression, paste(content.area.progression, grade.progression, sep="_"), sep="/"), x), collapse="; "))
+			}
 			norm.var.name <- paste(c("SGP_NORM_GROUP", sgp.labels[['my.extra.label']]), collapse="_")
-			quantile.data[, norm.var.name:=factor(factor(ORDER, levels=seq_along(norm.groups), labels=norm.groups)), with=FALSE] ### double factor to wipe unused levels
-			quantile.dat[, ORDER:=NULL]
+			sgp.order.name <- paste(c("SGP", sgp.labels[['my.extra.label']], "ORDER"), collapse="_")
+			if (!print.sgp.order) { # Return only SGP_NORM_GROUP
+				quantile.data[, norm.var.name:=factor(factor(ORDER, levels=seq_along(norm.groups), labels=norm.groups)), with=FALSE] ### double factor to wipe unused levels
+				quantile.data[, ORDER:=NULL]
+			} else {  # Return both ORDER and SGP_NORM_GROUP
+				quantile.data[, norm.var.name:=factor(factor(ORDER, levels=seq_along(norm.groups), labels=norm.groups)), with=FALSE]
+				setnames(quantile.data, "ORDER", sgp.order.name)
+			}
 		}
 
 		if (dim(quantile.data)[1] <= 250) {
