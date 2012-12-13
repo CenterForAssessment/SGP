@@ -415,6 +415,7 @@ function(panel.data,         ## REQUIRED
 			return(tmp.score)
 	}
 
+	split.location <- function(years) sapply(strsplit(years, '_'), length)[1]
 
 	############################################################################
 	###
@@ -750,7 +751,7 @@ function(panel.data,         ## REQUIRED
 		if (year.progression[1] == "BASELINE") {
 			year.progression.lags <- rep(1, length(year.progression)-1)
 		} else {
-			year.progression.lags <- diff(as.numeric(sapply(strsplit(year.progression, '_'), '[', 1)))
+			year.progression.lags <- diff(as.numeric(sapply(strsplit(year.progression, '_'), '[', split.location(year.progression))))
 		}
 	}
 
