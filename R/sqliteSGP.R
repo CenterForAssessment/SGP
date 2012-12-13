@@ -535,7 +535,7 @@ function(sgp_object,
 			setnames(tmp.list[[i]], 4, "STUDENTGROUP")
 		}
 
-		tmp <- as.data.frame(subset(rbind.fill(tmp.list), !is.na(DISTRICT_NUMBER) & !is.na(STUDENTGROUP) & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes"))
+		tmp <- as.data.frame(convert.variables(subset(rbind.fill(tmp.list), !is.na(DISTRICT_NUMBER) & !is.na(STUDENTGROUP) & DISTRICT_ENROLLMENT_STATUS=="Enrolled District: Yes")))
 
 		tmp.STUDENTGROUP <- data.frame(
 			KEY_VALUE_KEY="STUDENT_GROUP", ### NOTE: Must have underscore. It's an older version of the table
