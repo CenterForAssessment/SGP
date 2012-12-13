@@ -233,21 +233,6 @@
 		temp_uncond_frame <- matrix(my.tmp[,splinefun(GRADE, V1)(tmp.smooth.grades), by=PERCENTILE][['V1']], nrow=length(gaPlot.achievement_percentiles), byrow=TRUE)
 		rownames(temp_uncond_frame) <- gaPlot.achievement_percentiles
 		colnames(temp_uncond_frame) <- tmp.smooth.grades
-
-
-#		## Creating the points used by lines to construct unconditional percentile curves
-#
-#		temp_uncond_frame <- matrix(nrow=length(gaPlot.achievement_percentiles), ncol=length(tmp.smooth.grades))
-#		rownames(temp_uncond_frame) <- gaPlot.achievement_percentiles
-#		colnames(temp_uncond_frame) <- tmp.smooth.grades
-#		temp_uncond_frame <- as.data.frame(temp_uncond_frame)
-#
-#		setkey(growthAchievementPlot.data, YEAR)
-#		for (i in gaPlot.achievement_percentiles) {
-#			temp_achievement_curve <- splinefun(tmp.unique.grades, as.vector(by(growthAchievementPlot.data[data.table(year)]$TRANSFORMED_SCALE_SCORE, 
-#				growthAchievementPlot.data[data.table(year)]$GRADE, quantile, probs=i, na.rm=TRUE)), method="monoH.FC")
-#			temp_uncond_frame[as.character(i),] <- temp_achievement_curve(tmp.smooth.grades)
-#		}
 	}
 
 
