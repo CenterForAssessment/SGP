@@ -107,6 +107,7 @@ function(sgp_object,
 				drop.nonsequential.grade.progression.variables=FALSE, # taken care of in data reshape above.
 				grade.progression=grade.sequences,
 				content.area.progression=content_areas,
+				year.progression=rep("BASELINE", length(content_areas)),
 				year.progression.lags=baseline.grade.sequences.lags,
 				exact.grade.progression.sequence=TRUE,
 				print.time.taken=FALSE,
