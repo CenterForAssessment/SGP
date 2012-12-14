@@ -121,6 +121,8 @@ function(sgp_object,
 						tmp.base.gp <- tail(par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]], tmp.max.order+1)
 						par.sgp.config[[cnt]][['base.gp']] <- as.character(tmp.base.gp)
 						par.sgp.config[[cnt]][['max.order']] <- tmp.max.order
+						par.sgp.config[[cnt]][['time.lags']] <- diff(as.integer(sapply(strsplit(tail(par.sgp.config[[cnt]][['sgp.panel.years']], tmp.max.order+1), '_'), '[', 
+							split.location(par.sgp.config[[cnt]][['sgp.panel.years']]))))
 					}
 				} ### END if (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline)
 				cnt <- cnt + 1

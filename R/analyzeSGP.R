@@ -331,6 +331,9 @@ function(sgp_object,
 							...))
 					}
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
+					if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
+						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], sgp.percentiles.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config)))
+					}
 					rm(tmp)
 					} # END SNOW
 				
@@ -379,7 +382,7 @@ function(sgp_object,
 					}
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
 					if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
-						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], sgp.percentiles.=getErrorReports(tmp, tmp.tf, par.sgp.config))
+						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], sgp.percentiles.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config)))
 					}
 					rm(tmp)
 				} # End MULTICORE
@@ -412,6 +415,7 @@ function(sgp_object,
 						panel.data.vnames=getPanelDataVnames("sgp.percentiles", sgp.iter),
 						grade.progression=sgp.iter[["base.gp"]],
 						content.area.progression=tail(sgp.iter[["sgp.content.areas"]], min(sgp.iter[["max.order"]], sgp.percentiles.baseline.max.order)+1),
+						year.progression.lags=sgp.iter[["time.lags"]],
 						num.prior=min(sgp.iter[["max.order"]], sgp.percentiles.baseline.max.order),
 						percentile.cuts=SGPstateData[[state]][["SGP_Configuration"]][["percentile.cuts"]],
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
@@ -435,6 +439,7 @@ function(sgp_object,
 						panel.data.vnames=getPanelDataVnames("sgp.percentiles", sgp.iter),
 						grade.progression=sgp.iter[["base.gp"]],
 						content.area.progression=tail(sgp.iter[["sgp.content.areas"]], min(sgp.iter[["max.order"]], sgp.percentiles.baseline.max.order)+1),
+						year.progression.lags=sgp.iter[["time.lags"]],
 						num.prior=min(sgp.iter[["max.order"]], sgp.percentiles.baseline.max.order),
 						percentile.cuts=SGPstateData[[state]][["SGP_Configuration"]][["percentile.cuts"]],
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
@@ -443,6 +448,9 @@ function(sgp_object,
 						...))
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
+					if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
+						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], sgp.percentiles.baseline.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config.baseline)))
+					}
 					rm(tmp)
 					} # END SNOW
 				
@@ -459,6 +467,7 @@ function(sgp_object,
 						panel.data.vnames=getPanelDataVnames("sgp.percentiles", sgp.iter),
 						grade.progression=sgp.iter[["base.gp"]],
 						content.area.progression=tail(sgp.iter[["sgp.content.areas"]], min(sgp.iter[["max.order"]], sgp.percentiles.baseline.max.order)+1),
+						year.progression.lags=sgp.iter[["time.lags"]],
 						num.prior=min(sgp.iter[["max.order"]], sgp.percentiles.baseline.max.order),
 						percentile.cuts=SGPstateData[[state]][["SGP_Configuration"]][["percentile.cuts"]],
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
@@ -468,7 +477,7 @@ function(sgp_object,
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
 					if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
-						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], sgp.percentiles.baseline.=getErrorReports(tmp, tmp.tf, par.sgp.config))
+						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], sgp.percentiles.baseline.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config.baseline)))
 					}
 					rm(tmp)
 				} # End MULTICORE
@@ -527,6 +536,9 @@ function(sgp_object,
 						...))
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
+					if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
+						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], sgp.projections.=getErrorReports(tmp, tmp.tf, par.sgp.config))
+					}
 					rm(tmp)
 					} # END SNOW
 				
@@ -611,6 +623,9 @@ function(sgp_object,
 						...))
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
+					if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
+						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], sgp.projections.baseline.=getErrorReports(tmp, tmp.tf, par.sgp.config.baseline))
+					}
 					rm(tmp)
 					} # END SNOW
 				
@@ -635,7 +650,7 @@ function(sgp_object,
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
 					if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
-						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], sgp.projections.baseline.=getErrorReports(tmp, tmp.tf, par.sgp.config))
+						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], sgp.projections.baseline.=getErrorReports(tmp, tmp.tf, par.sgp.config.baseline))
 					}
 					rm(tmp)
 				} # End MULTICORE
@@ -696,6 +711,9 @@ function(sgp_object,
 						...))
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
+					if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
+						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], sgp.projections.lagged.=getErrorReports(tmp, tmp.tf, par.sgp.config))
+					}
 					rm(tmp)
 					} # END SNOW
 				
@@ -782,6 +800,9 @@ function(sgp_object,
 					...))
 
 				tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
+				if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
+					tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], sgp.projections.lagged.baseline.=getErrorReports(tmp, tmp.tf, par.sgp.config.baseline))
+				}
 				rm(tmp)
 			} # END SNOW
 			
@@ -806,7 +827,7 @@ function(sgp_object,
 
 				tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
 				if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
-					tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], sgp.projections.lagged.baseline.=getErrorReports(tmp, tmp.tf, par.sgp.config))
+					tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], sgp.projections.lagged.baseline.=getErrorReports(tmp, tmp.tf, par.sgp.config.baseline))
 				}
 				rm(tmp)
 				} # End MULTICORE
@@ -897,6 +918,7 @@ function(sgp_object,
 					panel.data.vnames=getPanelDataVnames("sgp.percentiles", sgp.iter),
 					grade.progression=sgp.iter[["base.gp"]],
 					content.area.progression=tail(sgp.iter[["sgp.content.areas"]], min(sgp.iter[["max.order"]], sgp.percentiles.baseline.max.order)+1),
+					year.progression.lags=sgp.iter[["time.lags"]],
 					num.prior=min(sgp.iter[["max.order"]], sgp.percentiles.baseline.max.order),
 					percentile.cuts=SGPstateData[[state]][["SGP_Configuration"]][["percentile.cuts"]],
 					drop.nonsequential.grade.progression.variables=FALSE,
