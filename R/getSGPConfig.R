@@ -54,7 +54,7 @@ function(sgp_object,
 	get.par.sgp.config <- function(sgp.config) {
 		
 		par.sgp.config <- list(); cnt <- 1
-		for (a in seq_along(names(sgp.config))) { # now seq_along names so that sgp.config lists can have same names for some elements
+		for (a in seq_along(sgp.config)) { # now seq_along names so that sgp.config lists can have same names for some elements
 
 			tmp.matrices <- tmp_sgp_object[['Coefficient_Matrices']][[paste(strsplit(names(sgp.config)[a], "\\.")[[1]][1], ".BASELINE", sep="")]]
 
