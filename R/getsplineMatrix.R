@@ -34,6 +34,10 @@ function(
 		if (length(my.tmp.index)==0) {
 			stop(paste("\tNOTE: No splineMatrix exists with designated content.area.progression:", my.matrix.content.area.progression, "year.progression:", 
 				my.matrix.time.progression, "and grade.progression", my.matrix.grade.progression))
+		}
+		if (length(my.tmp.index)>1) {
+			stop(paste("\tNOTE: Multiple splineMatrix objects exists with designated content.area.progression:", my.matrix.content.area.progression, "year.progression:", 
+				my.matrix.time.progression, "grade.progression:", my.matrix.grade.progression, "time.progression.lags:", my.matrix.time.progression.lags))
 		} else {
 			return(my.matrices[[my.tmp.index]])
 		}

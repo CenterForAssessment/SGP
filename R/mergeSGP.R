@@ -16,7 +16,7 @@ function(list_1,
 				}
 			}
 		}
-		for (j in c("Coefficient_Matrices", "Goodness_of_Fit", "Knots_Boundaries")) {
+		for (j in c("Goodness_of_Fit", "Knots_Boundaries")) {
 			for (k in names(list_2[[j]])) {
 				if (!identical(list_1[[j]][[k]], list_2[[j]][[k]])) {
  					names.list <- c(unique(names(list_1[[j]][[k]])), unique(names(list_2[[j]][[k]]))) # Get list of (unique) names first.
@@ -33,7 +33,29 @@ function(list_1,
 					}
 				}
 			}
-		}
+		} # j in c("Goodness_of_Fit", "Knots_Boundaries")
+
+		j <- "Coefficient_Matrices"
+		for (k in names(list_2[[j]])) {
+			if (!identical(list_1[[j]][[k]], list_2[[j]][[k]])) {
+ 					names.list <- c(unique(names(list_1[[j]][[k]])), unique(names(list_2[[j]][[k]]))) # Get list of (unique) names first.
+				list_1[[j]][[k]] <- c(list_1[[j]][[k]], list_2[[j]][[k]][!names(list_2[[j]][[k]]) %in% names(list_1[[j]][[k]])]) # new elements by name
+				if (any(duplicated(names.list))) {
+					dups <- names.list[which(duplicated(names.list))]
+						for (l in seq(dups)) {
+							l1.dups <- which(names(list_1[[j]][[k]]) %in% dups[l])
+							l2.dups <- which(names(list_2[[j]][[k]]) %in% dups[l])
+							tmp.new.matrices <- list_2[[j]][[k]][l2.dups]
+							for (l2 in rev(seq_along(l2.dups))) { # go in reverse to avoid changing the position of earlier elements ('subscript out of bounds')
+								if(any(tmp.tf <- sapply(l1.dups, function(x) identical(list_1[[j]][[k]][[x]]@.Data, tmp.new.matrices[[l2]]@.Data)))) {
+									tmp.new.matrices[[l2]] <- NULL
+								}
+							}
+						list_1[[j]][[k]] <- c(list_1[[j]][[k]], tmp.new.matrices)
+						}
+					}
+			}
+		}	# j <- "Coefficient_Matrices"
 	}
 	list_1[which(names(list_1) != "Panel_Data")]
 } ### END mergeSGP
