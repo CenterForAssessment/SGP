@@ -61,7 +61,7 @@ function(sgp_object,
 	if (target.type %in% c("sgp.projections", "sgp.projections.baseline")) {
 		tmp_object_1 <- data.table(sgp_object@Data[,c(key(tmp_object_1), "ACHIEVEMENT_LEVEL"), with=FALSE], key=key(tmp_object_1))[tmp_object_1]
 	}
-	invisible(tmp_object_1[, paste(target.level, "STATUS_INITIAL", sep="_") := getTargetInitialStatus(tmp_object_1[[grep("ACHIEVEMENT", names(tmp_object_1), value=TRUE)]], state, target.level), with=FALSE])
+	tmp_object_1[, paste(target.level, "STATUS_INITIAL", sep="_") := getTargetInitialStatus(tmp_object_1[[grep("ACHIEVEMENT", names(tmp_object_1), value=TRUE)]], state, target.level), with=FALSE]
 	tmp_object_1 <- tmp_object_1[!is.na(get(paste(target.level, "STATUS_INITIAL", sep="_")))]
 
 	## Find min/max of targets based upon CATCH_UP_KEEP_UP_STATUS_INITIAL status
@@ -77,8 +77,8 @@ function(sgp_object,
 	setnames(tmp_object_2, "V1", paste("SGP_TARGET", baseline.label, projection.label, target.level.label, "_",  max.sgp.target.years.forward.label, "_YEAR", sep=""))
 
 	if (target.type %in% c("sgp.projections.lagged", "sgp.projections.lagged.baseline") & return.lagged.status) {
-		invisible(tmp_object_2[,c("ACHIEVEMENT_LEVEL_PRIOR", grep("STATUS_INITIAL", names(tmp_object_1), value=TRUE)) := 
-			list(tmp_object_1[["ACHIEVEMENT_LEVEL_PRIOR"]], tmp_object_1[[grep("STATUS_INITIAL", names(tmp_object_1), value=TRUE)]]), with=FALSE])
+		tmp_object_2[,c("ACHIEVEMENT_LEVEL_PRIOR", grep("STATUS_INITIAL", names(tmp_object_1), value=TRUE)) := 
+			list(tmp_object_1[["ACHIEVEMENT_LEVEL_PRIOR"]], tmp_object_1[[grep("STATUS_INITIAL", names(tmp_object_1), value=TRUE)]]), with=FALSE]
 	}
 
 	setkeyv(tmp_object_2, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
