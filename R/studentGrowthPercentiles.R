@@ -962,7 +962,7 @@ function(panel.data,         ## REQUIRED
 
 		if (goodness.of.fit) {
 			Goodness_of_Fit[[tmp.path]][['TMP_NAME']] <- .goodness.of.fit(data.table(prior.ss, quantile.data[, "SGP", with=FALSE])) 
-			names(Goodness_of_Fit[[tmp.path]])[length(Goodness_of_Fit[[tmp.path]])] <- paste("GRADE_", paste(tmp.gp, collapse="-"), sep="")]]
+			names(Goodness_of_Fit[[tmp.path]])[length(Goodness_of_Fit[[tmp.path]])] <- paste("GRADE_", paste(tmp.gp, collapse="-"), sep="")
 		}
 
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, "SGP", "SGP_BASELINE")
