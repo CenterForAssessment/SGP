@@ -104,7 +104,7 @@ function(panel.data,         ## REQUIRED
 
         .year.increment <- function(year, increment) {
 		if (identical(year, "BASELINE")) {
-			return("BASELINE")
+			return(rep("BASELINE", length(increment)))
 		} else {
 			sapply(increment, function(x) paste(as.numeric(unlist(strsplit(as.character(year), "_")))+x, collapse="_"))
 		}
@@ -961,7 +961,8 @@ function(panel.data,         ## REQUIRED
 		}
 
 		if (goodness.of.fit) {
-			Goodness_of_Fit[[tmp.path]][[paste("GRADE_", paste(tmp.gp, collapse="-"), sep="")]] <- .goodness.of.fit(data.table(prior.ss, quantile.data[, "SGP", with=FALSE])) 
+			Goodness_of_Fit[[tmp.path]][['TMP_NAME']] <- .goodness.of.fit(data.table(prior.ss, quantile.data[, "SGP", with=FALSE])) 
+			names(Goodness_of_Fit[[tmp.path]])[length(Goodness_of_Fit[[tmp.path]])] <- paste("GRADE_", paste(tmp.gp, collapse="-"), sep="")]]
 		}
 
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, "SGP", "SGP_BASELINE")
