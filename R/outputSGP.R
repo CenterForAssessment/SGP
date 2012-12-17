@@ -354,7 +354,7 @@ function(sgp_object,
 				for (proj.iter in grep(paste("PROJ_YEAR", j, sep="_"), names(outputSGP.data))) {
 					tmp.scale_score.name <- names(outputSGP.data)[proj.iter]
 					outputSGP.data[[proj.iter]] <- outputSGP.data[,
-						piecewise.transform(get(tmp.scale_score.name), state, tmp.content_areas[CONTENT_AREA[1]], tmp.year.name, get(tmp.grade.name)[1]+1), 
+						piecewise.transform(get(tmp.scale_score.name), state, tmp.content_areas[CONTENT_AREA[1]], tmp.year.name, as.character(type.convert(get(tmp.grade.name)[1])+1)), 
 						by=list(CONTENT_AREA, outputSGP.data[[tmp.grade.name]])]$V1 
 				}
 			}
