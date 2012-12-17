@@ -2,11 +2,29 @@
 function(list_1,
 	list_2) {
 
+	### Utility functions
+
+	unique.splineMatrix <- function(list.of.splineMatrices) {
+		tmp.list <- lapply(list.of.splineMatrices, 
+			function(x) list(Content_Areas=x@Content_Areas, Grade_Progression=x@Grade_Progression, Time=x@Time, Time_Lags=x@Time_Lags, Version=x@Version))
+		if (any(duplicated(tmp.list))) {
+			list.of.splineMatrices[!duplicated(list.of.splineMatrices[order(as.character(unlist(sapply(tmp.list, function(x) x$Version[1]))), decreasing=TRUE)])]
+		} else {
+			list.of.splineMatrices
+		}
+	}
+
+	
+	### Merge lists
+
 	if (is.null(names(list_1))) return(list_2)
 	if (!is.null(names(list_2))) {
 		for (j in c("Coefficient_Matrices", "Cutscores", "Goodness_of_Fit", "Knots_Boundaries", "SGPercentiles", "SGProjections", "Simulated_SGPs", "Error_Reports")) {
 			list_1[[j]] <- c(list_1[[j]], list_2[[j]])[!duplicated(names(c(list_1[[j]], list_2[[j]])))]
 		}
+
+		### SGPercentiles, SGProjections, Simulated_SGPs
+
 		for (j in c("SGPercentiles", "SGProjections", "Simulated_SGPs")) {
 			if (all(names(list_2[[j]]) %in% names(list_1[[j]]))) {
 				for (k in names(list_2[[j]])) { # merging list_2 in with list_1, so use it here
@@ -16,6 +34,9 @@ function(list_1,
 				}
 			}
 		}
+
+		### Goodness_of_Fit, Knots_Boundaries
+
 		for (j in c("Goodness_of_Fit", "Knots_Boundaries")) {
 			for (k in names(list_2[[j]])) {
 				if (!identical(list_1[[j]][[k]], list_2[[j]][[k]])) {
@@ -35,25 +56,12 @@ function(list_1,
 			}
 		} # j in c("Goodness_of_Fit", "Knots_Boundaries")
 
+		### Coefficient_Matrices
+
 		j <- "Coefficient_Matrices"
 		for (k in names(list_2[[j]])) {
 			if (!identical(list_1[[j]][[k]], list_2[[j]][[k]])) {
- 					names.list <- c(unique(names(list_1[[j]][[k]])), unique(names(list_2[[j]][[k]]))) # Get list of (unique) names first.
-				list_1[[j]][[k]] <- c(list_1[[j]][[k]], list_2[[j]][[k]][!names(list_2[[j]][[k]]) %in% names(list_1[[j]][[k]])]) # new elements by name
-				if (any(duplicated(names.list))) {
-					dups <- names.list[which(duplicated(names.list))]
-						for (l in seq(dups)) {
-							l1.dups <- which(names(list_1[[j]][[k]]) %in% dups[l])
-							l2.dups <- which(names(list_2[[j]][[k]]) %in% dups[l])
-							tmp.new.matrices <- list_2[[j]][[k]][l2.dups]
-							for (l2 in rev(seq_along(l2.dups))) { # go in reverse to avoid changing the position of earlier elements ('subscript out of bounds')
-								if(any(tmp.tf <- sapply(l1.dups, function(x) identical(list_1[[j]][[k]][[x]]@.Data, tmp.new.matrices[[l2]]@.Data)))) {
-									tmp.new.matrices[[l2]] <- NULL
-								}
-							}
-						list_1[[j]][[k]] <- c(list_1[[j]][[k]], tmp.new.matrices)
-						}
-					}
+				list_1[[j]][[k]] <- unique.splineMatrix(c(list_1[[j]][[k]], list_2[[j]][[k]]))
 			}
 		}	# j <- "Coefficient_Matrices"
 	}
