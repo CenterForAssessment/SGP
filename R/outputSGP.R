@@ -431,14 +431,17 @@ function(sgp_object,
 	
 			if ("ELL_STATUS" %in% outputSGP.student.groups) {
 				outputSGP.data[[paste("ELL_STATUS", i, sep=".")]] <- NULL
+				outputSGP.student.groups[outputSGP.student.groups=="ELL_STATUS"] <- "LANGUAGE_PROFICIENCY"
 			}
 	
 			if ("GIFTED_AND_TALENTED_PROGRAM_STATUS" %in% outputSGP.student.groups) {
 				outputSGP.data[[paste("GIFTED_AND_TALENTED_PROGRAM_STATUS", i, sep=".")]] <- NULL
+				outputSGP.student.groups[outputSGP.student.groups=="GIFTED_AND_TALENTED_PROGRAM_STATUS"] <- "GIFTED_CODE"
 			}
 	
 			if ("HOMELESS_STATUS" %in% outputSGP.student.groups) {
 				outputSGP.data[[paste("HOMELESS_STATUS", i, sep=".")]] <- NULL
+				outputSGP.student.groups[outputSGP.student.groups=="HOMELESS_STATUS"] <- "HLS_CODE"
 			}
 		}
 
