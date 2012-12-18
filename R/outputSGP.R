@@ -289,12 +289,12 @@ function(sgp_object,
 
 		tmp.districts.and.schools <- unique(data.table(sgp_object@Data[CJ("VALID_CASE", tmp.last.year, tmp.content_areas)][,
 								list(VALID_CASE, YEAR, CONTENT_AREA, DISTRICT_NUMBER, SCHOOL_NUMBER)], key=key(sgp_object)))
-		report.ids <- data.table(sgp_object@Data[tmp.districts.and.schools][STATE_ENROLLMENT_STATUS=="Enrolled State: Yes"][, list(ID, FIRST_NAME, LAST_NAME)],
+		report.ids <- data.table(sgp_object@Data[tmp.districts.and.schools][VALID_CASE=="VALID_CASE" & STATE_ENROLLMENT_STATUS=="Enrolled State: Yes"][, list(ID, FIRST_NAME, LAST_NAME)],
 			key=c("ID", "FIRST_NAME", "LAST_NAME"))
 		setkey(report.ids, ID)
 		report.ids <- unique(report.ids)
-		setkeyv(sgp_object@Data, c("ID", "CONTENT_AREA", "YEAR"))
-		tmp.table <- sgp_object@Data[CJ(report.ids[["ID"]], tmp.content_areas, tmp.years)[report.ids]]
+		setkeyv(sgp_object@Data, c("ID", "CONTENT_AREA", "YEAR", "VALID_CASE"))
+		tmp.table <- sgp_object@Data[CJ(report.ids[["ID"]], tmp.content_areas, tmp.years, "VALID_CASE")[report.ids]]
 		tmp.table[,FIRST_NAME:=NULL]; tmp.table[,LAST_NAME:=NULL]
 		setnames(tmp.table, "FIRST_NAME.1", "FIRST_NAME"); setnames(tmp.table, "LAST_NAME.1", "LAST_NAME")
 		setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))
@@ -397,6 +397,8 @@ function(sgp_object,
 				tmp.order[i], sep="_"))
 			setnames(outputSGP.data, grep(paste("SGP", rev(tmp.years.short)[i], sep="."), names(outputSGP.data)), paste("GROWTH_PERCENTILE", tmp.order[i], sep="_"))
 			setnames(outputSGP.data, grep(paste("ACHIEVEMENT_LEVEL", rev(tmp.years.short)[i], sep="."), names(outputSGP.data)), paste("PERFORMANCE_LEVEL", tmp.order[i], sep="_"))
+			setnames(outputSGP.data, grep(paste(getTargetName(target.years=outputSGP.projection.years.for.target), rev(tmp.years.short)[i], sep="."), names(outputSGP.data)), 
+				paste("SGP_TARGET", tmp.order[i], sep="_"))
 		}
 	
 		## NULLify variable to be removed
