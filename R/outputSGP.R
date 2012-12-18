@@ -23,7 +23,7 @@ function(sgp_object,
 	### Define varaibles (to prevent R CMD check warnings)
 
 	SCALE_SCORE <- CONTENT_AREA <- YEAR <- GRADE <- ID <- ETHNICITY <- GENDER <- LAST_NAME <- FIRST_NAME <- VALID_CASE <- DISTRICT_NUMBER <- SCHOOL_NUMBER <- YEAR_BY_CONTENT_AREA <- NULL
-	names.type <- names.provided <- names.output <- NULL
+	names.type <- names.provided <- names.output <- STATE_ENROLLMENT_STATUS <- NULL
 
 	### Create state (if missing) from sgp_object (if possible)
 
@@ -289,9 +289,14 @@ function(sgp_object,
 
 		tmp.districts.and.schools <- unique(data.table(sgp_object@Data[CJ("VALID_CASE", tmp.last.year, tmp.content_areas)][,
 								list(VALID_CASE, YEAR, CONTENT_AREA, DISTRICT_NUMBER, SCHOOL_NUMBER)], key=key(sgp_object)))
-		report.ids <- unique(sgp_object@Data[tmp.districts.and.schools][["ID"]])
+		report.ids <- data.table(sgp_object@Data[tmp.districts.and.schools][STATE_ENROLLMENT_STATUS=="Enrolled State: Yes"][, list(ID, FIRST_NAME, LAST_NAME)],
+			key=c("ID", "FIRST_NAME", "LAST_NAME"))
+		setkey(report.ids, ID)
+		report.ids <- unique(report.ids)
 		setkeyv(sgp_object@Data, c("ID", "CONTENT_AREA", "YEAR"))
-		tmp.table <- sgp_object@Data[CJ(report.ids, tmp.content_areas, tmp.years)]
+		tmp.table <- sgp_object@Data[CJ(report.ids[["ID"]], tmp.content_areas, tmp.years)[report.ids]]
+		tmp.table[,FIRST_NAME:=NULL]; tmp.table[,LAST_NAME:=NULL]
+		setnames(tmp.table, "FIRST_NAME.1", "FIRST_NAME"); setnames(tmp.table, "LAST_NAME.1", "LAST_NAME")
 		setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))
 
 		### Create transformed scale scores
