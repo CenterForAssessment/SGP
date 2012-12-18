@@ -458,7 +458,7 @@ function(sgp_object,
 				outputSGP.data[[paste("GRADE_LEVEL", i, sep="_")]] <- NA
 				outputSGP.data[[paste("SCALE_SCORE", i, sep="_")]] <- NA
 				outputSGP.data[[paste("TRANSFORMED_SCALE_SCORE", i, sep="_")]] <- NA
-				outputSGP.data[[paste(getTargetName(target.years=outputSGP.projection.years.for.target, target.label="GROWTH_TARGET"), i, sep="_")]] <- NA
+				outputSGP.data[[paste("GROWTH_TARGET", i, sep="_")]] <- NA
 				outputSGP.data[[paste("GROWTH_PERCENTILE", i, sep="_")]] <- NA
 				outputSGP.data[[paste("PERFORMANCE_LEVEL", i, sep="_")]] <- NA
 			}
