@@ -387,17 +387,17 @@ function(sgp_object,
 		setnames(outputSGP.data, which(names(outputSGP.data)==paste("STATE_ENROLLMENT_STATUS", tmp.last.year.short, sep=".")), "STATE_ENROLLMENT_STATUS")
 
 		if ("ELL_STATUS" %in% outputSGP.student.groups) {
-			setnames(outputSGP.data, which(names(outputSGP.data)==paste("ELL_STATUS", tmp.last.year.short, sep=".")), "LANGUAGE_PROFICIENCY")
+			setnames(outputSGP.data, which(names(outputSGP.data)=="ELL_STATUS"), "LANGUAGE_PROFICIENCY")
 		} else {
 			outputSGP.data[['LANGUAGE_PROFICIENCY']] <- as.character(NA)
 		}
 		if ("GIFTED_AND_TALENTED_PROGRAM_STATUS" %in% outputSGP.student.groups) {
-			setnames(outputSGP.data, which(names(outputSGP.data)==paste("GIFTED_AND_TALENTED_PROGRAM_STATUS", tmp.last.year.short, sep=".")), "GIFTED_CODE")
+			setnames(outputSGP.data, which(names(outputSGP.data)=="GIFTED_AND_TALENTED_PROGRAM_STATUS"), "GIFTED_CODE")
 		} else {
 			outputSGP.data[['GIFTED_CODE']] <- as.character(NA)
 		}
 		if ("HOMELESS_STATUS" %in% outputSGP.student.groups) {
-			setnames(outputSGP.data, which(names(outputSGP.data)==paste("HOMELESS_STATUS", tmp.last.year.short, sep=".")), "HLS_CODE")
+			setnames(outputSGP.data, which(names(outputSGP.data)=="HOMELESS_STATUS"), "HLS_CODE")
 		} else {
 			outputSGP.data[['HLS_CODE']] <- as.character(NA)
 		}
