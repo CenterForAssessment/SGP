@@ -116,8 +116,7 @@ function(
 
 		variables.to.merge <- names(tmp.data) %w/o% key(slot.data)
 		for (tmp.merge.variable in variables.to.merge) {
-#			slot.data[tmp.data[,key(slot.data), with=FALSE], tmp.merge.variable := tmp.data[[tmp.merge.variable]], with=FALSE, mult="first"]
-			slot.data[tmp.data[,key(slot.data), with=FALSE], eval(tmp.merge.variable) := tmp.data[[tmp.merge.variable]]]
+			slot.data[tmp.data[,key(slot.data), with=FALSE], tmp.merge.variable := tmp.data[[tmp.merge.variable]], with=FALSE, mult="first"]
 		}
 		setkeyv(slot.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 		rm(tmp.list); suppressMessages(gc())
@@ -156,8 +155,7 @@ function(
 
 		variables.to.merge <- names(tmp.data) %w/o% key(slot.data)
 		for (tmp.merge.variable in variables.to.merge) {
-#			slot.data[tmp.data[,key(slot.data), with=FALSE], tmp.merge.variable := tmp.data[, tmp.merge.variable, with=FALSE], with=FALSE, mult="first"]
-			slot.data[tmp.data[,key(slot.data), with=FALSE], eval(tmp.merge.variable) := tmp.data[[tmp.merge.variable]]]
+			slot.data[tmp.data[,key(slot.data), with=FALSE], tmp.merge.variable := tmp.data[, tmp.merge.variable, with=FALSE], with=FALSE, mult="first"]
 		}
 		setkeyv(slot.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 		rm(tmp.list); suppressMessages(gc())
@@ -193,8 +191,7 @@ function(
 				tmp_target_data <- getTargetSGP(sgp_object, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward)
 					variables.to.merge <- names(tmp_target_data) %w/o% key(slot.data)
 				for (tmp.merge.variable in variables.to.merge) {
-#					slot.data[tmp_target_data[,key(slot.data), with=FALSE], tmp.merge.variable := tmp_target_data[, tmp.merge.variable, with=FALSE], with=FALSE, mult="first"]
-					slot.data[tmp_target_data[,key(slot.data), with=FALSE], eval(tmp.merge.variable) := tmp_target_data[[tmp.merge.variable]]]
+					slot.data[tmp_target_data[,key(slot.data), with=FALSE], tmp.merge.variable := tmp_target_data[, tmp.merge.variable, with=FALSE], with=FALSE, mult="first"]
 				}
 			}
 		}
