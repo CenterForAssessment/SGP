@@ -485,26 +485,6 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 ######## IF WIDE data is NOT supplied
 ###############################################
 
-
-	#### Some data prep
-
-	if (!is.null(sgPlot.districts)) {
-		if (is.factor(sgp_object@Data$DISTRICT_NUMBER)) {
-			sgPlot.districts <- as.factor(sgPlot.districts)
-		} else {
-			sgPlot.districts <- as.integer(sgPlot.districts)
-		}
-	}
-
-	if (!is.null(sgPlot.schools)) {
-		if (is.factor(sgp_object@Data$SCHOOL_NUMBER)) {
-			sgPlot.schools <- as.factor(sgPlot.schools)
-		} else {
-			sgPlot.schools <- as.integer(sgPlot.schools)
-		}
-	}
-
-
 	#### Set key on LONG data
 
 	long.key <- c("VALID_CASE", "YEAR", "CONTENT_AREA", "DISTRICT_NUMBER", "SCHOOL_NUMBER")
