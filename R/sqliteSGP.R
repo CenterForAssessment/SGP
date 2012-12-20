@@ -106,7 +106,7 @@ function(sgp_object,
 
 		if (is.null(years)) years <- unique(sgp_object@Data$YEAR) %w/o% NA
 		if (is.null(content_areas)) content_areas <- unique(sgp_object@Data$CONTENT_AREA) %w/o% NA
-
+		my.null.string <- "NULL"
 
 	## Create tmp.school.and.district.by.year table
 
@@ -139,7 +139,7 @@ function(sgp_object,
 		dbGetQuery(db, sqlite.create.table("DISTRICT", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA")))
 		dbWriteTable(db, "DISTRICT", tmp, row.names=FALSE, append=TRUE) 
 
-		if (text.output) write.table(tmp, file=file.path(output.directory, "DISTRICT.dat"), row.names=FALSE, na="(null)", quote=FALSE, sep="|")
+		if (text.output) write.table(tmp, file=file.path(output.directory, "DISTRICT.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
 
 
 	### Table 2. DISTRICT_GRADE
@@ -164,7 +164,7 @@ function(sgp_object,
 		dbGetQuery(db, sqlite.create.table("DISTRICT_GRADE", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "GRADE")))
 		dbWriteTable(db, "DISTRICT_GRADE", tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))], row.names=FALSE, append=TRUE) 
 
-		if (text.output) write.table(tmp, file=file.path(output.directory, "DISTRICT_GRADE.dat"), row.names=FALSE, na="(null)", quote=FALSE, sep="|")
+		if (text.output) write.table(tmp, file=file.path(output.directory, "DISTRICT_GRADE.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
 
 
 	### Table 3. DISTRICT_ETHNICITY
@@ -192,7 +192,7 @@ function(sgp_object,
 		dbGetQuery(db, sqlite.create.table("DISTRICT_ETHNICITY", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "ETHNICITY")))
 		dbWriteTable(db, "DISTRICT_ETHNICITY", tmp, row.names=FALSE, append=TRUE) 
 
-		if (text.output) write.table(tmp, file=file.path(output.directory, "DISTRICT_ETHNICITY.dat"), row.names=FALSE, na="(null)", quote=FALSE, sep="|")
+		if (text.output) write.table(tmp, file=file.path(output.directory, "DISTRICT_ETHNICITY.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
 
 
 	### Table 4. DISTRICT_GRADE_ETHNICITY
@@ -219,7 +219,7 @@ function(sgp_object,
 		dbGetQuery(db, sqlite.create.table("DISTRICT_GRADE_ETHNICITY", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "GRADE", "ETHNICITY")))
 		dbWriteTable(db, "DISTRICT_GRADE_ETHNICITY", tmp, row.names=FALSE, append=TRUE) 
 
-		if (text.output) write.table(tmp, file=file.path(output.directory, "DISTRICT_GRADE_ETHNICITY.dat"), row.names=FALSE, na="(null)", quote=FALSE, sep="|")
+		if (text.output) write.table(tmp, file=file.path(output.directory, "DISTRICT_GRADE_ETHNICITY.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
 
 
 	### Table 5. DISTRICT_STUDENTGROUP
@@ -257,7 +257,7 @@ function(sgp_object,
 		dbGetQuery(db, sqlite.create.table("DISTRICT_STUDENTGROUP", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "STUDENTGROUP")))
 		dbWriteTable(db, "DISTRICT_STUDENTGROUP", tmp, row.names=FALSE, append=TRUE) 
 
-		if (text.output) write.table(tmp, file=file.path(output.directory, "DISTRICT_STUDENTGROUP.dat"), row.names=FALSE, na="(null)", quote=FALSE, sep="|")
+		if (text.output) write.table(tmp, file=file.path(output.directory, "DISTRICT_STUDENTGROUP.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
 
 
 	### Table 6. DISTRICT_GRADE_STUDENTGROUP
@@ -293,7 +293,7 @@ function(sgp_object,
 		dbGetQuery(db, sqlite.create.table("DISTRICT_GRADE_STUDENTGROUP", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "GRADE", "STUDENTGROUP")))
 		dbWriteTable(db, "DISTRICT_GRADE_STUDENTGROUP", tmp, row.names=FALSE, append=TRUE) 
 
-		if (text.output) write.table(tmp, file=file.path(output.directory, "DISTRICT_GRADE_STUDENTGROUP.dat"), row.names=FALSE, na="(null)", quote=FALSE, sep="|")
+		if (text.output) write.table(tmp, file=file.path(output.directory, "DISTRICT_GRADE_STUDENTGROUP.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
 
 
 	## Table 7. SCHOOL
@@ -321,7 +321,7 @@ function(sgp_object,
 		dbGetQuery(db, sqlite.create.table("SCHOOL", field.types, c("YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER", "EMH_LEVEL", "CONTENT_AREA")))
 		dbWriteTable(db, "SCHOOL", tmp, row.names=FALSE, append=TRUE) 
 
-		if (text.output) write.table(tmp, file=file.path(output.directory, "SCHOOL.dat"), row.names=FALSE, na="(null)", quote=FALSE, sep="|")
+		if (text.output) write.table(tmp, file=file.path(output.directory, "SCHOOL.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
 
 
 	## Table 8. SCHOOL_GRADE
@@ -350,7 +350,7 @@ function(sgp_object,
 		dbGetQuery(db, sqlite.create.table("SCHOOL_GRADE", field.types, c("YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER", "EMH_LEVEL", "GRADE", "CONTENT_AREA")))
 		dbWriteTable(db, "SCHOOL_GRADE", tmp, row.names=FALSE, append=TRUE) 
 
-		if (text.output) write.table(tmp, file=file.path(output.directory, "SCHOOL_GRADE.dat"), row.names=FALSE, na="(null)", quote=FALSE, sep="|")
+		if (text.output) write.table(tmp, file=file.path(output.directory, "SCHOOL_GRADE.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
 
 
 	## Table 9. SCHOOL_ETHNICITY
@@ -381,7 +381,7 @@ function(sgp_object,
 		dbGetQuery(db, sqlite.create.table("SCHOOL_ETHNICITY", field.types, c("YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER", "EMH_LEVEL", "CONTENT_AREA", "ETHNICITY")))
 		dbWriteTable(db, "SCHOOL_ETHNICITY", tmp, row.names=FALSE, append=TRUE) 
 
-		if (text.output) write.table(tmp, file=file.path(output.directory, "SCHOOL_ETHNICITY.dat"), row.names=FALSE, na="(null)", quote=FALSE, sep="|")
+		if (text.output) write.table(tmp, file=file.path(output.directory, "SCHOOL_ETHNICITY.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
 
 
 	## Table 10. SCHOOL_STUDENTGROUP
@@ -422,7 +422,7 @@ function(sgp_object,
 			c("YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER", "EMH_LEVEL", "CONTENT_AREA", "STUDENTGROUP")))
 		dbWriteTable(db, "SCHOOL_STUDENTGROUP", tmp, row.names=FALSE, append=TRUE) 
 
-		if (text.output) write.table(tmp, file=file.path(output.directory, "SCHOOL_STUDENTGROUP.dat"), row.names=FALSE, na="(null)", quote=FALSE, sep="|")
+		if (text.output) write.table(tmp, file=file.path(output.directory, "SCHOOL_STUDENTGROUP.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
 
 
 	## Table 11. SCHOOL_TEACHER
@@ -466,7 +466,7 @@ function(sgp_object,
 		dbGetQuery(db, sqlite.create.table("SCHOOL_TEACHER", field.types, c("YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER", "TEACHER_USID", "EMH_LEVEL", "CONTENT_AREA")))
 		dbWriteTable(db, "SCHOOL_TEACHER", tmp, row.names=FALSE, append=TRUE) 
 
-		if (text.output) write.table(tmp, file=file.path(output.directory, "SCHOOL_TEACHER.dat"), row.names=FALSE, na="(null)", quote=FALSE, sep="|")
+		if (text.output) write.table(tmp, file=file.path(output.directory, "SCHOOL_TEACHER.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
 
 	} ### END SCHOOL_TEACHER table
 
@@ -549,7 +549,7 @@ function(sgp_object,
 		dbGetQuery(db, sqlite.create.table("KEY_VALUE_LOOKUP", field.types, "KEY_VALUE_ID"))
 		dbWriteTable(db, "KEY_VALUE_LOOKUP", tmp, row.names=FALSE, append=TRUE) 
 
-		if (text.output) write.table(tmp, file=file.path(output.directory, "KEY_VALUE_LOOKUP.dat"), row.names=FALSE, na="(null)", quote=FALSE, sep="|")
+		if (text.output) write.table(tmp, file=file.path(output.directory, "KEY_VALUE_LOOKUP.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
 
 ###
 ### Disconnect database
