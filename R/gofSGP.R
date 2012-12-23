@@ -6,7 +6,7 @@
 		grades=NULL,
 		use.sgp="SGP",
 		output.format="PDF",
-		color.scale="reds") {
+		color.scale="reds.and.blues") {
 
 	### To prevent R CMD check warnings
 
@@ -15,11 +15,28 @@
 
         ### Create state (if NULL) from sgp_object (if possible)
 
-        if (is.null(state)) {
+        if (is.null(state) & is.SGP(sgp_object)) {
                 tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
                 state <- getStateAbbreviation(tmp.name, "gofSGP")
         }
 
+	### Create common object for data
+
+	if (is.SGP(sgp_object)) tmp.data <- sgp_object@Data else tmp.data <- sgp_object
+
+
+	### Set up parameters based upon the existence of ACHIEVEMENT_LEVEL_PRIOR
+
+	if ("ACHIEVEMENT_LEVEL_PRIOR" %in% names(tmp.data)) {
+		with.prior.achievement.level <- TRUE
+		my.width <- 8.5; my.height <- 11
+		variables.to.get <- c("SCALE_SCORE_PRIOR", "ACHIEVEMENT_LEVEL_PRIOR", use.sgp, "GRADE")
+	} else {
+		with.prior.achievement.level <- FALSE
+		my.width <- 8.5; my.height <- 5.5
+		variables.to.get <- c("SCALE_SCORE_PRIOR", use.sgp, "GRADE")
+	}
+	
 
 	### Setup
 
@@ -31,16 +48,22 @@
 	pretty_year <- function(x) sub("_", "-", x)
 
 	gof.draw <- function(content_area.year.grade.data, content_area, year, grade) {
-		file.path <- file.path("Goodness_of_Fit", "gofSGP", my.extra.label, paste(content_area, year, sep="."))
-		dir.create(file.path, showWarnings=FALSE, recursive=TRUE)
-		if (output.format=="PDF") pdf(file=paste(file.path, paste("/gofSGP_Grade", grade, sep="_"), ".pdf", sep=""), width=8.5, height=11)
-		if (output.format=="PNG") Cairo(file=paste(file.path, paste("/gofSGP_Grade", grade, sep="_"), ".png", sep=""), width=8.5, height=11, units="in", dpi=144, pointsize=24, bg="transparent")
-		grid.draw(.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale))
-		dev.off()
+		
+		if (output.format!="GROB") {
+			file.path <- file.path("Goodness_of_Fit", paste(content_area, year, sep="."))
+			dir.create(file.path, showWarnings=FALSE, recursive=TRUE)
+			if (output.format=="PDF") pdf(file=paste(file.path, paste("/gofSGP_Grade", grade, sep="_"), ".pdf", sep=""), width=my.width, height=my.height)
+			if (output.format=="PNG") Cairo(file=paste(file.path, paste("/gofSGP_Grade", grade, sep="_"), ".png", sep=""), width=my.width, height=my.height, units="in", dpi=144, pointsize=24, bg="transparent")
+			grid.draw(.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale, with.prior.achievement.level=with.prior.achievement.level))
+			dev.off()
+			return(NULL)
+		} else {
+			.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale, with.prior.achievement.level=with.prior.achievement.level)
+		}
 	}
 
 	.goodness.of.fit <- 
-		function(data1, content_area, year, grade, color.scale="reds") {
+		function(data1, content_area, year, grade, color.scale="reds", with.prior.achievement.level=FALSE) {
 
 		.cell.color <- function(x){
 		my.blues.and.reds <- diverge_hcl(21, c = 100, l = c(50, 100))
@@ -103,9 +126,9 @@
 			return(gfittable)
 		}
 
-		PRIOR_SS <- SGP <- NULL
-		tmp.table <- .sgp.fit(data1[['PRIOR_SS']], data1[['SGP']])
-		tmp.cuts <- .quantcut(data1[['PRIOR_SS']], 0:10/10, right=FALSE)
+		SCALE_SCORE_PRIOR <- SGP <- NULL
+		tmp.table <- .sgp.fit(data1[['SCALE_SCORE_PRIOR']], data1[['SGP']])
+		tmp.cuts <- .quantcut(data1[['SCALE_SCORE_PRIOR']], 0:10/10, right=FALSE)
 		tmp.cuts.percentages <- round(100*table(tmp.cuts)/sum(table(tmp.cuts)), digits=1)
 		tmp.colors <- .cell.color(as.vector(tmp.table))
 		tmp.list <- list()
@@ -114,41 +137,53 @@
 			tmp.list[[i]] <- quantile(data1$SGP[tmp.cuts==i], probs=ppoints(1:500))
 		}
 
-		tmp.prior.achievement.level.percentages <- table(factor(data1[['ACHIEVEMENT_LEVEL_PRIOR']]))/(dim(data1)[1])
-		tmp.prior.achievement.level.colors <- rev(diverge_hcl(length(tmp.prior.achievement.level.percentages), h = c(180, 40), c = 255, l = c(20, 100)))
-		tmp.prior.achievement.level.percentages.labels <- paste("(", round(100*table(factor(data1[['ACHIEVEMENT_LEVEL_PRIOR']]))/(dim(data1)[1]), digits=1), "%)", sep="")
-		if (is.null(state)) {
-			tmp.prior.achievement.level.labels <- row.names(tmp.prior.achievement.level.percentages)
+		if (with.prior.achievement.level) {
+			tmp.prior.achievement.level.percentages <- table(factor(data1[['ACHIEVEMENT_LEVEL_PRIOR']]))/(dim(data1)[1])
+			tmp.prior.achievement.level.colors <- rev(diverge_hcl(length(tmp.prior.achievement.level.percentages), h = c(180, 40), c = 255, l = c(20, 100)))
+			tmp.prior.achievement.level.percentages.labels <- paste("(", round(100*table(factor(data1[['ACHIEVEMENT_LEVEL_PRIOR']]))/(dim(data1)[1]), digits=1), "%)", sep="")
+			if (is.null(state)) {
+				tmp.prior.achievement.level.labels <- row.names(tmp.prior.achievement.level.percentages)
+			} else {
+				tmp.prior.achievement.level.labels <- names(SGPstateData[[state]][['Student_Report_Information']][['Achievement_Level_Labels']])
+			}
+			tmp.prior.achievement.level.base.points <- cumsum(tmp.prior.achievement.level.percentages)+(seq_along(tmp.prior.achievement.level.percentages)-1)/100
+			tmp.prior.achievement.level.centers <- tmp.prior.achievement.level.base.points-tmp.prior.achievement.level.percentages/2
+			tmp.prior.achievement.level.quantiles <- tapply(data1[['SGP']], factor(data1[['ACHIEVEMENT_LEVEL_PRIOR']]), quantile, probs=1:9/10, simplify=FALSE)
+
+			layout.vp <- viewport(layout = grid.layout(7, 4, widths = unit(c(0.1, 4.9, 3.4, 0.1), rep("inches", 4)),
+			heights = unit(c(0.2, 1.0, 0.1, 5.4, 0.1, 4.0, 0.2), rep("inches", 2))), name="layout")
+			components <- vpList(viewport(layout.pos.row=2, layout.pos.col=2:3, name="title"),
+				viewport(layout.pos.row=4, layout.pos.col=2:3, xscale=c(-30,110), yscale=c(-0.25, 1.25), name="prior_achievement_level"),
+				viewport(layout.pos.row=6, layout.pos.col=2, xscale=c(-3,12), yscale=c(0,13), name="table"),
+				viewport(layout.pos.row=6, layout.pos.col=3, xscale=c(-25,110), yscale=c(-8,130), name="qq"))
 		} else {
-			tmp.prior.achievement.level.labels <- names(SGPstateData[[state]][['Student_Report_Information']][['Achievement_Level_Labels']])
+			layout.vp <- viewport(layout = grid.layout(5, 4, widths = unit(c(0.1, 4.9, 3.4, 0.1), rep("inches", 4)),
+			heights = unit(c(0.2, 1.0, 0.1, 4.0, 0.2), rep("inches", 2))), name="layout")
+			components <- vpList(viewport(layout.pos.row=2, layout.pos.col=2:3, name="title"),
+			viewport(layout.pos.row=4, layout.pos.col=2, xscale=c(-3,12), yscale=c(0,13), name="table"),
+			viewport(layout.pos.row=4, layout.pos.col=3, xscale=c(-25,110), yscale=c(-8,130), name="qq"))
 		}
-		tmp.prior.achievement.level.base.points <- cumsum(tmp.prior.achievement.level.percentages)+(seq_along(tmp.prior.achievement.level.percentages)-1)/100
-		tmp.prior.achievement.level.centers <- tmp.prior.achievement.level.base.points-tmp.prior.achievement.level.percentages/2
-		tmp.prior.achievement.level.quantiles <- tapply(data1[['SGP']], factor(data1[['ACHIEVEMENT_LEVEL_PRIOR']]), quantile, probs=1:9/10, simplify=FALSE)
 
-		layout.vp <- viewport(layout = grid.layout(7, 4, widths = unit(c(0.1, 4.9, 3.4, 0.1), rep("inches", 4)),
-		heights = unit(c(0.2, 1.0, 0.1, 5.4, 0.1, 4.0, 0.2), rep("inches", 2))), name="layout")
-		components <- vpList(viewport(layout.pos.row=2, layout.pos.col=2:3, name="title"),
-			viewport(layout.pos.row=4, layout.pos.col=2:3, xscale=c(-30,110), yscale=c(-0.25, 1.25), name="prior_achievement_level"),
-			viewport(layout.pos.row=6, layout.pos.col=2, xscale=c(-3,12), yscale=c(0,13), name="table"),
-			viewport(layout.pos.row=6, layout.pos.col=3, xscale=c(-25,110), yscale=c(-8,130), name="qq"))
 
-		grobs <- gTree(childrenvp=layout.vp,
-			name=paste(content_area, ".", year, ".GRADE.", grade, sep=""),
-			children=gList(gTree(vp="layout",
-			childrenvp=components,
-			name=paste("CHILDREN.", content_area, ".", year, ".GRADE.", grade, sep=""),
-			children=gList(
+		### grob with prior achievement
 
-				### title
+		if (with.prior.achievement.level) {
+
+			gof.grob <- gTree(childrenvp=layout.vp,
+				name=paste(content_area, ".", year, ".GRADE.", grade, sep=""),
+				children=gList(gTree(vp="layout",
+				childrenvp=components,
+				name=paste("CHILDREN.", content_area, ".", year, ".GRADE.", grade, sep=""),
+					children=gList(
+
+			### title
 
 				roundrectGrob(gp=gpar(fill="grey95"), vp="title", r=unit(3, "mm")),
 				textGrob(x=0.5, y=0.65, "Student Growth Percentile Goodness-of-Fit Descriptives", gp=gpar(cex=1.75), vp="title"),
 				textGrob(x=0.5, y=0.35, paste(pretty_year(year), " ", sub(' +$', '', capwords(paste(content_area, my.extra.label))),
 					", Grade ", grade, " (N = ", format(dim(data1)[1], big.mark=","), ")", sep=""), vp="title", gp=gpar(cex=1.2)),
 
-
-				### prior_achievement_level
+			### prior_achievement_level
 
 				textGrob(x=unit(0.5, "npc"), y=unit(1.15, "native"), "SGP Deciles by Prior Achievement Level", gp=gpar(cex=1.7), vp="prior_achievement_level"),
 				roundrectGrob(width=0.98, r=unit(2, "mm"), vp="prior_achievement_level"),
@@ -166,12 +201,62 @@
 				textGrob(x=c(1,1:9*10,99), y=-0.115, as.character(c(1,1:9*10,99)), gp=gpar(cex=0.8), default.units="native", vp="prior_achievement_level"),
 				textGrob(y=-0.18, x=50, "Median Student Growth Percentile", gp=gpar(cex=0.8), default.units="native", vp="prior_achievement_level"),
 				polylineGrob(x=rep(unlist(tmp.prior.achievement.level.quantiles), each=2), 
-					y=as.numeric(rbind(rep(tmp.prior.achievement.level.base.points, each=9), rep(tmp.prior.achievement.level.base.points-tmp.prior.achievement.level.percentages, each=9))),
-					id=rep(1:length(unlist(tmp.prior.achievement.level.quantiles)), each=2), 
-					gp=gpar(lwd=c(rep(0.4,4),1.4,rep(0.4,4)), col=c(rep("grey75",4),"white",rep("grey75",4)), lty=c(rep(2,4),1,rep(2,4))), 
-					vp="prior_achievement_level", default.units="native"),
+				y=as.numeric(rbind(rep(tmp.prior.achievement.level.base.points, each=9), rep(tmp.prior.achievement.level.base.points-tmp.prior.achievement.level.percentages, each=9))),
+				id=rep(1:length(unlist(tmp.prior.achievement.level.quantiles)), each=2), 
+				gp=gpar(lwd=c(rep(0.4,4),1.4,rep(0.4,4)), col=c(rep("grey75",4),"white",rep("grey75",4)), lty=c(rep(2,4),1,rep(2,4))), 
+				vp="prior_achievement_level", default.units="native"),
 
-				### table
+			### table
+
+				roundrectGrob(width=0.98, r=unit(2, "mm"), vp="table"),
+				rectGrob(x=rep(1:10, each=dim(tmp.table)[1]), y=rep(10:(10-dim(tmp.table)[1]+1),10), width=1, height=1, default.units="native",
+					gp=gpar(col="black", fill=tmp.colors), vp="table"),
+				textGrob(x=0.35, y=10:(10-dim(tmp.table)[1]+1), paste(c("1st", "2nd", "3rd", paste(4:dim(tmp.table)[1], "th", sep="")),
+					dimnames(tmp.table)[[1]], sep="/"), just="right", gp=gpar(cex=0.7), default.units="native", vp="table"),
+				textGrob(x=10.65, y=10:(10-dim(tmp.table)[1]+1), paste("(", tmp.cuts.percentages, "%)", sep=""), just="left", gp=gpar(cex=0.7),
+					default.units="native", vp="table"),
+				textGrob(x=-2.5, y=5.5, "Prior Scale Score Decile/Range", gp=gpar(cex=0.8), default.units="native", rot=90, vp="table"),
+				textGrob(x=1:10, y=10.8, dimnames(tmp.table)[[2]], gp=gpar(cex=0.7), default.units="native", rot=45, just="left", vp="table"),
+				textGrob(x=5.75, y=12.5, "Student Growth Percentile Range", gp=gpar(cex=0.8), default.units="native", vp="table"),
+				textGrob(x=rep(1:10,each=dim(tmp.table)[1]), y=rep(10:(10-dim(tmp.table)[1]+1),10),
+					formatC(as.vector(tmp.table), format="f", digits=2), default.units="native", gp=gpar(cex=0.7), vp="table"),
+				textGrob(x=-2.55, y=9.0, "*", default.units="native", rot=90, gp=gpar(cex=0.7), vp="table"),
+				textGrob(x=-2.05, y=0.3, "*", default.units="native", gp=gpar(cex=0.7), vp="table"),
+				textGrob(x=-2.0, y=0.25, "Prior score deciles can be uneven depending upon the prior score distribution", just="left", default.units="native",
+					gp=gpar(cex=0.5), vp="table"),
+
+			### qq
+
+				roundrectGrob(width=0.98, r=unit(2, "mm"), vp="qq"),
+				polylineGrob(unlist(tmp.list), rep(ppoints(1:500)*100, length(levels(tmp.cuts))),
+					id=rep(seq(length(levels(tmp.cuts))), each=500), gp=gpar(lwd=0.35), default.units="native", vp="qq"),
+				linesGrob(c(0,100), c(0,100), gp=gpar(lwd=0.75, col="red"), default.units="native", vp="qq"),
+				linesGrob(x=c(-3,-3,103,103,-3), y=c(-3,103,103,-3,-3), default.units="native", vp="qq"),
+				polylineGrob(x=rep(c(-6,-3), 11), y=rep(0:10*10, each=2), id=rep(1:11, each=2), default.units="native", vp="qq"),
+				textGrob(x=-7, y=0:10*10, 0:10*10, default.units="native", gp=gpar(cex=0.7), just="right", vp="qq"),
+				polylineGrob(x=rep(0:10*10, each=2), y=rep(c(103,106), 11), id=rep(1:11, each=2), default.units="native", vp="qq"),
+				textGrob(x=0:10*10, y=109, 0:10*10, default.units="native", gp=gpar(cex=0.7), vp="qq"),
+				textGrob(x=45, y=123, "QQ-Plot: Student Growth Percentiles", default.units="native", vp="qq"),
+				textGrob(x=50, y=115, "Theoretical SGP Distribution", default.units="native", gp=gpar(cex=0.7), vp="qq"),
+				textGrob(x=-17, y=50, "Empirical SGP Distribution", default.units="native", gp=gpar(cex=0.7), rot=90, vp="qq")))))
+
+		} else {
+
+			gof.grob <- gTree(childrenvp=layout.vp,
+				name=paste(content_area, ".", year, ".GRADE.", grade, sep=""),
+				children=gList(gTree(vp="layout",
+				childrenvp=components,
+				name=paste("CHILDREN.", content_area, ".", year, ".GRADE.", grade, sep=""),
+					children=gList(
+
+			### title
+
+				roundrectGrob(gp=gpar(fill="grey95"), vp="title", r=unit(3, "mm")),
+				textGrob(x=0.5, y=0.65, "Student Growth Percentile Goodness-of-Fit Descriptives", gp=gpar(cex=1.75), vp="title"),
+				textGrob(x=0.5, y=0.35, paste(pretty_year(year), " ", sub(' +$', '', capwords(paste(content_area, my.extra.label))),
+					", Grade ", grade, " (N = ", format(dim(data1)[1], big.mark=","), ")", sep=""), vp="title", gp=gpar(cex=1.2)),
+
+			### table
 
 				roundrectGrob(width=0.98, r=unit(2, "mm"), vp="table"),
 				rectGrob(x=rep(1:10, each=dim(tmp.table)[1]), y=rep(10:(10-dim(tmp.table)[1]+1),10), width=1, height=1, default.units="native",
@@ -190,7 +275,7 @@
 				textGrob(x=-2.0, y=0.25, "Prior score deciles can be uneven depending upon the prior score distribution", just="left", default.units="native",
 					gp=gpar(cex=0.5), vp="table"),
 
-				### qq
+			### qq
 
 				roundrectGrob(width=0.98, r=unit(2, "mm"), vp="qq"),
 				polylineGrob(unlist(tmp.list), rep(ppoints(1:500)*100, length(levels(tmp.cuts))),
@@ -205,6 +290,9 @@
 				textGrob(x=50, y=115, "Theoretical SGP Distribution", default.units="native", gp=gpar(cex=0.7), vp="qq"),
 				textGrob(x=-17, y=50, "Empirical SGP Distribution", default.units="native", gp=gpar(cex=0.7), rot=90, vp="qq")))))
 
+		} ### END else
+
+		return(gof.grob)
 	} ### END .goodness.of.fit function
 
 	### Define variables
@@ -215,30 +303,43 @@
 	### Get arguments
 
 	if (is.null(years)) {
-		years <- unique(sgp_object@Data[!is.na(sgp_object@Data[[use.sgp]]),][['YEAR']])
+		years <- unique(tmp.data[!is.na(tmp.data[[use.sgp]]),][['YEAR']])
 	} 
 
 	if (is.null(content_areas)) {
-		content_areas <- unique(sgp_object@Data[!is.na(sgp_object@Data[[use.sgp]]),][['CONTENT_AREA']])
+		content_areas <- unique(tmp.data[!is.na(tmp.data[[use.sgp]]),][['CONTENT_AREA']])
 	}
 
-
-	### Setkey on data
-
-	setkey(sgp_object@Data, VALID_CASE, YEAR, CONTENT_AREA)
+	setkey(tmp.data, VALID_CASE, YEAR, CONTENT_AREA)
 
 	for (years.iter in years) {
 		for (content_areas.iter in content_areas) {
-			tmp.data <- sgp_object@Data[data.table("VALID_CASE", years.iter, content_areas.iter)][, c("SCALE_SCORE_PRIOR", "ACHIEVEMENT_LEVEL_PRIOR", use.sgp, "GRADE"), with=FALSE]
+			tmp.data_1 <- tmp.data[data.table("VALID_CASE", years.iter, content_areas.iter)][, variables.to.get, with=FALSE]
 			if (is.null(grades)) {
-				grades <- sort(unique(tmp.data[!is.na(tmp.data[[use.sgp]]),][['GRADE']]))
+				grades <- sort(unique(tmp.data_1[!is.na(tmp.data_1[[use.sgp]]),][['GRADE']]))
 			}
 			for (grades.iter in grades) {
-				tmp.data.final <- tmp.data[tmp.data[['GRADE']]==grades.iter & !is.na(tmp.data[[use.sgp]]) & !is.na(SCALE_SCORE_PRIOR),]
-				gof.draw(data.frame(PRIOR_SS=tmp.data.final[['SCALE_SCORE_PRIOR']], SGP=tmp.data.final[[use.sgp]], ACHIEVEMENT_LEVEL_PRIOR=tmp.data.final[['ACHIEVEMENT_LEVEL_PRIOR']]), content_area=content_areas.iter, year=years.iter, grade=grades.iter)
-
+				tmp.data.final <- tmp.data_1[tmp.data_1[['GRADE']]==grades.iter & !is.na(tmp.data_1[[use.sgp]]) & !is.na(SCALE_SCORE_PRIOR),]
+				if ("ACHIEVEMENT_LEVEL_PRIOR" %in% names(tmp.data.final)) {
+					gof.object <- gof.draw(
+						data.frame(
+							SCALE_SCORE_PRIOR=tmp.data.final[['SCALE_SCORE_PRIOR']], 
+							SGP=tmp.data.final[[use.sgp]], 
+							ACHIEVEMENT_LEVEL_PRIOR=tmp.data.final[['ACHIEVEMENT_LEVEL_PRIOR']]), 
+							content_area=content_areas.iter, 
+							year=years.iter, 
+							grade=grades.iter)
+				} else {
+					gof.object <- gof.draw(
+						data.frame(
+							SCALE_SCORE_PRIOR=tmp.data.final[['SCALE_SCORE_PRIOR']], 
+							SGP=tmp.data.final[[use.sgp]]), 
+							content_area=content_areas.iter, 
+							year=years.iter, 
+							grade=grades.iter)
+				}
+				if (!is.null(gof.object)) return(gof.object)
 			}
 		}
 	}
-
 } ### END gofSGP function

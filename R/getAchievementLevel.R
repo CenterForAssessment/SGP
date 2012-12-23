@@ -3,12 +3,14 @@ function(sgp_data,
 	state=NULL,
 	year=NULL,
 	content_area=NULL,
-	grade=NULL) {
+	grade=NULL,
+	achievement.level.name="ACHIEVEMENT_LEVEL",
+	scale.score.name="SCALE_SCORE") {
 
-	CONTENT_AREA <- YEAR <- GRADE <- SCALE_SCORE <- NULL
+	CONTENT_AREA <- YEAR <- GRADE <- NULL
 
-	if (!"ACHIEVEMENT_LEVEL" %in% names(sgp_data)) {
-		sgp_data[['ACHIEVEMENT_LEVEL']] <- 
+	if (!achievement.level.name %in% names(sgp_data)) {
+		sgp_data[[achievement.level.name]] <- 
 			factor(1, levels=seq_along(SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]][!is.na(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]])]),
 			labels=SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]][!is.na(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]])], ordered=TRUE)
 	}
@@ -42,10 +44,9 @@ function(sgp_data,
 	}
 
 	setkeyv(sgp_data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))
-		sgp_data[["ACHIEVEMENT_LEVEL"]][sgp_data[CJ("VALID_CASE", content_area, year, grade), which=TRUE, nomatch=0]] <- 
-		sgp_data[CJ("VALID_CASE", content_area, year, grade), nomatch=0][, getAchievementLevel_INTERNAL(state, CONTENT_AREA, YEAR, GRADE, SCALE_SCORE), 
+		sgp_data[[achievement.level.name]][sgp_data[CJ("VALID_CASE", content_area, year, grade), which=TRUE, nomatch=0]] <- 
+		sgp_data[CJ("VALID_CASE", content_area, year, grade), nomatch=0][, getAchievementLevel_INTERNAL(state, CONTENT_AREA, YEAR, GRADE, get(scale.score.name)), 
 			by=list(CONTENT_AREA, YEAR, GRADE)][["V1"]]
-	setkeyv(sgp_data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 
 	return(sgp_data)
 } ### END getAchievementLevel Function

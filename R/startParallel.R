@@ -123,7 +123,7 @@ function(
 			upper.index <- min((chunk+1)*chunk.size, length(qr.taus))
 			TAUS.LIST[[chunk+1]] <- qr.taus[lower.index:upper.index]
 		}
-		if ((chunk.size*workers) > length(taus))  TAUS.LIST <- TAUS.LIST[sapply(TAUS.LIST, function(x) !is.na(x)[[1]][1])]
+		if ((chunk.size*workers) > length(qr.taus))  TAUS.LIST <- TAUS.LIST[sapply(TAUS.LIST, function(x) !is.na(x)[[1]][1])]
 	}
 	
 	###
