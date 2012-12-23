@@ -225,7 +225,7 @@ sgp_g8_DEMO <- studentGrowthPercentiles(panel.data=sgpData,
                    grade.progression=c(5,6,8))
 
 
-## NOTE: Goodness of Fit results are stored as a graphical object in the
+## NOTE: Goodness of Fit results are stored as graphical objects in the
 ## Goodness_of_Fit slot. To view or save (using any R output device) try:
 
 grid.draw(sgp_g4$Goodness_of_Fit$READING.2012$GRADE_4)
@@ -286,6 +286,7 @@ for (i in seq_along(my.grade.sequences)) {
      my.sgpData <- studentGrowthPercentiles(panel.data=my.sgpData,
                      sgp.labels=list(my.year=2012, my.subject="Reading"),
                      growth.levels="DEMO",
+                     goodness.of.fit="DEMO",
                      grade.progression=my.grade.sequences[[i]])
 }
 
@@ -297,7 +298,7 @@ file="2012_Reading_SGPercentiles.csv", row.names=FALSE, quote=FALSE, na="")
 # Create pdfs of all Goodness of Fit results:
 
 for (i in names(my.sgpData$Goodness_of_Fit$READING.2012)) {
-    pdf(file=paste(i, "_Reading_2012_GOF.pdf", sep=""), width=8.5, height=4.5)
+    pdf(file=paste(i, "_Reading_2012_GOF.pdf", sep=""), width=8.5, height=11)
        grid.draw(my.sgpData[["Goodness_of_Fit"]][["READING.2012"]][[i]])
     dev.off()
 }

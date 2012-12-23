@@ -73,7 +73,7 @@ function(sgp_object,
 			for (i in names(sgp_object@SGP[["Goodness_of_Fit"]])) {
 				dir.create(paste("Goodness_of_Fit/", i, sep=""), recursive=TRUE, showWarnings=FALSE)
 					for (j in names(sgp_object@SGP[["Goodness_of_Fit"]][[i]])) {
-						pdf(file=paste("Goodness_of_Fit/", i, "/", j, ".pdf", sep=""), width=8.5, height=4.5)
+						pdf(file=paste("Goodness_of_Fit/", i, "/", j, ".pdf", sep=""), width=8.5, height=11)
 						grid.draw(sgp_object@SGP[["Goodness_of_Fit"]][[i]][[j]])
 						dev.off()
 					}
@@ -260,6 +260,7 @@ function(sgp_object,
 							drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 							exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 							sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
+							goodness.of.fit=state,
 							...))
 					}
 				} else {
@@ -281,6 +282,7 @@ function(sgp_object,
 							drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 							exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 							sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
+							goodness.of.fit=state,
 							...))
 					}
 				}
@@ -310,6 +312,7 @@ function(sgp_object,
 							drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 							exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 							sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
+							goodness.of.fit=state,
 							...))
 					} else {
 						tmp <- clusterApplyLB(par.start$internal.cl, rev(par.sgp.config), 	function(sgp.iter)	studentGrowthPercentiles( 
@@ -328,6 +331,7 @@ function(sgp_object,
 							drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 							exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 							sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
+							goodness.of.fit=state,
 							...))
 					}
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -360,6 +364,7 @@ function(sgp_object,
 							drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 							exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 							sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
+							goodness.of.fit=state,
 							...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 					} else {
 						tmp <- mclapply(rev(par.sgp.config), function(sgp.iter)	studentGrowthPercentiles( 
@@ -378,6 +383,7 @@ function(sgp_object,
 							drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 							exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 							sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
+							goodness.of.fit=state,
 							...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 					}
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -421,6 +427,7 @@ function(sgp_object,
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
+						goodness.of.fit=state,
 						...))
 				}
 				tmp_sgp_object <- mergeSGP(tmp_sgp_object, tmp)
@@ -445,6 +452,7 @@ function(sgp_object,
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
+						goodness.of.fit=state,
 						...))
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -473,6 +481,7 @@ function(sgp_object,
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
+						goodness.of.fit=state,
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
