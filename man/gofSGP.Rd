@@ -15,7 +15,7 @@ gofSGP(
 	grades=NULL,
 	use.sgp="SGP",
 	output.format="PDF",
-	color.scale="reds")
+	color.scale="reds.and.blues")
 }
 
 \arguments{
