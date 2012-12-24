@@ -10,7 +10,7 @@ function(data,
 	started.at <- proc.time()
 	message(paste("\nStarted prepareSGP", date()))
 
-	VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- ID <- GRADE <- SCALE_SCORE <- DUPLICATED_CASES <- PRIOR_SCALE_SCORE <- PRIOR_GRADE <- SCHOOL_NUMBER <- YEAR_INT <- NULL
+	VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- ID <- GRADE <- SCALE_SCORE <- DUPLICATED_CASES <- NULL
 
 	## Get state (if possible)
 
@@ -244,18 +244,7 @@ function(data,
 		### HIGH_NEED_STATUS
 
 		if (!"HIGH_NEED_STATUS" %in% names(sgp_object@Data) & "SCHOOL_NUMBER" %in% names(sgp_object@Data)) {
-			sgp_object@Data[["YEAR_INT"]] <- as.integer(factor(sgp_object@Data[["YEAR"]]))
-			setkeyv(sgp_object@Data, c("ID", "CONTENT_AREA", "YEAR_INT", "VALID_CASE")) ## CRITICAL that VALID_CASE is last in group
-			sgp_object@Data$PRIOR_SCALE_SCORE <- sgp_object@Data[SJ(ID, CONTENT_AREA, YEAR_INT-1L), mult="last"][,SCALE_SCORE]
-			sgp_object@Data$PRIOR_GRADE <- sgp_object@Data[SJ(ID, CONTENT_AREA, YEAR_INT-1L), mult="last"][,GRADE]
-
-			setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR_INT", "SCHOOL_NUMBER", "PRIOR_GRADE", "ID"))
-			sgp_object@Data[["HIGH_NEED_STATUS"]] <- sgp_object@Data[,my.quantile.function(PRIOR_SCALE_SCORE, !VALID_CASE[1]=="VALID_CASE"), 
-				by=list(VALID_CASE, CONTENT_AREA, YEAR_INT, SCHOOL_NUMBER, PRIOR_GRADE)]$V1
-			sgp_object@Data[["PRIOR_SCALE_SCORE"]] <- sgp_object@Data[["PRIOR_GRADE"]] <- sgp_object@Data[["YEAR_INT"]] <- NULL
-			message("\tNOTE: Added variable HIGH_NEED_STATUS to @Data.")
-			sgp_object@Names <- rbind(sgp_object@Names, c("HIGH_NEED_STATUS", "HIGH_NEED_STATUS", "demographic", "High need status flag", TRUE))
-			setkey(sgp_object@Data, VALID_CASE, CONTENT_AREA, YEAR, ID)
+			sgp_object <- getHighNeedStatus(sgp_object)
 		}
 
 		### STATE_ENROLLMENT_STATUS, DISTRICT_ENROLLMENT_STATUS, SCHOOL_ENROLLMENT_STATUS
