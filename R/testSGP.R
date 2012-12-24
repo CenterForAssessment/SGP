@@ -29,7 +29,7 @@ function(
 		paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=sgpData_LONG,\n\tsgPlot.demo.report=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
 
 
-	cat("##### Beginning testSGP test number 1 #####\n", fill=TRUE)
+	cat("##### Begin testSGP test number 1 #####\n", fill=TRUE)
 
 	cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 
@@ -45,7 +45,7 @@ function(
 
 	### TEST of SGP variable
 
-	tmp.messages <- ("##### Results of testSGP test number 1 #####")
+	tmp.messages <- ("\t##### Results of testSGP test number 1 #####\n")
 
 	if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 8565260L)) {
 		tmp.messages <- c(tmp.messages, "\tTest of variable SGP: OK\n")
@@ -116,7 +116,7 @@ function(
 
 	### Part 1
 
-	tmp.messages <- "\n##### Beginning testSGP test number 2: Part 1 #####\n"
+	tmp.messages <- "##### Begin testSGP test number 2 #####\n"
 
 	expression.to.evaluate <- 
 		paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=Demonstration_Data_LONG,\n\tsgPlot.demo.report=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
@@ -130,6 +130,8 @@ function(
 	eval(parse(text=expression.to.evaluate))
 	
 	### TEST of SGP variable
+
+	tmp.messages <- ("\t##### Results of testSGP test number 2: Part 1 #####\n")
 
 	if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 5668654L)) {
 		tmp.messages <- c(tmp.messages, "\tTest of variable SGP, part 1: OK\n")
@@ -177,11 +179,9 @@ function(
 		tmp.messages <- c(tmp.messages, "\tTest of variable MOVE_UP_STAY_UP_STATUS, part 1: FAIL\n")
 	}
 
-	tmp.messages <- c(tmp.messages, "\n##### End testSGP test number 1 #####\n")
+	tmp.messages <- c(tmp.messages, "\t##### End testSGP test number 2: Part 1 #####\n")
 
 	### Part 2
-
-	tmp.messages <- c(tmp.messages, "\n##### Beginning testSGP test number 2: Part 2 #####\n")
 
 	expression.to.evaluate <- 
 		paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=Demonstration_Data_LONG_2011_2012,\n\tsgPlot.demo.report=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
@@ -195,6 +195,8 @@ function(
 	eval(parse(text=expression.to.evaluate))
 	
 	### TEST of SGP variable
+
+	tmp.messages <- ("\n\t##### Results of testSGP test number 2: Part 2 #####\n")
 
 	if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 8565260L)) {
 		tmp.messages <- c(tmp.messages, "\tTest of variable SGP, part 2: OK\n")
@@ -242,7 +244,9 @@ function(
 		tmp.messages <- c(tmp.messages, "\tTest of variable MOVE_UP_STAY_UP_STATUS, part 2: FAIL\n")
 	}
 
-	tmp.messages <- c(tmp.messages, "\n##### End testSGP test number 1 #####\n")
+	tmp.messages <- c(tmp.messages, "\t##### End testSGP test number 2: Part 2 #####\n")
+
+	tmp.messages <- c(tmp.messages, "\n##### End testSGP test number 2 #####\n")
 	cat(tmp.messages, fill=TRUE)
 
 	} ### End TEST_NUMBER 2
