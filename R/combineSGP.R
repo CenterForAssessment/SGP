@@ -15,7 +15,7 @@ function(
 	message(paste("Started combineSGP", date()))
 
 	ID <- CONTENT_AREA <- YEAR <- GRADE <- YEAR_INTEGER_TMP <- ACHIEVEMENT_LEVEL <- CATCH_UP_KEEP_UP_STATUS_INITIAL <- MOVE_UP_STAY_UP_STATUS_INITIAL <- VALID_CASE <- NULL
-	MOVE_UP_STAY_UP_STATUS <- CATCH_UP_KEEP_UP_STATUS <- NULL
+	MOVE_UP_STAY_UP_STATUS <- CATCH_UP_KEEP_UP_STATUS <- ACHIEVEMENT_LEVEL_PRIOR <- NULL
 
 	tmp.messages <- NULL
 
@@ -201,6 +201,7 @@ function(
 		if ("CATCH_UP_KEEP_UP" %in% target.level) {
 
 			level.to.get <- which.max(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")-1
+			slot.data[,CATCH_UP_KEEP_UP_STATUS_INITIAL:=getTargetInitialStatus(ACHIEVEMENT_LEVEL_PRIOR, state, "CATCH_UP_KEEP_UP")]
 
 			if ("CATCH_UP_KEEP_UP_STATUS" %in% names(slot.data)) slot.data[,CATCH_UP_KEEP_UP_STATUS := NULL]
 			slot.data[,CATCH_UP_KEEP_UP_STATUS := rep(as.character(NA), dim(slot.data)[1])]
@@ -229,6 +230,7 @@ function(
 		if ("MOVE_UP_STAY_UP" %in% target.level) {
 
 			level.to.get <- which.max(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")
+			slot.data[,MOVE_UP_STAY_UP_STATUS_INITIAL:=getTargetInitialStatus(ACHIEVEMENT_LEVEL_PRIOR, state, "MOVE_UP_STAY_UP")]
 
 			if ("MOVE_UP_STAY_UP_STATUS" %in% names(slot.data)) slot.data[,MOVE_UP_STAY_UP_STATUS := NULL]
 			slot.data[,MOVE_UP_STAY_UP_STATUS := rep(as.character(NA), dim(slot.data)[1])]
