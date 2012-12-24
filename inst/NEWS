@@ -3,6 +3,7 @@ Changes in version: SGP_1.0-0.0
   NEW FEATURES:
 
 	  o Update goodness of fit plots to include an additional representation of growth percentiles by prior achievement level.
+	  o Incorporated updateSGP into SGP package including a new test in testSGP, testSGP(2), utilizing it.
 
 Changes in version: SGP_0.9-9.9
 

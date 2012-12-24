@@ -1,6 +1,7 @@
 `updateSGP` <- 
 function(what_sgp_object,
 	with_sgp_data_LONG,
+	state=NULL,
 	...) {
 
         started.at <- proc.time()
