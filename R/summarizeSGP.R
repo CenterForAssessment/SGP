@@ -32,8 +32,8 @@ function(sgp_object,
 	if (!is.null(sgp_object@Summary)) {
 		if (save.old.summaries) {
 			tmp.year <- tail(sort(sgp_object@Summary[['STATE']][['STATE__YEAR__STATE_ENROLLMENT_STATUS']][['YEAR']]), 1)
-			message(paste("\tNOTE: Saving @Summary slot to", paste(gsub(" ", "_", toupper(state.name[state.abb=="WV"])), "SGP", tmp.year, "Summary_Slot.Rdata", sep="_")))
-			save(sgp_object@Summary, file=paste(gsub(" ", "_", toupper(state.name[state.abb=="WV"])), "SGP", tmp.year, "Summary_Slot.Rdata", sep="_"))
+			message(paste("\tNOTE: Saving @Summary slot to", paste(gsub(" ", "_", toupper(state.name[state.abb==state])), "SGP", tmp.year, "Summary_Slot.Rdata", sep="_")))
+			save(sgp_object@Summary, file=paste(gsub(" ", "_", toupper(state.name[state.abb==state])), "SGP", tmp.year, "Summary_Slot.Rdata", sep="_"))
 		} else {
 			message("\tNOTE: Deleting @Summary slot")
 			sgp_object@Summary <- NULL

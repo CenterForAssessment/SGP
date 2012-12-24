@@ -24,6 +24,7 @@ abcSGP(sgp_object,
 	simulate.sgps=TRUE,
 	parallel.config=NULL,
 	save.intermediate.results=FALSE,
+	save.old.summaries=FALSE,
 	sgPlot.demo.report=FALSE,
 	sgp.summaries=NULL,
 	summary.groups=NULL,
@@ -71,6 +72,9 @@ If missing the function will use the data to infer all the grade progressions fo
   }
   \item{save.intermediate.results}{Should intermediate results of \code{abcSGP} be saved after each of \code{\link{prepareSGP}}, \code{\link{analyzeSGP}},
   \code{\link{combineSGP}}, and \code{\link{summarizeSGP}}. Default is FALSE.
+  }
+  \item{save.old.summaries}{A boolean argument (defaults to FALSE which will delete the @Summary slot before creating new summaries) 
+  indicating whether the call to \code{\link{summarizeSGP}} should save existing summaries in the @Summary slot. 
   }
   \item{sgPlot.demo.report}{A boolean variable (defaults to FALSE) indicating whether to produce only the demonstration student report catalog. Default is to produce reports for entire current 
   year data.

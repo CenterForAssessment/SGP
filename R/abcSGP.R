@@ -15,6 +15,7 @@ function(sgp_object,
 	simulate.sgps=TRUE,
 	parallel.config=NULL,
 	save.intermediate.results=FALSE,
+	save.old.summaries=FALSE,
 	sgPlot.demo.report=FALSE,
 	sgp.summaries=NULL,
 	summary.groups=NULL,
@@ -99,7 +100,8 @@ function(sgp_object,
 			sgp.summaries=sgp.summaries, 
 			summary.groups=summary.groups, 
 			confidence.interval.groups=confidence.interval.groups,
-			parallel.config=parallel.config)
+			parallel.config=parallel.config,
+			save.old.summaries=save.old.summaries)
 
                 if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
 	}

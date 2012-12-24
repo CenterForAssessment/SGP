@@ -11,6 +11,7 @@ updateSGP(
 	what_sgp_object,
 	with_sgp_data_LONG,
 	state=NULL,
+	save.old.summaries=TRUE,
 	...)
 }
 
@@ -20,6 +21,9 @@ updateSGP(
   \item{with_sgp_data_LONG}{The additional data in LONG for to be added to the supplied object of class SGP analyzed. The additional data must be in the same form as the data in the @Data slot. 
   }
   \item{state}{The 'state' for the sgp_object. Derived from sgp_object name if not explicitly supplied. 
+  }
+  \item{save.old.summaries}{A boolean argument (defaults to FALSE which will delete the @Summary slot before creating new summaries)
+  indicating whether the call to \code{\link{summarizeSGP}} should save existing summaries in the @Summary slot.
   }
   \item{...}{Arguments to be passed to \code{\link{abcSGP}} for finer control over SGP calculations. For example, 'parallel.config' can be supplied to abcSGP for parallel computation.
   }
