@@ -29,7 +29,7 @@ function(what_sgp_object,
 	### abcSGP
 
 	new.year <- sort(unique(with_sgp_data_LONG$YEAR))
-	what_sgp_object <- abcSGP(what_sgp_object, years=new.year, state=state, sgPlot.demo.report=TRUE,...)
+	what_sgp_object <- abcSGP(what_sgp_object, years=new.year, state=state,...)
 
 
 	### Print finish and return SGP object
