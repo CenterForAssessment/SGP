@@ -96,7 +96,7 @@ function(matrix_argument,
 
 			### Version
 
-			version <- list(SGP_Package_Version=paste('Unknown - Converted with', as.character(packageVersion("SGP"))), Date_Prepared=paste('Unknown - Coverted', date()))
+			version <- list(SGP_Package_Version=as.character(packageVersion("SGP")), Date_Prepared=date())
 
 
 			### Create new splineMatrix
@@ -168,7 +168,7 @@ function(matrix_argument,
 
 			### Version
 
-			version <- list(SGP_Package_Version=paste('Unknown - Converted with', as.character(packageVersion("SGP"))), Date_Prepared=paste('Unknown - Coverted', date()))
+			version <- list(SGP_Package_Version=as.character(packageVersion("SGP")), Date_Prepared=date())
 
 
 			### Create new splineMatrix

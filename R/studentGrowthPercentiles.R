@@ -489,8 +489,26 @@ function(panel.data,         ## REQUIRED
 			if (!is.null(panel.data[[i]])) {
 				assign(i, panel.data[[i]])
 			}
-		} 
-	}
+		}
+		## Check class and construction of coefficient matrices
+
+		if (!is.null(Coefficient_Matrices)) {
+			tmp.matrices <- Coefficient_Matrices; tmp.changes <- FALSE
+			for (i in names(tmp.matrices)) {
+				splineMatrix.tf <- sapply(tmp.matrices[[i]], validObject, test=TRUE)==TRUE
+				if (!any(splineMatrix.tf)) {
+					tmp.changes <- TRUE
+					for (j in names(tmp.matrices[[i]])[!splineMatrix.tf]) {
+						message(paste("\tUpdating Existing Coefficient Matrix", i, j, "to new splineMatrix class."))
+						tmp.matrices[[i]][[j]] <- as.splineMatrix(matrix_argument=tmp.matrices[[i]][[j]], matrix_argument_name=j, sgp_object=panel.data)
+					}
+				}
+			}
+			if (tmp.changes) {
+				Coefficient_Matrices <- tmp.matrices
+			}
+		}
+	} ### if (identical(class(panel.data), "list"))
 
 
 	### Create Panel_Data based upon class of input data
