@@ -165,7 +165,7 @@ function(sgp_object,
  
 		ListExpr <- parse(text=paste("as.list(c(", paste(unlist(tmp.sgp.summaries), collapse=", "),"))",sep="")) 
 		ByExpr <- parse(text=paste("list(", paste(sgp.groups.to.summarize, collapse=", "), ")", sep=""))
-		tmp <- data[, eval(ListExpr), by=eval(ByExpr)]
+		tmp <- data[, eval(ListExpr), keyby=eval(ByExpr)]
 		if (produce.confidence.interval & "CSEM" %in% confidence.interval.groups$TYPE) {
 			SIM_ByExpr1 <- parse(text=paste("list(", paste(unlist(strsplit(as.character(sgp.groups.to.summarize), ", "))
 				[!(unlist(strsplit(as.character(sgp.groups.to.summarize), ", "))) %in% key(data)], collapse=", "), 
