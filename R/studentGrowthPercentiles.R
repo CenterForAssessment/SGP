@@ -43,11 +43,6 @@ function(panel.data,         ## REQUIRED
 	###
 	##########################################################
 
-#	rbind.all <- function(.list, ...){
-#		if(length(.list)==1) return(.list[[1]])
-#		Recall(c(list(rbind(.list[[1]], .list[[2]], ...)), .list[-(1:2)]), ...)
-#	}
-
 	.smooth.isotonize.row <- function(x, iso=isotonize) {
         	x[which(is.na(x))] <- approx(x, xout=which(is.na(x)))$y
         	if (iso) return(sort(x))
@@ -786,7 +781,6 @@ function(panel.data,         ## REQUIRED
 			} ### END if (dim(tmp.data)[1] > 0)
 		} ## END j loop
 
-#		quantile.data <- data.table(rbind.all(tmp.quantiles), key="ID")
 		quantile.data <- data.table(rbindlist(tmp.quantiles), key="ID")
 
 		if (print.other.gp) {
@@ -808,7 +802,6 @@ function(panel.data,         ## REQUIRED
 		}
 
 		if (csem.tf) {
-#			simulation.data <- data.table(rbind.all(tmp.csem.quantiles), key="ID")
 			simulation.data <- data.table(rbindlist(tmp.csem.quantiles), key="ID")
 			simulation.data <- simulation.data[c(which(!duplicated(simulation.data))[-1]-1, nrow(simulation.data))]
 
@@ -835,7 +828,6 @@ function(panel.data,         ## REQUIRED
 		}
 
 		if (!is.null(percentile.cuts)){
-#			cuts.best <- data.table(rbind.all(tmp.percentile.cuts), key="ID")
 			cuts.best <- data.table(rbindlist(tmp.percentile.cuts), key="ID")
 			cuts.best <- cuts.best[c(which(!duplicated(cuts.best))[-1]-1, nrow(cuts.best))][,-1, with=FALSE]
 			quantile.data <- cbind(quantile.data, cuts.best)

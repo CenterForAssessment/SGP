@@ -172,8 +172,8 @@ function(sgp_object,
 				", ", paste(names(tmp.simulation.dt)[grep("SGP_SIM_", names(tmp.simulation.dt))], collapse=", "), ")", sep=""))
 			SIM_ByExpr2 <- parse(text=paste("list(", paste(sgp.groups.to.summarize, collapse=", "), ")", sep=""))
 				tmp.sim <- data[tmp.simulation.dt, eval(SIM_ByExpr1)][, -(1:2), with=FALSE][,
-				lapply(.SD, median_na), by=eval(SIM_ByExpr2)][, 
-				as.list(round(apply(.SD, 1, quantile, probs=confidence.interval.groups$QUANTILES))), by=eval(SIM_ByExpr2)]
+				lapply(.SD, median_na), keyby=eval(SIM_ByExpr2)][, 
+				as.list(round(apply(.SD, 1, quantile, probs=confidence.interval.groups$QUANTILES))), keyby=eval(SIM_ByExpr2)]
 			tmp <- data.table(merge.data.frame(tmp, tmp.sim, by = unlist(strsplit(as.character(sgp.groups.to.summarize), ", ")),all=TRUE))
 		}
 		setnames(tmp, (dim(tmp)[2]-length(sgp.summaries.names)+1):dim(tmp)[2], sgp.summaries.names)
