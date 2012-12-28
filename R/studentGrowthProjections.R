@@ -545,9 +545,9 @@ function(panel.data,	## REQUIRED
 
 	if (is.null(grade.projection.sequence)) {
 		grade.projection.sequence <- sort(unique(as.numeric(sapply(sapply(tmp.matrices, function(x) x@Grade_Progression), function(x) type.convert(tail(x, 1))))))
-		grade.projection.sequence <- grade.projection.sequence[sapply(grade.projection.sequence, function(x) !x %in% grade.progression)]
+		grade.projection.sequence <- grade.projection.sequence[grade.projection.sequence > max(grade.progression)]
 
-		if (tmp.last==tail(grade.projection.sequence, 1)) {
+		if (identical(grade.projection.sequence, numeric(0))) {
 			stop("Supplied grade.progression and coefficient matrices do not allow projection. See help page for details.")
 		}
 
