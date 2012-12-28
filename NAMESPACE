@@ -29,7 +29,6 @@ export(
 	"summarizeSGP",
 	"testSGP",
 	"updateSGP",
-	"viewSummaryGroups",
 	"visualizeSGP"
 )
 
