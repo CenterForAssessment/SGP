@@ -174,7 +174,7 @@ function(panel.data,	## REQUIRED
 
 	.get.coefficient.matrix <- function(grade, order, content.areas, grade.prog) {
 		tmp.mtx.name <- paste("qrmatrix", grade, order, sep="_") 
-		tmp.index <- grep(tmp.mtx.name, matrix.names)
+		tmp.index <- grep(tmp.mtx.name, names(tmp.matrices))
 		tmp.tf <- tmp.index2 <- NULL
 		for (i in tmp.index) {
 			if (!identical(class(try(panel.data[['Coefficient_Matrices']][[tmp.path.coefficient.matrices]][[i]]@Content_Areas, silent=TRUE)), "try-error")) {
@@ -217,7 +217,7 @@ function(panel.data,	## REQUIRED
 							bnd <- paste("tmp.matrix@Boundaries[['boundaries_", rev(tmp.gp)[k], "']]", sep="")
 							mod <- paste(mod, ", bs(tmp.dt[['SS", rev(tmp.gp)[k], "']], knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
 						}
-						.check.my.coefficient.matrices(matrix.names, grade.projection.sequence[j], k)
+						.check.my.coefficient.matrices(names(tmp.matrices), grade.projection.sequence[j], k)
 						tmp.grd <- grade.projection.sequence[j]
 						tmp.matrix <-  .get.coefficient.matrix(
 									tmp.grd, 
@@ -537,7 +537,6 @@ function(panel.data,	## REQUIRED
 
 	### Calculate grade.projection.sequence, content_area.projection.sequence, and grade.projection.sequence.priors
 
-	matrix.names <- names(panel.data[["Coefficient_Matrices"]][[tmp.path.coefficient.matrices]])
 	tmp.matrices <- panel.data[["Coefficient_Matrices"]][[tmp.path.coefficient.matrices]]
 
 
