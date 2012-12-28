@@ -786,7 +786,8 @@ function(panel.data,         ## REQUIRED
 			} ### END if (dim(tmp.data)[1] > 0)
 		} ## END j loop
 
-		quantile.data <- data.table(rbind.all(tmp.quantiles), key="ID")
+#		quantile.data <- data.table(rbind.all(tmp.quantiles), key="ID")
+		quantile.data <- data.table(rbindlist(tmp.quantiles), key="ID")
 
 		if (print.other.gp) {
 			quantile.data <- data.table(reshape(quantile.data, idvar="ID", timevar="ORDER", direction="wide"),

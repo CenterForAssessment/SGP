@@ -63,7 +63,7 @@ function(list_1,
 			if (!identical(list_1[[j]][[k]], list_2[[j]][[k]])) {
 				list_1[[j]][[k]] <- unique.splineMatrix(c(list_1[[j]][[k]], list_2[[j]][[k]]))
 			}
-		}	# j <- "Coefficient_Matrices"
+		} # j <- "Coefficient_Matrices"
 	}
 	list_1[which(names(list_1) != "Panel_Data")]
 } ### END mergeSGP
