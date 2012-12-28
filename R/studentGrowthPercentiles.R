@@ -703,7 +703,7 @@ function(panel.data,         ## REQUIRED
 					grade.progression, 
 					year.progression,
 					year.progression.lags, 
-					return.only.orders=TRUE))
+					what.to.return="ORDERS"))
 
 		if (max.order < num.prior) {
 			tmp.messages <- c(tmp.messages, paste("\tNOTE: Requested number of prior scores (num.prior=", num.prior, ") exceeds maximum matrix order (max.order=", max.order, "). 
