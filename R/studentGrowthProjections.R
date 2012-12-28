@@ -191,6 +191,15 @@ function(panel.data,	## REQUIRED
 		} else {
 			tmp.mtx <- panel.data[['Coefficient_Matrices']][[tmp.path.coefficient.matrices]][[tmp.mtx.name]]
 		}
+
+		if (dim(tmp.mtx)[2] != 100) {
+			tau.num <- ceiling(as.numeric(substr(colnames(tmp.mtx), 6, nchar(colnames(tmp.mtx))))*100)
+			na.replace <- 1:100 %in% tau.num
+			na.mtx <- matrix(NA, nrow=nrow(tmp.mtx), ncol=100)
+			na.mtx[,na.replace] <- tmp.mtx
+			tmp.mtx <- na.mtx
+			missing.taus=TRUE
+		}
 		return(tmp.mtx)
 	}
 
@@ -226,14 +235,6 @@ function(panel.data,	## REQUIRED
 									grade.prog = tail(c(tmp.gp,tmp.grd), k+1))
 
 						tmp.scores <- eval(parse(text=paste(int, substring(mod, 2), ")", sep="")))
-						if (dim(tmp.matrix)[2] != 100) {
-							tau.num <- ceiling(as.numeric(substr(colnames(tmp.matrix), 6, nchar(colnames(tmp.matrix))))*100)
-							na.replace <- 1:100 %in% tau.num
-							na.mtx <- matrix(NA, nrow=nrow(tmp.matrix), ncol=100)
-							na.mtx[,na.replace] <- tmp.matrix
-							tmp.matrix <- na.mtx
-							missing.taus=TRUE
-						}
 
 						for (m in seq(100)) {
 							tmp.dt[m+100*(seq(dim(tmp.dt)[1]/100)-1), TEMP_1:=tmp.scores[m+100*(seq(dim(tmp.dt)[1]/100)-1),] %*% tmp.matrix[,m]]
@@ -252,10 +253,11 @@ function(panel.data,	## REQUIRED
 						tmp.gp <- c(tmp.gp, grade.projection.sequence[j])
 					} ## END j loop
 					tmp.percentile.trajectories[[i]] <- tmp.dt[,-(1:grade.projection.sequence.priors[[i]][1]+1),with=FALSE]
+					rm(tmp.dt); suppressMessages(gc())
 				} ## END if (dim(tmp.dt)[1] > 0)
 			} ## END if statement
 		} ## END i loop
-		as.data.frame(do.call(rbind, tmp.percentile.trajectories))
+		rbindlist(tmp.percentile.trajectories)
 	} ## END function
 
 	.sgp.targets <- function(data, cut, convert.0and100) {
@@ -271,8 +273,7 @@ function(panel.data,	## REQUIRED
 
 	.get.trajectories.and.cuts <- function(percentile.trajectories, trajectories.tf, cuts.tf, projection.unit=projection.unit) {
 		if (trajectories.tf) {
-			tmp.traj <- round(percentile.trajectories[seq(dim(percentile.trajectories)[1]) %% 100 %in% ((percentile.trajectory.values+1) %% 100), 
-					colnames(percentile.trajectories)], digits=projcuts.digits)
+			tmp.traj <- round(percentile.trajectories[seq(dim(percentile.trajectories)[1]) %% 100 %in% ((percentile.trajectory.values+1) %% 100)], digits=projcuts.digits)
 			trajectories <- data.table(reshape(data.table(tmp.traj, CUT=rep(percentile.trajectory.values, dim(tmp.traj)[1]/length(percentile.trajectory.values))), 
 				idvar="ID", timevar="CUT", direction="wide"), key="ID")
 			if (projection.unit=="GRADE") {
@@ -285,8 +286,7 @@ function(panel.data,	## REQUIRED
 			if (!cuts.tf) return(trajectories)
 		}
 		if (cuts.tf) {
-			percentile.trajectories[["ID"]] <- as.integer(percentile.trajectories[["ID"]]) 
-			percentile.trajectories <- data.table(percentile.trajectories, key="ID")
+			setkey(percentile.trajectories, ID)
 
 			k <- 1
 			cuts.arg <- names.arg <- character()
