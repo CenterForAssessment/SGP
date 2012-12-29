@@ -53,8 +53,6 @@ function(panel.data,         ## REQUIRED
             sub(' ', '_', toupper(sub('\\.+$', '', paste(unlist(sapply(labels[pieces], as.character)), collapse="."))))
         }
 
-	pretty_year <- function(x) sub("_", "-", x)
-
 	.get.knots.boundaries <- function(data, by.grade) {
 
 		num.panels <- (dim(data)[2]-1)/2
@@ -192,40 +190,18 @@ function(panel.data,         ## REQUIRED
 			taus <- switch(sgp.quantiles,
 				PERCENTILES = (1:100-0.5)/100)
 		}
-
 		if (is.numeric(sgp.quantiles)) {
 			taus <- sgp.quantiles
 		}
 		return(taus)
 	}
 
-	get.coefficient.matrix.label <- function(tmp.last, k) {
+	get.coefficient.matrix.name <- function(tmp.last, k) {
 		return(paste("qrmatrix_", tmp.last, "_", k, sep=""))
 	}
 
-	.get.coefficient.matrix <- function(tmp.last, j, content.areas, grade.prog) {
-		tmp.mtx.name <- paste("qrmatrix", tmp.last, j, sep="_") 
-		tmp.index <- grep(tmp.mtx.name, matrix.names)
-		tmp.tf <- tmp.index2 <- NULL
-		for (i in tmp.index) {
-			if (!identical(class(try(Coefficient_Matrices[[tmp.path.coefficient.matrices]][[i]]@Content_Areas, silent=TRUE)), "try-error")) {
-				tmp.tf <- c(tmp.tf, TRUE); tmp.index2 <- c(tmp.index2, i)
-			} else tmp.tf <- c(tmp.tf, FALSE)
-		}
-		if (any(tmp.tf)) {
-			for (i in tmp.index2) {
-				if (all(Coefficient_Matrices[[tmp.path.coefficient.matrices]][[i]]@Content_Areas[[1]] == content.areas) & 
-				    all(Coefficient_Matrices[[tmp.path.coefficient.matrices]][[i]]@Grade_Progression[[1]] == grade.prog, na.rm=TRUE)) {
-					tmp.mtx <- Coefficient_Matrices[[tmp.path.coefficient.matrices]][[i]]	
-				}
-			}
-		} else { # if not a newer version of splineMatrix, get coef matrix the "old" way (by name alone).
-			tmp.mtx <- Coefficient_Matrices[[tmp.path.coefficient.matrices]][[tmp.mtx.name]]
-		}
-		return(tmp.mtx)
-	}
-
 	.get.percentile.predictions <- function(my.data, my.matrix) {
+		SCORE <- NULL
 		tmp.num.variables <- dim(my.data)[2]
 		mod <- character()
 		int <- "cbind(rep(1, dim(my.data)[1]),"
@@ -235,11 +211,12 @@ function(panel.data,         ## REQUIRED
 			mod <- paste(mod, ", bs(my.data[[", tmp.num.variables-k, "]], knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
 		}	
 		tmp <- eval(parse(text=paste(int, substring(mod, 2), ") %*% my.matrix", sep="")))
-		return(round(t(apply(tmp, 1, function(x) .smooth.isotonize.row(x))), digits=5))
+		return(round(matrix(data.table(ID=rep(seq(dim(tmp)[1]), each=100), SCORE=as.vector(t(tmp)))[,.smooth.isotonize.row(SCORE), by=ID][['V1']], ncol=100, byrow=TRUE), digits=5))
 	}
 
 	.get.quantiles <- function(data1, data2) {
-		tmp <- apply(cbind(data1 < data2, FALSE), 1, function(x) which.min(x)-1)
+		TMP_TF <- NULL
+		tmp <- data.table(ID=rep(seq(dim(data1)[1]), each=101), TMP_TF=as.vector(t(cbind(data1 < data2, FALSE))))[,which.min(TMP_TF)-1, by=ID][['V1']]
 		if (!is.null(sgp.loss.hoss.adjustment)) {
 			my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
 			my.hoss <- eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['loss.hoss_", tmp.last, "']][2]", sep="")))
@@ -306,7 +283,7 @@ function(panel.data,         ## REQUIRED
 	###
 	############################################################################
 
-	ID <- tmp.messages <- ORDER <- NULL
+	ID <- tmp.messages <- ORDER <- TEMP_SGP_SIM <- NULL
 
 	if (missing(panel.data)) {
 		stop("User must supply student achievement data for student growth percentile calculations. NOTE: data is now supplied to function using panel.data argument. See help page for details.")
@@ -684,10 +661,9 @@ function(panel.data,         ## REQUIRED
 		}
 		for (k in coefficient.matrix.priors) {
 			Coefficient_Matrices[[tmp.path.coefficient.matrices]][['TMP_NAME']] <- .create.coefficient.matrices(ss.data, k, by.grade)
-			names(Coefficient_Matrices[[tmp.path.coefficient.matrices]])[length(Coefficient_Matrices[[tmp.path.coefficient.matrices]])] <- get.coefficient.matrix.label(tmp.last, k)
+			names(Coefficient_Matrices[[tmp.path.coefficient.matrices]])[length(Coefficient_Matrices[[tmp.path.coefficient.matrices]])] <- get.coefficient.matrix.name(tmp.last, k)
 		}
 	}
-	matrix.names <- names(Coefficient_Matrices[[tmp.path.coefficient.matrices]])
 
 	### Calculate growth percentiles (if requested),  percentile cuts (if requested), and simulated confidence intervals (if requested)
 
@@ -732,34 +708,25 @@ function(panel.data,         ## REQUIRED
 				tmp.predictions <- .get.percentile.predictions(tmp.data, tmp.matrix)
 				tmp.quantiles[[j]] <- data.table(ID=tmp.data[["ID"]], ORDER=j, SGP=.get.quantiles(tmp.predictions, tmp.data[[dim(tmp.data)[2]]]))
 				if (csem.tf) {
-					if (is.null(calculate.confidence.intervals$simulation.iterations)) calculate.confidence.intervals$simulation.iterations <- 100
+					if (is.null(calculate.confidence.intervals$simulation.iterations)) calculate.confidence.intervals[['simulation.iterations']] <- 100
 					if (!is.null(calculate.confidence.intervals$variable)) {
 						if (missing(panel.data.vnames)) {
 							tmp.csem.variable <- Panel_Data[Panel_Data[,1] %in% 
-								ss.data[tmp.data[["ID"]]][["ORIGINAL.ID"]],calculate.confidence.intervals$variable] 
+								ss.data[tmp.data[['ID']]][["ID"]],calculate.confidence.intervals$variable] 
 						} else {
 							tmp.csem.variable <- Panel_Data[Panel_Data[,panel.data.vnames[1]] %in% 
-								ss.data[tmp.data[["ID"]]][["ORIGINAL.ID"]],calculate.confidence.intervals$variable] 
+								ss.data[tmp.data[['ID']]][["ID"]],calculate.confidence.intervals$variable] 
 						}
 					} else {
 						tmp.csem.variable <- NULL
 					}
-					for (k in seq(calculate.confidence.intervals$simulation.iterations)) { 
+
+					tmp.csem.quantiles[[j]] <- data.table(ID=tmp.data[['ID']])
+					for (k in seq(calculate.confidence.intervals[['simulation.iterations']])) { 
 						set.seed(k)
-						if (k==1) {
-							tmp.csem.quantiles[[j]] <- data.frame(ID=tmp.data[["ID"]],
-							SGP_SIM_1=.get.quantiles(tmp.predictions, .csem.score.simulator(
-								scale_scores=tmp.data[[dim(tmp.data)[2]]],
-								grade=tmp.last,
-								content_area=sgp.labels$my.subject,
-								year=sgp.labels$my.year,
-								state=calculate.confidence.intervals$state,
-								variable=tmp.csem.variable,
-								distribution=calculate.confidence.intervals$distribution,
-								round=calculate.confidence.intervals$round)))
-						} else {
-							tmp.csem.quantiles[[j]] <- cbind(tmp.csem.quantiles[[j]], 
-								.get.quantiles(tmp.predictions, .csem.score.simulator(
+						tmp.csem.quantiles[[j]][,TEMP_SGP_SIM:=.get.quantiles(
+								tmp.predictions, 
+								.csem.score.simulator(
 									scale_scores=tmp.data[[dim(tmp.data)[2]]],
 									grade=tmp.last,
 									content_area=sgp.labels$my.subject,
@@ -767,9 +734,8 @@ function(panel.data,         ## REQUIRED
 									state=calculate.confidence.intervals$state,
 									variable=tmp.csem.variable,
 									distribution=calculate.confidence.intervals$distribution,
-									round=calculate.confidence.intervals$round)))
-									names(tmp.csem.quantiles[[j]])[k+1] <- paste("SGP_SIM", k, sep="_")
-						}
+									round=calculate.confidence.intervals$round))]
+						setnames(tmp.csem.quantiles[[j]], "TEMP_SGP_SIM", paste("SGP_SIM", k, sep="_"))
 					} ## END k loop
 				} ## END CSEM analysis
 
@@ -808,7 +774,7 @@ function(panel.data,         ## REQUIRED
 			if (is.character(calculate.confidence.intervals) | is.list(calculate.confidence.intervals)) {
 				if (is.null(calculate.confidence.intervals$confidence.quantiles) | identical(toupper(calculate.confidence.intervals$confidence.quantiles), "STANDARD_ERROR")) {
 					tmp.cq <- round(apply(simulation.data[, -1, with=FALSE], 1, sd, na.rm=TRUE))
-						invisible(quantile.data[,SGP_STANDARD_ERROR := tmp.cq])
+					quantile.data[,SGP_STANDARD_ERROR := tmp.cq]
 				} else {
 					if (!(is.numeric(calculate.confidence.intervals$confidence.quantiles) & all(calculate.confidence.intervals$confidence.quantiles < 1) & 
 						all(calculate.confidence.intervals$confidence.quantiles > 0)))  {
