@@ -142,7 +142,7 @@ function(sgp_object,
 	}
 
 	sgpSummary <- function(data, sgp.groups.to.summarize, produce.confidence.interval) {
-		SGP_SIM <- V1 <- .SD <- NULL ## To prevent R CMD check warning
+		SGP_SIM <- V1 <- .SD <- MEDIAN_SGP_with_SHRINKAGE <- NULL ## To prevent R CMD check warning
 		if (produce.confidence.interval) {
 			if ("Bootstrap" %in% confidence.interval.groups$TYPE) {
 				require(boot)
