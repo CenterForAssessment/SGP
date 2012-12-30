@@ -586,11 +586,8 @@ function(panel.data,	## REQUIRED
 	trajectories.and.cuts <- .get.trajectories.and.cuts(percentile.trajectories, !is.null(percentile.trajectory.values), tf.cutscores, toupper(projection.unit))
 
 	if (!is.null(achievement.level.prior.vname)) {
-		ACHIEVEMENT_LEVEL_PRIOR <- NULL
-		setkey(panel.data[["Panel_Data"]], ID); setkey(trajectories.and.cuts, ID)
-		trajectories.and.cuts[panel.data[["Panel_Data"]][["ID"]], ACHIEVEMENT_LEVEL_PRIOR := panel.data[['Panel_Data']][[achievement.level.prior.vname]]]
-#		trajectories.and.cuts <- panel.data[["Panel_Data"]][,c("ID", achievement.level.prior.vname), with=FALSE][trajectories.and.cuts]
-#		setnames(trajectories.and.cuts, achievement.level.prior.vname, "ACHIEVEMENT_LEVEL_PRIOR")
+		trajectories.and.cuts <- data.table(panel.data[["Panel_Data"]][,c("ID", achievement.level.prior.vname)], key="ID")[trajectories.and.cuts]
+		setnames(trajectories.and.cuts, achievement.level.prior.vname, "ACHIEVEMENT_LEVEL_PRIOR")
 	}
 
 #	SGProjections[[tmp.path]] <- rbind.fill(as.data.frame(SGProjections[[tmp.path]]), .unget.data.table(as.data.table(trajectories.and.cuts), ss.data))
