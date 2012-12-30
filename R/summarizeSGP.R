@@ -178,7 +178,7 @@ function(sgp_object,
 		}
 		setnames(tmp, (dim(tmp)[2]-length(sgp.summaries.names)+1):dim(tmp)[2], sgp.summaries.names)
 		constant <- var(tmp[['MEDIAN_SGP']], na.rm=TRUE) - mean(tmp[['MEDIAN_SGP_STANDARD_ERROR']]^2, na.rm=TRUE)
-		tmp[['MEDIAN_SGP_with_SHRINKAGE']] <- round(50 + ((tmp[['MEDIAN_SGP']]-50) * (constant/(constant+tmp[['MEDIAN_SGP_STANDARD_ERROR']]^2))))
+		tmp[,MEDIAN_SGP_with_SHRINKAGE := round(50 + ((tmp[['MEDIAN_SGP']]-50) * (constant/(constant+tmp[['MEDIAN_SGP_STANDARD_ERROR']]^2))))]
 		message(paste("\tFinished with", sgp.groups.to.summarize))
 		return(tmp)
 	} ### END sgpSummary function
@@ -191,7 +191,6 @@ function(sgp_object,
 				CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
 				YEAR=unlist(strsplit(i, "[.]"))[2])
 		}
- 
 		data.table(rbind.fill(tmp.list), VALID_CASE="VALID_CASE", key=key(data))
 	}
 
