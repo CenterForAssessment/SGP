@@ -102,25 +102,25 @@ function(panel.data,	## REQUIRED
 		}
 	}
 
-	.get.data.table <- function(ss.data) {
-		names(ss.data) <- NA
-		names(ss.data)[c(1, (1+num.panels-max(num.predictors)+1):(1+num.panels), (1+2*num.panels-max(num.predictors)+1):(1+2*num.panels))] <- 
-			c("ORIGINAL.ID", GD, SS)
-		data.table(ID=seq(dim(ss.data)[1]), ss.data, key="ID")
-	}
+#	.get.data.table <- function(ss.data) {
+#		names(ss.data) <- NA
+#		names(ss.data)[c(1, (1+num.panels-max(num.predictors)+1):(1+num.panels), (1+2*num.panels-max(num.predictors)+1):(1+2*num.panels))] <- 
+#			c("ORIGINAL.ID", GD, SS)
+#		data.table(ID=seq(dim(ss.data)[1]), ss.data, key="ID")
+#	}
 
-	.unget.data.table <- function(my.data, my.lookup) {
-		setkey(my.data, ID); ORIGINAL.ID <- NULL
-		my.data[["ID"]] <- my.lookup[my.data[["ID"]], ORIGINAL.ID]
-		if (!is.null(achievement.level.prior.vname)) {
-			panel.data[["Panel_Data"]] <- as.data.table(panel.data[["Panel_Data"]])
-			setkey(panel.data[["Panel_Data"]], ID)
-			invisible(setkeyv(my.data, NULL)); setkey(my.data, ID)
-			my.data <- panel.data[["Panel_Data"]][,c("ID", achievement.level.prior.vname), with=FALSE][my.data]
-			setnames(my.data, 2, "ACHIEVEMENT_LEVEL_PRIOR")
-		}
-		return(as.data.frame(my.data))
-	}
+#	.unget.data.table <- function(my.data, my.lookup) {
+#		setkey(my.data, ID); ORIGINAL.ID <- NULL
+#		my.data[["ID"]] <- my.lookup[my.data[["ID"]], ORIGINAL.ID]
+#		if (!is.null(achievement.level.prior.vname)) {
+#			panel.data[["Panel_Data"]] <- as.data.table(panel.data[["Panel_Data"]])
+#			setkey(panel.data[["Panel_Data"]], ID)
+#			invisible(setkeyv(my.data, NULL)); setkey(my.data, ID)
+#			my.data <- panel.data[["Panel_Data"]][,c("ID", achievement.level.prior.vname), with=FALSE][my.data]
+#			setnames(my.data, 2, "ACHIEVEMENT_LEVEL_PRIOR")
+#		}
+#		return(as.data.frame(my.data))
+#	}
 
 	.year.increment <- function(year, increment, lag=0) {
 		paste(as.numeric(unlist(strsplit(as.character(year), "_")))+increment-lag, collapse="_")	
@@ -490,9 +490,9 @@ function(panel.data,	## REQUIRED
                 if (!all(panel.data.vnames %in% names(panel.data[["Panel_Data"]]))) {
                         tmp.messages <- c(tmp.messages, "\tNOTE: Supplied 'panel.data.vnames' are not all in the supplied 'Panel_Data'.\n\t\tAnalyses will continue with the variables contained in both Panel_Data and those provided in the supplied argument 'panel.data.vnames'.\n")
                 }
-                ss.data <- panel.data[["Panel_Data"]][,intersect(panel.data.vnames, names(panel.data[["Panel_Data"]]))]
+                ss.data <- as.data.table(panel.data[["Panel_Data"]][,intersect(panel.data.vnames, names(panel.data[["Panel_Data"]]))])
         } else {
-                ss.data <- panel.data[["Panel_Data"]]
+                ss.data <- as.data.table(panel.data[["Panel_Data"]])
         }
 
 	if (dim(ss.data)[2] %% 2 != 1) {
@@ -512,7 +512,10 @@ function(panel.data,	## REQUIRED
 	num.predictors <- 1:length(grade.progression)
 	GD <- paste("GD", grade.progression, sep="")
 	SS <- paste("SS", grade.progression, sep="")
-	ss.data <- .get.data.table(ss.data)
+#	ss.data <- .get.data.table(ss.data)
+	setnames(ss.data, c(1, (1+num.panels-max(num.predictors)+1):(1+num.panels), (1+2*num.panels-max(num.predictors)+1):(1+2*num.panels)), c("ID", GD, SS))
+	setkey(ss.data, ID)
+
 
 
 	### Test to see if ss.data has cases to analyze
@@ -582,7 +585,16 @@ function(panel.data,	## REQUIRED
 
 	trajectories.and.cuts <- .get.trajectories.and.cuts(percentile.trajectories, !is.null(percentile.trajectory.values), tf.cutscores, toupper(projection.unit))
 
-	SGProjections[[tmp.path]] <- rbind.fill(as.data.frame(SGProjections[[tmp.path]]), .unget.data.table(as.data.table(trajectories.and.cuts), ss.data))
+	if (!is.null(achievement.level.prior.vname)) {
+		ACHIEVEMENT_LEVEL_PRIOR <- NULL
+		setkey(panel.data[["Panel_Data"]], ID); setkey(trajectories.and.cuts, ID)
+		trajectories.and.cuts[panel.data[["Panel_Data"]][["ID"]], ACHIEVEMENT_LEVEL_PRIOR := panel.data[['Panel_Data']][[achievement.level.prior.vname]]]
+#		trajectories.and.cuts <- panel.data[["Panel_Data"]][,c("ID", achievement.level.prior.vname), with=FALSE][trajectories.and.cuts]
+#		setnames(trajectories.and.cuts, achievement.level.prior.vname, "ACHIEVEMENT_LEVEL_PRIOR")
+	}
+
+#	SGProjections[[tmp.path]] <- rbind.fill(as.data.frame(SGProjections[[tmp.path]]), .unget.data.table(as.data.table(trajectories.and.cuts), ss.data))
+	SGProjections[[tmp.path]] <- rbind.fill(as.data.frame(SGProjections[[tmp.path]]), trajectories.and.cuts)
 
 
 	### Announce Completion & Return SGP Object

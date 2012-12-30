@@ -581,16 +581,16 @@ function(sgp_object,
 				tmp.dt.long <- data.table(melt(as.data.frame(tmp.dt), 
 					measure.vars=summary.groups[["institution_multiple_membership"]][[j-1]][["VARIABLE.NAMES"]], 
 					value.name=multiple.membership.variable.name))
-				invisible(tmp.dt.long[, variable := NULL])
+				tmp.dt.long[, variable := NULL]
 				if (!is.null(summary.groups[["institution_multiple_membership"]][[j-1]][["WEIGHTS"]])) {
-					invisible(tmp.dt.long[, WEIGHT := melt(as.data.frame(tmp.dt[, 
+					tmp.dt.long[, WEIGHT := melt(as.data.frame(tmp.dt[, 
 						summary.groups[["institution_multiple_membership"]][[j-1]][["WEIGHTS"]], with=FALSE]), 
-						measure.vars=summary.groups[["institution_multiple_membership"]][[j-1]][["WEIGHTS"]])[,2]])
+						measure.vars=summary.groups[["institution_multiple_membership"]][[j-1]][["WEIGHTS"]])[,2]]
 				}
 				if (!is.null(summary.groups[["institution_multiple_membership"]][[j-1]][["ENROLLMENT_STATUS"]])) {
-					invisible(tmp.dt.long[, ENROLLMENT_STATUS := melt(as.data.frame(tmp.dt[, 
+					tmp.dt.long[, ENROLLMENT_STATUS := melt(as.data.frame(tmp.dt[, 
 						summary.groups[["institution_multiple_membership"]][[j-1]][["ENROLLMENT_STATUS"]], with=FALSE]), 
-						measure.vars=summary.groups[["institution_multiple_membership"]][[j-1]][["ENROLLMENT_STATUS"]])[,2]])
+						measure.vars=summary.groups[["institution_multiple_membership"]][[j-1]][["ENROLLMENT_STATUS"]])[,2]]
 					setnames(tmp.dt.long, "ENROLLMENT_STATUS", enrollment.status.name)
 					summary.groups[["institution_inclusion"]][[tmp.inst]] <- enrollment.status.name
 				} else {
