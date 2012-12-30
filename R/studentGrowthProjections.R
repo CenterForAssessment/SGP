@@ -273,7 +273,8 @@ function(panel.data,	## REQUIRED
 
 	.get.trajectories.and.cuts <- function(percentile.trajectories, trajectories.tf, cuts.tf, projection.unit=projection.unit) {
 		if (trajectories.tf) {
-			tmp.traj <- round(percentile.trajectories[seq(dim(percentile.trajectories)[1]) %% 100 %in% ((percentile.trajectory.values+1) %% 100)], digits=projcuts.digits)
+			tmp.traj <- percentile.trajectories[seq(dim(percentile.trajectories)[1]) %% 100 %in% ((percentile.trajectory.values+1) %% 100)]
+			tmp.traj[,2:dim(tmp.traj)[2] := round(tmp.traj[,2:dim(tmp.traj)[2], with=FALSE], digits=projcuts.digits), with=FALSE]
 			trajectories <- data.table(reshape(data.table(tmp.traj, CUT=rep(percentile.trajectory.values, dim(tmp.traj)[1]/length(percentile.trajectory.values))), 
 				idvar="ID", timevar="CUT", direction="wide"), key="ID")
 			if (projection.unit=="GRADE") {
@@ -287,7 +288,6 @@ function(panel.data,	## REQUIRED
 		}
 		if (cuts.tf) {
 			setkey(percentile.trajectories, ID)
-
 			k <- 1
 			cuts.arg <- names.arg <- character()
 
