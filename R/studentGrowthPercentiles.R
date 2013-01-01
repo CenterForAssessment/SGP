@@ -773,24 +773,21 @@ function(panel.data,         ## REQUIRED
 
 			if (is.character(calculate.confidence.intervals) | is.list(calculate.confidence.intervals)) {
 				if (is.null(calculate.confidence.intervals$confidence.quantiles) | identical(toupper(calculate.confidence.intervals$confidence.quantiles), "STANDARD_ERROR")) {
-					tmp.cq <- round(apply(simulation.data[, -1, with=FALSE], 1, sd, na.rm=TRUE))
-					quantile.data[,SGP_STANDARD_ERROR := tmp.cq]
+					quantile.data[,SGP_STANDARD_ERROR:=round(apply(simulation.data[, -1, with=FALSE], 1, sd, na.rm=TRUE))]
 				} else {
 					if (!(is.numeric(calculate.confidence.intervals$confidence.quantiles) & all(calculate.confidence.intervals$confidence.quantiles < 1) & 
 						all(calculate.confidence.intervals$confidence.quantiles > 0)))  {
 						stop("Argument to 'calculate.confidence.intervals$confidence.quantiles' must be numeric and consist of quantiles.")
 					}
-					tmp.cq <- round(t(apply(simulation.data[, -1, with=FALSE], 1, quantile, probs = calculate.confidence.intervals$confidence.quantiles)))
-						colnames(tmp.cq) <- paste("SGP_", calculate.confidence.intervals$confidence.quantiles, "_CONFIDENCE_BOUND", sep="")
-						quantile.data <- cbind(quantile.data, tmp.cq)
+					tmp.cq <- data.table(round(t(apply(simulation.data[, -1, with=FALSE], 1, quantile, probs = calculate.confidence.intervals$confidence.quantiles))))
+					quantile.data[,paste("SGP_", calculate.confidence.intervals$confidence.quantiles, "_CONFIDENCE_BOUND", sep=""):=tmp.cq]
 				}
 			}
 			if (!is.null(calculate.confidence.intervals$confidence.quantiles)) {
-				tmp.cq <- round(t(apply(simulation.data[, -1, with=FALSE], 1, quantile, probs = calculate.confidence.intervals$confidence.quantiles)))
-					colnames(tmp.cq) <- paste("SGP_", calculate.confidence.intervals$confidence.quantiles, "_CONFIDENCE_BOUND", sep="")
-					quantile.data <- cbind(quantile.data, tmp.cq)
+				tmp.cq <- data.table(round(t(apply(simulation.data[, -1, with=FALSE], 1, quantile, probs = calculate.confidence.intervals$confidence.quantiles))))
+				quantile.data[,paste("SGP_", calculate.confidence.intervals$confidence.quantiles, "_CONFIDENCE_BOUND", sep=""):=tmp.cq]
 			}
-			Simulated_SGPs[[tmp.path]] <- rbind.fill(as.data.frame(Simulated_SGPs[[tmp.path]]), simulation.data) 
+			Simulated_SGPs[[tmp.path]] <- rbind.fill(simulation.data, as.data.frame(Simulated_SGPs[[tmp.path]])) 
 		}
 
 		if (!is.null(percentile.cuts)){
@@ -801,7 +798,7 @@ function(panel.data,         ## REQUIRED
 
 		if (return.prior.scale.score) {
 			SCALE_SCORE_PRIOR <- NULL
-			quantile.data[, SCALE_SCORE_PRIOR:=prior.ss]
+			quantile.data[,SCALE_SCORE_PRIOR:=prior.ss]
 		}
 
 		if (print.sgp.order | return.norm.group.identifier) {
