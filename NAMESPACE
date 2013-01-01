@@ -28,7 +28,7 @@ export(
 	"studentGrowthProjections",
 	"summarizeSGP",
 	"testSGP",
-	"viewSummaryGroups",
+	"updateSGP",
 	"visualizeSGP"
 )
 

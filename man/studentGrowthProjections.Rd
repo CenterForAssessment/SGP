@@ -8,7 +8,10 @@
 \usage{
 studentGrowthProjections(panel.data, 
                          sgp.labels,               
-                         grade.progression,       
+                         grade.progression,
+                         content_area.progression=NULL,
+                         grade.projection.sequence=NULL,
+                         content_area.projection.sequence=NULL,
                          max.forward.progression.years,
                          max.forward.progression.grade, 
                          max.order.for.progression,  
@@ -17,7 +20,6 @@ studentGrowthProjections(panel.data,
                          panel.data.vnames,
                          achievement.level.prior.vname=NULL,
                          performance.level.cutscores, 
-                         chunk.size=100000,
                          calculate.sgps=TRUE,
                          convert.0and100=TRUE,    
                          projection.unit="YEAR",       
@@ -30,16 +32,22 @@ studentGrowthProjections(panel.data,
 
 \arguments{
   \item{panel.data}{Object of class \code{list} containing longitudinal student data in wide format in \code{panel.data$Panel_Data}.  See \code{\link{studentGrowthPercentiles}}
-  for data requirements.  List object must also contain \code{panel.data$Knots_Boundaries} and \code{panel.data$Coefficient_Matrices}.  See \code{\link{sgpData}} for an 
-  exemplar data set. NOTE: The column position of the variables IS IMPORTANT, NOT the names of the variables. 
+    for data requirements.  List object must also contain \code{panel.data$Knots_Boundaries} and \code{panel.data$Coefficient_Matrices}.  See \code{\link{sgpData}} for an 
+    exemplar data set. NOTE: The column position of the variables IS IMPORTANT, NOT the names of the variables. 
   }
   \item{sgp.labels}{REQUIRED. A list, \code{sgp.labels}, of the form  \code{list(my.year= ,} \cr
-  \code{my.subject= )}. The user-specified values are used to save the percentile growth projections/trajectories and identify coefficient matrices and knots & boundaries for calculation if
-  \code{use.my.coefficient.matrices} or \cr
-   \code{use.my.knots.boundaries} is missing. Partly replaces previous argument \code{proj.function.labels}. 
+    \code{my.subject= )}. The user-specified values are used to save the percentile growth projections/trajectories and identify coefficient matrices and knots & boundaries for calculation if
+    \code{use.my.coefficient.matrices} or \cr
+    \code{use.my.knots.boundaries} is missing. Partly replaces previous argument \code{proj.function.labels}. 
   }
   \item{grade.progression}{REQUIRED. Argument to specify a student grade/time progression in the data to be used for percentile growth projection/trajectory calculation. 
-  This argument helps in replacing previous arguments \code{num.panels},  \code{max.num.scores}, and \code{num.prior.scores}.
+    This argument helps in replacing previous arguments \code{num.panels},  \code{max.num.scores}, and \code{num.prior.scores}.
+  }
+  \item{content_area.progression}{Argument to specify a student content area progression in the data supplied for percentile growth projection/trajectory calculation. 
+  }
+  \item{grade.projection.sequence}{Argument to manually supply grade sequence over which projection is made. Defaults to NULL and is calculated from available data.
+  }
+  \item{content_area.projection.sequence}{Argument to manually supply content area sequence over which projection is made. Defaults to NULL and is calculated from available data.
   }
   \item{max.forward.progression.years}{The MAXIMUM number of years/grades/time periods to project forward conditional upon available coefficient matrices. If missing, function
   will project forward as far as allowed by available coefficient matrices. 
@@ -82,8 +90,6 @@ studentGrowthProjections(panel.data,
   Note that the subject name must match that provided by \code{sgp.labels}. If cuts are not desired leave the cutscore unspecified, which is the default. 
   If your state's cutscores are not included in the \code{SGPstateData} data set or are incorrect, please contact 
   \email{dbetebenner@nciea.org} to have them added or corrected!
-  }
-  \item{chunk.size}{An integer (default of 100,000) indicating the number of rows in the block of data to process separately (so that the program doesn't overwhelm memory). 
   }
   \item{calculate.sgps}{Boolean argument (defaults to TRUE) indicating whether to calculate student growth projections. Currently used to bypass calculations in \code{\link{analyzeSGP}} when scale changes occur.
   }

@@ -24,6 +24,7 @@ abcSGP(sgp_object,
 	simulate.sgps=TRUE,
 	parallel.config=NULL,
 	save.intermediate.results=FALSE,
+	save.old.summaries=FALSE,
 	sgPlot.demo.report=FALSE,
 	sgp.summaries=NULL,
 	summary.groups=NULL,
@@ -72,6 +73,9 @@ If missing the function will use the data to infer all the grade progressions fo
   \item{save.intermediate.results}{Should intermediate results of \code{abcSGP} be saved after each of \code{\link{prepareSGP}}, \code{\link{analyzeSGP}},
   \code{\link{combineSGP}}, and \code{\link{summarizeSGP}}. Default is FALSE.
   }
+  \item{save.old.summaries}{A boolean argument (defaults to FALSE which will delete the @Summary slot before creating new summaries) 
+  indicating whether the call to \code{\link{summarizeSGP}} should save existing summaries in the @Summary slot. 
+  }
   \item{sgPlot.demo.report}{A boolean variable (defaults to FALSE) indicating whether to produce only the demonstration student report catalog. Default is to produce reports for entire current 
   year data.
   }
@@ -80,10 +84,10 @@ If missing the function will use the data to infer all the grade progressions fo
   }
   \item{summary.groups}{A list consisting of 8 types of groups across which all summaries are taken: \code{institution}, \code{content}, \code{time}, \code{institution_type}, 
   \code{institution_level}, \code{demographic}, and \code{institution_inclusion}. Summaries generated in summarizeSGP are for all possible combinations of the 8 types of group. See documentation for 
-  \code{\link{summarizeSGP}} and \code{\link{viewSummaryGroups}} for more detail. 
+  \code{\link{summarizeSGP}} for more detail. 
   }
   \item{confidence.interval.groups}{A subset of the groups provided in the \code{summary.groups} argument indicating which groups to provide confidence intervals for. 
-  See documentation for \code{\link{summarizeSGP}} and \code{\link{viewSummaryGroups}} for more detail.
+  See documentation for \code{\link{summarizeSGP}} for more detail.
   }
   \item{plot.types}{A character vector passed to \code{\link{visualizeSGP}} indicating the types of plots to produce. Currently supported plots include \code{\link{bubblePlot}}s, 
   \code{\link{studentGrowthPlot}}s, and \code{\link{growthAchievementPlot}}s. 

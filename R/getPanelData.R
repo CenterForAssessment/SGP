@@ -46,5 +46,4 @@ function(sgp.data,
 			drop=names(sgp.data)[!names(sgp.data) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "ACHIEVEMENT_LEVEL")],
 			direction="wide")))
 	}
-	suppressMessages(gc())
 } ## END getPanelData
