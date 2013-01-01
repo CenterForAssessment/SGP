@@ -6,9 +6,9 @@ function(
 	my.matrix.time.progression,
 	my.matrix.time.progression.lags,
 	my.matrix.order=NULL,
-	return.only.orders=FALSE) {
+	what.to.return="MATRICES") {
 
-	Matrix_TF <- Order <- NULL
+	Matrix_TF <- Order <- Grade <- NULL
 
 	splineMatrix_equality <- function(my.matrix, my.order=NULL) {
 		tmp.df <- data.frame()
@@ -19,16 +19,23 @@ function(
 					identical(my.matrix@Time[[1]], as.character(tail(my.matrix.time.progression, my.order[i]+1))) &
 					identical(my.matrix@Time_Lags[[1]], as.integer(tail(my.matrix.time.progression.lags, my.order[i])))
 			tmp.df[i,2] <-	my.order[i]
+			tmp.df[i,3] <- tail(my.matrix@Grade_Progression[[1]], 1)
 		}
-		names(tmp.df) <- c("Matrix_TF", "Order")
+		names(tmp.df) <- c("Matrix_TF", "Order", "Grade")
 		return(tmp.df)
 	}
 
-	if (return.only.orders) {
+	if (what.to.return=="ORDERS") {
 		tmp.list <- lapply(my.matrices, splineMatrix_equality)
 		tmp.orders <-  as.numeric(unlist(sapply(tmp.list[sapply(tmp.list, function(x) any(x[['Matrix_TF']]))], subset, Matrix_TF==TRUE, select=Order)))
 		return(tmp.orders)
-	} else {
+	}
+	if (what.to.return=="GRADES") {
+		tmp.list <- lapply(my.matrices, splineMatrix_equality)
+		tmp.grades <-  as.numeric(unlist(sapply(tmp.list[sapply(tmp.list, function(x) any(x[['Matrix_TF']]))], subset, Matrix_TF==TRUE, select=Grade)))
+		return(tmp.grades)
+	}
+	if (what.to.return=="MATRICES") {
 		if (is.null(my.matrix.order)) my.matrix.order <- length(my.matrix.time.progression.lags)
 		my.tmp.index <- which(sapply(lapply(my.matrices, splineMatrix_equality, my.order=my.matrix.order), function(x) x[['Matrix_TF']]))
 		if (length(my.tmp.index)==0) {

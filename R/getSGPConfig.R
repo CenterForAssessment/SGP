@@ -110,7 +110,7 @@ function(sgp_object,
 								my.matrix.time.progression=rep("BASELINE", tmp.max.order+1),
 								my.matrix.time.progression.lags=diff(as.integer(sapply(strsplit(tail(par.sgp.config[[cnt]][['sgp.panel.years']], tmp.max.order+1), '_'), '[', 
 									split.location(par.sgp.config[[cnt]][['sgp.panel.years']])))),
-								return.only.orders=TRUE)) > 0 # Cases where content area has some BASELINE coef matrices, but not for this particular config (Time, Lag, etc off)
+								what.to.return="ORDERS")) > 0 # Cases where content area has some BASELINE coef matrices, but not for this particular config (Time, Lag, etc off)
 						} else tmp.matrices.tf <- FALSE
 					} else tmp.matrices.tf <- FALSE
 

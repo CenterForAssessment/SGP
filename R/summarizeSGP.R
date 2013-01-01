@@ -32,8 +32,12 @@ function(sgp_object,
 	if (!is.null(sgp_object@Summary)) {
 		if (save.old.summaries) {
 			tmp.year <- tail(sort(sgp_object@Summary[['STATE']][['STATE__YEAR__STATE_ENROLLMENT_STATUS']][['YEAR']]), 1)
-			message(paste("\tNOTE: Saving @Summary slot to", paste(gsub(" ", "_", toupper(state.name[state.abb=="WV"])), "SGP", tmp.year, "Summary_Slot.Rdata", sep="_")))
-			save(sgp_object@Summary, file=paste(gsub(" ", "_", toupper(state.name[state.abb=="WV"])), "SGP", tmp.year, "Summary_Slot.Rdata", sep="_"))
+			tmp.state.name <- gsub(" ", "_", toupper(getStateAbbreviation(state, type="name")))
+			tmp.file.name <- paste(tmp.state.name, "SGP_Summary", tmp.year, sep="_")
+			assign(tmp.file.name, sgp_object@Summary)
+			message(paste("\tNOTE: Saving @Summary slot to", paste("Data/", tmp.file.name, ".Rdata and then deleting @Summary slot.", sep="")))
+			save(list=tmp.file.name, file=file.path("Data", paste(tmp.file.name, "Rdata", sep=".")))
+			sgp_object@Summary <- NULL
 		} else {
 			message("\tNOTE: Deleting @Summary slot")
 			sgp_object@Summary <- NULL
@@ -138,7 +142,7 @@ function(sgp_object,
 	}
 
 	sgpSummary <- function(data, sgp.groups.to.summarize, produce.confidence.interval) {
-		SGP_SIM <- V1 <- .SD <- NULL ## To prevent R CMD check warning
+		SGP_SIM <- V1 <- .SD <- MEDIAN_SGP_with_SHRINKAGE <- NULL ## To prevent R CMD check warning
 		if (produce.confidence.interval) {
 			if ("Bootstrap" %in% confidence.interval.groups$TYPE) {
 				require(boot)
@@ -161,20 +165,20 @@ function(sgp_object,
  
 		ListExpr <- parse(text=paste("as.list(c(", paste(unlist(tmp.sgp.summaries), collapse=", "),"))",sep="")) 
 		ByExpr <- parse(text=paste("list(", paste(sgp.groups.to.summarize, collapse=", "), ")", sep=""))
-		tmp <- data[, eval(ListExpr), by=eval(ByExpr)]
+		tmp <- data[, eval(ListExpr), keyby=eval(ByExpr)]
 		if (produce.confidence.interval & "CSEM" %in% confidence.interval.groups$TYPE) {
 			SIM_ByExpr1 <- parse(text=paste("list(", paste(unlist(strsplit(as.character(sgp.groups.to.summarize), ", "))
 				[!(unlist(strsplit(as.character(sgp.groups.to.summarize), ", "))) %in% key(data)], collapse=", "), 
 				", ", paste(names(tmp.simulation.dt)[grep("SGP_SIM_", names(tmp.simulation.dt))], collapse=", "), ")", sep=""))
 			SIM_ByExpr2 <- parse(text=paste("list(", paste(sgp.groups.to.summarize, collapse=", "), ")", sep=""))
 				tmp.sim <- data[tmp.simulation.dt, eval(SIM_ByExpr1)][, -(1:2), with=FALSE][,
-				lapply(.SD, median_na), by=eval(SIM_ByExpr2)][, 
-				as.list(round(apply(.SD, 1, quantile, probs=confidence.interval.groups$QUANTILES))), by=eval(SIM_ByExpr2)]
+				lapply(.SD, median_na), keyby=eval(SIM_ByExpr2)][, 
+				as.list(round(apply(.SD, 1, quantile, probs=confidence.interval.groups$QUANTILES))), keyby=eval(SIM_ByExpr2)]
 			tmp <- data.table(merge.data.frame(tmp, tmp.sim, by = unlist(strsplit(as.character(sgp.groups.to.summarize), ", ")),all=TRUE))
 		}
 		setnames(tmp, (dim(tmp)[2]-length(sgp.summaries.names)+1):dim(tmp)[2], sgp.summaries.names)
 		constant <- var(tmp[['MEDIAN_SGP']], na.rm=TRUE) - mean(tmp[['MEDIAN_SGP_STANDARD_ERROR']]^2, na.rm=TRUE)
-		tmp[['MEDIAN_SGP_with_SHRINKAGE']] <- round(50 + ((tmp[['MEDIAN_SGP']]-50) * (constant/(constant+tmp[['MEDIAN_SGP_STANDARD_ERROR']]^2))))
+		tmp[,MEDIAN_SGP_with_SHRINKAGE := round(50 + ((tmp[['MEDIAN_SGP']]-50) * (constant/(constant+tmp[['MEDIAN_SGP_STANDARD_ERROR']]^2))))]
 		message(paste("\tFinished with", sgp.groups.to.summarize))
 		return(tmp)
 	} ### END sgpSummary function
@@ -187,7 +191,6 @@ function(sgp_object,
 				CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
 				YEAR=unlist(strsplit(i, "[.]"))[2])
 		}
- 
 		data.table(rbind.fill(tmp.list), VALID_CASE="VALID_CASE", key=key(data))
 	}
 
@@ -578,16 +581,16 @@ function(sgp_object,
 				tmp.dt.long <- data.table(melt(as.data.frame(tmp.dt), 
 					measure.vars=summary.groups[["institution_multiple_membership"]][[j-1]][["VARIABLE.NAMES"]], 
 					value.name=multiple.membership.variable.name))
-				invisible(tmp.dt.long[, variable := NULL])
+				tmp.dt.long[, variable := NULL]
 				if (!is.null(summary.groups[["institution_multiple_membership"]][[j-1]][["WEIGHTS"]])) {
-					invisible(tmp.dt.long[, WEIGHT := melt(as.data.frame(tmp.dt[, 
+					tmp.dt.long[, WEIGHT := melt(as.data.frame(tmp.dt[, 
 						summary.groups[["institution_multiple_membership"]][[j-1]][["WEIGHTS"]], with=FALSE]), 
-						measure.vars=summary.groups[["institution_multiple_membership"]][[j-1]][["WEIGHTS"]])[,2]])
+						measure.vars=summary.groups[["institution_multiple_membership"]][[j-1]][["WEIGHTS"]])[,2]]
 				}
 				if (!is.null(summary.groups[["institution_multiple_membership"]][[j-1]][["ENROLLMENT_STATUS"]])) {
-					invisible(tmp.dt.long[, ENROLLMENT_STATUS := melt(as.data.frame(tmp.dt[, 
+					tmp.dt.long[, ENROLLMENT_STATUS := melt(as.data.frame(tmp.dt[, 
 						summary.groups[["institution_multiple_membership"]][[j-1]][["ENROLLMENT_STATUS"]], with=FALSE]), 
-						measure.vars=summary.groups[["institution_multiple_membership"]][[j-1]][["ENROLLMENT_STATUS"]])[,2]])
+						measure.vars=summary.groups[["institution_multiple_membership"]][[j-1]][["ENROLLMENT_STATUS"]])[,2]]
 					setnames(tmp.dt.long, "ENROLLMENT_STATUS", enrollment.status.name)
 					summary.groups[["institution_inclusion"]][[tmp.inst]] <- enrollment.status.name
 				} else {
