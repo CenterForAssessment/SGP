@@ -301,6 +301,9 @@ function(panel.data,         ## REQUIRED
 			stop("Supplied panel.data$Panel_Data is not a data.frame or a data.table")
 		}
 	}
+	if (identical(class(panel.data), "list") & !is.null(panel.data[['Coefficient_Matrices']])) {
+		panel.data[['Coefficient_Matrices']] <- checksplineMatrix(panel.data[['Coefficient_Matrices']])
+	}
 
 	if (!missing(sgp.labels)) {
 		if (!is.list(sgp.labels)) {
