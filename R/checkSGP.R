@@ -61,20 +61,7 @@ function(sgp_object,
 	## Check class and construction of coefficient matrices
 
 	if (!is.null(sgp_object@SGP[["Coefficient_Matrices"]])) {
-		tmp.matrices <- sgp_object@SGP[["Coefficient_Matrices"]]; tmp.changes <- FALSE
-		for (i in names(tmp.matrices)) {
-			splineMatrix.tf <- sapply(tmp.matrices[[i]], validObject, test=TRUE)==TRUE
-			if (!any(splineMatrix.tf)) {
-				tmp.changes <- TRUE
-				message("Updating Existing Coefficient Matrices to new splineMatrix class.")
-				for (j in names(tmp.matrices[[i]])[!splineMatrix.tf]) {
-					tmp.matrices[[i]][[j]] <- as.splineMatrix(matrix_argument=tmp.matrices[[i]][[j]], matrix_argument_name=j, sgp_object=sgp_object)
-				}
-			}
-		}
-		if (tmp.changes) {
-			sgp_object@SGP[["Coefficient_Matrices"]] <- tmp.matrices
-		}
+		sgp_object@SGP[["Coefficient_Matrices"]] <- checksplineMatrix(sgp_object@SGP[["Coefficient_Matrices"]], sgp_object)
 	}
 
 	## Check class of variables in @SGP$SGPercentiles and @SGP$SGProjections
