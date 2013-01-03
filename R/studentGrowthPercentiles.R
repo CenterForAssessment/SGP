@@ -764,10 +764,10 @@ function(panel.data,         ## REQUIRED
 		}
 
 		if (tf.growth.levels) {
-			quantile.data <- data.table(quantile.data, SGP_LEVEL=factor(findInterval(quantile.data[["SGP"]], tmp.growth.levels[["my.cuts"]]), 
+			SGP_LEVEL <- NULL
+			quantile.data[, SGP_LEVEL:=factor(findInterval(quantile.data[["SGP"]], tmp.growth.levels[["my.cuts"]]), 
 				levels=seq(length(tmp.growth.levels[["my.levels"]]))-1, ## Necessary in case the full range of SGPs isn't present
-				labels=tmp.growth.levels[["my.levels"]]))
-		
+				labels=tmp.growth.levels[["my.levels"]], ordered=TRUE)]
 		}
 
 		if (csem.tf) {
