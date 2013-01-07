@@ -163,9 +163,8 @@ function(data,
 			setkeyv(data@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 			if (any(duplicated(data@Data["VALID_CASE"]))) {
 				message("\tWARNING: @Data keyed by 'VALID_CASE', 'CONTENT_AREA', 'YEAR', 'ID' has duplicate cases. Subsequent merges will likely be corrupt.")
-				message("\tDuplicate cases are saved and available in current working environment as 'DUPLICATED_CASES'.")
-				assign("DUPLICATED_CASES", data@Data["VALID_CASE"][duplicated(data@Data["VALID_CASE"])][,list(VALID_CASE, CONTENT_AREA, YEAR, ID)], envir=globalenv())
-				assign("DUPLICATED_CASES", data@Data["VALID_CASE"][duplicated(data@Data["VALID_CASE"])][,list(VALID_CASE, CONTENT_AREA, YEAR, ID)])
+				message("\tDuplicate cases are available in current workspace as 'DUPLICATED_CASES' and saved as 'DUPLICATED_CASES.Rdata'.")
+				DUPLICATED_CASES <<- data@Data["VALID_CASE"][duplicated(data@Data["VALID_CASE"])][,list(VALID_CASE, CONTENT_AREA, YEAR, ID)]
 				save(DUPLICATED_CASES, file="DUPLICATED_CASES.Rdata")
 			}
 		}
