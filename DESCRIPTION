@@ -13,7 +13,7 @@ Author: Damian W. Betebenner <dbetebenner@nciea.org>, Adam Van Iwaarden <Vaniwaa
 	Joe DeCastra (Mississippi), Ken Thompson (Mississippi), Soo Yeon Cho (Missouri), Dr. Jeff Halsell (Nevada), Dr. Selcuk Ozdemir (Nevada), Roger Silva (Nevada), Deb Wiswell (New Hampshire), 
 	Katya Levitan-Reiner (New Haven Public Schools), Joshua Marland (New York), W Joshua Rew (Oregon), Jason Becker (Rhode Island), Dr. Jessica Brown (Rhode Island), 
 	Ana Karantonis (Rhode Island), Dr. Deborah Jonas (Virginia), Juan D'Brot (West Virginia), Nate Hixson (West Virginia), Daniel Bush (Wisconsin), Justin Meyer (Wisconsin), 
-	Joseph Newton (Wisconsin), Dr. Philip Olsen (Wisconsin), Nick Stroud (Wisconsin).  
+	Joseph Newton (Wisconsin), Dr. Philip Olsen (Wisconsin), Nick Stroud (Wisconsin), Brendan Houng (University of Melbourne).  
 Maintainer: Damian W. Betebenner <dbetebenner@nciea.org>
 Depends: R (>= 2.12), boot, colorspace, data.table (>= 1.8.0), foreach, grid, gridBase, methods, plyr, reshape2, randomNames (>= 0.0-5), quantreg, splines, SGPdata (>= 2.0-0)
 Suggests: Cairo, doMC, doMPI, doParallel, doRedis, doSNOW, iterators, multicore, parallel, pdf2, RSQLite, sn, snow

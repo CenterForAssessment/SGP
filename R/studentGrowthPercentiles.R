@@ -568,7 +568,7 @@ function(panel.data,         ## REQUIRED
 		if (!missing(year.progression)) year.progression <- tail(year.progression, length(tmp.gp))
 	}
 
-	if (is.numeric(tmp.gp) & drop.nonsequential.grade.progression.variables && any(diff(tmp.gp)!=1)) {
+	if (is.numeric(tmp.gp) & drop.nonsequential.grade.progression.variables && any(diff(tmp.gp) > 1)) {
 		ss.data <- ss.data[,c(1, (num.panels+1)-rev(c(1, cumsum(rev(diff(tmp.gp)))+1)-1), (2*num.panels+1)-rev(c(1, cumsum(rev(diff(tmp.gp)))+1)-1))]
                 num.panels <- (dim(ss.data)[2]-1)/2
 	}
