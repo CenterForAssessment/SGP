@@ -145,7 +145,6 @@ function(sgp_object,
 		SGP_SIM <- V1 <- .SD <- MEDIAN_SGP_with_SHRINKAGE <- NULL ## To prevent R CMD check warning
 		if (produce.confidence.interval) {
 			if ("Bootstrap" %in% confidence.interval.groups$TYPE) {
-				require(boot)
 				tmp.list <- list()
 				tmp.quantiles <- paste("c(", paste(confidence.interval.groups$QUANTILES, collapse=", "), ")", sep="")
 				for (i in confidence.interval.groups$VARIABLES) {

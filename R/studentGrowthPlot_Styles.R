@@ -23,11 +23,6 @@
 
 	CUTLEVEL <- ID <- CONTENT_AREA <- NULL ## To prevent R CMD check warnings
 
-	### Load packages
-
-	if ("PNG" %in% sgPlot.output.format) {
-		require("Cairo")
-	}
 
 	### Utility functions
 

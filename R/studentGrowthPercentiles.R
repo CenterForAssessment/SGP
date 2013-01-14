@@ -263,7 +263,6 @@ function(panel.data,         ## REQUIRED
 			tmp.scale <- variable
 		}
 			if(distribution=="Skew-Normal") {
-				require(sn) 
 				tmp.shape <- tan((pi/2)*((min.max[1]+min.max[2]) - 2*scale_scores)/(min.max[2]-min.max[1]))
 				tmp.score <- round_any(as.numeric(rsn(length(scale_scores), location=scale_scores, scale=tmp.scale, shape=tmp.shape)), round)
 			}
@@ -333,7 +332,7 @@ function(panel.data,         ## REQUIRED
 		}
 		if (is.character(growth.levels)) {
 			if (!growth.levels %in% names(SGPstateData)) {
-				tmp.messages <- c(tmp.messages, "\tNOTE: Growth Level are currently not specified for the indicated state. Please contact the SGP package administrator to have your state's data included in the package. Student growth percentiles will be calculated without augmented growth.levels\n")
+				tmp.messages <- c(tmp.messages, "\tNOTE: Growth Level are currently not specified for the indicated state. \n\tPlease contact the SGP package administrator to have your state's data included in the package. Student growth percentiles will be calculated without augmented growth.levels\n")
 				tf.growth.levels <- FALSE
 			} else {
 			tmp.growth.levels[["my.cuts"]] <- SGPstateData[[growth.levels]][["Growth"]][["Cutscores"]][["Cuts"]]

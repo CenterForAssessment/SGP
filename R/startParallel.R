@@ -48,7 +48,6 @@ function(
 	###  Basic configuration
 	
 	if (toupper(parallel.config[['BACKEND']]) == 'FOREACH') {
-		require(foreach); require(iterators) # Have to load iterators for sequential uses
 		if (!is.na(parallel.config[['TYPE']]) & !identical(parallel.config[['TYPE']], "NA")) {
 			eval(parse(text=paste("require(", parallel.config[['TYPE']], ")")))
 		} else parallel.config[['TYPE']] <- "NA"
@@ -73,12 +72,11 @@ function(
 	} #  END FOREACH
 
 	if (toupper(parallel.config[['BACKEND']]) == 'MULTICORE') {
-		require(multicore)
 		par.type <- 'MULTICORE'
 	}
 
 	if (toupper(parallel.config[['BACKEND']]) == 'SNOW') {
-		require(snow)
+#		require(snow)
 		par.type <- 'SNOW'
 	}
 

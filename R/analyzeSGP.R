@@ -26,7 +26,7 @@ function(sgp_object,
 	started.at <- proc.time()
 	message(paste("\nStarted analyzeSGP", date()))
 
-	VALID_CASE <- CONTENT_AREA <- YEAR <- GRADE <- ID <- NULL ## To prevent R CMD check warnings
+	VALID_CASE <- CONTENT_AREA <- YEAR <- GRADE <- ID <- NULL
 
 
 	###
@@ -40,7 +40,7 @@ function(sgp_object,
 		state <- getStateAbbreviation(tmp.name, "analyzeSGP")
 	}
 
-
+	
 	###
 	### Tests associated with provided arguments
 	###
