@@ -76,7 +76,6 @@ function(
 	}
 
 	if (toupper(parallel.config[['BACKEND']]) == 'SNOW') {
-#		require(snow)
 		par.type <- 'SNOW'
 	}
 
