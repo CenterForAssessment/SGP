@@ -9,6 +9,7 @@ Changes in version: SGP_1.0-0.0
 
 	  o Removed chunk.size argument from 'studentGrowthProjections' function based upon refined implementation using data.table.
 	  o Changed SGP_LEVEL and SGP_LEVEL_BASELINE to ordered factor from factor.
+	  o SGPstateData is now an environment instead of a list so that updates can be smoothly added.
 
 Changes in version: SGP_0.9-9.9
 
