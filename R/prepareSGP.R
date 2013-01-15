@@ -166,7 +166,6 @@ function(data,
 				message("\tNOTE: Duplicate cases are available in current workspace as 'DUPLICATED_CASES' and saved as 'DUPLICATED_CASES.Rdata'.")
 				DUPLICATED_CASES <- data@Data["VALID_CASE"][duplicated(data@Data["VALID_CASE"])][,list(VALID_CASE, CONTENT_AREA, YEAR, ID)]
 				save(DUPLICATED_CASES, file="DUPLICATED_CASES.Rdata")
-				load("DUPLICATED_CASES.Rdata", envir=.GlobalEnv)
 			}
 		}
 
@@ -176,7 +175,7 @@ function(data,
 			SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]] <- createKnotsBoundaries(data@Data)
 			assign(paste(state, "Knots_Boundaries", sep="_"), SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]])
 			save(list=paste(state, "Knots_Boundaries", sep="_"), file=paste(state, "Knots_Boundaries.Rdata", sep="_"))
-			message(paste("\tNOTE: Knots and Boundaries do not exist for state provided.\n\t\tThey have been produced and available in the environment 'SGPenv', (using state=", state, ") for subsequent analyses and saved to your working directory '", getwd(), "'. To use SGPstateData with these values attach the environment by issuing the command 'attach(SGPenv)'.", sep=""))
+			message(paste("\tNOTE: Knots and Boundaries do not exist for state provided.\n\tThey have been produced and are available using state=", state, " for subsequent analyses and saved to your working directory '", getwd(), "'.", sep=""))
 		}
 
 		data@Version <- getVersion(data)
@@ -192,10 +191,9 @@ function(data,
 		setkeyv(data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 		if (any(duplicated(data["VALID_CASE"]))) {
 			message("\tWARNING: Data keyed by 'VALID_CASE', 'CONTENT_AREA', 'YEAR', 'ID' has duplicate cases. Subsequent merges will be corrupted.")
-			message("\tNOTE: Duplicate cases are saved and available in the attached environment 'SGPenv' as 'DUPLICATED_CASES'. To use DUPLICATED_CASES with these values attach the environment by issuing the command 'attach(SGPenv)'")
+			message("\tNOTE: Duplicate cases are available in current workspace as 'DUPLICATED_CASES' and saved as 'DUPLICATED_CASES.Rdata'.")
 			assign("DUPLICATED_CASES", data["VALID_CASE"][duplicated(data["VALID_CASE"])][,list(VALID_CASE, CONTENT_AREA, YEAR, ID)])
 			save(DUPLICATED_CASES, file="DUPLICATED_CASES.Rdata")
-			load("DUPLICATED_CASES.Rdata", envir=.GlobalEnv)
 		}
 
 		## Check for knots and boundaries
@@ -205,9 +203,7 @@ function(data,
 			assign(paste(state, "Knots_Boundaries", sep="_"), SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]])
 			save(list=paste(state, "Knots_Boundaries", sep="_"), file=paste(state, "Knots_Boundaries.Rdata", sep="_"))
 			save(SGPstateData, file="SGPstateData.Rdata")
-			load("SGPstateData.Rdata", envir=.GlobalEnv)
-			load(paste(state, "Knots_Boundaries.Rdata", sep="_"), envir=.GlobalEnv)
-			message(paste("\tNOTE: Knots and Boundaries do not exist for state provided.\n\tThey have been produced and available in the environment 'SGPenv', (using state=", state, ") for subsequent analyses and saved to your working directory '", getwd(), "'. To use SGPstateData with these values attach the environment by issuing the command 'attach(SGPenv)'.", sep=""))
+			message(paste("\tNOTE: Knots and Boundaries do not exist for state provided.\n\tThey have been produced and are available using state=", state, " for subsequent analyses and saved to your working directory '", getwd(), "'.", sep=""))
 		}
 
 		##  Create the SGP object
