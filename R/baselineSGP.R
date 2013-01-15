@@ -15,7 +15,7 @@ function(sgp_object,
 
 
 	started.at <- proc.time()
-	message(paste("\n\tStarted baselineSGP", date(), "\n"))
+	message(paste("\tStarted baselineSGP", date(), "\n"))
 
 	VALID_CASE <- YEAR <- GRADE <- CONTENT_AREA <- NULL ### To prevent R CMD check warnings
 
