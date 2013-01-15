@@ -37,11 +37,6 @@
 		variables.to.get <- c("SCALE_SCORE_PRIOR", use.sgp, "GRADE")
 	}
 	
-
-	### Setup
-
-	if (output.format=="PNG") require("Cairo")
-
 		
 	### Utility functions
 

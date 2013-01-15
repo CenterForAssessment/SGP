@@ -44,10 +44,6 @@
 	bubble_plot_configs.BUBBLE_PLOT_PATH=paste("Figures", sep=""),
 	bubble_plot_pdftk.CREATE_CATALOG=FALSE) {
 
-# Load required packages
-
-require(gridBase)
-
 
 # Test for data to plot
 
@@ -60,7 +56,7 @@ if (length(bubble_plot_data.X)==0) {
 
 if (bubble_plot_configs.BUBBLE_TIPS) {
 	if (length(find.package("pdf2", quiet=TRUE)) > 0 & as.numeric(version$minor) < 14) {
-		require(pdf2)
+		eval(parse(text="require(pdf2)"))
 	} else {
 		bubble_plot_configs.BUBBLE_TIPS <- FALSE
 		message("\tImplentation of BUBBLE_TIPS requires the installation of the package pdf2 from R-Forge: install.packages('pdf2',repos='http://R-Forge.R-project.org')")
@@ -102,7 +98,6 @@ if (!is.null(bubble_plot_configs.BUBBLE_COLOR)) {
        if (bubble_plot_configs.BUBBLE_COLOR_GRADIENT_REVERSE) my.colors <- rev(my.colors)
     }
 } else {
-     require(colorspace)
      my.colors <- rev(rainbow_hcl(num.levels))
 }
 

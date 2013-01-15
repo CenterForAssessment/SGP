@@ -23,11 +23,6 @@
 
 	CUTLEVEL <- ID <- CONTENT_AREA <- NULL ## To prevent R CMD check warnings
 
-	### Load packages
-
-	if ("PNG" %in% sgPlot.output.format) {
-		require("Cairo")
-	}
 
 	### Utility functions
 
@@ -82,7 +77,7 @@
 
 	### Define quantities/variables related to state
 
-	if (state %in% names(SGPstateData)) {
+	if (state %in% ls(SGPstateData)) {
 		tmp.abbreviation <- SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Abbreviation"]]
 		tmp.state <- paste(state.name[state==state.abb], tmp.abbreviation)
 		tmp.organization <- SGPstateData[[state]][["Assessment_Program_Information"]][["Organization"]]

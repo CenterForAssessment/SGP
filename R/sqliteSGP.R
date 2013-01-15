@@ -14,9 +14,6 @@ function(sgp_object,
 	YEAR <- DISTRICT_NUMBER <- SCHOOL_NUMBER <- CONTENT_AREA <- DISTRICT_ENROLLMENT_STATUS <- GRADE <- ETHNICITY <- STUDENTGROUP <- SCHOOL_ENROLLMENT_STATUS <- EMH_LEVEL <- MEDIAN_SGP <- NULL
 	INSTRUCTOR_NUMBER <- INSTRUCTOR_ENROLLMENT_STATUS <- NULL
 
-	## Load packages
-
-		require(RSQLite)
 
         ## Create state (if NULL) from sgp_object (if possible)
 

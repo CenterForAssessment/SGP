@@ -88,7 +88,7 @@ function(sgp_object,
 		if (!all(levels(sgp_object@Data$ACHIEVEMENT_LEVEL) %in% SGPstateData[[state]][['Achievement']][['Levels']][['Labels']])) {
 			missing.achievement.levels <- 
 				levels(sgp_object@Data$ACHIEVEMENT_LEVEL)[!levels(sgp_object@Data$ACHIEVEMENT_LEVEL) %in% SGPstateData[[state]][['Achievement']][['Levels']][['Labels']]]
-			message(paste("\tNOTE: Achievement level(s):", missing.achievement.levels, "in supplied data are not contained in 'SGPstateData'."))
+			message(paste("\tNOTE: Achievement level(s):", paste(missing.achievement.levels, collapse=", "), "in supplied data are not contained in 'SGPstateData'.", collapse=" "))
 		}
 	}
 

@@ -11,10 +11,6 @@ function(Scale_Scores,               ## List of Scale Scores
 	Cutscores,                   ## data.frame of long formatted achievement level cutscores
 	Report_Parameters) {         ## list containing Current_Year, Content_Area, State, Denote_Content_Area
 
-### Load packages
-
-require(colorspace)
-
 
 ### Create relevant variables
 

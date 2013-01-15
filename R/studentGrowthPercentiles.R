@@ -263,7 +263,6 @@ function(panel.data,         ## REQUIRED
 			tmp.scale <- variable
 		}
 			if(distribution=="Skew-Normal") {
-				require(sn) 
 				tmp.shape <- tan((pi/2)*((min.max[1]+min.max[2]) - 2*scale_scores)/(min.max[2]-min.max[1]))
 				tmp.score <- round_any(as.numeric(rsn(length(scale_scores), location=scale_scores, scale=tmp.scale, shape=tmp.shape)), round)
 			}
@@ -332,8 +331,8 @@ function(panel.data,         ## REQUIRED
 			} 
 		}
 		if (is.character(growth.levels)) {
-			if (!growth.levels %in% names(SGPstateData)) {
-				tmp.messages <- c(tmp.messages, "\tNOTE: Growth Level are currently not specified for the indicated state. Please contact the SGP package administrator to have your state's data included in the package. Student growth percentiles will be calculated without augmented growth.levels\n")
+			if (!growth.levels %in% ls(SGPstateData)) {
+				tmp.messages <- c(tmp.messages, "\tNOTE: Growth Level are currently not specified for the indicated state. \n\tPlease contact the SGP package administrator to have your state's data included in the package. Student growth percentiles will be calculated without augmented growth.levels\n")
 				tf.growth.levels <- FALSE
 			} else {
 			tmp.growth.levels[["my.cuts"]] <- SGPstateData[[growth.levels]][["Growth"]][["Cutscores"]][["Cuts"]]
@@ -429,11 +428,11 @@ function(panel.data,         ## REQUIRED
 			}
 		} 
 		if (is.character(calculate.confidence.intervals)) {
-			if (!calculate.confidence.intervals %in% c(names(SGPstateData), names(panel.data))) {
+			if (!calculate.confidence.intervals %in% c(ls(SGPstateData), names(panel.data))) {
 				tmp.messages <- c(tmp.messages, "\tNOTE: Please provide an appropriate state acronym or variable name in supplied data corresponding to CSEMs. See help page for details. SGPs will be calculated without confidence intervals.\n")
 			csem.tf <- FALSE
 			}
-			if (calculate.confidence.intervals %in% names(SGPstateData)) {
+			if (calculate.confidence.intervals %in% ls(SGPstateData)) {
 				if ("YEAR" %in% names(SGPstateData[[calculate.confidence.intervals]][["Assessment_Program_Information"]][["CSEM"]])) {
 					if (!sgp.labels$my.year %in% unique(SGPstateData[[calculate.confidence.intervals]][["Assessment_Program_Information"]][["CSEM"]][["YEAR"]])) {
 						tmp.messages <- c(tmp.messages, "\tNOTE: SGPstateData contains year specific CSEMs but year requested is not available. Simulated SGPs and confidence intervals will not be calculated.\n")
@@ -568,7 +567,7 @@ function(panel.data,         ## REQUIRED
 		if (!missing(year.progression)) year.progression <- tail(year.progression, length(tmp.gp))
 	}
 
-	if (is.numeric(tmp.gp) & drop.nonsequential.grade.progression.variables && any(diff(tmp.gp)!=1)) {
+	if (is.numeric(tmp.gp) & drop.nonsequential.grade.progression.variables && any(diff(tmp.gp) > 1)) {
 		ss.data <- ss.data[,c(1, (num.panels+1)-rev(c(1, cumsum(rev(diff(tmp.gp)))+1)-1), (2*num.panels+1)-rev(c(1, cumsum(rev(diff(tmp.gp)))+1)-1))]
                 num.panels <- (dim(ss.data)[2]-1)/2
 	}
@@ -828,7 +827,7 @@ function(panel.data,         ## REQUIRED
 		}
 
 		if (is.character(goodness.of.fit) | goodness.of.fit==TRUE) {
-			if (is.character(goodness.of.fit) & goodness.of.fit %in% names(SGPstateData)) {
+			if (is.character(goodness.of.fit) & goodness.of.fit %in% ls(SGPstateData)) {
 				tmp.gof.data <- getAchievementLevel(
 							sgp_data=data.table(
 								SCALE_SCORE=quantile.data[['SCALE_SCORE_PRIOR']],
