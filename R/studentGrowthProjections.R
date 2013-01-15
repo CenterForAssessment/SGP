@@ -390,7 +390,7 @@ function(panel.data,	## REQUIRED
 			}
 		}
 		if (is.character(use.my.knots.boundaries)) {
-			if (!use.my.knots.boundaries %in% names(SGPstateData)) {
+			if (!use.my.knots.boundaries %in% ls(SGPstateData)) {
 				stop(paste("Knots and Boundaries are currently not implemented for the state (", use.my.knots.boundaries, ") indicated. Please contact the SGP package administrator to have your Knots and Boundaries included in the package", sep=""))
 			}
 		}
@@ -418,7 +418,7 @@ function(panel.data,	## REQUIRED
 
 	if (!missing(performance.level.cutscores)) {
 		if (is.character(performance.level.cutscores)) {
-			if (!(performance.level.cutscores %in% names(SGPstateData))) {
+			if (!(performance.level.cutscores %in% ls(SGPstateData))) {
 				tmp.messages <- c(tmp.messages, "\tNOTE: To use state cutscores, supply an appropriate two letter state abbreviation. \nRequested state may not be included. See help page for details.\n")
 				tf.cutscores <- FALSE
 			}
