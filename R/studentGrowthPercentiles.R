@@ -331,7 +331,7 @@ function(panel.data,         ## REQUIRED
 			} 
 		}
 		if (is.character(growth.levels)) {
-			if (!growth.levels %in% names(SGPstateData)) {
+			if (!growth.levels %in% ls(SGPstateData)) {
 				tmp.messages <- c(tmp.messages, "\tNOTE: Growth Level are currently not specified for the indicated state. \n\tPlease contact the SGP package administrator to have your state's data included in the package. Student growth percentiles will be calculated without augmented growth.levels\n")
 				tf.growth.levels <- FALSE
 			} else {
@@ -428,11 +428,11 @@ function(panel.data,         ## REQUIRED
 			}
 		} 
 		if (is.character(calculate.confidence.intervals)) {
-			if (!calculate.confidence.intervals %in% c(names(SGPstateData), names(panel.data))) {
+			if (!calculate.confidence.intervals %in% c(ls(SGPstateData), names(panel.data))) {
 				tmp.messages <- c(tmp.messages, "\tNOTE: Please provide an appropriate state acronym or variable name in supplied data corresponding to CSEMs. See help page for details. SGPs will be calculated without confidence intervals.\n")
 			csem.tf <- FALSE
 			}
-			if (calculate.confidence.intervals %in% names(SGPstateData)) {
+			if (calculate.confidence.intervals %in% ls(SGPstateData)) {
 				if ("YEAR" %in% names(SGPstateData[[calculate.confidence.intervals]][["Assessment_Program_Information"]][["CSEM"]])) {
 					if (!sgp.labels$my.year %in% unique(SGPstateData[[calculate.confidence.intervals]][["Assessment_Program_Information"]][["CSEM"]][["YEAR"]])) {
 						tmp.messages <- c(tmp.messages, "\tNOTE: SGPstateData contains year specific CSEMs but year requested is not available. Simulated SGPs and confidence intervals will not be calculated.\n")
@@ -827,7 +827,7 @@ function(panel.data,         ## REQUIRED
 		}
 
 		if (is.character(goodness.of.fit) | goodness.of.fit==TRUE) {
-			if (is.character(goodness.of.fit) & goodness.of.fit %in% names(SGPstateData)) {
+			if (is.character(goodness.of.fit) & goodness.of.fit %in% ls(SGPstateData)) {
 				tmp.gof.data <- getAchievementLevel(
 							sgp_data=data.table(
 								SCALE_SCORE=quantile.data[['SCALE_SCORE_PRIOR']],
