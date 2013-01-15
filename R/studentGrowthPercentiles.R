@@ -331,7 +331,7 @@ function(panel.data,         ## REQUIRED
 			} 
 		}
 		if (is.character(growth.levels)) {
-			if (!growth.levels %in% ls(SGPstateData)) {
+			if (is.null(SGPstateData[[growth.levels]][["Growth"]][["Levels"]])) {
 				tmp.messages <- c(tmp.messages, "\tNOTE: Growth Level are currently not specified for the indicated state. \n\tPlease contact the SGP package administrator to have your state's data included in the package. Student growth percentiles will be calculated without augmented growth.levels\n")
 				tf.growth.levels <- FALSE
 			} else {
