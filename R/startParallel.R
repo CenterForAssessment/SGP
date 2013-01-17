@@ -4,7 +4,7 @@ function(
 	process,
 	qr.taus) {
 	
-	if (toupper(parallel.config[['BACKEND']]) == 'MULTICORE' | parallel.config[['BACKEND']]) == 'SNOW') {
+	if (toupper(parallel.config[['BACKEND']]) == 'MULTICORE' | toupper(parallel.config[['BACKEND']]) == 'SNOW') {
 		stop(paste(parallel.config[['BACKEND']], "no longer supported.  Please use the 'PARALLEL' package backend and R > 2.14 for parallel computation"))
 	}
 	
