@@ -8,10 +8,8 @@ function(
 		stop(paste('\n\t', parallel.config[['BACKEND']], "no longer supported.  Please use the 'PARALLEL' package backend and R > 2.12 for parallel computation.\n"))
 	}
 	
-	if (toupper(parallel.config[['BACKEND']]) == 'FOREACH') {
-		if (parallel.config[['TYPE']]!="doParallel") { # this needs to be nested inside first if statement otherwise logical(0) and spits error if BACKEND != FOREACH...
+	if (toupper(parallel.config[['BACKEND']]) == 'FOREACH' && parallel.config[['TYPE']] != "doParallel") {
 			stop(paste('\n\t', parallel.config[['TYPE']], "no longer supported.  Please use doParallel and R > 2.12 for parallel computation.\n"))
-		}
 	}
 	
 	workers <- NULL; par.type <- 'OTHER'; TAUS.LIST <- NULL
@@ -121,6 +119,7 @@ function(
 	###
 	###  Need this for all flavors - move to startParallel
 	###
+
 	if (process=='TAUS') {
 		chunk.size <- ceiling(length(qr.taus) / workers)
 		TAUS.LIST <- vector("list", workers)
