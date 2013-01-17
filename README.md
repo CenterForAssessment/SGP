@@ -26,7 +26,7 @@ Install latest development release from Github
 ```R 
 install.packages("devtools")
 require(devtools)
-install_github("SGP", "SchoolView")
+install_github("SGP", "SchoolView", args="--byte-compile")
 require(SGP)
 ```
 
@@ -216,7 +216,7 @@ The function accepts multiple arguments detailed in the
 Bibliography
 ------------
 
-Betebenner, D. W., Iwaarden, A. V., and Domingue, B. (2012). SGP: An R Package for the Calculation and Visualization of Student Growth Percentiles & Percentile Growth Trajectories.
+Betebenner, D. W., VanIwaarden, A., and Domingue, B. (2012). SGP: An R Package for the Calculation and Visualization of Student Growth Percentiles & Percentile Growth Trajectories.
 
 R Development Core Team (2012). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria.
 3-900051-07-0.

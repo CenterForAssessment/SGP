@@ -4,6 +4,14 @@ function(
 	process,
 	qr.taus) {
 	
+	if (toupper(parallel.config[['BACKEND']]) == 'MULTICORE' | parallel.config[['BACKEND']]) == 'SNOW') {
+		stop(paste(parallel.config[['BACKEND']], "no longer supported.  Please use the 'PARALLEL' package backend and R > 2.14 for parallel computation"))
+	}
+	
+	if (toupper(parallel.config[['BACKEND']]) == 'FOREACH' & parallel.config[['TYPE']]!="doParallel") {
+		stop(paste(parallel.config[['TYPE']], "no longer supported.  Please use doParallel and R > 2.14 for parallel computation"))
+	}
+	
 	workers <- NULL; par.type <- 'OTHER'; TAUS.LIST <- NULL
 
 	if (!is.null(parallel.config[['CLUSTER.OBJECT']])) {
@@ -44,7 +52,6 @@ function(
 	
 	if (all(c("PERCENTILES", "TAUS") %in% names(parallel.config[['WORKERS']]))) stop("Both TAUS and PERCENTILES can not be executed in Parallel at the same time.")
 
-	# parallel.config=list(BACKEND="PARALLEL", WORKERS=list(PERCENTILES=8, PROJ=5, BASE=7, TAUS=3))
 	###  Basic configuration
 	
 	if (toupper(parallel.config[['BACKEND']]) == 'FOREACH') {
@@ -52,11 +59,11 @@ function(
 			eval(parse(text=paste("require(", parallel.config[['TYPE']], ")")))
 		} else parallel.config[['TYPE']] <- "NA"
 
-		if (parallel.config[['TYPE']]=="doMC" & is.null(parallel.config[['OPTIONS']][["preschedule"]])) {
-			if (is.list(parallel.config[['OPTIONS']])) {
-				parallel.config[['OPTIONS']][["preschedule"]]=FALSE
-			}	else parallel.config[['OPTIONS']]=list(preschedule=FALSE)
-		}
+		# if (parallel.config[['TYPE']]=="doMC" & is.null(parallel.config[['OPTIONS']][["preschedule"]])) {
+			# if (is.list(parallel.config[['OPTIONS']])) {
+				# parallel.config[['OPTIONS']][["preschedule"]]=FALSE
+			# }	else parallel.config[['OPTIONS']]=list(preschedule=FALSE)
+		# }
 
 		if (parallel.config[['TYPE']]=="doParallel") { 
 			if (.Platform$OS.type == "unix" & is.null(par.type)) par.type <- 'MULTICORE' 
@@ -71,13 +78,13 @@ function(
 		foreach.options <- parallel.config[['OPTIONS']] # works fine if NULL
 	} #  END FOREACH
 
-	if (toupper(parallel.config[['BACKEND']]) == 'MULTICORE') {
-		par.type <- 'MULTICORE'
-	}
+	# if (toupper(parallel.config[['BACKEND']]) == 'MULTICORE') {
+		# par.type <- 'MULTICORE'
+	# }
 
-	if (toupper(parallel.config[['BACKEND']]) == 'SNOW') {
-		par.type <- 'SNOW'
-	}
+	# if (toupper(parallel.config[['BACKEND']]) == 'SNOW') {
+		# par.type <- 'SNOW'
+	# }
 
 	if (toupper(parallel.config[['BACKEND']]) == 'PARALLEL') {
 		# Weird error for MPI stopCluster(...) 'Error in NextMethod() : 'NextMethod' called from an anonymous function'  load snow first removes it.
@@ -133,26 +140,26 @@ function(
 			registerDoSEQ() # prevents warning message
 			return(list(foreach.options=foreach.options, par.type=par.type))
 		}
-		if (parallel.config[['TYPE']]=="doMC") {
-			registerDoMC(workers)
-			return(list(foreach.options=foreach.options, par.type=par.type))
-		}
-		if (parallel.config[['TYPE']]=='doMPI') {
-			doPar.cl <- startMPIcluster(count=workers)
-			registerDoMPI(doPar.cl)
-			return(list(doPar.cl=doPar.cl, foreach.options=foreach.options, par.type=par.type))
-		}
-		if (parallel.config[['TYPE']]=='doRedis') {
-			redisWorker('jobs', port=10187) #  Doesn't seem to work.  Maybe get rid of this option/flavor?
-			registerDoRedis('jobs')
-			startLocalWorkers(n=workers, queue='jobs')
-			return(list(jobs='jobs', foreach.options=foreach.options, par.type=par.type))
-		}
-		if (parallel.config[['TYPE']]=='doSNOW') {
-			doPar.cl=makeCluster(workers, type='SOCK')
-			registerDoSNOW(doPar.cl)
-			return(list(doPar.cl=doPar.cl, foreach.options=foreach.options, par.type=par.type))
-		}
+		# if (parallel.config[['TYPE']]=="doMC") {
+			# registerDoMC(workers)
+			# return(list(foreach.options=foreach.options, par.type=par.type))
+		# }
+		# if (parallel.config[['TYPE']]=='doMPI') {
+			# doPar.cl <- startMPIcluster(count=workers)
+			# registerDoMPI(doPar.cl)
+			# return(list(doPar.cl=doPar.cl, foreach.options=foreach.options, par.type=par.type))
+		# }
+		# if (parallel.config[['TYPE']]=='doRedis') {
+			# redisWorker('jobs', port=10187) #  Doesn't seem to work.  Maybe get rid of this option/flavor?
+			# registerDoRedis('jobs')
+			# startLocalWorkers(n=workers, queue='jobs')
+			# return(list(jobs='jobs', foreach.options=foreach.options, par.type=par.type))
+		# }
+		# if (parallel.config[['TYPE']]=='doSNOW') {
+			# doPar.cl=makeCluster(workers, type='SOCK')
+			# registerDoSNOW(doPar.cl)
+			# return(list(doPar.cl=doPar.cl, foreach.options=foreach.options, par.type=par.type))
+		# }
 		if (parallel.config[['TYPE']]=="doParallel") {
 			if (par.type == 'SNOW') {
 				doPar.cl <- makeCluster(workers, type='SOCK')

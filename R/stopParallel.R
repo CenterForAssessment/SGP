@@ -8,25 +8,25 @@ function(
 	if (toupper(parallel.config[['BACKEND']]) == 'FOREACH') {
 		if (is.na(parallel.config[['TYPE']])) parallel.config[['TYPE']] <- "NA" # Stop checks on NA below.
 
-		if (parallel.config[['TYPE']]=="doMPI") {
-			closeCluster(par.start$doPar.cl)
-			return()
-		}
+		# if (parallel.config[['TYPE']]=="doMPI") {
+			# closeCluster(par.start$doPar.cl)
+			# return()
+		# }
 
 		if (parallel.config[['TYPE']]=="doParallel" & par.start$par.type=='SNOW') {
 			stopCluster(par.start$doPar.cl)
 			return()
 		}
 		
-		if (parallel.config[['TYPE']]=="doSNOW") {
-			stopCluster(par.start$doPar.cl)
-			return()
-		}
+		# if (parallel.config[['TYPE']]=="doSNOW") {
+			# stopCluster(par.start$doPar.cl)
+			# return()
+		# }
 		
-		if (parallel.config[['TYPE']]=="doRedis") {
-			removeQueue(par.start$jobs)
-			return()
-		}
+		# if (parallel.config[['TYPE']]=="doRedis") {
+			# removeQueue(par.start$jobs)
+			# return()
+		# }
 	} #  END FOREACH
 
 	# Nothing required for MULTICORE (or doMC)
