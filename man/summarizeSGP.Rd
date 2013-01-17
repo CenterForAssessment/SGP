@@ -83,13 +83,13 @@ most states.
 \item{save.old.summaries}{A boolean argument, defaults to FALSE, indicating whether to save the @Summary slot (if not NULL) prior to calculating new summaries. By defaulting to FALSE, the function
 overwrites previous (e.g., last year's summaries) summaries.
 }
-\item{parallel.config}{A named list with, at a minimum, two elements indicating 1) the BACKEND package to be used for parallel computation and 2) the WORKERS list to specify the number of processors to be used in each major analysis.  The BACKEND element can be set = to \code{FOREACH}, \code{SNOW}, \code{MULTICORE}, or \code{PARALLEL}.  Please consult the manuals and vignettes for information of these packages!
+ \item{parallel.config}{A named list with, at a minimum, two elements indicating 1) the BACKEND package to be used for parallel computation and 2) the WORKERS list to specify the number of processors to be used in each major analysis.  The BACKEND element can be set = to \code{FOREACH} or \code{PARALLEL}.  Please consult the manuals and vignettes for information of these packages!  The \code{\link{analyzeSGP}} help page contains more thorough explanation and examples of the \code{parallel.config} setup. 
 
-TYPE is a third element of the \code{parallel.config} list that provides necessary information when using FOREACH, SNOW or PARALLEL packages as the backend. With BACKEND="FOREACH", the TYPE element specifies the "doMC", "doMPI", "doSNOW", "doRedis" or "doParallel" flavor of foreach backends.  TYPE=NA (default) produces summaries sequentially.  If BACKEND = "SNOW", the TYPE element specifies the cluster type (either "SOCK" for socket cluster of "MPI" for an OpenMPI cluster).  The function will create a cluster object based on these parameters and the number of workers requested (see WORKERS list description below).  Alternatively, the name of an external CLUSTER.OBJECT set up by the user outside of the function can be used.   If BACKEND = "PARALLEL", the \code{parallel} package will be used, and the TYPE element specifies the SNOW type cluster to be used.  If Windows is the operating system, this element must = "SOCK".  Defaults are assigned based on operating system if TYPE is missing based on system OS.  Unix/Mac OS defaults to MULTICORE to avoid prescheduling.  SNOW can be chosen in the systems by specifying "SOCK" or "SNOW" in the TYPE element.
+TYPE is a third element of the \code{parallel.config} list that provides necessary information when using FOREACH or PARALLEL packages as the backend. With BACKEND="FOREACH",  the TYPE element specifies the flavor of foreach backend.  As of version 1.0-1.0, only "doParallel" is supported.  TYPE=NA (default) produces summaries sequentially.  If BACKEND = "PARALLEL", the \code{parallel} package will be used.  This package combines deprecated parallel packages \code{snow} and \code{multicore}.  Using the "snow" implementation of \code{parallel} the function will create a cluster object based on the TYPE element specified and the number of workers requested (see WORKERS list description below).  The TYPE element indicates the users preferred cluster type (either "SOCK" for socket cluster of "MPI" for an OpenMPI cluster). If Windows is the operating system, this "snow" implementation must be use and the TYPE element must = "SOCK".  Defaults are assigned based on operating system if TYPE is missing based on system OS.  Unix/Mac OS defaults to the "multicore" to avoid worker node prescheduling and appears to be more efficient in these operating systems. 
 
 The WORKERS element is a list with SUMMARY specifying the number of processors (nodes) desired or available.  For example, SUMMARY=2 may be used on a dual core machine to use both cores available. (NOTE: choice of the number of cores is a balance between the number of processors available and the amount of RAM a system has; each system will be different and may require some adjustment).
 
-Default is FOREACH as the back end, TYPE=NA and both plot WORKERS=1, which produces summary tables sequentially: 'list(BACKEND="FOREACH", TYPE=NA, WORKERS=list(SUMMARY=1))' 
+Default is FOREACH as the back end, TYPE=NA and WORKERS=1, which produces summary tables sequentially: 'list(BACKEND="FOREACH", TYPE=NA, WORKERS=list(SUMMARY=1))' 
 
 Example parallel use cases are provided below.
   }
@@ -116,13 +116,7 @@ Demonstration_SGP <- summarizeSGP(Demonstration_SGP)
 
 ###  Example uses of the parallel.config argument
 
-##  Windows users must use snow: 
-Demonstration_SGP <- summarizeSGP(Demonstration_SGP,
-	parallel.config=list(
-		BACKEND="SNOW", TYPE="SOCK",
-		WORKERS=list(SUMMARY=2))
-
-##  Windows users with R version >= 2.13  may prefer the parallel package:
+##  Windows users  must use the parallel package and R version >= 2.13:
 #  Note the number of workers is 8, and SOCK type cluster is used.
 #  This example is would be good for a single workstation with 8 cores.
 	. . .
@@ -131,38 +125,20 @@ Demonstration_SGP <- summarizeSGP(Demonstration_SGP,
 		WORKERS=list(SUMMARY=2))
 	. . .
 
-## FOREACH uses:
-# doMC - only available on Linux or Mac OSX
-	. . .
-	parallel.config=list(
-		BACKEND="FOREACH", TYPE="doMC",
-		WORKERS=2)
-	. . .
-
-#  New doParallel package - only available with R 2.13 or newer
-#  Note the SOCK cluster is the only option made available at this time
-#  for use with SNOW. 
+#  doParallel package - only available with R 2.13 or newer
 	. . .
 	parallel.config=list(
 		BACKEND="FOREACH", TYPE="doParallel", 
 		WORKERS=list(SUMMARY=6))
 	. . .
 
-##  New parallel package - only available with R 2.13 or newer
+##  parallel package - only available with R 2.13 or newer
 #  Note the number of workers is 50, and MPI is used, 
 #  suggesting this example is for a HPC cluster usage.
 	. . .
 	parallel.config=list(
 		BACKEND="PARALLEL", TYPE="MPI"),
 		WORKERS=list(SUMMARY=50))
-	. . .
-
-##  Linux/Mac may use the multicore package:
-#    TYPE is not used with MULTICORE.
-	. . .
-	parallel.config=list(
-		BACKEND="MULTICORE",
-		WORKERS=4)
 	. . .
 
 #  NOTE:  This list of parallel.config specifications is NOT exhaustive.  
