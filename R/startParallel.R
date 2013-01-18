@@ -9,7 +9,7 @@ function(
 	}
 	
 	if (toupper(parallel.config[['BACKEND']]) == 'FOREACH') {
-		if (parallel.config[['TYPE']]!="doParallel") { # this needs to be nested inside first if statement otherwise logical(0) and spits error if BACKEND != FOREACH...
+		if (parallel.config[['TYPE']]!="doParallel" & !is.na(parallel.config[['TYPE']])) { # this needs to be nested inside first if statement otherwise logical(0) and spits error if BACKEND != FOREACH...
 			stop(paste('\n\t', parallel.config[['TYPE']], "no longer supported.  Please use doParallel and R > 2.12 for parallel computation.\n"))
 		}
 	}
@@ -99,7 +99,7 @@ function(
 			par.type <- 'SNOW'
 		} else {
 			if (.Platform$OS.type == "unix") par.type <- 'MULTICORE' 
-			if (.Platform$OS.type != "unix") par.type <- 'SNOW'
+			if (.Platform$OS.type != "unix") par.type <- 'SNOW'; parallel.config[['TYPE']] <- 'SOCK'
 		}
 	}
 	
