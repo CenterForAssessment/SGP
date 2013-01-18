@@ -543,7 +543,7 @@ function(panel.data,         ## REQUIRED
 			tmp.messages <- c(tmp.messages, paste("\tNOTE: Specified argument num.prior (", num.prior, ") exceeds number of panels of data supplied. Analyses will utilize maximum number of priors possible.\n", sep=""))
 			num.prior <- length(tmp.gp[!is.na(tmp.gp)])-1
 		} else {
-			tmp.gp <- tail(tmp.gp[!is.na(tmp.gp)], num.prior+1)
+			tmp.gp <- grade.progression <- tail(tmp.gp[!is.na(tmp.gp)], num.prior+1)
 			
 	}} else {
 		num.prior <- length(tmp.gp[!is.na(tmp.gp)])-1
@@ -558,7 +558,9 @@ function(panel.data,         ## REQUIRED
 	if (is.character(tmp.gp)) {
 		tmp.slot.gp <- tmp.gp
 		tmp.gp <- tmp.gp[!is.na(tmp.gp)]
-	}	else tmp.slot.gp <- grade.progression
+	} else {
+		tmp.slot.gp <- grade.progression
+	}
 
 	if (!is.null(max.order.for.percentile)) {
 		tmp.gp <- tail(tmp.gp, max.order.for.percentile+1)
