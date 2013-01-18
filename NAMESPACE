@@ -1,5 +1,29 @@
-import("data.table")
-import("grid")
+export(abcSGP)
+export(analyzeSGP)
+export(as.splineMatrix)
+export(baselineSGP)
+export(bubblePlot)
+export(bubblePlot_Styles)
+export(capwords)
+export(combineSGP)
+export(gofSGP)
+export(growthAchievementPlot)
+export(is.splineMatrix)
+export(is.SGP)
+export(outputSGP)
+export(prepareSGP)
+export(studentGrowthPercentiles)
+export(studentGrowthPlot)
+export(studentGrowthPlot_Styles)
+export(studentGrowthProjections)
+export(summarizeSGP)
+export(testSGP)
+export(updateSGP)
+export(visualizeSGP)
+exportClasses(SGP)
+exportClasses(splineMatrix)
+import(data.table)
+import(grid)
 importFrom(Cairo,Cairo)
 importFrom(colorspace,rainbow_hcl,diverge_hcl)
 importFrom(doParallel,registerDoParallel)
@@ -12,33 +36,3 @@ importFrom(reshape2,melt)
 importFrom(RSQLite,dbGetQuery,dbWriteTable,dbConnect,dbDisconnect,SQLite)
 importFrom(sn,rsn)
 importFrom(splines,bs)
-
-export(
-	"abcSGP",
-	"analyzeSGP",
-	"as.splineMatrix",
-	"baselineSGP",
-	"bubblePlot",
-	"bubblePlot_Styles",
-	"capwords",
-	"combineSGP",
-	"gofSGP",
-	"growthAchievementPlot",
-	"is.splineMatrix",
-	"is.SGP",
-	"outputSGP",
-	"prepareSGP",
-	"studentGrowthPercentiles",
-	"studentGrowthPlot",
-	"studentGrowthPlot_Styles",
-	"studentGrowthProjections",
-	"summarizeSGP",
-	"testSGP",
-	"updateSGP",
-	"visualizeSGP"
-)
-
-exportClasses(
-	"SGP",
-	"splineMatrix"
-)

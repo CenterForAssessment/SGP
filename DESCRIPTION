@@ -1,8 +1,8 @@
 Package: SGP
 Type: Package
 Title: An R Package for the Calculation and Visualization of Student Growth Percentiles & Percentile Growth Trajectories.
-Version: 1.0-1.0
-Date: 2013-1-17
+Version: 1.0-2.0
+Date: 2013-1-18
 Authors@R: c(person("Damian", "Betebenner", email="dbetebenner@nciea.org", role=c("aut", "cre")), person("Adam", "VanIwaarden", email="vaniwaarden@colorado.edu", role="aut"),
                     person("Ben", "Domingue", email="ben.domingue@gmail.com", role="aut"))
 Author: Damian W. Betebenner <dbetebenner@nciea.org>, Adam VanIwaarden <vaniwaarden@colorado.edu> and Ben Domingue <ben.domingue@gmail.com>
@@ -15,7 +15,7 @@ Author: Damian W. Betebenner <dbetebenner@nciea.org>, Adam VanIwaarden <vaniwaar
 	Dr. Jessica Brown (Rhode Island), Ana Karantonis (Rhode Island), Dr. Deborah Jonas (Virginia), Juan D'Brot (West Virginia), Nate Hixson (West Virginia), Daniel Bush (Wisconsin), 
 	Justin Meyer (Wisconsin), Joseph Newton (Wisconsin), Dr. Philip Olsen (Wisconsin), Nick Stroud (Wisconsin), Brendan Houng (University of Melbourne).  
 Maintainer: Damian W. Betebenner <dbetebenner@nciea.org>
-Depends: R (>= 2.12), SGPdata (>= 3.0-0), methods
+Depends: R (>= 2.15), SGPdata (>= 3.0-0), methods
 Suggests: randomNames (>= 0.0-5), parallel
 Imports: Cairo, colorspace, data.table (>= 1.8.6), doParallel, foreach, grid, gridBase, iterators, plyr, quantreg, reshape2, RSQLite, sn, snow, SparseM, splines
 Description: Functions to calculate student growth percentiles and percentile growth projections/trajectories for students using large scale, 
@@ -24,8 +24,7 @@ Description: Functions to calculate student growth percentiles and percentile gr
 	the quantile regression analyses and specify what percentile growth is required for students to reach future achievement targets.
 SystemRequirements: (PDF)LaTeX (http://www.latex-project.org/) with pdfpages package for studentGrowthPlot option in visualizeSGP to bind together student growth plots into school catalogs.
 URL: https://github.com/SchoolView/SGP, http://schoolview.github.com/SGP/, http://cran.r-project.org/web/packages/SGP/
-LazyLoad: Yes
 LazyData: Yes
 LazyDataCompression: xz
 License: CC BY-SA 3.0 US | CC BY-NC-SA 3.0 + file LICENSE
-ByteCompile: TRUE
+ByteCompile: FALSE

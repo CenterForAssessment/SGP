@@ -797,7 +797,7 @@ function(panel.data,         ## REQUIRED
 		if (!is.null(percentile.cuts)){
 			cuts.best <- data.table(rbindlist(tmp.percentile.cuts), key="ID")
 			cuts.best <- cuts.best[c(which(!duplicated(cuts.best))[-1]-1, nrow(cuts.best))][,-1, with=FALSE]
-			quantile.data <- cbind(quantile.data, cuts.best)
+			quantile.data <- data.table(quantile.data, cuts.best)
 		}
 
 		if (return.prior.scale.score) {
