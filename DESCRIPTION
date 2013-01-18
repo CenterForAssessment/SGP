@@ -27,4 +27,4 @@ URL: https://github.com/SchoolView/SGP, http://schoolview.github.com/SGP/, http:
 LazyData: Yes
 LazyDataCompression: xz
 License: CC BY-SA 3.0 US | CC BY-NC-SA 3.0 + file LICENSE
-ByteCompile: FALSE
+ByteCompile: TRUE
