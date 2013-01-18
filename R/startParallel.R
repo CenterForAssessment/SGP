@@ -97,7 +97,7 @@ function(
 			par.type <- 'SNOW'
 		} else {
 			if (.Platform$OS.type == "unix") par.type <- 'MULTICORE' 
-			if (.Platform$OS.type != "unix") par.type <- 'SNOW'
+			if (.Platform$OS.type != "unix") par.type <- 'SNOW'; parallel.config[['TYPE']] <- 'SOCK'
 		}
 	}
 	
