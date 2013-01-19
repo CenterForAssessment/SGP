@@ -3,6 +3,7 @@ Changes in version: SGP_1.0-2.0
   USER VISIBLE CHANGES:
 
 	  o Deprecated use of MULTICORE, MPI, and REDIS in favor of PARALLEL.
+	  o Exported previously internal function createKnotsBoundaries allowing for users to generated Knots, Boundaries, Loss/Hoss values separately.
 
 Changes in version: SGP_1.0-0.0
 
