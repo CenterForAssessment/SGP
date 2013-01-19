@@ -79,7 +79,7 @@ function(sgp_object,
 	## Set up parallel.config if NULL
 
 	if (is.null(parallel.config)) {
-		 parallel.config=list(BACKEND="FOREACH", TYPE="NA", WORKERS=list(SUMMARY=1))
+		 parallel.config=list(BACKEND="PARALLEL", WORKERS=list(SUMMARY=1))
 	}
 
 	## Utility Functions
