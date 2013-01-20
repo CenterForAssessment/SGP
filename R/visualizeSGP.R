@@ -230,7 +230,8 @@ function(sgp_object,
 						year=gaPlot.iter[["YEAR"]], 
 						format=gaPlot.format,
 						baseline=gaPlot.baseline,
-						pdf.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))
+						output.format=c("PDF", "PNG"),
+						output.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))
 
 			} ## END dopar 
 		} ## END FOREACH
@@ -248,7 +249,8 @@ function(sgp_object,
 						year=gaPlot.iter[["YEAR"]], 
 						format=gaPlot.format,
 						baseline=gaPlot.baseline,
-						pdf.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]])))
+						output.format=c("PDF", "PNG"),
+						output.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]])))
 		}
 		
 		if (par.start$par.type=="MULTICORE") {
@@ -263,7 +265,8 @@ function(sgp_object,
 						year=gaPlot.iter[["YEAR"]], 
 						format=gaPlot.format,
 						baseline=gaPlot.baseline,
-						pdf.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))}, 
+						output.format=c("PDF", "PNG"),
+						output.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))}, 
 				mc.cores=par.start$workers, mc.preschedule=FALSE)
 		}
 		

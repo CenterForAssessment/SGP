@@ -227,6 +227,13 @@ function(sgp_object,
 					)
 				}
 
+				if ("SCALE_SCORE_PRIOR_STANDARDIZED" %in% names(sgp_object@Data)) {
+					tmp.sgp.summaries <- c(
+						tmp.sgp.summaries,
+						MEAN_SCALE_SCORE_PRIOR_STANDARDIZED="mean_na(SCALE_SCORE_PRIOR_STANDARDIZED)"
+					)
+				}
+
 				if (!is.null(my.sgp.target)) {
 					tmp.sgp.summaries <- c(
 						tmp.sgp.summaries, 
@@ -476,7 +483,7 @@ function(sgp_object,
 	}
 
 	variables.for.summaries <- intersect(c(my.sgp, my.sgp.target, my.sgp.target.musu, 
-						"ACHIEVEMENT_LEVEL", "ACHIEVEMENT_LEVEL_PRIOR", "CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STAY_UP_STATUS",
+						"ACHIEVEMENT_LEVEL", "ACHIEVEMENT_LEVEL_PRIOR", "CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STAY_UP_STATUS", "SCALE_SCORE_PRIOR_STANDARDIZED",
 						unique(as.character(unlist(summary.groups)))),
 					names(sgp_object@Data)) 
 

@@ -30,6 +30,7 @@ function(panel.data,         ## REQUIRED
          convert.using.loss.hoss=TRUE,
          goodness.of.fit=TRUE,
          return.prior.scale.score=TRUE,
+         return.prior.scale.score.standardized=TRUE,
          return.norm.group.identifier=TRUE,
          print.time.taken=TRUE,
          parallel.config=NULL) {
@@ -803,6 +804,11 @@ function(panel.data,         ## REQUIRED
 		if (return.prior.scale.score) {
 			SCALE_SCORE_PRIOR <- NULL
 			quantile.data[,SCALE_SCORE_PRIOR:=prior.ss]
+		}
+
+		if (return.prior.scale.score.standardized) {
+			SCALE_SCORE_PRIOR_STANDARDIZED <- NULL
+			quantile.data[,SCALE_SCORE_PRIOR_STANDARDIZED:=as.numeric(scale(prior.ss))]
 		}
 
 		if (print.sgp.order | return.norm.group.identifier) {
