@@ -1,3 +1,9 @@
+Changes in version: SGP_1.0-4.0
+
+  BUG FIXES:
+
+	  o Fixed bug associated with creation of enhanced goodness of fit plots.
+
 Changes in version: SGP_1.0-3.0
 
   USER VISIBLE CHANGES:

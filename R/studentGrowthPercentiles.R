@@ -246,7 +246,7 @@ function(panel.data,         ## REQUIRED
 	} 
 
 	.csem.score.simulator <- function(scale_scores, grade, content_area, year, state, variable, distribution, round) {
-		GRADE <- CONTENT_AREA <- YEAR <- NULL ## To avoid R CMD check warnings
+		GRADE <- CONTENT_AREA <- YEAR <- NULL
 		if (is.null(round)) round <- 1
 		if (is.null(distribution)) distribution <- "Normal"
 		if (!is.null(state)) min.max <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]][[paste("loss.hoss_", grade, sep="")]]
@@ -836,6 +836,7 @@ function(panel.data,         ## REQUIRED
 
 		if (is.character(goodness.of.fit) | goodness.of.fit==TRUE) {
 			if (is.character(goodness.of.fit) & goodness.of.fit %in% ls(SGPstateData)) {
+				GRADE <- NULL
 				tmp.gof.data <- getAchievementLevel(
 							sgp_data=data.table(
 								SCALE_SCORE=quantile.data[['SCALE_SCORE_PRIOR']],
@@ -843,11 +844,11 @@ function(panel.data,         ## REQUIRED
 								VALID_CASE="VALID_CASE", 
 								CONTENT_AREA=sgp.labels[['my.subject']], 
 								YEAR=sgp.labels[['my.year']], 
-								GRADE=tmp.last),
+								GRADE=tail(tmp.gp, 2)[1]),
 							state=goodness.of.fit,
 							year=sgp.labels[['my.year']],
 							content_area=sgp.labels[['my.subject']],
-							grade=tmp.last)
+							grade=tail(tmp.gp, 2)[1])[,GRADE:=tmp.last]
 				setnames(tmp.gof.data, c("SCALE_SCORE", "ACHIEVEMENT_LEVEL"), c("SCALE_SCORE_PRIOR", "ACHIEVEMENT_LEVEL_PRIOR"))
 
 				Goodness_of_Fit[[tmp.path]][['TMP_NAME']] <- gofSGP(
