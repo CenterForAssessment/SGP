@@ -77,10 +77,18 @@ function(sgp_object,
 		if (length(sgp_object@SGP[["Goodness_of_Fit"]]) > 0) {
 			for (i in names(sgp_object@SGP[["Goodness_of_Fit"]])) {
 				dir.create(paste("Goodness_of_Fit/", i, sep=""), recursive=TRUE, showWarnings=FALSE)
-					for (j in names(sgp_object@SGP[["Goodness_of_Fit"]][[i]])) {
-						pdf(file=paste("Goodness_of_Fit/", i, "/", j, ".pdf", sep=""), width=8.5, height=11)
-						grid.draw(sgp_object@SGP[["Goodness_of_Fit"]][[i]][[j]])
-						dev.off()
+					for (output.format in c("PDF", "PNG")) {
+						for (j in names(sgp_object@SGP[["Goodness_of_Fit"]][[i]])) {
+							if (output.format=="PDF") {
+								pdf(file=paste("Goodness_of_Fit/", i, "/", j, ".pdf", sep=""), width=8.5, height=11)
+							}
+							if (output.format=="PNG") {
+								Cairo(file=paste("Goodness_of_Fit/", i, "/", j, ".png", sep=""), 
+								      width=8.5, height=11, units="in", dpi=144, pointsize=24, bg="transparent")
+							}
+							grid.draw(sgp_object@SGP[["Goodness_of_Fit"]][[i]][[j]])
+							dev.off()
+						}
 					}
 				}
 		} else {
@@ -889,6 +897,7 @@ function(sgp_object,
 						drop.nonsequential.grade.progression.variables=FALSE,
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
+						goodness.of.fit=state,
 						...)
 				} else {
 					tmp_sgp_object <- studentGrowthPercentiles(
@@ -906,6 +915,7 @@ function(sgp_object,
 						drop.nonsequential.grade.progression.variables=FALSE,
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
+						goodness.of.fit=state,
 						...)
 				}
 				suppressMessages(gc())
@@ -938,6 +948,7 @@ function(sgp_object,
 					drop.nonsequential.grade.progression.variables=FALSE,
 					exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 					sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
+					goodness.of.fit=state,
 					...)
 				suppressMessages(gc())
 			}

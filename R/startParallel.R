@@ -8,10 +8,8 @@ function(
 		stop(paste('\n\t', parallel.config[['BACKEND']], "no longer supported.  Please use the 'PARALLEL' package backend and R > 2.12 for parallel computation.\n"))
 	}
 	
-	if (toupper(parallel.config[['BACKEND']]) == 'FOREACH') {
-		if (parallel.config[['TYPE']]!="doParallel" & !is.na(parallel.config[['TYPE']])) { # this needs to be nested inside first if statement otherwise logical(0) and spits error if BACKEND != FOREACH...
+	if (toupper(parallel.config[['BACKEND']]) == 'FOREACH' && (parallel.config[['TYPE']] != "doParallel" & !is.na(parallel.config[['TYPE']]))) {
 			stop(paste('\n\t', parallel.config[['TYPE']], "no longer supported.  Please use doParallel and R > 2.12 for parallel computation.\n"))
-		}
 	}
 	
 	workers <- NULL; par.type <- 'OTHER'; TAUS.LIST <- NULL
@@ -58,8 +56,8 @@ function(
 	
 	if (toupper(parallel.config[['BACKEND']]) == 'FOREACH') {
 		if (!is.na(parallel.config[['TYPE']]) & !identical(parallel.config[['TYPE']], "NA")) {
-			eval(parse(text=paste("require(", parallel.config[['TYPE']], ")")))
-		} else parallel.config[['TYPE']] <- "NA"
+			eval(parse(text=paste("suppressPackageStartupMessages(require(", parallel.config[['TYPE']], "))")))
+		} else parallel.config[['TYPE']] <- "doParallel"
 
 		# if (parallel.config[['TYPE']]=="doMC" & is.null(parallel.config[['OPTIONS']][["preschedule"]])) {
 			# if (is.list(parallel.config[['OPTIONS']])) {
@@ -91,7 +89,7 @@ function(
 	if (toupper(parallel.config[['BACKEND']]) == 'PARALLEL') {
 		# Weird error for MPI stopCluster(...) 'Error in NextMethod() : 'NextMethod' called from an anonymous function'  load snow first removes it.
 		# if (!is.null(parallel.config[['TYPE']]) && parallel.config[['TYPE']] == 'MPI') require(snow)  #  Don't think this is a problem any more... 08/03/12
-		require(parallel)
+		suppressPackageStartupMessages(require(parallel))
 		if (!is.null(parallel.config[['TYPE']])) {
 			if (!parallel.config[['TYPE']] %in% c('SOCK', 'MPI')) {
 				stop("The 'snow' package will be used when 'parallel.config$TYPE' is specified and BACKEND=='PARALLEL'.  List element must be 'SOCK' or 'MPI'.")
@@ -121,6 +119,7 @@ function(
 	###
 	###  Need this for all flavors - move to startParallel
 	###
+
 	if (process=='TAUS') {
 		chunk.size <- ceiling(length(qr.taus) / workers)
 		TAUS.LIST <- vector("list", workers)

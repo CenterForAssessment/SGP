@@ -30,6 +30,7 @@ function(panel.data,         ## REQUIRED
          convert.using.loss.hoss=TRUE,
          goodness.of.fit=TRUE,
          return.prior.scale.score=TRUE,
+         return.prior.scale.score.standardized=TRUE,
          return.norm.group.identifier=TRUE,
          print.time.taken=TRUE,
          parallel.config=NULL) {
@@ -543,7 +544,7 @@ function(panel.data,         ## REQUIRED
 			tmp.messages <- c(tmp.messages, paste("\tNOTE: Specified argument num.prior (", num.prior, ") exceeds number of panels of data supplied. Analyses will utilize maximum number of priors possible.\n", sep=""))
 			num.prior <- length(tmp.gp[!is.na(tmp.gp)])-1
 		} else {
-			tmp.gp <- tail(tmp.gp[!is.na(tmp.gp)], num.prior+1)
+			tmp.gp <- grade.progression <- tail(tmp.gp[!is.na(tmp.gp)], num.prior+1)
 			
 	}} else {
 		num.prior <- length(tmp.gp[!is.na(tmp.gp)])-1
@@ -558,7 +559,9 @@ function(panel.data,         ## REQUIRED
 	if (is.character(tmp.gp)) {
 		tmp.slot.gp <- tmp.gp
 		tmp.gp <- tmp.gp[!is.na(tmp.gp)]
-	}	else tmp.slot.gp <- grade.progression
+	} else {
+		tmp.slot.gp <- grade.progression
+	}
 
 	if (!is.null(max.order.for.percentile)) {
 		tmp.gp <- tail(tmp.gp, max.order.for.percentile+1)
@@ -795,12 +798,17 @@ function(panel.data,         ## REQUIRED
 		if (!is.null(percentile.cuts)){
 			cuts.best <- data.table(rbindlist(tmp.percentile.cuts), key="ID")
 			cuts.best <- cuts.best[c(which(!duplicated(cuts.best))[-1]-1, nrow(cuts.best))][,-1, with=FALSE]
-			quantile.data <- cbind(quantile.data, cuts.best)
+			quantile.data <- data.table(quantile.data, cuts.best)
 		}
 
 		if (return.prior.scale.score) {
 			SCALE_SCORE_PRIOR <- NULL
 			quantile.data[,SCALE_SCORE_PRIOR:=prior.ss]
+		}
+
+		if (return.prior.scale.score.standardized) {
+			SCALE_SCORE_PRIOR_STANDARDIZED <- NULL
+			quantile.data[,SCALE_SCORE_PRIOR_STANDARDIZED:=as.numeric(scale(prior.ss))]
 		}
 
 		if (print.sgp.order | return.norm.group.identifier) {

@@ -1,4 +1,15 @@
-Changes in version: SGP_1.0-1.0
+Changes in version: SGP_1.0-2.0
+
+  USER VISIBLE CHANGES:
+
+	  o Deprecated use of MULTICORE, MPI, and REDIS in favor of PARALLEL.
+	  o Exported previously internal function createKnotsBoundaries allowing for users to generated Knots, Boundaries, Loss/Hoss values separately.
+	  o studentGrowthPercentiles includes new argument for 'return.prior.scale.score.standardize' that generates the variable 'SCALE_SCORE_PRIOR_STANDARDIZED'.
+	  o growthAchievementPlot includes new argument for 'output.format' that allows for both 'PDF' and 'PNG' output.
+	  o Previous growthAchievementPlot argument 'pdf.folder' changed to 'output.folder'.
+	  o analyzeSGP prints goodness of fit plots in two formats: 'PDF' and 'PNG'.
+
+Changes in version: SGP_1.0-0.0
 
   NEW FEATURES:
 

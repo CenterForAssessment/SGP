@@ -11,8 +11,9 @@
 	content_area,
 	year, 
 	format="print",
-	baseline=FALSE, 
-	pdf.folder,
+	baseline=FALSE,
+	output.format="PDF",
+	output.folder,
 	assessment.name) { 
 
 	CUTLEVEL <- GRADE <- YEAR <- ID <- SCALE_SCORE <- level_1_curve <- V1 <- TRANSFORMED_SCALE_SCORE <- PERCENTILE <- NULL ## To prevent R CMD check warnings
@@ -22,7 +23,7 @@
 	## State stuff
 
 	if (state %in% c(state.abb, "DEMO")) {
-		state.name.label <- c(state.name, "DEMONSTRATION")[state==c(state.abb, "DEMO")]
+		state.name.label <- c(state.name, "Demonstration")[state==c(state.abb, "DEMO")]
 	} else {
 		state.name.label <- test.abbreviation.label <- state
 	}
@@ -39,7 +40,7 @@
 
 	## Create folder for plots
 
-	dir.create(pdf.folder, recursive=TRUE, showWarnings=FALSE)
+	dir.create(output.folder, recursive=TRUE, showWarnings=FALSE)
 
 	## Create default values
 
@@ -278,8 +279,6 @@
 
 		tmp2.df <- subset(tmp1.df, ID==j)
 		tmp.df <- data.frame(matrix(c(as.numeric(as.character(tmp2.df$ID[1])), tmp2.df$GRADE, tmp2.df$SCALE_SCORE), nrow=1))
-		pdf(file=paste(pdf.folder, "/", state.name.file.label, "_State_Growth_and_Achievement_Plot_", capwords(content_area), "_", year, "_Level_", j, ".pdf", sep=""), 
-			width=8.5, height=11, bg=format.colors.background)
 
 	## Create Percentile Trajectory functions
 
@@ -342,6 +341,22 @@
 				 xscale=c(0,1),
 				 yscale=c(0,1),
 				 gp=gpar(fill="transparent"))
+
+##
+## Loop over output.format
+##
+
+		for (k in output.format) {
+
+		if (k=="PDF") {
+			pdf(file=paste(output.folder, "/", state.name.file.label, "_State_Growth_and_Achievement_Plot_", capwords(content_area), "_", year, "_Level_", j, ".pdf", sep=""), 
+				width=8.5, height=11, bg=format.colors.background)
+		}
+		if (k=="PNG") {
+			Cairo(file=paste(output.folder, "/", state.name.file.label, "_State_Growth_and_Achievement_Plot_", capwords(content_area), "_", year, "_Level_", j, ".png", sep=""),
+			      width=8.5, height=11, units="in", dpi=144, pointsize=24, bg=format.colors.background)
+
+		}
 
 
 ##
@@ -543,13 +558,13 @@
 	
 	grid.roundrect(width=unit(0.95, "npc"), r=unit(0.025, "snpc"), gp=gpar(col=format.colors.font, lwd=1.6))
 	grid.text(x=0.5, y=0.675, paste(state.name.label, ": ", pretty_year(year), " ", content_area.label, sep=""), 
-		gp=gpar(col=format.colors.font, fontface=2, fontfamily="Helvetica-Narrow", cex=3.0), default.units="native")
+		gp=gpar(col=format.colors.font, cex=2.65), default.units="native")
 	if (is.null(SGPstateData[[state]][["Achievement"]][["College_Readiness_Cutscores"]])) {
 		grid.text(x=0.5, y=0.275, "Norm & Criterion Referenced Growth & Achievement", 
-			gp=gpar(col=format.colors.font, fontface=2, fontfamily="Helvetica-Narrow", cex=2.25), default.units="native")
+			gp=gpar(col=format.colors.font, cex=2.0), default.units="native")
 	} else {
 		grid.text(x=0.5, y=0.275, "Norm & Criterion Referenced Growth to College Readiness", 
-			gp=gpar(col=format.colors.font, fontface=2, fontfamily="Helvetica-Narrow", cex=2.0), default.units="native")
+			gp=gpar(col=format.colors.font, cex=1.75), default.units="native")
 	}
 	
 	popViewport() ## pop title.vp
@@ -561,10 +576,12 @@
 	
 	popViewport()
 	
+	dev.off()
+		} ### END Loop over output.format
+
 	message(paste("\tStarted", year, state.name.label, content_area, "growthAchievementPlot:",  started.date))
 	message(paste("\tFinished", year, state.name.label, content_area, "growthAchievementPlot:",  date(), "in", timetaken(started.at), "\n"))
-	
-	dev.off()
+
 	
 	} ## End loop over starting scores or students
 
