@@ -5,6 +5,15 @@ function(tmp.data,
 	CONTENT_AREA <- GRADE <- VALID_CASE <- NULL
 
 	tmp.grade.list <- tmp.list <- list()
+
+	if (!is.data.table(tmp.data)) {
+		if (!all(c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID") %in% names(tmp.data))) {
+			stop("NOTE: Data set used for the creation of Knots and Boundaries must contain (at a minimum) the variables 'VALID_CASE', 'CONTENT_AREA', 'YEAR', 'ID'")
+		}
+		tmp.data <- as.data.table(tmp.data)
+		setkeyv(tmp.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
+	}
+
 	for (my.list.label in unique(tmp.data["VALID_CASE"][["CONTENT_AREA"]])) {
 		tmp.grade.list[[my.list.label]] <- sort(unique(tmp.data[SJ("VALID_CASE", my.list.label)][["GRADE"]]))
 		for (j in seq_along(tmp.grade.list[[my.list.label]])) {

@@ -74,7 +74,7 @@ function(sgp_object,
 	### Set up parallel.config if NULL
 
 	if (is.null(parallel.config)) {
-		parallel.config = list(BACKEND="FOREACH", TYPE=NA, WORKERS=list(GA_PLOTS=1, SG_PLOTS=1, SG_PLOTS_TARGETS=1))
+		parallel.config = list(BACKEND="PARALLEL", WORKERS=list(GA_PLOTS=1, SG_PLOTS=1, SG_PLOTS_TARGETS=1))
 	}
 
 	### Utility functions	
@@ -230,7 +230,8 @@ function(sgp_object,
 						year=gaPlot.iter[["YEAR"]], 
 						format=gaPlot.format,
 						baseline=gaPlot.baseline,
-						pdf.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))
+						output.format=c("PDF", "PNG"),
+						output.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))
 
 			} ## END dopar 
 		} ## END FOREACH
@@ -248,7 +249,8 @@ function(sgp_object,
 						year=gaPlot.iter[["YEAR"]], 
 						format=gaPlot.format,
 						baseline=gaPlot.baseline,
-						pdf.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]])))
+						output.format=c("PDF", "PNG"),
+						output.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]])))
 		}
 		
 		if (par.start$par.type=="MULTICORE") {
@@ -263,7 +265,8 @@ function(sgp_object,
 						year=gaPlot.iter[["YEAR"]], 
 						format=gaPlot.format,
 						baseline=gaPlot.baseline,
-						pdf.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))}, 
+						output.format=c("PDF", "PNG"),
+						output.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))}, 
 				mc.cores=par.start$workers, mc.preschedule=FALSE)
 		}
 		
@@ -665,7 +668,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 	#### Anonymize (if requested) (NOT necessary if wide data is provided)
  
 		if (sgPlot.anonymize) {
-			require(randomNames)
+			suppressPackageStartupMessages(require(randomNames))
 			if (!"ETHNICITY" %in% names(tmp.table)) tmp.table[["ETHNICITY"]] <- 1
 			if (!"GENDER" %in% names(tmp.table)) tmp.table[["GENDER"]] <- round(runif(dim(tmp.table)[1], min=0, max=1))
 			tmp.dt <- tmp.table[,list(ID, ETHNICITY, GENDER)]

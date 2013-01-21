@@ -1,5 +1,5 @@
 `.onLoad` <- 
-function(libname, pkgname="SparseM") {
+function(libname, pkgname) {
 }
 
 

@@ -21,7 +21,7 @@ function(
 	if (1 %in% TEST_NUMBER) {
 
 	options(error=recover)
-	require(parallel)
+	suppressPackageStartupMessages(require(parallel))
 	Demonstration_SGP <- tmp.messages <- NULL
 	number.cores <- detectCores()-1
 
@@ -108,7 +108,7 @@ function(
 	if (2 %in% TEST_NUMBER) {
 
 	options(error=recover)
-	require(parallel)
+	suppressPackageStartupMessages(require(parallel))
 	Demonstration_SGP <- tmp.messages <- NULL
 	Demonstration_Data_LONG <- subset(sgpData_LONG, YEAR %in% c("2007_2008", "2008_2009", "2009_2010", "2010_2011"))
 	Demonstration_Data_LONG_2011_2012 <- subset(sgpData_LONG, YEAR %in% c("2011_2012"))
