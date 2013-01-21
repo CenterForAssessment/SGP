@@ -170,7 +170,7 @@ bubblePlot(
 	Default value is \code{bubble_plot_configs.BUBBLE_COLOR="deeppink2"}.
 	}
 	\item{bubble_plot_configs.BUBBLE_COLOR_GRADIENT_REVERSE}{
-	Boolean arugment (defaults to FALSE) indicating whether to reverse color gradient associated with bubbles.
+	Boolean argument (defaults to FALSE) indicating whether to reverse color gradient associated with bubbles.
 	}
 	\item{bubble_plot_configs.BUBBLE_TIPS}{
 	Default value is \code{bubble_plot_configs.BUBBLE_TIPS=TRUE}.

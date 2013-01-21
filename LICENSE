@@ -1,14 +1,6 @@
-Functions in the SGP package are issued under two different licenses:
-
-  o bubblePlot and studentGrowthPlot are issued under CC BY-NC-SA 3.0: http://creativecommons.org/licenses/by-nc-sa/3.0/us/
-  o All other functions are issued under CC BY-SA 3.0: http://creativecommons.org/licenses/by-sa/3.0/us/
-
-In particular note that the bubblePlot and studentGrowthPlot functions are NOT to 
-be used for any commercial purpose. This restriction does not apply to the other functions.
-
 Use of this package for any purpose requires attribution: 
 
-Damian W. Betebenner (2012). 
+Damian W. Betebenner, Adam Van Iwaarden and Ben Domingue (2013).
 SGP: An R Package for the Calculation and Visualization of Student Growth Percentiles. 
 http://cran.r-project.org/web/packages/SGP/
 https://github.com/StudentGrowthPercentiles/SGP

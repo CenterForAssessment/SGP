@@ -78,7 +78,7 @@ achievement as the vertical dimension of the \code{\link{bubblePlot}}.
   }
 }
 
-\details{\code{bubblePlot_Styles} is an omnibus function containing a number of applications of the \code{bubblePlot} function with data output from \code{SGP} analyses. As added stytles are 
+\details{\code{bubblePlot_Styles} is an omnibus function containing a number of applications of the \code{bubblePlot} function with data output from \code{SGP} analyses. As added styles are 
 constructed they will be added to the function allowing user to construct plots of their liking. User wishing to participate and provide or suggest specific styles of their own should
 contact the package maintainer. Styles representing summary level data (e.g., growth and achievement for schools) are currently assigned numbers from 1 to 99 and styles representing
 individual level data (e.g., growth and achievement for students within a single grade) are currently assigned numbers from 100 to 199. 
@@ -90,7 +90,7 @@ individual level data (e.g., growth and achievement for students within a single
 \value{Function produces \emph{numerous} PDF bubble charts in the styles specified by the function. 
 }
 
-\author{Damian W. Betebenner \email{dbetebenner@nciea.org}}
+\author{Damian W. Betebenner \email{dbetebenner@nciea.org} and Adam Van Iwaarden \email{vaniwaarden@colorado.edu}}
 
 \keyword{misc}
 \keyword{models}

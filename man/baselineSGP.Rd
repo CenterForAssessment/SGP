@@ -2,7 +2,7 @@
 \alias{baselineSGP}
 \title{Analyze student data to produce student growth percentiles and coefficient matrices from a baseline (i.e. multiple cohort) norm group}
 \description{
-  Utility function/exemplar used to produce student growth percentiles using long formatted data like that provided by \code{\link{prepareSGP}}. Used as part of \code{\link{analyzeSGP}} for baseline refeenced student growth percentile analyses.
+  Utility function/exemplar used to produce student growth percentiles using long formatted data like that provided by \code{\link{prepareSGP}}. Used as part of \code{\link{analyzeSGP}} for baseline referenced student growth percentile analyses.
 }
 
 \usage{
@@ -43,7 +43,7 @@ To utilize the maximum matrix order, set to NULL.
   }
   \item{return.matrices.only}{Boolean variable indicating whether the function will only return baseline referenced coefficient matrices. Defaults to FALSE.
   }
-  \item{calculate.baseline.sgps}{Boolean variable indicating whether the function will calcualte baseline referenced student growth percentiles from baseline referenced coefficient matrices. Defaults to TRUE.
+  \item{calculate.baseline.sgps}{Boolean variable indicating whether the function will calculate baseline referenced student growth percentiles from baseline referenced coefficient matrices. Defaults to TRUE.
   }
   \item{goodness.of.fit.print}{Boolean variable indicating whether the function will export goodness of fit plots if baseline referenced student growth percentiles are calculated. Defaults to TRUE.
   }

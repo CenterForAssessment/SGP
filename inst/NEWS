@@ -1,4 +1,4 @@
-Changes in version: SGP_1.0-2.0
+Changes in version: SGP_1.0-3.0
 
   USER VISIBLE CHANGES:
 
@@ -8,6 +8,8 @@ Changes in version: SGP_1.0-2.0
 	  o growthAchievementPlot includes new argument for 'output.format' that allows for both 'PDF' and 'PNG' output.
 	  o Previous growthAchievementPlot argument 'pdf.folder' changed to 'output.folder'.
 	  o analyzeSGP prints goodness of fit plots in two formats: 'PDF' and 'PNG'.
+	  o Added Australia/NAPLAN data to SGPstateData.
+	  o Updated CITATION.
 
 Changes in version: SGP_1.0-0.0
 

@@ -3,7 +3,7 @@
 \title{growthAchievementPlot for SGP}
 \description{
 Function to create growth and achievement plots depicting system level results associated with student growth percentile results. The charts show, simultaneously, 
-norm- and criterion-referneced student achievement (i.e., status) as well as norm- and criterion-referenced student growth. These charts are those shown on the 
+norm- and criterion-referenced student achievement (i.e., status) as well as norm- and criterion-referenced student growth. These charts are those shown on the 
 cover of the December 2009 Issue of \emph{Educational Measurement: Issues and Practice}. See Betebenner (2009) and Betebenner (2012) for more details
 }
 \usage{
