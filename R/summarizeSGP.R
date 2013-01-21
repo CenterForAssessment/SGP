@@ -109,6 +109,7 @@ function(sgp_object,
 	median_na <- function(x) median(as.numeric(x), na.rm=TRUE)
 	boot.median <- function(x,i) median(x[i], na.rm=TRUE)
 	mean_na <- function(x, result.digits=2) round(mean(as.numeric(x), na.rm=TRUE), digits=result.digits)
+	sd_na <- function(x, result.digits=2) round(sd(as.numeric(x), na.rm=TRUE), digits=result.digits)
 	num_non_missing <- function(x) sum(!is.na(as.numeric(x)))
 	sgp_standard_error <- function(x,y=1) round(y*sd(x, na.rm=TRUE)/sqrt(sum(!is.na(as.numeric(x)))), digits=2)
 
@@ -230,7 +231,8 @@ function(sgp_object,
 				if ("SCALE_SCORE_PRIOR_STANDARDIZED" %in% names(sgp_object@Data)) {
 					tmp.sgp.summaries <- c(
 						tmp.sgp.summaries,
-						MEAN_SCALE_SCORE_PRIOR_STANDARDIZED="mean_na(SCALE_SCORE_PRIOR_STANDARDIZED)"
+						MEAN_SCALE_SCORE_PRIOR_STANDARDIZED="mean_na(SCALE_SCORE_PRIOR_STANDARDIZED)",
+						SD_SCALE_SCORE_PRIOR_STANDARDIZED="sd_na(SCALE_SCORE_PRIOR_STANDARDIZED)"
 					)
 				}
 
