@@ -232,7 +232,7 @@ function(sgp_object,
 					tmp.sgp.summaries <- c(
 						tmp.sgp.summaries,
 						MEAN_SCALE_SCORE_PRIOR_STANDARDIZED="mean_na(SCALE_SCORE_PRIOR_STANDARDIZED)",
-						SD_SCALE_SCORE_PRIOR_STANDARDIZED="sd_na(SCALE_SCORE_PRIOR_STANDRDIZED)"
+						SD_SCALE_SCORE_PRIOR_STANDARDIZED="sd_na(SCALE_SCORE_PRIOR_STANDARDIZED)"
 					)
 				}
 
