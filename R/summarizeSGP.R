@@ -108,7 +108,7 @@ function(sgp_object,
 
 	median_na <- function(x) median(as.numeric(x), na.rm=TRUE)
 	boot.median <- function(x,i) median(x[i], na.rm=TRUE)
-	mean_na <- function(x, result.digits=1) round(mean(as.numeric(x), na.rm=TRUE), digits=result.digits)
+	mean_na <- function(x, result.digits=2) round(mean(as.numeric(x), na.rm=TRUE), digits=result.digits)
 	num_non_missing <- function(x) sum(!is.na(as.numeric(x)))
 	sgp_standard_error <- function(x,y=1) round(y*sd(x, na.rm=TRUE)/sqrt(sum(!is.na(as.numeric(x)))), digits=2)
 
