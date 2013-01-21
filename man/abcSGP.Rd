@@ -99,7 +99,7 @@ If missing the function will use the data to infer all the grade progressions fo
 Summary slot. 
 }
 
-\author{Damian W. Betebenner \email{dbetebenner@nciea.org}}
+\author{Damian W. Betebenner \email{dbetebenner@nciea.org} and Adam Van Iwaarden \email{vaniwaarden@colorado.edu}}
 
 \seealso{\code{\link{prepareSGP}}, \code{\link{analyzeSGP}}, \code{\link{combineSGP}}, \code{\link{summarizeSGP}},  \cr
 \code{\link{studentGrowthPercentiles}}, and \code{\link{studentGrowthProjections}}}

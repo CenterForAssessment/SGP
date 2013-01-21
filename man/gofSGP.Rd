@@ -33,7 +33,7 @@ gofSGP(
   }
   \item{output.format}{Character vectors (defaults to 'PDF') indicating what driver to use to output results. Options currently include 'PDF' and 'PNG'.
   }
-  \item{color.scale}{Character vectors (defaults to 'red') indicating what color pallete to use for creating percentile distribution table.
+  \item{color.scale}{Character vectors (defaults to 'red') indicating what color palette to use for creating percentile distribution table.
   }
 }
 

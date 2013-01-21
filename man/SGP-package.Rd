@@ -6,23 +6,23 @@
 \description{
 SGP contains classes and functions to calculate student growth percentiles and percentile growth projections/trajectories following methodology found in Betebenner (2008, 2009).
 The package contains two primary functions, \code{\link{studentGrowthPercentiles}} and \code{\link{studentGrowthProjections}}, and numerous higher level functions
-that make use of them including: \code{prepareSGP}, \code{\link{analyzeSGP}}, \code{\link{combineSGP}}, \code{\link{summarizeSGP}}, and \code{\link{visualizeSGP}}. These 
-functions are used to calculate and visualize student growth percentiles and percentile growth projections/trajectories for students using large scale, longitudinal assessment data. 
-These norm- and criterion-referenced growth values are currently used in a number of states for many purpses including diagnostic and accountability. The functions employ quantile 
-regression (using the \code{quantreg} package) to estimate the conditional density for current achievement using each student's achievement history. 
+that make use of them including: \code{\link{prepareSGP}}, \code{\link{analyzeSGP}}, \code{\link{combineSGP}}, \code{\link{summarizeSGP}}, \code{\link{visualizeSGP}} and
+\code{\link{outputSGP}}. These functions are used to calculate and visualize student growth percentiles and percentile growth projections/trajectories for students using large scale, 
+longitudinal assessment data.  These norm- and criterion-referenced growth values are currently used in a number of states for many purposes including diagnostic and accountability. 
+The functions employ quantile regression (using the \code{quantreg} package) to estimate the conditional density for current achievement using each student's achievement history. 
 Percentile growth projections/trajectories are calculated using the coefficient matrices derived from the student growth percentile analyses. These quantities
 are summarized in a variety of ways to describe student growth. As of the 0.2-0.0 release, the package also includes the graphics functions 
 \code{\link{bubblePlot}}, \code{\link{studentGrowthPlot}}, and \code{\link{growthAchievementPlot}} to produce high quality graphical representations associated with the student 
-growth percentile analyses. 
+growth percentile analyses.
 }
 
 \details{
 \tabular{ll}{
 Package: \tab SGP\cr
 Type: \tab Package\cr
-Version: \tab 1.0-2.0\cr
-Date: \tab 2013-1-20\cr
-License: \tab CC BY-SA 3.0 US | CC BY-NC-SA 3.0 + file LICENSE\cr
+Version: \tab 1.0-3.0\cr
+Date: \tab 2013-1-21\cr
+License: \tab CC BY-SA 3.0 US + file LICENSE\cr
 LazyLoad: \tab yes\cr
 }
 Calculation of student growth percentiles and percentile growth trajectories/projections is typically performed by grade and subject. Data for growth percentile 

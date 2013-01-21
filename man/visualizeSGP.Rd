@@ -113,7 +113,7 @@ function will produce plots for all available instructors provided in the data w
   }
   \item{bPlot.folder}{Character vector indicating where \code{\link{bubblePlot}}s should be placed. Default folder is "Visualizations/bubblePlots".
   }
-  \item{sgPlot.save.sgPlot.data}{A boolean argument indicating whether wide formatted data should be save as part of indivividual student report production. For operational
+  \item{sgPlot.save.sgPlot.data}{A boolean argument indicating whether wide formatted data should be save as part of individual student report production. For operational
   student report production construction, using a wide formatted file for a large state can save in having to reshape the same long file multiple times.
   }
   \item{sgPlot.years}{A vector indicating year for which to produce \code{\link{studentGrowthPlot}}s. The supplied year indicates the \emph{final} year associated with each
@@ -203,7 +203,7 @@ and represented on the student growth plot using the years forward provided.
   }
  \item{parallel.config}{A named list with, at a minimum, two elements indicating 1) the BACKEND package to be used for parallel computation and 2) the WORKERS list to specify the number of processors to be used in each major analysis.  The BACKEND element can be set = to \code{FOREACH} or \code{PARALLEL}.  Please consult the manuals and vignettes for information of these packages!  The \code{\link{analyzeSGP}} help page contains more thorough explanation and examples of the \code{parallel.config} setup. 
 
-TYPE is a third element of the \code{parallel.config} list that provides necessary information when using FOREACH or PARALLEL packages as the backend. With BACKEND="FOREACH",  the TYPE element specifies the flavor of foreach backend.  As of version 1.0-1.0, only "doParallel" is supported.  TYPE=NA (default) produces summaries sequentially.  If BACKEND = "PARALLEL", the \code{parallel} package will be used.  This package combines deprecated parallel packages \code{snow} and \code{multicore}.  Using the "snow" implementation of \code{parallel} the function will create a cluster object based on the TYPE element specified and the number of workers requested (see WORKERS list description below).  The TYPE element indicates the users preferred cluster type (either "SOCK" for socket cluster of "MPI" for an OpenMPI cluster). If Windows is the operating system, this "snow" implementation must be use and the TYPE element must = "SOCK".  Defaults are assigned based on operating system if TYPE is missing based on system OS.  Unix/Mac OS defaults to the "multicore" to avoid worker node prescheduling and appears to be more efficient in these operating systems. 
+TYPE is a third element of the \code{parallel.config} list that provides necessary information when using FOREACH or PARALLEL packages as the backend. With BACKEND="FOREACH",  the TYPE element specifies the flavor of 'foreach' backend.  As of version 1.0-1.0, only "doParallel" is supported.  TYPE=NA (default) produces summaries sequentially.  If BACKEND = "PARALLEL", the \code{parallel} package will be used.  This package combines deprecated parallel packages \code{snow} and \code{multicore}.  Using the "snow" implementation of \code{parallel} the function will create a cluster object based on the TYPE element specified and the number of workers requested (see WORKERS list description below).  The TYPE element indicates the users preferred cluster type (either "SOCK" for socket cluster of "MPI" for an OpenMPI cluster). If Windows is the operating system, this "snow" implementation must be use and the TYPE element must = "SOCK".  Defaults are assigned based on operating system if TYPE is missing based on system OS.  Unix/Mac OS defaults to the "multicore" to avoid worker node prescheduling and appears to be more efficient in these operating systems. 
 
 The WORKERS element is a list with GA_PLOTS (growth achievement plots) and SG_PLOTS (student growth plots) specifying the number of processors to be used.  NOTE: choice of the number of cores is a balance between the number of processors available and the amount of RAM a system has; each system will be different and may require some adjustment.
 
@@ -227,7 +227,7 @@ Betebenner, D. W. (2009). Norm- and criterion-referenced student growth.
 Educational Measurement: Issues and Practice, 28(4):42-51.
 }
 
-\author{Damian W. Betebenner \email{dbetebenner@nciea.org} and Adam VanIwaarden \email{vaniwaarden@colorado.edu}}
+\author{Damian W. Betebenner \email{dbetebenner@nciea.org} and Adam Van Iwaarden \email{vaniwaarden@colorado.edu}}
 
 \seealso{\code{\link{bubblePlot}}, \code{\link{bubblePlot_Styles}}, \code{\link{studentGrowthPlot}}, \code{\link{growthAchievementPlot}}}
 
