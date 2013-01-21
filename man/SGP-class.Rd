@@ -14,7 +14,7 @@ Objects can be created by calls of the form \code{new("SGP", ...)}, but this is 
 
 \section{Slots}{
   \describe{
-    \item{\code{Data}:}{A data.table including student-level data in a (long) format. Each VALID_CASE, CONTENT_AREA, YEAR, ID combination represents a unique case in the data. See sgpData_LONG for an examplar data set}
+    \item{\code{Data}:}{A data.table including student-level data in a (long) format. Each VALID_CASE, CONTENT_AREA, YEAR, ID combination represents a unique case in the data. See sgpData_LONG for an exemplar data set}
     \item{\code{Names}:}{A data.frame with three columns. The data.frame is used as a lookup table to translate state specific variable names to SGP variable names}
     \item{\code{SGP}:}{A list including the output from \code{\link{analyzeSGP}}}
     \item{\code{Summary}:}{A list including the output from \code{\link{summarizeSGP}}}

@@ -4,7 +4,7 @@
 \description{
 Function includes five "styles" associated with \code{\link{studentGrowthPlot}} to create PDF student growth plots depicting the growth and achievement for an individual
 student over time. The five styles display one to five content area student growth plots on a single page. The one, two, and three content area plots are rendered on 8.5 by 11
-pdfs and the four and five content area plots are rendered on 11 by 17 pdfs. These charts are currently being used in multiple states to report student growth results. This function 
+PDFs and the four and five content area plots are rendered on 11 by 17 PDFs. These charts are currently being used in multiple states to report student growth results. This function 
 is called by \code{\link{visualizeSGP}} to generate individual student reports. This function may expand in the future to incorporate other possible individual student reports.
 }
 \usage{
@@ -87,7 +87,7 @@ achievement reports.
 \value{Function produces \emph{numerous} (potentially hundreds of thousands of) PDF student growth plots. 
 }
 
-\author{Damian W. Betebenner \email{dbetebenner@nciea.org}}
+\author{Damian W. Betebenner \email{dbetebenner@nciea.org} and Adam Van Iwaarden \email{vaniwaarden@colorado.edu}}
 \references{
 Betebenner, D. W. (2012). Growth, standards, and accountability. In G. J. Cizek,
 \emph{Setting Performance Standards: Foundations, Methods & Innovations. 2nd Edition} (pp. 439-450).

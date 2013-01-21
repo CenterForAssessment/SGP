@@ -106,11 +106,11 @@ studentGrowthProjections(panel.data,
   \item{isotonize}{Boolean argument (defaults to TRUE) indicating whether quantile regression results are isotonized to prevent quantile crossing following 
   the methods derived by Dette & Volgushev (2008).
   }
-  \item{lag.increment}{A non-negative integer (defaults to 0) indicating the lag assocated with the data supplied for projections. Only relevant if Cutscores or Knots and Boundares are year dependent. 
+  \item{lag.increment}{A non-negative integer (defaults to 0) indicating the lag associated with the data supplied for projections. Only relevant if Cutscores or Knots and Boundaries are year dependent. 
   }
   \item{projcuts.digits}{The number of digits (defaults to NULL/0) percentile trajectories (if requested) are formatted.
   }
-  \item{print.time.taken}{Boolean argument (defaults to TRUE) indicating whether to print message indicating information on studentGrowthPercentile analysis and time taken.
+  \item{print.time.taken}{Boolean argument (defaults to TRUE) indicating whether to print message indicating information on studentGrowthProjection analysis and time taken.
   }
 }
 
@@ -134,7 +134,7 @@ Dette, H. & Volgushev, S. (2008). Non-crossing non-parametric estimates of quant
 70(3), 609-627.
 }
 
-\author{Damian W. Betebenner \email{dbetebenner@nciea.org} }
+\author{Damian W. Betebenner \email{dbetebenner@nciea.org} and Adam Van Iwaarden \email{vaniwaarden@colorado.edu}}
 
 \note{Use of this function assumes prior calculation of student growth percentiles, making the coefficient matrices available within the  \code{panel.data$Coefficient_Matrices} 
   list object.  Additionally, if cutscores are desired they must be supplied explicitly by the user (as detailed above in

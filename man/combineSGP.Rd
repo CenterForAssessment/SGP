@@ -41,7 +41,7 @@ student growth percentile results.
   \item{max.sgp.target.years.forward}{A integer indicating the number of years forward from the lagged (last year's) score to project forward for growth to standard calculations. Default is 3 years from the present, 4 years from the lagged year, which is the standard in most growth to standard calculations used by state departments of education.
   }
   \item{update.all.years}{A boolean argument defaulting to FALSE indicating whether \code{combineSGP} should delete previously merged variables calculated in \code{\link{analyzeSGP}} and 
-remerge all available data.
+re-merge all available data.
   }
 }
 
@@ -49,7 +49,7 @@ remerge all available data.
 \code{YEAR}, \code{ID} merged with student growth percentiles and/or lagged projection targets and catch-up/keep-up and move-up/stay-up status.
 }
 
-\author{Damian W. Betebenner \email{dbetebenner@nciea.org}}
+\author{Damian W. Betebenner \email{dbetebenner@nciea.org} and Adam Van Iwaarden \email{vaniwaarden@colorado.edu}}
 
 \seealso{\code{\link{prepareSGP}}, \code{\link{analyzeSGP}}}
 

@@ -12,5 +12,7 @@ Wisconsin (WI), Archdioces of Baltimore (AOB), Colorado English Language Assessm
 }
 \usage{data(SGPstateData)}
 
+\author{Damian W. Betebenner \email{dbetebenner@nciea.org} and Adam Van Iwaarden \email{vaniwaarden@colorado.edu}}
+
 \source{State assessment data and technical assessment documentation}
 \keyword{datasets}

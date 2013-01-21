@@ -104,7 +104,7 @@ to calculate the lags/differences based upon the supplied years.
  \code{panel.data$Coefficient_Matrices$my.subject.my.year} where \code{my.subject} and \code{my.year} are provided by \code{sgp.labels}.
   }
  \item{calculate.confidence.intervals}{A character vector providing either a state acronym or a variable name from the supplied panel data. If a state acronym, CSEM tables from the embedded 
-   \code{\link{SGPstateData}} (note: CSEM data must be embedded in the \code{SGPstateData} set. To have your state CSEMs embedd in the \code{SGPstateData} set, please contact the package
+   \code{\link{SGPstateData}} (note: CSEM data must be embedded in the \code{SGPstateData} set. To have your state CSEMs embed in the \code{SGPstateData} set, please contact the package
    administrator) will be used. If a variable name, the supplied panel data must contain a variable providing student level CSEMs (e.g., with adaptive testing). NOTE: If a variable
    name is supplied, the user must also use the argument \code{panel.data.vnames} indicating what variables in the supplied \code{panel.data} will be used for the \code{studentGrowthPercentile} 
    analysis. For greater control, the user can also supply a list of the form \code{list(state= , confidence.quantiles= , simulation.iterations= , distribution= , round= )} or 
@@ -123,7 +123,7 @@ to calculate the lags/differences based upon the supplied years.
   }
   \item{knot.cut.percentiles}{Argument that specifies the quantiles to be used for calculation of B-spline knots. Default is to place knots at the 0.2, 0.4, 0.6, and 0.8 quantiles. 
   }
-  \item{knots.boundaries.by.panel}{Boolean argument (defaults to FALSE) indicating whether knots and boundaries should be calculated by panel in supplied panel data instead of aggregating across panel. If panels are on different scales, then different knots and boundaries may be required to accomodate quantile regression analyses.
+  \item{knots.boundaries.by.panel}{Boolean argument (defaults to FALSE) indicating whether knots and boundaries should be calculated by panel in supplied panel data instead of aggregating across panel. If panels are on different scales, then different knots and boundaries may be required to accommodate quantile regression analyses.
   }
   \item{exact.grade.progression.sequence}{Boolean argument indicating whether the grade.progression supplied is used exactly (TRUE) as supplied or whether lower order analyses are run as part of the whole analysis (FALSE--the default). 
   }
@@ -133,7 +133,7 @@ to calculate the lags/differences based upon the supplied years.
   }
   \item{sgp.quantiles}{Argument to specify quantiles for quantile regression estimation. Default is Percentiles. User can additionally submit a vector of quantiles (between 0 and 1). Goodness of fit output only available currently for PERCENTILES. 
   }
-  \item{sgp.loss.hoss.adjustment}{Argument to control whether SGP is calculated using which.max for values associated with the hoss embedded in SGPstateData. Providing two letter state acronymn utilizes this adjustment whereas supply NULL (the default) uses no adjustment. 
+  \item{sgp.loss.hoss.adjustment}{Argument to control whether SGP is calculated using which.max for values associated with the hoss embedded in SGPstateData. Providing two letter state acronym utilizes this adjustment whereas supply NULL (the default) uses no adjustment. 
   }
   \item{percuts.digits}{Argument specifying how many digits (defaults to 2) to print percentile cuts (if asked for) with.
   }
@@ -188,7 +188,7 @@ Dette, H. & Volgushev, S. (2008). Non-crossing non-parametric estimates of quant
 Koenker, R. (2005). \emph{Quantile regression}. Cambridge: Cambridge University Press.
 }
 
-\author{Damian W. Betebenner \email{dbetebenner@nciea.org}}
+\author{Damian W. Betebenner \email{dbetebenner@nciea.org} and Adam Van Iwaarden \email{vaniwaarden@colorado.edu}}
 
 \seealso{\code{\link{studentGrowthProjections}}, \code{\link{sgpData}}, \code{\link{sgpData_LONG}}, \code{\link{SGPstateData}}}
 
@@ -299,7 +299,7 @@ for (i in seq_along(my.grade.sequences)) {
 write.csv(my.sgpData$SGPercentiles$READING.2012, 
 file="2012_Reading_SGPercentiles.csv", row.names=FALSE, quote=FALSE, na="")
 
-# Create pdfs of all Goodness of Fit results:
+# Create PDFs of all Goodness of Fit results:
 
 for (i in names(my.sgpData$Goodness_of_Fit$READING.2012)) {
     pdf(file=paste(i, "_Reading_2012_GOF.pdf", sep=""), width=8.5, height=11)
@@ -335,7 +335,7 @@ for (i in seq_along(my.grade.sequences)) {
       grade.progression=my.grade.sequences[[i]])
 }
 
-### Example showing how to use pre-calcualted coefficient
+### Example showing how to use pre-calculated coefficient
 ### matrices to calculate student growth percentiles
 
 my.grade.sequences <- list(3:4, 3:5, 3:6, 3:7, 4:8)
