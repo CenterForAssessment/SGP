@@ -31,6 +31,7 @@ function(sgp_object,
 					if (!is.null(content_areas)) tmp.content_areas.diff <- tmp.content_areas.diff[sapply(strsplit(tmp.content_areas.diff, "[.]"), function(x) x[2] %in% content_areas)]
 				}
 				if (length(tmp.content_areas.diff) > 0) {
+					tmp.names <- c(tmp.names, unlist(lapply(tmp.content_areas.diff, function(x) tmp.sgp.names[grep(x, tmp.sgp.names)])))
 					message(c("\tNOTE: Cohort referenced SGPs being used for baseline referenced SGPs for content areas and years: ", 
 						paste(unlist(lapply(tmp.content_areas.diff, function(x) tmp.sgp.names[grep(x, tmp.sgp.names)])), collapse=", ")))
 				}
@@ -44,7 +45,7 @@ function(sgp_object,
 	if (sgp.type %in% c("sgp.projections", "sgp.projections.baseline")) {
 		tmp.lagged.names <- grep("LAGGED", names(sgp_object@SGP$SGProjections), value=TRUE)
 		tmp.sgp.projections.names <- setdiff(names(sgp_object@SGP$SGProjections), tmp.lagged.names)
-		tmp.baseline.names <- grep("BASELINE", tmp.sgp.projections.names, value=TRUE) 
+		tmp.baseline.names <- grep("BASELINE", tmp.sgp.projections.names, value=TRUE)
 		if (sgp.type=="sgp.projections") tmp.names <- tmp.sgp.projections.names %w/o% tmp.baseline.names
 		if (sgp.type=="sgp.projections.baseline") {
 			tmp.names <- tmp.baseline.names
@@ -56,7 +57,8 @@ function(sgp_object,
 					if (!is.null(content_areas)) tmp.content_areas.diff <- tmp.content_areas.diff[sapply(strsplit(tmp.content_areas.diff, "[.]"), function(x) x[2] %in% content_areas)]
 				}
 				if (length(tmp.content_areas.diff) > 0) {
-					message(c("\tNOTE: Cohort referenced lagged.projections being used for baseline referenced lagged projections for content areas and years: ", paste(unlist(lapply(tmp.content_areas.diff, function(x) tmp.lagged.names[grep(x, tmp.lagged.names)])), collapse=", ")))
+					tmp.names <- c(tmp.names, tmp.content_areas.diff)
+					message(c("\tNOTE: Cohort referenced projections being used for baseline referenced projections for content areas and years: ", paste(tmp.content_areas.diff, collapse=", ")))
 				}
 			} ### END if (use.cohort.for.baseline.when.missing)
 		}
@@ -79,6 +81,7 @@ function(sgp_object,
 					if (!is.null(content_areas)) tmp.content_areas.diff <- tmp.content_areas.diff[sapply(strsplit(tmp.content_areas.diff, "[.]"), function(x) x[2] %in% content_areas)]
 				}
 				if (length(tmp.content_areas.diff) > 0) {
+					tmp.names <- c(tmp.names, unlist(lapply(tmp.content_areas.diff, function(x) tmp.lagged.names[grep(x, tmp.lagged.names)])))
 					message(c("\tNOTE: Cohort referenced lagged.projections being used for baseline referenced lagged projections for content areas and years: ", paste(unlist(lapply(tmp.content_areas.diff, function(x) tmp.lagged.names[grep(x, tmp.lagged.names)])), collapse=", ")))
 				}
 			} ### END if (use.cohort.for.baseline.when.missing)
