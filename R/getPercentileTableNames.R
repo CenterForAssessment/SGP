@@ -24,7 +24,7 @@ function(sgp_object,
 		if (sgp.type=="sgp.percentiles.baseline") {
 			tmp.names <- tmp.baseline.names
 			if (use.cohort.for.baseline.when.missing) {
-				tmp.content_areas.diff <- setdiff(unique(sapply(strsplit(tmp.names, "[.]"), function(x) paste(x[1:2], collapse="."))), 
+				tmp.content_areas.diff <- setdiff(unique(sapply(strsplit(tmp.sgp.names, "[.]"), function(x) paste(x[1:2], collapse="."))), 
 					unique(sapply(strsplit(tmp.baseline.names, "[.]"), function(x) paste(x[1:2], collapse="."))))
 				if (length(tmp.content_areas.diff) > 0) {
 					if (!is.null(years)) tmp.content_areas.diff <- tmp.content_areas.diff[sapply(strsplit(tmp.content_areas.diff, "[.]"), function(x) x[2] %in% years)]
