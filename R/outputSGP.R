@@ -23,7 +23,7 @@ function(sgp_object,
 	### Define varaibles (to prevent R CMD check warnings)
 
 	SCALE_SCORE <- CONTENT_AREA <- YEAR <- GRADE <- ID <- ETHNICITY <- GENDER <- LAST_NAME <- FIRST_NAME <- VALID_CASE <- DISTRICT_NUMBER <- SCHOOL_NUMBER <- YEAR_BY_CONTENT_AREA <- NULL
-	names.type <- names.provided <- names.output <- STATE_ENROLLMENT_STATUS <- EMH_LEVEL <- NULL
+	names.type <- names.provided <- names.output <- names.sgp <- STATE_ENROLLMENT_STATUS <- EMH_LEVEL <- NULL
 
 	### Create state (if missing) from sgp_object (if possible)
 
