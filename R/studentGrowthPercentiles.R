@@ -874,7 +874,7 @@ function(panel.data,         ## REQUIRED
 										grades=tmp.last,
 										output.format="GROB")
 			}
-			names(Goodness_of_Fit[[tmp.path]])[length(Goodness_of_Fit[[tmp.path]])] <- paste("GRADE_YEAR", paste(paste(tmp.gp, year.progression, sep="_"), collapse="-"), sep="")
+			names(Goodness_of_Fit[[tmp.path]])[length(Goodness_of_Fit[[tmp.path]])] <- paste("GRADE_YEAR:", paste(paste(tmp.gp, year.progression, sep="_"), collapse="-"), sep="")
 		}
 
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, "SGP", "SGP_BASELINE")
