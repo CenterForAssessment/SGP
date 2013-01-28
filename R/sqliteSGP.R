@@ -442,15 +442,12 @@ function(sgp_object,
 	
 		if ("SCHOOL_NUMBER__INSTRUCTOR_NUMBER__EMH_LEVEL__CONTENT_AREA__YEAR__INSTRUCTOR_ENROLLMENT_STATUS" %in% names(sgp_object@Summary[['SCHOOL_NUMBER']])) {	
 			tmp.table.name <- "SCHOOL_NUMBER__INSTRUCTOR_NUMBER__EMH_LEVEL__CONTENT_AREA__YEAR__INSTRUCTOR_ENROLLMENT_STATUS"
-			tmp <- as.data.frame(convert.variables(subset(sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__EMH_LEVEL__CONTENT_AREA__YEAR"]],
+			tmp <- as.data.frame(convert.variables(subset(sgp_object@Summary[["SCHOOL_NUMBER"]][[tmp.table.name]],
 				!is.na(SCHOOL_NUMBER) & !is.na(INSTRUCTOR_NUMBER) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & 
-				INSTRUCTOR_ENROLLMENT_STATUS=="Enrolled School: Yes" & !is.na(MEDIAN_SGP))))
+				INSTRUCTOR_ENROLLMENT_STATUS=="Enrolled Instructor: Yes" & !is.na(MEDIAN_SGP))))
 		} else {
 			tmp.table.name <- "SCHOOL_NUMBER__INSTRUCTOR_NUMBER__EMH_LEVEL__CONTENT_AREA__YEAR"
-			tmp <- as.data.frame(convert.variables(subset(sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__EMH_LEVEL__CONTENT_AREA__YEAR"]],
-				!is.na(SCHOOL_NUMBER) & !is.na(INSTRUCTOR_NUMBER) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & 
-				!is.na(MEDIAN_SGP))))
-			tmp <- as.data.frame(convert.variables(subset(sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__EMH_LEVEL__CONTENT_AREA__YEAR"]],
+			tmp <- as.data.frame(convert.variables(subset(sgp_object@Summary[["SCHOOL_NUMBER"]][[tmp.table.name]],
 				!is.na(SCHOOL_NUMBER) & !is.na(INSTRUCTOR_NUMBER) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & 
 				!is.na(MEDIAN_SGP))))
 		}
