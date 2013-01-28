@@ -1,4 +1,7 @@
 `getPreferredSGP` <- function(tmp.data, state) {
+
+	YEAR <- SGP_NORM_GROUP <- VALID_CASE <- CONTENT_AREA <- ID <- PREFERENCE <- NULL
+
 	if (!is.null(SGPstateData[[state]][['SGP_Norm_Group_Preference']])) {
 		message(paste("\tNOTE: Multiple SGPs exist for individual students. Unique SGPs will be created using SGP Norm Group Preference Table for ", state, ".", sep=""))
 	} else {
