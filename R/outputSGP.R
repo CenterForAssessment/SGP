@@ -37,7 +37,7 @@ function(sgp_object,
 
 	if (is.null(outputSGP.student.groups)) {
 		outputSGP.student.groups <- intersect(names(sgp_object@Data), 
-			subset(sgp_object@Names, names.type=="demographic" & names.output==TRUE, select=names.provided, drop=TRUE))
+			subset(sgp_object@Names, names.type=="demographic" & names.output==TRUE, select=names.sgp, drop=TRUE))
 	}
 
 
