@@ -60,9 +60,8 @@ function(sgp_object,
 		"%w/o%" <- function(x, y) x[!x %in% y]
 
 		convert.variables <- function(tmp.df) {
-			if (is.character(tmp.df$YEAR) | is.factor(tmp.df$YEAR)) {
-				tmp1 <- unlist(strsplit(tmp.df$YEAR, "_"))
-				tmp.df$YEAR <- as.integer(tmp1[seq(length(tmp1)) %% 2 == 0])
+			if (length(grep(tmp.df$YEAR, "_")) > 0) {
+				tmp.df$YEAR <- sapply(strsplit(tmp.df$YEAR, "_"), '[', 2)
 			}
 			if (is.character(tmp.df$CONTENT_AREA)) {
 				tmp.df$CONTENT_AREA <- as.factor(tmp.df$CONTENT_AREA)
