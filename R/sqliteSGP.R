@@ -287,7 +287,7 @@ function(sgp_object,
 
 		tmp.list <- list()
 		for (i in other.student.groups %w/o% c("ETHNICITY")) {
-			tmp.list[[i]] <- sgp_object@Summary[[group.number[1]]][[paste(group.number[1], "CONTENT_AREA__YEAR__GRADE", i, group.enroll.status[1], sep="")]]
+			tmp.list[[i]] <- sgp_object@Summary[[group.number[1]]][[paste(group.number[1], "CONTENT_AREA__YEAR__GRADE", i, group.enroll.status[1], sep="__")]]
 		}
 
 		for (i in seq_along(tmp.list)) {
