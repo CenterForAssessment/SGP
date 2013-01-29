@@ -23,7 +23,7 @@ function(sgp_object,
 	### Define varaibles (to prevent R CMD check warnings)
 
 	SCALE_SCORE <- CONTENT_AREA <- YEAR <- GRADE <- ID <- ETHNICITY <- GENDER <- LAST_NAME <- FIRST_NAME <- VALID_CASE <- DISTRICT_NUMBER <- SCHOOL_NUMBER <- YEAR_BY_CONTENT_AREA <- NULL
-	names.type <- names.provided <- names.output <- STATE_ENROLLMENT_STATUS <- EMH_LEVEL <- NULL
+	names.type <- names.provided <- names.output <- names.sgp <- STATE_ENROLLMENT_STATUS <- EMH_LEVEL <- NULL
 
 	### Create state (if missing) from sgp_object (if possible)
 
@@ -37,7 +37,7 @@ function(sgp_object,
 
 	if (is.null(outputSGP.student.groups)) {
 		outputSGP.student.groups <- intersect(names(sgp_object@Data), 
-			subset(sgp_object@Names, names.type=="demographic" & names.output==TRUE, select=names.provided, drop=TRUE))
+			subset(sgp_object@Names, names.type=="demographic" & names.output==TRUE, select=names.sgp, drop=TRUE))
 	}
 
 
@@ -220,7 +220,7 @@ function(sgp_object,
 
 		convert.variables <- function(tmp.df) {
 			if ("YEAR" %in% names(tmp.df) && is.character(tmp.df$YEAR)) {
-				tmp.df$YEAR <- as.integer(sapply(strsplit(tmp.df$YEAR, "_"), '[', 2))
+				if (length(grep("_", tmp.df$YEAR)) > 0) tmp.df$YEAR <- as.integer(sapply(strsplit(tmp.df$YEAR, "_"), '[', 2)) else tmp.df$YEAR <- as.integer(tmp.df$YEAR)
 			}
 			if ("CONTENT_AREA" %in% names(tmp.df) && is.character(tmp.df$CONTENT_AREA)) {
 				tmp.df$CONTENT_AREA <- as.integer(as.factor(tmp.df$CONTENT_AREA))
@@ -237,12 +237,13 @@ function(sgp_object,
 			if ("GENDER" %in% names(tmp.df) && is.factor(tmp.df$GENDER)) {
 				tmp.df[['GENDER']] <- substr(tmp.df$GENDER, 1, 1)
 			}
-			for (names.iter in c(outputSGP.student.groups, "SCHOOL_ENROLLMENT_STATUS", "DISTRICT_ENROLLMENT_STATUS", "STATE_ENROLLMENT_STATUS") %w/o% "ETHNICITY") {
+			for (names.iter in c(outputSGP.student.groups, "SCHOOL_ENROLLMENT_STATUS", "DISTRICT_ENROLLMENT_STATUS", "STATE_ENROLLMENT_STATUS") %w/o% grep("ETHNICITY", outputSGP.student.groups, value=TRUE)) {
 				if (names.iter %in% names(tmp.df) && is.factor(tmp.df[[names.iter]])) {
 					tmp.df[[names.iter]] <- as.character(tmp.df[[names.iter]])
 					tmp.df[[names.iter]][grep("Yes", tmp.df[[names.iter]])] <- "Y"
 					tmp.df[[names.iter]][grep("No", tmp.df[[names.iter]])] <- "N"
 					tmp.df[[names.iter]][tmp.df[[names.iter]]=="Students with Disabilities (IEP)"] <- "Y"
+					tmp.df[[names.iter]][tmp.df[[names.iter]]=="High Need Status: ELL, Special Education, or Disadvantaged Student"] <- "Y"
 					tmp.df[[names.iter]][tmp.df[[names.iter]]=="Economically Disadvantaged"] <- "Y"
 					tmp.df[[names.iter]][tmp.df[[names.iter]]=="English Language Learners (ELL)"] <- "N"
 				}
@@ -265,14 +266,24 @@ function(sgp_object,
 		if (is.null(outputSGP_INDIVIDUAL.years)) {
 			tmp.years <- sort(unique(sgp_object@Data["VALID_CASE"][["YEAR"]]))
 			tmp.last.year <- tail(tmp.years, 1)
-			tmp.years.short <- sapply(strsplit(tmp.years, "_"), '[', 2)
-			tmp.last.year.short <- tail(unlist(strsplit(tail(tmp.years, 1), "_")), 1)
+			if (length(grep("_", tmp.years)) > 0) {
+				tmp.years.short <- sapply(strsplit(tmp.years, "_"), '[', 2) 
+				tmp.last.year.short <- tail(unlist(strsplit(tail(tmp.years, 1), "_")), 1)
+			} else {
+				tmp.years.short <- tmp.years
+				tmp.last.year.short <- tmp.last.year
+			}
 		} else {
 			tmp.all.years <- sort(unique(sgp_object@Data["VALID_CASE"][["YEAR"]])) 
 			tmp.years <- tmp.all.years[1:which(tmp.all.years==tail(sort(outputSGP_INDIVIDUAL.years), 1))]
 			tmp.last.year <- tail(tmp.years, 1)
-			tmp.years.short <- sapply(strsplit(tmp.years, "_"), '[', 2)
-			tmp.last.year.short <- tail(unlist(strsplit(tail(tmp.years, 1), "_")), 1)
+			if (length(grep("_", tmp.years)) > 0) {
+				tmp.years.short <- sapply(strsplit(tmp.years, "_"), '[', 2)
+				tmp.last.year.short <- tail(unlist(strsplit(tail(tmp.years, 1), "_")), 1)
+			} else {
+				tmp.years.short <- tmp.years
+				tmp.last.year.short <- tmp.last.year
+			}
 		}
 
 
