@@ -248,7 +248,7 @@ function(sgp_object,
 			"ENROLLMENT_PERCENTAGE REAL")
 
 		tmp.list <- list()
-		for (i in other.student.groups %w/o% c("ETHNICITY")) {
+		for (i in other.student.groups %w/o% grep("ETHNICITY", other.student.groups, value=TRUE)) {
 			tmp.list[[i]] <- sgp_object@Summary[[group.number[1]]][[paste(group.number[1], "CONTENT_AREA__YEAR", i, group.enroll.status[1], sep="__")]]
 		}
 
@@ -286,7 +286,7 @@ function(sgp_object,
 			"PERCENT_AT_ABOVE_PROFICIENT_COUNT INTEGER")
 
 		tmp.list <- list()
-		for (i in other.student.groups %w/o% c("ETHNICITY")) {
+		for (i in other.student.groups %w/o% grep("ETHNICITY", other.student.groups, value=TRUE)) {
 			tmp.list[[i]] <- sgp_object@Summary[[group.number[1]]][[paste(group.number[1], "CONTENT_AREA__YEAR__GRADE", i, group.enroll.status[1], sep="__")]]
 		}
 
@@ -412,7 +412,7 @@ function(sgp_object,
 			"ENROLLMENT_PERCENTAGE REAL")
 
 		tmp.list <- list()
-		for (i in other.student.groups %w/o% c("ETHNICITY")) {
+		for (i in other.student.groups %w/o% grep("ETHNICITY", other.student.groups, value=TRUE)) {
 			tmp.list[[i]] <- sgp_object@Summary[[group.number[2]]][[paste(group.number[2], "EMH_LEVEL__CONTENT_AREA__YEAR", i, group.enroll.status[2], sep="__")]]
 		}
 
@@ -534,7 +534,7 @@ function(sgp_object,
 		# STUDENTGROUP
 
 		tmp.list <- list()
-		for (i in other.student.groups %w/o% c("ETHNICITY")) {
+		for (i in other.student.groups %w/o% grep("ETHNICITY", other.student.groups, value=TRUE)) {
 			tmp.list[[i]] <- sgp_object@Summary[[group.number[1]]][[paste(group.number[1], "CONTENT_AREA__YEAR", i, group.enroll.status[1], sep="__")]]
 		}
 
