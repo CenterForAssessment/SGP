@@ -107,8 +107,8 @@ function(sgp_object,
 				my.data[['STUDENTGROUP']][my.data[['STUDENTGROUP']]=="Male"] <- "M"
 			}
 			if ("INSTRUCTOR_NUMBER" %in% names(my.data)) names(my.data)[names(my.data)=="INSTRUCTOR_NUMBER"] <- "TEACHER_USID"
-			if (group.number[1]!="DISTRICT") names(my.data)[names(my.data)==group.number[1]] <- "DISTRICT"
-			if (group.number[2]!="SCHOOL") names(my.data)[names(my.data)==group.number[2]] <- "SCHOOL"
+			if (group.number[1]!="DISTRICT") names(my.data)[names(my.data)==group.number[1]] <- "DISTRICT_NUMBER"
+			if (group.number[2]!="SCHOOL") names(my.data)[names(my.data)==group.number[2]] <- "SCHOOL_NUMBER"
 			return(my.data)
 		}
 
