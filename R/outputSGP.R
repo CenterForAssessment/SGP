@@ -265,14 +265,24 @@ function(sgp_object,
 		if (is.null(outputSGP_INDIVIDUAL.years)) {
 			tmp.years <- sort(unique(sgp_object@Data["VALID_CASE"][["YEAR"]]))
 			tmp.last.year <- tail(tmp.years, 1)
-			tmp.years.short <- sapply(strsplit(tmp.years, "_"), '[', 2)
-			tmp.last.year.short <- tail(unlist(strsplit(tail(tmp.years, 1), "_")), 1)
+			if (length(grep("_", tmp.years)) > 0) {
+				tmp.years.short <- sapply(strsplit(tmp.years, "_"), '[', 2) 
+				tmp.last.year.short <- tail(unlist(strsplit(tail(tmp.years, 1), "_")), 1)
+			} else {
+				tmp.years.short <- tmp.years
+				tmp.last.year.short <- tmp.last.year
+			}
 		} else {
 			tmp.all.years <- sort(unique(sgp_object@Data["VALID_CASE"][["YEAR"]])) 
 			tmp.years <- tmp.all.years[1:which(tmp.all.years==tail(sort(outputSGP_INDIVIDUAL.years), 1))]
 			tmp.last.year <- tail(tmp.years, 1)
-			tmp.years.short <- sapply(strsplit(tmp.years, "_"), '[', 2)
-			tmp.last.year.short <- tail(unlist(strsplit(tail(tmp.years, 1), "_")), 1)
+			if (length(grep("_", tmp.years)) > 0) {
+				tmp.years.short <- sapply(strsplit(tmp.years, "_"), '[', 2)
+				tmp.last.year.short <- tail(unlist(strsplit(tail(tmp.years, 1), "_")), 1)
+			} else {
+				tmp.years.short <- tmp.years
+				tmp.last.year.short <- tmp.last.year
+			}
 		}
 
 
