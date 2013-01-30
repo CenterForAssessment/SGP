@@ -7,6 +7,7 @@ Changes in version: SGP_1.0-5.0
   USER VISIBLE CHANGES:
 
 	  o Modified two physical science baseline coefficient matrices to EOCT from grade 8.
+	  o Output messages for studentGrowthPercentiles and studentGrowthProjections indicate number of students utilized for the analyses.
 
 
 Changes in version: SGP_1.0-4.0
