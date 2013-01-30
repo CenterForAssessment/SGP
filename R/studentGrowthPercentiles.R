@@ -874,7 +874,20 @@ function(panel.data,         ## REQUIRED
 										grades=tmp.last,
 										output.format="GROB")
 			}
-			names(Goodness_of_Fit[[tmp.path]])[length(Goodness_of_Fit[[tmp.path]])] <- paste("GRADE_YEAR:", paste(paste(tmp.gp, year.progression, sep="_"), collapse="-"), sep="")
+			if (!all(sapply(2:length(content.area.progression), function(f) identical(content.area.progression[f-1], content.area.progression[f])))) {
+				if (tail(grade.progression, 1) == "EOCT") {
+					tmp.grade.name <- "EOCT" 
+				} else {
+					tmp.grade.name <- paste("GRADE_", tail(grade.progression, 1), sep="")
+				}
+				tmp.name <- paste(paste(sapply(strsplit(head(year.progression, -1), '_'), '[', split.location(year.progression)), 
+					paste(head(content.area.progression, -1), head(grade.progression, -1), sep=" "), sep=" "), collapse=", ")
+				tmp.name <- gsub("MATHEMATICS", "MATH", tmp.name)
+				names(Goodness_of_Fit[[tmp.path]])[length(Goodness_of_Fit[[tmp.path]])] <- paste(tmp.grade.name, " (Priors- ", tmp.name, ")", sep="")
+			} else {
+				names(Goodness_of_Fit[[tmp.path]])[length(Goodness_of_Fit[[tmp.path]])] <- paste("GRADE_", 
+					paste(paste(tmp.gp, year.progression, sep="_"), collapse="-"), sep="")
+			}
 		}
 
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, "SGP", "SGP_BASELINE")
