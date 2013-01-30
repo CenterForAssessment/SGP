@@ -4,6 +4,10 @@ Changes in version: SGP_1.0-5.0
 
 	  o Integrate ability to specify preferred SGP using SGPstateData and internal function getPreferredSGP. See GA SGPstateData for an example.
 
+  USER VISIBLE CHANGES:
+
+	  o Modified two physical science baseline coefficient matrices to EOCT from grade 8.
+
 
 Changes in version: SGP_1.0-4.0
 
