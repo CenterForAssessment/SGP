@@ -130,7 +130,7 @@ function(sgp_object,
 
 	tmp_sgp_object <- list(Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]], Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]])
 
-	tmp_sgp_data_for_analysis <- sgp_object@Data[,c("VALID_CASE", "YEAR", "CONTENT_AREA", "GRADE", "ID", "SCALE_SCORE", "ACHIEVEMENT_LEVEL"), with=FALSE]
+	tmp_sgp_data_for_analysis <- copy(sgp_object@Data[,c("VALID_CASE", "YEAR", "CONTENT_AREA", "GRADE", "ID", "SCALE_SCORE", "ACHIEVEMENT_LEVEL"), with=FALSE])
 	setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE)
 
 
