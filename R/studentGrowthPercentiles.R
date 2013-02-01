@@ -277,7 +277,7 @@ function(panel.data,         ## REQUIRED
 	}
 
 	.simex.sgp <- function(state, variable, lambda, B,extrapolation){
-		GRADE <- CONTENT_AREA <- YEAR <- NULL ## To avoid R CMD check warnings
+		GRADE <- CONTENT_AREA <- YEAR <- V1 <- Lambda <- tau <- NULL ## To avoid R CMD check warnings
 		content_area<-sgp.labels$my.subject
 		year<-sgp.labels$my.year
     

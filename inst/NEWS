@@ -1,3 +1,10 @@
+Changes in version: SGP_1.0-6.0
+
+  NEW FEATURES:
+
+	  o Initial integration of SIMEX measurement error correction into studentGrowthPercentiles.
+
+
 Changes in version: SGP_1.0-5.0
 
   NEW FEATURES:

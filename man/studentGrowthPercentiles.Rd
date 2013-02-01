@@ -43,7 +43,8 @@ studentGrowthPercentiles(panel.data,
                          return.prior.scale.score.standardized=TRUE,
                          return.norm.group.identifier=TRUE,
                          print.time.taken=TRUE,
-                         parallel.config=NULL)
+                         parallel.config=NULL,
+			 calculate.simex)
 }
 
 \arguments{
@@ -159,6 +160,8 @@ Useful for examining relationship between prior achievement and student growth.
   \item{print.time.taken}{Boolean argument (defaults to TRUE) indicating whether to print message indicating information on studentGrowthPercentile analysis and time taken.
   }
   \item{parallel.config}{parallel configuration argument allowing for parallel analysis by 'tau'. Defaults to NULL.
+  }
+  \item{calculate.simex}{A character state acronymn or list including state/csem variable, simulation.iterations, lambda and extrapolation method.
   }
 } 
 
