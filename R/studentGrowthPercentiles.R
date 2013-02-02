@@ -1106,4 +1106,4 @@ function(panel.data,         ## REQUIRED
 		SGProjections=SGProjections,
 		Simulated_SGPs=Simulated_SGPs)
 
-### END studentGrowthPercentiles Function
+} ### END studentGrowthPercentiles Function
