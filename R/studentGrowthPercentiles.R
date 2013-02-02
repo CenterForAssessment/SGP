@@ -1092,7 +1092,7 @@ function(panel.data,         ## REQUIRED
 		} else {
 			message(paste("\tContent Area: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
 		}
-		if (verbose.output) message(Verbose_Output)
+		if (verbose.output) message(Verbose_Messages)
 		message(c(tmp.messages, "\tFinished SGP Student Growth Percentile Analysis: ", date(), " in ", timetaken(started.at), "\n")) 
 	}
 
