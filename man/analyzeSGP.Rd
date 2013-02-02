@@ -28,6 +28,7 @@ analyzeSGP(sgp_object,
          sgp.baseline.panel.years=NULL,
          sgp.baseline.config=NULL,
          parallel.config=NULL,
+	 verbose.output=FALSE,
          ...)
 }
 
@@ -90,6 +91,8 @@ The WORKERS list must contain, at a minimum, a single number of processors (node
 Alternatively, the name of an external CLUSTER.OBJECT (SOCK or MPI) set up by the user outside of the function can be used.  
 
 Example use cases are provided below.
+  }
+  \item{verbose.output}{A boolean argument indicating whether the function should output verbose diagnostic messages.
   }
 \item{...}{Arguments to be passed to \code{\link{studentGrowthPercentiles}} or \code{\link{studentGrowthProjections}} for finer control over SGP calculations. NOTE: arguments can only be passed to one lower level function at a time, and only student growth percentiles OR projections can be created but not both at the same time.
   }

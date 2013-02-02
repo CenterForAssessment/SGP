@@ -44,7 +44,8 @@ studentGrowthPercentiles(panel.data,
                          return.norm.group.identifier=TRUE,
                          print.time.taken=TRUE,
                          parallel.config=NULL,
-			 calculate.simex)
+			 calculate.simex,
+			 verbose.output=FALSE)
 }
 
 \arguments{
@@ -162,6 +163,8 @@ Useful for examining relationship between prior achievement and student growth.
   \item{parallel.config}{parallel configuration argument allowing for parallel analysis by 'tau'. Defaults to NULL.
   }
   \item{calculate.simex}{A character state acronymn or list including state/csem variable, simulation.iterations, lambda and extrapolation method.
+  }
+  \item{verbose.output}{A boolean argument indicating whether the function should output verbose diagnostic messages.
   }
 } 
 

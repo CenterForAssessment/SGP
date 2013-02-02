@@ -21,6 +21,7 @@ function(sgp_object,
          sgp.baseline.panel.years=NULL,
          sgp.baseline.config=NULL, 
          parallel.config=NULL,
+	 verbose.output=FALSE,
          ...) {
 
 	started.at <- proc.time()
@@ -274,6 +275,7 @@ function(sgp_object,
 							exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 							sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 							goodness.of.fit=state,
+							verbose.output=verbose.output,
 							...))
 					}
 				} else {
@@ -296,6 +298,7 @@ function(sgp_object,
 							exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 							sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 							goodness.of.fit=state,
+							verbose.output=verbose.output,
 							...))
 					}
 				}
@@ -326,6 +329,7 @@ function(sgp_object,
 							exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 							sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 							goodness.of.fit=state,
+							verbose.output=verbose.output,
 							...))
 					} else {
 						tmp <- clusterApplyLB(par.start$internal.cl, rev(par.sgp.config), 	function(sgp.iter)	studentGrowthPercentiles( 
@@ -345,6 +349,7 @@ function(sgp_object,
 							exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 							sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 							goodness.of.fit=state,
+							verbose.output=verbose.output,
 							...))
 					}
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -378,6 +383,7 @@ function(sgp_object,
 							exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 							sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 							goodness.of.fit=state,
+							verbose.output=verbose.output,
 							...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 					} else {
 						tmp <- mclapply(rev(par.sgp.config), function(sgp.iter)	studentGrowthPercentiles( 
@@ -397,6 +403,7 @@ function(sgp_object,
 							exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 							sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 							goodness.of.fit=state,
+							verbose.output=verbose.output,
 							...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 					}
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -441,6 +448,7 @@ function(sgp_object,
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 						goodness.of.fit=state,
+						verbose.output=verbose.output,
 						...))
 				}
 				tmp_sgp_object <- mergeSGP(tmp_sgp_object, tmp)
@@ -466,6 +474,7 @@ function(sgp_object,
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 						goodness.of.fit=state,
+						verbose.output=verbose.output,
 						...))
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -495,6 +504,7 @@ function(sgp_object,
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 						goodness.of.fit=state,
+						verbose.output=verbose.output,
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -898,6 +908,7 @@ function(sgp_object,
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 						goodness.of.fit=state,
+						verbose.output=verbose.output,
 						...)
 				} else {
 					tmp_sgp_object <- studentGrowthPercentiles(
@@ -916,6 +927,7 @@ function(sgp_object,
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 						goodness.of.fit=state,
+						verbose.output=verbose.output,
 						...)
 				}
 				suppressMessages(gc())
@@ -949,6 +961,7 @@ function(sgp_object,
 					exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 					sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 					goodness.of.fit=state,
+					verbose.output=verbose.output,
 					...)
 				suppressMessages(gc())
 			}

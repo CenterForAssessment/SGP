@@ -34,7 +34,8 @@ function(panel.data,         ## REQUIRED
          return.norm.group.identifier=TRUE,
          print.time.taken=TRUE,
          parallel.config=NULL,
-         calculate.simex) {
+         calculate.simex,
+	 verbose.output=FALSE) {
 
 	started.at <- proc.time()
 	started.date <- date()
@@ -106,7 +107,8 @@ function(panel.data,         ## REQUIRED
         }
 
 	get.my.knots.boundaries.path <- function(content_area, year) {
-		tmp.knots.boundaries.names <- names(Knots_Boundaries[[tmp.path.knots.boundaries]])[match(content_area, names(Knots_Boundaries[[tmp.path.knots.boundaries]]))]
+		tmp.knots.boundaries.names <- 
+			names(Knots_Boundaries[[tmp.path.knots.boundaries]])[match(content_area, sapply(strsplit(names(Knots_Boundaries[[tmp.path.knots.boundaries]]), "[.]"), '[', 1))]
 		if (is.na(tmp.knots.boundaries.names)) {
 			return(paste("[['", tmp.path.knots.boundaries, "']]", sep=""))
 		} else {
@@ -625,7 +627,7 @@ function(panel.data,         ## REQUIRED
 	### Create object to store the studentGrowthPercentiles objects
 
 	tmp.objects <- c("Coefficient_Matrices", "Cutscores", "Goodness_of_Fit", "Knots_Boundaries", "Panel_Data", "SGPercentiles", "SGProjections", "Simulated_SGPs") 
-	Coefficient_Matrices <- Cutscores <- Goodness_of_Fit <- Knots_Boundaries <- Panel_Data <- SGPercentiles <- SGProjections <- Simulated_SGPs <- SGP_STANDARD_ERROR <- NULL
+	Coefficient_Matrices <- Cutscores <- Goodness_of_Fit <- Knots_Boundaries <- Panel_Data <- SGPercentiles <- SGProjections <- Simulated_SGPs <- SGP_STANDARD_ERROR <- Verbose_Messages <- NULL
 
 	if (identical(class(panel.data), "list")) {
 		for (i in tmp.objects) {
@@ -835,6 +837,12 @@ function(panel.data,         ## REQUIRED
 		for (k in coefficient.matrix.priors) {
 			Coefficient_Matrices[[tmp.path.coefficient.matrices]][['TMP_NAME']] <- .create.coefficient.matrices(ss.data, k, by.grade)
 			names(Coefficient_Matrices[[tmp.path.coefficient.matrices]])[length(Coefficient_Matrices[[tmp.path.coefficient.matrices]])] <- get.coefficient.matrix.name(tmp.last, k)
+			if (verbose.output) {
+				tmp.coefficient.matrix.name <- get.coefficient.matrix.name(tmp.last, k)
+				tmp.knots <- paste(Coefficient_Matrices[[tmp.path.coefficient.matrices]][[tmp.coefficient.matrix.name]]@Knots, collapse=", ")
+				tmp.boundaries <- paste(Coefficient_Matrices[[tmp.path.coefficient.matrices]][[tmp.coefficient.matrix.name]]@Boundaries, collapse=", ")
+				Verbose_Messages <- c(Verbose_Messages, paste("\tNOTE: Coefficient Matrix ", tmp.coefficient.matrix.name, " created using Knots: ", tmp.knots, " and Boundaries: ", tmp.boundaries, ".\n", sep=""))	
+			}
 		}
 	}
 
