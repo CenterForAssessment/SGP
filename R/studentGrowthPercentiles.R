@@ -1024,6 +1024,14 @@ function(panel.data,         ## REQUIRED
 			Simulated_SGPs[[tmp.path]] <- rbind.fill(simulation.data, as.data.frame(Simulated_SGPs[[tmp.path]])) 
 		}
 
+		## start simex cycle
+		if (simex.tf){
+		  
+		  quantile.data.simex<-.simex.sgp(state=calculate.simex$state, variable=calculate.simex$variable, lambda=calculate.simex$lambda, 
+		                                  B=calculate.simex$simulation.iterations, extrapolation=calculate.simex$extrapolation)
+      quantile.data[,SGP_SIMEX:=quantile.data.simex[["SGP_SIMEX"]]]
+		}## END SIMEX analysis
+		
 		if (!is.null(percentile.cuts)){
 			cuts.best <- data.table(rbindlist(tmp.percentile.cuts), key="ID")
 			cuts.best <- cuts.best[c(which(!duplicated(cuts.best))[-1]-1, nrow(cuts.best))][,-1, with=FALSE]
@@ -1125,13 +1133,6 @@ function(panel.data,         ## REQUIRED
 
 	} ## End if calculate.sgps
 
-	## start simex cycle
-	if (simex.tf){
-		
-		quantile.data.simex<-.simex.sgp(state=calculate.simex$state, variable=calculate.simex$variable, lambda=calculate.simex$lambda, 
-			B=calculate.simex$simulation.iterations, extrapolation=calculate.simex$extrapolation)
-		SGPercentiles[[tmp.path]]<-SGPercentiles[[tmp.path]][quantile.data.simex]
-	}## END SIMEX analysis
 
 	### Start/Finish Message & Return SGP Object
 
