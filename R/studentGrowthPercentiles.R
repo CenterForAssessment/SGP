@@ -625,60 +625,7 @@ function(panel.data,         ## REQUIRED
 		simex.tf <- FALSE
 	}
 
-=======
-	  simex.tf <- TRUE
-	  if (!is.character(calculate.simex) & !is.list(calculate.simex)) {
-	    tmp.messages <- c(tmp.messages, "\tNOTE: Please supply an appropriate state acronym, variable or list containing details to calculate.simex. See help page for details. SGPs will be calculated without measurement error correction.\n")
-	    simex.tf <- FALSE
-	  }
-	  if (is.list(calculate.simex)) {
-	    if (!(("state" %in% names(calculate.simex)) | ("variable" %in% names(calculate.simex)))) {
-	      tmp.messages <- c(tmp.messages, "\tNOTE: Please specify an appropriate list for calculate.simex including state/csem variable, simulation.iterations, lambda and extrapolation. See help page for details. SGPs will be calculated without measurement error correction.\n")
-	      simex.tf <- FALSE
-	    }
-	    if ("variable" %in% names(calculate.simex) & missing(panel.data.vnames)) {
-	      stop("To utilize a supplied CSEM variable for measurement error correction you must specify the variables to be used for student growth percentile calculations with the panel.data.vnames argument. See help page for details.")
-	    }
-	    if (all(c("state", "variable") %in% names(calculate.simex))) {
-	      stop("Please specify EITHER a state OR a CSEM variable for SGP measurement error correction. See help page for details.")
-	    }
-	    if (!is.null(calculate.simex$lambda)){
-	      if (!is.numeric(lambda)) {
-	        tmp.messages <- c(tmp.messages, "\tNOTE: Please supply numeric values to lambda. See help page for details. SGPs will be calculated without measurement error correction.\n")
-	        simex.tf <- FALSE
-	      }
-	      if (any(lambda < 0)) {
-	        warning("lambda should not contain negative values. Negative values will be ignored",
-	                call. = FALSE)
-	        lambda <- lambda[lambda >= 0]} else lambda=lambda}
-	  }
-	  if (is.character(calculate.simex)) {
-	    if (!calculate.simex %in% c(names(SGPstateData), names(panel.data))) {
-	      tmp.messages <- c(tmp.messages, "\tNOTE: Please provide an appropriate state acronym or variable name in supplied data corresponding to CSEMs. See help page for details. SGPs will be calculated without measurement error correction.\n")
-	      simex.tf <- FALSE
-	    }
-	    if (calculate.simex %in% names(SGPstateData)) {
-	      if ("YEAR" %in% names(SGPstateData[[calculate.simex]][["Assessment_Program_Information"]][["CSEM"]])) {
-	        if (!sgp.labels$my.year %in% unique(SGPstateData[[calculate.simex]][["Assessment_Program_Information"]][["CSEM"]][["YEAR"]])) {
-	          tmp.messages <- c(tmp.messages, "\tNOTE: SGPstateData contains year specific CSEMs but year requested is not available. SGPs will be calculated without measurement error correction.\n")
-	          simex.tf <- FALSE
-	        }
-	      }
-	      if (!sgp.labels$my.subject %in% unique(SGPstateData[[calculate.simex]][["Assessment_Program_Information"]][["CSEM"]][["CONTENT_AREA"]])) {
-	        tmp.messages <- c(tmp.messages, paste("\tNOTE: SGPstateData does not contain content area CSEMs for requested content area '", sgp.labels$my.subject, "'. SGPs will be calculated without measurement error correction.\n", sep=""))
-	        simex.tf <- FALSE
-	      }
-	      calculate.simex <- list(state=calculate.simex)
-	    }
-	    if (calculate.simex %in% names(panel.data)) {
-	      calculate.simex <- list(variable=calculate.simex)
-	    }
-	  }
-	} else {
-	  simex.tf <- FALSE
-	}
-	
->>>>>>> 48df563e2c4c646176b712e35307e478fafb3f90
+
 	### Create object to store the studentGrowthPercentiles objects
 
 	tmp.objects <- c("Coefficient_Matrices", "Cutscores", "Goodness_of_Fit", "Knots_Boundaries", "Panel_Data", "SGPercentiles", "SGProjections", "Simulated_SGPs") 
@@ -1123,7 +1070,6 @@ function(panel.data,         ## REQUIRED
 
 	## start simex cycle
 	if (simex.tf){
-<<<<<<< HEAD
 		if (is.null(calculate.simex$simulation.iterations)) calculate.simex$simulation.iterations <- 100
 		if (is.null(calculate.simex$lambda)) calculate.simex$lambda <- seq(0,2,0.5)
 		if (is.null(calculate.simex$extrapolation)) calculate.simex$extrapolation <- "linear"
@@ -1133,16 +1079,6 @@ function(panel.data,         ## REQUIRED
 		SGPercentiles[[tmp.path]]<-SGPercentiles[[tmp.path]][quantile.data.simex]
 	}## END SIMEX analysis
 
-=======
-	  if (is.null(calculate.simex$simulation.iterations)) calculate.simex$simulation.iterations <- 100
-	  if (is.null(calculate.simex$lambda)) calculate.simex$lambda <- seq(0,2,0.5)
-	  if (is.null(calculate.simex$extrapolation)) calculate.simex$extrapolation <- "linear"
-	  
-	  data<- .get.panel.data(ss.data,max.order, by.grade)
-	  tmp.simex.quantiles<-.simex.sgp(data, grade.progression=tmp.gp, content_area=sgp.labels$my.subject, year=sgp.labels$my.year, state=calculate.simex$state, variable=calculate.simex$variable, lambda=calculate.simex$lambda, B=calculate.simex$simulation.iterations,extrapolation=calculate.simex$extrapolation)
-	  Corrected_SGPercentiles[[tmp.path]] <- rbind.fill(.unget.data.table(tmp.simex.quantiles, ss.data), Corrected_SGPercentiles[[tmp.path]])
-	}## END SIMEX analysis  
->>>>>>> 48df563e2c4c646176b712e35307e478fafb3f90
 	### Start/Finish Message & Return SGP Object
 
 	if (print.time.taken) {
