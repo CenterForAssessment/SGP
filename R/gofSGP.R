@@ -44,11 +44,11 @@
 
 	gof.draw <- function(content_area.year.grade.data, content_area, year, grade) {
 		
-		if (output.format!="GROB") {
+		if (!"GROB" %in% output.format) {
 			file.path <- file.path("Goodness_of_Fit", paste(content_area, year, sep="."))
 			dir.create(file.path, showWarnings=FALSE, recursive=TRUE)
-			if (output.format=="PDF") pdf(file=paste(file.path, paste("/gofSGP_Grade", grade, sep="_"), ".pdf", sep=""), width=my.width, height=my.height)
-			if (output.format=="PNG") Cairo(file=paste(file.path, paste("/gofSGP_Grade", grade, sep="_"), ".png", sep=""), width=my.width, height=my.height, units="in", dpi=144, pointsize=24, bg="transparent")
+			if ("PDF" %in% output.format) pdf(file=paste(file.path, paste("/gofSGP_Grade", grade, sep="_"), ".pdf", sep=""), width=my.width, height=my.height)
+			if ("PNG" %in% output.format) Cairo(file=paste(file.path, paste("/gofSGP_Grade", grade, sep="_"), ".png", sep=""), width=my.width, height=my.height, units="in", dpi=144, pointsize=24, bg="transparent")
 			grid.draw(.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale, with.prior.achievement.level=with.prior.achievement.level))
 			dev.off()
 			return(NULL)
