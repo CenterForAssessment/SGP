@@ -277,6 +277,7 @@ function(panel.data,         ## REQUIRED
 	}
 
 
+  
 	.simex.sgp <- function(state, variable, lambda, B,extrapolation){
 		GRADE <- CONTENT_AREA <- YEAR <- V1 <- Lambda <- tau <- NULL ## To avoid R CMD check warnings
 		content_area<-sgp.labels$my.subject
@@ -572,7 +573,6 @@ function(panel.data,         ## REQUIRED
 	}
 
 	if (!missing(calculate.simex)) {
-<<<<<<< HEAD
 		simex.tf <- TRUE
 		if (!is.character(calculate.simex) & !is.list(calculate.simex)) {
 			tmp.messages <- c(tmp.messages, "\tNOTE: Please supply an appropriate state acronym, variable or list containing details to calculate.simex. See help page for details. SGPs will be calculated without measurement error correction.\n")
