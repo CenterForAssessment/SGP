@@ -1152,7 +1152,6 @@ function(panel.data,         ## REQUIRED
 		Panel_Data=Panel_Data, 
 		SGPercentiles=SGPercentiles,
 		SGProjections=SGProjections,
-		Simulated_SGPs=Simulated_SGPs,
-	  Corrected_SGPercentiles=Corrected_SGPercentiles)
+		Simulated_SGPs=Simulated_SGPs)
 
 } ## END studentGrowthPercentiles Function
