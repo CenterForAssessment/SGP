@@ -417,7 +417,6 @@ function(panel.data,         ## REQUIRED
 			
 			switch(extrapolation, QUADRATIC = fit <- lm(fitted[[paste("order_",k,sep="")]] ~ lambda + I(lambda^2)), LINEAR = fit <- lm(fitted[[paste("order_",k,sep="")]]~ lambda))
 			extrap[[paste("order_",k,sep="")]]<-as.data.table(matrix(predict(fit,newdata=data.frame(lambda=-1)), nrow=dim(data)[1]))
-			setnames(extrap[[paste("order_",k,sep="")]], taus)
 			tmp.quantiles.simex[[k]]<-data.table(ID=data[["ID"]], ORDER=k, SGP_SIMEX=.get.quantiles(extrap[[paste("order_",k,sep="")]], data[[tail(SS.yr,1)]]))
 		}
 		# if (exists("par.start")) stopParallel(parallel.config, par.start)
@@ -1130,7 +1129,7 @@ function(panel.data,         ## REQUIRED
 	if (simex.tf){
 		
 		quantile.data.simex<-.simex.sgp(state=calculate.simex$state, variable=calculate.simex$variable, lambda=calculate.simex$lambda, 
-			B=calculate.simex$simulation.iterations,extrapolation=calculate.simex$extrapolation)
+			B=calculate.simex$simulation.iterations, extrapolation=calculate.simex$extrapolation)
 		SGPercentiles[[tmp.path]]<-SGPercentiles[[tmp.path]][quantile.data.simex]
 	}## END SIMEX analysis
 
