@@ -295,9 +295,9 @@ function(panel.data,         ## REQUIRED
 		  for (i in seq_along(tmp.gp.iter)) {
 		    knt <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['knots_", tmp.gp.iter[i], "']]", sep="")
 		    bnd <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['boundaries_", tmp.gp.iter[i], "']]", sep="")
-		    mod <- paste(mod, " + bs(data[[", tmp.num.variables-i, "]], knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
+		    mod <- paste(mod, " + bs(prior_", tmp.gp.iter[i], ", knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
 		  }
-		  return(parse(text=paste("rq(data[[", tmp.num.variables,"]] ~ ", substring(mod,4), ", tau=taus,data=data, method=rq.method)[['fitted.values']]", sep="")))
+		  return(parse(text=paste("rq(final.yr ~", substring(mod,4), ", tau=taus,data=data, method=rq.method)[['fitted.values']]", sep="")))
 		}
 		
 		for (k in coefficient.matrix.priors) {
@@ -345,6 +345,7 @@ function(panel.data,         ## REQUIRED
 				big.data <- rbindlist(replicate(B, data, simplify = FALSE))
 				big.data[, Lambda := rep(L, each=dim(data)[1]*B)]
 				big.data[, b := rep(1:B, each=dim(data)[1])]
+				setnames(big.data,tmp.num.variables,"final.yr")
 					for (g in seq_along(tmp.gp.iter)) {
 						big.data[, paste("icsem", tmp.gp.iter[g], sep="") := rep(csem.int[, paste("icsem", tmp.gp.iter[g], sep="")], time=B)]
             big.data[, tmp.num.variables-g := eval(parse(text=paste("big.data[[", tmp.num.variables-g,
@@ -366,6 +367,8 @@ function(panel.data,         ## REQUIRED
 							"']] <- c(bs[,V1], bs[,V2])", sep="")))
 						eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['loss.hoss_", tmp.gp.iter[g], 
 							"']] <- c(lh[,V1], lh[,V2])", sep="")))
+            
+						setnames(big.data,tmp.num.variables-g,paste("prior_",g,sep=""))
 					}
 			  		  
 				if (is.null(parallel.config)) { # Sequential
