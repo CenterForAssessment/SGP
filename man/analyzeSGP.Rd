@@ -22,12 +22,14 @@ analyzeSGP(sgp_object,
          sgp.projections.lagged.baseline.max.order=3,
          sgp.use.my.coefficient.matrices=NULL,
          simulate.sgps=TRUE,
+	 calculate.simex=NULL,
          goodness.of.fit.print=TRUE,
          sgp.config=NULL,
          sgp.config.drop.nonsequential.grade.progression.variables=TRUE,
          sgp.baseline.panel.years=NULL,
          sgp.baseline.config=NULL,
          parallel.config=NULL,
+	 verbose.output=FALSE,
          ...)
 }
 
@@ -71,6 +73,8 @@ Default is 3.  To utilize the maximum matrix order, set to NULL.
   }
   \item{simulate.sgps}{Boolean variable indicating whether to simulate SGP values for students based on test-specific Conditional Standard Errors of Measurement (CSEM).  Test CSEM data must be available for simulation and included in \code{SGPstateData}.  This argument must be set to TRUE for confidence interval construction. Defaults to TRUE.
   }
+  \item{calculate.simex}{A character state acronymn or list including state/csem variable, simulation.iterations, lambda and extrapolation method. Defaults to NULL, no simex calculations performed.
+  }
   \item{goodness.of.fit.print}{Boolean variable indicating whether to print out Goodness of Fit figures as PDF into a directory labeled Goodness of Fit. Defaults to TRUE.
   }
   \item{sgp.config}{If \code{years}, \code{content_areas}, and \code{grades} are missing, user can directly specify a list containing three vectors: \code{baseline.content.areas}, \code{baseline.panel.years}, and \code{baseline.grade.sequences}. This advanced option is helpful for analysis of non-traditional grade progressions and other special cases. See examples for use cases.
@@ -90,6 +94,8 @@ The WORKERS list must contain, at a minimum, a single number of processors (node
 Alternatively, the name of an external CLUSTER.OBJECT (SOCK or MPI) set up by the user outside of the function can be used.  
 
 Example use cases are provided below.
+  }
+  \item{verbose.output}{A boolean argument indicating whether the function should output verbose diagnostic messages.
   }
 \item{...}{Arguments to be passed to \code{\link{studentGrowthPercentiles}} or \code{\link{studentGrowthProjections}} for finer control over SGP calculations. NOTE: arguments can only be passed to one lower level function at a time, and only student growth percentiles OR projections can be created but not both at the same time.
   }
