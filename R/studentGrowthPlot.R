@@ -129,7 +129,7 @@ interpolate.grades <- function(grades, data.year.span) {
 				interp.df = data.frame(GRADE=temp.grades), 
 				year_span=year_span, 
 				increment_for_projection=0,
-				years=yearIncrement(Report_Parameters$Current_Year, seq(1-max(which(grades[1]==temp.grades)), length=length(temp.grades))) 
+				years=yearIncrement(Report_Parameters$Current_Year, seq(1-max(which(grades[1]==temp.grades)), length=length(temp.grades)))))
 		} else {
 			year.increment.for.projection <- grades.reported.in.state[which(grades[1]==grades.reported.in.state)+1]-grades[1]
 			year_span <- max(min(last.scale.score, data.year.span-1), min(grades[1]-min(grades.reported.in.state)+1, data.year.span-1))-
@@ -140,7 +140,7 @@ interpolate.grades <- function(grades, data.year.span) {
 				interp.df = data.frame(GRADE=temp.grades), 
 				year_span=year_span,
 				increment_for_projection=year.increment.for.projection,
-				years=yearIncrement(Report_Parameters$Current_Year, seq(1-max(which(grades[1]==temp.grades)), length=length(temp.grades)))
+				years=yearIncrement(Report_Parameters$Current_Year, seq(1-max(which(grades[1]==temp.grades)), length=length(temp.grades)))))
 		}
 	} 
 } 
