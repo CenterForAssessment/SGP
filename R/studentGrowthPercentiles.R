@@ -284,7 +284,7 @@ function(panel.data,         ## REQUIRED
 		year <- sgp.labels$my.year
 		my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
     
-		fitted <- extrap <- tmp.quantiles <- list()
+		fitted <- extrap <- tmp.quantiles.simex <- list()
 		loss.hoss <- matrix(nrow=2,ncol=length(tmp.gp)-1)
 		for (g in 1:ncol(loss.hoss)) {
 			loss.hoss[,g] <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]][[paste("loss.hoss_", rev(tmp.gp)[-1][g], sep="")]]
