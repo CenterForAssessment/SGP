@@ -289,23 +289,20 @@ function(panel.data,         ## REQUIRED
 		for (g in 1:ncol(loss.hoss)) {
 			loss.hoss[,g] <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]][[paste("loss.hoss_", rev(tmp.gp)[-1][g], sep="")]]
 		}
+		
 		rqfit <- function(tmp.gp.iter, lam) {  #  AVI added in the lam  argument here to index the lambda specific knots and boundaries
-			mod <- character()
-			for (i in seq_along(tmp.gp.iter)) {
-				knt <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['knots_", tmp.gp.iter[i], "']]", sep="")
-				bnd <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['boundaries_", tmp.gp.iter[i], "']]", sep="")
-				mod <- paste(mod, " + bs(SS_", tmp.yr.iter[i], ", knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
-			}
-			return(parse(text=paste("rq(SS_", tmp.yr.last,"~", substring(mod,4), ", tau=taus, method=rq.method)[['fitted.values']]", sep="")))
+		  mod <- character()
+		  for (i in seq_along(tmp.gp.iter)) {
+		    knt <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['knots_", tmp.gp.iter[i], "']]", sep="")
+		    bnd <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['boundaries_", tmp.gp.iter[i], "']]", sep="")
+		    mod <- paste(mod, " + bs(data[[", tmp.num.variables-i, "]], knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
+		  }
+		  return(parse(text=paste("rq(data[[", tmp.num.variables,"]] ~ ", substring(mod,4), ", tau=taus,data=data, method=rq.method)[['fitted.values']]", sep="")))
 		}
 		
 		for (k in coefficient.matrix.priors) {
 			data <- .get.panel.data(ss.data, k, by.grade)
 			tmp.num.variables <- dim(data)[2]
-			SS.yr <- names(data)[-1]
-			tmp.yr.last <- as.numeric(substring(tail(SS.yr,1),4))
-			tmp.yr <- as.numeric(substring(SS.yr,4))
-			tmp.yr.iter <- rev(tmp.yr)[2:(k+1)]
 			tmp.gp.iter <- rev(tmp.gp)[2:(k+1)]
 			csem.int <- matrix(nrow=dim(data)[1],ncol=length(tmp.gp.iter)) # build matrix to store interpolated csem
 			colnames(csem.int) <- paste("icsem", tmp.gp.iter,sep="")
@@ -350,9 +347,9 @@ function(panel.data,         ## REQUIRED
 				big.data[, b := rep(1:B, each=dim(data)[1])]
 					for (g in seq_along(tmp.gp.iter)) {
 						big.data[, paste("icsem", tmp.gp.iter[g], sep="") := rep(csem.int[, paste("icsem", tmp.gp.iter[g], sep="")], time=B)]
-						big.data[, paste("SS_", tmp.yr.iter[g], sep="") := eval(parse(text=paste("big.data[['SS_", tmp.yr.iter[g],
-							"']] + sqrt(big.data[['Lambda']]) * big.data[['icsem", tmp.gp.iter[g], "']] * rnorm(dim(big.data)[1])", sep="")))]
-						col.index <- which(names(big.data) == paste("SS_",tmp.yr.iter[g], sep=""))
+            big.data[, tmp.num.variables-g := eval(parse(text=paste("big.data[[", tmp.num.variables-g,
+							"]] + sqrt(big.data[['Lambda']]) * big.data[['icsem", tmp.gp.iter[g], "']] * rnorm(dim(big.data)[1])", sep="")))]
+						col.index <- tmp.num.variables-g
 						big.data[big.data[[col.index]] < loss.hoss[1,g], col.index := loss.hoss[1,g], with=F]
 						big.data[big.data[[col.index]] > loss.hoss[2,g], col.index := loss.hoss[2,g], with=F] 
 ## problem w 4th grade HOSS in SGPstateData?  HOSS = 940, but highest score in data is 795.  Since we've calculated Knots_Boundaries internally in the 
@@ -419,7 +416,7 @@ function(panel.data,         ## REQUIRED
 			
 			switch(extrapolation, QUADRATIC = fit <- lm(fitted[[paste("order_",k,sep="")]] ~ lambda + I(lambda^2)), LINEAR = fit <- lm(fitted[[paste("order_",k,sep="")]]~ lambda))
 			extrap[[paste("order_",k,sep="")]]<-as.data.table(matrix(predict(fit,newdata=data.frame(lambda=-1)), nrow=dim(data)[1]))
-			tmp.quantiles.simex[[k]] <- data.table(ID=data[["ID"]], ORDER=k, SGP_SIMEX=.get.quantiles(extrap[[paste("order_",k,sep="")]], data[[tail(SS.yr,1)]]))
+			tmp.quantiles.simex[[k]] <- data.table(ID=data[["ID"]], ORDER=k, SGP_SIMEX=.get.quantiles(extrap[[paste("order_",k,sep="")]], data[[tmp.num.variables]]))
 		} ### END for (k in coefficient.matrix.priors)
 # if (exists("par.start")) stopParallel(parallel.config, par.start)
 # reassemble data
