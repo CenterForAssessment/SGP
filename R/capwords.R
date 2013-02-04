@@ -1,5 +1,7 @@
 `capwords` <-
-function(x, special.words = c("ELA", "II", "III", "IV", "EMH", "HS", "MS", "ES", "SES", "IEP", "ELL", "MAD", "SD", "US", "SGP")) {
+function(x, 
+	special.words = c("ELA", "II", "III", "IV", "EMH", "HS", "MS", "ES", "SES", "IEP", "ELL", "MAD", "SD", "US", "SGP")) {
+
 	if (is.null(x)) return(NULL)
 	x <- gsub("_", " ", x)
 	x <- gsub("[.]", " ", x)

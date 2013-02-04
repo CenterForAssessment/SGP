@@ -6,16 +6,6 @@ function(matrix_argument,
 		if (!class(matrix_argument) %in% c("matrix", "splineMatrix")) stop("Supplied object must be of class 'matrix' or 'splineMatrix'.")
 		if (class(matrix_argument) == "splineMatrix" && validObject(matrix_argument, test=TRUE)==TRUE) return(matrix_argument)
 
-		### Utility functions
-
-			year.increment <- function(year, increment) {
-				tmp.list <- list()
-				for (i in seq_along(increment)) {
-					tmp.list[[i]] <- paste(as.numeric(unlist(strsplit(as.character(year), "_")))+increment[i], collapse="_")
-				}
-				unlist(tmp.list)
-			}
-
 		### Create relvant variables
 
 			if (class(matrix_argument)=="matrix") tmp.matrix <- matrix_argument else tmp.matrix <- matrix_argument@.Data
@@ -81,7 +71,7 @@ function(matrix_argument,
 
 			### Time Lag
 
-			time_lags <- diff(type.convert(grade_progression))
+			time_lags <- as.integer(diff(type.convert(grade_progression)))
 
 
 			### Time
@@ -90,7 +80,7 @@ function(matrix_argument,
 			if (tmp.time == "BASELINE") {
 				time <- rep("BASELINE", length(grade_progression))
 			} else {
-				time <- rev(year.increment(tmp.time, -cumsum(c(0, rev(time_lags)))))
+				time <- as.character(rev(yearIncrement(tmp.time, -cumsum(c(0, rev(time_lags))))))
 			}
 
 
@@ -154,14 +144,14 @@ function(matrix_argument,
 
 			### Time
 
-			if (.hasSlot(matrix_argument, "Time") && matrix_argument@Version > "1.0-6.0") {
+			if (.hasSlot(matrix_argument, "Time") && matrix_argument@Version[['SGP_Package_Version']] > "1.0.6.0") {
 				time <- as.character(matrix_argument@Time[[1]])
 			} else {
 				tmp.time <- unlist(strsplit(gsub("'|]]", "", strsplit(rn, "\\[\\[")[[1]][2]), "[.]"))[2]
 				if (tmp.time == "BASELINE") {
 					time <- rep("BASELINE", length(grade_progression))
 				} else {
-					time <- as.character(rev(year.increment(tmp.time, -cumsum(c(0, rev(time_lags))))))
+					time <- as.character(rev(yearIncrement(tmp.time, -cumsum(c(0, rev(time_lags))))))
 				}
 			}
 

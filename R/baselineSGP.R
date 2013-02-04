@@ -57,19 +57,11 @@ function(sgp_object,
 
 		test.year.sequence <- function(content_areas, years, grades, baseline.grade.sequences.lags=NULL) {
 
-			year.increment <- function(year, increment) {
-				tmp.list <- list()
-				for (i in seq_along(increment)) {
-					tmp.list[[i]] <- paste(as.numeric(unlist(strsplit(as.character(year), "_")))+increment[i], collapse="_")
-				}
-				unlist(tmp.list)
-			}
-
 			grades <- type.convert(as.character(grades), as.is=TRUE)
 			if (is.null(baseline.grade.sequences.lags)) baseline.grade.sequences.lags <- rep(1, length(grades)-1)
 
 			tmp.years.sequence <- list()
-			tmp.years.sequence <- lapply(years, function(x) year.increment(year=x, increment=c(0,cumsum(baseline.grade.sequences.lags))))
+			tmp.years.sequence <- lapply(years, function(x) yearIncrement(year=x, increment=c(0,cumsum(baseline.grade.sequences.lags))))
 			return(tmp.years.sequence[sapply(tmp.years.sequence, function(x) all(x %in% years))])
 
 		} ### END test.year.sequence

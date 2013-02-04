@@ -58,10 +58,6 @@ arrow.color <- function(sgp){
           arrow.legend.color[findInterval(sgp, growth.level.cutscores)+1]
 }
 
-.year.increment <- function(year, increment) {
-      paste(as.numeric(unlist(strsplit(as.character(year), "_")))+increment, collapse="_")
-}
-
 get.my.cutscore.year <- function(state, content_area, year) {
 	year <- tail(sort(c(SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[content_area]], year)), 1)
         tmp.cutscore.years <- sapply(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]])[grep(content_area, names(SGPstateData[[state]][["Achievement"]][["Cutscores"]]))], "[.]"),
@@ -99,7 +95,7 @@ interpolate.grades <- function(grades, data.year.span) {
 		return (list(
 			interp.df = data.frame(GRADE=2:8), 
 			year_span=year_span,
-			years=sapply(-5:1, function(x) .year.increment(Report_Parameters$Current_Year, x))))
+			years=yearIncrement(Report_Parameters$Current_Year, -5:1)))
 	} else {
 		if (last.scale.score < data.year.span) {
 			grades[(last.scale.score+1):data.year.span] <- (grades[last.scale.score]-1):(grades[last.scale.score] - (data.year.span - last.scale.score))
@@ -133,8 +129,7 @@ interpolate.grades <- function(grades, data.year.span) {
 				interp.df = data.frame(GRADE=temp.grades), 
 				year_span=year_span, 
 				increment_for_projection=0,
-				years=sapply(seq(1-max(which(grades[1]==temp.grades)), length=length(temp.grades)), 
-					function(x) .year.increment(Report_Parameters$Current_Year, x))))
+				years=yearIncrement(Report_Parameters$Current_Year, seq(1-max(which(grades[1]==temp.grades)), length=length(temp.grades)))))
 		} else {
 			year.increment.for.projection <- grades.reported.in.state[which(grades[1]==grades.reported.in.state)+1]-grades[1]
 			year_span <- max(min(last.scale.score, data.year.span-1), min(grades[1]-min(grades.reported.in.state)+1, data.year.span-1))-
@@ -145,8 +140,7 @@ interpolate.grades <- function(grades, data.year.span) {
 				interp.df = data.frame(GRADE=temp.grades), 
 				year_span=year_span,
 				increment_for_projection=year.increment.for.projection,
-				years=sapply(seq(1-max(which(grades[1]==temp.grades)), length=length(temp.grades)), 
-					function(x) .year.increment(Report_Parameters$Current_Year, x))))
+				years=yearIncrement(Report_Parameters$Current_Year, seq(1-max(which(grades[1]==temp.grades)), length=length(temp.grades)))))
 		}
 	} 
 } 
