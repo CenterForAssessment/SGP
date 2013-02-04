@@ -50,8 +50,8 @@ function(panel.data,	## REQUIRED
         }
 
 	get.my.knots.boundaries.path <- function(content_area, year) {
-		tmp.knots.boundaries.names <- names(panel.data[["Knots_Boundaries"]][[tmp.path.knots.boundaries]])[
-			grep(content_area, names(panel.data[["Knots_Boundaries"]][[tmp.path.knots.boundaries]]))]
+		tmp.knots.boundaries.names <-
+                        names(panel.data[['Knots_Boundaries']][[tmp.path.knots.boundaries]])[match(content_area, sapply(strsplit(names(panel.data[['Knots_Boundaries']][[tmp.path.knots.boundaries]]), "[.]"), '[', 1))]
 		if (length(tmp.knots.boundaries.names)==0) {
 			return(paste("[['", tmp.path.knots.boundaries, "']]", sep=""))
 		} else {
@@ -101,26 +101,6 @@ function(panel.data,	## REQUIRED
 			data[eval(parse(text=str1))][, c("ID", str3), with=FALSE]
 		}
 	}
-
-#	.get.data.table <- function(ss.data) {
-#		names(ss.data) <- NA
-#		names(ss.data)[c(1, (1+num.panels-max(num.predictors)+1):(1+num.panels), (1+2*num.panels-max(num.predictors)+1):(1+2*num.panels))] <- 
-#			c("ORIGINAL.ID", GD, SS)
-#		data.table(ID=seq(dim(ss.data)[1]), ss.data, key="ID")
-#	}
-
-#	.unget.data.table <- function(my.data, my.lookup) {
-#		setkey(my.data, ID); ORIGINAL.ID <- NULL
-#		my.data[["ID"]] <- my.lookup[my.data[["ID"]], ORIGINAL.ID]
-#		if (!is.null(achievement.level.prior.vname)) {
-#			panel.data[["Panel_Data"]] <- as.data.table(panel.data[["Panel_Data"]])
-#			setkey(panel.data[["Panel_Data"]], ID)
-#			invisible(setkeyv(my.data, NULL)); setkey(my.data, ID)
-#			my.data <- panel.data[["Panel_Data"]][,c("ID", achievement.level.prior.vname), with=FALSE][my.data]
-#			setnames(my.data, 2, "ACHIEVEMENT_LEVEL_PRIOR")
-#		}
-#		return(as.data.frame(my.data))
-#	}
 
 	.year.increment <- function(year, increment, lag=0) {
 		paste(as.numeric(unlist(strsplit(as.character(year), "_")))+increment-lag, collapse="_")	

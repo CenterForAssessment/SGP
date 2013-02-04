@@ -20,8 +20,8 @@ growth percentile analyses.
 \tabular{ll}{
 Package: \tab SGP\cr
 Type: \tab Package\cr
-Version: \tab 1.0-6.0\cr
-Date: \tab 2013-2-1\cr
+Version: \tab 1.0-7.0\cr
+Date: \tab 2013-2-4\cr
 License: \tab CC BY-SA 3.0 US + file LICENSE\cr
 LazyLoad: \tab yes\cr
 }
@@ -30,7 +30,7 @@ calculation must be specifically formatted.  See \code{\link{sgpData}} for an ex
 provided in the examples of the \code{\link{studentGrowthPercentiles}} and \code{\link{studentGrowthProjections}} using the higher level functions 
 \code{\link{prepareSGP}}, \code{\link{analyzeSGP}}, \code{\link{combineSGP}}, \code{\link{summarizeSGP}}, and \code{visualizeSGP}.} 
 
-\author{Damian W. Betebenner \email{dbetebenner@nciea.org}, Adam Van Iwaarden \email{Vaniwaarden@colorado.edu} and Ben Domingue \email{ben.domingue@gmail.com}} 
+\author{Damian W. Betebenner \email{dbetebenner@nciea.org}, Adam Van Iwaarden \email{Vaniwaarden@colorado.edu}, Ben Domingue \email{ben.domingue@gmail.com} and Yi Shang \email{shangyi@gmail.com}} 
 
 \references{ 
 Betebenner, D. W. (2012). Growth, standards, and accountability. In G. J. Cizek,

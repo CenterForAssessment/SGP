@@ -13,6 +13,7 @@ function(sgp_object,
 	sgp.projections.baseline=TRUE,
 	sgp.projections.lagged.baseline=TRUE,
 	simulate.sgps=TRUE,
+	calculate.simex=NULL,
 	parallel.config=NULL,
 	save.intermediate.results=FALSE,
 	save.old.summaries=FALSE,
@@ -20,7 +21,8 @@ function(sgp_object,
 	sgp.summaries=NULL,
 	summary.groups=NULL,
 	confidence.interval.groups=NULL,
-	plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot")) {
+	plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot"),
+	verbose.output=FALSE) {
 
         started.at <- proc.time()
 	message(paste("\nStarted abcSGP", date()), "\n")
@@ -67,7 +69,9 @@ function(sgp_object,
 			sgp.projections.baseline=sgp.projections.baseline,
 			sgp.projections.lagged.baseline=sgp.projections.lagged.baseline,
 			simulate.sgps=simulate.sgps,
-			parallel.config=parallel.config)
+			calculate.simex=calculate.simex,
+			parallel.config=parallel.config,
+			verbose.output=verbose.output)
 
                 if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
 	}
