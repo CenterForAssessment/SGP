@@ -492,7 +492,6 @@ function(panel.data,	## REQUIRED
 	num.predictors <- 1:length(grade.progression)
 	GD <- paste("GD", grade.progression, sep="")
 	SS <- paste("SS", grade.progression, sep="")
-#	ss.data <- .get.data.table(ss.data)
 	setnames(ss.data, c(1, (1+num.panels-max(num.predictors)+1):(1+num.panels), (1+2*num.panels-max(num.predictors)+1):(1+2*num.panels)), c("ID", GD, SS))
 	setkey(ss.data, ID)
 
@@ -501,6 +500,7 @@ function(panel.data,	## REQUIRED
 	### Test to see if ss.data has cases to analyze
 
 	if (dim(.get.panel.data(ss.data, 1, by.grade, tmp.gp=grade.progression))[1] == 0) {
+warning()
                 tmp.messages <- c(tmp.messages, "\tNOTE: Supplied data together with grade progression contains no data. Check data, function arguments and see help page for details.\n")
                 message(paste("\tStarted studentGrowthProjections", started.date))
                 message(paste("\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
