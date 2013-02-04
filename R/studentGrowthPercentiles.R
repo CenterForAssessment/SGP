@@ -295,7 +295,7 @@ function(panel.data,         ## REQUIRED
 		  for (i in seq_along(tmp.gp.iter)) {
 		    knt <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['knots_", tmp.gp.iter[i], "']]", sep="")
 		    bnd <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['boundaries_", tmp.gp.iter[i], "']]", sep="")
-		    mod <- paste(mod, " + bs(prior_", tmp.gp.iter[i], ", knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
+		    mod <- paste(mod, " + bs(prior_", i, ", knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
 		  }
 		  return(parse(text=paste("rq(final.yr ~", substring(mod,4), ", tau=taus,data=data, method=rq.method)[['fitted.values']]", sep="")))
 		}
