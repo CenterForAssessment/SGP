@@ -22,7 +22,7 @@ setClassUnion("list.null", c("list","NULL"))
 		if (any(object@Time[[1]]=="BASELINE")) {
 			tmp.test.time <- TRUE
 		} else {
-			tmp.test.time <- yearIncrement(head(object@Time[[1]], 1), c(0, cumsum(object@Time_Lags[[1]]))) == object@Time[[1]]
+			tmp.test.time <- all(yearIncrement(head(object@Time[[1]], 1), c(0, cumsum(object@Time_Lags[[1]]))) == object@Time[[1]])
 		}
 	}
 
