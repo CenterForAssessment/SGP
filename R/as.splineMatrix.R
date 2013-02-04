@@ -90,7 +90,7 @@ function(matrix_argument,
 			if (tmp.time == "BASELINE") {
 				time <- rep("BASELINE", length(grade_progression))
 			} else {
-				time <- rev(year.increment(tmp.time, -cumsum(c(0, time_lags))))
+				time <- rev(year.increment(tmp.time, -cumsum(c(0, rev(time_lags)))))
 			}
 
 
@@ -154,14 +154,14 @@ function(matrix_argument,
 
 			### Time
 
-			if (.hasSlot(matrix_argument, "Time")) {
+			if (.hasSlot(matrix_argument, "Time") && matrix_argument@Version > "1.0-6.0") {
 				time <- as.character(matrix_argument@Time[[1]])
 			} else {
 				tmp.time <- unlist(strsplit(gsub("'|]]", "", strsplit(rn, "\\[\\[")[[1]][2]), "[.]"))[2]
 				if (tmp.time == "BASELINE") {
 					time <- rep("BASELINE", length(grade_progression))
 				} else {
-					time <- as.character(rev(year.increment(tmp.time, -cumsum(c(0, time_lags)))))
+					time <- as.character(rev(year.increment(tmp.time, -cumsum(c(0, rev(time_lags))))))
 				}
 			}
 

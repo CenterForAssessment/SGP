@@ -15,6 +15,7 @@ function(sgp_object,
          sgp.projections.lagged.baseline.max.order=3,
          sgp.use.my.coefficient.matrices=NULL,
          simulate.sgps=TRUE,
+	 calculate.simex=NULL,
          goodness.of.fit.print=TRUE,
          sgp.config=NULL,
          sgp.config.drop.nonsequential.grade.progression.variables=TRUE,
@@ -276,6 +277,7 @@ function(sgp_object,
 							sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 							goodness.of.fit=state,
 							verbose.output=verbose.output,
+							calculate.simex=calculate.simex,
 							...))
 					}
 				} else {
@@ -299,6 +301,7 @@ function(sgp_object,
 							sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 							goodness.of.fit=state,
 							verbose.output=verbose.output,
+							calculate.simex=calculate.simex,
 							...))
 					}
 				}
@@ -330,6 +333,7 @@ function(sgp_object,
 							sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 							goodness.of.fit=state,
 							verbose.output=verbose.output,
+							calculate.simex=calculate.simex,
 							...))
 					} else {
 						tmp <- clusterApplyLB(par.start$internal.cl, rev(par.sgp.config), 	function(sgp.iter)	studentGrowthPercentiles( 
@@ -350,6 +354,7 @@ function(sgp_object,
 							sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 							goodness.of.fit=state,
 							verbose.output=verbose.output,
+							calculate.simex=calculate.simex,
 							...))
 					}
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -384,6 +389,7 @@ function(sgp_object,
 							sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 							goodness.of.fit=state,
 							verbose.output=verbose.output,
+							calculate.simex=calculate.simex,
 							...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 					} else {
 						tmp <- mclapply(rev(par.sgp.config), function(sgp.iter)	studentGrowthPercentiles( 
@@ -404,6 +410,7 @@ function(sgp_object,
 							sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 							goodness.of.fit=state,
 							verbose.output=verbose.output,
+							calculate.simex=calculate.simex,
 							...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 					}
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -909,6 +916,7 @@ function(sgp_object,
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 						goodness.of.fit=state,
 						verbose.output=verbose.output,
+						calculate.simex=calculate.simex,
 						...)
 				} else {
 					tmp_sgp_object <- studentGrowthPercentiles(
@@ -928,6 +936,7 @@ function(sgp_object,
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 						goodness.of.fit=state,
 						verbose.output=verbose.output,
+						calculate.simex=calculate.simex,
 						...)
 				}
 				suppressMessages(gc())

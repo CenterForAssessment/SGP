@@ -22,6 +22,7 @@ analyzeSGP(sgp_object,
          sgp.projections.lagged.baseline.max.order=3,
          sgp.use.my.coefficient.matrices=NULL,
          simulate.sgps=TRUE,
+	 calculate.simex=NULL,
          goodness.of.fit.print=TRUE,
          sgp.config=NULL,
          sgp.config.drop.nonsequential.grade.progression.variables=TRUE,
@@ -71,6 +72,8 @@ Default is 3.  To utilize the maximum matrix order, set to NULL.
   same name as those provided by the sgp.labels argument.
   }
   \item{simulate.sgps}{Boolean variable indicating whether to simulate SGP values for students based on test-specific Conditional Standard Errors of Measurement (CSEM).  Test CSEM data must be available for simulation and included in \code{SGPstateData}.  This argument must be set to TRUE for confidence interval construction. Defaults to TRUE.
+  }
+  \item{calculate.simex}{A character state acronymn or list including state/csem variable, simulation.iterations, lambda and extrapolation method. Defaults to NULL, no simex calculations performed.
   }
   \item{goodness.of.fit.print}{Boolean variable indicating whether to print out Goodness of Fit figures as PDF into a directory labeled Goodness of Fit. Defaults to TRUE.
   }

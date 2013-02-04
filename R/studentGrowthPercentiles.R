@@ -34,7 +34,7 @@ function(panel.data,         ## REQUIRED
          return.norm.group.identifier=TRUE,
          print.time.taken=TRUE,
          parallel.config=NULL,
-         calculate.simex,
+         calculate.simex=NULL,
 	 verbose.output=FALSE) {
 
 	started.at <- proc.time()
@@ -277,44 +277,41 @@ function(panel.data,         ## REQUIRED
 			tmp.score[tmp.score > min.max[2]] <- min.max[2]
 			return(tmp.score)
 	}
-
-
   
-	.simex.sgp <- function(state, variable, lambda, B,extrapolation){
-		GRADE <- CONTENT_AREA <- YEAR <- V1 <- Lambda <- tau <- NULL ## To avoid R CMD check warnings
-		content_area<-sgp.labels$my.subject
-		year<-sgp.labels$my.year
+	.simex.sgp <- function(state, variable, lambda, B, extrapolation) {
+		GRADE <- CONTENT_AREA <- YEAR <- V1 <- Lambda <- tau <- b <- PREDICTED_VALUES <- NULL ## To avoid R CMD check warnings
+		content_area <- sgp.labels$my.subject
+		year <- sgp.labels$my.year
 		my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
     
-		fitted=list()
-		extrap=list()
-		tmp.quantiles.simex=list()
-		loss.hoss<-matrix(nrow=2,ncol=length(tmp.gp)-1)
+		fitted <- extrap <- tmp.quantiles <- list()
+		loss.hoss <- matrix(nrow=2,ncol=length(tmp.gp)-1)
 		for (g in 1:ncol(loss.hoss)) {
-			loss.hoss[,g]<-SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]][[paste("loss.hoss_", rev(tmp.gp)[-1][g], sep="")]]
+			loss.hoss[,g] <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]][[paste("loss.hoss_", rev(tmp.gp)[-1][g], sep="")]]
 		}
-		rqfit<-function(tmp.gp.iter, lam){  #  AVI added in the lam  argument here to index the lambda specific knots and boundaries
-		  mod<-character()
-		  for (i in seq_along(tmp.gp.iter)) {
-		    knt <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['knots_", tmp.gp.iter[i], "']]", sep="")
-		    bnd <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['boundaries_", tmp.gp.iter[i], "']]", sep="")
-		    mod <- paste(mod, " + bs(SS_", tmp.yr.iter[i], ", knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
-		  }
-		  return(parse(text=paste("rq(SS_", tmp.yr.last,"~", substring(mod,4), ", tau=taus, method=rq.method)[['fitted.values']]", sep="")))
+		rqfit <- function(tmp.gp.iter, lam) {  #  AVI added in the lam  argument here to index the lambda specific knots and boundaries
+			mod <- character()
+			for (i in seq_along(tmp.gp.iter)) {
+				knt <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['knots_", tmp.gp.iter[i], "']]", sep="")
+				bnd <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['boundaries_", tmp.gp.iter[i], "']]", sep="")
+				mod <- paste(mod, " + bs(SS_", tmp.yr.iter[i], ", knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
+			}
+			return(parse(text=paste("rq(SS_", tmp.yr.last,"~", substring(mod,4), ", tau=taus, method=rq.method)[['fitted.values']]", sep="")))
 		}
 		
-		for (k in coefficient.matrix.priors){
-			data<- .get.panel.data(ss.data, k, by.grade)
+		for (k in coefficient.matrix.priors) {
+			data <- .get.panel.data(ss.data, k, by.grade)
 			tmp.num.variables <- dim(data)[2]
-			SS.yr<-names(data)[-1]
-			tmp.yr.last<-as.numeric(substring(tail(SS.yr,1),4))
-			tmp.yr<-as.numeric(substring(SS.yr,4))
-			tmp.yr.iter<-rev(tmp.yr)[2:(k+1)]
-			tmp.gp.iter<-rev(tmp.gp)[2:(k+1)]
-			csem.int<-matrix(nrow=dim(data)[1],ncol=length(tmp.gp.iter)) # build matrix to store interpolated csem
-			colnames(csem.int)<-paste("icsem",tmp.gp.iter,sep="")
+			SS.yr <- names(data)[-1]
+			tmp.yr.last <- as.numeric(substring(tail(SS.yr,1),4))
+			tmp.yr <- as.numeric(substring(SS.yr,4))
+			tmp.yr.iter <- rev(tmp.yr)[2:(k+1)]
+			tmp.gp.iter <- rev(tmp.gp)[2:(k+1)]
+			csem.int <- matrix(nrow=dim(data)[1],ncol=length(tmp.gp.iter)) # build matrix to store interpolated csem
+			colnames(csem.int) <- paste("icsem", tmp.gp.iter,sep="")
 			
 			# interpolate csem for all scale scores except that of the last grade
+
 			if (!is.null(state)){
 				for (g in seq_along(tmp.gp.iter)) {
 			        if ("YEAR" %in% names(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
@@ -332,112 +329,115 @@ function(panel.data,         ## REQUIRED
 				}
 			}
 			
-			# naive model #
+			# naive model
+
 			fitted[[paste("order_",k,sep="")]]<-matrix(0,nrow=length(lambda),ncol=dim(data)[1]*length(taus))
 			tmp.matrix <- getsplineMatrix(
-			  Coefficient_Matrices[[tmp.path.coefficient.matrices]], 
-			  tail(content.area.progression, k+1), 
-			  tail(grade.progression, k+1),
-			  tail(year.progression, k+1),
-			  tail(year.progression.lags, k),
-			  my.matrix.order=k)
+				Coefficient_Matrices[[tmp.path.coefficient.matrices]], 
+				tail(content.area.progression, k+1), 
+				tail(grade.progression, k+1),
+				tail(year.progression, k+1),
+				tail(year.progression.lags, k),
+				my.matrix.order=k)
 			
 			fitted[[paste("order_",k,sep="")]][1,] <- as.vector(.get.percentile.predictions(data, tmp.matrix))
 			
-			# perturbe data #
+			# perturbe data
 			
 			for (L in lambda[-1]) {
-			  big.data <- rbindlist(replicate(B, data, simplify = FALSE))
-			  big.data[, Lambda := rep(L, each=dim(data)[1]*B)]
-			  big.data[, b := rep(1:B, each=dim(data)[1])]
-			  for (g in seq_along(tmp.gp.iter)){
-			    big.data[, paste("icsem", tmp.gp.iter[g], sep="") := rep(csem.int[, paste("icsem", tmp.gp.iter[g], sep="")], time=B)]
-			    big.data[, paste("SS_", tmp.yr.iter[g], sep="") := eval(parse(text=paste("big.data[['SS_", tmp.yr.iter[g],
-			                                                                             "']] + sqrt(big.data[['Lambda']]) * big.data[['icsem", tmp.gp.iter[g], "']] * rnorm(dim(big.data)[1])", sep="")))]
-			    col.index <- which(names(big.data) == paste("SS_",tmp.yr.iter[g], sep=""))
-			    big.data[big.data[[col.index]] < loss.hoss[1,g], col.index := loss.hoss[1,g], with=F]
-			    big.data[big.data[[col.index]] > loss.hoss[2,g], col.index := loss.hoss[2,g], with=F] # problem w 4th grade HOSS in SGPstateData?  HOSS = 940, but highest score in data is 795.  Since we've calculated Knots_Boundaries internally in the test implimentation, the function is producing data outside of the (internally calculated) boundaries and then warnings are being thrown.  Should we correct the problem here?  Produce data specific loss.hoss or continue to use SGPstateData (and create Boundaries from that?)  Just create new Knots and use SGPstateData for LOSS/HOSS and Boundaries?  I think there are a couple viable options here...
-			    			
-			    ks <- big.data[, as.list(as.vector(unlist(round(quantile(big.data[[col.index]], probs=c(0.2,0.4,0.6,0.8), na.rm=TRUE), digits=3))))] # Knots
-			    bs <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.1), digits=3)))] # Boundaries
-			    lh <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.0), digits=3)))] # LOSS/HOSS
+				big.data <- rbindlist(replicate(B, data, simplify = FALSE))
+				big.data[, Lambda := rep(L, each=dim(data)[1]*B)]
+				big.data[, b := rep(1:B, each=dim(data)[1])]
+					for (g in seq_along(tmp.gp.iter)) {
+						big.data[, paste("icsem", tmp.gp.iter[g], sep="") := rep(csem.int[, paste("icsem", tmp.gp.iter[g], sep="")], time=B)]
+						big.data[, paste("SS_", tmp.yr.iter[g], sep="") := eval(parse(text=paste("big.data[['SS_", tmp.yr.iter[g],
+							"']] + sqrt(big.data[['Lambda']]) * big.data[['icsem", tmp.gp.iter[g], "']] * rnorm(dim(big.data)[1])", sep="")))]
+						col.index <- which(names(big.data) == paste("SS_",tmp.yr.iter[g], sep=""))
+						big.data[big.data[[col.index]] < loss.hoss[1,g], col.index := loss.hoss[1,g], with=F]
+						big.data[big.data[[col.index]] > loss.hoss[2,g], col.index := loss.hoss[2,g], with=F] 
+## problem w 4th grade HOSS in SGPstateData?  HOSS = 940, but highest score in data is 795.  Since we've calculated Knots_Boundaries internally in the 
+## test implimentation, the function is producing data outside of the (internally calculated) boundaries and then warnings are being thrown.  
+## Should we correct the problem here?  Produce data specific loss.hoss or continue to use SGPstateData (and create Boundaries from that?)  
+## Just create new Knots and use SGPstateData for LOSS/HOSS and Boundaries?  I think there are a couple viable options here...
+						ks <- big.data[, as.list(as.vector(unlist(round(quantile(big.data[[col.index]], probs=c(0.2,0.4,0.6,0.8), na.rm=TRUE), digits=3))))] # Knots
+						bs <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.1), digits=3)))] # Boundaries
+						lh <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.0), digits=3)))] # LOSS/HOSS
 			    
-			    eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['knots_", tmp.gp.iter[g], 
-			                          "']] <- c(ks[,V1], ks[,V2], ks[,V3], ks[,V4])", sep="")))
-			    eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['boundaries_", tmp.gp.iter[g], 
-			                          "']] <- c(bs[,V1], bs[,V2])", sep="")))
-			    eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['loss.hoss_", tmp.gp.iter[g], 
-			                          "']] <- c(lh[,V1], lh[,V2])", sep="")))
-			  }
+						eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['knots_", tmp.gp.iter[g], 
+							"']] <- c(ks[,V1], ks[,V2], ks[,V3], ks[,V4])", sep="")))
+						eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['boundaries_", tmp.gp.iter[g], 
+							"']] <- c(bs[,V1], bs[,V2])", sep="")))
+						eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['loss.hoss_", tmp.gp.iter[g], 
+							"']] <- c(lh[,V1], lh[,V2])", sep="")))
+					}
 			  		  
-			  if (is.null(parallel.config)) { # Sequential
-			    fitted.b <- big.data[,eval(rqfit(tmp.gp.iter[1:k], lam=L)), by='b']
-			    fitted.b[, ID := rep(data$ID, time = (B*length(taus)))]
-			    fitted.b[,tau := rep(taus, each=dim(data)[1], time=B)]
-			  } else {	# Parallel over 1:B
-			    if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
-			      ##  Don't offer this option now.  But this could ultimately be the BEST option for this because we could have 
-			      ##  nested foreach loops around Lambda, B and even the priors/orders if we have access to enough cores (cluster)
-			      message("FOREACH backend in not currently available for SIMEX.  Changing to BACKEND='PARALLEL' and TYPE will be set to OS default.")
-			      parallel.config[["BACKEND"]] <- "PARALLEL"
-			    } 
+				if (is.null(parallel.config)) { # Sequential
+					fitted.b <- big.data[,eval(rqfit(tmp.gp.iter[1:k], lam=L)), by='b']
+					fitted.b[, ID := rep(data$ID, time = (B*length(taus)))]
+					fitted.b[,tau := rep(taus, each=dim(data)[1], time=B)]
+				} else {	# Parallel over 1:B
+					if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
+						##  Don't offer this option now.  But this could ultimately be the BEST option for this because we could have 
+						##  nested foreach loops around Lambda, B and even the priors/orders if we have access to enough cores (cluster)
+						message("FOREACH backend in not currently available for SIMEX.  Changing to BACKEND='PARALLEL' and TYPE will be set to OS default.")
+						parallel.config[["BACKEND"]] <- "PARALLEL"
+					} 
 			    
-			    par.start <- startParallel(parallel.config, 'SIMEX') 
-			    ##  Note, that if you use the parallel.config for SIMEX here, you also need to use it for TAUS in the naive analysis
-			    ##  Example parallel.config argument:  '... parallel.config=list(BACKEND="PARALLEL", TYPE="SOCK", WORKERS=list(SIMEX = 4, TAUS = 4))'
-			    
-			    if (par.start$par.type == 'MULTICORE') {
-			      tmp.fitted.b <- mclapply(1:B, function(x) big.data[b==x][,eval(rqfit(tmp.gp.iter[1:k], lam=L))], mc.cores=par.start$workers)
-			    }
-			    if (par.start$par.type == 'SNOW') {
-			      tmp.fitted.b <- parLapply(par.start$internal.cl, 1:B, function(x) big.data[b==x][,eval(rqfit(tmp.gp.iter[1:k], lam=L))])
-			    }
-			    fitted.b <- data.table(do.call(c, as.vector(tmp.fitted.b)), ID = rep(data$ID, time=(B*length(taus))), 
-			                           tau=rep(taus, each=dim(data)[1], time=B), b = rep(1:B, each = dim(data)[1]*length(taus)), key=c('ID', 'b'))
-			    stopParallel(parallel.config, par.start)
-			  }
-			  # Make new variable 'PREDICTED_VALUES' to compare with 'V1' and to preserve 'tau'
-			  fitted.b[, PREDICTED_VALUES := .smooth.isotonize.row(V1), by=list(ID, b)] #  Could just use V1 := ... in final implimentation to keep from adding a column here
-			  fitted[[paste("order_",k,sep="")]][which(lambda==L),] <- fitted.b[, mean(PREDICTED_VALUES), by=list(ID, tau)][['V1']] # Turning 'fitted' object into data.table and using replace by reference might help things here
+					par.start <- startParallel(parallel.config, 'SIMEX') 
+					##  Note, that if you use the parallel.config for SIMEX here, you also need to use it for TAUS in the naive analysis
+					##  Example parallel.config argument:  '... parallel.config=list(BACKEND="PARALLEL", TYPE="SOCK", WORKERS=list(SIMEX = 4, TAUS = 4))'
+					if (par.start$par.type == 'MULTICORE') {
+						tmp.fitted.b <- mclapply(1:B, function(x) big.data[b==x][,eval(rqfit(tmp.gp.iter[1:k], lam=L))], mc.cores=par.start$workers)
+					}
+					if (par.start$par.type == 'SNOW') {
+						tmp.fitted.b <- parLapply(par.start$internal.cl, 1:B, function(x) big.data[b==x][,eval(rqfit(tmp.gp.iter[1:k], lam=L))])
+					}
+					fitted.b <- data.table(do.call(c, as.vector(tmp.fitted.b)), ID = rep(data$ID, time=(B*length(taus))), 
+						tau=rep(taus, each=dim(data)[1], time=B), b = rep(1:B, each = dim(data)[1]*length(taus)), key=c('ID', 'b'))
+					stopParallel(parallel.config, par.start)
+				}
+				# Make new variable 'PREDICTED_VALUES' to compare with 'V1' and to preserve 'tau'
+				fitted.b[, PREDICTED_VALUES := .smooth.isotonize.row(V1), by=list(ID, b)] #  Could just use V1 := ... in final implimentation to keep from adding a column here
+				fitted[[paste("order_",k,sep="")]][which(lambda==L),] <- fitted.b[, mean(PREDICTED_VALUES), by=list(ID, tau)][['V1']] 
 			  
-			  #  Here are some things I did to look at the effects of using the .smooth.isotonize.row function to keep 
-			  #  quantile lines from crossing.  Maybe minimal impact here in the aggregate (along with a handful of 
-			  #  big impacts on a few students), we can't assume this will always be the case.
+#  Here are some things I did to look at the effects of using the .smooth.isotonize.row function to keep 
+#  quantile lines from crossing.  Maybe minimal impact here in the aggregate (along with a handful of 
+#  big impacts on a few students), we can't assume this will always be the case.
 			  
-			  # fitted.b[, DIF := PREDICTED_VALUES-V1]
-			  # table(round(fitted.b$DIF))
-			  # fitted.b[DIF<(-120),]  #  I picked out a few here that have multiple large differences to investigate:
-			  # fitted.b[ID==8527485 & b==5,] # student with large differences (crossing quantile curves) at the LOWER end SGPs
-			  # fitted.b[ID==9090788 & b==9,] # student with large differences (crossing quantile curves) at the UPPER end SGPs
-			  # fitted.b.ave <- fitted.b[, mean(PREDICTED_VALUES), by=list(ID, tau)]
-			  # fitted.b.ave2<- fitted.b[, mean(V1), by=list(ID, tau)]
-			  # fitted.b.ave[ID==9090788,]
-			  # fitted.b.ave2[ID==9090788,]
-			}
-			# extrapolation
-			# the splinefun extrapolation was removed because I couldn't find a way to vectorize this function
+# fitted.b[, DIF := PREDICTED_VALUES-V1]
+# table(round(fitted.b$DIF))
+# fitted.b[DIF<(-120),]  #  I picked out a few here that have multiple large differences to investigate:
+# fitted.b[ID==8527485 & b==5,] # student with large differences (crossing quantile curves) at the LOWER end SGPs
+# fitted.b[ID==9090788 & b==9,] # student with large differences (crossing quantile curves) at the UPPER end SGPs
+# fitted.b.ave <- fitted.b[, mean(PREDICTED_VALUES), by=list(ID, tau)]
+# fitted.b.ave2<- fitted.b[, mean(V1), by=list(ID, tau)]
+# fitted.b.ave[ID==9090788,]
+# fitted.b.ave2[ID==9090788,]
+			} ### END for (L in lambda[-1])`
+# extrapolation
+# the splinefun extrapolation was removed because I couldn't find a way to vectorize this function
 			
 			switch(extrapolation, QUADRATIC = fit <- lm(fitted[[paste("order_",k,sep="")]] ~ lambda + I(lambda^2)), LINEAR = fit <- lm(fitted[[paste("order_",k,sep="")]]~ lambda))
 			extrap[[paste("order_",k,sep="")]]<-as.data.table(matrix(predict(fit,newdata=data.frame(lambda=-1)), nrow=dim(data)[1]))
-			tmp.quantiles.simex[[k]]<-data.table(ID=data[["ID"]], ORDER=k, SGP_SIMEX=.get.quantiles(extrap[[paste("order_",k,sep="")]], data[[tail(SS.yr,1)]]))
-		}
-		# if (exists("par.start")) stopParallel(parallel.config, par.start)
-		#reassemble data
+			tmp.quantiles.simex[[k]] <- data.table(ID=data[["ID"]], ORDER=k, SGP_SIMEX=.get.quantiles(extrap[[paste("order_",k,sep="")]], data[[tail(SS.yr,1)]]))
+		} ### END for (k in coefficient.matrix.priors)
+# if (exists("par.start")) stopParallel(parallel.config, par.start)
+# reassemble data
 		quantile.data.simex<-data.table(rbindlist(tmp.quantiles.simex),key="ID")
 		
 		if (print.other.gp) {
-		  quantile.data.simex <- data.table(reshape(quantile.data.simex, idvar="ID", timevar="ORDER", direction="wide"),
-		                                    SGP_SIMEX=quantile.data.simex[c(which(!duplicated(quantile.data.simex))[-1]-1L, nrow(quantile.data.simex))][["SGP_SIMEX"]])
+			quantile.data.simex <- data.table(reshape(quantile.data.simex, idvar="ID", timevar="ORDER", direction="wide"),
+				SGP_SIMEX=quantile.data.simex[c(which(!duplicated(quantile.data.simex))[-1]-1L, nrow(quantile.data.simex))][["SGP_SIMEX"]])
 		} else {
-		  if (print.sgp.order | return.norm.group.identifier) {
-		    quantile.data.simex <- quantile.data.simex[c(which(!duplicated(quantile.data.simex))[-1]-1L, nrow(quantile.data.simex))]
-		  } else {
-		    quantile.data.simex <- quantile.data.simex[c(which(!duplicated(quantile.data.simex))[-1]-1L, nrow(quantile.data.simex)), c("ID", "SGP_SIMEX"), with=FALSE]
-		  }
+			if (print.sgp.order | return.norm.group.identifier) {
+				quantile.data.simex <- quantile.data.simex[c(which(!duplicated(quantile.data.simex))[-1]-1L, nrow(quantile.data.simex))]
+			} else {
+				quantile.data.simex <- quantile.data.simex[c(which(!duplicated(quantile.data.simex))[-1]-1L, nrow(quantile.data.simex)), c("ID", "SGP_SIMEX"), with=FALSE]
+			}
 		}
-		quantile.data.simex[,ORDER:=NULL]
+		quantile.data.simex[, ORDER:=NULL]
 		return (quantile.data.simex)
-	}
+	} ### END .simex.sgp function
 
 	split.location <- function(years) sapply(strsplit(years, '_'), length)[1]
 
@@ -619,7 +619,7 @@ function(panel.data,         ## REQUIRED
 		csem.tf <- FALSE
 	}
 
-	if (!missing(calculate.simex)) {
+	if (!is.null(calculate.simex)) {
 		simex.tf <- TRUE
 		if (!is.character(calculate.simex) & !is.list(calculate.simex)) {
 			tmp.messages <- c(tmp.messages, "\tNOTE: Please supply an appropriate state acronym, variable or list containing details to calculate.simex. See help page for details. SGPs will be calculated without measurement error correction.\n")
@@ -671,13 +671,13 @@ function(panel.data,         ## REQUIRED
 		if (is.null(calculate.simex$simulation.iterations)) calculate.simex$simulation.iterations <- 20
 		if (is.null(calculate.simex$lambda)) calculate.simex$lambda <- seq(0,2,0.5)
 		if (is.null(calculate.simex$extrapolation)) {
-      calculate.simex$extrapolation <- "LINEAR"
+			calculate.simex$extrapolation <- "LINEAR"
 		} else {
-      calculate.simex$extrapolation <- toupper(calculate.simex$extrapolation)
+			calculate.simex$extrapolation <- toupper(calculate.simex$extrapolation)
 		}
 		if (!any(calculate.simex$extrapolation == c("QUADRATIC", "LINEAR", "NATURAL"))) {
-		  warning("extrapolation not implemented. Using: linear", call. = FALSE)
-		  calculate.simex$extrapolation <- "LINEAR"
+			message("\t NOTE: Extrapolation not implemented. Using: linear", call. = FALSE)
+			calculate.simex$extrapolation <- "LINEAR"
 		}
 		
 	} else {
@@ -689,6 +689,7 @@ function(panel.data,         ## REQUIRED
 
 	tmp.objects <- c("Coefficient_Matrices", "Cutscores", "Goodness_of_Fit", "Knots_Boundaries", "Panel_Data", "SGPercentiles", "SGProjections", "Simulated_SGPs") 
 	Coefficient_Matrices <- Cutscores <- Goodness_of_Fit <- Knots_Boundaries <- Panel_Data <- SGPercentiles <- SGProjections <- Simulated_SGPs <- SGP_STANDARD_ERROR <- Verbose_Messages <- NULL
+	SGP_SIMEX <- NULL
 
 	if (identical(class(panel.data), "list")) {
 		for (i in tmp.objects) {
@@ -1033,13 +1034,11 @@ function(panel.data,         ## REQUIRED
 			Simulated_SGPs[[tmp.path]] <- rbind.fill(simulation.data, as.data.frame(Simulated_SGPs[[tmp.path]])) 
 		}
 
-		## start simex cycle
 		if (simex.tf){
-		  
-		  quantile.data.simex<-.simex.sgp(state=calculate.simex$state, variable=calculate.simex$variable, lambda=calculate.simex$lambda, 
-		                                  B=calculate.simex$simulation.iterations, extrapolation=calculate.simex$extrapolation)
-      quantile.data[,SGP_SIMEX:=quantile.data.simex[["SGP_SIMEX"]]]
-		}## END SIMEX analysis
+			quantile.data.simex<-.simex.sgp(state=calculate.simex$state, variable=calculate.simex$variable, lambda=calculate.simex$lambda, 
+				B=calculate.simex$simulation.iterations, extrapolation=calculate.simex$extrapolation)
+			quantile.data[, SGP_SIMEX:=quantile.data.simex[["SGP_SIMEX"]]]
+		}
 		
 		if (!is.null(percentile.cuts)){
 			cuts.best <- data.table(rbindlist(tmp.percentile.cuts), key="ID")

@@ -22,6 +22,7 @@ abcSGP(sgp_object,
 	sgp.projections.baseline=TRUE,
 	sgp.projections.lagged.baseline=TRUE,
 	simulate.sgps=TRUE,
+	calculate.simex=NULL,
 	parallel.config=NULL,
 	save.intermediate.results=FALSE,
 	save.old.summaries=FALSE,
@@ -66,6 +67,8 @@ If missing the function will use the data to infer all the grade progressions fo
   }
   \item{simulate.sgps}{Boolean variable indicating whether to simulate SGP values for students based on test-specific Conditional Standard Errors of Measurement (CSEM). 
   Test CSEM data must be available for simulation.  Must be set to TRUE for confidence interval construction. Defaults to TRUE in \code{abcSGP} only.
+  }
+  \item{calculate.simex}{A character state acronymn or list including state/csem variable, simulation.iterations, lambda and extrapolation method. Default to NULL, no simex calculations done.
   }
  \item{parallel.config}{A named list with, at a minimum, two elements indicating 1) the BACKEND package to be used for parallel computation and 2) the WORKERS list to specify the number of processors to be used in each major analysis.  The BACKEND element can be set = to \code{FOREACH} or \code{PARALLEL}.  Please consult the manuals and vignettes for information of these packages!  The \code{\link{analyzeSGP}} help page contains more thorough explanation and examples of the \code{parallel.config} setup. 
  
