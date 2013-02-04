@@ -418,12 +418,12 @@ function(panel.data,         ## REQUIRED
 # the splinefun extrapolation was removed because I couldn't find a way to vectorize this function
 			
 			switch(extrapolation, QUADRATIC = fit <- lm(fitted[[paste("order_",k,sep="")]] ~ lambda + I(lambda^2)), LINEAR = fit <- lm(fitted[[paste("order_",k,sep="")]]~ lambda))
-			extrap[[paste("order_",k,sep="")]]<-as.data.table(matrix(predict(fit,newdata=data.frame(lambda=-1)), nrow=dim(data)[1]))
+			extrap[[paste("order_",k,sep="")]] <- as.data.table(matrix(predict(fit,newdata=data.frame(lambda=-1)), nrow=dim(data)[1]))
 			tmp.quantiles.simex[[k]] <- data.table(ID=data[["ID"]], ORDER=k, SGP_SIMEX=.get.quantiles(extrap[[paste("order_",k,sep="")]], data[[tail(SS.yr,1)]]))
 		} ### END for (k in coefficient.matrix.priors)
 # if (exists("par.start")) stopParallel(parallel.config, par.start)
 # reassemble data
-		quantile.data.simex<-data.table(rbindlist(tmp.quantiles.simex),key="ID")
+		quantile.data.simex <- data.table(rbindlist(tmp.quantiles.simex),key="ID")
 		
 		if (print.other.gp) {
 			quantile.data.simex <- data.table(reshape(quantile.data.simex, idvar="ID", timevar="ORDER", direction="wide"),
@@ -899,6 +899,7 @@ function(panel.data,         ## REQUIRED
 		for (k in coefficient.matrix.priors) {
 			Coefficient_Matrices[[tmp.path.coefficient.matrices]][['TMP_NAME']] <- .create.coefficient.matrices(ss.data, k, by.grade)
 			names(Coefficient_Matrices[[tmp.path.coefficient.matrices]])[length(Coefficient_Matrices[[tmp.path.coefficient.matrices]])] <- get.coefficient.matrix.name(tmp.last, k)
+
 			if (verbose.output) {
 				tmp.coefficient.matrix.name <- get.coefficient.matrix.name(tmp.last, k)
 				tmp.grade.names <- paste("Grade", rev(head(unlist(Coefficient_Matrices[[tmp.path.coefficient.matrices]][[tmp.coefficient.matrix.name]]@Grade_Progression), -1)))
