@@ -19,10 +19,10 @@ setClassUnion("list.null", c("list","NULL"))
 	}
 
 	if (!is.null(object@Time)) {
-		if (any(object@Time=="BASELINE")) {
+		if (any(object@Time[[1]]=="BASELINE")) {
 			tmp.test.time <- TRUE
 		} else {
-			tmp.test.time <- yearIncrement(head(object@Time, 1), c(0, cumsum(object@Time_Lags))) == object@Time
+			tmp.test.time <- yearIncrement(head(object@Time[[1]], 1), c(0, cumsum(object@Time_Lags[[1]]))) == object@Time[[1]]
 		}
 	}
 
