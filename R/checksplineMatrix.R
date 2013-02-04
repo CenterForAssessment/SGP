@@ -5,10 +5,9 @@ function(list.of.splineMatrix, sgp_object=NULL) {
 	}
 	for (i in names(list.of.splineMatrix)) {
 		splineMatrix.tf <- sapply(list.of.splineMatrix[[i]], validObject, test=TRUE)==TRUE
-		if (!any(splineMatrix.tf)) {
-			tmp.changes <- TRUE
-			message(paste("\tNOTE: Updating current Coefficient Matrix", i, "to new splineMatrix class."))
+		if (!all(splineMatrix.tf)) {
 			for (j in names(list.of.splineMatrix[[i]])[!splineMatrix.tf]) {
+				message(paste("\tNOTE: Updating Coefficient Matrix", i, j, "to new splineMatrix class."))
 				list.of.splineMatrix[[i]][[j]] <- as.splineMatrix(matrix_argument=list.of.splineMatrix[[i]][[j]], matrix_argument_name=j, sgp_object=sgp_object)
 			}
 		}

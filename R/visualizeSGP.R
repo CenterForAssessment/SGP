@@ -82,10 +82,6 @@ function(sgp_object,
 	"%w/o%" <- function(x,y) x[!x %in% y]
 	num_non_missing <- function(x) sum(!is.na(x))
 
-	.year.increment <- function(year, increment) {
-		paste(as.numeric(unlist(strsplit(as.character(year), "_")))+increment, collapse="_")
-	}
-
 	pretty_year <- function(x) sub("_", "-", x)
 
 	get.max.order.for.progression <- function(year, content_area) {
@@ -744,7 +740,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			}
 			sgPlot.data <- data.table(rbindlist(tmp.list), key=key(sgPlot.data))[sgPlot.data]
 			tmp.grade.name <- paste("GRADE", tmp.last.year, sep=".")
-			tmp.year.name <- .year.increment(tmp.last.year, 1)
+			tmp.year.name <- yearIncrement(tmp.last.year, 1)
 			setkeyv(sgPlot.data, c("CONTENT_AREA", tmp.grade.name))
 			for (proj.iter in grep("PROJ_YEAR_1", names(sgPlot.data))) {
 				tmp.scale_score.name <- names(sgPlot.data)[proj.iter]

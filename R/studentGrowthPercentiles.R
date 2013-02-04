@@ -61,7 +61,7 @@ function(panel.data,         ## REQUIRED
 		num.panels <- (dim(data)[2]-1)/2
 
 		if (knots.boundaries.by.panel) {
-			tmp.years <- rep(.year.increment(sgp.labels$my.year, (-num.panels+1):-1), each=dim(data)[1])
+			tmp.years <- rep(yearIncrement(sgp.labels$my.year, (-num.panels+1):-1), each=dim(data)[1])
 		} else {
 			tmp.years <- rep(sgp.labels$my.year, dim(data)[1]*(num.panels-1))
 		}
@@ -98,14 +98,6 @@ function(panel.data,         ## REQUIRED
 		}
 	}
 
-        .year.increment <- function(year, increment) {
-		if (identical(year, "BASELINE")) {
-			return(rep("BASELINE", length(increment)))
-		} else {
-			sapply(increment, function(x) paste(as.numeric(unlist(strsplit(as.character(year), "_")))+x, collapse="_"))
-		}
-        }
-
 	get.my.knots.boundaries.path <- function(content_area, year) {
 		tmp.knots.boundaries.names <- 
 			names(Knots_Boundaries[[tmp.path.knots.boundaries]])[match(content_area, sapply(strsplit(names(Knots_Boundaries[[tmp.path.knots.boundaries]]), "[.]"), '[', 1))]
@@ -138,7 +130,7 @@ function(panel.data,         ## REQUIRED
 		s4Bs <- "Boundaries=list("
 		tmp.gp.iter <- rev(tmp.gp)[2:(k+1)]
 		for (i in seq_along(tmp.gp.iter)) {
-			my.path.knots.boundaries <- get.my.knots.boundaries.path(rev(content.area.progression)[i+1], .year.increment(rev(year.progression)[i+1], 0))
+			my.path.knots.boundaries <- get.my.knots.boundaries.path(rev(content.area.progression)[i+1], yearIncrement(rev(year.progression)[i+1], 0))
 			.check.knots.boundaries(names(eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, sep="")))), tmp.gp.iter[i])
 			knt <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['knots_", tmp.gp.iter[i], "']]", sep="")
 			bnd <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['boundaries_", tmp.gp.iter[i], "']]", sep="")
@@ -423,7 +415,7 @@ function(panel.data,         ## REQUIRED
 		} ### END for (k in coefficient.matrix.priors)
 # if (exists("par.start")) stopParallel(parallel.config, par.start)
 # reassemble data
-		quantile.data.simex<-data.table(rbindlist(tmp.quantiles.simex),key="ID")
+		quantile.data.simex <- data.table(rbindlist(tmp.quantiles.simex),key="ID")
 		
 		if (print.other.gp) {
 			quantile.data.simex <- data.table(reshape(quantile.data.simex, idvar="ID", timevar="ORDER", direction="wide"),
@@ -846,7 +838,7 @@ function(panel.data,         ## REQUIRED
 	}
 
 	if (missing(year.progression) & !identical(sgp.labels[['my.extra.label']], "BASELINE")) {
-		year.progression <- .year.increment(sgp.labels[['my.year']], rev(seq(0, length=length(tmp.gp), by=-1)))
+		year.progression <- yearIncrement(sgp.labels[['my.year']], rev(seq(0, length=length(tmp.gp), by=-1)))
 	} else {
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) {
 			year.progression <- rep("BASELINE", length(tmp.gp))
@@ -899,6 +891,7 @@ function(panel.data,         ## REQUIRED
 		for (k in coefficient.matrix.priors) {
 			Coefficient_Matrices[[tmp.path.coefficient.matrices]][['TMP_NAME']] <- .create.coefficient.matrices(ss.data, k, by.grade)
 			names(Coefficient_Matrices[[tmp.path.coefficient.matrices]])[length(Coefficient_Matrices[[tmp.path.coefficient.matrices]])] <- get.coefficient.matrix.name(tmp.last, k)
+
 			if (verbose.output) {
 				tmp.coefficient.matrix.name <- get.coefficient.matrix.name(tmp.last, k)
 				tmp.grade.names <- paste("Grade", rev(head(unlist(Coefficient_Matrices[[tmp.path.coefficient.matrices]][[tmp.coefficient.matrix.name]]@Grade_Progression), -1)))
@@ -995,7 +988,8 @@ function(panel.data,         ## REQUIRED
 
 		if (print.other.gp) {
 			quantile.data <- data.table(reshape(quantile.data, idvar="ID", timevar="ORDER", direction="wide"),
-				SGP=quantile.data[c(which(!duplicated(quantile.data))[-1]-1L, nrow(quantile.data))][["SGP"]])
+				SGP=quantile.data[c(which(!duplicated(quantile.data))[-1]-1L, nrow(quantile.data))][["SGP"]],
+				ORDER=quantile.data[c(which(!duplicated(quantile.data))[-1]-1L, nrow(quantile.data))][["ORDER"]])
 		} else {
 			if (print.sgp.order | return.norm.group.identifier) {
 				quantile.data <- quantile.data[c(which(!duplicated(quantile.data))[-1]-1L, nrow(quantile.data))]
