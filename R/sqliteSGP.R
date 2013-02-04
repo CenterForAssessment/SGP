@@ -59,10 +59,6 @@ function(sgp_object,
 			else substr(s, 1, n)
 		}
 
-		.year.increment <- function(year, increment) {
-			sapply(increment, function(x) paste(as.numeric(unlist(strsplit(as.character(year), "_")))+x, collapse="_"))
-		}
-
 		sqlite.create.table <- function(table.name, field.types, primary.key) {
 			tmp.sql <- paste("CREATE TABLE ", table.name, " (", paste(field.types, collapse=", "), 
 				", PRIMARY KEY (", paste(primary.key, collapse=", "), "))", sep="")
@@ -92,7 +88,7 @@ function(sgp_object,
 
 		get.year <- function(year) {
 			if (SGPstateData[[state]][["Assessment_Program_Information"]][["Test_Season"]]=="Fall") {
-				.year.increment(year, -1)				
+				yearIncrement(year, -1)				
 			} else {
 				return(year)
 			}

@@ -102,10 +102,6 @@ function(panel.data,	## REQUIRED
 		}
 	}
 
-	.year.increment <- function(year, increment, lag=0) {
-		paste(as.numeric(unlist(strsplit(as.character(year), "_")))+increment-lag, collapse="_")	
-	}
-
 	get.my.cutscore.year.sgprojection <- function(Cutscores, content_area, year) {
 		tmp.cutscore.years <- sapply(strsplit(names(Cutscores)[grep(content_area, names(Cutscores))], "[.]"), function(x) x[2])
 		if (any(!is.na(tmp.cutscore.years))) {
@@ -223,7 +219,7 @@ function(panel.data,	## REQUIRED
 						tmp.dt[,TEMP_2:=tmp.dt[,.smooth.bound.iso.row(
 										TEMP_1, 
 										grade.projection.sequence[j], 
-										.year.increment(sgp.labels[['my.year']], j, lag.increment),  
+										yearIncrement(sgp.labels[['my.year']], j, lag.increment),
 										missing.taus=missing.taus, 
 										na.replace=na.replace), 
 									by=ID][['V1']]]
@@ -272,7 +268,7 @@ function(panel.data,	## REQUIRED
 			cuts.arg <- names.arg <- character()
 
 			for (i in seq_along(grade.projection.sequence)) {
-				my.cutscore.year <- get.my.cutscore.year.sgprojection(Cutscores, sgp.labels$my.subject, .year.increment(sgp.labels$my.year, i, lag.increment))
+				my.cutscore.year <- get.my.cutscore.year.sgprojection(Cutscores, sgp.labels$my.subject, yearIncrement(sgp.labels$my.year, i, lag.increment))
 				tmp.cutscores.by.grade <- tmp.cutscores[[my.cutscore.year]][[paste("GRADE_", grade.projection.sequence[i], sep="")]]
 
 				if (!is.null(tmp.cutscores.by.grade)) {
@@ -500,7 +496,6 @@ function(panel.data,	## REQUIRED
 	### Test to see if ss.data has cases to analyze
 
 	if (dim(.get.panel.data(ss.data, 1, by.grade, tmp.gp=grade.progression))[1] == 0) {
-warning()
                 tmp.messages <- c(tmp.messages, "\tNOTE: Supplied data together with grade progression contains no data. Check data, function arguments and see help page for details.\n")
                 message(paste("\tStarted studentGrowthProjections", started.date))
                 message(paste("\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))

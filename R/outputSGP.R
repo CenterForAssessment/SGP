@@ -175,10 +175,6 @@ function(sgp_object,
 
 		### Utility functions
 
-		.year.increment <- function(year, increment) {
-			paste(as.numeric(unlist(strsplit(as.character(year), "_")))+increment, collapse="_")
-		}
-
 		get.my.label <- function(state, content_area, year, label="Cutscores") {
 			tmp.cutscore.years <- sapply(strsplit(names(SGPstateData[[state]][["Achievement"]][[label]])[grep(content_area, names(SGPstateData[[state]][["Achievement"]][[label]]))], "[.]"),
 				function(x) x[2])
@@ -366,7 +362,7 @@ function(sgp_object,
 				}
 				outputSGP.data <- data.table(convert.variables(rbind.fill(tmp.list)), key=paste(key(outputSGP.data), collapse=","))[outputSGP.data]
 				tmp.grade.name <- paste("GRADE", tmp.last.year.short, sep=".")
-				tmp.year.name <- .year.increment(tmp.last.year.short, j)
+				tmp.year.name <- yearIncrement(tmp.last.year.short, j)
 				setkeyv(outputSGP.data, c("CONTENT_AREA", tmp.grade.name))
 				for (proj.iter in grep(paste("PROJ_YEAR", j, sep="_"), names(outputSGP.data))) {
 					tmp.scale_score.name <- names(outputSGP.data)[proj.iter]
