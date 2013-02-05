@@ -236,6 +236,14 @@ function(sgp_object,
 					)
 				}
 
+				if ("SGP_SIMEX" %in% names(sgp_object@Data)) {
+					tmp.sgp.summaries <- c(
+						tmp.sgp.summaries,
+						MEDIAN_SGP_SIMEX="median_na(SGP_SIMEX)",
+						MEAN_SGP_SIMEX="mean_na(SGP_SIMEX)"
+					)
+				}
+
 				if (!is.null(my.sgp.target)) {
 					tmp.sgp.summaries <- c(
 						tmp.sgp.summaries, 
@@ -485,7 +493,7 @@ function(sgp_object,
 	}
 
 	variables.for.summaries <- intersect(c(my.sgp, my.sgp.target, my.sgp.target.musu, 
-						"ACHIEVEMENT_LEVEL", "ACHIEVEMENT_LEVEL_PRIOR", "CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STAY_UP_STATUS", "SCALE_SCORE_PRIOR_STANDARDIZED",
+						"ACHIEVEMENT_LEVEL", "ACHIEVEMENT_LEVEL_PRIOR", "CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STAY_UP_STATUS", "SCALE_SCORE_PRIOR_STANDARDIZED", "SGP_SIMEX",
 						unique(as.character(unlist(summary.groups)))),
 					names(sgp_object@Data)) 
 

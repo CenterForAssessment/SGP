@@ -78,7 +78,7 @@ function(
 	############################################################################
 
 	if (update.all.years) {
-		variables.to.null.out <- c("SGP", "SGP_LEVEL", "SGP_STANDARD_ERROR", "SCALE_SCORE_PRIOR", "SCALE_SCORE_PRIOR_STANDARDIZED", "SGP_BASELINE", "SGP_LEVEL_BASELINE", 
+		variables.to.null.out <- c("SGP", "SGP_SIMEX", "SGP_LEVEL", "SGP_STANDARD_ERROR", "SCALE_SCORE_PRIOR", "SCALE_SCORE_PRIOR_STANDARDIZED", "SGP_BASELINE", "SGP_LEVEL_BASELINE", 
 					   "SGP_TARGET", "SGP_TARGET_MU", "SGP_TARGET_MOVE_UP_STAY_UP", "SGP_TARGET_MOVE_UP_STAY_UP_BASELINE", "ACHIEVEMENT_LEVEL_PRIOR", 
 					   "CATCH_UP_KEEP_UP_STATUS_INITIAL", "SGP_TARGET_BASELINE", "CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STATUS", "MOVE_UP_STAY_UP_STATUS", 
 					   paste("SGP_TARGET", max.sgp.target.years.forward, "YEAR", sep="_"), paste("SGP_TARGET_MOVE_UP_STAY_UP", max.sgp.target.years.forward, "YEAR", sep="_"), 

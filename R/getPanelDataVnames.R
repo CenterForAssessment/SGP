@@ -2,12 +2,6 @@
 function(sgp.type,
 	sgp.iter) {
 
-	## year.increment function
-
-	year.increment <- function(year, increment, lag) {
-		paste(as.numeric(unlist(strsplit(as.character(year), "_")))+increment-lag, collapse="_")
-	}
-
 	if (sgp.type=="sgp.percentiles") {
 		return(c("ID", paste("GRADE", tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), 
 			tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), sep="."), 
