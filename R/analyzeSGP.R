@@ -221,7 +221,7 @@ function(sgp_object,
 
 	### Create par.sgp.config (for both parallel and sequential implementations)
 
-	setkey(sgp_object@Data, VALID_CASE, CONTENT_AREA, YEAR, GRADE)
+	setkeyv(sgp_object@Data, getKey(sgp_object))
 	par.sgp.config <- getSGPConfig(sgp_object, tmp_sgp_object, content_areas, years, grades, sgp.config, sgp.percentiles.baseline, sgp.projections.baseline, sgp.projections.lagged.baseline,
 		sgp.config.drop.nonsequential.grade.progression.variables)
 

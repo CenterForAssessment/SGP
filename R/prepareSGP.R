@@ -157,14 +157,18 @@ function(data,
 
 		data <- checkSGP(data, state=state)
 
+		## define the key
+
+		if ("YEAR_WITHIN" %in% names(data@Data)) tmp.key <- c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", "YEAR_WITHIN") else tmp.key <- c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID")
+
 		## Key data.table and check for duplicate cases
 
-		if (!identical(key(data@Data), c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))) {
-			setkeyv(data@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
+		if (!identical(key(data@Data), tmp.key)) {
+			setkeyv(data@Data, tmp.key)
 			if (any(duplicated(data@Data["VALID_CASE"]))) {
-				message("\tWARNING: @Data keyed by 'VALID_CASE', 'CONTENT_AREA', 'YEAR', 'ID' has duplicate cases. Subsequent merges will likely be corrupt.")
+				message(paste("\tWARNING: @Data keyed by", tmp.key, "has duplicate cases. Subsequent merges will likely be corrupt."))
 				message("\tNOTE: Duplicate cases are available in current workspace as 'DUPLICATED_CASES' and saved as 'DUPLICATED_CASES.Rdata'.")
-				DUPLICATED_CASES <- data@Data["VALID_CASE"][duplicated(data@Data["VALID_CASE"])][,list(VALID_CASE, CONTENT_AREA, YEAR, ID)]
+				DUPLICATED_CASES <- data@Data["VALID_CASE"][duplicated(data@Data["VALID_CASE"])][,tmp.key, with=FALSE]
 				save(DUPLICATED_CASES, file="DUPLICATED_CASES.Rdata")
 			}
 		}
@@ -183,16 +187,19 @@ function(data,
 	} else {
 		variable.names <- getNames(data, var.names)
 
-	
+		## define the key
+
+		if ("YEAR_WITHIN" %in% names(data)) tmp.key <- c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", "YEAR_WITHIN") else tmp.key <- c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID")
+
 		##  Create keyed data.table and check for duplicate cases
 
 		data <- as.data.table(data)
 		setnames(data, which(!is.na(variable.names$names.sgp)), variable.names$names.sgp[!is.na(variable.names$names.sgp)])
-		setkeyv(data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
+		setkeyv(data, tmp.key)
 		if (any(duplicated(data["VALID_CASE"]))) {
-			message("\tWARNING: Data keyed by 'VALID_CASE', 'CONTENT_AREA', 'YEAR', 'ID' has duplicate cases. Subsequent merges will be corrupted.")
+			message(paste("\tWARNING: Data keyed by", tmp.key, "has duplicate cases. Subsequent merges will be corrupted."))
 			message("\tNOTE: Duplicate cases are available in current workspace as 'DUPLICATED_CASES' and saved as 'DUPLICATED_CASES.Rdata'.")
-			assign("DUPLICATED_CASES", data["VALID_CASE"][duplicated(data["VALID_CASE"])][,list(VALID_CASE, CONTENT_AREA, YEAR, ID)])
+			assign("DUPLICATED_CASES", data["VALID_CASE"][duplicated(data["VALID_CASE"])][,tmp.key, with=FALSE])
 			save(DUPLICATED_CASES, file="DUPLICATED_CASES.Rdata")
 		}
 
@@ -232,7 +239,7 @@ function(data,
 	
 	if (!"ACHIEVEMENT_LEVEL" %in% names(sgp_object@Data) & !is.null(SGPstateData[[state]][["Achievement"]][["Cutscores"]])) {
 		sgp_object@Data <- getAchievementLevel(sgp_object@Data, state=state)
-		setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
+		setkeyv(sgp_object@Data, getKey(sgp_object))
 		message(paste("\tNOTE: Added variable ACHIEVEMENT_LEVEL to @Data using", state, "cutscores embedded in SGPstateData."))
 	}
 
