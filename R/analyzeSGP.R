@@ -28,7 +28,7 @@ function(sgp_object,
 	started.at <- proc.time()
 	message(paste("\nStarted analyzeSGP", date()))
 
-	VALID_CASE <- CONTENT_AREA <- YEAR <- GRADE <- ID <- NULL
+	VALID_CASE <- CONTENT_AREA <- YEAR <- GRADE <- ID <- YEAR_WITHIN <- NULL
 
 
 	###
@@ -132,8 +132,14 @@ function(sgp_object,
 
 	tmp_sgp_object <- list(Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]], Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]])
 
-	tmp_sgp_data_for_analysis <- copy(sgp_object@Data[,c("VALID_CASE", "YEAR", "CONTENT_AREA", "GRADE", "ID", "SCALE_SCORE", "ACHIEVEMENT_LEVEL"), with=FALSE])
-	setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE)
+	variables.to.get <- c("VALID_CASE", "YEAR", "CONTENT_AREA", "GRADE", "ID", "SCALE_SCORE", "ACHIEVEMENT_LEVEL")
+	if ("YEAR_WITHIN" %in% names(sgp_object@Data)) variables.to.get <- c(variables.to.get, "YEAR_WITHIN")
+	tmp_sgp_data_for_analysis <- copy(sgp_object@Data[,variables.to.get, with=FALSE])
+	if ("YEAR_WITHIN" %in% names(tmp_sgp_data_for_analysis)) {
+		setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE, YEAR_WITHIN)
+	} else {
+		setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE)
+	}
 
 
 	#######################################################################################################################
