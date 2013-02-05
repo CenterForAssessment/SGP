@@ -11,8 +11,10 @@ function(my.config,
 			my.config[[i]][['sgp.grade.sequences']][[1]] <- my.config[[i]][['sgp.grade.sequences']][[1]][!is.na(my.config[[i]][['sgp.grade.sequences']])]
 			my.config[[i]][['sgp.grade.sequences']][[1]] <- as.character(my.config[[i]][['sgp.grade.sequences']][[1]])
 			if (length(my.config[[i]][['sgp.projection.grade.sequences']][[1]]) > 0) {
-				my.config[[i]][['sgp.projection.grade.sequences']][[1]] <- my.config[[i]][['sgp.projection.grade.sequences']][[1]][!is.na(my.config[[i]][['sgp.projection.grade.sequences']])]
-				my.config[[i]][['sgp.projection.grade.sequences']][[1]] <- as.character(my.config[[i]][['sgp.projection.grade.sequences']][[1]])
+				my.config[[i]][['sgp.projection.grade.sequences']][[1]] <- 
+					my.config[[i]][['sgp.projection.grade.sequences']][[1]][!is.na(my.config[[i]][['sgp.projection.grade.sequences']])]
+				tmp.min <- min(length(my.config[[i]][['sgp.content.areas']]), length(my.config[[i]][['sgp.projection.grade.sequences']][[1]]))
+				my.config[[i]][['sgp.projection.grade.sequences']][[1]] <- tail(as.character(my.config[[i]][['sgp.projection.grade.sequences']][[1]]), tmp.min)
 			}
 
 			if (length(my.config[[i]][['sgp.content.areas']]) != length(my.config[[i]][['sgp.grade.sequences']][[1]])) {
