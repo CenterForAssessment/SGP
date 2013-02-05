@@ -60,9 +60,9 @@
 	}
 
 	tmp.smooth.grades <- seq(gaPlot.grade_range[1], gaPlot.grade_range[2], by=0.01)
-	tmp.unique.grades <- intersect(sort(unique(gaPlot.sgp_object@Data["VALID_CASE"][["GRADE"]])), gaPlot.grade_range[1]:gaPlot.grade_range[2])
+	tmp.unique.grades <- intersect(sort(as.numeric(unique(gaPlot.sgp_object@Data["VALID_CASE"][["GRADE"]]))), gaPlot.grade_range[1]:gaPlot.grade_range[2])
 	if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])) {
-		if (!identical(tmp.unique.grades, as.character(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]]))) {
+		if (!identical(tmp.unique.grades, as.integer(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]]))) {
 			message(paste("\tNOTE: Unique grades in supplied data do not match grades indicated for", state.name.label, "in SGPstateData.")) 
 		}
 		tmp.unique.grades <- intersect(tmp.unique.grades, SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])
