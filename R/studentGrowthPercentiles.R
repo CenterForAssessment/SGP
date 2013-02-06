@@ -101,7 +101,7 @@ function(panel.data,         ## REQUIRED
 
 	get.my.knots.boundaries.path <- function(content_area, year) {
 		tmp.knots.boundaries.names <- 
-			names(Knots_Boundaries[[tmp.path.knots.boundaries]])[match(content_area, sapply(strsplit(names(Knots_Boundaries[[tmp.path.knots.boundaries]]), "[.]"), '[', 1))]
+			names(Knots_Boundaries[[tmp.path.knots.boundaries]])[content_area==sapply(strsplit(names(Knots_Boundaries[[tmp.path.knots.boundaries]]), "[.]"), '[', 1)]
 		if (is.na(tmp.knots.boundaries.names)) {
 			return(paste("[['", tmp.path.knots.boundaries, "']]", sep=""))
 		} else {
