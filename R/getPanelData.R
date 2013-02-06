@@ -9,7 +9,7 @@ function(sgp.data,
 		tmp.lookup <- SJ("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), 
 			tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), sgp.iter[["sgp.grade.sequences"]][[1]])
 						
-		if ("YEAR_WITHIN" %in% names(test1)) {
+		if ("YEAR_WITHIN" %in% names(sgp.data)) {
 			tmp.lookup <- rbindlist(lapply(1:length(sgp.iter[['sgp.panel.years.within']]), function(f) 
 				data.frame(as.data.frame(tmp.lookup[f]), sgp.iter[['sgp.panel.years.within']][[f]], stringsAsFactors=FALSE)))
 		}

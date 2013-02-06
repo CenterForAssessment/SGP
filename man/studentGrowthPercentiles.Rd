@@ -12,6 +12,7 @@ using the \cr
 studentGrowthPercentiles(panel.data,
                          sgp.labels,
                          panel.data.vnames,
+                         additional.vnames.to.return=NULL,
                          grade.progression,
                          content.area.progression,
                          year.progression,
@@ -60,6 +61,9 @@ studentGrowthPercentiles(panel.data,
   subject & grade. Except in special circumstances, supplying \code{my.year} and \code{my.subject} are sufficient to uniquely label derivative output.
   }
   \item{panel.data.vnames}{Vector of variables to use in student growth percentile calculations. If not specified, function attempts to use all available variables.
+  }
+  \item{additional.vnames.to.return}{A list of the form list(VARIABLE_NAME_SUPPLIED=VARIABLE_NAME_TO_BE_RETURNED) indicating data to be returned with results 
+  from \code{\link{studentGrowthPercentiles}} analyses.
   }
   \item{grade.progression}{Preferred argument to specify a student grade/time progression in the data. For example, \code{3:4} would indicate to subset the
   data where the two most recent years of data available are 3 and 4, respectively. Also allows for non-sequential grade progressions to be analyzed with automatic 

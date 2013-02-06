@@ -2,6 +2,7 @@
 function(panel.data,         ## REQUIRED
          sgp.labels,         ## REQUIRED
          panel.data.vnames,
+	 additional.vnames.to.return=NULL,
          grade.progression,
          content.area.progression,
          year.progression,
@@ -676,6 +677,13 @@ function(panel.data,         ## REQUIRED
 		simex.tf <- FALSE
 	}
 
+	if (!is.null(additional.vnames.to.return)) {
+		if (!all(names(additional.vnames.to.return) %in% names(panel.data[["Panel_Data"]]))) {
+			tmp.messages <- c(tmp.messages, "\tNOTE: Supplied 'additional.vnames.to.return' are not all contained in supplied panel.data. No additional variables will be returned.\n")
+			additional.vnames.to.return <- NULL
+		}
+	}
+
 
 	### Create object to store the studentGrowthPercentiles objects
 
@@ -1131,6 +1139,12 @@ function(panel.data,         ## REQUIRED
 
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, "SGP", "SGP_BASELINE")
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & tf.growth.levels) setnames(quantile.data, "SGP_LEVEL", "SGP_LEVEL_BASELINE")
+
+		if (!is.null(additional.vnames.to.return)) {
+			quantile.data <- data.table(panel.data[["Panel_Data"]][,c("ID", names(additional.vnames.to.return))], key="ID")[quantile.data]
+			setnames(quantile.data, names(additional.vnames.to.return), unlist(additional.vnames.to.return))
+		}
+
 		SGPercentiles[[tmp.path]] <- rbind.fill(quantile.data, as.data.frame(SGPercentiles[[tmp.path]]))
 
 	} ## End if calculate.sgps
