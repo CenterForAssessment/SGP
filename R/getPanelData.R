@@ -6,14 +6,20 @@ function(sgp.data,
 	YEAR <- CONTENT_AREA <- NULL
 
 	if (sgp.type=="sgp.percentiles") {
+		tmp.lookup <- SJ("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), 
+			tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), sgp.iter[["sgp.grade.sequences"]][[1]])
+						
+		if ("YEAR_WITHIN" %in% names(test1)) {
+			tmp.lookup <- rbindlist(lapply(1:length(sgp.iter[['sgp.panel.years.within']]), function(f) 
+				data.frame(as.data.frame(tmp.lookup[f]), sgp.iter[['sgp.panel.years.within']][[f]], stringsAsFactors=FALSE)))
+		}
+
 		return(as.data.frame(reshape(
-			sgp.data[SJ("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), 
-				tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), sgp.iter[["sgp.grade.sequences"]][[1]]), nomatch=0][,
-				'tmp.timevar' := paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
-		idvar="ID",
-		timevar="tmp.timevar",
-		drop=names(sgp.data)[!names(sgp.data) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar")],
-		direction="wide")))
+			sgp.data[tmp.lookup, nomatch=0][, 'tmp.timevar' := paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
+			idvar="ID",
+			timevar="tmp.timevar",
+			drop=names(sgp.data)[!names(sgp.data) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR_WITHIN", "tmp.timevar")],
+			direction="wide")))
 	}
 
 	if (sgp.type=="sgp.projections") {
