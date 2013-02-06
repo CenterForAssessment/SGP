@@ -101,8 +101,8 @@ function(panel.data,         ## REQUIRED
 
 	get.my.knots.boundaries.path <- function(content_area, year) {
 		tmp.knots.boundaries.names <- 
-			names(Knots_Boundaries[[tmp.path.knots.boundaries]])[match(content_area, sapply(strsplit(names(Knots_Boundaries[[tmp.path.knots.boundaries]]), "[.]"), '[', 1))]
-		if (is.na(tmp.knots.boundaries.names)) {
+			names(Knots_Boundaries[[tmp.path.knots.boundaries]])[content_area==sapply(strsplit(names(Knots_Boundaries[[tmp.path.knots.boundaries]]), "[.]"), '[', 1)]
+		if (length(tmp.knots.boundaries.names)==0) {
 			return(paste("[['", tmp.path.knots.boundaries, "']]", sep=""))
 		} else {
 			tmp.knots.boundaries.years <- sapply(strsplit(tmp.knots.boundaries.names, "[.]"), function(x) x[2])
@@ -903,9 +903,11 @@ function(panel.data,         ## REQUIRED
 			if (verbose.output) {
 				tmp.coefficient.matrix.name <- get.coefficient.matrix.name(tmp.last, k)
 				tmp.grade.names <- paste("Grade", rev(head(unlist(Coefficient_Matrices[[tmp.path.coefficient.matrices]][[tmp.coefficient.matrix.name]]@Grade_Progression), -1)))
-				tmp.knots <- paste(tmp.grade.names, paste(Coefficient_Matrices[[tmp.path.coefficient.matrices]][[tmp.coefficient.matrix.name]]@Knots, collapse=", "))
-				tmp.boundaries <- paste(tmp.grade.names, paste(Coefficient_Matrices[[tmp.path.coefficient.matrices]][[tmp.coefficient.matrix.name]]@Boundaries, collapse=", "))
-				Verbose_Messages <- c(Verbose_Messages, paste("\tNOTE: Coefficient Matrix ", tmp.coefficient.matrix.name, " created using Knots: ", tmp.knots, " and Boundaries: ", tmp.boundaries, ".\n", sep=""))	
+				for (l in seq_along(tmp.grade.names)) {
+					tmp.knots <- paste(tmp.grade.names[l], Coefficient_Matrices[[tmp.path.coefficient.matrices]][[tmp.coefficient.matrix.name]]@Knots[l])
+					tmp.boundaries <- paste(tmp.grade.names[l], Coefficient_Matrices[[tmp.path.coefficient.matrices]][[tmp.coefficient.matrix.name]]@Boundaries[l])
+					Verbose_Messages <- c(Verbose_Messages, paste("\tNOTE: Coefficient Matrix ", tmp.coefficient.matrix.name, " created using Knots: ", tmp.knots, " and Boundaries: ", tmp.boundaries, ".\n", sep=""))
+				}
 			}
 		}
 	}
@@ -1153,7 +1155,7 @@ function(panel.data,         ## REQUIRED
 	### Start/Finish Message & Return SGP Object
 
 	if (print.time.taken) {
-		message(paste("\tStarted studentGrowthPercentiles:", started.date))
+		message(paste("\tStarted studentGrowthPercentiles:", started.date, "\n"))
 		if (calculate.sgps) {
 			message(paste("\tContent Area: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label, " (N=", format(dim(quantile.data)[1], big.mark=","), ")", sep=""))
 		} else {
