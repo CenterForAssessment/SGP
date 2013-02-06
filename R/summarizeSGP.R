@@ -73,7 +73,7 @@ function(sgp_object,
 		stop("User must supply a list containing a Student slot with long data. See documentation for details.")
 	}
 
-	if (!identical(key(sgp_object@Data), c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))) setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
+	setkeyv(sgp_object@Data, getKey(sgp_object))
 
 
 	## Set up parallel.config if NULL
