@@ -135,7 +135,7 @@ function(sgp_object,
 					CONTENT_AREA=sort(intersect(
 						unique(sgp_object@Data[SJ("VALID_CASE", tmp.years[year.iter]), nomatch=0][["CONTENT_AREA"]]),
 						names(SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Labels"]]))))
-					setkey(sgp_object@Data, VALID_CASE, CONTENT_AREA, YEAR, ID)
+					setkeyv(sgp_object@Data, getKey(sgp_object))
 			}
 		}
 

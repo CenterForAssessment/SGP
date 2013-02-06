@@ -122,7 +122,7 @@ function(
 		for (tmp.merge.variable in variables.to.merge) {
 			slot.data[tmp.data[,key(slot.data), with=FALSE], tmp.merge.variable := tmp.data[[tmp.merge.variable]], with=FALSE, nomatch=0]
 		}
-		setkeyv(slot.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
+		setkeyv(slot.data, getKey(slot.data))
 		rm(tmp.list); suppressMessages(gc())
 	}
 
@@ -161,7 +161,7 @@ function(
 		for (tmp.merge.variable in variables.to.merge) {
 			slot.data[tmp.data[,key(slot.data), with=FALSE], tmp.merge.variable := tmp.data[, tmp.merge.variable, with=FALSE], with=FALSE, nomatch=0]
 		}
-		setkeyv(slot.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
+		setkeyv(slot.data, getKey(slot.data))
 		rm(tmp.list); suppressMessages(gc())
 	}
 
@@ -264,7 +264,7 @@ function(
 		slot.data[[i]] <- NULL
 	}
 
-	setkeyv(slot.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
+	setkeyv(slot.data, getKey(slot.data))
 	sgp_object@Data <- slot.data
 
 	message(c(tmp.messages, paste("Finished combineSGP", date(), "in", timetaken(started.at), "\n"), sep=""))
