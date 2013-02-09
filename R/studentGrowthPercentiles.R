@@ -346,10 +346,6 @@ function(panel.data,         ## REQUIRED
 						col.index <- tmp.num.variables-g
 						big.data[big.data[[col.index]] < loss.hoss[1,g], col.index := loss.hoss[1,g], with=F]
 						big.data[big.data[[col.index]] > loss.hoss[2,g], col.index := loss.hoss[2,g], with=F] 
-## problem w 4th grade HOSS in SGPstateData?  HOSS = 940, but highest score in data is 795.  Since we've calculated Knots_Boundaries internally in the 
-## test implimentation, the function is producing data outside of the (internally calculated) boundaries and then warnings are being thrown.  
-## Should we correct the problem here?  Produce data specific loss.hoss or continue to use SGPstateData (and create Boundaries from that?)  
-## Just create new Knots and use SGPstateData for LOSS/HOSS and Boundaries?  I think there are a couple viable options here...
 						ks <- big.data[, as.list(as.vector(unlist(round(quantile(big.data[[col.index]], probs=c(0.2,0.4,0.6,0.8), na.rm=TRUE), digits=3))))] # Knots
 						bs <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.1), digits=3)))] # Boundaries
 						lh <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.0), digits=3)))] # LOSS/HOSS
@@ -393,29 +389,11 @@ function(panel.data,         ## REQUIRED
 				fitted.b[, PREDICTED_VALUES := .smooth.isotonize.row(V1), by=list(ID, b)] #  Could just use V1 := ... in final implimentation to keep from adding a column here
 				fitted[[paste("order_",k,sep="")]][which(lambda==L),] <- fitted.b[, mean(PREDICTED_VALUES), by=list(ID, tau)][['V1']] 
 			  
-#  Here are some things I did to look at the effects of using the .smooth.isotonize.row function to keep 
-#  quantile lines from crossing.  Maybe minimal impact here in the aggregate (along with a handful of 
-#  big impacts on a few students), we can't assume this will always be the case.
-			  
-# fitted.b[, DIF := PREDICTED_VALUES-V1]
-# table(round(fitted.b$DIF))
-# fitted.b[DIF<(-120),]  #  I picked out a few here that have multiple large differences to investigate:
-# fitted.b[ID==8527485 & b==5,] # student with large differences (crossing quantile curves) at the LOWER end SGPs
-# fitted.b[ID==9090788 & b==9,] # student with large differences (crossing quantile curves) at the UPPER end SGPs
-# fitted.b.ave <- fitted.b[, mean(PREDICTED_VALUES), by=list(ID, tau)]
-# fitted.b.ave2<- fitted.b[, mean(V1), by=list(ID, tau)]
-# fitted.b.ave[ID==9090788,]
-# fitted.b.ave2[ID==9090788,]
-			} ### END for (L in lambda[-1])`
-# extrapolation
-# the splinefun extrapolation was removed because I couldn't find a way to vectorize this function
-			
 			switch(extrapolation, QUADRATIC = fit <- lm(fitted[[paste("order_",k,sep="")]] ~ lambda + I(lambda^2)), LINEAR = fit <- lm(fitted[[paste("order_",k,sep="")]]~ lambda))
 			extrap[[paste("order_",k,sep="")]]<-as.data.table(matrix(predict(fit,newdata=data.frame(lambda=-1)), nrow=dim(data)[1]))
 			tmp.quantiles.simex[[k]] <- data.table(ID=data[["ID"]], ORDER=k, SGP_SIMEX=.get.quantiles(extrap[[paste("order_",k,sep="")]], data[[tmp.num.variables]]))
 		} ### END for (k in coefficient.matrix.priors)
-# if (exists("par.start")) stopParallel(parallel.config, par.start)
-# reassemble data
+
 		quantile.data.simex <- data.table(rbindlist(tmp.quantiles.simex),key="ID")
 		
 		if (print.other.gp) {
@@ -812,6 +790,8 @@ function(panel.data,         ## REQUIRED
 	tmp.last <- tail(tmp.gp, 1)
 	ss.data <- data.table(ss.data[,c(1, (1+num.panels-num.prior):(1+num.panels), (1+2*num.panels-num.prior):(1+2*num.panels))], key=names(ss.data)[1])
         num.panels <- (dim(ss.data)[2]-1)/2
+
+	if (is.factor(ss.data[[1]])) ss.data[[1]] <- as.character(ss.data[[1]])
 
         if (dim(.get.panel.data(ss.data, 1, by.grade))[1] == 0) {
                 tmp.messages <- "\tNOTE: Supplied data together with grade progression contains no data. Check data, function arguments and see help page for details.\n"
