@@ -4,6 +4,7 @@ function(list.of.splineMatrix, sgp_object=NULL) {
 		list.of.splineMatrix <- list(list.of.splineMatrix)
 	}
 	for (i in names(list.of.splineMatrix)) {
+		list.of.splineMatrix[[i]] <- unique.splineMatrix(list.of.splineMatrix[[i]])
 		splineMatrix.tf <- sapply(list.of.splineMatrix[[i]], validObject, test=TRUE)==TRUE
 		if (!all(splineMatrix.tf)) {
 			for (j in names(list.of.splineMatrix[[i]])[!splineMatrix.tf]) {
@@ -12,5 +13,5 @@ function(list.of.splineMatrix, sgp_object=NULL) {
 			}
 		}
 	}
-	return(unique.splineMatrix(list.of.splineMatrix))
+	return(list.of.splineMatrix)
 } ### END checksplineMatrix
