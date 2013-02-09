@@ -12,5 +12,5 @@ function(list.of.splineMatrix, sgp_object=NULL) {
 			}
 		}
 	}
-	return(list.of.splineMatrix)
+	return(unique.splineMatrix(list.of.splineMatrix))
 } ### END checksplineMatrix
