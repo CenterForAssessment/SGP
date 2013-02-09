@@ -341,7 +341,7 @@ function(panel.data,         ## REQUIRED
 				setnames(big.data,tmp.num.variables,"final.yr")
 					for (g in seq_along(tmp.gp.iter)) {
 						big.data[, paste("icsem", tmp.gp.iter[g], sep="") := rep(csem.int[, paste("icsem", tmp.gp.iter[g], sep="")], time=B)]
-            big.data[, tmp.num.variables-g := eval(parse(text=paste("big.data[[", tmp.num.variables-g,
+						big.data[, tmp.num.variables-g := eval(parse(text=paste("big.data[[", tmp.num.variables-g,
 							"]] + sqrt(big.data[['Lambda']]) * big.data[['icsem", tmp.gp.iter[g], "']] * rnorm(dim(big.data)[1])", sep="")))]
 						col.index <- tmp.num.variables-g
 						big.data[big.data[[col.index]] < loss.hoss[1,g], col.index := loss.hoss[1,g], with=F]
@@ -385,10 +385,13 @@ function(panel.data,         ## REQUIRED
 						tau=rep(taus, each=dim(data)[1], time=B), b = rep(1:B, each = dim(data)[1]*length(taus)), key=c('ID', 'b'))
 					stopParallel(parallel.config, par.start)
 				}
+
 				# Make new variable 'PREDICTED_VALUES' to compare with 'V1' and to preserve 'tau'
 				fitted.b[, PREDICTED_VALUES := .smooth.isotonize.row(V1), by=list(ID, b)] #  Could just use V1 := ... in final implimentation to keep from adding a column here
 				fitted[[paste("order_",k,sep="")]][which(lambda==L),] <- fitted.b[, mean(PREDICTED_VALUES), by=list(ID, tau)][['V1']] 
-			  
+			
+			} ### END for (L in lambda[-1])
+
 			switch(extrapolation, QUADRATIC = fit <- lm(fitted[[paste("order_",k,sep="")]] ~ lambda + I(lambda^2)), LINEAR = fit <- lm(fitted[[paste("order_",k,sep="")]]~ lambda))
 			extrap[[paste("order_",k,sep="")]]<-as.data.table(matrix(predict(fit,newdata=data.frame(lambda=-1)), nrow=dim(data)[1]))
 			tmp.quantiles.simex[[k]] <- data.table(ID=data[["ID"]], ORDER=k, SGP_SIMEX=.get.quantiles(extrap[[paste("order_",k,sep="")]], data[[tmp.num.variables]]))
@@ -790,7 +793,6 @@ function(panel.data,         ## REQUIRED
 	tmp.last <- tail(tmp.gp, 1)
 	ss.data <- data.table(ss.data[,c(1, (1+num.panels-num.prior):(1+num.panels), (1+2*num.panels-num.prior):(1+2*num.panels))], key=names(ss.data)[1])
         num.panels <- (dim(ss.data)[2]-1)/2
-
 	if (is.factor(ss.data[[1]])) ss.data[[1]] <- as.character(ss.data[[1]])
 
         if (dim(.get.panel.data(ss.data, 1, by.grade))[1] == 0) {
