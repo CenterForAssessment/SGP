@@ -186,7 +186,7 @@ function(data,
 
 		if ("YEAR_WITHIN" %in% names(data@Data) & !all(c("FIRST", "LAST") %in% names(data@Data))) {
 			data@Data <- getFirstAndLastInGroup(data@Data)
-			setkeyv(data@Data, getKey(sgp_object))
+			setkeyv(data@Data, getKey(data@Data))
 		}
 
 		data@Version <- getVersion(data)
@@ -224,7 +224,7 @@ function(data,
 
 		if ("YEAR_WITHIN" %in% names(data) & !all(c("FIRST", "LAST") %in% names(data))) {
 			data <- getFirstAndLastInGroup(data)
-			setkeyv(data, getKey(sgp_object))
+			setkeyv(data, getKey(data))
 		}
 
 		##  Create the SGP object
