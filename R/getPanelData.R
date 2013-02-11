@@ -3,29 +3,18 @@ function(sgp.data,
 	sgp.type,
 	sgp.iter) {
 
-	VALID_CASE <- YEAR <- CONTENT_AREA <- V5 <- FIRST <- LAST <- ID <- GRADE <- SCALE_SCORE <- YEAR_WITHIN <- tmp.timevar <- NULL
+	YEAR <- CONTENT_AREA <- V5 <- ID <- GRADE <- SCALE_SCORE <- YEAR_WITHIN <- tmp.timevar <- FIRST_OBSERVATION <- LAST_OBSERVATION <- NULL
 
 	if (sgp.type=="sgp.percentiles") {
 
-		### Utility functions
-
-		first.and.last.in.group <- function(DT) {
-			setkey(DT, VALID_CASE, CONTENT_AREA, YEAR, GRADE, ID, YEAR_WITHIN)
-			setkey(DT, VALID_CASE, CONTENT_AREA, YEAR, GRADE, ID)
-			DT[DT[unique(DT),,mult="first", which=TRUE], FIRST:=1L]
-			DT[DT[unique(DT),,mult="last", which=TRUE], LAST:=1L]
-			return(DT)
-		}
-
 		if ("YEAR_WITHIN" %in% names(sgp.data)) {
-			sgp.data <- first.and.last.in.group(sgp.data)
 			tmp.lookup <- data.table("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])),
 				tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), sgp.iter[["sgp.grade.sequences"]][[1]],
-				tail(sgp.iter[["sgp.panel.years.within"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), FIRST=as.integer(NA), LAST=as.integer(NA))
-			tmp.lookup[V5=="FIRST", FIRST:=1L]; tmp.lookup[V5=="LAST", LAST:=1L]; tmp.lookup[,V5:=NULL]
+				tail(sgp.iter[["sgp.panel.years.within"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), FIRST_OBSERVATION=as.integer(NA), LAST_OBSERVATION=as.integer(NA))
+			tmp.lookup[V5=="FIRST_OBSERVATION", FIRST_OBSERVATION:=1L]; tmp.lookup[V5=="LAST_OBSERVATION", LAST_OBSERVATION:=1L]; tmp.lookup[,V5:=NULL]
 
 			tmp.lookup.list <- list()
-			for (i in c("FIRST", "LAST")) {
+			for (i in c("FIRST_OBSERVATION", "LAST_OBSERVATION")) {
 				setkeyv(sgp.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", i))
 				setkeyv(tmp.lookup, c("VALID_CASE", paste("V", 2:4, sep=""), i))
 				suppressWarnings(tmp.lookup.list[[i]] <- data.table(sgp.data[tmp.lookup[get(i)==1], nomatch=0][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, i, sep="."), with=FALSE][,
