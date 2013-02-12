@@ -11,6 +11,7 @@ function(list.of.splineMatrix, sgp_object=NULL) {
 				list.of.splineMatrix[[i]][[j]] <- as.splineMatrix(matrix_argument=list.of.splineMatrix[[i]][[j]], matrix_argument_name=j, sgp_object=sgp_object)
 			}
 		}
+		list.of.splineMatrix[[i]] <- unique.splineMatrix(list.of.splineMatrix[[i]])
 	}
 	return(list.of.splineMatrix)
 } ### END checksplineMatrix

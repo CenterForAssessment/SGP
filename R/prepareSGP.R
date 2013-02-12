@@ -182,6 +182,13 @@ function(data,
 			message(paste("\tNOTE: Knots and Boundaries do not exist for state provided.\n\tThey have been produced and are available using state=", state, " for subsequent analyses and saved to your working directory '", getwd(), "'.", sep=""))
 		}
 
+		## Create FIRST_OBESRVATION, LAST_OBSERVATION if YEAR_WITHIN exists
+
+		if ("YEAR_WITHIN" %in% names(data@Data) & !all(c("FIRST", "LAST") %in% names(data@Data))) {
+			data@Data <- getFirstAndLastInGroup(data@Data)
+			setkeyv(data@Data, getKey(data@Data))
+		}
+
 		data@Version <- getVersion(data)
 		sgp_object <- data
 	} else {
@@ -211,6 +218,13 @@ function(data,
 			save(list=paste(state, "Knots_Boundaries", sep="_"), file=paste(state, "Knots_Boundaries.Rdata", sep="_"))
 			save(SGPstateData, file="SGPstateData.Rdata")
 			message(paste("\tNOTE: Knots and Boundaries do not exist for state provided.\n\tThey have been produced and are available using state=", state, " for subsequent analyses and saved to your working directory '", getwd(), "'.", sep=""))
+		}
+
+		## Create FIRST_OBESRVATION, LAST_OBSERVATION if YEAR_WITHIN exists
+
+		if ("YEAR_WITHIN" %in% names(data) & !all(c("FIRST", "LAST") %in% names(data))) {
+			data <- getFirstAndLastInGroup(data)
+			setkeyv(data, getKey(data))
 		}
 
 		##  Create the SGP object

@@ -30,6 +30,7 @@ analyzeSGP(sgp_object,
          sgp.baseline.config=NULL,
          parallel.config=NULL,
 	 verbose.output=FALSE,
+	 get.cohort.data.info=FALSE,
          ...)
 }
 
@@ -95,9 +96,12 @@ Alternatively, the name of an external CLUSTER.OBJECT (SOCK or MPI) set up by th
 
 Example use cases are provided below.
   }
-  \item{verbose.output}{A boolean argument indicating whether the function should output verbose diagnostic messages.
+  \item{verbose.output}{A boolean argument (defaults to FALSE) indicating whether the function should output verbose diagnostic messages.
   }
-\item{...}{Arguments to be passed to \code{\link{studentGrowthPercentiles}} or \code{\link{studentGrowthProjections}} for finer control over SGP calculations. NOTE: arguments can only be passed to one lower level function at a time, and only student growth percentiles OR projections can be created but not both at the same time.
+  \item{get.cohort.data.info}{A boolean argument (defaults to FALSE) indicating whether the a summary of all cohorts to be submitted to the \code{\link{studentGrowthPercentiles}} and 
+  \code{\link{studentGrowthProjections}} functions should be performed prior to analysis.
+  }
+  \item{...}{Arguments to be passed to \code{\link{studentGrowthPercentiles}} or \code{\link{studentGrowthProjections}} for finer control over SGP calculations. NOTE: arguments can only be passed to one lower level function at a time, and only student growth percentiles OR projections can be created but not both at the same time.
   }
 }
 
