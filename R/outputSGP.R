@@ -318,6 +318,9 @@ function(sgp_object,
 		#### Anonymize (if requested) (NOT necessary if wide data is provided)
  
 		if (outputSGP.anonymize | !all(c("LAST_NAME", "FIRST_NAME") %in% names(tmp.table))) {
+			if (!all(c("LAST_NAME", "FIRST_NAME") %in% names(tmp.table))) {
+				message("\tNOTE: 'FIRST_NAME' and 'LAST_NAME' are not a part of the @Data. Anonymized first and last names will be added.")
+			}
 			suppressPackageStartupMessages(require(randomNames))
 			if (!"ETHNICITY" %in% names(tmp.table)) tmp.table[["ETHNICITY"]] <- 1
 			if (!"GENDER" %in% names(tmp.table)) tmp.table[["GENDER"]] <- round(runif(dim(tmp.table)[1], min=0, max=1))
@@ -325,8 +328,8 @@ function(sgp_object,
 			setkey(tmp.dt, ID)
 			tmp.dt <- tmp.dt[!duplicated(tmp.dt),]
 
-			tmp.dt$LAST_NAME <- randomNames(gender=tmp.dt$GENDER, ethnicity=tmp.dt$ETHNICITY, which.names="last")
-			tmp.dt$FIRST_NAME <- randomNames(gender=tmp.dt$GENDER, ethnicity=tmp.dt$ETHNICITY, which.names="first")	
+			tmp.dt[,LAST_NAME:=randomNames(gender=tmp.dt$GENDER, ethnicity=tmp.dt$ETHNICITY, which.names="last")]
+			tmp.dt[,FIRST_NAME:=randomNames(gender=tmp.dt$GENDER, ethnicity=tmp.dt$ETHNICITY, which.names="first")]
 
 			names.dt <- tmp.dt[,list(ID, LAST_NAME, FIRST_NAME)]
 			setkey(names.dt, ID)

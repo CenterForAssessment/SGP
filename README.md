@@ -39,11 +39,11 @@ Analysis of data utilizing the **SGP** methodology requires, broadly, two steps:
 	* Preparation of data into *LONG* format.
 * Data Analysis
 	* prepareSGP
-    * analyzeSGP
-    * combineSGP
-    * summarizeSGP
-    * visualizeSGP
-    * outputSGP
+	* analyzeSGP
+	* combineSGP
+	* summarizeSGP
+	* visualizeSGP
+	* outputSGP
 
 
 
