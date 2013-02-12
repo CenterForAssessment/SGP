@@ -23,6 +23,7 @@ function(sgp_object,
          sgp.baseline.config=NULL, 
          parallel.config=NULL,
 	 verbose.output=FALSE,
+	 get.cohort.data.info=FALSE,
          ...) {
 
 	started.at <- proc.time()
@@ -237,6 +238,13 @@ function(sgp_object,
 			message("\tNOTE: Baseline coefficient matrices are not available for ", baseline.missings, ".", sep="")
 		}
 		par.sgp.config.baseline <- par.sgp.config[which(sapply(par.sgp.config, function(x) !identical(x[['base.gp']], "NO_BASELINE_COEFFICIENT_MATRICES")))]
+	}
+
+
+	### Produce cohort data information
+
+	if (get.cohort.data.info) {
+		cohort.data.info <- getCohortDataInfo(tmp_sgp_data_for_analysis, par.sgp.config)
 	}
 
 
