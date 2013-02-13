@@ -173,6 +173,14 @@ function(sgp_object,
 			started.at <- proc.time()
 			message(paste("\tStarted SchoolView STUDENT_GROWTH data production in outputSGP", date()))
 
+		### Check arguments
+
+		if (!all(c("LAST_NAME", "FIRST_NAME") %in% names(sgp_object@Data))) {
+			message("\tNOTE: 'LAST_NAME' and 'FIRST_NAME' are not included in supplied data. Anonymized last names and first names will be supplied.")
+			outputSGP.anonymize <- TRUE
+			sgp_object@Data[['FIRST_NAME']] <- sgp_object@Data[['LAST_NAME']] <- as.character(NA)
+		}
+
 		### Utility functions
 
 		get.my.label <- function(state, content_area, year, label="Cutscores") {
@@ -291,7 +299,6 @@ function(sgp_object,
 			tmp.content_areas <- sort(outputSGP_INDIVIDUAL.content_areas)
 		}
 
-
 		### subset data
 
 		tmp.districts.and.schools <- unique(data.table(sgp_object@Data[CJ("VALID_CASE", tmp.last.year, tmp.content_areas)][,
@@ -314,13 +321,9 @@ function(sgp_object,
 			piecewise.transform(SCALE_SCORE, state, as.character(CONTENT_AREA[1]), as.character(YEAR[1]), as.character(GRADE[1])), 
 				by=list(CONTENT_AREA, YEAR, GRADE)]$V1
 
-
 		#### Anonymize (if requested) (NOT necessary if wide data is provided)
  
-		if (outputSGP.anonymize | !all(c("LAST_NAME", "FIRST_NAME") %in% names(tmp.table))) {
-			if (!all(c("LAST_NAME", "FIRST_NAME") %in% names(tmp.table))) {
-				message("\tNOTE: 'FIRST_NAME' and 'LAST_NAME' are not a part of the @Data. Anonymized first and last names will be added.")
-			}
+		if (outputSGP.anonymize) {
 			suppressPackageStartupMessages(require(randomNames))
 			if (!"ETHNICITY" %in% names(tmp.table)) tmp.table[["ETHNICITY"]] <- 1
 			if (!"GENDER" %in% names(tmp.table)) tmp.table[["GENDER"]] <- round(runif(dim(tmp.table)[1], min=0, max=1))
@@ -338,8 +341,7 @@ function(sgp_object,
 			tmp.table <- names.dt[tmp.table]
 		} ## END if (outputSGP.anonymize)
 
-
-	### Reshape data set
+		### Reshape data set
 
 		variables.to.keep <- c("VALID_CASE", "ID", "LAST_NAME", "FIRST_NAME", "CONTENT_AREA", "YEAR", "GRADE", "EMH_LEVEL", 
 			"SCALE_SCORE", "TRANSFORMED_SCALE_SCORE", "ACHIEVEMENT_LEVEL", "SGP", getTargetName(target.years=outputSGP.projection.years.for.target),
