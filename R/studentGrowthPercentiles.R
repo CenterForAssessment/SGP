@@ -794,8 +794,9 @@ function(panel.data,         ## REQUIRED
 	ss.data <- data.table(ss.data[,c(1, (1+num.panels-num.prior):(1+num.panels), (1+2*num.panels-num.prior):(1+2*num.panels))], key=names(ss.data)[1])
         num.panels <- (dim(ss.data)[2]-1)/2
 	if (is.factor(ss.data[[1]])) ss.data[[1]] <- as.character(ss.data[[1]])
+	if (exact.grade.progression.sequence) tmp.num.prior <- num.prior else tmp.num.prior <- 1
 
-        if (dim(.get.panel.data(ss.data, 1, by.grade))[1] == 0) {
+        if (dim(.get.panel.data(ss.data, tmp.num.prior, by.grade))[1] == 0) {
                 tmp.messages <- "\tNOTE: Supplied data together with grade progression contains no data. Check data, function arguments and see help page for details.\n"
                 message(paste("\tStarted studentGrowthPercentiles", started.date))
                 message(paste("\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
