@@ -176,7 +176,7 @@ function(sgp_object,
 		### Check arguments
 
 		if (!all(c("LAST_NAME", "FIRST_NAME") %in% names(sgp_object@Data))) {
-			message("\tNOTE: 'LAST_NAME' and 'FIRST_NAME' are not included in supplied data. Anonymized data will be supplied.")
+			message("\tNOTE: 'LAST_NAME' and 'FIRST_NAME' are not included in supplied data. Anonymized last names and first names will be supplied.")
 			outputSGP.anonymize <- TRUE
 			sgp_object@Data[['FIRST_NAME']] <- sgp_object@Data[['LAST_NAME']] <- as.character(NA)
 		}
