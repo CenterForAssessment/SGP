@@ -152,11 +152,20 @@ function(
 			if (is.na(unlist(strsplit(i, "[.]"))[3])) { ### If cohort referenced SGP are to be included in baseline SGP (e.g., Georgia)
 				setnames(tmp.list[[i]], "SGP", "SGP_BASELINE")
 				if ("SGP_LEVEL" %in% names(tmp.list[[i]])) setnames(tmp.list[[i]], "SGP_LEVEL", "SGP_LEVEL_BASELINE")
-				if ("SGP_NORM_GROUP" %in% names(tmp.list[[i]])) setnames(tmp.list[[i]], "SGP_NORM_GROUP", "SGP_NORM_GROUP_BASELINE")
+				if ("SGP_NORM_GROUP" %in% names(tmp.list[[i]])) {
+					setnames(tmp.list[[i]], "SGP_NORM_GROUP", "SGP_NORM_GROUP_BASELINE")
+					tmp.levels <- levels(tmp.list[[i]][['SGP_NORM_GROUP_BASELINE']])
+					tmp.years <- unique(sapply(strsplit(unlist(strsplit(paste(tmp.levels, collapse=" "), "; | ")), "/"), '[', 1))
+					levels(tmp.list[[i]][['SGP_NORM_GROUP_BASELINE']]) <- gsub(paste(tmp.years, collapse="|"), "BASELINE", tmp.levels)
+				}
 			}
 		}
 
 		tmp.data <- data.table(rbind.fill(tmp.list), VALID_CASE="VALID_CASE", key=key(slot.data))
+
+		if (any(duplicated(tmp.data))) {
+			tmp.data <- getPreferredSGP(tmp.data, state, type="BASELINE")
+		}
 
 		variables.to.merge <- names(tmp.data) %w/o% key(slot.data)
 		for (tmp.merge.variable in variables.to.merge) {
