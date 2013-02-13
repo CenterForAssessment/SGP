@@ -19,5 +19,5 @@ function(tmp.data,
 	setkeyv(tmp.data, c("YEAR", tmp.sgp.norm.group))
 	tmp.data <- data.table(SGPstateData[[state]][['SGP_Norm_Group_Preference']][tmp.data], key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", "PREFERENCE"))
 	setkey(tmp.data, VALID_CASE, CONTENT_AREA, YEAR, ID)
-	tmp.data[!duplicated(tmp.data)][,PREFERENCE:=NULL]
+	return(tmp.data[!duplicated(tmp.data)][,PREFERENCE:=NULL])
 } ### END getPreferredSGP
