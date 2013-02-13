@@ -798,7 +798,7 @@ function(panel.data,         ## REQUIRED
 
         if (dim(.get.panel.data(ss.data, tmp.num.prior, by.grade))[1] == 0) {
                 tmp.messages <- "\t\tNOTE: Supplied data together with grade progression contains no data. Check data, function arguments and see help page for details.\n"
-                message(paste("\t\tStarted studentGrowthPercentiles", started.date))
+                message(paste("\tStarted studentGrowthPercentiles", started.date))
                 message(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
                 message(paste(tmp.messages, "\tFinished SGP Student Growth Percentile Analysis", date(), "in", timetaken(started.at), "\n"))
 
@@ -1138,7 +1138,7 @@ function(panel.data,         ## REQUIRED
 	### Start/Finish Message & Return SGP Object
 
 	if (print.time.taken) {
-		message(paste("Started studentGrowthPercentiles:", started.date, "\n"))
+		message(paste("\tStarted studentGrowthPercentiles:", started.date, "\n"))
 		if (calculate.sgps) {
 			message(paste("\t\tContent Area: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label, " (N=", format(dim(quantile.data)[1], big.mark=","), ")", sep=""))
 		} else {
