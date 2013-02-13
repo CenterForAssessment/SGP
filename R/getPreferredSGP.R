@@ -16,7 +16,7 @@ function(tmp.data,
 	} else {
 		stop("\tNOTE: Multiple SGPs exist for individual students. Please examine results in @SGP[['SGPercentiles']].")
 	}
-	setkey(tmp.data, c("YEAR", tmp.sgp.norm.group))
+	setkeyv(tmp.data, c("YEAR", tmp.sgp.norm.group))
 	tmp.data <- data.table(SGPstateData[[state]][['SGP_Norm_Group_Preference']][tmp.data], key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", "PREFERENCE"))
 	setkey(tmp.data, VALID_CASE, CONTENT_AREA, YEAR, ID)
 	tmp.data[!duplicated(tmp.data)][,PREFERENCE:=NULL]
