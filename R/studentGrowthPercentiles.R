@@ -982,7 +982,7 @@ function(panel.data,         ## REQUIRED
 		if (print.other.gp) {
 			quantile.data <- data.table(reshape(quantile.data, idvar="ID", timevar="ORDER", direction="wide"),
 				SGP=quantile.data[c(which(!duplicated(quantile.data))[-1]-1L, nrow(quantile.data))][["SGP"]],
-				ORDER=quantile.data[c(which(!duplicated(quantile.data))[-1]-1L, nrow(quantile.data))][["ORDER"]])
+				ORDER=as.integer(quantile.data[c(which(!duplicated(quantile.data))[-1]-1L, nrow(quantile.data))][["ORDER"]]))
 		} else {
 			if (print.sgp.order | return.norm.group.identifier) {
 				quantile.data <- quantile.data[c(which(!duplicated(quantile.data))[-1]-1L, nrow(quantile.data))]
@@ -1053,10 +1053,18 @@ function(panel.data,         ## REQUIRED
 			norm.var.name <- paste(c("SGP_NORM_GROUP", sgp.labels[['my.extra.label']]), collapse="_")
 			sgp.order.name <- paste(c("SGP", sgp.labels[['my.extra.label']], "ORDER"), collapse="_")
 			if (!print.sgp.order) { # Return only SGP_NORM_GROUP
-				quantile.data[, norm.var.name:=factor(factor(ORDER, levels=seq_along(norm.groups), labels=norm.groups)), with=FALSE] ### double factor to wipe unused levels
+				if (exact.grade.progression.sequence) {
+					quantile.data[, norm.var.name:=factor(factor(ORDER, labels=norm.groups)), with=FALSE]
+				} else {
+					quantile.data[, norm.var.name:=factor(factor(ORDER, levels=seq_along(norm.groups), labels=norm.groups)), with=FALSE]
+				}
 				quantile.data[, ORDER:=NULL]
 			} else {  # Return both ORDER and SGP_NORM_GROUP
-				quantile.data[, norm.var.name:=factor(factor(ORDER, levels=seq_along(norm.groups), labels=norm.groups)), with=FALSE]
+				if (exact.grade.progression.sequence) {
+					quantile.data[, norm.var.name:=factor(factor(ORDER, labels=norm.groups)), with=FALSE]
+				} else {
+					quantile.data[, norm.var.name:=factor(factor(ORDER, levels=seq_along(norm.groups), labels=norm.groups)), with=FALSE]
+				}
 				setnames(quantile.data, "ORDER", sgp.order.name)
 			}
 		}
