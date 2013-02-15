@@ -780,7 +780,7 @@ function(panel.data,         ## REQUIRED
 		tmp.gp <- tail(tmp.gp, max.order.for.percentile+1)
 		num.prior <- min(num.prior, max.order.for.percentile)
 		if (!missing(content.area.progression)) content.area.progression <- tail(content.area.progression, length(tmp.gp))
-		if (!missing(year.progression)) year.progression <- tail(year.progression, length(tmp.gp))
+		if (!missing(year.progression)) year.progression <- year.progression.for.norm.group <- tail(year.progression, length(tmp.gp))
 	}
 
 	if (is.numeric(tmp.gp) & drop.nonsequential.grade.progression.variables && any(diff(tmp.gp) > 1)) {
