@@ -11,7 +11,7 @@ function(sgp.data,
 			tmp.lookup <- data.table("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])),
 				tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), sgp.iter[["sgp.grade.sequences"]][[1]],
 				tail(sgp.iter[["sgp.panel.years.within"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), FIRST_OBSERVATION=as.integer(NA), LAST_OBSERVATION=as.integer(NA))
-			tmp.lookup[V5=="FIRST_OBSERVATION", FIRST_OBSERVATION:=1L]; tmp.lookup[V5=="LAST_OBSERVATION", LAST_OBSERVATION:=1L]; tmp.lookup[,V5:=NULL]
+			tmp.lookup[grep("FIRST", V5, ignore.case=TRUE), FIRST_OBSERVATION:=1L]; tmp.lookup[grep("LAST", V5, ignore.case=TRUE), LAST_OBSERVATION:=1L]; tmp.lookup[,V5:=NULL]
 
 			tmp.lookup.list <- list()
 			for (i in c("FIRST_OBSERVATION", "LAST_OBSERVATION")) {

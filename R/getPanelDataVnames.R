@@ -25,7 +25,8 @@ function(sgp.type,
 			tmp.list <- list()
 			for (i in intersect(special.names.to.return, sgp.data.names)) {
 				tmp.list <- c(tmp.list, list(TMP=i))
-				names(tmp.list)[[length(tmp.list)]] <- paste(i, tail(sgp.iter[["sgp.panel.years"]], 1), tail(sgp.iter[["sgp.content.areas"]], 1), sep=".")
+				names(tmp.list)[[length(tmp.list)]] <- 
+					paste(i, tail(sgp.iter[["sgp.panel.years"]], 1), tail(sgp.iter[["sgp.content.areas"]], 1), tail(sgp.iter[['sgp.panel.years.within']], 1), sep=".")
 			}
 			return(tmp.list)
 		} else {

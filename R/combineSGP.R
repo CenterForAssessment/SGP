@@ -158,6 +158,10 @@ function(
 
 		tmp.data <- data.table(rbind.fill(tmp.list), VALID_CASE="VALID_CASE", key=key(slot.data))
 
+		if (any(duplicated(tmp.data))) {
+			tmp.data <- getPreferredSGP(tmp.data, state, type="BASELINE")
+		}
+
 		variables.to.merge <- names(tmp.data) %w/o% key(slot.data)
 		for (tmp.merge.variable in variables.to.merge) {
 			slot.data[tmp.data[,key(slot.data), with=FALSE], tmp.merge.variable := tmp.data[, tmp.merge.variable, with=FALSE], with=FALSE, nomatch=0]
@@ -196,7 +200,8 @@ function(
 				tmp_target_data <- getTargetSGP(sgp_object, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward)
 					variables.to.merge <- names(tmp_target_data) %w/o% key(slot.data)
 				for (tmp.merge.variable in variables.to.merge) {
-					slot.data[tmp_target_data[,key(slot.data), with=FALSE], tmp.merge.variable := tmp_target_data[, tmp.merge.variable, with=FALSE], with=FALSE, nomatch=0]
+					slot.data[tmp_target_data[,intersect(key(slot.data), names(tmp_target_data)), with=FALSE],
+						tmp.merge.variable := tmp_target_data[, tmp.merge.variable, with=FALSE], with=FALSE, nomatch=0]
 				}
 			}
 		}
