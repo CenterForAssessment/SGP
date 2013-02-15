@@ -152,12 +152,7 @@ function(
 			if (is.na(unlist(strsplit(i, "[.]"))[3])) { ### If cohort referenced SGP are to be included in baseline SGP (e.g., Georgia)
 				setnames(tmp.list[[i]], "SGP", "SGP_BASELINE")
 				if ("SGP_LEVEL" %in% names(tmp.list[[i]])) setnames(tmp.list[[i]], "SGP_LEVEL", "SGP_LEVEL_BASELINE")
-				if ("SGP_NORM_GROUP" %in% names(tmp.list[[i]])) {
-					setnames(tmp.list[[i]], "SGP_NORM_GROUP", "SGP_NORM_GROUP_BASELINE")
-					tmp.levels <- levels(tmp.list[[i]][['SGP_NORM_GROUP_BASELINE']])
-					tmp.years <- unique(sapply(strsplit(unlist(strsplit(paste(tmp.levels, collapse=" "), "; | ")), "/"), '[', 1))
-					levels(tmp.list[[i]][['SGP_NORM_GROUP_BASELINE']]) <- gsub(paste(tmp.years, collapse="|"), "BASELINE", tmp.levels)
-				}
+				if ("SGP_NORM_GROUP" %in% names(tmp.list[[i]])) setnames(tmp.list[[i]], "SGP_NORM_GROUP", "SGP_NORM_GROUP_BASELINE")
 			}
 		}
 

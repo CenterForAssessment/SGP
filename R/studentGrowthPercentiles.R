@@ -829,10 +829,11 @@ function(panel.data,         ## REQUIRED
 	}
 
 	if (missing(year.progression) & !identical(sgp.labels[['my.extra.label']], "BASELINE")) {
-		year.progression <- yearIncrement(sgp.labels[['my.year']], rev(seq(0, length=length(tmp.gp), by=-1)))
+		year.progression <- year.progression.for.norm.group <- yearIncrement(sgp.labels[['my.year']], c(0, cumsum(diff(tmp.gp))))
 	} else {
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) {
 			year.progression <- rep("BASELINE", length(tmp.gp))
+			year.progression.for.norm.group <- yearIncrement(sgp.labels[['my.year']], c(0, cumsum(diff(tmp.gp))))
 		}
 		if (!identical(class(year.progression), "character")) {
 			stop("year.area.progression should be a character vector. See help page for details.")
@@ -1045,10 +1046,10 @@ function(panel.data,         ## REQUIRED
 
 		if (print.sgp.order | return.norm.group.identifier) {
 			if (exact.grade.progression.sequence) {
-				norm.groups <- paste(paste(year.progression, paste(content.area.progression, grade.progression, sep="_"), sep="/"), collapse="; ")
+				norm.groups <- paste(paste(year.progression.for.norm.group, paste(content.area.progression, grade.progression, sep="_"), sep="/"), collapse="; ")
 			} else {
-				norm.groups <- sapply(seq_along(year.progression)[-1][1:(num.panels-1)], 
-				 function(x) paste(tail(paste(year.progression, paste(content.area.progression, grade.progression, sep="_"), sep="/"), x), collapse="; "))
+				norm.groups <- sapply(seq_along(year.progression.for.norm.group)[-1][1:(num.panels-1)], 
+				 function(x) paste(tail(paste(year.progression.for.norm.group, paste(content.area.progression, grade.progression, sep="_"), sep="/"), x), collapse="; "))
 			}
 			norm.var.name <- paste(c("SGP_NORM_GROUP", sgp.labels[['my.extra.label']]), collapse="_")
 			sgp.order.name <- paste(c("SGP", sgp.labels[['my.extra.label']], "ORDER"), collapse="_")
