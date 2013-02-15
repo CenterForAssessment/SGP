@@ -831,7 +831,6 @@ function(panel.data,         ## REQUIRED
 	if (missing(year.progression) & !identical(sgp.labels[['my.extra.label']], "BASELINE")) {
 		year.progression <- year.progression.for.norm.group <- yearIncrement(sgp.labels[['my.year']], c(0, cumsum(diff(tmp.gp))))
 	} else {
-		year.progression.for.norm.group <- year.progression
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) {
 			year.progression <- rep("BASELINE", length(tmp.gp))
 			year.progression.for.norm.group <- yearIncrement(sgp.labels[['my.year']], c(0, cumsum(diff(tmp.gp))))
