@@ -834,6 +834,8 @@ function(panel.data,         ## REQUIRED
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) {
 			year.progression <- rep("BASELINE", length(tmp.gp))
 			year.progression.for.norm.group <- rev(yearIncrement(sgp.labels[['my.year']], c(0, -cumsum(year.progression.lags))))
+		} else {
+			year.progression.for.norm.group <- year.progression
 		}
 		if (!identical(class(year.progression), "character")) {
 			stop("year.area.progression should be a character vector. See help page for details.")
