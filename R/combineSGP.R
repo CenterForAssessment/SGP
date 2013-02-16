@@ -119,10 +119,15 @@ function(
 			tmp.data <- getPreferredSGP(tmp.data, state)
 		}
 
-		variables.to.merge <- names(tmp.data) %w/o% key(slot.data)
-		for (tmp.merge.variable in variables.to.merge) {
-			slot.data[tmp.data[,key(slot.data), with=FALSE], tmp.merge.variable := tmp.data[[tmp.merge.variable]], with=FALSE, nomatch=0]
+		if (length(intersect(names(slot.data), names(tmp.data)) %w/o% key(slot.data))==0) {
+			slot.data <- tmp.data[slot.data]
+		} else {
+			variables.to.merge <- names(tmp.data) %w/o% key(slot.data)
+			for (tmp.merge.variable in variables.to.merge) {
+				slot.data[tmp.data[,key(slot.data), with=FALSE], tmp.merge.variable := tmp.data[[tmp.merge.variable]], with=FALSE, nomatch=0]
+			}
 		}
+
 		setkeyv(slot.data, getKey(slot.data))
 		rm(tmp.list); suppressMessages(gc())
 	}
@@ -162,10 +167,15 @@ function(
 			tmp.data <- getPreferredSGP(tmp.data, state, type="BASELINE")
 		}
 
-		variables.to.merge <- names(tmp.data) %w/o% key(slot.data)
-		for (tmp.merge.variable in variables.to.merge) {
-			slot.data[tmp.data[,key(slot.data), with=FALSE], tmp.merge.variable := tmp.data[, tmp.merge.variable, with=FALSE], with=FALSE, nomatch=0]
+		if (length(intersect(names(slot.data), names(tmp.data)) %w/o% key(slot.data))==0) {
+			slot.data <- tmp.data[slot.data]
+		} else {
+			variables.to.merge <- names(tmp.data) %w/o% key(slot.data)
+			for (tmp.merge.variable in variables.to.merge) {
+				slot.data[tmp.data[,key(slot.data), with=FALSE], tmp.merge.variable := tmp.data[, tmp.merge.variable, with=FALSE], with=FALSE, nomatch=0]
+			}
 		}
+
 		setkeyv(slot.data, getKey(slot.data))
 		rm(tmp.list); suppressMessages(gc())
 	}
@@ -197,11 +207,16 @@ function(
 
 		for (target.type.iter in target.type) {
 			for (target.level.iter in target.level) {
-				tmp_target_data <- getTargetSGP(sgp_object, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward)
-					variables.to.merge <- names(tmp_target_data) %w/o% key(slot.data)
-				for (tmp.merge.variable in variables.to.merge) {
-					slot.data[tmp_target_data[,intersect(key(slot.data), names(tmp_target_data)), with=FALSE],
-						tmp.merge.variable := tmp_target_data[, tmp.merge.variable, with=FALSE], with=FALSE, nomatch=0]
+				tmp.data <- getTargetSGP(sgp_object, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward)
+
+				if (length(intersect(names(slot.data), names(tmp.data)) %w/o% key(slot.data))==0) {
+					slot.data <- tmp.data[slot.data]
+				} else {
+					variables.to.merge <- names(tmp.data) %w/o% key(slot.data)
+					for (tmp.merge.variable in variables.to.merge) {
+						slot.data[tmp.data[,intersect(key(slot.data), names(tmp.data)), with=FALSE],
+								tmp.merge.variable := tmp.data[, tmp.merge.variable, with=FALSE], with=FALSE, nomatch=0]
+					}
 				}
 			}
 		}
