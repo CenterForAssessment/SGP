@@ -1043,7 +1043,7 @@ function(panel.data,         ## REQUIRED
 
 		if (return.prior.scale.score.standardized) {
 			SCALE_SCORE_PRIOR_STANDARDIZED <- NULL
-			quantile.data[,SCALE_SCORE_PRIOR_STANDARDIZED:=as.numeric(scale(prior.ss))]
+			quantile.data[,SCALE_SCORE_PRIOR_STANDARDIZED:=round(as.numeric(scale(prior.ss)), digits=3)]
 		}
 
 		if (print.sgp.order | return.norm.group.identifier) {
