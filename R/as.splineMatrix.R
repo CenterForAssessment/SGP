@@ -147,7 +147,7 @@ function(matrix_argument,
 			if (.hasSlot(matrix_argument, "Time") && matrix_argument@Version[['SGP_Package_Version']] > "1.0.6.0") {
 				time <- as.character(matrix_argument@Time[[1]])
 			} else {
-				tmp.time <- unlist(strsplit(gsub("'|]]", "", strsplit(rn, "\\[\\[")[[1]][2]), "[.]"))[2]
+				tmp.time <- unlist(strsplit(gsub("'|]]|\"", "", strsplit(rn, "\\[\\[|\\$")[[1]][2]), "[.]"))[2]
 				if (tmp.time == "BASELINE") {
 					time <- rep("BASELINE", length(grade_progression))
 				} else {
