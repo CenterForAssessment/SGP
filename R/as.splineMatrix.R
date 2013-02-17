@@ -129,7 +129,7 @@ function(matrix_argument,
 			if (.hasSlot(matrix_argument, "Content_Areas")) {
 				content_areas <- as.character(matrix_argument@Content_Areas[[1]])
 			} else {
-				content_areas <- rep(unlist(strsplit(gsub("'|]]", "", strsplit(rn, "\\[\\[")[[1]][2]), "[.]"))[1], length(grade_progression))
+				content_areas <- rep(unlist(strsplit(gsub("'|]]|\"", "", strsplit(rn, "\\[\\[|\\$")[[1]][2]), "[.]"))[1], length(grade_progression))
 			}
 
 
