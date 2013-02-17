@@ -66,7 +66,7 @@ function(matrix_argument,
 
 			### Content Areas
 
-			content_areas <- rep(unlist(strsplit(gsub("'|]]", "", strsplit(rn, "\\[\\[")[[1]][2]), "[.]"))[1], length(grade_progression))
+			content_areas <- rep(unlist(strsplit(gsub("'|]]|\"", "", strsplit(rn, "\\[\\[|\\$")[[1]][2]), "[.]"))[1], length(grade_progression))
 
 
 			### Time Lag
@@ -76,7 +76,7 @@ function(matrix_argument,
 
 			### Time
 
-			tmp.time <- unlist(strsplit(gsub("'|]]", "", strsplit(rn, "\\[\\[")[[1]][2]), "[.]"))[2]
+			tmp.time <- unlist(strsplit(gsub("'|]]|\"", "", strsplit(rn, "\\[\\[|\\$")[[1]][2]), "[.]"))[2]
 			if (tmp.time == "BASELINE") {
 				time <- rep("BASELINE", length(grade_progression))
 			} else {
