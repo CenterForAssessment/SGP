@@ -1,6 +1,8 @@
 `as.splineMatrix` <- 
 function(matrix_argument,
 	matrix_argument_name,
+	content_area=NULL,
+	year=NULL,
 	sgp_object=NULL) {
 
 		if (!class(matrix_argument) %in% c("matrix", "splineMatrix")) stop("Supplied object must be of class 'matrix' or 'splineMatrix'.")
@@ -77,6 +79,10 @@ function(matrix_argument,
 			### Time
 
 			tmp.time <- unlist(strsplit(gsub("'|]]|\"", "", strsplit(rn, "\\[\\[|\\$")[[1]][2]), "[.]"))[2]
+			if (!is.null(year) && tmp.time != year) {
+				message("\tNOTE: Year inferred from supplied splineMatrix does not equal year indicated in @SGP[['Coefficient_Matrices']]. Results will proceed based upon @SGP[['Coefficient_Matrices']]")
+				tmp.time <- year
+			}
 			if (tmp.time == "BASELINE") {
 				time <- rep("BASELINE", length(grade_progression))
 			} else {

@@ -686,9 +686,11 @@ function(panel.data,         ## REQUIRED
 				splineMatrix.tf <- sapply(tmp.matrices[[i]], validObject, test=TRUE)==TRUE
 				if (!any(splineMatrix.tf)) {
 					tmp.changes <- TRUE
+					tmp.content_area <- unlist(strsplit(i, "[.]"))[1]; tmp.year <- unlist(strsplit(i, "[.]"))[2]
 					for (j in names(tmp.matrices[[i]])[!splineMatrix.tf]) {
 						message(paste("\t\tUpdating Existing Coefficient Matrix", i, j, "to new splineMatrix class."))
-						tmp.matrices[[i]][[j]] <- as.splineMatrix(matrix_argument=tmp.matrices[[i]][[j]], matrix_argument_name=j, sgp_object=panel.data)
+						tmp.matrices[[i]][[j]] <- 
+							as.splineMatrix(matrix_argument=tmp.matrices[[i]][[j]], matrix_argument_name=j, content_area=tmp.content_area, year=tmp.year, sgp_object=panel.data)
 					}
 				}
 			}
