@@ -80,7 +80,7 @@ function(matrix_argument,
 
 			tmp.time <- unlist(strsplit(gsub("'|]]|\"", "", strsplit(rn, "\\[\\[|\\$")[[1]][2]), "[.]"))[2]
 			if (!is.null(year) && tmp.time != year) {
-				message("\tNOTE: Year inferred from supplied splineMatrix does not equal year indicated in @SGP[['Coefficient_Matrices']]. Results will proceed based upon @SGP[['Coefficient_Matrices']]")
+				message("\tNOTE: Year from supplied splineMatrix does not equal year indicated in @SGP[['Coefficient_Matrices']]. Results will proceed based upon @SGP[['Coefficient_Matrices']]")
 				tmp.time <- year
 			}
 			if (tmp.time == "BASELINE") {
@@ -154,6 +154,10 @@ function(matrix_argument,
 				time <- as.character(matrix_argument@Time[[1]])
 			} else {
 				tmp.time <- unlist(strsplit(gsub("'|]]|\"", "", strsplit(rn, "\\[\\[|\\$")[[1]][2]), "[.]"))[2]
+				if (!is.null(year) && tmp.time != year) {
+					message("\tNOTE: Year from supplied splineMatrix does not equal year indicated in @SGP[['Coefficient_Matrices']]. Results will proceed based upon @SGP[['Coefficient_Matrices']]")
+					tmp.time <- year
+				}
 				if (tmp.time == "BASELINE") {
 					time <- rep("BASELINE", length(grade_progression))
 				} else {
