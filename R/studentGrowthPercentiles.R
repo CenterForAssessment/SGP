@@ -1151,7 +1151,7 @@ function(panel.data,         ## REQUIRED
 	### Start/Finish Message & Return SGP Object
 
 	if (print.time.taken) {
-		message(paste("\tStarted studentGrowthPercentiles:", started.date, "\n"))
+		message(paste("\tStarted studentGrowthPercentiles:", started.date))
 		if (calculate.sgps) {
 			message(paste("\t\tContent Area: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label, " (N=", format(dim(quantile.data)[1], big.mark=","), ")", sep=""))
 		} else {
