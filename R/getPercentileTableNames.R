@@ -32,8 +32,8 @@ function(sgp_object,
 				}
 				if (length(tmp.content_areas.diff) > 0) {
 					tmp.names <- c(tmp.names, unlist(lapply(tmp.content_areas.diff, function(x) tmp.sgp.names[grep(x, tmp.sgp.names)])))
-					message(c("\tNOTE: Cohort referenced SGPs being used for baseline referenced SGPs for content areas and years: ", 
-						paste(unlist(lapply(tmp.content_areas.diff, function(x) tmp.sgp.names[grep(x, tmp.sgp.names)])), collapse=", ")))
+					message(c("\tNOTE: Cohort referenced SGPs being used for baseline referenced SGPs for content areas and years:\n\t\t", 
+						paste(unlist(lapply(tmp.content_areas.diff, function(x) tmp.sgp.names[grep(x, tmp.sgp.names)])), collapse=",\n\t\t")))
 				}
 			} ### END if (use.cohort.for.baseline.when.missing)
 		}

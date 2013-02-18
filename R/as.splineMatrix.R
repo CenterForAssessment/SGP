@@ -1,6 +1,8 @@
 `as.splineMatrix` <- 
 function(matrix_argument,
 	matrix_argument_name,
+	content_area=NULL,
+	year=NULL,
 	sgp_object=NULL) {
 
 		if (!class(matrix_argument) %in% c("matrix", "splineMatrix")) stop("Supplied object must be of class 'matrix' or 'splineMatrix'.")
@@ -66,7 +68,7 @@ function(matrix_argument,
 
 			### Content Areas
 
-			content_areas <- rep(unlist(strsplit(gsub("'|]]", "", strsplit(rn, "\\[\\[")[[1]][2]), "[.]"))[1], length(grade_progression))
+			content_areas <- rep(unlist(strsplit(gsub("'|]]|\"", "", strsplit(rn, "\\[\\[|\\$")[[1]][2]), "[.]"))[1], length(grade_progression))
 
 
 			### Time Lag
@@ -76,7 +78,11 @@ function(matrix_argument,
 
 			### Time
 
-			tmp.time <- unlist(strsplit(gsub("'|]]", "", strsplit(rn, "\\[\\[")[[1]][2]), "[.]"))[2]
+			tmp.time <- unlist(strsplit(gsub("'|]]|\"", "", strsplit(rn, "\\[\\[|\\$")[[1]][2]), "[.]"))[2]
+			if (!is.null(year) && tmp.time != year) {
+				message("\tNOTE: Year from supplied splineMatrix does not equal year indicated in @SGP[['Coefficient_Matrices']]. Results will proceed based upon @SGP[['Coefficient_Matrices']]")
+				tmp.time <- year
+			}
 			if (tmp.time == "BASELINE") {
 				time <- rep("BASELINE", length(grade_progression))
 			} else {
@@ -129,7 +135,7 @@ function(matrix_argument,
 			if (.hasSlot(matrix_argument, "Content_Areas")) {
 				content_areas <- as.character(matrix_argument@Content_Areas[[1]])
 			} else {
-				content_areas <- rep(unlist(strsplit(gsub("'|]]", "", strsplit(rn, "\\[\\[")[[1]][2]), "[.]"))[1], length(grade_progression))
+				content_areas <- rep(unlist(strsplit(gsub("'|]]|\"", "", strsplit(rn, "\\[\\[|\\$")[[1]][2]), "[.]"))[1], length(grade_progression))
 			}
 
 
@@ -147,7 +153,11 @@ function(matrix_argument,
 			if (.hasSlot(matrix_argument, "Time") && matrix_argument@Version[['SGP_Package_Version']] > "1.0.6.0") {
 				time <- as.character(matrix_argument@Time[[1]])
 			} else {
-				tmp.time <- unlist(strsplit(gsub("'|]]", "", strsplit(rn, "\\[\\[")[[1]][2]), "[.]"))[2]
+				tmp.time <- unlist(strsplit(gsub("'|]]|\"", "", strsplit(rn, "\\[\\[|\\$")[[1]][2]), "[.]"))[2]
+				if (!is.null(year) && tmp.time != year) {
+					message("\tNOTE: Year from supplied splineMatrix does not equal year indicated in @SGP[['Coefficient_Matrices']]. Results will proceed based upon @SGP[['Coefficient_Matrices']]")
+					tmp.time <- year
+				}
 				if (tmp.time == "BASELINE") {
 					time <- rep("BASELINE", length(grade_progression))
 				} else {

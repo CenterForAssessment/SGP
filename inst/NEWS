@@ -4,6 +4,7 @@ Changes in version: SGP_1.0-9.0
 
 	  o Integrated YEAR_WITHIN into getPanelData.
 	  o Integrated SGP_Norm_Group_Preference into combineSGP for states with multiple end of course assessments.
+	  o Integrated ME baseline coefficient matrices into SGPstateData.
 
   BUG FIXES:
 
