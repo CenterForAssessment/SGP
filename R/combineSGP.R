@@ -81,6 +81,7 @@ function(
 		variables.to.null.out <- c("SGP", "SGP_SIMEX", "SGP_LEVEL", "SGP_STANDARD_ERROR", "SCALE_SCORE_PRIOR", "SCALE_SCORE_PRIOR_STANDARDIZED", "SGP_BASELINE", "SGP_LEVEL_BASELINE", 
 					   "SGP_TARGET", "SGP_TARGET_MU", "SGP_TARGET_MOVE_UP_STAY_UP", "SGP_TARGET_MOVE_UP_STAY_UP_BASELINE", "ACHIEVEMENT_LEVEL_PRIOR", 
 					   "CATCH_UP_KEEP_UP_STATUS_INITIAL", "SGP_TARGET_BASELINE", "CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STATUS", "MOVE_UP_STAY_UP_STATUS",
+					   "SGP_NORM_GROUP", "SGP_NORM_GROUP_BASELINE",
 					   grep("PERCENTILE_CUT", names(slot.data), value=TRUE),
 					   paste("SGP_TARGET", max.sgp.target.years.forward, "YEAR", sep="_"), paste("SGP_TARGET_MOVE_UP_STAY_UP", max.sgp.target.years.forward, "YEAR", sep="_"), 
 					   paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, "YEAR", sep="_"), paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", max.sgp.target.years.forward, "YEAR", sep="_"))
@@ -119,10 +120,15 @@ function(
 			tmp.data <- getPreferredSGP(tmp.data, state)
 		}
 
-		variables.to.merge <- names(tmp.data) %w/o% key(slot.data)
-		for (tmp.merge.variable in variables.to.merge) {
-			slot.data[tmp.data[,key(slot.data), with=FALSE], tmp.merge.variable := tmp.data[[tmp.merge.variable]], with=FALSE, nomatch=0]
+		if (length(intersect(names(slot.data), names(tmp.data)) %w/o% key(slot.data))==0) {
+			slot.data <- tmp.data[slot.data]
+		} else {
+			variables.to.merge <- names(tmp.data) %w/o% key(slot.data)
+			for (tmp.merge.variable in variables.to.merge) {
+				slot.data[tmp.data[,key(slot.data), with=FALSE], tmp.merge.variable := tmp.data[[tmp.merge.variable]], with=FALSE, nomatch=0]
+			}
 		}
+
 		setkeyv(slot.data, getKey(slot.data))
 		rm(tmp.list); suppressMessages(gc())
 	}
@@ -162,10 +168,15 @@ function(
 			tmp.data <- getPreferredSGP(tmp.data, state, type="BASELINE")
 		}
 
-		variables.to.merge <- names(tmp.data) %w/o% key(slot.data)
-		for (tmp.merge.variable in variables.to.merge) {
-			slot.data[tmp.data[,key(slot.data), with=FALSE], tmp.merge.variable := tmp.data[, tmp.merge.variable, with=FALSE], with=FALSE, nomatch=0]
+		if (length(intersect(names(slot.data), names(tmp.data)) %w/o% key(slot.data))==0) {
+			slot.data <- tmp.data[slot.data]
+		} else {
+			variables.to.merge <- names(tmp.data) %w/o% c(key(slot.data), "SCALE_SCORE_PRIOR", "SCALE_SCORE_PRIOR_STANDARDIZED")
+			for (tmp.merge.variable in variables.to.merge) {
+				slot.data[tmp.data[,key(slot.data), with=FALSE], tmp.merge.variable := tmp.data[, tmp.merge.variable, with=FALSE], with=FALSE, nomatch=0]
+			}
 		}
+
 		setkeyv(slot.data, getKey(slot.data))
 		rm(tmp.list); suppressMessages(gc())
 	}
@@ -197,11 +208,16 @@ function(
 
 		for (target.type.iter in target.type) {
 			for (target.level.iter in target.level) {
-				tmp_target_data <- getTargetSGP(sgp_object, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward)
-					variables.to.merge <- names(tmp_target_data) %w/o% key(slot.data)
-				for (tmp.merge.variable in variables.to.merge) {
-					slot.data[tmp_target_data[,intersect(key(slot.data), names(tmp_target_data)), with=FALSE],
-						tmp.merge.variable := tmp_target_data[, tmp.merge.variable, with=FALSE], with=FALSE, nomatch=0]
+				tmp.data <- getTargetSGP(sgp_object, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward)
+
+				if (length(intersect(names(slot.data), names(tmp.data)) %w/o% key(slot.data))==0) {
+					slot.data <- tmp.data[slot.data]
+				} else {
+					variables.to.merge <- names(tmp.data) %w/o% key(slot.data)
+					for (tmp.merge.variable in variables.to.merge) {
+						slot.data[tmp.data[,intersect(key(slot.data), names(tmp.data)), with=FALSE],
+								tmp.merge.variable := tmp.data[, tmp.merge.variable, with=FALSE], with=FALSE, nomatch=0]
+					}
 				}
 			}
 		}
@@ -228,9 +244,9 @@ function(
 			slot.data[CATCH_UP_KEEP_UP_STATUS_INITIAL == "Catching Up" & CATCH_UP_KEEP_UP_STATUS == "Catch Up: No" & 
 				as.numeric(ACHIEVEMENT_LEVEL) > level.to.get, CATCH_UP_KEEP_UP_STATUS := "Catch Up: Yes"]
 			slot.data[CATCH_UP_KEEP_UP_STATUS_INITIAL == "Catching Up" & CATCH_UP_KEEP_UP_STATUS == "Catch Up: Yes" & 
-				as.numeric(ACHIEVEMENT_LEVEL) <= level.to.get & GRADE == max(as.numeric(GRADE)[!is.na(get(my.sgp.target))]), CATCH_UP_KEEP_UP_STATUS := "Catch Up: No"]
+				as.numeric(ACHIEVEMENT_LEVEL) <= level.to.get & GRADE == max(as.numeric(GRADE[!is.na(get(my.sgp.target))])), CATCH_UP_KEEP_UP_STATUS := "Catch Up: No"]
 			slot.data[CATCH_UP_KEEP_UP_STATUS_INITIAL == "Keeping Up" & CATCH_UP_KEEP_UP_STATUS == "Keep Up: No" & 
-				as.numeric(ACHIEVEMENT_LEVEL) > level.to.get & GRADE == max(as.numeric(GRADE)[!is.na(get(my.sgp.target))]), CATCH_UP_KEEP_UP_STATUS := "Keep Up: Yes"]
+				as.numeric(ACHIEVEMENT_LEVEL) > level.to.get & GRADE == max(as.numeric(GRADE[!is.na(get(my.sgp.target))])), CATCH_UP_KEEP_UP_STATUS := "Keep Up: Yes"]
 			slot.data[,CATCH_UP_KEEP_UP_STATUS := as.factor(CATCH_UP_KEEP_UP_STATUS)]
 		}
 
@@ -257,9 +273,9 @@ function(
 			slot.data[MOVE_UP_STAY_UP_STATUS_INITIAL == "Moving Up" & MOVE_UP_STAY_UP_STATUS == "Move Up: No" & 
 				as.numeric(ACHIEVEMENT_LEVEL) > level.to.get, MOVE_UP_STAY_UP_STATUS := "Move Up: Yes"]
 			slot.data[MOVE_UP_STAY_UP_STATUS_INITIAL == "Moving Up" & MOVE_UP_STAY_UP_STATUS == "Move Up: Yes" & 
-				as.numeric(ACHIEVEMENT_LEVEL) <= level.to.get & GRADE == max(as.numeric(GRADE)[!is.na(get(my.sgp.target.move.up.stay.up))]), MOVE_UP_STAY_UP_STATUS := "Move Up: No"]
+				as.numeric(ACHIEVEMENT_LEVEL) <= level.to.get & GRADE == max(as.numeric(GRADE[!is.na(get(my.sgp.target.move.up.stay.up))])), MOVE_UP_STAY_UP_STATUS := "Move Up: No"]
 			slot.data[MOVE_UP_STAY_UP_STATUS_INITIAL == "Staying Up" & MOVE_UP_STAY_UP_STATUS == "Stay Up: No" & 
-				as.numeric(ACHIEVEMENT_LEVEL) > level.to.get & GRADE == max(as.numeric(GRADE)[!is.na(get(my.sgp.target.move.up.stay.up))]), MOVE_UP_STAY_UP_STATUS := "Stay Up: Yes"]
+				as.numeric(ACHIEVEMENT_LEVEL) > level.to.get & GRADE == max(as.numeric(GRADE[!is.na(get(my.sgp.target.move.up.stay.up))])), MOVE_UP_STAY_UP_STATUS := "Stay Up: Yes"]
 			slot.data[,MOVE_UP_STAY_UP_STATUS := as.factor(MOVE_UP_STAY_UP_STATUS)]
 
 		}

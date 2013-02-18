@@ -686,9 +686,11 @@ function(panel.data,         ## REQUIRED
 				splineMatrix.tf <- sapply(tmp.matrices[[i]], validObject, test=TRUE)==TRUE
 				if (!any(splineMatrix.tf)) {
 					tmp.changes <- TRUE
+					tmp.content_area <- unlist(strsplit(i, "[.]"))[1]; tmp.year <- unlist(strsplit(i, "[.]"))[2]
 					for (j in names(tmp.matrices[[i]])[!splineMatrix.tf]) {
 						message(paste("\t\tUpdating Existing Coefficient Matrix", i, j, "to new splineMatrix class."))
-						tmp.matrices[[i]][[j]] <- as.splineMatrix(matrix_argument=tmp.matrices[[i]][[j]], matrix_argument_name=j, sgp_object=panel.data)
+						tmp.matrices[[i]][[j]] <- 
+							as.splineMatrix(matrix_argument=tmp.matrices[[i]][[j]], matrix_argument_name=j, content_area=tmp.content_area, year=tmp.year, sgp_object=panel.data)
 					}
 				}
 			}
@@ -1043,7 +1045,7 @@ function(panel.data,         ## REQUIRED
 
 		if (return.prior.scale.score.standardized) {
 			SCALE_SCORE_PRIOR_STANDARDIZED <- NULL
-			quantile.data[,SCALE_SCORE_PRIOR_STANDARDIZED:=as.numeric(scale(prior.ss))]
+			quantile.data[,SCALE_SCORE_PRIOR_STANDARDIZED:=round(as.numeric(scale(prior.ss)), digits=3)]
 		}
 
 		if (print.sgp.order | return.norm.group.identifier) {
@@ -1149,7 +1151,7 @@ function(panel.data,         ## REQUIRED
 	### Start/Finish Message & Return SGP Object
 
 	if (print.time.taken) {
-		message(paste("\tStarted studentGrowthPercentiles:", started.date, "\n"))
+		message(paste("\tStarted studentGrowthPercentiles:", started.date))
 		if (calculate.sgps) {
 			message(paste("\t\tContent Area: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label, " (N=", format(dim(quantile.data)[1], big.mark=","), ")", sep=""))
 		} else {

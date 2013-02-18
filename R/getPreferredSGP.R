@@ -7,12 +7,14 @@ function(tmp.data,
 
 	if (type=="BASELINE") {
 		tmp.sgp.norm.group.variables <- c("YEAR", "SGP_NORM_GROUP_BASELINE", "PREFERENCE")
+		tmp.message <- "\tNOTE: Multiple Baseline SGPs exist for individual students. Unique Baseline SGPs will be created using SGP Norm Group Preference Table for "
 	} else {
 		tmp.sgp.norm.group.variables <- c("YEAR", "SGP_NORM_GROUP", "PREFERENCE")
+		tmp.message <- "\tNOTE: Multiple SGPs exist for individual students. Unique SGPs will be created using SGP Norm Group Preference Table for "
 	}
 
 	if (!is.null(SGPstateData[[state]][['SGP_Norm_Group_Preference']])) {
-		message(paste("\tNOTE: Multiple SGPs exist for individual students. Unique SGPs will be created using SGP Norm Group Preference Table for ", state, ".", sep=""))
+		message(paste(tmp.message, state, ".", sep=""))
 		setkeyv(SGPstateData[[state]][['SGP_Norm_Group_Preference']], tmp.sgp.norm.group.variables[1:2])
 		setkeyv(tmp.data, tmp.sgp.norm.group.variables[1:2])
 	} else {
