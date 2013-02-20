@@ -831,7 +831,7 @@ function(panel.data,         ## REQUIRED
 	}
 
 	if (is.null(year.progression) & is.null(year.progression.lags)) {
-		if (is.character(type.convert(grade.progression, as.is=TRUE))) {
+		if (is.character(type.convert(as.character(grade.progression), as.is=TRUE))) {
 			stop("\tNOTE: Non-numeric grade progressions must be accompanied by arguments 'year.progression' and 'year.progression.lags'")
 		} else {
 			year.progression <- year.progression.for.norm.group <- rev(yearIncrement(sgp.labels[['my.year']], c(0, -cumsum(diff(rev(type.convert(grade.progression)))))))
