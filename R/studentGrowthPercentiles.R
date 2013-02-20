@@ -4,9 +4,9 @@ function(panel.data,         ## REQUIRED
          panel.data.vnames,
 	 additional.vnames.to.return=NULL,
          grade.progression,
-         content.area.progression,
-         year.progression,
-         year.progression.lags,
+         content.area.progression=NULL,
+         year.progression=NULL,
+         year.progression.lags=NULL,
          num.prior,
          max.order.for.percentile=NULL,
          subset.grade,
@@ -781,8 +781,8 @@ function(panel.data,         ## REQUIRED
 	if (!is.null(max.order.for.percentile)) {
 		tmp.gp <- tail(tmp.gp, max.order.for.percentile+1)
 		num.prior <- min(num.prior, max.order.for.percentile)
-		if (!missing(content.area.progression)) content.area.progression <- tail(content.area.progression, length(tmp.gp))
-		if (!missing(year.progression)) year.progression <- year.progression.for.norm.group <- tail(year.progression, length(tmp.gp))
+		if (!is.null(content.area.progression)) content.area.progression <- tail(content.area.progression, length(tmp.gp))
+		if (!is.null(year.progression)) year.progression <- year.progression.for.norm.group <- tail(year.progression, length(tmp.gp))
 	}
 
 	if (is.numeric(tmp.gp) & drop.nonsequential.grade.progression.variables && any(diff(tmp.gp) > 1)) {
@@ -816,7 +816,7 @@ function(panel.data,         ## REQUIRED
         } 
 
 
-	if (missing(content.area.progression)) {
+	if (is.null(content.area.progression)) {
 		content.area.progression <- rep(sgp.labels$my.subject, length(tmp.gp))
 	} else {
 		if (!identical(class(content.area.progression), "character")) {
@@ -830,12 +830,14 @@ function(panel.data,         ## REQUIRED
 		}
 	}
 
-	if (missing(year.progression) & !identical(sgp.labels[['my.extra.label']], "BASELINE")) {
-		year.progression <- year.progression.for.norm.group <- rev(yearIncrement(sgp.labels[['my.year']], c(0, -cumsum(year.progression.lags))))
+	if (is.null(year.progression)) {
+		if (!identical(sgp.labels[['my.extra.label']], "BASELINE")) {
+			year.progression <- year.progression.for.norm.group <- rev(yearIncrement(sgp.labels[['my.year']], c(0, -cumsum(rev(year.progression.lags)))))
+		}
 	} else {
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) {
 			year.progression <- rep("BASELINE", length(tmp.gp))
-			year.progression.for.norm.group <- rev(yearIncrement(sgp.labels[['my.year']], c(0, -cumsum(year.progression.lags))))
+			year.progression.for.norm.group <- rev(yearIncrement(sgp.labels[['my.year']], c(0, -cumsum(rev(year.progression.lags)))))
 		} else {
 			year.progression.for.norm.group <- year.progression
 		}
@@ -850,7 +852,7 @@ function(panel.data,         ## REQUIRED
 		}
 	}
 
-	if (missing(year.progression.lags)) {
+	if (is.null(year.progression.lags)) {
 		if (year.progression[1] == "BASELINE") {
 			year.progression.lags <- rep(1, length(year.progression)-1)
 		} else {
