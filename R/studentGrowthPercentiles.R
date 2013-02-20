@@ -837,16 +837,14 @@ function(panel.data,         ## REQUIRED
 			year.progression <- year.progression.for.norm.group <- rev(yearIncrement(sgp.labels[['my.year']], c(0, -cumsum(rev(diff(type.convert(as.character(grade.progression))))))))
 		}
 	}
+
 	if (is.null(year.progression) & !is.null(year.progression.lags)) {
 		if (!identical(sgp.labels[['my.extra.label']], "BASELINE")) {
 			year.progression <- year.progression.for.norm.group <- rev(yearIncrement(sgp.labels[['my.year']], c(0, -cumsum(rev(year.progression.lags)))))
 		}
-	} else {
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) {
 			year.progression <- rep("BASELINE", length(tmp.gp))
 			year.progression.for.norm.group <- rev(yearIncrement(sgp.labels[['my.year']], c(0, -cumsum(rev(year.progression.lags)))))
-		} else {
-			year.progression.for.norm.group <- year.progression
 		}
 		if (!identical(class(year.progression), "character")) {
 			stop("year.area.progression should be a character vector. See help page for details.")
@@ -862,8 +860,10 @@ function(panel.data,         ## REQUIRED
 	if (!is.null(year.progression) & is.null(year.progression.lags)) {
 		if (year.progression[1] == "BASELINE") {
 			year.progression.lags <- rep(1, length(year.progression)-1)
+			year.progression.for.norm.group <- year.progression
 		} else {
 			year.progression.lags <- diff(as.numeric(sapply(strsplit(year.progression, '_'), '[', split.location(year.progression))))
+			year.progression.for.norm.group <- year.progression
 		}
 	}
 
