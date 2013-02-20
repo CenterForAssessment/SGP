@@ -830,7 +830,14 @@ function(panel.data,         ## REQUIRED
 		}
 	}
 
-	if (is.null(year.progression)) {
+	if (is.null(year.progression) & is.null(year.progression.lags)) {
+		if (is.character(type.convert(grade.progression, as.is=TRUE))) {
+			stop("\tNOTE: Non-numeric grade progressions must be accompanied by arguments 'year.progression' and 'year.progression.lags'")
+		} else {
+			year.progression <- year.progression.for.norm.group <- rev(yearIncrement(sgp.labels[['my.year']], c(0, -cumsum(diff(rev(type.convert(grade.progression)))))))
+		}
+	}
+	if (is.null(year.progression) & !is.null(year.progression.lags)) {
 		if (!identical(sgp.labels[['my.extra.label']], "BASELINE")) {
 			year.progression <- year.progression.for.norm.group <- rev(yearIncrement(sgp.labels[['my.year']], c(0, -cumsum(rev(year.progression.lags)))))
 		}
@@ -852,7 +859,7 @@ function(panel.data,         ## REQUIRED
 		}
 	}
 
-	if (is.null(year.progression.lags)) {
+	if (!is.null(year.progression) & is.null(year.progression.lags)) {
 		if (year.progression[1] == "BASELINE") {
 			year.progression.lags <- rep(1, length(year.progression)-1)
 		} else {
