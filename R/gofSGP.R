@@ -3,6 +3,7 @@
 		state=NULL,
 		years=NULL,
 		content_areas=NULL,
+		content_areas_prior=NULL,
 		grades=NULL,
 		use.sgp="SGP",
 		output.format="PDF",
@@ -42,23 +43,25 @@
 
 	pretty_year <- function(x) sub("_", "-", x)
 
-	gof.draw <- function(content_area.year.grade.data, content_area, year, grade, content_area_prior=NULL) {
+	gof.draw <- function(content_area.year.grade.data, content_area, year, grade, content_areas_prior) {
 		
 		if (!"GROB" %in% output.format) {
 			file.path <- file.path("Goodness_of_Fit", paste(content_area, year, sep="."))
 			dir.create(file.path, showWarnings=FALSE, recursive=TRUE)
 			if ("PDF" %in% output.format) pdf(file=paste(file.path, paste("/gofSGP_Grade", grade, sep="_"), ".pdf", sep=""), width=my.width, height=my.height)
 			if ("PNG" %in% output.format) Cairo(file=paste(file.path, paste("/gofSGP_Grade", grade, sep="_"), ".png", sep=""), width=my.width, height=my.height, units="in", dpi=144, pointsize=24, bg="transparent")
-			grid.draw(.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale, with.prior.achievement.level=with.prior.achievement.level))
+			grid.draw(.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale, with.prior.achievement.level=with.prior.achievement.level, 
+				content_areas_prior=content_areas_prior))
 			dev.off()
 			return(NULL)
 		} else {
-			.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale, with.prior.achievement.level=with.prior.achievement.level)
+			.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale, with.prior.achievement.level=with.prior.achievement.level,
+				content_areas_prior=content_areas_prior)
 		}
 	}
 
 	.goodness.of.fit <- 
-		function(data1, content_area, year, grade, color.scale="reds", with.prior.achievement.level=FALSE) {
+		function(data1, content_area, year, grade, color.scale="reds", with.prior.achievement.level=FALSE, content_areas_prior=NULL) {
 
 		.cell.color <- function(x){
 		my.blues.and.reds <- diverge_hcl(21, c = 100, l = c(50, 100))
@@ -144,6 +147,7 @@
 			tmp.prior.achievement.level.base.points <- cumsum(tmp.prior.achievement.level.percentages)+(seq_along(tmp.prior.achievement.level.percentages)-1)/100
 			tmp.prior.achievement.level.centers <- tmp.prior.achievement.level.base.points-tmp.prior.achievement.level.percentages/2
 			tmp.prior.achievement.level.quantiles <- tapply(data1[['SGP']], factor(data1[['ACHIEVEMENT_LEVEL_PRIOR']]), quantile, probs=1:9/10, simplify=FALSE)
+			tmp.prior.content.area.label <- paste("Prior Achievement Level (", capwords(content_areas_prior), ")", sep="")
 
 			layout.vp <- viewport(layout = grid.layout(7, 4, widths = unit(c(0.1, 4.9, 3.4, 0.1), rep("inches", 4)),
 			heights = unit(c(0.2, 1.0, 0.1, 5.4, 0.1, 4.0, 0.2), rep("inches", 2))), name="layout")
@@ -188,7 +192,7 @@
 					gp=gpar(col="black", fill=tmp.prior.achievement.level.colors)),
 				textGrob(x=-2, y=tmp.prior.achievement.level.centers, tmp.prior.achievement.level.labels, default.units="native", 
 					just="right", vp="prior_achievement_level", gp=gpar(cex=0.8)),
-				textGrob(x=-25, y=0.5, paste("Prior ", content_area_prior, " Achievement Level", sep=""), gp=gpar(cex=1), default.units="native", rot=90, vp="prior_achievement_level"),
+				textGrob(x=-25, y=0.5, tmp.prior.content.area.label, gp=gpar(cex=1), default.units="native", rot=90, vp="prior_achievement_level"),
 				textGrob(x=101, y=tmp.prior.achievement.level.centers, tmp.prior.achievement.level.percentages.labels, default.units="native", 
 					just="left", vp="prior_achievement_level", gp=gpar(cex=0.7)),
 				linesGrob(c(1,99), -0.05, gp=gpar(lwd=1.0), default.units="native", vp="prior_achievement_level"),
@@ -316,13 +320,14 @@
 			for (grades.iter in grades) {
 				tmp.data.final <- tmp.data_1[tmp.data_1[['GRADE']]==grades.iter & !is.na(tmp.data_1[[use.sgp]]) & !is.na(SCALE_SCORE_PRIOR),]
 				if ("ACHIEVEMENT_LEVEL_PRIOR" %in% names(tmp.data.final)) {
+					if ("CONTENT_AREA_PRIOR" %in% names(tmp.data.final)) content_areas_prior <- tmp.data.final[["CONTENT_AREA_PRIOR"]][1]
 					gof.object <- gof.draw(
 						data.frame(
 							SCALE_SCORE_PRIOR=tmp.data.final[['SCALE_SCORE_PRIOR']], 
 							SGP=tmp.data.final[[use.sgp]], 
 							ACHIEVEMENT_LEVEL_PRIOR=tmp.data.final[['ACHIEVEMENT_LEVEL_PRIOR']]), 
 							content_area=content_areas.iter,
-							content_area_prior=tmp.data.final[["CONTENT_AREA_PRIOR"]][1],
+							content_areas_prior=content_areas_prior,
 							year=years.iter, 
 							grade=grades.iter)
 				} else {

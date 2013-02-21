@@ -1090,12 +1090,12 @@ function(panel.data,         ## REQUIRED
 
 		if (is.character(goodness.of.fit) | goodness.of.fit==TRUE) {
 			if (is.character(goodness.of.fit) & goodness.of.fit %in% ls(SGPstateData)) {
-				GRADE <- NULL
+				GRADE <- YEAR <- CONTENT_AREA <- NULL
 				tmp.gof.data <- getAchievementLevel(
 							sgp_data=data.table(
 								SCALE_SCORE=quantile.data[['SCALE_SCORE_PRIOR']],
 								SGP=quantile.data[['SGP']],
-								VALID_CASE="VALID_CASE", 
+								VALID_CASE="VALID_CASE",
 								CONTENT_AREA=rev(content.area.progression)[2],
 								YEAR=rev(year.progression)[2], 
 								GRADE=rev(tmp.gp)[2]),
@@ -1104,13 +1104,15 @@ function(panel.data,         ## REQUIRED
 							content_area=rev(content.area.progression)[2],
 							grade=tail(tmp.gp, 2)[1])[,GRADE:=tmp.last][,YEAR:=sgp.labels[['my.year']]]
 				setnames(tmp.gof.data, c("SCALE_SCORE", "ACHIEVEMENT_LEVEL", "CONTENT_AREA"), c("SCALE_SCORE_PRIOR", "ACHIEVEMENT_LEVEL_PRIOR", "CONTENT_AREA_PRIOR"))
-				tmp.gof.data[,CONTENT_AREA:=sgp.labels[['my.subject']]]
+				tmp.gof.data[["CONTENT_AREA"]] <- sgp.labels[['my.subject']]
+				content_areas_prior <- tmp.gof.data[['CONTENT_AREA_PRIOR']][1]
 
 				Goodness_of_Fit[[tmp.path]][['TMP_NAME']] <- gofSGP(
 										sgp_object=tmp.gof.data,
 										state=goodness.of.fit,
 										years=sgp.labels[['my.year']],
 										content_areas=sgp.labels[['my.subject']],
+										content_areas_prior=content_areas_prior,
 										grades=tmp.last,
 										output.format="GROB")
 			} else {
