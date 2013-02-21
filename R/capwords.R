@@ -2,10 +2,12 @@
 function(x, 
 	special.words = c("ELA", "II", "III", "IV", "EMH", "HS", "MS", "ES", "SES", "IEP", "ELL", "MAD", "SD", "US", "SGP")) {
 
+	trim <- function (x) gsub("^\\s+|\\s+$", "", x)
+
 	if (is.null(x)) return(NULL)
 	x <- gsub("_", " ", x)
 	x <- gsub("[.]", " ", x)
-	x <- gsub(" +$", "", x)
+	x <- trim(x)
 	my.split <- function(words, split.character) {
 		tmp.split <- unlist(strsplit(words, split=split.character))
 		tmp.split.special.words.index <- which(!tmp.split %in% special.words)

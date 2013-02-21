@@ -4,9 +4,9 @@ function(panel.data,         ## REQUIRED
          panel.data.vnames,
 	 additional.vnames.to.return=NULL,
          grade.progression,
-         content.area.progression,
-         year.progression,
-         year.progression.lags,
+         content.area.progression=NULL,
+         year.progression=NULL,
+         year.progression.lags=NULL,
          num.prior,
          max.order.for.percentile=NULL,
          subset.grade,
@@ -781,8 +781,8 @@ function(panel.data,         ## REQUIRED
 	if (!is.null(max.order.for.percentile)) {
 		tmp.gp <- tail(tmp.gp, max.order.for.percentile+1)
 		num.prior <- min(num.prior, max.order.for.percentile)
-		if (!missing(content.area.progression)) content.area.progression <- tail(content.area.progression, length(tmp.gp))
-		if (!missing(year.progression)) year.progression <- year.progression.for.norm.group <- tail(year.progression, length(tmp.gp))
+		if (!is.null(content.area.progression)) content.area.progression <- tail(content.area.progression, length(tmp.gp))
+		if (!is.null(year.progression)) year.progression <- year.progression.for.norm.group <- tail(year.progression, length(tmp.gp))
 	}
 
 	if (is.numeric(tmp.gp) & drop.nonsequential.grade.progression.variables && any(diff(tmp.gp) > 1)) {
@@ -816,7 +816,7 @@ function(panel.data,         ## REQUIRED
         } 
 
 
-	if (missing(content.area.progression)) {
+	if (is.null(content.area.progression)) {
 		content.area.progression <- rep(sgp.labels$my.subject, length(tmp.gp))
 	} else {
 		if (!identical(class(content.area.progression), "character")) {
@@ -830,14 +830,21 @@ function(panel.data,         ## REQUIRED
 		}
 	}
 
-	if (missing(year.progression) & !identical(sgp.labels[['my.extra.label']], "BASELINE")) {
-		year.progression <- year.progression.for.norm.group <- rev(yearIncrement(sgp.labels[['my.year']], c(0, -cumsum(year.progression.lags))))
-	} else {
+	if (is.null(year.progression) & is.null(year.progression.lags)) {
+		if (is.character(type.convert(as.character(grade.progression), as.is=TRUE))) {
+			stop("\tNOTE: Non-numeric grade progressions must be accompanied by arguments 'year.progression' and 'year.progression.lags'")
+		} else {
+			year.progression <- year.progression.for.norm.group <- rev(yearIncrement(sgp.labels[['my.year']], c(0, -cumsum(rev(diff(type.convert(as.character(grade.progression))))))))
+		}
+	}
+
+	if (is.null(year.progression) & !is.null(year.progression.lags)) {
+		if (!identical(sgp.labels[['my.extra.label']], "BASELINE")) {
+			year.progression <- year.progression.for.norm.group <- rev(yearIncrement(sgp.labels[['my.year']], c(0, -cumsum(rev(year.progression.lags)))))
+		}
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) {
 			year.progression <- rep("BASELINE", length(tmp.gp))
-			year.progression.for.norm.group <- rev(yearIncrement(sgp.labels[['my.year']], c(0, -cumsum(year.progression.lags))))
-		} else {
-			year.progression.for.norm.group <- year.progression
+			year.progression.for.norm.group <- rev(yearIncrement(sgp.labels[['my.year']], c(0, -cumsum(rev(year.progression.lags)))))
 		}
 		if (!identical(class(year.progression), "character")) {
 			stop("year.area.progression should be a character vector. See help page for details.")
@@ -850,11 +857,13 @@ function(panel.data,         ## REQUIRED
 		}
 	}
 
-	if (missing(year.progression.lags)) {
+	if (!is.null(year.progression) & is.null(year.progression.lags)) {
 		if (year.progression[1] == "BASELINE") {
 			year.progression.lags <- rep(1, length(year.progression)-1)
+			year.progression.for.norm.group <- year.progression
 		} else {
 			year.progression.lags <- diff(as.numeric(sapply(strsplit(year.progression, '_'), '[', split.location(year.progression))))
+			year.progression.for.norm.group <- year.progression
 		}
 	}
 
@@ -894,7 +903,7 @@ function(panel.data,         ## REQUIRED
 				for (l in seq_along(tmp.grade.names)) {
 					tmp.knots <- paste(tmp.grade.names[l], Coefficient_Matrices[[tmp.path.coefficient.matrices]][[tmp.coefficient.matrix.name]]@Knots[l])
 					tmp.boundaries <- paste(tmp.grade.names[l], Coefficient_Matrices[[tmp.path.coefficient.matrices]][[tmp.coefficient.matrix.name]]@Boundaries[l])
-					Verbose_Messages <- c(Verbose_Messages, paste("\tNOTE: Coefficient Matrix ", tmp.coefficient.matrix.name, " created using Knots: ", tmp.knots, " and Boundaries: ", tmp.boundaries, ".\n", sep=""))
+					Verbose_Messages <- c(Verbose_Messages, paste("\t\tNOTE: Coefficient Matrix ", tmp.coefficient.matrix.name, " created using Knots: ", tmp.knots, " and Boundaries: ", tmp.boundaries, ".\n", sep=""))
 				}
 			}
 		}
@@ -1081,26 +1090,29 @@ function(panel.data,         ## REQUIRED
 
 		if (is.character(goodness.of.fit) | goodness.of.fit==TRUE) {
 			if (is.character(goodness.of.fit) & goodness.of.fit %in% ls(SGPstateData)) {
-				GRADE <- NULL
+				GRADE <- YEAR <- CONTENT_AREA <- NULL
 				tmp.gof.data <- getAchievementLevel(
 							sgp_data=data.table(
 								SCALE_SCORE=quantile.data[['SCALE_SCORE_PRIOR']],
 								SGP=quantile.data[['SGP']],
-								VALID_CASE="VALID_CASE", 
-								CONTENT_AREA=sgp.labels[['my.subject']], 
-								YEAR=sgp.labels[['my.year']], 
-								GRADE=tail(tmp.gp, 2)[1]),
+								VALID_CASE="VALID_CASE",
+								CONTENT_AREA=rev(content.area.progression)[2],
+								YEAR=rev(year.progression)[2], 
+								GRADE=rev(tmp.gp)[2]),
 							state=goodness.of.fit,
-							year=sgp.labels[['my.year']],
-							content_area=sgp.labels[['my.subject']],
-							grade=tail(tmp.gp, 2)[1])[,GRADE:=tmp.last]
-				setnames(tmp.gof.data, c("SCALE_SCORE", "ACHIEVEMENT_LEVEL"), c("SCALE_SCORE_PRIOR", "ACHIEVEMENT_LEVEL_PRIOR"))
+							year=rev(year.progression)[2],
+							content_area=rev(content.area.progression)[2],
+							grade=tail(tmp.gp, 2)[1])[,GRADE:=tmp.last][,YEAR:=sgp.labels[['my.year']]]
+				setnames(tmp.gof.data, c("SCALE_SCORE", "ACHIEVEMENT_LEVEL", "CONTENT_AREA"), c("SCALE_SCORE_PRIOR", "ACHIEVEMENT_LEVEL_PRIOR", "CONTENT_AREA_PRIOR"))
+				tmp.gof.data[["CONTENT_AREA"]] <- sgp.labels[['my.subject']]
+				content_areas_prior <- tmp.gof.data[['CONTENT_AREA_PRIOR']][1]
 
 				Goodness_of_Fit[[tmp.path]][['TMP_NAME']] <- gofSGP(
 										sgp_object=tmp.gof.data,
 										state=goodness.of.fit,
 										years=sgp.labels[['my.year']],
 										content_areas=sgp.labels[['my.subject']],
+										content_areas_prior=content_areas_prior,
 										grades=tmp.last,
 										output.format="GROB")
 			} else {
