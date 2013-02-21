@@ -1096,14 +1096,15 @@ function(panel.data,         ## REQUIRED
 								SCALE_SCORE=quantile.data[['SCALE_SCORE_PRIOR']],
 								SGP=quantile.data[['SGP']],
 								VALID_CASE="VALID_CASE", 
-								CONTENT_AREA=sgp.labels[['my.subject']], 
-								YEAR=sgp.labels[['my.year']], 
-								GRADE=tail(tmp.gp, 2)[1]),
+								CONTENT_AREA=rev(content.area.progression)[2],
+								YEAR=rev(year.progression)[2], 
+								GRADE=rev(tmp.gp)[2]),
 							state=goodness.of.fit,
-							year=sgp.labels[['my.year']],
-							content_area=sgp.labels[['my.subject']],
-							grade=tail(tmp.gp, 2)[1])[,GRADE:=tmp.last]
-				setnames(tmp.gof.data, c("SCALE_SCORE", "ACHIEVEMENT_LEVEL"), c("SCALE_SCORE_PRIOR", "ACHIEVEMENT_LEVEL_PRIOR"))
+							year=rev(year.progression)[2],
+							content_area=rev(content.area.progression)[2],
+							grade=tail(tmp.gp, 2)[1])[,GRADE:=tmp.last][,YEAR:=sgp.labels[['my.year']]]
+				setnames(tmp.gof.data, c("SCALE_SCORE", "ACHIEVEMENT_LEVEL", "CONTENT_AREA"), c("SCALE_SCORE_PRIOR", "ACHIEVEMENT_LEVEL_PRIOR", "CONTENT_AREA_PRIOR"))
+				tmp.gof.data[,CONTENT_AREA:=sgp.labels[['my.subject']]]
 
 				Goodness_of_Fit[[tmp.path]][['TMP_NAME']] <- gofSGP(
 										sgp_object=tmp.gof.data,

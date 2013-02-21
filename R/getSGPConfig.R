@@ -98,7 +98,7 @@ function(sgp_object,
 					if (paste(strsplit(names(sgp.config)[a], "\\.")[[1]][1], ".BASELINE", sep="") %in% names(tmp_sgp_object[["Coefficient_Matrices"]])) {
 						mtx.names <- names(tmp_sgp_object[["Coefficient_Matrices"]][[paste(strsplit(names(sgp.config)[a], "\\.")[[1]][1], ".BASELINE", sep="")]])
 						mtx.index <- which(sapply(mtx.names, function(x) strsplit(x, "_")[[1]][2]) == tail(par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]], 1))
-						if (length(mtx.index) !=0) { # Cases where content area has some BASELINE coef matrices, but not with the present grade prog
+						if (length(mtx.index) != 0) { # Cases where content area has some BASELINE coef matrices, but not with the present grade prog
 							tmp.max.order <- max(as.numeric(sapply(strsplit(mtx.names[mtx.index], "_"), function(x) x[3])))
 							if (length(par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]])-1 < tmp.max.order) {
 								tmp.max.order <- length(par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]])-1

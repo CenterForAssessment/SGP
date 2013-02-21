@@ -30,7 +30,7 @@
 	if ("ACHIEVEMENT_LEVEL_PRIOR" %in% names(tmp.data)) {
 		with.prior.achievement.level <- TRUE
 		my.width <- 8.5; my.height <- 11
-		variables.to.get <- c("SCALE_SCORE_PRIOR", "ACHIEVEMENT_LEVEL_PRIOR", use.sgp, "GRADE")
+		variables.to.get <- c("SCALE_SCORE_PRIOR", "ACHIEVEMENT_LEVEL_PRIOR", "CONTENT_AREA_PRIOR", use.sgp, "GRADE")
 	} else {
 		with.prior.achievement.level <- FALSE
 		my.width <- 8.5; my.height <- 5.5
@@ -42,7 +42,7 @@
 
 	pretty_year <- function(x) sub("_", "-", x)
 
-	gof.draw <- function(content_area.year.grade.data, content_area, year, grade) {
+	gof.draw <- function(content_area.year.grade.data, content_area, year, grade, content_area_prior=NULL) {
 		
 		if (!"GROB" %in% output.format) {
 			file.path <- file.path("Goodness_of_Fit", paste(content_area, year, sep="."))
@@ -188,7 +188,7 @@
 					gp=gpar(col="black", fill=tmp.prior.achievement.level.colors)),
 				textGrob(x=-2, y=tmp.prior.achievement.level.centers, tmp.prior.achievement.level.labels, default.units="native", 
 					just="right", vp="prior_achievement_level", gp=gpar(cex=0.8)),
-				textGrob(x=-25, y=0.5, "Prior Achievement Level", gp=gpar(cex=1), default.units="native", rot=90, vp="prior_achievement_level"),
+				textGrob(x=-25, y=0.5, paste("Prior ", content_area_prior, " Achievement Level", sep=""), gp=gpar(cex=1), default.units="native", rot=90, vp="prior_achievement_level"),
 				textGrob(x=101, y=tmp.prior.achievement.level.centers, tmp.prior.achievement.level.percentages.labels, default.units="native", 
 					just="left", vp="prior_achievement_level", gp=gpar(cex=0.7)),
 				linesGrob(c(1,99), -0.05, gp=gpar(lwd=1.0), default.units="native", vp="prior_achievement_level"),
@@ -309,7 +309,7 @@
 
 	for (years.iter in years) {
 		for (content_areas.iter in content_areas) {
-			tmp.data_1 <- tmp.data[data.table("VALID_CASE", years.iter, content_areas.iter)][, variables.to.get, with=FALSE]
+			tmp.data_1 <- tmp.data[data.table("VALID_CASE", years.iter, content_areas.iter)][, intersect(variables.to.get, names(tmp.data)), with=FALSE]
 			if (is.null(grades)) {
 				grades <- sort(unique(tmp.data_1[!is.na(tmp.data_1[[use.sgp]]),][['GRADE']]))
 			}
@@ -321,7 +321,8 @@
 							SCALE_SCORE_PRIOR=tmp.data.final[['SCALE_SCORE_PRIOR']], 
 							SGP=tmp.data.final[[use.sgp]], 
 							ACHIEVEMENT_LEVEL_PRIOR=tmp.data.final[['ACHIEVEMENT_LEVEL_PRIOR']]), 
-							content_area=content_areas.iter, 
+							content_area=content_areas.iter,
+							content_area_prior=tmp.data.final[["CONTENT_AREA_PRIOR"]][1],
 							year=years.iter, 
 							grade=grades.iter)
 				} else {
