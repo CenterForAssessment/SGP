@@ -12,6 +12,7 @@ gofSGP(
 	state=NULL,
 	years=NULL,
 	content_areas=NULL,
+	content_areas_prior=NULL,
 	grades=NULL,
 	use.sgp="SGP",
 	output.format="PDF",
@@ -26,6 +27,9 @@ gofSGP(
   \item{years}{The years that goodness-of-fit plots are requested. Default is to use all years available.
   }
   \item{content_areas}{The content area(s) that goodness-of-fit plots are requested. Default is to use all content areas available.
+  }
+  \item{content_areas_prior}{The content area(s) of the prior year which growth by achievement level is being produced that goodness-of-fit plots are requested. 
+  Default is to use all content areas available.
   }
   \item{grades}{The grade(s) that goodness-of-fit plots are requested. Default is to use all grade available.
   }
