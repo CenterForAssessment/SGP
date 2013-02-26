@@ -239,7 +239,7 @@ function(data,
 		## Test data_supplementary argument
 
 		if (!is.null(data_supplementary) && !identical(class(data_supplementary), "list")) {
-			stop("\nNOTE: Supplied supplementary data to 'data_supplementary' must be data table(s) embedded in a wrapper list")
+			stop("\tNOTE: Supplied supplementary data to 'data_supplementary' must be data table(s) embedded in a wrapper list")
 		}
 
 		##  Create the SGP object
