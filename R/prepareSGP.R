@@ -71,11 +71,11 @@ function(data,
 
 		if (!is.null(var.names)) {
 			if (!class(var.names) %in% c("list", "data.frame")) {
-				stop("Supplied argument to 'var.names' must be of class list or data.frame. Please supply argument of appropriate class.")
+				stop("\tNOTE: Supplied argument to 'var.names' must be of class list or data.frame. Please supply argument of appropriate class.")
 			}
 			if (identical("data.frame", class(var.names))) {
 				if (!identical(names(var.names), c("names.provided", "names.sgp", "names.type", "names.info", "names.output"))) {
-					stop("Supplied data.frame to arugment 'var.names' does not include all required columns: 'names.provided', 'names.sgp', 'names.type', 'names.info', 'names.output'")
+					stop("\tNOTE: Supplied data.frame to arugment 'var.names' does not include all required columns: 'names.provided', 'names.sgp', 'names.type', 'names.info', 'names.output'")
 				}
 			}
 			if (identical("list", class(var.names))) {
@@ -115,7 +115,7 @@ function(data,
 		## Check see if any of the required variables are missing
 
 		if (!all(required.names %in% variable.names$names.sgp)) {
-			stop(paste("\tThe {data} object is missing the following column name: ", required.names[(required.names %in% variable.names$names.sgp)==FALSE],
+			stop(paste("\tNOTE: The {data} object is missing the following column name: ", required.names[(required.names %in% variable.names$names.sgp)==FALSE],
 			". Please identify the variable using the {var.names} argument.", sep=""))
 		}
 		return(data.frame(variable.names[order(variable.names$column.provided),][,c("names.provided", "names.sgp", "names.type", "names.info", "names.output")], row.names=NULL, stringsAsFactors=FALSE))
@@ -190,9 +190,11 @@ function(data,
 			setkeyv(data@Data, getKey(data@Data))
 		}
 
+		if (packageVersion("SGP") < 1.1) data@Data_Supplementary <- NULL
+
 		if (!is.null(data_supplementary)) {
 			if (!identical(class(data_supplementary), "list")) {
-				stop("\nNOTE: Supplied supplementary data to 'data_supplementary' must be data table(s) embedded in a wrapper list")
+				stop("\tNOTE: Supplied supplementary data to 'data_supplementary' must be data table(s) embedded in a wrapper list")
 			} else {
 				data@Data_Supplementary <- c(data@Data_Supplementary, data_supplementary)
 			}
