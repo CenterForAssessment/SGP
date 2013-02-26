@@ -21,6 +21,7 @@ function(sgp_object,
 	sgPlot.demo.report=FALSE,
 	sgp.summaries=NULL,
 	summary.groups=NULL,
+	data_supplementary=NULL,
 	confidence.interval.groups=NULL,
 	plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot"),
 	verbose.output=FALSE) {
@@ -41,7 +42,7 @@ function(sgp_object,
 	### prepareSGP ###
 
 	if ("prepareSGP" %in% steps) {
-		sgp_object <- prepareSGP(sgp_object, state=state, var.names=prepareSGP.var.names)
+		sgp_object <- prepareSGP(sgp_object, data_supplementary=data_supplementary, state=state, var.names=prepareSGP.var.names)
 	        if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
 	}
 
