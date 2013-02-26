@@ -13,6 +13,7 @@ function(sgp_object,
          sgp.percentiles.baseline.max.order=3,
          sgp.projections.baseline.max.order=3,
          sgp.projections.lagged.baseline.max.order=3,
+	 sgp.minimum.default.panel.years=3,
          sgp.use.my.coefficient.matrices=NULL,
          simulate.sgps=TRUE,
 	 calculate.simex=NULL,
@@ -229,7 +230,7 @@ function(sgp_object,
 
 	setkeyv(sgp_object@Data, getKey(sgp_object))
 	par.sgp.config <- getSGPConfig(sgp_object, tmp_sgp_object, content_areas, years, grades, sgp.config, sgp.percentiles.baseline, sgp.projections.baseline, sgp.projections.lagged.baseline,
-		sgp.config.drop.nonsequential.grade.progression.variables)
+		sgp.config.drop.nonsequential.grade.progression.variables, sgp.minimum.default.panel.years)
 
 	if (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline) {
 		if (any(sapply(par.sgp.config, function(x) identical(x[['base.gp']], "NO_BASELINE_COEFFICIENT_MATRICES")))) {

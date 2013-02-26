@@ -7,6 +7,7 @@
 
 \usage{
 prepareSGP(data,
+	data_supplementary=NULL,
 	state=NULL,
 	var.names=NULL,
 	create.additional.variables=TRUE,
@@ -14,7 +15,9 @@ prepareSGP(data,
 }
 
 \arguments{
-  \item{data}{A panel data set in long form. See embedded \code{\link{sgpData_LONG}} data set for an exemplar. 
+  \item{data}{A panel data set in long form or an object of class SGP. See embedded \code{\link{sgpData_LONG}} data set for an exemplar. 
+  }
+  \item{data_supplementary}{Supplementary data (e.g., student teacher lookup tables) to be embedded in SGP object in slot @Data_Supplementary. Data must be embedded in a list. Default is no data supplied.
   }
   \item{state}{A two letter acronymn indicating the state associated with the data. If not supplied, the function will try to infer what the state is from the data object name supplied.
   }

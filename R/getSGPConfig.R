@@ -8,7 +8,8 @@ function(sgp_object,
 	sgp.percentiles.baseline,
 	sgp.projections.baseline,
 	sgp.projections.lagged.baseline,
-	sgp.config.drop.nonsequential.grade.progression.variables) {
+	sgp.config.drop.nonsequential.grade.progression.variables,
+	sgp.minimum.default.panel.years) {
 
 	YEAR <- CONTENT_AREA <- VALID_CASE <- NULL
 
@@ -138,7 +139,7 @@ function(sgp_object,
 		}
 		if (is.null(years)) {
 			for (i in content_areas) {
-				tmp.years[[i]] <- sort(tail(unique(sgp_object@Data[SJ("VALID_CASE", i)][['YEAR']]), -2), decreasing=TRUE)
+				tmp.years[[i]] <- sort(tail(unique(sgp_object@Data[SJ("VALID_CASE", i)][['YEAR']]), -(sgp.minimum.default.panel.years-1)), decreasing=TRUE)
 			}
 		} else {
 			for (i in content_areas) {

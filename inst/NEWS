@@ -1,3 +1,10 @@
+Changes in version: SGP_1.0-9.3
+
+  USER VISIBLE CHANGES:
+
+	  o Added use.my.coefficient.matrices argument to abcSGP to faciliate updateSGP.
+	  o updateSGP now allows for single argument of 'what_sgp_object' to be supplied allowing for re-calculation of SGPs using embedded coefficient matrices.
+
 Changes in version: SGP_1.0-9.2
 
   USER VISIBLE CHANGES:

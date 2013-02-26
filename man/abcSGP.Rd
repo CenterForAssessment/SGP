@@ -21,6 +21,7 @@ abcSGP(sgp_object,
 	sgp.percentiles.baseline=TRUE,
 	sgp.projections.baseline=TRUE,
 	sgp.projections.lagged.baseline=TRUE,
+	sgp.use.my.coefficient.matrices=NULL,
 	simulate.sgps=TRUE,
 	calculate.simex=NULL,
 	parallel.config=NULL,
@@ -64,6 +65,9 @@ If missing the function will use the data to infer all the grade progressions fo
   \item{sgp.projections.baseline}{Boolean variable indicating whether to calculate baseline student growth projections. Defaults to TRUE.
   }
   \item{sgp.projections.lagged.baseline}{Boolean variable indicating whether to calculate lagged baseline student growth projections. Defaults to TRUE.
+  }
+  \item{sgp.use.my.coefficient.matrices}{Boolean variable indicating whether to use embedded coefficient matrices to calculate SGPs. One should be careful to remove previously calculated SGPs prior
+  to recalculating SGPs.
   }
   \item{simulate.sgps}{Boolean variable indicating whether to simulate SGP values for students based on test-specific Conditional Standard Errors of Measurement (CSEM). 
   Test CSEM data must be available for simulation.  Must be set to TRUE for confidence interval construction. Defaults to TRUE in \code{abcSGP} only.

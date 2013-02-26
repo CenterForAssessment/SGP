@@ -1,5 +1,6 @@
 `prepareSGP` <- 
 function(data,
+	data_supplementary=NULL,
 	state=NULL,
 	var.names=NULL,
 	create.additional.variables=TRUE,
@@ -189,6 +190,14 @@ function(data,
 			setkeyv(data@Data, getKey(data@Data))
 		}
 
+		if (!is.null(data_supplementary) && !is.null(data@Data_Supplementary)) {
+			if (!identical(class(data_supplementary), "list")) {
+				stop("\nNOTE: Supplied supplementary data to 'data_supplementary' must be data table(s) embedded in a wrapper list")
+			} else {
+				data@Data_Supplementary <- c(data@Data_Supplementary, data_supplementary)
+			}
+		}
+
 		data@Version <- getVersion(data)
 		sgp_object <- data
 	} else {
@@ -229,7 +238,7 @@ function(data,
 
 		##  Create the SGP object
 
-		sgp_object <- new("SGP", Data=data, Names=variable.names, Version=getVersion(data))
+		sgp_object <- new("SGP", Data=data, Data_Supplementary=data_supplementary, Names=variable.names, Version=getVersion(data))
 		sgp_object <- checkSGP(sgp_object, state=state)
 
 	} ## END else
