@@ -190,7 +190,7 @@ function(data,
 			setkeyv(data@Data, getKey(data@Data))
 		}
 
-		if (packageVersion("SGP") < 1.1) data@Data_Supplementary <- NULL
+		if (!.hasSlot(data, "Data_Supplementary")) data@Data_Supplementary <- NULL
 
 		if (!is.null(data_supplementary)) {
 			if (!identical(class(data_supplementary), "list")) {
