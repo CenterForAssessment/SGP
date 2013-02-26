@@ -236,6 +236,12 @@ function(data,
 			setkeyv(data, getKey(data))
 		}
 
+		## Test data_supplementary argument
+
+		if (!is.null(data_supplementary) && !identical(class(data_supplementary), "list")) {
+			stop("\nNOTE: Supplied supplementary data to 'data_supplementary' must be data table(s) embedded in a wrapper list")
+		}
+
 		##  Create the SGP object
 
 		sgp_object <- new("SGP", Data=data, Data_Supplementary=data_supplementary, Names=variable.names, Version=getVersion(data))
