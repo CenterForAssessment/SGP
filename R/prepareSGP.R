@@ -190,7 +190,7 @@ function(data,
 			setkeyv(data@Data, getKey(data@Data))
 		}
 
-		if (!is.null(data_supplementary) && !is.null(data@Data_Supplementary)) {
+		if (!is.null(data_supplementary)) {
 			if (!identical(class(data_supplementary), "list")) {
 				stop("\nNOTE: Supplied supplementary data to 'data_supplementary' must be data table(s) embedded in a wrapper list")
 			} else {
