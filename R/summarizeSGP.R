@@ -488,7 +488,7 @@ function(sgp_object,
 						"YEAR_WITHIN"),
 					names(sgp_object@Data)) 
 
-	if (!is.null(sgp_object@Data_Supplemental)) variables.for.summaries <- c("VALID_CASE", "ID", variables.for.summaries)
+	if (!is.null(sgp_object@Data_Supplementary)) variables.for.summaries <- c("VALID_CASE", "ID", variables.for.summaries)
 
 	### Define demographic subgroups and tables that will be calculated from all possible created by expand.grid
 
