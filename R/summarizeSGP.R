@@ -501,10 +501,10 @@ function(sgp_object,
 	selected.summary.tables <- list()
 	for (k in selected.institution.types) {
 		if (length(grep("INSTRUCTOR_NUMBER", k)) > 0 | length(grep("CURRENT", k)) > 0) {
-			if (length(grep("CURRENT", k)) > 0 | length(grep("INSTRUCTOR", grep("ENROLLMENT_STATUS", names(sgp_object@Data), value=TRUE)))==0) {
+			if (length(grep("CURRENT", k)) > 0 | !"INSTRUCTOR_ENROLLMENT_STATUS" %in% names(sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']])) {
 				ENROLLMENT_STATUS_ARGUMENT <- NULL; ADD_MISSING_ARGUMENT <- TRUE
 			} 
-			if (length(grep("INSTRUCTOR", grep("ENROLLMENT_STATUS", names(sgp_object@Data), value=TRUE))) > 0) {
+			if ("INSTRUCTOR_ENROLLMENT_STATUS" %in% names(sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']])) {
 				ENROLLMENT_STATUS_ARGUMENT <- "INSTRUCTOR_ENROLLMENT_STATUS"; ADD_MISSING_ARGUMENT <- FALSE
 			}
 
