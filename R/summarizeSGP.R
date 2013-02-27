@@ -488,6 +488,7 @@ function(sgp_object,
 						"YEAR_WITHIN"),
 					names(sgp_object@Data)) 
 
+	if (!is.null(sgp_object@Data_Supplemental)) variables.for.summaries <- c("VALID_CASE", "ID", variables.for.summaries)
 
 	### Define demographic subgroups and tables that will be calculated from all possible created by expand.grid
 
@@ -585,8 +586,8 @@ function(sgp_object,
 
 				### Create LONGer data and run summarizeSGP_INTERNAL
 				
-				tmp.dt.long <- tmp.dt[data.table(sgp_object@Data_Supplementary[[i]][,VALID_CASE:="VALID_CASE"], key=getKey(tmp.dt)), nomatch=0]
-				sgp_object@Summary[[i]] <- c(sgp_object@Summary[[i]], summarizeSGP_INTERNAL(tmp.dt.long, tmp.inst))
+				tmp.dt.long <- tmp.dt[data.table(sgp_object@Data_Supplementary[[j-1]][,VALID_CASE:="VALID_CASE"], key=getKey(tmp.dt)), nomatch=0]
+				sgp_object@Summary[[i]] <- c(sgp_object@Summary[[j-1]], summarizeSGP_INTERNAL(tmp.dt.long, tmp.inst))
 
 #				tmp.dt.long <- data.table(melt(as.data.frame(tmp.dt), 
 #					measure.vars=summary.groups[["institution_multiple_membership"]][[j-1]][["VARIABLE.NAME"]], 
