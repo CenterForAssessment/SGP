@@ -2,7 +2,9 @@
 \alias{prepareSGP}
 \title{Prepare data for SGP analyses}
 \description{
-  Utility function/exemplar used to embed supplied long data into a list object as a keyed data.table.
+  Utility function/exemplar used to embed supplied long data into a list object as a keyed data.table. NOTE: This function also serves the purposes of running many checks on the SGP object you 
+  construct to make sure it is up to date and in the best shape possible. If you have an older object that you wish to make sure is up to date with the latest version of the SGP package, running 
+  \code{\link{prepareSGP}} on an object is never bad thing to do. See examples for more information.
 }
 
 \usage{
@@ -43,6 +45,10 @@ for summarization and reporting.
 \dontrun{
 ## prepareSGP is Step 1 of 5 of abcSGP
 Demonstration_SGP <- prepareSGP(sgpData_LONG)
+
+## Running prepareSGP on an already create SGP object as part of a annual update
+
+Demonstration_SGP <- prepareSGP(Demonstration_SGP)
 }  
 }
 
