@@ -15,6 +15,7 @@ Objects can be created by calls of the form \code{new("SGP", ...)}, but this is 
 \section{Slots}{
   \describe{
     \item{\code{Data}:}{A data.table including student-level data in a (long) format. Each VALID_CASE, CONTENT_AREA, YEAR, ID combination represents a unique case in the data. See sgpData_LONG for an exemplar data set}
+    \item{\code{Data_Supplementary}:}{A list (possibly NULL) providing additional data.tables containing student level multiple-membership lookup tables. For example, sgpData_INSTRUCTOR_NUMBER provides student teacher linkages and can be embedded in this slot using a list that contains it.}
     \item{\code{Names}:}{A data.frame with three columns. The data.frame is used as a lookup table to translate state specific variable names to SGP variable names}
     \item{\code{SGP}:}{A list including the output from \code{\link{analyzeSGP}}}
     \item{\code{Summary}:}{A list including the output from \code{\link{summarizeSGP}}}
@@ -38,7 +39,7 @@ Objects can be created by calls of the form \code{new("SGP", ...)}, but this is 
 }
 
 
-\author{Jonathan P. Weeks \email{weeksjp@gmail.com}}
+\author{Jonathan P. Weeks \email{weeksjp@gmail.com} and Damian W. Betebenner \email{dbetebenner@nciea.org}}
 
 \seealso{
 \code{\link{prepareSGP}}

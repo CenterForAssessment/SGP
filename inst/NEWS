@@ -1,8 +1,24 @@
+Changes in version: SGP_1.0-9.4
+
+  USER VISIBLE CHANGES:
+
+	  o Updated package SGPdata separating INSTRUCTOR_NUMBER from sgpData_LONG and creating sgpData_INSTRUCTOR_NUMBER as a prototype multiple membership table.
+	  o Removed INSTRUCTOR_NUMBER variables names from the variable name lookup for DEMO.
+	  o Altered the way the package deals with 'multiple.membership.groups'. New slot @Data_Supplemental includes multiple membership supplemental tables (like sgpData_INSTRUCTOR_NUMBER).
+
+Changes in version: SGP_1.0-9.3
+
+  USER VISIBLE CHANGES:
+
+	  o Added use.my.coefficient.matrices argument to abcSGP to faciliate updateSGP.
+	  o updateSGP now allows for single argument of 'what_sgp_object' to be supplied allowing for re-calculation of SGPs using embedded coefficient matrices.
+
 Changes in version: SGP_1.0-9.2
 
   USER VISIBLE CHANGES:
 
 	  o Added prior achievement content area to goodness of fit charts showing growth by prior achievement.
+	  o Added two more Economics repeat sequences to baseline matrices for Georgia.
 
 Changes in version: SGP_1.0-9.1
 

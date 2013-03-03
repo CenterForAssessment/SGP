@@ -8,19 +8,25 @@ SGP object.
 
 \usage{
 updateSGP(
-	what_sgp_object,
-	with_sgp_data_LONG,
+	what_sgp_object=NULL,
+	with_sgp_data_LONG=NULL,
 	state=NULL,
+	years=NULL,
+	content_areas=NULL,
 	save.old.summaries=TRUE,
 	...)
 }
 
 \arguments{
-  \item{what_sgp_object}{The SGP object to which the additional data will be added and analyzed. 
+  \item{what_sgp_object}{The SGP object to which the additional data will be added and analyzed. This object must be specified.
   }
-  \item{with_sgp_data_LONG}{The additional data in LONG for to be added to the supplied object of class SGP analyzed. The additional data must be in the same form as the data in the @Data slot. 
+  \item{with_sgp_data_LONG}{The additional data in LONG for to be added to the supplied object of class SGP analyzed. The additional data must be in the same form as the data in the @Data slot. If with_sgp_data_LONG is not supplied, the function with update the sgp_object supplied in 'what_sgp_object' using the embedded coefficient matrices, essentially re-doing the analyses.
   }
   \item{state}{The 'state' for the sgp_object. Derived from sgp_object name if not explicitly supplied. 
+  }
+  \item{years}{If only 'what_sgp_object' is supplied, years specifies the years to be run amongst those in the provided sgp_object.
+  }
+  \item{content_areas}{If only 'what_sgp_object' is supplied, content_areas specifies the content areas to be run amonst those provided by the coefficient matrices in the sgp_object. Default is to run all analyses associated with the coefficient matrices.
   }
   \item{save.old.summaries}{A boolean argument (defaults to FALSE which will delete the @Summary slot before creating new summaries)
   indicating whether the call to \code{\link{summarizeSGP}} should save existing summaries in the @Summary slot.

@@ -17,7 +17,7 @@ function(sgp_object,
 
 	### Set variables to NULL to prevent R CMD check warnings
 
-	tmp.simulation.dt <- variable <- WEIGHT <- ENROLLMENT_STATUS <- STATE <- names.type <- names.sgp <- names.output <- BY_GROWTH_ONLY <- NULL
+	tmp.simulation.dt <- variable <- WEIGHT <- ENROLLMENT_STATUS <- STATE <- names.type <- names.sgp <- names.output <- BY_GROWTH_ONLY <- VALID_CASE <- NULL
 
 	
 	### Create state (if NULL) from sgp_object (if possible)
@@ -277,7 +277,7 @@ function(sgp_object,
 				time=getFromNames("time"),
 				institution_level=getFromNames("institution_level"),
 				demographic=intersect(c(getFromNames("demographic"), "CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STAY_UP_STATUS", "ACHIEVEMENT_LEVEL_PRIOR", "HIGH_NEED_STATUS"), names(sgp_object@Data)),
-				institution_multiple_membership=get.multiple.membership(sgp_object@Names[!is.na(sgp_object@Names$names.sgp),]))
+				institution_multiple_membership=get.multiple.membership(sgp_object))
 
 				for (i in tmp.summary.groups[["institution"]]) {
 					tmp.split <- paste(c(unlist(strsplit(i, "_"))[!unlist(strsplit(i, "_"))=="NUMBER"], "ENROLLMENT_STATUS"), collapse="_")
@@ -311,41 +311,31 @@ function(sgp_object,
 		}
 	} ### END sgpSummarize.config
 
-	get.multiple.membership <- function(names.df) {
+	get.multiple.membership <- function(sgp_object) {
 		tmp.names <- list()
-		tmp.number.variables <- unique(suppressWarnings(as.numeric(sapply(strsplit(
-			names.df[["names.type"]][grep("institution_multiple_membership", names.df[["names.type"]])], "_"), 
-			function(x) tail(x,1)))) %w/o% NA)
-		if (length(tmp.number.variables)==0) {
+		if (is.null(sgp_object@Data_Supplementary)) {
 			tmp.names <- NULL
 		} else {
-			for (i in seq(tmp.number.variables)) {
-				tmp.variable.names <- as.character(names.df[names.df$names.type==paste("institution_multiple_membership_", i, sep=""), "names.sgp"]) %w/o% NA
+			for (i in seq_along(sgp_object@Data_Supplementary)) {
+				tmp.variable.names <- names(sgp_object@Data_Supplementary)[i]
+				tmp.weights <- grep("WEIGHT", names(sgp_object@Data_Supplementary[[i]]), value=TRUE)
+				tmp.inclusion <- grep("ENROLLMENT_STATUS", names(sgp_object@Data_Supplementary[[i]]), value=TRUE)
 
-				tmp.length <- sum(paste("institution_multiple_membership_", i, sep="")==names.df[["names.type"]], na.rm=TRUE)
-				tmp.weight.length <- sum(paste("institution_multiple_membership_", i, "_weight", sep="")==names.df[["names.type"]], na.rm=TRUE)
-				tmp.inclusion.length <- sum(paste("institution_multiple_membership_", i, "_inclusion", sep="")==names.df[["names.type"]], na.rm=TRUE)
-
-				if ((tmp.weight.length != 0 & tmp.weight.length != tmp.length) | (tmp.inclusion.length != 0 & tmp.inclusion.length != tmp.length)) {
-					stop("\tNOTE: The same (non-zero) number of inclusion/weight Multiple Membership variables must exist as the number of multiple Membership variables.")
-				}
-
-				if (tmp.weight.length == 0) {
+				if (length(tmp.weights) == 0) {
 					tmp.weights <- NULL
-				} else {
-					tmp.weights <- as.character(names.df[names.df$names.type==paste("institution_multiple_membership_", i, "_weight", sep=""), "names.sgp"]) %w/o% NA
 				}
-				
-				if (tmp.inclusion.length != 0 & tmp.inclusion.length != tmp.length) {
-					stop("\tNOTE: The same number (or zero) of Multiple membership inclusion variables must exist as the number of multiple membership variables.")
-				}
-				if (tmp.inclusion.length == 0) {
-					tmp.inclusion <- NULL 
-				} else {
-					tmp.inclusion <- as.character(names.df[names.df$names.type==paste("institution_multiple_membership_", i, "_inclusion", sep=""), "names.sgp"]) %w/o% NA
+				if (length(tmp.weights) > 1) {
+					stop(paste("\tNOTE: Number of 'WEIGHT' variables in the '@Data_Supplementary' table", tmp.variable.names, "exceeds 1. Only 1 'WEIGHT' variable allowed."))
 				}
 
-				tmp.names[[i]] <- list(VARIABLE.NAMES=tmp.variable.names, WEIGHTS=tmp.weights, ENROLLMENT_STATUS=tmp.inclusion)
+				if (length(tmp.inclusion) == 0) {
+					tmp.inclusion <- NULL
+				}
+				if (length(tmp.inclusion) > 1) {
+					stop(paste("\tNOTE: Number of 'WEIGHT' variables in the '@Data_Supplementary' table", tmp.variable.names, "exceeds 1. Only 1 'WEIGHT' variable allowed."))
+				}
+
+				tmp.names[[i]] <- list(VARIABLE.NAME=tmp.variable.names, WEIGHTS=tmp.weights, ENROLLMENT_STATUS=tmp.inclusion)
 			}
 		}
 		return(tmp.names)
@@ -494,9 +484,11 @@ function(sgp_object,
 
 	variables.for.summaries <- intersect(c(my.sgp, my.sgp.target, my.sgp.target.musu, 
 						"ACHIEVEMENT_LEVEL", "ACHIEVEMENT_LEVEL_PRIOR", "CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STAY_UP_STATUS", "SCALE_SCORE_PRIOR_STANDARDIZED", "SGP_SIMEX",
-						unique(as.character(unlist(summary.groups)))),
+						unique(as.character(unlist(summary.groups))),
+						"YEAR_WITHIN"),
 					names(sgp_object@Data)) 
 
+	if (!is.null(sgp_object@Data_Supplementary)) variables.for.summaries <- c("VALID_CASE", "ID", variables.for.summaries)
 
 	### Define demographic subgroups and tables that will be calculated from all possible created by expand.grid
 
@@ -510,10 +502,10 @@ function(sgp_object,
 	selected.summary.tables <- list()
 	for (k in selected.institution.types) {
 		if (length(grep("INSTRUCTOR_NUMBER", k)) > 0 | length(grep("CURRENT", k)) > 0) {
-			if (length(grep("CURRENT", k)) > 0 | length(grep("INSTRUCTOR", grep("ENROLLMENT_STATUS", names(sgp_object@Data), value=TRUE)))==0) {
+			if (length(grep("CURRENT", k)) > 0 | !"INSTRUCTOR_ENROLLMENT_STATUS" %in% names(sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']])) {
 				ENROLLMENT_STATUS_ARGUMENT <- NULL; ADD_MISSING_ARGUMENT <- TRUE
 			} 
-			if (length(grep("INSTRUCTOR", grep("ENROLLMENT_STATUS", names(sgp_object@Data), value=TRUE))) > 0) {
+			if ("INSTRUCTOR_ENROLLMENT_STATUS" %in% names(sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']])) {
 				ENROLLMENT_STATUS_ARGUMENT <- "INSTRUCTOR_ENROLLMENT_STATUS"; ADD_MISSING_ARGUMENT <- FALSE
 			}
 
@@ -579,41 +571,23 @@ function(sgp_object,
 			}
 			if (j > 1) {
 
-				### Create variable name to be used
+				### Create variable name and set up tmp.inst
 
-				multiple.membership.variable.name <- paste(head(unlist(strsplit(summary.groups[["institution_multiple_membership"]][[j-1]][["VARIABLE.NAMES"]][1], "_")), -1), 
-						collapse="_")
-
-				### Aggregations will occur by this new institution_level variable
-
-				if (!is.null(summary.groups[["institution_multiple_membership"]][[j-1]][["ENROLLMENT_STATUS"]])) {
-					enrollment.status.name <- paste(paste(paste(head(unlist(strsplit(multiple.membership.variable.name, "_")), -1), collapse="_")), "ENROLLMENT_STATUS", sep="_")
-				}
+				multiple.membership.variable.name <- summary.groups[["institution_multiple_membership"]][[j-1]][["VARIABLE.NAME"]]
 				tmp.inst <- paste(i, multiple.membership.variable.name, sep=", ")
-				
 
-				### Reshape data using melt
-
-				tmp.dt.long <- data.table(melt(as.data.frame(tmp.dt), 
-					measure.vars=summary.groups[["institution_multiple_membership"]][[j-1]][["VARIABLE.NAMES"]], 
-					value.name=multiple.membership.variable.name))
-				tmp.dt.long[, variable := NULL]
-				if (!is.null(summary.groups[["institution_multiple_membership"]][[j-1]][["WEIGHTS"]])) {
-					tmp.dt.long[, WEIGHT := melt(as.data.frame(tmp.dt[, 
-						summary.groups[["institution_multiple_membership"]][[j-1]][["WEIGHTS"]], with=FALSE]), 
-						measure.vars=summary.groups[["institution_multiple_membership"]][[j-1]][["WEIGHTS"]])[,2]]
-				}
 				if (!is.null(summary.groups[["institution_multiple_membership"]][[j-1]][["ENROLLMENT_STATUS"]])) {
-					tmp.dt.long[, ENROLLMENT_STATUS := melt(as.data.frame(tmp.dt[, 
-						summary.groups[["institution_multiple_membership"]][[j-1]][["ENROLLMENT_STATUS"]], with=FALSE]), 
-						measure.vars=summary.groups[["institution_multiple_membership"]][[j-1]][["ENROLLMENT_STATUS"]])[,2]]
-					setnames(tmp.dt.long, "ENROLLMENT_STATUS", enrollment.status.name)
-					summary.groups[["institution_inclusion"]][[tmp.inst]] <- enrollment.status.name
+					summary.groups[["institution_inclusion"]][[tmp.inst]] <- summary.groups[["institution_multiple_membership"]][[j-1]][["ENROLLMENT_STATUS"]]
 				} else {
 					summary.groups[["institution_inclusion"]][[tmp.inst]] <- paste(i, "ENROLLMENT_STATUS", sep="_")
 				}
+				
 				summary.groups[["growth_only_summary"]][[tmp.inst]] <- "BY_GROWTH_ONLY" # Do we have an option to NOT include "BY_GROWTH_ONLY"? (would we want this?)
-				sgp_object@Summary[[i]] <- c(sgp_object@Summary[[i]], summarizeSGP_INTERNAL(tmp.dt.long[!is.na(get(multiple.membership.variable.name))], tmp.inst))
+
+				### Create LONGer data and run summarizeSGP_INTERNAL
+				
+				tmp.dt.long <- tmp.dt[data.table(sgp_object@Data_Supplementary[[j-1]][,VALID_CASE:="VALID_CASE"], key=getKey(tmp.dt)), nomatch=0]
+				sgp_object@Summary[[i]] <- c(sgp_object@Summary[[i]], summarizeSGP_INTERNAL(tmp.dt.long, tmp.inst))
 			} 
 		} ### End i loop over summary.groups[["institution"]]
 	} ### END j loop over multiple membership groups (if they exist)

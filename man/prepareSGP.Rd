@@ -2,11 +2,14 @@
 \alias{prepareSGP}
 \title{Prepare data for SGP analyses}
 \description{
-  Utility function/exemplar used to embed supplied long data into a list object as a keyed data.table.
+  Utility function/exemplar used to embed supplied long data into a list object as a keyed data.table. NOTE: This function also serves the purposes of running many checks on the SGP object you 
+  construct to make sure it is up to date and in the best shape possible. If you have an older object that you wish to make sure is up to date with the latest version of the SGP package, running 
+  \code{\link{prepareSGP}} on an object is never bad thing to do. See examples for more information.
 }
 
 \usage{
 prepareSGP(data,
+	data_supplementary=NULL,
 	state=NULL,
 	var.names=NULL,
 	create.additional.variables=TRUE,
@@ -14,7 +17,9 @@ prepareSGP(data,
 }
 
 \arguments{
-  \item{data}{A panel data set in long form. See embedded \code{\link{sgpData_LONG}} data set for an exemplar. 
+  \item{data}{A panel data set in long form or an object of class SGP. See embedded \code{\link{sgpData_LONG}} data set for an exemplar. 
+  }
+  \item{data_supplementary}{Supplementary data (e.g., student teacher lookup tables) to be embedded in SGP object in slot @Data_Supplementary. Data must be embedded in a list. Default is no data supplied.
   }
   \item{state}{A two letter acronymn indicating the state associated with the data. If not supplied, the function will try to infer what the state is from the data object name supplied.
   }
@@ -40,6 +45,10 @@ for summarization and reporting.
 \dontrun{
 ## prepareSGP is Step 1 of 5 of abcSGP
 Demonstration_SGP <- prepareSGP(sgpData_LONG)
+
+## Running prepareSGP on an already create SGP object as part of a annual update
+
+Demonstration_SGP <- prepareSGP(Demonstration_SGP)
 }  
 }
 

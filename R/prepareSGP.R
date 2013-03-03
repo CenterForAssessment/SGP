@@ -1,5 +1,6 @@
 `prepareSGP` <- 
 function(data,
+	data_supplementary=NULL,
 	state=NULL,
 	var.names=NULL,
 	create.additional.variables=TRUE,
@@ -70,11 +71,11 @@ function(data,
 
 		if (!is.null(var.names)) {
 			if (!class(var.names) %in% c("list", "data.frame")) {
-				stop("Supplied argument to 'var.names' must be of class list or data.frame. Please supply argument of appropriate class.")
+				stop("\tNOTE: Supplied argument to 'var.names' must be of class list or data.frame. Please supply argument of appropriate class.")
 			}
 			if (identical("data.frame", class(var.names))) {
 				if (!identical(names(var.names), c("names.provided", "names.sgp", "names.type", "names.info", "names.output"))) {
-					stop("Supplied data.frame to arugment 'var.names' does not include all required columns: 'names.provided', 'names.sgp', 'names.type', 'names.info', 'names.output'")
+					stop("\tNOTE: Supplied data.frame to arugment 'var.names' does not include all required columns: 'names.provided', 'names.sgp', 'names.type', 'names.info', 'names.output'")
 				}
 			}
 			if (identical("list", class(var.names))) {
@@ -114,7 +115,7 @@ function(data,
 		## Check see if any of the required variables are missing
 
 		if (!all(required.names %in% variable.names$names.sgp)) {
-			stop(paste("\tThe {data} object is missing the following column name: ", required.names[(required.names %in% variable.names$names.sgp)==FALSE],
+			stop(paste("\tNOTE: The {data} object is missing the following column name: ", required.names[(required.names %in% variable.names$names.sgp)==FALSE],
 			". Please identify the variable using the {var.names} argument.", sep=""))
 		}
 		return(data.frame(variable.names[order(variable.names$column.provided),][,c("names.provided", "names.sgp", "names.type", "names.info", "names.output")], row.names=NULL, stringsAsFactors=FALSE))
@@ -189,6 +190,16 @@ function(data,
 			setkeyv(data@Data, getKey(data@Data))
 		}
 
+		if (!.hasSlot(data, "Data_Supplementary")) data@Data_Supplementary <- NULL
+
+		if (!is.null(data_supplementary)) {
+			if (!identical(class(data_supplementary), "list")) {
+				stop("\tNOTE: Supplied supplementary data to 'data_supplementary' must be data table(s) embedded in a wrapper list")
+			} else {
+				data@Data_Supplementary <- c(data@Data_Supplementary, data_supplementary)
+			}
+		}
+
 		data@Version <- getVersion(data)
 		sgp_object <- data
 	} else {
@@ -227,9 +238,15 @@ function(data,
 			setkeyv(data, getKey(data))
 		}
 
+		## Test data_supplementary argument
+
+		if (!is.null(data_supplementary) && !identical(class(data_supplementary), "list")) {
+			stop("\tNOTE: Supplied supplementary data to 'data_supplementary' must be data table(s) embedded in a wrapper list")
+		}
+
 		##  Create the SGP object
 
-		sgp_object <- new("SGP", Data=data, Names=variable.names, Version=getVersion(data))
+		sgp_object <- new("SGP", Data=data, Data_Supplementary=data_supplementary, Names=variable.names, Version=getVersion(data))
 		sgp_object <- checkSGP(sgp_object, state=state)
 
 	} ## END else

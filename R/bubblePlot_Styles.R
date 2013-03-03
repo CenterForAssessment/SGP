@@ -22,7 +22,7 @@
 	DISTRICT_NUMBER <- DISTRICT_NAME <- SCHOOL_NUMBER <- SCHOOL_NAME <- SCHOOL_ENROLLMENT_STATUS <- YEAR <- CONTENT_AREA <- MEDIAN_SGP_COUNT <- NULL ## To prevent R CMD check warnings
 	ID <- YEAR_INTEGER_TMP <- SCALE_SCORE <- SGP <- GRADE <- NULL ## To prevent R CMD check warnings
 	INSTRUCTOR_NUMBER <- INSTRUCTOR_NAME <- INSTRUCTOR_ENROLLMENT_STATUS <- NULL
-	SGP_TARGET <- variable <- WEIGHT <- ENROLLMENT_STATUS <- NULL
+	SGP_TARGET <- VALID_CASE <- ENROLLMENT_STATUS <- NULL
 	### Define relevant quantities
 
 	# State stuff
@@ -265,46 +265,6 @@
 		subset(tmp.bPlot.data, eval(parse(text=tmp)))
 	}
 
-	get.multiple.membership <- function(names.df) {
-		"%w/o%" <- function(x, y) x[!x %in% y]
-		tmp.names <- list()
-		tmp.number.variables <- unique(suppressWarnings(as.numeric(sapply(strsplit(
-			names.df[["names.type"]][grep("institution_multiple_membership", names.df[["names.type"]])], "_"), 
-			function(x) tail(x,1)))) %w/o% NA)
-		if (length(tmp.number.variables)==0) {
-			tmp.names <- NULL
-		} else {
-			for (i in seq(tmp.number.variables)) {
-				tmp.variable.names <- as.character(names.df[names.df$names.type==paste("institution_multiple_membership_", i, sep=""), "names.sgp"])
-
-				tmp.length <- sum(paste("institution_multiple_membership_", i, sep="")==names.df[["names.type"]], na.rm=TRUE)
-				tmp.weight.length <- sum(paste("institution_multiple_membership_", i, "_weight", sep="")==names.df[["names.type"]], na.rm=TRUE)
-				tmp.inclusion.length <- sum(paste("institution_multiple_membership_", i, "_inclusion", sep="")==names.df[["names.type"]], na.rm=TRUE)
-
-				if ((tmp.weight.length != 0 & tmp.weight.length != tmp.length) | (tmp.inclusion.length != 0 & tmp.inclusion.length != tmp.length)) {
-					stop("\tNOTE: The same (non-zero) number of inclusion/weight Multiple Membership variables must exist as the number of multiple Membership variables.")
-				}
-
-				if (tmp.weight.length == 0) {
-					tmp.weights <- NULL
-				} else {
-					tmp.weights <- as.character(names.df[names.df$names.type==paste("institution_multiple_membership_", i, "_weight", sep=""), "names.sgp"])
-				}
-				
-				if (tmp.inclusion.length != 0 & tmp.inclusion.length != tmp.length) {
-					stop("\tNOTE: The same number (or zero) of Multiple membership inclusion variables must exist as the number of multiple membership variables.")
-				}
-				if (tmp.inclusion.length == 0) {
-					tmp.inclusion <- NULL 
-				} else {
-					tmp.inclusion <- as.character(names.df[names.df$names.type==paste("institution_multiple_membership_", i, "_inclusion", sep=""), "names.sgp"])
-				}
-
-				tmp.names[[i]] <- list(VARIABLE.NAMES=tmp.variable.names, WEIGHTS=tmp.weights, ENROLLMENT_STATUS=tmp.inclusion)
-			}
-		}
-		return(tmp.names)
-	} ### END get.multiple.membership
 
 #################################################################################################################
 ####
@@ -1905,8 +1865,6 @@ if (22 %in% bPlot.styles) {
 				sgp_object@Data$YEAR_INTEGER_TMP <- NULL
 			}
 		}
-		mult.memb <- get.multiple.membership(sgp_object@Names)
-		if (!is.null(mult.memb)) mult.memb.var.name <- paste(head(unlist(strsplit(mult.memb[[1]][["VARIABLE.NAMES"]][1], "_")), -1), collapse="_")
 	} # END Individual Plot setup
  
 
@@ -2100,22 +2058,12 @@ if (22 %in% bPlot.styles) {
 				tmp.bPlot.data.1.long[['DISTRICT_NAME']] <- factor('Psuedo District')
 				setkeyv(tmp.bPlot.data.1.long, "INSTRUCTOR_NUMBER")
 			} else {
-				tmp.bPlot.data.1 <- sgp_object@Data[SJ("VALID_CASE", year.iter, content_area.iter, my.iters$tmp.districts[district.iter])]	
-					
-				tmp.bPlot.data.1.long <- data.table(melt(as.data.frame(tmp.bPlot.data.1), 
-					measure.vars=mult.memb[[1]][["VARIABLE.NAMES"]], 
-					value.name=mult.memb.var.name), key=mult.memb.var.name)
-				invisible(tmp.bPlot.data.1.long[, variable := NULL])
-				if (!is.null(mult.memb[[1]][["WEIGHTS"]])) {
-					invisible(tmp.bPlot.data.1.long[, WEIGHT := melt(as.data.frame(tmp.bPlot.data.1[, 
-						mult.memb[[1]][["WEIGHTS"]], with=FALSE]), 
-						measure.vars=mult.memb[[1]][["WEIGHTS"]])[,2]])
+				if (!"INSTRUCTOR_NUMBER" %in% names(sgp_object@Data_Supplementary)) {
+					stop("\tNOTE: Indvidividual level Instructor bubble plots require an INSTRUCTOR_NUMBER lookup table embedded in @Data_Supplementary")
 				}
-				if (!is.null(mult.memb[[1]][["ENROLLMENT_STATUS"]])) {
-					invisible(tmp.bPlot.data.1.long[, ENROLLMENT_STATUS := melt(as.data.frame(tmp.bPlot.data.1[, 
-						mult.memb[[1]][["ENROLLMENT_STATUS"]], with=FALSE]), 
-						measure.vars=mult.memb[[1]][["ENROLLMENT_STATUS"]])[,2]])
-				}
+				tmp.bPlot.data.1.long <- data.table(sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']][,VALID_CASE:="VALID_CASE"],
+								key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))[
+									sgp_object@Data[SJ("VALID_CASE", year.iter, content_area.iter, my.iters$tmp.districts[district.iter])], nomatch=0]
 			}
 
 			setkeyv(tmp.bPlot.data.1.long, "INSTRUCTOR_NUMBER")
@@ -2276,23 +2224,12 @@ if (22 %in% bPlot.styles) {
 				tmp.bPlot.data.1.long[['SCHOOL_NAME']] <- factor('Psuedo School')
 				tmp.bPlot.data.1.long[['DISTRICT_NUMBER']] <- factor('-999')
 				tmp.bPlot.data.1.long[['DISTRICT_NAME']] <- factor('Psuedo District')
-			}	else {
-				tmp.bPlot.data.1 <- sgp_object@Data[SJ("VALID_CASE", year.iter, content_area.iter, my.iters$tmp.districts[district.iter])]	
-					
-				tmp.bPlot.data.1.long <- data.table(melt(as.data.frame(tmp.bPlot.data.1), 
-					measure.vars=mult.memb[[1]][["VARIABLE.NAMES"]], 
-					value.name=mult.memb.var.name), key=mult.memb.var.name)
-				invisible(tmp.bPlot.data.1.long[, variable := NULL])
-				if (!is.null(mult.memb[[1]][["WEIGHTS"]])) {
-					invisible(tmp.bPlot.data.1.long[, WEIGHT := melt(as.data.frame(tmp.bPlot.data.1[, 
-						mult.memb[[1]][["WEIGHTS"]], with=FALSE]), 
-						measure.vars=mult.memb[[1]][["WEIGHTS"]])[,2]])
+			} else {
+				if (!"INSTRUCTOR_NUMBER" %in% names(sgp_object@Data_Supplementary)) {
+					stop("\tNOTE: Indvidividual level Instructor bubble plots require an INSTRUCTOR_NUMBER lookup table embedded in @Data_Supplementary")
 				}
-				if (!is.null(mult.memb[[1]][["ENROLLMENT_STATUS"]])) {
-					invisible(tmp.bPlot.data.1.long[, ENROLLMENT_STATUS := melt(as.data.frame(tmp.bPlot.data.1[, 
-						mult.memb[[1]][["ENROLLMENT_STATUS"]], with=FALSE]), 
-						measure.vars=mult.memb[[1]][["ENROLLMENT_STATUS"]])[,2]])
-				}
+				tmp.bPlot.data.1.long <- data.table(sgp_object@Data[SJ("VALID_CASE", year.iter, content_area.iter, my.iters$tmp.districts[district.iter])],
+								key=c("ID", "CONTENT_AREA", "YEAR"))[sgp_object@Data_Supplementary, nomatch=0]
 			}
 		
 			tmp.unique.schools <- my.iters$tmp.schools[my.iters$tmp.schools %in% unique(tmp.bPlot.data.1.long$SCHOOL_NUMBER)]
@@ -2334,25 +2271,13 @@ if (22 %in% bPlot.styles) {
 		# Get median SGP for grade, school, content area combination
 		# Report 'Official' Median.  Should be the same as median(bPlot.data$SGP, na.rm=TRUE).  Use that if NULL for some reason (prevents error)
 
-			if (is.null(mult.memb)) {
-				if (bPlot.full.academic.year) {
-					instructor.content_area.grade.median <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__INSTRUCTOR_ENROLLMENT_STATUS"]][
-						INSTRUCTOR_NUMBER==instructor.iter & CONTENT_AREA==content_area.iter & YEAR==year.iter & GRADE==grade.iter][["MEDIAN_SGP"]]
-
-				} else {
-					instructor.content_area.grade.median <- sgp_object@Summary[["INSTRUCTOR_NUMBER"]][["INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR"]][
-						INSTRUCTOR_NUMBER==instructor.iter & CONTENT_AREA==content_area.iter & YEAR==year.iter & GRADE==grade.iter][["MEDIAN_SGP"]]
-				}
+			if (bPlot.full.academic.year) {
+				instructor.content_area.grade.median <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__GRADE__INSTRUCTOR_ENROLLMENT_STATUS"]][
+					INSTRUCTOR_NUMBER==instructor.iter & CONTENT_AREA==content_area.iter & YEAR==year.iter & GRADE==grade.iter][["MEDIAN_SGP"]]
 			} else {
-				if (bPlot.full.academic.year) {
-					instructor.content_area.grade.median <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__GRADE__INSTRUCTOR_ENROLLMENT_STATUS"]][
-						INSTRUCTOR_NUMBER==instructor.iter & CONTENT_AREA==content_area.iter & YEAR==year.iter & GRADE==grade.iter][["MEDIAN_SGP"]]
-				} else {
-					instructor.content_area.grade.median <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__GRADE"]][
-						INSTRUCTOR_NUMBER==instructor.iter & CONTENT_AREA==content_area.iter & YEAR==year.iter & GRADE==grade.iter][["MEDIAN_SGP"]]
-	
-				}			
-			}
+				instructor.content_area.grade.median <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__GRADE"]][
+					INSTRUCTOR_NUMBER==instructor.iter & CONTENT_AREA==content_area.iter & YEAR==year.iter & GRADE==grade.iter][["MEDIAN_SGP"]]
+			}			
 			if (is.null(instructor.content_area.grade.median)) instructor.content_area.grade.median <- median(bPlot.data$SGP, na.rm=TRUE)
 			if (bPlot.demo) instructor.content_area.grade.median <- median(bPlot.data$SGP, na.rm=TRUE)
 

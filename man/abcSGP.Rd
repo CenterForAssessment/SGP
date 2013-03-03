@@ -21,6 +21,7 @@ abcSGP(sgp_object,
 	sgp.percentiles.baseline=TRUE,
 	sgp.projections.baseline=TRUE,
 	sgp.projections.lagged.baseline=TRUE,
+	sgp.use.my.coefficient.matrices=NULL,
 	simulate.sgps=TRUE,
 	calculate.simex=NULL,
 	parallel.config=NULL,
@@ -29,6 +30,7 @@ abcSGP(sgp_object,
 	sgPlot.demo.report=FALSE,
 	sgp.summaries=NULL,
 	summary.groups=NULL,
+	data_supplementary=NULL,
 	confidence.interval.groups=NULL,
 	plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot"),
 	verbose.output=FALSE) 
@@ -65,6 +67,9 @@ If missing the function will use the data to infer all the grade progressions fo
   }
   \item{sgp.projections.lagged.baseline}{Boolean variable indicating whether to calculate lagged baseline student growth projections. Defaults to TRUE.
   }
+  \item{sgp.use.my.coefficient.matrices}{Boolean variable indicating whether to use embedded coefficient matrices to calculate SGPs. One should be careful to remove previously calculated SGPs prior
+  to recalculating SGPs.
+  }
   \item{simulate.sgps}{Boolean variable indicating whether to simulate SGP values for students based on test-specific Conditional Standard Errors of Measurement (CSEM). 
   Test CSEM data must be available for simulation.  Must be set to TRUE for confidence interval construction. Defaults to TRUE in \code{abcSGP} only.
   }
@@ -89,6 +94,9 @@ If missing the function will use the data to infer all the grade progressions fo
   \item{summary.groups}{A list consisting of 8 types of groups across which all summaries are taken: \code{institution}, \code{content}, \code{time}, \code{institution_type}, 
   \code{institution_level}, \code{demographic}, and \code{institution_inclusion}. Summaries generated in summarizeSGP are for all possible combinations of the 8 types of group. See documentation for 
   \code{\link{summarizeSGP}} for more detail. 
+  }
+  \item{data_supplementary}{A list argument (or NULL, the default) providing additional multiple membership lookup tables for \code{\link{summarizeSGP}}. See \code{\link{sgpData_INSTRUCTOR_NUMBER}}
+  for an example. Supplied data is embedded in the @Data_Supplementary slot.
   }
   \item{confidence.interval.groups}{A subset of the groups provided in the \code{summary.groups} argument indicating which groups to provide confidence intervals for. 
   See documentation for \code{\link{summarizeSGP}} for more detail.
