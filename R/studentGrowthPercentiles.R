@@ -751,7 +751,7 @@ function(panel.data,         ## REQUIRED
 		tmp.gp <- 1:num.panels
 		by.grade <- FALSE
 	}
-	if (!missing(num.prior)) {
+	if (!missing(num.prior) & !exact.grade.progression.sequence) {
 		if (length(num.prior) > 1 | !((num.prior-round(num.prior)) < .Machine$double.eps^0.5) | num.prior <= 0) {
 			stop("Specified num.prior not positive integer(s)")
 		}

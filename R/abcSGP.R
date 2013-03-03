@@ -12,6 +12,7 @@ function(sgp_object,
 	sgp.percentiles.baseline=TRUE,
 	sgp.projections.baseline=TRUE,
 	sgp.projections.lagged.baseline=TRUE,
+	sgp.use.my.coefficient.matrices=NULL,
 	simulate.sgps=TRUE,
 	calculate.simex=NULL,
 	parallel.config=NULL,
@@ -20,6 +21,7 @@ function(sgp_object,
 	sgPlot.demo.report=FALSE,
 	sgp.summaries=NULL,
 	summary.groups=NULL,
+	data_supplementary=NULL,
 	confidence.interval.groups=NULL,
 	plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot"),
 	verbose.output=FALSE) {
@@ -40,7 +42,7 @@ function(sgp_object,
 	### prepareSGP ###
 
 	if ("prepareSGP" %in% steps) {
-		sgp_object <- prepareSGP(sgp_object, state=state, var.names=prepareSGP.var.names)
+		sgp_object <- prepareSGP(sgp_object, data_supplementary=data_supplementary, state=state, var.names=prepareSGP.var.names)
 	        if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
 	}
 
@@ -68,6 +70,7 @@ function(sgp_object,
 			sgp.percentiles.baseline=sgp.percentiles.baseline,
 			sgp.projections.baseline=sgp.projections.baseline,
 			sgp.projections.lagged.baseline=sgp.projections.lagged.baseline,
+			sgp.use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
 			simulate.sgps=simulate.sgps,
 			calculate.simex=calculate.simex,
 			parallel.config=parallel.config,
