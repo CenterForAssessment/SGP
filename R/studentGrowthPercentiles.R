@@ -760,6 +760,7 @@ function(panel.data,         ## REQUIRED
 			num.prior <- length(tmp.gp[!is.na(tmp.gp)])-1
 		} else {
 			tmp.gp <- grade.progression <- tail(tmp.gp[!is.na(tmp.gp)], num.prior+1)
+			if (!is.null(content.area.progression) && length(content.area.progression > num.prior+1)) content.area.progression <- tail(content.area.progression, num.prior+1)
 			
 	}} else {
 		num.prior <- length(tmp.gp[!is.na(tmp.gp)])-1
