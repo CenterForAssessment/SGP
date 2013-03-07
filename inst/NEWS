@@ -1,3 +1,9 @@
+Changes in version: SGP_1.0-9.5
+
+  BUG FIXES:
+
+	  o studentGrowthPercentiles now correctly adjusts length of content.area.progression (when supplied) when num.prior also used.
+
 Changes in version: SGP_1.0-9.4
 
   USER VISIBLE CHANGES:
