@@ -217,7 +217,7 @@ function(sgp_object,
 					get.expression(proficient.achievement.levels), ", ", get.expression(all.achievement.levels), ")",sep=""),
 				PERCENT_AT_ABOVE_PROFICIENT_COUNT="num_non_missing(ACHIEVEMENT_LEVEL)",
 				MEAN_SGP_STANDARD_ERROR=paste("sgp_standard_error(", my.sgp, ")", sep=""),
-				MEDIAN_SGP_STANDARD_ERROR=paste("sgp_standard_error(", my.sgp, ",1.25)", sep=""))
+				MEDIAN_SGP_STANDARD_ERROR=paste("sgp_standard_error(", my.sgp, ",1.253)", sep=""))
 
 				if ("ACHIEVEMENT_LEVEL_PRIOR" %in% names(sgp_object@Data)) {
 					tmp.sgp.summaries <- c(
