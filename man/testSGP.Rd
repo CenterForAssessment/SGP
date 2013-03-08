@@ -7,13 +7,16 @@ testSGP runs large scale tests of the SGP package to test for consistent perform
 
 \usage{
 testSGP(TEST_NUMBER,
+	save.results=FALSE,
 	memory.profile=FALSE)
 }
 
 \arguments{
   \item{TEST_NUMBER}{An integer indicating the test to be run. Type 'testSGP()' to see list and description of available tests. 
   }
-  \item{memory.profile}{Boolean variable indicating whether to use memory profiling via \code{Rprof}.  Experimental. Defaults to FALSE. 
+  \item{save.results}{A boolean variable, defaulting to FALSE, indicating whether the results of the analysis is saved to the working directory. 
+  }
+  \item{memory.profile}{A boolean variable indicating whether to use memory profiling via \code{Rprof}.  Experimental. Defaults to FALSE. 
   }
 }
 
