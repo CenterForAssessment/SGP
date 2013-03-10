@@ -173,6 +173,24 @@ function(sgp_object,
 		write.table(get(paste(tmp.state, "SGP_INSTRUCTOR_Data", sep="_")), 
 			file=file.path(outputSGP.directory, paste(tmp.state, "SGP_INSTRUCTOR_Data.txt", sep="_")), sep="|", quote=FALSE, row.names=FALSE, na="")
 
+		if (identical(.Platform$OS.type, "unix")) {
+			if (file.info(file.path(outputSGP.directory, paste(tmp.state, "SGP_INSTRUCTOR_Data.txt", sep="_")))$size > 4000000000) {
+				tmp.working.directory <- getwd()
+				setwd(file.path(outputSGP.directory))
+				if (paste(tmp.state, "SGP_INSTRUCTOR_Data.txt.gz", sep="_") %in% list.files()) file.remove(paste(tmp.state, "SGP_INSTRUCTOR_Data.txt.gz", sep="_"))
+				system(paste("gzip", paste(tmp.state, "SGP_INSTRUCTOR_Data.txt", sep="_")))
+				setwd(tmp.working.directory)
+			} else {
+				tmp.working.directory <- getwd()
+				setwd(file.path(outputSGP.directory))
+				if (paste(tmp.state, "SGP_INSTRUCTOR_Data.txt.zip", sep="_") %in% list.files()) file.remove(paste(tmp.state, "SGP_INSTRUCTOR_Data.txt.zip", sep="_"))
+				suppressMessages(
+					zip(paste(tmp.state, "SGP_INSTRUCTOR_Data.txt.zip", sep="_"), paste(tmp.state, "SGP_INSTRUCTOR_Data.txt", sep="_"))
+				)
+				setwd(tmp.working.directory)
+			}
+		}
+
 		message(paste("\tFinished INSTRUCTOR data production in outputSGP", date(), "in", timetaken(started.at), "\n"))
 
 	} ### END if INSTRUCTOR_Data %in% output.type
