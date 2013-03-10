@@ -9,7 +9,7 @@
 \usage{
 outputSGP(sgp_object,
 	state=NULL,
-        output.type=c("LONG_Data", "WIDE_Data"),
+        output.type=c("LONG_Data", "WIDE_Data", "INSTRUCTOR_Data"),
         baseline.sgps=FALSE,
         outputSGP_SUMMARY.years=NULL,
         outputSGP_SUMMARY.content_areas=NULL,
@@ -31,9 +31,10 @@ outputSGP(sgp_object,
   }
   \item{content_areas}{A vector indicating the content areas to be included in the output. Default is to use all content areas.
   }
-  \item{output.type}{A character vector indicating what output type is requested. Currently \code{LONG_Data}, \code{WIDE_Data}, and \code{SchoolView} are supported modes of output. 
-  \code{LONG_Data} exports the contents of the @Data slot in a pipe delimited format. \code{WIDE_Data} exports a reshaped version of the @Data slot where each row is a unique student
-  record. \code{SchoolView} exports tables used for representation in SchoolView. The default exports \code{LONG_Data} and \code{WIDE_Data}. 
+  \item{output.type}{A character vector indicating what output type is requested. Currently \code{LONG_Data}, \code{WIDE_Data}, \code{INSTRUCTOR_Data} and \code{SchoolView} are supported 
+  modes of output.  \code{LONG_Data} exports the contents of the @Data slot in a pipe delimited format. \code{WIDE_Data} exports a reshaped version of the @Data slot where each row is a 
+  unique student record. \code{INSTRUCTOR_Data} uses the \code{@Data_Supplementary$INSTRUCTOR_NUMBER} table to export a long student by instructor number table. 
+  \code{SchoolView} exports tables used for representation in SchoolView. The default exports \code{LONG_Data} and \code{WIDE_Data}. 
   }
   \item{baseline.sgps}{Boolean vector indicating whether to output baseline SGPs for cohorts referenced SGPs.
   }
