@@ -166,8 +166,8 @@ function(sgp_object,
 		started.at <- proc.time()
 		message(paste("\tStarted INSTRUCTOR data production in outputSGP", date()))
 
-		assign(paste(tmp.state, "SGP_INSTRUCTOR_Data", sep="_", sgp_object@Data[data.table(sgp_object@Data_Supplementary[["INSTRUCTOR_NUMBER"]][,VALID_CASE:="VALID_CASE"], 
-			key=getKey(sgp_object@Data)), nomatch=0]))
+		assign(paste(tmp.state, "SGP_INSTRUCTOR_Data", sep="_"), sgp_object@Data[data.table(sgp_object@Data_Supplementary[["INSTRUCTOR_NUMBER"]][,VALID_CASE:="VALID_CASE"], 
+			key=getKey(sgp_object@Data)), nomatch=0])
 
 		save(list=paste(tmp.state, "SGP_INSTRUCTOR_Data", sep="_"), file=file.path(outputSGP.directory, paste(tmp.state, "SGP_INSTRUCTOR_Data.Rdata", sep="_")))
 		write.table(get(paste(tmp.state, "SGP_INSTRUCTOR_Data", sep="_")), 
