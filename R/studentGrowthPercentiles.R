@@ -951,22 +951,22 @@ function(panel.data,         ## REQUIRED
 					my.matrix.order=j)
 
 				tmp.predictions <- .get.percentile.predictions(tmp.data, tmp.matrix)
-				tmp.quantiles[[j]] <- data.table(ID=tmp.data[["ID"]], ORDER=j, SGP=.get.quantiles(tmp.predictions, tmp.data[[dim(tmp.data)[2]]]))
+				tmp.quantiles[[j]] <- data.table(ID=tmp.data[[1]], ORDER=j, SGP=.get.quantiles(tmp.predictions, tmp.data[[dim(tmp.data)[2]]]))
 				if (csem.tf) {
 					if (is.null(calculate.confidence.intervals$simulation.iterations)) calculate.confidence.intervals[['simulation.iterations']] <- 100
 					if (!is.null(calculate.confidence.intervals$variable)) {
 						if (missing(panel.data.vnames)) {
 							tmp.csem.variable <- Panel_Data[Panel_Data[,1] %in% 
-								ss.data[tmp.data[['ID']]][["ID"]],calculate.confidence.intervals$variable] 
+								ss.data[tmp.data[[1]]][[1]], calculate.confidence.intervals$variable] 
 						} else {
 							tmp.csem.variable <- Panel_Data[Panel_Data[,panel.data.vnames[1]] %in% 
-								ss.data[tmp.data[['ID']]][["ID"]],calculate.confidence.intervals$variable] 
+								ss.data[tmp.data[[1]]][[1]], calculate.confidence.intervals$variable] 
 						}
 					} else {
 						tmp.csem.variable <- NULL
 					}
 
-					tmp.csem.quantiles[[j]] <- data.table(ID=tmp.data[['ID']])
+					tmp.csem.quantiles[[j]] <- data.table(ID=tmp.data[[1]])
 					for (k in seq(calculate.confidence.intervals[['simulation.iterations']])) { 
 						set.seed(k)
 						tmp.csem.quantiles[[j]][,TEMP_SGP_SIM:=.get.quantiles(
@@ -985,7 +985,7 @@ function(panel.data,         ## REQUIRED
 				} ## END CSEM analysis
 
 				if (!is.null(percentile.cuts)) {
-					tmp.percentile.cuts[[j]] <- data.table(ID=tmp.data[["ID"]], .get.percentile.cuts(tmp.predictions))
+					tmp.percentile.cuts[[j]] <- data.table(ID=tmp.data[[1]], .get.percentile.cuts(tmp.predictions))
 				}
 				if ((is.character(goodness.of.fit) | goodness.of.fit==TRUE | return.prior.scale.score) & j==1) prior.ss <- tmp.data[[dim(tmp.data)[2]-1]]
 				if (exact.grade.progression.sequence & return.prior.scale.score) prior.ss <- tmp.data[[dim(tmp.data)[2]-1]]
