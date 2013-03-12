@@ -66,9 +66,9 @@ studentGrowthPercentiles(panel.data,
   from \code{\link{studentGrowthPercentiles}} analyses.
   }
   \item{grade.progression}{Preferred argument to specify a student grade/time progression in the data. For example, \code{3:4} would indicate to subset the
-  data where the two most recent years of data available are 3 and 4, respectively. Also allows for non-sequential grade progressions to be analyzed with automatic 
-  removal of columns where "holes" occur is supplied grade.progression. For example, for the grade.progression \code{c(7,8,10)}, the penultimate GRADE and SCALE_SCORE column 
-  in the supplied panel.data would be removed.  Also can be combined with an appropriate \code{panel.data.vnames} argument to remove a year of data would analyze students 
+  data where the two most recent grades for which data are available are 3 and 4, respectively. The argument allows for non-sequential grade progressions to be analyzed with automatic 
+  removal of columns where "holes" occur in the supplied grade.progression. For example, for the grade.progression \code{c(7,8,10)}, the penultimate GRADE and SCALE_SCORE column 
+  in the supplied panel.data would be removed.  The argument can also be combined with an appropriate \code{panel.data.vnames} argument to remove a year of data would analyze students 
   progressing from 7 to 8 to 10. 
   }
   \item{content.area.progression}{Character vector of content area names of same length as grade.progression to be provided if not all identical to 'my.subject' in sgp.labels list.  Vector will be used to populate the @Content_Areas slot of the splineMatrix class coefficient matrices.  If missing, 'sgp.labels$my.subject' is repeated in a vector length equal to grade.progression.
