@@ -241,9 +241,12 @@ sgp_g8_DEMO <- studentGrowthPercentiles(panel.data=sgpData,
 
 ## NOTE: Goodness of Fit results are stored as graphical objects in the
 ## Goodness_of_Fit slot. To view or save (using any R output device) try:
+## Load 'grid' package to access grid.draw function
 
+require(grid)
 grid.draw(sgp_g4$Goodness_of_Fit$READING.2012$GRADE_4)
 
+require(grid)
 pdf(file="Grade_4_Reading_2012_GOF.pdf", width=8.5, height=4.5)
    grid.draw(sgp_g4$Goodness_of_Fit$READING.2012$GRADE_4)
 dev.off()
