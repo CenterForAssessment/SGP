@@ -993,6 +993,12 @@ function(panel.data,         ## REQUIRED
 		} ## END j loop
 
 		quantile.data <- data.table(rbindlist(tmp.quantiles), key="ID")
+		quantile.data[,SCALE_SCORE_PRIOR:=prior.ss]
+
+		if (return.prior.scale.score.standardized) {
+			SCALE_SCORE_PRIOR_STANDARDIZED <- NULL
+			quantile.data[,SCALE_SCORE_PRIOR_STANDARDIZED:=round(as.numeric(scale(prior.ss)), digits=3)]
+		}
 
 		if (print.other.gp) {
 			quantile.data <- data.table(reshape(quantile.data, idvar="ID", timevar="ORDER", direction="wide"),
@@ -1046,13 +1052,6 @@ function(panel.data,         ## REQUIRED
 			cuts.best <- data.table(rbindlist(tmp.percentile.cuts), key="ID")
 			cuts.best <- cuts.best[c(which(!duplicated(cuts.best))[-1]-1, nrow(cuts.best))][,-1, with=FALSE]
 			quantile.data <- data.table(quantile.data, cuts.best)
-		}
-
-		quantile.data[,SCALE_SCORE_PRIOR:=prior.ss]
-
-		if (return.prior.scale.score.standardized) {
-			SCALE_SCORE_PRIOR_STANDARDIZED <- NULL
-			quantile.data[,SCALE_SCORE_PRIOR_STANDARDIZED:=round(as.numeric(scale(prior.ss)), digits=3)]
 		}
 
 		if (print.sgp.order | return.norm.group.identifier) {
