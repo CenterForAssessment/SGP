@@ -1,6 +1,12 @@
+Changes in version: SGP_1.0-9.7
+
+  USER VISIBLE CHANGES:
+
+	  o Changed examples to work with 2012_2013 year of new SGPdata.
+
 Changes in version: SGP_1.0-9.6
 
-  BUG FIXES:
+  USER VISIBLE CHANGES:
 
 	  o Update variable names for Hawaii state data
 
