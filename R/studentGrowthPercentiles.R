@@ -422,7 +422,7 @@ function(panel.data,         ## REQUIRED
 	###
 	############################################################################
 
-	ID <- tmp.messages <- ORDER <- TEMP_SGP_SIM <- NULL
+	ID <- tmp.messages <- ORDER <- SCALE_SCORE_PRIOR <- TEMP_SGP_SIM <- NULL
 
 	if (missing(panel.data)) {
 		stop("User must supply student achievement data for student growth percentile calculations. NOTE: data is now supplied to function using panel.data argument. See help page for details.")
@@ -1048,10 +1048,7 @@ function(panel.data,         ## REQUIRED
 			quantile.data <- data.table(quantile.data, cuts.best)
 		}
 
-		if (return.prior.scale.score) {
-			SCALE_SCORE_PRIOR <- NULL
-			quantile.data[,SCALE_SCORE_PRIOR:=prior.ss]
-		}
+		quantile.data[,SCALE_SCORE_PRIOR:=prior.ss]
 
 		if (return.prior.scale.score.standardized) {
 			SCALE_SCORE_PRIOR_STANDARDIZED <- NULL
@@ -1154,6 +1151,10 @@ function(panel.data,         ## REQUIRED
 		if (!is.null(additional.vnames.to.return)) {
 			quantile.data <- data.table(panel.data[["Panel_Data"]][,c("ID", names(additional.vnames.to.return))], key="ID")[quantile.data]
 			setnames(quantile.data, names(additional.vnames.to.return), unlist(additional.vnames.to.return))
+		}
+
+		if (!return.prior.scale.score) {
+			quantile.data[,SCALE_SCORE_PRIOR:=NULL]
 		}
 
 		SGPercentiles[[tmp.path]] <- rbind.fill(quantile.data, as.data.frame(SGPercentiles[[tmp.path]]))
