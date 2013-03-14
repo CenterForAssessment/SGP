@@ -32,7 +32,7 @@ testSGP(TEST_NUMBER,
 ## testSGP(1) runs abcSGP for all years in sgpData_LONG
 testSGP(1)
 
-## testSGP(2) runs abcSGP for all years in sgpData_LONG except most recent than adds 
+## testSGP(2) runs abcSGP for all years in sgpData_LONG except most recent year than adds 
 ## in most recent year and runs current year analyses
 testSGP(2)
 }  

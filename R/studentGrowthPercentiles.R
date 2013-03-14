@@ -422,7 +422,7 @@ function(panel.data,         ## REQUIRED
 	###
 	############################################################################
 
-	ID <- tmp.messages <- ORDER <- TEMP_SGP_SIM <- NULL
+	ID <- tmp.messages <- ORDER <- SCALE_SCORE_PRIOR <- TEMP_SGP_SIM <- NULL
 
 	if (missing(panel.data)) {
 		stop("User must supply student achievement data for student growth percentile calculations. NOTE: data is now supplied to function using panel.data argument. See help page for details.")
@@ -993,6 +993,12 @@ function(panel.data,         ## REQUIRED
 		} ## END j loop
 
 		quantile.data <- data.table(rbindlist(tmp.quantiles), key="ID")
+		quantile.data[,SCALE_SCORE_PRIOR:=prior.ss]
+
+		if (return.prior.scale.score.standardized) {
+			SCALE_SCORE_PRIOR_STANDARDIZED <- NULL
+			quantile.data[,SCALE_SCORE_PRIOR_STANDARDIZED:=round(as.numeric(scale(prior.ss)), digits=3)]
+		}
 
 		if (print.other.gp) {
 			quantile.data <- data.table(reshape(quantile.data, idvar="ID", timevar="ORDER", direction="wide"),
@@ -1046,16 +1052,6 @@ function(panel.data,         ## REQUIRED
 			cuts.best <- data.table(rbindlist(tmp.percentile.cuts), key="ID")
 			cuts.best <- cuts.best[c(which(!duplicated(cuts.best))[-1]-1, nrow(cuts.best))][,-1, with=FALSE]
 			quantile.data <- data.table(quantile.data, cuts.best)
-		}
-
-		if (return.prior.scale.score) {
-			SCALE_SCORE_PRIOR <- NULL
-			quantile.data[,SCALE_SCORE_PRIOR:=prior.ss]
-		}
-
-		if (return.prior.scale.score.standardized) {
-			SCALE_SCORE_PRIOR_STANDARDIZED <- NULL
-			quantile.data[,SCALE_SCORE_PRIOR_STANDARDIZED:=round(as.numeric(scale(prior.ss)), digits=3)]
 		}
 
 		if (print.sgp.order | return.norm.group.identifier) {
@@ -1154,6 +1150,10 @@ function(panel.data,         ## REQUIRED
 		if (!is.null(additional.vnames.to.return)) {
 			quantile.data <- data.table(panel.data[["Panel_Data"]][,c("ID", names(additional.vnames.to.return))], key="ID")[quantile.data]
 			setnames(quantile.data, names(additional.vnames.to.return), unlist(additional.vnames.to.return))
+		}
+
+		if (!return.prior.scale.score) {
+			quantile.data[,SCALE_SCORE_PRIOR:=NULL]
 		}
 
 		SGPercentiles[[tmp.path]] <- rbind.fill(quantile.data, as.data.frame(SGPercentiles[[tmp.path]]))
