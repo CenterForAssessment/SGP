@@ -254,7 +254,7 @@ function(panel.data,         ## REQUIRED
 				CSEM_Data <- subset(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], GRADE==grade & CONTENT_AREA==content_area)
 			}
 			CSEM_Function <- splinefun(CSEM_Data[["SCALE_SCORE"]], CSEM_Data[["SCALE_SCORE_CSEM"]], method="natural")
-			tmp.scale <- CSEM_Function(scale_scores)
+			tmp.scale <- sqrt(CSEM_Function(scale_scores))
 		} 
 		if (!is.null(variable)) {
 			tmp.scale <- variable
