@@ -95,10 +95,10 @@ function(what_sgp_object=NULL,
 
 		if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
 
-		what_sgp_object <- summarizeSGP(what_sgp_object, state=state, ...)
-
-		if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
-
+		if (!is.null(what_sgp_object@Summary)) {
+			what_sgp_object <- summarizeSGP(what_sgp_object, state=state, ...)
+			if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
+		}
 
 		### Print finish and return SGP object
 
