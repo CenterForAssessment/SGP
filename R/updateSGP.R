@@ -28,21 +28,39 @@ function(what_sgp_object=NULL,
 	### What updateSGP
 
 	if (!is.null(what_sgp_object) & is.null(with_sgp_data_LONG)) {
+		
+		tmp.years <- tmp.content_areas.years <- list()
 
 		matrix.names <- names(what_sgp_object@SGP[['Coefficient_Matrices']])
 
 		if (is.null(content_areas)) {
 			content_areas <- sort(unique(sapply(strsplit(matrix.names, "[.]"), '[', 1)))
 		}
-		if (is.null(years)) {
+
+		for (i in content_areas) {
+			tmp.content_area.matrix.names <- grep(i, matrix.names, value=TRUE)
+			tmp.years[[i]] <- sort(unique(sapply(strsplit(tmp.content_area.matrix.names, "[.]"), '[', 2)))
+		}
+
+		if (!is.null(years)) {
 			for (i in content_areas) {
-				tmp.content_area.matrix.names <- grep(i, matrix.names, value=TRUE)
-			}
-		} else {
-			for (i in content_areas) {
-				tmp.years[[i]] <- years
+				tmp.years[[i]] <- intersect(tmp.years[[i]], c(years, "BASELINE"))
 			}
 		}
+
+		for (i in names(tmp.years)) {
+			tmp.content_areas.years[[i]] <- paste(i, tmp.years[[i]], sep=".")
+		}
+
+		tmp.content_areas.years <- as.character(unlist(tmp.content_areas.years))
+
+		### NULL out previous results to be re-calculated
+
+		sgp_sgp_object@SGP[['Goodness_of_Fit']][tmp.content_areas.years] <- NULL
+		sgp_sgp_object@SGP[['SGPercentiles']][tmp.content_areas.years] <- NULL
+		sgp_sgp_object@SGP[['SGProjections']][tmp.content_areas.years] <- NULL
+
+		### Re-calculate
 
 		what_sgp_object <- prepareSGP(what_sgp_object)
 

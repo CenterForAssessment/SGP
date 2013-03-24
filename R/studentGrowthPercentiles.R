@@ -14,7 +14,7 @@ function(panel.data,         ## REQUIRED
          growth.levels, 
          use.my.knots.boundaries,
          use.my.coefficient.matrices=NULL,
-         calculate.confidence.intervals,
+         calculate.confidence.intervals=NULL,
          print.other.gp=FALSE,
          print.sgp.order=FALSE, 
          calculate.sgps=TRUE, 
@@ -549,7 +549,7 @@ function(panel.data,         ## REQUIRED
 	if (!calculate.sgps & (is.character(goodness.of.fit) | goodness.of.fit==TRUE)) {
 		tmp.messages <- c(tmp.messages, "\t\tNOTE: Goodness-of-Fit tables only produced when calculating SGPs.\n")
 	}
-	if (!missing(calculate.confidence.intervals)) {
+	if (!is.null(calculate.confidence.intervals)) {
 		csem.tf <- TRUE
 		if (!is.character(calculate.confidence.intervals) & !is.list(calculate.confidence.intervals)) {
 			tmp.messages <- c(tmp.messages, "\t\tNOTE: Please supply an appropriate state acronym, variable or list containing details to calculate.confidence.intervals. See help page for details. SGPs will be calculated without confidence intervals.\n")
