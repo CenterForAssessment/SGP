@@ -14,6 +14,7 @@ updateSGP(
 	years=NULL,
 	content_areas=NULL,
 	save.old.summaries=TRUE,
+	save.intermediate.results=FALSE,
 	...)
 }
 
@@ -30,6 +31,8 @@ updateSGP(
   }
   \item{save.old.summaries}{A boolean argument (defaults to FALSE which will delete the @Summary slot before creating new summaries)
   indicating whether the call to \code{\link{summarizeSGP}} should save existing summaries in the @Summary slot.
+  }
+  \item{save.intermediate.results}{A boolean argument (defaults to FALSE) indicating whether results should be save to the current directory after each step of the analysis.
   }
   \item{...}{Arguments to be passed to \code{\link{abcSGP}} for finer control over SGP calculations. For example, 'parallel.config' can be supplied to abcSGP for parallel computation.
   }
