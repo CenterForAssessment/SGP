@@ -63,9 +63,9 @@ function(what_sgp_object=NULL,
 
 		### NULL out previous results to be re-calculated
 
-		sgp_sgp_object@SGP[['Goodness_of_Fit']][tmp.content_areas.years] <- NULL
-		sgp_sgp_object@SGP[['SGPercentiles']][tmp.content_areas.years] <- NULL
-		sgp_sgp_object@SGP[['SGProjections']][tmp.content_areas.years] <- NULL
+		what_sgp_object@SGP[['Goodness_of_Fit']][tmp.content_areas.years] <- NULL
+		what_sgp_object@SGP[['SGPercentiles']][tmp.content_areas.years] <- NULL
+		what_sgp_object@SGP[['SGProjections']][tmp.content_areas.years] <- NULL
 		
 
 		### Re-calculate
@@ -74,8 +74,8 @@ function(what_sgp_object=NULL,
 
 		if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
 
-		what_sgp_object <- analyzeSGP(
-					sgp_object=what_sgp_object,
+		sgp_object <- analyzeSGP(
+					sgp_object=sgp_object,
 					state=state,
 					years=years,
 					content_areas=content_areas,
@@ -91,19 +91,19 @@ function(what_sgp_object=NULL,
 
 		if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
 
-		what_sgp_object <- combineSGP(what_sgp_object, state=state, years=years, content_areas=content_areas) 
+		sgp_object <- combineSGP(sgp_object, state=state, years=years, content_areas=content_areas) 
 
 		if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
 
-		if (!is.null(what_sgp_object@Summary)) {
-			what_sgp_object <- summarizeSGP(what_sgp_object, state=state, ...)
+		if (!is.null(sgp_object@Summary)) {
+			sgp_object <- summarizeSGP(sgp_object, state=state, ...)
 			if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
 		}
 
 		### Print finish and return SGP object
 
 		message(paste("Finished updateSGP", date(), "in", timetaken(started.at), "\n"))
-		return(what_sgp_object)
+		return(sgp_object)
 
 	} ### END What updateSGP
 
