@@ -19,6 +19,9 @@ function(what_sgp_object=NULL,
 		state <- getStateAbbreviation(tmp.name, "updateSGP")
         }
 
+	### Utility functions
+
+	"%w/o%" <- function(x,y) x[!x %in% y]
 	
 	### Argument checks
 
@@ -45,12 +48,16 @@ function(what_sgp_object=NULL,
 
 		if (!is.null(years)) {
 			for (i in content_areas) {
-				tmp.years[[i]] <- intersect(tmp.years[[i]], c(years, "BASELINE"))
+				tmp.years[[i]] <- intersect(tmp.years[[i]], c("BASELINE", years))
 			}
 		}
 
 		for (i in names(tmp.years)) {
-			tmp.content_areas.years[[i]] <- paste(i, tmp.years[[i]], sep=".")
+			if (length(grep("BASELINE", tmp.years[[i]])) > 0) {
+				tmp.content_areas.years[[i]] <- c(paste(i, tmp.years[[i]] %w/o% "BASELINE", sep="."), paste(i, tmp.years[[i]] %w/o% "BASELINE", "BASELINE", sep="."))
+			} else {
+				tmp.content_areas.years[[i]] <- paste(i, tmp.years[[i]], sep=".")
+			}
 		}
 
 		tmp.content_areas.years <- as.character(unlist(tmp.content_areas.years))
