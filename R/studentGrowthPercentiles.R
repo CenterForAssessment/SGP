@@ -14,7 +14,7 @@ function(panel.data,         ## REQUIRED
          growth.levels, 
          use.my.knots.boundaries,
          use.my.coefficient.matrices=NULL,
-         calculate.confidence.intervals,
+         calculate.confidence.intervals=NULL,
          print.other.gp=FALSE,
          print.sgp.order=FALSE, 
          calculate.sgps=TRUE, 
@@ -254,7 +254,7 @@ function(panel.data,         ## REQUIRED
 				CSEM_Data <- subset(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], GRADE==grade & CONTENT_AREA==content_area)
 			}
 			CSEM_Function <- splinefun(CSEM_Data[["SCALE_SCORE"]], CSEM_Data[["SCALE_SCORE_CSEM"]], method="natural")
-			tmp.scale <- CSEM_Function(scale_scores)
+			tmp.scale <- sqrt(CSEM_Function(scale_scores))
 		} 
 		if (!is.null(variable)) {
 			tmp.scale <- variable
@@ -549,7 +549,7 @@ function(panel.data,         ## REQUIRED
 	if (!calculate.sgps & (is.character(goodness.of.fit) | goodness.of.fit==TRUE)) {
 		tmp.messages <- c(tmp.messages, "\t\tNOTE: Goodness-of-Fit tables only produced when calculating SGPs.\n")
 	}
-	if (!missing(calculate.confidence.intervals)) {
+	if (!is.null(calculate.confidence.intervals)) {
 		csem.tf <- TRUE
 		if (!is.character(calculate.confidence.intervals) & !is.list(calculate.confidence.intervals)) {
 			tmp.messages <- c(tmp.messages, "\t\tNOTE: Please supply an appropriate state acronym, variable or list containing details to calculate.confidence.intervals. See help page for details. SGPs will be calculated without confidence intervals.\n")
@@ -1026,7 +1026,7 @@ function(panel.data,         ## REQUIRED
 
 			if (is.character(calculate.confidence.intervals) | is.list(calculate.confidence.intervals)) {
 				if (is.null(calculate.confidence.intervals$confidence.quantiles) | identical(toupper(calculate.confidence.intervals$confidence.quantiles), "STANDARD_ERROR")) {
-					quantile.data[,SGP_STANDARD_ERROR:=round(apply(simulation.data[, -1, with=FALSE], 1, sd, na.rm=TRUE))]
+					quantile.data[,SGP_STANDARD_ERROR:=round(apply(simulation.data[, -1, with=FALSE], 1, sd, na.rm=TRUE), digits=2)]
 				} else {
 					if (!(is.numeric(calculate.confidence.intervals$confidence.quantiles) & all(calculate.confidence.intervals$confidence.quantiles < 1) & 
 						all(calculate.confidence.intervals$confidence.quantiles > 0)))  {
@@ -1147,6 +1147,7 @@ function(panel.data,         ## REQUIRED
 
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, "SGP", "SGP_BASELINE")
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & tf.growth.levels) setnames(quantile.data, "SGP_LEVEL", "SGP_LEVEL_BASELINE")
+		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & "SGP_STANDARD_ERROR" %in% names(quantile.data)) setnames(quantile.data, "SGP_STANDARD_ERROR", "SGP_BASELINE_STANDARD_ERROR")
 
 		if (!is.null(additional.vnames.to.return)) {
 			quantile.data <- data.table(panel.data[["Panel_Data"]][,c("ID", names(additional.vnames.to.return))], key="ID")[quantile.data]
