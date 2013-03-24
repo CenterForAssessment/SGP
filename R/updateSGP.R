@@ -5,6 +5,7 @@ function(what_sgp_object=NULL,
 	years=NULL,
 	content_areas=NULL,
 	save.old.summaries=TRUE,
+	save.intermediate.results=FALSE,
 	...) {
 
         started.at <- proc.time()
@@ -28,24 +29,81 @@ function(what_sgp_object=NULL,
 	### What updateSGP
 
 	if (!is.null(what_sgp_object) & is.null(with_sgp_data_LONG)) {
+		
+		tmp.years <- tmp.content_areas.years <- list()
 
 		matrix.names <- names(what_sgp_object@SGP[['Coefficient_Matrices']])
 
 		if (is.null(content_areas)) {
 			content_areas <- sort(unique(sapply(strsplit(matrix.names, "[.]"), '[', 1)))
 		}
-		if (is.null(years)) {
+
+		for (i in content_areas) {
+			tmp.content_area.matrix.names <- grep(i, matrix.names, value=TRUE)
+			tmp.years[[i]] <- sort(unique(sapply(strsplit(tmp.content_area.matrix.names, "[.]"), '[', 2)))
+		}
+
+		if (!is.null(years)) {
 			for (i in content_areas) {
-				tmp.content_area.matrix.names <- grep(i, matrix.names, value=TRUE)
-			}
-		} else {
-			for (i in content_areas) {
-				tmp.years[[i]] <- years
+				tmp.years[[i]] <- intersect(tmp.years[[i]], c(years, "BASELINE"))
 			}
 		}
 
-		what_sgp_object <- prepareSGP(what_sgp_object)
+		for (i in names(tmp.years)) {
+			tmp.content_areas.years[[i]] <- paste(i, tmp.years[[i]], sep=".")
+		}
 
+		tmp.content_areas.years <- as.character(unlist(tmp.content_areas.years))
+
+		if (length(grep("BASELINE", tmp.content_areas.years)) > 0) {
+			tf.sgp.baseline <- TRUE	
+		} else {
+			tf.sgp.baseline <- FALSE
+		}
+
+		### NULL out previous results to be re-calculated
+
+		sgp_sgp_object@SGP[['Goodness_of_Fit']][tmp.content_areas.years] <- NULL
+		sgp_sgp_object@SGP[['SGPercentiles']][tmp.content_areas.years] <- NULL
+		sgp_sgp_object@SGP[['SGProjections']][tmp.content_areas.years] <- NULL
+		
+
+		### Re-calculate
+
+		sgp_object <- prepareSGP(what_sgp_object)
+
+		if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
+
+		what_sgp_object <- analyzeSGP(
+					sgp_object=what_sgp_object,
+					state=state,
+					years=years,
+					content_areas=content_areas,
+					sgp.percentiles=TRUE,
+					sgp.projections=TRUE,
+					sgp.projections.lagged=TRUE,
+					sgp.percentiles.baseline=tf.sgp.baseline,
+					sgp.projections.baseline=tf.sgp.baseline,
+					sgp.projections.lagged.baseline=tf.sgp.baseline,
+					use.my.coefficient.matrices=TRUE,
+					...
+					)
+
+		if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
+
+		what_sgp_object <- combineSGP(what_sgp_object, state=state, years=years, content_areas=content_areas) 
+
+		if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
+
+		what_sgp_object <- summarizeSGP(what_sgp_object, state=state, ...)
+
+		if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
+
+
+		### Print finish and return SGP object
+
+		message(paste("Finished updateSGP", date(), "in", timetaken(started.at), "\n"))
+		return(what_sgp_object)
 
 	} ### END What updateSGP
 
@@ -67,7 +125,7 @@ function(what_sgp_object=NULL,
 		### abcSGP
 
 		new.year <- sort(unique(with_sgp_data_LONG$YEAR))
-		what_sgp_object <- abcSGP(what_sgp_object, years=new.year, state=state, save.old.summaries=save.old.summaries,...)
+		what_sgp_object <- abcSGP(what_sgp_object, years=new.year, state=state, save.intermediate.results=save.intermediate.results, save.old.summaries=save.old.summaries,...)
 
 
 		### Print finish and return SGP object
