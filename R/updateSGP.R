@@ -43,21 +43,17 @@ function(what_sgp_object=NULL,
 
 		for (i in content_areas) {
 			tmp.content_area.matrix.names <- grep(i, matrix.names, value=TRUE)
-			tmp.years[[i]] <- sort(unique(sapply(strsplit(tmp.content_area.matrix.names, "[.]"), '[', 2)))
+			tmp.years[[i]] <- sort(unique(sapply(strsplit(tmp.content_area.matrix.names, "[.]"), '[', 2))) %w/o% "BASELINE"
 		}
 
 		if (!is.null(years)) {
 			for (i in content_areas) {
-				tmp.years[[i]] <- intersect(tmp.years[[i]], c("BASELINE", years))
+				tmp.years[[i]] <- intersect(tmp.years[[i]], years)
 			}
 		}
 
 		for (i in names(tmp.years)) {
-			if (length(grep("BASELINE", tmp.years[[i]])) > 0) {
-				tmp.content_areas.years[[i]] <- c(paste(i, tmp.years[[i]] %w/o% "BASELINE", sep="."), paste(i, tmp.years[[i]] %w/o% "BASELINE", "BASELINE", sep="."))
-			} else {
-				tmp.content_areas.years[[i]] <- paste(i, tmp.years[[i]], sep=".")
-			}
+			tmp.content_areas.years[[i]] <- paste(i, tmp.years[[i]], sep=".")
 		}
 
 		tmp.content_areas.years <- as.character(unlist(tmp.content_areas.years))
@@ -70,14 +66,16 @@ function(what_sgp_object=NULL,
 
 		### NULL out previous results to be re-calculated
 
-		what_sgp_object@SGP[['Goodness_of_Fit']][tmp.content_areas.years] <- NULL
-		what_sgp_object@SGP[['SGPercentiles']][tmp.content_areas.years] <- NULL
-		what_sgp_object@SGP[['SGProjections']][tmp.content_areas.years] <- NULL
+		what_sgp_object@SGP[['Goodness_of_Fit']][grep(paste(tmp.content_areas.years, collapse="|"), names(what_sgp_object@SGP[['Goodness_of_Fit']]))] <- NULL
+		what_sgp_object@SGP[['SGPercentiles']][grep(paste(tmp.content_areas.years, collapse="|"), names(what_sgp_object@SGP[['SGPercentiles']]))] <- NULL
+		what_sgp_object@SGP[['SGProjections']][grep(paste(tmp.content_areas.years, collapse="|"), names(what_sgp_object@SGP[['SGProjections']]))] <- NULL
 		
 
 		### Re-calculate
 
-		sgp_object <- prepareSGP(what_sgp_object)
+		sgp_object <- prepareSGP(
+				what_sgp_object,
+				state=state)
 
 		if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
 
