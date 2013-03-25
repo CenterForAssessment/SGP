@@ -9,7 +9,7 @@ function(list.of.splineMatrix,
 		list.of.splineMatrix <- list(list.of.splineMatrix)
 	}
 	for (i in names(list.of.splineMatrix)) {
-		if (length(grep("BASELINE", i))==0 | is.null(state) | is.null(SGPstateData[[state]][['Baseline_splineMatrix']])) {
+		if (length(grep("BASELINE", i))==0 | is.null(state) || is.null(SGPstateData[[state]][['Baseline_splineMatrix']])) {
 			splineMatrix.tf <- sapply(list.of.splineMatrix[[i]], validObject, test=TRUE)==TRUE
 			if (!all(splineMatrix.tf)) {
 				content_area <- unlist(strsplit(i, "[.]"))[1]; year <- unlist(strsplit(i, "[.]"))[2]
