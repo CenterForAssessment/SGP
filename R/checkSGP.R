@@ -61,7 +61,7 @@ function(sgp_object,
 	## Check class and construction of coefficient matrices
 
 	if (!is.null(sgp_object@SGP[["Coefficient_Matrices"]])) {
-		sgp_object@SGP[["Coefficient_Matrices"]] <- checksplineMatrix(sgp_object@SGP[["Coefficient_Matrices"]], sgp_object)
+		sgp_object@SGP[["Coefficient_Matrices"]] <- checksplineMatrix(sgp_object@SGP[["Coefficient_Matrices"]], sgp_object, state)
 	}
 
 	## Check class of variables in @SGP$SGPercentiles and @SGP$SGProjections
