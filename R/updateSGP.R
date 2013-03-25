@@ -58,7 +58,7 @@ function(what_sgp_object=NULL,
 
 		tmp.content_areas.years <- as.character(unlist(tmp.content_areas.years))
 
-		if (length(grep("BASELINE", tmp.content_areas.years)) > 0) {
+		if (length(grep("BASELINE", matrix.names)) > 0) {
 			tf.sgp.baseline <- TRUE	
 		} else {
 			tf.sgp.baseline <- FALSE
