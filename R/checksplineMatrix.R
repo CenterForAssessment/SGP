@@ -22,6 +22,7 @@ function(list.of.splineMatrix,
 			list.of.splineMatrix[[i]] <- unique.splineMatrix(list.of.splineMatrix[[i]])
 		} else {
 			list.of.splineMatrix[[i]] <- SGPstateData[[state]][['Baseline_splineMatrix']][['Coefficient_Matrices']][[i]]
+		}
 	}
 	return(list.of.splineMatrix)
 } ### END checksplineMatrix
