@@ -90,7 +90,7 @@ function(what_sgp_object=NULL,
 					sgp.percentiles.baseline=tf.sgp.baseline,
 					sgp.projections.baseline=tf.sgp.baseline,
 					sgp.projections.lagged.baseline=tf.sgp.baseline,
-					use.my.coefficient.matrices=TRUE,
+					sgp.use.my.coefficient.matrices=TRUE,
 					...
 					)
 
