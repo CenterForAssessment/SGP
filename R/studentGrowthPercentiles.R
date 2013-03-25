@@ -678,9 +678,10 @@ function(panel.data,         ## REQUIRED
 				assign(i, panel.data[[i]])
 			}
 		}
+
 		## Check class and construction of coefficient matrices
 
-		if (!is.null(Coefficient_Matrices)) {
+		if (!is.null(panel.data[['Coefficient_Matrices']])) {
 			tmp.matrices <- Coefficient_Matrices; tmp.changes <- FALSE
 			for (i in names(tmp.matrices)) {
 				splineMatrix.tf <- sapply(tmp.matrices[[i]], validObject, test=TRUE)==TRUE
