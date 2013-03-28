@@ -22,7 +22,7 @@ function(tmp.data,
 	}
 	tmp.data <- data.table(SGPstateData[[state]][['SGP_Norm_Group_Preference']][,tmp.sgp.norm.group.variables,with=FALSE][tmp.data], 
 		key=c(getKey(tmp.data), "PREFERENCE"))
-	setkey(tmp.data, getKey(tmp.data))
+	setkeyv(tmp.data, getKey(tmp.data))
 	tmp.data <- tmp.data[!duplicated(tmp.data)][,PREFERENCE:=NULL]
 	setkeyv(tmp.data, getKey(tmp.data))
 	return(tmp.data)
