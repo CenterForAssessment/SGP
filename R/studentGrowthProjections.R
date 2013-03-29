@@ -384,7 +384,7 @@ function(panel.data,	## REQUIRED
 			}
 			tmp.path.coefficient.matrices <- .create.path(use.my.coefficient.matrices)
 			if (is.null(panel.data[["Coefficient_Matrices"]]) | is.null(panel.data[["Coefficient_Matrices"]][[tmp.path.coefficient.matrices]])) {
-				if (sgp.labels$my.year=="BASELINE" & !is.null(SGPstateData[[performance.level.cutscores]][["Baseline_splineMatrix"]])) {
+				if (sgp.labels$my.extra.label=="BASELINE" & !is.null(SGPstateData[[performance.level.cutscores]][["Baseline_splineMatrix"]])) {
 					panel.data[["Coefficient_Matrices"]][[tmp.path.coefficient.matrices]] <- SGPstateData[[performance.level.cutscores]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]]
 				} else {
 					stop("Coefficient matrices indicated by argument use.my.coefficient.matrices are not included.")

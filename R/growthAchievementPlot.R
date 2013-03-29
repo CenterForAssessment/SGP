@@ -179,11 +179,11 @@
 		gaPlot.sgp_object@SGP$Panel_Data <- tmp.df
 		gaPlot.sgp_object@SGP$SGProjections <- NULL
 		tmp.grades <- as.numeric(tmp.df[1,2:((dim(tmp.df)[2]+1)/2)])
-		if (baseline) tmp.year <- "BASELINE" else tmp.year <- year
+		if (baseline) my.extra.labels <- "BASELINE" else my.extra.label <- NULL
 
 		studentGrowthProjections(
 			panel.data=gaPlot.sgp_object@SGP,
-			sgp.labels=list(my.year=tmp.year, my.subject=content_area),
+			sgp.labels=list(my.year=year, my.subject=content_area, my.extra.label=my.extra.label),
 			projcuts.digits=2,
 			projection.unit="GRADE",
 			percentile.trajectory.values=percentile,
