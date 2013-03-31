@@ -352,12 +352,18 @@
 
 		for (k in output.format) {
 
+		if (baseline) {
+			my.label <- "_State_Baseline_Growth_and_Achievement_Plot_"
+		} else {
+			my.label <- "_State_Growth_and_Achievement_Plot_"
+		}
+
 		if (k=="PDF") {
-			pdf(file=paste(output.folder, "/", state.name.file.label, "_State_Growth_and_Achievement_Plot_", capwords(content_area), "_", year, "_Level_", j, ".pdf", sep=""), 
+			pdf(file=paste(output.folder, "/", state.name.file.label, my.label, capwords(content_area), "_", year, "_Level_", j, ".pdf", sep=""), 
 				width=8.5, height=11, bg=format.colors.background)
 		}
 		if (k=="PNG") {
-			Cairo(file=paste(output.folder, "/", state.name.file.label, "_State_Growth_and_Achievement_Plot_", capwords(content_area), "_", year, "_Level_", j, ".png", sep=""),
+			Cairo(file=paste(output.folder, "/", state.name.file.label, my.label, capwords(content_area), "_", year, "_Level_", j, ".png", sep=""),
 			      width=8.5, height=11, units="in", dpi=144, pointsize=24, bg=format.colors.background)
 
 		}
