@@ -386,14 +386,23 @@ function(panel.data,	## REQUIRED
 			if (sgp.labels$my.extra.label=="BASELINE" & !is.null(SGPstateData[[performance.level.cutscores]][["Baseline_splineMatrix"]])) {
 				panel.data[["Coefficient_Matrices"]][[tmp.path.coefficient.matrices]] <- SGPstateData[[performance.level.cutscores]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]]
 			} else {
-				stop("Coefficient matrices indicated by argument use.my.coefficient.matrices are not included.")
+				message("\tNOTE: Coefficient matrices indicated by argument use.my.coefficient.matrices are not included.")
+				return(NULL)
 			}
 		}
 	} else {
 		if (identical(sgp.labels$my.extra.label, "BASELINE")) {
 			tmp.path.coefficient.matrices <- paste(sgp.labels$my.subject, "BASELINE", sep=".")
+			if (is.null(panel.data[["Coefficient_Matrices"]]) | is.null(panel.data[["Coefficient_Matrices"]][[tmp.path.coefficient.matrices]])) {
+				message(paste("\tNOTE: Coefficient matrices indicated by argument sgp.labels, '", tmp.path.coefficient.matrices, "', are not included. Bypassing plot production.", sep=""))
+				return(NULL)
+			}
 		} else {
 			tmp.path.coefficient.matrices <- tmp.path
+			if (is.null(panel.data[["Coefficient_Matrices"]]) | is.null(panel.data[["Coefficient_Matrices"]][[tmp.path.coefficient.matrices]])) {
+				message(paste("\tNOTE: Coefficient matrices indicated by argument sgp.labels, '", tmp.path.coefficient.matrices, "', are not included. Bypassing plot production.", sep=""))
+				return(NULL)
+			}
 		}
 	} 
 
