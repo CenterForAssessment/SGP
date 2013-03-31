@@ -190,7 +190,7 @@
 			grade.progression=tmp.grades,
 			max.forward.progression.grade=gaPlot.grade_range[2],
 			max.order.for.progression=gaPlot.max.order.for.progression,
-			print.time.taken=FALSE)[["SGProjections"]][[paste(content_area, tmp.year, sep=".")]][,-1]
+			print.time.taken=FALSE)[["SGProjections"]][[paste(content_area, year, sep=".")]][,-1]
 	}
 
 	smoothPercentileTrajectory <- function(tmp.df, percentile, content_area, year, state) {
