@@ -183,7 +183,7 @@
 		gaPlot.sgp_object@SGP$Panel_Data <- tmp.df
 		gaPlot.sgp_object@SGP$SGProjections <- NULL
 		tmp.grades <- as.numeric(tmp.df[1,2:((dim(tmp.df)[2]+1)/2)])
-		if (baseline) my.extra.labels <- "BASELINE" else my.extra.label <- NULL
+		if (baseline) my.extra.label <- "BASELINE" else my.extra.label <- NULL
 
 		studentGrowthProjections(
 			panel.data=gaPlot.sgp_object@SGP,
