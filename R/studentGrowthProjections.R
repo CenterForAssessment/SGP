@@ -391,9 +391,9 @@ function(panel.data,	## REQUIRED
 		}
 	} else {
 		if (sgp.labels$my.extra.label=="BASELINE") {
-			tmp.path.coefficient.matrices <- tmp.path
+			tmp.path.coefficient.matrices <- paste(sgp.labels$my.subject, "BASELINE", sep=".")
 		} else {
-			tmp.path.coefficient.matrices <- paste(sgp.labels$my.subject, sgp.labels$my.year, sep=".")
+			tmp.path.coefficient.matrices <- tmp.path
 		}
 	} 
 
