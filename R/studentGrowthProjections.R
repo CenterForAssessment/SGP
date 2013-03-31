@@ -378,20 +378,24 @@ function(panel.data,	## REQUIRED
 		if (!is.list(use.my.coefficient.matrices)) {
 			stop("Please specify an appropriate list for use.my.coefficient.matrices. See help page for details.")
 		}
-		if (!identical(names(use.my.coefficient.matrices), c("my.year", "my.subject")) &
-			!identical(names(use.my.coefficient.matrices), c("my.year", "my.subject", "my.extra.label"))) {
+		if (!identical(names(use.my.coefficient.matrices), c("my.year", "my.subject")) & !identical(names(use.my.coefficient.matrices), c("my.year", "my.subject", "my.extra.label"))) {
 			stop("Please specify an appropriate list for use.my.coefficient.matrices. See help page for details.")
+		}
+		tmp.path.coefficient.matrices <- .create.path(use.my.coefficient.matrices)
+		if (is.null(panel.data[["Coefficient_Matrices"]]) | is.null(panel.data[["Coefficient_Matrices"]][[tmp.path.coefficient.matrices]])) {
+			if (sgp.labels$my.extra.label=="BASELINE" & !is.null(SGPstateData[[performance.level.cutscores]][["Baseline_splineMatrix"]])) {
+				panel.data[["Coefficient_Matrices"]][[tmp.path.coefficient.matrices]] <- SGPstateData[[performance.level.cutscores]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]]
+			} else {
+				stop("Coefficient matrices indicated by argument use.my.coefficient.matrices are not included.")
 			}
-			tmp.path.coefficient.matrices <- .create.path(use.my.coefficient.matrices)
-			if (is.null(panel.data[["Coefficient_Matrices"]]) | is.null(panel.data[["Coefficient_Matrices"]][[tmp.path.coefficient.matrices]])) {
-				if (sgp.labels$my.extra.label=="BASELINE" & !is.null(SGPstateData[[performance.level.cutscores]][["Baseline_splineMatrix"]])) {
-					panel.data[["Coefficient_Matrices"]][[tmp.path.coefficient.matrices]] <- SGPstateData[[performance.level.cutscores]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]]
-				} else {
-					stop("Coefficient matrices indicated by argument use.my.coefficient.matrices are not included.")
-				}
-		}} else {
+		}
+	} else {
+		if (sgp.labels$my.extra.label=="BASELINE") {
 			tmp.path.coefficient.matrices <- tmp.path
-		} 
+		} else {
+			tmp.path.coefficient.matrices <- paste(sgp.labels$my.subject, sgp.labels$my.year, sep=".")
+		}
+	} 
 
 	if (!missing(performance.level.cutscores)) {
 		if (is.character(performance.level.cutscores)) {
