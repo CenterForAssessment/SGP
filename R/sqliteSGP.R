@@ -5,6 +5,7 @@ function(sgp_object,
 	content_areas=NULL,
 	other.student.groups,
 	text.output=TRUE,
+	null.output.string="NULL",
 	projection.years.for.target=3,
 	output.directory=file.path("Data", "SchoolView")) {
 
@@ -113,7 +114,7 @@ function(sgp_object,
 
 		if (is.null(years)) years <- unique(sgp_object@Data$YEAR) %w/o% NA
 		if (is.null(content_areas)) content_areas <- unique(sgp_object@Data$CONTENT_AREA) %w/o% NA
-		my.null.string <- "NULL"
+		if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["null.output.string"]])) my.null.string <- SGPstateData[[state]][["SGP_Configuration"]][["null.output.string"]]
 
 	## Create tmp.school.and.district.by.year table
 
@@ -319,7 +320,7 @@ function(sgp_object,
 			"PERCENT_AT_ABOVE_PROFICIENT_COUNT INTEGER")
 
 		tmp <- as.data.frame(convert.variables(subset(sgp_object@Summary[[group.number[2]]][[paste(group.number[2], "EMH_LEVEL__CONTENT_AREA__YEAR", group.enroll.status[2], sep="__")]],
-			!is.na(get(group.enroll.status[2])) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & get(group.enroll.status[2])==group.enroll.status.label[2] &
+			!is.na(get(group.enroll.status[2])) & !is.na(get(group.number[2])) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & get(group.enroll.status[2])==group.enroll.status.label[2] &
 			!is.na(MEDIAN_SGP))))
 		tmp <- as.data.frame(merge(tmp, as.data.frame(tmp.school.and.district.by.year), all.x=TRUE)) 
 		tmp <- convert.names(tmp)
