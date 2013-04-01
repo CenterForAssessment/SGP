@@ -82,7 +82,8 @@ function(
 					   "SGP_TARGET", "SGP_TARGET_MU", "SGP_TARGET_MOVE_UP_STAY_UP", "SGP_TARGET_MOVE_UP_STAY_UP_BASELINE", "ACHIEVEMENT_LEVEL_PRIOR", 
 					   "CATCH_UP_KEEP_UP_STATUS_INITIAL", "SGP_TARGET_BASELINE", "CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STATUS", "MOVE_UP_STAY_UP_STATUS",
 					   "SGP_NORM_GROUP", "SGP_NORM_GROUP_BASELINE", "SGP_BASELINE_STANDARD_ERROR",
-					   grep("PERCENTILE_CUT", names(slot.data), value=TRUE),
+					   grep("SGP_ORDER", names(slot.data), value=TRUE), grep("SGP_BASELINE_ORDER", names(slot.data), value=TRUE),
+					   grep("PERCENTILE_CUT", names(slot.data), value=TRUE), grep("CONFIDENCE_BOUND", names(slot.data), value=TRUE),
 					   paste("SGP_TARGET", max.sgp.target.years.forward, "YEAR", sep="_"), paste("SGP_TARGET_MOVE_UP_STAY_UP", max.sgp.target.years.forward, "YEAR", sep="_"), 
 					   paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, "YEAR", sep="_"), paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", max.sgp.target.years.forward, "YEAR", sep="_"))
 
