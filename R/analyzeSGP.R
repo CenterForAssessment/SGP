@@ -404,6 +404,7 @@ function(sgp_object,
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 						goodness.of.fit=state,
 						verbose.output=verbose.output,
+						print.other.gp=print.other.gp,
 						...))
 				}
 				tmp_sgp_object <- mergeSGP(tmp_sgp_object, tmp)
@@ -432,6 +433,7 @@ function(sgp_object,
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 						goodness.of.fit=state,
 						verbose.output=verbose.output,
+						print.other.gp=print.other.gp,
 						...))
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -464,6 +466,7 @@ function(sgp_object,
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 						goodness.of.fit=state,
 						verbose.output=verbose.output,
+						print.other.gp=print.other.gp,
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -902,6 +905,7 @@ function(sgp_object,
 					sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 					goodness.of.fit=state,
 					verbose.output=verbose.output,
+					print.other.gp=print.other.gp,
 					...)
 				suppressMessages(gc())
 			}
