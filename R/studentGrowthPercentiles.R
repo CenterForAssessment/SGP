@@ -486,15 +486,15 @@ function(panel.data,         ## REQUIRED
 			stop("use.my.coefficient.matrices is only appropriate when panel data is of class list. See help page for details.")
 		}
 		if (!is.list(use.my.coefficient.matrices)) {
-			stop("Please specify an appropriate list for use.my.coefficient.matrices. See help page for details.")
+			stop("Please specify an appropriate list for argument 'use.my.coefficient.matrices'. See help page for details.")
 		}
 		if (!identical(names(use.my.coefficient.matrices), c("my.year", "my.subject")) & 
 			!identical(names(use.my.coefficient.matrices), c("my.year", "my.subject", "my.extra.label"))) {
-				stop("Please specify an appropriate list for use.my.coefficient.matrices. See help page for details.")
+				stop("Please specify an appropriate list for argument 'use.my.coefficient.matrices'. See help page for details.")
 		}
 		tmp.path.coefficient.matrices <- .create.path(use.my.coefficient.matrices)
 		if (is.null(panel.data[["Coefficient_Matrices"]]) | is.null(panel.data[["Coefficient_Matrices"]][[tmp.path.coefficient.matrices]])) {
-			stop("Coefficient matrices indicated by use.my.coefficient.matrices are not included.")
+			stop("Coefficient matrices indicated by argument 'use.my.coefficient.matrices' are not included.")
 		}
 	} else {
 		tmp.path.coefficient.matrices <- tmp.path
