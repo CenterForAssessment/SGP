@@ -176,21 +176,25 @@
 
 	gaPlot.percentile_trajectories_Internal <- function(tmp.df, percentile, content_area, year, state) {
 
+		.create.path <- function(labels, pieces=c("my.subject", "my.year", "my.extra.label")) {
+			sub(' ', '_', toupper(sub('\\.+$', '', paste(unlist(sapply(labels[pieces], as.character)), collapse="."))))
+		}
+
 		gaPlot.sgp_object@SGP$Panel_Data <- tmp.df
 		gaPlot.sgp_object@SGP$SGProjections <- NULL
 		tmp.grades <- as.numeric(tmp.df[1,2:((dim(tmp.df)[2]+1)/2)])
-		if (baseline) tmp.year <- "BASELINE" else tmp.year <- year
+		if (baseline) my.extra.label <- "BASELINE" else my.extra.label <- NULL
 
 		studentGrowthProjections(
 			panel.data=gaPlot.sgp_object@SGP,
-			sgp.labels=list(my.year=tmp.year, my.subject=content_area),
+			sgp.labels=list(my.year=year, my.subject=content_area, my.extra.label=my.extra.label),
 			projcuts.digits=2,
 			projection.unit="GRADE",
 			percentile.trajectory.values=percentile,
 			grade.progression=tmp.grades,
 			max.forward.progression.grade=gaPlot.grade_range[2],
 			max.order.for.progression=gaPlot.max.order.for.progression,
-			print.time.taken=FALSE)[["SGProjections"]][[paste(content_area, tmp.year, sep=".")]][,-1]
+			print.time.taken=FALSE)[["SGProjections"]][[.create.path(list(my.subject=content_area, my.year=year, my.extra.label=my.extra.label))]][,-1]
 	}
 
 	smoothPercentileTrajectory <- function(tmp.df, percentile, content_area, year, state) {
@@ -348,12 +352,18 @@
 
 		for (k in output.format) {
 
+		if (baseline) {
+			my.label <- "_State_Baseline_Growth_and_Achievement_Plot_"
+		} else {
+			my.label <- "_State_Growth_and_Achievement_Plot_"
+		}
+
 		if (k=="PDF") {
-			pdf(file=paste(output.folder, "/", state.name.file.label, "_State_Growth_and_Achievement_Plot_", capwords(content_area), "_", year, "_Level_", j, ".pdf", sep=""), 
+			pdf(file=paste(output.folder, "/", state.name.file.label, my.label, capwords(content_area), "_", year, "_Level_", j, ".pdf", sep=""), 
 				width=8.5, height=11, bg=format.colors.background)
 		}
 		if (k=="PNG") {
-			Cairo(file=paste(output.folder, "/", state.name.file.label, "_State_Growth_and_Achievement_Plot_", capwords(content_area), "_", year, "_Level_", j, ".png", sep=""),
+			Cairo(file=paste(output.folder, "/", state.name.file.label, my.label, capwords(content_area), "_", year, "_Level_", j, ".png", sep=""),
 			      width=8.5, height=11, units="in", dpi=144, pointsize=24, bg=format.colors.background)
 
 		}

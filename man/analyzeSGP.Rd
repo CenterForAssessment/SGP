@@ -31,6 +31,7 @@ analyzeSGP(sgp_object,
          sgp.baseline.config=NULL,
          parallel.config=NULL,
 	 verbose.output=FALSE,
+	 print.other.gp=FALSE,
 	 get.cohort.data.info=FALSE,
          ...)
 }
@@ -100,6 +101,8 @@ Alternatively, the name of an external CLUSTER.OBJECT (SOCK or MPI) set up by th
 Example use cases are provided below.
   }
   \item{verbose.output}{A boolean argument (defaults to FALSE) indicating whether the function should output verbose diagnostic messages.
+  }
+  \item{print.other.gp}{A boolean argument (defaults to FALSE) indicating whether the function should output SGP of all orders.
   }
   \item{get.cohort.data.info}{A boolean argument (defaults to FALSE) indicating whether the a summary of all cohorts to be submitted to the \code{\link{studentGrowthPercentiles}} and 
   \code{\link{studentGrowthProjections}} functions should be performed prior to analysis.

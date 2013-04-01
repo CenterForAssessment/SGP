@@ -289,8 +289,9 @@ function(data,
 		
 		for (i in seq_along(tmp.enrollment_status.variables)) {
 			if (!tmp.enrollment_status.variables[i] %in% names(sgp_object@Data) & !paste(tmp.enrollment_status.levels[i], "NUMBER", sep="_") %in% names(sgp_object@Data)) {
-				sgp_object@Data[[tmp.enrollment_status.variables[i]]][sgp_object@Data[['VALID_CASE']]=="VALID_CASE"] <- 
+				sgp_object@Data[[tmp.enrollment_status.variables[i]]] <- 
 					factor(1, levels=0:1, labels=paste("Enrolled", capwords(tmp.enrollment_status.levels[i]), c(": No", ": Yes"), sep=""))
+				sgp_object@Data[[tmp.enrollment_status.variables[i]]][sgp_object@Data[['VALID_CASE']]!="VALID_CASE"] <- NA
 				message(paste("\tNOTE: Added variable", tmp.enrollment_status.variables[i], "to @Data."))
 			}
 		}
