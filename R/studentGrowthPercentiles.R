@@ -486,15 +486,15 @@ function(panel.data,         ## REQUIRED
 			stop("use.my.coefficient.matrices is only appropriate when panel data is of class list. See help page for details.")
 		}
 		if (!is.list(use.my.coefficient.matrices)) {
-			stop("Please specify an appropriate list for use.my.coefficient.matrices. See help page for details.")
+			stop("Please specify an appropriate list for argument 'use.my.coefficient.matrices'. See help page for details.")
 		}
 		if (!identical(names(use.my.coefficient.matrices), c("my.year", "my.subject")) & 
 			!identical(names(use.my.coefficient.matrices), c("my.year", "my.subject", "my.extra.label"))) {
-				stop("Please specify an appropriate list for use.my.coefficient.matrices. See help page for details.")
+				stop("Please specify an appropriate list for argument 'use.my.coefficient.matrices'. See help page for details.")
 		}
 		tmp.path.coefficient.matrices <- .create.path(use.my.coefficient.matrices)
 		if (is.null(panel.data[["Coefficient_Matrices"]]) | is.null(panel.data[["Coefficient_Matrices"]][[tmp.path.coefficient.matrices]])) {
-			stop("Coefficient matrices indicated by use.my.coefficient.matrices are not included.")
+			stop("Coefficient matrices indicated by argument 'use.my.coefficient.matrices' are not included.")
 		}
 	} else {
 		tmp.path.coefficient.matrices <- tmp.path
@@ -966,7 +966,7 @@ function(panel.data,         ## REQUIRED
 		quantile.data <- data.table(rbindlist(tmp.quantiles), key="ID")
 
 		if (print.other.gp) {
-			quantile.data <- data.table(reshape(quantile.data, idvar="ID", timevar="ORDER", direction="wide"),
+			quantile.data <- data.table(reshape(quantile.data, idvar="ID", timevar="ORDER", direction="wide", sep="_ORDER_"),
 				SGP=quantile.data[c(which(!duplicated(quantile.data))[-1]-1L, nrow(quantile.data))][["SGP"]],
 				ORDER=as.integer(quantile.data[c(which(!duplicated(quantile.data))[-1]-1L, nrow(quantile.data))][["ORDER"]]))
 		} else {
@@ -1119,6 +1119,10 @@ function(panel.data,         ## REQUIRED
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, "SGP", "SGP_BASELINE")
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & tf.growth.levels) setnames(quantile.data, "SGP_LEVEL", "SGP_LEVEL_BASELINE")
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & "SGP_STANDARD_ERROR" %in% names(quantile.data)) setnames(quantile.data, "SGP_STANDARD_ERROR", "SGP_BASELINE_STANDARD_ERROR")
+		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & print.other.gp) {
+			my.tmp.names <- grep("SGP_ORDER", names(quantile.data), value=TRUE)
+			setnames(quantile.data, my.tmp.names, gsub("SGP_ORDER", "SGP_BASELINE_ORDER", my.tmp.names))
+		}
 
 		if (!is.null(additional.vnames.to.return)) {
 			quantile.data <- data.table(panel.data[["Panel_Data"]][,c("ID", names(additional.vnames.to.return))], key="ID")[quantile.data]

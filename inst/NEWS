@@ -1,3 +1,9 @@
+Changes in version: SGP_1.0-9.9
+
+  BUG FIXES:
+
+	  o growthAchievementPlot now renders baseline referenced SGP correctly.
+
 Changes in version: SGP_1.0-9.8
 
   USER VISIBLE CHANGES:
