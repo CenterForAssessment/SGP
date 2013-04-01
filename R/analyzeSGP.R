@@ -24,6 +24,7 @@ function(sgp_object,
          sgp.baseline.config=NULL, 
          parallel.config=NULL,
 	 verbose.output=FALSE,
+	 print.other.gp=FALSE,
 	 get.cohort.data.info=FALSE,
          ...) {
 
@@ -292,6 +293,7 @@ function(sgp_object,
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 						goodness.of.fit=state,
 						verbose.output=verbose.output,
+						print.other.gp=print.other.gp,
 						calculate.simex=calculate.simex,
 						...))
 					}
@@ -320,6 +322,7 @@ function(sgp_object,
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 						goodness.of.fit=state,
 						verbose.output=verbose.output,
+						print.other.gp=print.other.gp,
 						calculate.simex=calculate.simex,
 						...))
 
@@ -352,6 +355,7 @@ function(sgp_object,
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 						goodness.of.fit=state,
 						verbose.output=verbose.output,
+						print.other.gp=print.other.gp,
 						calculate.simex=calculate.simex,
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 
@@ -861,6 +865,7 @@ function(sgp_object,
 					sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 					goodness.of.fit=state,
 					verbose.output=verbose.output,
+					print.other.gp=print.other.gp,
 					calculate.simex=calculate.simex,
 					...)
 			}
