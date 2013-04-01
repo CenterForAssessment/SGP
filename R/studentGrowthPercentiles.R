@@ -966,7 +966,7 @@ function(panel.data,         ## REQUIRED
 		quantile.data <- data.table(rbindlist(tmp.quantiles), key="ID")
 
 		if (print.other.gp) {
-			quantile.data <- data.table(reshape(quantile.data, idvar="ID", timevar="ORDER", direction="wide"),
+			quantile.data <- data.table(reshape(quantile.data, idvar="ID", timevar="ORDER", direction="wide", sep="_ORDER_"),
 				SGP=quantile.data[c(which(!duplicated(quantile.data))[-1]-1L, nrow(quantile.data))][["SGP"]],
 				ORDER=as.integer(quantile.data[c(which(!duplicated(quantile.data))[-1]-1L, nrow(quantile.data))][["ORDER"]]))
 		} else {
