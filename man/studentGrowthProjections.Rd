@@ -99,9 +99,9 @@ studentGrowthProjections(panel.data,
   \item{projection.unit}{Argument specifying the units in which the projections/trajectories and cuts are reported. Either \code{"GRADE"}, the default, or 
   \code{"YEAR"}.
   }       
-  \item{percentile.trajectory.values}{Returns a vector of percentile trajectories (defaults to 1 to 99) associated with percentile growth projections/trajectories
-  produced, in addition to the percentiles sufficient to reach the performance thresholds. If no percentile trajectories are desired, set 
-  \code{percentile.trajectory.values=NULL}. Default is set to NULL and no percentile.trajectory.values are returned.
+  \item{percentile.trajectory.values}{An integer argument with values ranging from 1 to 100 that returns a vector of percentile trajectory cuts (default is NULL, 
+  no percentile trajectory values returned).  The returned values are the lower bound for the interval associated with the percentile(s) requested. If no percentile trajectories
+  are desired, set \code{percentile.trajectory.values=NULL}.
   }
   \item{isotonize}{Boolean argument (defaults to TRUE) indicating whether quantile regression results are isotonized to prevent quantile crossing following 
   the methods derived by Dette & Volgushev (2008).
