@@ -441,7 +441,7 @@ function(panel.data,	## REQUIRED
 		stop("\tNOTE: Either percentile trajectories and/or performance level cutscores must be supplied for the analyses.")
 	}
 
-	if (!all(percentile.trajectory.values) %in% 1:100) {
+	if (!is.null(percentile.trajectory.values) && !all(percentile.trajectory.values %in% 1:100)) {
 		message("\tNOTE: Supplied 'percentile.trajectory.values' must be integers between 1 and 100. Only supplied values in that range will be used.")
 		percentile.trajectory.values <- intersect(percentile.trajectory.values, 1:100)
 	}
