@@ -5,7 +5,7 @@ function(sgp_object,
 	content_areas=NULL,
 	other.student.groups,
 	text.output=TRUE,
-	null.output.string="NULL",
+	null.output.string=NULL,
 	projection.years.for.target=3,
 	output.directory=file.path("Data", "SchoolView")) {
 
@@ -114,7 +114,11 @@ function(sgp_object,
 
 		if (is.null(years)) years <- unique(sgp_object@Data$YEAR) %w/o% NA
 		if (is.null(content_areas)) content_areas <- unique(sgp_object@Data$CONTENT_AREA) %w/o% NA
-		if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["null.output.string"]])) my.null.string <- SGPstateData[[state]][["SGP_Configuration"]][["null.output.string"]]
+		if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["null.output.string"]])) {
+			my.null.string <- SGPstateData[[state]][["SGP_Configuration"]][["null.output.string"]]
+		} else {
+			my.null.string <- "NULL"
+		}
 
 	## Create tmp.school.and.district.by.year table
 

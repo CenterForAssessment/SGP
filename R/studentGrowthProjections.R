@@ -250,7 +250,7 @@ function(panel.data,	## REQUIRED
 	.get.trajectories.and.cuts <- function(percentile.trajectories, trajectories.tf, cuts.tf, projection.unit=projection.unit) {
 		CUT <- NULL
 		if (trajectories.tf) {
-			tmp.traj <- percentile.trajectories[seq(dim(percentile.trajectories)[1]) %% 100 %in% ((percentile.trajectory.values+1) %% 100)]
+			tmp.traj <- percentile.trajectories[rep(1:100, dim(percentile.trajectories)[1]/100) %in% percentile.trajectory.values]
 			tmp.traj[,2:dim(tmp.traj)[2] := round(tmp.traj[,2:dim(tmp.traj)[2], with=FALSE], digits=projcuts.digits), with=FALSE]
 			trajectories <- data.table(reshape(tmp.traj[, CUT:=rep(percentile.trajectory.values, dim(tmp.traj)[1]/length(percentile.trajectory.values))], 
 				idvar="ID", timevar="CUT", direction="wide"), key="ID")
@@ -438,7 +438,12 @@ function(panel.data,	## REQUIRED
 	}
 
 	if (is.null(percentile.trajectory.values) & !tf.cutscores) {
-		stop("Either percentile trajectories and/or performance level cutscores must be supplied for the analyses.")
+		stop("\tNOTE: Either percentile trajectories and/or performance level cutscores must be supplied for the analyses.")
+	}
+
+	if (!is.null(percentile.trajectory.values) && !all(percentile.trajectory.values %in% 1:100)) {
+		message("\tNOTE: Supplied 'percentile.trajectory.values' must be integers between 1 and 100. Only supplied values in that range will be used.")
+		percentile.trajectory.values <- intersect(percentile.trajectory.values, 1:100)
 	}
 
 	if (!is.null(achievement.level.prior.vname)) {
