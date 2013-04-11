@@ -362,7 +362,7 @@ if (bubble_plot_configs.BUBBLE_TIPS) {
                             gp=gpar(lwd=0.5))
               grid.circle(x=bubble_plot_data.X[i], y=bubble_plot_data.Y[i], 
                       r=unit(c(1.0, 0.4)*bubblesize(bubble_plot_data.SIZE[i], numstud.range), rep("inches", length(bubble_plot_data.SIZE[i]))), 
-                      gp=gpar(lwd=c(0.5, 3.0), fill=bubblecolor(unclass(tmp.LEVELS))), default.units="native") 
+                      gp=gpar(lwd=c(0.5, 3.0), fill=bubblecolor(unclass(tmp.LEVELS[bubble_plot_data.INDICATE]))), default.units="native") 
               grid.rect(x=unit(indicate.coordinates$x, "npc"), y=unit(indicate.coordinates$y, "npc"), 
                              width=unit(2*text.buffer, "inches")+unit(1.0, "strwidth", bubble_plot_labels.BUBBLE_TITLES[i]), 
                              height=unit(1.5*text.buffer, "inches")+unit(1.0, "strheight", bubble_plot_labels.BUBBLE_TITLES[i]), 
@@ -490,7 +490,7 @@ else {
                         gp=gpar(lwd=0.5))
           grid.circle(x=bubble_plot_data.X[bubble_plot_data.INDICATE], y=bubble_plot_data.Y[bubble_plot_data.INDICATE], 
                   r=unit(c(1.0, 0.4)*bubblesize(bubble_plot_data.SIZE[bubble_plot_data.INDICATE], numstud.range), rep("inches", length(bubble_plot_data.SIZE[bubble_plot_data.INDICATE]))), 
-                  gp=gpar(lwd=c(0.5, 3.0), fill=bubblecolor(unclass(tmp.LEVELS))), default.units="native") 
+                  gp=gpar(lwd=c(0.5, 3.0), fill=bubblecolor(unclass(tmp.LEVELS[bubble_plot_data.INDICATE]))), default.units="native") 
           grid.rect(x=unit(indicate.coordinates$x, "npc"), y=unit(indicate.coordinates$y, "npc"), 
                          width=unit(2*text.buffer, "inches")+unit(1.0, "strwidth", bubble_plot_labels.BUBBLE_TITLES[bubble_plot_data.INDICATE]), 
                          height=unit(1.5*text.buffer, "inches")+unit(1.0, "strheight", bubble_plot_labels.BUBBLE_TITLES[bubble_plot_data.INDICATE]), 
@@ -535,7 +535,7 @@ else {
                         gp=gpar(lwd=0.5))
           grid.circle(x=bubble_plot_data.X[bubble_plot_data.INDICATE], y=bubble_plot_data.Y[bubble_plot_data.INDICATE], 
                   r=unit(c(1.0, 0.4)*bubblesize(bubble_plot_data.SIZE[bubble_plot_data.INDICATE], numstud.range), rep("inches", length(bubble_plot_data.SIZE[bubble_plot_data.INDICATE]))), 
-                  gp=gpar(lwd=c(0.5, 3.0), fill=bubblecolor(unclass(tmp.LEVELS))), default.units="native") 
+                  gp=gpar(lwd=c(0.5, 3.0), fill=bubblecolor(unclass(tmp.LEVELS[bubble_plot_data.INDICATE]))), default.units="native") 
           grid.rect(x=unit(indicate.coordinates$x, "npc"), y=unit(indicate.coordinates$y, "npc"), 
                          width=unit(2*text.buffer, "inches")+unit(1.0, "strwidth", bubble_plot_labels.BUBBLE_TITLES[bubble_plot_data.INDICATE]), 
                          height=unit(1.5*text.buffer, "inches")+unit(1.0, "strheight", bubble_plot_labels.BUBBLE_TITLES[bubble_plot_data.INDICATE]), 
