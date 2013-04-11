@@ -100,8 +100,8 @@ studentGrowthProjections(panel.data,
   \code{"YEAR"}.
   }       
   \item{percentile.trajectory.values}{An integer argument with values ranging from 1 to 100 that returns a vector of percentile trajectory cuts (default is NULL, 
-  no percentile trajectory values returned).  The returned values are the lower bound for the interval associated with the percentile(s) requested. If no percentile trajectories
-  are desired, set \code{percentile.trajectory.values=NULL}.
+  no percentile trajectory values returned).  The returned values are the lower bound for the interval associated with the percentile(s) requested. For example, by specifying
+  'percentile.trajectory.values=1' the user would receive the conditional .005 quantile associated with each student's distribution.
   }
   \item{isotonize}{Boolean argument (defaults to TRUE) indicating whether quantile regression results are isotonized to prevent quantile crossing following 
   the methods derived by Dette & Volgushev (2008).
