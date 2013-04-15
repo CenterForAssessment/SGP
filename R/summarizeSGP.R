@@ -332,7 +332,7 @@ function(sgp_object,
 					tmp.inclusion <- NULL
 				}
 				if (length(tmp.inclusion) > 1) {
-					stop(paste("\tNOTE: Number of 'WEIGHT' variables in the '@Data_Supplementary' table", tmp.variable.names, "exceeds 1. Only 1 'WEIGHT' variable allowed."))
+					stop(paste("\tNOTE: Number of 'ENROLLMENT_STATUS' variables in the '@Data_Supplementary' table", tmp.variable.names, "exceeds 1. Only 1 'ENROLLMENT_STATUS' variable allowed."))
 				}
 
 				tmp.names[[i]] <- list(VARIABLE.NAME=tmp.variable.names, WEIGHTS=tmp.weights, ENROLLMENT_STATUS=tmp.inclusion)
