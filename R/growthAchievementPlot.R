@@ -589,8 +589,9 @@
 	dev.off()
 		} ### END Loop over output.format
 
-	message(paste("\tStarted", year, state.name.label, content_area, "growthAchievementPlot:",  started.date))
-	message(paste("\tFinished", year, state.name.label, content_area, "growthAchievementPlot:",  date(), "in", timetaken(started.at), "\n"))
+	if (baseline) tmp.baseline.message <- "Baseline Referenced" else tmp.baseline.message <- "Cohort Referenced"
+	message(paste("\tStarted", year, state.name.label, content_area, tmp.baseline.message, "growthAchievementPlot:",  started.date))
+	message(paste("\tFinished", year, state.name.label, content_area, tmp.baseline.message, "growthAchievementPlot:",  date(), "in", timetaken(started.at), "\n"))
 
 	
 	} ## End loop over starting scores or students

@@ -110,9 +110,9 @@ function(sgp_object,
 	} ### END get.sgPlot.iter
 
 
-	get.gaPlot.iter <- function(gaPlot.years, gaPlot.content_areas, gaPlot.students) {
+	get.gaPlot.iter <- function(gaPlot.years, gaPlot.content_areas, gaPlot.students, gaPlot.baseline) {
 
-		tmp.list <- tmp.gaPlot.list <- list()
+		tmp.list <- tmp.gaPlot.list <- tmp.df.list <- list()
 
 		# Years 
 
@@ -141,12 +141,20 @@ function(sgp_object,
 
 		tmp.df <- rbind.fill(tmp.list)
 
+		for (i in seq(length(gaPlot.baseline))) {
+			tmp.df$BASELINE <- gaPlot.baseline[i]
+			tmp.df.list[[i]] <- tmp.df
+		}
+
+		tmp.df <- rbind.fill(tmp.df.list)
+
 		if (!is.null(gaPlot.students)) {
-			 tmp.df <- expand.grid(tmp.df, ID=gaPlot.students)
+			 tmp.df <- merge(tmp.df, gaPlot.students)
+			 names(tmp.df)[dim(tmp.df)[2]] <- "ID"
 		}
 
 		for (i in seq(dim(tmp.df)[1])) {
-			tmp.gaPlot.list[[i]] <- list(YEAR=tmp.df[["YEAR"]][i], CONTENT_AREA=tmp.df[["CONTENT_AREA"]][i], ID=tmp.df[["ID"]][i])
+			tmp.gaPlot.list[[i]] <- list(YEAR=tmp.df[["YEAR"]][i], CONTENT_AREA=tmp.df[["CONTENT_AREA"]][i], ID=tmp.df[["ID"]][i], BASELINE=tmp.df[["BASELINE"]][i])
 		}
 		return(tmp.gaPlot.list)
 
@@ -206,7 +214,7 @@ function(sgp_object,
 			gaPlot.baseline <- FALSE ## Default to FALSE if not set by user
 			if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort Referenced") gaPlot.baseline <- FALSE
 			if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Baseline Referenced") gaPlot.baseline <- TRUE
-			if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort and Baseline Referenced") gaPlot.baseline <- FALSE
+			if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort and Baseline Referenced") gaPlot.baseline <- c(TRUE, FALSE)
 		}
 
 		par.start <- startParallel(parallel.config, 'GA_PLOTS')
@@ -215,7 +223,7 @@ function(sgp_object,
 		
 		if (par.start$par.type=="FOREACH") {
 
-			foreach(gaPlot.iter=iter(get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students)), .packages="SGP", .inorder=FALSE,
+			foreach(gaPlot.iter=iter(get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students, gaPlot.baseline)), .packages="SGP", .inorder=FALSE,
 				.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
 					growthAchievementPlot(
 						gaPlot.sgp_object=gaPlot.sgp_object,
@@ -225,7 +233,7 @@ function(sgp_object,
 						content_area=gaPlot.iter[["CONTENT_AREA"]],
 						year=gaPlot.iter[["YEAR"]], 
 						format=gaPlot.format,
-						baseline=gaPlot.baseline,
+						baseline=gaPlot.iter[["BASELINE"]],
 						output.format=c("PDF", "PNG"),
 						output.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))
 
