@@ -242,7 +242,7 @@ function(sgp_object,
 		
 		if (par.start$par.type=="SNOW") {
 			
-			gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students)
+			gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students, gaPlot.baseline)
 			clusterApplyLB(par.start$internal.cl, gaPlot.list, function(gaPlot.iter) 
 				growthAchievementPlot(
 						gaPlot.sgp_object=gaPlot.sgp_object,
@@ -252,13 +252,13 @@ function(sgp_object,
 						content_area=gaPlot.iter[["CONTENT_AREA"]],
 						year=gaPlot.iter[["YEAR"]], 
 						format=gaPlot.format,
-						baseline=gaPlot.baseline,
+						baseline=gaPlot.iter[["BASELINE"]],
 						output.format=c("PDF", "PNG"),
 						output.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]])))
 		}
 		
 		if (par.start$par.type=="MULTICORE") {
-			gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students)
+			gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students, gaPlot.baseline)
 			mclapply(gaPlot.list, function(gaPlot.iter) {
 						growthAchievementPlot(
 						gaPlot.sgp_object=gaPlot.sgp_object,
@@ -268,7 +268,7 @@ function(sgp_object,
 						content_area=gaPlot.iter[["CONTENT_AREA"]],
 						year=gaPlot.iter[["YEAR"]], 
 						format=gaPlot.format,
-						baseline=gaPlot.baseline,
+						baseline=gaPlot.iter[["BASELINE"]],
 						output.format=c("PDF", "PNG"),
 						output.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))}, 
 				mc.cores=par.start$workers, mc.preschedule=FALSE)
