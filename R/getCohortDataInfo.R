@@ -3,7 +3,7 @@ function(sgp.data,
 	par.sgp.config) {
 
 	for (sgp.iter in seq(length(par.sgp.config))) {
-		par.sgp.config[[sgp.iter]][['panel_data_dimension']] <- dim(getPanelData(sgp.data, "sgp.percentiles", par.sgp.config[sgp.iter]))
+		par.sgp.config[[sgp.iter]][['panel_data_dimension']] <- dim(getPanelData(sgp.data, "sgp.percentiles", par.sgp.config[[sgp.iter]]))
 	}
 	return(par.sgp.config)
 } ### END getCohortDataInfo
