@@ -250,7 +250,7 @@ function(sgp_object,
 	### Produce cohort data information
 
 	if (get.cohort.data.info) {
-		cohort_data_infor <- getCohortDataInfo(tmp_sgp_data_for_analysis, par.sgp.config)
+		cohort_data_info <- getCohortDataInfo(tmp_sgp_data_for_analysis, par.sgp.config)
 		save(cohort_data_info, file="cohort_data_info.Rdata")
 	}
 
