@@ -277,10 +277,10 @@ function(panel.data,         ## REQUIRED
 			for (g in seq_along(tmp.gp.iter)) {
 				if ("YEAR" %in% names(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
 					CSEM_Data <- subset(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], 
-						GRADE==tmp.gp.iter[g] & CONTENT_AREA== tmp.ca.iter[g] & YEAR==tmp.yr.iter[g])
+						GRADE==tmp.gp.iter[g] & CONTENT_AREA == tmp.ca.iter[g] & YEAR == tmp.yr.iter[g])
 				} else {
 					CSEM_Data <- subset(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], 
-						GRADE==tmp.gp.iter[g] & CONTENT_AREA== tmp.ca.iter[g])
+						GRADE==tmp.gp.iter[g] & CONTENT_AREA == tmp.ca.iter[g])
 				}
 				if (dim(CSEM_Data)[1] == 0) stop(paste('CSEM data for', tmp.ca.iter[g], 'Grade', tmp.gp.iter[g],
 					'is required to use SIMEX functionality, but is not available in SGPstateData.  Please contact package administrators to add CSEM data.'))
@@ -296,7 +296,7 @@ function(panel.data,         ## REQUIRED
 
 			# naive model
 
-			fitted[[paste("order_",k,sep="")]]<-matrix(0,nrow=length(lambda),ncol=dim(data)[1]*length(taus))
+			fitted[[paste("order_", k, sep="")]] <-matrix(0, nrow=length(lambda), ncol=dim(data)[1]*length(taus))
 			tmp.matrix <- getsplineMatrix(
 				Coefficient_Matrices[[tmp.path.coefficient.matrices]], 
 				tail(content.area.progression, k+1), 
@@ -305,7 +305,7 @@ function(panel.data,         ## REQUIRED
 				tail(year.progression.lags, k),
 				my.matrix.order=k)
 			
-			fitted[[paste("order_",k,sep="")]][1,] <- as.vector(.get.percentile.predictions(data, tmp.matrix))
+			fitted[[paste("order_", k, sep="")]][1,] <- as.vector(.get.percentile.predictions(data, tmp.matrix))
 			
 			# perturbe data
 			
@@ -325,18 +325,18 @@ function(panel.data,         ## REQUIRED
 					bs <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.1), digits=3)))] # Boundaries
 					lh <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.0), digits=3)))] # LOSS/HOSS
 			
-					eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['knots_", tmp.gp.iter[g], 
-						"']] <- c(ks[,V1], ks[,V2], ks[,V3], ks[,V4])", sep="")))
-					eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['boundaries_", tmp.gp.iter[g], 
-						"']] <- c(bs[,V1], bs[,V2])", sep="")))
-					eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['loss.hoss_", tmp.gp.iter[g], 
-						"']] <- c(lh[,V1], lh[,V2])", sep="")))
+					eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, 
+						"']][['knots_", tmp.gp.iter[g], "']] <- c(ks[,V1], ks[,V2], ks[,V3], ks[,V4])", sep="")))
+					eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, 
+						"']][['boundaries_", tmp.gp.iter[g], "']] <- c(bs[,V1], bs[,V2])", sep="")))
+					eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, 
+						"']][['loss.hoss_", tmp.gp.iter[g], "']] <- c(lh[,V1], lh[,V2])", sep="")))
 		
 					setnames(big.data,tmp.num.variables-g,paste("prior_",g,sep=""))
 				}
 
 				if (is.null(parallel.config)) { # Sequential
-					fitted.b <- big.data[,eval(rqfit(tmp.gp.iter[1:k], lam=L)), by='b']
+					fitted.b <- big.data[, eval(rqfit(tmp.gp.iter[1:k], lam=L)), by='b']
 					fitted.b[, ID := rep(data$ID, time = (B*length(taus)))]
 					fitted.b[,tau := rep(taus, each=dim(data)[1], time=B)]
 				} else {	# Parallel over 1:B
@@ -363,16 +363,16 @@ function(panel.data,         ## REQUIRED
 
 				# Make new variable 'PREDICTED_VALUES' to compare with 'V1' and to preserve 'tau'
 				fitted.b[, PREDICTED_VALUES := .smooth.isotonize.row(V1), by=list(ID, b)] #  Could just use V1 := ... in final implimentation to keep from adding a column here
-				fitted[[paste("order_",k,sep="")]][which(lambda==L),] <- fitted.b[, mean(PREDICTED_VALUES), by=list(ID, tau)][['V1']] 
+				fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted.b[, mean(PREDICTED_VALUES), by=list(ID, tau)][['V1']] 
 			
 			} ### END for (L in lambda[-1])
 
-			switch(extrapolation, QUADRATIC = fit <- lm(fitted[[paste("order_",k,sep="")]] ~ lambda + I(lambda^2)), LINEAR = fit <- lm(fitted[[paste("order_",k,sep="")]]~ lambda))
-			extrap[[paste("order_",k,sep="")]]<-as.data.table(matrix(predict(fit,newdata=data.frame(lambda=-1)), nrow=dim(data)[1]))
-			tmp.quantiles.simex[[k]] <- data.table(ID=data[["ID"]], SIMEX_ORDER=k, SGP_SIMEX=.get.quantiles(extrap[[paste("order_",k,sep="")]], data[[tmp.num.variables]]))
+			switch(extrapolation, QUADRATIC = fit <- lm(fitted[[paste("order_", k, sep="")]] ~ lambda + I(lambda^2)), LINEAR = fit <- lm(fitted[[paste("order_", k, sep="")]]~ lambda))
+			extrap[[paste("order_", k, sep="")]]<-as.data.table(matrix(predict(fit, newdata=data.frame(lambda=-1)), nrow=dim(data)[1]))
+			tmp.quantiles.simex[[k]] <- data.table(ID=data[["ID"]], SIMEX_ORDER=k, SGP_SIMEX=.get.quantiles(extrap[[paste("order_", k, sep="")]], data[[tmp.num.variables]]))
 		} ### END for (k in coefficient.matrix.priors)
 
-		quantile.data.simex <- data.table(rbindlist(tmp.quantiles.simex),key=c("ID", "SIMEX_ORDER"))
+		quantile.data.simex <- data.table(rbindlist(tmp.quantiles.simex), key=c("ID", "SIMEX_ORDER"))
 		setkey(quantile.data.simex, ID) # first key on ID and SIMEX_ORDER, then re-key on ID only to insure sorted order.  Don't rely on rbindlist/k ordering...
 		
 		if (print.other.gp) {
