@@ -75,6 +75,15 @@ function(sgp_object,
 		message(paste("\tNOTE: Achievement Level cutscores for state, ", state, ", are not in embedded SGPstateData. Projections and Lagged Projections will not be calculated"))
 		sgp.projections <- sgp.projections.lagged <- sgp.projections.baseline <- sgp.projections.lagged.baseline <- FALSE
 	}
+	
+	if (all(c("PERCENTILES", "TAUS") %in% names(parallel.config[['WORKERS']]))) stop("Both TAUS and PERCENTILES can not be executed in Parallel at the same time.")
+	if (all(c("PERCENTILES", "SIMEX") %in% names(parallel.config[['WORKERS']]))) stop("Both SIMEX and PERCENTILES can not be executed in Parallel at the same time.")
+	
+	if (any(c("SIMEX", "TAUS") %in% names(parallel.config[['WORKERS']]))) {
+		lower.level.parallel.config <- parallel.config
+		parallel.config <- NULL
+	} else lower.level.parallel.config <- NULL
+
 
 	### 
 	### Utility functions
@@ -869,6 +878,7 @@ function(sgp_object,
 					goodness.of.fit=state,
 					verbose.output=verbose.output,
 					print.other.gp=print.other.gp,
+					parallel.config=lower.level.parallel.config,
 					calculate.simex=calculate.simex,
 					...)
 			}
