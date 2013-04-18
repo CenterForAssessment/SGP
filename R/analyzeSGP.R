@@ -13,19 +13,19 @@ function(sgp_object,
          sgp.percentiles.baseline.max.order=3,
          sgp.projections.baseline.max.order=3,
          sgp.projections.lagged.baseline.max.order=3,
-	 sgp.minimum.default.panel.years=3,
+         sgp.minimum.default.panel.years=3,
          sgp.use.my.coefficient.matrices=NULL,
          simulate.sgps=TRUE,
-	 calculate.simex=NULL,
+         calculate.simex=NULL,
          goodness.of.fit.print=TRUE,
          sgp.config=NULL,
          sgp.config.drop.nonsequential.grade.progression.variables=TRUE,
          sgp.baseline.panel.years=NULL,
          sgp.baseline.config=NULL, 
          parallel.config=NULL,
-	 verbose.output=FALSE,
-	 print.other.gp=FALSE,
-	 get.cohort.data.info=FALSE,
+         verbose.output=FALSE,
+         print.other.gp=FALSE,
+         get.cohort.data.info=FALSE,
          ...) {
 
 	started.at <- proc.time()
@@ -234,8 +234,8 @@ function(sgp_object,
 	### Create par.sgp.config (for both parallel and sequential implementations)
 
 	setkeyv(sgp_object@Data, getKey(sgp_object))
-	par.sgp.config <- getSGPConfig(sgp_object, tmp_sgp_object, content_areas, years, grades, sgp.config, sgp.percentiles.baseline, sgp.projections.baseline, sgp.projections.lagged.baseline,
-		sgp.config.drop.nonsequential.grade.progression.variables, sgp.minimum.default.panel.years)
+	par.sgp.config <- getSGPConfig(sgp_object, tmp_sgp_object, content_areas, years, grades, sgp.config, sgp.percentiles.baseline, sgp.projections.baseline, 
+		sgp.projections.lagged.baseline, sgp.config.drop.nonsequential.grade.progression.variables, sgp.minimum.default.panel.years)
 
 	if (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline) {
 		if (any(sapply(par.sgp.config, function(x) identical(x[['base.gp']], "NO_BASELINE_COEFFICIENT_MATRICES")))) {
