@@ -53,14 +53,14 @@
 	}
 
 	if (!missing(state) & missing(gaPlot.percentile_trajectories)) {
-		gaPlot.percentile_trajectories <- round(sort(c(10, 50, 90, SGPstateData[[state]][["Growth"]][["Cutscores"]][["Cuts"]]))/5) * 5
+		gaPlot.percentile_trajectories <- round(sort(unique(c(10, 50, 90, SGPstateData[[state]][["Growth"]][["Cutscores"]][["Cuts"]]))/5)) * 5
 	} 
 	if (missing(state) & missing(gaPlot.percentile_trajectories)) {
 		gaPlot.percentile_trajectories <- c(10, 35, 50, 65, 90)
 	}
 
 	tmp.smooth.grades <- seq(gaPlot.grade_range[1], gaPlot.grade_range[2], by=0.01)
-	tmp.unique.grades <- intersect(sort(as.numeric(unique(gaPlot.sgp_object@Data["VALID_CASE"][["GRADE"]]))), gaPlot.grade_range[1]:gaPlot.grade_range[2])
+	tmp.unique.grades <- sort(intersect(unique(gaPlot.sgp_object@Data["VALID_CASE"][["GRADE"]]), gaPlot.grade_range[1]:gaPlot.grade_range[2]))
 	if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])) {
 		if (!identical(tmp.unique.grades, as.integer(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]]))) {
 			message(paste("\tNOTE: Unique grades in supplied data do not match grades indicated for", state.name.label, "in SGPstateData.")) 
