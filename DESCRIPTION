@@ -24,7 +24,7 @@ Description: Functions to calculate student growth percentiles and percentile gr
         with each student's achievement history.  Percentile growth projections/trajectories are calculated using the coefficient matrices derived from 
 	the quantile regression analyses and specify what percentile growth is required for students to reach future achievement targets.
 SystemRequirements: (PDF)LaTeX (http://www.latex-project.org/) with 'pdfpages' package for studentGrowthPlot option in visualizeSGP to bind together student growth plots into school catalogs.
-URL: https://github.com/SchoolView/SGP, http://schoolview.github.com/SGP/, http://cran.r-project.org/web/packages/SGP/
+URL: https://github.com/SchoolView/SGP, http://schoolview.github.io/SGP/, http://cran.r-project.org/web/packages/SGP/
 LazyData: Yes
 LazyDataCompression: xz
 License: CC BY-SA 3.0 US + file LICENSE
