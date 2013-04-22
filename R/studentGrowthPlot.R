@@ -25,6 +25,12 @@ growth.level.cutscores.text <- SGPstateData[[Report_Parameters$State]][["Growth"
 grades.reported.in.state <- SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Grades_Reported"]][[Report_Parameters$Content_Area]]
 test.abbreviation <- SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Abbreviation"]]
 
+if (SGPstateData[[Report_Parameters$State]][['Assessment_Program_Information']][['Test_Season']]=="Fall") {
+	test.season <- SGPstateData[[Report_Parameters$State]][['Assessment_Program_Information']][['Test_Season']]
+} else {
+	test.season <- NULL
+}
+
 achievement.level.region.colors <- paste("grey", round(seq(62, 91, length=number.achievement.level.regions)), sep="")
 border.color <- "grey25"
 if (is.null(SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["arrow.legend.color"]])) {
@@ -145,16 +151,29 @@ interpolate.grades <- function(grades, data.year.span) {
 	} 
 } 
 
-year.function <- function(year, add.sub, vec.length, output.type="numeric") {
-	if (length(grep("_", year) > 0)) {
-                tmp <- as.numeric(unlist(strsplit(as.character(year), "_")))+add.sub
-		if (output.type=="numeric") {
-			return(seq(from=tmp[2], length=vec.length))
+year.function <- function(year, add.sub, vec.length, output.type="numeric", season=NULL) {
+	if (is.null(season)) {
+		if (length(grep("_", year) > 0)) {
+       	         tmp <- as.numeric(unlist(strsplit(as.character(year), "_")))+add.sub
+			if (output.type=="numeric") {
+				return(seq(from=tmp[2], length=vec.length))
+			} else {
+				return(paste(seq(from=tmp[1], length=vec.length), "-", seq(from=tmp[2], length=vec.length), sep=""))
+			}
 		} else {
-			return(paste(seq(from=tmp[1], length=vec.length), "-", seq(from=tmp[2], length=vec.length), sep=""))
+			return(seq(from=as.numeric(year)+add.sub, length=vec.length))
 		}
 	} else {
-		return(seq(from=as.numeric(year)+add.sub, length=vec.length))
+		if (length(grep("_", year) > 0)) {
+       	         tmp <- as.numeric(unlist(strsplit(as.character(year), "_")))+add.sub
+			if (output.type=="numeric") {
+				return(seq(from=tmp[2], length=vec.length))
+			} else {
+				return(paste(season, seq(from=tmp[2], length=vec.length)))
+			}
+		} else {
+			return(paste(season, seq(from=as.numeric(year)+add.sub, length=vec.length)))
+		}
 	}
 }
 
@@ -164,7 +183,7 @@ grade.values <- interpolate.grades(Grades, studentGrowthPlot.year.span)
 if (grade.values$year_span > 0) {
 	low.year <- year.function(Report_Parameters$Current_Year, (1-grade.values$year_span), 1)
 	high.year <- year.function(Report_Parameters$Current_Year, studentGrowthPlot.year.span-grade.values$year_span, 1)
-	year.text <- c(year.function(Report_Parameters$Current_Year, (1-grade.values$year_span), grade.values$year_span+grade.values$increment_for_projection, "character"), 
+	year.text <- c(year.function(Report_Parameters$Current_Year, (1-grade.values$year_span), grade.values$year_span+grade.values$increment_for_projection, "character", test.season), 
 		rep(" ", studentGrowthPlot.year.span))
 	year.text <- head(year.text, studentGrowthPlot.year.span)
 
