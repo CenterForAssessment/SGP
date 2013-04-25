@@ -481,7 +481,7 @@ function(sgp_object,
 
 		## Tidy up outputSGP.student.groups
 
-		for (i in outputSGP.student.groups) {
+		for (i in intersect(outputSGP.student.groups, names(outputSGP.data))) {
 			setkeyv(outputSGP.data, "STATE_ASSIGNED_ID")
 			if (any(is.na(outputSGP.data[[i]]))) {
 				tmp.i.variable <- outputSGP.data[!is.na(get(i))][,unique(get(i)), by=STATE_ASSIGNED_ID]
