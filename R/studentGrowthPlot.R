@@ -169,7 +169,7 @@ year.function <- function(year, add.sub, vec.length, output.type="numeric", seas
 			if (output.type=="numeric") {
 				return(seq(from=tmp[2], length=vec.length))
 			} else {
-				return(paste(season, seq(from=tmp[2], length=vec.length)))
+				return(paste(season, seq(from=tmp[1], length=vec.length)))
 			}
 		} else {
 			return(paste(season, seq(from=as.numeric(year)+add.sub, length=vec.length)))
