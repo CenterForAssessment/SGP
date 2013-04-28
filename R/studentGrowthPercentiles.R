@@ -277,10 +277,10 @@ function(panel.data,         ## REQUIRED
 			for (g in seq_along(tmp.gp.iter)) {
 				if ("YEAR" %in% names(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
 					CSEM_Data <- subset(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], 
-						GRADE==tmp.gp.iter[g] & CONTENT_AREA == tmp.ca.iter[g] & YEAR == tmp.yr.iter[g])
+						GRADE==tmp.gp.iter[g] & CONTENT_AREA== tmp.ca.iter[g] & YEAR==tmp.yr.iter[g])
 				} else {
 					CSEM_Data <- subset(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], 
-						GRADE==tmp.gp.iter[g] & CONTENT_AREA == tmp.ca.iter[g])
+						GRADE==tmp.gp.iter[g] & CONTENT_AREA== tmp.ca.iter[g])
 				}
 				if (dim(CSEM_Data)[1] == 0) stop(paste('CSEM data for', tmp.ca.iter[g], 'Grade', tmp.gp.iter[g],
 					'is required to use SIMEX functionality, but is not available in SGPstateData.  Please contact package administrators to add CSEM data.'))
@@ -290,7 +290,8 @@ function(panel.data,         ## REQUIRED
 
 			if (!is.null(variable)){
 				for (g in seq_along(tmp.gp.iter)) {
-					csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")] <- variable[[paste("CSEM.grade", tmp.gp.iter[g], ".", tmp.ca.iter[g], sep="")]]
+					csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")] <- 
+						variable[[paste("CSEM.grade", tmp.gp.iter[g], ".", tmp.ca.iter[g], sep="")]]
 				}
 			}
 
@@ -315,9 +316,10 @@ function(panel.data,         ## REQUIRED
 				big.data[, b := rep(1:B, each=dim(data)[1])]
 				setnames(big.data,tmp.num.variables,"final.yr")
 				for (g in seq_along(tmp.gp.iter)) {
-					big.data[, paste("icsem", tmp.gp.iter[g], sep="") := rep(csem.int[, paste("icsem", tmp.gp.iter[g], sep="")], time=B)]
-					big.data[, tmp.num.variables-g := eval(parse(text=paste("big.data[[", tmp.num.variables-g,
-						"]] + sqrt(big.data[['Lambda']]) * big.data[['icsem", tmp.gp.iter[g], "']] * rnorm(dim(big.data)[1])", sep="")))]
+					big.data[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="") := 
+						rep(csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")], time=B)]
+					big.data[, tmp.num.variables-g := eval(parse(text=paste("big.data[[", tmp.num.variables-g, "]]+sqrt(big.data[['Lambda']])*big.data[['icsem",
+						tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], "']] * rnorm(dim(big.data)[1])", sep="")))]
 					col.index <- tmp.num.variables-g
 					big.data[big.data[[col.index]] < loss.hoss[1,g], col.index := loss.hoss[1,g], with=F]
 					big.data[big.data[[col.index]] > loss.hoss[2,g], col.index := loss.hoss[2,g], with=F] 
@@ -325,12 +327,12 @@ function(panel.data,         ## REQUIRED
 					bs <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.1), digits=3)))] # Boundaries
 					lh <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.0), digits=3)))] # LOSS/HOSS
 			
-					eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, 
-						"']][['knots_", tmp.gp.iter[g], "']] <- c(ks[,V1], ks[,V2], ks[,V3], ks[,V4])", sep="")))
-					eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, 
-						"']][['boundaries_", tmp.gp.iter[g], "']] <- c(bs[,V1], bs[,V2])", sep="")))
-					eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, 
-						"']][['loss.hoss_", tmp.gp.iter[g], "']] <- c(lh[,V1], lh[,V2])", sep="")))
+					eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['knots_", tmp.gp.iter[g], 
+						"']] <- c(ks[,V1], ks[,V2], ks[,V3], ks[,V4])", sep="")))
+					eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['boundaries_", tmp.gp.iter[g], 
+						"']] <- c(bs[,V1], bs[,V2])", sep="")))
+					eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['loss.hoss_", tmp.gp.iter[g], 
+						"']] <- c(lh[,V1], lh[,V2])", sep="")))
 		
 					setnames(big.data,tmp.num.variables-g,paste("prior_",g,sep=""))
 				}
@@ -368,7 +370,7 @@ function(panel.data,         ## REQUIRED
 			} ### END for (L in lambda[-1])
 
 			switch(extrapolation, QUADRATIC = fit <- lm(fitted[[paste("order_", k, sep="")]] ~ lambda + I(lambda^2)), LINEAR = fit <- lm(fitted[[paste("order_", k, sep="")]]~ lambda))
-			extrap[[paste("order_", k, sep="")]]<-as.data.table(matrix(predict(fit, newdata=data.frame(lambda=-1)), nrow=dim(data)[1]))
+			extrap[[paste("order_", k, sep="")]]<-as.data.table(matrix(predict(fit,newdata=data.frame(lambda=-1)), nrow=dim(data)[1]))
 			tmp.quantiles.simex[[k]] <- data.table(ID=data[["ID"]], SIMEX_ORDER=k, SGP_SIMEX=.get.quantiles(extrap[[paste("order_", k, sep="")]], data[[tmp.num.variables]]))
 		} ### END for (k in coefficient.matrix.priors)
 
