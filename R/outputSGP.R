@@ -23,7 +23,7 @@ function(sgp_object,
 	### Define varaibles (to prevent R CMD check warnings)
 
 	SCALE_SCORE <- CONTENT_AREA <- YEAR <- GRADE <- ID <- ETHNICITY <- GENDER <- LAST_NAME <- FIRST_NAME <- VALID_CASE <- DISTRICT_NUMBER <- SCHOOL_NUMBER <- YEAR_BY_CONTENT_AREA <- NULL
-	names.type <- names.provided <- names.output <- names.sgp <- STATE_ENROLLMENT_STATUS <- EMH_LEVEL <- NULL
+	names.type <- names.provided <- names.output <- names.sgp <- STATE_ENROLLMENT_STATUS <- EMH_LEVEL <- STATE_ASSIGNED_ID <- NULL
 
 	### Create state (if missing) from sgp_object (if possible)
 
@@ -477,7 +477,19 @@ function(sgp_object,
 			setnames(outputSGP.data, grep(paste(getTargetName(target.years=outputSGP.projection.years.for.target), rev(tmp.years.short)[i], sep="."), names(outputSGP.data)), 
 				paste("GROWTH_TARGET", tmp.order[i], sep="_"))
 		}
-	
+
+
+		## Tidy up outputSGP.student.groups
+
+		for (i in intersect(outputSGP.student.groups, names(outputSGP.data))) {
+			setkeyv(outputSGP.data, "STATE_ASSIGNED_ID")
+			if (any(is.na(outputSGP.data[[i]]))) {
+				tmp.i.variable <- outputSGP.data[!is.na(get(i))][,unique(get(i)), by=STATE_ASSIGNED_ID]
+				outputSGP.data[tmp.i.variable[["STATE_ASSIGNED_ID"]], i:=tmp.i.variable[["V1"]], with=FALSE]
+			}
+		}
+
+
 		## NULLify variable to be removed
 
 		for (i in head(tmp.years.short, -1)) {

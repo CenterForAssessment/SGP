@@ -207,7 +207,7 @@ function(
 		}
 
 
-		for (target.type.iter in target.type) {
+		for (target.type.iter in sort(target.type[c(sgp.projections.lagged, sgp.projections.lagged.baseline)])) {
 			for (target.level.iter in target.level) {
 				tmp.data <- getTargetSGP(sgp_object, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward)
 
