@@ -27,7 +27,9 @@ import(data.table)
 import(grid)
 importFrom(Cairo,Cairo)
 importFrom(colorspace,rainbow_hcl,diverge_hcl)
-importFrom(doParallel,registerDoParallel)
+if (R.version[["major"]]==3 | (R.version[["major"]]==2 & R.version[["minor"]]>=14)) {
+	importFrom(doParallel,registerDoParallel)
+}
 importFrom(foreach,'%dopar%',foreach,registerDoSEQ)
 importFrom(gridBase,gridFIG)
 importFrom(iterators,iter)
