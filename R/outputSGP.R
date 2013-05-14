@@ -613,7 +613,7 @@ function(sgp_object,
 
 	} ## End if SchoolView %in% output.type
 
-	setkey(sgp_object@Data, getKey(sgp_object))
+	setkeyv(sgp_object@Data, getKey(sgp_object))
 	message(paste("Finished outputSGP", date(), "in", timetaken(started.at.outputSGP), "\n"))
 
 } ## END outputSGP
