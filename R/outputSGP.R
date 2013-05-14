@@ -582,7 +582,23 @@ function(sgp_object,
 			"CUT_1_YEAR_2", "CUT_99_YEAR_2", "CUT_35_YEAR_2", "CUT_65_YEAR_2", "CUT_20_YEAR_2", "CUT_40_YEAR_2", "CUT_60_YEAR_2", "CUT_80_YEAR_2",
 			"CUT_1_YEAR_3", "CUT_99_YEAR_3", "CUT_35_YEAR_3", "CUT_65_YEAR_3", "CUT_20_YEAR_3", "CUT_40_YEAR_3", "CUT_60_YEAR_3", "CUT_80_YEAR_3")
 
-		write.table(outputSGP.data[,tmp.variable.names, with=FALSE], file=file.path(outputSGP.directory, "SchoolView", "STUDENT_GROWTH.dat"), row.names=FALSE, na="", quote=FALSE, sep="|")
+		STUDENT_GROWTH <- outputSGP.data[,tmp.variable.names, with=FALSE]
+
+
+		## Check for NAs in select variables STUDENT_GROWTH
+
+		variables.to.check <- c("EMH_LEVEL", unique(outputSGP.student.groups)) %w/o% c("GIFTED_CODE", "HLS_CODE")
+
+		for (i in variables.to.check) {
+			if (any(is.na(STUDENT_GROWTH[[i]]))) {
+				stop(paste("\tNAs are present in variable:", i, "of the 'STUDENT_GROWTH' table. Table must be free of NAs for proper loading"))
+			}
+		}
+
+
+		## Output results
+
+		write.table(STUDENT_GROWTH, file=file.path(outputSGP.directory, "SchoolView", "STUDENT_GROWTH.dat"), row.names=FALSE, na="", quote=FALSE, sep="|")
 			tmp.working.directory <- getwd()
 			setwd(file.path(outputSGP.directory, "SchoolView"))
 			if ("STUDENT_GROWTH.dat.zip" %in% list.files()) file.remove("STUDENT_GROWTH.dat.zip")
@@ -591,15 +607,14 @@ function(sgp_object,
 			)
 			setwd(tmp.working.directory)
 
-		STUDENT_GROWTH <- outputSGP.data[,tmp.variable.names, with=FALSE]
 		save(STUDENT_GROWTH, file=file.path(outputSGP.directory, "SchoolView", "STUDENT_GROWTH.Rdata"))
 
 		message(paste("\tFinished SchoolView STUDENT_GROWTH data production in outputSGP", date(), "in", timetaken(started.at), "\n"))
 
 	} ## End if SchoolView %in% output.type
 
-		setkey(sgp_object@Data, VALID_CASE, CONTENT_AREA, YEAR, ID)
-		message(paste("Finished outputSGP", date(), "in", timetaken(started.at.outputSGP), "\n"))
+	setkey(sgp_object@Data, getKey(sgp_object))
+	message(paste("Finished outputSGP", date(), "in", timetaken(started.at.outputSGP), "\n"))
 
 } ## END outputSGP
 
