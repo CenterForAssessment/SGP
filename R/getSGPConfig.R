@@ -98,6 +98,9 @@ function(sgp_object,
 					if (!sgp.config.drop.nonsequential.grade.progression.variables)  index <- seq_along(index) 
 					par.sgp.config[[cnt]][['sgp.panel.years']] <- tail(par.sgp.config[[cnt]][['sgp.panel.years']], max(index))[index]
 					par.sgp.config[[cnt]][['sgp.content.areas']] <- tail(par.sgp.config[[cnt]][['sgp.content.areas']], max(index))[index]
+					if ('sgp.panel.years.within' %in% names(sgp.config[[a]]) {
+						par.sgp.config[[cnt]][['sgp.panel.years.within']] <- tail(par.sgp.config[[cnt]][['sgp.panel.years.within']], max(index))[index]
+					} 
 				}
 
 				### Additional arguments associated with baseline analyses
