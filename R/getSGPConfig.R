@@ -41,12 +41,22 @@ function(sgp_object,
 		.sgp.grade.sequences <- lapply(.sgp.grade.sequences, as.character)
 		.sgp.projection.grade.sequences <- lapply(tmp.sgp.projection.grade.sequences, function(x) if (length(x) > 1) x[(tail(x,1)-x) <= length(.sgp.panel.years)-1] else x)
 		.sgp.projection.grade.sequences <- lapply(.sgp.projection.grade.sequences, as.character)
+		if ("YEAR_WITHIN" %in% names(sgp_object@Data)) {
+			.sgp.panel.years.within <- rep("LAST_OBSERVATION", length(.sgp.content.areas))
+			return(list(
+				sgp.content.areas=.sgp.content.areas,
+				sgp.panel.years=.sgp.panel.years,
+				sgp.grade.sequences=.sgp.grade.sequences,
+				sgp.projection.grade.sequences=.sgp.projection.grade.sequences,
+				sgp.panel.years.within=.sgp.panel.years.within))
+		} else {
+			return(list(
+				sgp.content.areas=.sgp.content.areas,
+				sgp.panel.years=.sgp.panel.years,
+				sgp.grade.sequences=.sgp.grade.sequences,
+				sgp.projection.grade.sequences=.sgp.projection.grade.sequences))
+		}
 
-		list(
-			sgp.content.areas=.sgp.content.areas, 
-			sgp.panel.years=.sgp.panel.years, 
-			sgp.grade.sequences=.sgp.grade.sequences, 
-			sgp.projection.grade.sequences=.sgp.projection.grade.sequences)
 
 	} ### END get.config 
 	
@@ -88,6 +98,9 @@ function(sgp_object,
 					if (!sgp.config.drop.nonsequential.grade.progression.variables)  index <- seq_along(index) 
 					par.sgp.config[[cnt]][['sgp.panel.years']] <- tail(par.sgp.config[[cnt]][['sgp.panel.years']], max(index))[index]
 					par.sgp.config[[cnt]][['sgp.content.areas']] <- tail(par.sgp.config[[cnt]][['sgp.content.areas']], max(index))[index]
+					if ('sgp.panel.years.within' %in% names(sgp.config[[a]])) {
+						par.sgp.config[[cnt]][['sgp.panel.years.within']] <- tail(par.sgp.config[[cnt]][['sgp.panel.years.within']], max(index))[index]
+					} 
 				}
 
 				### Additional arguments associated with baseline analyses
