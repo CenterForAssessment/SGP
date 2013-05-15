@@ -41,12 +41,22 @@ function(sgp_object,
 		.sgp.grade.sequences <- lapply(.sgp.grade.sequences, as.character)
 		.sgp.projection.grade.sequences <- lapply(tmp.sgp.projection.grade.sequences, function(x) if (length(x) > 1) x[(tail(x,1)-x) <= length(.sgp.panel.years)-1] else x)
 		.sgp.projection.grade.sequences <- lapply(.sgp.projection.grade.sequences, as.character)
+		if ("YEAR_WITHIN" %in% names(sgp_object@Data)) {
+			.sgp.panel.years.within <- rep("LAST_OBSERVATION", length(.sgp.content.areas))
+			return(list(
+				sgp.content.areas=.sgp.content.areas,
+				sgp.panel.years=.sgp.panel.years,
+				sgp.grade.sequences=.sgp.grade.sequences,
+				sgp.projection.grade.sequences=.sgp.projection.grade.sequences,
+				sgp.panel.years.within=.sgp.panel.years.within))
+		} else {
+			return(list(
+				sgp.content.areas=.sgp.content.areas,
+				sgp.panel.years=.sgp.panel.years,
+				sgp.grade.sequences=.sgp.grade.sequences,
+				sgp.projection.grade.sequences=.sgp.projection.grade.sequences))
+		}
 
-		list(
-			sgp.content.areas=.sgp.content.areas, 
-			sgp.panel.years=.sgp.panel.years, 
-			sgp.grade.sequences=.sgp.grade.sequences, 
-			sgp.projection.grade.sequences=.sgp.projection.grade.sequences)
 
 	} ### END get.config 
 	
