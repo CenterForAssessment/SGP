@@ -23,7 +23,7 @@
 	ID <- YEAR_INTEGER_TMP <- SCALE_SCORE <- SGP <- GRADE <- NULL ## To prevent R CMD check warnings
 	INSTRUCTOR_NUMBER <- INSTRUCTOR_NAME <- INSTRUCTOR_ENROLLMENT_STATUS <- NULL
 	SGP_TARGET <- VALID_CASE <- ENROLLMENT_STATUS <- NULL
-	SCALE_SCORE_PRIOR <- SGP_PRIOR <- SGP_TARGET_PRIOR <- ACHIEVEMENT_LEVEL_PRIOR <- CONTENT_AREA_PRIOR <- NULL
+	SCALE_SCORE_PRIOR <- SGP_PRIOR <- SGP_TARGET_PRIOR <- ACHIEVEMENT_LEVEL_PRIOR <- CONTENT_AREA_PRIOR <- SGP_NORM_GROUP <- NULL
 
 	### Define relevant quantities
 
@@ -1866,8 +1866,9 @@ if (22 %in% bPlot.styles) {
 				if (!"SGP_TARGET_PRIOR" %in% names(slot.data)) {
 					slot.data[,SGP_TARGET_PRIOR:=slot.data[SJ(ID, CONTENT_AREA, YEAR_INTEGER_TMP-1), mult="last"][["SGP_TARGET"]]]
 				}
-				if (!"CONTENT_AREA_PRIOR" %in% names(slot.data)) {
-					slot.data[,CONTENT_AREA_PRIOR:=slot.data[SJ(ID, CONTENT_AREA, YEAR_INTEGER_TMP-1), mult="last"][["CONTENT_AREA"]]]
+				if (!"CONTENT_AREA_PRIOR" %in% names(slot.data) & "SGP_NORM_GROUP" %in% names(slot.data)) {
+					slot.data[,CONTENT_AREA_PRIOR:=SGP_NORM_GROUP]
+					levels(slot.data$CONTENT_AREA_PRIOR) <- sapply(strsplit(sapply(strsplit(sapply(strsplit(levels(slot.data$CONTENT_AREA_PRIOR), ";"), function(x) rev(x)[2]), "/"), function(x) rev(x)[1]), "_"), function(x) paste(head(x, -1), collapse=" "))
 				}
 				slot.data[,YEAR_INTEGER_TMP:=NULL]
 			}
@@ -2228,7 +2229,7 @@ if (22 %in% bPlot.styles) {
 				tmp.bPlot.data.1.long[['INSTRUCTOR_NUMBER']] <- factor(paste("Grade_", tmp.bPlot.data.1.long[['GRADE']], sep=""))
 				tmp.bPlot.data.1.long[['INSTRUCTOR_NAME']] <- factor('Psuedo-Instructor')
 				tmp.bPlot.data.1.long[['SCHOOL_NUMBER']] <- factor('-99')
-				tmp.bPlot.data.1.long[['SCHOOL_NAME']] <- factor('Psuedo School')
+				tmp.bPlot.data.1.long[['SCHOOL_NAME']] <- factor('Pseudo School')
 				tmp.bPlot.data.1.long[['DISTRICT_NUMBER']] <- factor('-999')
 				tmp.bPlot.data.1.long[['DISTRICT_NAME']] <- factor('Psuedo District')
 			} else {
@@ -2280,10 +2281,10 @@ if (22 %in% bPlot.styles) {
 
 			if (bPlot.full.academic.year) {
 				instructor.content_area.grade.median <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__GRADE__INSTRUCTOR_ENROLLMENT_STATUS"]][
-					INSTRUCTOR_NUMBER==instructor.iter & CONTENT_AREA==content_area.iter & YEAR==year.iter & GRADE==grade.iter][["MEDIAN_SGP"]]
+					SCHOOL_NUMBER==school.iter & INSTRUCTOR_NUMBER==instructor.iter & CONTENT_AREA==content_area.iter & YEAR==year.iter & GRADE==grade.iter][["MEDIAN_SGP"]]
 			} else {
 				instructor.content_area.grade.median <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__GRADE"]][
-					INSTRUCTOR_NUMBER==instructor.iter & CONTENT_AREA==content_area.iter & YEAR==year.iter & GRADE==grade.iter][["MEDIAN_SGP"]]
+					SCHOOL_NUMBER==school.iter & INSTRUCTOR_NUMBER==instructor.iter & CONTENT_AREA==content_area.iter & YEAR==year.iter & GRADE==grade.iter][["MEDIAN_SGP"]]
 			}			
 			if (is.null(instructor.content_area.grade.median)) instructor.content_area.grade.median <- median(bPlot.data$SGP, na.rm=TRUE)
 			if (bPlot.demo) instructor.content_area.grade.median <- median(bPlot.data$SGP, na.rm=TRUE)
