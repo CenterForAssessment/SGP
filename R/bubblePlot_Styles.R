@@ -2249,6 +2249,11 @@ if (22 %in% bPlot.styles) {
 	
 			for (instructor.iter in sort(unique(tmp.bPlot.data$INSTRUCTOR_NUMBER))) { ### Loop over unique teachers in school
 			bPlot.data <- subset(tmp.bPlot.data, INSTRUCTOR_NUMBER==instructor.iter)
+			if ("INSTRUCTOR_LAST_NAME" %in% names(bPlot.data)) {
+				tmp.instructor.reference <- paste(bPlot.data$INSTRUCTOR_FIRST_NAME[1], bPlot.data$INSTRUCTOR_LAST_NAME[1])
+			} else {
+				tmp.instructor.reference <- instructor.iter
+			}
 	
 	
 			if (dim(bPlot.data)[1] > 1) { # had error when only 1 kid per teacher
@@ -2324,8 +2329,8 @@ if (22 %in% bPlot.styles) {
 				bubble_plot_labels.LEVELS=NULL, #levels(bubblePlot[["subset.factor"]]),
 				bubble_plot_labels.BUBBLE_TITLES=paste(bPlot.data$FIRST_NAME, bPlot.data$LAST_NAME),
 				bubble_plot_titles.MAIN=bPlot.labels$main.title,
-				bubble_plot_titles.SUB1=paste(bPlot.data$SCHOOL_NAME[1], "Student Performance"),
-				bubble_plot_titles.SUB2=paste(bPlot.labels$x.year.label, "Instructor", instructor.iter, capwords(content_area.iter)),
+				bubble_plot_titles.SUB1=paste(bPlot.labels$x.year.label, bPlot.data$SCHOOL_NAME[1], "Student", capwords(content_area.iter), "Performance"),
+				bubble_plot_titles.SUB2=paste("Instructor:", tmp.instructor.reference),
 				bubble_plot_titles.LEGEND1="",
 				bubble_plot_titles.LEGEND2_P1=NULL,
 				bubble_plot_titles.LEGEND2_P2=NULL,
