@@ -75,8 +75,8 @@
 			my.labels$y.year <- year.iter
 			if (bubblePlot_LEVEL=="Summary") my.labels$y.year.label <- paste(pretty_year(my.labels$y.year), "Percent at/above Proficient")
 			if (bubblePlot_LEVEL=="Individual") my.labels$y.year.label <- paste(pretty_year(my.labels$y.year), "Achievement Level")
-			if (bubblePlot_LEVEL=="Summary") my.labels$main.title <- paste(test.abbreviation.label, "Growth and Achievement")
-			if (bubblePlot_LEVEL=="Individual") my.labels$main.title <- paste(test.abbreviation.label, "Growth and Achievement")
+			if (bubblePlot_LEVEL=="Summary") my.labels$main.title <- paste(test.abbreviation.label, "Growth & Achievement")
+			if (bubblePlot_LEVEL=="Individual") my.labels$main.title <- paste(test.abbreviation.label, "Growth & Achievement")
 			if (bubblePlot_LEVEL=="Summary") my.labels$pdf.title <- "Bubble_Plot_(Current_Achievement)"
 			if (bubblePlot_LEVEL=="Individual") my.labels$pdf.title <- "Student_Bubble_Plot_(Current_Achievement)"
 		}
@@ -1864,7 +1864,7 @@ if (22 %in% bPlot.styles) {
 					slot.data[,SGP_PRIOR:=slot.data[SJ(ID, CONTENT_AREA, YEAR_INTEGER_TMP-1), mult="last"][["SGP"]]]
 				}
 				if (!"SGP_TARGET_PRIOR" %in% names(slot.data)) {
-					slot.data[,SGP_TARGET_PRIOR:=slot.data[SJ(ID, CONTENT_AREA, YEAR_INTEGER_TMP-1), mult="last"][["SGP_TARGET"]]]
+					slot.data[,SGP_TARGET_PRIOR:=slot.data[SJ(ID, CONTENT_AREA, YEAR_INTEGER_TMP-1), mult="last"][["SGP_TARGET_3_YEAR"]]]
 				}
 				if (!"CONTENT_AREA_PRIOR" %in% names(slot.data) & "SGP_NORM_GROUP" %in% names(slot.data)) {
 					slot.data[,CONTENT_AREA_PRIOR:=SGP_NORM_GROUP]
@@ -2309,7 +2309,7 @@ if (22 %in% bPlot.styles) {
 				bubble_plot_data.LEVELS=NULL, 
 
 				bubble_plot_data.BUBBLE_TIPS_LINES=list(bPlot.data[['SGP']], bPlot.data[['SCALE_SCORE']],
-					capwords(gsub("_", " ", bPlot.data[["CONTENT_AREA_PRIOR"]])),  # capwords not working with factors with "_" in them...
+					sapply(gsub("_", " ", as.character(bPlot.data[["CONTENT_AREA_PRIOR"]])), capwords),  # capwords not working with factors with "_" in them...
 					bPlot.data[['SGP_PRIOR']],
 					paste(bPlot.data[['SCALE_SCORE_PRIOR']], " (", bPlot.data[['ACHIEVEMENT_LEVEL_PRIOR']], ")", sep="")),
 				bubble_plot_labels.BUBBLE_TIPS_LINES=list(paste(bPlot.labels$x.year.label, "Student Growth Percentile"),
