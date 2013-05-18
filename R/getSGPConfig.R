@@ -88,7 +88,6 @@ function(sgp_object,
 
 				### Create index and identify years and content areas from sgp.panel.years
 
-				#  Coerce sgp.grade.sequence to character first to deal with mixed config cases (some numeric/integer, some character)
 				par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]] <- as.character(par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]])
 
 				if (is.numeric(type.convert(par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]]))) {
@@ -112,19 +111,26 @@ function(sgp_object,
 					if (paste(strsplit(names(sgp.config)[a], "\\.")[[1]][1], ".BASELINE", sep="") %in% names(tmp_sgp_object[["Coefficient_Matrices"]])) {
 						mtx.names <- names(tmp_sgp_object[["Coefficient_Matrices"]][[paste(strsplit(names(sgp.config)[a], "\\.")[[1]][1], ".BASELINE", sep="")]])
 						mtx.index <- which(sapply(mtx.names, function(x) strsplit(x, "_")[[1]][2]) == tail(par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]], 1))
-						if (length(mtx.index) != 0) { # Cases where content area has some BASELINE coef matrices, but not with the present grade prog
+						if (length(mtx.index) > 0) { # Cases where content area has some BASELINE coef matrices, but not with the present grade prog
 							tmp.max.order <- max(as.numeric(sapply(strsplit(mtx.names[mtx.index], "_"), function(x) x[3])))
 							if (length(par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]])-1 < tmp.max.order) {
 								tmp.max.order <- length(par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]])-1
 							}
-							tmp.matrices.tf <- length(getsplineMatrix(
+							tmp.orders <- getsplineMatrix(
 								my.matrices=tmp.matrices[mtx.index], 
 								my.matrix.content.area.progression=tail(par.sgp.config[[cnt]][['sgp.content.areas']], tmp.max.order+1), 
 								my.matrix.grade.progression=tail(par.sgp.config[[cnt]][['sgp.grade.sequences']][[1]], tmp.max.order+1), 
 								my.matrix.time.progression=rep("BASELINE", tmp.max.order+1),
 								my.matrix.time.progression.lags=diff(as.integer(sapply(strsplit(tail(par.sgp.config[[cnt]][['sgp.panel.years']], tmp.max.order+1), '_'), '[', 
 									split.location(par.sgp.config[[cnt]][['sgp.panel.years']])))),
-								what.to.return="ORDERS")) > 0 # Cases where content area has some BASELINE coef matrices, but not for this particular config (Time, Lag, etc off)
+								what.to.return="ORDERS")
+
+							if (length(tmp.orders) > 0) tmp.matrices.tf <- TRUE
+
+							if (par.sgp.config[[cnt]][['sgp.exact.grade.progression']] && !tmp.max.order %in% tmp.orders) {
+								tmp.matrices.tf <- FALSE
+							}
+
 						} else tmp.matrices.tf <- FALSE
 					} else tmp.matrices.tf <- FALSE
 
