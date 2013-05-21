@@ -5,6 +5,7 @@ function(sgp_object,
 	content_areas=NULL,
 	other.student.groups,
 	text.output=TRUE,
+	json.output=TRUE,
 	null.output.string=NULL,
 	projection.years.for.target=3,
 	output.directory=file.path("Data", "SchoolView")) {
@@ -44,9 +45,18 @@ function(sgp_object,
 			tmp.state <- gsub(" ", "_", state)
 		}
 
-		dir.create(output.directory, recursive=TRUE, showWarnings=FALSE)
-		if (file.exists(file.path(output.directory, paste(tmp.state, "_Data_SQLITE.sqlite", sep="")))) file.remove(file.path(output.directory, paste(tmp.state, "_Data_SQLITE.sqlite", sep="")))
-		db <- dbConnect(SQLite(), dbname=file.path(output.directory, paste(tmp.state, "_Data_SQLITE.sqlite", sep="")))
+		sqlite.output.directory <- file.path(output.directory, "SQLITE")
+		dir.create(sqlite.output.directory, recursive=TRUE, showWarnings=FALSE)
+		if (file.exists(file.path(sqlite.output.directory, paste(tmp.state, "_Data_SQLITE.sqlite", sep="")))) file.remove(file.path(output.directory, paste(tmp.state, "_Data_SQLITE.sqlite", sep="")))
+		db <- dbConnect(SQLite(), dbname=file.path(sqlite.output.directory, paste(tmp.state, "_Data_SQLITE.sqlite", sep="")))
+		if (text.output) {
+			text.output.directory <- file.path(output.directory, "TEXT")
+			dir.create(text.output.directory, recursive=TRUE, showWarnings=FALSE)
+		}
+		if (json.output) {
+			json.output.directory <- file.path(output.directory, "JSON")
+			dir.create(json.output.directory, recursive=TRUE, showWarnings=FALSE)
+		}
 
 
 	## Utility functions
@@ -151,7 +161,8 @@ function(sgp_object,
 		dbGetQuery(db, sqlite.create.table("DISTRICT", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA")))
 		dbWriteTable(db, "DISTRICT", tmp, row.names=FALSE, append=TRUE) 
 
-		if (text.output) write.table(tmp, file=file.path(output.directory, "DISTRICT.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
+		if (text.output) write.table(tmp, file=file.path(text.output.directory, "DISTRICT.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
+		if (json.output) cat(toJSON(tmp), file=file.path(json.output.directory, "DISTRICT.json"))
 
 
 	### Table 2. DISTRICT_GRADE
@@ -176,7 +187,8 @@ function(sgp_object,
 		dbGetQuery(db, sqlite.create.table("DISTRICT_GRADE", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "GRADE")))
 		dbWriteTable(db, "DISTRICT_GRADE", tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))], row.names=FALSE, append=TRUE) 
 
-		if (text.output) write.table(tmp, file=file.path(output.directory, "DISTRICT_GRADE.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
+		if (text.output) write.table(tmp, file=file.path(text.output.directory, "DISTRICT_GRADE.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
+		if (json.output) cat(toJSON(tmp), file=file.path(json.output.directory, "DISTRICT_GRADE.json"))
 
 
 	### Table 3. DISTRICT_ETHNICITY
@@ -204,7 +216,8 @@ function(sgp_object,
 		dbGetQuery(db, sqlite.create.table("DISTRICT_ETHNICITY", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "ETHNICITY")))
 		dbWriteTable(db, "DISTRICT_ETHNICITY", tmp, row.names=FALSE, append=TRUE) 
 
-		if (text.output) write.table(tmp, file=file.path(output.directory, "DISTRICT_ETHNICITY.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
+		if (text.output) write.table(tmp, file=file.path(text.output.directory, "DISTRICT_ETHNICITY.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
+		if (json.output) cat(toJSON(tmp), file=file.path(json.output.directory, "DISTRICT_ETHNICITY.json"))
 
 
 	### Table 4. DISTRICT_GRADE_ETHNICITY
@@ -231,7 +244,8 @@ function(sgp_object,
 		dbGetQuery(db, sqlite.create.table("DISTRICT_GRADE_ETHNICITY", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "GRADE", "ETHNICITY")))
 		dbWriteTable(db, "DISTRICT_GRADE_ETHNICITY", tmp, row.names=FALSE, append=TRUE) 
 
-		if (text.output) write.table(tmp, file=file.path(output.directory, "DISTRICT_GRADE_ETHNICITY.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
+		if (text.output) write.table(tmp, file=file.path(text.output.directory, "DISTRICT_GRADE_ETHNICITY.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
+		if (json.output) cat(toJSON(tmp), file=file.path(json.output.directory, "DISTRICT_GRADE_ETHNICITY.json"))
 
 
 	### Table 5. DISTRICT_STUDENTGROUP
@@ -269,7 +283,8 @@ function(sgp_object,
 		dbGetQuery(db, sqlite.create.table("DISTRICT_STUDENTGROUP", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "STUDENTGROUP")))
 		dbWriteTable(db, "DISTRICT_STUDENTGROUP", tmp, row.names=FALSE, append=TRUE) 
 
-		if (text.output) write.table(tmp, file=file.path(output.directory, "DISTRICT_STUDENTGROUP.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
+		if (text.output) write.table(tmp, file=file.path(text.output.directory, "DISTRICT_STUDENTGROUP.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
+		if (json.output) cat(toJSON(tmp), file=file.path(json.output.directory, "DISTRICT_STUDENTGROUP.json"))
 
 
 	### Table 6. DISTRICT_GRADE_STUDENTGROUP
@@ -305,7 +320,8 @@ function(sgp_object,
 		dbGetQuery(db, sqlite.create.table("DISTRICT_GRADE_STUDENTGROUP", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "GRADE", "STUDENTGROUP")))
 		dbWriteTable(db, "DISTRICT_GRADE_STUDENTGROUP", tmp, row.names=FALSE, append=TRUE) 
 
-		if (text.output) write.table(tmp, file=file.path(output.directory, "DISTRICT_GRADE_STUDENTGROUP.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
+		if (text.output) write.table(tmp, file=file.path(text.output.directory, "DISTRICT_GRADE_STUDENTGROUP.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
+		if (json.output) cat(toJSON(tmp), file=file.path(json.output.directory, "DISTRICT_GRADE_STUDENTGROUP.json"))
 
 
 	## Table 7. SCHOOL
@@ -333,7 +349,8 @@ function(sgp_object,
 		dbGetQuery(db, sqlite.create.table("SCHOOL", field.types, c("YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER", "EMH_LEVEL", "CONTENT_AREA")))
 		dbWriteTable(db, "SCHOOL", tmp, row.names=FALSE, append=TRUE) 
 
-		if (text.output) write.table(tmp, file=file.path(output.directory, "SCHOOL.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
+		if (text.output) write.table(tmp, file=file.path(text.output.directory, "SCHOOL.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
+		if (json.output) cat(toJSON(tmp), file=file.path(json.output.directory, "SCHOOL.json"))
 
 
 	## Table 8. SCHOOL_GRADE
@@ -362,7 +379,8 @@ function(sgp_object,
 		dbGetQuery(db, sqlite.create.table("SCHOOL_GRADE", field.types, c("YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER", "EMH_LEVEL", "GRADE", "CONTENT_AREA")))
 		dbWriteTable(db, "SCHOOL_GRADE", tmp, row.names=FALSE, append=TRUE) 
 
-		if (text.output) write.table(tmp, file=file.path(output.directory, "SCHOOL_GRADE.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
+		if (text.output) write.table(tmp, file=file.path(text.output.directory, "SCHOOL_GRADE.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
+		if (json.output) cat(toJSON(tmp), file=file.path(json.output.directory, "SCHOOL_GRADE.json"))
 
 
 	## Table 9. SCHOOL_ETHNICITY
@@ -393,7 +411,8 @@ function(sgp_object,
 		dbGetQuery(db, sqlite.create.table("SCHOOL_ETHNICITY", field.types, c("YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER", "EMH_LEVEL", "CONTENT_AREA", "ETHNICITY")))
 		dbWriteTable(db, "SCHOOL_ETHNICITY", tmp, row.names=FALSE, append=TRUE) 
 
-		if (text.output) write.table(tmp, file=file.path(output.directory, "SCHOOL_ETHNICITY.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
+		if (text.output) write.table(tmp, file=file.path(text.output.directory, "SCHOOL_ETHNICITY.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
+		if (json.output) cat(toJSON(tmp), file=file.path(json.output.directory, "SCHOOL_ETHNICITY.json"))
 
 
 	## Table 10. SCHOOL_STUDENTGROUP
@@ -434,7 +453,8 @@ function(sgp_object,
 			c("YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER", "EMH_LEVEL", "CONTENT_AREA", "STUDENTGROUP")))
 		dbWriteTable(db, "SCHOOL_STUDENTGROUP", tmp, row.names=FALSE, append=TRUE) 
 
-		if (text.output) write.table(tmp, file=file.path(output.directory, "SCHOOL_STUDENTGROUP.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
+		if (text.output) write.table(tmp, file=file.path(text.output.directory, "SCHOOL_STUDENTGROUP.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
+		if (json.output) cat(toJSON(tmp), file=file.path(json.output.directory, "SCHOOL_STUDENTGROUP.json"))
 
 
 	## Table 11. SCHOOL_TEACHER
@@ -475,7 +495,8 @@ function(sgp_object,
 		dbGetQuery(db, sqlite.create.table("SCHOOL_TEACHER", field.types, c("YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER", "TEACHER_USID", "EMH_LEVEL", "CONTENT_AREA")))
 		dbWriteTable(db, "SCHOOL_TEACHER", tmp, row.names=FALSE, append=TRUE) 
 
-		if (text.output) write.table(tmp, file=file.path(output.directory, "SCHOOL_TEACHER.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
+		if (text.output) write.table(tmp, file=file.path(text.output.directory, "SCHOOL_TEACHER.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
+		if (json.output) cat(toJSON(tmp), file=file.path(json.output.directory, "SCHOOL_TEACHER.json"))
 
 	} ### END SCHOOL_TEACHER table
 
@@ -558,7 +579,8 @@ function(sgp_object,
 		dbGetQuery(db, sqlite.create.table("KEY_VALUE_LOOKUP", field.types, "KEY_VALUE_ID"))
 		dbWriteTable(db, "KEY_VALUE_LOOKUP", tmp, row.names=FALSE, append=TRUE) 
 
-		if (text.output) write.table(tmp, file=file.path(output.directory, "KEY_VALUE_LOOKUP.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
+		if (text.output) write.table(tmp, file=file.path(text.output.directory, "KEY_VALUE_LOOKUP.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
+		if (json.output) cat(toJSON(tmp), file=file.path(json.output.directory, "KEY_VALUE_LOOKUP.json"))
 
 ###
 ### Disconnect database
