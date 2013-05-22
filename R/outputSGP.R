@@ -290,7 +290,8 @@ function(sgp_object,
 				tmp.df[['EMH_LEVEL']] <- substr(tmp.df$EMH_LEVEL, 1, 1)
 			}
 			if ("GENDER" %in% names(tmp.df) && is.factor(tmp.df$GENDER)) {
-				tmp.df[['GENDER']] <- substr(tmp.df$GENDER, 1, 1)
+				tmp.df[['GENDER']][grep("MALE", sgp_object@Data$GENDER, ignore.case=TRUE) %w/o% grep("FEMALE", sgp_object@Data$GENDER, ignore.case=TRUE)] <- "M"
+				tmp.df[['GENDER']][grep("FEMALE", sgp_object@Data$GENDER, ignore.case=TRUE)] <- "F"
 			}
 			for (names.iter in c(outputSGP.student.groups, "SCHOOL_ENROLLMENT_STATUS", "DISTRICT_ENROLLMENT_STATUS", "STATE_ENROLLMENT_STATUS") %w/o% grep("ETHNICITY", outputSGP.student.groups, value=TRUE)) {
 				if (names.iter %in% names(tmp.df) && is.factor(tmp.df[[names.iter]])) {
