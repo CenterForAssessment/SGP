@@ -592,7 +592,7 @@ function(sgp_object,
 
 		## Check for NAs in select variables STUDENT_GROWTH
 
-		variables.to.check <- c("EMH_LEVEL", unique(outputSGP.student.groups)) %w/o% c("GIFTED_CODE", "HLS_CODE", "LANGUAGE_PROFICIENCY")
+		variables.to.check <- c("EMH_LEVEL", unique(outputSGP.student.groups)) %w/o% c("GIFTED_CODE", "HLS_CODE", "LANGUAGE_PROFICIENCY", "HIGH_NEED_STATUS")
 
 		for (i in variables.to.check) {
 			if (any(is.na(STUDENT_GROWTH[[i]]))) {
