@@ -23,7 +23,7 @@ function(sgp_object,
 	### Define varaibles (to prevent R CMD check warnings)
 
 	SCALE_SCORE <- CONTENT_AREA <- YEAR <- GRADE <- ID <- ETHNICITY <- GENDER <- LAST_NAME <- FIRST_NAME <- VALID_CASE <- DISTRICT_NUMBER <- SCHOOL_NUMBER <- YEAR_BY_CONTENT_AREA <- NULL
-	names.type <- names.provided <- names.output <- names.sgp <- STATE_ENROLLMENT_STATUS <- EMH_LEVEL <- STATE_ASSIGNED_ID <- NULL
+	names.type <- names.provided <- names.output <- names.sgp <- STATE_ENROLLMENT_STATUS <- EMH_LEVEL <- STATE_ASSIGNED_ID <- .N <- NULL
 
 	### Create state (if missing) from sgp_object (if possible)
 
@@ -290,7 +290,13 @@ function(sgp_object,
 				tmp.df[['EMH_LEVEL']] <- substr(tmp.df$EMH_LEVEL, 1, 1)
 			}
 			if ("GENDER" %in% names(tmp.df) && is.factor(tmp.df$GENDER)) {
-				tmp.df[['GENDER']] <- substr(tmp.df$GENDER, 1, 1)
+				tmp.female <- grep("FEMALE", levels(sgp_object@Data$GENDER), ignore.case=TRUE)
+				if (tmp.female==1) {
+					levels(tmp.df$GENDER) <- c("F", "M")
+				} else {
+					levels(tmp.df$GENDER) <- c("M", "F")
+
+				}
 			}
 			for (names.iter in c(outputSGP.student.groups, "SCHOOL_ENROLLMENT_STATUS", "DISTRICT_ENROLLMENT_STATUS", "STATE_ENROLLMENT_STATUS") %w/o% grep("ETHNICITY", outputSGP.student.groups, value=TRUE)) {
 				if (names.iter %in% names(tmp.df) && is.factor(tmp.df[[names.iter]])) {
@@ -482,10 +488,9 @@ function(sgp_object,
 		## Tidy up outputSGP.student.groups
 
 		for (i in intersect(outputSGP.student.groups, names(outputSGP.data))) {
-			setkeyv(outputSGP.data, "STATE_ASSIGNED_ID")
 			if (any(is.na(outputSGP.data[[i]]))) {
-				tmp.i.variable <- outputSGP.data[!is.na(get(i))][,unique(get(i)), by=STATE_ASSIGNED_ID]
-				outputSGP.data[tmp.i.variable[["STATE_ASSIGNED_ID"]], i:=tmp.i.variable[["V1"]], with=FALSE]
+				setkeyv(outputSGP.data, c("STATE_ASSIGNED_ID", i))
+				outputSGP.data[[i]] <- outputSGP.data[,rep(rev(get(i))[1], .N), by=STATE_ASSIGNED_ID][['V1']]
 			}
 		}
 
@@ -587,7 +592,7 @@ function(sgp_object,
 
 		## Check for NAs in select variables STUDENT_GROWTH
 
-		variables.to.check <- c("EMH_LEVEL", unique(outputSGP.student.groups)) %w/o% c("GIFTED_CODE", "HLS_CODE", "LANGUAGE_PROFICIENCY")
+		variables.to.check <- c("EMH_LEVEL", unique(outputSGP.student.groups)) %w/o% c("GIFTED_CODE", "HLS_CODE", "LANGUAGE_PROFICIENCY", "HIGH_NEED_STATUS")
 
 		for (i in variables.to.check) {
 			if (any(is.na(STUDENT_GROWTH[[i]]))) {
