@@ -1854,8 +1854,8 @@ if (22 %in% bPlot.styles) {
 		### Create PRIOR Scale Score, SGP, SGP_TARGET and CONTENT_AREA
 
 		if (bPlot.prior.achievement) {
-			if (!all(c("SCALE_SCORE_PRIOR", "SGP_PRIOR", "SGP_TARGET_PRIOR", "CONTENT_AREA_PRIOR") %in% names(sgp_object@Data))) {
-				slot.data[, YEAR_INTEGER_TMP:=as.integer(as.factor(sgp_object@Data$YEAR))]
+			if (!all(c("SCALE_SCORE_PRIOR", "SGP_PRIOR", "SGP_TARGET_PRIOR", "CONTENT_AREA_PRIOR") %in% names(slot.data))) {
+				slot.data[, YEAR_INTEGER_TMP:=as.integer(as.factor(slot.data$YEAR))]
 				setkeyv(slot.data, c("ID", "CONTENT_AREA", "YEAR_INTEGER_TMP", "VALID_CASE")) ## CRITICAL that VALID_CASE is last in group
 				if (!"SCALE_SCORE_PRIOR" %in% names(slot.data)) {
 					slot.data[,SCALE_SCORE_PRIOR:=slot.data[SJ(ID, CONTENT_AREA, YEAR_INTEGER_TMP-1), mult="last"][["SCALE_SCORE"]]]
