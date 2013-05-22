@@ -47,7 +47,7 @@ function(sgp_object,
 
 		sqlite.output.directory <- file.path(output.directory, "SQLITE")
 		dir.create(sqlite.output.directory, recursive=TRUE, showWarnings=FALSE)
-		if (file.exists(file.path(sqlite.output.directory, paste(tmp.state, "_Data_SQLITE.sqlite", sep="")))) file.remove(file.path(output.directory, paste(tmp.state, "_Data_SQLITE.sqlite", sep="")))
+		if (file.exists(file.path(sqlite.output.directory, paste(tmp.state, "_Data_SQLITE.sqlite", sep="")))) file.remove(file.path(sqlite.output.directory, paste(tmp.state, "_Data_SQLITE.sqlite", sep="")))
 		db <- dbConnect(SQLite(), dbname=file.path(sqlite.output.directory, paste(tmp.state, "_Data_SQLITE.sqlite", sep="")))
 		if (text.output) {
 			text.output.directory <- file.path(output.directory, "TEXT")
