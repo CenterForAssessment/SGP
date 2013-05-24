@@ -13,19 +13,19 @@ function(sgp_object,
          sgp.percentiles.baseline.max.order=3,
          sgp.projections.baseline.max.order=3,
          sgp.projections.lagged.baseline.max.order=3,
-	 sgp.minimum.default.panel.years=3,
+         sgp.minimum.default.panel.years=3,
          sgp.use.my.coefficient.matrices=NULL,
          simulate.sgps=TRUE,
-	 calculate.simex=NULL,
+         calculate.simex=NULL,
          goodness.of.fit.print=TRUE,
          sgp.config=NULL,
          sgp.config.drop.nonsequential.grade.progression.variables=TRUE,
          sgp.baseline.panel.years=NULL,
          sgp.baseline.config=NULL, 
          parallel.config=NULL,
-	 verbose.output=FALSE,
-	 print.other.gp=FALSE,
-	 get.cohort.data.info=FALSE,
+         verbose.output=FALSE,
+         print.other.gp=FALSE,
+         get.cohort.data.info=FALSE,
          ...) {
 
 	started.at <- proc.time()
@@ -75,6 +75,15 @@ function(sgp_object,
 		message(paste("\tNOTE: Achievement Level cutscores for state, ", state, ", are not in embedded SGPstateData. Projections and Lagged Projections will not be calculated"))
 		sgp.projections <- sgp.projections.lagged <- sgp.projections.baseline <- sgp.projections.lagged.baseline <- FALSE
 	}
+	
+	if (all(c("PERCENTILES", "TAUS") %in% names(parallel.config[['WORKERS']]))) stop("Both TAUS and PERCENTILES can not be executed in Parallel at the same time.")
+	if (all(c("PERCENTILES", "SIMEX") %in% names(parallel.config[['WORKERS']]))) stop("Both SIMEX and PERCENTILES can not be executed in Parallel at the same time.")
+	
+	if (any(c("SIMEX", "TAUS") %in% names(parallel.config[['WORKERS']]))) {
+		lower.level.parallel.config <- parallel.config
+		parallel.config <- NULL
+	} else lower.level.parallel.config <- NULL
+
 
 	### 
 	### Utility functions
@@ -234,8 +243,8 @@ function(sgp_object,
 	### Create par.sgp.config (for both parallel and sequential implementations)
 
 	setkeyv(sgp_object@Data, getKey(sgp_object))
-	par.sgp.config <- getSGPConfig(sgp_object, tmp_sgp_object, content_areas, years, grades, sgp.config, sgp.percentiles.baseline, sgp.projections.baseline, sgp.projections.lagged.baseline,
-		sgp.config.drop.nonsequential.grade.progression.variables, sgp.minimum.default.panel.years)
+	par.sgp.config <- getSGPConfig(sgp_object, tmp_sgp_object, content_areas, years, grades, sgp.config, sgp.percentiles.baseline, sgp.projections.baseline, 
+		sgp.projections.lagged.baseline, sgp.config.drop.nonsequential.grade.progression.variables, sgp.minimum.default.panel.years)
 
 	if (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline) {
 		if (any(sapply(par.sgp.config, function(x) identical(x[['base.gp']], "NO_BASELINE_COEFFICIENT_MATRICES")))) {
@@ -870,6 +879,7 @@ function(sgp_object,
 					goodness.of.fit=state,
 					verbose.output=verbose.output,
 					print.other.gp=print.other.gp,
+					parallel.config=lower.level.parallel.config,
 					calculate.simex=calculate.simex,
 					...)
 			}
