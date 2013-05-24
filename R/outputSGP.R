@@ -603,16 +603,16 @@ function(sgp_object,
 
 		## Output results
 
-		write.table(STUDENT_GROWTH, file=file.path(outputSGP.directory, "SchoolView", "STUDENT_GROWTH.dat"), row.names=FALSE, na="", quote=FALSE, sep="|")
+		write.table(STUDENT_GROWTH, file=file.path(outputSGP.directory, "SchoolView", "TEXT", "STUDENT_GROWTH.dat"), row.names=FALSE, na="", quote=FALSE, sep="|")
 			tmp.working.directory <- getwd()
-			setwd(file.path(outputSGP.directory, "SchoolView"))
+			setwd(file.path(outputSGP.directory, "SchoolView", "TEXT"))
 			if ("STUDENT_GROWTH.dat.zip" %in% list.files()) file.remove("STUDENT_GROWTH.dat.zip")
 			suppressMessages(
 				zip("STUDENT_GROWTH.dat.zip", "STUDENT_GROWTH.dat")
 			)
 			setwd(tmp.working.directory)
 
-		save(STUDENT_GROWTH, file=file.path(outputSGP.directory, "SchoolView", "STUDENT_GROWTH.Rdata"))
+		save(STUDENT_GROWTH, file=file.path(outputSGP.directory, "SchoolView", "RDATA", "STUDENT_GROWTH.Rdata"))
 
 		message(paste("\tFinished SchoolView STUDENT_GROWTH data production in outputSGP", date(), "in", timetaken(started.at), "\n"))
 
