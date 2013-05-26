@@ -1,5 +1,8 @@
-SGP: An R Package for the calculation of student growth percentiles and percentile growth trajectories/projections
-==================================================================================================================
+SGP 
+===
+
+An R Package for the calculation of student growth percentiles and percentile growth trajectories/projections
+-------------------------------------------------------------------------------------------------------------
 
 
 The **SGP** Package (SGP, 2013) is an open source package built for the open source **R** software environment (R Development Core Team, 2013). The classes, functions and data within the **SGP** package are used to calculate student growth percentiles and percentile growth projections/trajectories using large scale, longitudinal assessment data. The methodology uses quantile regression to estimate the conditional density associated associated with each student's achievement history. Percentile growth projections/trajectories are calculated using the coefficient matrices derived from the quantile regression analyses and specify the percentile growth required for students to reach future achievement targets.
