@@ -26,7 +26,7 @@ Install latest development release from Github
 ```R 
 install.packages("devtools")
 require(devtools)
-install_github("SGP", "SchoolView", args="--byte-compile")
+install_github("SGP", "SchoolView")
 require(SGP)
 ```
 
