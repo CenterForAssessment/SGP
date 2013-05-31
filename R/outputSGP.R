@@ -612,6 +612,7 @@ function(sgp_object,
 			)
 			setwd(tmp.working.directory)
 
+		dir.create(file.path(outputSGP.directory, "SchoolView", "RDATA"), recursive=TRUE, showWarnings=FALSE)
 		save(STUDENT_GROWTH, file=file.path(outputSGP.directory, "SchoolView", "RDATA", "STUDENT_GROWTH.Rdata"))
 
 		message(paste("\tFinished SchoolView STUDENT_GROWTH data production in outputSGP", date(), "in", timetaken(started.at), "\n"))
