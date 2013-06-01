@@ -1134,7 +1134,7 @@ function(panel.data,         ## REQUIRED
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, "SGP", "SGP_BASELINE")
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & tf.growth.levels) setnames(quantile.data, "SGP_LEVEL", "SGP_LEVEL_BASELINE")
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & "SGP_STANDARD_ERROR" %in% names(quantile.data)) setnames(quantile.data, "SGP_STANDARD_ERROR", "SGP_BASELINE_STANDARD_ERROR")
-		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & return.norm.group.scale.scores) setnames(quantile.data, "SGP_NORM_GROUP_SCALE_SCALES", "SGP_NORM_GROUP_BASELINE_SCALE_SCORES")
+		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & return.norm.group.scale.scores) setnames(quantile.data, "SGP_NORM_GROUP_SCALE_SCORES", "SGP_NORM_GROUP_BASELINE_SCALE_SCORES")
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & print.other.gp) {
 			my.tmp.names <- grep("SGP_ORDER", names(quantile.data), value=TRUE)
 			setnames(quantile.data, my.tmp.names, gsub("SGP_ORDER", "SGP_BASELINE_ORDER", my.tmp.names))
