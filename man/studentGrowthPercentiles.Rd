@@ -43,6 +43,7 @@ studentGrowthPercentiles(panel.data,
                          return.prior.scale.score=TRUE,
                          return.prior.scale.score.standardized=TRUE,
                          return.norm.group.identifier=TRUE,
+			 return.norm.group.scale.scores=FALSE,
                          print.time.taken=TRUE,
                          parallel.config=NULL,
 			 calculate.simex=NULL,
@@ -154,13 +155,16 @@ to calculate the lags/differences based upon the supplied years.
    Goodness of fit results are grid.grobs stored in \code{panel.data$Goodness_of_Fit} \cr   
    \code{$my.subject.my.year} where \code{my.subject} and \code{my.year} are provided by \code{sgp.labels}.
   }
-  \item{return.prior.scale.score}{Boolean argument (default to TRUE) indicating whether to include the prior scale score in the SGP data output. Useful for examining relationship between prior 
+  \item{return.prior.scale.score}{Boolean argument (defaults to TRUE) indicating whether to include the prior scale score in the SGP data output. Useful for examining relationship between prior 
    achievement and student growth.
   }
   \item{return.prior.scale.score.standardized}{Boolean argument (default to TRUE) indicating whether to include the standardized prior scale score in the SGP data output. 
 Useful for examining relationship between prior achievement and student growth.
   }
   \item{return.norm.group.identifier}{Boolean argument (default to TRUE) indicating whether to include the content areas and years that form students' specific norm group in the SGP data output.
+  }
+  \item{return.norm.group.scale.scores}{Boolean argument (defaults. to FALSE) indicating whether to return a comma separated character vector of the scores associated with the SGP_NORM_GROUP to
+  which the student belongs.
   }
   \item{print.time.taken}{Boolean argument (defaults to TRUE) indicating whether to print message indicating information on studentGrowthPercentile analysis and time taken.
   }
