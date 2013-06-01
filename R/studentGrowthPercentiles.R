@@ -33,7 +33,7 @@ function(panel.data,         ## REQUIRED
          return.prior.scale.score=TRUE,
          return.prior.scale.score.standardized=TRUE,
          return.norm.group.identifier=TRUE,
-	 return.norm.group.scale.scores=FALSE,
+	 return.norm.group.scale.scores=NULL,
          print.time.taken=TRUE,
          parallel.config=NULL,
          calculate.simex=NULL,
@@ -974,7 +974,7 @@ function(panel.data,         ## REQUIRED
 				}
 				if ((is.character(goodness.of.fit) | goodness.of.fit==TRUE | return.prior.scale.score) & j==1) prior.ss <- tmp.data[[dim(tmp.data)[2]-1]]
 				if (exact.grade.progression.sequence & return.prior.scale.score) prior.ss <- tmp.data[[dim(tmp.data)[2]-1]]
-				if (return.norm.group.scale.scores) tmp.quantiles[[j]][, SGP_NORM_GROUP_SCALE_SCORES:=do.call(paste, c(tmp.data[,-1,with=FALSE], list(sep=",")))]
+				if (!is.null(return.norm.group.scale.scores)) tmp.quantiles[[j]][, SGP_NORM_GROUP_SCALE_SCORES:=do.call(paste, c(tmp.data[,-1,with=FALSE], list(sep=",")))]
 			} ### END if (dim(tmp.data)[1] > 0)
 		} ## END j loop
 
@@ -1134,7 +1134,7 @@ function(panel.data,         ## REQUIRED
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, "SGP", "SGP_BASELINE")
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & tf.growth.levels) setnames(quantile.data, "SGP_LEVEL", "SGP_LEVEL_BASELINE")
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & "SGP_STANDARD_ERROR" %in% names(quantile.data)) setnames(quantile.data, "SGP_STANDARD_ERROR", "SGP_BASELINE_STANDARD_ERROR")
-		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & return.norm.group.scale.scores) setnames(quantile.data, "SGP_NORM_GROUP_SCALE_SCORES", "SGP_NORM_GROUP_BASELINE_SCALE_SCORES")
+		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & !is.null(return.norm.group.scale.scores)) setnames(quantile.data, "SGP_NORM_GROUP_SCALE_SCORES", "SGP_NORM_GROUP_BASELINE_SCALE_SCORES")
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & print.other.gp) {
 			my.tmp.names <- grep("SGP_ORDER", names(quantile.data), value=TRUE)
 			setnames(quantile.data, my.tmp.names, gsub("SGP_ORDER", "SGP_BASELINE_ORDER", my.tmp.names))
