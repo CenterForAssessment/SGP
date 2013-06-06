@@ -59,9 +59,9 @@ function(
 		}
 		if (SGPstateData[[state]][["Growth"]][["System_Type"]]=="Cohort and Baseline Referenced") {
 			target.type <- c("sgp.projections.lagged", "sgp.projections.lagged.baseline")
-			my.sgp <- "SGP"
-			my.sgp.target <- paste("SGP_TARGET", max.sgp.target.years.forward, "YEAR", sep="_")
-			my.sgp.target.move.up.stay.up <- paste("SGP_TARGET_MOVE_UP_STAY_UP", max.sgp.target.years.forward, "YEAR", sep="_")
+			my.sgp <- "SGP_BASELINE"
+			my.sgp.target <- paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, "YEAR", sep="_")
+			my.sgp.target.move.up.stay.up <- paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", max.sgp.target.years.forward, "YEAR", sep="_")
 		}
 	}
 
