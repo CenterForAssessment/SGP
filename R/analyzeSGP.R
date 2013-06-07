@@ -71,6 +71,13 @@ function(sgp_object,
 		sgp.loss.hoss.adjustment <- NULL
 	}
 
+
+	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["return.norm.group.scale.scores"]])) {
+		return.norm.group.scale.scores <- SGPstateData[[state]][["SGP_Configuration"]][["return.norm.group.scale.scores"]]
+	} else {
+		return.norm.group.scale.scores <- NULL
+	}
+
 	if ((sgp.projections | sgp.projections.lagged | sgp.projections.baseline | sgp.projections.lagged.baseline) & is.null(SGPstateData[[state]][["Achievement"]][["Cutscores"]])) {
 		message(paste("\tNOTE: Achievement Level cutscores for state, ", state, ", are not in embedded SGPstateData. Projections and Lagged Projections will not be calculated"))
 		sgp.projections <- sgp.projections.lagged <- sgp.projections.baseline <- sgp.projections.lagged.baseline <- FALSE
@@ -301,6 +308,7 @@ function(sgp_object,
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
+						return.norm.group.scale.scores=return.norm.group.scale.scores,
 						goodness.of.fit=state,
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
@@ -330,6 +338,7 @@ function(sgp_object,
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
+						return.norm.group.scale.scores=return.norm.group.scale.scores,
 						goodness.of.fit=state,
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
@@ -363,6 +372,7 @@ function(sgp_object,
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
+						return.norm.group.scale.scores=return.norm.group.scale.scores,
 						goodness.of.fit=state,
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
@@ -412,6 +422,7 @@ function(sgp_object,
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
+						return.norm.group.scale.scores=return.norm.group.scale.scores,
 						goodness.of.fit=state,
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
@@ -441,6 +452,7 @@ function(sgp_object,
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
+						return.norm.group.scale.scores=return.norm.group.scale.scores,
 						goodness.of.fit=state,
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
@@ -474,6 +486,7 @@ function(sgp_object,
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
+						return.norm.group.scale.scores=return.norm.group.scale.scores,
 						goodness.of.fit=state,
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
@@ -876,6 +889,7 @@ function(sgp_object,
 					drop.nonsequential.grade.progression.variables=FALSE,
 					exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 					sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
+					return.norm.group.scale.scores=return.norm.group.scale.scores,
 					goodness.of.fit=state,
 					verbose.output=verbose.output,
 					print.other.gp=print.other.gp,
@@ -914,6 +928,7 @@ function(sgp_object,
 					drop.nonsequential.grade.progression.variables=FALSE,
 					exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 					sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
+					return.norm.group.scale.scores=return.norm.group.scale.scores,
 					goodness.of.fit=state,
 					verbose.output=verbose.output,
 					print.other.gp=print.other.gp,

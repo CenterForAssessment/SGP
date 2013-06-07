@@ -33,6 +33,7 @@ function(panel.data,         ## REQUIRED
          return.prior.scale.score=TRUE,
          return.prior.scale.score.standardized=TRUE,
          return.norm.group.identifier=TRUE,
+	 return.norm.group.scale.scores=NULL,
          print.time.taken=TRUE,
          parallel.config=NULL,
          calculate.simex=NULL,
@@ -650,7 +651,7 @@ function(panel.data,         ## REQUIRED
 
 	tmp.objects <- c("Coefficient_Matrices", "Cutscores", "Goodness_of_Fit", "Knots_Boundaries", "Panel_Data", "SGPercentiles", "SGProjections", "Simulated_SGPs") 
 	Coefficient_Matrices <- Cutscores <- Goodness_of_Fit <- Knots_Boundaries <- Panel_Data <- SGPercentiles <- SGProjections <- Simulated_SGPs <- SGP_STANDARD_ERROR <- Verbose_Messages <- NULL
-	SGP_SIMEX <- NULL
+	SGP_SIMEX <- SGP_NORM_GROUP_SCALE_SCORES <- NULL
 
 	if (identical(class(panel.data), "list")) {
 		for (i in tmp.objects) {
@@ -973,6 +974,7 @@ function(panel.data,         ## REQUIRED
 				}
 				if ((is.character(goodness.of.fit) | goodness.of.fit==TRUE | return.prior.scale.score) & j==1) prior.ss <- tmp.data[[dim(tmp.data)[2]-1]]
 				if (exact.grade.progression.sequence & return.prior.scale.score) prior.ss <- tmp.data[[dim(tmp.data)[2]-1]]
+				if (!is.null(return.norm.group.scale.scores)) tmp.quantiles[[j]][, SGP_NORM_GROUP_SCALE_SCORES:=do.call(paste, c(tmp.data[,-1,with=FALSE], list(sep="; ")))]
 			} ### END if (dim(tmp.data)[1] > 0)
 		} ## END j loop
 
@@ -1041,7 +1043,7 @@ function(panel.data,         ## REQUIRED
 
 		if (print.sgp.order | return.norm.group.identifier) {
 			if (exact.grade.progression.sequence) {
-				norm.groups <- paste(paste(year.progression.for.norm.group, paste(content.area.progression, grade.progression, sep="_"), sep="/"), collapse="; ")
+				norm.groups <- paste(tail(paste(year.progression.for.norm.group, paste(content.area.progression, grade.progression, sep="_"), sep="/"), num.prior+1), collapse="; ")
 			} else {
 				norm.groups <- sapply(seq_along(year.progression.for.norm.group)[-1][1:(num.panels-1)], 
 				function(x) paste(tail(paste(year.progression.for.norm.group, paste(content.area.progression, grade.progression, sep="_"), sep="/"), x), collapse="; "))
@@ -1132,6 +1134,7 @@ function(panel.data,         ## REQUIRED
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, "SGP", "SGP_BASELINE")
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & tf.growth.levels) setnames(quantile.data, "SGP_LEVEL", "SGP_LEVEL_BASELINE")
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & "SGP_STANDARD_ERROR" %in% names(quantile.data)) setnames(quantile.data, "SGP_STANDARD_ERROR", "SGP_BASELINE_STANDARD_ERROR")
+		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & !is.null(return.norm.group.scale.scores)) setnames(quantile.data, "SGP_NORM_GROUP_SCALE_SCORES", "SGP_NORM_GROUP_BASELINE_SCALE_SCORES")
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & print.other.gp) {
 			my.tmp.names <- grep("SGP_ORDER", names(quantile.data), value=TRUE)
 			setnames(quantile.data, my.tmp.names, gsub("SGP_ORDER", "SGP_BASELINE_ORDER", my.tmp.names))
