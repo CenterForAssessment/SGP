@@ -256,7 +256,7 @@
 		format.colors.background <- rgb(0.48, 0.48, 0.52)
 		format.colors.region <- c("#4D98C1", "#6BAED6", "#9ECAE1", "#C6DBEF", "#DEEBF7")[seq(number.achievement.level.regions)]
 		format.colors.font <- rgb(0.985, 0.985, 1.0)
-		format.colors.growth.trajectories <- "magenta"
+		format.colors.growth.trajectories <- "khaki1"
 	}
 
 	xscale.range <- c(gaPlot.grade_range[1]-0.5, gaPlot.grade_range[2]+0.5)
