@@ -40,10 +40,10 @@ function(my.config,
 			my.config[[i]][['baseline.panel.years']] <- my.config[[i]][['baseline.panel.years']][!is.na(my.config[[i]][['baseline.panel.years']])]
 			my.config[[i]][['baseline.grade.sequences']] <- my.config[[i]][['baseline.grade.sequences']][!is.na(my.config[[i]][['baseline.grade.sequences']])]
 			my.config[[i]][['baseline.panel.years']] <- as.character(my.config[[i]][['baseline.panel.years']])
-			my.config[[i]][['baseline.grade.sequences']] <- as.character(my.config[[i]][['baseline.grade.sequences']])
+			my.config[[i]][['baseline.grade.sequences']][[1]] <- as.character(my.config[[i]][['baseline.grade.sequences']][[1]])
 
-			if (length(my.config[[i]][['baseline.content.areas']]) != length(my.config[[i]][['baseline.grade.sequences']])) {
-				tmp.min <- min(length(my.config[[i]][['baseline.content.areas']]), length(my.config[[i]][['baseline.grade.sequences']]))
+			if (length(my.config[[i]][['baseline.content.areas']]) != length(my.config[[i]][['baseline.grade.sequences']][[1]])) {
+				tmp.min <- min(length(my.config[[i]][['baseline.content.areas']]), length(my.config[[i]][['baseline.grade.sequences']][[1]]))
 				my.config[[i]][['baseline.content.areas']] <- tail( my.config[[i]][['baseline.content.areas']], tmp.min)
 				my.config[[i]][['baseline.grade.sequences']] <- tail( my.config[[i]][['baseline.grade.sequences']], tmp.min)
 			}
