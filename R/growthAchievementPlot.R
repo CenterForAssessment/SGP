@@ -251,10 +251,12 @@
 		format.colors.background <- rgb(0.985, 0.985, 1.0)
 		format.colors.region <- paste("grey", round(seq(62, 91, length=number.achievement.level.regions)), sep="")
 		format.colors.font <- "grey20"
+		format.colors.growth.trajectories <- "black"
 	} else {
 		format.colors.background <- rgb(0.48, 0.48, 0.52)
 		format.colors.region <- c("#4D98C1", "#6BAED6", "#9ECAE1", "#C6DBEF", "#DEEBF7")[seq(number.achievement.level.regions)]
 		format.colors.font <- rgb(0.985, 0.985, 1.0)
+		format.colors.growth.trajectories <- "magenta"
 	}
 
 	xscale.range <- c(gaPlot.grade_range[1]-0.5, gaPlot.grade_range[2]+0.5)
@@ -445,7 +447,7 @@
 
 		for (i in gaPlot.percentile_trajectories) {
 			grid.lines(tmp.smooth.grades, smoothPercentileTrajectory_Functions[[as.character(i)]](tmp.smooth.grades), 
-				gp=gpar(lwd=1.2, col="black"), default.units="native")
+				gp=gpar(lwd=1.2, col=format.colors.growth.trajectories), default.units="native")
 		}
 	}
 
@@ -508,21 +510,21 @@
 	pushViewport(right.axis.vp)
 	
 	if (is.null(SGPstateData[[state]][["Achievement"]][["College_Readiness_Cutscores"]])) {
-		grid.lines(0.1, gp.axis.range, gp=gpar(lwd=1.5, col=format.colors.font), default.units="native")
+		grid.lines(0.1, gp.axis.range, gp=gpar(lwd=1.5, col=format.colors.growth.trajectories), default.units="native")
 	
 		for (i in gaPlot.percentile_trajectories){
 			grid.lines(c(-0.1, 0.1), smoothPercentileTrajectory_Functions[[as.character(i)]](gaPlot.grade_range[2]), 
-				gp=gpar(lwd=1.5, col=format.colors.font), default.units="native")
+				gp=gpar(lwd=1.5, col=format.colors.growth.trajectories), default.units="native")
 			grid.text(x=unit(-0.55, "native"), y=smoothPercentileTrajectory_Functions[[as.character(i)]](gaPlot.grade_range[2]), i, 
-				gp=gpar(col=format.colors.font, cex=0.8), just="left", default.units="native")
+				gp=gpar(col=format.colors.growth.trajectories, cex=0.8), just="left", default.units="native")
 		}
 	
 		if (baseline) {
 			grid.text(x=0.5, y=(gp.axis.range[1]+gp.axis.range[2])/2, "Baseline Referenced Percentile Growth Trajectory", 
-				gp=gpar(col=format.colors.font, cex=1.0), rot=90, default.units="native")
+				gp=gpar(col=format.colors.growth.trajectories, cex=1.0), rot=90, default.units="native")
 		} else {
 			grid.text(x=0.5, y=(gp.axis.range[1]+gp.axis.range[2])/2, "Percentile Growth Trajectory", 
-				gp=gpar(col=format.colors.font, cex=1.0), rot=90, default.units="native")
+				gp=gpar(col=format.colors.growth.trajectories, cex=1.0), rot=90, default.units="native")
 		}
 	} else {
 		tmp.cut <- as.numeric(SGPstateData[[state]][["Achievement"]][["College_Readiness_Cutscores"]][[content_area]])
@@ -535,13 +537,13 @@
 	
 		for (i in gaPlot.percentile_trajectories){
 			grid.lines(c(-0.15, 0.05), smoothPercentileTrajectory_Functions[[as.character(i)]](gaPlot.grade_range[2]), 
-				gp=gpar(lwd=1.5, col=format.colors.font), default.units="native")
+				gp=gpar(lwd=1.5, col=format.colors.growth.trajectories), default.units="native")
 			grid.text(x=unit(-0.5, "native"), y=smoothPercentileTrajectory_Functions[[as.character(i)]](gaPlot.grade_range[2]), i, 
-				gp=gpar(col=format.colors.font, cex=0.8), just="left", default.units="native")
+				gp=gpar(col=format.colors.growth.trajectories, cex=0.8), just="left", default.units="native")
 		}
 	
 		grid.text(x=0.65, y=(gp.axis.range[1]+gp.axis.range[2])/2, "Percentile Growth Trajectory to College Readiness", 
-			gp=gpar(col=format.colors.font, cex=1.0), rot=90, default.units="native")
+			gp=gpar(col=format.colors.growth.trajectories, cex=1.0), rot=90, default.units="native")
 	}
 	popViewport() ## pop right.axis.vp
 	
