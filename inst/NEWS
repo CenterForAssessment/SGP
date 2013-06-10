@@ -6,6 +6,7 @@ Changes in version: SGP_1.2-0.0
 	  o Corrected error message provided in summarizeSGP for INSTRUCTOR_NUMBER summaries. 
 	  o outputSGP output.type='SchoolView' now outputs JSON data for tables. 
 	  o Added argument return.norm.group.scale.scores to studentGrowthPercentiles to return score vector of each student associated with their SGP. 
+	  o Changed growth trajectory to distinguishing color on growth achievement plots. 
 
 Changes in version: SGP_1.1-0.0
 
