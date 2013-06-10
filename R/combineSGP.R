@@ -59,9 +59,10 @@ function(
 		}
 		if (SGPstateData[[state]][["Growth"]][["System_Type"]]=="Cohort and Baseline Referenced") {
 			target.type <- c("sgp.projections.lagged", "sgp.projections.lagged.baseline")
-			my.sgp <- "SGP_BASELINE"
-			my.sgp.target <- paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, "YEAR", sep="_")
-			my.sgp.target.move.up.stay.up <- paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", max.sgp.target.years.forward, "YEAR", sep="_")
+			my.sgp <- c("SGP", "SGP_BASELINE")
+			my.sgp.target <- c(paste("SGP_TARGET", max.sgp.target.years.forward, "YEAR", sep="_"), paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, "YEAR", sep="_"))
+			my.sgp.target.move.up.stay.up <- c(paste("SGP_TARGET_MOVE_UP_STAY_UP", max.sgp.target.years.forward, "YEAR", sep="_"),
+				paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", max.sgp.target.years.forward, "YEAR", sep="_"))
 		}
 	}
 
@@ -230,25 +231,28 @@ function(
 			level.to.get <- which.max(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")-1
 			slot.data[,CATCH_UP_KEEP_UP_STATUS_INITIAL:=getTargetInitialStatus(ACHIEVEMENT_LEVEL_PRIOR, state, "CATCH_UP_KEEP_UP")]
 
-			if ("CATCH_UP_KEEP_UP_STATUS" %in% names(slot.data)) slot.data[,CATCH_UP_KEEP_UP_STATUS := NULL]
-			slot.data[,CATCH_UP_KEEP_UP_STATUS := rep(as.character(NA), dim(slot.data)[1])]
+			for (i in seq_along(my.sgp)) {
+				if (length(grep("BASELINE", my.sgp[i]))==0) my.label <- "CATCH_UP_KEEP_UP_STATUS" else my.label <- "CATCH_UP_KEEP_UP_STATUS_BASELINE"
+				if (my.label %in% names(slot.data)) slot.data[,my.label := NULL, with=FALSE]
+				slot.data[,my.label := rep(as.character(NA), dim(slot.data)[1]), with=FALSE]
 
-			slot.data[CATCH_UP_KEEP_UP_STATUS_INITIAL == "Keeping Up" & get(my.sgp) >= get(my.sgp.target), CATCH_UP_KEEP_UP_STATUS := "Keep Up: Yes"]
-			slot.data[CATCH_UP_KEEP_UP_STATUS_INITIAL == "Keeping Up" & get(my.sgp) < get(my.sgp.target), CATCH_UP_KEEP_UP_STATUS := "Keep Up: No"]
-			slot.data[CATCH_UP_KEEP_UP_STATUS_INITIAL == "Catching Up" & get(my.sgp) >= get(my.sgp.target), CATCH_UP_KEEP_UP_STATUS := "Catch Up: Yes"]
-			slot.data[CATCH_UP_KEEP_UP_STATUS_INITIAL == "Catching Up" & get(my.sgp) < get(my.sgp.target), CATCH_UP_KEEP_UP_STATUS := "Catch Up: No"]
+				slot.data[CATCH_UP_KEEP_UP_STATUS_INITIAL == "Keeping Up" & get(my.sgp[i]) >= get(my.sgp.target[i]), my.label := "Keep Up: Yes", with=FALSE]
+				slot.data[CATCH_UP_KEEP_UP_STATUS_INITIAL == "Keeping Up" & get(my.sgp[i]) < get(my.sgp.target[i]), my.label := "Keep Up: No", with=FALSE]
+				slot.data[CATCH_UP_KEEP_UP_STATUS_INITIAL == "Catching Up" & get(my.sgp[i]) >= get(my.sgp.target[i]), my.label := "Catch Up: Yes", with=FALSE]
+				slot.data[CATCH_UP_KEEP_UP_STATUS_INITIAL == "Catching Up" & get(my.sgp[i]) < get(my.sgp.target[i]), my.label := "Catch Up: No", with=FALSE]
 
-			### CATCH_UP_KEEP_UP clean up based upon reality
+				### CATCH_UP_KEEP_UP clean up based upon reality
 
-			slot.data[CATCH_UP_KEEP_UP_STATUS_INITIAL == "Keeping Up" & CATCH_UP_KEEP_UP_STATUS == "Keep Up: Yes" & 
-				as.numeric(ACHIEVEMENT_LEVEL) <= level.to.get, CATCH_UP_KEEP_UP_STATUS := "Keep Up: No"]
-			slot.data[CATCH_UP_KEEP_UP_STATUS_INITIAL == "Catching Up" & CATCH_UP_KEEP_UP_STATUS == "Catch Up: No" & 
-				as.numeric(ACHIEVEMENT_LEVEL) > level.to.get, CATCH_UP_KEEP_UP_STATUS := "Catch Up: Yes"]
-			slot.data[CATCH_UP_KEEP_UP_STATUS_INITIAL == "Catching Up" & CATCH_UP_KEEP_UP_STATUS == "Catch Up: Yes" & 
-				as.numeric(ACHIEVEMENT_LEVEL) <= level.to.get & GRADE == max(as.numeric(GRADE[!is.na(get(my.sgp.target))])), CATCH_UP_KEEP_UP_STATUS := "Catch Up: No"]
-			slot.data[CATCH_UP_KEEP_UP_STATUS_INITIAL == "Keeping Up" & CATCH_UP_KEEP_UP_STATUS == "Keep Up: No" & 
-				as.numeric(ACHIEVEMENT_LEVEL) > level.to.get & GRADE == max(as.numeric(GRADE[!is.na(get(my.sgp.target))])), CATCH_UP_KEEP_UP_STATUS := "Keep Up: Yes"]
-			slot.data[,CATCH_UP_KEEP_UP_STATUS := as.factor(CATCH_UP_KEEP_UP_STATUS)]
+				slot.data[CATCH_UP_KEEP_UP_STATUS_INITIAL == "Keeping Up" & get(my.label) == "Keep Up: Yes" & 
+					as.numeric(ACHIEVEMENT_LEVEL) <= level.to.get, my.label := "Keep Up: No", with=FALSE]
+				slot.data[CATCH_UP_KEEP_UP_STATUS_INITIAL == "Catching Up" & get(my.label) == "Catch Up: No" & 
+					as.numeric(ACHIEVEMENT_LEVEL) > level.to.get, my.label := "Catch Up: Yes", with=FALSE]
+				slot.data[CATCH_UP_KEEP_UP_STATUS_INITIAL == "Catching Up" & get(my.label) == "Catch Up: Yes" & 
+					as.numeric(ACHIEVEMENT_LEVEL) <= level.to.get & GRADE == max(as.numeric(GRADE[!is.na(get(my.sgp.target))])), my.label := "Catch Up: No", with=FALSE]
+				slot.data[CATCH_UP_KEEP_UP_STATUS_INITIAL == "Keeping Up" & get(my.label) == "Keep Up: No" & 
+					as.numeric(ACHIEVEMENT_LEVEL) > level.to.get & GRADE == max(as.numeric(GRADE[!is.na(get(my.sgp.target))])), my.label := "Keep Up: Yes", with=FALSE]
+				slot.data[,my.label := as.factor(get(my.label)), with=FALSE]
+			}
 		}
 
 
@@ -259,26 +263,28 @@ function(
 			level.to.get <- which.max(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")
 			slot.data[,MOVE_UP_STAY_UP_STATUS_INITIAL:=getTargetInitialStatus(ACHIEVEMENT_LEVEL_PRIOR, state, "MOVE_UP_STAY_UP")]
 
-			if ("MOVE_UP_STAY_UP_STATUS" %in% names(slot.data)) slot.data[,MOVE_UP_STAY_UP_STATUS := NULL]
-			slot.data[,MOVE_UP_STAY_UP_STATUS := rep(as.character(NA), dim(slot.data)[1])]
+			for (i in seq_along(my.sgp)) {
+				if (length(grep("BASELINE", my.sgp[i]))==0) my.label <- "MOVE_UP_STAY_UP_STATUS" else my.label <- "MOVE_UP_STAY_UP_STATUS_BASELINE"
+				if (my.label %in% names(slot.data)) slot.data[,my.label := NULL, with=FALSE]
+				slot.data[,my.label := rep(as.character(NA), dim(slot.data)[1]), with=FALSE]
 
-			slot.data[MOVE_UP_STAY_UP_STATUS_INITIAL == "Staying Up" & get(my.sgp) >= get(my.sgp.target.move.up.stay.up), MOVE_UP_STAY_UP_STATUS := "Stay Up: Yes"]
-			slot.data[MOVE_UP_STAY_UP_STATUS_INITIAL == "Staying Up" & get(my.sgp) < get(my.sgp.target.move.up.stay.up), MOVE_UP_STAY_UP_STATUS := "Stay Up: No"]
-			slot.data[MOVE_UP_STAY_UP_STATUS_INITIAL == "Moving Up" & get(my.sgp) >= get(my.sgp.target.move.up.stay.up), MOVE_UP_STAY_UP_STATUS := "Move Up: Yes"]
-			slot.data[MOVE_UP_STAY_UP_STATUS_INITIAL == "Moving Up" & get(my.sgp) < get(my.sgp.target.move.up.stay.up), MOVE_UP_STAY_UP_STATUS := "Move Up: No"]
+				slot.data[MOVE_UP_STAY_UP_STATUS_INITIAL == "Staying Up" & get(my.sgp[i]) >= get(my.sgp.target.move.up.stay.up[i]), my.label := "Stay Up: Yes", with=FALSE]
+				slot.data[MOVE_UP_STAY_UP_STATUS_INITIAL == "Staying Up" & get(my.sgp[i]) < get(my.sgp.target.move.up.stay.up[i]), my.label := "Stay Up: No", with=FALSE]
+				slot.data[MOVE_UP_STAY_UP_STATUS_INITIAL == "Moving Up" & get(my.sgp[i]) >= get(my.sgp.target.move.up.stay.up[i]), my.label := "Move Up: Yes", with=FALSE]
+				slot.data[MOVE_UP_STAY_UP_STATUS_INITIAL == "Moving Up" & get(my.sgp[i]) < get(my.sgp.target.move.up.stay.up[i]), my.label := "Move Up: No", with=FALSE]
 
-			### MOVE_UP_STAY_UP clean up based upon reality
+				### MOVE_UP_STAY_UP clean up based upon reality
 
-			slot.data[MOVE_UP_STAY_UP_STATUS_INITIAL == "Staying Up" & MOVE_UP_STAY_UP_STATUS == "Stay Up: Yes" & 
-				as.numeric(ACHIEVEMENT_LEVEL) <= level.to.get, MOVE_UP_STAY_UP_STATUS := "Stay Up: No"]
-			slot.data[MOVE_UP_STAY_UP_STATUS_INITIAL == "Moving Up" & MOVE_UP_STAY_UP_STATUS == "Move Up: No" & 
-				as.numeric(ACHIEVEMENT_LEVEL) > level.to.get, MOVE_UP_STAY_UP_STATUS := "Move Up: Yes"]
-			slot.data[MOVE_UP_STAY_UP_STATUS_INITIAL == "Moving Up" & MOVE_UP_STAY_UP_STATUS == "Move Up: Yes" & 
-				as.numeric(ACHIEVEMENT_LEVEL) <= level.to.get & GRADE == max(as.numeric(GRADE[!is.na(get(my.sgp.target.move.up.stay.up))])), MOVE_UP_STAY_UP_STATUS := "Move Up: No"]
-			slot.data[MOVE_UP_STAY_UP_STATUS_INITIAL == "Staying Up" & MOVE_UP_STAY_UP_STATUS == "Stay Up: No" & 
-				as.numeric(ACHIEVEMENT_LEVEL) > level.to.get & GRADE == max(as.numeric(GRADE[!is.na(get(my.sgp.target.move.up.stay.up))])), MOVE_UP_STAY_UP_STATUS := "Stay Up: Yes"]
-			slot.data[,MOVE_UP_STAY_UP_STATUS := as.factor(MOVE_UP_STAY_UP_STATUS)]
-
+				slot.data[MOVE_UP_STAY_UP_STATUS_INITIAL == "Staying Up" & get(my.label) == "Stay Up: Yes" & 
+					as.numeric(ACHIEVEMENT_LEVEL) <= level.to.get, my.label := "Stay Up: No", with=FALSE]
+				slot.data[MOVE_UP_STAY_UP_STATUS_INITIAL == "Moving Up" & get(my.label) == "Move Up: No" & 
+					as.numeric(ACHIEVEMENT_LEVEL) > level.to.get, my.label := "Move Up: Yes", with=FALSE]
+				slot.data[MOVE_UP_STAY_UP_STATUS_INITIAL == "Moving Up" & get(my.label) == "Move Up: Yes" & 
+					as.numeric(ACHIEVEMENT_LEVEL) <= level.to.get & GRADE == max(as.numeric(GRADE[!is.na(get(my.sgp.target.move.up.stay.up))])), my.label := "Move Up: No", with=FALSE]
+				slot.data[MOVE_UP_STAY_UP_STATUS_INITIAL == "Staying Up" & get(my.label) == "Stay Up: No" & 
+					as.numeric(ACHIEVEMENT_LEVEL) > level.to.get & GRADE == max(as.numeric(GRADE[!is.na(get(my.sgp.target.move.up.stay.up))])), my.label := "Stay Up: Yes", with=FALSE]
+				slot.data[,my.label := as.factor(get(my.label)), with=FALSE]
+			}
 		}
 
 	} ## END sgp.projections.lagged | sgp.projections.lagged.baseline

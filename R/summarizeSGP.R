@@ -53,21 +53,18 @@ function(sgp_object,
 		if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort and Baseline Referenced") summarizeSGP.baseline <- TRUE
 	}
 
-	if (summarizeSGP.baseline) {
-		my.sgp <- "SGP_BASELINE"
-		my.sgp.level <- "SGP_LEVEL_BASELINE"
-		my.sgp.target <- paste("SGP_TARGET_BASELINE", projection.years.for.target, "YEAR", sep="_")
-		my.sgp.target.musu <- paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", projection.years.for.target, "YEAR", sep="_")
-		if (!my.sgp.target %in% names(sgp_object@Data)) my.sgp.target <- NULL
-		if (!my.sgp.target.musu %in% names(sgp_object@Data)) my.sgp.target.musu <- NULL
-	} else {
-		my.sgp <- "SGP"
-		my.sgp.level <- "SGP_LEVEL"
-		my.sgp.target <- paste("SGP_TARGET", projection.years.for.target, "YEAR", sep="_")
-		my.sgp.target.musu <- paste("SGP_TARGET_MOVE_UP_STAY_UP", projection.years.for.target, "YEAR", sep="_")
-		if (!my.sgp.target %in% names(sgp_object@Data)) my.sgp.target <- NULL
-		if (!my.sgp.target.musu %in% names(sgp_object@Data)) my.sgp.target.musu <- NULL
-	}
+	if (summarizeSGP.baseline) my.sgp <- c("SGP", "SGP_BASELINE") else my.sgp <- "SGP"
+
+	my.sgp.target <- paste("SGP_TARGET", projection.years.for.target, "YEAR", sep="_")
+	my.sgp.target.musu <- paste("SGP_TARGET_MOVE_UP_STAY_UP", projection.years.for.target, "YEAR", sep="_")
+	my.sgp.target.baseline <- paste("SGP_TARGET_BASELINE", projection.years.for.target, "YEAR", sep="_")
+	my.sgp.target.musu.baseline <-  paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", projection.years.for.target, "YEAR", sep="_")
+
+	if (!my.sgp.target %in% names(sgp_object@Data)) my.sgp.target <- NULL
+	if (!my.sgp.target.musu %in% names(sgp_object@Data)) my.sgp.target.musu <- NULL
+	if (!my.sgp.target.baseline %in% names(sgp_object@Data)) my.sgp.target.baseline <- NULL
+	if (!my.sgp.target.musu.baseline %in% names(sgp_object@Data)) my.sgp.target.musu.baseline <- NULL
+
 
 	if (missing(sgp_object)) {
 		stop("User must supply a list containing a Student slot with long data. See documentation for details.")
@@ -210,14 +207,24 @@ function(sgp_object,
 			}
 
 			tmp.sgp.summaries <- list(
-				MEAN_SGP=paste("mean_na(", my.sgp, ")", sep=""),
-				MEDIAN_SGP=paste("median_na(", my.sgp, ")", sep=""),
-				MEDIAN_SGP_COUNT=paste("num_non_missing(", my.sgp, ")", sep=""),
+				MEAN_SGP="mean_na(SGP)",
+				MEDIAN_SGP="median_na(SGP)",
+				MEDIAN_SGP_COUNT="num_non_missing(SGP)",
 				PERCENT_AT_ABOVE_PROFICIENT=paste("percent_in_category(ACHIEVEMENT_LEVEL, ", 
 					get.expression(proficient.achievement.levels), ", ", get.expression(all.achievement.levels), ")",sep=""),
 				PERCENT_AT_ABOVE_PROFICIENT_COUNT="num_non_missing(ACHIEVEMENT_LEVEL)",
-				MEAN_SGP_STANDARD_ERROR=paste("sgp_standard_error(", my.sgp, ")", sep=""),
-				MEDIAN_SGP_STANDARD_ERROR=paste("sgp_standard_error(", my.sgp, ",1.253)", sep=""))
+				MEAN_SGP_STANDARD_ERROR="sgp_standard_error(SGP)",
+				MEDIAN_SGP_STANDARD_ERROR="sgp_standard_error(SGP, 1.253)")
+
+				if (summarizeSGP.baseline) {
+					tmp.sgp.summaries <- c(
+						tmp.sgp.summaries,
+						MEAN_SGP_BASELINE="mean_na(SGP_BASELINE)",
+						MEDIAN_SGP_BASELINE="median_na(SGP_BASELINE)",
+						MEAN_SGP_BASELINE_STANDARD_ERROR="sgp_standard_error(SGP_BASELINE)",
+						MEDIAN_SGP_BASELINE_STANDARD_ERROR="sgp_standard_error(SGP_BASELINE, 1.253)"
+					)
+				}
 
 				if ("ACHIEVEMENT_LEVEL_PRIOR" %in% names(sgp_object@Data)) {
 					tmp.sgp.summaries <- c(
@@ -255,6 +262,18 @@ function(sgp_object,
 						c(paste("MEDIAN", my.sgp.target, sep="_"), paste("MEDIAN", my.sgp.target, "COUNT", sep="_"))
 				}
 
+				if (!is.null(my.sgp.target.baseline)) {
+					tmp.sgp.summaries <- c(
+						tmp.sgp.summaries, 
+						M1=paste("median_na(", my.sgp.target.baseline, ")", sep=""),  
+						M2=paste("num_non_missing(", my.sgp.target.baseline, ")", sep=""),
+						PERCENT_CATCHING_UP_KEEPING_UP="percent_in_category(CATCH_UP_KEEP_UP_STATUS_BASELINE, list(c('Catch Up: Yes', 'Keep Up: Yes')), list(c('Catch Up: Yes', 'Catch Up: No', 'Keep Up: Yes', 'Keep Up: No')))"
+					)
+					names(tmp.sgp.summaries)[sapply(c("M1", "M2"), function(x) which(names(tmp.sgp.summaries)==x))] <- 
+						c(paste("MEDIAN", my.sgp.target.baseline, sep="_"), paste("MEDIAN", my.sgp.target.baseline, "COUNT", sep="_"))
+
+				}
+
 				if (!is.null(my.sgp.target.musu)) {
 					tmp.sgp.summaries <- c(
 						tmp.sgp.summaries, 
@@ -264,6 +283,17 @@ function(sgp_object,
 					)
 					names(tmp.sgp.summaries)[sapply(c("M1", "M2"), function(x) which(names(tmp.sgp.summaries)==x))] <- 
 						c(paste("MEDIAN", my.sgp.target.musu, sep="_"), paste("MEDIAN", my.sgp.target.musu, "COUNT", sep="_"))
+				}
+
+				if (!is.null(my.sgp.target.musu.baseline)) {
+					tmp.sgp.summaries <- c(
+						tmp.sgp.summaries, 
+						M1=paste("median_na(", my.sgp.target.musu.baseline, ")", sep=""),  
+						M2=paste("num_non_missing(", my.sgp.target.musu.baseline, ")", sep=""),
+						PERCENT_MOVING_UP_STAYING_UP="percent_in_category(MOVE_UP_STAY_UP_STATUS_BASELINE, list(c('Move Up: Yes', 'Stay Up: Yes')), list(c('Move Up: Yes', 'Move Up: No', 'Stay Up: Yes', 'Stay Up: No')))"
+					)
+					names(tmp.sgp.summaries)[sapply(c("M1", "M2"), function(x) which(names(tmp.sgp.summaries)==x))] <- 
+						c(paste("MEDIAN", my.sgp.target.musu.baseline, sep="_"), paste("MEDIAN", my.sgp.target.musu.baseline, "COUNT", sep="_"))
 				}
 
 			return(tmp.sgp.summaries)
@@ -479,11 +509,13 @@ function(sgp_object,
 
 	if (any(!sapply(summary.groups[["growth_only_summary"]], is.null))) {
 #		sgp_object@Data[,BY_GROWTH_ONLY := factor(is.na(sgp_object@Data[[my.sgp]]), levels=c(FALSE, TRUE), labels=c("Students without SGP", "Students with SGP"))]
-		sgp_object@Data[["BY_GROWTH_ONLY"]] <- factor(is.na(sgp_object@Data[[my.sgp]]), levels=c(FALSE, TRUE), labels=c("Students without SGP", "Students with SGP"))
+		sgp_object@Data[["BY_GROWTH_ONLY"]] <- factor(is.na(sgp_object@Data[[my.sgp[1]]]), levels=c(FALSE, TRUE), labels=c("Students without SGP", "Students with SGP"))
 	}
 
-	variables.for.summaries <- intersect(c(my.sgp, my.sgp.target, my.sgp.target.musu, 
-						"ACHIEVEMENT_LEVEL", "ACHIEVEMENT_LEVEL_PRIOR", "CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STAY_UP_STATUS", "SCALE_SCORE_PRIOR_STANDARDIZED", "SGP_SIMEX",
+	variables.for.summaries <- intersect(c(my.sgp, my.sgp.target, my.sgp.target.baseline, my.sgp.target.musu, my.sgp.target.musu.baseline,
+						"ACHIEVEMENT_LEVEL", "ACHIEVEMENT_LEVEL_PRIOR", 
+						"CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STAY_UP_STATUS", "CATCH_UP_KEEP_UP_STATUS_BASELINE","MOVE_UP_STAY_UP_STATUS_BASELINE",
+						"SCALE_SCORE_PRIOR_STANDARDIZED", "SGP_SIMEX",
 						unique(as.character(unlist(summary.groups))),
 						"YEAR_WITHIN"),
 					names(sgp_object@Data)) 
@@ -492,7 +524,9 @@ function(sgp_object,
 
 	### Define demographic subgroups and tables that will be calculated from all possible created by expand.grid
 
-	selected.demographic.subgroups <- intersect(c(getFromNames("demographic"), "CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STAY_UP_STATUS", "ACHIEVEMENT_LEVEL_PRIOR", "HIGH_NEED_STATUS"), names(sgp_object@Data))
+	selected.demographic.subgroups <- intersect(
+		c(getFromNames("demographic"), "CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STAY_UP_STATUS", "CATCH_UP_KEEP_UP_STATUS_BASELINE", "MOVE_UP_STAY_UP_STATUS_BASELINE", 
+			"ACHIEVEMENT_LEVEL_PRIOR", "HIGH_NEED_STATUS"), names(sgp_object@Data))
 	if (is.null(SGPstateData[[state]][["Variable_Name_Lookup"]])) {
 		selected.institution.types <- c("STATE", "DISTRICT_NUMBER", "SCHOOL_NUMBER")
 	} else {
