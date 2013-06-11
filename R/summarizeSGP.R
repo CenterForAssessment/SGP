@@ -267,7 +267,7 @@ function(sgp_object,
 						tmp.sgp.summaries, 
 						M1=paste("median_na(", my.sgp.target.baseline, ")", sep=""),  
 						M2=paste("num_non_missing(", my.sgp.target.baseline, ")", sep=""),
-						PERCENT_CATCHING_UP_KEEPING_UP="percent_in_category(CATCH_UP_KEEP_UP_STATUS_BASELINE, list(c('Catch Up: Yes', 'Keep Up: Yes')), list(c('Catch Up: Yes', 'Catch Up: No', 'Keep Up: Yes', 'Keep Up: No')))"
+						PERCENT_CATCHING_UP_KEEPING_UP_BASELINE="percent_in_category(CATCH_UP_KEEP_UP_STATUS_BASELINE, list(c('Catch Up: Yes', 'Keep Up: Yes')), list(c('Catch Up: Yes', 'Catch Up: No', 'Keep Up: Yes', 'Keep Up: No')))"
 					)
 					names(tmp.sgp.summaries)[sapply(c("M1", "M2"), function(x) which(names(tmp.sgp.summaries)==x))] <- 
 						c(paste("MEDIAN", my.sgp.target.baseline, sep="_"), paste("MEDIAN", my.sgp.target.baseline, "COUNT", sep="_"))
@@ -290,7 +290,7 @@ function(sgp_object,
 						tmp.sgp.summaries, 
 						M1=paste("median_na(", my.sgp.target.musu.baseline, ")", sep=""),  
 						M2=paste("num_non_missing(", my.sgp.target.musu.baseline, ")", sep=""),
-						PERCENT_MOVING_UP_STAYING_UP="percent_in_category(MOVE_UP_STAY_UP_STATUS_BASELINE, list(c('Move Up: Yes', 'Stay Up: Yes')), list(c('Move Up: Yes', 'Move Up: No', 'Stay Up: Yes', 'Stay Up: No')))"
+						PERCENT_MOVING_UP_STAYING_UP_BASELINE="percent_in_category(MOVE_UP_STAY_UP_STATUS_BASELINE, list(c('Move Up: Yes', 'Stay Up: Yes')), list(c('Move Up: Yes', 'Move Up: No', 'Stay Up: Yes', 'Stay Up: No')))"
 					)
 					names(tmp.sgp.summaries)[sapply(c("M1", "M2"), function(x) which(names(tmp.sgp.summaries)==x))] <- 
 						c(paste("MEDIAN", my.sgp.target.musu.baseline, sep="_"), paste("MEDIAN", my.sgp.target.musu.baseline, "COUNT", sep="_"))
