@@ -581,6 +581,14 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			if (sgPlot.reports.by.instructor) {
 				tmp.districts.and.schools <- tmp.district.and.schools.instructors
 			} else {
+				#### Create FIRST_NAME, LAST_NAME, SCHOOL_NUMBER, SCHOOL_NAME, DISTRICT_NUMBER, DISTRICT_NAME if they don't exist
+
+				if (!"FIRST_NAME" %in% names(slot.data)) slot.data[,FIRST_NAME:=""]
+				if (!"LAST_NAME" %in% names(slot.data)) slot.data[,LAST_NAME:=""]
+				if (!"SCHOOL_NAME" %in% names(slot.data)) slot.data[,SCHOOL_NAME:=""]
+				if (!"DISTRICT_NAME" %in% names(slot.data)) slot.data[,DISTRICT_NAME:=""]
+				if (!"DISTRICT_NUMBER" %in% names(slot.data)) slot.data[,DISTRICT_NUMBER:=""]
+
 				setkeyv(slot.data, long.key)
 
 				if (is.null(sgPlot.schools) | is.null(sgPlot.districts)) {
@@ -703,14 +711,6 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 				tmp.table[, SCHOOL_NAME := as.factor(tmp.table$SCHOOL_NAME)]
 			}
 		} ## END if (sgPlot.anonymize)
-
-	#### Create FIRST_NAME, LAST_NAME, SCHOOL_NUMBER, SCHOOL_NAME, DISTRICT_NUMBER, DISTRICT_NAME if they don't exist
-
-		if (!"FIRST_NAME" %in% names(tmp.table)) tmp.table[,FIRST_NAME:=""]
-		if (!"LAST_NAME" %in% names(tmp.table)) tmp.table[,LAST_NAME:=""]
-		if (!"SCHOOL_NAME" %in% names(tmp.table)) tmp.table[,SCHOOL_NAME:=""]
-		if (!"DISTRICT_NAME" %in% names(tmp.table)) tmp.table[,DISTRICT_NAME:=""]
-		if (!"DISTRICT_NUMBER" %in% names(tmp.table)) tmp.table[,DISTRICT_NUMBER:=""]
 
 	#### Reshape data (NOT NECESSARY IF WIDE data is provided)
 
