@@ -704,10 +704,13 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			}
 		} ## END if (sgPlot.anonymize)
 
-	#### Create FIRST_NAME and LAST_NAME if they don't exist
+	#### Create FIRST_NAME, LAST_NAME, SCHOOL_NUMBER, SCHOOL_NAME, DISTRICT_NUMBER, DISTRICT_NAME if they don't exist
 
-		if (!"FIRST_NAME" %in% names(tmp.table)) tmp.table$FIRST_NAME <- ""
-		if (!"LAST_NAME" %in% names(tmp.table)) tmp.table$LAST_NAME <- ""
+		if (!"FIRST_NAME" %in% names(tmp.table)) tmp.table[,FIRST_NAME:=""]
+		if (!"LAST_NAME" %in% names(tmp.table)) tmp.table[,LAST_NAME:=""]
+		if (!"SCHOOL_NAME" %in% names(tmp.table)) tmp.table[,SCHOOL_NAME:=""]
+		if (!"DISTRICT_NAME" %in% names(tmp.table)) tmp.table[,DISTRICT_NAME:=""]
+		if (!"DISTRICT_NUMBER" %in% names(tmp.table)) tmp.table[,DISTRICT_NUMBER:=""]
 
 	#### Reshape data (NOT NECESSARY IF WIDE data is provided)
 
