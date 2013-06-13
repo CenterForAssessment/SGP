@@ -500,6 +500,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 	if (!"FIRST_NAME" %in% names(slot.data)) slot.data[,FIRST_NAME:=""]
 	if (!"LAST_NAME" %in% names(slot.data)) slot.data[,LAST_NAME:=""]
 	if (!"SCHOOL_NAME" %in% names(slot.data)) slot.data[,SCHOOL_NAME:=""]
+	if (!"SCHOOL_NUMBER" %in% names(slot.data)) slot.data[,SCHOOL_NUMBER:=""]
 	if (!"DISTRICT_NAME" %in% names(slot.data)) slot.data[,DISTRICT_NAME:=""]
 	if (!"DISTRICT_NUMBER" %in% names(slot.data)) slot.data[,DISTRICT_NUMBER:=""]
 
