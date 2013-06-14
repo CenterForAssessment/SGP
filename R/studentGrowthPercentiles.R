@@ -253,11 +253,6 @@ function(panel.data,         ## REQUIRED
 			loss.hoss[,g] <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area[g]]][[paste("loss.hoss_", rev(tmp.gp)[-1][g], sep="")]]
 		}
 		
-		if (exact.grade.progression.sequence) {
-			simex.matrix.priors <- num.prior
-		} else {
-			simex.matrix.priors <- seq(num.prior)
-		}
 		rqfit <- function(tmp.gp.iter, lam) {  #  AVI added in the lam  argument here to index the lambda specific knots and boundaries
 			mod <- character()
 			for (i in seq_along(tmp.gp.iter)) {
@@ -268,6 +263,15 @@ function(panel.data,         ## REQUIRED
 			return(parse(text=paste("rq(final.yr ~", substring(mod,4), ", tau=taus,data=data, method=rq.method)[['fitted.values']]", sep="")))
 		}
 		
+		if (!is.null(use.my.coefficient.matrices)) {
+			taus <- .create_taus(sgp.quantiles)
+			if (exact.grade.progression.sequence) {
+				simex.matrix.priors <- num.prior
+			} else {
+				simex.matrix.priors <- seq(num.prior)
+			}
+		}
+
 		for (k in simex.matrix.priors) {
 			data <- .get.panel.data(ss.data, k, by.grade)
 			tmp.num.variables <- dim(data)[2]
