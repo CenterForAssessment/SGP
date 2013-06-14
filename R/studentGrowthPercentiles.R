@@ -253,6 +253,11 @@ function(panel.data,         ## REQUIRED
 			loss.hoss[,g] <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area[g]]][[paste("loss.hoss_", rev(tmp.gp)[-1][g], sep="")]]
 		}
 		
+		if (exact.grade.progression.sequence) {
+			simex.matrix.priors <- num.prior
+		} else {
+			simex.matrix.priors <- seq(num.prior)
+		}
 		rqfit <- function(tmp.gp.iter, lam) {  #  AVI added in the lam  argument here to index the lambda specific knots and boundaries
 			mod <- character()
 			for (i in seq_along(tmp.gp.iter)) {
@@ -263,7 +268,7 @@ function(panel.data,         ## REQUIRED
 			return(parse(text=paste("rq(final.yr ~", substring(mod,4), ", tau=taus,data=data, method=rq.method)[['fitted.values']]", sep="")))
 		}
 		
-		for (k in coefficient.matrix.priors) {
+		for (k in simex.matrix.priors) {
 			data <- .get.panel.data(ss.data, k, by.grade)
 			tmp.num.variables <- dim(data)[2]
 			tmp.gp.iter <- rev(tmp.gp)[2:(k+1)]
@@ -373,7 +378,7 @@ function(panel.data,         ## REQUIRED
 			switch(extrapolation, QUADRATIC = fit <- lm(fitted[[paste("order_", k, sep="")]] ~ lambda + I(lambda^2)), LINEAR = fit <- lm(fitted[[paste("order_", k, sep="")]]~ lambda))
 			extrap[[paste("order_", k, sep="")]]<-as.data.table(matrix(predict(fit,newdata=data.frame(lambda=-1)), nrow=dim(data)[1]))
 			tmp.quantiles.simex[[k]] <- data.table(ID=data[["ID"]], SIMEX_ORDER=k, SGP_SIMEX=.get.quantiles(extrap[[paste("order_", k, sep="")]], data[[tmp.num.variables]]))
-		} ### END for (k in coefficient.matrix.priors)
+		} ### END for (k in simex.matrix.priors)
 
 		quantile.data.simex <- data.table(rbindlist(tmp.quantiles.simex), key=c("ID", "SIMEX_ORDER"))
 		setkey(quantile.data.simex, ID) # first key on ID and SIMEX_ORDER, then re-key on ID only to insure sorted order.  Don't rely on rbindlist/k ordering...
