@@ -270,7 +270,7 @@ function(panel.data,         ## REQUIRED
 			} else {
 				simex.matrix.priors <- seq(num.prior)
 			}
-		}
+		} else simex.matrix.priors <- coefficient.matrix.priors
 
 		for (k in simex.matrix.priors) {
 			data <- .get.panel.data(ss.data, k, by.grade)
