@@ -34,11 +34,11 @@ function(sgp_object,
 
 	changeVariableClass <- function(my.data, convert.tf, data.slot) {
 		if (!data.slot=="@Data") {
-			message(paste("\tNOTE: ID in", data.slot, "converted from class factor to character to accomodate data.table >= 1.8.0 changes."))
+			message(paste("\tNOTE: ID in", data.slot, "converted from class factor to character to accommodate data.table >= 1.8.0 changes."))
 			my.data[["ID"]] <- as.character(my.data[["ID"]])			
 		} else {
 			for (my.variable in c("ID", "VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE")[convert.tf]) {
-				message(paste("\tNOTE:", my.variable, "in", data.slot, "converted from class ", class(my.data[[my.variable]]), " to character to accomodate data.table >= 1.8.0 changes."))
+				message(paste("\tNOTE:", my.variable, "in", data.slot, "converted from class ", class(my.data[[my.variable]]), " to character to accommodate data.table >= 1.8.0 changes."))
 				my.data[[my.variable]] <- as.character(my.data[[my.variable]])
 			}
 		}
