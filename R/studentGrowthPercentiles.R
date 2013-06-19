@@ -263,7 +263,16 @@ function(panel.data,         ## REQUIRED
 			return(parse(text=paste("rq(final.yr ~", substring(mod,4), ", tau=taus,data=data, method=rq.method)[['fitted.values']]", sep="")))
 		}
 		
-		for (k in coefficient.matrix.priors) {
+		if (!is.null(use.my.coefficient.matrices)) {
+			taus <- .create_taus(sgp.quantiles)
+			if (exact.grade.progression.sequence) {
+				simex.matrix.priors <- num.prior
+			} else {
+				simex.matrix.priors <- seq(num.prior)
+			}
+		} else simex.matrix.priors <- coefficient.matrix.priors
+
+		for (k in simex.matrix.priors) {
 			data <- .get.panel.data(ss.data, k, by.grade)
 			tmp.num.variables <- dim(data)[2]
 			tmp.gp.iter <- rev(tmp.gp)[2:(k+1)]
@@ -351,7 +360,7 @@ function(panel.data,         ## REQUIRED
 					} 
 				
 					par.start <- startParallel(parallel.config, 'SIMEX') 
-					##  Note, that if you use the parallel.config for SIMEX here, you also need to use it for TAUS in the naive analysis
+					##  Note, that if you use the parallel.config for SIMEX here, you can also use it for TAUS in the naive analysis
 					##  Example parallel.config argument:  '... parallel.config=list(BACKEND="PARALLEL", TYPE="SOCK", WORKERS=list(SIMEX = 4, TAUS = 4))'
 					if (par.start$par.type == 'MULTICORE') {
 						tmp.fitted.b <- mclapply(1:B, function(x) big.data[b==x][,eval(rqfit(tmp.gp.iter[1:k], lam=L))], mc.cores=par.start$workers)
@@ -365,16 +374,16 @@ function(panel.data,         ## REQUIRED
 				}
 
 				# Make new variable 'PREDICTED_VALUES' to compare with 'V1' and to preserve 'tau'
-				fitted.b[, PREDICTED_VALUES := .smooth.isotonize.row(V1), by=list(ID, b)] #  Could just use V1 := ... in final implimentation to keep from adding a column here
-				fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted.b[, mean(PREDICTED_VALUES), by=list(ID, tau)][['V1']] 
+				fitted.b[, V1 := .smooth.isotonize.row(V1), by=list(ID, b)] # Use V1 := ... instead of PREDICTED_VALUES := .. to keep from adding a column
+				fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted.b[, mean(V1), by=list(ID, tau)][['V1']] 
 			
 			} ### END for (L in lambda[-1])
 
 			switch(extrapolation, QUADRATIC = fit <- lm(fitted[[paste("order_", k, sep="")]] ~ lambda + I(lambda^2)), LINEAR = fit <- lm(fitted[[paste("order_", k, sep="")]]~ lambda))
-			extrap[[paste("order_", k, sep="")]]<-as.data.table(matrix(predict(fit,newdata=data.frame(lambda=-1)), nrow=dim(data)[1]))
+			extrap[[paste("order_", k, sep="")]] <- t(apply(matrix(predict(fit, newdata=data.frame(lambda=-1)), nrow=dim(data)[1]), 1, .smooth.isotonize.row))
 			tmp.quantiles.simex[[k]] <- data.table(ID=data[["ID"]], SIMEX_ORDER=k, SGP_SIMEX=.get.quantiles(extrap[[paste("order_", k, sep="")]], data[[tmp.num.variables]]))
-		} ### END for (k in coefficient.matrix.priors)
-
+		} ### END for (k in simex.matrix.priors)
+		
 		quantile.data.simex <- data.table(rbindlist(tmp.quantiles.simex), key=c("ID", "SIMEX_ORDER"))
 		setkey(quantile.data.simex, ID) # first key on ID and SIMEX_ORDER, then re-key on ID only to insure sorted order.  Don't rely on rbindlist/k ordering...
 		
