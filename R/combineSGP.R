@@ -127,7 +127,7 @@ function(
 		} else {
 			variables.to.merge <- names(tmp.data) %w/o% key(slot.data)
 			for (tmp.merge.variable in variables.to.merge) {
-				slot.data[tmp.data[,key(slot.data), with=FALSE], tmp.merge.variable := tmp.data[[tmp.merge.variable]], with=FALSE, nomatch=0]
+				slot.data[tmp.data[,key(slot.data), with=FALSE], tmp.merge.variable := tmp.data[,tmp.merge.variable, with=FALSE], with=FALSE, nomatch=0]
 			}
 		}
 

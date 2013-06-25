@@ -495,6 +495,15 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 ######## IF WIDE data is NOT supplied
 ###############################################
 
+	#### Create FIRST_NAME, LAST_NAME, SCHOOL_NUMBER, SCHOOL_NAME, DISTRICT_NUMBER, DISTRICT_NAME if they don't exist
+
+	if (!"FIRST_NAME" %in% names(slot.data)) slot.data[,FIRST_NAME:=""]
+	if (!"LAST_NAME" %in% names(slot.data)) slot.data[,LAST_NAME:=""]
+	if (!"SCHOOL_NAME" %in% names(slot.data)) slot.data[,SCHOOL_NAME:=""]
+	if (!"SCHOOL_NUMBER" %in% names(slot.data)) slot.data[,SCHOOL_NUMBER:=""]
+	if (!"DISTRICT_NAME" %in% names(slot.data)) slot.data[,DISTRICT_NAME:=""]
+	if (!"DISTRICT_NUMBER" %in% names(slot.data)) slot.data[,DISTRICT_NUMBER:=""]
+
 	#### Set key on LONG data
 
 	long.key <- c("VALID_CASE", "YEAR", "CONTENT_AREA", "DISTRICT_NUMBER", "SCHOOL_NUMBER")
@@ -581,8 +590,6 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			if (sgPlot.reports.by.instructor) {
 				tmp.districts.and.schools <- tmp.district.and.schools.instructors
 			} else {
-				setkeyv(slot.data, long.key)
-
 				if (is.null(sgPlot.schools) | is.null(sgPlot.districts)) {
 					tmp.districts.and.schools <- unique(data.table(slot.data[CJ("VALID_CASE", tmp.last.year, tmp.content_areas)][,
 						list(VALID_CASE, YEAR, CONTENT_AREA, DISTRICT_NUMBER, SCHOOL_NUMBER)], 
@@ -703,11 +710,6 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 				tmp.table[, SCHOOL_NAME := as.factor(tmp.table$SCHOOL_NAME)]
 			}
 		} ## END if (sgPlot.anonymize)
-
-	#### Create FIRST_NAME and LAST_NAME if they don't exist
-
-		if (!"FIRST_NAME" %in% names(tmp.table)) tmp.table$FIRST_NAME <- ""
-		if (!"LAST_NAME" %in% names(tmp.table)) tmp.table$LAST_NAME <- ""
 
 	#### Reshape data (NOT NECESSARY IF WIDE data is provided)
 
