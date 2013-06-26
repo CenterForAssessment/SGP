@@ -1,6 +1,6 @@
 `capwords` <-
 function(x, 
-	special.words = c("ELA", "II", "III", "IV", "EMH", "HS", "MS", "ES", "SES", "IEP", "ELL", "MAD", "SD", "US", "SGP")) {
+	special.words = c("ELA","I", "II", "III", "IV", "EMH", "HS", "MS", "ES", "SES", "IEP", "ELL", "MAD", "SD", "SWD", "US", "SGP", "SIMEX")) {
 
 	trim <- function (x) gsub("^\\s+|\\s+$", "", x)
 
