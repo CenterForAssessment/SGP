@@ -152,12 +152,12 @@ function(panel.data,         ## REQUIRED
 			} else {
 				if (par.start$par.type == 'MULTICORE') {
 					tmp.mtx <- mclapply(par.start$TAUS.LIST, function(x) eval(parse(text=paste("rq(tmp.data[[", tmp.num.variables, "]] ~ ", 
-						substring(mod,4), ", tau=x, data=tmp.data, method=rq.method)[['coefficients']]", sep=""))), mc.cores=par.start$workers)
+						substring(mod,4), ", tau=x, data=tmp.data, method=rq.method)[['coefficients']]", sep=""))), mc.cores=par.start$workers, mc.preschedule = FALSE)
 					tmp.mtx <- do.call(cbind, tmp.mtx)
 				}
 				
 				if (par.start$par.type == 'SNOW') {
-					tmp.mtx <- parLapply(par.start$internal.cl, par.start$TAUS.LIST, function(x) eval(parse(text=paste("rq(tmp.data[[", 
+					tmp.mtx <- parLapplyLB(par.start$internal.cl, par.start$TAUS.LIST, function(x) eval(parse(text=paste("rq(tmp.data[[", 
 						tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=x, data=tmp.data, method=rq.method)[['coefficients']]", sep=""))))
 					tmp.mtx <- do.call(cbind, tmp.mtx)
 				}
