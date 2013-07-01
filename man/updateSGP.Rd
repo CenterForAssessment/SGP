@@ -10,6 +10,7 @@ SGP object.
 updateSGP(
 	what_sgp_object=NULL,
 	with_sgp_data_LONG=NULL,
+	steps=c("prepareSGP", "analyzeSGP", "combineSGP", "summarizeSGP", "visualizeSGP", "outputSGP"),
 	state=NULL,
 	years=NULL,
 	content_areas=NULL,
@@ -22,6 +23,9 @@ updateSGP(
   \item{what_sgp_object}{The SGP object to which the additional data will be added and analyzed. This object must be specified.
   }
   \item{with_sgp_data_LONG}{The additional data in LONG for to be added to the supplied object of class SGP analyzed. The additional data must be in the same form as the data in the @Data slot. If with_sgp_data_LONG is not supplied, the function with update the sgp_object supplied in 'what_sgp_object' using the embedded coefficient matrices, essentially re-doing the analyses.
+  }
+  \item{steps}{A vector indicting the steps abcSGP will perform as part of the update. Defaults to all steps: \code{\link{prepareSGP}}, \code{\link{analyzeSGP}}, \code{\link{combineSGP}}, 
+  \code{\link{summarizeSGP}}, \code{\link{visualizeSGP}}, \code{\link{outputSGP}}.
   }
   \item{state}{The 'state' for the sgp_object. Derived from sgp_object name if not explicitly supplied. 
   }

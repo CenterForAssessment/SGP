@@ -1,6 +1,7 @@
 `updateSGP` <- 
 function(what_sgp_object=NULL,
 	with_sgp_data_LONG=NULL,
+	steps=c("prepareSGP", "analyzeSGP", "combineSGP", "summarizeSGP", "visualizeSGP", "outputSGP"),
 	state=NULL,
 	years=NULL,
 	content_areas=NULL,
@@ -131,7 +132,7 @@ function(what_sgp_object=NULL,
 		### abcSGP
 
 		new.year <- sort(unique(with_sgp_data_LONG$YEAR))
-		what_sgp_object <- abcSGP(what_sgp_object, years=new.year, state=state, save.intermediate.results=save.intermediate.results, save.old.summaries=save.old.summaries,...)
+		what_sgp_object <- abcSGP(what_sgp_object, steps=steps, years=new.year, state=state, save.intermediate.results=save.intermediate.results, save.old.summaries=save.old.summaries,...)
 
 
 		### Print finish and return SGP object
