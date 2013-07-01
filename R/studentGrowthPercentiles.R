@@ -250,7 +250,7 @@ function(panel.data,         ## REQUIRED
 		fitted <- extrap <- tmp.quantiles.simex <- list()
 		loss.hoss <- matrix(nrow=2,ncol=length(tmp.gp)-1)
 		for (g in 1:ncol(loss.hoss)) {
-			loss.hoss[,g] <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area[g]]][[paste("loss.hoss_", rev(tmp.gp)[-1][g], sep="")]]
+			loss.hoss[,g] <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[rev(content_area)[-1][g]]][[paste("loss.hoss_", rev(tmp.gp)[-1][g], sep="")]]
 		}
 		
 		rqfit <- function(tmp.gp.iter, lam) {  #  AVI added in the lam  argument here to index the lambda specific knots and boundaries
