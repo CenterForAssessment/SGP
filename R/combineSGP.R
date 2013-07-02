@@ -132,7 +132,7 @@ function(
 		}
 
 		setkeyv(slot.data, getKey(slot.data))
-		rm(tmp.list); suppressMessages(gc())
+		rm(tmp.list) #; suppressMessages(gc())
 	}
 
 
@@ -180,7 +180,7 @@ function(
 		}
 
 		setkeyv(slot.data, getKey(slot.data))
-		rm(tmp.list); suppressMessages(gc())
+		rm(tmp.list) #; suppressMessages(gc())
 	}
 
 
