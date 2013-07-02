@@ -21,7 +21,7 @@ function(
 
 	### Create slot.data from sgp_object@Data
 
-	slot.data <- data.table(sgp_object@Data, key=key(sgp_object@Data))
+	slot.data <- data.table(sgp_object@Data)
 
 
 	### Create state (if missing) from sgp_object (if possible)
