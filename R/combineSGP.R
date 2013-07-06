@@ -171,7 +171,7 @@ function(
 		}
 
 		if (length(intersect(names(slot.data), names(tmp.data)) %w/o% c(key(slot.data), "SCALE_SCORE_PRIOR", "SCALE_SCORE_PRIOR_STANDARDIZED"))==0) {
-			slot.data <- tmp.data[slot.data]
+			slot.data <- tmp.data[,!c("SCALE_SCORE_PRIOR", "SCALE_SCORE_PRIOR_STANDARDIZED"), with=FALSE][slot.data]
 		} else {
 			variables.to.merge <- names(tmp.data) %w/o% c(key(slot.data), "SCALE_SCORE_PRIOR", "SCALE_SCORE_PRIOR_STANDARDIZED")
 			for (tmp.merge.variable in variables.to.merge) {
