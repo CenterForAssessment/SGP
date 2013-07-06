@@ -170,7 +170,7 @@ function(
 			tmp.data <- getPreferredSGP(tmp.data, state, type="BASELINE")
 		}
 
-		if (length(intersect(names(slot.data), names(tmp.data)) %w/o% key(slot.data))==0) {
+		if (length(intersect(names(slot.data), names(tmp.data)) %w/o% c(key(slot.data), "SCALE_SCORE_PRIOR", "SCALE_SCORE_PRIOR_STANDARDIZED"))==0) {
 			slot.data <- tmp.data[slot.data]
 		} else {
 			variables.to.merge <- names(tmp.data) %w/o% c(key(slot.data), "SCALE_SCORE_PRIOR", "SCALE_SCORE_PRIOR_STANDARDIZED")
