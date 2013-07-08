@@ -126,7 +126,9 @@ function(
 			slot.data <- tmp.data[slot.data]
 		} else {
 			variables.to.merge <- names(tmp.data) %w/o% key(slot.data)
-			slot.data <- tmp.data[,c(key(slot.data), variables.to.merge), with=FALSE][slot.data]
+			for (tmp.merge.variable in variables.to.merge) {
+				slot.data[tmp.data[,key(slot.data), with=FALSE], tmp.merge.variable := tmp.data[,tmp.merge.variable, with=FALSE], with=FALSE, nomatch=0]
+			}
 		}
 
 		setkeyv(slot.data, getKey(slot.data))
@@ -171,8 +173,10 @@ function(
 		if (length(intersect(names(slot.data), names(tmp.data)) %w/o% c(key(slot.data), "SCALE_SCORE_PRIOR", "SCALE_SCORE_PRIOR_STANDARDIZED"))==0) {
 			slot.data <- tmp.data[,!c("SCALE_SCORE_PRIOR", "SCALE_SCORE_PRIOR_STANDARDIZED"), with=FALSE][slot.data]
 		} else {
-			variables.to.merge <- names(tmp.data) %w/o% names(slot.data)
-			slot.data <- tmp.data[,c(key(slot.data), variables.to.merge), with=FALSE][slot.data]
+			variables.to.merge <- names(tmp.data) %w/o% c(key(slot.data), "SCALE_SCORE_PRIOR", "SCALE_SCORE_PRIOR_STANDARDIZED")
+			for (tmp.merge.variable in variables.to.merge) {
+				slot.data[tmp.data[,key(slot.data), with=FALSE], tmp.merge.variable := tmp.data[, tmp.merge.variable, with=FALSE], with=FALSE, nomatch=0]
+			}
 		}
 
 		setkeyv(slot.data, getKey(slot.data))
