@@ -78,9 +78,9 @@ function(sgp_object,
 				if (!is.null(sgp.config[[a]][['sgp.projection.grade.sequences']])) {
 					par.sgp.config[[cnt]][['sgp.projection.grade.sequences']] <- sgp.config[[a]][['sgp.projection.grade.sequences']][b]
 				} else {
-					par.sgp.config[[cnt]][['sgp.projection.grade.sequences']] <- head(sgp.config[[a]][['sgp.grade.sequences']][b], -1)
+					par.sgp.config[[cnt]][['sgp.projection.grade.sequences']] <- lapply(sgp.config[[a]][['sgp.grade.sequences']][b], function(x) head(x, -1))
 				}
-				if (!sgp.config[[a]][['sgp.exact.grade.progression']]) {
+				if (!is.null(sgp.config[[a]][['sgp.exact.grade.progression']])) {
 					par.sgp.config[[cnt]][['sgp.exact.grade.progression']] <- sgp.config[[a]][['sgp.exact.grade.progression']][b]
 				} else {
 					par.sgp.config[[cnt]][['sgp.exact.grade.progression']] <- FALSE
