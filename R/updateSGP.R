@@ -131,7 +131,7 @@ function(what_sgp_object=NULL,
 
 		### abcSGP
 
-		new.year <- sort(unique(with_sgp_data_LONG$YEAR))
+		new.year <- sort(unique(tmp_sgp_object@Data$YEAR))
 		what_sgp_object <- abcSGP(what_sgp_object, steps=steps, years=new.year, state=state, save.intermediate.results=save.intermediate.results, save.old.summaries=save.old.summaries,...)
 
 
