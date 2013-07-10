@@ -595,6 +595,7 @@ function(sgp_object,
 	### Loop and send to summarizeSGP_INTERNAL
 
 	tmp.dt <- sgp_object@Data[data.table("VALID_CASE", content_areas.by.years), nomatch=0][, variables.for.summaries, with=FALSE][, STATE:=state]
+	if (!is.null(summary.groups[["institution_multiple_membership"]])) setkeyv(tmp.dt, getKey(sgp_object@Data))
 
 	par.start <- startParallel(parallel.config, 'SUMMARY')
 
