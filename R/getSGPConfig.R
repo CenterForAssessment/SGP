@@ -75,8 +75,16 @@ function(sgp_object,
 
 				par.sgp.config[[cnt]] <- sgp.config[[a]]
 				par.sgp.config[[cnt]][['sgp.grade.sequences']] <- tmp.gp <- sgp.config[[a]][['sgp.grade.sequences']][b]
-				par.sgp.config[[cnt]][['sgp.projection.grade.sequences']] <- sgp.config[[a]][['sgp.projection.grade.sequences']][b]
-				par.sgp.config[[cnt]][['sgp.exact.grade.progression']] <- sgp.config[[a]][['sgp.exact.grade.progression']][b]
+				if (!is.null(sgp.config[[a]][['sgp.projection.grade.sequences']])) {
+					par.sgp.config[[cnt]][['sgp.projection.grade.sequences']] <- sgp.config[[a]][['sgp.projection.grade.sequences']][b]
+				} else {
+					par.sgp.config[[cnt]][['sgp.projection.grade.sequences']] <- lapply(sgp.config[[a]][['sgp.grade.sequences']][b], function(x) head(x, -1))
+				}
+				if (!is.null(sgp.config[[a]][['sgp.exact.grade.progression']])) {
+					par.sgp.config[[cnt]][['sgp.exact.grade.progression']] <- sgp.config[[a]][['sgp.exact.grade.progression']][b]
+				} else {
+					par.sgp.config[[cnt]][['sgp.exact.grade.progression']] <- FALSE
+				}
 				
 				###  Set sgp.exact.grade.progression=TRUE if using multiple content areas in a single year as priors.
 
