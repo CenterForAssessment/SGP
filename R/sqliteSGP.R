@@ -14,7 +14,7 @@ function(sgp_object,
 	message(paste("\tStarted sqliteSGP in outputSGP", date()))
 
 	YEAR <- DISTRICT_NUMBER <- SCHOOL_NUMBER <- CONTENT_AREA <- DISTRICT_ENROLLMENT_STATUS <- GRADE <- ETHNICITY <- STUDENTGROUP <- SCHOOL_ENROLLMENT_STATUS <- EMH_LEVEL <- MEDIAN_SGP <- NULL
-	INSTRUCTOR_NUMBER <- INSTRUCTOR_ENROLLMENT_STATUS <- NULL
+	INSTRUCTOR_NUMBER <- INSTRUCTOR_ENROLLMENT_STATUS <- TMP_ID <- NULL
 
 
         ## Create state (if NULL) from sgp_object (if possible)
@@ -277,9 +277,9 @@ function(sgp_object,
 			!is.na(MEDIAN_SGP))))
 
 		tmp <- convert.names(tmp)
-		tmp$ENROLLMENT_PERCENTAGE <- NA
+		tmp$ENROLLMENT_PERCENTAGE <- NA; tmp$TMP_ID <- 1:dim(tmp)[1]
 		tmp <- data.table(tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))], key=c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "STUDENTGROUP"))
-		tmp <- as.data.frame(tmp[!duplicated(tmp)])
+		tmp <- as.data.frame(data.table(tmp[!duplicated(tmp)], key="TMP_ID")[,TMP_ID:=NULL])
 
 		dbGetQuery(db, sqlite.create.table("DISTRICT_STUDENTGROUP", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "STUDENTGROUP")))
 		dbWriteTable(db, "DISTRICT_STUDENTGROUP", tmp, row.names=FALSE, append=TRUE) 
