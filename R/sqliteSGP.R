@@ -277,9 +277,9 @@ function(sgp_object,
 			!is.na(MEDIAN_SGP))))
 
 		tmp <- convert.names(tmp)
-		tmp$ENROLLMENT_PERCENTAGE <- NA; tmp$TMP_ID <- 1:dim(tmp)[1]
+		tmp$ENROLLMENT_PERCENTAGE <- NA 
 		tmp <- data.table(tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))], key=c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "STUDENTGROUP"))
-		tmp <- as.data.frame(data.table(tmp[!duplicated(tmp)], key="TMP_ID")[,TMP_ID:=NULL])
+		tmp <- as.data.frame(data.table(tmp[!duplicated(tmp)]))
 
 		dbGetQuery(db, sqlite.create.table("DISTRICT_STUDENTGROUP", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "STUDENTGROUP")))
 		dbWriteTable(db, "DISTRICT_STUDENTGROUP", tmp, row.names=FALSE, append=TRUE) 
@@ -568,7 +568,9 @@ function(sgp_object,
 			setnames(tmp.list[[i]], 4, "STUDENTGROUP")
 		}
 
-		tmp <- as.data.frame(convert.variables(subset(rbind.fill(tmp.list), !is.na(get(group.number[1])) & !is.na(STUDENTGROUP) & get(group.enroll.status[1])==group.enroll.status.label[1])))
+		tmp <- data.table(convert.variables(subset(rbind.fill(tmp.list), !is.na(get(group.number[1])) & !is.na(STUDENTGROUP) & get(group.enroll.status[1])==group.enroll.status.label[1])),
+			key=c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "STUDENTGROUP"))
+                tmp <- as.data.frame(data.table(tmp[!duplicated(tmp)]))
 
 		tmp.STUDENTGROUP <- data.frame(
 			KEY_VALUE_KEY="STUDENT_GROUP", ### NOTE: Must have underscore. It's an older version of the table
