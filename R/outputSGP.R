@@ -302,7 +302,7 @@ function(sgp_object,
 				if (names.iter %in% names(tmp.df) && is.factor(tmp.df[[names.iter]])) {
 					tmp.df[[names.iter]] <- as.character(tmp.df[[names.iter]])
 					tmp.df[[names.iter]][grep("Yes", tmp.df[[names.iter]])] <- "Y"
-					tmp.df[[names.iter]][grep("No", tmp.df[[names.iter]])] <- "N"
+					tmp.df[[names.iter]][intersect(grep("No", tmp.df[[names.iter]]), grep("Not", tmp.table[["ESEA_WAIVER_SUBGROUPS"]], invert=TRUE))] <- "N"
 					tmp.df[[names.iter]][tmp.df[[names.iter]]=="Students with Disabilities (IEP)"] <- "Y"
 					tmp.df[[names.iter]][tmp.df[[names.iter]]=="High Need Status: ELL, Special Education, or Disadvantaged Student"] <- "Y"
 					tmp.df[[names.iter]][tmp.df[[names.iter]]=="Economically Disadvantaged"] <- "Y"
@@ -360,7 +360,7 @@ function(sgp_object,
 
 		tmp.districts.and.schools <- unique(data.table(sgp_object@Data[CJ("VALID_CASE", tmp.last.year, tmp.content_areas)][,
 								list(VALID_CASE, YEAR, CONTENT_AREA, DISTRICT_NUMBER, SCHOOL_NUMBER, EMH_LEVEL)], key=key(sgp_object)))
-		report.ids <- data.table(sgp_object@Data[tmp.districts.and.schools][VALID_CASE=="VALID_CASE" & STATE_ENROLLMENT_STATUS=="Enrolled State: Yes"][, 
+		report.ids <- data.table(sgp_object@Data[tmp.districts.and.schools][VALID_CASE=="VALID_CASE" & STATE_ENROLLMENT_STATUS=="Enrolled State: Yes" & !is.na(EMH_LEVEL)][, 
 			list(ID, FIRST_NAME, LAST_NAME, DISTRICT_NUMBER, SCHOOL_NUMBER, EMH_LEVEL)], key=c("ID", "FIRST_NAME", "LAST_NAME", "DISTRICT_NUMBER", "SCHOOL_NUMBER"))
 		setkey(report.ids, ID)
 		report.ids <- unique(report.ids)
@@ -596,7 +596,7 @@ function(sgp_object,
 
 		for (i in variables.to.check) {
 			if (any(is.na(STUDENT_GROWTH[[i]]))) {
-				stop(paste("\tNAs are present in variable:", i, "of the 'STUDENT_GROWTH' table. Table must be free of NAs for proper loading"))
+				message(paste("\tNAs are present in variable:", i, "of the 'STUDENT_GROWTH' table. Table must be free of NAs for proper loading"))
 			}
 		}
 
