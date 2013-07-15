@@ -387,11 +387,22 @@ if ("studentGrowthPlot" %in% plot.types) {
 		if (sgPlot.baseline) {
 			my.sgp <- "SGP_BASELINE"
 			my.sgp.level <- "SGP_LEVEL_BASELINE"
-			if (!is.null(sgPlot.show.targets.years.forward)) my.target.types <- c("sgp.projections.baseline", "sgp.projections.lagged.baseline")
+			if (!is.null(sgPlot.show.targets.years.forward) && (!is.integer(sgPlot.show.targets.years.forward) | length(sgPlot.show.targets.years.forward)!=1)) {
+				message("\tNOTE: sgPlot.show.targets.years.forward must be a positive integer. Argument will be set to NULL")
+				sgPlot.show.targets.years.forward <- NULL
+			} else {
+				my.target.types <- c("sgp.projections.baseline", "sgp.projections.lagged.baseline")
+			}
 		} else {
 			my.sgp <- "SGP"
 			my.sgp.level <- "SGP_LEVEL"
-			if (!is.null(sgPlot.show.targets.years.forward)) my.target.types <- c("sgp.projections", "sgp.projections.lagged")
+			if (!is.null(sgPlot.show.targets.years.forward)) 
+			if (!is.null(sgPlot.show.targets.years.forward) && (!is.numeric(sgPlot.show.targets.years.forward) | length(sgPlot.show.targets.years.forward)!=1)) {
+				message("\tNOTE: sgPlot.show.targets.years.forward must be a positive integer. Argument will be set to NULL")
+				sgPlot.show.targets.years.forward <- NULL
+			} else {
+				my.target.types <- c("sgp.projections", "sgp.projections.lagged")
+			}
 		}
 
 	#### Which targets
@@ -756,13 +767,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			}
 		} ### END if (sgPlot.baseline)
 
-
-
-
-
-##############################################################################################################
-	#### BEGIN CONSTRUCTION ZONE: Calculate and Merge in lagged targets if requested
-##############################################################################################################
+	#### Calculate SCALE_SCORE_TARGETS from SGP targets if requested
 
 		if (!is.null(sgPlot.show.targets.years.forward)) {
 
@@ -771,38 +776,24 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			for (target.type in my.target.types) {
 				for (target.level in my.target.levels) {
 					sgPlot.data <- data.table(getTargetSGP(sgp_object, tmp.content_areas, state, tmp.last.year, 
-						target.type, target.level, sgPlot.show.targets.years.forward, unique(sgPlot.data[['ID']]), FALSE), key=c("ID", "CONTENT_AREA"))[sgPlot.data]
-					invisible(sgPlot.data[,VALID_CASE := NULL]); invisible(sgPlot.data[,YEAR := NULL])
+						target.type, target.level, sgPlot.show.targets.years.forward, unique(sgPlot.data[['ID']]), FALSE)[,!c("VALID_CASE", "YEAR"), with=FALSE], 
+						key=c("ID", "CONTENT_AREA"))[sgPlot.data]
 				}
 			} 
 
 
-browser()
-
 			for (target.type in my.target.types) {
-				for (target.level in my.target.levels) {
-					my.sgp.target <- getTargetName(target.type, target.level, sgPlot.show.targets.years.forward)
-					getTargetScaleScore(
-						sgp_object, 
-						state, 
-						sgPlot.data[, c("ID", my.sgp.target), with=FALSE], 
-						target.type, 
-						target.level, 
-						subset(get.years.content_areas.grades(state), YEAR==tmp.last.year),
-						parallel.config=parallel.config)
-
-				}
+				target.level <- as.character(sapply(my.target.levels, function(x) getTargetName(target.type, x, sgPlot.show.targets.years.forward)))
+				sgp_object <- getTargetScaleScore(
+					sgp_object, 
+					state, 
+					sgPlot.data[, c("ID", "CONTENT_AREA", target.level), with=FALSE],
+					target.type,
+					target.level,
+					subset(get.years.content_areas.grades(state), YEAR==tmp.last.year),
+					parallel.config=parallel.config)
 			}
-
 		} ### if (!is.null(sgPlot.show.targets.years.forward))
-
-
-##############################################################################################################
-	#### END CONSTRUCTION ZONE: Calculate and Merge in lagged targets if requested
-##############################################################################################################
-
-
-
 
 	### Merge in INSTRUCTOR_NAME if requested
 
