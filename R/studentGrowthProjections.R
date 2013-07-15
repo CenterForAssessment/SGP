@@ -273,9 +273,9 @@ function(panel.data,	## REQUIRED
 				idvar="ID", timevar="CUT", direction="wide"), key="ID")
 
 			if (projection.unit=="GRADE") {
-				tmp.vec <- expand.grid(tmp.name.prefix, percentile.trajectory.values, "_PROJ_GRADE_", grade.projection.sequence)[1:(2*tmp.num.years.forward),]
+				tmp.vec <- expand.grid(tmp.name.prefix, percentile.trajectory.values, "_PROJ_GRADE_", grade.projection.sequence)[1:(length(percentile.trajectory.values)*tmp.num.years.forward),]
 			} else {
-				tmp.vec <- expand.grid(tmp.name.prefix, percentile.trajectory.values, "_PROJ_YEAR_", seq_along(grade.projection.sequence))[1:(2*tmp.num.years.forward),]
+				tmp.vec <- expand.grid(tmp.name.prefix, percentile.trajectory.values, "_PROJ_YEAR_", seq_along(grade.projection.sequence))[1:(length(percentile.trajectory.values)*tmp.num.years.forward),]
 			}
 			tmp.vec <- tmp.vec[order(tmp.vec$Var2),]
 			setnames(trajectories, c("ID", do.call(paste, c(tmp.vec, sep=""))))
