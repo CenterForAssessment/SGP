@@ -335,23 +335,6 @@ if ("studentGrowthPlot" %in% plot.types) {
 		}
 	} ## END piecewise.transform
 
-	get.years.content_areas.grades <- function(state) {
-		tmp.list <- list()
-		for (i in names(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]])) {
-			tmp.df <- data.frame(GRADE=as.character(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[i]]), stringsAsFactors=FALSE)
-			if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[i]])) {
-				tmp.df <- CJ(tmp.df$GRADE, SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[i]]:tmp.last.year)
-			} else {
-				tmp.df <- CJ(tmp.df$GRADE, tmp.years)
-			}
-			setnames(tmp.df, c("GRADE", "YEAR")) 
-			tmp.list[[i]] <- data.table(CONTENT_AREA=i, tmp.df)
-		}
-	tmp.dt <- data.table(rbind.fill(tmp.list))
-	setkeyv(tmp.dt, c("CONTENT_AREA", "GRADE", "YEAR"))
-	return(tmp.dt[!is.na(CONTENT_AREA)])
-	} ## END get.years.content_areas.grades
-
 
 ######################################################################
 ##### DISTINGUISH CASES WHEN WIDE data is or is not provided
@@ -650,12 +633,12 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			report.ids <- unique(slot.data[tmp.districts.and.schools][["ID"]])
 			if (sgPlot.reports.by.instructor) report.ids <- intersect(student.teacher.lookup[['ID']], report.ids)
 			setkeyv(slot.data, c("CONTENT_AREA", "GRADE", "YEAR"))
-			tmp.table <- data.table(slot.data[get.years.content_areas.grades(state), nomatch=0], 
+			tmp.table <- data.table(slot.data[getYearsContentAreasGrades(state), nomatch=0], 
 				key=c("ID", "CONTENT_AREA", "YEAR", "VALID_CASE"))[CJ(report.ids, tmp.content_areas, tmp.years, "VALID_CASE")]
 		} else {
 			report.ids <- sgPlot.students
 			setkeyv(slot.data, c("CONTENT_AREA", "GRADE", "YEAR"))
-			tmp.table <- data.table(slot.data[get.years.content_areas.grades(state), nomatch=0], 
+			tmp.table <- data.table(slot.data[getYearsContentAreasGrades(state), nomatch=0], 
 				key=c("VALID_CASE", "ID", "CONTENT_AREA", "YEAR"))[CJ("VALID_CASE", report.ids, tmp.content_areas, tmp.years)]
 			setkeyv(tmp.table, c("VALID_CASE", "YEAR", "CONTENT_AREA", "DISTRICT_NUMBER", "SCHOOL_NUMBER"))
 			tmp.districts.and.schools <- tmp.table[CJ("VALID_CASE", tmp.last.year, tmp.content_areas)][, list(DISTRICT_NUMBER, SCHOOL_NUMBER)]
@@ -790,7 +773,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 					sgPlot.data[, c("ID", "CONTENT_AREA", target.level), with=FALSE],
 					target.type,
 					target.level,
-					subset(get.years.content_areas.grades(state), YEAR==tmp.last.year),
+					subset(getYearsContentAreasGrades(state), YEAR==tmp.last.year),
 					parallel.config=parallel.config)
 			}
 		} ### if (!is.null(sgPlot.show.targets.years.forward))

@@ -66,7 +66,8 @@ function(sgp.data,
 			idvar="ID",
 			timevar="tmp.timevar",
 			drop=names(sgp.data)[!names(sgp.data) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar")],
-			direction="wide"), key="ID")[sgp.targets[CONTENT_AREA==tail(sgp.iter[["sgp.content.areas"]], 1)], nomatch=0][,!"CONTENT_AREA", with=FALSE]))
+			direction="wide"), key="ID")[sgp.targets[CONTENT_AREA==tail(sgp.iter[["sgp.content.areas"]], 1) & YEAR==tail(sgp.iter[["sgp.panel.years"]], 1)], nomatch=0]
+			[,!c("CONTENT_AREA", "YEAR"), with=FALSE]))
 		}
 	}
 
@@ -105,7 +106,8 @@ function(sgp.data,
 			idvar="ID",
 			timevar="tmp.timevar",
 			drop=names(sgp.data)[!names(sgp.data) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "ACHIEVEMENT_LEVEL")],
-			direction="wide"), key="ID")[sgp.targets[CONTENT_AREA==tail(sgp.iter[["sgp.content.areas"]], 1)], nomatch=0][,!"CONTENT_AREA", with=FALSE]))
+			direction="wide"), key="ID")[sgp.targets[CONTENT_AREA==tail(sgp.iter[["sgp.content.areas"]], 1) & YEAR==tail(sgp.iter[["sgp.panel.years"]], 1)], nomatch=0]
+			[,!c("CONTENT_AREA", "YEAR"), with=FALSE]))
 
 		}
 	}

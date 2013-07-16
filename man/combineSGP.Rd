@@ -16,8 +16,10 @@ combineSGP(sgp_object,
         sgp.percentiles.baseline=TRUE,
 	sgp.projections.lagged=TRUE,
         sgp.projections.lagged.baseline=TRUE,
+	sgp.target.scale.scores=FALSE,
 	max.sgp.target.years.forward=3,
-	update.all.years=FALSE)
+	update.all.years=FALSE,
+	parallel.config=NULL)
 }
 
 \arguments{
@@ -38,10 +40,14 @@ student growth percentile results.
   }
   \item{sgp.projections.lagged.baseline}{A boolean variable indicating whether to combine lagged baseline student growth projections and calculate catch-up/keep-up move-up/stay-up values.
   }
+  \item{sgp.target.scale.scores}{A boolean variable indicating whether targets from calculated scale scores should be calculated following target calculation.
+  }
   \item{max.sgp.target.years.forward}{A integer indicating the number of years forward from the lagged (last year's) score to project forward for growth to standard calculations. Default is 3 years from the present, 4 years from the lagged year, which is the standard in most growth to standard calculations used by state departments of education.
   }
   \item{update.all.years}{A boolean argument defaulting to FALSE indicating whether \code{combineSGP} should delete previously merged variables calculated in \code{\link{analyzeSGP}} and 
 re-merge all available data.
+  }
+  \item{parallel.config}{Parallel configuration only used when 'sgp.target.scale.scores' is set to TRUE. Default is NULL consistent with no targets being calculated.
   }
 }
 
