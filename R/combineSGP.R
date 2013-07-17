@@ -315,11 +315,11 @@ function(
 		} 
 
 		for (target.type.iter in sgp.target.scale.scores.types) {
-			target.level.iter <- as.character(sapply(target.level, function(x) getTargetName(target.type.iter, x, max.sgp.target.years.forward)))
+			tmp.variable.names <- c("ID", "CONTENT_AREA", "YEAR", as.character(sapply(target.level, function(x) getTargetName(target.type.iter, x, max.sgp.target.years.forward))))
 			sgp_object <- getTargetScaleScore(
 				sgp_object, 
 				state, 
-				tmp.data[, c("ID", "CONTENT_AREA", "YEAR", target.level.iter), with=FALSE],
+				tmp.data[, tmp.variable.names, with=FALSE],
 				target.type.iter,
 				target.level.iter,
 				getYearsContentAreasGrades(state, unique(tmp.data$YEAR)),
