@@ -47,7 +47,8 @@ student growth percentile results.
   \item{update.all.years}{A boolean argument defaulting to FALSE indicating whether \code{combineSGP} should delete previously merged variables calculated in \code{\link{analyzeSGP}} and 
 re-merge all available data.
   }
-  \item{parallel.config}{Parallel configuration only used when 'sgp.target.scale.scores' is set to TRUE. Default is NULL consistent with no targets being calculated.
+  \item{parallel.config}{Parallel configuration only used when 'sgp.target.scale.scores' is set to TRUE. Default is NULL consistent with no targets being calculated. To utilize parallel processing
+  in the calculation of SGP scale score targets user must specify a list designating a backend (e.g, BACKEND='PARALLEL') and a number of workers (e.g., 'WORKERS=list(SGP_SCALE_SCORE_TARGETS=4').
   }
 }
 
