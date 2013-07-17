@@ -594,10 +594,7 @@ function(panel.data,         ## REQUIRED
 				tmp.messages <- c(tmp.messages, "\t\tNOTE: Please specify an appropriate list for calculate.simex including state/csem variable, simulation.iterations, lambda and extrapolation. See help page for details. SGPs will be calculated without measurement error correction.\n")
 				simex.tf <- FALSE
 			}
-			if ("variable" %in% names(calculate.simex) & missing(panel.data.vnames)) {
-				stop("To utilize a supplied CSEM variable for measurement error correction you must specify the variables to be used for student growth percentile calculations with the panel.data.vnames argument. See help page for details.")
-			}
-			if (all(c("state", "variable") %in% names(calculate.simex))) {
+				if (all(c("state", "variable") %in% names(calculate.simex))) {
 				stop("Please specify EITHER a state OR a CSEM variable for SGP measurement error correction. See help page for details.")
 			}
 			if (!is.null(calculate.simex$lambda)){
