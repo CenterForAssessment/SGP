@@ -283,20 +283,22 @@ function(panel.data,         ## REQUIRED
 			
 			# interpolate csem for all scale scores except that of the last grade
 
-			if (is.null(state)) stop('CSEM data must be available in SGPstateData to use SIMEX functionality (\'state\' argument is currently NULL).')
-			for (g in seq_along(tmp.gp.iter)) {
-				if ("YEAR" %in% names(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
-					CSEM_Data <- subset(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], 
-						GRADE==tmp.gp.iter[g] & CONTENT_AREA== tmp.ca.iter[g] & YEAR==tmp.yr.iter[g])
-				} else {
-					CSEM_Data <- subset(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], 
-						GRADE==tmp.gp.iter[g] & CONTENT_AREA== tmp.ca.iter[g])
-				}
-				if (dim(CSEM_Data)[1] == 0) stop(paste('CSEM data for', tmp.ca.iter[g], 'Grade', tmp.gp.iter[g],
-					'is required to use SIMEX functionality, but is not available in SGPstateData.  Please contact package administrators to add CSEM data.'))
-				CSEM_Function <- splinefun(CSEM_Data[["SCALE_SCORE"]], CSEM_Data[["SCALE_SCORE_CSEM"]], method="natural")
-				csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")] <- CSEM_Function(data[[tmp.num.variables-g]])
+			if (!is.null(state)) {
+			  for (g in seq_along(tmp.gp.iter)) {
+			    if ("YEAR" %in% names(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
+			      CSEM_Data <- subset(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], 
+			                          GRADE==tmp.gp.iter[g] & CONTENT_AREA== tmp.ca.iter[g] & YEAR==tmp.yr.iter[g])
+			    } else {
+			      CSEM_Data <- subset(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], 
+			                          GRADE==tmp.gp.iter[g] & CONTENT_AREA== tmp.ca.iter[g])
+			    }
+			    if (dim(CSEM_Data)[1] == 0) stop(paste('CSEM data for', tmp.ca.iter[g], 'Grade', tmp.gp.iter[g],
+			                                           'is required to use SIMEX functionality, but is not available in SGPstateData.  Please contact package administrators to add CSEM data.'))
+			    CSEM_Function <- splinefun(CSEM_Data[["SCALE_SCORE"]], CSEM_Data[["SCALE_SCORE_CSEM"]], method="natural")
+			    csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")] <- CSEM_Function(data[[tmp.num.variables-g]])
+			  }
 			}
+			
 
 			if (!is.null(variable)){
 				for (g in seq_along(tmp.gp.iter)) {
