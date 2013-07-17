@@ -633,12 +633,12 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			report.ids <- unique(slot.data[tmp.districts.and.schools][["ID"]])
 			if (sgPlot.reports.by.instructor) report.ids <- intersect(student.teacher.lookup[['ID']], report.ids)
 			setkeyv(slot.data, c("CONTENT_AREA", "GRADE", "YEAR"))
-			tmp.table <- data.table(slot.data[getYearsContentAreasGrades(state), nomatch=0], 
+			tmp.table <- data.table(slot.data[getYearsContentAreasGrades(state, tmp.years), nomatch=0], 
 				key=c("ID", "CONTENT_AREA", "YEAR", "VALID_CASE"))[CJ(report.ids, tmp.content_areas, tmp.years, "VALID_CASE")]
 		} else {
 			report.ids <- sgPlot.students
 			setkeyv(slot.data, c("CONTENT_AREA", "GRADE", "YEAR"))
-			tmp.table <- data.table(slot.data[getYearsContentAreasGrades(state), nomatch=0], 
+			tmp.table <- data.table(slot.data[getYearsContentAreasGrades(state, tmp.years), nomatch=0], 
 				key=c("VALID_CASE", "ID", "CONTENT_AREA", "YEAR"))[CJ("VALID_CASE", report.ids, tmp.content_areas, tmp.years)]
 			setkeyv(tmp.table, c("VALID_CASE", "YEAR", "CONTENT_AREA", "DISTRICT_NUMBER", "SCHOOL_NUMBER"))
 			tmp.districts.and.schools <- tmp.table[CJ("VALID_CASE", tmp.last.year, tmp.content_areas)][, list(DISTRICT_NUMBER, SCHOOL_NUMBER)]
@@ -749,34 +749,6 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 					by=list(CONTENT_AREA, sgPlot.data[[tmp.grade.name]])][['V1']] 
 			}
 		} ### END if (sgPlot.baseline)
-
-	#### Calculate SCALE_SCORE_TARGETS from SGP targets if requested
-
-		if (!is.null(sgPlot.show.targets.years.forward)) {
-
-			setkey(sgPlot.data, ID, CONTENT_AREA)
-
-			for (target.type in my.target.types) {
-				for (target.level in my.target.levels) {
-					sgPlot.data <- data.table(getTargetSGP(sgp_object, tmp.content_areas, state, tmp.last.year, 
-						target.type, target.level, sgPlot.show.targets.years.forward, unique(sgPlot.data[['ID']]), FALSE)[,!c("VALID_CASE", "YEAR"), with=FALSE], 
-						key=c("ID", "CONTENT_AREA"))[sgPlot.data]
-				}
-			} 
-
-
-			for (target.type in my.target.types) {
-				target.level <- as.character(sapply(my.target.levels, function(x) getTargetName(target.type, x, sgPlot.show.targets.years.forward)))
-				sgp_object <- getTargetScaleScore(
-					sgp_object, 
-					state, 
-					sgPlot.data[, c("ID", "CONTENT_AREA", target.level), with=FALSE],
-					target.type,
-					target.level,
-					subset(getYearsContentAreasGrades(state), YEAR==tmp.last.year),
-					parallel.config=parallel.config)
-			}
-		} ### if (!is.null(sgPlot.show.targets.years.forward))
 
 	### Merge in INSTRUCTOR_NAME if requested
 
