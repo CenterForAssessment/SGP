@@ -253,14 +253,15 @@ function(panel.data,         ## REQUIRED
 			loss.hoss[,g] <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[rev(content_area)[-1][g]]][[paste("loss.hoss_", rev(tmp.gp)[-1][g], sep="")]]
 		}
 		
-		rqfit <- function(tmp.gp.iter, lam) {  #  AVI added in the lam  argument here to index the lambda specific knots and boundaries
+		#  Change rqfit to actual function, not a returned expression.  Add in rqdata to be explicit about what data is being passed in.
+		rqfit <- function(tmp.gp.iter, lam, rqdata) {  #  AVI added in the lam argument here to index the lambda specific knots and boundaries
 			mod <- character()
 			for (i in seq_along(tmp.gp.iter)) {
 				knt <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['knots_", tmp.gp.iter[i], "']]", sep="")
 				bnd <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['boundaries_", tmp.gp.iter[i], "']]", sep="")
 				mod <- paste(mod, " + bs(prior_", i, ", knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
 			}
-			return(parse(text=paste("rq(final.yr ~", substring(mod,4), ", tau=taus,data=data, method=rq.method)[['fitted.values']]", sep="")))
+			eval(parse(text=paste("rq(final.yr ~", substring(mod,4), ", tau=taus, data = rqdata, method=rq.method)[['fitted.values']]", sep="")))
 		}
 		
 		if (!is.null(use.my.coefficient.matrices)) {
@@ -333,7 +334,7 @@ function(panel.data,         ## REQUIRED
 					col.index <- tmp.num.variables-g
 					big.data[big.data[[col.index]] < loss.hoss[1,g], col.index := loss.hoss[1,g], with=F]
 					big.data[big.data[[col.index]] > loss.hoss[2,g], col.index := loss.hoss[2,g], with=F] 
-					ks <- big.data[, as.list(as.vector(unlist(round(quantile(big.data[[col.index]], probs=c(0.2,0.4,0.6,0.8), na.rm=TRUE), digits=3))))] # Knots
+					ks <- big.data[, as.list(as.vector(unlist(round(quantile(big.data[[col.index]], probs=knot.cut.percentiles, na.rm=TRUE), digits=3))))] # Knots
 					bs <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.1), digits=3)))] # Boundaries
 					lh <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.0), digits=3)))] # LOSS/HOSS
 			
@@ -348,14 +349,24 @@ function(panel.data,         ## REQUIRED
 				}
 
 				if (is.null(parallel.config)) { # Sequential
-					fitted.b <- big.data[, eval(rqfit(tmp.gp.iter[1:k], lam=L)), by='b']
+					fitted.b <- big.data[, rqfit(tmp.gp.iter[1:k], lam=L, rqdata=.SD), by='b']
 					fitted.b[, ID := rep(data$ID, time = (B*length(taus)))]
 					fitted.b[,tau := rep(taus, each=dim(data)[1], time=B)]
+
+					#  AVI also tried using this lapply function similar to the parallel solutions.  
+					#  Results matched parallel implimentations below (and revised rqfit/data.table now above), suggesting
+					#  that this original sequential implementation is the source of the conflicting results.
+					#  NOTE: this requires moving the fitted.b <- data.table(do.call(c, ... line outside of the 'else' parallel loop.
+					# tmp.fitted.b <- lapply(1:B, function(x) {
+						# rq.data = big.data[b==x]
+						# return(rqfit(tmp.gp.iter[1:k], lam=L, rqdata=rq.data))
+					# })
 				} else {	# Parallel over 1:B
 					if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
 						##  Don't offer this option now.  But this could ultimately be the BEST option for this because we could have 
 						##  nested foreach loops around Lambda, B and even the priors/orders if we have access to enough cores (cluster)
-						message("\t\tNOTE: FOREACH backend in not currently available for SIMEX.  Changing to BACKEND='PARALLEL' and TYPE will be set to OS default.")
+						message("\t\tNOTE: FOREACH backend in not currently available for SIMEX.  
+							Changing to BACKEND='PARALLEL' and TYPE will be set to OS default.")
 						parallel.config[["BACKEND"]] <- "PARALLEL"
 					} 
 				
@@ -363,18 +374,18 @@ function(panel.data,         ## REQUIRED
 					##  Note, that if you use the parallel.config for SIMEX here, you can also use it for TAUS in the naive analysis
 					##  Example parallel.config argument:  '... parallel.config=list(BACKEND="PARALLEL", TYPE="SOCK", WORKERS=list(SIMEX = 4, TAUS = 4))'
 					if (par.start$par.type == 'MULTICORE') {
-						tmp.fitted.b <- mclapply(1:B, function(x) big.data[b==x][,eval(rqfit(tmp.gp.iter[1:k], lam=L))], mc.cores=par.start$workers)
+						tmp.fitted.b <- mclapply(1:B, function(x) big.data[b==x][, rqfit(tmp.gp.iter[1:k], lam=L, rqdata=.SD)], mc.cores=par.start$workers)
 					}
 					if (par.start$par.type == 'SNOW') {
-						tmp.fitted.b <- parLapply(par.start$internal.cl, 1:B, function(x) big.data[b==x][,eval(rqfit(tmp.gp.iter[1:k], lam=L))])
+						tmp.fitted.b <- parLapply(par.start$internal.cl, 1:B, function(x) big.data[b==x][, rqfit(tmp.gp.iter[1:k], lam=L, rqdata=.SD)])
 					}
 					fitted.b <- data.table(do.call(c, as.vector(tmp.fitted.b)), ID = rep(data$ID, time=(B*length(taus))), 
 						tau=rep(taus, each=dim(data)[1], time=B), b = rep(1:B, each = dim(data)[1]*length(taus)), key=c('ID', 'b'))
 					stopParallel(parallel.config, par.start)
 				}
 
-				# Make new variable 'PREDICTED_VALUES' to compare with 'V1' and to preserve 'tau'
 				fitted.b[, V1 := .smooth.isotonize.row(V1), by=list(ID, b)] # Use V1 := ... instead of PREDICTED_VALUES := .. to keep from adding a column
+				setkey(fitted.b, ID, tau) # setkey here to try and improve efficiency.
 				fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted.b[, mean(V1), by=list(ID, tau)][['V1']] 
 			
 			} ### END for (L in lambda[-1])
