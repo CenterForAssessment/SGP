@@ -307,9 +307,9 @@ function(
 		for (target.type.iter in sgp.target.scale.scores.types) {
 			for (target.level.iter in target.level) {
 				if (!exists("tmp.target.data")) {
-					tmp.target <- getTargetSGP(sgp_object, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward, return.lagged.status=FALSE)
+					tmp.target.data <- getTargetSGP(sgp_object, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward, return.lagged.status=FALSE)
 				} else {
-					tmp.target <- getTargetSGP(sgp_object, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward, return.lagged.status=FALSE)[tmp.target.data]
+					tmp.target.data <- getTargetSGP(sgp_object, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward, return.lagged.status=FALSE)[tmp.target.data]
 				}
 			}
 		} 
