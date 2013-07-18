@@ -306,10 +306,10 @@ function(
 
 		for (target.type.iter in sgp.target.scale.scores.types) {
 			for (target.level.iter in target.level) {
-				if (!exists("tmp.data")) {
-					tmp.data <- getTargetSGP(sgp_object, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward, return.lagged.status=FALSE)
+				if (!exists("tmp.target.data")) {
+					tmp.target <- getTargetSGP(sgp_object, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward, return.lagged.status=FALSE)
 				} else {
-					tmp.data <- getTargetSGP(sgp_object, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward, return.lagged.status=FALSE)[tmp.data]
+					tmp.target <- getTargetSGP(sgp_object, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward, return.lagged.status=FALSE)[tmp.target.data]
 				}
 			}
 		} 
@@ -319,10 +319,10 @@ function(
 			sgp_object <- getTargetScaleScore(
 				sgp_object, 
 				state, 
-				tmp.data[, tmp.variable.names, with=FALSE],
+				tmp.target.data[, tmp.variable.names, with=FALSE],
 				target.type.iter,
 				target.level.iter,
-				getYearsContentAreasGrades(state, unique(tmp.data$YEAR)),
+				getYearsContentAreasGrades(state, unique(tmp.target.data$YEAR)),
 				parallel.config=parallel.config)
 		}
 	} ### END !is.null(sgp.target.scale.scores)
