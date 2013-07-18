@@ -288,10 +288,10 @@ function(panel.data,         ## REQUIRED
 			for (g in seq_along(tmp.gp.iter)) {
 				if ("YEAR" %in% names(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
 					CSEM_Data <- subset(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], 
-						GRADE==tmp.gp.iter[g] & CONTENT_AREA== tmp.ca.iter[g] & YEAR==tmp.yr.iter[g])
+						GRADE == tmp.gp.iter[g] & CONTENT_AREA == tmp.ca.iter[g] & YEAR == tmp.yr.iter[g])
 				} else {
 					CSEM_Data <- subset(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], 
-						GRADE==tmp.gp.iter[g] & CONTENT_AREA== tmp.ca.iter[g])
+						GRADE == tmp.gp.iter[g] & CONTENT_AREA == tmp.ca.iter[g])
 				}
 				if (dim(CSEM_Data)[1] == 0) stop(paste('CSEM data for', tmp.ca.iter[g], 'Grade', tmp.gp.iter[g],
 					'is required to use SIMEX functionality, but is not available in SGPstateData.  Please contact package administrators to add CSEM data.'))
@@ -390,9 +390,12 @@ function(panel.data,         ## REQUIRED
 			
 			} ### END for (L in lambda[-1])
 
-			switch(extrapolation, QUADRATIC = fit <- lm(fitted[[paste("order_", k, sep="")]] ~ lambda + I(lambda^2)), LINEAR = fit <- lm(fitted[[paste("order_", k, sep="")]]~ lambda))
+			switch(extrapolation,
+				LINEAR = fit <- lm(fitted[[paste("order_", k, sep="")]]~ lambda),
+				QUADRATIC = fit <- lm(fitted[[paste("order_", k, sep="")]] ~ lambda + I(lambda^2)))
 			extrap[[paste("order_", k, sep="")]] <- t(apply(matrix(predict(fit, newdata=data.frame(lambda=-1)), nrow=dim(data)[1]), 1, .smooth.isotonize.row))
-			tmp.quantiles.simex[[k]] <- data.table(ID=data[["ID"]], SIMEX_ORDER=k, SGP_SIMEX=.get.quantiles(extrap[[paste("order_", k, sep="")]], data[[tmp.num.variables]]))
+			tmp.quantiles.simex[[k]] <- data.table(ID=data[["ID"]], SIMEX_ORDER=k, 
+				SGP_SIMEX=.get.quantiles(extrap[[paste("order_", k, sep="")]], data[[tmp.num.variables]]))
 		} ### END for (k in simex.matrix.priors)
 		
 		quantile.data.simex <- data.table(rbindlist(tmp.quantiles.simex), key=c("ID", "SIMEX_ORDER"))
