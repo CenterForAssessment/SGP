@@ -90,7 +90,8 @@ function(sgp_object,
 			content_areas=content_areas,
 			sgp.percentiles=sgp.percentiles,
 			sgp.projections.lagged=sgp.projections.lagged,
-			sgp.projections.lagged.baseline=sgp.projections.lagged.baseline)
+			sgp.projections.lagged.baseline=sgp.projections.lagged.baseline,
+			parallel.config=parallel.config)
 
                 if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
 	}
