@@ -103,9 +103,33 @@ function(sgp_object,
 		}
 	}
 
-	median_na <- function(x) median(as.numeric(x), na.rm=TRUE)
+	weighted.median <- function(x, probs=0.5, w, na.rm=TRUE) {
+		if (is.null(w)) return(as.numeric(quantile(x, probs, na.rm)))
+		q <- !is.na(x) & !is.na(w)
+		if (!all(q)) {if (na.rm) {x<-x[q]; w<-t[q]} else stop("NA's")}
+		ord <- order(x)
+		z <- list(y=x[ord], w=w[ord])
+		z$x <- (cumsum(z$w) - z$w[1]) / (sum(z$w) - z$w[1]) # 0 to 1 inclusive
+		a <- approx(z$x, z$y, probs)$y
+		dec <- if (length(probs)>1) 2-log10(diff(range(probs))) else 2
+		return(a)
+	}
+
+	median_na <- function(x, weight) {
+		if (is.null(weight)) {
+			median(as.numeric(x), na.rm=TRUE)
+		} else {
+			weighted.median(as.numeric(x), w=weight, na.rm=TRUE)
+		}
+	}
 	boot.median <- function(x,i) median(x[i], na.rm=TRUE)
-	mean_na <- function(x, result.digits=2) round(mean(as.numeric(x), na.rm=TRUE), digits=result.digits)
+	mean_na <- function(x, weight, result.digits=2) {
+		if (is.null(weight)) {
+			round(mean(as.numeric(x), na.rm=TRUE), digits=result.digits)
+		} else {
+			round(weighted.mean(as.numeric(x), w=weight, na.rm=TRUE), digits=result.digits)
+		}
+	}
 	sd_na <- function(x, result.digits=2) round(sd(as.numeric(x), na.rm=TRUE), digits=result.digits)
 	num_non_missing <- function(x) sum(!is.na(as.numeric(x)))
 	sgp_standard_error <- function(x,y=1) round(y*sd(x, na.rm=TRUE)/sqrt(sum(!is.na(as.numeric(x)))), digits=2)
@@ -207,8 +231,8 @@ function(sgp_object,
 			}
 
 			tmp.sgp.summaries <- list(
-				MEAN_SGP="mean_na(SGP)",
-				MEDIAN_SGP="median_na(SGP)",
+				MEAN_SGP="mean_na(SGP, WEIGHT)",
+				MEDIAN_SGP="median_na(SGP, WEIGHT)",
 				MEDIAN_SGP_COUNT="num_non_missing(SGP)",
 				PERCENT_AT_ABOVE_PROFICIENT=paste("percent_in_category(ACHIEVEMENT_LEVEL, ", 
 					get.expression(proficient.achievement.levels), ", ", get.expression(all.achievement.levels), ")",sep=""),
@@ -219,8 +243,8 @@ function(sgp_object,
 				if (summarizeSGP.baseline) {
 					tmp.sgp.summaries <- c(
 						tmp.sgp.summaries,
-						MEAN_SGP_BASELINE="mean_na(SGP_BASELINE)",
-						MEDIAN_SGP_BASELINE="median_na(SGP_BASELINE)",
+						MEAN_SGP_BASELINE="mean_na(SGP_BASELINE, WEIGHT)",
+						MEDIAN_SGP_BASELINE="median_na(SGP_BASELINE, WEIGHT)",
 						MEAN_SGP_BASELINE_STANDARD_ERROR="sgp_standard_error(SGP_BASELINE)",
 						MEDIAN_SGP_BASELINE_STANDARD_ERROR="sgp_standard_error(SGP_BASELINE, 1.253)"
 					)
@@ -238,7 +262,7 @@ function(sgp_object,
 				if ("SCALE_SCORE_PRIOR_STANDARDIZED" %in% names(sgp_object@Data)) {
 					tmp.sgp.summaries <- c(
 						tmp.sgp.summaries,
-						MEAN_SCALE_SCORE_PRIOR_STANDARDIZED="mean_na(SCALE_SCORE_PRIOR_STANDARDIZED)",
+						MEAN_SCALE_SCORE_PRIOR_STANDARDIZED="mean_na(SCALE_SCORE_PRIOR_STANDARDIZED, WEIGHT)",
 						SD_SCALE_SCORE_PRIOR_STANDARDIZED="sd_na(SCALE_SCORE_PRIOR_STANDARDIZED)"
 					)
 				}
@@ -246,15 +270,15 @@ function(sgp_object,
 				if ("SGP_SIMEX" %in% names(sgp_object@Data)) {
 					tmp.sgp.summaries <- c(
 						tmp.sgp.summaries,
-						MEDIAN_SGP_SIMEX="median_na(SGP_SIMEX)",
-						MEAN_SGP_SIMEX="mean_na(SGP_SIMEX)"
+						MEDIAN_SGP_SIMEX="median_na(SGP_SIMEX, WEIGHT)",
+						MEAN_SGP_SIMEX="mean_na(SGP_SIMEX, WEIGHT)"
 					)
 				}
 
 				if (!is.null(my.sgp.target)) {
 					tmp.sgp.summaries <- c(
 						tmp.sgp.summaries, 
-						M1=paste("median_na(", my.sgp.target, ")", sep=""),  
+						M1=paste("median_na(", my.sgp.target, ", WEIGHT)", sep=""),  
 						M2=paste("num_non_missing(", my.sgp.target, ")", sep=""),
 						PERCENT_CATCHING_UP_KEEPING_UP="percent_in_category(CATCH_UP_KEEP_UP_STATUS, list(c('Catch Up: Yes', 'Keep Up: Yes')), list(c('Catch Up: Yes', 'Catch Up: No', 'Keep Up: Yes', 'Keep Up: No')))"
 					)
@@ -265,7 +289,7 @@ function(sgp_object,
 				if (!is.null(my.sgp.target.baseline)) {
 					tmp.sgp.summaries <- c(
 						tmp.sgp.summaries, 
-						M1=paste("median_na(", my.sgp.target.baseline, ")", sep=""),  
+						M1=paste("median_na(", my.sgp.target.baseline, ", WEIGHT)", sep=""),  
 						M2=paste("num_non_missing(", my.sgp.target.baseline, ")", sep=""),
 						PERCENT_CATCHING_UP_KEEPING_UP_BASELINE="percent_in_category(CATCH_UP_KEEP_UP_STATUS_BASELINE, list(c('Catch Up: Yes', 'Keep Up: Yes')), list(c('Catch Up: Yes', 'Catch Up: No', 'Keep Up: Yes', 'Keep Up: No')))"
 					)
@@ -277,7 +301,7 @@ function(sgp_object,
 				if (!is.null(my.sgp.target.musu)) {
 					tmp.sgp.summaries <- c(
 						tmp.sgp.summaries, 
-						M1=paste("median_na(", my.sgp.target.musu, ")", sep=""),  
+						M1=paste("median_na(", my.sgp.target.musu, ", WEIGHT)", sep=""),  
 						M2=paste("num_non_missing(", my.sgp.target.musu, ")", sep=""),
 						PERCENT_MOVING_UP_STAYING_UP="percent_in_category(MOVE_UP_STAY_UP_STATUS, list(c('Move Up: Yes', 'Stay Up: Yes')), list(c('Move Up: Yes', 'Move Up: No', 'Stay Up: Yes', 'Stay Up: No')))"
 					)
@@ -288,7 +312,7 @@ function(sgp_object,
 				if (!is.null(my.sgp.target.musu.baseline)) {
 					tmp.sgp.summaries <- c(
 						tmp.sgp.summaries, 
-						M1=paste("median_na(", my.sgp.target.musu.baseline, ")", sep=""),  
+						M1=paste("median_na(", my.sgp.target.musu.baseline, ", WEIGHT)", sep=""),  
 						M2=paste("num_non_missing(", my.sgp.target.musu.baseline, ")", sep=""),
 						PERCENT_MOVING_UP_STAYING_UP_BASELINE="percent_in_category(MOVE_UP_STAY_UP_STATUS_BASELINE, list(c('Move Up: Yes', 'Stay Up: Yes')), list(c('Move Up: Yes', 'Move Up: No', 'Stay Up: Yes', 'Stay Up: No')))"
 					)
@@ -339,7 +363,7 @@ function(sgp_object,
 
 			return(tmp.confidence.interval.groups)
 		}
-	} ### END sgpSummarize.config
+	} ### END summarizeSGP.config
 
 	get.multiple.membership <- function(sgp_object) {
 		tmp.names <- list()
@@ -622,6 +646,11 @@ function(sgp_object,
 				### Create LONGer data and run summarizeSGP_INTERNAL
 				
 				tmp.dt.long <- tmp.dt[data.table(sgp_object@Data_Supplementary[[j-1]][,VALID_CASE:="VALID_CASE"], key=getKey(tmp.dt)), nomatch=0]
+
+				if (!is.null(summary.groups[["institution_multiple_membership"]][[j-1]][["WEIGHTS"]])) {
+					setnames(tmp.dt.long, summary.groups[["institution_multiple_membership"]][[j-1]][["WEIGHTS"]], "WEIGHT")
+				}
+
 				sgp_object@Summary[[i]] <- c(sgp_object@Summary[[i]], summarizeSGP_INTERNAL(tmp.dt.long, tmp.inst))
 			} 
 		} ### End i loop over summary.groups[["institution"]]
