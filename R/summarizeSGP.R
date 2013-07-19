@@ -106,7 +106,7 @@ function(sgp_object,
 	weighted.median <- function(x, probs=0.5, w, na.rm=TRUE) {
 		if (is.null(w)) return(as.numeric(quantile(x, probs, na.rm)))
 		q <- !is.na(x) & !is.na(w)
-		if (!all(q)) {if (na.rm) {x<-x[q]; w<-t[q]} else stop("NA's")}
+		if (!all(q)) {if (na.rm) {x<-x[q]; w<-w[q]} else stop("NA's")}
 		ord <- order(x)
 		z <- list(y=x[ord], w=w[ord])
 		z$x <- (cumsum(z$w) - z$w[1]) / (sum(z$w) - z$w[1]) # 0 to 1 inclusive
