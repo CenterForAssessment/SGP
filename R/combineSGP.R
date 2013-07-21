@@ -8,8 +8,10 @@ function(
 	sgp.percentiles.baseline=TRUE,
 	sgp.projections.lagged=TRUE,
 	sgp.projections.lagged.baseline=TRUE,
+	sgp.target.scale.scores=FALSE,
 	max.sgp.target.years.forward=3,
-	update.all.years=FALSE) {
+	update.all.years=FALSE,
+	parallel.config=NULL) {
 
 	started.at <- proc.time()
 	message(paste("Started combineSGP", date()))
@@ -50,12 +52,14 @@ function(
 			my.sgp <- "SGP"
 			my.sgp.target <- paste("SGP_TARGET", max.sgp.target.years.forward, "YEAR", sep="_")
 			my.sgp.target.move.up.stay.up <- paste("SGP_TARGET_MOVE_UP_STAY_UP", max.sgp.target.years.forward, "YEAR", sep="_")
+			if (sgp.target.scale.scores) sgp.target.scale.scores.types <- c("sgp.projections", "sgp.projections.lagged")
 		}
 		if (SGPstateData[[state]][["Growth"]][["System_Type"]]=="Baseline Referenced") {
 			target.type <- "sgp.projections.lagged.baseline"
 			my.sgp <- "SGP_BASELINE"
 			my.sgp.target <- paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, "YEAR", sep="_")
 			my.sgp.target.move.up.stay.up <- paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", max.sgp.target.years.forward, "YEAR", sep="_")
+			if (sgp.target.scale.scores) sgp.target.scale.scores.types <- c("sgp.projections.baseline", "sgp.projections.lagged.baseline")
 		}
 		if (SGPstateData[[state]][["Growth"]][["System_Type"]]=="Cohort and Baseline Referenced") {
 			target.type <- c("sgp.projections.lagged", "sgp.projections.lagged.baseline")
@@ -63,6 +67,7 @@ function(
 			my.sgp.target <- c(paste("SGP_TARGET", max.sgp.target.years.forward, "YEAR", sep="_"), paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, "YEAR", sep="_"))
 			my.sgp.target.move.up.stay.up <- c(paste("SGP_TARGET_MOVE_UP_STAY_UP", max.sgp.target.years.forward, "YEAR", sep="_"),
 				paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", max.sgp.target.years.forward, "YEAR", sep="_"))
+			if (sgp.target.scale.scores) sgp.target.scale.scores.types <- c("sgp.projections", "sgp.projections.baseline", "sgp.projections.lagged", "sgp.projections.lagged.baseline")
 		}
 	}
 
@@ -197,16 +202,15 @@ function(
 		sgp.projections.lagged.baseline <- FALSE
 	}
 
+	if (length(which(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")) > 1) {
+		target.level <- c("CATCH_UP_KEEP_UP", "MOVE_UP_STAY_UP")
+	} else {
+		target.level <- "CATCH_UP_KEEP_UP"
+	}
+
 	### Calculate Targets
  
 	if (sgp.projections.lagged | sgp.projections.lagged.baseline) { 
-
-		if (length(which(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")) > 1) {
-			target.level <- c("CATCH_UP_KEEP_UP", "MOVE_UP_STAY_UP")
-		} else {
-			target.level <- "CATCH_UP_KEEP_UP"
-		}
-
 
 		for (target.type.iter in sort(target.type[c(sgp.projections.lagged, sgp.projections.lagged.baseline)])) {
 			for (target.level.iter in target.level) {
@@ -287,11 +291,44 @@ function(
 			}
 		}
 
+		for (i in intersect(names(slot.data), c("CATCH_UP_KEEP_UP_STATUS_INITIAL", "MOVE_UP_STAY_UP_STATUS_INITIAL"))) {
+			slot.data[[i]] <- NULL
+		}
+
 	} ## END sgp.projections.lagged | sgp.projections.lagged.baseline
 
-	for (i in intersect(names(slot.data), c("CATCH_UP_KEEP_UP_STATUS_INITIAL", "MOVE_UP_STAY_UP_STATUS_INITIAL"))) {
-		slot.data[[i]] <- NULL
-	}
+
+	###################################################################################################
+	### Create SGP Scale Score targets (Cohort and Baseline referenced) if requested
+	###################################################################################################
+
+	if (sgp.target.scale.scores) {
+
+		for (target.type.iter in sgp.target.scale.scores.types) {
+			for (target.level.iter in target.level) {
+				if (!exists("tmp.target.data")) {
+					tmp.target.data <- getTargetSGP(sgp_object, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward, return.lagged.status=FALSE)
+				} else {
+					tmp.target.data <- getTargetSGP(sgp_object, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward, return.lagged.status=FALSE)[tmp.target.data]
+				}
+			}
+		} 
+
+		for (target.type.iter in sgp.target.scale.scores.types) {
+			tmp.target.level.names <- as.character(sapply(target.level, function(x) getTargetName(target.type.iter, x, max.sgp.target.years.forward)))
+			sgp_object <- getTargetScaleScore(
+				sgp_object, 
+				state, 
+				tmp.target.data[, c("ID", "CONTENT_AREA", "YEAR", tmp.target.level.names), with=FALSE],
+				target.type.iter,
+				tmp.target.level.names,
+				getYearsContentAreasGrades(state, unique(tmp.target.data$YEAR)),
+				parallel.config=parallel.config)
+		}
+	} ### END !is.null(sgp.target.scale.scores)
+
+
+	### Put slot.data into @Data slot
 
 	setkeyv(slot.data, getKey(slot.data))
 	sgp_object@Data <- slot.data

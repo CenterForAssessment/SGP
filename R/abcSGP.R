@@ -13,6 +13,7 @@ function(sgp_object,
 	sgp.projections.baseline=TRUE,
 	sgp.projections.lagged.baseline=TRUE,
 	sgp.use.my.coefficient.matrices=NULL,
+	sgp.target.scale.scores=FALSE,
 	simulate.sgps=TRUE,
 	calculate.simex=NULL,
 	parallel.config=NULL,
@@ -90,7 +91,9 @@ function(sgp_object,
 			content_areas=content_areas,
 			sgp.percentiles=sgp.percentiles,
 			sgp.projections.lagged=sgp.projections.lagged,
-			sgp.projections.lagged.baseline=sgp.projections.lagged.baseline)
+			sgp.projections.lagged.baseline=sgp.projections.lagged.baseline,
+			sgp.target.scale.scores=sgp.target.scale.scores,
+			parallel.config=parallel.config)
 
                 if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
 	}

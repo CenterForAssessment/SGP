@@ -22,6 +22,7 @@ abcSGP(sgp_object,
 	sgp.projections.baseline=TRUE,
 	sgp.projections.lagged.baseline=TRUE,
 	sgp.use.my.coefficient.matrices=NULL,
+	sgp.target.scale.scores=FALSE,
 	simulate.sgps=TRUE,
 	calculate.simex=NULL,
 	parallel.config=NULL,
@@ -69,6 +70,8 @@ If missing the function will use the data to infer all the grade progressions fo
   }
   \item{sgp.use.my.coefficient.matrices}{Boolean variable indicating whether to use embedded coefficient matrices to calculate SGPs. One should be careful to remove previously calculated SGPs prior
   to recalculating SGPs.
+  }
+  \item{sgp.target.scale.scores}{Boolean variable indicating whether target scale scores associated with SGP_TARGETs should be calculated as part of the \code{\link{combineSGP}} run. Defaults to FALSE.
   }
   \item{simulate.sgps}{Boolean variable indicating whether to simulate SGP values for students based on test-specific Conditional Standard Errors of Measurement (CSEM). 
   Test CSEM data must be available for simulation.  Must be set to TRUE for confidence interval construction. Defaults to TRUE in \code{abcSGP} only.
