@@ -750,7 +750,26 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			}
 		} ### END if (sgPlot.baseline)
 
-	### Merge in INSTRUCTOR_NAME if requested
+	#### Merge in scale scores associated with SGP_TARGETs (if requested & available) and transform using piecewise.transform (if required) (NOT NECESSARY IF WIDE data is provided)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	#### Merge in INSTRUCTOR_NAME if requested
 
 		if (sgPlot.reports.by.instructor) {
 			setkeyv(student.teacher.lookup, c("ID", paste("INSTRUCTOR_NUMBER", tmp.last.year, sep=".")))
