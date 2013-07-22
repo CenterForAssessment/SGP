@@ -6,8 +6,6 @@ function(sgp_object,
 	sgp.type,
 	use.cohort.for.baseline.when.missing=NULL) {
 
-	"%w/o%" <- function(x, y) x[!x %in% y]
-
         if (is.null(use.cohort.for.baseline.when.missing)) {
                 if (!is.null(state) && is.null(SGPstateData[[state]][["SGP_Configuration"]][["use.cohort.for.baseline.when.missing"]])) {
                         use.cohort.for.baseline.when.missing <- FALSE
@@ -43,10 +41,11 @@ function(sgp_object,
 	}
 
 	if (sgp.type %in% c("sgp.projections", "sgp.projections.baseline")) {
+		tmp.target.names <- grep("TARGET_SCALE_SCORES", names(sgp_object@SGP$SGProjections), value=TRUE)
 		tmp.lagged.names <- grep("LAGGED", names(sgp_object@SGP$SGProjections), value=TRUE)
-		tmp.sgp.projections.names <- setdiff(names(sgp_object@SGP$SGProjections), tmp.lagged.names)
+		tmp.sgp.projections.names <- setdiff(names(sgp_object@SGP$SGProjections), c(tmp.target.names, tmp.lagged.names))
 		tmp.baseline.names <- grep("BASELINE", tmp.sgp.projections.names, value=TRUE)
-		if (sgp.type=="sgp.projections") tmp.names <- tmp.sgp.projections.names %w/o% tmp.baseline.names
+		if (sgp.type=="sgp.projections") tmp.names <- setdiff(tmp.sgp.projections.names, tmp.baseline.names)
 		if (sgp.type=="sgp.projections.baseline") {
 			tmp.names <- tmp.baseline.names
 			if (use.cohort.for.baseline.when.missing) {
@@ -68,7 +67,8 @@ function(sgp_object,
 	}
 
 	if (sgp.type %in% c("sgp.projections.lagged", "sgp.projections.lagged.baseline")) {
-		tmp.lagged.names <- grep("LAGGED", names(sgp_object@SGP$SGProjections), value=TRUE)
+		tmp.target.names <- grep("TARGET_SCALE_SCORES", names(sgp_object@SGP$SGProjections), value=TRUE)
+		tmp.lagged.names <- setdiff(grep("LAGGED", names(sgp_object@SGP$SGProjections), value=TRUE), tmp.target.names)
 		tmp.baseline.names <- intersect(tmp.lagged.names, grep("BASELINE", names(sgp_object@SGP$SGProjections), value=TRUE))
 		if (sgp.type=="sgp.projections.lagged") tmp.names <- setdiff(tmp.lagged.names, tmp.baseline.names)
 		if (sgp.type=="sgp.projections.lagged.baseline") {
