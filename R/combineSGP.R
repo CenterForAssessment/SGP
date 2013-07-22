@@ -309,7 +309,9 @@ function(
 				if (!exists("tmp.target.data")) {
 					tmp.target.data <- getTargetSGP(sgp_object, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward, return.lagged.status=FALSE)
 				} else {
-					tmp.target.data <- getTargetSGP(sgp_object, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward, return.lagged.status=FALSE)[tmp.target.data]
+					tmp.target.data <- data.table(merge.data.frame(tmp.target.data, 
+						getTargetSGP(sgp_object, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward, return.lagged.status=FALSE),
+						all=TRUE), key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 				}
 			}
 		} 
