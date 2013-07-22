@@ -247,17 +247,35 @@ function(panel.data,	## REQUIRED
 		}
 	}
 
+
 	.get.trajectories.and.cuts <- function(percentile.trajectories, trajectories.tf, cuts.tf, projection.unit=projection.unit) {
 		CUT <- NULL
 		if (trajectories.tf) {
-			tmp.traj <- percentile.trajectories[rep(1:100, dim(percentile.trajectories)[1]/100) %in% percentile.trajectory.values]
+			if (is.numeric(percentile.trajectory.values)) {
+				tmp.name.prefix <- "P"
+				tmp.traj <- percentile.trajectories[rep(1:100, dim(percentile.trajectories)[1]/100) %in% percentile.trajectory.values]
+				tmp.num.years.forward <- length(grade.projection.sequence)
+			}
+			if (is.character(percentile.trajectory.values)) {
+				tmp.name.prefix <- "SCALE_SCORE_"
+				tmp.num.years.forward <- min(length(grade.projection.sequence), 
+					lapply(strsplit(percentile.trajectory.values, "_")[[1]], type.convert)[sapply(lapply(strsplit(percentile.trajectory.values, "_")[[1]], type.convert), is.numeric)][[1]])
+				if (length(grep("LAGGED", percentile.trajectory.values)) > 0) {
+					tmp.num.years.forward <- tmp.num.years.forward + 1
+				}
+
+				tmp.indices <- as.integer(rep(100*(seq(dim(panel.data$Panel_Data)[1])-1), each=length(percentile.trajectory.values)) +
+					as.numeric(t(as.matrix(panel.data[["Panel_Data"]][,percentile.trajectory.values]))))
+				tmp.traj <- percentile.trajectories[tmp.indices, 1:(2+tmp.num.years.forward-1), with=FALSE][,ID:=rep(panel.data[["Panel_Data"]][["ID"]], each=length(percentile.trajectory.values))]
+			}
 			tmp.traj[,2:dim(tmp.traj)[2] := round(tmp.traj[,2:dim(tmp.traj)[2], with=FALSE], digits=projcuts.digits), with=FALSE]
 			trajectories <- data.table(reshape(tmp.traj[, CUT:=rep(percentile.trajectory.values, dim(tmp.traj)[1]/length(percentile.trajectory.values))], 
 				idvar="ID", timevar="CUT", direction="wide"), key="ID")
+
 			if (projection.unit=="GRADE") {
-				tmp.vec <- expand.grid("P", percentile.trajectory.values, "_PROJ_GRADE_", grade.projection.sequence)
+				tmp.vec <- expand.grid(tmp.name.prefix, percentile.trajectory.values, "_PROJ_GRADE_", grade.projection.sequence)[1:(length(percentile.trajectory.values)*tmp.num.years.forward),]
 			} else {
-				tmp.vec <- expand.grid("P", percentile.trajectory.values, "_PROJ_YEAR_", seq_along(grade.projection.sequence))
+				tmp.vec <- expand.grid(tmp.name.prefix, percentile.trajectory.values, "_PROJ_YEAR_", seq_along(grade.projection.sequence))[1:(length(percentile.trajectory.values)*tmp.num.years.forward),]
 			}
 			tmp.vec <- tmp.vec[order(tmp.vec$Var2),]
 			setnames(trajectories, c("ID", do.call(paste, c(tmp.vec, sep=""))))
@@ -441,9 +459,13 @@ function(panel.data,	## REQUIRED
 		stop("\tNOTE: Either percentile trajectories and/or performance level cutscores must be supplied for the analyses.")
 	}
 
-	if (!is.null(percentile.trajectory.values) && !all(percentile.trajectory.values %in% 1:100)) {
-		message("\tNOTE: Supplied 'percentile.trajectory.values' must be integers between 1 and 100. Only supplied values in that range will be used.")
+	if (!is.null(percentile.trajectory.values) && is.numeric(percentile.trajectory.values) && !all(percentile.trajectory.values %in% 1:100)) {
+		message("\tNOTE: Integer supplied 'percentile.trajectory.values' must be between 1 and 100. Only supplied values in that range will be used.")
 		percentile.trajectory.values <- intersect(percentile.trajectory.values, 1:100)
+	}
+
+	if (!is.null(percentile.trajectory.values) && is.character(percentile.trajectory.values) && !all(percentile.trajectory.values %in% names(panel.data[["Panel_Data"]]))) {
+		message("\tNOTE: Character 'percentile.trajectory.values' must correspond to individual specific variable in panel.data[['Panel_Data']]. Please check for appropriate variables.")
 	}
 
 	if (!is.null(achievement.level.prior.vname)) {

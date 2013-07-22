@@ -74,7 +74,7 @@ function(sgp_object,
 	### Set up parallel.config if NULL
 
 	if (is.null(parallel.config)) {
-		parallel.config = list(BACKEND="PARALLEL", WORKERS=list(GA_PLOTS=1, SG_PLOTS=1, SG_PLOTS_TARGETS=1))
+		parallel.config = list(BACKEND="PARALLEL", WORKERS=list(GA_PLOTS=1, SG_PLOTS=1))
 	}
 
 	### Utility functions	
@@ -335,23 +335,6 @@ if ("studentGrowthPlot" %in% plot.types) {
 		}
 	} ## END piecewise.transform
 
-	get.years.content_areas.grades <- function(state) {
-		tmp.list <- list()
-		for (i in names(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]])) {
-			tmp.df <- data.frame(GRADE=as.character(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[i]]), stringsAsFactors=FALSE)
-			if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[i]])) {
-				tmp.df <- CJ(tmp.df$GRADE, SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[i]]:tmp.last.year)
-			} else {
-				tmp.df <- CJ(tmp.df$GRADE, tmp.years)
-			}
-			setnames(tmp.df, c("GRADE", "YEAR")) 
-			tmp.list[[i]] <- data.table(CONTENT_AREA=i, tmp.df)
-		}
-	tmp.dt <- data.table(rbind.fill(tmp.list))
-	setkeyv(tmp.dt, c("CONTENT_AREA", "GRADE", "YEAR"))
-	return(tmp.dt[!is.na(CONTENT_AREA)])
-	} ## END get.years.content_areas.grades
-
 
 ######################################################################
 ##### DISTINGUISH CASES WHEN WIDE data is or is not provided
@@ -387,11 +370,22 @@ if ("studentGrowthPlot" %in% plot.types) {
 		if (sgPlot.baseline) {
 			my.sgp <- "SGP_BASELINE"
 			my.sgp.level <- "SGP_LEVEL_BASELINE"
-			if (!is.null(sgPlot.show.targets.years.forward)) my.target.types <- c("sgp.projections.baseline", "sgp.projections.lagged.baseline")
+			if (!is.null(sgPlot.show.targets.years.forward) && (!is.integer(sgPlot.show.targets.years.forward) | length(sgPlot.show.targets.years.forward)!=1)) {
+				message("\tNOTE: sgPlot.show.targets.years.forward must be a positive integer. Argument will be set to NULL")
+				sgPlot.show.targets.years.forward <- NULL
+			} else {
+				my.target.types <- c("sgp.projections.baseline", "sgp.projections.lagged.baseline")
+			}
 		} else {
 			my.sgp <- "SGP"
 			my.sgp.level <- "SGP_LEVEL"
-			if (!is.null(sgPlot.show.targets.years.forward)) my.target.types <- c("sgp.projections", "sgp.projections.lagged")
+			if (!is.null(sgPlot.show.targets.years.forward)) 
+			if (!is.null(sgPlot.show.targets.years.forward) && (!is.numeric(sgPlot.show.targets.years.forward) | length(sgPlot.show.targets.years.forward)!=1)) {
+				message("\tNOTE: sgPlot.show.targets.years.forward must be a positive integer. Argument will be set to NULL")
+				sgPlot.show.targets.years.forward <- NULL
+			} else {
+				my.target.types <- c("sgp.projections", "sgp.projections.lagged")
+			}
 		}
 
 	#### Which targets
@@ -639,12 +633,12 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			report.ids <- unique(slot.data[tmp.districts.and.schools][["ID"]])
 			if (sgPlot.reports.by.instructor) report.ids <- intersect(student.teacher.lookup[['ID']], report.ids)
 			setkeyv(slot.data, c("CONTENT_AREA", "GRADE", "YEAR"))
-			tmp.table <- data.table(slot.data[get.years.content_areas.grades(state), nomatch=0], 
+			tmp.table <- data.table(slot.data[getYearsContentAreasGrades(state, tmp.years), nomatch=0], 
 				key=c("ID", "CONTENT_AREA", "YEAR", "VALID_CASE"))[CJ(report.ids, tmp.content_areas, tmp.years, "VALID_CASE")]
 		} else {
 			report.ids <- sgPlot.students
 			setkeyv(slot.data, c("CONTENT_AREA", "GRADE", "YEAR"))
-			tmp.table <- data.table(slot.data[get.years.content_areas.grades(state), nomatch=0], 
+			tmp.table <- data.table(slot.data[getYearsContentAreasGrades(state, tmp.years), nomatch=0], 
 				key=c("VALID_CASE", "ID", "CONTENT_AREA", "YEAR"))[CJ("VALID_CASE", report.ids, tmp.content_areas, tmp.years)]
 			setkeyv(tmp.table, c("VALID_CASE", "YEAR", "CONTENT_AREA", "DISTRICT_NUMBER", "SCHOOL_NUMBER"))
 			tmp.districts.and.schools <- tmp.table[CJ("VALID_CASE", tmp.last.year, tmp.content_areas)][, list(DISTRICT_NUMBER, SCHOOL_NUMBER)]
@@ -756,55 +750,26 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			}
 		} ### END if (sgPlot.baseline)
 
+	#### Merge in scale scores associated with SGP_TARGETs (if requested & available) and transform using piecewise.transform (if required) (NOT NECESSARY IF WIDE data is provided)
 
 
 
 
-##############################################################################################################
-	#### BEGIN CONSTRUCTION ZONE: Calculate and Merge in lagged targets if requested
-##############################################################################################################
-
-		if (!is.null(sgPlot.show.targets.years.forward)) {
-
-			setkey(sgPlot.data, ID, CONTENT_AREA)
-
-			for (target.type in my.target.types) {
-				for (target.level in my.target.levels) {
-					sgPlot.data <- data.table(getTargetSGP(sgp_object, tmp.content_areas, state, tmp.last.year, 
-						target.type, target.level, sgPlot.show.targets.years.forward, unique(sgPlot.data[['ID']]), FALSE), key=c("ID", "CONTENT_AREA"))[sgPlot.data]
-					invisible(sgPlot.data[,VALID_CASE := NULL]); invisible(sgPlot.data[,YEAR := NULL])
-				}
-			} 
-
-
-browser()
-
-			for (target.type in my.target.types) {
-				for (target.level in my.target.levels) {
-					my.sgp.target <- getTargetName(target.type, target.level, sgPlot.show.targets.years.forward)
-					getTargetScaleScore(
-						sgp_object, 
-						state, 
-						sgPlot.data[, c("ID", my.sgp.target), with=FALSE], 
-						target.type, 
-						target.level, 
-						subset(get.years.content_areas.grades(state), YEAR==tmp.last.year),
-						parallel.config=parallel.config)
-
-				}
-			}
-
-		} ### if (!is.null(sgPlot.show.targets.years.forward))
-
-
-##############################################################################################################
-	#### END CONSTRUCTION ZONE: Calculate and Merge in lagged targets if requested
-##############################################################################################################
 
 
 
 
-	### Merge in INSTRUCTOR_NAME if requested
+
+
+
+
+
+
+
+
+
+
+	#### Merge in INSTRUCTOR_NAME if requested
 
 		if (sgPlot.reports.by.instructor) {
 			setkeyv(student.teacher.lookup, c("ID", paste("INSTRUCTOR_NUMBER", tmp.last.year, sep=".")))

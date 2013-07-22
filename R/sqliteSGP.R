@@ -568,7 +568,8 @@ function(sgp_object,
 			setnames(tmp.list[[i]], 4, "STUDENTGROUP")
 		}
 
-		tmp <- data.table(convert.variables(subset(rbind.fill(tmp.list), !is.na(get(group.number[1])) & !is.na(STUDENTGROUP) & get(group.enroll.status[1])==group.enroll.status.label[1])),
+		tmp <- data.table(convert.names(convert.variables(subset(rbind.fill(tmp.list), 
+			!is.na(get(group.number[1])) & !is.na(STUDENTGROUP) & get(group.enroll.status[1])==group.enroll.status.label[1]))), 
 			key=c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "STUDENTGROUP"))
                 tmp <- as.data.frame(data.table(tmp[!duplicated(tmp)]))
 
