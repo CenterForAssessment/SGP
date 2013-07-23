@@ -71,7 +71,7 @@ function(sgp_object,
 	tmp_object_2 <- tmp_object_1[, eval(jExpression), by=list(ID, CONTENT_AREA, YEAR, VALID_CASE)]
 
 	if (target.type %in% c("sgp.projections.baseline", "sgp.projections.lagged.baseline")) baseline.label <- "_BASELINE" else baseline.label <- NULL
-	if (target.type %in% c("sgp.projections", "sgp.projections.baseline")) projection.label <- NULL else projection.label <- "_LAGGED"
+	if (target.type %in% c("sgp.projections", "sgp.projections.baseline")) projection.label <- "_CURRENT" else projection.label <- NULL
 	if (target.level=="MOVE_UP_STAY_UP") target.level.label <- "_MOVE_UP_STAY_UP" else target.level.label <- NULL
 
 	setnames(tmp_object_2, "V1", paste("SGP_TARGET", baseline.label, target.level.label, "_",  max.sgp.target.years.forward.label, "_YEAR", projection.label, sep=""))
