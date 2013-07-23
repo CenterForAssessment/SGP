@@ -377,7 +377,7 @@ function(panel.data,         ## REQUIRED
 						tmp.fitted.b <- parLapply(par.start$internal.cl, 1:B, function(x) big.data[b==x][,eval(rqfit(tmp.gp.iter[1:k], lam=L))])
 					}
 					fitted.b <- data.table(do.call(c, as.vector(tmp.fitted.b)), ID = rep(data$ID, time=(B*length(taus))), 
-						tau=rep(taus, each=dim(data)[1], time=B), b = rep(1:B, each = dim(data)[1]*length(taus)), key=c('ID', 'b'))
+						tau=rep(taus, each=dim(data)[1], time=B), b = rep(1:B, each = dim(data)[1]*length(taus)))
 					stopParallel(parallel.config, par.start)
 				}
 
