@@ -244,7 +244,7 @@ function(panel.data,         ## REQUIRED
 	} 
 
 	.simex.sgp <- function(state, variable, lambda, B, extrapolation) {
-		GRADE <- CONTENT_AREA <- YEAR <- V1 <- Lambda <- tau <- b <- PREDICTED_VALUES <- NULL ## To avoid R CMD check warnings
+		GRADE <- CONTENT_AREA <- YEAR <- V1 <- Lambda <- tau <- b <- PREDICTED_VALUES <- .SD <- NULL ## To avoid R CMD check warnings
 		content_area <- content.area.progression
 		year <- year.progression
 		my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))

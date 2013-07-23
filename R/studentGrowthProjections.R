@@ -260,7 +260,7 @@ function(panel.data,	## REQUIRED
 				tmp.name.prefix <- "SCALE_SCORE_"
 				tmp.num.years.forward <- min(length(grade.projection.sequence), 
 					lapply(strsplit(percentile.trajectory.values, "_")[[1]], type.convert)[sapply(lapply(strsplit(percentile.trajectory.values, "_")[[1]], type.convert), is.numeric)][[1]])
-				if (length(grep("LAGGED", percentile.trajectory.values)) > 0) {
+				if (length(grep("CURRENT", percentile.trajectory.values))==0) {
 					tmp.num.years.forward <- tmp.num.years.forward + 1
 				}
 
