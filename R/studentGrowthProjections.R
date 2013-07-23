@@ -273,9 +273,9 @@ function(panel.data,	## REQUIRED
 				idvar="ID", timevar="CUT", direction="wide"), key="ID")
 
 			if (projection.unit=="GRADE") {
-				tmp.vec <- expand.grid(tmp.name.prefix, percentile.trajectory.values, "CURRENT_PROJ_GRADE_", grade.projection.sequence)[1:(length(percentile.trajectory.values)*tmp.num.years.forward),]
+				tmp.vec <- expand.grid(tmp.name.prefix, percentile.trajectory.values, "CURRENT_PROJ_GRADE_", grade.projection.sequence, lag.increment.label)[1:(length(percentile.trajectory.values)*tmp.num.years.forward),]
 			} else {
-				tmp.vec <- expand.grid(tmp.name.prefix, percentile.trajectory.values, "CURRENT_PROJ_YEAR_", seq_along(grade.projection.sequence))[1:(length(percentile.trajectory.values)*tmp.num.years.forward),]
+				tmp.vec <- expand.grid(tmp.name.prefix, percentile.trajectory.values, "CURRENT_PROJ_YEAR_", seq_along(grade.projection.sequence), lag.increment.label)[1:(length(percentile.trajectory.values)*tmp.num.years.forward),]
 			}
 			tmp.vec <- tmp.vec[order(tmp.vec$Var2),]
 			setnames(trajectories, c("ID", do.call(paste, c(tmp.vec, sep=""))))
@@ -294,9 +294,9 @@ function(panel.data,	## REQUIRED
 					for (j in seq_along(tmp.cutscores.by.grade)) {
 						cuts.arg[k] <- paste(".sgp.targets(SS", grade.projection.sequence[i], ", ", tmp.cutscores.by.grade[j], ", ", convert.0and100, ")", sep="")
 						if (projection.unit=="GRADE") {
-							names.arg[k] <- paste("LEVEL_", j, "_SGP_TARGET_GRADE_", grade.projection.sequence[i], sep="")
+							names.arg[k] <- paste("LEVEL_", j, "_SGP_TARGET_GRADE_", grade.projection.sequence[i], lag.increment.label, sep="")
 						} else {
-							names.arg[k] <- paste("LEVEL_", j, "_SGP_TARGET_YEAR_", i, sep="")
+							names.arg[k] <- paste("LEVEL_", j, "_SGP_TARGET_YEAR_", i, lag.increment.label, sep="")
 						}
 						k <- k+1
 					}
@@ -473,6 +473,12 @@ function(panel.data,	## REQUIRED
 			tmp.messages <- c(tmp.messages, "\t\tNOTE: Supplied achievement.level.prior.vname is not in supplied panel.data. No ACHIEVEMENT_LEVEL_PRIOR variable will be produced.\n")
 			achievement.level.prior.vname <- NULL
 		}
+	}
+
+	if (lag.increment >= 1) {
+		lag.increment.label <- "_LAGGED"
+	} else {
+		lag.increment.label <- NULL
 	}
 
 
