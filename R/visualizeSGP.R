@@ -573,7 +573,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			tmp.ids <- list()
 			setkeyv(slot.data, c("VALID_CASE", "YEAR", "GRADE"))
 			tmp.grades.reported <- unique(unlist(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]]))
-			tmp.grades.reported <- as.character(tmp.grades.reported[tmp.grades.reported %in% unique(slot.data)["VALID_CASE"][["GRADE"]]])
+			tmp.grades.reported <- as.character(tmp.grades.reported[tmp.grades.reported %in% unique(slot.data)[list("VALID_CASE", tmp.last.year)][["GRADE"]]])
 			for (i in seq_along(tmp.grades.reported)) {
 				tmp.ids[[i]] <- as.character(sample(unique(slot.data[SJ("VALID_CASE", tmp.last.year, tmp.grades.reported[i])]$ID), 10))
 			}
