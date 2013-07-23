@@ -475,11 +475,7 @@ function(panel.data,	## REQUIRED
 		}
 	}
 
-	if (lag.increment==0) {
-		lag.increment.label <- "_CURRENT"
-	} else {
-		lag.increment.label <- ""
-	}
+	if (lag.increment==0) lag.increment.label <- "_CURRENT" else lag.increment.label <- ""
 
 
 	########################################################
