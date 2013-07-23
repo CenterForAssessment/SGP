@@ -42,7 +42,7 @@ function(sgp_object,
 		cols.to.get.names <- names(sgp_object@SGP[["SGProjections"]][[i]])[
 			grep(paste("LEVEL_", level.to.get, sep=""), names(sgp_object@SGP[["SGProjections"]][[i]]))]
 		num.years.to.get <- min(max.sgp.target.years.forward, length(cols.to.get.names))
-		cols.to.get.names <- cols.to.get.names[as.integer(sapply(sapply(cols.to.get.names, strsplit, "_"), tail, 1) ) <= num.years.to.get]
+		cols.to.get.names <- cols.to.get.names[as.integer(sapply(strsplit(sapply(sapply(cols.to.get.names, strsplit, "_YEAR_"), tail, 1), "_"), head, 1)) <= num.years.to.get]
 		if (target.type %in% c("sgp.projections.lagged", "sgp.projections.lagged.baseline")) cols.to.get.names <- c("ACHIEVEMENT_LEVEL_PRIOR", cols.to.get.names)
 		cols.to.get <- sapply(cols.to.get.names, function(x) which(x==names(sgp_object@SGP[["SGProjections"]][[i]])))
 		tmp.list[[i]] <- data.table(
