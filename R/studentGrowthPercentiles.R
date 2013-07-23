@@ -244,7 +244,7 @@ function(panel.data,         ## REQUIRED
 	} 
 
 	.simex.sgp <- function(state, variable, lambda, B, extrapolation) {
-		GRADE <- CONTENT_AREA <- YEAR <- V1 <- Lambda <- tau <- b <- PREDICTED_VALUES <- NULL ## To avoid R CMD check warnings
+		GRADE <- CONTENT_AREA <- YEAR <- V1 <- Lambda <- tau <- b <- .SD <- NULL ## To avoid R CMD check warnings
 		content_area <- content.area.progression
 		year <- year.progression
 		my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
@@ -354,15 +354,6 @@ function(panel.data,         ## REQUIRED
 					fitted.b <- big.data[, rqfit(tmp.gp.iter[1:k], lam=L, rqdata=.SD), by='b']
 					fitted.b[, ID := rep(data$ID, time = (B*length(taus)))]
 					fitted.b[,tau := rep(taus, each=dim(data)[1], time=B)]
-
-					#  AVI also tried using this lapply function similar to the parallel solutions.  
-					#  Results matched parallel implimentations below (and revised rqfit/data.table now above), suggesting
-					#  that this original sequential implementation is the source of the conflicting results.
-					#  NOTE: this requires moving the fitted.b <- data.table(do.call(c, ... line outside of the 'else' parallel loop.
-					# tmp.fitted.b <- lapply(1:B, function(x) {
-						# rq.data = big.data[b==x]
-						# return(rqfit(tmp.gp.iter[1:k], lam=L, rqdata=rq.data))
-					# })
 				} else {	# Parallel over 1:B
 					if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
 						##  Don't offer this option now.  But this could ultimately be the BEST option for this because we could have 
@@ -382,12 +373,11 @@ function(panel.data,         ## REQUIRED
 						tmp.fitted.b <- parLapply(par.start$internal.cl, 1:B, function(x) big.data[b==x][, rqfit(tmp.gp.iter[1:k], lam=L, rqdata=.SD)])
 					}
 					fitted.b <- data.table(do.call(c, as.vector(tmp.fitted.b)), ID = rep(data$ID, time=(B*length(taus))), 
-						tau=rep(taus, each=dim(data)[1], time=B), b = rep(1:B, each = dim(data)[1]*length(taus)), key=c('ID', 'b'))
+						tau=rep(taus, each=dim(data)[1], time=B), b = rep(1:B, each = dim(data)[1]*length(taus)))
 					stopParallel(parallel.config, par.start)
 				}
 
 				fitted.b[, V1 := .smooth.isotonize.row(V1), by=list(ID, b)] # Use V1 := ... instead of PREDICTED_VALUES := .. to keep from adding a column
-				setkey(fitted.b, ID, tau) # setkey here to try and improve efficiency.
 				fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted.b[, mean(V1), by=list(ID, tau)][['V1']] 
 			
 			} ### END for (L in lambda[-1])
