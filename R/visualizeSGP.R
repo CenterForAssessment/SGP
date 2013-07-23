@@ -753,15 +753,14 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 				tmp.list <- list()
 				for (i in tmp.proj.names) {
 					tmp.list[[i]] <- data.table(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
-					sgp_object@SGP[["SGProjections"]][[i]][,c(1, grep("PROJ_YEAR_1", names(sgp_object@SGP[["SGProjections"]][[i]])))])
+					sgp_object@SGP[["SGProjections"]][[i]][,c(1, grep("PROJ", names(sgp_object@SGP[["SGProjections"]][[i]])))])
 				}
 				sgPlot.data <- data.table(rbindlist(tmp.list), key=key(sgPlot.data))[sgPlot.data]
 				tmp.grade.name <- paste("GRADE", tmp.last.year, sep=".")
 				tmp.year.name <- yearIncrement(tmp.last.year, 1)
 				setkeyv(sgPlot.data, c("CONTENT_AREA", tmp.grade.name))
-				for (proj.iter in grep("PROJ_YEAR_1", names(sgPlot.data))) {
-					tmp.scale_score.name <- names(sgPlot.data)[proj.iter]
-					sgPlot.data[[proj.iter]] <- sgPlot.data[,piecewise.transform(get(tmp.scale_score.name), state, CONTENT_AREA, tmp.year.name, get.next.grade(get(tmp.grade.name)[1], CONTENT_AREA[1])), 
+				for (proj.iter in grep("PROJ", names(sgPlot.data), value=TRUE)) {
+					sgPlot.data[[proj.iter]] <- sgPlot.data[,piecewise.transform(get(proj.iter), state, CONTENT_AREA, tmp.year.name, get.next.grade(get(tmp.grade.name)[1], CONTENT_AREA[1])), 
 						by=list(CONTENT_AREA, sgPlot.data[[tmp.grade.name]])][['V1']] 
 				}
 			} ### END if (sgPlot.fan)
