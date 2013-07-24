@@ -25,7 +25,7 @@ growth.level.cutscores.text <- SGPstateData[[Report_Parameters$State]][["Growth"
 grades.reported.in.state <- SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Grades_Reported"]][[Report_Parameters$Content_Area]]
 test.abbreviation <- SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Abbreviation"]]
 
-if (SGPstateData[[Report_Parameters$State]][['Assessment_Program_Information']][['Test_Season']]=="Fall") {
+if (identical(SGPstateData[[Report_Parameters$State]][['Assessment_Program_Information']][['Test_Season']], "Fall")) {
 	test.season <- SGPstateData[[Report_Parameters$State]][['Assessment_Program_Information']][['Test_Season']]
 } else {
 	test.season <- NULL

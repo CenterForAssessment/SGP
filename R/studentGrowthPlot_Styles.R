@@ -1004,7 +1004,10 @@ if (reports.by.instructor) {
 				SGP=as.numeric(subset(tmp_student_data, select=paste(my.sgp, rev(sgPlot.years), sep="."))),
 				SGP_Levels=as.character(unlist(subset(tmp_student_data, select=paste(my.sgp.level, rev(sgPlot.years), sep=".")))),
 				Grades=as.numeric(subset(tmp_student_data, select=paste("GRADE", rev(sgPlot.years), sep="."))),
-				Cuts_NY1=as.numeric(subset(tmp_student_data, select=grep("PROJ", names(tmp_student_data)))),
+				Cuts_NY1=as.numeric(subset(tmp_student_data, select=grep("PROJ_YEAR_1_CURRENT", names(tmp_student_data)))),
+#				Scale_Score_Targets_Current_NY1=as.numeric(subset(tmp_student_data, select=grep(
+#				Cuts_NY2=as.numeric(subset(tmp_student_data, select=grep("PROJ_YEAR_2_CURRENT", names(tmp_student_data)))),
+#				Cuts_NY3=as.numeric(subset(tmp_student_data, select=grep("PROJ_YEAR_3_CURRENT", names(tmp_student_data)))),
 				Cutscores=Cutscores[[content_areas[vp]]],
 				Report_Parameters=list(Current_Year=last.year, Content_Area=content_areas[vp], State=state, 
 					Denote_Content_Area=tmp_student_data[['CONTENT_AREA_RESPONSIBILITY']]=="Content Area Responsibility: Yes"))
