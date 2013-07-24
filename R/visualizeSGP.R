@@ -810,7 +810,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			}
 
 		} ### END if (sgPlot.fan | !is.null(sgPlot.scale_score.targets))
-
+browser()
 	#### Merge in INSTRUCTOR_NAME if requested
 
 		if (sgPlot.reports.by.instructor) {
