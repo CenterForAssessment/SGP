@@ -808,7 +808,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 					}
 				}
 			}
-browser()
+
 		} ### END if (sgPlot.fan | !is.null(sgPlot.scale_score.targets))
 
 	#### Merge in INSTRUCTOR_NAME if requested
