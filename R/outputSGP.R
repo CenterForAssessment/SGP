@@ -311,6 +311,14 @@ function(sgp_object,
 					tmp.df[[names.iter]][tmp.df[[names.iter]]=="High Need Status: ELL, Special Education, or Disadvantaged Student"] <- "Y"
 					tmp.df[[names.iter]][tmp.df[[names.iter]]=="Economically Disadvantaged"] <- "Y"
 					tmp.df[[names.iter]][tmp.df[[names.iter]]=="English Language Learners (ELL)"] <- "N"
+					if (names.iter=="ELL_STATUS_MULTILEVEL" & state=="HI") {
+						tmp.df[[names.iter]][tmp.df[[names.iter]]=="Currently ELL"] <- "CE"
+						tmp.df[[names.iter]][tmp.df[[names.iter]]=="Formerly ELL"] <- "FE"
+						tmp.df[[names.iter]][tmp.df[[names.iter]]=="Monitoring ELL"] <- "ME"
+						tmp.df[[names.iter]][tmp.df[[names.iter]]=="Not ELL"] <- "NE"
+						tmp.df[[names.iter]][tmp.df[[names.iter]]=="Parent Refusal"] <- "PR"
+						tmp.df[[names.iter]][tmp.df[[names.iter]]=="Potentially ELL"] <- "PE"
+					}
 				}
 			}
 			return(tmp.df)
