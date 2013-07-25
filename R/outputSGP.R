@@ -302,11 +302,23 @@ function(sgp_object,
 				if (names.iter %in% names(tmp.df) && is.factor(tmp.df[[names.iter]])) {
 					tmp.df[[names.iter]] <- as.character(tmp.df[[names.iter]])
 					tmp.df[[names.iter]][grep("Yes", tmp.df[[names.iter]])] <- "Y"
-					tmp.df[[names.iter]][intersect(grep("No", tmp.df[[names.iter]]), grep("Not", tmp.table[["ESEA_WAIVER_SUBGROUPS"]], invert=TRUE))] <- "N"
+					if (names.iter=="ESEA_WAIVER_SUBGROUPS") {
+						tmp.df[[names.iter]][intersect(grep("No", tmp.df[[names.iter]]), grep("Not", tmp.table[["ESEA_WAIVER_SUBGROUPS"]], invert=TRUE))] <- "N"
+					} else {
+						tmp.df[[names.iter]][grep("No", tmp.df[[names.iter]])] <- "N"
+					}
 					tmp.df[[names.iter]][tmp.df[[names.iter]]=="Students with Disabilities (IEP)"] <- "Y"
 					tmp.df[[names.iter]][tmp.df[[names.iter]]=="High Need Status: ELL, Special Education, or Disadvantaged Student"] <- "Y"
 					tmp.df[[names.iter]][tmp.df[[names.iter]]=="Economically Disadvantaged"] <- "Y"
 					tmp.df[[names.iter]][tmp.df[[names.iter]]=="English Language Learners (ELL)"] <- "N"
+					if (names.iter=="ELL_STATUS_MULTILEVEL" & state=="HI") {
+						tmp.df[[names.iter]][tmp.df[[names.iter]]=="Currently ELL"] <- "CE"
+						tmp.df[[names.iter]][tmp.df[[names.iter]]=="Formerly ELL"] <- "FE"
+						tmp.df[[names.iter]][tmp.df[[names.iter]]=="Monitoring ELL"] <- "ME"
+						tmp.df[[names.iter]][tmp.df[[names.iter]]=="Not ELL"] <- "NE"
+						tmp.df[[names.iter]][tmp.df[[names.iter]]=="Parent Refusal"] <- "PR"
+						tmp.df[[names.iter]][tmp.df[[names.iter]]=="Potential ELL"] <- "PE"
+					}
 				}
 			}
 			return(tmp.df)

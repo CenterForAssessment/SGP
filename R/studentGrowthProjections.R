@@ -260,9 +260,7 @@ function(panel.data,	## REQUIRED
 				tmp.name.prefix <- "SCALE_SCORE_"
 				tmp.num.years.forward <- min(length(grade.projection.sequence), 
 					lapply(strsplit(percentile.trajectory.values, "_")[[1]], type.convert)[sapply(lapply(strsplit(percentile.trajectory.values, "_")[[1]], type.convert), is.numeric)][[1]])
-				if (length(grep("LAGGED", percentile.trajectory.values)) > 0) {
-					tmp.num.years.forward <- tmp.num.years.forward + 1
-				}
+				if (length(grep("CURRENT", percentile.trajectory.values))==0) tmp.num.years.forward <- min(length(grade.projection.sequence), tmp.num.years.forward+1)
 
 				tmp.indices <- as.integer(rep(100*(seq(dim(panel.data$Panel_Data)[1])-1), each=length(percentile.trajectory.values)) +
 					as.numeric(t(as.matrix(panel.data[["Panel_Data"]][,percentile.trajectory.values]))))
@@ -272,10 +270,11 @@ function(panel.data,	## REQUIRED
 			trajectories <- data.table(reshape(tmp.traj[, CUT:=rep(percentile.trajectory.values, dim(tmp.traj)[1]/length(percentile.trajectory.values))], 
 				idvar="ID", timevar="CUT", direction="wide"), key="ID")
 
+			if (length(grep("CURRENT", percentile.trajectory.values))!=0) percentile.trajectory.values <- unlist(strsplit(percentile.trajectory.values, "_CURRENT"))
 			if (projection.unit=="GRADE") {
-				tmp.vec <- expand.grid(tmp.name.prefix, percentile.trajectory.values, "_PROJ_GRADE_", grade.projection.sequence)[1:(length(percentile.trajectory.values)*tmp.num.years.forward),]
+				tmp.vec <- expand.grid(tmp.name.prefix, percentile.trajectory.values, "_PROJ_GRADE_", grade.projection.sequence, lag.increment.label)[1:(length(percentile.trajectory.values)*tmp.num.years.forward),]
 			} else {
-				tmp.vec <- expand.grid(tmp.name.prefix, percentile.trajectory.values, "_PROJ_YEAR_", seq_along(grade.projection.sequence))[1:(length(percentile.trajectory.values)*tmp.num.years.forward),]
+				tmp.vec <- expand.grid(tmp.name.prefix, percentile.trajectory.values, "_PROJ_YEAR_", seq_along(grade.projection.sequence), lag.increment.label)[1:(length(percentile.trajectory.values)*tmp.num.years.forward),]
 			}
 			tmp.vec <- tmp.vec[order(tmp.vec$Var2),]
 			setnames(trajectories, c("ID", do.call(paste, c(tmp.vec, sep=""))))
@@ -294,9 +293,9 @@ function(panel.data,	## REQUIRED
 					for (j in seq_along(tmp.cutscores.by.grade)) {
 						cuts.arg[k] <- paste(".sgp.targets(SS", grade.projection.sequence[i], ", ", tmp.cutscores.by.grade[j], ", ", convert.0and100, ")", sep="")
 						if (projection.unit=="GRADE") {
-							names.arg[k] <- paste("LEVEL_", j, "_SGP_TARGET_GRADE_", grade.projection.sequence[i], sep="")
+							names.arg[k] <- paste("LEVEL_", j, "_SGP_TARGET_GRADE_", grade.projection.sequence[i], lag.increment.label, sep="")
 						} else {
-							names.arg[k] <- paste("LEVEL_", j, "_SGP_TARGET_YEAR_", i, sep="")
+							names.arg[k] <- paste("LEVEL_", j, "_SGP_TARGET_YEAR_", i, lag.increment.label, sep="")
 						}
 						k <- k+1
 					}
@@ -474,6 +473,8 @@ function(panel.data,	## REQUIRED
 			achievement.level.prior.vname <- NULL
 		}
 	}
+
+	if (lag.increment==0) lag.increment.label <- "_CURRENT" else lag.increment.label <- ""
 
 
 	########################################################

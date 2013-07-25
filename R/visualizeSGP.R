@@ -32,7 +32,8 @@ function(sgp_object,
 		sgPlot.front.page=NULL,
 		sgPlot.folder="Visualizations/studentGrowthPlots",
 		sgPlot.folder.names="number",
-		sgPlot.fan=TRUE, 
+		sgPlot.fan=TRUE,
+		sgPlot.scale_score.targets=TRUE,
 		sgPlot.anonymize=FALSE,
 		sgPlot.cleanup=TRUE,
 		sgPlot.demo.report=FALSE,
@@ -390,10 +391,15 @@ if ("studentGrowthPlot" %in% plot.types) {
 
 	#### Which targets
 
-		if (length(which(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")) <= 1) {
-			my.target.levels <- "CATCH_UP_KEEP_UP"
-		} else {
-			my.target.levels <- c("CATCH_UP_KEEP_UP", "MOVE_UP_STAY_UP")
+		if (identical(sgPlot.scale_score.targets, TRUE)) {
+			sgPlot.scale_score.targets <- c("sgp.projections", "sgp.projections.lagged")
+		} 
+		if (identical(sgPlot.scale_score.targets, FALSE)) {
+			sgPlot.scale_score.targets <- NULL
+		}
+		if (!is.null(sgPlot.scale_score.targets) && !all(sgPlot.scale_score.targets %in% c("sgp.projections", "sgp.projections.lagged"))) {
+			message("\tNOTE: 'sgPlot.scale_score.targets' must consist of 'sgp.projections' and/or 'sgp.projections.lagged'.")
+			sgPlot.scale_score.targets <- NULL
 		}
 
 
@@ -567,7 +573,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			tmp.ids <- list()
 			setkeyv(slot.data, c("VALID_CASE", "YEAR", "GRADE"))
 			tmp.grades.reported <- unique(unlist(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]]))
-			tmp.grades.reported <- as.character(tmp.grades.reported[tmp.grades.reported %in% unique(slot.data)["VALID_CASE"][["GRADE"]]])
+			tmp.grades.reported <- as.character(tmp.grades.reported[tmp.grades.reported %in% unique(slot.data)[list("VALID_CASE", tmp.last.year)][["GRADE"]]])
 			for (i in seq_along(tmp.grades.reported)) {
 				tmp.ids[[i]] <- as.character(sample(unique(slot.data[SJ("VALID_CASE", tmp.last.year, tmp.grades.reported[i])]$ID), 10))
 			}
@@ -726,48 +732,84 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 		sgPlot.data <- sgPlot.data[, variables.to.keep, with=FALSE]
 
 	#### Merge in 1 year projections (if requested & available) and transform using piecewise.tranform (if required) (NOT NECESSARY IF WIDE data is provided)
-
-		if (sgPlot.baseline) {
-			tmp.proj.names <- paste(tmp.content_areas, tmp.last.year, "BASELINE", sep=".")
-		} else {
-			tmp.proj.names <- paste(tmp.content_areas, tmp.last.year, sep=".")
-		}
-		if (sgPlot.fan & all(tmp.proj.names %in% names(sgp_object@SGP[["SGProjections"]]))) {
-			setkeyv(sgPlot.data, c("ID", "CONTENT_AREA"))
-			tmp.list <- list()
-			for (i in tmp.proj.names) {
-				tmp.list[[i]] <- data.table(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
-					sgp_object@SGP[["SGProjections"]][[i]][,c(1, grep("PROJ_YEAR_1", names(sgp_object@SGP[["SGProjections"]][[i]])))])
-			}
-			sgPlot.data <- data.table(rbindlist(tmp.list), key=key(sgPlot.data))[sgPlot.data]
-			tmp.grade.name <- paste("GRADE", tmp.last.year, sep=".")
-			tmp.year.name <- yearIncrement(tmp.last.year, 1)
-			setkeyv(sgPlot.data, c("CONTENT_AREA", tmp.grade.name))
-			for (proj.iter in grep("PROJ_YEAR_1", names(sgPlot.data))) {
-				tmp.scale_score.name <- names(sgPlot.data)[proj.iter]
-				sgPlot.data[[proj.iter]] <- sgPlot.data[,piecewise.transform(get(tmp.scale_score.name), state, CONTENT_AREA, tmp.year.name, get.next.grade(get(tmp.grade.name)[1], CONTENT_AREA[1])), 
-					by=list(CONTENT_AREA, sgPlot.data[[tmp.grade.name]])][['V1']] 
-			}
-		} ### END if (sgPlot.baseline)
-
 	#### Merge in scale scores associated with SGP_TARGETs (if requested & available) and transform using piecewise.transform (if required) (NOT NECESSARY IF WIDE data is provided)
 
-browser()
+		if (sgPlot.fan | !is.null(sgPlot.scale_score.targets)) {
 
+			if (sgPlot.baseline) {
+				tmp.proj.names <- paste(tmp.content_areas, tmp.last.year, "BASELINE", sep=".")
+				tmp.proj.cut_score.names <- paste(tmp.content_areas, tmp.last.year, "BASELINE_TARGET_SCALE_SCORES", sep=".")
+				tmp.proj.cut_score.names.lagged <- paste(tmp.content_areas, tmp.last.year, "LAGGED", "BASELINE_TARGET_SCALE_SCORES", sep=".")
+			} else {
+				tmp.proj.names <- paste(tmp.content_areas, tmp.last.year, sep=".")
+				tmp.proj.cut_score.names <- paste(tmp.content_areas, tmp.last.year, "TARGET_SCALE_SCORES", sep=".")
+				tmp.proj.cut_score.names.lagged <- paste(tmp.content_areas, tmp.last.year, "LAGGED", "TARGET_SCALE_SCORES", sep=".")
+			}
 
+			### Straight projections for fan
 
+			if (sgPlot.fan & any(tmp.proj.names %in% names(sgp_object@SGP[["SGProjections"]]))) {
+				setkeyv(sgPlot.data, c("ID", "CONTENT_AREA"))
+				tmp.list <- list()
+				for (i in tmp.proj.names) {
+					tmp.list[[i]] <- data.table(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
+					sgp_object@SGP[["SGProjections"]][[i]][,c(1, grep("PROJ", names(sgp_object@SGP[["SGProjections"]][[i]])))])
+				}
+				sgPlot.data <- data.table(rbindlist(tmp.list), key=key(sgPlot.data))[sgPlot.data]
+				tmp.grade.name <- paste("GRADE", tmp.last.year, sep=".")
+				tmp.year.name <- yearIncrement(tmp.last.year, 1)
+				setkeyv(sgPlot.data, c("CONTENT_AREA", tmp.grade.name))
+				for (proj.iter in grep("PROJ", names(sgPlot.data), value=TRUE)) {
+					sgPlot.data[[proj.iter]] <- sgPlot.data[,piecewise.transform(get(proj.iter), state, CONTENT_AREA, tmp.year.name, get.next.grade(get(tmp.grade.name)[1], CONTENT_AREA[1])), 
+						by=list(CONTENT_AREA, sgPlot.data[[tmp.grade.name]])][['V1']] 
+				}
+			} ### END if (sgPlot.fan)
 
+			### Straight projection scale score targets
 
+			if ("sgp.projections" %in% sgPlot.scale_score.targets & any(tmp.proj.cut_score.names %in% names(sgp_object@SGP[["SGProjections"]]))) {
 
+				setkeyv(sgPlot.data, c("ID", "CONTENT_AREA"))
+				tmp.list <- list()
+				for (i in tmp.proj.cut_score.names) {
+					tmp.list[[i]] <- data.table(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1], sgp_object@SGP[["SGProjections"]][[i]], key=key(sgPlot.data))
+				}
+				sgPlot.data <- data.table(rbindlist(tmp.list), key=key(sgPlot.data))[sgPlot.data]
+				tmp.grade.name <- paste("GRADE", tmp.last.year, sep=".")
+				tmp.year.name
 
+			} ### END if ("sgp.projections" %in% sgPlot.scale_score.targets)
 
+			### Lagged projection scale score targets
 
+			if ("sgp.projections.lagged" %in% sgPlot.scale_score.targets & any(tmp.proj.cut_score.names.lagged %in% names(sgp_object@SGP[["SGProjections"]]))) {
 
+				setkeyv(sgPlot.data, c("ID", "CONTENT_AREA"))
+				tmp.list <- list()
+				for (i in tmp.proj.cut_score.names.lagged) {
+					tmp.list[[i]] <- data.table(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1], sgp_object@SGP[["SGProjections"]][[i]], key=key(sgPlot.data))
+				}
+				sgPlot.data <- data.table(rbindlist(tmp.list), key=key(sgPlot.data))[sgPlot.data]
+			} ### END if ("sgp.projections.lagged" %in% sgPlot.scale_score.targets)
+		
+			### Transform scale scores
 
+			tmp.grade.name <- paste("GRADE", tmp.last.year, sep=".")
+			tmp.year.names <- paste("YEAR", 1:8, sep="_")
+			setkeyv(sgPlot.data, c("CONTENT_AREA", tmp.grade.name))
 
+			for (i in seq(8)) {
+				if (length(grep(paste("PROJ_YEAR", i, sep="_"), names(sgPlot.data))) > 0) {
+					for (j in grep(paste("PROJ_YEAR", i, sep="_"), names(sgPlot.data), value=TRUE)) {
+						if (length(grep("CURRENT", j)) > 0) tmp.increment <- i else tmp.increment <- i-1
+						sgPlot.data[,j := piecewise.transform(get(j), state, CONTENT_AREA, yearIncrement(tmp.last.year, tmp.increment), 
+							get.next.grade(get(tmp.grade.name)[1], CONTENT_AREA[1])), 
+						by=list(CONTENT_AREA, sgPlot.data[[tmp.grade.name]]), with=FALSE] 
+					}
+				}
+			}
 
-
-
+		} ### END if (sgPlot.fan | !is.null(sgPlot.scale_score.targets))
 
 	#### Merge in INSTRUCTOR_NAME if requested
 
@@ -822,6 +864,7 @@ if (sgPlot.produce.plots) {
 			sgPlot.front.page=sgPlot.front.page,
 			sgPlot.header.footer.color=sgPlot.header.footer.color,
 			sgPlot.fan=sgPlot.fan,
+			sgPlot.scale_score.targets=sgPlot.scale_score.targets,
 			sgPlot.cleanup=sgPlot.cleanup,
 			sgPlot.baseline=sgPlot.baseline,
 			sgPlot.zip=sgPlot.zip,
@@ -854,6 +897,7 @@ if (sgPlot.produce.plots) {
 							sgPlot.front.page=sgPlot.front.page,
 							sgPlot.header.footer.color=sgPlot.header.footer.color,
 							sgPlot.fan=sgPlot.fan,
+							sgPlot.scale_score.targets=sgPlot.scale_score.targets,
 							sgPlot.cleanup=sgPlot.cleanup,
 							sgPlot.baseline=sgPlot.baseline,
 							sgPlot.zip=sgPlot.zip,
@@ -883,6 +927,7 @@ if (sgPlot.produce.plots) {
 					sgPlot.front.page=sgPlot.front.page,
 					sgPlot.header.footer.color=sgPlot.header.footer.color,
 					sgPlot.fan=sgPlot.fan,
+					sgPlot.scale_score.targets=sgPlot.scale_score.targets,
 					sgPlot.cleanup=sgPlot.cleanup,
 					sgPlot.baseline=sgPlot.baseline,
 					sgPlot.zip=sgPlot.zip,
@@ -911,6 +956,7 @@ if (sgPlot.produce.plots) {
 					sgPlot.front.page=sgPlot.front.page,
 					sgPlot.header.footer.color=sgPlot.header.footer.color,
 					sgPlot.fan=sgPlot.fan,
+					sgPlot.scale_score.targets=sgPlot.scale_score.targets,
 					sgPlot.cleanup=sgPlot.cleanup,
 					sgPlot.baseline=sgPlot.baseline,
 					sgPlot.zip=sgPlot.zip,

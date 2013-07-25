@@ -43,7 +43,8 @@ visualizeSGP(
            sgPlot.front.page=NULL,
            sgPlot.folder="Visualizations/studentGrowthPlots",
            sgPlot.folder.names="number",
-           sgPlot.fan=TRUE,  
+           sgPlot.fan=TRUE,
+	   sgPlot.scale_score.targets=TRUE,
            sgPlot.anonymize=FALSE,
            sgPlot.cleanup=TRUE,
            sgPlot.demo.report=FALSE,
@@ -158,6 +159,8 @@ provided the function produces \code{\link{studentGrowthPlot}}s for ALL students
 \code{\link{studentGrowthPlot}}s.   
   }
   \item{sgPlot.fan}{A boolean argument (defaults to TRUE) indicating whether to produce projection fan on \code{\link{studentGrowthPlot}}s.  
+  }
+  \item{sgPlot.scale_score.targets}{A boolean argument (defaults to TRUE) indicating whether to indicate SGP growth targets on \code{\link{studentGrowthPlot}}s.  
   }
   \item{sgPlot.anonymize}{A boolean argument (defaults to FALSE) indicating whether to anonymize \code{\link{studentGrowthPlot}}s student, school and district names. 
   For student level anonymization, the function utilizes the \code{randomNames} package to produce gender and ethnicity based names based upon gender and ethnicity 

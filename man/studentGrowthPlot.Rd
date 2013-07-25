@@ -11,7 +11,11 @@ studentGrowthPlot(Scale_Scores,
 	SGP, 
 	SGP_Levels, 
 	Grades, 
-	Cuts_NY1,
+	Cuts,
+	Scale_Score_Targets_CUKU,
+	Scale_Score_Targets_MUSU,
+	Scale_Score_Targets_Current_CUKU,
+	Scale_Score_Targets_Current_MUSU,
 	Connect_Points="Arrows",
 	Cutscores,
 	Report_Parameters) 
@@ -36,8 +40,20 @@ studentGrowthPlot(Scale_Scores,
 	\item{Grades}{
 		A vector of historical grades student was tested in.
 	}
-	\item{Cuts_NY1}{
-		A vector of cuts scores for next year.
+	\item{Cuts}{
+		A list of cuts scores for NY1, NY2, and NY3.
+	}
+	\item{Scale_Score_Targets_CUKU}{
+		A list of catch up keep up scale score targets (lagged).
+	}
+	\item{Scale_Score_Targets_MUSU}{
+		A list of move up stay up scale score targets (lagged).
+	}
+	\item{Scale_Score_Targets_Current_CUKU}{
+		A list of catch up keep up scale score targets (current year).
+	}
+	\item{Scale_Score_Targets_Current_MUSU}{
+		A list of move up stay up scale score targets (current year).
 	}
 	\item{Connect_Points}{
 		Argument specifying how historical achievement scores are connected in the studentGrowthPlot. Currently accepts either \code{Arrows}, the default, or 
