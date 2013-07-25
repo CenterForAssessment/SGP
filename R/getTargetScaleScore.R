@@ -39,14 +39,14 @@ function(sgp_object,
 	if (target.type=="sgp.projections") {
 		my.extra.label <- "TARGET_SCALE_SCORES"
 		baseline.tf <- FALSE
-		lag.increment <- NULL
+		lag.increment <- 0
 		grade.progression <- "sgp.iter[['sgp.projection.grade.sequences']][[1]]"
 		my.target.type <- "sgp.projections"
 	}
 	if (target.type=="sgp.projections.baseline") {
 		my.extra.label <- "BASELINE.TARGET_SCALE_SCORES"
 		baseline.tf <- TRUE
-		lag.increment <- NULL
+		lag.increment <- 0
 		grade.progression <- "sgp.iter[['sgp.projection.grade.sequences']][[1]]"
 		my.target.type <- "sgp.projections"
 	}

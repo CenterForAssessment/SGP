@@ -6,7 +6,11 @@ function(Scale_Scores,               ## List of Scale Scores
 	SGP,                         ## List of SGPs
 	SGP_Levels,                  ## List of SGP Levels
 	Grades,                      ## List of Grade levels for student
-	Cuts_NY1,                    ## Vector of NY1 cutscores
+	Cuts,                        ## List of NY1, NY2, and NY3 cutscores
+	Scale_Score_Targets_CUKU,
+	Scale_Score_Targets_MUSU,
+	Scale_Score_Targets_Current_CUKU,
+	Scale_Score_Targets_Current_MUSU,
 	Connect_Points="Arrows",     ## Current "Arrows" or "None"
 	Cutscores,                   ## data.frame of long formatted achievement level cutscores
 	Report_Parameters) {         ## list containing Current_Year, Content_Area, State, Denote_Content_Area
@@ -25,7 +29,7 @@ growth.level.cutscores.text <- SGPstateData[[Report_Parameters$State]][["Growth"
 grades.reported.in.state <- SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Grades_Reported"]][[Report_Parameters$Content_Area]]
 test.abbreviation <- SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Abbreviation"]]
 
-if (SGPstateData[[Report_Parameters$State]][['Assessment_Program_Information']][['Test_Season']]=="Fall") {
+if (identical(SGPstateData[[Report_Parameters$State]][['Assessment_Program_Information']][['Test_Season']], "Fall")) {
 	test.season <- SGPstateData[[Report_Parameters$State]][['Assessment_Program_Information']][['Test_Season']]
 } else {
 	test.season <- NULL
@@ -228,7 +232,7 @@ if (grade.values$year_span > 0) {
 		gp.levels.text <- rep(" ", studentGrowthPlot.year.span-1)
 	}
 
-	cuts.ny1.text <- Cuts_NY1
+	cuts.ny1.text <- Cuts[["NY1"]]
 }
 
 if (grade.values$year_span == 0) {
