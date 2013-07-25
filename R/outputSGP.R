@@ -317,7 +317,7 @@ function(sgp_object,
 						tmp.df[[names.iter]][tmp.df[[names.iter]]=="Monitoring ELL"] <- "ME"
 						tmp.df[[names.iter]][tmp.df[[names.iter]]=="Not ELL"] <- "NE"
 						tmp.df[[names.iter]][tmp.df[[names.iter]]=="Parent Refusal"] <- "PR"
-						tmp.df[[names.iter]][tmp.df[[names.iter]]=="Potentially ELL"] <- "PE"
+						tmp.df[[names.iter]][tmp.df[[names.iter]]=="Potential ELL"] <- "PE"
 					}
 				}
 			}

@@ -260,11 +260,7 @@ function(panel.data,	## REQUIRED
 				tmp.name.prefix <- "SCALE_SCORE_"
 				tmp.num.years.forward <- min(length(grade.projection.sequence), 
 					lapply(strsplit(percentile.trajectory.values, "_")[[1]], type.convert)[sapply(lapply(strsplit(percentile.trajectory.values, "_")[[1]], type.convert), is.numeric)][[1]])
-				if (length(grep("CURRENT", percentile.trajectory.values))==0) {
-					tmp.num.years.forward <- min(length(grade.projection.sequence), tmp.num.years.forward+1)
-				} else {
-					percentile.trajectory.values <- unlist(strsplit(percentile.trajectory.values, "_CURRENT"))
-				}
+				if (length(grep("CURRENT", percentile.trajectory.values))==0) tmp.num.years.forward <- min(length(grade.projection.sequence), tmp.num.years.forward+1)
 
 				tmp.indices <- as.integer(rep(100*(seq(dim(panel.data$Panel_Data)[1])-1), each=length(percentile.trajectory.values)) +
 					as.numeric(t(as.matrix(panel.data[["Panel_Data"]][,percentile.trajectory.values]))))
@@ -274,6 +270,7 @@ function(panel.data,	## REQUIRED
 			trajectories <- data.table(reshape(tmp.traj[, CUT:=rep(percentile.trajectory.values, dim(tmp.traj)[1]/length(percentile.trajectory.values))], 
 				idvar="ID", timevar="CUT", direction="wide"), key="ID")
 
+			if (length(grep("CURRENT", percentile.trajectory.values))!=0) percentile.trajectory.values <- unlist(strsplit(percentile.trajectory.values, "_CURRENT"))
 			if (projection.unit=="GRADE") {
 				tmp.vec <- expand.grid(tmp.name.prefix, percentile.trajectory.values, "_PROJ_GRADE_", grade.projection.sequence, lag.increment.label)[1:(length(percentile.trajectory.values)*tmp.num.years.forward),]
 			} else {
