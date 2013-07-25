@@ -810,7 +810,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			}
 
 		} ### END if (sgPlot.fan | !is.null(sgPlot.scale_score.targets))
-browser()
+
 	#### Merge in INSTRUCTOR_NAME if requested
 
 		if (sgPlot.reports.by.instructor) {
@@ -864,6 +864,7 @@ if (sgPlot.produce.plots) {
 			sgPlot.front.page=sgPlot.front.page,
 			sgPlot.header.footer.color=sgPlot.header.footer.color,
 			sgPlot.fan=sgPlot.fan,
+			sgPlot.scale_score.targets=sgPlot.scale_score.targets,
 			sgPlot.cleanup=sgPlot.cleanup,
 			sgPlot.baseline=sgPlot.baseline,
 			sgPlot.zip=sgPlot.zip,
@@ -896,6 +897,7 @@ if (sgPlot.produce.plots) {
 							sgPlot.front.page=sgPlot.front.page,
 							sgPlot.header.footer.color=sgPlot.header.footer.color,
 							sgPlot.fan=sgPlot.fan,
+							sgPlot.scale_score.targets=sgPlot.scale_score.targets,
 							sgPlot.cleanup=sgPlot.cleanup,
 							sgPlot.baseline=sgPlot.baseline,
 							sgPlot.zip=sgPlot.zip,
@@ -925,6 +927,7 @@ if (sgPlot.produce.plots) {
 					sgPlot.front.page=sgPlot.front.page,
 					sgPlot.header.footer.color=sgPlot.header.footer.color,
 					sgPlot.fan=sgPlot.fan,
+					sgPlot.scale_score.targets=sgPlot.scale_score.targets,
 					sgPlot.cleanup=sgPlot.cleanup,
 					sgPlot.baseline=sgPlot.baseline,
 					sgPlot.zip=sgPlot.zip,
@@ -953,6 +956,7 @@ if (sgPlot.produce.plots) {
 					sgPlot.front.page=sgPlot.front.page,
 					sgPlot.header.footer.color=sgPlot.header.footer.color,
 					sgPlot.fan=sgPlot.fan,
+					sgPlot.scale_score.targets=sgPlot.scale_score.targets,
 					sgPlot.cleanup=sgPlot.cleanup,
 					sgPlot.baseline=sgPlot.baseline,
 					sgPlot.zip=sgPlot.zip,
