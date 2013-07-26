@@ -238,7 +238,7 @@
 
 		# y.variable (include/not include prior achievement)
 
-		if (bPlot.prior.achievement & length(grep("PRIOR", names(tmp.data))) > 0) {
+		if (bPlot.prior.achievement & length(grep("PERCENT_AT_ABOVE_PROFICIENT_PRIOR", names(tmp.data))) > 0) {
 			if (bubblePlot_LEVEL=="Summary") my.iters$tmp.y.variable <- c("PERCENT_AT_ABOVE_PROFICIENT", "PERCENT_AT_ABOVE_PROFICIENT_PRIOR")
 			if (bubblePlot_LEVEL=="Individual") my.iters$tmp.y.variable <- c("SCALE_SCORE", "SCALE_SCORE_PRIOR")
 		} else {
