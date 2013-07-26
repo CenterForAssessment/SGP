@@ -7,6 +7,7 @@ function(x,
 	if (is.null(x)) return(NULL)
 	x <- gsub("_", " ", x)
 	x <- gsub("[.]", " ", x)
+	x <- gsub("  ", " ", x)
 	x <- trim(x)
 	my.split <- function(words, split.character) {
 		tmp.split <- unlist(strsplit(words, split=split.character))

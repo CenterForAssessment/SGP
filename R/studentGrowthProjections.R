@@ -262,8 +262,8 @@ function(panel.data,	## REQUIRED
 					lapply(strsplit(percentile.trajectory.values, "_")[[1]], type.convert)[sapply(lapply(strsplit(percentile.trajectory.values, "_")[[1]], type.convert), is.numeric)][[1]])
 				if (length(grep("CURRENT", percentile.trajectory.values))==0) tmp.num.years.forward <- min(length(grade.projection.sequence), tmp.num.years.forward+1)
 
-				tmp.indices <- as.integer(rep(100*(seq(dim(panel.data$Panel_Data)[1])-1), each=length(percentile.trajectory.values)) +
-					as.numeric(t(as.matrix(panel.data[["Panel_Data"]][,percentile.trajectory.values]))))
+				tmp.indices <- as.integer(rep(100*(seq(dim(percentile.trajectories)[1])-1), each=length(percentile.trajectory.values)) +
+					as.numeric(t(as.matrix(data.table(panel.data[["Panel_Data"]], key="ID")[list(unique(percentile.trajectories[['ID']]))][,percentile.trajectory.values, with=FALSE]))))
 				tmp.traj <- percentile.trajectories[tmp.indices, 1:(2+tmp.num.years.forward-1), with=FALSE][,ID:=rep(panel.data[["Panel_Data"]][["ID"]], each=length(percentile.trajectory.values))]
 			}
 			tmp.traj[,2:dim(tmp.traj)[2] := round(tmp.traj[,2:dim(tmp.traj)[2], with=FALSE], digits=projcuts.digits), with=FALSE]
