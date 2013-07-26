@@ -44,7 +44,7 @@ visualizeSGP(
            sgPlot.folder="Visualizations/studentGrowthPlots",
            sgPlot.folder.names="number",
            sgPlot.fan=TRUE,
-	   sgPlot.scale_score.targets=TRUE,
+	   sgPlot.scale_score.targets=FALSE,
            sgPlot.anonymize=FALSE,
            sgPlot.cleanup=TRUE,
            sgPlot.demo.report=FALSE,
