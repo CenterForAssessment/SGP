@@ -15,7 +15,7 @@ Author: Damian W. Betebenner <dbetebenner@nciea.org>, Adam Van Iwaarden <vaniwaa
 	Catherine McCaslin (New Haven Public Schools), Joshua Marland (New York), W Joshua Rew (Oregon), Jason Becker (Rhode Island), Dr. Jessica Brown (Rhode Island), 
 	Ana Karantonis (Rhode Island), Dr. Deborah Jonas (Virginia), Juan D'Brot (West Virginia), Dr. Deb Came (Washington), Krissy Johnson (Washington), Nate Hixson (West Virginia), 
 	Daniel Bush (Wisconsin), Justin Meyer (Wisconsin), Joseph Newton (Wisconsin), Dr. Philip Olsen (Wisconsin), Nick Stroud (Wisconsin), Brendan Houng (University of Melbourne, Australia),
-	Leslie Rosales (Guatemala).
+	Leslie Rosales (Guatemala), Nathan Wall (eMetric).
 Maintainer: Damian W. Betebenner <dbetebenner@nciea.org>
 Depends: R (>= 2.13), SGPdata (>= 7.0-0), methods
 Suggests: randomNames (>= 0.0-5), parallel
