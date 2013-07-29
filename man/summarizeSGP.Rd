@@ -17,6 +17,7 @@ summarizeSGP(sgp_object,
            summarizeSGP.baseline=NULL,
            projection.years.for.target=3,
            save.old.summaries=FALSE,
+	   highest.level.summary.grouping="STATE",
            parallel.config=NULL) 
 }
 
@@ -82,6 +83,8 @@ most states.
 }
 \item{save.old.summaries}{A boolean argument, defaults to FALSE, indicating whether to save the @Summary slot (if not NULL) prior to calculating new summaries. By defaulting to FALSE, the function
 overwrites previous (e.g., last year's summaries) summaries.
+}
+\item{highest.level.summary.grouping}{A character vector indicating the highest level for summary groups, defaults to 'STATE'.
 }
  \item{parallel.config}{A named list with, at a minimum, two elements indicating 1) the BACKEND package to be used for parallel computation and 2) the WORKERS list to specify the number of processors to be used in each major analysis.  The BACKEND element can be set = to \code{FOREACH} or \code{PARALLEL}.  Please consult the manuals and vignettes for information of these packages!  The \code{\link{analyzeSGP}} help page contains more thorough explanation and examples of the \code{parallel.config} setup. 
 
