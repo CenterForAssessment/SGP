@@ -10,6 +10,7 @@ function(sgp_object,
          summarizeSGP.baseline=NULL,
          projection.years.for.target=3,
          save.old.summaries=FALSE,
+	 highest.level.summary.grouping="STATE",
          parallel.config=NULL) {
 
 	started.at <- proc.time()
@@ -17,7 +18,7 @@ function(sgp_object,
 
 	### Set variables to NULL to prevent R CMD check warnings
 
-	tmp.simulation.dt <- variable <- WEIGHT <- ENROLLMENT_STATUS <- STATE <- names.type <- names.sgp <- names.output <- BY_GROWTH_ONLY <- VALID_CASE <- NULL
+	tmp.simulation.dt <- variable <- WEIGHT <- ENROLLMENT_STATUS <- names.type <- names.sgp <- names.output <- BY_GROWTH_ONLY <- VALID_CASE <- NULL
 
 	
 	### Create state (if NULL) from sgp_object (if possible)
@@ -27,11 +28,19 @@ function(sgp_object,
                 state <- getStateAbbreviation(tmp.name, "summarizeSGP")
         }
 
+
+	### Create specific variables
+
+	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["highest.level.summary.grouping"]])) {
+		highest.level.summary.grouping <- SGPstateData[[state]][["SGP_Configuration"]][["highest.level.summary.grouping"]]
+	}
+
 	### Export/Overwrite old summaries
 
 	if (!is.null(sgp_object@Summary)) {
 		if (save.old.summaries) {
-			tmp.year <- tail(sort(sgp_object@Summary[['STATE']][['STATE__YEAR__STATE_ENROLLMENT_STATUS']][['YEAR']]), 1)
+			tmp.index <- grep("YEAR", names(sgp_object@Summary[[highest.level.summary.grouping]]))[1]
+			tmp.year <- tail(sort(sgp_object@Summary[[highest.level.summary.grouping]][[tmp.index]][['YEAR']]), 1)
 			tmp.state.name <- gsub(" ", "_", toupper(getStateAbbreviation(state, type="name")))
 			tmp.file.name <- paste(tmp.state.name, "SGP_Summary", tmp.year, sep="_")
 			assign(tmp.file.name, sgp_object@Summary)
@@ -325,7 +334,7 @@ function(sgp_object,
 
 		if (config.type=="summary.groups") {
 			tmp.summary.groups <- list(
-				institution=c("STATE", getFromNames("institution")),
+				institution=c(highest.level.summary.grouping, getFromNames("institution")),
 				institution_type=getFromNames("institution_type"),
 				content=getFromNames("content"),
 				time=getFromNames("time"),
@@ -554,7 +563,7 @@ function(sgp_object,
 	if (is.null(SGPstateData[[state]][["Variable_Name_Lookup"]])) {
 		selected.institution.types <- c("STATE", "DISTRICT_NUMBER", "SCHOOL_NUMBER")
 	} else {
-		selected.institution.types <- c("STATE", getFromNames("institution"))
+		selected.institution.types <- c(highest.level.summary.grouping, getFromNames("institution"))
 	}
 	selected.institution.types <- c(selected.institution.types, paste(selected.institution.types[grep("CURRENT", selected.institution.types, invert=TRUE)], "INSTRUCTOR_NUMBER", sep=", "))
 	selected.summary.tables <- list()
@@ -618,7 +627,7 @@ function(sgp_object,
 
 	### Loop and send to summarizeSGP_INTERNAL
 
-	tmp.dt <- sgp_object@Data[data.table("VALID_CASE", content_areas.by.years), nomatch=0][, variables.for.summaries, with=FALSE][, STATE:=state]
+	tmp.dt <- sgp_object@Data[data.table("VALID_CASE", content_areas.by.years), nomatch=0][, variables.for.summaries, with=FALSE][, highest.level.summary.grouping:=state, with=FALSE]
 	if (!is.null(summary.groups[["institution_multiple_membership"]])) setkeyv(tmp.dt, getKey(sgp_object@Data))
 
 	par.start <- startParallel(parallel.config, 'SUMMARY')

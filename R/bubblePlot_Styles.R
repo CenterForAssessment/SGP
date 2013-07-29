@@ -238,7 +238,7 @@
 
 		# y.variable (include/not include prior achievement)
 
-		if (bPlot.prior.achievement & length(grep("PRIOR", names(tmp.data))) > 0) {
+		if (bPlot.prior.achievement & length(grep("PERCENT_AT_ABOVE_PROFICIENT_PRIOR", names(tmp.data))) > 0) {
 			if (bubblePlot_LEVEL=="Summary") my.iters$tmp.y.variable <- c("PERCENT_AT_ABOVE_PROFICIENT", "PERCENT_AT_ABOVE_PROFICIENT_PRIOR")
 			if (bubblePlot_LEVEL=="Individual") my.iters$tmp.y.variable <- c("SCALE_SCORE", "SCALE_SCORE_PRIOR")
 		} else {
@@ -388,7 +388,7 @@ if (2 %in% bPlot.styles) {
 			tmp.bPlot.levels.txt <- parse(text=paste("list(", paste("PCT_", bPlot.levels, "=(100*length(grep('Yes',", 
 				bPlot.levels, "))/length(grep('Yes|No',", bPlot.levels, ")))", sep="", collapse=","), ")"))
 			bPlot.levels <- as.list(bPlot.levels)
-		} else bPlot.levels <- list(A=NULL)
+		}
 
 		if (bPlot.full.academic.year) {
 			tmp.bPlot.data <- sgp_object@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__CONTENT_AREA__YEAR__SCHOOL_ENROLLMENT_STATUS"]][
@@ -429,6 +429,8 @@ if (2 %in% bPlot.styles) {
 		my.iters <- get.my.iters(tmp.bPlot.data, bubblePlot_LEVEL)
 
 		### Start loops for bubblePlots
+
+		if (is.null(bPlot.levels)) bPlot.levels <- list(A=NULL)
 
 		for (bPlot.levels.iter in unlist(bPlot.levels)) {  ### Loop over bPlot.levels
 		for (year.iter in my.iters$tmp.years) {  ### Loop over year
