@@ -70,6 +70,8 @@ function(
 				paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", max.sgp.target.years.forward, "YEAR", sep="_"))
 			if (sgp.target.scale.scores) sgp.target.scale.scores.types <- c("sgp.projections", "sgp.projections.baseline", "sgp.projections.lagged", "sgp.projections.lagged.baseline")
 		}
+	} else {
+		target.type <- c("sgp.projections.lagged", "sgp.projections.lagged.baseline")[c(sgp.projections.lagged, sgp.projections.lagged.baseline)]
 	}
 
 	catch_keep_move_functions <- c(min, max)
@@ -213,7 +215,7 @@ function(
  
 	if (sgp.projections.lagged | sgp.projections.lagged.baseline) { 
 
-		for (target.type.iter in sort(target.type[c(sgp.projections.lagged, sgp.projections.lagged.baseline)])) {
+		for (target.type.iter in target.type) {
 			for (target.level.iter in target.level) {
 				tmp.data <- getTargetSGP(sgp_object, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward)
 
