@@ -409,6 +409,7 @@ if (Connect_Points=="Arrows") {
    }
 } ## END Connect_Points=="Arrows"
 
+
 if (Grades[1] != max(grades.reported.in.state) & !is.na(cuts.ny1.text[1])){
 
 	for (i in seq(number.growth.levels)) {
@@ -427,8 +428,18 @@ if (Grades[1] != max(grades.reported.in.state) & !is.na(cuts.ny1.text[1])){
 	}
 }
 
-grid.circle(x=low.year:high.year, y=scale.scores.values, r=unit(0.04, "inches"),
-               gp=gpar(col=border.color, lwd=0.7, fill="white"), default.units="native") 
+scale_score.target.types <- c("Scale_Score_Targets_CUKU", "Scale_Score_Targets_MUSU", "Scale_Score_Targets_Current_CUKU", "Scale_Score_Targets_Current_MUSU")
+for (i in scale_score.target.types) {
+	if (length(grep("CUKU", i))==0) target.format <- "blue" else target.format <- "pink"
+	if (length(get(i)[["NY1"]]) > 0 && length(grep("Current", i))==0) {
+		grid.circle(x=current.year, y=get(i)[['NY1']], r=unit(0.04, "inches"), gp=gpar(col=border.color, lwd=0.7, fill=target.format), default.units="native") 
+	}
+	if (length(get(i)[["NY1"]]) > 0 && length(grep("Current", i))>0) {
+		grid.circle(x=current.year+1, y=get(i)[['NY1']], r=unit(0.04, "inches"), gp=gpar(col=border.color, lwd=0.7, fill=target.format), default.units="native") 
+	}
+}
+
+grid.circle(x=low.year:high.year, y=scale.scores.values, r=unit(0.04, "inches"), gp=gpar(col=border.color, lwd=0.7, fill="white"), default.units="native") 
 
 popViewport()
 
