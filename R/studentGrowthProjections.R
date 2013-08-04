@@ -266,6 +266,23 @@ function(panel.data,	## REQUIRED
 					each=length(percentile.trajectory.values)) + as.numeric(t(as.matrix(data.table(panel.data[["Panel_Data"]], 
 					key="ID")[list(unique(percentile.trajectories[['ID']]))][,percentile.trajectory.values, with=FALSE]))))
 				tmp.traj <- percentile.trajectories[tmp.indices, 1:(2+tmp.num.years.forward-1), with=FALSE][,ID:=rep(unique(percentile.trajectories$ID), each=length(percentile.trajectory.values))]
+				if (tmp.num.years.forward==1) {
+					my.cutscore.year <- get.my.cutscore.year.sgprojection(Cutscores, sgp.labels$my.subject, yearIncrement(sgp.labels$my.year, 1, lag.increment))
+					tmp.cutscores.by.grade <- tmp.cutscores[[my.cutscore.year]][[paste("GRADE_", grade.projection.sequence[1], sep="")]]
+					tmp.target.name <- tail(names(tmp.traj), 1)
+					if (length(percentile.trajectory.values)==1) {
+						cuku.level.to.get <- which.max(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")-1
+						tmp.target.scores <- rep(tmp.cutscores.by.grade[cuku.level.to.get], length(unique(tmp.traj[['ID']])))
+
+					}
+					if (length(percentile.trajectory.values)==2) {
+						cuku.level.to.get <- which.max(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")-1
+						musu.level.to.get <- which.max(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")
+						tmp.target.scores <- rep(c(tmp.cutscores.by.grade[cuku.level.to.get], tmp.cutscores.by.grade[musu.level.to.get]), length(unique(tmp.traj[['ID']])))
+					}
+					tmp.target.scores[is.na(tmp.traj[[tmp.target.name]])] <- NA
+					tmp.traj[,tmp.target.name:=tmp.target.scores, with=FALSE]
+				}
 			}
 			tmp.traj[,2:dim(tmp.traj)[2] := round(tmp.traj[,2:dim(tmp.traj)[2], with=FALSE], digits=projcuts.digits), with=FALSE]
 			trajectories <- data.table(reshape(tmp.traj[, CUT:=rep(percentile.trajectory.values, dim(tmp.traj)[1]/length(percentile.trajectory.values))], 
@@ -438,7 +455,7 @@ function(panel.data,	## REQUIRED
 				stop("\nCutscores provided in SGPstateData does not include a subject name that matches my.subject in sgp.labels (CASE SENSITIVE). See help page for details.\n\n")
 			} else {
 				tmp.cutscores <- SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]
-				tf.cutscores <- TRUE
+				if (!is.character(percentile.trajectory.values)) tf.cutscores <- TRUE else tf.cutscores <- FALSE
 		}}
 		if (is.list(performance.level.cutscores)) {
 			if (any(names(performance.level.cutscores) %in% sgp.labels$my.subject)) {
@@ -494,7 +511,7 @@ function(panel.data,	## REQUIRED
 		}
 	} 
 
-	if (tf.cutscores) {
+	if (tf.cutscores | is.character(percentile.trajectory.values)) {
 		Cutscores <- tmp.cutscores
 	}
 

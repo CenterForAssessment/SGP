@@ -41,7 +41,6 @@ function(sgp_object,
 		sgPlot.baseline=NULL,
 		sgPlot.zip=TRUE,
 		sgPlot.output.format="PDF",
-		sgPlot.show.targets.years.forward=NULL,
 		gaPlot.years=NULL,
 		gaPlot.content_areas=NULL, 
 		gaPlot.students=NULL,
@@ -371,22 +370,9 @@ if ("studentGrowthPlot" %in% plot.types) {
 		if (sgPlot.baseline) {
 			my.sgp <- "SGP_BASELINE"
 			my.sgp.level <- "SGP_LEVEL_BASELINE"
-			if (!is.null(sgPlot.show.targets.years.forward) && (!is.integer(sgPlot.show.targets.years.forward) | length(sgPlot.show.targets.years.forward)!=1)) {
-				message("\tNOTE: sgPlot.show.targets.years.forward must be a positive integer. Argument will be set to NULL")
-				sgPlot.show.targets.years.forward <- NULL
-			} else {
-				my.target.types <- c("sgp.projections.baseline", "sgp.projections.lagged.baseline")
-			}
 		} else {
 			my.sgp <- "SGP"
 			my.sgp.level <- "SGP_LEVEL"
-			if (!is.null(sgPlot.show.targets.years.forward)) 
-			if (!is.null(sgPlot.show.targets.years.forward) && (!is.numeric(sgPlot.show.targets.years.forward) | length(sgPlot.show.targets.years.forward)!=1)) {
-				message("\tNOTE: sgPlot.show.targets.years.forward must be a positive integer. Argument will be set to NULL")
-				sgPlot.show.targets.years.forward <- NULL
-			} else {
-				my.target.types <- c("sgp.projections", "sgp.projections.lagged")
-			}
 		}
 
 	#### Which targets
@@ -395,7 +381,11 @@ if ("studentGrowthPlot" %in% plot.types) {
 			sgPlot.scale_score.targets <- c("sgp.projections", "sgp.projections.lagged")
 		} 
 		if (identical(sgPlot.scale_score.targets, FALSE)) {
-			sgPlot.scale_score.targets <- NULL
+			if (!is.null(SGPstateData[[state]][['SGP_Configuration']][['sgPlot.scale_score.targets']]))
+				sgPlot.scale_score.targets <- SGPstateData[[state]][['SGP_Configuration']][['sgPlot.scale_score.targets']]
+			} else {
+				sgPlot.scale_score.targets <- NULL
+			}
 		}
 		if (!is.null(sgPlot.scale_score.targets) && !all(sgPlot.scale_score.targets %in% c("sgp.projections", "sgp.projections.lagged"))) {
 			message("\tNOTE: 'sgPlot.scale_score.targets' must consist of 'sgp.projections' and/or 'sgp.projections.lagged'.")
