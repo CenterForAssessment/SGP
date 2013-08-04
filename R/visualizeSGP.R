@@ -381,7 +381,7 @@ if ("studentGrowthPlot" %in% plot.types) {
 			sgPlot.scale_score.targets <- c("sgp.projections", "sgp.projections.lagged")
 		} 
 		if (identical(sgPlot.scale_score.targets, FALSE)) {
-			if (!is.null(SGPstateData[[state]][['SGP_Configuration']][['sgPlot.scale_score.targets']]))
+			if (!is.null(SGPstateData[[state]][['SGP_Configuration']][['sgPlot.scale_score.targets']])) {
 				sgPlot.scale_score.targets <- SGPstateData[[state]][['SGP_Configuration']][['sgPlot.scale_score.targets']]
 			} else {
 				sgPlot.scale_score.targets <- NULL
