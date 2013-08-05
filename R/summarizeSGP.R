@@ -160,37 +160,48 @@ function(sgp_object,
 		return(tmp.pct)
 	}
 
-	boot.sgp <- function(dat, conf.quantiles=c(0.025, 0.975), nboot=100) {
-		out <- numeric(); CI <- c(NA,NA)
+	boot.sgp <- function(dat, conf.quantiles=NULL, nboot=100) {
+		out <- numeric(); CI <- c(NA,NA); SE <- NA
 		if (sum(is.na(dat)) != length(dat)) {
 			for (j in 1:nboot) {
 				foo <- sample(dat,length(dat), replace=TRUE)
 				out[j] <- boot.median(foo)
 			}
-			CI <- round(as.numeric(quantile(out, conf.quantiles, na.rm=TRUE)), digits=1)
+			if (!is.null(conf.quantiles)) {
+				CI <- round(as.numeric(quantile(out, conf.quantiles, na.rm=TRUE)), digits=1)
+			} else {
+				SE <- round(as.numeric(sd(out, na.rm=TRUE)), digits=1)
+			}
 		}
-		CI
+		if (!is.null(conf.quantiles)) return(CI) else return(SE)
 	}
 
 	sgpSummary <- function(data, sgp.groups.to.summarize, produce.confidence.interval) {
 		SGP_SIM <- V1 <- .SD <- MEDIAN_SGP_with_SHRINKAGE <- NULL ## To prevent R CMD check warning
+		tmp.sgp.summaries <- sgp.summaries
+		sgp.summaries.names <- unlist(strsplit(names(sgp.summaries), "[.]"))
 		if (produce.confidence.interval) {
-			if ("Bootstrap" %in% confidence.interval.groups$TYPE) {
+			if ("Bootstrap_CI" %in% confidence.interval.groups$TYPE) {
 				tmp.list <- list()
 				tmp.quantiles <- paste("c(", paste(confidence.interval.groups$QUANTILES, collapse=", "), ")", sep="")
 				for (i in confidence.interval.groups$VARIABLES) {
 					tmp.list[[paste("MEDIAN_", i, "_QUANTILES", sep="")]] <- paste("boot.sgp(", i, ", ", tmp.quantiles, ")", sep="")
 				}
-				tmp.sgp.summaries <- c(sgp.summaries, tmp.list)
-				sgp.summaries.names <- c(unlist(strsplit(names(sgp.summaries), "[.]")), paste("MEDIAN_SGP_", confidence.interval.groups$QUANTILES, "_CONFIDENCE_BOUND", sep="")) 
+				tmp.sgp.summaries <- c(tmp.sgp.summaries, tmp.list)
+				sgp.summaries.names <- c(sgp.summaries.names, do.call(paste, c(data.table(expand.grid("MEDIAN", my.sgp, confidence.interval.groups$QUANTILES, "CONFIDENCE_BOUND_BOOTSTRAP"), key="Var2"), sep="_"))) 
 			} 
-			if ("CSEM" %in% confidence.interval.groups$TYPE) {
-				tmp.sgp.summaries <- sgp.summaries
-				sgp.summaries.names <- c(unlist(strsplit(names(sgp.summaries), "[.]")), paste("MEDIAN_SGP_", confidence.interval.groups$QUANTILES, "_CONFIDENCE_BOUND", sep=""))
+			if ("Bootstrap_SE" %in% confidence.interval.groups$TYPE) {
+				tmp.list <- list()
+				for (i in confidence.interval.groups$VARIABLES) {
+					tmp.list[[paste("MEDIAN_", i, "_SE", sep="")]] <- paste("boot.sgp(", i, ")", sep="")
+				}
+				tmp.sgp.summaries <- c(tmp.sgp.summaries, tmp.list)
+				sgp.summaries.names <- c(sgp.summaries.names, do.call(paste, c(data.table(expand.grid("MEDIAN", my.sgp, "STANDARD_ERROR_BOOTSTRAP"), key="Var2"), sep="_"))) 
 			}
-		} else {
-			tmp.sgp.summaries <- sgp.summaries
-			sgp.summaries.names <- unlist(strsplit(names(sgp.summaries), "[.]"))
+			if ("CSEM" %in% confidence.interval.groups$TYPE) {
+				sgp.summaries.names <- c(sgp.summaries.names, 
+					do.call(paste, c(data.table(expand.grid("MEDIAN", my.sgp, confidence.interval.groups$QUANTILES, "STANDARD_ERROR_BOOTSTRAP_CSEM"), key="Var2"), sep="_")))
+			}
 		}
  
 		ListExpr <- parse(text=paste("as.list(c(", paste(unlist(tmp.sgp.summaries), collapse=", "),"))",sep="")) 
@@ -357,7 +368,7 @@ function(sgp_object,
 		
 		if (config.type=="confidence.interval.groups") {
 			tmp.confidence.interval.groups <- list(
-				TYPE="Bootstrap",
+				TYPE=c("Bootstrap_CI", "Bootstrap_SE"),
 				VARIABLES=my.sgp,
 				QUANTILES=c(0.025, 0.975),
 				GROUPS=list(
