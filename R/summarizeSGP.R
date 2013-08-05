@@ -372,14 +372,24 @@ function(sgp_object,
 				VARIABLES=my.sgp,
 				QUANTILES=c(0.025, 0.975),
 				GROUPS=list(
-					institution="SCHOOL_NUMBER",
+					institution=c("SCHOOL_NUMBER", "STATE, INSTRUCTOR_NUMBER"),
 					institution_type="EMH_LEVEL",
 					content="CONTENT_AREA",
 					time="YEAR",
 					institution_level=NULL,
 					demographic=NULL,
-					institution_inclusion=list(STATE=NULL, DISTRICT_NUMBER=NULL, SCHOOL_NUMBER="SCHOOL_ENROLLMENT_STATUS"),
-					growth_only_summary=list(STATE="BY_GROWTH_ONLY", DISTRICT_NUMBER="BY_GROWTH_ONLY", SCHOOL_NUMBER="BY_GROWTH_ONLY")))
+					institution_multiple_membership=get.multiple.membership(sgp_object)))
+
+					for (i in tmp.confidence.interval.groups[["GROUPS"]][["institution"]]) {
+						tmp.split <- paste(c(unlist(strsplit(i, "_"))[!unlist(strsplit(i, "_"))=="NUMBER"], "ENROLLMENT_STATUS"), collapse="_")
+						if (tmp.split %in% getFromNames("institution_inclusion")) {
+							tmp.confidence.interval.groups[["GROUPS"]][["institution_inclusion"]][[i]] <- tmp.split
+						} 
+						tmp.confidence.interval.groups[["GROUPS"]][["growth_only_summary"]][[i]] <- "BY_GROWTH_ONLY"
+					}
+					tmp.confidence.interval.groups[["GROUPS"]][["institution_inclusion"]] <- as.list(tmp.confidence.interval.groups[["GROUPS"]][["institution_inclusion"]])
+					tmp.confidence.interval.groups[["GROUPS"]][["growth_only_summary"]] <- as.list(tmp.confidence.interval.groups[["GROUPS"]][["growth_only_summary"]])
+
 
 			return(tmp.confidence.interval.groups)
 		}
@@ -657,8 +667,16 @@ function(sgp_object,
 
 				if (!is.null(summary.groups[["institution_multiple_membership"]][[j-1]][["ENROLLMENT_STATUS"]])) {
 					summary.groups[["institution_inclusion"]][[tmp.inst]] <- summary.groups[["institution_multiple_membership"]][[j-1]][["ENROLLMENT_STATUS"]]
+					if (tmp.inst %in% confidence.interval.groups[['GROUPS']][['institution']]) {
+						confidence.interval.groups[['GROUPS']][['institution_inclusion']][[tmp.inst]] <-
+							summary.groups[["institution_multiple_membership"]][[j-1]][["ENROLLMENT_STATUS"]]
+					}
 				} else {
 					summary.groups[["institution_inclusion"]][[tmp.inst]] <- paste(i, "ENROLLMENT_STATUS", sep="_")
+					if (tmp.inst %in% confidence.interval.groups[['GROUPS']][['institution']]) {
+						confidence.interval.groups[['GROUPS']][['institution_inclusion']][[tmp.inst]] <-
+							paste(i, "ENROLLMENT_STATUS", sep="_")	
+					}
 				}
 				
 				summary.groups[["growth_only_summary"]][[tmp.inst]] <- "BY_GROWTH_ONLY" # Do we have an option to NOT include "BY_GROWTH_ONLY"? (would we want this?)
