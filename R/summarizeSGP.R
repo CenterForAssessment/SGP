@@ -160,37 +160,48 @@ function(sgp_object,
 		return(tmp.pct)
 	}
 
-	boot.sgp <- function(dat, conf.quantiles=c(0.025, 0.975), nboot=100) {
-		out <- numeric(); CI <- c(NA,NA)
+	boot.sgp <- function(dat, conf.quantiles=NULL, nboot=100) {
+		out <- numeric(); CI <- c(NA,NA); SE <- NA
 		if (sum(is.na(dat)) != length(dat)) {
 			for (j in 1:nboot) {
 				foo <- sample(dat,length(dat), replace=TRUE)
 				out[j] <- boot.median(foo)
 			}
-			CI <- round(as.numeric(quantile(out, conf.quantiles, na.rm=TRUE)), digits=1)
+			if (!is.null(conf.quantiles)) {
+				CI <- round(as.numeric(quantile(out, conf.quantiles, na.rm=TRUE)), digits=1)
+			} else {
+				SE <- round(as.numeric(sd(out, na.rm=TRUE)), digits=1)
+			}
 		}
-		CI
+		if (!is.null(conf.quantiles)) return(CI) else return(SE)
 	}
 
 	sgpSummary <- function(data, sgp.groups.to.summarize, produce.confidence.interval) {
 		SGP_SIM <- V1 <- .SD <- MEDIAN_SGP_with_SHRINKAGE <- NULL ## To prevent R CMD check warning
+		tmp.sgp.summaries <- sgp.summaries
+		sgp.summaries.names <- unlist(strsplit(names(sgp.summaries), "[.]"))
 		if (produce.confidence.interval) {
-			if ("Bootstrap" %in% confidence.interval.groups$TYPE) {
+			if ("Bootstrap_CI" %in% confidence.interval.groups$TYPE) {
 				tmp.list <- list()
 				tmp.quantiles <- paste("c(", paste(confidence.interval.groups$QUANTILES, collapse=", "), ")", sep="")
 				for (i in confidence.interval.groups$VARIABLES) {
 					tmp.list[[paste("MEDIAN_", i, "_QUANTILES", sep="")]] <- paste("boot.sgp(", i, ", ", tmp.quantiles, ")", sep="")
 				}
-				tmp.sgp.summaries <- c(sgp.summaries, tmp.list)
-				sgp.summaries.names <- c(unlist(strsplit(names(sgp.summaries), "[.]")), paste("MEDIAN_SGP_", confidence.interval.groups$QUANTILES, "_CONFIDENCE_BOUND", sep="")) 
+				tmp.sgp.summaries <- c(tmp.sgp.summaries, tmp.list)
+				sgp.summaries.names <- c(sgp.summaries.names, do.call(paste, c(data.table(expand.grid("MEDIAN", my.sgp, confidence.interval.groups$QUANTILES, "CONFIDENCE_BOUND_BOOTSTRAP"), key="Var2"), sep="_"))) 
 			} 
-			if ("CSEM" %in% confidence.interval.groups$TYPE) {
-				tmp.sgp.summaries <- sgp.summaries
-				sgp.summaries.names <- c(unlist(strsplit(names(sgp.summaries), "[.]")), paste("MEDIAN_SGP_", confidence.interval.groups$QUANTILES, "_CONFIDENCE_BOUND", sep=""))
+			if ("Bootstrap_SE" %in% confidence.interval.groups$TYPE) {
+				tmp.list <- list()
+				for (i in confidence.interval.groups$VARIABLES) {
+					tmp.list[[paste("MEDIAN_", i, "_SE", sep="")]] <- paste("boot.sgp(", i, ")", sep="")
+				}
+				tmp.sgp.summaries <- c(tmp.sgp.summaries, tmp.list)
+				sgp.summaries.names <- c(sgp.summaries.names, do.call(paste, c(data.table(expand.grid("MEDIAN", my.sgp, "STANDARD_ERROR_BOOTSTRAP"), key="Var2"), sep="_"))) 
 			}
-		} else {
-			tmp.sgp.summaries <- sgp.summaries
-			sgp.summaries.names <- unlist(strsplit(names(sgp.summaries), "[.]"))
+			if ("CSEM" %in% confidence.interval.groups$TYPE) {
+				sgp.summaries.names <- c(sgp.summaries.names, 
+					do.call(paste, c(data.table(expand.grid("MEDIAN", my.sgp, confidence.interval.groups$QUANTILES, "STANDARD_ERROR_BOOTSTRAP_CSEM"), key="Var2"), sep="_")))
+			}
 		}
  
 		ListExpr <- parse(text=paste("as.list(c(", paste(unlist(tmp.sgp.summaries), collapse=", "),"))",sep="")) 
@@ -357,18 +368,28 @@ function(sgp_object,
 		
 		if (config.type=="confidence.interval.groups") {
 			tmp.confidence.interval.groups <- list(
-				TYPE="Bootstrap",
+				TYPE=c("Bootstrap_CI", "Bootstrap_SE"),
 				VARIABLES=my.sgp,
 				QUANTILES=c(0.025, 0.975),
 				GROUPS=list(
-					institution="SCHOOL_NUMBER",
+					institution=c("SCHOOL_NUMBER", "STATE, INSTRUCTOR_NUMBER"),
 					institution_type="EMH_LEVEL",
 					content="CONTENT_AREA",
 					time="YEAR",
 					institution_level=NULL,
 					demographic=NULL,
-					institution_inclusion=list(STATE=NULL, DISTRICT_NUMBER=NULL, SCHOOL_NUMBER="SCHOOL_ENROLLMENT_STATUS"),
-					growth_only_summary=list(STATE="BY_GROWTH_ONLY", DISTRICT_NUMBER="BY_GROWTH_ONLY", SCHOOL_NUMBER="BY_GROWTH_ONLY")))
+					institution_multiple_membership=get.multiple.membership(sgp_object)))
+
+					for (i in tmp.confidence.interval.groups[["GROUPS"]][["institution"]]) {
+						tmp.split <- paste(c(unlist(strsplit(i, "_"))[!unlist(strsplit(i, "_"))=="NUMBER"], "ENROLLMENT_STATUS"), collapse="_")
+						if (tmp.split %in% getFromNames("institution_inclusion")) {
+							tmp.confidence.interval.groups[["GROUPS"]][["institution_inclusion"]][[i]] <- tmp.split
+						} 
+						tmp.confidence.interval.groups[["GROUPS"]][["growth_only_summary"]][[i]] <- "BY_GROWTH_ONLY"
+					}
+					tmp.confidence.interval.groups[["GROUPS"]][["institution_inclusion"]] <- as.list(tmp.confidence.interval.groups[["GROUPS"]][["institution_inclusion"]])
+					tmp.confidence.interval.groups[["GROUPS"]][["growth_only_summary"]] <- as.list(tmp.confidence.interval.groups[["GROUPS"]][["growth_only_summary"]])
+
 
 			return(tmp.confidence.interval.groups)
 		}
@@ -646,8 +667,16 @@ function(sgp_object,
 
 				if (!is.null(summary.groups[["institution_multiple_membership"]][[j-1]][["ENROLLMENT_STATUS"]])) {
 					summary.groups[["institution_inclusion"]][[tmp.inst]] <- summary.groups[["institution_multiple_membership"]][[j-1]][["ENROLLMENT_STATUS"]]
+					if (tmp.inst %in% confidence.interval.groups[['GROUPS']][['institution']]) {
+						confidence.interval.groups[['GROUPS']][['institution_inclusion']][[tmp.inst]] <-
+							summary.groups[["institution_multiple_membership"]][[j-1]][["ENROLLMENT_STATUS"]]
+					}
 				} else {
 					summary.groups[["institution_inclusion"]][[tmp.inst]] <- paste(i, "ENROLLMENT_STATUS", sep="_")
+					if (tmp.inst %in% confidence.interval.groups[['GROUPS']][['institution']]) {
+						confidence.interval.groups[['GROUPS']][['institution_inclusion']][[tmp.inst]] <-
+							paste(i, "ENROLLMENT_STATUS", sep="_")	
+					}
 				}
 				
 				summary.groups[["growth_only_summary"]][[tmp.inst]] <- "BY_GROWTH_ONLY" # Do we have an option to NOT include "BY_GROWTH_ONLY"? (would we want this?)
