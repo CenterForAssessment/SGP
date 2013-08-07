@@ -12,6 +12,7 @@ Changes in version: SGP_1.2-0.0
 	  o Added argument return.norm.group.scale.scores to studentGrowthPercentiles to return score vector of each student associated with their SGP. 
 	  o Changed growth trajectory to distinguishing color on growth achievement plots.
 	  o Added argument sgp.cohort.size to studentGrowthPercentiles to control minimum cohort size restriction.
+	  o summarizeSGP now calculates bootstrap standard errors as well as bootstrap confidence intervals.
 
 Changes in version: SGP_1.1-0.0
 
