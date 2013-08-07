@@ -183,7 +183,10 @@ if (reports.by.school) {
 
 			if ("PDF" %in% sgPlot.output.format) {
 			######################## SCHOOL Report Catalog LaTeX Header #################################################################################
-			cat("\\documentclass[pdftex]{book}\n\\usepackage{hyperref,pdfpages}\n\\hypersetup{%\n", file=paste("school_catalog_", i, "_", j, ".tex", sep=""))
+			if (.Platform$OS.type == "windows" & length(unique(tmp_district_data[list(j)]$ID)) > 500) {
+				cat("\\let\\mypdfximage\\pdfximage\n\\def\\pdfximage{\\immediate\\mypdfximage}\n\\documentclass[pdftex]{book}\n\\usepackage{hyperref,pdfpages}\n\\hypersetup{%\n",
+					file=paste("school_catalog_", i, "_", j, ".tex", sep=""))	
+			} else cat("\\documentclass[pdftex]{book}\n\\usepackage{hyperref,pdfpages}\n\\hypersetup{%\n", file=paste("school_catalog_", i, "_", j, ".tex", sep=""))
 			cat(paste("pdftitle={", tmp_school_name, ": ", pretty_year(last.year), " ", tmp.state, " Growth and Achievement Reports},\n", sep=""), 
 				file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE)
 			cat(paste("pdfauthor={", tmp.organization$Name, "/Center for Assessment Inc.},\n", sep=""), "pdfcreator={pdfLaTeX},\n", 
@@ -759,8 +762,8 @@ if (reports.by.instructor) {
 	if ("PDF" %in% sgPlot.output.format) {
 		################################ INSTRUCTOR Report Catalog LaTeX Code ###################################################################################
 		if (is.null(sgPlot.front.page)) {
-		cat(paste("\\pdfbookmark[3]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", student_number, ")", sep=""), "}{", n , "}\n\\includepdf[fitpaper=true]{", 
-			path.to.pdfs, "/", file_name, "}\n", sep=""), file=paste("instructor_catalog_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
+			cat(paste("\\pdfbookmark[3]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", student_number, ")", sep=""), "}{", n , "}\n\\includepdf[fitpaper=true]{", 
+				path.to.pdfs, "/", file_name, "}\n", sep=""), file=paste("instructor_catalog_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
 		} else {
 			cat(paste("\\includepdf[fitpaper=true]{", sgPlot.front.page.ijk, "}\n\\pdfbookmark[3]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", 
 			student_number, ")", sep=""), "}{", n , "}\n\\includepdf[fitpaper=true]{", path.to.pdfs, "/", file_name, "}\n", sep=""), 
