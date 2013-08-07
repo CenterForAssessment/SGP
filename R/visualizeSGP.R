@@ -60,7 +60,7 @@ function(sgp_object,
 	TEST_LEVEL <- SUBJECT_CODE <- SCALE_SCORE <- GRADE <- NULL ## To prevent R CMD check warnings
 	SCHOOL_ENROLLMENT_STATUS <- LAST_NAME <- FIRST_NAME <- NULL ## To prevent R CMD check warnings
 	MEDIAN_SGP <- MEDIAN_SGP_COUNT <- VALID_CASE <- gaPlot.iter <- sgPlot.iter <- V1 <- variable <- INSTRUCTOR_NAME <- INSTRUCTOR_NUMBER <- NULL ## To prevent R CMD check warnings
-	CONTENT_AREA_RESPONSIBILITY <- INSTRUCTOR_LAST_NAME <- INSTRUCTOR_FIRST_NAME <- NULL
+	CONTENT_AREA_RESPONSIBILITY <- INSTRUCTOR_LAST_NAME <- INSTRUCTOR_FIRST_NAME <- TRANSFORMED_SCALE_SCORE <- NULL
 
 
 	### Create state (if missing) from sgp_object (if possible)
@@ -660,8 +660,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 	#### Create transformed scale scores (NOT necessary if wide data is provided)
 
 		setkeyv(tmp.table, c("CONTENT_AREA", "YEAR", "GRADE"))
-		tmp.table$TRANSFORMED_SCALE_SCORE <- tmp.table[,
-			piecewise.transform(SCALE_SCORE, state, CONTENT_AREA, as.character(YEAR), as.character(GRADE)), by=list(CONTENT_AREA, YEAR, GRADE)]$V1
+		tmp.table[, TRANSFORMED_SCALE_SCORE := piecewise.transform(SCALE_SCORE, state, CONTENT_AREA, as.character(YEAR), as.character(GRADE)), by=list(CONTENT_AREA, YEAR, GRADE)]
 
 	#### Anonymize (if requested) (NOT necessary if wide data is provided)
  
@@ -746,13 +745,6 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 					sgp_object@SGP[["SGProjections"]][[i]][,c(1, grep("PROJ", names(sgp_object@SGP[["SGProjections"]][[i]])))])
 				}
 				sgPlot.data <- data.table(rbindlist(tmp.list), key=key(sgPlot.data))[sgPlot.data]
-				tmp.grade.name <- paste("GRADE", tmp.last.year, sep=".")
-				tmp.year.name <- yearIncrement(tmp.last.year, 1)
-				setkeyv(sgPlot.data, c("CONTENT_AREA", tmp.grade.name))
-				for (proj.iter in grep("PROJ", names(sgPlot.data), value=TRUE)) {
-					sgPlot.data[[proj.iter]] <- sgPlot.data[,piecewise.transform(get(proj.iter), state, CONTENT_AREA, tmp.year.name, get.next.grade(get(tmp.grade.name)[1], CONTENT_AREA[1])), 
-						by=list(CONTENT_AREA, sgPlot.data[[tmp.grade.name]])][['V1']] 
-				}
 			} ### END if (sgPlot.fan)
 
 			### Straight projection scale score targets
@@ -765,9 +757,6 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 					tmp.list[[i]] <- data.table(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1], sgp_object@SGP[["SGProjections"]][[i]], key=key(sgPlot.data))
 				}
 				sgPlot.data <- data.table(rbindlist(tmp.list), key=key(sgPlot.data))[sgPlot.data]
-				tmp.grade.name <- paste("GRADE", tmp.last.year, sep=".")
-				tmp.year.name
-
 			} ### END if ("sgp.projections" %in% sgPlot.scale_score.targets)
 
 			### Lagged projection scale score targets
@@ -785,20 +774,16 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			### Transform scale scores
 
 			tmp.grade.name <- paste("GRADE", tmp.last.year, sep=".")
-			tmp.year.names <- paste("YEAR", 1:8, sep="_")
 			setkeyv(sgPlot.data, c("CONTENT_AREA", tmp.grade.name))
 
 			for (i in seq(8)) {
 				if (length(grep(paste("PROJ_YEAR", i, sep="_"), names(sgPlot.data))) > 0) {
-					for (j in grep(paste("PROJ_YEAR", i, sep="_"), names(sgPlot.data), value=TRUE)) {
-						if (length(grep("CURRENT", j)) > 0) tmp.increment <- i else tmp.increment <- i-1
-						sgPlot.data[,j := piecewise.transform(get(j), state, CONTENT_AREA, yearIncrement(tmp.last.year, tmp.increment), 
-							get.next.grade(get(tmp.grade.name)[1], CONTENT_AREA[1])), 
-						by=list(CONTENT_AREA, sgPlot.data[[tmp.grade.name]]), with=FALSE] 
+					for (proj.iter in grep(paste("PROJ_YEAR", i, sep="_"), names(sgPlot.data), value=TRUE)) {
+						if (length(grep("CURRENT", proj.iter)) > 0) tmp.increment <- i else tmp.increment <- i-1
+							eval(parse(text=paste("sgPlot.data[, ", proj.iter, ":=piecewise.transform(", proj.iter, ", state, CONTENT_AREA, yearIncrement('", tmp.last.year, "',", tmp.increment, "), get.next.grade(", tmp.grade.name, "[1], CONTENT_AREA[1])), by=list(CONTENT_AREA, ", tmp.grade.name, ")]", sep="")))
 					}
 				}
 			}
-
 		} ### END if (sgPlot.fan | !is.null(sgPlot.scale_score.targets))
 
 	#### Merge in INSTRUCTOR_NAME if requested
