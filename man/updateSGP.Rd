@@ -16,6 +16,7 @@ updateSGP(
 	content_areas=NULL,
 	save.old.summaries=TRUE,
 	save.intermediate.results=FALSE,
+	sgPlot.demo.report=TRUE,
 	...)
 }
 
@@ -37,6 +38,8 @@ updateSGP(
   indicating whether the call to \code{\link{summarizeSGP}} should save existing summaries in the @Summary slot.
   }
   \item{save.intermediate.results}{A boolean argument (defaults to FALSE) indicating whether results should be save to the current directory after each step of the analysis.
+  }
+  \item{sgPlot.demo.report}{A boolean argument (defaults to TRUE) indicating whether updateSGP should produce just the demo student growth plots or those associated with all students in the last year.
   }
   \item{...}{Arguments to be passed to \code{\link{abcSGP}} for finer control over SGP calculations. For example, 'parallel.config' can be supplied to abcSGP for parallel computation.
   }

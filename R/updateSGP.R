@@ -7,6 +7,7 @@ function(what_sgp_object=NULL,
 	content_areas=NULL,
 	save.old.summaries=TRUE,
 	save.intermediate.results=FALSE,
+	sgPlot.demo.report=TRUE,
 	...) {
 
         started.at <- proc.time()
@@ -132,7 +133,7 @@ function(what_sgp_object=NULL,
 		### abcSGP
 
 		new.year <- sort(unique(tmp_sgp_object@Data$YEAR))
-		what_sgp_object <- abcSGP(what_sgp_object, steps=steps, years=new.year, state=state, save.intermediate.results=save.intermediate.results, save.old.summaries=save.old.summaries,...)
+		what_sgp_object <- abcSGP(what_sgp_object, steps=steps, years=new.year, state=state, save.intermediate.results=save.intermediate.results, save.old.summaries=save.old.summaries, sgPlot.demo.report=sgPlot.demo.report,...)
 
 
 		### Print finish and return SGP object
