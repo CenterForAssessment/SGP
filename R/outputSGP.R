@@ -23,7 +23,7 @@ function(sgp_object,
 	### Define varaibles (to prevent R CMD check warnings)
 
 	SCALE_SCORE <- CONTENT_AREA <- YEAR <- GRADE <- ID <- ETHNICITY <- GENDER <- LAST_NAME <- FIRST_NAME <- VALID_CASE <- DISTRICT_NUMBER <- SCHOOL_NUMBER <- YEAR_BY_CONTENT_AREA <- NULL
-	names.type <- names.provided <- names.output <- names.sgp <- STATE_ENROLLMENT_STATUS <- EMH_LEVEL <- STATE_ASSIGNED_ID <- .N <- NULL
+	names.type <- names.provided <- names.output <- names.sgp <- STATE_ENROLLMENT_STATUS <- EMH_LEVEL <- STATE_ASSIGNED_ID <- .N <- TRANSFORMED_SCALE_SCORE <- NULL
 
 	### Create state (if missing) from sgp_object (if possible)
 
@@ -386,9 +386,7 @@ function(sgp_object,
 		### Create transformed scale scores
 
 		setkeyv(tmp.table, c("CONTENT_AREA", "YEAR", "GRADE"))
-		tmp.table$TRANSFORMED_SCALE_SCORE <- tmp.table[,
-			piecewise.transform(SCALE_SCORE, state, as.character(CONTENT_AREA[1]), as.character(YEAR[1]), as.character(GRADE[1])), 
-				by=list(CONTENT_AREA, YEAR, GRADE)]$V1
+		tmp.table[, TRANSFORMED_SCALE_SCORE:=piecewise.transform(SCALE_SCORE, state, CONTENT_AREA, YEAR, GRADE), by=list(CONTENT_AREA, YEAR, GRADE)]
 
 		#### Anonymize (if requested) (NOT necessary if wide data is provided)
  
