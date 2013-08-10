@@ -177,7 +177,7 @@ function(sgp_object,
 	}
 
 	sgpSummary <- function(data, sgp.groups.to.summarize, produce.confidence.interval) {
-		SGP_SIM <- V1 <- .SD <- MEDIAN_SGP_with_SHRINKAGE <- NULL ## To prevent R CMD check warning
+		SGP_SIM <- V1 <- V2 <- .SD <- MEDIAN_SGP_with_SHRINKAGE <- NULL ## To prevent R CMD check warning
 		tmp.sgp.summaries <- sgp.summaries
 		sgp.summaries.names <- unlist(strsplit(names(sgp.summaries), "[.]"))
 		if (produce.confidence.interval) {
@@ -198,26 +198,34 @@ function(sgp_object,
 				tmp.sgp.summaries <- c(tmp.sgp.summaries, tmp.list)
 				sgp.summaries.names <- c(sgp.summaries.names, do.call(paste, c(data.table(expand.grid("MEDIAN", my.sgp, "STANDARD_ERROR_BOOTSTRAP"), key="Var2"), sep="_"))) 
 			}
-			if ("CSEM" %in% confidence.interval.groups$TYPE) {
-				sgp.summaries.names <- c(sgp.summaries.names, 
-					do.call(paste, c(data.table(expand.grid("MEDIAN", my.sgp, confidence.interval.groups$QUANTILES, "STANDARD_ERROR_BOOTSTRAP_CSEM"), key="Var2"), sep="_")))
-			}
 		}
  
 		ListExpr <- parse(text=paste("as.list(c(", paste(unlist(tmp.sgp.summaries), collapse=", "),"))",sep="")) 
 		ByExpr <- parse(text=paste("list(", paste(sgp.groups.to.summarize, collapse=", "), ")", sep=""))
 		tmp <- data[, eval(ListExpr), keyby=eval(ByExpr)]
-		if (produce.confidence.interval & "CSEM" %in% confidence.interval.groups$TYPE) {
-			SIM_ByExpr1 <- parse(text=paste("list(", paste(unlist(strsplit(as.character(sgp.groups.to.summarize), ", "))
-				[!(unlist(strsplit(as.character(sgp.groups.to.summarize), ", "))) %in% key(data)], collapse=", "), 
-				", ", paste(names(tmp.simulation.dt)[grep("SGP_SIM_", names(tmp.simulation.dt))], collapse=", "), ")", sep=""))
-			SIM_ByExpr2 <- parse(text=paste("list(", paste(sgp.groups.to.summarize, collapse=", "), ")", sep=""))
-				tmp.sim <- data[tmp.simulation.dt, eval(SIM_ByExpr1)][, -(1:2), with=FALSE][,
-				lapply(.SD, median_na), keyby=eval(SIM_ByExpr2)][, 
-				as.list(round(apply(.SD, 1, quantile, probs=confidence.interval.groups$QUANTILES))), keyby=eval(SIM_ByExpr2)]
-			tmp <- data.table(merge.data.frame(tmp, tmp.sim, by = unlist(strsplit(as.character(sgp.groups.to.summarize), ", ")),all=TRUE))
-		}
 		setnames(tmp, (dim(tmp)[2]-length(sgp.summaries.names)+1):dim(tmp)[2], sgp.summaries.names)
+
+		if (produce.confidence.interval & "CSEM" %in% confidence.interval.groups[['TYPE']]) {
+			tmp.list.1 <- list() 
+			tmp.number.simulated.sgps <- length(grep("SGP_SIM", names(sgp_object@SGP[["Simulated_SGPs"]][[1]])))
+			tmp.number.unique.cases <- dim(tmp.simulation.dt)[1]/tmp.number.simulated.sgps
+			for (i in seq(tmp.number.simulated.sgps)) {
+				tmp.subset.data <- sgp_object@Data[,c(key(tmp.subset.data), unlist(strsplit(sgp.groups.to.summarize, ", "))), with=FALSE][
+					tmp.simulation.dt[seq(i, length=tmp.number.unique.cases, by=tmp.number.simulated.sgps)]]
+				tmp.list.1[[i]] <- tmp.subset.data[,list(median_na(SGP_SIM, NULL), mean_na(SGP_SIM, NULL)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")]
+			}
+			tmp.csem <- data.table(reshape(rbindlist(tmp.list.1)[,list(sd_na(V1), sd_na(V2)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")],
+					idvar=c(unlist(strsplit(sgp.groups.to.summarize, ", "))), timevar="BASELINE", direction="wide"), key=key(tmp))
+			if (length(grep("BASELINE", names(tmp.csem)))==0) {
+				setnames(tmp.csem, c("V1.NA", "V2.NA"), c("MEDIAN_SGP_STANDARD_ERROR_CSEM", "MEAN_SGP_STANDARD_ERROR_CSEM"))
+			} else {
+				setnames(tmp.csem, c("V1.NA", "V2.NA", "V1.BASELINE", "V2.BASELINE"), 
+					c("MEDIAN_SGP_STANDARD_ERROR_CSEM", "MEAN_SGP_STANDARD_ERROR_CSEM", "MEDIAN_SGP_BASELINE_STANDARD_ERROR_CSEM", "MEAN_SGP_BASELINE_STANDARD_ERROR_CSEM")) 
+			}
+
+			tmp <- tmp.csem[tmp]
+		}
+
 		constant <- var(tmp[['MEDIAN_SGP']], na.rm=TRUE) - mean(tmp[['MEDIAN_SGP_STANDARD_ERROR']]^2, na.rm=TRUE)
 		tmp[,MEDIAN_SGP_with_SHRINKAGE := round(50 + ((tmp[['MEDIAN_SGP']]-50) * (constant/(constant+tmp[['MEDIAN_SGP_STANDARD_ERROR']]^2))))]
 		message(paste("\tFinished with", sgp.groups.to.summarize))
@@ -228,11 +236,15 @@ function(sgp_object,
 		tmp.list <- list()
 		tmp.names <- names(sgp_object@SGP[["Simulated_SGPs"]]) 
 		for (i in tmp.names) {
-			tmp.list[[i]] <- data.frame(sgp_object@SGP[["Simulated_SGPs"]][[i]],
-				CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
-				YEAR=unlist(strsplit(i, "[.]"))[2])
+			if (length(grep("BASELINE", i) > 0)) tmp.baseline <- "BASELINE" else tmp.baseline <- as.character(NA)
+			tmp.list[[i]] <- data.table(
+				ID=rep(sgp_object@SGP[["Simulated_SGPs"]][[i]][["ID"]], each=length(grep("SGP_SIM", names(sgp_object@SGP[["Simulated_SGPs"]][[i]])))),
+				SGP_SIM=as.integer(as.matrix(t(sgp_object@SGP[["Simulated_SGPs"]][[i]][,-1]))))[,
+				"CONTENT_AREA":=unlist(strsplit(i, "[.]"))[1]][,
+				"YEAR":=unlist(strsplit(i, "[.]"))[2]][,
+				"BASELINE":=tmp.baseline]
 		}
-		data.table(rbind.fill(tmp.list), VALID_CASE="VALID_CASE", key=key(data))
+		return(data.table(rbindlist(tmp.list), VALID_CASE="VALID_CASE", key=key(tmp.dt)))
 	}
 
 	summarizeSGP.config <- function(sgp_object, config.type) {
@@ -368,7 +380,7 @@ function(sgp_object,
 		
 		if (config.type=="confidence.interval.groups") {
 			tmp.confidence.interval.groups <- list(
-				TYPE=c("Bootstrap_CI", "Bootstrap_SE"),
+				TYPE=c("Bootstrap_CI", "Bootstrap_SE", "CSEM"),
 				VARIABLES=my.sgp,
 				QUANTILES=c(0.025, 0.975),
 				GROUPS=list(
