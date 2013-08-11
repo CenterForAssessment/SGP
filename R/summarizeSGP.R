@@ -210,8 +210,8 @@ function(sgp_object,
 			tmp.number.simulated.sgps <- length(grep("SGP_SIM", names(sgp_object@SGP[["Simulated_SGPs"]][[1]])))
 			tmp.number.unique.cases <- dim(tmp.simulation.dt)[1]/tmp.number.simulated.sgps
 			for (i in seq(tmp.number.simulated.sgps)) {
-				tmp.subset.data <- sgp_object@Data[,c(key(sgp_object@Data), unlist(strsplit(sgp.groups.to.summarize, ", "))), with=FALSE][
-					tmp.simulation.dt[seq(i, length=tmp.number.unique.cases, by=tmp.number.simulated.sgps)]]
+				tmp.subset.data <- data[,c(key(data), unlist(strsplit(sgp.groups.to.summarize, ", "))), with=FALSE][
+					tmp.simulation.dt[seq(i, length=tmp.number.unique.cases, by=tmp.number.simulated.sgps)], allow.cartesian=TRUE]
 				tmp.list.1[[i]] <- tmp.subset.data[,list(median_na(SGP_SIM, NULL), mean_na(SGP_SIM, NULL)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")]
 			}
 			tmp.csem <- data.table(reshape(rbindlist(tmp.list.1)[,list(sd_na(V1), sd_na(V2)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")],
