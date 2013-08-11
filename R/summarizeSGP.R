@@ -176,7 +176,7 @@ function(sgp_object,
 		if (!is.null(conf.quantiles)) return(CI) else return(SE)
 	}
 
-	sgpSummary <- function(data, sgp.groups.to.summarize, produce.confidence.interval) {
+	sgpSummary <- function(data, sgp.groups.to.summarize, produce.confidence.interval, tmp.simulation.dt) {
 		SGP_SIM <- V1 <- V2 <- .SD <- MEDIAN_SGP_with_SHRINKAGE <- NULL ## To prevent R CMD check warning
 		tmp.sgp.summaries <- sgp.summaries
 		sgp.summaries.names <- unlist(strsplit(names(sgp.summaries), "[.]"))
@@ -210,20 +210,21 @@ function(sgp_object,
 			tmp.number.simulated.sgps <- length(grep("SGP_SIM", names(sgp_object@SGP[["Simulated_SGPs"]][[1]])))
 			tmp.number.unique.cases <- dim(tmp.simulation.dt)[1]/tmp.number.simulated.sgps
 			for (i in seq(tmp.number.simulated.sgps)) {
-				tmp.subset.data <- sgp_object@Data[,c(key(tmp.subset.data), unlist(strsplit(sgp.groups.to.summarize, ", "))), with=FALSE][
+				tmp.subset.data <- sgp_object@Data[,c(key(sgp_object@Data), unlist(strsplit(sgp.groups.to.summarize, ", "))), with=FALSE][
 					tmp.simulation.dt[seq(i, length=tmp.number.unique.cases, by=tmp.number.simulated.sgps)]]
 				tmp.list.1[[i]] <- tmp.subset.data[,list(median_na(SGP_SIM, NULL), mean_na(SGP_SIM, NULL)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")]
 			}
 			tmp.csem <- data.table(reshape(rbindlist(tmp.list.1)[,list(sd_na(V1), sd_na(V2)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")],
 					idvar=c(unlist(strsplit(sgp.groups.to.summarize, ", "))), timevar="BASELINE", direction="wide"), key=key(tmp))
 			if (length(grep("BASELINE", names(tmp.csem)))==0) {
-				setnames(tmp.csem, c("V1.NA", "V2.NA"), c("MEDIAN_SGP_STANDARD_ERROR_CSEM", "MEAN_SGP_STANDARD_ERROR_CSEM"))
+				setnames(tmp.csem, c("V1.COHORT", "V2.COHORT"), c("MEDIAN_SGP_STANDARD_ERROR_CSEM", "MEAN_SGP_STANDARD_ERROR_CSEM"))
 			} else {
-				setnames(tmp.csem, c("V1.NA", "V2.NA", "V1.BASELINE", "V2.BASELINE"), 
+				setnames(tmp.csem, c("V1.COHORT", "V2.COHORT", "V1.BASELINE", "V2.BASELINE"), 
 					c("MEDIAN_SGP_STANDARD_ERROR_CSEM", "MEAN_SGP_STANDARD_ERROR_CSEM", "MEDIAN_SGP_BASELINE_STANDARD_ERROR_CSEM", "MEAN_SGP_BASELINE_STANDARD_ERROR_CSEM")) 
 			}
 
 			tmp <- tmp.csem[tmp]
+			setcolorder(tmp, c(grep("CSEM", names(tmp), invert=TRUE), grep("CSEM", names(tmp))))
 		}
 
 		constant <- var(tmp[['MEDIAN_SGP']], na.rm=TRUE) - mean(tmp[['MEDIAN_SGP_STANDARD_ERROR']]^2, na.rm=TRUE)
@@ -236,7 +237,7 @@ function(sgp_object,
 		tmp.list <- list()
 		tmp.names <- names(sgp_object@SGP[["Simulated_SGPs"]]) 
 		for (i in tmp.names) {
-			if (length(grep("BASELINE", i) > 0)) tmp.baseline <- "BASELINE" else tmp.baseline <- as.character(NA)
+			if (length(grep("BASELINE", i) > 0)) tmp.baseline <- "BASELINE" else tmp.baseline <- "COHORT"
 			tmp.list[[i]] <- data.table(
 				ID=rep(sgp_object@SGP[["Simulated_SGPs"]][[i]][["ID"]], each=length(grep("SGP_SIM", names(sgp_object@SGP[["Simulated_SGPs"]][[i]])))),
 				SGP_SIM=as.integer(as.matrix(t(sgp_object@SGP[["Simulated_SGPs"]][[i]][,-1]))))[,
@@ -441,9 +442,8 @@ function(sgp_object,
 		
 		tmp.summary <- list()
 
-		if (!is.null(confidence.interval.groups) & "CSEM" %in% confidence.interval.groups$TYPE) {
-			tmp.simulation.dt <- combineSims(sgp_object); gc()
-		} 
+		if (!is.null(confidence.interval.groups) & "CSEM" %in% confidence.interval.groups$TYPE)  tmp.simulation.dt <- combineSims(sgp_object) else tmp.simulation.dt <- NULL
+
 
 		### Create summary tables
 		
@@ -479,14 +479,14 @@ function(sgp_object,
 	  			j <- k <- NULL ## To prevent R CMD check warnings
 	  			tmp.summary <- foreach(j=iter(sgp.groups), k=iter(sgp.groups %in% ci.groups), 
 	  				.options.multicore=list(preschedule = FALSE, set.seed = FALSE), .packages="SGP", .inorder=FALSE) %dopar% {
-						return(sgpSummary(data, j, k))
+						return(sgpSummary(data, j, k, tmp.simulation.dt))
 				}
 				names(tmp.summary) <- gsub(", ", "__", sgp.groups)
 			} else {
 				j <- k <- NULL ## To prevent R CMD check warnings
 				tmp.summary <- foreach(j=iter(sgp.groups), k=iter(rep(FALSE, length(sgp.groups))), 
 					.options.multicore=list(preschedule = FALSE, set.seed = FALSE), .packages="SGP", .inorder=FALSE) %dopar% {
-						return(sgpSummary(data, j, k))
+						return(sgpSummary(data, j, k, tmp.simulation.dt))
 				}
 				names(tmp.summary) <- gsub(", ", "__", sgp.groups)
 			}
@@ -497,13 +497,13 @@ function(sgp_object,
 	  			j <- k <- NULL ## To prevent R CMD check warnings
 	  			summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], sgp.groups[x] %in% ci.groups))
 	  			tmp.summary <- parLapply(par.start$internal.cl, summary.iter, 
-	  				function(iter) sgpSummary(data, iter[1], eval(parse(text=iter[2]))))
+	  				function(iter) sgpSummary(data, iter[1], eval(parse(text=iter[2])), tmp.simulation.dt))
 				names(tmp.summary) <- gsub(", ", "__", sgp.groups)
 			} else {
 				j <- k <- NULL ## To prevent R CMD check warnings
 				summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], FALSE))
 	  			tmp.summary <- parLapply(par.start$internal.cl, summary.iter, 
-	  				function(iter) sgpSummary(data, iter[1], eval(parse(text=iter[2]))))
+	  				function(iter) sgpSummary(data, iter[1], eval(parse(text=iter[2])), tmp.simulation.dt))
 				names(tmp.summary) <- gsub(", ", "__", sgp.groups)
 			}
 			# if (is.null(parallel.config[['CLUSTER.OBJECT']]))	 stopCluster(internal.cl)
@@ -514,13 +514,13 @@ function(sgp_object,
 	  			j <- k <- NULL ## To prevent R CMD check warnings
 	  			summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], sgp.groups[x] %in% ci.groups))
 	  			tmp.summary <- mclapply(summary.iter, 
-	  				function(iter) sgpSummary(data, iter[1], eval(parse(text=iter[2]))), mc.cores=par.start$workers, mc.preschedule=FALSE)
+	  				function(iter) sgpSummary(data, iter[1], eval(parse(text=iter[2])), tmp.simulation.dt), mc.cores=par.start$workers, mc.preschedule=FALSE)
 				names(tmp.summary) <- gsub(", ", "__", sgp.groups)
 			} else {
 				j <- k <- NULL ## To prevent R CMD check warnings
 				summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], FALSE))
 	  			tmp.summary <- mclapply(summary.iter, 
-	  				function(iter) sgpSummary(data, iter[1], eval(parse(text=iter[2]))), mc.cores=par.start$workers, mc.preschedule=FALSE)	
+	  				function(iter) sgpSummary(data, iter[1], eval(parse(text=iter[2])), tmp.simulation.dt), mc.cores=par.start$workers, mc.preschedule=FALSE)	
 				names(tmp.summary) <- gsub(", ", "__", sgp.groups)
 			}
 		} # END 'MULTICORE' Flavor
