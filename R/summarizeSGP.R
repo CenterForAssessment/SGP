@@ -380,8 +380,9 @@ function(sgp_object,
 		}
 		
 		if (config.type=="confidence.interval.groups") {
+			if (is.null(sgp_object@SGP[['Simulated_SGPs']])) tmp.type <- c("Bootstrap_CI", "Bootstrap_SE") else tmp.type <- c(tmp.type, "CSEM")
 			tmp.confidence.interval.groups <- list(
-				TYPE=c("Bootstrap_CI", "Bootstrap_SE", "CSEM"),
+				TYPE=tmp.type,
 				VARIABLES=my.sgp,
 				QUANTILES=c(0.025, 0.975),
 				GROUPS=list(
