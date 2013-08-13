@@ -113,7 +113,7 @@ function(sgp_object,
 	}
 
 	weighted.median <- function(x, probs=0.5, w, na.rm=TRUE) {
-		if (is.null(w) | (!is.null(w) && length(x[!is.na(x) & w!=0]) < 2)) return(as.numeric(quantile(x, probs, na.rm)))
+		if (is.null(w) | (!is.null(w) && length(x[!is.na(x) & !is.na(w) & w!=0]) < 2)) return(as.numeric(quantile(x, probs, na.rm)))
 		q <- !is.na(x) & !is.na(w) & w!=0
 		if (!all(q)) {if (na.rm) {x<-x[q]; w<-w[q]} else stop("NA's")}
 		ord <- order(x)
