@@ -117,7 +117,7 @@ function(sgp_object,
 		q <- !is.na(x) & !is.na(w) & w!=0
 		if (length(x[q]) < 2) return(as.numeric(quantile(x, probs, na.rm)))
 		if (!all(q)) {if (na.rm) {x<-x[q]; w<-w[q]} else stop("NA's")}
-		ord <- sort.list(x, method="radix")
+		ord <- order(x)
 		z <- list(y=x[ord], w=w[ord])
 		z$x <- (cumsum(z$w) - z$w[1]) / (sum(z$w) - z$w[1]) # 0 to 1 inclusive
 		a <- approx(z$x, z$y, probs)$y
