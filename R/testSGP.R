@@ -1,7 +1,7 @@
 `testSGP` <- 
 function(
 	TEST_NUMBER,
-	save.results=FALSE,
+	save.results=TRUE,
 	memory.profile=FALSE) {
 
 	YEAR <- NULL
