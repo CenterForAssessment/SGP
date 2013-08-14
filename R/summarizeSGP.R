@@ -113,8 +113,9 @@ function(sgp_object,
 	}
 
 	weighted.median <- function(x, probs=0.5, w, na.rm=TRUE) {
-		if (is.null(w) | length(x[!is.na(x)]) < 2) return(as.numeric(quantile(x, probs, na.rm)))
-		q <- !is.na(x) & !is.na(w)
+		if (is.null(w)) return(as.numeric(quantile(x, probs, na.rm)))
+		q <- !is.na(x) & !is.na(w) & w!=0
+		if (length(x[q]) < 2) return(as.numeric(quantile(x, probs, na.rm)))
 		if (!all(q)) {if (na.rm) {x<-x[q]; w<-w[q]} else stop("NA's")}
 		ord <- order(x)
 		z <- list(y=x[ord], w=w[ord])
@@ -380,8 +381,9 @@ function(sgp_object,
 		}
 		
 		if (config.type=="confidence.interval.groups") {
+			if (is.null(names(sgp_object@SGP[['Simulated_SGPs']]))) tmp.type <- c("Bootstrap_CI", "Bootstrap_SE") else tmp.type <- c("Bootstrap_CI", "Bootstrap_SE", "CSEM")
 			tmp.confidence.interval.groups <- list(
-				TYPE=c("Bootstrap_CI", "Bootstrap_SE", "CSEM"),
+				TYPE=tmp.type,
 				VARIABLES=my.sgp,
 				QUANTILES=c(0.025, 0.975),
 				GROUPS=list(
