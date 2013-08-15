@@ -444,7 +444,7 @@ function(sgp_object,
 		
 		tmp.summary <- list()
 
-		if (!is.null(confidence.interval.groups) & "CSEM" %in% confidence.interval.groups$TYPE)  tmp.simulation.dt <- combineSims(sgp_object) else tmp.simulation.dt <- NULL
+		if (!is.null(confidence.interval.groups) & "CSEM" %in% confidence.interval.groups[['TYPE']])  tmp.simulation.dt <- combineSims(sgp_object) else tmp.simulation.dt <- NULL
 
 
 		### Create summary tables
@@ -588,7 +588,7 @@ function(sgp_object,
 						"YEAR_WITHIN"),
 					names(sgp_object@Data)) 
 
-	if (!is.null(sgp_object@Data_Supplementary)) variables.for.summaries <- c("VALID_CASE", "ID", variables.for.summaries)
+	if (!is.null(sgp_object@Data_Supplementary) | "CSEM" %in% confidence.interval.groups[['TYPE']]) variables.for.summaries <- c("VALID_CASE", "ID", variables.for.summaries)
 
 	### Define demographic subgroups and tables that will be calculated from all possible created by expand.grid
 
@@ -663,7 +663,7 @@ function(sgp_object,
 	### Loop and send to summarizeSGP_INTERNAL
 
 	tmp.dt <- sgp_object@Data[data.table("VALID_CASE", content_areas.by.years), nomatch=0][, variables.for.summaries, with=FALSE][, highest.level.summary.grouping:=state, with=FALSE]
-	if (!is.null(summary.groups[["institution_multiple_membership"]])) setkeyv(tmp.dt, getKey(sgp_object@Data))
+	if (!is.null(summary.groups[["institution_multiple_membership"]]) | "CSEM" %in% confidence.interval.groups[['TYPE']]) setkeyv(tmp.dt, getKey(sgp_object@Data))
 
 	par.start <- startParallel(parallel.config, 'SUMMARY')
 
