@@ -7,7 +7,7 @@ testSGP runs large scale tests of the SGP package to test for consistent perform
 
 \usage{
 testSGP(TEST_NUMBER,
-	save.results=FALSE,
+	save.results=TRUE,
 	memory.profile=FALSE)
 }
 
