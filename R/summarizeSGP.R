@@ -581,7 +581,7 @@ function(sgp_object,
 	if (is.null(confidence.interval.groups)) confidence.interval.groups <- summarizeSGP.config(sgp_object, "confidence.interval.groups")
 
 	if (any(!sapply(summary.groups[["growth_only_summary"]], is.null))) {
-		slot.data[,BY_GROWTH_ONLY := factor(is.na(slot.data[[my.sgp]]), levels=c(FALSE, TRUE), labels=c("Students without SGP", "Students with SGP"))]
+		slot.data[,BY_GROWTH_ONLY := factor(is.na(slot.data[[my.sgp[1]]]), levels=c(FALSE, TRUE), labels=c("Students without SGP", "Students with SGP"))]
 	}
 
 	variables.for.summaries <- intersect(c(my.sgp, my.sgp.target, my.sgp.target.baseline, my.sgp.target.musu, my.sgp.target.musu.baseline,
