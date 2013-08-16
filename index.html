@@ -8,12 +8,12 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
     <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
     <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    
+    <script
+        src="https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
 
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-
-    <title>SGP: Student Growth Percentiles by dbetebenner</title>
+    <title>SGP: Student Growth Percentiles &amp; Percentile Growth Trajectories/Projections</title>
   </head>
 
   <body>
@@ -32,12 +32,18 @@
 
 <h2>Student Growth Percentiles &amp; Percentile Growth Trajectories/Projections</h2>
 
-<p>The <strong>SGP</strong> Package (SGP, 2012) is an open source package built for the open source <strong>R</strong> software environment (R Development Core Team, 2012). The classes, functions and data within the <strong>SGP</strong> package are used to calculate student growth percentiles and percentile growth projections/trajectories using large scale, longitudinal assessment data. The methodology uses quantile regression to estimate the conditional density associated associated with each student's achievement history. Percentile growth projections/trajectories are calculated using the coefficient matrices derived from the quantile regression analyses and specify the percentile growth required for students to reach future achievement targets.</p>
+<p>The <strong>SGP</strong> Package (SGP, 2013) is an open source software package built for the 
+    open source <strong>R</strong> software environment (R Development Core Team, 2013). The classes, 
+    functions and data within the <strong>SGP</strong> package are used to calculate student growth percentiles 
+    and percentile growth projections/trajectories using large scale, longitudinal assessment data. The methodology 
+    uses quantile regression to estimate the conditional density associated associated with each student's achievement history. 
+    Percentile growth projections/trajectories are calculated using the coefficient matrices derived from the quantile regression 
+    analyses and specify the percentile growth required for students to reach future achievement targets.</p>
 
 <ul>
-<li>Web site: <a href="http://SchoolView.github.com/SGP/">http://SchoolView.github.com/SGP/</a>
+<li>Web site: <a href="http://SchoolView.github.com/SGP/" target="_blank">http://SchoolView.github.com/SGP/</a>
 </li>
-<li>CRAN Web site: <a href="http://cran.r-project.org/web/packages/SGP/">http://cran.r-project.org/web/packages/SGP/</a>
+<li>CRAN Web site: <a href="http://cran.r-project.org/web/packages/SGP/" target="_blank">http://cran.r-project.org/web/packages/SGP/</a>
 </li>
 </ul><h2>Install stable CRAN release</h2>
 
@@ -53,10 +59,14 @@
 <span class="nv">require</span><span class="gs">(</span>SGP<span class="gs">)</span>
 </pre></div>
 
-<p>To install from Github you might need: Windows: Rtools (<a href="http://cran.r-project.org/bin/windows/Rtools/">http://cran.r-project.org/bin/windows/Rtools/</a>), OS X: xcode (from the app store),
+<p>To install from Github you might need: Windows: Rtools (<a href="http://cran.r-project.org/bin/windows/Rtools/" target="_blank">http://cran.r-project.org/bin/windows/Rtools/</a>), OS X: xcode (from the app store),
 Linux: apt-get install r-base-dev (or similar).</p>
 
-<p>Analysis of data utilizing the <strong>SGP</strong> methodology requires, broadly, two steps: Data Preparation and Data Analysis with these two steps consisting of several substeps:</p>
+
+<h2>Getting Started</h2>            
+            
+<p>Analysis of data utilizing the <strong>SGP</strong> methodology requires, broadly, 
+    two steps: Data Preparation and Data Analysis with these two steps consisting of several substeps:</p>
 
 <ul>
 <li>Data Preparation
@@ -68,19 +78,20 @@ Linux: apt-get install r-base-dev (or similar).</p>
 <li>Data Analysis
 
 <ul>
-<li>prepareSGP</li>
-<li>analyzeSGP</li>
-<li>combineSGP</li>
-<li>summarizeSGP</li>
-<li>visualizeSGP</li>
-<li>outputSGP</li>
+<li><a href="https://github.com/SchoolView/SGP/blob/master/R/prepareSGP.R" target="_blank">prepareSGP</a></li>
+<li><a href="https://github.com/SchoolView/SGP/blob/master/R/analyzeSGP.R" target="_blank">analyzeSGP</a></li>
+<li><a href="https://github.com/SchoolView/SGP/blob/master/R/combineSGP.R" target="_blank">combineSGP</a></li>
+<li><a href="https://github.com/SchoolView/SGP/blob/master/R/summarizeSGP.R" target="_blank">summarizeSGP</a></li>
+<li><a href="https://github.com/SchoolView/SGP/blob/master/R/visualizeSGP.R" target="_blank">visualizeSGP</a></li>
+<li><a href="https://github.com/SchoolView/SGP/blob/master/R/outputSGP.R" target="_blank">outputSGP</a></li>
 </ul>
 </li>
 </ul><h1>Data Preparation</h1>
 
 <p>The following provides thorough <strong>SGP</strong> data formatting/preparation specifications for
-utilizing the utility function of the package (SGP:2012). To help
-illustrate these specifications there is an embedded data set, , within
+utilizing the utility function of the package (SGP:2013). To help
+illustrate these specifications there is an embedded data set, 
+<a href="https://github.com/SchoolView/SGPstateData" target="_blank">SGPstateData</a>, within
 the package. The development team uses this data set frequently to test
 new features included in the package. Ensuring your data is set up in
 the proper format will minimize later efforts to run analyses. The goal,
@@ -114,20 +125,22 @@ different grades and content area combinations. This is what is meant by <em>lon
 
 <h2>Required Variables</h2>
 
-<p>The following list gives the columns that are requires for the
+<p>The following list gives the columns that are required for the
 calculation of Student Growth Percentiles and how they should be
-formatted (if applicable).</p>
+formatted (if applicable). The user is not required to use the same naming 
+conventions as outlined here. A variable name lookup
+table discussed in the next section can be provided to allow user names to be 
+translated back and for to <strong>SGP</strong> names.</p>
 
 <ul>
-<li><p><code>ID</code> This column contains the unique student identifiers. Values will be set to
+<li><p><code>ID</code> This field contains the unique student identifier. Values will be set to
 class <em>character</em>.</p></li>
 <li><p><code>CONTENT_AREA</code> This column describes the content area for a given
 row. Most datasets would presumably contain <em>MATHEMATICS</em> and
-<em>READING</em>, but other values are possible. These values must be
-capitalized and match the states’ assessment information contained
-in the <strong>SGPstateData</strong> object that comes embedded within the <strong>SGP</strong> package.
-Please contact <a href="https://github.com/dbetebenner" class="user-mention">@dbetebenner</a> to have assessment data added to this
-object. These values should be of class <em>character</em>.</p></li>
+<em>READING</em>, but other values are possible. If your analyses uses the embedded meta-data
+<a href="https://github.com/SchoolView/SGPstateData" target="_blank">SGPstateData</a>, then the values of 
+<code>CONTENT_AREA</code> must be capitalized and match the states’ assessment information contained
+in <strong>SGPstateData</strong>. These values should be of class <em>character</em>.</p></li>
 <li><p><code>YEAR</code> This column gives either the academic year (e.g., <em>2006_2007</em>
 as in the sample data) or the year in which the assessment took
 place (e.g., <em>2007</em>). If the latter form is used, the class of this
@@ -190,14 +203,20 @@ summaries.</p>
 
 <h2>Variable Name Lookup Table</h2>
 
-<p>If a user does not wish to rename the columns in their data to match the
-conventions used in the <code>SGP</code> package listed above, the
+<p>The <strong>SGP</strong> package utilizes a variable name lookup table to carry out automated analyses.
+Please contact <a href="https://github.com/dbetebenner" class="user-mention">@dbetebenner</a> to have assessment data added to this
+object.
+    
+If a user does not wish to rename the columns in their data to match the
+conventions used in the <strong>SGP</strong> package listed above, the
 <code>Variable_Lookup_Table</code> option can be used. The user must supply an
 appropriate list of variable names in the <code>var.names</code> argument of the
-<code>prepareSGP</code> function. For example, if a state has a unique student
+<a href="https://github.com/SchoolView/SGP/blob/master/R/prepareSGP.R" target="_blank">prepareSGP</a>
+function. For example, if a state has a unique student
 identifier named ``My_Student_ID" and an assessment subject variable
 named ``My_Subject" (all other variable names match), an example call
-to <code>prepareSGP</code> would include this argument:</p>
+to <a href="https://github.com/SchoolView/SGP/blob/master/R/prepareSGP.R" target="_blank">prepareSGP</a>
+would include this argument:</p>
 
 <pre><code>My_State_Data &lt;- prepareSGP(..., 
    var.names=list(ID="MyStudent_ID", CONTENT_AREA="My_Subject"))
@@ -210,21 +229,31 @@ summarization and reporting.</p>
 <h2>Data Analysis</h2>
 
 <p>Once a dataset is properly formatted, a comprehensive analysis can be
-conducted using <strong>abcSGP</strong>. An example of the call using the sample data
-is below.</p>
+conducted using <a href="https://github.com/SchoolView/SGP/blob/master/R/abcSGP.R" target="_blank">abcSGP</a>. 
+An example of the call using the sample data is below.</p>
 
 <pre><code>Demonstration_SGP &lt;- abcSGP(sgpData_LONG)
 </code></pre>
 
-<p>This call returns an object of class <em>SGP</em> named <code>Demonstration_SGP</code> object which contains student growth percentiles and other information, but it also produces goodness of fit and visualization folders containing files on those two topics.
-The function accepts multiple arguments detailed in the 
-<a href="https://github.com/dbetebenner/SGP/blob/master/man/abcSGP.Rd">documentation</a>.</p>
+<p>
+    When \(a \ne 0\), there are two solutions to \(ax^2 + bx + c = 0\) and they are
+$$x = {-b \pm \sqrt{b^2-4ac} \over 2a}.$$
+            </p>
+            
+<p>This call returns an object of class <strong>SGP</strong> named <code>Demonstration_SGP</code> object which contains 
+student growth percentiles and other information, but it also produces goodness of fit and visualization folders containing files on those two topics.
+The function accepts multiple arguments detailed in the </p>
+
+            
+            
+<h2>Results</h2>            
+            <a href="images/MATHEMATICS_GOODNESS_OF_FIT/gofSGP_Grade_4.png" target="_blank"><img alt="Goodness of Fit: Mathematics, Grade 4" src="images/MATHEMATICS_GOODNESS_OF_FIT/gofSGP_Grade_4_SMALL.png"/></a>
 
 <h2>Bibliography</h2>
 
-<p>Betebenner, D. W., Iwaarden, A. V., and Domingue, B. (2012). SGP: An R Package for the Calculation and Visualization of Student Growth Percentiles &amp; Percentile Growth Trajectories.</p>
+<p>Betebenner, D. W., VanIwaarden, A., and Domingue, B. (2013). SGP: An R Package for the Calculation and Visualization of Student Growth Percentiles &amp; Percentile Growth Trajectories.</p>
 
-<p>R Development Core Team (2012). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria.
+<p>R Development Core Team (2013). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria.
 3-900051-07-0.</p>
         </section>
 
