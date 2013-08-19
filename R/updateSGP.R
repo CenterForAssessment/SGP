@@ -1,6 +1,7 @@
 `updateSGP` <- 
 function(what_sgp_object=NULL,
 	with_sgp_data_LONG=NULL,
+	refresh.current.year.results=FALSE,
 	steps=c("prepareSGP", "analyzeSGP", "combineSGP", "summarizeSGP", "visualizeSGP", "outputSGP"),
 	state=NULL,
 	years=NULL,
@@ -31,7 +32,10 @@ function(what_sgp_object=NULL,
 		stop("\tNOTE: Argument 'what_sgp_object' must be supplied to updateSGP (at a minimum). See man page for 'updateSGP' for details.")
 	}
 
+
+	##############################################################################
 	### What updateSGP
+	##############################################################################
 
 	if (!is.null(what_sgp_object) & is.null(with_sgp_data_LONG)) {
 		
@@ -116,14 +120,31 @@ function(what_sgp_object=NULL,
 	} ### END What updateSGP
 
 
+	#############################################################################################
 	### What/With updateSGP
+	#############################################################################################
 
 	if (!is.null(what_sgp_object) & !is.null(with_sgp_data_LONG)) {
+
+		YEAR <- NULL
 
 		### Use prepareSGP on supplied 'with_sgp_data_LONG'
 
 		tmp_sgp_object <- prepareSGP(with_sgp_data_LONG, state=state, create.additional.variables=FALSE)
-		what_sgp_object@Data <- as.data.table(rbind.fill(what_sgp_object@Data, tmp_sgp_object@Data))
+		new.year <- sort(unique(tmp_sgp_object@Data$YEAR))
+		
+		if (refresh.current.year.results) {
+			what_sgp_object@Data <- as.data.table(rbind.fill(what_sgp_object@Data[YEAR!=new.year], tmp_sgp_object@Data))
+			what_sgp_object@SGP[['Goodness_of_Fit']][grep(new.year, names(what_sgp_object@SGP[['Goodness_of_Fit']]))] <- NULL
+			what_sgp_object@SGP[['SGPercentiles']][grep(new.year, names(what_sgp_object@SGP[['SGPercentiles']]))] <- NULL
+			what_sgp_object@SGP[['SGProjections']][grep(new.year, names(what_sgp_object@SGP[['SGProjections']]))] <- NULL
+			what_sgp_object@SGP[['Simulated_SGPs']][grep(new.year, names(what_sgp_object@SGP[['Simulated_SGPs']]))] <- NULL
+			sgp.use.my.coefficient.matrices <- TRUE
+		} else {
+			what_sgp_object@Data <- as.data.table(rbind.fill(what_sgp_object@Data, tmp_sgp_object@Data))
+			sgp.use.my.coefficient.matrices <- FALSE
+		}
+
 		if ("HIGH_NEED_STATUS" %in% names(what_sgp_object@Data)) {
 			what_sgp_object@Data[['HIGH_NEED_STATUS']] <- NULL
 			what_sgp_object <- suppressMessages(prepareSGP(what_sgp_object, state=state))
@@ -132,8 +153,16 @@ function(what_sgp_object=NULL,
 
 		### abcSGP
 
-		new.year <- sort(unique(tmp_sgp_object@Data$YEAR))
-		what_sgp_object <- abcSGP(what_sgp_object, steps=steps, years=new.year, state=state, save.intermediate.results=save.intermediate.results, save.old.summaries=save.old.summaries, sgPlot.demo.report=sgPlot.demo.report,...)
+		what_sgp_object <- abcSGP(
+					what_sgp_object, 
+					steps=steps, 
+					years=new.year, 
+					state=state, 
+					save.intermediate.results=save.intermediate.results, 
+					save.old.summaries=save.old.summaries, 
+					sgPlot.demo.report=sgPlot.demo.report,
+					sgp.use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
+					...)
 
 
 		### Print finish and return SGP object
