@@ -1,4 +1,4 @@
-`studentGrowthPercentiles` <-
+`studentGrowthPercentiles.2` <-
 function(panel.data,         ## REQUIRED
          sgp.labels,         ## REQUIRED
          panel.data.vnames,
@@ -259,14 +259,15 @@ function(panel.data,         ## REQUIRED
 		  }
 		}   
 		
-		rqfit <- function(tmp.gp.iter, lam) {  #  AVI added in the lam  argument here to index the lambda specific knots and boundaries
-			mod <- character()
-			for (i in seq_along(tmp.gp.iter)) {
-				knt <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['knots_", tmp.gp.iter[i], "']]", sep="")
-				bnd <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['boundaries_", tmp.gp.iter[i], "']]", sep="")
-				mod <- paste(mod, " + bs(prior_", i, ", knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
-			}
-			return(parse(text=paste("rq(final.yr ~", substring(mod,4), ", tau=taus,data=data, method=rq.method)[['fitted.values']]", sep="")))
+		rqfit <- function(tmp.gp.iter, lam, rqdata) {  #  AVI added in the lam argument here to index the lambda specific knots and boundaries
+		  mod <- character()
+		  for (i in seq_along(tmp.gp.iter)) {
+		    knt <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['knots_", tmp.gp.iter[i], "']]", sep="")
+		    bnd <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['boundaries_", tmp.gp.iter[i], "']]", sep="")
+		    mod <- paste(mod, " + bs(prior_", i, ", knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
+		  }
+		  fitted.values<-eval(parse(text=paste("rq(final.yr ~", substring(mod,4), ", tau=taus, data = rqdata, method=rq.method)[['fitted.values']]", sep="")))
+		  return(apply(fitted.values,1,.smooth.isotonize.row))
 		}
 		
 		if (!is.null(use.my.coefficient.matrices)) {
@@ -356,9 +357,11 @@ function(panel.data,         ## REQUIRED
 				}
 
 				if (is.null(parallel.config)) { # Sequential
-					fitted.b <- big.data[, eval(rqfit(tmp.gp.iter[1:k], lam=L)), by='b']
-					fitted.b[, ID := rep(data$ID, time = (B*length(taus)))]
-					fitted.b[,tau := rep(taus, each=dim(data)[1], time=B)]
+				  setkey(big.data,b)
+				  for (z in 1:B) {
+				    f<-rqfit(tmp.gp.iter[1:k], lam=L,rqdata=big.data[J(z)])
+				    fitted[[paste("order_", k, sep="")]][which(lambda==L),] <-fitted[[paste("order_", k, sep="")]][which(lambda==L),] + as.vector(f/B)
+				  }
 				} else {	# Parallel over 1:B
 					if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
 						##  Don't offer this option now.  But this could ultimately be the BEST option for this because we could have 
@@ -371,20 +374,18 @@ function(panel.data,         ## REQUIRED
 					##  Note, that if you use the parallel.config for SIMEX here, you can also use it for TAUS in the naive analysis
 					##  Example parallel.config argument:  '... parallel.config=list(BACKEND="PARALLEL", TYPE="SOCK", WORKERS=list(SIMEX = 4, TAUS = 4))'
 					if (par.start$par.type == 'MULTICORE') {
-						tmp.fitted.b <- mclapply(1:B, function(x) big.data[b==x][,eval(rqfit(tmp.gp.iter[1:k], lam=L))], mc.cores=par.start$workers)
+					  tmp.fitted.b <- mclapply(1:B, function(x) big.data[b==x][,rqfit(tmp.gp.iter[1:k], lam=L, rqdata=.SD)], mc.cores=par.start$workers)
 					}
 					if (par.start$par.type == 'SNOW') {
-						tmp.fitted.b <- parLapply(par.start$internal.cl, 1:B, function(x) big.data[b==x][,eval(rqfit(tmp.gp.iter[1:k], lam=L))])
+						tmp.fitted.b <- parLapply(par.start$internal.cl, 1:B, function(x) big.data[b==x][,eval(rqfit(tmp.gp.iter[1:k], lam=L, rqdata=.SD))])
 					}
-					fitted.b <- data.table(do.call(c, as.vector(tmp.fitted.b)), ID = rep(data$ID, time=(B*length(taus))), 
-						tau=rep(taus, each=dim(data)[1], time=B), b = rep(1:B, each = dim(data)[1]*length(taus)))
-					stopParallel(parallel.config, par.start)
+					for (z in 1:B) {
+					  fitted[[paste("order_", k, sep="")]][which(lambda==L),] <-fitted[[paste("order_", k, sep="")]][which(lambda==L),] + as.vector(tmp.fitted.b[[z]]/B)
+					} 
+          stopParallel(parallel.config, par.start)
 				}
 
-				# Make new variable 'PREDICTED_VALUES' to compare with 'V1' and to preserve 'tau'
-				fitted.b[, V1 := .smooth.isotonize.row(V1), by=list(ID, b)] # Use V1 := ... instead of PREDICTED_VALUES := .. to keep from adding a column
-				fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted.b[, mean(V1), by=list(ID, tau)][['V1']] 
-			
+				
 			} ### END for (L in lambda[-1])
 
 			switch(extrapolation, QUADRATIC = fit <- lm(fitted[[paste("order_", k, sep="")]] ~ lambda + I(lambda^2)), LINEAR = fit <- lm(fitted[[paste("order_", k, sep="")]]~ lambda))
