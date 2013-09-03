@@ -36,6 +36,7 @@ studentGrowthPercentiles(panel.data,
                          convert.0and100=TRUE,                                   
                          sgp.quantiles="Percentiles",
                          sgp.loss.hoss.adjustment=NULL,
+                         sgp.cohort.size=NULL,
                          percuts.digits=0,                                  
                          isotonize=TRUE,                                 
                          convert.using.loss.hoss=TRUE,                
@@ -43,7 +44,7 @@ studentGrowthPercentiles(panel.data,
                          return.prior.scale.score=TRUE,
                          return.prior.scale.score.standardized=TRUE,
                          return.norm.group.identifier=TRUE,
-			 return.norm.group.scale.scores=NULL,
+                         return.norm.group.scale.scores=NULL,
                          print.time.taken=TRUE,
                          parallel.config=NULL,
 			 calculate.simex=NULL,
@@ -141,6 +142,8 @@ to calculate the lags/differences based upon the supplied years.
   \item{sgp.quantiles}{Argument to specify quantiles for quantile regression estimation. Default is Percentiles. User can additionally submit a vector of quantiles (between 0 and 1). Goodness of fit output only available currently for PERCENTILES. 
   }
   \item{sgp.loss.hoss.adjustment}{Argument to control whether SGP is calculated using which.max for values associated with the hoss embedded in SGPstateData. Providing two letter state acronym utilizes this adjustment whereas supply NULL (the default) uses no adjustment. 
+  }
+  \item{sgp.cohort.size}{Argument to control the minimum cohort size used to calculate SGPs and associated coefficient matrices. NULL (the default) uses no restriction.  If not NULL, argument should be an integer value. 
   }
   \item{percuts.digits}{Argument specifying how many digits (defaults to 2) to print percentile cuts (if asked for) with.
   }

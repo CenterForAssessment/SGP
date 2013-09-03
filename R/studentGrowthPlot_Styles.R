@@ -16,6 +16,7 @@
            sgPlot.front.page,
            sgPlot.header.footer.color,
            sgPlot.fan,
+	   sgPlot.scale_score.targets,
            sgPlot.cleanup,
            sgPlot.baseline,
            sgPlot.zip,
@@ -182,7 +183,10 @@ if (reports.by.school) {
 
 			if ("PDF" %in% sgPlot.output.format) {
 			######################## SCHOOL Report Catalog LaTeX Header #################################################################################
-			cat("\\documentclass[pdftex]{book}\n\\usepackage{hyperref,pdfpages}\n\\hypersetup{%\n", file=paste("school_catalog_", i, "_", j, ".tex", sep=""))
+			if (.Platform$OS.type == "windows" & length(unique(tmp_district_data[list(j)]$ID)) > 500) {
+				cat("\\let\\mypdfximage\\pdfximage\n\\def\\pdfximage{\\immediate\\mypdfximage}\n\\documentclass[pdftex]{book}\n\\usepackage{hyperref,pdfpages}\n\\hypersetup{%\n",
+					file=paste("school_catalog_", i, "_", j, ".tex", sep=""))	
+			} else cat("\\documentclass[pdftex]{book}\n\\usepackage{hyperref,pdfpages}\n\\hypersetup{%\n", file=paste("school_catalog_", i, "_", j, ".tex", sep=""))
 			cat(paste("pdftitle={", tmp_school_name, ": ", pretty_year(last.year), " ", tmp.state, " Growth and Achievement Reports},\n", sep=""), 
 				file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE)
 			cat(paste("pdfauthor={", tmp.organization$Name, "/Center for Assessment Inc.},\n", sep=""), "pdfcreator={pdfLaTeX},\n", 
@@ -375,16 +379,29 @@ if (reports.by.school) {
 		tmp_student_data <- as.data.frame(tmp_grade_data[ID==n & CONTENT_AREA==content_areas[vp]])
 		pushViewport(get(paste("content_area_", vp, ".vp", sep="")))
                 studentGrowthPlot(
-                                  Scale_Scores=as.numeric(subset(tmp_student_data, select=paste("SCALE_SCORE", rev(sgPlot.years), sep="."))),
-                                  Plotting_Scale_Scores=as.numeric(subset(tmp_student_data, select=paste("TRANSFORMED_SCALE_SCORE", rev(sgPlot.years), sep="."))),
-                                  Achievement_Levels=as.character(unlist(subset(tmp_student_data, select=paste("ACHIEVEMENT_LEVEL", rev(sgPlot.years), sep=".")))),
-                                  SGP=as.numeric(subset(tmp_student_data, select=paste(my.sgp, rev(sgPlot.years), sep="."))),
-                                  SGP_Levels=as.character(unlist(subset(tmp_student_data, select=paste(my.sgp.level, rev(sgPlot.years), sep=".")))),
-                                  Grades=as.numeric(subset(tmp_student_data, select=paste("GRADE", rev(sgPlot.years), sep="."))),
-                                  Cuts_NY1=as.numeric(subset(tmp_student_data, select=grep("PROJ", names(tmp_student_data)))),
-                                  Cutscores=Cutscores[[content_areas[vp]]],
-                                  Report_Parameters=list(Current_Year=last.year, Content_Area=content_areas[vp], State=state))
-
+				Scale_Scores=as.numeric(subset(tmp_student_data, select=paste("SCALE_SCORE", rev(sgPlot.years), sep="."))),
+				Plotting_Scale_Scores=as.numeric(subset(tmp_student_data, select=paste("TRANSFORMED_SCALE_SCORE", rev(sgPlot.years), sep="."))),
+				Achievement_Levels=as.character(unlist(subset(tmp_student_data, select=paste("ACHIEVEMENT_LEVEL", rev(sgPlot.years), sep=".")))),
+				SGP=as.numeric(subset(tmp_student_data, select=paste(my.sgp, rev(sgPlot.years), sep="."))),
+				SGP_Levels=as.character(unlist(subset(tmp_student_data, select=paste(my.sgp.level, rev(sgPlot.years), sep=".")))),
+				Grades=as.numeric(subset(tmp_student_data, select=paste("GRADE", rev(sgPlot.years), sep="."))),
+				Cuts=list(NY1=as.numeric(subset(tmp_student_data, select=intersect(grep("P[1-9]", names(tmp_student_data)), grep("YEAR_1", names(tmp_student_data))))),
+					NY2=as.numeric(subset(tmp_student_data, select=intersect(grep("P[1-9]", names(tmp_student_data)), grep("YEAR_2", names(tmp_student_data))))),
+					NY3=as.numeric(subset(tmp_student_data, select=intersect(grep("P[1-9]", names(tmp_student_data)), grep("YEAR_3", names(tmp_student_data)))))),
+				Scale_Score_Targets_CUKU=list(NY1=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1"]]),
+								NY2=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_3"]]),
+								NY3=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_3"]])),
+				Scale_Score_Targets_MUSU=list(NY1=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR_PROJ_YEAR_1"]]),
+								NY2=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR_PROJ_YEAR_3"]]),
+								NY3=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR_PROJ_YEAR_3"]])),
+				Scale_Score_Targets_Current_CUKU=list(NY1=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT"]]),
+								NY2=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_3_CURRENT"]]),
+								NY3=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_3_CURRENT"]])),
+				Scale_Score_Targets_Current_MUSU=list(NY1=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR_PROJ_YEAR_1_CURRENT"]]),
+								NY2=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR_PROJ_YEAR_3_CURRENT"]]),
+								NY3=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR_PROJ_YEAR_3_CURRENT"]])),
+				Cutscores=Cutscores[[content_areas[vp]]],
+				Report_Parameters=list(Current_Year=last.year, Content_Area=content_areas[vp], State=state))
 		popViewport()
 
               } ## END loop over content_areas
@@ -521,7 +538,21 @@ if (reports.by.school) {
 				SGP=as.numeric(subset(tmp_student_data, select=paste(my.sgp, rev(sgPlot.years), sep="."))),
 				SGP_Levels=as.character(unlist(subset(tmp_student_data, select=paste(my.sgp.level, rev(sgPlot.years), sep=".")))),
 				Grades=as.numeric(subset(tmp_student_data, select=paste("GRADE", rev(sgPlot.years), sep="."))),
-				Cuts_NY1=as.numeric(subset(tmp_student_data, select=grep("PROJ", names(tmp_student_data)))),
+				Cuts=list(NY1=as.numeric(subset(tmp_student_data, select=intersect(grep("P[1-9]", names(tmp_student_data)), grep("YEAR_1", names(tmp_student_data))))),
+					NY2=as.numeric(subset(tmp_student_data, select=intersect(grep("P[1-9]", names(tmp_student_data)), grep("YEAR_2", names(tmp_student_data))))),
+					NY3=as.numeric(subset(tmp_student_data, select=intersect(grep("P[1-9]", names(tmp_student_data)), grep("YEAR_3", names(tmp_student_data)))))),
+				Scale_Score_Targets_CUKU=list(NY1=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1"]]),
+								NY2=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_3"]]),
+								NY3=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_3"]])),
+				Scale_Score_Targets_MUSU=list(NY1=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR_PROJ_YEAR_1"]]),
+								NY2=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR_PROJ_YEAR_3"]]),
+								NY3=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR_PROJ_YEAR_3"]])),
+				Scale_Score_Targets_Current_CUKU=list(NY1=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT"]]),
+								NY2=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_3_CURRENT"]]),
+								NY3=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_3_CURRENT"]])),
+				Scale_Score_Targets_Current_MUSU=list(NY1=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR_PROJ_YEAR_1_CURRENT"]]),
+								NY2=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR_PROJ_YEAR_3_CURRENT"]]),
+								NY3=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR_PROJ_YEAR_3_CURRENT"]])),
 				Cutscores=Cutscores[[content_areas[vp]]],
 				Report_Parameters=list(Current_Year=last.year, Content_Area=content_areas[vp], State=state))
 			popViewport()
@@ -731,8 +762,8 @@ if (reports.by.instructor) {
 	if ("PDF" %in% sgPlot.output.format) {
 		################################ INSTRUCTOR Report Catalog LaTeX Code ###################################################################################
 		if (is.null(sgPlot.front.page)) {
-		cat(paste("\\pdfbookmark[3]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", student_number, ")", sep=""), "}{", n , "}\n\\includepdf[fitpaper=true]{", 
-			path.to.pdfs, "/", file_name, "}\n", sep=""), file=paste("instructor_catalog_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
+			cat(paste("\\pdfbookmark[3]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", student_number, ")", sep=""), "}{", n , "}\n\\includepdf[fitpaper=true]{", 
+				path.to.pdfs, "/", file_name, "}\n", sep=""), file=paste("instructor_catalog_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
 		} else {
 			cat(paste("\\includepdf[fitpaper=true]{", sgPlot.front.page.ijk, "}\n\\pdfbookmark[3]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", 
 			student_number, ")", sep=""), "}{", n , "}\n\\includepdf[fitpaper=true]{", path.to.pdfs, "/", file_name, "}\n", sep=""), 
@@ -856,17 +887,30 @@ if (reports.by.instructor) {
 		tmp_student_data <- as.data.frame(tmp_grade_data[ID==n & CONTENT_AREA==content_areas[vp]])
 		pushViewport(get(paste("content_area_", vp, ".vp", sep="")))
                 studentGrowthPlot(
-                                  Scale_Scores=as.numeric(subset(tmp_student_data, select=paste("SCALE_SCORE", rev(sgPlot.years), sep="."))),
-                                  Plotting_Scale_Scores=as.numeric(subset(tmp_student_data, select=paste("TRANSFORMED_SCALE_SCORE", rev(sgPlot.years), sep="."))),
-                                  Achievement_Levels=as.character(unlist(subset(tmp_student_data, select=paste("ACHIEVEMENT_LEVEL", rev(sgPlot.years), sep=".")))),
-                                  SGP=as.numeric(subset(tmp_student_data, select=paste(my.sgp, rev(sgPlot.years), sep="."))),
-                                  SGP_Levels=as.character(unlist(subset(tmp_student_data, select=paste(my.sgp.level, rev(sgPlot.years), sep=".")))),
-                                  Grades=as.numeric(subset(tmp_student_data, select=paste("GRADE", rev(sgPlot.years), sep="."))),
-                                  Cuts_NY1=as.numeric(subset(tmp_student_data, select=grep("PROJ", names(tmp_student_data)))),
-                                  Cutscores=Cutscores[[content_areas[vp]]],
-                                  Report_Parameters=list(Current_Year=last.year, Content_Area=content_areas[vp], State=state,
+				Scale_Scores=as.numeric(subset(tmp_student_data, select=paste("SCALE_SCORE", rev(sgPlot.years), sep="."))),
+				Plotting_Scale_Scores=as.numeric(subset(tmp_student_data, select=paste("TRANSFORMED_SCALE_SCORE", rev(sgPlot.years), sep="."))),
+				Achievement_Levels=as.character(unlist(subset(tmp_student_data, select=paste("ACHIEVEMENT_LEVEL", rev(sgPlot.years), sep=".")))),
+				SGP=as.numeric(subset(tmp_student_data, select=paste(my.sgp, rev(sgPlot.years), sep="."))),
+				SGP_Levels=as.character(unlist(subset(tmp_student_data, select=paste(my.sgp.level, rev(sgPlot.years), sep=".")))),
+				Grades=as.numeric(subset(tmp_student_data, select=paste("GRADE", rev(sgPlot.years), sep="."))),
+				Cuts=list(NY1=as.numeric(subset(tmp_student_data, select=intersect(grep("P[1-9]", names(tmp_student_data)), grep("YEAR_1", names(tmp_student_data))))),
+					NY2=as.numeric(subset(tmp_student_data, select=intersect(grep("P[1-9]", names(tmp_student_data)), grep("YEAR_2", names(tmp_student_data))))),
+					NY3=as.numeric(subset(tmp_student_data, select=intersect(grep("P[1-9]", names(tmp_student_data)), grep("YEAR_3", names(tmp_student_data)))))),
+				Scale_Score_Targets_CUKU=list(NY1=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1"]]),
+								NY2=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_3"]]),
+								NY3=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_3"]])),
+				Scale_Score_Targets_MUSU=list(NY1=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR_PROJ_YEAR_1"]]),
+								NY2=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR_PROJ_YEAR_3"]]),
+								NY3=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR_PROJ_YEAR_3"]])),
+				Scale_Score_Targets_Current_CUKU=list(NY1=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT"]]),
+								NY2=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_3_CURRENT"]]),
+								NY3=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_3_CURRENT"]])),
+				Scale_Score_Targets_Current_MUSU=list(NY1=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR_PROJ_YEAR_1_CURRENT"]]),
+								NY2=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR_PROJ_YEAR_3_CURRENT"]]),
+								NY3=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR_PROJ_YEAR_3_CURRENT"]])),
+				Cutscores=Cutscores[[content_areas[vp]]],
+				Report_Parameters=list(Current_Year=last.year, Content_Area=content_areas[vp], State=state,
 					Denote_Content_Area=tmp_student_data[['CONTENT_AREA_RESPONSIBILITY']]=="Content Area Responsibility: Yes"))
-
 		popViewport()
 
               } ## END loop over content_areas
@@ -1004,7 +1048,21 @@ if (reports.by.instructor) {
 				SGP=as.numeric(subset(tmp_student_data, select=paste(my.sgp, rev(sgPlot.years), sep="."))),
 				SGP_Levels=as.character(unlist(subset(tmp_student_data, select=paste(my.sgp.level, rev(sgPlot.years), sep=".")))),
 				Grades=as.numeric(subset(tmp_student_data, select=paste("GRADE", rev(sgPlot.years), sep="."))),
-				Cuts_NY1=as.numeric(subset(tmp_student_data, select=grep("PROJ", names(tmp_student_data)))),
+				Cuts=list(NY1=as.numeric(subset(tmp_student_data, select=intersect(grep("P[1-9]", names(tmp_student_data)), grep("YEAR_1", names(tmp_student_data))))),
+					NY2=as.numeric(subset(tmp_student_data, select=intersect(grep("P[1-9]", names(tmp_student_data)), grep("YEAR_2", names(tmp_student_data))))),
+					NY3=as.numeric(subset(tmp_student_data, select=intersect(grep("P[1-9]", names(tmp_student_data)), grep("YEAR_3", names(tmp_student_data)))))),
+				Scale_Score_Targets_CUKU=list(NY1=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1"]]),
+								NY2=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_3"]]),
+								NY3=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_3"]])),
+				Scale_Score_Targets_MUSU=list(NY1=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR_PROJ_YEAR_1"]]),
+								NY2=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR_PROJ_YEAR_3"]]),
+								NY3=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR_PROJ_YEAR_3"]])),
+				Scale_Score_Targets_Current_CUKU=list(NY1=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT"]]),
+								NY2=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_3_CURRENT"]]),
+								NY3=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_3_CURRENT"]])),
+				Scale_Score_Targets_Current_MUSU=list(NY1=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR_PROJ_YEAR_1_CURRENT"]]),
+								NY2=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR_PROJ_YEAR_3_CURRENT"]]),
+								NY3=as.numeric(tmp_student_data[["SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR_PROJ_YEAR_3_CURRENT"]])),
 				Cutscores=Cutscores[[content_areas[vp]]],
 				Report_Parameters=list(Current_Year=last.year, Content_Area=content_areas[vp], State=state, 
 					Denote_Content_Area=tmp_student_data[['CONTENT_AREA_RESPONSIBILITY']]=="Content Area Responsibility: Yes"))

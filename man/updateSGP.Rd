@@ -10,12 +10,14 @@ SGP object.
 updateSGP(
 	what_sgp_object=NULL,
 	with_sgp_data_LONG=NULL,
+	refresh.current.year.results=FALSE,
 	steps=c("prepareSGP", "analyzeSGP", "combineSGP", "summarizeSGP", "visualizeSGP", "outputSGP"),
 	state=NULL,
 	years=NULL,
 	content_areas=NULL,
 	save.old.summaries=TRUE,
 	save.intermediate.results=FALSE,
+	sgPlot.demo.report=TRUE,
 	...)
 }
 
@@ -23,6 +25,8 @@ updateSGP(
   \item{what_sgp_object}{The SGP object to which the additional data will be added and analyzed. This object must be specified.
   }
   \item{with_sgp_data_LONG}{The additional data in LONG for to be added to the supplied object of class SGP analyzed. The additional data must be in the same form as the data in the @Data slot. If with_sgp_data_LONG is not supplied, the function with update the sgp_object supplied in 'what_sgp_object' using the embedded coefficient matrices, essentially re-doing the analyses.
+  }
+  \item{refresh.current.year.results}{A boolean argument (defaults to FALSE) indicating whether updateSGP will remove current year results and recalculate using pre-calculated coefficient matrices. 
   }
   \item{steps}{A vector indicting the steps abcSGP will perform as part of the update. Defaults to all steps: \code{\link{prepareSGP}}, \code{\link{analyzeSGP}}, \code{\link{combineSGP}}, 
   \code{\link{summarizeSGP}}, \code{\link{visualizeSGP}}, \code{\link{outputSGP}}.
@@ -37,6 +41,8 @@ updateSGP(
   indicating whether the call to \code{\link{summarizeSGP}} should save existing summaries in the @Summary slot.
   }
   \item{save.intermediate.results}{A boolean argument (defaults to FALSE) indicating whether results should be save to the current directory after each step of the analysis.
+  }
+  \item{sgPlot.demo.report}{A boolean argument (defaults to TRUE) indicating whether updateSGP should produce just the demo student growth plots or those associated with all students in the last year.
   }
   \item{...}{Arguments to be passed to \code{\link{abcSGP}} for finer control over SGP calculations. For example, 'parallel.config' can be supplied to abcSGP for parallel computation.
   }

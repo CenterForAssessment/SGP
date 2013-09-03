@@ -26,6 +26,7 @@ function(panel.data,         ## REQUIRED
          convert.0and100=TRUE,
          sgp.quantiles="Percentiles",
          sgp.loss.hoss.adjustment=NULL,
+         sgp.cohort.size=NULL,
          percuts.digits=0,
          isotonize=TRUE,
          convert.using.loss.hoss=TRUE,
@@ -33,7 +34,7 @@ function(panel.data,         ## REQUIRED
          return.prior.scale.score=TRUE,
          return.prior.scale.score.standardized=TRUE,
          return.norm.group.identifier=TRUE,
-	 return.norm.group.scale.scores=NULL,
+         return.norm.group.scale.scores=NULL,
          print.time.taken=TRUE,
          parallel.config=NULL,
          calculate.simex=NULL,
@@ -125,6 +126,7 @@ function(panel.data,         ## REQUIRED
 	.create.coefficient.matrices <- function(data, k, by.grade) {
 		tmp.data <- .get.panel.data(data, k, by.grade)
 		if (dim(tmp.data)[1]==0) return(NULL)
+		if (dim(tmp.data)[1] < sgp.cohort.size) return("Insufficient N")
 		tmp.num.variables <- dim(tmp.data)[2]
 		mod <- character()
 		s4Ks <- "Knots=list("
@@ -242,7 +244,7 @@ function(panel.data,         ## REQUIRED
 	} 
 
 	.simex.sgp <- function(state, variable, lambda, B, extrapolation) {
-		GRADE <- CONTENT_AREA <- YEAR <- V1 <- Lambda <- tau <- b <- PREDICTED_VALUES <- NULL ## To avoid R CMD check warnings
+		GRADE <- CONTENT_AREA <- YEAR <- V1 <- Lambda <- tau <- b <- .SD <- NULL ## To avoid R CMD check warnings
 		content_area <- content.area.progression
 		year <- year.progression
 		my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
@@ -259,6 +261,7 @@ function(panel.data,         ## REQUIRED
 		  }
 		}   
 		
+
 		rqfit <- function(tmp.gp.iter, lam, rqdata) {  #  AVI added in the lam argument here to index the lambda specific knots and boundaries
 		  mod <- character()
 		  for (i in seq_along(tmp.gp.iter)) {
@@ -305,8 +308,6 @@ function(panel.data,         ## REQUIRED
 			    csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")] <- CSEM_Function(data[[tmp.num.variables-g]])
 			  }
 			}
-			
-
 			if (!is.null(variable)){
 				for (g in seq_along(tmp.gp.iter)) {
 					csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")] <- 
@@ -342,7 +343,7 @@ function(panel.data,         ## REQUIRED
 					col.index <- tmp.num.variables-g
 					big.data[big.data[[col.index]] < loss.hoss[1,g], col.index := loss.hoss[1,g], with=F]
 					big.data[big.data[[col.index]] > loss.hoss[2,g], col.index := loss.hoss[2,g], with=F] 
-					ks <- big.data[, as.list(as.vector(unlist(round(quantile(big.data[[col.index]], probs=c(0.2,0.4,0.6,0.8), na.rm=TRUE), digits=3))))] # Knots
+					ks <- big.data[, as.list(as.vector(unlist(round(quantile(big.data[[col.index]], probs=knot.cut.percentiles, na.rm=TRUE), digits=3))))] # Knots
 					bs <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.1), digits=3)))] # Boundaries
 					lh <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.0), digits=3)))] # LOSS/HOSS
 			
@@ -362,11 +363,13 @@ function(panel.data,         ## REQUIRED
 				    f<-rqfit(tmp.gp.iter[1:k], lam=L,rqdata=big.data[J(z)])
 				    fitted[[paste("order_", k, sep="")]][which(lambda==L),] <-fitted[[paste("order_", k, sep="")]][which(lambda==L),] + as.vector(f/B)
 				  }
+
 				} else {	# Parallel over 1:B
 					if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
 						##  Don't offer this option now.  But this could ultimately be the BEST option for this because we could have 
 						##  nested foreach loops around Lambda, B and even the priors/orders if we have access to enough cores (cluster)
-						message("\t\tNOTE: FOREACH backend in not currently available for SIMEX.  Changing to BACKEND='PARALLEL' and TYPE will be set to OS default.")
+						message("\t\tNOTE: FOREACH backend in not currently available for SIMEX.  
+							Changing to BACKEND='PARALLEL' and TYPE will be set to OS default.")
 						parallel.config[["BACKEND"]] <- "PARALLEL"
 					} 
 				
@@ -385,12 +388,14 @@ function(panel.data,         ## REQUIRED
           stopParallel(parallel.config, par.start)
 				}
 
-				
 			} ### END for (L in lambda[-1])
 
-			switch(extrapolation, QUADRATIC = fit <- lm(fitted[[paste("order_", k, sep="")]] ~ lambda + I(lambda^2)), LINEAR = fit <- lm(fitted[[paste("order_", k, sep="")]]~ lambda))
+			switch(extrapolation,
+				LINEAR = fit <- lm(fitted[[paste("order_", k, sep="")]]~ lambda),
+				QUADRATIC = fit <- lm(fitted[[paste("order_", k, sep="")]] ~ lambda + I(lambda^2)))
 			extrap[[paste("order_", k, sep="")]] <- t(apply(matrix(predict(fit, newdata=data.frame(lambda=-1)), nrow=dim(data)[1]), 1, .smooth.isotonize.row))
-			tmp.quantiles.simex[[k]] <- data.table(ID=data[["ID"]], SIMEX_ORDER=k, SGP_SIMEX=.get.quantiles(extrap[[paste("order_", k, sep="")]], data[[tmp.num.variables]]))
+			tmp.quantiles.simex[[k]] <- data.table(ID=data[["ID"]], SIMEX_ORDER=k, 
+				SGP_SIMEX=.get.quantiles(extrap[[paste("order_", k, sep="")]], data[[tmp.num.variables]]))
 		} ### END for (k in simex.matrix.priors)
 		
 		quantile.data.simex <- data.table(rbindlist(tmp.quantiles.simex), key=c("ID", "SIMEX_ORDER"))
@@ -795,8 +800,10 @@ function(panel.data,         ## REQUIRED
 	num.panels <- (dim(ss.data)[2]-1)/2
 	if (is.factor(ss.data[[1]])) ss.data[[1]] <- as.character(ss.data[[1]])
 	if (exact.grade.progression.sequence) tmp.num.prior <- num.prior else tmp.num.prior <- 1
+	if (is.null(sgp.cohort.size)) sgp.cohort.size <- 0
 
-	if (dim(.get.panel.data(ss.data, tmp.num.prior, by.grade))[1] == 0) {
+	max.cohort.size <- dim(.get.panel.data(ss.data, tmp.num.prior, by.grade))[1]
+	if (max.cohort.size == 0) {
 		tmp.messages <- "\t\tNOTE: Supplied data together with grade progression contains no data. Check data, function arguments and see help page for details.\n"
 		message(paste("\tStarted studentGrowthPercentiles", started.date))
 		message(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", 
@@ -814,6 +821,24 @@ function(panel.data,         ## REQUIRED
 				Simulated_SGPs=Simulated_SGPs))
 		} 
 
+	if (max.cohort.size < sgp.cohort.size) {
+		tmp.messages <- paste("\t\tNOTE: Supplied data together with grade progression contains fewer than the minimum cohort size. \n\t\tOnly", max.cohort.size, 
+			"valid cases provided with", sgp.cohort.size, "indicated as minimum cohort N size. Check data, function arguments and see help page for details.\n")
+		message(paste("\tStarted studentGrowthPercentiles", started.date))
+		message(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", 
+			paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
+		message(paste(tmp.messages, "\tStudent Growth Percentile Analysis NOT RUN", date(), "\n"))
+
+		return(
+			list(Coefficient_Matrices=Coefficient_Matrices,
+				Cutscores=Cutscores,
+				Goodness_of_Fit=Goodness_of_Fit,
+				Knots_Boundaries=Knots_Boundaries,
+				Panel_Data=Panel_Data,
+				SGPercentiles=SGPercentiles,
+				SGProjections=SGProjections,
+				Simulated_SGPs=Simulated_SGPs))
+		}
 
 	if (is.null(content.area.progression)) {
 		content.area.progression <- rep(sgp.labels$my.subject, length(tmp.gp))
@@ -894,6 +919,15 @@ function(panel.data,         ## REQUIRED
 		}
 		for (k in coefficient.matrix.priors) {
 			Coefficient_Matrices[[tmp.path.coefficient.matrices]][['TMP_NAME']] <- .create.coefficient.matrices(ss.data, k, by.grade)
+			if (identical(Coefficient_Matrices[[tmp.path.coefficient.matrices]][['TMP_NAME']], "Insufficient N")) {
+				tmp.messages <- c(tmp.messages, paste("\tNOTE: Some grade progressions contain fewer than the minimum cohort size.",
+					"\n\t\tOnly analyses with MAX grade progression", paste(rev(rev(tmp.gp)[1:k]), collapse = ', '), "will be produced given", sgp.cohort.size,
+					"indicated as minimum cohort N size. \n\t\tCheck data, function arguments and see help page for details.\n"))
+				Coefficient_Matrices[[tmp.path.coefficient.matrices]][['TMP_NAME']] <- NULL
+				grade.progression <- tmp.gp <- rev(rev(tmp.gp)[1:k])
+				# num.prior <- length(tmp.gp[2:k]) # Force lots of warnings (?)
+				break
+			}
 			names(Coefficient_Matrices[[tmp.path.coefficient.matrices]])[length(Coefficient_Matrices[[tmp.path.coefficient.matrices]])] <- get.coefficient.matrix.name(tmp.last, k)
 
 			if (verbose.output) {

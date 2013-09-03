@@ -121,12 +121,45 @@ function(
 	###
 
 	if (process=='TAUS') {
-		chunk.size <- ceiling(length(qr.taus) / workers)
+		if (workers > 3) {
+			if (workers %in% 4:10) {
+				tmp.sml <- ceiling((length(qr.taus) / workers)*0.75)
+				tmp.lrg <- ceiling((length(qr.taus)-(2*tmp.sml))/(workers-2))
+				chunk.size <- c(tmp.sml, rep(tmp.lrg, (workers-2)), tmp.sml)
+				if (sum(chunk.size) > length(qr.taus)) {
+					over <- (sum(chunk.size) - length(qr.taus)); index <- 0
+					while(over != 0) {
+						if (over %% 2 == 0) {
+							index <- index + 1
+							chunk.size[(length(chunk.size)-(index))] <- chunk.size[(length(chunk.size)-(index))]-1
+						} else chunk.size[(index + 1)] <- chunk.size[(index + 1)]-1
+						over <- over - 1
+					}
+				}
+			}
+			if (workers > 10) {
+				tmp.sml.a <- ceiling((length(qr.taus) / workers)*0.334)
+				tmp.sml.b <- ceiling((length(qr.taus) / workers)*0.666)
+				tmp.lrg <- ceiling((length(qr.taus)-(2*sum(tmp.sml.a, tmp.sml.b)))/(workers-4))
+				chunk.size <- c(tmp.sml.a, tmp.sml.b, rep(tmp.lrg, (workers-4)), tmp.sml.b, tmp.sml.a)
+				if (sum(chunk.size) > length(qr.taus)) {
+					over <- (sum(chunk.size) - length(qr.taus)); index <- 0
+					while(over != 0) {
+						if (over %% 2 != 0) {
+							index <- index + 1
+							chunk.size[(length(chunk.size)-(index + 1))] <- chunk.size[(length(chunk.size)-(index + 1))]-1
+						} else chunk.size[(index + 2)] <- chunk.size[(index + 2)]-1
+						over <- over -1
+					}
+				}
+			}
+		}	else chunk.size <- rep(ceiling(length(qr.taus) / workers), workers)
+
 		TAUS.LIST <- vector("list", workers)
-		for (chunk in 0:(workers-1)) {
-			lower.index <- chunk*chunk.size+1
-			upper.index <- min((chunk+1)*chunk.size, length(qr.taus))
-			TAUS.LIST[[chunk+1]] <- qr.taus[lower.index:upper.index]
+		count <- index <- 1
+		for (ch in chunk.size) {
+			TAUS.LIST[[index]] <- qr.taus[count:(count+ch-1)]
+			count <- (count+ch); index <- index + 1
 		}
 		if ((chunk.size*workers) > length(qr.taus))  TAUS.LIST <- TAUS.LIST[sapply(TAUS.LIST, function(x) !is.na(x)[[1]][1])]
 	}

@@ -51,7 +51,7 @@ function(panel.data,	## REQUIRED
 
 	get.my.knots.boundaries.path <- function(content_area, year) {
 		tmp.knots.boundaries.names <-
-                        names(panel.data[['Knots_Boundaries']][[tmp.path.knots.boundaries]])[match(content_area, sapply(strsplit(names(panel.data[['Knots_Boundaries']][[tmp.path.knots.boundaries]]), "[.]"), '[', 1))]
+			names(panel.data[['Knots_Boundaries']][[tmp.path.knots.boundaries]])[content_area==sapply(strsplit(names(panel.data[['Knots_Boundaries']][[tmp.path.knots.boundaries]]), "[.]"), '[', 1)]
 		if (length(tmp.knots.boundaries.names)==0) {
 			return(paste("[['", tmp.path.knots.boundaries, "']]", sep=""))
 		} else {
@@ -247,17 +247,52 @@ function(panel.data,	## REQUIRED
 		}
 	}
 
+
 	.get.trajectories.and.cuts <- function(percentile.trajectories, trajectories.tf, cuts.tf, projection.unit=projection.unit) {
 		CUT <- NULL
 		if (trajectories.tf) {
-			tmp.traj <- percentile.trajectories[rep(1:100, dim(percentile.trajectories)[1]/100) %in% percentile.trajectory.values]
+			if (is.numeric(percentile.trajectory.values)) {
+				tmp.name.prefix <- "P"
+				tmp.traj <- percentile.trajectories[rep(1:100, dim(percentile.trajectories)[1]/100) %in% percentile.trajectory.values]
+				tmp.num.years.forward <- length(grade.projection.sequence)
+			}
+			if (is.character(percentile.trajectory.values)) {
+				tmp.name.prefix <- "SCALE_SCORE_"
+				tmp.num.years.forward <- min(length(grade.projection.sequence), 
+					lapply(strsplit(percentile.trajectory.values, "_")[[1]], type.convert)[sapply(lapply(strsplit(percentile.trajectory.values, "_")[[1]], type.convert), is.numeric)][[1]])
+				if (length(grep("CURRENT", percentile.trajectory.values))==0) tmp.num.years.forward <- min(length(grade.projection.sequence), tmp.num.years.forward+1)
+
+				tmp.indices <- as.integer(rep(dim(percentile.trajectories)[1]/length(unique(percentile.trajectories$ID))*(seq(length(unique(percentile.trajectories$ID)))-1), 
+					each=length(percentile.trajectory.values)) + as.numeric(t(as.matrix(data.table(panel.data[["Panel_Data"]], 
+					key="ID")[list(unique(percentile.trajectories[['ID']]))][,percentile.trajectory.values, with=FALSE]))))
+				tmp.traj <- percentile.trajectories[tmp.indices, 1:(2+tmp.num.years.forward-1), with=FALSE][,ID:=rep(unique(percentile.trajectories$ID), each=length(percentile.trajectory.values))]
+				if (tmp.num.years.forward==1) {
+					my.cutscore.year <- get.my.cutscore.year.sgprojection(Cutscores, sgp.labels$my.subject, yearIncrement(sgp.labels$my.year, 1, lag.increment))
+					tmp.cutscores.by.grade <- tmp.cutscores[[my.cutscore.year]][[paste("GRADE_", grade.projection.sequence[1], sep="")]]
+					tmp.target.name <- tail(names(tmp.traj), 1)
+					if (length(percentile.trajectory.values)==1) {
+						cuku.level.to.get <- which.max(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")-1
+						tmp.target.scores <- rep(tmp.cutscores.by.grade[cuku.level.to.get], length(unique(tmp.traj[['ID']])))
+
+					}
+					if (length(percentile.trajectory.values)==2) {
+						cuku.level.to.get <- which.max(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")-1
+						musu.level.to.get <- which.max(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")
+						tmp.target.scores <- rep(c(tmp.cutscores.by.grade[cuku.level.to.get], tmp.cutscores.by.grade[musu.level.to.get]), length(unique(tmp.traj[['ID']])))
+					}
+					tmp.target.scores[is.na(tmp.traj[[tmp.target.name]])] <- NA
+					tmp.traj[,tmp.target.name:=tmp.target.scores, with=FALSE]
+				}
+			}
 			tmp.traj[,2:dim(tmp.traj)[2] := round(tmp.traj[,2:dim(tmp.traj)[2], with=FALSE], digits=projcuts.digits), with=FALSE]
 			trajectories <- data.table(reshape(tmp.traj[, CUT:=rep(percentile.trajectory.values, dim(tmp.traj)[1]/length(percentile.trajectory.values))], 
 				idvar="ID", timevar="CUT", direction="wide"), key="ID")
+
+			if (length(grep("CURRENT", percentile.trajectory.values))!=0) percentile.trajectory.values <- unlist(strsplit(percentile.trajectory.values, "_CURRENT"))
 			if (projection.unit=="GRADE") {
-				tmp.vec <- expand.grid("P", percentile.trajectory.values, "_PROJ_GRADE_", grade.projection.sequence)
+				tmp.vec <- expand.grid(tmp.name.prefix, percentile.trajectory.values, "_PROJ_GRADE_", grade.projection.sequence, lag.increment.label)[1:(length(percentile.trajectory.values)*tmp.num.years.forward),]
 			} else {
-				tmp.vec <- expand.grid("P", percentile.trajectory.values, "_PROJ_YEAR_", seq_along(grade.projection.sequence))
+				tmp.vec <- expand.grid(tmp.name.prefix, percentile.trajectory.values, "_PROJ_YEAR_", seq_along(grade.projection.sequence), lag.increment.label)[1:(length(percentile.trajectory.values)*tmp.num.years.forward),]
 			}
 			tmp.vec <- tmp.vec[order(tmp.vec$Var2),]
 			setnames(trajectories, c("ID", do.call(paste, c(tmp.vec, sep=""))))
@@ -276,9 +311,9 @@ function(panel.data,	## REQUIRED
 					for (j in seq_along(tmp.cutscores.by.grade)) {
 						cuts.arg[k] <- paste(".sgp.targets(SS", grade.projection.sequence[i], ", ", tmp.cutscores.by.grade[j], ", ", convert.0and100, ")", sep="")
 						if (projection.unit=="GRADE") {
-							names.arg[k] <- paste("LEVEL_", j, "_SGP_TARGET_GRADE_", grade.projection.sequence[i], sep="")
+							names.arg[k] <- paste("LEVEL_", j, "_SGP_TARGET_GRADE_", grade.projection.sequence[i], lag.increment.label, sep="")
 						} else {
-							names.arg[k] <- paste("LEVEL_", j, "_SGP_TARGET_YEAR_", i, sep="")
+							names.arg[k] <- paste("LEVEL_", j, "_SGP_TARGET_YEAR_", i, lag.increment.label, sep="")
 						}
 						k <- k+1
 					}
@@ -420,7 +455,7 @@ function(panel.data,	## REQUIRED
 				stop("\nCutscores provided in SGPstateData does not include a subject name that matches my.subject in sgp.labels (CASE SENSITIVE). See help page for details.\n\n")
 			} else {
 				tmp.cutscores <- SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]
-				tf.cutscores <- TRUE
+				if (!is.character(percentile.trajectory.values)) tf.cutscores <- TRUE else tf.cutscores <- FALSE
 		}}
 		if (is.list(performance.level.cutscores)) {
 			if (any(names(performance.level.cutscores) %in% sgp.labels$my.subject)) {
@@ -441,9 +476,13 @@ function(panel.data,	## REQUIRED
 		stop("\tNOTE: Either percentile trajectories and/or performance level cutscores must be supplied for the analyses.")
 	}
 
-	if (!is.null(percentile.trajectory.values) && !all(percentile.trajectory.values %in% 1:100)) {
-		message("\tNOTE: Supplied 'percentile.trajectory.values' must be integers between 1 and 100. Only supplied values in that range will be used.")
+	if (!is.null(percentile.trajectory.values) && is.numeric(percentile.trajectory.values) && !all(percentile.trajectory.values %in% 1:100)) {
+		message("\tNOTE: Integer supplied 'percentile.trajectory.values' must be between 1 and 100. Only supplied values in that range will be used.")
 		percentile.trajectory.values <- intersect(percentile.trajectory.values, 1:100)
+	}
+
+	if (!is.null(percentile.trajectory.values) && is.character(percentile.trajectory.values) && !all(percentile.trajectory.values %in% names(panel.data[["Panel_Data"]]))) {
+		message("\tNOTE: Character 'percentile.trajectory.values' must correspond to individual specific variable in panel.data[['Panel_Data']]. Please check for appropriate variables.")
 	}
 
 	if (!is.null(achievement.level.prior.vname)) {
@@ -452,6 +491,8 @@ function(panel.data,	## REQUIRED
 			achievement.level.prior.vname <- NULL
 		}
 	}
+
+	if (lag.increment==0) lag.increment.label <- "_CURRENT" else lag.increment.label <- ""
 
 
 	########################################################
@@ -470,7 +511,7 @@ function(panel.data,	## REQUIRED
 		}
 	} 
 
-	if (tf.cutscores) {
+	if (tf.cutscores | is.character(percentile.trajectory.values)) {
 		Cutscores <- tmp.cutscores
 	}
 
