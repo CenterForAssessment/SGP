@@ -1,4 +1,4 @@
-`studentGrowthPercentiles.2` <-
+`studentGrowthPercentiles` <-
 function(panel.data,         ## REQUIRED
          sgp.labels,         ## REQUIRED
          panel.data.vnames,
