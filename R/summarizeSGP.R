@@ -367,19 +367,19 @@ function(sgp_object,
 				demographic=intersect(c(getFromNames("demographic"), "CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STAY_UP_STATUS", "ACHIEVEMENT_LEVEL_PRIOR", "HIGH_NEED_STATUS"), names(sgp_object@Data)),
 				institution_multiple_membership=get.multiple.membership(sgp_object))
 
-				tmp.summary.groups[["institution_inclusion"]] <- vector(mode="list", length=length(tmp.summary.groups[["institution"]]))
-				names(tmp.summary.groups[["institution_inclusion"]]) <- tmp.summary.groups[["institution"]]
-				for (i in tmp.summary.groups[["institution"]]) {
-					tmp.split <- paste(c(unlist(strsplit(i, "_"))[!unlist(strsplit(i, "_"))=="NUMBER"], "ENROLLMENT_STATUS"), collapse="_")
-					if (tmp.split %in% getFromNames("institution_inclusion")) {
-						tmp.summary.groups[["institution_inclusion"]][[i]] <- tmp.split
-					}
-					tmp.summary.groups[["growth_only_summary"]][[i]] <- "BY_GROWTH_ONLY"
+			tmp.summary.groups[["institution_inclusion"]] <- vector(mode="list", length=length(tmp.summary.groups[["institution"]]))
+			names(tmp.summary.groups[["institution_inclusion"]]) <- tmp.summary.groups[["institution"]]
+			for (i in tmp.summary.groups[["institution"]]) {
+				tmp.split <- paste(c(unlist(strsplit(i, "_"))[!unlist(strsplit(i, "_"))=="NUMBER"], "ENROLLMENT_STATUS"), collapse="_")
+				if (tmp.split %in% getFromNames("institution_inclusion")) {
+					tmp.summary.groups[["institution_inclusion"]][[i]] <- tmp.split
 				}
-				tmp.summary.groups[["institution_inclusion"]] <- as.list(tmp.summary.groups[["institution_inclusion"]])
-				tmp.summary.groups[["growth_only_summary"]] <- as.list(tmp.summary.groups[["growth_only_summary"]])
+				tmp.summary.groups[["growth_only_summary"]][[i]] <- "BY_GROWTH_ONLY"
+			}
+			tmp.summary.groups[["institution_inclusion"]] <- as.list(tmp.summary.groups[["institution_inclusion"]])
+			tmp.summary.groups[["growth_only_summary"]] <- as.list(tmp.summary.groups[["growth_only_summary"]])
 
-				return(tmp.summary.groups)
+			return(tmp.summary.groups)
 		}
 		
 		if (config.type=="confidence.interval.groups") {
@@ -399,16 +399,15 @@ function(sgp_object,
 
 			tmp.confidence.interval.groups[["GROUPS"]][["institution_inclusion"]] <- vector(mode="list", length=length(tmp.confidence.interval.groups[["GROUPS"]][["institution"]]))
 			names(tmp.confidence.interval.groups[["GROUPS"]][["institution_inclusion"]]) <- tmp.confidence.interval.groups[["GROUPS"]][["institution"]]
-					for (i in tmp.confidence.interval.groups[["GROUPS"]][["institution"]]) {
-						tmp.split <- paste(c(unlist(strsplit(i, "_"))[!unlist(strsplit(i, "_"))=="NUMBER"], "ENROLLMENT_STATUS"), collapse="_")
-						if (tmp.split %in% getFromNames("institution_inclusion")) {
-							tmp.confidence.interval.groups[["GROUPS"]][["institution_inclusion"]][[i]] <- tmp.split
-						} 
-						tmp.confidence.interval.groups[["GROUPS"]][["growth_only_summary"]][[i]] <- "BY_GROWTH_ONLY"
-					}
-					tmp.confidence.interval.groups[["GROUPS"]][["institution_inclusion"]] <- as.list(tmp.confidence.interval.groups[["GROUPS"]][["institution_inclusion"]])
-					tmp.confidence.interval.groups[["GROUPS"]][["growth_only_summary"]] <- as.list(tmp.confidence.interval.groups[["GROUPS"]][["growth_only_summary"]])
-
+			for (i in tmp.confidence.interval.groups[["GROUPS"]][["institution"]]) {
+				tmp.split <- paste(c(unlist(strsplit(i, "_"))[!unlist(strsplit(i, "_"))=="NUMBER"], "ENROLLMENT_STATUS"), collapse="_")
+				if (tmp.split %in% getFromNames("institution_inclusion")) {
+					tmp.confidence.interval.groups[["GROUPS"]][["institution_inclusion"]][[i]] <- tmp.split
+				} 
+				tmp.confidence.interval.groups[["GROUPS"]][["growth_only_summary"]][[i]] <- "BY_GROWTH_ONLY"
+			}
+			tmp.confidence.interval.groups[["GROUPS"]][["institution_inclusion"]] <- as.list(tmp.confidence.interval.groups[["GROUPS"]][["institution_inclusion"]])
+			tmp.confidence.interval.groups[["GROUPS"]][["growth_only_summary"]] <- as.list(tmp.confidence.interval.groups[["GROUPS"]][["growth_only_summary"]])
 
 			return(tmp.confidence.interval.groups)
 		}
