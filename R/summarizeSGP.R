@@ -81,7 +81,7 @@ function(sgp_object,
 
 
 	if (missing(sgp_object)) {
-		stop("User must supply a list containing a Student slot with long data. See documentation for details.")
+		stop("User must supply an SGP object containing a @Data slot with long data. See documentation for details.")
 	}
 
 	setkeyv(slot.data, getKey(sgp_object))
@@ -233,8 +233,11 @@ function(sgp_object,
 			setcolorder(tmp, c(grep("CSEM", names(tmp), invert=TRUE), grep("CSEM", names(tmp))))
 		}
 
-		constant <- var(tmp[['MEDIAN_SGP']], na.rm=TRUE) - mean(tmp[['MEDIAN_SGP_STANDARD_ERROR']]^2, na.rm=TRUE)
-		tmp[,MEDIAN_SGP_with_SHRINKAGE := round(50 + ((tmp[['MEDIAN_SGP']]-50) * (constant/(constant+tmp[['MEDIAN_SGP_STANDARD_ERROR']]^2))))]
+		if ('MEDIAN_SGP_STANDARD_ERROR' %in% names(tmp)) {
+			constant <- var(tmp[['MEDIAN_SGP']], na.rm=TRUE) - mean(tmp[['MEDIAN_SGP_STANDARD_ERROR']]^2, na.rm=TRUE)
+			tmp[,MEDIAN_SGP_with_SHRINKAGE := round(50 + ((tmp[['MEDIAN_SGP']]-50) * (constant/(constant+tmp[['MEDIAN_SGP_STANDARD_ERROR']]^2))))]
+		}
+		
 		message(paste("\tFinished with", sgp.groups.to.summarize))
 		return(tmp)
 	} ### END sgpSummary function
@@ -372,17 +375,19 @@ function(sgp_object,
 				demographic=intersect(c(getFromNames("demographic"), "CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STAY_UP_STATUS", "ACHIEVEMENT_LEVEL_PRIOR", "HIGH_NEED_STATUS"), names(slot.data)),
 				institution_multiple_membership=get.multiple.membership(sgp_object))
 
-				for (i in tmp.summary.groups[["institution"]]) {
-					tmp.split <- paste(c(unlist(strsplit(i, "_"))[!unlist(strsplit(i, "_"))=="NUMBER"], "ENROLLMENT_STATUS"), collapse="_")
-					if (tmp.split %in% getFromNames("institution_inclusion")) {
-						tmp.summary.groups[["institution_inclusion"]][[i]] <- tmp.split
-					} 
-					tmp.summary.groups[["growth_only_summary"]][[i]] <- "BY_GROWTH_ONLY"
+			tmp.summary.groups[["institution_inclusion"]] <- vector(mode="list", length=length(tmp.summary.groups[["institution"]]))
+			names(tmp.summary.groups[["institution_inclusion"]]) <- tmp.summary.groups[["institution"]]
+			for (i in tmp.summary.groups[["institution"]]) {
+				tmp.split <- paste(c(unlist(strsplit(i, "_"))[!unlist(strsplit(i, "_"))=="NUMBER"], "ENROLLMENT_STATUS"), collapse="_")
+				if (tmp.split %in% getFromNames("institution_inclusion")) {
+					tmp.summary.groups[["institution_inclusion"]][[i]] <- tmp.split
 				}
-				tmp.summary.groups[["institution_inclusion"]] <- as.list(tmp.summary.groups[["institution_inclusion"]])
-				tmp.summary.groups[["growth_only_summary"]] <- as.list(tmp.summary.groups[["growth_only_summary"]])
+				tmp.summary.groups[["growth_only_summary"]][[i]] <- "BY_GROWTH_ONLY"
+			}
+			tmp.summary.groups[["institution_inclusion"]] <- as.list(tmp.summary.groups[["institution_inclusion"]])
+			tmp.summary.groups[["growth_only_summary"]] <- as.list(tmp.summary.groups[["growth_only_summary"]])
 
-				return(tmp.summary.groups)
+			return(tmp.summary.groups)
 		}
 		
 		if (config.type=="confidence.interval.groups") {
@@ -400,16 +405,17 @@ function(sgp_object,
 					demographic=NULL,
 					institution_multiple_membership=get.multiple.membership(sgp_object)))
 
-					for (i in tmp.confidence.interval.groups[["GROUPS"]][["institution"]]) {
-						tmp.split <- paste(c(unlist(strsplit(i, "_"))[!unlist(strsplit(i, "_"))=="NUMBER"], "ENROLLMENT_STATUS"), collapse="_")
-						if (tmp.split %in% getFromNames("institution_inclusion")) {
-							tmp.confidence.interval.groups[["GROUPS"]][["institution_inclusion"]][[i]] <- tmp.split
-						} 
-						tmp.confidence.interval.groups[["GROUPS"]][["growth_only_summary"]][[i]] <- "BY_GROWTH_ONLY"
-					}
-					tmp.confidence.interval.groups[["GROUPS"]][["institution_inclusion"]] <- as.list(tmp.confidence.interval.groups[["GROUPS"]][["institution_inclusion"]])
-					tmp.confidence.interval.groups[["GROUPS"]][["growth_only_summary"]] <- as.list(tmp.confidence.interval.groups[["GROUPS"]][["growth_only_summary"]])
-
+			tmp.confidence.interval.groups[["GROUPS"]][["institution_inclusion"]] <- vector(mode="list", length=length(tmp.confidence.interval.groups[["GROUPS"]][["institution"]]))
+			names(tmp.confidence.interval.groups[["GROUPS"]][["institution_inclusion"]]) <- tmp.confidence.interval.groups[["GROUPS"]][["institution"]]
+			for (i in tmp.confidence.interval.groups[["GROUPS"]][["institution"]]) {
+				tmp.split <- paste(c(unlist(strsplit(i, "_"))[!unlist(strsplit(i, "_"))=="NUMBER"], "ENROLLMENT_STATUS"), collapse="_")
+				if (tmp.split %in% getFromNames("institution_inclusion")) {
+					tmp.confidence.interval.groups[["GROUPS"]][["institution_inclusion"]][[i]] <- tmp.split
+				} 
+				tmp.confidence.interval.groups[["GROUPS"]][["growth_only_summary"]][[i]] <- "BY_GROWTH_ONLY"
+			}
+			tmp.confidence.interval.groups[["GROUPS"]][["institution_inclusion"]] <- as.list(tmp.confidence.interval.groups[["GROUPS"]][["institution_inclusion"]])
+			tmp.confidence.interval.groups[["GROUPS"]][["growth_only_summary"]] <- as.list(tmp.confidence.interval.groups[["GROUPS"]][["growth_only_summary"]])
 
 			return(tmp.confidence.interval.groups)
 		}
@@ -630,15 +636,15 @@ function(sgp_object,
 						group.format(ENROLLMENT_STATUS_ARGUMENT, ADD_MISSING_ARGUMENT)), sep=""))
 			}
 		} else {
-			if (!paste(c(unlist(strsplit(k, "_"))[!unlist(strsplit(k, "_"))=="NUMBER"], "ENROLLMENT_STATUS"), collapse="_") %in% names(slot.data)) {
+			if (is.null(summary.groups[["institution_inclusion"]][[k]])) {
 				ENROLLMENT_STATUS_ARGUMENT <- NULL
 				ADD_MISSING_ARGUMENT <- TRUE
 			} else {
-				ENROLLMENT_STATUS_ARGUMENT <- paste(c(unlist(strsplit(k, "_"))[!unlist(strsplit(k, "_"))=="NUMBER"], "ENROLLMENT_STATUS"), collapse="_")
+				ENROLLMENT_STATUS_ARGUMENT <- summary.groups[["institution_inclusion"]][[k]]
 				ADD_MISSING_ARGUMENT <- FALSE
 			}
 
-			if (length(grep("SCHOOL", k)) > 0 & paste(c(unlist(strsplit(k, "_"))[!unlist(strsplit(k, "_"))=="NUMBER"], "ENROLLMENT_STATUS"), collapse="_") %in% names(slot.data)) {
+			if (length(grep("SCHOOL", k)) > 0 & !is.null(summary.groups[["institution_inclusion"]][[k]])) {
 				selected.summary.tables[[k]] <- do.call(paste, c(expand.grid(k,
 					group.format("EMH_LEVEL"),
 					group.format("CONTENT_AREA"),
