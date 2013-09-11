@@ -35,6 +35,11 @@ function(sgp_object,
 		highest.level.summary.grouping <- SGPstateData[[state]][["SGP_Configuration"]][["highest.level.summary.grouping"]]
 	}
 
+	### Create slot.data from sgp_object@Data
+
+	slot.data <- copy(sgp_object@Data)
+
+
 	### Export/Overwrite old summaries
 
 	if (!is.null(sgp_object@Summary)) {
@@ -69,17 +74,17 @@ function(sgp_object,
 	my.sgp.target.baseline <- paste("SGP_TARGET_BASELINE", projection.years.for.target, "YEAR", sep="_")
 	my.sgp.target.musu.baseline <-  paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", projection.years.for.target, "YEAR", sep="_")
 
-	if (!my.sgp.target %in% names(sgp_object@Data)) my.sgp.target <- NULL
-	if (!my.sgp.target.musu %in% names(sgp_object@Data)) my.sgp.target.musu <- NULL
-	if (!my.sgp.target.baseline %in% names(sgp_object@Data)) my.sgp.target.baseline <- NULL
-	if (!my.sgp.target.musu.baseline %in% names(sgp_object@Data)) my.sgp.target.musu.baseline <- NULL
+	if (!my.sgp.target %in% names(slot.data)) my.sgp.target <- NULL
+	if (!my.sgp.target.musu %in% names(slot.data)) my.sgp.target.musu <- NULL
+	if (!my.sgp.target.baseline %in% names(slot.data)) my.sgp.target.baseline <- NULL
+	if (!my.sgp.target.musu.baseline %in% names(slot.data)) my.sgp.target.musu.baseline <- NULL
 
 
 	if (missing(sgp_object)) {
 		stop("User must supply an SGP object containing a @Data slot with long data. See documentation for details.")
 	}
 
-	setkeyv(sgp_object@Data, getKey(sgp_object))
+	setkeyv(slot.data, getKey(sgp_object))
 
 
 	## Set up parallel.config if NULL
@@ -287,7 +292,7 @@ function(sgp_object,
 					)
 				}
 
-				if ("ACHIEVEMENT_LEVEL_PRIOR" %in% names(sgp_object@Data)) {
+				if ("ACHIEVEMENT_LEVEL_PRIOR" %in% names(slot.data)) {
 					tmp.sgp.summaries <- c(
 						tmp.sgp.summaries,
 						PERCENT_AT_ABOVE_PROFICIENT_PRIOR=paste("percent_in_category(ACHIEVEMENT_LEVEL_PRIOR, ", 
@@ -296,7 +301,7 @@ function(sgp_object,
 					)
 				}
 
-				if ("SCALE_SCORE_PRIOR_STANDARDIZED" %in% names(sgp_object@Data)) {
+				if ("SCALE_SCORE_PRIOR_STANDARDIZED" %in% names(slot.data)) {
 					tmp.sgp.summaries <- c(
 						tmp.sgp.summaries,
 						MEAN_SCALE_SCORE_PRIOR_STANDARDIZED="mean_na(SCALE_SCORE_PRIOR_STANDARDIZED, WEIGHT)",
@@ -304,7 +309,7 @@ function(sgp_object,
 					)
 				}
 
-				if ("SGP_SIMEX" %in% names(sgp_object@Data)) {
+				if ("SGP_SIMEX" %in% names(slot.data)) {
 					tmp.sgp.summaries <- c(
 						tmp.sgp.summaries,
 						MEDIAN_SGP_SIMEX="median_na(SGP_SIMEX, WEIGHT)",
@@ -367,7 +372,7 @@ function(sgp_object,
 				content=getFromNames("content"),
 				time=getFromNames("time"),
 				institution_level=getFromNames("institution_level"),
-				demographic=intersect(c(getFromNames("demographic"), "CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STAY_UP_STATUS", "ACHIEVEMENT_LEVEL_PRIOR", "HIGH_NEED_STATUS"), names(sgp_object@Data)),
+				demographic=intersect(c(getFromNames("demographic"), "CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STAY_UP_STATUS", "ACHIEVEMENT_LEVEL_PRIOR", "HIGH_NEED_STATUS"), names(slot.data)),
 				institution_multiple_membership=get.multiple.membership(sgp_object))
 
 			tmp.summary.groups[["institution_inclusion"]] <- vector(mode="list", length=length(tmp.summary.groups[["institution"]]))
@@ -450,7 +455,7 @@ function(sgp_object,
 		
 		tmp.summary <- list()
 
-		if (!is.null(confidence.interval.groups) & "CSEM" %in% confidence.interval.groups$TYPE)  tmp.simulation.dt <- combineSims(sgp_object) else tmp.simulation.dt <- NULL
+		if (!is.null(confidence.interval.groups) & "CSEM" %in% confidence.interval.groups[['TYPE']])  tmp.simulation.dt <- combineSims(sgp_object) else tmp.simulation.dt <- NULL
 
 
 		### Create summary tables
@@ -544,7 +549,7 @@ function(sgp_object,
 	###################################################################################
 
 	if (is.null(content_areas)) {
-		content_areas <- unique(sgp_object@Data["VALID_CASE"]$CONTENT_AREA)
+		content_areas <- unique(slot.data["VALID_CASE"]$CONTENT_AREA)
 	}
 
 	if (is.null(SGPstateData[[state]][["SGP_Configuration"]][["state.multiple.year.summary"]])) {	
@@ -555,13 +560,13 @@ function(sgp_object,
 	tmp.years <- list()
 	if (is.null(years)) {
 		for (i in content_areas) {
-			tmp.years[[i]] <- tail(sort(unique(sgp_object@Data[SJ("VALID_CASE", i)]$YEAR)), state.multiple.year.summary)
+			tmp.years[[i]] <- tail(sort(unique(slot.data[SJ("VALID_CASE", i)]$YEAR)), state.multiple.year.summary)
 		}
 	} else {
 		if (!is.list(years)) {
 			for (i in content_areas) {
-				tmp.years[[i]] <- tail(sort(unique(sgp_object@Data[SJ("VALID_CASE", i)]$YEAR))[
-					seq(which(sort(unique(sgp_object@Data[SJ("VALID_CASE", i)]$YEAR))==tail(sort(years), 1)))], state.multiple.year.summary)
+				tmp.years[[i]] <- tail(sort(unique(slot.data[SJ("VALID_CASE", i)]$YEAR))[
+					seq(which(sort(unique(slot.data[SJ("VALID_CASE", i)]$YEAR))==tail(sort(years), 1)))], state.multiple.year.summary)
 			}
 		} else {
 			if (!all(content_areas %in% names(years))) {
@@ -582,8 +587,7 @@ function(sgp_object,
 	if (is.null(confidence.interval.groups)) confidence.interval.groups <- summarizeSGP.config(sgp_object, "confidence.interval.groups")
 
 	if (any(!sapply(summary.groups[["growth_only_summary"]], is.null))) {
-#		sgp_object@Data[,BY_GROWTH_ONLY := factor(is.na(sgp_object@Data[[my.sgp]]), levels=c(FALSE, TRUE), labels=c("Students without SGP", "Students with SGP"))]
-		sgp_object@Data[["BY_GROWTH_ONLY"]] <- factor(is.na(sgp_object@Data[[my.sgp[1]]]), levels=c(FALSE, TRUE), labels=c("Students without SGP", "Students with SGP"))
+		slot.data[,BY_GROWTH_ONLY := factor(is.na(slot.data[[my.sgp[1]]]), levels=c(FALSE, TRUE), labels=c("Students without SGP", "Students with SGP"))]
 	}
 
 	variables.for.summaries <- intersect(c(my.sgp, my.sgp.target, my.sgp.target.baseline, my.sgp.target.musu, my.sgp.target.musu.baseline,
@@ -592,15 +596,15 @@ function(sgp_object,
 						"SCALE_SCORE_PRIOR_STANDARDIZED", "SGP_SIMEX",
 						unique(as.character(unlist(summary.groups))),
 						"YEAR_WITHIN"),
-					names(sgp_object@Data)) 
+					names(slot.data)) 
 
-	if (!is.null(sgp_object@Data_Supplementary)) variables.for.summaries <- c("VALID_CASE", "ID", variables.for.summaries)
+	if (!is.null(sgp_object@Data_Supplementary) | "CSEM" %in% confidence.interval.groups[['TYPE']]) variables.for.summaries <- c("VALID_CASE", "ID", variables.for.summaries)
 
 	### Define demographic subgroups and tables that will be calculated from all possible created by expand.grid
 
 	selected.demographic.subgroups <- intersect(
 		c(getFromNames("demographic"), "CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STAY_UP_STATUS", "CATCH_UP_KEEP_UP_STATUS_BASELINE", "MOVE_UP_STAY_UP_STATUS_BASELINE", 
-			"ACHIEVEMENT_LEVEL_PRIOR", "HIGH_NEED_STATUS"), names(sgp_object@Data))
+			"ACHIEVEMENT_LEVEL_PRIOR", "HIGH_NEED_STATUS"), names(slot.data))
 	if (is.null(SGPstateData[[state]][["Variable_Name_Lookup"]])) {
 		selected.institution.types <- c("STATE", "DISTRICT_NUMBER", "SCHOOL_NUMBER")
 	} else {
@@ -668,8 +672,8 @@ function(sgp_object,
 
 	### Loop and send to summarizeSGP_INTERNAL
 
-	tmp.dt <- sgp_object@Data[data.table("VALID_CASE", content_areas.by.years), nomatch=0][, variables.for.summaries, with=FALSE][, highest.level.summary.grouping:=state, with=FALSE]
-	if (!is.null(summary.groups[["institution_multiple_membership"]])) setkeyv(tmp.dt, getKey(sgp_object@Data))
+	tmp.dt <- slot.data[data.table("VALID_CASE", content_areas.by.years), nomatch=0][, variables.for.summaries, with=FALSE][, highest.level.summary.grouping:=state, with=FALSE]
+	if (!is.null(summary.groups[["institution_multiple_membership"]]) | "CSEM" %in% confidence.interval.groups[['TYPE']]) setkeyv(tmp.dt, getKey(slot.data))
 
 	par.start <- startParallel(parallel.config, 'SUMMARY')
 
@@ -715,13 +719,6 @@ function(sgp_object,
 	} ### END j loop over multiple membership groups (if they exist)
 
 	stopParallel(parallel.config, par.start)
-
-
-	## NULL out BY_GROWTH_ONLY
-	if (any(!sapply(summary.groups[["growth_only_summary"]], is.null))) {
-		sgp_object@Data[["BY_GROWTH_ONLY"]] <- NULL
-	}
-
 	message(paste("Finished summarizeSGP", date(), "in", timetaken(started.at), "\n"))
 	return(sgp_object)
 } ## END summarizeSGP Function
