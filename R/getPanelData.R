@@ -9,9 +9,9 @@ function(sgp.data,
 	if (sgp.type=="sgp.percentiles") {
 
 		if ("YEAR_WITHIN" %in% names(sgp.data)) {
-			tmp.lookup <- data.table("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])),
-				tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), sgp.iter[["sgp.grade.sequences"]][[1]],
-				tail(sgp.iter[["sgp.panel.years.within"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), FIRST_OBSERVATION=as.integer(NA), LAST_OBSERVATION=as.integer(NA))
+			tmp.lookup <- data.table("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]])),
+				tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]])), sgp.iter[["sgp.grade.sequences"]],
+				tail(sgp.iter[["sgp.panel.years.within"]], length(sgp.iter[["sgp.grade.sequences"]])), FIRST_OBSERVATION=as.integer(NA), LAST_OBSERVATION=as.integer(NA))
 			tmp.lookup[grep("FIRST", V5, ignore.case=TRUE), FIRST_OBSERVATION:=1L]; tmp.lookup[grep("LAST", V5, ignore.case=TRUE), LAST_OBSERVATION:=1L]; tmp.lookup[,V5:=NULL]
 
 			tmp.lookup.list <- list()
@@ -33,8 +33,8 @@ function(sgp.data,
 					drop=names(sgp.data)[!names(tmp.lookup.list[[1]]) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR_WITHIN", "tmp.timevar")], 
 					direction="wide")))
 		} else {
-			tmp.lookup <- SJ("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])),
-				tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])), sgp.iter[["sgp.grade.sequences"]][[1]])
+			tmp.lookup <- SJ("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]])),
+				tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]])), sgp.iter[["sgp.grade.sequences"]])
 
 			return(as.data.frame(reshape(
 				sgp.data[tmp.lookup, nomatch=0][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
@@ -49,9 +49,9 @@ function(sgp.data,
 	if (sgp.type=="sgp.projections") {
 		if (is.null(sgp.targets)) {
 			return(as.data.frame(reshape(
-				sgp.data[SJ("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.projection.grade.sequences"]][[1]])),
-					tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.projection.grade.sequences"]][[1]])),
-						sgp.iter[["sgp.projection.grade.sequences"]][[1]]), nomatch=0][,
+				sgp.data[SJ("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.projection.grade.sequences"]])),
+					tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.projection.grade.sequences"]])),
+						sgp.iter[["sgp.projection.grade.sequences"]]), nomatch=0][,
 					'tmp.timevar' := paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
 			idvar="ID",
 			timevar="tmp.timevar",
@@ -59,9 +59,9 @@ function(sgp.data,
 			direction="wide")))
 		} else {
 			return(as.data.frame(data.table(reshape(
-				sgp.data[SJ("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.projection.grade.sequences"]][[1]])),
-					tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.projection.grade.sequences"]][[1]])),
-						sgp.iter[["sgp.projection.grade.sequences"]][[1]]), nomatch=0][,
+				sgp.data[SJ("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.projection.grade.sequences"]])),
+					tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.projection.grade.sequences"]])),
+						sgp.iter[["sgp.projection.grade.sequences"]]), nomatch=0][,
 					'tmp.timevar' := paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
 			idvar="ID",
 			timevar="tmp.timevar",
@@ -80,11 +80,11 @@ function(sgp.data,
 						sgp.data[SJ("VALID_CASE", 
 						tail(sgp.iter[["sgp.content.areas"]], 1), 
 						tail(sgp.iter[["sgp.panel.years"]], 1), 
-						tail(sgp.iter[["sgp.grade.sequences"]][[1]], 1))][,"ID", with=FALSE]], 
+						tail(sgp.iter[["sgp.grade.sequences"]], 1))][,"ID", with=FALSE]], 
 				key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))[
-				SJ("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])-1),
-					tail(head(sgp.iter[["sgp.panel.years"]], -1), length(sgp.iter[["sgp.grade.sequences"]][[1]])-1),
-					head(sgp.iter[["sgp.grade.sequences"]][[1]], -1)), nomatch=0][,
+				SJ("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]])-1),
+					tail(head(sgp.iter[["sgp.panel.years"]], -1), length(sgp.iter[["sgp.grade.sequences"]])-1),
+					head(sgp.iter[["sgp.grade.sequences"]], -1)), nomatch=0][,
 					'tmp.timevar' := paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
 			idvar="ID",
 			timevar="tmp.timevar",
@@ -97,11 +97,11 @@ function(sgp.data,
 						sgp.data[SJ("VALID_CASE", 
 						tail(sgp.iter[["sgp.content.areas"]], 1), 
 						tail(sgp.iter[["sgp.panel.years"]], 1), 
-						tail(sgp.iter[["sgp.grade.sequences"]][[1]], 1))][,"ID", with=FALSE]], 
+						tail(sgp.iter[["sgp.grade.sequences"]], 1))][,"ID", with=FALSE]], 
 				key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))[
-				SJ("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]][[1]])-1),
-					tail(head(sgp.iter[["sgp.panel.years"]], -1), length(sgp.iter[["sgp.grade.sequences"]][[1]])-1),
-					head(sgp.iter[["sgp.grade.sequences"]][[1]], -1)), nomatch=0][,
+				SJ("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]])-1),
+					tail(head(sgp.iter[["sgp.panel.years"]], -1), length(sgp.iter[["sgp.grade.sequences"]])-1),
+					head(sgp.iter[["sgp.grade.sequences"]], -1)), nomatch=0][,
 					'tmp.timevar' := paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
 			idvar="ID",
 			timevar="tmp.timevar",

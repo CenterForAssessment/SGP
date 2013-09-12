@@ -255,4 +255,54 @@ function(
 
 	} ### End TEST_NUMBER 2
 
+
+	#######################################################################################################################################################
+	###
+	### TEST NUMBER 3
+	###
+	#######################################################################################################################################################
+
+	if (3 %in% TEST_NUMBER) {
+
+	options(error=recover)
+	options(warn=2)
+	suppressPackageStartupMessages(require(parallel))
+	number.cores <- detectCores()-1
+	Demonstration_SGP <- tmp.messages <- NULL
+
+	### Add EOCT courses to sgpData_LONG
+
+	Demonstration_Data_LONG <- sgpData_LONG
+	Demonstration_Data_LONG$CONTENT_AREA[Demonstration_Data_LONG$CONTENT_AREA == 'MATHEMATICS' & Demonstration_Data_LONG$GRADE == '9'] <- 'ALGEBRA_I'
+	Demonstration_Data_LONG$CONTENT_AREA[Demonstration_Data_LONG$CONTENT_AREA == 'MATHEMATICS' & Demonstration_Data_LONG$GRADE == '10'] <- 'ALGEBRA_II'
+	Demonstration_Data_LONG$CONTENT_AREA[Demonstration_Data_LONG$CONTENT_AREA == 'READING' & Demonstration_Data_LONG$GRADE == '9'] <- 'GRADE_9_LIT'
+	Demonstration_Data_LONG$CONTENT_AREA[Demonstration_Data_LONG$CONTENT_AREA == 'READING' & Demonstration_Data_LONG$GRADE == '10'] <- 'AMERICAN_LIT'
+	Demonstration_Data_LONG$GRADE_REPORTED <- Demonstration_Data_LONG$GRADE
+	Demonstration_Data_LONG$GRADE[Demonstration_Data_LONG$CONTENT_AREA %in% c('ALGEBRA_I', 'ALGEBRA_II', 'GRADE_9_LIT', 'AMERICAN_LIT')] <-  'EOCT'
+
+	### Add config to SGPstateData
+
+	SGPstateData[["DEMO"]][["SGP_Configuration"]][["grade.projection.sequence"]] <- list(
+			READING=c("3", "4", "5", "6", "7", "8", "EOCT", "EOCT"),
+			MATHEMATICS=c("3", "4", "5", "6", "7", "8", "EOCT", "EOCT"),
+			GRADE_9_LIT=c("3", "4", "5", "6", "7", "8", "EOCT", "EOCT"),
+			AMERICAN_LIT=c("3", "4", "5", "6", "7", "8", "EOCT", "EOCT"),
+			ALGEBRA_I=c("3", "4", "5", "6", "7", "8", "EOCT", "EOCT"),
+			ALGEBRA_II=c("3", "4", "5", "6", "7", "8", "EOCT", "EOCT"))
+	SGPstateData[["DEMO"]][["SGP_Configuration"]][["content_area.projection.sequence"]] <- list(
+			READING=c("READING", "READING", "READING", "READING", "READING", "READING", "GRADE_9_LIT", "AMERICAN_LIT"),
+			GRADE_9_LIT=c("READING", "READING", "READING", "READING", "READING", "READING", "GRADE_9_LIT", "AMERICAN_LIT"),
+			AMERICAN_LIT=c("READING", "READING", "READING", "READING", "READING", "READING", "GRADE_9_LIT", "AMERICAN_LIT"),
+			MATHEMATICS=c("MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "ALGEBRA_I", "ALGEBRA_II"),
+			ALGEBRA_I=c("MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "ALGEBRA_I", "ALGEBRA_II"),
+			ALGEBRA_II=c("MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "ALGEBRA_I", "ALGEBRA_II"))
+		
+
+
+
+
+
+
+	} ### End TEST_NUMBER 3
+
 } ### END testSGP Function
