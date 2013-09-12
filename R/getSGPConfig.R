@@ -26,19 +26,19 @@ function(sgp_object,
 
 	get.config <- function(content_area, year, grades) {
 		
-		### Get data
+		### Years & Grades
 		tmp.unique.data <- lapply(sgp_object@Data[SJ("VALID_CASE", content_area), nomatch=0][, c("YEAR", "GRADE"), with=FALSE], function(x) sort(type.convert(unique(x), as.is=TRUE)))
 
-		### Years
-		.sgp.panel.years <- as.character(tmp.unique.data$YEAR[1:which(tmp.unique.data$YEAR==year)])
+		### Years (sgp.panel.years)
+		sgp.panel.years <- as.character(tmp.unique.data$YEAR[1:which(tmp.unique.data$YEAR==year)])
 
-		### Content Areas
-		.sgp.content.areas <- rep(content_area, length(.sgp.panel.years))
+		### Content Areas (sgp.content.areas)
+		sgp.content.areas <- rep(content_area, length(sgp.panel.years))
 
-
-		tmp.last.year.grades <- sort(type.convert(unique(subset(sgp_object@Data, YEAR==tail(.sgp.panel.years, 1) & CONTENT_AREA==content_area & VALID_CASE=="VALID_CASE")[['GRADE']]), as.is=TRUE))
+		### Grades (sgp.grade.sequences, sgp.projection.grade.sequences)
+		tmp.last.year.grades <- sort(type.convert(unique(subset(sgp_object@Data, YEAR==tail(sgp.panel.years, 1) & CONTENT_AREA==content_area & VALID_CASE=="VALID_CASE")[['GRADE']]), as.is=TRUE))
 		if (!is.numeric(tmp.last.year.grades) | !is.numeric(tmp.unique.data[['GRADE']])) {
-			stop("\tNOTE: Automatic configuration of analyses is currently only available for integer grade levels. Manual specification of 'sgp.config' is required for non-traditional grade and course progressions.")
+			stop("\tNOTE: Automatic 'sgp.config' calculation is only available for integer grade levels. Manual specification of 'sgp.config' is required for non-traditional grade and course progressions.")
 		}
 		tmp.sgp.grade.sequences <- lapply(tail(tmp.last.year.grades, -1), function(x) tail(tmp.unique.data$GRADE[tmp.unique.data$GRADE <= x], length(tmp.unique.data$YEAR)))
 		tmp.sgp.projection.grade.sequences <- lapply(head(tmp.last.year.grades, -1), function(x) tail(tmp.unique.data$GRADE[tmp.unique.data$GRADE <= x], length(tmp.unique.data$YEAR)))
@@ -46,30 +46,29 @@ function(sgp_object,
 			tmp.sgp.grade.sequences <- tmp.sgp.grade.sequences[sapply(tmp.sgp.grade.sequences, function(x) tail(x,1)) %in% grades]
 			tmp.sgp.projection.grade.sequences <- tmp.sgp.projection.grade.sequences[sapply(tmp.sgp.projection.grade.sequences, function(x) tail(x,1)) %in% grades]
 		}
-		.sgp.grade.sequences <- lapply(tmp.sgp.grade.sequences, function(x) if (length(x) > 1) x[(tail(x,1)-x) <= length(.sgp.panel.years)-1])
-		.sgp.grade.sequences <- .sgp.grade.sequences[!unlist(lapply(.sgp.grade.sequences, function(x) !length(x) > 1))]
-		.sgp.grade.sequences <- lapply(.sgp.grade.sequences, as.character)
-		.sgp.projection.grade.sequences <- lapply(tmp.sgp.projection.grade.sequences, function(x) if (length(x) > 1) x[(tail(x,1)-x) <= length(.sgp.panel.years)-1] else x)
-		.sgp.projection.grade.sequences <- lapply(.sgp.projection.grade.sequences, as.character)
+		sgp.grade.sequences <- lapply(tmp.sgp.grade.sequences, function(x) if (length(x) > 1) x[(tail(x,1)-x) <= length(sgp.panel.years)-1])
+		sgp.grade.sequences <- sgp.grade.sequences[!unlist(lapply(sgp.grade.sequences, function(x) !length(x) > 1))]
+		sgp.grade.sequences <- lapply(sgp.grade.sequences, as.character)
+		sgp.projection.grade.sequences <- lapply(tmp.sgp.projection.grade.sequences, function(x) if (length(x) > 1) x[(tail(x,1)-x) <= length(sgp.panel.years)-1] else x)
+		sgp.projection.grade.sequences <- lapply(sgp.projection.grade.sequences, as.character)
 
+		### Create and return sgp.config
 		if ("YEAR_WITHIN" %in% names(sgp_object@Data)) {
-			.sgp.panel.years.within <- rep("LAST_OBSERVATION", length(.sgp.content.areas))
+			sgp.panel.years.within <- rep("LAST_OBSERVATION", length(sgp.content.areas))
 			return(list(
-				sgp.content.areas=.sgp.content.areas,
-				sgp.panel.years=.sgp.panel.years,
-				sgp.grade.sequences=.sgp.grade.sequences,
-				sgp.projection.grade.sequences=.sgp.projection.grade.sequences,
-				sgp.panel.years.within=.sgp.panel.years.within))
+				sgp.content.areas=sgp.content.areas,
+				sgp.panel.years=sgp.panel.years,
+				sgp.grade.sequences=sgp.grade.sequences,
+				sgp.projection.grade.sequences=sgp.projection.grade.sequences,
+				sgp.panel.years.within=sgp.panel.years.within))
 		} else {
 			return(list(
-				sgp.content.areas=.sgp.content.areas,
-				sgp.panel.years=.sgp.panel.years,
-				sgp.grade.sequences=.sgp.grade.sequences,
-				sgp.projection.grade.sequences=.sgp.projection.grade.sequences
+				sgp.content.areas=sgp.content.areas,
+				sgp.panel.years=sgp.panel.years,
+				sgp.grade.sequences=sgp.grade.sequences,
+				sgp.projection.grade.sequences=sgp.projection.grade.sequences
 				))
 		}
-
-
 	} ### END get.config 
 	
 	split.location <- function(years) sapply(strsplit(years, '_'), length)[1]
