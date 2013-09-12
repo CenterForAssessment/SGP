@@ -250,19 +250,26 @@ function(panel.data,         ## REQUIRED
 
 		fitted <- extrap <- tmp.quantiles.simex <- list()
 		loss.hoss <- matrix(nrow=2,ncol=length(tmp.gp)-1)
-		for (g in 1:ncol(loss.hoss)) {
-			loss.hoss[,g] <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[rev(content_area)[-1][g]]][[paste("loss.hoss_", rev(tmp.gp)[-1][g], sep="")]]
-		}
+		if (!is.null(state)) {
+		  for (g in 1:ncol(loss.hoss)) {
+			  loss.hoss[,g] <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[rev(content_area)[-1][g]]][[paste("loss.hoss_", rev(tmp.gp)[-1][g], sep="")]]
+		}}
+		if (!is.null(variable)) {
+		  for (g in 1:ncol(loss.hoss)) {
+		    loss.hoss[,g] <- variable[[paste("loss.hoss_", rev(tmp.gp)[-1][g], sep="")]]
+		  }
+		}   
 		
-		#  Change rqfit to actual function, not a returned expression.  Add in rqdata to be explicit about what data is being passed in.
+
 		rqfit <- function(tmp.gp.iter, lam, rqdata) {  #  AVI added in the lam argument here to index the lambda specific knots and boundaries
-			mod <- character()
-			for (i in seq_along(tmp.gp.iter)) {
-				knt <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['knots_", tmp.gp.iter[i], "']]", sep="")
-				bnd <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['boundaries_", tmp.gp.iter[i], "']]", sep="")
-				mod <- paste(mod, " + bs(prior_", i, ", knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
-			}
-			eval(parse(text=paste("rq(final.yr ~", substring(mod,4), ", tau=taus, data = rqdata, method=rq.method)[['fitted.values']]", sep="")))
+		  mod <- character()
+		  for (i in seq_along(tmp.gp.iter)) {
+		    knt <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['knots_", tmp.gp.iter[i], "']]", sep="")
+		    bnd <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['boundaries_", tmp.gp.iter[i], "']]", sep="")
+		    mod <- paste(mod, " + bs(prior_", i, ", knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
+		  }
+		  fitted.values<-eval(parse(text=paste("rq(final.yr ~", substring(mod,4), ", tau=taus, data = rqdata, method=rq.method)[['fitted.values']]", sep="")))
+		  return(apply(fitted.values,1,.smooth.isotonize.row))
 		}
 
 		if (!is.null(use.my.coefficient.matrices)) {
@@ -285,21 +292,21 @@ function(panel.data,         ## REQUIRED
 			
 			# interpolate csem for all scale scores except that of the last grade
 
-			if (is.null(state)) stop('CSEM data must be available in SGPstateData to use SIMEX functionality (\'state\' argument is currently NULL).')
-			for (g in seq_along(tmp.gp.iter)) {
-				if ("YEAR" %in% names(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
-					CSEM_Data <- subset(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], 
-						GRADE == tmp.gp.iter[g] & CONTENT_AREA == tmp.ca.iter[g] & YEAR == tmp.yr.iter[g])
-				} else {
-					CSEM_Data <- subset(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], 
-						GRADE == tmp.gp.iter[g] & CONTENT_AREA == tmp.ca.iter[g])
-				}
-				if (dim(CSEM_Data)[1] == 0) stop(paste('CSEM data for', tmp.ca.iter[g], 'Grade', tmp.gp.iter[g],
-					'is required to use SIMEX functionality, but is not available in SGPstateData.  Please contact package administrators to add CSEM data.'))
-				CSEM_Function <- splinefun(CSEM_Data[["SCALE_SCORE"]], CSEM_Data[["SCALE_SCORE_CSEM"]], method="natural")
-				csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")] <- CSEM_Function(data[[tmp.num.variables-g]])
+			if (!is.null(state)) {
+			  for (g in seq_along(tmp.gp.iter)) {
+			    if ("YEAR" %in% names(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
+			      CSEM_Data <- subset(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], 
+			                          GRADE==tmp.gp.iter[g] & CONTENT_AREA== tmp.ca.iter[g] & YEAR==tmp.yr.iter[g])
+			    } else {
+			      CSEM_Data <- subset(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], 
+			                          GRADE==tmp.gp.iter[g] & CONTENT_AREA== tmp.ca.iter[g])
+			    }
+			    if (dim(CSEM_Data)[1] == 0) stop(paste('CSEM data for', tmp.ca.iter[g], 'Grade', tmp.gp.iter[g],
+			                                           'is required to use SIMEX functionality, but is not available in SGPstateData.  Please contact package administrators to add CSEM data.'))
+			    CSEM_Function <- splinefun(CSEM_Data[["SCALE_SCORE"]], CSEM_Data[["SCALE_SCORE_CSEM"]], method="natural")
+			    csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")] <- CSEM_Function(data[[tmp.num.variables-g]])
+			  }
 			}
-
 			if (!is.null(variable)){
 				for (g in seq_along(tmp.gp.iter)) {
 					csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")] <- 
@@ -350,9 +357,12 @@ function(panel.data,         ## REQUIRED
 				}
 
 				if (is.null(parallel.config)) { # Sequential
-					fitted.b <- big.data[, rqfit(tmp.gp.iter[1:k], lam=L, rqdata=.SD), by='b']
-					fitted.b[, ID := rep(data$ID, time = (B*length(taus)))]
-					fitted.b[,tau := rep(taus, each=dim(data)[1], time=B)]
+				  setkey(big.data,b)
+				  for (z in 1:B) {
+				    f<-rqfit(tmp.gp.iter[1:k], lam=L,rqdata=big.data[J(z)])
+				    fitted[[paste("order_", k, sep="")]][which(lambda==L),] <-fitted[[paste("order_", k, sep="")]][which(lambda==L),] + as.vector(t(f)/B)
+				  }
+
 				} else {	# Parallel over 1:B
 					if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
 						##  Don't offer this option now.  But this could ultimately be the BEST option for this because we could have 
@@ -366,19 +376,17 @@ function(panel.data,         ## REQUIRED
 					##  Note, that if you use the parallel.config for SIMEX here, you can also use it for TAUS in the naive analysis
 					##  Example parallel.config argument:  '... parallel.config=list(BACKEND="PARALLEL", TYPE="SOCK", WORKERS=list(SIMEX = 4, TAUS = 4))'
 					if (par.start$par.type == 'MULTICORE') {
-						tmp.fitted.b <- mclapply(1:B, function(x) big.data[b==x][, rqfit(tmp.gp.iter[1:k], lam=L, rqdata=.SD)], mc.cores=par.start$workers)
+					  tmp.fitted.b <- mclapply(1:B, function(x) big.data[b==x][,rqfit(tmp.gp.iter[1:k], lam=L, rqdata=.SD)], mc.cores=par.start$workers)
 					}
 					if (par.start$par.type == 'SNOW') {
-						tmp.fitted.b <- parLapply(par.start$internal.cl, 1:B, function(x) big.data[b==x][, rqfit(tmp.gp.iter[1:k], lam=L, rqdata=.SD)])
+						tmp.fitted.b <- parLapply(par.start$internal.cl, 1:B, function(x) big.data[b==x][,eval(rqfit(tmp.gp.iter[1:k], lam=L, rqdata=.SD))])
 					}
-					fitted.b <- data.table(do.call(c, as.vector(tmp.fitted.b)), ID = rep(data$ID, time=(B*length(taus))), 
-						tau=rep(taus, each=dim(data)[1], time=B), b = rep(1:B, each = dim(data)[1]*length(taus)))
-					stopParallel(parallel.config, par.start)
+					for (z in 1:B) {
+					  fitted[[paste("order_", k, sep="")]][which(lambda==L),] <-fitted[[paste("order_", k, sep="")]][which(lambda==L),] + as.vector(t(tmp.fitted.b[[z]])/B)
+					} 
+          stopParallel(parallel.config, par.start)
 				}
 
-				fitted.b[, V1 := .smooth.isotonize.row(V1), by=list(ID, b)] # Use V1 := ... instead of PREDICTED_VALUES := .. to keep from adding a column
-				fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted.b[, mean(V1), by=list(ID, tau)][['V1']] 
-			
 			} ### END for (L in lambda[-1])
 
 			switch(extrapolation,
@@ -597,10 +605,7 @@ function(panel.data,         ## REQUIRED
 				tmp.messages <- c(tmp.messages, "\t\tNOTE: Please specify an appropriate list for calculate.simex including state/csem variable, simulation.iterations, lambda and extrapolation. See help page for details. SGPs will be calculated without measurement error correction.\n")
 				simex.tf <- FALSE
 			}
-			if ("variable" %in% names(calculate.simex) & missing(panel.data.vnames)) {
-				stop("To utilize a supplied CSEM variable for measurement error correction you must specify the variables to be used for student growth percentile calculations with the panel.data.vnames argument. See help page for details.")
-			}
-			if (all(c("state", "variable") %in% names(calculate.simex))) {
+				if (all(c("state", "variable") %in% names(calculate.simex))) {
 				stop("Please specify EITHER a state OR a CSEM variable for SGP measurement error correction. See help page for details.")
 			}
 			if (!is.null(calculate.simex$lambda)){
