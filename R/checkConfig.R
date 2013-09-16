@@ -23,9 +23,7 @@ function(my.config,
 				my.config[[i]][['sgp.grade.sequences']] <- tail( my.config[[i]][['sgp.grade.sequences']], tmp.min)
 			}
 		}
-
 		return(my.config)
-
 	}
 
 	if (config.type=="Baseline") {
@@ -48,8 +46,6 @@ function(my.config,
 				my.config[[i]][['sgp.baseline.grade.sequences']] <- tail( my.config[[i]][['sgp.baseline.grade.sequences']], tmp.min)
 			}
 		}
-
 		return(my.config)
 	}
-
 } ### END checkConfig

@@ -243,16 +243,16 @@ function(sgp_object,
 	### Create par.sgp.config (for both parallel and sequential implementations)
 
 	setkeyv(sgp_object@Data, getKey(sgp_object))
-	par.sgp.config <- getSGPConfig(sgp_object, tmp_sgp_object, content_areas, years, grades, sgp.config, sgp.percentiles.baseline, sgp.projections.baseline, 
-		sgp.projections.lagged.baseline, sgp.config.drop.nonsequential.grade.progression.variables, sgp.minimum.default.panel.years)
+	par.sgp.config <- getSGPConfig(sgp_object, tmp_sgp_object, content_areas, years, grades, sgp.config, sgp.percentiles, sgp.projections, sgp.projections.lagged,
+		sgp.percentiles.baseline, sgp.projections.baseline, sgp.projections.lagged.baseline, sgp.config.drop.nonsequential.grade.progression.variables, sgp.minimum.default.panel.years)
 
 	if (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline) {
-		if (any(sapply(par.sgp.config, function(x) identical(x[['base.gp']], "NO_BASELINE_COEFFICIENT_MATRICES")))) {
-			baseline.missings <- which(sapply(par.sgp.config, function(x) identical(x[['base.gp']], "NO_BASELINE_COEFFICIENT_MATRICES")))
+		if (any(sapply(par.sgp.config, function(x) identical(x[['sgp.baseline.grade.sequences']], "NO_BASELINE_COEFFICIENT_MATRICES")))) {
+			baseline.missings <- which(sapply(par.sgp.config, function(x) identical(x[['sgp.baseline.grade.sequences']], "NO_BASELINE_COEFFICIENT_MATRICES")))
 			baseline.missings <- paste(unlist(sapply(par.sgp.config[baseline.missings], function(x) paste(tail(x$sgp.content.areas, 1), x$sgp.grade.sequences))), collapse=";\n\t\t")
 			message("\tNOTE: Baseline coefficient matrices are not available for:\n\t\t", baseline.missings, ".", sep="")
 		}
-		par.sgp.config.baseline <- par.sgp.config[which(sapply(par.sgp.config, function(x) !identical(x[['base.gp']], "NO_BASELINE_COEFFICIENT_MATRICES")))]
+		par.sgp.config.baseline <- par.sgp.config[which(sapply(par.sgp.config, function(x) !identical(x[['sgp.baseline.grade.sequences']], "NO_BASELINE_COEFFICIENT_MATRICES")))]
 	}
 
 
@@ -410,10 +410,10 @@ function(sgp_object,
 						calculate.confidence.intervals=calculate.confidence.intervals,
 						panel.data.vnames=getPanelDataVnames("sgp.percentiles", sgp.iter, names(tmp_sgp_data_for_analysis)),
 						additional.vnames.to.return=getPanelDataVnames("sgp.percentiles.to.return", sgp.iter, names(tmp_sgp_data_for_analysis)),
-						grade.progression=sgp.iter[["base.gp"]],
-						content_area.progression=tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["base.gp"]])),
-						year_lags.progression=sgp.iter[["time.lags"]],
-						num.prior=min(sgp.iter[["max.order"]], sgp.percentiles.baseline.max.order),
+						grade.progression=sgp.iter[["sgp.baseline.grade.sequences"]],
+						content_area.progression=sgp.iter[["sgp.baseline.content.areas"]],
+						year_lags.progression=sgp.iter[["sgp.baseline.panel.years.lags"]],
+						num.prior=min(sgp.iter[["sgp.baseline.max.order"]], sgp.percentiles.baseline.max.order),
 						percentile.cuts=SGPstateData[[state]][["SGP_Configuration"]][["percentile.cuts"]],
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
@@ -440,10 +440,10 @@ function(sgp_object,
 						calculate.confidence.intervals=calculate.confidence.intervals,
 						panel.data.vnames=getPanelDataVnames("sgp.percentiles", sgp.iter, names(tmp_sgp_data_for_analysis)),
 						additional.vnames.to.return=getPanelDataVnames("sgp.percentiles.to.return", sgp.iter, names(tmp_sgp_data_for_analysis)),
-						grade.progression=sgp.iter[["base.gp"]],
-						content_area.progression=tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["base.gp"]])),
-						year_lags.progression=sgp.iter[["time.lags"]],
-						num.prior=min(sgp.iter[["max.order"]], sgp.percentiles.baseline.max.order),
+						grade.progression=sgp.iter[["sgp.baseline.grade.sequences"]],
+						content_area.progression=sgp.iter[["sgp.baseline.content.areas"]],
+						year_lags.progression=sgp.iter[["sgp.baseline.panel.years.lags"]],
+						num.prior=min(sgp.iter[["sgp.baseline.max.order"]], sgp.percentiles.baseline.max.order),
 						percentile.cuts=SGPstateData[[state]][["SGP_Configuration"]][["percentile.cuts"]],
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
@@ -474,10 +474,10 @@ function(sgp_object,
 						calculate.confidence.intervals=calculate.confidence.intervals,
 						panel.data.vnames=getPanelDataVnames("sgp.percentiles", sgp.iter, names(tmp_sgp_data_for_analysis)),
 						additional.vnames.to.return=getPanelDataVnames("sgp.percentiles.to.return", sgp.iter, names(tmp_sgp_data_for_analysis)),
-						grade.progression=sgp.iter[["base.gp"]],
-						content_area.progression=tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["base.gp"]])),
-						year_lags.progression=sgp.iter[["time.lags"]],
-						num.prior=min(sgp.iter[["max.order"]], sgp.percentiles.baseline.max.order),
+						grade.progression=sgp.iter[["sgp.baseline.grade.sequences"]],
+						content_area.progression=sgp.iter[["sgp.baseline.content.areas"]],
+						year_lags.progression=sgp.iter[["sgp.baseline.panel.years.lags"]],
+						num.prior=min(sgp.iter[["sgp.baseline.max.order"]], sgp.percentiles.baseline.max.order),
 						percentile.cuts=SGPstateData[[state]][["SGP_Configuration"]][["percentile.cuts"]],
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
@@ -952,9 +952,9 @@ function(sgp_object,
 					growth.levels=state,
 					panel.data.vnames=getPanelDataVnames("sgp.percentiles", sgp.iter, names(tmp_sgp_data_for_analysis)),
 					additional.vnames.to.return=getPanelDataVnames("sgp.percentiles.to.return", sgp.iter, names(tmp_sgp_data_for_analysis)),
-					grade.progression=sgp.iter[["base.gp"]],
-					content_area.progression=tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["base.gp"]])),
-					year_lags.progression=sgp.iter[["time.lags"]],
+					grade.progression=sgp.iter[["sgp.baseline.grade.sequences"]],
+					content_area.progression=sgp.iter[["sgp.baseline.content.areas"]],
+					year_lags.progression=sgp.iter[["sgp.baseline.panel.years.lags"]],
 					num.prior=min(sgp.iter[["max.order"]], sgp.percentiles.baseline.max.order),
 					percentile.cuts=SGPstateData[[state]][["SGP_Configuration"]][["percentile.cuts"]],
 					calculate.confidence.intervals=calculate.confidence.intervals,
