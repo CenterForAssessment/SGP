@@ -139,13 +139,18 @@ function(panel.data,	## REQUIRED
 		for (i in seq_along(grade.progression)) {
 			tmp.list[[i]] <- list()
 			for (j in seq_along(grade.projection.sequence)) {
-				tmp.year_lags <- c(tail(year_lags.progression, i-1), head(year_lags.projection.sequence, j))
+				tmp.years_lags <- c(tail(year_lags.progression, i-1), head(year_lags.projection.sequence, j))
+				if (length(grep("BASELINE", sgp.labels[['my.extra.label']])) > 0) {
+					tmp.years <- rep("BASELINE", length(tmp.years_lags)+1) 
+				} else {
+					tmp.years <- yearIncrement(sgp.labels$my.year, rev(c(0, -cumsum(rev(tmp.years_lags)))))
+				}
 				tmp.list[[i]][[j]] <- getsplineMatrices(
 						tmp.matrices,
 						c(tail(content_area.progression, i), head(content_area.projection.sequence, j)),
 						c(tail(grade.progression, i), head(grade.projection.sequence, j)),
-						yearIncrement(sgp.labels$my.year, rev(c(0, -cumsum(rev(tmp.year_lags))))),
-						tmp.year_lags,
+						tmp.years,
+						tmp.years_lags,
 						my.highest.order.matrix=TRUE)[[1]]
 				if (dim(tmp.list[[i]][[j]]@.Data)[2] != 100) {
 					tmp.list[[i]][[j]]@.Data <- add.missing.taus.to.matrix(tmp.list[[i]][[j]]@.Data)
@@ -377,7 +382,7 @@ function(panel.data,	## REQUIRED
 		}
 		tmp.path.coefficient.matrices <- .create.path(use.my.coefficient.matrices)
 		if (is.null(panel.data[["Coefficient_Matrices"]]) | is.null(panel.data[["Coefficient_Matrices"]][[tmp.path.coefficient.matrices]])) {
-			if (sgp.labels$my.extra.label=="BASELINE" & !is.null(SGPstateData[[performance.level.cutscores]][["Baseline_splineMatrix"]])) {
+			if (length(grep("BASELINE", sgp.labels[['my.extra.label']])) > 0 & !is.null(SGPstateData[[performance.level.cutscores]][["Baseline_splineMatrix"]])) {
 				panel.data[["Coefficient_Matrices"]][[tmp.path.coefficient.matrices]] <- SGPstateData[[performance.level.cutscores]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]]
 			} else {
 				message("\tNOTE: Coefficient matrices indicated by argument use.my.coefficient.matrices are not included.")
@@ -386,7 +391,7 @@ function(panel.data,	## REQUIRED
 		}
 	}
 	if (missing(use.my.coefficient.matrices) & is.null(content_area.projection.sequence)) {
-		if (identical(sgp.labels$my.extra.label, "BASELINE")) {
+		if (length(grep("BASELINE", sgp.labels[['my.extra.label']])) > 0) {
 			tmp.path.coefficient.matrices <- paste(sgp.labels$my.subject, "BASELINE", sep=".")
 			if (is.null(panel.data[["Coefficient_Matrices"]]) | is.null(panel.data[["Coefficient_Matrices"]][[tmp.path.coefficient.matrices]])) {
 				stop(paste("\tNOTE: Coefficient matrices indicated by argument sgp.labels, '", tmp.path.coefficient.matrices, "', are not included. Please check supplied list to make sure appropriate coefficient matrices are included.", sep=""))
@@ -401,7 +406,7 @@ function(panel.data,	## REQUIRED
 		}
 	}
 	if (!is.null(content_area.projection.sequence)) {
-		if (identical(sgp.labels$my.extra.label, "BASELINE")) {
+		if (length(grep("BASELINE", sgp.labels[['my.extra.label']])) > 0) {
 			tmp.path.coefficient.matrices <- paste(unique(content_area.projection.sequence), "BASELINE", sep=".")
 		} else {
 			tmp.path.coefficient.matrices <- paste(unique(content_area.projection.sequence), sgp.labels$my.year, sep=".")
@@ -577,7 +582,7 @@ function(panel.data,	## REQUIRED
 	### PROJECTION SEQUENCES: Calculate grade.projection.sequence, content_area.projection.sequence, and year_lags.projection.sequence if not supplied
 
 	if (is.null(grade.projection.sequence)) {
-		grade.projection.sequence <- sort(unique(sapply(tmp.matrices, function(x) tail(slot(x, "Grade_Progression")[[1]], 1))))
+		grade.projection.sequence <- as.character(sort(type.convert(unique(sapply(tmp.matrices, function(x) tail(slot(x, "Grade_Progression")[[1]], 1))), as.is=TRUE)))
 	}
 
 	if (identical(grade.projection.sequence, numeric(0))) {
@@ -592,7 +597,7 @@ function(panel.data,	## REQUIRED
 		year_lags.projection.sequence <- rep(1, length(grade.projection.sequence)) ### NOTE same length as grade.projection.sequence to include lag between progression and projection sequence
 	}
 
-	tmp.index <- which(grade.projection.sequence > tail(grade.progression, 1))
+	tmp.index <- which(sapply(grade.projection.sequence, function(x) type.convert(x, as.is=TRUE) > type.convert(tail(grade.progression, 1), as.is=TRUE)))
 	if (!missing(max.forward.progression.grade)) tmp.index <- intersect(tmp.index, which(grade.projection.sequence <= max.forward.progression.grade))
 	if (!missing(max.forward.progression.years)) tmp.index <- head(tmp.index, max.forward.progression.years)
 	grade.projection.sequence <- grade.projection.sequence[tmp.index]

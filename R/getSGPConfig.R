@@ -125,9 +125,9 @@ function(sgp_object,
 					par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']] <- diff(as.numeric(sapply(strsplit(par.sgp.config[[b.iter[b]]][['sgp.panel.years']], '_'), '[', 1)))
 				}
 
-				### Create sgp.projection.grade.sequence (if requested)
-				if (is.null(sgp.config[[a]][['sgp.projection.grade.sequence']]) & (sgp.projections|sgp.projections.lagged|sgp.projections.baseline|sgp.projections.lagged.baseline)) {
-					par.sgp.config[[b.iter[b]]][['sgp.projection.grade.sequence']] <- head(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], -1)
+				### Create sgp.projection.grade.sequences (if requested)
+				if (is.null(sgp.config[[a]][['sgp.projection.grade.sequences']]) & (sgp.projections|sgp.projections.lagged|sgp.projections.baseline|sgp.projections.lagged.baseline)) {
+					par.sgp.config[[b.iter[b]]][['sgp.projection.grade.sequences']] <- head(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], -1)
 					par.sgp.config[[b.iter[b]]][['sgp.projection.content.areas']] <- head(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], -1)
 					par.sgp.config[[b.iter[b]]][['sgp.projection.panel.years.lags']] <- head(par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']], -1)
 				}
