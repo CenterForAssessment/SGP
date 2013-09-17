@@ -43,21 +43,18 @@ function(sgp_object,
 		my.extra.label <- "TARGET_SCALE_SCORES"
 		baseline.tf <- FALSE
 		lag.increment <- 0
-		grade.progression <- "sgp.iter[['sgp.projection.grade.sequences']][[1]]"
 		my.target.type <- "sgp.projections"
 	}
 	if (target.type=="sgp.projections.baseline") {
 		my.extra.label <- "BASELINE.TARGET_SCALE_SCORES"
 		baseline.tf <- TRUE
 		lag.increment <- 0
-		grade.progression <- "sgp.iter[['sgp.projection.grade.sequences']][[1]]"
 		my.target.type <- "sgp.projections"
 	}
 	if (target.type=="sgp.projections.lagged") {
 		my.extra.label <- "LAGGED.TARGET_SCALE_SCORES"
 		baseline.tf <- FALSE
 		lag.increment <- 1
-		grade.progression <- "head(sgp.iter[['sgp.grade.sequences']][[1]], -1)"
 		my.target.type <- "sgp.projections.lagged"
 	}
 
@@ -65,7 +62,6 @@ function(sgp_object,
 		my.extra.label <- "LAGGED.BASELINE.TARGET_SCALE_SCORES"
 		baseline.tf <- TRUE
 		lag.increment <- 1
-		grade.progression <- "head(sgp.iter[['sgp.grade.sequences']][[1]], -1)"
 		my.target.type <- "sgp.projections.lagged"
 	}
 
@@ -91,9 +87,14 @@ function(sgp_object,
 					use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 					performance.level.cutscores=state,
 					panel.data.vnames=getPanelDataVnames(my.target.type, sgp.iter),
-					grade.progression=eval(parse(text=grade.progression)),
+					grade.progression=sgp.iter[["sgp.projection.grade.sequences"]],
+					content_area.progression=sgp.iter[["sgp.projection.content.areas"]],
+					year_lags.progression=sgp.iter[["sgp.projection.panel.years.lags"]],
 					max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[["sgp.panel.years"]], 1), tail(sgp.iter[["sgp.content.areas"]], 1), state),
 					lag.increment=lag.increment,
+					grade.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+					content_area.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+					year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
 					percentile.trajectory.values=target.level,
 					calculate.sgps=!(tail(sgp.iter[["sgp.panel.years"]], 1) %in% SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]]),
 					projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]]))
@@ -113,9 +114,14 @@ function(sgp_object,
 					use.my.knots.boundaries=list(my.year=tail(sgp.iter[['sgp.panel.years']], 1), my.subject=tail(sgp.iter[['sgp.content.areas']], 1)),
 					performance.level.cutscores=state,
 					panel.data.vnames=getPanelDataVnames(my.target.type, sgp.iter),
-					grade.progression=eval(parse(text=grade.progression)),
-					max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[['sgp.panel.years']], 1), tail(sgp.iter[['sgp.content.areas']], 1), state),
+					grade.progression=sgp.iter[["sgp.projection.grade.sequences"]],
+					content_area.progression=sgp.iter[["sgp.projection.content.areas"]],
+					year_lags.progression=sgp.iter[["sgp.projection.panel.years.lags"]],
+					max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[["sgp.panel.years"]], 1), tail(sgp.iter[["sgp.content.areas"]], 1), state),
 					lag.increment=lag.increment,
+					grade.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+					content_area.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+					year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
 					percentile.trajectory.values=target.level,
 					calculate.sgps=!(tail(sgp.iter[['sgp.panel.years']], 1) %in% SGPstateData[[state]][['Assessment_Program_Information']][['Scale_Change']][[tail(sgp.iter[['sgp.content.areas']], 1)]]),
 					projcuts.digits=SGPstateData[[state]][['SGP_Configuration']][['projcuts.digits']]))
@@ -136,9 +142,14 @@ function(sgp_object,
 						use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						performance.level.cutscores=state,
 						panel.data.vnames=getPanelDataVnames(my.target.type, sgp.iter),
-						grade.progression=eval(parse(text=grade.progression)),
+						grade.progression=sgp.iter[["sgp.projection.grade.sequences"]],
+						content_area.progression=sgp.iter[["sgp.projection.content.areas"]],
+						year_lags.progression=sgp.iter[["sgp.projection.panel.years.lags"]],
 						max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[["sgp.panel.years"]], 1), tail(sgp.iter[["sgp.content.areas"]], 1), state),
 						lag.increment=lag.increment,
+						grade.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+						content_area.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+						year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
 						percentile.trajectory.values=target.level,
 						calculate.sgps=!(tail(sgp.iter[["sgp.panel.years"]], 1) %in% SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]]),
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]]),
@@ -169,9 +180,14 @@ function(sgp_object,
 				use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 				performance.level.cutscores=state,
 				panel.data.vnames=getPanelDataVnames(my.target.type, sgp.iter),
-				grade.progression=eval(parse(text=grade.progression)),
+				grade.progression=sgp.iter[["sgp.projection.grade.sequences"]],
+				content_area.progression=sgp.iter[["sgp.projection.content.areas"]],
+				year_lags.progression=sgp.iter[["sgp.projection.panel.years.lags"]],
 				max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[["sgp.panel.years"]], 1), tail(sgp.iter[["sgp.content.areas"]], 1), state),
 				lag.increment=lag.increment,
+				grade.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+				content_area.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+				year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
 				percentile.trajectory.values=target.level,
 				calculate.sgps=!(tail(sgp.iter[["sgp.panel.years"]], 1) %in% SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]]),
 				projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]])

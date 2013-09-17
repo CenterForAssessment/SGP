@@ -199,6 +199,6 @@ function(sgp_object,
 		}
 		checkConfig(get.par.sgp.config(tmp.sgp.config), "Standard")
 	} else {
-		checkConfig(get.par.sgp.config(tmp.sgp.config), "Standard")
+		checkConfig(get.par.sgp.config(sgp.config), "Standard")
 	}
 } ## END getSGPConfig
