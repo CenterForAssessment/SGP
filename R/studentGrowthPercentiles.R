@@ -85,10 +85,11 @@ function(panel.data,         ## REQUIRED
 	}
 
 	.get.panel.data <- function(tmp.data, k, by.grade) {
-		str1 <- paste(" & !is.na(tmp.data[[", 1+2*num.panels, "]])", sep="")
-		str2 <- paste(" & tmp.data[[", 1+num.panels, "]]=='", tmp.last, "'", sep="")
-		str3 <- 1+2*num.panels
-		for (i in 1:k) {
+#		str1 <- paste(" & !is.na(tmp.data[[", 1+2*num.panels, "]])", sep="")
+#		str2 <- paste(" & tmp.data[[", 1+num.panels, "]]=='", tmp.last, "'", sep="")
+#		str3 <- 1+2*num.panels
+		str1 <- str2 <- str3 <- NULL
+		for (i in 0:k) {
 			str1 <- paste(str1, " & !is.na(tmp.data[[", 1+2*num.panels-i, "]])", sep="")
 			str2 <- paste(str2, " & tmp.data[[", 1+num.panels-i, "]]=='", rev(as.character(tmp.gp))[i+1], "'", sep="")
 			str3 <- c(1+2*num.panels-i, str3)
@@ -96,7 +97,7 @@ function(panel.data,         ## REQUIRED
 		if (by.grade) {
 			tmp.data[eval(parse(text=paste(substring(str1, 4), str2, sep="")))][, c(1, str3), with=FALSE]
 		} else {
-			tmp.data[eval(parse(text=substring(str1, 3)))][, c(1, str3), with=FALSE]
+			tmp.data[eval(parse(text=substring(str1, 4)))][, c(1, str3), with=FALSE]
 		}
 	}
 

@@ -75,21 +75,14 @@ function(panel.data,	## REQUIRED
 	}
 
 	.get.panel.data <- function(tmp.data, tmp.gp, num.prior=NULL, subset.tf=NULL, bound.data=TRUE) {
+		str1 <- str2 <- str3 <- NULL
 		if (is.null(num.prior)) num.prior <- length(tmp.gp)
-		if (is.null(subset.tf)) {
-			str1 <- paste(" & !is.na(tmp.data[[", 1+2*num.panels, "]])", sep="")
-		} else {
-			str1 <- paste(" & subset.tf & !is.na(tmp.data[[", 1+2*num.panels, "]])", sep="")
-		}
-		str2 <- paste(" & tmp.data[[", 1+num.panels, "]]=='", rev(as.character(tmp.gp))[1], "'", sep="")
-		str3 <- 1+2*num.panels
-		if (num.prior >= 2) {
-			for (i in 1:num.prior) {
-				str1 <- paste(str1, " & !is.na(tmp.data[[", 1+2*num.panels-i, "]])", sep="")
-				str2 <- paste(str2, " & tmp.data[[", 1+num.panels-i, "]]=='", rev(as.character(tmp.gp))[i+1], "'", sep="")
-				str3 <- c(1+2*num.panels-i, str3)
-			}
-		}
+		for (i in 1:num.prior-1) {
+			str1 <- paste(str1, " & !is.na(tmp.data[[", 1+2*num.panels-i, "]])", sep="")
+			str2 <- paste(str2, " & tmp.data[[", 1+num.panels-i, "]]=='", rev(as.character(tmp.gp))[i+1], "'", sep="")
+			str3 <- c(1+2*num.panels-i, str3)
+		} 
+		if (!is.null(subset.tf)) str1 <- paste(str1, " & subset.tf", sep="")
 		tmp.data <- tmp.data[eval(parse(text=paste(substring(str1, 4), str2, sep="")))][, c(1, str3), with=FALSE]
 		if (bound.data) {
 			for (i in seq(dim(tmp.data)[2]-1)) {
