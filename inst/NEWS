@@ -2,6 +2,7 @@ Changes in version: SGP_1.2-0.0
 
   USER VISIBLE CHANGES:
 
+	  o Modified and corrected citation in LICENSE.
 	  o Added capability to calculate student growth projections for End of Course testing sequences.
 	  o Added capability to calculate scale score targets to combineSGP and visualize them on student growth plots.
 	  o Added capability to calculate weighted medians and weighted means in summarizeSGP.

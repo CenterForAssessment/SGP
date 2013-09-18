@@ -591,7 +591,9 @@ function(panel.data,	## REQUIRED
 	}
 
 	tmp.index <- which(sapply(grade.projection.sequence, function(x) type.convert(x, as.is=TRUE) > type.convert(tail(grade.progression, 1), as.is=TRUE)))
-	if (!missing(max.forward.progression.grade)) tmp.index <- intersect(tmp.index, which(grade.projection.sequence <= max.forward.progression.grade))
+	if (!missing(max.forward.progression.grade)) {
+		tmp.index <- intersect(tmp.index, which(sapply(grade.projection.sequence, function(x) type.convert(x, as.is=TRUE) <= type.convert(as.character(max.forward.progression.grade), as.is=TRUE))))
+	}
 	if (!missing(max.forward.progression.years)) tmp.index <- head(tmp.index, max.forward.progression.years)
 	grade.projection.sequence <- grade.projection.sequence[tmp.index]
 	content_area.projection.sequence <- content_area.projection.sequence[tmp.index]
