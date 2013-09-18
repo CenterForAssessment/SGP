@@ -88,8 +88,8 @@ function(panel.data,	## REQUIRED
 			for (i in seq(dim(tmp.data)[2]-1)) {
 				bnd <- eval(parse(text=paste("panel.data[['Knots_Boundaries']]", get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year)), 
 					"[['loss.hoss_", tmp.gp[i], "']]", sep="")))
-				tmp.data[[i+1]][tmp.data[[i+1]]<bnd[1]] <- bnd[1]
-				tmp.data[[i+1]][tmp.data[[i+1]]>bnd[2]] <- bnd[2]
+				tmp.data[tmp.data[[i+1]]<bnd[1], names(tmp.data)[i+1] := bnd[1], with=FALSE]
+				tmp.data[tmp.data[[i+1]]>bnd[2], names(tmp.data)[i+1] := bnd[2], with=FALSE]
 			}
 		}
 		return(tmp.data)

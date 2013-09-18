@@ -85,9 +85,6 @@ function(panel.data,         ## REQUIRED
 	}
 
 	.get.panel.data <- function(tmp.data, k, by.grade) {
-#		str1 <- paste(" & !is.na(tmp.data[[", 1+2*num.panels, "]])", sep="")
-#		str2 <- paste(" & tmp.data[[", 1+num.panels, "]]=='", tmp.last, "'", sep="")
-#		str3 <- 1+2*num.panels
 		str1 <- str2 <- str3 <- NULL
 		for (i in 0:k) {
 			str1 <- paste(str1, " & !is.na(tmp.data[[", 1+2*num.panels-i, "]])", sep="")
