@@ -158,7 +158,7 @@ function(panel.data,	## REQUIRED
 				}
 			}
 		}
-		return(tmp.list)
+		return(rev(tmp.list)) ### rev gives highest orders first
 	}
 
 	.get.percentile.trajectories <- function(ss.data, projection.matrices) {
