@@ -33,8 +33,8 @@ function(panel.data,	## REQUIRED
 	###
 	##########################################################
 
-	.smooth.bound.iso.row <- function(x, grade, tmp.year, iso=isotonize, missing.taus, na.replace) {
-		bnd <- eval(parse(text=paste("panel.data[['Knots_Boundaries']]", get.my.knots.boundaries.path(sgp.labels$my.subject, tmp.year), "[['loss.hoss_", grade, "']]", sep="")))
+	.smooth.bound.iso.row <- function(x, grade, tmp.year, tmp.content_area, iso=isotonize, missing.taus, na.replace) {
+		bnd <- eval(parse(text=paste("panel.data[['Knots_Boundaries']]", get.my.knots.boundaries.path(tmp.content_area, tmp.year), "[['loss.hoss_", grade, "']]", sep="")))
 		x[x < bnd[1]] <- bnd[1] ; x[x > bnd[2]] <- bnd[2]
 		if (!iso) return(round(x, digits=5)) # Results are the same whether NAs present or not...
 		if (iso & missing.taus) {
@@ -187,13 +187,14 @@ function(panel.data,	## REQUIRED
 										TEMP_1, 
 										grade.projection.sequence[j], 
 										yearIncrement(sgp.labels[['my.year']], j, lag.increment),
+										content_area.projection.sequence[j],
 										missing.taus=missing.taus, 
 										na.replace=na.replace), 
 									by=eval(names(tmp.dt)[1])]
-						setnames(tmp.dt, "TEMP_2", paste("SS", grade.projection.sequence[j], sep=""))
+						setnames(tmp.dt, "TEMP_2", paste("SS", grade.projection.sequence[j], content_area.projection.sequence[j], sep="."))
 						tmp.dt[,TEMP_1:=NULL]
 					} ## END j loop
-					tmp.percentile.trajectories[[i]] <- tmp.dt[,c("ID", paste("SS", grade.projection.sequence, sep="")), with=FALSE]
+					tmp.percentile.trajectories[[i]] <- tmp.dt[,c("ID", paste("SS", grade.projection.sequence, content_area.projection.sequence, sep=".")), with=FALSE]
 					rm(tmp.dt); suppressMessages(gc())
 				} ## END if (dim(tmp.dt)[1] > 0)
 			} ## END if statement
@@ -268,12 +269,12 @@ function(panel.data,	## REQUIRED
 			cuts.arg <- names.arg <- character()
 
 			for (i in seq_along(grade.projection.sequence)) {
-				my.cutscore.year <- get.my.cutscore.year.sgprojection(Cutscores, sgp.labels[['my.subject']], yearIncrement(sgp.labels[['my.year']], i, lag.increment))
+				my.cutscore.year <- get.my.cutscore.year.sgprojection(Cutscores, content_area.projection.sequence[i], yearIncrement(sgp.labels[['my.year']], i, lag.increment))
 				tmp.cutscores.by.grade <- tmp.cutscores[[my.cutscore.year]][[paste("GRADE_", grade.projection.sequence[i], sep="")]]
 
 				if (!is.null(tmp.cutscores.by.grade)) {
 					for (j in seq_along(tmp.cutscores.by.grade)) {
-						cuts.arg[k] <- paste(".sgp.targets(SS", grade.projection.sequence[i], ", ", tmp.cutscores.by.grade[j], ", ", convert.0and100, ")", sep="")
+						cuts.arg[k] <- paste(".sgp.targets(SS", ".", grade.projection.sequence[i], ".", content_area.projection.sequence[i], ", ", tmp.cutscores.by.grade[j], ", ", convert.0and100, ")", sep="")
 						if (projection.unit=="GRADE") {
 							names.arg[k] <- paste("LEVEL_", j, "_SGP_TARGET_GRADE_", grade.projection.sequence[i], lag.increment.label, sep="")
 						} else {
@@ -524,7 +525,7 @@ function(panel.data,	## REQUIRED
 			key=names(ss.data)[1])
 	num.panels <- (dim(ss.data)[2]-1)/2
 	setnames(ss.data, c(1, (1+num.panels-length(grade.progression)+1):(1+num.panels), (1+2*num.panels-length(grade.progression)+1):(1+2*num.panels)), 
-		c("ID", paste("GD", grade.progression, sep=""), paste("SS", grade.progression, sep="")))
+		c("ID", paste("GD", grade.progression, content_area.progression, sep="."), paste("SS", grade.progression, content_area.progression, sep=".")))
 
 
 	### Test to see if ss.data has cases to analyze
@@ -590,15 +591,17 @@ function(panel.data,	## REQUIRED
 		year_lags.projection.sequence <- rep(1, length(grade.projection.sequence)) ### NOTE same length as grade.projection.sequence to include lag between progression and projection sequence
 	}
 
-	tmp.index <- which(sapply(grade.projection.sequence, function(x) type.convert(x, as.is=TRUE) > type.convert(tail(grade.progression, 1), as.is=TRUE)))
+	grade.content_area.progression <- paste(content_area.progression, paste("GRADE", grade.progression, sep="_"), sep=".")
+	grade.content_area.projection.sequence <- paste(content_area.projection.sequence, paste("GRADE", grade.projection.sequence, sep="_"), sep=".")
+	tmp.index <- seq(which(tail(grade.content_area.progression, 1)==grade.content_area.projection.sequence)+1, length(grade.projection.sequence))
 	if (!missing(max.forward.progression.grade)) {
 		tmp.index <- intersect(tmp.index, which(sapply(grade.projection.sequence, function(x) type.convert(x, as.is=TRUE) <= type.convert(as.character(max.forward.progression.grade), as.is=TRUE))))
 	}
 	if (!missing(max.forward.progression.years)) tmp.index <- head(tmp.index, max.forward.progression.years)
 	grade.projection.sequence <- grade.projection.sequence[tmp.index]
 	content_area.projection.sequence <- content_area.projection.sequence[tmp.index]
-	year_lags.projection.sequence <- year_lags.projection.sequence[tmp.index]
-
+	year_lags.projection.sequence <- year_lags.projection.sequence[tmp.index-1]
+	grade.content_area.projection.sequence <- grade.content_area.projection.sequence[tmp.index]
 
 	### Calculate grade.projection.sequence.priors 
 
@@ -619,9 +622,9 @@ function(panel.data,	## REQUIRED
 	### Select specific percentile trajectories and calculate cutscores
 
 	if (tf.cutscores) {
-		tmp.cutscore.grades <- as.numeric(sapply(strsplit(names(tmp.cutscores[[sgp.labels$my.subject]]), "_"), function(x) x[2]))
-		if (!all(grade.projection.sequence %in% tmp.cutscore.grades)) {
-			tmp.messages <- c(tmp.messages, "\t\tNOTE: Cutscores provided do not include cutscores for all grades in projection. Projections to grades without cutscores will be missing.\n")
+		tmp.cutscore.grade.content_area <- unlist(sapply(seq_along(tmp.cutscores), function(x) paste(names(tmp.cutscores)[x], names(tmp.cutscores[[x]]), sep=".")))
+		if (!all(grade.content_area.projection.sequence %in% tmp.cutscore.grade.content_area)) {
+			tmp.messages <- c(tmp.messages, "\t\tNOTE: Cutscores provided do not include cutscores for all grades/content areas in projection. Projections to grades/content areas without cutscores will be missing.\n")
 	}} 
 
 	trajectories.and.cuts <- .get.trajectories.and.cuts(percentile.trajectories, !is.null(percentile.trajectory.values), tf.cutscores, toupper(projection.unit))
