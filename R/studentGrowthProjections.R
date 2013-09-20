@@ -52,6 +52,7 @@ function(panel.data,	## REQUIRED
         }
 
 	get.my.knots.boundaries.path <- function(content_area, year) {
+		tmp.path.knots.boundaries <- paste(content_area, sgp.labels[['my.year']], sep=".")
 		tmp.knots.boundaries.names <-
 			names(panel.data[['Knots_Boundaries']][[tmp.path.knots.boundaries]])[content_area==sapply(strsplit(names(panel.data[['Knots_Boundaries']][[tmp.path.knots.boundaries]]), "[.]"), '[', 1)]
 		if (length(tmp.knots.boundaries.names)==0) {
@@ -74,20 +75,20 @@ function(panel.data,	## REQUIRED
 		}
 	}
 
-	.get.panel.data <- function(tmp.data, tmp.gp, num.prior=NULL, subset.tf=NULL, bound.data=TRUE) {
+	.get.panel.data <- function(tmp.data, grade.progression, content_area.progression, num.prior=NULL, subset.tf=NULL, bound.data=TRUE) {
 		str1 <- str2 <- str3 <- NULL
-		if (is.null(num.prior)) num.prior <- length(tmp.gp)
+		if (is.null(num.prior)) num.prior <- length(grade.progression)
 		for (i in 1:num.prior-1) {
 			str1 <- paste(str1, " & !is.na(tmp.data[[", 1+2*num.panels-i, "]])", sep="")
-			str2 <- paste(str2, " & tmp.data[[", 1+num.panels-i, "]]=='", rev(as.character(tmp.gp))[i+1], "'", sep="")
+			str2 <- paste(str2, " & tmp.data[[", 1+num.panels-i, "]]=='", rev(as.character(grade.progression))[i+1], "'", sep="")
 			str3 <- c(1+2*num.panels-i, str3)
 		} 
 		if (!is.null(subset.tf)) str1 <- paste(str1, " & subset.tf", sep="")
 		tmp.data <- tmp.data[eval(parse(text=paste(substring(str1, 4), str2, sep="")))][, c(1, str3), with=FALSE]
 		if (bound.data) {
 			for (i in seq(dim(tmp.data)[2]-1)) {
-				bnd <- eval(parse(text=paste("panel.data[['Knots_Boundaries']]", get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year)), 
-					"[['loss.hoss_", tmp.gp[i], "']]", sep="")))
+				bnd <- eval(parse(text=paste("panel.data[['Knots_Boundaries']]", get.my.knots.boundaries.path(content_area.progression[i], as.character(sgp.labels$my.year)), 
+					"[['loss.hoss_", grade.progression[i], "']]", sep="")))
 				tmp.data[tmp.data[[i+1]]<bnd[1], names(tmp.data)[i+1] := bnd[1], with=FALSE]
 				tmp.data[tmp.data[[i+1]]>bnd[2], names(tmp.data)[i+1] := bnd[2], with=FALSE]
 			}
@@ -161,7 +162,11 @@ function(panel.data,	## REQUIRED
 
 		for (i in seq_along(projection.matrices)) {
 			if (any(!ss.data[[1]] %in% completed.ids)) {
-				tmp.dt <- .get.panel.data(ss.data, head(projection.matrices[[i]][[1]]@Grade_Progression[[1]], -1), subset.tf=!(ss.data[[1]] %in% completed.ids))
+				tmp.dt <- .get.panel.data(
+							ss.data, 
+							head(projection.matrices[[i]][[1]]@Grade_Progression[[1]], -1), 
+							head(projection.matrices[[i]][[1]]@Content_Areas[[1]], -1), 
+							subset.tf=!(ss.data[[1]] %in% completed.ids))
 				if (dim(tmp.dt)[1] > 0) {
 					completed.ids <- c(unique(tmp.dt[[1]]), completed.ids)
 					tmp.dt <- tmp.dt[list(rep(tmp.dt[[1]], each=100))]
@@ -354,8 +359,7 @@ function(panel.data,	## REQUIRED
 			if (!identical(names(use.my.knots.boundaries), c("my.year", "my.subject")) & !identical(names(use.my.knots.boundaries), c("my.year", "my.subject", "my.extra.label"))) {
 				stop("Please specify an appropriate list for use.my.knots.boundaries. See help page for details.")
 			}
-			tmp.path.knots.boundaries <- .create.path(sgp.labels, pieces=c("my.subject", "my.year"))
-			if (is.null(panel.data[["Knots_Boundaries"]]) | is.null(panel.data[["Knots_Boundaries"]][[tmp.path.knots.boundaries]])) {
+			if (is.null(panel.data[["Knots_Boundaries"]]) | is.null(panel.data[["Knots_Boundaries"]][[.create.path(use.my.knots.boundaries, pieces=c("my.subject", "my.year"))]])) {
 				stop("Knots and Boundaries indicated by use.my.knots.boundaries are not included.")
 			}
 		}
@@ -365,7 +369,6 @@ function(panel.data,	## REQUIRED
 			}
 		}
 	} 
-	tmp.path.knots.boundaries <- .create.path(sgp.labels, pieces=c("my.subject", "my.year"))
 
 	if (!missing(use.my.coefficient.matrices) & is.null(content_area.projection.sequence)) {
 		if (!is.list(use.my.coefficient.matrices)) {
@@ -530,7 +533,7 @@ function(panel.data,	## REQUIRED
 
 	### Test to see if ss.data has cases to analyze
 
-	if (dim(.get.panel.data(ss.data, grade.progression, 1, bound.data=FALSE))[1] == 0) {
+	if (dim(.get.panel.data(ss.data, grade.progression, content_area.progression, 1, bound.data=FALSE))[1] == 0) {
                 tmp.messages <- c(tmp.messages, "\t\tNOTE: Supplied data together with grade progression contains no data. Check data, function arguments and see help page for details.\n")
                 message(paste("\tStarted studentGrowthProjections", started.date))
                 message(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
@@ -560,9 +563,6 @@ function(panel.data,	## REQUIRED
 		if (!identical(class(content_area.progression), "character")) {
 			stop("content_area.progression should be a character vector. See help page for details.")
 		}
-		if (!identical(tail(content_area.progression, 1), sgp.labels[['my.subject']])) {
-			stop("The last element in the content_area.progression must be identical to 'my.subject' of the sgp.labels. See help page for details.")
-		}
 		if (length(content_area.progression) != length(grade.progression)) {
 			tmp.messages <- c(tmp.messages, "\tNOTE: The content_area.progression vector does not have the same number of elements as the grade.progression vector.\n")
 		}
@@ -576,7 +576,7 @@ function(panel.data,	## REQUIRED
 	### PROJECTION SEQUENCES: Calculate grade.projection.sequence, content_area.projection.sequence, and year_lags.projection.sequence if not supplied
 
 	if (is.null(grade.projection.sequence)) {
-		grade.projection.sequence <- as.character(sort(type.convert(unique(sapply(tmp.matrices, function(x) tail(slot(x, "Grade_Progression")[[1]], 1))), as.is=TRUE)))
+		grade.projection.sequence <- as.character(unique(sort(type.convert(sapply(tmp.matrices, function(x) tail(slot(x, "Grade_Progression")[[1]], 2)), as.is=TRUE))))
 	}
 
 	if (identical(grade.projection.sequence, numeric(0))) {
