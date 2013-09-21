@@ -48,7 +48,7 @@ function(
 
 	### TEST of SGP variable
 
-	tmp.messages <- ("\t##### Results of testSGP test number 1 #####\n")
+	tmp.messages <- ("\t##### Results of testSGP test number 1 #####\n\n")
 
 	if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 8565260L)) {
 		tmp.messages <- c(tmp.messages, "\tTest of variable SGP: OK\n")
@@ -97,7 +97,7 @@ function(
 	}
 
 	tmp.messages <- c(tmp.messages, "\n##### End testSGP test number 1 #####\n")
-	cat(tmp.messages, fill=TRUE)
+	cat(tmp.messages)
 
 	} ### End TEST_NUMBER 1
 
@@ -200,7 +200,7 @@ function(
 	
 	### TEST of SGP variable
 
-	tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number 2: Part 2 #####\n")
+	tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number 2: Part 2 #####\n\n")
 
 	if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 8565260L)) {
 		tmp.messages <- c(tmp.messages, "\tTest of variable SGP, part 2: OK\n")
@@ -251,7 +251,7 @@ function(
 	tmp.messages <- c(tmp.messages, "\t##### End testSGP test number 2: Part 2 #####\n")
 
 	tmp.messages <- c(tmp.messages, "\n##### End testSGP test number 2 #####\n")
-	cat(tmp.messages, fill=TRUE)
+	cat(tmp.messages)
 
 	} ### End TEST_NUMBER 2
 

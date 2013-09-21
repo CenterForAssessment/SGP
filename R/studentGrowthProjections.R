@@ -145,7 +145,8 @@ function(panel.data,	## REQUIRED
 						c(tail(grade.progression, i), head(grade.projection.sequence, j)),
 						tmp.years,
 						tmp.years_lags,
-						my.highest.order.matrix=TRUE)[[1]]
+						my.highest.order.matrix=TRUE,
+						my.matrix.order=max.order.for.progression)[[1]]
 				if (dim(tmp.list[[i]][[j]]@.Data)[2] != 100) {
 					tmp.list[[i]][[j]]@.Data <- add.missing.taus.to.matrix(tmp.list[[i]][[j]]@.Data)
 					missing.taus <- TRUE
