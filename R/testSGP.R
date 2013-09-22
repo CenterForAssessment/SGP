@@ -272,13 +272,12 @@ function(
 
 	### Add EOCT courses to sgpData_LONG
 
-	Demonstration_Data_LONG <- sgpData_LONG
-	Demonstration_Data_LONG$CONTENT_AREA[Demonstration_Data_LONG$CONTENT_AREA == 'MATHEMATICS' & Demonstration_Data_LONG$GRADE == '9'] <- 'ALGEBRA_I'
-	Demonstration_Data_LONG$CONTENT_AREA[Demonstration_Data_LONG$CONTENT_AREA == 'MATHEMATICS' & Demonstration_Data_LONG$GRADE == '10'] <- 'ALGEBRA_II'
-	Demonstration_Data_LONG$CONTENT_AREA[Demonstration_Data_LONG$CONTENT_AREA == 'READING' & Demonstration_Data_LONG$GRADE == '9'] <- 'GRADE_9_LIT'
-	Demonstration_Data_LONG$CONTENT_AREA[Demonstration_Data_LONG$CONTENT_AREA == 'READING' & Demonstration_Data_LONG$GRADE == '10'] <- 'AMERICAN_LIT'
-	Demonstration_Data_LONG$GRADE_REPORTED <- Demonstration_Data_LONG$GRADE
-	Demonstration_Data_LONG$GRADE[Demonstration_Data_LONG$CONTENT_AREA %in% c('ALGEBRA_I', 'ALGEBRA_II', 'GRADE_9_LIT', 'AMERICAN_LIT')] <-  'EOCT'
+	sgpData_LONG$CONTENT_AREA[sgpData_LONG$CONTENT_AREA == 'MATHEMATICS' & sgpData_LONG$GRADE == '9'] <- 'ALGEBRA_I'
+	sgpData_LONG$CONTENT_AREA[sgpData_LONG$CONTENT_AREA == 'MATHEMATICS' & sgpData_LONG$GRADE == '10'] <- 'ALGEBRA_II'
+	sgpData_LONG$CONTENT_AREA[sgpData_LONG$CONTENT_AREA == 'READING' & sgpData_LONG$GRADE == '9'] <- 'GRADE_9_LIT'
+	sgpData_LONG$CONTENT_AREA[sgpData_LONG$CONTENT_AREA == 'READING' & sgpData_LONG$GRADE == '10'] <- 'AMERICAN_LIT'
+	sgpData_LONG$GRADE_REPORTED <- sgpData_LONG$GRADE
+	sgpData_LONG$GRADE[sgpData_LONG$CONTENT_AREA %in% c('ALGEBRA_I', 'ALGEBRA_II', 'GRADE_9_LIT', 'AMERICAN_LIT')] <-  'EOCT'
 
 	### Modify SGPstateData
 
