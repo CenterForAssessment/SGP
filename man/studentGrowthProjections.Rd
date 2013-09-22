@@ -28,6 +28,7 @@ studentGrowthProjections(panel.data,
                          percentile.trajectory.values=NULL, 
                          isotonize=TRUE,
                          lag.increment=0,
+			 sgp.exact.grade.progression=FALSE,
                          projcuts.digits=NULL,
                          print.time.taken=TRUE)
 }
@@ -116,6 +117,8 @@ studentGrowthProjections(panel.data,
   the methods derived by Dette & Volgushev (2008).
   }
   \item{lag.increment}{A non-negative integer (defaults to 0) indicating the lag associated with the data supplied for projections. Only relevant if Cutscores or Knots and Boundaries are year dependent. 
+  }
+  \item{sgp.exact.grade.progression}{A boolean argument (defaults to FALSE) indicating whether to use the exact grade progression supplied or all orders up to the grade progression supplied.
   }
   \item{projcuts.digits}{The number of digits (defaults to NULL/0) percentile trajectories (if requested) are formatted.
   }

@@ -21,6 +21,7 @@ function(panel.data,	## REQUIRED
 	percentile.trajectory.values=NULL,
 	isotonize=TRUE,
 	lag.increment=0,
+	sgp.exact.grade.progression=FALSE,
 	projcuts.digits=NULL,
 	print.time.taken=TRUE) {
 
@@ -119,7 +120,8 @@ function(panel.data,	## REQUIRED
 							year_lags.progression, 
 							grade.projection.sequence, 
 							content_area.projection.sequence, 
-							year_lags.projection.sequence) {
+							year_lags.projection.sequence,
+							sgp.exact.grade.progression) {
 
 		add.missing.taus.to.matrix <- function(my.matrix) {
 			augmented.mtx <- matrix(NA, nrow=nrow(my.matrix), ncol=100)
@@ -129,11 +131,13 @@ function(panel.data,	## REQUIRED
 			return(augmented.mtx)
 		}
 
+		if (sgp.exact.grade.progression) grade.progression.index <- length(grade.progression) else grade.progression.index <- seq_along(grade.progression)
+
 		tmp.list <- list()
-		for (i in seq_along(grade.progression)) {
+		for (i in seq_along(grade.progression.index)) {
 			tmp.list[[i]] <- list()
 			for (j in seq_along(grade.projection.sequence)) {
-				tmp.years_lags <- c(tail(year_lags.progression, i-1), head(year_lags.projection.sequence, j))
+				tmp.years_lags <- c(tail(year_lags.progression, grade.progression.index[i]-1), head(year_lags.projection.sequence, j))
 				if (length(grep("BASELINE", sgp.labels[['my.extra.label']])) > 0) {
 					tmp.years <- rep("BASELINE", length(tmp.years_lags)+1) 
 				} else {
@@ -141,8 +145,8 @@ function(panel.data,	## REQUIRED
 				}
 				tmp.list[[i]][[j]] <- getsplineMatrices(
 						tmp.matrices,
-						c(tail(content_area.progression, i), head(content_area.projection.sequence, j)),
-						c(tail(grade.progression, i), head(grade.projection.sequence, j)),
+						c(tail(content_area.progression, grade.progression.index[i]), head(content_area.projection.sequence, j)),
+						c(tail(grade.progression, grade.progression.index[i]), head(grade.projection.sequence, j)),
 						tmp.years,
 						tmp.years_lags,
 						my.highest.order.matrix=TRUE,
@@ -612,7 +616,8 @@ function(panel.data,	## REQUIRED
 							year_lags.progression,
 							grade.projection.sequence, 
 							content_area.projection.sequence,
-							year_lags.projection.sequence) 
+							year_lags.projection.sequence,
+							sgp.exact.grade.progression) 
 
 
 	### Calculate percentile trajectories

@@ -314,56 +314,16 @@ function(
 
 	GRADE_9_LIT_2012_2013.config <- list(
 		GRADE_9_LIT.2012_2013 = list(
-			sgp.content.areas=c('READING', 'GRADE_9_LIT'),
-			sgp.panel.years=c('2011_2012', '2012_2013'),
-			sgp.grade.sequences=list(c(8, 'EOCT')),
-			sgp.exact.grade.progression=TRUE,
-			sgp.norm.group.preference=4),
-		GRADE_9_LIT.2012_2013 = list(
-			sgp.content.areas=c('READING', 'READING', 'GRADE_9_LIT'),
-			sgp.panel.years=c('2010_2011', '2011_2012', '2012_2013'),
-			sgp.grade.sequences=list(c(7:8, 'EOCT')),
-			sgp.exact.grade.progression=TRUE,
-			sgp.norm.group.preference=3),
-		GRADE_9_LIT.2012_2013 = list(
-			sgp.content.areas=c('READING', 'READING', 'READING', 'GRADE_9_LIT'),
-			sgp.panel.years=c('2009_2010', '2010_2011', '2011_2012', '2012_2013'),
-			sgp.grade.sequences=list(c(6:8, 'EOCT')),
-			sgp.exact.grade.progression=TRUE,
-			sgp.norm.group.preference=2),
-		GRADE_9_LIT.2012_2013 = list(
 			sgp.content.areas=c('READING', 'READING', 'READING', 'READING', 'GRADE_9_LIT'),
 			sgp.panel.years=c('2008_2009', '2009_2010', '2010_2011', '2011_2012', '2012_2013'),
-			sgp.grade.sequences=list(c(5:8, 'EOCT')),
-			sgp.exact.grade.progression=TRUE,
-			sgp.norm.group.preference=1)
+			sgp.grade.sequences=list(c(5:8, 'EOCT')))
 	)
 	
 	AMERICAN_LIT_2012_2013.config <- list(
 		AMERICAN_LIT.2012_2013 = list(
-			sgp.content.areas=c('GRADE_9_LIT', 'AMERICAN_LIT'),
-			sgp.panel.years=c('2011_2012', '2012_2013'),
-			sgp.grade.sequences=list(c('EOCT', 'EOCT')),
-			sgp.exact.grade.progression=TRUE,
-			sgp.norm.group.preference=4),
-		AMERICAN_LIT.2012_2013 = list(
-			sgp.content.areas=c('READING', 'GRADE_9_LIT', 'AMERICAN_LIT'),
-			sgp.panel.years=c('2010_2011', '2011_2012', '2012_2013'),
-			sgp.grade.sequences=list(c(8, 'EOCT', 'EOCT')),
-			sgp.exact.grade.progression=TRUE,
-			sgp.norm.group.preference=3),
-		AMERICAN_LIT.2012_2013 = list(
-			sgp.content.areas=c('READING', 'READING', 'GRADE_9_LIT', 'AMERICAN_LIT'),
-			sgp.panel.years=c('2009_2010', '2010_2011', '2011_2012', '2012_2013'),
-			sgp.grade.sequences=list(c(7:8, 'EOCT', 'EOCT')),
-			sgp.exact.grade.progression=TRUE,
-			sgp.norm.group.preference=2),
-		AMERICAN_LIT.2012_2013 = list(
 			sgp.content.areas=c('READING', 'READING', 'READING', 'GRADE_9_LIT', 'AMERICAN_LIT'),
 			sgp.panel.years=c('2008_2009', '2009_2010', '2010_2011', '2011_2012', '2012_2013'),
-			sgp.grade.sequences=list(c(6:8, 'EOCT', 'EOCT')),
-			sgp.exact.grade.progression=TRUE,
-			sgp.norm.group.preference=1)
+			sgp.grade.sequences=list(c(6:8, 'EOCT', 'EOCT')))
 	)
 
 	MATHEMATICS_2012_2013.config <- list(
@@ -375,56 +335,16 @@ function(
 
 	ALGEBRA_I_2012_2013.config <- list(
 		 ALGEBRA_I.2012_2013 = list(
-			sgp.content.areas=c('MATHEMATICS', 'ALGEBRA_I'),
-			sgp.panel.years=c('2011_2012', '2012_2013'),
-			sgp.grade.sequences=list(c(8, 'EOCT')),
-			sgp.exact.grade.progression=TRUE,
-			sgp.norm.group.preference=4),
-		 ALGEBRA_I.2012_2013 = list(
-			sgp.content.areas=c('MATHEMATICS', 'MATHEMATICS', 'ALGEBRA_I'),
-			sgp.panel.years=c('2010_2011', '2011_2012', '2012_2013'),
-			sgp.grade.sequences=list(c(7:8, 'EOCT')),
-			sgp.exact.grade.progression=TRUE,
-			sgp.norm.group.preference=3),
-		 ALGEBRA_I.2012_2013 = list(
-			sgp.content.areas=c('MATHEMATICS', 'MATHEMATICS', 'MATHEMATICS', 'ALGEBRA_I'),
-			sgp.panel.years=c('2009_2010', '2010_2011', '2011_2012', '2012_2013'),
-			sgp.grade.sequences=list(c(6:8, 'EOCT')),
-			sgp.exact.grade.progression=TRUE,
-			sgp.norm.group.preference=2),
-		 ALGEBRA_I.2012_2013 = list(
 			sgp.content.areas=c('MATHEMATICS', 'MATHEMATICS', 'MATHEMATICS', 'MATHEMATICS', 'ALGEBRA_I'),
 			sgp.panel.years=c('2008_2009', '2009_2010', '2010_2011', '2011_2012', '2012_2013'),
-			sgp.grade.sequences=list(c(5:8, 'EOCT')),
-			sgp.exact.grade.progression=TRUE,
-			sgp.norm.group.preference=1)
+			sgp.grade.sequences=list(c(5:8, 'EOCT')))
 	)
 
 	ALGEBRA_II_2012_2013.config <- list(
 		 ALGEBRA_II.2012_2013 = list(
-			sgp.content.areas=c('ALGEBRA_I', 'ALGEBRA_II'),
-			sgp.panel.years=c('2011_2012', '2012_2013'),
-			sgp.grade.sequences=list(c('EOCT', 'EOCT')),
-			sgp.exact.grade.progression=TRUE,
-			sgp.norm.group.preference=4),
-		 ALGEBRA_II.2012_2013 = list(
-			sgp.content.areas=c('MATHEMATICS', 'ALGEBRA_I', 'ALGEBRA_II'),
-			sgp.panel.years=c('2010_2011', '2011_2012', '2012_2013'),
-			sgp.grade.sequences=list(c(8, 'EOCT', 'EOCT')),
-			sgp.exact.grade.progression=TRUE,
-			sgp.norm.group.preference=3),
-		 ALGEBRA_II.2012_2013 = list(
-			sgp.content.areas=c('MATHEMATICS', 'MATHEMATICS', 'ALGEBRA_I', 'ALGEBRA_II'),
-			sgp.panel.years=c('2009_2010', '2010_2011', '2011_2012', '2012_2013'),
-			sgp.grade.sequences=list(c(7:8, 'EOCT', 'EOCT')),
-			sgp.exact.grade.progression=TRUE,
-			sgp.norm.group.preference=2),
-		 ALGEBRA_II.2012_2013 = list(
 			sgp.content.areas=c('MATHEMATICS', 'MATHEMATICS', 'MATHEMATICS', 'ALGEBRA_I', 'ALGEBRA_II'),
 			sgp.panel.years=c('2008_2009', '2009_2010', '2010_2011', '2011_2012', '2012_2013'),
-			sgp.grade.sequences=list(c(6:8, 'EOCT', 'EOCT')),
-			sgp.exact.grade.progression=TRUE,
-			sgp.norm.group.preference=1)
+			sgp.grade.sequences=list(c(6:8, 'EOCT', 'EOCT')))
 	)
 
 	sgp.config <- c(READING_2012_2013.config, MATHEMATICS_2012_2013.config, GRADE_9_LIT_2012_2013.config, AMERICAN_LIT_2012_2013.config, ALGEBRA_I_2012_2013.config, ALGEBRA_II_2012_2013.config)
