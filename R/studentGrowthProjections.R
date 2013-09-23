@@ -271,21 +271,16 @@ function(panel.data,	## REQUIRED
 			}
 			tmp.vec <- tmp.vec[order(tmp.vec$Var2),]
 			setnames(trajectories, c("ID", do.call(paste, c(tmp.vec, sep=""))))
-			for (i in 2:dim(trajectories)[2]) {
-				setattr(trajectories[[i]], "comment", paste("TRAJECTORY CONTENT AREA:", rep(content_area.projection.sequence, length(percentile.trajectory.values))[i-1]))
-			}
 			if (!cuts.tf) return(trajectories)
 		}
 		if (cuts.tf) {
 			setkey(percentile.trajectories, ID)
 			k <- 1
 			cuts.arg <- names.arg <- character()
-			comments.arg <- list()
 
 			for (i in seq_along(grade.projection.sequence)) {
 				my.cutscore.year <- get.my.cutscore.year.sgprojection(Cutscores, content_area.projection.sequence[i], yearIncrement(sgp.labels[['my.year']], i, lag.increment))
 				tmp.cutscores.by.grade <- tmp.cutscores[[my.cutscore.year]][[paste("GRADE_", grade.projection.sequence[i], sep="")]]
-				comments.arg[[i]] <- rep(content_area.projection.sequence[i], length(tmp.cutscores.by.grade))
 
 				if (!is.null(tmp.cutscores.by.grade)) {
 					for (j in seq_along(tmp.cutscores.by.grade)) {
@@ -302,9 +297,6 @@ function(panel.data,	## REQUIRED
 			arg <- paste("list(", paste(cuts.arg, collapse=", "), ")", sep="")
 			tmp.cuts <- eval(parse(text=paste("percentile.trajectories[,", arg, ", by=ID]", sep="")))
 			setnames(tmp.cuts, c("ID", names.arg))
-			for (i in 2:dim(tmp.cuts)[2]) {
-				setattr(tmp.cuts[[i]], "comment", paste("SGP CUT CONTENT AREA:", unlist(comments.arg)[i-1]))
-			}
 			setkey(tmp.cuts, ID)
 			if (!trajectories.tf) {
 				return(tmp.cuts)
