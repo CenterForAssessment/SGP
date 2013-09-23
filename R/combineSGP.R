@@ -198,11 +198,11 @@ function(
 
 	if (length(getPercentileTableNames(sgp_object, content_areas, state, years, "sgp.projections.lagged")) == 0) {
 		 tmp.messages <- c(tmp.messages, "\tNOTE: No SGP lagged projections available in SGP slot. No student growth projection targets will be produced.\n")
-		 sgp.projections.lagged <- FALSE
+		 sgp.projections.lagged <- FALSE; target.type <- c("sgp.projections.lagged", "sgp.projections.lagged.baseline")[c(sgp.projections.lagged, sgp.projections.lagged.baseline)]
 	}
 	if (length(getPercentileTableNames(sgp_object, content_areas, state, years, "sgp.projections.lagged.baseline")) == 0) {
 		tmp.messages <- c(tmp.messages, "\tNOTE: No SGP lagged baseline projections available in SGP slot. No baseline referenced student growth projection targets will be produced.\n")
-		sgp.projections.lagged.baseline <- FALSE
+		sgp.projections.lagged.baseline <- FALSE; target.type <- c("sgp.projections.lagged", "sgp.projections.lagged.baseline")[c(sgp.projections.lagged, sgp.projections.lagged.baseline)]
 	}
 
 	if (length(which(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")) > 1) {
