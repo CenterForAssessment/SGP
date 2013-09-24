@@ -14,9 +14,9 @@ studentGrowthPercentiles(panel.data,
                          panel.data.vnames,
                          additional.vnames.to.return=NULL,
                          grade.progression,
-                         content.area.progression,
+                         content_area.progression,
                          year.progression,
-                         year.progression.lags,
+                         year_lags.progression,
                          num.prior,
                          max.order.for.percentile=NULL,
                          subset.grade,                                     
@@ -73,12 +73,12 @@ studentGrowthPercentiles(panel.data,
   in the supplied panel.data would be removed.  The argument can also be combined with an appropriate \code{panel.data.vnames} argument to remove a year of data would analyze students 
   progressing from 7 to 8 to 10. 
   }
-  \item{content.area.progression}{Character vector of content area names of same length as grade.progression to be provided if not all identical to 'my.subject' in sgp.labels list.  Vector will be used to populate the @Content_Areas slot of the splineMatrix class coefficient matrices.  If missing, 'sgp.labels$my.subject' is repeated in a vector length equal to grade.progression.
+  \item{content_area.progression}{Character vector of content area names of same length as grade.progression to be provided if not all identical to 'my.subject' in sgp.labels list.  Vector will be used to populate the @Content_Areas slot of the splineMatrix class coefficient matrices.  If missing, 'sgp.labels$my.subject' is repeated in a vector length equal to grade.progression.
   }
   \item{year.progression}{Character vector of years associated with grade and content area progressions. If missing then the year.progression is assumed to end in 'my.year' provided in
 sgp.labels and be of the same length as grade.progression.  Vector will be used to populate the @Years slot of the splineMatrix class coefficient matrices.
   }
-  \item{year.progression.lags}{A numeric vector indicating the time lags/span between observations in the columns supplied to 'studentGrowthPercentiles'. The default, NULL, allows the function
+  \item{year_lags.progression}{A numeric vector indicating the time lags/span between observations in the columns supplied to 'studentGrowthPercentiles'. The default, NULL, allows the function
 to calculate the lags/differences based upon the supplied years.
   }
   \item{num.prior}{Number of prior scores one wishes to use in the analysis. Defaults to \code{num.panels-1}. 

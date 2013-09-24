@@ -18,8 +18,8 @@ function(sgp.iter,
 
 	if (sgp.iter.type=="Baseline") {
 		kb <- list()
-		tmp.content_areas <- unique(sgp.iter[["baseline.content.areas"]])
-		content_area.label <- tail(sgp.iter[["baseline.content.areas"]], 1)
+		tmp.content_areas <- unique(sgp.iter[["sgp.baseline.content.areas"]])
+		content_area.label <- tail(sgp.iter[["sgp.baseline.content.areas"]], 1)
 		tmp.year <- "BASELINE"
 
 		for (j in tmp.content_areas) {
