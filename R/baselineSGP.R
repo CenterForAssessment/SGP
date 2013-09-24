@@ -98,9 +98,9 @@ function(sgp_object,
 				goodness.of.fit=FALSE,
 				drop.nonsequential.grade.progression.variables=FALSE, # taken care of in data reshape above.
 				grade.progression=grade.sequences,
-				content.area.progression=content_areas,
+				content_area.progression=content_areas,
 				year.progression=rep("BASELINE", length(content_areas)),
-				year.progression.lags=baseline.grade.sequences.lags,
+				year_lags.progression=baseline.grade.sequences.lags,
 				exact.grade.progression.sequence=TRUE,
 				print.time.taken=FALSE,
 				...)[["Coefficient_Matrices"]])
@@ -150,10 +150,10 @@ function(sgp_object,
 			tmp.list[[sgp.iter]] <- baselineSGP_Internal(
 							sgp_object,
 							state=state,
-							years=sgp.baseline.config[[sgp.iter]][["baseline.panel.years"]],
-							content_areas=sgp.baseline.config[[sgp.iter]][["baseline.content.areas"]],
-							grade.sequences=sgp.baseline.config[[sgp.iter]][["baseline.grade.sequences"]],
-							baseline.grade.sequences.lags=sgp.baseline.config[[sgp.iter]][["baseline.grade.sequences.lags"]],
+							years=sgp.baseline.config[[sgp.iter]][["sgp.baseline.panel.years"]],
+							content_areas=sgp.baseline.config[[sgp.iter]][["sgp.baseline.content.areas"]],
+							grade.sequences=sgp.baseline.config[[sgp.iter]][["sgp.baseline.grade.sequences"]],
+							baseline.grade.sequences.lags=sgp.baseline.config[[sgp.iter]][["sgp.baseline.grade.sequences.lags"]],
 							knots.boundaries.iter=sgp.baseline.config[[sgp.iter]])
 		}
 
@@ -177,6 +177,7 @@ function(sgp_object,
 			setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE)
 
 		sgp.config <- getSGPConfig(sgp_object, tmp_sgp_object, content_areas, years, grades, sgp.config,
+			sgp.percentiles=FALSE, sgp.projections=FALSE, sgp.projections.lagged=FALSE,
 			sgp.percentiles.baseline=TRUE, sgp.projections.baseline=FALSE, sgp.projections.lagged.baseline=FALSE,
 			sgp.config.drop.nonsequential.grade.progression.variables=TRUE)
 		sgp.config.baseline <- sgp.config[which(sapply(sgp.config, function(x) !identical(x[['base.gp']], "NO_BASELINE_COEFFICIENT_MATRICES")))]
@@ -196,7 +197,7 @@ function(sgp_object,
 					growth.levels=state,
 					panel.data.vnames=getPanelDataVnames("sgp.percentiles", sgp.iter),
 					grade.progression=sgp.iter[['base.gp']],
-					content.area.progression=tail(sgp.iter[['sgp.content.areas']], min(sgp.iter[['max.order']], sgp.percentiles.baseline.max.order)+1),
+					content_area.progression=tail(sgp.iter[['sgp.content.areas']], min(sgp.iter[['max.order']], sgp.percentiles.baseline.max.order)+1),
 					num.prior=min(sgp.iter[['max.order']], sgp.percentiles.baseline.max.order),
 					percentile.cuts=SGPstateData[[state]][['SGP_Configuration']][['percentile.cuts']],
 					drop.nonsequential.grade.progression.variables=FALSE,

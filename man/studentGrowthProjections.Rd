@@ -10,8 +10,10 @@ studentGrowthProjections(panel.data,
                          sgp.labels,               
                          grade.progression,
                          content_area.progression=NULL,
+			 year_lags.progression=NULL,
                          grade.projection.sequence=NULL,
                          content_area.projection.sequence=NULL,
+                         year_lags.projection.sequence=NULL,
                          max.forward.progression.years,
                          max.forward.progression.grade, 
                          max.order.for.progression,  
@@ -26,6 +28,7 @@ studentGrowthProjections(panel.data,
                          percentile.trajectory.values=NULL, 
                          isotonize=TRUE,
                          lag.increment=0,
+			 sgp.exact.grade.progression=FALSE,
                          projcuts.digits=NULL,
                          print.time.taken=TRUE)
 }
@@ -43,11 +46,18 @@ studentGrowthProjections(panel.data,
   \item{grade.progression}{REQUIRED. Argument to specify a student grade/time progression in the data to be used for percentile growth projection/trajectory calculation. 
     This argument helps in replacing previous arguments \code{num.panels},  \code{max.num.scores}, and \code{num.prior.scores}.
   }
-  \item{content_area.progression}{Argument to specify a student content area progression in the data supplied for percentile growth projection/trajectory calculation. 
+  \item{content_area.progression}{Argument to specify a student content area progression in the data supplied for percentile growth projection/trajectory calculation. Defaults to NULL and is
+  calculated from supplied argument 'sgp.labels'.
+  }
+  \item{year_lags.progression}{Argument to specify a student year progression lags in the data supplied for percentile growth projection/trajectory calculation. Defaults to NULL assuming
+  annual increment
+  calculated from supplied argument 'sgp.labels' and 'grade.progression'.
   }
   \item{grade.projection.sequence}{Argument to manually supply grade sequence over which projection is made. Defaults to NULL and is calculated from available data.
   }
-  \item{content_area.projection.sequence}{Argument to manually supply content area sequence over which projection is made. Defaults to NULL and is calculated from available data.
+  \item{content_area.projection.sequence}{Argument to manually supply content area sequence over which projection is made. Defaults to NULL and assumes current year content area is repeated going forward.
+  }
+  \item{year_lags.projection.sequence}{Argument to manually supply year lags sequence over which projection is made. Length of supplied sequence should be 1 less than length of supplied 'grade.projection.sequence' and 'content_area.projection.sequence'. Defaults to NULL and assumes annual (1 year lags).
   }
   \item{max.forward.progression.years}{The MAXIMUM number of years/grades/time periods to project forward conditional upon available coefficient matrices. If missing, function
   will project forward as far as allowed by available coefficient matrices. 
@@ -107,6 +117,8 @@ studentGrowthProjections(panel.data,
   the methods derived by Dette & Volgushev (2008).
   }
   \item{lag.increment}{A non-negative integer (defaults to 0) indicating the lag associated with the data supplied for projections. Only relevant if Cutscores or Knots and Boundaries are year dependent. 
+  }
+  \item{sgp.exact.grade.progression}{A boolean argument (defaults to FALSE) indicating whether to use the exact grade progression supplied or all orders up to the grade progression supplied.
   }
   \item{projcuts.digits}{The number of digits (defaults to NULL/0) percentile trajectories (if requested) are formatted.
   }
