@@ -142,7 +142,7 @@ function(what_sgp_object=NULL,
 			sgp.use.my.coefficient.matrices <- TRUE
 		} else {
 			what_sgp_object@Data <- as.data.table(rbind.fill(what_sgp_object@Data, tmp_sgp_object@Data))
-			sgp.use.my.coefficient.matrices <- FALSE
+			sgp.use.my.coefficient.matrices <- NULL
 		}
 
 		if ("HIGH_NEED_STATUS" %in% names(what_sgp_object@Data)) {
@@ -171,5 +171,4 @@ function(what_sgp_object=NULL,
 		return(what_sgp_object)
 
 	} ### END what/with updateSGP
-
 } ## END updateSGP Function
