@@ -224,7 +224,7 @@ function(sgp_object,
 
 	if (return.matrices.only) {
 		tmp.list <- list()
-		for (ca in unique(sapply(sgp.baseline.config, function(x) tail(x[["baseline.content.areas"]],1)))) {
+		for (ca in unique(sapply(sgp.baseline.config, function(x) tail(x[["sgp.baseline.content.areas"]],1)))) {
 			tmp.list[[paste(ca, ".BASELINE", sep="")]] <- sgp_object@SGP[["Coefficient_Matrices"]][[paste(ca, ".BASELINE", sep="")]]
 		}
 		return(tmp.list)

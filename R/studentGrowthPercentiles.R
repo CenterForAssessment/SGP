@@ -1114,7 +1114,8 @@ function(panel.data,         ## REQUIRED
 		}
 
 		if (is.character(goodness.of.fit) | goodness.of.fit==TRUE) {
-			if (is.character(goodness.of.fit) & goodness.of.fit %in% ls(SGPstateData)) {
+			if (is.character(goodness.of.fit) & goodness.of.fit %in% ls(SGPstateData) &&
+				!is.null(SGPstateData[[goodness.of.fit]][['Achievement']][['Cutscores']][[rev(content_area.progression)[2]]][[paste("GRADE_", rev(tmp.gp)[2], sep="")]]) {
 				GRADE <- YEAR <- CONTENT_AREA <- NULL
 				tmp.gof.data <- getAchievementLevel(
 							sgp_data=data.table(
