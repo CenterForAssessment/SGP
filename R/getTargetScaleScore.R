@@ -168,8 +168,8 @@ function(sgp_object,
 
 		for (sgp.iter in par.sgp.config) {
 			panel.data=within(tmp_sgp_object, assign("Panel_Data", getPanelData(tmp_sgp_data_for_analysis, my.target.type, sgp.iter, sgp.targets)))
-			tmp.knots.boundaries <- getKnotsBoundaries(sgp.iter, state) # Get specific knots and boundaries in case course sequence is different
-			panel.data[["Knots_Boundaries"]][[names(tmp.knots.boundaries)]] <- tmp.knots.boundaries[[names(tmp.knots.boundaries)]]
+			panel.data[['Coefficient_Matrices']] <- tmp_sgp_object[['Coefficient_Matrices']]
+			panel.data[['Knots_Boundaries']] <- tmp_sgp_object[['Knots_Boundaries']]
 	
 			tmp_sgp_object <- studentGrowthProjections(
 				panel.data=panel.data,
