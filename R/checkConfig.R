@@ -29,7 +29,7 @@ function(my.config,
 	if (config.type=="Baseline") {
 
 		if (!all(unlist(sapply(lapply(my.config, names),
-			function(x) x %in% c("sgp.baseline.content.areas", "sgp.baseline.panel.years", "sgp.baseline.grade.sequences", "sgp.baseline.grade.sequences.lags"))))) {
+			function(x) x %in% c("sgp.baseline.content.areas", "sgp.baseline.panel.years", "sgp.baseline.grade.sequences", "sgp.baseline.grade.sequences.lags", "sgp.baseline.panel.years.within"))))) {
 				stop("Please specify an appropriate list of SGP function labels (sgp.baseline.config).  See help page for details.")
 		}       
 
