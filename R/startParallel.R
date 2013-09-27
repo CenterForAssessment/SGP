@@ -161,7 +161,7 @@ function(
 			TAUS.LIST[[index]] <- qr.taus[count:(count+ch-1)]
 			count <- (count+ch); index <- index + 1
 		}
-		if ((chunk.size*workers) > length(qr.taus))  TAUS.LIST <- TAUS.LIST[sapply(TAUS.LIST, function(x) !is.na(x)[[1]][1])]
+		if (sum(chunk.size) > length(qr.taus)) for(l in 1:length(TAUS.LIST))  TAUS.LIST[[l]] <- TAUS.LIST[[l]][!is.na(TAUS.LIST[[l]])]
 	}
 	
 	###

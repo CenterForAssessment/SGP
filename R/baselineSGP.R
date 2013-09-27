@@ -67,21 +67,27 @@ function(sgp_object,
 		} ### END test.year.sequence
 
 
-		### Reshape data 
+		### Get multiple-cohort data and stack up into 'Super-cohort'
 
-		setkeyv(sgp_object@Data, c("VALID_CASE", "YEAR", "GRADE", "CONTENT_AREA"))
+		variables.to.get <- c("VALID_CASE", "YEAR", "CONTENT_AREA", "GRADE", "ID", "SCALE_SCORE", "ACHIEVEMENT_LEVEL", "YEAR_WITHIN", "FIRST_OBSERVATION", "LAST_OBSERVATION")
+		tmp_sgp_data_for_analysis <- sgp_object@Data[,intersect(names(sgp_object@Data), variables.to.get), with=FALSE]
+		if ("YEAR_WITHIN" %in% names(tmp_sgp_data_for_analysis)) {
+			setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE, YEAR_WITHIN)
+		} else {
+			setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE)
+		}
 		tmp.year.sequence <- test.year.sequence(content_areas, years, grade.sequences, baseline.grade.sequences.lags)
 		tmp.list <- list()
 		for (k in seq_along(tmp.year.sequence)) {
-			tmp.lookup <- data.table(CJ("VALID_CASE", tmp.year.sequence[[k]]), grade.sequences[!is.na(grade.sequences)], content_areas, seq_along(tmp.year.sequence[[k]]))
-			setnames(tmp.lookup, c("VALID_CASE", "YEAR", "GRADE", "CONTENT_AREA", "tmp.timevar"))
-			setkeyv(tmp.lookup, c("VALID_CASE", "YEAR", "GRADE", "CONTENT_AREA", "tmp.timevar"))
-			tmp.list[[k]] <- reshape(sgp_object@Data[tmp.lookup, nomatch=0],
-				idvar="ID",
-				timevar="tmp.timevar",
-				direction="wide",
-				drop=names(sgp_object@Data)[!names(sgp_object@Data) %in% c('ID', 'SCALE_SCORE', 'tmp.timevar')])
-			tmp.list[[k]] <- as.data.frame(tmp.list[[k]][!apply(is.na(tmp.list[[k]]), 1, any)])
+			tmp.sgp.iter <- sgp.baseline.config[[sgp.iter]] # Convert sgp.baseline.config into a valid sgp.iter for getPanelData
+			names(tmp.sgp.iter) <- gsub('sgp.baseline.', 'sgp.', names(tmp.sgp.iter))
+			tmp.sgp.iter$sgp.panel.years <- tmp.year.sequence[[k]]
+			tmp.sgp.iter$sgp.grade.sequences <- tmp.sgp.iter$sgp.grade.sequences
+			tmp.list[[k]] <- getPanelData(tmp_sgp_data_for_analysis, "sgp.percentiles", sgp.iter = tmp.sgp.iter)
+			col.index <- c(1, grep("GRADE",names(tmp.list[[k]])), grep("SCALE_SCORE",names(tmp.list[[k]])))
+			tmp.list[[k]] <- tmp.list[[k]][!apply(is.na(tmp.list[[k]]), 1, any), col.index]
+			names(tmp.list[[k]]) <- c("ID", paste("GRADE", rev(seq_along(tmp.year.sequence[[k]])), sep="_"), 
+				paste("SCALE_SCORE", rev(seq_along(tmp.year.sequence[[k]])), sep="_")) # Use rev() in case vars are added: 1= current, 2= first prior, etc.
 		}
 		tmp.df <- rbind.fill(tmp.list)
 
@@ -90,7 +96,7 @@ function(sgp_object,
 
 		tmp_sgp_list <- list(Coefficient_Matrices =
 			studentGrowthPercentiles(
-				panel.data=list(Panel_Data=data.frame(tmp.df[,1], matrix(grade.sequences[!is.na(grade.sequences)], nrow=1), tmp.df[,-1]), 
+				panel.data=list(Panel_Data= tmp.df, 
 					Knots_Boundaries=getKnotsBoundaries(knots.boundaries.iter, state, "Baseline")),
 				sgp.labels=list(my.year="BASELINE", my.subject=tail(content_areas, 1)),
 				use.my.knots.boundaries=list(my.year="BASELINE", my.subject=tail(content_areas, 1)),
@@ -173,8 +179,13 @@ function(sgp_object,
 
 		tmp_sgp_object <- list(Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]], Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]])
 
-		tmp_sgp_data_for_analysis <- sgp_object@Data[,c("VALID_CASE", "YEAR", "CONTENT_AREA", "GRADE", "ID", "SCALE_SCORE", "ACHIEVEMENT_LEVEL"), with=FALSE]
+		variables.to.get <- c("VALID_CASE", "YEAR", "CONTENT_AREA", "GRADE", "ID", "SCALE_SCORE", "ACHIEVEMENT_LEVEL", "YEAR_WITHIN", "FIRST_OBSERVATION", "LAST_OBSERVATION")
+		tmp_sgp_data_for_analysis <- sgp_object@Data[,intersect(names(sgp_object@Data), variables.to.get), with=FALSE]
+		if ("YEAR_WITHIN" %in% names(tmp_sgp_data_for_analysis)) {
+			setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE, YEAR_WITHIN)
+		} else {
 			setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE)
+		}
 
 		sgp.config <- getSGPConfig(sgp_object, tmp_sgp_object, content_areas, years, grades, sgp.config,
 			sgp.percentiles=FALSE, sgp.projections=FALSE, sgp.projections.lagged=FALSE,
