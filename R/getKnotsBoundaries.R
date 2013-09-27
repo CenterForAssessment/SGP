@@ -36,5 +36,4 @@ function(sgp.iter,
 	}
 		
 	return(kb[["Knots_Boundaries"]])
-
 } ## END getKnotsBoundaries
