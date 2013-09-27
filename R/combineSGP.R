@@ -264,7 +264,7 @@ function(
 			terminal.content_areas <- intersect(terminal.content_areas, sapply(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]], tail, 1))
 		}
 
-		if (sgp.target.content_areas) {
+		if (!is.null(sgp.target.content_areas) && sgp.target.content_areas) {
 			for (my.sgp.target.content_area.iter in target.args[['my.sgp.target.content_area']]) {
 				slot.data[!is.na(get(target.args[['my.sgp.target']][1])), target.args[['my.sgp.target.content_area']] := 
 					getTargetSGPContentArea(GRADE[1], CONTENT_AREA[1], state, max.sgp.target.years.forward, target.args[['my.sgp.target.content_area.iter']]), 
