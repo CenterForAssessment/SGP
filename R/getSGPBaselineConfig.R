@@ -39,20 +39,20 @@ function(sgp_object,
 	for (i in .content_areas) {
 		tmp.sgp.baseline.config[[as.character(i)]] <- 
 			list(
-				baseline.content.areas=i, 
-				baseline.panel.years=.years,
-				baseline.grade.sequences=sgp.baseline.grade.sequences,
-				baseline.grade.sequences.lags=sgp.baseline.grade.sequences.lags)
+				sgp.baseline.content.areas=i, 
+				sgp.baseline.panel.years=.years,
+				sgp.baseline.grade.sequences=sgp.baseline.grade.sequences,
+				sgp.baseline.grade.sequences.lags=sgp.baseline.grade.sequences.lags)
 	}
 
 	for (a in seq_along(tmp.sgp.baseline.config)) {
-		tmp.length <- length(tmp.sgp.baseline.config[[a]][["baseline.grade.sequences"]])
+		tmp.length <- length(tmp.sgp.baseline.config[[a]][["sgp.baseline.grade.sequences"]])
 		for (b in seq(tmp.length)) {
 			sgp.baseline.config[[b+(a-1)*tmp.length]] <- tmp.sgp.baseline.config[[a]]
-			sgp.baseline.config[[b+(a-1)*tmp.length]][["baseline.grade.sequences"]] <- unlist(tmp.sgp.baseline.config[[a]][["baseline.grade.sequences"]][b])
-			sgp.baseline.config[[b+(a-1)*tmp.length]][["baseline.grade.sequences.lags"]] <- unlist(tmp.sgp.baseline.config[[a]][["baseline.grade.sequences.lags"]][b])
-			sgp.baseline.config[[b+(a-1)*tmp.length]][["baseline.content.areas"]] <- 
-				rep(sgp.baseline.config[[b+(a-1)*tmp.length]][["baseline.content.areas"]], length(sgp.baseline.config[[b+(a-1)*tmp.length]][["baseline.grade.sequences"]]))
+			sgp.baseline.config[[b+(a-1)*tmp.length]][["sgp.baseline.grade.sequences"]] <- unlist(tmp.sgp.baseline.config[[a]][["sgp.baseline.grade.sequences"]][b])
+			sgp.baseline.config[[b+(a-1)*tmp.length]][["sgp.baseline.grade.sequences.lags"]] <- unlist(tmp.sgp.baseline.config[[a]][["sgp.baseline.grade.sequences.lags"]][b])
+			sgp.baseline.config[[b+(a-1)*tmp.length]][["sgp.baseline.content.areas"]] <- 
+				rep(sgp.baseline.config[[b+(a-1)*tmp.length]][["sgp.baseline.content.areas"]], length(sgp.baseline.config[[b+(a-1)*tmp.length]][["sgp.baseline.grade.sequences"]]))
 		}
 	}
 

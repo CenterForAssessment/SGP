@@ -78,6 +78,12 @@ function(sgp_object,
 		return.norm.group.scale.scores <- NULL
 	}
 
+	if (!is.null(SGPstateData[[state]][["Growth"]][["Cutscores"]][["Cuts"]])) {
+		percentile.trajectory.values <- SGPstateData[[state]][["Growth"]][["Cutscores"]][["Cuts"]]
+	} else {
+		percentile.trajectory.values <- c(35, 50, 65)
+	}
+
 	if ((sgp.projections | sgp.projections.lagged | sgp.projections.baseline | sgp.projections.lagged.baseline) & is.null(SGPstateData[[state]][["Achievement"]][["Cutscores"]])) {
 		message(paste("\tNOTE: Achievement Level cutscores for state, ", state, ", are not in embedded SGPstateData. Projections and Lagged Projections will not be calculated"))
 		sgp.projections <- sgp.projections.lagged <- sgp.projections.baseline <- sgp.projections.lagged.baseline <- FALSE
@@ -237,16 +243,16 @@ function(sgp_object,
 	### Create par.sgp.config (for both parallel and sequential implementations)
 
 	setkeyv(sgp_object@Data, getKey(sgp_object))
-	par.sgp.config <- getSGPConfig(sgp_object, tmp_sgp_object, content_areas, years, grades, sgp.config, sgp.percentiles.baseline, sgp.projections.baseline, 
-		sgp.projections.lagged.baseline, sgp.config.drop.nonsequential.grade.progression.variables, sgp.minimum.default.panel.years)
+	par.sgp.config <- getSGPConfig(sgp_object, tmp_sgp_object, content_areas, years, grades, sgp.config, sgp.percentiles, sgp.projections, sgp.projections.lagged,
+		sgp.percentiles.baseline, sgp.projections.baseline, sgp.projections.lagged.baseline, sgp.config.drop.nonsequential.grade.progression.variables, sgp.minimum.default.panel.years)
 
 	if (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline) {
-		if (any(sapply(par.sgp.config, function(x) identical(x[['base.gp']], "NO_BASELINE_COEFFICIENT_MATRICES")))) {
-			baseline.missings <- which(sapply(par.sgp.config, function(x) identical(x[['base.gp']], "NO_BASELINE_COEFFICIENT_MATRICES")))
+		if (any(sapply(par.sgp.config, function(x) identical(x[['sgp.baseline.grade.sequences']], "NO_BASELINE_COEFFICIENT_MATRICES")))) {
+			baseline.missings <- which(sapply(par.sgp.config, function(x) identical(x[['sgp.baseline.grade.sequences']], "NO_BASELINE_COEFFICIENT_MATRICES")))
 			baseline.missings <- paste(unlist(sapply(par.sgp.config[baseline.missings], function(x) paste(tail(x$sgp.content.areas, 1), x$sgp.grade.sequences))), collapse=";\n\t\t")
 			message("\tNOTE: Baseline coefficient matrices are not available for:\n\t\t", baseline.missings, ".", sep="")
 		}
-		par.sgp.config.baseline <- par.sgp.config[which(sapply(par.sgp.config, function(x) !identical(x[['base.gp']], "NO_BASELINE_COEFFICIENT_MATRICES")))]
+		par.sgp.config.baseline <- par.sgp.config[which(sapply(par.sgp.config, function(x) !identical(x[['sgp.baseline.grade.sequences']], "NO_BASELINE_COEFFICIENT_MATRICES")))]
 	}
 
 
@@ -287,8 +293,8 @@ function(sgp_object,
 						calculate.confidence.intervals=calculate.confidence.intervals,
 						panel.data.vnames=getPanelDataVnames("sgp.percentiles", sgp.iter, names(tmp_sgp_data_for_analysis)),
 						additional.vnames.to.return=getPanelDataVnames("sgp.percentiles.to.return", sgp.iter, names(tmp_sgp_data_for_analysis)),
-						grade.progression=sgp.iter[["sgp.grade.sequences"]][[1]],
-						content.area.progression=sgp.iter[["sgp.content.areas"]],
+						grade.progression=sgp.iter[["sgp.grade.sequences"]],
+						content_area.progression=sgp.iter[["sgp.content.areas"]],
 						year.progression=sgp.iter[["sgp.panel.years"]],
 						max.order.for.percentile=SGPstateData[[state]][["SGP_Configuration"]][["max.order.for.percentile"]],
 						percentile.cuts=SGPstateData[[state]][["SGP_Configuration"]][["percentile.cuts"]],
@@ -318,8 +324,8 @@ function(sgp_object,
 						calculate.confidence.intervals=calculate.confidence.intervals,
 						panel.data.vnames=getPanelDataVnames("sgp.percentiles", sgp.iter, names(tmp_sgp_data_for_analysis)),
 						additional.vnames.to.return=getPanelDataVnames("sgp.percentiles.to.return", sgp.iter, names(tmp_sgp_data_for_analysis)),
-						grade.progression=sgp.iter[["sgp.grade.sequences"]][[1]],
-						content.area.progression=sgp.iter[["sgp.content.areas"]],
+						grade.progression=sgp.iter[["sgp.grade.sequences"]],
+						content_area.progression=sgp.iter[["sgp.content.areas"]],
 						year.progression=sgp.iter[["sgp.panel.years"]],
 						max.order.for.percentile=SGPstateData[[state]][["SGP_Configuration"]][["max.order.for.percentile"]],
 						percentile.cuts=SGPstateData[[state]][["SGP_Configuration"]][["percentile.cuts"]],
@@ -353,8 +359,8 @@ function(sgp_object,
 						calculate.confidence.intervals=calculate.confidence.intervals,
 						panel.data.vnames=getPanelDataVnames("sgp.percentiles", sgp.iter, names(tmp_sgp_data_for_analysis)),
 						additional.vnames.to.return=getPanelDataVnames("sgp.percentiles.to.return", sgp.iter, names(tmp_sgp_data_for_analysis)),
-						grade.progression=sgp.iter[["sgp.grade.sequences"]][[1]],
-						content.area.progression=sgp.iter[["sgp.content.areas"]],
+						grade.progression=sgp.iter[["sgp.grade.sequences"]],
+						content_area.progression=sgp.iter[["sgp.content.areas"]],
 						year.progression=sgp.iter[["sgp.panel.years"]],
 						max.order.for.percentile=SGPstateData[[state]][["SGP_Configuration"]][["max.order.for.percentile"]],
 						percentile.cuts=SGPstateData[[state]][["SGP_Configuration"]][["percentile.cuts"]],
@@ -404,10 +410,10 @@ function(sgp_object,
 						calculate.confidence.intervals=calculate.confidence.intervals,
 						panel.data.vnames=getPanelDataVnames("sgp.percentiles", sgp.iter, names(tmp_sgp_data_for_analysis)),
 						additional.vnames.to.return=getPanelDataVnames("sgp.percentiles.to.return", sgp.iter, names(tmp_sgp_data_for_analysis)),
-						grade.progression=sgp.iter[["base.gp"]],
-						content.area.progression=tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["base.gp"]])),
-						year.progression.lags=sgp.iter[["time.lags"]],
-						num.prior=min(sgp.iter[["max.order"]], sgp.percentiles.baseline.max.order),
+						grade.progression=sgp.iter[["sgp.baseline.grade.sequences"]],
+						content_area.progression=sgp.iter[["sgp.baseline.content.areas"]],
+						year_lags.progression=sgp.iter[["sgp.baseline.panel.years.lags"]],
+						num.prior=min(sgp.iter[["sgp.baseline.max.order"]], sgp.percentiles.baseline.max.order),
 						percentile.cuts=SGPstateData[[state]][["SGP_Configuration"]][["percentile.cuts"]],
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
@@ -434,10 +440,10 @@ function(sgp_object,
 						calculate.confidence.intervals=calculate.confidence.intervals,
 						panel.data.vnames=getPanelDataVnames("sgp.percentiles", sgp.iter, names(tmp_sgp_data_for_analysis)),
 						additional.vnames.to.return=getPanelDataVnames("sgp.percentiles.to.return", sgp.iter, names(tmp_sgp_data_for_analysis)),
-						grade.progression=sgp.iter[["base.gp"]],
-						content.area.progression=tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["base.gp"]])),
-						year.progression.lags=sgp.iter[["time.lags"]],
-						num.prior=min(sgp.iter[["max.order"]], sgp.percentiles.baseline.max.order),
+						grade.progression=sgp.iter[["sgp.baseline.grade.sequences"]],
+						content_area.progression=sgp.iter[["sgp.baseline.content.areas"]],
+						year_lags.progression=sgp.iter[["sgp.baseline.panel.years.lags"]],
+						num.prior=min(sgp.iter[["sgp.baseline.max.order"]], sgp.percentiles.baseline.max.order),
 						percentile.cuts=SGPstateData[[state]][["SGP_Configuration"]][["percentile.cuts"]],
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
@@ -468,10 +474,10 @@ function(sgp_object,
 						calculate.confidence.intervals=calculate.confidence.intervals,
 						panel.data.vnames=getPanelDataVnames("sgp.percentiles", sgp.iter, names(tmp_sgp_data_for_analysis)),
 						additional.vnames.to.return=getPanelDataVnames("sgp.percentiles.to.return", sgp.iter, names(tmp_sgp_data_for_analysis)),
-						grade.progression=sgp.iter[["base.gp"]],
-						content.area.progression=tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["base.gp"]])),
-						year.progression.lags=sgp.iter[["time.lags"]],
-						num.prior=min(sgp.iter[["max.order"]], sgp.percentiles.baseline.max.order),
+						grade.progression=sgp.iter[["sgp.baseline.grade.sequences"]],
+						content_area.progression=sgp.iter[["sgp.baseline.content.areas"]],
+						year_lags.progression=sgp.iter[["sgp.baseline.panel.years.lags"]],
+						num.prior=min(sgp.iter[["sgp.baseline.max.order"]], sgp.percentiles.baseline.max.order),
 						percentile.cuts=SGPstateData[[state]][["SGP_Configuration"]][["percentile.cuts"]],
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
@@ -514,10 +520,16 @@ function(sgp_object,
 						performance.level.cutscores=state,
 						max.forward.progression.years=3,
 						max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[["sgp.panel.years"]], 1), tail(sgp.iter[["sgp.content.areas"]], 1), state),
-						percentile.trajectory.values=c(1, SGPstateData[[state]][["Growth"]][["Cutscores"]][["Cuts"]], 99),
+						percentile.trajectory.values=c(1, percentile.trajectory.values, 99),
 						panel.data.vnames=getPanelDataVnames("sgp.projections", sgp.iter),
-						grade.progression=sgp.iter[["sgp.projection.grade.sequences"]][[1]],
+						grade.progression=sgp.iter[["sgp.projection.grade.sequences"]],
+						content_area.progression=sgp.iter[["sgp.projection.content.areas"]],
+						year_lags.progression=sgp.iter[["sgp.projection.panel.years.lags"]],
+						grade.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+						content_area.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+						year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
 						calculate.sgps=!(tail(sgp.iter[["sgp.panel.years"]], 1) %in% SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]]),
+						sgp.exact.grade.progression=sgp.iter[["sgp.exact.grade.progression"]],
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...))
 				}
@@ -535,10 +547,16 @@ function(sgp_object,
 						performance.level.cutscores=state,
 						max.forward.progression.years=3,
 						max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[["sgp.panel.years"]], 1), tail(sgp.iter[["sgp.content.areas"]], 1), state),
-						percentile.trajectory.values=c(1, SGPstateData[[state]][["Growth"]][["Cutscores"]][["Cuts"]], 99),
+						percentile.trajectory.values=c(1, percentile.trajectory.values, 99),
 						panel.data.vnames=getPanelDataVnames("sgp.projections", sgp.iter),
-						grade.progression=sgp.iter[["sgp.projection.grade.sequences"]][[1]],
+						grade.progression=sgp.iter[["sgp.projection.grade.sequences"]],
+						content_area.progression=sgp.iter[["sgp.projection.content.areas"]],
+						year_lags.progression=sgp.iter[["sgp.projection.panel.years.lags"]],
+						grade.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+						content_area.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+						year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
 						calculate.sgps=!(tail(sgp.iter[["sgp.panel.years"]], 1) %in% SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]]),
+						sgp.exact.grade.progression=sgp.iter[["sgp.exact.grade.progression"]],
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...))
 	
@@ -560,10 +578,16 @@ function(sgp_object,
 						performance.level.cutscores=state,
 						max.forward.progression.years=3,
 						max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[["sgp.panel.years"]], 1), tail(sgp.iter[["sgp.content.areas"]], 1), state),
-						percentile.trajectory.values=c(1, SGPstateData[[state]][["Growth"]][["Cutscores"]][["Cuts"]], 99),
+						percentile.trajectory.values=c(1, percentile.trajectory.values, 99),
 						panel.data.vnames=getPanelDataVnames("sgp.projections", sgp.iter),
-						grade.progression=sgp.iter[["sgp.projection.grade.sequences"]][[1]],
+						grade.progression=sgp.iter[["sgp.projection.grade.sequences"]],
+						content_area.progression=sgp.iter[["sgp.projection.content.areas"]],
+						year_lags.progression=sgp.iter[["sgp.projection.panel.years.lags"]],
+						grade.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+						content_area.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+						year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
 						calculate.sgps=!(tail(sgp.iter[["sgp.panel.years"]], 1) %in% SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]]),
+						sgp.exact.grade.progression=sgp.iter[["sgp.exact.grade.progression"]],
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
@@ -600,10 +624,16 @@ function(sgp_object,
 						performance.level.cutscores=state,
 						max.forward.progression.years=3,
 						max.order.for.progression=sgp.projections.baseline.max.order,
-						percentile.trajectory.values=c(1, SGPstateData[[state]][["Growth"]][["Cutscores"]][["Cuts"]], 99),
+						percentile.trajectory.values=c(1, percentile.trajectory.values, 99),
 						panel.data.vnames=getPanelDataVnames("sgp.projections", sgp.iter),
-						grade.progression=sgp.iter[["sgp.projection.grade.sequences"]][[1]],
+						grade.progression=sgp.iter[["sgp.projection.grade.sequences"]],
+						content_area.progression=sgp.iter[["sgp.projection.content.areas"]],
+						year_lags.progression=sgp.iter[["sgp.projection.panel.years.lags"]],
+						grade.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+						content_area.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+						year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
 						calculate.sgps=!(tail(sgp.iter[["sgp.panel.years"]], 1) %in% SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]]),
+						sgp.exact.grade.progression=sgp.iter[["sgp.exact.grade.progression"]],
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...))
 				}
@@ -622,10 +652,16 @@ function(sgp_object,
 						performance.level.cutscores=state,
 						max.forward.progression.years=3,
 						max.order.for.progression=sgp.projections.baseline.max.order,
-						percentile.trajectory.values=c(1, SGPstateData[[state]][["Growth"]][["Cutscores"]][["Cuts"]], 99),
+						percentile.trajectory.values=c(1, percentile.trajectory.values, 99),
 						panel.data.vnames=getPanelDataVnames("sgp.projections", sgp.iter),
-						grade.progression=sgp.iter[["sgp.projection.grade.sequences"]][[1]],
+						grade.progression=sgp.iter[["sgp.projection.grade.sequences"]],
+						content_area.progression=sgp.iter[["sgp.projection.content.areas"]],
+						year_lags.progression=sgp.iter[["sgp.projection.panel.years.lags"]],
+						grade.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+						content_area.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+						year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
 						calculate.sgps=!(tail(sgp.iter[["sgp.panel.years"]], 1) %in% SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]]),
+						sgp.exact.grade.progression=sgp.iter[["sgp.exact.grade.progression"]],
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...))
 	
@@ -648,10 +684,16 @@ function(sgp_object,
 						performance.level.cutscores=state,
 						max.forward.progression.years=3,
 						max.order.for.progression=sgp.projections.baseline.max.order,
-						percentile.trajectory.values=c(1, SGPstateData[[state]][["Growth"]][["Cutscores"]][["Cuts"]], 99),
+						percentile.trajectory.values=c(1, percentile.trajectory.values, 99),
 						panel.data.vnames=getPanelDataVnames("sgp.projections", sgp.iter),
-						grade.progression=sgp.iter[["sgp.projection.grade.sequences"]][[1]],
+						grade.progression=sgp.iter[["sgp.projection.grade.sequences"]],
+						content_area.progression=sgp.iter[["sgp.projection.content.areas"]],
+						year_lags.progression=sgp.iter[["sgp.projection.panel.years.lags"]],
+						grade.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+						content_area.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+						year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
 						calculate.sgps=!(tail(sgp.iter[["sgp.panel.years"]], 1) %in% SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]]),
+						sgp.exact.grade.progression=sgp.iter[["sgp.exact.grade.progression"]],
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
@@ -686,12 +728,18 @@ function(sgp_object,
 						use.my.coefficient.matrices=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
 						use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
 						performance.level.cutscores=state,
+						max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[["sgp.panel.years"]], 1), tail(sgp.iter[["sgp.content.areas"]], 1), state),
 						panel.data.vnames=getPanelDataVnames("sgp.projections.lagged", sgp.iter),
 						achievement.level.prior.vname=paste("ACHIEVEMENT_LEVEL", tail(head(sgp.iter[["sgp.panel.years"]], -1), 1), tail(head(sgp.iter[["sgp.content.areas"]], -1), 1), sep="."),
-						grade.progression=head(sgp.iter[["sgp.grade.sequences"]][[1]], -1),
-						max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[["sgp.panel.years"]], 1), tail(sgp.iter[["sgp.content.areas"]], 1), state),
+						grade.progression=sgp.iter[["sgp.projection.grade.sequences"]],
+						content_area.progression=sgp.iter[["sgp.projection.content.areas"]],
+						year_lags.progression=sgp.iter[["sgp.projection.panel.years.lags"]],
 						lag.increment=1,
+						grade.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+						content_area.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+						year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
 						calculate.sgps=!(tail(sgp.iter[["sgp.panel.years"]], 1) %in% SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]]),
+						sgp.exact.grade.progression=sgp.iter[["sgp.exact.grade.progression"]],
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...))
 				}
@@ -708,12 +756,18 @@ function(sgp_object,
 						use.my.coefficient.matrices=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
 						use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
 						performance.level.cutscores=state,
+						max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[["sgp.panel.years"]], 1), tail(sgp.iter[["sgp.content.areas"]], 1), state),
 						panel.data.vnames=getPanelDataVnames("sgp.projections.lagged", sgp.iter),
 						achievement.level.prior.vname=paste("ACHIEVEMENT_LEVEL", tail(head(sgp.iter[["sgp.panel.years"]], -1), 1), tail(head(sgp.iter[["sgp.content.areas"]], -1), 1), sep="."),
-						grade.progression=head(sgp.iter[["sgp.grade.sequences"]][[1]], -1),
-						max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[["sgp.panel.years"]], 1), tail(sgp.iter[["sgp.content.areas"]], 1), state),
+						grade.progression=sgp.iter[["sgp.projection.grade.sequences"]],
+						content_area.progression=sgp.iter[["sgp.projection.content.areas"]],
+						year_lags.progression=sgp.iter[["sgp.projection.panel.years.lags"]],
 						lag.increment=1,
+						grade.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+						content_area.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+						year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
 						calculate.sgps=!(tail(sgp.iter[["sgp.panel.years"]], 1) %in% SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]]),
+						sgp.exact.grade.progression=sgp.iter[["sgp.exact.grade.progression"]],
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...))
 	
@@ -734,12 +788,18 @@ function(sgp_object,
 						use.my.coefficient.matrices=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
 						use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
 						performance.level.cutscores=state,
+						max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[["sgp.panel.years"]], 1), tail(sgp.iter[["sgp.content.areas"]], 1), state),
 						panel.data.vnames=getPanelDataVnames("sgp.projections.lagged", sgp.iter),
 						achievement.level.prior.vname=paste("ACHIEVEMENT_LEVEL", tail(head(sgp.iter[["sgp.panel.years"]], -1), 1), tail(head(sgp.iter[["sgp.content.areas"]], -1), 1), sep="."),
-						grade.progression=head(sgp.iter[["sgp.grade.sequences"]][[1]], -1),
-						max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[["sgp.panel.years"]], 1), tail(sgp.iter[["sgp.content.areas"]], 1), state),
+						grade.progression=sgp.iter[["sgp.projection.grade.sequences"]],
+						content_area.progression=sgp.iter[["sgp.projection.content.areas"]],
+						year_lags.progression=sgp.iter[["sgp.projection.panel.years.lags"]],
 						lag.increment=1,
+						grade.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+						content_area.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+						year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
 						calculate.sgps=!(tail(sgp.iter[["sgp.panel.years"]], 1) %in% SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]]),
+						sgp.exact.grade.progression=sgp.iter[["sgp.exact.grade.progression"]],
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
@@ -777,9 +837,15 @@ function(sgp_object,
 						max.order.for.progression=sgp.projections.lagged.baseline.max.order,
 						panel.data.vnames=getPanelDataVnames("sgp.projections.lagged", sgp.iter),
 						achievement.level.prior.vname=paste("ACHIEVEMENT_LEVEL", tail(head(sgp.iter[["sgp.panel.years"]], -1), 1), tail(head(sgp.iter[["sgp.content.areas"]], -1), 1), sep="."),
-						grade.progression=head(sgp.iter[["sgp.grade.sequences"]][[1]], -1),
+						grade.progression=sgp.iter[["sgp.projection.grade.sequences"]],
+						content_area.progression=sgp.iter[["sgp.projection.content.areas"]],
+						year_lags.progression=sgp.iter[["sgp.projection.panel.years.lags"]],
 						lag.increment=1,
+						grade.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+						content_area.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+						year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
 						calculate.sgps=!(tail(sgp.iter[["sgp.panel.years"]], 1) %in% SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]]),
+						sgp.exact.grade.progression=sgp.iter[["sgp.exact.grade.progression"]],
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...))
 				}
@@ -800,9 +866,15 @@ function(sgp_object,
 					max.order.for.progression=sgp.projections.lagged.baseline.max.order,
 					panel.data.vnames=getPanelDataVnames("sgp.projections.lagged", sgp.iter),
 					achievement.level.prior.vname=paste("ACHIEVEMENT_LEVEL", tail(head(sgp.iter[["sgp.panel.years"]], -1), 1), tail(head(sgp.iter[["sgp.content.areas"]], -1), 1), sep="."),
-					grade.progression=head(sgp.iter[["sgp.grade.sequences"]][[1]], -1),
+					grade.progression=sgp.iter[["sgp.projection.grade.sequences"]],
+					content_area.progression=sgp.iter[["sgp.projection.content.areas"]],
+					year_lags.progression=sgp.iter[["sgp.projection.panel.years.lags"]],
 					lag.increment=1,
+					grade.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+					content_area.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+					year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
 					calculate.sgps=!(tail(sgp.iter[["sgp.panel.years"]], 1) %in% SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]]),
+					sgp.exact.grade.progression=sgp.iter[["sgp.exact.grade.progression"]],
 					projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 					...))
 
@@ -826,9 +898,15 @@ function(sgp_object,
 					max.order.for.progression=sgp.projections.lagged.baseline.max.order,
 					panel.data.vnames=getPanelDataVnames("sgp.projections.lagged", sgp.iter),
 					achievement.level.prior.vname=paste("ACHIEVEMENT_LEVEL", tail(head(sgp.iter[["sgp.panel.years"]], -1), 1), tail(head(sgp.iter[["sgp.content.areas"]], -1), 1), sep="."),
-					grade.progression=head(sgp.iter[["sgp.grade.sequences"]][[1]], -1),
+					grade.progression=sgp.iter[["sgp.projection.grade.sequences"]],
+					content_area.progression=sgp.iter[["sgp.projection.content.areas"]],
+					year_lags.progression=sgp.iter[["sgp.projection.panel.years.lags"]],
 					lag.increment=1,
+					grade.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+					content_area.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+					year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
 					calculate.sgps=!(tail(sgp.iter[["sgp.panel.years"]], 1) %in% SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]]),
+					sgp.exact.grade.progression=sgp.iter[["sgp.exact.grade.progression"]],
 					projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 					...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 
@@ -858,7 +936,7 @@ function(sgp_object,
 		if (sgp.percentiles) {
 			for (sgp.iter in rev(par.sgp.config)) {
 
-				panel.data=within(tmp_sgp_object, assign("Panel_Data", getPanelData(tmp_sgp_data_for_analysis, "sgp.percentiles", sgp.iter)))
+				panel.data <- within(tmp_sgp_object, assign("Panel_Data", getPanelData(tmp_sgp_data_for_analysis, "sgp.percentiles", sgp.iter)))
 				tmp.knots.boundaries <- getKnotsBoundaries(sgp.iter, state) # Get specific knots and boundaries in case course sequence is different
 				panel.data[["Knots_Boundaries"]][[names(tmp.knots.boundaries)]] <- tmp.knots.boundaries[[names(tmp.knots.boundaries)]]
 
@@ -870,8 +948,8 @@ function(sgp_object,
 					growth.levels=state,
 					panel.data.vnames=getPanelDataVnames("sgp.percentiles", sgp.iter, names(tmp_sgp_data_for_analysis)),
 					additional.vnames.to.return=getPanelDataVnames("sgp.percentiles.to.return", sgp.iter, names(tmp_sgp_data_for_analysis)),
-					grade.progression=sgp.iter[["sgp.grade.sequences"]][[1]],
-					content.area.progression=sgp.iter[["sgp.content.areas"]],
+					grade.progression=sgp.iter[["sgp.grade.sequences"]],
+					content_area.progression=sgp.iter[["sgp.content.areas"]],
 					year.progression=sgp.iter[["sgp.panel.years"]],
 					max.order.for.percentile=SGPstateData[[state]][["SGP_Configuration"]][["max.order.for.percentile"]],
 					percentile.cuts=SGPstateData[[state]][["SGP_Configuration"]][["percentile.cuts"]],
@@ -897,7 +975,7 @@ function(sgp_object,
 		if (sgp.percentiles.baseline) {
 			for (sgp.iter in rev(par.sgp.config.baseline)) {
 				
-				panel.data=within(tmp_sgp_object, assign("Panel_Data", getPanelData(tmp_sgp_data_for_analysis, "sgp.percentiles", sgp.iter)))
+				panel.data <- within(tmp_sgp_object, assign("Panel_Data", getPanelData(tmp_sgp_data_for_analysis, "sgp.percentiles", sgp.iter)))
 				tmp.knots.boundaries <- getKnotsBoundaries(sgp.iter, state) # Get specific knots and boundaries in case course sequence is different
 				panel.data[["Knots_Boundaries"]][[names(tmp.knots.boundaries)]] <- tmp.knots.boundaries[[names(tmp.knots.boundaries)]]
 
@@ -910,9 +988,9 @@ function(sgp_object,
 					growth.levels=state,
 					panel.data.vnames=getPanelDataVnames("sgp.percentiles", sgp.iter, names(tmp_sgp_data_for_analysis)),
 					additional.vnames.to.return=getPanelDataVnames("sgp.percentiles.to.return", sgp.iter, names(tmp_sgp_data_for_analysis)),
-					grade.progression=sgp.iter[["base.gp"]],
-					content.area.progression=tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["base.gp"]])),
-					year.progression.lags=sgp.iter[["time.lags"]],
+					grade.progression=sgp.iter[["sgp.baseline.grade.sequences"]],
+					content_area.progression=sgp.iter[["sgp.baseline.content.areas"]],
+					year_lags.progression=sgp.iter[["sgp.baseline.panel.years.lags"]],
 					num.prior=min(sgp.iter[["max.order"]], sgp.percentiles.baseline.max.order),
 					percentile.cuts=SGPstateData[[state]][["SGP_Configuration"]][["percentile.cuts"]],
 					calculate.confidence.intervals=calculate.confidence.intervals,
@@ -934,7 +1012,7 @@ function(sgp_object,
 		if (sgp.projections) {
 			for (sgp.iter in par.sgp.config) {
 	
-				panel.data=within(tmp_sgp_object, assign("Panel_Data", getPanelData(tmp_sgp_data_for_analysis, "sgp.projections", sgp.iter)))
+				panel.data <- within(tmp_sgp_object, assign("Panel_Data", getPanelData(tmp_sgp_data_for_analysis, "sgp.projections", sgp.iter)))
 				tmp.knots.boundaries <- getKnotsBoundaries(sgp.iter, state) # Get specific knots and boundaries in case course sequence is different
 				panel.data[["Knots_Boundaries"]][[names(tmp.knots.boundaries)]] <- tmp.knots.boundaries[[names(tmp.knots.boundaries)]]
 
@@ -946,10 +1024,16 @@ function(sgp_object,
 					performance.level.cutscores=state,
 					max.forward.progression.years=3,
 					max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[["sgp.panel.years"]], 1), tail(sgp.iter[["sgp.content.areas"]], 1), state),
-					percentile.trajectory.values=c(1, SGPstateData[[state]][["Growth"]][["Cutscores"]][["Cuts"]], 99),
+					percentile.trajectory.values=c(1, percentile.trajectory.values, 99),
 					panel.data.vnames=getPanelDataVnames("sgp.projections", sgp.iter),
-					grade.progression=sgp.iter[["sgp.projection.grade.sequences"]][[1]],
+					grade.progression=sgp.iter[["sgp.projection.grade.sequences"]],
+					content_area.progression=sgp.iter[["sgp.projection.content.areas"]],
+					year_lags.progression=sgp.iter[["sgp.projection.panel.years.lags"]],
+					grade.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+					content_area.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+					year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
 					calculate.sgps=!(tail(sgp.iter[["sgp.panel.years"]], 1) %in% SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]]),
+					sgp.exact.grade.progression=sgp.iter[["sgp.exact.grade.progression"]],
 					projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 					...)
 				suppressMessages(gc())
@@ -962,7 +1046,7 @@ function(sgp_object,
 		if (sgp.projections.baseline) {
 			for (sgp.iter in par.sgp.config.baseline) {
 
-				panel.data=within(tmp_sgp_object, assign("Panel_Data", getPanelData(tmp_sgp_data_for_analysis, "sgp.projections", sgp.iter)))
+				panel.data <- within(tmp_sgp_object, assign("Panel_Data", getPanelData(tmp_sgp_data_for_analysis, "sgp.projections", sgp.iter)))
 				tmp.knots.boundaries <- getKnotsBoundaries(sgp.iter, state) # Get specific knots and boundaries in case course sequence is different
 				panel.data[["Knots_Boundaries"]][[names(tmp.knots.boundaries)]] <- tmp.knots.boundaries[[names(tmp.knots.boundaries)]]
 
@@ -975,10 +1059,16 @@ function(sgp_object,
 					performance.level.cutscores=state,
 					max.forward.progression.years=3,
 					max.order.for.progression=sgp.projections.baseline.max.order,
-					percentile.trajectory.values=c(1, SGPstateData[[state]][["Growth"]][["Cutscores"]][["Cuts"]], 99),
+					percentile.trajectory.values=c(1, percentile.trajectory.values, 99),
 					panel.data.vnames=getPanelDataVnames("sgp.projections", sgp.iter),
-					grade.progression=sgp.iter[["sgp.projection.grade.sequences"]][[1]],
+					grade.progression=sgp.iter[["sgp.projection.grade.sequences"]],
+					content_area.progression=sgp.iter[["sgp.projection.content.areas"]],
+					year_lags.progression=sgp.iter[["sgp.projection.panel.years.lags"]],
+					grade.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+					content_area.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+					year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
 					calculate.sgps=!(tail(sgp.iter[["sgp.panel.years"]], 1) %in% SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]]),
+					sgp.exact.grade.progression=sgp.iter[["sgp.exact.grade.progression"]],
 					projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 					...)
 				suppressMessages(gc())
@@ -991,7 +1081,7 @@ function(sgp_object,
 		if (sgp.projections.lagged) {
 			for (sgp.iter in par.sgp.config) {
 
-				panel.data=within(tmp_sgp_object, assign("Panel_Data", getPanelData(tmp_sgp_data_for_analysis, "sgp.projections.lagged", sgp.iter)))
+				panel.data <- within(tmp_sgp_object, assign("Panel_Data", getPanelData(tmp_sgp_data_for_analysis, "sgp.projections.lagged", sgp.iter)))
 				tmp.knots.boundaries <- getKnotsBoundaries(sgp.iter, state) # Get specific knots and boundaries in case course sequence is different
 				panel.data[["Knots_Boundaries"]][[names(tmp.knots.boundaries)]] <- tmp.knots.boundaries[[names(tmp.knots.boundaries)]]
 
@@ -1002,12 +1092,18 @@ function(sgp_object,
 					use.my.coefficient.matrices=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
 					use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
 					performance.level.cutscores=state,
+					max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[["sgp.panel.years"]], 1), tail(sgp.iter[["sgp.content.areas"]], 1), state),
 					panel.data.vnames=getPanelDataVnames("sgp.projections.lagged", sgp.iter),
 					achievement.level.prior.vname=paste("ACHIEVEMENT_LEVEL", tail(head(sgp.iter[["sgp.panel.years"]], -1), 1), tail(head(sgp.iter[["sgp.content.areas"]], -1), 1), sep="."),
-					grade.progression=head(sgp.iter[["sgp.grade.sequences"]][[1]], -1),
-					max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[["sgp.panel.years"]], 1), tail(sgp.iter[["sgp.content.areas"]], 1), state),
+					grade.progression=sgp.iter[["sgp.projection.grade.sequences"]],
+					content_area.progression=sgp.iter[["sgp.projection.content.areas"]],
+					year_lags.progression=sgp.iter[["sgp.projection.panel.years.lags"]],
 					lag.increment=1,
+					grade.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+					content_area.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+					year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
 					calculate.sgps=!(tail(sgp.iter[["sgp.panel.years"]], 1) %in% SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]]),
+					sgp.exact.grade.progression=sgp.iter[["sgp.exact.grade.progression"]],
 					projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 					...)
 				suppressMessages(gc())
@@ -1034,9 +1130,15 @@ function(sgp_object,
 					max.order.for.progression=sgp.projections.lagged.baseline.max.order,
 					panel.data.vnames=getPanelDataVnames("sgp.projections.lagged", sgp.iter),
 					achievement.level.prior.vname=paste("ACHIEVEMENT_LEVEL", tail(head(sgp.iter[["sgp.panel.years"]], -1), 1), tail(head(sgp.iter[["sgp.content.areas"]], -1), 1), sep="."),
-					grade.progression=head(sgp.iter[["sgp.grade.sequences"]][[1]], -1),
+					grade.progression=sgp.iter[["sgp.projection.grade.sequences"]],
+					content_area.progression=sgp.iter[["sgp.projection.content.areas"]],
+					year_lags.progression=sgp.iter[["sgp.projection.panel.years.lags"]],
 					lag.increment=1,
+					grade.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+					content_area.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+					year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
 					calculate.sgps=!(tail(sgp.iter[["sgp.panel.years"]], 1) %in% SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]]),
+					sgp.exact.grade.progression=sgp.iter[["sgp.exact.grade.progression"]],
 					projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 					...)
 				suppressMessages(gc())

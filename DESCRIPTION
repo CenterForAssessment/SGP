@@ -2,7 +2,7 @@ Package: SGP
 Type: Package
 Title: An R Package for the Calculation and Visualization of Student Growth Percentiles & Percentile Growth Trajectories.
 Version: 1.2-0.0
-Date: 2013-8-21
+Date: 2013-10-1
 Authors@R: c(person("Damian", "Betebenner", email="dbetebenner@nciea.org", role=c("aut", "cre")), person("Adam", "Van Iwaarden", email="vaniwaarden@colorado.edu", role="aut"),
                     person("Ben", "Domingue", email="ben.domingue@gmail.com", role="aut"), person("Yi", "Shang", email="shangyi@gmail.com", role="aut"))
 Author: Damian W. Betebenner <dbetebenner@nciea.org>, Adam Van Iwaarden <vaniwaarden@colorado.edu>, Ben Domingue <ben.domingue@gmail.com>, and Yi Shang <shangyi@Gmail.com>

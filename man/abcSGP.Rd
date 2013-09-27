@@ -29,6 +29,7 @@ abcSGP(sgp_object,
 	save.intermediate.results=FALSE,
 	save.old.summaries=FALSE,
 	sgPlot.demo.report=FALSE,
+	sgp.config=NULL,
 	sgp.summaries=NULL,
 	summary.groups=NULL,
 	data_supplementary=NULL,
@@ -90,6 +91,8 @@ If missing the function will use the data to infer all the grade progressions fo
   }
   \item{sgPlot.demo.report}{A boolean variable (defaults to FALSE) indicating whether to produce only the demonstration student report catalog. Default is to produce reports for entire current 
   year data.
+  }
+  \item{sgp.config}{Configuration passed to \code{\link{analyzeSGP}} for user specified SGP analyses. See \code{\link{analyzeSGP}} documentation for details on format of configuration argument. 
   }
   \item{sgp.summaries}{A list giving the summaries requested for each group analyzed based upon the \code{summary.group} argument. Default is NULL allowing the \code{\link{summarizeSGP}} 
   function to produce the list of summaries automatically.
