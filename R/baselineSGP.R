@@ -162,7 +162,7 @@ function(sgp_object,
 							content_areas=sgp.baseline.config[[sgp.iter]][["sgp.baseline.content.areas"]],
 							grade.sequences=sgp.baseline.config[[sgp.iter]][["sgp.baseline.grade.sequences"]],
 							baseline.grade.sequences.lags=sgp.baseline.config[[sgp.iter]][["sgp.baseline.grade.sequences.lags"]],
-							knots.boundaries.iter=sgp.baseline.config[[sgp.iter]]
+							knots.boundaries.iter=sgp.baseline.config[[sgp.iter]],
 							parallel.config=parallel.config)
 		}
 
