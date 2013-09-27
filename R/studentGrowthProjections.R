@@ -53,7 +53,7 @@ function(panel.data,	## REQUIRED
         }
 
 	get.my.knots.boundaries.path <- function(content_area, year) {
-		tmp.path.knots.boundaries <- paste(content_area, sgp.labels[['my.year']], sep=".")
+		tmp.path.knots.boundaries <- paste(sgp.labels[['my.subject']], sgp.labels[['my.year']], sep=".")
 		tmp.knots.boundaries.names <-
 			names(panel.data[['Knots_Boundaries']][[tmp.path.knots.boundaries]])[content_area==sapply(strsplit(names(panel.data[['Knots_Boundaries']][[tmp.path.knots.boundaries]]), "[.]"), '[', 1)]
 		if (length(tmp.knots.boundaries.names)==0) {

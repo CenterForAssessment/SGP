@@ -9,7 +9,7 @@ function(
 	sgp.projections.lagged=TRUE,
 	sgp.projections.lagged.baseline=TRUE,
 	sgp.target.scale.scores=FALSE,
-	sgp.target.content_areas=TRUE,
+	sgp.target.content_areas=NULL,
 	max.sgp.target.years.forward=3,
 	update.all.years=FALSE,
 	parallel.config=NULL) {
@@ -43,6 +43,13 @@ function(
 			tmp.messages <- c(tmp.messages, "\tNOTE: argument 'state' required for target SGP calculation. Target SGPs will not be calculated.\n")
 			sgp.projections.lagged <- sgp.projections.lagged.baseline <- FALSE
 		}
+	}
+
+	### Create SGP_TARGET_CONTENT_AREA in certain cases
+
+	if (is.null(sgp.target.content_areas) & length(unique(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]])) >= 2) {
+		sgp.target.content_areas <- TRUE
+		tmp.messages <- c(tmp.messages, "\tNOTE: Multple content areas detected for student growth targets. 'sgp.target.content_areas set to TRUE.\n")
 	}
 
 	## Utility functions
@@ -257,7 +264,7 @@ function(
 			terminal.content_areas <- intersect(terminal.content_areas, sapply(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]], tail, 1))
 		}
 
-		if (sgp.target.content_areas) {
+		if (!is.null(sgp.target.content_areas) && sgp.target.content_areas) {
 			for (my.sgp.target.content_area.iter in target.args[['my.sgp.target.content_area']]) {
 				slot.data[!is.na(get(target.args[['my.sgp.target']][1])), target.args[['my.sgp.target.content_area']] := 
 					getTargetSGPContentArea(GRADE[1], CONTENT_AREA[1], state, max.sgp.target.years.forward, target.args[['my.sgp.target.content_area.iter']]), 

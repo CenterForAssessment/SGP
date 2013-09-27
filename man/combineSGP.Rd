@@ -17,7 +17,7 @@ combineSGP(sgp_object,
 	sgp.projections.lagged=TRUE,
         sgp.projections.lagged.baseline=TRUE,
 	sgp.target.scale.scores=FALSE,
-	sgp.target.content_areas=TRUE,
+	sgp.target.content_areas=NULL,
 	max.sgp.target.years.forward=3,
 	update.all.years=FALSE,
 	parallel.config=NULL)
