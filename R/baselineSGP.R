@@ -11,6 +11,7 @@ function(sgp_object,
 	return.matrices.only=FALSE,
 	calculate.baseline.sgps=TRUE,
 	goodness.of.fit.print=TRUE,
+	parallel.config=NULL,
 	...) {
 
 
@@ -48,7 +49,7 @@ function(sgp_object,
 	############################################
 
 
-	baselineSGP_Internal <- function(sgp_object, state, years, content_areas, grade.sequences, baseline.grade.sequences.lags, knots.boundaries.iter) {
+	baselineSGP_Internal <- function(sgp_object, state, years, content_areas, grade.sequences, baseline.grade.sequences.lags, knots.boundaries.iter, parallel.config) {
 
 		started.at <- proc.time()
 		started.date <- date()
@@ -70,7 +71,7 @@ function(sgp_object,
 		### Get multiple-cohort data and stack up into 'Super-cohort'
 
 		variables.to.get <- c("VALID_CASE", "YEAR", "CONTENT_AREA", "GRADE", "ID", "SCALE_SCORE", "ACHIEVEMENT_LEVEL", "YEAR_WITHIN", "FIRST_OBSERVATION", "LAST_OBSERVATION")
-		tmp_sgp_data_for_analysis <- sgp_object@Data[,intersect(names(sgp_object@Data), variables.to.get), with=FALSE]
+		tmp_sgp_data_for_analysis <- sgp_object@Data[,intersect(names(sgp_object@Data), variables.to.get), with=FALSE]["VALID_CASE"]
 		if ("YEAR_WITHIN" %in% names(tmp_sgp_data_for_analysis)) {
 			setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE, YEAR_WITHIN)
 		} else {
@@ -109,6 +110,7 @@ function(sgp_object,
 				year_lags.progression=baseline.grade.sequences.lags,
 				exact.grade.progression.sequence=TRUE,
 				print.time.taken=FALSE,
+				parallel.config=parallel.config,
 				...)[["Coefficient_Matrices"]])
 
 		message(paste("\tStarted baselineSGP Coefficient Matrix Calculation:", started.date))
@@ -160,7 +162,8 @@ function(sgp_object,
 							content_areas=sgp.baseline.config[[sgp.iter]][["sgp.baseline.content.areas"]],
 							grade.sequences=sgp.baseline.config[[sgp.iter]][["sgp.baseline.grade.sequences"]],
 							baseline.grade.sequences.lags=sgp.baseline.config[[sgp.iter]][["sgp.baseline.grade.sequences.lags"]],
-							knots.boundaries.iter=sgp.baseline.config[[sgp.iter]])
+							knots.boundaries.iter=sgp.baseline.config[[sgp.iter]],
+							parallel.config=parallel.config)
 		}
 
 		sgp_object@SGP <- mergeSGP(Reduce(mergeSGP, tmp.list), sgp_object@SGP)
