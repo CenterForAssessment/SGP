@@ -1,7 +1,7 @@
 `outputSGP` <- 
 function(sgp_object,
 	state=NULL,
-	output.type=c("LONG_Data", "WIDE_Data", "INSTRUCTOR_Data"),
+	output.type=c("LONG_Data", "LONG_FINAL_YEAR_Data", "WIDE_Data", "INSTRUCTOR_Data"),
 	baseline.sgps=FALSE,
 	outputSGP_SUMMARY.years=NULL,
 	outputSGP_SUMMARY.content_areas=NULL,
@@ -47,7 +47,6 @@ function(sgp_object,
 	###
 	###############################################
 
-
 	if ("LONG_Data" %in% output.type) {
 
 		### Create state name
@@ -88,6 +87,56 @@ function(sgp_object,
 		message(paste("\tFinished LONG data production in outputSGP", date(), "in", timetaken(started.at), "\n"))
 
 	} ### END if LONG_Data %in% output.type
+
+
+	###############################################
+	###
+	### LONG_FINAL_YEAR_Data
+	###
+	###############################################
+
+	if ("LONG_FINAL_YEAR_Data" %in% output.type) {
+
+		### Create state name
+
+		if (state %in% c(state.abb, "DEMO")) {
+			tmp.state <- gsub(" ", "_", c(state.name, "Demonstration")[state==c(state.abb, "DEMO")])
+		} else {
+			tmp.state <- gsub(" ", "_", state)
+		}
+
+		### Write LONG table
+
+		started.at <- proc.time()
+		message(paste("\tStarted LONG FINAL YEAR data production in outputSGP", date()))
+
+		final.year <- tail(sort(unique(sgp_object@Data$YEAR)), 1)
+		names.in.data <- which(sgp_object@Names[['names.sgp']] %in% names(sgp_object@Data))
+		if (outputSGP.translate.names) setnames(sgp_object@Data, sgp_object@Names[['names.sgp']][names.in.data], sgp_object@Names[['names.provided']][names.in.data])
+		write.table(subset(sgp_object@Data, YEAR==final.year), file=file.path(outputSGP.directory, paste(tmp.state, "_SGP_LONG_Data_", final.year, ".txt", sep="")), 
+			sep="|", quote=FALSE, row.names=FALSE, na="")
+		if (identical(.Platform$OS.type, "unix")) {
+			if (file.info(file.path(outputSGP.directory, paste(tmp.state, "_SGP_LONG_Data_", final.year, ".txt", sep="")))$size > 4000000000) {
+				tmp.working.directory <- getwd()
+				setwd(file.path(outputSGP.directory))
+				if (paste(tmp.state, "_SGP_LONG_Data_", final.year, ".txt.gz", sep="") %in% list.files()) file.remove(paste(tmp.state, "_SGP_LONG_Data_", final.year, ".txt.gz", sep=""))
+				system(paste("gzip", paste(tmp.state, "_SGP_LONG_Data_", final.year, ".txt", sep="")))
+				setwd(tmp.working.directory)
+			} else {
+				tmp.working.directory <- getwd()
+				setwd(file.path(outputSGP.directory))
+				if (paste(tmp.state, "_SGP_LONG_Data_", final.year, ".txt.zip", sep="") %in% list.files()) file.remove(paste(tmp.state, "_SGP_LONG_Data_", final.year, ".txt.zip", sep=""))
+				suppressMessages(
+					zip(paste(tmp.state, "_SGP_LONG_Data_", final.year, ".txt.zip", sep=""), paste(tmp.state, "_SGP_LONG_Data_", final.year, ".txt", sep=""))
+				)
+				setwd(tmp.working.directory)
+			}
+		}
+		if (outputSGP.translate.names) setnames(sgp_object@Data, sgp_object@Names[['names.provided']][names.in.data], sgp_object@Names[['names.sgp']][names.in.data])
+
+		message(paste("\tFinished LONG FINAL YEAR data production in outputSGP", date(), "in", timetaken(started.at), "\n"))
+
+	} ### END if LONG_FINAL_YEAR_Data %in% output.type
 
 
 	###############################################
