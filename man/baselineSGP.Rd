@@ -18,6 +18,7 @@
 	return.matrices.only=FALSE,
 	calculate.baseline.sgps=TRUE,
 	goodness.of.fit.print=TRUE,
+	parallel.config=NULL,
 	...)
 }
 
@@ -46,6 +47,8 @@ To utilize the maximum matrix order, set to NULL.
   \item{calculate.baseline.sgps}{Boolean variable indicating whether the function will calculate baseline referenced student growth percentiles from baseline referenced coefficient matrices. Defaults to TRUE.
   }
   \item{goodness.of.fit.print}{Boolean variable indicating whether the function will export goodness of fit plots if baseline referenced student growth percentiles are calculated. Defaults to TRUE.
+  }
+  \item{parallel.config}{parallel configuration argument allowing for parallel analysis by 'tau'. Defaults to NULL.
   }
   \item{...}{Arguments to be passed internally to \code{\link{studentGrowthPercentiles}} for finer control over SGP calculations.
   }
