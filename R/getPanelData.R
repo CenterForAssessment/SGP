@@ -16,7 +16,7 @@ function(sgp.data,
 			setnames(tmp.lookup, paste("V", 1:4, sep=""), c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))
 			
 			tmp.lookup.list <- list()
-			for (i in c("FIRST_OBSERVATION", "LAST_OBSERVATION")) {
+			for (i in unique(sgp.iter[["sgp.panel.years.within"]])) {
 				setkeyv(sgp.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", i))
 				setkeyv(tmp.lookup, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", i))
 				suppressWarnings(tmp.lookup.list[[i]] <- data.table(sgp.data[tmp.lookup[get(i)==1], nomatch=0][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, i, sep="."), with=FALSE][,
