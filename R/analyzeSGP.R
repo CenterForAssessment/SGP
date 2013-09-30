@@ -84,6 +84,16 @@ function(sgp_object,
 		percentile.trajectory.values <- c(35, 50, 65)
 	}
 
+	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["sgp.projections.baseline.max.order"]])) {
+		sgp.projections.baseline.max.order <- SGPstateData[[state]][["SGP_Configuration"]][["sgp.projections.baseline.max.order"]]
+	}
+
+	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["sgp.projections.lagged.baseline.max.order"]])) {
+		sgp.projections.lagged.baseline.max.order <- SGPstateData[[state]][["SGP_Configuration"]][["sgp.projections.lagged.baseline.max.order"]]
+	}
+
+
+
 	if ((sgp.projections | sgp.projections.lagged | sgp.projections.baseline | sgp.projections.lagged.baseline) & is.null(SGPstateData[[state]][["Achievement"]][["Cutscores"]])) {
 		message(paste("\tNOTE: Achievement Level cutscores for state, ", state, ", are not in embedded SGPstateData. Projections and Lagged Projections will not be calculated"))
 		sgp.projections <- sgp.projections.lagged <- sgp.projections.baseline <- sgp.projections.lagged.baseline <- FALSE

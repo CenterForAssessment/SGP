@@ -592,8 +592,12 @@ function(panel.data,	## REQUIRED
 		content_area.projection.sequence <- rep(tail(content_area.progression, 1), length(grade.projection.sequence))
 	}
 
-	if (is.null(year_lags.projection.sequence)) {
-		year_lags.projection.sequence <- rep(1, length(grade.projection.sequence)) ### NOTE same length as grade.projection.sequence to include lag between progression and projection sequence
+	if (is.null(year_lags.projection.sequence)) { ### NOTE same length as grade.projection.sequence for lag between progression and projection sequence
+		if (is.numeric(type.convert(grade.projection.sequence))) {
+			year_lags.projection.sequence <- diff(as.numeric(c(tail(grade.progression, 1), grade.projection.sequence)))
+		} else {
+			year_lags.projection.sequence <- rep(1, length(grade.projection.sequence))
+		}
 	}
 
 	grade.content_area.progression <- paste(content_area.progression, paste("GRADE", grade.progression, sep="_"), sep=".")

@@ -65,10 +65,13 @@ function(
 
 	### Call getsplineMatrix
 
-	if (is.null(my.matrix.order)) {
-		tmp.orders <- getsplineMatrix(my.exact.grade.progression.sequence=my.exact.grade.progression.sequence, what.to.return="ORDERS")
-	} else {
-		tmp.orders <- my.matrix.order
+	tmp.orders <- getsplineMatrix(my.exact.grade.progression.sequence=my.exact.grade.progression.sequence, what.to.return="ORDERS")
+	if (!is.null(my.matrix.order)) {
+		if (!my.matrix.order %in% tmp.orders) {
+			return(list(NULL))
+		} else {
+			tmp.orders <- my.matrix.order
+		}
 	}
 
 	if (what.to.return=="ORDERS")  return(tmp.orders)
