@@ -112,8 +112,9 @@ function(sgp_object,
 
 		final.year <- tail(sort(unique(sgp_object@Data$YEAR)), 1)
 		names.in.data <- which(sgp_object@Names[['names.sgp']] %in% names(sgp_object@Data))
-		if (outputSGP.translate.names) setnames(sgp_object@Data, sgp_object@Names[['names.sgp']][names.in.data], sgp_object@Names[['names.provided']][names.in.data])
-		write.table(subset(sgp_object@Data, YEAR==final.year), file=file.path(outputSGP.directory, paste(tmp.state, "_SGP_LONG_Data_", final.year, ".txt", sep="")), 
+		output.data.final.year <- subset(sgp_object@Data, YEAR==final.year)
+		if (outputSGP.translate.names) setnames(output.data.final.year, sgp_object@Names[['names.sgp']][names.in.data], sgp_object@Names[['names.provided']][names.in.data])
+		write.table(output.data.final.year, file=file.path(outputSGP.directory, paste(tmp.state, "_SGP_LONG_Data_", final.year, ".txt", sep="")), 
 			sep="|", quote=FALSE, row.names=FALSE, na="")
 		if (identical(.Platform$OS.type, "unix")) {
 			if (file.info(file.path(outputSGP.directory, paste(tmp.state, "_SGP_LONG_Data_", final.year, ".txt", sep="")))$size > 4000000000) {
