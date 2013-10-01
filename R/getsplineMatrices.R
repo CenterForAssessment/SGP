@@ -6,8 +6,9 @@ function(
 	my.matrix.time.progression,
 	my.matrix.time.progression.lags,
 	my.exact.grade.progression.sequence=FALSE,
-	my.highest.order.matrix=FALSE,
+	return.highest.order.matrix=FALSE,
 	my.matrix.order=NULL,
+	my.matrix.highest.order=NULL,
 	what.to.return="MATRICES") {
 
 	Matrix_TF <- Order <- Grade <- NULL
@@ -65,19 +66,17 @@ function(
 
 	### Call getsplineMatrix
 
-	tmp.orders <- getsplineMatrix(my.exact.grade.progression.sequence=my.exact.grade.progression.sequence, what.to.return="ORDERS")
-	if (!is.null(my.matrix.order)) {
-		if (!my.matrix.order %in% tmp.orders) {
-			return(list(NULL))
-		} else {
-			tmp.orders <- my.matrix.order
-		}
+	if (is.null(my.matrix.order)) {
+		tmp.orders <- getsplineMatrix(my.exact.grade.progression.sequence=my.exact.grade.progression.sequence, what.to.return="ORDERS")
+	} else {
+		if (!is.null(my.matrix.highest.order) && my.matrix.highest.order < my.matrix.order) my.matrix.order <- my.matrix.highest.order
+		tmp.orders <- my.matrix.order
 	}
 
 	if (what.to.return=="ORDERS")  return(tmp.orders)
 
 	if (what.to.return=="MATRICES") {
-		if (my.highest.order.matrix) tmp.orders <- tail(tmp.orders, 1)
+		if (return.highest.order.matrix) tmp.orders <- tail(tmp.orders, 1)
 		return(lapply(tmp.orders, function(x) getsplineMatrix(my.matrix.order=x)))
 	}
 } ### END getsplineMatrices

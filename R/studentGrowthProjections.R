@@ -149,8 +149,8 @@ function(panel.data,	## REQUIRED
 						c(tail(grade.progression, grade.progression.index[i]), head(grade.projection.sequence, j)),
 						tmp.years,
 						tmp.years_lags,
-						my.highest.order.matrix=TRUE,
-						my.matrix.order=max.order.for.progression)[[1]]
+						return.highest.order.matrix=TRUE,
+						my.matrix.highest.order=max.order.for.progression)[[1]]
 				if (dim(tmp.list[[i]][[j]]@.Data)[2] != 100) {
 					tmp.list[[i]][[j]]@.Data <- add.missing.taus.to.matrix(tmp.list[[i]][[j]]@.Data)
 					missing.taus <- TRUE
@@ -592,14 +592,6 @@ function(panel.data,	## REQUIRED
 		content_area.projection.sequence <- rep(tail(content_area.progression, 1), length(grade.projection.sequence))
 	}
 
-	if (is.null(year_lags.projection.sequence)) { ### NOTE same length as grade.projection.sequence for lag between progression and projection sequence
-		if (is.numeric(type.convert(grade.projection.sequence))) {
-			year_lags.projection.sequence <- diff(as.numeric(c(tail(grade.progression, 1), grade.projection.sequence)))
-		} else {
-			year_lags.projection.sequence <- rep(1, length(grade.projection.sequence))
-		}
-	}
-
 	grade.content_area.progression <- paste(content_area.progression, paste("GRADE", grade.progression, sep="_"), sep=".")
 	grade.content_area.projection.sequence <- paste(content_area.projection.sequence, paste("GRADE", grade.projection.sequence, sep="_"), sep=".")
 	tmp.index <- seq(which(tail(grade.content_area.progression, 1)==grade.content_area.projection.sequence)+1, length(grade.projection.sequence))
@@ -609,7 +601,13 @@ function(panel.data,	## REQUIRED
 	if (!missing(max.forward.progression.years)) tmp.index <- head(tmp.index, max.forward.progression.years)
 	grade.projection.sequence <- grade.projection.sequence[tmp.index]
 	content_area.projection.sequence <- content_area.projection.sequence[tmp.index]
-	year_lags.projection.sequence <- year_lags.projection.sequence[tmp.index-1]
+	if (is.null(year_lags.projection.sequence)) { ### NOTE same length as grade.projection.sequence for lag between progression and projection sequence
+		if (is.numeric(type.convert(grade.projection.sequence))) {
+			year_lags.projection.sequence <- diff(as.numeric(c(tail(grade.progression, 1), grade.projection.sequence)))
+		} else {
+			year_lags.projection.sequence <- rep(1, length(grade.projection.sequence))
+		}
+	}
 	grade.content_area.projection.sequence <- grade.content_area.projection.sequence[tmp.index]
 
 	### Calculate grade.projection.sequence.priors 
