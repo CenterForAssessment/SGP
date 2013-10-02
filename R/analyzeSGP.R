@@ -92,7 +92,9 @@ function(sgp_object,
 		sgp.projections.lagged.baseline.max.order <- SGPstateData[[state]][["SGP_Configuration"]][["sgp.projections.lagged.baseline.max.order"]]
 	}
 
-
+	if (!is.null(sgp.config) && sgp.config.drop.nonsequential.grade.progression.variables) {
+		sgp.config.drop.nonsequential.grade.progression.variables <- FALSE
+	}
 
 	if ((sgp.projections | sgp.projections.lagged | sgp.projections.baseline | sgp.projections.lagged.baseline) & is.null(SGPstateData[[state]][["Achievement"]][["Cutscores"]])) {
 		message(paste("\tNOTE: Achievement Level cutscores for state, ", state, ", are not in embedded SGPstateData. Projections and Lagged Projections will not be calculated"))
