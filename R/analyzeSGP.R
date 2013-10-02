@@ -92,7 +92,9 @@ function(sgp_object,
 		sgp.projections.lagged.baseline.max.order <- SGPstateData[[state]][["SGP_Configuration"]][["sgp.projections.lagged.baseline.max.order"]]
 	}
 
-
+	if (!is.null(sgp.config) && sgp.config.drop.nonsequential.grade.progression.variables) {
+		sgp.config.drop.nonsequential.grade.progression.variables <- FALSE
+	}
 
 	if ((sgp.projections | sgp.projections.lagged | sgp.projections.baseline | sgp.projections.lagged.baseline) & is.null(SGPstateData[[state]][["Achievement"]][["Cutscores"]])) {
 		message(paste("\tNOTE: Achievement Level cutscores for state, ", state, ", are not in embedded SGPstateData. Projections and Lagged Projections will not be calculated"))
@@ -259,7 +261,8 @@ function(sgp_object,
 	if (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline) {
 		if (any(sapply(par.sgp.config, function(x) identical(x[['sgp.baseline.grade.sequences']], "NO_BASELINE_COEFFICIENT_MATRICES")))) {
 			baseline.missings <- which(sapply(par.sgp.config, function(x) identical(x[['sgp.baseline.grade.sequences']], "NO_BASELINE_COEFFICIENT_MATRICES")))
-			baseline.missings <- paste(unlist(sapply(par.sgp.config[baseline.missings], function(x) paste(tail(x$sgp.content.areas, 1), x$sgp.grade.sequences))), collapse=";\n\t\t")
+			baseline.missings <- paste(unlist(sapply(baseline.missings, function(x) 
+				paste(tail(par.sgp.config[[x]]$sgp.content.areas, 1), paste(par.sgp.config[[x]]$sgp.grade.sequences, collapse=", "), sep=": "))), collapse=";\n\t\t")
 			message("\tNOTE: Baseline coefficient matrices are not available for:\n\t\t", baseline.missings, ".", sep="")
 		}
 		par.sgp.config.baseline <- par.sgp.config[which(sapply(par.sgp.config, function(x) !identical(x[['sgp.baseline.grade.sequences']], "NO_BASELINE_COEFFICIENT_MATRICES")))]

@@ -82,7 +82,6 @@ function(sgp_object,
 				setwd(tmp.working.directory)
 			}
 		}
-		if (outputSGP.translate.names) setnames(sgp_object@Data, sgp_object@Names[['names.provided']][names.in.data], sgp_object@Names[['names.sgp']][names.in.data])
 
 		message(paste("\tFinished LONG data production in outputSGP", date(), "in", timetaken(started.at), "\n"))
 
@@ -133,7 +132,6 @@ function(sgp_object,
 				setwd(tmp.working.directory)
 			}
 		}
-		if (outputSGP.translate.names) setnames(sgp_object@Data, sgp_object@Names[['names.provided']][names.in.data], sgp_object@Names[['names.sgp']][names.in.data])
 
 		message(paste("\tFinished LONG FINAL YEAR data production in outputSGP", date(), "in", timetaken(started.at), "\n"))
 
