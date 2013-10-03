@@ -55,7 +55,7 @@ studentGrowthPercentiles(panel.data,
   \item{panel.data}{REQUIRED. Object of class list, data.frame, or matrix containing longitudinal student data in wide format. If supplied as part of a list, data should be 
   contained in \code{panel.data$Panel_Data}. Data must be formatted so that student ID is the first variable/column, student grade/time variables for each time period, 
   from earliest to most recent, are the next variables/columns, and student scale score variables for each year, from earliest to latest, are the remaining 
-  variables/columns. See \code{\link{sgpData}} for an exemplar data set. NOTE: The column position of the variables IS IMPORTANT, NOT the names of the variables. 
+  variables/columns. See \code{\link[SGPdata]{sgpData}} for an exemplar data set. NOTE: The column position of the variables IS IMPORTANT, NOT the names of the variables. 
   }
   \item{sgp.labels}{REQUIRED. A list, \code{sgp.labels}, of the form  \code{list(my.year= ,} \cr 
   \code{my.subject= )} or \code{list(my.year= , my.subject= , my.extra.label)}. The user-specified values are used to save the student growth percentiles, 
@@ -207,7 +207,7 @@ Koenker, R. (2005). \emph{Quantile regression}. Cambridge: Cambridge University 
 
 \author{Damian W. Betebenner \email{dbetebenner@nciea.org} and Adam Van Iwaarden \email{vaniwaarden@colorado.edu}}
 
-\seealso{\code{\link{studentGrowthProjections}}, \code{\link{sgpData}}, \code{\link{sgpData_LONG}}, \code{\link{SGPstateData}}}
+\seealso{\code{\link{studentGrowthProjections}}, \code{\link[SGPdata]{sgpData}}, \code{\link[SGPdata]{sgpData_LONG}}, \code{\link{SGPstateData}}}
 
 
 \examples{

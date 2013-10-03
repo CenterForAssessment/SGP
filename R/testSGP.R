@@ -12,6 +12,7 @@ function(
 		message("\t\t2. abcSGP test using all available years except most recent followed by an updated analysis using the most recent year's data.")
 	}
 
+	suppressPackageStartupMessages(require(SGPdata))
 
 	#######################################################################################################################################################
 	###
