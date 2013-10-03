@@ -26,7 +26,7 @@ License: \tab CC BY-SA 3.0 US + file LICENSE\cr
 LazyLoad: \tab yes\cr
 }
 Calculation of student growth percentiles and percentile growth trajectories/projections is typically performed by grade and subject. Data for growth percentile 
-calculation must be specifically formatted.  See \code{\link{sgpData}} for an example data set. Batch R syntax for performing analyses across all grades and years is 
+calculation must be specifically formatted.  See \code{\link[SGPdata]{sgpData}} for an example data set. Batch R syntax for performing analyses across all grades and years is 
 provided in the examples of the \code{\link{studentGrowthPercentiles}} and \code{\link{studentGrowthProjections}} using the higher level functions 
 \code{\link{prepareSGP}}, \code{\link{analyzeSGP}}, \code{\link{combineSGP}}, \code{\link{summarizeSGP}}, and \code{visualizeSGP}.} 
 
