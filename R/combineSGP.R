@@ -18,7 +18,7 @@ function(
 	message(paste("Started combineSGP", date()))
 
 	ID <- CONTENT_AREA <- YEAR <- GRADE <- YEAR_INTEGER_TMP <- ACHIEVEMENT_LEVEL <- CATCH_UP_KEEP_UP_STATUS_INITIAL <- MOVE_UP_STAY_UP_STATUS_INITIAL <- VALID_CASE <- NULL
-	MOVE_UP_STAY_UP_STATUS <- CATCH_UP_KEEP_UP_STATUS <- ACHIEVEMENT_LEVEL_PRIOR <- target.type <- NULL
+	MOVE_UP_STAY_UP_STATUS <- CATCH_UP_KEEP_UP_STATUS <- ACHIEVEMENT_LEVEL_PRIOR <- target.type <- TEMP <- NULL
 
 	tmp.messages <- NULL
 
@@ -119,7 +119,8 @@ function(
 	if (update.all.years) {
 		variables.to.null.out <- c("SGP", "SGP_SIMEX", "SGP_LEVEL", "SGP_STANDARD_ERROR", "SCALE_SCORE_PRIOR", "SCALE_SCORE_PRIOR_STANDARDIZED", "SGP_BASELINE", "SGP_LEVEL_BASELINE", 
 					   "SGP_TARGET", "SGP_TARGET_MU", "SGP_TARGET_MU_BASELINE", "SGP_TARGET_MOVE_UP_STAY_UP", "SGP_TARGET_MOVE_UP_STAY_UP_BASELINE", "ACHIEVEMENT_LEVEL_PRIOR", 
-					   "CATCH_UP_KEEP_UP_STATUS_INITIAL", "SGP_TARGET_BASELINE", "CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STATUS", "MOVE_UP_STAY_UP_STATUS",
+					   "CATCH_UP_KEEP_UP_STATUS_INITIAL", "SGP_TARGET_BASELINE", "CATCH_UP_KEEP_UP_STATUS", "CATCH_UP_KEEP_UP_STATUS_BASELINE",
+					   "MOVE_UP_STATUS", "MOVE_UP_STAY_UP_STATUS", "MOVE_UP_STAY_UP_STATUS_BASELINE",
 					   "SGP_NORM_GROUP", "SGP_NORM_GROUP_BASELINE", "SGP_BASELINE_STANDARD_ERROR", "SGP_NORM_GROUP_SCALE_SCORES", "SGP_NORM_GROUP_BASELINE_SCALE_SCORES",
 					   grep("SGP_ORDER", names(slot.data), value=TRUE), grep("SGP_BASELINE_ORDER", names(slot.data), value=TRUE),
 					   grep("PERCENTILE_CUT", names(slot.data), value=TRUE), grep("CONFIDENCE_BOUND", names(slot.data), value=TRUE),
@@ -165,7 +166,8 @@ function(
 		} else {
 			variables.to.merge <- names(tmp.data) %w/o% key(slot.data)
 			for (tmp.merge.variable in variables.to.merge) {
-				slot.data[tmp.data[,key(slot.data), with=FALSE], tmp.merge.variable := tmp.data[,tmp.merge.variable, with=FALSE], with=FALSE, nomatch=0]
+				slot.data[tmp.data[,key(slot.data), with=FALSE], TEMP := tmp.data[[tmp.merge.variable]], nomatch=0]
+				setnames(slot.data, "TEMP", tmp.merge.variable)
 			}
 		}
 
@@ -213,7 +215,8 @@ function(
 		} else {
 			variables.to.merge <- names(tmp.data) %w/o% c(key(slot.data), "SCALE_SCORE_PRIOR", "SCALE_SCORE_PRIOR_STANDARDIZED")
 			for (tmp.merge.variable in variables.to.merge) {
-				slot.data[tmp.data[,key(slot.data), with=FALSE], tmp.merge.variable := tmp.data[, tmp.merge.variable, with=FALSE], with=FALSE, nomatch=0]
+				slot.data[tmp.data[,key(slot.data), with=FALSE], TEMP := tmp.data[[tmp.merge.variable]], nomatch=0]
+				setnames(slot.data, "TEMP", tmp.merge.variable)
 			}
 		}
 
@@ -251,7 +254,7 @@ function(
 					variables.to.merge <- names(tmp.data) %w/o% key(slot.data)
 					for (tmp.merge.variable in variables.to.merge) {
 						slot.data[tmp.data[,intersect(key(slot.data), names(tmp.data)), with=FALSE],
-								tmp.merge.variable := tmp.data[, tmp.merge.variable, with=FALSE], with=FALSE, nomatch=0]
+							tmp.merge.variable := tmp.data[, tmp.merge.variable, with=FALSE], with=FALSE, nomatch=0]
 					}
 				}
 			}
