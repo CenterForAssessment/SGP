@@ -17,7 +17,7 @@ prepareSGP(data,
 }
 
 \arguments{
-  \item{data}{A panel data set in long form or an object of class SGP. See embedded \code{\link{sgpData_LONG}} data set for an exemplar. 
+  \item{data}{A panel data set in long form or an object of class SGP. See embedded \code{\link[SGPdata]{sgpData_LONG}} data set for an exemplar. 
   }
   \item{data_supplementary}{Supplementary data (e.g., student teacher lookup tables) to be embedded in SGP object in slot @Data_Supplementary. Data must be embedded in a list. Default is no data supplied.
   }
@@ -39,7 +39,7 @@ for summarization and reporting.
 
 \author{Ben Domgingue \email{ben.domingue@gmail.com} and Damian W. Betebenner \email{dbetebenner@nciea.org}}
 
-\seealso{\code{\link{sgpData_LONG}}}
+\seealso{\code{\link[SGPdata]{sgpData_LONG}}}
 
 \examples{
 \dontrun{

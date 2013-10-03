@@ -35,7 +35,7 @@ studentGrowthProjections(panel.data,
 
 \arguments{
   \item{panel.data}{Object of class \code{list} containing longitudinal student data in wide format in \code{panel.data$Panel_Data}.  See \code{\link{studentGrowthPercentiles}}
-    for data requirements.  List object must also contain \code{panel.data$Knots_Boundaries} and \code{panel.data$Coefficient_Matrices}.  See \code{\link{sgpData}} for an 
+    for data requirements.  List object must also contain \code{panel.data$Knots_Boundaries} and \code{panel.data$Coefficient_Matrices}.  See \code{\link[SGPdata]{sgpData}} for an 
     exemplar data set. NOTE: The column position of the variables IS IMPORTANT, NOT the names of the variables. 
   }
   \item{sgp.labels}{REQUIRED. A list, \code{sgp.labels}, of the form  \code{list(my.year= ,} \cr
@@ -153,7 +153,7 @@ Dette, H. & Volgushev, S. (2008). Non-crossing non-parametric estimates of quant
   \code{performance.level.cutscores}) or included in the \code{SGPstateData} data set.  If your state's cutscores are not included or are incorrect, please contact \email{dbetebenner@nciea.org} to have cutscores added or corrected!
 }
 
-\seealso{\code{\link{studentGrowthPercentiles}}, \code{\link{sgpData}}}
+\seealso{\code{\link{studentGrowthPercentiles}}, \code{\link[SGPdata]{sgpData}}}
 
 \examples{
 \dontrun{

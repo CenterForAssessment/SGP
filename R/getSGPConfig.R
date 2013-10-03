@@ -145,10 +145,6 @@ function(sgp_object,
 							my.matrix.time.progression.lags=par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']],
 							what.to.return="ORDERS")
 
-							if (length(tmp.orders) > 0) tmp.matrices.tf <- TRUE
-							if (par.sgp.config[[b.iter[b]]][['sgp.exact.grade.progression']] && !tmp.max.order %in% tmp.orders) {
-								tmp.matrices.tf <- FALSE
-							}
 						if (length(tmp.orders) > 0) {
 							tmp.matrices.tf <- TRUE
 							tmp.max.order <- max(tmp.orders)
