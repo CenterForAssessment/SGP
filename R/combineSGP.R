@@ -18,7 +18,7 @@ function(
 	message(paste("Started combineSGP", date()))
 
 	ID <- CONTENT_AREA <- YEAR <- GRADE <- YEAR_INTEGER_TMP <- ACHIEVEMENT_LEVEL <- CATCH_UP_KEEP_UP_STATUS_INITIAL <- MOVE_UP_STAY_UP_STATUS_INITIAL <- VALID_CASE <- NULL
-	MOVE_UP_STAY_UP_STATUS <- CATCH_UP_KEEP_UP_STATUS <- ACHIEVEMENT_LEVEL_PRIOR <- target.type <- TEMP <- NULL
+	MOVE_UP_STAY_UP_STATUS <- CATCH_UP_KEEP_UP_STATUS <- ACHIEVEMENT_LEVEL_PRIOR <- target.type <- NULL
 
 	tmp.messages <- NULL
 
@@ -165,10 +165,8 @@ function(
 			slot.data <- tmp.data[slot.data]
 		} else {
 			variables.to.merge <- names(tmp.data) %w/o% key(slot.data)
-			for (tmp.merge.variable in variables.to.merge) {
-				slot.data[tmp.data[,key(slot.data), with=FALSE], TEMP := tmp.data[[tmp.merge.variable]], nomatch=0]
-				setnames(slot.data, "TEMP", tmp.merge.variable)
-			}
+			tmp.index <- slot.data[tmp.data[,key(slot.data), with=FALSE], which=TRUE]
+			slot.data[tmp.index, variables.to.merge := tmp.data[, variables.to.merge, with=FALSE], with=FALSE, nomatch=0]
 		}
 
 		setkeyv(slot.data, getKey(slot.data))
@@ -214,10 +212,8 @@ function(
 			slot.data <- tmp.data[,!c("SCALE_SCORE_PRIOR", "SCALE_SCORE_PRIOR_STANDARDIZED"), with=FALSE][slot.data]
 		} else {
 			variables.to.merge <- names(tmp.data) %w/o% c(key(slot.data), "SCALE_SCORE_PRIOR", "SCALE_SCORE_PRIOR_STANDARDIZED")
-			for (tmp.merge.variable in variables.to.merge) {
-				slot.data[tmp.data[,key(slot.data), with=FALSE], TEMP := tmp.data[[tmp.merge.variable]], nomatch=0]
-				setnames(slot.data, "TEMP", tmp.merge.variable)
-			}
+			tmp.index <- slot.data[tmp.data[,key(slot.data), with=FALSE], which=TRUE]
+			slot.data[tmp.index, variables.to.merge := tmp.data[, variables.to.merge, with=FALSE], with=FALSE, nomatch=0]
 		}
 
 		setkeyv(slot.data, getKey(slot.data))
@@ -252,10 +248,8 @@ function(
 					slot.data <- tmp.data[slot.data]
 				} else {
 					variables.to.merge <- names(tmp.data) %w/o% key(slot.data)
-					for (tmp.merge.variable in variables.to.merge) {
-						slot.data[tmp.data[,intersect(key(slot.data), names(tmp.data)), with=FALSE],
-							tmp.merge.variable := tmp.data[, tmp.merge.variable, with=FALSE], with=FALSE, nomatch=0]
-					}
+					tmp.index <- slot.data[tmp.data[,intersect(key(slot.data), names(tmp.data)), with=FALSE], which=TRUE]
+					slot.data[tmp.index, variables.to.merge := tmp.data[, variables.to.merge, with=FALSE], with=FALSE, nomatch=0]
 				}
 			}
 		}
