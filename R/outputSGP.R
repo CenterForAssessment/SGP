@@ -63,8 +63,9 @@ function(sgp_object,
 		message(paste("\tStarted LONG data production in outputSGP", date()))
 
 		names.in.data <- which(sgp_object@Names[['names.sgp']] %in% names(sgp_object@Data))
-		if (outputSGP.translate.names) setnames(sgp_object@Data, sgp_object@Names[['names.sgp']][names.in.data], sgp_object@Names[['names.provided']][names.in.data])
-		write.table(sgp_object@Data, file=file.path(outputSGP.directory, paste(tmp.state, "SGP_LONG_Data.txt", sep="_")), sep="|", quote=FALSE, row.names=FALSE, na="")
+		output.data <- copy(sgp_object@Data)
+		if (outputSGP.translate.names) setnames(output.data, sgp_object@Names[['names.sgp']][names.in.data], sgp_object@Names[['names.provided']][names.in.data])
+		write.table(output.data, file=file.path(outputSGP.directory, paste(tmp.state, "SGP_LONG_Data.txt", sep="_")), sep="|", quote=FALSE, row.names=FALSE, na="")
 		if (identical(.Platform$OS.type, "unix")) {
 			if (file.info(file.path(outputSGP.directory, paste(tmp.state, "SGP_LONG_Data.txt", sep="_")))$size > 4000000000) {
 				tmp.working.directory <- getwd()
