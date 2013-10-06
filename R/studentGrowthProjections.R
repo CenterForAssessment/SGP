@@ -520,6 +520,8 @@ function(panel.data,	## REQUIRED
 	if (length(grade.progression) > num.panels) {
 		tmp.messages <- c(tmp.messages, paste("\t\tNOTE: Supplied grade progression, grade.progress=c(", paste(grade.progression, collapse=","), "), exceeds number of panels (", num.panels, ") in provided data.\n\t\t Analyses will utilize maximum number of priors supplied by the data.\n", sep=""))
 		grade.progression <- tail(grade.progression, num.panels)
+		if (!is.null(content_area.progression)) content_area.progression <- tail(content_area.progression, length(grade.progression))
+		if (!is.null(year_lags.progression)) year_lags.progression <- tail(year_lags.progression, length(grade.progression)-1)
 	}
 
 	if (!is.null(max.order.for.progression)) {
