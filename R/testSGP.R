@@ -369,6 +369,50 @@ function(
 		Rprof(NULL)
 	}
 
+	### TEST of SGP variable
+
+	tmp.messages <- ("\t##### Results of testSGP test number 3 #####\n\n")
+	
+	if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 2896606L)) {
+		tmp.messages <- c(tmp.messages, "\tTest of variable SGP: OK\n")
+	} else {
+		tmp.messages <- c(tmp.messages, "\tTest of variable SGP: FAIL\n")
+	}
+
+	### TEST of SGP_TARGET_3_YEAR variable
+
+	if (identical(sum(Demonstration_SGP@Data$SGP_TARGET_3_YEAR, na.rm=TRUE), 2896606L)) {
+		tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_3_YEAR: OK\n")
+	} else {
+		tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_3_YEAR: FAIL\n")
+	}
+
+	### TEST of SGP_TARGET_MOVE_UP_STAY_UP variable
+
+	if (identical(sum(Demonstration_SGP@Data$SGP_TARGET_MOVE_UP_STAY_UP, na.rm=TRUE), 3113673L)) {
+		tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP: OK\n")
+	} else {
+		tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP: FAIL\n")
+	}
+
+	### TEST of CATCH_UP_KEEP_UP_STATUS variable
+
+	if (identical(as.numeric(table(Demonstration_SGP@Data$CATCH_UP_KEEP_UP_STATUS)), c(13977, 3847, 11202, 29107))) {
+		tmp.messages <- c(tmp.messages, "\tTest of variable CATCH_UP_KEEP_UP_STATUS: OK\n")
+	} else {
+		tmp.messages <- c(tmp.messages, "\tTest of variable CATCH_UP_KEEP_UP_STATUS: FAIL\n")
+	}
+
+	### TEST of MOVE_UP_STAY_UP_STATUS variable
+
+	if (identical(as.numeric(table(Demonstration_SGP@Data$MOVE_UP_STAY_UP_STATUS)), c(24801, 4647, 6186, 4675))) {
+		tmp.messages <- c(tmp.messages, "\tTest of variable MOVE_UP_STAY_UP_STATUS: OK\n")
+	} else {
+		tmp.messages <- c(tmp.messages, "\tTest of variable MOVE_UP_STAY_UP_STATUS: FAIL\n")
+	}
+
+	tmp.messages <- c(tmp.messages, "\n##### End testSGP test number 3 #####\n")
+	cat(tmp.messages)
 	} ### End TEST_NUMBER 3
 
 } ### END testSGP Function
