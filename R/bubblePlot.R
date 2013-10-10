@@ -671,7 +671,8 @@ if (!is.null(bubble_plot_data.LEVELS) & !is.null(bubble_plot_titles.NOTE)) {
 	stop('\n\n\t\t Both NOTE and LEVELS can not be used simulateously.  Please choose one and proceed.\n')
 }
 if (is.null(bubble_plot_data.LEVELS) & !is.null(bubble_plot_titles.NOTE)){
-	grid.text(x=0.5, y=0.55, bubble_plot_titles.NOTE, gp=gpar(col=format.colors.font[1], fontface=3, cex=1.2))
+	y.pos <- (nchar(bubble_plot_titles.NOTE)/300) * 0.35  # attempt to be adaptive with NOTE length...
+	grid.text(x=0.5, y=y.pos, bubble_plot_titles.NOTE, gp=gpar(col=format.colors.font[1], fontface=3, cex=1.0))
 }
 
 popViewport() ## pop right.legend.vp
