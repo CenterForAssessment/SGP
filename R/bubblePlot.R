@@ -19,6 +19,7 @@
 	bubble_plot_titles.LEGEND1="School Size",
 	bubble_plot_titles.LEGEND2_P1=NULL,
 	bubble_plot_titles.LEGEND2_P2=NULL,
+	bubble_plot_titles.NOTE = NULL,
 	bubble_plot_configs.BUBBLE_MIN_MAX=c(0.03, 0.03),
 	bubble_plot_configs.BUBBLE_X_TICKS=seq(0,100,10),
 	bubble_plot_configs.BUBBLE_X_TICKS_SIZE=c(rep(0.6, 5), 1, rep(0.6, 5)),
@@ -664,6 +665,14 @@ for (i in 1:num.levels){
 grid.circle(x=0.15, y=y.coors[i], r=unit(0.1, "inches"), gp=gpar(col="grey14", lwd=0.7, fill=bubblecolor(i)))
 grid.text(x=0.25, y=y.coors[i], bubble_plot_labels.LEVELS[i], gp=gpar(col=format.colors.font[1], cex=0.9), just="left")
 }
+}
+
+if (!is.null(bubble_plot_data.LEVELS) & !is.null(bubble_plot_titles.NOTE)) {
+	stop('\n\n\t\t Both NOTE and LEVELS can not be used simulateously.  Please choose one and proceed.\n')
+}
+if (is.null(bubble_plot_data.LEVELS) & !is.null(bubble_plot_titles.NOTE)){
+	y.pos <- (nchar(bubble_plot_titles.NOTE)/300) * 0.35  # attempt to be adaptive with NOTE length...
+	grid.text(x=0.5, y=y.pos, bubble_plot_titles.NOTE, gp=gpar(col=format.colors.font[1], fontface=3, cex=1.0))
 }
 
 popViewport() ## pop right.legend.vp
