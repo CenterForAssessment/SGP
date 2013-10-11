@@ -33,6 +33,7 @@ bubblePlot(
 	bubble_plot_titles.LEGEND1="School Size",
 	bubble_plot_titles.LEGEND2_P1=NULL,
 	bubble_plot_titles.LEGEND2_P2=NULL,
+	bubble_plot_titles.NOTE=NULL,
 	bubble_plot_configs.BUBBLE_MIN_MAX=c(0.03, 0.03),
 	bubble_plot_configs.BUBBLE_X_TICKS=seq(0,100,10),
 	bubble_plot_configs.BUBBLE_X_TICKS_SIZE=c(rep(0.6, 5), 1, rep(0.6, 5)),
@@ -130,6 +131,10 @@ bubblePlot(
 	}
 	\item{bubble_plot_titles.LEGEND2_P2}{
 	The 2nd line of the title of the lower legend of the bubble plot. Default value is \code{bubble_plot_titles.LEGEND2_P2=NULL}.
+	}
+	\item{bubble_plot_titles.NOTE}{
+	A note, message, description, etc to be placed in lower half of the legend. Default value is \code{bubble_plot_titles.NOTE=NULL}.  
+	Note that this can only be used if there are not LEVELS (and therefore no second legend).
 	}
 	\item{bubble_plot_configs.BUBBLE_MIN_MAX}{
 	A vector of length two indicating min and max values for the bubbles in inches. Default value is \code{bubble_plot_configs.BUBBLE_MIN_MAX=c(0.03, 0.03)}.
