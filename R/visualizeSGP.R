@@ -664,13 +664,8 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 
 	#### Change SCALE_SCORE if Scale_Score_Lookup exists in SGPstateData (NOT necessary if wide data is provided)
 
-		if (!is.null(SGPstateData[[state]][['Assessment_Program_Information']][['Scale_Score_Lookup']])) {
-			tmp.dt <- tmp.table[!is.na(SCALE_SCORE), findInterval(SCALE_SCORE, 
-				SGPstateData[[state]][['Assessment_Program_Information']][['Scale_Score_Lookup']][list(CONTENT_AREA[1], YEAR[1], GRADE[1])][['SCALE_SCORE']])+1, 
-				by=list(CONTENT_AREA, YEAR, GRADE)]
-			tmp.table[!is.na(SCALE_SCORE), SCALE_SCORE := tmp.dt[,
-				SGPstateData[[state]][['Assessment_Program_Information']][['Scale_Score_Lookup']][list(CONTENT_AREA[1], YEAR[1], GRADE[1])][['TRANSFORMED_SCALE_SCORE']][V1],
-				by=list(CONTENT_AREA, YEAR, GRADE)][['V1']]]
+		if ("SCALE_SCORE_ACTUAL" %in% names(sgp_object@Data)) {
+			tmp.table[,SCALE_SCORE:=SCALE_SCORE_ACTUAL]
 		}
 
 	#### Anonymize (if requested) (NOT necessary if wide data is provided)
