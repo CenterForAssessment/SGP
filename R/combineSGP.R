@@ -126,7 +126,7 @@ function(
 					   grep("PERCENTILE_CUT", names(slot.data), value=TRUE), grep("CONFIDENCE_BOUND", names(slot.data), value=TRUE),
 					   paste("SGP_TARGET", max.sgp.target.years.forward, "YEAR", sep="_"), paste("SGP_TARGET_MOVE_UP_STAY_UP", max.sgp.target.years.forward, "YEAR", sep="_"), 
 					   paste("SGP_TARGET", max.sgp.target.years.forward, "YEAR_CURRENT", sep="_"), paste("SGP_TARGET_MOVE_UP_STAY_UP", max.sgp.target.years.forward, "YEAR_CURRENT", sep="_"), 
-					   paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, "YEAR", sep="_"), paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", max.sgp.target.years.forward, "YEAR", sep="_"))
+					   paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, "YEAR", sep="_"), paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", max.sgp.target.years.forward, "YEAR", sep="_"),
 					   paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, "YEAR_CURRENT", sep="_"), paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", max.sgp.target.years.forward, "YEAR_CURRENT", sep="_"))
 
 		for (tmp.variables.to.null.out in intersect(names(slot.data), variables.to.null.out)) {
