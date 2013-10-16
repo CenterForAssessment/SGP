@@ -7,10 +7,11 @@ function(Scale_Scores,               ## List of Scale Scores
 	SGP_Levels,                  ## List of SGP Levels
 	Grades,                      ## List of Grade levels for student
 	Cuts,                        ## List of NY1, NY2, and NY3 cutscores
-	Scale_Score_Targets_CUKU,
-	Scale_Score_Targets_MUSU,
-	Scale_Score_Targets_Current_CUKU,
-	Scale_Score_Targets_Current_MUSU,
+	SGP_Targets,                 ## List of CUKU, CUKU_Current, MUSU, MUSU_Current (multi) year targets
+	Scale_Score_Targets_CUKU,    ## Next year CUKU scale score targets
+	Scale_Score_Targets_MUSU,    ## Next year MUSU scale score targets
+	Scale_Score_Targets_Current_CUKU,  ## This year CUKU scale score targets
+	Scale_Score_Targets_Current_MUSU,  ## This year MUSU scale score targets
 	Connect_Points="Arrows",     ## Current "Arrows" or "None"
 	Cutscores,                   ## data.frame of long formatted achievement level cutscores
 	Report_Parameters) {         ## list containing Current_Year, Content_Area, State, Denote_Content_Area
@@ -29,6 +30,8 @@ growth.level.cutscores.text <- SGPstateData[[Report_Parameters$State]][["Growth"
 grades.reported.in.state <- SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Grades_Reported"]][[Report_Parameters$Content_Area]]
 test.abbreviation <- SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Abbreviation"]]
 
+scale_score.target.types <- c("Scale_Score_Targets_CUKU", "Scale_Score_Targets_MUSU", "Scale_Score_Targets_Current_CUKU", "Scale_Score_Targets_Current_MUSU")
+
 if (identical(SGPstateData[[Report_Parameters$State]][['Assessment_Program_Information']][['Test_Season']], "Fall")) {
 	test.season <- SGPstateData[[Report_Parameters$State]][['Assessment_Program_Information']][['Test_Season']]
 } else {
@@ -41,6 +44,11 @@ if (is.null(SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["arr
 	arrow.legend.color <- rev(diverge_hcl(number.growth.levels, h = c(180, 40), c = 255, l = c(20, 100)))
 } else {
 	arrow.legend.color <- SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["arrow.legend.color"]]
+}
+if (is.null(SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["sgp.target.types"]])) {
+	sgp.target.types <- c("Scale_Score_Targets_CUKU", "Scale_Score_Targets_MUSU", "Scale_Score_Targets_Current_CUKU", "Scale_Score_Targets_Current_MUSU")
+} else {
+	sgp.target.types <- SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["sgp.target.types"]]
 }
 missing.data.symbol <- "--"
 studentGrowthPlot.year.span <- 5
@@ -422,13 +430,14 @@ if (Grades[1] != max(grades.reported.in.state) & !is.na(cuts.ny1.text[1])){
 			height=unit(min(yscale.range[2], as.numeric(cuts.ny1.text[i+1])) - max(yscale.range[1], as.numeric(cuts.ny1.text[i])), "native"), 
 			width=unit(0.04, "native"), r=unit(0.45, "snpc"), gp=gpar(lwd=0.3, col=border.color, fill=arrow.legend.color[i]))
 
-		grid.text(x=current.year+grade.values$increment_for_projection+.05, 
-			y=(max(yscale.range[1], cuts.ny1.text[i])+min(yscale.range[2], cuts.ny1.text[i+1]))/2, growth.level.labels[i],
-			default.units="native", just="left", gp=gpar(cex=.4, col=border.color))
+		if (display.fan.growth.levels) {
+			grid.text(x=current.year+grade.values$increment_for_projection+.05, 
+				y=(max(yscale.range[1], cuts.ny1.text[i])+min(yscale.range[2], cuts.ny1.text[i+1]))/2, growth.level.labels[i],
+				default.units="native", just="left", gp=gpar(cex=.4, col=border.color))
+		}
 	}
 }
 
-scale_score.target.types <- c("Scale_Score_Targets_CUKU", "Scale_Score_Targets_MUSU", "Scale_Score_Targets_Current_CUKU", "Scale_Score_Targets_Current_MUSU")
 for (i in scale_score.target.types) {
 	if (length(grep("CUKU", i))==0) target.format <- "black" else target.format <- "black"
 	if (length(get(i)[["NY1"]]) > 0 && length(grep("Current", i))==0) {

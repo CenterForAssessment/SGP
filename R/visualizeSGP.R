@@ -33,7 +33,7 @@ function(sgp_object,
 		sgPlot.folder="Visualizations/studentGrowthPlots",
 		sgPlot.folder.names="number",
 		sgPlot.fan=TRUE,
-		sgPlot.scale_score.targets=FALSE,
+		sgPlot.sgp.targets=FALSE,
 		sgPlot.anonymize=FALSE,
 		sgPlot.cleanup=TRUE,
 		sgPlot.demo.report=FALSE,
@@ -351,7 +351,32 @@ if ("studentGrowthPlot" %in% plot.types) {
 		if (is.SGP(sgp_object)) {
 			sgPlot.wide.data <- FALSE
 			slot.data <- copy(sgp_object@Data)
-		}
+
+			if (sgPlot.baseline) {
+				my.sgp <- "SGP_BASELINE"
+				my.sgp.level <- "SGP_LEVEL_BASELINE"
+				my.sgp.targets <- grep("BASELINE", grep("SGP_TARGET", names(sgp_object@Data), value=TRUE), value=TRUE)
+			} else {
+				my.sgp <- "SGP"
+				my.sgp.level <- "SGP_LEVEL"
+				my.sgp.targets <- grep("SGP_TARGET", names(sgp_object@Data), value=TRUE) %w/o% grep("BASELINE", grep("SGP_TARGET", names(sgp_object@Data), value=TRUE), value=TRUE)
+			}
+
+			if (identical(sgPlot.sgp.targets, TRUE)) {
+				sgPlot.sgp.targets <- c("sgp.projections", "sgp.projections.lagged")
+			} 
+			if (identical(sgPlot.sgp.targets, FALSE)) {
+				if (!is.null(SGPstateData[[state]][['SGP_Configuration']][['sgPlot.sgp.targets']])) {
+					sgPlot.sgp.targets <- SGPstateData[[state]][['SGP_Configuration']][['sgPlot.sgp.targets']]
+				} else {
+					sgPlot.sgp.targets <- NULL
+				}
+			}
+			if (!is.null(sgPlot.sgp.targets) && !all(sgPlot.sgp.targets %in% c("sgp.projections", "sgp.projections.lagged"))) {
+				message("\tNOTE: 'sgPlot.sgp.targets' must consist of 'sgp.projections' and/or 'sgp.projections.lagged'.")
+				sgPlot.sgp.targets <- NULL
+			}
+		} ### END if(is.SGP(sgp_object))
 
 		if (sgPlot.demo.report & sgPlot.wide.data) {
 			message("\tNOTE: Demonstration report is not supported using wide data. Process will proceed with demonstration report production using long data.\n")
@@ -365,31 +390,6 @@ if ("studentGrowthPlot" %in% plot.types) {
 			if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort Referenced") sgPlot.baseline <- FALSE
 			if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Baseline Referenced") sgPlot.baseline <- TRUE
 			if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort and Baseline Referenced") sgPlot.baseline <- FALSE
-		}
-
-		if (sgPlot.baseline) {
-			my.sgp <- "SGP_BASELINE"
-			my.sgp.level <- "SGP_LEVEL_BASELINE"
-		} else {
-			my.sgp <- "SGP"
-			my.sgp.level <- "SGP_LEVEL"
-		}
-
-	#### Which targets
-
-		if (identical(sgPlot.scale_score.targets, TRUE)) {
-			sgPlot.scale_score.targets <- c("sgp.projections", "sgp.projections.lagged")
-		} 
-		if (identical(sgPlot.scale_score.targets, FALSE)) {
-			if (!is.null(SGPstateData[[state]][['SGP_Configuration']][['sgPlot.scale_score.targets']])) {
-				sgPlot.scale_score.targets <- SGPstateData[[state]][['SGP_Configuration']][['sgPlot.scale_score.targets']]
-			} else {
-				sgPlot.scale_score.targets <- NULL
-			}
-		}
-		if (!is.null(sgPlot.scale_score.targets) && !all(sgPlot.scale_score.targets %in% c("sgp.projections", "sgp.projections.lagged"))) {
-			message("\tNOTE: 'sgPlot.scale_score.targets' must consist of 'sgp.projections' and/or 'sgp.projections.lagged'.")
-			sgPlot.scale_score.targets <- NULL
 		}
 
 
@@ -709,7 +709,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 	#### Reshape data (NOT NECESSARY IF WIDE data is provided)
 
 		variables.to.keep <- c("VALID_CASE", "ID", "LAST_NAME", "FIRST_NAME", "CONTENT_AREA", "YEAR", "GRADE", 
-			"SCALE_SCORE", "TRANSFORMED_SCALE_SCORE", "ACHIEVEMENT_LEVEL", my.sgp, my.sgp.level, "SCHOOL_NAME", "SCHOOL_NUMBER", "DISTRICT_NAME", "DISTRICT_NUMBER")
+			"SCALE_SCORE", "TRANSFORMED_SCALE_SCORE", "ACHIEVEMENT_LEVEL", my.sgp, my.sgp.level, my.sgp.targets, "SCHOOL_NAME", "SCHOOL_NUMBER", "DISTRICT_NAME", "DISTRICT_NUMBER")
 
 		sgPlot.data <- reshape(tmp.table[,variables.to.keep, with=FALSE],
 			idvar=c("ID", "CONTENT_AREA"),
@@ -720,7 +720,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 		variables.to.keep <- c("ID", "CONTENT_AREA", 
 			paste("LAST_NAME", tmp.last.year, sep="."), paste("FIRST_NAME", tmp.last.year, sep="."), paste("GRADE", tmp.years, sep="."), 
 			paste(my.sgp, tmp.years, sep="."), paste("SCALE_SCORE", tmp.years, sep="."), paste("TRANSFORMED_SCALE_SCORE", tmp.years, sep="."), 
-			paste("ACHIEVEMENT_LEVEL", tmp.years, sep="."), paste(my.sgp.level, tmp.years, sep="."),
+			paste("ACHIEVEMENT_LEVEL", tmp.years, sep="."), paste(my.sgp.level, tmp.years, sep="."), paste(my.sgp.targets, tmp.last.year, sep="."),
 			paste("SCHOOL_NAME", tmp.last.year, sep="."), paste("SCHOOL_NUMBER", tmp.last.year, sep="."), 
 			paste("DISTRICT_NAME", tmp.last.year, sep="."), paste("DISTRICT_NUMBER", tmp.last.year, sep="."))
 
@@ -729,7 +729,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 	#### Merge in 1 year projections (if requested & available) and transform using piecewise.tranform (if required) (NOT NECESSARY IF WIDE data is provided)
 	#### Merge in scale scores associated with SGP_TARGETs (if requested & available) and transform using piecewise.transform (if required) (NOT NECESSARY IF WIDE data is provided)
 
-		if (sgPlot.fan | !is.null(sgPlot.scale_score.targets)) {
+		if (sgPlot.fan | !is.null(sgPlot.sgp.targets)) {
 
 			if (sgPlot.baseline) {
 				tmp.proj.names <- paste(tmp.content_areas, tmp.last.year, "BASELINE", sep=".")
@@ -755,7 +755,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 
 			### Straight projection scale score targets
 
-			if ("sgp.projections" %in% sgPlot.scale_score.targets & any(tmp.proj.cut_score.names %in% names(sgp_object@SGP[["SGProjections"]]))) {
+			if ("sgp.projections" %in% sgPlot.sgp.targets & any(tmp.proj.cut_score.names %in% names(sgp_object@SGP[["SGProjections"]]))) {
 
 				setkeyv(sgPlot.data, c("ID", "CONTENT_AREA"))
 				tmp.list <- list()
@@ -763,11 +763,11 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 					tmp.list[[i]] <- data.table(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1], sgp_object@SGP[["SGProjections"]][[i]], key=key(sgPlot.data))
 				}
 				sgPlot.data <- data.table(rbindlist(tmp.list), key=key(sgPlot.data))[sgPlot.data]
-			} ### END if ("sgp.projections" %in% sgPlot.scale_score.targets)
+			} ### END if ("sgp.projections" %in% sgPlot.sgp.targets)
 
 			### Lagged projection scale score targets
 
-			if ("sgp.projections.lagged" %in% sgPlot.scale_score.targets & any(tmp.proj.cut_score.names.lagged %in% names(sgp_object@SGP[["SGProjections"]]))) {
+			if ("sgp.projections.lagged" %in% sgPlot.sgp.targets & any(tmp.proj.cut_score.names.lagged %in% names(sgp_object@SGP[["SGProjections"]]))) {
 
 				setkeyv(sgPlot.data, c("ID", "CONTENT_AREA"))
 				tmp.list <- list()
@@ -775,7 +775,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 					tmp.list[[i]] <- data.table(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1], sgp_object@SGP[["SGProjections"]][[i]], key=key(sgPlot.data))
 				}
 				sgPlot.data <- data.table(rbindlist(tmp.list), key=key(sgPlot.data))[sgPlot.data]
-			} ### END if ("sgp.projections.lagged" %in% sgPlot.scale_score.targets)
+			} ### END if ("sgp.projections.lagged" %in% sgPlot.sgp.targets)
 		
 			### Transform scale scores
 
@@ -790,7 +790,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 					}
 				}
 			}
-		} ### END if (sgPlot.fan | !is.null(sgPlot.scale_score.targets))
+		} ### END if (sgPlot.fan | !is.null(sgPlot.sgp.targets))
 
 	#### Merge in INSTRUCTOR_NAME if requested
 
@@ -845,7 +845,7 @@ if (sgPlot.produce.plots) {
 			sgPlot.front.page=sgPlot.front.page,
 			sgPlot.header.footer.color=sgPlot.header.footer.color,
 			sgPlot.fan=sgPlot.fan,
-			sgPlot.scale_score.targets=sgPlot.scale_score.targets,
+			sgPlot.sgp.targets=sgPlot.sgp.targets,
 			sgPlot.cleanup=sgPlot.cleanup,
 			sgPlot.baseline=sgPlot.baseline,
 			sgPlot.zip=sgPlot.zip,
@@ -878,7 +878,7 @@ if (sgPlot.produce.plots) {
 							sgPlot.front.page=sgPlot.front.page,
 							sgPlot.header.footer.color=sgPlot.header.footer.color,
 							sgPlot.fan=sgPlot.fan,
-							sgPlot.scale_score.targets=sgPlot.scale_score.targets,
+							sgPlot.sgp.targets=sgPlot.sgp.targets,
 							sgPlot.cleanup=sgPlot.cleanup,
 							sgPlot.baseline=sgPlot.baseline,
 							sgPlot.zip=sgPlot.zip,
@@ -908,7 +908,7 @@ if (sgPlot.produce.plots) {
 					sgPlot.front.page=sgPlot.front.page,
 					sgPlot.header.footer.color=sgPlot.header.footer.color,
 					sgPlot.fan=sgPlot.fan,
-					sgPlot.scale_score.targets=sgPlot.scale_score.targets,
+					sgPlot.sgp.targets=sgPlot.sgp.targets,
 					sgPlot.cleanup=sgPlot.cleanup,
 					sgPlot.baseline=sgPlot.baseline,
 					sgPlot.zip=sgPlot.zip,
@@ -937,7 +937,7 @@ if (sgPlot.produce.plots) {
 					sgPlot.front.page=sgPlot.front.page,
 					sgPlot.header.footer.color=sgPlot.header.footer.color,
 					sgPlot.fan=sgPlot.fan,
-					sgPlot.scale_score.targets=sgPlot.scale_score.targets,
+					sgPlot.sgp.targets=sgPlot.sgp.targets,
 					sgPlot.cleanup=sgPlot.cleanup,
 					sgPlot.baseline=sgPlot.baseline,
 					sgPlot.zip=sgPlot.zip,
