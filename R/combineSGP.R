@@ -199,7 +199,7 @@ function(
 				setnames(tmp.list[[i]], "SGP", "SGP_BASELINE")
 				if ("SGP_LEVEL" %in% names(tmp.list[[i]])) setnames(tmp.list[[i]], "SGP_LEVEL", "SGP_LEVEL_BASELINE")
 				if ("SGP_NORM_GROUP" %in% names(tmp.list[[i]])) setnames(tmp.list[[i]], "SGP_NORM_GROUP", "SGP_NORM_GROUP_BASELINE")
-				if ("SGP_NORM_GROUP_SCALE_SCORE" %in% names(tmp.list[[i]])) setnames(tmp.list[[i]], "SGP_NORM_GROUP_SCALE_SCORES", "SGP_NORM_GROUP_BASELINE_SCALE_SCORES")
+				if ("SGP_NORM_GROUP_SCALE_SCORES" %in% names(tmp.list[[i]])) setnames(tmp.list[[i]], "SGP_NORM_GROUP_SCALE_SCORES", "SGP_NORM_GROUP_BASELINE_SCALE_SCORES")
 			}
 		}
 
