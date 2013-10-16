@@ -26,7 +26,7 @@ studentGrowthPlot_Styles(
            sgPlot.front.page,
            sgPlot.header.footer.color,
            sgPlot.fan,
-	   sgPlot.scale_score.targets,
+	   sgPlot.sgp.targets,
            sgPlot.cleanup,
            sgPlot.baseline,
            sgPlot.zip,
@@ -71,7 +71,7 @@ to version 0.9-9.7, this was the only way of bundling reports and was thus the d
   }
   \item{sgPlot.fan}{A boolean argument indicating whether the projection fan indicating growth rates necessary to reach 1 years targets be displayed.
   }
-  \item{sgPlot.scale_score.targets}{A boolean argument indicating whether the scale score targets are to be displayed.
+  \item{sgPlot.sgp.targets}{A boolean argument indicating whether the sgp targets are to be displayed.
   }
   \item{sgPlot.cleanup}{A boolean argument indicating whether to cleanup/remove files produced as part of pdfLaTeX build.
   }

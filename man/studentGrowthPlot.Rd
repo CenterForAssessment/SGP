@@ -12,6 +12,7 @@ studentGrowthPlot(Scale_Scores,
 	SGP_Levels, 
 	Grades, 
 	Cuts,
+	SGP_Targets,
 	Scale_Score_Targets_CUKU,
 	Scale_Score_Targets_MUSU,
 	Scale_Score_Targets_Current_CUKU,
@@ -42,6 +43,9 @@ studentGrowthPlot(Scale_Scores,
 	}
 	\item{Cuts}{
 		A list of cuts scores for NY1, NY2, and NY3.
+	}
+	\item{SGP_Targets}{
+		A list of CUKU, CUKU_Current, MUSU, MUSU_Current targets.
 	}
 	\item{Scale_Score_Targets_CUKU}{
 		A list of catch up keep up scale score targets (lagged).
