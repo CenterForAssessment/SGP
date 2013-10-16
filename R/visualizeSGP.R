@@ -348,6 +348,14 @@ if ("studentGrowthPlot" %in% plot.types) {
 		if (!is.null(sgPlot.schools)) sgPlot.reports.by.school <- TRUE
 		if (!is.null(sgPlot.districts)) sgPlot.reports.by.school <- TRUE
 		if (is.data.frame(sgp_object)) sgPlot.wide.data <- TRUE
+
+		if (is.null(sgPlot.baseline)) {
+			sgPlot.baseline <- FALSE ## Default to cohort referenced is not set by user
+			if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort Referenced") sgPlot.baseline <- FALSE
+			if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Baseline Referenced") sgPlot.baseline <- TRUE
+			if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort and Baseline Referenced") sgPlot.baseline <- FALSE
+		}
+
 		if (is.SGP(sgp_object)) {
 			sgPlot.wide.data <- FALSE
 			slot.data <- copy(sgp_object@Data)
@@ -381,15 +389,6 @@ if ("studentGrowthPlot" %in% plot.types) {
 		if (sgPlot.demo.report & sgPlot.wide.data) {
 			message("\tNOTE: Demonstration report is not supported using wide data. Process will proceed with demonstration report production using long data.\n")
 			sgPlot.demo.report <- FALSE
-		}
-
-	#### To Baseline or not to Baseline
-
-		if (is.null(sgPlot.baseline)) {
-			sgPlot.baseline <- FALSE ## Default to cohort referenced is not set by user
-			if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort Referenced") sgPlot.baseline <- FALSE
-			if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Baseline Referenced") sgPlot.baseline <- TRUE
-			if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort and Baseline Referenced") sgPlot.baseline <- FALSE
 		}
 
 

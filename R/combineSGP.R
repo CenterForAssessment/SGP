@@ -70,7 +70,7 @@ function(
 		}
 		
 		if (identical(system.type, "Cohort Referenced")) {
-			tmp.list[['target.type']] <- "sgp.projections.lagged"
+			tmp.list[['target.type']] <- c("sgp.projections", "sgp.projections.lagged")
 			tmp.list[['my.sgp']] <- "SGP"
 			tmp.list[['my.sgp.target']] <- paste("SGP_TARGET", max.sgp.target.years.forward, "YEAR", sep="_")
 			tmp.list[['my.sgp.target.content_area']] <- paste("SGP_TARGET", max.sgp.target.years.forward, "YEAR_CONTENT_AREA", sep="_")
@@ -78,7 +78,7 @@ function(
 			if (sgp.target.scale.scores) tmp.list[['sgp.target.scale.scores.types']] <- c("sgp.projections", "sgp.projections.lagged")
 		}
 		if (identical(system.type, "Baseline Referenced")) {
-			tmp.list[['target.type']] <- "sgp.projections.lagged.baseline"
+			tmp.list[['target.type']] <- c("sgp.projections.baseline", "sgp.projections.lagged.baseline")
 			tmp.list[['my.sgp']] <- "SGP_BASELINE"
 			tmp.list[['my.sgp.target']] <- paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, "YEAR", sep="_")
 			tmp.list[['my.sgp.target.content_area']] <- paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, "YEAR_CONTENT_AREA", sep="_")
@@ -86,7 +86,7 @@ function(
 			if (sgp.target.scale.scores) tmp.list[['sgp.target.scale.scores.types']] <- c("sgp.projections.baseline", "sgp.projections.lagged.baseline")
 		}
 		if (identical(system.type, "Cohort and Baseline Referenced")) {
-			tmp.list[['target.type']] <- c("sgp.projections.lagged", "sgp.projections.lagged.baseline")
+			tmp.list[['target.type']] <- c("sgp.projections", "sgp.projections.baseline", "sgp.projections.lagged", "sgp.projections.lagged.baseline")
 			tmp.list[['my.sgp']] <- c("SGP", "SGP_BASELINE")
 			tmp.list[['my.sgp.target']] <- c(paste("SGP_TARGET", max.sgp.target.years.forward, "YEAR", sep="_"), 
 				paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, "YEAR", sep="_"))
