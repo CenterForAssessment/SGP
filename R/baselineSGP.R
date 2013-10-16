@@ -80,7 +80,7 @@ function(sgp_object,
 		tmp.year.sequence <- test.year.sequence(content_areas, years, grade.sequences, baseline.grade.sequences.lags)
 		tmp.list <- list()
 		for (k in seq_along(tmp.year.sequence)) {
-			tmp.sgp.iter <- sgp.baseline.config[[sgp.iter]] # Convert sgp.baseline.config into a valid sgp.iter for getPanelData
+			tmp.sgp.iter <- sgp.baseline.config[[iter]] # Convert sgp.baseline.config into a valid sgp.iter for getPanelData
 			names(tmp.sgp.iter) <- gsub('sgp.baseline.', 'sgp.', names(tmp.sgp.iter))
 			tmp.sgp.iter$sgp.panel.years <- tmp.year.sequence[[k]]
 			tmp.sgp.iter$sgp.grade.sequences <- tmp.sgp.iter$sgp.grade.sequences
@@ -154,15 +154,15 @@ function(sgp_object,
 
 		tmp.list <- list()
 
-		for (sgp.iter in seq_along(sgp.baseline.config)) {
-			tmp.list[[sgp.iter]] <- baselineSGP_Internal(
+		for (iter in seq_along(sgp.baseline.config)) {
+			tmp.list[[iter]] <- baselineSGP_Internal(
 							sgp_object,
 							state=state,
-							years=sgp.baseline.config[[sgp.iter]][["sgp.baseline.panel.years"]],
-							content_areas=sgp.baseline.config[[sgp.iter]][["sgp.baseline.content.areas"]],
-							grade.sequences=sgp.baseline.config[[sgp.iter]][["sgp.baseline.grade.sequences"]],
-							baseline.grade.sequences.lags=sgp.baseline.config[[sgp.iter]][["sgp.baseline.grade.sequences.lags"]],
-							knots.boundaries.iter=sgp.baseline.config[[sgp.iter]],
+							years=sgp.baseline.config[[iter]][["sgp.baseline.panel.years"]],
+							content_areas=sgp.baseline.config[[iter]][["sgp.baseline.content.areas"]],
+							grade.sequences=sgp.baseline.config[[iter]][["sgp.baseline.grade.sequences"]],
+							baseline.grade.sequences.lags=sgp.baseline.config[[iter]][["sgp.baseline.grade.sequences.lags"]],
+							knots.boundaries.iter=sgp.baseline.config[[iter]],
 							parallel.config=parallel.config)
 		}
 
