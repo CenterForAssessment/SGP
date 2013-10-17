@@ -14,6 +14,8 @@ combineSGP(sgp_object,
 	content_areas=NULL,
 	sgp.percentiles=TRUE,
         sgp.percentiles.baseline=TRUE,
+	sgp.projections=TRUE,
+	sgp.projections.baseline=TRUE,
 	sgp.projections.lagged=TRUE,
         sgp.projections.lagged.baseline=TRUE,
 	sgp.target.scale.scores=FALSE,
@@ -36,6 +38,10 @@ student growth percentile results.
   \item{sgp.percentiles}{A boolean variable indicating whether to combine student growth percentiles.
   }
   \item{sgp.percentiles.baseline}{A boolean variable indicating whether to combine baseline student growth percentiles.
+  }
+  \item{sgp.projections}{A boolean variable indicating whether to combine current year student growth projections and calculate catch-up/keep-up and move-up/stay-up values.
+  }
+  \item{sgp.projections.baseline}{A boolean variable indicating whether to combine current year baseline student growth projections and calculate catch-up/keep-up and move-up/stay-up values.
   }
   \item{sgp.projections.lagged}{A boolean variable indicating whether to combine lagged student growth projections and calculate catch-up/keep-up and move-up/stay-up values.
   }
