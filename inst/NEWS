@@ -17,6 +17,7 @@ Changes in version: SGP_1.2-0.0
 	  o Added argument sgp.cohort.size to studentGrowthPercentiles to control minimum cohort size restriction.
 	  o summarizeSGP now calculates bootstrap standard errors as well as bootstrap confidence intervals.
 	  o outputSGP now includes ability to export data for FINAL YEAR of long format 'LONG_FINAL_YEAR_Data'.
+	  o combineSGP now produces current year targets as well as lagged targets adding arguments 'sgp.projections' and 'sgp.projections.baseline'.
 
 Changes in version: SGP_1.1-0.0
 

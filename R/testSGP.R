@@ -75,10 +75,10 @@ function(
 
 	### TEST of SGP_TARGET_MOVE_UP_STAY_UP variable
 
-	if (identical(sum(Demonstration_SGP@Data$SGP_TARGET_MOVE_UP_STAY_UP, na.rm=TRUE), 9201802L)) {
-		tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP: OK\n")
+	if (identical(sum(Demonstration_SGP@Data$SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, na.rm=TRUE), 9201802L)) {
+		tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR: OK\n")
 	} else {
-		tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP: FAIL\n")
+		tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR: FAIL\n")
 	}
 
 	### TEST of CATCH_UP_KEEP_UP_STATUS variable
@@ -227,10 +227,10 @@ function(
 
 	### TEST of SGP_TARGET_MOVE_UP_STAY_UP variable
 
-	if (identical(sum(Demonstration_SGP@Data$SGP_TARGET_MOVE_UP_STAY_UP, na.rm=TRUE), 9201802L)) {
-		tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP, part 2: OK\n")
+	if (identical(sum(Demonstration_SGP@Data$SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, na.rm=TRUE), 9201802L)) {
+		tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, part 2: OK\n")
 	} else {
-		tmp.messges <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP, part 2: FAIL\n")
+		tmp.messges <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, part 2: FAIL\n")
 	}
 
 	### TEST of CATCH_UP_KEEP_UP_STATUS variable
@@ -389,10 +389,10 @@ function(
 
 	### TEST of SGP_TARGET_MOVE_UP_STAY_UP variable
 
-	if (identical(sum(Demonstration_SGP@Data$SGP_TARGET_MOVE_UP_STAY_UP, na.rm=TRUE), 3113673L)) {
-		tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP: OK\n")
+	if (identical(sum(Demonstration_SGP@Data$SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, na.rm=TRUE), 3113673L)) {
+		tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR: OK\n")
 	} else {
-		tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP: FAIL\n")
+		tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR: FAIL\n")
 	}
 
 	### TEST of CATCH_UP_KEEP_UP_STATUS variable
