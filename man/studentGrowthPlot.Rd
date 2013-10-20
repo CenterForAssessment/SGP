@@ -12,11 +12,8 @@ studentGrowthPlot(Scale_Scores,
 	SGP_Levels, 
 	Grades, 
 	Cuts,
-	Scale_Score_Targets_CUKU,
-	Scale_Score_Targets_MUSU,
-	Scale_Score_Targets_Current_CUKU,
-	Scale_Score_Targets_Current_MUSU,
-	Connect_Points="Arrows",
+	SGP_Targets,
+	SGP_Scale_Score_Targets,
 	Cutscores,
 	Report_Parameters) 
 }
@@ -43,27 +40,17 @@ studentGrowthPlot(Scale_Scores,
 	\item{Cuts}{
 		A list of cuts scores for NY1, NY2, and NY3.
 	}
-	\item{Scale_Score_Targets_CUKU}{
-		A list of catch up keep up scale score targets (lagged).
+	\item{SGP_Targets}{
+		A list of CUKU, CUKU_Current, MUSU, MUSU_Current targets.
 	}
-	\item{Scale_Score_Targets_MUSU}{
-		A list of move up stay up scale score targets (lagged).
-	}
-	\item{Scale_Score_Targets_Current_CUKU}{
-		A list of catch up keep up scale score targets (current year).
-	}
-	\item{Scale_Score_Targets_Current_MUSU}{
-		A list of move up stay up scale score targets (current year).
-	}
-	\item{Connect_Points}{
-		Argument specifying how historical achievement scores are connected in the studentGrowthPlot. Currently accepts either \code{Arrows}, the default, or 
-		\code{None}.
+	\item{SGP_Scale_Score_Targets}{
+		A list of CUKU, CUKU_Current, MUSU, MUSU_Current scale score targets.
 	}
 	\item{Cutscores}{
 		A data.frame of long formatted achievement level cutscores.
 	}
 	\item{Report_Parameters}{
-		A list containing arguments: \code{Current_Year}, \code{Content_Area}, \code{State}.
+		A list containing arguments: \code{Current_Year}, \code{Content_Area}, \code{State}, \code{Denote_Content_Area}, \code{SGP_Targets}, and \code{Configuration}.
 	}
 }
 \details{Function currently used as part of SGP package to produce student growth charts for states. More documentation to follow.}
