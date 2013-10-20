@@ -114,6 +114,18 @@ function(sgp_object,
 		setnames(sgp_object@Data, i, paste(i, "3_YEAR", sep="_"))
 	}
 
+	## Add CURRENT to names of straight projection targets
+
+	for (i in grep("LAGGED", names(sgp_object@SGP[['SGProjections']]), value=TRUE, invert=TRUE)) {
+		tmp.names <- grep("YEAR", names(sgp_object@SGP[['SGProjections']][[i]]), value=TRUE)
+		if (length(grep("CURRENT", tmp.names))!=length(tmp.names)) {
+			tmp.data <- as.data.table(sgp_object@SGP[['SGProjections']][[i]])
+			setnames(tmp.data, tmp.names, paste(tmp.names, "CURRENT", sep="_"))
+			sgp_object@SGP[['SGProjections']][[i]] <- as.data.frame(tmp.data)
+			message(paste("\tNOTE: Adding '_CURRENT' to non-lagged variable names in @SGP[['SGProjections']]", i))
+		}
+	}
+
 
 	## Return sgp_object	
 

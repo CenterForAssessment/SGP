@@ -342,6 +342,13 @@ if ("studentGrowthPlot" %in% plot.types) {
 
 	#### Some checks
 
+		if (is.SGP(sgp_object)) {
+			sgPlot.wide.data <- FALSE
+			slot.data <- copy(sgp_object@Data)
+		} else {
+			slot.data <- sgp_object
+		}
+
 		if (!is.null(sgPlot.students) | !is.null(sgPlot.instructors) | !is.null(sgPlot.schools) | !is.null(sgPlot.districts)) sgPlot.demo.report <- FALSE
 		if (!is.null(sgPlot.students)) sgPlot.reports.by.student <- TRUE
 		if (!is.null(sgPlot.instructors)) sgPlot.reports.by.instructor <- TRUE
@@ -350,41 +357,44 @@ if ("studentGrowthPlot" %in% plot.types) {
 		if (is.data.frame(sgp_object)) sgPlot.wide.data <- TRUE
 
 		if (is.null(sgPlot.baseline)) {
-			sgPlot.baseline <- FALSE ## Default to cohort referenced is not set by user
+			sgPlot.baseline <- FALSE ## Default to cohort referenced SGPs if not set by user
 			if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort Referenced") sgPlot.baseline <- FALSE
 			if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Baseline Referenced") sgPlot.baseline <- TRUE
 			if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort and Baseline Referenced") sgPlot.baseline <- FALSE
 		}
 
-		if (is.SGP(sgp_object)) {
-			sgPlot.wide.data <- FALSE
-			slot.data <- copy(sgp_object@Data)
-
-			if (sgPlot.baseline) {
-				my.sgp <- "SGP_BASELINE"
-				my.sgp.level <- "SGP_LEVEL_BASELINE"
-				my.sgp.targets <- grep("BASELINE", grep("SGP_TARGET", names(sgp_object@Data), value=TRUE), value=TRUE)
+		if (identical(sgPlot.sgp.targets, TRUE)) {
+			sgPlot.sgp.targets <- c("sgp.projections", "sgp.projections.lagged")
+		} 
+		if (identical(sgPlot.sgp.targets, FALSE)) {
+			if (!is.null(SGPstateData[[state]][['SGP_Configuration']][['sgPlot.sgp.targets']])) {
+				sgPlot.sgp.targets <- SGPstateData[[state]][['SGP_Configuration']][['sgPlot.sgp.targets']]
 			} else {
-				my.sgp <- "SGP"
-				my.sgp.level <- "SGP_LEVEL"
-				my.sgp.targets <- grep("SGP_TARGET", names(sgp_object@Data), value=TRUE) %w/o% grep("BASELINE", grep("SGP_TARGET", names(sgp_object@Data), value=TRUE), value=TRUE)
-			}
-
-			if (identical(sgPlot.sgp.targets, TRUE)) {
-				sgPlot.sgp.targets <- c("sgp.projections", "sgp.projections.lagged")
-			} 
-			if (identical(sgPlot.sgp.targets, FALSE)) {
-				if (!is.null(SGPstateData[[state]][['SGP_Configuration']][['sgPlot.sgp.targets']])) {
-					sgPlot.sgp.targets <- SGPstateData[[state]][['SGP_Configuration']][['sgPlot.sgp.targets']]
-				} else {
-					sgPlot.sgp.targets <- NULL
-				}
-			}
-			if (!is.null(sgPlot.sgp.targets) && !all(sgPlot.sgp.targets %in% c("sgp.projections", "sgp.projections.lagged"))) {
-				message("\tNOTE: 'sgPlot.sgp.targets' must consist of 'sgp.projections' and/or 'sgp.projections.lagged'.")
 				sgPlot.sgp.targets <- NULL
 			}
-		} ### END if(is.SGP(sgp_object))
+		}
+		if (!is.null(sgPlot.sgp.targets) && !all(sgPlot.sgp.targets %in% c("sgp.projections", "sgp.projections.lagged"))) {
+			message("\tNOTE: 'sgPlot.sgp.targets' must consist of 'sgp.projections' and/or 'sgp.projections.lagged'.")
+			sgPlot.sgp.targets <- NULL
+		}
+
+		if (sgPlot.baseline) {
+			my.sgp <- "SGP_BASELINE"
+			my.sgp.level <- "SGP_LEVEL_BASELINE"
+			my.sgp.targets <- grep("SCALE_SCORE", grep("BASELINE", grep("SGP_TARGET", names(slot.data), value=TRUE), value=TRUE), value=TRUE, invert=TRUE)
+			if (identical("sgp.projections.baseline", sgPlot.sgp.targets)) my.sgp.targets <- grep("CURRENT", my.sgp.targets, value=TRUE) 
+			if (identical("sgp.projections.lagged.baseline", sgPlot.sgp.targets)) my.sgp.targets <- grep("CURRENT", my.sgp.targets, value=TRUE, invert=TRUE) 
+			if (is.null(sgPlot.sgp.targets)) my.sgp.targets <- NULL
+		} else {
+			my.sgp <- "SGP"
+			my.sgp.level <- "SGP_LEVEL"
+			my.sgp.targets <- grep("SCALE_SCORE", grep("BASELINE", grep("SGP_TARGET", names(slot.data), value=TRUE), value=TRUE, invert=TRUE), value=TRUE, invert=TRUE)
+			if (identical("sgp.projections", sgPlot.sgp.targets)) my.sgp.targets <- grep("CURRENT", my.sgp.targets, value=TRUE) 
+			if (identical("sgp.projections.lagged", sgPlot.sgp.targets)) my.sgp.targets <- grep("CURRENT", my.sgp.targets, value=TRUE, invert=TRUE) 
+			if (is.null(sgPlot.sgp.targets)) my.sgp.targets <- NULL
+		}
+
+		if (!is.null(my.sgp.targets)) sgPlot.sgp.target.timeframe <- as.numeric(rev(unlist(strsplit(unlist(strsplit(my.sgp.targets[1], "_YEAR"))[1], "_")))[1])
 
 		if (sgPlot.demo.report & sgPlot.wide.data) {
 			message("\tNOTE: Demonstration report is not supported using wide data. Process will proceed with demonstration report production using long data.\n")
@@ -719,9 +729,10 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 		variables.to.keep <- c("ID", "CONTENT_AREA", 
 			paste("LAST_NAME", tmp.last.year, sep="."), paste("FIRST_NAME", tmp.last.year, sep="."), paste("GRADE", tmp.years, sep="."), 
 			paste(my.sgp, tmp.years, sep="."), paste("SCALE_SCORE", tmp.years, sep="."), paste("TRANSFORMED_SCALE_SCORE", tmp.years, sep="."), 
-			paste("ACHIEVEMENT_LEVEL", tmp.years, sep="."), paste(my.sgp.level, tmp.years, sep="."), paste(my.sgp.targets, tmp.last.year, sep="."),
+			paste("ACHIEVEMENT_LEVEL", tmp.years, sep="."), paste(my.sgp.level, tmp.years, sep="."),
 			paste("SCHOOL_NAME", tmp.last.year, sep="."), paste("SCHOOL_NUMBER", tmp.last.year, sep="."), 
 			paste("DISTRICT_NAME", tmp.last.year, sep="."), paste("DISTRICT_NUMBER", tmp.last.year, sep="."))
+		if (!is.null(my.sgp.targets)) variables.to.keep <- c(variables.to.keep, paste(my.sgp.targets, tmp.last.year, sep="."))
 
 		sgPlot.data <- sgPlot.data[, variables.to.keep, with=FALSE]
 
@@ -732,8 +743,8 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 
 			if (sgPlot.baseline) {
 				tmp.proj.names <- paste(tmp.content_areas, tmp.last.year, "BASELINE", sep=".")
-				tmp.proj.cut_score.names <- paste(tmp.content_areas, tmp.last.year, "BASELINE_TARGET_SCALE_SCORES", sep=".")
-				tmp.proj.cut_score.names.lagged <- paste(tmp.content_areas, tmp.last.year, "LAGGED", "BASELINE_TARGET_SCALE_SCORES", sep=".")
+				tmp.proj.cut_score.names <- paste(tmp.content_areas, tmp.last.year, "BASELINE", "TARGET_SCALE_SCORES", sep=".")
+				tmp.proj.cut_score.names.lagged <- paste(tmp.content_areas, tmp.last.year, "LAGGED", "BASELINE", "TARGET_SCALE_SCORES", sep=".")
 			} else {
 				tmp.proj.names <- paste(tmp.content_areas, tmp.last.year, sep=".")
 				tmp.proj.cut_score.names <- paste(tmp.content_areas, tmp.last.year, "TARGET_SCALE_SCORES", sep=".")
@@ -820,6 +831,7 @@ if (sgPlot.save.sgPlot.data) {
 	save(list=tmp.file.name, file=paste(tmp.file.name, ".Rdata", sep=""))
 }
 
+
 #### studentGrowthPlot production
 
 if (sgPlot.produce.plots) {
@@ -847,6 +859,7 @@ if (sgPlot.produce.plots) {
 			sgPlot.sgp.targets=sgPlot.sgp.targets,
 			sgPlot.cleanup=sgPlot.cleanup,
 			sgPlot.baseline=sgPlot.baseline,
+			sgPlot.sgp.target.timeframe=sgPlot.sgp.target.timeframe,
 			sgPlot.zip=sgPlot.zip,
 			sgPlot.output.format=sgPlot.output.format)
 
@@ -880,6 +893,7 @@ if (sgPlot.produce.plots) {
 							sgPlot.sgp.targets=sgPlot.sgp.targets,
 							sgPlot.cleanup=sgPlot.cleanup,
 							sgPlot.baseline=sgPlot.baseline,
+							sgPlot.sgp.target.timeframe=sgPlot.sgp.target.timeframe,
 							sgPlot.zip=sgPlot.zip,
 							sgPlot.output.format=sgPlot.output.format)
 			} ### END dopar
@@ -910,6 +924,7 @@ if (sgPlot.produce.plots) {
 					sgPlot.sgp.targets=sgPlot.sgp.targets,
 					sgPlot.cleanup=sgPlot.cleanup,
 					sgPlot.baseline=sgPlot.baseline,
+					sgPlot.sgp.target.timeframe=sgPlot.sgp.target.timeframe,
 					sgPlot.zip=sgPlot.zip,
 					sgPlot.output.format=sgPlot.output.format))
 		} ### END if SNOW
@@ -939,6 +954,7 @@ if (sgPlot.produce.plots) {
 					sgPlot.sgp.targets=sgPlot.sgp.targets,
 					sgPlot.cleanup=sgPlot.cleanup,
 					sgPlot.baseline=sgPlot.baseline,
+					sgPlot.sgp.target.timeframe=sgPlot.sgp.target.timeframe,
 					sgPlot.zip=sgPlot.zip,
 					sgPlot.output.format=sgPlot.output.format), mc.cores=par.start$workers, mc.preschedule=FALSE)
 		}  ### END if MULTICORE
