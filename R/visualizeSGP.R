@@ -73,7 +73,7 @@ function(sgp_object,
 
 	### Set up parallel.config if NULL
 
-	if (is.null(parallel.config)) {
+	if (is.null(parallel.config) & !is.null(sgPlot.students) & !is.null(gaPlot.students)) {
 		parallel.config = list(BACKEND="PARALLEL", WORKERS=list(GA_PLOTS=1, SG_PLOTS=1))
 	}
 

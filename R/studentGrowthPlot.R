@@ -443,21 +443,21 @@ if (Grades[1] != max(grades.reported.in.state) & !is.na(cuts.ny1.text[1])){
 
 for (i in names(unlist(SGP_Targets)[!is.na(unlist(SGP_Targets))])) {
 	if (length(grep("Current", i))==0) {
-		current.year.x.coor <- current.year-1
+		current.year.x.coor <- current.year
 		tmp.achievement.level <- which(head(tail(Achievement_Levels[!is.na(Achievement_Levels)], 2), 1)==SGPstateData[[Report_Parameters$State]][["Achievement"]][["Levels"]][["Labels"]])
 	} else {
-		current.year.x.coor <- current.year
+		current.year.x.coor <- current.year+1
 		tmp.achievement.level <- which(tail(Achievement_Levels[!is.na(Achievement_Levels)], 1)==SGPstateData[[Report_Parameters$State]][["Achievement"]][["Levels"]][["Labels"]])
 	}
 	if (length(grep("CUKU", i))>0 & tmp.achievement.level <= level.to.get.cuku) tmp.target.label <- "Catch Up Target"
 	if (length(grep("CUKU", i))>0 & tmp.achievement.level > level.to.get.cuku) tmp.target.label <- "Keep Up Target"
 	if (length(grep("MUSU", i))>0 & tmp.achievement.level <= level.to.get.musu) tmp.target.label <- "Move Up Target"
 	if (length(grep("MUSU", i))>0 & tmp.achievement.level > level.to.get.musu) tmp.target.label <- "Stay Up Target"
-	grid.circle(x=current.year.x.coor, y=SGP_Scale_Score_Targets[[i]][['NY1']], r=unit(0.04, "inches"), 
-		gp=gpar(col=arrow.color(SGP_Targets[[i]]), lwd=0.9, fill=arrow.color(SGP_Targets[[i]]), default.units="native"))
-	grid.lines(x=c(current.year.x.coor, current.year.x.coor+1), y=c(scale.scores.values[which(current.year.x.coor==low.year:high.year)], SGP_Scale_Score_Targets[[i]][['NY1']]), 
-		gp=gpar(lwd=0.8, col=arrow.color(SGP_Targets[[i]]), default.units="native"))
-	grid.text(x=current.year.x.coor+1.1, y=SGP_Scale_Score_Targets[[i]][['NY1']], tmp.target.label, default.units="native", just="left", gp=gpar(cex=.25, col=border.color))
+	grid.lines(x=c(current.year.x.coor-1, current.year.x.coor), y=c(scale.scores.values[which(current.year.x.coor-1==low.year:high.year)], SGP_Scale_Score_Targets[[i]][['NY1']]), 
+		gp=gpar(lwd=0.8, col=border.color), default.units="native")
+	grid.circle(x=current.year.x.coor, y=SGP_Scale_Score_Targets[[i]][['NY1']], r=unit(c(0.05, 0.04, 0.025, 0.0125), "inches"), 
+		gp=gpar(col=c("black", "white", "black", "white"), lwd=0.01, fill=c("black", "white", "black", "white")), default.units="native")
+	grid.text(x=current.year.x.coor+0.075, y=SGP_Scale_Score_Targets[[i]][['NY1']], tmp.target.label, default.units="native", just="left", gp=gpar(cex=.25, col=border.color))
 }
 
 grid.circle(x=low.year:high.year, y=scale.scores.values, r=unit(0.04, "inches"), gp=gpar(col=border.color, lwd=0.7, fill="white"), default.units="native") 
@@ -514,46 +514,68 @@ popViewport()
 ### Bottom Viewport
 
 pushViewport(bottom.vp)
-
-
-grid.text(x=low.year:high.year, y=2.67, grades.text, gp=gpar(col=border.color, cex=.75), default.units="native")
-grid.text(x=low.year:high.year, y=2.3, year.text, gp=gpar(col=border.color, cex=.6), default.units="native")
-
-
-grid.text(x=low.year:high.year, y=1.7, scale.scores.text, gp=gpar(col=border.color, cex=.65), default.units="native")
-
-grid.text(x=low.year:high.year, y=1.3, ach.levels.text, gp=gpar(col=border.color, cex=.6), default.units="native")
-
-
-grid.text(x=(low.year+1):high.year-0.5, y=0.7, gp.text, gp=gpar(col=border.color, cex=.65), default.units="native")
-
-
-grid.text(x=(low.year+1):high.year-0.5, y=0.3, gp.levels.text, gp=gpar(col=border.color, cex=.6), default.units="native")
+if (is.null(Report_Parameters[['SGP_Targets']])) {
+	grid.text(x=low.year:high.year, y=2.67, grades.text, gp=gpar(col=border.color, cex=.75), default.units="native")
+	grid.text(x=low.year:high.year, y=2.3, year.text, gp=gpar(col=border.color, cex=.6), default.units="native")
+	grid.text(x=low.year:high.year, y=1.7, scale.scores.text, gp=gpar(col=border.color, cex=.65), default.units="native")
+	grid.text(x=low.year:high.year, y=1.3, ach.levels.text, gp=gpar(col=border.color, cex=.6), default.units="native")
+	grid.text(x=(low.year+1):high.year-0.5, y=0.7, gp.text, gp=gpar(col=border.color, cex=.65), default.units="native")
+	grid.text(x=(low.year+1):high.year-0.5, y=0.3, gp.levels.text, gp=gpar(col=border.color, cex=.6), default.units="native")
+} else {
+	grid.text(x=low.year:high.year, y=2.75, grades.text, gp=gpar(col=border.color, cex=.6), default.units="native")
+	grid.text(x=low.year:high.year, y=2.45, year.text, gp=gpar(col=border.color, cex=.5), default.units="native")
+	grid.text(x=low.year:high.year, y=1.95, scale.scores.text, gp=gpar(col=border.color, cex=.5), default.units="native")
+	grid.text(x=low.year:high.year, y=1.65, ach.levels.text, gp=gpar(col=border.color, cex=.5), default.units="native")
+	grid.text(x=low.year:high.year, y=1.35, ach.levels.text, gp=gpar(col=border.color, cex=.5), default.units="native")
+	grid.text(x=(low.year+1):high.year-0.5, y=0.85, gp.text, gp=gpar(col=border.color, cex=.5), default.units="native")
+	grid.text(x=(low.year+1):high.year-0.5, y=0.55, gp.levels.text, gp=gpar(col=border.color, cex=.5), default.units="native")
+	grid.text(x=(low.year+1):high.year-0.5, y=0.25, gp.levels.text, gp=gpar(col=border.color, cex=.5), default.units="native")
+}
 popViewport()
 
 
 pushViewport(bottom.left.right.vp)
-grid.lines(x=c(0,1), y=2, gp=gpar(lwd=1.8, col=border.color), default.units="native")
-grid.lines(x=c(0,1), y=1, gp=gpar(lwd=1, col=border.color), default.units="native")
-grid.lines(x=c(0,1), y=0, gp=gpar(lwd=1.8, col=border.color), default.units="native")
+if (is.null(Report_Parameters[['SGP_Targets']])) {
+	grid.lines(x=c(0,1), y=2, gp=gpar(lwd=1.8, col=border.color), default.units="native")
+	grid.lines(x=c(0,1), y=1, gp=gpar(lwd=1, col=border.color), default.units="native")
+	grid.lines(x=c(0,1), y=0, gp=gpar(lwd=1.8, col=border.color), default.units="native")
+} else {
+	grid.lines(x=c(0,1), y=2.2, gp=gpar(lwd=1.8, col=border.color), default.units="native")
+	grid.lines(x=c(0,1), y=1.1, gp=gpar(lwd=1, col=border.color), default.units="native")
+	grid.lines(x=c(0,1), y=0, gp=gpar(lwd=1.8, col=border.color), default.units="native")
+}
 popViewport()
 
+
+### Bottom Right Viewport
+
 pushViewport(bottom.right.vp)
-grid.text(x=0.1, y=1.5, "Achievement", gp=gpar(col=border.color, cex=1.2), just="left", default.units="native")
-grid.text(x=0.1, y=.5, "Growth", gp=gpar(col=border.color, cex=1.2), just="left", default.units="native")
+if (is.null(Report_Parameters[['SGP_Targets']])) {
+	grid.text(x=0.1, y=1.5, "Achievement", gp=gpar(col=border.color, cex=1.2), just="left", default.units="native")
+	grid.text(x=0.1, y=.5, "Growth", gp=gpar(col=border.color, cex=1.2), just="left", default.units="native")
+} else {
+	grid.text(x=0.1, y=1.65, "Achievement", gp=gpar(col=border.color, cex=1.3), just="left", default.units="native")
+	grid.text(x=0.1, y=0.55, "Growth", gp=gpar(col=border.color, cex=1.3), just="left", default.units="native")
+}
 popViewport()
 
 
 ### Bottom Left Viewport
 
 pushViewport(bottom.left.vp)
-
-grid.text(x=0.9, y=1.7, "Scale Score", gp=gpar(col=border.color, cex=.7), just="right", default.units="native")
-grid.text(x=0.9, y=1.3, "Achievement Level", gp=gpar(col=border.color, cex=.7), just="right", default.units="native")
-
-grid.text(x=0.9, y=0.7, "Growth Percentile", gp=gpar(col=border.color, cex=.7), just="right", default.units="native")
-grid.text(x=0.9, y=0.3, "Growth Level", gp=gpar(col=border.color, cex=.7), just="right", default.units="native")
-
+if (is.null(Report_Parameters[['SGP_Targets']])) {
+	grid.text(x=0.9, y=1.7, "Scale Score", gp=gpar(col=border.color, cex=.7), just="right", default.units="native")
+	grid.text(x=0.9, y=1.3, "Achievement Level", gp=gpar(col=border.color, cex=.7), just="right", default.units="native")
+	grid.text(x=0.9, y=0.7, "Growth Percentile", gp=gpar(col=border.color, cex=.7), just="right", default.units="native")
+	grid.text(x=0.9, y=0.3, "Growth Level", gp=gpar(col=border.color, cex=.7), just="right", default.units="native")
+} else {
+	grid.text(x=0.9, y=1.95, "Scale Score", gp=gpar(col=border.color, cex=.575), just="right", default.units="native")
+	grid.text(x=0.9, y=1.65, "Achievement Level", gp=gpar(col=border.color, cex=.575), just="right", default.units="native")
+	grid.text(x=0.9, y=1.35, "Achievement Target", gp=gpar(col=border.color, cex=.575), just="right", default.units="native")
+	grid.text(x=0.9, y=0.85, "Growth Percentile", gp=gpar(col=border.color, cex=.575), just="right", default.units="native")
+	grid.text(x=0.9, y=0.55, "Growth Level", gp=gpar(col=border.color, cex=.575), just="right", default.units="native")
+	grid.text(x=0.9, y=0.25, "Growth Target", gp=gpar(col=border.color, cex=.575), just="right", default.units="native")
+}
 popViewport()
 
 

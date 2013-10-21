@@ -231,7 +231,7 @@ if (reports.by.school) {
 
 	### Create path to pdf files
 
-	path.to.pdfs <- file.path(sgPlot.folder, year_folder, district_folder, school_folder, grade_folder)
+	path.to.pdfs <- paste(c(sgPlot.folder, year_folder, district_folder, school_folder, grade_folder), collapse=.Platform$file.sep)
 	dir.create(path.to.pdfs, recursive=TRUE, showWarnings=FALSE)
 
 	## Students
@@ -479,9 +479,17 @@ if (reports.by.school) {
                 grid.text(x=0.325, y=interpretation.y-0.31, "Growth", gp=gpar(cex=0.9), default.units="native", just="left")
                 grid.text(x=0.325, y=interpretation.y-0.335, "Percentile", gp=gpar(cex=0.9), default.units="native", just="left")
 
+                if (!is.null(sgPlot.sgp.targets)) {
+			grid.circle(x=0.2, y=interpretation.y-0.41, r=unit(c(0.08, 0.065, 0.045, 0.0225), "inches"),
+				gp=gpar(col=c("black", "white", "black", "white"), lwd=0.01, fill=c("black", "white", "black", "white")), default.units="native")
+			grid.text(x=0.325, y=interpretation.y-0.385, "Catch Up/Keep Up", gp=gpar(cex=0.9), default.units="native", just="left")
+			grid.text(x=0.325, y=interpretation.y-0.41, "Move Up/Stay Up", gp=gpar(cex=0.9), default.units="native", just="left")
+			grid.text(x=0.325, y=interpretation.y-0.435, "Targets", gp=gpar(cex=0.9), default.units="native", just="left")
+		}
+
 		# Suggested uses
 
-                suggested.y <- 0.52
+                if (is.null(sgPlot.sgp.targets)) suggested.y <- 0.52 else suggested.y <- 0.42
 
                 grid.roundrect(x=unit(0.5, "native"), y=unit(suggested.y, "native"), width=unit(0.9, "native"), height=unit(0.06, "native"), 
                                gp=gpar(fill=sgPlot.header.footer.color, col="black"))
@@ -583,11 +591,12 @@ if (reports.by.school) {
 	if (sgPlot.cleanup & "PDF" %in% sgPlot.output.format) {
 		files.to.remove <- list.files(pattern=paste(i, j, sep="_"), all.files=TRUE)
 		lapply(files.to.remove, file.remove)
-		files.to.remove <- list.files(path=file.path(sgPlot.folder, year_folder, district_folder, school_folder), pattern="REPORT", all.files=TRUE, full.names=TRUE, recursive=TRUE)
+		files.to.remove <- list.files(path=paste(c(sgPlot.folder, year_folder, district_folder, school_folder), collapse=.Platform$file.sep), 
+			pattern="REPORT", all.files=TRUE, full.names=TRUE, recursive=TRUE)
 		lapply(files.to.remove, file.remove)
 	}
 
-	if (identical(.Platform$OS.type, "unix") & sgPlot.zip) {
+	if (identical(.Platform$OS.type, "unix") & sgPlot.zip & !reports.by.student) {
 		if (1000*as.numeric(unlist(strsplit(system(paste("du -s", file.path(sgPlot.folder, year_folder, district_folder, school_folder)), intern=TRUE), "\t"))[1]) > 4000000000) {
 			tmp.working.directory <- getwd()
 			setwd(file.path(sgPlot.folder, year_folder, district_folder))
