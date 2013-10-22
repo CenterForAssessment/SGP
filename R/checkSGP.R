@@ -119,13 +119,10 @@ function(sgp_object,
 	for (i in grep("LAGGED", names(sgp_object@SGP[['SGProjections']]), value=TRUE, invert=TRUE)) {
 		tmp.names <- grep("YEAR", names(sgp_object@SGP[['SGProjections']][[i]]), value=TRUE)
 		if (length(grep("CURRENT", tmp.names))!=length(tmp.names)) {
-			tmp.data <- as.data.table(sgp_object@SGP[['SGProjections']][[i]])
-			setnames(tmp.data, tmp.names, paste(tmp.names, "CURRENT", sep="_"))
-			sgp_object@SGP[['SGProjections']][[i]] <- as.data.frame(tmp.data)
-			message(paste("\tNOTE: Adding '_CURRENT' to non-lagged variable names in @SGP[['SGProjections']]", i))
+			setnames(sgp_object@SGP[['SGProjections']][[i]], tmp.names, paste(tmp.names, "CURRENT", sep="_"))
+			message(paste("\tNOTE: Adding '_CURRENT' to non-lagged variable names in @SGP[['SGProjections']][['", i, "']]", sep=""))
 		}
 	}
-
 
 	## Return sgp_object	
 

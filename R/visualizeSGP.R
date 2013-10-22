@@ -34,6 +34,7 @@ function(sgp_object,
 		sgPlot.folder.names="number",
 		sgPlot.fan=TRUE,
 		sgPlot.sgp.targets=FALSE,
+		sgPlot.sgp.targets.timeframe=3,
 		sgPlot.anonymize=FALSE,
 		sgPlot.cleanup=TRUE,
 		sgPlot.demo.report=FALSE,
@@ -73,7 +74,7 @@ function(sgp_object,
 
 	### Set up parallel.config if NULL
 
-	if (is.null(parallel.config) & !is.null(sgPlot.students) & !is.null(gaPlot.students)) {
+	if (is.null(parallel.config)) {
 		parallel.config = list(BACKEND="PARALLEL", WORKERS=list(GA_PLOTS=1, SG_PLOTS=1))
 	}
 
@@ -363,6 +364,10 @@ if ("studentGrowthPlot" %in% plot.types) {
 			if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort and Baseline Referenced") sgPlot.baseline <- FALSE
 		}
 
+		if (!is.null(sgPlot.sgp.targets) && !is.null(SGPstateData[[state]][['SGP_Configuration']][['sgPlot.sgp.targets.timeframe']])) {
+			sgPlot.sgp.targets.timeframe <- SGPstateData[[state]][['SGP_Configuration']][['sgPlot.sgp.targets.timeframe']]
+		}
+
 		if (identical(sgPlot.sgp.targets, TRUE)) {
 			sgPlot.sgp.targets <- c("sgp.projections", "sgp.projections.lagged")
 		} 
@@ -394,7 +399,7 @@ if ("studentGrowthPlot" %in% plot.types) {
 			if (is.null(sgPlot.sgp.targets)) my.sgp.targets <- NULL
 		}
 
-		if (!is.null(my.sgp.targets)) sgPlot.sgp.target.timeframe <- as.numeric(rev(unlist(strsplit(unlist(strsplit(my.sgp.targets[1], "_YEAR"))[1], "_")))[1])
+		if (!is.null(my.sgp.targets)) sgPlot.sgp.targets.timeframe <- as.numeric(rev(unlist(strsplit(unlist(strsplit(my.sgp.targets[1], "_YEAR"))[1], "_")))[1])
 
 		if (sgPlot.demo.report & sgPlot.wide.data) {
 			message("\tNOTE: Demonstration report is not supported using wide data. Process will proceed with demonstration report production using long data.\n")
@@ -836,7 +841,7 @@ if (sgPlot.save.sgPlot.data) {
 
 if (sgPlot.produce.plots) {
 
-	if (is.null(parallel.config) | sgPlot.demo.report) { ### NO Parallel Processing
+	if (parallel.config[['WORKERS']][['SG_PLOTS']]==1 | sgPlot.demo.report) { ### NO Parallel Processing
 
 		studentGrowthPlot_Styles(
 			sgPlot.data=sgPlot.data,
@@ -859,7 +864,7 @@ if (sgPlot.produce.plots) {
 			sgPlot.sgp.targets=sgPlot.sgp.targets,
 			sgPlot.cleanup=sgPlot.cleanup,
 			sgPlot.baseline=sgPlot.baseline,
-			sgPlot.sgp.target.timeframe=sgPlot.sgp.target.timeframe,
+			sgPlot.sgp.targets.timeframe=sgPlot.sgp.targets.timeframe,
 			sgPlot.zip=sgPlot.zip,
 			sgPlot.output.format=sgPlot.output.format)
 
@@ -893,7 +898,7 @@ if (sgPlot.produce.plots) {
 							sgPlot.sgp.targets=sgPlot.sgp.targets,
 							sgPlot.cleanup=sgPlot.cleanup,
 							sgPlot.baseline=sgPlot.baseline,
-							sgPlot.sgp.target.timeframe=sgPlot.sgp.target.timeframe,
+							sgPlot.sgp.targets.timeframe=sgPlot.sgp.targets.timeframe,
 							sgPlot.zip=sgPlot.zip,
 							sgPlot.output.format=sgPlot.output.format)
 			} ### END dopar
@@ -924,7 +929,7 @@ if (sgPlot.produce.plots) {
 					sgPlot.sgp.targets=sgPlot.sgp.targets,
 					sgPlot.cleanup=sgPlot.cleanup,
 					sgPlot.baseline=sgPlot.baseline,
-					sgPlot.sgp.target.timeframe=sgPlot.sgp.target.timeframe,
+					sgPlot.sgp.targets.timeframe=sgPlot.sgp.targets.timeframe,
 					sgPlot.zip=sgPlot.zip,
 					sgPlot.output.format=sgPlot.output.format))
 		} ### END if SNOW
@@ -954,7 +959,7 @@ if (sgPlot.produce.plots) {
 					sgPlot.sgp.targets=sgPlot.sgp.targets,
 					sgPlot.cleanup=sgPlot.cleanup,
 					sgPlot.baseline=sgPlot.baseline,
-					sgPlot.sgp.target.timeframe=sgPlot.sgp.target.timeframe,
+					sgPlot.sgp.targets.timeframe=sgPlot.sgp.targets.timeframe,
 					sgPlot.zip=sgPlot.zip,
 					sgPlot.output.format=sgPlot.output.format), mc.cores=par.start$workers, mc.preschedule=FALSE)
 		}  ### END if MULTICORE

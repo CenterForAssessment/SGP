@@ -29,7 +29,7 @@ studentGrowthPlot_Styles(
 	   sgPlot.sgp.targets,
            sgPlot.cleanup,
            sgPlot.baseline,
-	   sgPlot.sgp.target.timeframe,
+	   sgPlot.sgp.targets.timeframe,
            sgPlot.zip,
            sgPlot.output.format)
 }
@@ -78,7 +78,7 @@ to version 0.9-9.7, this was the only way of bundling reports and was thus the d
   }
   \item{sgPlot.baseline}{A boolean argument indicating whether to use baseline referenced student growth percentiles in student growth plots.
   }
-  \item{sgPlot.sgp.target.timeframe}{An integer argument indicating the number of years forward associated with SGP targets.
+  \item{sgPlot.sgp.targets.timeframe}{An integer argument indicating the number of years forward associated with SGP targets.
   }
   \item{sgPlot.zip}{A boolean argument indicating whether to school folders.
   }
