@@ -45,6 +45,7 @@ visualizeSGP(
            sgPlot.folder.names="number",
            sgPlot.fan=TRUE,
 	   sgPlot.sgp.targets=FALSE,
+	   sgPlot.sgp.targets.timeframe=3,
            sgPlot.anonymize=FALSE,
            sgPlot.cleanup=TRUE,
            sgPlot.demo.report=FALSE,
@@ -160,6 +161,8 @@ provided the function produces \code{\link{studentGrowthPlot}}s for ALL students
   \item{sgPlot.fan}{A boolean argument (defaults to TRUE) indicating whether to produce projection fan on \code{\link{studentGrowthPlot}}s.  
   }
   \item{sgPlot.sgp.targets}{A boolean argument (defaults to TRUE) indicating whether to indicate SGP growth targets on \code{\link{studentGrowthPlot}}s.  
+  }
+  \item{sgPlot.sgp.targets.timeframe}{An integer argument specifying the number of years forward associated with targets to be added to the student growth plots.  
   }
   \item{sgPlot.anonymize}{A boolean argument (defaults to FALSE) indicating whether to anonymize \code{\link{studentGrowthPlot}}s student, school and district names. 
   For student level anonymization, the function utilizes the \code{randomNames} package to produce gender and ethnicity based names based upon gender and ethnicity 

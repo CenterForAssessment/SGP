@@ -19,7 +19,7 @@
 	   sgPlot.sgp.targets,
            sgPlot.cleanup,
            sgPlot.baseline,
-	   sgPlot.sgp.target.timeframe,
+	   sgPlot.sgp.targets.timeframe,
            sgPlot.zip,
            sgPlot.output.format) {
 
@@ -99,11 +99,11 @@
         if (sgPlot.baseline) {
                  my.sgp <- "SGP_BASELINE"
                  my.sgp.level <- "SGP_LEVEL_BASELINE"
-		 my.sgp.target.label <- c("SGP_TARGET_BASELINE", paste(sgPlot.sgp.target.timeframe, "YEAR", sep="_"))
+		 my.sgp.target.label <- c("SGP_TARGET_BASELINE", paste(sgPlot.sgp.targets.timeframe, "YEAR", sep="_"))
         } else {
                  my.sgp <- "SGP"
                  my.sgp.level <- "SGP_LEVEL"
-		 my.sgp.target.label <- c("SGP_TARGET", paste(sgPlot.sgp.target.timeframe, "YEAR", sep="_"))
+		 my.sgp.target.label <- c("SGP_TARGET", paste(sgPlot.sgp.targets.timeframe, "YEAR", sep="_"))
         }
 
 

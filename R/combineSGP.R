@@ -54,7 +54,13 @@ function(
 		tmp.messages <- c(tmp.messages, "\tNOTE: Multple content areas detected for student growth targets. 'sgp.target.content_areas set to TRUE.\n")
 	}
 
-	## Utility functions
+	### Check to see if max.sgp.target.years.forward if configured in SGPstateData
+
+	if (!is.null(SGPstateData[[state]][['SGP_Configuration']][['max.sgp.target.years.forward']])) {
+		max.sgp.target.years.forward <- SGPstateData[[state]][['SGP_Configuration']][['max.sgp.target.years.forward']]
+	}
+
+	### Utility functions
 
 	get.target.arguments <- function(system.type, target.type) {
 		tmp.list <- list()
