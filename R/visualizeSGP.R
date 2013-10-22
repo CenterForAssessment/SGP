@@ -74,7 +74,7 @@ function(sgp_object,
 
 	### Set up parallel.config if NULL
 
-	if (is.null(parallel.config) & !is.null(sgPlot.students) & !is.null(gaPlot.students)) {
+	if (is.null(parallel.config)) {
 		parallel.config = list(BACKEND="PARALLEL", WORKERS=list(GA_PLOTS=1, SG_PLOTS=1))
 	}
 
@@ -841,7 +841,7 @@ if (sgPlot.save.sgPlot.data) {
 
 if (sgPlot.produce.plots) {
 
-	if (is.null(parallel.config) | sgPlot.demo.report) { ### NO Parallel Processing
+	if (parallel.config[['WORKERS']][['SG_PLOTS']]==1 | sgPlot.demo.report) { ### NO Parallel Processing
 
 		studentGrowthPlot_Styles(
 			sgPlot.data=sgPlot.data,
