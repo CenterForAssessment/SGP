@@ -1157,7 +1157,7 @@ function(panel.data,         ## REQUIRED
 										grades=tmp.last,
 										output.format="GROB")
 			}
-			if (!all(sapply(2:length(content_area.progression), function(f) identical(content_area.progression[f-1], content_area.progression[f])))) {
+			if (length(unique(content_area.progression)) > 1) {
 				if (tail(grade.progression, 1) == "EOCT") {
 					tmp.grade.name <- "EOCT" 
 				} else {

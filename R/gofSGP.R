@@ -138,7 +138,7 @@ function(
 
 		if (with.prior.achievement.level) {
 			tmp.prior.achievement.level.percentages <- table(factor(data1[['ACHIEVEMENT_LEVEL_PRIOR']]))/(dim(data1)[1])
-			tmp.prior.achievement.level.colors <- rev(diverge_hcl(length(tmp.prior.achievement.level.percentages), h = c(180, 40), c = 255, l = c(20, 100)))
+			tmp.prior.achievement.level.colors <- rev(diverge_hcl(length(tmp.prior.achievement.level.percentages)))
 			tmp.prior.achievement.level.percentages.labels <- paste("(", round(100*table(factor(data1[['ACHIEVEMENT_LEVEL_PRIOR']]))/(dim(data1)[1]), digits=1), "%)", sep="")
 			if (is.null(state)) {
 				tmp.prior.achievement.level.labels <- row.names(tmp.prior.achievement.level.percentages)
