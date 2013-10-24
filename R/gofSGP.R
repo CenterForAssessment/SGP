@@ -1,13 +1,14 @@
-`gofSGP` <- function(
-		sgp_object,
-		state=NULL,
-		years=NULL,
-		content_areas=NULL,
-		content_areas_prior=NULL,
-		grades=NULL,
-		use.sgp="SGP",
-		output.format="PDF",
-		color.scale="reds.and.blues") {
+`gofSGP` <- 
+function(
+	sgp_object,
+	state=NULL,
+	years=NULL,
+	content_areas=NULL,
+	content_areas_prior=NULL,
+	grades=NULL,
+	use.sgp="SGP",
+	output.format="PDF",
+	color.scale="reds.and.blues") {
 
 	### To prevent R CMD check warnings
 

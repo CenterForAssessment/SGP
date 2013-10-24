@@ -1114,7 +1114,7 @@ function(panel.data,         ## REQUIRED
 		}
 
 		if (is.character(goodness.of.fit) | goodness.of.fit==TRUE) {
-			if (is.character(goodness.of.fit) & goodness.of.fit %in% ls(SGPstateData) &&
+			if (is.character(goodness.of.fit) & goodness.of.fit %in% objects(SGPstateData) &&
 				!is.null(SGPstateData[[goodness.of.fit]][['Achievement']][['Cutscores']][[rev(content_area.progression)[2]]][[paste("GRADE_", rev(tmp.gp)[2], sep="")]])) {
 				GRADE <- YEAR <- CONTENT_AREA <- NULL
 				tmp.gof.data <- getAchievementLevel(
@@ -1123,10 +1123,10 @@ function(panel.data,         ## REQUIRED
 								SGP=quantile.data[['SGP']],
 								VALID_CASE="VALID_CASE",
 								CONTENT_AREA=rev(content_area.progression)[2],
-								YEAR=rev(year.progression)[2], 
+								YEAR=rev(year.progression.for.norm.group)[2], 
 								GRADE=rev(tmp.gp)[2]),
 							state=goodness.of.fit,
-							year=rev(year.progression)[2],
+							year=rev(year.progression.for.norm.group)[2],
 							content_area=rev(content_area.progression)[2],
 							grade=tail(tmp.gp, 2)[1])[,GRADE:=tmp.last][,YEAR:=sgp.labels[['my.year']]]
 				setnames(tmp.gof.data, c("SCALE_SCORE", "ACHIEVEMENT_LEVEL", "CONTENT_AREA"), c("SCALE_SCORE_PRIOR", "ACHIEVEMENT_LEVEL_PRIOR", "CONTENT_AREA_PRIOR"))
@@ -1163,13 +1163,13 @@ function(panel.data,         ## REQUIRED
 				} else {
 					tmp.grade.name <- paste("GRADE_", tail(grade.progression, 1), sep="")
 				}
-				tmp.name <- paste(paste(sapply(strsplit(head(year.progression, -1), '_'), '[', split.location(year.progression)), 
+				tmp.name <- paste(paste(sapply(strsplit(head(year.progression.for.norm.group, -1), '_'), '[', split.location(year.progression.for.norm.group)), 
 					paste(head(content_area.progression, -1), head(grade.progression, -1), sep=" "), sep=" "), collapse=", ")
 				tmp.name <- gsub("MATHEMATICS", "MATH", tmp.name)
 				names(Goodness_of_Fit[[tmp.path]])[length(Goodness_of_Fit[[tmp.path]])] <- paste(tmp.grade.name, " (Priors- ", tmp.name, ")", sep="")
 			} else {
 				names(Goodness_of_Fit[[tmp.path]])[length(Goodness_of_Fit[[tmp.path]])] <- paste("GRADE_", 
-					paste(paste(tmp.gp, year.progression, sep="_"), collapse="-"), sep="")
+					paste(paste(tmp.gp, year.progression.for.norm.group, sep="_"), collapse="-"), sep="")
 			}
 		}
 
