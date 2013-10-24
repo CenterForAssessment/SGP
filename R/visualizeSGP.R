@@ -779,7 +779,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 
 			### Straight projection scale score targets
 
-			if ("sgp.projections" %in% sgPlot.sgp.targets & any(tmp.proj.cut_score.names %in% names(sgp_object@SGP[["SGProjections"]]))) {
+			if (any(c("sgp.projections", "sgp.projections.baseline") %in% sgPlot.sgp.targets) & any(tmp.proj.cut_score.names %in% names(sgp_object@SGP[["SGProjections"]]))) {
 
 				setkeyv(sgPlot.data, c("ID", "CONTENT_AREA"))
 				tmp.list <- list()
@@ -791,7 +791,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 
 			### Lagged projection scale score targets
 
-			if ("sgp.projections.lagged" %in% sgPlot.sgp.targets & any(tmp.proj.cut_score.names.lagged %in% names(sgp_object@SGP[["SGProjections"]]))) {
+			if (any(c("sgp.projections.lagged", "sgp.projections.lagged.baseline") %in% sgPlot.sgp.targets) & any(tmp.proj.cut_score.names.lagged %in% names(sgp_object@SGP[["SGProjections"]]))) {
 
 				setkeyv(sgPlot.data, c("ID", "CONTENT_AREA"))
 				tmp.list <- list()
