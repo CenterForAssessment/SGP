@@ -387,7 +387,7 @@ if ("studentGrowthPlot" %in% plot.types) {
 			sgPlot.sgp.targets <- NULL
 		}
 		if (!is.null(sgPlot.sgp.targets) & sgPlot.baseline && !all(sgPlot.sgp.targets %in% c("sgp.projections.baseline", "sgp.projections.lagged.baseline"))) {
-			message("\tNOTE: 'sgPlot.sgp.targets' must consist of 'sgp.projections' and/or 'sgp.projections.lagged'.")
+			message("\tNOTE: 'sgPlot.sgp.targets' must consist of 'sgp.projections.baseline' and/or 'sgp.projections.lagged.baseline'.")
 			sgPlot.sgp.targets <- NULL
 		}
 
