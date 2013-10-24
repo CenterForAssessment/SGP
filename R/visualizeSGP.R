@@ -368,6 +368,10 @@ if ("studentGrowthPlot" %in% plot.types) {
 			sgPlot.sgp.targets.timeframe <- SGPstateData[[state]][['SGP_Configuration']][['sgPlot.sgp.targets.timeframe']]
 		}
 
+		if (is.null(sgPlot.sgp.targets) && !is.null(SGPstateData[[state]][['SGP_Configuration']][['sgPlot.sgp.targets']])) {
+			sgPlot.sgp.targets <- SGPstateData[[state]][['SGP_Configuration']][['sgPlot.sgp.targets']]
+		}
+
 		if (identical(sgPlot.sgp.targets, TRUE)) {
 			sgPlot.sgp.targets <- c("sgp.projections", "sgp.projections.lagged")
 		} 
