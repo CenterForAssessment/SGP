@@ -31,6 +31,7 @@ function(panel.data,         ## REQUIRED
          isotonize=TRUE,
          convert.using.loss.hoss=TRUE,
          goodness.of.fit=TRUE,
+	 goodness.of.fit.minimum.n=NULL,
          return.prior.scale.score=TRUE,
          return.prior.scale.score.standardized=TRUE,
          return.norm.group.identifier=TRUE,
@@ -665,6 +666,8 @@ function(panel.data,         ## REQUIRED
 
 	if (is.null(sgp.cohort.size)) sgp.cohort.size <- 0
 
+	if (is.null(goodness.of.fit.minimum.n)) goodness.of.fit.minimum.n <- 250
+
 	### Create object to store the studentGrowthPercentiles objects
 
 	tmp.objects <- c("Coefficient_Matrices", "Cutscores", "Goodness_of_Fit", "Knots_Boundaries", "Panel_Data", "SGPercentiles", "SGProjections", "Simulated_SGPs") 
@@ -1108,7 +1111,7 @@ function(panel.data,         ## REQUIRED
 			}
 		}
 
-		if (dim(quantile.data)[1] <= 250) {
+		if (dim(quantile.data)[1] <= goodness.of.fit.minimum.n) {
 			message("\tNOTE: Due to small number of cases (", dim(quantile.data)[1], ") no goodness of fit plots produced.")
 			goodness.of.fit <- FALSE
 		}
