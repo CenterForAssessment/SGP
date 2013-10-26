@@ -1160,20 +1160,10 @@ function(panel.data,         ## REQUIRED
 										grades=tmp.last,
 										output.format="GROB")
 			}
-			if (length(unique(content_area.progression)) > 1) {
-				if (tail(grade.progression, 1) == "EOCT") {
-					tmp.grade.name <- "EOCT" 
-				} else {
-					tmp.grade.name <- paste("GRADE_", tail(grade.progression, 1), sep="")
-				}
-				tmp.name <- paste(paste(sapply(strsplit(head(year.progression.for.norm.group, -1), '_'), '[', split.location(year.progression.for.norm.group)), 
-					paste(head(content_area.progression, -1), head(grade.progression, -1), sep=" "), sep=" "), collapse=", ")
-				tmp.name <- gsub("MATHEMATICS", "MATH", tmp.name)
-				names(Goodness_of_Fit[[tmp.path]])[length(Goodness_of_Fit[[tmp.path]])] <- paste(tmp.grade.name, " (Priors- ", tmp.name, ")", sep="")
-			} else {
-				names(Goodness_of_Fit[[tmp.path]])[length(Goodness_of_Fit[[tmp.path]])] <- paste("GRADE_", 
-					paste(paste(tmp.gp, year.progression.for.norm.group, sep="_"), collapse="-"), sep="")
-			}
+			tmp.gof.plot.name <- paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression, sep="_"), sep="/"), num.prior+1), collapse="; ")
+			tmp.gof.plot.name <- gsub("MATHEMATICS", "MATH", tmp.gof.plot.name)
+			names(Goodness_of_Fit[[tmp.path]])[length(Goodness_of_Fit[[tmp.path]])] <-
+				gsub("/", "_", paste(gsub(";", "", rev(unlist(strsplit(tail(tmp.gof.plot.name, 1), " ")))), collapse=";"))
 		}
 
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, "SGP", "SGP_BASELINE")
