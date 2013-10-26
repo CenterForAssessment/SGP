@@ -382,8 +382,12 @@ if ("studentGrowthPlot" %in% plot.types) {
 				sgPlot.sgp.targets <- NULL
 			}
 		}
-		if (!is.null(sgPlot.sgp.targets) && !all(sgPlot.sgp.targets %in% c("sgp.projections", "sgp.projections.lagged"))) {
+		if (!is.null(sgPlot.sgp.targets) & !sgPlot.baseline && !all(sgPlot.sgp.targets %in% c("sgp.projections", "sgp.projections.lagged"))) {
 			message("\tNOTE: 'sgPlot.sgp.targets' must consist of 'sgp.projections' and/or 'sgp.projections.lagged'.")
+			sgPlot.sgp.targets <- NULL
+		}
+		if (!is.null(sgPlot.sgp.targets) & sgPlot.baseline && !all(sgPlot.sgp.targets %in% c("sgp.projections.baseline", "sgp.projections.lagged.baseline"))) {
+			message("\tNOTE: 'sgPlot.sgp.targets' must consist of 'sgp.projections.baseline' and/or 'sgp.projections.lagged.baseline'.")
 			sgPlot.sgp.targets <- NULL
 		}
 
@@ -692,10 +696,11 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			suppressPackageStartupMessages(require(randomNames))
 			if (!"ETHNICITY" %in% names(tmp.table)) tmp.table[["ETHNICITY"]] <- 1
 			if (!"GENDER" %in% names(tmp.table)) tmp.table[["GENDER"]] <- round(runif(dim(tmp.table)[1], min=0, max=1))
+			if ("LAST_NAME" %in% names(tmp.table)) tmp.table[,LAST_NAME:=NULL]
+			if ("FIRST_NAME" %in% names(tmp.table)) tmp.table[,FIRST_NAME:=NULL]
 			tmp.dt <- tmp.table[,list(ID, ETHNICITY, GENDER)]
 			setkey(tmp.dt, ID)
 			tmp.dt <- tmp.dt[!duplicated(tmp.dt),]
-
 			tmp.dt[,LAST_NAME := randomNames(gender=tmp.dt$GENDER, ethnicity=tmp.dt$ETHNICITY, which.names="last")]
 			tmp.dt[,FIRST_NAME := randomNames(gender=tmp.dt$GENDER, ethnicity=tmp.dt$ETHNICITY, which.names="first")]
 
@@ -774,7 +779,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 
 			### Straight projection scale score targets
 
-			if ("sgp.projections" %in% sgPlot.sgp.targets & any(tmp.proj.cut_score.names %in% names(sgp_object@SGP[["SGProjections"]]))) {
+			if (any(c("sgp.projections", "sgp.projections.baseline") %in% sgPlot.sgp.targets) & any(tmp.proj.cut_score.names %in% names(sgp_object@SGP[["SGProjections"]]))) {
 
 				setkeyv(sgPlot.data, c("ID", "CONTENT_AREA"))
 				tmp.list <- list()
@@ -786,7 +791,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 
 			### Lagged projection scale score targets
 
-			if ("sgp.projections.lagged" %in% sgPlot.sgp.targets & any(tmp.proj.cut_score.names.lagged %in% names(sgp_object@SGP[["SGProjections"]]))) {
+			if (any(c("sgp.projections.lagged", "sgp.projections.lagged.baseline") %in% sgPlot.sgp.targets) & any(tmp.proj.cut_score.names.lagged %in% names(sgp_object@SGP[["SGProjections"]]))) {
 
 				setkeyv(sgPlot.data, c("ID", "CONTENT_AREA"))
 				tmp.list <- list()

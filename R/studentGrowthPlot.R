@@ -60,6 +60,11 @@ if (is.null(Report_Parameters[['Configuration']][['Connect_Points']])) {
 	connect.points <- Report_Parameters[['Configuration']][['Connect_Points']]
 }
 
+if (!is.null(Report_Parameters[['SGP_Targets']])) {
+	if (all(c("sgp.projections", "sgp.projections.lagged") %in% Report_Parameters[['SGP_Targets']]) | all(c("sgp.projections.baseline", "sgp.projections.lagged.baseline") %in% Report_Parameters[['SGP_Targets']])) tmp.target.types <- names(unlist(SGP_Targets)[!is.na(unlist(SGP_Targets))])
+	if (identical("sgp.projections", Report_Parameters[['SGP_Targets']]) | identical("sgp.projections.baseline", Report_Parameters[['SGP_Targets']])) tmp.target.types <- grep("Current", names(unlist(SGP_Targets)[!is.na(unlist(SGP_Targets))]), value=TRUE)
+	if (identical("sgp.projections.lagged", Report_Parameters[['SGP_Targets']]) | identical("sgp.projections.lagged.baseline", Report_Parameters[['SGP_Targets']])) tmp.target.types <- grep("Current", names(unlist(SGP_Targets)[!is.na(unlist(SGP_Targets))]), value=TRUE, invert=TRUE)
+}
 
 ### Utility functions
 
@@ -442,7 +447,7 @@ if (Grades[1] != max(grades.reported.in.state) & !is.na(cuts.ny1.text[1])){
 }
 
 if (!is.null(Report_Parameters[['SGP_Targets']])) {
-	for (i in names(unlist(SGP_Targets)[!is.na(unlist(SGP_Targets))])) {
+	for (i in tmp.target.types) {
 		if (length(grep("Current", i))==0) {
 			current.year.x.coor <- current.year
 			x.coor.label.adjustment <- -0.075; label.position <- c("right")
@@ -548,11 +553,11 @@ if (is.null(Report_Parameters[['SGP_Targets']])) {
 	grid.text(x=(low.year+1):high.year-0.5, y=0.55, gp.levels.text, gp=gpar(col=border.color, cex=.5), default.units="native")
 
 	tmp.projection.names.list <- list()
-	if (length(grep("Current", names(unlist(SGP_Targets)[!is.na(unlist(SGP_Targets))]), value=TRUE)) > 0) {
-		tmp.projection.names.list[["Current"]] <- grep("Current", names(unlist(SGP_Targets)[!is.na(unlist(SGP_Targets))]), value=TRUE)
+	if (length(grep("Current", tmp.target.types)) > 0) {
+		tmp.projection.names.list[["Current"]] <- grep("Current", tmp.target.types, value=TRUE)
 	}
-	if (length(grep("Current", names(unlist(SGP_Targets)[!is.na(unlist(SGP_Targets))]), value=TRUE, invert=TRUE)) > 0) {
-		tmp.projection.names.list[["Lagged"]] <- grep("Current", names(unlist(SGP_Targets)[!is.na(unlist(SGP_Targets))]), value=TRUE, invert=TRUE)
+	if (length(grep("Current", tmp.target.types, invert=TRUE)) > 0) {
+		tmp.projection.names.list[["Lagged"]] <- grep("Current", tmp.target.types, value=TRUE, invert=TRUE)
 	}
 
 	for (i in seq_along(tmp.projection.names.list)) {

@@ -31,6 +31,7 @@ function(panel.data,         ## REQUIRED
          isotonize=TRUE,
          convert.using.loss.hoss=TRUE,
          goodness.of.fit=TRUE,
+	 goodness.of.fit.minimum.n=NULL,
          return.prior.scale.score=TRUE,
          return.prior.scale.score.standardized=TRUE,
          return.norm.group.identifier=TRUE,
@@ -665,6 +666,8 @@ function(panel.data,         ## REQUIRED
 
 	if (is.null(sgp.cohort.size)) sgp.cohort.size <- 0
 
+	if (is.null(goodness.of.fit.minimum.n)) goodness.of.fit.minimum.n <- 250
+
 	### Create object to store the studentGrowthPercentiles objects
 
 	tmp.objects <- c("Coefficient_Matrices", "Cutscores", "Goodness_of_Fit", "Knots_Boundaries", "Panel_Data", "SGPercentiles", "SGProjections", "Simulated_SGPs") 
@@ -1108,7 +1111,7 @@ function(panel.data,         ## REQUIRED
 			}
 		}
 
-		if (dim(quantile.data)[1] <= 250) {
+		if (dim(quantile.data)[1] <= goodness.of.fit.minimum.n) {
 			message("\tNOTE: Due to small number of cases (", dim(quantile.data)[1], ") no goodness of fit plots produced.")
 			goodness.of.fit <- FALSE
 		}
@@ -1157,20 +1160,10 @@ function(panel.data,         ## REQUIRED
 										grades=tmp.last,
 										output.format="GROB")
 			}
-			if (!all(sapply(2:length(content_area.progression), function(f) identical(content_area.progression[f-1], content_area.progression[f])))) {
-				if (tail(grade.progression, 1) == "EOCT") {
-					tmp.grade.name <- "EOCT" 
-				} else {
-					tmp.grade.name <- paste("GRADE_", tail(grade.progression, 1), sep="")
-				}
-				tmp.name <- paste(paste(sapply(strsplit(head(year.progression.for.norm.group, -1), '_'), '[', split.location(year.progression.for.norm.group)), 
-					paste(head(content_area.progression, -1), head(grade.progression, -1), sep=" "), sep=" "), collapse=", ")
-				tmp.name <- gsub("MATHEMATICS", "MATH", tmp.name)
-				names(Goodness_of_Fit[[tmp.path]])[length(Goodness_of_Fit[[tmp.path]])] <- paste(tmp.grade.name, " (Priors- ", tmp.name, ")", sep="")
-			} else {
-				names(Goodness_of_Fit[[tmp.path]])[length(Goodness_of_Fit[[tmp.path]])] <- paste("GRADE_", 
-					paste(paste(tmp.gp, year.progression.for.norm.group, sep="_"), collapse="-"), sep="")
-			}
+			tmp.gof.plot.name <- paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression, sep="_"), sep="/"), num.prior+1), collapse="; ")
+			tmp.gof.plot.name <- gsub("MATHEMATICS", "MATH", tmp.gof.plot.name)
+			names(Goodness_of_Fit[[tmp.path]])[length(Goodness_of_Fit[[tmp.path]])] <-
+				gsub("/", "_", paste(gsub(";", "", rev(unlist(strsplit(tail(tmp.gof.plot.name, 1), " ")))), collapse=";"))
 		}
 
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, "SGP", "SGP_BASELINE")
