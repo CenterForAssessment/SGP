@@ -62,7 +62,7 @@ function(
 
 	### Utility functions
 
-	get.target.arguments <- function(system.type, target.type) {
+	get.target.arguments <- function(system.type, target.type=NULL) {
 		tmp.list <- list()
 		if (is.null(system.type)) {
 			if (identical(target.type, c("sgp.projections", "sgp.projections.lagged"))) system.type <- "Cohort Referenced"
@@ -384,7 +384,7 @@ function(
 	###################################################################################################
 
 	if (sgp.target.scale.scores) {
-
+		target.args <- get.target.arguments(SGPstateData[[state]][["Growth"]][["System_Type"]])
 		for (target.type.iter in target.args[['sgp.target.scale.scores.types']]) {
 			for (target.level.iter in target.args[['target.level']]) {
 				if (!exists("tmp.target.data")) {

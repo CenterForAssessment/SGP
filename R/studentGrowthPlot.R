@@ -453,7 +453,7 @@ if (!is.null(Report_Parameters[['SGP_Targets']])) {
 			x.coor.label.adjustment <- -0.075; label.position <- c("right")
 			tmp.achievement.level <- which(tail(head(Achievement_Levels, 2), 1)==achievement.level.labels)
 		} else {
-			current.year.x.coor <- current.year+1
+			current.year.x.coor <- current.year+grade.values$increment_for_projection
 			x.coor.label.adjustment <- 0.075; label.position <- c("left")
 			tmp.achievement.level <- which(head(Achievement_Levels, 1)==achievement.level.labels)
 		}
