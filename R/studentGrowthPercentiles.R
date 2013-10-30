@@ -995,7 +995,9 @@ function(panel.data,         ## REQUIRED
 						tmp.csem.variable <- NULL
 					}
 
-					tmp.csem.quantiles[[j]] <- data.table(ID=tmp.data[[1]])
+					
+					tmp.csem.quantiles[[j]] <- tmp.data[,c(names(tmp.data)[1], additional.vnames.to.return), with=FALSE]
+					setnames(tmp.csem.quantiles[[j]], names(tmp.csem.quantiles[[j]])[1], "ID")
 					for (k in seq(calculate.confidence.intervals[['simulation.iterations']])) { 
 						set.seed(k)
 						tmp.csem.quantiles[[j]][,TEMP_SGP_SIM:=.get.quantiles(
@@ -1073,7 +1075,7 @@ function(panel.data,         ## REQUIRED
 			Simulated_SGPs[[tmp.path]] <- rbind.fill(simulation.data, as.data.frame(Simulated_SGPs[[tmp.path]])) 
 		}
 
-		if (simex.tf){
+		if (simex.tf) {
 			quantile.data.simex<-.simex.sgp(state=calculate.simex$state, variable=calculate.simex$variable, lambda=calculate.simex$lambda, 
 				B=calculate.simex$simulation.iterations, extrapolation=calculate.simex$extrapolation)
 			quantile.data[, SGP_SIMEX:=quantile.data.simex[["SGP_SIMEX"]]]
