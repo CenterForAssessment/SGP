@@ -80,7 +80,7 @@ function(sgp_object,
 				setwd(file.path(outputSGP.directory))
 				if (paste(tmp.state, "SGP_LONG_Data.txt.zip", sep="_") %in% list.files()) file.remove(paste(tmp.state, "SGP_LONG_Data.txt.zip", sep="_"))
 				suppressMessages(
-					zip(paste(tmp.state, "SGP_LONG_Data.txt.zip", sep="_"), paste(tmp.state, "SGP_LONG_Data.txt", sep="_"))
+					zip(paste(tmp.state, "SGP_LONG_Data.txt.zip", sep="_"), paste(tmp.state, "SGP_LONG_Data.txt", sep="_"), flags="-rmq")
 				)
 				setwd(tmp.working.directory)
 			}
@@ -132,7 +132,7 @@ function(sgp_object,
 				setwd(file.path(outputSGP.directory))
 				if (paste(tmp.state, "_SGP_LONG_Data_", final.year, ".txt.zip", sep="") %in% list.files()) file.remove(paste(tmp.state, "_SGP_LONG_Data_", final.year, ".txt.zip", sep=""))
 				suppressMessages(
-					zip(paste(tmp.state, "_SGP_LONG_Data_", final.year, ".txt.zip", sep=""), paste(tmp.state, "_SGP_LONG_Data_", final.year, ".txt", sep=""))
+					zip(paste(tmp.state, "_SGP_LONG_Data_", final.year, ".txt.zip", sep=""), paste(tmp.state, "_SGP_LONG_Data_", final.year, ".txt", sep=""), flags="-rmq")
 				)
 				setwd(tmp.working.directory)
 			}
@@ -187,7 +187,7 @@ function(sgp_object,
 				setwd(file.path(outputSGP.directory))
 				if (paste(tmp.state, "SGP_WIDE_Data.txt.zip", sep="_") %in% list.files()) file.remove(paste(tmp.state, "SGP_WIDE_Data.txt.zip", sep="_"))
 				suppressMessages(
-					zip(paste(tmp.state, "SGP_WIDE_Data.txt.zip", sep="_"), paste(tmp.state, "SGP_WIDE_Data.txt", sep="_"))
+					zip(paste(tmp.state, "SGP_WIDE_Data.txt.zip", sep="_"), paste(tmp.state, "SGP_WIDE_Data.txt", sep="_"), flags="-rmq")
 				)
 				setwd(tmp.working.directory)
 			}
@@ -238,7 +238,7 @@ function(sgp_object,
 				setwd(file.path(outputSGP.directory))
 				if (paste(tmp.state, "SGP_INSTRUCTOR_Data.txt.zip", sep="_") %in% list.files()) file.remove(paste(tmp.state, "SGP_INSTRUCTOR_Data.txt.zip", sep="_"))
 				suppressMessages(
-					zip(paste(tmp.state, "SGP_INSTRUCTOR_Data.txt.zip", sep="_"), paste(tmp.state, "SGP_INSTRUCTOR_Data.txt", sep="_"))
+					zip(paste(tmp.state, "SGP_INSTRUCTOR_Data.txt.zip", sep="_"), paste(tmp.state, "SGP_INSTRUCTOR_Data.txt", sep="_"), flags="-rmq")
 				)
 				setwd(tmp.working.directory)
 			}
@@ -671,7 +671,7 @@ function(sgp_object,
 			setwd(file.path(outputSGP.directory, "SchoolView", "TEXT"))
 			if ("STUDENT_GROWTH.dat.zip" %in% list.files()) file.remove("STUDENT_GROWTH.dat.zip")
 			suppressMessages(
-				zip("STUDENT_GROWTH.dat.zip", "STUDENT_GROWTH.dat")
+				zip("STUDENT_GROWTH.dat.zip", "STUDENT_GROWTH.dat", flags="-rmq")
 			)
 			setwd(tmp.working.directory)
 

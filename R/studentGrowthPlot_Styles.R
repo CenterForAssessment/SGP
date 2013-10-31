@@ -608,7 +608,7 @@ if (reports.by.school) {
 			setwd(file.path(sgPlot.folder, year_folder, district_folder))
 			if (paste(school_folder, ".zip", sep="") %in% list.files()) file.remove(paste(school_folder, ".zip", sep=""))
 			suppressMessages(
-				system(paste("zip -rq", paste(school_folder, ".zip", sep=""), school_folder, sep=" "))
+				zip(paste(school_folder, ".zip", sep=""), school_folder, flags="-rmq")
 			)
 			setwd(tmp.working.directory)
 		}
@@ -1125,7 +1125,7 @@ if (reports.by.instructor) {
 			setwd(file.path(sgPlot.folder, year_folder, district_folder, school_folder))
 			if (paste(instructor_folder, ".zip", sep="") %in% list.files()) file.remove(paste(instructor_folder, ".zip", sep=""))
 			suppressMessages(
-				system(paste("zip -rq", paste(instructor_folder, ".zip", sep=""), instructor_folder, sep=" "))
+				zip(paste(instructor_folder, ".zip", sep=""), instructor_folder, flags="-rmq")
 			)
 			setwd(tmp.working.directory)
 		}
