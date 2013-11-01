@@ -79,7 +79,7 @@
 
 	### Define quantities/variables related to state
 
-	if (state %in% ls(SGPstateData)) {
+	if (state %in% objects(SGPstateData)) {
 		tmp.abbreviation <- SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Abbreviation"]]
 		tmp.state <- paste(state.name[state==state.abb], tmp.abbreviation)
 		tmp.organization <- SGPstateData[[state]][["Assessment_Program_Information"]][["Organization"]]
