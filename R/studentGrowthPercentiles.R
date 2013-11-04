@@ -1079,7 +1079,7 @@ function(panel.data,         ## REQUIRED
 		}
 
 		if (simex.tf) {
-			quantile.data.simex<-.simex.sgp(state=calculate.simex$state, variable=calculate.simex$variable, lambda=calculate.simex$lambda, 
+			quantile.data.simex <- .simex.sgp(state=calculate.simex$state, variable=calculate.simex$variable, lambda=calculate.simex$lambda, 
 				B=calculate.simex$simulation.iterations, extrapolation=calculate.simex$extrapolation)
 			quantile.data[, SGP_SIMEX:=quantile.data.simex[["SGP_SIMEX"]]]
 		}
