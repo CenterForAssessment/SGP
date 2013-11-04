@@ -995,9 +995,12 @@ function(panel.data,         ## REQUIRED
 						tmp.csem.variable <- NULL
 					}
 
-					
-					tmp.csem.quantiles[[j]] <- tmp.data[,c(names(tmp.data)[1], additional.vnames.to.return), with=FALSE]
+					tmp.csem.quantiles[[j]] <- tmp.data[,names(tmp.data)[1], with=FALSE]
 					setnames(tmp.csem.quantiles[[j]], names(tmp.csem.quantiles[[j]])[1], "ID")
+					if (!is.null(additional.vnames.to.return)) {
+						tmp.csem.quantiles[[j]] <- data.table(panel.data[["Panel_Data"]][,c("ID", names(additional.vnames.to.return))], key="ID")[tmp.csem.quantiles[[j]]]
+						setnames(tmp.csem.quantiles[[j]], names(additional.vnames.to.return), unlist(additional.vnames.to.return))
+					}
 					for (k in seq(calculate.confidence.intervals[['simulation.iterations']])) { 
 						set.seed(k)
 						tmp.csem.quantiles[[j]][,TEMP_SGP_SIM:=.get.quantiles(
