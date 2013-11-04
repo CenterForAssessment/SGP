@@ -604,7 +604,7 @@ function(panel.data,         ## REQUIRED
 				tmp.messages <- c(tmp.messages, "\t\tNOTE: Please specify an appropriate list for calculate.simex including state/csem variable, simulation.iterations, lambda and extrapolation. See help page for details. SGPs will be calculated without measurement error correction.\n")
 				simex.tf <- FALSE
 			}
-				if (all(c("state", "variable") %in% names(calculate.simex))) {
+			if (all(c("state", "variable") %in% names(calculate.simex))) {
 				stop("Please specify EITHER a state OR a CSEM variable for SGP measurement error correction. See help page for details.")
 			}
 			if (!is.null(calculate.simex$lambda)){
@@ -619,11 +619,11 @@ function(panel.data,         ## REQUIRED
 			}
 		}
 		if (is.character(calculate.simex)) {
-			if (!calculate.simex %in% c(names(SGPstateData), names(panel.data))) {
+			if (!calculate.simex %in% c(objects(SGPstateData), names(panel.data))) {
 				tmp.messages <- c(tmp.messages, "\t\tNOTE: Please provide an appropriate state acronym or variable name in supplied data corresponding to CSEMs. See help page for details. SGPs will be calculated without measurement error correction.\n")
 				simex.tf <- FALSE
 			}
-			if (calculate.simex %in% names(SGPstateData)) {
+			if (calculate.simex %in% objects(SGPstateData)) {
 				if ("YEAR" %in% names(SGPstateData[[calculate.simex]][["Assessment_Program_Information"]][["CSEM"]])) {
 					if (!sgp.labels$my.year %in% unique(SGPstateData[[calculate.simex]][["Assessment_Program_Information"]][["CSEM"]][["YEAR"]])) {
 						tmp.messages <- c(tmp.messages, "\t\tNOTE: SGPstateData contains year specific CSEMs but year requested is not available. SGPs will be calculated without measurement error correction.\n")
