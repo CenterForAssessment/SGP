@@ -278,7 +278,7 @@ function(panel.data,         ## REQUIRED
 
 		for (k in simex.matrix.priors) {
 			tmp.data <- .get.panel.data(ss.data, k, by.grade)
-			tmp.num.variables <- dim(data)[2]
+			tmp.num.variables <- dim(tmp.data)[2]
 			tmp.gp.iter <- rev(tmp.gp)[2:(k+1)]
 			tmp.ca.iter <- rev(content_area.progression)[2:(k+1)]
 			tmp.yr.iter <- rev(year.progression)[2:(k+1)]
@@ -384,7 +384,7 @@ function(panel.data,         ## REQUIRED
 			switch(extrapolation,
 				LINEAR = fit <- lm(fitted[[paste("order_", k, sep="")]]~ lambda),
 				QUADRATIC = fit <- lm(fitted[[paste("order_", k, sep="")]] ~ lambda + I(lambda^2)))
-			extrap[[paste("order_", k, sep="")]] <- t(apply(matrix(predict(fit, newdata=data.frame(lambda=-1)), nrow=dim(data)[1]), 1, .smooth.isotonize.row))
+			extrap[[paste("order_", k, sep="")]] <- t(apply(matrix(predict(fit, newdata=data.frame(lambda=-1)), nrow=dim(tmp.data)[1]), 1, .smooth.isotonize.row))
 			tmp.quantiles.simex[[k]] <- data.table(ID=tmp.data[["ID"]], SIMEX_ORDER=k, 
 				SGP_SIMEX=.get.quantiles(extrap[[paste("order_", k, sep="")]], tmp.data[[tmp.num.variables]]))
 		} ### END for (k in simex.matrix.priors)
