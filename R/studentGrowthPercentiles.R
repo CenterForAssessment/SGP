@@ -243,32 +243,28 @@ function(panel.data,         ## REQUIRED
 
 	.simex.sgp <- function(state, variable, lambda, B, extrapolation) {
 		GRADE <- CONTENT_AREA <- YEAR <- V1 <- Lambda <- tau <- b <- .SD <- NULL ## To avoid R CMD check warnings
-		content_area <- content_area.progression
-		year <- year.progression
 		my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
 
 		fitted <- extrap <- tmp.quantiles.simex <- list()
 		loss.hoss <- matrix(nrow=2,ncol=length(tmp.gp)-1)
 		if (!is.null(state)) {
-		  for (g in 1:ncol(loss.hoss)) {
-			  loss.hoss[,g] <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[rev(content_area)[-1][g]]][[paste("loss.hoss_", rev(tmp.gp)[-1][g], sep="")]]
+			for (g in 1:ncol(loss.hoss)) {
+				loss.hoss[,g] <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[rev(content_area.progression)[-1][g]]][[paste("loss.hoss_", rev(tmp.gp)[-1][g], sep="")]]
 		}}
 		if (!is.null(variable)) {
-		  for (g in 1:ncol(loss.hoss)) {
-		    loss.hoss[,g] <- variable[[paste("loss.hoss_", rev(tmp.gp)[-1][g], sep="")]]
-		  }
-		}   
+			for (g in 1:ncol(loss.hoss)) {
+				loss.hoss[,g] <- variable[[paste("loss.hoss_", rev(tmp.gp)[-1][g], sep="")]]
+		}}   
 		
-
 		rqfit <- function(tmp.gp.iter, lam, rqdata) {  #  AVI added in the lam argument here to index the lambda specific knots and boundaries
-		  mod <- character()
-		  for (i in seq_along(tmp.gp.iter)) {
-		    knt <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['knots_", tmp.gp.iter[i], "']]", sep="")
-		    bnd <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['boundaries_", tmp.gp.iter[i], "']]", sep="")
-		    mod <- paste(mod, " + bs(prior_", i, ", knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
-		  }
-		  fitted.values<-eval(parse(text=paste("rq(final.yr ~", substring(mod,4), ", tau=taus, data = rqdata, method=rq.method)[['fitted.values']]", sep="")))
-		  return(apply(fitted.values,1,.smooth.isotonize.row))
+			mod <- character()
+			for (i in seq_along(tmp.gp.iter)) {
+				knt <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['knots_", tmp.gp.iter[i], "']]", sep="")
+				bnd <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['boundaries_", tmp.gp.iter[i], "']]", sep="")
+				mod <- paste(mod, " + bs(prior_", i, ", knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
+			}
+			fitted.values<-eval(parse(text=paste("rq(final.yr ~", substring(mod,4), ", tau=taus, data = rqdata, method=rq.method)[['fitted.values']]", sep="")))
+			return(apply(fitted.values,1,.smooth.isotonize.row))
 		}
 
 		if (!is.null(use.my.coefficient.matrices)) {
@@ -281,57 +277,55 @@ function(panel.data,         ## REQUIRED
 		} else simex.matrix.priors <- coefficient.matrix.priors
 
 		for (k in simex.matrix.priors) {
-			data <- .get.panel.data(ss.data, k, by.grade)
+			tmp.data <- .get.panel.data(ss.data, k, by.grade)
 			tmp.num.variables <- dim(data)[2]
 			tmp.gp.iter <- rev(tmp.gp)[2:(k+1)]
-			tmp.ca.iter <- rev(content_area)[2:(k+1)]
-			tmp.yr.iter <- rev(year)[2:(k+1)]
-			csem.int <- matrix(nrow=dim(data)[1], ncol=length(tmp.gp.iter)) # build matrix to store interpolated csem
+			tmp.ca.iter <- rev(content_area.progression)[2:(k+1)]
+			tmp.yr.iter <- rev(year.progression)[2:(k+1)]
+			csem.int <- matrix(nrow=dim(tmp.data)[1], ncol=length(tmp.gp.iter)) # build matrix to store interpolated csem
 			colnames(csem.int) <- paste("icsem", tmp.gp.iter, tmp.ca.iter, tmp.yr.iter, sep="")
 			
 			# interpolate csem for all scale scores except that of the last grade
 
 			if (!is.null(state)) {
-			  for (g in seq_along(tmp.gp.iter)) {
-			    if ("YEAR" %in% names(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
-			      CSEM_Data <- subset(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], 
-			                          GRADE==tmp.gp.iter[g] & CONTENT_AREA== tmp.ca.iter[g] & YEAR==tmp.yr.iter[g])
-			    } else {
-			      CSEM_Data <- subset(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], 
-			                          GRADE==tmp.gp.iter[g] & CONTENT_AREA== tmp.ca.iter[g])
-			    }
-			    if (dim(CSEM_Data)[1] == 0) stop(paste('CSEM data for', tmp.ca.iter[g], 'Grade', tmp.gp.iter[g],
-			                                           'is required to use SIMEX functionality, but is not available in SGPstateData.  Please contact package administrators to add CSEM data.'))
-			    CSEM_Function <- splinefun(CSEM_Data[["SCALE_SCORE"]], CSEM_Data[["SCALE_SCORE_CSEM"]], method="natural")
-			    csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")] <- CSEM_Function(data[[tmp.num.variables-g]])
-			  }
+				for (g in seq_along(tmp.gp.iter)) {
+					if ("YEAR" %in% names(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
+						CSEM_Data <- subset(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], 
+							GRADE==tmp.gp.iter[g] & CONTENT_AREA== tmp.ca.iter[g] & YEAR==tmp.yr.iter[g])
+					} else {
+						CSEM_Data <- subset(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], 
+							GRADE==tmp.gp.iter[g] & CONTENT_AREA== tmp.ca.iter[g])
+					}
+					if (dim(CSEM_Data)[1] == 0) stop(paste('CSEM data for', tmp.ca.iter[g], 'Grade', tmp.gp.iter[g], 'is required to use SIMEX functionality, but is not available in SGPstateData.  Please contact package administrators to add CSEM data.'))
+						CSEM_Function <- splinefun(CSEM_Data[["SCALE_SCORE"]], CSEM_Data[["SCALE_SCORE_CSEM"]], method="natural")
+						csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")] <- CSEM_Function(tmp.data[[tmp.num.variables-g]])
+				}
 			}
 			if (!is.null(variable)){
 				for (g in seq_along(tmp.gp.iter)) {
-					csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")] <- 
-						variable[[paste("CSEM.grade", tmp.gp.iter[g], ".", tmp.ca.iter[g], sep="")]]
+					csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")] <- variable[[paste("CSEM.grade", tmp.gp.iter[g], ".", tmp.ca.iter[g], sep="")]]
 				}
 			}
 
 			# naive model
 
-			fitted[[paste("order_", k, sep="")]] <- matrix(0, nrow=length(lambda), ncol=dim(data)[1]*length(taus))
+			fitted[[paste("order_", k, sep="")]] <- matrix(0, nrow=length(lambda), ncol=dim(tmp.data)[1]*length(taus))
 			tmp.matrix <- getsplineMatrices(
 				Coefficient_Matrices[[tmp.path.coefficient.matrices]], 
 				tail(content_area.progression, k+1), 
 				tail(grade.progression, k+1),
 				tail(year.progression, k+1),
 				tail(year_lags.progression, k),
-				my.matrix.order=k)
+				my.matrix.order=k)[[1]]
 			
-			fitted[[paste("order_", k, sep="")]][1,] <- as.vector(.get.percentile.predictions(data, tmp.matrix))
+			fitted[[paste("order_", k, sep="")]][1,] <- as.vector(.get.percentile.predictions(tmp.data, tmp.matrix))
 			
-			# perturbe data
+			# perturb data
 			
 			for (L in lambda[-1]) {
-				big.data <- rbindlist(replicate(B, data, simplify = FALSE))
-				big.data[, Lambda := rep(L, each=dim(data)[1]*B)]
-				big.data[, b := rep(1:B, each=dim(data)[1])]
+				big.data <- rbindlist(replicate(B, tmp.data, simplify = FALSE))
+				big.data[, Lambda := rep(L, each=dim(tmp.data)[1]*B)]
+				big.data[, b := rep(1:B, each=dim(tmp.data)[1])]
 				setnames(big.data,tmp.num.variables,"final.yr")
 				for (g in seq_along(tmp.gp.iter)) {
 					big.data[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="") := 
@@ -383,17 +377,16 @@ function(panel.data,         ## REQUIRED
 					for (z in 1:B) {
 					  fitted[[paste("order_", k, sep="")]][which(lambda==L),] <-fitted[[paste("order_", k, sep="")]][which(lambda==L),] + as.vector(t(tmp.fitted.b[[z]])/B)
 					} 
-          stopParallel(parallel.config, par.start)
+					stopParallel(parallel.config, par.start)
 				}
-
 			} ### END for (L in lambda[-1])
 
 			switch(extrapolation,
 				LINEAR = fit <- lm(fitted[[paste("order_", k, sep="")]]~ lambda),
 				QUADRATIC = fit <- lm(fitted[[paste("order_", k, sep="")]] ~ lambda + I(lambda^2)))
 			extrap[[paste("order_", k, sep="")]] <- t(apply(matrix(predict(fit, newdata=data.frame(lambda=-1)), nrow=dim(data)[1]), 1, .smooth.isotonize.row))
-			tmp.quantiles.simex[[k]] <- data.table(ID=data[["ID"]], SIMEX_ORDER=k, 
-				SGP_SIMEX=.get.quantiles(extrap[[paste("order_", k, sep="")]], data[[tmp.num.variables]]))
+			tmp.quantiles.simex[[k]] <- data.table(ID=tmp.data[["ID"]], SIMEX_ORDER=k, 
+				SGP_SIMEX=.get.quantiles(extrap[[paste("order_", k, sep="")]], tmp.data[[tmp.num.variables]]))
 		} ### END for (k in simex.matrix.priors)
 		
 		quantile.data.simex <- data.table(rbindlist(tmp.quantiles.simex), key=c("ID", "SIMEX_ORDER"))
@@ -600,7 +593,7 @@ function(panel.data,         ## REQUIRED
 			simex.tf <- FALSE
 		}
 		if (is.list(calculate.simex)) {
-			if (!(("state" %in% names(calculate.simex)) | ("variable" %in% names(calculate.simex)))) {
+			if (!("state" %in% names(calculate.simex)) & !("variable" %in% names(calculate.simex))) {
 				tmp.messages <- c(tmp.messages, "\t\tNOTE: Please specify an appropriate list for calculate.simex including state/csem variable, simulation.iterations, lambda and extrapolation. See help page for details. SGPs will be calculated without measurement error correction.\n")
 				simex.tf <- FALSE
 			}
