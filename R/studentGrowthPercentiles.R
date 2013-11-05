@@ -350,18 +350,16 @@ function(panel.data,         ## REQUIRED
 				}
 
 				if (is.null(parallel.config)) { # Sequential
-				  setkey(big.data,b)
-				  for (z in 1:B) {
-				    f<-rqfit(tmp.gp.iter[1:k], lam=L,rqdata=big.data[list(z)])
-				    fitted[[paste("order_", k, sep="")]][which(lambda==L),] <-fitted[[paste("order_", k, sep="")]][which(lambda==L),] + as.vector(t(f)/B)
-				  }
-
+					setkey(big.data,b)
+					for (z in 1:B) {
+						f<-rqfit(tmp.gp.iter[1:k], lam=L,rqdata=big.data[list(z)])
+						fitted[[paste("order_", k, sep="")]][which(lambda==L),] <-fitted[[paste("order_", k, sep="")]][which(lambda==L),] + as.vector(t(f)/B)
+					}
 				} else {	# Parallel over 1:B
 					if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
 						##  Don't offer this option now.  But this could ultimately be the BEST option for this because we could have 
 						##  nested foreach loops around Lambda, B and even the priors/orders if we have access to enough cores (cluster)
-						message("\t\tNOTE: FOREACH backend in not currently available for SIMEX.  
-							Changing to BACKEND='PARALLEL' and TYPE will be set to OS default.")
+						message("\t\tNOTE: FOREACH backend in not currently available for SIMEX.  Changing to BACKEND='PARALLEL' and TYPE will be set to OS default.")
 						parallel.config[["BACKEND"]] <- "PARALLEL"
 					} 
 				
@@ -369,13 +367,13 @@ function(panel.data,         ## REQUIRED
 					##  Note, that if you use the parallel.config for SIMEX here, you can also use it for TAUS in the naive analysis
 					##  Example parallel.config argument:  '... parallel.config=list(BACKEND="PARALLEL", TYPE="SOCK", WORKERS=list(SIMEX = 4, TAUS = 4))'
 					if (par.start$par.type == 'MULTICORE') {
-					  tmp.fitted.b <- mclapply(1:B, function(x) big.data[b==x][,rqfit(tmp.gp.iter[1:k], lam=L, rqdata=.SD)], mc.cores=par.start$workers)
+						tmp.fitted.b <- mclapply(1:B, function(x) big.data[b==x][,rqfit(tmp.gp.iter[1:k], lam=L, rqdata=.SD)], mc.cores=par.start$workers)
 					}
 					if (par.start$par.type == 'SNOW') {
 						tmp.fitted.b <- parLapply(par.start$internal.cl, 1:B, function(x) big.data[b==x][,eval(rqfit(tmp.gp.iter[1:k], lam=L, rqdata=.SD))])
 					}
 					for (z in 1:B) {
-					  fitted[[paste("order_", k, sep="")]][which(lambda==L),] <-fitted[[paste("order_", k, sep="")]][which(lambda==L),] + as.vector(t(tmp.fitted.b[[z]])/B)
+						fitted[[paste("order_", k, sep="")]][which(lambda==L),] <-fitted[[paste("order_", k, sep="")]][which(lambda==L),] + as.vector(t(tmp.fitted.b[[z]])/B)
 					} 
 					stopParallel(parallel.config, par.start)
 				}
