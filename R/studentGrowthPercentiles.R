@@ -326,6 +326,7 @@ function(panel.data,         ## REQUIRED
 				big.data <- rbindlist(replicate(B, tmp.data, simplify = FALSE))
 				big.data[, Lambda := rep(L, each=dim(tmp.data)[1]*B)]
 				big.data[, b := rep(1:B, each=dim(tmp.data)[1])]
+				setkey(big.data, b)
 				setnames(big.data,tmp.num.variables,"final.yr")
 				for (g in seq_along(tmp.gp.iter)) {
 					big.data[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="") := 
@@ -350,7 +351,6 @@ function(panel.data,         ## REQUIRED
 				}
 
 				if (is.null(parallel.config)) { # Sequential
-					setkey(big.data, b)
 					for (z in 1:B) {
 						f<-rqfit(tmp.gp.iter[1:k], lam=L,rqdata=big.data[list(z)])
 						fitted[[paste("order_", k, sep="")]][which(lambda==L),] <-fitted[[paste("order_", k, sep="")]][which(lambda==L),] + as.vector(t(f)/B)
