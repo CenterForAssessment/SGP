@@ -333,8 +333,8 @@ function(panel.data,         ## REQUIRED
 					big.data[, tmp.num.variables-g := eval(parse(text=paste("big.data[[", tmp.num.variables-g, "]]+sqrt(big.data[['Lambda']])*big.data[['icsem",
 						tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], "']] * rnorm(dim(big.data)[1])", sep="")))]
 					col.index <- tmp.num.variables-g
-					big.data[big.data[[col.index]] < loss.hoss[1,g], col.index := loss.hoss[1,g], with=F]
-					big.data[big.data[[col.index]] > loss.hoss[2,g], col.index := loss.hoss[2,g], with=F] 
+					big.data[big.data[[col.index]] < loss.hoss[1,g], col.index := loss.hoss[1,g], with=FALSE]
+					big.data[big.data[[col.index]] > loss.hoss[2,g], col.index := loss.hoss[2,g], with=FALSE] 
 					ks <- big.data[, as.list(as.vector(unlist(round(quantile(big.data[[col.index]], probs=knot.cut.percentiles, na.rm=TRUE), digits=3))))] # Knots
 					bs <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.1), digits=3)))] # Boundaries
 					lh <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.0), digits=3)))] # LOSS/HOSS
@@ -350,7 +350,7 @@ function(panel.data,         ## REQUIRED
 				}
 
 				if (is.null(parallel.config)) { # Sequential
-					setkey(big.data,b)
+					setkey(big.data, b)
 					for (z in 1:B) {
 						f<-rqfit(tmp.gp.iter[1:k], lam=L,rqdata=big.data[list(z)])
 						fitted[[paste("order_", k, sep="")]][which(lambda==L),] <-fitted[[paste("order_", k, sep="")]][which(lambda==L),] + as.vector(t(f)/B)
@@ -367,13 +367,13 @@ function(panel.data,         ## REQUIRED
 					##  Note, that if you use the parallel.config for SIMEX here, you can also use it for TAUS in the naive analysis
 					##  Example parallel.config argument:  '... parallel.config=list(BACKEND="PARALLEL", TYPE="SOCK", WORKERS=list(SIMEX = 4, TAUS = 4))'
 					if (par.start$par.type == 'MULTICORE') {
-						tmp.fitted.b <- mclapply(1:B, function(x) big.data[b==x][,rqfit(tmp.gp.iter[1:k], lam=L, rqdata=.SD)], mc.cores=par.start$workers)
+						tmp.fitted.b <- mclapply(1:B, function(x) big.data[list(x)][,rqfit(tmp.gp.iter[1:k], lam=L, rqdata=.SD)], mc.cores=par.start$workers)
 					}
 					if (par.start$par.type == 'SNOW') {
-						tmp.fitted.b <- parLapply(par.start$internal.cl, 1:B, function(x) big.data[b==x][,eval(rqfit(tmp.gp.iter[1:k], lam=L, rqdata=.SD))])
+						tmp.fitted.b <- parLapply(par.start$internal.cl, 1:B, function(x) big.data[list(x)][,eval(rqfit(tmp.gp.iter[1:k], lam=L, rqdata=.SD))])
 					}
 					for (z in 1:B) {
-						fitted[[paste("order_", k, sep="")]][which(lambda==L),] <-fitted[[paste("order_", k, sep="")]][which(lambda==L),] + as.vector(t(tmp.fitted.b[[z]])/B)
+						fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + as.vector(t(tmp.fitted.b[[z]])/B)
 					} 
 					stopParallel(parallel.config, par.start)
 				}
