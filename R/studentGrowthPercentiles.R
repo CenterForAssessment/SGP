@@ -1113,13 +1113,20 @@ function(panel.data,         ## REQUIRED
 		}
 
 		if (is.character(goodness.of.fit) | goodness.of.fit==TRUE) {
+			if (simex.tf) {
+				sgps.for.gof <- c("SGP", "SGP_SIMEX")
+				sgps.for.gof.path <- c(tmp.path, paste(tmp.path, "SIMEX", sep="."))
+			} else {
+				sgps.for.gof <- "SGP"
+				sgps.for.gof.path <- tmp.path
+			}
 			if (is.character(goodness.of.fit) & goodness.of.fit %in% objects(SGPstateData) &&
 				!is.null(SGPstateData[[goodness.of.fit]][['Achievement']][['Cutscores']][[rev(content_area.progression)[2]]][[paste("GRADE_", rev(tmp.gp)[2], sep="")]])) {
 				GRADE <- YEAR <- CONTENT_AREA <- NULL
 				tmp.gof.data <- getAchievementLevel(
 							sgp_data=data.table(
 								SCALE_SCORE=quantile.data[['SCALE_SCORE_PRIOR']],
-								SGP=quantile.data[['SGP']],
+								quantile.data[, sgps.for.gof, with=FALSE],
 								VALID_CASE="VALID_CASE",
 								CONTENT_AREA=rev(content_area.progression)[2],
 								YEAR=rev(year.progression.for.norm.group)[2], 
@@ -1129,37 +1136,49 @@ function(panel.data,         ## REQUIRED
 							content_area=rev(content_area.progression)[2],
 							grade=tail(tmp.gp, 2)[1])[,GRADE:=tmp.last][,YEAR:=sgp.labels[['my.year']]]
 				setnames(tmp.gof.data, c("SCALE_SCORE", "ACHIEVEMENT_LEVEL", "CONTENT_AREA"), c("SCALE_SCORE_PRIOR", "ACHIEVEMENT_LEVEL_PRIOR", "CONTENT_AREA_PRIOR"))
-				tmp.gof.data[["CONTENT_AREA"]] <- sgp.labels[['my.subject']]
-				content_areas_prior <- tmp.gof.data[['CONTENT_AREA_PRIOR']][1]
+				tmp.gof.data[,CONTENT_AREA:=sgp.labels[['my.subject']]]
 
-				Goodness_of_Fit[[tmp.path]][['TMP_NAME']] <- gofSGP(
-										sgp_object=tmp.gof.data,
-										state=goodness.of.fit,
-										years=sgp.labels[['my.year']],
-										content_areas=sgp.labels[['my.subject']],
-										content_areas_prior=content_areas_prior,
-										grades=tmp.last,
-										output.format="GROB")
+				for (gof.iter in seq_along(sgps.for.gof)) {
+					Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]][['TMP_NAME']] <- gofSGP(
+											sgp_object=tmp.gof.data,
+											state=goodness.of.fit,
+											years=sgp.labels[['my.year']],
+											content_areas=sgp.labels[['my.subject']],
+											content_areas_prior=tmp.gof.data[['CONTENT_AREA_PRIOR']][1],
+											grades=tmp.last,
+											use.sgp=sgps.for.gof[gof.iter],
+											output.format="GROB")
+
+					tmp.gof.plot.name <- 
+						paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression, sep="_"), sep="/"), num.prior+1), collapse="; ")
+					tmp.gof.plot.name <- gsub("MATHEMATICS", "MATH", tmp.gof.plot.name)
+					names(Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]])[length(Goodness_of_Fit[[tmp.path]])] <- 
+						gsub("/", "_", paste(gsub(";", "", rev(unlist(strsplit(tail(tmp.gof.plot.name, 1), " ")))), collapse=";"))
+				}
 			} else {
 				tmp.gof.data <- data.table(
 							SCALE_SCORE_PRIOR=quantile.data[['SCALE_SCORE_PRIOR']],
-							SGP=quantile.data[['SGP']],
+							quantile.data[, sgps.for.gof, with=FALSE],
 							VALID_CASE="VALID_CASE", 
 							CONTENT_AREA=sgp.labels[['my.subject']], 
 							YEAR=sgp.labels[['my.year']], 
 							GRADE=tmp.last)
- 
-				Goodness_of_Fit[[tmp.path]][['TMP_NAME']] <- gofSGP(
-										sgp_object=tmp.gof.data,
-										years=sgp.labels[['my.year']],
-										content_areas=sgp.labels[['my.subject']],
-										grades=tmp.last,
-										output.format="GROB")
+
+				for (sgps.for.gof.iter in sgps.for.gof) {
+					Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]][['TMP_NAME']] <- gofSGP(
+											sgp_object=tmp.gof.data,
+											years=sgp.labels[['my.year']],
+											content_areas=sgp.labels[['my.subject']],
+											grades=tmp.last,
+											use.sgp=sgps.for.gof[gof.iter],
+											output.format="GROB")
+					tmp.gof.plot.name <- 
+						paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression, sep="_"), sep="/"), num.prior+1), collapse="; ")
+					tmp.gof.plot.name <- gsub("MATHEMATICS", "MATH", tmp.gof.plot.name)
+					names(Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]])[length(Goodness_of_Fit[[tmp.path]])] <- 
+						gsub("/", "_", paste(gsub(";", "", rev(unlist(strsplit(tail(tmp.gof.plot.name, 1), " ")))), collapse=";"))
+				}
 			}
-			tmp.gof.plot.name <- paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression, sep="_"), sep="/"), num.prior+1), collapse="; ")
-			tmp.gof.plot.name <- gsub("MATHEMATICS", "MATH", tmp.gof.plot.name)
-			names(Goodness_of_Fit[[tmp.path]])[length(Goodness_of_Fit[[tmp.path]])] <-
-				gsub("/", "_", paste(gsub(";", "", rev(unlist(strsplit(tail(tmp.gof.plot.name, 1), " ")))), collapse=";"))
 		}
 
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, "SGP", "SGP_BASELINE")
