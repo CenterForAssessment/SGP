@@ -1134,8 +1134,8 @@ function(panel.data,         ## REQUIRED
 							state=goodness.of.fit,
 							year=rev(year.progression.for.norm.group)[2],
 							content_area=rev(content_area.progression)[2],
-							grade=tail(tmp.gp, 2)[1])[,GRADE:=tmp.last][,YEAR:=sgp.labels[['my.year']]][,CONTENT_AREA_CURRENT:=sgp.labels[['my.subject']]]
-				setnames(tmp.gof.data, c("SCALE_SCORE", "ACHIEVEMENT_LEVEL", "CONTENT_AREA", "CONTENT_AREA_CURRENT"), 
+							grade=tail(tmp.gp, 2)[1])[,c("GRADE", "YEAR", "CONTENT_AREA_TEMP"):=data.table(tmp.last, sgp.labels[['my.year']], sgp.labels[['my.subject']])]
+				setnames(tmp.gof.data, c("SCALE_SCORE", "ACHIEVEMENT_LEVEL", "CONTENT_AREA", "CONTENT_AREA_TEMP"), 
 					c("SCALE_SCORE_PRIOR", "ACHIEVEMENT_LEVEL_PRIOR", "CONTENT_AREA_PRIOR", "CONTENT_AREA"))
 
 				for (gof.iter in seq_along(sgps.for.gof)) {
