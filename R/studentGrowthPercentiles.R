@@ -326,6 +326,7 @@ function(panel.data,         ## REQUIRED
 				big.data <- rbindlist(replicate(B, tmp.data, simplify = FALSE))
 				big.data[, Lambda := rep(L, each=dim(tmp.data)[1]*B)]
 				big.data[, b := rep(1:B, each=dim(tmp.data)[1])]
+				setkey(big.data, b)
 				setnames(big.data,tmp.num.variables,"final.yr")
 				for (g in seq_along(tmp.gp.iter)) {
 					big.data[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="") := 
@@ -333,8 +334,8 @@ function(panel.data,         ## REQUIRED
 					big.data[, tmp.num.variables-g := eval(parse(text=paste("big.data[[", tmp.num.variables-g, "]]+sqrt(big.data[['Lambda']])*big.data[['icsem",
 						tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], "']] * rnorm(dim(big.data)[1])", sep="")))]
 					col.index <- tmp.num.variables-g
-					big.data[big.data[[col.index]] < loss.hoss[1,g], col.index := loss.hoss[1,g], with=F]
-					big.data[big.data[[col.index]] > loss.hoss[2,g], col.index := loss.hoss[2,g], with=F] 
+					big.data[big.data[[col.index]] < loss.hoss[1,g], col.index := loss.hoss[1,g], with=FALSE]
+					big.data[big.data[[col.index]] > loss.hoss[2,g], col.index := loss.hoss[2,g], with=FALSE] 
 					ks <- big.data[, as.list(as.vector(unlist(round(quantile(big.data[[col.index]], probs=knot.cut.percentiles, na.rm=TRUE), digits=3))))] # Knots
 					bs <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.1), digits=3)))] # Boundaries
 					lh <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.0), digits=3)))] # LOSS/HOSS
@@ -350,18 +351,15 @@ function(panel.data,         ## REQUIRED
 				}
 
 				if (is.null(parallel.config)) { # Sequential
-				  setkey(big.data,b)
-				  for (z in 1:B) {
-				    f<-rqfit(tmp.gp.iter[1:k], lam=L,rqdata=big.data[list(z)])
-				    fitted[[paste("order_", k, sep="")]][which(lambda==L),] <-fitted[[paste("order_", k, sep="")]][which(lambda==L),] + as.vector(t(f)/B)
-				  }
-
+					for (z in 1:B) {
+						f<-rqfit(tmp.gp.iter[1:k], lam=L,rqdata=big.data[list(z)])
+						fitted[[paste("order_", k, sep="")]][which(lambda==L),] <-fitted[[paste("order_", k, sep="")]][which(lambda==L),] + as.vector(t(f)/B)
+					}
 				} else {	# Parallel over 1:B
 					if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
 						##  Don't offer this option now.  But this could ultimately be the BEST option for this because we could have 
 						##  nested foreach loops around Lambda, B and even the priors/orders if we have access to enough cores (cluster)
-						message("\t\tNOTE: FOREACH backend in not currently available for SIMEX.  
-							Changing to BACKEND='PARALLEL' and TYPE will be set to OS default.")
+						message("\t\tNOTE: FOREACH backend in not currently available for SIMEX.  Changing to BACKEND='PARALLEL' and TYPE will be set to OS default.")
 						parallel.config[["BACKEND"]] <- "PARALLEL"
 					} 
 				
@@ -369,13 +367,13 @@ function(panel.data,         ## REQUIRED
 					##  Note, that if you use the parallel.config for SIMEX here, you can also use it for TAUS in the naive analysis
 					##  Example parallel.config argument:  '... parallel.config=list(BACKEND="PARALLEL", TYPE="SOCK", WORKERS=list(SIMEX = 4, TAUS = 4))'
 					if (par.start$par.type == 'MULTICORE') {
-					  tmp.fitted.b <- mclapply(1:B, function(x) big.data[b==x][,rqfit(tmp.gp.iter[1:k], lam=L, rqdata=.SD)], mc.cores=par.start$workers)
+						tmp.fitted.b <- mclapply(1:B, function(x) big.data[list(x)][,rqfit(tmp.gp.iter[1:k], lam=L, rqdata=.SD)], mc.cores=par.start$workers)
 					}
 					if (par.start$par.type == 'SNOW') {
-						tmp.fitted.b <- parLapply(par.start$internal.cl, 1:B, function(x) big.data[b==x][,eval(rqfit(tmp.gp.iter[1:k], lam=L, rqdata=.SD))])
+						tmp.fitted.b <- parLapply(par.start$internal.cl, 1:B, function(x) big.data[list(x)][,eval(rqfit(tmp.gp.iter[1:k], lam=L, rqdata=.SD))])
 					}
 					for (z in 1:B) {
-					  fitted[[paste("order_", k, sep="")]][which(lambda==L),] <-fitted[[paste("order_", k, sep="")]][which(lambda==L),] + as.vector(t(tmp.fitted.b[[z]])/B)
+						fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + as.vector(t(tmp.fitted.b[[z]])/B)
 					} 
 					stopParallel(parallel.config, par.start)
 				}
@@ -1115,53 +1113,76 @@ function(panel.data,         ## REQUIRED
 		}
 
 		if (is.character(goodness.of.fit) | goodness.of.fit==TRUE) {
+			if (simex.tf) {
+				sgps.for.gof <- c("SGP", "SGP_SIMEX")
+				sgps.for.gof.path <- c(tmp.path, paste(tmp.path, "SIMEX", sep="."))
+			} else {
+				sgps.for.gof <- "SGP"
+				sgps.for.gof.path <- tmp.path
+			}
 			if (is.character(goodness.of.fit) & goodness.of.fit %in% objects(SGPstateData) &&
 				!is.null(SGPstateData[[goodness.of.fit]][['Achievement']][['Cutscores']][[rev(content_area.progression)[2]]][[paste("GRADE_", rev(tmp.gp)[2], sep="")]])) {
 				GRADE <- YEAR <- CONTENT_AREA <- NULL
 				tmp.gof.data <- getAchievementLevel(
 							sgp_data=data.table(
 								SCALE_SCORE=quantile.data[['SCALE_SCORE_PRIOR']],
-								SGP=quantile.data[['SGP']],
+								quantile.data[, sgps.for.gof, with=FALSE],
 								VALID_CASE="VALID_CASE",
 								CONTENT_AREA=rev(content_area.progression)[2],
 								YEAR=rev(year.progression.for.norm.group)[2], 
-								GRADE=rev(tmp.gp)[2]),
+								GRADE=rev(tmp.gp)[2],
+								CONTENT_AREA_CURRENT=sgp.labels[['my.subject']],
+								YEAR_CURRENT=sgp.labels[['my.year']],
+								GRADE_CURRENT=tmp.last),
 							state=goodness.of.fit,
 							year=rev(year.progression.for.norm.group)[2],
 							content_area=rev(content_area.progression)[2],
-							grade=tail(tmp.gp, 2)[1])[,GRADE:=tmp.last][,YEAR:=sgp.labels[['my.year']]]
-				setnames(tmp.gof.data, c("SCALE_SCORE", "ACHIEVEMENT_LEVEL", "CONTENT_AREA"), c("SCALE_SCORE_PRIOR", "ACHIEVEMENT_LEVEL_PRIOR", "CONTENT_AREA_PRIOR"))
-				tmp.gof.data[["CONTENT_AREA"]] <- sgp.labels[['my.subject']]
-				content_areas_prior <- tmp.gof.data[['CONTENT_AREA_PRIOR']][1]
+							grade=tail(tmp.gp, 2)[1])[,!c("YEAR", "GRADE"), with=FALSE]
 
-				Goodness_of_Fit[[tmp.path]][['TMP_NAME']] <- gofSGP(
-										sgp_object=tmp.gof.data,
-										state=goodness.of.fit,
-										years=sgp.labels[['my.year']],
-										content_areas=sgp.labels[['my.subject']],
-										content_areas_prior=content_areas_prior,
-										grades=tmp.last,
-										output.format="GROB")
+				setnames(tmp.gof.data, c("SCALE_SCORE", "ACHIEVEMENT_LEVEL", "CONTENT_AREA", "CONTENT_AREA_CURRENT", "YEAR_CURRENT", "GRADE_CURRENT"), 
+					c("SCALE_SCORE_PRIOR", "ACHIEVEMENT_LEVEL_PRIOR", "CONTENT_AREA_PRIOR", "CONTENT_AREA", "YEAR", "GRADE"))
+
+				for (gof.iter in seq_along(sgps.for.gof)) {
+					Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]][['TMP_NAME']] <- gofSGP(
+											sgp_object=tmp.gof.data,
+											state=goodness.of.fit,
+											years=sgp.labels[['my.year']],
+											content_areas=sgp.labels[['my.subject']],
+											content_areas_prior=tmp.gof.data[['CONTENT_AREA_PRIOR']][1],
+											grades=tmp.last,
+											use.sgp=sgps.for.gof[gof.iter],
+											output.format="GROB")
+
+					tmp.gof.plot.name <- 
+						paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression, sep="_"), sep="/"), num.prior+1), collapse="; ")
+					tmp.gof.plot.name <- gsub("MATHEMATICS", "MATH", tmp.gof.plot.name)
+					names(Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]])[length(Goodness_of_Fit[[tmp.path]])] <- 
+						gsub("/", "_", paste(gsub(";", "", rev(unlist(strsplit(tail(tmp.gof.plot.name, 1), " ")))), collapse=";"))
+				}
 			} else {
 				tmp.gof.data <- data.table(
 							SCALE_SCORE_PRIOR=quantile.data[['SCALE_SCORE_PRIOR']],
-							SGP=quantile.data[['SGP']],
+							quantile.data[, sgps.for.gof, with=FALSE],
 							VALID_CASE="VALID_CASE", 
 							CONTENT_AREA=sgp.labels[['my.subject']], 
 							YEAR=sgp.labels[['my.year']], 
 							GRADE=tmp.last)
- 
-				Goodness_of_Fit[[tmp.path]][['TMP_NAME']] <- gofSGP(
-										sgp_object=tmp.gof.data,
-										years=sgp.labels[['my.year']],
-										content_areas=sgp.labels[['my.subject']],
-										grades=tmp.last,
-										output.format="GROB")
+
+				for (sgps.for.gof.iter in sgps.for.gof) {
+					Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]][['TMP_NAME']] <- gofSGP(
+											sgp_object=tmp.gof.data,
+											years=sgp.labels[['my.year']],
+											content_areas=sgp.labels[['my.subject']],
+											grades=tmp.last,
+											use.sgp=sgps.for.gof[gof.iter],
+											output.format="GROB")
+					tmp.gof.plot.name <- 
+						paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression, sep="_"), sep="/"), num.prior+1), collapse="; ")
+					tmp.gof.plot.name <- gsub("MATHEMATICS", "MATH", tmp.gof.plot.name)
+					names(Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]])[length(Goodness_of_Fit[[tmp.path]])] <- 
+						gsub("/", "_", paste(gsub(";", "", rev(unlist(strsplit(tail(tmp.gof.plot.name, 1), " ")))), collapse=";"))
+				}
 			}
-			tmp.gof.plot.name <- paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression, sep="_"), sep="/"), num.prior+1), collapse="; ")
-			tmp.gof.plot.name <- gsub("MATHEMATICS", "MATH", tmp.gof.plot.name)
-			names(Goodness_of_Fit[[tmp.path]])[length(Goodness_of_Fit[[tmp.path]])] <-
-				gsub("/", "_", paste(gsub(";", "", rev(unlist(strsplit(tail(tmp.gof.plot.name, 1), " ")))), collapse=";"))
 		}
 
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, "SGP", "SGP_BASELINE")
