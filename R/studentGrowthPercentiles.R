@@ -1134,9 +1134,9 @@ function(panel.data,         ## REQUIRED
 							state=goodness.of.fit,
 							year=rev(year.progression.for.norm.group)[2],
 							content_area=rev(content_area.progression)[2],
-							grade=tail(tmp.gp, 2)[1])[,GRADE:=tmp.last][,YEAR:=sgp.labels[['my.year']]]
-				setnames(tmp.gof.data, c("SCALE_SCORE", "ACHIEVEMENT_LEVEL", "CONTENT_AREA"), c("SCALE_SCORE_PRIOR", "ACHIEVEMENT_LEVEL_PRIOR", "CONTENT_AREA_PRIOR"))
-				tmp.gof.data[,CONTENT_AREA:=sgp.labels[['my.subject']]]
+							grade=tail(tmp.gp, 2)[1])[,GRADE:=tmp.last][,YEAR:=sgp.labels[['my.year']]][,CONTENT_AREA_CURRENT:=sgp.labels[['my.subject']]]
+				setnames(tmp.gof.data, c("SCALE_SCORE", "ACHIEVEMENT_LEVEL", "CONTENT_AREA", "CONTENT_AREA_CURRENT"), 
+					c("SCALE_SCORE_PRIOR", "ACHIEVEMENT_LEVEL_PRIOR", "CONTENT_AREA_PRIOR", "CONTENT_AREA"))
 
 				for (gof.iter in seq_along(sgps.for.gof)) {
 					Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]][['TMP_NAME']] <- gofSGP(
