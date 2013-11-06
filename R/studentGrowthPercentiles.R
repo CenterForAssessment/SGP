@@ -1130,11 +1130,15 @@ function(panel.data,         ## REQUIRED
 								VALID_CASE="VALID_CASE",
 								CONTENT_AREA=rev(content_area.progression)[2],
 								YEAR=rev(year.progression.for.norm.group)[2], 
-								GRADE=rev(tmp.gp)[2]),
+								GRADE=rev(tmp.gp)[2],
+								CONTENT_AREA_CURRENT=sgp.labels[['my.subject']],
+								YEAR_CURRENT=sgp.labels[['my.year']],
+								GRADE_CURRENT=tmp.last),
 							state=goodness.of.fit,
 							year=rev(year.progression.for.norm.group)[2],
 							content_area=rev(content_area.progression)[2],
 							grade=tail(tmp.gp, 2)[1])#[,c("GRADE", "YEAR", "CONTENT_AREA_TEMP"):=data.table(tmp.last, sgp.labels[['my.year']], sgp.labels[['my.subject']])]
+browser()
 				setnames(tmp.gof.data, c("SCALE_SCORE", "ACHIEVEMENT_LEVEL", "CONTENT_AREA", "CONTENT_AREA_TEMP"), 
 					c("SCALE_SCORE_PRIOR", "ACHIEVEMENT_LEVEL_PRIOR", "CONTENT_AREA_PRIOR", "CONTENT_AREA"))
 
