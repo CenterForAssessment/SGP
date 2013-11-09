@@ -2,7 +2,7 @@
 \alias{analyzeSGP}
 \title{Analyze student data to produce student growth percentiles and student growth projections}
 \description{
-  Utility function/exemplar used to produce student growth percentiles and student growth projections using long formatted data like that provided by \code{\link{prepareSGP}}.
+  Wrapper function used to produce student growth percentiles and student growth projections (both cohort and baseline referenced) using long formatted data like that provided by \code{\link{prepareSGP}}.
 }
 
 \usage{
@@ -73,8 +73,8 @@ Default is 3.  To utilize the maximum matrix order, set to NULL.
   }
   \item{sgp.minimum.default.panel.years}{Integer indicating the minimum number of panels years to use for default sgp analyses. Default value is 3 years of data.
   }
-  \item{sgp.use.my.coefficient.matrices}{Argument, defaults to NULL indicating whether to use coefficient matrices to calculate student growth percentiles embedded in provided object of 
-  same name as those provided by the sgp.labels argument.
+  \item{sgp.use.my.coefficient.matrices}{Argument, defaults to NULL, indicating whether to use coefficient matrices embedded in argument supplied to 'sgp_object' to calculate student growth 
+  percentiles.
   }
   \item{simulate.sgps}{Boolean variable indicating whether to simulate SGP values for students based on test-specific Conditional Standard Errors of Measurement (CSEM).  Test CSEM data must be available for simulation and included in \code{SGPstateData}.  This argument must be set to TRUE for confidence interval construction. Defaults to TRUE.
   }
