@@ -352,8 +352,8 @@ function(panel.data,         ## REQUIRED
 
 				if (is.null(parallel.config)) { # Sequential
 					for (z in 1:B) {
-						f<-rqfit(tmp.gp.iter[1:k], lam=L,rqdata=big.data[list(z)])
-						fitted[[paste("order_", k, sep="")]][which(lambda==L),] <-fitted[[paste("order_", k, sep="")]][which(lambda==L),] + as.vector(t(f)/B)
+						f <- rqfit(tmp.gp.iter[1:k], lam=L, rqdata=big.data[list(z)])
+						fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + as.vector(t(f)/B)
 					}
 				} else {	# Parallel over 1:B
 					if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {

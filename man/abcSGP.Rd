@@ -1,9 +1,9 @@
 \name{abcSGP}
 \alias{abcSGP}
-\title{Perform 5 step sequence: prepareSGP, analyzeSGP, combineSGP, summarizeSGP, and visualizeSGP}
+\title{Perform 6 step sequence: prepareSGP, analyzeSGP, combineSGP, summarizeSGP, visualizeSGP, and outputSGP}
 \description{
   Utility function to perform sequence of 6 steps going from data preparation, \code{\link{prepareSGP}}, SGP data analysis, \code{\link{analyzeSGP}},
-  data combining, \code{\link{combineSGP}}, data summarization, \code{\link{summarizeSGP}}, data visualization \code{\link{visualizeSGP}} and data output
+  data combining, \code{\link{combineSGP}}, data summary, \code{\link{summarizeSGP}}, data visualization \code{\link{visualizeSGP}} and data output
   \code{\link{outputSGP}}.
 }
 
@@ -77,7 +77,7 @@ If missing the function will use the data to infer all the grade progressions fo
   \item{simulate.sgps}{Boolean variable indicating whether to simulate SGP values for students based on test-specific Conditional Standard Errors of Measurement (CSEM). 
   Test CSEM data must be available for simulation.  Must be set to TRUE for confidence interval construction. Defaults to TRUE in \code{abcSGP} only.
   }
-  \item{calculate.simex}{A character state acronymn or list including state/csem variable, simulation.iterations, lambda and extrapolation method. Default to NULL, no simex calculations done.
+  \item{calculate.simex}{A character state acronym or list including state/csem variable, simulation.iterations, lambda and extrapolation method. Default to NULL, no simex calculations done.
   }
  \item{parallel.config}{A named list with, at a minimum, two elements indicating 1) the BACKEND package to be used for parallel computation and 2) the WORKERS list to specify the number of processors to be used in each major analysis.  The BACKEND element can be set = to \code{FOREACH} or \code{PARALLEL}.  Please consult the manuals and vignettes for information of these packages!  The \code{\link{analyzeSGP}} help page contains more thorough explanation and examples of the \code{parallel.config} setup. 
  
@@ -86,10 +86,10 @@ If missing the function will use the data to infer all the grade progressions fo
   \item{save.intermediate.results}{Should intermediate results of \code{abcSGP} be saved after each of \code{\link{prepareSGP}}, \code{\link{analyzeSGP}},
   \code{\link{combineSGP}}, and \code{\link{summarizeSGP}}. Default is FALSE.
   }
-  \item{save.old.summaries}{A boolean argument (defaults to FALSE which will delete the @Summary slot before creating new summaries) 
+  \item{save.old.summaries}{A Boolean argument (defaults to FALSE which will delete the @Summary slot before creating new summaries) 
   indicating whether the call to \code{\link{summarizeSGP}} should save existing summaries in the @Summary slot. 
   }
-  \item{sgPlot.demo.report}{A boolean variable (defaults to FALSE) indicating whether to produce only the demonstration student report catalog. Default is to produce reports for entire current 
+  \item{sgPlot.demo.report}{A Boolean variable (defaults to FALSE) indicating whether to produce only the demonstration student report catalog. Default is to produce reports for entire current 
   year data.
   }
   \item{sgp.config}{Configuration passed to \code{\link{analyzeSGP}} for user specified SGP analyses. See \code{\link{analyzeSGP}} documentation for details on format of configuration argument. 
@@ -110,11 +110,11 @@ If missing the function will use the data to infer all the grade progressions fo
   \item{plot.types}{A character vector passed to \code{\link{visualizeSGP}} indicating the types of plots to produce. Currently supported plots include \code{\link{bubblePlot}}s, 
   \code{\link{studentGrowthPlot}}s, and \code{\link{growthAchievementPlot}}s. 
   }
-  \item{verbose.output}{A boolean argument indicating whether the function should output verbose diagnostic messages.
+  \item{verbose.output}{A Boolean argument indicating whether the function should output verbose diagnostic messages.
   }
 }
 
-\value{Function returns a list containing the input long data set in the \code{Student} slot as a data.table keyed using \code{VALID_CASE}, \code{CONTENT_AREA}, 
+\value{Function returns a list containing the input long data set in the \code{@Data} slot as a data.table keyed using \code{VALID_CASE}, \code{CONTENT_AREA}, 
 \code{YEAR}, \code{ID}, SGP results including student growth percentile and student growth projections/trajectories in the SGP slot, and summary results in the 
 Summary slot. 
 }
