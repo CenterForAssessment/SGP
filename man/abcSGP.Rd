@@ -114,7 +114,7 @@ If missing the function will use the data to infer all the grade progressions fo
   }
 }
 
-\value{Function returns a list containing the input long data set in the \code{Student} slot as a data.table keyed using \code{VALID_CASE}, \code{CONTENT_AREA}, 
+\value{Function returns a list containing the input long data set in the \code{@Data} slot as a data.table keyed using \code{VALID_CASE}, \code{CONTENT_AREA}, 
 \code{YEAR}, \code{ID}, SGP results including student growth percentile and student growth projections/trajectories in the SGP slot, and summary results in the 
 Summary slot. 
 }
