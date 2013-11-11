@@ -113,7 +113,7 @@ Example use cases are provided below.
   }
 }
 
-\value{Function returns a list containing the long data set in the \code{Data} slot as a \code{data.table} keyed using \code{VALID_CASE}, \code{CONTENT_AREA}, 
+\value{Function returns a list containing the long data set in the \code{@Data} slot as a \code{data.table} keyed using \code{VALID_CASE}, \code{CONTENT_AREA}, 
 \code{YEAR}, \code{ID} and the student growth percentile and/or student growth projection/trajectory results in the \code{SGP} slot. 
 }
 
