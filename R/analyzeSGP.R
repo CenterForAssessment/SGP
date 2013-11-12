@@ -26,6 +26,7 @@ function(sgp_object,
          verbose.output=FALSE,
          print.other.gp=FALSE,
          get.cohort.data.info=FALSE,
+	 overwrite.existing.sgp.data=TRUE,
          ...) {
 
 	started.at <- proc.time()
