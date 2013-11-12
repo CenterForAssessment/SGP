@@ -168,7 +168,7 @@ function(data,
 		if (!identical(key(data@Data), tmp.key)) {
 			setkeyv(data@Data, tmp.key)
 			if (any(duplicated(data@Data["VALID_CASE"]))) {
-				message(paste("\tWARNING: @Data keyed by", tmp.key, "has duplicate cases. Subsequent merges will likely be corrupt."))
+				message(paste("\tWARNING: @Data keyed by", paste(tmp.key, collapse=", "), "has duplicate cases. Subsequent merges will likely be corrupt."))
 				message("\tNOTE: Duplicate cases are available in current workspace as 'DUPLICATED_CASES' and saved as 'DUPLICATED_CASES.Rdata'.")
 				DUPLICATED_CASES <- data@Data["VALID_CASE"][duplicated(data@Data["VALID_CASE"])][,tmp.key, with=FALSE]
 				save(DUPLICATED_CASES, file="DUPLICATED_CASES.Rdata")

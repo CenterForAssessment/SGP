@@ -2,7 +2,7 @@
 \alias{analyzeSGP}
 \title{Analyze student data to produce student growth percentiles and student growth projections}
 \description{
-  Utility function/exemplar used to produce student growth percentiles and student growth projections using long formatted data like that provided by \code{\link{prepareSGP}}.
+  Wrapper function used to produce student growth percentiles and student growth projections (both cohort and baseline referenced) using long formatted data like that provided by \code{\link{prepareSGP}}.
 }
 
 \usage{
@@ -33,6 +33,7 @@ analyzeSGP(sgp_object,
 	 verbose.output=FALSE,
 	 print.other.gp=FALSE,
 	 get.cohort.data.info=FALSE,
+	 overwrite.existing.sgp.data=TRUE,
          ...)
 }
 
@@ -73,8 +74,8 @@ Default is 3.  To utilize the maximum matrix order, set to NULL.
   }
   \item{sgp.minimum.default.panel.years}{Integer indicating the minimum number of panels years to use for default sgp analyses. Default value is 3 years of data.
   }
-  \item{sgp.use.my.coefficient.matrices}{Argument, defaults to NULL indicating whether to use coefficient matrices to calculate student growth percentiles embedded in provided object of 
-  same name as those provided by the sgp.labels argument.
+  \item{sgp.use.my.coefficient.matrices}{Argument, defaults to NULL, indicating whether to use coefficient matrices embedded in argument supplied to 'sgp_object' to calculate student growth 
+  percentiles.
   }
   \item{simulate.sgps}{Boolean variable indicating whether to simulate SGP values for students based on test-specific Conditional Standard Errors of Measurement (CSEM).  Test CSEM data must be available for simulation and included in \code{SGPstateData}.  This argument must be set to TRUE for confidence interval construction. Defaults to TRUE.
   }
@@ -104,14 +105,15 @@ Example use cases are provided below.
   }
   \item{print.other.gp}{A Boolean argument (defaults to FALSE) indicating whether the function should output SGP of all orders.
   }
-  \item{get.cohort.data.info}{A Boolean argument (defaults to FALSE) indicating whether the a summary of all cohorts to be submitted to the \code{\link{studentGrowthPercentiles}} and 
+  \item{get.cohort.data.info}{A Boolean argument (defaults to FALSE) indicating whether a summary of all cohorts to be submitted to the \code{\link{studentGrowthPercentiles}} and 
   \code{\link{studentGrowthProjections}} functions should be performed prior to analysis.
   }
+  \item{overwrite.existing.sgp.data}{A Boolean argument (defaults to TRUE) indicating whether the analyses submitted should delete prior data associated with the same analyses to be performed.}
   \item{...}{Arguments to be passed to \code{\link{studentGrowthPercentiles}} or \code{\link{studentGrowthProjections}} for finer control over SGP calculations. NOTE: arguments can only be passed to one lower level function at a time, and only student growth percentiles OR projections can be created but not both at the same time.
   }
 }
 
-\value{Function returns a list containing the long data set in the \code{Data} slot as a \code{data.table} keyed using \code{VALID_CASE}, \code{CONTENT_AREA}, 
+\value{Function returns a list containing the long data set in the \code{@Data} slot as a \code{data.table} keyed using \code{VALID_CASE}, \code{CONTENT_AREA}, 
 \code{YEAR}, \code{ID} and the student growth percentile and/or student growth projection/trajectory results in the \code{SGP} slot. 
 }
 

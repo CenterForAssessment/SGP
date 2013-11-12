@@ -2,7 +2,7 @@
 \alias{baselineSGP}
 \title{Analyze student data to produce student growth percentiles and coefficient matrices from a baseline (i.e. multiple cohort) norm group}
 \description{
-  Utility function/exemplar used to produce student growth percentiles using long formatted data like that provided by \code{\link{prepareSGP}}. Used as part of \code{\link{analyzeSGP}} for baseline referenced student growth percentile analyses.
+Utility function/exemplar used to produce student growth percentiles using long formatted data like that provided by \code{\link{prepareSGP}}. Used as part of \code{\link{analyzeSGP}} for baseline referenced student growth percentile analyses.
 }
 
 \usage{
@@ -23,7 +23,7 @@
 }
 
 \arguments{
-  \item{sgp_object}{An object of class \code{SGP} containing long formatted data in the \code{Data} (from \code{\link{prepareSGP}}) slot. 
+  \item{sgp_object}{An object of class \code{SGP} containing long formatted data in the \code{@Data} (from \code{\link{prepareSGP}}) slot. 
   }
   \item{state}{Acronym indicating state associated with the data for access to embedded knot and boundaries.
   }

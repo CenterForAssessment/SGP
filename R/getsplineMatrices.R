@@ -51,12 +51,13 @@ function(
 			if (is.null(my.matrix.order)) my.matrix.order <- length(my.matrix.time.progression.lags)
 			my.tmp.index <- which(sapply(lapply(my.matrices, splineMatrix_equality, my.order=my.matrix.order), function(x) x[['Matrix_TF']]))
 			if (length(my.tmp.index)==0) {
-				stop(paste("\tNOTE: No splineMatrix exists with designated content_area.progression:", my.matrix.content_area.progression, "year.progression:", 
-					my.matrix.time.progression, "and grade.progression", my.matrix.grade.progression))
+				stop(paste("\tNOTE: No splineMatrix exists with designated content_area.progression:", paste(my.matrix.content_area.progression, collapse=", "), "year.progression:", 
+					paste(my.matrix.time.progression, collapse=", "), "and grade.progression", paste(my.matrix.grade.progression, collapse=", ")))
 			}
 			if (length(my.tmp.index)>1) {
-				stop(paste("\tNOTE: Multiple splineMatrix objects exists with designated content_area.progression:", my.matrix.content_area.progression, "year.progression:", 
-					my.matrix.time.progression, "grade.progression:", my.matrix.grade.progression, "time.progression.lags:", my.matrix.time.progression.lags))
+				stop(paste("\tNOTE: Multiple splineMatrix objects exists with designated content_area.progression:", paste(my.matrix.content_area.progression, collapse=", "), 
+				"year.progression:", paste(my.matrix.time.progression, collapse=", "), "grade.progression:", paste(my.matrix.grade.progression, collapse=", "), 
+				"time.progression.lags:", paste(my.matrix.time.progression.lags, collapse=", ")))
 			} else {
 				return(my.matrices[[my.tmp.index]])
 			}

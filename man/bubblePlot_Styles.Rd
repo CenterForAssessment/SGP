@@ -30,7 +30,7 @@ bubblePlot_Styles(
 }
 
 \arguments{
-  \item{sgp_object}{An object of class SGP containing long formatted data in the \code{Data} slot that will be used for the production of student growth 
+  \item{sgp_object}{An object of class SGP containing long formatted data in the \code{@Data} slot that will be used for the production of student growth 
 and achievement plots and system growth and achievement plots, summary data from \code{\link{summarizeSGP}} in the \code{Summary} slot for bubble plots.  
   }
   \item{state}{Acronym indicating state associated with the summaries for access to assessment program information embedded in \code{SGPstateData}.
@@ -63,7 +63,7 @@ associated documentation for example plots.
   }
   \item{bPlot.anonymize}{A boolean argument (defaults to FALSE) indicating whether to anonymize \code{\link{bubblePlot}}s school and district names that appear in the
 plots and data tips of the plots.  For student level anonymization, the function utilizes the randomNames package to produce gender and ethnic correct names based 
-upon gender and ethnicity codes available in \code{sgp_object@Data}.
+upon gender and ethnicity codes available in \code{@Data}.
   }
   \item{bPlot.prior.achievement}{A boolean argument (defaults to TRUE) indicating whether to produce \code{\link{bubblePlot}}s using prior achievement as well as current
 achievement as the vertical dimension of the \code{\link{bubblePlot}}. 

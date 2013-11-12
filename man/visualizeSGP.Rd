@@ -64,7 +64,7 @@ visualizeSGP(
 }
 
 \arguments{
-  \item{sgp_object}{An object of class SGP containing long formatted data in the \code{Data} slot that will be used for the production of student growth 
+  \item{sgp_object}{An object of class SGP containing long formatted data in the \code{@Data} slot that will be used for the production of student growth 
   and achievement plots and system growth and achievement plots, summary data from \code{\link{summarizeSGP}} in the \code{Summary} slot for bubble plots.  
   }
   \item{plot.types}{A character vector indicating what types of plots to construct. Currently available plots include \code{\link{bubblePlot}}, 

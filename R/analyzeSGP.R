@@ -26,6 +26,7 @@ function(sgp_object,
          verbose.output=FALSE,
          print.other.gp=FALSE,
          get.cohort.data.info=FALSE,
+	 overwrite.existing.sgp.data=TRUE,
          ...) {
 
 	started.at <- proc.time()
@@ -109,6 +110,9 @@ function(sgp_object,
 		parallel.config <- NULL
 	} else lower.level.parallel.config <- NULL
 
+	if (identical(calculate.simex, TRUE)) {
+		calculate.simex <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=25, extrapolation="linear")
+	}
 
 	### 
 	### Utility functions

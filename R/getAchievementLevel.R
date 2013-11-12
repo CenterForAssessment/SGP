@@ -44,9 +44,12 @@ function(sgp_data,
 	}
 
 	setkeyv(sgp_data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))
-		sgp_data[[achievement.level.name]][sgp_data[CJ("VALID_CASE", content_area, year, grade), which=TRUE, nomatch=0]] <- 
+		sgp_data[sgp_data[CJ("VALID_CASE", content_area, year, grade), which=TRUE, nomatch=0], achievement.level.name :=
 		sgp_data[CJ("VALID_CASE", content_area, year, grade), nomatch=0][, getAchievementLevel_INTERNAL(state, CONTENT_AREA, YEAR, GRADE, get(scale.score.name)), 
-			by=list(CONTENT_AREA, YEAR, GRADE)][["V1"]]
+			by=list(CONTENT_AREA, YEAR, GRADE)][["V1"]], with=FALSE]
+#		sgp_data[[achievement.level.name]][sgp_data[CJ("VALID_CASE", content_area, year, grade), which=TRUE, nomatch=0]] <- 
+#		sgp_data[CJ("VALID_CASE", content_area, year, grade), nomatch=0][, getAchievementLevel_INTERNAL(state, CONTENT_AREA, YEAR, GRADE, get(scale.score.name)), 
+#			by=list(CONTENT_AREA, YEAR, GRADE)][["V1"]]
 
 	return(sgp_data)
 } ### END getAchievementLevel Function

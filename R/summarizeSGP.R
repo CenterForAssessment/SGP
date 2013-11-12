@@ -18,7 +18,7 @@ function(sgp_object,
 
 	### Set variables to NULL to prevent R CMD check warnings
 
-	tmp.simulation.dt <- variable <- WEIGHT <- ENROLLMENT_STATUS <- names.type <- names.sgp <- names.output <- BY_GROWTH_ONLY <- VALID_CASE <- NULL
+	tmp.simulation.dt <- variable <- WEIGHT <- ENROLLMENT_STATUS <- names.type <- names.sgp <- names.output <- BY_GROWTH_ONLY <- VALID_CASE <- YEAR_WITHIN <- NULL
 
 	
 	### Create state (if NULL) from sgp_object (if possible)
@@ -247,12 +247,16 @@ function(sgp_object,
 		tmp.names <- names(sgp_object@SGP[["Simulated_SGPs"]]) 
 		for (i in tmp.names) {
 			if (length(grep("BASELINE", i) > 0)) tmp.baseline <- "BASELINE" else tmp.baseline <- "COHORT"
+			if ("YEAR_WITHIN" %in% names(sgp_object@SGP[["Simulated_SGPs"]][[i]])) columns.to.omit <- -c(1,2) else columns.to.omit <- -1
 			tmp.list[[i]] <- data.table(
 				ID=rep(sgp_object@SGP[["Simulated_SGPs"]][[i]][["ID"]], each=length(grep("SGP_SIM", names(sgp_object@SGP[["Simulated_SGPs"]][[i]])))),
-				SGP_SIM=as.integer(as.matrix(t(sgp_object@SGP[["Simulated_SGPs"]][[i]][,-1]))))[,
+				SGP_SIM=as.integer(as.matrix(t(sgp_object@SGP[["Simulated_SGPs"]][[i]][,columns.to.omit]))))[,
 				"CONTENT_AREA":=unlist(strsplit(i, "[.]"))[1]][,
 				"YEAR":=unlist(strsplit(i, "[.]"))[2]][,
 				"BASELINE":=tmp.baseline]
+			if ("YEAR_WITHIN" %in% names(sgp_object@SGP[["Simulated_SGPs"]][[i]])) {
+				tmp.list[[i]][,YEAR_WITHIN:=rep(sgp_object@SGP[["Simulated_SGPs"]][[i]][["YEAR_WITHIN"]], each=length(grep("SGP_SIM", names(sgp_object@SGP[["Simulated_SGPs"]][[i]]))))]
+			}
 		}
 		return(data.table(rbindlist(tmp.list), VALID_CASE="VALID_CASE", key=key(tmp.dt)))
 	}

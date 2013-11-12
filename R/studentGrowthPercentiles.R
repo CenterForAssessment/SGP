@@ -243,32 +243,28 @@ function(panel.data,         ## REQUIRED
 
 	.simex.sgp <- function(state, variable, lambda, B, extrapolation) {
 		GRADE <- CONTENT_AREA <- YEAR <- V1 <- Lambda <- tau <- b <- .SD <- NULL ## To avoid R CMD check warnings
-		content_area <- content_area.progression
-		year <- year.progression
 		my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
 
 		fitted <- extrap <- tmp.quantiles.simex <- list()
 		loss.hoss <- matrix(nrow=2,ncol=length(tmp.gp)-1)
 		if (!is.null(state)) {
-		  for (g in 1:ncol(loss.hoss)) {
-			  loss.hoss[,g] <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[rev(content_area)[-1][g]]][[paste("loss.hoss_", rev(tmp.gp)[-1][g], sep="")]]
+			for (g in 1:ncol(loss.hoss)) {
+				loss.hoss[,g] <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[rev(content_area.progression)[-1][g]]][[paste("loss.hoss_", rev(tmp.gp)[-1][g], sep="")]]
 		}}
 		if (!is.null(variable)) {
-		  for (g in 1:ncol(loss.hoss)) {
-		    loss.hoss[,g] <- variable[[paste("loss.hoss_", rev(tmp.gp)[-1][g], sep="")]]
-		  }
-		}   
+			for (g in 1:ncol(loss.hoss)) {
+				loss.hoss[,g] <- variable[[paste("loss.hoss_", rev(tmp.gp)[-1][g], sep="")]]
+		}}   
 		
-
 		rqfit <- function(tmp.gp.iter, lam, rqdata) {  #  AVI added in the lam argument here to index the lambda specific knots and boundaries
-		  mod <- character()
-		  for (i in seq_along(tmp.gp.iter)) {
-		    knt <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['knots_", tmp.gp.iter[i], "']]", sep="")
-		    bnd <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['boundaries_", tmp.gp.iter[i], "']]", sep="")
-		    mod <- paste(mod, " + bs(prior_", i, ", knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
-		  }
-		  fitted.values<-eval(parse(text=paste("rq(final.yr ~", substring(mod,4), ", tau=taus, data = rqdata, method=rq.method)[['fitted.values']]", sep="")))
-		  return(apply(fitted.values,1,.smooth.isotonize.row))
+			mod <- character()
+			for (i in seq_along(tmp.gp.iter)) {
+				knt <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['knots_", tmp.gp.iter[i], "']]", sep="")
+				bnd <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['boundaries_", tmp.gp.iter[i], "']]", sep="")
+				mod <- paste(mod, " + bs(prior_", i, ", knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
+			}
+			fitted.values<-eval(parse(text=paste("rq(final.yr ~", substring(mod,4), ", tau=taus, data = rqdata, method=rq.method)[['fitted.values']]", sep="")))
+			return(apply(fitted.values,1,.smooth.isotonize.row))
 		}
 
 		if (!is.null(use.my.coefficient.matrices)) {
@@ -281,57 +277,56 @@ function(panel.data,         ## REQUIRED
 		} else simex.matrix.priors <- coefficient.matrix.priors
 
 		for (k in simex.matrix.priors) {
-			data <- .get.panel.data(ss.data, k, by.grade)
-			tmp.num.variables <- dim(data)[2]
+			tmp.data <- .get.panel.data(ss.data, k, by.grade)
+			tmp.num.variables <- dim(tmp.data)[2]
 			tmp.gp.iter <- rev(tmp.gp)[2:(k+1)]
-			tmp.ca.iter <- rev(content_area)[2:(k+1)]
-			tmp.yr.iter <- rev(year)[2:(k+1)]
-			csem.int <- matrix(nrow=dim(data)[1], ncol=length(tmp.gp.iter)) # build matrix to store interpolated csem
+			tmp.ca.iter <- rev(content_area.progression)[2:(k+1)]
+			tmp.yr.iter <- rev(year.progression)[2:(k+1)]
+			csem.int <- matrix(nrow=dim(tmp.data)[1], ncol=length(tmp.gp.iter)) # build matrix to store interpolated csem
 			colnames(csem.int) <- paste("icsem", tmp.gp.iter, tmp.ca.iter, tmp.yr.iter, sep="")
 			
 			# interpolate csem for all scale scores except that of the last grade
 
 			if (!is.null(state)) {
-			  for (g in seq_along(tmp.gp.iter)) {
-			    if ("YEAR" %in% names(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
-			      CSEM_Data <- subset(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], 
-			                          GRADE==tmp.gp.iter[g] & CONTENT_AREA== tmp.ca.iter[g] & YEAR==tmp.yr.iter[g])
-			    } else {
-			      CSEM_Data <- subset(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], 
-			                          GRADE==tmp.gp.iter[g] & CONTENT_AREA== tmp.ca.iter[g])
-			    }
-			    if (dim(CSEM_Data)[1] == 0) stop(paste('CSEM data for', tmp.ca.iter[g], 'Grade', tmp.gp.iter[g],
-			                                           'is required to use SIMEX functionality, but is not available in SGPstateData.  Please contact package administrators to add CSEM data.'))
-			    CSEM_Function <- splinefun(CSEM_Data[["SCALE_SCORE"]], CSEM_Data[["SCALE_SCORE_CSEM"]], method="natural")
-			    csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")] <- CSEM_Function(data[[tmp.num.variables-g]])
-			  }
+				for (g in seq_along(tmp.gp.iter)) {
+					if ("YEAR" %in% names(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
+						CSEM_Data <- subset(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], 
+							GRADE==tmp.gp.iter[g] & CONTENT_AREA== tmp.ca.iter[g] & YEAR==tmp.yr.iter[g])
+					} else {
+						CSEM_Data <- subset(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], 
+							GRADE==tmp.gp.iter[g] & CONTENT_AREA== tmp.ca.iter[g])
+					}
+					if (dim(CSEM_Data)[1] == 0) stop(paste('CSEM data for', tmp.ca.iter[g], 'Grade', tmp.gp.iter[g], 'is required to use SIMEX functionality, but is not available in SGPstateData.  Please contact package administrators to add CSEM data.'))
+						CSEM_Function <- splinefun(CSEM_Data[["SCALE_SCORE"]], CSEM_Data[["SCALE_SCORE_CSEM"]], method="natural")
+						csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")] <- CSEM_Function(tmp.data[[tmp.num.variables-g]])
+				}
 			}
 			if (!is.null(variable)){
 				for (g in seq_along(tmp.gp.iter)) {
-					csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")] <- 
-						variable[[paste("CSEM.grade", tmp.gp.iter[g], ".", tmp.ca.iter[g], sep="")]]
+					csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")] <- variable[[paste("CSEM.grade", tmp.gp.iter[g], ".", tmp.ca.iter[g], sep="")]]
 				}
 			}
 
 			# naive model
 
-			fitted[[paste("order_", k, sep="")]] <- matrix(0, nrow=length(lambda), ncol=dim(data)[1]*length(taus))
+			fitted[[paste("order_", k, sep="")]] <- matrix(0, nrow=length(lambda), ncol=dim(tmp.data)[1]*length(taus))
 			tmp.matrix <- getsplineMatrices(
 				Coefficient_Matrices[[tmp.path.coefficient.matrices]], 
 				tail(content_area.progression, k+1), 
 				tail(grade.progression, k+1),
 				tail(year.progression, k+1),
 				tail(year_lags.progression, k),
-				my.matrix.order=k)
+				my.matrix.order=k)[[1]]
 			
-			fitted[[paste("order_", k, sep="")]][1,] <- as.vector(.get.percentile.predictions(data, tmp.matrix))
+			fitted[[paste("order_", k, sep="")]][1,] <- as.vector(.get.percentile.predictions(tmp.data, tmp.matrix))
 			
-			# perturbe data
+			# perturb data
 			
 			for (L in lambda[-1]) {
-				big.data <- rbindlist(replicate(B, data, simplify = FALSE))
-				big.data[, Lambda := rep(L, each=dim(data)[1]*B)]
-				big.data[, b := rep(1:B, each=dim(data)[1])]
+				big.data <- rbindlist(replicate(B, tmp.data, simplify = FALSE))
+				big.data[, Lambda := rep(L, each=dim(tmp.data)[1]*B)]
+				big.data[, b := rep(1:B, each=dim(tmp.data)[1])]
+				setkey(big.data, b)
 				setnames(big.data,tmp.num.variables,"final.yr")
 				for (g in seq_along(tmp.gp.iter)) {
 					big.data[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="") := 
@@ -339,8 +334,8 @@ function(panel.data,         ## REQUIRED
 					big.data[, tmp.num.variables-g := eval(parse(text=paste("big.data[[", tmp.num.variables-g, "]]+sqrt(big.data[['Lambda']])*big.data[['icsem",
 						tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], "']] * rnorm(dim(big.data)[1])", sep="")))]
 					col.index <- tmp.num.variables-g
-					big.data[big.data[[col.index]] < loss.hoss[1,g], col.index := loss.hoss[1,g], with=F]
-					big.data[big.data[[col.index]] > loss.hoss[2,g], col.index := loss.hoss[2,g], with=F] 
+					big.data[big.data[[col.index]] < loss.hoss[1,g], col.index := loss.hoss[1,g], with=FALSE]
+					big.data[big.data[[col.index]] > loss.hoss[2,g], col.index := loss.hoss[2,g], with=FALSE] 
 					ks <- big.data[, as.list(as.vector(unlist(round(quantile(big.data[[col.index]], probs=knot.cut.percentiles, na.rm=TRUE), digits=3))))] # Knots
 					bs <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.1), digits=3)))] # Boundaries
 					lh <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.0), digits=3)))] # LOSS/HOSS
@@ -356,18 +351,15 @@ function(panel.data,         ## REQUIRED
 				}
 
 				if (is.null(parallel.config)) { # Sequential
-				  setkey(big.data,b)
-				  for (z in 1:B) {
-				    f<-rqfit(tmp.gp.iter[1:k], lam=L,rqdata=big.data[list(z)])
-				    fitted[[paste("order_", k, sep="")]][which(lambda==L),] <-fitted[[paste("order_", k, sep="")]][which(lambda==L),] + as.vector(t(f)/B)
-				  }
-
+					for (z in 1:B) {
+						f <- rqfit(tmp.gp.iter[1:k], lam=L, rqdata=big.data[list(z)])
+						fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + as.vector(t(f)/B)
+					}
 				} else {	# Parallel over 1:B
 					if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
 						##  Don't offer this option now.  But this could ultimately be the BEST option for this because we could have 
 						##  nested foreach loops around Lambda, B and even the priors/orders if we have access to enough cores (cluster)
-						message("\t\tNOTE: FOREACH backend in not currently available for SIMEX.  
-							Changing to BACKEND='PARALLEL' and TYPE will be set to OS default.")
+						message("\t\tNOTE: FOREACH backend in not currently available for SIMEX.  Changing to BACKEND='PARALLEL' and TYPE will be set to OS default.")
 						parallel.config[["BACKEND"]] <- "PARALLEL"
 					} 
 				
@@ -375,25 +367,24 @@ function(panel.data,         ## REQUIRED
 					##  Note, that if you use the parallel.config for SIMEX here, you can also use it for TAUS in the naive analysis
 					##  Example parallel.config argument:  '... parallel.config=list(BACKEND="PARALLEL", TYPE="SOCK", WORKERS=list(SIMEX = 4, TAUS = 4))'
 					if (par.start$par.type == 'MULTICORE') {
-					  tmp.fitted.b <- mclapply(1:B, function(x) big.data[b==x][,rqfit(tmp.gp.iter[1:k], lam=L, rqdata=.SD)], mc.cores=par.start$workers)
+						tmp.fitted.b <- mclapply(1:B, function(x) big.data[list(x)][,rqfit(tmp.gp.iter[1:k], lam=L, rqdata=.SD)], mc.cores=par.start$workers)
 					}
 					if (par.start$par.type == 'SNOW') {
-						tmp.fitted.b <- parLapply(par.start$internal.cl, 1:B, function(x) big.data[b==x][,eval(rqfit(tmp.gp.iter[1:k], lam=L, rqdata=.SD))])
+						tmp.fitted.b <- parLapply(par.start$internal.cl, 1:B, function(x) big.data[list(x)][,eval(rqfit(tmp.gp.iter[1:k], lam=L, rqdata=.SD))])
 					}
 					for (z in 1:B) {
-					  fitted[[paste("order_", k, sep="")]][which(lambda==L),] <-fitted[[paste("order_", k, sep="")]][which(lambda==L),] + as.vector(t(tmp.fitted.b[[z]])/B)
+						fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + as.vector(t(tmp.fitted.b[[z]])/B)
 					} 
-          stopParallel(parallel.config, par.start)
+					stopParallel(parallel.config, par.start)
 				}
-
 			} ### END for (L in lambda[-1])
 
 			switch(extrapolation,
 				LINEAR = fit <- lm(fitted[[paste("order_", k, sep="")]]~ lambda),
 				QUADRATIC = fit <- lm(fitted[[paste("order_", k, sep="")]] ~ lambda + I(lambda^2)))
-			extrap[[paste("order_", k, sep="")]] <- t(apply(matrix(predict(fit, newdata=data.frame(lambda=-1)), nrow=dim(data)[1]), 1, .smooth.isotonize.row))
-			tmp.quantiles.simex[[k]] <- data.table(ID=data[["ID"]], SIMEX_ORDER=k, 
-				SGP_SIMEX=.get.quantiles(extrap[[paste("order_", k, sep="")]], data[[tmp.num.variables]]))
+			extrap[[paste("order_", k, sep="")]] <- t(apply(matrix(predict(fit, newdata=data.frame(lambda=-1)), nrow=dim(tmp.data)[1]), 1, .smooth.isotonize.row))
+			tmp.quantiles.simex[[k]] <- data.table(ID=tmp.data[["ID"]], SIMEX_ORDER=k, 
+				SGP_SIMEX=.get.quantiles(extrap[[paste("order_", k, sep="")]], tmp.data[[tmp.num.variables]]))
 		} ### END for (k in simex.matrix.priors)
 		
 		quantile.data.simex <- data.table(rbindlist(tmp.quantiles.simex), key=c("ID", "SIMEX_ORDER"))
@@ -568,11 +559,11 @@ function(panel.data,         ## REQUIRED
 			}
 		} 
 		if (is.character(calculate.confidence.intervals)) {
-			if (!calculate.confidence.intervals %in% c(ls(SGPstateData), names(panel.data))) {
+			if (!calculate.confidence.intervals %in% c(objects(SGPstateData), names(panel.data))) {
 				tmp.messages <- c(tmp.messages, "\t\tNOTE: Please provide an appropriate state acronym or variable name in supplied data corresponding to CSEMs. See help page for details. SGPs will be calculated without confidence intervals.\n")
 				csem.tf <- FALSE
 			}
-			if (calculate.confidence.intervals %in% ls(SGPstateData)) {
+			if (calculate.confidence.intervals %in% objects(SGPstateData)) {
 				if ("YEAR" %in% names(SGPstateData[[calculate.confidence.intervals]][["Assessment_Program_Information"]][["CSEM"]])) {
 					if (!sgp.labels$my.year %in% unique(SGPstateData[[calculate.confidence.intervals]][["Assessment_Program_Information"]][["CSEM"]][["YEAR"]])) {
 						tmp.messages <- c(tmp.messages, "\t\tNOTE: SGPstateData contains year specific CSEMs but year requested is not available. Simulated SGPs and confidence intervals will not be calculated.\n")
@@ -600,11 +591,11 @@ function(panel.data,         ## REQUIRED
 			simex.tf <- FALSE
 		}
 		if (is.list(calculate.simex)) {
-			if (!(("state" %in% names(calculate.simex)) | ("variable" %in% names(calculate.simex)))) {
+			if (!("state" %in% names(calculate.simex)) & !("variable" %in% names(calculate.simex))) {
 				tmp.messages <- c(tmp.messages, "\t\tNOTE: Please specify an appropriate list for calculate.simex including state/csem variable, simulation.iterations, lambda and extrapolation. See help page for details. SGPs will be calculated without measurement error correction.\n")
 				simex.tf <- FALSE
 			}
-				if (all(c("state", "variable") %in% names(calculate.simex))) {
+			if (all(c("state", "variable") %in% names(calculate.simex))) {
 				stop("Please specify EITHER a state OR a CSEM variable for SGP measurement error correction. See help page for details.")
 			}
 			if (!is.null(calculate.simex$lambda)){
@@ -619,11 +610,11 @@ function(panel.data,         ## REQUIRED
 			}
 		}
 		if (is.character(calculate.simex)) {
-			if (!calculate.simex %in% c(names(SGPstateData), names(panel.data))) {
+			if (!calculate.simex %in% c(objects(SGPstateData), names(panel.data))) {
 				tmp.messages <- c(tmp.messages, "\t\tNOTE: Please provide an appropriate state acronym or variable name in supplied data corresponding to CSEMs. See help page for details. SGPs will be calculated without measurement error correction.\n")
 				simex.tf <- FALSE
 			}
-			if (calculate.simex %in% names(SGPstateData)) {
+			if (calculate.simex %in% objects(SGPstateData)) {
 				if ("YEAR" %in% names(SGPstateData[[calculate.simex]][["Assessment_Program_Information"]][["CSEM"]])) {
 					if (!sgp.labels$my.year %in% unique(SGPstateData[[calculate.simex]][["Assessment_Program_Information"]][["CSEM"]][["YEAR"]])) {
 						tmp.messages <- c(tmp.messages, "\t\tNOTE: SGPstateData contains year specific CSEMs but year requested is not available. SGPs will be calculated without measurement error correction.\n")
@@ -995,7 +986,12 @@ function(panel.data,         ## REQUIRED
 						tmp.csem.variable <- NULL
 					}
 
-					tmp.csem.quantiles[[j]] <- data.table(ID=tmp.data[[1]])
+					tmp.csem.quantiles[[j]] <- tmp.data[,names(tmp.data)[1], with=FALSE]
+					setnames(tmp.csem.quantiles[[j]], names(tmp.csem.quantiles[[j]])[1], "ID")
+					if (!is.null(additional.vnames.to.return)) {
+						tmp.csem.quantiles[[j]] <- data.table(panel.data[["Panel_Data"]][,c("ID", names(additional.vnames.to.return))], key="ID")[tmp.csem.quantiles[[j]]]
+						setnames(tmp.csem.quantiles[[j]], names(additional.vnames.to.return), unlist(additional.vnames.to.return))
+					}
 					for (k in seq(calculate.confidence.intervals[['simulation.iterations']])) { 
 						set.seed(k)
 						tmp.csem.quantiles[[j]][,TEMP_SGP_SIM:=.get.quantiles(
@@ -1073,8 +1069,8 @@ function(panel.data,         ## REQUIRED
 			Simulated_SGPs[[tmp.path]] <- rbind.fill(simulation.data, as.data.frame(Simulated_SGPs[[tmp.path]])) 
 		}
 
-		if (simex.tf){
-			quantile.data.simex<-.simex.sgp(state=calculate.simex$state, variable=calculate.simex$variable, lambda=calculate.simex$lambda, 
+		if (simex.tf) {
+			quantile.data.simex <- .simex.sgp(state=calculate.simex$state, variable=calculate.simex$variable, lambda=calculate.simex$lambda, 
 				B=calculate.simex$simulation.iterations, extrapolation=calculate.simex$extrapolation)
 			quantile.data[, SGP_SIMEX:=quantile.data.simex[["SGP_SIMEX"]]]
 		}
@@ -1117,53 +1113,76 @@ function(panel.data,         ## REQUIRED
 		}
 
 		if (is.character(goodness.of.fit) | goodness.of.fit==TRUE) {
+			if (simex.tf) {
+				sgps.for.gof <- c("SGP", "SGP_SIMEX")
+				sgps.for.gof.path <- c(tmp.path, paste(tmp.path, "SIMEX", sep="."))
+			} else {
+				sgps.for.gof <- "SGP"
+				sgps.for.gof.path <- tmp.path
+			}
 			if (is.character(goodness.of.fit) & goodness.of.fit %in% objects(SGPstateData) &&
 				!is.null(SGPstateData[[goodness.of.fit]][['Achievement']][['Cutscores']][[rev(content_area.progression)[2]]][[paste("GRADE_", rev(tmp.gp)[2], sep="")]])) {
 				GRADE <- YEAR <- CONTENT_AREA <- NULL
 				tmp.gof.data <- getAchievementLevel(
 							sgp_data=data.table(
 								SCALE_SCORE=quantile.data[['SCALE_SCORE_PRIOR']],
-								SGP=quantile.data[['SGP']],
+								quantile.data[, sgps.for.gof, with=FALSE],
 								VALID_CASE="VALID_CASE",
 								CONTENT_AREA=rev(content_area.progression)[2],
 								YEAR=rev(year.progression.for.norm.group)[2], 
-								GRADE=rev(tmp.gp)[2]),
+								GRADE=rev(tmp.gp)[2],
+								CONTENT_AREA_CURRENT=sgp.labels[['my.subject']],
+								YEAR_CURRENT=sgp.labels[['my.year']],
+								GRADE_CURRENT=tmp.last),
 							state=goodness.of.fit,
 							year=rev(year.progression.for.norm.group)[2],
 							content_area=rev(content_area.progression)[2],
-							grade=tail(tmp.gp, 2)[1])[,GRADE:=tmp.last][,YEAR:=sgp.labels[['my.year']]]
-				setnames(tmp.gof.data, c("SCALE_SCORE", "ACHIEVEMENT_LEVEL", "CONTENT_AREA"), c("SCALE_SCORE_PRIOR", "ACHIEVEMENT_LEVEL_PRIOR", "CONTENT_AREA_PRIOR"))
-				tmp.gof.data[["CONTENT_AREA"]] <- sgp.labels[['my.subject']]
-				content_areas_prior <- tmp.gof.data[['CONTENT_AREA_PRIOR']][1]
+							grade=tail(tmp.gp, 2)[1])[,!c("YEAR", "GRADE"), with=FALSE]
 
-				Goodness_of_Fit[[tmp.path]][['TMP_NAME']] <- gofSGP(
-										sgp_object=tmp.gof.data,
-										state=goodness.of.fit,
-										years=sgp.labels[['my.year']],
-										content_areas=sgp.labels[['my.subject']],
-										content_areas_prior=content_areas_prior,
-										grades=tmp.last,
-										output.format="GROB")
+				setnames(tmp.gof.data, c("SCALE_SCORE", "ACHIEVEMENT_LEVEL", "CONTENT_AREA", "CONTENT_AREA_CURRENT", "YEAR_CURRENT", "GRADE_CURRENT"), 
+					c("SCALE_SCORE_PRIOR", "ACHIEVEMENT_LEVEL_PRIOR", "CONTENT_AREA_PRIOR", "CONTENT_AREA", "YEAR", "GRADE"))
+
+				for (gof.iter in seq_along(sgps.for.gof)) {
+					Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]][['TMP_NAME']] <- gofSGP(
+											sgp_object=tmp.gof.data,
+											state=goodness.of.fit,
+											years=sgp.labels[['my.year']],
+											content_areas=sgp.labels[['my.subject']],
+											content_areas_prior=tmp.gof.data[['CONTENT_AREA_PRIOR']][1],
+											grades=tmp.last,
+											use.sgp=sgps.for.gof[gof.iter],
+											output.format="GROB")
+
+					tmp.gof.plot.name <- 
+						paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression, sep="_"), sep="/"), num.prior+1), collapse="; ")
+					tmp.gof.plot.name <- gsub("MATHEMATICS", "MATH", tmp.gof.plot.name)
+					names(Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]])[length(Goodness_of_Fit[[tmp.path]])] <- 
+						gsub("/", "_", paste(gsub(";", "", rev(unlist(strsplit(tail(tmp.gof.plot.name, 1), " ")))), collapse=";"))
+				}
 			} else {
 				tmp.gof.data <- data.table(
 							SCALE_SCORE_PRIOR=quantile.data[['SCALE_SCORE_PRIOR']],
-							SGP=quantile.data[['SGP']],
+							quantile.data[, sgps.for.gof, with=FALSE],
 							VALID_CASE="VALID_CASE", 
 							CONTENT_AREA=sgp.labels[['my.subject']], 
 							YEAR=sgp.labels[['my.year']], 
 							GRADE=tmp.last)
- 
-				Goodness_of_Fit[[tmp.path]][['TMP_NAME']] <- gofSGP(
-										sgp_object=tmp.gof.data,
-										years=sgp.labels[['my.year']],
-										content_areas=sgp.labels[['my.subject']],
-										grades=tmp.last,
-										output.format="GROB")
+
+				for (sgps.for.gof.iter in sgps.for.gof) {
+					Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]][['TMP_NAME']] <- gofSGP(
+											sgp_object=tmp.gof.data,
+											years=sgp.labels[['my.year']],
+											content_areas=sgp.labels[['my.subject']],
+											grades=tmp.last,
+											use.sgp=sgps.for.gof[gof.iter],
+											output.format="GROB")
+					tmp.gof.plot.name <- 
+						paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression, sep="_"), sep="/"), num.prior+1), collapse="; ")
+					tmp.gof.plot.name <- gsub("MATHEMATICS", "MATH", tmp.gof.plot.name)
+					names(Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]])[length(Goodness_of_Fit[[tmp.path]])] <- 
+						gsub("/", "_", paste(gsub(";", "", rev(unlist(strsplit(tail(tmp.gof.plot.name, 1), " ")))), collapse=";"))
+				}
 			}
-			tmp.gof.plot.name <- paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression, sep="_"), sep="/"), num.prior+1), collapse="; ")
-			tmp.gof.plot.name <- gsub("MATHEMATICS", "MATH", tmp.gof.plot.name)
-			names(Goodness_of_Fit[[tmp.path]])[length(Goodness_of_Fit[[tmp.path]])] <-
-				gsub("/", "_", paste(gsub(";", "", rev(unlist(strsplit(tail(tmp.gof.plot.name, 1), " ")))), collapse=";"))
 		}
 
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, "SGP", "SGP_BASELINE")

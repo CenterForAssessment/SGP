@@ -22,7 +22,7 @@ summarizeSGP(sgp_object,
 }
 
 \arguments{
-  \item{sgp_object}{A list containing long formatted data in the \code{Student} slot. If summaries of student growth percentiles are requested, those quantities must first be produced (possibly by first using \code{\link{analyzeSGP}}) and subsequently combined with the \code{Student} data (possibly with \code{\link{combineSGP}}).
+  \item{sgp_object}{A list containing long formatted data in the \code{@Data} slot. If summaries of student growth percentiles are requested, those quantities must first be produced (possibly by first using \code{\link{analyzeSGP}}) and subsequently combined with the \code{@Data} data (possibly with \code{\link{combineSGP}}).
   }
   \item{state}{Acronym indicating state associated with the summaries for access to assessment program information embedded in \code{SGPstateData}.
   }
