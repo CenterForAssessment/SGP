@@ -31,7 +31,7 @@ bubblePlot_Styles(
 
 \arguments{
   \item{sgp_object}{An object of class SGP containing long formatted data in the \code{@Data} slot that will be used for the production of student growth 
-and achievement plots and system growth and achievement plots, summary data from \code{\link{summarizeSGP}} in the \code{Summary} slot for bubble plots.  
+and achievement plots and system growth and achievement plots, summary data from \code{\link{summarizeSGP}} in the \code{@Summary} slot for bubble plots.  
   }
   \item{state}{Acronym indicating state associated with the summaries for access to assessment program information embedded in \code{SGPstateData}.
   }

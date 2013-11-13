@@ -37,8 +37,8 @@ updateSGP(
   }
   \item{content_areas}{If only 'what_sgp_object' is supplied, content_areas specifies the content areas to be run amonst those provided by the coefficient matrices in the sgp_object. Default is to run all analyses associated with the coefficient matrices.
   }
-  \item{save.old.summaries}{A boolean argument (defaults to FALSE which will delete the @Summary slot before creating new summaries)
-  indicating whether the call to \code{\link{summarizeSGP}} should save existing summaries in the @Summary slot.
+  \item{save.old.summaries}{A boolean argument (defaults to FALSE which will delete the \code{@Summary} slot before creating new summaries)
+  indicating whether the call to \code{\link{summarizeSGP}} should save existing summaries in the \code{@Summary} slot.
   }
   \item{save.intermediate.results}{A boolean argument (defaults to FALSE) indicating whether results should be save to the current directory after each step of the analysis.
   }

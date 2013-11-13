@@ -81,7 +81,7 @@ a set of approximately 100 tables are produced that are used in other parts of t
 \item{projection.years.for.target}{An integer argument indicating \code{SGP_TARGET} variables to summarize based upon years projected forward. Default is 3 years which is what is generally used by
 most states.
 }
-\item{save.old.summaries}{A boolean argument, defaults to FALSE, indicating whether to save the @Summary slot (if not NULL) prior to calculating new summaries. By defaulting to FALSE, the function
+\item{save.old.summaries}{A boolean argument, defaults to FALSE, indicating whether to save the \code{@Summary} slot (if not NULL) prior to calculating new summaries. By defaulting to FALSE, the function
 overwrites previous (e.g., last year's summaries) summaries.
 }
 \item{highest.level.summary.grouping}{A character vector indicating the highest level for summary groups, defaults to 'STATE'.
@@ -101,7 +101,7 @@ Example parallel use cases are provided below.
 \details{Function makes use of the \code{foreach} package to parallel process summary tables of student data. The proper choice of parallel backend is dependent upon the user's operating system, software and system memory capacity. Please see the \code{foreach} documentation for details. By default, the function will process the summary tables sequentially.
 }
 
-\value{Function returns lists containing the summary tables as data.table objects in the \code{Summary} slot of the SGP data object. Each \code{institution} has a slot in the \code{Summary} list. 
+\value{Function returns lists containing the summary tables as data.table objects in the \code{@Summary} slot of the SGP data object. Each \code{institution} has a slot in the \code{@Summary} list. 
 }
 
 \author{Damian W. Betebenner \email{dbetebenner@nciea.org} and Adam Van Iwaarden \email{vaniwaarden@colorado.edu}}
