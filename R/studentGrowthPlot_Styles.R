@@ -119,7 +119,7 @@ if (reports.by.school) {
 
 	sgPlot.folder <- file.path(sgPlot.folder, "School")
 
-	if (sgPlot.output.format=="PNG") {
+	if (identical(sgPlot.output.format, "PNG")) {
 		sgPlot.folder <- file.path(sgPlot.folder, "PNG")
 	}
 

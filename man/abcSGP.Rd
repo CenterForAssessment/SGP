@@ -91,8 +91,8 @@ If missing the function will use the data to infer all the grade progressions fo
   \item{save.intermediate.results}{Should intermediate results of \code{abcSGP} be saved after each of \code{\link{prepareSGP}}, \code{\link{analyzeSGP}},
   \code{\link{combineSGP}}, and \code{\link{summarizeSGP}}. Default is FALSE.
   }
-  \item{save.old.summaries}{A Boolean argument (defaults to FALSE which will delete the @Summary slot before creating new summaries) 
-  indicating whether the call to \code{\link{summarizeSGP}} should save existing summaries in the @Summary slot. 
+  \item{save.old.summaries}{A Boolean argument (defaults to FALSE which will delete the \code{@Summary} slot before creating new summaries) 
+  indicating whether the call to \code{\link{summarizeSGP}} should save existing summaries in the \code{@Summary} slot. 
   }
   \item{sgPlot.demo.report}{A Boolean variable (defaults to FALSE) indicating whether to produce only the demonstration student report catalog. Default is to produce reports for entire current 
   year data.
@@ -121,7 +121,7 @@ If missing the function will use the data to infer all the grade progressions fo
 
 \value{Function returns a list containing the input long data set in the \code{@Data} slot as a data.table keyed using \code{VALID_CASE}, \code{CONTENT_AREA}, 
 \code{YEAR}, \code{ID}, SGP results including student growth percentile and student growth projections/trajectories in the SGP slot, and summary results in the 
-Summary slot. 
+\code{@Summary} slot. 
 }
 
 \author{Damian W. Betebenner \email{dbetebenner@nciea.org} and Adam Van Iwaarden \email{vaniwaarden@colorado.edu}}
