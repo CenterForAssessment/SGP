@@ -241,11 +241,11 @@ function(panel.data,         ## REQUIRED
 		return(tmp)
 	} 
 
-	.simex.sgp <- function(state, variable, lambda, B, extrapolation) {
+	.simex.sgp <- function(state, variable, lambda, B, extrapolation, save.matrices) {
 		GRADE <- CONTENT_AREA <- YEAR <- V1 <- Lambda <- tau <- b <- .SD <- NULL ## To avoid R CMD check warnings
 		my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
 
-		fitted <- extrap <- tmp.quantiles.simex <- list()
+		fitted <- extrap <- tmp.quantiles.simex <- simex.coef.matrices <- list()
 		loss.hoss <- matrix(nrow=2,ncol=length(tmp.gp)-1)
 		if (!is.null(state)) {
 			for (g in 1:ncol(loss.hoss)) {
@@ -256,15 +256,27 @@ function(panel.data,         ## REQUIRED
 				loss.hoss[,g] <- variable[[paste("loss.hoss_", rev(tmp.gp)[-1][g], sep="")]]
 		}}   
 		
-		rqfit <- function(tmp.gp.iter, lam, rqdata) {  #  AVI added in the lam argument here to index the lambda specific knots and boundaries
+		rq.mtx <- function(tmp.gp.iter, lam, rqdata) {
 			mod <- character()
+			s4Ks <- "Knots=list("
+			s4Bs <- "Boundaries=list("
 			for (i in seq_along(tmp.gp.iter)) {
 				knt <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['knots_", tmp.gp.iter[i], "']]", sep="")
 				bnd <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['boundaries_", tmp.gp.iter[i], "']]", sep="")
 				mod <- paste(mod, " + bs(prior_", i, ", knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
+				s4Ks <- paste(s4Ks, "knots_", tmp.gp.iter[i], "=", knt, ",", sep="")
+				s4Bs <- paste(s4Bs, "boundaries_", tmp.gp.iter[i], "=", bnd, ",", sep="")
 			}
-			fitted.values<-eval(parse(text=paste("rq(final.yr ~", substring(mod,4), ", tau=taus, data = rqdata, method=rq.method)[['fitted.values']]", sep="")))
-			return(apply(fitted.values,1,.smooth.isotonize.row))
+			tmp.mtx <-eval(parse(text=paste("rq(final.yr ~", substring(mod,4), ", tau=taus, data = rqdata, method=rq.method)[['coefficients']]", sep="")))
+			
+			tmp.version <- list(SGP_Package_Version=as.character(packageVersion("SGP")), Date_Prepared=date(), Matrix_Information=list(N=dim(rqdata)[1]))
+	
+			eval(parse(text=paste("new('splineMatrix', tmp.mtx, ", substring(s4Ks, 1, nchar(s4Ks)-1), "), ", substring(s4Bs, 1, nchar(s4Bs)-1), "), ",
+				"Content_Areas=list(as.character(tail(content_area.progression, k+1))), ",
+				"Grade_Progression=list(as.character(tail(tmp.slot.gp, k+1))), ",
+				"Time=list(as.character(tail(year.progression, k+1))), ",
+				"Time_Lags=list(as.integer(tail(year_lags.progression, k))), ",
+				"Version=tmp.version)", sep="")))
 		}
 
 		if (!is.null(use.my.coefficient.matrices)) {
@@ -352,9 +364,13 @@ function(panel.data,         ## REQUIRED
 
 				if (is.null(parallel.config)) { # Sequential
 					for (z in 1:B) {
-						f <- rqfit(tmp.gp.iter[1:k], lam=L, rqdata=big.data[list(z)])
-						fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + as.vector(t(f)/B)
+						simex.coef.matrices[[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]][[z]] <- rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=big.data[list(z)])
+						fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + 
+							as.vector(.get.percentile.predictions(
+							big.data[list(z)][, which(names(big.data[list(z)]) %in% c("ID", paste('prior_', k:1, sep=""), "final.yr")), with=FALSE], 
+							simex.coef.matrices[[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]][[z]])/B)
 					}
+					
 				} else {	# Parallel over 1:B
 					if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
 						##  Don't offer this option now.  But this could ultimately be the BEST option for this because we could have 
@@ -363,17 +379,23 @@ function(panel.data,         ## REQUIRED
 						parallel.config[["BACKEND"]] <- "PARALLEL"
 					} 
 				
-					par.start <- startParallel(parallel.config, 'SIMEX') 
+					par.start <- startParallel(parallel.config, 'SIMEX')
+					
 					##  Note, that if you use the parallel.config for SIMEX here, you can also use it for TAUS in the naive analysis
 					##  Example parallel.config argument:  '... parallel.config=list(BACKEND="PARALLEL", TYPE="SOCK", WORKERS=list(SIMEX = 4, TAUS = 4))'
 					if (par.start$par.type == 'MULTICORE') {
-						tmp.fitted.b <- mclapply(1:B, function(x) big.data[list(x)][,rqfit(tmp.gp.iter[1:k], lam=L, rqdata=.SD)], mc.cores=par.start$workers)
+						simex.coef.matrices[[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]] <- 
+							mclapply(1:B, function(x) big.data[list(x)][,rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=.SD)], mc.cores=par.start$workers)
 					}
 					if (par.start$par.type == 'SNOW') {
-						tmp.fitted.b <- parLapply(par.start$internal.cl, 1:B, function(x) big.data[list(x)][,eval(rqfit(tmp.gp.iter[1:k], lam=L, rqdata=.SD))])
+						simex.coef.matrices[[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]] <- 
+							parLapply(par.start$internal.cl, 1:B, function(x) big.data[list(x)][,rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=.SD)])
 					}
 					for (z in 1:B) {
-						fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + as.vector(t(tmp.fitted.b[[z]])/B)
+						fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + 
+							as.vector(.get.percentile.predictions(
+							big.data[list(z)][, which(names(big.data[list(z)]) %in% c("ID", paste('prior_', k:1, sep=""), "final.yr")), with=FALSE], 
+							simex.coef.matrices[[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]][[z]])/B)
 					} 
 					stopParallel(parallel.config, par.start)
 				}
@@ -387,17 +409,25 @@ function(panel.data,         ## REQUIRED
 				SGP_SIMEX=.get.quantiles(extrap[[paste("order_", k, sep="")]], tmp.data[[tmp.num.variables]]))
 		} ### END for (k in simex.matrix.priors)
 		
+		if (is.null(save.matrices)) simex.coef.matrices <- NULL
+		
 		quantile.data.simex <- data.table(rbindlist(tmp.quantiles.simex), key=c("ID", "SIMEX_ORDER"))
 		setkey(quantile.data.simex, ID) # first key on ID and SIMEX_ORDER, then re-key on ID only to insure sorted order.  Don't rely on rbindlist/k ordering...
 		
 		if (print.other.gp) {
-			return(data.table(reshape(quantile.data.simex, idvar="ID", timevar="SIMEX_ORDER", direction="wide"),
-				SGP_SIMEX=quantile.data.simex[c(which(!duplicated(quantile.data.simex))[-1]-1L, nrow(quantile.data.simex))][["SGP_SIMEX"]]))
+			return(list(
+				DT = data.table(reshape(quantile.data.simex, idvar="ID", timevar="SIMEX_ORDER", direction="wide"),
+					SGP_SIMEX=quantile.data.simex[c(which(!duplicated(quantile.data.simex))[-1]-1L, nrow(quantile.data.simex))][["SGP_SIMEX"]]),
+				MATRICES = simex.coef.matrices))
 		} else {
 			if (print.sgp.order | return.norm.group.identifier) {
-				return(quantile.data.simex[c(which(!duplicated(quantile.data.simex))[-1]-1L, nrow(quantile.data.simex))])
+				return(list(
+					DT = quantile.data.simex[c(which(!duplicated(quantile.data.simex))[-1]-1L, nrow(quantile.data.simex))],
+					MATRICES = simex.coef.matrices))
 			} else {
-				return(quantile.data.simex[c(which(!duplicated(quantile.data.simex))[-1]-1L, nrow(quantile.data.simex)), c("ID", "SGP_SIMEX"), with=FALSE])
+				return(list(
+					DT = quantile.data.simex[c(which(!duplicated(quantile.data.simex))[-1]-1L, nrow(quantile.data.simex)), c("ID", "SGP_SIMEX"), with=FALSE],
+					MATRICES = simex.coef.matrices))
 			}
 		}
 	} ### END .simex.sgp function
@@ -1071,8 +1101,10 @@ function(panel.data,         ## REQUIRED
 
 		if (simex.tf) {
 			quantile.data.simex <- .simex.sgp(state=calculate.simex$state, variable=calculate.simex$variable, lambda=calculate.simex$lambda, 
-				B=calculate.simex$simulation.iterations, extrapolation=calculate.simex$extrapolation)
-			quantile.data[, SGP_SIMEX:=quantile.data.simex[["SGP_SIMEX"]]]
+				B=calculate.simex$simulation.iterations, extrapolation=calculate.simex$extrapolation, save.matrices = calculate.simex$save.matrices)
+			quantile.data[, SGP_SIMEX:=quantile.data.simex[['DT']][["SGP_SIMEX"]]]
+			
+			if(!is.null(quantile.data.simex[['MATRICES']])) Coefficient_Matrices[[paste(tmp.path.coefficient.matrices, '.SIMEX', sep="")]] <- quantile.data.simex[['MATRICES']]
 		}
 		
 		if (!is.null(percentile.cuts)){
