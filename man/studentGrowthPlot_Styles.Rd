@@ -48,39 +48,39 @@ studentGrowthPlot_Styles(
   }
   \item{schools}{A vector of school numbers indicating which schools student growth plots should be produce for.
   }
-  \item{reports.by.student}{A boolean variable passed to \code{studentGrowthPlot_Styles} indicating whether separate individual plots will be produced or separate reports
+  \item{reports.by.student}{A Boolean variable passed to \code{studentGrowthPlot_Styles} indicating whether separate individual plots will be produced or separate reports
 and a summary catalog containing those reports will be produced. 
   }
-  \item{reports.by.instructor}{A boolean variable passed to \code{studentGrowthPlot_Styles} indicating whether individual plots will be collated and bundled as a summary catalog by instructor.
+  \item{reports.by.instructor}{A Boolean variable passed to \code{studentGrowthPlot_Styles} indicating whether individual plots will be collated and bundled as a summary catalog by instructor.
   }
-  \item{reports.by.school}{A boolean variable passed to \code{studentGrowthPlot_Styles} indicating whether individual plots will be collated and bundled as a summary catalog by school. Prior
+  \item{reports.by.school}{A Boolean variable passed to \code{studentGrowthPlot_Styles} indicating whether individual plots will be collated and bundled as a summary catalog by school. Prior
 to version 0.9-9.7, this was the only way of bundling reports and was thus the default.
   }
   \item{sgPlot.years}{A vector of all years over which student growth plots are being produced.  
   }
-  \item{sgPlot.demo.report}{A boolean argument indicating whether a demonstration report catalog (with anonymized individual, school, and district names) is to be produced. 
+  \item{sgPlot.demo.report}{A Boolean argument indicating whether a demonstration report catalog (with anonymized individual, school, and district names) is to be produced. 
   }
   \item{sgPlot.folder}{A character argument specifying the folder into which the student growth reports will be placed. 
   }
   \item{sgPlot.folder.names}{Either \code{names} or \code{number} indicating whether names or numbers should be used as folder names.
   }
-  \item{sgPlot.anonymize}{A boolean argument indicating whether individual, school, and district names should be anonymized.
+  \item{sgPlot.anonymize}{A Boolean argument indicating whether individual, school, and district names should be anonymized.
   }
   \item{sgPlot.front.page}{A character vector indicating the file, the the base directory, that should be used as the front page for the student growth plots. 
   }
   \item{sgPlot.header.footer.color}{A color (as a character) specifying the header/footer color of the report.
   }
-  \item{sgPlot.fan}{A boolean argument indicating whether the projection fan indicating growth rates necessary to reach 1 years targets be displayed.
+  \item{sgPlot.fan}{A Boolean argument indicating whether the projection fan indicating growth rates necessary to reach 1 years targets be displayed.
   }
-  \item{sgPlot.sgp.targets}{A boolean argument indicating whether the sgp targets are to be displayed.
+  \item{sgPlot.sgp.targets}{A Boolean argument indicating whether the sgp targets are to be displayed.
   }
-  \item{sgPlot.cleanup}{A boolean argument indicating whether to cleanup/remove files produced as part of pdfLaTeX build.
+  \item{sgPlot.cleanup}{A Boolean argument indicating whether to cleanup/remove files produced as part of pdfLaTeX build.
   }
-  \item{sgPlot.baseline}{A boolean argument indicating whether to use baseline referenced student growth percentiles in student growth plots.
+  \item{sgPlot.baseline}{A Boolean argument indicating whether to use baseline referenced student growth percentiles in student growth plots.
   }
   \item{sgPlot.sgp.targets.timeframe}{An integer argument indicating the number of years forward associated with SGP targets.
   }
-  \item{sgPlot.zip}{A boolean argument indicating whether to school folders.
+  \item{sgPlot.zip}{A Boolean argument indicating whether to school folders.
   }
   \item{sgPlot.output.format}{Argument indicating the desired type of output format for student growth plots. Either 'PDF', 'PNG', or 'PDF_PIECES'.
   }

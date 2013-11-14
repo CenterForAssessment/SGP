@@ -26,7 +26,7 @@ updateSGP(
   }
   \item{with_sgp_data_LONG}{The additional data in LONG for to be added to the supplied object of class SGP analyzed. The additional data must be in the same form as the data in the @Data slot. If with_sgp_data_LONG is not supplied, the function with update the sgp_object supplied in 'what_sgp_object' using the embedded coefficient matrices, essentially re-doing the analyses.
   }
-  \item{refresh.current.year.results}{A boolean argument (defaults to FALSE) indicating whether updateSGP will remove current year results and recalculate using pre-calculated coefficient matrices. 
+  \item{refresh.current.year.results}{A Boolean argument (defaults to FALSE) indicating whether updateSGP will remove current year results and recalculate using pre-calculated coefficient matrices. 
   }
   \item{steps}{A vector indicting the steps abcSGP will perform as part of the update. Defaults to all steps: \code{\link{prepareSGP}}, \code{\link{analyzeSGP}}, \code{\link{combineSGP}}, 
   \code{\link{summarizeSGP}}, \code{\link{visualizeSGP}}, \code{\link{outputSGP}}.
@@ -37,12 +37,12 @@ updateSGP(
   }
   \item{content_areas}{If only 'what_sgp_object' is supplied, content_areas specifies the content areas to be run amonst those provided by the coefficient matrices in the sgp_object. Default is to run all analyses associated with the coefficient matrices.
   }
-  \item{save.old.summaries}{A boolean argument (defaults to FALSE which will delete the \code{@Summary} slot before creating new summaries)
+  \item{save.old.summaries}{A Boolean argument (defaults to FALSE which will delete the \code{@Summary} slot before creating new summaries)
   indicating whether the call to \code{\link{summarizeSGP}} should save existing summaries in the \code{@Summary} slot.
   }
-  \item{save.intermediate.results}{A boolean argument (defaults to FALSE) indicating whether results should be save to the current directory after each step of the analysis.
+  \item{save.intermediate.results}{A Boolean argument (defaults to FALSE) indicating whether results should be save to the current directory after each step of the analysis.
   }
-  \item{sgPlot.demo.report}{A boolean argument (defaults to TRUE) indicating whether updateSGP should produce just the demo student growth plots or those associated with all students in the last year.
+  \item{sgPlot.demo.report}{A Boolean argument (defaults to TRUE) indicating whether updateSGP should produce just the demo student growth plots or those associated with all students in the last year.
   }
   \item{...}{Arguments to be passed to \code{\link{abcSGP}} for finer control over SGP calculations. For example, 'parallel.config' can be supplied to abcSGP for parallel computation.
   }

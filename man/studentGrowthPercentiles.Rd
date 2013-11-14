@@ -178,7 +178,7 @@ Useful for examining relationship between prior achievement and student growth.
   }
   \item{calculate.simex}{A character state acronymn or list including state/csem variable, simulation.iterations, lambda and extrapolation method. Defaults to NULL, no simex calculations performed.
   }
-  \item{verbose.output}{A boolean argument indicating whether the function should output verbose diagnostic messages.
+  \item{verbose.output}{A Boolean argument indicating whether the function should output verbose diagnostic messages.
   }
 } 
 
