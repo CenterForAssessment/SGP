@@ -388,7 +388,7 @@ function(panel.data,         ## REQUIRED
 							mclapply(1:B, function(x) big.data[list(x)][,rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=.SD)], mc.cores=par.start$workers)
 					}
 					if (par.start$par.type == 'SNOW') {
-						simex.coef.matrices[[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]] <- 
+						simex.coef.matrices[[paste("Grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]] <- 
 							parLapply(par.start$internal.cl, 1:B, function(x) big.data[list(x)][,rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=.SD)])
 					}
 					for (z in 1:B) {
