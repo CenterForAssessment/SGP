@@ -41,7 +41,7 @@ growthAchievementPlot(
         A vector of percentiles that achievement (i.e., status) percentiles will be depicted across the range of grades.
         }
         \item{gaPlot.show.scale.transformations}{
-        A boolean arguments (defaults to TRUE) indicating whether to show the scale as a vertical axis if a scale transformation is applied to the supplied data.
+        A Boolean arguments (defaults to TRUE) indicating whether to show the scale as a vertical axis if a scale transformation is applied to the supplied data.
         }
 	\item{gaPlot.grade_range}{
 	The grade range for which to demonstrate plot. If missing, function uses supplied state to derive grade range.	
