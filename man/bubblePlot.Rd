@@ -68,12 +68,12 @@ bubblePlot(
 	A vector of Y coordinates for the bubbles to be plotted.
 	}
 	\item{bubble_plot_data.SUBSET}{
-	A boolean vector indicating a subset of the bubbles to be highlighted and plotted. When BUBBLE_TIPS are indicated, only subsetted bubbles will show bubble tips.
+	A Boolean vector indicating a subset of the bubbles to be highlighted and plotted. When BUBBLE_TIPS are indicated, only subsetted bubbles will show bubble tips.
 	To further accentuate highlight bubbles, their radius can be altered using the bubble_plot_configs.BUBBLE_SUBSET_INCREASE argument. 
 	Default value is \code{bubble_plot_data.SUBSET=NULL}.
 	}
 	\item{bubble_plot_data.INDICATE}{
-	A boolean vector indicating whether to attached a label to to further highlight in a manner suitable for printing. Usually done for few bubbles.
+	A Boolean vector indicating whether to attached a label to to further highlight in a manner suitable for printing. Usually done for few bubbles.
 	Default value is \code{bubble_plot_data.INDICATE=NULL}.
 	}
 	\item{bubble_plot_data.BUBBLE_CENTER_LABEL}{

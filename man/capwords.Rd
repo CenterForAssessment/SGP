@@ -33,6 +33,13 @@ capwords("JOHN'S") ## John's
 
 test.vector <- paste("TEST", 1:10, sep="")
 sapply(test.vector, capwords)
+
+
+## With factors, convert levels instead of the entire vector
+
+test.factor <- factor(paste("TEST", rep(letters[1:10], each=50)))
+levels(test.factor) <- sapply(levels(test.factor), capwords)
+levels(test.factor)
 }  
 }
 

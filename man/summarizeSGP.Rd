@@ -75,13 +75,13 @@ All group slots MUST be included in the list, although \code{NULL} can be provid
 }
 For \code{CSEM} analysis this argument requires that simulated SGPs have been produced (see \code{\link{analyzeSGP}} for more information). List slots set to \code{NULL} will not produce confidence intervals. NOTE: This is currently an experimental functionality and is very memory intensive. Groups to be included should be identified selectively! The default 95\% confidence intervals are provided in the selected summary tables as two additional columns named \code{LOWER_MEDIAN_SGP_95_CONF_BOUND} and \code{UPPER_MEDIAN_SGP_95_CONF_BOUND}. 
   }
-\item{produce.all.summary.tables}{A boolean variable, defaults to FALSE, indicating whether the function should produce ALL possible summary table. By default, a set of approximately 70 tables are produced that are used in other parts of the packages (e.g., bubblePlots).}
-\item{summarizeSGP.baseline}{A boolean variable, defaults to FALSE, indicating whether the function should utilize baseline sgp for summary table production. By default, 
+\item{produce.all.summary.tables}{A Boolean variable, defaults to FALSE, indicating whether the function should produce ALL possible summary table. By default, a set of approximately 70 tables are produced that are used in other parts of the packages (e.g., bubblePlots).}
+\item{summarizeSGP.baseline}{A Boolean variable, defaults to FALSE, indicating whether the function should utilize baseline sgp for summary table production. By default, 
 a set of approximately 100 tables are produced that are used in other parts of the packages (e.g., bubblePlots).}
 \item{projection.years.for.target}{An integer argument indicating \code{SGP_TARGET} variables to summarize based upon years projected forward. Default is 3 years which is what is generally used by
 most states.
 }
-\item{save.old.summaries}{A boolean argument, defaults to FALSE, indicating whether to save the \code{@Summary} slot (if not NULL) prior to calculating new summaries. By defaulting to FALSE, the function
+\item{save.old.summaries}{A Boolean argument, defaults to FALSE, indicating whether to save the \code{@Summary} slot (if not NULL) prior to calculating new summaries. By defaulting to FALSE, the function
 overwrites previous (e.g., last year's summaries) summaries.
 }
 \item{highest.level.summary.grouping}{A character vector indicating the highest level for summary groups, defaults to 'STATE'.
