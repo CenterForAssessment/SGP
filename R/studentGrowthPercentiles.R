@@ -815,6 +815,26 @@ function(panel.data,         ## REQUIRED
 		num.panels <- (dim(ss.data)[2]-1)/2
 	}
 
+	##  Run this check before the setup of ss.data - otherwise function chokes on negative subscripts
+	if (exact.grade.progression.sequence & num.prior > num.panels){
+		tmp.messages <- paste("\t\tNOTE: Supplied data together with EXACT grade progression contains fewer panel years than required. \n\t\t
+			Check data, function arguments and see help page for details.\n")
+		message(paste("\tStarted studentGrowthPercentiles", started.date))
+		message(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", 
+			paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
+		message(paste(tmp.messages, "\tStudent Growth Percentile Analysis NOT RUN", date(), "\n"))
+
+		return(
+			list(Coefficient_Matrices=Coefficient_Matrices,
+				Cutscores=Cutscores,
+				Goodness_of_Fit=Goodness_of_Fit,
+				Knots_Boundaries=Knots_Boundaries,
+				Panel_Data=Panel_Data,
+				SGPercentiles=SGPercentiles,
+				SGProjections=SGProjections,
+				Simulated_SGPs=Simulated_SGPs))
+	}
+
 	### Create ss.data
 
 	tmp.last <- tail(tmp.gp, 1)
