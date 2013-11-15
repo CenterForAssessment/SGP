@@ -184,8 +184,8 @@ provided the function produces \code{\link{studentGrowthPlot}}s for ALL students
   }
   \item{sgPlot.output.format}{Argument indicating the desired type of output format for student growth plots. Either 'PDF' (default) or 'PNG'.
   }
-  \item{gaPlot.years}{A vector indicating year for which to produce \code{\link{growthAchievementPlot}}s. If missing the function will use the last year available 
-  in the data to produce \code{\link{growthAchievementPlot}}s.
+  \item{gaPlot.years}{A vector indicating the year(s) for which to produce \code{\link{growthAchievementPlot}}s. If missing the function will use the last year available 
+  in the data to produce the \code{\link{growthAchievementPlot}}s.
   }
   \item{gaPlot.content_areas}{A vector indicating content area(s) to produce \code{\link{growthAchievementPlot}}s using data available in \code{sgp_object}. 
   If missing the function will produce plots for all available content areas provided in the data. 
@@ -193,7 +193,7 @@ provided the function produces \code{\link{studentGrowthPlot}}s for ALL students
   \item{gaPlot.students}{A vector of student \code{ID}s indicating which students to produce \code{\link{growthAchievementPlot}}s for. If missing the function will 
   use \emph{all} available students in the data to produce \code{\link{growthAchievementPlot}}s. 
   }
-  \item{gaPlot.format}{Either "print" or "presentation" indicating whether to optimize the plot for print form (light background) or presentation form (dark background). 
+  \item{gaPlot.format}{Either 'print' or 'presentation' indicating whether to optimize the plot for print form (light background) or presentation form (dark background). 
   }
   \item{gaPlot.baseline}{Argument (defaults to NULL) indicating whether to calculate growth and achievement plots using percentile trajectories derived from baseline 
   referenced coefficient matrices. If not set by user, argument will be set using \code{SGPstateData} which contains information on whether state is a cohort or 
@@ -201,7 +201,7 @@ provided the function produces \code{\link{studentGrowthPlot}}s for ALL students
   }
   \item{gaPlot.max.order.for.progression}{The maximum coefficient matrix order to use for each progression. Default is NULL which utilizes the maximum order available 
   with the coefficient matrices.}
-  \item{gaPlot.folder}{Character vector indicating where \code{\link{growthAchievementPlot}}s should be placed. Default folder is "Visualizations/growthAchievementPlots".  
+  \item{gaPlot.folder}{Character vector indicating where \code{\link{growthAchievementPlot}}s should be placed. The default folder is 'Visualizations/growthAchievementPlots'.  
   }
  \item{parallel.config}{A named list with, at a minimum, two elements indicating 1) the BACKEND package to be used for parallel computation and 2) the WORKERS list to specify the number of processors to be used in each major analysis.  The BACKEND element can be set = to \code{FOREACH} or \code{PARALLEL}.  Please consult the manuals and vignettes for information of these packages!  The \code{\link{analyzeSGP}} help page contains more thorough explanation and examples of the \code{parallel.config} setup. 
 
@@ -211,7 +211,7 @@ The WORKERS element is a list with GA_PLOTS (growth achievement plots) and SG_PL
 
 Default is FOREACH as the back end, TYPE=NA and both plot WORKERS=1, which produces plots sequentially: 'list(BACKEND="FOREACH", TYPE=NA, WORKERS=list(GA_PLOTS=1, SG_PLOTS=1))'
 
-Examples of various parallel configurations can be found in the examples for  \code{\link{analyzeSGP}} and  \code{\link{summarizeSGP}}.
+Examples of various parallel configurations can be found in the examples for \code{\link{analyzeSGP}} and \code{\link{summarizeSGP}}.
   }
 }
 
@@ -242,6 +242,14 @@ Demonstration_SGP <- analyzeSGP(Demonstration_SGP)
 Demonstration_SGP <- combineSGP(Demonstration_SGP)
 Demonstration_SGP <- summarizeSGP(Demonstration_SGP)
 visualizeSGP(Demonstration_SGP)
+
+## Produce a DEMO catalog of student growth plots
+
+visualizeSGP(
+	sgp_object=Demonstration_SGP, 
+	plot.types="studentGrowthPlot",
+	state="DEMO",
+	sgPlot.demo.report=TRUE)
 
 ## Production of sample student growth and achievement plots
 
