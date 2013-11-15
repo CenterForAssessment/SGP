@@ -364,7 +364,7 @@ function(panel.data,         ## REQUIRED
 
 				if (is.null(parallel.config)) { # Sequential
 					for (z in 1:B) {
-						simex.coef.matrices[[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]][[z]] <- rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=big.data[list(z)])
+						simex.coef.matrices[[paste("Grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]][[z]] <- rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=big.data[list(z)])
 						fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + 
 							as.vector(.get.percentile.predictions(
 							big.data[list(z)][, which(names(big.data[list(z)]) %in% c("ID", paste('prior_', k:1, sep=""), "final.yr")), with=FALSE], 
@@ -384,7 +384,7 @@ function(panel.data,         ## REQUIRED
 					##  Note, that if you use the parallel.config for SIMEX here, you can also use it for TAUS in the naive analysis
 					##  Example parallel.config argument:  '... parallel.config=list(BACKEND="PARALLEL", TYPE="SOCK", WORKERS=list(SIMEX = 4, TAUS = 4))'
 					if (par.start$par.type == 'MULTICORE') {
-						simex.coef.matrices[[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]] <- 
+						simex.coef.matrices[[paste("Grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]] <- 
 							mclapply(1:B, function(x) big.data[list(x)][,rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=.SD)], mc.cores=par.start$workers)
 					}
 					if (par.start$par.type == 'SNOW') {
