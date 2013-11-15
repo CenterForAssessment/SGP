@@ -44,7 +44,7 @@ function(sgp_object,
 		if (!is.numeric(tmp.last.year.grades) | !is.numeric(tmp.unique.data[['GRADE']])) {
 			stop("\tNOTE: Automatic 'sgp.config' calculation is only available for integer grade levels. Manual specification of 'sgp.config' is required for non-traditional grade and course progressions.")
 		}
-		tmp.sgp.grade.sequences <- lapply(tail(tmp.last.year.grades, -1), function(x) tail(tmp.unique.data$GRADE[tmp.unique.data$GRADE <= x], length(tmp.unique.data$YEAR)))
+		tmp.sgp.grade.sequences <- lapply(tmp.last.year.grades, function(x) tail(tmp.unique.data$GRADE[tmp.unique.data$GRADE <= x], length(tmp.unique.data$YEAR)))
 		if (!is.null(grades)) {
 			tmp.sgp.grade.sequences <- tmp.sgp.grade.sequences[sapply(tmp.sgp.grade.sequences, function(x) tail(x,1)) %in% grades]
 		}
