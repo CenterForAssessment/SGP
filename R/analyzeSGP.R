@@ -991,8 +991,8 @@ function(sgp_object,
 						calculate.simex=calculate.simex,
 						...)
 					} else {
-						message(paste("NOTE: Supplied data together with grade progression contains either no student records &/or no prior data for", tail(sgp.iter[["sgp.panel.years"]], 1), 
-							tail(sgp.iter[["sgp.content.areas"]], 1), "with", paste(head(sgp.iter[["sgp.content.areas"]], -1), collapse=", "), "priors"))
+						message(paste("\n\t\tNOTE: No student records &/or no prior data for", tail(sgp.iter[["sgp.panel.years"]], 1), 
+							tail(sgp.iter[["sgp.content.areas"]], 1), "with", paste(head(sgp.iter[["sgp.content.areas"]], -1), collapse=", "), "priors.\n"))
 					}
 			}
 			suppressMessages(gc())
@@ -1034,8 +1034,8 @@ function(sgp_object,
 						print.other.gp=print.other.gp,
 						...)
 					} else {
-						message(paste("NOTE: Supplied data together with grade progression contains either no student records &/or no prior data for", tail(sgp.iter[["sgp.panel.years"]], 1), 
-							tail(sgp.iter[["sgp.content.areas"]], 1), "with", paste(head(sgp.iter[["sgp.content.areas"]], -1), collapse=", "), "priors"))
+						message(paste("\n\t\tNOTE: No student records &/or no prior data for", tail(sgp.iter[["sgp.panel.years"]], 1), 
+							tail(sgp.iter[["sgp.content.areas"]], 1), "with", paste(head(sgp.iter[["sgp.content.areas"]], -1), collapse=", "), "priors.\n"))
 					}
 				suppressMessages(gc())
 			}
@@ -1073,8 +1073,8 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...)
 				} else {
-					message(paste("NOTE: Supplied data together with grade progression contains either no student records &/or no prior data for", tail(sgp.iter[["sgp.panel.years"]], 1), 
-						tail(sgp.iter[["sgp.content.areas"]], 1), "with", paste(head(sgp.iter[["sgp.content.areas"]], -1), collapse=", "), "priors"))
+					message(paste("\n\t\tNOTE: No student records &/or no prior data for", tail(sgp.iter[["sgp.panel.years"]], 1), 
+						tail(sgp.iter[["sgp.content.areas"]], 1), "with", paste(head(sgp.iter[["sgp.content.areas"]], -1), collapse=", "), "priors.\n"))
 				}
 				suppressMessages(gc())
 			}
@@ -1114,8 +1114,8 @@ function(sgp_object,
 						...)
 				suppressMessages(gc())
 				} else {
-					message(paste("NOTE: Supplied data together with grade progression contains either no student records &/or no prior data for", tail(sgp.iter[["sgp.panel.years"]], 1), 
-						tail(sgp.iter[["sgp.content.areas"]], 1), "with", paste(head(sgp.iter[["sgp.content.areas"]], -1), collapse=", "), "priors"))
+					message(paste("\n\t\tNOTE: No student records &/or no prior data for", tail(sgp.iter[["sgp.panel.years"]], 1), 
+						tail(sgp.iter[["sgp.content.areas"]], 1), "with", paste(head(sgp.iter[["sgp.content.areas"]], -1), collapse=", "), "priors.\n"))
 				}
 			}
 		} ## END if sgp.projections.baseline
@@ -1153,8 +1153,8 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...)
 				} else {
-					message(paste("NOTE: Supplied data together with grade progression contains either no student records &/or no prior data for", tail(sgp.iter[["sgp.panel.years"]], 1), 
-						tail(sgp.iter[["sgp.content.areas"]], 1), "with", paste(head(sgp.iter[["sgp.content.areas"]], -1), collapse=", "), "priors"))
+					message(paste("\n\t\tNOTE: No student records &/or no prior data for", tail(sgp.iter[["sgp.panel.years"]], 1), 
+						tail(sgp.iter[["sgp.content.areas"]], 1), "with", paste(head(sgp.iter[["sgp.content.areas"]], -1), collapse=", "), "priors.\n"))
 				}
 				suppressMessages(gc())
 			}
@@ -1193,8 +1193,8 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...)
 				} else {
-					message(paste("NOTE: Supplied data together with grade progression contains either no student records &/or no prior data for", tail(sgp.iter[["sgp.panel.years"]], 1), 
-						tail(sgp.iter[["sgp.content.areas"]], 1), "with", paste(head(sgp.iter[["sgp.content.areas"]], -1), collapse=", "), "priors"))
+					message(paste("\n\t\tNOTE: No student records &/or no prior data for", tail(sgp.iter[["sgp.panel.years"]], 1), 
+						tail(sgp.iter[["sgp.content.areas"]], 1), "with", paste(head(sgp.iter[["sgp.content.areas"]], -1), collapse=", "), "priors.\n"))
 				}
 				suppressMessages(gc())
 			}
