@@ -33,7 +33,7 @@ function(sgp_object,
 	## checkchangeVariableClassVariableClass
 
 	changeVariableClass <- function(my.data, convert.tf, data.slot) {
-		if (!data.slot=="@Data") {
+		if (!data.slot=="@Data" & !data.slot=="@Data_Supplementary") {
 			message(paste("\tNOTE: ID in", data.slot, "converted from class factor to character to accommodate data.table >= 1.8.0 changes."))
 			my.data[["ID"]] <- as.character(my.data[["ID"]])			
 		} else {
@@ -56,6 +56,16 @@ function(sgp_object,
 
 	if (any(tmp.check <- checkVariableClass(sgp_object@Data, id.only=FALSE))) {
 		sgp_object@Data <- changeVariableClass(sgp_object@Data, convert.tf=tmp.check, data.slot="@Data")
+	}
+
+	## Check class of variables in @Data_Supplementary
+	
+	if (!is.null(sgp_object@Data_Supplementary)) {
+		for(j in 1:length(sgp_object@Data_Supplementary)) {
+			if (any(tmp.check <- checkVariableClass(sgp_object@Data_Supplementary[[j]], id.only=FALSE))) {
+				sgp_object@Data_Supplementary[[j]] <- changeVariableClass(sgp_object@Data_Supplementary[[j]], convert.tf=tmp.check, data.slot="@Data_Supplementary")
+			}
+		}
 	}
 
 	## Check class and construction of coefficient matrices
