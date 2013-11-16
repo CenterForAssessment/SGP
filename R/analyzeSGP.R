@@ -111,7 +111,7 @@ function(sgp_object,
 	} else lower.level.parallel.config <- NULL
 
 	if (identical(calculate.simex, TRUE)) {
-		calculate.simex <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=25, extrapolation="linear")
+		calculate.simex <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=25, extrapolation="linear", save.matrices=TRUE)
 	}
 
 	### 
