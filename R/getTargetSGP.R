@@ -11,7 +11,6 @@ function(sgp_object,
 
 	TARGET_STATUS_INITIAL <- VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- NULL
 
-
 	### Define variables
 
 	if (target.level=="CATCH_UP_KEEP_UP") level.to.get <- which.max(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")-1
@@ -83,5 +82,4 @@ function(sgp_object,
 
 	setkeyv(tmp_object_2, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 	return(tmp_object_2)
-
 } ### END getTargetSGP
