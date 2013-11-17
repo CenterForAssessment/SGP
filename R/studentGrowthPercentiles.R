@@ -1124,7 +1124,9 @@ function(panel.data,         ## REQUIRED
 				B=calculate.simex$simulation.iterations, extrapolation=calculate.simex$extrapolation, save.matrices = calculate.simex$save.matrices)
 			quantile.data[, SGP_SIMEX:=quantile.data.simex[['DT']][["SGP_SIMEX"]]]
 			
-			if(!is.null(quantile.data.simex[['MATRICES']])) Coefficient_Matrices[[paste(tmp.path.coefficient.matrices, '.SIMEX', sep="")]] <- quantile.data.simex[['MATRICES']]
+			if(!is.null(quantile.data.simex[['MATRICES']])) {
+				Coefficient_Matrices[[paste(tmp.path.coefficient.matrices, '.SIMEX', sep="")]][[paste('grade_', tail(tmp.gp,1), sep="")]] <- quantile.data.simex[['MATRICES']]
+			}
 		}
 		
 		if (!is.null(percentile.cuts)){
