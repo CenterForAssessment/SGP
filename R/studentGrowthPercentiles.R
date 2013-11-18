@@ -1141,7 +1141,8 @@ function(panel.data,         ## REQUIRED
 
 		if (simex.tf) {
 			quantile.data.simex <- .simex.sgp(state=calculate.simex$state, variable=calculate.simex$variable, lambda=calculate.simex$lambda, 
-				B=calculate.simex$simulation.iterations, extrapolation=calculate.simex$extrapolation, save.matrices = calculate.simex$save.matrices)
+				B=calculate.simex$simulation.iterations, extrapolation=calculate.simex$extrapolation, 
+				save.matrices = calculate.simex$save.matrices, simex.use.my.coefficient.matrices = calculate.simex$simex.use.my.coefficient.matrices)
 			quantile.data[, SGP_SIMEX:=quantile.data.simex[['DT']][["SGP_SIMEX"]]]
 			
 			if(!is.null(quantile.data.simex[['MATRICES']])) {
