@@ -286,7 +286,7 @@ if (Report_Parameters$Content_Area %in% names(SGPstateData[[Report_Parameters$St
                      Plotting_Scale_Scores,
                      tmp.range,
                      na.rm=TRUE)
-   yscale.range <- extendrange(c(low.score, high.score), f=0.1)
+   yscale.range <- extendrange(c(low.score, high.score), f=0.15)
 } else {
    low.score <- min(cuts.ny1.text, 
                     Plotting_Scale_Scores, 
