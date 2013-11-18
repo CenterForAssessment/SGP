@@ -288,15 +288,6 @@ function(panel.data,         ## REQUIRED
 			}
 		} else simex.matrix.priors <- coefficient.matrix.priors
 
-		if (!is.null(simex.use.my.coefficient.matrices)) { # Element from the 'calculate.simex' argument list.
-			available.matrices <- length(Coefficient_Matrices[[paste(tmp.path.coefficient.matrices, '.SIMEX', sep="")]][[
-				paste("grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]])
-			if (is.null(B)) B <- available.matrices
-			sim.iters <- 1:B
-			if (available.matrices > B) sim.iters <- sample(1:available.matrices, B)
-			if (available.matrices < B) sim.iters <- sample(1:B, available.matrices, replace=TRUE)
-		} 
-		
 		for (k in simex.matrix.priors) {
 			tmp.data <- .get.panel.data(ss.data, k, by.grade)
 			tmp.num.variables <- dim(tmp.data)[2]
@@ -371,6 +362,14 @@ function(panel.data,         ## REQUIRED
 					setnames(big.data,tmp.num.variables-g,paste("prior_",g,sep=""))
 				}
 
+				if (!is.null(simex.use.my.coefficient.matrices)) { # Element from the 'calculate.simex' argument list.
+					available.matrices <- length(Coefficient_Matrices[[paste(tmp.path.coefficient.matrices, '.SIMEX', sep="")]][[
+						paste("grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]])
+					sim.iters <- 1:B
+					if (available.matrices > B) sim.iters <- sample(1:available.matrices, B)
+					if (available.matrices < B) sim.iters <- sample(1:B, available.matrices, replace=TRUE)
+				} 
+		
 				if (is.null(parallel.config)) { # Sequential
 					for (z in sim.iters) {
 						if (!is.null(simex.use.my.coefficient.matrices)) {
