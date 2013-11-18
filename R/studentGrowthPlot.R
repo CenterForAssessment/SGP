@@ -24,6 +24,8 @@ growth.level.labels <- SGPstateData[[Report_Parameters$State]][["Growth"]][["Lev
 growth.level.cutscores <- SGPstateData[[Report_Parameters$State]][["Growth"]][["Cutscores"]][["Cuts"]]
 growth.level.cutscores.text <- SGPstateData[[Report_Parameters$State]][["Growth"]][["Cutscores"]][["Labels"]]
 grades.reported.in.state <- SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Grades_Reported"]][[Report_Parameters$Content_Area]]
+grades.reported.in.state.low <- min(grades.reported.in.state)
+grades.reported.in.state.high <- max(grades.reported.in.state)
 test.abbreviation <- SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Abbreviation"]]
 level.to.get.cuku <- which.max(SGPstateData[[Report_Parameters$State]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")-1
 level.to.get.musu <- which.max(SGPstateData[[Report_Parameters$State]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")
@@ -275,7 +277,7 @@ if (grade.values$year_span == 0) {
 current.year <- year.function(Report_Parameters$Current_Year, 0, 1)
 xscale.range <- range(low.year,high.year) + c(-0.075, 0.1)*diff(range(low.year,high.year))
 if (Report_Parameters$Content_Area %in% names(SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]])) {
-   tmp.range <- range(SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[Report_Parameters$Content_Area]], na.rm=TRUE)
+   tmp.range <- range(head(tail(SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[Report_Parameters$Content_Area]],-1),-1), na.rm=TRUE)
    low.score <- min(cuts.ny1.text,
                     Plotting_Scale_Scores,
                     tmp.range,
@@ -284,16 +286,15 @@ if (Report_Parameters$Content_Area %in% names(SGPstateData[[Report_Parameters$St
                      Plotting_Scale_Scores,
                      tmp.range,
                      na.rm=TRUE)
-   tmp.extend.range <- extendrange(c(low.score,high.score), f=0.1)
-   yscale.range <- extendrange(c(min(tmp.range[1], tmp.extend.range[1]), max(tmp.range[2], tmp.extend.range[2])), f=0.05)
+   yscale.range <- extendrange(c(low.score, high.score), f=0.1)
 } else {
    low.score <- min(cuts.ny1.text, 
                     Plotting_Scale_Scores, 
-                    Cutscores$CUTSCORE[Cutscores$GRADE==max(grade.values$interp.df$GRADE[2], 3) & Cutscores$CUTLEVEL==1], 
+                    Cutscores$CUTSCORE[Cutscores$GRADE==max(grade.values$interp.df$GRADE[2], grades.reported.in.state.low) & Cutscores$CUTLEVEL==1], 
                     na.rm=TRUE)
    high.score <- max(cuts.ny1.text, 
                      Plotting_Scale_Scores, 
-                     Cutscores$CUTSCORE[Cutscores$GRADE==min(tail(grade.values$interp.df$GRADE, 2)[1], 10) & Cutscores$CUTLEVEL==number.achievement.level.regions-1], 
+                     Cutscores$CUTSCORE[Cutscores$GRADE==min(tail(grade.values$interp.df$GRADE, 2)[1], grades.reported.in.state.high) & Cutscores$CUTLEVEL==number.achievement.level.regions-1], 
                      na.rm=TRUE)
    yscale.range <- extendrange(c(low.score,high.score), f=0.15)
 }
@@ -510,15 +511,15 @@ grid.polygon(x=c(0,1,1,0),
              gp=gpar(fill=achievement.level.region.colors[i], lwd=0.5, col=border.color, alpha=0.7))
 }
 
-grid.text(x=.9, y=(level_1_curve(xscale.range[1]) + yscale.range[1])/2, names(achievement.level.labels)[1], 
-          gp=gpar(col=border.color, fontface=2, fontfamily="Helvetica-Narrow", cex=.75), default.units="native", just="right")
-grid.text(x=.9, y=(eval(parse(text=paste("level_", number.achievement.level.regions-1, "_curve(xscale.range[1])", sep=""))) + yscale.range[2])/2, 
+grid.text(x=0.94, y=(level_1_curve(xscale.range[1]) + yscale.range[1])/2, names(achievement.level.labels)[1], 
+          gp=gpar(col=border.color, fontface=2, fontfamily="Helvetica-Narrow", cex=.85), default.units="native", just="right")
+grid.text(x=0.94, y=(eval(parse(text=paste("level_", number.achievement.level.regions-1, "_curve(xscale.range[1])", sep=""))) + yscale.range[2])/2, 
           names(achievement.level.labels)[number.achievement.level.regions], 
           gp=gpar(col=border.color, fontface=2, fontfamily="Helvetica-Narrow", cex=.85), default.units="native", just="right")
 
 if (number.achievement.level.regions > 2) {
     for (i in 2:(number.achievement.level.regions-1)) {
-         grid.text(x=.9, y=(eval(parse(text=paste("(level_", i-1, "_curve(xscale.range[1]) + level_", i, "_curve(xscale.range[1]))/2", sep="")))),
+         grid.text(x=.94, y=(eval(parse(text=paste("(level_", i-1, "_curve(xscale.range[1]) + level_", i, "_curve(xscale.range[1]))/2", sep="")))),
                    names(achievement.level.labels)[i], 
                    gp=gpar(col=border.color, fontface=2, fontfamily="Helvetica-Narrow", cex=.85), default.units="native", just="right")
     }
