@@ -288,7 +288,7 @@ function(panel.data,         ## REQUIRED
 			}
 		} else simex.matrix.priors <- coefficient.matrix.priors
 
-		if (!is.null(simex.use.my.coefficient.matrices) { # Element from the 'calculate.simex' argument list.
+		if (!is.null(simex.use.my.coefficient.matrices)) { # Element from the 'calculate.simex' argument list.
 			available.matrices <- length(Coefficient_Matrices[[paste(tmp.path.coefficient.matrices, '.SIMEX', sep="")]][[
 				paste("grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]])
 			if (is.null(B)) B <- available.matrices
