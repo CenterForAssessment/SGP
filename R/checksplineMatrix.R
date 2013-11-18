@@ -32,7 +32,7 @@ function(list.of.splineMatrix,
 						if (!all(splineMatrix.tf)) {
 							content_area <- unlist(strsplit(i, "[.]"))[1]; year <- unlist(strsplit(i, "[.]"))[2]
 							for (j in names(list.of.splineMatrix[[i]][[grd]][[ord]][[lambda]])[!splineMatrix.tf]) {
-								message(paste("\tNOTE: Updating Coefficient Matrix", i, grd, ord, labda, j, "to new splineMatrix class."))
+								message(paste("\tNOTE: Updating Coefficient Matrix", i, grd, ord, lambda, j, "to new splineMatrix class."))
 								list.of.splineMatrix[[i]][[grd]][[ord]][[lambda]][[j]] <- 
 									as.splineMatrix(matrix_argument=list.of.splineMatrix[[i]][[grd]][[ord]][[lambda]][[j]], matrix_argument_name=j, content_area=content_area, year=year, sgp_object=sgp_object)
 							}

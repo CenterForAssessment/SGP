@@ -8,7 +8,7 @@ function(state,
 	for (i in names(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]])) {
 		tmp.df <- data.frame(GRADE=as.character(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[i]]), stringsAsFactors=FALSE)
 		if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[i]])) {
-			tmp.df <- CJ(tmp.df$GRADE, SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[i]]:tail(sort(tmp.years), 1))
+			tmp.df <- CJ(tmp.df$GRADE, intersect(SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[i]]:tail(sort(tmp.years), 1), tmp.years))
 		} else {
 			tmp.df <- CJ(tmp.df$GRADE, tmp.years)
 		}

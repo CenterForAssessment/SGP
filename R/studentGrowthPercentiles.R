@@ -816,7 +816,7 @@ function(panel.data,         ## REQUIRED
 	}
 
 	##  Run this check before the setup of ss.data - otherwise function chokes on negative subscripts
-	if (exact.grade.progression.sequence & num.prior > num.panels){
+	if (exact.grade.progression.sequence & num.prior > num.panels) {
 		tmp.messages <- paste("\t\tNOTE: Supplied data together with EXACT grade progression contains fewer panel years than required. \n\t\t
 			Check data, function arguments and see help page for details.\n")
 		message(paste("\tStarted studentGrowthPercentiles", started.date))
