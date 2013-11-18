@@ -1125,7 +1125,8 @@ function(panel.data,         ## REQUIRED
 			quantile.data[, SGP_SIMEX:=quantile.data.simex[['DT']][["SGP_SIMEX"]]]
 			
 			if(!is.null(quantile.data.simex[['MATRICES']])) {
-				Coefficient_Matrices[[paste(tmp.path.coefficient.matrices, '.SIMEX', sep="")]][[paste('grade_', tail(tmp.gp,1), sep="")]] <- quantile.data.simex[['MATRICES']]
+				Coefficient_Matrices[[paste(tmp.path.coefficient.matrices, '.SIMEX', sep="")]][[paste('grade_', tail(tmp.gp,1), sep="")]] <- 
+					quantile.data.simex[['MATRICES']][[paste('grade_', tail(tmp.gp,1), sep="")]]
 			}
 		}
 		
