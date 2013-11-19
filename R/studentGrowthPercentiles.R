@@ -31,7 +31,7 @@ function(panel.data,         ## REQUIRED
          isotonize=TRUE,
          convert.using.loss.hoss=TRUE,
          goodness.of.fit=TRUE,
-	 goodness.of.fit.minimum.n=NULL,
+         goodness.of.fit.minimum.n=NULL,
          return.prior.scale.score=TRUE,
          return.prior.scale.score.standardized=TRUE,
          return.norm.group.identifier=TRUE,

@@ -1,18 +1,18 @@
 `baselineSGP` <-
 function(sgp_object,
-	state=NULL,
-	years=NULL,
-	content_areas=NULL,
-	grades=NULL,
-	sgp.config=NULL,
-	sgp.baseline.config=NULL,
-	sgp.baseline.panel.years=NULL,
-	sgp.percentiles.baseline.max.order=3,
-	return.matrices.only=FALSE,
-	calculate.baseline.sgps=TRUE,
-	goodness.of.fit.print=TRUE,
-	parallel.config=NULL,
-	...) {
+		state=NULL,
+		years=NULL,
+		content_areas=NULL,
+		grades=NULL,
+		sgp.config=NULL,
+		sgp.baseline.config=NULL,
+		sgp.baseline.panel.years=NULL,
+		sgp.percentiles.baseline.max.order=3,
+		return.matrices.only=FALSE,
+		calculate.baseline.sgps=TRUE,
+		goodness.of.fit.print=TRUE,
+		parallel.config=NULL,
+		...) {
 
 
 	started.at <- proc.time()
