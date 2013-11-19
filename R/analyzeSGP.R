@@ -1297,9 +1297,8 @@ function(sgp_object,
 					sgp.exact.grade.progression=sgp.iter[["sgp.exact.grade.progression"]],
 					projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 					...)
-				}
-				suppressMessages(gc())
 			}
+			suppressMessages(gc())
 		} ## END sgp.projections.lagged.baseline
 
 		tmp_sgp_object[['Panel_Data']] <- NULL
