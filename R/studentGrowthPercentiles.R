@@ -375,7 +375,7 @@ function(panel.data,         ## REQUIRED
 		
 				if (is.null(parallel.config)) { # Sequential
 					for (z in sim.iters) {
-						if (!is.null(simex.use.my.coefficient.matrices)) {
+						if (is.null(simex.use.my.coefficient.matrices)) {
 							simex.coef.matrices[[paste("grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]][[z]] <-
 								rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=big.data[list(z)])
 						} else {
