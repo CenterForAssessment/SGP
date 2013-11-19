@@ -10,6 +10,7 @@ function(sgp_object,
 		sgp.percentiles.baseline.max.order=3,
 		return.matrices.only=FALSE,
 		calculate.baseline.sgps=TRUE,
+		calculate.baseline.simex=NULL,
 		goodness.of.fit.print=TRUE,
 		parallel.config=NULL,
 		...) {
@@ -94,10 +95,12 @@ function(sgp_object,
 
 
 		### Calculate Coefficient Matrices and return list containing coefficient matrices
+		
+		if (!is.null(calculate.baseline.simex)) TMP_Coefficient_Matrices = sgp_object@SGP[["Coefficient_Matrices"]] else TMP_Coefficient_Matrices <- list()
 
 		tmp_sgp_list <- list(Coefficient_Matrices =
 			studentGrowthPercentiles(
-				panel.data=list(Panel_Data= tmp.df, 
+				panel.data=list(Panel_Data= tmp.df, Coefficient_Matrices = TMP_Coefficient_Matrices, #  Add Coef Matrices for SIMEX
 					Knots_Boundaries=getKnotsBoundaries(knots.boundaries.iter, state, "Baseline")),
 				sgp.labels=list(my.year="BASELINE", my.subject=tail(content_areas, 1)),
 				use.my.knots.boundaries=list(my.year="BASELINE", my.subject=tail(content_areas, 1)),
@@ -169,7 +172,41 @@ function(sgp_object,
 		sgp_object@SGP <- mergeSGP(Reduce(mergeSGP, tmp.list), sgp_object@SGP)
 	} else {
 		sgp_object@SGP <- mergeSGP(sgp_object@SGP, SGPstateData[[state]][["Baseline_splineMatrix"]])
-        }
+	}
+
+
+	#################################################################################
+	###
+	###    Calculate SIMEX baseline referenced coefficient matrices if requested
+	###
+	#################################################################################
+
+	if (!is.null(calculate.baseline.simex)) {
+		if (is.null(sgp.baseline.config)) {
+			sgp.baseline.config <- getSGPBaselineConfig(sgp_object, content_areas, grades, sgp.baseline.panel.years)
+		} else {
+			sgp.baseline.config <- checkConfig(sgp.baseline.config, "Baseline")
+		}
+
+		tmp.list <- list()
+
+		for (iter in seq_along(sgp.baseline.config)) {
+			tmp.list[[iter]] <- baselineSGP_Internal(
+					sgp_object,
+					state=state,
+					years=sgp.baseline.config[[iter]][["sgp.baseline.panel.years"]],
+					content_areas=sgp.baseline.config[[iter]][["sgp.baseline.content.areas"]],
+					grade.sequences=sgp.baseline.config[[iter]][["sgp.baseline.grade.sequences"]],
+					baseline.grade.sequences.lags=sgp.baseline.config[[iter]][["sgp.baseline.grade.sequences.lags"]],
+					knots.boundaries.iter=sgp.baseline.config[[iter]],
+					parallel.config=parallel.config,
+					use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.baseline.config[[sgp.iter]][["sgp.baseline.content.areas"]], 1)),
+					calculate.simex=calculate.baseline.simex)
+		}
+
+		sgp_object@SGP <- mergeSGP(Reduce(mergeSGP, tmp.list), sgp_object@SGP)
+		
+	}
 
 
 	################################################################
@@ -238,8 +275,15 @@ function(sgp_object,
 
 	if (return.matrices.only) {
 		tmp.list <- list()
-		for (ca in unique(sapply(sgp.baseline.config, function(x) tail(x[["sgp.baseline.content.areas"]],1)))) {
-			tmp.list[[paste(ca, ".BASELINE", sep="")]] <- sgp_object@SGP[["Coefficient_Matrices"]][[paste(ca, ".BASELINE", sep="")]]
+		if (is.null(SGPstateData[[state]][["Baseline_splineMatrix"]])) {
+			for (ca in unique(sapply(sgp.baseline.config, function(x) tail(x[["sgp.baseline.content.areas"]],1)))) {
+				tmp.list[[paste(ca, ".BASELINE", sep="")]] <- sgp_object@SGP[["Coefficient_Matrices"]][[paste(ca, ".BASELINE", sep="")]]
+			}
+		}
+		if (calculate.baseline.simex) {
+			for (ca in unique(sapply(sgp.baseline.config, function(x) tail(x[["sgp.baseline.content.areas"]],1)))) {
+				tmp.list[[paste(ca, ".BASELINE.SIMEX", sep="")]] <- sgp_object@SGP[["Coefficient_Matrices"]][[paste(ca, ".BASELINE.SIMEX", sep="")]]
+			}			
 		}
 		return(tmp.list)
 	} else {
