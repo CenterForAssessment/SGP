@@ -294,7 +294,6 @@ function(sgp_object,
 							sgp.baseline.config=sgp.baseline.config[sgp.iter], ## NOTE: must pass list, [...], not vector, [[...]].
 							return.matrices.only=TRUE,
 							calculate.baseline.sgps=FALSE,
-							use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.baseline.config[[sgp.iter]][["sgp.baseline.content.areas"]], 1)),
 							calculate.simex=calculate.simex,
 							parallel.config=parallel.config)
 					}
@@ -315,7 +314,6 @@ function(sgp_object,
 								sgp.baseline.config=list(sgp.iter), ## NOTE: list of sgp.iter must be passed for proper iteration
 								return.matrices.only=TRUE,
 								calculate.baseline.sgps=FALSE,
-								use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.iter[["sgp.baseline.content.areas"]], 1)),
 								calculate.simex=calculate.simex,
 								parallel.config=parallel.config))
 						}
@@ -329,7 +327,6 @@ function(sgp_object,
 								sgp.baseline.config=list(sgp.iter), ## NOTE: list of sgp.iter must be passed for proper iteration
 								return.matrices.only=TRUE,
 								calculate.baseline.sgps=FALSE,
-								use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.iter[["sgp.baseline.content.areas"]], 1)),
 								calculate.simex=calculate.simex,
 								parallel.config=parallel.config))
 						
@@ -344,7 +341,6 @@ function(sgp_object,
 								sgp.baseline.config=list(sgp.iter), ## NOTE: list of sgp.iter must be passed for proper iteration
 								return.matrices.only=TRUE,
 								calculate.baseline.sgps=FALSE,
-								use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.iter[["sgp.baseline.content.areas"]], 1)),
 								calculate.simex=calculate.simex,
 								parallel.config=parallel.config),
 								mc.cores=par.start$workers, mc.preschedule=FALSE)
@@ -364,7 +360,6 @@ function(sgp_object,
 						sgp.baseline.config=sgp.baseline.config[sgp.iter], ## NOTE: must pass list, [...], not vector, [[...]].
 						return.matrices.only=TRUE,
 						calculate.baseline.sgps=FALSE,
-						use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.baseline.config[[sgp.iter]][["sgp.baseline.content.areas"]], 1)),
 						calculate.simex=calculate.simex)
 				}
 				
