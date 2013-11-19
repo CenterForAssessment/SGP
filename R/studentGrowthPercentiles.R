@@ -1035,9 +1035,7 @@ function(panel.data,         ## REQUIRED
 			B=calculate.simex$simulation.iterations, extrapolation=calculate.simex$extrapolation, 
 			save.matrices = calculate.simex$save.matrices, simex.use.my.coefficient.matrices = calculate.simex$simex.use.my.coefficient.matrices,
 			calculate.simex.sgps=calculate.sgps)
-		
-		if (calculate.sgps) quantile.data[, SGP_SIMEX:=quantile.data.simex[['DT']][["SGP_SIMEX"]]]
-		
+	
 		if(!is.null(quantile.data.simex[['MATRICES']])) {
 			tmp_sgp_1 <- list(Coefficient_Matrices = list(TMP_SIMEX=Coefficient_Matrices[[paste(tmp.path.coefficient.matrices, '.SIMEX', sep="")]]))
 			tmp_sgp_2 <- list(Coefficient_Matrices = list(TMP_SIMEX=quantile.data.simex[['MATRICES']]))
@@ -1176,6 +1174,8 @@ function(panel.data,         ## REQUIRED
 			}
 			Simulated_SGPs[[tmp.path]] <- rbind.fill(simulation.data, as.data.frame(Simulated_SGPs[[tmp.path]])) 
 		}
+
+		if (simex.tf) quantile.data[, SGP_SIMEX:=quantile.data.simex[['DT']][["SGP_SIMEX"]]]
 
 		if (!is.null(percentile.cuts)){
 			cuts.best <- data.table(rbindlist(tmp.percentile.cuts), key="ID")
