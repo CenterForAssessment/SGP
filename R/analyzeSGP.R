@@ -1221,7 +1221,6 @@ function(sgp_object,
 				tmp.knots.boundaries <- getKnotsBoundaries(sgp.iter, state) # Get specific knots and boundaries in case course sequence is different
 				panel.data[["Knots_Boundaries"]][[names(tmp.knots.boundaries)]] <- tmp.knots.boundaries[[names(tmp.knots.boundaries)]]
 
-				if (dim(panel.data$Panel_Data)[1] > 0 & dim(panel.data$Panel_Data)[2] > 3) {
 					tmp_sgp_object <- studentGrowthProjections(
 						panel.data=panel.data,
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1),
@@ -1244,10 +1243,6 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...)
 				suppressMessages(gc())
-				} else {
-					message(paste("\n\t\tNOTE: No student records &/or no prior data for", tail(sgp.iter[["sgp.panel.years"]], 1), 
-						tail(sgp.iter[["sgp.content.areas"]], 1), "with", paste(head(sgp.iter[["sgp.content.areas"]], -1), collapse=", "), "priors.\n"))
-				}
 			}
 		} ## END if sgp.projections.baseline
 	
@@ -1261,7 +1256,6 @@ function(sgp_object,
 				tmp.knots.boundaries <- getKnotsBoundaries(sgp.iter, state) # Get specific knots and boundaries in case course sequence is different
 				panel.data[["Knots_Boundaries"]][[names(tmp.knots.boundaries)]] <- tmp.knots.boundaries[[names(tmp.knots.boundaries)]]
 
-				if (dim(panel.data$Panel_Data)[1] > 0 & dim(panel.data$Panel_Data)[2] > 3) {
 					tmp_sgp_object <- studentGrowthProjections(
 						panel.data=panel.data,
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 
@@ -1283,10 +1277,6 @@ function(sgp_object,
 						sgp.exact.grade.progression=sgp.iter[["sgp.exact.grade.progression"]],
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...)
-				} else {
-					message(paste("\n\t\tNOTE: No student records &/or no prior data for", tail(sgp.iter[["sgp.panel.years"]], 1), 
-						tail(sgp.iter[["sgp.content.areas"]], 1), "with", paste(head(sgp.iter[["sgp.content.areas"]], -1), collapse=", "), "priors.\n"))
-				}
 				suppressMessages(gc())
 			}
 		} ## END sgp.projections.lagged
@@ -1301,7 +1291,6 @@ function(sgp_object,
 				tmp.knots.boundaries <- getKnotsBoundaries(sgp.iter, state) # Get specific knots and boundaries in case course sequence is different
 				panel.data[["Knots_Boundaries"]][[names(tmp.knots.boundaries)]] <- tmp.knots.boundaries[[names(tmp.knots.boundaries)]]
 
-				if (dim(panel.data$Panel_Data)[1] > 0 & dim(panel.data$Panel_Data)[2] > 3) {
 					tmp_sgp_object <- studentGrowthProjections(
 						panel.data=panel.data,
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 
@@ -1323,10 +1312,6 @@ function(sgp_object,
 						sgp.exact.grade.progression=sgp.iter[["sgp.exact.grade.progression"]],
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						...)
-				} else {
-					message(paste("\n\t\tNOTE: No student records &/or no prior data for", tail(sgp.iter[["sgp.panel.years"]], 1), 
-						tail(sgp.iter[["sgp.content.areas"]], 1), "with", paste(head(sgp.iter[["sgp.content.areas"]], -1), collapse=", "), "priors.\n"))
-				}
 				suppressMessages(gc())
 			}
 		} ## END sgp.projections.lagged.baseline
