@@ -398,6 +398,8 @@ function(panel.data,         ## REQUIRED
 					
 					##  Note, that if you use the parallel.config for SIMEX here, you can also use it for TAUS in the naive analysis
 					##  Example parallel.config argument:  '... parallel.config=list(BACKEND="PARALLEL", TYPE="SOCK", WORKERS=list(SIMEX = 4, TAUS = 4))'
+					
+					##  Calculate coefficient matricies (if needed/requested)
 					if (is.null(simex.use.my.coefficient.matrices)) {
 						if (par.start$par.type == 'MULTICORE') {
 							simex.coef.matrices[[paste("grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]] <- 
@@ -412,12 +414,23 @@ function(panel.data,         ## REQUIRED
 							Coefficient_Matrices[[paste(tmp.path.coefficient.matrices, '.SIMEX', sep="")]][[
 								paste("grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]]
 					}
-					for (z in sim.iters) {
-						fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + 
-							as.vector(.get.percentile.predictions(
+					
+					##  get percentile predictions from coefficient matricies
+					if (par.start$par.type == 'MULTICORE') {
+						tmp.fitted <- mclapply(sim.iters, function(z) { as.vector(.get.percentile.predictions(
 							big.data[list(match(z, sim.iters))][, which(names(big.data[list(match(z, sim.iters))]) %in% c("ID", paste('prior_', k:1, sep=""), "final.yr")), with=FALSE], 
 							simex.coef.matrices[[paste("grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]][[z]])/B)
-					} 
+						}, mc.cores=par.start$workers)
+					fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- tmp.fitted[[1]]
+					for(z in sim.iters[-1]) fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + tmp.fitted[[z]]
+					}
+					if (par.start$par.type == 'SNOW') {
+						tmp.fitted <- parLapply(par.start$internal.cl, sim.iters, function(z) { as.vector(.get.percentile.predictions(
+							big.data[list(match(z, sim.iters))][, which(names(big.data[list(match(z, sim.iters))]) %in% c("ID", paste('prior_', k:1, sep=""), "final.yr")), with=FALSE], 
+							simex.coef.matrices[[paste("grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]][[z]])/B)})
+					}
+					
+
 					stopParallel(parallel.config, par.start)
 				}
 			} ### END for (L in lambda[-1])
