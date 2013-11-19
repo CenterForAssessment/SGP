@@ -230,7 +230,10 @@ function(sgp_object,
 					} # END if (MULTICORE)
 					stopParallel(parallel.config, par.start)
 				} #  END  if parallel
-			} else { ### SEQUENTIAL BASELINE COEFFICIENT MATRIX CONSTRUCTION 
+			} else { 
+				##  SEQUENTIAL BASELINE COEFFICIENT MATRIX CONSTRUCTION 
+				##  Or, run TAUS in parallel in studentGrowthPercentiles using lower.level.parallel.config 
+				##  Useful if many more cores/workers available than configs to iterate over.
 				tmp <- list()
 				for (sgp.iter in seq_along(sgp.baseline.config)) {
 					tmp[[sgp.iter]] <- baselineSGP(
@@ -238,9 +241,11 @@ function(sgp_object,
 						state=state,
 						sgp.baseline.config=sgp.baseline.config[sgp.iter], ## NOTE: must pass list, [...], not vector, [[...]].
 						return.matrices.only=TRUE,
-						calculate.baseline.sgps=FALSE)
+						calculate.baseline.sgps=FALSE,
+						parallel.config=lower.level.parallel.config)
 				}
 				tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp)))
+				rm(tmp)
 			}
 
 			assign(paste(state, "_Baseline_Matrices", sep=""), list())
@@ -273,25 +278,6 @@ function(sgp_object,
 			message("\n\tStarted SIMEX Baseline Coefficient Matrix Calculation:\n")
 			
 			if (!is.null(parallel.config)) { ### PARALLEL BASELINE COEFFICIENT MATRIX CONSTRUCTION
-				
-				##  Run SIMEX simulation iterations in parallel in studentGrowthPercentiles.  
-				##  Useful if many more cores/workers available than configs to iterate over.
-				if("SIMEX" %in% names(parallel.config$WORKERS)) {
-					tmp <- list()
-					for (sgp.iter in seq_along(sgp.baseline.config)) {
-						tmp[[sgp.iter]] <- baselineSGP(
-							sgp_object,
-							state=state,
-							sgp.baseline.config=sgp.baseline.config[sgp.iter], ## NOTE: must pass list, [...], not vector, [[...]].
-							return.matrices.only=TRUE,
-							calculate.baseline.sgps=FALSE,
-							calculate.baseline.simex=calculate.simex,
-							parallel.config=parallel.config)
-					}
-
-					tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp)))
-					# rm(tmp)
-				}	else {
 				
 					par.start <- startParallel(parallel.config, 'BASELINE_MATRICES')
 	
@@ -341,8 +327,10 @@ function(sgp_object,
 						} # END if (MULTICORE)
 						stopParallel(parallel.config, par.start)
 					} #  END FOREACH, SNOW and MULTICORE
-				} #  END all parallel
-			} else { ### SEQUENTIAL BASELINE COEFFICIENT MATRIX CONSTRUCTION 
+			} else { 
+				## SEQUENTIAL BASELINE COEFFICIENT MATRIX CONSTRUCTION 
+				##  Or, run SIMEX simulation iterations in parallel in studentGrowthPercentiles using lower.level.parallel.config 
+				##  Useful if many more cores/workers available than configs to iterate over.
 				tmp <- list()
 				for (sgp.iter in seq_along(sgp.baseline.config)) {
 					tmp[[sgp.iter]] <- baselineSGP(
@@ -351,7 +339,8 @@ function(sgp_object,
 						sgp.baseline.config=sgp.baseline.config[sgp.iter], ## NOTE: must pass list, [...], not vector, [[...]].
 						return.matrices.only=TRUE,
 						calculate.baseline.sgps=FALSE,
-						calculate.baseline.simex=calculate.simex)
+						calculate.baseline.simex=calculate.simex,
+						parallel.config=lower.level.parallel.config)
 				}
 				
 				tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp)))
