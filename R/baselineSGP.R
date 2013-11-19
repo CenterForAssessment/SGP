@@ -284,7 +284,7 @@ function(sgp_object,
 				tmp.list[[paste(ca, ".BASELINE", sep="")]] <- sgp_object@SGP[["Coefficient_Matrices"]][[paste(ca, ".BASELINE", sep="")]]
 			}
 		}
-		if (calculate.baseline.simex) {
+		if (!is.null(calculate.baseline.simex)) {
 			for (ca in unique(sapply(sgp.baseline.config, function(x) tail(x[["sgp.baseline.content.areas"]],1)))) {
 				tmp.list[[paste(ca, ".BASELINE.SIMEX", sep="")]] <- sgp_object@SGP[["Coefficient_Matrices"]][[paste(ca, ".BASELINE.SIMEX", sep="")]]
 			}			
