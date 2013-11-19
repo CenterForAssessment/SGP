@@ -362,13 +362,15 @@ function(panel.data,         ## REQUIRED
 					setnames(big.data,tmp.num.variables-g,paste("prior_",g,sep=""))
 				}
 
+				## Establish the simulation iterations - either 1) 1:B, or 2) a sample of either B or the number of previously computed matrices
+				sim.iters <- 1:B
+				
 				if (!is.null(simex.use.my.coefficient.matrices)) { # Element from the 'calculate.simex' argument list.
 					available.matrices <- length(Coefficient_Matrices[[paste(tmp.path.coefficient.matrices, '.SIMEX', sep="")]][[
 						paste("grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]])
-					sim.iters <- 1:B
 					if (available.matrices > B) sim.iters <- sample(1:available.matrices, B)
 					if (available.matrices < B) sim.iters <- sample(1:B, available.matrices, replace=TRUE)
-				} 
+				}
 		
 				if (is.null(parallel.config)) { # Sequential
 					for (z in sim.iters) {
@@ -381,10 +383,9 @@ function(panel.data,         ## REQUIRED
 						}
 						fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + 
 							as.vector(.get.percentile.predictions(
-							big.data[list(z)][, which(names(big.data[list(z)]) %in% c("ID", paste('prior_', k:1, sep=""), "final.yr")), with=FALSE], 
+							big.data[list(match(z, sim.iters))][, which(names(big.data[list(match(z, sim.iters))]) %in% c("ID", paste('prior_', k:1, sep=""), "final.yr")), with=FALSE], 
 							simex.coef.matrices[[paste("grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]][[z]])/B)
 					}
-					
 				} else {	# Parallel over sim.iters
 					if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
 						##  Don't offer this option now.  But this could ultimately be the BEST option for this because we could have 
@@ -397,7 +398,7 @@ function(panel.data,         ## REQUIRED
 					
 					##  Note, that if you use the parallel.config for SIMEX here, you can also use it for TAUS in the naive analysis
 					##  Example parallel.config argument:  '... parallel.config=list(BACKEND="PARALLEL", TYPE="SOCK", WORKERS=list(SIMEX = 4, TAUS = 4))'
-					if (!is.null(simex.use.my.coefficient.matrices)) {
+					if (is.null(simex.use.my.coefficient.matrices)) {
 						if (par.start$par.type == 'MULTICORE') {
 							simex.coef.matrices[[paste("grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]] <- 
 								mclapply(sim.iters, function(x) big.data[list(x)][,rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=.SD)], mc.cores=par.start$workers)
@@ -408,12 +409,13 @@ function(panel.data,         ## REQUIRED
 						}
 					} else {
 						simex.coef.matrices[[paste("grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]] <-
-							Coefficient_Matrices[[paste("grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]]
+							Coefficient_Matrices[[paste(tmp.path.coefficient.matrices, '.SIMEX', sep="")]][[
+								paste("grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]]
 					}
 					for (z in sim.iters) {
 						fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + 
 							as.vector(.get.percentile.predictions(
-							big.data[list(z)][, which(names(big.data[list(z)]) %in% c("ID", paste('prior_', k:1, sep=""), "final.yr")), with=FALSE], 
+							big.data[list(match(z, sim.iters))][, which(names(big.data[list(match(z, sim.iters))]) %in% c("ID", paste('prior_', k:1, sep=""), "final.yr")), with=FALSE], 
 							simex.coef.matrices[[paste("grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]][[z]])/B)
 					} 
 					stopParallel(parallel.config, par.start)
