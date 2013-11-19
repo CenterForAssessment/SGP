@@ -270,15 +270,6 @@ function(sgp_object,
 				sgp.baseline.config <- checkConfig(sgp.baseline.config, "Baseline")
 			}
 			
-			##  Put BASELINE cohort matrices in sgp_object if not there already
-			if (length(grep(".BASELINE", names(sgp_object@SGP[["Coefficient_Matrices"]]))) == 0) {
-				sgp_object@SGP <- mergeSGP(sgp_object@SGP, SGPstateData[[state]][["Baseline_splineMatrix"]])
-			}
-			
-			##  Temporarily remove BASELINE matrices from SGPstateData (necessary for baselineSGP function)
-			tmp.baselines <- SGPstateData[[state]][["Baseline_splineMatrix"]]
-			SGPstateData[[state]][["Baseline_splineMatrix"]] <- NULL
-		
 			message("\n\tStarted SIMEX Baseline Coefficient Matrix Calculation:\n")
 			
 			if (!is.null(parallel.config)) { ### PARALLEL BASELINE COEFFICIENT MATRIX CONSTRUCTION
@@ -287,7 +278,7 @@ function(sgp_object,
 				##  Useful if many more cores/workers available than configs to iterate over.
 				if("SIMEX" %in% names(parallel.config$WORKERS)) {
 					tmp <- list()
-					for (sgp.iter in seq_along(sbc)) {
+					for (sgp.iter in seq_along(sgp.baseline.config)) {
 						tmp[[sgp.iter]] <- baselineSGP(
 							sgp_object,
 							state=state,
@@ -367,9 +358,6 @@ function(sgp_object,
 				rm(tmp)
 			}
 			
-			###  Replace BASELINE matrices into SGPstateData
-			SGPstateData[[state]][["Baseline_splineMatrix"]] <- tmp.baselines
-
 			###  Save SIMEX BASELINE matrices
 			assign(paste(state, "_SIMEX_Baseline_Matrices", sep=""), list())
 			for (tmp.matrix.label in grep("BASELINE.SIMEX", names(tmp_sgp_object$Coefficient_Matrices), value=TRUE)) {
