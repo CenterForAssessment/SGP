@@ -285,7 +285,7 @@ function(sgp_object,
 							sgp.baseline.config=sgp.baseline.config[sgp.iter], ## NOTE: must pass list, [...], not vector, [[...]].
 							return.matrices.only=TRUE,
 							calculate.baseline.sgps=FALSE,
-							calculate.simex=calculate.simex,
+							calculate.baseline.simex=calculate.simex,
 							parallel.config=parallel.config)
 					}
 
@@ -305,7 +305,7 @@ function(sgp_object,
 								sgp.baseline.config=list(sgp.iter), ## NOTE: list of sgp.iter must be passed for proper iteration
 								return.matrices.only=TRUE,
 								calculate.baseline.sgps=FALSE,
-								calculate.simex=calculate.simex,
+								calculate.baseline.simex=calculate.simex,
 								parallel.config=parallel.config))
 						}
 						tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp)))
@@ -318,7 +318,7 @@ function(sgp_object,
 								sgp.baseline.config=list(sgp.iter), ## NOTE: list of sgp.iter must be passed for proper iteration
 								return.matrices.only=TRUE,
 								calculate.baseline.sgps=FALSE,
-								calculate.simex=calculate.simex,
+								calculate.baseline.simex=calculate.simex,
 								parallel.config=parallel.config))
 						
 							tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp)))
@@ -332,7 +332,7 @@ function(sgp_object,
 								sgp.baseline.config=list(sgp.iter), ## NOTE: list of sgp.iter must be passed for proper iteration
 								return.matrices.only=TRUE,
 								calculate.baseline.sgps=FALSE,
-								calculate.simex=calculate.simex,
+								calculate.baseline.simex=calculate.simex,
 								parallel.config=parallel.config),
 								mc.cores=par.start$workers, mc.preschedule=FALSE)
 								
@@ -351,7 +351,7 @@ function(sgp_object,
 						sgp.baseline.config=sgp.baseline.config[sgp.iter], ## NOTE: must pass list, [...], not vector, [[...]].
 						return.matrices.only=TRUE,
 						calculate.baseline.sgps=FALSE,
-						calculate.simex=calculate.simex)
+						calculate.baseline.simex=calculate.simex)
 				}
 				
 				tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp)))
