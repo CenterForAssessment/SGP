@@ -50,7 +50,7 @@ function(sgp_object,
 	############################################
 
 
-	baselineSGP_Internal <- function(sgp_object, state, years, content_areas, grade.sequences, baseline.grade.sequences.lags, knots.boundaries.iter, parallel.config) {
+	baselineSGP_Internal <- function(sgp_object, state, years, content_areas, grade.sequences, baseline.grade.sequences.lags, knots.boundaries.iter, parallel.config, use.my.coefficient.matrices, calculate.simex) {
 
 		started.at <- proc.time()
 		started.date <- date()
@@ -104,6 +104,7 @@ function(sgp_object,
 					Knots_Boundaries=getKnotsBoundaries(knots.boundaries.iter, state, "Baseline")),
 				sgp.labels=list(my.year="BASELINE", my.subject=tail(content_areas, 1)),
 				use.my.knots.boundaries=list(my.year="BASELINE", my.subject=tail(content_areas, 1)),
+				use.my.coefficient.matrices= use.my.coefficient.matrices,
 				calculate.sgps=FALSE,
 				goodness.of.fit=FALSE,
 				drop.nonsequential.grade.progression.variables=FALSE, # taken care of in data reshape above.
@@ -114,6 +115,7 @@ function(sgp_object,
 				exact.grade.progression.sequence=TRUE,
 				print.time.taken=FALSE,
 				parallel.config=parallel.config,
+				calculate.simex=calculate.simex,
 				...)[["Coefficient_Matrices"]])
 
 		message(paste("\tStarted baselineSGP Coefficient Matrix Calculation:", started.date))
@@ -166,7 +168,9 @@ function(sgp_object,
 							grade.sequences=sgp.baseline.config[[iter]][["sgp.baseline.grade.sequences"]],
 							baseline.grade.sequences.lags=sgp.baseline.config[[iter]][["sgp.baseline.grade.sequences.lags"]],
 							knots.boundaries.iter=sgp.baseline.config[[iter]],
-							parallel.config=parallel.config)
+							use.my.coefficient.matrices=NULL,
+							parallel.config=parallel.config,
+							calculate.simex=NULL)
 		}
 
 		sgp_object@SGP <- mergeSGP(Reduce(mergeSGP, tmp.list), sgp_object@SGP)
@@ -200,7 +204,7 @@ function(sgp_object,
 					baseline.grade.sequences.lags=sgp.baseline.config[[iter]][["sgp.baseline.grade.sequences.lags"]],
 					knots.boundaries.iter=sgp.baseline.config[[iter]],
 					parallel.config=parallel.config,
-					use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.baseline.config[[sgp.iter]][["sgp.baseline.content.areas"]], 1)),
+					use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.baseline.config[[iter]][["sgp.baseline.content.areas"]], 1)),
 					calculate.simex=calculate.baseline.simex)
 		}
 
