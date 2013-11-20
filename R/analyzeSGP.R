@@ -287,54 +287,54 @@ function(sgp_object,
 			
 			if (!is.null(parallel.config)) { ### PARALLEL BASELINE COEFFICIENT MATRIX CONSTRUCTION
 				
-					par.start <- startParallel(parallel.config, 'BASELINE_MATRICES')
-	
-					##  FOREACH flavor
-					if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
-						tmp <- foreach(sgp.iter=iter(sgp.baseline.config), .packages="SGP", .combine="mergeSGP", .inorder=FALSE,
-							.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
-							return(baselineSGP(
-								sgp_object,
-								state=state,
-								sgp.baseline.config=list(sgp.iter), ## NOTE: list of sgp.iter must be passed for proper iteration
-								return.matrices.only=TRUE,
-								calculate.baseline.sgps=FALSE,
-								calculate.baseline.simex=calculate.simex,
-								parallel.config=parallel.config))
-						}
+				par.start <- startParallel(parallel.config, 'BASELINE_MATRICES')
+
+				##  FOREACH flavor
+				if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
+					tmp <- foreach(sgp.iter=iter(sgp.baseline.config), .packages="SGP", .combine="mergeSGP", .inorder=FALSE,
+						.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
+						return(baselineSGP(
+							sgp_object,
+							state=state,
+							sgp.baseline.config=list(sgp.iter), ## NOTE: list of sgp.iter must be passed for proper iteration
+							return.matrices.only=TRUE,
+							calculate.baseline.sgps=FALSE,
+							calculate.baseline.simex=calculate.simex,
+							parallel.config=parallel.config))
+					}
+					tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp, simex=TRUE)))
+					rm(tmp)
+				} else {  ## SNOW and MULTICORE flavors
+					if (par.start$par.type=="SNOW") {
+						tmp <- clusterApplyLB(par.start$internal.cl, sgp.baseline.config, function(sgp.iter) baselineSGP(
+							sgp_object,
+							state=state,
+							sgp.baseline.config=list(sgp.iter), ## NOTE: list of sgp.iter must be passed for proper iteration
+							return.matrices.only=TRUE,
+							calculate.baseline.sgps=FALSE,
+							calculate.baseline.simex=calculate.simex,
+							parallel.config=parallel.config))
+					
 						tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp, simex=TRUE)))
 						rm(tmp)
-					} else {  ## SNOW and MULTICORE flavors
-						if (par.start$par.type=="SNOW") {
-							tmp <- clusterApplyLB(par.start$internal.cl, sgp.baseline.config, function(sgp.iter) baselineSGP(
-								sgp_object,
-								state=state,
-								sgp.baseline.config=list(sgp.iter), ## NOTE: list of sgp.iter must be passed for proper iteration
-								return.matrices.only=TRUE,
-								calculate.baseline.sgps=FALSE,
-								calculate.baseline.simex=calculate.simex,
-								parallel.config=parallel.config))
+					} # END if (SNOW)
 						
-							tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp, simex=TRUE)))
-							rm(tmp)
-						} # END if (SNOW)
+					if (par.start$par.type=="MULTICORE") {
+						tmp <- mclapply(sgp.baseline.config, function(sgp.iter) baselineSGP(
+							sgp_object,
+							state=state,
+							sgp.baseline.config=list(sgp.iter), ## NOTE: list of sgp.iter must be passed for proper iteration
+							return.matrices.only=TRUE,
+							calculate.baseline.sgps=FALSE,
+							calculate.baseline.simex=calculate.simex,
+							parallel.config=parallel.config),
+							mc.cores=par.start$workers, mc.preschedule=FALSE)
 							
-						if (par.start$par.type=="MULTICORE") {
-							tmp <- mclapply(sgp.baseline.config, function(sgp.iter) baselineSGP(
-								sgp_object,
-								state=state,
-								sgp.baseline.config=list(sgp.iter), ## NOTE: list of sgp.iter must be passed for proper iteration
-								return.matrices.only=TRUE,
-								calculate.baseline.sgps=FALSE,
-								calculate.baseline.simex=calculate.simex,
-								parallel.config=parallel.config),
-								mc.cores=par.start$workers, mc.preschedule=FALSE)
-								
-							tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp, simex=TRUE)))
-							rm(tmp)
-						} # END if (MULTICORE)
-						stopParallel(parallel.config, par.start)
-					} #  END FOREACH, SNOW and MULTICORE
+						tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp, simex=TRUE)))
+						rm(tmp)
+					} # END if (MULTICORE)
+					stopParallel(parallel.config, par.start)
+				} #  END FOREACH, SNOW and MULTICORE
 			} else { 
 				## SEQUENTIAL BASELINE COEFFICIENT MATRIX CONSTRUCTION 
 				##  Or, run SIMEX simulation iterations in parallel in studentGrowthPercentiles using lower.level.parallel.config 
