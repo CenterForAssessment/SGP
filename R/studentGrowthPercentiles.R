@@ -435,8 +435,8 @@ function(panel.data,         ## REQUIRED
 								}, mc.cores=par.start$workers
 							)
 							fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- tmp.fitted[[1]]
-							for (z in sim.iters[-1]) {
-								fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + tmp.fitted[[match(z, sim.iters)]]
+							for (s in seq_along(sim.iters[-1])) {
+								fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + tmp.fitted[[s]]
 							}
 						}
 						if (par.start$par.type == 'SNOW') {
@@ -446,8 +446,8 @@ function(panel.data,         ## REQUIRED
 									simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[match(z, sim.iters)]])/B)}
 							)
 							fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- tmp.fitted[[1]]
-							for (z in sim.iters[-1]) {
-								fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + tmp.fitted[[match(z, sim.iters)]]
+							for (s in seq_along(sim.iters[-1])) {
+								fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + tmp.fitted[[s]]
 							}
 						}
 					}
