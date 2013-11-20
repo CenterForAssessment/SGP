@@ -31,7 +31,7 @@ function(panel.data,         ## REQUIRED
          isotonize=TRUE,
          convert.using.loss.hoss=TRUE,
          goodness.of.fit=TRUE,
-	 goodness.of.fit.minimum.n=NULL,
+         goodness.of.fit.minimum.n=NULL,
          return.prior.scale.score=TRUE,
          return.prior.scale.score.standardized=TRUE,
          return.norm.group.identifier=TRUE,
@@ -241,7 +241,7 @@ function(panel.data,         ## REQUIRED
 		return(tmp)
 	} 
 
-	.simex.sgp <- function(state, variable, lambda, B, extrapolation, save.matrices, simex.use.my.coefficient.matrices=NULL) {
+	.simex.sgp <- function(state, variable, lambda, B, extrapolation, save.matrices, simex.use.my.coefficient.matrices=NULL, calculate.simex.sgps) {
 		GRADE <- CONTENT_AREA <- YEAR <- V1 <- Lambda <- tau <- b <- .SD <- NULL ## To avoid R CMD check warnings
 		my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
 
@@ -320,17 +320,18 @@ function(panel.data,         ## REQUIRED
 			}
 
 			# naive model
-
-			fitted[[paste("order_", k, sep="")]] <- matrix(0, nrow=length(lambda), ncol=dim(tmp.data)[1]*length(taus))
-			tmp.matrix <- getsplineMatrices(
-				Coefficient_Matrices[[tmp.path.coefficient.matrices]], 
-				tail(content_area.progression, k+1), 
-				tail(grade.progression, k+1),
-				tail(year.progression, k+1),
-				tail(year_lags.progression, k),
-				my.matrix.order=k)[[1]]
-			
-			fitted[[paste("order_", k, sep="")]][1,] <- as.vector(.get.percentile.predictions(tmp.data, tmp.matrix))
+			if (calculate.simex.sgps) {
+				fitted[[paste("order_", k, sep="")]] <- matrix(0, nrow=length(lambda), ncol=dim(tmp.data)[1]*length(taus))
+				tmp.matrix <- getsplineMatrices(
+					Coefficient_Matrices[[tmp.path.coefficient.matrices]], 
+					tail(content_area.progression, k+1), 
+					tail(grade.progression, k+1),
+					tail(year.progression, k+1),
+					tail(year_lags.progression, k),
+					my.matrix.order=k)[[1]]
+				
+				fitted[[paste("order_", k, sep="")]][1,] <- as.vector(.get.percentile.predictions(tmp.data, tmp.matrix))
+			}
 			
 			# perturb data
 			
@@ -366,25 +367,37 @@ function(panel.data,         ## REQUIRED
 				sim.iters <- 1:B
 				
 				if (!is.null(simex.use.my.coefficient.matrices)) { # Element from the 'calculate.simex' argument list.
-					available.matrices <- length(Coefficient_Matrices[[paste(tmp.path.coefficient.matrices, '.SIMEX', sep="")]][[
-						paste("grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]])
-					if (available.matrices >= B) sim.iters <- sample(1:available.matrices, B)
-					if (available.matrices < B) sim.iters <- sample(1:B, available.matrices, replace=TRUE)
+					available.matrices <- unlist(getsplineMatrices(
+						Coefficient_Matrices[[paste(tmp.path.coefficient.matrices, '.SIMEX', sep="")]][[
+							paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]], 
+						tail(content_area.progression, k+1), 
+						tail(grade.progression, k+1),
+						tail(year.progression, k+1),
+						tail(year_lags.progression, k),
+						my.exact.grade.progression.sequence=TRUE,
+						return.multiple.matrices=TRUE,
+						my.matrix.order=k), recursive=FALSE)
+
+					if (length(available.matrices) > B) sim.iters <- sample(1:B, length(available.matrices)) # Stays as 1:B when length(available.matrices) == B
+					if (length(available.matrices) < B) sim.iters <- sample(1:length(available.matrices), B, replace=TRUE)
 				}
 		
 				if (is.null(parallel.config)) { # Sequential
 					for (z in sim.iters) {
-						if (!is.null(simex.use.my.coefficient.matrices)) {
-							simex.coef.matrices[[paste("grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]][[z]] <-
+						if (is.null(simex.use.my.coefficient.matrices)) {
+							simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]] <-
 								rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=big.data[list(z)])
 						} else {
-							simex.coef.matrices[[paste("grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]][[z]] <-
-								Coefficient_Matrices[[paste("grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]][[z]]
+							simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]] <-
+								Coefficient_Matrices[[paste(tmp.path.coefficient.matrices, '.SIMEX', sep="")]][[
+								paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]]
 						}
-						fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + 
-							as.vector(.get.percentile.predictions(
-							big.data[list(match(z, sim.iters))][, which(names(big.data[list(match(z, sim.iters))]) %in% c("ID", paste('prior_', k:1, sep=""), "final.yr")), with=FALSE], 
-							simex.coef.matrices[[paste("grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]][[z]])/B)
+						if (calculate.simex.sgps) {
+							fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + 
+								as.vector(.get.percentile.predictions(big.data[list(match(z, sim.iters))][, 
+								which(names(big.data[list(match(z, sim.iters))]) %in% c("ID", paste('prior_', k:1, sep=""), "final.yr")), with=FALSE], 
+								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]])/B)
+						}
 					}
 				} else {	# Parallel over sim.iters
 					if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
@@ -402,61 +415,64 @@ function(panel.data,         ## REQUIRED
 					##  Calculate coefficient matricies (if needed/requested)
 					if (is.null(simex.use.my.coefficient.matrices)) {
 						if (par.start$par.type == 'MULTICORE') {
-							simex.coef.matrices[[paste("grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]] <- 
+							simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <- 
 								mclapply(sim.iters, function(x) big.data[list(x)][,rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=.SD)], mc.cores=par.start$workers)
 						}
 						if (par.start$par.type == 'SNOW') {
-							simex.coef.matrices[[paste("grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]] <- 
+							simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <- 
 								parLapply(par.start$internal.cl, sim.iters, function(x) big.data[list(x)][,rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=.SD)])
 						}
 					} else {
-						simex.coef.matrices[[paste("grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]] <-
+						simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
 							Coefficient_Matrices[[paste(tmp.path.coefficient.matrices, '.SIMEX', sep="")]][[
-								paste("grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]]
+								paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]]
 					}
 					
 					##  get percentile predictions from coefficient matricies
-					if (par.start$par.type == 'MULTICORE') {
-						tmp.fitted <- mclapply(sim.iters, function(z) { as.vector(.get.percentile.predictions(
-							big.data[list(match(z, sim.iters))][, 
-								which(names(big.data[list(match(z, sim.iters))]) %in% c("ID", paste('prior_', k:1, sep=""), "final.yr")), with=FALSE], 
-								simex.coef.matrices[[paste("grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]][[z]])/B)
-							}, mc.cores=par.start$workers
-						)
-						fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- tmp.fitted[[1]]
-						for (z in sim.iters[-1]) {
-							fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + tmp.fitted[[z]]
+					if (calculate.simex.sgps) {
+						if (par.start$par.type == 'MULTICORE') {
+							tmp.fitted <- mclapply(sim.iters, function(z) { as.vector(.get.percentile.predictions(
+								big.data[list(match(z, sim.iters))][, 
+									which(names(big.data[list(match(z, sim.iters))]) %in% c("ID", paste('prior_', k:1, sep=""), "final.yr")), with=FALSE], 
+									simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]])/B)
+								}, mc.cores=par.start$workers
+							)
+							fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- tmp.fitted[[1]]
+							for (z in sim.iters[-1]) {
+								fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + tmp.fitted[[z]]
+							}
+						}
+						if (par.start$par.type == 'SNOW') {
+							tmp.fitted <- parLapply(par.start$internal.cl, sim.iters, function(z) { as.vector(.get.percentile.predictions(
+								big.data[list(match(z, sim.iters))][, 
+									which(names(big.data[list(match(z, sim.iters))]) %in% c("ID", paste('prior_', k:1, sep=""), "final.yr")), with=FALSE], 
+									simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]])/B)}
+							)
+							fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- tmp.fitted[[1]]
+							for (z in sim.iters[-1]) {
+								fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + tmp.fitted[[z]]
+							}
 						}
 					}
-					if (par.start$par.type == 'SNOW') {
-						tmp.fitted <- parLapply(par.start$internal.cl, sim.iters, function(z) { as.vector(.get.percentile.predictions(
-							big.data[list(match(z, sim.iters))][, 
-								which(names(big.data[list(match(z, sim.iters))]) %in% c("ID", paste('prior_', k:1, sep=""), "final.yr")), with=FALSE], 
-								simex.coef.matrices[[paste("grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]][[z]])/B)}
-						)
-						fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- tmp.fitted[[1]]
-						for (z in sim.iters[-1]) {
-							fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + tmp.fitted[[z]]
-						}
-					}
-
 					stopParallel(parallel.config, par.start)
 				}
 			} ### END for (L in lambda[-1])
 
-			switch(extrapolation,
-				LINEAR = fit <- lm(fitted[[paste("order_", k, sep="")]] ~ lambda),
-				QUADRATIC = fit <- lm(fitted[[paste("order_", k, sep="")]] ~ lambda + I(lambda^2)))
-			extrap[[paste("order_", k, sep="")]] <- t(apply(matrix(predict(fit, newdata=data.frame(lambda=-1)), nrow=dim(tmp.data)[1]), 1, .smooth.isotonize.row))
-			tmp.quantiles.simex[[k]] <- data.table(ID=tmp.data[["ID"]], SIMEX_ORDER=k, 
-				SGP_SIMEX=.get.quantiles(extrap[[paste("order_", k, sep="")]], tmp.data[[tmp.num.variables]]))
+			if (calculate.simex.sgps) {
+				switch(extrapolation,
+					LINEAR = fit <- lm(fitted[[paste("order_", k, sep="")]] ~ lambda),
+					QUADRATIC = fit <- lm(fitted[[paste("order_", k, sep="")]] ~ lambda + I(lambda^2)))
+				extrap[[paste("order_", k, sep="")]] <- t(apply(matrix(predict(fit, newdata=data.frame(lambda=-1)), nrow=dim(tmp.data)[1]), 1, .smooth.isotonize.row))
+				tmp.quantiles.simex[[k]] <- data.table(ID=tmp.data[["ID"]], SIMEX_ORDER=k, 
+					SGP_SIMEX=.get.quantiles(extrap[[paste("order_", k, sep="")]], tmp.data[[tmp.num.variables]]))
+			}
 		} ### END for (k in simex.matrix.priors)
 		
 		if (is.null(save.matrices)) simex.coef.matrices <- NULL
-		
-		quantile.data.simex <- data.table(rbindlist(tmp.quantiles.simex), key=c("ID", "SIMEX_ORDER"))
-		setkey(quantile.data.simex, ID) # first key on ID and SIMEX_ORDER, then re-key on ID only to insure sorted order.  Don't rely on rbindlist/k ordering...
-		
+		if (calculate.simex.sgps) {
+			quantile.data.simex <- data.table(rbindlist(tmp.quantiles.simex), key=c("ID", "SIMEX_ORDER"))
+			setkey(quantile.data.simex, ID) # first key on ID and SIMEX_ORDER, then re-key on ID only to insure sorted order.  Don't rely on rbindlist/k ordering...
+		}  else quantile.data.simex <- data.table("ID"=NA, "SIMEX_ORDER"=NA, "SGP_SIMEX"=NA) # set up empty data.table for reshapes and subsets below.
 		if (print.other.gp) {
 			return(list(
 				DT = data.table(reshape(quantile.data.simex, idvar="ID", timevar="SIMEX_ORDER", direction="wide"),
@@ -1031,6 +1047,22 @@ function(panel.data,         ## REQUIRED
 		}
 	}
 
+	### Calculate SIMEX corrected coefficient matrices and percentiles (if requested)
+
+	if (simex.tf) {
+		quantile.data.simex <- .simex.sgp(state=calculate.simex$state, variable=calculate.simex$variable, lambda=calculate.simex$lambda, 
+			B=calculate.simex$simulation.iterations, extrapolation=calculate.simex$extrapolation, 
+			save.matrices = calculate.simex$save.matrices, simex.use.my.coefficient.matrices = calculate.simex$simex.use.my.coefficient.matrices,
+			calculate.simex.sgps=calculate.sgps)
+	
+		if(!is.null(quantile.data.simex[['MATRICES']])) {
+			tmp_sgp_1 <- list(Coefficient_Matrices = list(TMP_SIMEX=Coefficient_Matrices[[paste(tmp.path.coefficient.matrices, '.SIMEX', sep="")]]))
+			tmp_sgp_2 <- list(Coefficient_Matrices = list(TMP_SIMEX=quantile.data.simex[['MATRICES']]))
+			tmp_sgp_combined <- mergeSGP(tmp_sgp_1, tmp_sgp_2)
+			Coefficient_Matrices[[paste(tmp.path.coefficient.matrices, '.SIMEX', sep="")]] <- tmp_sgp_combined[["Coefficient_Matrices"]][["TMP_SIMEX"]]
+		}
+	}
+		
 	### Calculate growth percentiles (if requested),  percentile cuts (if requested), and simulated confidence intervals (if requested)
 
 	if (calculate.sgps) {
@@ -1162,20 +1194,8 @@ function(panel.data,         ## REQUIRED
 			Simulated_SGPs[[tmp.path]] <- rbind.fill(simulation.data, as.data.frame(Simulated_SGPs[[tmp.path]])) 
 		}
 
-		if (simex.tf) {
-			quantile.data.simex <- .simex.sgp(state=calculate.simex$state, variable=calculate.simex$variable, lambda=calculate.simex$lambda, 
-				B=calculate.simex$simulation.iterations, extrapolation=calculate.simex$extrapolation, 
-				save.matrices = calculate.simex$save.matrices, simex.use.my.coefficient.matrices = calculate.simex$simex.use.my.coefficient.matrices)
-			quantile.data[, SGP_SIMEX:=quantile.data.simex[['DT']][["SGP_SIMEX"]]]
-			
-			if(!is.null(quantile.data.simex[['MATRICES']])) {
-				tmp_sgp_1 <- list(Coefficient_Matrices = list(TMP_SIMEX=Coefficient_Matrices[[paste(tmp.path.coefficient.matrices, '.SIMEX', sep="")]]))
-				tmp_sgp_2 <- list(Coefficient_Matrices = list(TMP_SIMEX=quantile.data.simex[['MATRICES']]))
-				tmp_sgp_combined <- mergeSGP(tmp_sgp_1, tmp_sgp_2)
-				Coefficient_Matrices[[paste(tmp.path.coefficient.matrices, '.SIMEX', sep="")]] <- tmp_sgp_combined[["Coefficient_Matrices"]][["TMP_SIMEX"]]
-			}
-		}
-		
+		if (simex.tf) quantile.data[, SGP_SIMEX:=quantile.data.simex[['DT']][["SGP_SIMEX"]]]
+
 		if (!is.null(percentile.cuts)){
 			cuts.best <- data.table(rbindlist(tmp.percentile.cuts), key="ID")
 			cuts.best <- cuts.best[c(which(!duplicated(cuts.best))[-1]-1, nrow(cuts.best))][,-1, with=FALSE]
@@ -1294,6 +1314,7 @@ function(panel.data,         ## REQUIRED
 			my.tmp.names <- grep("SGP_ORDER", names(quantile.data), value=TRUE)
 			setnames(quantile.data, my.tmp.names, gsub("SGP_ORDER", "SGP_BASELINE_ORDER", my.tmp.names))
 		}
+		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & simex.tf) setnames(quantile.data, "SGP_SIMEX", "SGP_SIMEX_BASELINE")
 
 		if (!is.null(additional.vnames.to.return)) {
 			quantile.data <- data.table(panel.data[["Panel_Data"]][,c("ID", names(additional.vnames.to.return))], key="ID")[quantile.data]

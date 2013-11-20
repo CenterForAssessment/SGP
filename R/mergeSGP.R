@@ -52,12 +52,10 @@ function(list_1,
 					list_1[[j]][[k]] <- unique.splineMatrix(c(list_1[[j]][[k]], list_2[[j]][[k]]))
 				}
 			} else {
-				for (grd in names(list_2[[j]][[k]])) {
-					for (ord in names(list_2[[j]][[k]][[grd]])) {
-						for (lambda in names(list_2[[j]][[k]][[grd]][[ord]])) {
-							if (!identical(list_1[[j]][[k]][[grd]][[ord]][[lambda]], list_2[[j]][[k]][[grd]][[ord]][[lambda]])) {
-								list_1[[j]][[k]][[grd]][[ord]][[lambda]] <- unique.splineMatrix(c(list_1[[j]][[k]][[grd]][[ord]][[lambda]], list_2[[j]][[k]][[grd]][[ord]][[lambda]]))
-							}
+				for (grd_ord in names(list_2[[j]][[k]])) {
+					for (lambda in names(list_2[[j]][[k]][[grd_ord]])) {
+						if (!identical(list_1[[j]][[k]][[grd_ord]][[lambda]], list_2[[j]][[k]][[grd_ord]][[lambda]])) {
+							list_1[[j]][[k]][[grd_ord]][[lambda]] <- unique.splineMatrix(c(list_1[[j]][[k]][[grd_ord]][[lambda]], list_2[[j]][[k]][[grd_ord]][[lambda]]))
 						}
 					}
 				}

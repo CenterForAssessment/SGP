@@ -17,6 +17,7 @@ Utility function/exemplar used to produce student growth percentiles using long 
 	sgp.percentiles.baseline.max.order=3,
 	return.matrices.only=FALSE,
 	calculate.baseline.sgps=TRUE,
+	calculate.baseline.simex=NULL,
 	goodness.of.fit.print=TRUE,
 	parallel.config=NULL,
 	...)
@@ -45,6 +46,8 @@ To utilize the maximum matrix order, set to NULL.
   \item{return.matrices.only}{Boolean variable indicating whether the function will only return baseline referenced coefficient matrices. Defaults to FALSE.
   }
   \item{calculate.baseline.sgps}{Boolean variable indicating whether the function will calculate baseline referenced student growth percentiles from baseline referenced coefficient matrices. Defaults to TRUE.
+  }
+  \item{calculate.baseline.simex}{A list including state/csem variable, simulation.iterations, lambda and extrapolation method. Defaults to NULL, no simex calculations performed.  Alternatively, setting the argument to TRUE sets the list up with state=state, lambda=seq(0,2,0.5), simulation.iterations=25, extrapolation="linear" and save.matrices=TRUE.
   }
   \item{goodness.of.fit.print}{Boolean variable indicating whether the function will export goodness of fit plots if baseline referenced student growth percentiles are calculated. Defaults to TRUE.
   }
