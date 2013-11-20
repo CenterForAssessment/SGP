@@ -21,10 +21,10 @@ prepareSGP(data,
   }
   \item{data_supplementary}{Supplementary data (e.g., student teacher lookup tables) to be embedded in SGP object in slot @Data_Supplementary. Data must be embedded in a list. Default is no data supplied.
   }
-  \item{state}{A two letter acronymn indicating the state associated with the data. If not supplied, the function will try to infer what the state is from the data object name supplied.
+  \item{state}{A two letter acronym indicating the state associated with the data. If not supplied, the function will try to infer what the state is from the data object name supplied.
   }
-  \item{var.names}{A list or a dataframe that includes all required columns that do not match the SGP conventions, as well as all secondary columns needed 
-for summarization and reporting.
+  \item{var.names}{A list or a data.frame that includes all required columns that do not match the SGP conventions, as well as all secondary columns needed 
+for summarizing and reporting.
   }
   \item{create.additional.variables}{Boolean argument indicating whether prepareSGP should create additional variables often used in analyses. For example, the function can create a variable
   \code{HIGH_NEED_STATUS} identifying the top and bottom quartile of students in each school by year by content area by grade grouping.
@@ -37,7 +37,7 @@ for summarization and reporting.
   in the \code{data} slot.
 }
 
-\author{Ben Domgingue \email{ben.domingue@gmail.com} and Damian W. Betebenner \email{dbetebenner@nciea.org}}
+\author{Adam Van Iwaarden \email{vaniwaarden@colorado.edu}, Damian W. Betebenner \email{dbetebenner@nciea.org}, and Ben Domingue \email{ben.domingue@gmail.com}}
 
 \seealso{\code{\link[SGPdata]{sgpData_LONG}}}
 
@@ -49,6 +49,11 @@ Demonstration_SGP <- prepareSGP(sgpData_LONG)
 ## Running prepareSGP on an already create SGP object as part of a annual update
 
 Demonstration_SGP <- prepareSGP(Demonstration_SGP)
+
+
+## Running prepareSGP on a long data set without creating addition variables
+
+Demonstration_SGP <- prepareSGP(sgpData_LONG, create.additional.variables=FALSE)
 }  
 }
 

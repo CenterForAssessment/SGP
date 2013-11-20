@@ -4,7 +4,7 @@
 \description{
   Utility function/exemplar used to merge student long data with results from student growth percentiles and/or student growth projections calculations. Default values of this
   function are designed to be used following use of other utility functions: \code{\link{prepareSGP}} and \code{\link{analyzeSGP}}. Function is integrated with cutscores embedded in
-  \code{\link{SGPstateData}} to calculate growth-to-standard targets associated with catch-up/keep-up to proficient status and move-up/stay-up to advanced status as well as the scale scores
+  \code{\link{SGPstateData}} to calculate growth-to-standard targets associated with catch-up/keep-up to proficient status and/or move-up/stay-up to advanced status as well as the scale scores
   associated with these targets.
 }
 

@@ -2,12 +2,12 @@ Package: SGP
 Type: Package
 Title: An R Package for the Calculation and Visualization of Student Growth Percentiles & Percentile Growth Trajectories.
 Version: 1.2-0.0
-Date: 2013-11-15
+Date: 2013-11-30
 Authors@R: c(person("Damian", "Betebenner", email="dbetebenner@nciea.org", role=c("aut", "cre")), person("Adam", "Van Iwaarden", email="vaniwaarden@colorado.edu", role="aut"),
                     person("Ben", "Domingue", email="ben.domingue@gmail.com", role="aut"), person("Yi", "Shang", email="shangyi@gmail.com", role="aut"))
 Author: Damian W. Betebenner <dbetebenner@nciea.org>, Adam Van Iwaarden <vaniwaarden@colorado.edu>, Ben Domingue <ben.domingue@gmail.com>, and Yi Shang <shangyi@Gmail.com>
         with contributions from Dr. Jonathan Weeks, Dr. Yi Shang, John Stewart, Dr. Jinnie Choi, Dr. Xin Wei, and Hi Shin Shim. With special thanks to 
-        State Department of Education analysts: Dr. Xiaoyuan Tan (Arizona), Dr. Carrie Giovannini (Arizona), Dr. Sarah Polasky (Arizona), Rebecca Gau (Arizona), 
+        State Department of Education analysts: Dr. Xiaoyuan Tan (Arizona), Dr. Carrie Giovannini (Arizona), Dr. Sarah Polasky (Arizona), Rebecca Gau (Arizona), Jeffrey Dean (Arkansas),
 	Dr. Bill Bonk (Colorado), Marie Huchton (Colorado), Dr. Allison Timberlake (Georgia), Dr. Melissa Fincher (Georgia), Kiran Athota (Georgia), Travis Allen (Georgia), 
 	Glenn Hirata (Hawaii), Glenn Nochi (Hawaii), Joshua Lee (Hawaii), Ayaka Nukui (Idaho), Dr. Carissa Miller (Idaho), Dr. Wes Bruce (Indiana), Robert Hochsegang (Indiana), 
 	Tony Moss (Kansas), Dr. Xuewen Sheng (Kansas), Dr. Kathy Flanagan (Massachusetts), Robert Lee (Massachusetts), Joe DeCastra (Mississippi), Ken Thompson (Mississippi), 
