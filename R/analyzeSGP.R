@@ -357,6 +357,11 @@ function(sgp_object,
 			message("\n\tFinished Calculating SIMEX Baseline Coefficient Matrices\n")
 			suppressMessages(gc()) # clean up
 		} # END Compute SIMEX baseline coefficient matrices
+		
+		##  Enforce that simex.use.my.coefficient.matrices must be TRUE for BASELINE SIMEX calculations below
+		calculate.simex.baseline <- calculate.simex
+		calculate.simex.baseline$simex.use.my.coefficient.matrices=TRUE
+		
 	} # END check for SIMEX baseline matrices presence
 
 
@@ -547,7 +552,7 @@ function(sgp_object,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
-						calculate.simex=calculate.simex,
+						calculate.simex=calculate.simex.baseline,
 						...))
 				}
 				tmp_sgp_object <- mergeSGP(tmp_sgp_object, tmp)
@@ -579,7 +584,7 @@ function(sgp_object,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
-						calculate.simex=calculate.simex,
+						calculate.simex=calculate.simex.baseline,
 						...))
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -615,7 +620,7 @@ function(sgp_object,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
-						calculate.simex=calculate.simex,
+						calculate.simex=calculate.simex.baseline,
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -1139,7 +1144,7 @@ function(sgp_object,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
-						calculate.simex=calculate.simex,
+						calculate.simex=calculate.simex.baseline,
 						...)
 					} else {
 						message(paste("\n\t\tNOTE: No student records &/or no prior data for", tail(sgp.iter[["sgp.panel.years"]], 1), 
