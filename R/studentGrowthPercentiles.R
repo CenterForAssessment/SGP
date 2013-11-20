@@ -378,8 +378,8 @@ function(panel.data,         ## REQUIRED
 						return.multiple.matrices=TRUE,
 						my.matrix.order=k), recursive=FALSE)
 
-					if (length(available.matrices) >= B) sim.iters <- sample(1:length(available.matrices), B)
-					if (length(available.matrices) < B) sim.iters <- sample(1:B, length(available.matrices), replace=TRUE)
+					if (length(available.matrices) > B) sim.iters <- sample(1:B, length(available.matrices)) # Stays as 1:B when length(available.matrices) == B
+					if (length(available.matrices) < B) sim.iters <- sample(1:length(available.matrices), B, replace=TRUE)
 				}
 		
 				if (is.null(parallel.config)) { # Sequential
