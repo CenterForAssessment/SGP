@@ -368,7 +368,7 @@ function(panel.data,         ## REQUIRED
 				if (!is.null(simex.use.my.coefficient.matrices)) { # Element from the 'calculate.simex' argument list.
 					available.matrices <- length(Coefficient_Matrices[[paste(tmp.path.coefficient.matrices, '.SIMEX', sep="")]][[
 						paste("grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]])
-					if (available.matrices > B) sim.iters <- sample(1:available.matrices, B)
+					if (available.matrices >= B) sim.iters <- sample(1:available.matrices, B)
 					if (available.matrices < B) sim.iters <- sample(1:B, available.matrices, replace=TRUE)
 				}
 		
@@ -418,25 +418,34 @@ function(panel.data,         ## REQUIRED
 					##  get percentile predictions from coefficient matricies
 					if (par.start$par.type == 'MULTICORE') {
 						tmp.fitted <- mclapply(sim.iters, function(z) { as.vector(.get.percentile.predictions(
-							big.data[list(match(z, sim.iters))][, which(names(big.data[list(match(z, sim.iters))]) %in% c("ID", paste('prior_', k:1, sep=""), "final.yr")), with=FALSE], 
-							simex.coef.matrices[[paste("grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]][[z]])/B)
-						}, mc.cores=par.start$workers)
-					fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- tmp.fitted[[1]]
-					for(z in sim.iters[-1]) fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + tmp.fitted[[z]]
+							big.data[list(match(z, sim.iters))][, 
+								which(names(big.data[list(match(z, sim.iters))]) %in% c("ID", paste('prior_', k:1, sep=""), "final.yr")), with=FALSE], 
+								simex.coef.matrices[[paste("grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]][[z]])/B)
+							}, mc.cores=par.start$workers
+						)
+						fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- tmp.fitted[[1]]
+						for (z in sim.iters[-1]) {
+							fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + tmp.fitted[[z]]
+						}
 					}
 					if (par.start$par.type == 'SNOW') {
 						tmp.fitted <- parLapply(par.start$internal.cl, sim.iters, function(z) { as.vector(.get.percentile.predictions(
-							big.data[list(match(z, sim.iters))][, which(names(big.data[list(match(z, sim.iters))]) %in% c("ID", paste('prior_', k:1, sep=""), "final.yr")), with=FALSE], 
-							simex.coef.matrices[[paste("grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]][[z]])/B)})
+							big.data[list(match(z, sim.iters))][, 
+								which(names(big.data[list(match(z, sim.iters))]) %in% c("ID", paste('prior_', k:1, sep=""), "final.yr")), with=FALSE], 
+								simex.coef.matrices[[paste("grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]][[z]])/B)}
+						)
+						fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- tmp.fitted[[1]]
+						for (z in sim.iters[-1]) {
+							fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + tmp.fitted[[z]]
+						}
 					}
-					
 
 					stopParallel(parallel.config, par.start)
 				}
 			} ### END for (L in lambda[-1])
 
 			switch(extrapolation,
-				LINEAR = fit <- lm(fitted[[paste("order_", k, sep="")]]~ lambda),
+				LINEAR = fit <- lm(fitted[[paste("order_", k, sep="")]] ~ lambda),
 				QUADRATIC = fit <- lm(fitted[[paste("order_", k, sep="")]] ~ lambda + I(lambda^2)))
 			extrap[[paste("order_", k, sep="")]] <- t(apply(matrix(predict(fit, newdata=data.frame(lambda=-1)), nrow=dim(tmp.data)[1]), 1, .smooth.isotonize.row))
 			tmp.quantiles.simex[[k]] <- data.table(ID=tmp.data[["ID"]], SIMEX_ORDER=k, 
