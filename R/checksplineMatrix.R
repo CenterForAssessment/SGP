@@ -25,22 +25,20 @@ function(list.of.splineMatrix,
 				list.of.splineMatrix[[i]] <- SGPstateData[[state]][['Baseline_splineMatrix']][['Coefficient_Matrices']][[i]]
 			}
 		} else {
-			for (grd in names(list.of.splineMatrix[[i]])) {
-				for (ord in names(list.of.splineMatrix[[i]][[grd]])) {
-					for (lambda in names(list.of.splineMatrix[[i]][[grd]][[ord]])) {
-						splineMatrix.tf <- sapply(list.of.splineMatrix[[i]][[grd]][[ord]][[lambda]], validObject, test=TRUE)==TRUE
-						if (!all(splineMatrix.tf)) {
-							content_area <- unlist(strsplit(i, "[.]"))[1]; year <- unlist(strsplit(i, "[.]"))[2]
-							for (j in names(list.of.splineMatrix[[i]][[grd]][[ord]][[lambda]])[!splineMatrix.tf]) {
-								message(paste("\tNOTE: Updating Coefficient Matrix", i, grd, ord, labda, j, "to new splineMatrix class."))
-								list.of.splineMatrix[[i]][[grd]][[ord]][[lambda]][[j]] <- 
-									as.splineMatrix(matrix_argument=list.of.splineMatrix[[i]][[grd]][[ord]][[lambda]][[j]], matrix_argument_name=j, content_area=content_area, year=year, sgp_object=sgp_object)
-							}
+			for (grd_ord in names(list.of.splineMatrix[[i]])) {
+				for (lambda in names(list.of.splineMatrix[[i]][[grd_ord]])) {
+					splineMatrix.tf <- sapply(list.of.splineMatrix[[i]][[grd_ord]][[lambda]], validObject, test=TRUE)==TRUE
+					if (!all(splineMatrix.tf)) {
+						content_area <- unlist(strsplit(i, "[.]"))[1]; year <- unlist(strsplit(i, "[.]"))[2]
+						for (j in names(list.of.splineMatrix[[i]][[grd_ord]][[lambda]])[!splineMatrix.tf]) {
+							message(paste("\tNOTE: Updating Coefficient Matrix", i, grd, ord, labda, j, "to new splineMatrix class."))
+							list.of.splineMatrix[[i]][[grd_ord]][[lambda]][[j]] <- 
+								as.splineMatrix(matrix_argument=list.of.splineMatrix[[i]][[grd_ord]][[lambda]][[j]], matrix_argument_name=j, content_area=content_area, year=year, sgp_object=sgp_object)
 						}
 					}
 				}
 			}
-			list.of.splineMatrix[[i]][[grd]][[ord]][[lambda]] <- unique.splineMatrix(list.of.splineMatrix[[i]][[grd]][[ord]][[lambda]])			
+			list.of.splineMatrix[[i]][[grd_ord]][[lambda]] <- unique.splineMatrix(list.of.splineMatrix[[i]][[grd_ord]][[lambda]])			
 		}
 	}
 	return(list.of.splineMatrix)
