@@ -383,20 +383,18 @@ function(panel.data,         ## REQUIRED
 				}
 		
 				if (is.null(parallel.config)) { # Sequential
-					for (z in sim.iters) {
-						if (is.null(simex.use.my.coefficient.matrices)) {
+					if (is.null(simex.use.my.coefficient.matrices)) {
+						for (z in seq_along(sim.iters)) {
 							simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]] <-
 								rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=big.data[list(z)])
-						} else {
-							simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[match(z, sim.iters)]] <- 
-								available.matrices[[z]]
 						}
-						if (calculate.simex.sgps) {
-							fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + 
-								as.vector(.get.percentile.predictions(big.data[list(match(z, sim.iters))][, 
-								which(names(big.data[list(match(z, sim.iters))]) %in% c("ID", paste('prior_', k:1, sep=""), "final.yr")), with=FALSE], 
-								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[match(z, sim.iters)]])/B)
-						}
+					} else simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <- available.matrices[sim.iters]
+					
+					if (calculate.simex.sgps) {
+						fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + 
+							as.vector(.get.percentile.predictions(big.data[list(z)][, 
+							which(names(big.data[list(z)]) %in% c("ID", paste('prior_', k:1, sep=""), "final.yr")), with=FALSE], 
+							simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]])/B)
 					}
 				} else {	# Parallel over sim.iters
 					if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
@@ -422,16 +420,16 @@ function(panel.data,         ## REQUIRED
 								parLapply(par.start$internal.cl, sim.iters, function(z) big.data[list(z)][,rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=.SD)])
 						}
 					} else {
-						simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <- available.matrices
+						simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <- available.matrices[sim.iters]
 					}
 					
 					##  get percentile predictions from coefficient matricies
 					if (calculate.simex.sgps) {
 						if (par.start$par.type == 'MULTICORE') {
-							tmp.fitted <- mclapply(sim.iters, function(z) { as.vector(.get.percentile.predictions(
-								big.data[list(match(z, sim.iters))][, 
-									which(names(big.data[list(match(z, sim.iters))]) %in% c("ID", paste('prior_', k:1, sep=""), "final.yr")), with=FALSE], 
-									simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[match(z, sim.iters)]])/B)
+							tmp.fitted <- mclapply(seq_along(sim.iters), function(z) { as.vector(.get.percentile.predictions(
+								big.data[list(z)][, 
+									which(names(big.data[list(z)]) %in% c("ID", paste('prior_', k:1, sep=""), "final.yr")), with=FALSE], 
+									simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]])/B)
 								}, mc.cores=par.start$workers
 							)
 							fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- tmp.fitted[[1]]
@@ -440,10 +438,10 @@ function(panel.data,         ## REQUIRED
 							}
 						}
 						if (par.start$par.type == 'SNOW') {
-							tmp.fitted <- parLapply(par.start$internal.cl, sim.iters, function(z) { as.vector(.get.percentile.predictions(
-								big.data[list(match(z, sim.iters))][, 
-									which(names(big.data[list(match(z, sim.iters))]) %in% c("ID", paste('prior_', k:1, sep=""), "final.yr")), with=FALSE], 
-									simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[match(z, sim.iters)]])/B)}
+							tmp.fitted <- parLapply(par.start$internal.cl, seq_along(sim.iters), function(z) { as.vector(.get.percentile.predictions(
+								big.data[list(z)][, 
+									which(names(big.data[list(z)]) %in% c("ID", paste('prior_', k:1, sep=""), "final.yr")), with=FALSE], 
+									simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]])/B)}
 							)
 							fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- tmp.fitted[[1]]
 							for (s in seq_along(sim.iters[-1])) {
