@@ -367,10 +367,19 @@ function(panel.data,         ## REQUIRED
 				sim.iters <- 1:B
 				
 				if (!is.null(simex.use.my.coefficient.matrices)) { # Element from the 'calculate.simex' argument list.
-					available.matrices <- length(Coefficient_Matrices[[paste(tmp.path.coefficient.matrices, '.SIMEX', sep="")]][[
-						paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]])
-					if (available.matrices > B) sim.iters <- sample(1:available.matrices, B)
-					if (available.matrices < B) sim.iters <- sample(1:B, available.matrices, replace=TRUE)
+					available.matrices <- getsplineMatrices(
+						Coefficient_Matrices[[paste(tmp.path.coefficient.matrices, '.SIMEX', sep="")]][[
+							paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]], 
+						tail(content_area.progression, k+1), 
+						tail(grade.progression, k+1),
+						tail(year.progression, k+1),
+						tail(year_lags.progression, k),
+						my.exact.grade.progression.sequence=TRUE,
+						return.multiple.matrices=TRUE,
+						my.matrix.order=k)
+
+					if (length(available.matrices) > B) sim.iters <- sample(1:length(available.matrices), B)
+					if (length(available.matrices) < B) sim.iters <- sample(1:B, length(available.matrices), replace=TRUE)
 				}
 		
 				if (is.null(parallel.config)) { # Sequential

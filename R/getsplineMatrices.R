@@ -7,6 +7,7 @@ function(
 	my.matrix.time.progression.lags,
 	my.exact.grade.progression.sequence=FALSE,
 	return.highest.order.matrix=FALSE,
+	return.multiple.matrices=FALSE,
 	my.matrix.order=NULL,
 	my.matrix.highest.order=NULL,
 	what.to.return="MATRICES") {
@@ -54,7 +55,7 @@ function(
 				stop(paste("\tNOTE: No splineMatrix exists with designated content_area.progression:", paste(my.matrix.content_area.progression, collapse=", "), "year.progression:", 
 					paste(my.matrix.time.progression, collapse=", "), "and grade.progression", paste(my.matrix.grade.progression, collapse=", ")))
 			}
-			if (length(my.tmp.index)>1) {
+			if (length(my.tmp.index)>1 & !return.multiple.matrices) {
 				stop(paste("\tNOTE: Multiple splineMatrix objects exists with designated content_area.progression:", paste(my.matrix.content_area.progression, collapse=", "), 
 				"year.progression:", paste(my.matrix.time.progression, collapse=", "), "grade.progression:", paste(my.matrix.grade.progression, collapse=", "), 
 				"time.progression.lags:", paste(my.matrix.time.progression.lags, collapse=", ")))
