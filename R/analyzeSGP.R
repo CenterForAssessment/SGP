@@ -145,13 +145,21 @@ function(sgp_object,
 
 	## Function to merge coefficient matrices from coefficient matrix productions
 
-	merge.coefficient.matrices <- function(list.of.matrices) {
+	merge.coefficient.matrices <- function(list.of.matrices, simex=FALSE) {
 		tmp.list <- list()
 		tmp.coefficient.matrices <- unlist(list.of.matrices, recursive=FALSE)
-		for (tmp.names in unique(names(tmp.coefficient.matrices))) {
-			tmp1 <- unlist(tmp.coefficient.matrices[grep(tmp.names, names(tmp.coefficient.matrices))], recursive=FALSE)
-			names(tmp1) <- sapply(strsplit(names(tmp1), "[.]"), function(x) x[3])
-			tmp.list[[tmp.names]] <- tmp1
+		if (simex) {
+			for (tmp.names in unique(names(tmp.coefficient.matrices))) {
+				tmp1 <- unlist(tmp.coefficient.matrices[grep(tmp.names, names(tmp.coefficient.matrices))], recursive=FALSE)
+				names(tmp1) <- sapply(strsplit(names(tmp1), "[.]"), function(x) x[4])
+				tmp.list[[tmp.names]] <- tmp1
+			}
+		} else {
+			for (tmp.names in unique(names(tmp.coefficient.matrices))) {
+				tmp1 <- unlist(tmp.coefficient.matrices[grep(tmp.names, names(tmp.coefficient.matrices))], recursive=FALSE)
+				names(tmp1) <- sapply(strsplit(names(tmp1), "[.]"), function(x) x[3])
+				tmp.list[[tmp.names]] <- tmp1
+			}
 		}
 	tmp.list
 	}
@@ -294,7 +302,7 @@ function(sgp_object,
 								calculate.baseline.simex=calculate.simex,
 								parallel.config=parallel.config))
 						}
-						tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp)))
+						tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp, simex=TRUE)))
 						rm(tmp)
 					} else {  ## SNOW and MULTICORE flavors
 						if (par.start$par.type=="SNOW") {
@@ -307,7 +315,7 @@ function(sgp_object,
 								calculate.baseline.simex=calculate.simex,
 								parallel.config=parallel.config))
 						
-							tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp)))
+							tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp, simex=TRUE)))
 							rm(tmp)
 						} # END if (SNOW)
 							
@@ -322,7 +330,7 @@ function(sgp_object,
 								parallel.config=parallel.config),
 								mc.cores=par.start$workers, mc.preschedule=FALSE)
 								
-							tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp)))
+							tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp, simex=TRUE)))
 							rm(tmp)
 						} # END if (MULTICORE)
 						stopParallel(parallel.config, par.start)
@@ -343,7 +351,7 @@ function(sgp_object,
 						parallel.config=lower.level.parallel.config)
 				}
 				
-				tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp)))
+				tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp, simex=TRUE)))
 				rm(tmp)
 			}
 			
