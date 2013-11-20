@@ -380,7 +380,8 @@ function(panel.data,         ## REQUIRED
 								rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=big.data[list(z)])
 						} else {
 							simex.coef.matrices[[paste("grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]][[z]] <-
-								Coefficient_Matrices[[paste("grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]][[z]]
+								Coefficient_Matrices[[paste(tmp.path.coefficient.matrices, '.SIMEX', sep="")]][[
+								paste("grade_", tail(tmp.gp,1), sep="")]][[paste("order_", k, sep="")]][[paste("lambda_", L, sep="")]][[z]]
 						}
 						if (calculate.simex.sgps) {
 							fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + 
