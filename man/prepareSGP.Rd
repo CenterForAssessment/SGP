@@ -49,6 +49,11 @@ Demonstration_SGP <- prepareSGP(sgpData_LONG)
 ## Running prepareSGP on an already create SGP object as part of a annual update
 
 Demonstration_SGP <- prepareSGP(Demonstration_SGP)
+
+
+## Running prepareSGP on a long data set without creating addition variables
+
+Demonstration_SGP <- prepareSGP(sgpData_LONG, create.additional.variables=FALSE)
 }  
 }
 
