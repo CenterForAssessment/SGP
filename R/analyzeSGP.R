@@ -1152,6 +1152,7 @@ function(sgp_object,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
+						parallel.config=lower.level.parallel.config,
 						calculate.simex=calculate.simex.baseline,
 						...)
 					} else {
