@@ -339,10 +339,10 @@ function(panel.data,         ## REQUIRED
 				big.data[, Lambda := rep(L, each=dim(tmp.data)[1]*B)]
 				big.data[, b := rep(1:B, each=dim(tmp.data)[1])]
 				setkey(big.data, b)
-				setnames(big.data,tmp.num.variables,"final.yr")
+				setnames(big.data, tmp.num.variables, "final.yr")
 				for (g in seq_along(tmp.gp.iter)) {
 					big.data[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="") := 
-						rep(csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")], time=B)]
+						rep(csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")], B)]
 					big.data[, tmp.num.variables-g := eval(parse(text=paste("big.data[[", tmp.num.variables-g, "]]+sqrt(big.data[['Lambda']])*big.data[['icsem",
 						tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], "']] * rnorm(dim(big.data)[1])", sep="")))]
 					col.index <- tmp.num.variables-g
@@ -359,7 +359,7 @@ function(panel.data,         ## REQUIRED
 					eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['loss.hoss_", tmp.gp.iter[g], 
 						"']] <- c(lh[,V1], lh[,V2])", sep="")))
 		
-					setnames(big.data,tmp.num.variables-g,paste("prior_",g,sep=""))
+					setnames(big.data, tmp.num.variables-g, paste("prior_",g,sep=""))
 				}
 
 				## Establish the simulation iterations - either 1) 1:B, or 2) a sample of either B or the number of previously computed matrices
