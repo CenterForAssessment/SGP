@@ -367,7 +367,7 @@ function(panel.data,         ## REQUIRED
 				sim.iters <- 1:B
 				
 				if (!is.null(simex.use.my.coefficient.matrices)) { # Element from the 'calculate.simex' argument list.
-					available.matrices <- getsplineMatrices(
+					available.matrices <- unlist(getsplineMatrices(
 						Coefficient_Matrices[[paste(tmp.path.coefficient.matrices, '.SIMEX', sep="")]][[
 							paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]], 
 						tail(content_area.progression, k+1), 
@@ -376,7 +376,7 @@ function(panel.data,         ## REQUIRED
 						tail(year_lags.progression, k),
 						my.exact.grade.progression.sequence=TRUE,
 						return.multiple.matrices=TRUE,
-						my.matrix.order=k)
+						my.matrix.order=k), recursive=FALSE)
 
 					if (length(available.matrices) > B) sim.iters <- sample(1:length(available.matrices), B)
 					if (length(available.matrices) < B) sim.iters <- sample(1:B, length(available.matrices), replace=TRUE)
