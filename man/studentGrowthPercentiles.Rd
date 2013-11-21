@@ -177,7 +177,8 @@ Useful for examining relationship between prior achievement and student growth.
   }
   \item{parallel.config}{parallel configuration argument allowing for parallel analysis by 'tau'. Defaults to NULL.
   }
-  \item{calculate.simex}{A character state acronymn or list including state/csem variable, simulation.iterations, lambda and extrapolation method. Defaults to NULL, no simex calculations performed.
+  \item{calculate.simex}{A character state acronymn or list including state/csem variable, simulation.iterations, simulation.sample.size, lambda and extrapolation method. 
+  Defaults to NULL, no simex calculations performed.
   }
   \item{sgp.percentiles.set.seed}{An integer (or NULL) argument indicating whether to set.seed to make analyses fully reproducible. To turn off, set argument to NULL. Default is 314159.
   }

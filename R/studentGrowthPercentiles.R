@@ -694,7 +694,7 @@ function(panel.data,         ## REQUIRED
 			if (all(c("state", "variable") %in% names(calculate.simex))) {
 				stop("Please specify EITHER a state OR a CSEM variable for SGP measurement error correction. See help page for details.")
 			}
-			if (!is.null(calculate.simex$lambda)){
+			if (!is.null(calculate.simex$lambda)) {
 				if (!is.numeric(calculate.simex$lambda)) {
 					tmp.messages <- c(tmp.messages, "\t\tNOTE: Please supply numeric values to lambda. See help page for details. SGPs will be calculated without measurement error correction.\n")
 					simex.tf <- FALSE
@@ -729,6 +729,7 @@ function(panel.data,         ## REQUIRED
 			}
 		}
 		if (is.null(calculate.simex$simulation.iterations)) calculate.simex$simulation.iterations <- 20
+		if (!is.null(calculate.simex$simex.sample.size) && !is.numeric(calculate.simex$simex.sample.size)) calculate.simex$simulation.sample.size <- NULL
 		if (is.null(calculate.simex$lambda)) calculate.simex$lambda <- seq(0,2,0.5)
 		if (is.null(calculate.simex$extrapolation)) {
 			calculate.simex$extrapolation <- "LINEAR"
@@ -1059,10 +1060,16 @@ function(panel.data,         ## REQUIRED
 	### Calculate SIMEX corrected coefficient matrices and percentiles (if requested)
 
 	if (simex.tf) {
-		quantile.data.simex <- .simex.sgp(state=calculate.simex$state, variable=calculate.simex$variable, lambda=calculate.simex$lambda, 
-			B=calculate.simex$simulation.iterations, extrapolation=calculate.simex$extrapolation, 
-			save.matrices = calculate.simex$save.matrices, simex.use.my.coefficient.matrices = calculate.simex$simex.use.my.coefficient.matrices,
-			calculate.simex.sgps=calculate.sgps)
+		quantile.data.simex <- .simex.sgp(
+						state=calculate.simex$state, 
+						variable=calculate.simex$variable, 
+						lambda=calculate.simex$lambda, 
+						B=calculate.simex$simulation.iterations,
+						simex.sample.size=calculate.simex$simex.sample.size
+						extrapolation=calculate.simex$extrapolation, 
+						save.matrices=calculate.simex$save.matrices, 
+						simex.use.my.coefficient.matrices=calculate.simex$simex.use.my.coefficient.matrices,
+						calculate.simex.sgps=calculate.sgps)
 	
 		if(!is.null(quantile.data.simex[['MATRICES']])) {
 			tmp_sgp_1 <- list(Coefficient_Matrices = list(TMP_SIMEX=Coefficient_Matrices[[paste(tmp.path.coefficient.matrices, '.SIMEX', sep="")]]))
