@@ -365,6 +365,7 @@ function(panel.data,         ## REQUIRED
 						"']] <- c(lh[,V1], lh[,V2])", sep="")))
 		
 					setnames(big.data, tmp.num.variables-g, paste("prior_",g,sep=""))
+					setkey(big.data, b, ID)
 				}
 
 				## Establish the simulation iterations - either 1) 1:B, or 2) a sample of either B or the number of previously computed matrices
