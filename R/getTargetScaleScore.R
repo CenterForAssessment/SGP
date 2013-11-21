@@ -173,31 +173,36 @@ function(sgp_object,
 			panel.data=within(tmp_sgp_object, assign("Panel_Data", getPanelData(tmp_sgp_data_for_analysis, my.target.type, sgp.iter, sgp.targets)))
 			panel.data[['Coefficient_Matrices']] <- tmp_sgp_object[['Coefficient_Matrices']]
 			panel.data[['Knots_Boundaries']] <- tmp_sgp_object[['Knots_Boundaries']]
-	
-			tmp_sgp_object <- studentGrowthProjections(
-				panel.data=panel.data,
-				sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 
-					my.extra.label=my.extra.label),
-				use.my.coefficient.matrices=list(my.year=if (baseline.tf) "BASELINE" else tail(sgp.iter[["sgp.panel.years"]], 1), 
-					my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
-				use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
-				performance.level.cutscores=state,
-				panel.data.vnames=getPanelDataVnames(my.target.type, sgp.iter),
-				grade.progression=sgp.iter[["sgp.projection.grade.sequences"]],
-				content_area.progression=sgp.iter[["sgp.projection.content.areas"]],
-				year_lags.progression=sgp.iter[["sgp.projection.panel.years.lags"]],
-				max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[["sgp.panel.years"]], 1), tail(sgp.iter[["sgp.content.areas"]], 1), state),
-				lag.increment=lag.increment,
-				grade.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
-				content_area.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
-				year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
-				percentile.trajectory.values=target.level,
-				calculate.sgps=!(tail(sgp.iter[["sgp.panel.years"]], 1) %in% SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]]),
-				projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]])
+
+			if (dim(panel.data$Panel_Data)[1] > 0) {	
+				tmp_sgp_object <- studentGrowthProjections(
+					panel.data=panel.data,
+					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 
+						my.extra.label=my.extra.label),
+					use.my.coefficient.matrices=list(my.year=if (baseline.tf) "BASELINE" else tail(sgp.iter[["sgp.panel.years"]], 1), 
+						my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
+					use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
+					performance.level.cutscores=state,
+					panel.data.vnames=getPanelDataVnames(my.target.type, sgp.iter),
+					grade.progression=sgp.iter[["sgp.projection.grade.sequences"]],
+					content_area.progression=sgp.iter[["sgp.projection.content.areas"]],
+					year_lags.progression=sgp.iter[["sgp.projection.panel.years.lags"]],
+					max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[["sgp.panel.years"]], 1), tail(sgp.iter[["sgp.content.areas"]], 1), state),
+					lag.increment=lag.increment,
+					grade.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+					content_area.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+					year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]],
+					percentile.trajectory.values=target.level,
+					calculate.sgps=!(tail(sgp.iter[["sgp.panel.years"]], 1) %in% SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]]),
+					projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]])
+			} else {
+				message(paste("\n\t\tNOTE: No student records &/or no prior data for scale score target student growth projections:", tail(sgp.iter[["sgp.panel.years"]], 1),
+					tail(sgp.iter[["sgp.content.areas"]], 1), "with", paste(head(sgp.iter[["sgp.content.areas"]], -1), collapse=", "), "priors.\n"))
+			}
+		suppressMessages(gc())
 		}
 	} ### END if (is.null(parallel.config))
 
 	sgp_object@SGP <- mergeSGP(tmp_sgp_object, sgp_object@SGP)
 	return(sgp_object)
-
 } ### END getTargetScaleScore

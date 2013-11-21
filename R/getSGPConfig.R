@@ -181,7 +181,7 @@ function(sgp_object,
 		}
 		if (is.null(years)) {
 			for (i in content_areas) {
-				tmp.years[[i]] <- sort(tail(unique(sgp_object@Data[SJ("VALID_CASE", i)][['YEAR']]), -(sgp.minimum.default.panel.years-1)), decreasing=TRUE)
+				tmp.years[[i]] <- sort(tail(unique(sgp_object@Data[SJ("VALID_CASE", i)][['YEAR']]), - (sgp.minimum.default.panel.years-1)), decreasing=TRUE)
 			}
 		} else {
 			for (i in content_areas) {
