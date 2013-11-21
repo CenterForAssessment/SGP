@@ -242,7 +242,7 @@ function(panel.data,         ## REQUIRED
 		return(tmp)
 	} 
 
-	.simex.sgp <- function(state, variable, lambda, B, extrapolation, save.matrices, simex.use.my.coefficient.matrices=NULL, calculate.simex.sgps) {
+	.simex.sgp <- function(state, variable, lambda, B, simex.sample.size, extrapolation, save.matrices, simex.use.my.coefficient.matrices=NULL, calculate.simex.sgps) {
 		GRADE <- CONTENT_AREA <- YEAR <- V1 <- Lambda <- tau <- b <- .SD <- TEMP <- NULL ## To avoid R CMD check warnings
 		my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
 
@@ -392,8 +392,13 @@ function(panel.data,         ## REQUIRED
 				if (is.null(parallel.config)) { # Sequential
 					if (is.null(simex.use.my.coefficient.matrices)) {
 						for (z in seq_along(sim.iters)) {
-							simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]] <-
-								rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=big.data[list(z)])
+							if (!is.null(simex.sample.size) && dim(tmp.data)[1] <= simex.sample.size) {
+								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]] <-
+									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=big.data[list(z)])
+							} else {
+								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]] <-
+									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=big.data[list(z)][sample(seq(dim(tmp.data)[1]), simex.sample.size)])
+							}
 						}
 					} else simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <- available.matrices[sim.iters]
 					
@@ -419,12 +424,24 @@ function(panel.data,         ## REQUIRED
 					##  Calculate coefficient matricies (if needed/requested)
 					if (is.null(simex.use.my.coefficient.matrices)) {
 						if (par.start$par.type == 'MULTICORE') {
-							simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <- 
-								mclapply(sim.iters, function(z) big.data[list(z)][,rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=.SD)], mc.cores=par.start$workers)
+							if (!is.null(simex.sample.size) && dim(tmp.data)[1] <= simex.sample.size) {
+								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <- 
+									mclapply(sim.iters, function(z) big.data[list(z)][,rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=.SD)], mc.cores=par.start$workers)
+							} else {
+								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
+									mclapply(sim.iters, function(z) big.data[list(z)][sample(seq(dim(tmp.data)[1]), simex.sample.size)][,
+										rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=.SD)], mc.cores=par.start$workers)
+							}
 						}
 						if (par.start$par.type == 'SNOW') {
-							simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <- 
-								parLapply(par.start$internal.cl, sim.iters, function(z) big.data[list(z)][,rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=.SD)])
+							if (!is.null(simex.sample.size) && dim(tmp.data)[1] <= simex.sample.size) {
+								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <- 
+									parLapply(par.start$internal.cl, sim.iters, function(z) big.data[list(z)][,rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=.SD)])
+							} else {
+								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
+									parLapply(par.start$internal.cl, sim.iters, function(z) big.data[list(z)][sample(seq(dim(tmp.data)[1]), simex.sample.size)][,
+										rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=.SD)])
+							}
 						}
 					} else {
 						simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <- available.matrices[sim.iters]
