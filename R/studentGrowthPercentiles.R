@@ -39,6 +39,7 @@ function(panel.data,         ## REQUIRED
          print.time.taken=TRUE,
          parallel.config=NULL,
          calculate.simex=NULL,
+	 sgp.percentiles.set.seed=314159,
          verbose.output=FALSE) {
 
 	started.at <- proc.time()
@@ -242,7 +243,7 @@ function(panel.data,         ## REQUIRED
 	} 
 
 	.simex.sgp <- function(state, variable, lambda, B, extrapolation, save.matrices, simex.use.my.coefficient.matrices=NULL, calculate.simex.sgps) {
-		GRADE <- CONTENT_AREA <- YEAR <- V1 <- Lambda <- tau <- b <- .SD <- NULL ## To avoid R CMD check warnings
+		GRADE <- CONTENT_AREA <- YEAR <- V1 <- Lambda <- tau <- b <- .SD <- TEMP <- NULL ## To avoid R CMD check warnings
 		my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
 
 		fitted <- extrap <- tmp.quantiles.simex <- simex.coef.matrices <- list()
@@ -339,16 +340,20 @@ function(panel.data,         ## REQUIRED
 				big.data <- rbindlist(replicate(B, tmp.data, simplify = FALSE))
 				big.data[, Lambda := rep(L, each=dim(tmp.data)[1]*B)]
 				big.data[, b := rep(1:B, each=dim(tmp.data)[1])]
-				setkey(big.data, b)
-				setnames(big.data,tmp.num.variables,"final.yr")
+				setnames(big.data, tmp.num.variables, "final.yr")
 				for (g in seq_along(tmp.gp.iter)) {
-					big.data[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="") := 
-						rep(csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")], time=B)]
-					big.data[, tmp.num.variables-g := eval(parse(text=paste("big.data[[", tmp.num.variables-g, "]]+sqrt(big.data[['Lambda']])*big.data[['icsem",
-						tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], "']] * rnorm(dim(big.data)[1])", sep="")))]
 					col.index <- tmp.num.variables-g
-					big.data[big.data[[col.index]] < loss.hoss[1,g], col.index := loss.hoss[1,g], with=FALSE]
-					big.data[big.data[[col.index]] > loss.hoss[2,g], col.index := loss.hoss[2,g], with=FALSE] 
+					setkeyv(big.data, c(names(big.data)[col.index], "final.yr", "b"))
+					big.data.uniques <- unique(big.data)
+					big.data.uniques.indices <- which(!duplicated(big.data))
+					big.data.uniques[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="") := 
+						rep(csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")], B)[big.data.uniques.indices]]
+					big.data.uniques[, TEMP := 
+						eval(parse(text=paste("big.data.uniques[[", tmp.num.variables-g, "]]+sqrt(big.data.uniques[['Lambda']])*big.data.uniques[['icsem",
+						tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], "']] * rnorm(dim(big.data.uniques)[1])", sep="")))]
+					big.data.uniques[big.data.uniques[[col.index]] < loss.hoss[1,g], col.index := loss.hoss[1,g], with=FALSE]
+					big.data.uniques[big.data.uniques[[col.index]] > loss.hoss[2,g], col.index := loss.hoss[2,g], with=FALSE]
+					big.data[, tmp.num.variables-g := big.data.uniques[,c(key(big.data), "TEMP"), with=FALSE][big.data][['TEMP']]]
 					ks <- big.data[, as.list(as.vector(unlist(round(quantile(big.data[[col.index]], probs=knot.cut.percentiles, na.rm=TRUE), digits=3))))] # Knots
 					bs <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.1), digits=3)))] # Boundaries
 					lh <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.0), digits=3)))] # LOSS/HOSS
@@ -360,7 +365,8 @@ function(panel.data,         ## REQUIRED
 					eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['loss.hoss_", tmp.gp.iter[g], 
 						"']] <- c(lh[,V1], lh[,V2])", sep="")))
 		
-					setnames(big.data,tmp.num.variables-g,paste("prior_",g,sep=""))
+					setnames(big.data, tmp.num.variables-g, paste("prior_",g,sep=""))
+					setkey(big.data, b, ID)
 				}
 
 				## Establish the simulation iterations - either 1) 1:B, or 2) a sample of either B or the number of previously computed matrices
@@ -382,6 +388,7 @@ function(panel.data,         ## REQUIRED
 					if (length(available.matrices) < B) sim.iters <- sample(1:length(available.matrices), B, replace=TRUE)
 				}
 		
+				setkey(big.data, b)
 				if (is.null(parallel.config)) { # Sequential
 					if (is.null(simex.use.my.coefficient.matrices)) {
 						for (z in seq_along(sim.iters)) {
@@ -742,6 +749,8 @@ function(panel.data,         ## REQUIRED
 	if (is.null(sgp.cohort.size)) sgp.cohort.size <- 0
 
 	if (is.null(goodness.of.fit.minimum.n)) goodness.of.fit.minimum.n <- 250
+
+	if (!is.null(sgp.percentiles.set.seed)) set.seed(as.integer(sgp.percentiles.set.seed))
 
 	### Create object to store the studentGrowthPercentiles objects
 
@@ -1113,7 +1122,6 @@ function(panel.data,         ## REQUIRED
 						setnames(tmp.csem.quantiles[[j]], names(additional.vnames.to.return), unlist(additional.vnames.to.return))
 					}
 					for (k in seq(calculate.confidence.intervals[['simulation.iterations']])) { 
-						set.seed(k)
 						tmp.csem.quantiles[[j]][,TEMP_SGP_SIM:=.get.quantiles(
 								tmp.predictions, 
 								csemScoreSimulator(
