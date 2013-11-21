@@ -1060,7 +1060,7 @@ function(panel.data,         ## REQUIRED
 						variable=calculate.simex$variable, 
 						lambda=calculate.simex$lambda, 
 						B=calculate.simex$simulation.iterations,
-						simex.sample.size=calculate.simex$simex.sample.size
+						simex.sample.size=calculate.simex$simex.sample.size,
 						extrapolation=calculate.simex$extrapolation, 
 						save.matrices=calculate.simex$save.matrices, 
 						simex.use.my.coefficient.matrices=calculate.simex$simex.use.my.coefficient.matrices,
