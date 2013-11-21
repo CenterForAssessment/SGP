@@ -39,6 +39,7 @@ function(panel.data,         ## REQUIRED
          print.time.taken=TRUE,
          parallel.config=NULL,
          calculate.simex=NULL,
+	 sgp.percentiles.set.seed=314159,
          verbose.output=FALSE) {
 
 	started.at <- proc.time()
@@ -754,6 +755,8 @@ function(panel.data,         ## REQUIRED
 
 	if (is.null(goodness.of.fit.minimum.n)) goodness.of.fit.minimum.n <- 250
 
+	if (!is.null(sgp.percentiles.set.seed)) set.seed(as.integer(sgp.percentiles.set.seed))
+
 	### Create object to store the studentGrowthPercentiles objects
 
 	tmp.objects <- c("Coefficient_Matrices", "Cutscores", "Goodness_of_Fit", "Knots_Boundaries", "Panel_Data", "SGPercentiles", "SGProjections", "Simulated_SGPs") 
@@ -1124,7 +1127,6 @@ function(panel.data,         ## REQUIRED
 						setnames(tmp.csem.quantiles[[j]], names(additional.vnames.to.return), unlist(additional.vnames.to.return))
 					}
 					for (k in seq(calculate.confidence.intervals[['simulation.iterations']])) { 
-						set.seed(k)
 						tmp.csem.quantiles[[j]][,TEMP_SGP_SIM:=.get.quantiles(
 								tmp.predictions, 
 								csemScoreSimulator(
