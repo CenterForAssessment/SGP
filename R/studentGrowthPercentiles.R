@@ -339,16 +339,19 @@ function(panel.data,         ## REQUIRED
 				big.data <- rbindlist(replicate(B, tmp.data, simplify = FALSE))
 				big.data[, Lambda := rep(L, each=dim(tmp.data)[1]*B)]
 				big.data[, b := rep(1:B, each=dim(tmp.data)[1])]
-				setkey(big.data, b)
 				setnames(big.data, tmp.num.variables, "final.yr")
 				for (g in seq_along(tmp.gp.iter)) {
-					big.data[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="") := 
-						rep(csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")], B)]
-					big.data[, tmp.num.variables-g := eval(parse(text=paste("big.data[[", tmp.num.variables-g, "]]+sqrt(big.data[['Lambda']])*big.data[['icsem",
-						tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], "']] * rnorm(dim(big.data)[1])", sep="")))]
 					col.index <- tmp.num.variables-g
-					big.data[big.data[[col.index]] < loss.hoss[1,g], col.index := loss.hoss[1,g], with=FALSE]
-					big.data[big.data[[col.index]] > loss.hoss[2,g], col.index := loss.hoss[2,g], with=FALSE] 
+					setkeyv(big.data, c(names(big.data)[col.index], "final.yr", "b"))
+					big.data.uniques <- unique(big.data)
+					big.data.uniques.indices <- which(!duplicated(big.data))
+					big.data.uniques[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="") := 
+						rep(csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")], B)[big.data.uniques.indices]]
+					big.data.uniques[, tmp.num.variables-g := 
+						eval(parse(text=paste("big.data.uniques[[", tmp.num.variables-g, "]]+sqrt(big.data.uniques[['Lambda']])*big.data.uniques[['icsem",
+						tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], "']] * rnorm(dim(big.data.uniques)[1])", sep="")))]
+					big.data.uniques[big.data.uniques[[col.index]] < loss.hoss[1,g], col.index := loss.hoss[1,g], with=FALSE]
+					big.data.uniques[big.data.uniques[[col.index]] > loss.hoss[2,g], col.index := loss.hoss[2,g], with=FALSE] 
 					ks <- big.data[, as.list(as.vector(unlist(round(quantile(big.data[[col.index]], probs=knot.cut.percentiles, na.rm=TRUE), digits=3))))] # Knots
 					bs <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.1), digits=3)))] # Boundaries
 					lh <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.0), digits=3)))] # LOSS/HOSS
@@ -382,6 +385,7 @@ function(panel.data,         ## REQUIRED
 					if (length(available.matrices) < B) sim.iters <- sample(1:length(available.matrices), B, replace=TRUE)
 				}
 		
+				setkey(big.data, b)
 				if (is.null(parallel.config)) { # Sequential
 					for (z in sim.iters) {
 						if (is.null(simex.use.my.coefficient.matrices)) {
