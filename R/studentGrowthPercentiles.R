@@ -242,7 +242,7 @@ function(panel.data,         ## REQUIRED
 	} 
 
 	.simex.sgp <- function(state, variable, lambda, B, extrapolation, save.matrices, simex.use.my.coefficient.matrices=NULL, calculate.simex.sgps) {
-		GRADE <- CONTENT_AREA <- YEAR <- V1 <- Lambda <- tau <- b <- .SD <- NULL ## To avoid R CMD check warnings
+		GRADE <- CONTENT_AREA <- YEAR <- V1 <- Lambda <- tau <- b <- .SD <- TEMP <- NULL ## To avoid R CMD check warnings
 		my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
 
 		fitted <- extrap <- tmp.quantiles.simex <- simex.coef.matrices <- list()
@@ -347,11 +347,12 @@ function(panel.data,         ## REQUIRED
 					big.data.uniques.indices <- which(!duplicated(big.data))
 					big.data.uniques[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="") := 
 						rep(csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")], B)[big.data.uniques.indices]]
-					big.data.uniques[, tmp.num.variables-g := 
+					big.data.uniques[, TEMP := 
 						eval(parse(text=paste("big.data.uniques[[", tmp.num.variables-g, "]]+sqrt(big.data.uniques[['Lambda']])*big.data.uniques[['icsem",
 						tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], "']] * rnorm(dim(big.data.uniques)[1])", sep="")))]
 					big.data.uniques[big.data.uniques[[col.index]] < loss.hoss[1,g], col.index := loss.hoss[1,g], with=FALSE]
-					big.data.uniques[big.data.uniques[[col.index]] > loss.hoss[2,g], col.index := loss.hoss[2,g], with=FALSE] 
+					big.data.uniques[big.data.uniques[[col.index]] > loss.hoss[2,g], col.index := loss.hoss[2,g], with=FALSE]
+					big.data[, tmp.num.variables-g := big.data.uniques[,c(key(big.data), "TEMP"), with=FALSE][big.data][['TEMP']]]
 					ks <- big.data[, as.list(as.vector(unlist(round(quantile(big.data[[col.index]], probs=knot.cut.percentiles, na.rm=TRUE), digits=3))))] # Knots
 					bs <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.1), digits=3)))] # Boundaries
 					lh <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.0), digits=3)))] # LOSS/HOSS
