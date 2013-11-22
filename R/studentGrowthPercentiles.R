@@ -403,10 +403,12 @@ function(panel.data,         ## REQUIRED
 					} else simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <- available.matrices[sim.iters]
 					
 					if (calculate.simex.sgps) {
-						fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + 
-							as.vector(.get.percentile.predictions(big.data[list(z)][, 
-							which(names(big.data[list(z)]) %in% c("ID", paste('prior_', k:1, sep=""), "final.yr")), with=FALSE], 
-							simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]])/B)
+						for (z in seq_along(sim.iters)) {
+							fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + 
+								as.vector(.get.percentile.predictions(big.data[list(z)][, 
+								which(names(big.data[list(z)]) %in% c("ID", paste('prior_', k:1, sep=""), "final.yr")), with=FALSE], 
+								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]])/B)
+						}
 					}
 				} else {	# Parallel over sim.iters
 					if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
