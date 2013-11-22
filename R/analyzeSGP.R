@@ -362,14 +362,14 @@ function(sgp_object,
 			for (tmp.matrix.label in grep("BASELINE.SIMEX", names(tmp_sgp_object$Coefficient_Matrices), value=TRUE)) {
 				eval(parse(text=paste(state, "_SIMEX_Baseline_Matrices[['", tmp.matrix.label, "']] <- tmp_sgp_object[['Coefficient_Matrices']][['", tmp.matrix.label, "']]", sep="")))
 			}
-			save(list=paste(state, "_SIMEX_Baseline_Matrices", sep=""), file=paste(state, "_SIMEX_Baseline_Matrices.Rdata", sep=""))
+			save(list=paste(state, "_SIMEX_Baseline_Matrices", sep=""), file=paste(state, "_SIMEX_Baseline_Matrices.Rdata", sep=""), compress="xz")
 			
 			message("\n\tFinished Calculating SIMEX Baseline Coefficient Matrices\n")
 			suppressMessages(gc()) # clean up
 		} # END Compute SIMEX baseline coefficient matrices
 		
 		##  Enforce that simex.use.my.coefficient.matrices must be TRUE for BASELINE SIMEX calculations below
-		calculate.simex.baseline$simex.use.my.coefficient.matrices=TRUE
+		calculate.simex.baseline$simex.use.my.coefficient.matrices <- TRUE
 		
 	} # END check for SIMEX baseline matrices presence
 
@@ -1142,7 +1142,7 @@ function(sgp_object,
 						grade.progression=sgp.iter[["sgp.baseline.grade.sequences"]],
 						content_area.progression=sgp.iter[["sgp.baseline.content.areas"]],
 						year_lags.progression=sgp.iter[["sgp.baseline.panel.years.lags"]],
-						num.prior=min(sgp.iter[["max.order"]], sgp.percentiles.baseline.max.order),
+						num.prior=min(sgp.iter[["sgp.baseline.max.order"]], sgp.percentiles.baseline.max.order),
 						percentile.cuts=SGPstateData[[state]][["SGP_Configuration"]][["percentile.cuts"]],
 						calculate.confidence.intervals=calculate.confidence.intervals,
 						drop.nonsequential.grade.progression.variables=FALSE,
