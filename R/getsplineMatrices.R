@@ -73,11 +73,14 @@ function(
 	if (is.null(my.matrix.order)) {
 		tmp.orders <- getsplineMatrix(my.exact.grade.progression.sequence=my.exact.grade.progression.sequence, what.to.return="ORDERS")
 	} else {
-		if (!is.null(my.matrix.highest.order) && my.matrix.highest.order < my.matrix.order) my.matrix.order <- my.matrix.highest.order
 		tmp.orders <- my.matrix.order
 	}
 
 	if (what.to.return=="ORDERS")  return(tmp.orders)
+
+	if (!is.null(my.matrix.highest.order)) {
+		tmp.orders <- tmp.orders[tmp.orders <= my.matrix.highest.order]
+	}
 
 	if (what.to.return=="MATRICES") {
 		if (return.highest.order.matrix) tmp.orders <- tail(tmp.orders, 1)
