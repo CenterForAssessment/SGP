@@ -54,7 +54,7 @@ studentGrowthPlot(Scale_Scores,
 	}
 }
 \details{Function currently used as part of SGP package to produce student growth charts for states. Function is usally called from the higher level function \code{\link{visualizeSGP}} which
-allows for the creation of a student growth plot catalog for each school with student reports organized by grade and student name. 
+allows for the creation of a student growth plot catalog for each school with student reports organized by grade and student name.} 
 \value{Returns a student growth plot graphical object that is usually exported in either PDF or PNG format.}
 \author{Damian W. Betebenner \email{dbetebenner@nciea.org}}
 \references{
