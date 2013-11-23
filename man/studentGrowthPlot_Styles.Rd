@@ -90,7 +90,7 @@ to version 0.9-9.7, this was the only way of bundling reports and was thus the d
 content areas depending upon the availability of test data for the state. This function will expand in the future to allow for other types of individual growth and
 achievement reports.
 }
-\value{Function produces \emph{numerous} (potentially hundreds of thousands of) PDF student growth plots. 
+\value{Function produces \emph{numerous} (potentially hundreds of thousands of) PDF/PNG student growth plots. 
 }
 
 \author{Damian W. Betebenner \email{dbetebenner@nciea.org} and Adam Van Iwaarden \email{vaniwaarden@colorado.edu}}
