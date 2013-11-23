@@ -136,7 +136,7 @@ function(sgp_object,
 
 	## Test if SCALE_SCORE is of class numeric and convert if not
 
-	if (!is.numeric(sgp_object@Data[['SCALE_SCORE']])) {
+	if (!is.double(sgp_object@Data[['SCALE_SCORE']])) {
 		sgp_object@Data[['SCALE_SCORE']] <- as.numeric(sgp_object@Data[['SCALE_SCORE']])
 		message("\tNOTE: Converting SCALE_SCORE to class 'numeric'.")
 	}
