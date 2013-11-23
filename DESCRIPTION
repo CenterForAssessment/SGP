@@ -2,7 +2,7 @@ Package: SGP
 Type: Package
 Title: An R Package for the Calculation and Visualization of Student Growth Percentiles & Percentile Growth Trajectories.
 Version: 1.2-0.0
-Date: 2013-11-30
+Date: 2013-12-1
 Authors@R: c(person("Damian", "Betebenner", email="dbetebenner@nciea.org", role=c("aut", "cre")), person("Adam", "Van Iwaarden", email="vaniwaarden@colorado.edu", role="aut"),
                     person("Ben", "Domingue", email="ben.domingue@gmail.com", role="aut"), person("Yi", "Shang", email="shangyi@gmail.com", role="aut"))
 Author: Damian W. Betebenner <dbetebenner@nciea.org>, Adam Van Iwaarden <vaniwaarden@colorado.edu>, Ben Domingue <ben.domingue@gmail.com>, and Yi Shang <shangyi@Gmail.com>
@@ -18,7 +18,7 @@ Author: Damian W. Betebenner <dbetebenner@nciea.org>, Adam Van Iwaarden <vaniwaa
 	Leslie Rosales (Guatemala), Nathan Wall (eMetric).
 Maintainer: Damian W. Betebenner <dbetebenner@nciea.org>
 Depends: R (>= 2.13)
-Suggests: randomNames (>= 0.0-5), parallel, SGPdata (>= 7.0-0)
+Suggests: randomNames (>= 0.0-5), parallel, SGPdata (>= 8.0-0)
 Imports: Cairo, colorspace, data.table (>= 1.8.10), doParallel, foreach, grid, gridBase, iterators, methods, plyr, quantreg, reshape2, RJSONIO, RSQLite, sn, splines
 Description: Functions to calculate student growth percentiles and percentile growth projections/trajectories for students using large scale, 
         longitudinal assessment data.  Functions use quantile regression to estimate the conditional density associated 
