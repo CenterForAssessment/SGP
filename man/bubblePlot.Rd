@@ -2,13 +2,14 @@
 \alias{bubblePlot}
 \title{Core bubblePlot function for SGP}
 \description{
-Function to create bubble plots associated with student growth percentile results. The function is adaptable to many representation but 
+Function to create bubble plots associated with student growth percentile and percentile growth trajectory results. The function is adaptable to many representations but 
 is used in conjunction with results derived from \code{\link{summarizeSGP}} to represent summary level results of growth against achievement 
 (usually, median student growth percentile against percentage at/above proficient). The function has MANY options and users are advised to 
 read this documentation thoroughly as well as investigate the source code for the function itself to see what the many different representations 
 that are possible. The function has the ability to produce interactive data tips using the \code{pdf2} package available on R-Forge. This package is NOT
 installed as part of the SGP package and must be installed separately from the package to take advantage of this functionality of the \code{bubblePlot} function.
-To install \code{pdf2} from the \code{R} prompt type: \code{install.packages("pdf2",repos="http://R-Forge.R-project.org")}
+To install \code{pdf2} from the \code{R} prompt type: \code{install.packages("pdf2",repos="http://R-Forge.R-project.org")}. The use of the pdf2 package is 
+scheduled to be deprecated as it is no longer maintained by the creator and requires use of a pre 2.14 version of R.
 }
 \usage{
 bubblePlot(

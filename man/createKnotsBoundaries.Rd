@@ -2,7 +2,8 @@
 \alias{createKnotsBoundaries}
 \title{Function to create Knots and Boundaries from supplied data in LONG format.}
 \description{
-The function createKnotsBoundaries creates Knots, Boundaries and Loss/Hoss scores for subsequent use and embedding in SGPstateData.
+The function createKnotsBoundaries creates Knots, Boundaries and Loss/Hoss scores for subsequent use and embedding in SGPstateData. Function can be called separately but is usually called as part of 
+\code{\link{prepareSGP}}. See examples below.
 }
 
 \usage{
@@ -11,7 +12,7 @@ createKnotsBoundaries(tmp.data,
 }
 
 \arguments{
-  \item{tmp.data}{Data supplied to function in LONG format. See sgpData_LONG for exemplar. tmp.data must contain, at least, variables 'VALID_CASE', 'CONTENT_AREA', 'SCALE_SCORE', 'GRADE' 
+  \item{tmp.data}{Data supplied to function in LONG format. See sgpData_LONG for an exemplar. tmp.data must contain, at least, variables 'VALID_CASE', 'CONTENT_AREA', 'SCALE_SCORE', 'GRADE'. 
   }
   \item{knot.cut.percentiles}{A numeric vector of quantiles of 'SCALE_SCORE' to be used as the cut points. Default is to use the 20th, 40th, 60th, and 80th percentiles (i.e., c(0.2,0.4,0.6,0.8)).  
   }
@@ -24,7 +25,14 @@ createKnotsBoundaries(tmp.data,
 
 \examples{
 \dontrun{
+### Run on supplied long data
+
 DEMO_Knots_Boundaries <- createKnotsBoundaries(sgpData_LONG)
+
+### Run as part of prepareSGP
+
+SGPstateData[["DEMO"]][["Achievement"]][["Knots_Boundaries"]] <- NULL ### Eliminate knots to show this creates knots and boundaries
+Demonstration_SGP <- prepareSGP(sgpData_LONG)
 }  
 }
 

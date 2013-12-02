@@ -100,7 +100,7 @@ formatted (if applicable).
 	class *character*.
 
 -   `CONTENT_AREA` This column describes the content area for a given
-    row. Most datasets would presumably contain *MATHEMATICS* and
+    row. Most data sets would presumably contain *MATHEMATICS* and
     *READING*, but other values are possible. These values must be
     capitalized and match the states’ assessment information contained
     in the **SGPstateData** object that comes embedded within the **SGP** package.
@@ -205,7 +205,7 @@ summarization and reporting.
 Data Analysis
 -------------
 
-Once a dataset is properly formatted, a comprehensive analysis can be
+Once a data set is properly formatted, a comprehensive analysis can be
 conducted using **abcSGP**. An example of the call using the sample data
 is below.
 

@@ -4,7 +4,7 @@
 \alias{is.splineMatrix}
 \alias{as.splineMatrix}
 \title{Class "splineMatrix"}
-\description{The formal S4 class for coefficient matrices produced from the \code{\link{studentGrowthPercentiles}} function. This class stores the B-spline knots and boundaries used the coefficient matrix object for the production of student growth percentiles and projections.}
+\description{The formal S4 class for coefficient matrices produced from the \code{\link{studentGrowthPercentiles}} function. This class stores the B-spline knots and boundaries used by the coefficient matrix object for the production of student growth percentiles and projections.}
 
 \section{Objects from the Class}{
 Objects can be created by calls of the form \code{new("splineMatrix", ...)}, but this is not encouraged.  Previously produced coefficient matrices MUST be bound to the IDENTICAL knots and boundaries used to create them. Use the function \code{\link{studentGrowthPercentiles}} instead.
@@ -14,9 +14,9 @@ Objects can be created by calls of the form \code{new("splineMatrix", ...)}, but
   \describe{
     \item{\code{.Data}:}{A coefficient matrix derived from \code{\link{studentGrowthPercentiles}}.}
     \item{\code{Knots}:}{A list(s) of numeric values used as the \code{knots} to generate the B-spline basis matrix in \code{\link{studentGrowthPercentiles}}.}
-    \item{\code{Boundaries}:}{A list(s) of numeric values as the \code{Boundary.knots}to generate the B-spline basis matrix in \code{\link{studentGrowthPercentiles}}.}
-    \item{\code{Content_Areas}:}{A list of content area names included in the data used to produce the coefficient matrix.}
-    \item{\code{Grade_Progression}:}{A list of the grades included in the data used to produce matrices.}
+    \item{\code{Boundaries}:}{A list(s) of numeric values used as the \code{Boundary.knots}to generate the B-spline basis matrix in \code{\link{studentGrowthPercentiles}}.}
+    \item{\code{Content_Areas}:}{A list of time dependent content area names included in the data used to produce the coefficient matrix.}
+    \item{\code{Grade_Progression}:}{A list of the time dependent grades included in the data used to produce matrices.}
     \item{\code{Time}:}{A list of the Times (e.g., years) measurements occurred included in the data used to produce matrices.}
     \item{\code{Time_Lags}:}{A list of the time lags/differences between Time (e.g., years) included in the data used to produce matrices.}
     \item{\code{Version}:}{A list including the version of the SGP package used to construct the splineMatrix object and the date the object was created.}

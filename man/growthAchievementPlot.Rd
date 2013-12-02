@@ -28,7 +28,7 @@ growthAchievementPlot(
 \arguments{
 	\item{gaPlot.sgp_object}{
         The sgp_object containing system information for constructing the growth and achievement plot. Object is calculated using \code{\link{abcSGP}} or (at least) \code{\link{prepareSGP}}
-        followed by \code{\link{analyzeSGP}}.
+        followed by \code{\link{analyzeSGP}}. The function requires coefficient matrices in order to display percentile growth trajectories.
 	}
 	\item{gaPlot.students}{
         Either NULL (the default) or a list of student IDs for whom one wishes to generate growth and achievement plots. 
