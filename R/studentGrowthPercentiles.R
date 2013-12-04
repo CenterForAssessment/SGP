@@ -55,7 +55,7 @@ function(panel.data,         ## REQUIRED
 		if (!is.null(sgp.loss.hoss.adjustment)) {
 			my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
 			bnd <- eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['loss.hoss_", tmp.last, "']]", sep="")))
-			x[x < bnd[1]] <- bnd[1] ; x[x > bnd[2]] <- bnd[2]
+			x[x > bnd[2]] <- bnd[2]
 		}
 		x[which(is.na(x))] <- approx(x, xout=which(is.na(x)))$y
 		if (iso) return(sort(x))
@@ -238,12 +238,10 @@ function(panel.data,         ## REQUIRED
 		tmp <- data.table(ID=rep(seq(dim(data1)[1]), each=101), TMP_TF=as.vector(t(cbind(data1 < data2, FALSE))))[,which.min(TMP_TF)-1, by=ID][['V1']]
 		if (!is.null(sgp.loss.hoss.adjustment)) {
 			my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
-			loss.hoss <- eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['loss.hoss_", tmp.last, "']]", sep="")))
-			for (i in loss.hoss) {
-				tmp.index <- which(data2==i)
-				if (length(tmp.index) > 0) {
-					tmp[tmp.index] <- apply(cbind(data1 > data2, TRUE)[tmp.index,,drop=FALSE], 1, function(x) which.max(x)-1)
-				}
+			tmp.hoss <- eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['loss.hoss_", tmp.last, "']][2]", sep="")))
+			tmp.index <- which(data2==tmp.hoss)
+			if (length(tmp.index) > 0) {
+				tmp[tmp.index] <- apply(cbind(data1 > data2, TRUE)[tmp.index,,drop=FALSE], 1, function(x) which.max(x)-1)
 			}
 		}
 		if (convert.0and100) {
