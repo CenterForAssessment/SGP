@@ -28,6 +28,9 @@ function(sgp_object,
 		state <- getStateAbbreviation(tmp.name, "baselineSGP")
 	}
 
+	if (identical(calculate.baseline.simex, TRUE)) {
+		calculate.baseline.simex <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear", save.matrices=TRUE)
+	}
 
 	### Syncronize "return.matrices.only" and "calculate.baseline.sgps" arguments
 
