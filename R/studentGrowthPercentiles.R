@@ -52,10 +52,31 @@ function(panel.data,         ## REQUIRED
 	##########################################################
 
 	.smooth.isotonize.row <- function(x, iso=isotonize) {
+		if (!is.null(sgp.loss.hoss.adjustment)) {
+			my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
+			bnd <- eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['loss.hoss_", tmp.last, "']]", sep="")))
+			x[x < bnd[1]] <- bnd[1] ; x[x > bnd[2]] <- bnd[2]
+		}
 		x[which(is.na(x))] <- approx(x, xout=which(is.na(x)))$y
 		if (iso) return(sort(x))
 		else return(x)
 	}
+
+	.smooth.bound.iso.row <- function(x, grade, tmp.year, tmp.content_area, iso=isotonize, missing.taus, na.replace) {
+		bnd <- eval(parse(text=paste("panel.data[['Knots_Boundaries']]", get.my.knots.boundaries.path(tmp.content_area, tmp.year), "[['loss.hoss_", grade, "']]", sep="")))
+		x[x < bnd[1]] <- bnd[1] ; x[x > bnd[2]] <- bnd[2]
+		if (!iso) return(round(x, digits=5)) # Results are the same whether NAs present or not...
+		if (iso & missing.taus) {
+			na.row <- rep(NA,100)
+			na.row[na.replace] <- round(sort(x[!is.na(x)]), digits=5)
+			return(na.row)
+		} else {
+			x[which(is.na(x))] <- approx(x, xout=which(is.na(x)))$y
+			return(round(sort(x), digits=5))
+		}
+	}
+
+
 
 	.create.path <- function(labels, pieces=c("my.subject", "my.year", "my.extra.label")) {
 		sub(' ', '_', toupper(sub('\\.+$', '', paste(unlist(sapply(labels[pieces], as.character)), collapse="."))))
