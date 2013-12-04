@@ -89,7 +89,7 @@ function(sgp_object,
 			tmp.sgp.iter$sgp.panel.years <- tmp.year.sequence[[k]]
 			tmp.sgp.iter$sgp.grade.sequences <- tmp.sgp.iter$sgp.grade.sequences
 			tmp.list[[k]] <- getPanelData(tmp_sgp_data_for_analysis, "sgp.percentiles", sgp.iter = tmp.sgp.iter)
-			col.index <- c(1, grep("GRADE",names(tmp.list[[k]])), grep("SCALE_SCORE",names(tmp.list[[k]])))
+			col.index <- c(1, grep("GRADE.",names(tmp.list[[k]])), grep("SCALE_SCORE.",names(tmp.list[[k]])))
 			tmp.list[[k]] <- tmp.list[[k]][!apply(is.na(tmp.list[[k]]), 1, any), col.index]
 			names(tmp.list[[k]]) <- c("ID", paste("GRADE", rev(seq_along(tmp.year.sequence[[k]])), sep="_"), 
 				paste("SCALE_SCORE", rev(seq_along(tmp.year.sequence[[k]])), sep="_")) # Use rev() in case vars are added: 1= current, 2= first prior, etc.
