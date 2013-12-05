@@ -162,10 +162,6 @@ function(sgp_object,
 						par.sgp.config[[b.iter[b]]][['sgp.baseline.max.order']] <- tmp.max.order
 						par.sgp.config[[b.iter[b]]][['sgp.baseline.panel.years.lags']] <- tail(par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']], tmp.max.order) 
 					}
-
-					if ("YEAR_WITHIN" %in% names(sgp_object@Data)) {
-						par.sgp.config[[b.iter[b]]][['sgp.baseline.panel.years.within']] <- rep("LAST_OBSERVATION", length(sgp.content.areas))
-					}
 				} ### END if (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline
 
 			} ### END b loop
