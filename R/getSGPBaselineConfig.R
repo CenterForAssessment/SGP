@@ -53,6 +53,9 @@ function(sgp_object,
 			sgp.baseline.config[[b+(a-1)*tmp.length]][["sgp.baseline.grade.sequences.lags"]] <- unlist(tmp.sgp.baseline.config[[a]][["sgp.baseline.grade.sequences.lags"]][b])
 			sgp.baseline.config[[b+(a-1)*tmp.length]][["sgp.baseline.content.areas"]] <- 
 				rep(sgp.baseline.config[[b+(a-1)*tmp.length]][["sgp.baseline.content.areas"]], length(sgp.baseline.config[[b+(a-1)*tmp.length]][["sgp.baseline.grade.sequences"]]))
+			if ("YEAR_WITHIN" %in% names(sgp_object@Data)) {
+				sgp.baseline.config[[b+(a-1)*tmp.length]][['sgp.baseline.panel.years.within']] <- rep("LAST_OBSERVATION", length(content_areas))
+			}
 		}
 	}
 
