@@ -10,6 +10,7 @@ function(what_sgp_object=NULL,
 	sgp.use.my.coefficient.matrices=NULL,
 	overwrite.existing.data=FALSE,
 	sgPlot.demo.report=TRUE,
+	sgp.config=NULL,
 	parallel.config=NULL,
 	...) {
 
@@ -101,6 +102,7 @@ function(what_sgp_object=NULL,
 					sgp.projections.lagged.baseline=tf.sgp.baseline,
 					sgp.use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
 					save.intermediate.results=save.intermediate.results,
+					sgp.config=sgp.config,
 					parallel.config=parallel.config,
 					...
 					)
@@ -150,6 +152,7 @@ function(what_sgp_object=NULL,
 						save.old.summaries=save.old.summaries, 
 						sgPlot.demo.report=sgPlot.demo.report,
 						sgp.use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
+						sgp.config=sgp.config,
 						parallel.config=parallel.config,
 						...)
 
@@ -176,6 +179,7 @@ function(what_sgp_object=NULL,
 							save.old.summaries=save.old.summaries, 
 							sgPlot.demo.report=sgPlot.demo.report,
 							sgp.use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
+							sgp.config=sgp.config,
 							goodness.of.fit.print=FALSE,
 							...)
 
@@ -214,6 +218,7 @@ function(what_sgp_object=NULL,
 							save.old.summaries=save.old.summaries, 
 							sgPlot.demo.report=sgPlot.demo.report,
 							sgp.use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
+							sgp.config=sgp.config,
 							parallel.config=parallel.config,
 							...)
 

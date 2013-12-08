@@ -19,6 +19,7 @@ updateSGP(
 	sgp.use.my.coefficient.matrices=NULL,
 	overwrite.existing.data=FALSE,
 	sgPlot.demo.report=TRUE,
+	sgp.config=NULL,
 	parallel.config=NULL,
 	...)
 }
@@ -48,6 +49,8 @@ updateSGP(
   \item{overwrite.existing.data}{A Boolean argument (defaults to FALSE) indicating whether updateSGP should overwrite existing data/results from an earlier run as part of updateSGP.
   }
   \item{sgPlot.demo.report}{A Boolean argument (defaults to TRUE) indicating whether updateSGP should produce just the demo student growth plots or those associated with all students in the last year.
+  }
+  \item{sgp.config}{List of analysis control parameters passed to \code{\link{analyzeSGP}}. For details on this argument see document for that function.
   }
   \item{parallel.config}{Parallel computation configuration passed to \code{\link{abcSGP}}, \code{\link{analyzeSGP}}, \code{\link{combineSGP}}, and \code{\link{summarizeSGP}}. See documentation 
   under those functions for details.
