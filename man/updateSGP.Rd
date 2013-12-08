@@ -17,7 +17,7 @@ updateSGP(
 	save.old.summaries=TRUE,
 	save.intermediate.results=TRUE,
 	sgp.use.my.coefficient.matrices=NULL,
-	overwrite.previous.data=FALSE,
+	overwrite.existing.data=FALSE,
 	sgPlot.demo.report=TRUE,
 	parallel.config=NULL,
 	...)
@@ -45,7 +45,7 @@ updateSGP(
   \item{sgp.use.my.coefficient.matrices}{A Boolean argument (defaults to FALSE/NULL) passed to \code{\link{analyzeSGP}} indicating whether previous coefficient matrices should be used as 
   part of the analyses.
   }
-  \item{overwrite.previous.data}{A Boolean argument (defaults to FALSE) indicating whether updateSGP should overwrite previous data/results from an earlier run as part of updateSGP.
+  \item{overwrite.existing.data}{A Boolean argument (defaults to FALSE) indicating whether updateSGP should overwrite existing data/results from an earlier run as part of updateSGP.
   }
   \item{sgPlot.demo.report}{A Boolean argument (defaults to TRUE) indicating whether updateSGP should produce just the demo student growth plots or those associated with all students in the last year.
   }

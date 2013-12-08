@@ -8,7 +8,7 @@ function(what_sgp_object=NULL,
 	save.old.summaries=TRUE,
 	save.intermediate.results=TRUE,
 	sgp.use.my.coefficient.matrices=NULL,
-	overwrite.previous.data=FALSE,
+	overwrite.existing.data=FALSE,
 	sgPlot.demo.report=TRUE,
 	parallel.config=NULL,
 	...) {
@@ -77,7 +77,7 @@ function(what_sgp_object=NULL,
 		}
 		tmp.content_areas.years <- as.character(unlist(tmp.content_areas.years))
 
-		### NULL out previous results to be re-calculated
+		### NULL out existing results to be re-calculated
 
 		what_sgp_object@SGP[['Goodness_of_Fit']][grep(paste(tmp.content_areas.years, collapse="|"), names(what_sgp_object@SGP[['Goodness_of_Fit']]))] <- NULL
 		what_sgp_object@SGP[['SGPercentiles']][grep(paste(tmp.content_areas.years, collapse="|"), names(what_sgp_object@SGP[['SGPercentiles']]))] <- NULL
@@ -122,7 +122,7 @@ function(what_sgp_object=NULL,
 		tmp_sgp_object <- prepareSGP(with_sgp_data_LONG, state=state, create.additional.variables=FALSE)
 		update.years <- sort(unique(tmp_sgp_object@Data$YEAR))
 
-		if (overwrite.previous.data) {
+		if (overwrite.existing.data) {
 				what_sgp_object@Data <- as.data.table(rbind.fill(what_sgp_object@Data[YEAR!=update.years], tmp_sgp_object@Data))
 				what_sgp_object@SGP[['Goodness_of_Fit']][grep(update.years, names(what_sgp_object@SGP[['Goodness_of_Fit']]))] <- NULL
 				what_sgp_object@SGP[['SGPercentiles']][grep(update.years, names(what_sgp_object@SGP[['SGPercentiles']]))] <- NULL
@@ -222,6 +222,6 @@ function(what_sgp_object=NULL,
 				message(paste("Finished updateSGP", date(), "in", timetaken(started.at), "\n"))
 				return(what_sgp_object)
 			} ### END if else (!is.null(sgp.use.my.coefficient.matrices))
-		} ### END if (overwrite.previous.data)
+		} ### END if (overwrite.existing.data)
 	} ### END !is.null(with_sgp_data_LONG)
 } ## END updateSGP Function
