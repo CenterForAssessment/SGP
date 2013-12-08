@@ -36,6 +36,9 @@ function(what_sgp_object=NULL,
 	if (is.null(with_sgp_data_LONG)) {
 		sgp.use.my.coefficient.matrices <- TRUE
 	}
+	if (identical(sgp.use.my.coefficient.matrices, FALSE)) {
+		sgp.use.my.coefficient.matrices <- NULL
+	}
 
 	matrix.names <- names(what_sgp_object@SGP[['Coefficient_Matrices']])
 	if (length(grep("BASELINE", matrix.names)) > 0) {
@@ -113,7 +116,7 @@ function(what_sgp_object=NULL,
 
 	if (!is.null(with_sgp_data_LONG)) {
 
-		YEAR <- NULL
+		YEAR <- ID <- NULL
 		tmp_sgp_object <- prepareSGP(with_sgp_data_LONG, state=state, create.additional.variables=FALSE)
 		update.years <- sort(unique(tmp_sgp_object@Data$YEAR))
 
@@ -153,9 +156,31 @@ function(what_sgp_object=NULL,
 			return(what_sgp_object)
 
 		} else {
-			if (sgp.use.my.coefficient.matrices) {
+			if (!is.null(sgp.use.my.coefficient.matrices)) {
+				tmp.long.data <- rbind.fill(subset(what_sgp_object@Data, ID %in% unique(tmp_sgp_object@Data[['ID']])), tmp_sgp_object@Data)
+				tmp.sgp_object <- abcSGP(
+							tmp.long.data,
+							steps=steps, 
+							years=update.years, 
+							state=state, 
+							sgp.percentiles=TRUE,
+							sgp.projections=TRUE,
+							sgp.projections.lagged=TRUE,
+							sgp.percentiles.baseline=tf.sgp.baseline,
+							sgp.projections.baseline=tf.sgp.baseline,
+							sgp.projections.lagged.baseline=tf.sgp.baseline,
+							save.intermediate.results=save.intermediate.results, 
+							save.old.summaries=save.old.summaries, 
+							sgPlot.demo.report=sgPlot.demo.report,
+							sgp.use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
+							...)
 
+				what_sgp_object <- mergeSGP(what_sgp_object, tmp.sgp_object)
 
+				### Print finish and return SGP object
+
+				message(paste("Finished updateSGP", date(), "in", timetaken(started.at), "\n"))
+				return(what_sgp_object)
 			} else {
 				what_sgp_object@Data <- as.data.table(rbind.fill(what_sgp_object@Data, tmp_sgp_object@Data))
 
@@ -188,7 +213,7 @@ function(what_sgp_object=NULL,
 
 				message(paste("Finished updateSGP", date(), "in", timetaken(started.at), "\n"))
 				return(what_sgp_object)
-			} ### END if else (sgp.use.my.coefficient.matrices)
+			} ### END if else (!is.null(sgp.use.my.coefficient.matrices))
 		} ### END if (overwrite.previous.data)
 	} ### END !is.null(with_sgp_data_LONG)
 } ## END updateSGP Function
