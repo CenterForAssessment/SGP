@@ -10,13 +10,14 @@ SGP object.
 updateSGP(
 	what_sgp_object=NULL,
 	with_sgp_data_LONG=NULL,
-	refresh.current.year.results=FALSE,
-	steps=c("prepareSGP", "analyzeSGP", "combineSGP", "summarizeSGP", "visualizeSGP", "outputSGP"),
 	state=NULL,
+	steps=c("prepareSGP", "analyzeSGP", "combineSGP", "summarizeSGP", "visualizeSGP", "outputSGP"),
 	years=NULL,
 	content_areas=NULL,
 	save.old.summaries=TRUE,
-	save.intermediate.results=FALSE,
+	save.intermediate.results=TRUE,
+	sgp.use.my.coefficient.matrices=NULL,
+	overwrite.previous.data=FALSE,
 	sgPlot.demo.report=TRUE,
 	...)
 }
@@ -26,12 +27,10 @@ updateSGP(
   }
   \item{with_sgp_data_LONG}{The additional data in LONG for to be added to the supplied object of class SGP analyzed. The additional data must be in the same form as the data in the @Data slot. If with_sgp_data_LONG is not supplied, the function with update the sgp_object supplied in 'what_sgp_object' using the embedded coefficient matrices, essentially re-doing the analyses.
   }
-  \item{refresh.current.year.results}{A Boolean argument (defaults to FALSE) indicating whether updateSGP will remove current year results and recalculate using pre-calculated coefficient matrices. 
+  \item{state}{The 'state' for the sgp_object. Derived from sgp_object name if not explicitly supplied. 
   }
   \item{steps}{A vector indicting the steps abcSGP will perform as part of the update. Defaults to all steps: \code{\link{prepareSGP}}, \code{\link{analyzeSGP}}, \code{\link{combineSGP}}, 
   \code{\link{summarizeSGP}}, \code{\link{visualizeSGP}}, \code{\link{outputSGP}}.
-  }
-  \item{state}{The 'state' for the sgp_object. Derived from sgp_object name if not explicitly supplied. 
   }
   \item{years}{If only 'what_sgp_object' is supplied, years specifies the years to be run amongst those in the provided sgp_object.
   }
@@ -41,6 +40,11 @@ updateSGP(
   indicating whether the call to \code{\link{summarizeSGP}} should save existing summaries in the \code{@Summary} slot.
   }
   \item{save.intermediate.results}{A Boolean argument (defaults to FALSE) indicating whether results should be save to the current directory after each step of the analysis.
+  }
+  \item{sgp.use.my.coefficient.matrices}{A Boolean argument (defaults to FALSE/NULL) passed to \code{\link{analyzeSGP}} indicating whether previous coefficient matrices should be used as 
+  part of the analyses.
+  }
+  \item{overwrite.previous.data}{A Boolean argument (defaults to FALSE) indicating whether updateSGP should overwrite previous data/results from an earlier run as part of updateSGP.
   }
   \item{sgPlot.demo.report}{A Boolean argument (defaults to TRUE) indicating whether updateSGP should produce just the demo student growth plots or those associated with all students in the last year.
   }
