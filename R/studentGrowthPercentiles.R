@@ -849,9 +849,6 @@ function(panel.data,         ## REQUIRED
 	### Create ss.data from Panel_Data
 
 	if (!missing(panel.data.vnames)) {
-		if (!missing(num.prior)) {
-			panel.data.vnames <- tail(panel.data.vnames, min(c(num.prior, max.order.for.percentile))+1)
-		}
 		if (!all(panel.data.vnames %in% names(Panel_Data))) {
 			tmp.messages <- c(tmp.messages, "\t\tNOTE: Supplied 'panel.data.vnames' are not all in the supplied Panel_Data. Analyses will continue with the intersection names contain in Panel_Data.\n")
 		}
