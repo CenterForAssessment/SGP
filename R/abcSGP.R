@@ -13,7 +13,7 @@ function(sgp_object,
 	sgp.projections.baseline=TRUE,
 	sgp.projections.lagged.baseline=TRUE,
 	sgp.use.my.coefficient.matrices=NULL,
-	sgp.minimum.default.panel.years=3,
+	sgp.minimum.default.panel.years=NULL,
 	sgp.target.scale.scores=FALSE,
 	simulate.sgps=TRUE,
 	calculate.simex=NULL,
@@ -60,6 +60,13 @@ function(sgp_object,
         	        message("\tCSEMs are required in SGPstateData to simulate SGPs for confidence interval calculations. Confidence intervals will not be calculated.")
 			simulate.sgps <- FALSE
 		}
+
+		if (is.null(sgp.minimum.default.panel.years) & !is.null(SGPstateData[[state]][["SGP_Configuration"]][['sgp.minimum.default.panel.years']])) {
+			sgp.minimum.default.panel.years <- SGPstateData[[state]][["SGP_Configuration"]][['sgp.minimum.default.panel.years']]
+		} 
+		if (is.null(sgp.minimum.default.panel.years) & is.null(SGPstateData[[state]][["SGP_Configuration"]][['sgp.minimum.default.panel.years']])) {
+			sgp.minimum.default.panel.years <- 3
+		} 
 
 		sgp_object <- analyzeSGP(
 			sgp_object=sgp_object,
