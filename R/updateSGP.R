@@ -183,6 +183,14 @@ function(what_sgp_object=NULL,
 							goodness.of.fit.print=FALSE,
 							...)
 
+				### Save analyses with just update
+
+				tmp.file.name <- paste(gsub(" ", "_", toupper(getStateAbbreviation(state, type="name"))), "SGP_Update", paste(update.years, collapse=","), sep="_")
+				assign(tmp.file.name, tmp.sgp_object)
+				save(list=tmp.file.name, file=file.path("Data", paste(tmp.file.name, "Rdata", sep=".")))
+
+				### Merge update with original SGP object
+
 				what_sgp_object <- mergeSGP(what_sgp_object, tmp.sgp_object)
 				what_sgp_object <- combineSGP(what_sgp_object, years=update.years, state=state, parallel.config=parallel.config)
 				what_sgp_object <- summarizeSGP(what_sgp_object, state=state, parallel.config=parallel.config)
