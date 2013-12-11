@@ -201,12 +201,12 @@ function(what_sgp_object=NULL,
 
 				### Merge update with original SGP object
 
-				what_sgp_object@Data <- rbind.fill(what_sgp_object@Data, tmp_sgp_object@Data)
+				what_sgp_object@Data <- data.table(rbind.fill(what_sgp_object@Data, tmp_sgp_object@Data), key=getKey(what_sgp_object@Data))
 				if ("HIGH_NEED_STATUS" %in% names(what_sgp_object@Data)) {
 					what_sgp_object@Data[['HIGH_NEED_STATUS']] <- NULL
 					what_sgp_object <- suppressMessages(prepareSGP(what_sgp_object, state=state))
 				}
-				what_sgp_object@SGP <- mergeSGP(what_sgp_object@SGP, tmp.sgp_object@SGP)
+				what_sgp_object@SGP <- mergeSGP(what_sgp_object@SGP, tmp.sgp_object.update@SGP)
 				what_sgp_object <- combineSGP(what_sgp_object, years=update.years, state=state, parallel.config=parallel.config)
 
 				if ("summarizeSGP" %in% steps) what_sgp_object <- summarizeSGP(what_sgp_object, state=state, parallel.config=parallel.config)
@@ -218,7 +218,7 @@ function(what_sgp_object=NULL,
 				message(paste("Finished updateSGP", date(), "in", timetaken(started.at), "\n"))
 				return(what_sgp_object)
 			} else {
-				what_sgp_object@Data <- as.data.table(rbind.fill(what_sgp_object@Data, tmp_sgp_object@Data))
+				what_sgp_object@Data <- data.table(rbind.fill(what_sgp_object@Data, tmp_sgp_object@Data), key=getKey(what_sgp_object@Data))
 
 				if ("HIGH_NEED_STATUS" %in% names(what_sgp_object@Data)) {
 					what_sgp_object@Data[['HIGH_NEED_STATUS']] <- NULL
