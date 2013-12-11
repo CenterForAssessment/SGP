@@ -201,7 +201,7 @@ function(what_sgp_object=NULL,
 
 				### Merge update with original SGP object
 
-				what_sgp_object <- rbind.fill(what_sgp_object@Data, tmp_sgp_object@Data)
+				what_sgp_object@Data <- rbind.fill(what_sgp_object@Data, tmp_sgp_object@Data)
 				if ("HIGH_NEED_STATUS" %in% names(what_sgp_object@Data)) {
 					what_sgp_object@Data[['HIGH_NEED_STATUS']] <- NULL
 					what_sgp_object <- suppressMessages(prepareSGP(what_sgp_object, state=state))
