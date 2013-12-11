@@ -188,8 +188,8 @@ function(what_sgp_object=NULL,
 							calculate.simex = calculate.simex,
 							simulate.sgps = simulate.sgps,
 							sgp.config=sgp.config,
+							parallel.config=parallel.config,
 							goodness.of.fit.print=FALSE,
-							calculate.simex = calculate.simex,
 							...)
 
 					what_sgp_object@SGP <- mergeSGP(what_sgp_object@SGP, tmp.sgp_object@SGP)
