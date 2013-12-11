@@ -165,6 +165,7 @@ function(what_sgp_object=NULL,
 			if (!is.null(sgp.use.my.coefficient.matrices)) {
 				tmp.long.data <- rbind.fill(subset(what_sgp_object@Data, ID %in% unique(tmp_sgp_object@Data[['ID']])), tmp_sgp_object@Data)
 				tmp.sgp_object <- prepareSGP(tmp.long.data, state=state, create.additional.variables=FALSE)
+				tmp.sgp_object@SGP$Coefficient_Matrices <- what_sgp_object@SGP$Coefficient_Matrices
 				if ("analyzeSGP" %in% steps) {
 					tmp.sgp_object <- analyzeSGP(
 							tmp.sgp_object,
