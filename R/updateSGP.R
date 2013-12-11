@@ -22,16 +22,16 @@ function(what_sgp_object=NULL,
 	parallel.config=NULL,
 	...) {
 
-        started.at <- proc.time()
-	message(paste("\nStarted updateSGP", date()), "\n")
+		started.at <- proc.time()
+		message(paste("\nStarted updateSGP", date()), "\n")
 
 
 	### Create state (if NULL) from sgp_object (if possible)
 
-        if (is.null(state)) {
-		tmp.name <- toupper(gsub("_", " ", deparse(substitute(what_sgp_object))))
-		state <- getStateAbbreviation(tmp.name, "updateSGP")
-        }
+		if (is.null(state)) {
+			tmp.name <- toupper(gsub("_", " ", deparse(substitute(what_sgp_object))))
+			state <- getStateAbbreviation(tmp.name, "updateSGP")
+		}
 
 	### Utility functions
 
@@ -51,11 +51,6 @@ function(what_sgp_object=NULL,
 	}
 
 	matrix.names <- names(what_sgp_object@SGP[['Coefficient_Matrices']])
-	if (length(grep("BASELINE", matrix.names)) > 0) {
-		tf.sgp.baseline <- TRUE	
-	} else {
-		tf.sgp.baseline <- FALSE
-	}
 
 
 	##############################################################################
