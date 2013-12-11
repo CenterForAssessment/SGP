@@ -171,11 +171,11 @@ function(what_sgp_object=NULL,
 		} else {
 			if (!is.null(sgp.use.my.coefficient.matrices)) {
 				tmp.long.data <- rbind.fill(subset(what_sgp_object@Data, ID %in% unique(tmp_sgp_object@Data[['ID']])), tmp_sgp_object@Data)
-				tmp.sgp_object <- prepareSGP(tmp.long.data, state=state, create.additional.variables=FALSE)
-				tmp.sgp_object@SGP$Coefficient_Matrices <- what_sgp_object@SGP$Coefficient_Matrices
-				if ("analyzeSGP" %in% steps) {
-					tmp.sgp_object <- analyzeSGP(
-							tmp.sgp_object,
+				tmp.sgp_object.update <- prepareSGP(tmp.long.data, state=state, create.additional.variables=FALSE)
+				tmp.sgp_object.update@SGP$Coefficient_Matrices <- what_sgp_object@SGP$Coefficient_Matrices
+
+				tmp.sgp_object.update <- analyzeSGP(
+							tmp.sgp_object.update,
 							years=update.years, 
 							state=state, 
 							sgp.percentiles=sgp.percentiles,
@@ -191,10 +191,24 @@ function(what_sgp_object=NULL,
 							parallel.config=parallel.config,
 							goodness.of.fit.print=FALSE,
 							...)
+				tmp.sgp_object.update <- combineSGP(tmp.sgp_object.update, state=state)
 
-					what_sgp_object@SGP <- mergeSGP(what_sgp_object@SGP, tmp.sgp_object@SGP)
+				### Save analyses with just update
+
+				tmp.file.name <- paste(gsub(" ", "_", toupper(getStateAbbreviation(state, type="name"))), "SGP_Update", paste(update.years, collapse=","), sep="_")
+				assign(tmp.file.name, tmp.sgp_object.update)
+				save(list=tmp.file.name, file=file.path("Data", paste(tmp.file.name, "Rdata", sep=".")))
+
+				### Merge update with original SGP object
+
+				what_sgp_object <- rbind.fill(what_sgp_object@Data, tmp_sgp_object@Data)
+				if ("HIGH_NEED_STATUS" %in% names(what_sgp_object@Data)) {
+					what_sgp_object@Data[['HIGH_NEED_STATUS']] <- NULL
+					what_sgp_object <- suppressMessages(prepareSGP(what_sgp_object, state=state))
 				}
-				if ("combineSGP" %in% steps) what_sgp_object <- combineSGP(what_sgp_object, years=update.years, state=state, parallel.config=parallel.config)
+				what_sgp_object@SGP <- mergeSGP(what_sgp_object@SGP, tmp.sgp_object@SGP)
+				what_sgp_object <- combineSGP(what_sgp_object, years=update.years, state=state, parallel.config=parallel.config)
+
 				if ("summarizeSGP" %in% steps) what_sgp_object <- summarizeSGP(what_sgp_object, state=state, parallel.config=parallel.config)
 				if ("visualizeSGP" %in% steps) visualizeSGP(what_sgp_object)
 				if ("outputSGP" %in% steps) outputSGP(what_sgp_object)
