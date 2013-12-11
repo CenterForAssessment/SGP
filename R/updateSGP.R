@@ -165,7 +165,8 @@ function(what_sgp_object=NULL,
 			if (!is.null(sgp.use.my.coefficient.matrices)) {
 				tmp.long.data <- rbind.fill(subset(what_sgp_object@Data, ID %in% unique(tmp_sgp_object@Data[['ID']])), tmp_sgp_object@Data)
 				tmp.sgp_object <- prepareSGP(tmp.long.data, state=state, create.additional.variables=FALSE)
-				tmp.sgp_object <- analyzeSGP(
+				if ("analyzeSGP" %in% steps) {
+					tmp.sgp_object <- analyzeSGP(
 							tmp.sgp_object,
 							years=update.years, 
 							state=state, 
@@ -175,17 +176,15 @@ function(what_sgp_object=NULL,
 							sgp.percentiles.baseline=tf.sgp.baseline,
 							sgp.projections.baseline=tf.sgp.baseline,
 							sgp.projections.lagged.baseline=tf.sgp.baseline,
-							save.intermediate.results=save.intermediate.results, 
-							save.old.summaries=save.old.summaries, 
-							sgPlot.demo.report=sgPlot.demo.report,
 							sgp.use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
 							sgp.config=sgp.config,
 							goodness.of.fit.print=FALSE,
 							...)
 
-				what_sgp_object <- mergeSGP(what_sgp_object, tmp.sgp_object)
-				what_sgp_object <- combineSGP(what_sgp_object, years=update.years, state=state, parallel.config=parallel.config)
-				what_sgp_object <- summarizeSGP(what_sgp_object, state=state, parallel.config=parallel.config)
+					what_sgp_object <- mergeSGP(what_sgp_object, tmp.sgp_object)
+				}
+				if ("combineSGP" %in% steps) what_sgp_object <- combineSGP(what_sgp_object, years=update.years, state=state, parallel.config=parallel.config)
+				if ("summarizeSGP" %in% steps) what_sgp_object <- summarizeSGP(what_sgp_object, state=state, parallel.config=parallel.config)
 				if ("visualizeSGP" %in% steps) visualizeSGP(what_sgp_object)
 				if ("outputSGP" %in% steps) outputSGP(what_sgp_object)
 
