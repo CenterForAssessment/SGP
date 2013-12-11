@@ -5,6 +5,12 @@ function(what_sgp_object=NULL,
 	steps=c("prepareSGP", "analyzeSGP", "combineSGP", "summarizeSGP", "visualizeSGP", "outputSGP"),
 	years=NULL,
 	content_areas=NULL,
+	sgp.percentiles=TRUE, 
+	sgp.projections=TRUE,
+	sgp.projections.lagged=TRUE,
+	sgp.percentiles.baseline=TRUE,
+	sgp.projections.baseline=TRUE,
+	sgp.projections.lagged.baseline=TRUE,
 	save.old.summaries=TRUE,
 	save.intermediate.results=TRUE,
 	sgp.use.my.coefficient.matrices=NULL,
@@ -182,7 +188,7 @@ function(what_sgp_object=NULL,
 							goodness.of.fit.print=FALSE,
 							...)
 
-					what_sgp_object <- mergeSGP(what_sgp_object, tmp.sgp_object)
+					what_sgp_object <- mergeSGP(what_sgp_object@SGP, tmp.sgp_object@SGP)
 				}
 				if ("combineSGP" %in% steps) what_sgp_object <- combineSGP(what_sgp_object, years=update.years, state=state, parallel.config=parallel.config)
 				if ("summarizeSGP" %in% steps) what_sgp_object <- summarizeSGP(what_sgp_object, state=state, parallel.config=parallel.config)
