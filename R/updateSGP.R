@@ -11,6 +11,8 @@ function(what_sgp_object=NULL,
 	sgp.percentiles.baseline=TRUE,
 	sgp.projections.baseline=TRUE,
 	sgp.projections.lagged.baseline=TRUE,
+	calculate.simex = NULL,
+	simulate.sgps = simulate.sgps,
 	save.old.summaries=TRUE,
 	save.intermediate.results=TRUE,
 	sgp.use.my.coefficient.matrices=NULL,
@@ -108,6 +110,8 @@ function(what_sgp_object=NULL,
 					sgp.projections.lagged.baseline=sgp.projections.lagged.baseline,
 					sgp.use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
 					save.intermediate.results=save.intermediate.results,
+					calculate.simex = calculate.simex,
+					simulate.sgps = simulate.sgps,
 					sgp.config=sgp.config,
 					parallel.config=parallel.config,
 					...
@@ -158,6 +162,8 @@ function(what_sgp_object=NULL,
 						save.old.summaries=save.old.summaries, 
 						sgPlot.demo.report=sgPlot.demo.report,
 						sgp.use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
+						calculate.simex = calculate.simex,
+						simulate.sgps = simulate.sgps,
 						sgp.config=sgp.config,
 						parallel.config=parallel.config,
 						...)
@@ -184,11 +190,14 @@ function(what_sgp_object=NULL,
 							sgp.projections.baseline=sgp.projections.baseline,
 							sgp.projections.lagged.baseline=sgp.projections.lagged.baseline,
 							sgp.use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
+							calculate.simex = calculate.simex,
+							simulate.sgps = simulate.sgps,
 							sgp.config=sgp.config,
 							goodness.of.fit.print=FALSE,
+							calculate.simex = calculate.simex,
 							...)
 
-					what_sgp_object <- mergeSGP(what_sgp_object@SGP, tmp.sgp_object@SGP)
+					what_sgp_object@SGP <- mergeSGP(what_sgp_object@SGP, tmp.sgp_object@SGP)
 				}
 				if ("combineSGP" %in% steps) what_sgp_object <- combineSGP(what_sgp_object, years=update.years, state=state, parallel.config=parallel.config)
 				if ("summarizeSGP" %in% steps) what_sgp_object <- summarizeSGP(what_sgp_object, state=state, parallel.config=parallel.config)
@@ -224,6 +233,8 @@ function(what_sgp_object=NULL,
 							save.old.summaries=save.old.summaries, 
 							sgPlot.demo.report=sgPlot.demo.report,
 							sgp.use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
+							calculate.simex = calculate.simex,
+							simulate.sgps = simulate.sgps,
 							sgp.config=sgp.config,
 							parallel.config=parallel.config,
 							...)
