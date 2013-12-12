@@ -116,7 +116,7 @@ function(sgp_object,
 	}
 
 	if (identical(calculate.simex.baseline, TRUE)) {
-		calculate.simex <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear", save.matrices=TRUE)
+		calculate.simex.baseline <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear", save.matrices=TRUE)
 	}
 
 	if (is.null(sgp.minimum.default.panel.years) & !is.null(SGPstateData[[state]][["SGP_Configuration"]][['sgp.minimum.default.panel.years']])) {
@@ -289,6 +289,10 @@ function(sgp_object,
 
 		###  Calculate BASELINE SIMEX matrices if they are not present
 		if (length(grep(".BASELINE.SIMEX", names(tmp_sgp_object[["Coefficient_Matrices"]]))) == 0) {
+			
+			##  Enforce that simex.use.my.coefficient.matrices must be FALSE for BASELINE SIMEX matrix production
+			calculate.simex.baseline$simex.use.my.coefficient.matrices <- NULL
+			
 			if (is.null(sgp.baseline.config)) {
 				sgp.baseline.config <- getSGPBaselineConfig(sgp_object, content_areas, grades, sgp.baseline.panel.years)
 			} else {
@@ -311,7 +315,7 @@ function(sgp_object,
 							sgp.baseline.config=list(sgp.iter), ## NOTE: list of sgp.iter must be passed for proper iteration
 							return.matrices.only=TRUE,
 							calculate.baseline.sgps=FALSE,
-							calculate.baseline.simex=calculate.simex,
+							calculate.baseline.simex=calculate.simex.baseline,
 							parallel.config=parallel.config))
 					}
 					tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp, simex=TRUE)))
@@ -324,7 +328,7 @@ function(sgp_object,
 							sgp.baseline.config=list(sgp.iter), ## NOTE: list of sgp.iter must be passed for proper iteration
 							return.matrices.only=TRUE,
 							calculate.baseline.sgps=FALSE,
-							calculate.baseline.simex=calculate.simex,
+							calculate.baseline.simex=calculate.simex.baseline,
 							parallel.config=parallel.config))
 					
 						tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp, simex=TRUE)))
@@ -338,7 +342,7 @@ function(sgp_object,
 							sgp.baseline.config=list(sgp.iter), ## NOTE: list of sgp.iter must be passed for proper iteration
 							return.matrices.only=TRUE,
 							calculate.baseline.sgps=FALSE,
-							calculate.baseline.simex=calculate.simex,
+							calculate.baseline.simex=calculate.simex.baseline,
 							parallel.config=parallel.config),
 							mc.cores=par.start$workers, mc.preschedule=FALSE)
 							
@@ -359,7 +363,7 @@ function(sgp_object,
 						sgp.baseline.config=sgp.baseline.config[sgp.iter], ## NOTE: must pass list, [...], not vector, [[...]].
 						return.matrices.only=TRUE,
 						calculate.baseline.sgps=FALSE,
-						calculate.baseline.simex=calculate.simex,
+						calculate.baseline.simex=calculate.simex.baseline,
 						parallel.config=lower.level.parallel.config)
 				}
 				
