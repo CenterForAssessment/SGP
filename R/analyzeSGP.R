@@ -17,6 +17,7 @@ function(sgp_object,
          sgp.use.my.coefficient.matrices=NULL,
          simulate.sgps=TRUE,
          calculate.simex=NULL,
+         calculate.simex.baseline=NULL,
          goodness.of.fit.print=TRUE,
          sgp.config=NULL,
          sgp.config.drop.nonsequential.grade.progression.variables=TRUE,
@@ -114,6 +115,10 @@ function(sgp_object,
 		calculate.simex <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear", save.matrices=TRUE)
 	}
 
+	if (identical(calculate.simex.baseline, TRUE)) {
+		calculate.simex <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear", save.matrices=TRUE)
+	}
+
 	if (is.null(sgp.minimum.default.panel.years) & !is.null(SGPstateData[[state]][["SGP_Configuration"]][['sgp.minimum.default.panel.years']])) {
 		sgp.minimum.default.panel.years <- SGPstateData[[state]][["SGP_Configuration"]][['sgp.minimum.default.panel.years']]
 	}
@@ -121,8 +126,6 @@ function(sgp_object,
 		sgp.minimum.default.panel.years <- 3
 	} 
 	
-	calculate.simex.baseline <- calculate.simex
-
 	### 
 	### Utility functions
 	###
@@ -282,7 +285,7 @@ function(sgp_object,
 	##   SIMEX Baseline SGP - compute matrices first if they are not in sgp_object (NOTE: Not stored in SGPstateData)
 	#######################################################################################################################
 
-	if (sgp.percentiles.baseline & !is.null(calculate.simex)) {
+	if (sgp.percentiles.baseline & !is.null(calculate.simex.baseline)) {
 
 		###  Calculate BASELINE SIMEX matrices if they are not present
 		if (length(grep(".BASELINE.SIMEX", names(tmp_sgp_object[["Coefficient_Matrices"]]))) == 0) {
