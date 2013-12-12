@@ -14,6 +14,14 @@ updateSGP(
 	steps=c("prepareSGP", "analyzeSGP", "combineSGP", "summarizeSGP", "visualizeSGP", "outputSGP"),
 	years=NULL,
 	content_areas=NULL,
+	sgp.percentiles=TRUE,
+	sgp.projections=TRUE,
+	sgp.projections.lagged=TRUE,
+	sgp.percentiles.baseline=TRUE,
+	sgp.projections.baseline=TRUE,
+	sgp.projections.lagged.baseline=TRUE,
+	calculate.simex=NULL,
+	simulate.sgps=TRUE,
 	save.old.summaries=TRUE,
 	save.intermediate.results=TRUE,
 	sgp.use.my.coefficient.matrices=NULL,
@@ -37,6 +45,22 @@ updateSGP(
   \item{years}{If only 'what_sgp_object' is supplied, years specifies the years to be run amongst those in the provided sgp_object.
   }
   \item{content_areas}{If only 'what_sgp_object' is supplied, content_areas specifies the content areas to be run amonst those provided by the coefficient matrices in the sgp_object. Default is to run all analyses associated with the coefficient matrices.
+  }
+  \item{sgp.percentiles}{Boolean variable indicating whether to calculate student growth percentiles (if analyzeSGP is included in the 'steps' argument). Defaults to TRUE.
+  }
+  \item{sgp.projections}{Boolean variable indicating whether to calculate student growth projections (if analyzeSGP is included in the 'steps' argument). Defaults to TRUE.
+  }
+  \item{sgp.projections.lagged}{Boolean variable indicating whether to calculate lagged student growth projections often used for growth to standard analyses (if analyzeSGP is included in the 'steps' argument). Defaults to TRUE.
+  }
+  \item{sgp.percentiles.baseline}{Boolean variable indicating whether to calculate baseline student growth percentiles and/or coefficient matrices (if analyzeSGP is included in the 'steps' argument). Defaults to TRUE.
+  }
+  \item{sgp.projections.baseline}{Boolean variable indicating whether to calculate baseline student growth projections (if analyzeSGP is included in the 'steps' argument). Defaults to TRUE.
+  }
+  \item{sgp.projections.lagged.baseline}{Boolean variable indicating whether to calculate lagged baseline student growth projections (if analyzeSGP is included in the 'steps' argument). Defaults to TRUE.
+  }
+  \item{calculate.simex}{A character state acronym or list including state/csem variable, simulation.iterations, lambda and extrapolation method. Defaults to NULL, no simex calculations performed.  Alternatively, setting the argument to TRUE sets the list up with state=state, lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear" and save.matrices=TRUE.  This argument is passed to \code{\link{analyzeSGP}}.
+  }
+  \item{simulate.sgps}{Boolean variable indicating whether to simulate SGP values for students based on test-specific Conditional Standard Errors of Measurement (CSEM).  Test CSEM data must be available for simulation and included in \code{SGPstateData}.  This argument must be set to TRUE for confidence interval construction. Defaults to TRUE.  This argument is passed to \code{\link{analyzeSGP}}.
   }
   \item{save.old.summaries}{A Boolean argument (defaults to FALSE which will delete the \code{@Summary} slot before creating new summaries)
   indicating whether the call to \code{\link{summarizeSGP}} should save existing summaries in the \code{@Summary} slot.
