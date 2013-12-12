@@ -171,6 +171,10 @@ function(what_sgp_object=NULL,
 		} else {
 			if (!is.null(sgp.use.my.coefficient.matrices)) {
 				tmp.long.data <- rbind.fill(subset(what_sgp_object@Data, ID %in% unique(tmp_sgp_object@Data[['ID']])), tmp_sgp_object@Data)
+				if ("YEAR_WITHIN" %in% names(tmp.long.data)) {
+					tmp.long.data$FIRST_OBSERVATION <- NULL
+					tmp.long.data$LAST_OBSERVATION <- NULL
+				}
 				tmp.sgp_object.update <- prepareSGP(tmp.long.data, state=state, create.additional.variables=FALSE)
 				tmp.sgp_object.update@SGP$Coefficient_Matrices <- what_sgp_object@SGP$Coefficient_Matrices
 
