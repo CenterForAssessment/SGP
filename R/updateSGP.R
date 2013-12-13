@@ -29,10 +29,10 @@ function(what_sgp_object=NULL,
 
 	### Create state (if NULL) from sgp_object (if possible)
 
-		if (is.null(state)) {
-			tmp.name <- toupper(gsub("_", " ", deparse(substitute(what_sgp_object))))
-			state <- getStateAbbreviation(tmp.name, "updateSGP")
-		}
+	if (is.null(state)) {
+		tmp.name <- toupper(gsub("_", " ", deparse(substitute(what_sgp_object))))
+		state <- getStateAbbreviation(tmp.name, "updateSGP")
+	}
 
 	if (identical(calculate.simex, TRUE)) {
 		##  Enforce that simex.use.my.coefficient.matrices must be TRUE for updating COHORT SIMEX SGPs
@@ -246,7 +246,8 @@ function(what_sgp_object=NULL,
 					what_sgp_object@Data[['HIGH_NEED_STATUS']] <- NULL
 					what_sgp_object <- suppressMessages(prepareSGP(what_sgp_object, state=state))
 				}
-				what_sgp_object@SGP <- mergeSGP(what_sgp_object@SGP, tmp.sgp_object.update@SGP)
+				what_sgp_object@SGP <- mergeSGP(what_sgp_object@SGP[-grep("Coefficient_Matrices", names(what_sgp_object@SGP))], 
+					tmp.sgp_object.update@SGP[-grep("Coefficient_Matrices", names(tmp.sgp_object.update@SGP))])
 				if ("combineSGP" %in% steps) {
 					what_sgp_object <- combineSGP(what_sgp_object, years=update.years, state=state, parallel.config=parallel.config,
 						sgp.percentiles=sgp.percentiles,
