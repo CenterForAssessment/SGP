@@ -130,7 +130,9 @@ function(what_sgp_object=NULL,
 				what_sgp_object@SGP[['SGPercentiles']][grep(update.years, names(what_sgp_object@SGP[['SGPercentiles']]))] <- NULL
 				what_sgp_object@SGP[['SGProjections']][grep(update.years, names(what_sgp_object@SGP[['SGProjections']]))] <- NULL
 				what_sgp_object@SGP[['Simulated_SGPs']][grep(update.years, names(what_sgp_object@SGP[['Simulated_SGPs']]))] <- NULL
-				sgp.use.my.coefficient.matrices <- sgp.use.my.coefficient.matrices
+				if (is.null(sgp.use.my.coefficient.matrices)) {
+					what_sgp_object@SGP[['Coefficient_Matrices']][grep(update.years, names(what_sgp_object@SGP[['Coefficient_Matrices']]))] <- NULL
+				}
 
 			if ("HIGH_NEED_STATUS" %in% names(what_sgp_object@Data)) {
 				what_sgp_object@Data[['HIGH_NEED_STATUS']] <- NULL
