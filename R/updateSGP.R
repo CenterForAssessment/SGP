@@ -211,6 +211,7 @@ function(what_sgp_object=NULL,
 							parallel.config=parallel.config,
 							goodness.of.fit.print=FALSE,
 							...)
+							
 				tmp.sgp_object.update <- combineSGP(tmp.sgp_object.update, state=state,
 					sgp.percentiles=sgp.percentiles,
 					sgp.projections=sgp.projections,
@@ -218,6 +219,19 @@ function(what_sgp_object=NULL,
 					sgp.percentiles.baseline=sgp.percentiles.baseline,
 					sgp.projections.baseline=sgp.projections.baseline,
 					sgp.projections.lagged.baseline=sgp.projections.lagged.baseline)
+
+				if ("SCALE_SCORE_PRIOR_STANDARDIZED" %in% names(what_sgp_object@Data)) {
+					SCALE_SCORE_PRIOR_STANDARDIZED <- NULL
+					tmp.stand.prior <- what_sgp_object@Data[, list(SCALE_SCORE_PRIOR = SCALE_SCORE_PRIOR, 
+						SCALE_SCORE_PRIOR_STANDARDIZED = round(as.numeric(scale(SCALE_SCORE_PRIOR)), digits=3)), by = c("CONTENT_AREA", "GRADE", "YEAR")][
+						!is.na( SCALE_SCORE_PRIOR)] # & YEAR %in% update.years
+					setkey(tmp.stand.prior)
+					tmp.stand.prior <- unique(tmp.stand.prior)
+					
+					setkeyv(tmp.sgp_object.update@Data, names(tmp.stand.prior)[1:4])
+					tmp.sgp_object.update@Data[, SCALE_SCORE_PRIOR_STANDARDIZED := NULL]
+					tmp.sgp_object.update@Data <- data.table(tmp.stand.prior[tmp.sgp_object.update@Data], key=getKey(what_sgp_object@Data))
+				}
 
 				### Save analyses with just update
 
