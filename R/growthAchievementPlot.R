@@ -7,6 +7,7 @@
 	gaPlot.show.scale.transformations=TRUE,
 	gaPlot.grade_range,
 	gaPlot.max.order.for.progression=NULL,
+	gaPlot.start.points="Achievement Level Cuts",
 	state,
 	content_area,
 	year, 
@@ -266,7 +267,12 @@
 
 	if (is.null(gaPlot.students)) {
 		my.cutscore.label <- get.my.label(state, content_area, as.character(year))
-		start.cuts <- SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.cutscore.label]]
+		if (gaPlot.start.points=="Achievement_Level_Cuts") {
+			start.cuts <- SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.cutscore.label]]
+		} 
+		if (gaPlot.start.points=="Achievement_Percentiles") {
+			start.cuts <- sort(temp_uncond_frame[,1])	
+		}
 	 	tmp1.df <- data.frame(ID=seq_along(start.cuts[[1]]),
 			GRADE=as.numeric(as.character(tail(unlist(strsplit(names(start.cuts)[1], "_")), 1))),
 			SCALE_SCORE=start.cuts[[1]])
@@ -359,12 +365,15 @@
 			my.label <- "_State_Growth_and_Achievement_Plot_"
 		}
 
+		if (gaPlot.start.points=="Achievement_Level_Cuts") tmp.label <- "_Level_" 
+		if (gaPlot.start.points=="Achievement_Percentiles") tmp.label <- "_Percentile_"
+
 		if (k=="PDF") {
-			pdf(file=paste(output.folder, "/", state.name.file.label, my.label, capwords(content_area), "_", year, "_Level_", j, ".pdf", sep=""), 
+			pdf(file=paste(output.folder, "/", state.name.file.label, my.label, capwords(content_area), "_", year, tmp.label, j, ".pdf", sep=""), 
 				width=8.5, height=11, bg=format.colors.background)
 		}
 		if (k=="PNG") {
-			Cairo(file=paste(output.folder, "/", state.name.file.label, my.label, capwords(content_area), "_", year, "_Level_", j, ".png", sep=""),
+			Cairo(file=paste(output.folder, "/", state.name.file.label, my.label, capwords(content_area), "_", year, tmp.label, j, ".png", sep=""),
 			      width=8.5, height=11, units="in", dpi=144, pointsize=24, bg=format.colors.background)
 
 		}
