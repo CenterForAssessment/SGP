@@ -34,6 +34,16 @@ function(what_sgp_object=NULL,
 			state <- getStateAbbreviation(tmp.name, "updateSGP")
 		}
 
+	if (identical(calculate.simex, TRUE)) {
+		##  Enforce that simex.use.my.coefficient.matrices must be TRUE for updating COHORT SIMEX SGPs
+		calculate.simex <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear", save.matrices=TRUE, simex.use.my.coefficient.matrices = TRUE)
+	}
+
+	if (identical(calculate.simex.baseline, TRUE)) {
+		##  Enforce that simex.use.my.coefficient.matrices must be TRUE for updating BASELINE SIMEX SGPs
+		calculate.simex.baseline <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear", save.matrices=TRUE, simex.use.my.coefficient.matrices = TRUE)
+	}
+
 	### Utility functions
 
 	"%w/o%" <- function(x,y) x[!x %in% y]
