@@ -366,18 +366,15 @@
 			my.label <- "_State_Growth_and_Achievement_Plot_"
 		}
 
-		if (gaPlot.start.points=="Achievement_Level_Cuts") tmp.label <- "_Level_" 
-		if (gaPlot.start.points=="Achievement_Percentiles") tmp.label <- "_Percentile_"
-
-		if (k=="PDF") {
-			pdf(file=paste(output.folder, "/", state.name.file.label, my.label, capwords(content_area), "_", year, tmp.label, j, ".pdf", sep=""), 
-				width=8.5, height=11, bg=format.colors.background)
+		if (gaPlot.start.points=="Achievement Level Cuts") {
+			tmp.file.name <- paste(output.folder, "/Achievement_Level_Cuts/", state.name.file.label, my.label, capwords(content_area), "_", year, "_Level_", j, ".pdf", sep="")
 		}
-		if (k=="PNG") {
-			Cairo(file=paste(output.folder, "/", state.name.file.label, my.label, capwords(content_area), "_", year, tmp.label, j, ".png", sep=""),
-			      width=8.5, height=11, units="in", dpi=144, pointsize=24, bg=format.colors.background)
-
+		if (gaPlot.start.points=="Achievement Percentiles") {
+			tmp.file.name <- paste(output.folder, "/Achievement_Percentiles/", state.name.file.label, my.label, capwords(content_area), "_", year, "_Percentile_", j, ".pdf", sep="")
 		}
+
+		if (k=="PDF") pdf(file=tmp.file.name, width=8.5, height=11, bg=format.colors.background)
+		if (k=="PNG") Cairo(file=tmp.file.name, width=8.5, height=11, units="in", dpi=144, pointsize=24, bg=format.colors.background)
 
 
 ##
