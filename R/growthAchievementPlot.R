@@ -267,10 +267,10 @@
 
 	if (is.null(gaPlot.students)) {
 		my.cutscore.label <- get.my.label(state, content_area, as.character(year))
-		if (gaPlot.start.points=="Achievement_Level_Cuts") {
+		if (gaPlot.start.points=="Achievement Level Cuts") {
 			start.cuts <- SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.cutscore.label]]
 		} 
-		if (gaPlot.start.points=="Achievement_Percentiles") {
+		if (gaPlot.start.points=="Achievement Percentiles") {
 			start.cuts <- sort(temp_uncond_frame[,1])	
 		}
 	 	tmp1.df <- data.frame(ID=seq_along(start.cuts[[1]]),
