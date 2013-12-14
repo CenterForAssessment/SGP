@@ -1340,7 +1340,7 @@ function(panel.data,         ## REQUIRED
 							YEAR=sgp.labels[['my.year']], 
 							GRADE=tmp.last)
 
-				for (gof.iter in sgps.for.gof) {
+				for (gof.iter in seq_along(sgps.for.gof)) {
 					Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]][['TMP_NAME']] <- gofSGP(
 											sgp_object=tmp.gof.data,
 											years=sgp.labels[['my.year']],

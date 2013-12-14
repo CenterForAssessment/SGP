@@ -8,6 +8,7 @@ function(what_sgp_object=NULL,
 	save.old.summaries=TRUE,
 	save.intermediate.results=TRUE,
 	sgp.use.my.coefficient.matrices=NULL,
+	sgp.target.scale.scores=FALSE,
 	overwrite.existing.data=FALSE,
 	sgPlot.demo.report=TRUE,
 	sgp.config=NULL,
@@ -101,6 +102,7 @@ function(what_sgp_object=NULL,
 					sgp.projections.baseline=tf.sgp.baseline,
 					sgp.projections.lagged.baseline=tf.sgp.baseline,
 					sgp.use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
+					sgp.target.scale.scores=sgp.target.scale.scores,
 					save.intermediate.results=save.intermediate.results,
 					sgp.config=sgp.config,
 					parallel.config=parallel.config,
@@ -130,7 +132,9 @@ function(what_sgp_object=NULL,
 				what_sgp_object@SGP[['SGPercentiles']][grep(update.years, names(what_sgp_object@SGP[['SGPercentiles']]))] <- NULL
 				what_sgp_object@SGP[['SGProjections']][grep(update.years, names(what_sgp_object@SGP[['SGProjections']]))] <- NULL
 				what_sgp_object@SGP[['Simulated_SGPs']][grep(update.years, names(what_sgp_object@SGP[['Simulated_SGPs']]))] <- NULL
-				sgp.use.my.coefficient.matrices <- sgp.use.my.coefficient.matrices
+				if (is.null(sgp.use.my.coefficient.matrices)) {
+					what_sgp_object@SGP[['Coefficient_Matrices']][grep(update.years, names(what_sgp_object@SGP[['Coefficient_Matrices']]))] <- NULL
+				}
 
 			if ("HIGH_NEED_STATUS" %in% names(what_sgp_object@Data)) {
 				what_sgp_object@Data[['HIGH_NEED_STATUS']] <- NULL
@@ -152,6 +156,7 @@ function(what_sgp_object=NULL,
 						save.old.summaries=save.old.summaries, 
 						sgPlot.demo.report=sgPlot.demo.report,
 						sgp.use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
+						sgp.target.scale.scores=sgp.target.scale.scores,
 						sgp.config=sgp.config,
 						parallel.config=parallel.config,
 						...)
@@ -232,6 +237,7 @@ function(what_sgp_object=NULL,
 							save.old.summaries=save.old.summaries, 
 							sgPlot.demo.report=sgPlot.demo.report,
 							sgp.use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
+							sgp.target.scale.scores=sgp.target.scale.scores,
 							sgp.config=sgp.config,
 							parallel.config=parallel.config,
 							...)
