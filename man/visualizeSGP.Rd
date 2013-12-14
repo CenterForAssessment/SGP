@@ -59,7 +59,7 @@ visualizeSGP(
            gaPlot.format="print",
            gaPlot.baseline=NULL,
            gaPlot.max.order.for.progression=NULL,
-	   gaPlot.start.points="Achievement_Level_Cuts",
+	   gaPlot.start.points="Achievement Level Cuts",
            gaPlot.folder="Visualizations/growthAchievementPlots",
            parallel.config=NULL)
 }
