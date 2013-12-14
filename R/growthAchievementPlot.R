@@ -41,7 +41,7 @@
 
 	## Create folder for plots
 
-	dir.create(output.folder, recursive=TRUE, showWarnings=FALSE)
+	dir.create(file.path(output.folder, gsub(" ", "_", gaPlot.start.points)), recursive=TRUE, showWarnings=FALSE)
 
 	## Create default values
 
