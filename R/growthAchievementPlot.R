@@ -41,7 +41,7 @@
 
 	## Create folder for plots
 
-	dir.create(file.path(output.folder, gsub(" ", "_", gaPlot.start.points)), recursive=TRUE, showWarnings=FALSE)
+	dir.create(output.folder, recursive=TRUE, showWarnings=FALSE)
 
 	## Create default values
 
@@ -274,7 +274,8 @@
 		if (gaPlot.start.points=="Achievement Percentiles") {
 			start.cuts.values <- as.numeric(sort(temp_uncond_frame[,1]))
 		}
-	 	tmp1.df <- data.frame(ID=seq_along(start.cuts[[1]]),
+	 	tmp1.df <- data.frame(
+			ID=seq_along(start.cuts.values),
 			GRADE=as.numeric(as.character(tail(unlist(strsplit(names(start.cuts)[1], "_")), 1))),
 			SCALE_SCORE=start.cuts.values)
 	} else {
@@ -366,15 +367,16 @@
 			my.label <- "_State_Growth_and_Achievement_Plot_"
 		}
 
+		if (k=="PDF") tmp.suffix <- ".pdf" else tmp.suffix <- ".png"
 		if (gaPlot.start.points=="Achievement Level Cuts") {
-			tmp.file.name <- paste(output.folder, "/Achievement_Level_Cuts/", state.name.file.label, my.label, capwords(content_area), "_", year, "_Level_", j, ".pdf", sep="")
+			tmp.file.name <- paste(output.folder, "/", state.name.file.label, my.label, capwords(content_area), "_", year, "_Level_", j, tmp.suffix, sep="")
 		}
 		if (gaPlot.start.points=="Achievement Percentiles") {
-			tmp.file.name <- paste(output.folder, "/Achievement_Percentiles/", state.name.file.label, my.label, capwords(content_area), "_", year, "_Percentile_", j, ".pdf", sep="")
+			tmp.file.name <- paste(output.folder, "/", state.name.file.label, my.label, capwords(content_area), "_", year, "_Percentile_", as.integer(100*gaPlot.achievement_percentiles[j]), tmp.suffix, sep="")
 		}
 
 		if (k=="PDF") pdf(file=tmp.file.name, width=8.5, height=11, bg=format.colors.background)
-		if (k=="PNG") Cairo(file=tmp.file.name, width=8.5, height=11, units="in", dpi=144, pointsize=24, bg=format.colors.background)
+		if (k=="PNG") Cairo(file=tmp.file.name, width=8.5, height=11, units="in", dpi=144, pointsize=22, bg=format.colors.background)
 
 
 ##
