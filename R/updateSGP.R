@@ -90,7 +90,7 @@ function(what_sgp_object=NULL,
 		### Update results
 
 		sgp_object <- abcSGP(
-					sgp_object=sgp_object,
+					sgp_object=what_sgp_object,
 					state=state,
 					steps=steps,
 					years=years,
