@@ -212,26 +212,7 @@ function(what_sgp_object=NULL,
 							goodness.of.fit.print=FALSE,
 							...)
 							
-				tmp.sgp_object.update <- combineSGP(tmp.sgp_object.update, state=state,
-					sgp.percentiles=sgp.percentiles,
-					sgp.projections=sgp.projections,
-					sgp.projections.lagged=sgp.projections.lagged,
-					sgp.percentiles.baseline=sgp.percentiles.baseline,
-					sgp.projections.baseline=sgp.projections.baseline,
-					sgp.projections.lagged.baseline=sgp.projections.lagged.baseline)
-
-				if ("SCALE_SCORE_PRIOR_STANDARDIZED" %in% names(what_sgp_object@Data)) {
-					SCALE_SCORE_PRIOR_STANDARDIZED <- NULL
-					tmp.stand.prior <- what_sgp_object@Data[, list(SCALE_SCORE_PRIOR = SCALE_SCORE_PRIOR, 
-						SCALE_SCORE_PRIOR_STANDARDIZED = round(as.numeric(scale(SCALE_SCORE_PRIOR)), digits=3)), by = c("CONTENT_AREA", "GRADE", "YEAR")][
-						!is.na( SCALE_SCORE_PRIOR)] # & YEAR %in% update.years
-					setkey(tmp.stand.prior)
-					tmp.stand.prior <- unique(tmp.stand.prior)
-					
-					setkeyv(tmp.sgp_object.update@Data, names(tmp.stand.prior)[1:4])
-					tmp.sgp_object.update@Data[, SCALE_SCORE_PRIOR_STANDARDIZED := NULL]
-					tmp.sgp_object.update@Data <- data.table(tmp.stand.prior[tmp.sgp_object.update@Data], key=getKey(what_sgp_object@Data))
-				}
+				tmp.sgp_object.update <- combineSGP(tmp.sgp_object.update, state=state)
 
 				### Save analyses with just update
 
@@ -243,19 +224,12 @@ function(what_sgp_object=NULL,
 
 				what_sgp_object@Data <- data.table(rbind.fill(what_sgp_object@Data, tmp_sgp_object@Data), key=getKey(what_sgp_object@Data))
 				if ("HIGH_NEED_STATUS" %in% names(what_sgp_object@Data)) {
-					what_sgp_object@Data[['HIGH_NEED_STATUS']] <- NULL
+					what_sgp_object@Data[, HIGH_NEED_STATUS := NULL]
 					what_sgp_object <- suppressMessages(prepareSGP(what_sgp_object, state=state))
 				}
-				what_sgp_object@SGP <- mergeSGP(what_sgp_object@SGP[-grep("Coefficient_Matrices", names(what_sgp_object@SGP))], 
-					tmp.sgp_object.update@SGP[-grep("Coefficient_Matrices", names(tmp.sgp_object.update@SGP))])
+				what_sgp_object@SGP <- mergeSGP(what_sgp_object@SGP, tmp_sgp_object@SGP)
 				if ("combineSGP" %in% steps) {
-					what_sgp_object <- combineSGP(what_sgp_object, years=update.years, state=state, parallel.config=parallel.config,
-						sgp.percentiles=sgp.percentiles,
-						sgp.projections=sgp.projections,
-						sgp.projections.lagged=sgp.projections.lagged,
-						sgp.percentiles.baseline=sgp.percentiles.baseline,
-						sgp.projections.baseline=sgp.projections.baseline,
-						sgp.projections.lagged.baseline=sgp.projections.lagged.baseline)
+					what_sgp_object <- combineSGP(what_sgp_object, years=update.years, state=state)
 				}
 
 				if ("summarizeSGP" %in% steps) what_sgp_object <- summarizeSGP(what_sgp_object, state=state, parallel.config=parallel.config)
