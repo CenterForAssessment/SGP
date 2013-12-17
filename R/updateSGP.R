@@ -227,7 +227,6 @@ function(what_sgp_object=NULL,
 					what_sgp_object@Data[, HIGH_NEED_STATUS := NULL]
 					what_sgp_object <- suppressMessages(prepareSGP(what_sgp_object, state=state))
 				}
-				# what_sgp_object@SGP <- mergeSGP(what_sgp_object@SGP, tmp.sgp_object.update@SGP)
 				##  Remove duplicates if present before merging results back in.
 				tmp_sgp_list <- mergeSGP(what_sgp_object@SGP, tmp.sgp_object.update@SGP)
 				for (ca in names(tmp.sgp_object.update@SGP[["SGPercentiles"]])) {
