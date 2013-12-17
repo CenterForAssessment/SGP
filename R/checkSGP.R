@@ -134,11 +134,16 @@ function(sgp_object,
 		}
 	}
 
-	## Test if SCALE_SCORE is of class numeric and convert if not
+	## Test if SCALE_SCORE and SCALE_SCORE_PRIOR are of class numeric and convert if not
 
 	if (!is.double(sgp_object@Data[['SCALE_SCORE']])) {
 		sgp_object@Data[['SCALE_SCORE']] <- as.numeric(sgp_object@Data[['SCALE_SCORE']])
 		message("\tNOTE: Converting SCALE_SCORE to class 'numeric'.")
+	}
+
+	if ("SCALE_SCORE_PRIOR" %in% names(sgp_object@Data) && !is.double(sgp_object@Data[['SCALE_SCORE_PRIOR']])) {
+		sgp_object@Data[['SCALE_SCORE_PRIOR']] <- as.numeric(sgp_object@Data[['SCALE_SCORE_PRIOR']])
+		message("\tNOTE: Converting SCALE_SCORE_PRIOR to class 'numeric'.")
 	}
 
 	## Return sgp_object	

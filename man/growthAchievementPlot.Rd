@@ -15,6 +15,7 @@ growthAchievementPlot(
         gaPlot.show.scale.transformations=TRUE,
         gaPlot.grade_range,
         gaPlot.max.order.for.progression=NULL,
+	gaPlot.start.points="Achievement Level Cuts",
         state,
         content_area,
         year,
@@ -48,6 +49,9 @@ growthAchievementPlot(
 	}
 	\item{gaPlot.max.order.for.progression}{
 	The maximum coefficient matrix order to use for each progression. Default is NULL which utilizes the maximum order available with the coefficient matrices.
+	}
+	\item{gaPlot.start.points}{
+	Either 'Achievement Level Cuts' or 'Achievement Percentiles' defining where the growth percentiles trajectories will start in the growth achievement plots.
 	}
         \item{state}{
         A two letter acronym for the state associated with the supplied data.

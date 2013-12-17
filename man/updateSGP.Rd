@@ -25,6 +25,7 @@ updateSGP(
 	save.old.summaries=TRUE,
 	save.intermediate.results=TRUE,
 	sgp.use.my.coefficient.matrices=NULL,
+	sgp.target.scale.scores=FALSE,
 	overwrite.existing.data=FALSE,
 	sgPlot.demo.report=TRUE,
 	sgp.config=NULL,
@@ -68,6 +69,9 @@ updateSGP(
   \item{save.intermediate.results}{A Boolean argument (defaults to FALSE) indicating whether results should be save to the current directory after each step of the analysis.
   }
   \item{sgp.use.my.coefficient.matrices}{A Boolean argument (defaults to FALSE/NULL) passed to \code{\link{analyzeSGP}} indicating whether previous coefficient matrices should be used as 
+  part of the analyses.
+  }
+  \item{sgp.target.scale.scores}{A Boolean argument (defaults to FALSE/NULL) passed to \code{\link{combineSGP}} indicating whether to calculate scale scores associated with SGP targets as 
   part of the analyses.
   }
   \item{overwrite.existing.data}{A Boolean argument (defaults to FALSE) indicating whether updateSGP should overwrite existing data/results from an earlier run as part of updateSGP.

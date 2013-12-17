@@ -59,6 +59,7 @@ visualizeSGP(
            gaPlot.format="print",
            gaPlot.baseline=NULL,
            gaPlot.max.order.for.progression=NULL,
+	   gaPlot.start.points="Achievement Level Cuts",
            gaPlot.folder="Visualizations/growthAchievementPlots",
            parallel.config=NULL)
 }
@@ -182,7 +183,7 @@ provided the function produces \code{\link{studentGrowthPlot}}s for ALL students
   }
   \item{sgPlot.zip}{A Boolean argument (defaults to TRUE) indicating whether to zip school folders containing \code{\link{studentGrowthPlot}}s. 
   }
-  \item{sgPlot.output.format}{Argument indicating the desired type of output format for student growth plots. Either 'PDF' (default) or 'PNG'.
+  \item{sgPlot.output.format}{Argument indicating the desired type of output format for student growth plots. Either 'PDF' (default), 'PNG', or 'PDF_PIECES'.
   }
   \item{gaPlot.years}{A vector indicating the year(s) for which to produce \code{\link{growthAchievementPlot}}s. If missing the function will use the last year available 
   in the data to produce the \code{\link{growthAchievementPlot}}s.
@@ -202,6 +203,8 @@ provided the function produces \code{\link{studentGrowthPlot}}s for ALL students
   \item{gaPlot.max.order.for.progression}{The maximum coefficient matrix order to use for each progression. Default is NULL which utilizes the maximum order available 
   with the coefficient matrices.}
   \item{gaPlot.folder}{Character vector indicating where \code{\link{growthAchievementPlot}}s should be placed. The default folder is 'Visualizations/growthAchievementPlots'.  
+  }
+  \item{gaPlot.start.points}{Either 'Achievement Level Cuts' or 'Achievement Percentiles' defining where the percentile trajectories of the growth achievement plot will start from.
   }
  \item{parallel.config}{A named list with, at a minimum, two elements indicating 1) the BACKEND package to be used for parallel computation and 2) the WORKERS list to specify the number of processors to be used in each major analysis.  The BACKEND element can be set = to \code{FOREACH} or \code{PARALLEL}.  Please consult the manuals and vignettes for information of these packages!  The \code{\link{analyzeSGP}} help page contains more thorough explanation and examples of the \code{parallel.config} setup. 
 

@@ -7,6 +7,7 @@
 	gaPlot.show.scale.transformations=TRUE,
 	gaPlot.grade_range,
 	gaPlot.max.order.for.progression=NULL,
+	gaPlot.start.points="Achievement Level Cuts",
 	state,
 	content_area,
 	year, 
@@ -267,9 +268,16 @@
 	if (is.null(gaPlot.students)) {
 		my.cutscore.label <- get.my.label(state, content_area, as.character(year))
 		start.cuts <- SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.cutscore.label]]
-	 	tmp1.df <- data.frame(ID=seq_along(start.cuts[[1]]),
+		if (gaPlot.start.points=="Achievement Level Cuts") {
+			start.cuts.values <- start.cuts[[1]]
+		} 
+		if (gaPlot.start.points=="Achievement Percentiles") {
+			start.cuts.values <- as.numeric(sort(temp_uncond_frame[,1]))
+		}
+	 	tmp1.df <- data.frame(
+			ID=seq_along(start.cuts.values),
 			GRADE=as.numeric(as.character(tail(unlist(strsplit(names(start.cuts)[1], "_")), 1))),
-			SCALE_SCORE=start.cuts[[1]])
+			SCALE_SCORE=start.cuts.values)
 	} else {
 		setkey(growthAchievementPlot.data, ID)
 		tmp1.df <- growthAchievementPlot.data[gaPlot.students]
@@ -359,15 +367,16 @@
 			my.label <- "_State_Growth_and_Achievement_Plot_"
 		}
 
-		if (k=="PDF") {
-			pdf(file=paste(output.folder, "/", state.name.file.label, my.label, capwords(content_area), "_", year, "_Level_", j, ".pdf", sep=""), 
-				width=8.5, height=11, bg=format.colors.background)
+		if (k=="PDF") tmp.suffix <- ".pdf" else tmp.suffix <- ".png"
+		if (gaPlot.start.points=="Achievement Level Cuts") {
+			tmp.file.name <- paste(output.folder, "/", state.name.file.label, my.label, capwords(content_area), "_", year, "_Level_", j, tmp.suffix, sep="")
 		}
-		if (k=="PNG") {
-			Cairo(file=paste(output.folder, "/", state.name.file.label, my.label, capwords(content_area), "_", year, "_Level_", j, ".png", sep=""),
-			      width=8.5, height=11, units="in", dpi=144, pointsize=24, bg=format.colors.background)
+		if (gaPlot.start.points=="Achievement Percentiles") {
+			tmp.file.name <- paste(output.folder, "/", state.name.file.label, my.label, capwords(content_area), "_", year, "_Percentile_", as.integer(100*gaPlot.achievement_percentiles[j]), tmp.suffix, sep="")
+		}
 
-		}
+		if (k=="PDF") pdf(file=tmp.file.name, width=8.5, height=11, bg=format.colors.background)
+		if (k=="PNG") Cairo(file=tmp.file.name, width=8.5, height=11, units="in", dpi=144, pointsize=22, bg=format.colors.background)
 
 
 ##
