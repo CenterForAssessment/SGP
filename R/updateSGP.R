@@ -11,11 +11,11 @@ function(what_sgp_object=NULL,
 	sgp.percentiles.baseline=TRUE,
 	sgp.projections.baseline=TRUE,
 	sgp.projections.lagged.baseline=TRUE,
-	calculate.simex = NULL,
-	calculate.simex.baseline = NULL,
 	simulate.sgps = FALSE,
 	save.old.summaries=TRUE,
 	save.intermediate.results=TRUE,
+	calculate.simex = NULL,
+	calculate.simex.baseline = NULL,
 	sgp.use.my.coefficient.matrices=NULL,
 	sgp.target.scale.scores=FALSE,
 	overwrite.existing.data=FALSE,
@@ -139,7 +139,7 @@ function(what_sgp_object=NULL,
 
 	if (!is.null(with_sgp_data_LONG)) {
 
-		YEAR <- ID <- NULL
+		HIGH_NEED_STATUS <- YEAR <- ID <- NULL
 		tmp_sgp_object <- prepareSGP(with_sgp_data_LONG, state=state, create.additional.variables=FALSE)
 		update.years <- sort(unique(tmp_sgp_object@Data$YEAR))
 
