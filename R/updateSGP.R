@@ -219,12 +219,6 @@ function(what_sgp_object=NULL,
 							
 				tmp.sgp_object.update <- combineSGP(tmp.sgp_object.update, state=state)
 
-				### Save analyses with just update
-
-				tmp.file.name <- paste(gsub(" ", "_", toupper(getStateAbbreviation(state, type="name"))), "SGP_Update", paste(update.years, collapse=","), sep="_")
-				assign(tmp.file.name, tmp.sgp_object.update)
-				save(list=tmp.file.name, file=file.path("Data", paste(tmp.file.name, "Rdata", sep=".")))
-
 				### Merge update with original SGP object
 
 				what_sgp_object@Data <- data.table(rbind.fill(what_sgp_object@Data, tmp_sgp_object@Data), key=getKey(what_sgp_object@Data))
@@ -251,6 +245,17 @@ function(what_sgp_object=NULL,
 				if ("summarizeSGP" %in% steps) what_sgp_object <- summarizeSGP(what_sgp_object, state=state, parallel.config=parallel.config)
 				if ("visualizeSGP" %in% steps) visualizeSGP(what_sgp_object)
 				if ("outputSGP" %in% steps) outputSGP(what_sgp_object)
+
+				### Save SGP object with update data and full student history
+
+				tmp.file.name <- paste(gsub(" ", "_", toupper(getStateAbbreviation(state, type="name"))), "SGP_Update", paste(update.years, collapse=","), sep="_")
+				assign(tmp.file.name, tmp.sgp_object.update)
+				save(list=tmp.file.name, file=file.path("Data", "Updated_Data", paste(tmp.file.name, "Rdata", sep=".")))
+
+				###  Output just additional update data
+				
+				tmp_sgp_object <- suppressMessages(combineSGP(tmp_sgp_object, state=state))
+				outputSGP(tmp_sgp_object, state = state, output.type = "LONG_Data", outputSGP.directory = file.path("Data", "Updated_Data"))
 
 				### Print finish and return SGP object
 
