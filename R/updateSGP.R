@@ -248,16 +248,16 @@ function(what_sgp_object=NULL,
 				if ("visualizeSGP" %in% steps) visualizeSGP(what_sgp_object)
 				if ("outputSGP" %in% steps) outputSGP(what_sgp_object)
 
+				###  Output just additional update data
+				
+				tmp_sgp_object <- suppressMessages(combineSGP(tmp_sgp_object, state=state))
+				outputSGP(tmp_sgp_object, state = state, output.type = "LONG_Data", outputSGP.directory = file.path("Data", "Updated_Data"))
+
 				### Save SGP object with update data and full student history
 
 				tmp.file.name <- paste(gsub(" ", "_", toupper(getStateAbbreviation(state, type="name"))), "SGP_Update", paste(update.years, collapse=","), sep="_")
 				assign(tmp.file.name, tmp.sgp_object.update)
 				save(list=tmp.file.name, file=file.path("Data", "Updated_Data", paste(tmp.file.name, "Rdata", sep=".")))
-
-				###  Output just additional update data
-				
-				tmp_sgp_object <- suppressMessages(combineSGP(tmp_sgp_object, state=state))
-				outputSGP(tmp_sgp_object, state = state, output.type = "LONG_Data", outputSGP.directory = file.path("Data", "Updated_Data"))
 
 				### Print finish and return SGP object
 
