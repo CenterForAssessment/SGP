@@ -250,6 +250,7 @@ function(what_sgp_object=NULL,
 
 				###  Output just additional update data
 				
+				tmp_sgp_object@SGP <- tmp.sgp_object.update@SGP
 				tmp_sgp_object <- suppressMessages(combineSGP(tmp_sgp_object, state=state))
 				outputSGP(tmp_sgp_object, state = state, output.type = "LONG_Data", outputSGP.directory = file.path("Data", "Updated_Data"))
 
