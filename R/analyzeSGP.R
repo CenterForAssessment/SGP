@@ -17,6 +17,7 @@ function(sgp_object,
          sgp.use.my.coefficient.matrices=NULL,
          simulate.sgps=TRUE,
          calculate.simex=NULL,
+         calculate.simex.baseline=NULL,
          goodness.of.fit.print=TRUE,
          sgp.config=NULL,
          sgp.config.drop.nonsequential.grade.progression.variables=TRUE,
@@ -93,6 +94,12 @@ function(sgp_object,
 		sgp.projections.lagged.baseline.max.order <- SGPstateData[[state]][["SGP_Configuration"]][["sgp.projections.lagged.baseline.max.order"]]
 	}
 
+	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["return.prior.scale.score.standardized"]])) {
+		return.prior.scale.score.standardized <- SGPstateData[[state]][["SGP_Configuration"]][["return.prior.scale.score.standardized"]]
+	} else {
+		return.prior.scale.score.standardized <- TRUE
+	}
+
 	if (!is.null(sgp.config) && sgp.config.drop.nonsequential.grade.progression.variables) {
 		sgp.config.drop.nonsequential.grade.progression.variables <- FALSE
 	}
@@ -114,6 +121,10 @@ function(sgp_object,
 		calculate.simex <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear", save.matrices=TRUE)
 	}
 
+	if (identical(calculate.simex.baseline, TRUE)) {
+		calculate.simex.baseline <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear", save.matrices=TRUE)
+	}
+
 	if (is.null(sgp.minimum.default.panel.years) & !is.null(SGPstateData[[state]][["SGP_Configuration"]][['sgp.minimum.default.panel.years']])) {
 		sgp.minimum.default.panel.years <- SGPstateData[[state]][["SGP_Configuration"]][['sgp.minimum.default.panel.years']]
 	}
@@ -121,8 +132,6 @@ function(sgp_object,
 		sgp.minimum.default.panel.years <- 3
 	} 
 	
-	calculate.simex.baseline <- calculate.simex
-
 	### 
 	### Utility functions
 	###
@@ -282,10 +291,14 @@ function(sgp_object,
 	##   SIMEX Baseline SGP - compute matrices first if they are not in sgp_object (NOTE: Not stored in SGPstateData)
 	#######################################################################################################################
 
-	if (sgp.percentiles.baseline & !is.null(calculate.simex)) {
+	if (sgp.percentiles.baseline & !is.null(calculate.simex.baseline)) {
 
 		###  Calculate BASELINE SIMEX matrices if they are not present
 		if (length(grep(".BASELINE.SIMEX", names(tmp_sgp_object[["Coefficient_Matrices"]]))) == 0) {
+			
+			##  Enforce that simex.use.my.coefficient.matrices must be FALSE for BASELINE SIMEX matrix production
+			calculate.simex.baseline$simex.use.my.coefficient.matrices <- NULL
+			
 			if (is.null(sgp.baseline.config)) {
 				sgp.baseline.config <- getSGPBaselineConfig(sgp_object, content_areas, grades, sgp.baseline.panel.years)
 			} else {
@@ -308,7 +321,7 @@ function(sgp_object,
 							sgp.baseline.config=list(sgp.iter), ## NOTE: list of sgp.iter must be passed for proper iteration
 							return.matrices.only=TRUE,
 							calculate.baseline.sgps=FALSE,
-							calculate.baseline.simex=calculate.simex,
+							calculate.baseline.simex=calculate.simex.baseline,
 							parallel.config=parallel.config))
 					}
 					tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp, simex=TRUE)))
@@ -321,7 +334,7 @@ function(sgp_object,
 							sgp.baseline.config=list(sgp.iter), ## NOTE: list of sgp.iter must be passed for proper iteration
 							return.matrices.only=TRUE,
 							calculate.baseline.sgps=FALSE,
-							calculate.baseline.simex=calculate.simex,
+							calculate.baseline.simex=calculate.simex.baseline,
 							parallel.config=parallel.config))
 					
 						tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp, simex=TRUE)))
@@ -335,7 +348,7 @@ function(sgp_object,
 							sgp.baseline.config=list(sgp.iter), ## NOTE: list of sgp.iter must be passed for proper iteration
 							return.matrices.only=TRUE,
 							calculate.baseline.sgps=FALSE,
-							calculate.baseline.simex=calculate.simex,
+							calculate.baseline.simex=calculate.simex.baseline,
 							parallel.config=parallel.config),
 							mc.cores=par.start$workers, mc.preschedule=FALSE)
 							
@@ -356,7 +369,7 @@ function(sgp_object,
 						sgp.baseline.config=sgp.baseline.config[sgp.iter], ## NOTE: must pass list, [...], not vector, [[...]].
 						return.matrices.only=TRUE,
 						calculate.baseline.sgps=FALSE,
-						calculate.baseline.simex=calculate.simex,
+						calculate.baseline.simex=calculate.simex.baseline,
 						parallel.config=lower.level.parallel.config)
 				}
 				
@@ -445,6 +458,7 @@ function(sgp_object,
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 						sgp.cohort.size=SGPstateData[[state]][["SGP_Configuration"]][["sgp.cohort.size"]],
 						return.norm.group.scale.scores=return.norm.group.scale.scores,
+						return.prior.scale.score.standardized=return.prior.scale.score.standardized,
 						goodness.of.fit=state,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
@@ -477,6 +491,7 @@ function(sgp_object,
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 						sgp.cohort.size=SGPstateData[[state]][["SGP_Configuration"]][["sgp.cohort.size"]],
 						return.norm.group.scale.scores=return.norm.group.scale.scores,
+						return.prior.scale.score.standardized=return.prior.scale.score.standardized,
 						goodness.of.fit=state,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
@@ -513,6 +528,7 @@ function(sgp_object,
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 						sgp.cohort.size=SGPstateData[[state]][["SGP_Configuration"]][["sgp.cohort.size"]],
 						return.norm.group.scale.scores=return.norm.group.scale.scores,
+						return.prior.scale.score.standardized=return.prior.scale.score.standardized,
 						goodness.of.fit=state,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
@@ -564,6 +580,7 @@ function(sgp_object,
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 						return.norm.group.scale.scores=return.norm.group.scale.scores,
+						return.prior.scale.score.standardized=return.prior.scale.score.standardized,
 						goodness.of.fit=state,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
@@ -596,6 +613,7 @@ function(sgp_object,
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 						return.norm.group.scale.scores=return.norm.group.scale.scores,
+						return.prior.scale.score.standardized=return.prior.scale.score.standardized,
 						goodness.of.fit=state,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
@@ -632,6 +650,7 @@ function(sgp_object,
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 						return.norm.group.scale.scores=return.norm.group.scale.scores,
+						return.prior.scale.score.standardized=return.prior.scale.score.standardized,
 						goodness.of.fit=state,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
@@ -1111,6 +1130,7 @@ function(sgp_object,
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 						sgp.cohort.size=SGPstateData[[state]][["SGP_Configuration"]][["sgp.cohort.size"]],
 						return.norm.group.scale.scores=return.norm.group.scale.scores,
+						return.prior.scale.score.standardized=return.prior.scale.score.standardized,
 						goodness.of.fit=state,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
@@ -1156,6 +1176,7 @@ function(sgp_object,
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 						return.norm.group.scale.scores=return.norm.group.scale.scores,
+						return.prior.scale.score.standardized=return.prior.scale.score.standardized,
 						goodness.of.fit=state,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,

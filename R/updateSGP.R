@@ -5,8 +5,17 @@ function(what_sgp_object=NULL,
 	steps=c("prepareSGP", "analyzeSGP", "combineSGP", "summarizeSGP", "visualizeSGP", "outputSGP"),
 	years=NULL,
 	content_areas=NULL,
+	sgp.percentiles=TRUE, 
+	sgp.projections=TRUE,
+	sgp.projections.lagged=TRUE,
+	sgp.percentiles.baseline=TRUE,
+	sgp.projections.baseline=TRUE,
+	sgp.projections.lagged.baseline=TRUE,
+	simulate.sgps = FALSE,
 	save.old.summaries=TRUE,
 	save.intermediate.results=TRUE,
+	calculate.simex = NULL,
+	calculate.simex.baseline = NULL,
 	sgp.use.my.coefficient.matrices=NULL,
 	sgp.target.scale.scores=FALSE,
 	overwrite.existing.data=FALSE,
@@ -15,16 +24,26 @@ function(what_sgp_object=NULL,
 	parallel.config=NULL,
 	...) {
 
-        started.at <- proc.time()
-	message(paste("\nStarted updateSGP", date()), "\n")
+		started.at <- proc.time()
+		message(paste("\nStarted updateSGP", date()), "\n")
 
 
 	### Create state (if NULL) from sgp_object (if possible)
 
-        if (is.null(state)) {
+	if (is.null(state)) {
 		tmp.name <- toupper(gsub("_", " ", deparse(substitute(what_sgp_object))))
 		state <- getStateAbbreviation(tmp.name, "updateSGP")
-        }
+	}
+
+	if (identical(calculate.simex, TRUE)) {
+		##  Enforce that simex.use.my.coefficient.matrices must be TRUE for updating COHORT SIMEX SGPs
+		calculate.simex <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear", save.matrices=TRUE, simex.use.my.coefficient.matrices = TRUE)
+	}
+
+	if (identical(calculate.simex.baseline, TRUE)) {
+		##  Enforce that simex.use.my.coefficient.matrices must be TRUE for updating BASELINE SIMEX SGPs
+		calculate.simex.baseline <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear", save.matrices=TRUE, simex.use.my.coefficient.matrices = TRUE)
+	}
 
 	### Utility functions
 
@@ -44,11 +63,6 @@ function(what_sgp_object=NULL,
 	}
 
 	matrix.names <- names(what_sgp_object@SGP[['Coefficient_Matrices']])
-	if (length(grep("BASELINE", matrix.names)) > 0) {
-		tf.sgp.baseline <- TRUE	
-	} else {
-		tf.sgp.baseline <- FALSE
-	}
 
 
 	##############################################################################
@@ -95,15 +109,18 @@ function(what_sgp_object=NULL,
 					steps=steps,
 					years=years,
 					content_areas=content_areas,
-					sgp.percentiles=TRUE,
-					sgp.projections=TRUE,
-					sgp.projections.lagged=TRUE,
-					sgp.percentiles.baseline=tf.sgp.baseline,
-					sgp.projections.baseline=tf.sgp.baseline,
-					sgp.projections.lagged.baseline=tf.sgp.baseline,
+					sgp.percentiles=sgp.percentiles,
+					sgp.projections=sgp.projections,
+					sgp.projections.lagged=sgp.projections.lagged,
+					sgp.percentiles.baseline=sgp.percentiles.baseline,
+					sgp.projections.baseline=sgp.projections.baseline,
+					sgp.projections.lagged.baseline=sgp.projections.lagged.baseline,
 					sgp.use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
 					sgp.target.scale.scores=sgp.target.scale.scores,
 					save.intermediate.results=save.intermediate.results,
+					calculate.simex = calculate.simex,
+					calculate.simex.baseline=calculate.simex.baseline,
+					simulate.sgps = simulate.sgps,
 					sgp.config=sgp.config,
 					parallel.config=parallel.config,
 					...
@@ -122,7 +139,7 @@ function(what_sgp_object=NULL,
 
 	if (!is.null(with_sgp_data_LONG)) {
 
-		YEAR <- ID <- NULL
+		HIGH_NEED_STATUS <- YEAR <- ID <- NULL
 		tmp_sgp_object <- prepareSGP(with_sgp_data_LONG, state=state, create.additional.variables=FALSE)
 		update.years <- sort(unique(tmp_sgp_object@Data$YEAR))
 
@@ -146,16 +163,19 @@ function(what_sgp_object=NULL,
 						steps=steps, 
 						years=update.years, 
 						state=state, 
-						sgp.percentiles=TRUE,
-						sgp.projections=TRUE,
-						sgp.projections.lagged=TRUE,
-						sgp.percentiles.baseline=tf.sgp.baseline,
-						sgp.projections.baseline=tf.sgp.baseline,
-						sgp.projections.lagged.baseline=tf.sgp.baseline,
+						sgp.percentiles=sgp.percentiles,
+						sgp.projections=sgp.projections,
+						sgp.projections.lagged=sgp.projections.lagged,
+						sgp.percentiles.baseline=sgp.percentiles.baseline,
+						sgp.projections.baseline=sgp.projections.baseline,
+						sgp.projections.lagged.baseline=sgp.projections.lagged.baseline,
 						save.intermediate.results=save.intermediate.results, 
 						save.old.summaries=save.old.summaries, 
 						sgPlot.demo.report=sgPlot.demo.report,
 						sgp.use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
+						calculate.simex = calculate.simex,
+						calculate.simex.baseline=calculate.simex.baseline,
+						simulate.sgps = simulate.sgps,
 						sgp.target.scale.scores=sgp.target.scale.scores,
 						sgp.config=sgp.config,
 						parallel.config=parallel.config,
@@ -169,24 +189,34 @@ function(what_sgp_object=NULL,
 		} else {
 			if (!is.null(sgp.use.my.coefficient.matrices)) {
 				tmp.long.data <- rbind.fill(subset(what_sgp_object@Data, ID %in% unique(tmp_sgp_object@Data[['ID']])), tmp_sgp_object@Data)
+				if ("YEAR_WITHIN" %in% names(tmp.long.data)) {
+					tmp.long.data$FIRST_OBSERVATION <- NULL
+					tmp.long.data$LAST_OBSERVATION <- NULL
+				}
 				tmp.sgp_object.update <- prepareSGP(tmp.long.data, state=state, create.additional.variables=FALSE)
+				tmp.sgp_object.update@SGP$Coefficient_Matrices <- what_sgp_object@SGP$Coefficient_Matrices
+				
+				SGPstateData[[state]][["SGP_Configuration"]][["return.prior.scale.score.standardized"]] <- FALSE
+
 				tmp.sgp_object.update <- analyzeSGP(
 							tmp.sgp_object.update,
 							years=update.years, 
 							state=state, 
-							sgp.percentiles=TRUE,
-							sgp.projections=TRUE,
-							sgp.projections.lagged=TRUE,
-							sgp.percentiles.baseline=tf.sgp.baseline,
-							sgp.projections.baseline=tf.sgp.baseline,
-							sgp.projections.lagged.baseline=tf.sgp.baseline,
-							save.intermediate.results=save.intermediate.results, 
-							save.old.summaries=save.old.summaries, 
-							sgPlot.demo.report=sgPlot.demo.report,
+							sgp.percentiles=sgp.percentiles,
+							sgp.projections=sgp.projections,
+							sgp.projections.lagged=sgp.projections.lagged,
+							sgp.percentiles.baseline=sgp.percentiles.baseline,
+							sgp.projections.baseline=sgp.projections.baseline,
+							sgp.projections.lagged.baseline=sgp.projections.lagged.baseline,
 							sgp.use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
+							calculate.simex = calculate.simex,
+							calculate.simex.baseline=calculate.simex.baseline,
+							simulate.sgps = simulate.sgps,
 							sgp.config=sgp.config,
+							parallel.config=parallel.config,
 							goodness.of.fit.print=FALSE,
 							...)
+							
 				tmp.sgp_object.update <- combineSGP(tmp.sgp_object.update, state=state)
 
 				### Save analyses with just update
@@ -197,13 +227,27 @@ function(what_sgp_object=NULL,
 
 				### Merge update with original SGP object
 
-				what_sgp_object <- rbind.fill(what_sgp_object@Data, tmp_sgp_object@Data)
+				what_sgp_object@Data <- data.table(rbind.fill(what_sgp_object@Data, tmp_sgp_object@Data), key=getKey(what_sgp_object@Data))
 				if ("HIGH_NEED_STATUS" %in% names(what_sgp_object@Data)) {
-					what_sgp_object@Data[['HIGH_NEED_STATUS']] <- NULL
+					what_sgp_object@Data[, HIGH_NEED_STATUS := NULL]
 					what_sgp_object <- suppressMessages(prepareSGP(what_sgp_object, state=state))
 				}
-				what_sgp_object <- mergeSGP(what_sgp_object, tmp.sgp_object.update)
-				what_sgp_object <- combineSGP(what_sgp_object, years=update.years, state=state, parallel.config=parallel.config)
+				##  Remove duplicates if present before merging results back in.
+				tmp_sgp_list <- mergeSGP(what_sgp_object@SGP, tmp.sgp_object.update@SGP)
+				for (ca in names(tmp.sgp_object.update@SGP[["SGPercentiles"]])) {
+					tmp.dt <- data.table(tmp_sgp_list[["SGPercentiles"]][[ca]])
+					if (length(grep("BASELINE", ca))==0) {
+						setkeyv(tmp.dt, c("ID", "SGP_NORM_GROUP"))
+					} else setkeyv(tmp.dt, c("ID", "SGP_NORM_GROUP_BASELINE"))
+					
+					tmp_sgp_list[["SGPercentiles"]][[ca]] <- data.frame(tmp.dt[!duplicated(tmp.dt)])
+				}
+				what_sgp_object@SGP <- tmp_sgp_list
+
+				if ("combineSGP" %in% steps) {
+					what_sgp_object <- combineSGP(what_sgp_object, years=update.years, state=state)
+				}
+
 				if ("summarizeSGP" %in% steps) what_sgp_object <- summarizeSGP(what_sgp_object, state=state, parallel.config=parallel.config)
 				if ("visualizeSGP" %in% steps) visualizeSGP(what_sgp_object)
 				if ("outputSGP" %in% steps) outputSGP(what_sgp_object)
@@ -213,7 +257,7 @@ function(what_sgp_object=NULL,
 				message(paste("Finished updateSGP", date(), "in", timetaken(started.at), "\n"))
 				return(what_sgp_object)
 			} else {
-				what_sgp_object@Data <- as.data.table(rbind.fill(what_sgp_object@Data, tmp_sgp_object@Data))
+				what_sgp_object@Data <- data.table(rbind.fill(what_sgp_object@Data, tmp_sgp_object@Data), key=getKey(what_sgp_object@Data))
 
 				if ("HIGH_NEED_STATUS" %in% names(what_sgp_object@Data)) {
 					what_sgp_object@Data[['HIGH_NEED_STATUS']] <- NULL
@@ -227,16 +271,19 @@ function(what_sgp_object=NULL,
 							steps=steps, 
 							years=update.years, 
 							state=state, 
-							sgp.percentiles=TRUE,
-							sgp.projections=TRUE,
-							sgp.projections.lagged=TRUE,
-							sgp.percentiles.baseline=tf.sgp.baseline,
-							sgp.projections.baseline=tf.sgp.baseline,
-							sgp.projections.lagged.baseline=tf.sgp.baseline,
+							sgp.percentiles=sgp.percentiles,
+							sgp.projections=sgp.projections,
+							sgp.projections.lagged=sgp.projections.lagged,
+							sgp.percentiles.baseline=sgp.percentiles.baseline,
+							sgp.projections.baseline=sgp.projections.baseline,
+							sgp.projections.lagged.baseline=sgp.projections.lagged.baseline,
 							save.intermediate.results=save.intermediate.results, 
 							save.old.summaries=save.old.summaries, 
 							sgPlot.demo.report=sgPlot.demo.report,
 							sgp.use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
+							calculate.simex = calculate.simex,
+							calculate.simex.baseline=calculate.simex.baseline,
+							simulate.sgps = simulate.sgps,
 							sgp.target.scale.scores=sgp.target.scale.scores,
 							sgp.config=sgp.config,
 							parallel.config=parallel.config,
