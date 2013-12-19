@@ -241,7 +241,13 @@ function(what_sgp_object=NULL,
 				what_sgp_object@SGP <- tmp_sgp_list
 
 				if ("combineSGP" %in% steps) {
-					what_sgp_object <- combineSGP(what_sgp_object, years=update.years, state=state)
+					what_sgp_object <- combineSGP(what_sgp_object, years=update.years, state=state,
+						sgp.percentiles= sgp.percentiles, 
+						sgp.projections= sgp.projections,
+						sgp.projections.lagged= sgp.projections.lagged,
+						sgp.percentiles.baseline= sgp.percentiles.baseline,
+						sgp.projections.baseline=sgp.projections.baseline,
+						sgp.projections.lagged.baseline= sgp.projections.lagged.baseline)
 				}
 
 				if ("summarizeSGP" %in% steps) what_sgp_object <- summarizeSGP(what_sgp_object, state=state, parallel.config=parallel.config)
