@@ -141,7 +141,7 @@ function(what_sgp_object=NULL,
 
 		HIGH_NEED_STATUS <- YEAR <- ID <- NULL
 		tmp_sgp_object <- prepareSGP(with_sgp_data_LONG, state=state, create.additional.variables=FALSE)
-		update.years <- sort(unique(tmp_sgp_object@Data$YEAR))
+		if(is.null(years)) update.years <- sort(unique(tmp_sgp_object@Data$YEAR)) else update.years <- years
 
 		if (overwrite.existing.data) {
 				what_sgp_object@Data <- as.data.table(rbind.fill(what_sgp_object@Data[YEAR!=update.years], tmp_sgp_object@Data))
@@ -219,7 +219,7 @@ function(what_sgp_object=NULL,
 							goodness.of.fit.print=FALSE,
 							...)
 							
-				tmp.sgp_object.update <- combineSGP(tmp.sgp_object.update, state=state)
+				tmp.sgp_object.update <- suppressMessages(combineSGP(tmp.sgp_object.update, state=state))
 
 				### Merge update with original SGP object
 
