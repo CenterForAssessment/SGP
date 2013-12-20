@@ -236,14 +236,26 @@ function(what_sgp_object=NULL,
 				}
 				##  Remove duplicates if present before merging results back in.
 				tmp_sgp_list <- mergeSGP(what_sgp_object@SGP, tmp.sgp_object.update@SGP)
-				for (ca in names(tmp.sgp_object.update@SGP[["SGPercentiles"]])) {
-					tmp.dt <- data.table(tmp_sgp_list[["SGPercentiles"]][[ca]])
-					if (length(grep("BASELINE", ca))==0) {
-						setkeyv(tmp.dt, c("ID", "SGP_NORM_GROUP"))
-					} else setkeyv(tmp.dt, c("ID", "SGP_NORM_GROUP_BASELINE"))
-					
-					tmp_sgp_list[["SGPercentiles"]][[ca]] <- data.frame(tmp.dt[!duplicated(tmp.dt)])
+
+				if (sgp.percentiles | sgp.percentiles.baseline) {
+					for (ca in names(tmp.sgp_object.update@SGP[["SGPercentiles"]])) {
+						tmp.dt <- data.table(tmp.sgp_object.update@SGP[["SGPercentiles"]][[ca]])
+						if (length(grep("BASELINE", ca))==0) {
+							setkeyv(tmp.dt, c("ID", "SGP_NORM_GROUP"))
+						} else setkeyv(tmp.dt, c("ID", "SGP_NORM_GROUP_BASELINE"))
+						
+						tmp_sgp_list[["SGPercentiles"]][[ca]] <- data.frame(tmp.dt[!duplicated(tmp.dt)])
+					}
 				}
+				
+				if (sgp.projections | sgp.projections.baseline | sgp.projections.lagged | sgp.projections.lagged.baseline) {
+					for (ca in names(tmp.sgp_object.update@SGP[["SGProjections"]])) {
+						tmp.dt <- data.table(tmp.sgp_object.update@SGP[["SGProjections"]][[ca]])
+						setkeyv(tmp.dt, names(tmp.dt)[-grep("ACHIEVEMENT_LEVEL", names(tmp.dt))])
+						tmp_sgp_list[["SGProjections"]][[ca]] <- data.frame(tmp.dt[!duplicated(tmp.dt)])
+					}
+				}
+				
 				what_sgp_object@SGP <- tmp_sgp_list
 
 				if ("combineSGP" %in% steps) {
