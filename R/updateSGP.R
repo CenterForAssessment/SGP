@@ -227,6 +227,12 @@ function(what_sgp_object=NULL,
 							
 				tmp.sgp_object.update <- suppressMessages(combineSGP(tmp.sgp_object.update, state=state))
 
+				### Save SGP object with update data and full student history
+
+				tmp.file.name <- paste(gsub(" ", "_", toupper(getStateAbbreviation(state, type="name"))), "SGP_Update", paste(update.years, collapse=","), sep="_")
+				assign(tmp.file.name, tmp.sgp_object.update)
+				save(list=tmp.file.name, file=file.path("Data", "Updated_Data", paste(tmp.file.name, "Rdata", sep=".")))
+
 				### Merge update with original SGP object
 
 				what_sgp_object@Data <- data.table(rbind.fill(what_sgp_object@Data, tmp_sgp_object@Data), key=getKey(what_sgp_object@Data))
@@ -273,16 +279,12 @@ function(what_sgp_object=NULL,
 				if ("outputSGP" %in% steps) outputSGP(what_sgp_object)
 
 				###  Output just additional update data
-				
-				tmp_sgp_object@SGP <- tmp.sgp_object.update@SGP
-				tmp_sgp_object <- suppressMessages(combineSGP(tmp_sgp_object, state=state))
-				outputSGP(tmp_sgp_object, state = state, output.type = "LONG_Data", outputSGP.directory = file.path("Data", "Updated_Data"))
-
-				### Save SGP object with update data and full student history
-
-				tmp.file.name <- paste(gsub(" ", "_", toupper(getStateAbbreviation(state, type="name"))), "SGP_Update", paste(update.years, collapse=","), sep="_")
-				assign(tmp.file.name, tmp.sgp_object.update)
-				save(list=tmp.file.name, file=file.path("Data", "Updated_Data", paste(tmp.file.name, "Rdata", sep=".")))
+				###  Do this AFTER rbind.fill @Data, mergeSGP, combineSGP, etc.				
+				if (update.years  %in% unique(tmp_sgp_object@Data$YEAR)) {
+					tmp_sgp_object@SGP <- tmp.sgp_object.update@SGP
+					tmp_sgp_object <- suppressMessages(combineSGP(tmp_sgp_object, state=state))
+					outputSGP(tmp_sgp_object, state = state, output.type = "LONG_Data", outputSGP.directory = file.path("Data", "Updated_Data"))
+				} else message("NOTE: with_sgp_data_LONG appears to only contain priors.  Only results containing the entire student history have been saved.")
 
 				### Print finish and return SGP object
 
