@@ -245,7 +245,7 @@ function(what_sgp_object=NULL,
 
 				if (sgp.percentiles | sgp.percentiles.baseline) {
 					for (ca in names(tmp.sgp_object.update@SGP[["SGPercentiles"]])) {
-						tmp.dt <- data.table(tmp_sgp_list@SGP[["SGPercentiles"]][[ca]])
+						tmp.dt <- data.table(tmp_sgp_list[["SGPercentiles"]][[ca]])
 						if (length(grep("BASELINE", ca))==0) {
 							setkeyv(tmp.dt, c("ID", "SGP_NORM_GROUP"))
 						} else setkeyv(tmp.dt, c("ID", "SGP_NORM_GROUP_BASELINE"))
@@ -256,7 +256,7 @@ function(what_sgp_object=NULL,
 				
 				if (sgp.projections | sgp.projections.baseline | sgp.projections.lagged | sgp.projections.lagged.baseline) {
 					for (ca in names(tmp.sgp_object.update@SGP[["SGProjections"]])) {
-						tmp.dt <- data.table(tmp_sgp_list@SGP[["SGProjections"]][[ca]])
+						tmp.dt <- data.table(tmp_sgp_list[["SGProjections"]][[ca]])
 						setkeyv(tmp.dt, names(tmp.dt)[-grep("ACHIEVEMENT_LEVEL", names(tmp.dt))])
 						tmp_sgp_list[["SGProjections"]][[ca]] <- data.frame(tmp.dt[!duplicated(tmp.dt)])
 					}
