@@ -321,6 +321,14 @@ function(sgp_object,
 					)
 				}
 
+				if ("SGP_SIMEX_BASELINE" %in% names(slot.data)) {
+					tmp.sgp.summaries <- c(
+						tmp.sgp.summaries,
+						MEDIAN_SGP_SIMEX_BASELINE="median_na(SGP_SIMEX_BASELINE, WEIGHT)",
+						MEAN_SGP_SIMEX_BASELINE="mean_na(SGP_SIMEX_BASELINE, WEIGHT)"
+					)
+				}
+
 				if (!is.null(my.sgp.target)) {
 					tmp.sgp.summaries <- c(
 						tmp.sgp.summaries, 
