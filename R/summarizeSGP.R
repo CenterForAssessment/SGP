@@ -605,7 +605,7 @@ function(sgp_object,
 	variables.for.summaries <- intersect(c(my.sgp, my.sgp.target, my.sgp.target.baseline, my.sgp.target.musu, my.sgp.target.musu.baseline,
 						"ACHIEVEMENT_LEVEL", "ACHIEVEMENT_LEVEL_PRIOR", 
 						"CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STAY_UP_STATUS", "CATCH_UP_KEEP_UP_STATUS_BASELINE","MOVE_UP_STAY_UP_STATUS_BASELINE",
-						"SCALE_SCORE_PRIOR_STANDARDIZED", "SGP_SIMEX",
+						"SCALE_SCORE_PRIOR_STANDARDIZED", "SGP_SIMEX", "SGP_SIMEX_BASELINE",
 						unique(as.character(unlist(summary.groups))),
 						"YEAR_WITHIN"),
 					names(slot.data)) 
