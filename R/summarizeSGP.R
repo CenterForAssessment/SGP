@@ -67,7 +67,7 @@ function(sgp_object,
 		if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort and Baseline Referenced") summarizeSGP.baseline <- TRUE
 	}
 
-	if (summarizeSGP.baseline) my.sgp <- c("SGP", "SGP_BASELINE") else my.sgp <- "SGP"
+	if (summarizeSGP.baseline) my.sgp <- intersect(names(slot.data), c("SGP", "SGP_BASELINE", "SGP_SIMEX", "SGP_SIMEX_BASELINE")) else my.sgp <- intersect(names(slot.data), c("SGP", "SGP_SIMEX"))
 
 	my.sgp.target <- paste("SGP_TARGET", projection.years.for.target, "YEAR", sep="_")
 	my.sgp.target.musu <- paste("SGP_TARGET_MOVE_UP_STAY_UP", projection.years.for.target, "YEAR", sep="_")
