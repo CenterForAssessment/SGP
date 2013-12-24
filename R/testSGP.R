@@ -125,15 +125,14 @@ function(
 	################################
 	if ('2A' %in% toupper(TEST_NUMBER)) {
 
-		tmp.messages <- "##### Begin testSGP test number 2a #####\n\n"
-
 		options(error=recover)
 		options(warn=2)
 		suppressPackageStartupMessages(require(parallel))
-		Demonstration_SGP <- tmp.messages <- NULL
+		Demonstration_SGP <- NULL
 		Demonstration_Data_LONG <- subset(sgpData_LONG, YEAR %in% c("2008_2009", "2009_2010", "2010_2011", "2011_2012"))
 		Demonstration_Data_LONG_2012_2013 <- subset(sgpData_LONG, YEAR %in% c("2012_2013"))
 		number.cores <- detectCores()-1
+		tmp.messages <- "##### Begin testSGP test number 2a #####\n\n"
 
 		### Part 1
 
@@ -247,7 +246,7 @@ function(
 		if (identical(sum(Demonstration_SGP@Data$SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, na.rm=TRUE), 9201802L)) {
 			tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, part 2: OK\n")
 		} else {
-			tmp.messges <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, part 2: FAIL\n")
+			tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, part 2: FAIL\n")
 		}
 
 		### TEST of CATCH_UP_KEEP_UP_STATUS variable
@@ -283,7 +282,7 @@ function(
 		options(error=recover)
 		options(warn=2)
 		suppressPackageStartupMessages(require(parallel))
-		Demonstration_SGP <- tmp.messages <- ID <- CONTENT_AREA <- NULL
+		Demonstration_SGP <- ID <- CONTENT_AREA <- NULL
 		Demonstration_Data_LONG_2012_2013 <- subset(sgpData_LONG, YEAR %in% c("2012_2013"))
 		number.cores <- detectCores()-1
 
