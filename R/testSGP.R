@@ -346,8 +346,8 @@ function(
 			Demonstration_Data_LONG <- subset(sgpData_LONG, YEAR %in% c("2008_2009", "2009_2010", "2010_2011", "2011_2012"))
 			Demonstration_Data_LONG_2012_2013 <- subset(sgpData_LONG, YEAR %in% c("2012_2013"))
 			tmp.2012_2013.ids <- sort(unique(Demonstration_Data_LONG_2012_2013[['ID']]))
-			tmp.group.1 <- tmp.2012_2013.ids[1:20]
-			tmp.group.2 <- tmp.2012_2013.ids[21:40]
+			tmp.group.1 <- tmp.2012_2013.ids[1:100]
+			tmp.group.2 <- tmp.2012_2013.ids[101:200]
 			with_sgp_data_LONG <- subset(Demonstration_Data_LONG_2012_2013, ID %in% tmp.group.1 | (ID %in% tmp.group.2 & CONTENT_AREA=="MATHEMATICS"))
 			Demonstration_SGP@Data <- subset(Demonstration_SGP@Data, !((ID %in% tmp.group.1 & YEAR=="2012_2013") | (ID %in% tmp.group.2 & CONTENT_AREA=="MATHEMATICS" & YEAR=="2012_2013")))
 			Demonstration_SGP@SGP$SGPercentiles$MATHEMATICS.2012_2013 <- subset(Demonstration_SGP@SGP$SGPercentiles$MATHEMATICS.2012_2013, !ID %in% c(tmp.group.1, tmp.group.2))
