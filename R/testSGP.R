@@ -350,6 +350,18 @@ function(
 			tmp.group.2 <- tmp.2012_2013.ids[21:40]
 			with_sgp_data_LONG <- subset(Demonstration_Data_LONG_2012_2013, ID %in% tmp.group.1 | (ID %in% tmp.group.2 & CONTENT_AREA=="MATHEMATICS"))
 			Demonstration_SGP@Data <- subset(Demonstration_SGP@Data, !((ID %in% tmp.group.1 & YEAR=="2012_2013") | (ID %in% tmp.group.2 & CONTENT_AREA=="MATHEMATICS" & YEAR=="2012_2013")))
+			Demonstration_SGP@SGP$SGPercentiles$MATHEMATICS.2012_2013 <- subset(Demonstration_SGP@SGP$SGPercentiles$MATHEMATICS.2012_2013, !ID %in% c(tmp.group.1, tmp.group.2))
+			Demonstration_SGP@SGP$SGPercentiles$MATHEMATICS.2012_2013.BASELINE <- subset(Demonstration_SGP@SGP$SGPercentiles$MATHEMATICS.2012_2013.BASELINE, !ID %in% c(tmp.group.1, tmp.group.2))
+			Demonstration_SGP@SGP$SGProjections$MATHEMATICS.2012_2013 <- subset(Demonstration_SGP@SGP$SGProjections$MATHEMATICS.2012_2013, !ID %in% c(tmp.group.1, tmp.group.2))
+			Demonstration_SGP@SGP$SGProjections$MATHEMATICS.2012_2013.BASELINE <- subset(Demonstration_SGP@SGP$SGProjections$MATHEMATICS.2012_2013.BASELINE, !ID %in% c(tmp.group.1, tmp.group.2))
+			Demonstration_SGP@SGP$SGProjections$MATHEMATICS.2012_2013.LAGGED <- subset(Demonstration_SGP@SGP$SGProjections$MATHEMATICS.2012_2013.LAGGED, !ID %in% c(tmp.group.1, tmp.group.2))
+			Demonstration_SGP@SGP$SGProjections$MATHEMATICS.2012_2013.LAGGED.BASELINE <- subset(Demonstration_SGP@SGP$SGProjections$MATHEMATICS.2012_2013.LAGGED.BASELINE, !ID %in% c(tmp.group.1, tmp.group.2))
+			Demonstration_SGP@SGP$SGPercentiles$READING.2012_2013 <- subset(Demonstration_SGP@SGP$SGPercentiles$READING.2012_2013, !ID %in% tmp.group.1)
+			Demonstration_SGP@SGP$SGPercentiles$READING.2012_2013.BASELINE <- subset(Demonstration_SGP@SGP$SGPercentiles$READING.2012_2013.BASELINE, !ID %in% tmp.group.1)
+			Demonstration_SGP@SGP$SGProjections$READING.2012_2013 <- subset(Demonstration_SGP@SGP$SGProjections$READING.2012_2013, !ID %in% tmp.group.1)
+			Demonstration_SGP@SGP$SGProjections$READING.2012_2013.BASELINE <- subset(Demonstration_SGP@SGP$SGProjections$READING.2012_2013.BASELINE, !ID %in% tmp.group.1)
+			Demonstration_SGP@SGP$SGProjections$READING.2012_2013.LAGGED <- subset(Demonstration_SGP@SGP$SGProjections$READING.2012_2013.LAGGED, !ID %in% tmp.group.1)
+			Demonstration_SGP@SGP$SGProjections$READING.2012_2013.LAGGED.BASELINE <- subset(Demonstration_SGP@SGP$SGProjections$READING.2012_2013.LAGGED.BASELINE, !ID %in% tmp.group.1)
 
 			expression.to.evaluate <- 
 				paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=with_sgp_data_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\tsgp.use.my.coefficient.matrices=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgPlot.demo.report=TRUE,\n\tparallel.config=NULL\n)\n", sep="")
