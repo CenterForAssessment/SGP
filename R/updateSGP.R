@@ -141,7 +141,7 @@ function(what_sgp_object=NULL,
 
 	if (!is.null(with_sgp_data_LONG)) {
 
-		HIGH_NEED_STATUS <- YEAR <- ID <- NULL
+		HIGH_NEED_STATUS <- YEAR <- ID <- VALID_CASE <- CONTENT_AREA <- NULL
 		tmp_sgp_object <- prepareSGP(with_sgp_data_LONG, state=state, create.additional.variables=FALSE)
 		if(is.null(years)) update.years <- sort(unique(tmp_sgp_object@Data$YEAR)) else update.years <- years
 
