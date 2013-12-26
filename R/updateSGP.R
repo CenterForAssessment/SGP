@@ -192,7 +192,8 @@ function(what_sgp_object=NULL,
 
 		} else {
 			if (!is.null(sgp.use.my.coefficient.matrices)) {
-				tmp.long.data <- rbind.fill(subset(what_sgp_object@Data, ID %in% unique(tmp_sgp_object@Data[['ID']])), tmp_sgp_object@Data)
+				tmp.long.data <- rbind.fill(data.table(what_sgp_object@Data, key=c("VALID_CASE", "CONTENT_AREA", "ID"))[
+					data.table(tmp_sgp_object@Data, key=c("VALID_CASE", "CONTENT_AREA", "ID")), nomatch='0'], tmp_sgp_object@Data)
 				if ("YEAR_WITHIN" %in% names(tmp.long.data)) {
 					tmp.long.data$FIRST_OBSERVATION <- NULL
 					tmp.long.data$LAST_OBSERVATION <- NULL
