@@ -141,7 +141,7 @@ function(what_sgp_object=NULL,
 
 	if (!is.null(with_sgp_data_LONG)) {
 
-		HIGH_NEED_STATUS <- YEAR <- ID <- NULL
+		HIGH_NEED_STATUS <- YEAR <- ID <- VALID_CASE <- CONTENT_AREA <- NULL
 		tmp_sgp_object <- prepareSGP(with_sgp_data_LONG, state=state, create.additional.variables=FALSE)
 		if(is.null(years)) update.years <- sort(unique(tmp_sgp_object@Data$YEAR)) else update.years <- years
 
@@ -192,7 +192,8 @@ function(what_sgp_object=NULL,
 
 		} else {
 			if (!is.null(sgp.use.my.coefficient.matrices)) {
-				tmp.long.data <- rbind.fill(subset(what_sgp_object@Data, ID %in% unique(tmp_sgp_object@Data[['ID']])), tmp_sgp_object@Data)
+				tmp.long.data <- rbind.fill(data.table(what_sgp_object@Data, key=c("VALID_CASE", "CONTENT_AREA", "ID"))[
+					data.table(tmp_sgp_object@Data, key=c("VALID_CASE", "CONTENT_AREA", "ID"))[,list(VALID_CASE, CONTENT_AREA, ID)], nomatch='0'], tmp_sgp_object@Data)
 				if ("YEAR_WITHIN" %in% names(tmp.long.data)) {
 					tmp.long.data$FIRST_OBSERVATION <- NULL
 					tmp.long.data$LAST_OBSERVATION <- NULL
@@ -227,7 +228,7 @@ function(what_sgp_object=NULL,
 							
 				tmp.sgp_object.update <- suppressMessages(combineSGP(tmp.sgp_object.update, state=state))
 
-				### Save SGP object with update data and full student history
+				### Save SGP object with updated data and full student history
 				### Create Data/Updated_Data directory if it doesn't already exist:
 				dir.create(file.path("Data", "Updated_Data"), recursive=TRUE, showWarnings=FALSE)
 
@@ -242,32 +243,15 @@ function(what_sgp_object=NULL,
 					what_sgp_object@Data[, HIGH_NEED_STATUS := NULL]
 					what_sgp_object <- suppressMessages(prepareSGP(what_sgp_object, state=state))
 				}
-				##  Remove duplicates if present before merging results back in.
 				tmp_sgp_list <- mergeSGP(what_sgp_object@SGP, tmp.sgp_object.update@SGP)
 
-				if (sgp.percentiles | sgp.percentiles.baseline) {
-					for (ca in names(tmp.sgp_object.update@SGP[["SGPercentiles"]])) {
-						tmp.dt <- data.table(tmp_sgp_list[["SGPercentiles"]][[ca]])
-						if (length(grep("BASELINE", ca))==0) {
-							setkeyv(tmp.dt, c("ID", "SGP_NORM_GROUP"))
-						} else setkeyv(tmp.dt, c("ID", "SGP_NORM_GROUP_BASELINE"))
-						
-						tmp_sgp_list[["SGPercentiles"]][[ca]] <- data.frame(tmp.dt[!duplicated(tmp.dt)])
-					}
-				}
-				
-				if (sgp.projections | sgp.projections.baseline | sgp.projections.lagged | sgp.projections.lagged.baseline) {
-					for (ca in names(tmp.sgp_object.update@SGP[["SGProjections"]])) {
-						tmp.dt <- data.table(tmp_sgp_list[["SGProjections"]][[ca]])
-						setkeyv(tmp.dt, names(tmp.dt)[-grep("ACHIEVEMENT_LEVEL", names(tmp.dt))])
-						tmp_sgp_list[["SGProjections"]][[ca]] <- data.frame(tmp.dt[!duplicated(tmp.dt)])
-					}
-				}
-				
 				what_sgp_object@SGP <- tmp_sgp_list
 
 				if ("combineSGP" %in% steps) {
-					what_sgp_object <- combineSGP(what_sgp_object, years=update.years, state=state,
+					what_sgp_object <- combineSGP(
+						what_sgp_object, 
+						years=update.years, 
+						state=state,
 						sgp.percentiles= sgp.percentiles, 
 						sgp.projections= sgp.projections,
 						sgp.projections.lagged= sgp.projections.lagged,

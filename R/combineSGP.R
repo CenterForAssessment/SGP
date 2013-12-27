@@ -172,13 +172,9 @@ function(
 			tmp.data <- getPreferredSGP(tmp.data, state)
 		}
 
-		if (length(intersect(names(slot.data), names(tmp.data)) %w/o% key(slot.data))==0) {
-			slot.data <- tmp.data[slot.data]
-		} else {
-			variables.to.merge <- names(tmp.data) %w/o% key(slot.data)
-			tmp.index <- slot.data[tmp.data[,key(slot.data), with=FALSE], which=TRUE]
-			slot.data[tmp.index, variables.to.merge := tmp.data[, variables.to.merge, with=FALSE], with=FALSE, nomatch=0]
-		}
+		variables.to.merge <- names(tmp.data) %w/o% key(slot.data)
+		tmp.index <- slot.data[tmp.data[,key(slot.data), with=FALSE], which=TRUE]
+		slot.data[tmp.index, variables.to.merge := tmp.data[, variables.to.merge, with=FALSE], with=FALSE, nomatch=0]
 
 		setkeyv(slot.data, getKey(slot.data))
 		rm(tmp.list); suppressMessages(gc())
@@ -221,13 +217,9 @@ function(
 			tmp.data <- getPreferredSGP(tmp.data, state, type="BASELINE")
 		}
 
-		if (length(intersect(names(slot.data), names(tmp.data)) %w/o% c(key(slot.data), "SCALE_SCORE_PRIOR", "SCALE_SCORE_PRIOR_STANDARDIZED"))==0) {
-			slot.data <- tmp.data[,!c("SCALE_SCORE_PRIOR", "SCALE_SCORE_PRIOR_STANDARDIZED"), with=FALSE][slot.data]
-		} else {
-			variables.to.merge <- names(tmp.data) %w/o% c(key(slot.data), "SCALE_SCORE_PRIOR", "SCALE_SCORE_PRIOR_STANDARDIZED")
-			tmp.index <- slot.data[tmp.data[,key(slot.data), with=FALSE], which=TRUE]
-			slot.data[tmp.index, variables.to.merge := tmp.data[, variables.to.merge, with=FALSE], with=FALSE, nomatch=0]
-		}
+		variables.to.merge <- names(tmp.data) %w/o% c(key(slot.data), "SCALE_SCORE_PRIOR", "SCALE_SCORE_PRIOR_STANDARDIZED")
+		tmp.index <- slot.data[tmp.data[,key(slot.data), with=FALSE], which=TRUE]
+		slot.data[tmp.index, variables.to.merge := tmp.data[, variables.to.merge, with=FALSE], with=FALSE, nomatch=0]
 
 		setkeyv(slot.data, getKey(slot.data))
 		rm(tmp.list); suppressMessages(gc())
@@ -268,13 +260,9 @@ function(
 			for (target.level.iter in target.args[['target.level']]) {
 				tmp.data <- getTargetSGP(sgp_object, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward)
 
-				if (length(intersect(names(slot.data), names(tmp.data)) %w/o% key(slot.data))==0) {
-					slot.data <- tmp.data[slot.data]
-				} else {
-					variables.to.merge <- names(tmp.data) %w/o% key(slot.data)
-					tmp.index <- slot.data[tmp.data[,intersect(key(slot.data), names(tmp.data)), with=FALSE], which=TRUE]
-					slot.data[tmp.index, variables.to.merge := tmp.data[, variables.to.merge, with=FALSE], with=FALSE, nomatch=0]
-				}
+				variables.to.merge <- names(tmp.data) %w/o% key(slot.data)
+				tmp.index <- slot.data[tmp.data[,intersect(key(slot.data), names(tmp.data)), with=FALSE], which=TRUE]
+				slot.data[tmp.index, variables.to.merge := tmp.data[, variables.to.merge, with=FALSE], with=FALSE, nomatch=0]
 			}
 		}
 
