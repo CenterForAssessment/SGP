@@ -67,7 +67,7 @@ function(
 		tmp.messages <- c(tmp.messages, "\tTest of variable SGP_BASELINE: FAIL\n")
 	}
 
-	### TEST of SGP_TARGET variable
+	### TEST of SGP_TARGET_3_YEAR variable
 
 	if (identical(sum(Demonstration_SGP@Data$SGP_TARGET_3_YEAR, na.rm=TRUE), 7796624L)) {
 		tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_3_YEAR: OK\n")
@@ -75,7 +75,7 @@ function(
 		tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_3_YEAR: FAIL\n")
 	}
 
-	### TEST of SGP_TARGET_MOVE_UP_STAY_UP variable
+	### TEST of SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR variable
 
 	if (identical(sum(Demonstration_SGP@Data$SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, na.rm=TRUE), 9201802L)) {
 		tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR: OK\n")
@@ -97,6 +97,14 @@ function(
 		tmp.messages <- c(tmp.messages, "\tTest of variable MOVE_UP_STAY_UP_STATUS: OK\n")
 	} else {
 		tmp.messages <- c(tmp.messages, "\tTest of variable MOVE_UP_STAY_UP_STATUS: FAIL\n")
+	}
+
+	### TEST of MEDIAN_SGP variable
+
+	if (identical(sum(Demonstration_SGP@Summary$SCHOOL_NUMBER[["SCHOOL_NUMBER__SCHOOL_ENROLLMENT_STATUS"]]$MEDIAN_SGP, na.rm=TRUE), 9140.5)) {
+		tmp.messages <- c(tmp.messages, "\tTest of variable MEDIAN_SGP: OK\n")
+	} else {
+		tmp.messages <- c(tmp.messages, "\tTest of variable MEDIAN_SGP: FAIL\n")
 	}
 
 	tmp.messages <- c(tmp.messages, "\n##### End testSGP test number 1 #####\n")
@@ -372,9 +380,9 @@ function(
 		tmp.messages <- c(tmp.messages, paste("\t\t##### Results of testSGP test number", capwords(i), "#####\n"))
 
 		if (identical(sum(Demonstration_SGP@Data[YEAR=="2012_2013"]$SGP, na.rm=TRUE), 2896606L)) {
-			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 1: OK\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 2: OK\n")
 		} else {
-			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 1: FAIL\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 2: FAIL\n")
 		}
 
 		### TEST of SGP_BASELINE variable
