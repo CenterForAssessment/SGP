@@ -317,7 +317,9 @@ function(sgp_object,
 					tmp.sgp.summaries <- c(
 						tmp.sgp.summaries,
 						MEDIAN_SGP_SIMEX="median_na(SGP_SIMEX, WEIGHT)",
-						MEAN_SGP_SIMEX="mean_na(SGP_SIMEX, WEIGHT)"
+						MEAN_SGP_SIMEX="mean_na(SGP_SIMEX, WEIGHT)",
+						MEAN_SGP_SIMEX_STANDARD_ERROR="sgp_standard_error(SGP_SIMEX)",
+						MEDIAN_SGP_SIMEX_STANDARD_ERROR="sgp_standard_error(SGP_SIMEX, 1.253)"
 					)
 				}
 
@@ -325,7 +327,9 @@ function(sgp_object,
 					tmp.sgp.summaries <- c(
 						tmp.sgp.summaries,
 						MEDIAN_SGP_SIMEX_BASELINE="median_na(SGP_SIMEX_BASELINE, WEIGHT)",
-						MEAN_SGP_SIMEX_BASELINE="mean_na(SGP_SIMEX_BASELINE, WEIGHT)"
+						MEAN_SGP_SIMEX_BASELINE="mean_na(SGP_SIMEX_BASELINE, WEIGHT)",
+						MEAN_SGP_SIMEX_BASELINE_STANDARD_ERROR="sgp_standard_error(SGP_SIMEX_BASELINE)",
+						MEDIAN_SGP_SIMEX_BASELINE_STANDARD_ERROR="sgp_standard_error(SGP_SIMEX_BASELINE, 1.253)"
 					)
 				}
 
