@@ -228,7 +228,7 @@ function(what_sgp_object=NULL,
 							
 				tmp.sgp_object.update <- suppressMessages(combineSGP(tmp.sgp_object.update, state=state))
 
-				### Save SGP object with update data and full student history
+				### Save SGP object with updated data and full student history
 				### Create Data/Updated_Data directory if it doesn't already exist:
 				dir.create(file.path("Data", "Updated_Data"), recursive=TRUE, showWarnings=FALSE)
 
