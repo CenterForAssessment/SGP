@@ -214,10 +214,12 @@ function(
 		}
 
 		eval(parse(text=expression.to.evaluate))
-	
-		### TEST of SGP variable
+
+		### TEST of variable values
 
 		tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number 2a: Part 2 #####\n")
+
+		### TEST of SGP variable
 
 		if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 8565260L)) {
 			tmp.messages <- c(tmp.messages, "\tTest of variable SGP, part 2: OK\n")
@@ -311,10 +313,10 @@ function(
 		### Part 2 
 		#############################################################
 
+		tmp.messages <- c(tmp.messages, paste("\t##### Begin testSGP test number ", capwords(i), ": Part 2 #####\n\n", sep=""))
+
 		### TEST 2b ###
 		if (i=='2B') {
-			tmp.messages <- c(tmp.messages, paste("\t##### Begin testSGP test number ", capwords(i), ": Part 2 #####\n\n", sep=""))
-
 			Demonstration_Data_LONG_2012_2013 <- subset(sgpData_LONG, YEAR %in% c("2012_2013"))
 
 			expression.to.evaluate <- 
@@ -323,12 +325,10 @@ function(
 			cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 
 			eval(parse(text=expression.to.evaluate))
-			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number ", capwords(i), ": Part 2 #####\n", sep=""))
 		} ### End TEST 2b
 
 		### TEST 2c ###
 		if (i=='2C') {
-			tmp.messages <- c(tmp.messages, paste("\t##### Begin testSGP test number ", capwords(i), ": Part 2 #####\n", sep=""))
 			Demonstration_Data_LONG_2012_2013 <- subset(sgpData_LONG, YEAR %in% c("2012_2013"))
 
 			expression.to.evaluate <- 
@@ -337,12 +337,10 @@ function(
 			cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 
 			eval(parse(text=expression.to.evaluate))
-			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number ", capwords(i), ": Part 2 #####\n", sep=""))
 		} ### End TEST 2c
 
 		### TEST 2d ###
 		if (i=='2D') {
-			tmp.messages <- c(tmp.messages, paste("\t##### Begin testSGP test number ", capwords(i), ": Part 2 #####\n", sep=""))
 			Demonstration_Data_LONG <- subset(sgpData_LONG, YEAR %in% c("2008_2009", "2009_2010", "2010_2011", "2011_2012"))
 			Demonstration_Data_LONG_2012_2013 <- subset(sgpData_LONG, YEAR %in% c("2012_2013"))
 			tmp.2012_2013.ids <- sort(unique(Demonstration_Data_LONG_2012_2013[['ID']]))
@@ -370,8 +368,59 @@ function(
 			cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 
 			eval(parse(text=expression.to.evaluate))
-			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number ", capwords(i), ": Part 2 #####\n", sep=""))
 		} ### End TEST 2d
+
+		### TEST of SGP variable
+
+		tmp.messages <- c(tmp.messages, paste("\t##### Results of testSGP test number", capwords(i), "#####\n"))
+
+		if (identical(sum(Demonstration_SGP@Data[YEAR=="2012_2013"]$SGP, na.rm=TRUE), 2896606L)) {
+			tmp.messages <- c(tmp.messages, "\tTest of variable SGP, part 1: OK\n")
+		} else {
+			tmp.messages <- c(tmp.messages, "\tTest of variable SGP, part 1: FAIL\n")
+		}
+
+		### TEST of SGP_BASELINE variable
+
+		if (identical(sum(Demonstration_SGP@Data[YEAR=="2012_2013"]$SGP_BASELINE, na.rm=TRUE), 2906337L)) {
+			tmp.messages <- c(tmp.messages, "\tTest of variable SGP_BASELINE, part 2: OK\n")
+		} else {
+			tmp.messages <- c(tmp.messages, "\tTest of variable SGP_BASELINE, part 2: FAIL\n")
+		}
+
+		### TEST of SGP_TARGET_3_YEAR variable
+
+		if (identical(sum(Demonstration_SGP@Data[YEAR=="2012_2013"]$SGP_TARGET_3_YEAR, na.rm=TRUE), 2551187L)) {
+			tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_3_YEAR, part 2: OK\n")
+		} else {
+			tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_3_YEAR, part 2: FAIL\n")
+		}
+
+		### TEST of SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR variable
+
+		if (identical(sum(Demonstration_SGP@Data[YEAR=="2012_2013"]$SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, na.rm=TRUE), 3113673L)) {
+			tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, part 2: OK\n")
+		} else {
+			tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, part 2: FAIL\n")
+		}
+
+		### TEST of CATCH_UP_KEEP_UP_STATUS variable
+
+		if (identical(as.numeric(table(Demonstration_SGP@Data[YEAR=="2012_2013"]$CATCH_UP_KEEP_UP_STATUS)), c(13977, 3847, 11202, 29107))) {
+			tmp.messages <- c(tmp.messages, "\tTest of variable CATCH_UP_KEEP_UP_STATUS, part 2: OK\n")
+		} else {
+			tmp.messages <- c(tmp.messages, "\tTest of variable CATCH_UP_KEEP_UP_STATUS, part 2: FAIL\n")
+		}
+
+		### TEST of MOVE_UP_STAY_UP_STATUS variable
+
+		if (identical(as.numeric(table(Demonstration_SGP@Data[YEAR=="2012_2013"]$MOVE_UP_STAY_UP_STATUS)), c(24801, 4647, 6186, 4675))) {
+			tmp.messages <- c(tmp.messages, "\tTest of variable MOVE_UP_STAY_UP_STATUS, part 2: OK\n")
+		} else {
+			tmp.messages <- c(tmp.messages, "\tTest of variable MOVE_UP_STAY_UP_STATUS, part 2: FAIL\n")
+		}
+
+		tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number ", capwords(i), ": Part 2 #####\n", sep=""))
 		tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number", capwords(i), "#####\n"))
 		cat(tmp.messages)
 	} ### End for (i in TEST_NUMBER)
