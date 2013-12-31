@@ -20,6 +20,7 @@ analyzeSGP(sgp_object,
          sgp.percentiles.baseline.max.order=3,
          sgp.projections.baseline.max.order=3,
          sgp.projections.lagged.baseline.max.order=3,
+	 sgp.projections.max.forward.progression.years=3,
 	 sgp.minimum.default.panel.years=NULL,
          sgp.use.my.coefficient.matrices=NULL,
          simulate.sgps=TRUE,
@@ -34,7 +35,6 @@ analyzeSGP(sgp_object,
 	 verbose.output=FALSE,
 	 print.other.gp=FALSE,
 	 get.cohort.data.info=FALSE,
-	 overwrite.existing.sgp.data=TRUE,
          ...)
 }
 
@@ -71,6 +71,8 @@ To utilize the maximum matrix order, set to NULL.
   }
   \item{sgp.projections.lagged.baseline.max.order}{Integer indicating the maximum order to calculate lagged baseline student growth projections (regardless of maximum coefficient matrix order). 
 Default is 3.  To utilize the maximum matrix order, set to NULL.
+  }
+  \item{sgp.projections.max.forward.progression.years}{Integer indicating the maximum number of years forward that cohort based projections will be established for. Default is 3 years.
   }
   \item{sgp.minimum.default.panel.years}{Integer indicating the minimum number of panels years to use for default sgp analyses. Default value is NULL (converted to 3) years of data.
   }
@@ -110,7 +112,6 @@ Example use cases are provided below.
   \item{get.cohort.data.info}{A Boolean argument (defaults to FALSE) indicating whether a summary of all cohorts to be submitted to the \code{\link{studentGrowthPercentiles}} and 
   \code{\link{studentGrowthProjections}} functions should be performed prior to analysis.
   }
-  \item{overwrite.existing.sgp.data}{A Boolean argument (defaults to TRUE) indicating whether the analyses submitted should delete prior data associated with the same analyses to be performed.}
   \item{...}{Arguments to be passed to \code{\link{studentGrowthPercentiles}} or \code{\link{studentGrowthProjections}} for finer control over SGP calculations. NOTE: arguments can only be passed to one lower level function at a time, and only student growth percentiles OR projections can be created but not both at the same time.
   }
 }
