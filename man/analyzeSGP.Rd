@@ -39,7 +39,7 @@ analyzeSGP(sgp_object,
 }
 
 \arguments{
-  \item{sgp_object}{An object of class \code{SGP} containing long formatted data in the \code{code} (from \code{\link{prepareSGP}}) slot. 
+  \item{sgp_object}{An object of class \code{SGP} containing long formatted data in the \code{@Data} slot (from \code{\link{prepareSGP}}). 
   }
   \item{state}{Acronym indicating state associated with the data for access to embedded knot and boundaries, cutscores, CSEMs, and other state related assessment data.
   }
@@ -64,8 +64,7 @@ If left missing the function will use the data to infer all the grade progressio
   }
   \item{sgp.projections.lagged.baseline}{Boolean variable indicating whether to calculate lagged baseline student growth projections. Defaults to TRUE.
   }
-  \item{sgp.percentiles.baseline.max.order}{Integer indicating the maximum order to calculate baseline student growth percentiles (regardless of maximum coefficient matrix order). Default is 3.
-To utilize the maximum matrix order, set to NULL.
+  \item{sgp.percentiles.baseline.max.order}{Integer indicating the maximum order to calculate baseline student growth percentiles (regardless of maximum coefficient matrix order).  Also the max order of baseline coefficient matrices to be calculated if requested. Default is 3. To utilize the maximum matrix order, set to NULL. 
   }
   \item{sgp.projections.baseline.max.order}{Integer indicating the maximum order to calculate baseline student growth projections (regardless of maximum coefficient matrix order). Default is 3.
 To utilize the maximum matrix order, set to NULL.
