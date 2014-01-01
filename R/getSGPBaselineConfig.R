@@ -46,8 +46,9 @@ function(sgp_object,
 				sgp.baseline.grade.sequences.lags=sgp.baseline.grade.sequences.lags)
 	}
 
-	for (a in seq_along(tmp.sgp.baseline.config)) {
-		tmp.length <- length(tmp.sgp.baseline.config[[a]][["sgp.baseline.grade.sequences"]])
+	for (a in rev(seq_along(tmp.sgp.baseline.config))) {
+		# Set tmp.length only once to the first list length.  Overwrites elements if subsequent list length differ from the first
+		if (a == 1) tmp.length <- length(tmp.sgp.baseline.config[[a]][["sgp.baseline.grade.sequences"]])
 		for (b in seq(tmp.length)) {
 			sgp.baseline.config[[b+(a-1)*tmp.length]] <- tmp.sgp.baseline.config[[a]]
 			sgp.baseline.config[[b+(a-1)*tmp.length]][["sgp.baseline.grade.sequences"]] <- unlist(tmp.sgp.baseline.config[[a]][["sgp.baseline.grade.sequences"]][b])
