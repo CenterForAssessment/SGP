@@ -788,7 +788,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 					tmp.list[[i]] <- data.table(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
 					sgp_object@SGP[["SGProjections"]][[i]][,c(1, grep("PROJ", names(sgp_object@SGP[["SGProjections"]][[i]])))])
 				}
-				sgPlot.data <- data.table(rbindlist(tmp.list), key=key(sgPlot.data))[sgPlot.data]
+				sgPlot.data <- data.table(rbind.fill(tmp.list), key=key(sgPlot.data))[sgPlot.data]
 			} ### END if (sgPlot.fan)
 
 			### Straight projection scale score targets
@@ -800,7 +800,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 				for (i in tmp.proj.cut_score.names) {
 					tmp.list[[i]] <- data.table(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1], sgp_object@SGP[["SGProjections"]][[i]], key=key(sgPlot.data))
 				}
-				sgPlot.data <- data.table(rbindlist(tmp.list), key=key(sgPlot.data))[sgPlot.data]
+				sgPlot.data <- data.table(rbind.fill(tmp.list), key=key(sgPlot.data))[sgPlot.data]
 			} ### END if ("sgp.projections" %in% sgPlot.sgp.targets)
 
 			### Lagged projection scale score targets
@@ -812,7 +812,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 				for (i in tmp.proj.cut_score.names.lagged) {
 					tmp.list[[i]] <- data.table(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1], sgp_object@SGP[["SGProjections"]][[i]], key=key(sgPlot.data))
 				}
-				sgPlot.data <- data.table(rbindlist(tmp.list), key=key(sgPlot.data))[sgPlot.data]
+				sgPlot.data <- data.table(rbind.fill(tmp.list), key=key(sgPlot.data))[sgPlot.data]
 			} ### END if ("sgp.projections.lagged" %in% sgPlot.sgp.targets)
 		
 			### Transform scale scores
