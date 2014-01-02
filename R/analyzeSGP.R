@@ -207,7 +207,7 @@ function(sgp_object,
 
 		if (is.null(SGPstateData[[state]][["Baseline_splineMatrix"]])) {
 			if (is.null(sgp.baseline.config)) {
-				sgp.baseline.config <- getSGPBaselineConfig(sgp_object, content_areas, grades, sgp.baseline.panel.years)
+				sgp.baseline.config <- getSGPBaselineConfig(sgp_object, content_areas, grades, sgp.baseline.panel.years, sgp.percentiles.baseline.max.order)
 			} else {
 				sgp.baseline.config <- checkConfig(sgp.baseline.config, "Baseline")
 			}
@@ -300,7 +300,7 @@ function(sgp_object,
 			calculate.simex.baseline$simex.use.my.coefficient.matrices <- NULL
 			
 			if (is.null(sgp.baseline.config)) {
-				sgp.baseline.config <- getSGPBaselineConfig(sgp_object, content_areas, grades, sgp.baseline.panel.years)
+				sgp.baseline.config <- getSGPBaselineConfig(sgp_object, content_areas, grades, sgp.baseline.panel.years, sgp.percentiles.baseline.max.order)
 			} else {
 				sgp.baseline.config <- checkConfig(sgp.baseline.config, "Baseline")
 			}
