@@ -1095,7 +1095,7 @@ function(sgp_object,
 					panel.data=list(
 						Panel_Data=getPanelData(tmp_sgp_data_for_analysis, "sgp.projections.lagged", sgp.iter), 
 						Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]], 
-						Knots_Boundaries=getKnotsBoundaries(sgp.iter, state, c("Standard", "sgp.projections"))),
+						Knots_Boundaries=getKnotsBoundaries(sgp.iter, state, c("Standard", "sgp.projections.lagged"))),
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 
 						my.extra.label="LAGGED.BASELINE"),
 					use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)), 
@@ -1143,7 +1143,7 @@ function(sgp_object,
 			for (sgp.iter in rev(par.sgp.config)) {
 
 				panel.data <- within(tmp_sgp_object, assign("Panel_Data", getPanelData(tmp_sgp_data_for_analysis, "sgp.percentiles", sgp.iter)))
-				tmp.knots.boundaries <- getKnotsBoundaries(sgp.iter, state, c("Standard", "sgp.percentiles")) # Get specific knots and boundaries in case course sequence is different
+				tmp.knots.boundaries <- getKnotsBoundaries(sgp.iter, state, c("Standard", "sgp.percentiles"))
 				panel.data[["Knots_Boundaries"]][[names(tmp.knots.boundaries)]] <- tmp.knots.boundaries[[names(tmp.knots.boundaries)]]
 
 				if (dim(panel.data$Panel_Data)[1] > 0 & dim(panel.data$Panel_Data)[2] > 3) {
@@ -1189,7 +1189,7 @@ function(sgp_object,
 			for (sgp.iter in rev(par.sgp.config.baseline)) {
 				
 				panel.data <- within(tmp_sgp_object, assign("Panel_Data", getPanelData(tmp_sgp_data_for_analysis, "sgp.percentiles", sgp.iter)))
-				tmp.knots.boundaries <- getKnotsBoundaries(sgp.iter, state, c("Standard", "sgp.percentiles")) # Get specific knots and boundaries in case course sequence is different
+				tmp.knots.boundaries <- getKnotsBoundaries(sgp.iter, state, c("Standard", "sgp.percentiles"))
 				panel.data[["Knots_Boundaries"]][[names(tmp.knots.boundaries)]] <- tmp.knots.boundaries[[names(tmp.knots.boundaries)]]
 
 				if (dim(panel.data$Panel_Data)[1] > 0 & dim(panel.data$Panel_Data)[2] > 3) {
@@ -1235,7 +1235,7 @@ function(sgp_object,
 			for (sgp.iter in par.sgp.config) {
 	
 				panel.data <- within(tmp_sgp_object, assign("Panel_Data", getPanelData(tmp_sgp_data_for_analysis, "sgp.projections", sgp.iter)))
-				tmp.knots.boundaries <- getKnotsBoundaries(sgp.iter, state, c("Standard", "sgp.projections")) # Get specific knots and boundaries in case course sequence is different
+				tmp.knots.boundaries <- getKnotsBoundaries(sgp.iter, state, c("Standard", "sgp.projections"))
 				panel.data[["Knots_Boundaries"]][[names(tmp.knots.boundaries)]] <- tmp.knots.boundaries[[names(tmp.knots.boundaries)]]
 
 				if (dim(panel.data$Panel_Data)[1] > 0) {
@@ -1274,7 +1274,7 @@ function(sgp_object,
 			for (sgp.iter in par.sgp.config.baseline) {
 
 				panel.data <- within(tmp_sgp_object, assign("Panel_Data", getPanelData(tmp_sgp_data_for_analysis, "sgp.projections", sgp.iter)))
-				tmp.knots.boundaries <- getKnotsBoundaries(sgp.iter, state, c("Standard", "sgp.projections")) # Get specific knots and boundaries in case course sequence is different
+				tmp.knots.boundaries <- getKnotsBoundaries(sgp.iter, state, c("Standard", "sgp.projections"))
 				panel.data[["Knots_Boundaries"]][[names(tmp.knots.boundaries)]] <- tmp.knots.boundaries[[names(tmp.knots.boundaries)]]
 
 				if (dim(panel.data$Panel_Data)[1] > 0) {
