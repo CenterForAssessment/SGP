@@ -14,6 +14,7 @@ function(
 	sgp.target.content_areas=NULL,
 	max.sgp.target.years.forward=3,
 	update.all.years=FALSE,
+	sgp.config=NULL,
 	parallel.config=NULL) {
 
 	started.at <- proc.time()
@@ -395,6 +396,7 @@ function(
 				target.type.iter,
 				tmp.target.level.names,
 				getYearsContentAreasGrades(state, unique(tmp.target.data$YEAR), unique(tmp.target.data$CONTENT_AREA)),
+				sgp.config=sgp.config,
 				parallel.config=parallel.config)
 		}
 	} ### END !is.null(sgp.target.scale.scores)

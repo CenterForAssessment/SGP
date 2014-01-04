@@ -1,15 +1,17 @@
 `getKnotsBoundaries` <- 
 function(sgp.iter,
 	state,
-	sgp.iter.type="Standard") {
+	sgp.iter.type=c("Standard", "sgp.percentiles")) {
 
-	if (sgp.iter.type=="Standard") {
+	if (sgp.iter.type[1]=="Standard") {
+		if (sgp.iter.type[2] %in% c("sgp.percentiles", "sgp.projections.lagged")) my.content.areas <- "sgp.content.areas"
+		if (sgp.iter.type[2]=="sgp.projections") my.content.areas <- "sgp.projection.content.areas"
 		kb <- list()
-		tmp.content_areas <- unique(sgp.iter[["sgp.content.areas"]])
+		tmp.content_areas <- unique(sgp.iter[[my.content.areas]])
 		if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]])) {
 			tmp.content_areas <- sapply(tmp.content_areas, function(x) unique(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[x]]))
 		}
-		content_area.label <- tail(sgp.iter[["sgp.content.areas"]], 1)
+		content_area.label <- tail(sgp.iter[[my.content.areas]], 1)
 		tmp.year <- tail(sgp.iter[["sgp.panel.years"]], 1)
 
 		for (j in tmp.content_areas) {
@@ -19,13 +21,15 @@ function(sgp.iter,
 		}
 	}
 
-	if (sgp.iter.type=="Baseline") {
+	if (sgp.iter.type[1]=="Baseline") {
+		if (sgp.iter.type[2] %in% c("sgp.percentiles", "sgp.projections.lagged")) my.content.areas <- "sgp.baseline.content.areas"
+		if (sgp.iter.type[2]=="sgp.projections") my.content.areas <- "sgp.projection.content.areas"
 		kb <- list()
-		tmp.content_areas <- unique(sgp.iter[["sgp.baseline.content.areas"]])
+		tmp.content_areas <- unique(sgp.iter[[my.content.areas]])
 		if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]])) {
 			tmp.content_areas <- sapply(tmp.content_areas, function(x) unique(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[x]]))
 		}
-		content_area.label <- tail(sgp.iter[["sgp.baseline.content.areas"]], 1)
+		content_area.label <- tail(sgp.iter[[my.content.areas]], 1)
 		tmp.year <- "BASELINE"
 
 		for (j in tmp.content_areas) {
