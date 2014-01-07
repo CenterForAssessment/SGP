@@ -24,7 +24,7 @@ function(sgp_object,
 	for (i in .content_areas) {
 		.grades <- sort(type.convert(unique(sgp_object@Data[SJ("VALID_CASE", i)][["GRADE"]])))
 		tmp.sgp.grade.sequences <- lapply(.grades[-1], function(x) tail(.grades[.grades <= x], (.baseline.max.order+1)))
-		tmp.sgp.baseline.grade.sequences <- sapply(tmp.sgp.grade.sequences, function(x) x[(tail(x,1)-x) <= .baseline.max.order])
+		tmp.sgp.baseline.grade.sequences <- sapply(tmp.sgp.grade.sequences, function(x) x[(tail(x,1)-x) <= length(.years)-2])
 		if (!is.null(grades)) {
 			tmp.sgp.baseline.grade.sequences <- tmp.sgp.baseline.grade.sequences[sapply(tmp.sgp.baseline.grade.sequences, function(x) tail(x, 1) %in% grades)]
 		}
