@@ -7,7 +7,11 @@ function(state,
 
 	tmp.list <- list()
 	for (i in intersect(names(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]]), tmp.content_areas)) {
-		tmp.df <- data.frame(GRADE=as.character(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[i]]), stringsAsFactors=FALSE)
+		if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][['Content_Areas_Domains']])) {
+			tmp.df <- data.frame(GRADE=as.character(unique(unlist(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][grep(i, SGPstateData[[state]][["Student_Report_Information"]][['Content_Areas_Domains']])]))), stringsAsFactors=FALSE)
+		} else {
+			tmp.df <- data.frame(GRADE=as.character(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[i]]), stringsAsFactors=FALSE)
+		}
 		if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[i]])) {
 			tmp.df <- CJ(tmp.df$GRADE, intersect(SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[i]]:tail(sort(tmp.years), 1), tmp.years))
 		} else {

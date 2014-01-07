@@ -1,14 +1,14 @@
 `studentGrowthPlot` <- 
-function(Scale_Scores,               ## List of Scale Scores
+function(Scale_Scores,               ## Vector of Scale Scores
 	Plotting_Scale_Scores,       ## Score used for plotting, if missing, then Scale_Scores are used for plotting,
                                      ## if supplied Scale_Scores used for text
 	Achievement_Levels,          ## NOTE: Achievement_Levels must/should be supplied as factors with appropriate level codings 
-	SGP,                         ## List of SGPs
-	SGP_Levels,                  ## List of SGP Levels
-	Grades,                      ## List of Grade levels for student
-	Cuts,                        ## List of NY1, NY2, and NY3 cutscores
-	SGP_Targets,                 ## List of CUKU, CUKU_Current, MUSU, MUSU_Current (multi) year targets
-	SGP_Scale_Score_Targets,         ## List of CUKU, CUKU_Current, MUSU, MUSU_Current scale score targets
+	SGP,                         ## Vector of SGPs
+	SGP_Levels,                  ## Vector of SGP Levels
+	Grades,                      ## Vector of Grade levels for student
+	Cuts,                        ## Vector of NY1, NY2, and NY3 cutscores
+	SGP_Targets,                 ## Vector of CUKU, CUKU_Current, MUSU, MUSU_Current (multi) year targets
+	SGP_Scale_Score_Targets,     ## Vector of CUKU, CUKU_Current, MUSU, MUSU_Current scale score targets
 	Cutscores,                   ## data.frame of long formatted achievement level cutscores
 	Report_Parameters) {         ## list containing Current_Year, Content_Area, State, Denote_Content_Area, SGP_Targets, Configuration
 
@@ -23,7 +23,11 @@ number.growth.levels <- length(SGPstateData[[Report_Parameters$State]][["Growth"
 growth.level.labels <- SGPstateData[[Report_Parameters$State]][["Growth"]][["Levels"]]
 growth.level.cutscores <- SGPstateData[[Report_Parameters$State]][["Growth"]][["Cutscores"]][["Cuts"]]
 growth.level.cutscores.text <- SGPstateData[[Report_Parameters$State]][["Growth"]][["Cutscores"]][["Labels"]]
-grades.reported.in.state <- SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Grades_Reported"]][[Report_Parameters$Content_Area]]
+if (!is.null(SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Grades_Reported_Domains"]])) {
+	grades.reported.in.state <- SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Grades_Reported"]][[Report_Parameters$Content_Area]]
+} else {
+	grades.reported.in.state <- SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Grades_Reported"]][[Report_Parameters$Content_Area]]
+}
 grades.reported.in.state.low <- min(grades.reported.in.state)
 grades.reported.in.state.high <- max(grades.reported.in.state)
 test.abbreviation <- SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Abbreviation"]]

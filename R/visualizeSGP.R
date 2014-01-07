@@ -595,11 +595,29 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 		if (sgPlot.demo.report) {
 			sgPlot.anonymize <- TRUE
 			tmp.ids <- list()
-			setkeyv(slot.data, c("VALID_CASE", "YEAR", "GRADE"))
-			tmp.grades.reported <- unique(unlist(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]]))
-			tmp.grades.reported <- as.character(tmp.grades.reported[tmp.grades.reported %in% unique(slot.data)[list("VALID_CASE", tmp.last.year)][["GRADE"]]])
-			for (i in seq_along(tmp.grades.reported)) {
-				tmp.ids[[i]] <- as.character(sample(unique(slot.data[SJ("VALID_CASE", tmp.last.year, tmp.grades.reported[i])]$ID), 10))
+			setkeyv(slot.data, c("VALID_CASE", "YEAR", "GRADE", "CONTENT_AREA_LABELS"))
+			if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]])) {
+				tmp.data.table <- list()
+				for (i in names(grep(unique(unlist(SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]]))[1], unlist(SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]]), value=TRUE))) {
+					tmp.grades.reported <- SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[i]]
+					tmp.data.table[[i]] <- data.table(
+						VALID_CASE="VALID_CASE",
+						YEAR=tmp.last.year,
+						GRADE=tmp.grades.reported, 
+						CONTENT_AREA_LABELS=i)
+				}
+				tmp.grades.content_areas.reported <- data.table(rbindlist(tmp.data.table), key=key(slot.data))
+			} else {
+				tmp.grades.reported <- unique(unlist(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]]))
+				tmp.grades.content_areas.reported <- data.table(
+					VALID_CASE="VALID_CASE",
+					YEAR=tmp.last.year,
+					GRADE=tmp.grades.reported, 
+					CONTENT_AREA_LABELS=names(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]])[1], key=key(slot.data))
+			}
+			tmp.grades.content_areas.reported <- unique(slot.data)[,key(slot.data), with=FALSE][tmp.grades.content_areas.reported, nomatch=0]
+			for (i in seq(dim(tmp.grades.content_areas.reported)[1])) {
+				tmp.ids[[i]] <- as.character(sample(unique(slot.data[tmp.grades.content_areas.reported[i]]$ID), 10))
 			}
 			slot.data[,c("SCHOOL_NUMBER", "DISTRICT_NUMBER") := NULL]
 			slot.data[slot.data$ID %in% unlist(tmp.ids), c("SCHOOL_NUMBER", "DISTRICT_NUMBER") := list(-99L, -999L)]
@@ -770,13 +788,13 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 		if (sgPlot.fan | !is.null(sgPlot.sgp.targets)) {
 
 			if (sgPlot.baseline) {
-				tmp.proj.names <- paste(tmp.content_areas, tmp.last.year, "BASELINE", sep=".")
-				tmp.proj.cut_score.names <- paste(tmp.content_areas, tmp.last.year, "BASELINE", "TARGET_SCALE_SCORES", sep=".")
-				tmp.proj.cut_score.names.lagged <- paste(tmp.content_areas, tmp.last.year, "LAGGED", "BASELINE", "TARGET_SCALE_SCORES", sep=".")
+				tmp.proj.names <- intersect(names(sgp_object@SGP[["SGProjections"]]), paste(tmp.content_areas, tmp.last.year, "BASELINE", sep="."))
+				tmp.proj.cut_score.names <- intersect(names(sgp_object@SGP[["SGProjections"]]), paste(tmp.content_areas, tmp.last.year, "BASELINE", "TARGET_SCALE_SCORES", sep="."))
+				tmp.proj.cut_score.names.lagged <- intersect(names(sgp_object@SGP[["SGProjections"]]), paste(tmp.content_areas, tmp.last.year, "LAGGED", "BASELINE", "TARGET_SCALE_SCORES", sep="."))
 			} else {
-				tmp.proj.names <- paste(tmp.content_areas, tmp.last.year, sep=".")
-				tmp.proj.cut_score.names <- paste(tmp.content_areas, tmp.last.year, "TARGET_SCALE_SCORES", sep=".")
-				tmp.proj.cut_score.names.lagged <- paste(tmp.content_areas, tmp.last.year, "LAGGED", "TARGET_SCALE_SCORES", sep=".")
+				tmp.proj.names <- intersect(names(sgp_object@SGP[["SGProjections"]]), paste(tmp.content_areas, tmp.last.year, sep="."))
+				tmp.proj.cut_score.names <- intersect(names(sgp_object@SGP[["SGProjections"]]), paste(tmp.content_areas, tmp.last.year, "TARGET_SCALE_SCORES", sep="."))
+				tmp.proj.cut_score.names.lagged <- intersect(names(sgp_object@SGP[["SGProjections"]]), paste(tmp.content_areas, tmp.last.year, "LAGGED", "TARGET_SCALE_SCORES", sep="."))
 			}
 
 			### Straight projections for fan
