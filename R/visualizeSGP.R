@@ -826,7 +826,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			setkeyv(student.teacher.lookup, c("ID", paste("INSTRUCTOR_NUMBER", tmp.last.year, sep=".")))
 			unique.teacher.lookup <- unique(student.teacher.lookup)[,c("ID", paste(c("INSTRUCTOR_NUMBER", "INSTRUCTOR_NAME"), tmp.last.year, sep=".")), with=FALSE]
 			setkey(sgPlot.data, ID); setkey(unique.teacher.lookup)
-			sgPlot.data <- sgPlot.data[unique.teacher.lookup]
+			sgPlot.data <- sgPlot.data[unique.teacher.lookup, allow.cartesian=TRUE]
 			tmp.key <- c("ID", paste("INSTRUCTOR_NUMBER", tmp.last.year, sep="."), "CONTENT_AREA")
 			setkeyv(sgPlot.data, tmp.key)
 			sgPlot.data <- data.table(student.teacher.lookup[,c(tmp.key, "CONTENT_AREA_RESPONSIBILITY"), with=FALSE], key=tmp.key)[sgPlot.data]
