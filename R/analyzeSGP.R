@@ -207,7 +207,7 @@ function(sgp_object,
 
 		if (is.null(SGPstateData[[state]][["Baseline_splineMatrix"]])) {
 			if (is.null(sgp.baseline.config)) {
-				sgp.baseline.config <- getSGPBaselineConfig(sgp_object, content_areas, grades, sgp.baseline.panel.years)
+				sgp.baseline.config <- getSGPBaselineConfig(sgp_object, content_areas, grades, sgp.baseline.panel.years, sgp.percentiles.baseline.max.order)
 			} else {
 				sgp.baseline.config <- checkConfig(sgp.baseline.config, "Baseline")
 			}
@@ -293,19 +293,23 @@ function(sgp_object,
 
 	if (sgp.percentiles.baseline & !is.null(calculate.simex.baseline)) {
 
+		if (is.null(sgp.baseline.config)) {
+			sgp.baseline.config <- getSGPBaselineConfig(sgp_object, content_areas, grades, sgp.baseline.panel.years, sgp.percentiles.baseline.max.order)
+		} else {
+			sgp.baseline.config <- checkConfig(sgp.baseline.config, "Baseline")
+		}
+
+		tmp.subjects <- unique(sapply(sgp.baseline.config, function(x) tail(x[["sgp.baseline.content.areas"]],1)))
+
 		###  Calculate BASELINE SIMEX matrices if they are not present
-		if (length(grep(".BASELINE.SIMEX", names(tmp_sgp_object[["Coefficient_Matrices"]]))) == 0) {
+		if (!all(find.matrices <- paste(tmp.subjects, ".BASELINE.SIMEX", sep="") %in% names(tmp_sgp_object[["Coefficient_Matrices"]]))) {
+			tmp.subjects <- tmp.subjects[!find.matrices]
+			sgp.baseline.config <- sgp.baseline.config[which(sapply(sgp.baseline.config, function(x) tail(x[["sgp.baseline.content.areas"]],1)) %in% tmp.subjects)]
+
+			message("\n\tStarted SIMEX Baseline Coefficient Matrix Calculation:\n")
 			
 			##  Enforce that simex.use.my.coefficient.matrices must be FALSE for BASELINE SIMEX matrix production
 			calculate.simex.baseline$simex.use.my.coefficient.matrices <- NULL
-			
-			if (is.null(sgp.baseline.config)) {
-				sgp.baseline.config <- getSGPBaselineConfig(sgp_object, content_areas, grades, sgp.baseline.panel.years)
-			} else {
-				sgp.baseline.config <- checkConfig(sgp.baseline.config, "Baseline")
-			}
-			
-			message("\n\tStarted SIMEX Baseline Coefficient Matrix Calculation:\n")
 			
 			if (!is.null(parallel.config)) { ### PARALLEL BASELINE COEFFICIENT MATRIX CONSTRUCTION
 				
