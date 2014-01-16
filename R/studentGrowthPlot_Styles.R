@@ -45,7 +45,7 @@
 
 		if (!any(content_area %in% names(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]]))) {
 			tmp.list <- list()
-			for (i in match(content_area, names(SGPstateData[[state]][["Achievement"]][["Cutscores"]]))) {
+			for (i in grep(content_area, sapply(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]]), '[.]'), '[', 1))) {
 				tmp.grades <- as.character(matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]][[i]]), "_")),
 					ncol=2, byrow=TRUE)[,2])
 				tmp.cutscores <- matrix(unlist(SGPstateData[[state]][["Achievement"]][["Cutscores"]][[i]]),
@@ -55,7 +55,7 @@
 				for (j in seq(number.achievement.level.regions-1)) {
 					tmp.list[[paste(i, j, sep="_")]] <- data.frame(
 						GRADE=tmp.grades,
-						CONTENT_AREA=names(SGPstateData[[state]][["Achievement"]][["Cutscores"]])[i],
+						CONTENT_AREA=unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]])[i], '[.]'))[1],
 						CUTLEVEL=rep(j, length(tmp.grades)),
 						CUTSCORES=tmp.cutscores[,j],
 						YEAR=rep(tmp.year, length(tmp.grades)), stringsAsFactors=FALSE)
@@ -63,17 +63,18 @@
 			}
 		} else {
 			tmp.list <- list()
-			for (i in match(content_area, names(SGPstateData[[state]][["Achievement"]][["Cutscores"]]))) {
+			for (i in grep(content_area, sapply(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]]), '[.]'), '[', 1))) {
 				tmp.grades <- as.character(matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]][[i]]), "_")),
 					ncol=2, byrow=TRUE)[,2])
+				tmp.year <- as.character(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]])[i], "[.]"))[2])
 
 				for (j in seq(number.achievement.level.regions-1)) {
 					tmp.list[[paste(i, j, sep="_")]] <- data.frame(
 						GRADE=tmp.grades,
-						CONTENT_AREA=names(SGPstateData[[state]][["Achievement"]][["Cutscores"]])[i],
+						CONTENT_AREA=unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]])[i], '[.]'))[1],
 						CUTLEVEL=rep(j, length(tmp.grades)),
-						CUTSCORES=rep(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[i]][j+1]), 
-						YEAR=as.character(NA), stringsAsFactors=FALSE)
+						CUTSCORES=rep(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[names(SGPstateData[[state]][["Achievement"]][["Cutscores"]][i])]][j+1]), 
+						YEAR=rep(tmp.year, length(tmp.grades)), stringsAsFactors=FALSE)
 				}
 			}
 		}
