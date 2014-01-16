@@ -28,7 +28,7 @@ function(
 	}
 	if (distribution=="Skew-Normal") {
 		tmp.shape <- tan((pi/2)*((min.max[1]+min.max[2]) - 2*scale_scores)/(min.max[2]-min.max[1]))
-		tmp.score <- round_any(as.numeric(rsn(length(scale_scores), location=scale_scores, scale=tmp.scale, shape=tmp.shape)), round)
+		tmp.score <- round_any(as.numeric(rsn(length(scale_scores), xi=scale_scores, omega=tmp.scale, alpha=tmp.shape)), round)
 	}
 	if (distribution=="Normal") {
 		tmp.score <- round_any(as.numeric(rnorm(length(scale_scores), mean=scale_scores, sd=tmp.scale)), round)
