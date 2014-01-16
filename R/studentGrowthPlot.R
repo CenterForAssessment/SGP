@@ -280,6 +280,9 @@ if (grade.values$year_span > 0) {
 	year.text <- head(year.text, studentGrowthPlot.year.span)
 	content_area.text <- grade.values$interp.df$CONTENT_AREA[match(gsub("-", "_", year.text), grade.values$years)]
 	content_area.text[is.na(content_area.text)] <- " "
+	for (i in which(content_area.text %in% names(SGPstateData[["DEMO"]][["Student_Report_Information"]][["Content_Areas_Labels"]]))) {
+		content_area.text[i] <- SGPstateData[["DEMO"]][["Student_Report_Information"]][["Content_Areas_Labels"]][[content_area.text[i]]]
+	}
 
 	if (grade.values$increment_for_projection_current > 0) {
 		grades.text.numbers <- c(Grades[grade.values$year_span:1], 
@@ -473,7 +476,7 @@ if (grade.values$year_span == 0) {
 }
 
 if (sgPlot.show.content_area.progression) {
-	grid.text(x=low.year:high.year, y=convertY(unit(0.05, "npc"), "native"), sapply(content_area.text, capwords), gp=gpar(col="white", cex=0.8), default.units="native")
+	grid.text(x=low.year:high.year, y=convertY(unit(0.05, "npc"), "native"), sapply(content_area.text, capwords), gp=gpar(col="white", cex=0.75), default.units="native")
 }
 
 if (connect.points=="Arrows") {
