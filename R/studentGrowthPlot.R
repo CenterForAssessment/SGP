@@ -11,12 +11,12 @@ function(Scale_Scores,               ## Vector of Scale Scores
 	SGP_Targets,                 ## Vector of CUKU, CUKU_Current, MUSU, MUSU_Current (multi) year targets
 	SGP_Scale_Score_Targets,     ## Vector of CUKU, CUKU_Current, MUSU, MUSU_Current scale score targets
 	Cutscores,                   ## data.frame of long formatted achievement level cutscores
-	Report_Parameters) {         ## list containing Current_Year, Content_Area, State, Denote_Content_Area, SGP_Targets, Configuration
+	Report_Parameters) {         ## list containing Current_Year, Content_Area, Content_Area_Title, State, Denote_Content_Area, SGP_Targets, Configuration
 
 
 ### Create relevant variables
 
-content.area.label <- SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Content_Areas_Labels"]][[Report_Parameters$Content_Area]]
+content.area.label <- SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Content_Areas_Labels"]][[Report_Parameters$Content_Area_Title]]
 CUTLEVEL <- level_1_curve <- NULL ## To prevent R CMD check warnings
 number.achievement.level.regions <- length(SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Achievement_Level_Labels"]])
 achievement.level.labels <- SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Achievement_Level_Labels"]]
@@ -89,7 +89,7 @@ if (!is.null(SGPstateData[[Report_Parameters$State]][['SGP_Configuration']][['sg
 	sgPlot.show.content_area.progression <- SGPstateData[[Report_Parameters$State]][['SGP_Configuration']][['sgPlot.show.content_area.progression']]
 } else {
 	if (is.null(Report_Parameters[['Configuration']][['Show_Content_Area_Progression']])) {
-		if (length(unique(Content_Areas[!is.na(Content_Areas)])) > 1 || !all(Content_Areas[!is.na(Content_Areas)] == Report_Parameters$Content_Area)) {
+		if (length(unique(Content_Areas[!is.na(Content_Areas)])) > 1 || !all(Content_Areas[!is.na(Content_Areas)]==Report_Parameters$Content_Area)) {
 			sgPlot.show.content_area.progression <- TRUE
 		} else {
 			sgPlot.show.content_area.progression <- FALSE
