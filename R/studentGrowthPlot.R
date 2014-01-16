@@ -291,9 +291,11 @@ if (grade.values$year_span > 0) {
 	}
 	grades.text.numbers.missing <- which(is.na(grades.text.numbers))
 	grades.text.numbers.non.tested <- which(!tmp.grades.text.numbers %in% grades.content_areas.reported.in.state$GRADE)
+	grades.text.eoct <- which(grades.text.numbers=="EOCT")
 	grades.text <- c(paste("Grade", grades.text.numbers), rep(" ", studentGrowthPlot.year.span))
 	grades.text[grades.text.numbers.missing] <- missing.data.symbol
 	grades.text[grades.text.numbers.non.tested] <- "Non-tested Grade"
+	grades.text[grades.text.eoct] <- "EOCT"
 	grades.text <- head(grades.text, studentGrowthPlot.year.span)
 
 	scale.scores.values <- c(Plotting_Scale_Scores[grade.values$year_span:1], rep(NA, studentGrowthPlot.year.span))
@@ -323,7 +325,11 @@ if (grade.values$year_span > 0) {
 		gp.levels.text <- rep(" ", studentGrowthPlot.year.span-1)
 	}
 
-	cuts.ny1.text <- Cuts[["NY1"]]
+	if (grade.values$increment_for_projection_current==0) {
+		cuts.ny1.text <- rep(NA, number.growth.levels+1)
+	} else {
+		cuts.ny1.text <- Cuts[["NY1"]]
+	}
 }
 
 if (grade.values$year_span == 0) {
@@ -344,7 +350,7 @@ if (grade.values$year_span == 0) {
 
 	gp.levels.text <- rep(" ", studentGrowthPlot.year.span-1)
 
-        cuts.ny1.text <- rep(NA, number.growth.levels)
+        cuts.ny1.text <- rep(NA, number.growth.levels+1)
 }
 
 

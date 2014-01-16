@@ -251,7 +251,11 @@ if (reports.by.school) {
 			if (sgPlot.folder.names=="name") {
 				grade_folder <- paste("Grade", k, sep="_")
 			} else {
-				grade_folder <- substr(paste("0", as.character(k), sep=""), nchar(k), nchar(k)+1)
+				if (k=="EOCT") {
+					grade_folder <- "EOCT"
+				} else {
+					grade_folder <- substr(paste("0", as.character(k), sep=""), nchar(k), nchar(k)+1)
+				}
 			}
 
 			if ("PDF" %in% sgPlot.output.format) {
