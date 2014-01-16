@@ -91,6 +91,8 @@ if (!is.null(SGPstateData[[Report_Parameters$State]][['SGP_Configuration']][['sg
 if (is.null(Report_Parameters[['Configuration']][['Show_Content_Area_Progression']])) {
 	if (length(unique(Content_Areas[!is.na(Content_Areas)])) > 1 || !all(Content_Areas[!is.na(Content_Areas)] == Report_Parameters$Content_Area)) {
 		sgPlot.show.content_area.progression <- TRUE
+	} else {
+		sgPlot.show.content_area.progression <- FALSE
 	}
 } else {
 	sgPlot.show.content_area.progression <- Report_Parameters[['Configuration']][['Show_Content_Area_Progression']]
@@ -325,6 +327,7 @@ if (grade.values$year_span == 0) {
 	low.year <- year.function(Report_Parameters$Current_Year, 0, 1)
 	high.year <- year.function(Report_Parameters$Current_Year, studentGrowthPlot.year.span-1, 1) 
 	year.text <- rep(" ", studentGrowthPlot.year.span)
+	content_area.txt <- rep(" ", studentGrowthPlot.year.span)
 
 	grades.text <- rep(" ", studentGrowthPlot.year.span)
 
