@@ -181,7 +181,7 @@ interpolate.grades <- function(grades, content_areas, data.year.span) {
 	if (first.scale.score == 0) {
 		year_span <- 0
 		return (list(
-			interp.df = data.frame(GRADE=2:8, CONTENT_AREA=Report_Parameters$Content_Area, stringsAsFactors=FALSE), 
+			interp.df = data.frame(GRADE=head(unique(Cutscores$GRADE), 7), CONTENT_AREA=Report_Parameters$Content_Area, stringsAsFactors=FALSE), 
 			year_span=year_span,
 			years=yearIncrement(Report_Parameters$Current_Year, -5:1)))
 	} else {
@@ -373,11 +373,11 @@ if (Report_Parameters$Content_Area %in% names(SGPstateData[[Report_Parameters$St
 } else {
    low.score <- min(cuts.ny1.text, 
                     Plotting_Scale_Scores, 
-                    Cutscores$CUTSCORE[Cutscores$GRADE==max(grade.values$interp.df$GRADE[1], "GRADE_LOWER") & Cutscores$CUTLEVEL==1], 
+                    Cutscores$CUTSCORE[Cutscores$GRADE==grade.values$interp.df$GRADE[1] & Cutscores$CUTLEVEL==1], 
                     na.rm=TRUE)
    high.score <- max(cuts.ny1.text, 
                      Plotting_Scale_Scores, 
-                     Cutscores$CUTSCORE[Cutscores$GRADE==min(tail(grade.values$interp.df$GRADE, 1), "GRADE_UPPER") & Cutscores$CUTLEVEL==number.achievement.level.regions-1], 
+                     Cutscores$CUTSCORE[Cutscores$GRADE==tail(grade.values$interp.df$GRADE, 1) & Cutscores$CUTLEVEL==number.achievement.level.regions-1], 
                      na.rm=TRUE)
    yscale.range <- extendrange(c(low.score,high.score), f=0.15)
 }
