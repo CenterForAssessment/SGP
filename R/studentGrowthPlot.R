@@ -118,18 +118,22 @@ arrow.color <- function(sgp){
 }
 
 get.my.cutscore.year <- function(state, content_area, year) {
-	year <- tail(sort(c(SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[content_area]], year)), 1)
-        tmp.cutscore.years <- sapply(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]])[grep(content_area, names(SGPstateData[[state]][["Achievement"]][["Cutscores"]]))], "[.]"),
-                function(x) x[2])
-        if (year %in% tmp.cutscore.years) {
-                return(year)
-        } else {
-                if (year==sort(c(year, tmp.cutscore.years))[1]) {
-                        return(NA)
-                } else {
-                        return(sort(tmp.cutscore.years)[which(year==sort(c(year, tmp.cutscore.years)))-1])
-                }
-        }
+	if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area]])) {
+		return(NA) 
+	} else {
+		year <- tail(sort(c(SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[content_area]], year)), 1)
+		tmp.cutscore.years <- 
+			sapply(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]])[grep(content_area, names(SGPstateData[[state]][["Achievement"]][["Cutscores"]]))], "[.]"), '[', 2)
+		if (year %in% tmp.cutscore.years) {
+			return(year)
+		} else {
+			if (year==sort(c(year, tmp.cutscore.years))[1]) {
+				return(NA)
+			} else {
+				return(sort(tmp.cutscore.years)[which(year==sort(c(year, tmp.cutscore.years)))-1])
+			}
+		}
+	}
 }
 
 interpolate.grades <- function(grades, content_areas, data.year.span) {
@@ -171,6 +175,7 @@ interpolate.grades <- function(grades, content_areas, data.year.span) {
 			tmp.content_areas <- c(tmp.content_areas, grades.content_areas.reported.in.state$CONTENT_AREA[tmp.tail+1])
 			tmp.grades.numeric <- c(tmp.grades.numeric, grades.content_areas.reported.in.state$GRADE_NUMERIC[tmp.tail+1])
 		}
+		tmp.grades[is.na(tmp.grades)] <- tmp.grades.numeric[is.na(tmp.grades)]
 		return(data.frame(GRADE=tmp.grades, GRADE_NUMERIC=tmp.grades.numeric, CONTENT_AREA=tmp.content_areas, stringsAsFactors=FALSE))
 	}
 
@@ -231,9 +236,10 @@ interpolate.grades <- function(grades, content_areas, data.year.span) {
 			year.increment.for.projection.current <- grades.content_areas.reported.in.state$YEAR_LAG[which(grades[1]==grades.content_areas.reported.in.state$GRADE_NUMERIC)+1]
 			year_span <- max(min(last.scale.score, data.year.span-1), min(grades[1]-min(grades.content_areas.reported.in.state$GRADE_NUMERIC)+1, data.year.span-1))-
 				(year.increment.for.projection.current-1)
-			temp.grades <- head(grades, year_span)
-			temp.grades.content_areas <- extend.grades(c(rev(temp.grades), 
-				grades.content_areas.reported.in.state$GRADE_NUMERIC[seq(from=match(grades[1], grades.content_areas.reported.in.state$GRADE_NUMERIC)+1, length=data.year.span-year_span)]))
+			temp.grades <- c(rev(head(grades, year_span)), 
+				head(seq(grades.content_areas.reported.in.state$GRADE_NUMERIC[match(grades[1], grades.content_areas.reported.in.state$GRADE_NUMERIC)]+1, length=data.year.span), 
+					data.year.span-year_span))
+			temp.grades.content_areas <- extend.grades(temp.grades)
 			return (list(
 				interp.df = temp.grades.content_areas, 
 				year_span=year_span,
