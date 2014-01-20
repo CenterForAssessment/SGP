@@ -395,7 +395,7 @@ function(
 				tmp.target.data[, c("ID", "CONTENT_AREA", "YEAR", tmp.target.level.names), with=FALSE],
 				target.type.iter,
 				tmp.target.level.names,
-				getYearsContentAreasGrades(state, unique(tmp.target.data$YEAR), unique(tmp.target.data$CONTENT_AREA)),
+				getYearsContentAreasGrades(state, years=unique(tmp.target.data$YEAR), content_areas=unique(tmp.target.data$CONTENT_AREA)),
 				sgp.config=sgp.config,
 				parallel.config=parallel.config)
 		}

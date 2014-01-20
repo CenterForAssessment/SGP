@@ -1,22 +1,26 @@
 `getYearsContentAreasGrades` <- 
 function(state,
-	tmp.years,
-	tmp.content_areas) {
+	years,
+	content_areas=NULL,
+	content_areas_domains=NULL) {
 
 	CONTENT_AREA <- NULL
 
 	tmp.list <- list()
+	if (is.null(content_areas)) tmp.content_areas <- content_areas_domains else tmp.content_areas <- content_areas
 	for (i in intersect(names(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]]), tmp.content_areas)) {
-		if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][['Content_Areas_Domains']])) {
+		if (!is.null(content_areas_domains)) {
 			tmp.df <- data.frame(GRADE=as.character(unique(unlist(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][grep(i, SGPstateData[[state]][["Student_Report_Information"]][['Content_Areas_Domains']])]))), stringsAsFactors=FALSE)
 		} else {
 			tmp.df <- data.frame(GRADE=as.character(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[i]]), stringsAsFactors=FALSE)
 		}
+
 		if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[i]])) {
-			tmp.df <- CJ(tmp.df$GRADE, intersect(SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[i]]:tail(sort(tmp.years), 1), tmp.years))
+			tmp.df <- CJ(tmp.df$GRADE, intersect(SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[i]]:tail(sort(years), 1), years))
 		} else {
-			tmp.df <- CJ(tmp.df$GRADE, tmp.years)
+			tmp.df <- CJ(tmp.df$GRADE, years)
 		}
+
 		setnames(tmp.df, c("GRADE", "YEAR")) 
 		tmp.list[[i]] <- data.table(CONTENT_AREA=i, tmp.df)
 	}

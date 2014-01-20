@@ -3,10 +3,12 @@ Type: Package
 Title: An R Package for the Calculation and Visualization of Student Growth Percentiles & Percentile Growth Trajectories.
 Version: 1.2-0.0
 Date: 2014-1-20
-Authors@R: c(person("Damian", "Betebenner", email="dbetebenner@nciea.org", role=c("aut", "cre")), person("Adam", "Van Iwaarden", email="vaniwaarden@colorado.edu", role="aut"),
-                    person("Ben", "Domingue", email="ben.domingue@gmail.com", role="aut"), person("Yi", "Shang", email="shangyi@gmail.com", role="aut"))
-Author: Damian W. Betebenner <dbetebenner@nciea.org>, Adam Van Iwaarden <vaniwaarden@colorado.edu>, Ben Domingue <ben.domingue@gmail.com>, and Yi Shang <shangyi@Gmail.com>
-        with contributions from Dr. Jonathan Weeks, Dr. Yi Shang, John Stewart, Dr. Jinnie Choi, Dr. Xin Wei, and Hi Shin Shim. With special thanks to 
+Authors@R: c(person(given=c("Damian", "W."), family="Betebenner", email="dbetebenner@nciea.org", role=c("aut", "cre")), 
+		person(given="Adam", family="Van Iwaarden", email="vaniwaarden@colorado.edu", role="aut"),
+		person(given="Ben", family="Domingue", email="ben.domingue@gmail.com", role="aut"), 
+		person(given="Yi", family="Shang", email="shangyi@gmail.com", role="aut"))
+Author: Damian W. Betebenner [aut, cre], Adam Van Iwaarden [aut], Ben Domingue [aut],  Yi Shang [aut]
+        with contributions from Dr. Jonathan Weeks, John Stewart, Dr. Jinnie Choi, Dr. Xin Wei, and Dr. Hi Shin Shim. With special thanks to 
         State Department of Education analysts: Dr. Xiaoyuan Tan (Arizona), Dr. Carrie Giovannini (Arizona), Dr. Sarah Polasky (Arizona), Rebecca Gau (Arizona), Jeffrey Dean (Arkansas),
 	Dr. Bill Bonk (Colorado), Marie Huchton (Colorado), Dr. Allison Timberlake (Georgia), Dr. Melissa Fincher (Georgia), Kiran Athota (Georgia), Travis Allen (Georgia), 
 	Glenn Hirata (Hawaii), Glenn Nochi (Hawaii), Joshua Lee (Hawaii), Ayaka Nukui (Idaho), Dr. Carissa Miller (Idaho), Dr. Wes Bruce (Indiana), Robert Hochsegang (Indiana), 
@@ -15,7 +17,7 @@ Author: Damian W. Betebenner <dbetebenner@nciea.org>, Adam Van Iwaarden <vaniwaa
 	Catherine McCaslin (New Haven Public Schools), Joshua Marland (New York), W Joshua Rew (Oregon), Jason Becker (Rhode Island), Dr. Jessica Brown (Rhode Island), 
 	Ana Karantonis (Rhode Island), Dr. Deborah Jonas (Virginia), Juan D'Brot (West Virginia), Dr. Deb Came (Washington), Krissy Johnson (Washington), Nate Hixson (West Virginia), 
 	Daniel Bush (Wisconsin), Justin Meyer (Wisconsin), Joseph Newton (Wisconsin), Dr. Philip Olsen (Wisconsin), Nick Stroud (Wisconsin), Brendan Houng (University of Melbourne, Australia),
-	Leslie Rosales (Guatemala), Nathan Wall (eMetric).
+	Leslie Rosales (Guatemala), Nathan Wall (eMetric)
 Maintainer: Damian W. Betebenner <dbetebenner@nciea.org>
 Depends: R (>= 2.13)
 Suggests: randomNames (>= 0.0-5), parallel, SGPdata (>= 8.0-0)
@@ -24,7 +26,7 @@ Description: Functions to calculate student growth percentiles and percentile gr
         longitudinal assessment data.  Functions use quantile regression to estimate the conditional density associated 
         with each student's achievement history.  Percentile growth projections/trajectories are calculated using the coefficient matrices derived from 
 	the quantile regression analyses and specify what percentile growth is required for students to reach future achievement targets.
-SystemRequirements: (PDF)LaTeX (http://www.latex-project.org/) with 'pdfpages' package for studentGrowthPlot option in visualizeSGP to bind together student growth plots into school catalogs.
+SystemRequirements: (PDF)LaTeX (http://www.latex-project.org/) with 'pdfpages' package for studentGrowthPlot option in visualizeSGP to bind together student growth plots into school catalogs
 URL: https://github.com/CenterForAssessment/SGP, http://centerforassessment.github.io/SGP/, http://cran.r-project.org/web/packages/SGP/
 LazyData: Yes
 LazyDataCompression: xz

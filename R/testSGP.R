@@ -464,6 +464,7 @@ SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
 	Content_Areas_Labels=list(MATHEMATICS="Math", READING="Reading", GRADE_9_LIT="Grade 9 Lit", AMERICAN_LIT="American Lit", ALGEBRA_I="Algebra I", ALGEBRA_II="Algebra II"),
 	Content_Areas_Domains=list(MATHEMATICS="MATHEMATICS", READING="READING", GRADE_9_LIT="READING", AMERICAN_LIT="READING", ALGEBRA_I="MATHEMATICS", ALGEBRA_II="MATHEMATICS"),
 	Grades_Reported=list(MATHEMATICS=c("3","4","5","6","7","8"), READING=c("3","4","5","6","7","8"), GRADE_9_LIT="EOCT", AMERICAN_LIT="EOCT", ALGEBRA_I="EOCT", ALGEBRA_II="EOCT"),
+	Grades_Reported_Domains=list(MATHEMATICS=c("3","4","5","6","7","8", "EOCT"), READING=c("3","4","5","6","7","8", "9", "EOCT")),
 	Achievement_Level_Labels=list(
 		"Unsatisfactory"="Unsatisfactory", 
 		"Part Proficient"="Partially Proficient", 
@@ -491,6 +492,8 @@ SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
 			AMERICAN_LIT=rep(1L, 7),
 			ALGEBRA_I=rep(1L, 7),
 			ALGEBRA_II=rep(1L, 7))
+
+	SGPstateData[["DEMO"]][['SGP_Configuration']][['sgPlot.show.content_area.progression']] <- TRUE
 
 	### Create configurations
 
