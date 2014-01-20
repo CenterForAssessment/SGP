@@ -28,5 +28,5 @@ SystemRequirements: (PDF)LaTeX (http://www.latex-project.org/) with 'pdfpages' p
 URL: https://github.com/CenterForAssessment/SGP, http://centerforassessment.github.io/SGP/, http://cran.r-project.org/web/packages/SGP/
 LazyData: Yes
 LazyDataCompression: xz
-License: CC BY-SA 3.0 US + file LICENSE
+License: GPL-2
 ByteCompile: TRUE
