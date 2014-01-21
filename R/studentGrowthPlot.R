@@ -302,8 +302,8 @@ if (grade.values$year_span > 0) {
 	grades.text.numbers.non.tested <- which(!tmp.grades.text.numbers %in% grades.content_areas.reported.in.state$GRADE)
 	grades.text.eoct <- which(grades.text.numbers=="EOCT")
 	grades.text <- c(paste("Grade", grades.text.numbers), rep(" ", studentGrowthPlot.year.span))
-	grades.text[grades.text.numbers.missing] <- missing.data.symbol
 	grades.text[grades.text.numbers.non.tested] <- "Non-tested Grade"
+	grades.text[grades.text.numbers.missing] <- missing.data.symbol
 	grades.text[grades.text.eoct] <- "EOCT"
 	grades.text <- head(grades.text, studentGrowthPlot.year.span)
 
