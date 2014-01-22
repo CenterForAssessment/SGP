@@ -45,6 +45,10 @@
 				for (i in grep(content_area.iter, sapply(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]]), '[.]'), '[', 1))) {
 					tmp.content_area <- unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]])[i], '[.]'))[1]
 					tmp.grades <- as.character(matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]][[i]]), "_")), ncol=2, byrow=TRUE)[,2])
+					tmp.loss <- as.numeric(sapply(SGPstateData[[state]][['Achievement']][['Knots_Boundaries']][[i]][
+								grep("loss.hoss", names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[i]]))], '[', 1))
+					tmp.hoss <- as.numeric(sapply(SGPstateData[[state]][['Achievement']][['Knots_Boundaries']][[i]][
+								grep("loss.hoss", names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[i]]))], '[', 2))
 					tmp.cutscores <- matrix(unlist(SGPstateData[[state]][["Achievement"]][["Cutscores"]][[i]]),
 						ncol=number.achievement.level.regions-1, byrow=TRUE)
 					tmp.year <- as.character(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]])[i], "[.]"))[2])
@@ -53,18 +57,26 @@
 						tmp.list[[paste(i, j, sep="_")]] <- data.table(
 							GRADE=tmp.grades,
 							CONTENT_AREA=tmp.content_area,
-							CUTLEVEL=j,
+							CUTLEVEL=as.character(j),
 							CUTSCORES=tmp.cutscores[,j],
 							YEAR=tmp.year)
-						tmp.list[[paste(i, j, sep="_")]] <- subset(tmp.list[[paste(i, j, sep="_")]], 
-							GRADE %in% SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[tmp.content_area]])
 					}
+
+					tmp.list[["LOSS"]] <- data.table(
+						GRADE=tmp.grades,
+						CONTENT_AREA=tmp.content_area,
+						CUTLEVEL="LOSS",
+						CUTSCORES=tmp.loss,
+						YEAR=tmp.year)
+					
+					tmp.list[["HOSS"]] <- data.table(
+						GRADE=tmp.grades,
+						CONTENT_AREA=tmp.content_area,
+						CUTLEVEL="HOSS",
+						CUTSCORES=tmp.hoss,
+						YEAR=tmp.year)
 				}
 			}
-			tmp.long.cutscores <- data.table(subset(rbindlist(tmp.list), CUTLEVEL %in% 1:(number.achievement.level.regions-1)), key=c("YEAR", "CUTLEVEL"))
-			tmp.extension <- data.table(CONTENT_AREA="PLACEHOLDER", GRADE=c("GRADE_LOWER", "GRADE_UPPER"), tmp.long.cutscores[,extendrange(CUTSCORES, f=0.15), by=list(YEAR, CUTLEVEL)])
-			setnames(tmp.extension, "V1", "CUTSCORES")
-			tmp.long.cutscores <- rbind(tmp.long.cutscores, setcolorder(tmp.extension,names(tmp.long.cutscores)))
 		} else {
 			tmp.list <- list()
 			tmp.grades <- as.character(matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]][[i]]), "_")), ncol=2, byrow=TRUE)[,2])
@@ -73,17 +85,31 @@
 				tmp.list[[j]] <- data.table(
 					GRADE=tmp.grades,
 					CONTENT_AREA=content_area,
-					CUTLEVEL=j,
+					CUTLEVEL=as.character(j),
 					CUTSCORES=SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area]][j+1], 
 					YEAR=NA)
-				tmp.list[[j]] <- subset(tmp.list[[j]], 
-					GRADE %in% SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])
+
+				tmp.list[["LOSS"]] <- data.table(
+					GRADE=tmp.grades,
+					CONTENT_AREA=tmp.content_area,
+					CUTLEVEL="LOSS",
+					CUTSCORES=SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area]][1],
+					YEAR=tmp.year)
+					
+				tmp.list[["HOSS"]] <- data.table(
+					GRADE=tmp.grades,
+					CONTENT_AREA=tmp.content_area,
+					CUTLEVEL="HOSS",
+					CUTSCORES=tail(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area]], 1),
+					YEAR=tmp.year)
 			}
-			tmp.long.cutscores <- data.table(subset(rbindlist(tmp.list), CUTLEVEL %in% 1:(number.achievement.level.regions-1)), key=c("YEAR", "CUTLEVEL"))
-			tmp.extension <- data.table(CONTENT_AREA="PLACEHOLDER", GRADE=c("GRADE_LOWER", "GRADE_UPPER"), tmp.long.cutscores[,extendrange(CUTSCORES, f=0.15), by=list(YEAR, CUTLEVEL)])
-			setnames(tmp.extension, "V1", "CUTSCORES")
-			tmp.long.cutscores <- rbind(tmp.long.cutscores, setcolorder(tmp.extension,names(tmp.long.cutscores)))
 		}
+
+		tmp.long.cutscores <- data.table(subset(rbindlist(tmp.list), GRADE %in% SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[tmp.content_area]]), 
+					key=c("YEAR", "CUTLEVEL"))
+		tmp.extension <- data.table(CONTENT_AREA="PLACEHOLDER", GRADE=c("GRADE_LOWER", "GRADE_UPPER"), tmp.long.cutscores[,extendrange(CUTSCORES, f=0.15), by=list(YEAR, CUTLEVEL)])
+		setnames(tmp.extension, "V1", "CUTSCORES")
+		tmp.long.cutscores <- rbind(tmp.long.cutscores, setcolorder(tmp.extension,names(tmp.long.cutscores)))
 
 		if (length(sort(tmp.long.cutscores$YEAR)) > 0 & !is.null(SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[content_area]])) {
 			tmp.long.cutscores <- subset(tmp.long.cutscores, as.numeric(unlist(sapply(strsplit(as.character(tmp.long.cutscores$YEAR), "_"), function(x) x[1]))) >= 
@@ -91,7 +117,6 @@
 		}
 
 		return(tmp.long.cutscores)
-			
 	} ## END create.long.cutscores.sgPlot
 
 	### Check/adjust supplied arguments
