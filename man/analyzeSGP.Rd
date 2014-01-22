@@ -21,6 +21,7 @@ analyzeSGP(sgp_object,
          sgp.projections.baseline.max.order=3,
          sgp.projections.lagged.baseline.max.order=3,
 	 sgp.projections.max.forward.progression.years=3,
+	 sgp.projections.max.forward.progression.grade=NULL,
 	 sgp.minimum.default.panel.years=NULL,
          sgp.use.my.coefficient.matrices=NULL,
          simulate.sgps=TRUE,
@@ -73,6 +74,8 @@ To utilize the maximum matrix order, set to NULL.
 Default is 3.  To utilize the maximum matrix order, set to NULL.
   }
   \item{sgp.projections.max.forward.progression.years}{Integer indicating the maximum number of years forward that cohort based projections will be established for. Default is 3 years.
+  }
+  \item{sgp.projections.max.forward.progression.grade}{Integer indicating the maximum grade forward that cohort based projections will be established for. Default is NULL, the highest grade.
   }
   \item{sgp.minimum.default.panel.years}{Integer indicating the minimum number of panels years to use for default sgp analyses. Default value is NULL (converted to 3) years of data.
   }
