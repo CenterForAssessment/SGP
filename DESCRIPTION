@@ -61,7 +61,7 @@ Authors@R: c(person(given=c("Damian", "W."), family="Betebenner", email="dbetebe
 		person(given="Phyllis", family="Clay", role="ctb", comment="Albuquerque Public Schools"),
 		person(given="Peter", family="Kinyua", role="ctb", comment="Albuquerque Public Schools"),
 		person(given="Brendan", family="Houng", role="ctb", comment="University of Melbourne, Australia, NAPLAN"),
-		person(given="Leslie", family="Rosale", role="ctb", comment="Guatemala Department of Education"),
+		person(given="Leslie", family="Rosale", role="ctb", comment="Ministry of Education, Guatemala"),
 		person(given="Nathan", family="Wall", role="ctb", comment="eMetric working with Nevada Department of Education and South Dakota Department of Education"))
 Maintainer: Damian W. Betebenner <dbetebenner@nciea.org>
 Depends: R (>= 2.13)
