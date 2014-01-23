@@ -378,7 +378,11 @@ if ("studentGrowthPlot" %in% plot.types) {
 		}
 
 		if (identical(sgPlot.sgp.targets, TRUE)) {
-			sgPlot.sgp.targets <- c("sgp.projections", "sgp.projections.lagged")
+			if (sgPlot.baseline) {
+				sgPlot.sgp.targets <- c("sgp.projections.baseline", "sgp.projections.lagged.baseline")
+			} else {
+				sgPlot.sgp.targets <- c("sgp.projections", "sgp.projections.lagged")
+			}
 		} 
 		if (identical(sgPlot.sgp.targets, FALSE)) {
 			if (!is.null(SGPstateData[[state]][['SGP_Configuration']][['sgPlot.sgp.targets']])) {
