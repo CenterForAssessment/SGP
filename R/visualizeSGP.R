@@ -42,6 +42,7 @@ function(sgp_object,
 		sgPlot.baseline=NULL,
 		sgPlot.zip=TRUE,
 		sgPlot.output.format="PDF",
+		sgPlot.year.span=5,
 		gaPlot.years=NULL,
 		gaPlot.content_areas=NULL, 
 		gaPlot.students=NULL,
@@ -428,7 +429,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 	#### Calculate years and content area from data
  
 		tmp.all.years <- sort(unique(sapply(strsplit(names(sgp_object), "[.]"), function(x) x[2])))
-		tmp.years <- tail(tmp.all.years, 5)
+		tmp.years <- tail(tmp.all.years, sgPlot.year.span)
 		tmp.last.year <- tail(tmp.all.years, 1)
 		tmp.content_areas_domains <- unique(sgp_object[["CONTENT_AREA"]])
 
@@ -528,11 +529,12 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 	#### Year stuff (NECESSARY even IF WIDE data is provided)
 
 	if (is.null(sgPlot.years)) {
-		tmp.years <- tail(sort(unique(slot.data["VALID_CASE"][["YEAR"]])), 5)
+		tmp.years <- sort(unique(slot.data["VALID_CASE"][["YEAR"]])) 
+		tmp.years.subset <- tail(tmp.years, sgPlot.year.span)
 		tmp.last.year <- tail(tmp.years, 1)
 	} else {
-		tmp.all.years <- sort(unique(slot.data["VALID_CASE"][["YEAR"]])) 
-		tmp.years <- tail(tmp.all.years[1:which(tmp.all.years==tail(sort(sgPlot.years), 1))], 5)
+		tmp.years <- sort(unique(slot.data["VALID_CASE"][["YEAR"]])) 
+		tmp.years.subset <- tail(tmp.years[1:which(tmp.years==tail(sort(sgPlot.years), 1))], sgPlot.year.span)
 		tmp.last.year <- tail(tmp.years, 1)
 	}
 
@@ -893,7 +895,7 @@ if (sgPlot.produce.plots) {
 			reports.by.student=sgPlot.reports.by.student,
 			reports.by.instructor=sgPlot.reports.by.instructor,
 			reports.by.school=sgPlot.reports.by.school,
-			sgPlot.years=tmp.years,
+			sgPlot.years=tmp.years.subset,
 			sgPlot.folder=sgPlot.folder,
 			sgPlot.folder.names=sgPlot.folder.names,
 			sgPlot.demo.report=sgPlot.demo.report,
@@ -927,7 +929,7 @@ if (sgPlot.produce.plots) {
 							reports.by.student=sgPlot.reports.by.student,
 							reports.by.instructor=sgPlot.reports.by.instructor,
 							reports.by.school=sgPlot.reports.by.school,
-							sgPlot.years=tmp.years,
+							sgPlot.years=tmp.years.subset,
 							sgPlot.folder=sgPlot.folder,
 							sgPlot.folder.names=sgPlot.folder.names,
 							sgPlot.demo.report=sgPlot.demo.report,
@@ -958,7 +960,7 @@ if (sgPlot.produce.plots) {
 					reports.by.student=sgPlot.reports.by.student,
 					reports.by.instructor=sgPlot.reports.by.instructor,
 					reports.by.school=sgPlot.reports.by.school,
-					sgPlot.years=tmp.years,
+					sgPlot.years=tmp.years.subset,
 					sgPlot.folder=sgPlot.folder,
 					sgPlot.folder.names=sgPlot.folder.names,
 					sgPlot.demo.report=sgPlot.demo.report,
@@ -988,7 +990,7 @@ if (sgPlot.produce.plots) {
 					reports.by.student=sgPlot.reports.by.student,
 					reports.by.instructor=sgPlot.reports.by.instructor,
 					reports.by.school=sgPlot.reports.by.school,
-					sgPlot.years=tmp.years,
+					sgPlot.years=tmp.years.subset,
 					sgPlot.folder=sgPlot.folder,
 					sgPlot.folder.names=sgPlot.folder.names,
 					sgPlot.demo.report=sgPlot.demo.report,

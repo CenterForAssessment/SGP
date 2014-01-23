@@ -53,6 +53,7 @@ visualizeSGP(
            sgPlot.baseline=NULL,
            sgPlot.zip=TRUE,
            sgPlot.output.format="PDF",
+	   sgPlot.year.span=5,
            gaPlot.years=NULL,
            gaPlot.content_areas=NULL,
            gaPlot.students=NULL,
@@ -183,7 +184,9 @@ provided the function produces \code{\link{studentGrowthPlot}}s for ALL students
   }
   \item{sgPlot.zip}{A Boolean argument (defaults to TRUE) indicating whether to zip school folders containing \code{\link{studentGrowthPlot}}s. 
   }
-  \item{sgPlot.output.format}{Argument indicating the desired type of output format for student growth plots. Either 'PDF' (default), 'PNG', or 'PDF_PIECES'.
+  \item{sgPlot.output.format}{Argument indicating the desired type of output format for student growth plots. Either 'PDF' (default), 'PNG', 'PDF_PIECES', or 'JSON'.
+  }
+  \item{sgPlot.year.span}{Integer argument (defaults to 5) indicating the number of years to display for the pdf student growth plot.
   }
   \item{gaPlot.years}{A vector indicating the year(s) for which to produce \code{\link{growthAchievementPlot}}s. If missing the function will use the last year available 
   in the data to produce the \code{\link{growthAchievementPlot}}s.
