@@ -104,7 +104,7 @@
 				CONTENT_AREA=content_area,
 				CUTLEVEL="LOSS",
 				CUTSCORES=SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area]][1],
-				YEAR=tmp.year)
+				YEAR=NA)
 			tmp.list[["LOSS"]] <- subset(tmp.list[["LOSS"]], GRADE %in% SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])
 					
 			tmp.list[["HOSS"]] <- data.table(
@@ -112,7 +112,7 @@
 				CONTENT_AREA=content_area,
 				CUTLEVEL="HOSS",
 				CUTSCORES=tail(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area]], 1),
-				YEAR=tmp.year)
+				YEAR=NA)
 			tmp.list[["HOSS"]] <- subset(tmp.list[["HOSS"]], GRADE %in% SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])
 		}
 
