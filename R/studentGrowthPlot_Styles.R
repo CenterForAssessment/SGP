@@ -149,7 +149,7 @@
 			Cutscores[[i]] <- create.long.cutscores.sgPlot(state, i)
 		}
 		if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["sgp.projections.max.forward.progression.grade"]])) {
-			trajectory.cuts <- sort(c(SGPstateData[[state]][["Growth"]][["Cutscores"]][['Cuts']], SGPstateData[[state]][["SGP_Configuration"]][["sgp.projections.max.forward.progression.grade"]]))
+			trajectory.cuts <- sort(c(SGPstateData[[state]][["Growth"]][["Cutscores"]][['Cuts']], SGPstateData[[state]][["Student_Report_Information"]][["Projection_Fan_Limits"]]))
 			trajectory.cuts <- paste(paste("P", trajectory.cuts, sep=""), collapse="|")
 		} else {
 			trajectory.cuts <- c(1, SGPstateData[[state]][["Growth"]][["Cutscores"]][['Cuts']], 99)
