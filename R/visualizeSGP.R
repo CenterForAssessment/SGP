@@ -433,7 +433,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 	#### Calculate years and content area from data
  
 		tmp.all.years <- sort(unique(sapply(strsplit(names(sgp_object), "[.]"), function(x) x[2])))
-		tmp.years <- tail(tmp.all.years, sgPlot.year.span)
+		tmp.years.subset <- tail(tmp.all.years, sgPlot.year.span)
 		tmp.last.year <- tail(tmp.all.years, 1)
 		tmp.content_areas_domains <- unique(sgp_object[["CONTENT_AREA"]])
 

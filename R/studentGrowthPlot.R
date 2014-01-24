@@ -671,7 +671,8 @@ if (is.null(Report_Parameters[['SGP_Targets']])) {
 		} else {
 			tmp.projection.names <- tmp.projection.names.list[[i]]
 			tmp.projection.year <- current.year
-			tmp.achievement.level <- which(tail(head(Achievement_Levels, 2), 1)==achievement.level.labels)
+			tmp.projection.year.lag <- min(which(!is.na(tail(Scale_Scores, -1))), na.rm=TRUE)
+			tmp.achievement.level <- which(tail(head(Achievement_Levels, tmp.projection.year.lag+1), 1)==achievement.level.labels)
 		}
 		if (length(grep("CUKU", tmp.projection.names)) > 0 & tmp.achievement.level <= level.to.get.cuku) {
 			level.to.get.cuku.label <- names(achievement.level.labels)[level.to.get.cuku+1]
