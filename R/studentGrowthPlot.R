@@ -543,7 +543,7 @@ if (!is.null(Report_Parameters[['SGP_Targets']])) {
 	for (i in tmp.target.types) {
 		if (length(grep("Current", i))==0) {
 			current.year.x.coor <- current.year
-			current.year.x.coor.lag <- min(which(!is.na(tail(Scale_Scores -1))), na.rm=TRUE)
+			current.year.x.coor.lag <- min(which(!is.na(tail(Scale_Scores, -1))), na.rm=TRUE)
 			x.coor.label.adjustment <- -0.075; label.position <- "right"
 			tmp.achievement.level <- which(tail(head(Achievement_Levels, current.year.x.coor.lag+1), 1)==achievement.level.labels)
 		} else {
