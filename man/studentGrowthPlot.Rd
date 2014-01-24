@@ -10,7 +10,8 @@ studentGrowthPlot(Scale_Scores,
 	Achievement_Levels, 
 	SGP, 
 	SGP_Levels, 
-	Grades, 
+	Grades,
+	Content_Areas,
 	Cuts,
 	SGP_Targets,
 	SGP_Scale_Score_Targets,
@@ -36,6 +37,9 @@ studentGrowthPlot(Scale_Scores,
 	}
 	\item{Grades}{
 		A vector of historical grades student was tested in.
+	}
+	\item{Content_Areas}{
+		A vector of historical content areas student was tested in.
 	}
 	\item{Cuts}{
 		A list of cuts scores for NY1, NY2, and NY3.

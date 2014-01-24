@@ -7,8 +7,8 @@ function(panel.data,	## REQUIRED
 	grade.projection.sequence=NULL,
 	content_area.projection.sequence=NULL,
 	year_lags.projection.sequence=NULL,
-	max.forward.progression.years,
-	max.forward.progression.grade,
+	max.forward.progression.years=NULL,
+	max.forward.progression.grade=NULL,
 	max.order.for.progression=NULL,
 	use.my.knots.boundaries,
 	use.my.coefficient.matrices,
@@ -538,26 +538,6 @@ function(panel.data,	## REQUIRED
 		c("ID", paste("GD", grade.progression, content_area.progression, sep="."), paste("SS", grade.progression, content_area.progression, sep=".")))
 
 
-	### Test to see if ss.data has cases to analyze
-
-	if (dim(.get.panel.data(ss.data, grade.progression, content_area.progression, 1, bound.data=FALSE))[1] == 0) {
-                tmp.messages <- c(tmp.messages, "\t\tNOTE: Supplied data together with grade progression contains no data. Check data, function arguments and see help page for details.\n")
-                message(paste("\tStarted studentGrowthProjections", started.date))
-                message(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
-                message(paste(tmp.messages, "\tFinished studentGrowthProjections: SGP Percentile Growth Trajectory/Projection Analysis", date(), "in", timetaken(started.at), "\n"))
-
-                return(
-                list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],
-                        Cutscores=panel.data[["Cutscores"]],
-                        Goodness_of_Fit=panel.data[["Goodness_of_Fit"]],
-                        Knots_Boundaries=panel.data[["Knots_Bounadries"]],
-                        Panel_Data=NULL,
-                        SGPercentiles=panel.data[["SGPercentiles"]],
-                        SGProjections=panel.data[["SGProjections"]],
-                        Simulated_SGPs=panel.data[["Simulated_SGPs"]]))
-        } 
-
-
 	### Get relevant matrices for projections
 
 	tmp.matrices <- unlist(panel.data[["Coefficient_Matrices"]][match(tmp.path.coefficient.matrices, names(panel.data[["Coefficient_Matrices"]]))], recursive=FALSE)
@@ -597,10 +577,10 @@ function(panel.data,	## REQUIRED
 	grade.content_area.progression <- paste(content_area.progression, paste("GRADE", grade.progression, sep="_"), sep=".")
 	grade.content_area.projection.sequence <- paste(content_area.projection.sequence, paste("GRADE", grade.projection.sequence, sep="_"), sep=".")
 	tmp.index <- seq(which(tail(grade.content_area.progression, 1)==grade.content_area.projection.sequence)+1, length(grade.projection.sequence))
-	if (!missing(max.forward.progression.grade)) {
+	if (!is.null(max.forward.progression.grade)) {
 		tmp.index <- intersect(tmp.index, which(sapply(grade.projection.sequence, function(x) type.convert(x, as.is=TRUE) <= type.convert(as.character(max.forward.progression.grade), as.is=TRUE))))
 	}
-	if (!missing(max.forward.progression.years)) tmp.index <- head(tmp.index, max.forward.progression.years)
+	if (!is.null(max.forward.progression.years)) tmp.index <- head(tmp.index, max.forward.progression.years)
 	grade.projection.sequence <- grade.projection.sequence[tmp.index]
 	content_area.projection.sequence <- content_area.projection.sequence[tmp.index]
 	if (is.null(year_lags.projection.sequence)) { ### NOTE same length as grade.projection.sequence for lag between progression and projection sequence
@@ -611,6 +591,25 @@ function(panel.data,	## REQUIRED
 		}
 	}
 	grade.content_area.projection.sequence <- grade.content_area.projection.sequence[tmp.index]
+
+	### Test to see if ss.data has cases to analyze and configuration has elements to answer
+
+	if (dim(.get.panel.data(ss.data, grade.progression, content_area.progression, 1, bound.data=FALSE))[1] == 0 | length(tmp.index)==0) {
+                tmp.messages <- c(tmp.messages, "\t\tNOTE: Supplied data together with grade progression contains no data for analysis. Check data, function arguments and see help page for details.\n")
+                message(paste("\tStarted studentGrowthProjections", started.date))
+                message(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
+                message(paste(tmp.messages, "\tFinished studentGrowthProjections: SGP Percentile Growth Trajectory/Projection Analysis", date(), "in", timetaken(started.at), "\n"))
+
+                return(
+                list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],
+                        Cutscores=panel.data[["Cutscores"]],
+                        Goodness_of_Fit=panel.data[["Goodness_of_Fit"]],
+                        Knots_Boundaries=panel.data[["Knots_Bounadries"]],
+                        Panel_Data=NULL,
+                        SGPercentiles=panel.data[["SGPercentiles"]],
+                        SGProjections=panel.data[["SGProjections"]],
+                        Simulated_SGPs=panel.data[["Simulated_SGPs"]]))
+        } 
 
 	### Calculate grade.projection.sequence.priors 
 

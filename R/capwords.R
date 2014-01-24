@@ -5,6 +5,8 @@ function(x,
 	trim <- function (x) gsub("^\\s+|\\s+$", "", x)
 
 	if (is.null(x)) return(NULL)
+	if (is.na(x)) return(NA)
+	if (identical(x, " ")) return(" ")
 	x <- gsub("_", " ", x)
 	x <- gsub("[.]", " ", x)
 	x <- gsub("  ", " ", x)
