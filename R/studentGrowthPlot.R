@@ -543,32 +543,42 @@ if (!is.null(Report_Parameters[['SGP_Targets']])) {
 	for (i in tmp.target.types) {
 		if (length(grep("Current", i))==0) {
 			current.year.x.coor <- current.year
-			x.coor.label.adjustment <- -0.075; label.position <- c("right")
-			tmp.achievement.level <- which(tail(head(Achievement_Levels, 2), 1)==achievement.level.labels)
+			current.year.x.coor.lag <- min(which(!is.na(tail(Scale_Scores -1))), na.rm=TRUE)
+			x.coor.label.adjustment <- -0.075; label.position <- "right"
+			tmp.achievement.level <- which(tail(head(Achievement_Levels, current.year.x.coor.lag+1), 1)==achievement.level.labels)
 		} else {
 			current.year.x.coor <- current.year+grade.values$increment_for_projection_current
-			x.coor.label.adjustment <- 0.075; label.position <- c("left")
+			current.year.x.coor.lag <- grade.values$increment_for_projection_current
+			x.coor.label.adjustment <- 0.075; label.position <- "left"
 			tmp.achievement.level <- which(head(Achievement_Levels, 1)==achievement.level.labels)
 		}
 
-		y.coordinates <- c(SGP_Scale_Score_Targets[[i]][['NY1']], as.numeric(convertY(convertY(unit(SGP_Scale_Score_Targets[[i]][['NY1']], "native"), "inches")-unit(0.075, "inches"), "native"))) 
 		if (length(grep("CUKU", i))>0 & tmp.achievement.level <= level.to.get.cuku) {
 			label.position <- c(label.position, "center")
 			tmp.target.label <- c("Catch Up", "Target")
+			y.coordinates <- c(as.numeric(convertY(convertY(unit(SGP_Scale_Score_Targets[[i]][['NY1']], "native"), "inches")+unit(0.0375, "inches"), "native")), 
+						as.numeric(convertY(convertY(unit(SGP_Scale_Score_Targets[[i]][['NY1']], "native"), "inches")-unit(0.0375, "inches"), "native"))) 
 		}
 		if (length(grep("CUKU", i))>0 & tmp.achievement.level > level.to.get.cuku) {
 			label.position <- c(label.position, "top")
 			tmp.target.label <- c("Keep Up", "Target")
+			y.coordinates <- c(SGP_Scale_Score_Targets[[i]][['NY1']], 
+						as.numeric(convertY(convertY(unit(SGP_Scale_Score_Targets[[i]][['NY1']], "native"), "inches")-unit(0.075, "inches"), "native"))) 
 		}
 		if (length(grep("MUSU", i))>0 & tmp.achievement.level <= level.to.get.musu) {
 			label.position <- c(label.position, "bottom")
 			tmp.target.label <- c("Move Up", "Target")
+			y.coordinates <- c(as.numeric(convertY(convertY(unit(SGP_Scale_Score_Targets[[i]][['NY1']], "native"), "inches")+unit(0.075, "inches"), "native")), 
+						SGP_Scale_Score_Targets[[i]][['NY1']]) 
 		}
 		if (length(grep("MUSU", i))>0 & tmp.achievement.level > level.to.get.musu) {
 			label.position <- c(label.position, "bottom")
 			tmp.target.label <- c("Stay Up", "Target")
+			y.coordinates <- c(as.numeric(convertY(convertY(unit(SGP_Scale_Score_Targets[[i]][['NY1']], "native"), "inches")+unit(0.075, "inches"), "native")), 
+						SGP_Scale_Score_Targets[[i]][['NY1']]) 
 		}
-		grid.lines(x=c(current.year.x.coor-1, current.year.x.coor), y=c(scale.scores.values[which(current.year.x.coor-1==low.year:high.year)], SGP_Scale_Score_Targets[[i]][['NY1']]), 
+		grid.lines(x=c(current.year.x.coor-current.year.x.coor.lag, current.year.x.coor), 
+			y=c(scale.scores.values[which(current.year.x.coor-current.year.x.coor.lag==low.year:high.year)], SGP_Scale_Score_Targets[[i]][['NY1']]), 
 			gp=gpar(lwd=0.8, col=border.color), default.units="native")
 		grid.circle(x=current.year.x.coor, y=SGP_Scale_Score_Targets[[i]][['NY1']], r=unit(c(0.05, 0.04, 0.025, 0.0125), "inches"), 
 			gp=gpar(col=c("black", "white", "black", "white"), lwd=0.01, fill=c("black", "white", "black", "white")), default.units="native")
