@@ -207,7 +207,8 @@ interpolate.grades <- function(grades, content_areas, data.year.span) {
 			}
 			if (any(!grades %in% grades.content_areas.reported.in.state$GRADE_NUMERIC)) {
 				for (tmp.missing.grades in which(!grades %in% grades.content_areas.reported.in.state$GRADE_NUMERIC)) {
-					grades[tmp.missing.grades] <- grades.content_areas.reported.in.state[which.min(grades[tmp.missing.grades] > grades.content_areas.reported.in.state$GRADE_NUMERIC)-1]
+					grades[tmp.missing.grades] <- 
+						grades.content_areas.reported.in.state$GRADE_NUMERIC[which.min(grades[tmp.missing.grades] > grades.content_areas.reported.in.state$GRADE_NUMERIC)-1]
 				}
 			}
 		}
