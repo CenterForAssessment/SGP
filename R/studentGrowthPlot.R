@@ -221,7 +221,7 @@ interpolate.grades <- function(grades, content_areas, data.year.span) {
 			if (length(intersect(tmp.na, which(!is.na(suppressWarnings(as.numeric(grades)))))) > 0) {
 				tmp.indices <- intersect(tmp.na, which(!is.na(suppressWarnings(as.numeric(grades)))))
 				grades[tmp.indices] <- NA
-				grades[tmp.indices] <- approx(suppressWarnings(as.numeric(grades)), xout=tmp.indices)$y
+				grades[tmp.indices] <- round(approx(suppressWarnings(as.numeric(grades)), xout=tmp.indices)$y)
 			}
 		}
 
