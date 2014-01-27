@@ -66,7 +66,8 @@ To utilize the maximum matrix order, set to NULL.
 
 \examples{
 \dontrun{
-##  Calculate baseline referenced SGPs (using coefficient matrices embedded in SGPstateData)
+##  Calculate baseline referenced SGPs 
+## (using coefficient matrices embedded in SGPstateData)
 
 Demonstration_SGP <- prepareSGP(sgpData_LONG)
 Demonstration_SGP <-  baselineSGP(Demonstration_SGP)
@@ -76,10 +77,14 @@ Demonstration_SGP <-  baselineSGP(Demonstration_SGP)
 
 SGPstateData[["DEMO"]][["Baseline_splineMatrix"]] <- NULL
 Demonstration_SGP <- prepareSGP(sgpData_LONG)
-DEMO_Baseline_Matrices <- baselineSGP(Demonstration_SGP, return.matrices.only=TRUE, calculate.baseline.sgps=FALSE)
+DEMO_Baseline_Matrices <- baselineSGP(
+				Demonstration_SGP, 
+				return.matrices.only=TRUE, 
+				calculate.baseline.sgps=FALSE)
 
 
-## Calculate baseline referenced coefficient matrices and baseline referenced SGPs with 4 years of data
+## Calculate baseline referenced coefficient matrices and 
+## baseline referenced SGPs with 4 years of data
 
 SGPstateData[["DEMO"]][["Baseline_splineMatrix"]] <- NULL
 
