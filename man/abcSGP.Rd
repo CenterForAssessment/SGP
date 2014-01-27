@@ -10,7 +10,8 @@
 \usage{
 abcSGP(sgp_object,
 	state=NULL,
-	steps=c("prepareSGP", "analyzeSGP", "combineSGP", "summarizeSGP", "visualizeSGP", "outputSGP"),
+	steps=c("prepareSGP", "analyzeSGP", "combineSGP", 
+		"summarizeSGP", "visualizeSGP", "outputSGP"),
 	years=NULL,
 	content_areas=NULL,
 	grades=NULL,

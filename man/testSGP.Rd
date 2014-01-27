@@ -36,7 +36,8 @@ testSGP(1)
 ## in most recent year and runs current year analyses using updateSGP
 testSGP(2)
 
-## testSGP(3) runs abcSGP on grade progressions including End of Course Tests in Mathematics (Algebra I and Algebra II) and Reading (Grade 9 Literature and American Literature)
+## testSGP(3) runs abcSGP on grade progressions including End of Course Tests in Mathematics 
+## (Algebra I and Algebra II) and Reading (Grade 9 Literature and American Literature)
 testSGP(3)
 
 ## testSGP(4) runs prepareSGP and analyzeSGP with simex adjustment for measurement error
