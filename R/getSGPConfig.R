@@ -18,13 +18,12 @@ function(sgp_object,
 
 	### Check arguments
 
-	if (!is.null(grades)) {
+	if (is.null(sgp.config) & !is.null(grades)) {
 		grades <- type.convert(as.character(grades), as.is=TRUE)
 		if (!is.numeric(grades)) {
 			stop("\tNOTE: Automatic configuration of analyses is currently only available for integer grade levels. Manual specification of 'sgp.config' is required for non-traditional End of Course grade and course progressions.")
 		} 
 	}
-
 
 	### get.config function
 

@@ -9,7 +9,8 @@
 \usage{
 outputSGP(sgp_object,
 	state=NULL,
-        output.type=c("LONG_Data", "LONG_FINAL_YEAR_Data", "WIDE_Data", "INSTRUCTOR_Data"),
+        output.type=c("LONG_Data", "LONG_FINAL_YEAR_Data", "WIDE_Data", 
+			"INSTRUCTOR_Data"),
         baseline.sgps=FALSE,
         outputSGP_SUMMARY.years=NULL,
         outputSGP_SUMMARY.content_areas=NULL,

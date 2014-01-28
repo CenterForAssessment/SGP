@@ -23,6 +23,7 @@ combineSGP(sgp_object,
 	sgp.target.content_areas=NULL,
 	max.sgp.target.years.forward=3,
 	update.all.years=FALSE,
+	sgp.config=NULL,
 	parallel.config=NULL)
 }
 
@@ -54,8 +55,11 @@ student growth percentile results.
   }
   \item{max.sgp.target.years.forward}{A integer indicating the number of years forward from the lagged (last year's) score to project forward for growth to standard calculations. Default is 3 years from the present, 4 years from the lagged year, which is the standard in most growth to standard calculations used by state departments of education.
   }
-  \item{update.all.years}{A Boolean argument defaulting to FALSE indicating whether \code{combineSGP} should delete previously merged variables calculated in \code{\link{analyzeSGP}} and 
+  \item{update.all.years}{A Boolean argument defaulting to FALSE indicating whether \code{\link{combineSGP}} should delete previously merged variables calculated in \code{\link{analyzeSGP}} and 
 re-merge all available data.
+  }
+  \item{sgp.config}{Argument (defaults to NULL) passed utilized only for target scale score calculation. If targets for end of course tests are required, user must specify configurations
+  directly. See code from \code{\link{testSGP}} number 3 for an example. 
   }
   \item{parallel.config}{Parallel configuration only used when 'sgp.target.scale.scores' is set to TRUE. Default is NULL consistent with no targets being calculated. To utilize parallel processing
   in the calculation of SGP scale score targets user must specify a list designating a backend (e.g, BACKEND='PARALLEL') and a number of workers (e.g., 'WORKERS=list(SGP_SCALE_SCORE_TARGETS=4)').

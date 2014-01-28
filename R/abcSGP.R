@@ -109,6 +109,7 @@ function(sgp_object,
 			sgp.projections.lagged=sgp.projections.lagged,
 			sgp.projections.lagged.baseline=sgp.projections.lagged.baseline,
 			sgp.target.scale.scores=sgp.target.scale.scores,
+			sgp.config=sgp.config,
 			parallel.config=parallel.config)
 
                 if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")

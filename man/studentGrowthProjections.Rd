@@ -14,8 +14,8 @@ studentGrowthProjections(panel.data,
                          grade.projection.sequence=NULL,
                          content_area.projection.sequence=NULL,
                          year_lags.projection.sequence=NULL,
-                         max.forward.progression.years,
-                         max.forward.progression.grade, 
+                         max.forward.progression.years=NULL,
+                         max.forward.progression.grade=NULL, 
                          max.order.for.progression,  
                          use.my.knots.boundaries,   
                          use.my.coefficient.matrices,  
@@ -59,10 +59,10 @@ studentGrowthProjections(panel.data,
   }
   \item{year_lags.projection.sequence}{Argument to manually supply year lags sequence over which projection is made. Length of supplied sequence should be 1 less than length of supplied 'grade.projection.sequence' and 'content_area.projection.sequence'. Defaults to NULL and assumes annual (1 year lags).
   }
-  \item{max.forward.progression.years}{The MAXIMUM number of years/grades/time periods to project forward conditional upon available coefficient matrices. If missing, function
+  \item{max.forward.progression.years}{The MAXIMUM number of years/grades/time periods to project forward conditional upon available coefficient matrices. If missing/NULL (the default), function
   will project forward as far as allowed by available coefficient matrices. 
   }
-  \item{max.forward.progression.grade}{The MAXIMUM grade to project forward based upon available coefficient matrices. If missing, function
+  \item{max.forward.progression.grade}{The MAXIMUM grade to project forward based upon available coefficient matrices. If missing/NULL (the default), function
   will project forward as far as allowed by available coefficient matrices. 
   }
   \item{max.order.for.progression}{Argument to specify the maximum coefficient matrix order to be used for percentile growth projection/trajectory calculation. 

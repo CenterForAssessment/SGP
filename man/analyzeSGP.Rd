@@ -21,6 +21,7 @@ analyzeSGP(sgp_object,
          sgp.projections.baseline.max.order=3,
          sgp.projections.lagged.baseline.max.order=3,
 	 sgp.projections.max.forward.progression.years=3,
+	 sgp.projections.max.forward.progression.grade=NULL,
 	 sgp.minimum.default.panel.years=NULL,
          sgp.use.my.coefficient.matrices=NULL,
          simulate.sgps=TRUE,
@@ -74,6 +75,8 @@ Default is 3.  To utilize the maximum matrix order, set to NULL.
   }
   \item{sgp.projections.max.forward.progression.years}{Integer indicating the maximum number of years forward that cohort based projections will be established for. Default is 3 years.
   }
+  \item{sgp.projections.max.forward.progression.grade}{Integer indicating the maximum grade forward that cohort based projections will be established for. Default is NULL, the highest grade.
+  }
   \item{sgp.minimum.default.panel.years}{Integer indicating the minimum number of panels years to use for default sgp analyses. Default value is NULL (converted to 3) years of data.
   }
   \item{sgp.use.my.coefficient.matrices}{Argument, defaults to NULL, indicating whether to use coefficient matrices embedded in argument supplied to 'sgp_object' to calculate student growth 
@@ -87,9 +90,13 @@ Default is 3.  To utilize the maximum matrix order, set to NULL.
   }
   \item{goodness.of.fit.print}{Boolean variable indicating whether to print out Goodness of Fit figures as PDF into a directory labeled Goodness of Fit. Defaults to TRUE.
   }
-  \item{sgp.config}{If \code{years}, \code{content_areas}, and \code{grades} are missing, user can directly specify a list containing three vectors: \code{baseline.content.areas}, \code{baseline.panel.years}, and \code{baseline.grade.sequences}. This advanced option is helpful for analysis of non-traditional grade progressions and other special cases. See examples for use cases.
+  \item{sgp.config}{If \code{years}, \code{content_areas}, and \code{grades} are missing, user can directly specify a list containing three vectors: 
+  \code{baseline.content.areas}, \code{baseline.panel.years}, and \code{baseline.grade.sequences}. This advanced option is helpful for analysis of non-traditional grade progressions and 
+  other special cases. See examples for use cases.
   }
-  \item{sgp.config.drop.nonsequential.grade.progression.variables}{Boolean variable (defaults to TRUE) indicating whether non-sequential grade progression variables should be dropped when sgp.config is processed. For example, if a grade progression of c(3,4,6) is provided, the data configuration will assume (default is TRUE) that data for a missing year needs to be dropped prior to applying \code{\link{studentGrowthPercentiles}} or \code{\link{studentGrowthProjections}} to the data. 
+  \item{sgp.config.drop.nonsequential.grade.progression.variables}{Boolean variable (defaults to TRUE) indicating whether non-sequential grade progression variables should be dropped when 
+  sgp.config is processed. For example, if a grade progression of c(3,4,6) is provided, the data configuration will assume (default is TRUE) that data for a missing year needs to be dropped prior 
+  to applying \code{\link{studentGrowthPercentiles}} or \code{\link{studentGrowthProjections}} to the data. 
   }
   \item{sgp.baseline.panel.years}{A vector of years to be used for baseline coefficient matrix calculation. Default is to use most recent five years of data.}
   \item{sgp.baseline.config}{A list containing three vectors: \code{sgp.content.areas}, \code{sgp.panel.years}, \code{sgp.grade.sequences} indicating how baseline student growth percentile analyses
@@ -190,14 +197,15 @@ MATHEMATICS.2011_2012 = list(
 	sgp.panel.years=c('2009_2010', '2009_2010', '2010_2011', '2010_2011', '2011_2012'),
 	sgp.grade.sequences=list(c(3,3,4,4,5), c(4,4,5,5,6), c(5,5,6,6,7), c(6,6,7,7,8))))
 
-Demonstration_SGP <- analyzeSGP(Demonstration_SGP,
-                                          sgp.config=DEMO.config,
-                                          sgp.projections=FALSE,
-                                          sgp.projections.lagged=FALSE,
-                                          sgp.percentiles.baseline=FALSE,
-                                          sgp.projections.baseline=FALSE,
-                                          sgp.projections.lagged.baseline=FALSE,
-                                          sgp.config.drop.nonsequential.grade.progression.variables=FALSE)
+Demonstration_SGP <- analyzeSGP(
+		Demonstration_SGP,
+		sgp.config=DEMO.config,
+		sgp.projections=FALSE,
+		sgp.projections.lagged=FALSE,
+		sgp.percentiles.baseline=FALSE,
+		sgp.projections.baseline=FALSE,
+		sgp.projections.lagged.baseline=FALSE,
+		sgp.config.drop.nonsequential.grade.progression.variables=FALSE)
 
 
 ###

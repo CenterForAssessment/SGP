@@ -103,7 +103,7 @@ function(sgp_object,
 		tmp_sgp_list <- list(Coefficient_Matrices =
 			studentGrowthPercentiles(
 				panel.data=list(Panel_Data= tmp.df, Coefficient_Matrices = TMP_Coefficient_Matrices, #  Add Coef Matrices for SIMEX
-					Knots_Boundaries=getKnotsBoundaries(knots.boundaries.iter, state, "Baseline")),
+					Knots_Boundaries=getKnotsBoundaries(knots.boundaries.iter, state, c("Baseline", "sgp.percentiles"))),
 				sgp.labels=list(my.year="BASELINE", my.subject=tail(content_areas, 1)),
 				use.my.knots.boundaries=list(my.year="BASELINE", my.subject=tail(content_areas, 1)),
 				use.my.coefficient.matrices= use.my.coefficient.matrices,
@@ -242,7 +242,7 @@ function(sgp_object,
 		for (sgp.iter in sgp.config.baseline) {
 
 			panel.data=within(tmp_sgp_object, assign("Panel_Data", getPanelData(tmp_sgp_data_for_analysis, "sgp.percentiles", sgp.iter)))
-			tmp.knots.boundaries <- getKnotsBoundaries(sgp.iter, state) # Get specific knots and boundaries in case course sequence is different
+			tmp.knots.boundaries <- getKnotsBoundaries(sgp.iter, state, c("Standard", "sgp.percentiles")) # Get specific knots and boundaries in case course sequence is different
 			panel.data[["Knots_Boundaries"]][[names(tmp.knots.boundaries)]] <- tmp.knots.boundaries[[names(tmp.knots.boundaries)]]
 
 			tmp_sgp_object <- studentGrowthPercentiles(

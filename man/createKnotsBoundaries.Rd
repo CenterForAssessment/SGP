@@ -31,7 +31,9 @@ DEMO_Knots_Boundaries <- createKnotsBoundaries(sgpData_LONG)
 
 ### Run as part of prepareSGP
 
-SGPstateData[["DEMO"]][["Achievement"]][["Knots_Boundaries"]] <- NULL ### Eliminate knots to show this creates knots and boundaries
+### First NULL out knots and boundaries embedded in SGPstateData
+
+SGPstateData[["DEMO"]][["Achievement"]][["Knots_Boundaries"]] <- NULL
 Demonstration_SGP <- prepareSGP(sgpData_LONG)
 }  
 }

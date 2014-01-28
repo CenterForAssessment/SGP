@@ -460,14 +460,16 @@ SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
 	list(
 	# Transformed_Achievement_Level_Cutscores=list(MATHEMATICS=c(0,100,200,300,400), READING=c(0,100,200,300,400, GRADE_9_LIT=c(0,100,200,300,400), AMERICAN_LIT=c(0,100,200,300,400), ALGEBRA_I=c(0,100,200,300,400), ALGEBRA_II=c(0,100,200,300,400))), ### FOR TESTING
 	# Transformed_Achievement_Level_Cutscores_gaPlot=list(MATHEMATICS=c(0,100,200,300,400), READING=c(0,100,200,300,400, GRADE_9_LIT=c(0,100,200,300,400), AMERICAN_LIT=c(0,100,200,300,400), ALGEBRA_I=c(0,100,200,300,400), ALGEBRA_II=c(0,100,200,300,400))), ### FOR TESTING
-		Vertical_Scale="Yes",
-		Content_Areas_Labels=list(MATHEMATICS="Math", READING="Reading", GRADE_9_LIT="Grade 9 Lit", AMERICAN_LIT="American Lit", ALGEBRA_I="Algebra I", ALGEBRA_II="Algebra II"),
-		Grades_Reported=list(MATHEMATICS=c(3,4,5,6,7,8,9,10), READING=c(3,4,5,6,7,8,9,10)), 
-		Achievement_Level_Labels=list(
-			"Unsatisfactory"="Unsatisfactory", 
-			"Part Proficient"="Partially Proficient", 
-			"Proficient"="Proficient", 
-			"Advanced"="Advanced"))
+	Vertical_Scale="Yes",
+	Content_Areas_Labels=list(MATHEMATICS="Math", READING="Reading", GRADE_9_LIT="Grade 9 Lit", AMERICAN_LIT="American Lit", ALGEBRA_I="Algebra I", ALGEBRA_II="Algebra II"),
+	Content_Areas_Domains=list(MATHEMATICS="MATHEMATICS", READING="READING", GRADE_9_LIT="READING", AMERICAN_LIT="READING", ALGEBRA_I="MATHEMATICS", ALGEBRA_II="MATHEMATICS"),
+	Grades_Reported=list(MATHEMATICS=c("3","4","5","6","7","8"), READING=c("3","4","5","6","7","8"), GRADE_9_LIT="EOCT", AMERICAN_LIT="EOCT", ALGEBRA_I="EOCT", ALGEBRA_II="EOCT"),
+	Grades_Reported_Domains=list(MATHEMATICS=c("3","4","5","6","7","8", "EOCT"), READING=c("3","4","5","6","7","8", "9", "EOCT")),
+	Achievement_Level_Labels=list(
+		"Unsatisfactory"="Unsatisfactory", 
+		"Part Proficient"="Partially Proficient", 
+		"Proficient"="Proficient", 
+		"Advanced"="Advanced"))
 
 	SGPstateData[["DEMO"]][["SGP_Configuration"]][["grade.projection.sequence"]] <- list(
 			READING=c("3", "4", "5", "6", "7", "8", "EOCT", "EOCT"),
@@ -490,6 +492,8 @@ SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
 			AMERICAN_LIT=rep(1L, 7),
 			ALGEBRA_I=rep(1L, 7),
 			ALGEBRA_II=rep(1L, 7))
+
+	SGPstateData[["DEMO"]][['SGP_Configuration']][['sgPlot.show.content_area.progression']] <- TRUE
 
 	### Create configurations
 
@@ -538,7 +542,7 @@ SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
 	sgp.config <- c(READING_2012_2013.config, MATHEMATICS_2012_2013.config, GRADE_9_LIT_2012_2013.config, AMERICAN_LIT_2012_2013.config, ALGEBRA_I_2012_2013.config, ALGEBRA_II_2012_2013.config)
 	 
 	expression.to.evaluate <- 
-		paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=sgpData_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP', 'summarizeSGP', 'visualizeSGP'),\n\tsimulate.sgps=FALSE,\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.config=sgp.config,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
+		paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=sgpData_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP', 'summarizeSGP', 'visualizeSGP'),\n\tsimulate.sgps=FALSE,\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.config=sgp.config,\n\tplot.types=c('bubblePlot', 'studentGrowthPlot'),\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
 
 	if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(Demonstration_SGP, file='Demonstration_SGP.Rdata')", sep="\n")
 
@@ -632,6 +636,15 @@ SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
 	
 	eval(parse(text=expression.to.evaluate))
 
+	### TEST of SGP_SIMEX_BASELINE variable
+
+	tmp.messages <- ("\t##### Results of testSGP test number 3 #####\n\n")
+	
+	if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX_BASELINE, na.rm=TRUE), 8585922L)) {
+		tmp.messages <- c(tmp.messages, "\tTest of variable SGP_SIMEX_BASELINE: OK\n")
+	} else {
+		tmp.messages <- c(tmp.messages, "\tTest of variable SGP_SIMEX_BASELINE: FAIL\n")
+	}
 	tmp.messages <- c(tmp.messages, "\n##### End testSGP test number 4 #####\n")
 	cat(tmp.messages)
 	} ### End TEST_NUMBER 4
