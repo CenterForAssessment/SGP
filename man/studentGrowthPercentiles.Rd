@@ -218,6 +218,7 @@ Koenker, R. (2005). \emph{Quantile regression}. Cambridge: Cambridge University 
 
 
 \examples{
+\dontrun{
 ## Calculate 4th grade student growth percentiles using included sgpData
 
 require(SGPdata)
@@ -236,7 +237,6 @@ sgp_g4_v2 <- studentGrowthPercentiles(panel.data=sgpData,
 
 identical(sgp_g4$SGPercentiles, sgp_g4_v2$SGPercentiles)
 
-\dontrun{
 ## Established state Knots and Boundaries are available in the supplied SGPstateData
 ## file and used by supplying the appropriate two letter state acronym.
  
