@@ -221,6 +221,7 @@ Koenker, R. (2005). \emph{Quantile regression}. Cambridge: Cambridge University 
 \dontrun{
 ## Calculate 4th grade student growth percentiles using included sgpData
 
+require(SGPdata)
 sgp_g4 <- studentGrowthPercentiles(panel.data=sgpData,
                 sgp.labels=list(my.year=2013, my.subject="Reading"),
                 percentile.cuts=c(1,35,65,99),
