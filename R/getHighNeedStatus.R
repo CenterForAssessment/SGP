@@ -34,7 +34,9 @@ function(sgp_object) {
 	slot.data[,c("PRIOR_SCALE_SCORE", "PRIOR_GRADE", "YEAR_INT"):=NULL]
 	setkey(slot.data, VALID_CASE, CONTENT_AREA, YEAR, ID)
 	sgp_object@Data <- slot.data
-	sgp_object@Names <- rbind(sgp_object@Names, c("HIGH_NEED_STATUS", "HIGH_NEED_STATUS", "demographic", "High need status flag", TRUE))
+	if (!"HIGH_NEED_STATUS" %in% sgp_object@Names[['names.sgp']]) {
+		sgp_object@Names <- rbind(sgp_object@Names, c("HIGH_NEED_STATUS", "HIGH_NEED_STATUS", "demographic", "High need status flag", TRUE))
+	}
 	message("\tNOTE: Added variable HIGH_NEED_STATUS to @Data.")
 	return(sgp_object)
 } ### END getHighNeedStatus
