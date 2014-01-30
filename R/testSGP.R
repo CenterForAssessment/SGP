@@ -347,7 +347,6 @@ function(
 
 		### TEST 2d ###
 		if (i=='2D') {
-			Demonstration_Data_LONG <- subset(sgpData_LONG, YEAR %in% c("2008_2009", "2009_2010", "2010_2011", "2011_2012"))
 			Demonstration_Data_LONG_2012_2013 <- subset(sgpData_LONG, YEAR %in% c("2012_2013"))
 			tmp.2012_2013.ids <- sort(unique(Demonstration_Data_LONG_2012_2013[['ID']]))
 			tmp.group.1 <- tmp.2012_2013.ids[1:150]

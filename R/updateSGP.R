@@ -261,15 +261,15 @@ function(what_sgp_object=NULL,
 				}
 
 				if ("summarizeSGP" %in% steps) what_sgp_object <- summarizeSGP(what_sgp_object, state=state, parallel.config=parallel.config)
-				if ("visualizeSGP" %in% steps) visualizeSGP(what_sgp_object)
-				if ("outputSGP" %in% steps) outputSGP(what_sgp_object)
+				if ("visualizeSGP" %in% steps) visualizeSGP(what_sgp_object, state=state)
+				if ("outputSGP" %in% steps) outputSGP(what_sgp_object, state=state)
 
 				###  Output just additional update data
 				###  Do this AFTER rbind.fill @Data, mergeSGP, combineSGP, etc.				
 				if (update.years  %in% unique(tmp_sgp_object@Data$YEAR)) {
 					tmp_sgp_object@SGP <- tmp.sgp_object.update@SGP
 					tmp_sgp_object <- suppressMessages(combineSGP(tmp_sgp_object, state=state))
-					outputSGP(tmp_sgp_object, state = state, output.type = "LONG_Data", outputSGP.directory = file.path("Data", "Updated_Data"))
+					outputSGP(tmp_sgp_object, state=state, output.type="LONG_Data", outputSGP.directory=file.path("Data", "Updated_Data"))
 				} else message("NOTE: with_sgp_data_LONG appears to only contain priors.  Only results containing the entire student history have been saved.")
 
 				### Print finish and return SGP object

@@ -11,6 +11,7 @@ function(Scale_Scores,               ## Vector of Scale Scores
 	SGP_Targets,                 ## Vector of CUKU, CUKU_Current, MUSU, MUSU_Current (multi) year targets
 	SGP_Scale_Score_Targets,     ## Vector of CUKU, CUKU_Current, MUSU, MUSU_Current scale score targets
 	Cutscores,                   ## data.frame of long formatted achievement level cutscores
+	Years,                       ## Vector of years corresponding to Scale_Scores, Content_Areas, ... arguments supplied
 	Report_Parameters) {         ## list containing Current_Year, Content_Area, Content_Area_Title, State, Denote_Content_Area, SGP_Targets, Configuration
 
 
