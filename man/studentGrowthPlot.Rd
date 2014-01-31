@@ -16,6 +16,7 @@ studentGrowthPlot(Scale_Scores,
 	SGP_Targets,
 	SGP_Scale_Score_Targets,
 	Cutscores,
+	Years,
 	Report_Parameters) 
 }
 \arguments{
@@ -52,6 +53,9 @@ studentGrowthPlot(Scale_Scores,
 	}
 	\item{Cutscores}{
 		A data.frame of long formatted achievement level cutscores.
+	}
+	\item{Years}{
+		A vector of years corresponding to supplied scale scores.
 	}
 	\item{Report_Parameters}{
 		A list containing arguments: \code{Current_Year}, \code{Content_Area}, \code{State}, \code{Denote_Content_Area}, \code{SGP_Targets}, and \code{Configuration}.
