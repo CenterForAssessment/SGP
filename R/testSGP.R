@@ -637,7 +637,7 @@ SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
 
 	### TEST of SGP_SIMEX_BASELINE variable
 
-	tmp.messages <- ("\t##### Results of testSGP test number 3 #####\n\n")
+	tmp.messages <- ("\t##### Results of testSGP test number 4 #####\n\n")
 	
 	if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX_BASELINE, na.rm=TRUE), 8585922L)) {
 		tmp.messages <- c(tmp.messages, "\tTest of variable SGP_SIMEX_BASELINE: OK\n")
