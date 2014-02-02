@@ -87,33 +87,43 @@
 			}
 		} else {
 			tmp.list <- list()
-			tmp.grades <- as.character(matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]][[i]]), "_")), ncol=2, byrow=TRUE)[,2])
-
-			for (j in seq(number.achievement.level.regions-1)) {
-				tmp.list[[j]] <- data.table(
-					GRADE=tmp.grades,
-					CONTENT_AREA=content_area,
-					CUTLEVEL=as.character(j),
-					CUTSCORES=SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area]][j+1], 
-					YEAR=NA)
-
-				tmp.list[[j]] <- subset(tmp.list[[j]], GRADE %in% SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])
+			if(!all(content_area %in% names(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]]))) {
+				stop("Not all content areas have Transformed Achievement Level Cutscores available in SGPstateData.
+					Please augment the SGPstateData set with your data or contact the SGP package maintainer to have your data added to the SGP package.")
 			}
-			tmp.list[["LOSS"]] <- data.table(
-				GRADE=tmp.grades,
-				CONTENT_AREA=content_area,
-				CUTLEVEL="LOSS",
-				CUTSCORES=SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area]][1],
-				YEAR=NA)
-			tmp.list[["LOSS"]] <- subset(tmp.list[["LOSS"]], GRADE %in% SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])
-					
-			tmp.list[["HOSS"]] <- data.table(
-				GRADE=tmp.grades,
-				CONTENT_AREA=content_area,
-				CUTLEVEL="HOSS",
-				CUTSCORES=tail(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area]], 1),
-				YEAR=NA)
-			tmp.list[["HOSS"]] <- subset(tmp.list[["HOSS"]], GRADE %in% SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])
+			# tmp.grades <- as.character(matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]][[i]]), "_")), ncol=2, byrow=TRUE)[,2])
+			for (content_area.iter in content_area) {
+				for (i in grep(content_area.iter, sapply(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]]), '[.]'), '[', 1))) {
+					tmp.content_area <- unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]])[i], '[.]'))[1]
+					tmp.grades <- as.character(matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]][[i]]), "_")), ncol=2, byrow=TRUE)[,2])
+
+					for (j in seq(number.achievement.level.regions-1)) {
+						tmp.list[[paste(i, j, sep="_")]] <- data.table(
+							GRADE=tmp.grades,
+							CONTENT_AREA=tmp.content_area,
+							CUTLEVEL=as.character(j),
+							CUTSCORES=SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area.iter]][j+1], 
+							YEAR=NA)
+		
+						tmp.list[[paste(i, j, sep="_")]] <- subset(tmp.list[[paste(i, j, sep="_")]], GRADE %in% SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area.iter]])
+					}
+					tmp.list[[paste(i, "LOSS", sep="_")]] <- data.table(
+						GRADE=tmp.grades,
+						CONTENT_AREA=tmp.content_area,
+						CUTLEVEL="LOSS",
+						CUTSCORES=SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area.iter]][1],
+						YEAR=NA)
+					tmp.list[[paste(i, "LOSS", sep="_")]] <- subset(tmp.list[[paste(i, "LOSS", sep="_")]], GRADE %in% SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area.iter]])
+							
+					tmp.list[[paste(i, "HOSS", sep="_")]] <- data.table(
+						GRADE=tmp.grades,
+						CONTENT_AREA=tmp.content_area,
+						CUTLEVEL="HOSS",
+						CUTSCORES=tail(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area.iter]], 1),
+						YEAR=NA)
+					tmp.list[[paste(i, "HOSS", sep="_")]] <- subset(tmp.list[[paste(i, "HOSS", sep="_")]], GRADE %in% SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area.iter]])
+				}
+			}
 		}
 
 		tmp.long.cutscores <- data.table(rbindlist(tmp.list), key=c("YEAR", "CUTLEVEL"))
