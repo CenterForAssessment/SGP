@@ -759,7 +759,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 				setkey(tmp.table, SCHOOL_NUMBER)
 				tmp.school.number <- data.table(SCHOOL_NUMBER=unique(tmp.table$SCHOOL_NUMBER) %w/o% NA, seq_along(unique(tmp.table$SCHOOL_NUMBER) %w/o% NA), 
 					key="SCHOOL_NUMBER")[tmp.table]$V2
-				tmp.table[SCHOOL_NAME := as.character(tmp.table$SCHOOL_NAME)]
+				tmp.table[, SCHOOL_NAME := as.character(tmp.table$SCHOOL_NAME)]
 				tmp.table[!is.na(tmp.table$SCHOOL_NUMBER), SCHOOL_NAME := paste("Sample School", tmp.school.number[!is.na(tmp.table$SCHOOL_NUMBER)])]
 				tmp.table[, SCHOOL_NAME := as.factor(tmp.table$SCHOOL_NAME)]
 			}

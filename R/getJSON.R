@@ -2,101 +2,215 @@
 function(tmp.data,
 	state,
 	content_area,
-	data.type)
+	year,
+	years.for.percentile.trajectories,
+	data.type,
+	baseline=FALSE,
+	data.year.span.default=5) {
 
-	### Utility functions
-
-	interpolate.grades <- function(grades, content_areas, years, data.year.span, grades.content_areas.reported.in.state) {
-
-		last.number <- function (x) {
-			if (sum(!is.na(x)) > 0) return(max(which(!is.na(x)))) else return (0)
-		}
-
-		first.number <- function (x) {
-			if (sum(!is.na(x)) > 0 ) return(min(which(!is.na(x)))) else return (0)
-		}
-
-		convert.grades <- function(grades, content_areas, to="GRADE_NUMERIC", lookup=grades.content_areas.reported.in.state) {
-			if (to=="GRADE_NUMERIC") {
-				return(as.numeric(lookup$GRADE_NUMERIC[match(paste(grades, content_areas), paste(lookup$GRADE, lookup$CONTENT_AREA))]))
-			}
-			if (to=="GRADE") {
-				return(as.character(lookup$GRADE[match(grades, lookup$GRADE_NUMERIC)]))
-			}
-		}
-
-		first.scale.score <- first.number(head(grades, data.year.span-1))
-		last.scale.score <- last.number(grades)
-		tmp.grades <- grades[seq(first.scale.score, last.scale.score)]
-		tmp.content_areas <- content_areas[seq(first.scale.score, last.scale.score)]
-		tmp.years <- years[seq(first.scale.score, last.scale.score)]
-		tmp.grades <- convert.grades(tmp.grades, tmp.content_areas)
-
-		tmp.index <- match(tmp.grades[1], grades.content_areas.reported.in.state$GRADE_NUMERIC)
-
-		if (tmp.index < dim(grades.content_areas.reported.in.state)[1]) {
-			tmp.additional <- seq(tmp.index+1, dim(grades.content_areas.reported.in.state)[1])
-			tmp.grades <- c(rev(grades.content_areas.reported.in.state$GRADE_NUMERIC[tmp.additional]), tmp.grades)
-			tmp.content_areas <- c(rev(grades.content_areas.reported.in.state$CONTENT_AREA[tmp.additional]), tmp.content_areas)
-			tmp.years <- rev(year.function(Report_Parameters$Current_Year, 1, 5, "character")
-		}
-
-
-
-	} ### END interpolate.grades
-
-	
-	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]])) {
-		grades.content_areas.reported.in.state <- data.frame(
-					GRADE=SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["grade.projection.sequence"]][[Report_Parameters$Content_Area]],
-					YEAR_LAG=c(1, SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[Report_Parameters$Content_Area]]),
-					CONTENT_AREA=SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["content_area.projection.sequence"]][[Report_Parameters$Content_Area]], 
-					stringsAsFactors=FALSE
-					)
-	} else {
-		grades.content_areas.reported.in.state <- data.frame(
-				GRADE=SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]],
-				YEAR_LAG=c(1, diff(as.numeric(SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Grades_Reported"]][[Report_Parameters$Content_Area]]))),
-				CONTENT_AREA=Report_Parameters$Content_Area, 
-				stringsAsFactors=FALSE
-				)
-	}
-	grades.content_areas.reported.in.state$GRADE_NUMERIC <- as.numeric(grades.content_areas.reported.in.state$GRADE[1])+c(0, cumsum(tail(grades.content_areas.reported.in.state$YEAR_LAG, -1)))
-	grades.content_areas.reported.in.state$GRADE_NUMERIC <- (as.numeric(grades.content_areas.reported.in.state$GRADE[2])-1)+c(0, cumsum(tail(grades.content_areas.reported.in.state$YEAR_LAG, -1)))
-
-
-	### Create lists to be converted to JSON
+	CONTENT_AREA <- GRADE <- YEAR <- CUTLEVEL <- NULL
 
 	if (data.type=="studentGrowthPlot") {
 
-		tmp.list <- list(
-			Scale_Scores=as.numeric(subset(tmp.data, select=paste("SCALE_SCORE", rev(sgPlot.years), sep="."))),
-			Plotting_Scale_Scores=as.numeric(subset(tmp.data, select=paste("TRANSFORMED_SCALE_SCORE", rev(sgPlot.years), sep="."))),
-			Achievement_Levels=as.character(unlist(subset(tmp.data, select=paste("ACHIEVEMENT_LEVEL", rev(sgPlot.years), sep=".")))),
-			SGP=as.numeric(subset(tmp.data, select=paste(my.sgp, rev(sgPlot.years), sep="."))),
-			SGP_Levels=as.character(unlist(subset(tmp.data, select=paste(my.sgp.level, rev(sgPlot.years), sep=".")))),
-			Grades=as.character(subset(tmp.data, select=paste("GRADE", rev(sgPlot.years), sep="."))),
-			Content_Areas=as.character(subset(tmp.data, select=paste("CONTENT_AREA_LABELS", rev(sgPlot.years), sep="."))),
-			Cuts=list(NY1=as.numeric(subset(tmp.data, select=intersect(grep(trajectory.cuts, names(tmp.data)), grep("YEAR_1", names(tmp.data))))),
-				NY2=as.numeric(subset(tmp.data, select=intersect(grep(trajectory.cuts, names(tmp.data)), grep("YEAR_2", names(tmp.data))))),
-				NY3=as.numeric(subset(tmp.data, select=intersect(grep(trajectory.cuts, names(tmp.data)), grep("YEAR_3", names(tmp.data)))))),
-			SGP_Targets=list(CUKU=tmp.data[[paste(paste(my.sgp.target.label[1], my.sgp.target.label[2], sep="_"), last.year, sep=".")]], 
-				CUKU_Current=tmp.data[[paste(paste(my.sgp.target.label[1], my.sgp.target.label[2], "CURRENT", sep="_"), last.year, sep=".")]], 
-				MUSU=tmp.data[[paste(paste(my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], sep="_"), last.year, sep=".")]], 
-				MUSU_Current=tmp.data[[paste(paste(my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "CURRENT", sep="_"), last.year, sep=".")]]),
-			SGP_Scale_Score_Targets=list(CUKU=list(NY1=as.numeric(tmp.data[[paste('SCALE_SCORE', my.sgp.target.label[1], my.sgp.target.label[2], "PROJ_YEAR_1", sep="_")]]),
-				NY2=as.numeric(tmp.data[[paste('SCALE_SCORE', my.sgp.target.label[1], my.sgp.target.label[2], "PROJ_YEAR_2", sep="_")]]),
-				NY3=as.numeric(tmp.data[[paste('SCALE_SCORE', my.sgp.target.label[1], my.sgp.target.label[2], "PROJ_YEAR_1", sep="_")]])),
-				MUSU=list(NY1=as.numeric(tmp.data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_1", sep="_")]]),
-					NY2=as.numeric(tmp.data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_2", sep="_")]]),
-					NY3=as.numeric(tmp.data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_3", sep="_")]])),
-				CUKU_Current=list(NY1=as.numeric(tmp.data[[paste('SCALE_SCORE', my.sgp.target.label[1], my.sgp.target.label[2], "PROJ_YEAR_1_CURRENT", sep="_")]]),
-					NY2=as.numeric(tmp.data[[paste('SCALE_SCORE', my.sgp.target.label[1], my.sgp.target.label[2], "PROJ_YEAR_2_CURRENT", sep="_")]]),
-					NY3=as.numeric(tmp.data[[paste('SCALE_SCORE', my.sgp.target.label[1], my.sgp.target.label[2], "PROJ_YEAR_3_CURRENT", sep="_")]])),
-				MUSU_Current=list(NY1=as.numeric(tmp.data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_1_CURRENT", sep="_")]]),
-					NY2=as.numeric(tmp.data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_2_CURRENT", sep="_")]]),
-					NY3=as.numeric(tmp.data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_3_CURRENT", sep="_")]]))),
-			Cutscores=Cutscores[[content_areas[vp]]],
-			Report_Parameters=list(Current_Year=last.year, Content_Area=content_areas[vp], Content_Area_Title=tmp.data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]], 
-				State=state))
+		### Utility functions
+
+		interpolate.extend.data <- function(tmp.data, grades.content_areas.reported.in.state) {
+
+			tmp.list <- NULL
+
+			last.number <- function (x) {
+				if (sum(!is.na(x)) > 0) return(max(which(!is.na(x)))) else return (0)
+			}
+	
+			first.number <- function (x) {
+				if (sum(!is.na(x)) > 0 ) return(min(which(!is.na(x)))) else return (0)
+			}
+
+			convert.grades <- function(grades, content_areas, to="GRADE_NUMERIC", lookup=grades.content_areas.reported.in.state) {
+				if (to=="GRADE_NUMERIC") {
+					return(as.numeric(lookup$GRADE_NUMERIC[match(paste(grades, content_areas), paste(lookup$GRADE, lookup$CONTENT_AREA))]))
+				}
+				if (to=="GRADE") {
+					return(as.character(lookup$GRADE[match(grades, lookup$GRADE_NUMERIC)]))
+				}
+			}
+
+			first.scale.score <- first.number(tmp.data$Grades)
+			last.scale.score <- last.number(tmp.data$Grades)
+			tmp.grades <- tmp.data$Grades[seq(first.scale.score, last.scale.score)]
+			tmp.content_areas <- tmp.data$Content_Areas[seq(first.scale.score, last.scale.score)]
+			tmp.grades <- convert.grades(tmp.grades, tmp.content_areas)
+			tmp.years <- tmp.data$Years[seq(first.scale.score, last.scale.score)]
+			tmp.scale_scores <- tmp.data$Scale_Scores[seq(first.scale.score, last.scale.score)]
+			tmp.plotting_scale_scores <- tmp.data$Plotting_Scale_Scores[seq(first.scale.score, last.scale.score)]
+			tmp.achievement_levels <- tmp.data$Achievement_Levels[seq(first.scale.score, last.scale.score)]
+			tmp.sgp <- tmp.data$SGP[seq(first.scale.score, last.scale.score)]
+			tmp.sgp_levels <- tmp.data$SGP_Levels[seq(first.scale.score, last.scale.score)]
+
+			tmp.index.high <- match(tmp.grades[1], grades.content_areas.reported.in.state$GRADE_NUMERIC)
+			if (tmp.index.high < dim(grades.content_areas.reported.in.state)[1]) {
+				tmp.additional.high <- seq(tmp.index.high+1, dim(grades.content_areas.reported.in.state)[1])
+				tmp.grades.extended <- c(rev(grades.content_areas.reported.in.state$GRADE_NUMERIC[tmp.additional.high]), tmp.grades)
+				tmp.content_areas.extended <- c(rev(grades.content_areas.reported.in.state$CONTENT_AREA[tmp.additional.high]), tmp.content_areas)
+				tmp.years.extended <- c(rev(year.extend(year, cumsum(grades.content_areas.reported.in.state$YEAR_LAG[tmp.additional.high]))), tmp.years)
+				tmp.scale_scores.extended <- c(rep(NA, length(tmp.additional.high)), tmp.scale_scores)
+				tmp.plotting_scale_scores.extended <- c(rep(NA, length(tmp.additional.high)), tmp.plotting_scale_scores)
+				tmp.achievement_levels.extended <- c(rep(NA, length(tmp.additional.high)), tmp.achievement_levels)
+				tmp.sgp.extended <- c(rep(NA, length(tmp.additional.high)), tmp.sgp)
+				tmp.sgp_levels.extended <- c(rep(NA, length(tmp.additional.high)), tmp.sgp_levels)
+			}
+
+			tmp.index.low <- match(tail(tmp.grades, 1), grades.content_areas.reported.in.state$GRADE_NUMERIC)
+			if (tmp.index.low > 1) {
+				tmp.additional.low <- seq(tmp.index.low-1)
+				tmp.grades.extended <- c(tmp.grades.extended, rev(grades.content_areas.reported.in.state$GRADE_NUMERIC[tmp.additional.low]))
+				tmp.content_areas.extended <- c(tmp.content_areas.extended, rev(grades.content_areas.reported.in.state$CONTENT_AREA[tmp.additional.low]))
+				tmp.years.extended <- c(tmp.years.extended, rev(year.extend(tail(tmp.years.extended, 1), -cumsum(grades.content_areas.reported.in.state$YEAR_LAG[rev(tmp.additional.low)]))))
+				tmp.scale_scores.extended <- c(tmp.scale_scores.extended, rep(NA, length(tmp.additional.low)))
+				tmp.plotting_scale_scores.extended <- c(tmp.plotting_scale_scores.extended, rep(NA, length(tmp.additional.low)))
+				tmp.achievement_levels.extended <- c(tmp.achievement_levels.extended, rep(NA, length(tmp.additional.low)))
+				tmp.sgp.extended <- c(tmp.sgp.extended, rep(NA, length(tmp.additional.low)))
+				tmp.sgp_levels.extended <- c(tmp.sgp_levels.extended, rep(NA, length(tmp.additional.low)))
+			}
+
+			if (any(is.na(tmp.grades.extended))) {
+				tmp.na <- which(is.na(tmp.grades.extended))
+				for (i in tmp.na) {
+					tmp.grades.extended[i] <- grades.content_areas.reported.in.state$GRADE_NUMERIC[
+						match(tmp.grades.extended[i-1], grades.content_areas.reported.in.state$GRADE_NUMERIC)]
+				}
+				if (length(intersect(tmp.na, which(!is.na(suppressWarnings(as.numeric(tmp.grades.extended)))))) > 0) {
+					tmp.indices <- intersect(tmp.na, which(!is.na(suppressWarnings(as.numeric(tmp.grades.extended)))))
+					tmp.grades.extended[tmp.indices] <- NA
+					tmp.grades.extended[tmp.indices] <- round(approx(suppressWarnings(as.numeric(tmp.grades.extended)), xout=tmp.indices)$y)
+				}
+			}
+
+			for (i in seq_along(tmp.grades.extended)) {
+				tmp.list[[i]] <- list(
+						Grade=rev(convert.grades(tmp.grades.extended, to="GRADE"))[i],
+						Scale_Score=rev(tmp.scale_scores.extended)[i],
+						Plotting_Scale_Score=rev(tmp.plotting_scale_scores.extended)[i],
+						Achievement_Level=rev(tmp.achievement_levels.extended)[i],
+						SGP=rev(tmp.sgp.extended)[i],
+						SGP_Level=rev(tmp.sgp_levels.extended)[i],
+						Content_Area=rev(tmp.content_areas.extended)[i],
+						Year=rev(tmp.years.extended)[i])
+			}
+
+			tmp.list[['Report_Parameters']] <- list(First_Score_Index=length(tmp.additional.low)+1, Last_Score_Index=length(tmp.additional.low)+length(tmp.grades))
+
+			return(tmp.list)
+		} ### END interpolate.extend.data
+
+
+		getJSON.percentile_trajectories_Internal <- function(tmp.df, percentile, content_area, year, state) {
+
+			.create.path <- function(labels, pieces=c("my.subject", "my.year", "my.extra.label")) {
+				sub(' ', '_', toupper(sub('\\.+$', '', paste(unlist(sapply(labels[pieces], as.character)), collapse="."))))
+			}
+
+			gaPlot.sgp_object@SGP$Panel_Data <- tmp.df
+			gaPlot.sgp_object@SGP$SGProjections <- NULL
+			tmp.grades <- as.numeric(tmp.df[1,2:((dim(tmp.df)[2]+1)/2)])
+			if (baseline) my.extra.label <- "BASELINE" else my.extra.label <- NULL
+
+			studentGrowthProjections(
+				panel.data=gaPlot.sgp_object@SGP,
+				sgp.labels=list(my.year=year, my.subject=content_area, my.extra.label=my.extra.label),
+				projcuts.digits=2,
+				projection.unit="GRADE",
+				percentile.trajectory.values=percentile,
+				grade.progression=tmp.grades,
+				max.forward.progression.grade=gaPlot.grade_range[2],
+				max.order.for.progression=gaPlot.max.order.for.progression,
+				print.time.taken=FALSE)[["SGProjections"]][[.create.path(list(my.subject=content_area, my.year=year, my.extra.label=my.extra.label))]][,-1]
+		}
+
+		year.extend <- function(year , add.sub) {
+			if (length(grep("_", year) > 0)) {
+				tmp <- as.numeric(unlist(strsplit(as.character(year), "_"))[2])+add.sub
+				return(paste(tmp-1, tmp, sep="_"))
+			} else {
+				return(as.character(as.numeric(year)+add.sub))
+			}
+		}
+
+		get.my.cutscores <- function(cutscores, content_area, year, grade) {
+			tmp.cutscores <- data.table(cutscores[CONTENT_AREA==content_area & GRADE==grade], key="CUTLEVEL")
+			if (!all(is.na(tmp.cutscores$YEAR))) {
+				tmp.cutscore.years <- unique(cutscores$YEAR)
+				if (year %in% tmp.cutscore.years) {
+					tmp.cutscores <- data.table(tmp.cutscores[YEAR==year], key="CUTLEVEL")
+				} else {
+					if (year==sort(c(year, tmp.cutscore.years))[1]) {
+						tmp.cutscores <- data.table(tmp.cutscores[is.na(YEAR)], key="CUTLEVEL")
+					} else {
+						tmp.year <- sort(tmp.cutscore.years)[which(year==sort(c(year, tmp.cutscore.years)))-1]
+						tmp.cutscores <- data.table(tmp.cutscores[YEAR==tmp.year], key="CUTLEVEL")
+					}
+				}
+			}
+			return(c(tmp.cutscores[CUTLEVEL=="LOSS"]$CUTSCORE, tmp.cutscores[!CUTLEVEL %in% c("LOSS", "HOSS")]$CUTSCORE, tmp.cutscores[CUTLEVEL=="HOSS"]$CUTSCORE))
+		}
+
+		### Create grades.content_areas.reported.in.state
+	
+		if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]])) {
+			grades.content_areas.reported.in.state <- data.frame(
+						GRADE=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[content_area]],
+						YEAR_LAG=c(1, SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[content_area]]),
+						CONTENT_AREA=SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]], 
+						stringsAsFactors=FALSE
+						)
+		} else {
+			grades.content_areas.reported.in.state <- data.frame(
+					GRADE=SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]],
+					YEAR_LAG=c(1, diff(as.numeric(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]]))),
+					CONTENT_AREA=content_area, 
+					stringsAsFactors=FALSE
+					)
+		}
+		grades.content_areas.reported.in.state$GRADE_NUMERIC <- as.numeric(grades.content_areas.reported.in.state$GRADE[1])+c(0, cumsum(tail(grades.content_areas.reported.in.state$YEAR_LAG, -1)))
+		grades.content_areas.reported.in.state$GRADE_NUMERIC <- (as.numeric(grades.content_areas.reported.in.state$GRADE[2])-1)+c(0, cumsum(tail(grades.content_areas.reported.in.state$YEAR_LAG, -1)))
+
+
+		### Create and restructure list to be converted to JSON
+
+		tmp.data.extended <- interpolate.extend.data(tmp.data, grades.content_areas.reported.in.state)
+
+		for (i in which(names(tmp.data.extended)!="Report_Parameters")) {
+			tmp.data.extended[[i]][['Cutscores']] <- get.my.cutscores(tmp.data$Cutscores, tmp.data.extended[[i]]$Content_Area, tmp.data.extended[[i]]$Year, tmp.data.extended[[i]]$Grade)
+		}
+		
+		### Add in trajectories and targets
+
+		for (i in years.for.percentile.trajectories) {
+			tmp.index <- which(i==unlist(sapply(tmp.data.extended, '[[', 'Year')))
+			tmp.df <- data.frame(matrix(c(1, rev(tmp.data$Grades)[1:which(i==rev(tmp.data$Years))], rev(tmp.data$Scale_Scores)[1:which(i==rev(tmp.data$Years))]), nrow=1), 
+				stringsAsFactors=FALSE)
+			for (j in seq(to=dim(tmp.df)[2], length=(dim(tmp.df)[2]-1)/2)) {
+				tmp.df[[j]] <- as.numeric(tmp.df[[j]])
+			}
+			tmp.data.extended[[tmp.index]][['Percentile_Trajectories']] <- 
+				getJSON.percentile_trajectories_Internal(tmp.df, 1:99, tmp.data.extended[[tmp.index]]$Content_Area, i, state)
+		}
+
+
+		### Add in Targets and Targets_Scale_Scores
+
+		tmp.data.extended[['SGP_Targets']] <- "TEMP"
+		tmp.data.extended[['SGP_Targets_Scale_Scores']] <- "TEMP"
+
+		### Add in Report Parameters
+
+		tmp.data.extended[['Report_Parameters']] <- "TEMP"
+
+
+		### Return list
+
+		return(tmp.data.extended)	
+
+	} ### END if (data.type=="studentGrowthPlot")
+
 } ### END getJSON
