@@ -302,7 +302,7 @@ if ("studentGrowthPlot" %in% plot.types) {
 			return(NA)
 		} else {
 			tmp.grades.reported <- SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]]
-			c(tmp.grades.reported, NA)[match(grade, tmp.grades.reported)+1]
+			if (tmp.grades.reported[match(grade, tmp.grades.reported)] == "EOCT") return("EOCT") else c(tmp.grades.reported, NA)[match(grade, tmp.grades.reported)+1]
 		}
 	}
 
@@ -547,7 +547,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 	slot.data[,CONTENT_AREA_LABELS:=CONTENT_AREA]
 	if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]])) {
 		for (i in names(SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]])) {
-			slot.data[VALID_CASE=="VALID_CASE" & CONTENT_AREA==i, CONTENT_AREA:=SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]][[i]]]	
+			slot.data[VALID_CASE=="VALID_CASE" & CONTENT_AREA==i, CONTENT_AREA:=SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]][[i]]]
 		}
 		setkeyv(slot.data, long.key)
 	}
@@ -626,7 +626,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 				tmp.ids[[i]] <- as.character(sample(unique(slot.data[tmp.grades.content_areas.reported[i]]$ID), 10))
 			}
 			slot.data[,c("SCHOOL_NUMBER", "DISTRICT_NUMBER") := NULL]
-			slot.data[slot.data$ID %in% unlist(tmp.ids), c("SCHOOL_NUMBER", "DISTRICT_NUMBER") := list(-99L, -999L)]
+			slot.data[slot.data$ID %in% unique(unlist(tmp.ids)), c("SCHOOL_NUMBER", "DISTRICT_NUMBER") := list(-99L, -999L)]
 			tmp.districts.and.schools <- CJ("VALID_CASE", tmp.last.year, tmp.content_areas_domains, -999L, -99L)
 			setnames(tmp.districts.and.schools, c("VALID_CASE", "YEAR", "CONTENT_AREA", "DISTRICT_NUMBER", "SCHOOL_NUMBER"))
 			setkeyv(tmp.districts.and.schools, long.key) 
