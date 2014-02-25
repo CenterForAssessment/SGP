@@ -2,7 +2,7 @@ Changes in version: SGP_1.3-0.0
 
   USER VISIBLE CHANGES:
 
-	  o 
+	  o Adding internal getJSON function to studentGrowthPlot_Styles to export student level JSON suitable to interactive student reports.
 
 Changes in version: SGP_1.2-0.0
 

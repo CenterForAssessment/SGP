@@ -96,6 +96,7 @@
 				for (i in grep(content_area.iter, sapply(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]]), '[.]'), '[', 1))) {
 					tmp.content_area <- unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]])[i], '[.]'))[1]
 					tmp.grades <- as.character(matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]][[i]]), "_")), ncol=2, byrow=TRUE)[,2])
+					tmp.year <- as.character(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]])[i], "[.]"))[2])
 
 					for (j in seq(number.achievement.level.regions-1)) {
 						tmp.list[[paste(i, j, sep="_")]] <- data.table(
@@ -103,7 +104,7 @@
 							CONTENT_AREA=tmp.content_area,
 							CUTLEVEL=as.character(j),
 							CUTSCORES=SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area.iter]][j+1], 
-							YEAR=NA)
+							YEAR=tmp.year)
 		
 						tmp.list[[paste(i, j, sep="_")]] <- subset(tmp.list[[paste(i, j, sep="_")]], GRADE %in% SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area.iter]])
 					}
@@ -112,7 +113,7 @@
 						CONTENT_AREA=tmp.content_area,
 						CUTLEVEL="LOSS",
 						CUTSCORES=SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area.iter]][1],
-						YEAR=NA)
+						YEAR=tmp.year)
 					tmp.list[[paste(i, "LOSS", sep="_")]] <- subset(tmp.list[[paste(i, "LOSS", sep="_")]], GRADE %in% SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area.iter]])
 							
 					tmp.list[[paste(i, "HOSS", sep="_")]] <- data.table(
@@ -120,7 +121,7 @@
 						CONTENT_AREA=tmp.content_area,
 						CUTLEVEL="HOSS",
 						CUTSCORES=tail(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area.iter]], 1),
-						YEAR=NA)
+						YEAR=tmp.year)
 					tmp.list[[paste(i, "HOSS", sep="_")]] <- subset(tmp.list[[paste(i, "HOSS", sep="_")]], GRADE %in% SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area.iter]])
 				}
 			}
@@ -338,9 +339,8 @@ if (reports.by.school) {
 	if ("JSON" %in% sgPlot.output.format) {
 
 		for (vp in seq_along(content_areas)) {
-
 			tmp_student_data <- as.data.frame(tmp_grade_data[ID==n & CONTENT_AREA==content_areas[vp]])
-			cat(toJSON(list(
+			tmp.list <- list(
 				Scale_Scores=as.numeric(subset(tmp_student_data, select=paste("SCALE_SCORE", rev(sgPlot.years), sep="."))),
 				Plotting_Scale_Scores=as.numeric(subset(tmp_student_data, select=paste("TRANSFORMED_SCALE_SCORE", rev(sgPlot.years), sep="."))),
 				Achievement_Levels=as.character(unlist(subset(tmp_student_data, select=paste("ACHIEVEMENT_LEVEL", rev(sgPlot.years), sep=".")))),
@@ -368,9 +368,13 @@ if (reports.by.school) {
 						NY2=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_2_CURRENT", sep="_")]]),
 						NY3=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_3_CURRENT", sep="_")]]))),
 				Cutscores=Cutscores[[content_areas[vp]]],
+				Years=rev(sgPlot.years),
 				Report_Parameters=list(Current_Year=last.year, Content_Area=content_areas[vp], Content_Area_Title=tmp_student_data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]], 
-					State=state)), pretty=TRUE), file=file.path(path.to.pdfs, paste(file_name_json, "_", vp, ".json", sep="")))
-			}
+					State=state, SGP_Targets=sgPlot.sgp.targets))
+
+			tmp_student_data_JSON <- getJSON(tmp.list, state=state, content_area=vp, year=last.year, baseline=sgPlot.baseline, data.type="studentGrowthPlot")
+			cat(toJSON(tmp_student_data_JSON, pretty=TRUE), file=file.path(path.to.pdfs, paste(file_name_json, "_", vp, ".json", sep="")))
+		}
 	} ### END if ("JSON" %in% sgPlot.output.format)
 
 
