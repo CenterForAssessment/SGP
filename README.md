@@ -7,7 +7,7 @@ An R Package for the calculation of student growth percentiles and percentile gr
 -------------------------------------------------------------------------------------------------------------
 
 
-The **SGP** Package (SGP, 2013) is an open source package built for the open source **R** software environment (R Development Core Team, 2013). The classes, functions and data within the **SGP** package are used to calculate student growth percentiles and percentile growth projections/trajectories using large scale, longitudinal assessment data. The methodology uses quantile regression to estimate the conditional density associated associated with each student's achievement history. Percentile growth projections/trajectories are calculated using the coefficient matrices derived from the quantile regression analyses and specify the percentile growth required for students to reach future achievement targets.
+The **SGP** Package (Betebenner, VanIwaarden, Domingue, Shang, 2014) is an open source package built for the open source **R** software environment (R Development Core Team, 2014). The classes, functions and data within the **SGP** package are used to calculate student growth percentiles and percentile growth projections/trajectories using large scale, longitudinal assessment data. The methodology uses quantile regression to estimate the conditional density associated associated with each student's achievement history. Percentile growth projections/trajectories are calculated using the coefficient matrices derived from the quantile regression analyses and specify the percentile growth required for students to reach future achievement targets.
 
 * Web site: http://centerforassessment.github.io/SGP/
 * CRAN Web site: http://cran.r-project.org/web/packages/SGP/
@@ -53,7 +53,7 @@ Data Preparation
 ================
 
 The following provides thorough **SGP** data formatting/preparation specifications for
-utilizing the utility function of the package (SGP:2013). To help
+utilizing the utility function of the SGP package (Betebenner, VanIwaarden, Domingue, and Shang, 2014). To help
 illustrate these specifications there is an embedded data set, , within
 the package. The development team uses this data set frequently to test
 new features included in the package. Ensuring your data is set up in
@@ -218,7 +218,7 @@ The function accepts multiple arguments detailed in the
 Bibliography
 ------------
 
-Betebenner, D. W., VanIwaarden, A., and Domingue, B. (2013). SGP: An R Package for the Calculation and Visualization of Student Growth Percentiles & Percentile Growth Trajectories.
+Betebenner, D. W., VanIwaarden, A., Domingue, B., and Shang, Y. (2014). SGP: An R Package for the Calculation and Visualization of Student Growth Percentiles & Percentile Growth Trajectories.
 
-R Development Core Team (2013). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria.
+R Development Core Team (2014). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria.
 3-900051-07-0.
