@@ -297,13 +297,28 @@ if ("studentGrowthPlot" %in% plot.types) {
 
 	#### Utility functions
 
-	get.next.grade <- function(grade, content_area) {
+	get.next.grade <- function(grade, content_area, increment) {
 		if (is.na(grade)) {
 			return(NA)
+		}
+		if (!is.null(tmp.domain <- SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]][[content_area]])) {
+			if (is.na(as.numeric(grade))) {
+				tmp.index <- which(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tmp.domain]] == content_area)
+			} else tmp.index <- which(SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[tmp.domain]] == grade)
+			SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[tmp.domain]][tmp.index + increment]
 		} else {
 			tmp.grades.reported <- SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]]
-			if (tmp.grades.reported[match(grade, tmp.grades.reported)] == "EOCT") return("EOCT") else c(tmp.grades.reported, NA)[match(grade, tmp.grades.reported)+1]
+			c(tmp.grades.reported, NA)[match(grade, tmp.grades.reported) + increment]
 		}
+	}
+
+	get.next.content_area <- function(grade, content_area, increment) {
+		if (!is.null(tmp.domain <- SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]][[content_area]]) & increment != 0) {
+			if (is.na(as.numeric(grade))) {
+				tmp.index <- which(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tmp.domain]] == content_area)
+			} else tmp.index <- which(SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[tmp.domain]] == grade)
+			return(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tmp.domain]][tmp.index + increment])
+		} else return(content_area)
 	}
 
 	get.my.label <- function(state, content_area, year, label="Cutscores") {
@@ -328,7 +343,7 @@ if ("studentGrowthPlot" %in% plot.types) {
 		my.cutscores.label <- get.my.label(state, content_area, year)
 		my.knots_boundaries.label <- get.my.label(state, content_area, year, "Knots_Boundaries")
 		if (content_area %in% names(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]]) &&
-			grade %in% as.numeric(matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[my.knots_boundaries.label]]), "_")), ncol=2, byrow=TRUE)[,2])) {
+			grade %in% matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[my.knots_boundaries.label]]), "_")), ncol=2, byrow=TRUE)[,2]) {
 				tmp.loss.hoss <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[my.knots_boundaries.label]][[paste("loss.hoss_", grade, sep="")]]
 				scale_score[scale_score < tmp.loss.hoss[1]] <- tmp.loss.hoss[1]; scale_score[scale_score > tmp.loss.hoss[2]] <- tmp.loss.hoss[2]
 				tmp.old.cuts <- c(tmp.loss.hoss[1], SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.cutscores.label]][[paste("GRADE_", grade, sep="")]], tmp.loss.hoss[2])
@@ -602,17 +617,27 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			sgPlot.anonymize <- TRUE
 			tmp.ids <- list()
 			setkeyv(slot.data, c("VALID_CASE", "YEAR", "GRADE", "CONTENT_AREA_LABELS"))
-			if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]])) {
-				tmp.data.table <- list()
-				for (i in names(grep(unique(unlist(SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]]))[1], unlist(SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]]), value=TRUE))) {
-					tmp.grades.reported <- SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[i]]
-					tmp.data.table[[i]] <- data.table(
-						VALID_CASE="VALID_CASE",
-						YEAR=tmp.last.year,
-						GRADE=tmp.grades.reported, 
-						CONTENT_AREA_LABELS=i)
+			if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported_Domains"]])) {
+				tmp.subjects <- names(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]])
+				tmp.eoct.subjects <- names(unlist(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]]))[
+					unlist(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]])=='EOCT']
+				tmp.gradelevel.subjects <- tmp.subjects[!tmp.subjects %in% tmp.eoct.subjects]
+				tmp.grades <- as.numeric(unique(unlist(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported_Domains"]])))
+				tmp.grades <- my.grades <- tmp.grades[!is.na(tmp.grades)]
+				my.subjects <- NULL; k <- 1
+				while(length(tmp.grades) > 0) {
+					my.subjects <- c(my.subjects, rep(tmp.gradelevel.subjects[k], length(tmp.grades[tmp.grades %in% 
+						SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[tmp.gradelevel.subjects[k]]]])))
+					tmp.grades <- tmp.grades[!tmp.grades %in% SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[tmp.gradelevel.subjects[k]]]]
+					k <- k+1 
 				}
-				tmp.grades.content_areas.reported <- data.table(rbindlist(tmp.data.table), key=key(slot.data))
+				my.grades <- c(my.grades, rep("EOCT", length(tmp.eoct.subjects)))
+				my.subjects <- c(my.subjects, tmp.eoct.subjects)
+				tmp.grades.content_areas.reported <- data.table(
+					VALID_CASE="VALID_CASE",
+					YEAR=tmp.last.year,
+					GRADE= my.grades, 
+					CONTENT_AREA_LABELS= my.subjects)
 			} else {
 				tmp.grades.reported <- as.character(unique(unlist(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]])))
 				tmp.grades.content_areas.reported <- data.table(
@@ -849,7 +874,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 				if (length(grep(paste("PROJ_YEAR", i, sep="_"), names(sgPlot.data))) > 0) {
 					for (proj.iter in grep(paste("PROJ_YEAR", i, sep="_"), names(sgPlot.data), value=TRUE)) {
 						if (length(grep("CURRENT", proj.iter)) > 0) tmp.increment <- i else tmp.increment <- i-1
-						eval(parse(text=paste("sgPlot.data[, ", proj.iter, ":=piecewise.transform(", proj.iter, ", state, CONTENT_AREA, yearIncrement('", tmp.last.year, "',", tmp.increment, "), get.next.grade(", tmp.grade.name, "[1], CONTENT_AREA[1])), by=list(CONTENT_AREA, ", tmp.grade.name, ")]", sep="")))
+						eval(parse(text=paste("sgPlot.data[, ", proj.iter, ":=piecewise.transform(", proj.iter, ", state, get.next.content_area(", tmp.grade.name, "[1], CONTENT_AREA[1], ", tmp.increment,"), yearIncrement('", tmp.last.year, "',", tmp.increment, "), get.next.grade(", tmp.grade.name, "[1], CONTENT_AREA[1], ", tmp.increment,")), by=list(CONTENT_AREA, ", tmp.grade.name, ")]", sep="")))
 					}
 				}
 			}
