@@ -2071,9 +2071,8 @@ if (22 %in% bPlot.styles) {
 				if (!"INSTRUCTOR_NUMBER" %in% names(sgp_object@Data_Supplementary)) {
 					stop("\tNOTE: Indvidividual level Instructor bubble plots require an INSTRUCTOR_NUMBER lookup table embedded in @Data_Supplementary")
 				}
-				tmp.bPlot.data.1.long <- data.table(sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']][,VALID_CASE:="VALID_CASE"],
-								key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))[
-									slot.data[SJ("VALID_CASE", year.iter, content_area.iter, my.iters$tmp.districts[district.iter])], nomatch=0]
+				tmp.bPlot.data.1.long <- data.table(slot.data[SJ("VALID_CASE", year.iter, content_area.iter, my.iters$tmp.districts[district.iter])],
+                                                                key=c("ID", "CONTENT_AREA", "YEAR"))[sgp_object@Data_Supplementary$INSTRUCTOR_NUMBER, nomatch=0]
 			}
 
 			setkeyv(tmp.bPlot.data.1.long, "INSTRUCTOR_NUMBER")
@@ -2239,7 +2238,7 @@ if (22 %in% bPlot.styles) {
 					stop("\tNOTE: Indvidividual level Instructor bubble plots require an INSTRUCTOR_NUMBER lookup table embedded in @Data_Supplementary")
 				}
 				tmp.bPlot.data.1.long <- data.table(slot.data[SJ("VALID_CASE", year.iter, content_area.iter, my.iters$tmp.districts[district.iter])],
-								key=c("ID", "CONTENT_AREA", "YEAR"))[sgp_object@Data_Supplementary, nomatch=0]
+								key=c("ID", "CONTENT_AREA", "YEAR"))[sgp_object@Data_Supplementary$INSTRUCTOR_NUMBER, nomatch=0]
 			}
 		
 			tmp.unique.schools <- my.iters$tmp.schools[my.iters$tmp.schools %in% unique(tmp.bPlot.data.1.long$SCHOOL_NUMBER)]

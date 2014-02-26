@@ -100,6 +100,13 @@ if (!is.null(SGPstateData[[Report_Parameters$State]][['SGP_Configuration']][['sg
 	}
 }
 
+if (is.null(SGPstateData[[Report_Parameters$State]][['SGP_Configuration']][['Show_Fan_Cut_Scores']])) {
+	Report_Parameters[['Configuration']][['Show_Fan_Cut_Scores']] <- FALSE
+} else {
+	Report_Parameters[['Configuration']][['Show_Fan_Cut_Scores']] <- TRUE
+}
+
+
 ### Utility functions
 
 ach.level.labels <- function(perlevel){
@@ -534,9 +541,13 @@ if (paste(Grades[1], Content_Areas[1]) != tail(paste(grades.content_areas.report
 			width=unit(0.04, "native"), r=unit(0.45, "snpc"), gp=gpar(lwd=0.3, col=border.color, fill=arrow.legend.color[i]))
 
 		if (is.null(Report_Parameters[['SGP_Targets']])) {
-			grid.text(x=current.year+grade.values$increment_for_projection_current+.05, 
+			grid.text(x=current.year+grade.values$increment_for_projection_current+0.05, 
 				y=(max(yscale.range[1], cuts.ny1.text[i])+min(yscale.range[2], cuts.ny1.text[i+1]))/2, growth.level.labels[i],
-				default.units="native", just="left", gp=gpar(cex=.4, col=border.color))
+				default.units="native", just="left", gp=gpar(cex=0.4, col=border.color))
+		}
+		if (i != 1 & Report_Parameters[['Configuration']][['Show_Fan_Cut_Scores']]) {
+			grid.text(x=current.year+grade.values$increment_for_projection_current+0.05, y=cuts.ny1.text[i], as.character(cuts.ny1.text[i]),
+				default.units="native", just="left", gp=gpar(cex=0.4, col=border.color))
 		}
 	}
 }
