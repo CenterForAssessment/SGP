@@ -13,6 +13,7 @@ studentGrowthPlot(Scale_Scores,
 	Grades,
 	Content_Areas,
 	Cuts,
+	Plotting_Cuts,
 	SGP_Targets,
 	SGP_Scale_Score_Targets,
 	Cutscores,
@@ -44,6 +45,9 @@ studentGrowthPlot(Scale_Scores,
 	}
 	\item{Cuts}{
 		A list of cuts scores for NY1, NY2, and NY3.
+	}
+	\item{Plotting_Cuts}{
+		A list of plotting cuts scores for NY1, NY2, and NY3. Plotting cuts are identical to Cuts for states with a vertical scale and are transformed for non-vertical scale states.
 	}
 	\item{SGP_Targets}{
 		A list of CUKU, CUKU_Current, MUSU, MUSU_Current targets.

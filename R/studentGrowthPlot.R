@@ -8,6 +8,7 @@ function(Scale_Scores,               ## Vector of Scale Scores
 	Grades,                      ## Vector of Grade levels for student
 	Content_Areas,               ## Vector of Content Areas for student
 	Cuts,                        ## Vector of NY1, NY2, and NY3 cutscores
+	Plotting_Cuts,               ## Vector of NY1, NY2, and NY3 cutscores used for plotting (transformed if non-vertical scale)
 	SGP_Targets,                 ## Vector of CUKU, CUKU_Current, MUSU, MUSU_Current (multi) year targets
 	SGP_Scale_Score_Targets,     ## Vector of CUKU, CUKU_Current, MUSU, MUSU_Current scale score targets
 	Cutscores,                   ## data.frame of long formatted achievement level cutscores
@@ -316,6 +317,7 @@ if (grade.values$year_span > 0) {
 	grades.text[grades.text.eoct] <- "EOCT"
 	grades.text <- head(grades.text, studentGrowthPlot.year.span)
 
+	if (missing(Plotting_Scale_Scores)) Plotting_Scale_Scores <- Scale_Scores
 	scale.scores.values <- c(Plotting_Scale_Scores[grade.values$year_span:1], rep(NA, studentGrowthPlot.year.span))
 	scale.scores.values <- head(scale.scores.values, studentGrowthPlot.year.span)
 
