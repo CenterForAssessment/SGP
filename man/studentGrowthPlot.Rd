@@ -16,6 +16,7 @@ studentGrowthPlot(Scale_Scores,
 	Plotting_Cuts,
 	SGP_Targets,
 	SGP_Scale_Score_Targets,
+	Plotting_SGP_Scale_Score_Targets,
 	Cutscores,
 	Years,
 	Report_Parameters) 
@@ -54,6 +55,9 @@ studentGrowthPlot(Scale_Scores,
 	}
 	\item{SGP_Scale_Score_Targets}{
 		A list of CUKU, CUKU_Current, MUSU, MUSU_Current scale score targets.
+	}
+	\item{Plotting_SGP_Scale_Score_Targets}{
+		A list of CUKU, CUKU_Current, MUSU, MUSU_Current scale score targets for plotting that are transformed when no vertical scale exists.
 	}
 	\item{Cutscores}{
 		A data.frame of long formatted achievement level cutscores.
