@@ -874,7 +874,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 				if (length(grep(paste("PROJ_YEAR", i, sep="_"), names(sgPlot.data))) > 0) {
 					for (proj.iter in grep(paste("PROJ_YEAR", i, sep="_"), names(sgPlot.data), value=TRUE)) {
 						if (length(grep("CURRENT", proj.iter)) > 0) tmp.increment <- i else tmp.increment <- i-1
-						eval(parse(text=paste("sgPlot.data[, ", proj.iter, ":=piecewise.transform(", proj.iter, ", state, get.next.content_area(", tmp.grade.name, "[1], CONTENT_AREA[1], ", tmp.increment,"), yearIncrement('", tmp.last.year, "',", tmp.increment, "), get.next.grade(", tmp.grade.name, "[1], CONTENT_AREA[1], ", tmp.increment,")), by=list(CONTENT_AREA, ", tmp.grade.name, ")]", sep="")))
+						eval(parse(text=paste("sgPlot.data[, ", paste(proj.iter, 'TRANSFORMED', sep='_'), ":=piecewise.transform(", proj.iter, ", state, get.next.content_area(", tmp.grade.name, "[1], CONTENT_AREA[1], ", tmp.increment,"), yearIncrement('", tmp.last.year, "',", tmp.increment, "), get.next.grade(", tmp.grade.name, "[1], CONTENT_AREA[1], ", tmp.increment,")), by=list(CONTENT_AREA, ", tmp.grade.name, ")]", sep="")))
 					}
 				}
 			}
