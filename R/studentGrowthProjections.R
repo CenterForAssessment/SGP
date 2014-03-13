@@ -143,14 +143,33 @@ function(panel.data,	## REQUIRED
 				} else {
 					tmp.years <- yearIncrement(sgp.labels$my.year, rev(c(0, -cumsum(rev(tmp.years_lags)))))
 				}
-				tmp.list[[i]][[j]] <- getsplineMatrices(
+				tmp.matrix <- getsplineMatrices(
 						tmp.matrices,
 						c(tail(content_area.progression, grade.progression.index[i]), head(content_area.projection.sequence, j)),
 						c(tail(grade.progression, grade.progression.index[i]), head(grade.projection.sequence, j)),
 						tmp.years,
 						tmp.years_lags,
 						return.highest.order.matrix=TRUE,
-						my.matrix.highest.order=max.order.for.progression)[[1]]
+						my.matrix.highest.order=max.order.for.progression)
+				if (length(tmp.matrix) == 0) {
+					# Reverse tmp.years to find COHORT or BASELINE analog
+					if (length(grep("BASELINE", sgp.labels[['my.extra.label']])) > 0) {
+						tmp.years2 <- yearIncrement(sgp.labels$my.year, rev(c(0, -cumsum(rev(tmp.years_lags))))) 
+					} else {
+						tmp.years2 <- rep("BASELINE", length(tmp.years_lags)+1)
+					}
+
+					tmp.matrix <- getsplineMatrices(
+						tmp.matrices,
+						c(tail(content_area.progression, grade.progression.index[i]), head(content_area.projection.sequence, j)),
+						c(tail(grade.progression, grade.progression.index[i]), head(grade.projection.sequence, j)),
+						tmp.years2,
+						tmp.years_lags,
+						return.highest.order.matrix=TRUE,
+						my.matrix.highest.order=max.order.for.progression)
+					tmp.matrix[[1]]@Time[[1]] <- tmp.years  # Overwrite @Time slot to make function think the type is consistent
+				}
+				tmp.list[[i]][[j]] <- tmp.matrix[[1]]
 				if (dim(tmp.list[[i]][[j]]@.Data)[2] != 100) {
 					tmp.list[[i]][[j]]@.Data <- add.missing.taus.to.matrix(tmp.list[[i]][[j]]@.Data)
 					missing.taus <- TRUE
@@ -540,7 +559,32 @@ function(panel.data,	## REQUIRED
 
 	### Get relevant matrices for projections
 
-	tmp.matrices <- unlist(panel.data[["Coefficient_Matrices"]][match(tmp.path.coefficient.matrices, names(panel.data[["Coefficient_Matrices"]]))], recursive=FALSE)
+	# Check to see if ALL relevant matrices exist
+	if (any(is.na(match(tmp.path.coefficient.matrices, names(panel.data[["Coefficient_Matrices"]]))))) {
+		tmp.fix.index <- which(is.na(match(tmp.path.coefficient.matrices, names(panel.data[["Coefficient_Matrices"]]))))
+		# Reverse tmp.path.coefficient.matrices use of my.year/BASELINE and try that
+		if (length(grep("BASELINE", sgp.labels[['my.extra.label']])) > 0) {
+			tmp.path.coefficient.matrices2 <- paste(unique(content_area.projection.sequence), sgp.labels$my.year, sep=".")[tmp.fix.index]
+		} else {
+			tmp.path.coefficient.matrices2 <- paste(unique(content_area.projection.sequence), "BASELINE", sep=".")[tmp.fix.index]
+		}
+		if (any(is.na(match(tmp.path.coefficient.matrices2, names(panel.data[["Coefficient_Matrices"]]))))) {
+			stop("Not all CONTENT_AREA values in content_area.progression have associated BASELINE or current COHORT referenced coefficient matrices.")
+		} else {
+			if (length(grep("BASELINE", sgp.labels[['my.extra.label']])) > 0) {
+				message(paste("NOTE:  Not all CONTENT_AREA values in content_area.progression have associated BASELINE referenced coefficient matrices.
+					COHORT referenced matrices for missing content areas (", paste(gsub(paste(".", sgp.labels$my.year, sep=""), "", tmp.path.coefficient.matrices2), collapse=", "),
+					") have been found and will be used.\nPlease note the inconsistency and ensure this is correct!", sep=""))
+					
+			} else {
+				message(paste("NOTE:  Not all CONTENT_AREA values in content_area.progression have associated COHORT referenced coefficient matrices.
+					BASELINE referenced matrices for missing content areas (", paste(gsub(".BASELINE", "", tmp.path.coefficient.matrices2), collapse=", "),
+					") have been found and will be used.\nPlease note the inconsistency and ensure this is correct!", sep=""))
+			}
+		}
+		tmp.matrices <- unlist(panel.data[["Coefficient_Matrices"]][c(match(tmp.path.coefficient.matrices, names(panel.data[["Coefficient_Matrices"]])),
+			match(tmp.path.coefficient.matrices2, names(panel.data[["Coefficient_Matrices"]])))], recursive=FALSE)
+	} else tmp.matrices <- unlist(panel.data[["Coefficient_Matrices"]][match(tmp.path.coefficient.matrices, names(panel.data[["Coefficient_Matrices"]]))], recursive=FALSE)
 
 	### PROGRESSION SEQUENCES: content_area.progression, & year_lags.progression if not supplied
 
