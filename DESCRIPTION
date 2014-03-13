@@ -1,8 +1,8 @@
 Package: SGP
 Type: Package
 Title: An R Package for the Calculation and Visualization of Student Growth Percentiles & Percentile Growth Trajectories.
-Version: 1.2-4.0
-Date: 2014-3-1
+Version: 1.2-6.0
+Date: 2014-3-7
 Authors@R: c(person(given=c("Damian", "W."), family="Betebenner", email="dbetebenner@nciea.org", role=c("aut", "cre")), 
 		person(given="Adam", family="Van Iwaarden", email="vaniwaarden@colorado.edu", role="aut"),
 		person(given="Ben", family="Domingue", email="ben.domingue@gmail.com", role="aut"), 
@@ -29,6 +29,7 @@ Authors@R: c(person(given=c("Damian", "W."), family="Betebenner", email="dbetebe
 		person(given="Joshua", family="Lee", role="ctb", comment="Hawaii Department of Education"),
 		person(given="Ayaka", family="Nukui", role="ctb", comment="Idaho Department of Education"),
 		person(given="Carissa", family="Miller", role="ctb", comment="Idaho Department of Education"),
+		person(given="Matthew", family="Raimondi", role="ctb", comment="Elgin Area School District U46 (Illinois)"),
 		person(given="Wes", family="Bruce", role="ctb", comment="Indiana Department of Education"),
 		person(given="Robert", family="Hochsegang", role="ctb", comment="Indiana Department of Education"),
 		person(given="Tony", family="Moss", role="ctb", comment="Kansas State Department of Education"),
