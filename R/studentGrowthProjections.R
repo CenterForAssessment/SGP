@@ -572,14 +572,14 @@ function(panel.data,	## REQUIRED
 			stop("Not all CONTENT_AREA values in content_area.progression have associated BASELINE or current COHORT referenced coefficient matrices.")
 		} else {
 			if (length(grep("BASELINE", sgp.labels[['my.extra.label']])) > 0) {
-				message(paste("NOTE:  Not all CONTENT_AREA values in content_area.progression have associated BASELINE referenced coefficient matrices.
-					COHORT referenced matrices for missing content areas (", paste(gsub(paste(".", sgp.labels$my.year, sep=""), "", tmp.path.coefficient.matrices2), collapse=", "),
-					") have been found and will be used.\nPlease note the inconsistency and ensure this is correct!", sep=""))
+				message(paste("\tNOTE:  Not all CONTENT_AREA values in content_area.progression have associated BASELINE referenced coefficient matrices.\n\tCOHORT referenced matrices for missing content areas (", 
+					paste(gsub(paste(".", sgp.labels$my.year, sep=""), "", tmp.path.coefficient.matrices2), collapse=", "),
+					") have been found and will be used.\n\tPlease note the inconsistency and ensure this is correct!", sep=""))
 					
 			} else {
-				message(paste("NOTE:  Not all CONTENT_AREA values in content_area.progression have associated COHORT referenced coefficient matrices.
-					BASELINE referenced matrices for missing content areas (", paste(gsub(".BASELINE", "", tmp.path.coefficient.matrices2), collapse=", "),
-					") have been found and will be used.\nPlease note the inconsistency and ensure this is correct!", sep=""))
+				message(paste("NOTE:  Not all CONTENT_AREA values in content_area.progression have associated COHORT referenced coefficient matrices.\n\tBASELINE referenced matrices for missing content areas (", 
+					paste(gsub(".BASELINE", "", tmp.path.coefficient.matrices2), collapse=", "),
+					") have been found and will be used.\n\tPlease note the inconsistency and ensure this is correct!", sep=""))
 			}
 		}
 		tmp.matrices <- unlist(panel.data[["Coefficient_Matrices"]][c(match(tmp.path.coefficient.matrices, names(panel.data[["Coefficient_Matrices"]])),
