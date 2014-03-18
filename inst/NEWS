@@ -4,6 +4,7 @@ Changes in version: SGP_1.3-0.0
 
 	  o Adding internal getJSON function to studentGrowthPlot_Styles to export student level JSON suitable to interactive student reports.
 	  o Added Illinois meta-data to SGPstateData.
+	  o Adding cuts to projection fan
 
 Changes in version: SGP_1.2-0.0
 
