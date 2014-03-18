@@ -117,13 +117,13 @@ function(
 	###
 	### TEST NUMBER 2: Various tests of updateSGP functionality.
 	###
-	### TEST NUMBER 2a: Test of updateSGP performing SGP analyses in two steps: Create what_sgp_object: 2008-2009 to 2011-2012 followed by adding with_sgp_data_LONG 2012-2013 using
+	### TEST NUMBER 2a: Test of updateSGP performing SGP analyses in two steps: Create what_sgp_object: 2009-2010 to 2012-2013 followed by adding with_sgp_data_LONG 2013-2014 using
 	###			overwrite.existing.data=FALSE and sgp.use.my.coefficient.matrices=FALSE.
-	### TEST NUMBER 2b: Test of updateSGP performing SGP analyses in two steps: Create what_sgp_object: 2008-2009 to 2012-2013 followed by adding with_sgp_data_LONG 2012-2013 using
+	### TEST NUMBER 2b: Test of updateSGP performing SGP analyses in two steps: Create what_sgp_object: 2009-2010 to 2013-2014 followed by adding with_sgp_data_LONG 2013-2014 using
 	###			overwrite.existing.data=TRUE and sgp.use.my.coefficient.matrices=FALSE.
-	### TEST NUMBER 2c: Test of updateSGP performing SGP analyses in two steps: Create what_sgp_object: 2008-2009 to 2012-2013 followed by adding with_sgp_data_LONG 2012-2013 using
+	### TEST NUMBER 2c: Test of updateSGP performing SGP analyses in two steps: Create what_sgp_object: 2009-2010 to 2013-2014 followed by adding with_sgp_data_LONG 2013-2014 using
 	###			overwrite.existing.data=TRUE and sgp.use.my.coefficient.matrices=TRUE.
-	### TEST NUMBER 2d: Test of updateSGP performing SGP analyses in two steps: Create what_sgp_object: 2008-2009 to 2012-2013 followed by adding with_sgp_data_LONG 2012-2013 using
+	### TEST NUMBER 2d: Test of updateSGP performing SGP analyses in two steps: Create what_sgp_object: 2009-2010 to 2013-2014 followed by adding with_sgp_data_LONG 2013-2014 using
 	###			overwrite.existing.data=FALSE and sgp.use.my.coefficient.matrices=TRUE.
 	###
 	#########################################################################################################################################################################
@@ -137,8 +137,8 @@ function(
 		options(warn=2)
 		suppressPackageStartupMessages(require(parallel))
 		Demonstration_SGP <- NULL
-		Demonstration_Data_LONG <- subset(sgpData_LONG, YEAR %in% c("2008_2009", "2009_2010", "2010_2011", "2011_2012"))
-		Demonstration_Data_LONG_2012_2013 <- subset(sgpData_LONG, YEAR %in% c("2012_2013"))
+		Demonstration_Data_LONG <- subset(sgpData_LONG, YEAR %in% c("2009_2010", "2010_2011", "2011_2012", "2012_2013"))
+		Demonstration_Data_LONG_2013_2014 <- subset(sgpData_LONG, YEAR %in% c("2013_2014"))
 		number.cores <- detectCores()-1
 		tmp.messages <- "##### Begin testSGP test number 2a #####\n\n"
 
@@ -211,7 +211,7 @@ function(
 		### Part 2
 
 		expression.to.evaluate <- 
-			paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=Demonstration_Data_LONG_2012_2013,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\tsgp.target.scale.scores=TRUE,\n\tsgPlot.demo.report=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
+			paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=Demonstration_Data_LONG_2013_2014,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\tsgp.target.scale.scores=TRUE,\n\tsgPlot.demo.report=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
 
 		cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 
@@ -291,7 +291,7 @@ function(
 		options(warn=2)
 		suppressPackageStartupMessages(require(parallel))
 		Demonstration_SGP <- ID <- CONTENT_AREA <- NULL
-		Demonstration_Data_LONG_2012_2013 <- subset(sgpData_LONG, YEAR %in% c("2012_2013"))
+		Demonstration_Data_LONG_2013_2014 <- subset(sgpData_LONG, YEAR %in% c("2013_2014"))
 		number.cores <- detectCores()-1
 
 		############################################################
@@ -302,7 +302,7 @@ function(
 		tmp.messages <- c(tmp.messages, paste("\t##### Begin testSGP test number ", capwords(i), ": Part 1 #####\n\n", sep=""))
 
 		expression.to.evaluate <- 
-			paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=sgpData_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\tyears='2012_2013',\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, "))\n)\n", sep="")
+			paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=sgpData_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\tyears='2013_2014',\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, "))\n)\n", sep="")
 
 		cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 
@@ -323,10 +323,10 @@ function(
 
 		### TEST 2b ###
 		if (i=='2B') {
-			Demonstration_Data_LONG_2012_2013 <- subset(sgpData_LONG, YEAR %in% c("2012_2013"))
+			Demonstration_Data_LONG_2013_2014 <- subset(sgpData_LONG, YEAR %in% c("2013_2014"))
 
 			expression.to.evaluate <- 
-				paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=Demonstration_Data_LONG_2012_2013,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\toverwrite.existing.data=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgPlot.demo.report=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
+				paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=Demonstration_Data_LONG_2013_2014,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\toverwrite.existing.data=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgPlot.demo.report=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
 
 			cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 
@@ -335,10 +335,10 @@ function(
 
 		### TEST 2c ###
 		if (i=='2C') {
-			Demonstration_Data_LONG_2012_2013 <- subset(sgpData_LONG, YEAR %in% c("2012_2013"))
+			Demonstration_Data_LONG_2013_2014 <- subset(sgpData_LONG, YEAR %in% c("2013_2014"))
 
 			expression.to.evaluate <- 
-				paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=Demonstration_Data_LONG_2012_2013,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\toverwrite.existing.data=TRUE,\n\tsgp.use.my.coefficient.matrices=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgPlot.demo.report=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
+				paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=Demonstration_Data_LONG_2013_2014,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\toverwrite.existing.data=TRUE,\n\tsgp.use.my.coefficient.matrices=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgPlot.demo.report=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
 
 			cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 
@@ -347,24 +347,24 @@ function(
 
 		### TEST 2d ###
 		if (i=='2D') {
-			Demonstration_Data_LONG_2012_2013 <- subset(sgpData_LONG, YEAR %in% c("2012_2013"))
-			tmp.2012_2013.ids <- sort(unique(Demonstration_Data_LONG_2012_2013[['ID']]))
-			tmp.group.1 <- tmp.2012_2013.ids[1:150]
-			tmp.group.2 <- tmp.2012_2013.ids[151:250]
-			with_sgp_data_LONG <- subset(Demonstration_Data_LONG_2012_2013, ID %in% tmp.group.1 | (ID %in% tmp.group.2 & CONTENT_AREA=="MATHEMATICS"))
-			Demonstration_SGP@Data <- subset(Demonstration_SGP@Data, !((ID %in% tmp.group.1 & YEAR=="2012_2013") | (ID %in% tmp.group.2 & CONTENT_AREA=="MATHEMATICS" & YEAR=="2012_2013")))
-			Demonstration_SGP@SGP$SGPercentiles$MATHEMATICS.2012_2013 <- subset(Demonstration_SGP@SGP$SGPercentiles$MATHEMATICS.2012_2013, !ID %in% c(tmp.group.1, tmp.group.2))
-			Demonstration_SGP@SGP$SGPercentiles$MATHEMATICS.2012_2013.BASELINE <- subset(Demonstration_SGP@SGP$SGPercentiles$MATHEMATICS.2012_2013.BASELINE, !ID %in% c(tmp.group.1, tmp.group.2))
-			Demonstration_SGP@SGP$SGProjections$MATHEMATICS.2012_2013 <- subset(Demonstration_SGP@SGP$SGProjections$MATHEMATICS.2012_2013, !ID %in% c(tmp.group.1, tmp.group.2))
-			Demonstration_SGP@SGP$SGProjections$MATHEMATICS.2012_2013.BASELINE <- subset(Demonstration_SGP@SGP$SGProjections$MATHEMATICS.2012_2013.BASELINE, !ID %in% c(tmp.group.1, tmp.group.2))
-			Demonstration_SGP@SGP$SGProjections$MATHEMATICS.2012_2013.LAGGED <- subset(Demonstration_SGP@SGP$SGProjections$MATHEMATICS.2012_2013.LAGGED, !ID %in% c(tmp.group.1, tmp.group.2))
-			Demonstration_SGP@SGP$SGProjections$MATHEMATICS.2012_2013.LAGGED.BASELINE <- subset(Demonstration_SGP@SGP$SGProjections$MATHEMATICS.2012_2013.LAGGED.BASELINE, !ID %in% c(tmp.group.1, tmp.group.2))
-			Demonstration_SGP@SGP$SGPercentiles$READING.2012_2013 <- subset(Demonstration_SGP@SGP$SGPercentiles$READING.2012_2013, !ID %in% tmp.group.1)
-			Demonstration_SGP@SGP$SGPercentiles$READING.2012_2013.BASELINE <- subset(Demonstration_SGP@SGP$SGPercentiles$READING.2012_2013.BASELINE, !ID %in% tmp.group.1)
-			Demonstration_SGP@SGP$SGProjections$READING.2012_2013 <- subset(Demonstration_SGP@SGP$SGProjections$READING.2012_2013, !ID %in% tmp.group.1)
-			Demonstration_SGP@SGP$SGProjections$READING.2012_2013.BASELINE <- subset(Demonstration_SGP@SGP$SGProjections$READING.2012_2013.BASELINE, !ID %in% tmp.group.1)
-			Demonstration_SGP@SGP$SGProjections$READING.2012_2013.LAGGED <- subset(Demonstration_SGP@SGP$SGProjections$READING.2012_2013.LAGGED, !ID %in% tmp.group.1)
-			Demonstration_SGP@SGP$SGProjections$READING.2012_2013.LAGGED.BASELINE <- subset(Demonstration_SGP@SGP$SGProjections$READING.2012_2013.LAGGED.BASELINE, !ID %in% tmp.group.1)
+			Demonstration_Data_LONG_2013_2014 <- subset(sgpData_LONG, YEAR %in% c("2013_2014"))
+			tmp.2013_2014.ids <- sort(unique(Demonstration_Data_LONG_2013_2014[['ID']]))
+			tmp.group.1 <- tmp.2013_2014.ids[1:150]
+			tmp.group.2 <- tmp.2013_2014.ids[151:250]
+			with_sgp_data_LONG <- subset(Demonstration_Data_LONG_2013_2014, ID %in% tmp.group.1 | (ID %in% tmp.group.2 & CONTENT_AREA=="MATHEMATICS"))
+			Demonstration_SGP@Data <- subset(Demonstration_SGP@Data, !((ID %in% tmp.group.1 & YEAR=="2013_2014") | (ID %in% tmp.group.2 & CONTENT_AREA=="MATHEMATICS" & YEAR=="2013_2014")))
+			Demonstration_SGP@SGP$SGPercentiles$MATHEMATICS.2013_2014 <- subset(Demonstration_SGP@SGP$SGPercentiles$MATHEMATICS.2013_2014, !ID %in% c(tmp.group.1, tmp.group.2))
+			Demonstration_SGP@SGP$SGPercentiles$MATHEMATICS.2013_2014.BASELINE <- subset(Demonstration_SGP@SGP$SGPercentiles$MATHEMATICS.2013_2014.BASELINE, !ID %in% c(tmp.group.1, tmp.group.2))
+			Demonstration_SGP@SGP$SGProjections$MATHEMATICS.2013_2014 <- subset(Demonstration_SGP@SGP$SGProjections$MATHEMATICS.2013_2014, !ID %in% c(tmp.group.1, tmp.group.2))
+			Demonstration_SGP@SGP$SGProjections$MATHEMATICS.2013_2014.BASELINE <- subset(Demonstration_SGP@SGP$SGProjections$MATHEMATICS.2013_2014.BASELINE, !ID %in% c(tmp.group.1, tmp.group.2))
+			Demonstration_SGP@SGP$SGProjections$MATHEMATICS.2013_2014.LAGGED <- subset(Demonstration_SGP@SGP$SGProjections$MATHEMATICS.2013_2014.LAGGED, !ID %in% c(tmp.group.1, tmp.group.2))
+			Demonstration_SGP@SGP$SGProjections$MATHEMATICS.2013_2014.LAGGED.BASELINE <- subset(Demonstration_SGP@SGP$SGProjections$MATHEMATICS.2013_2014.LAGGED.BASELINE, !ID %in% c(tmp.group.1, tmp.group.2))
+			Demonstration_SGP@SGP$SGPercentiles$READING.2013_2014 <- subset(Demonstration_SGP@SGP$SGPercentiles$READING.2013_2014, !ID %in% tmp.group.1)
+			Demonstration_SGP@SGP$SGPercentiles$READING.2013_2014.BASELINE <- subset(Demonstration_SGP@SGP$SGPercentiles$READING.2013_2014.BASELINE, !ID %in% tmp.group.1)
+			Demonstration_SGP@SGP$SGProjections$READING.2013_2014 <- subset(Demonstration_SGP@SGP$SGProjections$READING.2013_2014, !ID %in% tmp.group.1)
+			Demonstration_SGP@SGP$SGProjections$READING.2013_2014.BASELINE <- subset(Demonstration_SGP@SGP$SGProjections$READING.2013_2014.BASELINE, !ID %in% tmp.group.1)
+			Demonstration_SGP@SGP$SGProjections$READING.2013_2014.LAGGED <- subset(Demonstration_SGP@SGP$SGProjections$READING.2013_2014.LAGGED, !ID %in% tmp.group.1)
+			Demonstration_SGP@SGP$SGProjections$READING.2013_2014.LAGGED.BASELINE <- subset(Demonstration_SGP@SGP$SGProjections$READING.2013_2014.LAGGED.BASELINE, !ID %in% tmp.group.1)
 
 			expression.to.evaluate <- 
 				paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=with_sgp_data_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\tsgp.use.my.coefficient.matrices=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgPlot.demo.report=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
@@ -378,7 +378,7 @@ function(
 
 		tmp.messages <- c(tmp.messages, paste("\t\t##### Results of testSGP test number", capwords(i), "#####\n"))
 
-		if (identical(sum(Demonstration_SGP@Data[YEAR=="2012_2013"]$SGP, na.rm=TRUE), 2896606L)) {
+		if (identical(sum(Demonstration_SGP@Data[YEAR=="2013_2014"]$SGP, na.rm=TRUE), 2896606L)) {
 			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 2: OK\n")
 		} else {
 			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 2: FAIL\n")
@@ -386,7 +386,7 @@ function(
 
 		### TEST of SGP_BASELINE variable
 
-		if (identical(sum(Demonstration_SGP@Data[YEAR=="2012_2013"]$SGP_BASELINE, na.rm=TRUE), 2906337L)) {
+		if (identical(sum(Demonstration_SGP@Data[YEAR=="2013_2014"]$SGP_BASELINE, na.rm=TRUE), 2906337L)) {
 			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 2: OK\n")
 		} else {
 			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 2: FAIL\n")
@@ -394,7 +394,7 @@ function(
 
 		### TEST of SGP_TARGET_3_YEAR variable
 
-		if (identical(sum(Demonstration_SGP@Data[YEAR=="2012_2013"]$SGP_TARGET_3_YEAR, na.rm=TRUE), 2551187L)) {
+		if (identical(sum(Demonstration_SGP@Data[YEAR=="2013_2014"]$SGP_TARGET_3_YEAR, na.rm=TRUE), 2551187L)) {
 			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR, part 2: OK\n")
 		} else {
 			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR, part 2: FAIL\n")
@@ -402,7 +402,7 @@ function(
 
 		### TEST of SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR variable
 
-		if (identical(sum(Demonstration_SGP@Data[YEAR=="2012_2013"]$SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, na.rm=TRUE), 3113673L)) {
+		if (identical(sum(Demonstration_SGP@Data[YEAR=="2013_2014"]$SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, na.rm=TRUE), 3113673L)) {
 			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, part 2: OK\n")
 		} else {
 			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, part 2: FAIL\n")
@@ -410,7 +410,7 @@ function(
 
 		### TEST of CATCH_UP_KEEP_UP_STATUS variable
 
-		if (identical(as.numeric(table(Demonstration_SGP@Data[YEAR=="2012_2013"]$CATCH_UP_KEEP_UP_STATUS)), c(13977, 3847, 11202, 29107))) {
+		if (identical(as.numeric(table(Demonstration_SGP@Data[YEAR=="2013_2014"]$CATCH_UP_KEEP_UP_STATUS)), c(13977, 3847, 11202, 29107))) {
 			tmp.messages <- c(tmp.messages, "\t\tTest of variable CATCH_UP_KEEP_UP_STATUS, part 2: OK\n")
 		} else {
 			tmp.messages <- c(tmp.messages, "\t\tTest of variable CATCH_UP_KEEP_UP_STATUS, part 2: FAIL\n")
@@ -418,7 +418,7 @@ function(
 
 		### TEST of MOVE_UP_STAY_UP_STATUS variable
 
-		if (identical(as.numeric(table(Demonstration_SGP@Data[YEAR=="2012_2013"]$MOVE_UP_STAY_UP_STATUS)), c(24801, 4647, 6186, 4675))) {
+		if (identical(as.numeric(table(Demonstration_SGP@Data[YEAR=="2013_2014"]$MOVE_UP_STAY_UP_STATUS)), c(24801, 4647, 6186, 4675))) {
 			tmp.messages <- c(tmp.messages, "\t\tTest of variable MOVE_UP_STAY_UP_STATUS, part 2: OK\n")
 		} else {
 			tmp.messages <- c(tmp.messages, "\t\tTest of variable MOVE_UP_STAY_UP_STATUS, part 2: FAIL\n")
@@ -496,49 +496,49 @@ SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
 
 	### Create configurations
 
-	READING_2012_2013.config <- list(
-		READING.2012_2013 = list(
+	READING_2013_2014.config <- list(
+		READING.2013_2014 = list(
 			sgp.content.areas=c('READING', 'READING', 'READING', 'READING', 'READING'),
-			sgp.panel.years=c('2008_2009', '2009_2010', '2010_2011', '2011_2012', '2012_2013'),
+			sgp.panel.years=c('2009_2010', '2010_2011', '2011_2012', '2012_2013', '2013_2014'),
 			sgp.grade.sequences=list(3:4, 3:5, 3:6, 3:7, 4:8))
 	)
 
-	GRADE_9_LIT_2012_2013.config <- list(
-		GRADE_9_LIT.2012_2013 = list(
+	GRADE_9_LIT_2013_2014.config <- list(
+		GRADE_9_LIT.2013_2014 = list(
 			sgp.content.areas=c('READING', 'READING', 'READING', 'READING', 'GRADE_9_LIT'),
-			sgp.panel.years=c('2008_2009', '2009_2010', '2010_2011', '2011_2012', '2012_2013'),
+			sgp.panel.years=c('2009_2010', '2010_2011', '2011_2012', '2012_2013', '2013_2014'),
 			sgp.grade.sequences=list(c(5:8, 'EOCT')))
 	)
 	
-	AMERICAN_LIT_2012_2013.config <- list(
-		AMERICAN_LIT.2012_2013 = list(
+	AMERICAN_LIT_2013_2014.config <- list(
+		AMERICAN_LIT.2013_2014 = list(
 			sgp.content.areas=c('READING', 'READING', 'READING', 'GRADE_9_LIT', 'AMERICAN_LIT'),
-			sgp.panel.years=c('2008_2009', '2009_2010', '2010_2011', '2011_2012', '2012_2013'),
+			sgp.panel.years=c('2009_2010', '2010_2011', '2011_2012', '2012_2013', '2013_2014'),
 			sgp.grade.sequences=list(c(6:8, 'EOCT', 'EOCT')))
 	)
 
-	MATHEMATICS_2012_2013.config <- list(
-		MATHEMATICS.2012_2013 = list(
+	MATHEMATICS_2013_2014.config <- list(
+		MATHEMATICS.2013_2014 = list(
 			sgp.content.areas=c('MATHEMATICS', 'MATHEMATICS', 'MATHEMATICS', 'MATHEMATICS', 'MATHEMATICS'),
-			sgp.panel.years=c('2008_2009', '2009_2010', '2010_2011', '2011_2012', '2012_2013'),
+			sgp.panel.years=c('2009_2010', '2010_2011', '2011_2012', '2012_2013', '2013_2014'),
 			sgp.grade.sequences=list(3:4, 3:5, 3:6, 3:7, 4:8))
 	)
 
-	ALGEBRA_I_2012_2013.config <- list(
-		 ALGEBRA_I.2012_2013 = list(
+	ALGEBRA_I_2013_2014.config <- list(
+		 ALGEBRA_I.2013_2014 = list(
 			sgp.content.areas=c('MATHEMATICS', 'MATHEMATICS', 'MATHEMATICS', 'MATHEMATICS', 'ALGEBRA_I'),
-			sgp.panel.years=c('2008_2009', '2009_2010', '2010_2011', '2011_2012', '2012_2013'),
+			sgp.panel.years=c('2009_2010', '2010_2011', '2011_2012', '2012_2013', '2013_2014'),
 			sgp.grade.sequences=list(c(5:8, 'EOCT')))
 	)
 
-	ALGEBRA_II_2012_2013.config <- list(
-		 ALGEBRA_II.2012_2013 = list(
+	ALGEBRA_II_2013_2014.config <- list(
+		 ALGEBRA_II.2013_2014 = list(
 			sgp.content.areas=c('MATHEMATICS', 'MATHEMATICS', 'MATHEMATICS', 'ALGEBRA_I', 'ALGEBRA_II'),
-			sgp.panel.years=c('2008_2009', '2009_2010', '2010_2011', '2011_2012', '2012_2013'),
+			sgp.panel.years=c('2009_2010', '2010_2011', '2011_2012', '2012_2013', '2013_2014'),
 			sgp.grade.sequences=list(c(6:8, 'EOCT', 'EOCT')))
 	)
 
-	sgp.config <- c(READING_2012_2013.config, MATHEMATICS_2012_2013.config, GRADE_9_LIT_2012_2013.config, AMERICAN_LIT_2012_2013.config, ALGEBRA_I_2012_2013.config, ALGEBRA_II_2012_2013.config)
+	sgp.config <- c(READING_2013_2014.config, MATHEMATICS_2013_2014.config, GRADE_9_LIT_2013_2014.config, AMERICAN_LIT_2013_2014.config, ALGEBRA_I_2013_2014.config, ALGEBRA_II_2013_2014.config)
 	 
 	expression.to.evaluate <- 
 		paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=sgpData_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP', 'summarizeSGP', 'visualizeSGP'),\n\tsimulate.sgps=FALSE,\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.config=sgp.config,\n\tplot.types=c('bubblePlot', 'studentGrowthPlot'),\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
@@ -621,7 +621,7 @@ SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
 	Demonstration_SGP <- tmp.messages <- NULL
 
 	expression.to.evaluate <- 
-		paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=sgpData_LONG,steps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\tdata_supplementary=list(INSTRUCTOR_NUMBER=sgpData_INSTRUCTOR_NUMBER),\n\tyears='2012_2013',\n\tsgp.percentiles=TRUE,\n\tsgp.projections=FALSE,\n\tsgp.projections.lagged=FALSE,\n\tsgp.percentiles.baseline=FALSE,\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tcalculate.simex=TRUE,\n\tsgPlot.demo.report=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(SIMEX=", number.cores, ", TAUS=", number.cores, "))\n)\n", sep="")
+		paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=sgpData_LONG,steps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\tdata_supplementary=list(INSTRUCTOR_NUMBER=sgpData_INSTRUCTOR_NUMBER),\n\tyears='2013_2014',\n\tsgp.percentiles=TRUE,\n\tsgp.projections=FALSE,\n\tsgp.projections.lagged=FALSE,\n\tsgp.percentiles.baseline=FALSE,\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tcalculate.simex=TRUE,\n\tsgPlot.demo.report=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(SIMEX=", number.cores, ", TAUS=", number.cores, "))\n)\n", sep="")
 
 	if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(Demonstration_SGP, file='Demonstration_SGP.Rdata')", sep="\n")
 

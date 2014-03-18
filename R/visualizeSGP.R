@@ -64,6 +64,7 @@ function(sgp_object,
 	SCHOOL_ENROLLMENT_STATUS <- LAST_NAME <- FIRST_NAME <- NULL ## To prevent R CMD check warnings
 	MEDIAN_SGP <- MEDIAN_SGP_COUNT <- VALID_CASE <- gaPlot.iter <- sgPlot.iter <- V1 <- variable <- INSTRUCTOR_NAME <- INSTRUCTOR_NUMBER <- NULL ## To prevent R CMD check warnings
 	CONTENT_AREA_RESPONSIBILITY <- INSTRUCTOR_LAST_NAME <- INSTRUCTOR_FIRST_NAME <- TRANSFORMED_SCALE_SCORE <- SCALE_SCORE_ACTUAL <- CONTENT_AREA_LABELS <- NULL
+	TEMP <- TEMP_SCORE <- TEMP_GRADE <- NULL
 
 
 	### Create state (if missing) from sgp_object (if possible)
@@ -898,7 +899,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 						setnames(sgPlot.data, tmp.grade.name, "TEMP_GRADE")
 						sgPlot.data[, TEMP := piecewise.transform(TEMP_SCORE, state, 
 										get.next.content_area(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment), 
-										yearIncremet(tmp.last.year, tmp.increment), 
+										yearIncrement(tmp.last.year, tmp.increment), 
 										get.next.grade(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment)), by=list(CONTENT_AREA, TEMP_GRADE)]
 						setnames(sgPlot.data, "TEMP", paste(proj.iter, "TRANSFORMED", sep="_"))
 
