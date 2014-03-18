@@ -64,6 +64,7 @@ function(sgp_object,
 	SCHOOL_ENROLLMENT_STATUS <- LAST_NAME <- FIRST_NAME <- NULL ## To prevent R CMD check warnings
 	MEDIAN_SGP <- MEDIAN_SGP_COUNT <- VALID_CASE <- gaPlot.iter <- sgPlot.iter <- V1 <- variable <- INSTRUCTOR_NAME <- INSTRUCTOR_NUMBER <- NULL ## To prevent R CMD check warnings
 	CONTENT_AREA_RESPONSIBILITY <- INSTRUCTOR_LAST_NAME <- INSTRUCTOR_FIRST_NAME <- TRANSFORMED_SCALE_SCORE <- SCALE_SCORE_ACTUAL <- CONTENT_AREA_LABELS <- NULL
+	TEMP <- TEMP_SCORE <- TEMP_GRADE <- NULL
 
 
 	### Create state (if missing) from sgp_object (if possible)
@@ -169,6 +170,12 @@ function(sgp_object,
 		tmp.sgp@SGP <- sgp_object@SGP[c("Coefficient_Matrices", "Knots_Boundaries")]
 		return(tmp.sgp)
 	} ### END get.gaPlot.object
+
+	get.actual.scores <- function(score, content_area, grade) {
+		if (is.na(content_area) | is.na(grade)) return(rep(as.numeric(NA), length(score)))
+		tmp.function <- get(paste("stepfun", content_area, grade, sep="."))
+		return(tmp.function(score))
+	}
 
 ##############################################################################################################
 #### bubblePlot
@@ -745,7 +752,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 		setkeyv(tmp.table, c("CONTENT_AREA_LABELS", "YEAR", "GRADE"))
 		tmp.table[, TRANSFORMED_SCALE_SCORE := piecewise.transform(SCALE_SCORE, state, CONTENT_AREA_LABELS, as.character(YEAR), as.character(GRADE)), by=list(CONTENT_AREA_LABELS, YEAR, GRADE)]
 
-	#### Change SCALE_SCORE if Scale_Score_Lookup exists in SGPstateData (NOT necessary if wide data is provided)
+	#### Change SCALE_SCORE if SCALE_SCORE_ACTUAL is in sgp_object@Data
 
 		if ("SCALE_SCORE_ACTUAL" %in% names(sgp_object@Data)) {
 			tmp.table[,SCALE_SCORE:=SCALE_SCORE_ACTUAL]
@@ -869,17 +876,57 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 
 			tmp.grade.name <- paste("GRADE", tmp.last.year, sep=".")
 			setkeyv(sgPlot.data, c("CONTENT_AREA", tmp.grade.name))
+			if ("SCALE_SCORE_ACTUAL" %in% names(sgp_object@Data)) {
+				tmp.lookup <- data.table(rbind.fill(
+					sgp_object@Data[YEAR==tmp.last.year, max(SCALE_SCORE_ACTUAL, na.rm=TRUE), by=list(CONTENT_AREA, GRADE, SCALE_SCORE)],
+					sgp_object@Data[YEAR==tmp.last.year, min(SCALE_SCORE_ACTUAL, na.rm=TRUE), by=list(CONTENT_AREA, GRADE)]
+				))
+				setnames(tmp.lookup, "V1", "SCALE_SCORE_ACTUAL")
+				setkey(tmp.lookup, CONTENT_AREA, GRADE, SCALE_SCORE, SCALE_SCORE_ACTUAL)
+				for (i in unique(tmp.lookup$CONTENT_AREA)) {
+					for (j in unique(tmp.lookup$GRADE)) {
+						assign(paste("stepfun", i, j, sep="."), 
+							stepfun(sort(tmp.lookup[list(i, j)]$SCALE_SCORE), tmp.lookup[list(i,j)]$SCALE_SCORE_ACTUAL))
+					}
+				}
+			}
 
 			for (i in seq(8)) {
 				if (length(grep(paste("PROJ_YEAR", i, sep="_"), names(sgPlot.data))) > 0) {
 					for (proj.iter in grep(paste("PROJ_YEAR", i, sep="_"), names(sgPlot.data), value=TRUE)) {
 						if (length(grep("CURRENT", proj.iter)) > 0) tmp.increment <- i else tmp.increment <- i-1
-						eval(parse(text=paste("sgPlot.data[, ", paste(proj.iter, 'TRANSFORMED', sep='_'), ":=piecewise.transform(", proj.iter, ", state, get.next.content_area(", tmp.grade.name, "[1], CONTENT_AREA[1], ", tmp.increment,"), yearIncrement('", tmp.last.year, "',", tmp.increment, "), get.next.grade(", tmp.grade.name, "[1], CONTENT_AREA[1], ", tmp.increment,")), by=list(CONTENT_AREA, ", tmp.grade.name, ")]", sep="")))
+						setnames(sgPlot.data, proj.iter, "TEMP_SCORE")
+						setnames(sgPlot.data, tmp.grade.name, "TEMP_GRADE")
+						sgPlot.data[, TEMP := piecewise.transform(TEMP_SCORE, state, 
+										get.next.content_area(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment), 
+										yearIncrement(tmp.last.year, tmp.increment), 
+										get.next.grade(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment)), by=list(CONTENT_AREA, TEMP_GRADE)]
+						setnames(sgPlot.data, "TEMP", paste(proj.iter, "TRANSFORMED", sep="_"))
+
+						if ("SCALE_SCORE_ACTUAL" %in% names(sgp_object@Data)) {
+							sgPlot.data[, TEMP_SCORE := get.actual.scores(TEMP_SCORE, 
+								get.next.content_area(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment), 
+								get.next.grade(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment)), by=list(CONTENT_AREA, TEMP_GRADE)]
+						}
+
+						setnames(sgPlot.data, "TEMP_SCORE", proj.iter)
+						setnames(sgPlot.data, "TEMP_GRADE", tmp.grade.name)
 					}
 				}
 			}
 
 			setnames(sgPlot.data, c("CONTENT_AREA", "CONTENT_AREA_TEMP"), c(paste("CONTENT_AREA_LABELS", tmp.last.year, sep="."), "CONTENT_AREA"))
+
+			if ("SCALE_SCORE_ACTUAL" %in% names(sgp_object@Data)) {
+				tmp.lookup <- data.table(rbind.fill(
+						sgp_object@Data[YEAR==tmp.last.year, max(SCALE_SCORE_ACTUAL, na.rm=TRUE), by=list(CONTENT_AREA, GRADE, SCALE_SCORE)],
+						sgp_object@Data[YEAR==tmp.last.year, min(SCALE_SCORE_ACTUAL, na.rm=TRUE), by=list(CONTENT_AREA, GRADE)]
+				))
+				setnames(tmp.lookup, "V1", "SCALE_SCORE_ACTUAL")
+				setkey(tmp.lookup, CONTENT_AREA, GRADE, SCALE_SCORE, SCALE_SCORE_ACTUAL)
+
+				
+			}
 		} ### END if (sgPlot.fan | !is.null(sgPlot.sgp.targets))
 
 	#### Merge in INSTRUCTOR_NAME if requested

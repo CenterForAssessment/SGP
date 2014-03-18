@@ -12,20 +12,19 @@ The **SGP** Package (Betebenner, VanIwaarden, Domingue, Shang, 2014) is an open 
 * Web site: http://centerforassessment.github.io/SGP/
 * CRAN Web site: http://cran.r-project.org/web/packages/SGP/
 
-
-Install stable CRAN release
+To install the latest stable release from [CRAN](http://cran.r-project.org/package=SGP)
 ---------------------------
 
-```R 
+```coffee
 install.packages("SGP")
 require(SGP)
 ```
 
 
-Install latest development release from Github
+Install latest development release from [Github](https://github.com/CenterForAssessment/SGP/) :octocat:
 ----------------------------------------------
 
-```R 
+```coffee 
 install.packages("devtools")
 require(devtools)
 install_github("SGP", "CenterForAssessment")
