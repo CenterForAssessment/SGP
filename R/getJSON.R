@@ -63,6 +63,7 @@ function(tmp.data,
 			tmp.index.low <- match(tail(tmp.grades, 1), grades.content_areas.reported.in.state$GRADE_NUMERIC)
 			if (tmp.index.low > 1) {
 				tmp.additional.low <- seq(tmp.index.low-1)
+				tmp.additional.low.length <- length(tmp.additional.low)
 				tmp.grades.extended <- c(tmp.grades.extended, rev(grades.content_areas.reported.in.state$GRADE_NUMERIC[tmp.additional.low]))
 				tmp.content_areas.extended <- c(tmp.content_areas.extended, rev(grades.content_areas.reported.in.state$CONTENT_AREA[tmp.additional.low]))
 				tmp.years.extended <- c(tmp.years.extended, rev(year.extend(tail(tmp.years.extended, 1), -cumsum(grades.content_areas.reported.in.state$YEAR_LAG[rev(tmp.additional.low)]))))
@@ -71,6 +72,8 @@ function(tmp.data,
 				tmp.achievement_levels.extended <- c(tmp.achievement_levels.extended, rep(NA, length(tmp.additional.low)))
 				tmp.sgp.extended <- c(tmp.sgp.extended, rep(NA, length(tmp.additional.low)))
 				tmp.sgp_levels.extended <- c(tmp.sgp_levels.extended, rep(NA, length(tmp.additional.low)))
+			} else {
+				tmp.additional.low.length <- 0 
 			}
 
 			if (any(is.na(tmp.grades.extended))) {
@@ -98,7 +101,7 @@ function(tmp.data,
 						Year=rev(tmp.years.extended)[i])
 			}
 
-			tmp.list[['Report_Parameters']] <- list(First_Score_Index=length(tmp.additional.low)+1, Last_Score_Index=length(tmp.additional.low)+length(tmp.grades))
+			tmp.list[['Report_Parameters']] <- list(First_Score_Index=tmp.additional.low.length+1, Last_Score_Index=tmp.additional.low.length+length(tmp.grades))
 
 			return(tmp.list)
 		} ### END interpolate.extend.data
@@ -118,6 +121,9 @@ function(tmp.data,
 			studentGrowthProjections(
 				panel.data=gaPlot.sgp_object@SGP,
 				sgp.labels=list(my.year=year, my.subject=content_area, my.extra.label=my.extra.label),
+				grade.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[content_area]],
+				content_area.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]],
+				year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[content_area]],
 				projcuts.digits=2,
 				projection.unit="GRADE",
 				percentile.trajectory.values=percentile,
@@ -183,28 +189,61 @@ function(tmp.data,
 			tmp.data.extended[[i]][['Cutscores']] <- get.my.cutscores(tmp.data$Cutscores, tmp.data.extended[[i]]$Content_Area, tmp.data.extended[[i]]$Year, tmp.data.extended[[i]]$Grade)
 		}
 		
-		### Add in trajectories and targets
+		### Add in Percentile_Trajectories, SGP_Targets, SGP_Targets_Scale_Scores 
 
 		for (i in years.for.percentile.trajectories) {
+
+			### Percentile_Trajectories
+
 			tmp.index <- which(i==unlist(sapply(tmp.data.extended, '[[', 'Year')))
 			tmp.df <- data.frame(matrix(c(1, rev(tmp.data$Grades)[1:which(i==rev(tmp.data$Years))], rev(tmp.data$Scale_Scores)[1:which(i==rev(tmp.data$Years))]), nrow=1), 
 				stringsAsFactors=FALSE)
 			for (j in seq(to=dim(tmp.df)[2], length=(dim(tmp.df)[2]-1)/2)) {
 				tmp.df[[j]] <- as.numeric(tmp.df[[j]])
 			}
-			tmp.data.extended[[tmp.index]][['Percentile_Trajectories']] <- 
-				getJSON.percentile_trajectories_Internal(tmp.df, 1:99, tmp.data.extended[[tmp.index]]$Content_Area, i, state)
+#			tmp.data.extended[[tmp.index]][['Percentile_Trajectories']] <- 
+#				getJSON.percentile_trajectories_Internal(tmp.df, 1:99, tmp.data.extended[[tmp.index]]$Content_Area, i, state)
+
+			################################################
+			### HACK
+			################################################
+
+			tmp.matrix <- matrix(NA, nrow=max(which(names(tmp.data.extended)!="Report_Parameters"))-tmp.index+1, ncol=100)
+			tmp.matrix[1,] <- rep(tmp.data.extended[[tmp.index]]$Scale_Score, dim(tmp.matrix)[2])
+			for (k in seq(2, max(which(names(tmp.data.extended)!="Report_Parameters"))-tmp.index+1)) {
+				tmp.matrix[k,] <- round(seq(tmp.data.extended[[tmp.index]]$Scale_Score-20*(k-1), tmp.data.extended[[tmp.index]]$Scale_Score+20*(k-1), length=100), digits=1)
+			}
+			tmp.data.extended[[tmp.index]][['Percentile_Trajectories']] <- as.list(as.data.frame(tmp.matrix))
+
+			### SGP_Targets
+
+			tmp.num.targets <- dim(tmp.matrix)[1]-1
+			tmp.data.extended[[tmp.index]][['SGP_Targets']] <- list(Catch_Up_Keep_Up=round(seq(70, 50, length=tmp.num.targets)), Move_Up_Stay_Up=round(seq(90, 70, length=tmp.num.targets)))
+			if (tmp.data.extended[[tmp.index]][['Achievement_Level']] %in% c("Unsatisfactory", "Partially Proficient")) {
+				tmp.data.extended[[tmp.index]][['SGP_Targets']][['Move_Up_Stay_Up']] <- rep(NA, length=tmp.num.targets)
+			}
+
+			### SGP_Targets_Scale_Scores
+
+			tmp.cuku.list <- tmp.musu.list <- list()
+			for (k in seq_along(tmp.data.extended[[tmp.index]][['SGP_Targets']][['Catch_Up_Keep_Up']])) {
+				tmp.cuku.list[[k]] <- round(tmp.matrix[k+1, tmp.data.extended[[tmp.index]][['SGP_Targets']][['Catch_Up_Keep_Up']][k]])
+				if (!tmp.data.extended[[tmp.index]][['Achievement_Level']] %in% c("Unsatisfactory", "Partially Proficient")) {
+					tmp.musu.list[[k]] <- round(tmp.matrix[k+1, tmp.data.extended[[tmp.index]][['SGP_Targets']][['Move_Up_Stay_Up']][k]])
+				} else {
+					tmp.musu.list[[k]] <- as.numeric(NA)
+				}
+				tmp.data.extended[[tmp.index]][['SGP_Targets_Scale_Scores']] <- list(Catch_Up_Keep_Up=unlist(tmp.cuku.list), Move_Up_Stay_Up=unlist(tmp.musu.list))
+			}
+			##############################################
+			### END HACK
+			##############################################
 		}
 
 
-		### Add in Targets and Targets_Scale_Scores
-
-		tmp.data.extended[['SGP_Targets']] <- "TEMP"
-		tmp.data.extended[['SGP_Targets_Scale_Scores']] <- "TEMP"
-
 		### Add in Report Parameters
 
-		tmp.data.extended[['Report_Parameters']] <- "TEMP"
+		tmp.data.extended[['Report_Parameters']] <- c(tmp.data.extended[['Report_Parameters']], "TEMP")
 
 
 		### Return list
