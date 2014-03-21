@@ -204,11 +204,11 @@ function(tmp.data,
 			### Percentile_Trajectories
 
 			tmp.index <- which(i==unlist(sapply(tmp.data.extended, '[[', 'Year')))
-			tmp.data.extended[[tmp.index]][['Percentile_Trajectories']] <- getJSON.percentile_trajectories_Internal(
-												sgPlot.data=tmp.data, 
-												percentile.trajectory.values=1:99, 
-												year=i, 
-												state=state)
+#			tmp.data.extended[[tmp.index]][['Percentile_Trajectories']] <- getJSON.percentile_trajectories_Internal(
+#												sgPlot.data=tmp.data, 
+#												percentile.trajectory.values=1:99, 
+#												year=i, 
+#												state=state)
 
 			################################################
 			### HACK
