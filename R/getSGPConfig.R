@@ -72,6 +72,10 @@ function(sgp_object,
 
 	get.par.sgp.config <- function(sgp.config) {
 
+		### Utility functions
+
+		split.location <- function(years) sapply(strsplit(years, '_'), length)[1]
+
 		### Set-up
 
 		par.sgp.config <- list()
@@ -121,7 +125,8 @@ function(sgp_object,
 
 				### Create sgp.panel.years.lags
 				if (is.null(sgp.config[[a]][['sgp.panel.year.lags']])) {
-					par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']] <- diff(as.numeric(sapply(strsplit(par.sgp.config[[b.iter[b]]][['sgp.panel.years']], '_'), '[', 1)))
+					par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']] <- 
+						diff(as.numeric(sapply(strsplit(par.sgp.config[[b.iter[b]]][['sgp.panel.years']], '_'), '[', split.location(par.sgp.config[[b.iter[b]]][['sgp.panel.years']]))))
 				}
 
 				### Create sgp.projection.grade.sequences (if requested)

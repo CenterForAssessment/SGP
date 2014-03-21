@@ -5,15 +5,18 @@ function(
 	content_area, 
 	year, 
 	state, 
-	variable, 
-	distribution, 
-	round) {
+	variable=NULL, 
+	distribution=NULL, 
+	round=NULL) {
 
 	GRADE <- CONTENT_AREA <- YEAR <- NULL
 	if (is.null(round)) round <- 1
 	if (is.null(distribution)) distribution <- "Normal"
-	if (!is.null(state)) min.max <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]][[paste("loss.hoss_", grade, sep="")]]
-	if (!is.null(variable)) min.max <- range(scale_scores, na.rm=TRUE)
+	if (!is.null(state)) {
+		min.max <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]][[paste("loss.hoss_", grade, sep="")]]
+	} else {
+		min.max <- range(scale_scores, na.rm=TRUE)
+	}
 	if (!is.null(state)) {
 		if ("YEAR" %in% names(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
 			CSEM_Data <- subset(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], GRADE==grade & CONTENT_AREA==content_area & YEAR==year)

@@ -396,8 +396,15 @@ if (reports.by.school) {
 				Report_Parameters=list(Current_Year=last.year, Content_Area=content_areas[vp], Content_Area_Title=tmp_student_data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]], 
 					State=state, SGP_Targets=sgPlot.sgp.targets))
 
-			tmp_student_data_JSON <- getJSON(tmp.list, state=state, content_area=vp, year=last.year, baseline=sgPlot.baseline, data.type="studentGrowthPlot")
-			cat(toJSON(tmp_student_data_JSON, pretty=TRUE), file=file.path(path.to.pdfs, paste(file_name_json, "_", vp, ".json", sep="")))
+			tmp_student_data_JSON <- getJSON(
+							tmp.data=tmp.list, 
+							state=state, 
+							content_area=content_areas[vp], 
+							year=last.year,
+							years.for.percentile.trajectories=yearIncrement(last.year, c(0,-1)),
+							baseline=sgPlot.baseline, 
+							data.type="studentGrowthPlot")
+			cat(toJSON(tmp_student_data_JSON, pretty=TRUE, na="null"), file=file.path(path.to.pdfs, paste(file_name_json, "_", vp, ".json", sep="")))
 		}
 	} ### END if ("JSON" %in% sgPlot.output.format)
 
