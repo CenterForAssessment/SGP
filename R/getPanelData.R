@@ -85,13 +85,13 @@ function(sgp.data,
 					drop=names(sgp.data)[!names(tmp.lookup.list[[1]]) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR_WITHIN", "tmp.timevar")], 
 					direction="wide"), key="ID")[sgp.targets[CONTENT_AREA==tail(sgp.iter[["sgp.projection.content.areas"]], 1) & YEAR==tail(sgp.iter[["sgp.panel.years"]], 1)], nomatch=0]
 					[,!c("CONTENT_AREA", "YEAR"), with=FALSE]))
-		} else {
-			tmp.lookup <- SJ("VALID_CASE", sgp.iter[["sgp.projection.content.areas"]], 
-				tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.projection.grade.sequences"]])), sgp.iter[["sgp.projection.grade.sequences"]])
-			# ensure lookup table is ordered by years.  NULL out key after sorted so that it doesn't corrupt the join in reshape.
-			setkey(tmp.lookup, V3)
-			setkey(tmp.lookup, NULL)
+			}
 		}
+		tmp.lookup <- SJ("VALID_CASE", sgp.iter[["sgp.projection.content.areas"]], 
+			tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.projection.grade.sequences"]])), sgp.iter[["sgp.projection.grade.sequences"]])
+		# ensure lookup table is ordered by years.  NULL out key after sorted so that it doesn't corrupt the join in reshape.
+		setkey(tmp.lookup, V3)
+		setkey(tmp.lookup, NULL)
 		if (is.null(sgp.targets)) {
 			return(as.data.frame(reshape(
 				sgp.data[tmp.lookup, nomatch=0][, 'tmp.timevar' := paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
