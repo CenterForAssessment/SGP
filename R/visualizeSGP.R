@@ -374,6 +374,9 @@ if ("studentGrowthPlot" %in% plot.types) {
 			sgPlot.wide.data <- FALSE
 			slot.data <- copy(sgp_object@Data)
 		} else {
+			if ("JSON" %in% sgPlot.output.format) {
+				stop("\tNOTE: JSON output requires object of class SGP to be passed to visualizeSGP for argument sgp_object")
+			}
 			slot.data <- sgp_object
 		}
 
