@@ -27,14 +27,14 @@ setClassUnion("list.null", c("list","NULL"))
 	}
 
 	if (!is.null(object@Time_Lags)) {
-		tmp.test.integer.lags <- is.integer(object@Time_Lags[[1]])
+		tmp.test.numeric.lags <- is.numeric(object@Time_Lags[[1]])
 	}
 	
 	if (!tmp.test.null) errors <- c(errors, "\tError in splineMatrix construction: Slots in splineMatrix are not all non-null.")
 	if (!tmp.test.length) errors <- c(errors, "\tError in splineMatrix construction: Slots @Grade_Progression, @Content_Areas, and @Time are not all the same length.")
 	if (!tmp.test.character) errors <- c(errors, "\tError in splineMatrix construction: Slots @Grade_Progression, @Content_Areas, and @Time are not all characters.")
 	if (!tmp.test.time) errors <- c(errors, "\tError in splineMatrix construction: Slots @Time and @Time_Lags are not commensurate with one another.")
-	if (!tmp.test.integer.lags) errors <- c(errors, "\tError in splineMatrix construction: Slots @Grade_Progression, @Content_Areas, and @Time are not all characters.")
+	if (!tmp.test.numeric.lags) errors <- c(errors, "\tError in splineMatrix construction: Slot @Time_Lags is not numeric.")
 
 	if (is.null(errors)) TRUE else errors
 }
