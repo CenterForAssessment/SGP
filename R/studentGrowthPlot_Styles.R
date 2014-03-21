@@ -404,7 +404,7 @@ if (reports.by.school) {
 							years.for.percentile.trajectories=yearIncrement(last.year, c(0,-1)),
 							baseline=sgPlot.baseline, 
 							data.type="studentGrowthPlot")
-			cat(toJSON(tmp_student_data_JSON, pretty=TRUE), file=file.path(path.to.pdfs, paste(file_name_json, "_", vp, ".json", sep="")))
+			cat(toJSON(tmp_student_data_JSON, pretty=TRUE, na="null"), file=file.path(path.to.pdfs, paste(file_name_json, "_", vp, ".json", sep="")))
 		}
 	} ### END if ("JSON" %in% sgPlot.output.format)
 

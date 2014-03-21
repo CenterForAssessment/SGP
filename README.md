@@ -76,7 +76,7 @@ would contain all available information for a single student. For
 example, here are the first four rows (only the first 8 columns) of the
 sample data:
 
-```R
+```coffee
 > sgpData_LONG[1:4,1:7]
 ID LAST_NAME FIRST_NAME CONTENT_AREA   YEAR GRADE SCALE_SCORE
 1 1000079   Nixon  Daniela MATHEMATICS 2006_2007   8     463
@@ -208,7 +208,9 @@ Once a data set is properly formatted, a comprehensive analysis can be
 conducted using **abcSGP**. An example of the call using the sample data
 is below.
 
+```coffee
     Demonstration_SGP <- abcSGP(sgpData_LONG)
+```
 
 This call returns an object of class *SGP* named `Demonstration_SGP` object which contains student growth percentiles and other information, but it also produces goodness of fit and visualization folders containing files on those two topics.
 The function accepts multiple arguments detailed in the 
