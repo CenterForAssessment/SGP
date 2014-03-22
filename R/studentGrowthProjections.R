@@ -167,6 +167,7 @@ function(panel.data,	## REQUIRED
 						tmp.years_lags,
 						return.highest.order.matrix=TRUE,
 						my.matrix.highest.order=max.order.for.progression)
+					if (length(tmp.matrix) == 0) next
 					tmp.matrix[[1]]@Time[[1]] <- tmp.years  # Overwrite @Time slot to make function think the type is consistent
 				}
 				tmp.list[[i]][[j]] <- tmp.matrix[[1]]
@@ -176,6 +177,7 @@ function(panel.data,	## REQUIRED
 				}
 			}
 		}
+		for (f in 1:length(tmp.list)) tmp.list[[f]] <- tmp.list[[f]][which(!sapply(tmp.list[[f]], is.null))]
 		return(rev(tmp.list)) ### rev gives highest orders first
 	}
 
