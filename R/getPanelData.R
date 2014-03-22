@@ -119,7 +119,7 @@ function(sgp.data,
 			tmp.data <- data.table(sgp.data, key="ID")[tmp.ids]
 			tmp.lookup <- data.table(V1="VALID_CASE", tail(sgp.iter[["sgp.projection.content.areas"]], length(sgp.iter[["sgp.projection.grade.sequences"]])),
 				head(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.projection.grade.sequences"]])), sgp.iter[["sgp.projection.grade.sequences"]],
-				tail(sgp.iter[["sgp.panel.years.within"]], length(sgp.iter[["sgp.projection.grade.sequences"]])), FIRST_OBSERVATION=as.integer(NA), LAST_OBSERVATION=as.integer(NA))
+				head(sgp.iter[["sgp.panel.years.within"]], length(sgp.iter[["sgp.projection.grade.sequences"]])), FIRST_OBSERVATION=as.integer(NA), LAST_OBSERVATION=as.integer(NA))
 			tmp.lookup[grep("FIRST", V5, ignore.case=TRUE), FIRST_OBSERVATION:=1L]; tmp.lookup[grep("LAST", V5, ignore.case=TRUE), LAST_OBSERVATION:=1L]; tmp.lookup[,V5:=NULL]
 			setnames(tmp.lookup, paste("V", 1:4, sep=""), c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))
 			
