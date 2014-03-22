@@ -205,9 +205,9 @@ function(sgp_object,
 					SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]][1:tmp.index]
 				tmp.year_lags.projection.sequence <-
 					SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]][1:(tmp.index-1)]
-				if (!all(tmp.content_area.projection.sequence == sgp.iter[["sgp.content.areas"]] & 
-					tmp.grade.projection.sequence == sgp.iter[["sgp.grade.sequences"]] & 
-					tmp.year_lags.projection.sequence == sgp.iter[["sgp.panel.years.lags"]])) iter.test <- FALSE else iter.test <- TRUE
+				if (!all(sgp.iter[["sgp.content.areas"]] == tmp.content_area.projection.sequence & 
+					sgp.iter[["sgp.grade.sequences"]] == tmp.grade.projection.sequence & 
+					sgp.iter[["sgp.panel.years.lags"]] == tmp.year_lags.projection.sequence)) iter.test <- FALSE else iter.test <- TRUE
 			}	else iter.test <- TRUE
 		}	else iter.test <- TRUE
 		return(iter.test)
