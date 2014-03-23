@@ -128,23 +128,28 @@ function(sgp.data,
 				setkeyv(tmp.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", i))
 				setkeyv(tmp.lookup, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", i))
 				suppressWarnings(tmp.lookup.list[[i]] <- data.table(tmp.data[tmp.lookup[get(i)==1], nomatch=0][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, i, sep="."), with=FALSE][,
-					list(ID, GRADE, SCALE_SCORE, YEAR_WITHIN, tmp.timevar)], key="ID")) ### Could be NULL and result in a warning
-			}			
+					list(ID, GRADE, SCALE_SCORE, YEAR_WITHIN, tmp.timevar, ACHIEVEMENT_LEVEL)], key="ID")) ### Could be NULL and result in a warning
+			}		
+			achievement.level.prior.vname <- paste("ACHIEVEMENT_LEVEL", tail(head(sgp.iter[["sgp.panel.years"]], -1), 1), tail(head(sgp.iter[["sgp.content.areas"]], -1), 1), sep=".")	
 			if (is.null(sgp.targets)) {
-				return(as.data.frame(reshape(
+				tmp.data <- reshape(
 					rbindlist(tmp.lookup.list),
 					idvar="ID",
 					timevar="tmp.timevar",
 					drop=names(sgp.data)[!names(sgp.data) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "ACHIEVEMENT_LEVEL")],
-					direction="wide")))
+					direction="wide")
+				setnames(tmp.data, names(tmp.data)[grep(achievement.level.prior.vname, names(tmp.data))], achievement.level.prior.vname)
+				return(as.data.frame(tmp.data))
 			} else {
-				return(as.data.frame(data.table(reshape(
+				tmp.data <- data.table(reshape(
 					rbindlist(tmp.lookup.list),
 					idvar="ID",
 					timevar="tmp.timevar",
 					drop=names(sgp.data)[!names(sgp.data) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "ACHIEVEMENT_LEVEL")],
 					direction="wide"), key="ID")[sgp.targets[CONTENT_AREA==tail(sgp.iter[["sgp.content.areas"]], 1) & YEAR==tail(sgp.iter[["sgp.panel.years"]], 1)], nomatch=0]
-					[,!c("CONTENT_AREA", "YEAR"), with=FALSE]))
+					[,!c("CONTENT_AREA", "YEAR"), with=FALSE]
+				setnames(tmp.data, names(tmp.data)[grep(achievement.level.prior.vname, names(tmp.data))], achievement.level.prior.vname)
+				return(as.data.frame(tmp.data))
 			}
 		} else {
 			if (is.null(sgp.targets)) {
