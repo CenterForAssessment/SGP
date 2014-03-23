@@ -635,7 +635,7 @@ function(panel.data,	## REQUIRED
 		} else {
 			year_lags.projection.sequence <- rep(1, length(grade.projection.sequence))
 		}
-	}
+	} else year_lags.projection.sequence <- year_lags.projection.sequence[tmp.index-1]
 	grade.content_area.projection.sequence <- grade.content_area.projection.sequence[tmp.index]
 
 	### Test to see if ss.data has cases to analyze and configuration has elements to answer
