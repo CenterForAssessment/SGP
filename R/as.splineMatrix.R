@@ -141,10 +141,10 @@ function(matrix_argument,
 
 			### Time Lag
 
-			if (.hasSlot(matrix_argument, "Time")) {
-				time_lags <- as.integer(matrix_argument@Time_Lags[[1]])
+			if (.hasSlot(matrix_argument, "Time_Lags")) {
+				time_lags <- as.numeric(matrix_argument@Time_Lags[[1]])
 			} else {
-				time_lags <- as.integer(diff(type.convert(grade_progression)))
+				time_lags <- as.numeric(diff(type.convert(grade_progression)))
 			}
 
 
