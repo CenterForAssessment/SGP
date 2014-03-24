@@ -448,12 +448,12 @@ function(sgp_object,
 		}
 		par.sgp.config.baseline <- par.sgp.config[which(sapply(par.sgp.config, function(x) !identical(x[['sgp.baseline.grade.sequences']], "NO_BASELINE_COEFFICIENT_MATRICES")))]
 
-		par.sgp.config.projections.baseline <- par.sgp.config.baseline[sapply(par.sgp.config.baseline, test.projection.iter)]
+		suppressWarnings(par.sgp.config.projections.baseline <- par.sgp.config.baseline[sapply(par.sgp.config.baseline, test.projection.iter)])
 		# Enforce that all projection configs must NOT be exact grade progressions to avoid duplicates in SGProjections
 		for (f in 1:length(par.sgp.config.projections.baseline)) par.sgp.config.projections.baseline[[f]]$sgp.exact.grade.progression <- FALSE
 	}
 
-	par.sgp.config.projections <- par.sgp.config[sapply(par.sgp.config, test.projection.iter)]
+	suppressWarnings(par.sgp.config.projections <- par.sgp.config[sapply(par.sgp.config, test.projection.iter)])
 	# Enforce that all projection configs must NOT be exact grade progressions to avoid duplicates in SGProjections
 	for (f in 1:length(par.sgp.config.projections)) par.sgp.config.projections[[f]]$sgp.exact.grade.progression <- FALSE
 
