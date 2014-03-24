@@ -194,7 +194,7 @@ function(panel.data,         ## REQUIRED
 			"Content_Areas=list(as.character(tail(content_area.progression, k+1))), ",
 			"Grade_Progression=list(as.character(tail(tmp.slot.gp, k+1))), ",
 			"Time=list(as.character(tail(year.progression, k+1))), ",
-			"Time_Lags=list(as.integer(tail(year_lags.progression, k))), ",
+			"Time_Lags=list(as.numeric(tail(year_lags.progression, k))), ",
 			"Version=tmp.version)", sep="")))
 
 	} ### END .create.coefficient.matrices
@@ -297,7 +297,7 @@ function(panel.data,         ## REQUIRED
 				"Content_Areas=list(as.character(tail(content_area.progression, k+1))), ",
 				"Grade_Progression=list(as.character(tail(tmp.slot.gp, k+1))), ",
 				"Time=list(as.character(tail(year.progression, k+1))), ",
-				"Time_Lags=list(as.integer(tail(year_lags.progression, k))), ",
+				"Time_Lags=list(as.numeric(tail(year_lags.progression, k))), ",
 				"Version=tmp.version)", sep="")))
 		}
 
