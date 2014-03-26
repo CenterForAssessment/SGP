@@ -34,7 +34,7 @@ analyzeSGP(sgp_object,
          sgp.baseline.config=NULL,
          parallel.config=NULL,
 	 verbose.output=FALSE,
-	 print.other.gp=FALSE,
+	 print.other.gp=NULL,
 	 get.cohort.data.info=FALSE,
          ...)
 }

@@ -27,7 +27,7 @@ function(sgp_object,
          sgp.baseline.config=NULL, 
          parallel.config=NULL,
          verbose.output=FALSE,
-         print.other.gp=FALSE,
+         print.other.gp=NULL,
          get.cohort.data.info=FALSE,
          ...) {
 
@@ -141,6 +141,11 @@ function(sgp_object,
 	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][['sgp.projections.max.forward.progression.grade']])) {
 		sgp.projections.max.forward.progression.grade <- SGPstateData[[state]][["SGP_Configuration"]][['sgp.projections.max.forward.progression.grade']]
 	}
+	
+	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][['print.other.gp']])) {
+		print.other.gp <- SGPstateData[[state]][["SGP_Configuration"]][['print.other.gp']]
+	}
+	if (is.null(print.other.gp)) print.other.gp <- FALSE
 	
 	### 
 	### Utility functions
