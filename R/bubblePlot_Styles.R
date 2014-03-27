@@ -86,20 +86,20 @@
 	names.merge <- function(tmp.data, bPlot.anonymize) {
 		if (!"INSTRUCTOR_NUMBER" %in% names(tmp.data) & !"SCHOOL_NUMBER" %in% names(tmp.data) & "DISTRICT_NUMBER" %in% names(tmp.data)) {
 			tmp.names <- unique(data.table(sgp_object@Data[!is.na(DISTRICT_NUMBER), 
-				list(DISTRICT_NUMBER, DISTRICT_NAME, SCHOOL_NUMBER, SCHOOL_NAME)], key="DISTRICT_NUMBER")) # Keep other institution NUMBER to iterate over in some plots
+				list(DISTRICT_NUMBER, DISTRICT_NAME, SCHOOL_NUMBER, SCHOOL_NAME, YEAR)], key=c("DISTRICT_NUMBER", "YEAR"))) # Keep other institution NUMBER to iterate over in some plots
 			if (bPlot.anonymize) {
 				tmp.names$DISTRICT_NAME <- paste("District", as.numeric(as.factor(tmp.names$DISTRICT_NUMBER)))
 			}
-			setkey(tmp.data, DISTRICT_NUMBER)
+			setkey(tmp.data, DISTRICT_NUMBER, YEAR)
 		}
 		
 		if (!"INSTRUCTOR_NUMBER" %in% names(tmp.data) & "SCHOOL_NUMBER" %in% names(tmp.data) & !"DISTRICT_NUMBER" %in% names(tmp.data)) {
 			tmp.names <- unique(data.table(sgp_object@Data[!is.na(SCHOOL_NUMBER), 
-				list(DISTRICT_NUMBER, DISTRICT_NAME, SCHOOL_NUMBER, SCHOOL_NAME)], key="SCHOOL_NUMBER")) # Keep other institution NUMBER to iterate over in some plots
+				list(DISTRICT_NUMBER, DISTRICT_NAME, SCHOOL_NUMBER, SCHOOL_NAME, YEAR)], key=c("SCHOOL_NUMBER", "YEAR"))) # Keep other institution NUMBER to iterate over in some plots
 			if (bPlot.anonymize) {
 				tmp.names$SCHOOL_NAME <- paste("School", as.numeric(as.factor(tmp.names$SCHOOL_NUMBER)))
 			}
-			setkey(tmp.data, SCHOOL_NUMBER)
+			setkey(tmp.data, SCHOOL_NUMBER, YEAR)
 		}
 		
 		if ("INSTRUCTOR_NUMBER" %in% names(tmp.data)) { #Add both school and district number regardless of 
