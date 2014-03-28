@@ -55,8 +55,7 @@ The [SGP Package Wiki](https://github.com/CenterForAssessment/SGP/wiki/Home) con
 ___________________________________________________________________
 
 
-### The SGP Package support the [Foundation for Open Access Statistics (FOAS)](http://www.foastat.org/index.html)
-
+The SGP Package supports the [Foundation for Open Access Statistics (FOAS)](http://www.foastat.org/index.html)
 <p align="right">
   <img style='width: 25%;' src="http://www.foastat.org/images/foas.png" alt="Sublime's custom image"/>
 </p>
