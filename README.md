@@ -12,6 +12,18 @@ The **SGP** Package (Betebenner, VanIwaarden, Domingue, Shang, 2014) is an open 
 * Web site: http://centerforassessment.github.io/SGP/
 * CRAN Web site: http://cran.r-project.org/web/packages/SGP/
 
+Team Members
+------------
+
+The **SGP** Package is maintained by a group of four very nice people. We love feedback and are happy to answer questions. But make sure to send us some :heart:.
+
+* [Damian Betebenner](https://github.com/dbetebenner)
+* [Adam VanIwaarden](https://github.com/adamvi)
+* [Ben Domingue](https://github.com/ben-domingue)
+* [Yi Shang](https://github.com/shangyi)
+
+
+
 Install the latest stable release from [CRAN](http://cran.r-project.org/package=SGP)
 ---------------------------
 
