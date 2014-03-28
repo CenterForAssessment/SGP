@@ -51,5 +51,5 @@ ___________________________________________________________________
 
 The SGP Package supports the [Foundation for Open Access Statistics (FOAS)](http://www.foastat.org/index.html)
 <p align="right">
-  <img style='width: 25%;' src="http://www.foastat.org/images/foas.png" alt="Sublime's custom image"/>
+  <img src="http://www.foastat.org/images/foas.png" alt="Sublime's custom image" style="width: 25%;"/>
 </p>
