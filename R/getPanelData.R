@@ -4,7 +4,7 @@ function(sgp.data,
 	sgp.iter,
 	sgp.targets=NULL) {
 
-	YEAR <- CONTENT_AREA <- V3 <- V5 <- ID <- GRADE <- SCALE_SCORE <- YEAR_WITHIN <- tmp.timevar <- FIRST_OBSERVATION <- LAST_OBSERVATION <- NULL
+	YEAR <- CONTENT_AREA <- V3 <- V5 <- ID <- GRADE <- SCALE_SCORE <- YEAR_WITHIN <- tmp.timevar <- FIRST_OBSERVATION <- LAST_OBSERVATION <- ACHIEVEMENT_LEVEL <- NULL
 
 	if (sgp.type=="sgp.percentiles") {
 
