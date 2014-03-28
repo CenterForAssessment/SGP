@@ -1,4 +1,4 @@
-![SGP_Logo](https://raw.githubusercontent.com/CenterForAssessment/SGP_Resources/master/misc/SGP1.png)
+![SGP_Logo](https://raw.githubusercontent.com/CenterForAssessment/SGP_Resources/master/misc/SGP2.jpg)
 
 An R Package for the calculation of student growth percentiles and percentile growth trajectories/projections
 -------------------------------------------------------------------------------------------------------------
