@@ -202,6 +202,7 @@ function(sgp_object,
 	test.projection.iter <- function(sgp.iter) {
 		if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]])) {
 			if (tail(sgp.iter[["sgp.grade.sequences"]], 1) == "EOCT") { # Only check EOCT configs/iters
+				if (is.null(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]])) return(FALSE)
 				tmp.index <- match(tail(sgp.iter[["sgp.content.areas"]], 1), 
 					SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]])
 				tmp.content_area.projection.sequence <-
