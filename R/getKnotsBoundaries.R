@@ -9,7 +9,7 @@ function(sgp.iter,
 		kb <- list()
 		tmp.content_areas <- unique(sgp.iter[[my.content.areas]])
 		if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]])) {
-			tmp.content_areas <- sapply(tmp.content_areas, function(x) unique(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[x]]))
+			tmp.content_areas <- unique(unlist(sapply(tmp.content_areas, function(x) unique(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[x]]))))
 		}
 		content_area.label <- tail(sgp.iter[[my.content.areas]], 1)
 		tmp.year <- tail(sgp.iter[["sgp.panel.years"]], 1)
@@ -27,7 +27,7 @@ function(sgp.iter,
 		kb <- list()
 		tmp.content_areas <- unique(sgp.iter[[my.content.areas]])
 		if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]])) {
-			tmp.content_areas <- sapply(tmp.content_areas, function(x) unique(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[x]]))
+			tmp.content_areas <- unique(unlist(sapply(tmp.content_areas, function(x) unique(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[x]]))))
 		}
 		content_area.label <- tail(sgp.iter[[my.content.areas]], 1)
 		tmp.year <- "BASELINE"
