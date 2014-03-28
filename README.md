@@ -15,7 +15,7 @@ The **SGP** Package (Betebenner, VanIwaarden, Domingue, Shang, 2014) is an open 
 Team Members
 ------------
 
-The **SGP** Package is maintained by a group of four very nice people. We love feedback and are happy to answer questions. But make sure to send us some :heart:.
+The **SGP** Package is maintained by a group of four very nice people. We love feedback and are happy to answer questions. Just make sure to show us some :heart:.
 
 * [Damian Betebenner](https://github.com/dbetebenner)
 * [Adam VanIwaarden](https://github.com/adamvi)
@@ -48,9 +48,15 @@ Linux: apt-get install r-base-dev (or similar).
 
 
 To use the SGP Package
-______________________
+----------------------
 
 The [SGP Package Wiki](https://github.com/CenterForAssessment/SGP/wiki/Home) contains instructions on how to prepare data and run SGP analyses.
 
+___________________________________________________________________
 
-![FOAS_Logo](http://www.foastat.org/images/foas.png)
+
+### The SGP Package support the [Foundation for Open Access Statistics (FOAS)](http://www.foastat.org/index.html)
+
+<p align="right">
+  <img src="http://www.foastat.org/images/foas.png" alt="Sublime's custom image"/>
+</p>
