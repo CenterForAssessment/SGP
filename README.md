@@ -1,7 +1,4 @@
-![NCIEA_Logo](http://www.gravatar.com/avatar/4e8359782a12ae6da19d546220e1a8b0.png)
-
-SGP 
-===
+![SGP_Logo](https://github.com/CenterForAssessment/SGP_Resources/blob/master/misc/SGP1.png)
 
 An R Package for the calculation of student growth percentiles and percentile growth trajectories/projections
 -------------------------------------------------------------------------------------------------------------
