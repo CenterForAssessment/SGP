@@ -12,7 +12,7 @@ The **SGP** Package (Betebenner, VanIwaarden, Domingue, Shang, 2014) is an open 
 * Web site: http://centerforassessment.github.io/SGP/
 * CRAN Web site: http://cran.r-project.org/web/packages/SGP/
 
-To install the latest stable release from [CRAN](http://cran.r-project.org/package=SGP)
+Install the latest stable release from [CRAN](http://cran.r-project.org/package=SGP)
 ---------------------------
 
 ```coffee
@@ -21,7 +21,7 @@ require(SGP)
 ```
 
 
-To install latest development release from [Github](https://github.com/CenterForAssessment/SGP/) :octocat:
+Install latest development release from [Github](https://github.com/CenterForAssessment/SGP/) :octocat:
 ----------------------------------------------
 
 ```coffee 
@@ -38,6 +38,7 @@ Linux: apt-get install r-base-dev (or similar).
 To use the SGP Package
 ______________________
 
-The [SGP Package Wiki](https://github.com/CenterForAssessment/SGP/wiki/Data-Preparation) contains instructions on how to prepare data and run SGP analyses.
+The [SGP Package Wiki](https://github.com/CenterForAssessment/SGP/wiki/Home) contains instructions on how to prepare data and run SGP analyses.
 
 
+![FOAS_Logo](http://www.foastat.org/images/foas.png)
