@@ -46,10 +46,15 @@ Linux: apt-get install r-base-dev (or similar).
 
 The [SGP Package Wiki](https://github.com/CenterForAssessment/SGP/wiki/Home) contains instructions on how to prepare data and run SGP analyses.
 
+
+### Bibliography
+
+Betebenner, D. W., VanIwaarden, A., Domingue, B., and Shang, Y. (2014). SGP: An R Package for the Calculation and Visualization of Student Growth Percentiles & Percentile Growth Trajectories.
+
+R Development Core Team (2014). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria.
+3-900051-07-0.
+
 ___________________________________________________________________
 
 
 The SGP Package supports the [Foundation for Open Access Statistics (FOAS)](http://www.foastat.org/index.html)
-<p align="right">
-  <img src="http://www.foastat.org/images/foas.png" alt="Sublime's custom image" style="width: 25%;"/>
-</p>
