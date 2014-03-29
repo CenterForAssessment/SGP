@@ -1153,11 +1153,11 @@ function(panel.data,         ## REQUIRED
 					if (is.null(calculate.confidence.intervals$simulation.iterations)) calculate.confidence.intervals[['simulation.iterations']] <- 100
 					if (!is.null(calculate.confidence.intervals$variable)) {
 						if (missing(panel.data.vnames)) {
-							tmp.csem.variable <- Panel_Data[Panel_Data[,1] %in% 
-								ss.data[tmp.data[[1]]][[1]], calculate.confidence.intervals$variable] 
+							tmp.csem.variable <- Panel_Data[Panel_Data[[1]] %in% 
+								ss.data[list(tmp.data[[1]])][[1]], calculate.confidence.intervals$variable] 
 						} else {
 							tmp.csem.variable <- Panel_Data[Panel_Data[,panel.data.vnames[1]] %in% 
-								ss.data[tmp.data[[1]]][[1]], calculate.confidence.intervals$variable] 
+								ss.data[list(tmp.data[[1]])][[1]], calculate.confidence.intervals$variable] 
 						}
 					} else {
 						tmp.csem.variable <- NULL
