@@ -63,7 +63,8 @@ Authors@R: c(person(given=c("Damian", "W."), family="Betebenner", email="dbetebe
 		person(given="Peter", family="Kinyua", role="ctb", comment="Albuquerque Public Schools"),
 		person(given="Brendan", family="Houng", role="ctb", comment="University of Melbourne, Australia, NAPLAN"),
 		person(given="Leslie", family="Rosale", role="ctb", comment="Ministry of Education, Guatemala"),
-		person(given="Nathan", family="Wall", role="ctb", comment="eMetric working with Nevada Department of Education and South Dakota Department of Education"))
+		person(given="Nathan", family="Wall", role="ctb", comment="eMetric working with Nevada Department of Education and South Dakota Department of Education"),
+		person(given="Narek", family="Sahakyan", role="ctb", comment="World Class Instruction and Design (WIDA)"))
 Maintainer: Damian W. Betebenner <dbetebenner@nciea.org>
 Depends: R (>= 2.13)
 Suggests: randomNames (>= 0.0-5), parallel, SGPdata (>= 8.0-0)
@@ -73,7 +74,7 @@ Description: Functions to calculate student growth percentiles and percentile gr
         with each student's achievement history.  Percentile growth projections/trajectories are calculated using the coefficient matrices derived from 
 	the quantile regression analyses and specify what percentile growth is required for students to reach future achievement targets.
 SystemRequirements: (PDF)LaTeX (http://www.latex-project.org/) with 'pdfpages' package for studentGrowthPlot option in visualizeSGP to bind together student growth plots into school catalogs
-URL: sgp.io, http://github.com/CenterForAssessment/SGP, http://cran.r-project.org/web/packages/SGP/
+URL: http://sgp.io, http://github.com/CenterForAssessment/SGP, http://cran.r-project.org/web/packages/SGP/
 BugReports: https://github.com/CenterForAssessment/SGP/issues
 LazyData: Yes
 LazyDataCompression: xz
