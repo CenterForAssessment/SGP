@@ -7,7 +7,7 @@ ________________________________________________________________________________
 
 The **SGP** Package (Betebenner, VanIwaarden, Domingue, Shang, 2014) is an open source package built for the open source **R** software environment (R Development Core Team, 2014). The classes, functions and data within the **SGP** package are used to calculate student growth percentiles and percentile growth projections/trajectories using large scale, longitudinal assessment data. The methodology uses quantile regression to estimate the conditional density associated associated with each student's achievement history. Percentile growth projections/trajectories are calculated using the coefficient matrices derived from the quantile regression analyses and specify the percentile growth required for students to reach future achievement targets.
 
-* Web site: http://centerforassessment.github.io/SGP/
+* Web site: (sgp.io)
 * CRAN Web site: http://cran.r-project.org/web/packages/SGP/
 
 ### Team Members
@@ -23,7 +23,7 @@ The **SGP** Package is maintained by a group of four very nice people. We love f
 
 ### Install the latest stable release from [CRAN](http://cran.r-project.org/package=SGP)
 
-```coffee
+```S
 install.packages("SGP")
 require(SGP)
 ```
@@ -31,7 +31,7 @@ require(SGP)
 
 ### Install latest development release from [Github](https://github.com/CenterForAssessment/SGP/) :octocat:
 
-```coffee 
+```S
 install.packages("devtools")
 require(devtools)
 install_github("SGP", "CenterForAssessment")
