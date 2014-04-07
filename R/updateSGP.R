@@ -143,6 +143,7 @@ function(what_sgp_object=NULL,
 
 		HIGH_NEED_STATUS <- YEAR <- ID <- VALID_CASE <- CONTENT_AREA <- NULL
 		tmp_sgp_object <- prepareSGP(with_sgp_data_LONG, state=state, create.additional.variables=FALSE)
+		if(!is.null(sgp.config)) years <- unique(sapply(lapply(sgp.config, '[[', 'sgp.panel.years'), tail, 1))
 		if(is.null(years)) update.years <- sort(unique(tmp_sgp_object@Data$YEAR)) else update.years <- years
 
 		if (overwrite.existing.data) {
@@ -207,6 +208,7 @@ function(what_sgp_object=NULL,
 
 				tmp.sgp_object.update <- analyzeSGP(
 							tmp.sgp_object.update,
+							steps=steps, 
 							years=update.years, 
 							content_areas=content_areas,
 							grades=grades,
