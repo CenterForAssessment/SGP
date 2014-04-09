@@ -55,11 +55,21 @@ function(sgp_object,
 	} else {
 		tmp_object_1 <- data.table(rbind.fill(tmp.list), VALID_CASE="VALID_CASE")
 	}
-	setkeyv(tmp_object_1, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
+	
+	if ("YEAR_WITHIN" %in% names(sgp_object@Data)) {
+		###  Assumes that any "canonical progression" will use the LAST_OBSERVATION for all (or at least the most recent) prior(s)
+		tmp_object_1[, LAST_OBSERVATION := 1L]
+		setkeyv(tmp_object_1, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", "LAST_OBSERVATION"))
+	} else {
+		setkeyv(tmp_object_1, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
+	}
 
 	if (target.type %in% c("sgp.projections", "sgp.projections.baseline")) {
+		if ("YEAR_WITHIN" %in% names(sgp_object@Data)) setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", "LAST_OBSERVATION"))
 		tmp_object_1 <- data.table(sgp_object@Data[,c(key(tmp_object_1), "ACHIEVEMENT_LEVEL"), with=FALSE], key=key(tmp_object_1))[tmp_object_1]
+		if ("YEAR_WITHIN" %in% names(sgp_object@Data)) setkeyv(sgp_object@Data, getKey(sgp_object))
 	}
+
 	tmp_object_1[, paste(target.level, "STATUS_INITIAL", sep="_") := getTargetInitialStatus(tmp_object_1[[grep("ACHIEVEMENT", names(tmp_object_1), value=TRUE)]], state, target.level), with=FALSE]
 	tmp_object_1 <- tmp_object_1[!is.na(get(paste(target.level, "STATUS_INITIAL", sep="_")))]
 
