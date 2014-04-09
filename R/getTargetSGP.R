@@ -65,9 +65,15 @@ function(sgp_object,
 	}
 
 	if (target.type %in% c("sgp.projections", "sgp.projections.baseline")) {
-		if ("YEAR_WITHIN" %in% names(sgp_object@Data)) setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", "LAST_OBSERVATION"))
-		tmp_object_1 <- data.table(sgp_object@Data[,c(key(tmp_object_1), "ACHIEVEMENT_LEVEL"), with=FALSE], key=key(tmp_object_1))[tmp_object_1]
-		if ("YEAR_WITHIN" %in% names(sgp_object@Data)) setkeyv(sgp_object@Data, getKey(sgp_object))
+		if ("YEAR_WITHIN" %in% names(sgp_object@Data)) {
+			setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", "LAST_OBSERVATION"))
+			tmp_object_1 <- data.table(sgp_object@Data[,c(key(tmp_object_1), "YEAR_WITHIN", "ACHIEVEMENT_LEVEL"), with=FALSE], key=key(tmp_object_1))[tmp_object_1]
+			setkeyv(sgp_object@Data, getKey(sgp_object))
+			jExp_Key <- c('ID', 'CONTENT_AREA', 'YEAR', 'VALID_CASE', 'YEAR_WITHIN')
+		} else 	{
+			tmp_object_1 <- data.table(sgp_object@Data[,c(key(tmp_object_1), "ACHIEVEMENT_LEVEL"), with=FALSE], key=key(tmp_object_1))[tmp_object_1]
+			jExp_Key <- c('ID', 'CONTENT_AREA', 'YEAR', 'VALID_CASE')
+		}
 	}
 
 	tmp_object_1[, paste(target.level, "STATUS_INITIAL", sep="_") := getTargetInitialStatus(tmp_object_1[[grep("ACHIEVEMENT", names(tmp_object_1), value=TRUE)]], state, target.level), with=FALSE]
@@ -77,7 +83,7 @@ function(sgp_object,
 
 	jExpression <- parse(text=paste("{catch_keep_move_functions[[unclass(", target.level, "_STATUS_INITIAL)]](",paste(names(tmp_object_1)[grep("LEVEL", names(tmp_object_1)) %w/o% 
 		grep("ACHIEVEMENT", names(tmp_object_1))], collapse=", "),", na.rm=TRUE)}", sep=""))
-	tmp_object_2 <- tmp_object_1[, eval(jExpression), by=list(ID, CONTENT_AREA, YEAR, VALID_CASE)]
+	tmp_object_2 <- tmp_object_1[, eval(jExpression), by = jExp_Key] # list(ID, CONTENT_AREA, YEAR, VALID_CASE)
 
 	if (target.type %in% c("sgp.projections.baseline", "sgp.projections.lagged.baseline")) baseline.label <- "_BASELINE" else baseline.label <- NULL
 	if (target.type %in% c("sgp.projections", "sgp.projections.baseline")) projection.label <- "_CURRENT" else projection.label <- NULL
@@ -90,6 +96,6 @@ function(sgp_object,
 			list(tmp_object_1[["ACHIEVEMENT_LEVEL_PRIOR"]], tmp_object_1[[grep("STATUS_INITIAL", names(tmp_object_1), value=TRUE)]]), with=FALSE]
 	}
 
-	setkeyv(tmp_object_2, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
+	setkeyv(tmp_object_2, getKey(sgp_object))
 	return(tmp_object_2)
 } ### END getTargetSGP
