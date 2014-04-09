@@ -16,6 +16,7 @@ abcSGP(sgp_object,
 	content_areas=NULL,
 	grades=NULL,
 	prepareSGP.var.names=NULL,
+	prepareSGP.create.additional.variables=FALSE,
 	sgp.percentiles=TRUE,
 	sgp.projections=TRUE,
 	sgp.projections.lagged=TRUE,
@@ -62,8 +63,8 @@ If missing the function will use the data to infer the content area(s) available
   \item{grades}{A vector indicating grades for which to calculate student growth percentiles and/or student growth projections/trajectories. 
 If missing the function will use the data to infer all the grade progressions for student growth percentile and student growth projections/trajectories analyses.
   }
-  \item{prepareSGP.var.names}{list supplied to prepareSGP mapping provided variable names to variable names required as part of the SGP package. See \code{\link{prepareSGP}} for more details. Defaults to NULL.
-  }
+  \item{prepareSGP.var.names}{list supplied to prepareSGP mapping provided variable names to variable names required as part of the SGP package. See \code{\link{prepareSGP}} for more details. Defaults to NULL.}
+  \item{prepareSGP.create.additional.variables}{Boolean variable indicating whether prepareSGP should create addition variables (e.g., ACHIEVEMENT_LEVEL) if they are missing.}
   \item{sgp.percentiles}{Boolean variable indicating whether to calculate student growth percentiles. Defaults to TRUE.
   }
   \item{sgp.projections}{Boolean variable indicating whether to calculate student growth projections. Defaults to TRUE.
