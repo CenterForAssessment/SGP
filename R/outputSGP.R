@@ -682,6 +682,21 @@ function(sgp_object,
 
 	} ## End if SchoolView %in% output.type
 
+	###############################################
+	###
+	### RLI output
+	###
+	###############################################
+
+	if ("RLI" %in% output.type) {
+
+		started.at <- proc.time()
+		message(paste("\tStarted RLI in outputSGP", date()))
+		message(paste("\tFinished RLI in outputSGP", date(), "in", timetaken(started.at), "\n"))
+
+	} ## End if RLI %in% output.type
+
+
 	setkeyv(sgp_object@Data, getKey(sgp_object))
 	message(paste("Finished outputSGP", date(), "in", timetaken(started.at.outputSGP), "\n"))
 

@@ -28,6 +28,7 @@ function(sgp_object,
 	data_supplementary=NULL,
 	confidence.interval.groups=NULL,
 	plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot"),
+	outputSGP.output.type=c("LONG_Data", "LONG_FINAL_YEAR_Data", "WIDE_Data", "INSTRUCTOR_Data"),
 	verbose.output=FALSE) {
 
         started.at <- proc.time()
@@ -158,6 +159,7 @@ function(sgp_object,
 		outputSGP(
 			sgp_object=sgp_object,
 			state=state,
+			output.type=outputSGP.output.type,
 			outputSGP_SUMMARY.years=years,
 			outputSGP_SUMMARY.content_areas=content_areas,
 			outputSGP_INDIVIDUAL.years=years,

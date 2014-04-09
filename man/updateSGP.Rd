@@ -11,8 +11,7 @@ updateSGP(
 	what_sgp_object=NULL,
 	with_sgp_data_LONG=NULL,
 	state=NULL,
-	steps=c("prepareSGP", "analyzeSGP", "combineSGP", 
-		"summarizeSGP", "visualizeSGP", "outputSGP"),
+	steps=c("prepareSGP", "analyzeSGP", "combineSGP", "summarizeSGP", "visualizeSGP", "outputSGP"),
 	years=NULL,
 	content_areas=NULL,
 	grades=NULL,
@@ -31,6 +30,7 @@ updateSGP(
 	sgp.target.scale.scores=FALSE,
 	overwrite.existing.data=FALSE,
 	sgPlot.demo.report=TRUE,
+	outputSGP.output.type=c("LONG_Data", "LONG_FINAL_YEAR_Data", "WIDE_Data", "INSTRUCTOR_Data"),
 	sgp.config=NULL,
 	parallel.config=NULL,
 	...)
@@ -85,6 +85,10 @@ If missing the function will use the data to infer all the grade progressions fo
   \item{overwrite.existing.data}{A Boolean argument (defaults to FALSE) indicating whether updateSGP should overwrite existing data/results from an earlier run as part of updateSGP.
   }
   \item{sgPlot.demo.report}{A Boolean argument (defaults to TRUE) indicating whether updateSGP should produce just the demo student growth plots or those associated with all students in the last year.
+  }
+  \item{outputSGP.output.type}{Specifies the type of output generated as part of intermediate step when adding addition data and using old coefficient matrices. Defaults are the defuaults of outputSGP,
+  \code{LONG_Data}, \code{LONG_FINAL_YEAR_Data}, \code{WIDE_Data}, and \code{INSTRUCTOR_Data}.
+
   }
   \item{sgp.config}{List of analysis control parameters passed to \code{\link{analyzeSGP}}. For details on this argument see document for that function.
   }

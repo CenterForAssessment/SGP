@@ -38,6 +38,7 @@ abcSGP(sgp_object,
 	data_supplementary=NULL,
 	confidence.interval.groups=NULL,
 	plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot"),
+	outputSGP.output.type=c("LONG_Data", "LONG_FINAL_YEAR_Data", "WIDE_Data", "INSTRUCTOR_Data"),
 	verbose.output=FALSE) 
 }
 
@@ -122,6 +123,8 @@ If missing the function will use the data to infer all the grade progressions fo
   \item{plot.types}{A character vector passed to \code{\link{visualizeSGP}} indicating the types of plots to produce. Currently supported plots include \code{\link{bubblePlot}}s, 
   \code{\link{studentGrowthPlot}}s, and \code{\link{growthAchievementPlot}}s. 
   }
+  \item{outputSGP.output.type}{An argument passed to outputSGP indicating the output types to be produced. Defaults to \code{LONG_Data}, \code{LONG_FINAL_YEAR_Data}, \code{WIDE_Data}, 
+  and \code{INSTRUCTOR_Data}.}
   \item{verbose.output}{A Boolean argument indicating whether the function should output verbose diagnostic messages.
   }
 }

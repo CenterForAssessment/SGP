@@ -21,6 +21,7 @@ function(what_sgp_object=NULL,
 	sgp.target.scale.scores=FALSE,
 	overwrite.existing.data=FALSE,
 	sgPlot.demo.report=TRUE,
+	outputSGP.output.type=c("LONG_Data", "LONG_FINAL_YEAR_Data", "WIDE_Data", "INSTRUCTOR_Data"),
 	sgp.config=NULL,
 	parallel.config=NULL,
 	...) {
@@ -143,6 +144,7 @@ function(what_sgp_object=NULL,
 
 		HIGH_NEED_STATUS <- YEAR <- ID <- VALID_CASE <- CONTENT_AREA <- NULL
 		tmp_sgp_object <- prepareSGP(with_sgp_data_LONG, state=state, create.additional.variables=FALSE)
+		if(!is.null(sgp.config)) years <- unique(sapply(lapply(sgp.config, '[[', 'sgp.panel.years'), tail, 1))
 		if(is.null(years)) update.years <- sort(unique(tmp_sgp_object@Data$YEAR)) else update.years <- years
 
 		if (overwrite.existing.data) {
@@ -226,15 +228,15 @@ function(what_sgp_object=NULL,
 							goodness.of.fit.print=FALSE,
 							...)
 							
-				tmp.sgp_object.update <- suppressMessages(combineSGP(tmp.sgp_object.update, state=state))
+				if ("combineSGP" %in% steps) tmp.sgp_object.update <- suppressMessages(combineSGP(tmp.sgp_object.update, state=state))
 
-				### Save SGP object with updated data and full student history
-				### Create Data/Updated_Data directory if it doesn't already exist:
+				### Output of INTERMEDIATE results including full student history
+
 				dir.create(file.path("Data", "Updated_Data"), recursive=TRUE, showWarnings=FALSE)
-
 				tmp.file.name <- paste(gsub(" ", "_", toupper(getStateAbbreviation(state, type="name"))), "SGP_Update", paste(update.years, collapse=","), sep="_")
 				assign(tmp.file.name, tmp.sgp_object.update)
 				save(list=tmp.file.name, file=file.path("Data", "Updated_Data", paste(tmp.file.name, "Rdata", sep=".")))
+				outputSGP(tmp.sgp_object.update, state=state, output.type=union(outputSGP.output.type, "LONG_FINAL_YEAR_Data"), outputSGP.directory=file.path("Data", "Updated_Data"))
 
 				### Merge update with original SGP object
 
@@ -243,9 +245,7 @@ function(what_sgp_object=NULL,
 					what_sgp_object@Data[, HIGH_NEED_STATUS := NULL]
 					what_sgp_object <- suppressMessages(prepareSGP(what_sgp_object, state=state))
 				}
-				tmp_sgp_list <- mergeSGP(what_sgp_object@SGP, tmp.sgp_object.update@SGP)
-
-				what_sgp_object@SGP <- tmp_sgp_list
+				what_sgp_object@SGP <- mergeSGP(what_sgp_object@SGP, tmp.sgp_object.update@SGP)
 
 				if ("combineSGP" %in% steps) {
 					what_sgp_object <- combineSGP(
@@ -262,15 +262,8 @@ function(what_sgp_object=NULL,
 
 				if ("summarizeSGP" %in% steps) what_sgp_object <- summarizeSGP(what_sgp_object, state=state, parallel.config=parallel.config)
 				if ("visualizeSGP" %in% steps) visualizeSGP(what_sgp_object, state=state, sgPlot.demo.report=sgPlot.demo.report)
-				if ("outputSGP" %in% steps) outputSGP(what_sgp_object, state=state)
+				if ("outputSGP" %in% steps) outputSGP(what_sgp_object, state=state, output.type=outputSGP.output.type)
 
-				###  Output just additional update data
-				###  Do this AFTER rbind.fill @Data, mergeSGP, combineSGP, etc.				
-				if (update.years  %in% unique(tmp_sgp_object@Data$YEAR)) {
-					tmp_sgp_object@SGP <- tmp.sgp_object.update@SGP
-					tmp_sgp_object <- suppressMessages(combineSGP(tmp_sgp_object, state=state))
-					outputSGP(tmp_sgp_object, state=state, output.type="LONG_Data", outputSGP.directory=file.path("Data", "Updated_Data"))
-				} else message("NOTE: with_sgp_data_LONG appears to only contain priors.  Only results containing the entire student history have been saved.")
 
 				### Print finish and return SGP object
 
