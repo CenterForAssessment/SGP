@@ -138,9 +138,10 @@ function(sgp_object,
 
 				### Create baseline specific arguments
 				if (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline) {
-
-					if (paste(strsplit(names(sgp.config)[a], "\\.")[[1]][1], ".BASELINE", sep="") %in% names(tmp_sgp_object[["Coefficient_Matrices"]])) {
-						tmp.matrices <- tmp_sgp_object[['Coefficient_Matrices']][[paste(strsplit(names(sgp.config)[a], "\\.")[[1]][1], ".BASELINE", sep="")]]
+					test.label <- sub(unlist(strsplit(tail(sgp.config[a][[1]][['sgp.panel.years']], 1), "[.]"))[1], "BASELINE", 
+						paste(tail(sgp.config[a][[1]][['sgp.content.areas']], 1), tail(sgp.config[a][[1]][['sgp.panel.years']], 1), sep="."))
+					if (test.label %in% names(tmp_sgp_object[["Coefficient_Matrices"]])) {
+						tmp.matrices <- tmp_sgp_object[['Coefficient_Matrices']][[test.label]]
 						tmp.orders <- getsplineMatrices(
 							my.matrices=tmp.matrices, 
 							my.matrix.content_area.progression=par.sgp.config[[b.iter[b]]][['sgp.content.areas']], 
