@@ -57,23 +57,28 @@ function(sgp_object,
 	}
 	
 	if ("YEAR_WITHIN" %in% names(sgp_object@Data)) {
-		###  Assumes that any "canonical progression" will use the LAST_OBSERVATION for all (or at least the most recent) prior(s)
-		tmp_object_1[, LAST_OBSERVATION := 1L]
-		setkeyv(tmp_object_1, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", "LAST_OBSERVATION"))
+		###  Assumes that any "canonical progression" will use the LAST_OBSERVATION for all (or at least the most recent) prior(s) in straight progressions
+		if (target.type %in% c("sgp.projections", "sgp.projections.baseline")) {
+			tmp_object_1[, LAST_OBSERVATION := 1L]; year.within.key <- "LAST_OBSERVATION"
+		}
+		###  lagged progressions would still be based on the FIRST_OBSERVATION score (used to produce SGP)
+		if (target.type %in% c("sgp.projections.lagged", "sgp.projections.lagged.baseline")) {
+			tmp_object_1[, FIRST_OBSERVATION := 1L]; year.within.key <- "FIRST_OBSERVATION"
+		}
+		setkeyv(tmp_object_1, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", year.within.key))
+		setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", year.within.key))
+		tmp_object_1 <- data.table(sgp_object@Data[,c(key(tmp_object_1), "YEAR_WITHIN"), with=FALSE], key=key(tmp_object_1))[tmp_object_1]
+		jExp_Key <- c('ID', 'CONTENT_AREA', 'YEAR', 'VALID_CASE', 'YEAR_WITHIN')
 	} else {
 		setkeyv(tmp_object_1, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
+		jExp_Key <- c('ID', 'CONTENT_AREA', 'YEAR', 'VALID_CASE')
 	}
-
+		
 	if (target.type %in% c("sgp.projections", "sgp.projections.baseline")) {
 		if ("YEAR_WITHIN" %in% names(sgp_object@Data)) {
-			setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", "LAST_OBSERVATION"))
-			tmp_object_1 <- data.table(sgp_object@Data[,c(key(tmp_object_1), "YEAR_WITHIN", "ACHIEVEMENT_LEVEL"), with=FALSE], key=key(tmp_object_1))[tmp_object_1]
-			setkeyv(sgp_object@Data, getKey(sgp_object))
-			jExp_Key <- c('ID', 'CONTENT_AREA', 'YEAR', 'VALID_CASE', 'YEAR_WITHIN')
-		} else 	{
 			tmp_object_1 <- data.table(sgp_object@Data[,c(key(tmp_object_1), "ACHIEVEMENT_LEVEL"), with=FALSE], key=key(tmp_object_1))[tmp_object_1]
-			jExp_Key <- c('ID', 'CONTENT_AREA', 'YEAR', 'VALID_CASE')
-		}
+			setkeyv(sgp_object@Data, getKey(sgp_object))
+		} else 	tmp_object_1 <- data.table(sgp_object@Data[,c(key(tmp_object_1), "ACHIEVEMENT_LEVEL"), with=FALSE], key=key(tmp_object_1))[tmp_object_1]
 	}
 
 	tmp_object_1[, paste(target.level, "STATUS_INITIAL", sep="_") := getTargetInitialStatus(tmp_object_1[[grep("ACHIEVEMENT", names(tmp_object_1), value=TRUE)]], state, target.level), with=FALSE]
