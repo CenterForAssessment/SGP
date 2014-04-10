@@ -645,7 +645,7 @@ function(panel.data,         ## REQUIRED
 			!identical(names(use.my.coefficient.matrices), c("my.year", "my.subject", "my.extra.label"))) {
 				stop("Please specify an appropriate list for argument 'use.my.coefficient.matrices'. See help page for details.")
 		}
-		tmp.path.coefficient.matrices <- .create.path(use.my.coefficient.matrices)
+		tmp.path.coefficient.matrices <- .create.path(use.my.coefficient.matrices, pieces=c("my.subject", "my.year"))
 		if (is.null(panel.data[["Coefficient_Matrices"]]) | is.null(panel.data[["Coefficient_Matrices"]][[tmp.path.coefficient.matrices]])) {
 			stop("Coefficient matrices indicated by argument 'use.my.coefficient.matrices' are not included.")
 		}
