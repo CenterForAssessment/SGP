@@ -16,6 +16,7 @@ abcSGP(sgp_object,
 	content_areas=NULL,
 	grades=NULL,
 	prepareSGP.var.names=NULL,
+	prepareSGP.create.additional.variables=FALSE,
 	sgp.percentiles=TRUE,
 	sgp.projections=TRUE,
 	sgp.projections.lagged=TRUE,
@@ -38,6 +39,7 @@ abcSGP(sgp_object,
 	data_supplementary=NULL,
 	confidence.interval.groups=NULL,
 	plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot"),
+	outputSGP.output.type=c("LONG_Data", "LONG_FINAL_YEAR_Data", "WIDE_Data", "INSTRUCTOR_Data"),
 	verbose.output=FALSE) 
 }
 
@@ -61,8 +63,8 @@ If missing the function will use the data to infer the content area(s) available
   \item{grades}{A vector indicating grades for which to calculate student growth percentiles and/or student growth projections/trajectories. 
 If missing the function will use the data to infer all the grade progressions for student growth percentile and student growth projections/trajectories analyses.
   }
-  \item{prepareSGP.var.names}{list supplied to prepareSGP mapping provided variable names to variable names required as part of the SGP package. See \code{\link{prepareSGP}} for more details. Defaults to NULL.
-  }
+  \item{prepareSGP.var.names}{list supplied to prepareSGP mapping provided variable names to variable names required as part of the SGP package. See \code{\link{prepareSGP}} for more details. Defaults to NULL.}
+  \item{prepareSGP.create.additional.variables}{Boolean variable indicating whether prepareSGP should create addition variables (e.g., ACHIEVEMENT_LEVEL) if they are missing.}
   \item{sgp.percentiles}{Boolean variable indicating whether to calculate student growth percentiles. Defaults to TRUE.
   }
   \item{sgp.projections}{Boolean variable indicating whether to calculate student growth projections. Defaults to TRUE.
@@ -122,6 +124,8 @@ If missing the function will use the data to infer all the grade progressions fo
   \item{plot.types}{A character vector passed to \code{\link{visualizeSGP}} indicating the types of plots to produce. Currently supported plots include \code{\link{bubblePlot}}s, 
   \code{\link{studentGrowthPlot}}s, and \code{\link{growthAchievementPlot}}s. 
   }
+  \item{outputSGP.output.type}{An argument passed to outputSGP indicating the output types to be produced. Defaults to \code{LONG_Data}, \code{LONG_FINAL_YEAR_Data}, \code{WIDE_Data}, 
+  and \code{INSTRUCTOR_Data}.}
   \item{verbose.output}{A Boolean argument indicating whether the function should output verbose diagnostic messages.
   }
 }

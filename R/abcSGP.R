@@ -6,6 +6,7 @@ function(sgp_object,
 	content_areas=NULL,
 	grades=NULL,
 	prepareSGP.var.names=NULL,
+	prepareSGP.create.additional.variables=FALSE,
 	sgp.percentiles=TRUE, 
 	sgp.projections=TRUE,
 	sgp.projections.lagged=TRUE,
@@ -28,6 +29,7 @@ function(sgp_object,
 	data_supplementary=NULL,
 	confidence.interval.groups=NULL,
 	plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot"),
+	outputSGP.output.type=c("LONG_Data", "LONG_FINAL_YEAR_Data", "WIDE_Data", "INSTRUCTOR_Data"),
 	verbose.output=FALSE) {
 
         started.at <- proc.time()
@@ -46,7 +48,12 @@ function(sgp_object,
 	### prepareSGP ###
 
 	if ("prepareSGP" %in% steps) {
-		sgp_object <- prepareSGP(sgp_object, data_supplementary=data_supplementary, state=state, var.names=prepareSGP.var.names)
+		sgp_object <- prepareSGP(
+				sgp_object, 
+				data_supplementary=data_supplementary, 
+				state=state, 
+				var.names=prepareSGP.var.names, 
+				create.additional.variables=prepareSGP.create.additional.variables)
 	        if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
 	}
 
@@ -158,6 +165,7 @@ function(sgp_object,
 		outputSGP(
 			sgp_object=sgp_object,
 			state=state,
+			output.type=outputSGP.output.type,
 			outputSGP_SUMMARY.years=years,
 			outputSGP_SUMMARY.content_areas=content_areas,
 			outputSGP_INDIVIDUAL.years=years,
