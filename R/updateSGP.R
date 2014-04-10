@@ -272,6 +272,13 @@ function(what_sgp_object=NULL,
 					outputSGP(tmp_sgp_object, state=state, output.type="LONG_Data", outputSGP.directory=file.path("Data", "Updated_Data"))
 				} else message("NOTE: with_sgp_data_LONG appears to only contain priors.  Only results containing the entire student history have been saved.")
 
+				### Re-establish FIRST_ & LAST_OBSERVATION variables
+				if ("YEAR_WITHIN" %in% names(what_sgp_object@Data)) {
+					what_sgp_object@Data[, LAST_OBSERVATION := NULL]
+					what_sgp_object@Data[, FIRST_OBSERVATION := NULL]
+					what_sgp_object <- suppressMessages(prepareSGP(what_sgp_object, state=state))
+				}
+
 				### Print finish and return SGP object
 
 				message(paste("Finished updateSGP", date(), "in", timetaken(started.at), "\n"))
