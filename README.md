@@ -49,7 +49,7 @@ The [SGP Package Wiki](https://github.com/CenterForAssessment/SGP/wiki/Home) con
 
 ### Bibliography
 
-Betebenner, D. W., VanIwaarden, A., Domingue, B., and Shang, Y. (2014). SGP: An R Package for the Calculation and Visualization of Student Growth Percentiles & Percentile Growth Trajectories.
+Betebenner, D. W., VanIwaarden, A., Domingue, B., and Shang, Y. (2014). SGP: An R Package for the Calculation and Visualization of Student Growth Percentiles & Percentile Growth Trajectories. 
 
 R Development Core Team (2014). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria.
 3-900051-07-0.
