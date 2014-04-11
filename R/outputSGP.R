@@ -520,6 +520,9 @@ function(sgp_object,
 		setnames(outputSGP.data, which(names(outputSGP.data)==paste("STATE_ENROLLMENT_STATUS", tmp.last.year.short, sep=".")), "STATE_ENROLLMENT_STATUS")
 
 		if ("ELL_STATUS" %in% outputSGP.student.groups) {
+			outputSGP.data$ELL_STATUS <- as.factor(outputSGP.data$ELL_STATUS)
+			levels(outputSGP.data$ELL_STATUS) <- c("Y", "N")
+			outputSGP.data$ELL_STATUS <- as.character(outputSGP.data$ELL_STATUS)
 			setnames(outputSGP.data, which(names(outputSGP.data)=="ELL_STATUS"), "LANGUAGE_PROFICIENCY")
 		} else {
 			outputSGP.data[['LANGUAGE_PROFICIENCY']] <- as.character(NA)
