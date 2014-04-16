@@ -394,11 +394,11 @@ if (Report_Parameters$Content_Area %in% names(SGPstateData[[Report_Parameters$St
 } else {
    low.score <- min(cuts.ny1, 
                     Plotting_Scale_Scores, 
-                    Cutscores$CUTSCORE[Cutscores$GRADE==grade.values$interp.df$GRADE[1] & Cutscores$CUTLEVEL==1], 
+                    Cutscores$CUTSCORES[Cutscores$GRADE==grade.values$interp.df$GRADE[1] & Cutscores$CUTLEVEL==1], 
                     na.rm=TRUE)
    high.score <- max(cuts.ny1, 
                      Plotting_Scale_Scores, 
-                     Cutscores$CUTSCORE[Cutscores$GRADE==tail(grade.values$interp.df$GRADE, 1) & Cutscores$CUTLEVEL==number.achievement.level.regions-1], 
+                     Cutscores$CUTSCORES[Cutscores$GRADE==tail(grade.values$interp.df$GRADE, 1) & Cutscores$CUTLEVEL==number.achievement.level.regions-1], 
                      na.rm=TRUE)
    yscale.range <- extendrange(c(low.score,high.score), f=0.15)
 }
@@ -461,7 +461,7 @@ for (i in seq(number.achievement.level.regions-1)){
     temp <- cbind(temp_id=seq_len(nrow(grade.values$interp.df)), grade.values$interp.df, YEAR=grade.values$years)
     temp$YEAR <- sapply(temp$YEAR, function(x) get.my.cutscore.year(Report_Parameters$State, Report_Parameters$Content_Area, as.character(x)))
     temp <- merge(temp, subset(Cutscores, CUTLEVEL==i), all.x=TRUE)
-    temp <- temp[order(temp$temp_id),]$CUTSCORE
+    temp <- temp[order(temp$temp_id),]$CUTSCORES
     temp[which(is.na(temp))] <- approx(temp, xout=which(is.na(temp)))$y
     assign(paste("level_", i, "_curve", sep=""), splinefun((low.year-1):(high.year+1), temp, method="mono"))
 }
