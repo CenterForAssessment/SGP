@@ -35,6 +35,7 @@ analyzeSGP(sgp_object,
          parallel.config=NULL,
 	 verbose.output=FALSE,
 	 print.other.gp=NULL,
+         sgp.projections.projection.unit="YEAR",
 	 get.cohort.data.info=FALSE,
          ...)
 }
@@ -115,6 +116,9 @@ Example use cases are provided below.
   \item{verbose.output}{A Boolean argument (defaults to FALSE) indicating whether the function should output verbose diagnostic messages.
   }
   \item{print.other.gp}{A Boolean argument (defaults to FALSE) indicating whether the function should output SGP of all orders.
+  }
+  \item{sgp.projections.projection.unit}{A character vector argument indicating whether the studentGrowthProjections function should produce projections relative to future grades or future years.
+  Options are "YEAR" and "GRADE", with default being "YEAR".
   }
   \item{get.cohort.data.info}{A Boolean argument (defaults to FALSE) indicating whether a summary of all cohorts to be submitted to the \code{\link{studentGrowthPercentiles}} and 
   \code{\link{studentGrowthProjections}} functions should be performed prior to analysis.
