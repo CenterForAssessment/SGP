@@ -691,7 +691,7 @@ function(panel.data,         ## REQUIRED
 			}
 		} 
 		if (is.character(calculate.confidence.intervals)) {
-			if (!calculate.confidence.intervals %in% c(objects(SGPstateData), names(panel.data))) {
+			if (!calculate.confidence.intervals %in% c(objects(SGPstateData), names(panel.data[['Panel_Data']]))) {
 				tmp.messages <- c(tmp.messages, "\t\tNOTE: Please provide an appropriate state acronym or variable name in supplied data corresponding to CSEMs. See help page for details. SGPs will be calculated without confidence intervals.\n")
 				csem.tf <- FALSE
 			}
@@ -708,7 +708,7 @@ function(panel.data,         ## REQUIRED
 				}
 				calculate.confidence.intervals <- list(state=calculate.confidence.intervals)
 			}
-			if (calculate.confidence.intervals %in% names(panel.data)) {
+			if (calculate.confidence.intervals %in% names(panel.data[['Panel_Data']])) {
 				calculate.confidence.intervals <- list(variable=calculate.confidence.intervals)
 			}
 		}
@@ -1150,15 +1150,9 @@ function(panel.data,         ## REQUIRED
 				tmp.predictions <- .get.percentile.predictions(tmp.data, tmp.matrix)
 				tmp.quantiles[[j]] <- data.table(ID=tmp.data[[1]], ORDER=tmp.orders[j], SGP=.get.quantiles(tmp.predictions, tmp.data[[dim(tmp.data)[2]]]))
 				if (csem.tf) {
-					if (is.null(calculate.confidence.intervals$simulation.iterations)) calculate.confidence.intervals[['simulation.iterations']] <- 100
-					if (!is.null(calculate.confidence.intervals$variable)) {
-						if (missing(panel.data.vnames)) {
-							tmp.csem.variable <- Panel_Data[Panel_Data[[1]] %in% 
-								ss.data[list(tmp.data[[1]])][[1]], calculate.confidence.intervals$variable] 
-						} else {
-							tmp.csem.variable <- Panel_Data[Panel_Data[,panel.data.vnames[1]] %in% 
-								ss.data[list(tmp.data[[1]])][[1]], calculate.confidence.intervals$variable] 
-						}
+					if (is.null(calculate.confidence.intervals[['simulation.iterations']])) calculate.confidence.intervals[['simulation.iterations']] <- 100
+					if (!is.null(calculate.confidence.intervals[['variable']])) {
+						tmp.csem.variable <- Panel_Data[Panel_Data[[1]] %in% ss.data[list(tmp.data[[1]])][[1]], calculate.confidence.intervals[['variable']]] 
 					} else {
 						tmp.csem.variable <- NULL
 					}
