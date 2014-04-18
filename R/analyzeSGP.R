@@ -61,8 +61,11 @@ function(sgp_object,
 		} else {
 			calculate.confidence.intervals <- state
 		}
-	} else {
+	}
+	if (simulate.sgps==FALSE) {
 		calculate.confidence.intervals <- NULL
+	} else {
+		calculate.confidence.intervals <- simulate.sgps
 	}
 
 	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["sgp.config.drop.nonsequential.grade.progression.variables"]])) {
