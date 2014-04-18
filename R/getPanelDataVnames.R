@@ -1,8 +1,7 @@
 `getPanelDataVnames` <- 
 function(sgp.type,
 	sgp.iter,
-	sgp.data.names,
-	csem.variable=NULL) {
+	sgp.data.names) {
 
 	if (sgp.type=="sgp.percentiles") {
 		if ("YEAR_WITHIN" %in% sgp.data.names) {
@@ -11,12 +10,12 @@ function(sgp.type,
 				tail(sgp.iter[["sgp.panel.years.within"]], length(sgp.iter[["sgp.grade.sequences"]])), sep="."), 
 				paste("SCALE_SCORE", tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]])),
 				tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]])), 
-				tail(sgp.iter[["sgp.panel.years.within"]], length(sgp.iter[["sgp.grade.sequences"]])), sep="."), csem.variable))
+				tail(sgp.iter[["sgp.panel.years.within"]], length(sgp.iter[["sgp.grade.sequences"]])), sep=".")))
 		} else {
 			return(c("ID", paste("GRADE", tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]])), 
 				tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]])), sep="."), 
 				paste("SCALE_SCORE", tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]])),
-				tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]])), sep="."), csem.variable))
+				tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]])), sep=".")))
 		}
 	}
 
