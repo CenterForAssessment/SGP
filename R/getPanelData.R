@@ -2,7 +2,6 @@
 function(sgp.data,
 	sgp.type,
 	sgp.iter,
-	csem.variable=NULL,
 	sgp.targets=NULL) {
 
 	YEAR <- CONTENT_AREA <- V3 <- V5 <- ID <- GRADE <- SCALE_SCORE <- YEAR_WITHIN <- tmp.timevar <- FIRST_OBSERVATION <- LAST_OBSERVATION <- ACHIEVEMENT_LEVEL <- NULL
@@ -32,7 +31,7 @@ function(sgp.data,
 				rbindlist(tmp.lookup.list),
 					idvar="ID", 
 					timevar="tmp.timevar", 
-					drop=names(sgp.data)[!names(tmp.lookup.list[[1]]) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR_WITHIN", "tmp.timevar", csem.variable)], 
+					drop=names(sgp.data)[!names(tmp.lookup.list[[1]]) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR_WITHIN", "tmp.timevar")], 
 					direction="wide")))
 		} else {
 			tmp.lookup <- SJ("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]])),
@@ -45,7 +44,7 @@ function(sgp.data,
 				sgp.data[tmp.lookup, nomatch=0][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
 					idvar="ID",
 					timevar="tmp.timevar",
-					drop=names(sgp.data)[!names(sgp.data) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", csem.variable)],
+					drop=names(sgp.data)[!names(sgp.data) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar")],
 					direction="wide")))
 		}
 	} ### END if (sgp.type=="sgp.percentiles")
