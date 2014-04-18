@@ -1,4 +1,4 @@
-![SGP_Logo](https://raw.githubusercontent.com/CenterForAssessment/SGP_Resources/master/misc/SGP4.png)
+![SGP: Student Growth Percentiles](https://raw.githubusercontent.com/CenterForAssessment/SGP_Resources/master/misc/SGP_Futura.png)
 
 ______________________________________________________________________________________________________
 
