@@ -12,7 +12,7 @@ The **SGP** Package (Betebenner, VanIwaarden, Domingue, Shang, 2014) is an open 
 
 ### Team Members
 
-The **SGP** Package is crafted with :hearts: by: 
+The **SGP** Package is crafted with :heart: by: 
 
 * [Damian Betebenner](https://github.com/dbetebenner)
 * [Adam VanIwaarden](https://github.com/adamvi)
