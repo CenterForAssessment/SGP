@@ -23,6 +23,7 @@ function(what_sgp_object=NULL,
 	sgPlot.demo.report=TRUE,
 	outputSGP.output.type=c("LONG_Data", "LONG_FINAL_YEAR_Data", "WIDE_Data", "INSTRUCTOR_Data"),
 	sgp.config=NULL,
+	goodness.of.fit.print=TRUE,
 	parallel.config=NULL,
 	...) {
 
@@ -125,6 +126,7 @@ function(what_sgp_object=NULL,
 					calculate.simex.baseline=calculate.simex.baseline,
 					simulate.sgps = simulate.sgps,
 					sgp.config=sgp.config,
+					goodness.of.fit.print=goodness.of.fit.print,
 					parallel.config=parallel.config,
 					...
 					)
@@ -184,6 +186,7 @@ function(what_sgp_object=NULL,
 						simulate.sgps = simulate.sgps,
 						sgp.target.scale.scores=sgp.target.scale.scores,
 						sgp.config=sgp.config,
+						goodness.of.fit.print=goodness.of.fit.print,
 						parallel.config=parallel.config,
 						...)
 
@@ -309,6 +312,7 @@ function(what_sgp_object=NULL,
 							simulate.sgps = simulate.sgps,
 							sgp.target.scale.scores=sgp.target.scale.scores,
 							sgp.config=sgp.config,
+							goodness.of.fit.print=goodness.of.fit.print,
 							parallel.config=parallel.config,
 							...)
 
