@@ -238,7 +238,7 @@ function(sgp_object,
 
 
 	get.simulate.sgps.arg <- function(calculate.confidence.intervals, state, sgp.iter) {
-		if (is.null(calculate.confidence.intervals) | calculate.confidence.intervals==state) {
+		if (is.null(calculate.confidence.intervals) || calculate.confidence.intervals==state) {
 			return(calculate.confidence.intervals)
 		} else {
 			return(paste(calculate.confidence.intervals, tail(sgp.iter[['sgp.panel.years']], 1), tail(sgp.iter[['sgp.content.areas']], 1), sep="."))
