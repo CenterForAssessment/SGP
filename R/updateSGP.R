@@ -127,6 +127,7 @@ function(what_sgp_object=NULL,
 					simulate.sgps = simulate.sgps,
 					sgp.config=sgp.config,
 					goodness.of.fit.print=goodness.of.fit.print,
+					outputSGP.output.type=outputSGP.output.type,
 					parallel.config=parallel.config,
 					...
 					)
@@ -187,6 +188,7 @@ function(what_sgp_object=NULL,
 						sgp.target.scale.scores=sgp.target.scale.scores,
 						sgp.config=sgp.config,
 						goodness.of.fit.print=goodness.of.fit.print,
+						outputSGP.output.type=outputSGP.output.type,
 						parallel.config=parallel.config,
 						...)
 
@@ -313,6 +315,7 @@ function(what_sgp_object=NULL,
 							sgp.target.scale.scores=sgp.target.scale.scores,
 							sgp.config=sgp.config,
 							goodness.of.fit.print=goodness.of.fit.print,
+							outputSGP.output.type=outputSGP.output.type,
 							parallel.config=parallel.config,
 							...)
 

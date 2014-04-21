@@ -249,13 +249,13 @@ function(data,
 
 	## Create ACHIEVEMENT_LEVEL is it doesn't exist
 	
-	if (!"ACHIEVEMENT_LEVEL" %in% names(sgp_object@Data) & !is.null(SGPstateData[[state]][["Achievement"]][["Cutscores"]])) {
-		sgp_object@Data <- getAchievementLevel(sgp_object@Data, state=state)
-		setkeyv(sgp_object@Data, getKey(sgp_object))
-		message(paste("\tNOTE: Added variable ACHIEVEMENT_LEVEL to @Data using", state, "cutscores embedded in SGPstateData."))
-	}
-
 	if (create.additional.variables) {
+
+		if (!"ACHIEVEMENT_LEVEL" %in% names(sgp_object@Data) & !is.null(SGPstateData[[state]][["Achievement"]][["Cutscores"]])) {
+			sgp_object@Data <- getAchievementLevel(sgp_object@Data, state=state)
+			setkeyv(sgp_object@Data, getKey(sgp_object))
+			message(paste("\tNOTE: Added variable ACHIEVEMENT_LEVEL to @Data using", state, "cutscores embedded in SGPstateData."))
+		}
 
 		### HIGH_NEED_STATUS
 
