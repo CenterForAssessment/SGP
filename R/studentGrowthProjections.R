@@ -97,8 +97,16 @@ function(panel.data,	## REQUIRED
 		return(tmp.data)
 	}
 
-	get.my.cutscore.year.sgprojection <- function(Cutscores, content_area, year) {
-		tmp.cutscore.years <- sapply(strsplit(names(Cutscores)[grep(content_area, names(Cutscores))], "[.]"), function(x) x[2])
+	get.my.cutscore.state.year.sgprojection <- function(Cutscores, content_area, year, my.state) {
+		if(!is.na(my.state)) {
+			tmp.cutscore.state <- sapply(strsplit(names(Cutscores)[grep(content_area, names(Cutscores))], "[.]"), function(x) x[2])
+			if (my.state %in% tmp.cutscore.state) {
+				content_area <- paste(content_area, my.state, sep=".")
+				year.split.index <- 3
+			} else year.split.index <- 2
+		} else year.split.index <- 2
+			
+		tmp.cutscore.years <- sapply(strsplit(names(Cutscores)[grep(content_area, names(Cutscores))], "[.]"), function(x) x[year.split.index])
 		if (any(!is.na(tmp.cutscore.years))) {
 			if (year %in% tmp.cutscore.years) {
 				return(paste(content_area, year, sep="."))
@@ -263,7 +271,7 @@ function(panel.data,	## REQUIRED
 					key="ID")[list(unique(percentile.trajectories[['ID']]))][,percentile.trajectory.values, with=FALSE]))))
 				tmp.traj <- percentile.trajectories[tmp.indices, 1:(2+tmp.num.years.forward-1), with=FALSE][,ID:=rep(unique(percentile.trajectories$ID), each=length(percentile.trajectory.values))]
 				if (tmp.num.years.forward==1) {
-					my.cutscore.year <- get.my.cutscore.year.sgprojection(Cutscores, sgp.labels$my.subject, yearIncrement(sgp.labels$my.year, 1, lag.increment))
+					my.cutscore.year <- get.my.cutscore.state.year.sgprojection(Cutscores, sgp.labels$my.subject, yearIncrement(sgp.labels$my.year, 1, lag.increment), my.state=NA)
 					tmp.cutscores.by.grade <- tmp.cutscores[[my.cutscore.year]][[paste("GRADE_", grade.projection.sequence[1], sep="")]]
 					tmp.target.name <- tail(names(tmp.traj), 1)
 					if (length(percentile.trajectory.values)==1) {
@@ -296,28 +304,40 @@ function(panel.data,	## REQUIRED
 		}
 		if (cuts.tf) {
 			setkey(percentile.trajectories, ID)
-			k <- 1
-			cuts.arg <- names.arg <- character()
+			tmp.cuts.list <- list()
 
-			for (i in seq_along(grade.projection.sequence)) {
-				my.cutscore.year <- get.my.cutscore.year.sgprojection(Cutscores, content_area.projection.sequence[i], yearIncrement(sgp.labels[['my.year']], i, lag.increment))
-				tmp.cutscores.by.grade <- tmp.cutscores[[my.cutscore.year]][[paste("GRADE_", grade.projection.sequence[i], sep="")]]
-
-				if (!is.null(tmp.cutscores.by.grade)) {
-					for (j in seq_along(tmp.cutscores.by.grade)) {
-						cuts.arg[k] <- paste(".sgp.targets(SS", ".", grade.projection.sequence[i], ".", content_area.projection.sequence[i], ", ", tmp.cutscores.by.grade[j], ", ", convert.0and100, ")", sep="")
-						if (projection.unit=="GRADE") {
-							names.arg[k] <- paste("LEVEL_", j, "_SGP_TARGET_GRADE_", grade.projection.sequence[i], lag.increment.label, sep="")
-						} else {
-							names.arg[k] <- paste("LEVEL_", j, "_SGP_TARGET_YEAR_", i, lag.increment.label, sep="")
+			if ("STATE" %in% names(panel.data[["Panel_Data"]])) {
+				states <- unique(panel.data[["Panel_Data"]]$STATE); state.arg <- "STATE == states[n.state]"
+				percentile.trajectories <- data.table(panel.data[["Panel_Data"]][,c("ID", "STATE")], key="ID")[percentile.trajectories]
+			} else {
+				states <- NA; state.arg <- "is.na(STATE)"
+				percentile.trajectories[, STATE := NA]
+			}
+			for (n.state in seq(states)) {
+				k <- 1
+				cuts.arg <- names.arg <- character()
+				for (i in seq_along(grade.projection.sequence)) {
+ 					my.cutscore.state.year <- get.my.cutscore.state.year.sgprojection(Cutscores, content_area.projection.sequence[i], yearIncrement(sgp.labels[['my.year']], i, lag.increment), my.state=states[n.state])
+ 					tmp.cutscores.by.grade <- tmp.cutscores[[my.cutscore.state.year]][[paste("GRADE_", grade.projection.sequence[i], sep="")]]
+ 	
+ 					if (!is.null(tmp.cutscores.by.grade)) {
+ 						for (j in seq_along(tmp.cutscores.by.grade)) {
+ 							cuts.arg[k] <- paste(".sgp.targets(SS", ".", grade.projection.sequence[i], ".", content_area.projection.sequence[i], ", ", tmp.cutscores.by.grade[j], ", ", convert.0and100, ")", sep="")
+							if (projection.unit=="GRADE") {
+								names.arg[k] <- paste("LEVEL_", j, "_SGP_TARGET_GRADE_", grade.projection.sequence[i], lag.increment.label, sep="")
+							} else {
+								names.arg[k] <- paste("LEVEL_", j, "_SGP_TARGET_YEAR_", i, lag.increment.label, sep="")
+							}
+							k <- k+1
 						}
-						k <- k+1
 					}
 				}
-			}
-			arg <- paste("list(", paste(cuts.arg, collapse=", "), ")", sep="")
-			tmp.cuts <- eval(parse(text=paste("percentile.trajectories[,", arg, ", by=ID]", sep="")))
-			setnames(tmp.cuts, c("ID", names.arg))
+				arg <- paste("list(", paste(cuts.arg, collapse=", "), ")", sep="")
+				tmp.cuts.list[[n.state]] <- eval(parse(text=paste("percentile.trajectories[which(", state.arg, "),", arg, ", by=ID]", sep="")))
+				setnames(tmp.cuts.list[[n.state]], c("ID", names.arg))
+			} # End loop over states (if they exist)
+			tmp.cuts <- data.table(rbind.fill(tmp.cuts.list))
+			setcolorder(tmp.cuts, names(tmp.cuts.list[[which.max(sapply(tmp.cuts.list, ncol))]])) # Reorder based on state with the most cutscores/proficiency levels
 			setkey(tmp.cuts, ID)
 			if (!trajectories.tf) {
 				return(tmp.cuts)
