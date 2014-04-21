@@ -12,14 +12,14 @@ The **SGP** Package (Betebenner, VanIwaarden, Domingue, Shang, 2014) is an open 
 
 ### Team Members
 
-The **SGP** Package is crafted with :revolving_hearts: by: 
+The **SGP** Package is crafted with :hearts: by: 
 
 * [Damian Betebenner](https://github.com/dbetebenner)
 * [Adam VanIwaarden](https://github.com/adamvi)
 * [Ben Domingue](https://github.com/ben-domingue)
 * [Yi Shang](https://github.com/shangyi)
 
-We love feedback and are happy to answer questions. Just make sure to show us some :heart:.
+We love feedback and are happy to answer questions.
 
 
 ### Install the latest stable release from [CRAN](http://cran.r-project.org/package=SGP)
