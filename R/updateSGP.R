@@ -236,7 +236,8 @@ function(what_sgp_object=NULL,
 				tmp.file.name <- paste(gsub(" ", "_", toupper(getStateAbbreviation(state, type="name"))), "SGP_Update", paste(update.years, collapse=","), sep="_")
 				assign(tmp.file.name, tmp.sgp_object.update)
 				save(list=tmp.file.name, file=file.path("Data", "Updated_Data", paste(tmp.file.name, "Rdata", sep=".")))
-				outputSGP(tmp.sgp_object.update, state=state, output.type=union(outputSGP.output.type, "LONG_FINAL_YEAR_Data"), outputSGP.directory=file.path("Data", "Updated_Data"))
+				outputSGP(tmp.sgp_object.update, state=state, output.type=union(outputSGP.output.type, intersect(outputSGP.output.type, "LONG_FINAL_YEAR_Data")), 
+					outputSGP.directory=file.path("Data", "Updated_Data"))
 
 				### Merge update with original SGP object
 
