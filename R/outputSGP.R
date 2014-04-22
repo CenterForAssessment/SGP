@@ -696,13 +696,13 @@ function(sgp_object,
 		started.at <- proc.time()
 		message(paste("\tStarted RLI in outputSGP", date()))
 
-		dir.create(file.path(outputSGP.directory, "RLI"), recursive=TRUE, showWarnings=FALSE)
-
 		for (names.iter in grep("BASELINE", names(sgp_object@SGP[['SGPercentiles']]), value=TRUE)) {
+			dir.create(file.path(outputSGP.directory, "RLI", "SGPercentiles"), recursive=TRUE, showWarnings=FALSE)
 			write.table(sgp_object@SGP[['SGPercentiles']][[names.iter]], 
 				file=file.path(outputSGP.directory, "RLI", "SGPercentiles", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
 		}
 		for (names.iter in grep("BASELINE", names(sgp_object@SGP[['SGProjections']]), value=TRUE)) {
+			dir.create(file.path(outputSGP.directory, "RLI", "SGProjections"), recursive=TRUE, showWarnings=FALSE)
 			write.table(sgp_object@SGP[['SGProjections']][[names.iter]], 
 				file=file.path(outputSGP.directory, "RLI", "SGProjections", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
 		}
