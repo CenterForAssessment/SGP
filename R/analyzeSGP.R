@@ -153,7 +153,7 @@ function(sgp_object,
 	if (is.null(print.other.gp)) print.other.gp <- FALSE
 	
 	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][['sgp.projections.max.forward.progression.years']])) {
-		if (!SGPstateData[[state]][["SGP_Configuration"]][['sgp.projections.max.forward.progression.years']]) {
+		if (SGPstateData[[state]][["SGP_Configuration"]][['sgp.projections.max.forward.progression.years']]==FALSE) {
 			sgp.projections.max.forward.progression.years <- NULL
 		} else {
 			sgp.projections.max.forward.progression.years <- SGPstateData[[state]][["SGP_Configuration"]][['sgp.projections.max.forward.progression.years']]
@@ -266,7 +266,7 @@ function(sgp_object,
 	##   Baseline SGP - compute matrices first if they are not in SGPstateData or merge them into sgp_object if in SGPstateData
 	#######################################################################################################################
 
-	if (sgp.percentiles.baseline) {
+	if (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline) {
 
 		if (is.null(SGPstateData[[state]][["Baseline_splineMatrix"]])) {
 			if (is.null(sgp.baseline.config)) {
