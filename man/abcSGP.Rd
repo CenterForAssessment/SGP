@@ -29,6 +29,7 @@ abcSGP(sgp_object,
 	simulate.sgps=TRUE,
 	calculate.simex=NULL,
 	calculate.simex.baseline=NULL,
+	goodness.of.fit.print=TRUE,
 	parallel.config=NULL,
 	save.intermediate.results=FALSE,
 	save.old.summaries=FALSE,
@@ -90,6 +91,8 @@ If missing the function will use the data to infer all the grade progressions fo
   \item{calculate.simex}{A character state acronym or list including state/csem variable, simulation.iterations, lambda and extrapolation method. Default to NULL, no simex calculations done.  Alternatively, setting the argument to TRUE sets the list up with state=state, lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear" and save.matrices=TRUE.
   }
   \item{calculate.simex.baseline}{A character state acronym or list including state/csem variable, simulation.iterations, lambda and extrapolation method. Defaults to NULL, no simex calculations performed.  Alternatively, setting the argument to TRUE sets the list up with state=state, lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear", save.matrices=TRUE and simex.use.my.coefficient.matrices = TRUE.  This argument is passed to \code{\link{analyzeSGP}}.
+  }
+  \item{goodness.of.fit.print}{Boolean variable passed to \code{\link{analyzeSGP}} indicating whether to print goodness of fit results.
   }
  \item{parallel.config}{A named list with, at a minimum, two elements indicating 1) the BACKEND package to be used for parallel computation and 2) the WORKERS list to specify the number of processors to be used in each major analysis.  The BACKEND element can be set = to \code{FOREACH} or \code{PARALLEL}.  Please consult the manuals and vignettes for information of these packages!  The \code{\link{analyzeSGP}} help page contains more thorough explanation and examples of the \code{parallel.config} setup. 
  

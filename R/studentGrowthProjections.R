@@ -253,7 +253,7 @@ function(panel.data,	## REQUIRED
 	}
 
 	.get.trajectories.and.cuts <- function(percentile.trajectories, trajectories.tf, cuts.tf, projection.unit=projection.unit) {
-		CUT <- NULL
+		CUT <- STATE <- NULL
 		if (trajectories.tf) {
 			if (is.numeric(percentile.trajectory.values)) {
 				tmp.name.prefix <- "P"
@@ -307,7 +307,7 @@ function(panel.data,	## REQUIRED
 			tmp.cuts.list <- list()
 
 			if ("STATE" %in% names(panel.data[["Panel_Data"]])) {
-				states <- unique(panel.data[["Panel_Data"]]$STATE); state.arg <- "STATE == states[n.state]"
+				states <- unique(panel.data[["Panel_Data"]][['STATE']]); state.arg <- "STATE == states[n.state]"
 				percentile.trajectories <- data.table(panel.data[["Panel_Data"]][,c("ID", "STATE")], key="ID")[percentile.trajectories]
 			} else {
 				states <- NA; state.arg <- "is.na(STATE)"
