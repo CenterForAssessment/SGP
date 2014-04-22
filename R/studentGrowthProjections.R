@@ -18,6 +18,7 @@ function(panel.data,	## REQUIRED
         calculate.sgps=TRUE,
 	convert.0and100=TRUE,
 	projection.unit="YEAR",
+	projection.unit.label=NULL,
 	percentile.trajectory.values=NULL,
 	isotonize=TRUE,
 	lag.increment=0,
@@ -519,6 +520,10 @@ function(panel.data,	## REQUIRED
 
 	if (is.null(projcuts.digits)) {
 		projcuts.digits <- 0
+	}
+
+	if (is.null(projection.unit.label)) {
+		projection.unit.label <- projection.unit
 	}
 
 
