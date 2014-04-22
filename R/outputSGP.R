@@ -700,11 +700,11 @@ function(sgp_object,
 
 		for (names.iter in grep("BASELINE", names(sgp_object@SGP[['SGPercentiles']]), value=TRUE)) {
 			write.table(sgp_object@SGP[['SGPercentiles']][[names.iter]], 
-				file=file.path(outputSGP.directory, "RLI", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
+				file=file.path(outputSGP.directory, "RLI", "SGPercentiles", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
 		}
 		for (names.iter in grep("BASELINE", names(sgp_object@SGP[['SGProjections']]), value=TRUE)) {
 			write.table(sgp_object@SGP[['SGProjections']][[names.iter]], 
-				file=file.path(outputSGP.directory, "RLI", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
+				file=file.path(outputSGP.directory, "RLI", "SGProjections", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
 		}
 
 		message(paste("\tFinished RLI in outputSGP", date(), "in", timetaken(started.at), "\n"))
