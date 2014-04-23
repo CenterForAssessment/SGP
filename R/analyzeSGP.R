@@ -166,6 +166,8 @@ function(sgp_object,
 
 	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][['sgp.projections.projection.unit.label']])) {
 		sgp.projections.projection.unit.label <- SGPstateData[[state]][["SGP_Configuration"]][['sgp.projections.projection.unit.label']]
+	} else {
+		sgp.projections.projection.unit.label <- sgp.projections.projection.unit
 	}
 
 	### 
