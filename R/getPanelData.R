@@ -84,9 +84,10 @@ function(sgp.data,
 					tmp.data[, CONTENT_AREA := tail(sgp.iter[['sgp.projection.content.areas']], 1)]
 					tmp.data[, VALID_CASE := "VALID_CASE"]
 					setkeyv(tmp.data, getKey(sgp.data))
-					setkeyv(sgp.data, getKey(sgp.data))
+					tmp.key <- key(sgp.data); setkeyv(sgp.data, getKey(sgp.data))
 					tmp.data <- sgp.data[, c(getKey(sgp.data), "STATE"), with=FALSE][tmp.data]
 					tmp.data[, c("YEAR", "CONTENT_AREA", "VALID_CASE") := NULL]
+					setkeyv(sgp.data, tmp.key)
 				}
 				return(as.data.frame(tmp.data))
 			} else {
@@ -102,9 +103,10 @@ function(sgp.data,
 					tmp.data[, CONTENT_AREA := tail(sgp.iter[['sgp.projection.content.areas']], 1)]
 					tmp.data[, VALID_CASE := "VALID_CASE"]
 					setkeyv(tmp.data, getKey(sgp.data))
-					setkeyv(sgp.data, getKey(sgp.data))
+					tmp.key <- key(sgp.data); setkeyv(sgp.data, getKey(sgp.data))
 					tmp.data <- sgp.data[, c(getKey(sgp.data), "STATE"), with=FALSE][tmp.data]
 					tmp.data[, c("YEAR", "CONTENT_AREA", "VALID_CASE") := NULL]
+					setkeyv(sgp.data, tmp.key)
 				}
 				return(as.data.frame(tmp.data))
 			}
@@ -126,9 +128,10 @@ function(sgp.data,
 				tmp.data[, CONTENT_AREA := tail(sgp.iter[['sgp.projection.content.areas']], 1)]
 				tmp.data[, VALID_CASE := "VALID_CASE"]
 				setkeyv(tmp.data, getKey(sgp.data))
-				setkeyv(sgp.data, getKey(sgp.data))
+				tmp.key <- key(sgp.data); setkeyv(sgp.data, getKey(sgp.data))
 				tmp.data <- sgp.data[, c(getKey(sgp.data), "STATE"), with=FALSE][tmp.data]
 				tmp.data[, c("YEAR", "CONTENT_AREA", "VALID_CASE") := NULL]
+				setkeyv(sgp.data, tmp.key)
 			}
 			return(as.data.frame(tmp.data))
 		} else {
@@ -144,9 +147,10 @@ function(sgp.data,
 				tmp.data[, CONTENT_AREA := tail(sgp.iter[['sgp.projection.content.areas']], 1)]
 				tmp.data[, VALID_CASE := "VALID_CASE"]
 				setkeyv(tmp.data, getKey(sgp.data))
-				setkeyv(sgp.data, getKey(sgp.data))
+				tmp.key <- key(sgp.data); setkeyv(sgp.data, getKey(sgp.data))
 				tmp.data <- sgp.data[, c(getKey(sgp.data), "STATE"), with=FALSE][tmp.data]
 				tmp.data[, c("YEAR", "CONTENT_AREA", "VALID_CASE") := NULL]
+				setkeyv(sgp.data, tmp.key)
 			}
 			return(as.data.frame(tmp.data))
 		}
@@ -186,9 +190,10 @@ function(sgp.data,
 					tmp.data[, CONTENT_AREA := tail(sgp.iter[['sgp.projection.content.areas']], 1)]
 					tmp.data[, VALID_CASE := "VALID_CASE"]
 					setkeyv(tmp.data, getKey(sgp.data))
-					setkeyv(sgp.data, getKey(sgp.data))
+					tmp.key <- key(sgp.data); setkeyv(sgp.data, getKey(sgp.data))
 					tmp.data <- sgp.data[, c(getKey(sgp.data), "STATE"), with=FALSE][tmp.data]
 					tmp.data[, c("YEAR", "CONTENT_AREA", "VALID_CASE") := NULL]
+					setkeyv(sgp.data, tmp.key)
 				}
 				return(as.data.frame(tmp.data))
 			} else {
@@ -205,9 +210,10 @@ function(sgp.data,
 					tmp.data[, CONTENT_AREA := tail(sgp.iter[['sgp.projection.content.areas']], 1)]
 					tmp.data[, VALID_CASE := "VALID_CASE"]
 					setkeyv(tmp.data, getKey(sgp.data))
-					setkeyv(sgp.data, getKey(sgp.data))
+					tmp.key <- key(sgp.data); setkeyv(sgp.data, getKey(sgp.data))
 					tmp.data <- sgp.data[, c(getKey(sgp.data), "STATE"), with=FALSE][tmp.data]
 					tmp.data[, c("YEAR", "CONTENT_AREA", "VALID_CASE") := NULL]
+					setkeyv(sgp.data, tmp.key)
 				}
 				return(as.data.frame(tmp.data))
 			}
@@ -235,9 +241,10 @@ function(sgp.data,
 					tmp.data[, CONTENT_AREA := tail(sgp.iter[['sgp.projection.content.areas']], 1)]
 					tmp.data[, VALID_CASE := "VALID_CASE"]
 					setkeyv(tmp.data, getKey(sgp.data))
-					setkeyv(sgp.data, getKey(sgp.data))
+					tmp.key <- key(sgp.data); setkeyv(sgp.data, getKey(sgp.data))
 					tmp.data <- sgp.data[, c(getKey(sgp.data), "STATE"), with=FALSE][tmp.data]
 					tmp.data[, c("YEAR", "CONTENT_AREA", "VALID_CASE") := NULL]
+					setkeyv(sgp.data, tmp.key)
 				}
 				return(as.data.frame(tmp.data))
 			} else {
@@ -264,9 +271,10 @@ function(sgp.data,
 					tmp.data[, CONTENT_AREA := tail(sgp.iter[['sgp.projection.content.areas']], 1)]
 					tmp.data[, VALID_CASE := "VALID_CASE"]
 					setkeyv(tmp.data, getKey(sgp.data))
-					setkeyv(sgp.data, getKey(sgp.data))
+					tmp.key <- key(sgp.data); setkeyv(sgp.data, getKey(sgp.data))
 					tmp.data <- sgp.data[, c(getKey(sgp.data), "STATE"), with=FALSE][tmp.data]
 					tmp.data[, c("YEAR", "CONTENT_AREA", "VALID_CASE") := NULL]
+					setkeyv(sgp.data, tmp.key)
 				}
 				return(as.data.frame(tmp.data))
 			}
