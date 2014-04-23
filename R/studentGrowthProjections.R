@@ -18,6 +18,7 @@ function(panel.data,	## REQUIRED
         calculate.sgps=TRUE,
 	convert.0and100=TRUE,
 	projection.unit="YEAR",
+	projection.unit.label=NULL,
 	percentile.trajectory.values=NULL,
 	isotonize=TRUE,
 	lag.increment=0,
@@ -294,9 +295,9 @@ function(panel.data,	## REQUIRED
 
 			if (length(grep("CURRENT", percentile.trajectory.values))!=0) percentile.trajectory.values <- unlist(strsplit(percentile.trajectory.values, "_CURRENT"))
 			if (projection.unit=="GRADE") {
-				tmp.vec <- expand.grid(tmp.name.prefix, percentile.trajectory.values, "_PROJ_GRADE_", grade.projection.sequence, lag.increment.label)[1:(length(percentile.trajectory.values)*tmp.num.years.forward),]
+				tmp.vec <- expand.grid(tmp.name.prefix, percentile.trajectory.values, paste("_PROJ_", projection.unit.label, "_", sep=""), grade.projection.sequence, lag.increment.label)[1:(length(percentile.trajectory.values)*tmp.num.years.forward),]
 			} else {
-				tmp.vec <- expand.grid(tmp.name.prefix, percentile.trajectory.values, "_PROJ_YEAR_", seq_along(grade.projection.sequence), lag.increment.label)[1:(length(percentile.trajectory.values)*tmp.num.years.forward),]
+				tmp.vec <- expand.grid(tmp.name.prefix, percentile.trajectory.values, paste("_PROJ_", projection.unit.label, "_", sep=""), seq_along(grade.projection.sequence), lag.increment.label)[1:(length(percentile.trajectory.values)*tmp.num.years.forward),]
 			}
 			tmp.vec <- tmp.vec[order(tmp.vec$Var2),]
 			setnames(trajectories, c("ID", do.call(paste, c(tmp.vec, sep=""))))
@@ -324,9 +325,9 @@ function(panel.data,	## REQUIRED
  						for (j in seq_along(tmp.cutscores.by.grade)) {
  							cuts.arg[k] <- paste(".sgp.targets(SS", ".", grade.projection.sequence[i], ".", content_area.projection.sequence[i], ", ", tmp.cutscores.by.grade[j], ", ", convert.0and100, ")", sep="")
 							if (projection.unit=="GRADE") {
-								names.arg[k] <- paste("LEVEL_", j, "_SGP_TARGET_GRADE_", grade.projection.sequence[i], lag.increment.label, sep="")
+								names.arg[k] <- paste("LEVEL_", j, "_SGP_TARGET_", projection.unit.label, "_", grade.projection.sequence[i], lag.increment.label, sep="")
 							} else {
-								names.arg[k] <- paste("LEVEL_", j, "_SGP_TARGET_YEAR_", i, lag.increment.label, sep="")
+								names.arg[k] <- paste("LEVEL_", j, "_SGP_TARGET_", projection.unit.label, "_", i, lag.increment.label, sep="")
 							}
 							k <- k+1
 						}
@@ -519,6 +520,10 @@ function(panel.data,	## REQUIRED
 
 	if (is.null(projcuts.digits)) {
 		projcuts.digits <- 0
+	}
+
+	if (is.null(projection.unit.label)) {
+		projection.unit.label <- projection.unit
 	}
 
 

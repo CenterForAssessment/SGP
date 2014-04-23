@@ -24,7 +24,8 @@ studentGrowthProjections(panel.data,
                          performance.level.cutscores, 
                          calculate.sgps=TRUE,
                          convert.0and100=TRUE,    
-                         projection.unit="YEAR",       
+                         projection.unit="YEAR",
+                         projection.unit.label=NULL,
                          percentile.trajectory.values=NULL, 
                          isotonize=TRUE,
                          lag.increment=0,
@@ -108,6 +109,9 @@ studentGrowthProjections(panel.data,
   }
   \item{projection.unit}{Argument specifying the units in which the projections/trajectories and cuts are reported. Either \code{"GRADE"}, the default, or 
   \code{"YEAR"}.
+  }       
+  \item{projection.unit.label}{Argument specifying the label associated with the units in which the projections/trajectories and cuts are reported. Defaults to NULL utilizing the value associated
+	with the argument supplied to \code{projection.unit}. 
   }       
   \item{percentile.trajectory.values}{An integer argument with values ranging from 1 to 100 that returns a vector of percentile trajectory cuts (default is NULL, 
   no percentile trajectory values returned).  The returned values are the lower bound for the interval associated with the percentile(s) requested. For example, by specifying
