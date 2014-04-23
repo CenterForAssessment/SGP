@@ -308,8 +308,12 @@ function(panel.data,	## REQUIRED
 			tmp.cuts.list <- list()
 
 			if ("STATE" %in% names(panel.data[["Panel_Data"]])) {
-				states <- unique(panel.data[["Panel_Data"]][['STATE']]); state.arg <- "STATE == states[n.state]"
-				percentile.trajectories <- data.table(panel.data[["Panel_Data"]][,c("ID", "STATE")], key="ID")[percentile.trajectories]
+				included.states <- unique(panel.data[["Panel_Data"]][['STATE']]); state.arg <- "STATE == states[n.state]"
+				content_area.index <- grep(sgp.labels$my.subject, sapply(names(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]), function(x) strsplit(x, "[.]")[[1]][1], USE.NAMES=FALSE))
+				available.states <- unique(sapply(names(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]), function(x) strsplit(x, "[.]")[[1]][2], USE.NAMES=FALSE)[content_area.index])
+				unavailable.states <- included.states[!included.states %in% available.states]
+				percentile.trajectories <- data.table(panel.data[["Panel_Data"]][,c("ID", "STATE")], key="ID")[STATE %in% available.states][percentile.trajectories][!is.na(STATE)]
+				states <- included.states[included.states %in% available.states]
 			} else {
 				states <- NA; state.arg <- "is.na(STATE)"
 				percentile.trajectories[, STATE := NA]
@@ -343,7 +347,7 @@ function(panel.data,	## REQUIRED
 			if (!trajectories.tf) {
 				return(tmp.cuts)
 			} else {
-				return(merge(tmp.cuts, trajectories))
+				return(merge(tmp.cuts, trajectories, all=TRUE))
 			}
 		}
 	}
@@ -467,8 +471,9 @@ function(panel.data,	## REQUIRED
 				tmp.messages <- c(tmp.messages, "\t\tNOTE: Cutscores are currently not implemented for the state indicated. \nPlease contact the SGP package administrator to have your cutscores included in the package.\n")
 				tf.cutscores <- FALSE
 			}
-			if (!sgp.labels$my.subject %in% names(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]])) {
-				stop("\nCutscores provided in SGPstateData does not include a subject name that matches my.subject in sgp.labels (CASE SENSITIVE). See help page for details.\n\n")
+			if (!sgp.labels$my.subject %in% unique(sapply(names(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]), function(x) strsplit(x, "[.]")[[1]][1], USE.NAMES=FALSE))) {
+				tmp.messages <- c(tmp.messages, paste("\t\tNOTE: Cutscores provided in SGPstateData does not include", sgp.labels$my.subject, "(CASE SENSITIVE). See help page for details.\n"))
+				tf.cutscores <- FALSE
 			} else {
 				tmp.cutscores <- SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]
 				if (!is.character(percentile.trajectory.values)) tf.cutscores <- TRUE else tf.cutscores <- FALSE
@@ -703,9 +708,23 @@ function(panel.data,	## REQUIRED
 
 	if (tf.cutscores) {
 		tmp.cutscore.grade.content_area <- unlist(sapply(seq_along(tmp.cutscores), function(x) paste(names(tmp.cutscores)[x], names(tmp.cutscores[[x]]), sep=".")))
-		if (!all(grade.content_area.projection.sequence %in% tmp.cutscore.grade.content_area)) {
-			tmp.messages <- c(tmp.messages, "\t\tNOTE: Cutscores provided do not include cutscores for all grades/content areas in projection. Projections to grades/content areas without cutscores will be missing.\n")
-	}} 
+		if ("STATE" %in% names(panel.data[["Panel_Data"]])) {
+			included.states <- unique(panel.data[["Panel_Data"]][['STATE']]); state.arg <- "STATE == states[n.state]"
+			content_area.index <- grep(sgp.labels$my.subject, sapply(names(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]), function(x) strsplit(x, "[.]")[[1]][1], USE.NAMES=FALSE))
+			available.states <- unique(sapply(names(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]), function(x) strsplit(x, "[.]")[[1]][2], USE.NAMES=FALSE)[content_area.index])
+			unavailable.states <- included.states[!included.states %in% available.states]
+			if (length(unavailable.states) > 0) {
+				tmp.messages <- c(tmp.messages, paste("\t\tNOTE: The required state specific cutscores for ", sgp.labels$my.subject, " provided in SGPstateData do not include ", 
+					paste(unavailable.states[order(unavailable.states)], collapse = ", "), ". Target projections will not be produced for these state(s) students.\n", sep = ""))
+			}
+			tmp.grade.content_area.projection.sequence <- sapply(available.states, function(x) paste(content_area.projection.sequence, x, paste("GRADE", grade.projection.sequence, sep="_"), sep="."))
+			if (!all(tmp.grade.content_area.projection.sequence %in% tmp.cutscore.grade.content_area)) {
+				tmp.messages <- c(tmp.messages, "\t\tNOTE: Cutscores provided do not include cutscores for all grades/content areas in projection. Projections to grades/content areas without cutscores will be missing.\n")
+			}			
+		} else {
+			if (!all(grade.content_area.projection.sequence %in% tmp.cutscore.grade.content_area)) {
+				tmp.messages <- c(tmp.messages, "\t\tNOTE: Cutscores provided do not include cutscores for all grades/content areas in projection. Projections to grades/content areas without cutscores will be missing.\n")
+	}}}
 
 	trajectories.and.cuts <- .get.trajectories.and.cuts(percentile.trajectories, !is.null(percentile.trajectory.values), tf.cutscores, toupper(projection.unit))
 
