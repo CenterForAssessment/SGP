@@ -724,8 +724,7 @@ function(panel.data,	## REQUIRED
 		} else {
 			if (!all(grade.content_area.projection.sequence %in% tmp.cutscore.grade.content_area)) {
 				tmp.messages <- c(tmp.messages, "\t\tNOTE: Cutscores provided do not include cutscores for all grades/content areas in projection. Projections to grades/content areas without cutscores will be missing.\n")
-			}
-		}
+	}}}
 
 	trajectories.and.cuts <- .get.trajectories.and.cuts(percentile.trajectories, !is.null(percentile.trajectory.values), tf.cutscores, toupper(projection.unit))
 
