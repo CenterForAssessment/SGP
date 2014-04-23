@@ -308,7 +308,6 @@ function(panel.data,	## REQUIRED
 			tmp.cuts.list <- list()
 
 			if ("STATE" %in% names(panel.data[["Panel_Data"]])) {
-				percentile.trajectories <- data.table(panel.data[["Panel_Data"]][,c("ID", "STATE")], key="ID")[percentile.trajectories]
 				included.states <- unique(panel.data[["Panel_Data"]][['STATE']]); state.arg <- "STATE == states[n.state]"
 				content_area.index <- grep(sgp.labels$my.subject, sapply(names(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]), function(x) strsplit(x, "[.]")[[1]][1], USE.NAMES=FALSE))
 				available.states <- unique(sapply(names(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]), function(x) strsplit(x, "[.]")[[1]][2], USE.NAMES=FALSE)[content_area.index])
@@ -316,8 +315,8 @@ function(panel.data,	## REQUIRED
 				if (length(unavailable.states) > 0) {
 					tmp.messages <- c(tmp.messages, paste("\t\tNOTE: The required state specific cutscores for ", sgp.labels$my.subject, " provided in SGPstateData do not include ", 
 						paste(unavailable.states[order(unavailable.states)], collapse = ", "), ". Target projections will not be produced for these state(s) students.\n", sep = ""))
-					percentile.trajectories <- percentile.trajectories[STATE %in% available.states]
 				}
+				percentile.trajectories <- data.table(panel.data[["Panel_Data"]][,c("ID", "STATE")], key="ID")[STATE %in% available.states][percentile.trajectories][!is.na(STATE)]
 				states <- included.states[included.states %in% available.states]
 			} else {
 				states <- NA; state.arg <- "is.na(STATE)"
@@ -352,7 +351,7 @@ function(panel.data,	## REQUIRED
 			if (!trajectories.tf) {
 				return(tmp.cuts)
 			} else {
-				return(merge(tmp.cuts, trajectories))
+				return(merge(tmp.cuts, trajectories, all=TRUE))
 			}
 		}
 	}
