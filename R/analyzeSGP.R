@@ -87,7 +87,7 @@ function(sgp_object,
 	}
 
 	if (!is.null(SGPstateData[[state]][["Growth"]][["Cutscores"]][["Cuts"]])) {
-		percentile.trajectory.values <- SGPstateData[[state]][["Growth"]][["Cutscores"]][["Cuts"]]
+		percentile.trajectory.values <- unique(c(SGPstateData[[state]][["Growth"]][["Cutscores"]][["Cuts"]], 50))
 	} else {
 		percentile.trajectory.values <- c(35, 50, 65)
 	}
