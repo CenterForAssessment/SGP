@@ -161,7 +161,13 @@ function(sgp_object,
 	}
 
 	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][['sgp.projections.projection.unit']])) {
-		projection.unit=sgp.projections.projection.unit <- SGPstateData[[state]][["SGP_Configuration"]][['sgp.projections.projection.unit']]
+		sgp.projections.projection.unit <- SGPstateData[[state]][["SGP_Configuration"]][['sgp.projections.projection.unit']]
+	}
+
+	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][['sgp.projections.projection.unit.label']])) {
+		sgp.projections.projection.unit.label <- SGPstateData[[state]][["SGP_Configuration"]][['sgp.projections.projection.unit.label']]
+	} else {
+		sgp.projections.projection.unit.label <- sgp.projections.projection.unit
 	}
 
 	### 
@@ -795,6 +801,7 @@ function(sgp_object,
 						sgp.exact.grade.progression=sgp.iter[["sgp.exact.grade.progression"]],
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						projection.unit=sgp.projections.projection.unit,
+						projection.unit.label=sgp.projections.projection.unit.label,
 						...))
 				}
 				tmp_sgp_object <- mergeSGP(tmp_sgp_object, tmp)
@@ -826,6 +833,7 @@ function(sgp_object,
 						sgp.exact.grade.progression=sgp.iter[["sgp.exact.grade.progression"]],
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						projection.unit=sgp.projections.projection.unit,
+						projection.unit.label=sgp.projections.projection.unit.label,
 						...))
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -861,6 +869,7 @@ function(sgp_object,
 						sgp.exact.grade.progression=sgp.iter[["sgp.exact.grade.progression"]],
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						projection.unit=sgp.projections.projection.unit,
+						projection.unit.label=sgp.projections.projection.unit.label,
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -911,6 +920,7 @@ function(sgp_object,
 						sgp.exact.grade.progression=sgp.iter[["sgp.exact.grade.progression"]],
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						projection.unit=sgp.projections.projection.unit,
+						projection.unit.label=sgp.projections.projection.unit.label,
 						...))
 				}
 				tmp_sgp_object <- mergeSGP(tmp_sgp_object, tmp)
@@ -943,6 +953,7 @@ function(sgp_object,
 						sgp.exact.grade.progression=sgp.iter[["sgp.exact.grade.progression"]],
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						projection.unit=sgp.projections.projection.unit,
+						projection.unit.label=sgp.projections.projection.unit.label,
 						...))
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -979,6 +990,7 @@ function(sgp_object,
 						sgp.exact.grade.progression=sgp.iter[["sgp.exact.grade.progression"]],
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						projection.unit=sgp.projections.projection.unit,
+						projection.unit.label=sgp.projections.projection.unit.label,
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -1029,6 +1041,7 @@ function(sgp_object,
 						sgp.exact.grade.progression=sgp.iter[["sgp.exact.grade.progression"]],
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						projection.unit=sgp.projections.projection.unit,
+						projection.unit.label=sgp.projections.projection.unit.label,
 						...))
 				}
 				tmp_sgp_object <- mergeSGP(tmp_sgp_object, tmp)
@@ -1061,6 +1074,7 @@ function(sgp_object,
 						sgp.exact.grade.progression=sgp.iter[["sgp.exact.grade.progression"]],
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						projection.unit=sgp.projections.projection.unit,
+						projection.unit.label=sgp.projections.projection.unit.label,
 						...))
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -1097,6 +1111,7 @@ function(sgp_object,
 						sgp.exact.grade.progression=sgp.iter[["sgp.exact.grade.progression"]],
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						projection.unit=sgp.projections.projection.unit,
+						projection.unit.label=sgp.projections.projection.unit.label,
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -1147,6 +1162,7 @@ function(sgp_object,
 						sgp.exact.grade.progression=sgp.iter[["sgp.exact.grade.progression"]],
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						projection.unit=sgp.projections.projection.unit,
+						projection.unit.label=sgp.projections.projection.unit.label,
 						...))
 				}
 				tmp_sgp_object <- mergeSGP(tmp_sgp_object, tmp)
@@ -1180,6 +1196,7 @@ function(sgp_object,
 					sgp.exact.grade.progression=sgp.iter[["sgp.exact.grade.progression"]],
 					projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 					projection.unit=sgp.projections.projection.unit,
+					projection.unit.label=sgp.projections.projection.unit.label,
 					...))
 
 				tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -1216,6 +1233,7 @@ function(sgp_object,
 					sgp.exact.grade.progression=sgp.iter[["sgp.exact.grade.progression"]],
 					projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 					projection.unit=sgp.projections.projection.unit,
+					projection.unit.label=sgp.projections.projection.unit.label,
 					...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 
 				tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -1362,6 +1380,7 @@ function(sgp_object,
 						sgp.exact.grade.progression=sgp.iter[["sgp.exact.grade.progression"]],
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						projection.unit=sgp.projections.projection.unit,
+						projection.unit.label=sgp.projections.projection.unit.label,
 						...)
 				} else {
 					message(paste("\n\t\tNOTE: No student records &/or no prior data for student growth projections:", tail(sgp.iter[["sgp.panel.years"]], 1), 
@@ -1404,6 +1423,7 @@ function(sgp_object,
 						sgp.exact.grade.progression=sgp.iter[["sgp.exact.grade.progression"]],
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						projection.unit=sgp.projections.projection.unit,
+						projection.unit.label=sgp.projections.projection.unit.label,
 						...)
 				} else {
 					message(paste("\n\t\tNOTE: No student records &/or no prior data for baseline student growth projections:", tail(sgp.iter[["sgp.panel.years"]], 1), 
@@ -1446,6 +1466,7 @@ function(sgp_object,
 						sgp.exact.grade.progression=sgp.iter[["sgp.exact.grade.progression"]],
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						projection.unit=sgp.projections.projection.unit,
+						projection.unit.label=sgp.projections.projection.unit.label,
 						...)
 				} else {
 					message(paste("\n\t\tNOTE: No student records &/or no prior data for lagged student growth projections:", tail(sgp.iter[["sgp.panel.years"]], 1), 
@@ -1488,6 +1509,7 @@ function(sgp_object,
 						sgp.exact.grade.progression=sgp.iter[["sgp.exact.grade.progression"]],
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						projection.unit=sgp.projections.projection.unit,
+						projection.unit.label=sgp.projections.projection.unit.label,
 						...)
 				} else {
 					message(paste("\n\t\tNOTE: No student records &/or no prior data for lagged baseline student growth projections:", tail(sgp.iter[["sgp.panel.years"]], 1), 
