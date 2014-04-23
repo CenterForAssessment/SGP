@@ -129,11 +129,26 @@ function(sgp_object,
 						diff(as.numeric(sapply(strsplit(par.sgp.config[[b.iter[b]]][['sgp.panel.years']], '_'), '[', split.location(par.sgp.config[[b.iter[b]]][['sgp.panel.years']]))))
 				}
 
-				### Create sgp.projection.grade.sequences (if requested)
-				if (is.null(sgp.config[[a]][['sgp.projection.grade.sequences']]) & (sgp.projections | sgp.projections.lagged | sgp.projections.baseline | sgp.projections.lagged.baseline)) {
+				### Create sgp.projection.grade.sequences (if NULL)
+				if (is.null(sgp.config[[a]][['sgp.projection.grade.sequences']]) & (sgp.projections|sgp.projections.lagged|sgp.projections.baseline|sgp.projections.lagged.baseline)) {
 					par.sgp.config[[b.iter[b]]][['sgp.projection.grade.sequences']] <- head(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], -1)
+				} else {
+					par.sgp.config[[b.iter[b]]][['sgp.projection.grade.sequences']] <- as.character(sgp.config[[a]][['sgp.projection.grade.sequences']][[b]])
+				}
+
+				### Create sgp.projection.content.areas (if NULL)
+				if (is.null(sgp.config[[a]][['sgp.projection.content.areas']]) & (sgp.projections|sgp.projections.lagged|sgp.projections.baseline|sgp.projections.lagged.baseline)) {
 					par.sgp.config[[b.iter[b]]][['sgp.projection.content.areas']] <- head(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], -1)
+				} else {
+					par.sgp.config[[b.iter[b]]][['sgp.projection.content.areas']] <- as.character(sgp.config[[a]][['sgp.projection.content.areas']])
+				}
+
+				### Create sgp.projection.panel.years.lags (if NULL)
+				if (is.null(sgp.config[[a]][['sgp.projection.content.areas']]) & (sgp.projections|sgp.projections.lagged|sgp.projections.baseline|sgp.projections.lagged.baseline)) {
 					par.sgp.config[[b.iter[b]]][['sgp.projection.panel.years.lags']] <- head(par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']], -1)
+				} else {
+					par.sgp.config[[b.iter[b]]][['sgp.projection.panel.years.lags']] <- 
+						diff(as.numeric(sapply(strsplit(par.sgp.config[[b.iter[b]]][['sgp.projection.panel.years']], '_'), '[', split.location(par.sgp.config[[b.iter[b]]][['sgp.projection.panel.years']]))))
 				}
 
 				### Create baseline specific arguments

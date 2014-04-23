@@ -703,7 +703,7 @@ function(sgp_object,
 		}
 		for (names.iter in grep("BASELINE", names(sgp_object@SGP[['SGProjections']]), value=TRUE)) {
 			dir.create(file.path(outputSGP.directory, "RLI", "SGProjections"), recursive=TRUE, showWarnings=FALSE)
-			write.table(sgp_object@SGP[['SGProjections']][[names.iter]], 
+			write.table(as.data.table(sgp_object@SGP[['SGProjections']][[names.iter]])[,GROUP:=names.iter],
 				file=file.path(outputSGP.directory, "RLI", "SGProjections", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
 		}
 
