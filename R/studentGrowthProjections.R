@@ -714,16 +714,16 @@ function(panel.data,	## REQUIRED
 			available.states <- unique(sapply(names(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]), function(x) strsplit(x, "[.]")[[1]][2], USE.NAMES=FALSE)[content_area.index])
 			unavailable.states <- included.states[!included.states %in% available.states]
 			if (length(unavailable.states) > 0) {
-				tmp.messages <- c(tmp.messages, paste("\t\tNOTE: The required state specific cutscores for ", sgp.labels$my.subject, " provided in SGPstateData do not include ", 
-					paste(unavailable.states[order(unavailable.states)], collapse = ", "), ". Target projections will not be produced for these state(s) students.\n", sep = ""))
+				tmp.messages <- c(tmp.messages, paste("\t\tNOTE: The required state specific cutscores for ", sgp.labels$my.subject, " provided in SGPstateData do not include: ", 
+					paste(unavailable.states[order(unavailable.states)], collapse = ", "), ".\n\t\tTarget projections will not be produced for these state(s) students.\n", sep = ""))
 			}
 			tmp.grade.content_area.projection.sequence <- sapply(available.states, function(x) paste(content_area.projection.sequence, x, paste("GRADE", grade.projection.sequence, sep="_"), sep="."))
 			if (!all(tmp.grade.content_area.projection.sequence %in% tmp.cutscore.grade.content_area)) {
-				tmp.messages <- c(tmp.messages, "\t\tNOTE: Cutscores provided do not include cutscores for all grades/content areas in projection. Projections to grades/content areas without cutscores will be missing.\n")
+				tmp.messages <- c(tmp.messages, "\t\tNOTE: Cutscores provided do not include cutscores for all grades/content areas in projection.\n\t\tProjections to grades/content areas without cutscores will be missing.\n")
 			}			
 		} else {
 			if (!all(grade.content_area.projection.sequence %in% tmp.cutscore.grade.content_area)) {
-				tmp.messages <- c(tmp.messages, "\t\tNOTE: Cutscores provided do not include cutscores for all grades/content areas in projection. Projections to grades/content areas without cutscores will be missing.\n")
+				tmp.messages <- c(tmp.messages, "\t\tNOTE: Cutscores provided do not include cutscores for all grades/content areas in projection.\n\t\tProjections to grades/content areas without cutscores will be missing.\n")
 	}}}
 
 	trajectories.and.cuts <- .get.trajectories.and.cuts(percentile.trajectories, !is.null(percentile.trajectory.values), tf.cutscores, toupper(projection.unit))
