@@ -40,12 +40,12 @@ function(sgp_data,
 		cutscore.subjects <- unique(sapply(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]]), function(x) strsplit(x, "[.]")[[1]][1], USE.NAMES=FALSE))
 		sgp_data[which(STATE %in% cutscore.states & CONTENT_AREA %in% cutscore.subjects), TMP_ACH_LEVEL := findInterval(SCALE_SCORE, 
 				SGPstateData[[state]][["Achievement"]][["Cutscores"]][[paste(CONTENT_AREA[1], ".", STATE[1], sep="")]][[paste("GRADE_", GRADE[1], sep="")]])+1L, 
-			by=c("STATE", "CONTENT_AREA", "GRADE")]	
+			by=c("STATE", "CONTENT_AREA", "GRADE")]
 		for (state_level in names(SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]][["State_Levels"]])) {
-			sgp_data[which(STATE %in% SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]][["State_Levels"]][[state_level]][["States"]] & 
+			suppressWarnings(sgp_data[which(STATE %in% SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]][["State_Levels"]][[state_level]][["States"]] & 
 				CONTENT_AREA %in% cutscore.subjects), ACHIEVEMENT_LEVEL := as.character(factor(TMP_ACH_LEVEL, 
 					levels = 1:length(SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]][["State_Levels"]][[state_level]][["Levels"]]),
-					labels = SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]][["State_Levels"]][[state_level]][["Levels"]]))]
+					labels = SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]][["State_Levels"]][[state_level]][["Levels"]]))])
 		}
 		sgp_data[, TMP_ACH_LEVEL := NULL]
 		sgp_data[, ACHIEVEMENT_LEVEL := ordered(ACHIEVEMENT_LEVEL, levels = c("Not Proficient", "Proficient"))]
