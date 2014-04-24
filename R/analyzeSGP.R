@@ -489,6 +489,11 @@ function(sgp_object,
 		# Enforce that all projection configs must NOT be exact grade progressions to avoid duplicates in SGProjections
 		if (length(par.sgp.config.projections.baseline) > 0) {
 			for (f in 1:length(par.sgp.config.projections.baseline)) par.sgp.config.projections.baseline[[f]]$sgp.exact.grade.progression <- FALSE
+		} else {
+			if (sgp.projections.baseline | sgp.projections.lagged.baseline) {
+				message("\tNOTE: No congigurations are present for baseline or lagged baselinr projections. No baseline projections will be calculated")
+				sgp.projections.baseline <- sgp.projections.lagged.baseline <- FALSE
+			}
 		}
 	}
 
@@ -496,6 +501,11 @@ function(sgp_object,
 	# Enforce that all projection configs must NOT be exact grade progressions to avoid duplicates in SGProjections
 	if (length(par.sgp.config.projections) > 0) {
 		for (f in 1:length(par.sgp.config.projections)) par.sgp.config.projections[[f]]$sgp.exact.grade.progression <- FALSE
+	} else {
+		if (sgp.projections | sgp.projections.lagged) {
+			message("\tNOTE: No congigurations are present for baseline or lagged baselinr projections. No baseline projections will be calculated")
+			sgp.projections <- sgp.projections.lagged <- FALSE
+		}
 	}
 
 	### Produce cohort data information
