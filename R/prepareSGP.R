@@ -196,7 +196,7 @@ function(data,
 		setnames(data, which(!is.na(variable.names$names.sgp)), variable.names$names.sgp[!is.na(variable.names$names.sgp)])
 		setkeyv(data, tmp.key)
 		if (any(duplicated(data["VALID_CASE"]))) {
-			message(paste("\tWARNING: Data keyed by", tmp.key, "has duplicate cases. Subsequent merges will be corrupted."))
+			message(paste("\tWARNING: Data keyed by", paste(tmp.key, collapse=", "), "has duplicate cases. Subsequent merges will be corrupted."))
 			message("\tNOTE: Duplicate cases are available in current workspace as 'DUPLICATED_CASES' and saved as 'DUPLICATED_CASES.Rdata'.")
 			assign("DUPLICATED_CASES", data["VALID_CASE"][duplicated(data["VALID_CASE"])][,tmp.key, with=FALSE])
 			save(DUPLICATED_CASES, file="DUPLICATED_CASES.Rdata")
