@@ -221,6 +221,7 @@ function(sgp_object,
 	## Function to test each element of par.sgp.config to make sure (EOCT) projections can/should be run
 	
 	test.projection.iter <- function(sgp.iter) {
+		if (sgp.iter[['sgp.projection.grade.sequences']]=="NO_PROJECTIONS") return(FALSE)
 		if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]])) {
 			if (tail(sgp.iter[["sgp.grade.sequences"]], 1) == "EOCT") { # Only check EOCT configs/iters
 				if (is.null(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]])) return(FALSE)
@@ -486,12 +487,26 @@ function(sgp_object,
 
 		suppressWarnings(par.sgp.config.projections.baseline <- par.sgp.config.baseline[sapply(par.sgp.config.baseline, test.projection.iter)])
 		# Enforce that all projection configs must NOT be exact grade progressions to avoid duplicates in SGProjections
-		for (f in 1:length(par.sgp.config.projections.baseline)) par.sgp.config.projections.baseline[[f]]$sgp.exact.grade.progression <- FALSE
+		if (length(par.sgp.config.projections.baseline) > 0) {
+			for (f in 1:length(par.sgp.config.projections.baseline)) par.sgp.config.projections.baseline[[f]]$sgp.exact.grade.progression <- FALSE
+		} else {
+			if (sgp.projections.baseline | sgp.projections.lagged.baseline) {
+				message("\tNOTE: No congigurations are present for baseline or lagged baseline projections. No baseline projections will be calculated.")
+				sgp.projections.baseline <- sgp.projections.lagged.baseline <- FALSE
+			}
+		}
 	}
 
 	suppressWarnings(par.sgp.config.projections <- par.sgp.config[sapply(par.sgp.config, test.projection.iter)])
 	# Enforce that all projection configs must NOT be exact grade progressions to avoid duplicates in SGProjections
-	for (f in 1:length(par.sgp.config.projections)) par.sgp.config.projections[[f]]$sgp.exact.grade.progression <- FALSE
+	if (length(par.sgp.config.projections) > 0) {
+		for (f in 1:length(par.sgp.config.projections)) par.sgp.config.projections[[f]]$sgp.exact.grade.progression <- FALSE
+	} else {
+		if (sgp.projections | sgp.projections.lagged) {
+			message("\tNOTE: No congigurations are present for baseline or lagged baseline projections. No baseline projections will be calculated.")
+			sgp.projections <- sgp.projections.lagged <- FALSE
+		}
+	}
 
 	### Produce cohort data information
 
