@@ -65,8 +65,6 @@ function(sgp_object,
 	}
 	if (simulate.sgps==FALSE) {
 		calculate.confidence.intervals <- csem.variable <- NULL
-	} else {
-		calculate.confidence.intervals <- csem.variable <- simulate.sgps
 	}
 
 	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["sgp.config.drop.nonsequential.grade.progression.variables"]])) {
