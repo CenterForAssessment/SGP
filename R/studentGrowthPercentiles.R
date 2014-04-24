@@ -1273,7 +1273,7 @@ function(panel.data,         ## REQUIRED
 			}
 		}
 
-		if (dim(quantile.data)[1] <= goodness.of.fit.minimum.n) {
+		if (goodness.of.fit & dim(quantile.data)[1] <= goodness.of.fit.minimum.n) {
 			message("\tNOTE: Due to small number of cases (", dim(quantile.data)[1], ") no goodness of fit plots produced.")
 			goodness.of.fit <- FALSE
 		}
