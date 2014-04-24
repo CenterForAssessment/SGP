@@ -95,7 +95,7 @@ function(data,
 		## Check see if any of the required variables are missing
 
 		if (!all(required.names %in% variable.names$names.sgp)) {
-			stop(paste("\tNOTE: The {data} object is missing the following column name: ", required.names[(required.names %in% variable.names$names.sgp)==FALSE],
+			stop(paste("\tNOTE: The {data} object is missing the following column name(s): ", paste(required.names[(required.names %in% variable.names$names.sgp)==FALSE], collapse=", "),
 			". Please identify the variable using the {var.names} argument.", sep=""))
 		}
 		return(data.frame(variable.names[order(variable.names$column.provided),][,c("names.provided", "names.sgp", "names.type", "names.info", "names.output")], row.names=NULL, stringsAsFactors=FALSE))
