@@ -123,8 +123,8 @@ function(sgp_object,
 					} 
 				}
 
-				### Create sgp.panel.years.lags
-				if (is.null(sgp.config[[a]][['sgp.panel.year.lags']])) {
+				### Create sgp.panel.years.lags (if NULL)
+				if (is.null(sgp.config[[a]][['sgp.panel.years.lags']])) {
 					par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']] <- 
 						diff(as.numeric(sapply(strsplit(par.sgp.config[[b.iter[b]]][['sgp.panel.years']], '_'), '[', split.location(par.sgp.config[[b.iter[b]]][['sgp.panel.years']]))))
 				}
@@ -146,10 +146,13 @@ function(sgp_object,
 				}
 
 				### Create sgp.projection.panel.years.lags (if NULL)
-				if (is.null(sgp.config[[a]][['sgp.projection.content.areas']]) & (sgp.projections|sgp.projections.lagged|sgp.projections.baseline|sgp.projections.lagged.baseline)) {
+				if (is.null(sgp.config[[a]][['sgp.projection.panel.years']]) & (sgp.projections|sgp.projections.lagged|sgp.projections.baseline|sgp.projections.lagged.baseline)) {
+					tmp.panel.years <- head(par.sgp.config[[b.iter[b]]][['sgp.panel.years']], -1)
+					par.sgp.config[[b.iter[b]]][['sgp.projection.panel.years']] <- 
+						as.character(sapply(tmp.panel.years, yearIncrement, tail(par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']], 1)))
 					par.sgp.config[[b.iter[b]]][['sgp.projection.panel.years.lags']] <- head(par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']], -1)
 				} else {
-					if (identical(par.sgp.config[[b.iter[b]]][['sgp.projection.grade.sequences']], "NO_PROJECTIONS")) {
+					if (!identical(par.sgp.config[[b.iter[b]]][['sgp.projection.grade.sequences']], "NO_PROJECTIONS")) {
 						par.sgp.config[[b.iter[b]]][['sgp.projection.panel.years.lags']] <- 
 							diff(as.numeric(sapply(strsplit(par.sgp.config[[b.iter[b]]][['sgp.projection.panel.years']], '_'), '[', split.location(par.sgp.config[[b.iter[b]]][['sgp.projection.panel.years']]))))
 					}
