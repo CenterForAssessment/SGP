@@ -28,6 +28,7 @@ updateSGP(
 	calculate.simex.baseline=NULL,
 	sgp.use.my.coefficient.matrices=NULL,
 	sgp.target.scale.scores=FALSE,
+	sgp.target.scale.scores.only=FALSE,
 	overwrite.existing.data=FALSE,
 	sgPlot.demo.report=TRUE,
 	outputSGP.output.type=c("LONG_Data", "LONG_FINAL_YEAR_Data", "WIDE_Data", "INSTRUCTOR_Data"),
@@ -82,6 +83,9 @@ If missing the function will use the data to infer all the grade progressions fo
   }
   \item{sgp.target.scale.scores}{A Boolean argument (defaults to FALSE/NULL) passed to \code{\link{combineSGP}} indicating whether to calculate scale scores associated with SGP targets as 
   part of the analyses.
+  }
+  \item{sgp.target.scale.scores.only}{A Boolean argument (defaults to FALSE/NULL) passed to \code{\link{combineSGP}} indicating whether to skip merging of data and only calculate scale scores 
+  associated with SGP targets.
   }
   \item{overwrite.existing.data}{A Boolean argument (defaults to FALSE) indicating whether updateSGP should overwrite existing data/results from an earlier run as part of updateSGP.
   }

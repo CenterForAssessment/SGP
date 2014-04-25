@@ -54,7 +54,11 @@ function(sgp_object,
 	### Tests associated with provided arguments
 	###
 
-	if (simulate.sgps==TRUE & (sgp.percentiles | sgp.percentiles.baseline)) {
+	if (!(sgp.percentiles | sgp.percentiles.baseline)) {
+		simulate.sgps <- FALSE
+	}
+
+	if (simulate.sgps) {
 		if (is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
 			message("\tNOTE: CSEMs are required in SGPstateData to simulate SGPs for confidence interval calculations. Confidence intervals will not be calculated.")
 			calculate.confidence.intervals <- csem.variable <- NULL
@@ -62,8 +66,7 @@ function(sgp_object,
 			calculate.confidence.intervals <- state
 			csem.variable <- NULL
 		}
-	}
-	if (simulate.sgps==FALSE) {
+	} else {
 		calculate.confidence.intervals <- csem.variable <- NULL
 	}
 
@@ -166,6 +169,12 @@ function(sgp_object,
 		sgp.projections.projection.unit.label <- SGPstateData[[state]][["SGP_Configuration"]][['sgp.projections.projection.unit.label']]
 	} else {
 		sgp.projections.projection.unit.label <- sgp.projections.projection.unit
+	}
+
+	if (!goodness.of.fit.print){
+		goodness.of.fit.print.arg <- FALSE
+	} else {
+		goodness.of.fit.print.arg <- state
 	}
 
 	### 
@@ -558,7 +567,7 @@ function(sgp_object,
 						sgp.cohort.size=SGPstateData[[state]][["SGP_Configuration"]][["sgp.cohort.size"]],
 						return.norm.group.scale.scores=return.norm.group.scale.scores,
 						return.prior.scale.score.standardized=return.prior.scale.score.standardized,
-						goodness.of.fit=state,
+						goodness.of.fit=goodness.of.fit.print.arg,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
@@ -593,7 +602,7 @@ function(sgp_object,
 						sgp.cohort.size=SGPstateData[[state]][["SGP_Configuration"]][["sgp.cohort.size"]],
 						return.norm.group.scale.scores=return.norm.group.scale.scores,
 						return.prior.scale.score.standardized=return.prior.scale.score.standardized,
-						goodness.of.fit=state,
+						goodness.of.fit=goodness.of.fit.print.arg,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
@@ -632,7 +641,7 @@ function(sgp_object,
 						sgp.cohort.size=SGPstateData[[state]][["SGP_Configuration"]][["sgp.cohort.size"]],
 						return.norm.group.scale.scores=return.norm.group.scale.scores,
 						return.prior.scale.score.standardized=return.prior.scale.score.standardized,
-						goodness.of.fit=state,
+						goodness.of.fit=goodness.of.fit.print.arg,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
@@ -686,7 +695,7 @@ function(sgp_object,
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 						return.norm.group.scale.scores=return.norm.group.scale.scores,
 						return.prior.scale.score.standardized=return.prior.scale.score.standardized,
-						goodness.of.fit=state,
+						goodness.of.fit=goodness.of.fit.print.arg,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
@@ -721,7 +730,7 @@ function(sgp_object,
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 						return.norm.group.scale.scores=return.norm.group.scale.scores,
 						return.prior.scale.score.standardized=return.prior.scale.score.standardized,
-						goodness.of.fit=state,
+						goodness.of.fit=goodness.of.fit.print.arg,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
@@ -760,7 +769,7 @@ function(sgp_object,
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 						return.norm.group.scale.scores=return.norm.group.scale.scores,
 						return.prior.scale.score.standardized=return.prior.scale.score.standardized,
-						goodness.of.fit=state,
+						goodness.of.fit=goodness.of.fit.print.arg,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
@@ -1300,7 +1309,7 @@ function(sgp_object,
 						sgp.cohort.size=SGPstateData[[state]][["SGP_Configuration"]][["sgp.cohort.size"]],
 						return.norm.group.scale.scores=return.norm.group.scale.scores,
 						return.prior.scale.score.standardized=return.prior.scale.score.standardized,
-						goodness.of.fit=state,
+						goodness.of.fit=goodness.of.fit.print.arg,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
@@ -1346,7 +1355,7 @@ function(sgp_object,
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 						return.norm.group.scale.scores=return.norm.group.scale.scores,
 						return.prior.scale.score.standardized=return.prior.scale.score.standardized,
-						goodness.of.fit=state,
+						goodness.of.fit=goodness.of.fit.print.arg,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
