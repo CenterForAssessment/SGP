@@ -20,6 +20,7 @@ combineSGP(sgp_object,
 	sgp.projections.lagged=TRUE,
         sgp.projections.lagged.baseline=TRUE,
 	sgp.target.scale.scores=FALSE,
+	sgp.target.scale.scores.only=FALSE,
 	sgp.target.content_areas=NULL,
 	max.sgp.target.years.forward=3,
 	update.all.years=FALSE,
@@ -49,7 +50,9 @@ student growth percentile results.
   }
   \item{sgp.projections.lagged.baseline}{A Boolean variable indicating whether to combine lagged baseline student growth projections and calculate catch-up/keep-up move-up/stay-up values.
   }
-  \item{sgp.target.scale.scores}{A Boolean variable indicating whether targets from calculated scale scores should be calculated following target calculation.
+  \item{sgp.target.scale.scores}{A Boolean variable indicating whether scale scores from calculated SGP targets should be calculated.
+  }
+  \item{sgp.target.scale.scores.only}{A Boolean variable indicating whether to skip merging of data  and only calculate targets.
   }
   \item{sgp.target.content_areas}{A Boolean variable indicating whether content area associated with SGP targets should be calculated.
   }

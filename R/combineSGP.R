@@ -11,6 +11,7 @@ function(
 	sgp.projections.lagged=TRUE,
 	sgp.projections.lagged.baseline=TRUE,
 	sgp.target.scale.scores=FALSE,
+	sgp.target.scale.scores.only=FALSE,
 	sgp.target.content_areas=NULL,
 	max.sgp.target.years.forward=3,
 	update.all.years=FALSE,
@@ -59,6 +60,13 @@ function(
 
 	if (!is.null(SGPstateData[[state]][['SGP_Configuration']][['max.sgp.target.years.forward']])) {
 		max.sgp.target.years.forward <- SGPstateData[[state]][['SGP_Configuration']][['max.sgp.target.years.forward']]
+	}
+
+	### Check sgp.target.scale.scores.only and make adjustments to other arguments as necessary
+
+	if (sgp.target.scale.scores.only) {
+		sgp.target.scale.scores <- TRUE
+		sgp.percentiles <- sgp.projections <- sgp.projections.lagged <- sgp.percentiles.baseline <- sgp.projections.baseline <- sgp.projections.lagged.baseline <- FALSE
 	}
 
 	### Utility functions
