@@ -95,7 +95,7 @@ function(data,
 		## Check see if any of the required variables are missing
 
 		if (!all(required.names %in% variable.names$names.sgp)) {
-			stop(paste("\tNOTE: The {data} object is missing the following column name: ", required.names[(required.names %in% variable.names$names.sgp)==FALSE],
+			stop(paste("\tNOTE: The {data} object is missing the following column name(s): ", paste(required.names[(required.names %in% variable.names$names.sgp)==FALSE], collapse=", "),
 			". Please identify the variable using the {var.names} argument.", sep=""))
 		}
 		return(data.frame(variable.names[order(variable.names$column.provided),][,c("names.provided", "names.sgp", "names.type", "names.info", "names.output")], row.names=NULL, stringsAsFactors=FALSE))
@@ -196,7 +196,7 @@ function(data,
 		setnames(data, which(!is.na(variable.names$names.sgp)), variable.names$names.sgp[!is.na(variable.names$names.sgp)])
 		setkeyv(data, tmp.key)
 		if (any(duplicated(data["VALID_CASE"]))) {
-			message(paste("\tWARNING: Data keyed by", tmp.key, "has duplicate cases. Subsequent merges will be corrupted."))
+			message(paste("\tWARNING: Data keyed by", paste(tmp.key, collapse=", "), "has duplicate cases. Subsequent merges will be corrupted."))
 			message("\tNOTE: Duplicate cases are available in current workspace as 'DUPLICATED_CASES' and saved as 'DUPLICATED_CASES.Rdata'.")
 			assign("DUPLICATED_CASES", data["VALID_CASE"][duplicated(data["VALID_CASE"])][,tmp.key, with=FALSE])
 			save(DUPLICATED_CASES, file="DUPLICATED_CASES.Rdata")

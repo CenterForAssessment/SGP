@@ -60,9 +60,9 @@ function(sgp.type,
 				tail(sgp.iter[["sgp.projection.content.areas"]], length(sgp.iter[["sgp.projection.grade.sequences"]])), 
 				head(sgp.iter[["sgp.panel.years.within"]], length(sgp.iter[["sgp.projection.grade.sequences"]])), sep=".")))
 		} else {
-			return(c("ID", paste("GRADE", sapply(head(sgp.iter[["sgp.projection.panel.years"]], length(sgp.iter[["sgp.projection.grade.sequences"]])), yearIncrement, tail(sgp.iter[['sgp.projection.panel.years.lags']], 1)), 
+			return(c("ID", paste("GRADE", sapply(head(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.projection.grade.sequences"]])), yearIncrement, tail(sgp.iter[['sgp.panel.years.lags']], 1)), 
 				tail(sgp.iter[["sgp.projection.content.areas"]], length(sgp.iter[["sgp.projection.grade.sequences"]])), sep="."), 
-				paste("SCALE_SCORE", sapply(head(sgp.iter[["sgp.projection.panel.years"]], length(sgp.iter[["sgp.projection.grade.sequences"]])), yearIncrement, tail(sgp.iter[['sgp.projection.panel.years.lags']], 1)),
+				paste("SCALE_SCORE", sapply(head(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.projection.grade.sequences"]])), yearIncrement, tail(sgp.iter[['sgp.panel.years.lags']], 1)),
 				tail(sgp.iter[["sgp.projection.content.areas"]], length(sgp.iter[["sgp.projection.grade.sequences"]])), sep=".")))			
 		}
 	}

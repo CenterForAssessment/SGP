@@ -140,7 +140,7 @@ function(sgp_object,
 				if (is.null(sgp.config[[a]][['sgp.projection.content.areas']]) & (sgp.projections|sgp.projections.lagged|sgp.projections.baseline|sgp.projections.lagged.baseline)) {
 					par.sgp.config[[b.iter[b]]][['sgp.projection.content.areas']] <- head(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], -1)
 				} else {
-					if (par.sgp.config[[b.iter[b]]][['sgp.projection.grade.sequences']]!="NO_PROJECTIONS") {
+					if (identical(par.sgp.config[[b.iter[b]]][['sgp.projection.grade.sequences']], "NO_PROJECTIONS")) {
 						par.sgp.config[[b.iter[b]]][['sgp.projection.content.areas']] <- as.character(sgp.config[[a]][['sgp.projection.content.areas']])
 					}
 				}
@@ -149,7 +149,7 @@ function(sgp_object,
 				if (is.null(sgp.config[[a]][['sgp.projection.content.areas']]) & (sgp.projections|sgp.projections.lagged|sgp.projections.baseline|sgp.projections.lagged.baseline)) {
 					par.sgp.config[[b.iter[b]]][['sgp.projection.panel.years.lags']] <- head(par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']], -1)
 				} else {
-					if (par.sgp.config[[b.iter[b]]][['sgp.projection.grade.sequences']]!="NO_PROJECTIONS") {
+					if (identical(par.sgp.config[[b.iter[b]]][['sgp.projection.grade.sequences']], "NO_PROJECTIONS")) {
 						par.sgp.config[[b.iter[b]]][['sgp.projection.panel.years.lags']] <- 
 							diff(as.numeric(sapply(strsplit(par.sgp.config[[b.iter[b]]][['sgp.projection.panel.years']], '_'), '[', split.location(par.sgp.config[[b.iter[b]]][['sgp.projection.panel.years']]))))
 					}
