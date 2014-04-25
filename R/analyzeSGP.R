@@ -54,7 +54,7 @@ function(sgp_object,
 	### Tests associated with provided arguments
 	###
 
-	if (simulate.sgps==TRUE) {
+	if (simulate.sgps==TRUE & (sgp.percentiles | sgp.percentiles.baseline)) {
 		if (is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
 			message("\tNOTE: CSEMs are required in SGPstateData to simulate SGPs for confidence interval calculations. Confidence intervals will not be calculated.")
 			calculate.confidence.intervals <- csem.variable <- NULL

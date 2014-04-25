@@ -715,7 +715,7 @@ function(panel.data,	## REQUIRED
 			unavailable.states <- included.states[!included.states %in% available.states]
 			if (length(unavailable.states) > 0) {
 				tmp.messages <- c(tmp.messages, paste("\t\tNOTE: The required state specific cutscores for ", sgp.labels$my.subject, " provided in SGPstateData do not include: ", 
-					paste(unavailable.states[order(unavailable.states)], collapse = ", "), ".\n\t\tTarget projections will not be produced for these state(s) students.\n", sep = ""))
+					paste(unavailable.states[order(unavailable.states)], collapse = ", "), ".\n\t\t\tTarget projections will not be produced for students in these states.\n", sep = ""))
 			}
 			tmp.grade.content_area.projection.sequence <- sapply(available.states, function(x) paste(content_area.projection.sequence, x, paste("GRADE", grade.projection.sequence, sep="_"), sep="."))
 			if (!all(tmp.grade.content_area.projection.sequence %in% tmp.cutscore.grade.content_area)) {
