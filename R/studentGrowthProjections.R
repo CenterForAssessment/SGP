@@ -340,6 +340,10 @@ function(panel.data,	## REQUIRED
 				arg <- paste("list(", paste(cuts.arg, collapse=", "), ")", sep="")
 				tmp.cuts.list[[n.state]] <- eval(parse(text=paste("percentile.trajectories[which(", state.arg, "),", arg, ", by=ID]", sep="")))
 				setnames(tmp.cuts.list[[n.state]], c("ID", names.arg))
+				if (!is.na(states[n.state])) {
+					tmp.cuts.list[[n.state]][,STATE:=states[n.state]]
+					setcolorder(tmp.cuts.list[[n.state]], c("ID", "STATE", names.arg))
+				}
 			} # End loop over states (if they exist)
 			tmp.cuts <- data.table(rbind.fill(tmp.cuts.list))
 			setcolorder(tmp.cuts, names(tmp.cuts.list[[which.max(sapply(tmp.cuts.list, ncol))]])) # Reorder based on state with the most cutscores/proficiency levels

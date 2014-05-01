@@ -46,7 +46,7 @@ function(sgp_object,
 		if (save.old.summaries) {
 			tmp.index <- grep("YEAR", names(sgp_object@Summary[[highest.level.summary.grouping]]))[1]
 			tmp.year <- tail(sort(sgp_object@Summary[[highest.level.summary.grouping]][[tmp.index]][['YEAR']]), 1)
-			tmp.state.name <- gsub(" ", "_", toupper(getStateAbbreviation(state, type="name")))
+			tmp.state.name <- gsub(" ", "_", getStateAbbreviation(state, type="name"))
 			tmp.file.name <- paste(tmp.state.name, "SGP_Summary", tmp.year, sep="_")
 			assign(tmp.file.name, sgp_object@Summary)
 			message(paste("\tNOTE: Saving @Summary slot to", paste("Data/", tmp.file.name, ".Rdata and then deleting @Summary slot.", sep="")))
