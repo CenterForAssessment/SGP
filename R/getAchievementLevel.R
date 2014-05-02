@@ -38,17 +38,10 @@ function(sgp_data,
 	if ("STATE" %in% names(sgp_data) & !is.null(SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]])) {
 		cutscore.states <- SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]][["Cutscore_States"]]
 		cutscore.subjects <- unique(sapply(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]]), function(x) strsplit(x, "[.]")[[1]][1], USE.NAMES=FALSE))
-		sgp_data[which(STATE %in% cutscore.states & CONTENT_AREA %in% cutscore.subjects), TMP_ACH_LEVEL := findInterval(SCALE_SCORE, 
-				SGPstateData[[state]][["Achievement"]][["Cutscores"]][[paste(CONTENT_AREA[1], ".", STATE[1], sep="")]][[paste("GRADE_", GRADE[1], sep="")]])+1L, 
+		sgp_data[which(STATE %in% cutscore.states & CONTENT_AREA %in% cutscore.subjects), ACHIEVEMENT_LEVEL := paste("Level", findInterval(SCALE_SCORE, 
+				SGPstateData[[state]][["Achievement"]][["Cutscores"]][[paste(CONTENT_AREA[1], ".", STATE[1], sep="")]][[paste("GRADE_", GRADE[1], sep="")]])+1L),
 			by=c("STATE", "CONTENT_AREA", "GRADE")]
-		for (state_level in names(SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]][["State_Levels"]])) {
-			suppressWarnings(sgp_data[which(STATE %in% SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]][["State_Levels"]][[state_level]][["States"]] & 
-				CONTENT_AREA %in% cutscore.subjects), ACHIEVEMENT_LEVEL := as.character(factor(TMP_ACH_LEVEL, 
-					levels = 1:length(SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]][["State_Levels"]][[state_level]][["Levels"]]),
-					labels = SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]][["State_Levels"]][[state_level]][["Levels"]]))])
-		}
-		sgp_data[, TMP_ACH_LEVEL := NULL]
-		sgp_data[, ACHIEVEMENT_LEVEL := ordered(ACHIEVEMENT_LEVEL, levels = c("Not Proficient", "Proficient"))]
+		sgp_data[, ACHIEVEMENT_LEVEL := ordered(ACHIEVEMENT_LEVEL)]
 	} else {
 		if (is.null(year)) year <- sort(unique(sgp_data[['YEAR']]))
 		if (is.null(content_area)) content_area <- sort(unique(sgp_data[['CONTENT_AREA']][sgp_data[['YEAR']] %in% year]))
