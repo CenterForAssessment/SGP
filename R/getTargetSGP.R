@@ -9,7 +9,7 @@ function(sgp_object,
 	subset.ids=NULL,
 	return.lagged.status=TRUE) {
 
-	TARGET_STATUS_INITIAL <- VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- FIRST_OBSERVATION <- LAST_OBSERVATION <- NULL
+	TARGET_STATUS_INITIAL <- VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- FIRST_OBSERVATION <- LAST_OBSERVATION <- STATE <- NULL
 
 	### Utility functions
 
@@ -25,6 +25,11 @@ function(sgp_object,
 	max.sgp.target.years.forward.label <- max.sgp.target.years.forward
 	if (target.type %in% c("sgp.projections.lagged", "sgp.projections.lagged.baseline")) max.sgp.target.years.forward <- max.sgp.target.years.forward+1
 
+	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["sgp.projections.projection.unit.label"]])) {
+		sgp.projections.projection.unit.label <- SGPstateData[[state]][["SGP_Configuration"]][["sgp.projections.projection.unit.label"]]
+	} else {
+		sgp.projections.projection.unit.label <- "YEAR"
+	}
 
 	### Loop over different states (usually just 1 state)
 
@@ -38,30 +43,7 @@ function(sgp_object,
 	}
 
 	for (state.iter in tmp.unique.states) {
-
-		if (!is.null(SGPstateData[[state]][['Achievement']][['Cutscore_Information']])) {
-			tmp.state.level <- which(sapply(lapply(SGPstateData[["RLI"]][["Achievement"]][["Cutscore_Information"]][['State_Levels']], '[[', 1), function(x) state.iter %in% x[[1]]))
-			if (target.level=="CATCH_UP_KEEP_UP") {
-				level.to.get <- which.max(SGPstateData[[state.iter]][["Achievement"]][["Cutscore_Information"]][['State_Levels']][[tmp.state.level]][['Levels']]=="Proficient")-1
-			}
-			if (target.level=="MOVE_UP_STAY_UP") {
-				if (length(which(SGPstateData[[state.iter]][["Achievement"]][["Cutscore_Information"]][['State_Levels']][[tmp.state.level]][['Levels']]=="Proficient")) <= 1) {
-					stop(paste("\tNOTE: MOVE_UP_STAY_UP Targets cannot be calculated because no achievement levels above PROFICIENT exist in ", state.iter, ".", sep=""))  
-				} else {
-					level.to.get <- which.max(SGPstateData[[state.iter]][["Achievement"]][["Cutscore_Information"]][['State_Levels']][[tmp.state.level]][['Levels']]=="Proficient")
-				}
-			}
-		} else {
-			if (target.level=="CATCH_UP_KEEP_UP") level.to.get <- which.max(SGPstateData[[state.iter]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")-1
-			if (target.level=="MOVE_UP_STAY_UP") {
-				if (length(which(SGPstateData[[state.iter]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")) <= 1) {
-					stop(paste("\tNOTE: MOVE_UP_STAY_UP Targets cannot be calculated because no achievement levels above PROFICIENT exist in ", state.iter, ".", sep=""))  
-				} else {
-					level.to.get <- which.max(SGPstateData[[state.iter]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")
-				}
-			}
-		} 
-
+		level.to.get <- getTargetSGPLevel(state, state.iter, target.level)
 
 		### Calculate Targets
 
@@ -69,19 +51,20 @@ function(sgp_object,
 			cols.to.get.names <- names(sgp_object@SGP[["SGProjections"]][[i]])[
 				grep(paste("LEVEL_", level.to.get, sep=""), names(sgp_object@SGP[["SGProjections"]][[i]]))]
 			num.years.to.get <- min(max.sgp.target.years.forward, length(cols.to.get.names))
-			cols.to.get.names <- cols.to.get.names[as.integer(sapply(strsplit(sapply(sapply(cols.to.get.names, strsplit, "_YEAR_"), tail, 1), "_"), head, 1)) <= num.years.to.get]
+			cols.to.get.names <- cols.to.get.names[as.integer(sapply(strsplit(sapply(sapply(cols.to.get.names, strsplit, paste("_", sgp.projections.projection.unit.label, "_", sep="")), tail, 1), "_"), head, 1)) <= num.years.to.get]
 			if (target.type %in% c("sgp.projections.lagged", "sgp.projections.lagged.baseline")) cols.to.get.names <- c("ACHIEVEMENT_LEVEL_PRIOR", cols.to.get.names)
+			if ("STATE" %in% names(sgp_object@Data)) cols.to.get.names <- c("STATE", cols.to.get.names)
 			cols.to.get <- sapply(cols.to.get.names, function(x) which(x==names(sgp_object@SGP[["SGProjections"]][[i]])))
 
 			if ("STATE" %in% names(sgp_object@Data)) {
 				tmp.list[[i]] <- data.table(
 					CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
-					YEAR=unlist(strsplit(i, "[.]"))[2],
-					sgp_object@SGP[["SGProjections"]][[i]][STATE==state.iter][,c(1,cols.to.get)])
+					YEAR=getTableNameYear(i),
+					sgp_object@SGP[["SGProjections"]][[i]][,c(1,cols.to.get)])[STATE==state.iter]
 			} else {
 				tmp.list[[i]] <- data.table(
 					CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
-					YEAR=unlist(strsplit(i, "[.]"))[2],
+					YEAR=getTableNameYear(i),
 					sgp_object@SGP[["SGProjections"]][[i]][,c(1,cols.to.get)])
 			}
 		}

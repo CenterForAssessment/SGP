@@ -3,12 +3,8 @@ function(achievement_level,
 	state,
 	status.type="CATCH_UP_KEEP_UP") {
 
-		if (!all(levels(achievement_level) %in% SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]])) {
-			levels(achievement_level)[!levels(achievement_level) %in% SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]]] <- NA
-		}
-
 		if (status.type=="CATCH_UP_KEEP_UP") {
-			levels(achievement_level) <- SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]] 
+			if (!identical(levels(achievement_level), c("Not Proficient", "Proficient"))) levels(achievement_level) <- SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]] 
 			levels(achievement_level) <- c("Catching Up", "Keeping Up")
 			return(factor(achievement_level, ordered=FALSE))
 		}

@@ -180,7 +180,7 @@ function(
 		for (i in tmp.names) {
 		tmp.list[[i]] <- data.table(
 					CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
-					YEAR=unlist(strsplit(i, "[.]"))[2],
+					YEAR=getTableNameYear(i),
 					sgp_object@SGP[["SGPercentiles"]][[i]])
 		}
 
@@ -217,7 +217,7 @@ function(
 		for (i in tmp.names) {
 			tmp.list[[i]] <- data.table(
 				CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
-				YEAR=unlist(strsplit(i, "[.]"))[2],
+				YEAR=getTableNameYear(i),
 				sgp_object@SGP[["SGPercentiles"]][[i]])
 
 			if (is.na(unlist(strsplit(i, "[.]"))[3])) { ### If cohort referenced SGP are to be included in baseline SGP (e.g., Georgia)
@@ -303,7 +303,7 @@ function(
 
 		if ("CATCH_UP_KEEP_UP" %in% target.args[['target.level']]) {
 
-			level.to.get <- which.max(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")-1
+			level.to.get <- getTargetSGPLevel(state, target.level="CATCH_UP_KEEP_UP")
 			slot.data[,CATCH_UP_KEEP_UP_STATUS_INITIAL:=getTargetInitialStatus(ACHIEVEMENT_LEVEL_PRIOR, state, "CATCH_UP_KEEP_UP")]
 
 			for (i in seq_along(target.args[['my.sgp']])) {
@@ -343,7 +343,7 @@ function(
 
 		if ("MOVE_UP_STAY_UP" %in% target.args[['target.level']]) {
 
-			level.to.get <- which.max(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")
+			level.to.get <- getTargetSGPLevel(state, target.level="MOVE_UP_STAY_UP")
 			slot.data[,MOVE_UP_STAY_UP_STATUS_INITIAL:=getTargetInitialStatus(ACHIEVEMENT_LEVEL_PRIOR, state, "MOVE_UP_STAY_UP")]
 
 			for (i in seq_along(target.args[['my.sgp']])) {
