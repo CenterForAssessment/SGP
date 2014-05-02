@@ -61,7 +61,7 @@ function(sgp_object,
 				}
 			} ### END if (use.cohort.for.baseline.when.missing)
 		}
-		tmp.names <- tmp.names[sapply(sapply(tmp.names, function(x) grep("LEVEL", names(sgp_object@SGP[['SGProjections']][[x]]))), function(x) length(x)>0)]
+		if (length(tmp.names) > 0) tmp.names <- tmp.names[sapply(lapply(tmp.names, function(x) grep("LEVEL", names(sgp_object@SGP[['SGProjections']][[x]]))), function(x) length(x)>0)]
 		if (length(tmp.names) > 0 & !is.null(years)) tmp.names <- tmp.names[sapply(strsplit(tmp.names, "[.]"), function(x) x[2] %in% years)]
 		if (length(tmp.names) > 0 & !is.null(content_areas)) tmp.names <- tmp.names[sapply(strsplit(tmp.names, "[.]"), function(x) x[1] %in% content_areas)]
 		return(tmp.names)
@@ -87,7 +87,7 @@ function(sgp_object,
 				}
 			} ### END if (use.cohort.for.baseline.when.missing)
 		}
-		tmp.names <- tmp.names[sapply(sapply(tmp.names, function(x) grep("LEVEL", names(sgp_object@SGP[['SGProjections']][[x]]))), function(x) length(x)>0)]
+		if (length(tmp.names) > 0) tmp.names <- tmp.names[sapply(lapply(tmp.names, function(x) grep("LEVEL", names(sgp_object@SGP[['SGProjections']][[x]]))), function(x) length(x)>0)]
 		if (length(tmp.names) > 0 & !is.null(years)) tmp.names <- tmp.names[sapply(strsplit(tmp.names, "[.]"), function(x) x[2] %in% years)]
 		if (length(tmp.names) > 0 & !is.null(content_areas)) tmp.names <- tmp.names[sapply(strsplit(tmp.names, "[.]"), function(x) x[1] %in% content_areas)]
 		return(tmp.names)
