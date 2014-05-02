@@ -3,7 +3,7 @@ function(state,
 	state.iter=NULL,
 	target.level){
 		if (!is.null(SGPstateData[[state]][['Achievement']][['Cutscore_Information']])) {
-			tmp.state.level <- which(sapply(lapply(SGPstateData[["RLI"]][["Achievement"]][["Cutscore_Information"]][['State_Levels']], '[[', 1), function(x) state.iter %in% x[[1]]))
+			tmp.state.level <- which(sapply(lapply(SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]][['State_Levels']], '[[', 1), function(x) state.iter %in% x[[1]]))
 			if (target.level=="CATCH_UP_KEEP_UP") {
 				level.to.get <- which.max(SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]][['State_Levels']][[tmp.state.level]][['Levels']]=="Proficient")-1
 			}

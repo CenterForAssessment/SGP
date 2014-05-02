@@ -304,7 +304,7 @@ function(
 		if ("CATCH_UP_KEEP_UP" %in% target.args[['target.level']]) {
 
 			level.to.get <- getTargetSGPLevel(state, target.level="CATCH_UP_KEEP_UP")
-			slot.data[,CATCH_UP_KEEP_UP_STATUS_INITIAL:=getTargetInitialStatus(ACHIEVEMENT_LEVEL_PRIOR, state, "CATCH_UP_KEEP_UP")]
+			slot.data[,CATCH_UP_KEEP_UP_STATUS_INITIAL:=getTargetInitialStatus(ACHIEVEMENT_LEVEL_PRIOR, state, status.type="CATCH_UP_KEEP_UP")]
 
 			for (i in seq_along(target.args[['my.sgp']])) {
 				if (length(grep("BASELINE", target.args[['my.sgp']][i]))==0) my.label <- "CATCH_UP_KEEP_UP_STATUS" else my.label <- "CATCH_UP_KEEP_UP_STATUS_BASELINE"
@@ -344,7 +344,7 @@ function(
 		if ("MOVE_UP_STAY_UP" %in% target.args[['target.level']]) {
 
 			level.to.get <- getTargetSGPLevel(state, target.level="MOVE_UP_STAY_UP")
-			slot.data[,MOVE_UP_STAY_UP_STATUS_INITIAL:=getTargetInitialStatus(ACHIEVEMENT_LEVEL_PRIOR, state, "MOVE_UP_STAY_UP")]
+			slot.data[,MOVE_UP_STAY_UP_STATUS_INITIAL:=getTargetInitialStatus(ACHIEVEMENT_LEVEL_PRIOR, state, status.type="MOVE_UP_STAY_UP")]
 
 			for (i in seq_along(target.args[['my.sgp']])) {
 				if (length(grep("BASELINE", target.args[['my.sgp']][i]))==0) my.label <- "MOVE_UP_STAY_UP_STATUS" else my.label <- "MOVE_UP_STAY_UP_STATUS_BASELINE"

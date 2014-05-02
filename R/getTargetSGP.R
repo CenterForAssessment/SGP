@@ -101,7 +101,7 @@ function(sgp_object,
 		}
 
 		tmp_object_1[, paste(target.level, "STATUS_INITIAL", sep="_") := 
-			getTargetInitialStatus(tmp_object_1[[grep("ACHIEVEMENT", names(tmp_object_1), value=TRUE)]], state, target.level), with=FALSE]
+			getTargetInitialStatus(tmp_object_1[[grep("ACHIEVEMENT", names(tmp_object_1), value=TRUE)]], state, state.iter, target.level), with=FALSE]
 		tmp_object_1 <- tmp_object_1[!is.na(get(paste(target.level, "STATUS_INITIAL", sep="_")))]
 
 		## Find min/max of targets based upon CATCH_UP_KEEP_UP_STATUS_INITIAL status
@@ -122,6 +122,6 @@ function(sgp_object,
 		}
 
 		tmp.sgpTarget.list[[state.iter]] <- tmp_object_2
-	}
+	} ### END for state.iter
 		return(data.table(rbind.fill(tmp.sgpTarget.list), key=getKey(sgp_object)))
 } ### END getTargetSGP
