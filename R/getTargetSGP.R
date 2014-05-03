@@ -123,5 +123,5 @@ function(sgp_object,
 
 		tmp.sgpTarget.list[[state.iter]] <- tmp_object_2
 	} ### END for state.iter
-		return(data.table(rbind.fill(tmp.sgpTarget.list), key=getKey(sgp_object)))
+	return(data.table(rbind.fill(tmp.sgpTarget.list), key=getKey(sgp_object)))
 } ### END getTargetSGP
