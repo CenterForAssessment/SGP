@@ -400,17 +400,24 @@ function(
 
 	if (sgp.target.scale.scores) {
 		target.args <- get.target.arguments(SGPstateData[[state]][["Growth"]][["System_Type"]])
+		tmp.target.list <- list()
 		for (target.type.iter in target.args[['sgp.target.scale.scores.types']]) {
 			for (target.level.iter in target.args[['target.level']]) {
-				if (!exists("tmp.target.data")) {
-					tmp.target.data <- getTargetSGP(sgp_object, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward, return.lagged.status=FALSE)
-				} else {
-					tmp.target.data <- data.table(merge.data.frame(tmp.target.data, 
-						getTargetSGP(sgp_object, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward, return.lagged.status=FALSE),
-						all=TRUE), key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
-				}
+				tmp.target.list[[paste(target.type.iter, target.level.iter)]] <- 
+					getTargetSGP(sgp_object, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward, return.lagged.status=FALSE)
 			}
-		} 
+		}
+		tmp.target.data <- data.table(Reduce(function(x, y) merge.data.frame(x, y, all=T), tmp.target.list, accumulate=FALSE), key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
+
+#				if (!exists("tmp.target.data")) {
+#					tmp.target.data <- getTargetSGP(sgp_object, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward, return.lagged.status=FALSE)
+#				} else {
+#					tmp.target.data <- data.table(merge.data.frame(tmp.target.data, 
+#						getTargetSGP(sgp_object, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward, return.lagged.status=FALSE),
+#						all=TRUE), key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
+#				}
+#			}
+#		} 
 
 		for (target.type.iter in target.args[['sgp.target.scale.scores.types']]) {
 			tmp.target.level.names <- as.character(sapply(target.args[['target.level']], function(x) getTargetName(target.type.iter, x, max.sgp.target.years.forward)))

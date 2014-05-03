@@ -34,6 +34,7 @@ function(sgp_object,
 	### Loop over different states (usually just 1 state)
 
 	tmp.names <- getPercentileTableNames(sgp_object, content_areas, state, years, target.type)
+	if (length(tmp.names)==0) return(NULL)
 	tmp.list <- list()
 
 	if ("STATE" %in% names(sgp_object@Data)) {
