@@ -416,7 +416,8 @@ function(
 		tmp.target.data <- data.table(Reduce(function(x, y) merge.data.frame(x, y, all=T), tmp.target.list, accumulate=FALSE), key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 
 		for (target.type.iter in target.args[['sgp.target.scale.scores.types']]) {
-			tmp.target.level.names <- as.character(sapply(target.args[['target.level']], function(x) getTargetName(target.type.iter, x, max.sgp.target.years.forward, projection.unit.label)))
+			tmp.target.level.names <- 
+				as.character(sapply(target.args[['target.level']], function(x) getTargetName(target.type.iter, x, max.sgp.target.years.forward, "SGP_TARGET", projection.unit.label)))
 			sgp_object <- getTargetScaleScore(
 				sgp_object, 
 				state, 
