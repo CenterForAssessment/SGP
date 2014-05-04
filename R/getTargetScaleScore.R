@@ -28,6 +28,7 @@ function(sgp_object,
 	
 	par.sgp.config <- getSGPConfig(
 				sgp_object,
+				state,
 				tmp_sgp_object,
 				sort(unique(years.content_areas.grades[['CONTENT_AREA']])),
 				sort(unique(years.content_areas.grades[['YEAR']])),
@@ -74,7 +75,6 @@ function(sgp_object,
 		my.target.type <- "sgp.projections.lagged"
 		my.content.areas <- "sgp.content.areas"
 	}
-
 
 
 	### Calculate targets
