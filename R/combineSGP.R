@@ -63,7 +63,7 @@ function(
 	}
 
 	if (!is.null(SGPstateData[[state]][['SGP_Configuration']][['sgp.projections.projection.unit.label']])) {
-		projection.unit.label <- SGPstateData[[state]][['SGP_Configuration']][['max.sgp.target.years.forward']][['sgp.projections.projection.unit.label']]
+		projection.unit.label <- SGPstateData[[state]][['SGP_Configuration']][['sgp.projections.projection.unit.label']]
 	} else {
 		projections.unit.label <- "YEAR"
 	}
