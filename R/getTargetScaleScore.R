@@ -85,7 +85,7 @@ function(sgp_object,
 		###  FOREACH flavor
 
 		if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
-			tmp <- foreach(sgp.iter=iter(par.sgp.config), .packages="SGP", .combine="mergeSGP", .inorder=FALSE,
+			tmp <- foreach(sgp.iter=iter(par.sgp.config[[target.type]]), .packages="SGP", .combine="mergeSGP", .inorder=FALSE,
 				.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
 				return(studentGrowthProjections(
 					panel.data=list(
@@ -116,7 +116,7 @@ function(sgp_object,
 		} else {# END FOREACH
 			###   SNOW flavor
 			if (par.start$par.type == 'SNOW') {
-				tmp <- clusterApplyLB(par.start$internal.cl, par.sgp.config, 	function(sgp.iter)	studentGrowthProjections(
+				tmp <- clusterApplyLB(par.start$internal.cl, par.sgp.config[[target.type]], function(sgp.iter) studentGrowthProjections(
 					panel.data=list(
 						Panel_Data=getPanelData(tmp_sgp_data_for_analysis, my.target.type, sgp.iter, sgp.targets=sgp.targets), 
 						Coefficient_Matrices=tmp_sgp_object[['Coefficient_Matrices']], 
@@ -146,7 +146,7 @@ function(sgp_object,
 			
 				###  MULTICORE flavor
 				if (par.start$par.type == 'MULTICORE') {
-					tmp <- mclapply(par.sgp.config, function(sgp.iter)	studentGrowthProjections(
+					tmp <- mclapply(par.sgp.config[[target.type]], function(sgp.iter) studentGrowthProjections(
 						panel.data=list(
 							Panel_Data=getPanelData(tmp_sgp_data_for_analysis, my.target.type, sgp.iter, sgp.targets=sgp.targets), 
 							Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]], 
@@ -173,7 +173,8 @@ function(sgp_object,
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
 					if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
-						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], sgp.projections.lagged.=getErrorReports(tmp, tmp.tf, par.sgp.config))
+						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], 
+							sgp.projections.lagged.=getErrorReports(tmp, tmp.tf, par.sgp.config[[target.type]]))
 					}
 					rm(tmp)
 				} # End MULTICORE
@@ -182,7 +183,7 @@ function(sgp_object,
 		suppressMessages(gc()) # clean up
 	} else { ### END if (!is.null(parallel.config))
 
-		for (sgp.iter in par.sgp.config) {
+		for (sgp.iter in par.sgp.config[[target.type]]) {
 			panel.data=within(tmp_sgp_object, assign("Panel_Data", getPanelData(tmp_sgp_data_for_analysis, my.target.type, sgp.iter, sgp.targets=sgp.targets)))
 			panel.data[['Coefficient_Matrices']] <- tmp_sgp_object[['Coefficient_Matrices']]
 			panel.data[['Knots_Boundaries']] <- tmp_sgp_object[['Knots_Boundaries']]
