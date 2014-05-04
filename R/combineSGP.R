@@ -65,7 +65,7 @@ function(
 	if (!is.null(SGPstateData[[state]][['SGP_Configuration']][['sgp.projections.projection.unit.label']])) {
 		projection.unit.label <- SGPstateData[[state]][['SGP_Configuration']][['sgp.projections.projection.unit.label']]
 	} else {
-		projections.unit.label <- "YEAR"
+		projection.unit.label <- "YEAR"
 	}
 
 	### Check sgp.target.scale.scores.only and make adjustments to other arguments as necessary
