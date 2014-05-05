@@ -294,7 +294,7 @@ function(
 
 		### CATCH_UP_KEEP_UP_STATUS Calculation
 
-		if ("CATCH_UP_KEEP_UP" %in% target.args[['target.level']]) {
+		if ("CATCH_UP_KEEP_UP" %in% target.args[['target.level']] & (sgp.projections.lagged | sgp.projections.lagged.baseline)) {
 
 			level.to.get <- getTargetSGPLevel(state, target.level="CATCH_UP_KEEP_UP")
 			slot.data[,CATCH_UP_KEEP_UP_STATUS_INITIAL:=getTargetInitialStatus(ACHIEVEMENT_LEVEL_PRIOR, state, status.type="CATCH_UP_KEEP_UP")]
@@ -334,7 +334,7 @@ function(
 
 		### MOVE_UP_STAY_UP_STATUS Calculation
 
-		if ("MOVE_UP_STAY_UP" %in% target.args[['target.level']]) {
+		if ("MOVE_UP_STAY_UP" %in% target.args[['target.level']] & (sgp.projections.lagged | sgp.projections.lagged.baseline)) {
 
 			level.to.get <- getTargetSGPLevel(state, target.level="MOVE_UP_STAY_UP")
 			slot.data[,MOVE_UP_STAY_UP_STATUS_INITIAL:=getTargetInitialStatus(ACHIEVEMENT_LEVEL_PRIOR, state, status.type="MOVE_UP_STAY_UP")]
@@ -372,7 +372,7 @@ function(
 		}
 
 		for (i in intersect(names(slot.data), c("CATCH_UP_KEEP_UP_STATUS_INITIAL", "MOVE_UP_STAY_UP_STATUS_INITIAL"))) {
-			slot.data[[i]] <- NULL
+			slot.data[,i:=NULL]
 		}
 
 	} ## END sgp.projections.lagged | sgp.projections.lagged.baseline
