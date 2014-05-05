@@ -11,6 +11,7 @@ function(
 	sgp.projections.lagged=TRUE,
 	sgp.projections.lagged.baseline=TRUE,
 	sgp.target.scale.scores=FALSE,
+	sgp.target.scale.scores.only=FALSE,
 	sgp.target.content_areas=NULL,
 	max.sgp.target.years.forward=3,
 	update.all.years=FALSE,
@@ -65,6 +66,10 @@ function(
 		projection.unit.label <- SGPstateData[[state]][['SGP_Configuration']][['sgp.projections.projection.unit.label']]
 	} else {
 		projection.unit.label <- "YEAR"
+	}
+
+	if (sgp.target.scale.scores.only) {
+		sgp.target.scale.scores <- TRUE
 	}
 
 	### Utility functions
@@ -165,7 +170,7 @@ function(
 		sgp.percentiles <- FALSE
 	}
 
-	if (sgp.percentiles) { 
+	if (sgp.percentiles & !sgp.target.scale.scores.only) { 
 
 		tmp.list <- list()
 		for (i in tmp.names) {
@@ -202,7 +207,7 @@ function(
 		 sgp.percentiles.baseline <- FALSE
 	}
 
-	if (sgp.percentiles.baseline) {
+	if (sgp.percentiles.baseline & !sgp.target.scale.scores.only) {
 
 		tmp.list <- list() 
 		for (i in tmp.names) {
@@ -261,7 +266,7 @@ function(
 
 	### Calculate Targets
  
-	if (sgp.projections | sgp.projections.baseline | sgp.projections.lagged | sgp.projections.lagged.baseline) {
+	if ((sgp.projections | sgp.projections.baseline | sgp.projections.lagged | sgp.projections.lagged.baseline) & !sgp.target.scale.scores.only) {
 
 		target.args <- get.target.arguments(SGPstateData[[state]][["Growth"]][["System_Type"]], target.type, projection.unit.label)
 

@@ -26,6 +26,7 @@ abcSGP(sgp_object,
 	sgp.use.my.coefficient.matrices=NULL,
 	sgp.minimum.default.panel.years=NULL,
 	sgp.target.scale.scores=FALSE,
+	sgp.target.scale.scores.only=FALSE,
 	simulate.sgps=TRUE,
 	calculate.simex=NULL,
 	calculate.simex.baseline=NULL,
@@ -84,6 +85,9 @@ If missing the function will use the data to infer all the grade progressions fo
   \item{sgp.minimum.default.panel.years}{Integer indicating the minimum number of panel years to begin with in the calculation of student growth percentiles. The default is NULL (converted to 3 years).
   }
   \item{sgp.target.scale.scores}{Boolean variable passed to \code{\link{combineSGP}} indicating whether target scale scores associated with SGP_TARGETs should be calculated as 
+  part of the \code{\link{combineSGP}} run. Defaults to FALSE.
+  }
+  \item{sgp.target.scale.scores.only}{Boolean variable passed to \code{\link{combineSGP}} indicating whether ONLY target scale scores associated with SGP_TARGETs should be calculated as 
   part of the \code{\link{combineSGP}} run. Defaults to FALSE.
   }
   \item{simulate.sgps}{Boolean variable indicating whether to simulate SGP values for students based on test-specific Conditional Standard Errors of Measurement (CSEM). 
