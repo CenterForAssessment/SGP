@@ -736,7 +736,7 @@ function(panel.data,         ## REQUIRED
 					simex.tf <- FALSE
 				}
 				if (any(calculate.simex$lambda < 0)) {
-					warning("lambda should not contain negative values. Negative values will be ignored", call. = FALSE)
+					message("lambda should not contain negative values. Negative values will be ignored", call. = FALSE)
 					lambda <- calculate.simex$lambda[calculate.simex$lambda >= 0]
 				} else lambda=calculate.simex$lambda
 			}
