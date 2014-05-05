@@ -11,7 +11,6 @@ function(
 	sgp.projections.lagged=TRUE,
 	sgp.projections.lagged.baseline=TRUE,
 	sgp.target.scale.scores=FALSE,
-	sgp.target.scale.scores.only=FALSE,
 	sgp.target.content_areas=NULL,
 	max.sgp.target.years.forward=3,
 	update.all.years=FALSE,
@@ -68,16 +67,9 @@ function(
 		projection.unit.label <- "YEAR"
 	}
 
-	### Check sgp.target.scale.scores.only and make adjustments to other arguments as necessary
-
-	if (sgp.target.scale.scores.only) {
-		sgp.target.scale.scores <- TRUE
-		sgp.percentiles <- sgp.projections <- sgp.projections.lagged <- sgp.percentiles.baseline <- sgp.projections.baseline <- sgp.projections.lagged.baseline <- FALSE
-	}
-
 	### Utility functions
 
-	get.target.arguments <- function(system.type, target.type=NULL) {
+	get.target.arguments <- function(system.type, target.type=NULL, projection.unit.label) {
 		tmp.list <- list()
 		if (is.null(system.type)) {
 			if (identical(target.type, c("sgp.projections", "sgp.projections.lagged"))) system.type <- "Cohort Referenced"
@@ -158,15 +150,6 @@ function(
 		}
 	}
 
-
-	###########################################################################################
-	###
-	### Merging of percentiles/projections
-	###
-	###########################################################################################
-
-
-	if (!sgp.target.scale.scores.only) {
 
 	############################################################################
 	### sgp.percentiles: Merge Cohort Referenced SGPs with student data
@@ -255,19 +238,19 @@ function(
 	######################################################################################
 
 
-	if (length(getPercentileTableNames(sgp_object, content_areas, state, years, "sgp.projections")) == 0) {
+	if (length(getPercentileTableNames(sgp_object, content_areas, state, years, "sgp.projections")) == 0 & sgp.projections) {
 		 tmp.messages <- c(tmp.messages, "\tNOTE: No SGP projections available in SGP slot. No current year student growth projection targets will be produced.\n")
 		 sgp.projections <- FALSE; 
 	}
-	if (length(getPercentileTableNames(sgp_object, content_areas, state, years, "sgp.projections.baseline")) == 0) {
+	if (length(getPercentileTableNames(sgp_object, content_areas, state, years, "sgp.projections.baseline")) == 0 & sgp.projections.baseline) {
 		 tmp.messages <- c(tmp.messages, "\tNOTE: No SGP baseline projections available in SGP slot. No current year baseline student growth projection targets will be produced.\n")
 		 sgp.projections.baseline <- FALSE; 
 	}
-	if (length(getPercentileTableNames(sgp_object, content_areas, state, years, "sgp.projections.lagged")) == 0) {
+	if (length(getPercentileTableNames(sgp_object, content_areas, state, years, "sgp.projections.lagged")) == 0 & sgp.projections.lagged) {
 		 tmp.messages <- c(tmp.messages, "\tNOTE: No SGP lagged projections available in SGP slot. No student growth projection targets will be produced.\n")
 		 sgp.projections.lagged <- FALSE; 
 	}
-	if (length(getPercentileTableNames(sgp_object, content_areas, state, years, "sgp.projections.lagged.baseline")) == 0) {
+	if (length(getPercentileTableNames(sgp_object, content_areas, state, years, "sgp.projections.lagged.baseline")) == 0 & sgp.projections.lagged.baseline) {
 		tmp.messages <- c(tmp.messages, "\tNOTE: No SGP lagged baseline projections available in SGP slot. No baseline referenced student growth projection targets will be produced.\n")
 		sgp.projections.lagged.baseline <- FALSE; 
 	}
@@ -278,7 +261,7 @@ function(
  
 	if (sgp.projections | sgp.projections.baseline | sgp.projections.lagged | sgp.projections.lagged.baseline) {
 
-		target.args <- get.target.arguments(SGPstateData[[state]][["Growth"]][["System_Type"]], target.type)
+		target.args <- get.target.arguments(SGPstateData[[state]][["Growth"]][["System_Type"]], target.type, projection.unit.label)
 
 		for (target.type.iter in target.args[['target.type']]) {
 			for (target.level.iter in target.args[['target.level']]) {
@@ -391,21 +374,12 @@ function(
 	} ## END sgp.projections.lagged | sgp.projections.lagged.baseline
 
 
-	} ### END if (!sgp.target.scale.scores.only) ### END of merging
-
-	###########################################################################################
-	###
-	### END Merging of percentiles/projections
-	###
-	###########################################################################################
-
-
 	###################################################################################################
 	### Create SGP Scale Score targets (Cohort and Baseline referenced) if requested
 	###################################################################################################
 
 	if (sgp.target.scale.scores) {
-		target.args <- get.target.arguments(SGPstateData[[state]][["Growth"]][["System_Type"]])
+		target.args <- get.target.arguments(SGPstateData[[state]][["Growth"]][["System_Type"]], projection.unit.label=projection.unit.label)
 		tmp.target.list <- list()
 		for (target.type.iter in target.args[['sgp.target.scale.scores.types']]) {
 			for (target.level.iter in target.args[['target.level']]) {
