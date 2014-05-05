@@ -50,7 +50,7 @@ function(
 
 	### Create SGP_TARGET_CONTENT_AREA in certain cases
 
-	if (is.null(sgp.target.content_areas) & length(unique(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]])) >= 2) {
+	if (is.null(sgp.target.content_areas) & any(sapply(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]], function(x) length(unique(x))) > 1)) {
 		sgp.target.content_areas <- TRUE
 		tmp.messages <- c(tmp.messages, "\tNOTE: Multple content areas detected for student growth targets. 'sgp.target.content_areas set to TRUE.\n")
 	}
@@ -88,28 +88,28 @@ function(
 		if (identical(system.type, "Cohort Referenced")) {
 			tmp.list[['target.type']] <- intersect(target.type, c("sgp.projections", "sgp.projections.lagged"))
 			tmp.list[['my.sgp']] <- "SGP"
-			tmp.list[['my.sgp.target']] <- paste("SGP_TARGET", max.sgp.target.years.forward, "YEAR", sep="_")
-			tmp.list[['my.sgp.target.content_area']] <- paste("SGP_TARGET", max.sgp.target.years.forward, "YEAR_CONTENT_AREA", sep="_")
-			tmp.list[['my.sgp.target.move.up.stay.up']] <- paste("SGP_TARGET_MOVE_UP_STAY_UP", max.sgp.target.years.forward, "YEAR", sep="_")
+			tmp.list[['my.sgp.target']] <- paste("SGP_TARGET", max.sgp.target.years.forward, projection.unit.label, sep="_")
+			tmp.list[['my.sgp.target.content_area']] <- paste("SGP_TARGET", max.sgp.target.years.forward, projection.unit.label, "CONTENT_AREA", sep="_")
+			tmp.list[['my.sgp.target.move.up.stay.up']] <- paste("SGP_TARGET_MOVE_UP_STAY_UP", max.sgp.target.years.forward, projection.unit.label, sep="_")
 			if (sgp.target.scale.scores) tmp.list[['sgp.target.scale.scores.types']] <- c("sgp.projections", "sgp.projections.lagged")
 		}
 		if (identical(system.type, "Baseline Referenced")) {
 			tmp.list[['target.type']] <- intersect(target.type, c("sgp.projections.baseline", "sgp.projections.lagged.baseline"))
 			tmp.list[['my.sgp']] <- "SGP_BASELINE"
-			tmp.list[['my.sgp.target']] <- paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, "YEAR", sep="_")
-			tmp.list[['my.sgp.target.content_area']] <- paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, "YEAR_CONTENT_AREA", sep="_")
-			tmp.list[['my.sgp.target.move.up.stay.up']] <- paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", max.sgp.target.years.forward, "YEAR", sep="_")
+			tmp.list[['my.sgp.target']] <- paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, projection.unit.label, sep="_")
+			tmp.list[['my.sgp.target.content_area']] <- paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, projection.unit.label, "CONTENT_AREA", sep="_")
+			tmp.list[['my.sgp.target.move.up.stay.up']] <- paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", max.sgp.target.years.forward, projection.unit.label, sep="_")
 			if (sgp.target.scale.scores) tmp.list[['sgp.target.scale.scores.types']] <- c("sgp.projections.baseline", "sgp.projections.lagged.baseline")
 		}
 		if (identical(system.type, "Cohort and Baseline Referenced")) {
 			tmp.list[['target.type']] <- intersect(target.type, c("sgp.projections", "sgp.projections.baseline", "sgp.projections.lagged", "sgp.projections.lagged.baseline"))
 			tmp.list[['my.sgp']] <- c("SGP", "SGP_BASELINE")
-			tmp.list[['my.sgp.target']] <- c(paste("SGP_TARGET", max.sgp.target.years.forward, "YEAR", sep="_"), 
-				paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, "YEAR", sep="_"))
-			tmp.list[['my.sgp.target.content_area']] <- c(paste("SGP_TARGET", max.sgp.target.years.forward, "YEAR_CONTENT_AREA", sep="_"), 
-				paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, "YEAR_CONTENT_AREA", sep="_"))
-			tmp.list[['my.sgp.target.move.up.stay.up']] <- c(paste("SGP_TARGET_MOVE_UP_STAY_UP", max.sgp.target.years.forward, "YEAR", sep="_"),
-				paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", max.sgp.target.years.forward, "YEAR", sep="_"))
+			tmp.list[['my.sgp.target']] <- c(paste("SGP_TARGET", max.sgp.target.years.forward, projection.unit.label, sep="_"), 
+				paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, projection.unit.label, sep="_"))
+			tmp.list[['my.sgp.target.content_area']] <- c(paste("SGP_TARGET", max.sgp.target.years.forward, projection.unit.label, "CONTENT_AREA", sep="_"), 
+				paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, projection.unit.label, "CONTENT_AREA", sep="_"))
+			tmp.list[['my.sgp.target.move.up.stay.up']] <- c(paste("SGP_TARGET_MOVE_UP_STAY_UP", max.sgp.target.years.forward, projection.unit.label, sep="_"),
+				paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", max.sgp.target.years.forward, projection.unit.label, sep="_"))
 			if (sgp.target.scale.scores) tmp.list[['sgp.target.scale.scores.types']] <- 
 				c("sgp.projections", "sgp.projections.baseline", "sgp.projections.lagged", "sgp.projections.lagged.baseline")
 		}
@@ -134,16 +134,20 @@ function(
 
 	if (update.all.years) {
 		variables.to.null.out <- c("SGP", "SGP_SIMEX", "SGP_LEVEL", "SGP_STANDARD_ERROR", "SCALE_SCORE_PRIOR", "SCALE_SCORE_PRIOR_STANDARDIZED", "SGP_BASELINE", "SGP_LEVEL_BASELINE", 
-					   "SGP_TARGET", "SGP_TARGET_MU", "SGP_TARGET_MU_BASELINE", "SGP_TARGET_MOVE_UP_STAY_UP", "SGP_TARGET_MOVE_UP_STAY_UP_BASELINE", "ACHIEVEMENT_LEVEL_PRIOR", 
-					   "CATCH_UP_KEEP_UP_STATUS_INITIAL", "SGP_TARGET_BASELINE", "CATCH_UP_KEEP_UP_STATUS", "CATCH_UP_KEEP_UP_STATUS_BASELINE",
-					   "MOVE_UP_STATUS", "MOVE_UP_STAY_UP_STATUS", "MOVE_UP_STAY_UP_STATUS_BASELINE",
-					   "SGP_NORM_GROUP", "SGP_NORM_GROUP_BASELINE", "SGP_BASELINE_STANDARD_ERROR", "SGP_NORM_GROUP_SCALE_SCORES", "SGP_NORM_GROUP_BASELINE_SCALE_SCORES",
-					   grep("SGP_ORDER", names(slot.data), value=TRUE), grep("SGP_BASELINE_ORDER", names(slot.data), value=TRUE),
-					   grep("PERCENTILE_CUT", names(slot.data), value=TRUE), grep("CONFIDENCE_BOUND", names(slot.data), value=TRUE),
-					   paste("SGP_TARGET", max.sgp.target.years.forward, "YEAR", sep="_"), paste("SGP_TARGET_MOVE_UP_STAY_UP", max.sgp.target.years.forward, "YEAR", sep="_"), 
-					   paste("SGP_TARGET", max.sgp.target.years.forward, "YEAR_CURRENT", sep="_"), paste("SGP_TARGET_MOVE_UP_STAY_UP", max.sgp.target.years.forward, "YEAR_CURRENT", sep="_"), 
-					   paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, "YEAR", sep="_"), paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", max.sgp.target.years.forward, "YEAR", sep="_"),
-					   paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, "YEAR_CURRENT", sep="_"), paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", max.sgp.target.years.forward, "YEAR_CURRENT", sep="_"))
+						"SGP_TARGET", "SGP_TARGET_MU", "SGP_TARGET_MU_BASELINE", "SGP_TARGET_MOVE_UP_STAY_UP", "SGP_TARGET_MOVE_UP_STAY_UP_BASELINE", "ACHIEVEMENT_LEVEL_PRIOR", 
+						"CATCH_UP_KEEP_UP_STATUS_INITIAL", "SGP_TARGET_BASELINE", "CATCH_UP_KEEP_UP_STATUS", "CATCH_UP_KEEP_UP_STATUS_BASELINE",
+						"MOVE_UP_STATUS", "MOVE_UP_STAY_UP_STATUS", "MOVE_UP_STAY_UP_STATUS_BASELINE",
+						"SGP_NORM_GROUP", "SGP_NORM_GROUP_BASELINE", "SGP_BASELINE_STANDARD_ERROR", "SGP_NORM_GROUP_SCALE_SCORES", "SGP_NORM_GROUP_BASELINE_SCALE_SCORES",
+						grep("SGP_ORDER", names(slot.data), value=TRUE), grep("SGP_BASELINE_ORDER", names(slot.data), value=TRUE),
+						grep("PERCENTILE_CUT", names(slot.data), value=TRUE), grep("CONFIDENCE_BOUND", names(slot.data), value=TRUE),
+						paste("SGP_TARGET", max.sgp.target.years.forward, projection.unit.label, sep="_"), 
+						paste("SGP_TARGET_MOVE_UP_STAY_UP", max.sgp.target.years.forward, projection.unit.label, sep="_"), 
+						paste("SGP_TARGET", max.sgp.target.years.forward, projection.unit.label, "CURRENT", sep="_"), 
+						paste("SGP_TARGET_MOVE_UP_STAY_UP", max.sgp.target.years.forward, projection.unit.label, "CURRENT", sep="_"), 
+						paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, projection.unit.label, sep="_"), 
+						paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", max.sgp.target.years.forward, projection.unit.label, sep="_"),
+						paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, projection.unit.label, "CURRENT", sep="_"), 
+						paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", max.sgp.target.years.forward, projection.unit.label, "CURRENT", sep="_"))
 
 		for (tmp.variables.to.null.out in intersect(names(slot.data), variables.to.null.out)) {
 			slot.data[,tmp.variables.to.null.out:=NULL, with=FALSE]

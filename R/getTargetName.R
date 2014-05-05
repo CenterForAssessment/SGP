@@ -9,5 +9,5 @@ function(target.type="sgp.projections.lagged",
 	if (target.type %in% c("sgp.projections", "sgp.projections.baseline")) target.period <- "CURRENT" else target.period <- NULL
 	if (target.type %in% c("sgp.projections.baseline", "sgp.projections.lagged.baseline")) sgp.type <- "BASELINE" else sgp.type <- NULL
 
-	return(paste(c(target.label, sgp.type, target.level, target.years, projection.unit.label, sgp.type), collapse="_"))
+	return(paste(c(target.label, sgp.type, target.level, target.years, projection.unit.label, target.period), collapse="_"))
 } ### END getTargetName
