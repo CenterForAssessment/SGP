@@ -372,7 +372,7 @@ function(
 		}
 
 		for (i in intersect(names(slot.data), c("CATCH_UP_KEEP_UP_STATUS_INITIAL", "MOVE_UP_STAY_UP_STATUS_INITIAL"))) {
-			slot.data[,i:=NULL]
+			slot.data[,i:=NULL,with=FALSE]
 		}
 
 	} ## END sgp.projections.lagged | sgp.projections.lagged.baseline
