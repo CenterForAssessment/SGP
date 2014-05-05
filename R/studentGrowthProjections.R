@@ -552,7 +552,7 @@ function(panel.data,	## REQUIRED
 		}
 	} 
 
-	if (tf.cutscores | is.character(percentile.trajectory.values)) {
+	if ((tf.cutscores | is.character(percentile.trajectory.values)) & exists("tmp.cutscores")) {
 		Cutscores <- tmp.cutscores
 	}
 
