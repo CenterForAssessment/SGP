@@ -227,30 +227,6 @@ function(sgp_object,
 	tmp.list
 	}
 
-#	## Function to test each element of par.sgp.config to make sure (EOCT) projections can/should be run
-#	
-#	test.projection.iter <- function(sgp.iter) {
-#		if (sgp.iter[['sgp.projection.grade.sequences']]=="NO_PROJECTIONS") return(FALSE)
-#		if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]])) {
-#			if (tail(sgp.iter[["sgp.grade.sequences"]], 1) == "EOCT") { # Only check EOCT configs/iters
-#				if (is.null(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]])) return(FALSE)
-#				tmp.index <- match(tail(sgp.iter[["sgp.content.areas"]], 1), 
-#					SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]])
-#				tmp.content_area.projection.sequence <-
-#					SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]][1:tmp.index]
-#				tmp.grade.projection.sequence <-
-#					SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]][1:tmp.index]
-#				tmp.year_lags.projection.sequence <-
-#					SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]][1:(tmp.index-1)]
-#				if (!all(sgp.iter[["sgp.content.areas"]] == tmp.content_area.projection.sequence & 
-#					sgp.iter[["sgp.grade.sequences"]] == tmp.grade.projection.sequence & 
-#					sgp.iter[["sgp.panel.years.lags"]] == tmp.year_lags.projection.sequence)) iter.test <- FALSE else iter.test <- TRUE
-#			}	else iter.test <- TRUE
-#		}	else iter.test <- TRUE
-#		return(iter.test)
-#	} # TEST: for (sgp.iter in par.sgp.config) print(test.projection.iter(sgp.iter))
-
-
 	get.simulate.sgps.arg <- function(calculate.confidence.intervals, state, sgp.iter) {
 		if (is.null(calculate.confidence.intervals) || calculate.confidence.intervals==state) {
 			return(calculate.confidence.intervals)
@@ -486,47 +462,14 @@ function(sgp_object,
 		sgp.percentiles.baseline, sgp.projections.baseline, sgp.projections.lagged.baseline, sgp.config.drop.nonsequential.grade.progression.variables, sgp.minimum.default.panel.years)
 
 	if (length(par.sgp.config[['sgp.projections']])==0) {
-		message("\tNOTE: No configurations are present for projections or lagged projections. No projections will be calculated.")
+		message("\tNOTE: No configurations are present for cohort referenced projections or lagged projections. No cohort referenced projections will be calculated.")
 		sgp.projections <- sgp.projections.lagged <- FALSE
-
 	}
 
 	if (length(par.sgp.config[['sgp.projections.baseline']])==0) {
 		message("\tNOTE: No configurations are present for baseline projections or lagged baseline projections. No baseline projections will be calculated.")
 		sgp.projections.baseline <- sgp.projections.lagged.baseline <- FALSE
 	}
-
-#	if (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline) {
-#		if (any(sapply(par.sgp.config, function(x) identical(x[['sgp.baseline.grade.sequences']], "NO_BASELINE_COEFFICIENT_MATRICES")))) {
-#			baseline.missings <- which(sapply(par.sgp.config, function(x) identical(x[['sgp.baseline.grade.sequences']], "NO_BASELINE_COEFFICIENT_MATRICES")))
-#			baseline.missings <- paste(unlist(sapply(baseline.missings, function(x) 
-#				paste(tail(par.sgp.config[[x]]$sgp.content.areas, 1), paste(par.sgp.config[[x]]$sgp.grade.sequences, collapse=", "), sep=": "))), collapse=";\n\t\t")
-#			message("\tNOTE: Baseline coefficient matrices are not available for:\n\t\t", baseline.missings, ".", sep="")
-#		}
-#		par.sgp.config.baseline <- par.sgp.config[which(sapply(par.sgp.config, function(x) !identical(x[['sgp.baseline.grade.sequences']], "NO_BASELINE_COEFFICIENT_MATRICES")))]
-#
-#		suppressWarnings(par.sgp.config.projections.baseline <- par.sgp.config.baseline[sapply(par.sgp.config.baseline, test.projection.iter)])
-#		# Enforce that all projection configs must NOT be exact grade progressions to avoid duplicates in SGProjections
-#		if (length(par.sgp.config.projections.baseline) > 0) {
-#			for (f in 1:length(par.sgp.config.projections.baseline)) par.sgp.config.projections.baseline[[f]]$sgp.exact.grade.progression <- FALSE
-#		} else {
-#			if (sgp.projections.baseline | sgp.projections.lagged.baseline) {
-#				message("\tNOTE: No configurations are present for baseline or lagged baseline projections. No baseline projections will be calculated.")
-#				sgp.projections.baseline <- sgp.projections.lagged.baseline <- FALSE
-#			}
-#		}
-#	}
-#
-#	suppressWarnings(par.sgp.config.projections <- par.sgp.config[sapply(par.sgp.config, test.projection.iter)])
-#	# Enforce that all projection configs must NOT be exact grade progressions to avoid duplicates in SGProjections
-#	if (length(par.sgp.config.projections) > 0) {
-#		for (f in 1:length(par.sgp.config.projections)) par.sgp.config.projections[[f]]$sgp.exact.grade.progression <- FALSE
-#	} else {
-#		if (sgp.projections | sgp.projections.lagged) {
-#			message("\tNOTE: No configurations are present for baseline or lagged baseline projections. No baseline projections will be calculated.")
-#			sgp.projections <- sgp.projections.lagged <- FALSE
-#		}
-#	}
 
 	### Produce cohort data information
 
