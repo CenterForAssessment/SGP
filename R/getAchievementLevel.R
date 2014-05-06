@@ -39,7 +39,7 @@ function(sgp_data,
 		cutscore.states <- SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]][["Cutscore_States"]]
 		cutscore.subjects <- unique(sapply(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]]), function(x) strsplit(x, "[.]")[[1]][1], USE.NAMES=FALSE))
 		sgp_data[which(STATE %in% cutscore.states & CONTENT_AREA %in% cutscore.subjects), ACHIEVEMENT_LEVEL := paste("Level", findInterval(SCALE_SCORE, 
-				SGPstateData[[state]][["Achievement"]][["Cutscores"]][[paste(CONTENT_AREA[1], ".", STATE[1], sep="")]][[paste("GRADE_", GRADE[1], sep="")]])+1L),
+				SGPstateData[[state]][["Achievement"]][["Cutscores"]][[paste(CONTENT_AREA[1], STATE[1], sep=".")]][[paste("GRADE", GRADE[1], sep="_")]])+1L),
 			by=c("STATE", "CONTENT_AREA", "GRADE")]
 		sgp_data[, ACHIEVEMENT_LEVEL := ordered(ACHIEVEMENT_LEVEL)]
 	} else {
