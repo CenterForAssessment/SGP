@@ -13,7 +13,7 @@ function(sgp.iter,
 		if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]]) && sgp.iter.type[2] %in% c("sgp.projections", "sgp.projections.lagged")) {
 			tmp.content_areas <- unique(unlist(sapply(tmp.content_areas, function(x) unique(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[x]]))))
 		}
-		content_area.label <- tail(sgp.iter[[my.content.areas]], 1)
+		content_area.label <- tail(sgp.iter[["sgp.projection.content.areas"]], 1)
 		tmp.year <- tail(sgp.iter[["sgp.panel.years"]], 1)
 
 		for (j in tmp.content_areas) {
@@ -33,7 +33,7 @@ function(sgp.iter,
 		if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]]) & sgp.iter.type[2] %in% c("sgp.projections", "sgp.projections.lagged")) {
 			tmp.content_areas <- unique(unlist(sapply(tmp.content_areas, function(x) unique(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[x]]))))
 		}
-		content_area.label <- tail(sgp.iter[[my.content.areas]], 1)
+		content_area.label <- tail(sgp.iter[["sgp.projection.content.areas"]], 1)
 		tmp.year <- "BASELINE"
 
 		for (j in tmp.content_areas) {
