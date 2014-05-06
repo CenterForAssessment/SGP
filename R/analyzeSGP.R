@@ -461,12 +461,12 @@ function(sgp_object,
 	par.sgp.config <- getSGPConfig(sgp_object, state, tmp_sgp_object, content_areas, years, grades, sgp.config, sgp.percentiles, sgp.projections, sgp.projections.lagged,
 		sgp.percentiles.baseline, sgp.projections.baseline, sgp.projections.lagged.baseline, sgp.config.drop.nonsequential.grade.progression.variables, sgp.minimum.default.panel.years)
 
-	if (length(par.sgp.config[['sgp.projections']])==0) {
+	if ((sgp.projections | sgp.projections.lagged) && length(par.sgp.config[['sgp.projections']])==0) {
 		message("\tNOTE: No configurations are present for cohort referenced projections or lagged projections. No cohort referenced projections will be calculated.")
 		sgp.projections <- sgp.projections.lagged <- FALSE
 	}
 
-	if (length(par.sgp.config[['sgp.projections.baseline']])==0) {
+	if ((sgp.projections.baseline | sgp.projections.lagged.baseline) && length(par.sgp.config[['sgp.projections.baseline']])==0) {
 		message("\tNOTE: No configurations are present for baseline projections or lagged baseline projections. No baseline projections will be calculated.")
 		sgp.projections.baseline <- sgp.projections.lagged.baseline <- FALSE
 	}
