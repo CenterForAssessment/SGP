@@ -171,7 +171,7 @@ function(sgp_object,
 				### Create sgp.projection.sequence (if NULL)
 				if (sgp.projections|sgp.projections.lagged|sgp.projections.baseline|sgp.projections.lagged.baseline) {
 					if (is.null(sgp.config[[a]][['sgp.projection.sequence']])) {
-						par.sgp.config[[b.iter[b]]][['sgp.projection.sequence']] <- "NO_SGP_PROJECTION_SEQUENCE_RETURNS_NULL_FROM_SGPstateData"
+						par.sgp.config[[b.iter[b]]][['sgp.projection.sequence']] <- tail(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], 1)
 					}
 				}
 
