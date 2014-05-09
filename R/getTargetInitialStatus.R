@@ -12,7 +12,7 @@ function(achievement_level,
 				tmp.labels <- c("Catching Up", "Keeping Up")
 				tmp.levels <- rep("Proficient", length(levels(achievement_level)))
 				tmp.levels[as.numeric(sapply(strsplit(levels(achievement_level), " "), '[', 2)) < cut.level] <- "Not Proficient"
-				achievement_level <- tmp.levels
+				levels(achievement_level) <- tmp.levels
 				levels(achievement_level) <- tmp.labels
 				return(factor(achievement_level, ordered=FALSE))
 			}
@@ -26,7 +26,7 @@ function(achievement_level,
 				tmp.labels <- c("Moving Up", "Staying Up")
 				tmp.levels <- rep("Proficient", length(levels(achievement_level)))
 				achievement.level.for.start <- SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]][
-					which(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")]
+					which(SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]][["State_Levels"]][[tmp.state.level]][['Levels']]=="Proficient")]
 				achievement_level[!achievement_level %in% achievement.level.for.start] <- NA
 				achievement_level <- unclass(factor(achievement_level))
 				achievement_level[achievement_level > 2] <- 2
