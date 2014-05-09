@@ -284,16 +284,15 @@ function(panel.data,	## REQUIRED
 						percentile.trajectories <- data.table(panel.data[["Panel_Data"]][,c("ID", "STATE")], key="ID")[STATE %in% available.states][percentile.trajectories][!is.na(STATE)]
 						tmp.traj <- percentile.trajectories[tmp.indices,][, ID := rep(unique(percentile.trajectories$ID), each=length(percentile.trajectory.values))]
 						
-						tmp.target.scores <- NULL
-						for (state.iter in available.states) {
+						for (state.iter in unique(tmp.traj$STATE)) {
+							my.cutscore.year <- get.my.cutscore.state.year.sgprojection(Cutscores, sgp.labels$my.subject, yearIncrement(sgp.labels$my.year, 1, lag.increment), my.state=state.iter)
+							tmp.cutscores.by.grade <- tmp.cutscores[[my.cutscore.year]][[paste("GRADE_", grade.projection.sequence[1], sep="")]]
 							if (length(percentile.trajectory.values)==1) {
 								tmp.state.level <- which(sapply(lapply(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscore_Information"]][['State_Levels']],
 									 '[[', 1), function(x) state.iter %in% x))
 								cuku.level.to.get <- which.max(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscore_Information"]][[
 									'State_Levels']][[tmp.state.level]][["Levels"]]=="Proficient")-1
-								my.cutscore.year <- get.my.cutscore.state.year.sgprojection(Cutscores, sgp.labels$my.subject, yearIncrement(sgp.labels$my.year, 1, lag.increment), my.state=state.iter)
-								tmp.cutscores.by.grade <- tmp.cutscores[[my.cutscore.year]][[paste("GRADE_", grade.projection.sequence[1], sep="")]]
-								tmp.target.scores <- c(tmp.target.scores, rep(tmp.cutscores.by.grade[cuku.level.to.get], sum(tmp.traj[['STATE']]==state.iter)/2))
+								tmp.traj[which(STATE==state.iter), tmp.target.name := rep(tmp.cutscores.by.grade[cuku.level.to.get], sum(tmp.traj[['STATE']]==state.iter)/2), with=FALSE]
 							}
 							if (length(percentile.trajectory.values)==2) {
 								tmp.state.level <- which(sapply(lapply(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscore_Information"]][['State_Levels']],
@@ -302,28 +301,26 @@ function(panel.data,	## REQUIRED
 									'State_Levels']][[tmp.state.level]][["Levels"]]=="Proficient")-1
 								musu.level.to.get <- which.max(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscore_Information"]][[
 									'State_Levels']][[tmp.state.level]][["Levels"]]=="Proficient")
-								my.cutscore.year <- get.my.cutscore.state.year.sgprojection(Cutscores, sgp.labels$my.subject, yearIncrement(sgp.labels$my.year, 1, lag.increment), my.state=state.iter)
-								tmp.cutscores.by.grade <- tmp.cutscores[[my.cutscore.year]][[paste("GRADE_", grade.projection.sequence[1], sep="")]]
-								tmp.target.scores <- c(tmp.target.scores, rep(c(tmp.cutscores.by.grade[cuku.level.to.get], tmp.cutscores.by.grade[musu.level.to.get]),
-									sum(tmp.traj[['STATE']]==state.iter)/2))
+								tmp.traj[which(STATE==state.iter), tmp.target.name := rep(c(tmp.cutscores.by.grade[cuku.level.to.get], 
+									tmp.cutscores.by.grade[musu.level.to.get]), sum(tmp.traj[['STATE']]==state.iter)/2), with=FALSE]
 							}
 						}
+						tmp.traj[, STATE := NULL]
 					} else {
 						my.cutscore.year <- get.my.cutscore.state.year.sgprojection(Cutscores, sgp.labels$my.subject, yearIncrement(sgp.labels$my.year, 1, lag.increment), my.state=NA)
 						tmp.cutscores.by.grade <- tmp.cutscores[[my.cutscore.year]][[paste("GRADE_", grade.projection.sequence[1], sep="")]]
 						if (length(percentile.trajectory.values)==1) {
 							cuku.level.to.get <- which.max(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")-1
 							tmp.target.scores <- rep(tmp.cutscores.by.grade[cuku.level.to.get], length(unique(tmp.traj[['ID']])))
-	
 						}
 						if (length(percentile.trajectory.values)==2) {
 							cuku.level.to.get <- which.max(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")-1
 							musu.level.to.get <- which.max(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")
 							tmp.target.scores <- rep(c(tmp.cutscores.by.grade[cuku.level.to.get], tmp.cutscores.by.grade[musu.level.to.get]), length(unique(tmp.traj[['ID']])))
 						}
+						tmp.target.scores[is.na(tmp.traj[[tmp.target.name]])] <- NA
+						tmp.traj[,tmp.target.name:=tmp.target.scores, with=FALSE]
 					}
-					tmp.target.scores[is.na(tmp.traj[[tmp.target.name]])] <- NA
-					tmp.traj[,tmp.target.name:=tmp.target.scores, with=FALSE]
 				}
 			}
 			tmp.traj[,2:dim(tmp.traj)[2] := round(tmp.traj[,2:dim(tmp.traj)[2], with=FALSE], digits=projcuts.digits), with=FALSE]
