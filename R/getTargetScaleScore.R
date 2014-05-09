@@ -14,17 +14,17 @@ function(sgp_object,
 
 	tmp_sgp_object <- list(Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]], Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]])
 	setkey(sgp_object@Data, VALID_CASE, ID)
-	variables.to.get <- c("VALID_CASE", "YEAR", "CONTENT_AREA", "GRADE", "ID", "SCALE_SCORE", "YEAR_WITHIN", "FIRST_OBSERVATION", "LAST_OBSERVATION")
+	variables.to.get <- c("VALID_CASE", "YEAR", "CONTENT_AREA", "GRADE", "ID", "SCALE_SCORE", "YEAR_WITHIN", "FIRST_OBSERVATION", "LAST_OBSERVATION", "STATE")
 	tmp_sgp_data_for_analysis <- sgp_object@Data[SJ("VALID_CASE", unique(sgp.targets[['ID']]))][, intersect(names(sgp_object@Data), variables.to.get), with=FALSE]
-        if ("YEAR_WITHIN" %in% names(tmp_sgp_data_for_analysis)) {
-                setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE, YEAR_WITHIN)
-        } else {
-                setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE)
-        }
+	if ("YEAR_WITHIN" %in% names(tmp_sgp_data_for_analysis)) {
+		setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE, YEAR_WITHIN)
+	} else {
+		setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE)
+	}
 	setkeyv(sgp_object@Data, getKey(sgp_object))
 	years.content_areas.grades <- data.table(unique(data.table(sgp_object@Data[data.table(VALID_CASE="VALID_CASE", sgp.targets, key=getKey(sgp_object))][,
-					c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"), with=FALSE], key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))), key=c("VALID_CASE", "CONTENT_AREA", "YEAR"))[
-					unique(data.table(VALID_CASE="VALID_CASE", tmp.years.content_areas.grades[,c("CONTENT_AREA", "YEAR"), with=FALSE], key=c("VALID_CASE", "CONTENT_AREA", "YEAR")))]
+		c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"), with=FALSE], key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))), key=c("VALID_CASE", "CONTENT_AREA", "YEAR"))[
+		unique(data.table(VALID_CASE="VALID_CASE", tmp.years.content_areas.grades[,c("CONTENT_AREA", "YEAR"), with=FALSE], key=c("VALID_CASE", "CONTENT_AREA", "YEAR")))]
 	
 	par.sgp.config <- getSGPConfig(
 				sgp_object,
@@ -42,7 +42,7 @@ function(sgp_object,
 				sgp.projections.lagged.baseline=length(grep("baseline", target.type)) > 0,
 				sgp.config.drop.nonsequential.grade.progression.variables=FALSE)
 	
-	
+	### Define variables
 
 	if (target.type=="sgp.projections") {
 		my.extra.label <- "TARGET_SCALE_SCORES"
@@ -74,11 +74,13 @@ function(sgp_object,
 		my.content.areas <- "sgp.content.areas"
 	}
 
+<<<<<<< HEAD
+=======
 	target.time.span <- as.numeric(sapply(unlist(strsplit(target.level[1], "_")), type.convert)[!sapply(lapply(unlist(strsplit(target.level[1], "_")), type.convert), is.factor)])
 
 
+>>>>>>> f5e62518f715229839874b34984ad4eb4c46080d
 	### Calculate targets
-
 	if (!is.null(parallel.config) && parallel.config[["WORKERS"]][["SGP_SCALE_SCORE_TARGETS"]] > 1) {
 		par.start <- startParallel(parallel.config, 'SGP_SCALE_SCORE_TARGETS')
 		
