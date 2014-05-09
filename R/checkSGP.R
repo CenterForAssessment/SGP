@@ -2,6 +2,8 @@
 function(sgp_object, 
 	state=NULL) {
 
+	ID <- NULL
+
 	### Check if sgp_object is of class SGP
 
 	if (!is.SGP(sgp_object)) stop("NOTE: Check SGP accepts only objects of class SGP. See manual pages for details.")
@@ -14,6 +16,9 @@ function(sgp_object,
                 state <- getStateAbbreviation(tmp.name, "checkSGP")
         }
 
+	my.character.variables <- c("ID", "VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE")
+	my.numeric.variables <- c("SCALE_SCORE", "SCALE_SCORE_PRIOR")
+
 
 	###
 	### Utility functions
@@ -21,25 +26,37 @@ function(sgp_object,
 
 	## checkVariableClass
 
-	checkVariableClass <- function(my.data, id.only=TRUE) {
+	checkVariableClass <- function(my.data, check.class, my.variables.to.check, id.only=TRUE) {
 		if (id.only){
 			return("ID" %in% names(my.data) && !is.character(my.data[["ID"]]))
 		} else {
-			tmp.vars <- c("ID", "VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE")
-			return(sapply(tmp.vars, function(x) x %in% names(my.data) && !is.character(my.data[[x]]), USE.NAMES=FALSE))
+			if (check.class=="character") {
+				return(sapply(my.variables.to.check, function(x) x %in% names(my.data) && !is.character(my.data[[x]]), USE.NAMES=FALSE))
+			}
+			if (check.class=="numeric") {
+				return(sapply(my.variables.to.check, function(x) x %in% names(my.data) && !is.double(my.data[[x]]), USE.NAMES=FALSE))
+			}
 		}
 	}
 
 	## checkchangeVariableClassVariableClass
 
-	changeVariableClass <- function(my.data, convert.tf, data.slot) {
+	changeVariableClass <- function(my.data, my.variables.to.change, data.slot, convert.to.class) {
 		if (!data.slot=="@Data" & !data.slot=="@Data_Supplementary") {
-			message(paste("\tNOTE: ID in", data.slot, "converted from class factor to character to accommodate data.table >= 1.8.0 changes."))
-			my.data[["ID"]] <- as.character(my.data[["ID"]])			
+			message(paste("\tNOTE: ID in", data.slot, "converted from factor to character."))
+			my.data[,ID:=as.character(my.data[["ID"]])]			
 		} else {
-			for (my.variable in c("ID", "VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE")[convert.tf]) {
-				message(paste("\tNOTE:", my.variable, "in", data.slot, "converted from class ", class(my.data[[my.variable]]), " to character to accommodate data.table >= 1.8.0 changes."))
-				my.data[[my.variable]] <- as.character(my.data[[my.variable]])
+			if (convert.to.class=="character") {
+				for (my.variable in my.variables.to.change) {
+					message(paste("\tNOTE:", my.variable, "in", data.slot, "converted from", class(my.data[[my.variable]]), "to character."))
+					my.data[,my.variable:= as.character(my.data[[my.variable]]), with=FALSE]
+				}
+			}
+			if (convert.to.class=="numeric") {
+				for (my.variable in my.variables.to.change) {
+					message(paste("\tNOTE:", my.variable, "in", data.slot, "converted from", class(my.data[[my.variable]]), "to numeric."))
+					my.data[,my.variable:= as.numeric(my.data[[my.variable]]), with=FALSE]
+				}
 			}
 		}
 		return(my.data)
@@ -54,16 +71,25 @@ function(sgp_object,
 
 	## Check class of variables in @Data
 
-	if (any(tmp.check <- checkVariableClass(sgp_object@Data, id.only=FALSE))) {
-		sgp_object@Data <- changeVariableClass(sgp_object@Data, convert.tf=tmp.check, data.slot="@Data")
+	if (any(tmp.check <- checkVariableClass(sgp_object@Data, "character", my.character.variables, id.only=FALSE))) {
+		sgp_object@Data <- changeVariableClass(sgp_object@Data, my.character.variables[tmp.check], data.slot="@Data", convert.to.class="character")
+	}
+
+	if (any(tmp.check <- checkVariableClass(sgp_object@Data, "numeric", my.numeric.variables, id.only=FALSE))) {
+		sgp_object@Data <- changeVariableClass(sgp_object@Data, my.numeric.variables[tmp.check], data.slot="@Data", convert.to.class="numeric")
 	}
 
 	## Check class of variables in @Data_Supplementary
 	
 	if (!is.null(sgp_object@Data_Supplementary)) {
 		for(j in 1:length(sgp_object@Data_Supplementary)) {
-			if (any(tmp.check <- checkVariableClass(sgp_object@Data_Supplementary[[j]], id.only=FALSE))) {
-				sgp_object@Data_Supplementary[[j]] <- changeVariableClass(sgp_object@Data_Supplementary[[j]], convert.tf=tmp.check, data.slot="@Data_Supplementary")
+			if (any(tmp.check <- checkVariableClass(sgp_object@Data_Supplementary[[j]], "character", my.character.variables, id.only=FALSE))) {
+				sgp_object@Data_Supplementary[[j]] <- 
+					changeVariableClass(sgp_object@Data_Supplementary[[j]], my.character.variables[tmp.check], data.slot="@Data_Supplementary", convert.to.class="character")
+			}
+			if (any(tmp.check <- checkVariableClass(sgp_object@Data_Supplementary[[j]], "numeric", my.numeric.variables, id.only=FALSE))) {
+				sgp_object@Data_Supplementary[[j]] <- 
+					changeVariableClass(sgp_object@Data_Supplementary[[j]], my.numeric.variables[tmp.check], data.slot="@Data_Supplementary", convert.to.class="numeric")
 			}
 		}
 	}
@@ -134,17 +160,17 @@ function(sgp_object,
 		}
 	}
 
-	## Test if SCALE_SCORE and SCALE_SCORE_PRIOR are of class numeric and convert if not
+#	## Test if SCALE_SCORE and SCALE_SCORE_PRIOR are of class numeric and convert if not
+#
+#	if (!is.double(sgp_object@Data[['SCALE_SCORE']])) {
+#		sgp_object@Data[['SCALE_SCORE']] <- as.numeric(sgp_object@Data[['SCALE_SCORE']])
+#		message("\tNOTE: Converting SCALE_SCORE to class 'numeric'.")
+#	}
 
-	if (!is.double(sgp_object@Data[['SCALE_SCORE']])) {
-		sgp_object@Data[['SCALE_SCORE']] <- as.numeric(sgp_object@Data[['SCALE_SCORE']])
-		message("\tNOTE: Converting SCALE_SCORE to class 'numeric'.")
-	}
-
-	if ("SCALE_SCORE_PRIOR" %in% names(sgp_object@Data) && !is.double(sgp_object@Data[['SCALE_SCORE_PRIOR']])) {
-		sgp_object@Data[['SCALE_SCORE_PRIOR']] <- as.numeric(sgp_object@Data[['SCALE_SCORE_PRIOR']])
-		message("\tNOTE: Converting SCALE_SCORE_PRIOR to class 'numeric'.")
-	}
+#	if ("SCALE_SCORE_PRIOR" %in% names(sgp_object@Data) && !is.double(sgp_object@Data[['SCALE_SCORE_PRIOR']])) {
+#		sgp_object@Data[['SCALE_SCORE_PRIOR']] <- as.numeric(sgp_object@Data[['SCALE_SCORE_PRIOR']])
+#		message("\tNOTE: Converting SCALE_SCORE_PRIOR to class 'numeric'.")
+#	}
 
 	## Return sgp_object	
 

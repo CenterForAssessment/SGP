@@ -20,6 +20,7 @@ function(panel.data,	## REQUIRED
 	projection.unit="YEAR",
 	projection.unit.label=NULL,
 	percentile.trajectory.values=NULL,
+	return.percentile.trajectory.values=NULL,
 	isotonize=TRUE,
 	lag.increment=0,
 	sgp.exact.grade.progression=FALSE,
@@ -587,7 +588,7 @@ function(panel.data,	## REQUIRED
 		}
 	} 
 
-	if (tf.cutscores | is.character(percentile.trajectory.values)) {
+	if ((tf.cutscores | is.character(percentile.trajectory.values)) & exists("tmp.cutscores")) {
 		Cutscores <- tmp.cutscores
 	}
 
@@ -771,6 +772,10 @@ function(panel.data,	## REQUIRED
 	if (!is.null(achievement.level.prior.vname)) {
 		trajectories.and.cuts <- data.table(panel.data[["Panel_Data"]][,c("ID", achievement.level.prior.vname)], key="ID")[trajectories.and.cuts]
 		setnames(trajectories.and.cuts, achievement.level.prior.vname, "ACHIEVEMENT_LEVEL_PRIOR")
+	}
+
+	if (!is.null(return.percentile.trajectory.values) && percentile.trajectory.values %in% names(panel.data$Panel_Data)) {
+		trajectories.and.cuts <- data.table(panel.data[["Panel_Data"]][,c("ID", percentile.trajectory.values)], key="ID")[trajectories.and.cuts]
 	}
 
 	SGProjections[[tmp.path]] <- rbind.fill(as.data.frame(SGProjections[[tmp.path]]), trajectories.and.cuts)

@@ -84,8 +84,8 @@ If missing the function will use the data to infer all the grade progressions fo
   \item{sgp.target.scale.scores}{A Boolean argument (defaults to FALSE/NULL) passed to \code{\link{combineSGP}} indicating whether to calculate scale scores associated with SGP targets as 
   part of the analyses.
   }
-  \item{sgp.target.scale.scores.only}{A Boolean argument (defaults to FALSE/NULL) passed to \code{\link{combineSGP}} indicating whether to skip merging of data and only calculate scale scores 
-  associated with SGP targets.
+  \item{sgp.target.scale.scores.only}{A Boolean argument (defaults to FALSE/NULL) passed to \code{\link{combineSGP}} indicating whether ONLY to calculate scale scores associated with SGP targets as 
+  part of the \code{\link{combineSGP}}.
   }
   \item{overwrite.existing.data}{A Boolean argument (defaults to FALSE) indicating whether updateSGP should overwrite existing data/results from an earlier run as part of updateSGP.
   }

@@ -26,7 +26,8 @@ studentGrowthProjections(panel.data,
                          convert.0and100=TRUE,    
                          projection.unit="YEAR",
                          projection.unit.label=NULL,
-                         percentile.trajectory.values=NULL, 
+                         percentile.trajectory.values=NULL,
+                         return.percentile.trajectory.values=NULL,
                          isotonize=TRUE,
                          lag.increment=0,
 			 sgp.exact.grade.progression=FALSE,
@@ -115,7 +116,10 @@ studentGrowthProjections(panel.data,
   }       
   \item{percentile.trajectory.values}{An integer argument with values ranging from 1 to 100 that returns a vector of percentile trajectory cuts (default is NULL, 
   no percentile trajectory values returned).  The returned values are the lower bound for the interval associated with the percentile(s) requested. For example, by specifying
-  'percentile.trajectory.values=1' the user would receive the conditional .005 quantile associated with each student's distribution.
+  'percentile.trajectory.values=1' the user would receive the conditional .005 quantile associated with each student's distribution. Supplied values can also be a vector of targets
+  that will return Scale Scores associated with those targets.
+  }
+  \item{return.percentile.trajectory.values}{A Boolean variable indicating whether to return the percentile trajectory values when they are supplied as targets via panel.data. Default is NULL/FALSE.
   }
   \item{isotonize}{Boolean argument (defaults to TRUE) indicating whether quantile regression results are isotonized to prevent quantile crossing following 
   the methods derived by Dette & Volgushev (2008).
