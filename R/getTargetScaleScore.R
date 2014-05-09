@@ -10,7 +10,7 @@ function(sgp_object,
 
 	VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- GRADE <- YEAR_WITHIN <- NULL
 
-	### Utility functions
+	### Define variables
 
 	tmp_sgp_object <- list(Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]], Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]])
 	setkey(sgp_object@Data, VALID_CASE, ID)
@@ -43,6 +43,7 @@ function(sgp_object,
 				sgp.config.drop.nonsequential.grade.progression.variables=FALSE)
 	
 	### Define variables
+
 	if (target.type=="sgp.projections") {
 		my.extra.label <- "TARGET_SCALE_SCORES"
 		baseline.tf <- FALSE
@@ -73,6 +74,12 @@ function(sgp_object,
 		my.content.areas <- "sgp.content.areas"
 	}
 
+<<<<<<< HEAD
+=======
+	target.time.span <- as.numeric(sapply(unlist(strsplit(target.level[1], "_")), type.convert)[!sapply(lapply(unlist(strsplit(target.level[1], "_")), type.convert), is.factor)])
+
+
+>>>>>>> f5e62518f715229839874b34984ad4eb4c46080d
 	### Calculate targets
 	if (!is.null(parallel.config) && parallel.config[["WORKERS"]][["SGP_SCALE_SCORE_TARGETS"]] > 1) {
 		par.start <- startParallel(parallel.config, 'SGP_SCALE_SCORE_TARGETS')
@@ -93,6 +100,7 @@ function(sgp_object,
 						my.subject=tail(sgp.iter[[my.content.areas]], 1)), 
 					use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[[my.content.areas]], 1)),
 					performance.level.cutscores=state,
+					max.forward.progression.years=target.time.span,
 					panel.data.vnames=getPanelDataVnames(my.target.type, sgp.iter, names(tmp_sgp_data_for_analysis)),
 					grade.progression=sgp.iter[["sgp.projection.grade.sequences"]],
 					content_area.progression=sgp.iter[["sgp.projection.content.areas"]],
@@ -123,6 +131,7 @@ function(sgp_object,
 						my.subject=tail(sgp.iter[[my.content.areas]], 1)), 
 					use.my.knots.boundaries=list(my.year=tail(sgp.iter[['sgp.panel.years']], 1), my.subject=tail(sgp.iter[['sgp.content.areas']], 1)),
 					performance.level.cutscores=state,
+					max.forward.progression.years=target.time.span,
 					panel.data.vnames=getPanelDataVnames(my.target.type, sgp.iter, names(tmp_sgp_data_for_analysis)),
 					grade.progression=sgp.iter[["sgp.projection.grade.sequences"]],
 					content_area.progression=sgp.iter[["sgp.projection.content.areas"]],
@@ -154,6 +163,7 @@ function(sgp_object,
 							my.subject=tail(sgp.iter[[my.content.areas]], 1)), 
 						use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[[my.content.areas]], 1)),
 						performance.level.cutscores=state,
+						max.forward.progression.years=target.time.span,
 						panel.data.vnames=getPanelDataVnames(my.target.type, sgp.iter, names(tmp_sgp_data_for_analysis)),
 						grade.progression=sgp.iter[["sgp.projection.grade.sequences"]],
 						content_area.progression=sgp.iter[["sgp.projection.content.areas"]],
@@ -195,6 +205,7 @@ function(sgp_object,
 						my.subject=tail(sgp.iter[[my.content.areas]], 1)), 
 					use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[[my.content.areas]], 1)),
 					performance.level.cutscores=state,
+					max.forward.progression.years=target.time.span,
 					panel.data.vnames=getPanelDataVnames(my.target.type, sgp.iter, names(tmp_sgp_data_for_analysis)),
 					grade.progression=sgp.iter[["sgp.projection.grade.sequences"]],
 					content_area.progression=sgp.iter[["sgp.projection.content.areas"]],
