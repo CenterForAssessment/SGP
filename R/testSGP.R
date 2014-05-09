@@ -99,6 +99,14 @@ function(
 		tmp.messages <- c(tmp.messages, "\tTest of variable MOVE_UP_STAY_UP_STATUS: FAIL\n")
 	}
 
+	### TEST of SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1 varialbe for READING.2013_2014 scale score targets
+
+	if (identical(as.integer(sum(Demonstration_SGP@SGP$SGProjections$READING.2013_2014.LAGGED.TARGET_SCALE_SCORES$SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1)), 18313900L)) {
+		tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1: OK\n")
+	} else {
+		tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1: FAIL\n")
+	}
+
 	### TEST of MEDIAN_SGP variable
 
 	if (identical(sum(Demonstration_SGP@Summary$SCHOOL_NUMBER[["SCHOOL_NUMBER__SCHOOL_ENROLLMENT_STATUS"]]$MEDIAN_SGP, na.rm=TRUE), 9140.5)) {

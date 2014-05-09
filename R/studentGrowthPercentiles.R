@@ -736,7 +736,7 @@ function(panel.data,         ## REQUIRED
 					simex.tf <- FALSE
 				}
 				if (any(calculate.simex$lambda < 0)) {
-					warning("lambda should not contain negative values. Negative values will be ignored", call. = FALSE)
+					message("lambda should not contain negative values. Negative values will be ignored", call. = FALSE)
 					lambda <- calculate.simex$lambda[calculate.simex$lambda >= 0]
 				} else lambda=calculate.simex$lambda
 			}
@@ -1222,7 +1222,7 @@ function(panel.data,         ## REQUIRED
 
 			if (is.character(calculate.confidence.intervals) | is.list(calculate.confidence.intervals)) {
 				if (is.null(calculate.confidence.intervals$confidence.quantiles) | identical(toupper(calculate.confidence.intervals$confidence.quantiles), "STANDARD_ERROR")) {
-					quantile.data[,SGP_STANDARD_ERROR:=round(sqrt(2*apply(simulation.data[, -1, with=FALSE], 1, sd, na.rm=TRUE)), digits=2)]
+					quantile.data[,SGP_STANDARD_ERROR:=round(apply(simulation.data[, -1, with=FALSE], 1, sd, na.rm=TRUE), digits=2)]
 				} else {
 					if (!(is.numeric(calculate.confidence.intervals$confidence.quantiles) & all(calculate.confidence.intervals$confidence.quantiles < 1) & 
 						all(calculate.confidence.intervals$confidence.quantiles > 0)))  {

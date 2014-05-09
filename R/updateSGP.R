@@ -236,7 +236,18 @@ function(what_sgp_object=NULL,
 							goodness.of.fit.print=FALSE,
 							...)
 							
-				if ("combineSGP" %in% steps) tmp.sgp_object.update <- suppressMessages(combineSGP(tmp.sgp_object.update, state=state))
+				if ("combineSGP" %in% steps) {
+					tmp.sgp_object.update <- suppressMessages(combineSGP(tmp.sgp_object.update,
+												state=state,
+												sgp.percentiles=sgp.percentiles,
+												sgp.projections=sgp.projections,
+												sgp.projections.lagged=sgp.projections.lagged,
+												sgp.percentiles.baseline=sgp.percentiles.baseline,
+												sgp.projections.baseline=sgp.projections.baseline,
+												sgp.projections.lagged.baseline=sgp.projections.lagged.baseline,
+												sgp.target.scale.scores=sgp.target.scale.scores,
+												sgp.target.scale.scores.only=sgp.target.scale.scores.only))
+				}
 
 				### Output of INTERMEDIATE results including full student history
 
@@ -266,7 +277,9 @@ function(what_sgp_object=NULL,
 						sgp.projections.lagged=sgp.projections.lagged,
 						sgp.percentiles.baseline=sgp.percentiles.baseline,
 						sgp.projections.baseline=sgp.projections.baseline,
-						sgp.projections.lagged.baseline=sgp.projections.lagged.baseline)
+						sgp.projections.lagged.baseline=sgp.projections.lagged.baseline,
+						sgp.target.scale.scores=sgp.target.scale.scores,
+						sgp.target.scale.scores.only=sgp.target.scale.scores.only)
 				}
 
 				if ("summarizeSGP" %in% steps) what_sgp_object <- summarizeSGP(what_sgp_object, state=state, parallel.config=parallel.config)

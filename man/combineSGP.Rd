@@ -52,7 +52,7 @@ student growth percentile results.
   }
   \item{sgp.target.scale.scores}{A Boolean variable indicating whether scale scores from calculated SGP targets should be calculated.
   }
-  \item{sgp.target.scale.scores.only}{A Boolean variable indicating whether to skip merging of data  and only calculate targets.
+  \item{sgp.target.scale.scores.only}{A Boolean variable indicating whether combineSGP should skip merging and only calculate scale scores from calculated SGP targets. Default is FALSE.
   }
   \item{sgp.target.content_areas}{A Boolean variable indicating whether content area associated with SGP targets should be calculated.
   }
