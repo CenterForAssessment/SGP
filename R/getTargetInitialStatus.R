@@ -11,9 +11,9 @@ function(achievement_level,
 			levels.that.are.not.proficient <- SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]][
 				which(SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]][["State_Levels"]][[tmp.state.level]][['Levels']]=="Not Proficient")]
 		} else {
-			levels.that.are.proficient <- SGPstateData[[state]][["Achievement"]][["Labels"]][["Proficient"]][
+			levels.that.are.proficient <- SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]][
 				which(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")]
-			levels.that.are.not.proficient <- SGPstateData[[state]][["Achievement"]][["Labels"]][["Proficient"]][
+			levels.that.are.not.proficient <- SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]][
 				which(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Not Proficient")]
 		}
 
