@@ -697,8 +697,10 @@ function(sgp_object,
 		message(paste("\tStarted RLI in outputSGP", date()))
 
 		for (names.iter in grep("BASELINE", names(sgp_object@SGP[['SGPercentiles']]), value=TRUE)) {
+			output.column.order <- 
+				c("ID", "SGP_BASELINE_ORDER_1", "SGP_BASELINE_ORDER_2", "SGP_BASELINE,SCALE_SCORE_PRIOR", "SGP_LEVEL_BASELINE", "SGP_NORM_GROUP_BASELINE", "SCALE_SCORE_PRIOR_STANDARDIZED")
 			dir.create(file.path(outputSGP.directory, "RLI", "SGPercentiles"), recursive=TRUE, showWarnings=FALSE)
-			write.table(sgp_object@SGP[['SGPercentiles']][[names.iter]], 
+			write.table(sgp_object@SGP[['SGPercentiles']][[names.iter]][,output.column.order], 
 				file=file.path(outputSGP.directory, "RLI", "SGPercentiles", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
 		}
 		for (names.iter in grep("BASELINE", names(sgp_object@SGP[['SGProjections']]), value=TRUE)) {
