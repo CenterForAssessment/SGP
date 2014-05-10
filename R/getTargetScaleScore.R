@@ -74,12 +74,8 @@ function(sgp_object,
 		my.content.areas <- "sgp.content.areas"
 	}
 
-<<<<<<< HEAD
-=======
 	target.time.span <- as.numeric(sapply(unlist(strsplit(target.level[1], "_")), type.convert)[!sapply(lapply(unlist(strsplit(target.level[1], "_")), type.convert), is.factor)])
 
-
->>>>>>> f5e62518f715229839874b34984ad4eb4c46080d
 	### Calculate targets
 	if (!is.null(parallel.config) && parallel.config[["WORKERS"]][["SGP_SCALE_SCORE_TARGETS"]] > 1) {
 		par.start <- startParallel(parallel.config, 'SGP_SCALE_SCORE_TARGETS')
