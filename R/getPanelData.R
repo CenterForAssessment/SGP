@@ -77,17 +77,13 @@ function(sgp.data,
 					rbindlist(tmp.lookup.list),
 					idvar= "ID",
 					timevar="tmp.timevar",
-					drop=names(sgp.data)[!names(tmp.lookup.list[[1]]) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR_WITHIN", "tmp.timevar")], 
+					drop=names(sgp.data)[!names(tmp.lookup.list[[1]]) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR_WITHIN", "tmp.timevar", "STATE")], 
 					direction="wide")
-				if ("STATE" %in% names(sgp.data)) {
-					tmp.data[, YEAR := tail(sgp.iter[['sgp.panel.years']], 1)]
-					tmp.data[, CONTENT_AREA := tail(sgp.iter[['sgp.projection.content.areas']], 1)]
-					tmp.data[, VALID_CASE := "VALID_CASE"]
-					setkeyv(tmp.data, getKey(sgp.data))
-					tmp.key <- key(sgp.data); setkeyv(sgp.data, getKey(sgp.data))
-					tmp.data <- sgp.data[, c(getKey(sgp.data), "STATE"), with=FALSE][tmp.data]
-					tmp.data[, c("YEAR", "CONTENT_AREA", "VALID_CASE") := NULL]
-					setkeyv(sgp.data, tmp.key)
+				if ("STATE" %in% names(sgp.data) && dim(tmp.data)[1]!=0) {
+					setnames(tmp.data, paste("STATE", tail(sgp.iter[['sgp.panel.years']], 1), tail(sgp.iter[['sgp.projection.content.areas']], 1), sep="."), "STATE")
+					if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0) {
+						tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL, with=FALSE]
+					}
 				}
 				return(as.data.frame(tmp.data))
 			} else {
@@ -95,18 +91,14 @@ function(sgp.data,
 					rbindlist(tmp.lookup.list),
 					idvar= "ID",
 					timevar="tmp.timevar",
-					drop=names(sgp.data)[!names(tmp.lookup.list[[1]]) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR_WITHIN", "tmp.timevar")], 
+					drop=names(sgp.data)[!names(tmp.lookup.list[[1]]) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR_WITHIN", "tmp.timevar", "STATE")], 
 					direction="wide"), key="ID")[sgp.targets[CONTENT_AREA==tail(sgp.iter[["sgp.projection.content.areas"]], 1) & YEAR==tail(sgp.iter[["sgp.panel.years"]], 1)], nomatch=0][,
 						!c("CONTENT_AREA", "YEAR"), with=FALSE]
-				if ("STATE" %in% names(sgp.data)) {
-					tmp.data[, YEAR := tail(sgp.iter[['sgp.panel.years']], 1)]
-					tmp.data[, CONTENT_AREA := tail(sgp.iter[['sgp.projection.content.areas']], 1)]
-					tmp.data[, VALID_CASE := "VALID_CASE"]
-					setkeyv(tmp.data, getKey(sgp.data))
-					tmp.key <- key(sgp.data); setkeyv(sgp.data, getKey(sgp.data))
-					tmp.data <- sgp.data[, c(getKey(sgp.data), "STATE"), with=FALSE][tmp.data]
-					tmp.data[, c("YEAR", "CONTENT_AREA", "VALID_CASE") := NULL]
-					setkeyv(sgp.data, tmp.key)
+				if ("STATE" %in% names(sgp.data) && dim(tmp.data)[1]!=0) {
+					setnames(tmp.data, paste("STATE", tail(sgp.iter[['sgp.panel.years']], 1), tail(sgp.iter[['sgp.projection.content.areas']], 1), sep="."), "STATE")
+					if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0) {
+						tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL, with=FALSE]
+					}
 				}
 				return(as.data.frame(tmp.data))
 			}
@@ -121,17 +113,12 @@ function(sgp.data,
 				sgp.data[tmp.lookup, nomatch=0][, 'tmp.timevar' := paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
 				idvar="ID",
 				timevar="tmp.timevar",
-				drop=names(sgp.data)[!names(sgp.data) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar")],
+				drop=names(sgp.data)[!names(sgp.data) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "STATE")],
 				direction="wide")
-			if ("STATE" %in% names(sgp.data)) {
-				tmp.data[, YEAR := tail(sgp.iter[['sgp.panel.years']], 1)]
-				tmp.data[, CONTENT_AREA := tail(sgp.iter[['sgp.projection.content.areas']], 1)]
-				tmp.data[, VALID_CASE := "VALID_CASE"]
-				setkeyv(tmp.data, getKey(sgp.data))
-				tmp.key <- key(sgp.data); setkeyv(sgp.data, getKey(sgp.data))
-				tmp.data <- sgp.data[, c(getKey(sgp.data), "STATE"), with=FALSE][tmp.data]
-				tmp.data[, c("YEAR", "CONTENT_AREA", "VALID_CASE") := NULL]
-				setkeyv(sgp.data, tmp.key)
+
+			if ("STATE" %in% names(sgp.data) && dim(tmp.data)[1]!=0) {
+				setnames(tmp.data, paste("STATE", tail(sgp.iter[['sgp.panel.years']], 1), tail(sgp.iter[['sgp.projection.content.areas']], 1), sep="."), "STATE")
+				if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0) tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL, with=FALSE]
 			}
 			return(as.data.frame(tmp.data))
 		} else {
@@ -139,18 +126,13 @@ function(sgp.data,
 					sgp.data[tmp.lookup, nomatch=0][, 'tmp.timevar' := paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
 				idvar="ID",
 				timevar="tmp.timevar",
-				drop=names(sgp.data)[!names(sgp.data) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar")],
+				drop=names(sgp.data)[!names(sgp.data) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "STATE")],
 				direction="wide"), key="ID")[sgp.targets[CONTENT_AREA==tail(sgp.iter[["sgp.projection.content.areas"]], 1) & YEAR==tail(sgp.iter[["sgp.panel.years"]], 1)], nomatch=0][,
 					!c("CONTENT_AREA", "YEAR"), with=FALSE]
-			if ("STATE" %in% names(sgp.data)) {
-				tmp.data[, YEAR := tail(sgp.iter[['sgp.panel.years']], 1)]
-				tmp.data[, CONTENT_AREA := tail(sgp.iter[['sgp.projection.content.areas']], 1)]
-				tmp.data[, VALID_CASE := "VALID_CASE"]
-				setkeyv(tmp.data, getKey(sgp.data))
-				tmp.key <- key(sgp.data); setkeyv(sgp.data, getKey(sgp.data))
-				tmp.data <- sgp.data[, c(getKey(sgp.data), "STATE"), with=FALSE][tmp.data]
-				tmp.data[, c("YEAR", "CONTENT_AREA", "VALID_CASE") := NULL]
-				setkeyv(sgp.data, tmp.key)
+
+			if ("STATE" %in% names(sgp.data) && dim(tmp.data)[1]!=0) {
+				setnames(tmp.data, paste("STATE", tail(sgp.iter[['sgp.panel.years']], 1), tail(sgp.iter[['sgp.projection.content.areas']], 1), sep="."), "STATE")
+				if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0) tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL, with=FALSE]
 			}
 			return(as.data.frame(tmp.data))
 		}
@@ -182,18 +164,15 @@ function(sgp.data,
 					rbindlist(tmp.lookup.list),
 					idvar="ID",
 					timevar="tmp.timevar",
-					drop=names(sgp.data)[!names(sgp.data) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "ACHIEVEMENT_LEVEL")],
+					drop=names(sgp.data)[!names(sgp.data) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "ACHIEVEMENT_LEVEL", "STATE")],
 					direction="wide")
 				setnames(tmp.data, names(tmp.data)[grep(achievement.level.prior.vname, names(tmp.data))], achievement.level.prior.vname)
-				if ("STATE" %in% names(sgp.data)) {
-					tmp.data[, YEAR := tail(sgp.iter[['sgp.panel.years']], 1)]
-					tmp.data[, CONTENT_AREA := tail(sgp.iter[['sgp.projection.content.areas']], 1)]
-					tmp.data[, VALID_CASE := "VALID_CASE"]
-					setkeyv(tmp.data, getKey(sgp.data))
-					tmp.key <- key(sgp.data); setkeyv(sgp.data, getKey(sgp.data))
-					tmp.data <- sgp.data[, c(getKey(sgp.data), "STATE"), with=FALSE][tmp.data]
-					tmp.data[, c("YEAR", "CONTENT_AREA", "VALID_CASE") := NULL]
-					setkeyv(sgp.data, tmp.key)
+
+				if ("STATE" %in% names(sgp.data) && dim(tmp.data)[1]!=0) {
+					setnames(tmp.data, paste("STATE", tail(sgp.iter[['sgp.panel.years']], 1), tail(sgp.iter[['sgp.projection.content.areas']], 1), sep="."), "STATE")
+					if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0) {
+						tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL, with=FALSE]
+					}
 				}
 				return(as.data.frame(tmp.data))
 			} else {
@@ -201,19 +180,16 @@ function(sgp.data,
 					rbindlist(tmp.lookup.list),
 					idvar="ID",
 					timevar="tmp.timevar",
-					drop=names(sgp.data)[!names(sgp.data) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "ACHIEVEMENT_LEVEL")],
+					drop=names(sgp.data)[!names(sgp.data) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "ACHIEVEMENT_LEVEL", "STATE")],
 					direction="wide"), key="ID")[sgp.targets[CONTENT_AREA==tail(sgp.iter[["sgp.content.areas"]], 1) & YEAR==tail(sgp.iter[["sgp.panel.years"]], 1)], nomatch=0][, 
 						!c("CONTENT_AREA", "YEAR"), with=FALSE]
 				setnames(tmp.data, names(tmp.data)[grep(achievement.level.prior.vname, names(tmp.data))], achievement.level.prior.vname)
-				if ("STATE" %in% names(sgp.data)) {
-					tmp.data[, YEAR := tail(sgp.iter[['sgp.panel.years']], 1)]
-					tmp.data[, CONTENT_AREA := tail(sgp.iter[['sgp.projection.content.areas']], 1)]
-					tmp.data[, VALID_CASE := "VALID_CASE"]
-					setkeyv(tmp.data, getKey(sgp.data))
-					tmp.key <- key(sgp.data); setkeyv(sgp.data, getKey(sgp.data))
-					tmp.data <- sgp.data[, c(getKey(sgp.data), "STATE"), with=FALSE][tmp.data]
-					tmp.data[, c("YEAR", "CONTENT_AREA", "VALID_CASE") := NULL]
-					setkeyv(sgp.data, tmp.key)
+
+				if ("STATE" %in% names(sgp.data) && dim(tmp.data)[1]!=0) {
+					setnames(tmp.data, paste("STATE", tail(sgp.iter[['sgp.panel.years']], 1), tail(sgp.iter[['sgp.projection.content.areas']], 1), sep="."), "STATE")
+					if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0) {
+						tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL, with=FALSE]
+					}
 				}
 				return(as.data.frame(tmp.data))
 			}
@@ -233,18 +209,14 @@ function(sgp.data,
 						'tmp.timevar' := paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
 				idvar="ID",
 				timevar="tmp.timevar",
-				drop=names(sgp.data)[!names(sgp.data) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "ACHIEVEMENT_LEVEL")],
+				drop=names(sgp.data)[!names(sgp.data) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "ACHIEVEMENT_LEVEL", "STATE")],
 				direction="wide")
 
-				if ("STATE" %in% names(sgp.data)) {
-					tmp.data[, YEAR := tail(sgp.iter[['sgp.panel.years']], 1)]
-					tmp.data[, CONTENT_AREA := tail(sgp.iter[['sgp.projection.content.areas']], 1)]
-					tmp.data[, VALID_CASE := "VALID_CASE"]
-					setkeyv(tmp.data, getKey(sgp.data))
-					tmp.key <- key(sgp.data); setkeyv(sgp.data, getKey(sgp.data))
-					tmp.data <- sgp.data[, c(getKey(sgp.data), "STATE"), with=FALSE][tmp.data]
-					tmp.data[, c("YEAR", "CONTENT_AREA", "VALID_CASE") := NULL]
-					setkeyv(sgp.data, tmp.key)
+				if ("STATE" %in% names(sgp.data) && dim(tmp.data)[1]!=0) {
+					setnames(tmp.data, paste("STATE", tail(sgp.iter[['sgp.panel.years']], 1), tail(sgp.iter[['sgp.projection.content.areas']], 1), sep="."), "STATE")
+					if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0) {
+						tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL, with=FALSE]
+					}
 				}
 				return(as.data.frame(tmp.data))
 			} else {
@@ -262,19 +234,15 @@ function(sgp.data,
 						'tmp.timevar' := paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
 				idvar="ID",
 				timevar="tmp.timevar",
-				drop=names(sgp.data)[!names(sgp.data) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "ACHIEVEMENT_LEVEL")],
+				drop=names(sgp.data)[!names(sgp.data) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "ACHIEVEMENT_LEVEL", "STATE")],
 				direction="wide"), key="ID")[sgp.targets[CONTENT_AREA==tail(sgp.iter[["sgp.content.areas"]], 1) & YEAR==tail(sgp.iter[["sgp.panel.years"]], 1)], nomatch=0][,
 					!c("CONTENT_AREA", "YEAR"), with=FALSE]
 
-				if ("STATE" %in% names(sgp.data)) {
-					tmp.data[, YEAR := tail(sgp.iter[['sgp.panel.years']], 1)]
-					tmp.data[, CONTENT_AREA := tail(sgp.iter[['sgp.projection.content.areas']], 1)]
-					tmp.data[, VALID_CASE := "VALID_CASE"]
-					setkeyv(tmp.data, getKey(sgp.data))
-					tmp.key <- key(sgp.data); setkeyv(sgp.data, getKey(sgp.data))
-					tmp.data <- sgp.data[, c(getKey(sgp.data), "STATE"), with=FALSE][tmp.data]
-					tmp.data[, c("YEAR", "CONTENT_AREA", "VALID_CASE") := NULL]
-					setkeyv(sgp.data, tmp.key)
+				if ("STATE" %in% names(sgp.data) && dim(tmp.data)[1]!=0) {
+					setnames(tmp.data, paste("STATE", tail(sgp.iter[['sgp.panel.years']], 1), tail(sgp.iter[['sgp.projection.content.areas']], 1), sep="."), "STATE")
+					if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0) {
+						tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL, with=FALSE]
+					}
 				}
 				return(as.data.frame(tmp.data))
 			}
