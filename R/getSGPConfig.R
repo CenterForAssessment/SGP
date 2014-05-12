@@ -13,7 +13,8 @@ function(sgp_object,
 	sgp.projections.baseline,
 	sgp.projections.lagged.baseline,
 	sgp.config.drop.nonsequential.grade.progression.variables,
-	sgp.minimum.default.panel.years) {
+	sgp.minimum.default.panel.years,
+	sgp.projections.max.forward.progression.years) {
 
 	YEAR <- CONTENT_AREA <- VALID_CASE <- NULL
 
@@ -174,6 +175,14 @@ function(sgp_object,
 						par.sgp.config[[b.iter[b]]][['sgp.projection.sequence']] <- tail(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], 1)
 					}
 				}
+
+				### Create sgp.projections.max.forward.progression.years (if NULL)
+				if (sgp.projections|sgp.projections.lagged|sgp.projections.baseline|sgp.projections.lagged.baseline) {
+					if (is.null(sgp.config[[a]][['sgp.projections.max.forward.progression.years']])) {
+						par.sgp.config[[b.iter[b]]][['sgp.projections.max.forward.progression.years']] <- sgp.projections.max.forward.progression.years
+					}
+				}
+
 
 				### Create baseline specific arguments
 				if (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline) {
