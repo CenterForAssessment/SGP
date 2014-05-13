@@ -15,6 +15,10 @@ function(sgp_object,
 
 	"%w/o%" <- function(x, y) x[!x %in% y]
 
+	getMaxSGPTargetYearsForward <- function(max.sgp.target.years.forward, state) {
+		return(max.sgp.target.years.forward)
+	}
+
 	
 	### Define variables
 
@@ -51,7 +55,7 @@ function(sgp_object,
 		for (i in tmp.names) {
 			cols.to.get.names <- names(sgp_object@SGP[["SGProjections"]][[i]])[
 				grep(paste("LEVEL_", level.to.get, sep=""), names(sgp_object@SGP[["SGProjections"]][[i]]))]
-			num.years.to.get <- min(max.sgp.target.years.forward, length(cols.to.get.names))
+			num.years.to.get <- min(getMaxSGPTargetYearsForward(max.sgp.target.years.forward, state), length(cols.to.get.names))
 			cols.to.get.names <- cols.to.get.names[as.integer(sapply(strsplit(sapply(sapply(cols.to.get.names, strsplit, paste("_", sgp.projections.projection.unit.label, "_", sep="")), tail, 1), "_"), head, 1)) <= num.years.to.get]
 			if (target.type %in% c("sgp.projections.lagged", "sgp.projections.lagged.baseline")) cols.to.get.names <- c("ACHIEVEMENT_LEVEL_PRIOR", cols.to.get.names)
 			if ("STATE" %in% names(sgp_object@Data)) cols.to.get.names <- c("STATE", cols.to.get.names)
