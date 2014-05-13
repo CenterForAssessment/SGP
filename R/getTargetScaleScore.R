@@ -74,7 +74,7 @@ function(sgp_object,
 				sgp.projections.baseline=length(grep("baseline", target.type)) > 0,
 				sgp.projections.lagged.baseline=length(grep("baseline", target.type)) > 0,
 				sgp.config.drop.nonsequential.grade.progression.variables=FALSE,
-				sgp.projections.max.forward.progression.years)
+				sgp.projections.max.forward.progression.years=sgp.projections.max.forward.progression.years)
 	
 
 	### Calculate targets
