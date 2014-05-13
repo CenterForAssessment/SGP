@@ -104,7 +104,7 @@ function(sgp.data,
 			}
 		}
 		tmp.lookup <- SJ("VALID_CASE", sgp.iter[["sgp.projection.content.areas"]], 
-			tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.projection.grade.sequences"]])), sgp.iter[["sgp.projection.grade.sequences"]])
+			tail(sgp.iter[["sgp.projection.panel.years"]], length(sgp.iter[["sgp.projection.grade.sequences"]])), sgp.iter[["sgp.projection.grade.sequences"]])
 		# ensure lookup table is ordered by years.  NULL out key after sorted so that it doesn't corrupt the join in reshape.
 		setkey(tmp.lookup, V3)
 		setkey(tmp.lookup, NULL)
@@ -117,7 +117,7 @@ function(sgp.data,
 				direction="wide")
 
 			if ("STATE" %in% names(sgp.data) && dim(tmp.data)[1]!=0) {
-				setnames(tmp.data, paste("STATE", tail(sgp.iter[['sgp.panel.years']], 1), tail(sgp.iter[['sgp.projection.content.areas']], 1), sep="."), "STATE")
+				setnames(tmp.data, paste("STATE", tail(sgp.iter[['sgp.projection.panel.years']], 1), tail(sgp.iter[['sgp.projection.content.areas']], 1), sep="."), "STATE")
 				if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0) tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL, with=FALSE]
 			}
 			return(as.data.frame(tmp.data))
@@ -127,11 +127,11 @@ function(sgp.data,
 				idvar="ID",
 				timevar="tmp.timevar",
 				drop=names(sgp.data)[!names(sgp.data) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "STATE")],
-				direction="wide"), key="ID")[sgp.targets[CONTENT_AREA==tail(sgp.iter[["sgp.projection.content.areas"]], 1) & YEAR==tail(sgp.iter[["sgp.panel.years"]], 1)], nomatch=0][,
+				direction="wide"), key="ID")[sgp.targets[CONTENT_AREA==tail(sgp.iter[["sgp.projection.content.areas"]], 1) & YEAR==tail(sgp.iter[["sgp.projection.panel.years"]], 1)], nomatch=0][,
 					!c("CONTENT_AREA", "YEAR"), with=FALSE]
 
 			if ("STATE" %in% names(sgp.data) && dim(tmp.data)[1]!=0) {
-				setnames(tmp.data, paste("STATE", tail(sgp.iter[['sgp.panel.years']], 1), tail(sgp.iter[['sgp.projection.content.areas']], 1), sep="."), "STATE")
+				setnames(tmp.data, paste("STATE", tail(sgp.iter[['sgp.projection.panel.years']], 1), tail(sgp.iter[['sgp.projection.content.areas']], 1), sep="."), "STATE")
 				if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0) tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL, with=FALSE]
 			}
 			return(as.data.frame(tmp.data))
