@@ -80,7 +80,7 @@ function(sgp.data,
 					drop=names(sgp.data)[!names(tmp.lookup.list[[1]]) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR_WITHIN", "tmp.timevar", "STATE")], 
 					direction="wide")
 				if ("STATE" %in% names(sgp.data) && dim(tmp.data)[1]!=0) {
-					setnames(tmp.data, paste("STATE", tail(sgp.iter[['sgp.panel.years']], 1), tail(sgp.iter[['sgp.projection.content.areas']], 1), sep="."), "STATE")
+					setnames(tmp.data, tail(sort(grep("STATE", names(tmp.data), value=TRUE)), 1), "STATE")
 					if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0) {
 						tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL, with=FALSE]
 					}
@@ -95,7 +95,7 @@ function(sgp.data,
 					direction="wide"), key="ID")[sgp.targets[CONTENT_AREA==tail(sgp.iter[["sgp.projection.content.areas"]], 1) & YEAR==tail(sgp.iter[["sgp.panel.years"]], 1)], nomatch=0][,
 						!c("CONTENT_AREA", "YEAR"), with=FALSE]
 				if ("STATE" %in% names(sgp.data) && dim(tmp.data)[1]!=0) {
-					setnames(tmp.data, paste("STATE", tail(sgp.iter[['sgp.panel.years']], 1), tail(sgp.iter[['sgp.projection.content.areas']], 1), sep="."), "STATE")
+					setnames(tmp.data, tail(sort(grep("STATE", names(tmp.data), value=TRUE)), 1), "STATE")
 					if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0) {
 						tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL, with=FALSE]
 					}
@@ -117,7 +117,7 @@ function(sgp.data,
 				direction="wide")
 
 			if ("STATE" %in% names(sgp.data) && dim(tmp.data)[1]!=0) {
-				setnames(tmp.data, paste("STATE", tail(sgp.iter[['sgp.projection.panel.years']], 1), tail(sgp.iter[['sgp.projection.content.areas']], 1), sep="."), "STATE")
+				setnames(tmp.data, tail(sort(grep("STATE", names(tmp.data), value=TRUE)), 1), "STATE")
 				if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0) tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL, with=FALSE]
 			}
 			return(as.data.frame(tmp.data))
@@ -131,7 +131,7 @@ function(sgp.data,
 					!c("CONTENT_AREA", "YEAR"), with=FALSE]
 
 			if ("STATE" %in% names(sgp.data) && dim(tmp.data)[1]!=0) {
-				setnames(tmp.data, paste("STATE", tail(sgp.iter[['sgp.projection.panel.years']], 1), tail(sgp.iter[['sgp.projection.content.areas']], 1), sep="."), "STATE")
+				setnames(tmp.data, tail(sort(grep("STATE", names(tmp.data), value=TRUE)), 1), "STATE")
 				if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0) tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL, with=FALSE]
 			}
 			return(as.data.frame(tmp.data))
@@ -169,7 +169,7 @@ function(sgp.data,
 				setnames(tmp.data, names(tmp.data)[grep(achievement.level.prior.vname, names(tmp.data))], achievement.level.prior.vname)
 
 				if ("STATE" %in% names(sgp.data) && dim(tmp.data)[1]!=0) {
-					setnames(tmp.data, paste("STATE", tail(sgp.iter[['sgp.panel.years']], 1), tail(sgp.iter[['sgp.projection.content.areas']], 1), sep="."), "STATE")
+					setnames(tmp.data, tail(sort(grep("STATE", names(tmp.data), value=TRUE)), 1), "STATE")
 					if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0) {
 						tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL, with=FALSE]
 					}
@@ -186,7 +186,7 @@ function(sgp.data,
 				setnames(tmp.data, names(tmp.data)[grep(achievement.level.prior.vname, names(tmp.data))], achievement.level.prior.vname)
 
 				if ("STATE" %in% names(sgp.data) && dim(tmp.data)[1]!=0) {
-					setnames(tmp.data, paste("STATE", tail(sgp.iter[['sgp.panel.years']], 1), tail(sgp.iter[['sgp.projection.content.areas']], 1), sep="."), "STATE")
+					setnames(tmp.data, tail(sort(grep("STATE", names(tmp.data), value=TRUE)), 1), "STATE")
 					if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0) {
 						tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL, with=FALSE]
 					}
@@ -213,7 +213,7 @@ function(sgp.data,
 				direction="wide")
 
 				if ("STATE" %in% names(sgp.data) && dim(tmp.data)[1]!=0) {
-					setnames(tmp.data, paste("STATE", tail(sgp.iter[['sgp.panel.years']], 1), tail(sgp.iter[['sgp.projection.content.areas']], 1), sep="."), "STATE")
+					setnames(tmp.data, tail(sort(grep("STATE", names(tmp.data), value=TRUE)), 1), "STATE")
 					if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0) {
 						tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL, with=FALSE]
 					}
@@ -239,7 +239,7 @@ function(sgp.data,
 					!c("CONTENT_AREA", "YEAR"), with=FALSE]
 
 				if ("STATE" %in% names(sgp.data) && dim(tmp.data)[1]!=0) {
-					setnames(tmp.data, paste("STATE", tail(sgp.iter[['sgp.panel.years']], 1), tail(sgp.iter[['sgp.projection.content.areas']], 1), sep="."), "STATE")
+					setnames(tmp.data, tail(sort(grep("STATE", names(tmp.data), value=TRUE)), 1), "STATE")
 					if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0) {
 						tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL, with=FALSE]
 					}
