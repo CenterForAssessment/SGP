@@ -869,7 +869,7 @@ function(panel.data,         ## REQUIRED
 		by.grade <- TRUE
 
 		if (length(tmp.gp[!is.na(tmp.gp)]) > num.panels) {
-			tmp.messages <- c(tmp.messages, paste("\t\tNOTE: Supplied grade progression, grade.progress=c(", paste(grade.progression, collapse=","), "), exceeds number of panels (", num.panels, ") in provided data.\n\t\t Analyses will utilize maximum number of priors supplied by the data.\n", sep=""))
+			tmp.messages <- c(tmp.messages, paste("\t\tNOTE: Supplied 'grade progression', grade.progression=c(", paste(grade.progression, collapse=","), "), exceeds number of panels (", num.panels, ") in provided data.\n\t\t Analyses will utilize maximum number of priors supplied by the data.\n", sep=""))
 		tmp.gp <- tail(grade.progression, num.panels)
 	}}
 	if (!missing(subset.grade) & missing(grade.progression)) {
