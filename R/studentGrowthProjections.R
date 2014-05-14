@@ -608,7 +608,7 @@ function(panel.data,	## REQUIRED
 	num.panels <- (dim(ss.data)[2]-1)/2
 
 	if (length(grade.progression) > num.panels) {
-		tmp.messages <- c(tmp.messages, paste("\t\tNOTE: Supplied grade progression, grade.progress=c(", paste(grade.progression, collapse=","), "), exceeds number of panels (", num.panels, ") in provided data.\n\t\t Analyses will utilize maximum number of priors supplied by the data.\n", sep=""))
+		tmp.messages <- c(tmp.messages, paste("\t\tNOTE: Supplied 'grade progression', grade.progression=c(", paste(grade.progression, collapse=","), "), exceeds number of panels (", num.panels, ") in provided data.\n\t\t Analyses will utilize maximum number of priors supplied by the data.\n", sep=""))
 		grade.progression <- tail(grade.progression, num.panels)
 		if (!is.null(content_area.progression)) content_area.progression <- tail(content_area.progression, length(grade.progression))
 		if (!is.null(year_lags.progression)) year_lags.progression <- tail(year_lags.progression, length(grade.progression)-1)
@@ -713,7 +713,7 @@ function(panel.data,	## REQUIRED
                 tmp.messages <- c(tmp.messages, "\t\tNOTE: Supplied data together with grade progression contains no data for analysis. Check data, function arguments and see help page for details.\n")
                 message(paste("\tStarted studentGrowthProjections", started.date))
                 message(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
-                message(paste(tmp.messages, "\tFinished studentGrowthProjections: SGP Percentile Growth Trajectory/Projection Analysis", date(), "in", timetaken(started.at), "\n"))
+                message(c(tmp.messages, "\tFinished studentGrowthProjections: SGP Percentile Growth Trajectory/Projection Analysis", date(), "in", timetaken(started.at), "\n"))
 
                 return(
                 list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],
