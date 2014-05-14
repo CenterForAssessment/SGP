@@ -154,7 +154,7 @@ function(sgp_object,
 					}
 				}
 
-				### Create sgp.projection.panel.years.lags (if NULL)
+				### Create sgp.projection.panel.years & sgp.projection.panel.years.lags (if NULL)
 				if (sgp.projections|sgp.projections.lagged|sgp.projections.baseline|sgp.projections.lagged.baseline) {
 					if (is.null(sgp.config[[a]][['sgp.projection.panel.years']])) {
 						tmp.panel.years <- head(par.sgp.config[[b.iter[b]]][['sgp.panel.years']], -1)

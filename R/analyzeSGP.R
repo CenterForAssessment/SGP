@@ -60,7 +60,7 @@ function(sgp_object,
 
 	if (simulate.sgps) {
 		if (is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
-			message("\tNOTE: CSEMs are required in SGPstateData to simulate SGPs for confidence interval calculations. Confidence intervals will not be calculated.")
+			message("\tNOTE: CSEMs are required in SGPstateData to simulate SGPs for confidence interval calculations. SGP standard errors will not be calculated.")
 			calculate.confidence.intervals <- csem.variable <- NULL
 		} else {
 			calculate.confidence.intervals <- state
