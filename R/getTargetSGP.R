@@ -9,7 +9,7 @@ function(sgp_object,
 	subset.ids=NULL,
 	return.lagged.status=TRUE) {
 
-	TARGET_STATUS_INITIAL <- VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- FIRST_OBSERVATION <- LAST_OBSERVATION <- STATE <- NULL
+	TARGET_STATUS_INITIAL <- VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- FIRST_OBSERVATION <- LAST_OBSERVATION <- STATE <- TMP_KEY <- NULL
 
 	### Utility functions
 
@@ -55,6 +55,7 @@ function(sgp_object,
 		for (i in tmp.names) {
 			cols.to.get.names <- names(sgp_object@SGP[["SGProjections"]][[i]])[
 				grep(paste("LEVEL_", level.to.get, sep=""), names(sgp_object@SGP[["SGProjections"]][[i]]))]
+			if ("SGP_PROJECTION_GROUP" %in% sgp_object@SGP[["SGProjections"]][[i]]) cols.to.get.names <- c(cols.to.get.names, "SGP_PROJECTION_GROUP")
 			num.years.to.get <- min(getMaxSGPTargetYearsForward(max.sgp.target.years.forward, state), length(cols.to.get.names))
 			cols.to.get.names <- cols.to.get.names[as.integer(sapply(strsplit(sapply(sapply(cols.to.get.names, strsplit, paste("_", sgp.projections.projection.unit.label, "_", sep="")), tail, 1), "_"), head, 1)) <= num.years.to.get]
 			if (target.type %in% c("sgp.projections.lagged", "sgp.projections.lagged.baseline")) cols.to.get.names <- c("ACHIEVEMENT_LEVEL_PRIOR", cols.to.get.names)
@@ -75,9 +76,9 @@ function(sgp_object,
 		}
 
 		if (!is.null(subset.ids)) {
-			tmp_object_1 <- data.table(rbind.fill(tmp.list), VALID_CASE="VALID_CASE", key=c("ID"))[subset.ids, nomatch=0]
+			tmp_object_1 <- data.table(rbind.fill(tmp.list), VALID_CASE="VALID_CASE", key=c("ID"))[subset.ids, nomatch=0][,TMP_KEY:=seq(length(ID))]
 		} else {
-			tmp_object_1 <- data.table(rbind.fill(tmp.list), VALID_CASE="VALID_CASE")
+			tmp_object_1 <- data.table(rbind.fill(tmp.list), VALID_CASE="VALID_CASE")[,TMP_KEY:=seq(length(ID))]
 		}
 	
 		if ("YEAR_WITHIN" %in% names(sgp_object@Data)) {
@@ -92,12 +93,12 @@ function(sgp_object,
 			setkeyv(tmp_object_1, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", year.within.key))
 			setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", year.within.key))
 			tmp_object_1 <- data.table(sgp_object@Data[,c(key(tmp_object_1), "YEAR_WITHIN"), with=FALSE], key=key(tmp_object_1))[tmp_object_1]
-			jExp_Key <- c('ID', 'CONTENT_AREA', 'YEAR', 'VALID_CASE', 'YEAR_WITHIN')
+#			jExp_Key <- c('ID', 'CONTENT_AREA', 'YEAR', 'VALID_CASE', 'YEAR_WITHIN')
 		} else {
 			setkeyv(tmp_object_1, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
-			jExp_Key <- c('ID', 'CONTENT_AREA', 'YEAR', 'VALID_CASE')
+#			jExp_Key <- c('ID', 'CONTENT_AREA', 'YEAR', 'VALID_CASE')
 		}
-		
+
 		if (target.type %in% c("sgp.projections", "sgp.projections.baseline")) {
 			if ("YEAR_WITHIN" %in% names(sgp_object@Data)) {
 				tmp_object_1 <- data.table(sgp_object@Data[,c(key(tmp_object_1), "ACHIEVEMENT_LEVEL"), with=FALSE], key=key(tmp_object_1))[tmp_object_1]
@@ -113,7 +114,7 @@ function(sgp_object,
 
 		jExpression <- parse(text=paste("{catch_keep_move_functions[[unclass(", target.level, "_STATUS_INITIAL)]](",paste(names(tmp_object_1)[grep("LEVEL", names(tmp_object_1)) %w/o% 
 			grep("ACHIEVEMENT", names(tmp_object_1))], collapse=", "),", na.rm=TRUE)}", sep=""))
-		tmp_object_2 <- tmp_object_1[, eval(jExpression), by = jExp_Key] # list(ID, CONTENT_AREA, YEAR, VALID_CASE)
+		tmp_object_2 <- tmp_object_1[, eval(jExpression), keyby = TMP_KEY] # list(ID, CONTENT_AREA, YEAR, VALID_CASE)
 
 		if (target.type %in% c("sgp.projections.baseline", "sgp.projections.lagged.baseline")) baseline.label <- "_BASELINE" else baseline.label <- NULL
 		if (target.type %in% c("sgp.projections", "sgp.projections.baseline")) projection.label <- "_CURRENT" else projection.label <- NULL

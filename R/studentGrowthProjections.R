@@ -21,6 +21,7 @@ function(panel.data,	## REQUIRED
 	projection.unit.label=NULL,
 	percentile.trajectory.values=NULL,
 	return.percentile.trajectory.values=NULL,
+	return.projection.group.identifier=NULL,
 	isotonize=TRUE,
 	lag.increment=0,
 	sgp.exact.grade.progression=FALSE,
@@ -398,7 +399,7 @@ function(panel.data,	## REQUIRED
 	###
 	############################################################################
 
-	ID <- tmp.messages <- NULL
+	ID <- tmp.messages <- SGP_PROJECTION_GROUP <- NULL
 
         if (!calculate.sgps) {
                 tmp.messages <- c(tmp.messages, paste("\t\tNOTE: Student growth projections not calculated for", sgp.labels$my.year, sgp.labels$my.subject, "due to argument calculate.sgps=FALSE.\n"))
@@ -774,6 +775,10 @@ function(panel.data,	## REQUIRED
 
 	if (!is.null(return.percentile.trajectory.values) && percentile.trajectory.values %in% names(panel.data$Panel_Data)) {
 		trajectories.and.cuts <- data.table(panel.data[["Panel_Data"]][,c("ID", percentile.trajectory.values)], key="ID")[trajectories.and.cuts]
+	}
+
+	if (!is.null(return.projection.group.identifier)) {
+		trajectories.and.cuts[,SGP_PROJECTION_GROUP:=return.projection.group.identifier]
 	}
 
 	SGProjections[[tmp.path]] <- rbind.fill(as.data.frame(SGProjections[[tmp.path]]), trajectories.and.cuts)
