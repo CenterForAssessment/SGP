@@ -778,7 +778,7 @@ function(panel.data,	## REQUIRED
 	}
 
 	if (!is.null(return.projection.group.identifier)) {
-		trajectories.and.cuts[,SGP_PROJECTION_GROUP:=paste(grade.content_area.projection.sequence, collapse="; ")]
+		trajectories.and.cuts[,SGP_PROJECTION_GROUP:=return.projection.group.identifier]
 	}
 
 	SGProjections[[tmp.path]] <- rbind.fill(as.data.frame(SGProjections[[tmp.path]]), trajectories.and.cuts)

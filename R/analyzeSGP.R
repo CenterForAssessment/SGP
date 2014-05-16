@@ -87,12 +87,6 @@ function(sgp_object,
 		return.norm.group.scale.scores <- NULL
 	}
 
-	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["return.projection.group.identifier"]])) {
-		return.projection.group.identifier <- SGPstateData[[state]][["SGP_Configuration"]][["return.projection.group.identifier"]]
-	} else {
-		return.projection.group.identifier <- NULL
-	}
-
 	if (!is.null(SGPstateData[[state]][["Growth"]][["Cutscores"]][["Cuts"]])) {
 		percentile.trajectory.values <- unique(c(SGPstateData[[state]][["Growth"]][["Cutscores"]][["Cuts"]], 50))
 	} else {
@@ -789,7 +783,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						projection.unit=sgp.projections.projection.unit,
 						projection.unit.label=sgp.projections.projection.unit.label,
-						return.projection.group.identifier=return.projection.group.identifier,
+						return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 						...))
 				}
 				tmp_sgp_object <- mergeSGP(tmp_sgp_object, tmp)
@@ -822,7 +816,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						projection.unit=sgp.projections.projection.unit,
 						projection.unit.label=sgp.projections.projection.unit.label,
-						return.projection.group.identifier=return.projection.group.identifier,
+						return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 						...))
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -860,7 +854,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						projection.unit=sgp.projections.projection.unit,
 						projection.unit.label=sgp.projections.projection.unit.label,
-						return.projection.group.identifier=return.projection.group.identifier,
+						return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -913,7 +907,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						projection.unit=sgp.projections.projection.unit,
 						projection.unit.label=sgp.projections.projection.unit.label,
-						return.projection.group.identifier=return.projection.group.identifier,
+						return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 						...))
 				}
 				tmp_sgp_object <- mergeSGP(tmp_sgp_object, tmp)
@@ -947,7 +941,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						projection.unit=sgp.projections.projection.unit,
 						projection.unit.label=sgp.projections.projection.unit.label,
-						return.projection.group.identifier=return.projection.group.identifier,
+						return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 						...))
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -986,7 +980,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						projection.unit=sgp.projections.projection.unit,
 						projection.unit.label=sgp.projections.projection.unit.label,
-						return.projection.group.identifier=return.projection.group.identifier,
+						return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -1039,7 +1033,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						projection.unit=sgp.projections.projection.unit,
 						projection.unit.label=sgp.projections.projection.unit.label,
-						return.projection.group.identifier=return.projection.group.identifier,
+						return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 						...))
 				}
 				tmp_sgp_object <- mergeSGP(tmp_sgp_object, tmp)
@@ -1073,7 +1067,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						projection.unit=sgp.projections.projection.unit,
 						projection.unit.label=sgp.projections.projection.unit.label,
-						return.projection.group.identifier=return.projection.group.identifier,
+						return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 						...))
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -1112,7 +1106,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						projection.unit=sgp.projections.projection.unit,
 						projection.unit.label=sgp.projections.projection.unit.label,
-						return.projection.group.identifier=return.projection.group.identifier,
+						return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -1165,7 +1159,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						projection.unit=sgp.projections.projection.unit,
 						projection.unit.label=sgp.projections.projection.unit.label,
-						return.projection.group.identifier=return.projection.group.identifier,
+						return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 						...))
 				}
 				tmp_sgp_object <- mergeSGP(tmp_sgp_object, tmp)
@@ -1200,7 +1194,7 @@ function(sgp_object,
 					projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 					projection.unit=sgp.projections.projection.unit,
 					projection.unit.label=sgp.projections.projection.unit.label,
-					return.projection.group.identifier=return.projection.group.identifier,
+					return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 					...))
 
 				tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -1239,7 +1233,7 @@ function(sgp_object,
 					projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 					projection.unit=sgp.projections.projection.unit,
 					projection.unit.label=sgp.projections.projection.unit.label,
-					return.projection.group.identifier=return.projection.group.identifier,
+					return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 					...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 
 				tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -1388,7 +1382,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						projection.unit=sgp.projections.projection.unit,
 						projection.unit.label=sgp.projections.projection.unit.label,
-						return.projection.group.identifier=return.projection.group.identifier,
+						return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 						...)
 				} else {
 					message(paste("\n\t\tNOTE: No student records &/or no prior data for student growth projections:", tail(sgp.iter[["sgp.projection.panel.years"]], 1), 
@@ -1432,7 +1426,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						projection.unit=sgp.projections.projection.unit,
 						projection.unit.label=sgp.projections.projection.unit.label,
-						return.projection.group.identifier=return.projection.group.identifier,
+						return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 						...)
 				} else {
 					message(paste("\n\t\tNOTE: No student records &/or no prior data for baseline student growth projections:", tail(sgp.iter[["sgp.projection.panel.years"]], 1), 
@@ -1476,7 +1470,6 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						projection.unit=sgp.projections.projection.unit,
 						projection.unit.label=sgp.projections.projection.unit.label,
-						return.projection.group.identifier=return.projection.group.identifier,
 						...)
 				} else {
 					message(paste("\n\t\tNOTE: No student records &/or no prior data for lagged student growth projections:", tail(sgp.iter[["sgp.panel.years"]], 1), 
@@ -1520,7 +1513,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						projection.unit=sgp.projections.projection.unit,
 						projection.unit.label=sgp.projections.projection.unit.label,
-						return.projection.group.identifier=return.projection.group.identifier,
+						return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 						...)
 				} else {
 					message(paste("\n\t\tNOTE: No student records &/or no prior data for lagged baseline student growth projections:", tail(sgp.iter[["sgp.panel.years"]], 1), 
