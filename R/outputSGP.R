@@ -703,11 +703,45 @@ function(sgp_object,
 					"SGP_LEVEL_BASELINE", "SGP_NORM_GROUP_BASELINE", "SCALE_SCORE_PRIOR_STANDARDIZED"), names(sgp_object@SGP[['SGPercentiles']][[names.iter]]))
 			write.table(sgp_object@SGP[['SGPercentiles']][[names.iter]][,output.column.order], 
 				file=file.path(outputSGP.directory, "RLI", "SGPercentiles", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
+			if (identical(.Platform$OS.type, "unix")) {
+				if (file.info(file.path(outputSGP.directory, "RLI", "SGPercentiles", paste(names.iter, "txt", sep=".")))$size > 4000000000) {
+					tmp.working.directory <- getwd()
+					setwd(file.path(outputSGP.directory, "RLI", "SGPercentiles"))
+					if (paste(names.iter, "txt.gz", sep=".") %in% list.files()) file.remove(paste(names.iter, "txt.gz", sep="."))
+					system(paste("gzip", paste(names.iter, "txt", sep=".")))
+					setwd(tmp.working.directory)
+				} else {
+					tmp.working.directory <- getwd()
+					setwd(file.path(outputSGP.directory, "RLI", "SGPercentiles"))
+					if (paste(names.iter, "txt.zip", sep=".") %in% list.files()) file.remove(paste(names.iter, "txt.zip", sep="."))
+					suppressMessages(
+						zip(paste(names.iter, "txt.zip", sep="."), paste(names.iter, "txt", sep="."), flags="-rmq")
+					)
+					setwd(tmp.working.directory)
+				}
+			}
 		}
 		for (names.iter in grep("BASELINE", names(sgp_object@SGP[['SGProjections']]), value=TRUE)) {
 			dir.create(file.path(outputSGP.directory, "RLI", "SGProjections"), recursive=TRUE, showWarnings=FALSE)
 			write.table(as.data.table(sgp_object@SGP[['SGProjections']][[names.iter]])[,GROUP:=names.iter],
 				file=file.path(outputSGP.directory, "RLI", "SGProjections", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
+			if (identical(.Platform$OS.type, "unix")) {
+				if (file.info(file.path(outputSGP.directory, "RLI", "SGPercentiles", paste(names.iter, "txt", sep=".")))$size > 4000000000) {
+					tmp.working.directory <- getwd()
+					setwd(file.path(outputSGP.directory, "RLI", "SGPercentiles"))
+					if (paste(names.iter, "txt.gz", sep=".") %in% list.files()) file.remove(paste(names.iter, "txt.gz", sep="."))
+					system(paste("gzip", paste(names.iter, "txt", sep=".")))
+					setwd(tmp.working.directory)
+				} else {
+					tmp.working.directory <- getwd()
+					setwd(file.path(outputSGP.directory, "RLI", "SGPercentiles"))
+					if (paste(names.iter, "txt.zip", sep=".") %in% list.files()) file.remove(paste(names.iter, "txt.zip", sep="."))
+					suppressMessages(
+						zip(paste(names.iter, "txt.zip", sep="."), paste(names.iter, "txt", sep="."), flags="-rmq")
+					)
+					setwd(tmp.working.directory)
+				}
+			}
 		}
 
 		message(paste("\tFinished RLI in outputSGP", date(), "in", timetaken(started.at), "\n"))
