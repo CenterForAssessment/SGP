@@ -87,6 +87,12 @@ function(sgp_object,
 		return.norm.group.scale.scores <- NULL
 	}
 
+	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["return.projection.group.identifier"]])) {
+		return.projection.group.identifier <- SGPstateData[[state]][["SGP_Configuration"]][["return.projection.group.identifier"]]
+	} else {
+		return.projection.group.identifier <- NULL
+	}
+
 	if (!is.null(SGPstateData[[state]][["Growth"]][["Cutscores"]][["Cuts"]])) {
 		percentile.trajectory.values <- unique(c(SGPstateData[[state]][["Growth"]][["Cutscores"]][["Cuts"]], 50))
 	} else {
