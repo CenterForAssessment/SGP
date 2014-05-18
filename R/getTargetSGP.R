@@ -9,11 +9,9 @@ function(sgp_object,
 	subset.ids=NULL,
 	return.lagged.status=TRUE) {
 
-	TARGET_STATUS_INITIAL <- VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- FIRST_OBSERVATION <- LAST_OBSERVATION <- STATE <- TMP_KEY <- SGP_PROJECTION_GROUP <- NULL
+	VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- FIRST_OBSERVATION <- LAST_OBSERVATION <- STATE <- TMP_KEY <- SGP_PROJECTION_GROUP <- NULL
 
 	### Utility functions
-
-	"%w/o%" <- function(x, y) x[!x %in% y]
 
 	getTargetSGP_INTERNAL <- function(tmp_object_1, state, state.iter, projection_group.iter, target.type, target.level, year_within) {
 
@@ -50,23 +48,23 @@ function(sgp_object,
 
 		num.years.available <- length(grep("LEVEL_[123456789]", names(tmp_object_1)))
 		if (projection_group.iter %in% names(SGPstateData[[state]][['SGP_Configuration']][['grade.projection.sequence']])) {
-			num.years.to.get <- min(SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]], num.years.available)
+			num.years.to.get <- num.years.to.get.label <- min(SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]], num.years.available)
 		} else {
-			num.years.to.get <- min(max.sgp.target.years.forward, num.years.available)
+			num.years.to.get <- num.years.to.get.label <- min(max.sgp.target.years.forward, num.years.available)
 		}
 		if (target.type %in% c("sgp.projections.lagged", "sgp.projections.lagged.baseline")) num.years.to.get <- num.years.to.get+1
 		
 		tmp.level.variables <- paste(grep(paste(sgp.projections.projection.unit.label, "_[", paste(seq(num.years.to.get), collapse=""), "]", sep=""), names(tmp_object_1), value=TRUE), collapse=", ")
 	
 		jExpression <- parse(text=paste("{catch_keep_move_functions[[unclass(", target.level, "_STATUS_INITIAL)]](", tmp.level.variables, ", na.rm=TRUE)}", sep=""))
-		tmp_object_2 <- tmp_object_1[, eval(jExpression), keyby = c(jExp_Key, TMP_KEY)] # list(ID, CONTENT_AREA, YEAR, VALID_CASE)
+		tmp_object_2 <- tmp_object_1[, eval(jExpression), keyby = c(jExp_Key, TMP_KEY)]
 
 		if (target.type %in% c("sgp.projections.baseline", "sgp.projections.lagged.baseline")) baseline.label <- "_BASELINE" else baseline.label <- NULL
 		if (target.type %in% c("sgp.projections", "sgp.projections.baseline")) projection.label <- "_CURRENT" else projection.label <- NULL
 		if (target.level=="MOVE_UP_STAY_UP") target.level.label <- "_MOVE_UP_STAY_UP" else target.level.label <- NULL
 	
 		setnames(tmp_object_2, "V1", 
-			paste("SGP_TARGET", baseline.label, target.level.label, "_",  num.years.to.get, "_", sgp.projections.projection.unit.label, projection.label, sep=""))
+			paste("SGP_TARGET", baseline.label, target.level.label, "_",  num.years.to.get.label, "_", sgp.projections.projection.unit.label, projection.label, sep=""))
 
 		if (target.type %in% c("sgp.projections.lagged", "sgp.projections.lagged.baseline") && return.lagged.status) {
 			tmp_object_2[,c("ACHIEVEMENT_LEVEL_PRIOR", grep("STATUS_INITIAL", names(tmp_object_1), value=TRUE)) := 
