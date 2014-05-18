@@ -82,8 +82,6 @@ function(sgp_object,
 
 	catch_keep_move_functions <- c(min, max)
 
-	if (target.type %in% c("sgp.projections.lagged", "sgp.projections.lagged.baseline")) max.sgp.target.years.forward <- max.sgp.target.years.forward+1
-
 	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["sgp.projections.projection.unit.label"]])) {
 		sgp.projections.projection.unit.label <- SGPstateData[[state]][["SGP_Configuration"]][["sgp.projections.projection.unit.label"]]
 	} else {
