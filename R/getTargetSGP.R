@@ -48,9 +48,11 @@ function(sgp_object,
 
 		num.years.available <- length(grep("LEVEL_[123456789]", names(tmp_object_1)))
 		if (projection_group.iter %in% names(SGPstateData[[state]][['SGP_Configuration']][['grade.projection.sequence']])) {
-			num.years.to.get <- num.years.to.get.label <- min(SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]], num.years.available)
+			num.years.to.get <- min(SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]], num.years.available)
+			num.years.to.get.label <- SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]]
 		} else {
-			num.years.to.get <- num.years.to.get.label <- min(max.sgp.target.years.forward, num.years.available)
+			num.years.to.get <- min(max.sgp.target.years.forward, num.years.available)
+			num.years.to.get.label <- max.sgp.target.years.forward
 		}
 		if (target.type %in% c("sgp.projections.lagged", "sgp.projections.lagged.baseline")) num.years.to.get <- num.years.to.get+1
 		
