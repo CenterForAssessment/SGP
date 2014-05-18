@@ -9,7 +9,7 @@ function(sgp_object,
 	subset.ids=NULL,
 	return.lagged.status=TRUE) {
 
-	VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- FIRST_OBSERVATION <- LAST_OBSERVATION <- STATE <- TMP_KEY <- SGP_PROJECTION_GROUP <- NULL
+	VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- FIRST_OBSERVATION <- LAST_OBSERVATION <- STATE <- SGP_PROJECTION_GROUP <- NULL
 
 	### Utility functions
 
@@ -27,10 +27,10 @@ function(sgp_object,
 			setkeyv(tmp_object_1, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", year.within.key))
 			setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", year.within.key))
 			tmp_object_1 <- data.table(sgp_object@Data[,c(key(tmp_object_1), "YEAR_WITHIN"), with=FALSE], key=key(tmp_object_1))[tmp_object_1]
-			jExp_Key <- c('ID', 'CONTENT_AREA', 'YEAR', 'VALID_CASE', 'YEAR_WITHIN', "SGP_PROJECTION_GROUP")
+			jExp_Key <- c('VALID_CASE', 'CONTENT_AREA', 'YEAR', 'ID', 'YEAR_WITHIN')
 		} else {
 			setkeyv(tmp_object_1, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
-			jExp_Key <- c('ID', 'CONTENT_AREA', 'YEAR', 'VALID_CASE', "SGP_PROJECTION_GROUP")
+			jExp_Key <- c('VALID_CASE', 'CONTENT_AREA', 'YEAR', 'ID')
 		}
 
 		if (target.type %in% c("sgp.projections", "sgp.projections.baseline")) {
@@ -59,7 +59,7 @@ function(sgp_object,
 		tmp.level.variables <- paste(grep(paste(sgp.projections.projection.unit.label, "_[", paste(seq(num.years.to.get), collapse=""), "]", sep=""), names(tmp_object_1), value=TRUE), collapse=", ")
 	
 		jExpression <- parse(text=paste("{catch_keep_move_functions[[unclass(", target.level, "_STATUS_INITIAL)]](", tmp.level.variables, ", na.rm=TRUE)}", sep=""))
-		tmp_object_2 <- tmp_object_1[, eval(jExpression), keyby = c(jExp_Key, TMP_KEY)]
+		tmp_object_2 <- tmp_object_1[, eval(jExpression), keyby = jExp_Key]
 
 		if (target.type %in% c("sgp.projections.baseline", "sgp.projections.lagged.baseline")) baseline.label <- "_BASELINE" else baseline.label <- NULL
 		if (target.type %in% c("sgp.projections", "sgp.projections.baseline")) projection.label <- "_CURRENT" else projection.label <- NULL
@@ -126,9 +126,9 @@ function(sgp_object,
 		}
 
 		if (!is.null(subset.ids)) {
-			tmp_object_1 <- data.table(rbind.fill(tmp.list), VALID_CASE="VALID_CASE", key=c("ID"))[subset.ids, nomatch=0][,TMP_KEY:=seq(length(ID))]
+			tmp_object_1 <- data.table(rbind.fill(tmp.list), VALID_CASE="VALID_CASE", key=c("ID"))[subset.ids, nomatch=0]
 		} else {
-			tmp_object_1 <- data.table(rbind.fill(tmp.list), VALID_CASE="VALID_CASE")[,TMP_KEY:=seq(length(ID))]
+			tmp_object_1 <- data.table(rbind.fill(tmp.list), VALID_CASE="VALID_CASE")
 		}
 
 		if (!"SGP_PROJECTION_GROUP" %in% names(tmp_object_1)) tmp_object_1[,SGP_PROJECTION_GROUP:=CONTENT_AREA]
