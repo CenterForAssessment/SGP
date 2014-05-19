@@ -726,15 +726,15 @@ function(sgp_object,
 			write.table(as.data.table(sgp_object@SGP[['SGProjections']][[names.iter]])[,GROUP:=names.iter],
 				file=file.path(outputSGP.directory, "RLI", "SGProjections", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
 			if (identical(.Platform$OS.type, "unix")) {
-				if (file.info(file.path(outputSGP.directory, "RLI", "SGPercentiles", paste(names.iter, "txt", sep=".")))$size > 4000000000) {
+				if (file.info(file.path(outputSGP.directory, "RLI", "SGProjections", paste(names.iter, "txt", sep=".")))$size > 4000000000) {
 					tmp.working.directory <- getwd()
-					setwd(file.path(outputSGP.directory, "RLI", "SGPercentiles"))
+					setwd(file.path(outputSGP.directory, "RLI", "SGProjections"))
 					if (paste(names.iter, "txt.gz", sep=".") %in% list.files()) file.remove(paste(names.iter, "txt.gz", sep="."))
 					system(paste("gzip", paste(names.iter, "txt", sep=".")))
 					setwd(tmp.working.directory)
 				} else {
 					tmp.working.directory <- getwd()
-					setwd(file.path(outputSGP.directory, "RLI", "SGPercentiles"))
+					setwd(file.path(outputSGP.directory, "RLI", "SGProjections"))
 					if (paste(names.iter, "txt.zip", sep=".") %in% list.files()) file.remove(paste(names.iter, "txt.zip", sep="."))
 					suppressMessages(
 						zip(paste(names.iter, "txt.zip", sep="."), paste(names.iter, "txt", sep="."), flags="-rmq")
