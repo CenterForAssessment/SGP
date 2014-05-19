@@ -405,7 +405,7 @@ function(
 					tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter, c("ID", "CONTENT_AREA", "YEAR", tmp.target.level.names), with=FALSE],
 					target.type.iter,
 					tmp.target.level.names,
-					getYearsContentAreasGrades(state, years=unique(tmp.target.data$YEAR), content_areas=unique(tmp.target.data$CONTENT_AREA)),
+					getYearsContentAreasGrades(state, years=unique(tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter][['YEAR']]), content_areas=unique(tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter][['CONTENT_AREA']])),
 					sgp.config=sgp.config,
 					projection_group.identifier=projection_group.iter,
 					parallel.config=parallel.config)
