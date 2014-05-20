@@ -57,7 +57,7 @@ growthAchievementPlot(
         A two letter acronym for the state associated with the supplied data.
         }
         \item{content_area}{
-        A character vector indicating the content area to produce the growth and achievement chart. Note that the supplied content area must match that used in the internal labelling of content
+        A character vector indicating the content area to produce the growth and achievement chart. Note that the supplied content area must match that used in the internal labeling of content
 	area for the sgp_object.
 	}
 	\item{year}{

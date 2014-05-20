@@ -1,6 +1,6 @@
 \name{studentGrowthPlot_Styles}
 \alias{studentGrowthPlot_Styles}
-\title{studentGrowth_Styles providing base templates for the core studentGrowthPlot function}
+\title{studentGrowthPlot_Styles providing base templates for the core studentGrowthPlot function}
 \description{
 Function includes five "styles" associated with \code{\link{studentGrowthPlot}} to create PDF student growth plots depicting the growth and achievement for an individual
 student over time. The five styles display one to five content area student growth plots on a single page. The one, two, and three content area plots are rendered on 8.5 by 11

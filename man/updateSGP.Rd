@@ -48,9 +48,9 @@ updateSGP(
   \item{steps}{A vector indicting the steps abcSGP will perform as part of the update. Defaults to all steps: \code{\link{prepareSGP}}, \code{\link{analyzeSGP}}, \code{\link{combineSGP}}, 
   \code{\link{summarizeSGP}}, \code{\link{visualizeSGP}}, \code{\link{outputSGP}}.
   }
-  \item{years}{If only 'what_sgp_object' is supplied, years specifies the years to be run amongst those in the provided sgp_object.
+  \item{years}{If only 'what_sgp_object' is supplied, years specifies the years to be run among those in the provided sgp_object.
   }
-  \item{content_areas}{If only 'what_sgp_object' is supplied, content_areas specifies the content areas to be run amonst those provided by the coefficient matrices in the sgp_object. Default is to run all analyses associated with the coefficient matrices.
+  \item{content_areas}{If only 'what_sgp_object' is supplied, content_areas specifies the content areas to be run among those provided by the coefficient matrices in the sgp_object. Default is to run all analyses associated with the coefficient matrices.
   }
   \item{grades}{A vector indicating grades for which to calculate student growth percentiles and/or student growth projections/trajectories. 
 If missing the function will use the data to infer all the grade progressions for student growth percentile and student growth projections/trajectories analyses.   This argument is passed to either \code{\link{abcSGP}} or \code{\link{analyzeSGP}} depending on the update context.
@@ -91,7 +91,7 @@ If missing the function will use the data to infer all the grade progressions fo
   }
   \item{sgPlot.demo.report}{A Boolean argument (defaults to TRUE) indicating whether updateSGP should produce just the demo student growth plots or those associated with all students in the last year.
   }
-  \item{outputSGP.output.type}{Specifies the type of output generated as part of intermediate step when adding addition data and using old coefficient matrices. Defaults are the defuaults of outputSGP,
+  \item{outputSGP.output.type}{Specifies the type of output generated as part of intermediate step when adding addition data and using old coefficient matrices. Defaults are the defaults of outputSGP,
   \code{LONG_Data}, \code{LONG_FINAL_YEAR_Data}, \code{WIDE_Data}, and \code{INSTRUCTOR_Data}.
 
   }

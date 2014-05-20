@@ -80,7 +80,7 @@ studentGrowthPercentiles(panel.data,
   \item{year.progression}{Character vector of years associated with grade and content area progressions. If missing then the year.progression is assumed to end in 'my.year' provided in
 sgp.labels and be of the same length as grade.progression.  Vector will be used to populate the @Years slot of the splineMatrix class coefficient matrices.
   }
-  \item{year_lags.progression}{A numeric vector indicating the time lags/span between observations in the columns supplied to 'studentGrowthPercentiles'. The default, NULL, allows the function
+  \item{year_lags.progression}{A numeric vector indicating the time lags/span between observations in the columns supplied to \code{studentGrowthPercentiles}. The default, NULL, allows the function
 to calculate the lags/differences based upon the supplied years.
   }
   \item{num.prior}{Number of prior scores one wishes to use in the analysis. Defaults to \code{num.panels-1}. 
@@ -116,7 +116,7 @@ to calculate the lags/differences based upon the supplied years.
  \item{calculate.confidence.intervals}{A character vector providing either a state acronym or a variable name from the supplied panel data. If a state acronym, CSEM tables from the embedded 
    \code{\link{SGPstateData}} (note: CSEM data must be embedded in the \code{SGPstateData} set. To have your state CSEMs embed in the \code{SGPstateData} set, please contact the package
    administrator) will be used. If a variable name, the supplied panel data must contain a variable providing student level CSEMs (e.g., with adaptive testing). NOTE: If a variable
-   name is supplied, the user must also use the argument \code{panel.data.vnames} indicating what variables in the supplied \code{panel.data} will be used for the \code{studentGrowthPercentile} 
+   name is supplied, the user must also use the argument \code{panel.data.vnames} indicating what variables in the supplied \code{panel.data} will be used for the \code{studentGrowthPercentiles} 
    analysis. For greater control, the user can also supply a list of the form \code{list(state= , confidence.quantiles= , simulation.iterations= , distribution= , round= )} or 
    \code{list(variable= , confidence.quantiles= , simulation.iterations= , distribution= , round= )} specifying the \code{state} or \code{variable} to use,
    \code{confidence.quantiles} to report from the simulated SGPs calculated for each student, \code{simulation.iterations} indicating the number of simulated SGPs to calculate, 
@@ -173,11 +173,11 @@ Useful for examining relationship between prior achievement and student growth.
   \item{return.norm.group.scale.scores}{Boolean argument (defaults. to NULL) indicating whether to return a comma separated character vector of the scores associated with the SGP_NORM_GROUP to
   which the student belongs.
   }
-  \item{print.time.taken}{Boolean argument (defaults to TRUE) indicating whether to print message indicating information on studentGrowthPercentile analysis and time taken.
+  \item{print.time.taken}{Boolean argument (defaults to TRUE) indicating whether to print message indicating information on \code{studentGrowthPercentiles} analysis and time taken.
   }
   \item{parallel.config}{parallel configuration argument allowing for parallel analysis by 'tau'. Defaults to NULL.
   }
-  \item{calculate.simex}{A character state acronymn or list including state/csem variable, simulation.iterations, simulation.sample.size, lambda and extrapolation method. 
+  \item{calculate.simex}{A character state acronym or list including state/csem variable, simulation.iterations, simulation.sample.size, lambda and extrapolation method. 
   Defaults to NULL, no simex calculations performed.
   }
   \item{sgp.percentiles.set.seed}{An integer (or NULL) argument indicating whether to set.seed to make analyses fully reproducible. To turn off, set argument to NULL. Default is 314159.
