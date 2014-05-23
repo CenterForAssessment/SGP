@@ -462,16 +462,26 @@ function(sgp_object,
 		sgp.percentiles.baseline, sgp.projections.baseline, sgp.projections.lagged.baseline, sgp.config.drop.nonsequential.grade.progression.variables, sgp.minimum.default.panel.years,
 		sgp.projections.max.forward.progression.years)
 
-	if ((sgp.projections | sgp.projections.lagged) && length(par.sgp.config[['sgp.projections']])==0) {
-		message("\tNOTE: No configurations are present for cohort referenced projections or lagged projections. No cohort referenced projections will be calculated.")
-		sgp.projections <- sgp.projections.lagged <- FALSE
+	if (sgp.projections & length(par.sgp.config[['sgp.projections']])==0) {
+		message("\tNOTE: No configurations are present for cohort referenced projections. No cohort referenced projections will be calculated.")
+		sgp.projections <- FALSE
 	}
 
-	if ((sgp.projections.baseline | sgp.projections.lagged.baseline) && length(par.sgp.config[['sgp.projections.baseline']])==0) {
-		message("\tNOTE: No configurations are present for baseline projections or lagged baseline projections. No baseline projections will be calculated.")
+	if (sgp.projections.lagged & length(par.sgp.config[['sgp.projections.lagged']])==0) {
+		message("\tNOTE: No configurations are present for cohort referenced lagged projections. No lagged cohort referenced projections will be calculated.")
+		sgp.projections.lagged <- FALSE
+	}
+
+	if (sgp.projections.baseline & length(par.sgp.config[['sgp.projections.baseline']])==0) {
+		message("\tNOTE: No configurations are present for baseline projections. No baseline projections will be calculated.")
 		sgp.projections.baseline <- sgp.projections.lagged.baseline <- FALSE
 	}
 
+	if (sgp.projections.lagged.baseline & length(par.sgp.config[['sgp.projections.lagged.baseline']])==0) {
+		message("\tNOTE: No configurations are present for lagged baseline projections. No lagged baseline projections will be calculated.")
+		sgp.projections.baseline <- sgp.projections.lagged.baseline <- FALSE
+	}
+	
 	### Produce cohort data information
 
 	if (get.cohort.data.info) {
