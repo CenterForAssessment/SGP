@@ -30,6 +30,7 @@ updateSGP(
 	sgp.target.scale.scores=FALSE,
 	sgp.target.scale.scores.only=FALSE,
 	overwrite.existing.data=FALSE,
+	update.old.data.with.new=TRUE,
 	sgPlot.demo.report=TRUE,
 	outputSGP.output.type=c("LONG_Data", "LONG_FINAL_YEAR_Data", "WIDE_Data", "INSTRUCTOR_Data"),
 	sgp.config=NULL,
@@ -88,6 +89,9 @@ If missing the function will use the data to infer all the grade progressions fo
   part of the \code{\link{combineSGP}}.
   }
   \item{overwrite.existing.data}{A Boolean argument (defaults to FALSE) indicating whether updateSGP should overwrite existing data/results from an earlier run as part of updateSGP.
+  }
+  \item{update.old.data.with.new}{A Boolean argument (defaults to TRUE) indicating whether updateSGP should add new data supplied in arugment with_SGP_Data_LONG to existing longitudinal data
+  or reduce data set to run analyses on only that which is provided. 
   }
   \item{sgPlot.demo.report}{A Boolean argument (defaults to TRUE) indicating whether updateSGP should produce just the demo student growth plots or those associated with all students in the last year.
   }

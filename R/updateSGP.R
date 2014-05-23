@@ -21,6 +21,7 @@ function(what_sgp_object=NULL,
 	sgp.target.scale.scores=FALSE,
 	sgp.target.scale.scores.only=FALSE,
 	overwrite.existing.data=FALSE,
+	update.old.data.with.new=TRUE,
 	sgPlot.demo.report=TRUE,
 	outputSGP.output.type=c("LONG_Data", "LONG_FINAL_YEAR_Data", "WIDE_Data", "INSTRUCTOR_Data"),
 	sgp.config=NULL,
@@ -299,7 +300,11 @@ function(what_sgp_object=NULL,
 				message(paste("Finished updateSGP", date(), "in", timetaken(started.at), "\n"))
 				return(what_sgp_object)
 			} else {
-				what_sgp_object@Data <- data.table(rbind.fill(what_sgp_object@Data, tmp_sgp_object@Data), key=getKey(what_sgp_object@Data))
+				if (update.old.data.with.new) {
+					what_sgp_object@Data <- data.table(rbind.fill(what_sgp_object@Data, tmp_sgp_object@Data), key=getKey(what_sgp_object@Data))
+				} else {
+					what_sgp_object@Data <- data.table(rbind.fill(what_sgp_object@Data[ID %in% tmp_sgp_object@Data$ID], tmp_sgp_object@Data), key=getKey(what_sgp_object@Data))
+				}
 
 				if ("HIGH_NEED_STATUS" %in% names(what_sgp_object@Data)) {
 					what_sgp_object@Data[['HIGH_NEED_STATUS']] <- NULL
