@@ -24,7 +24,8 @@ function(sgp_object,
          sgp.config=NULL,
          sgp.config.drop.nonsequential.grade.progression.variables=TRUE,
          sgp.baseline.panel.years=NULL,
-         sgp.baseline.config=NULL, 
+         sgp.baseline.config=NULL,
+         trim.sgp.config=TRUE,
          parallel.config=NULL,
          verbose.output=FALSE,
          print.other.gp=NULL,
@@ -458,7 +459,7 @@ function(sgp_object,
 	### Create par.sgp.config (for both parallel and sequential implementations) and par.sgp.config.projections for projections
 
 	setkeyv(sgp_object@Data, getKey(sgp_object))
-	par.sgp.config <- getSGPConfig(sgp_object, state, tmp_sgp_object, content_areas, years, grades, sgp.config, sgp.percentiles, sgp.projections, sgp.projections.lagged,
+	par.sgp.config <- getSGPConfig(sgp_object, state, tmp_sgp_object, content_areas, years, grades, sgp.config, trim.sgp.config, sgp.percentiles, sgp.projections, sgp.projections.lagged,
 		sgp.percentiles.baseline, sgp.projections.baseline, sgp.projections.lagged.baseline, sgp.config.drop.nonsequential.grade.progression.variables, sgp.minimum.default.panel.years,
 		sgp.projections.max.forward.progression.years)
 

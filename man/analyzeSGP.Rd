@@ -32,6 +32,7 @@ analyzeSGP(sgp_object,
          sgp.config.drop.nonsequential.grade.progression.variables=TRUE,
          sgp.baseline.panel.years=NULL,
          sgp.baseline.config=NULL,
+         trim.sgp.config=TRUE,
          parallel.config=NULL,
 	 verbose.output=FALSE,
 	 print.other.gp=NULL,
@@ -102,6 +103,8 @@ Default is 3.  To utilize the maximum matrix order, set to NULL.
   \item{sgp.baseline.panel.years}{A vector of years to be used for baseline coefficient matrix calculation. Default is to use most recent five years of data.}
   \item{sgp.baseline.config}{A list containing three vectors: \code{sgp.content.areas}, \code{sgp.panel.years}, \code{sgp.grade.sequences} indicating how baseline student growth percentile analyses
  are to be conducted. In almost all cases this value is calculated by default within the function but can be specified directly for advanced use cases. See source code for more detail on this configuration option.
+  }
+  \item{trim.sgp.config}{A Boolean variable indicating whether the arguments \code{content_areas}, \code{years} and \code{grades} should be used to 'trim' any manually supplied configuration for analysis supplied by 'sgp.config'.
   }
 \item{parallel.config}{A named list with, at a minimum, two elements indicating 1) the BACKEND package to be used for parallel computation and 2) the WORKERS list to specify the number of processors to be used in each major analysis.  The BACKEND element can be set = to \code{FOREACH} or \code{PARALLEL}.  Please consult the manuals and vignettes for information of these packages!
 
