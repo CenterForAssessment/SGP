@@ -5,7 +5,7 @@ function(
 	type="Abbreviation") {
 
 	my.state.abbreviations <- c(state.abb, "ABQ", "AOB", rep("DEMO", 2), "GUA", "RLI", "WIDA") ### NOTE: Add abbreviations ALPHABETICALLY
-	my.state.names <- c(state.name, "ALBUQUERQUE", "AOB", "DEMONSTRATION", "SGPDATA LONG", "GUATEMALA", "RLI", "WIDA") ### NOTE: Add state names ALPHABETICAALY
+	my.state.names <- c(state.name, "ALBUQUERQUE", "AOB", "DEMONSTRATION", "SGPDATA LONG", "GUATEMALA", "RLI", "WIDA", "WIDA_CO", "WIDA_MA") ### NOTE: Add state names ALPHABETICAALY
 	if (type=="Abbreviation") {
 		tmp.name.position <- sapply(my.state.names, function(x) regexpr(toupper(x), supplied.name))
 	} else {
