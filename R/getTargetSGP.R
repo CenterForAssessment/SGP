@@ -74,7 +74,7 @@ function(sgp_object,
 				tmp_object_2[,c("ACHIEVEMENT_LEVEL_PRIOR", grep("STATUS_INITIAL", names(tmp_object_1), value=TRUE)) := 
 					list(tmp_object_1[["ACHIEVEMENT_LEVEL_PRIOR"]], tmp_object_1[[grep("STATUS_INITIAL", names(tmp_object_1), value=TRUE)]]), with=FALSE]
 			}
-			return(tmp_object_2[SGP_PROJECTION_GROUP:=projection_group.iter])
+			return(tmp_object_2[,SGP_PROJECTION_GROUP:=projection_group.iter])
 		} else {
 			return(NULL)
 		}
