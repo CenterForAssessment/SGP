@@ -228,18 +228,18 @@ function(sgp_object,
 		if (identical(sgp.iter[['sgp.projection.grade.sequences']], "NO_PROJECTIONS")) return(FALSE)
 		if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]])) {
 			if (tail(sgp.iter[["sgp.grade.sequences"]], 1) == "EOCT") { # Only check EOCT configs/iters
-				if (is.null(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]])) return(FALSE)
+				if (is.null(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]])) return(FALSE)
 				tmp.index <- match(tail(sgp.iter[["sgp.content.areas"]], 1), 
-					SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]])
+					SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]])
 				tmp.content_area.projection.sequence <-
-					SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]][1:tmp.index]
+					SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]][1:tmp.index]
 				tmp.grade.projection.sequence <-
-					SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]][1:tmp.index]
+					SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]][1:tmp.index]
 				tmp.year_lags.projection.sequence <-
-					SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[tail(sgp.iter[["sgp.content.areas"]], 1)]][1:(tmp.index-1)]
-				if (!all(sgp.iter[["sgp.content.areas"]] == tmp.content_area.projection.sequence & 
+					SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]][1:(tmp.index-1)]
+				if (all(sgp.iter[["sgp.content.areas"]] == tmp.content_area.projection.sequence & 
 					sgp.iter[["sgp.grade.sequences"]] == tmp.grade.projection.sequence & 
-					sgp.iter[["sgp.panel.years.lags"]] == tmp.year_lags.projection.sequence)) iter.test <- FALSE else iter.test <- TRUE
+					sgp.iter[["sgp.panel.years.lags"]] == tmp.year_lags.projection.sequence)) iter.test <- TRUE else iter.test <- FALSE
 			}	else iter.test <- TRUE
 		}	else iter.test <- TRUE
 		return(iter.test)
