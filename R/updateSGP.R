@@ -21,6 +21,7 @@ function(what_sgp_object=NULL,
 	sgp.target.scale.scores=FALSE,
 	sgp.target.scale.scores.only=FALSE,
 	overwrite.existing.data=FALSE,
+	update.old.data.with.new=TRUE,
 	sgPlot.demo.report=TRUE,
 	outputSGP.output.type=c("LONG_Data", "LONG_FINAL_YEAR_Data", "WIDE_Data", "INSTRUCTOR_Data"),
 	sgp.config=NULL,
@@ -151,6 +152,8 @@ function(what_sgp_object=NULL,
 		tmp_sgp_object <- prepareSGP(with_sgp_data_LONG, state=state, create.additional.variables=FALSE)
 		if(!is.null(sgp.config)) years <- unique(sapply(lapply(sgp.config, '[[', 'sgp.panel.years'), tail, 1))
 		if(is.null(years)) update.years <- sort(unique(tmp_sgp_object@Data$YEAR)) else update.years <- years
+		if(is.null(content_areas)) update.content_areas <- sort(unique(tmp_sgp_object@Data$CONTENT_AREA)) else update.content_areas <- content_areas
+		if(is.null(grades)) update.grades <- sort(unique(tmp_sgp_object@Data$GRADE)) else update.grades <- grades
 
 		if (overwrite.existing.data) {
 				what_sgp_object@Data <- as.data.table(rbind.fill(what_sgp_object@Data[YEAR!=update.years], tmp_sgp_object@Data))
@@ -171,8 +174,8 @@ function(what_sgp_object=NULL,
 						what_sgp_object, 
 						steps=steps, 
 						years=update.years, 
-						content_areas=content_areas,
-						grades=grades,
+						content_areas=update.content_areas,
+						grades=update.grades,
 						state=state, 
 						sgp.percentiles=sgp.percentiles,
 						sgp.projections=sgp.projections,
@@ -218,8 +221,8 @@ function(what_sgp_object=NULL,
 				tmp.sgp_object.update <- analyzeSGP(
 							tmp.sgp_object.update,
 							years=update.years, 
-							content_areas=content_areas,
-							grades=grades,
+							content_areas=update.content_areas,
+							grades=update.grades,
 							state=state, 
 							sgp.percentiles=sgp.percentiles,
 							sgp.projections=sgp.projections,
@@ -299,7 +302,11 @@ function(what_sgp_object=NULL,
 				message(paste("Finished updateSGP", date(), "in", timetaken(started.at), "\n"))
 				return(what_sgp_object)
 			} else {
-				what_sgp_object@Data <- data.table(rbind.fill(what_sgp_object@Data, tmp_sgp_object@Data), key=getKey(what_sgp_object@Data))
+				if (update.old.data.with.new) {
+					what_sgp_object@Data <- data.table(rbind.fill(what_sgp_object@Data, tmp_sgp_object@Data), key=getKey(what_sgp_object@Data))
+				} else {
+					what_sgp_object@Data <- data.table(rbind.fill(what_sgp_object@Data[ID %in% tmp_sgp_object@Data$ID], tmp_sgp_object@Data), key=getKey(what_sgp_object@Data))
+				}
 
 				if ("HIGH_NEED_STATUS" %in% names(what_sgp_object@Data)) {
 					what_sgp_object@Data[['HIGH_NEED_STATUS']] <- NULL
@@ -312,8 +319,8 @@ function(what_sgp_object=NULL,
 							what_sgp_object, 
 							steps=steps, 
 							years=update.years, 
-							content_areas=content_areas,
-							grades=grades,
+							content_areas=update.content_areas,
+							grades=update.grades,
 							state=state, 
 							sgp.percentiles=sgp.percentiles,
 							sgp.projections=sgp.projections,

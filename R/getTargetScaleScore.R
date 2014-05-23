@@ -6,6 +6,7 @@ function(sgp_object,
 	target.level,
 	tmp.years.content_areas.grades,
 	sgp.config=NULL,
+	projection_group.identifier=NULL,
 	parallel.config=NULL) {
 
 	VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- GRADE <- YEAR_WITHIN <- NULL
@@ -67,6 +68,7 @@ function(sgp_object,
 				sort(unique(years.content_areas.grades[['YEAR']])),
 				sort(unique(years.content_areas.grades[['GRADE']])),
 				sgp.config=sgp.config,
+				trim.sgp.config=TRUE,
 				sgp.percentiles=TRUE,
 				sgp.projections=TRUE,
 				sgp.projections.lagged=TRUE,
@@ -109,6 +111,7 @@ function(sgp_object,
 					year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
 					percentile.trajectory.values=target.level,
 					return.percentile.trajectory.values=SGPstateData[[state]][["SGP_Configuration"]][["return.percentile.trajectory.values"]],
+					return.projection.group.identifier=projection_group.identifier,
 					calculate.sgps=!(tail(sgp.iter[["sgp.panel.years"]], 1) %in% SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[tail(sgp.iter[[my.content.areas]], 1)]]),
 					projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]]))
 			}
@@ -140,6 +143,7 @@ function(sgp_object,
 					year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
 					percentile.trajectory.values=target.level,
 					return.percentile.trajectory.values=SGPstateData[[state]][["SGP_Configuration"]][["return.percentile.trajectory.values"]],
+					return.projection.group.identifier=projection_group.identifier,
 					calculate.sgps=!(tail(sgp.iter[['sgp.panel.years']], 1) %in% SGPstateData[[state]][['Assessment_Program_Information']][['Scale_Change']][[tail(sgp.iter[['sgp.content.areas']], 1)]]),
 					projcuts.digits=SGPstateData[[state]][['SGP_Configuration']][['projcuts.digits']]))
 
@@ -172,6 +176,7 @@ function(sgp_object,
 						year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
 						percentile.trajectory.values=target.level,
 						return.percentile.trajectory.values=SGPstateData[[state]][["SGP_Configuration"]][["return.percentile.trajectory.values"]],
+						return.projection.group.identifier=projection_group.identifier,
 						calculate.sgps=!(tail(sgp.iter[["sgp.panel.years"]], 1) %in% SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[tail(sgp.iter[[my.content.areas]], 1)]]),
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]]),
 						mc.cores=par.start$workers, mc.preschedule=FALSE)
@@ -214,6 +219,7 @@ function(sgp_object,
 					year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
 					percentile.trajectory.values=target.level,
 					return.percentile.trajectory.values=SGPstateData[[state]][["SGP_Configuration"]][["return.percentile.trajectory.values"]],
+					return.projection.group.identifier=projection_group.identifier,
 					calculate.sgps=!(tail(sgp.iter[["sgp.panel.years"]], 1) %in% SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[tail(sgp.iter[[my.content.areas]], 1)]]),
 					projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]])
 			} else {

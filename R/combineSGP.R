@@ -22,7 +22,7 @@ function(
 	message(paste("Started combineSGP", date()))
 
 	ID <- CONTENT_AREA <- YEAR <- GRADE <- YEAR_INTEGER_TMP <- ACHIEVEMENT_LEVEL <- CATCH_UP_KEEP_UP_STATUS_INITIAL <- MOVE_UP_STAY_UP_STATUS_INITIAL <- VALID_CASE <- NULL
-	MOVE_UP_STAY_UP_STATUS <- CATCH_UP_KEEP_UP_STATUS <- ACHIEVEMENT_LEVEL_PRIOR <- target.type <- NULL
+	MOVE_UP_STAY_UP_STATUS <- CATCH_UP_KEEP_UP_STATUS <- ACHIEVEMENT_LEVEL_PRIOR <- target.type <- SGP_PROJECTION_GROUP <- NULL
 
 	tmp.messages <- NULL
 
@@ -393,20 +393,24 @@ function(
 					getTargetSGP(sgp_object, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward, return.lagged.status=FALSE)
 			}
 		}
-		tmp.target.data <- data.table(Reduce(function(x, y) merge.data.frame(x, y, all=T), tmp.target.list, accumulate=FALSE), key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
+		tmp.target.data <- data.table(Reduce(function(x, y) merge.data.frame(x, y, all=TRUE), tmp.target.list[!sapply(tmp.target.list, function(x) dim(x)[1]==0)], 
+			accumulate=FALSE), key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 
-		for (target.type.iter in target.args[['sgp.target.scale.scores.types']]) {
-			tmp.target.level.names <- 
-				as.character(sapply(target.args[['target.level']], function(x) getTargetName(target.type.iter, x, max.sgp.target.years.forward, "SGP_TARGET", projection.unit.label)))
-			sgp_object <- getTargetScaleScore(
-				sgp_object, 
-				state, 
-				tmp.target.data[, c("ID", "CONTENT_AREA", "YEAR", tmp.target.level.names), with=FALSE],
-				target.type.iter,
-				tmp.target.level.names,
-				getYearsContentAreasGrades(state, years=unique(tmp.target.data$YEAR), content_areas=unique(tmp.target.data$CONTENT_AREA)),
-				sgp.config=sgp.config,
-				parallel.config=parallel.config)
+		for (projection_group.iter in unique(tmp.target.data[['SGP_PROJECTION_GROUP']])) {
+			for (target.type.iter in target.args[['sgp.target.scale.scores.types']]) {
+				tmp.target.level.names <- 
+					as.character(sapply(target.args[['target.level']], function(x) getTargetName(state, target.type.iter, x, max.sgp.target.years.forward, "SGP_TARGET", projection.unit.label, projection_group.iter)))
+				sgp_object <- getTargetScaleScore(
+					sgp_object, 
+					state, 
+					tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter, c("ID", "CONTENT_AREA", "YEAR", tmp.target.level.names), with=FALSE],
+					target.type.iter,
+					tmp.target.level.names,
+					getYearsContentAreasGrades(state, years=unique(tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter][['YEAR']]), content_areas=unique(tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter][['CONTENT_AREA']])),
+					sgp.config=sgp.config,
+					projection_group.identifier=projection_group.iter,
+					parallel.config=parallel.config)
+			}
 		}
 	} ### END !is.null(sgp.target.scale.scores)
 
