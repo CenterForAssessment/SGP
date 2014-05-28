@@ -30,7 +30,7 @@ function(
 		} else {
 			Interpolation_Data <- subset(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], GRADE==grade & CONTENT_AREA==content_area)
 		}
-		tmp.scale <- Interpolation_Function(Interpolation_Data[['SCALE_SCORE']], Interpolation_Data[['CSEM']])
+		tmp.scale <- Interpolation_Function(Interpolation_Data[['SCALE_SCORE']], Interpolation_Data[['SCALE_SCORE_CSEM']])(scale_scores)
 	}
 	if (!is.null(variable)) tmp.scale <- variable
 
