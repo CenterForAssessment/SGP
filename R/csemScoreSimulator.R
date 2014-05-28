@@ -30,12 +30,12 @@ function(
 		} else {
 			Interpolation_Data <- subset(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], GRADE==grade & CONTENT_AREA==content_area)
 		}
-		tmp.scale <- Interpolation_Function(Interpolation_Data[['SCALE_SCORE']], Interpolation_Data[['SCALE_SCORE_CSEM']])(scale_scores)
+		tmp.omega <- Interpolation_Function(Interpolation_Data[['SCALE_SCORE']], Interpolation_Data[['SCALE_SCORE_CSEM']])(scale_scores)
 	}
-	if (!is.null(variable)) tmp.scale <- variable
+	if (!is.null(variable)) tmp.omega <- variable
 
-	if (distribution=="Skew-Normal") tmp.shape <- tan((pi/2)*((min.max[1]+min.max[2]) - 2*scale_scores)/(min.max[2]-min.max[1])) else tmp.shape <- 0
-	tmp.score <- round_any(as.numeric(rsn(length(scale_scores), xi=scale_scores, omega=sqrt(tmp.scale), alpha=sqrt(tmp.shape))), round)
+	if (distribution=="Skew-Normal") tmp.alpha <- tan((pi/2)*((min.max[1]+min.max[2]) - 2*scale_scores)/(min.max[2]-min.max[1])) else tmp.alpha <- 0
+	tmp.score <- round_any(as.numeric(rsn(length(scale_scores), xi=scale_scores, omega=2*sqrt(tmp.omega), alpha=2*sqrt(tmp.alpha))), round)
 	tmp.score[tmp.score < min.max[1]] <- min.max[1]
 	tmp.score[tmp.score > min.max[2]] <- min.max[2]
 	return(tmp.score)
