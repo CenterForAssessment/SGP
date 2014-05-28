@@ -1169,12 +1169,12 @@ function(panel.data,         ## REQUIRED
 								csemScoreSimulator(
 									scale_scores=tmp.data[[dim(tmp.data)[2]]],
 									grade=tmp.last,
-									content_area=sgp.labels$my.subject,
-									year=sgp.labels$my.year,
-									state=calculate.confidence.intervals$state,
+									content_area=sgp.labels[['my.subject']],
+									year=sgp.labels[['my.year']],
+									state=calculate.confidence.intervals[['state']],
 									variable=tmp.csem.variable,
-									distribution=calculate.confidence.intervals$distribution,
-									round=calculate.confidence.intervals$round))]
+									distribution=calculate.confidence.intervals[['distribution']],
+									round=calculate.confidence.intervals[['round']]))]
 						setnames(tmp.csem.quantiles[[j]], "TEMP_SGP_SIM", paste("SGP_SIM", k, sep="_"))
 					} ## END k loop
 				} ## END CSEM analysis

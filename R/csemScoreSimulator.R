@@ -10,6 +10,9 @@ function(
 	round=NULL) {
 
 	GRADE <- CONTENT_AREA <- YEAR <- NULL
+
+	### Define relevant variables
+
 	if (is.null(round)) round <- 1
 	if (is.null(distribution)) distribution <- "Normal"
 	if (!is.null(state)) {
@@ -17,25 +20,22 @@ function(
 	} else {
 		min.max <- range(scale_scores, na.rm=TRUE)
 	}
+	Interpolation_Function <- function(scale_score, variance) return(splinefun(scale_score, variance, method="natural"))
+
+	### Create scale score dependent CSEMs
+
 	if (!is.null(state)) {
 		if ("YEAR" %in% names(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
-			CSEM_Data <- subset(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], GRADE==grade & CONTENT_AREA==content_area & YEAR==year)
+			Interpolation_Data <- subset(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], GRADE==grade & CONTENT_AREA==content_area & YEAR==year)
 		} else {
-			CSEM_Data <- subset(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], GRADE==grade & CONTENT_AREA==content_area)
+			Interpolation_Data <- subset(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], GRADE==grade & CONTENT_AREA==content_area)
 		}
-		CSEM_Function <- splinefun(CSEM_Data[["SCALE_SCORE"]], CSEM_Data[["SCALE_SCORE_CSEM"]], method="natural")
-		tmp.scale <- CSEM_Function(scale_scores)
-	} 
-	if (!is.null(variable)) {
-		tmp.scale <- variable
+		tmp.scale <- Interpolation_Function(Interpolation_Data[['SCALE_SCORE']], Interpolation_Data[['CSEM']])
 	}
-	if (distribution=="Skew-Normal") {
-		tmp.shape <- tan((pi/2)*((min.max[1]+min.max[2]) - 2*scale_scores)/(min.max[2]-min.max[1]))
-		tmp.score <- round_any(as.numeric(rsn(length(scale_scores), xi=scale_scores, omega=tmp.scale, alpha=tmp.shape)), round)
-	}
-	if (distribution=="Normal") {
-		tmp.score <- round_any(as.numeric(rnorm(length(scale_scores), mean=scale_scores, sd=tmp.scale)), round)
-	}
+	if (!is.null(variable)) tmp.scale <- variable
+
+	if (distribution=="Skew-Normal") tmp.shape <- tan((pi/2)*((min.max[1]+min.max[2]) - 2*scale_scores)/(min.max[2]-min.max[1])) else tmp.shape <- 0
+	tmp.score <- round_any(as.numeric(rsn(length(scale_scores), xi=scale_scores, omega=sqrt(tmp.scale), alpha=sqrt(tmp.shape))), round)
 	tmp.score[tmp.score < min.max[1]] <- min.max[1]
 	tmp.score[tmp.score > min.max[2]] <- min.max[2]
 	return(tmp.score)

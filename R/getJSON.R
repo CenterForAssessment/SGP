@@ -1,5 +1,6 @@
 `getJSON` <-
 function(tmp.data,
+	sgPlot.sgp_object,
 	state,
 	content_area,
 	year,
@@ -106,38 +107,32 @@ function(tmp.data,
 			return(tmp.list)
 		} ### END interpolate.extend.data
 
-
-		getJSON.percentile_trajectories_Internal <- function(sgPlot.data, percentile.trajectory.values, year, state) {
+		getJSON.percentile_trajectories_Internal <- function(sgPlot.data, sgPlot.sgp_object, percentile.trajectory.values, year, state) {
 
 			.create.path <- function(labels, pieces=c("my.subject", "my.year", "my.extra.label")) {
 				sub(' ', '_', toupper(sub('\\.+$', '', paste(unlist(sapply(labels[pieces], as.character)), collapse="."))))
 			}
 
-			tmp.indices <- seq(which(year==rev(tmp.data$Years)))
-			tmp.df <- data.frame(matrix(c(1, rev(tmp.data$Grades)[tmp.indices], rev(tmp.data$Scale_Scores)[tmp.indices]), nrow=1), stringsAsFactors=FALSE)
+			tmp.indices <- seq(match(year, rev(sgPlot.data[['Years']])))
+			tmp.df <- data.frame(matrix(c(1, rev(tmp.data[['Grades']])[tmp.indices], rev(tmp.data[['Scale_Scores']])[tmp.indices]), nrow=1), stringsAsFactors=FALSE)
 			for (j in seq(to=dim(tmp.df)[2], length=(dim(tmp.df)[2]-1)/2)) {
 				tmp.df[[j]] <- as.numeric(tmp.df[[j]])
 			}
-			gaPlot.sgp_object@SGP$Panel_Data <- tmp.df
-			gaPlot.sgp_object@SGP$SGProjections <- NULL
-			tmp.grades <- as.numeric(tmp.df[1,2:((dim(tmp.df)[2]+1)/2)])
+			sgPlot.sgp_object@SGP$Panel_Data <- tmp.df
 			if (baseline) my.extra.label <- "BASELINE" else my.extra.label <- NULL
 
 			studentGrowthProjections(
-				panel.data=gaPlot.sgp_object@SGP,
+				panel.data=sgPlot.sgp_object@SGP,
 				sgp.labels=list(my.year=year, my.subject=content_area, my.extra.label=my.extra.label),
-#				grade.progression=
-#				content_area.progression=
-#				year_lags.progression=
+				grade.progression=rev(tmp.data[['Grades']])[tmp.indices],
+				content_area.progression=rev(tmp.data[['Content_Areas']])[tmp.indices],
+				year_lags.progression=diff(as.numeric(sapply(strsplit(rev(tmp.data[['Years']])[tmp.indices], "_"), '[', 2))),
 				grade.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[content_area]],
 				content_area.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]],
 				year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[content_area]],
 				projcuts.digits=2,
 				projection.unit="GRADE",
 				percentile.trajectory.values=percentile.trajectory.values,
-				grade.progression=tmp.grades,
-				max.forward.progression.grade=gaPlot.grade_range[2],
-				max.order.for.progression=gaPlot.max.order.for.progression,
 				print.time.taken=FALSE)[["SGProjections"]][[.create.path(list(my.subject=content_area, my.year=year, my.extra.label=my.extra.label))]][,-1]
 		} ### END getJSON.percentile_trajectories_Internal
 
@@ -165,7 +160,7 @@ function(tmp.data,
 					}
 				}
 			}
-			return(c(tmp.cutscores[CUTLEVEL=="LOSS"]$CUTSCORE, tmp.cutscores[!CUTLEVEL %in% c("LOSS", "HOSS")]$CUTSCORE, tmp.cutscores[CUTLEVEL=="HOSS"]$CUTSCORE))
+			return(c(tmp.cutscores[CUTLEVEL=="LOSS"][['CUTSCORES']], tmp.cutscores[!CUTLEVEL %in% c("LOSS", "HOSS")][['CUTSCORES']], tmp.cutscores[CUTLEVEL=="HOSS"][['CUTSCORES']]))
 		}
 
 		### Create grades.content_areas.reported.in.state
@@ -205,7 +200,8 @@ function(tmp.data,
 
 			tmp.index <- which(i==unlist(sapply(tmp.data.extended, '[[', 'Year')))
 			tmp.data.extended[[tmp.index]][['Percentile_Trajectories']] <- getJSON.percentile_trajectories_Internal(
-												sgPlot.data=tmp.data, 
+												sgPlot.data=tmp.data,
+												sgPlot.sgp_object=sgPlot.sgp_object,
 												percentile.trajectory.values=1:99, 
 												year=i, 
 												state=state)
@@ -257,5 +253,4 @@ function(tmp.data,
 		return(tmp.data.extended)	
 
 	} ### END if (data.type=="studentGrowthPlot")
-
 } ### END getJSON
