@@ -10,6 +10,7 @@ is called by \code{\link{visualizeSGP}} to generate individual student reports. 
 \usage{
 studentGrowthPlot_Styles(
            sgPlot.data,
+           sgPlot.sgp_object,
            state,
            last.year,
            content_areas,
@@ -37,6 +38,8 @@ studentGrowthPlot_Styles(
 \arguments{
   \item{sgPlot.data}{Wide formatted individual student report data used to produce student growth plots. To view structure of wide formatted data, utilize the 
 \code{sgPlot.save.sgPlot.data} option with \code{\link{visualizeSGP}} to save wide formatted student growth plot data.
+  }
+  \item{sgPlot.sgp_object}{SGP object containing coefficient matrices and knots and boundaries for percentile trajectory calculations associated with JSON output.
   }
   \item{state}{Acronym indicating state associated with the summaries for access to assessment program information embedded in \code{SGPstateData}.
   }

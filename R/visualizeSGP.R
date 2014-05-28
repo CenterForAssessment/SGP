@@ -164,12 +164,12 @@ function(sgp_object,
 
 	} ### END get.gaPlot.iter
 
-	get.gaPlot.object <- function(sgp_object) {
-		tmp.sgp <- new("SGP")
-		tmp.sgp@Data <- sgp_object@Data
-		tmp.sgp@SGP <- sgp_object@SGP[c("Coefficient_Matrices", "Knots_Boundaries")]
-		return(tmp.sgp)
-	} ### END get.gaPlot.object
+	get.object.shell <- function(sgp_object, with_data=TRUE) {
+		tmp.sgp_object <- new("SGP")
+		if (with_data) tmp.sgp_object@Data <- sgp_object@Data
+		tmp.sgp_object@SGP <- sgp_object@SGP[c("Coefficient_Matrices", "Knots_Boundaries")]
+		return(tmp.sgp_object)
+	} ### END get.object.shell
 
 	get.actual.scores <- function(score, content_area, grade) {
 		if (is.na(content_area) | is.na(grade)) return(rep(as.numeric(NA), length(score)))
@@ -229,7 +229,7 @@ function(sgp_object,
 
 		par.start <- startParallel(parallel.config, 'GA_PLOTS')
 
-		gaPlot.sgp_object <- get.gaPlot.object(sgp_object)
+		gaPlot.sgp_object <- get.object.shell(sgp_object)
 		
 		if (par.start$par.type=="FOREACH") {
 
@@ -960,12 +960,15 @@ if (sgPlot.save.sgPlot.data) {
 
 #### studentGrowthPlot production
 
+sgPlot.sgp_object <- get.object.shell(sgp_object, with_data=FALSE)
+
 if (sgPlot.produce.plots) {
 
 	if (parallel.config[['WORKERS']][['SG_PLOTS']]==1 | sgPlot.demo.report) { ### NO Parallel Processing
 
 		studentGrowthPlot_Styles(
 			sgPlot.data=sgPlot.data,
+			sgPlot.sgp_object=sgPlot.sgp_object,
 			state=state,
 			last.year=tmp.last.year,
 			content_areas=tmp.content_areas_domains,
@@ -1000,6 +1003,7 @@ if (sgPlot.produce.plots) {
 				.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
 						studentGrowthPlot_Styles(
 							sgPlot.data=sgPlot.data,
+							sgPlot.sgp_object=sgPlot.sgp_object,
 							state=state,
 							last.year=tmp.last.year,
 							content_areas=tmp.content_areas_domains,
@@ -1031,6 +1035,7 @@ if (sgPlot.produce.plots) {
 			clusterApplyLB(par.start$internal.cl, sgPlot.list, function(sgPlot.iter) 
 				studentGrowthPlot_Styles(
 					sgPlot.data=sgPlot.data,
+					sgPlot.sgp_object=sgPlot.sgp_object,
 					state=state,
 					last.year=tmp.last.year,
 					content_areas=tmp.content_areas_domains,
@@ -1061,6 +1066,7 @@ if (sgPlot.produce.plots) {
 			mclapply(sgPlot.list, function(sgPlot.iter) 
 				studentGrowthPlot_Styles(
 					sgPlot.data=sgPlot.data,
+					sgPlot.sgp_object=sgPlot.sgp_object,
 					state=state,
 					last.year=tmp.last.year,
 					content_areas=tmp.content_areas_domains,
