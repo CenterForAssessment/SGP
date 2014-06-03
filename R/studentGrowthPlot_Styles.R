@@ -426,11 +426,11 @@ if (reports.by.school) {
 		if (!reports.by.student) {
 			################################ SCHOOL Report Catalog LaTeX Code ###################################################################################
 			if (is.null(sgPlot.front.page)) {
-			cat(paste("\\pdfbookmark[2]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", student_number, ")", sep=""), "}{", n , "}\n\\includepdf[fitpaper=true]{", 
+			cat(paste("\\pdfbookmark[2]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", student_number, ")", sep=""), "}{", n , "}\n\\includepdf[pages={1-}, fitpaper=true]{", 
 				path.to.pdfs, "/", file_name, "}\n", sep=""), file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE)
 			} else {
-				cat(paste("\\includepdf[fitpaper=true]{", sgPlot.front.page.ij, "}\n\\pdfbookmark[2]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", 
-				student_number, ")", sep=""), "}{", n , "}\n\\includepdf[fitpaper=true]{", path.to.pdfs, "/", file_name, "}\n", sep=""), 
+				cat(paste("\\includepdf[pages={1-},fitpaper=true]{", sgPlot.front.page.ij, "}\n\\pdfbookmark[2]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", 
+				student_number, ")", sep=""), "}{", n , "}\n\\includepdf[pages={1-},fitpaper=true]{", path.to.pdfs, "/", file_name, "}\n", sep=""), 
 					file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE)
 			}
 			#####################################################################################################################################################
@@ -445,15 +445,14 @@ if (reports.by.school) {
 		cat(paste("pdfproducer={", tmp.organization$Name, "/Center for Assessment Inc.}}\n", sep=""), file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE) 
 		cat("\\begin{document}\n", file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
 		if (!is.null(sgPlot.front.page)) {
-			cat(paste("\\includepdf[fitpaper=true]{", sgPlot.front.page.ij, "}\n", sep=""), file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
+			cat(paste("\\includepdf[pages={1-}, fitpaper=true]{", sgPlot.front.page.ij, "}\n", sep=""), file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
 		}
-		cat(paste("\\includepdf[fitpaper=true]{", path.to.pdfs, "/", file_name, "}\n", sep=""), 
+		cat(paste("\\includepdf[pages={1-}, fitpaper=true]{", path.to.pdfs, "/", file_name, "}\n", sep=""), 
 			file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
 
 		cat("\\end{document}", file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
 		####################################################################################################################################################
 
-stop("@$$")
 		## Start pdf device
 		
 		if (length(content_areas) %in% c(1,2)) {
@@ -482,7 +481,7 @@ stop("@$$")
 		}
 
 		pdf(file.path(path.to.pdfs, file_name), 
-			width=report.width, height=report.height, version="1.4")
+			width=report.width, height=report.height, version="1.4", onefile=TRUE)
 
 		########################################################################################################
 		###
@@ -728,80 +727,16 @@ stop("@$$")
 		#############################
 		### Custom Student reports
 		#############################
-			
-		##  Push full report layout viewport
-		pushViewport(custom.isr$Grid_Objects$report.vp)
-		##  Push/pop content area report blocks
-		for (vp in seq_along(content_areas)) {
-			tmp_student_data <- as.data.frame(tmp_grade_data[ID==n & CONTENT_AREA==content_areas[vp]])
-			pushViewport(eval(parse(text=paste("custom.isr$Grid_Objects$content_area_", vp, ".vp", sep=""))))
-			studentGrowthPlot(
-				Scale_Scores=as.numeric(subset(tmp_student_data, select=paste("SCALE_SCORE", rev(sgPlot.years), sep="."))),
-				Plotting_Scale_Scores=as.numeric(subset(tmp_student_data, select=paste("TRANSFORMED_SCALE_SCORE", rev(sgPlot.years), sep="."))),
-				Achievement_Levels=as.character(unlist(subset(tmp_student_data, select=paste("ACHIEVEMENT_LEVEL", rev(sgPlot.years), sep=".")))),
-				SGP=as.numeric(subset(tmp_student_data, select=paste(my.sgp, rev(sgPlot.years), sep="."))),
-				SGP_Levels=as.character(unlist(subset(tmp_student_data, select=paste(my.sgp.level, rev(sgPlot.years), sep=".")))),
-				Grades=as.character(subset(tmp_student_data, select=paste("GRADE", rev(sgPlot.years), sep="."))),
-				Content_Areas=as.character(subset(tmp_student_data, select=paste("CONTENT_AREA_LABELS", rev(sgPlot.years), sep="."))),
-				Cuts=list(
-					NY1=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)), 
-						grep("YEAR_1", names(tmp_student_data))), grep("YEAR_1_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-					NY2=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)), 
-						grep("YEAR_2", names(tmp_student_data))), grep("YEAR_2_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-					NY3=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)), 
-						grep("YEAR_3", names(tmp_student_data))), grep("YEAR_3_CURRENT_TRANSFORMED", names(tmp_student_data)))))),
-				Plotting_Cuts=list(
-					NY1=as.numeric(subset(tmp_student_data, select=intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_1_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-					NY2=as.numeric(subset(tmp_student_data, select=intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_2_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-					NY3=as.numeric(subset(tmp_student_data, select=intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_3_CURRENT_TRANSFORMED", names(tmp_student_data)))))),
-				SGP_Targets=list(
-					CUKU=tmp_student_data[[paste(paste(my.sgp.target.label[1], my.sgp.target.label[2], sep="_"), last.year, sep=".")]], 
-					CUKU_Current=tmp_student_data[[paste(paste(my.sgp.target.label[1], my.sgp.target.label[2], "CURRENT", sep="_"), last.year, sep=".")]], 
-					MUSU=tmp_student_data[[paste(paste(my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], sep="_"), last.year, sep=".")]], 
-					MUSU_Current=tmp_student_data[[paste(paste(my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "CURRENT", sep="_"), last.year, sep=".")]]),
-				SGP_Scale_Score_Targets=list(
-					CUKU=list(
-						NY1=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], my.sgp.target.label[2], "PROJ_YEAR_1", sep="_")]]),
-						NY2=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], my.sgp.target.label[2], "PROJ_YEAR_2", sep="_")]]),
-						NY3=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], my.sgp.target.label[2], "PROJ_YEAR_3", sep="_")]])),
-					MUSU=list(
-						NY1=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_1", sep="_")]]),
-						NY2=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_2", sep="_")]]),
-						NY3=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_3", sep="_")]])),
-					CUKU_Current=list(
-						NY1=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], my.sgp.target.label[2], "PROJ_YEAR_1_CURRENT", sep="_")]]),
-						NY2=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], my.sgp.target.label[2], "PROJ_YEAR_2_CURRENT", sep="_")]]),
-						NY3=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], my.sgp.target.label[2], "PROJ_YEAR_3_CURRENT", sep="_")]])),
-					MUSU_Current=list(
-						NY1=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_1_CURRENT", sep="_")]]),
-						NY2=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_2_CURRENT", sep="_")]]),
-						NY3=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_3_CURRENT", sep="_")]]))),
-				Plotting_SGP_Scale_Score_Targets=list(
-					CUKU=list(
-						NY1=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], my.sgp.target.label[2], "PROJ_YEAR_1_TRANSFORMED", sep="_")]]),
-						NY2=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], my.sgp.target.label[2], "PROJ_YEAR_2_TRANSFORMED", sep="_")]]),
-						NY3=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], my.sgp.target.label[2], "PROJ_YEAR_3_TRANSFORMED", sep="_")]])),
-					MUSU=list(
-						NY1=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_1_TRANSFORMED", sep="_")]]),
-						NY2=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_2_TRANSFORMED", sep="_")]]),
-						NY3=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_3_TRANSFORMED", sep="_")]])),
-					CUKU_Current=list(
-						NY1=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], my.sgp.target.label[2], "PROJ_YEAR_1_CURRENT_TRANSFORMED", sep="_")]]),
-						NY2=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], my.sgp.target.label[2], "PROJ_YEAR_2_CURRENT_TRANSFORMED", sep="_")]]),
-						NY3=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], my.sgp.target.label[2], "PROJ_YEAR_3_CURRENT_TRANSFORMED", sep="_")]])),
-					MUSU_Current=list(
-						NY1=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_1_CURRENT_TRANSFORMED", sep="_")]]),
-						NY2=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_2_CURRENT_TRANSFORMED", sep="_")]]),
-						NY3=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_3_CURRENT_TRANSFORMED", sep="_")]]))),
-				Cutscores=Cutscores[[content_areas[vp]]],
-				Years=rev(sgPlot.years),
-				Report_Parameters=list(Current_Year=last.year, Content_Area=content_areas[vp], Content_Area_Title=tmp_student_data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]], 
-					State=state, SGP_Targets=sgPlot.sgp.targets))
-	
-			popViewport()
-		} ## END loop over content_areas
-
-
+		
+		# pdf(file.path(path.to.pdfs, file_name), 
+			# width=report.width, height=report.height, version="1.4", onefile=TRUE)
+# #
+		make.custom.isr <- as.function(custom.isr$Custom_ISR_Function$value)
+		environment(make.custom.isr) <- environment()
+		make.custom.isr()
+#
+		## Turn pdf device off
+		dev.off()
 		} # End Custom Student reports
 
 		## Code to LaTeX document attaching first page/adding meta-data
@@ -1084,11 +1019,11 @@ if (reports.by.instructor) {
 		if ("PDF" %in% sgPlot.output.format) {
 			################################ INSTRUCTOR Report Catalog LaTeX Code ###################################################################################
 			if (is.null(sgPlot.front.page)) {
-				cat(paste("\\pdfbookmark[3]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", student_number, ")", sep=""), "}{", n , "}\n\\includepdf[fitpaper=true]{", 
+				cat(paste("\\pdfbookmark[3]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", student_number, ")", sep=""), "}{", n , "}\n\\includepdf[pages={1-}, fitpaper=true]{", 
 					path.to.pdfs, "/", file_name, "}\n", sep=""), file=paste("instructor_catalog_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
 			} else {
-				cat(paste("\\includepdf[fitpaper=true]{", sgPlot.front.page.ijk, "}\n\\pdfbookmark[3]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", 
-				student_number, ")", sep=""), "}{", n , "}\n\\includepdf[fitpaper=true]{", path.to.pdfs, "/", file_name, "}\n", sep=""), 
+				cat(paste("\\includepdf[pages={1-}, fitpaper=true]{", sgPlot.front.page.ijk, "}\n\\pdfbookmark[3]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", 
+				student_number, ")", sep=""), "}{", n , "}\n\\includepdf[pages={1-}, fitpaper=true]{", path.to.pdfs, "/", file_name, "}\n", sep=""), 
 					file=paste("instructor_catalog_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
 			}
 			#####################################################################################################################################################
@@ -1102,9 +1037,9 @@ if (reports.by.instructor) {
 			cat(paste("pdfproducer={", tmp.organization$Name, "/Center for Assessment Inc.}}\n", sep=""), file=paste("student_report_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE) 
 			cat("\\begin{document}\n", file=paste("student_report_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
 			if (!is.null(sgPlot.front.page)) {
-				cat(paste("\\includepdf[fitpaper=true]{", sgPlot.front.page.ijk, "}\n", sep=""), file=paste("student_report_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
+				cat(paste("\\includepdf[pages={1-}, fitpaper=true]{", sgPlot.front.page.ijk, "}\n", sep=""), file=paste("student_report_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
 			}
-			cat(paste("\\includepdf[fitpaper=true]{", path.to.pdfs, "/", file_name, "}\n", sep=""), 
+			cat(paste("\\includepdf[pages={1-}, fitpaper=true]{", path.to.pdfs, "/", file_name, "}\n", sep=""), 
 				file=paste("student_report_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
 	
 			cat("\\end{document}", file=paste("student_report_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
