@@ -712,7 +712,6 @@ if (bubble_plot_configs.BUBBLE_TIPS) {
 	temp_pdf <- temp_pdf[-which(temp_pdf=="/C [ 0 1 1 ]")]
 	temp_pdf <- temp_pdf[-grep("PLACEHOLDER", temp_pdf)]
 	writeLines(temp_pdf, file.path.and.name)
-
 } ## End if BUBBLE_TIPS == TRUE
 
 
