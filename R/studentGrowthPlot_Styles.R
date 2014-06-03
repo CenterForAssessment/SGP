@@ -423,7 +423,6 @@ if (reports.by.school) {
 
 
 	if ("PDF" %in% sgPlot.output.format) {
->>>>>>> 161da735a1315be9c75319dbde15b89c99629456
 		if (!reports.by.student) {
 			################################ SCHOOL Report Catalog LaTeX Code ###################################################################################
 			if (is.null(sgPlot.front.page)) {
