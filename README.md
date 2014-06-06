@@ -2,9 +2,6 @@
   <img src="https://raw.githubusercontent.com/CenterForAssessment/SGP_Resources/master/misc/SGP_Futura_2.png" alt="SGP">
 </p>
 
-
-![SGP: Student Growth Percentiles](https://raw.githubusercontent.com/CenterForAssessment/SGP_Resources/master/misc/SGP_Futura_2.png)
-
 ______________________________________________________________________________________________________
 
 ### An R Package for the calculation of student growth percentiles and percentile growth trajectories/projections
