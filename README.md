@@ -1,3 +1,8 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/CenterForAssessment/SGP_Resources/master/misc/SGP_Futura_2.png" alt="SGP">
+</p>
+
+
 ![SGP: Student Growth Percentiles](https://raw.githubusercontent.com/CenterForAssessment/SGP_Resources/master/misc/SGP_Futura_2.png)
 
 ______________________________________________________________________________________________________
