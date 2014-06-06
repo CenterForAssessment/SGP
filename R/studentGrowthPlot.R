@@ -103,9 +103,9 @@ if (!is.null(SGPstateData[[Report_Parameters$State]][['SGP_Configuration']][['sg
 }
 
 if (is.null(SGPstateData[[Report_Parameters$State]][['SGP_Configuration']][['Show_Fan_Cut_Scores']])) {
-	Report_Parameters[['Configuration']][['Show_Fan_Cut_Scores']] <- FALSE
+	show.fan.cutscores <- FALSE
 } else {
-	Report_Parameters[['Configuration']][['Show_Fan_Cut_Scores']] <- TRUE
+	show.fan.cutscores <- TRUE
 }
 
 if (is.null(Report_Parameters[['Configuration']][['Font_Size']])) {
@@ -115,9 +115,9 @@ if (is.null(Report_Parameters[['Configuration']][['Font_Size']])) {
 	bottom.left.vp.size <- 0.7
 } else {
 	if (Report_Parameters[['Configuration']][['Font_Size']]=="Small_1") {
-		title.ca.size <- 1.5
+		title.ca.size <- 1.6
 		legend.size <- 0.4
-		bottom.right.vp.size <- 1.0
+		bottom.right.vp.size <- 1.2
 		bottom.left.vp.size <- 0.65
 	}
 }
@@ -148,8 +148,8 @@ if (is.null(Report_Parameters[['Configuration']][['Language']])) {
 		growth_percentile.label <- "Porcentaje de Crecimiento"
 		growth_level.label <- "Nivel de Crecimiento"
 		growth_target.label <- "Meta de Crecimiento"
-		level.label <- "Niveles de"
-		percentiles.label <- "Porcentaje"
+		level.label <- "Niveles"
+		percentiles.label <- "Porcentajes"
 		scale_score.label <- "Escala"
 		grade.label <- "Grado"
 		CU.label <- "Alcanzar"
@@ -605,7 +605,7 @@ if (paste(Grades[1], Content_Areas[1]) != tail(paste(grades.content_areas.report
 				y=(max(yscale.range[1], cuts.ny1[i])+min(yscale.range[2], cuts.ny1[i+1]))/2, growth.level.labels[i],
 				default.units="native", just="left", gp=gpar(cex=0.4, col=border.color))
 		}
-		if (i != 1 & Report_Parameters[['Configuration']][['Show_Fan_Cut_Scores']]) {
+		if (i != 1 & show.fan.cutscores) {
 			grid.text(x=current.year+grade.values$increment_for_projection_current+0.05, y=cuts.ny1[i], as.character(cuts.ny1.text[i]),
 				default.units="native", just="left", gp=gpar(cex=0.4, col=border.color))
 		}
@@ -831,8 +831,8 @@ grid.roundrect(width=unit(0.95, "native"), r=unit(.02, "snpc"), gp=gpar(lwd=1.8,
 if (!split.content_area.tf) {
 	grid.text(x=.5, y=0.875, content.area.label, gp=gpar(col=border.color, cex=title.ca.size, fontface=2, fontfamily="Helvetica-Narrow"), default.units="native")
 } else {
-	grid.text(x=.5, y=0.92, content_area.label.pieces[1], gp=gpar(col=border.color, cex=title.ca.size-0.3, fontface=2, fontfamily="Helvetica-Narrow"), default.units="native")
-	grid.text(x=.5, y=0.83, content_area.label.pieces[2], gp=gpar(col=border.color, cex= title.ca.size-0.3, fontface=2, fontfamily="Helvetica-Narrow"), default.units="native")	
+	grid.text(x=.5, y=0.92, content_area.label.pieces[1], gp=gpar(col=border.color, cex=title.ca.size-0.25, fontface=2, fontfamily="Helvetica-Narrow"), default.units="native")
+	grid.text(x=.5, y=0.83, content_area.label.pieces[2], gp=gpar(col=border.color, cex= title.ca.size-0.25, fontface=2, fontfamily="Helvetica-Narrow"), default.units="native")	
 }
 grid.text(x=0.08, y=0.75, achievement.label, gp=gpar(col=border.color, cex=.85, fontface=2, fontfamily="Helvetica-Narrow"), default.units="native", just="left")
 grid.text(x=0.08, y=0.525, growth.label, gp=gpar(col=border.color, cex=.75, fontface=2, fontfamily="Helvetica-Narrow"), default.units="native", just="left")
