@@ -1481,6 +1481,7 @@ function(sgp_object,
 						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]],
 						projection.unit=sgp.projections.projection.unit,
 						projection.unit.label=sgp.projections.projection.unit.label,
+						return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 						...)
 				} else {
 					message(paste("\n\t\tNOTE: No student records &/or no prior data for lagged student growth projections:", tail(sgp.iter[["sgp.panel.years"]], 1), 
