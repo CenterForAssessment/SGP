@@ -19,7 +19,6 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 
 ### Create relevant variables
 
-content.area.label <- SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Content_Areas_Labels"]][[Report_Parameters$Content_Area_Title]]
 CUTLEVEL <- level_1_curve <- NULL ## To prevent R CMD check warnings
 number.achievement.level.regions <- length(SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Achievement_Level_Labels"]])
 achievement.level.labels <- SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Achievement_Level_Labels"]]
@@ -27,6 +26,11 @@ number.growth.levels <- length(SGPstateData[[Report_Parameters$State]][["Growth"
 growth.level.labels <- SGPstateData[[Report_Parameters$State]][["Growth"]][["Levels"]]
 growth.level.cutscores <- SGPstateData[[Report_Parameters$State]][["Growth"]][["Cutscores"]][["Cuts"]]
 growth.level.cutscores.text <- SGPstateData[[Report_Parameters$State]][["Growth"]][["Cutscores"]][["Labels"]]
+if (!is.na(Report_Parameters$Content_Area_Title)) {
+	content.area.label <- SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Content_Areas_Labels"]][[Report_Parameters$Content_Area_Title]]
+} else {
+	content.area.label <- SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Content_Areas_Labels"]][[Report_Parameters$Content_Area]]
+}
 
 if (!is.null(SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["content_area.projection.sequence"]][[Report_Parameters$Content_Area]])) {
 	grades.content_areas.reported.in.state <- data.frame(
