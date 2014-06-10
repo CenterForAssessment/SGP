@@ -16,7 +16,7 @@ function(sgp_object,
         }
 
 	if (sgp.type %in% c("sgp.percentiles", "sgp.percentiles.baseline")) {
-		tmp.sgp.names <- names(sgp_object@SGP$SGPercentiles)
+		tmp.sgp.names <- as.character(names(sgp_object@SGP$SGPercentiles))
 		tmp.baseline.names <- grep("BASELINE", names(sgp_object@SGP$SGPercentiles), value=TRUE)
 		if (sgp.type=="sgp.percentiles") tmp.names <- setdiff(tmp.sgp.names, tmp.baseline.names)
 		if (sgp.type=="sgp.percentiles.baseline") {

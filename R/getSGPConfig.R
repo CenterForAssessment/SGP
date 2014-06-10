@@ -294,8 +294,19 @@ function(sgp_object,
 	if (sgp.percentiles) sgp.config.list[['sgp.percentiles']] <- par.sgp.config
 
 	if (sgp.projections | sgp.projections.lagged) {
-		tmp.config <- par.sgp.config[sapply(par.sgp.config, test.projection.iter)]
+		suppressWarnings(tmp.config <- par.sgp.config[sapply(par.sgp.config, test.projection.iter)])
 		if (length(tmp.config) > 0) for (f in 1:length(tmp.config)) tmp.config[[f]]$sgp.exact.grade.progression <- FALSE
+		while (any(sapply(tmp.config, function(x) length(x$sgp.projection.sequence)>1))) {
+			tmp.index <- which(any(sapply(tmp.config, function(x) length(x$sgp.projection.sequence)>1)))[1]
+			tmp.iter <- tmp.config[[tmp.index]]
+			tmp.config <- tmp.config[-tmp.index]
+			tmp.expand.config <- list()
+			for (j in 1:length(tmp.iter$sgp.projection.sequence)) {
+				tmp.expand.config[[j]] <- tmp.iter
+				tmp.expand.config[[j]]$sgp.projection.sequence <- tmp.expand.config[[j]]$sgp.projection.sequence[j]
+			}
+			tmp.config <- c(tmp.config, tmp.expand.config)
+		}
 		if (sgp.projections) sgp.config.list[['sgp.projections']] <- tmp.config
 		if (sgp.projections.lagged) sgp.config.list[['sgp.projections.lagged']] <- tmp.config
 	}
@@ -311,9 +322,20 @@ function(sgp_object,
 		sgp.config.list[['sgp.percentiles.baseline']] <- 
 			par.sgp.config[which(sapply(par.sgp.config, function(x) !identical(x[['sgp.baseline.grade.sequences']], "NO_BASELINE_COEFFICIENT_MATRICES")))]
 
-		tmp.config <- sgp.config.list[['sgp.percentiles.baseline']][sapply(sgp.config.list[['sgp.percentiles.baseline']], test.projection.iter)]
+		suppressWarnings(tmp.config <- sgp.config.list[['sgp.percentiles.baseline']][sapply(sgp.config.list[['sgp.percentiles.baseline']], test.projection.iter)])
 		if (length(tmp.config) > 0) for (f in 1:length(tmp.config)) tmp.config[[f]]$sgp.exact.grade.progression <- FALSE
 		if (!sgp.percentiles.baseline) sgp.config.list[['sgp.percentiles.baseline']] <- NULL
+		while (any(sapply(tmp.config, function(x) length(x$sgp.projection.sequence)>1))) {
+			tmp.index <- which(any(sapply(tmp.config, function(x) length(x$sgp.projection.sequence)>1)))[1]
+			tmp.iter <- tmp.config[[tmp.index]]
+			tmp.config <- tmp.config[-tmp.index]
+			tmp.expand.config <- list()
+			for (j in 1:length(tmp.iter$sgp.projection.sequence)) {
+				tmp.expand.config[[j]] <- tmp.iter
+				tmp.expand.config[[j]]$sgp.projection.sequence <- tmp.expand.config[[j]]$sgp.projection.sequence[j]
+			}
+			tmp.config <- c(tmp.config, tmp.expand.config)
+		}
 		if (sgp.projections.baseline) sgp.config.list[['sgp.projections.baseline']] <- tmp.config
 		if (sgp.projections.lagged.baseline) sgp.config.list[['sgp.projections.lagged.baseline']] <- tmp.config
 	}

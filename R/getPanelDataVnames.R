@@ -54,10 +54,10 @@ function(sgp.type,
 		if ("YEAR_WITHIN" %in% sgp.data.names) {
 			return(c("ID", paste("GRADE", tail(sgp.iter[["sgp.projection.panel.years"]], length(sgp.iter[["sgp.projection.grade.sequences"]])), 
 				tail(sgp.iter[["sgp.projection.content.areas"]], length(sgp.iter[["sgp.projection.grade.sequences"]])), 
-				tail(sgp.iter[["sgp.panel.years.within"]], length(sgp.iter[["sgp.projection.grade.sequences"]])), sep="."), 
+				head(sgp.iter[["sgp.panel.years.within"]], length(sgp.iter[["sgp.projection.grade.sequences"]])), sep="."), 
 				paste("SCALE_SCORE", tail(sgp.iter[["sgp.projection.panel.years"]], length(sgp.iter[["sgp.projection.grade.sequences"]])),
 				tail(sgp.iter[["sgp.projection.content.areas"]], length(sgp.iter[["sgp.projection.grade.sequences"]])), 
-				tail(sgp.iter[["sgp.panel.years.within"]], length(sgp.iter[["sgp.projection.grade.sequences"]])), sep=".")))
+				head(sgp.iter[["sgp.panel.years.within"]], length(sgp.iter[["sgp.projection.grade.sequences"]])), sep=".")))
 		} else {
 			return(c("ID", paste("GRADE", tail(sgp.iter[["sgp.projection.panel.years"]], length(sgp.iter[["sgp.projection.grade.sequences"]])), 
 				tail(sgp.iter[["sgp.projection.content.areas"]], length(sgp.iter[["sgp.projection.grade.sequences"]])), sep="."), 
