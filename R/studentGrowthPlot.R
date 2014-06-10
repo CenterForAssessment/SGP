@@ -146,8 +146,8 @@ if (is.null(Report_Parameters[['Configuration']][['Language']])) {
 } else {
 	if (Report_Parameters[['Configuration']][['Language']]=="Spanish") {
 		achievement.label <- "Resultado"
-		achievement_level.label <- "Nivel de Capacitación"
-		achievement_target.label <- "Meta de Capacitación"
+		achievement_level.label <- "Nivel de Capacitaci\uF3n" # Hex code for accented o is \uF3 - http://www.ascii.cl/htmlcodes.htm
+		achievement_target.label <- "Meta de Capacitaci\uF3n"
 		growth.label <- "Crecimiento"
 		growth_percentile.label <- "Porcentaje de Crecimiento"
 		growth_level.label <- "Nivel de Crecimiento"
