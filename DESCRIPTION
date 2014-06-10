@@ -59,6 +59,8 @@ Authors@R: c(person(given=c("Damian", "W."), family="Betebenner", email="dbetebe
 		person(given="Justin", family="Meyer", role="ctb", comment="Wisconsin Department of Education"),
 		person(given="Joseph", family="Newton", role="ctb", comment="Wisconsin Department of Education"),
 		person(given="Nick", family="Stroud", role="ctb", comment="Wisconsin Department of Education"),
+		person(given="John", family="Paul", role="ctb", comment="Wyoming Department of Education"),
+		person(given="Michael", family="Flicek", role="ctb", comment="Michael Flicek Projects LLC working with Wyoming Department of Education"),
 		person(given="Phyllis", family="Clay", role="ctb", comment="Albuquerque Public Schools"),
 		person(given="Peter", family="Kinyua", role="ctb", comment="Albuquerque Public Schools"),
 		person(given="Brendan", family="Houng", role="ctb", comment="University of Melbourne, Australia, NAPLAN"),
