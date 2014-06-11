@@ -273,10 +273,18 @@ function(
 		for (target.type.iter in target.args[['target.type']]) {
 			for (target.level.iter in target.args[['target.level']]) {
 				tmp.data <- getTargetSGP(sgp_object, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward)
+				if (any(duplicated(tmp.data))) {
+					duplicated.projections.tf <- TRUE
+					tmp.data <- getPreferredSGP(tmp.data, state, type="TARGET")
+				} else duplicated.projections.tf <- FALSE
 				variables.to.merge <- names(tmp.data) %w/o% key(slot.data)
 				tmp.index <- slot.data[tmp.data[,intersect(key(slot.data), names(tmp.data)), with=FALSE], which=TRUE]
 				slot.data[tmp.index, variables.to.merge := tmp.data[, variables.to.merge, with=FALSE], with=FALSE, nomatch=0]
 			}
+		}
+		if (duplicated.projections.tf) {
+			tmp.messages <- c(tmp.messages, paste(
+				"\tNOTE: Multiple Projections exist for individual students. Unique SGP Targets will be created using SGP Progression Preference Table for ", state))
 		}
 
 		### SGP_TARGET_CONTENT_AREA calculation
