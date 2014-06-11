@@ -284,7 +284,7 @@ function(
 		}
 		if (duplicated.projections.tf) {
 			tmp.messages <- c(tmp.messages, paste(
-				"\tNOTE: Multiple Projections exist for individual students. Unique SGP Targets will be created using SGP Progression Preference Table for ", state))
+				"\tNOTE: Multiple Projections exist for individual students. Unique SGP Targets will be created using SGP Progression Preference Table for ", state, ".\n", sep=""))
 		}
 
 		### SGP_TARGET_CONTENT_AREA calculation
