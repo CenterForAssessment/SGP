@@ -11,7 +11,8 @@ function(sgp_object,
 	outputSGP.student.groups=NULL,
 	outputSGP.directory="Data",
 	outputSGP.translate.names=TRUE,
-	outputSGP.projection.years.for.target=3) {
+	outputSGP.projection.years.for.target=3,
+	outputSGP.pass.through.variables=NULL) {
 
         started.at.outputSGP <- proc.time()
         message(paste("\nStarted outputSGP ", date(), ": Files produced from outputSGP saved in '", outputSGP.directory, "'\n", sep=""))
@@ -38,6 +39,10 @@ function(sgp_object,
 	if (is.null(outputSGP.student.groups)) {
 		outputSGP.student.groups <- intersect(names(sgp_object@Data), 
 			subset(sgp_object@Names, names.type=="demographic" & names.output==TRUE, select=names.sgp, drop=TRUE))
+	}
+
+	if (!is.null(SGPstateData[[state]][['SGP_Configuration']][['outputSGP.pass.through.variables']])) {
+		outputSGP.pass.through.variabes <- SGPstateData[[state]][['SGP_Configuration']][['outputSGP.pass.through.variables']]
 	}
 
 
@@ -698,11 +703,29 @@ function(sgp_object,
 
 		for (names.iter in grep("BASELINE", names(sgp_object@SGP[['SGPercentiles']]), value=TRUE)) {
 			dir.create(file.path(outputSGP.directory, "RLI", "SGPercentiles"), recursive=TRUE, showWarnings=FALSE)
-			output.column.order <- 
-				intersect(c("ID", "SGP_BASELINE_ORDER_1", "SGP_BASELINE_ORDER_2", "SGP_BASELINE", "SCALE_SCORE_PRIOR", 
-					"SGP_LEVEL_BASELINE", "SGP_NORM_GROUP_BASELINE", "SCALE_SCORE_PRIOR_STANDARDIZED"), names(sgp_object@SGP[['SGPercentiles']][[names.iter]]))
-			write.table(sgp_object@SGP[['SGPercentiles']][[names.iter]][,output.column.order], 
-				file=file.path(outputSGP.directory, "RLI", "SGPercentiles", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
+
+			if (!is.null(outputSGP.pass.through.variables)) {
+				output.column.order <- 
+						c(intersect(c("ID", "SGP_BASELINE_ORDER_1", "SGP_BASELINE_ORDER_2", "SGP_BASELINE", "SCALE_SCORE_PRIOR", 
+						"SGP_LEVEL_BASELINE", "SGP_NORM_GROUP_BASELINE", "SCALE_SCORE_PRIOR_STANDARDIZED"), names(sgp_object@SGP[['SGPercentiles']][[names.iter]])),
+						outputSGP.pass.through.variables)
+
+				write.table(sgp_object@Data[,c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", outputSGP.pass.through.variables), with=FALSE][
+					data.table(
+						VALID_CASE="VALID_CASE", 
+						CONTENT_AREA=unlist(strsplit(names.iter, "[.]"))[1], 
+						YEAR=getTableNameYear(names.iter), 
+						sgp_object@SGP[["SGPercentiles"]][[names.iter]])][,output.column.order, with=FALSE],
+					file=file.path(outputSGP.directory, "RLI", "SGPercentiles", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
+			} else {
+				output.column.order <- 
+					intersect(c("ID", "SGP_BASELINE_ORDER_1", "SGP_BASELINE_ORDER_2", "SGP_BASELINE", "SCALE_SCORE_PRIOR", 
+						"SGP_LEVEL_BASELINE", "SGP_NORM_GROUP_BASELINE", "SCALE_SCORE_PRIOR_STANDARDIZED"), names(sgp_object@SGP[['SGPercentiles']][[names.iter]]))
+				write.table(sgp_object@SGP[['SGPercentiles']][[names.iter]][,output.column.order], 
+					file=file.path(outputSGP.directory, "RLI", "SGPercentiles", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
+
+			}
+
 			if (identical(.Platform$OS.type, "unix")) {
 				if (file.info(file.path(outputSGP.directory, "RLI", "SGPercentiles", paste(names.iter, "txt", sep=".")))$size > 4000000000) {
 					tmp.working.directory <- getwd()
@@ -723,8 +746,24 @@ function(sgp_object,
 		}
 		for (names.iter in grep("BASELINE", names(sgp_object@SGP[['SGProjections']]), value=TRUE)) {
 			dir.create(file.path(outputSGP.directory, "RLI", "SGProjections"), recursive=TRUE, showWarnings=FALSE)
-			write.table(as.data.table(sgp_object@SGP[['SGProjections']][[names.iter]])[,GROUP:=names.iter],
-				file=file.path(outputSGP.directory, "RLI", "SGProjections", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
+
+			if (!is.null(outputSGP.pass.through.variables)) {
+				output.column.order <- c(names(sgp_object@SGP[['SGProjections']][[names.iter]]), "GROUP", outputSGP.pass.through.variables)
+				write.table(sgp_object@Data[,c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", outputSGP.pass.through.variables), with=FALSE][
+					data.table(
+						VALID_CASE="VALID_CASE", 
+						CONTENT_AREA=unlist(strsplit(names.iter, "[.]"))[1], 
+						YEAR=getTableNameYear(names.iter), 
+						sgp_object@SGP[["SGProjections"]][[names.iter]])][,GROUP:=names.iter][,output.column.order, with=FALSE],
+					file=file.path(outputSGP.directory, "RLI", "SGProjections", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
+
+			} else {
+				output.column.order <- names(sgp_object@SGP[['SGProjections']][[names.iter]])
+				write.table(as.data.table(sgp_object@SGP[['SGProjections']][[names.iter]])[,GROUP:=names.iter],
+					file=file.path(outputSGP.directory, "RLI", "SGProjections", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
+
+			}
+
 			if (identical(.Platform$OS.type, "unix")) {
 				if (file.info(file.path(outputSGP.directory, "RLI", "SGProjections", paste(names.iter, "txt", sep=".")))$size > 4000000000) {
 					tmp.working.directory <- getwd()
