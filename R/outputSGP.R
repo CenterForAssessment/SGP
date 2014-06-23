@@ -41,8 +41,9 @@ function(sgp_object,
 			subset(sgp_object@Names, names.type=="demographic" & names.output==TRUE, select=names.sgp, drop=TRUE))
 	}
 
-	if (!is.null(SGPstateData[[state]][['SGP_Configuration']][['outputSGP.pass.through.variables']])) {
-		outputSGP.pass.through.variabes <- SGPstateData[[state]][['SGP_Configuration']][['outputSGP.pass.through.variables']]
+	if (!is.null(SGPstateData[[state]][['SGP_Configuration']][['outputSGP.pass.through.variables']]) & 
+		all(SGPstateData[[state]][['SGP_Configuration']][['outputSGP.pass.through.variables']] %in% names(sgp_object@Data))) {
+			outputSGP.pass.through.variabes <- SGPstateData[[state]][['SGP_Configuration']][['outputSGP.pass.through.variables']]
 	}
 
 
