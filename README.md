@@ -4,6 +4,8 @@
 
 ______________________________________________________________________________________________________
 
+[![Build Status](https://travis-ci.org/dbetebenner/SGP.svg?branch=master)](https://travis-ci.org/dbetebenner/SGP)
+
 ### An R Package for the calculation of student growth percentiles and percentile growth trajectories/projections
 
 
