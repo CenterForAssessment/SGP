@@ -41,7 +41,10 @@ abcSGP(sgp_object,
 	data_supplementary=NULL,
 	confidence.interval.groups=NULL,
 	plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot"),
-	outputSGP.output.type=c("LONG_Data", "LONG_FINAL_YEAR_Data", "WIDE_Data", "INSTRUCTOR_Data"),
+	outputSGP.output.type=c("LONG_Data", 
+				"LONG_FINAL_YEAR_Data", 
+				"WIDE_Data", 
+				"INSTRUCTOR_Data"),
 	verbose.output=FALSE) 
 }
 
