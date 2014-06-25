@@ -44,7 +44,7 @@ function(sgp.iter,
 		if (sgp.iter.type[2]=="sgp.projections") {
 			content_area.label <- tail(sgp.iter[["sgp.projection.content.areas"]], 1)
 		} else {
-			content_area.label <- tail(sgp.iter[["sgp.content.areas"]], 1)
+			content_area.label <- tail(sgp.iter[["sgp.baseline.content.areas"]], 1)
 		}
 		tmp.year <- "BASELINE"
 
