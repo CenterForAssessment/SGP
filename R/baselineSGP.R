@@ -4,6 +4,7 @@ function(sgp_object,
 		years=NULL,
 		content_areas=NULL,
 		grades=NULL,
+		exclude.years=NULL,
 		sgp.config=NULL,
 		sgp.baseline.config=NULL,
 		sgp.baseline.panel.years=NULL,
@@ -82,6 +83,9 @@ function(sgp_object,
 			setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE)
 		}
 		tmp.year.sequence <- test.year.sequence(content_areas, years, grade.sequences, baseline.grade.sequences.lags)
+		if(!is.null(exclude.years)) {
+			tmp.year.sequence <- tmp.year.sequence[sapply(tmp.year.sequence, function(x) !tail(x, 1) %in% exclude.years)]
+		}
 		tmp.list <- list()
 		for (k in seq_along(tmp.year.sequence)) {
 			tmp.sgp.iter <- sgp.baseline.config[[iter]] # Convert sgp.baseline.config into a valid sgp.iter for getPanelData
