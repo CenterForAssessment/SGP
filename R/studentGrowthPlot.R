@@ -118,12 +118,10 @@ if (is.null(Report_Parameters[['Configuration']][['Font_Size']])) {
 	bottom.right.vp.size <- 1.2
 	bottom.left.vp.size <- 0.7
 } else {
-	if (Report_Parameters[['Configuration']][['Font_Size']]=="Small_1") {
-		title.ca.size <- 1.6
-		legend.size <- 0.4
-		bottom.right.vp.size <- 1.2
-		bottom.left.vp.size <- 0.65
-	}
+	title.ca.size <- Report_Parameters[['Configuration']][['Font_Size']][['title.ca.size']]
+	legend.size <- Report_Parameters[['Configuration']][['Font_Size']][['legend.size']]
+	bottom.right.vp.size <- Report_Parameters[['Configuration']][['Font_Size']][['bottom.right.vp.size']]
+	bottom.left.vp.size <- Report_Parameters[['Configuration']][['Font_Size']][['bottom.left.vp.size']]
 }
 
 if (is.null(Report_Parameters[['Configuration']][['Language']])) {

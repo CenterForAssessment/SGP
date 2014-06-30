@@ -34,7 +34,7 @@ function(sgp_object,
 		}
 
 		if (target.type %in% c("sgp.projections", "sgp.projections.baseline")) {
-			if ("YEAR_WITHIN" %in% names(sgp_object@Data)) {
+			if (year_within) {
 				tmp_object_1 <- data.table(sgp_object@Data[,c(key(tmp_object_1), "ACHIEVEMENT_LEVEL"), with=FALSE], key=key(tmp_object_1))[tmp_object_1]
 				setkeyv(sgp_object@Data, getKey(sgp_object))
 			} else 	tmp_object_1 <- data.table(sgp_object@Data[,c(key(tmp_object_1), "ACHIEVEMENT_LEVEL"), with=FALSE], key=key(tmp_object_1))[tmp_object_1]

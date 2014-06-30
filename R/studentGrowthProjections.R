@@ -781,6 +781,10 @@ function(panel.data,	## REQUIRED
 		trajectories.and.cuts[,SGP_PROJECTION_GROUP:=return.projection.group.identifier]
 	}
 
+	if ("YEAR_WITHIN" %in% names(panel.data[["Panel_Data"]])) {
+		trajectories.and.cuts <- data.table(panel.data[["Panel_Data"]][,c("ID", "YEAR_WITHIN")], key="ID")[trajectories.and.cuts]
+	}
+
 	SGProjections[[tmp.path]] <- rbind.fill(as.data.frame(SGProjections[[tmp.path]]), trajectories.and.cuts)
 
 

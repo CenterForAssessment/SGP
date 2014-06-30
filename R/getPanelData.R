@@ -79,6 +79,10 @@ function(sgp.data,
 					timevar="tmp.timevar",
 					drop=names(sgp.data)[!names(tmp.lookup.list[[1]]) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR_WITHIN", "tmp.timevar", "STATE")], 
 					direction="wide")
+				setnames(tmp.data, tail(sort(grep("YEAR_WITHIN", names(tmp.data), value=TRUE)), 1), "YEAR_WITHIN")
+				if (length(setdiff(grep("YEAR_WITHIN", names(tmp.data), value=TRUE), "YEAR_WITHIN")) > 0) {
+					tmp.data[,setdiff(grep("YEAR_WITHIN", names(tmp.data), value=TRUE), "YEAR_WITHIN"):=NULL, with=FALSE]
+				}
 				if ("STATE" %in% names(sgp.data) && dim(tmp.data)[1]!=0) {
 					setnames(tmp.data, tail(sort(grep("STATE", names(tmp.data), value=TRUE)), 1), "STATE")
 					if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0) {
@@ -94,6 +98,10 @@ function(sgp.data,
 					drop=names(sgp.data)[!names(tmp.lookup.list[[1]]) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR_WITHIN", "tmp.timevar", "STATE")], 
 					direction="wide"), key="ID")[sgp.targets[CONTENT_AREA==tail(sgp.iter[["sgp.projection.content.areas"]], 1) & YEAR==tail(sgp.iter[["sgp.panel.years"]], 1)], nomatch=0][,
 						!c("CONTENT_AREA", "YEAR"), with=FALSE]
+				setnames(tmp.data, tail(sort(grep("YEAR_WITHIN", names(tmp.data), value=TRUE)), 1), "YEAR_WITHIN")
+				if (length(setdiff(grep("YEAR_WITHIN", names(tmp.data), value=TRUE), "YEAR_WITHIN")) > 0) {
+					tmp.data[,setdiff(grep("YEAR_WITHIN", names(tmp.data), value=TRUE), "YEAR_WITHIN"):=NULL, with=FALSE]
+				}
 				if ("STATE" %in% names(sgp.data) && dim(tmp.data)[1]!=0) {
 					setnames(tmp.data, tail(sort(grep("STATE", names(tmp.data), value=TRUE)), 1), "STATE")
 					if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0) {
@@ -164,10 +172,15 @@ function(sgp.data,
 					rbindlist(tmp.lookup.list),
 					idvar="ID",
 					timevar="tmp.timevar",
-					drop=names(sgp.data)[!names(sgp.data) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "ACHIEVEMENT_LEVEL", "STATE")],
+					drop=names(sgp.data)[!names(sgp.data) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "ACHIEVEMENT_LEVEL", "YEAR_WITHIN", "STATE")],
 					direction="wide")
 				setnames(tmp.data, names(tmp.data)[grep(achievement.level.prior.vname, names(tmp.data))], achievement.level.prior.vname)
 
+				setnames(tmp.data, tail(sort(grep("YEAR_WITHIN", names(tmp.data), value=TRUE)), 1), "YEAR_WITHIN")
+				if (length(setdiff(grep("YEAR_WITHIN", names(tmp.data), value=TRUE), "YEAR_WITHIN")) > 0) {
+					tmp.data[,setdiff(grep("YEAR_WITHIN", names(tmp.data), value=TRUE), "YEAR_WITHIN"):=NULL, with=FALSE]
+				}
+				
 				if ("STATE" %in% names(sgp.data) && dim(tmp.data)[1]!=0) {
 					setnames(tmp.data, tail(sort(grep("STATE", names(tmp.data), value=TRUE)), 1), "STATE")
 					if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0) {
@@ -180,11 +193,16 @@ function(sgp.data,
 					rbindlist(tmp.lookup.list),
 					idvar="ID",
 					timevar="tmp.timevar",
-					drop=names(sgp.data)[!names(sgp.data) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "ACHIEVEMENT_LEVEL", "STATE")],
+					drop=names(sgp.data)[!names(sgp.data) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "ACHIEVEMENT_LEVEL", "YEAR_WITHIN", "STATE")],
 					direction="wide"), key="ID")[sgp.targets[CONTENT_AREA==tail(sgp.iter[["sgp.content.areas"]], 1) & YEAR==tail(sgp.iter[["sgp.panel.years"]], 1)], nomatch=0][, 
 						!c("CONTENT_AREA", "YEAR"), with=FALSE]
 				setnames(tmp.data, names(tmp.data)[grep(achievement.level.prior.vname, names(tmp.data))], achievement.level.prior.vname)
 
+				setnames(tmp.data, tail(sort(grep("YEAR_WITHIN", names(tmp.data), value=TRUE)), 1), "YEAR_WITHIN")
+				if (length(setdiff(grep("YEAR_WITHIN", names(tmp.data), value=TRUE), "YEAR_WITHIN")) > 0) {
+					tmp.data[,setdiff(grep("YEAR_WITHIN", names(tmp.data), value=TRUE), "YEAR_WITHIN"):=NULL, with=FALSE]
+				}
+				
 				if ("STATE" %in% names(sgp.data) && dim(tmp.data)[1]!=0) {
 					setnames(tmp.data, tail(sort(grep("STATE", names(tmp.data), value=TRUE)), 1), "STATE")
 					if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0) {
