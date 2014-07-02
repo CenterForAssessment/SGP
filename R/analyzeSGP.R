@@ -190,11 +190,16 @@ function(sgp_object,
 				dir.create(paste("Goodness_of_Fit/", i, sep=""), recursive=TRUE, showWarnings=FALSE)
 					for (output.format in c("PDF", "PNG")) {
 						for (j in names(sgp_object@SGP[["Goodness_of_Fit"]][[i]])) {
+							tmp.path <- file.path("Goodness_of_Fit", i, j)
+							if (!identical(.Platform$OS.type, "unix") & nchar(tmp.path) > 250) {
+								tmp.content_area <- unlist(strsplit(j, "[.]"))[1]
+								tmp.path <- gsub(tmp.content_area, substr(tmp.content_area, 1, 1), tmp.path)
+							}
 							if (output.format=="PDF") {
-								pdf(file=paste("Goodness_of_Fit/", i, "/", j, ".pdf", sep=""), width=8.5, height=11)
+								pdf(file=paste(tmp.path, ".pdf", sep=""), width=8.5, height=11)
 							}
 							if (output.format=="PNG") {
-								Cairo(file=paste("Goodness_of_Fit/", i, "/", j, ".png", sep=""), 
+								Cairo(file=paste(tmp.path, ".png", sep=""), 
 								      width=8.5, height=11, units="in", dpi=144, pointsize=24, bg="transparent")
 							}
 							grid.draw(sgp_object@SGP[["Goodness_of_Fit"]][[i]][[j]])
