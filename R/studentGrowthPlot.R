@@ -225,8 +225,8 @@ interpolate.grades <- function(grades, content_areas, data.year.span) {
 		tmp.grades.numeric <- x
 		tmp.content_areas <- grades.content_areas.reported.in.state$CONTENT_AREA[match(x, grades.content_areas.reported.in.state$GRADE_NUMERIC)]
 		tmp.grades <- convert.grades(x, to="GRADE")
-		tmp.head <- match(x[1], grades.content_areas.reported.in.state$GRADE_NUMERIC)
-		tmp.tail <- match(tail(x, 1), grades.content_areas.reported.in.state$GRADE_NUMERIC)
+		tmp.head <- min(which(x[1] <= grades.content_areas.reported.in.state$GRADE), na.rm=TRUE)
+		tmp.tail <- min(which(tail(x, 1) <= grades.content_areas.reported.in.state$GRADE), na.rm=TRUE)
 		if (tmp.head==1) {
 			tmp.grades <- c("GRADE_LOWER", tmp.grades); tmp.content_areas <- c("PLACEHOLDER", tmp.content_areas); tmp.grades.numeric <- c(NA, tmp.grades.numeric)
 		} else {
@@ -235,7 +235,9 @@ interpolate.grades <- function(grades, content_areas, data.year.span) {
 			tmp.grades.numeric <- c(grades.content_areas.reported.in.state$GRADE_NUMERIC[tmp.head-1], tmp.grades.numeric)
 		}
 		if (tmp.tail==dim(grades.content_areas.reported.in.state)[1]) {
-			tmp.grades <- c(tmp.grades, "GRADE_UPPER"); tmp.content_areas <- c(tmp.content_areas, "PLACEHOLDER"); tmp.grades.numeric <- c(tmp.grades.numeric, NA)
+			tmp.grades <- c(tmp.grades, "GRADE_UPPER"); 
+			tmp.content_areas <- c(tmp.content_areas, "PLACEHOLDER"); 
+			tmp.grades.numeric <- c(tmp.grades.numeric, NA)
 		} else {
 			tmp.grades <- c(tmp.grades, grades.content_areas.reported.in.state$GRADE[tmp.tail+1])
 			tmp.content_areas <- c(tmp.content_areas, grades.content_areas.reported.in.state$CONTENT_AREA[tmp.tail+1])
