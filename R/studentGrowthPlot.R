@@ -367,6 +367,9 @@ if (grade.values$year_span > 0) {
 		grades.text.numbers <- Grades[grade.values$year_span:1]
 		tmp.grades.text.numbers <- head(grade.values$interp.df$GRADE[-1], studentGrowthPlot.year.span)
 	}
+	if (!is.null(Report_Parameters[['Configuration']][['Zero_to_K']])) {
+		grades.text.numbers[which(grades.text.numbers==0)] <- "K"
+	}
 	grades.text.numbers.missing <- which(is.na(grades.text.numbers))
 	grades.text.numbers.non.tested <- which(!tmp.grades.text.numbers %in% grades.content_areas.reported.in.state$GRADE)
 	grades.text.eoct <- which(grades.text.numbers=="EOCT")
