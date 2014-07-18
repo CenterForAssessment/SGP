@@ -150,7 +150,7 @@ to calculate the lags/differences based upon the supplied years.
   \item{percuts.digits}{Argument specifying how many digits (defaults to 2) to print percentile cuts (if asked for) with.
   }
   \item{isotonize}{Boolean argument (defaults to TRUE) indicating whether quantile regression results are isotonized to prevent quantile crossing following the 
-  methods derived by Chernozhukov, Ivan Fernandez-Val and Alfred Glichon (2010). 
+  methods derived by Chernozhukov, Fernandez-Val and Glichon (2010). 
   }
   \item{convert.using.loss.hoss}{Boolean argument (defaults to TRUE) indicating whether requested percentile cuts are adjusted using the lowest obtainable scale 
    score (LOSS) and highest obtainable scale score (HOSS). Those percentile cuts above the HOSS are replaced with the HOSS and those percentile cuts below the 
@@ -206,7 +206,8 @@ Educational Measurement: Issues and Practice, 28(4):42-51.
 Betebenner, D. W. (2008). Toward a normative understanding of student growth. In K. E. Ryan & 
 L. A. Shepard (Eds.), \emph{The Future of Test Based Accountability} (pp. 155-170). New York: Routledge.
 
-Chernozhukov, V., Fernandez-Val, I. and Galichon, A. (2010), Quantile and Probability Curves Without Crossing. Econometrica, 78: 1093–1125.
+Chernozhukov, V., Fernandez-Val, I. and Galichon, A. (2010),
+Quantile and Probability Curves Without Crossing. Econometrica, 78: 1093-1125.
 
 Koenker, R. (2005). \emph{Quantile regression}. Cambridge: Cambridge University Press.
 }
