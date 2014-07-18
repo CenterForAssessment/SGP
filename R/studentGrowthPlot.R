@@ -159,6 +159,7 @@ if (is.null(Report_Parameters[['Configuration']][['Language']])) {
 		MU.label <- "Avanzar"
 		SU.label <- "Mantener"
 		target.label <- "Meta"
+		SGP_Levels <- SGPstateData[[Report_Parameters$State]][["Growth"]][["Levels"]][match(SGP_Levels, SGPstateData[[paste(head(unlist(strsplit(Report_Parameters$State, "_")), -1), collapse="_")]][["Growth"]][["Levels"]])]
 	}
 }
 
