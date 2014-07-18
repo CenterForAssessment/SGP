@@ -125,7 +125,7 @@ studentGrowthProjections(panel.data,
   \item{return.projection.group.identifier}{A Boolean variable indicating whether to return the projection group identifier to distinguish different projection trajectories. Defaults to NULL/FALSE.
   }
   \item{isotonize}{Boolean argument (defaults to TRUE) indicating whether quantile regression results are isotonized to prevent quantile crossing following 
-  the methods derived by Chernozhukov, Ivan Fernandez-Val and Alfred Glichon (2010).
+  the methods derived by Chernozhukov, Fernandez-Val and Glichon (2010).
   }
   \item{lag.increment}{A non-negative integer (defaults to 0) indicating the lag associated with the data supplied for projections. Only relevant if Cutscores or Knots and Boundaries are year dependent. 
   }
@@ -153,7 +153,8 @@ Educational Measurement: Issues and Practice, 28(4):42-51.
 Betebenner, D. W. (2008). Toward a normative understanding of student growth. In K. E. Ryan & 
 L. A. Shepard (Eds.), \emph{The Future of Test Based Accountability} (pp. 155-170). New York: Routledge.
 
-Chernozhukov, V., Fernandez-Val, I. and Galichon, A. (2010), Quantile and Probability Curves Without Crossing. Econometrica, 78: 1093–1125.
+Chernozhukov, V., Fernandez-Val, I. and Galichon, A. (2010),
+Quantile and Probability Curves Without Crossing. Econometrica, 78: 1093-1125.
 }
 
 \author{Damian W. Betebenner \email{dbetebenner@nciea.org} and Adam Van Iwaarden \email{vaniwaarden@colorado.edu}}

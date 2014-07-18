@@ -151,7 +151,7 @@ if (is.null(Report_Parameters[['Configuration']][['Language']])) {
 		growth_level.label <- "Nivel de Crecimiento"
 		growth_target.label <- "Meta de Crecimiento"
 		level.label <- "Niveles"
-		percentiles.label <- "Porcentajes"
+		percentiles.label <- "El Percentil"
 		scale_score.label <- "Escala"
 		grade.label <- "Grado"
 		CU.label <- "Alcanzar"
