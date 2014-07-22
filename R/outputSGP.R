@@ -24,7 +24,7 @@ function(sgp_object,
 	### Define varaibles (to prevent R CMD check warnings)
 
 	SCALE_SCORE <- CONTENT_AREA <- YEAR <- GRADE <- ID <- ETHNICITY <- GENDER <- LAST_NAME <- FIRST_NAME <- VALID_CASE <- DISTRICT_NUMBER <- SCHOOL_NUMBER <- YEAR_BY_CONTENT_AREA <- NULL
-	names.type <- names.provided <- names.output <- names.sgp <- STATE_ENROLLMENT_STATUS <- EMH_LEVEL <- STATE_ASSIGNED_ID <- .N <- TRANSFORMED_SCALE_SCORE <- GROUP <- NULL
+	names.type <- names.provided <- names.output <- names.sgp <- STATE_ENROLLMENT_STATUS <- EMH_LEVEL <- STATE_ASSIGNED_ID <- .N <- TRANSFORMED_SCALE_SCORE <- GROUP <- STATE <- NULL
 
 	### Create state (if missing) from sgp_object (if possible)
 
@@ -702,6 +702,8 @@ function(sgp_object,
 		started.at <- proc.time()
 		message(paste("\tStarted RLI in outputSGP", date()))
 
+		### SGPercentiles
+
 		for (names.iter in grep("BASELINE", names(sgp_object@SGP[['SGPercentiles']]), value=TRUE)) {
 			dir.create(file.path(outputSGP.directory, "RLI", "SGPercentiles"), recursive=TRUE, showWarnings=FALSE)
 
@@ -745,8 +747,44 @@ function(sgp_object,
 				}
 			}
 		}
+
+		### SGProjections
+
+		## Create CATCH_UP_KEEP_UP_INITIAL/MOVE_UP_STAY_UP_INITIAL variables
+
+		slot.data <- copy(sgp_object@Data)
+		tmp.unique.states <- sort(unique(slot.data$STATE))
+		tmp.unique.states <- intersect(tmp.unique.states, SGPstateData[["RLI"]][["Achievement"]][["Cutscore_Information"]][['Cutscore_States']])
+
+		for (target.level in c("CATCH_UP_KEEP_UP", "MOVE_UP_STAY_UP")) {
+			for (state.iter in tmp.unique.states) {
+				slot.data[STATE==state.iter, paste(target.level, "STATUS_INITIAL", sep="_") :=
+					getTargetInitialStatus(slot.data[STATE==state.iter][['ACHIEVEMENT_LEVEL']], state, state.iter, target.level), with=FALSE]
+			}
+		}
+
+		setnames(slot.data, c("CATCH_UP_KEEP_UP_STATUS_INITIAL", "MOVE_UP_STAY_UP_STATUS_INITIAL"), 
+			paste(c("CATCH_UP_KEEP_UP_STATUS_INITIAL", "MOVE_UP_STAY_UP_STATUS_INITIAL"), "CURRENT", sep="_"))
+
 		for (names.iter in grep("BASELINE", names(sgp_object@SGP[['SGProjections']]), value=TRUE)) {
 			dir.create(file.path(outputSGP.directory, "RLI", "SGProjections"), recursive=TRUE, showWarnings=FALSE)
+
+			if (length(grep("TARGET_SCALE_SCORES", names.iter))==0) {
+				tmp.table <- data.table(
+					VALID_CASE="VALID_CASE",
+					CONTENT_AREA=unlist(strsplit(names.iter, "[.]"))[1],
+					YEAR=getTableNameYear(names.iter),
+					sgp_object@SGP[["SGProjections"]][[names.iter]], key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
+				tmp.index <- tmp.table[,c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE]
+
+				sgp_object@SGP[["SGProjections"]][[names.iter]] <-
+					tmp.table[,c("CATCH_UP_KEEP_UP_STATUS_INITIAL_CURRENT", "MOVE_UP_STAY_UP_STATUS_INITIAL_CURRENT") := slot.data[tmp.index][,
+						c("CATCH_UP_KEEP_UP_STATUS_INITIAL_CURRENT", "MOVE_UP_STAY_UP_STATUS_INITIAL_CURRENT"), with=FALSE]]
+				if (!is.null(outputSGP.pass.through.variables)) {
+					outputSGP.pass.through.variables <- 
+						c("CATCH_UP_KEEP_UP_STATUS_INITIAL_CURRENT", "MOVE_UP_STAY_UP_STATUS_INITIAL_CURRENT", outputSGP.pass.through.variables)
+				}
+			}
 
 			if (!is.null(outputSGP.pass.through.variables)) {
 				output.column.order <- c(names(sgp_object@SGP[['SGProjections']][[names.iter]]), "GROUP", outputSGP.pass.through.variables)
