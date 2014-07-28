@@ -3,7 +3,8 @@ function(sgp_object,
 	additional.data,
 	testing.window, ### FALL, WINTER, EARLY_SPRING, LATE_SPRING for UPDATE 
 	eow.or.update="UPDATE", ### UPDATE or EOW
-	configuration.year) {
+	configuration.year,
+	parallel.config) {
 
 	### Tests for arguments
 
@@ -47,7 +48,7 @@ function(sgp_object,
 				outputSGP.output.type="RLI",
 				goodness.of.fit.print=FALSE,
 				update.old.data.with.new=FALSE,
-				parallel.config=list(BACKEND="PARALLEL", WORKERS=list(BASELINE_PERCENTILES=4, PROJECTIONS=4, SGP_SCALE_SCORE_TARGETS=4)),
+				parallel.config=parallel.config,
 				sgp.config=c(
 					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "MATHEMATICS", testing.window),
 					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "READING", testing.window),
@@ -73,7 +74,7 @@ function(sgp_object,
 				outputSGP.output.type="RLI",
 				goodness.of.fit.print=FALSE,
 				update.old.data.with.new=FALSE,
-				parallel.config=list(BACKEND="PARALLEL", WORKERS=list(BASELINE_PERCENTILES=4, PROJECTIONS=4, SGP_SCALE_SCORE_TARGETS=4)),
+				parallel.config=parallel.config,
 				sgp.config=c(
 					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "MATHEMATICS", testing.window),
 					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "READING", testing.window),
@@ -92,7 +93,7 @@ function(sgp_object,
 				sgp.target.scale.scores.only=TRUE,
 				outputSGP.output.type="RLI",
 				goodness.of.fit.print=FALSE,
-				parallel.config=list(BACKEND="PARALLEL", WORKERS=list(BASELINE_PERCENTILES=4, PROJECTIONS=4, SGP_SCALE_SCORE_TARGETS=4)),
+				parallel.config=parallel.config,
 				sgp.config=c(
 					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "MATHEMATICS", "SPRING"),
 					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "READING", "SPRING"),
@@ -129,7 +130,7 @@ function(sgp_object,
 				outputSGP.output.type="RLI",
 				update.old.data.with.new=FALSE,
 				goodness.of.fit.print=FALSE,
-				parallel.config=list(BACKEND="PARALLEL", WORKERS=list(BASELINE_PERCENTILES=4, PROJECTIONS=4, SGP_SCALE_SCORE_TARGETS=4)),
+				parallel.config=parallel.config,
 				sgp.config=c(
 					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "MATHEMATICS", testing.window),
 					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "READING", testing.window),
@@ -155,7 +156,7 @@ function(sgp_object,
 				outputSGP.output.type="RLI",
 				update.old.data.with.new=FALSE,
 				goodness.of.fit.print=FALSE,
-				parallel.config=list(BACKEND="PARALLEL", WORKERS=list(BASELINE_PERCENTILES=4, PROJECTIONS=4, SGP_SCALE_SCORE_TARGETS=4)),
+				parallel.config=parallel.config,
 				sgp.config=c(
 					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "MATHEMATICS", "EARLY_SPRING"),
 					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "READING", "EARLY_SPRING"),
@@ -178,7 +179,7 @@ function(sgp_object,
 				outputSGP.output.type="RLI",
 				update.old.data.with.new=FALSE,
 				goodness.of.fit.print=FALSE,
-				parallel.config=list(BACKEND="PARALLEL", WORKERS=list(BASELINE_PERCENTILES=4, PROJECTIONS=4, SGP_SCALE_SCORE_TARGETS=4)),
+				parallel.config=parallel.config,
 				sgp.config=c(
 					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "MATHEMATICS", testing.window),
 					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "READING", testing.window),
@@ -186,5 +187,4 @@ function(sgp_object,
 		}
 
 	} ### END END_OF_WINDOW scripts
-
 } ### END rliSGP
