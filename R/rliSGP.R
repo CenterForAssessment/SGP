@@ -4,7 +4,7 @@ function(sgp_object,
 	testing.window, ### FALL, WINTER, EARLY_SPRING, LATE_SPRING for UPDATE 
 	eow.or.update="UPDATE", ### UPDATE or EOW
 	configuration.year,
-	parallel.config) {
+	parallel.config=NULL) {
 
 	### Tests for arguments
 
