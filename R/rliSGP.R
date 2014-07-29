@@ -20,6 +20,8 @@ function(sgp_object,
 		testing.window <- "SPRING"
 	}
 
+	if (!is.data.table(additional.data)) additional.data <- as.data.table(additional.data)
+
 
 	########################################################################
 	###
@@ -145,7 +147,9 @@ function(sgp_object,
 
 		if (testing.window=="SPRING") {
 
-			sgp_object <- updateSGP(
+			### Create EARLY_SPRING to LATE_SPRING coefficient matrices
+
+			sgp_object.1 <- updateSGP(
 				what_sgp_object=sgp_object,
 				with_sgp_data_LONG=additional.data,
 				state="RLI",
@@ -157,8 +161,6 @@ function(sgp_object,
 				sgp.percentiles.baseline=FALSE,
 				sgp.projections.baseline=FALSE,
 				sgp.projections.lagged.baseline=FALSE,
-				sgp.target.scale.scores.only=TRUE,
-				outputSGP.output.type="RLI",
 				update.old.data.with.new=FALSE,
 				goodness.of.fit.print=FALSE,
 				parallel.config=parallel.config,
@@ -166,6 +168,11 @@ function(sgp_object,
 					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "MATHEMATICS", "EARLY_SPRING"),
 					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "READING", "EARLY_SPRING"),
 					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "EARLY_LIT", "EARLY_SPRING")))
+
+			### Get official SPRING scores for SGP spring analysis
+
+			setkeyv(additional.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
+			additional.data <- additional.data[!(which(duplicated(additional.data))-1)]
 
 			
 
