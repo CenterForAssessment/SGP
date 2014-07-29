@@ -1,7 +1,7 @@
 `rliSGP` <-
 function(sgp_object, 
 	additional.data,
-	testing.window, ### FALL, WINTER, EARLY_SPRING, LATE_SPRING for UPDATE 
+	testing.window, ### FALL, WINTER, SPRING, EARLY_SPRING, LATE_SPRING for UPDATE 
 	eow.or.update="UPDATE", ### UPDATE or EOW
 	configuration.year,
 	parallel.config=NULL) {
@@ -36,6 +36,7 @@ function(sgp_object,
 			RLI_SGP_SAMPLE_UPDATE_SHELL <- updateSGP(
 				what_sgp_object=sgp_object,
 				with_sgp_data_LONG=additional.data,
+				state="RLI",
 				steps=c("prepareSGP", "analyzeSGP", "combineSGP", "outputSGP"),
 				save.intermediate.results=TRUE,
 				sgp.percentiles=FALSE,
@@ -62,6 +63,7 @@ function(sgp_object,
 			RLI_SGP_SAMPLE_UPDATE_SHELL <- updateSGP(
 				what_sgp_object=sgp_object,
 				with_sgp_data_LONG=additional.data,
+				state="RLI",
 				steps=c("prepareSGP", "analyzeSGP"),
 				save.intermediate.results=TRUE,
 				sgp.percentiles=FALSE,
@@ -84,6 +86,7 @@ function(sgp_object,
 			RLI_SGP_UPDATE_SHELL <- abcSGP(
 				RLI_SGP_UPDATE_SHELL,
 				steps=c("prepareSGP", "analyzeSGP", "combineSGP", "outputSGP"),
+				state="RLI",
 				sgp.percentiles=FALSE,
 				sgp.projections=FALSE,
 				sgp.projections.lagged=FALSE,
@@ -118,6 +121,7 @@ function(sgp_object,
 			sgp_object <- updateSGP(
 				what_sgp_object=sgp_object,
 				with_sgp_data_LONG=additional.data,
+				state="RLI",
 				steps=c("prepareSGP", "analyzeSGP", "combineSGP", "outputSGP"),
 				save.intermediate.results=TRUE,
 				sgp.percentiles=TRUE,
@@ -144,6 +148,7 @@ function(sgp_object,
 			sgp_object <- updateSGP(
 				what_sgp_object=sgp_object,
 				with_sgp_data_LONG=additional.data,
+				state="RLI",
 				steps=c("prepareSGP", "analyzeSGP"),
 				save.intermediate.results=TRUE,
 				sgp.percentiles=TRUE,
@@ -167,6 +172,7 @@ function(sgp_object,
 			sgp_object <- updateSGP(
 				what_sgp_object=sgp_object,
 				with_sgp_data_LONG=additional.data,
+				state="RLI",
 				steps=c("prepareSGP", "analyzeSGP", "combineSGP", "outputSGP"),
 				save.intermediate.results=TRUE,
 				sgp.percentiles=TRUE,
