@@ -112,7 +112,7 @@ function(sgp_object,
 	###
 	###############################################################################
 
-	if (eow.or.update=="UPDATE") {
+	if (eow.or.update=="EOW") {
 
 		### FALL/WINTER
 
