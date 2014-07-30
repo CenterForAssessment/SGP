@@ -779,7 +779,7 @@ function(sgp_object,
 
 				sgp_object@SGP[["SGProjections"]][[names.iter]] <-
 					tmp.table[,c("CATCH_UP_KEEP_UP_STATUS_INITIAL_CURRENT", "MOVE_UP_STAY_UP_STATUS_INITIAL_CURRENT") := slot.data[tmp.index][,
-						c("CATCH_UP_KEEP_UP_STATUS_INITIAL_CURRENT", "MOVE_UP_STAY_UP_STATUS_INITIAL_CURRENT"), with=FALSE]]
+						c("CATCH_UP_KEEP_UP_STATUS_INITIAL_CURRENT", "MOVE_UP_STAY_UP_STATUS_INITIAL_CURRENT"), with=FALSE]][,!c("VALID_CASE", "CONTENT_AREA", "YEAR")]
 				if (!is.null(outputSGP.pass.through.variables)) {
 					outputSGP.pass.through.variables <- 
 						c("CATCH_UP_KEEP_UP_STATUS_INITIAL_CURRENT", "MOVE_UP_STAY_UP_STATUS_INITIAL_CURRENT", outputSGP.pass.through.variables)
@@ -797,8 +797,8 @@ function(sgp_object,
 					file=file.path(outputSGP.directory, "RLI", "SGProjections", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
 
 			} else {
-				output.column.order <- names(sgp_object@SGP[['SGProjections']][[names.iter]])
-				write.table(as.data.table(sgp_object@SGP[['SGProjections']][[names.iter]])[,GROUP:=names.iter],
+				output.column.order <- c(names(sgp_object@SGP[['SGProjections']][[names.iter]]), "GROUP")
+				write.table(as.data.table(sgp_object@SGP[['SGProjections']][[names.iter]])[,GROUP:=names.iter][,output.column.order, with=FALSE],
 					file=file.path(outputSGP.directory, "RLI", "SGProjections", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
 
 			}

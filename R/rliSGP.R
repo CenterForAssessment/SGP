@@ -6,6 +6,26 @@ function(sgp_object,
 	configuration.year,
 	parallel.config=NULL) {
 
+	YEAR <- NULL
+
+	### Utility functions
+
+	convertToBaseline <- function(baseline_matrices) {
+		tmp.list <- list()
+		for (i in names(baseline_matrices)) {
+			for (j in seq_along(baseline_matrices[[i]])) {
+				baseline_matrices[[i]][[j]]@Time <- list(rep("BASELINE", length(unlist(baseline_matrices[[i]][[j]]@Time))))
+			}	
+		}
+
+		tmp.content_areas <- unique(sapply(strsplit(names(baseline_matrices), "[.]"), '[', 1))
+		for (i in tmp.content_areas) {
+			tmp.list[[paste(i, "BASELINE", sep=".")]] <- unlist(baseline_matrices[grep(i, names(baseline_matrices))], recursive=FALSE)
+		}
+		return(tmp.list)
+	}
+
+
 	### Tests for arguments
 
 	if (missing(testing.window) || length(testing.window) != 1 || !testing.window %in% c("FALL", "WINTER", "EARLY_SPRING", "LATE_SPRING", "SPRING")) {
@@ -141,13 +161,25 @@ function(sgp_object,
 					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "MATHEMATICS", testing.window),
 					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "READING", testing.window),
 					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "EARLY_LIT", testing.window)))
+
+			### Create and save new UPDATE_SHELL
+
+			RLI_SGP_UPDATE_SHELL <- prepareSGP(subset(sgp_object@Data, YEAR %in% tail(sort(unique(sgp_object@Data$YEAR)), 7)), create.additional.variables=FALSE)
+			save(RLI_SGP_UPDATE_SHELL, file="RLI_SGP_UPDATE_SHELL.Rdata")
+
+
+			### Convert and save coefficient matrices
+
+			if (testing.window=="FALL") tmp.separator <- "1" else tmp.separator <- "2"
+			tmp.index <- grep(configuration.year, names(sgp_object@SGP$Coefficient_Matrices))
+			assign(paste("RLI_Baseline_Matrices_", paste(configuration.year, tmp.separator, "Rdata", sep="."), sep=""), convertToBaseline(sgp_object@SGP$Coefficient_Matrices[tmp.index]))
 		}
 
 		### SPRING
 
 		if (testing.window=="SPRING") {
 
-			### Create EARLY_SPRING to LATE_SPRING coefficient matrices
+			### STEP 1: Create EARLY_SPRING to LATE_SPRING coefficient matrices
 
 			sgp_object.1 <- updateSGP(
 				what_sgp_object=sgp_object,
@@ -169,14 +201,18 @@ function(sgp_object,
 					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "READING", "EARLY_SPRING"),
 					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "EARLY_LIT", "EARLY_SPRING")))
 
-			### Get official SPRING scores for SGP spring analysis
+			### Convert and save coefficient matrices
+
+			tmp.index <- grep(configuration.year, names(sgp_object.1@SGP$Coefficient_Matrices))
+			assign(paste("RLI_Baseline_Matrices_", paste(configuration.year, "4.Rdata", sep="."), sep=""), convertToBaseline(sgp_object.1@SGP$Coefficient_Matrices[tmp.index]))
+
+
+			### STEP 2: Get official SPRING scores for SGP spring analysis
 
 			setkeyv(additional.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 			additional.data <- additional.data[!(which(duplicated(additional.data))-1)]
 
-			
-
-			sgp_object <- updateSGP(
+			sgp_object.2 <- updateSGP(
 				what_sgp_object=sgp_object,
 				with_sgp_data_LONG=additional.data,
 				state="RLI",
@@ -197,6 +233,17 @@ function(sgp_object,
 					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "MATHEMATICS", testing.window),
 					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "READING", testing.window),
 					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "EARLY_LIT", testing.window)))
+
+			### Create and save new UPDATE_SHELL
+
+			RLI_SGP_UPDATE_SHELL <- prepareSGP(subset(sgp_object.2@Data, YEAR %in% tail(sort(unique(sgp_object.2@Data$YEAR)), 7)), create.additional.variables=FALSE)
+			save(RLI_SGP_UPDATE_SHELL, file="RLI_SGP_UPDATE_SHELL.Rdata")
+
+
+			### Convert and save coefficient matrices
+
+			tmp.index <- grep(configuration.year, names(sgp_object.2@SGP$Coefficient_Matrices))
+			assign(paste("RLI_Baseline_Matrices_", paste(configuration.year, "3.Rdata", sep="."), sep=""), convertToBaseline(sgp_object.2@SGP$Coefficient_Matrices[tmp.index]))
 		}
 
 	} ### END END_OF_WINDOW scripts
