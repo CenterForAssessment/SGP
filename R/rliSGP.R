@@ -6,7 +6,7 @@ function(sgp_object,
 	configuration.year,
 	parallel.config=NULL) {
 
-	YEAR <- NULL
+	YEAR <- GRADE <- NULL
 
 	### Utility functions
 
@@ -172,7 +172,9 @@ function(sgp_object,
 
 			if (testing.window=="FALL") tmp.separator <- "1" else tmp.separator <- "2"
 			tmp.index <- grep(configuration.year, names(sgp_object@SGP$Coefficient_Matrices))
-			assign(paste("RLI_Baseline_Matrices_", paste(configuration.year, tmp.separator, "Rdata", sep="."), sep=""), convertToBaseline(sgp_object@SGP$Coefficient_Matrices[tmp.index]))
+			assign(paste("RLI_Baseline_Matrices_", paste(configuration.year, tmp.separator, sep="."), sep=""), convertToBaseline(sgp_object@SGP$Coefficient_Matrices[tmp.index]))
+			save(list=paste("RLI_Baseline_Matrices_", paste(configuration.year, tmp.separator, sep="."), sep=""), 
+				file=paste("RLI_Baseline_Matrices_", paste(configuration.year, tmp.separator, "Rdata", sep="."), sep=""))
 		}
 
 		### SPRING
@@ -204,13 +206,20 @@ function(sgp_object,
 			### Convert and save coefficient matrices
 
 			tmp.index <- grep(configuration.year, names(sgp_object.1@SGP$Coefficient_Matrices))
-			assign(paste("RLI_Baseline_Matrices_", paste(configuration.year, "4.Rdata", sep="."), sep=""), convertToBaseline(sgp_object.1@SGP$Coefficient_Matrices[tmp.index]))
+			assign(paste("RLI_Baseline_Matrices_", paste(configuration.year, "4", sep="."), sep=""), convertToBaseline(sgp_object.1@SGP$Coefficient_Matrices[tmp.index]))
+			save(list=paste("RLI_Baseline_Matrices_", paste(configuration.year, "4", sep="."), sep=""), 
+				file=paste("RLI_Baseline_Matrices_", paste(configuration.year, "4", "Rdata", sep="."), sep=""))
 
 
 			### STEP 2: Get official SPRING scores for SGP spring analysis
 
-			setkeyv(additional.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
+			setkeyv(additional.data, c("VALID_CASE", "CONTENT_AREA", "ID", "YEAR"))
+			setkeyv(additional.data, c("VALID_CASE", "CONTENT_AREA", "ID"))
 			additional.data <- additional.data[!(which(duplicated(additional.data))-1)]
+			additional.data[,YEAR:=paste(configuration.year, "3", sep=".")]
+			additional.data[,GRADE:=as.factor(GRADE)]
+			levels(additional.data$GRADE) <- sub(".4", ".3", levels(additional.data$GRADE))
+			additional.data[,GRADE:=as.character(GRADE)]
 
 			sgp_object.2 <- updateSGP(
 				what_sgp_object=sgp_object,
@@ -243,7 +252,9 @@ function(sgp_object,
 			### Convert and save coefficient matrices
 
 			tmp.index <- grep(configuration.year, names(sgp_object.2@SGP$Coefficient_Matrices))
-			assign(paste("RLI_Baseline_Matrices_", paste(configuration.year, "3.Rdata", sep="."), sep=""), convertToBaseline(sgp_object.2@SGP$Coefficient_Matrices[tmp.index]))
+			assign(paste("RLI_Baseline_Matrices_", paste(configuration.year, "3", sep="."), sep=""), convertToBaseline(sgp_object.2@SGP$Coefficient_Matrices[tmp.index]))
+			save(list=paste("RLI_Baseline_Matrices_", paste(configuration.year, "3", sep="."), sep=""), 
+				file=paste("RLI_Baseline_Matrices_", paste(configuration.year, "3", "Rdata", sep="."), sep=""))
 		}
 
 	} ### END END_OF_WINDOW scripts
