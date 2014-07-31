@@ -3,8 +3,12 @@ function(sgp_object,
 	additional.data,
 	testing.window, ### FALL, WINTER, SPRING, EARLY_SPRING, LATE_SPRING for UPDATE 
 	eow.or.update="UPDATE", ### UPDATE or EOW
+	update.save.shell.only=FALSE,
 	configuration.year,
 	parallel.config=NULL) {
+
+	started.at <- proc.time()
+	message(paste("\nStarted rliSGP", date()), "\n")
 
 	YEAR <- GRADE <- NULL
 
@@ -60,7 +64,7 @@ function(sgp_object,
 				with_sgp_data_LONG=additional.data,
 				state="RLI",
 				steps=c("prepareSGP", "analyzeSGP", "combineSGP", "outputSGP"),
-				save.intermediate.results=TRUE,
+				save.intermediate.results=FALSE,
 				sgp.percentiles=FALSE,
 				sgp.projections=FALSE,
 				sgp.projections.lagged=FALSE,
@@ -87,7 +91,7 @@ function(sgp_object,
 				with_sgp_data_LONG=additional.data,
 				state="RLI",
 				steps=c("prepareSGP", "analyzeSGP"),
-				save.intermediate.results=TRUE,
+				save.intermediate.results=FALSE,
 				sgp.percentiles=FALSE,
 				sgp.projections=FALSE,
 				sgp.projections.lagged=FALSE,
@@ -145,7 +149,7 @@ function(sgp_object,
 				with_sgp_data_LONG=additional.data,
 				state="RLI",
 				steps=c("prepareSGP", "analyzeSGP", "combineSGP", "outputSGP"),
-				save.intermediate.results=TRUE,
+				save.intermediate.results=FALSE,
 				sgp.percentiles=TRUE,
 				sgp.projections=FALSE,
 				sgp.projections.lagged=FALSE,
@@ -181,81 +185,91 @@ function(sgp_object,
 
 		if (testing.window=="SPRING") {
 
-			### STEP 1: Create EARLY_SPRING to LATE_SPRING coefficient matrices
-
-			sgp_object.1 <- updateSGP(
-				what_sgp_object=sgp_object,
-				with_sgp_data_LONG=additional.data,
-				state="RLI",
-				steps=c("prepareSGP", "analyzeSGP"),
-				save.intermediate.results=TRUE,
-				sgp.percentiles=TRUE,
-				sgp.projections=FALSE,
-				sgp.projections.lagged=FALSE,
-				sgp.percentiles.baseline=FALSE,
-				sgp.projections.baseline=FALSE,
-				sgp.projections.lagged.baseline=FALSE,
-				update.old.data.with.new=FALSE,
-				goodness.of.fit.print=FALSE,
-				parallel.config=parallel.config,
-				sgp.config=c(
-					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "MATHEMATICS", "EARLY_SPRING"),
-					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "READING", "EARLY_SPRING"),
-					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "EARLY_LIT", "EARLY_SPRING")))
-
-			### Convert and save coefficient matrices
-
-			tmp.index <- grep(configuration.year, names(sgp_object.1@SGP$Coefficient_Matrices))
-			assign(paste("RLI_Baseline_Matrices_", paste(configuration.year, "4", sep="."), sep=""), convertToBaseline(sgp_object.1@SGP$Coefficient_Matrices[tmp.index]))
-			save(list=paste("RLI_Baseline_Matrices_", paste(configuration.year, "4", sep="."), sep=""), 
-				file=paste("RLI_Baseline_Matrices_", paste(configuration.year, "4", "Rdata", sep="."), sep=""))
-
-
-			### STEP 2: Get official SPRING scores for SGP spring analysis
+			### Create additional.data.unique
 
 			setkeyv(additional.data, c("VALID_CASE", "CONTENT_AREA", "ID", "YEAR"))
 			setkeyv(additional.data, c("VALID_CASE", "CONTENT_AREA", "ID"))
-			additional.data <- additional.data[!(which(duplicated(additional.data))-1)]
-			additional.data[,YEAR:=paste(configuration.year, "3", sep=".")]
-			additional.data[,GRADE:=as.factor(GRADE)]
-			levels(additional.data$GRADE) <- sub(".4", ".3", levels(additional.data$GRADE))
-			additional.data[,GRADE:=as.character(GRADE)]
+			additional.data.unique <- additional.data[!(which(duplicated(additional.data))-1)]
+			additional.data.unique[,YEAR:=paste(configuration.year, "3", sep=".")]
+			additional.data.unique[,GRADE:=as.factor(GRADE)]
+			levels(additional.data.unique$GRADE) <- sub(".4", ".3", levels(additional.data.unique$GRADE))
+			additional.data.unique[,GRADE:=as.character(GRADE)]
 
-			sgp_object.2 <- updateSGP(
-				what_sgp_object=sgp_object,
-				with_sgp_data_LONG=additional.data,
-				state="RLI",
-				steps=c("prepareSGP", "analyzeSGP", "combineSGP", "outputSGP"),
-				save.intermediate.results=TRUE,
-				sgp.percentiles=TRUE,
-				sgp.projections=FALSE,
-				sgp.projections.lagged=FALSE,
-				sgp.percentiles.baseline=TRUE,
-				sgp.projections.baseline=TRUE,
-				sgp.projections.lagged.baseline=FALSE,
-				sgp.target.scale.scores.only=TRUE,
-				outputSGP.output.type="RLI",
-				update.old.data.with.new=FALSE,
-				goodness.of.fit.print=FALSE,
-				parallel.config=parallel.config,
-				sgp.config=c(
-					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "MATHEMATICS", testing.window),
-					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "READING", testing.window),
-					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "EARLY_LIT", testing.window)))
+			if (update.save.shell.only) {
+				tmp.data <- rbind.fill(sgp_object@Data, additional.data.unique)
+				RLI_SGP_UPDATE_SHELL <- prepareSGP(subset(tmp.data, YEAR %in% tail(sort(unique(tmp.data$YEAR)), 6)), state="RLI", create.additional.variables=FALSE)
+				save(RLI_SGP_UPDATE_SHELL, file="RLI_SGP_UPDATE_SHELL.Rdata")
+			} else {
+				### STEP 1: Create EARLY_SPRING to LATE_SPRING coefficient matrices
 
-			### Create and save new UPDATE_SHELL
+				sgp_object.1 <- updateSGP(
+					what_sgp_object=sgp_object,
+					with_sgp_data_LONG=additional.data,
+					state="RLI",
+					steps=c("prepareSGP", "analyzeSGP"),
+					save.intermediate.results=FALSE,
+					sgp.percentiles=TRUE,
+					sgp.projections=FALSE,
+					sgp.projections.lagged=FALSE,
+					sgp.percentiles.baseline=FALSE,
+					sgp.projections.baseline=FALSE,
+					sgp.projections.lagged.baseline=FALSE,
+					update.old.data.with.new=FALSE,
+					goodness.of.fit.print=FALSE,
+					parallel.config=parallel.config,
+					sgp.config=c(
+						SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "MATHEMATICS", "EARLY_SPRING"),
+						SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "READING", "EARLY_SPRING"),
+						SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "EARLY_LIT", "EARLY_SPRING")))
 
-			RLI_SGP_UPDATE_SHELL <- prepareSGP(subset(sgp_object.2@Data, YEAR %in% tail(sort(unique(sgp_object.2@Data$YEAR)), 6)), state="RLI", create.additional.variables=FALSE)
-			save(RLI_SGP_UPDATE_SHELL, file="RLI_SGP_UPDATE_SHELL.Rdata")
+				### Convert and save coefficient matrices
+
+				tmp.index <- grep(configuration.year, names(sgp_object.1@SGP$Coefficient_Matrices))
+				assign(paste("RLI_Baseline_Matrices_", paste(configuration.year, "4", sep="."), sep=""), convertToBaseline(sgp_object.1@SGP$Coefficient_Matrices[tmp.index]))
+				save(list=paste("RLI_Baseline_Matrices_", paste(configuration.year, "4", sep="."), sep=""), 
+					file=paste("RLI_Baseline_Matrices_", paste(configuration.year, "4", "Rdata", sep="."), sep=""))
 
 
-			### Convert and save coefficient matrices
+				### STEP 2: Get official SPRING scores for SGP spring analysis
 
-			tmp.index <- grep(configuration.year, names(sgp_object.2@SGP$Coefficient_Matrices))
-			assign(paste("RLI_Baseline_Matrices_", paste(configuration.year, "3", sep="."), sep=""), convertToBaseline(sgp_object.2@SGP$Coefficient_Matrices[tmp.index]))
-			save(list=paste("RLI_Baseline_Matrices_", paste(configuration.year, "3", sep="."), sep=""), 
-				file=paste("RLI_Baseline_Matrices_", paste(configuration.year, "3", "Rdata", sep="."), sep=""))
-		}
+				sgp_object.2 <- updateSGP(
+					what_sgp_object=sgp_object,
+					with_sgp_data_LONG=additional.data.unique,
+					state="RLI",
+					steps=c("prepareSGP", "analyzeSGP", "combineSGP", "outputSGP"),
+					save.intermediate.results=FALSE,
+					sgp.percentiles=TRUE,
+					sgp.projections=FALSE,
+					sgp.projections.lagged=FALSE,
+					sgp.percentiles.baseline=TRUE,
+					sgp.projections.baseline=TRUE,
+					sgp.projections.lagged.baseline=FALSE,
+					sgp.target.scale.scores.only=TRUE,
+					outputSGP.output.type="RLI",
+					update.old.data.with.new=FALSE,
+					goodness.of.fit.print=FALSE,
+					parallel.config=parallel.config,
+					sgp.config=c(
+						SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "MATHEMATICS", testing.window),
+						SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "READING", testing.window),
+						SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "EARLY_LIT", testing.window)))
 
+
+				### Create and save new UPDATE_SHELL
+
+				RLI_SGP_UPDATE_SHELL <- prepareSGP(subset(sgp_object.2@Data, YEAR %in% tail(sort(unique(sgp_object.2@Data$YEAR)), 6)), state="RLI", create.additional.variables=FALSE)
+				save(RLI_SGP_UPDATE_SHELL, file="RLI_SGP_UPDATE_SHELL.Rdata")
+
+
+				### Convert and save coefficient matrices
+
+				tmp.index <- grep(configuration.year, names(sgp_object.2@SGP$Coefficient_Matrices))
+				assign(paste("RLI_Baseline_Matrices_", paste(configuration.year, "3", sep="."), sep=""), convertToBaseline(sgp_object.2@SGP$Coefficient_Matrices[tmp.index]))
+				save(list=paste("RLI_Baseline_Matrices_", paste(configuration.year, "3", sep="."), sep=""), 
+					file=paste("RLI_Baseline_Matrices_", paste(configuration.year, "3", "Rdata", sep="."), sep=""))
+			} ### END if (update.save.shell.only)
+		} ### END if (testing.window=="SPRING")
 	} ### END END_OF_WINDOW scripts
+
+	message(paste("Finished rliSGP", date(), "in", timetaken(started.at), "\n"))
 } ### END rliSGP
