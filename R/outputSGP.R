@@ -43,7 +43,7 @@ function(sgp_object,
 
 	if (!is.null(SGPstateData[[state]][['SGP_Configuration']][['outputSGP.pass.through.variables']]) & 
 		all(SGPstateData[[state]][['SGP_Configuration']][['outputSGP.pass.through.variables']] %in% names(sgp_object@Data))) {
-			outputSGP.pass.through.variabes <- SGPstateData[[state]][['SGP_Configuration']][['outputSGP.pass.through.variables']]
+			outputSGP.pass.through.variables <- SGPstateData[[state]][['SGP_Configuration']][['outputSGP.pass.through.variables']]
 	}
 
 
@@ -708,25 +708,22 @@ function(sgp_object,
 			dir.create(file.path(outputSGP.directory, "RLI", "SGPercentiles"), recursive=TRUE, showWarnings=FALSE)
 
 			if (!is.null(outputSGP.pass.through.variables)) {
-				output.column.order <- 
-						c(intersect(c("ID", "SGP_BASELINE_ORDER_1", "SGP_BASELINE_ORDER_2", "SGP_BASELINE", "SCALE_SCORE_PRIOR", 
-						"SGP_LEVEL_BASELINE", "SGP_NORM_GROUP_BASELINE", "SCALE_SCORE_PRIOR_STANDARDIZED"), names(sgp_object@SGP[['SGPercentiles']][[names.iter]])),
-						outputSGP.pass.through.variables)
-
-				write.table(sgp_object@Data[,c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", outputSGP.pass.through.variables), with=FALSE][
+				output.column.order <- c(SGPstateData$RLI$SGP_Configuration$output.column.order$SGPercentiles, outputSGP.pass.through.variables)
+				tmp.dt <- sgp_object@Data[,c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", outputSGP.pass.through.variables), with=FALSE][
 					data.table(
 						VALID_CASE="VALID_CASE", 
 						CONTENT_AREA=unlist(strsplit(names.iter, "[.]"))[1], 
 						YEAR=getTableNameYear(names.iter), 
-						sgp_object@SGP[["SGPercentiles"]][[names.iter]])][,output.column.order, with=FALSE],
-					file=file.path(outputSGP.directory, "RLI", "SGPercentiles", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
+						sgp_object@SGP[["SGPercentiles"]][[names.iter]])]
+				if (any(!output.column.order %in% names(tmp.dt))) tmp.dt[,output.column.order[!output.column.order %in% names(tmp.dt)]:=as.numeric(NA), with=FALSE]
+				tmp.dt <- tmp.dt[,output.column.order, with=FALSE]
+				write.table(tmp.dt, file=file.path(outputSGP.directory, "RLI", "SGPercentiles", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
 			} else {
-				output.column.order <- 
-					intersect(c("ID", "SGP_BASELINE_ORDER_1", "SGP_BASELINE_ORDER_2", "SGP_BASELINE", "SCALE_SCORE_PRIOR", 
-						"SGP_LEVEL_BASELINE", "SGP_NORM_GROUP_BASELINE", "SCALE_SCORE_PRIOR_STANDARDIZED"), names(sgp_object@SGP[['SGPercentiles']][[names.iter]]))
-				write.table(sgp_object@SGP[['SGPercentiles']][[names.iter]][,output.column.order], 
-					file=file.path(outputSGP.directory, "RLI", "SGPercentiles", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
-
+				output.column.order <- SGPstateData$RLI$SGP_Configuration$output.column.order$SGPercentiles
+				tmp.dt <- sgp_object@SGP[['SGPercentiles']][[names.iter]]
+				if (any(!output.column.order %in% names(tmp.dt))) tmp.dt[,output.column.order[!output.column.order %in% names(tmp.dt)]:=as.numeric(NA), with=FALSE]
+				tmp.dt <- tmp.dt[,output.column.order, with=FALSE]
+				write.table(tmp.dt, file=file.path(outputSGP.directory, "RLI", "SGPercentiles", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
 			}
 
 			if (identical(.Platform$OS.type, "unix")) {
@@ -780,27 +777,27 @@ function(sgp_object,
 				sgp_object@SGP[["SGProjections"]][[names.iter]] <-
 					tmp.table[,c("CATCH_UP_KEEP_UP_STATUS_INITIAL_CURRENT", "MOVE_UP_STAY_UP_STATUS_INITIAL_CURRENT") := slot.data[tmp.index][,
 						c("CATCH_UP_KEEP_UP_STATUS_INITIAL_CURRENT", "MOVE_UP_STAY_UP_STATUS_INITIAL_CURRENT"), with=FALSE]][,!c("VALID_CASE", "CONTENT_AREA", "YEAR"), with=FALSE]
-				if (!is.null(outputSGP.pass.through.variables)) {
-					outputSGP.pass.through.variables <- 
-						c("CATCH_UP_KEEP_UP_STATUS_INITIAL_CURRENT", "MOVE_UP_STAY_UP_STATUS_INITIAL_CURRENT", outputSGP.pass.through.variables)
-				}
+				output.column.order <- SGPstateData$RLI$SGP_Configuration$output.column.order$SGProjection
+			} else {
+				output.column.order <- SGPstateData$RLI$SGP_Configuration$output.column.order$SGProjection_Target
 			}
 
 			if (!is.null(outputSGP.pass.through.variables)) {
-				output.column.order <- c(names(sgp_object@SGP[['SGProjections']][[names.iter]]), "GROUP", outputSGP.pass.through.variables)
-				write.table(sgp_object@Data[,c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", outputSGP.pass.through.variables), with=FALSE][
+				output.column.order <- c(output.column.order, outputSGP.pass.through.variables)
+				tmp.dt <- sgp_object@Data[,c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", outputSGP.pass.through.variables), with=FALSE][
 					data.table(
 						VALID_CASE="VALID_CASE", 
 						CONTENT_AREA=unlist(strsplit(names.iter, "[.]"))[1], 
 						YEAR=getTableNameYear(names.iter), 
-						sgp_object@SGP[["SGProjections"]][[names.iter]])][,GROUP:=names.iter][,output.column.order, with=FALSE],
-					file=file.path(outputSGP.directory, "RLI", "SGProjections", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
-
+						sgp_object@SGP[["SGProjections"]][[names.iter]])][,GROUP:=names.iter]
+				if (any(!output.column.order %in% names(tmp.dt))) tmp.dt[,output.column.order[!output.column.order %in% names(tmp.dt)]:=as.numeric(NA), with=FALSE]
+				tmp.dt <- tmp.dt[,output.column.order, with=FALSE]
+				write.table(tmp.dt, file=file.path(outputSGP.directory, "RLI", "SGProjections", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
 			} else {
-				output.column.order <- c(names(sgp_object@SGP[['SGProjections']][[names.iter]]), "GROUP")
-				write.table(as.data.table(sgp_object@SGP[['SGProjections']][[names.iter]])[,GROUP:=names.iter][,output.column.order, with=FALSE],
-					file=file.path(outputSGP.directory, "RLI", "SGProjections", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
-
+				tmp.dt <- as.data.table(sgp_object@SGP[['SGProjections']][[names.iter]])[,GROUP:=names.iter]
+				if (any(!output.column.order %in% names(tmp.dt))) tmp.dt[,output.column.order[!output.column.order %in% names(tmp.dt)]:=as.numeric(NA), with=FALSE]
+				tmp.dt <- tmp.dt[,output.column.order, with=FALSE]
+				write.table(tmp.dt, file=file.path(outputSGP.directory, "RLI", "SGProjections", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
 			}
 
 			if (identical(.Platform$OS.type, "unix")) {
