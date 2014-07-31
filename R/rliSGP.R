@@ -7,6 +7,9 @@ function(sgp_object,
 	configuration.year,
 	parallel.config=NULL) {
 
+	started.at <- proc.time()
+	message(paste("\nStarted rliSGP", date()), "\n")
+
 	YEAR <- GRADE <- NULL
 
 	### Utility functions
@@ -267,4 +270,6 @@ function(sgp_object,
 			} ### END if (update.save.shell.only)
 		} ### END if (testing.window=="SPRING")
 	} ### END END_OF_WINDOW scripts
+
+	message(paste("Finished rliSGP", date(), "in", timetaken(started.at), "\n"))
 } ### END rliSGP
