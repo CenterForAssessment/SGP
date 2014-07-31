@@ -777,9 +777,9 @@ function(sgp_object,
 				sgp_object@SGP[["SGProjections"]][[names.iter]] <-
 					tmp.table[,c("CATCH_UP_KEEP_UP_STATUS_INITIAL_CURRENT", "MOVE_UP_STAY_UP_STATUS_INITIAL_CURRENT") := slot.data[tmp.index][,
 						c("CATCH_UP_KEEP_UP_STATUS_INITIAL_CURRENT", "MOVE_UP_STAY_UP_STATUS_INITIAL_CURRENT"), with=FALSE]][,!c("VALID_CASE", "CONTENT_AREA", "YEAR"), with=FALSE]
-				output.column.order <- SGPstateData$RLI$SGP_Configuration$output.column.order$SGPercentiles$SGProjection
+				output.column.order <- SGPstateData$RLI$SGP_Configuration$output.column.order$SGProjection
 			} else {
-				output.column.order <- SGPstateData$RLI$SGP_Configuration$output.column.order$SGPercentiles$SGProjection_Target
+				output.column.order <- SGPstateData$RLI$SGP_Configuration$output.column.order$SGProjection_Target
 			}
 
 			if (!is.null(outputSGP.pass.through.variables)) {
