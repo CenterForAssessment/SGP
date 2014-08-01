@@ -59,7 +59,7 @@ function(sgp_object,
 
 		if (testing.window %in% c("FALL", "WINTER", "SPRING")) {
 
-			RLI_SGP_SAMPLE_UPDATE_SHELL <- updateSGP(
+			RLI_SGP_UPDATE_SHELL <- updateSGP(
 				what_sgp_object=sgp_object,
 				with_sgp_data_LONG=additional.data,
 				state="RLI",
@@ -86,7 +86,7 @@ function(sgp_object,
 
 		if (testing.window=="EARLY_SPRING") {
 
-			RLI_SGP_SAMPLE_UPDATE_SHELL <- updateSGP(
+			RLI_SGP_UPDATE_SHELL <- updateSGP(
 				what_sgp_object=sgp_object,
 				with_sgp_data_LONG=additional.data,
 				state="RLI",
