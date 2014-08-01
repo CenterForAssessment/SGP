@@ -986,6 +986,8 @@ function(panel.data,         ## REQUIRED
 				Simulated_SGPs=Simulated_SGPs))
 	}
 
+	if (max.cohort.size > 250000) rq.method <- "pfn"
+
 	### PROGRESSION variable creation:
 
 	grade.progression <- tmp.gp
