@@ -382,12 +382,20 @@ function(panel.data,	## REQUIRED
 				}
 			} # End loop over states (if they exist)
 			tmp.cuts <- data.table(rbind.fill(tmp.cuts.list))
-			setcolorder(tmp.cuts, names(tmp.cuts.list[[which.max(sapply(tmp.cuts.list, ncol))]])) # Reorder based on state with the most cutscores/proficiency levels
-			setkey(tmp.cuts, ID)
-			if (!trajectories.tf) {
-				return(tmp.cuts)
+			if (dim(tmp.cuts)[1]==0) {
+				if (!trajectories.tf) {
+					return(NULL)
+				} else {
+					return(trajectories)
+				}
 			} else {
-				return(merge(tmp.cuts, trajectories, all=TRUE))
+				setcolorder(tmp.cuts, names(tmp.cuts.list[[which.max(sapply(tmp.cuts.list, ncol))]])) # Reorder based on state with the most cutscores/proficiency levels
+				setkey(tmp.cuts, ID)
+				if (!trajectories.tf) {
+					return(tmp.cuts)
+				} else {
+					return(merge(tmp.cuts, trajectories, all=TRUE))
+				}
 			}
 		}
 	}

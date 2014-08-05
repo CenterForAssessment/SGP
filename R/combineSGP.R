@@ -409,6 +409,9 @@ function(
 			for (target.type.iter in target.args[['sgp.target.scale.scores.types']]) {
 				tmp.target.level.names <- 
 					as.character(sapply(target.args[['target.level']], function(x) getTargetName(state, target.type.iter, x, max.sgp.target.years.forward, "SGP_TARGET", projection.unit.label, projection_group.iter)))
+				if (any(!tmp.target.level.names %in% names(tmp.target.data))) {
+					tmp.target.data[,tmp.target.level.names[!tmp.target.level.names %in% names(tmp.target.data)]:=as.integer(NA)]
+				}
 				sgp_object <- getTargetScaleScore(
 					sgp_object, 
 					state, 
