@@ -255,7 +255,9 @@ function(sgp_object,
 
 				### Create and save new UPDATE_SHELL
 
-				RLI_SGP_UPDATE_SHELL <- prepareSGP(subset(sgp_object.2@Data, YEAR %in% tail(sort(unique(sgp_object.2@Data$YEAR)), 6)), state="RLI", create.additional.variables=FALSE)
+				tmp.years <- sort(unique(sgp_object.2@Data$YEAR)); tmp.indices <- sapply(strsplit(tmp.years, "[.]"), '[', 2)
+				years.to.keep <- tmp.years[sort(c(tail(which(tmp.indices==1), 2), tail(which(tmp.indices==2), 1), tail(which(tmp.indices==3), 2)))]
+				RLI_SGP_UPDATE_SHELL <- prepareSGP(subset(sgp_object.2@Data, YEAR %in% years.to.keep), state="RLI", create.additional.variables=FALSE)
 				save(RLI_SGP_UPDATE_SHELL, file="RLI_SGP_UPDATE_SHELL.Rdata")
 
 
