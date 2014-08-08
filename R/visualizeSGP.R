@@ -960,7 +960,7 @@ if (sgPlot.save.sgPlot.data) {
 
 #### studentGrowthPlot production
 
-sgPlot.sgp_object <- get.object.shell(sgp_object, with_data=FALSE)
+if (sgPlot.wide.data) sgPlot.sgp_object <- NULL else sgPlot.sgp_object <- get.object.shell(sgp_object, with_data=FALSE)
 
 if (sgPlot.produce.plots) {
 
