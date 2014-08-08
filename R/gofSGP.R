@@ -44,13 +44,16 @@ function(
 
 	pretty_year <- function(x) sub("_", "-", x)
 
-	gof.draw <- function(content_area.year.grade.data, content_area, year, grade, content_areas_prior) {
+	gof.draw <- function(content_area.year.grade.data, content_area, year, grade, content_areas_prior, file.extra.label) {
 		
 		if (!"GROB" %in% output.format) {
-			file.path <- file.path("Goodness_of_Fit", paste(content_area, year, sep="."))
+			if (is.null(file.extra.label)) {
+				file.path <- file.path("Goodness_of_Fit", paste(content_area, year, sep="."))
+			} else file.path <- file.path("Goodness_of_Fit", paste(content_area, year, file.extra.label, sep="."))
 			dir.create(file.path, showWarnings=FALSE, recursive=TRUE)
 			if ("PDF" %in% output.format) pdf(file=paste(file.path, paste("/gofSGP_Grade", grade, sep="_"), ".pdf", sep=""), width=my.width, height=my.height)
-			if ("PNG" %in% output.format) Cairo(file=paste(file.path, paste("/gofSGP_Grade", grade, sep="_"), ".png", sep=""), width=my.width, height=my.height, units="in", dpi=144, pointsize=24, bg="transparent")
+			if ("PNG" %in% output.format) Cairo(file=paste(file.path, paste("/gofSGP_Grade", grade, sep="_"), ".png", sep=""), width=my.width, height=my.height, units="in", dpi=144, pointsize=10.5, bg="transparent")
+			if ("SVG" %in% output.format) CairoSVG(file=paste(file.path, paste("/gofSGP_Grade", grade, sep="_"), ".svg", sep=""), width=my.width, height=my.height, dpi=72, pointsize=10.5, bg="transparent")
 			grid.draw(.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale, with.prior.achievement.level=with.prior.achievement.level, 
 				content_areas_prior=content_areas_prior))
 			dev.off()
@@ -297,9 +300,16 @@ function(
 
 	### Define variables
 
-	if (use.sgp!="SGP") my.extra.label <- use.sgp else my.extra.label <- "SGP"
-
-
+	if (use.sgp!="SGP") {
+		my.extra.label <- use.sgp; file.extra.label <- NULL
+		if (grepl("SIMEX", use.sgp)) file.extra.label <- "SIMEX"
+		if (grepl("BASELINE", use.sgp)) file.extra.label <- "BASELINE"
+		if (grepl("SIMEX_BASELINE", use.sgp)) file.extra.label <- "BASELINE.SIMEX"
+	} else {
+		my.extra.label <- "SGP"
+		file.extra.label <- NULL
+	}
+	 
 	### Get arguments
 
 	if (is.null(years)) {
@@ -330,7 +340,8 @@ function(
 							content_area=content_areas.iter,
 							content_areas_prior=content_areas_prior,
 							year=years.iter, 
-							grade=grades.iter)
+							grade=grades.iter,
+							file.extra.label=file.extra.label)
 				} else {
 					gof.object <- gof.draw(
 						data.frame(
@@ -338,7 +349,8 @@ function(
 							SGP=tmp.data.final[[use.sgp]]), 
 							content_area=content_areas.iter, 
 							year=years.iter, 
-							grade=grades.iter)
+							grade=grades.iter,
+							file.extra.label=file.extra.label)
 				}
 				if (!is.null(gof.object)) return(gof.object)
 			}
