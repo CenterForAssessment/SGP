@@ -29,14 +29,15 @@ function(
 
 	### Set up parameters based upon the existence of ACHIEVEMENT_LEVEL_PRIOR
 
+	if (grepl("BASELINE", use.sgp)) norm.group.var <- "SGP_NORM_GROUP_BASELINE" else norm.group.var <- "SGP_NORM_GROUP"
 	if ("ACHIEVEMENT_LEVEL_PRIOR" %in% names(tmp.data)) {
 		with.prior.achievement.level <- TRUE
 		my.width <- 8.5; my.height <- 11
-		variables.to.get <- c("SCALE_SCORE_PRIOR", "ACHIEVEMENT_LEVEL_PRIOR", "CONTENT_AREA_PRIOR", use.sgp, "GRADE")
+		variables.to.get <- c("SCALE_SCORE_PRIOR", "ACHIEVEMENT_LEVEL_PRIOR", "CONTENT_AREA_PRIOR", use.sgp, "GRADE", norm.group.var)
 	} else {
 		with.prior.achievement.level <- FALSE
 		my.width <- 8.5; my.height <- 5.5
-		variables.to.get <- c("SCALE_SCORE_PRIOR", use.sgp, "GRADE")
+		variables.to.get <- c("SCALE_SCORE_PRIOR", use.sgp, "GRADE", norm.group.var)
 	}
 	
 		
@@ -44,16 +45,20 @@ function(
 
 	pretty_year <- function(x) sub("_", "-", x)
 
-	gof.draw <- function(content_area.year.grade.data, content_area, year, grade, content_areas_prior, file.extra.label) {
+	gof.draw <- function(content_area.year.grade.data, content_area, year, grade, content_areas_prior, file.extra.label, plot.name) {
 		
 		if (!"GROB" %in% output.format) {
 			if (is.null(file.extra.label)) {
 				file.path <- file.path("Goodness_of_Fit", paste(content_area, year, sep="."))
 			} else file.path <- file.path("Goodness_of_Fit", paste(content_area, year, file.extra.label, sep="."))
 			dir.create(file.path, showWarnings=FALSE, recursive=TRUE)
-			if ("PDF" %in% output.format) pdf(file=paste(file.path, paste("/gofSGP_Grade", grade, sep="_"), ".pdf", sep=""), width=my.width, height=my.height)
-			if ("PNG" %in% output.format) Cairo(file=paste(file.path, paste("/gofSGP_Grade", grade, sep="_"), ".png", sep=""), width=my.width, height=my.height, units="in", dpi=144, pointsize=10.5, bg="transparent")
-			if ("SVG" %in% output.format) CairoSVG(file=paste(file.path, paste("/gofSGP_Grade", grade, sep="_"), ".svg", sep=""), width=my.width, height=my.height, dpi=72, pointsize=10.5, bg="transparent")
+			if (is.na(plot.name)) {
+				tmp.plot.name <- paste("gofSGP_Grade", grade, sep="_")
+			} else tmp.plot.name <- sapply(plot.name, function(f) paste(rev(gsub("/", "_", strsplit(as.character(f), "; ")[[1]])), collapse=";"))
+
+			if ("PDF" %in% output.format) pdf(file=paste(file.path, "/", tmp.plot.name, ".pdf", sep=""), width=my.width, height=my.height)
+			if ("PNG" %in% output.format) Cairo(file=paste(file.path, "/", tmp.plot.name, ".png", sep=""), width=my.width, height=my.height, units="in", dpi=144, pointsize=10.5, bg="transparent")
+			if ("SVG" %in% output.format) CairoSVG(file=paste(file.path, "/", tmp.plot.name, ".svg", sep=""), width=my.width, height=my.height, dpi=72, pointsize=10.5, bg="transparent")
 			grid.draw(.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale, with.prior.achievement.level=with.prior.achievement.level, 
 				content_areas_prior=content_areas_prior))
 			dev.off()
@@ -328,31 +333,55 @@ function(
 			if (is.null(grades)) {
 				grades <- sort(unique(tmp.data_1[!is.na(tmp.data_1[[use.sgp]]),][['GRADE']]))
 			}
+			
+			if (all(grades=="EOCT")) { # use grade progression norm groups for EOCT subjects
+				tmp.norm.group <- unlist(unique(tmp.data_1[[norm.group.var]]), use.names=FALSE)
+				##  Remove norm groups that are subsets of larger ones:
+				# tmp.norm.group <- tmp.norm.group[sapply(1:length(tmp.norm.group), function(f) !any(grepl(tmp.norm.group[f], tmp.norm.group[-f])))]
+				tmp.norm.group <- tmp.norm.group[!is.na(tmp.norm.group)]
+			} else tmp.norm.group <- NA
+			
 			for (grades.iter in grades) {
-				tmp.data.final <- tmp.data_1[tmp.data_1[['GRADE']]==grades.iter & !is.na(tmp.data_1[[use.sgp]]) & !is.na(SCALE_SCORE_PRIOR),]
-				if ("ACHIEVEMENT_LEVEL_PRIOR" %in% names(tmp.data.final)) {
-					if ("CONTENT_AREA_PRIOR" %in% names(tmp.data.final)) content_areas_prior <- tmp.data.final[["CONTENT_AREA_PRIOR"]][1]
-					gof.object <- gof.draw(
-						data.frame(
-							SCALE_SCORE_PRIOR=tmp.data.final[['SCALE_SCORE_PRIOR']], 
-							SGP=tmp.data.final[[use.sgp]], 
-							ACHIEVEMENT_LEVEL_PRIOR=tmp.data.final[['ACHIEVEMENT_LEVEL_PRIOR']]), 
-							content_area=content_areas.iter,
-							content_areas_prior=content_areas_prior,
-							year=years.iter, 
-							grade=grades.iter,
-							file.extra.label=file.extra.label)
-				} else {
-					gof.object <- gof.draw(
-						data.frame(
-							SCALE_SCORE_PRIOR=tmp.data.final[['SCALE_SCORE_PRIOR']], 
-							SGP=tmp.data.final[[use.sgp]]), 
-							content_area=content_areas.iter, 
-							year=years.iter, 
-							grade=grades.iter,
-							file.extra.label=file.extra.label)
+				for (norm.group.iter in tmp.norm.group) {
+					if (all(is.na(tmp.norm.group))) {
+						tmp.data.final <- tmp.data_1[tmp.data_1[['GRADE']]==grades.iter & !is.na(tmp.data_1[[use.sgp]]) & !is.na(SCALE_SCORE_PRIOR),]
+					} else {
+						tmp.data.final <- tmp.data_1[!is.na(tmp.data_1[[use.sgp]]) & !is.na(SCALE_SCORE_PRIOR) & grepl(norm.group.iter, tmp.data_1[[norm.group.var]]),]
+					}
+					## Set up more rigorous search for prior achievement.
+					if ("ACHIEVEMENT_LEVEL_PRIOR" %in% names(tmp.data.final)) tmp.prior.ach <- TRUE else tmp.prior.ach <- FALSE
+					if (tmp.prior.ach) if(!all(tmp.data.final$ACHIEVEMENT_LEVEL_PRIOR %in% NA)) tmp.prior.ach <- TRUE else {
+						tmp.prior.ach <- FALSE
+						with.prior.achievement.level <- FALSE
+						tmp.data.final[, ACHIEVEMENT_LEVEL_PRIOR := NULL]
+						message(paste("ACHIEVEMENT_LEVEL_PRIOR variable does not include data for", content_areas.iter,"- Prior Achievement Level plot panel will not be produced."))
+					}
+					if (tmp.prior.ach) {
+						if ("CONTENT_AREA_PRIOR" %in% names(tmp.data.final)) content_areas_prior <- tmp.data.final[["CONTENT_AREA_PRIOR"]][1]
+						gof.object <- gof.draw(
+							data.frame(
+								SCALE_SCORE_PRIOR=tmp.data.final[['SCALE_SCORE_PRIOR']], 
+								SGP=tmp.data.final[[use.sgp]], 
+								ACHIEVEMENT_LEVEL_PRIOR=tmp.data.final[['ACHIEVEMENT_LEVEL_PRIOR']]), 
+								content_area=content_areas.iter,
+								content_areas_prior=content_areas_prior,
+								year=years.iter, 
+								grade=grades.iter,
+								file.extra.label=file.extra.label,
+								plot.name=norm.group.iter)
+					} else {
+						gof.object <- gof.draw(
+							data.frame(
+								SCALE_SCORE_PRIOR=tmp.data.final[['SCALE_SCORE_PRIOR']], 
+								SGP=tmp.data.final[[use.sgp]]), 
+								content_area=content_areas.iter, 
+								year=years.iter, 
+								grade=grades.iter,
+								file.extra.label=file.extra.label,
+								plot.name=norm.group.iter)
+					}
+					if (!is.null(gof.object)) return(gof.object)
 				}
-				if (!is.null(gof.object)) return(gof.object)
 			}
 		}
 	}
