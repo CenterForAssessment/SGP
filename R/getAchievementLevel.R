@@ -38,10 +38,14 @@ function(sgp_data,
 	if ("STATE" %in% names(sgp_data) & !is.null(SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]])) {
 		cutscore.states <- SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]][["Cutscore_States"]]
 		cutscore.subjects <- unique(sapply(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]]), function(x) strsplit(x, "[.]")[[1]][1], USE.NAMES=FALSE))
-		sgp_data[which(STATE %in% cutscore.states & CONTENT_AREA %in% cutscore.subjects), ACHIEVEMENT_LEVEL := paste("Level", findInterval(SCALE_SCORE, 
+		if (any(unique(sgp_data[['STATE']]) %in% cutscore.states)) {
+			sgp_data[which(STATE %in% cutscore.states & CONTENT_AREA %in% cutscore.subjects), ACHIEVEMENT_LEVEL := paste("Level", findInterval(SCALE_SCORE, 
 				SGPstateData[[state]][["Achievement"]][["Cutscores"]][[paste(CONTENT_AREA[1], STATE[1], sep=".")]][[paste("GRADE", GRADE[1], sep="_")]])+1L),
-			by=c("STATE", "CONTENT_AREA", "GRADE")]
-		sgp_data[, ACHIEVEMENT_LEVEL := ordered(ACHIEVEMENT_LEVEL)]
+				by=c("STATE", "CONTENT_AREA", "GRADE")]
+			sgp_data[,ACHIEVEMENT_LEVEL := ordered(ACHIEVEMENT_LEVEL)]
+		} else {
+			sgp_data[,ACHIEVEMENT_LEVEL:=factor(NA, ordered=TRUE)]
+		}
 	} else {
 		if (is.null(year)) year <- sort(unique(sgp_data[['YEAR']]))
 		if (is.null(content_area)) content_area <- sort(unique(sgp_data[['CONTENT_AREA']][sgp_data[['YEAR']] %in% year]))
