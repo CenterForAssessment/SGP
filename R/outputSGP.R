@@ -760,13 +760,15 @@ function(sgp_object,
 			}
 		}
 
-		setnames(slot.data, c("CATCH_UP_KEEP_UP_STATUS_INITIAL", "MOVE_UP_STAY_UP_STATUS_INITIAL"), 
-			paste(c("CATCH_UP_KEEP_UP_STATUS_INITIAL", "MOVE_UP_STAY_UP_STATUS_INITIAL"), "CURRENT", sep="_"))
+		if (any(c("CATCH_UP_KEEP_UP_STATUS_INITIAL", "MOVE_UP_STAY_UP_STATUS_INITIAL") %in% names(slot.data))) {
+			setnames(slot.data, intersect(names(slot.data), c("CATCH_UP_KEEP_UP_STATUS_INITIAL", "MOVE_UP_STAY_UP_STATUS_INITIAL")), 
+				paste(intersect(names(slot.data), c("CATCH_UP_KEEP_UP_STATUS_INITIAL", "MOVE_UP_STAY_UP_STATUS_INITIAL")), "CURRENT", sep="_"))
+		}
 
 		for (names.iter in grep("BASELINE", names(sgp_object@SGP[['SGProjections']]), value=TRUE)) {
 			dir.create(file.path(outputSGP.directory, "RLI", "SGProjections"), recursive=TRUE, showWarnings=FALSE)
 
-			if (length(grep("TARGET_SCALE_SCORES", names.iter))==0) {
+			if (length(grep("TARGET_SCALE_SCORES", names.iter))==0 && any(c("CATCH_UP_KEEP_UP_STATUS_INITIAL", "MOVE_UP_STAY_UP_STATUS_INITIAL") %in% names(slot.data))) {
 				tmp.table <- data.table(
 					VALID_CASE="VALID_CASE",
 					CONTENT_AREA=unlist(strsplit(names.iter, "[.]"))[1],
@@ -775,11 +777,11 @@ function(sgp_object,
 				tmp.index <- tmp.table[,c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE]
 
 				sgp_object@SGP[["SGProjections"]][[names.iter]] <-
-					tmp.table[,c("CATCH_UP_KEEP_UP_STATUS_INITIAL_CURRENT", "MOVE_UP_STAY_UP_STATUS_INITIAL_CURRENT") := slot.data[tmp.index][,
-						c("CATCH_UP_KEEP_UP_STATUS_INITIAL_CURRENT", "MOVE_UP_STAY_UP_STATUS_INITIAL_CURRENT"), with=FALSE]][,!c("VALID_CASE", "CONTENT_AREA", "YEAR"), with=FALSE]
-				output.column.order <- SGPstateData$RLI$SGP_Configuration$output.column.order$SGProjection
+					tmp.table[,intersect(names(slot.data), c("CATCH_UP_KEEP_UP_STATUS_INITIAL", "MOVE_UP_STAY_UP_STATUS_INITIAL")) := slot.data[tmp.index][,
+						intersect(names(slot.data), c("CATCH_UP_KEEP_UP_STATUS_INITIAL", "MOVE_UP_STAY_UP_STATUS_INITIAL")), with=FALSE]][,!c("VALID_CASE", "CONTENT_AREA", "YEAR"), with=FALSE]
+				output.column.order <- SGPstateData[['RLI']][['SGP_Configuration']][['output.column.order']][['SGProjection']]
 			} else {
-				output.column.order <- SGPstateData$RLI$SGP_Configuration$output.column.order$SGProjection_Target
+				output.column.order <- SGPstateData[['RLI']][['SGP_Configuration']][['output.column.order']][['SGProjection_Target']]
 			}
 
 			if (!is.null(outputSGP.pass.through.variables)) {
