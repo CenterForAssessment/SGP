@@ -768,7 +768,7 @@ function(sgp_object,
 		for (names.iter in grep("BASELINE", names(sgp_object@SGP[['SGProjections']]), value=TRUE)) {
 			dir.create(file.path(outputSGP.directory, "RLI", "SGProjections"), recursive=TRUE, showWarnings=FALSE)
 
-			if (length(grep("TARGET_SCALE_SCORES", names.iter))==0 && any(c("CATCH_UP_KEEP_UP_STATUS_INITIAL", "MOVE_UP_STAY_UP_STATUS_INITIAL") %in% names(slot.data))) {
+			if (length(grep("TARGET_SCALE_SCORES", names.iter))==0) {
 				tmp.table <- data.table(
 					VALID_CASE="VALID_CASE",
 					CONTENT_AREA=unlist(strsplit(names.iter, "[.]"))[1],
@@ -776,9 +776,11 @@ function(sgp_object,
 					sgp_object@SGP[["SGProjections"]][[names.iter]], key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 				tmp.index <- tmp.table[,c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE]
 
-				sgp_object@SGP[["SGProjections"]][[names.iter]] <-
-					tmp.table[,intersect(names(slot.data), c("CATCH_UP_KEEP_UP_STATUS_INITIAL", "MOVE_UP_STAY_UP_STATUS_INITIAL")) := slot.data[tmp.index][,
-						intersect(names(slot.data), c("CATCH_UP_KEEP_UP_STATUS_INITIAL", "MOVE_UP_STAY_UP_STATUS_INITIAL")), with=FALSE]][,!c("VALID_CASE", "CONTENT_AREA", "YEAR"), with=FALSE]
+				if (any(c("CATCH_UP_KEEP_UP_STATUS_INITIAL", "MOVE_UP_STAY_UP_STATUS_INITIAL") %in% names(slot.data))) {
+					sgp_object@SGP[["SGProjections"]][[names.iter]] <-
+						tmp.table[,intersect(names(slot.data), c("CATCH_UP_KEEP_UP_STATUS_INITIAL", "MOVE_UP_STAY_UP_STATUS_INITIAL")) := slot.data[tmp.index][,
+							intersect(names(slot.data), c("CATCH_UP_KEEP_UP_STATUS_INITIAL", "MOVE_UP_STAY_UP_STATUS_INITIAL")), with=FALSE]][,!c("VALID_CASE", "CONTENT_AREA", "YEAR"), with=FALSE]
+				}
 				output.column.order <- SGPstateData[['RLI']][['SGP_Configuration']][['output.column.order']][['SGProjection']]
 			} else {
 				output.column.order <- SGPstateData[['RLI']][['SGP_Configuration']][['output.column.order']][['SGProjection_Target']]
