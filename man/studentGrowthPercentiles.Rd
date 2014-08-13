@@ -28,7 +28,8 @@ studentGrowthPercentiles(panel.data,
                          print.other.gp=FALSE,                             
                          print.sgp.order=FALSE,
                          calculate.sgps=TRUE,                                       
-                         rq.method="br",                                           
+                         rq.method="br",
+                         max.n.for.coefficient.matrices=NULL,
                          knot.cut.percentiles=c(0.2,0.4,0.6,0.8),
                          knots.boundaries.by.panel=FALSE,
                          exact.grade.progression.sequence=FALSE,
@@ -130,6 +131,9 @@ to calculate the lags/differences based upon the supplied years.
   \item{calculate.sgps}{Boolean argument (defaults to TRUE) indicating whether student growth percentiles should be calculated following coefficient matrix calculation.
   } 
   \item{rq.method}{Argument to define the estimation method used in the quantile regression calculations. The default is the the \code{"br"} method referring to the Barrodale and Robert's L1 estimation detailed in Koenker (2005) and in the help for the quantile regression package.
+  }
+  \item{max.n.for.coefficient.matrices}{Argument the defines a size threshold above which a subset of data is taken with a number of cases equal to the sgp.subset.size.threshold argument. Default is NULL,
+  no subset is taken. 
   }
   \item{knot.cut.percentiles}{Argument that specifies the quantiles to be used for calculation of B-spline knots. Default is to place knots at the 0.2, 0.4, 0.6, and 0.8 quantiles. 
   }

@@ -19,6 +19,7 @@ function(panel.data,         ## REQUIRED
          print.sgp.order=FALSE, 
          calculate.sgps=TRUE, 
          rq.method="br",
+	 max.n.for.coefficient.matrices=NULL,
          knot.cut.percentiles=c(0.2,0.4,0.6,0.8),
          knots.boundaries.by.panel=FALSE,
          exact.grade.progression.sequence=FALSE,
@@ -144,10 +145,11 @@ function(panel.data,         ## REQUIRED
 		}
 	}
 
-	.create.coefficient.matrices <- function(data, k, by.grade) {
+	.create.coefficient.matrices <- function(data, k, by.grade, max.n.for.coefficient.matrices) {
 		tmp.data <- .get.panel.data(data, k, by.grade)
 		if (dim(tmp.data)[1]==0) return(NULL)
 		if (dim(tmp.data)[1] < sgp.cohort.size) return("Insufficient N")
+		if (!is.null(max.n.for.coefficient.matrices) && dim(tmp.data)[1] > max.n.for.coefficient.matrices) tmp.data <- tmp.data[sample(seq(dim(tmp.data)[1]), max.n.for.coefficient.matrices)]
 		tmp.num.variables <- dim(tmp.data)[2]
 		mod <- character()
 		s4Ks <- "Knots=list("
@@ -986,7 +988,6 @@ function(panel.data,         ## REQUIRED
 				Simulated_SGPs=Simulated_SGPs))
 	}
 
-	if (max.cohort.size > 2500000) rq.method <- "pfn"
 
 	### PROGRESSION variable creation:
 
@@ -1069,7 +1070,7 @@ function(panel.data,         ## REQUIRED
 			coefficient.matrix.priors <- seq(num.prior)
 		}
 		for (k in coefficient.matrix.priors) {
-			Coefficient_Matrices[[tmp.path.coefficient.matrices]][['TMP_NAME']] <- .create.coefficient.matrices(ss.data, k, by.grade)
+			Coefficient_Matrices[[tmp.path.coefficient.matrices]][['TMP_NAME']] <- .create.coefficient.matrices(ss.data, k, by.grade, max.n.for.coefficient.matrices)
 			if (identical(Coefficient_Matrices[[tmp.path.coefficient.matrices]][['TMP_NAME']], "Insufficient N")) {
 				tmp.messages <- c(tmp.messages, paste("\tNOTE: Some grade progressions contain fewer than the minimum cohort size.",
 					"\n\t\tOnly analyses with MAX grade progression", paste(rev(rev(tmp.gp)[1:k]), collapse = ', '), "will be produced given", sgp.cohort.size,
