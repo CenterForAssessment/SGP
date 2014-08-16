@@ -35,13 +35,13 @@ gofSGP(
   }
   \item{use.sgp}{Character vectors (defaults to 'SGP') indicating what student growth percentile variable to calculate goodness-of-fit plots for. 
   }
-  \item{output.format}{Character vectors (defaults to 'PDF') indicating what driver to use to output results. Options currently include 'PDF' and 'PNG'.
+  \item{output.format}{Character vectors (defaults to 'PDF') indicating what driver to use to output results. Options currently include 'PDF', 'PNG' and 'SVG'.  'SVG' is currently experimental.
   }
   \item{color.scale}{Character vectors (defaults to 'red') indicating what color palette to use for creating percentile distribution table.
   }
 }
 
-\value{Returns output ('PDF' or 'PNG') associated with goodness-of-fit analyses.
+\value{Returns output ('PDF' , 'PNG' or 'SVG') associated with goodness-of-fit analyses.
 }
 
 \author{Damian W. Betebenner \email{dbetebenner@nciea.org}}
