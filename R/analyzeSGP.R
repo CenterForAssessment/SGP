@@ -112,6 +112,12 @@ function(sgp_object,
 		return.prior.scale.score.standardized <- TRUE
 	}
 
+	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["max.n.for.coefficient.matrices`"]])) {
+		max.n.for.coefficient.matrices <- SGPstateData[[state]][["SGP_Configuration"]][["max.n.for.coefficient.matrices"]]
+	} else {
+		max.n.for.coefficient.matrices <- NULL
+	}
+
 	if (!is.null(sgp.config) && sgp.config.drop.nonsequential.grade.progression.variables) {
 		sgp.config.drop.nonsequential.grade.progression.variables <- FALSE
 	}
@@ -543,6 +549,7 @@ function(sgp_object,
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
 						calculate.simex=calculate.simex,
+						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 						...))
 					}
 				tmp_sgp_object <- mergeSGP(tmp_sgp_object, tmp)
@@ -578,6 +585,7 @@ function(sgp_object,
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
 						calculate.simex=calculate.simex,
+						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 						...))
 
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -618,6 +626,7 @@ function(sgp_object,
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
 						calculate.simex=calculate.simex,
+						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -1310,6 +1319,7 @@ function(sgp_object,
 						print.other.gp=print.other.gp,
 						parallel.config=lower.level.parallel.config,
 						calculate.simex=calculate.simex,
+						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 						...)
 				} else {
 					message(paste("\n\t\tNOTE: No student records &/or no prior data for student growth percentiles:", tail(sgp.iter[["sgp.panel.years"]], 1), 
