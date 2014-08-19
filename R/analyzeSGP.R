@@ -112,7 +112,7 @@ function(sgp_object,
 		return.prior.scale.score.standardized <- TRUE
 	}
 
-	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["max.n.for.coefficient.matrices`"]])) {
+	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["max.n.for.coefficient.matrices"]])) {
 		max.n.for.coefficient.matrices <- SGPstateData[[state]][["SGP_Configuration"]][["max.n.for.coefficient.matrices"]]
 	} else {
 		max.n.for.coefficient.matrices <- NULL
