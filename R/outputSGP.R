@@ -720,7 +720,7 @@ function(sgp_object,
 				write.table(tmp.dt, file=file.path(outputSGP.directory, "RLI", "SGPercentiles", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
 			} else {
 				output.column.order <- SGPstateData$RLI$SGP_Configuration$output.column.order$SGPercentiles
-				tmp.dt <- sgp_object@SGP[['SGPercentiles']][[names.iter]]
+				tmp.dt <- as.data.table(sgp_object@SGP[['SGPercentiles']][[names.iter]])
 				if (any(!output.column.order %in% names(tmp.dt))) tmp.dt[,output.column.order[!output.column.order %in% names(tmp.dt)]:=as.numeric(NA), with=FALSE]
 				tmp.dt <- tmp.dt[,output.column.order, with=FALSE]
 				write.table(tmp.dt, file=file.path(outputSGP.directory, "RLI", "SGPercentiles", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
