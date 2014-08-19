@@ -972,7 +972,7 @@ if (sgPlot.produce.plots) {
 			state=state,
 			last.year=tmp.last.year,
 			content_areas=tmp.content_areas_domains,
-			districts=tmp.districts.and.schools[["DISTRICT_NUMBER"]],
+			districts=unique(tmp.districts.and.schools[["DISTRICT_NUMBER"]]),
 			schools=tmp.districts.and.schools[["SCHOOL_NUMBER"]],
 			reports.by.student=sgPlot.reports.by.student,
 			reports.by.instructor=sgPlot.reports.by.instructor,
