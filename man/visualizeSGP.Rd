@@ -67,7 +67,7 @@ visualizeSGP(
 
 \arguments{
   \item{sgp_object}{An object of class SGP containing long formatted data in the \code{@Data} slot that will be used for the production of student growth 
-  and achievement plots and system growth and achievement plots, summary data from \code{\link{summarizeSGP}} in the \code{Summary} slot for bubble plots.  
+  and achievement plots and system growth and achievement plots, summary data from \code{\link{summarizeSGP}} in the \code{Summary} slot for bubble plots.  Alternatively, a properly formatted WIDE data set can be provided for production of student growth plots.  Such data sets are produced from an SGP object when the sgPlot.save.sgPlot.data argument is set to TRUE.  
   }
   \item{plot.types}{A character vector indicating what types of plots to construct. Currently available plots include \code{\link{bubblePlot}}, 
   \code{\link{studentGrowthPlot}}, and \code{\link{growthAchievementPlot}}.
