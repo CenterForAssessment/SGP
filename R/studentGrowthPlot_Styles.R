@@ -750,7 +750,7 @@ if (reports.by.school) {
 
 		for (vp in seq_along(content_areas)) {
 			if ("PNG" %in% sgPlot.output.format) {
-				Cairo(file.path(path.to.pdfs, paste(paste(n, vp, sep="_"), "png", sep=".")), width=8.2, height=3.74, units="in", dpi=144, pointsize=24, bg="transparent")
+				Cairo(file.path(path.to.pdfs, paste(paste(n, vp, sep="_"), "png", sep=".")), width=8.2, height=3.74, units="in", dpi=144, pointsize=10.5, bg="transparent")
 			} else {
 				pdf(file.path(path.to.pdfs, paste(paste(n, vp, sep="_"), "pdf", sep=".")), width=8.2, height=3.74, version="1.4") 
 			}
@@ -1306,7 +1306,7 @@ if (reports.by.instructor) {
 	
 			for (vp in seq_along(content_areas)) {
 				if ("PNG" %in% sgPlot.output.format) {
-					Cairo(file.path(path.to.pdfs, paste(paste(n, vp, sep="_"), "png", sep=".")), width=8.2, height=3.74, units="in", dpi=144, pointsize=24, bg="transparent")
+					Cairo(file.path(path.to.pdfs, paste(paste(n, vp, sep="_"), "png", sep=".")), width=8.2, height=3.74, units="in", dpi=144, pointsize=10.5, bg="transparent")
 				} else {
 					pdf(file.path(path.to.pdfs, paste(paste(n, vp, sep="_"), "pdf", sep=".")), width=8.2, height=3.74, version="1.4") 
 				}
