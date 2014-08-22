@@ -174,7 +174,8 @@ function(sgp_object,
 
 			if (testing.window=="FALL") tmp.separator <- "1" else tmp.separator <- "2"
 			tmp.index <- grep(configuration.year, names(sgp_object@SGP$Coefficient_Matrices))
-			assign(paste("RLI_Baseline_Matrices_", paste(configuration.year, tmp.separator, sep="."), sep=""), convertToBaseline(sgp_object@SGP$Coefficient_Matrices[tmp.index]))
+			assign(paste("RLI_Baseline_Matrices_", paste(yearIncrement(configuration.year, 1), tmp.separator, sep="."), sep=""), 
+				convertToBaseline(sgp_object@SGP$Coefficient_Matrices[tmp.index]))
 			save(list=paste("RLI_Baseline_Matrices_", paste(configuration.year, tmp.separator, sep="."), sep=""), 
 				file=paste("RLI_Baseline_Matrices_", paste(configuration.year, tmp.separator, "Rdata", sep="."), sep=""))
 		}
@@ -223,7 +224,8 @@ function(sgp_object,
 				### Convert and save coefficient matrices
 
 				tmp.index <- grep(configuration.year, names(sgp_object.1@SGP$Coefficient_Matrices))
-				assign(paste("RLI_Baseline_Matrices_", paste(configuration.year, "4", sep="."), sep=""), convertToBaseline(sgp_object.1@SGP$Coefficient_Matrices[tmp.index]))
+				assign(paste("RLI_Baseline_Matrices_", paste(yearIncrement(configuration.year, 1), "4", sep="."), sep=""), 
+					convertToBaseline(sgp_object.1@SGP$Coefficient_Matrices[tmp.index]))
 				save(list=paste("RLI_Baseline_Matrices_", paste(configuration.year, "4", sep="."), sep=""), 
 					file=paste("RLI_Baseline_Matrices_", paste(configuration.year, "4", "Rdata", sep="."), sep=""))
 
@@ -264,7 +266,8 @@ function(sgp_object,
 				### Convert and save coefficient matrices
 
 				tmp.index <- grep(configuration.year, names(sgp_object.2@SGP$Coefficient_Matrices))
-				assign(paste("RLI_Baseline_Matrices_", paste(configuration.year, "3", sep="."), sep=""), convertToBaseline(sgp_object.2@SGP$Coefficient_Matrices[tmp.index]))
+				assign(paste("RLI_Baseline_Matrices_", paste(yearIncrement(configuration.year, 1), "3", sep="."), sep=""), 
+					convertToBaseline(sgp_object.2@SGP$Coefficient_Matrices[tmp.index]))
 				save(list=paste("RLI_Baseline_Matrices_", paste(configuration.year, "3", sep="."), sep=""), 
 					file=paste("RLI_Baseline_Matrices_", paste(configuration.year, "3", "Rdata", sep="."), sep=""))
 			} ### END if (update.save.shell.only)
