@@ -206,7 +206,7 @@ function(sgp_object,
 							}
 							if (output.format=="PNG") {
 								Cairo(file=paste(tmp.path, ".png", sep=""), 
-								      width=8.5, height=11, units="in", dpi=144, pointsize=24, bg="transparent")
+								      width=8.5, height=11, units="in", dpi=144, pointsize=10.5, bg="transparent")
 							}
 							grid.draw(sgp_object@SGP[["Goodness_of_Fit"]][[i]][[j]])
 							dev.off()

@@ -236,6 +236,10 @@ if (reports.by.school) {
 		}
 		tmp_district_ids <- unique(sgPlot.data[list(i)]$ID)
 		tmp_district_data <- subset(sgPlot.data, ID %in% tmp_district_ids)
+		if (is.factor(tmp_district_data[[paste("LAST_NAME", last.year, sep=".")]]) | is.factor(tmp_district_data[[paste("FIRST_NAME", last.year, sep=".")]])) {
+			tmp_district_data[, paste("LAST_NAME", last.year, sep=".") := as.character(tmp_district_data[[paste("LAST_NAME", last.year, sep=".")]])]
+			tmp_district_data[, paste("FIRST_NAME", last.year, sep=".") := as.character(tmp_district_data[[paste("FIRST_NAME", last.year, sep=".")]])]			
+		}
 
 	## Schools
 
@@ -327,16 +331,16 @@ if (reports.by.school) {
 		setkeyv(tmp_grade_data, tmp.keys[4:5])
 	
 		for (n in unique(tmp_grade_data[["ID"]])) {
-			FIRST_NAME <- gsub(" |/", "-", sort(tmp_grade_data[ID==n][[tmp.keys[5]]])[1]) 
-			LAST_NAME <- gsub(" |/", "-", sort(tmp_grade_data[ID==n][[tmp.keys[4]]])[1])
+			FIRST_NAME <- sort(tmp_grade_data[ID==n][[tmp.keys[5]]])[1]
+			LAST_NAME <- sort(tmp_grade_data[ID==n][[tmp.keys[4]]])[1]
 			if (sgPlot.anonymize) {
 				student_number <- 1234567890
 			} else {
 				student_number <- n
 			}
 			if (sgPlot.folder.names=="name" | sgPlot.anonymize) {
-				file_name <- paste(paste(FIRST_NAME, LAST_NAME, student_number, year_folder, "REPORT", sep="_"), ".pdf", sep="")
-				file_name_json <- paste(paste(FIRST_NAME, LAST_NAME, student_number, year_folder, sep="_"), sep="")
+				file_name <- paste(paste(gsub(" |/", "-", FIRST_NAME), gsub(" |/", "-", LAST_NAME), student_number, year_folder, "REPORT", sep="_"), ".pdf", sep="")
+				file_name_json <- paste(paste(gsub(" |/", "-", FIRST_NAME), gsub(" |/", "-", LAST_NAME), student_number, year_folder, sep="_"), sep="")
 			} else {
 				file_name <- paste(n, "_REPORT.pdf", sep="")
 				file_name_json <- n
