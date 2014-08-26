@@ -1,6 +1,7 @@
 `updateSGP` <- 
 function(what_sgp_object=NULL,
 	with_sgp_data_LONG=NULL,
+	with_sgp_data_INSTRUCTOR_NUMBER=NULL,
 	state=NULL,
 	steps=c("prepareSGP", "analyzeSGP", "combineSGP", "summarizeSGP", "visualizeSGP", "outputSGP"),
 	years=NULL,
@@ -104,7 +105,14 @@ function(what_sgp_object=NULL,
 		what_sgp_object@SGP[['SGPercentiles']][grep(paste(tmp.content_areas.years, collapse="|"), names(what_sgp_object@SGP[['SGPercentiles']]))] <- NULL
 		what_sgp_object@SGP[['SGProjections']][grep(paste(tmp.content_areas.years, collapse="|"), names(what_sgp_object@SGP[['SGProjections']]))] <- NULL
 		what_sgp_object@SGP[['Simulated_SGPs']][grep(paste(tmp.content_areas.years, collapse="|"), names(what_sgp_object@SGP[['Simulated_SGPs']]))] <- NULL
-		
+
+		### Add in INSTRUCTOR_NUMBER data is supplied
+
+		if (!is.null(with_sgp_data_INSTRUCTOR_NUMBER)) {
+			what_sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']] <- 
+				data.table(rbind.fill(what_sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']], with_sgp_data_INSTRUCTOR_NUMBER),
+					key=c("ID", "CONTENT_AREA", "YEAR"))
+		}		
 
 		### Update results
 
@@ -285,6 +293,15 @@ function(what_sgp_object=NULL,
 						sgp.target.scale.scores.only=sgp.target.scale.scores.only)
 				}
 
+
+				### Add in INSTRUCTOR_NUMBER data for summarizeSGP if supplied
+
+				if (!is.null(with_sgp_data_INSTRUCTOR_NUMBER)) {
+					what_sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']] <- 
+						data.table(rbind.fill(what_sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']], with_sgp_data_INSTRUCTOR_NUMBER),
+							key=c("ID", "CONTENT_AREA", "YEAR"))
+				}		
+
 				if ("summarizeSGP" %in% steps) what_sgp_object <- summarizeSGP(what_sgp_object, state=state, parallel.config=parallel.config)
 				if ("visualizeSGP" %in% steps) visualizeSGP(what_sgp_object, state=state, sgPlot.demo.report=sgPlot.demo.report)
 				if ("outputSGP" %in% steps) outputSGP(what_sgp_object, state=state, output.type=outputSGP.output.type)
@@ -311,6 +328,14 @@ function(what_sgp_object=NULL,
 				if ("HIGH_NEED_STATUS" %in% names(what_sgp_object@Data)) {
 					what_sgp_object@Data[['HIGH_NEED_STATUS']] <- NULL
 					what_sgp_object <- suppressMessages(prepareSGP(what_sgp_object, state=state))
+				}
+
+				### Add in INSTRUCTOR_NUMBER data for summarizeSGP if supplied
+
+				if (!is.null(with_sgp_data_INSTRUCTOR_NUMBER)) {
+					what_sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']] <- 
+						data.table(rbind.fill(what_sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']], with_sgp_data_INSTRUCTOR_NUMBER),
+							key=c("ID", "CONTENT_AREA", "YEAR"))
 				}
 
 				### abcSGP

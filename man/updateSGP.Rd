@@ -10,6 +10,7 @@ SGP object.
 updateSGP(
 	what_sgp_object=NULL,
 	with_sgp_data_LONG=NULL,
+	with_sgp_data_INSTRUCTOR_NUMBER=NULL,
 	state=NULL,
 	steps=c("prepareSGP", 
 		"analyzeSGP", 
@@ -50,7 +51,10 @@ updateSGP(
 \arguments{
   \item{what_sgp_object}{The SGP object to which the additional data will be added and analyzed. This object must be specified.
   }
-  \item{with_sgp_data_LONG}{The additional data in LONG for to be added to the supplied object of class SGP analyzed. The additional data must be in the same form as the data in the @Data slot. If with_sgp_data_LONG is not supplied, the function with update the sgp_object supplied in 'what_sgp_object' using the embedded coefficient matrices, essentially re-doing the analyses.
+  \item{with_sgp_data_LONG}{The additional data in LONG format to be added to the supplied SGP object. The additional data must be in the same form as the data in the @Data slot. If with_sgp_data_LONG is not supplied, the function with update the sgp_object supplied in 'what_sgp_object' using the embedded coefficient matrices, essentially re-doing the analyses.
+  }
+  \item{with_sgp_data_INSTRUCTOR_NUMBER}{The addition INSTRUCTOR_NUMBER data in LONG format to be added to the supplied SGP object. The additional data must be in the same format as the data in the
+  @Data_Supplementary[['INSTRUCTOR_NUMBER']] slot.  Default is NULL, no INSTRUCTOR_NUMBER data is supplied.
   }
   \item{state}{The 'state' for the sgp_object. Derived from sgp_object name if not explicitly supplied. 
   }
