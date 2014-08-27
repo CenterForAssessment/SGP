@@ -630,6 +630,7 @@ function(sgp_object,
 	selected.institution.types <- c(selected.institution.types, paste(selected.institution.types[grep("CURRENT", selected.institution.types, invert=TRUE)], "INSTRUCTOR_NUMBER", sep=", "))
 	if ("SCHOOL_NUMBER_INSTRUCTOR" %in% names(sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']])) {
 		selected.institution.types <- c(selected.institution.types, "SCHOOL_NUMBER_INSTRUCTOR, INSTRUCTOR_NUMBER")
+		summary.groups[["institution"]] <- c(summary.groups[["institution"]], "SCHOOL_NUMBER_INSTRUCTOR")
 	}
 
 	selected.summary.tables <- list()
