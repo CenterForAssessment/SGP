@@ -33,7 +33,6 @@ function(sgp_object,
                 state <- getStateAbbreviation(tmp.name, "outputSGP")
         }
 
-
 	### Create relevant variables
 
 	if (is.null(outputSGP.student.groups)) {
@@ -46,6 +45,9 @@ function(sgp_object,
 			outputSGP.pass.through.variables <- SGPstateData[[state]][['SGP_Configuration']][['outputSGP.pass.through.variables']]
 	}
 
+	if (!is.null(SGPstateData[[state]][['SGP_Configuration']][['outputSGP.translate.names']])) {
+		outputSGP.translate.names <- SGPstateData[[state]][['SGP_Configuration']][['outputSGP.translate.names']]
+	}
 
 	###############################################
 	###
@@ -71,6 +73,11 @@ function(sgp_object,
 		names.in.data <- which(sgp_object@Names[['names.sgp']] %in% names(sgp_object@Data))
 		output.data <- copy(sgp_object@Data)
 		if (outputSGP.translate.names) setnames(output.data, sgp_object@Names[['names.sgp']][names.in.data], sgp_object@Names[['names.provided']][names.in.data])
+		if (!is.null(SGPstateData[[state]][['SGP_Configuration']][['output.column.order']][['SGP_Data_LONG']])) {
+			output.column.order <- c(intersect(SGPstateData[[state]][['SGP_Configuration']][['output.column.order']][['SGP_Data_LONG']], names(output.data)),
+						setdiff(names(output.data), SGPstateData[[state]][['SGP_Configuration']][['output.column.order']][['SGP_Data_LONG']]))
+			setcolorder(output.data, output.column.order)
+		}
 		assign(paste(tmp.state, "SGP_LONG_Data", sep="_"), output.data)
 		save(list=paste(tmp.state, "SGP_LONG_Data", sep="_"), file=file.path(outputSGP.directory, paste(tmp.state, "SGP_LONG_Data.Rdata", sep="_")))
 		write.table(output.data, file=file.path(outputSGP.directory, paste(tmp.state, "SGP_LONG_Data.txt", sep="_")), sep="|", quote=FALSE, row.names=FALSE, na="")
@@ -122,6 +129,11 @@ function(sgp_object,
 		names.in.data <- which(sgp_object@Names[['names.sgp']] %in% names(sgp_object@Data))
 		output.data.final.year <- subset(sgp_object@Data, YEAR==final.year)
 		if (outputSGP.translate.names) setnames(output.data.final.year, sgp_object@Names[['names.sgp']][names.in.data], sgp_object@Names[['names.provided']][names.in.data])
+		if (!is.null(SGPstateData[[state]][['SGP_Configuration']][['output.column.order']][['SGP_Data_LONG']])) {
+			output.column.order <- c(intersect(SGPstateData[[state]][['SGP_Configuration']][['output.column.order']][['SGP_Data_LONG']], names(output.data.final.year)),
+						setdiff(names(output.data.final.year), SGPstateData[[state]][['SGP_Configuration']][['output.column.order']][['SGP_Data_LONG']]))
+			setcolorder(output.data.final.year, output.column.order)
+		}
 		assign(paste(tmp.state, "SGP_LONG_Data", final.year, sep="_"), output.data.final.year)
 		save(list=paste(tmp.state, "SGP_LONG_Data", final.year, sep="_"), file=file.path(outputSGP.directory, paste(tmp.state, "_SGP_LONG_Data_", final.year, ".Rdata", sep="")))
 		write.table(output.data.final.year, file=file.path(outputSGP.directory, paste(tmp.state, "_SGP_LONG_Data_", final.year, ".txt", sep="")), 
