@@ -1,15 +1,6 @@
-<p align="center">
-  <img src="https://raw.githubusercontent.com/CenterForAssessment/SGP_Resources/master/misc/SGP_Futura_2.png" alt="SGP">
-</p>
 
-______________________________________________________________________________________________________
-
-[![Build Status](https://travis-ci.org/dbetebenner/SGP.svg?branch=master)](https://travis-ci.org/dbetebenner/SGP)
-
-### An R Package for the calculation of student growth percentiles and percentile growth trajectories/projections
-
-
-The **SGP** Package (Betebenner, VanIwaarden, Domingue, Shang, 2014) is an open source package built for the open source **R** software environment (R Development Core Team, 2014). The classes, functions and data within the **SGP** package are used to calculate student growth percentiles and percentile growth projections/trajectories using large scale, longitudinal assessment data. The methodology uses quantile regression to estimate the conditional density associated associated with each student's achievement history. Percentile growth projections/trajectories are calculated using the coefficient matrices derived from the quantile regression analyses and specify the percentile growth required for students to reach future achievement targets.
+<a href="http://sgp.io"><img src="https://raw.githubusercontent.com/CenterForAssessment/SGP_Resources/master/misc/SGP4_Logo.png" align="left" hspace="12" vspace="15"></a>
+The **SGP** Package is open source software built for the **R** software environment. The classes, functions and data within the **SGP** package are used to calculate student growth percentiles and percentile growth projections/trajectories using large scale, longitudinal assessment data. Quantile regression is used to estimate the conditional density associated with each student's achievement history. Percentile growth projections/trajectories are calculated using the derived coefficient matrices and show the percentile growth needed to reach future achievement targets. [![Build Status](https://travis-ci.org/dbetebenner/SGP.svg?branch=master)](https://travis-ci.org/dbetebenner/SGP)
 
 * Web site: [sgp.io](http://sgp.io)
 * CRAN Web site: http://cran.r-project.org/web/packages/SGP/
@@ -28,7 +19,7 @@ We love feedback and are happy to answer questions.
 
 ### Install the latest stable release from [CRAN](http://cran.r-project.org/package=SGP)
 
-```S
+```R
 install.packages("SGP")
 require(SGP)
 ```
@@ -36,14 +27,14 @@ require(SGP)
 
 ### Install latest development release from [Github](https://github.com/CenterForAssessment/SGP/) :octocat:
 
-```S
+```R
 install.packages("devtools")
 require(devtools)
 install_github("SGP", "CenterForAssessment")
 require(SGP)
 ```
 
-To install from Github you might need: Windows: Rtools (http://cran.r-project.org/bin/windows/Rtools/), OS X: xcode (from the app store),
+To install from Github you might need: Windows: [Rtools](http://cran.r-project.org/bin/windows/Rtools/), OS X: xcode (from the app store),
 Linux: apt-get install r-base-dev (or similar).
 
 
@@ -52,7 +43,7 @@ Linux: apt-get install r-base-dev (or similar).
 The [SGP Package Wiki](https://github.com/CenterForAssessment/SGP/wiki/Home) contains instructions on how to prepare data and run SGP analyses.
 
 
-### Bibliography
+### References
 
 Betebenner, D. W., VanIwaarden, A., Domingue, B., and Shang, Y. (2014). SGP: An R Package for the Calculation and Visualization of Student Growth Percentiles & Percentile Growth Trajectories. 
 

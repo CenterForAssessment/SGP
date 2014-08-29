@@ -49,6 +49,7 @@ function(sgp_object,
 			tmp.state.name <- gsub(" ", "_", getStateAbbreviation(state, type="name"))
 			tmp.file.name <- paste(tmp.state.name, "SGP_Summary", tmp.year, sep="_")
 			assign(tmp.file.name, sgp_object@Summary)
+			if (!"Data" %in% list.files()) dir.create("Data", showWarnings=FALSE)
 			message(paste("\tNOTE: Saving @Summary slot to", paste("Data/", tmp.file.name, ".Rdata and then deleting @Summary slot.", sep="")))
 			save(list=tmp.file.name, file=file.path("Data", paste(tmp.file.name, "Rdata", sep=".")))
 			sgp_object@Summary <- NULL
@@ -120,6 +121,7 @@ function(sgp_object,
 	weighted.median <- function(x, probs=0.5, w, na.rm=TRUE) {
 		if (is.null(w)) return(as.numeric(quantile(x, probs, na.rm)))
 		q <- !is.na(x) & !is.na(w) & w!=0
+		if (length(x[q])==0) return(NA)
 		if (length(x[q]) < 2) return(as.numeric(quantile(x, probs, na.rm)))
 		if (!all(q)) {if (na.rm) {x<-x[q]; w<-w[q]} else stop("NA's")}
 		ord <- order(x)
@@ -627,6 +629,11 @@ function(sgp_object,
 		selected.institution.types <- c(highest.level.summary.grouping, getFromNames("institution"))
 	}
 	selected.institution.types <- c(selected.institution.types, paste(selected.institution.types[grep("CURRENT", selected.institution.types, invert=TRUE)], "INSTRUCTOR_NUMBER", sep=", "))
+	if ("SCHOOL_NUMBER_INSTRUCTOR" %in% names(sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']])) {
+		selected.institution.types <- c(selected.institution.types, "SCHOOL_NUMBER_INSTRUCTOR, INSTRUCTOR_NUMBER")
+		summary.groups[["institution"]] <- c(summary.groups[["institution"]], "SCHOOL_NUMBER_INSTRUCTOR")
+	}
+
 	selected.summary.tables <- list()
 	for (k in selected.institution.types) {
 		if (length(grep("INSTRUCTOR_NUMBER", k)) > 0 | length(grep("CURRENT", k)) > 0) {
