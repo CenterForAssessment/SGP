@@ -1,6 +1,6 @@
 
-<a href="http://sgp.io"><img src="https://raw.githubusercontent.com/CenterForAssessment/SGP_Resources/master/misc/SGP4_Logo.png" align="left" hspace="10" vspace="15"></a>
-The **SGP** Package is open source software built for the **R** software environment. The classes, functions and data within the **SGP** package are used to calculate student growth percentiles and percentile growth projections/trajectories using large scale, longitudinal assessment data. Quantile regression is used to estimate the conditional density associated with each student's achievement history. Percentile growth projections/trajectories are calculated using the derived coefficient matrices and specify the percentile growth required to reach future achievement targets.
+<a href="http://sgp.io"><img src="https://raw.githubusercontent.com/CenterForAssessment/SGP_Resources/master/misc/SGP4_Logo.png" align="left" hspace="5" vspace="15"></a>
+The **SGP** Package is open source software built for the **R** software environment. The classes, functions and data within the **SGP** package are used to calculate student growth percentiles and percentile growth projections/trajectories using large scale, longitudinal assessment data. Quantile regression is used to estimate the conditional density associated with each student's achievement history. Percentile growth projections/trajectories are calculated using the derived coefficient matrices and show the percentile growth needed to reach future achievement targets.
 
 [![Build Status](https://travis-ci.org/dbetebenner/SGP.svg?branch=master)](https://travis-ci.org/dbetebenner/SGP)
 
@@ -36,7 +36,7 @@ install_github("SGP", "CenterForAssessment")
 require(SGP)
 ```
 
-To install from Github you might need: Windows: Rtools (http://cran.r-project.org/bin/windows/Rtools/), OS X: xcode (from the app store),
+To install from Github you might need: Windows: [Rtools](http://cran.r-project.org/bin/windows/Rtools/), OS X: xcode (from the app store),
 Linux: apt-get install r-base-dev (or similar).
 
 
