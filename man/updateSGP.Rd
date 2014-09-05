@@ -134,19 +134,19 @@ If missing the function will use the data to infer all the grade progressions fo
 \dontrun{
 ### Run analyses on all but final year's of data
 
-Demonstration_Data_LONG <- subset(sgpData_LONG, YEAR %in% c("2008_2009", "2009_2010", "2010_2011", "2011_2012"))
-Demonstration_Data_LONG_2012_2013 <- subset(sgpData_LONG, YEAR %in% c("2012_2013"))
+Demonstration_Data_LONG <- subset(sgpData_LONG, YEAR %in% c("2009_2010", "2010_2011", "2011_2012", "2012_2013"))
+Demonstration_Data_LONG_2013_2014 <- subset(sgpData_LONG, YEAR %in% c("2013_2014"))
 
 Demonstration_SGP <- abcSGP(
         sgp_object=Demonstration_Data_LONG,
         sgPlot.demo.report=TRUE)
 
 
-### Run updateSGP on Demonstration_SGP and the 2012_2013 data
+### Run updateSGP on Demonstration_SGP and the 2013_2014 data
 
 Demonstration_SGP <- updateSGP(
         what_sgp_object=Demonstration_SGP,
-        with_sgp_data_LONG=Demonstration_Data_LONG_2012_2013)
+        with_sgp_data_LONG=Demonstration_Data_LONG_2013_2014)
 }  
 }
 

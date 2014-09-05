@@ -168,13 +168,13 @@ Quantile and Probability Curves Without Crossing. Econometrica, 78: 1093-1125.
 
 \examples{
 \dontrun{
-## First calculate SGPs for 2013
+## First calculate SGPs for 2014
 my.grade.sequences <- list(3:4, 3:5, 3:6, 3:7, 4:8)
 my.sgpData <- list(Panel_Data = sgpData)
 
 for (i in seq_along(my.grade.sequences)) {
      my.sgpData <- studentGrowthPercentiles(panel.data=my.sgpData,
-                     sgp.labels=list(my.year=2013, my.subject="Reading"),
+                     sgp.labels=list(my.year=2014, my.subject="Reading"),
                      use.my.knots.boundaries="DEMO",
                      grade.progression=my.grade.sequences[[i]])
 }
@@ -185,7 +185,7 @@ my.grade.progressions <- list(3, 3:4, 3:5, 3:6, 4:7)
 
 for (i in seq_along(my.grade.progressions)) {
      my.sgpData <- studentGrowthProjections(panel.data=my.sgpData,
-                      sgp.labels=list(my.year=2013, my.subject="Reading"),
+                      sgp.labels=list(my.year=2014, my.subject="Reading"),
                       projcuts.digits=0,
                       projection.unit="GRADE",
                       performance.level.cutscores="DEMO",
@@ -194,8 +194,8 @@ for (i in seq_along(my.grade.progressions)) {
 }
 
 ##  Save the Student Growth Projections Results to a .csv file:
-write.csv(my.sgpData$SGProjections$READING.2013, 
-file= "2013_Reading_SGProjections.csv", row.names=FALSE, quote=FALSE)
+write.csv(my.sgpData$SGProjections$READING.2014, 
+file= "2014_Reading_SGProjections.csv", row.names=FALSE, quote=FALSE)
 }  
 }
 
