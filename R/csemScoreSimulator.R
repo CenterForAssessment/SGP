@@ -35,7 +35,7 @@ function(
 	if (!is.null(variable)) tmp.omega <- variable
 
 	if (distribution=="Skew-Normal") tmp.alpha <- tan((pi/2)*((min.max[1]+min.max[2]) - 2*scale_scores)/(min.max[2]-min.max[1])) else tmp.alpha <- 0
-	tmp.score <- round_any(as.numeric(rsn(length(scale_scores), xi=scale_scores, omega=sqrt(1+tmp.omega)-1, alpha=sqrt(1+tmp.alpha)-1)), round)
+	tmp.score <- round_any(as.numeric(rsn(length(scale_scores), xi=scale_scores, omega=0.5*tmp.omega, alpha=0.5*tmp.alpha)), round)
 	tmp.score[tmp.score < min.max[1]] <- min.max[1]
 	tmp.score[tmp.score > min.max[2]] <- min.max[2]
 	return(tmp.score)
