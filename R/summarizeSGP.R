@@ -136,7 +136,7 @@ function(sgp_object,
 		if (is.null(weight)) {
 			median(as.numeric(x), na.rm=TRUE)
 		} else {
-			weighted.median(as.numeric(x), w=weight, na.rm=TRUE)
+			weightedMedian(as.numeric(x), w=weight, na.rm=TRUE)
 		}
 	}
 	boot.median <- function(x,i) median(x[i], na.rm=TRUE)
