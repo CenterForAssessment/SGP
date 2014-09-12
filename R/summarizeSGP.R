@@ -118,20 +118,6 @@ function(sgp_object,
 		}
 	}
 
-	weighted.median <- function(x, probs=0.5, w, na.rm=TRUE) {
-		if (is.null(w)) return(as.numeric(quantile(x, probs, na.rm)))
-		q <- !is.na(x) & !is.na(w) & w!=0
-		if (length(x[q])==0) return(NA)
-		if (length(x[q]) < 2) return(as.numeric(quantile(x, probs, na.rm)))
-		if (!all(q)) {if (na.rm) {x<-x[q]; w<-w[q]} else stop("NA's")}
-		ord <- order(x)
-		z <- list(y=x[ord], w=w[ord])
-		z$x <- (cumsum(z$w) - z$w[1]) / (sum(z$w) - z$w[1]) # 0 to 1 inclusive
-		a <- approx(z$x, z$y, probs)$y
-		dec <- if (length(probs)>1) 2-log10(diff(range(probs))) else 2
-		return(a)
-	}
-
 	median_na <- function(x, weight) {
 		if (is.null(weight)) {
 			median(as.numeric(x), na.rm=TRUE)
