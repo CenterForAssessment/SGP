@@ -99,7 +99,15 @@ function(
 		tmp.messages <- c(tmp.messages, "\tTest of variable MOVE_UP_STAY_UP_STATUS: FAIL\n")
 	}
 
-	### TEST of SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1 varialbe for READING.2013_2014 scale score targets
+	### TEST of SCALE_SCORE_PRIOR variable
+
+	if (identical(sum(Demonstration_SGP@Data$SCALE_SCORE_PRIOR, na.rm=TRUE), 100865095)) {
+		tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_PRIOR: OK\n")
+	} else {
+		tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_PRIOR: FAIL\n")
+	}
+
+	### TEST of SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1 variable for READING.2013_2014 scale score targets
 
 	if (identical(as.integer(sum(Demonstration_SGP@SGP$SGProjections$READING.2013_2014.LAGGED.TARGET_SCALE_SCORES$SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1)), 18313900L)) {
 		tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1: OK\n")
