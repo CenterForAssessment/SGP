@@ -625,11 +625,15 @@ if (reports.by.school) {
 
 
 		## Top Legend
+		if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["sgPlot.use.student.school.name"]])) {
+			student_school_name <- sort(unique(tmp_student_data[[paste("SCHOOL_NAME", last.year, sep=".")]]))[1] # sort to get rid of potential NA values
+		} else student_school_name <- tmp_school_name
+
 		pushViewport(top.border.vp)
 		grid.rect(gp=gpar(fill=sgPlot.header.footer.color, col=sgPlot.header.footer.color))
 		grid.text(x=0.025, y=0.5, paste(FIRST_NAME, " ", LAST_NAME, sep=""),
 			gp=gpar(fontface="bold", fontfamily="Helvetica-Narrow", col="white", cex=1.65), just="left", default.units="native")
-		grid.text(x=0.975, y=0.5, tmp_school_name, gp=gpar(fontface="bold", fontfamily="Helvetica-Narrow", col="white", cex=1.65), just="right", default.units="native")
+		grid.text(x=0.975, y=0.5, student_school_name, gp=gpar(fontface="bold", fontfamily="Helvetica-Narrow", col="white", cex=1.65), just="right", default.units="native")
 		popViewport()
 
 		## Bottom Legend
@@ -1209,11 +1213,15 @@ if (reports.by.instructor) {
 			} ## END loop over content_areas
 	
 			## Top Legend
+			if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["sgPlot.use.student.school.name"]])) {
+				student_school_name <- sort(unique(tmp_student_data[[paste("SCHOOL_NAME", last.year, sep=".")]]))[1] # sort to get rid of potential NA values
+			} else student_school_name <- tmp_school_name
+
 			pushViewport(top.border.vp)
 			grid.rect(gp=gpar(fill=sgPlot.header.footer.color, col=sgPlot.header.footer.color))
 			grid.text(x=0.025, y=0.5, paste(FIRST_NAME, " ", LAST_NAME, sep="") , 
 				gp=gpar(fontface="bold", fontfamily="Helvetica-Narrow", col="white", cex=1.65), just="left", default.units="native")
-			grid.text(x=0.975, y=0.5, paste(tmp_school_name, ": ", FIRST_NAME_TEACHER, " ", LAST_NAME_TEACHER, sep=""), 
+			grid.text(x=0.975, y=0.5, paste(student_school_name, ": ", FIRST_NAME_TEACHER, " ", LAST_NAME_TEACHER, sep=""), 
 				gp=gpar(fontface="bold", fontfamily="Helvetica-Narrow", col="white", cex=1.65), just="right", default.units="native")
 			popViewport()
 	

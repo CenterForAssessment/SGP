@@ -232,7 +232,7 @@ function(
 			tmp.data <- getPreferredSGP(tmp.data, state, type="BASELINE")
 		}
 
-		variables.to.merge <- names(tmp.data) %w/o% c(key(slot.data), "SCALE_SCORE_PRIOR", "SCALE_SCORE_PRIOR_STANDARDIZED")
+		variables.to.merge <- names(tmp.data) %w/o% key(slot.data)
 		tmp.index <- slot.data[tmp.data[,key(slot.data), with=FALSE], which=TRUE]
 		slot.data[tmp.index, variables.to.merge := tmp.data[, variables.to.merge, with=FALSE], with=FALSE, nomatch=0]
 
