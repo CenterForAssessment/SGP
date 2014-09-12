@@ -626,7 +626,7 @@ if (reports.by.school) {
 
 		## Top Legend
 		if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["sgPlot.use.student.school.name"]])) {
-			student_school_name <- sort(unique(tmp_student_data[["SCHOOL_NAME"]]))[1] # sort to get rid of potential NA values
+			student_school_name <- sort(unique(tmp_student_data[[paste("SCHOOL_NAME", last.year, sep=".")]]))[1] # sort to get rid of potential NA values
 		} else student_school_name <- tmp_school_name
 
 		pushViewport(top.border.vp)
@@ -1214,7 +1214,7 @@ if (reports.by.instructor) {
 	
 			## Top Legend
 			if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["sgPlot.use.student.school.name"]])) {
-				student_school_name <- sort(unique(tmp_student_data[["SCHOOL_NAME"]]))[1] # sort to get rid of potential NA values
+				student_school_name <- sort(unique(tmp_student_data[[paste("SCHOOL_NAME", last.year, sep=".")]]))[1] # sort to get rid of potential NA values
 			} else student_school_name <- tmp_school_name
 
 			pushViewport(top.border.vp)
