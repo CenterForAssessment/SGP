@@ -28,6 +28,7 @@ function(sgp_object,
 		sgPlot.reports.by.instructor=FALSE,
 		sgPlot.students=NULL,
 		sgPlot.reports.by.student=FALSE,
+		sgPlot.reports.group.vars=list(DISTRICT_NUMBER="DISTRICT_NUMBER", SCHOOL_NUMBER="SCHOOL_NUMBER"),
 		sgPlot.header.footer.color="#4CB9CC",
 		sgPlot.front.page=NULL,
 		sgPlot.folder="Visualizations/studentGrowthPlots",
@@ -549,6 +550,22 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 	if (!"SCHOOL_NUMBER" %in% names(slot.data)) slot.data[,SCHOOL_NUMBER:=""]
 	if (!"DISTRICT_NAME" %in% names(slot.data)) slot.data[,DISTRICT_NAME:=""]
 	if (!"DISTRICT_NUMBER" %in% names(slot.data)) slot.data[,DISTRICT_NUMBER:=""]
+
+	####  Substitute alternate District and School Numbers if different than default provided in sgPlot.reports.group.vars
+
+	if (sgPlot.reports.group.vars[["DISTRICT_NUMBER"]] != "DISTRICT_NUMBER") {
+		if (!is.character(sgPlot.reports.group.vars[["DISTRICT_NUMBER"]])) {
+			stop("\nError: Components of 'sgPlot.reports.group.vars' argument must be character values specifying the name of alternate District or School Numbers to use.\n")
+		}
+		setnames(slot.data, c(sgPlot.reports.group.vars[["DISTRICT_NUMBER"]], "DISTRICT_NUMBER"), c("DISTRICT_NUMBER", "TMP_DNUM"))
+	}
+
+	if (sgPlot.reports.group.vars[["SCHOOL_NUMBER"]] != "SCHOOL_NUMBER") {
+		if (!is.character(sgPlot.reports.group.vars[["SCHOOL_NUMBER"]])) {
+			stop("\nError: Components of 'sgPlot.reports.group.vars' argument must be character values specifying the name of alternate District or School Numbers to use.\n")
+		}
+		setnames(slot.data, c(sgPlot.reports.group.vars[["SCHOOL_NUMBER"]], "SCHOOL_NUMBER"), c("SCHOOL_NUMBER", "TMP_SNUM"))
+	}
 
 	#### Set key on LONG data
 
