@@ -709,7 +709,7 @@ function(sgp_object,
 	###
 	###############################################
 
-	if ("RLI" %in% output.type) {
+	if (any(c("RLI", "RLI_UK") %in% output.type)) {
 
 		started.at <- proc.time()
 		message(paste("\tStarted RLI in outputSGP", date()))
