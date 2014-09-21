@@ -36,6 +36,8 @@ Authors@R: c(person(given=c("Damian", "W."), family="Betebenner", email="dbetebe
 		person(given="Xuewen", family="Sheng", role="ctb", comment="Kansas State Department of Education"),
 		person(given="Kathy", family="Flanagan", role="ctb", comment="Massachusetts Department of Elementary and Secondary Education"),
 		person(given="Robert", family="Lee", role="ctb", comment="Massachusetts Department of Elementary and Secondary Education"),
+		person(given="Ji", family="Zeng", role="ctb", comment="Michigan Department of Education"),
+		person(given="Steve", family="Viger", role="ctb", comment="Michigan Department of Education"),
 		person(given="Joe", family="DeCastra", role="ctb", comment="Mississippi Department of Education"),
 		person(given="Ken", family="Thompson", role="ctb", comment="Mississippi Department of Education"),
 		person(given="Soo Yeon", family="Cho", role="ctb", comment="Missouri Department of Education"),
