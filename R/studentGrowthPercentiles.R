@@ -718,6 +718,7 @@ function(panel.data,         ## REQUIRED
 		csem.tf <- FALSE
 	}
 
+	if(is.logical(calculate.simex)) if(!calculate.simex) calculate.simex <- NULL # check for calculate.simex=FALSE - same as calculate.simex=NULL
 	if (!is.null(calculate.simex)) {
 		simex.tf <- TRUE
 		if (!is.character(calculate.simex) & !is.list(calculate.simex)) {

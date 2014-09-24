@@ -457,6 +457,8 @@ if (reports.by.school) {
 		cat("\\end{document}", file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
 		####################################################################################################################################################
 
+		if (!custom.isr.tf) { # boiler plate student reports:
+
 		## Start pdf device
 		
 		if (length(content_areas) %in% c(1,2)) {
@@ -479,11 +481,6 @@ if (reports.by.school) {
 			stop("Individual Student Report Templates currently only available for situations with 1, 2, 3, 4 or 5 content areas.")
 		}
 
-		if (custom.isr.tf) {
-			report.width= custom.isr$report.width
-			report.height= custom.isr$report.height
-		}
-
 		pdf(file.path(path.to.pdfs, file_name), 
 			width=report.width, height=report.height, version="1.4", onefile=TRUE)
 
@@ -493,7 +490,6 @@ if (reports.by.school) {
 		###
 		########################################################################################################
 
-		if (!custom.isr.tf) { # boiler plate student reports:
 		if (length(content_areas)==1) {
 			report.vp <- viewport(layout = grid.layout(5, 4, widths = unit(c(2.5, 0.1, 8.3, 0.1), rep("inches", 4)), 
 				heights = unit(c(0.55, 0.2, 7, 0.25, 0.5), rep("inches", 5))))
@@ -626,7 +622,8 @@ if (reports.by.school) {
 
 		## Top Legend
 		if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["sgPlot.use.student.school.name"]])) {
-			student_school_name <- sort(unique(tmp_student_data[[paste("SCHOOL_NAME", last.year, sep=".")]]))[1] # sort to get rid of potential NA values
+			student_school_name <- sort(unique(as.character(tmp_grade_data[ID==n][[paste("SCHOOL_NAME", last.year, sep=".")]])))[1] # sort to get rid of potential NA values
+			if (is.na(student_school_name)) student_school_name <- tmp_school_name
 		} else student_school_name <- tmp_school_name
 
 		pushViewport(top.border.vp)
@@ -736,15 +733,12 @@ if (reports.by.school) {
 		### Custom Student reports
 		#############################
 		
-		# pdf(file.path(path.to.pdfs, file_name), 
-			# width=report.width, height=report.height, version="1.4", onefile=TRUE)
-# #
-		make.custom.isr <- as.function(custom.isr$Custom_ISR_Function$value)
-		environment(make.custom.isr) <- environment()
-		make.custom.isr()
-#
-		## Turn pdf device off
-		dev.off()
+			make.custom.isr <- as.function(custom.isr$Custom_ISR_Function$value)
+			environment(make.custom.isr) <- environment()
+	
+			## Turn pdf device ON and OFF within make.custom.isr
+			make.custom.isr()
+		
 		} # End Custom Student reports
 
 		## Code to LaTeX document attaching first page/adding meta-data
