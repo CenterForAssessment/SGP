@@ -15,7 +15,9 @@ function(sgp_object,
 	sgp.projections.lagged.baseline,
 	sgp.config.drop.nonsequential.grade.progression.variables,
 	sgp.minimum.default.panel.years,
-	sgp.projections.max.forward.progression.years) {
+	sgp.projections.max.forward.progression.years,
+	calculate.simex,
+	calculate.simex.baseline) {
 
 	YEAR <- CONTENT_AREA <- VALID_CASE <- NULL
 
@@ -184,6 +186,33 @@ function(sgp_object,
 					}
 				}
 
+				### Create sgp.calculate.simex (if requested) - else leave NULL
+				if (!is.null(calculate.simex) | !is.null(sgp.config[[a]][['sgp.calculate.simex']])) {
+					if (!is.null(sgp.config[[a]][['sgp.calculate.simex']])) {
+						if (is.logical(sgp.config[[a]][['sgp.calculate.simex']])) {
+							if (sgp.config[[a]][['sgp.calculate.simex']]) {
+								par.sgp.config[[b.iter[b]]][['sgp.calculate.simex']] <- list(
+									state=state, lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear", save.matrices=TRUE)
+							} else par.sgp.config[[b.iter[b]]][['sgp.calculate.simex']] <- NULL # FALSE - same as NULL
+						} else {
+							par.sgp.config[[b.iter[b]]][['sgp.calculate.simex']] <- sgp.config[[a]][['sgp.calculate.simex']]
+						}
+					} else par.sgp.config[[b.iter[b]]][['sgp.calculate.simex']] <- calculate.simex
+				}
+
+				### Create sgp.calculate.simex.baseline (if requested) - else leave NULL
+				if (!is.null(calculate.simex.baseline) | !is.null(sgp.config[[a]][['sgp.calculate.simex.baseline']])) {
+					if (!is.null(sgp.config[[a]][['sgp.calculate.simex.baseline']])) {
+						if (is.logical(sgp.config[[a]][['sgp.calculate.simex.baseline']])) {
+							if (sgp.config[[a]][['sgp.calculate.simex.baseline']]) {
+								par.sgp.config[[b.iter[b]]][['sgp.calculate.simex.baseline']] <- list(
+									state=state, lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear", save.matrices=TRUE)
+							} else par.sgp.config[[b.iter[b]]][['sgp.calculate.simex.baseline']] <- NULL # FALSE - same as NULL
+						} else {
+							par.sgp.config[[b.iter[b]]][['sgp.calculate.simex.baseline']] <- sgp.config[[a]][['sgp.calculate.simex.baseline']]
+						}
+					} else par.sgp.config[[b.iter[b]]][['sgp.calculate.simex.baseline']] <- calculate.simex.baseline
+				}
 
 				### Create baseline specific arguments
 				if (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline) {

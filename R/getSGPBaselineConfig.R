@@ -3,7 +3,8 @@ function(sgp_object,
 	content_areas,
 	grades, 
 	sgp.baseline.panel.years,
-	sgp.percentiles.baseline.max.order) {
+	sgp.percentiles.baseline.max.order,
+	calculate.simex.baseline=NULL) {
 
 	sgp.baseline.config <- tmp.sgp.baseline.config <- .content_areas <- .years <- .grades <- .sgp.grade.sequences <- list()
 
@@ -43,7 +44,8 @@ function(sgp_object,
 				sgp.baseline.content.areas=i, 
 				sgp.baseline.panel.years=.years,
 				sgp.baseline.grade.sequences=sgp.baseline.grade.sequences,
-				sgp.baseline.grade.sequences.lags=sgp.baseline.grade.sequences.lags)
+				sgp.baseline.grade.sequences.lags=sgp.baseline.grade.sequences.lags,
+				sgp.baseline.calculate.simex.baseline=calculate.simex.baseline)
 	}
 
 	for (a in seq_along(tmp.sgp.baseline.config)) {
@@ -55,6 +57,7 @@ function(sgp_object,
 			sgp.baseline.config[[b+(a-1)*tmp.length]][["sgp.baseline.grade.sequences.lags"]] <- unlist(tmp.sgp.baseline.config[[a]][["sgp.baseline.grade.sequences.lags"]][b])
 			sgp.baseline.config[[b+(a-1)*tmp.length]][["sgp.baseline.content.areas"]] <- 
 				rep(sgp.baseline.config[[b+(a-1)*tmp.length]][["sgp.baseline.content.areas"]], length(sgp.baseline.config[[b+(a-1)*tmp.length]][["sgp.baseline.grade.sequences"]]))
+			sgp.baseline.config[[b+(a-1)*tmp.length]][["sgp.baseline.calculate.simex.baseline"]] <- tmp.sgp.baseline.config[[a]][["sgp.baseline.calculate.simex.baseline"]]
 			if ("YEAR_WITHIN" %in% names(sgp_object@Data)) {
 				sgp.baseline.config[[b+(a-1)*tmp.length]][['sgp.baseline.panel.years.within']] <- rep("LAST_OBSERVATION", length(content_areas))
 			}
