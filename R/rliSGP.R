@@ -1,6 +1,7 @@
 `rliSGP` <-
-function(sgp_object, 
+function(sgp_object,
 	additional.data,
+	state=NULL,
 	testing.window, ### FALL, WINTER, SPRING, EARLY_SPRING, LATE_SPRING for UPDATE 
 	eow.or.update="UPDATE", ### UPDATE or EOW
 	update.save.shell.only=FALSE,
@@ -11,6 +12,13 @@ function(sgp_object,
 	message(paste("\nStarted rliSGP", date()), "\n")
 
 	YEAR <- GRADE <- NULL
+
+        if (is.null(state)) {
+                tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
+                state <- getStateAbbreviation(tmp.name, "abcSGP")
+        }
+
+	if (!state %in% c("RLI", "RLI_UK")) stop("\tNOTE: 'rliSGP' only works with states RLI or RLI_UK currently")
 
 	### Utility functions
 
@@ -62,7 +70,7 @@ function(sgp_object,
 			RLI_SGP_UPDATE_SHELL <- updateSGP(
 				what_sgp_object=sgp_object,
 				with_sgp_data_LONG=additional.data,
-				state="RLI",
+				state=state,
 				steps=c("prepareSGP", "analyzeSGP", "combineSGP", "outputSGP"),
 				save.intermediate.results=FALSE,
 				sgp.percentiles=FALSE,
@@ -89,7 +97,7 @@ function(sgp_object,
 			RLI_SGP_UPDATE_SHELL <- updateSGP(
 				what_sgp_object=sgp_object,
 				with_sgp_data_LONG=additional.data,
-				state="RLI",
+				state=state,
 				steps=c("prepareSGP", "analyzeSGP"),
 				save.intermediate.results=FALSE,
 				sgp.percentiles=FALSE,
@@ -110,7 +118,7 @@ function(sgp_object,
 			RLI_SGP_UPDATE_SHELL <- abcSGP(
 				RLI_SGP_UPDATE_SHELL,
 				steps=c("prepareSGP", "analyzeSGP", "combineSGP", "outputSGP"),
-				state="RLI",
+				state=state,
 				sgp.percentiles=FALSE,
 				sgp.projections=FALSE,
 				sgp.projections.lagged=FALSE,
@@ -145,7 +153,7 @@ function(sgp_object,
 			sgp_object <- updateSGP(
 				what_sgp_object=sgp_object,
 				with_sgp_data_LONG=additional.data,
-				state="RLI",
+				state=state,
 				steps=c("prepareSGP", "analyzeSGP", "combineSGP", "outputSGP"),
 				save.intermediate.results=FALSE,
 				sgp.percentiles=TRUE,
@@ -196,7 +204,7 @@ function(sgp_object,
 
 			if (update.save.shell.only) {
 				tmp.data <- rbind.fill(sgp_object@Data, additional.data.unique)
-				RLI_SGP_UPDATE_SHELL <- prepareSGP(subset(tmp.data, YEAR %in% tail(sort(unique(tmp.data$YEAR)), 6)), state="RLI", create.additional.variables=FALSE)
+				RLI_SGP_UPDATE_SHELL <- prepareSGP(subset(tmp.data, YEAR %in% tail(sort(unique(tmp.data$YEAR)), 6)), state=state, create.additional.variables=FALSE)
 				save(RLI_SGP_UPDATE_SHELL, file="RLI_SGP_UPDATE_SHELL.Rdata")
 			} else {
 				### STEP 1: Create EARLY_SPRING to LATE_SPRING coefficient matrices
@@ -204,7 +212,7 @@ function(sgp_object,
 				sgp_object.1 <- updateSGP(
 					what_sgp_object=sgp_object,
 					with_sgp_data_LONG=additional.data,
-					state="RLI",
+					state=state,
 					steps=c("prepareSGP", "analyzeSGP"),
 					save.intermediate.results=FALSE,
 					sgp.percentiles=TRUE,
@@ -235,7 +243,7 @@ function(sgp_object,
 				sgp_object.2 <- updateSGP(
 					what_sgp_object=sgp_object,
 					with_sgp_data_LONG=additional.data.unique,
-					state="RLI",
+					state=state,
 					steps=c("prepareSGP", "analyzeSGP", "combineSGP", "outputSGP"),
 					save.intermediate.results=FALSE,
 					sgp.percentiles=TRUE,
@@ -259,7 +267,7 @@ function(sgp_object,
 
 				tmp.years <- sort(unique(sgp_object.2@Data$YEAR)); tmp.indices <- sapply(strsplit(tmp.years, "[.]"), '[', 2)
 				years.to.keep <- tmp.years[sort(c(tail(which(tmp.indices==1), 2), tail(which(tmp.indices==2), 1), tail(which(tmp.indices==3), 2)))]
-				RLI_SGP_UPDATE_SHELL <- prepareSGP(subset(sgp_object.2@Data, YEAR %in% years.to.keep), state="RLI", create.additional.variables=FALSE)
+				RLI_SGP_UPDATE_SHELL <- prepareSGP(subset(sgp_object.2@Data, YEAR %in% years.to.keep), state=state, create.additional.variables=FALSE)
 				save(RLI_SGP_UPDATE_SHELL, file="RLI_SGP_UPDATE_SHELL.Rdata")
 
 

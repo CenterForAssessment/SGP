@@ -9,6 +9,7 @@ rliSGP is a wrapper function design to expediate SGP analyses on Renaissance Lea
 rliSGP(
 	sgp_object,
         additional.data,
+	state=NULL,
         testing.window,
         eow.or.update="UPDATE",
 	update.save.shell.only=FALSE,
@@ -20,6 +21,8 @@ rliSGP(
   \item{sgp_object}{The SGP object from which the goodness-of-fit data will be used. 
   }
   \item{additional.data}{Current window's data for UPDATE or EOW (end of window) processing. 
+  }
+  \item{state}{Abbreviation for STATE/ORGANIZATION being analyzed. Currently only available for 'RLI' or 'RLI_UK'.
   }
   \item{testing.window}{Argument indicating testing window being analyzed. Either 'FALL', 'WINTER', 'SPRING', 'EARLY_SPRING', 'LATE_SPRING' indicating what testing window's data is being analyzed.
   }
