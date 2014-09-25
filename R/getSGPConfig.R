@@ -205,8 +205,8 @@ function(sgp_object,
 					if (!is.null(sgp.config[[a]][['sgp.calculate.simex.baseline']])) {
 						if (is.logical(sgp.config[[a]][['sgp.calculate.simex.baseline']])) {
 							if (sgp.config[[a]][['sgp.calculate.simex.baseline']]) {
-								par.sgp.config[[b.iter[b]]][['sgp.calculate.simex.baseline']] <- list(
-									state=state, lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear", save.matrices=TRUE)
+								par.sgp.config[[b.iter[b]]][['sgp.calculate.simex.baseline']] <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=50,
+									simex.sample.size=25000, extrapolation="linear", save.matrices=TRUE, simex.use.my.coefficient.matrices = TRUE)
 							} else par.sgp.config[[b.iter[b]]][['sgp.calculate.simex.baseline']] <- NULL # FALSE - same as NULL
 						} else {
 							par.sgp.config[[b.iter[b]]][['sgp.calculate.simex.baseline']] <- sgp.config[[a]][['sgp.calculate.simex.baseline']]
