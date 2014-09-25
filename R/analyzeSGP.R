@@ -548,7 +548,7 @@ function(sgp_object,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
-						calculate.simex=calculate.simex,
+						calculate.simex=sgp.iter[["sgp.calculate.simex"]],
 						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 						...))
 					}
@@ -584,7 +584,7 @@ function(sgp_object,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
-						calculate.simex=calculate.simex,
+						calculate.simex=sgp.iter[["sgp.calculate.simex"]],
 						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 						...))
 
@@ -625,7 +625,7 @@ function(sgp_object,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
-						calculate.simex=calculate.simex,
+						calculate.simex=sgp.iter[["sgp.calculate.simex"]],
 						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 
@@ -681,7 +681,7 @@ function(sgp_object,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
-						calculate.simex=calculate.simex.baseline,
+						calculate.simex=sgp.iter[["calculate.simex.baseline"]],
 						...))
 				}
 				tmp_sgp_object <- mergeSGP(tmp_sgp_object, tmp)
@@ -716,7 +716,7 @@ function(sgp_object,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
-						calculate.simex=calculate.simex.baseline,
+						calculate.simex=sgp.iter[["calculate.simex.baseline"]],
 						...))
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -756,7 +756,7 @@ function(sgp_object,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
-						calculate.simex=calculate.simex.baseline,
+						calculate.simex=sgp.iter[["calculate.simex.baseline"]],
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -1318,7 +1318,7 @@ function(sgp_object,
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
 						parallel.config=lower.level.parallel.config,
-						calculate.simex=calculate.simex,
+						calculate.simex=sgp.iter[["sgp.calculate.simex"]],
 						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 						...)
 				} else {
@@ -1365,7 +1365,7 @@ function(sgp_object,
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
 						parallel.config=lower.level.parallel.config,
-						calculate.simex=calculate.simex.baseline,
+						calculate.simex=sgp.iter[["calculate.simex.baseline"]],
 						...)
 				} else {
 					message(paste("\n\t\tNOTE: No student records &/or no prior data for baseline student growth percentiles:", tail(sgp.iter[["sgp.panel.years"]], 1), 
