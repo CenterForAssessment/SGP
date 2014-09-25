@@ -39,6 +39,7 @@ visualizeSGP(
            sgPlot.reports.by.instructor=FALSE,
            sgPlot.students=NULL,
            sgPlot.reports.by.student=FALSE,
+           sgPlot.reports.group.vars=list(DISTRICT_NUMBER="DISTRICT_NUMBER", SCHOOL_NUMBER="SCHOOL_NUMBER"),
            sgPlot.header.footer.color="#4CB9CC",
            sgPlot.front.page=NULL,
            sgPlot.folder="Visualizations/studentGrowthPlots",
@@ -144,6 +145,8 @@ provided the function produces \code{\link{studentGrowthPlot}}s for ALL students
   }
   \item{sgPlot.students}{A vector of student \code{ID}s indicating which students to produce \code{\link{studentGrowthPlot}}s for. If missing the function will 
   use \emph{all} available students in the data to produce \code{\link{studentGrowthPlot}}s. 
+  }
+  \item{sgPlot.reports.group.vars}{A list of variables used to group student reports. Default is \code{list(DISTRICT_NUMBER='DISTRICT_NUMBER', SCHOOL_NUMBER='SCHOOL_NUMBER')}
   }
   \item{sgPlot.reports.by.student}{A Boolean variable indicating whether the reports should be collated as single reports in a single folder or deposited into a 
   \code{district/school/grade folder} hierarchy. The default is FALSE which puts the reports into their appropriate \code{district/school/grade} slot. 
