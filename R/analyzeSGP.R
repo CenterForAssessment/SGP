@@ -127,9 +127,20 @@ function(sgp_object,
 		sgp.projections <- sgp.projections.lagged <- sgp.projections.baseline <- sgp.projections.lagged.baseline <- FALSE
 	}
 	
-	if (all(c("PERCENTILES", "TAUS") %in% names(parallel.config[['WORKERS']]))) stop("Both TAUS and PERCENTILES can not be executed in Parallel at the same time.")
-	if (all(c("PERCENTILES", "SIMEX") %in% names(parallel.config[['WORKERS']]))) stop("Both SIMEX and PERCENTILES can not be executed in Parallel at the same time.")
+	if (all(c("PERCENTILES", "TAUS") %in% names(parallel.config[['WORKERS']]))) {
+		if (as.numeric(parallel.config[['WORKERS']][['PERCENTILES']])!=1) stop("Both TAUS and PERCENTILES can not be executed in Parallel at the same time.")
+	}
+	if (all(c("PERCENTILES", "SIMEX") %in% names(parallel.config[['WORKERS']]))) {
+		if (as.numeric(parallel.config[['WORKERS']][['PERCENTILES']])!=1) stop("Both SIMEX and PERCENTILES can not be executed in Parallel at the same time.")
+	}
 	
+	if (all(c("BASELINE_PERCENTILES", "TAUS") %in% names(parallel.config[['WORKERS']]))) {
+		if (as.numeric(parallel.config[['WORKERS']][['BASELINE_PERCENTILES']])!=1) stop("Both TAUS and BASELINE_PERCENTILES can not be executed in Parallel at the same time.")
+	}
+	if (all(c("BASELINE_PERCENTILES", "SIMEX") %in% names(parallel.config[['WORKERS']]))) {
+		if (as.numeric(parallel.config[['WORKERS']][['BASELINE_PERCENTILES']])!=1) stop("Both SIMEX and BASELINE_PERCENTILES can not be executed in Parallel at the same time.")
+	}
+
 	if (any(c("SIMEX", "TAUS") %in% names(parallel.config[['WORKERS']]))) {
 		lower.level.parallel.config <- parallel.config
 		parallel.config <- NULL
@@ -627,6 +638,7 @@ function(sgp_object,
 						print.other.gp=print.other.gp,
 						calculate.simex=sgp.iter[["sgp.calculate.simex"]],
 						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
+						parallel.config=par.start$Lower_Level_Parallel,
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -757,6 +769,7 @@ function(sgp_object,
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
 						calculate.simex=sgp.iter[["sgp.calculate.simex.baseline"]],
+						parallel.config=par.start$Lower_Level_Parallel,
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
