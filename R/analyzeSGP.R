@@ -368,7 +368,7 @@ function(sgp_object,
 		if (!all(find.matrices <- paste(tmp.subjects, ".BASELINE.SIMEX", sep="") %in% names(tmp_sgp_object[["Coefficient_Matrices"]]))) {
 
 			if (is.null(sgp.baseline.config)) {
-				sgp.baseline.config <- getSGPBaselineConfig(sgp_object, content_areas = tmp.subjects, grades, sgp.baseline.panel.years, sgp.percentiles.baseline.max.order)
+				sgp.baseline.config <- getSGPBaselineConfig(sgp_object, content_areas = tmp.subjects, grades, sgp.baseline.panel.years, sgp.percentiles.baseline.max.order, calculate.simex.baseline)
 			} else {
 				sgp.baseline.config <- checkConfig(sgp.baseline.config, "Baseline")
 			}
@@ -472,7 +472,7 @@ function(sgp_object,
 	setkeyv(sgp_object@Data, getKey(sgp_object))
 	par.sgp.config <- getSGPConfig(sgp_object, state, tmp_sgp_object, content_areas, years, grades, sgp.config, trim.sgp.config, sgp.percentiles, sgp.projections, sgp.projections.lagged,
 		sgp.percentiles.baseline, sgp.projections.baseline, sgp.projections.lagged.baseline, sgp.config.drop.nonsequential.grade.progression.variables, sgp.minimum.default.panel.years,
-		sgp.projections.max.forward.progression.years)
+		sgp.projections.max.forward.progression.years, calculate.simex, calculate.simex.baseline)
 
 	if (sgp.projections & length(par.sgp.config[['sgp.projections']])==0) {
 		message("\tNOTE: No configurations are present for cohort referenced projections. No cohort referenced projections will be calculated.")
@@ -548,7 +548,7 @@ function(sgp_object,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
-						calculate.simex=calculate.simex,
+						calculate.simex=sgp.iter[["sgp.calculate.simex"]],
 						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 						...))
 					}
@@ -584,7 +584,7 @@ function(sgp_object,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
-						calculate.simex=calculate.simex,
+						calculate.simex=sgp.iter[["sgp.calculate.simex"]],
 						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 						...))
 
@@ -625,7 +625,7 @@ function(sgp_object,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
-						calculate.simex=calculate.simex,
+						calculate.simex=sgp.iter[["sgp.calculate.simex"]],
 						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 
@@ -681,7 +681,7 @@ function(sgp_object,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
-						calculate.simex=calculate.simex.baseline,
+						calculate.simex=sgp.iter[["sgp.calculate.simex.baseline"]],
 						...))
 				}
 				tmp_sgp_object <- mergeSGP(tmp_sgp_object, tmp)
@@ -716,7 +716,7 @@ function(sgp_object,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
-						calculate.simex=calculate.simex.baseline,
+						calculate.simex=sgp.iter[["sgp.calculate.simex.baseline"]],
 						...))
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -756,7 +756,7 @@ function(sgp_object,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
-						calculate.simex=calculate.simex.baseline,
+						calculate.simex=sgp.iter[["sgp.calculate.simex.baseline"]],
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -1318,7 +1318,7 @@ function(sgp_object,
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
 						parallel.config=lower.level.parallel.config,
-						calculate.simex=calculate.simex,
+						calculate.simex=sgp.iter[["sgp.calculate.simex"]],
 						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 						...)
 				} else {
@@ -1365,7 +1365,7 @@ function(sgp_object,
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
 						parallel.config=lower.level.parallel.config,
-						calculate.simex=calculate.simex.baseline,
+						calculate.simex=sgp.iter[["sgp.calculate.simex.baseline"]],
 						...)
 				} else {
 					message(paste("\n\t\tNOTE: No student records &/or no prior data for baseline student growth percentiles:", tail(sgp.iter[["sgp.panel.years"]], 1), 
