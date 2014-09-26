@@ -127,21 +127,26 @@ function(sgp_object,
 		sgp.projections <- sgp.projections.lagged <- sgp.projections.baseline <- sgp.projections.lagged.baseline <- FALSE
 	}
 	
+	lower.level.parallel.config <- TRUE
 	if (all(c("PERCENTILES", "TAUS") %in% names(parallel.config[['WORKERS']]))) {
+		lower.level.parallel.config <- FALSE
 		if (as.numeric(parallel.config[['WORKERS']][['PERCENTILES']])!=1) stop("Both TAUS and PERCENTILES can not be executed in Parallel at the same time.")
 	}
 	if (all(c("PERCENTILES", "SIMEX") %in% names(parallel.config[['WORKERS']]))) {
+		lower.level.parallel.config <- FALSE
 		if (as.numeric(parallel.config[['WORKERS']][['PERCENTILES']])!=1) stop("Both SIMEX and PERCENTILES can not be executed in Parallel at the same time.")
 	}
 	
 	if (all(c("BASELINE_PERCENTILES", "TAUS") %in% names(parallel.config[['WORKERS']]))) {
+		lower.level.parallel.config <- FALSE
 		if (as.numeric(parallel.config[['WORKERS']][['BASELINE_PERCENTILES']])!=1) stop("Both TAUS and BASELINE_PERCENTILES can not be executed in Parallel at the same time.")
 	}
 	if (all(c("BASELINE_PERCENTILES", "SIMEX") %in% names(parallel.config[['WORKERS']]))) {
+		lower.level.parallel.config <- FALSE
 		if (as.numeric(parallel.config[['WORKERS']][['BASELINE_PERCENTILES']])!=1) stop("Both SIMEX and BASELINE_PERCENTILES can not be executed in Parallel at the same time.")
 	}
 
-	if (any(c("SIMEX", "TAUS") %in% names(parallel.config[['WORKERS']]))) {
+	if (any(c("SIMEX", "TAUS") %in% names(parallel.config[['WORKERS']])) & lower.level.parallel.config) {
 		lower.level.parallel.config <- parallel.config
 		parallel.config <- NULL
 	} else lower.level.parallel.config <- NULL
