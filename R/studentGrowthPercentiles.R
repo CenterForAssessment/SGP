@@ -441,6 +441,7 @@ function(panel.data,         ## REQUIRED
 						##  nested foreach loops around Lambda, B and even the priors/orders if we have access to enough cores (cluster)
 						message("\t\tNOTE: FOREACH backend in not currently available for SIMEX.  Changing to BACKEND='PARALLEL' and TYPE will be set to OS default.")
 						parallel.config[["BACKEND"]] <- "PARALLEL"
+						if (.Platform$OS.type != "unix") parallel.config[['TYPE']] <- 'SOCK' else parallel.config[['TYPE']] <- NULL
 					} 
 				
 					par.start <- startParallel(parallel.config, 'SIMEX')
