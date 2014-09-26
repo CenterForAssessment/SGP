@@ -170,6 +170,7 @@ function(panel.data,         ## REQUIRED
 			par.start <- startParallel(parallel.config, 'TAUS', qr.taus=taus) #  Need new argument here - default to missing
 	
 			if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
+				tmp.data <<- tmp.data
 				tmp.mtx <- foreach(j = iter(par.start$TAUS.LIST), .combine = "cbind", .packages="quantreg", .inorder=TRUE, 
 					.options.mpi=par.start$foreach.options, .options.multicore=par.start$foreach.options) %dopar% {
 					eval(parse(text=paste("rq(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=j, data=tmp.data, method=rq.method)[['coefficients']]", sep="")))
