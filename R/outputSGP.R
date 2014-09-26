@@ -24,7 +24,7 @@ function(sgp_object,
 	### Define varaibles (to prevent R CMD check warnings)
 
 	SCALE_SCORE <- CONTENT_AREA <- YEAR <- GRADE <- ID <- ETHNICITY <- GENDER <- LAST_NAME <- FIRST_NAME <- VALID_CASE <- DISTRICT_NUMBER <- SCHOOL_NUMBER <- YEAR_BY_CONTENT_AREA <- NULL
-	names.type <- names.provided <- names.output <- names.sgp <- STATE_ENROLLMENT_STATUS <- EMH_LEVEL <- STATE_ASSIGNED_ID <- .N <- TRANSFORMED_SCALE_SCORE <- GROUP <- STATE <- NULL
+	names.type <- names.provided <- names.output <- names.sgp <- STATE_ENROLLMENT_STATUS <- EMH_LEVEL <- STATE_ASSIGNED_ID <- .N <- TRANSFORMED_SCALE_SCORE <- GROUP <- STATE <- YEAR_WITHIN <- NULL
 
 	### Create state (if missing) from sgp_object (if possible)
 
@@ -32,6 +32,12 @@ function(sgp_object,
                 tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
                 state <- getStateAbbreviation(tmp.name, "outputSGP")
         }
+
+	### If sgp_object is a data.frame or data.table, embed in an SGP object
+
+	if ("data.frame" %in% class(sgp_object)) {
+		sgp_object <- suppressMessages(prepareSGP(sgp_object, state=state, create.additional.variables=FALSE))
+	}
 
 	### Create relevant variables
 
@@ -183,8 +189,12 @@ function(sgp_object,
 		message(paste("\tStarted WIDE data production in outputSGP", date()))
 
 		long_data_tmp <- copy(sgp_object@Data)
-		setkeyv(long_data_tmp, c("VALID_CASE", "YEAR", "CONTENT_AREA", "ID"))
-		suppressMessages(invisible(long_data_tmp[,YEAR_BY_CONTENT_AREA := paste(YEAR, CONTENT_AREA, sep=".")]))
+		setkeyv(long_data_tmp, getKey(long_data_tmp))
+		if ('YEAR_WITHIN' %in% names(long_data_tmp)) {
+			long_data_tmp[,YEAR_BY_CONTENT_AREA := paste(YEAR, CONTENT_AREA, YEAR_WITHIN, sep=".")]
+		} else {
+			long_data_tmp[,YEAR_BY_CONTENT_AREA := paste(YEAR, CONTENT_AREA, sep=".")]
+		}
 		assign(paste(tmp.state, "SGP_WIDE_Data", sep="_"), reshape(long_data_tmp["VALID_CASE"], idvar="ID", 
 			timevar="YEAR_BY_CONTENT_AREA", drop=c("VALID_CASE", "CONTENT_AREA", "YEAR"), direction="wide"))
 		eval(parse(text=paste("setkey(", tmp.state, "_SGP_WIDE_Data, ID)", sep="")))
