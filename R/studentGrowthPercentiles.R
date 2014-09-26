@@ -1296,7 +1296,7 @@ function(panel.data,         ## REQUIRED
 				tmp.gof.data <- getAchievementLevel(
 							sgp_data=data.table(
 								SCALE_SCORE=quantile.data[['SCALE_SCORE_PRIOR']],
-								quantile.data[, sgps.for.gof, with=FALSE],
+								quantile.data[, c(sgps.for.gof, norm.var.name), with=FALSE],
 								VALID_CASE="VALID_CASE",
 								CONTENT_AREA=rev(content_area.progression)[2],
 								YEAR=rev(year.progression.for.norm.group)[2], 
