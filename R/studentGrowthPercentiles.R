@@ -801,7 +801,7 @@ function(panel.data,         ## REQUIRED
 
 	tmp.objects <- c("Coefficient_Matrices", "Cutscores", "Goodness_of_Fit", "Knots_Boundaries", "Panel_Data", "SGPercentiles", "SGProjections", "Simulated_SGPs") 
 	Coefficient_Matrices <- Cutscores <- Goodness_of_Fit <- Knots_Boundaries <- Panel_Data <- SGPercentiles <- SGProjections <- Simulated_SGPs <- SGP_STANDARD_ERROR <- Verbose_Messages <- NULL
-	SGP_SIMEX <- SGP_NORM_GROUP_SCALE_SCORES <- NULL
+	SGP_SIMEX <- SGP_NORM_GROUP_SCALE_SCORES <- SGP_NORM_GROUP <- NULL
 
 	if (identical(class(panel.data), "list")) {
 		for (i in tmp.objects) {
@@ -1258,22 +1258,20 @@ function(panel.data,         ## REQUIRED
 				norm.groups <- sapply(seq_along(year.progression.for.norm.group)[-1][1:(num.panels-1)], 
 				function(x) paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression, sep="_"), sep="/"), x), collapse="; "))
 			}
-			norm.var.name <- paste(c("SGP_NORM_GROUP", sgp.labels[['my.extra.label']]), collapse="_")
-			sgp.order.name <- paste(c("SGP", sgp.labels[['my.extra.label']], "ORDER"), collapse="_")
 			if (!print.sgp.order) { # Return only SGP_NORM_GROUP
 				if (exact.grade.progression.sequence) {
-					quantile.data[, norm.var.name:=factor(factor(ORDER, labels=norm.groups)), with=FALSE]
+					quantile.data[, SGP_NORM_GROUP:=factor(factor(ORDER, labels=norm.groups))]
 				} else {
-					quantile.data[, norm.var.name:=factor(factor(ORDER, levels=seq_along(norm.groups), labels=norm.groups)), with=FALSE]
+					quantile.data[, SGP_NORM_GROUP:=factor(factor(ORDER, levels=seq_along(norm.groups), labels=norm.groups))]
 				}
 				quantile.data[, ORDER:=NULL]
 			} else {  # Return both ORDER and SGP_NORM_GROUP
 				if (exact.grade.progression.sequence) {
-					quantile.data[, norm.var.name:=factor(factor(ORDER, labels=norm.groups)), with=FALSE]
+					quantile.data[, SGP_NORM_GROUP:=factor(factor(ORDER, labels=norm.groups))]
 				} else {
-					quantile.data[, norm.var.name:=factor(factor(ORDER, levels=seq_along(norm.groups), labels=norm.groups)), with=FALSE]
+					quantile.data[, SGP_NORM_GROUP:=factor(factor(ORDER, levels=seq_along(norm.groups), labels=norm.groups))]
 				}
-				setnames(quantile.data, "ORDER", sgp.order.name)
+				setnames(quantile.data, "ORDER", "SGP_ORDER")
 			}
 		}
 
@@ -1296,7 +1294,7 @@ function(panel.data,         ## REQUIRED
 				tmp.gof.data <- getAchievementLevel(
 							sgp_data=data.table(
 								SCALE_SCORE=quantile.data[['SCALE_SCORE_PRIOR']],
-								quantile.data[, c(sgps.for.gof, norm.var.name), with=FALSE],
+								quantile.data[, c(sgps.for.gof, "SGP_NORM_GROUP"), with=FALSE],
 								VALID_CASE="VALID_CASE",
 								CONTENT_AREA=rev(content_area.progression)[2],
 								YEAR=rev(year.progression.for.norm.group)[2], 
@@ -1358,7 +1356,12 @@ function(panel.data,         ## REQUIRED
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, "SGP", "SGP_BASELINE")
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & tf.growth.levels) setnames(quantile.data, "SGP_LEVEL", "SGP_LEVEL_BASELINE")
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & "SGP_STANDARD_ERROR" %in% names(quantile.data)) setnames(quantile.data, "SGP_STANDARD_ERROR", "SGP_BASELINE_STANDARD_ERROR")
-		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & !is.null(return.norm.group.scale.scores)) setnames(quantile.data, "SGP_NORM_GROUP_SCALE_SCORES", "SGP_NORM_GROUP_BASELINE_SCALE_SCORES")
+		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & identical(return.norm.group.scale.scores, TRUE)) {
+			setnames(quantile.data, "SGP_NORM_GROUP_SCALE_SCORES", "SGP_NORM_GROUP_BASELINE_SCALE_SCORES")
+		}
+		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & identical(return.norm.group.identifier, TRUE)) {
+			setnames(quantile.data, "SGP_NORM_GROUP", "SGP_NORM_GROUP_BASELINE")
+		}
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & print.other.gp) {
 			my.tmp.names <- grep("SGP_ORDER", names(quantile.data), value=TRUE)
 			setnames(quantile.data, my.tmp.names, gsub("SGP_ORDER", "SGP_BASELINE_ORDER", my.tmp.names))
@@ -1369,6 +1372,8 @@ function(panel.data,         ## REQUIRED
 			quantile.data <- data.table(panel.data[["Panel_Data"]][,c("ID", names(additional.vnames.to.return))], key="ID")[quantile.data]
 			setnames(quantile.data, names(additional.vnames.to.return), unlist(additional.vnames.to.return))
 		}
+
+		if (identical(print.sgp.order, TRUE)) setnames(quantile.data, "SGP_ORDER", "SGP_BASELINE_ORDER")
 
 		if (!return.prior.scale.score) {
 			quantile.data[,SCALE_SCORE_PRIOR:=NULL]
