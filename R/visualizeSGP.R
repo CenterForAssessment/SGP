@@ -411,7 +411,7 @@ if ("studentGrowthPlot" %in% plot.types) {
 			}
 		} 
 		if (identical(sgPlot.sgp.targets, FALSE)) {
-			if (!is.null(SGPstateData[[state]][['SGP_Configuration']][['sgPlot.sgp.targets']])) {
+			if (length(grep("TARGET_SCALE_SCORES", names(sgp_object@SGP$SGProjections))) > 0 && !is.null(SGPstateData[[state]][['SGP_Configuration']][['sgPlot.sgp.targets']])) {
 				sgPlot.sgp.targets <- SGPstateData[[state]][['SGP_Configuration']][['sgPlot.sgp.targets']]
 			} else {
 				sgPlot.sgp.targets <- NULL
@@ -881,7 +881,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 				for (i in tmp.proj.cut_score.names.lagged) {
 					tmp.list[[i]] <- data.table(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1], sgp_object@SGP[["SGProjections"]][[i]], key=c("ID", "CONTENT_AREA"))
 				}
-				sgPlot.data <- data.table(rbind.fill(tmp.list), key=c("ID", "CONTENT_AREA"))[sgPlot.data, nomatch=0]
+				sgPlot.data <- data.table(rbind.fill(tmp.list), key=c("ID", "CONTENT_AREA"))[sgPlot.data]
 			} ### END if ("sgp.projections.lagged" %in% sgPlot.sgp.targets)
 		
 			### Transform scale scores
