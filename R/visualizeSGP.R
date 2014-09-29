@@ -322,7 +322,7 @@ if ("studentGrowthPlot" %in% plot.types) {
 
 	get.next.content_area <- function(grade, content_area, increment) {
 		if (!is.null(tmp.domain <- SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]][[content_area]]) & increment != 0) {
-			if (is.na(as.numeric(grade))) {
+			if (!is.numeric(type.convert(grade))) {
 				tmp.index <- which(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tmp.domain]] == content_area)
 			} else tmp.index <- which(SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[tmp.domain]] == grade)
 			return(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tmp.domain]][tmp.index + increment])
