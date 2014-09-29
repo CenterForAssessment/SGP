@@ -150,7 +150,8 @@ function(data,
 			if (any(duplicated(data@Data["VALID_CASE"]))) {
 				message(paste("\tWARNING: @Data keyed by", paste(tmp.key, collapse=", "), "has duplicate cases. Subsequent merges will likely be corrupt."))
 				message("\tNOTE: Duplicate cases are available in current workspace as 'DUPLICATED_CASES' and saved as 'DUPLICATED_CASES.Rdata'.")
-				DUPLICATED_CASES <- data@Data["VALID_CASE"][duplicated(data@Data["VALID_CASE"])][,tmp.key, with=FALSE]
+				assign("DUPLICATED_CASES", 
+					data@Data["VALID_CASE"][unique(data@Data["VALID_CASE"][duplicated(data@Data["VALID_CASE"]), c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE])])
 				save(DUPLICATED_CASES, file="DUPLICATED_CASES.Rdata")
 			}
 		}
@@ -199,6 +200,7 @@ function(data,
 			message(paste("\tWARNING: Data keyed by", paste(tmp.key, collapse=", "), "has duplicate cases. Subsequent merges will be corrupted."))
 			message("\tNOTE: Duplicate cases are available in current workspace as 'DUPLICATED_CASES' and saved as 'DUPLICATED_CASES.Rdata'.")
 			assign("DUPLICATED_CASES", data["VALID_CASE"][duplicated(data["VALID_CASE"])][,tmp.key, with=FALSE])
+			assign("DUPLICATED_CASES", data["VALID_CASE"][unique(data["VALID_CASE"][duplicated(data["VALID_CASE"]), c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE])])
 			save(DUPLICATED_CASES, file="DUPLICATED_CASES.Rdata")
 		}
 

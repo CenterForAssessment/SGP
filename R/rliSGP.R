@@ -146,6 +146,8 @@ function(sgp_object,
 
 	if (eow.or.update=="EOW") {
 
+		update.shell.name <- paste(state, "SGP_UPDATE_SHELL", sep="_")
+
 		### FALL/WINTER
 
 		if (testing.window %in% c("FALL", "WINTER")) {
@@ -174,8 +176,8 @@ function(sgp_object,
 
 			### Create and save new UPDATE_SHELL
 
-			RLI_SGP_UPDATE_SHELL <- prepareSGP(subset(sgp_object@Data, YEAR %in% tail(sort(unique(sgp_object@Data$YEAR)), 7)), create.additional.variables=FALSE)
-			save(RLI_SGP_UPDATE_SHELL, file="RLI_SGP_UPDATE_SHELL.Rdata")
+			assign(update.shell.name, prepareSGP(subset(sgp_object@Data, YEAR %in% tail(sort(unique(sgp_object@Data$YEAR)), 7)), create.additional.variables=FALSE))
+			save(list=update.shell.name, file=paste(update.shell.name, "Rdata", sep="."))
 
 
 			### Convert and save coefficient matrices
@@ -204,8 +206,8 @@ function(sgp_object,
 
 			if (update.save.shell.only) {
 				tmp.data <- rbind.fill(sgp_object@Data, additional.data.unique)
-				RLI_SGP_UPDATE_SHELL <- prepareSGP(subset(tmp.data, YEAR %in% tail(sort(unique(tmp.data$YEAR)), 6)), state=state, create.additional.variables=FALSE)
-				save(RLI_SGP_UPDATE_SHELL, file="RLI_SGP_UPDATE_SHELL.Rdata")
+				assign(update.shell.name, prepareSGP(subset(tmp.data, YEAR %in% tail(sort(unique(tmp.data$YEAR)), 6)), state=state, create.additional.variables=FALSE))
+				save(list=update.shell.name, file=paste(update.shell.name, "Rdata", sep="."))
 			} else {
 				### STEP 1: Create EARLY_SPRING to LATE_SPRING coefficient matrices
 
@@ -267,8 +269,8 @@ function(sgp_object,
 
 				tmp.years <- sort(unique(sgp_object.2@Data$YEAR)); tmp.indices <- sapply(strsplit(tmp.years, "[.]"), '[', 2)
 				years.to.keep <- tmp.years[sort(c(tail(which(tmp.indices==1), 2), tail(which(tmp.indices==2), 1), tail(which(tmp.indices==3), 2)))]
-				RLI_SGP_UPDATE_SHELL <- prepareSGP(subset(sgp_object.2@Data, YEAR %in% years.to.keep), state=state, create.additional.variables=FALSE)
-				save(RLI_SGP_UPDATE_SHELL, file="RLI_SGP_UPDATE_SHELL.Rdata")
+				assign(update.shell.name, prepareSGP(subset(sgp_object.2@Data, YEAR %in% years.to.keep), state=state, create.additional.variables=FALSE))
+				save(list=update.shell.name, file=paste(update.shell.name, "Rdata", sep="."))
 
 
 				### Convert and save coefficient matrices
