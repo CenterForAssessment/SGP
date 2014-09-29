@@ -644,35 +644,27 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			sgPlot.anonymize <- TRUE
 			tmp.ids <- list()
 			setkeyv(slot.data, c("VALID_CASE", "YEAR", "GRADE", "CONTENT_AREA_LABELS"))
-			if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported_Domains"]])) {
-				tmp.subjects <- names(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]])
-				tmp.eoct.subjects <- names(unlist(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]]))[
-					unlist(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]])=='EOCT']
-				tmp.gradelevel.subjects <- tmp.subjects[!tmp.subjects %in% tmp.eoct.subjects]
-				tmp.grades <- as.numeric(unique(unlist(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported_Domains"]])))
-				tmp.grades <- my.grades <- tmp.grades[!is.na(tmp.grades)]
-				my.subjects <- NULL; k <- 1
-				while(length(tmp.grades) > 0) {
-					my.subjects <- c(my.subjects, rep(tmp.gradelevel.subjects[k], length(tmp.grades[tmp.grades %in% 
-						SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[tmp.gradelevel.subjects[k]]]])))
-					tmp.grades <- tmp.grades[!tmp.grades %in% SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[tmp.gradelevel.subjects[k]]]]
-					k <- k+1 
+                        if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]])) {
+                                tmp.data.table <- list()
+                                for (i in names(grep("MATHEMATICS", unlist(SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]]), value=TRUE))) {
+					if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[i]])) {
+	                                        tmp.grades.reported <- as.character(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[i]])
+	                                        tmp.data.table[[i]] <- data.table(
+	                                                VALID_CASE="VALID_CASE",
+	                                                YEAR=tmp.last.year,
+	                                                GRADE=tmp.grades.reported,
+	                                                CONTENT_AREA_LABELS=i)
+	                                }
 				}
-				my.grades <- c(my.grades, rep("EOCT", length(tmp.eoct.subjects)))
-				my.subjects <- c(my.subjects, tmp.eoct.subjects)
-				tmp.grades.content_areas.reported <- data.table(
-					VALID_CASE="VALID_CASE",
-					YEAR=tmp.last.year,
-					GRADE= my.grades, 
-					CONTENT_AREA_LABELS= my.subjects)
-			} else {
-				tmp.grades.reported <- as.character(unique(unlist(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]])))
-				tmp.grades.content_areas.reported <- data.table(
-					VALID_CASE="VALID_CASE",
-					YEAR=tmp.last.year,
-					GRADE=tmp.grades.reported, 
-					CONTENT_AREA_LABELS=names(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]])[1], key=key(slot.data))
-			}
+                                tmp.grades.content_areas.reported <- data.table(rbindlist(tmp.data.table), key=key(slot.data))
+                        } else {
+                                tmp.grades.reported <- as.character(unique(unlist(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]])))
+                                tmp.grades.content_areas.reported <- data.table(
+                                        VALID_CASE="VALID_CASE",
+                                        YEAR=tmp.last.year,
+                                        GRADE=tmp.grades.reported,
+                                        CONTENT_AREA_LABELS=names(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]])[1], key=key(slot.data))
+                        }
 			tmp.grades.content_areas.reported <- unique(slot.data)[,key(slot.data), with=FALSE][tmp.grades.content_areas.reported, nomatch=0]
 			for (i in seq(dim(tmp.grades.content_areas.reported)[1])) {
 				tmp.ids[[i]] <- as.character(sample(unique(slot.data[tmp.grades.content_areas.reported[i]]$ID), 10))
