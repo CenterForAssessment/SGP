@@ -267,9 +267,13 @@ function(sgp_object,
 					SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]][1:tmp.index]
 				tmp.year_lags.projection.sequence <-
 					SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]][1:(tmp.index-1)]
-				if (all(sgp.iter[["sgp.content.areas"]] == tmp.content_area.projection.sequence & 
-					sgp.iter[["sgp.grade.sequences"]] == tmp.grade.projection.sequence & 
-					sgp.iter[["sgp.panel.years.lags"]] == tmp.year_lags.projection.sequence)) iter.test <- TRUE else iter.test <- FALSE
+				if (all(identical(sgp.iter[["sgp.content.areas"]], tail(tmp.content_area.projection.sequence, length(sgp.iter[["sgp.content.areas"]]))) & 
+					identical(sgp.iter[["sgp.grade.sequences"]], tail(tmp.grade.projection.sequence, length(sgp.iter[["sgp.grade.sequences"]]))) & 
+					identical(as.numeric(sgp.iter[["sgp.panel.years.lags"]]), as.numeric(tail(tmp.year_lags.projection.sequence, length(sgp.iter[["sgp.panel.years.lags"]])))))) {
+					 iter.test <- TRUE
+				} else {
+					iter.test <- FALSE
+				}
 			}	else iter.test <- TRUE
 		}	else iter.test <- TRUE
 		return(iter.test)
@@ -323,7 +327,7 @@ function(sgp_object,
 	if (sgp.percentiles) sgp.config.list[['sgp.percentiles']] <- par.sgp.config
 
 	if (sgp.projections | sgp.projections.lagged) {
-		suppressWarnings(tmp.config <- par.sgp.config[sapply(par.sgp.config, test.projection.iter)])
+		tmp.config <- par.sgp.config[sapply(par.sgp.config, test.projection.iter)]
 		if (length(tmp.config) > 0) for (f in 1:length(tmp.config)) tmp.config[[f]]$sgp.exact.grade.progression <- FALSE
 		while (any(sapply(tmp.config, function(x) length(x$sgp.projection.sequence)>1))) {
 			tmp.index <- which(any(sapply(tmp.config, function(x) length(x$sgp.projection.sequence)>1)))[1]
@@ -351,7 +355,7 @@ function(sgp_object,
 		sgp.config.list[['sgp.percentiles.baseline']] <- 
 			par.sgp.config[which(sapply(par.sgp.config, function(x) !identical(x[['sgp.baseline.grade.sequences']], "NO_BASELINE_COEFFICIENT_MATRICES")))]
 
-		suppressWarnings(tmp.config <- sgp.config.list[['sgp.percentiles.baseline']][sapply(sgp.config.list[['sgp.percentiles.baseline']], test.projection.iter)])
+		tmp.config <- sgp.config.list[['sgp.percentiles.baseline']][sapply(sgp.config.list[['sgp.percentiles.baseline']], test.projection.iter)]
 		if (length(tmp.config) > 0) for (f in 1:length(tmp.config)) tmp.config[[f]]$sgp.exact.grade.progression <- FALSE
 		if (!sgp.percentiles.baseline) sgp.config.list[['sgp.percentiles.baseline']] <- NULL
 		while (any(sapply(tmp.config, function(x) length(x$sgp.projection.sequence)>1))) {
