@@ -44,6 +44,7 @@ function(sgp_object,
 		tmp.target.names <- grep("TARGET_SCALE_SCORES", names(sgp_object@SGP$SGProjections), value=TRUE)
 		tmp.lagged.names <- grep("LAGGED", names(sgp_object@SGP$SGProjections), value=TRUE)
 		tmp.sgp.projections.names <- setdiff(names(sgp_object@SGP$SGProjections), c(tmp.target.names, tmp.lagged.names))
+		if(!is.null(tmp.sgp.projections.names)) {
 		tmp.baseline.names <- grep("BASELINE", tmp.sgp.projections.names, value=TRUE)
 		if (sgp.type=="sgp.projections") tmp.names <- setdiff(tmp.sgp.projections.names, tmp.baseline.names)
 		if (sgp.type=="sgp.projections.baseline") {
@@ -65,6 +66,7 @@ function(sgp_object,
 		if (length(tmp.names) > 0 & !is.null(years)) tmp.names <- tmp.names[sapply(tmp.names, function(x) getTableNameYear(x) %in% years)]
 		if (length(tmp.names) > 0 & !is.null(content_areas)) tmp.names <- tmp.names[sapply(strsplit(tmp.names, "[.]"), function(x) x[1] %in% content_areas)]
 		return(tmp.names)
+		} else return(NULL)
 	}
 
 	if (sgp.type %in% c("sgp.projections.lagged", "sgp.projections.lagged.baseline")) {
