@@ -26,15 +26,15 @@ function(sgp_object,
 
 	## Create group variable names
 
-	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["output.groups"]])) {
-		output.groups <- SGPstateData[[state]][["SGP_Configuration"]][["output.groups"]]
-	} else {
-		output.groups <- c("DISTRICT", "SCHOOL")
-	}
+		if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["output.groups"]])) {
+			output.groups <- SGPstateData[[state]][["SGP_Configuration"]][["output.groups"]]
+		} else {
+			output.groups <- c("DISTRICT", "SCHOOL")
+		}
 
-	group.number <- paste(output.groups, "NUMBER", sep="_")
-	group.enroll.status <- paste(output.groups, "ENROLLMENT_STATUS", sep="_")
-	group.enroll.status.label <- paste("Enrolled ", sapply(output.groups, capwords), ": Yes", sep="")
+		group.number <- paste(output.groups, "NUMBER", sep="_")
+		group.enroll.status <- paste(output.groups, "ENROLLMENT_STATUS", sep="_")
+		group.enroll.status.label <- paste("Enrolled ", sapply(output.groups, capwords), ": Yes", sep="")
 
 
 	## Create/Set database
@@ -109,7 +109,12 @@ function(sgp_object,
 		convert.names <- function(my.data) {
 			names(my.data)[names(my.data)=="PERCENT_CATCHING_UP_KEEPING_UP"] <- "PERCENT_AT_ABOVE_TARGET"
 			names(my.data)[names(my.data)==paste("MEDIAN_SGP_TARGET", projection.years.for.target, "YEAR", sep="_")] <- "MEDIAN_SGP_TARGET"
-			if ("EMH_LEVEL" %in% names(my.data)) my.data[['EMH_LEVEL']] <- as.character(factor(my.data[['EMH_LEVEL']], levels=1:3, labels=c("E", "H", "M")))
+			if ("EMH_LEVEL" %in% names(my.data) && is.numeric(my.data[['EMH_LEVEL']])) {
+				my.data[['EMH_LEVEL']] <- as.character(factor(my.data[['EMH_LEVEL']], levels=1:3, labels=c("E", "H", "M")))
+			}
+			if ("EMH_LEVEL" %in% names(my.data) && is.character(my.data[['EMH_LEVEL']])) {
+				my.data[['EMH_LEVEL']] <- substr(my.data[['EMH_LEVEL']],1,1)
+			}
 			if ("GENDER" %in% names(my.data)) {
 				my.data[['STUDENTGROUP']][my.data[['STUDENTGROUP']]=="Female"] <- "F"
 				my.data[['STUDENTGROUP']][my.data[['STUDENTGROUP']]=="Male"] <- "M"
@@ -543,6 +548,7 @@ function(sgp_object,
 
 		tmp <- subset(sgp_object@Summary[[group.number[2]]][[paste(group.number[2], "EMH_LEVEL__CONTENT_AREA__YEAR", group.enroll.status[2], sep="__")]],
 			!is.na(get(group.number[2])) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & get(group.enroll.status[2])==group.enroll.status.label[2])
+		if (!is.factor(tmp$EMH_LEVEL)) tmp[['EMH_LEVEL']] <- as.factor(tmp[['EMH_LEVEL']])
 		tmp.EMH <- data.frame(
 			KEY_VALUE_KEY="EMH_LEVEL",
 			KEY_VALUE_CODE=strhead(levels(tmp$EMH_LEVEL)[sort(unique(as.integer(tmp$EMH_LEVEL)))], 1), ## TEMP fix until EMH_LEVEL is fixed up
