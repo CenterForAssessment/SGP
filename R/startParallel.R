@@ -50,7 +50,28 @@ function(
 		if (is.null(parallel.config[['WORKERS']][[process]])) stop(paste(process, "workers must be specified."))
 	}
 	
-	if (all(c("PERCENTILES", "TAUS") %in% names(parallel.config[['WORKERS']]))) stop("Both TAUS and PERCENTILES can not be executed in Parallel at the same time.")
+	Lower_Level_Parallel <- NULL
+	if (all(c("PERCENTILES", "TAUS") %in% names(parallel.config[['WORKERS']]))) {
+		if (as.numeric(parallel.config[['WORKERS']][['PERCENTILES']])==1) {
+			Lower_Level_Parallel <- parallel.config
+		} else stop("Both TAUS and PERCENTILES can not be executed in Parallel at the same time.")
+	}
+	if (all(c("PERCENTILES", "SIMEX") %in% names(parallel.config[['WORKERS']]))) {
+		if (as.numeric(parallel.config[['WORKERS']][['PERCENTILES']])==1) {
+			Lower_Level_Parallel <- parallel.config
+		} else stop("Both SIMEX and PERCENTILES can not be executed in Parallel at the same time.")
+	}
+	
+	if (all(c("BASELINE_PERCENTILES", "TAUS") %in% names(parallel.config[['WORKERS']]))) {
+		if (as.numeric(parallel.config[['WORKERS']][['BASELINE_PERCENTILES']])==1) {
+			Lower_Level_Parallel <- parallel.config
+		} else stop("Both TAUS and BASELINE_PERCENTILES can not be executed in Parallel at the same time.")
+	}
+	if (all(c("BASELINE_PERCENTILES", "SIMEX") %in% names(parallel.config[['WORKERS']]))) {
+		if (as.numeric(parallel.config[['WORKERS']][['BASELINE_PERCENTILES']])==1) {
+			Lower_Level_Parallel <- parallel.config
+		} else stop("Both SIMEX and BASELINE_PERCENTILES can not be executed in Parallel at the same time.")
+	}
 
 	###  Basic configuration
 	
@@ -217,6 +238,6 @@ function(
 	}
 
 	if (par.type=='MULTICORE') {
-		return(list(workers=workers, par.type=par.type, TAUS.LIST=TAUS.LIST))
+		return(list(workers=workers, par.type=par.type, TAUS.LIST=TAUS.LIST, Lower_Level_Parallel=Lower_Level_Parallel))
 	}
 }
