@@ -307,14 +307,27 @@ function(sgp_object,
 	} else {
 		par.sgp.config <- checkConfig(get.par.sgp.config(sgp.config), "Standard")
 		if (trim.sgp.config) {
-			if (!is.null(content_areas)) {
-				par.sgp.config <- par.sgp.config[sapply(par.sgp.config, function(x) tail(x[['sgp.content.areas']], 1) %in% content_areas | tail(x[['sgp.projection.content.areas']], 1) %in% content_areas)]
-			}
-			if (!is.null(years)) {
-				par.sgp.config <- par.sgp.config[sapply(par.sgp.config, function(x) tail(x[['sgp.panel.years']], 1) %in% years | tail(x[['sgp.projection.panel.years']], 1) %in% years)]
-			}
-			if (!is.null(grades)) {
-				par.sgp.config <- par.sgp.config[sapply(par.sgp.config, function(x) tail(x[['sgp.grade.sequences']], 1) %in% grades | tail(x[['sgp.projection.grade.sequences']], 1) %in% grades)]
+			if (sgp.percentiles | sgp.percentiles.baseline) {
+				if (!is.null(content_areas)) {
+					par.sgp.config <- par.sgp.config[sapply(par.sgp.config, function(x) tail(x[['sgp.content.areas']], 1) %in% content_areas | tail(x[['sgp.projection.content.areas']], 1) %in% content_areas)]
+				}
+				if (!is.null(years)) {
+					par.sgp.config <- par.sgp.config[sapply(par.sgp.config, function(x) tail(x[['sgp.panel.years']], 1) %in% years | tail(x[['sgp.projection.panel.years']], 1) %in% years)]
+				}
+				if (!is.null(grades)) {
+					par.sgp.config <- par.sgp.config[sapply(par.sgp.config, function(x) tail(x[['sgp.grade.sequences']], 1) %in% grades | tail(x[['sgp.projection.grade.sequences']], 1) %in% grades)]
+				}
+			} else {
+				if (!is.null(content_areas)) {
+					par.sgp.config <- par.sgp.config[sapply(par.sgp.config, function(x) tail(x[['sgp.projection.content.areas']], 1) %in% content_areas)]
+				}
+				if (!is.null(years)) {
+					par.sgp.config <- par.sgp.config[sapply(par.sgp.config, function(x) tail(x[['sgp.projection.panel.years']], 1) %in% years)]
+				}
+				if (!is.null(grades)) {
+					par.sgp.config <- par.sgp.config[sapply(par.sgp.config, function(x) tail(x[['sgp.projection.grade.sequences']], 1) %in% grades)]
+				}
+
 			}
 		}
 	}
@@ -353,7 +366,7 @@ function(sgp_object,
 		}
 
 		sgp.config.list[['sgp.percentiles.baseline']] <- 
-			par.sgp.config[which(sapply(par.sgp.config, function(x) !identical(x[['sgp.baseline.grade.sequences']], "NO_BASELINE_COEFFICIENT_MATRICES")))]
+				par.sgp.config[which(sapply(par.sgp.config, function(x) !identical(x[['sgp.baseline.grade.sequences']], "NO_BASELINE_COEFFICIENT_MATRICES")))]
 
 		tmp.config <- sgp.config.list[['sgp.percentiles.baseline']][sapply(sgp.config.list[['sgp.percentiles.baseline']], test.projection.iter)]
 		if (length(tmp.config) > 0) for (f in 1:length(tmp.config)) tmp.config[[f]]$sgp.exact.grade.progression <- FALSE
@@ -369,6 +382,8 @@ function(sgp_object,
 			}
 			tmp.config <- c(tmp.config, tmp.expand.config)
 		}
+		
+		if (!sgp.percentiles.baseline) sgp.config.list[['sgp.percentiles.baseline']] <- NULL
 		if (sgp.projections.baseline) sgp.config.list[['sgp.projections.baseline']] <- tmp.config
 		if (sgp.projections.lagged.baseline) sgp.config.list[['sgp.projections.lagged.baseline']] <- tmp.config
 	}
