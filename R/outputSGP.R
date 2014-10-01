@@ -645,22 +645,11 @@ function(sgp_object,
 			}
 		}	
 
-		if (length(names(outputSGP.data)[grep("YEAR_1", names(outputSGP.data))]) == 4) {
-			for (i in 1:3) {
-				setnames(outputSGP.data, grep(paste("YEAR", i, sep="_"), names(outputSGP.data)), paste("CUT", c(1, 35, 65, 99), "YEAR", i, sep="_"))
-				for (j in c(20, 40, 60, 80)) {
-					outputSGP.data[[paste("CUT", j, "YEAR", i, sep="_")]] <- NA	
-				}
-			}
+		tmp.cut.names <- substr(sapply(strsplit(names(outputSGP.data)[grep("YEAR_1", names(outputSGP.data))], "_"), '[', 1), 2, 5)
+		for (i in 1:3) {
+			setnames(outputSGP.data, grep(paste("YEAR", i, sep="_"), names(outputSGP.data)), paste("CUT", tmp.cut.names, "YEAR", i, sep="_"))
 		}
-		if (length(names(outputSGP.data)[grep("YEAR_1", names(outputSGP.data))]) == 6) {
-			for (i in 1:3) {
-				setnames(outputSGP.data, grep(paste("YEAR", i, sep="_"), names(outputSGP.data)), paste("CUT", c(1, 20, 40, 60, 80, 99), "YEAR", i, sep="_"))
-				for (j in c(35, 65)) {
-					outputSGP.data[[paste("CUT", j, "YEAR", i, sep="_")]] <- NA
-				}
-			}
-		}
+
 
 		## Rearrange variables
 
@@ -677,9 +666,7 @@ function(sgp_object,
 			"GRADE_LEVEL_PY5", "SCALE_SCORE_PY5", "TRANSFORMED_SCALE_SCORE_PY5", "PERFORMANCE_LEVEL_PY5", "GROWTH_PERCENTILE_PY5", "GROWTH_TARGET_PY5",
 			"GRADE_LEVEL_PY6", "SCALE_SCORE_PY6", "TRANSFORMED_SCALE_SCORE_PY6", "PERFORMANCE_LEVEL_PY6", "GROWTH_PERCENTILE_PY6", "GROWTH_TARGET_PY6",
 			"GRADE_LEVEL_PY7", "SCALE_SCORE_PY7", "TRANSFORMED_SCALE_SCORE_PY7", "PERFORMANCE_LEVEL_PY7", "GROWTH_PERCENTILE_PY7", "GROWTH_TARGET_PY7",
-			"CUT_1_YEAR_1", "CUT_99_YEAR_1", "CUT_35_YEAR_1", "CUT_65_YEAR_1", "CUT_20_YEAR_1", "CUT_40_YEAR_1", "CUT_60_YEAR_1", "CUT_80_YEAR_1",
-			"CUT_1_YEAR_2", "CUT_99_YEAR_2", "CUT_35_YEAR_2", "CUT_65_YEAR_2", "CUT_20_YEAR_2", "CUT_40_YEAR_2", "CUT_60_YEAR_2", "CUT_80_YEAR_2",
-			"CUT_1_YEAR_3", "CUT_99_YEAR_3", "CUT_35_YEAR_3", "CUT_65_YEAR_3", "CUT_20_YEAR_3", "CUT_40_YEAR_3", "CUT_60_YEAR_3", "CUT_80_YEAR_3")
+			c(paste("CUT", tmp.cut.names, "YEAR_1", sep="_"), paste("CUT", tmp.cut.names, "YEAR_2", sep="_"), paste("CUT", tmp.cut.names, "YEAR_3", sep="_")))
 
 		STUDENT_GROWTH <- outputSGP.data[,tmp.variable.names, with=FALSE]
 
