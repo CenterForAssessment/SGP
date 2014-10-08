@@ -69,10 +69,10 @@ function(sgp_object,
 				sort(unique(years.content_areas.grades[['GRADE']])),
 				sgp.config=sgp.config,
 				trim.sgp.config=TRUE,
-				sgp.percentiles=TRUE,
+				sgp.percentiles=FALSE, ### NOT getting sgp.percentiles. Just projections
 				sgp.projections=TRUE,
 				sgp.projections.lagged=TRUE,
-				sgp.percentiles.baseline=length(grep("baseline", target.type)) > 0,
+				sgp.percentiles.baseline=FALSE, ### NOTE getting sgp.percentiles.baseline. Just projections
 				sgp.projections.baseline=length(grep("baseline", target.type)) > 0,
 				sgp.projections.lagged.baseline=length(grep("baseline", target.type)) > 0,
 				sgp.config.drop.nonsequential.grade.progression.variables=FALSE,
