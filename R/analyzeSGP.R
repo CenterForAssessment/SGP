@@ -477,8 +477,9 @@ function(sgp_object,
 			suppressMessages(gc()) # clean up
 		} # END Compute SIMEX baseline coefficient matrices
 		
-		##  Enforce that simex.use.my.coefficient.matrices must be TRUE for BASELINE SIMEX calculations below
+		##  Enforce that simex.use.my.coefficient.matrices must be TRUE and save.matrices is FALSE for BASELINE SIMEX calculations below
 		calculate.simex.baseline$simex.use.my.coefficient.matrices <- TRUE
+		calculate.simex.baseline$save.matrices <- FALSE
 		
 	} # END check for SIMEX baseline matrices presence
 

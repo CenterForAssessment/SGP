@@ -47,7 +47,7 @@ function(list_1,
 
 		j <- "Coefficient_Matrices"
 		for (k in names(list_2[[j]])) {
-			if (!length(grep("SIMEX", k)) > 0) {
+			if (!grepl("SIMEX", k)) {
 				if (!identical(list_1[[j]][[k]], list_2[[j]][[k]])) {
 					list_1[[j]][[k]] <- unique.splineMatrix(c(list_1[[j]][[k]], list_2[[j]][[k]]))
 				}

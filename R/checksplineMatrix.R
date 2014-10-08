@@ -9,7 +9,7 @@ function(list.of.splineMatrix,
 		list.of.splineMatrix <- list(list.of.splineMatrix)
 	}
 	for (i in names(list.of.splineMatrix)) {
-		if (length(grep("SIMEX", i))==0) {
+		if (!grepl("SIMEX", i)) {
 			if (length(grep("BASELINE", i))==0 | is.null(state) || is.null(SGPstateData[[state]][['Baseline_splineMatrix']])) {
 				splineMatrix.tf <- sapply(list.of.splineMatrix[[i]], validObject, test=TRUE)==TRUE
 				if (!all(splineMatrix.tf)) {
@@ -36,9 +36,9 @@ function(list.of.splineMatrix,
 								as.splineMatrix(matrix_argument=list.of.splineMatrix[[i]][[grd_ord]][[lambda]][[j]], matrix_argument_name=j, content_area=content_area, year=year, sgp_object=sgp_object)
 						}
 					}
+					list.of.splineMatrix[[i]][[grd_ord]][[lambda]] <- unique.splineMatrix(list.of.splineMatrix[[i]][[grd_ord]][[lambda]])
 				}
 			}
-			list.of.splineMatrix[[i]][[grd_ord]][[lambda]] <- unique.splineMatrix(list.of.splineMatrix[[i]][[grd_ord]][[lambda]])			
 		}
 	}
 	return(list.of.splineMatrix)
