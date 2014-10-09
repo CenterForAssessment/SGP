@@ -61,7 +61,12 @@ function(
 			if ("SVG" %in% output.format) CairoSVG(file=paste(file.path, "/", tmp.plot.name, ".svg", sep=""), width=my.width, height=my.height, dpi=72, pointsize=10.5, bg="transparent")
 			grid.draw(.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale, with.prior.achievement.level=with.prior.achievement.level, 
 				content_areas_prior=content_areas_prior))
-			dev.off()
+			
+			### Close plot dev for each output type.
+			if ("PDF" %in% output.format) dev.off()
+			if ("PNG" %in% output.format) dev.off()
+			if ("SVG" %in% output.format) dev.off()
+			
 			return(NULL)
 		} else {
 			.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale, with.prior.achievement.level=with.prior.achievement.level,
