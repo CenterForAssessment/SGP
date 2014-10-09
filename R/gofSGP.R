@@ -354,6 +354,7 @@ function(
 						tmp.prior.ach <- FALSE
 						with.prior.achievement.level <- FALSE
 						tmp.data.final[, ACHIEVEMENT_LEVEL_PRIOR := NULL]
+						my.width <- 8.5; my.height <- 5.5
 						message(paste("ACHIEVEMENT_LEVEL_PRIOR variable does not include data for", content_areas.iter,"- Prior Achievement Level plot panel will not be produced."))
 					}
 					if (tmp.prior.ach) {
