@@ -56,12 +56,24 @@ function(
 				tmp.plot.name <- paste("gofSGP_Grade", grade, sep="_")
 			} else tmp.plot.name <- sapply(plot.name, function(f) paste(rev(gsub("/", "_", strsplit(as.character(f), "; ")[[1]])), collapse=";"))
 
-			if ("PDF" %in% output.format) pdf(file=paste(file.path, "/", tmp.plot.name, ".pdf", sep=""), width=my.width, height=my.height)
-			if ("PNG" %in% output.format) Cairo(file=paste(file.path, "/", tmp.plot.name, ".png", sep=""), width=my.width, height=my.height, units="in", dpi=144, pointsize=10.5, bg="transparent")
-			if ("SVG" %in% output.format) CairoSVG(file=paste(file.path, "/", tmp.plot.name, ".svg", sep=""), width=my.width, height=my.height, dpi=72, pointsize=10.5, bg="transparent")
-			grid.draw(.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale, with.prior.achievement.level=with.prior.achievement.level, 
-				content_areas_prior=content_areas_prior))
-			dev.off()
+			if ("PDF" %in% output.format) {
+				pdf(file=paste(file.path, "/", tmp.plot.name, ".pdf", sep=""), width=my.width, height=my.height)
+				grid.draw(.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale, 
+					with.prior.achievement.level=with.prior.achievement.level, content_areas_prior=content_areas_prior))
+				dev.off()
+			}
+			if ("PNG" %in% output.format) {
+				Cairo(file=paste(file.path, "/", tmp.plot.name, ".png", sep=""), width=my.width, height=my.height, units="in", dpi=144, pointsize=10.5, bg="transparent")
+				grid.draw(.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale, 
+					with.prior.achievement.level=with.prior.achievement.level, content_areas_prior=content_areas_prior))
+				dev.off()
+			}
+			if ("SVG" %in% output.format) {
+				CairoSVG(file=paste(file.path, "/", tmp.plot.name, ".svg", sep=""), width=my.width, height=my.height, dpi=72, pointsize=10.5, bg="transparent")
+				grid.draw(.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale, 
+					with.prior.achievement.level=with.prior.achievement.level, content_areas_prior=content_areas_prior))
+				dev.off()
+			}
 			return(NULL)
 		} else {
 			.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale, with.prior.achievement.level=with.prior.achievement.level,
