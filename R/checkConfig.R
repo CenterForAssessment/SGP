@@ -15,7 +15,7 @@ function(my.config,
 					my.config[[i]][['sgp.projection.grade.sequences']][!is.na(my.config[[i]][['sgp.projection.grade.sequences']])]
 				tmp.min <- min(length(my.config[[i]][['sgp.content.areas']]), length(my.config[[i]][['sgp.projection.grade.sequences']]))
 				my.config[[i]][['sgp.projection.grade.sequences']] <- tail(as.character(my.config[[i]][['sgp.projection.grade.sequences']]), tmp.min)
-			}
+			} else my.config[[i]][['sgp.projection.grade.sequences']] <- NA
 
 			if (length(my.config[[i]][['sgp.content.areas']]) != length(my.config[[i]][['sgp.grade.sequences']])) {
 				tmp.min <- min(length(my.config[[i]][['sgp.content.areas']]), length(my.config[[i]][['sgp.grade.sequences']]))
