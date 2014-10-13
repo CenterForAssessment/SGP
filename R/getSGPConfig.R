@@ -394,12 +394,11 @@ function(sgp_object,
 		if (sgp.projections.lagged.baseline) sgp.config.list[['sgp.projections.lagged.baseline']] <- tmp.config
 	}
 
-	### Clean up configs:
+	### Clean up percentile configs for easier reading (don't do for projections - still depend on percentiles elements)
 	for (p in grep('sgp.percentiles', names(sgp.config.list))) {
-		sgp.config.list[[p]] <- sapply(sgp.config.list[[p]], function(l) return(l[-grep("projection", names(l))]))
-	}
-	for (p in grep('sgp.projections', names(sgp.config.list))) {
-		sgp.config.list[[p]] <- sapply(sgp.config.list[[p]], function(l) return(l[-grep("percentiles", names(l))]))
+		for (l in 1:length(sgp.config.list[[p]])) {
+			sgp.config.list[[p]][[l]] <- sgp.config.list[[p]][[l]][-grep("projection", names(sgp.config.list[[p]][[l]]))]
+		}
 	}
 
 	return(sgp.config.list)
