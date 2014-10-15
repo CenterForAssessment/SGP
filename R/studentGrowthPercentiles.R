@@ -77,8 +77,6 @@ function(panel.data,         ## REQUIRED
 		}
 	}
 
-
-
 	.create.path <- function(labels, pieces=c("my.subject", "my.year", "my.extra.label")) {
 		sub(' ', '_', toupper(sub('\\.+$', '', paste(unlist(sapply(labels[pieces], as.character)), collapse="."))))
 	}

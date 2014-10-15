@@ -616,6 +616,14 @@ function(panel.data,	## REQUIRED
 	}
 	num.panels <- (dim(ss.data)[2]-1)/2
 
+	if (dim(ss.data)[1] == 0) { ### Check needed for getTargetScaleScore when running straight projections for final subject in progression
+		tmp.messages <- c(tmp.messages, "\t\tNOTE: Supplied data together with grade progression contains no data for analysis. Check data, function arguments and see help page for details.\n")
+		message(paste("\tStarted studentGrowthProjections", started.date))
+		message(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
+		message(c(tmp.messages, "\tFinished studentGrowthProjections: ", date(), " in ", timetaken(started.at), "\n"))
+		return(NULL)
+	} 
+
 	if (length(grade.progression) > num.panels) {
 		tmp.messages <- c(tmp.messages, paste("\t\tNOTE: Supplied 'grade progression', grade.progression=c(", paste(grade.progression, collapse=","), "), exceeds number of panels (", num.panels, ") in provided data.\n\t\t Analyses will utilize maximum number of priors supplied by the data.\n", sep=""))
 		grade.progression <- tail(grade.progression, num.panels)
