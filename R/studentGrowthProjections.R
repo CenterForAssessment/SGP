@@ -15,7 +15,7 @@ function(panel.data,	## REQUIRED
 	panel.data.vnames,
 	achievement.level.prior.vname=NULL,
 	performance.level.cutscores,
-        calculate.sgps=TRUE,
+	calculate.sgps=TRUE,
 	convert.0and100=TRUE,
 	projection.unit="YEAR",
 	projection.unit.label=NULL,
@@ -51,9 +51,9 @@ function(panel.data,	## REQUIRED
 		}
 	}
 
-        .create.path <- function(labels, pieces=c("my.subject", "my.year", "my.extra.label")) {
-                sub(' ', '_', toupper(sub('\\.+$', '', paste(unlist(sapply(labels[pieces], as.character)), collapse="."))))
-        }
+	.create.path <- function(labels, pieces=c("my.subject", "my.year", "my.extra.label")) {
+		sub(' ', '_', toupper(sub('\\.+$', '', paste(unlist(sapply(labels[pieces], as.character)), collapse="."))))
+	}
 
 	get.my.knots.boundaries.path <- function(content_area, year) {
 		tmp.path.knots.boundaries <- paste(sgp.labels[['my.subject']], sgp.labels[['my.year']], sep=".")
@@ -409,10 +409,10 @@ function(panel.data,	## REQUIRED
 
 	ID <- tmp.messages <- SGP_PROJECTION_GROUP <- NULL
 
-        if (!calculate.sgps) {
-                tmp.messages <- c(tmp.messages, paste("\t\tNOTE: Student growth projections not calculated for", sgp.labels$my.year, sgp.labels$my.subject, "due to argument calculate.sgps=FALSE.\n"))
-                return(panel.data)
-        }
+	if (!calculate.sgps) {
+		tmp.messages <- c(tmp.messages, paste("\t\tNOTE: Student growth projections not calculated for", sgp.labels$my.year, sgp.labels$my.subject, "due to argument calculate.sgps=FALSE.\n"))
+		return(panel.data)
+	}
 
 	if (missing(panel.data)) {
 		stop("User must supply student achievement data for student growth percentile calculations. See help page for details.")
@@ -602,19 +602,27 @@ function(panel.data,	## REQUIRED
 
 	### Create ss.data from Panel_Data and rename variables based upon grade.progression
 
-        if (!missing(panel.data.vnames)) {
-                if (!all(panel.data.vnames %in% names(panel.data[["Panel_Data"]]))) {
-                        tmp.messages <- c(tmp.messages, "\t\tNOTE: Supplied 'panel.data.vnames' are not all in the supplied 'Panel_Data'.\n\t\tAnalyses will continue with the variables contained in both Panel_Data and those provided in the supplied argument 'panel.data.vnames'.\n")
-                }
-                ss.data <- as.data.table(panel.data[["Panel_Data"]][,intersect(panel.data.vnames, names(panel.data[["Panel_Data"]]))])
-        } else {
-                ss.data <- as.data.table(panel.data[["Panel_Data"]])
-        }
+	if (!missing(panel.data.vnames)) {
+		if (!all(panel.data.vnames %in% names(panel.data[["Panel_Data"]]))) {
+			tmp.messages <- c(tmp.messages, "\t\tNOTE: Supplied 'panel.data.vnames' are not all in the supplied 'Panel_Data'.\n\t\tAnalyses will continue with the variables contained in both Panel_Data and those provided in the supplied argument 'panel.data.vnames'.\n")
+		}
+		ss.data <- as.data.table(panel.data[["Panel_Data"]][,intersect(panel.data.vnames, names(panel.data[["Panel_Data"]]))])
+	} else {
+		ss.data <- as.data.table(panel.data[["Panel_Data"]])
+	}
 
 	if (dim(ss.data)[2] %% 2 != 1) {
 		stop(paste("Number of columns of supplied panel data (", dim(ss.data)[2], ") does not conform to data requirements. See help page for details."))
 	}
 	num.panels <- (dim(ss.data)[2]-1)/2
+
+	if (dim(ss.data)[1] == 0) { ### Check needed for getTargetScaleScore when running straight projections for final subject in progression
+		tmp.messages <- c(tmp.messages, "\t\tNOTE: Supplied data together with grade progression contains no data for analysis. Check data, function arguments and see help page for details.\n")
+		message(paste("\tStarted studentGrowthProjections", started.date))
+		message(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
+		message(c(tmp.messages, "\tFinished studentGrowthProjections: ", date(), " in ", timetaken(started.at), "\n"))
+		return(NULL)
+	} 
 
 	if (length(grade.progression) > num.panels) {
 		tmp.messages <- c(tmp.messages, paste("\t\tNOTE: Supplied 'grade progression', grade.progression=c(", paste(grade.progression, collapse=","), "), exceeds number of panels (", num.panels, ") in provided data.\n\t\t Analyses will utilize maximum number of priors supplied by the data.\n", sep=""))
@@ -719,21 +727,21 @@ function(panel.data,	## REQUIRED
 	### Test to see if ss.data has cases to analyze and configuration has elements to answer
 
 	if (dim(.get.panel.data(ss.data, grade.progression, content_area.progression, 1, bound.data=FALSE))[1] == 0 | length(tmp.index)==0) {
-                tmp.messages <- c(tmp.messages, "\t\tNOTE: Supplied data together with grade progression contains no data for analysis. Check data, function arguments and see help page for details.\n")
-                message(paste("\tStarted studentGrowthProjections", started.date))
-                message(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
+		tmp.messages <- c(tmp.messages, "\t\tNOTE: Supplied data together with grade progression contains no data for analysis. Check data, function arguments and see help page for details.\n")
+		message(paste("\tStarted studentGrowthProjections", started.date))
+		message(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
 		message(c(tmp.messages, "\tFinished studentGrowthProjections: ", date(), " in ", timetaken(started.at), "\n"))
 
-                return(
-                list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],
-                        Cutscores=panel.data[["Cutscores"]],
-                        Goodness_of_Fit=panel.data[["Goodness_of_Fit"]],
-                        Knots_Boundaries=panel.data[["Knots_Bounadries"]],
-                        Panel_Data=NULL,
-                        SGPercentiles=panel.data[["SGPercentiles"]],
-                        SGProjections=panel.data[["SGProjections"]],
-                        Simulated_SGPs=panel.data[["Simulated_SGPs"]]))
-        } 
+		return(
+			list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],
+				Cutscores=panel.data[["Cutscores"]],
+				Goodness_of_Fit=panel.data[["Goodness_of_Fit"]],
+				Knots_Boundaries=panel.data[["Knots_Bounadries"]],
+				Panel_Data=NULL,
+				SGPercentiles=panel.data[["SGPercentiles"]],
+				SGProjections=panel.data[["SGProjections"]],
+				Simulated_SGPs=panel.data[["Simulated_SGPs"]]))
+	} 
 
 	### Calculate grade.projection.sequence.priors 
 
@@ -799,7 +807,7 @@ function(panel.data,	## REQUIRED
 	### Announce Completion & Return SGP Object
 
 	if (print.time.taken) {
-	        message(paste("\tStarted studentGrowthProjections:", started.date))
+		message(paste("\tStarted studentGrowthProjections:", started.date))
 		message(paste("\t\tContent Area: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, " (N=", format(dim(trajectories.and.cuts)[1], big.mark=","), ")", sep="")) 
 		message(c(tmp.messages, "\tFinished studentGrowthProjections: ", date(), " in ", timetaken(started.at), "\n"))
 	} 

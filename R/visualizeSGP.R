@@ -869,7 +869,11 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 				for (i in tmp.proj.cut_score.names) {
 					tmp.list[[i]] <- data.table(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1], sgp_object@SGP[["SGProjections"]][[i]], key=c("ID", "CONTENT_AREA"))
 				}
-				sgPlot.data <- data.table(rbind.fill(tmp.list), key=c("ID", "CONTENT_AREA"))[sgPlot.data]
+				tmp.proj.data <- data.table(rbind.fill(tmp.list), key=c("ID", "CONTENT_AREA"))
+				sgPlot.data <- tmp.proj.data[!is.na(tmp.proj.data[[3]])][sgPlot.data] 
+				# Duplicates get made in combineSGP/getTargetScaleScore - one of which are NA's
+				# Not an elegant solution, but the above weeds them out.
+				# sgPlot.data <- data.table(rbind.fill(tmp.list), key=c("ID", "CONTENT_AREA"))[sgPlot.data]
 			} ### END if ("sgp.projections" %in% sgPlot.sgp.targets)
 
 			### Lagged projection scale score targets
