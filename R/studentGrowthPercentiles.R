@@ -440,21 +440,33 @@ function(panel.data,         ## REQUIRED
 					##  Note, that if you use the parallel.config for SIMEX here, you can also use it for TAUS in the naive analysis
 					##  Example parallel.config argument:  '... parallel.config=list(BACKEND="PARALLEL", TYPE="SOCK", WORKERS=list(SIMEX = 4, TAUS = 4))'
 					
+					isplitDT2 <- function(x, vals) {
+						ival <- iter(vals)
+						nextEl <- function() {
+						  val <- nextElem(ival)
+						  list(value=x[val], key=val)
+						}
+						obj <- list(nextElem=nextEl)
+						class(obj) <- c('abstractiter', 'iter')
+						obj
+					}
+					if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") big.data[, b := factor(b)]
+
 					##  Calculate coefficient matricies (if needed/requested)
 					if (is.logical(simex.use.my.coefficient.matrices)) if(! simex.use.my.coefficient.matrices) simex.use.my.coefficient.matrices <- NULL
 					if (is.null(simex.use.my.coefficient.matrices)) {
 						if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
 							if (is.null(simex.sample.size) || dim(tmp.data)[1] <= simex.sample.size) {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <- 
-								foreach(iter(sim.iters), .packages="quantreg", .options.mpi=par.start$foreach.options, 
-								.options.multicore=par.start$foreach.options, .options.snow=par.start$foreach.options) %dopar% {
-									big.data[list(z)][,rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=.SD)]
+								foreach(bd.sub = isplitDT2(big.data, levels(big.data$b)), .packages=c("quantreg", "data.table"), 
+								.options.mpi=par.start$foreach.options, .options.multicore=par.start$foreach.options, .options.snow=par.start$foreach.options) %dopar% {
+									bd.sub[,rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=.SD)]
 								}
 							} else {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
-								foreach(iter(sim.iters), .packages="quantreg", .options.mpi=par.start$foreach.options,
-								.options.multicore=par.start$foreach.options, .options.snow=par.start$foreach.options) %dopar% {
-									big.data[list(z)][sample(seq(dim(tmp.data)[1]), simex.sample.size)][, rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=.SD)]
+								foreach(bd.sub = isplitDT2(big.data, levels(big.data$b)), .packages=c("quantreg", "data.table"),
+								.options.mpi=par.start$foreach.options, .options.multicore=par.start$foreach.options, .options.snow=par.start$foreach.options) %dopar% {
+									bd.sub[sample(seq(dim(tmp.data)[1]), simex.sample.size)][, rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=.SD)]
 								}
 							}
 						} else {
