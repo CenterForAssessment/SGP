@@ -217,9 +217,10 @@ function(
 		# }
 		if (parallel.config[['TYPE']]=="doParallel") {
 			if (par.type == 'SNOW') {
-				doPar.cl <- makeCluster(workers, type='SOCK')
+				doPar.cl <- makePSOCKcluster(workers, type='SOCK')
 				registerDoParallel(doPar.cl)
 				clusterEvalQ(doPar.cl, library(SGP))
+				foreach.options <- attachExportEnv=TRUE
 				return(list(doPar.cl=doPar.cl, foreach.options=foreach.options, par.type=par.type))
 			} else {
 				registerDoParallel(workers)

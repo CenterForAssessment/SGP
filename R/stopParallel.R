@@ -15,6 +15,7 @@ function(
 
 		if (parallel.config[['TYPE']]=="doParallel" & par.start$par.type=='SNOW') {
 			stopCluster(par.start$doPar.cl)
+			stopImplicitCluster()
 			return()
 		}
 		
