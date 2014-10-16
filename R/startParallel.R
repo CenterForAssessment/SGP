@@ -220,7 +220,7 @@ function(
 				doPar.cl <- makePSOCKcluster(workers, type='SOCK')
 				registerDoParallel(doPar.cl)
 				clusterEvalQ(doPar.cl, library(SGP))
-				foreach.options <- attachExportEnv=TRUE
+				# foreach.options <- list(attachExportEnv=TRUE)
 				return(list(doPar.cl=doPar.cl, foreach.options=foreach.options, par.type=par.type))
 			} else {
 				registerDoParallel(workers)

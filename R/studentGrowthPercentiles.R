@@ -169,8 +169,8 @@ function(panel.data,         ## REQUIRED
 	
 			if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
 				# tmp.data <<- tmp.data
-				tmp.mtx <- foreach(j = iter(par.start$TAUS.LIST), .combine = "cbind", .packages="quantreg", .inorder=TRUE, 
-					.options.mpi = par.start$foreach.options, .options.multicore = par.start$foreach.options, .options.snow = par.start$foreach.options) %dopar% {
+				tmp.mtx <- foreach(j = iter(par.start$TAUS.LIST), .export=c("tmp.data", "Knots_Boundaries", "rq.method"), .combine = "cbind", .packages="quantreg", 
+				.inorder=TRUE, .options.mpi = par.start$foreach.options, .options.multicore = par.start$foreach.options, .options.snow = par.start$foreach.options) %dopar% {
 					eval(parse(text=paste("rq(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=j, data=tmp.data, method=rq.method)[['coefficients']]", sep="")))
 				}
 			} else {
