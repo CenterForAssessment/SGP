@@ -87,8 +87,8 @@ function(
 		# }
 
 		if (parallel.config[['TYPE']]=="doParallel") { 
-			if (.Platform$OS.type == "unix" & is.null(par.type)) par.type <- 'MULTICORE' 
-			if (.Platform$OS.type != "unix" & is.null(par.type)) par.type <- 'SNOW'
+			if (.Platform$OS.type == "unix" & par.type == "OTHER") par.type <- 'MULTICORE' 
+			if (.Platform$OS.type != "unix" & par.type == "OTHER") par.type <- 'SNOW'
 			if (par.type == 'MULTICORE' & is.null(parallel.config[['OPTIONS']][["preschedule"]])) {
 				if (is.list(parallel.config[['OPTIONS']])) {
 					parallel.config[['OPTIONS']][["preschedule"]]=FALSE
@@ -124,7 +124,7 @@ function(
 	
 	if (par.type == 'SNOW') {
 		if (is.null(parallel.config[['TYPE']])) stop("The 'parallel.config$TYPE' must be specified ('SOCK' or 'MPI')")
-		if (!parallel.config[['TYPE']] %in% c('SOCK','MPI')) stop("The 'parallel.config$TYPE' must be 'SOCK' or 'MPI'")
+		if (!parallel.config[['TYPE']] %in% c('SOCK','MPI', 'doParallel')) stop("The 'parallel.config$TYPE' must be 'SOCK', 'MPI' or 'doParallel'.")
 	}
 
 
@@ -190,14 +190,13 @@ function(
 	###
 	
 	if (toupper(parallel.config[['BACKEND']]) == 'FOREACH') {
-		par.type='FOREACH'
 		if (parallel.config[['TYPE']]=="NA") {
 			registerDoSEQ() # prevents warning message
-			return(list(foreach.options=foreach.options, par.type=par.type))
+			return(list(foreach.options=foreach.options, par.type=par.type, TAUS.LIST=TAUS.LIST))
 		}
 		# if (parallel.config[['TYPE']]=="doMC") {
 			# registerDoMC(workers)
-			# return(list(foreach.options=foreach.options, par.type=par.type))
+			# return(list(foreach.options=foreach.options, par.type=par.type, TAUS.LIST=TAUS.LIST))
 		# }
 		# if (parallel.config[['TYPE']]=='doMPI') {
 			# doPar.cl <- startMPIcluster(count=workers)
@@ -221,7 +220,7 @@ function(
 				registerDoParallel(doPar.cl)
 				clusterEvalQ(doPar.cl, library(SGP))
 				# foreach.options <- list(attachExportEnv=TRUE)
-				return(list(doPar.cl=doPar.cl, foreach.options=foreach.options, par.type=par.type))
+				return(list(doPar.cl=doPar.cl, foreach.options=foreach.options, par.type=par.type, TAUS.LIST=TAUS.LIST))
 			} else {
 				registerDoParallel(workers)
 				return(list(foreach.options=foreach.options, par.type=par.type, TAUS.LIST=TAUS.LIST))

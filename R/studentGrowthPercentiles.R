@@ -440,6 +440,7 @@ function(panel.data,         ## REQUIRED
 					##  Note, that if you use the parallel.config for SIMEX here, you can also use it for TAUS in the naive analysis
 					##  Example parallel.config argument:  '... parallel.config=list(BACKEND="PARALLEL", TYPE="SOCK", WORKERS=list(SIMEX = 4, TAUS = 4))'
 					
+					# from http://stackoverflow.com/questions/20810181/memory-issue-with-foreach-loop-in-r-on-windows-8-64-bit-doparallel-package
 					isplitDT2 <- function(x, vals) {
 						ival <- iter(vals)
 						nextEl <- function() {
@@ -460,13 +461,13 @@ function(panel.data,         ## REQUIRED
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <- 
 								foreach(bd.sub = isplitDT2(big.data, levels(big.data$b)), .packages=c("quantreg", "data.table"), 
 								.options.mpi=par.start$foreach.options, .options.multicore=par.start$foreach.options, .options.snow=par.start$foreach.options) %dopar% {
-									bd.sub[,rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=.SD)]
+									bd.sub[['value']][,rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=.SD)]
 								}
 							} else {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
 								foreach(bd.sub = isplitDT2(big.data, levels(big.data$b)), .packages=c("quantreg", "data.table"),
 								.options.mpi=par.start$foreach.options, .options.multicore=par.start$foreach.options, .options.snow=par.start$foreach.options) %dopar% {
-									bd.sub[sample(seq(dim(tmp.data)[1]), simex.sample.size)][, rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=.SD)]
+									bd.sub[['value']][sample(seq(dim(tmp.data)[1]), simex.sample.size)][, rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=.SD)]
 								}
 							}
 						} else {
@@ -499,11 +500,11 @@ function(panel.data,         ## REQUIRED
 					if (calculate.simex.sgps) {
 						if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
 							fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- 
-							foreach(z=iter(sim.iters), .combine="+", .options.mpi=par.start$foreach.options, 
+							foreach(bd.sub = isplitDT2(big.data, levels(big.data$b)), .combine="+", .export=c('.get.percentile.predictions'), 
 							.options.multicore=par.start$foreach.options) %dopar% { # .options.snow=par.start$foreach.options
-								as.vector(.get.percentile.predictions(big.data[list(z)][, 
-									which(names(big.data[list(z)]) %in% c("ID", paste('prior_', k:1, sep=""), "final.yr")), with=FALSE], 
-									simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]])/B)
+								as.vector(.get.percentile.predictions(bd.sub[['value']][, 
+									which(names(bd.sub[['value']]) %in% c("ID", paste('prior_', k:1, sep=""), "final.yr")), with=FALSE], 
+									simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[as.numeric(bd.sub[['key']])]])/B)
 							}
 						} else {
 						if (par.start$par.type == 'MULTICORE') {
