@@ -451,7 +451,7 @@ function(panel.data,         ## REQUIRED
 						class(obj) <- c('abstractiter', 'iter')
 						obj
 					}
-					if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") big.data[, b := factor(b)]
+					if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") big.data[, b := factor(b)]; setkey(big.data, b)
 
 					##  Calculate coefficient matricies (if needed/requested)
 					if (is.logical(simex.use.my.coefficient.matrices)) if(! simex.use.my.coefficient.matrices) simex.use.my.coefficient.matrices <- NULL
@@ -459,13 +459,16 @@ function(panel.data,         ## REQUIRED
 						if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
 							if (is.null(simex.sample.size) || dim(tmp.data)[1] <= simex.sample.size) {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <- 
+								# foreach(bd.sub = isplit(big.data, levels(big.data$b)), .packages=c("quantreg", "data.table"), 
 								foreach(bd.sub = isplitDT2(big.data, levels(big.data$b)), .packages=c("quantreg", "data.table"), 
+								.export=c("Knots_Boundaries", "rq.method", "taus", "content_area.progression", "tmp.slot.gp", "year.progression", "year_lags.progression"),
 								.options.mpi=par.start$foreach.options, .options.multicore=par.start$foreach.options, .options.snow=par.start$foreach.options) %dopar% {
 									bd.sub[['value']][,rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=.SD)]
 								}
 							} else {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
 								foreach(bd.sub = isplitDT2(big.data, levels(big.data$b)), .packages=c("quantreg", "data.table"),
+								.export=c("Knots_Boundaries", "rq.method", "taus", "content_area.progression", "tmp.slot.gp", "year.progression", "year_lags.progression"),
 								.options.mpi=par.start$foreach.options, .options.multicore=par.start$foreach.options, .options.snow=par.start$foreach.options) %dopar% {
 									bd.sub[['value']][sample(seq(dim(tmp.data)[1]), simex.sample.size)][, rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=.SD)]
 								}
@@ -500,7 +503,7 @@ function(panel.data,         ## REQUIRED
 					if (calculate.simex.sgps) {
 						if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
 							fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- 
-							foreach(bd.sub = isplitDT2(big.data, levels(big.data$b)), .combine="+", .export=c('.get.percentile.predictions'), 
+							foreach(bd.sub = isplitDT2(big.data, levels(big.data$b)), .combine="+", .export=c('.get.percentile.predictions', 'tmp.gp'), 
 							.options.multicore=par.start$foreach.options) %dopar% { # .options.snow=par.start$foreach.options
 								as.vector(.get.percentile.predictions(bd.sub[['value']][, 
 									which(names(bd.sub[['value']]) %in% c("ID", paste('prior_', k:1, sep=""), "final.yr")), with=FALSE], 
