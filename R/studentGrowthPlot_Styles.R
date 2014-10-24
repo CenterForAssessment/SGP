@@ -47,11 +47,17 @@
 				for (i in grep(content_area.iter, sapply(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]]), '[.]'), '[', 1))) {
 					tmp.content_area <- unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]])[i], '[.]'))[1]
 					tmp.grades <- as.character(matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]][[i]]), "_")), ncol=2, byrow=TRUE)[,2])
-					tmp.loss <- sapply(SGPstateData[[state]][['Achievement']][['Knots_Boundaries']][[i]][
-								grep("loss.hoss", names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[i]]))], '[', 1)
+
+					if (names(SGPstateData[[state]][["Achievement"]][["Cutscores"]])[i] %in% names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]])) {
+						tmp.loss.hoss.label <- names(SGPstateData[[state]][["Achievement"]][["Cutscores"]])[i]
+					} else {
+						tmp.loss.hoss.label <- tmp.content_area
+					}
+					tmp.loss <- sapply(SGPstateData[[state]][['Achievement']][['Knots_Boundaries']][[tmp.loss.hoss.label]][
+								grep("loss.hoss", names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[tmp.loss.hoss.label]]))], '[', 1)
 					tmp.loss <- as.numeric(tmp.loss[sapply(strsplit(names(tmp.loss), "_"), '[', 2) %in% tmp.grades])
-					tmp.hoss <- sapply(SGPstateData[[state]][['Achievement']][['Knots_Boundaries']][[i]][
-								grep("loss.hoss", names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[i]]))], '[', 2)
+					tmp.hoss <- sapply(SGPstateData[[state]][['Achievement']][['Knots_Boundaries']][[tmp.loss.hoss.label]][
+								grep("loss.hoss", names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[tmp.loss.hoss.label]]))], '[', 2)
 					tmp.hoss <- as.numeric(tmp.hoss[sapply(strsplit(names(tmp.hoss), "_"), '[', 2) %in% tmp.grades])
 					tmp.cutscores <- matrix(unlist(SGPstateData[[state]][["Achievement"]][["Cutscores"]][[i]]),
 						ncol=number.achievement.level.regions-1, byrow=TRUE)

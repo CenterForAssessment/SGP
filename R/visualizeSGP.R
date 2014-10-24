@@ -977,7 +977,7 @@ if (sgPlot.wide.data) sgPlot.sgp_object <- NULL else sgPlot.sgp_object <- get.ob
 
 if (sgPlot.produce.plots) {
 
-	if (parallel.config[['WORKERS']][['SG_PLOTS']]==1 | sgPlot.demo.report) { ### NO Parallel Processing
+	if (sgPlot.demo.report || parallel.config[['WORKERS']][['SG_PLOTS']]==1) { ### NO Parallel Processing
 
 		studentGrowthPlot_Styles(
 			sgPlot.data=sgPlot.data,
