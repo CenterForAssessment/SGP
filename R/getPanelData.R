@@ -7,9 +7,18 @@ function(sgp.data,
 
 	YEAR <- CONTENT_AREA <- VALID_CASE <- V3 <- V5 <- ID <- GRADE <- SCALE_SCORE <- YEAR_WITHIN <- tmp.timevar <- FIRST_OBSERVATION <- LAST_OBSERVATION <- ACHIEVEMENT_LEVEL <- NULL
 
+	if (is(sgp.data, "DBIObject")) {
+		var.names <- dbListFields(sgp.data, "sgp_data")
+		sqlite.tf <- TRUE
+		con <- dbConnect("SQLite", dbname = "Data/TMP_SGP_Data.sqlite")
+	} else {
+		var.names <- names(sgp.data)
+		sqlite.tf <- FALSE
+	}
+	
 	if (sgp.type=="sgp.percentiles") {
 
-		if ("YEAR_WITHIN" %in% names(sgp.data)) {
+		if ("YEAR_WITHIN" %in% var.names) {
 			tmp.lookup <- data.table(V1="VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]])),
 				tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]])), sgp.iter[["sgp.grade.sequences"]],
 				tail(sgp.iter[["sgp.panel.years.within"]], length(sgp.iter[["sgp.grade.sequences"]])), FIRST_OBSERVATION=as.integer(NA), LAST_OBSERVATION=as.integer(NA))
@@ -18,10 +27,20 @@ function(sgp.data,
 			
 			tmp.lookup.list <- list()
 			for (i in unique(sgp.iter[["sgp.panel.years.within"]])) {
-				setkeyv(sgp.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", i))
-				setkeyv(tmp.lookup, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", i))
-				suppressWarnings(tmp.lookup.list[[i]] <- data.table(sgp.data[tmp.lookup[get(i)==1], nomatch=0][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, i, sep="."), with=FALSE][,
-					list(ID, GRADE, SCALE_SCORE, YEAR_WITHIN, tmp.timevar)], key="ID")) ### Could be NULL and result in a warning
+				if (sqlite.tf) {
+					setkeyv(tmp.lookup, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", i))
+					rs <- dbSendQuery(con, paste("select * from sgp_data where CONTENT_AREA in ('", paste(tmp.lookup[get(i)==1]$CONTENT_AREA, collapse="', '"), "')", 
+						" AND GRADE in ('", paste(tmp.lookup[get(i)==1]$GRADE, collapse="', '"), "')",
+						" AND ", i, " in (1)",
+						" AND YEAR in ('", paste(tmp.lookup[get(i)==1]$YEAR, collapse="', '"), "')", sep=""))
+					suppressWarnings(tmp.lookup.list[[i]] <- data.table(fetch(rs, n = -1), key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", i))[tmp.lookup[get(i)==1], nomatch=0][,
+						'tmp.timevar':=paste(YEAR, CONTENT_AREA, i, sep="."), with=FALSE][, list(ID, GRADE, SCALE_SCORE, YEAR_WITHIN, tmp.timevar)])
+				} else {
+					setkeyv(sgp.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", i))
+					setkeyv(tmp.lookup, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", i))
+					suppressWarnings(tmp.lookup.list[[i]] <- data.table(sgp.data[tmp.lookup[get(i)==1], nomatch=0][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, i, sep="."), with=FALSE][,
+						list(ID, GRADE, SCALE_SCORE, YEAR_WITHIN, tmp.timevar)], key="ID")) ### Could be NULL and result in a warning
+				}
 			}
 			if (tail(sgp.iter[['sgp.panel.years']], 1)==head(tail(sgp.iter[['sgp.panel.years']], 2), 1)) {
 				tmp.ids <- intersect(tmp.lookup.list[[1]][['ID']], tmp.lookup.list[[2]][['ID']])
@@ -32,7 +51,7 @@ function(sgp.data,
 				rbindlist(tmp.lookup.list),
 					idvar="ID", 
 					timevar="tmp.timevar", 
-					drop=names(sgp.data)[!names(tmp.lookup.list[[1]]) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR_WITHIN", "tmp.timevar", sgp.csem)], 
+					drop=var.names[!names(tmp.lookup.list[[1]]) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR_WITHIN", "tmp.timevar", sgp.csem)], 
 					direction="wide")))
 		} else {
 			tmp.lookup <- SJ("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]])),
@@ -45,14 +64,14 @@ function(sgp.data,
 				sgp.data[tmp.lookup, nomatch=0][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
 					idvar="ID",
 					timevar="tmp.timevar",
-					drop=names(sgp.data)[!names(sgp.data) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", sgp.csem)],
+					drop=var.names[!var.names %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", sgp.csem)],
 					direction="wide")))
 		}
 	} ### END if (sgp.type=="sgp.percentiles")
 
 
 	if (sgp.type=="sgp.projections") {
-		if ("YEAR_WITHIN" %in% names(sgp.data)) {
+		if ("YEAR_WITHIN" %in% var.names) {
 			tmp.lookup <- data.table(V1="VALID_CASE", tail(sgp.iter[["sgp.projection.content.areas"]], length(sgp.iter[["sgp.projection.grade.sequences"]])),
 				sapply(head(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.projection.grade.sequences"]])), yearIncrement, tail(sgp.iter$sgp.panel.years.lags, 1)),
 				sgp.iter[["sgp.projection.grade.sequences"]], head(sgp.iter[["sgp.panel.years.within"]], length(sgp.iter[["sgp.projection.grade.sequences"]])), 
@@ -77,13 +96,13 @@ function(sgp.data,
 					rbindlist(tmp.lookup.list),
 					idvar= "ID",
 					timevar="tmp.timevar",
-					drop=names(sgp.data)[!names(tmp.lookup.list[[1]]) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR_WITHIN", "tmp.timevar", "STATE")], 
+					drop=var.names[!names(tmp.lookup.list[[1]]) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR_WITHIN", "tmp.timevar", "STATE")], 
 					direction="wide")
 				setnames(tmp.data, tail(sort(grep("YEAR_WITHIN", names(tmp.data), value=TRUE)), 1), "YEAR_WITHIN")
 				if (length(setdiff(grep("YEAR_WITHIN", names(tmp.data), value=TRUE), "YEAR_WITHIN")) > 0) {
 					tmp.data[,setdiff(grep("YEAR_WITHIN", names(tmp.data), value=TRUE), "YEAR_WITHIN"):=NULL, with=FALSE]
 				}
-				if ("STATE" %in% names(sgp.data) && dim(tmp.data)[1]!=0) {
+				if ("STATE" %in% var.names && dim(tmp.data)[1]!=0) {
 					setnames(tmp.data, tail(sort(grep("STATE", names(tmp.data), value=TRUE)), 1), "STATE")
 					if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0) {
 						tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL, with=FALSE]
@@ -95,14 +114,14 @@ function(sgp.data,
 					rbindlist(tmp.lookup.list),
 					idvar= "ID",
 					timevar="tmp.timevar",
-					drop=names(sgp.data)[!names(tmp.lookup.list[[1]]) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR_WITHIN", "tmp.timevar", "STATE")], 
+					drop=var.names[!names(tmp.lookup.list[[1]]) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR_WITHIN", "tmp.timevar", "STATE")], 
 					direction="wide"), key="ID")[sgp.targets[CONTENT_AREA==tail(sgp.iter[["sgp.projection.content.areas"]], 1) & YEAR==tail(sgp.iter[["sgp.panel.years"]], 1)], nomatch=0][,
 						!c("CONTENT_AREA", "YEAR"), with=FALSE]
 				setnames(tmp.data, tail(sort(grep("YEAR_WITHIN", names(tmp.data), value=TRUE)), 1), "YEAR_WITHIN")
 				if (length(setdiff(grep("YEAR_WITHIN", names(tmp.data), value=TRUE), "YEAR_WITHIN")) > 0) {
 					tmp.data[,setdiff(grep("YEAR_WITHIN", names(tmp.data), value=TRUE), "YEAR_WITHIN"):=NULL, with=FALSE]
 				}
-				if ("STATE" %in% names(sgp.data) && dim(tmp.data)[1]!=0) {
+				if ("STATE" %in% var.names && dim(tmp.data)[1]!=0) {
 					setnames(tmp.data, tail(sort(grep("STATE", names(tmp.data), value=TRUE)), 1), "STATE")
 					if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0) {
 						tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL, with=FALSE]
@@ -121,10 +140,10 @@ function(sgp.data,
 				sgp.data[tmp.lookup, nomatch=0][, 'tmp.timevar' := paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
 				idvar="ID",
 				timevar="tmp.timevar",
-				drop=names(sgp.data)[!names(sgp.data) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "STATE")],
+				drop=var.names[!var.names %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "STATE")],
 				direction="wide")
 
-			if ("STATE" %in% names(sgp.data) && dim(tmp.data)[1]!=0) {
+			if ("STATE" %in% var.names && dim(tmp.data)[1]!=0) {
 				setnames(tmp.data, tail(sort(grep("STATE", names(tmp.data), value=TRUE)), 1), "STATE")
 				if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0) tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL, with=FALSE]
 			}
@@ -134,11 +153,11 @@ function(sgp.data,
 					sgp.data[tmp.lookup, nomatch=0][, 'tmp.timevar' := paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
 				idvar="ID",
 				timevar="tmp.timevar",
-				drop=names(sgp.data)[!names(sgp.data) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "STATE")],
+				drop=var.names[!var.names %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "STATE")],
 				direction="wide"), key="ID")[sgp.targets[CONTENT_AREA==tail(sgp.iter[["sgp.projection.content.areas"]], 1) & YEAR==tail(sgp.iter[["sgp.projection.panel.years"]], 1)], nomatch=0][,
 					!c("CONTENT_AREA", "YEAR"), with=FALSE]
 
-			if ("STATE" %in% names(sgp.data) && dim(tmp.data)[1]!=0) {
+			if ("STATE" %in% var.names && dim(tmp.data)[1]!=0) {
 				setnames(tmp.data, tail(sort(grep("STATE", names(tmp.data), value=TRUE)), 1), "STATE")
 				if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0) tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL, with=FALSE]
 			}
@@ -148,7 +167,7 @@ function(sgp.data,
 
 
 	if (sgp.type=="sgp.projections.lagged") {
-		if ("YEAR_WITHIN" %in% names(sgp.data)) {
+		if ("YEAR_WITHIN" %in% var.names) {
 			setkeyv(sgp.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", tail(sgp.iter[["sgp.panel.years.within"]], 1)))
 			tmp.ids <- sgp.data[SJ("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], 1), tail(sgp.iter[["sgp.panel.years"]], 1), 
 				tail(sgp.iter[["sgp.grade.sequences"]], 1), 1)][,"ID", with=FALSE]
@@ -172,7 +191,7 @@ function(sgp.data,
 					rbindlist(tmp.lookup.list),
 					idvar="ID",
 					timevar="tmp.timevar",
-					drop=names(sgp.data)[!names(sgp.data) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "ACHIEVEMENT_LEVEL", "YEAR_WITHIN", "STATE")],
+					drop=var.names[!var.names %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "ACHIEVEMENT_LEVEL", "YEAR_WITHIN", "STATE")],
 					direction="wide")
 				setnames(tmp.data, names(tmp.data)[grep(achievement.level.prior.vname, names(tmp.data))], achievement.level.prior.vname)
 
@@ -181,7 +200,7 @@ function(sgp.data,
 					tmp.data[,setdiff(grep("YEAR_WITHIN", names(tmp.data), value=TRUE), "YEAR_WITHIN"):=NULL, with=FALSE]
 				}
 				
-				if ("STATE" %in% names(sgp.data) && dim(tmp.data)[1]!=0) {
+				if ("STATE" %in% var.names && dim(tmp.data)[1]!=0) {
 					setnames(tmp.data, tail(sort(grep("STATE", names(tmp.data), value=TRUE)), 1), "STATE")
 					if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0) {
 						tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL, with=FALSE]
@@ -193,7 +212,7 @@ function(sgp.data,
 					rbindlist(tmp.lookup.list),
 					idvar="ID",
 					timevar="tmp.timevar",
-					drop=names(sgp.data)[!names(sgp.data) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "ACHIEVEMENT_LEVEL", "YEAR_WITHIN", "STATE")],
+					drop=var.names[!var.names %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "ACHIEVEMENT_LEVEL", "YEAR_WITHIN", "STATE")],
 					direction="wide"), key="ID")[sgp.targets[CONTENT_AREA==tail(sgp.iter[["sgp.content.areas"]], 1) & YEAR==tail(sgp.iter[["sgp.panel.years"]], 1)], nomatch=0][, 
 						!c("CONTENT_AREA", "YEAR"), with=FALSE]
 				setnames(tmp.data, names(tmp.data)[grep(achievement.level.prior.vname, names(tmp.data))], achievement.level.prior.vname)
@@ -203,7 +222,7 @@ function(sgp.data,
 					tmp.data[,setdiff(grep("YEAR_WITHIN", names(tmp.data), value=TRUE), "YEAR_WITHIN"):=NULL, with=FALSE]
 				}
 				
-				if ("STATE" %in% names(sgp.data) && dim(tmp.data)[1]!=0) {
+				if ("STATE" %in% var.names && dim(tmp.data)[1]!=0) {
 					setnames(tmp.data, tail(sort(grep("STATE", names(tmp.data), value=TRUE)), 1), "STATE")
 					if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0) {
 						tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL, with=FALSE]
@@ -227,10 +246,10 @@ function(sgp.data,
 						'tmp.timevar' := paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
 				idvar="ID",
 				timevar="tmp.timevar",
-				drop=names(sgp.data)[!names(sgp.data) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "ACHIEVEMENT_LEVEL", "STATE")],
+				drop=var.names[!var.names %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "ACHIEVEMENT_LEVEL", "STATE")],
 				direction="wide")
 
-				if ("STATE" %in% names(sgp.data) && dim(tmp.data)[1]!=0) {
+				if ("STATE" %in% var.names && dim(tmp.data)[1]!=0) {
 					setnames(tmp.data, tail(sort(grep("STATE", names(tmp.data), value=TRUE)), 1), "STATE")
 					if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0) {
 						tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL, with=FALSE]
@@ -252,11 +271,11 @@ function(sgp.data,
 						'tmp.timevar' := paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
 				idvar="ID",
 				timevar="tmp.timevar",
-				drop=names(sgp.data)[!names(sgp.data) %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "ACHIEVEMENT_LEVEL", "STATE")],
+				drop=var.names[!var.names %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "ACHIEVEMENT_LEVEL", "STATE")],
 				direction="wide"), key="ID")[sgp.targets[CONTENT_AREA==tail(sgp.iter[["sgp.content.areas"]], 1) & YEAR==tail(sgp.iter[["sgp.panel.years"]], 1)], nomatch=0][,
 					!c("CONTENT_AREA", "YEAR"), with=FALSE]
 
-				if ("STATE" %in% names(sgp.data) && dim(tmp.data)[1]!=0) {
+				if ("STATE" %in% var.names && dim(tmp.data)[1]!=0) {
 					setnames(tmp.data, tail(sort(grep("STATE", names(tmp.data), value=TRUE)), 1), "STATE")
 					if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0) {
 						tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL, with=FALSE]

@@ -47,6 +47,7 @@ studentGrowthPercentiles(panel.data,
                          return.prior.scale.score.standardized=TRUE,
                          return.norm.group.identifier=TRUE,
                          return.norm.group.scale.scores=NULL,
+                         return.panel.data=FALSE,
                          print.time.taken=TRUE,
                          parallel.config=NULL,
 			 calculate.simex=NULL,
@@ -176,6 +177,8 @@ Useful for examining relationship between prior achievement and student growth.
   }
   \item{return.norm.group.scale.scores}{Boolean argument (defaults. to NULL) indicating whether to return a comma separated character vector of the scores associated with the SGP_NORM_GROUP to
   which the student belongs.
+  }
+  \item{return.panel.data}{Boolean argument indicating whether to return the original data provided in \code{panel.data$Panel_Data} in the SGP list of results.  Defaults to FALSE which returns a NULL list element.
   }
   \item{print.time.taken}{Boolean argument (defaults to TRUE) indicating whether to print message indicating information on \code{studentGrowthPercentiles} analysis and time taken.
   }

@@ -37,6 +37,7 @@ function(panel.data,         ## REQUIRED
          return.prior.scale.score.standardized=TRUE,
          return.norm.group.identifier=TRUE,
          return.norm.group.scale.scores=NULL,
+         return.panel.data=FALSE,
          print.time.taken=TRUE,
          parallel.config=NULL,
          calculate.simex=NULL,
@@ -1442,7 +1443,7 @@ function(panel.data,         ## REQUIRED
 		Cutscores=Cutscores, 
 		Goodness_of_Fit=Goodness_of_Fit, 
 		Knots_Boundaries=Knots_Boundaries,
-		Panel_Data=Panel_Data, 
+		Panel_Data = if (return.panel.data) Panel_Data else NULL, 
 		SGPercentiles=SGPercentiles,
 		SGProjections=SGProjections,
 		Simulated_SGPs=Simulated_SGPs)
