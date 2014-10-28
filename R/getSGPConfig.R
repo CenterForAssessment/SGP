@@ -342,10 +342,12 @@ function(sgp_object,
 		}
 
 		sgp.config.list[['sgp.percentiles.baseline']] <- 
-				par.sgp.config[which(sapply(par.sgp.config, function(x) !identical(x[['sgp.baseline.grade.sequences']], "NO_BASELINE_COEFFICIENT_MATRICES")))]
+			par.sgp.config[which(sapply(par.sgp.config, function(x) !identical(x[['sgp.baseline.grade.sequences']], "NO_BASELINE_COEFFICIENT_MATRICES")))]
 
-		tmp.config <- sgp.config.list[['sgp.percentiles.baseline']][sapply(sgp.config.list[['sgp.percentiles.baseline']], test.projection.iter)]
-		if (length(tmp.config) > 0) for (f in 1:length(tmp.config)) tmp.config[[f]]$sgp.exact.grade.progression <- FALSE
+		if (length(sgp.config.list[['sgp.percentiles.baseline']]) > 0) {
+			tmp.config <- sgp.config.list[['sgp.percentiles.baseline']][sapply(sgp.config.list[['sgp.percentiles.baseline']], test.projection.iter)]
+			if (length(tmp.config) > 0) for (f in 1:length(tmp.config)) tmp.config[[f]]$sgp.exact.grade.progression <- FALSE
+		}
 
 		if (sgp.projections.baseline | sgp.projections.lagged.baseline) {
 			while (any(sapply(tmp.config, function(x) length(x$sgp.projection.sequence)>1))) {
@@ -363,7 +365,7 @@ function(sgp_object,
 			if (sgp.projections.lagged.baseline) sgp.config.list[['sgp.projections.lagged.baseline']] <- tmp.config
 		}
 		
-		if (!sgp.percentiles.baseline) sgp.config.list[['sgp.percentiles.baseline']] <- NULL
+		if (!sgp.percentiles.baseline | length(sgp.config.list[['sgp.percentiles.baseline']]) == 0) sgp.config.list[['sgp.percentiles.baseline']] <- NULL
 		if (sgp.projections.baseline) sgp.config.list[['sgp.projections.baseline']] <- tmp.config
 		if (sgp.projections.lagged.baseline) sgp.config.list[['sgp.projections.lagged.baseline']] <- tmp.config
 	}
