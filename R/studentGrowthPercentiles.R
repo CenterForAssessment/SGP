@@ -399,7 +399,8 @@ function(panel.data,         ## REQUIRED
 				
 				## Write big.data to disk and remove from memory
 				dir.create("Data", recursive=TRUE, showWarnings=FALSE)
-				tmp.dbname <- paste("Data/", paste(unlist(sgp.labels), collapse="_"), "_Grade_", tmp.last, ".sqlite", sep="")
+				tmp.dbname <- paste("Data/", paste(tail(paste(year.progression.for.norm.group, 
+					paste(content_area.progression, grade.progression, sep="_"), sep="_"), num.prior+1), collapse="-"), ".sqlite", sep="")
 				con <- dbConnect(SQLite(), dbname = tmp.dbname)
 				dbWriteTable(con, name = "simex_data", value=big.data, overwrite=TRUE, row.names=0)
 				dbDisconnect(con)
@@ -544,7 +545,7 @@ function(panel.data,         ## REQUIRED
 					stopParallel(parallel.config, par.start)
 				}
 			} ### END for (L in lambda[-1])
-			unlink(paste("Data/", paste(unlist(sgp.labels), collapse="_"), "_Grade_", tmp.last, ".sqlite", sep=""))
+			unlink(tmp.dbname)
 
 			if (calculate.simex.sgps) {
 				switch(extrapolation,
