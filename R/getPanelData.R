@@ -67,9 +67,9 @@ function(sgp.data,
 				rs <- dbSendQuery(con, paste("select * from sgp_data where CONTENT_AREA in ('", paste(tmp.lookup$V2, collapse="', '"), "')", 
 					" AND GRADE in ('", paste(tmp.lookup$V4, collapse="', '"), "')",
 					" AND YEAR in ('", paste(tmp.lookup$V3, collapse="', '"), "')", sep=""))
+				tmp.data <- data.table(fetch(rs, n = -1), key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))
 				dbClearResult(dbListResults(con)[[1]])
-				return(as.data.frame(reshape(
-					data.table(fetch(rs, n = -1), key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))[tmp.lookup, nomatch=0][,
+				return(as.data.frame(reshape(tmp.data[tmp.lookup, nomatch=0][,
 						'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
 						idvar="ID",
 						timevar="tmp.timevar",
