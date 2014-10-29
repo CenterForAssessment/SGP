@@ -36,7 +36,6 @@ function(sgp.data,
 						" AND YEAR in ('", paste(tmp.lookup[get(i)==1]$YEAR, collapse="', '"), "')", sep="")), 
 						key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", i))[tmp.lookup[get(i)==1], nomatch=0][,
 						'tmp.timevar':=paste(YEAR, CONTENT_AREA, i, sep="."), with=FALSE][, list(ID, GRADE, SCALE_SCORE, YEAR_WITHIN, tmp.timevar)])
-					dbDisconnect(con)
 				} else {
 					setkeyv(sgp.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", i))
 					setkeyv(tmp.lookup, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", i))
@@ -44,6 +43,8 @@ function(sgp.data,
 						list(ID, GRADE, SCALE_SCORE, YEAR_WITHIN, tmp.timevar)], key="ID")) ### Could be NULL and result in a warning
 				}
 			}
+			if (sqlite.tf) dbDisconnect(con)
+			
 			if (tail(sgp.iter[['sgp.panel.years']], 1)==head(tail(sgp.iter[['sgp.panel.years']], 2), 1)) {
 				setkey(tmp.lookup.list[[1]], ID); setkey(tmp.lookup.list[[2]], ID)
 				tmp.ids <- intersect(tmp.lookup.list[[1]][['ID']], tmp.lookup.list[[2]][['ID']])
@@ -250,6 +251,7 @@ function(sgp.data,
 				}
 			}
 			if (sqlite.tf) dbDisconnect(con)
+			
 			achievement.level.prior.vname <- paste("ACHIEVEMENT_LEVEL", tail(head(sgp.iter[["sgp.panel.years"]], -1), 1), tail(head(sgp.iter[["sgp.content.areas"]], -1), 1), sep=".")	
 			if (is.null(sgp.targets)) {
 				tmp.data <- reshape(
