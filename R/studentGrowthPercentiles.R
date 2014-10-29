@@ -441,34 +441,20 @@ function(panel.data,         ## REQUIRED
 					##  Note, that if you use the parallel.config for SIMEX here, you can also use it for TAUS in the naive analysis
 					##  Example parallel.config argument:  '... parallel.config=list(BACKEND="PARALLEL", TYPE="SOCK", WORKERS=list(SIMEX = 4, TAUS = 4))'
 					
-					# from http://stackoverflow.com/questions/20810181/memory-issue-with-foreach-loop-in-r-on-windows-8-64-bit-doparallel-package
-					isplitDT2 <- function(x, vals) {
-						ival <- iter(vals)
-						nextEl <- function() {
-						  val <- nextElem(ival)
-						  list(value=x[val], key=val)
-						}
-						obj <- list(nextElem=nextEl)
-						class(obj) <- c('abstractiter', 'iter')
-						obj
-					}
-					if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") big.data[, b := factor(b)]; setkey(big.data, b)
-
 					##  Calculate coefficient matricies (if needed/requested)
 					if (is.logical(simex.use.my.coefficient.matrices)) if(! simex.use.my.coefficient.matrices) simex.use.my.coefficient.matrices <- NULL
 					if (is.null(simex.use.my.coefficient.matrices)) {
 						if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
 							if (is.null(simex.sample.size) || dim(tmp.data)[1] <= simex.sample.size) {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <- 
-								# foreach(bd.sub = isplit(big.data, levels(big.data$b)), .packages=c("quantreg", "data.table"), 
-								foreach(bd.sub = isplitDT2(big.data, levels(big.data$b)), .packages=c("quantreg", "data.table"), 
+								foreach(bd.sub = isplit(big.data, big.data$b), .packages=c("quantreg", "data.table"), 
 								.export=c("Knots_Boundaries", "rq.method", "taus", "content_area.progression", "tmp.slot.gp", "year.progression", "year_lags.progression"),
 								.options.mpi=par.start$foreach.options, .options.multicore=par.start$foreach.options, .options.snow=par.start$foreach.options) %dopar% {
 									bd.sub[['value']][,rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=.SD)]
 								}
 							} else {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
-								foreach(bd.sub = isplitDT2(big.data, levels(big.data$b)), .packages=c("quantreg", "data.table"),
+								foreach(bd.sub = isplit(big.data, big.data$b), .packages=c("quantreg", "data.table"),
 								.export=c("Knots_Boundaries", "rq.method", "taus", "content_area.progression", "tmp.slot.gp", "year.progression", "year_lags.progression"),
 								.options.mpi=par.start$foreach.options, .options.multicore=par.start$foreach.options, .options.snow=par.start$foreach.options) %dopar% {
 									bd.sub[['value']][sample(seq(dim(tmp.data)[1]), simex.sample.size)][, rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=.SD)]
@@ -504,11 +490,11 @@ function(panel.data,         ## REQUIRED
 					if (calculate.simex.sgps) {
 						if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
 							fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- 
-							foreach(bd.sub = isplitDT2(big.data, levels(big.data$b)), .combine="+", .export=c('.get.percentile.predictions', 'tmp.gp'), 
+							foreach(bd.sub = isplit(big.data, big.data$b), .combine="+", .export=c('.get.percentile.predictions', 'tmp.gp'), 
 							.options.multicore=par.start$foreach.options) %dopar% { # .options.snow=par.start$foreach.options
 								as.vector(.get.percentile.predictions(bd.sub[['value']][, 
 									which(names(bd.sub[['value']]) %in% c("ID", paste('prior_', k:1, sep=""), "final.yr")), with=FALSE], 
-									simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[as.numeric(bd.sub[['key']])]])/B)
+									simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[bd.sub[['key']][[1]]]])/B)
 							}
 						} else {
 						if (par.start$par.type == 'MULTICORE') {

@@ -278,8 +278,8 @@ function(sgp_object,
 		dir.create("Data", recursive=TRUE, showWarnings=FALSE)
 		if (!"TMP_SGP_Data.sqlite" %in% list.files("Data")) {
 			tmp_sgp_data_for_analysis <- dbConnect(SQLite(), dbname = "Data/TMP_SGP_Data.sqlite")
-			system.time(dbWriteTable(tmp_sgp_data_for_analysis, name = "sgp_data", 
-				value=sgp_object@Data[,intersect(names(sgp_object@Data), variables.to.get), with=FALSE]["VALID_CASE"], row.names=0))
+			dbWriteTable(tmp_sgp_data_for_analysis, name = "sgp_data", 
+				value=sgp_object@Data[,intersect(names(sgp_object@Data), variables.to.get), with=FALSE]["VALID_CASE"], row.names=0)
 		} else tmp_sgp_data_for_analysis <- dbConnect(SQLite(), dbname = "Data/TMP_SGP_Data.sqlite")
 		sgp.data.names <- dbListFields(tmp_sgp_data_for_analysis, "sgp_data")
 	} else {
