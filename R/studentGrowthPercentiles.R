@@ -268,6 +268,7 @@ function(panel.data,         ## REQUIRED
 	.simex.sgp <- function(state, variable, lambda, B, simex.sample.size, extrapolation, save.matrices, simex.use.my.coefficient.matrices=NULL, calculate.simex.sgps) {
 		GRADE <- CONTENT_AREA <- YEAR <- V1 <- Lambda <- tau <- b <- .SD <- TEMP <- NULL ## To avoid R CMD check warnings
 		my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
+		if (is.logical(simex.use.my.coefficient.matrices)) if(! simex.use.my.coefficient.matrices) simex.use.my.coefficient.matrices <- NULL
 
 		fitted <- extrap <- tmp.quantiles.simex <- simex.coef.matrices <- list()
 		loss.hoss <- matrix(nrow=2,ncol=length(tmp.gp)-1)
@@ -291,7 +292,7 @@ function(panel.data,         ## REQUIRED
 				s4Ks <- paste(s4Ks, "knots_", tmp.gp.iter[i], "=", knt, ",", sep="")
 				s4Bs <- paste(s4Bs, "boundaries_", tmp.gp.iter[i], "=", bnd, ",", sep="")
 			}
-			tmp.mtx <-eval(parse(text=paste("rq(final.yr ~", substring(mod,4), ", tau=taus, data = rqdata, method=rq.method)[['coefficients']]", sep="")))
+			tmp.mtx <-eval(parse(text=paste("rq(final_yr ~", substring(mod,4), ", tau=taus, data = rqdata, method=rq.method)[['coefficients']]", sep="")))
 			
 			tmp.version <- list(SGP_Package_Version=as.character(packageVersion("SGP")), Date_Prepared=date(), Matrix_Information=list(N=dim(rqdata)[1]))
 	
@@ -363,10 +364,10 @@ function(panel.data,         ## REQUIRED
 				big.data <- rbindlist(replicate(B, tmp.data, simplify = FALSE))
 				big.data[, Lambda := rep(L, each=dim(tmp.data)[1]*B)]
 				big.data[, b := rep(1:B, each=dim(tmp.data)[1])]
-				setnames(big.data, tmp.num.variables, "final.yr")
+				setnames(big.data, tmp.num.variables, "final_yr")
 				for (g in seq_along(tmp.gp.iter)) {
 					col.index <- tmp.num.variables-g
-					setkeyv(big.data, c(names(big.data)[col.index], "final.yr", "b"))
+					setkeyv(big.data, c(names(big.data)[col.index], "final_yr", "b"))
 					big.data.uniques <- unique(big.data)
 					big.data.uniques.indices <- which(!duplicated(big.data))
 					big.data.uniques[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="") := 
@@ -378,20 +379,31 @@ function(panel.data,         ## REQUIRED
 					big.data.uniques[big.data.uniques[[col.index]] > loss.hoss[2,g], col.index := loss.hoss[2,g], with=FALSE]
 					if (is.null(key(big.data.uniques))) setkeyv(big.data.uniques, key(big.data)) 
 					big.data[, tmp.num.variables-g := big.data.uniques[,c(key(big.data), "TEMP"), with=FALSE][big.data][['TEMP']]]
-					ks <- big.data[, as.list(as.vector(unlist(round(quantile(big.data[[col.index]], probs=knot.cut.percentiles, na.rm=TRUE), digits=3))))] # Knots
-					bs <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.1), digits=3)))] # Boundaries
-					lh <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.0), digits=3)))] # LOSS/HOSS
-			
-					eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['knots_", tmp.gp.iter[g], 
-						"']] <- c(ks[,V1], ks[,V2], ks[,V3], ks[,V4])", sep="")))
-					eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['boundaries_", tmp.gp.iter[g], 
-						"']] <- c(bs[,V1], bs[,V2])", sep="")))
-					eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['loss.hoss_", tmp.gp.iter[g], 
-						"']] <- c(lh[,V1], lh[,V2])", sep="")))
-		
+					
+					if (is.null(simex.use.my.coefficient.matrices)) {
+						ks <- big.data[, as.list(as.vector(unlist(round(quantile(big.data[[col.index]], probs=knot.cut.percentiles, na.rm=TRUE), digits=3))))] # Knots
+						bs <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.1), digits=3)))] # Boundaries
+						lh <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.0), digits=3)))] # LOSS/HOSS
+				
+						eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['knots_", tmp.gp.iter[g], 
+							"']] <- c(ks[,V1], ks[,V2], ks[,V3], ks[,V4])", sep="")))
+						eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['boundaries_", tmp.gp.iter[g], 
+							"']] <- c(bs[,V1], bs[,V2])", sep="")))
+						eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['loss.hoss_", tmp.gp.iter[g], 
+							"']] <- c(lh[,V1], lh[,V2])", sep="")))
+					}
+					
 					setnames(big.data, tmp.num.variables-g, paste("prior_",g,sep=""))
 					setkey(big.data, b, ID)
 				}
+				
+				## Write big.data to disk and remove from memory
+				dir.create("Data", recursive=TRUE, showWarnings=FALSE)
+				tmp.dbname <- paste("Data/", paste(unlist(sgp.labels), collapse="_"), "_Grade_", tmp.last, ".sqlite", sep="")
+				con <- dbConnect(SQLite(), dbname = tmp.dbname)
+				dbWriteTable(con, name = "simex_data", value=big.data, overwrite=TRUE, row.names=0)
+				dbDisconnect(con)
+				rm(big.data);suppressMessages(gc())
 
 				## Establish the simulation iterations - either 1) 1:B, or 2) a sample of either B or the number of previously computed matrices
 				sim.iters <- 1:B
@@ -412,16 +424,17 @@ function(panel.data,         ## REQUIRED
 					if (length(available.matrices) < B) sim.iters <- sample(1:length(available.matrices), B, replace=TRUE)
 				}
 		
-				setkey(big.data, b)
 				if (is.null(parallel.config)) { # Sequential
 					if (is.null(simex.use.my.coefficient.matrices)) {
 						for (z in seq_along(sim.iters)) {
 							if (is.null(simex.sample.size) || dim(tmp.data)[1] <= simex.sample.size) {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]] <-
-									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=big.data[list(z)])
+									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname), 
+										paste("select * from simex_data where b in ('", z, "')", sep="")))
 							} else {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]] <-
-									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=big.data[list(z)][sample(seq(dim(tmp.data)[1]), simex.sample.size)])
+									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname), 
+										paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq(dim(tmp.data)[1]), simex.sample.size)])
 							}
 						}
 					} else simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <- available.matrices[sim.iters]
@@ -429,9 +442,9 @@ function(panel.data,         ## REQUIRED
 					if (calculate.simex.sgps) {
 						for (z in seq_along(sim.iters)) {
 							fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + 
-								as.vector(.get.percentile.predictions(big.data[list(z)][, 
-								which(names(big.data[list(z)]) %in% c("ID", paste('prior_', k:1, sep=""), "final.yr")), with=FALSE], 
-								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]])/B)
+								as.vector(.get.percentile.predictions(dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname), 
+									paste("select ", paste(c("ID", paste('prior_', k:1, sep=""), "final_yr"), collapse=", "), " from simex_data where b in ('", z, "')", sep="")), 
+									simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]])/B)
 						}
 					}
 				} else {	# Parallel over sim.iters
@@ -442,43 +455,47 @@ function(panel.data,         ## REQUIRED
 					##  Example parallel.config argument:  '... parallel.config=list(BACKEND="PARALLEL", TYPE="SOCK", WORKERS=list(SIMEX = 4, TAUS = 4))'
 					
 					##  Calculate coefficient matricies (if needed/requested)
-					if (is.logical(simex.use.my.coefficient.matrices)) if(! simex.use.my.coefficient.matrices) simex.use.my.coefficient.matrices <- NULL
 					if (is.null(simex.use.my.coefficient.matrices)) {
 						if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
 							if (is.null(simex.sample.size) || dim(tmp.data)[1] <= simex.sample.size) {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <- 
-								foreach(bd.sub = isplit(big.data, big.data$b), .packages=c("quantreg", "data.table"), 
+								foreach(z=iter(sim.iters), .packages=c("quantreg", "data.table"), 
 								.export=c("Knots_Boundaries", "rq.method", "taus", "content_area.progression", "tmp.slot.gp", "year.progression", "year_lags.progression"),
 								.options.mpi=par.start$foreach.options, .options.multicore=par.start$foreach.options, .options.snow=par.start$foreach.options) %dopar% {
-									bd.sub[['value']][,rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=.SD)]
+									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
+										paste("select * from simex_data where b in ('", z, "')", sep="")))
 								}
 							} else {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
-								foreach(bd.sub = isplit(big.data, big.data$b), .packages=c("quantreg", "data.table"),
+								foreach(z=iter(sim.iters), .packages=c("quantreg", "data.table"), 
 								.export=c("Knots_Boundaries", "rq.method", "taus", "content_area.progression", "tmp.slot.gp", "year.progression", "year_lags.progression"),
 								.options.mpi=par.start$foreach.options, .options.multicore=par.start$foreach.options, .options.snow=par.start$foreach.options) %dopar% {
-									bd.sub[['value']][sample(seq(dim(tmp.data)[1]), simex.sample.size)][, rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=.SD)]
+									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
+										paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq(dim(tmp.data)[1]), simex.sample.size),])
 								}
 							}
 						} else {
 						if (par.start$par.type == 'MULTICORE') {
 							if (is.null(simex.sample.size) || dim(tmp.data)[1] <= simex.sample.size) {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <- 
-									mclapply(sim.iters, function(z) big.data[list(z)][,rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=.SD)], mc.cores=par.start$workers)
+									mclapply(sim.iters, function(z) rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
+										paste("select * from simex_data where b in ('", z, "')", sep=""))), mc.cores=par.start$workers)
 							} else {
-								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
-									mclapply(sim.iters, function(z) big.data[list(z)][sample(seq(dim(tmp.data)[1]), simex.sample.size)][,
-										rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=.SD)], mc.cores=par.start$workers)
+								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <- 
+									mclapply(sim.iters, function(z) rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
+										paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq(dim(tmp.data)[1]), simex.sample.size),]), 
+										mc.cores=par.start$workers)
 							}
 						}
 						if (par.start$par.type == 'SNOW') {
 							if (is.null(simex.sample.size) || dim(tmp.data)[1] <= simex.sample.size) {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <- 
-									parLapply(par.start$internal.cl, sim.iters, function(z) big.data[list(z)][,rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=.SD)])
+									parLapply(par.start$internal.cl, sim.iters, function(z) rq.mtx(tmp.gp.iter[1:k], lam=L, 
+										rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname), paste("select * from simex_data where b in ('", z, "')", sep=""))))
 							} else {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
-									parLapply(par.start$internal.cl, sim.iters, function(z) big.data[list(z)][sample(seq(dim(tmp.data)[1]), simex.sample.size)][,
-										rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=.SD)])
+									parLapply(par.start$internal.cl, sim.iters, function(z) rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
+										paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq(dim(tmp.data)[1]), simex.sample.size),]))
 							}
 						}
 						}
@@ -490,31 +507,33 @@ function(panel.data,         ## REQUIRED
 					if (calculate.simex.sgps) {
 						if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
 							fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- 
-							foreach(bd.sub = isplit(big.data, big.data$b), .combine="+", .export=c('.get.percentile.predictions', 'tmp.gp'), 
+							foreach(z=iter(sim.iters), .combine="+", .export=c('.get.percentile.predictions', 'tmp.gp'), 
+							# foreach(bd.sub = isplit(big.data, big.data$b), .combine="+", .export=c('.get.percentile.predictions', 'tmp.gp'), 
 							.options.multicore=par.start$foreach.options) %dopar% { # .options.snow=par.start$foreach.options
-								as.vector(.get.percentile.predictions(bd.sub[['value']][, 
-									which(names(bd.sub[['value']]) %in% c("ID", paste('prior_', k:1, sep=""), "final.yr")), with=FALSE], 
-									simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[bd.sub[['key']][[1]]]])/B)
+								as.vector(.get.percentile.predictions(dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
+									paste("select ", paste(c("ID", paste('prior_', k:1, sep=""), "final_yr"), collapse=", ")," from simex_data where b in ('",z,"')", sep="")), 
+									simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]])/B)
 							}
 						} else {
 						if (par.start$par.type == 'MULTICORE') {
-							tmp.fitted <- mclapply(seq_along(sim.iters), function(z) { as.vector(.get.percentile.predictions(
-								big.data[list(z)][, 
-									which(names(big.data[list(z)]) %in% c("ID", paste('prior_', k:1, sep=""), "final.yr")), with=FALSE], 
+							tmp.fitted <- mclapply(seq_along(sim.iters), function(z) {
+								as.vector(.get.percentile.predictions(dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
+									paste("select ", paste(c("ID", paste('prior_', k:1, sep=""), "final_yr"), collapse=", ")," from simex_data where b in ('",z,"')", sep="")), 
 									simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]])/B)
-								}, mc.cores=par.start$workers
-							)
+							}, mc.cores=par.start$workers)
+							
 							fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- tmp.fitted[[1]]
 							for (s in seq_along(sim.iters[-1])) {
 								fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + tmp.fitted[[s]]
 							}
 						}
 						if (par.start$par.type == 'SNOW') {
-							tmp.fitted <- parLapply(par.start$internal.cl, seq_along(sim.iters), function(z) { as.vector(.get.percentile.predictions(
-								big.data[list(z)][, 
-									which(names(big.data[list(z)]) %in% c("ID", paste('prior_', k:1, sep=""), "final.yr")), with=FALSE], 
-									simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]])/B)}
-							)
+							tmp.fitted <- parLapply(par.start$internal.cl, seq_along(sim.iters), function(z) { 
+								as.vector(.get.percentile.predictions(dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
+									paste("select ", paste(c("ID", paste('prior_', k:1, sep=""), "final_yr"), collapse=", ")," from simex_data where b in ('",z,"')", sep="")), 
+									simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]])/B)
+							})
+							
 							fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- tmp.fitted[[1]]
 							for (s in seq_along(sim.iters[-1])) {
 								fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + tmp.fitted[[s]]
@@ -525,6 +544,7 @@ function(panel.data,         ## REQUIRED
 					stopParallel(parallel.config, par.start)
 				}
 			} ### END for (L in lambda[-1])
+			unlink(paste("Data/", paste(unlist(sgp.labels), collapse="_"), "_Grade_", tmp.last, ".sqlite", sep=""))
 
 			if (calculate.simex.sgps) {
 				switch(extrapolation,
