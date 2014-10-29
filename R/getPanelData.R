@@ -9,9 +9,9 @@ function(sgp.data,
 	YEAR <- CONTENT_AREA <- VALID_CASE <- V3 <- V5 <- ID <- GRADE <- SCALE_SCORE <- YEAR_WITHIN <- tmp.timevar <- FIRST_OBSERVATION <- LAST_OBSERVATION <- ACHIEVEMENT_LEVEL <- NULL
 
 	if (is(sgp.data, "DBIObject")) {
-		var.names <- dbListFields(sgp.data, "sgp_data")
-		sqlite.tf <- TRUE
 		con <- dbConnect(SQLite(), dbname = "Data/TMP_SGP_Data.sqlite")
+		var.names <- dbListFields(con, "sgp_data")
+		sqlite.tf <- TRUE
 	} else {
 		var.names <- names(sgp.data)
 		sqlite.tf <- FALSE
