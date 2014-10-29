@@ -30,13 +30,12 @@ function(sgp.data,
 			for (i in unique(sgp.iter[["sgp.panel.years.within"]])) {
 				if (sqlite.tf) {
 					setkeyv(tmp.lookup, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", i))
-					rs <- dbSendQuery(con, paste("select * from sgp_data where CONTENT_AREA in ('", paste(tmp.lookup[get(i)==1]$CONTENT_AREA, collapse="', '"), "')", 
-						" AND GRADE in ('", paste(tmp.lookup[get(i)==1]$GRADE, collapse="', '"), "')",
-						" AND ", i, " in (1)",
-						" AND YEAR in ('", paste(tmp.lookup[get(i)==1]$YEAR, collapse="', '"), "')", sep=""))
-					suppressWarnings(tmp.lookup.list[[i]] <- data.table(fetch(rs, n = -1), key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", i))[tmp.lookup[get(i)==1], nomatch=0][,
+					suppressWarnings(tmp.lookup.list[[i]] <- data.table(dbGetQuery(con, 
+						paste("select * from sgp_data where CONTENT_AREA in ('", paste(tmp.lookup[get(i)==1]$CONTENT_AREA, collapse="', '"), "')",
+						" AND GRADE in ('", paste(tmp.lookup[get(i)==1]$GRADE, collapse="', '"), "')", " AND ", i, " in (1)", 
+						" AND YEAR in ('", paste(tmp.lookup[get(i)==1]$YEAR, collapse="', '"), "')", sep="")), 
+						key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", i))[tmp.lookup[get(i)==1], nomatch=0][,
 						'tmp.timevar':=paste(YEAR, CONTENT_AREA, i, sep="."), with=FALSE][, list(ID, GRADE, SCALE_SCORE, YEAR_WITHIN, tmp.timevar)])
-					dbClearResult(dbListResults(con)[[1]])
 					dbDisconnect(con)
 				} else {
 					setkeyv(sgp.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", i))
@@ -65,11 +64,10 @@ function(sgp.data,
 			setkey(tmp.lookup, NULL)
 
 			if (sqlite.tf) {
-				rs <- dbSendQuery(con, paste("select * from sgp_data where CONTENT_AREA in ('", paste(tmp.lookup$V2, collapse="', '"), "')", 
+				tmp.data <- data.table(dbGetQuery(con, 
+					paste("select * from sgp_data where CONTENT_AREA in ('", paste(tmp.lookup$V2, collapse="', '"), "')", 
 					" AND GRADE in ('", paste(tmp.lookup$V4, collapse="', '"), "')",
-					" AND YEAR in ('", paste(tmp.lookup$V3, collapse="', '"), "')", sep=""))
-				tmp.data <- data.table(fetch(rs, n = -1), key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))
-				dbClearResult(dbListResults(con)[[1]])
+					" AND YEAR in ('", paste(tmp.lookup$V3, collapse="', '"), "')", sep="")), key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))
 				dbDisconnect(con)
 				return(as.data.frame(reshape(tmp.data[tmp.lookup, nomatch=0][,
 						'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
@@ -102,13 +100,11 @@ function(sgp.data,
 			for (i in unique(sgp.iter[["sgp.panel.years.within"]])) {
 				if (sqlite.tf) {
 					setkeyv(tmp.lookup, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", i))
-					rs <- dbSendQuery(con, paste("select * from sgp_data where CONTENT_AREA in ('", paste(tmp.lookup[get(i)==1]$CONTENT_AREA, collapse="', '"), "')", 
-						" AND GRADE in ('", paste(tmp.lookup[get(i)==1]$GRADE, collapse="', '"), "')",
-						" AND ", i, " in (1)",
-						" AND YEAR in ('", paste(tmp.lookup[get(i)==1]$YEAR, collapse="', '"), "')", sep=""))
-					suppressWarnings(tmp.lookup.list[[i]] <- data.table(fetch(rs, n = -1), key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", i))[tmp.lookup[get(i)==1], nomatch=0][,
+					suppressWarnings(tmp.lookup.list[[i]] <- data.table(dbGetQuery(con, 
+						paste("select * from sgp_data where CONTENT_AREA in ('", paste(tmp.lookup[get(i)==1]$CONTENT_AREA, collapse="', '"), "')", 
+						" AND GRADE in ('", paste(tmp.lookup[get(i)==1]$GRADE, collapse="', '"), "')", " AND ", i, " in (1)",
+						" AND YEAR in ('", paste(tmp.lookup[get(i)==1]$YEAR, collapse="', '"), "')", sep="")), key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", i))[tmp.lookup[get(i)==1], nomatch=0][,
 						'tmp.timevar':=paste(YEAR, CONTENT_AREA, i, sep="."), with=FALSE][, list(ID, GRADE, SCALE_SCORE, YEAR_WITHIN, tmp.timevar)])
-					dbClearResult(dbListResults(con)[[1]])
 					dbDisconnect(con)
 				} else {
 					setkeyv(sgp.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", i))
@@ -168,17 +164,15 @@ function(sgp.data,
 		setkey(tmp.lookup, NULL)
 		if (is.null(sgp.targets)) {
 			if (sqlite.tf) {
-				rs <- dbSendQuery(con, paste("select * from sgp_data where CONTENT_AREA in ('", paste(tmp.lookup$V2, collapse="', '"), "')", 
-					" AND GRADE in ('", paste(tmp.lookup$V4, collapse="', '"), "')",
-					" AND YEAR in ('", paste(tmp.lookup$V3, collapse="', '"), "')", sep=""))
 				tmp.data <- reshape(
-					data.table(fetch(rs, n = -1), key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))[tmp.lookup, nomatch=0][,
-					'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
+					data.table(dbGetQuery(con, 
+						paste("select * from sgp_data where CONTENT_AREA in ('", paste(tmp.lookup$V2, collapse="', '"), "')", 
+						" AND GRADE in ('", paste(tmp.lookup$V4, collapse="', '"), "')", " AND YEAR in ('", paste(tmp.lookup$V3, collapse="', '"), "')", sep="")), 
+						key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))[tmp.lookup, nomatch=0][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
 					idvar="ID",
 					timevar="tmp.timevar",
 					drop=var.names[!var.names %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "STATE")],
 					direction="wide")
-				dbClearResult(dbListResults(con)[[1]])
 				dbDisconnect(con)
 			} else {
 				tmp.data <- reshape(
@@ -196,18 +190,15 @@ function(sgp.data,
 			return(as.data.frame(tmp.data))
 		} else {
 			if (sqlite.tf) {
-				rs <- dbSendQuery(con, paste("select * from sgp_data where CONTENT_AREA in ('", paste(tmp.lookup$V2, collapse="', '"), "')", 
-					" AND GRADE in ('", paste(tmp.lookup$V4, collapse="', '"), "')",
-					" AND YEAR in ('", paste(tmp.lookup$V3, collapse="', '"), "')", sep=""))
 				tmp.data <- data.table(reshape(
-					data.table(fetch(rs, n = -1), key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))[tmp.lookup, nomatch=0][,
-					'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
+					data.table(dbGetQuery(con, paste("select * from sgp_data where CONTENT_AREA in ('", paste(tmp.lookup$V2, collapse="', '"), "')", 
+						" AND GRADE in ('", paste(tmp.lookup$V4, collapse="', '"), "')", " AND YEAR in ('", paste(tmp.lookup$V3, collapse="', '"), "')", sep=""))
+						, key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))[tmp.lookup, nomatch=0][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
 					idvar="ID",
 					timevar="tmp.timevar",
 					drop=var.names[!var.names %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "STATE")],
 					direction="wide"), key="ID")[sgp.targets[CONTENT_AREA==tail(sgp.iter[["sgp.projection.content.areas"]], 1) & 
 						YEAR==tail(sgp.iter[["sgp.projection.panel.years"]], 1)], nomatch=0][,!c("CONTENT_AREA", "YEAR"), with=FALSE]
-				dbClearResult(dbListResults(con)[[1]])
 				dbDisconnect(con)
 			} else {
 				tmp.data <- data.table(reshape(
@@ -244,13 +235,12 @@ function(sgp.data,
 			for (i in unique(sgp.iter[["sgp.panel.years.within"]])) {
 				if (sqlite.tf) {
 					setkeyv(tmp.lookup, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", i))
-					rs <- dbSendQuery(con, paste("select * from sgp_data where CONTENT_AREA in ('", paste(tmp.lookup[get(i)==1]$CONTENT_AREA, collapse="', '"), "')", 
-						" AND GRADE in ('", paste(tmp.lookup[get(i)==1]$GRADE, collapse="', '"), "')",
-						" AND ", i, " in (1)",
-						" AND YEAR in ('", paste(tmp.lookup[get(i)==1]$YEAR, collapse="', '"), "')", sep=""))
-					suppressWarnings(tmp.lookup.list[[i]] <- data.table(fetch(rs, n = -1), key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", i))[tmp.lookup[get(i)==1], nomatch=0][,
+					suppressWarnings(tmp.lookup.list[[i]] <- data.table(dbGetQuery(con, 
+						paste("select * from sgp_data where CONTENT_AREA in ('", paste(tmp.lookup[get(i)==1]$CONTENT_AREA, collapse="', '"), "')", 
+							" AND GRADE in ('", paste(tmp.lookup[get(i)==1]$GRADE, collapse="', '"), "')", " AND ", i, " in (1)",
+							" AND YEAR in ('", paste(tmp.lookup[get(i)==1]$YEAR, collapse="', '"), "')", sep="")), 
+						key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", i))[tmp.lookup[get(i)==1], nomatch=0][,
 						'tmp.timevar':=paste(YEAR, CONTENT_AREA, i, sep="."), with=FALSE][, list(ID, GRADE, SCALE_SCORE, YEAR_WITHIN, tmp.timevar)])
-					dbClearResult(dbListResults(con)[[1]])
 					dbDisconnect(con)
 				} else {
 					setkeyv(sgp.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", i))
@@ -307,14 +297,13 @@ function(sgp.data,
 		} else {
 			if (is.null(sgp.targets)) {
 				if (sqlite.tf) {
-					rs.id <- dbSendQuery(con, paste("select ID from sgp_data where CONTENT_AREA in ('", tail(sgp.iter[["sgp.content.areas"]], 1), "')", 
+					tmp.ids <- data.table(dbGetQuery(con, paste("select ID from sgp_data where CONTENT_AREA in ('", tail(sgp.iter[["sgp.content.areas"]], 1), "')", 
 						" AND GRADE in ('", tail(sgp.iter[["sgp.grade.sequences"]], 1), "')",
-						" AND YEAR in ('", tail(sgp.iter[["sgp.panel.years"]], 1), "')", sep=""))
-					tmp.ids <- data.table(fetch(rs.id, n = -1))
-					rs <- dbSendQuery(con, paste("select * from sgp_data where GRADE in ('", paste(sgp.iter[["sgp.grade.sequences"]], collapse="', '"), "')",
-						" AND YEAR in ('", paste(sgp.iter[["sgp.panel.years"]], collapse="', '"), "')", sep=""))
-					tmp.data <- data.table(data.table(fetch(rs, n = -1), key="ID")[tmp.ids], key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))[
-						SJ("VALID_CASE", sgp.iter[["sgp.projection.content.areas"]],
+						" AND YEAR in ('", tail(sgp.iter[["sgp.panel.years"]], 1), "')", sep="")))
+					tmp.data <- data.table(data.table(dbGetQuery(con, 
+						paste("select * from sgp_data where GRADE in ('", paste(sgp.iter[["sgp.grade.sequences"]], collapse="', '"), "')",
+							" AND YEAR in ('", paste(sgp.iter[["sgp.panel.years"]], collapse="', '"), "')", sep="")), 
+						key="ID")[tmp.ids], key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))[SJ("VALID_CASE", sgp.iter[["sgp.projection.content.areas"]],
 						tail(head(sgp.iter[["sgp.panel.years"]], -1), length(sgp.iter[["sgp.projection.grade.sequences"]])),
 						sgp.iter[["sgp.projection.grade.sequences"]]), nomatch=0][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE]
 					tmp.data[, ACHIEVEMENT_LEVEL := ordered(ACHIEVEMENT_LEVEL, levels = SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]])]
@@ -324,7 +313,6 @@ function(sgp.data,
 						timevar="tmp.timevar",
 						drop=var.names[!var.names %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "ACHIEVEMENT_LEVEL", "STATE")],
 						direction="wide")
-					dbClearResult(dbListResults(con)[[1]])
 					dbDisconnect(con)
 				} else {
 					tmp.data <- reshape(
@@ -353,14 +341,13 @@ function(sgp.data,
 				return(as.data.frame(tmp.data))
 			} else {
 				if (sqlite.tf) {
-					rs.id <- dbSendQuery(con, paste("select ID from sgp_data where CONTENT_AREA in ('", tail(sgp.iter[["sgp.content.areas"]], 1), "')", 
+					tmp.ids <- data.table(dbGetQuery(con, paste("select ID from sgp_data where CONTENT_AREA in ('", tail(sgp.iter[["sgp.content.areas"]], 1), "')", 
 						" AND GRADE in ('", tail(sgp.iter[["sgp.grade.sequences"]], 1), "')",
-						" AND YEAR in ('", tail(sgp.iter[["sgp.panel.years"]], 1), "')", sep=""))
-					tmp.ids <- data.table(fetch(rs.id, n = -1))
-					rs <- dbSendQuery(con, paste("select * from sgp_data where GRADE in ('", paste(sgp.iter[["sgp.grade.sequences"]], collapse="', '"), "')",
-						" AND YEAR in ('", paste(sgp.iter[["sgp.panel.years"]], collapse="', '"), "')", sep=""))
-					tmp.data <- data.table(data.table(fetch(rs, n = -1), key="ID")[tmp.ids], key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))[
-						SJ("VALID_CASE", sgp.iter[["sgp.projection.content.areas"]],
+						" AND YEAR in ('", tail(sgp.iter[["sgp.panel.years"]], 1), "')", sep="")))
+					tmp.data <- data.table(data.table(dbGetQuery(con, 
+						paste("select * from sgp_data where GRADE in ('", paste(sgp.iter[["sgp.grade.sequences"]], collapse="', '"), "')",
+							" AND YEAR in ('", paste(sgp.iter[["sgp.panel.years"]], collapse="', '"), "')", sep="")), 
+						key="ID")[tmp.ids], key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))[SJ("VALID_CASE", sgp.iter[["sgp.projection.content.areas"]],
 						tail(head(sgp.iter[["sgp.panel.years"]], -1), length(sgp.iter[["sgp.projection.grade.sequences"]])),
 						sgp.iter[["sgp.projection.grade.sequences"]]), nomatch=0][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE]
 					tmp.data[, ACHIEVEMENT_LEVEL := ordered(ACHIEVEMENT_LEVEL, levels = SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]])]
@@ -371,7 +358,6 @@ function(sgp.data,
 						drop=var.names[!var.names %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "ACHIEVEMENT_LEVEL", "STATE")],
 						direction="wide"), key="ID")[sgp.targets[CONTENT_AREA==tail(sgp.iter[["sgp.content.areas"]], 1) & 
 							YEAR==tail(sgp.iter[["sgp.panel.years"]], 1)], nomatch=0][, !c("CONTENT_AREA", "YEAR"), with=FALSE]
-					dbClearResult(dbListResults(con)[[1]])
 					dbDisconnect(con)
 				} else {
 					tmp.data <- data.table(reshape(
