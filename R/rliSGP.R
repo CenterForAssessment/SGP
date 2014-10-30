@@ -6,6 +6,7 @@ function(sgp_object,
 	eow.or.update="UPDATE", ### UPDATE or EOW
 	update.save.shell.only=FALSE,
 	configuration.year,
+	update.ids=NULL,
 	parallel.config=NULL) {
 
 	started.at <- proc.time()
@@ -37,6 +38,24 @@ function(sgp_object,
 		return(tmp.list)
 	}
 
+	updateIDS <- function(my.data, id.lookup) {
+		setnames(id.lookup, 1:2, c("ID", "NEW_ID"))
+		setkey(id.lookup, ID)
+		if (is.SGP(my.data)) {
+			tmp.dt <- copy(my.data@Data)
+			setkey(tmp.dt, ID)
+			tmp.dt[id.lookup, ID:=NEW_ID, by=.EACHI]
+			sgp_object@Data <- tmp.dt
+			setkey(sgp_object@Data, VALID_CASE, CONTENT_AREA, YEAR, ID)
+			return(sgp_object)
+		}
+		if (is.data.frame(my.data)) {
+			setkey(my.data, ID)
+			my.data[id.lookup, ID:=NEW_ID, by=.EACHI]
+			return(my.data)
+		}
+	}
+
 
 	### Tests for arguments
 
@@ -53,6 +72,16 @@ function(sgp_object,
 	}
 
 	if (!is.data.table(additional.data)) additional.data <- as.data.table(additional.data)
+
+	if (!is.null(update.ids) && !is.data.table(update.ids)) update.ids <- as.data.table(update.ids)
+
+
+	### Update IDS if requested
+
+	if (!is.null(update.ids)) {
+		sgp_object <- updateIDS(sgp_object, update.ids)
+		additional.data <- updateIDS(additional.data, update.ids)
+	}
 
 
 	########################################################################
@@ -133,6 +162,12 @@ function(sgp_object,
 					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "MATHEMATICS", "SPRING"),
 					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "READING", "SPRING"),
 					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "EARLY_LIT", "SPRING")))
+		}
+
+		if (!is.null(update.ids)) {
+			update.shell.name <- paste(state, "SGP_UPDATE_SHELL", sep="_")
+			assign(update.shell.name, RLI_SGP_UPDATE_SHELL)
+			save(list=update.shell.name, paste(update.shell.name, "Rdata", sep="."))
 		}
 
 	} ### END UPDATE scripts
