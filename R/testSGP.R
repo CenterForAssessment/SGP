@@ -28,15 +28,9 @@ function(
 	options(warn=2)
 	suppressPackageStartupMessages(require(parallel))
 	Demonstration_SGP <- tmp.messages <- NULL
+	number.cores <- detectCores(logical=FALSE) # adding logical=FALSE seems get physical cores only in Windows (which is good for SNOW/SOCK)
 
-	if (.Platform$OS.type == "unix") {
-		tmp.backend <- "'PARALLEL', "
-		number.cores <- detectCores()-1
-	} else { # Windows
-		tmp.backend <- "'FOREACH', TYPE = 'doParallel', "
-		number.cores <- detectCores()/2
-	}
-	
+	if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE = 'doParallel', "
 	if (toupper(TEST_NUMBER) == "1B") sgp.big.data = "'NEW'" else sgp.big.data = FALSE
 	
 	expression.to.evaluate <- 
@@ -45,12 +39,9 @@ function(
 	if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(Demonstration_SGP, file='Demonstration_SGP.Rdata')", sep="\n")
 
 	cat("##### Begin testSGP test number 1 #####\n", fill=TRUE)
-
 	cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 
-	if (memory.profile) {
-		Rprof("testSGP(1)_Memory_Profile.out", memory.profiling=TRUE)
-	}
+	if (memory.profile) Rprof("testSGP(1)_Memory_Profile.out", memory.profiling=TRUE)
 	
 	eval(parse(text=expression.to.evaluate))
 

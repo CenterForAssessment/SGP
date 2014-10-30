@@ -77,6 +77,7 @@ function(sgp_object,
 				sgp.projections.lagged.baseline=grepl("baseline", target.type),
 				sgp.config.drop.nonsequential.grade.progression.variables=FALSE,
 				sgp.projections.max.forward.progression.years=sgp.projections.max.forward.progression.years,
+				sgp.use.my.coefficient.matrices=NULL,
 				calculate.simex=FALSE,
 				calculate.simex.baseline=FALSE)
 	

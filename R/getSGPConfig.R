@@ -405,8 +405,14 @@ function(sgp_object,
 			}
 			tmp.config <- c(tmp.config, tmp.expand.config)
 		}
-		if (sgp.projections) sgp.config.list[['sgp.projections']] <- tmp.config
-		if (sgp.projections.lagged) sgp.config.list[['sgp.projections.lagged']] <- tmp.config
+		if (sgp.projections) {
+			sgp.config.list[['sgp.projections']] <- tmp.config
+			for (i in 1:length(sgp.config.list[['sgp.projections']])) sgp.config.list[['sgp.projections']][[i]][['sgp.matrices']]<-NULL
+		}
+		if (sgp.projections.lagged) {
+			sgp.config.list[['sgp.projections.lagged']] <- tmp.config
+			for (i in 1:length(sgp.config.list[['sgp.projections.lagged']])) sgp.config.list[['sgp.projections.lagged']][[i]][['sgp.matrices']]<-NULL
+		}
 	}
 
 	if (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline) {
@@ -442,8 +448,14 @@ function(sgp_object,
 		}
 		
 		if (!sgp.percentiles.baseline | length(sgp.config.list[['sgp.percentiles.baseline']]) == 0) sgp.config.list[['sgp.percentiles.baseline']] <- NULL
-		if (sgp.projections.baseline) sgp.config.list[['sgp.projections.baseline']] <- tmp.config
-		if (sgp.projections.lagged.baseline) sgp.config.list[['sgp.projections.lagged.baseline']] <- tmp.config
+		if (sgp.projections.baseline) {
+			sgp.config.list[['sgp.projections.baseline']] <- tmp.config
+			for (i in 1:length(sgp.config.list[['sgp.projections.baseline']])) sgp.config.list[['sgp.projections.baseline']][[i]][['sgp.baseline.matrices']]<-NULL
+		}
+		if (sgp.projections.lagged.baseline) {
+			sgp.config.list[['sgp.projections.lagged.baseline']] <- tmp.config
+			for (i in 1:length(sgp.config.list[['sgp.projections.lagged.baseline']])) sgp.config.list[['sgp.projections.lagged.baseline']][[i]][['sgp.baseline.matrices']]<-NULL
+		}
 	}
 
 	### Trim sgp.config if requested
