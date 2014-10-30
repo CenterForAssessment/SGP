@@ -12,7 +12,7 @@ function(sgp_object,
 	started.at <- proc.time()
 	message(paste("\nStarted rliSGP", date()), "\n")
 
-	YEAR <- GRADE <- NULL
+	YEAR <- GRADE <- ID <- NEW_ID <- .EACHI <- NULL 
 
         if (is.null(state)) {
                 tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
@@ -40,13 +40,14 @@ function(sgp_object,
 
 	updateIDS <- function(my.data, id.lookup) {
 		setnames(id.lookup, 1:2, c("ID", "NEW_ID"))
+		id.lookup[,ID:=as.character(ID)]; id.lookup[,NEW_ID:=as.character(NEW_ID)]
 		setkey(id.lookup, ID)
 		if (is.SGP(my.data)) {
 			tmp.dt <- copy(my.data@Data)
 			setkey(tmp.dt, ID)
 			tmp.dt[id.lookup, ID:=NEW_ID, by=.EACHI]
 			sgp_object@Data <- tmp.dt
-			setkey(sgp_object@Data, VALID_CASE, CONTENT_AREA, YEAR, ID)
+			setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 			return(sgp_object)
 		}
 		if (is.data.frame(my.data)) {
