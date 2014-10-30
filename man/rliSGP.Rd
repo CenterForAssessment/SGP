@@ -14,6 +14,7 @@ rliSGP(
         eow.or.update="UPDATE",
 	update.save.shell.only=FALSE,
         configuration.year,
+        update.ids=NULL,
         parallel.config=NULL)
 }
 
@@ -31,6 +32,10 @@ rliSGP(
   \item{update.save.shell.only}{Boolean argument indicating whether End of Window processing should only produce/save RLI_SGP_UPDATE_SHELL and bypass coefficient matrix production.
   }
   \item{configuration.year}{Year associated with SGP analyses (configuration year) to be used.
+  }
+  \item{update.ids}{Argument that allows ID to be updated based upon a supplied two column data frame where the first column represents the ORIGINAL/OLD ID and the second column the NEW ID that
+is to replace it. NOTE that ID needn't be replaced in either 'sgp_object' nor 'additional.data' that are provided as part of the 'rliSGP' call. Substitution will occur on entire data set before
+analysis. Default is NULL, no ID replacement is performed.
   }
   \item{parallel.config}{Argument passed to \code{\link{abcSGP}} or \code{\link{updateSGP}} to activate parallel processing with an appropriate backend.
   }
