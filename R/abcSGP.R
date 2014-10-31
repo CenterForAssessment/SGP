@@ -33,7 +33,7 @@ function(sgp_object,
 	plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot"),
 	outputSGP.output.type=c("LONG_Data", "LONG_FINAL_YEAR_Data", "WIDE_Data", "INSTRUCTOR_Data"),
 	verbose.output=FALSE,
-    sgp.sqlite = NULL
+	sgp.sqlite = NULL
     ) {
 
         started.at <- proc.time()
