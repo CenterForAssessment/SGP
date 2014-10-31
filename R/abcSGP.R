@@ -33,7 +33,7 @@ function(sgp_object,
 	plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot"),
 	outputSGP.output.type=c("LONG_Data", "LONG_FINAL_YEAR_Data", "WIDE_Data", "INSTRUCTOR_Data"),
 	verbose.output=FALSE,
-    sgp.big.data = FALSE
+    sgp.sqlite = NULL
     ) {
 
         started.at <- proc.time()
@@ -101,7 +101,7 @@ function(sgp_object,
 			goodness.of.fit.print=goodness.of.fit.print,
 			parallel.config=parallel.config,
 			verbose.output=verbose.output,
-			sgp.big.data=sgp.big.data)
+			sgp.sqlite=sgp.sqlite)
 
                 if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
 	}

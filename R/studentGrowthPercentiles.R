@@ -398,8 +398,8 @@ function(panel.data,         ## REQUIRED
 				}
 				
 				## Write big.data to disk and remove from memory
-				dir.create("Data", recursive=TRUE, showWarnings=FALSE)
-				tmp.dbname <- paste("Data/", paste(tail(paste(year.progression.for.norm.group, 
+				dir.create("tmp_data", recursive=TRUE, showWarnings=FALSE)
+				tmp.dbname <- paste("tmp_data/", paste(tail(paste(year.progression.for.norm.group, 
 					paste(content_area.progression, grade.progression, sep="_"), sep="_"), num.prior+1), collapse="-"), ".sqlite", sep="")
 				con <- dbConnect(SQLite(), dbname = tmp.dbname)
 				dbWriteTable(con, name = "simex_data", value=big.data, overwrite=TRUE, row.names=0)

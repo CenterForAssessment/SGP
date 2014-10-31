@@ -46,7 +46,7 @@ abcSGP(sgp_object,
 				"WIDE_Data", 
 				"INSTRUCTOR_Data"),
 	verbose.output=FALSE,
-	sgp.big.data=FALSE) 
+	sgp.sqlite=NULL) 
 }
 
 \arguments{
@@ -140,7 +140,7 @@ If missing the function will use the data to infer all the grade progressions fo
   and \code{INSTRUCTOR_Data}.}
   \item{verbose.output}{A Boolean argument indicating whether the function should output verbose diagnostic messages.
   }
- \item{sgp.big.data}{A Boolean argument (defaults to FALSE) indicating whether a SQLite database file of the essential SGP data should be created from the \code{@Data} slot and subsequently used to extract data subsets for analyses conducted in order to reduce the amount of RAM memory required.  See full argument description in \code{\link{analyzeSGP}}.
+ \item{sgp.sqlite}{A Boolean argument (defaults to NULL) indicating whether a SQLite database file of the essential SGP data should be created from the \code{@Data} slot and subsequently used to extract data subsets for analyses conducted in order to reduce the amount of RAM memory required.  See full argument description in \code{\link{analyzeSGP}}.
  }
 }
 

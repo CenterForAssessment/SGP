@@ -38,7 +38,7 @@ analyzeSGP(sgp_object,
 	 print.other.gp=NULL,
          sgp.projections.projection.unit="YEAR",
 	 get.cohort.data.info=FALSE,
-	 sgp.big.data=FALSE,
+	 sgp.sqlite=NULL,
          ...)
 }
 
@@ -127,8 +127,8 @@ Example use cases are provided below.
   \item{get.cohort.data.info}{A Boolean argument (defaults to FALSE) indicating whether a summary of all cohorts to be submitted to the \code{\link{studentGrowthPercentiles}} and 
   \code{\link{studentGrowthProjections}} functions should be performed prior to analysis.
   }
- \item{sgp.big.data}{A Boolean argument (defaults to FALSE) indicating whether a SQLite database file of the essential SGP data should be created from the \code{@Data} slot and subsequently used to extract data subsets for analysis with \code{\link{studentGrowthPercentiles}} and 
-  \code{\link{studentGrowthProjections}} functions.  This step takes time but can substantially reduce the amount of RAM memory required to conduct analyses.  If set to TRUE the file "TMP_SGP_Data.sqlite" will be created in the \code{Data} directory.  If an existing database of that name exists, the existing file will be used.  In order to re-construct this .sqlite file, it must either be deleted, or the argument may be specified as the character "NEW", which will remove any previously existing file and re-construct "Data/TMP_SGP_Data.sqlite" from \code{@Data}.
+ \item{sgp.sqlite}{A Boolean argument (defaults to NULL) indicating whether a SQLite database file of the essential SGP data should be created from the \code{@Data} slot and subsequently used to extract data subsets for analysis with \code{\link{studentGrowthPercentiles}} and 
+  \code{\link{studentGrowthProjections}} functions.  The default, NULL, allows for an test of the size of the \code{@Data} object.  If greater than 1 GB sgp.sqlite is set to TRUE, if not then FALSE.  When TRUEE, this step can take some time but can also substantially reduce the amount of RAM memory required to conduct analyses.  If set to TRUE the \code{tmp_data} directory and file "TMP_SGP_Data.sqlite" will be created.  This tmp_data directory and file are deleted by default although one may keep them if the argument is specified as the character "KEEP".  Subsequently, if an existing directory and database of that name exists, the existing file will be used.  Manually move or delete the "tmp_data/TMP_SGP_Data.sqlite" file in order to re-construct it from \code{@Data}.
  }
   \item{...}{Arguments to be passed to \code{\link{studentGrowthPercentiles}} or \code{\link{studentGrowthProjections}} for finer control over SGP calculations. NOTE: arguments can only be passed to one lower level function at a time, and only student growth percentiles OR projections can be created but not both at the same time.
   }

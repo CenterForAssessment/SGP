@@ -31,7 +31,7 @@ function(sgp_object,
          print.other.gp=NULL,
          sgp.projections.projection.unit="YEAR",
          get.cohort.data.info=FALSE,
-         sgp.big.data = FALSE,
+         sgp.sqlite = NULL,
          ...) {
 
 	started.at <- proc.time()
@@ -279,14 +279,17 @@ function(sgp_object,
 	tmp_sgp_object <- list(Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]], Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]])
 
 	variables.to.get <- c("VALID_CASE", "YEAR", "CONTENT_AREA", "GRADE", "ID", "SCALE_SCORE", "ACHIEVEMENT_LEVEL", "YEAR_WITHIN", "FIRST_OBSERVATION", "LAST_OBSERVATION", "STATE", csem.variable)
-	if (toupper(sgp.big.data)=="NEW") {unlink("Data/TMP_SGP_Data.sqlite"); sgp.big.data <- TRUE}
-	if (sgp.big.data) {
-		dir.create("Data", recursive=TRUE, showWarnings=FALSE)
-		if (!"TMP_SGP_Data.sqlite" %in% list.files("Data")) {
-			tmp_sgp_data_for_analysis <- dbConnect(SQLite(), dbname = "Data/TMP_SGP_Data.sqlite")
+	
+	if (toupper(sgp.sqlite)=="KEEP") {keep.sqlite <- TRUE; sgp.sqlite <- TRUE} else keep.sqlite <- FALSE
+	if (is.null(sgp.sqlite)) if (as.numeric(strsplit(format(object.size(sgp_data@Data), units="GB"), " Gb")[[1]]) > 1) sgp.sqlite <- FALSE else sgp.sqlite <- TRUE
+
+	if (sgp.sqlite) {
+		dir.create("tmp_data", recursive=TRUE, showWarnings=FALSE)
+		if (!"TMP_SGP_Data.sqlite" %in% list.files("tmp_data")) {
+			tmp_sgp_data_for_analysis <- dbConnect(SQLite(), dbname = "tmp_data/TMP_SGP_Data.sqlite")
 			dbWriteTable(tmp_sgp_data_for_analysis, name = "sgp_data", 
 				value=sgp_object@Data[,intersect(names(sgp_object@Data), variables.to.get), with=FALSE]["VALID_CASE"], row.names=0)
-		} else tmp_sgp_data_for_analysis <- dbConnect(SQLite(), dbname = "Data/TMP_SGP_Data.sqlite")
+		} else tmp_sgp_data_for_analysis <- dbConnect(SQLite(), dbname = "tmp_data/TMP_SGP_Data.sqlite")
 		sgp.data.names <- dbListFields(tmp_sgp_data_for_analysis, "sgp_data")
 		dbDisconnect(tmp_sgp_data_for_analysis)
 	} else {
@@ -1628,6 +1631,7 @@ function(sgp_object,
 	} ## END sequential analyzeSGP
 
 
+	if (!keep.sqlite) unlink("tmp_data", recursive=TRUE)
 	sgp_object@SGP <- mergeSGP(tmp_sgp_object, sgp_object@SGP)
 
 	if (goodness.of.fit.print) gof.print(sgp_object)
