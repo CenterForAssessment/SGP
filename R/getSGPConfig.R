@@ -219,10 +219,19 @@ function(sgp_object,
 					}					
 					if (!is.null(par.sgp.config[[b.iter[b]]][['sgp.calculate.simex']][['simex.use.my.coefficient.matrices']])) {
 						tmp.matrix.label <- paste(tail(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], 1), 
-						tail(par.sgp.config[[b.iter[b]]][['sgp.panel.years']], 1), "SIMEX", sep=".")
+							tail(par.sgp.config[[b.iter[b]]][['sgp.panel.years']], 1), "SIMEX", sep=".")
+						tmp.orders <- getsplineMatrices(
+							my.matrices=tmp_sgp_object[['Coefficient_Matrices']][[tmp.matrix.label]], 
+							my.matrix.content_area.progression=par.sgp.config[[b.iter[b]]][['sgp.content.areas']], 
+							my.matrix.grade.progression=par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 
+							my.matrix.time.progression=par.sgp.config[[b.iter[b]]][['sgp.panel.years']],
+							my.matrix.time.progression.lags=par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']],
+							what.to.return="ORDERS")
+						tmp.max.order <- max(tmp.orders)
 	
 						for (L in par.sgp.config[[b.iter[b]]][['sgp.calculate.simex']][['lambda']][-1]) {
-							for (k in seq_along(tmp.orders)) {
+							if (par.sgp.config[[b.iter[b]]][['sgp.exact.grade.progression']]) ord.iter <- tmp.max.order else ord.iter <- seq_along(tmp.orders)
+							for (k in ord.iter) {
 							par.sgp.config[[b.iter[b]]][['sgp.matrices']][[paste(tmp.matrix.label, ".SIMEX", sep="")]][[
 								paste("qrmatrices", tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
 							unlist(getsplineMatrices(
@@ -242,7 +251,17 @@ function(sgp_object,
 
 				if (!is.null(sgp.use.my.coefficient.matrices)) {
 					tmp.matrix.label <- paste(tail(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], 1), tail(par.sgp.config[[b.iter[b]]][['sgp.panel.years']], 1), sep=".")
-					for (k in seq_along(tmp.orders)) {
+					tmp.orders <- getsplineMatrices(
+						my.matrices=tmp_sgp_object[['Coefficient_Matrices']][[tmp.matrix.label]], 
+						my.matrix.content_area.progression=par.sgp.config[[b.iter[b]]][['sgp.content.areas']], 
+						my.matrix.grade.progression=par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 
+						my.matrix.time.progression=par.sgp.config[[b.iter[b]]][['sgp.panel.years']],
+						my.matrix.time.progression.lags=par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']],
+						what.to.return="ORDERS")
+					tmp.max.order <- max(tmp.orders)
+
+					if (par.sgp.config[[b.iter[b]]][['sgp.exact.grade.progression']]) ord.iter <- tmp.max.order else ord.iter <- seq_along(tmp.orders)
+					for (k in ord.iter) {
 						par.sgp.config[[b.iter[b]]][['sgp.matrices']][[tmp.matrix.label]][[
 							paste("qrmatrices", tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 1), k, sep="_")]] <- getsplineMatrices(
 							my.matrices=tmp_sgp_object[['Coefficient_Matrices']][[tmp.matrix.label]],
@@ -292,7 +311,8 @@ function(sgp_object,
 							tmp.matrices.tf <- TRUE
 							tmp.max.order <- max(tmp.orders)
 							
-							for (k in seq_along(tmp.orders)) {
+							if (par.sgp.config[[b.iter[b]]][['sgp.exact.grade.progression']]) ord.iter <- tmp.max.order else ord.iter <- seq_along(tmp.orders)
+							for (k in ord.iter) {
 								par.sgp.config[[b.iter[b]]][['sgp.baseline.matrices']][[tmp.matrix.label]][[
 									paste("qrmatrices", tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 1), k, sep="_")]] <- getsplineMatrices(
 									my.matrices=tmp_sgp_object[['Coefficient_Matrices']][[tmp.matrix.label]],
@@ -305,7 +325,7 @@ function(sgp_object,
 							
 							if (!is.null(par.sgp.config[[b.iter[b]]][['sgp.calculate.simex.baseline']])) {
 								for (L in par.sgp.config[[b.iter[b]]][['sgp.calculate.simex.baseline']][['lambda']][-1]) {
-									for (k in seq_along(tmp.orders)) {
+									for (k in ord.iter) {
 									par.sgp.config[[b.iter[b]]][['sgp.baseline.matrices']][[paste(tmp.matrix.label, ".SIMEX", sep="")]][[
 										paste("qrmatrices", tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
 									unlist(getsplineMatrices(
