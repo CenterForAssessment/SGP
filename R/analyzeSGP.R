@@ -280,7 +280,7 @@ function(sgp_object,
 
 	variables.to.get <- c("VALID_CASE", "YEAR", "CONTENT_AREA", "GRADE", "ID", "SCALE_SCORE", "ACHIEVEMENT_LEVEL", "YEAR_WITHIN", "FIRST_OBSERVATION", "LAST_OBSERVATION", "STATE", csem.variable)
 	
-	if (is.null(sgp.sqlite)) if (as.numeric(strsplit(format(object.size(sgp_data@Data), units="GB"), " Gb")[[1]]) > 1) sgp.sqlite <- FALSE else sgp.sqlite <- TRUE
+	if (is.null(sgp.sqlite)) if (as.numeric(strsplit(format(object.size(sgp_object@Data), units="GB"), " Gb")[[1]]) > 1) sgp.sqlite <- FALSE else sgp.sqlite <- TRUE
 	if (toupper(sgp.sqlite)=="KEEP") {keep.sqlite <- TRUE; sgp.sqlite <- TRUE} else keep.sqlite <- FALSE
 
 	if (sgp.sqlite) {
