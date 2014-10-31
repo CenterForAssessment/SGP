@@ -192,8 +192,12 @@ function(sgp_object,
 				}
 
 				### Create sgp.calculate.simex (if requested) - else leave NULL
-				if (is.list(calculate.simex)) par.sgp.config[[b.iter[b]]][['sgp.calculate.simex']] <- calculate.simex
-				calculate.simex <- TRUE
+				tmp.calculate.simex <- calculate.simex
+				tmp.calculate.simex.baseline <- calculate.simex.baseline
+				if (is.list(tmp.calculate.simex)) {
+					par.sgp.config[[b.iter[b]]][['sgp.calculate.simex']] <- tmp.calculate.simex
+					tmp.calculate.simex <- TRUE
+				}
 
 				if (!is.null(sgp.config[[a]][['sgp.calculate.simex']])) {
 					if (is.logical(sgp.config[[a]][['sgp.calculate.simex']])) {
@@ -256,8 +260,10 @@ function(sgp_object,
 				}
 
 				### Create sgp.calculate.simex.baseline (if requested) - else leave NULL
-				if (is.list(calculate.simex.baseline)) par.sgp.config[[b.iter[b]]][['sgp.calculate.simex']] <- calculate.simex.baseline
-				calculate.simex.baseline <- TRUE
+				if (is.list(tmp.calculate.simex.baseline)) {
+					par.sgp.config[[b.iter[b]]][['sgp.calculate.simex.baseline']] <- tmp.calculate.simex.baseline
+					tmp.calculate.simex.baseline <- TRUE
+				}
 
 				if (!is.null(sgp.config[[a]][['sgp.calculate.simex.baseline']])) {
 					if (is.logical(sgp.config[[a]][['sgp.calculate.simex.baseline']])) {
@@ -399,6 +405,7 @@ function(sgp_object,
 	###
 
 	if (sgp.percentiles) sgp.config.list[['sgp.percentiles']] <- par.sgp.config
+	for (i in 1:length(sgp.config.list[['sgp.percentiles']])) sgp.config.list[['sgp.percentiles']][[i]][['sgp.baseline.matrices']]<-NULL
 
 	if (sgp.projections | sgp.projections.lagged) {
 		tmp.config <- par.sgp.config[sapply(par.sgp.config, test.projection.iter)]
@@ -434,6 +441,8 @@ function(sgp_object,
 
 		sgp.config.list[['sgp.percentiles.baseline']] <- 
 			par.sgp.config[which(sapply(par.sgp.config, function(x) !identical(x[['sgp.baseline.grade.sequences']], "NO_BASELINE_COEFFICIENT_MATRICES")))]
+
+		for (i in 1:length(sgp.config.list[['sgp.percentiles.baseline']])) sgp.config.list[['sgp.percentiles.baseline']][[i]][['sgp.matrices']]<-NULL
 
 		if (length(sgp.config.list[['sgp.percentiles.baseline']]) > 0) {
 			tmp.config <- sgp.config.list[['sgp.percentiles.baseline']][sapply(sgp.config.list[['sgp.percentiles.baseline']], test.projection.iter)]
