@@ -20,13 +20,13 @@ analyzeSGP(sgp_object,
          sgp.percentiles.baseline.max.order=3,
          sgp.projections.baseline.max.order=3,
          sgp.projections.lagged.baseline.max.order=3,
-	 sgp.projections.max.forward.progression.years=3,
-	 sgp.projections.max.forward.progression.grade=NULL,
-	 sgp.minimum.default.panel.years=NULL,
+         sgp.projections.max.forward.progression.years=3,
+         sgp.projections.max.forward.progression.grade=NULL,
+         sgp.minimum.default.panel.years=NULL,
          sgp.use.my.coefficient.matrices=NULL,
          simulate.sgps=TRUE,
-	 calculate.simex=NULL,
-	 calculate.simex.baseline=NULL,
+         calculate.simex=NULL,
+         calculate.simex.baseline=NULL,
          goodness.of.fit.print=TRUE,
          sgp.config=NULL,
          sgp.config.drop.nonsequential.grade.progression.variables=TRUE,
@@ -34,10 +34,11 @@ analyzeSGP(sgp_object,
          sgp.baseline.config=NULL,
          trim.sgp.config=TRUE,
          parallel.config=NULL,
-	 verbose.output=FALSE,
-	 print.other.gp=NULL,
+         verbose.output=FALSE,
+         print.other.gp=NULL,
          sgp.projections.projection.unit="YEAR",
-	 get.cohort.data.info=FALSE,
+         get.cohort.data.info=FALSE,
+         sgp.sqlite=NULL,
          ...)
 }
 
@@ -126,6 +127,9 @@ Example use cases are provided below.
   \item{get.cohort.data.info}{A Boolean argument (defaults to FALSE) indicating whether a summary of all cohorts to be submitted to the \code{\link{studentGrowthPercentiles}} and 
   \code{\link{studentGrowthProjections}} functions should be performed prior to analysis.
   }
+ \item{sgp.sqlite}{A Boolean argument (defaults to NULL) indicating whether a SQLite database file of the essential SGP data should be created from the \code{@Data} slot and subsequently used to extract data subsets for analysis with \code{\link{studentGrowthPercentiles}} and 
+  \code{\link{studentGrowthProjections}} functions.  The default, NULL, allows for an test of the size of the \code{@Data} object.  If greater than 1 GB sgp.sqlite is set to TRUE, if not then FALSE.  When TRUEE, this step can take some time but can also substantially reduce the amount of RAM memory required to conduct analyses.  If set to TRUE the \code{tmp_data} directory and file "TMP_SGP_Data.sqlite" will be created.  This tmp_data directory and file are deleted by default although one may keep them if the argument is specified as the character "KEEP".  Subsequently, if an existing directory and database of that name exists, the existing file will be used.  Manually move or delete the "tmp_data/TMP_SGP_Data.sqlite" file in order to re-construct it from \code{@Data}.
+ }
   \item{...}{Arguments to be passed to \code{\link{studentGrowthPercentiles}} or \code{\link{studentGrowthProjections}} for finer control over SGP calculations. NOTE: arguments can only be passed to one lower level function at a time, and only student growth percentiles OR projections can be created but not both at the same time.
   }
 }
@@ -229,9 +233,9 @@ Demonstration_SGP <- analyzeSGP(Demonstration_SGP,
 	parallel.config=list(
 		BACKEND="PARALLEL", TYPE="SOCK",
 		WORKERS=list(PERCENTILES=4, 
-		    PROJECTIONS=2, 
-		    LAGGED_PROJECTIONS=2,
-		    BASELINE_PERCENTILES=4))
+                    PROJECTIONS=2, 
+                    LAGGED_PROJECTIONS=2,
+                    BASELINE_PERCENTILES=4))
 
 ##  New parallel package - only available with R 2.13 or newer
 #  Note there are up to 16 workers, and MPI is used, 
@@ -240,9 +244,9 @@ Demonstration_SGP <- analyzeSGP(Demonstration_SGP,
 	parallel.config=list(
 		BACKEND="PARALLEL", TYPE="MPI",
 		WORKERS=list(PERCENTILES=16, 
-		    PROJECTIONS=8, 
-		    LAGGED_PROJECTIONS=6,
-		    BASELINE_PERCENTILES=12))
+                    PROJECTIONS=8, 
+                    LAGGED_PROJECTIONS=6,
+                    BASELINE_PERCENTILES=12))
 	...
 
 ## FOREACH use cases:
