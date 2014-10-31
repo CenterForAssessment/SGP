@@ -28,7 +28,7 @@ function(
 	options(warn=2)
 	suppressPackageStartupMessages(require(parallel))
 	Demonstration_SGP <- tmp.messages <- NULL
-	number.cores <- detectCores(logical=FALSE) # adding logical=FALSE seems get physical cores only in Windows (which is good for SNOW/SOCK)
+	number.cores <- detectCores(logical=FALSE)-1 # adding logical=FALSE seems get physical cores only in Windows (which is good for SNOW/SOCK)
 
 	if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE = 'doParallel', "
 	if (toupper(TEST_NUMBER) == "1B") sgp.big.data = "'NEW'" else sgp.big.data = FALSE
