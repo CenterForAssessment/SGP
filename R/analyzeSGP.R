@@ -284,7 +284,7 @@ function(sgp_object,
 	if (is.null(sgp.sqlite)) if (as.numeric(strsplit(format(object.size(sgp_data@Data), units="GB"), " Gb")[[1]]) > 1) sgp.sqlite <- FALSE else sgp.sqlite <- TRUE
 
 	if (sgp.sqlite) {
-		dir.create("tmp_data", recursive=TRUE, showWarnings=FALSE)
+		del.dir <- suppressWarnings(dir.create("tmp_data"))
 		if (!"TMP_SGP_Data.sqlite" %in% list.files("tmp_data")) {
 			tmp_sgp_data_for_analysis <- dbConnect(SQLite(), dbname = "tmp_data/TMP_SGP_Data.sqlite")
 			dbWriteTable(tmp_sgp_data_for_analysis, name = "sgp_data", 
@@ -1631,7 +1631,7 @@ function(sgp_object,
 	} ## END sequential analyzeSGP
 
 
-	if (!keep.sqlite) unlink("tmp_data", recursive=TRUE)
+	if (!keep.sqlite) {if (del.dir) unlink("tmp_data", recursive=TRUE) else unlink("tmp_data/TMP_SGP_Data.sqlite", recursive=TRUE)}
 	sgp_object@SGP <- mergeSGP(tmp_sgp_object, sgp_object@SGP)
 
 	if (goodness.of.fit.print) gof.print(sgp_object)
