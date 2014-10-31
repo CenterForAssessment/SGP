@@ -195,6 +195,12 @@ function(sgp_object,
 		sgp.projections.projection.unit.label <- sgp.projections.projection.unit
 	}
 
+	if (is.character(goodness.of.fit.print)) {
+		if (goodness.of.fit.print =="GROB") {
+			goodness.of.fit.print <- FALSE
+			goodness.of.fit.print.arg <- state
+		} else goodness.of.fit.print <- as.logical(goodness.of.fit.print)
+	}
 	if (!goodness.of.fit.print){
 		goodness.of.fit.print.arg <- FALSE
 	} else {
