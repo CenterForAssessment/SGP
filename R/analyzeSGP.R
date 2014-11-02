@@ -280,7 +280,7 @@ function(sgp_object,
 
 	variables.to.get <- c("VALID_CASE", "YEAR", "CONTENT_AREA", "GRADE", "ID", "SCALE_SCORE", "ACHIEVEMENT_LEVEL", "YEAR_WITHIN", "FIRST_OBSERVATION", "LAST_OBSERVATION", "STATE", csem.variable)
 	
-	if (is.null(sgp.sqlite)) if (as.numeric(strsplit(format(object.size(sgp_object@Data), units="GB"), " Gb")[[1]]) > 1) sgp.sqlite <- FALSE else sgp.sqlite <- TRUE
+	if (is.null(sgp.sqlite)) if (as.numeric(strsplit(format(object.size(sgp_object@Data), units="GB"), " Gb")[[1]]) > 1) sgp.sqlite <- TRUE else sgp.sqlite <- FALSE
 	if (toupper(sgp.sqlite)=="KEEP") {keep.sqlite <- TRUE; sgp.sqlite <- TRUE} else keep.sqlite <- FALSE
 
 	if (sgp.sqlite) {
@@ -1631,7 +1631,7 @@ function(sgp_object,
 	} ## END sequential analyzeSGP
 
 
-	if (!keep.sqlite) {if (del.dir) unlink("tmp_data", recursive=TRUE) else unlink("tmp_data/TMP_SGP_Data.sqlite", recursive=TRUE)}
+	if (!keep.sqlite) {if (del.dir) unlink("tmp_data", recursive=TRUE, force=TRUE) else unlink("tmp_data/TMP_SGP_Data.sqlite", recursive=TRUE)}
 	sgp_object@SGP <- mergeSGP(tmp_sgp_object, sgp_object@SGP)
 
 	if (goodness.of.fit.print) gof.print(sgp_object)
