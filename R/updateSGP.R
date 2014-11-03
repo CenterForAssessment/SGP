@@ -28,6 +28,7 @@ function(what_sgp_object=NULL,
 	sgp.config=NULL,
 	goodness.of.fit.print=TRUE,
 	parallel.config=NULL,
+	sgp.sqlite = NULL,
 	...) {
 
 		started.at <- proc.time()
@@ -245,6 +246,7 @@ function(what_sgp_object=NULL,
 							sgp.config=sgp.config,
 							parallel.config=parallel.config,
 							goodness.of.fit.print=FALSE,
+							sgp.sqlite= sgp.sqlite,
 							...)
 							
 				if ("combineSGP" %in% steps) {

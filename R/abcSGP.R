@@ -32,7 +32,9 @@ function(sgp_object,
 	confidence.interval.groups=NULL,
 	plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot"),
 	outputSGP.output.type=c("LONG_Data", "LONG_FINAL_YEAR_Data", "WIDE_Data", "INSTRUCTOR_Data"),
-	verbose.output=FALSE) {
+	verbose.output=FALSE,
+	sgp.sqlite = NULL
+    ) {
 
         started.at <- proc.time()
 	message(paste("\nStarted abcSGP", date()), "\n")
@@ -98,7 +100,8 @@ function(sgp_object,
 			calculate.simex.baseline=calculate.simex.baseline,
 			goodness.of.fit.print=goodness.of.fit.print,
 			parallel.config=parallel.config,
-			verbose.output=verbose.output)
+			verbose.output=verbose.output,
+			sgp.sqlite=sgp.sqlite)
 
                 if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
 	}
