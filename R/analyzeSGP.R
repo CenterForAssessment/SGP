@@ -1631,7 +1631,7 @@ function(sgp_object,
 	} ## END sequential analyzeSGP
 
 
-	if (!keep.sqlite) {if (del.dir) unlink("tmp_data", recursive=TRUE, force=TRUE) else unlink("tmp_data/TMP_SGP_Data.sqlite", recursive=TRUE)}
+	if (!keep.sqlite & sgp.sqlite) {if (del.dir) unlink("tmp_data", recursive=TRUE, force=TRUE) else unlink("tmp_data/TMP_SGP_Data.sqlite", recursive=TRUE)}
 	sgp_object@SGP <- mergeSGP(tmp_sgp_object, sgp_object@SGP)
 
 	if (goodness.of.fit.print) gof.print(sgp_object)
