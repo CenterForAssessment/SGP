@@ -377,6 +377,7 @@ function(sgp_object,
 				}
 				tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp)))
 			}
+			rm(tmp)
 
 			assign(paste(state, "_Baseline_Matrices", sep=""), list())
 			for (tmp.matrix.label in grep("BASELINE", names(tmp_sgp_object$Coefficient_Matrices), value=TRUE)) {
@@ -387,7 +388,7 @@ function(sgp_object,
 		} else {
 			tmp_sgp_object <- mergeSGP(tmp_sgp_object, SGPstateData[[state]][["Baseline_splineMatrix"]])
 		}
-		rm(tmp);suppressMessages(gc()) # clean up
+		suppressMessages(gc()) # clean up
 	} # END Get/Compute baseline coefficient matrices
 
 
@@ -813,8 +814,8 @@ function(sgp_object,
 					}
 				} # End MULTICORE
 			} # END parallel flavors
-		stopParallel(parallel.config, par.start)
-		rm(tmp);suppressMessages(gc()) # clean up
+			stopParallel(parallel.config, par.start)
+			rm(tmp);suppressMessages(gc()) # clean up
 		} ## END if sgp.percentiles.baseline
 
 
@@ -937,8 +938,8 @@ function(sgp_object,
 					}
 				} # End MULTICORE
 			} # END parallel flavors
-		stopParallel(parallel.config, par.start)
-		rm(tmp);suppressMessages(gc()) # clean up
+			stopParallel(parallel.config, par.start)
+			rm(tmp);suppressMessages(gc()) # clean up
 		} ## END if sgp.projections
 
 
@@ -1064,8 +1065,8 @@ function(sgp_object,
 					}
 				} # End MULTICORE
 			} # END parallel flavors
-		stopParallel(parallel.config, par.start)
-		rm(tmp);suppressMessages(gc()) # clean up
+			stopParallel(parallel.config, par.start)
+			rm(tmp);suppressMessages(gc()) # clean up
 		} ## END if sgp.projections.baseline
 
 
@@ -1191,8 +1192,8 @@ function(sgp_object,
 					}
 				} # End MULTICORE
 			} # END parallel flavors
-		stopParallel(parallel.config, par.start)
-		rm(tmp);suppressMessages(gc()) # clean up
+			stopParallel(parallel.config, par.start)
+			rm(tmp);suppressMessages(gc()) # clean up
 		} ## END if sgp.projections.lagged
 
 
@@ -1319,8 +1320,8 @@ function(sgp_object,
 				}
 				} # End MULTICORE
 			} # END parallel flavors
-		stopParallel(parallel.config, par.start)
-		rm(tmp);suppressMessages(gc()) # clean up
+			stopParallel(parallel.config, par.start)
+			rm(tmp);suppressMessages(gc()) # clean up
 		} ## END if sgp.projections.lagged.baseline
 	}  ## END if (!is.null(parallel.config))
 

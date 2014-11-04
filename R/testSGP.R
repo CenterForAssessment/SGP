@@ -745,14 +745,14 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 		tmp.messages <- c(tmp.messages, "\tTest of AMERICAN_LIT SGP_SIMEX_BASELINE: FAIL\n")
 	}
 	if (identical(sum(Demonstration_SGP@SGP$SGPercentiles$ALGEBRA_II.2013_2014.BASELINE$SGP_SIMEX_BASELINE), 212985L)) {
-		tmp.messages <- c(tmp.messages, "\tTest of AMERICAN_LIT SGP_SIMEX_BASELINE: OK\n")
-	} else {
-		tmp.messages <- c(tmp.messages, "\tTest of AMERICAN_LIT SGP_SIMEX_BASELINE: FAIL\n")
-	}
-	if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX_BASELINE, na.rm=TRUE), 1465489L)) {
 		tmp.messages <- c(tmp.messages, "\tTest of ALGEBRA_II SGP_SIMEX_BASELINE: OK\n")
 	} else {
 		tmp.messages <- c(tmp.messages, "\tTest of ALGEBRA_II SGP_SIMEX_BASELINE: FAIL\n")
+	}
+	if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX_BASELINE, na.rm=TRUE), 1465489L)) {
+		tmp.messages <- c(tmp.messages, "\tTest of @Data variable SGP_SIMEX_BASELINE: OK\n")
+	} else {
+		tmp.messages <- c(tmp.messages, "\tTest of @Data variable SGP_SIMEX_BASELINE: FAIL\n")
 	}
 	tmp.messages <- c(tmp.messages, "\n\t#####         End testSGP test number 4, Part 2             #####\n\n", "#####  End testSGP test number 4                                   #####\n")
 	cat(tmp.messages)
