@@ -200,11 +200,12 @@ function(sgp_object,
 			goodness.of.fit.print <- FALSE
 			goodness.of.fit.print.arg <- state
 		} else goodness.of.fit.print <- as.logical(goodness.of.fit.print)
-	}
-	if (!goodness.of.fit.print){
-		goodness.of.fit.print.arg <- FALSE
 	} else {
-		goodness.of.fit.print.arg <- state
+		if (!goodness.of.fit.print){
+			goodness.of.fit.print.arg <- FALSE
+		} else {
+			goodness.of.fit.print.arg <- state
+		}
 	}
 
 	### 
@@ -690,7 +691,7 @@ function(sgp_object,
 	###  BASELINE PERCENTILES
 	####################################
 
-		if (sgp.percentiles.baseline) {
+		if (sgp.percentiles.baseline & length(par.sgp.config[["sgp.percentiles.baseline"]]) > 0) {
 
 			par.start <- startParallel(parallel.config, 'BASELINE_PERCENTILES')
 

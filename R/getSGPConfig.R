@@ -424,8 +424,10 @@ function(sgp_object,
 	### Extend sgp.config.list
 	###
 
-	if (sgp.percentiles) sgp.config.list[['sgp.percentiles']] <- par.sgp.config
-	for (i in 1:length(sgp.config.list[['sgp.percentiles']])) sgp.config.list[['sgp.percentiles']][[i]][['sgp.baseline.matrices']]<-NULL
+	if (sgp.percentiles) {
+		sgp.config.list[['sgp.percentiles']] <- par.sgp.config
+		for (i in 1:length(sgp.config.list[['sgp.percentiles']])) sgp.config.list[['sgp.percentiles']][[i]][['sgp.baseline.matrices']]<-NULL
+	}
 
 	if (sgp.projections | sgp.projections.lagged) {
 		tmp.config <- par.sgp.config[sapply(par.sgp.config, test.projection.iter)]
@@ -462,9 +464,8 @@ function(sgp_object,
 		sgp.config.list[['sgp.percentiles.baseline']] <- 
 			par.sgp.config[which(sapply(par.sgp.config, function(x) !identical(x[['sgp.baseline.grade.sequences']], "NO_BASELINE_COEFFICIENT_MATRICES")))]
 
-		for (i in 1:length(sgp.config.list[['sgp.percentiles.baseline']])) sgp.config.list[['sgp.percentiles.baseline']][[i]][['sgp.matrices']]<-NULL
-
 		if (length(sgp.config.list[['sgp.percentiles.baseline']]) > 0) {
+			for (i in 1:length(sgp.config.list[['sgp.percentiles.baseline']])) sgp.config.list[['sgp.percentiles.baseline']][[i]][['sgp.matrices']]<-NULL
 			tmp.config <- sgp.config.list[['sgp.percentiles.baseline']][sapply(sgp.config.list[['sgp.percentiles.baseline']], test.projection.iter)]
 			if (length(tmp.config) > 0) for (f in 1:length(tmp.config)) tmp.config[[f]]$sgp.exact.grade.progression <- FALSE
 		}
