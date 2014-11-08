@@ -1399,7 +1399,7 @@ function(sgp_object,
 						...)
 				} else {
 					message(paste("\n\t\tNOTE: No student records &/or no prior data for student growth percentiles:", tail(sgp.iter[["sgp.panel.years"]], 1), 
-						tail(sgp.iter[["sgp.content.areas"]], 1), "with", paste(head(sgp.iter[["sgp.content.areas"]], -1), collapse=", "), "priors.\n"))
+						tail(sgp.iter[["sgp.content.areas"]], 1), "with", paste(paste(head(sgp.iter[["sgp.content.areas"]], -1), head(sgp.iter[["sgp.grade.sequences"]], -1), sep="/"), collapse=", "), "priors.\n"))
 				}
 			}
 			suppressMessages(gc())
@@ -1445,7 +1445,7 @@ function(sgp_object,
 						...)
 				} else {
 					message(paste("\n\t\tNOTE: No student records &/or no prior data for baseline student growth percentiles:", tail(sgp.iter[["sgp.panel.years"]], 1), 
-						tail(sgp.iter[["sgp.content.areas"]], 1), "with", paste(head(sgp.iter[["sgp.content.areas"]], -1), collapse=", "), "priors.\n"))
+						tail(sgp.iter[["sgp.content.areas"]], 1), "with", paste(paste(head(sgp.iter[["sgp.baseline.content.areas"]], -1), head(sgp.iter[["sgp.baseline.grade.sequences"]], -1), sep="/"), collapse=", "), "priors.\n"))
 				}
 			suppressMessages(gc())
 			}
