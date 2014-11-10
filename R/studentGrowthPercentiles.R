@@ -895,8 +895,8 @@ function(panel.data,         ## REQUIRED
 	
 	### Create ss.data from Panel_Data
 
-	if (dim(Panel_Data)[1]==0) {
-		tmp.messages <- "\t\tNOTE: Supplied data together with grade progression contains no data. Check data, function arguments and see help page for details.\n"
+	if (dim(Panel_Data)[1]==0 | dim(Panel_Data)[2]<3) {
+		tmp.messages <- paste("\t\tNOTE: Supplied data together with grade progression contains no data (dim = ", dim(Panel_Data), "). Check data, function arguments and see help page for details.\n", sep="")
 		message(paste("\tStarted studentGrowthPercentiles", started.date))
 		message(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", 
 			paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
