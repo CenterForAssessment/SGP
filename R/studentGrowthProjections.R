@@ -607,7 +607,16 @@ function(panel.data,	## REQUIRED
 		message(paste("\tStarted studentGrowthProjections", started.date))
 		message(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
 		message(c(tmp.messages, "\tFinished studentGrowthProjections: ", date(), " in ", timetaken(started.at), "\n"))
-		return(NULL)
+
+		return(
+			list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],
+				Cutscores=panel.data[["Cutscores"]],
+				Goodness_of_Fit=panel.data[["Goodness_of_Fit"]],
+				Knots_Boundaries=panel.data[["Knots_Boundaries"]],
+				Panel_Data=NULL,
+				SGPercentiles=panel.data[["SGPercentiles"]],
+				SGProjections=panel.data[["SGProjections"]],
+				Simulated_SGPs=panel.data[["Simulated_SGPs"]]))
 	}
  
 	if (!missing(panel.data.vnames)) {
@@ -736,7 +745,7 @@ function(panel.data,	## REQUIRED
 			list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],
 				Cutscores=panel.data[["Cutscores"]],
 				Goodness_of_Fit=panel.data[["Goodness_of_Fit"]],
-				Knots_Boundaries=panel.data[["Knots_Bounadries"]],
+				Knots_Boundaries=panel.data[["Knots_Boundaries"]],
 				Panel_Data=NULL,
 				SGPercentiles=panel.data[["SGPercentiles"]],
 				SGProjections=panel.data[["SGProjections"]],
