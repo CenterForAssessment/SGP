@@ -572,7 +572,6 @@ function(sgp_object,
 					return(studentGrowthPercentiles(
 						panel.data=list(
 							Panel_Data=getPanelData(tmp_sgp_data_for_analysis, state=state, "sgp.percentiles", sgp.iter, csem.variable), 
-							# Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]], 
 							Coefficient_Matrices=sgp.iter[["sgp.matrices"]], 
 							Knots_Boundaries=getKnotsBoundaries(sgp.iter, state, c("Standard", "sgp.percentiles"))),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
@@ -711,7 +710,6 @@ function(sgp_object,
 					return(studentGrowthPercentiles(
 						panel.data=list(
 							Panel_Data=getPanelData(tmp_sgp_data_for_analysis, state=state, "sgp.percentiles", sgp.iter, csem.variable), 
-							# Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]], 
 							Coefficient_Matrices=sgp.iter[["sgp.baseline.matrices"]], 
 							Knots_Boundaries=getKnotsBoundaries(sgp.iter, state, c("Standard", "sgp.percentiles"))),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), 
