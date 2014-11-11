@@ -602,6 +602,23 @@ function(panel.data,	## REQUIRED
 
 	### Create ss.data from Panel_Data and rename variables based upon grade.progression
 
+	if (dim(panel.data[['Panel_Data']])[1] == 0) { ### Check needed for getTargetScaleScore when running straight projections for final subject in progression
+		tmp.messages <- c(tmp.messages, "\t\tNOTE: Supplied data together with grade progression contains no data for analysis. Check data, function arguments and see help page for details.\n")
+		message(paste("\tStarted studentGrowthProjections", started.date))
+		message(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
+		message(c(tmp.messages, "\tFinished studentGrowthProjections: ", date(), " in ", timetaken(started.at), "\n"))
+
+		return(
+			list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],
+				Cutscores=panel.data[["Cutscores"]],
+				Goodness_of_Fit=panel.data[["Goodness_of_Fit"]],
+				Knots_Boundaries=panel.data[["Knots_Boundaries"]],
+				Panel_Data=NULL,
+				SGPercentiles=panel.data[["SGPercentiles"]],
+				SGProjections=panel.data[["SGProjections"]],
+				Simulated_SGPs=panel.data[["Simulated_SGPs"]]))
+	}
+ 
 	if (!missing(panel.data.vnames)) {
 		if (!all(panel.data.vnames %in% names(panel.data[["Panel_Data"]]))) {
 			tmp.messages <- c(tmp.messages, "\t\tNOTE: Supplied 'panel.data.vnames' are not all in the supplied 'Panel_Data'.\n\t\tAnalyses will continue with the variables contained in both Panel_Data and those provided in the supplied argument 'panel.data.vnames'.\n")
@@ -615,14 +632,6 @@ function(panel.data,	## REQUIRED
 		stop(paste("Number of columns of supplied panel data (", dim(ss.data)[2], ") does not conform to data requirements. See help page for details."))
 	}
 	num.panels <- (dim(ss.data)[2]-1)/2
-
-	if (dim(ss.data)[1] == 0) { ### Check needed for getTargetScaleScore when running straight projections for final subject in progression
-		tmp.messages <- c(tmp.messages, "\t\tNOTE: Supplied data together with grade progression contains no data for analysis. Check data, function arguments and see help page for details.\n")
-		message(paste("\tStarted studentGrowthProjections", started.date))
-		message(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
-		message(c(tmp.messages, "\tFinished studentGrowthProjections: ", date(), " in ", timetaken(started.at), "\n"))
-		return(NULL)
-	} 
 
 	if (length(grade.progression) > num.panels) {
 		tmp.messages <- c(tmp.messages, paste("\t\tNOTE: Supplied 'grade progression', grade.progression=c(", paste(grade.progression, collapse=","), "), exceeds number of panels (", num.panels, ") in provided data.\n\t\t Analyses will utilize maximum number of priors supplied by the data.\n", sep=""))
@@ -736,7 +745,7 @@ function(panel.data,	## REQUIRED
 			list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],
 				Cutscores=panel.data[["Cutscores"]],
 				Goodness_of_Fit=panel.data[["Goodness_of_Fit"]],
-				Knots_Boundaries=panel.data[["Knots_Bounadries"]],
+				Knots_Boundaries=panel.data[["Knots_Boundaries"]],
 				Panel_Data=NULL,
 				SGPercentiles=panel.data[["SGPercentiles"]],
 				SGProjections=panel.data[["SGProjections"]],

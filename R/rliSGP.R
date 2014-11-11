@@ -68,7 +68,7 @@ function(sgp_object,
 		testing.window <- "SPRING"
 	}
 
-	if (eow.or.update=="UPDATE" && testing.window=="LATE_SPRING") {
+	if (eow.or.update=="UPDATE" && testing.window %in% c("EARLY_SPRING", "LATE_SPRING")) {
 		testing.window <- "SPRING"
 	}
 
@@ -93,84 +93,33 @@ function(sgp_object,
 
 	if (eow.or.update=="UPDATE") {
 
-		### FALL, WINTER, SPRING (not EARLY_SPRING)
-
-		if (testing.window %in% c("FALL", "WINTER", "SPRING")) {
-
-			RLI_SGP_UPDATE_SHELL <- updateSGP(
-				what_sgp_object=sgp_object,
-				with_sgp_data_LONG=additional.data,
-				state=state,
-				steps=c("prepareSGP", "analyzeSGP", "combineSGP", "outputSGP"),
-				save.intermediate.results=FALSE,
-				sgp.percentiles=FALSE,
-				sgp.projections=FALSE,
-				sgp.projections.lagged=FALSE,
-				sgp.percentiles.baseline=TRUE,
-				sgp.projections.baseline=TRUE,
-				sgp.projections.lagged.baseline=FALSE,
-				sgp.target.scale.scores.only=TRUE,
-				outputSGP.output.type="RLI",
-				goodness.of.fit.print=FALSE,
-				update.old.data.with.new=FALSE,
-				parallel.config=parallel.config,
-				sgp.config=c(
-					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "MATHEMATICS", testing.window),
-					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "READING", testing.window),
-					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "EARLY_LIT", testing.window)))
-		}
-
-		### EARLY_SPRING special case
-
-		if (testing.window=="EARLY_SPRING") {
-
-			RLI_SGP_UPDATE_SHELL <- updateSGP(
-				what_sgp_object=sgp_object,
-				with_sgp_data_LONG=additional.data,
-				state=state,
-				steps=c("prepareSGP", "analyzeSGP"),
-				save.intermediate.results=FALSE,
-				sgp.percentiles=FALSE,
-				sgp.projections=FALSE,
-				sgp.projections.lagged=FALSE,
-				sgp.percentiles.baseline=TRUE,
-				sgp.projections.baseline=TRUE,
-				sgp.projections.lagged.baseline=FALSE,
-				goodness.of.fit.print=FALSE,
-				update.old.data.with.new=FALSE,
-				parallel.config=parallel.config,
-				sgp.config=c(
-					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "MATHEMATICS", testing.window),
-					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "READING", testing.window),
-					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "EARLY_LIT", testing.window)))
-
-
-			RLI_SGP_UPDATE_SHELL <- abcSGP(
-				RLI_SGP_UPDATE_SHELL,
-				steps=c("prepareSGP", "analyzeSGP", "combineSGP", "outputSGP"),
-				state=state,
-				sgp.percentiles=FALSE,
-				sgp.projections=FALSE,
-				sgp.projections.lagged=FALSE,
-				sgp.percentiles.baseline=TRUE,
-				sgp.projections.baseline=TRUE,
-				sgp.projections.lagged.baseline=FALSE,
-				sgp.target.scale.scores.only=TRUE,
-				outputSGP.output.type="RLI",
-				goodness.of.fit.print=FALSE,
-				parallel.config=parallel.config,
-				sgp.config=c(
-					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "MATHEMATICS", "SPRING"),
-					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "READING", "SPRING"),
-					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "EARLY_LIT", "SPRING")))
-		}
+		RLI_SGP_UPDATE_SHELL <- updateSGP(
+			what_sgp_object=sgp_object,
+			with_sgp_data_LONG=additional.data,
+			state=state,
+			steps=c("prepareSGP", "analyzeSGP", "combineSGP", "outputSGP"),
+			save.intermediate.results=FALSE,
+			sgp.percentiles=FALSE,
+			sgp.projections=FALSE,
+			sgp.projections.lagged=FALSE,
+			sgp.percentiles.baseline=TRUE,
+			sgp.projections.baseline=TRUE,
+			sgp.projections.lagged.baseline=FALSE,
+			sgp.target.scale.scores.only=TRUE,
+			outputSGP.output.type="RLI",
+			goodness.of.fit.print=FALSE,
+			update.old.data.with.new=FALSE,
+			parallel.config=parallel.config,
+			sgp.config=c(
+				SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "MATHEMATICS", testing.window),
+				SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "READING", testing.window),
+				SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "EARLY_LIT", testing.window)))
 
 		if (!is.null(update.ids)) {
 			update.shell.name <- paste(state, "SGP_UPDATE_SHELL", sep="_")
 			assign(update.shell.name, RLI_SGP_UPDATE_SHELL)
 			save(list=update.shell.name, paste(update.shell.name, "Rdata", sep="."))
 		}
-
 	} ### END UPDATE scripts
 
 
