@@ -491,7 +491,7 @@ function(sgp_object,
 			if (!produce.all.summary.tables) ci.groups <- intersect(ci.groups, selected.summary.tables)
 		}
 
-		if(par.start$par.type=="FOREACH") {
+		if(parallel.config[["BACKEND"]] == "FOREACH") {
 			if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
 	  			j <- k <- NULL ## To prevent R CMD check warnings
 	  			tmp.summary <- foreach(j=iter(sgp.groups), k=iter(sgp.groups %in% ci.groups), 
@@ -507,7 +507,7 @@ function(sgp_object,
 				}
 				names(tmp.summary) <- gsub(", ", "__", sgp.groups)
 			}
-		} # END FOREACH flavor
+		} else { # END FOREACH flavor
 
 		if(par.start$par.type=="SNOW") {
 			if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
@@ -541,6 +541,7 @@ function(sgp_object,
 				names(tmp.summary) <- gsub(", ", "__", sgp.groups)
 			}
 		} # END 'MULTICORE' Flavor
+		} # END not FOREACH
 
 		return(tmp.summary)
 	} ### END summarizeSGP_INTERNAL

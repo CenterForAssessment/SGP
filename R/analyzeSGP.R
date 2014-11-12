@@ -200,11 +200,12 @@ function(sgp_object,
 			goodness.of.fit.print <- FALSE
 			goodness.of.fit.print.arg <- state
 		} else goodness.of.fit.print <- as.logical(goodness.of.fit.print)
-	}
-	if (!goodness.of.fit.print){
-		goodness.of.fit.print.arg <- FALSE
 	} else {
-		goodness.of.fit.print.arg <- state
+		if (!goodness.of.fit.print){
+			goodness.of.fit.print.arg <- FALSE
+		} else {
+			goodness.of.fit.print.arg <- state
+		}
 	}
 
 	### 
@@ -337,7 +338,6 @@ function(sgp_object,
 						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], 
 							sgp.percentiles.baseline.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config[['sgp.percentiles.baseline']])))
 					}
-					rm(tmp)
 				} else {
 					if (par.start$par.type=="SNOW") {
 						tmp <- clusterApplyLB(par.start$internal.cl, sgp.baseline.config, function(sgp.iter) baselineSGP(
@@ -348,7 +348,6 @@ function(sgp_object,
 								calculate.baseline.sgps=FALSE))
 					
 						tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp)))
-						rm(tmp)
 					} # END if (SNOW)
 						
 					if (par.start$par.type=="MULTICORE") {
@@ -360,7 +359,6 @@ function(sgp_object,
 									calculate.baseline.sgps=FALSE),
 								mc.cores=par.start$workers, mc.preschedule=FALSE)
 						tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp)))
-						rm(tmp)
 					} # END if (MULTICORE)
 					stopParallel(parallel.config, par.start)
 				} #  END  if parallel
@@ -379,8 +377,8 @@ function(sgp_object,
 						parallel.config=lower.level.parallel.config)
 				}
 				tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp)))
-				rm(tmp)
 			}
+			rm(tmp)
 
 			assign(paste(state, "_Baseline_Matrices", sep=""), list())
 			for (tmp.matrix.label in grep("BASELINE", names(tmp_sgp_object$Coefficient_Matrices), value=TRUE)) {
@@ -445,7 +443,6 @@ function(sgp_object,
 						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], 
 							sgp.percentiles.baseline.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config[['sgp.percentiles.baseline']])))
 					}
-					rm(tmp)
 				} else {  ## SNOW and MULTICORE flavors
 					if (par.start$par.type=="SNOW") {
 						tmp <- clusterApplyLB(par.start$internal.cl, sgp.baseline.config, function(sgp.iter) baselineSGP(
@@ -458,7 +455,6 @@ function(sgp_object,
 							parallel.config=parallel.config))
 					
 						tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp, simex=TRUE)))
-						rm(tmp)
 					} # END if (SNOW)
 						
 					if (par.start$par.type=="MULTICORE") {
@@ -473,7 +469,6 @@ function(sgp_object,
 							mc.cores=par.start$workers, mc.preschedule=FALSE)
 							
 						tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp, simex=TRUE)))
-						rm(tmp)
 					} # END if (MULTICORE)
 					stopParallel(parallel.config, par.start)
 				} #  END FOREACH, SNOW and MULTICORE
@@ -494,7 +489,6 @@ function(sgp_object,
 				}
 				
 				tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp, simex=TRUE)))
-				rm(tmp)
 			}
 			
 			###  Save SIMEX BASELINE matrices
@@ -505,7 +499,7 @@ function(sgp_object,
 			save(list=paste(state, "_SIMEX_Baseline_Matrices", sep=""), file=paste(state, "_SIMEX_Baseline_Matrices.Rdata", sep=""), compress="xz")
 			
 			message("\n\tFinished Calculating SIMEX Baseline Coefficient Matrices\n")
-			suppressMessages(gc()) # clean up
+			rm(tmp);suppressMessages(gc()) # clean up
 		} # END Compute SIMEX baseline coefficient matrices
 		
 		##  Enforce that simex.use.my.coefficient.matrices must be TRUE and save.matrices is FALSE for BASELINE SIMEX calculations below
@@ -605,7 +599,6 @@ function(sgp_object,
 					tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], 
 						sgp.percentiles.baseline.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config[['sgp.percentiles.baseline']])))
 				}
-				rm(tmp)
 			} else { # END FOREACH
 				###    SNOW flavor
 				if (par.start$par.type == 'SNOW') {
@@ -645,7 +638,6 @@ function(sgp_object,
 						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], 
 							sgp.percentiles.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config[['sgp.percentiles']])))
 					}
-					rm(tmp)
 				} # END SNOW
 				
 				###  MULTICORE flavor
@@ -687,11 +679,10 @@ function(sgp_object,
 						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], 
 							sgp.percentiles.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config[['sgp.percentiles']])))
 					}
-					rm(tmp)
 				} # End MULTICORE
 			} # #END not FOREACH
 			stopParallel(parallel.config, par.start)
-			suppressMessages(gc()) # clean up
+			rm(tmp);suppressMessages(gc()) # clean up
 		} #END if (sgp.percentiles)
 
 
@@ -699,7 +690,7 @@ function(sgp_object,
 	###  BASELINE PERCENTILES
 	####################################
 
-		if (sgp.percentiles.baseline) {
+		if (sgp.percentiles.baseline & length(par.sgp.config[["sgp.percentiles.baseline"]]) > 0) {
 
 			par.start <- startParallel(parallel.config, 'BASELINE_PERCENTILES')
 
@@ -742,7 +733,6 @@ function(sgp_object,
 					tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], 
 						sgp.percentiles.baseline.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config[['sgp.percentiles.baseline']])))
 				}
-				rm(tmp)
 			} else { # END FOREACH	
 				###    SNOW flavor
 				if (par.start$par.type == 'SNOW') {
@@ -781,7 +771,6 @@ function(sgp_object,
 						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], 
 							sgp.percentiles.baseline.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config[['sgp.percentiles.baseline']])))
 					}
-					rm(tmp)
 				} # END SNOW
 				
 				###  MULTICORE flavor
@@ -822,11 +811,10 @@ function(sgp_object,
 						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], 
 							sgp.percentiles.baseline.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config[['sgp.percentiles.baseline']])))
 					}
-					rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
-		stopParallel(parallel.config, par.start)
-		suppressMessages(gc()) # clean up
+			stopParallel(parallel.config, par.start)
+			rm(tmp);suppressMessages(gc()) # clean up
 		} ## END if sgp.percentiles.baseline
 
 
@@ -874,7 +862,6 @@ function(sgp_object,
 					tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], 
 						sgp.percentiles.baseline.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config[['sgp.percentiles.baseline']])))
 				}
-				rm(tmp)
 			} else {# END FOREACH
 				###   SNOW flavor
 				if (par.start$par.type == 'SNOW') {
@@ -911,8 +898,7 @@ function(sgp_object,
 						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], 
 							sgp.projections.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections']]))
 					}
-					rm(tmp)
-					} # END SNOW
+				} # END SNOW
 				
 				###  MULTICORE flavor
 				if (par.start$par.type == 'MULTICORE') {
@@ -949,11 +935,10 @@ function(sgp_object,
 						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], 
 							sgp.projections.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections']]))
 					}
-					rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
-		stopParallel(parallel.config, par.start)
-		suppressMessages(gc()) # clean up
+			stopParallel(parallel.config, par.start)
+			rm(tmp);suppressMessages(gc()) # clean up
 		} ## END if sgp.projections
 
 
@@ -1002,7 +987,6 @@ function(sgp_object,
 					tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], 
 						sgp.percentiles.baseline.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config[['sgp.percentiles.baseline']])))
 				}
-				rm(tmp)
 			} else {# END FOREACH
 				###   SNOW flavor
 				if (par.start$par.type == 'SNOW') {
@@ -1040,8 +1024,7 @@ function(sgp_object,
 						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], 
 							sgp.projections.baseline.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections.baseline']]))
 					}
-					rm(tmp)
-					} # END SNOW
+				} # END SNOW
 				
 				###  MULTICORE flavor
 				if (par.start$par.type == 'MULTICORE') {
@@ -1079,11 +1062,10 @@ function(sgp_object,
 						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], 
 							sgp.projections.baseline.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections.baseline']]))
 					}
-					rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
-		stopParallel(parallel.config, par.start)
-		suppressMessages(gc()) # clean up
+			stopParallel(parallel.config, par.start)
+			rm(tmp);suppressMessages(gc()) # clean up
 		} ## END if sgp.projections.baseline
 
 
@@ -1132,7 +1114,6 @@ function(sgp_object,
 					tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], 
 						sgp.percentiles.baseline.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config[['sgp.percentiles.baseline']])))
 				}
-				rm(tmp)
 			} else {# END FOREACH
 				###   SNOW flavor
 				if (par.start$par.type == 'SNOW') {
@@ -1170,8 +1151,7 @@ function(sgp_object,
 						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], 
 							sgp.projections.lagged.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections.lagged']]))
 					}
-					rm(tmp)
-					} # END SNOW
+				} # END SNOW
 				
 				###  MULTICORE flavor
 				if (par.start$par.type == 'MULTICORE') {
@@ -1209,11 +1189,10 @@ function(sgp_object,
 						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], 
 							sgp.projections.lagged.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections.lagged']]))
 					}
-					rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
-		stopParallel(parallel.config, par.start)
-		suppressMessages(gc()) # clean up
+			stopParallel(parallel.config, par.start)
+			rm(tmp);suppressMessages(gc()) # clean up
 		} ## END if sgp.projections.lagged
 
 
@@ -1262,7 +1241,6 @@ function(sgp_object,
 					tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], 
 						sgp.percentiles.baseline.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config[['sgp.percentiles.baseline']])))
 				}
-				rm(tmp)
 			} else {# END FOREACH
 
 			###  SNOW flavor
@@ -1301,7 +1279,6 @@ function(sgp_object,
 					tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], 
 						sgp.projections.lagged.baseline.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections.lagged.baseline']]))
 				}
-				rm(tmp)
 			} # END SNOW
 			
 			###  MULTICORE flavor
@@ -1340,11 +1317,10 @@ function(sgp_object,
 					tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']], 
 						sgp.projections.lagged.baseline.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections.lagged.baseline']]))
 				}
-				rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
-		stopParallel(parallel.config, par.start)
-		suppressMessages(gc()) # clean up
+			stopParallel(parallel.config, par.start)
+			rm(tmp);suppressMessages(gc()) # clean up
 		} ## END if sgp.projections.lagged.baseline
 	}  ## END if (!is.null(parallel.config))
 
