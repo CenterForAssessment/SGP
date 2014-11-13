@@ -114,4 +114,4 @@ function(state,
 	}
 
 	return(tmp.long.cutscores)
-} ## END createLongCutscores
+} ## END createLongCutscores Function
