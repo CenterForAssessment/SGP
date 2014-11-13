@@ -134,12 +134,15 @@ function(sgp_object,
 			if (!is.null(gaPlot.content_areas)) {
 				tmp.list[[year.iter]] <- data.table(YEAR=tmp.years[year.iter], CONTENT_AREA=gaPlot.content_areas)
 			} else {
+				if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]])) {
+					tmp.content_areas <- unlist(SGPstateData[[state]][["Student_Report_Information"]][['Content_Areas_Domains']])
+				} else {
+					tmp.content_areas <- names(SGPstateData[[state]][["Student_Report_Information"]][['Content_Areas_Labels']])
+				}
 				setkey(sgp_object@Data, VALID_CASE, YEAR)
 				tmp.list[[year.iter]] <- data.table(
 					YEAR=tmp.years[year.iter],
-					CONTENT_AREA=sort(intersect(
-						unique(sgp_object@Data[SJ("VALID_CASE", tmp.years[year.iter]), nomatch=0][["CONTENT_AREA"]]),
-						names(SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Labels"]]))))
+					CONTENT_AREA=sort(intersect(unique(sgp_object@Data[SJ("VALID_CASE", tmp.years[year.iter]), nomatch=0][["CONTENT_AREA"]]), tmp.content_areas)))
 					setkeyv(sgp_object@Data, getKey(sgp_object))
 			}
 		}

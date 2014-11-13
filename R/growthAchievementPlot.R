@@ -45,12 +45,16 @@
 
 	## Create default values
 
-	if (missing(gaPlot.grade_range) & is.null(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])) {
-		stop("\tNOTE: No grade range is available from supplied argument or SGPstateData to construct growth and achievement plots.\n")
-	}
-
-	if (missing(gaPlot.grade_range) & !is.null(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])) {
-		gaPlot.grade_range <- range(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])
+	if (missing(gaPlot.grade_range)) {
+		if (is.null(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])) {
+			stop("\tNOTE: No grade range is available from supplied argument or SGPstateData to construct growth and achievement plots.\n")
+		}
+		if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])) {
+			gaPlot.grade_range <- range(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])
+		}
+		if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported_Domains"]][[content_area]])) {
+			gaPlot.grade_range <- range(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported_Domains"]][[content_area]])
+		}
 	}
 
 	if (!missing(state) & missing(gaPlot.percentile_trajectories)) {
