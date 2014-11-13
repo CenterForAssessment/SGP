@@ -113,71 +113,71 @@
 		return(z*10^floor(log(x,10)))
 	}
 
-	get.my.label <- function(state, content_area, year, label="Cutscores") {
-		tmp.cutscore.years <- sapply(strsplit(names(SGPstateData[[state]][["Achievement"]][[label]])[grep(content_area, names(SGPstateData[[state]][["Achievement"]][[label]]))], "[.]"),
-			function(x) x[2])
-		if (any(!is.na(tmp.cutscore.years))) {
-			if (year %in% tmp.cutscore.years) {
-				return(paste(content_area, year, sep="."))
-			} else {
-				if (year==sort(c(year, tmp.cutscore.years))[1]) {
-					return(content_area)
-				} else {
-					return(paste(content_area, sort(tmp.cutscore.years)[which(year==sort(c(year, tmp.cutscore.years)))-1], sep="."))
-				}
-			}
-		} else {
-			return(content_area)
-		}
-	}
-
-	create.long.cutscores <- function(state, content_area, year) {
-		number.achievement.level.regions <- length(SGPstateData[[state]][["Student_Report_Information"]][["Achievement_Level_Labels"]])
-		my.cutscore.label <- get.my.label(state, content_area, year)
-		if (!content_area %in% names(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]])) {
-			tmp.grades <- as.numeric(matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.cutscore.label]]), "_")),
-				ncol=2, byrow=TRUE)[,2])
-			tmp.cutscores <- matrix(unlist(SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.cutscore.label]]),
-			ncol=number.achievement.level.regions-1, byrow=TRUE)
-			tmp.list <- list()
-			for (i in seq(number.achievement.level.regions-1)) {
-				tmp.list[[i]] <- data.frame(GRADE=c(min(tmp.grades,na.rm=TRUE)-1, tmp.grades, max(tmp.grades,na.rm=TRUE)+1),
-					CUTLEVEL=rep(i, length(tmp.grades)+2),
-					CUTSCORES=c(extendrange(tmp.cutscores[,i], f=0.15)[1], tmp.cutscores[,i], extendrange(tmp.cutscores[,i], f=0.15)[2]))
-			}
-			subset(do.call(rbind, tmp.list), CUTLEVEL %in% 1:(number.achievement.level.regions-1))
-		} else {
-			tmp.grades <- as.numeric(matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.cutscore.label]]), "_")),
-				ncol=2, byrow=TRUE)[,2])
-			tmp.list <- list()
-			for (i in seq(number.achievement.level.regions-1)) {
-			tmp.list[[i]] <- data.frame(GRADE=c(min(tmp.grades, na.rm=TRUE)-1, tmp.grades, max(tmp.grades, na.rm=TRUE)+1),
-				CUTLEVEL=rep(i, length(tmp.grades)+2),
-				CUTSCORES=rep(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]][[content_area]][i+1],
-						length(tmp.grades)+2))
-			}
-			do.call(rbind, tmp.list)
-		}
-	} ## END create.long.cutscores
-
-	piecewise.transform <- function(scale_score, state, content_area, year, grade, output.digits=1) {
-		if (content_area %in% names(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]]) &
-			grade %in% as.numeric(matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]]), "_")), ncol=2, byrow=TRUE)[,2])) {
-				my.cutscores.label <- get.my.label(state, content_area, year)
-				my.knots_boundaries.label <- get.my.label(state, content_area, year, "Knots_Boundaries")
-				tmp.loss.hoss <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[my.knots_boundaries.label]][[paste("loss.hoss_", grade, sep="")]]
-				scale_score[scale_score < tmp.loss.hoss[1]] <- tmp.loss.hoss[1]; scale_score[scale_score > tmp.loss.hoss[2]] <- tmp.loss.hoss[2]
-				tmp.old.cuts <- c(tmp.loss.hoss[1], SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.cutscores.label]][[paste("GRADE_", grade, sep="")]], tmp.loss.hoss[2])
-				tmp.new.cuts <- SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]][[content_area]]
-				tmp.index <- findInterval(scale_score, tmp.old.cuts, rightmost.closed=TRUE)
-				tmp.diff <- diff(tmp.new.cuts)/diff(tmp.old.cuts)
-				round(tmp.new.cuts[tmp.index] + (scale_score - tmp.old.cuts[tmp.index]) * (diff(tmp.new.cuts)/diff(tmp.old.cuts))[tmp.index], digits=output.digits)
-		} else {
-			as.numeric(scale_score)
-		}
-	} ## END piecewise.transform
-
-	## Function that produces a smoothed Percentile Trajectory
+#	getMyLabel <- function(state, content_area, year, label="Cutscores") {
+#		tmp.cutscore.years <- sapply(strsplit(names(SGPstateData[[state]][["Achievement"]][[label]])[grep(content_area, names(SGPstateData[[state]][["Achievement"]][[label]]))], "[.]"),
+#			function(x) x[2])
+#		if (any(!is.na(tmp.cutscore.years))) {
+#			if (year %in% tmp.cutscore.years) {
+#				return(paste(content_area, year, sep="."))
+#			} else {
+#				if (year==sort(c(year, tmp.cutscore.years))[1]) {
+#					return(content_area)
+#				} else {
+#					return(paste(content_area, sort(tmp.cutscore.years)[which(year==sort(c(year, tmp.cutscore.years)))-1], sep="."))
+#				}
+#			}
+#		} else {
+#			return(content_area)
+#		}
+#	}
+#
+#	create.long.cutscores <- function(state, content_area, year) {
+#		number.achievement.level.regions <- length(SGPstateData[[state]][["Student_Report_Information"]][["Achievement_Level_Labels"]])
+#		my.cutscore.label <- getMyLabel(state, content_area, year)
+#		if (!content_area %in% names(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]])) {
+#			tmp.grades <- as.numeric(matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.cutscore.label]]), "_")),
+#				ncol=2, byrow=TRUE)[,2])
+#			tmp.cutscores <- matrix(unlist(SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.cutscore.label]]),
+#			ncol=number.achievement.level.regions-1, byrow=TRUE)
+#			tmp.list <- list()
+#			for (i in seq(number.achievement.level.regions-1)) {
+#				tmp.list[[i]] <- data.frame(GRADE=c(min(tmp.grades,na.rm=TRUE)-1, tmp.grades, max(tmp.grades,na.rm=TRUE)+1),
+#					CUTLEVEL=rep(i, length(tmp.grades)+2),
+#					CUTSCORES=c(extendrange(tmp.cutscores[,i], f=0.15)[1], tmp.cutscores[,i], extendrange(tmp.cutscores[,i], f=0.15)[2]))
+#			}
+#			subset(do.call(rbind, tmp.list), CUTLEVEL %in% 1:(number.achievement.level.regions-1))
+#		} else {
+#			tmp.grades <- as.numeric(matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.cutscore.label]]), "_")),
+#				ncol=2, byrow=TRUE)[,2])
+#			tmp.list <- list()
+#			for (i in seq(number.achievement.level.regions-1)) {
+#			tmp.list[[i]] <- data.frame(GRADE=c(min(tmp.grades, na.rm=TRUE)-1, tmp.grades, max(tmp.grades, na.rm=TRUE)+1),
+#				CUTLEVEL=rep(i, length(tmp.grades)+2),
+#				CUTSCORES=rep(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]][[content_area]][i+1],
+#						length(tmp.grades)+2))
+#			}
+#			do.call(rbind, tmp.list)
+#		}
+#	} ## END create.long.cutscores
+#
+#	piecewise.transform <- function(scale_score, state, content_area, year, grade, output.digits=1) {
+#		if (content_area %in% names(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]]) &
+#			grade %in% as.numeric(matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]]), "_")), ncol=2, byrow=TRUE)[,2])) {
+#				my.cutscores.label <- getMyLabel(state, content_area, year)
+#				my.knots_boundaries.label <- getMyLabel(state, content_area, year, "Knots_Boundaries")
+#				tmp.loss.hoss <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[my.knots_boundaries.label]][[paste("loss.hoss_", grade, sep="")]]
+#				scale_score[scale_score < tmp.loss.hoss[1]] <- tmp.loss.hoss[1]; scale_score[scale_score > tmp.loss.hoss[2]] <- tmp.loss.hoss[2]
+#				tmp.old.cuts <- c(tmp.loss.hoss[1], SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.cutscores.label]][[paste("GRADE_", grade, sep="")]], tmp.loss.hoss[2])
+#				tmp.new.cuts <- SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]][[content_area]]
+#				tmp.index <- findInterval(scale_score, tmp.old.cuts, rightmost.closed=TRUE)
+#				tmp.diff <- diff(tmp.new.cuts)/diff(tmp.old.cuts)
+#				round(tmp.new.cuts[tmp.index] + (scale_score - tmp.old.cuts[tmp.index]) * (diff(tmp.new.cuts)/diff(tmp.old.cuts))[tmp.index], digits=output.digits)
+#		} else {
+#			as.numeric(scale_score)
+#		}
+#	} ## END piecewise.transform
+#
+#	## Function that produces a smoothed Percentile Trajectory
 
 	gaPlot.percentile_trajectories_Internal <- function(tmp.df, percentile, content_area, year, state) {
 
@@ -211,7 +211,7 @@
 		if (content_area %in% names(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]])) {
 			tmp.spline.fun <- splinefun(grade.sequence, trajectories)
 			tmp.function <- function(grades) {
-				sapply(grades, function(x) piecewise.transform(tmp.spline.fun(x), state, as.character(content_area), as.character(year), as.character(x)))
+				sapply(grades, function(x) piecewiseTransform(tmp.spline.fun(x), state, as.character(content_area), as.character(year), as.character(x)))
 			}
 			return(splinefun(grade.sequence, tmp.function(grade.sequence)))
 		} else {
@@ -223,7 +223,7 @@
 	## Calculate Scale Transformations (if required) 
 
 	setkey(growthAchievementPlot.data, GRADE)
-		growthAchievementPlot.data[, TRANSFORMED_SCALE_SCORE:=piecewise.transform(SCALE_SCORE, state, as.character(content_area), as.character(YEAR), as.character(GRADE)), by=list(YEAR, GRADE)]
+		growthAchievementPlot.data[, TRANSFORMED_SCALE_SCORE:=piecewiseTransform(SCALE_SCORE, state, as.character(content_area), as.character(YEAR), as.character(GRADE)), by=list(YEAR, GRADE)]
 	if (content_area %in% names(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]])) {
 		gaPlot.show.scale.transformations <- FALSE
 	}
@@ -265,12 +265,12 @@
 
 	xscale.range <- c(gaPlot.grade_range[1]-0.5, gaPlot.grade_range[2]+0.5)
 
-	temp_cutscores <- subset(create.long.cutscores(state, as.character(content_area), as.character(year)), GRADE %in% tmp.unique.grades) 
+	temp_cutscores <- subset(createLongCutscores(state, as.character(content_area), as.character(year)), GRADE %in% tmp.unique.grades) 
 
 	## Create data sets to be used for plot production
 
 	if (is.null(gaPlot.students)) {
-		my.cutscore.label <- get.my.label(state, content_area, as.character(year))
+		my.cutscore.label <- getMyLabel(state, content_area, as.character(year))
 		start.cuts <- SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.cutscore.label]]
 		if (gaPlot.start.points=="Achievement Level Cuts") {
 			start.cuts.values <- start.cuts[[1]]

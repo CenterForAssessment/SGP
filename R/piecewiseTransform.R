@@ -1,4 +1,4 @@
-`piecewise.transform` <- 
+`piecewiseTransform` <- 
 function(scale_score,
 	state,
 	content_area,
@@ -22,4 +22,4 @@ function(scale_score,
 	} else {
 		as.numeric(scale_score)
 	}
-} ## END piecewise.transform
+} ## END piecewiseTransform Function
