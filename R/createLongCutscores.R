@@ -1,6 +1,7 @@
-`createLongCutscores` <- 
+`createLongCutscores` <-
 function(state,
-	content_area) {
+	content_area,
+   ) {
 
 	GRADE <- CUTSCORES <- YEAR <- CUTLEVEL <- NULL
 

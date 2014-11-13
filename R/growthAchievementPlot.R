@@ -265,7 +265,7 @@
 
 	xscale.range <- c(gaPlot.grade_range[1]-0.5, gaPlot.grade_range[2]+0.5)
 
-	temp_cutscores <- subset(createLongCutscores(state, as.character(content_area), as.character(year)), GRADE %in% tmp.unique.grades) 
+	temp_cutscores <- subset(createLongCutscores(state, as.character(content_area)), GRADE %in% tmp.unique.grades) 
 
 	## Create data sets to be used for plot production
 
