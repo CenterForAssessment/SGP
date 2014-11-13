@@ -226,8 +226,8 @@ interpolate.grades <- function(grades, content_areas, data.year.span) {
 		tmp.grades.numeric <- x
 		tmp.content_areas <- grades.content_areas.reported.in.state$CONTENT_AREA[match(x, grades.content_areas.reported.in.state$GRADE_NUMERIC)]
 		tmp.grades <- convert.grades(x, to="GRADE")
-		tmp.head <- min(which(x[1] <= grades.content_areas.reported.in.state$GRADE), na.rm=TRUE)
-		tmp.tail <- min(which(tail(x, 1) <= grades.content_areas.reported.in.state$GRADE), na.rm=TRUE)
+		tmp.head <- min(which(x[1] <= grades.content_areas.reported.in.state$GRADE_NUMERIC), na.rm=TRUE)
+		tmp.tail <- min(which(tail(x, 1) <= grades.content_areas.reported.in.state$GRADE_NUMERIC), na.rm=TRUE)
 		if (tmp.head==1) {
 			tmp.grades <- c("GRADE_LOWER", tmp.grades); tmp.content_areas <- c("PLACEHOLDER", tmp.content_areas); tmp.grades.numeric <- c(NA, tmp.grades.numeric)
 		} else {

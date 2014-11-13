@@ -33,10 +33,10 @@ function(
 
 	### Create state (if missing) from sgp_object (if possible)
 
-	   if (is.null(state)) {
-			tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
-			state <- getStateAbbreviation(tmp.name, "combineSGP")
-		}
+	if (is.null(state)) {
+		tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
+		state <- getStateAbbreviation(tmp.name, "combineSGP")
+	}
 
 	if (is.null(state)) {
 		tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
@@ -130,7 +130,12 @@ function(
 
 	"%w/o%" <- function(x,y) x[!x %in% y]
 
+	getTargetData <- function(tmp.target.data, projection_group.iter, tmp.target.level.names) {
+		tmp.data <- tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter, c("ID", "CONTENT_AREA", "YEAR", tmp.target.level.names), with=FALSE]
+		return(tmp.data[apply(tmp.data[,tmp.target.level.names, with=FALSE],1,function(x)any(!is.na(x)))])
+	}
 
+	
 	############################################################################
 	### Check update.all.years
 	############################################################################
@@ -398,11 +403,12 @@ function(
 		tmp.target.list <- list()
 		for (target.type.iter in target.args[['sgp.target.scale.scores.types']]) {
 			for (target.level.iter in target.args[['target.level']]) {
-				tmp.target.list[[paste(target.type.iter, target.level.iter)]] <- 
-					getTargetSGP(sgp_object, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward, return.lagged.status=FALSE)
+				tmp.target.list[[paste(target.type.iter, target.level.iter)]] <-
+					data.table(getTargetSGP(sgp_object, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward, return.lagged.status=FALSE),
+						key=c(getKey(sgp_object), "SGP_PROJECTION_GROUP"))
 			}
 		}
-		tmp.target.data <- data.table(Reduce(function(x, y) merge.data.frame(x, y, all=TRUE), tmp.target.list[!sapply(tmp.target.list, function(x) dim(x)[1]==0)], 
+		tmp.target.data <- data.table(Reduce(function(x, y) merge(x, y, all=TRUE), tmp.target.list[!sapply(tmp.target.list, function(x) dim(x)[1]==0)], 
 			accumulate=FALSE), key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 
 		for (projection_group.iter in unique(tmp.target.data[['SGP_PROJECTION_GROUP']])) {
@@ -412,10 +418,11 @@ function(
 				if (any(!tmp.target.level.names %in% names(tmp.target.data))) {
 					tmp.target.data[,tmp.target.level.names[!tmp.target.level.names %in% names(tmp.target.data)]:=as.integer(NA)]
 				}
+
 				sgp_object <- getTargetScaleScore(
 					sgp_object, 
-					state, 
-					tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter, c("ID", "CONTENT_AREA", "YEAR", tmp.target.level.names), with=FALSE],
+					state,
+					getTargetData(tmp.target.data, projection_group.iter, tmp.target.level.names),
 					target.type.iter,
 					tmp.target.level.names,
 					getYearsContentAreasGrades(state, years=unique(tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter][['YEAR']]), content_areas=unique(tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter][['CONTENT_AREA']])),
