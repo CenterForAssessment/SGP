@@ -2,6 +2,8 @@
 function(state,
 	content_area) {
 
+	GRADE <- CUTSCORES <- YEAR <- CUTLEVEL <- NULL
+
 	number.achievement.level.regions <- length(SGPstateData[[state]][["Student_Report_Information"]][["Achievement_Level_Labels"]])
 	if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]])) {
 		content_area <- unique(names(SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]])[
