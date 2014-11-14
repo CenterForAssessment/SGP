@@ -220,7 +220,12 @@
 	}
 
 
-	## Calculate Scale Transformations (if required) 
+	### Create LONG cutscores
+
+	long_cutscores <- createLongCutscores(state, as.character(content_area))
+	temp_cutscores <- long_cutscores[GRADE %in% tmp.unique.grades & !CUTLEVEL %in% c("LOSS", "HOSS")][,CUTLEVEL:=as.numeric(CUTLEVEL)]
+
+	### Calculate Scale Transformations (if required) 
 
 	setkey(growthAchievementPlot.data, GRADE)
 		growthAchievementPlot.data[, TRANSFORMED_SCALE_SCORE:=piecewiseTransform(SCALE_SCORE, state, as.character(content_area), as.character(YEAR), as.character(GRADE)), by=list(YEAR, GRADE)]
@@ -228,9 +233,7 @@
 		gaPlot.show.scale.transformations <- FALSE
 	}
 
-
 	### Calculate ACHIEVEMENT percentiles
-
 
 	if (!is.null(gaPlot.achievement_percentiles)) {
 
@@ -265,7 +268,6 @@
 
 	xscale.range <- c(gaPlot.grade_range[1]-0.5, gaPlot.grade_range[2]+0.5)
 
-	temp_cutscores <- subset(createLongCutscores(state, as.character(content_area)), GRADE %in% tmp.unique.grades & !CUTLEVEL %in% c("LOSS", "HOSS")) 
 
 	## Create data sets to be used for plot production
 
