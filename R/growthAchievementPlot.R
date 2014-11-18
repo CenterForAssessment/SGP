@@ -45,8 +45,7 @@
 
 	### Create LONG cutscores
 
-	long_cutscores <- createLongCutscores(state, as.character(content_area))
-	temp_cutscores <- long_cutscores[GRADE %in% tmp.unique.grades & !CUTLEVEL %in% c("LOSS", "HOSS")][,CUTLEVEL:=as.numeric(CUTLEVEL)]
+	long_cutscores <- createLongCutscores(state, as.character(content_area), add.GRADE_NUMERIC=TRUE)
 
 	### Create default values
 
@@ -54,12 +53,7 @@
 		if (is.null(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])) {
 			stop("\tNOTE: No grade range is available from supplied argument or SGPstateData to construct growth and achievement plots.\n")
 		}
-		if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])) {
-			gaPlot.grade_range <- range(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])
-		}
-		if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported_Domains"]][[content_area]])) {
-			gaPlot.grade_range <- range(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported_Domains"]][[content_area]])
-		}
+		gaPlot.grade_range <- range(long_cutscores$GRADE_NUMERIC)
 	}
 
 	if (!missing(state) & missing(gaPlot.percentile_trajectories)) {
@@ -93,6 +87,7 @@
 		content_area.label <- capwords(content_area)
 	}
 
+	temp_cutscores <- long_cutscores[GRADE %in% tmp.unique.grades & !CUTLEVEL %in% c("LOSS", "HOSS")][,CUTLEVEL:=as.numeric(CUTLEVEL)]
 
 	## Utility functions
 
