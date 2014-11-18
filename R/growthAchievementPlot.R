@@ -17,7 +17,7 @@
 	output.folder,
 	assessment.name) { 
 
-	CUTLEVEL <- GRADE <- YEAR <- ID <- SCALE_SCORE <- level_1_curve <- V1 <- TRANSFORMED_SCALE_SCORE <- PERCENTILE <- NULL ## To prevent R CMD check warnings
+	CUTLEVEL <- GRADE <- YEAR <- ID <- SCALE_SCORE <- level_1_curve <- V1 <- TRANSFORMED_SCALE_SCORE <- PERCENTILE <- GRADE_NUMERIC <- NULL ## To prevent R CMD check warnings
 	content_area <- toupper(content_area)
 	number.achievement.level.regions <- length(SGPstateData[[state]][["Student_Report_Information"]][["Achievement_Level_Labels"]])
 
@@ -53,7 +53,7 @@
 		if (is.null(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])) {
 			stop("\tNOTE: No grade range is available from supplied argument or SGPstateData to construct growth and achievement plots.\n")
 		}
-		gaPlot.grade_range <- range(long_cutscores$GRADE_NUMERIC)
+		gaPlot.grade_range <- range(long_cutscores$GRADE_NUMERIC, na.rm=TRUE)
 	}
 
 	if (!missing(state) & missing(gaPlot.percentile_trajectories)) {
@@ -64,16 +64,17 @@
 	}
 
 	tmp.smooth.grades <- seq(gaPlot.grade_range[1], gaPlot.grade_range[2], by=0.01)
-	tmp.unique.grades <- sort(intersect(unique(gaPlot.sgp_object@Data["VALID_CASE"][["GRADE"]]), gaPlot.grade_range[1]:gaPlot.grade_range[2]))
-	if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])) {
-		if (!identical(tmp.unique.grades, as.integer(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]]))) {
-			message(paste("\tNOTE: Unique grades in supplied data do not match grades indicated for", state.name.label, "in SGPstateData.")) 
-		}
-		tmp.unique.grades <- intersect(tmp.unique.grades, SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])
-	}
+	tmp.unique.grades.numeric <- sort(unique(long_cutscores[['GRADE_NUMERIC']]))
+	tmp.unique.grades.character <- unique(long_cutscores[!is.na(GRADE_NUMERIC)])[['GRADE']]
+#	if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])) {
+#		if (!identical(tmp.unique.grades, as.integer(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]]))) {
+#			message(paste("\tNOTE: Unique grades in supplied data do not match grades indicated for", state.name.label, "in SGPstateData.")) 
+#		}
+#		tmp.unique.grades <- intersect(tmp.unique.grades, SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])
+#	}
 	setkeyv(gaPlot.sgp_object@Data, c("VALID_CASE", "CONTENT_AREA"))
 	growthAchievementPlot.data <- gaPlot.sgp_object@Data[SJ("VALID_CASE", content_area)][, list(ID, YEAR, GRADE, SCALE_SCORE)][
-		GRADE %in% tmp.unique.grades & !is.na(SCALE_SCORE)]
+		GRADE %in% tmp.unique.grades.character & !is.na(SCALE_SCORE)]
 
 	if (missing(assessment.name) & missing(state)) {
 		assessment.name <- NULL
@@ -87,7 +88,7 @@
 		content_area.label <- capwords(content_area)
 	}
 
-	temp_cutscores <- long_cutscores[GRADE %in% tmp.unique.grades & !CUTLEVEL %in% c("LOSS", "HOSS")][,CUTLEVEL:=as.numeric(CUTLEVEL)]
+	temp_cutscores <- long_cutscores[GRADE %in% tmp.unique.grades.character & !CUTLEVEL %in% c("LOSS", "HOSS")][,CUTLEVEL:=as.numeric(CUTLEVEL)]
 
 	## Utility functions
 
@@ -170,7 +171,7 @@
 
 		setkey(growthAchievementPlot.data, YEAR, GRADE)
 		my.tmp <- growthAchievementPlot.data[list(year)][,quantile(TRANSFORMED_SCALE_SCORE, probs=gaPlot.achievement_percentiles, na.rm=TRUE), by=GRADE][
-			as.character(tmp.unique.grades)][,PERCENTILE:=rep(gaPlot.achievement_percentiles, length(tmp.unique.grades))]
+			as.character(tmp.unique.grades.character)][,PERCENTILE:=rep(gaPlot.achievement_percentiles, length(tmp.unique.grades.character))]
 		temp_uncond_frame <- matrix(my.tmp[,splinefun(GRADE, V1)(tmp.smooth.grades), by=PERCENTILE][['V1']], nrow=length(gaPlot.achievement_percentiles), byrow=TRUE)
 		rownames(temp_uncond_frame) <- gaPlot.achievement_percentiles
 		colnames(temp_uncond_frame) <- tmp.smooth.grades
@@ -337,7 +338,7 @@
 ##
 
 	for (i in 1:max(temp_cutscores$CUTLEVEL)){
-		assign(paste("level_", i, "_curve", sep=""), splinefun(tmp.unique.grades, subset(temp_cutscores, CUTLEVEL==i)$CUTSCORES))
+		assign(paste("level_", i, "_curve", sep=""), splinefun(tmp.unique.grades.numeric, subset(temp_cutscores, CUTLEVEL==i)$CUTSCORES))
 	}
 	
 
@@ -396,7 +397,7 @@
 
 	## Code for producing skipped grade region
 
-	skipped.grades <- gaPlot.grade_range[1]:gaPlot.grade_range[2] %w/o% tmp.unique.grades
+	skipped.grades <- tmp.unique.grades.numeric[1]:tmp.unique.grades.numeric[2] %w/o% tmp.unique.grades.numeric
 	if (length(skipped.grades) > 0) {
 		for (i in skipped.grades) {
 			grid.polygon(x=c(i-0.4, i-0.4, i+0.4, i+0.4), y=c(yscale.range, rev(yscale.range)), default.units="native", 
@@ -440,7 +441,7 @@
 	}
 
 	setkey(growthAchievementPlot.data, GRADE)
-	grid.text(x=unit(0.8, "native"), y=unit(median(growthAchievementPlot.data[data.table(as.character(tmp.unique.grades[1]))]$TRANSFORMED_SCALE_SCORE), "native"), 
+	grid.text(x=unit(0.8, "native"), y=unit(median(growthAchievementPlot.data[data.table(as.character(tmp.unique.grades.character[1]))]$TRANSFORMED_SCALE_SCORE), "native"), 
 		paste(pretty_year(year), "Achievement Percentile"), gp=gpar(col=format.colors.font, cex=0.9), rot=90)
 	
 	popViewport() ## pop left.axis.vp
@@ -497,9 +498,10 @@
 	pushViewport(bottom.axis.vp)
 	
 	grid.lines(gaPlot.grade_range, 0.8, gp=gpar(lwd=1.5, col=format.colors.font), default.units="native")
-	for (i in tmp.unique.grades){
-		grid.lines(i, c(0.5, 0.8), gp=gpar(lwd=1.5, col=format.colors.font), default.units="native")
-		grid.text(x=i, y=0.25, paste("Grade", i), gp=gpar(col=format.colors.font, cex=1.0), default.units="native")
+	for (i in seq_along(tmp.unique.grades.numeric)){
+		grid.lines(tmp.unique.grades.numeric[i], c(0.5, 0.8), gp=gpar(lwd=1.5, col=format.colors.font), default.units="native")
+		if (tmp.unique.grades.character[i]=="EOCT") tmp.label <- "EOCT" else tmp.label <- paste("Grade", tmp.unique.grades.numeric[i])
+		grid.text(x=i, y=0.25, tmp.label, gp=gpar(col=format.colors.font, cex=1.0), default.units="native")
 	}
 	
 	popViewport() ## pop bottom.axis.vp
