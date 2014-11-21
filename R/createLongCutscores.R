@@ -120,14 +120,14 @@ function(state,
 	if (add.GRADE_NUMERIC) {
 		if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area.argument]])) {
 			grades.content_areas.reported.in.state <- data.table(
-					GRADE=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[content_area.argument]],
+					GRADE=as.character(SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[content_area.argument]]),
 					YEAR_LAG=c(1, SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[content_area.argument]]),
 					CONTENT_AREA=SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area.argument]],
 					key=c("GRADE", "CONTENT_AREA")
 					)
 		} else {
 			grades.content_areas.reported.in.state <- data.table(
-					GRADE=SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area.argument]],
+					GRADE=as.character(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area.argument]]),
 					YEAR_LAG=c(1, diff(as.numeric(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area.argument]]))),
 					CONTENT_AREA=content_area.argument,
 					key=c("GRADE", "CONTENT_AREA")
