@@ -126,7 +126,7 @@ function(state,
 					key=c("GRADE", "CONTENT_AREA")
 					)
 		} else {
-			grades.content_areas.reported.in.state <- data.frame(
+			grades.content_areas.reported.in.state <- data.table(
 					GRADE=SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area.argument]],
 					YEAR_LAG=c(1, diff(as.numeric(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area.argument]]))),
 					CONTENT_AREA=content_area.argument,

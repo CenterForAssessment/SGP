@@ -17,8 +17,13 @@
 	output.folder,
 	assessment.name) { 
 
-	CUTLEVEL <- GRADE <- YEAR <- ID <- SCALE_SCORE <- level_1_curve <- V1 <- TRANSFORMED_SCALE_SCORE <- PERCENTILE <- GRADE_NUMERIC <- NULL ## To prevent R CMD check warnings
+	CUTLEVEL <- GRADE <- YEAR <- ID <- SCALE_SCORE <- level_1_curve <- V1 <- TRANSFORMED_SCALE_SCORE <- PERCENTILE <- GRADE_NUMERIC <- CONTENT_AREA <- NULL ## To prevent R CMD check warnings
 	content_area <- toupper(content_area)
+	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]])) {
+		content_area.all <- unique(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]])
+	} else {
+		content_area.all <- content_area
+	}
 	number.achievement.level.regions <- length(SGPstateData[[state]][["Student_Report_Information"]][["Achievement_Level_Labels"]])
 
 	## State stuff
@@ -73,7 +78,7 @@
 #		tmp.unique.grades <- intersect(tmp.unique.grades, SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])
 #	}
 	setkeyv(gaPlot.sgp_object@Data, c("VALID_CASE", "CONTENT_AREA"))
-	growthAchievementPlot.data <- gaPlot.sgp_object@Data[SJ("VALID_CASE", content_area)][, list(ID, YEAR, GRADE, SCALE_SCORE)][
+	growthAchievementPlot.data <- gaPlot.sgp_object@Data[SJ("VALID_CASE", content_area)][, list(ID, CONTENT_AREA, YEAR, GRADE, SCALE_SCORE)][
 		GRADE %in% tmp.unique.grades.character & !is.na(SCALE_SCORE)]
 
 	if (missing(assessment.name) & missing(state)) {
@@ -173,7 +178,7 @@
 		## Creating the points used by lines to construct unconditional percentile curves
 
 		setkey(growthAchievementPlot.data, YEAR, GRADE)
-		my.tmp <- growthAchievementPlot.data[list(year)][,quantile(TRANSFORMED_SCALE_SCORE, probs=gaPlot.achievement_percentiles, na.rm=TRUE), by=GRADE][
+		my.tmp <- growthAchievementPlot.data[list(year)][,quantile(TRANSFORMED_SCALE_SCORE, probs=gaPlot.achievement_percentiles, na.rm=TRUE), by=list(GRADE, CONTENT_AREA)][
 			as.character(tmp.unique.grades.character)][,PERCENTILE:=rep(gaPlot.achievement_percentiles, length(tmp.unique.grades.character))]
 		temp_uncond_frame <- matrix(my.tmp[,splinefun(GRADE, V1)(tmp.smooth.grades), by=PERCENTILE][['V1']], nrow=length(gaPlot.achievement_percentiles), byrow=TRUE)
 		rownames(temp_uncond_frame) <- gaPlot.achievement_percentiles
