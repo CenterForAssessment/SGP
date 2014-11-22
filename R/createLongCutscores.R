@@ -4,7 +4,7 @@ function(state,
 	add.GRADE_NUMERIC=FALSE
    ) {
 
-	GRADE <- CUTSCORES <- YEAR <- CUTLEVEL <- YEAR_LAG <- NULL
+	GRADE <- GRADE_NUMERIC <- CUTSCORES <- YEAR <- CUTLEVEL <- YEAR_LAG <- NULL
 
 	number.achievement.level.regions <- length(SGPstateData[[state]][["Student_Report_Information"]][["Achievement_Level_Labels"]])
 	content_area.argument <- content_area
@@ -127,13 +127,16 @@ function(state,
 					)
 		} else {
 			grades.content_areas.reported.in.state <- data.table(
-					GRADE=as.character(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area.argument]]),
+					GRADE=as.numeric(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area.argument]]),
 					YEAR_LAG=c(1, diff(as.numeric(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area.argument]]))),
 					CONTENT_AREA=content_area.argument,
 					key=c("GRADE", "CONTENT_AREA")
 					)
 		}
-		grades.content_areas.reported.in.state$GRADE_NUMERIC <- (as.numeric(grades.content_areas.reported.in.state$GRADE[2])-1)+c(0, cumsum(tail(grades.content_areas.reported.in.state$YEAR_LAG, -1)))
+		grades.content_areas.reported.in.state[,GRADE_NUMERIC:=
+			(as.numeric(grades.content_areas.reported.in.state$GRADE[2])-1)+c(0, cumsum(tail(grades.content_areas.reported.in.state$YEAR_LAG, -1)))]
+		grades.content_areas.reported.in.state[,GRADE:=as.character(grades.content_areas.reported.in.state$GRADE)]
+		setkeyv(grades.content_areas.reported.in.state, c("GRADE", "CONTENT_AREA"))
 		tmp.long.cutscores <- grades.content_areas.reported.in.state[tmp.long.cutscores]
 		tmp.long.cutscores[,YEAR_LAG:=NULL]
 	}
