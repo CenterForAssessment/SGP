@@ -180,9 +180,8 @@
 		setkey(growthAchievementPlot.data, GRADE, CONTENT_AREA)
 		growthAchievementPlot.data <- unique(long_cutscores[!is.na(GRADE_NUMERIC),c("GRADE", "CONTENT_AREA", "GRADE_NUMERIC"), with=FALSE])[growthAchievementPlot.data]
 		setnames(growthAchievementPlot.data, c("GRADE", "GRADE_NUMERIC"), c("GRADE_CHARACTER", "GRADE"))
-		setkey(growthAchievementPlot.data, YEAR, GRADE)
 		my.tmp <- growthAchievementPlot.data[list(year)][,quantile(TRANSFORMED_SCALE_SCORE, probs=gaPlot.achievement_percentiles, na.rm=TRUE), by=list(GRADE, CONTENT_AREA)][
-			tmp.unique.grades.numeric][,PERCENTILE:=rep(gaPlot.achievement_percentiles, length(tmp.unique.grades.numeric))]
+			list(tmp.unique.grades.numeric)][,PERCENTILE:=rep(gaPlot.achievement_percentiles, length(tmp.unique.grades.numeric))]
 		temp_uncond_frame <- matrix(my.tmp[,splinefun(GRADE, V1)(tmp.smooth.grades), by=PERCENTILE][['V1']], nrow=length(gaPlot.achievement_percentiles), byrow=TRUE)
 		rownames(temp_uncond_frame) <- gaPlot.achievement_percentiles
 		colnames(temp_uncond_frame) <- tmp.smooth.grades
