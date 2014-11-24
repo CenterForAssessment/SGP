@@ -94,6 +94,8 @@
 	}
 
 	temp_cutscores <- long_cutscores[GRADE %in% tmp.unique.grades.character & !CUTLEVEL %in% c("LOSS", "HOSS")][,CUTLEVEL:=as.numeric(CUTLEVEL)]
+	setkeyv(temp_cutscores, c("GRADE_NUMERIC", "CONTENT_AREA"))
+
 
 	## Utility functions
 
