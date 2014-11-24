@@ -139,7 +139,6 @@ function(state,
 		setkeyv(grades.content_areas.reported.in.state, c("GRADE", "CONTENT_AREA"))
 		tmp.long.cutscores <- grades.content_areas.reported.in.state[tmp.long.cutscores]
 		tmp.long.cutscores[,YEAR_LAG:=NULL]
-		setkeyv(tmp.long.cutscores, c("GRADE_NUMERIC", "CONTENT_AREA"))
 	}
 
 	return(tmp.long.cutscores)
