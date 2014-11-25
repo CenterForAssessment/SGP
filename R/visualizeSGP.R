@@ -275,7 +275,8 @@ function(sgp_object,
 		
 		if (par.start$par.type=="MULTICORE") {
 			gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students, gaPlot.baseline)
-			mclapply(gaPlot.list, function(gaPlot.iter) {
+#			mclapply(gaPlot.list, function(gaPlot.iter) {
+for (gaPlot.iter in gaPlot.list) {
 				growthAchievementPlot(
 						gaPlot.sgp_object=gaPlot.sgp_object,
 						gaPlot.students=gaPlot.iter[["ID"]],
@@ -287,12 +288,12 @@ function(sgp_object,
 						format=gaPlot.format,
 						baseline=gaPlot.iter[["BASELINE"]],
 						output.format=c("PDF", "PNG"),
-						output.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))}, 
-				mc.cores=par.start$workers, mc.preschedule=FALSE)
-		}
-		
+						output.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))}#, 
+#				mc.cores=par.start$workers, mc.preschedule=FALSE)
+#		}
+#		
 		stopParallel(parallel.config, par.start)
-
+}
 		message(paste("Finished growthAchievementPlot in visualizeSGP", date(), "in", timetaken(started.at), "\n"))
 	} ## END if (growthAchievementPlot %in% plot.types)
 
@@ -331,41 +332,6 @@ if ("studentGrowthPlot" %in% plot.types) {
 			return(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tmp.domain]][tmp.index + increment])
 		} else return(content_area)
 	}
-
-#	get.my.label <- function(state, content_area, year, label="Cutscores") {
-#		tmp.cutscore.years <- sapply(strsplit(names(SGPstateData[[state]][["Achievement"]][[label]])[grep(content_area, names(SGPstateData[[state]][["Achievement"]][[label]]))], "[.]"),
-#                        function(x) x[2])
-#		if (any(!is.na(tmp.cutscore.years))) {
-#			if (year %in% tmp.cutscore.years) {
-#				return(paste(content_area, year, sep="."))
-#			} else {
-#				if (year==sort(c(year, tmp.cutscore.years))[1]) {
-#					return(content_area)
-#				} else {
-#					return(paste(content_area, sort(tmp.cutscore.years)[which(year==sort(c(year, tmp.cutscore.years)))-1], sep="."))
-#				}
-#			}
-#		} else {
-#			return(content_area)
-#		}
-#	}
-#
-#	piecewise.transform <- function(scale_score, state, content_area, year, grade, output.digits=1) {
-#		my.cutscores.label <- get.my.label(state, content_area, year)
-#		my.knots_boundaries.label <- get.my.label(state, content_area, year, "Knots_Boundaries")
-#		if (content_area %in% names(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]]) &&
-#			grade %in% matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[my.knots_boundaries.label]]), "_")), ncol=2, byrow=TRUE)[,2]) {
-#				tmp.loss.hoss <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[my.knots_boundaries.label]][[paste("loss.hoss_", grade, sep="")]]
-#				scale_score[scale_score < tmp.loss.hoss[1]] <- tmp.loss.hoss[1]; scale_score[scale_score > tmp.loss.hoss[2]] <- tmp.loss.hoss[2]
-#				tmp.old.cuts <- c(tmp.loss.hoss[1], SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.cutscores.label]][[paste("GRADE_", grade, sep="")]], tmp.loss.hoss[2])
-#				tmp.new.cuts <- SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area]]
-#				tmp.index <- findInterval(scale_score, tmp.old.cuts, rightmost.closed=TRUE)
-#				tmp.diff <- diff(tmp.new.cuts)/diff(tmp.old.cuts)
-#				round(tmp.new.cuts[tmp.index] + (scale_score - tmp.old.cuts[tmp.index]) * (diff(tmp.new.cuts)/diff(tmp.old.cuts))[tmp.index], digits=output.digits)
-#		} else {
-#			as.numeric(scale_score)
-#		}
-#	} ## END piecewise.transform
 
 
 ######################################################################

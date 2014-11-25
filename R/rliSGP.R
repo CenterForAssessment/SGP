@@ -2,6 +2,7 @@
 function(sgp_object,
 	additional.data,
 	state=NULL,
+	content_areas=c("MATHEMATICS", "READING", "EARLY_LIT"),
 	testing.window, ### FALL, WINTER, SPRING, EARLY_SPRING, LATE_SPRING for UPDATE 
 	eow.or.update="UPDATE", ### UPDATE or EOW
 	update.save.shell.only=FALSE,
@@ -57,6 +58,14 @@ function(sgp_object,
 		}
 	}
 
+	getRLIConfig <- function(content_areas, configuration.year, testing.window) {
+		tmp.list <- list()
+		for (i in content_areas) {
+			tmp.list[[i]] <- SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, i, testing.window)
+		}
+		return(unlist(tmp.list, recursive=FALSE))
+	}
+
 
 	### Tests for arguments
 
@@ -110,10 +119,7 @@ function(sgp_object,
 			goodness.of.fit.print=FALSE,
 			update.old.data.with.new=FALSE,
 			parallel.config=parallel.config,
-			sgp.config=c(
-				SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "MATHEMATICS", testing.window),
-				SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "READING", testing.window),
-				SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "EARLY_LIT", testing.window)))
+			sgp.config=getRLIConfig(content_areas, configuration.year, testing.window))
 
 		if (!is.null(update.ids)) {
 			update.shell.name <- paste(state, "SGP_UPDATE_SHELL", sep="_")
@@ -154,10 +160,7 @@ function(sgp_object,
 				update.old.data.with.new=FALSE,
 				goodness.of.fit.print=FALSE,
 				parallel.config=parallel.config,
-				sgp.config=c(
-					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "MATHEMATICS", testing.window),
-					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "READING", testing.window),
-					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "EARLY_LIT", testing.window)))
+				sgp.config=getRLIConfig(content_areas, configuration.year, testing.window))
 
 			### Create and save new UPDATE_SHELL
 
@@ -211,10 +214,7 @@ function(sgp_object,
 					update.old.data.with.new=FALSE,
 					goodness.of.fit.print=FALSE,
 					parallel.config=parallel.config,
-					sgp.config=c(
-						SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "MATHEMATICS", "EARLY_SPRING"),
-						SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "READING", "EARLY_SPRING"),
-						SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "EARLY_LIT", "EARLY_SPRING")))
+					sgp.config=getRLIConfig(content_areas, configuration.year, "EARLY_SPRING"))
 
 				### Convert and save coefficient matrices
 
@@ -244,10 +244,7 @@ function(sgp_object,
 					update.old.data.with.new=FALSE,
 					goodness.of.fit.print=FALSE,
 					parallel.config=parallel.config,
-					sgp.config=c(
-						SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "MATHEMATICS", testing.window),
-						SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "READING", testing.window),
-						SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "EARLY_LIT", testing.window)))
+					sgp.config=getRLIConfig(content_areas, configuration.year, testing.window))
 
 
 				### Create and save new UPDATE_SHELL

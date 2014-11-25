@@ -757,4 +757,35 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 	tmp.messages <- c(tmp.messages, "\n\t#####         End testSGP test number 4, Part 2             #####\n\n", "#####  End testSGP test number 4                                   #####\n")
 	cat(tmp.messages)
 	} ### End TEST_NUMBER 4
+
+
+	#######################################################################################################################################################
+	###
+	### TEST NUMBER 5: Test of assessment change functionality
+	###
+	#######################################################################################################################################################
+
+	if (5 %in% TEST_NUMBER) {
+
+	options(error=recover)
+	options(warn=2)
+	suppressPackageStartupMessages(require(parallel))
+	number.cores <- detectCores()-1
+	Demonstration_SGP <- tmp.messages <- NULL
+
+	### Modify latest year data sgpData_LONG
+
+	sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'MATHEMATICS' & sgpData_LONG$YEAR == '2013_2014'] <- 
+		sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'MATHEMATICS' & sgpData_LONG$YEAR == '2013_2014'] + 1000
+	sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'READING' & sgpData_LONG$YEAR == '2013_2014'] <- 
+		sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'READING' & sgpData_LONG$YEAR == '2013_2014'] + 1200
+
+	### Modify SGPstateData
+
+	SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]] <-
+		list(Year="2013_2014",
+			
+
+		)
+	} ### End TEST_NUMBER 5
 } ### END testSGP Function

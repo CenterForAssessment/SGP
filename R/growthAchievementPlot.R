@@ -20,7 +20,7 @@
 	CUTLEVEL <- GRADE <- YEAR <- ID <- SCALE_SCORE <- level_1_curve <- V1 <- TRANSFORMED_SCALE_SCORE <- PERCENTILE <- GRADE_NUMERIC <- CONTENT_AREA <- NULL ## To prevent R CMD check warnings
 	content_area <- toupper(content_area)
 	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]])) {
-		content_area.all <- unique(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]])
+		content_area.all <- unique(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]])
 	} else {
 		content_area.all <- content_area
 	}
@@ -71,14 +71,8 @@
 	tmp.smooth.grades <- seq(gaPlot.grade_range[1], gaPlot.grade_range[2], by=0.01)
 	tmp.unique.grades.numeric <- sort(unique(long_cutscores[['GRADE_NUMERIC']]))
 	tmp.unique.grades.character <- unique(long_cutscores[!is.na(GRADE_NUMERIC)])[['GRADE']]
-#	if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])) {
-#		if (!identical(tmp.unique.grades, as.integer(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]]))) {
-#			message(paste("\tNOTE: Unique grades in supplied data do not match grades indicated for", state.name.label, "in SGPstateData.")) 
-#		}
-#		tmp.unique.grades <- intersect(tmp.unique.grades, SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])
-#	}
 	setkeyv(gaPlot.sgp_object@Data, c("VALID_CASE", "CONTENT_AREA"))
-	growthAchievementPlot.data <- gaPlot.sgp_object@Data[SJ("VALID_CASE", content_area)][, list(ID, CONTENT_AREA, YEAR, GRADE, SCALE_SCORE)][
+	growthAchievementPlot.data <- gaPlot.sgp_object@Data[CJ("VALID_CASE", content_area.all)][, list(ID, CONTENT_AREA, YEAR, GRADE, SCALE_SCORE)][
 		GRADE %in% tmp.unique.grades.character & !is.na(SCALE_SCORE)]
 
 	if (missing(assessment.name) & missing(state)) {
@@ -142,7 +136,6 @@
 			grade.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[content_area]],
 			content_area.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]],
 			year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[content_area]],
-			max.forward.progression.grade=gaPlot.grade_range[2],
 			max.order.for.progression=gaPlot.max.order.for.progression,
 			print.time.taken=FALSE)[["SGProjections"]][[.create.path(list(my.subject=content_area, my.year=year, my.extra.label=my.extra.label))]][,-1]
 	}
