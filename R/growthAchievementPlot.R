@@ -87,7 +87,7 @@
 		content_area.label <- capwords(content_area)
 	}
 
-	temp_cutscores <- long_cutscores[GRADE %in% tmp.unique.grades.character & !CUTLEVEL %in% c("LOSS", "HOSS")][,CUTLEVEL:=as.numeric(CUTLEVEL)]
+	temp_cutscores <- long_cutscores[GRADE %in% tmp.unique.grades.character & !CUTLEVEL %in% c("LOSS", "HOSS") & YEAR %in% tail(sort(unique(long_cutscores$YEAR), na.last=FALSE), 1)][,CUTLEVEL:=as.numeric(CUTLEVEL)]
 	setkeyv(temp_cutscores, c("GRADE_NUMERIC", "CONTENT_AREA"))
 
 
