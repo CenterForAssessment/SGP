@@ -143,8 +143,7 @@
 	smoothPercentileTrajectory <- function(tmp.df, percentile, content_area, year, state) {
 		tmp.trajectories <- gaPlot.percentile_trajectories_Internal(tmp.df, percentile, content_area, year, state)
 		trajectories <- c(tail(as.numeric(tmp.df), (dim(tmp.df)[2]-1)/2), as.numeric(tmp.trajectories))
-		grade.sequence <- as.numeric(c(tmp.df[1,2:((dim(tmp.df)[2]+1)/2)], sapply(strsplit(sapply(strsplit(names(tmp.trajectories), "_GRADE_"), tail, 1), "_"), head, 1)))
-
+		grade.sequence <- c(tmp.df[1,2:((dim(tmp.df)[2]+1)/2)], head(setdiff(tmp.unique.grades.numeric, tmp.df[1,2:((dim(tmp.df)[2]+1)/2)]), length(tmp.trajectories)))
 
 		if (content_area %in% names(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]])) {
 			tmp.spline.fun <- splinefun(grade.sequence, trajectories)
