@@ -783,7 +783,7 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 	### Modify SGPstateData
 
 	SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]] <-
-		list(Year="2013_2014",
+		list(Year="2013_2014"
 			
 
 		)
