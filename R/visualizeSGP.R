@@ -275,8 +275,7 @@ function(sgp_object,
 		
 		if (par.start$par.type=="MULTICORE") {
 			gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students, gaPlot.baseline)
-#			mclapply(gaPlot.list, function(gaPlot.iter) {
-for (gaPlot.iter in gaPlot.list) {
+			mclapply(gaPlot.list, function(gaPlot.iter) {
 				growthAchievementPlot(
 						gaPlot.sgp_object=gaPlot.sgp_object,
 						gaPlot.students=gaPlot.iter[["ID"]],
@@ -288,12 +287,11 @@ for (gaPlot.iter in gaPlot.list) {
 						format=gaPlot.format,
 						baseline=gaPlot.iter[["BASELINE"]],
 						output.format=c("PDF", "PNG"),
-						output.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))}#, 
-#				mc.cores=par.start$workers, mc.preschedule=FALSE)
-#		}
-#		
+						output.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))}, 
+				mc.cores=par.start$workers, mc.preschedule=FALSE)
+		}
+		
 		stopParallel(parallel.config, par.start)
-}
 		message(paste("Finished growthAchievementPlot in visualizeSGP", date(), "in", timetaken(started.at), "\n"))
 	} ## END if (growthAchievementPlot %in% plot.types)
 
