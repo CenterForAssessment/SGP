@@ -333,43 +333,6 @@ function(sgp_object,
 
 		### Utility functions
 
-		get.my.label <- function(state, content_area, year, label="Cutscores") {
-			tmp.cutscore.years <- sapply(strsplit(names(SGPstateData[[state]][["Achievement"]][[label]])[grep(content_area, names(SGPstateData[[state]][["Achievement"]][[label]]))], "[.]"),
-				function(x) x[2])
-			if (any(!is.na(tmp.cutscore.years))) {
-				if (year %in% tmp.cutscore.years) {
-					return(paste(content_area, year, sep="."))
-				} else {
-					if (year==sort(c(year, tmp.cutscore.years))[1]) {
-						return(content_area)
-					} else {
-						return(paste(content_area, sort(tmp.cutscore.years)[which(year==sort(c(year, tmp.cutscore.years)))-1], sep="."))
-					}
-				}
-			} else {
-				return(content_area)
-			}
-		}
-
-		piecewise.transform <- function(scale_score, state, content_area, year, grade, output.digits=1) {
-			if (content_area %in% names(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]]) &
-				grade %in% as.numeric(matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]]), "_")), 
-					ncol=2, byrow=TRUE)[,2])) {
-				my.knots_boundaries.label <- get.my.label(state, content_area, year, "Knots_Boundaries")
-				tmp.loss.hoss <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[my.knots_boundaries.label]][[paste("loss.hoss_", grade, sep="")]]
-				scale_score[scale_score < tmp.loss.hoss[1]] <- tmp.loss.hoss[1]; scale_score[scale_score > tmp.loss.hoss[2]] <- tmp.loss.hoss[2]
-				my.content_area <- get.my.label(state, content_area, year)
-				tmp.old.cuts <- c(tmp.loss.hoss[1], SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.content_area]][[paste("GRADE_", grade, sep="")]], 
-					tmp.loss.hoss[2])
-				tmp.new.cuts <- SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area]]
-				tmp.index <- findInterval(scale_score, tmp.old.cuts, rightmost.closed=TRUE)
-				tmp.diff <- diff(tmp.new.cuts)/diff(tmp.old.cuts)
-				round(tmp.new.cuts[tmp.index] + (scale_score - tmp.old.cuts[tmp.index]) * (diff(tmp.new.cuts)/diff(tmp.old.cuts))[tmp.index], digits=output.digits)
-			} else {
-				as.numeric(scale_score)
-			}
-		} ## END piecewise.transform
-
 		"%w/o%" <- function(x,y) x[!x %in% y]
 
 		convert.variables <- function(tmp.df) {
@@ -485,7 +448,7 @@ function(sgp_object,
 		### Create transformed scale scores
 
 		setkeyv(tmp.table, c("CONTENT_AREA", "YEAR", "GRADE"))
-		tmp.table[, TRANSFORMED_SCALE_SCORE:=piecewise.transform(SCALE_SCORE, state, CONTENT_AREA, YEAR, GRADE), by=list(CONTENT_AREA, YEAR, GRADE)]
+		tmp.table[, TRANSFORMED_SCALE_SCORE:=piecewiseTransform(SCALE_SCORE, state, CONTENT_AREA, YEAR, GRADE), by=list(CONTENT_AREA, YEAR, GRADE)]
 
 		#### Anonymize (if requested) (NOT necessary if wide data is provided)
  
@@ -538,7 +501,7 @@ function(sgp_object,
 				for (proj.iter in grep(paste("PROJ_YEAR", j, sep="_"), names(outputSGP.data))) {
 					tmp.scale_score.name <- names(outputSGP.data)[proj.iter]
 					outputSGP.data[[proj.iter]] <- outputSGP.data[,
-						piecewise.transform(get(tmp.scale_score.name), state, tmp.content_areas[CONTENT_AREA[1]], tmp.year.name, as.character(type.convert(get(tmp.grade.name)[1])+1)), 
+						piecewiseTransform(get(tmp.scale_score.name), state, tmp.content_areas[CONTENT_AREA[1]], tmp.year.name, as.character(type.convert(get(tmp.grade.name)[1])+1)), 
 						by=list(CONTENT_AREA, outputSGP.data[[tmp.grade.name]])]$V1 
 				}
 			}
