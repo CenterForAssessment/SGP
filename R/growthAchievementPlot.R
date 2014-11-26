@@ -97,8 +97,6 @@
 
 	pretty_year <- function(x) sub("_", "-", x)
 
-	"%w/o%" <- function(x, y) x[!x %in% y]
-
 	myround_up <- function(x) {
 		temp <- x/10^floor(log(x, 10))
 		roundup <- function(y) trunc(y+0.5)
@@ -402,7 +400,7 @@
 
 	## Code for producing skipped grade region
 
-	skipped.grades <- tmp.unique.grades.numeric[1]:tmp.unique.grades.numeric[2] %w/o% tmp.unique.grades.numeric
+	skipped.grades <- setdiff(min(tmp.unique.grades.numeric, na.rm=TRUE):max(tmp.unique.grades.numeric, na.rm=TRUE), tmp.unique.grades.numeric)
 	if (length(skipped.grades) > 0) {
 		for (i in skipped.grades) {
 			grid.polygon(x=c(i-0.4, i-0.4, i+0.4, i+0.4), y=c(yscale.range, rev(yscale.range)), default.units="native", 
