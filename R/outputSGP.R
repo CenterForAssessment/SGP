@@ -25,7 +25,8 @@ function(sgp_object,
 
 	SCALE_SCORE <- CONTENT_AREA <- YEAR <- GRADE <- ID <- ETHNICITY <- GENDER <- LAST_NAME <- FIRST_NAME <- VALID_CASE <- DISTRICT_NUMBER <- SCHOOL_NUMBER <- YEAR_BY_CONTENT_AREA <- NULL
 	names.type <- names.provided <- names.output <- names.sgp <- STATE_ENROLLMENT_STATUS <- EMH_LEVEL <- STATE_ASSIGNED_ID <- .N <- TRANSFORMED_SCALE_SCORE <- GROUP <- STATE <- YEAR_WITHIN <- NULL
-	DISADVANTAGED_STATUS <- SPECIAL_EDUCATION_STATUS <- ELL_STATUS <- HLS_CODE <- IEP_CODE <- LANGUAGE_PROFICIENCY <- GIFTED_CODE <- FRL_CODE <- NULL
+	DISADVANTAGED_STATUS <- SPECIAL_EDUCATION_STATUS <- ELL_STATUS <- HLS_CODE <- IEP_CODE <- LANGUAGE_PROFICIENCY <- GIFTED_CODE <- FRL_CODE <- STUDENT_GROWTH_ID <- MIDDLE_NAME <- NULL
+	OCTOBER_ENROLLMENT_STATUS <- NULL
 
 	### Create state (if missing) from sgp_object (if possible)
 
@@ -500,9 +501,9 @@ function(sgp_object,
 				setkeyv(outputSGP.data, c("CONTENT_AREA", tmp.grade.name))
 				for (proj.iter in grep(paste("PROJ_YEAR", j, sep="_"), names(outputSGP.data))) {
 					tmp.scale_score.name <- names(outputSGP.data)[proj.iter]
-					outputSGP.data[[proj.iter]] <- outputSGP.data[,
+					outputSGP.data[,proj.iter:=outputSGP.data[,
 						piecewiseTransform(get(tmp.scale_score.name), state, tmp.content_areas[CONTENT_AREA[1]], tmp.year.name, as.character(type.convert(get(tmp.grade.name)[1])+1)), 
-						by=list(CONTENT_AREA, outputSGP.data[[tmp.grade.name]])]$V1 
+						by=list(CONTENT_AREA, outputSGP.data[[tmp.grade.name]])]$V1, with=FALSE] 
 				}
 			}
 		}
@@ -529,7 +530,7 @@ function(sgp_object,
 		setnames(outputSGP.data, which(names(outputSGP.data)==paste("STATE_ENROLLMENT_STATUS", tmp.last.year.short, sep=".")), "STATE_ENROLLMENT_STATUS")
 
 		if ("ELL_STATUS" %in% outputSGP.student.groups) {
-			outputSGP.data[,ELL_STATUS := as.character(outputSGP.data$ELL_STATUS)]
+			outputSGP.data[,ELL_STATUS:=as.character(outputSGP.data$ELL_STATUS)]
 			outputSGP.data[grep("No", ELL_STATUS), ELL_STATUS:="N"]
 			outputSGP.data[grep("Yes", ELL_STATUS), ELL_STATUS:="Y"]
 			setnames(outputSGP.data, which(names(outputSGP.data)=="ELL_STATUS"), "LANGUAGE_PROFICIENCY")
@@ -577,52 +578,47 @@ function(sgp_object,
 		## NULLify variable to be removed
 
 		for (i in head(tmp.years.short, -1)) {
-			outputSGP.data[[paste("LAST_NAME", i, sep=".")]] <- NULL
-			outputSGP.data[[paste("FIRST_NAME", i, sep=".")]] <- NULL
-			outputSGP.data[[paste("DISTRICT_NUMBER", i, sep=".")]] <- NULL
-			outputSGP.data[[paste("SCHOOL_NUMBER", i, sep=".")]] <- NULL
-			outputSGP.data[[paste("EMH_LEVEL", i, sep=".")]] <- NULL
+			outputSGP.data[,paste("LAST_NAME", i, sep="."):=NULL, with=FALSE]
+			outputSGP.data[,paste("FIRST_NAME", i, sep="."):=NULL, with=FALSE]
+			outputSGP.data[,paste("DISTRICT_NUMBER", i, sep="."):=NULL, with=FALSE]
+			outputSGP.data[,paste("SCHOOL_NUMBER", i, sep="."):=NULL, with=FALSE]
+			outputSGP.data[,paste("EMH_LEVEL", i, sep="."):=NULL, with=FALSE]
 			for (j in outputSGP.student.groups) {
-				outputSGP.data[[paste(j, i, sep=".")]] <- NULL
+				outputSGP.data[,paste(j, i, sep="."):=NULL, with=FALSE]
 			}
-			outputSGP.data[[paste("SCHOOL_ENROLLMENT_STATUS", i, sep=".")]] <- NULL
-			outputSGP.data[[paste("DISTRICT_ENROLLMENT_STATUS", i, sep=".")]] <- NULL
-			outputSGP.data[[paste("STATE_ENROLLMENT_STATUS", i, sep=".")]] <- NULL
+			outputSGP.data[,paste("SCHOOL_ENROLLMENT_STATUS", i, sep="."):=NULL, with=FALSE]
+			outputSGP.data[,paste("DISTRICT_ENROLLMENT_STATUS", i, sep="."):=NULL, with=FALSE]
+			outputSGP.data[,paste("STATE_ENROLLMENT_STATUS", i, sep="."):=NULL, with=FALSE]
+		}
 	
-			if ("ELL_STATUS" %in% outputSGP.student.groups) {
-				outputSGP.data[,paste("ELL_STATUS", i, sep="."):=NULL, with=FALSE]
-				outputSGP.student.groups[outputSGP.student.groups=="ELL_STATUS"] <- "LANGUAGE_PROFICIENCY"
-			} else {
-				outputSGP.student.groups <- c(outputSGP.student.groups, "LANGUAGE_PROFICIENCY")
-			}
-	
-			if ("GIFTED_AND_TALENTED_PROGRAM_STATUS" %in% outputSGP.student.groups) {
-				outputSGP.data[,paste("GIFTED_AND_TALENTED_PROGRAM_STATUS", i, sep="."):=NULL, with=FALSE]
-				outputSGP.student.groups[outputSGP.student.groups=="GIFTED_AND_TALENTED_PROGRAM_STATUS"] <- "GIFTED_CODE"
-			} else {
-				outputSGP.student.groups <- c(outputSGP.student.groups, "GIFTED_CODE")
-			}
-	
-			if ("HOMELESS_STATUS" %in% outputSGP.student.groups) {
-				outputSGP.data[,paste("HOMELESS_STATUS", i, sep="."):=NULL, with=FALSE]
-				outputSGP.student.groups[outputSGP.student.groups=="HOMELESS_STATUS"] <- "HLS_CODE"
-			} else {
-				outputSGP.student.groups <- c(outputSGP.student.groups, "HLS_CODE")
-			}
-		
-			if ("DISADVANTAGED_STATUS" %in% outputSGP.student.groups) {
-				outputSGP.data[,paste("DISADVANTAGED_STATUS", i, sep="."):=NULL, with=FALSE]
-				outputSGP.student.groups[outputSGP.student.groups=="DISADVANTAGED_STATUS"] <- "FRL_CODE"
-			} else {
-				outputSGP.student.groups <- c(outputSGP.student.groups, "FRL_CODE")
-			}
+		if ("ELL_STATUS" %in% outputSGP.student.groups) {
+			outputSGP.student.groups[outputSGP.student.groups=="ELL_STATUS"] <- "LANGUAGE_PROFICIENCY"
+		} else {
+			outputSGP.student.groups <- c(outputSGP.student.groups, "LANGUAGE_PROFICIENCY")
+		}
 
-			if ("SPECIAL_EDUCATION_STATUS" %in% outputSGP.student.groups) {
-				outputSGP.data[,paste("SPECIAL_EDUCATION_STATUS", i, sep="."):=NULL, with=FALSE]
-				outputSGP.student.groups[outputSGP.student.groups=="SPECIAL_EDUCATION_STATUS"] <- "IEP_CODE"
-			} else {
-				outputSGP.student.groups <- c(outputSGP.student.groups, "IEP_CODE")
-			}
+		if ("GIFTED_AND_TALENTED_PROGRAM_STATUS" %in% outputSGP.student.groups) {
+			outputSGP.student.groups[outputSGP.student.groups=="GIFTED_AND_TALENTED_PROGRAM_STATUS"] <- "GIFTED_CODE"
+		} else {
+			outputSGP.student.groups <- c(outputSGP.student.groups, "GIFTED_CODE")
+		}
+	
+		if ("HOMELESS_STATUS" %in% outputSGP.student.groups) {
+			outputSGP.student.groups[outputSGP.student.groups=="HOMELESS_STATUS"] <- "HLS_CODE"
+		} else {
+			outputSGP.student.groups <- c(outputSGP.student.groups, "HLS_CODE")
+		}
+		
+		if ("DISADVANTAGED_STATUS" %in% outputSGP.student.groups) {
+			outputSGP.student.groups[outputSGP.student.groups=="DISADVANTAGED_STATUS"] <- "FRL_CODE"
+		} else {
+			outputSGP.student.groups <- c(outputSGP.student.groups, "FRL_CODE")
+		}
+
+		if ("SPECIAL_EDUCATION_STATUS" %in% outputSGP.student.groups) {
+			outputSGP.student.groups[outputSGP.student.groups=="SPECIAL_EDUCATION_STATUS"] <- "IEP_CODE"
+		} else {
+			outputSGP.student.groups <- c(outputSGP.student.groups, "IEP_CODE")
 		}
 
 		## Tidy up outputSGP.student.groups
@@ -630,26 +626,26 @@ function(sgp_object,
 		for (i in intersect(outputSGP.student.groups, names(outputSGP.data))) {
 			if (any(is.na(outputSGP.data[[i]]))) {
 				setkeyv(outputSGP.data, c("STATE_ASSIGNED_ID", i))
-				outputSGP.data[[i]] <- outputSGP.data[,rep(rev(get(i))[1], .N), by=STATE_ASSIGNED_ID][['V1']]
+				outputSGP.data[,i:=outputSGP.data[,rep(rev(get(i))[1], .N), by=STATE_ASSIGNED_ID][['V1']], with=FALSE]
 			}
 		}
 
 
 		## Create missing variables
 
-		outputSGP.data[["YEAR"]] <- tmp.last.year.short
-		outputSGP.data[["STUDENT_GROWTH_ID"]] <- seq(dim(outputSGP.data)[1])
-		outputSGP.data[["MIDDLE_NAME"]] <- as.character(NA)
-		outputSGP.data[["OCTOBER_ENROLLMENT_STATUS"]] <- as.character(NA)
+		outputSGP.data[,YEAR:=tmp.last.year.short]
+		outputSGP.data[,STUDENT_GROWTH_ID:=seq(dim(outputSGP.data)[1])]
+		outputSGP.data[,MIDDLE_NAME:=as.character(NA)]
+		outputSGP.data[,OCTOBER_ENROLLMENT_STATUS:=as.character(NA)]
 
 		if (length(tmp.years.short) < length(tmp.order)) {
 			for (i in tmp.order[(length(tmp.years.short)+1):length(tmp.order)]) {
-				outputSGP.data[[paste("GRADE_LEVEL", i, sep="_")]] <- NA
-				outputSGP.data[[paste("SCALE_SCORE", i, sep="_")]] <- NA
-				outputSGP.data[[paste("TRANSFORMED_SCALE_SCORE", i, sep="_")]] <- NA
-				outputSGP.data[[paste("GROWTH_TARGET", i, sep="_")]] <- NA
-				outputSGP.data[[paste("GROWTH_PERCENTILE", i, sep="_")]] <- NA
-				outputSGP.data[[paste("PERFORMANCE_LEVEL", i, sep="_")]] <- NA
+				outputSGP.data[,paste("GRADE_LEVEL", i, sep="_"):=NA, with=FALSE]
+				outputSGP.data[,paste("SCALE_SCORE", i, sep="_"):=NA, with=FALSE]
+				outputSGP.data[,paste("TRANSFORMED_SCALE_SCORE", i, sep="_"):=NA, with=FALSE]
+				outputSGP.data[,paste("GROWTH_TARGET", i, sep="_"):=NA, with=FALSE]
+				outputSGP.data[,paste("GROWTH_PERCENTILE", i, sep="_"):=NA, with=FALSE]
+				outputSGP.data[,paste("PERFORMANCE_LEVEL", i, sep="_"):=NA, with=FALSE]
 			}
 		}	
 
