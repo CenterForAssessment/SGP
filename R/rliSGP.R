@@ -2,6 +2,7 @@
 function(sgp_object,
 	additional.data,
 	state=NULL,
+	content_areas=c("MATHEMATICS", "READING", "EARLY_LIT"),
 	testing.window, ### FALL, WINTER, SPRING, EARLY_SPRING, LATE_SPRING for UPDATE 
 	eow.or.update="UPDATE", ### UPDATE or EOW
 	update.save.shell.only=FALSE,
@@ -57,6 +58,14 @@ function(sgp_object,
 		}
 	}
 
+	getRLIConfig <- function(content_areas, configuration.year, testing.window) {
+		tmp.list <- list()
+		for (i in content_areas) {
+			tmp.list[[i]] <- SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, i, testing.window)
+		}
+		return(unlist(tmp.list, recursive=FALSE))
+	}
+
 
 	### Tests for arguments
 
@@ -110,10 +119,7 @@ function(sgp_object,
 			goodness.of.fit.print=FALSE,
 			update.old.data.with.new=FALSE,
 			parallel.config=parallel.config,
-			sgp.config=c(
-				SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "MATHEMATICS", testing.window),
-				SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "READING", testing.window),
-				SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "EARLY_LIT", testing.window)))
+			sgp.config=getRLIConfig(content_areas, configuration.year, testing.window))
 
 		if (!is.null(update.ids)) {
 			update.shell.name <- paste(state, "SGP_UPDATE_SHELL", sep="_")
@@ -137,43 +143,46 @@ function(sgp_object,
 
 		if (testing.window %in% c("FALL", "WINTER")) {
 
-			sgp_object <- updateSGP(
-				what_sgp_object=sgp_object,
-				with_sgp_data_LONG=additional.data,
-				state=state,
-				steps=c("prepareSGP", "analyzeSGP", "combineSGP", "outputSGP"),
-				save.intermediate.results=FALSE,
-				sgp.percentiles=TRUE,
-				sgp.projections=FALSE,
-				sgp.projections.lagged=FALSE,
-				sgp.percentiles.baseline=TRUE,
-				sgp.projections.baseline=TRUE,
-				sgp.projections.lagged.baseline=FALSE,
-				sgp.target.scale.scores.only=TRUE,
-				outputSGP.output.type="RLI",
-				update.old.data.with.new=FALSE,
-				goodness.of.fit.print=FALSE,
-				parallel.config=parallel.config,
-				sgp.config=c(
-					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "MATHEMATICS", testing.window),
-					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "READING", testing.window),
-					SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "EARLY_LIT", testing.window)))
+			if (update.save.shell.only) {
+				tmp.data <- rbind.fill(sgp_object@Data, additional.data)
+				assign(update.shell.name, prepareSGP(subset(tmp.data, YEAR %in% tail(sort(unique(tmp.data$YEAR)), 6)), state=state, create.additional.variables=FALSE))
+				save(list=update.shell.name, file=paste(update.shell.name, "Rdata", sep="."))
+			} else {
+				sgp_object <- updateSGP(
+					what_sgp_object=sgp_object,
+					with_sgp_data_LONG=additional.data,
+					state=state,
+					steps=c("prepareSGP", "analyzeSGP", "combineSGP", "outputSGP"),
+					save.intermediate.results=FALSE,
+					sgp.percentiles=TRUE,
+					sgp.projections=FALSE,
+					sgp.projections.lagged=FALSE,
+					sgp.percentiles.baseline=TRUE,
+					sgp.projections.baseline=TRUE,
+					sgp.projections.lagged.baseline=FALSE,
+					sgp.target.scale.scores.only=TRUE,
+					outputSGP.output.type="RLI",
+					update.old.data.with.new=FALSE,
+					goodness.of.fit.print=FALSE,
+					parallel.config=parallel.config,
+					sgp.config=getRLIConfig(content_areas, configuration.year, testing.window))
 
-			### Create and save new UPDATE_SHELL
+				### Create and save new UPDATE_SHELL
 
-			assign(update.shell.name, prepareSGP(subset(sgp_object@Data, YEAR %in% tail(sort(unique(sgp_object@Data$YEAR)), 7)), create.additional.variables=FALSE))
-			save(list=update.shell.name, file=paste(update.shell.name, "Rdata", sep="."))
+				assign(update.shell.name, prepareSGP(subset(sgp_object@Data, YEAR %in% tail(sort(unique(sgp_object@Data$YEAR)), 7)), create.additional.variables=FALSE))
+				save(list=update.shell.name, file=paste(update.shell.name, "Rdata", sep="."))
 
 
-			### Convert and save coefficient matrices
+				### Convert and save coefficient matrices
 
-			if (testing.window=="FALL") tmp.separator <- "1" else tmp.separator <- "2"
-			tmp.index <- grep(configuration.year, names(sgp_object@SGP$Coefficient_Matrices))
-			assign(paste("RLI_Baseline_Matrices_", paste(yearIncrement(configuration.year, 1), tmp.separator, sep="."), sep=""), 
-				convertToBaseline(sgp_object@SGP$Coefficient_Matrices[tmp.index]))
-			save(list=paste("RLI_Baseline_Matrices_", paste(configuration.year, tmp.separator, sep="."), sep=""), 
-				file=paste("RLI_Baseline_Matrices_", paste(configuration.year, tmp.separator, "Rdata", sep="."), sep=""))
-		}
+				if (testing.window=="FALL") tmp.separator <- "1" else tmp.separator <- "2"
+				tmp.index <- grep(configuration.year, names(sgp_object@SGP$Coefficient_Matrices))
+				assign(paste("RLI_Baseline_Matrices_", paste(yearIncrement(configuration.year, 1), tmp.separator, sep="."), sep=""), 
+					convertToBaseline(sgp_object@SGP$Coefficient_Matrices[tmp.index]))
+				save(list=paste("RLI_Baseline_Matrices_", paste(yearIncrement(configuration.year, 1), tmp.separator, sep="."), sep=""), 
+					file=paste("RLI_Baseline_Matrices_", paste(yearIncrement(configuration.year, 1), tmp.separator, "Rdata", sep="."), sep=""))
+			}
+		} ### END if (testing.window %in% c("FALL", "WINTER"))
 
 		### SPRING
 
@@ -211,18 +220,15 @@ function(sgp_object,
 					update.old.data.with.new=FALSE,
 					goodness.of.fit.print=FALSE,
 					parallel.config=parallel.config,
-					sgp.config=c(
-						SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "MATHEMATICS", "EARLY_SPRING"),
-						SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "READING", "EARLY_SPRING"),
-						SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "EARLY_LIT", "EARLY_SPRING")))
+					sgp.config=getRLIConfig(content_areas, configuration.year, "EARLY_SPRING"))
 
 				### Convert and save coefficient matrices
 
 				tmp.index <- grep(configuration.year, names(sgp_object.1@SGP$Coefficient_Matrices))
 				assign(paste("RLI_Baseline_Matrices_", paste(yearIncrement(configuration.year, 1), "4", sep="."), sep=""), 
 					convertToBaseline(sgp_object.1@SGP$Coefficient_Matrices[tmp.index]))
-				save(list=paste("RLI_Baseline_Matrices_", paste(configuration.year, "4", sep="."), sep=""), 
-					file=paste("RLI_Baseline_Matrices_", paste(configuration.year, "4", "Rdata", sep="."), sep=""))
+				save(list=paste("RLI_Baseline_Matrices_", paste(yearIncrement(configuration.year, 1), "4", sep="."), sep=""), 
+					file=paste("RLI_Baseline_Matrices_", paste(yearIncrement(configuration.year, 1), "4", "Rdata", sep="."), sep=""))
 
 
 				### STEP 2: Get official SPRING scores for SGP spring analysis
@@ -244,10 +250,7 @@ function(sgp_object,
 					update.old.data.with.new=FALSE,
 					goodness.of.fit.print=FALSE,
 					parallel.config=parallel.config,
-					sgp.config=c(
-						SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "MATHEMATICS", testing.window),
-						SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "READING", testing.window),
-						SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, "EARLY_LIT", testing.window)))
+					sgp.config=getRLIConfig(content_areas, configuration.year, testing.window))
 
 
 				### Create and save new UPDATE_SHELL
@@ -263,8 +266,8 @@ function(sgp_object,
 				tmp.index <- grep(configuration.year, names(sgp_object.2@SGP$Coefficient_Matrices))
 				assign(paste("RLI_Baseline_Matrices_", paste(yearIncrement(configuration.year, 1), "3", sep="."), sep=""), 
 					convertToBaseline(sgp_object.2@SGP$Coefficient_Matrices[tmp.index]))
-				save(list=paste("RLI_Baseline_Matrices_", paste(configuration.year, "3", sep="."), sep=""), 
-					file=paste("RLI_Baseline_Matrices_", paste(configuration.year, "3", "Rdata", sep="."), sep=""))
+				save(list=paste("RLI_Baseline_Matrices_", paste(yearIncrement(configuration.year, 1), "3", sep="."), sep=""), 
+					file=paste("RLI_Baseline_Matrices_", paste(yearIncrement(configuration.year, 1), "3", "Rdata", sep="."), sep=""))
 			} ### END if (update.save.shell.only)
 		} ### END if (testing.window=="SPRING")
 	} ### END END_OF_WINDOW scripts

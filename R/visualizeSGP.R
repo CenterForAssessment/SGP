@@ -134,12 +134,15 @@ function(sgp_object,
 			if (!is.null(gaPlot.content_areas)) {
 				tmp.list[[year.iter]] <- data.table(YEAR=tmp.years[year.iter], CONTENT_AREA=gaPlot.content_areas)
 			} else {
+				if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]])) {
+					tmp.content_areas <- unlist(SGPstateData[[state]][["Student_Report_Information"]][['Content_Areas_Domains']])
+				} else {
+					tmp.content_areas <- names(SGPstateData[[state]][["Student_Report_Information"]][['Content_Areas_Labels']])
+				}
 				setkey(sgp_object@Data, VALID_CASE, YEAR)
 				tmp.list[[year.iter]] <- data.table(
 					YEAR=tmp.years[year.iter],
-					CONTENT_AREA=sort(intersect(
-						unique(sgp_object@Data[SJ("VALID_CASE", tmp.years[year.iter]), nomatch=0][["CONTENT_AREA"]]),
-						names(SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Labels"]]))))
+					CONTENT_AREA=sort(intersect(unique(sgp_object@Data[SJ("VALID_CASE", tmp.years[year.iter]), nomatch=0][["CONTENT_AREA"]]), tmp.content_areas)))
 					setkeyv(sgp_object@Data, getKey(sgp_object))
 			}
 		}
@@ -273,7 +276,7 @@ function(sgp_object,
 		if (par.start$par.type=="MULTICORE") {
 			gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students, gaPlot.baseline)
 			mclapply(gaPlot.list, function(gaPlot.iter) {
-						growthAchievementPlot(
+				growthAchievementPlot(
 						gaPlot.sgp_object=gaPlot.sgp_object,
 						gaPlot.students=gaPlot.iter[["ID"]],
 						gaPlot.max.order.for.progression=get.max.order.for.progression(gaPlot.iter[["YEAR"]], gaPlot.iter[["CONTENT_AREA"]]),
@@ -289,7 +292,6 @@ function(sgp_object,
 		}
 		
 		stopParallel(parallel.config, par.start)
-
 		message(paste("Finished growthAchievementPlot in visualizeSGP", date(), "in", timetaken(started.at), "\n"))
 	} ## END if (growthAchievementPlot %in% plot.types)
 
@@ -328,41 +330,6 @@ if ("studentGrowthPlot" %in% plot.types) {
 			return(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tmp.domain]][tmp.index + increment])
 		} else return(content_area)
 	}
-
-	get.my.label <- function(state, content_area, year, label="Cutscores") {
-		tmp.cutscore.years <- sapply(strsplit(names(SGPstateData[[state]][["Achievement"]][[label]])[grep(content_area, names(SGPstateData[[state]][["Achievement"]][[label]]))], "[.]"),
-                        function(x) x[2])
-		if (any(!is.na(tmp.cutscore.years))) {
-			if (year %in% tmp.cutscore.years) {
-				return(paste(content_area, year, sep="."))
-			} else {
-				if (year==sort(c(year, tmp.cutscore.years))[1]) {
-					return(content_area)
-				} else {
-					return(paste(content_area, sort(tmp.cutscore.years)[which(year==sort(c(year, tmp.cutscore.years)))-1], sep="."))
-				}
-			}
-		} else {
-			return(content_area)
-		}
-	}
-
-	piecewise.transform <- function(scale_score, state, content_area, year, grade, output.digits=1) {
-		my.cutscores.label <- get.my.label(state, content_area, year)
-		my.knots_boundaries.label <- get.my.label(state, content_area, year, "Knots_Boundaries")
-		if (content_area %in% names(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]]) &&
-			grade %in% matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[my.knots_boundaries.label]]), "_")), ncol=2, byrow=TRUE)[,2]) {
-				tmp.loss.hoss <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[my.knots_boundaries.label]][[paste("loss.hoss_", grade, sep="")]]
-				scale_score[scale_score < tmp.loss.hoss[1]] <- tmp.loss.hoss[1]; scale_score[scale_score > tmp.loss.hoss[2]] <- tmp.loss.hoss[2]
-				tmp.old.cuts <- c(tmp.loss.hoss[1], SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.cutscores.label]][[paste("GRADE_", grade, sep="")]], tmp.loss.hoss[2])
-				tmp.new.cuts <- SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area]]
-				tmp.index <- findInterval(scale_score, tmp.old.cuts, rightmost.closed=TRUE)
-				tmp.diff <- diff(tmp.new.cuts)/diff(tmp.old.cuts)
-				round(tmp.new.cuts[tmp.index] + (scale_score - tmp.old.cuts[tmp.index]) * (diff(tmp.new.cuts)/diff(tmp.old.cuts))[tmp.index], digits=output.digits)
-		} else {
-			as.numeric(scale_score)
-		}
-	} ## END piecewise.transform
 
 
 ######################################################################
@@ -762,7 +729,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 	#### Create transformed scale scores (NOT necessary if wide data is provided)
 
 		setkeyv(tmp.table, c("CONTENT_AREA_LABELS", "YEAR", "GRADE"))
-		tmp.table[, TRANSFORMED_SCALE_SCORE := piecewise.transform(SCALE_SCORE, state, CONTENT_AREA_LABELS, as.character(YEAR), as.character(GRADE)), by=list(CONTENT_AREA_LABELS, YEAR, GRADE)]
+		tmp.table[, TRANSFORMED_SCALE_SCORE := piecewiseTransform(SCALE_SCORE, state, CONTENT_AREA_LABELS, as.character(YEAR), as.character(GRADE)), by=list(CONTENT_AREA_LABELS, YEAR, GRADE)]
 
 	#### Change SCALE_SCORE if SCALE_SCORE_ACTUAL is in sgp_object@Data
 
@@ -831,7 +798,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 		sgPlot.data <- sgPlot.data[, variables.to.keep, with=FALSE]
 
 	#### Merge in 1 year projections (if requested & available) and transform using piecewise.tranform (if required) (NOT NECESSARY IF WIDE data is provided)
-	#### Merge in scale scores associated with SGP_TARGETs (if requested & available) and transform using piecewise.transform (if required) (NOT NECESSARY IF WIDE data is provided)
+	#### Merge in scale scores associated with SGP_TARGETs (if requested & available) and transform using piecewiseTransform (if required) (NOT NECESSARY IF WIDE data is provided)
 
 		if (sgPlot.fan | !is.null(sgPlot.sgp.targets)) {
 
@@ -913,7 +880,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 						if (length(grep("CURRENT", proj.iter)) > 0) tmp.increment <- i else tmp.increment <- i-1
 						setnames(sgPlot.data, proj.iter, "TEMP_SCORE")
 						setnames(sgPlot.data, tmp.grade.name, "TEMP_GRADE")
-						sgPlot.data[, TEMP := piecewise.transform(TEMP_SCORE, state, 
+						sgPlot.data[, TEMP := piecewiseTransform(TEMP_SCORE, state, 
 										get.next.content_area(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment), 
 										yearIncrement(tmp.last.year, tmp.increment), 
 										get.next.grade(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment)), by=list(CONTENT_AREA, TEMP_GRADE)]

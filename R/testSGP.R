@@ -564,7 +564,7 @@ SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
 	sgp.config <- c(READING_2013_2014.config, MATHEMATICS_2013_2014.config, GRADE_9_LIT_2013_2014.config, AMERICAN_LIT_2013_2014.config, ALGEBRA_I_2013_2014.config, ALGEBRA_II_2013_2014.config)
 	 
 	expression.to.evaluate <- 
-		paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=sgpData_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP', 'summarizeSGP', 'visualizeSGP'),\n\tsimulate.sgps=FALSE,\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.config=sgp.config,\n\tplot.types=c('bubblePlot', 'studentGrowthPlot'),\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
+		paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=sgpData_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP', 'summarizeSGP', 'visualizeSGP'),\n\tsimulate.sgps=FALSE,\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.config=sgp.config,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
 
 	if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(Demonstration_SGP, file='Demonstration_SGP.Rdata')", sep="\n")
 
@@ -757,4 +757,35 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 	tmp.messages <- c(tmp.messages, "\n\t#####         End testSGP test number 4, Part 2             #####\n\n", "#####  End testSGP test number 4                                   #####\n")
 	cat(tmp.messages)
 	} ### End TEST_NUMBER 4
+
+
+	#######################################################################################################################################################
+	###
+	### TEST NUMBER 5: Test of assessment change functionality
+	###
+	#######################################################################################################################################################
+
+	if (5 %in% TEST_NUMBER) {
+
+	options(error=recover)
+	options(warn=2)
+	suppressPackageStartupMessages(require(parallel))
+	number.cores <- detectCores()-1
+	Demonstration_SGP <- tmp.messages <- NULL
+
+	### Modify latest year data sgpData_LONG
+
+	sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'MATHEMATICS' & sgpData_LONG$YEAR == '2013_2014'] <- 
+		sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'MATHEMATICS' & sgpData_LONG$YEAR == '2013_2014'] + 1000
+	sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'READING' & sgpData_LONG$YEAR == '2013_2014'] <- 
+		sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'READING' & sgpData_LONG$YEAR == '2013_2014'] + 1200
+
+	### Modify SGPstateData
+
+	SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]] <-
+		list(Year="2013_2014"
+			
+
+		)
+	} ### End TEST_NUMBER 5
 } ### END testSGP Function
