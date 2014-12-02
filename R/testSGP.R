@@ -783,8 +783,18 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 	### Modify SGPstateData
 
 	SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]] <-
-		list(Year="2013_2014"
-			
+		list(
+			Year="2013_2014",
+			Assessment_Name_OLD="Old Demonstration Student Assessment Program",
+			Assessment_Name_NEW="New Demonstration Student Assessment Program",
+			Assessment_Abbreviation_OLD="DEMO_OLD",
+			Assessment_Abbreviation_NEW="DEMO_NEW",
+			Achievement_Levels_OLD=list(
+				Labels=c("Unsatisfactory", "Partially Proficient", "Proficient", "Advanced", "No Score"),
+				Proficient=c("Not Proficient", "Not Proficient", "Proficient", "Proficient", NA))
+			Achievement_Levels_NEW=list(
+				Labels=c("Level 1", "Level 2", "Level 3", "Level 4", "Level 5`"),
+				Proficient=c("Not Proficient", "Not Proficient", "Not Proficient", "Proficient", "Proficient"))
 
 		)
 	} ### End TEST_NUMBER 5
