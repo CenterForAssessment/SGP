@@ -2,7 +2,7 @@
 \alias{SGP-package}
 \alias{SGP}
 \docType{package}
-\title{SGP: An R Package for the Calculation and Visualization of Student Growth Percentiles & Percentile Growth Trajectories.}
+\title{SGP: Student Growth Percentiles & Percentile Growth Trajectories}
 \description{
 SGP contains classes and functions to calculate student growth percentiles and percentile growth projections/trajectories following methodology found in Betebenner (2008, 2009).
 The package contains two primary functions, \code{\link{studentGrowthPercentiles}} and \code{\link{studentGrowthProjections}}, and numerous higher level functions
@@ -20,8 +20,8 @@ growth percentile analyses.
 \tabular{ll}{
 Package: \tab SGP\cr
 Type: \tab Package\cr
-Version: \tab 1.3-1.8\cr
-Date: \tab 2014-12-2\cr
+Version: \tab 1.3-1.9\cr
+Date: \tab 2014-12-3\cr
 License: \tab GPL-2\cr
 LazyLoad: \tab yes\cr
 }
