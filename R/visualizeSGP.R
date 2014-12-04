@@ -370,6 +370,10 @@ if ("studentGrowthPlot" %in% plot.types) {
 			sgPlot.sgp.targets <- SGPstateData[[state]][['SGP_Configuration']][['sgPlot.sgp.targets']]
 		}
 
+		if (!is.null(SGPstateData[[state]][['SGP_Configuration']][['sgPlot.fan']])) {
+			sgPlot.fan <- SGPstateData[[state]][['SGP_Configuration']][['sgPlot.fan']]
+		}
+
 		if (identical(sgPlot.sgp.targets, TRUE)) {
 			if (sgPlot.baseline) {
 				sgPlot.sgp.targets <- c("sgp.projections.baseline", "sgp.projections.lagged.baseline")
