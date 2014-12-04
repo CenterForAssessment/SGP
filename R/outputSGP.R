@@ -338,19 +338,19 @@ function(sgp_object,
 
 		convert.variables <- function(tmp.df) {
 			if ("YEAR" %in% names(tmp.df) && is.character(tmp.df$YEAR)) {
-				if (length(grep("_", tmp.df$YEAR)) > 0) tmp.df$YEAR <- as.integer(sapply(strsplit(tmp.df$YEAR, "_"), '[', 2)) else tmp.df$YEAR <- as.integer(tmp.df$YEAR)
+				if (length(grep("_", tmp.df$YEAR)) > 0) tmp.df[,YEAR:=as.integer(sapply(strsplit(tmp.df$YEAR, "_"), '[', 2))] else tmp.df[,YEAR:=as.integer(tmp.df$YEAR)]
 			}
 			if ("CONTENT_AREA" %in% names(tmp.df) && is.character(tmp.df$CONTENT_AREA)) {
-				tmp.df$CONTENT_AREA <- as.integer(as.factor(tmp.df$CONTENT_AREA))
+				tmp.df[,CONTENT_AREA:=as.integer(as.factor(tmp.df$CONTENT_AREA))]
 			}
 			if ("LAST_NAME" %in% names(tmp.df) && is.factor(tmp.df$LAST_NAME)) {
-				tmp.df$LAST_NAME <- as.character(tmp.df$LAST_NAME)
+				tmp.df[,LAST_NAME:=as.character(tmp.df$LAST_NAME)]
 			}
 			if ("FIRST_NAME" %in% names(tmp.df) && is.factor(tmp.df$FIRST_NAME)) {
-				tmp.df$FIRST_NAME <- as.character(tmp.df$FIRST_NAME)
+				tmp.df[,FIRST_NAME:=as.character(tmp.df$FIRST_NAME)]
 			}
-			if ("EMH_LEVEL" %in% names(tmp.df) && is.factor(tmp.df$EMH_LEVEL)) {
-				tmp.df[['EMH_LEVEL']] <- substr(tmp.df$EMH_LEVEL, 1, 1)
+			if ("EMH_LEVEL" %in% names(tmp.df)) {
+				tmp.df[,EMH_LEVEL:=substr(as.character(tmp.df$EMH_LEVEL), 1, 1)]
 			}
 			if ("GENDER" %in% names(tmp.df) && is.factor(tmp.df$GENDER)) {
 				tmp.female <- grep("FEMALE", levels(sgp_object@Data$GENDER), ignore.case=TRUE)
@@ -495,7 +495,7 @@ function(sgp_object,
 					tmp.list[[i]] <- data.table(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
 						sgp_object@SGP[["SGProjections"]][[i]][,c(1, grep(paste("PROJ_YEAR", j, sep="_"), names(sgp_object@SGP[["SGProjections"]][[i]])))])
 				}
-				outputSGP.data <- data.table(convert.variables(rbind.fill(tmp.list)), key=paste(key(outputSGP.data), collapse=","))[outputSGP.data]
+				outputSGP.data <- data.table(convert.variables(as.data.table(rbind.fill(tmp.list))), key=paste(key(outputSGP.data), collapse=","))[outputSGP.data]
 				tmp.grade.name <- paste("GRADE", tmp.last.year.short, sep=".")
 				tmp.year.name <- yearIncrement(tmp.last.year.short, j)
 				setkeyv(outputSGP.data, c("CONTENT_AREA", tmp.grade.name))
@@ -657,7 +657,8 @@ function(sgp_object,
 			if (length(tmp.cut.names.missing) > 0) outputSGP.data[,paste("CUT", tmp.cut.names.missing, "YEAR", i, sep="_"):=NA]
 		}
 
-		setnames(outputSGP.data, names(outputSGP.data), gsub("GROWTH_TARGET", "SGP_TARGET", names(outputSGP.data)))
+		tmp.names <- grep("GROWTH_TARGET", names(outputSGP.data), value=TRUE)
+		outputSGP.data[,gsub("GROWTH_TARGET", "SGP_TARGET", tmp.names):=outputSGP.data[,tmp.names,with=FALSE],with=FALSE]
 
 
 		## Rearrange variables
@@ -666,14 +667,14 @@ function(sgp_object,
 			"CONTENT_AREA", "YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER", "EMH_LEVEL",
 			unique(outputSGP.student.groups),
 			"OCTOBER_ENROLLMENT_STATUS", "SCHOOL_ENROLLMENT_STATUS", "DISTRICT_ENROLLMENT_STATUS", "STATE_ENROLLMENT_STATUS",
-			"GRADE_LEVEL_CY", "SCALE_SCORE_CY", "TRANSFORMED_SCALE_SCORE_CY", "PERFORMANCE_LEVEL_CY", "GROWTH_PERCENTILE_CY", "SGP_TARGET_CY", 
-			"GRADE_LEVEL_PY1", "SCALE_SCORE_PY1", "TRANSFORMED_SCALE_SCORE_PY1", "PERFORMANCE_LEVEL_PY1", "GROWTH_PERCENTILE_PY1", "SGP_TARGET_PY1",
-			"GRADE_LEVEL_PY2", "SCALE_SCORE_PY2", "TRANSFORMED_SCALE_SCORE_PY2", "PERFORMANCE_LEVEL_PY2", "GROWTH_PERCENTILE_PY2", "SGP_TARGET_PY2",
-			"GRADE_LEVEL_PY3", "SCALE_SCORE_PY3", "TRANSFORMED_SCALE_SCORE_PY3", "PERFORMANCE_LEVEL_PY3", "GROWTH_PERCENTILE_PY3", "SGP_TARGET_PY3",
-			"GRADE_LEVEL_PY4", "SCALE_SCORE_PY4", "TRANSFORMED_SCALE_SCORE_PY4", "PERFORMANCE_LEVEL_PY4", "GROWTH_PERCENTILE_PY4", "SGP_TARGET_PY4",
-			"GRADE_LEVEL_PY5", "SCALE_SCORE_PY5", "TRANSFORMED_SCALE_SCORE_PY5", "PERFORMANCE_LEVEL_PY5", "GROWTH_PERCENTILE_PY5", "SGP_TARGET_PY5",
-			"GRADE_LEVEL_PY6", "SCALE_SCORE_PY6", "TRANSFORMED_SCALE_SCORE_PY6", "PERFORMANCE_LEVEL_PY6", "GROWTH_PERCENTILE_PY6", "SGP_TARGET_PY6",
-			"GRADE_LEVEL_PY7", "SCALE_SCORE_PY7", "TRANSFORMED_SCALE_SCORE_PY7", "PERFORMANCE_LEVEL_PY7", "GROWTH_PERCENTILE_PY7", "SGP_TARGET_PY7",
+			"GRADE_LEVEL_CY", "SCALE_SCORE_CY", "TRANSFORMED_SCALE_SCORE_CY", "PERFORMANCE_LEVEL_CY", "GROWTH_PERCENTILE_CY", "SGP_TARGET_CY", "GROWTH_TARGET_CY",
+			"GRADE_LEVEL_PY1", "SCALE_SCORE_PY1", "TRANSFORMED_SCALE_SCORE_PY1", "PERFORMANCE_LEVEL_PY1", "GROWTH_PERCENTILE_PY1", "SGP_TARGET_PY1", "GROWTH_TARGET_PY1",
+			"GRADE_LEVEL_PY2", "SCALE_SCORE_PY2", "TRANSFORMED_SCALE_SCORE_PY2", "PERFORMANCE_LEVEL_PY2", "GROWTH_PERCENTILE_PY2", "SGP_TARGET_PY2", "GROWTH_TARGET_PY2",
+			"GRADE_LEVEL_PY3", "SCALE_SCORE_PY3", "TRANSFORMED_SCALE_SCORE_PY3", "PERFORMANCE_LEVEL_PY3", "GROWTH_PERCENTILE_PY3", "SGP_TARGET_PY3", "GROWTH_TARGET_PY3",
+			"GRADE_LEVEL_PY4", "SCALE_SCORE_PY4", "TRANSFORMED_SCALE_SCORE_PY4", "PERFORMANCE_LEVEL_PY4", "GROWTH_PERCENTILE_PY4", "SGP_TARGET_PY4", "GROWTH_TARGET_PY4",
+			"GRADE_LEVEL_PY5", "SCALE_SCORE_PY5", "TRANSFORMED_SCALE_SCORE_PY5", "PERFORMANCE_LEVEL_PY5", "GROWTH_PERCENTILE_PY5", "SGP_TARGET_PY5", "GROWTH_TARGET_PY5",
+			"GRADE_LEVEL_PY6", "SCALE_SCORE_PY6", "TRANSFORMED_SCALE_SCORE_PY6", "PERFORMANCE_LEVEL_PY6", "GROWTH_PERCENTILE_PY6", "SGP_TARGET_PY6", "GROWTH_TARGET_PY6",
+			"GRADE_LEVEL_PY7", "SCALE_SCORE_PY7", "TRANSFORMED_SCALE_SCORE_PY7", "PERFORMANCE_LEVEL_PY7", "GROWTH_PERCENTILE_PY7", "SGP_TARGET_PY7", "GROWTH_TARGET_PY7",
 			c(paste("CUT", tmp.cuts.for.output, "YEAR_1", sep="_"), paste("CUT", tmp.cuts.for.output, "YEAR_2", sep="_"), paste("CUT", tmp.cuts.for.output, "YEAR_3", sep="_")))
 
 		STUDENT_GROWTH <- outputSGP.data[,tmp.variable.names, with=FALSE]
