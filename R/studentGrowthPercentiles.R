@@ -232,12 +232,13 @@ function(panel.data,         ## REQUIRED
 			mod <- paste(mod, ", bs(my.data[[", dim(my.data)[2]-k, "]], knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
 		}	
 		tmp <- eval(parse(text=paste(int, substring(mod, 2), ") %*% my.matrix", sep="")))
-		return(round(matrix(data.table(ID=rep(seq(dim(tmp)[1]), each=100), SCORE=as.vector(t(tmp)))[,.smooth.isotonize.row(SCORE), by=ID][['V1']], ncol=100, byrow=TRUE), digits=5))
+		return(round(matrix(data.table(ID=rep(seq(dim(tmp)[1]), each=length(sgp.quantiles)), SCORE=as.vector(t(tmp)))[,.smooth.isotonize.row(SCORE), by=ID][['V1']], 
+				ncol=length(sgp.quantiles), byrow=TRUE), digits=5))
 	}
 
 	.get.quantiles <- function(data1, data2) {
 		TMP_TF <- NULL
-		tmp <- data.table(ID=rep(seq(dim(data1)[1]), each=101), TMP_TF=as.vector(t(cbind(data1 < data2, FALSE))))[,which.min(TMP_TF)-1, by=ID][['V1']]
+		tmp <- data.table(ID=rep(seq(dim(data1)[1]), each=length(sgp.quantiles)+1), TMP_TF=as.vector(t(cbind(data1 < data2, FALSE))))[,which.min(TMP_TF)-1, by=ID][['V1']]
 		if (!is.null(sgp.loss.hoss.adjustment)) {
 			my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
 			tmp.hoss <- eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['loss.hoss_", tmp.last, "']][2]", sep="")))
