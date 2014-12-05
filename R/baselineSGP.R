@@ -92,7 +92,7 @@ function(sgp_object,
 			names(tmp.sgp.iter) <- gsub('sgp.baseline.', 'sgp.', names(tmp.sgp.iter))
 			tmp.sgp.iter$sgp.panel.years <- tmp.year.sequence[[k]]
 			tmp.sgp.iter$sgp.grade.sequences <- tmp.sgp.iter$sgp.grade.sequences
-			tmp.list[[k]] <- getPanelData(tmp_sgp_data_for_analysis, "sgp.percentiles", sgp.iter = tmp.sgp.iter)[,
+			tmp.list[[k]] <- getPanelData(tmp_sgp_data_for_analysis, state, "sgp.percentiles", sgp.iter = tmp.sgp.iter)[,
 				getPanelDataVnames("sgp.percentiles", tmp.sgp.iter, names(tmp_sgp_data_for_analysis))]
 			names(tmp.list[[k]]) <- c("ID", paste("GRADE", rev(seq_along(tmp.year.sequence[[k]])), sep="_"), 
 				paste("SCALE_SCORE", rev(seq_along(tmp.year.sequence[[k]])), sep="_")) # Use rev() in case vars are added: 1= current, 2= first prior, etc.
@@ -244,7 +244,7 @@ function(sgp_object,
 
 		for (sgp.iter in par.sgp.config[['sgp.percentiles.baseline']]) {
 
-			panel.data=within(tmp_sgp_object, assign("Panel_Data", getPanelData(tmp_sgp_data_for_analysis, "sgp.percentiles", sgp.iter)))
+			panel.data=within(tmp_sgp_object, assign("Panel_Data", getPanelData(tmp_sgp_data_for_analysis, state, "sgp.percentiles", sgp.iter)))
 			tmp.knots.boundaries <- getKnotsBoundaries(sgp.iter, state, c("Standard", "sgp.percentiles")) # Get specific knots and boundaries in case course sequence is different
 			panel.data[["Knots_Boundaries"]][[names(tmp.knots.boundaries)]] <- tmp.knots.boundaries[[names(tmp.knots.boundaries)]]
 
