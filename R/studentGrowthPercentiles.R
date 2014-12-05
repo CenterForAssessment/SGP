@@ -232,13 +232,13 @@ function(panel.data,         ## REQUIRED
 			mod <- paste(mod, ", bs(my.data[[", dim(my.data)[2]-k, "]], knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
 		}	
 		tmp <- eval(parse(text=paste(int, substring(mod, 2), ") %*% my.matrix", sep="")))
-		return(round(matrix(data.table(ID=rep(seq(dim(tmp)[1]), each=length(sgp.quantiles)), SCORE=as.vector(t(tmp)))[,.smooth.isotonize.row(SCORE), by=ID][['V1']], 
-				ncol=length(sgp.quantiles), byrow=TRUE), digits=5))
+		return(round(matrix(data.table(ID=rep(seq(dim(tmp)[1]), each=length(taus)), SCORE=as.vector(t(tmp)))[,.smooth.isotonize.row(SCORE), by=ID][['V1']], 
+				ncol=length(taus), byrow=TRUE), digits=5))
 	}
 
 	.get.quantiles <- function(data1, data2) {
 		TMP_TF <- NULL
-		tmp <- data.table(ID=rep(seq(dim(data1)[1]), each=length(sgp.quantiles)+1), TMP_TF=as.vector(t(cbind(data1 < data2, FALSE))))[,which.min(TMP_TF)-1, by=ID][['V1']]
+		tmp <- data.table(ID=rep(seq(dim(data1)[1]), each=length(taus)+1), TMP_TF=as.vector(t(cbind(data1 < data2, FALSE))))[,which.min(TMP_TF)-1, by=ID][['V1']]
 		if (!is.null(sgp.loss.hoss.adjustment)) {
 			my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
 			tmp.hoss <- eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['loss.hoss_", tmp.last, "']][2]", sep="")))
@@ -704,11 +704,15 @@ function(panel.data,         ## REQUIRED
 		sgp.quantiles <- toupper(sgp.quantiles)
 		if (sgp.quantiles != "PERCENTILES") {
 			stop("Character options for sgp.quantiles include only Percentiles at this time. Other options available by specifying a numeric quantity. See help page for details.")
-	}} 
+		}
+		taus <- .create_taus(sgp.quantiles)
+	} 
 	if (is.numeric(sgp.quantiles)) {
 		if (!(all(sgp.quantiles > 0 & sgp.quantiles < 1))) {
 			stop("Specify sgp.quantiles as as a vector of probabilities between 0 and 1.")
-	}}
+		}
+		taus <- .create_taus(sgp.quantiles)
+	}
 	if (!is.null(percentile.cuts)) {
 		if (sgp.quantiles != "PERCENTILES") {
 			stop("percentile.cuts only appropriate for growth percentiles. Set sgp.quantiles to Percentiles to produce requested percentile.cuts.")
@@ -758,6 +762,10 @@ function(panel.data,         ## REQUIRED
 			if (calculate.confidence.intervals %in% names(panel.data[['Panel_Data']])) {
 				calculate.confidence.intervals <- list(variable=calculate.confidence.intervals)
 			}
+		}
+		if (sgp.quantiles != "PERCENTILES") {
+			tmp.messages <- c(tmp.messages, "\t\tNOTE: When 'sgp.quantiles' is supplied and not equal to PERCENTILES, simulation based standard errors/confidences intervals for SGPs are not available.\n")
+			csem.tf <- FALSE
 		}
 	} else {
 		csem.tf <- FALSE
@@ -1127,7 +1135,6 @@ function(panel.data,         ## REQUIRED
 	### QR Calculations: coefficient matrices are saved/read into/from panel.data[["Coefficient_Matrices"]]
 
 	if (is.null(use.my.coefficient.matrices)) {
-		taus <- .create_taus(sgp.quantiles)
 		if (exact.grade.progression.sequence) {
 			coefficient.matrix.priors <- num.prior
 		} else {
