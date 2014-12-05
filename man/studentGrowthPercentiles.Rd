@@ -36,6 +36,7 @@ studentGrowthPercentiles(panel.data,
                          drop.nonsequential.grade.progression.variables=TRUE, 
                          convert.0and100=TRUE,                                   
                          sgp.quantiles="Percentiles",
+                         sgp.quantiles.labels=NULL,
                          sgp.loss.hoss.adjustment=NULL,
                          sgp.cohort.size=NULL,
                          percuts.digits=0,                                  
@@ -147,6 +148,8 @@ to calculate the lags/differences based upon the supplied years.
   \item{convert.0and100}{Boolean argument (defaults to TRUE) indicating whether conversion of growth percentiles of 0 and 100 to growth percentiles of 1 and 99, respectively, occurs. The default produces growth percentiles ranging from 1 to 99. 
   }
   \item{sgp.quantiles}{Argument to specify quantiles for quantile regression estimation. Default is Percentiles. User can additionally submit a vector of quantiles (between 0 and 1). Goodness of fit output only available currently for PERCENTILES. 
+  }
+  \item{sgp.quantiles.labels}{Argument to specify integer labels associated with provided 'sgp.quantiles'. Integer labels must a vector of length 1 longer than the length of 'sgp.quantiles'. 
   }
   \item{sgp.loss.hoss.adjustment}{Argument to control whether SGP is calculated using which.max for values associated with the hoss embedded in SGPstateData. Providing two letter state acronym utilizes this adjustment whereas supply NULL (the default) uses no adjustment. 
   }
