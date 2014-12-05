@@ -143,9 +143,10 @@ function(sgp_object,
 
 		if (testing.window %in% c("FALL", "WINTER")) {
 
+			if (testing.window=="FALL") num.windows.to.keep <- 5 else num.windows.to.keep <- 6
 			if (update.save.shell.only) {
 				tmp.data <- rbind.fill(sgp_object@Data, additional.data)
-				assign(update.shell.name, prepareSGP(subset(tmp.data, YEAR %in% tail(sort(unique(tmp.data$YEAR)), 6)), state=state, create.additional.variables=FALSE))
+				assign(update.shell.name, prepareSGP(subset(tmp.data, YEAR %in% tail(sort(unique(tmp.data$YEAR)), num.windows.to.keep)), state=state, create.additional.variables=FALSE))
 				save(list=update.shell.name, file=paste(update.shell.name, "Rdata", sep="."))
 			} else {
 				sgp_object <- updateSGP(
@@ -162,14 +163,14 @@ function(sgp_object,
 					sgp.projections.lagged.baseline=FALSE,
 					sgp.target.scale.scores.only=TRUE,
 					outputSGP.output.type="RLI",
-					update.old.data.with.new=FALSE,
+					update.old.data.with.new=TRUE,
 					goodness.of.fit.print=FALSE,
 					parallel.config=parallel.config,
 					sgp.config=getRLIConfig(content_areas, configuration.year, testing.window))
 
 				### Create and save new UPDATE_SHELL
 
-				assign(update.shell.name, prepareSGP(subset(sgp_object@Data, YEAR %in% tail(sort(unique(sgp_object@Data$YEAR)), 7)), create.additional.variables=FALSE))
+				assign(update.shell.name, prepareSGP(subset(sgp_object@Data, YEAR %in% tail(sort(unique(sgp_object@Data$YEAR)), num.windows.to.keep)), state=state, create.additional.variables=FALSE))
 				save(list=update.shell.name, file=paste(update.shell.name, "Rdata", sep="."))
 
 
@@ -247,7 +248,7 @@ function(sgp_object,
 					sgp.projections.lagged.baseline=FALSE,
 					sgp.target.scale.scores.only=TRUE,
 					outputSGP.output.type="RLI",
-					update.old.data.with.new=FALSE,
+					update.old.data.with.new=TRUE,
 					goodness.of.fit.print=FALSE,
 					parallel.config=parallel.config,
 					sgp.config=getRLIConfig(content_areas, configuration.year, testing.window))
