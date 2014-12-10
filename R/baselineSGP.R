@@ -92,13 +92,13 @@ function(sgp_object,
 			names(tmp.sgp.iter) <- gsub('sgp.baseline.', 'sgp.', names(tmp.sgp.iter))
 			tmp.sgp.iter$sgp.panel.years <- tmp.year.sequence[[k]]
 			tmp.sgp.iter$sgp.grade.sequences <- tmp.sgp.iter$sgp.grade.sequences
-			tmp.list[[k]] <- getPanelData(tmp_sgp_data_for_analysis, "sgp.percentiles", sgp.iter = tmp.sgp.iter)[,
+			if (!is.null(tmp.sgp.iter$sgp.exclude.sequences)) tmp.sgp.iter$sgp.exclude.sequences <- tmp.sgp.iter$sgp.exclude.sequences[COHORT_YEAR %in% tail(tmp.sgp.iter$sgp.panel.years, 1)]
+			tmp.list[[k]] <- getPanelData(tmp_sgp_data_for_analysis, state, "sgp.percentiles", sgp.iter = tmp.sgp.iter)[,
 				getPanelDataVnames("sgp.percentiles", tmp.sgp.iter, names(tmp_sgp_data_for_analysis))]
 			names(tmp.list[[k]]) <- c("ID", paste("GRADE", rev(seq_along(tmp.year.sequence[[k]])), sep="_"), 
 				paste("SCALE_SCORE", rev(seq_along(tmp.year.sequence[[k]])), sep="_")) # Use rev() in case vars are added: 1= current, 2= first prior, etc.
 		}
 		tmp.df <- rbind.fill(tmp.list)
-
 
 		### Calculate Coefficient Matrices and return list containing coefficient matrices
 		
