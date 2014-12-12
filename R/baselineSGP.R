@@ -20,7 +20,7 @@ function(sgp_object,
 	started.at <- proc.time()
 	message(paste("\tStarted baselineSGP", date(), "\n"))
 
-	VALID_CASE <- YEAR <- GRADE <- CONTENT_AREA <- YEAR_WITHIN <- NULL ### To prevent R CMD check warnings
+	VALID_CASE <- YEAR <- GRADE <- CONTENT_AREA <- YEAR_WITHIN <- COHORT_YEAR <- NULL ### To prevent R CMD check warnings
 
 	### Create state (if NULL) from sgp_object (if possible)
 
@@ -244,7 +244,7 @@ function(sgp_object,
 
 		for (sgp.iter in par.sgp.config[['sgp.percentiles.baseline']]) {
 
-			panel.data=within(tmp_sgp_object, assign("Panel_Data", getPanelData(tmp_sgp_data_for_analysis, "sgp.percentiles", sgp.iter)))
+			panel.data=within(tmp_sgp_object, assign("Panel_Data", getPanelData(tmp_sgp_data_for_analysis, state, "sgp.percentiles", sgp.iter)))
 			tmp.knots.boundaries <- getKnotsBoundaries(sgp.iter, state, c("Standard", "sgp.percentiles")) # Get specific knots and boundaries in case course sequence is different
 			panel.data[["Knots_Boundaries"]][[names(tmp.knots.boundaries)]] <- tmp.knots.boundaries[[names(tmp.knots.boundaries)]]
 

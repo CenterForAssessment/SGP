@@ -42,6 +42,12 @@ testSGP(3)
 
 ## testSGP(4) runs prepareSGP and analyzeSGP with simex adjustment for measurement error
 testSGP(4)
+
+## testSGP(5) runs abcSGP assuming at test transition in the most recent year. NOTE YET COMPLETED
+testSGP(5)
+
+## testSGP(6) runs a basic baseline SGP analysis including the construction of baseline matrices.
+testSGP(6)
 }  
 }
 

@@ -26,6 +26,7 @@ function(panel.data,         ## REQUIRED
          drop.nonsequential.grade.progression.variables=TRUE,
          convert.0and100=TRUE,
          sgp.quantiles="Percentiles",
+         sgp.quantiles.labels=NULL,
          sgp.loss.hoss.adjustment=NULL,
          sgp.cohort.size=NULL,
          percuts.digits=0,
@@ -232,25 +233,30 @@ function(panel.data,         ## REQUIRED
 			mod <- paste(mod, ", bs(my.data[[", dim(my.data)[2]-k, "]], knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
 		}	
 		tmp <- eval(parse(text=paste(int, substring(mod, 2), ") %*% my.matrix", sep="")))
-		return(round(matrix(data.table(ID=rep(seq(dim(tmp)[1]), each=100), SCORE=as.vector(t(tmp)))[,.smooth.isotonize.row(SCORE), by=ID][['V1']], ncol=100, byrow=TRUE), digits=5))
+		return(round(matrix(data.table(ID=rep(seq(dim(tmp)[1]), each=length(taus)), SCORE=as.vector(t(tmp)))[,.smooth.isotonize.row(SCORE), by=ID][['V1']], 
+				ncol=length(taus), byrow=TRUE), digits=5))
 	}
 
 	.get.quantiles <- function(data1, data2) {
-		TMP_TF <- NULL
-		tmp <- data.table(ID=rep(seq(dim(data1)[1]), each=101), TMP_TF=as.vector(t(cbind(data1 < data2, FALSE))))[,which.min(TMP_TF)-1, by=ID][['V1']]
-		if (!is.null(sgp.loss.hoss.adjustment)) {
-			my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
-			tmp.hoss <- eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['loss.hoss_", tmp.last, "']][2]", sep="")))
-			tmp.index <- which(data2==tmp.hoss)
-			if (length(tmp.index) > 0) {
-				tmp[tmp.index] <- apply(cbind(data1 > data2, TRUE)[tmp.index,,drop=FALSE], 1, function(x) which.max(x)-1)
+		TMP_TF <- SGP <- SGP_NEW <- .EACHI <- NULL
+		tmp <- data.table(ID=rep(seq(dim(data1)[1]), each=length(taus)+1), TMP_TF=as.vector(t(cbind(data1 < data2, FALSE))))[,which.min(TMP_TF)-1, by=ID][['V1']]
+		if (!is.null(sgp.quantiles.labels)) {
+			return(data.table(SGP=as.integer(tmp), key="SGP")[data.table(SGP=seq(0, length(sgp.quantiles)), SGP_NEW=sgp.quantiles.labels, key="SGP"), SGP:=SGP_NEW, by=.EACHI][['SGP']])
+		} else {
+			if (!is.null(sgp.loss.hoss.adjustment)) {
+				my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
+				tmp.hoss <- eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['loss.hoss_", tmp.last, "']][2]", sep="")))
+				tmp.index <- which(data2==tmp.hoss)
+				if (length(tmp.index) > 0) {
+					tmp[tmp.index] <- apply(cbind(data1 > data2, TRUE)[tmp.index,,drop=FALSE], 1, function(x) which.max(x)-1)
+				}
 			}
+			if (convert.0and100) {
+				tmp[tmp==0] <- 1
+				tmp[tmp==100] <- 99
+			}
+			return(as.integer(tmp))
 		}
-		if (convert.0and100) {
-			tmp[tmp==0] <- 1
-			tmp[tmp==100] <- 99
-		}
-		return(as.integer(tmp))
 	}
 
 	.get.percentile.cuts <- function(data1) {
@@ -305,7 +311,6 @@ function(panel.data,         ## REQUIRED
 		}
 
 		if (!is.null(use.my.coefficient.matrices)) { # Passed implicitly from studentGrowthPercentiles arguments
-			taus <- .create_taus(sgp.quantiles)
 			if (exact.grade.progression.sequence) {
 				simex.matrix.priors <- num.prior
 			} else {
@@ -704,11 +709,23 @@ function(panel.data,         ## REQUIRED
 		sgp.quantiles <- toupper(sgp.quantiles)
 		if (sgp.quantiles != "PERCENTILES") {
 			stop("Character options for sgp.quantiles include only Percentiles at this time. Other options available by specifying a numeric quantity. See help page for details.")
-	}} 
+		}
+		taus <- .create_taus(sgp.quantiles)
+		sgp.quantiles.labels <- NULL
+	} 
 	if (is.numeric(sgp.quantiles)) {
 		if (!(all(sgp.quantiles > 0 & sgp.quantiles < 1))) {
 			stop("Specify sgp.quantiles as as a vector of probabilities between 0 and 1.")
-	}}
+		}
+		taus <- .create_taus(sgp.quantiles)
+		if (!is.null(sgp.quantiles.labels)) {
+			if (length(sgp.quantiles.labels)!=length(sgp.quantiles)+1) stop("Supplied 'sgp.quantiles.labels' must be 1 longer than supplied 'sgp.quantiles'.")
+			if (any(is.na(as.integer(sgp.quantiles.labels)))) stop("Supplied 'sgp.quantiles.labels' must be integer values.")
+			sgp.quantiles.labels <- as.integer(sgp.quantiles.labels)
+		} else {
+			sgp.quantiles.labels <- as.integer(c(100*taus, 100))
+		}
+	}
 	if (!is.null(percentile.cuts)) {
 		if (sgp.quantiles != "PERCENTILES") {
 			stop("percentile.cuts only appropriate for growth percentiles. Set sgp.quantiles to Percentiles to produce requested percentile.cuts.")
@@ -758,6 +775,10 @@ function(panel.data,         ## REQUIRED
 			if (calculate.confidence.intervals %in% names(panel.data[['Panel_Data']])) {
 				calculate.confidence.intervals <- list(variable=calculate.confidence.intervals)
 			}
+		}
+		if (sgp.quantiles != "PERCENTILES") {
+			tmp.messages <- c(tmp.messages, "\t\tNOTE: When 'sgp.quantiles' is supplied and not equal to PERCENTILES, simulation based standard errors/confidences intervals for SGPs are not available.\n")
+			csem.tf <- FALSE
 		}
 	} else {
 		csem.tf <- FALSE
@@ -1127,7 +1148,6 @@ function(panel.data,         ## REQUIRED
 	### QR Calculations: coefficient matrices are saved/read into/from panel.data[["Coefficient_Matrices"]]
 
 	if (is.null(use.my.coefficient.matrices)) {
-		taus <- .create_taus(sgp.quantiles)
 		if (exact.grade.progression.sequence) {
 			coefficient.matrix.priors <- num.prior
 		} else {
