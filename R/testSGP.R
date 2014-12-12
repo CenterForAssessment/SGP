@@ -798,4 +798,53 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 
 		)
 	} ### End TEST_NUMBER 5
+
+
+	#######################################################################################################################################################
+	###
+	### TEST NUMBER 6: Test of baseline coefficient matrix generation functionality
+	###
+	#######################################################################################################################################################
+
+	if (6 %in% TEST_NUMBER) {
+
+	options(error=recover)
+	options(warn=2)
+	suppressPackageStartupMessages(require(parallel))
+	number.cores <- detectCores()-1
+        if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE = 'doParallel', "
+	Demonstration_SGP <- tmp.messages <- NULL
+
+	### Modify SGPstateData
+
+	SGPstateData[['DEMO']][['Baseline_splineMatrix']] <- NULL
+
+	expression.to.evaluate <- 
+		paste("\nDemonstration_SGP <- abcSGP(\n\tsgp_object=sgpData_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\tyears='2013_2014',\n\tcontent_areas='MATHEMATICS',\n\tsgp.percentiles=FALSE,\n\tsgp.projections=FALSE,\n\tsgp.projections.lagged=FALSE,\n\tsgp.percentiles.baseline=TRUE,\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(BASELINE_PERCENTILES=", number.cores, ", BASELINE_MATRICES=", number.cores, "))\n)", sep="")
+
+	if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(Demonstration_SGP, file='Demonstration_SGP.Rdata')", sep="\n")
+
+	cat("#####        Begin testSGP test number 6            #####\n", fill=TRUE)
+	cat("##           Basic Baseline Coefficient Matrix Test.       ##\n", fill=TRUE)
+
+	cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
+
+	if (memory.profile) {
+		Rprof("testSGP(6)_Memory_Profile.out", memory.profiling=TRUE)
+	}
+	
+	eval(parse(text=expression.to.evaluate))
+
+	### TEST of SGP_BASELINE variable
+
+	tmp.messages <- ("\t##            Results of testSGP test number 6            ##\n\n")
+	
+	if (identical(sum(Demonstration_SGP@Data$SGP_BASELINE, na.rm=TRUE), 1469353L)) {
+		tmp.messages <- c(tmp.messages, "\tTest of SGP_BASELINE: OK\n")
+	} else {
+		tmp.messages <- c(tmp.messages, "\tTest of SGP_BASELINE: FAIL\n")
+	}
+	tmp.messages <- c(tmp.messages, "\n\t#####         End testSGP test number 6             #####\n")
+	cat(tmp.messages)
+	} ### End TEST_NUMBER 6
 } ### END testSGP Function
