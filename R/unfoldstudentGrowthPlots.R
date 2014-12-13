@@ -6,8 +6,8 @@ function(directory="Visualizations"){
 
 	### Get list of zip files
 
-	list.of.zip.files <- list.files(tmp.directory, recursive=TRUE, pattern="zip")
-	list.of.zip.files <- paste(getwd(), tmp.directory, list.of.zip.files, sep="/")
+	list.of.zip.files <- list.files(file.path(directory, "studentGrowthPlots"), recursive=TRUE, pattern="zip")
+	list.of.zip.files <- paste(getwd(), file.path(directory, "studentGrowthPlots"), list.of.zip.files, sep="/")
 
 	### unzip the files
 
