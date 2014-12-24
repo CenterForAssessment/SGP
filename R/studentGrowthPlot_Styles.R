@@ -137,7 +137,7 @@ if (reports.by.school) {
 
 	setkeyv(tmp_district_data, tmp.keys[2])
 
-	for (j in schools) {
+	for (j in intersect(tmp_district_data[[paste("SCHOOL_NUMBER", last.year, sep=".")]], schools)) {
 	
 		started.at <- proc.time()
 		started.date <- date()
@@ -801,7 +801,7 @@ if (reports.by.instructor) {
 	## Schools
 	setkeyv(tmp_district_data, tmp.keys[2])
 
-	for (j in schools) {
+	for (j in intersect(tmp_district_data[[paste("SCHOOL_NUMBER", last.year, sep=".")]], schools)) {
 
 		if (sgPlot.demo.report | identical(j, -99L)) {
 			tmp_school_name <- "Sample School"
