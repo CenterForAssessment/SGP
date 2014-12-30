@@ -548,19 +548,15 @@ function(sgp_object,
 		} else {
 			outputSGP.data[,HLS_CODE:=as.character(NA)]
 		}
-		if (state=="HI") { 
-			if (any(c("IEP_STATUS", "SPECIAL_EDUCATION_STATUS") %in% names(outputSGP.data))) {
-				setnames(outputSGP.data, which(names(outputSGP.data) %in% c("IEP_STATUS", "SPECIAL_EDUCATION_STATUS")), "IEP_CODE")
-			} else {
-				outputSGP.data[,IEP_CODE:=as.character(NA)]
-			}
+		if (any(c("IEP_STATUS", "SPECIAL_EDUCATION_STATUS") %in% names(outputSGP.data))) {
+			setnames(outputSGP.data, which(names(outputSGP.data) %in% c("IEP_STATUS", "SPECIAL_EDUCATION_STATUS")), "IEP_CODE")
+		} else {
+			outputSGP.data[,IEP_CODE:=as.character(NA)]
 		}
-		if (state=="HI") {
-			if (any(c("FREE_REDUCED_LUNCH_STATUS", "DISADVANTAGED_STATUS") %in% names(outputSGP.data))) {
-				setnames(outputSGP.data, which(names(outputSGP.data) %in% c("FREE_REDUCED_LUNCH_STATUS", "DISADVANTAGED_STATUS")), "FRL_CODE")
-			} else {
-				outputSGP.data[,FRL_CODE:=as.character(NA)]
-			}
+		if (any(c("FREE_REDUCED_LUNCH_STATUS", "DISADVANTAGED_STATUS") %in% names(outputSGP.data))) {
+			setnames(outputSGP.data, which(names(outputSGP.data) %in% c("FREE_REDUCED_LUNCH_STATUS", "DISADVANTAGED_STATUS")), "FRL_CODE")
+		} else {
+			outputSGP.data[,FRL_CODE:=as.character(NA)]
 		}
 
 		for (i in seq_along(tmp.years.short)) {	
