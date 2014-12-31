@@ -165,7 +165,7 @@ function(what_sgp_object=NULL,
 		if(is.null(grades)) update.grades <- sort(unique(tmp_sgp_object@Data$GRADE)) else update.grades <- grades
 
 		if (overwrite.existing.data) {
-				what_sgp_object@Data <- as.data.table(rbind.fill(what_sgp_object@Data[YEAR!=update.years], tmp_sgp_object@Data))
+				what_sgp_object@Data <- as.data.table(rbind.fill(what_sgp_object@Data[which(YEAR!=update.years)], tmp_sgp_object@Data))
 				what_sgp_object@SGP[['Goodness_of_Fit']][grep(update.years, names(what_sgp_object@SGP[['Goodness_of_Fit']]))] <- NULL
 				what_sgp_object@SGP[['SGPercentiles']][grep(update.years, names(what_sgp_object@SGP[['SGPercentiles']]))] <- NULL
 				what_sgp_object@SGP[['SGProjections']][grep(update.years, names(what_sgp_object@SGP[['SGProjections']]))] <- NULL
@@ -324,7 +324,7 @@ function(what_sgp_object=NULL,
 				if (update.old.data.with.new) {
 					what_sgp_object@Data <- data.table(rbind.fill(what_sgp_object@Data, tmp_sgp_object@Data), key=getKey(what_sgp_object@Data))
 				} else {
-					what_sgp_object@Data <- data.table(rbind.fill(what_sgp_object@Data[ID %in% tmp_sgp_object@Data$ID], tmp_sgp_object@Data), key=getKey(what_sgp_object@Data))
+					what_sgp_object@Data <- data.table(rbind.fill(what_sgp_object@Data[which(ID %in% tmp_sgp_object@Data$ID)], tmp_sgp_object@Data), key=getKey(what_sgp_object@Data))
 				}
 
 				if ("HIGH_NEED_STATUS" %in% names(what_sgp_object@Data)) {
