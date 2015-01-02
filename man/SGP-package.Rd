@@ -20,7 +20,7 @@ growth percentile analyses.
 \tabular{ll}{
 Package: \tab SGP\cr
 Type: \tab Package\cr
-Version: \tab 1.3-2.6\cr
+Version: \tab 1.3-2.7\cr
 Date: \tab 2015-1-1\cr
 License: \tab GPL-2\cr
 LazyLoad: \tab yes\cr
