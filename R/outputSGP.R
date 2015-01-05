@@ -797,7 +797,12 @@ function(sgp_object,
 				}
 				output.column.order <- SGPstateData[['RLI']][['SGP_Configuration']][['output.column.order']][['SGProjection']]
 			} else {
-				output.column.order <- SGPstateData[['RLI']][['SGP_Configuration']][['output.column.order']][['SGProjection_Target']]
+				if (length(grep("6_TIME", names(sgp_object@SGP[['SGProjections']][[names.iter]]))) > 0) {
+					output.column.order <- SGPstateData[['RLI']][['SGP_Configuration']][['output.column.order']][['SGProjection_Target_6_TIME']]
+				}
+				if (length(grep("9_TIME", names(sgp_object@SGP[['SGProjections']][[names.iter]]))) > 0) {
+					output.column.order <- SGPstateData[['RLI']][['SGP_Configuration']][['output.column.order']][['SGProjection_Target_9_TIME']]
+				}
 			}
 
 			if (!is.null(outputSGP.pass.through.variables)) {
