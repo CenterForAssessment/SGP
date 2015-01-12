@@ -682,7 +682,9 @@ function(sgp_object,
 
 		for (i in variables.to.check) {
 			if (any(is.na(STUDENT_GROWTH[[i]]))) {
-				message(paste("\tNAs are present in variable:", i, "of the 'STUDENT_GROWTH' table. Table must be free of NAs for proper loading"))
+				message(paste("\tNAs are present in variable:", i, "of the 'STUDENT_GROWTH' table. NAs being changed to 'Unknown' to avoid data loading problems."))
+				STUDENT_GROWTH[,i:=as.character(get(i)), with=FALSE]
+				STUDENT_GROWTH[is.na(get(i)), i:="Unknown", with=FALSE]
 			}
 		}
 
