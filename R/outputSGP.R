@@ -548,19 +548,15 @@ function(sgp_object,
 		} else {
 			outputSGP.data[,HLS_CODE:=as.character(NA)]
 		}
-		if (state=="HI") { 
-			if ("SPECIAL_EDUCATION_STATUS" %in% names(outputSGP.data)) {
-				setnames(outputSGP.data, which(names(outputSGP.data)=="SPECIAL_EDUCATION_STATUS"), "IEP_CODE")
-			} else {
-				outputSGP.data[,IEP_CODE:=as.character(NA)]
-			}
+		if (any(c("IEP_STATUS", "SPECIAL_EDUCATION_STATUS") %in% names(outputSGP.data))) {
+			setnames(outputSGP.data, which(names(outputSGP.data) %in% c("IEP_STATUS", "SPECIAL_EDUCATION_STATUS")), "IEP_CODE")
+		} else {
+			outputSGP.data[,IEP_CODE:=as.character(NA)]
 		}
-		if (state=="HI") {
-			if ("DISADVANTAGED_STATUS" %in% names(outputSGP.data)) {
-				setnames(outputSGP.data, which(names(outputSGP.data)=="DISADVANTAGED_STATUS"), "FRL_CODE")
-			} else {
-				outputSGP.data[,FRL_CODE:=as.character(NA)]
-			}
+		if (any(c("FREE_REDUCED_LUNCH_STATUS", "DISADVANTAGED_STATUS") %in% names(outputSGP.data))) {
+			setnames(outputSGP.data, which(names(outputSGP.data) %in% c("FREE_REDUCED_LUNCH_STATUS", "DISADVANTAGED_STATUS")), "FRL_CODE")
+		} else {
+			outputSGP.data[,FRL_CODE:=as.character(NA)]
 		}
 
 		for (i in seq_along(tmp.years.short)) {	
@@ -610,14 +606,14 @@ function(sgp_object,
 			outputSGP.student.groups <- c(outputSGP.student.groups, "HLS_CODE")
 		}
 		
-		if ("DISADVANTAGED_STATUS" %in% outputSGP.student.groups) {
-			outputSGP.student.groups[outputSGP.student.groups=="DISADVANTAGED_STATUS"] <- "FRL_CODE"
+		if (any(c("FREE_REDUCED_LUNCH_STATUS", "DISADVANTAGED_STATUS") %in% outputSGP.student.groups)) {
+			outputSGP.student.groups[outputSGP.student.groups %in% c("FREE_REDUCED_LUNCH_STATUS", "DISADVANTAGED_STATUS")] <- "FRL_CODE"
 		} else {
 			outputSGP.student.groups <- c(outputSGP.student.groups, "FRL_CODE")
 		}
 
-		if ("SPECIAL_EDUCATION_STATUS" %in% outputSGP.student.groups) {
-			outputSGP.student.groups[outputSGP.student.groups=="SPECIAL_EDUCATION_STATUS"] <- "IEP_CODE"
+		if (any(c("IEP_STATUS", "SPECIAL_EDUCATION_STATUS") %in% outputSGP.student.groups)) {
+			outputSGP.student.groups[outputSGP.student.groups %in% c("IEP_STATUS", "SPECIAL_EDUCATION_STATUS")] <- "IEP_CODE"
 		} else {
 			outputSGP.student.groups <- c(outputSGP.student.groups, "IEP_CODE")
 		}
@@ -686,7 +682,9 @@ function(sgp_object,
 
 		for (i in variables.to.check) {
 			if (any(is.na(STUDENT_GROWTH[[i]]))) {
-				message(paste("\tNAs are present in variable:", i, "of the 'STUDENT_GROWTH' table. Table must be free of NAs for proper loading"))
+				message(paste("\tNAs are present in variable:", i, "of the 'STUDENT_GROWTH' table. NAs being changed to 'Unknown' to avoid data loading problems."))
+				STUDENT_GROWTH[,i:=as.character(get(i)), with=FALSE]
+				STUDENT_GROWTH[is.na(get(i)), i:="Unknown", with=FALSE]
 			}
 		}
 
@@ -794,14 +792,19 @@ function(sgp_object,
 					sgp_object@SGP[["SGProjections"]][[names.iter]], key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 				tmp.index <- tmp.table[,c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE]
 
-				if (any(c("CATCH_UP_KEEP_UP_STATUS_INITIAL", "MOVE_UP_STAY_UP_STATUS_INITIAL") %in% names(slot.data))) {
+				if (any(c("CATCH_UP_KEEP_UP_STATUS_INITIAL_CURRENT", "MOVE_UP_STAY_UP_STATUS_INITIAL_CURRENT") %in% names(slot.data))) {
 					sgp_object@SGP[["SGProjections"]][[names.iter]] <-
-						tmp.table[,intersect(names(slot.data), c("CATCH_UP_KEEP_UP_STATUS_INITIAL", "MOVE_UP_STAY_UP_STATUS_INITIAL")) := slot.data[tmp.index][,
-							intersect(names(slot.data), c("CATCH_UP_KEEP_UP_STATUS_INITIAL", "MOVE_UP_STAY_UP_STATUS_INITIAL")), with=FALSE]][,!c("VALID_CASE", "CONTENT_AREA", "YEAR"), with=FALSE]
+						tmp.table[,intersect(names(slot.data), c("CATCH_UP_KEEP_UP_STATUS_INITIAL_CURRENT", "MOVE_UP_STAY_UP_STATUS_INITIAL_CURRENT")) := slot.data[tmp.index][,
+							intersect(names(slot.data), c("CATCH_UP_KEEP_UP_STATUS_INITIAL_CURRENT", "MOVE_UP_STAY_UP_STATUS_INITIAL_CURRENT")), with=FALSE]][,!c("VALID_CASE", "CONTENT_AREA", "YEAR"), with=FALSE]
 				}
 				output.column.order <- SGPstateData[['RLI']][['SGP_Configuration']][['output.column.order']][['SGProjection']]
 			} else {
-				output.column.order <- SGPstateData[['RLI']][['SGP_Configuration']][['output.column.order']][['SGProjection_Target']]
+				if (length(grep("6_TIME", names(sgp_object@SGP[['SGProjections']][[names.iter]]))) > 0) {
+					output.column.order <- SGPstateData[['RLI']][['SGP_Configuration']][['output.column.order']][['SGProjection_Target_6_TIME']]
+				}
+				if (length(grep("9_TIME", names(sgp_object@SGP[['SGProjections']][[names.iter]]))) > 0) {
+					output.column.order <- SGPstateData[['RLI']][['SGP_Configuration']][['output.column.order']][['SGProjection_Target_9_TIME']]
+				}
 			}
 
 			if (!is.null(outputSGP.pass.through.variables)) {

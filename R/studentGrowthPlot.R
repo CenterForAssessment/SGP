@@ -14,7 +14,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 	Plotting_SGP_Scale_Score_Targets,     ## Vector of CUKU, CUKU_Current, MUSU, MUSU_Current scale score targets for plotting (transformed if non-vertical scale)
 	Cutscores,                            ## data.frame of long formatted achievement level cutscores
 	Years,                                ## Vector of years corresponding to Scale_Scores, Content_Areas, ... arguments supplied
-	Report_Parameters) {                  ## list containing Current_Year, Content_Area, Content_Area_Title, State, Denote_Content_Area, SGP_Targets, Configuration, Language
+	Report_Parameters) {                  ## list containing Current_Year, Content_Area, Content_Area_Title, State, Denote_Content_Area, SGP_Targets, Configuration, Language, Assessment_Transition
 
 
 ### Create relevant variables
@@ -473,11 +473,19 @@ growth.chart.vp <- viewport(name="growth.chart.vp",
                     yscale=yscale.range,
                     gp=gpar(fill="transparent"))
 
-right.vp <- viewport(name="right.vp",
-                    layout.pos.row=1, layout.pos.col=3,
-                    xscale=c(0,1),
-                    yscale=c(0,1),
-                    gp=gpar(fill="transparent"))
+if (is.null(Report_Parameters$Assessment_Transition)) {
+	right.vp <- viewport(name="right.vp",
+		layout.pos.row=1, layout.pos.col=3,
+		xscale=c(0,1),
+		yscale=c(0,1),
+		gp=gpar(fill="transparent"))
+} else {
+	right.vp <- viewport(name="right.vp",
+		layout.pos.row=1, layout.pos.col=3,
+		xscale=c(0,1),
+		yscale=yscale.range,
+		gp=gpar(fill="transparent"))
+}
 
 left.vp <- viewport(name="left.vp",
                     layout.pos.row=1, layout.pos.col=1,
@@ -485,8 +493,13 @@ left.vp <- viewport(name="left.vp",
                     yscale=yscale.range,
                     gp=gpar(fill="transparent"))
 
-growth.and.left.vp <- viewport(name="growth.and.left.vp",
-                    layout.pos.row=1, layout.pos.col=1:2)
+if (is.null(Report_Parameters$Assessment_Transition)) {
+	growth.and.margins.vp <- viewport(name="growth.and.margins.vp",
+		layout.pos.row=1, layout.pos.col=1:2)
+} else {
+	growth.and.margins.vp <- viewport(name="growth.and.margins.vp",
+		layout.pos.row=1, layout.pos.col=1:3)
+}
 
 bottom.vp <- viewport(name="bottom.vp",
                     layout.pos.row=2, layout.pos.col=2,
@@ -711,7 +724,7 @@ grid.lines(0, c(yscale.range[1], yscale.range[2]), gp=gpar(lwd=.8, col=border.co
 
 popViewport()
 
-pushViewport(growth.and.left.vp)
+pushViewport(growth.and.margins.vp)
 if (grade.values$year_span == 0) {grid.roundrect(r=unit(.01, "snpc"), gp=gpar(lwd=1.8, col=border.color, clip=TRUE, fill=rgb(1, 1, 1, 0.5)))}
 else {grid.roundrect(r=unit(.01, "snpc"), gp=gpar(lwd=1.8, col=border.color, clip=TRUE))}
 popViewport()
@@ -831,64 +844,69 @@ popViewport()
 
 ### Right Viewport
 
+if (is.null(Report_Parameters$Assessment_Transition)) { ### right.vp without ASSESSMENT_TRANSITION
+	pushViewport(right.vp)
+
+	grid.roundrect(width=unit(0.95, "native"), r=unit(.02, "snpc"), gp=gpar(lwd=1.8, col=border.color, fill=legend.fill.color), just="center")
+
+	if (!split.content_area.tf) {
+		grid.text(x=.5, y=0.875, content.area.label, gp=gpar(col=border.color, cex=title.ca.size, fontface=2, fontfamily="Helvetica-Narrow"), default.units="native")
+	} else {
+		grid.text(x=.5, y=0.92, content_area.label.pieces[1], gp=gpar(col=border.color, cex=title.ca.size-0.25, fontface=2, fontfamily="Helvetica-Narrow"), default.units="native")
+		grid.text(x=.5, y=0.83, content_area.label.pieces[2], gp=gpar(col=border.color, cex= title.ca.size-0.25, fontface=2, fontfamily="Helvetica-Narrow"), default.units="native")	
+	}
+	grid.text(x=0.08, y=0.75, achievement.label, gp=gpar(col=border.color, cex=.85, fontface=2, fontfamily="Helvetica-Narrow"), default.units="native", just="left")
+	grid.text(x=0.08, y=0.525, growth.label, gp=gpar(col=border.color, cex=.75, fontface=2, fontfamily="Helvetica-Narrow"), default.units="native", just="left")
+	grid.text(x=0.275, y=0.455, level.label, gp=gpar(col=border.color, cex=.6), default.units="native", just="center")
+	grid.text(x=0.75, y=0.455, percentiles.label, gp=gpar(col=border.color, cex=.6), default.units="native", just="center")
+
+	grid.roundrect(x=unit(0.3, "native"), y=unit(0.64, "native"), width=unit(0.3, "native"), height=unit(0.1, "native"), r=unit(0.06, "char"), 
+		gp=gpar(col="grey72", lwd=0.4, fill="grey72"))
+	grid.circle(x=0.3, y=0.64, r=unit(0.04, "inches"), gp=gpar(col=border.color, lwd=0.7, fill="white"), default.units="native") 
+	if (!split.content_area.tf) {
+		grid.text(x=0.7, y=0.658, paste(test.abbreviation, content.area.label), gp=gpar(col=border.color, cex=legend.size), default.units="native")
+		grid.text(x=0.7, y=0.622, scale_score.label, gp=gpar(col=border.color, cex= legend.size), default.units="native")
+	} else {
+		grid.text(x=0.7, y=0.7, test.abbreviation, gp=gpar(col=border.color, cex=legend.size), default.units="native")
+		grid.text(x=0.7, y=0.665, content_area.label.pieces[1], gp=gpar(col=border.color, cex=legend.size), default.units="native")
+		grid.text(x=0.7, y=0.63, content_area.label.pieces[2], gp=gpar(col=border.color, cex=legend.size), default.units="native")
+		grid.text(x=0.7, y=0.595, scale_score.label, gp=gpar(col=border.color, cex= legend.size), default.units="native")
+	}
+
+	y.center <- seq(0.05, 0.4, length=number.growth.levels+1)
+	arrow.legend.coors.x <- c(.25, .75, .75, 1, .5, 0, .25)
+	arrow.legend.coors.y <- c(0, 0, 1.3, 1.1, 2, 1.1, 1.3)
+
+	for (i in seq(number.growth.levels)) {
+		pushViewport(viewport(x=unit(0.3, "native"), y=unit(y.center[i], "native"), 
+			width=unit(0.07, "native"), height=unit(y.center[2]-y.center[1], "npc"), just=c("center", "bottom"),
+			xscale=c(0, 1), yscale=c(0, 2)))
+		grid.polygon(x=arrow.legend.coors.x, y=arrow.legend.coors.y, default.units="native", 
+			gp=gpar(lwd=0.3, col=border.color, fill=arrow.legend.color[i]))
+
+		popViewport()
+
+		pushViewport(viewport(x=unit(0.2, "native"), y=unit(y.center[i], "native"),
+			width=unit(0.04, "native"), height=unit(y.center[2]-y.center[1], "npc"), just=c("center", "bottom")))
+			grid.roundrect(x=0.5, y=0.5, width=1, height=1, r=unit(.45, "snpc"), 
+			gp=gpar(lwd=0.3, col=border.color, fill=arrow.legend.color[i]))
+		popViewport()
+
+		grid.polygon(x=c(0.05, rep(0.1875, 2)),
+			y=c((head(y.center,1)+tail(y.center,1))/2, y.center[i], y.center[i]+y.center[2]-y.center[1]), default.units="native", 
+			gp=gpar(col=NA, lwd=0, fill=arrow.legend.color[i], alpha=0.45)) 
+
+		grid.text(x=0.375, y=((y.center[1]+y.center[2])/2)+(i-1)*(y.center[2]-y.center[1]), growth.level.labels[i], default.units="native", 
+			gp=gpar(col=border.color, cex=.5), just="left")
+		grid.text(x=0.925, y=((y.center[1]+y.center[2])/2)+(i-1)*(y.center[2]-y.center[1]), growth.level.cutscores.text[i], default.units="native", 
+			gp=gpar(col=border.color, cex=.5), just="right")
+	}
+} else { ### right.vp with ASSESSMENT_TRANSITION
 pushViewport(right.vp)
 
-grid.roundrect(width=unit(0.95, "native"), r=unit(.02, "snpc"), gp=gpar(lwd=1.8, col=border.color, fill=legend.fill.color), just="center")
 
-if (!split.content_area.tf) {
-	grid.text(x=.5, y=0.875, content.area.label, gp=gpar(col=border.color, cex=title.ca.size, fontface=2, fontfamily="Helvetica-Narrow"), default.units="native")
-} else {
-	grid.text(x=.5, y=0.92, content_area.label.pieces[1], gp=gpar(col=border.color, cex=title.ca.size-0.25, fontface=2, fontfamily="Helvetica-Narrow"), default.units="native")
-	grid.text(x=.5, y=0.83, content_area.label.pieces[2], gp=gpar(col=border.color, cex= title.ca.size-0.25, fontface=2, fontfamily="Helvetica-Narrow"), default.units="native")	
+
 }
-grid.text(x=0.08, y=0.75, achievement.label, gp=gpar(col=border.color, cex=.85, fontface=2, fontfamily="Helvetica-Narrow"), default.units="native", just="left")
-grid.text(x=0.08, y=0.525, growth.label, gp=gpar(col=border.color, cex=.75, fontface=2, fontfamily="Helvetica-Narrow"), default.units="native", just="left")
-grid.text(x=0.275, y=0.455, level.label, gp=gpar(col=border.color, cex=.6), default.units="native", just="center")
-grid.text(x=0.75, y=0.455, percentiles.label, gp=gpar(col=border.color, cex=.6), default.units="native", just="center")
-
-grid.roundrect(x=unit(0.3, "native"), y=unit(0.64, "native"), width=unit(0.3, "native"), height=unit(0.1, "native"), r=unit(0.06, "char"), 
-               gp=gpar(col="grey72", lwd=0.4, fill="grey72"))
-grid.circle(x=0.3, y=0.64, r=unit(0.04, "inches"), gp=gpar(col=border.color, lwd=0.7, fill="white"), default.units="native") 
-if (!split.content_area.tf) {
-	grid.text(x=0.7, y=0.658, paste(test.abbreviation, content.area.label), gp=gpar(col=border.color, cex=legend.size), default.units="native")
-	grid.text(x=0.7, y=0.622, scale_score.label, gp=gpar(col=border.color, cex= legend.size), default.units="native")
-} else {
-	grid.text(x=0.7, y=0.7, test.abbreviation, gp=gpar(col=border.color, cex=legend.size), default.units="native")
-	grid.text(x=0.7, y=0.665, content_area.label.pieces[1], gp=gpar(col=border.color, cex=legend.size), default.units="native")
-	grid.text(x=0.7, y=0.63, content_area.label.pieces[2], gp=gpar(col=border.color, cex=legend.size), default.units="native")
-	grid.text(x=0.7, y=0.595, scale_score.label, gp=gpar(col=border.color, cex= legend.size), default.units="native")
-	
-}
-
-y.center <- seq(0.05, 0.4, length=number.growth.levels+1)
-arrow.legend.coors.x <- c(.25, .75, .75, 1, .5, 0, .25)
-arrow.legend.coors.y <- c(0, 0, 1.3, 1.1, 2, 1.1, 1.3)
-
-for (i in seq(number.growth.levels)) {
-   pushViewport(viewport(x=unit(0.3, "native"), y=unit(y.center[i], "native"), 
-                width=unit(0.07, "native"), height=unit(y.center[2]-y.center[1], "npc"), just=c("center", "bottom"),
-                xscale=c(0, 1), yscale=c(0, 2)))
-   grid.polygon(x=arrow.legend.coors.x, y=arrow.legend.coors.y, default.units="native", 
-                gp=gpar(lwd=0.3, col=border.color, fill=arrow.legend.color[i]))
-
-   popViewport()
-
-   pushViewport(viewport(x=unit(0.2, "native"), y=unit(y.center[i], "native"),
-                width=unit(0.04, "native"), height=unit(y.center[2]-y.center[1], "npc"), just=c("center", "bottom")))
-   grid.roundrect(x=0.5, y=0.5, width=1, height=1, r=unit(.45, "snpc"), 
-                  gp=gpar(lwd=0.3, col=border.color, fill=arrow.legend.color[i]))
-   popViewport()
-
-   grid.polygon(x=c(0.05, rep(0.1875, 2)),
-                y=c((head(y.center,1)+tail(y.center,1))/2, y.center[i], y.center[i]+y.center[2]-y.center[1]), default.units="native", 
-                gp=gpar(col=NA, lwd=0, fill=arrow.legend.color[i], alpha=0.45)) 
-
-   grid.text(x=0.375, y=((y.center[1]+y.center[2])/2)+(i-1)*(y.center[2]-y.center[1]), growth.level.labels[i], default.units="native", 
-             gp=gpar(col=border.color, cex=.5), just="left")
-   grid.text(x=0.925, y=((y.center[1]+y.center[2])/2)+(i-1)*(y.center[2]-y.center[1]), growth.level.cutscores.text[i], default.units="native", 
-             gp=gpar(col=border.color, cex=.5), just="right")
-}
-
 popViewport(2)
 
 } ## END studentGrowthPlot Function

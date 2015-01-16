@@ -830,7 +830,7 @@ function(sgp_object,
 					return(studentGrowthProjections(
 						panel.data=list(
 							Panel_Data=getPanelData(tmp_sgp_data_for_analysis, state=state, "sgp.projections", sgp.iter), 
-							Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]][-grep("BASELINE", names(tmp_sgp_object[["Coefficient_Matrices"]]))], 
+							Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]][setdiff(names(tmp_sgp_object[["Coefficient_Matrices"]]), grep("BASELINE", names(tmp_sgp_object[["Coefficient_Matrices"]]), value=TRUE))], 
 							Knots_Boundaries=getKnotsBoundaries(sgp.iter, state, c("Standard", "sgp.projections"))),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.projection.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.projection.content.areas"]], 1)),
 						use.my.coefficient.matrices=list(my.year=tail(sgp.iter[["sgp.projection.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.projection.content.areas"]], 1)), 
@@ -866,7 +866,7 @@ function(sgp_object,
 					tmp <- clusterApplyLB(par.start$internal.cl, par.sgp.config[['sgp.projections']], function(sgp.iter) studentGrowthProjections(
 						panel.data=list(
 							Panel_Data=getPanelData(tmp_sgp_data_for_analysis, state=state, "sgp.projections", sgp.iter),
-							Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]][-grep("BASELINE", names(tmp_sgp_object[["Coefficient_Matrices"]]))], 
+							Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]][setdiff(names(tmp_sgp_object[["Coefficient_Matrices"]]), grep("BASELINE", names(tmp_sgp_object[["Coefficient_Matrices"]]), value=TRUE))], 
 							Knots_Boundaries=getKnotsBoundaries(sgp.iter, state, c("Standard", "sgp.projections"))),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.projection.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.projection.content.areas"]], 1)),
 						use.my.coefficient.matrices=list(my.year=tail(sgp.iter[["sgp.projection.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.projection.content.areas"]], 1)), 
@@ -903,7 +903,7 @@ function(sgp_object,
 					tmp <- mclapply(par.sgp.config[['sgp.projections']], function(sgp.iter) studentGrowthProjections(
 						panel.data=list(
 							Panel_Data=getPanelData(tmp_sgp_data_for_analysis, state=state, "sgp.projections", sgp.iter), 
-							Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]][-grep("BASELINE", names(tmp_sgp_object[["Coefficient_Matrices"]]))], 
+							Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]][setdiff(names(tmp_sgp_object[["Coefficient_Matrices"]]), grep("BASELINE", names(tmp_sgp_object[["Coefficient_Matrices"]]), value=TRUE))], 
 							Knots_Boundaries=getKnotsBoundaries(sgp.iter, state, c("Standard", "sgp.projections"))),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.projection.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.projection.content.areas"]], 1)),
 						use.my.coefficient.matrices=list(my.year=tail(sgp.iter[["sgp.projection.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.projection.content.areas"]], 1)), 
@@ -1081,7 +1081,7 @@ function(sgp_object,
 					return(studentGrowthProjections(
 						panel.data=list(
 							Panel_Data=getPanelData(tmp_sgp_data_for_analysis, state=state, "sgp.projections.lagged", sgp.iter), 
-							Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]][-grep("BASELINE", names(tmp_sgp_object[["Coefficient_Matrices"]]))], 
+							Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]][setdiff(names(tmp_sgp_object[["Coefficient_Matrices"]]), grep("BASELINE", names(tmp_sgp_object[["Coefficient_Matrices"]]), value=TRUE))], 
 							Knots_Boundaries=getKnotsBoundaries(sgp.iter, state, c("Standard", "sgp.projections.lagged"))),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 
 							my.extra.label="LAGGED"),
@@ -1118,7 +1118,7 @@ function(sgp_object,
 					tmp <- clusterApplyLB(par.start$internal.cl, par.sgp.config[['sgp.projections.lagged']], function(sgp.iter) studentGrowthProjections(
 						panel.data=list(
 							Panel_Data=getPanelData(tmp_sgp_data_for_analysis, state=state, "sgp.projections.lagged", sgp.iter), 
-							Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]][-grep("BASELINE", names(tmp_sgp_object[["Coefficient_Matrices"]]))], 
+							Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]][setdiff(names(tmp_sgp_object[["Coefficient_Matrices"]]), grep("BASELINE", names(tmp_sgp_object[["Coefficient_Matrices"]]), value=TRUE))], 
 							Knots_Boundaries=getKnotsBoundaries(sgp.iter, state, c("Standard", "sgp.projections.lagged"))),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 
 							my.extra.label="LAGGED"),
@@ -1156,7 +1156,7 @@ function(sgp_object,
 					tmp <- mclapply(par.sgp.config[['sgp.projections.lagged']], function(sgp.iter) studentGrowthProjections(
 						panel.data=list(
 							Panel_Data=getPanelData(tmp_sgp_data_for_analysis, state=state, "sgp.projections.lagged", sgp.iter), 
-							Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]][-grep("BASELINE", names(tmp_sgp_object[["Coefficient_Matrices"]]))], 
+							Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]][setdiff(names(tmp_sgp_object[["Coefficient_Matrices"]]), grep("BASELINE", names(tmp_sgp_object[["Coefficient_Matrices"]]), value=TRUE))], 
 							Knots_Boundaries=getKnotsBoundaries(sgp.iter, state, c("Standard", "sgp.projections.lagged"))),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), 
 							my.extra.label="LAGGED"),
