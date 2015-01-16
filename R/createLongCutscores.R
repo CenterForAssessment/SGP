@@ -6,7 +6,6 @@ function(state,
 
 	GRADE <- GRADE_NUMERIC <- CUTSCORES <- YEAR <- CUTLEVEL <- YEAR_LAG <- NULL
 
-	number.achievement.level.regions <- length(SGPstateData[[state]][["Student_Report_Information"]][["Achievement_Level_Labels"]])
 	content_area.argument <- content_area
 	if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]])) {
 		content_area <- unique(names(SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]])[
@@ -32,10 +31,10 @@ function(state,
 							grep("loss.hoss", names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[tmp.loss.hoss.label]]))], '[', 2)
 				tmp.hoss <- as.numeric(tmp.hoss[sapply(strsplit(names(tmp.hoss), "_"), '[', 2) %in% tmp.grades])
 				tmp.cutscores <- matrix(unlist(SGPstateData[[state]][["Achievement"]][["Cutscores"]][[i]]),
-					ncol=number.achievement.level.regions-1, byrow=TRUE)
+					ncol=length(SGPstateData[[state]][["Achievement"]][["Cutscores"]][[i]][[1]]), byrow=TRUE)
 				tmp.year <- as.character(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]])[i], "[.]"))[2])
 
-				for (j in seq(number.achievement.level.regions-1)) {
+				for (j in seq(length(SGPstateData[[state]][["Achievement"]][["Cutscores"]][[i]][[1]]))) {
 					tmp.list[[paste(i, j, sep="_")]] <- data.table(
 						GRADE=tmp.grades,
 						CONTENT_AREA=tmp.content_area,
@@ -77,7 +76,7 @@ function(state,
 				tmp.grades <- as.character(matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]][[i]]), "_")), ncol=2, byrow=TRUE)[,2])
 				tmp.year <- as.character(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]])[i], "[.]"))[2])
 
-				for (j in seq(number.achievement.level.regions-1)) {
+				for (j in seq(length(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area.iter]])-1)) {
 					tmp.list[[paste(i, j, sep="_")]] <- data.table(
 						GRADE=tmp.grades,
 						CONTENT_AREA=tmp.content_area,

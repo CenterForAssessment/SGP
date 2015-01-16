@@ -76,7 +76,7 @@ function(data,
 			tmp.names <- default.variable.names[!(default.variable.names[["names.sgp"]] %in% var.names[["names.sgp"]]),]
 			variable.names <- rbind(var.names, tmp.names)
 		} else {
-			if (state=="DEMO" | is.null(SGPstateData[[state]][["Variable_Name_Lookup"]])) {
+			if (is.null(state) || state=="DEMO" || is.null(SGPstateData[[state]][["Variable_Name_Lookup"]])) {
 				variable.names <- default.variable.names
 			} else {
 				variable.names <- SGPstateData[[state]][["Variable_Name_Lookup"]]
