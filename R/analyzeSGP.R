@@ -208,6 +208,10 @@ function(sgp_object,
 		}
 	}
 
+	if (!is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]])) {
+		equate.list <- equateSGP(sgp_object, state)
+	}
+
 	### 
 	### Utility functions
 	###
