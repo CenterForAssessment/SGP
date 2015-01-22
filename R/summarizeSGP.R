@@ -495,14 +495,16 @@ function(sgp_object,
 			if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
 	  			j <- k <- NULL ## To prevent R CMD check warnings
 	  			tmp.summary <- foreach(j=iter(sgp.groups), k=iter(sgp.groups %in% ci.groups), 
-	  				.options.multicore=list(preschedule = FALSE, set.seed = FALSE), .packages="SGP", .inorder=FALSE) %dopar% {
+	  				.options.multicore=list(preschedule = FALSE, set.seed = FALSE),
+	  				.export=c("sgpSummary", "summarizeSGP_INTERNAL", "combineSims"), .packages="SGP", .inorder=FALSE) %dopar% {
 						return(sgpSummary(data, j, k, tmp.simulation.dt))
 				}
 				names(tmp.summary) <- gsub(", ", "__", sgp.groups)
 			} else {
 				j <- k <- NULL ## To prevent R CMD check warnings
 				tmp.summary <- foreach(j=iter(sgp.groups), k=iter(rep(FALSE, length(sgp.groups))), 
-					.options.multicore=list(preschedule = FALSE, set.seed = FALSE), .packages="SGP", .inorder=FALSE) %dopar% {
+					.options.multicore=list(preschedule = FALSE, set.seed = FALSE), .packages="SGP", .inorder=FALSE,
+					.export=c("sgpSummary", "summarizeSGP_INTERNAL", "combineSims")) %dopar% {
 						return(sgpSummary(data, j, k, tmp.simulation.dt))
 				}
 				names(tmp.summary) <- gsub(", ", "__", sgp.groups)
