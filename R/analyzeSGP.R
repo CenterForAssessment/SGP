@@ -37,7 +37,7 @@ function(sgp_object,
 	started.at <- proc.time()
 	message(paste("\nStarted analyzeSGP", date()))
 
-	VALID_CASE <- CONTENT_AREA <- YEAR <- GRADE <- ID <- YEAR_WITHIN <- NULL
+	VALID_CASE <- CONTENT_AREA <- YEAR <- GRADE <- ID <- YEAR_WITHIN <- .EACHI <- NULL
 
 
 	###
@@ -210,6 +210,16 @@ function(sgp_object,
 
 	if (!is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]])) {
 		equate.list <- equateSGP(sgp_object, state)
+		tmp.data.for.equate <- copy(sgp_object@Data)
+		tmp.year.for.equate <- SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]
+		setkey(tmp.data.for.equate, VALID_CASE, CONTENT_AREA, YEAR, GRADE)
+		for (i in names(equate.list)) {
+			content_area.iter <- unlist(strsplit(names(equate.list)[i], '[.]'))[1]
+			grade.iter <- unlist(strsplit(names(equate.list)[i], '[.]'))[2]
+			tmp.data.for.equate[list("VALID_CASE", content_area.iter, tmp.year.for.equate, grade.iter), equate.list[[i]][['concordance']], by=.EACHI]
+		}
+		setkey(tmp.data.for.equate, VALID_CASE, CONTENT_AREA, YEAR, ID)
+		sgp_object@Data <- tmp.data.for.equate
 	}
 
 	### 
