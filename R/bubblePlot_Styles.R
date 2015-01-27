@@ -15,7 +15,7 @@
 		bPlot.prior.achievement=TRUE, 
 		bPlot.draft=FALSE,
 		bPlot.demo=FALSE,
-		bPlot.output = "PDF",
+		bPlot.output ="PDF",
 		bPlot.format="print",
 		bPlot.folder="Visualizations/bubblePlots") {
 

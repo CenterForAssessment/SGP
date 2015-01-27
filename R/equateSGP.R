@@ -1,6 +1,7 @@
 `equateSGP` <- 
 function(sgp_object,
-	state) {
+	state,
+	equating.method="equip") {
 
 	VALID_CASE <- YEAR <- CONTENT_AREA <- GRADE <- NULL
 
@@ -17,16 +18,21 @@ function(sgp_object,
 	### Utility function
 
 	equateSGP_INTERNAL <- function(prior.year.data, current.year.data) {
-		return(equate(
+		return(list(
+			NEW_TO_OLD=equate(
 			freqtab(current.year.data[['SCALE_SCORE']], scales=seq(min(current.year.data[['SCALE_SCORE']], na.rm=TRUE), max(current.year.data[['SCALE_SCORE']], na.rm=TRUE))),
-			freqtab(prior.year.data[['SCALE_SCORE']], scales=seq(min(prior.year.data[['SCALE_SCORE']], na.rm=TRUE), max(prior.year.data[['SCALE_SCORE']], na.rm=TRUE))), type="equip"))
+			freqtab(prior.year.data[['SCALE_SCORE']], scales=seq(min(prior.year.data[['SCALE_SCORE']], na.rm=TRUE), max(prior.year.data[['SCALE_SCORE']], na.rm=TRUE))), type=equating.method),
+			OLD_TO_NEW=equate(
+			freqtab(prior.year.data[['SCALE_SCORE']], scales=seq(min(prior.year.data[['SCALE_SCORE']], na.rm=TRUE), max(prior.year.data[['SCALE_SCORE']], na.rm=TRUE))),
+			freqtab(current.year.data[['SCALE_SCORE']], scales=seq(min(current.year.data[['SCALE_SCORE']], na.rm=TRUE), max(current.year.data[['SCALE_SCORE']], na.rm=TRUE))), type=equating.method)
+			))
 	}
 
 	### Loop over GRADE and CONTENT_AREA
 
 	for (content_area.iter in unique(current.year.data$CONTENT_AREA)) {
 		for (grade.iter in unique(current.year.data$GRADE)) {
-			tmp.list[[paste(content_area.iter, grade.iter, sep=".")]] <- 
+			tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]] <- 
 				equateSGP_INTERNAL(prior.year.data[list(content_area.iter, grade.iter)], current.year.data[list(content_area.iter, grade.iter)])
 		}
 	}

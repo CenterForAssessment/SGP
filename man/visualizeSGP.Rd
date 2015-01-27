@@ -27,6 +27,7 @@ visualizeSGP(
            bPlot.prior.achievement=TRUE, 
            bPlot.draft=FALSE,
            bPlot.demo=FALSE,
+           bPlot.output="PDF",
            bPlot.format="print",
            bPlot.folder="Visualizations/bubblePlots",
            sgPlot.save.sgPlot.data=FALSE,
@@ -112,6 +113,8 @@ function will produce plots for all available instructors provided in the data w
   \item{bPlot.draft}{A Boolean argument (defaults to FALSE) indicating whether to put an indicator on the chart noting that the results are draft and to not distribute. 
   }
   \item{bPlot.demo}{A Boolean argument (defaults to FALSE) indicating whether to produce demo student level plots (styles 150 and/or 153) for instructors. 
+  }
+  \item{bPlot.output}{Either "PDF" or "PNG" indicating whether output is created using PDF or PNG driver. 
   }
   \item{bPlot.format}{Either "print" or "presentation" indicating whether to optimize the plot for print form (light background) or presentation form (dark background).
   }
