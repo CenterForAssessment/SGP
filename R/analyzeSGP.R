@@ -1526,6 +1526,49 @@ function(sgp_object,
 		} ## END if sgp.percentiles
 
 
+		### sgp.percentiles.equated
+			
+		if (sgp.percentiles.equated) {
+			for (sgp.iter in rev(par.sgp.config[['sgp.percentiles.equated']])) {
+
+				panel.data <- within(tmp_sgp_object, assign("Panel_Data", getPanelData(tmp_sgp_data_for_analysis, state=state, "sgp.percentiles", sgp.iter, csem.variable)))
+				tmp.knots.boundaries <- getKnotsBoundaries(sgp.iter, state, c("Standard", "sgp.percentiles"))
+				panel.data[["Knots_Boundaries"]][[names(tmp.knots.boundaries)]] <- tmp.knots.boundaries[[names(tmp.knots.boundaries)]]
+
+				tmp_sgp_object <- studentGrowthPercentiles(
+					panel.data=panel.data,
+					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), 
+						my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), my.extra.label="EQUATED"),
+					use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
+					use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
+					growth.levels=state,
+					panel.data.vnames=getPanelDataVnames("sgp.percentiles", sgp.iter, sgp.data.names),
+					additional.vnames.to.return=getPanelDataVnames("sgp.percentiles.to.return", sgp.iter, sgp.data.names),
+					grade.progression=sgp.iter[["sgp.grade.sequences"]],
+					content_area.progression=sgp.iter[["sgp.content.areas"]],
+					year.progression=sgp.iter[["sgp.panel.years"]],
+					max.order.for.percentile=SGPstateData[[state]][["SGP_Configuration"]][["max.order.for.percentile"]],
+					percentile.cuts=SGPstateData[[state]][["SGP_Configuration"]][["percentile.cuts"]],
+					calculate.confidence.intervals=get.simulate.sgps.arg(calculate.confidence.intervals, state, sgp.iter),
+					drop.nonsequential.grade.progression.variables=FALSE,
+					exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
+					sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
+					sgp.cohort.size=SGPstateData[[state]][["SGP_Configuration"]][["sgp.cohort.size"]],
+					return.norm.group.scale.scores=return.norm.group.scale.scores,
+					return.prior.scale.score.standardized=return.prior.scale.score.standardized,
+					goodness.of.fit=goodness.of.fit.print.arg,
+					goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
+					verbose.output=verbose.output,
+					print.other.gp=print.other.gp,
+					parallel.config=lower.level.parallel.config,
+					calculate.simex=sgp.iter[["sgp.calculate.simex"]],
+					max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
+					...)
+			}
+			suppressMessages(gc())
+		} ## END if sgp.percentiles.equated
+
+
 		## sgp.percentiles.baseline
 
 		if (sgp.percentiles.baseline) {
