@@ -706,7 +706,8 @@ function(sgp_object,
 
 		if (sgp.percentiles.equated) {
 			par.start <- startParallel(parallel.config, 'PERCENTILES')
-		
+			setnames(tmp_sgp_data_for_analysis, c("SCALE_SCORE", equate.variable), c(equate.variable, "SCALE_SCORE"))
+
 			###  FOREACH flavor
 			if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
 				tmp <- foreach(sgp.iter=iter(rev(par.sgp.config[['sgp.percentiles.equated']])), .packages="SGP", .errorhandling = "pass", .inorder=FALSE,
@@ -833,6 +834,7 @@ function(sgp_object,
 				} # End MULTICORE
 			} # #END not FOREACH
 			stopParallel(parallel.config, par.start)
+			setnames(tmp_sgp_data_for_analysis, c("SCALE_SCORE", equate.variable), c(equate.variable, "SCALE_SCORE"))
 			rm(tmp);suppressMessages(gc()) # clean up
 		} #END if (sgp.percentiles)
 
@@ -1529,6 +1531,7 @@ function(sgp_object,
 		### sgp.percentiles.equated
 			
 		if (sgp.percentiles.equated) {
+			setnames(tmp_sgp_data_for_analysis, c("SCALE_SCORE", equate.variable), c(equate.variable, "SCALE_SCORE"))
 			for (sgp.iter in rev(par.sgp.config[['sgp.percentiles.equated']])) {
 
 				panel.data <- within(tmp_sgp_object, assign("Panel_Data", getPanelData(tmp_sgp_data_for_analysis, state=state, "sgp.percentiles", sgp.iter, csem.variable)))
@@ -1565,6 +1568,7 @@ function(sgp_object,
 					max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 					...)
 			}
+			setnames(tmp_sgp_data_for_analysis, c("SCALE_SCORE", equate.variable), c(equate.variable, "SCALE_SCORE"))
 			suppressMessages(gc())
 		} ## END if sgp.percentiles.equated
 
