@@ -167,9 +167,8 @@
 	}
 
 	pullData <- function(state) {
-		con <- dbConnect(SQLite(), dbname = "tmp_data/TMP_Summary_Data.sqlite")
-		
-		tmp_data <- data.table(dbGetQuery(con, paste("select * from summary_data")), key=intersect(getKey(sgp_object), variables.for.summaries))
+		tmp_data <- data.table(dbGetQuery(dbConnect(SQLite(), dbname = "tmp_data/TMP_Summary_Data.sqlite"), 
+			paste("select * from summary_data")), key=intersect(getKey(sgp_object), variables.for.summaries))
 		if ("ACHIEVEMENT_LEVEL" %in% names(tmp_data)) {
 			tmp_data[, ACHIEVEMENT_LEVEL := ordered(ACHIEVEMENT_LEVEL, levels = SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]])]
 		}
@@ -188,7 +187,6 @@
 		if ("MOVE_UP_STAY_UP_STATUS_BASELINE" %in% names(tmp_data)) {
 			tmp_data[, MOVE_UP_STAY_UP_STATUS_BASELINE := factor(MOVE_UP_STAY_UP_STATUS_BASELINE)]
 		}
-		dbDisconnect(con)
 		
 		return(tmp_data)
 	} 
@@ -519,7 +517,7 @@
 				j <- k <- NULL ## To prevent R CMD check warnings
 				tmp.summary <- foreach(j=iter(sgp.groups), k=iter(sgp.groups %in% ci.groups), 
 					.options.multicore=list(preschedule = FALSE, set.seed = FALSE),
-					.export=c("sgpSummary", "summarizeSGP_INTERNAL", "combineSims"), .packages="SGP", .inorder=FALSE) %dopar% {
+					.export=c("sgpSummary", "summarizeSGP_INTERNAL"), .packages="SGP", .inorder=FALSE) %dopar% {
 						return(sgpSummary(j, k, tmp.simulation.dt))
 				}
 				names(tmp.summary) <- gsub(", ", "__", sgp.groups)
@@ -527,7 +525,7 @@
 				j <- k <- NULL ## To prevent R CMD check warnings
 				tmp.summary <- foreach(j=iter(sgp.groups), k=iter(rep(FALSE, length(sgp.groups))), 
 					.options.multicore=list(preschedule = FALSE, set.seed = FALSE), .packages="SGP", .inorder=FALSE,
-					.export=c("sgpSummary", "summarizeSGP_INTERNAL", "combineSims")) %dopar% {
+					.export=c("sgpSummary", "summarizeSGP_INTERNAL")) %dopar% {
 						return(sgpSummary(j, k, tmp.simulation.dt))
 				}
 				names(tmp.summary) <- gsub(", ", "__", sgp.groups)
