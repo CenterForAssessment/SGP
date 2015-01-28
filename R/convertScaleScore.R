@@ -4,7 +4,7 @@ function(tmp.data.for.equate,
 	equate.list,
 	conversion.type="NEW_TO_OLD") {
 
-	.EACHI <- SCALE_SCORE_EQUATED <- NULL
+	SCALE_SCORE <- SCALE_SCORE_EQUATED <- NULL
 
 	scale.score.concordance.list <- list()
 
@@ -23,5 +23,5 @@ function(tmp.data.for.equate,
 		}
 	}
 
-	return(data.table(rbindlist(scale.score.concordance.list), key=key(tmp.data.for.equate))[tmp.data.for.equate])
+	return(data.table(rbindlist(scale.score.concordance.list), key=key(tmp.data.for.equate))[tmp.data.for.equate][is.na(SCALE_SCORE_EQUATED), SCALE_SCORE_EQUATED:=SCALE_SCORE])
 } ### END convertScaleScore function
