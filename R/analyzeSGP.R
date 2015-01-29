@@ -31,7 +31,8 @@ function(sgp_object,
          print.other.gp=NULL,
          sgp.projections.projection.unit="YEAR",
          get.cohort.data.info=FALSE,
-         sgp.sqlite = NULL,
+         sgp.sqlite=NULL,
+         sgp.percentiles.equated=FALSE,
          ...) {
 
 	started.at <- proc.time()
@@ -208,6 +209,13 @@ function(sgp_object,
 		}
 	}
 
+	if (!is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]])) {
+		if (SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]!=tail(sort(unique(sgp_object@Data$YEAR)), 1)) {
+			sgp.percentiles.equated <- FALSE
+		} else {
+			sgp.percentiles.equated <- TRUE
+		}
+	}
 
 	### 
 	### Utility functions
@@ -278,8 +286,8 @@ function(sgp_object,
 	##   Create subset of @Data containing essential data elements for analyses
 	#######################################################################################################################
 
-	if (!is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]])) {
-		year.for.equate <- SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]
+	if (sgp.percentiles.equated) {
+		year.for.equate <- tail(sort(unique(sgp_object@Data$YEAR)), 1)
 		sgp_object@SGP$Linkages <- equateSGP(sgp_object, state, year.for.equate)
 		data.for.equate <- copy(sgp_object@Data)
 		setkeyv(data.for.equate, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", "SCALE_SCORE"))
