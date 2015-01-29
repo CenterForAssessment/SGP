@@ -166,9 +166,13 @@
 		if (!is.null(conf.quantiles)) return(CI) else return(SE)
 	}
 
-	pullData <- function(state) {
+	pullData <- function(state, pull.vars, sim.data = FALSE) {
+		if (sim.data) {
+			
+		}
 		tmp_data <- data.table(dbGetQuery(dbConnect(SQLite(), dbname = "tmp_data/TMP_Summary_Data.sqlite"), 
-			paste("select * from summary_data")), key=intersect(getKey(sgp_object), variables.for.summaries))
+			paste("select", paste(pull.vars, collapse = ","), "from summary_data"))) 
+		if(all((my.key <- intersect(getKey(sgp_object), variables.for.summaries)) %in% names(tmp_data))) setkeyv(tmp_data, my.key)
 		if ("ACHIEVEMENT_LEVEL" %in% names(tmp_data)) {
 			tmp_data[, ACHIEVEMENT_LEVEL := ordered(ACHIEVEMENT_LEVEL, levels = SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]])]
 		}
@@ -218,7 +222,10 @@
 		ListExpr <- parse(text=paste("as.list(c(", paste(unlist(tmp.sgp.summaries), collapse=", "),"))",sep="")) 
 		ByExpr <- parse(text=paste("list(", paste(sgp.groups.to.summarize, collapse=", "), ")", sep=""))
 		
-		tmp <- pullData(state)[, eval(ListExpr), keyby=eval(ByExpr)]
+		pull.vars <- c(unlist(sapply(dbListFields(dbConnect(SQLite(), dbname = "tmp_data/TMP_Summary_Data.sqlite"), "summary_data"), 
+			function(p) if (any(grepl(p, tmp.sgp.summaries))) return(p)), use.names=FALSE), strsplit(sgp.groups.to.summarize, ", ")[[1]])
+		
+		tmp <- pullData(state, pull.vars)[, eval(ListExpr), keyby=eval(ByExpr)]
 		setnames(tmp, (dim(tmp)[2]-length(sgp.summaries.names)+1):dim(tmp)[2], sgp.summaries.names)
 
 		if (produce.confidence.interval & "CSEM" %in% confidence.interval.groups[['TYPE']]) {
@@ -226,8 +233,9 @@
 			tmp.number.simulated.sgps <- length(grep("SGP_SIM", names(sgp_object@SGP[["Simulated_SGPs"]][[1]])))
 			tmp.number.unique.cases <- dim(tmp.simulation.dt)[1]/tmp.number.simulated.sgps
 			for (i in seq(tmp.number.simulated.sgps)) {
-				tmp.subset.data <- pullData(state)[,c(getKey(sgp_object), unlist(strsplit(sgp.groups.to.summarize, ", "))), with=FALSE][
-					tmp.simulation.dt[seq(i, length=tmp.number.unique.cases, by=tmp.number.simulated.sgps)], allow.cartesian=TRUE]
+				tmp.subset.data <- pullData(state, pull.vars)[, c(getKey(sgp_object), 
+					unlist(strsplit(sgp.groups.to.summarize, ", "))), with=FALSE][pullData(state, pull.vars, sim.data = TRUE)[
+					seq(i, length=tmp.number.unique.cases, by=tmp.number.simulated.sgps)], allow.cartesian=TRUE]
 				tmp.list.1[[i]] <- tmp.subset.data[,list(median_na(SGP_SIM, NULL), mean_na(SGP_SIM, NULL)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")]
 			}
 			tmp.csem <- data.table(reshape(rbindlist(tmp.list.1)[,list(sd_na(V1), sd_na(V2)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")],
@@ -512,6 +520,9 @@
 			if (!produce.all.summary.tables) ci.groups <- intersect(ci.groups, selected.summary.tables)
 		}
 
+		summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], FALSE))
+		tmp.summary <- sgpSummary(summary.iter[[56]][1], eval(parse(text= summary.iter[[56]][2])), tmp.simulation.dt)
+		
 		if (parallel.config[["BACKEND"]] == "FOREACH") {
 			if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
 				j <- k <- NULL ## To prevent R CMD check warnings
