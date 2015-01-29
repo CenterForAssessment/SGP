@@ -288,6 +288,10 @@ function(sgp_object,
 
 	if (sgp.percentiles.equated) {
 		year.for.equate <- tail(sort(unique(sgp_object@Data$YEAR)), 1)
+		if (!identical(years, year.for.equate)) {
+			message(paste("\tNOTE: Analyses involving equating only occur in most recent year. 'years' argument changed to", year.for.equate))
+			years <- year.for.equate
+		}
 		sgp_object@SGP$Linkages <- equateSGP(sgp_object, state, year.for.equate)
 		data.for.equate <- copy(sgp_object@Data)
 		setkeyv(data.for.equate, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", "SCALE_SCORE"))
