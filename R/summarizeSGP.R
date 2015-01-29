@@ -31,6 +31,7 @@
 	}
 
 	sgp.data.names <- names(sgp_object@Data)
+	sgp_key <- getKey(sgp_object)
 
 	### Export/Overwrite old summaries
 	if (!is.null(sgp_object@Summary)) {
@@ -167,7 +168,7 @@
 		}
 		tmp_data <- data.table(dbGetQuery(dbConnect(SQLite(), dbname = "tmp_data/TMP_Summary_Data.sqlite"), 
 			paste("select", paste(pull.vars, collapse = ","), "from summary_data"))) 
-		if(all((my.key <- intersect(getKey(sgp_object), variables.for.summaries)) %in% names(tmp_data))) setkeyv(tmp_data, my.key)
+		if(all((my.key <- intersect(sgp_key, variables.for.summaries)) %in% names(tmp_data))) setkeyv(tmp_data, my.key)
 		if ("ACHIEVEMENT_LEVEL" %in% names(tmp_data)) {
 			tmp_data[, ACHIEVEMENT_LEVEL := ordered(ACHIEVEMENT_LEVEL, levels = SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]])]
 		}
@@ -225,10 +226,9 @@
 
 		if (produce.confidence.interval & "CSEM" %in% confidence.interval.groups[['TYPE']]) {
 			tmp.list.1 <- list() 
-			tmp.number.simulated.sgps <- length(grep("SGP_SIM", names(sgp_object@SGP[["Simulated_SGPs"]][[1]])))
 			tmp.number.unique.cases <- dim(tmp.simulation.dt)[1]/tmp.number.simulated.sgps
 			for (i in seq(tmp.number.simulated.sgps)) {
-				tmp.subset.data <- pullData(state, pull.vars)[, c(getKey(sgp_object), 
+				tmp.subset.data <- pullData(state, pull.vars)[, c(sgp_key, 
 					unlist(strsplit(sgp.groups.to.summarize, ", "))), with=FALSE][pullData(state, pull.vars, sim.data = TRUE)[
 					seq(i, length=tmp.number.unique.cases, by=tmp.number.simulated.sgps)], allow.cartesian=TRUE]
 				tmp.list.1[[i]] <- tmp.subset.data[,list(median_na(SGP_SIM, NULL), mean_na(SGP_SIM, NULL)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")]
@@ -270,7 +270,7 @@
 				tmp.list[[i]][,YEAR_WITHIN:=rep(sgp_object@SGP[["Simulated_SGPs"]][[i]][["YEAR_WITHIN"]], each=length(grep("SGP_SIM", names(sgp_object@SGP[["Simulated_SGPs"]][[i]]))))]
 			}
 		}
-		return(data.table(rbindlist(tmp.list), VALID_CASE="VALID_CASE", key=getKey(sgp_object)))
+		return(data.table(rbindlist(tmp.list), VALID_CASE="VALID_CASE", key=sgp_key))
 	}
 
 	summarizeSGP.config <- function(sgp_object, config.type) {
@@ -485,6 +485,7 @@
 
 		if (!is.null(confidence.interval.groups) & "CSEM" %in% confidence.interval.groups[['TYPE']]) {
 			tmp.simulation.dt <- combineSims(sgp_object)
+			tmp.number.simulated.sgps <- length(grep("SGP_SIM", names(sgp_object@SGP[["Simulated_SGPs"]][[1]])))
 		} else tmp.simulation.dt <- NULL
 
 		### Create summary tables
@@ -526,8 +527,8 @@
 			if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
 				j <- k <- NULL ## To prevent R CMD check warnings
 				tmp.summary <- foreach(j=iter(sgp.groups), k=iter(sgp.groups %in% ci.groups), 
-					.options.multicore=list(preschedule = FALSE, set.seed = FALSE),
-					.export=c("sgpSummary", "summarizeSGP_INTERNAL"), .packages="SGP", .inorder=FALSE) %dopar% {
+					.options.multicore=list(preschedule = FALSE, set.seed = FALSE), .packages="SGP", .inorder=FALSE,
+					.export=c("sgpSummary", "summarizeSGP_INTERNAL"), .noexport("sgp_object")) %dopar% {
 						return(sgpSummary(j, k, tmp.simulation.dt))
 				}
 				names(tmp.summary) <- gsub(", ", "__", sgp.groups)
@@ -535,7 +536,7 @@
 				j <- k <- NULL ## To prevent R CMD check warnings
 				tmp.summary <- foreach(j=iter(sgp.groups), k=iter(rep(FALSE, length(sgp.groups))), 
 					.options.multicore=list(preschedule = FALSE, set.seed = FALSE), .packages="SGP", .inorder=FALSE,
-					.export=c("sgpSummary", "summarizeSGP_INTERNAL")) %dopar% {
+					.export=c("sgpSummary", "summarizeSGP_INTERNAL"), .noexport("sgp_object")) %dopar% {
 						return(sgpSummary(j, k, tmp.simulation.dt))
 				}
 				names(tmp.summary) <- gsub(", ", "__", sgp.groups)
@@ -767,7 +768,7 @@
 				tmp.dt.long <- sgp_object@Data[data.table("VALID_CASE", content_areas.by.years), nomatch=0][,
 					variables.for.summaries, with=FALSE][, highest.level.summary.grouping:=state, with=FALSE]
 				tmp.dt.long[, BY_GROWTH_ONLY := factor(is.na(tmp.dt.long[[my.sgp[1]]]), levels=c(FALSE, TRUE), labels=c("Students without SGP", "Students with SGP"))]
-				tmp.dt.long <- tmp.dt.long[data.table(sgp_object@Data_Supplementary[[j-1]][,VALID_CASE:="VALID_CASE"], key=getKey(sgp_object)), nomatch=0]
+				tmp.dt.long <- tmp.dt.long[data.table(sgp_object@Data_Supplementary[[j-1]][,VALID_CASE:="VALID_CASE"], key=sgp_key), nomatch=0]
 				
 				if (!is.null(summary.groups[["institution_multiple_membership"]][[j-1]][["WEIGHTS"]])) {
 					setnames(tmp.dt.long, summary.groups[["institution_multiple_membership"]][[j-1]][["WEIGHTS"]], "WEIGHT")
