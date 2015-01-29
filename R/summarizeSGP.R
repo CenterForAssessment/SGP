@@ -78,11 +78,6 @@
 		stop("User must supply an SGP object containing a @Data slot with long data. See documentation for details.")
 	}
 
-	## Set up parallel.config if NULL
-	if (is.null(parallel.config)) {
-		parallel.config=list(BACKEND="PARALLEL", WORKERS=list(SUMMARY=1))
-	}
-
 	###
 	## Utility Functions
 	###
@@ -520,8 +515,12 @@
 			if (!produce.all.summary.tables) ci.groups <- intersect(ci.groups, selected.summary.tables)
 		}
 
-		summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], FALSE))
-		tmp.summary <- sgpSummary(summary.iter[[56]][1], eval(parse(text= summary.iter[[56]][2])), tmp.simulation.dt)
+		## if NULL parallel.config
+		if (is.null(parallel.config)) {
+			summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], FALSE))
+			for (s in seq_along(summary.iter)){
+				tmp.summary[[s]] <- sgpSummary(summary.iter[[s]][1], eval(parse(text= summary.iter[[s]][2])), tmp.simulation.dt)
+		}
 		
 		if (parallel.config[["BACKEND"]] == "FOREACH") {
 			if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
@@ -733,7 +732,7 @@
 
 	dbDisconnect(sgp_data_for_summary)
 
-	par.start <- startParallel(parallel.config, 'SUMMARY')
+	if(!is.null(parallel.config)) par.start <- startParallel(parallel.config, 'SUMMARY')
 
 	for (j in seq(length(summary.groups[["institution_multiple_membership"]])+1)) {
 		for (i in summary.groups[["institution"]]) {
