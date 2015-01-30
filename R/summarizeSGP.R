@@ -518,65 +518,48 @@
 
 		## if NULL parallel.config
 		if (is.null(parallel.config)) {
-			summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], FALSE))
-			for (s in seq_along(summary.iter)){
-				tmp.summary[[s]] <- sgpSummary(summary.iter[[s]][1], eval(parse(text= summary.iter[[s]][2])), tmp.simulation.dt)
+			if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
+				summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], sgp.groups[x] %in% ci.groups))
+			} else summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], FALSE))
+
+			tmp.summary[[s]] <- sgpSummary(summary.iter[[s]][1], eval(parse(text= summary.iter[[s]][2])), tmp.simulation.dt)
+		} else {
+			if (any(toupper(parallel.config) =="TEST")) {
+				tmp.summary[[1]] <- sgpSummary(summary.iter[[56]][1], eval(parse(text = summary.iter[[56]][2])), tmp.simulation.dt)
+				parallel.config <- list(BACKEND="DONE")
+			}
 		}
+		
+		j <- k <- NULL ## To prevent R CMD check warnings
 		
 		if (parallel.config[["BACKEND"]] == "FOREACH") {
 			if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
-				j <- k <- NULL ## To prevent R CMD check warnings
-				tmp.summary <- foreach(j=iter(sgp.groups), k=iter(sgp.groups %in% ci.groups), 
-					.options.multicore=list(preschedule = FALSE, set.seed = FALSE), .packages="SGP", .inorder=FALSE,
-					.export=c("sgpSummary", "summarizeSGP_INTERNAL"), .noexport("sgp_object")) %dopar% {
-						return(sgpSummary(j, k, tmp.simulation.dt))
-				}
-				names(tmp.summary) <- gsub(", ", "__", sgp.groups)
-			} else {
-				j <- k <- NULL ## To prevent R CMD check warnings
-				tmp.summary <- foreach(j=iter(sgp.groups), k=iter(rep(FALSE, length(sgp.groups))), 
-					.options.multicore=list(preschedule = FALSE, set.seed = FALSE), .packages="SGP", .inorder=FALSE,
-					.export=c("sgpSummary", "summarizeSGP_INTERNAL"), .noexport("sgp_object")) %dopar% {
-						return(sgpSummary(j, k, tmp.simulation.dt))
-				}
-				names(tmp.summary) <- gsub(", ", "__", sgp.groups)
+				k.iter <- iter(sgp.groups %in% ci.groups)
+			} else	k.iter <- iter(rep(FALSE, length(sgp.groups)))
+
+			tmp.summary <- foreach(j = iter(sgp.groups), k = k.iter, 
+				.options.multicore=list(preschedule = FALSE, set.seed = FALSE), .packages="SGP", .inorder=FALSE,
+				.export=c("sgpSummary", "summarizeSGP_INTERNAL"), .noexport ="sgp_object", .errorhandling = "pass") %dopar% {
+					return(sgpSummary(j, k, tmp.simulation.dt))
 			}
 		} else { # END FOREACH flavor
+		### SNOW and MULTICORE
+		if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
+			summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], sgp.groups[x] %in% ci.groups))
+		} else summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], FALSE))
 
 		if (par.start$par.type=="SNOW") {
-			if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
-				j <- k <- NULL ## To prevent R CMD check warnings
-				summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], sgp.groups[x] %in% ci.groups))
-				tmp.summary <- parLapply(par.start$internal.cl, summary.iter, 
-					function(iter) sgpSummary(iter[1], eval(parse(text=iter[2])), tmp.simulation.dt))
-				names(tmp.summary) <- gsub(", ", "__", sgp.groups)
-			} else {
-				j <- k <- NULL ## To prevent R CMD check warnings
-				summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], FALSE))
-				tmp.summary <- parLapply(par.start$internal.cl, summary.iter, 
-					function(iter) sgpSummary(iter[1], eval(parse(text=iter[2])), tmp.simulation.dt))
-				names(tmp.summary) <- gsub(", ", "__", sgp.groups)
-			}
-			# if (is.null(parallel.config[['CLUSTER.OBJECT']]))	 stopCluster(internal.cl)
-		} # END 'SNOW' Flavor
- 
-		if (par.start$par.type=="MULTICORE") {
-			if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
-				j <- k <- NULL ## To prevent R CMD check warnings
-				summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], sgp.groups[x] %in% ci.groups))
-				tmp.summary <- mclapply(summary.iter, 
-					function(iter) sgpSummary(iter[1], eval(parse(text=iter[2])), tmp.simulation.dt), mc.cores=par.start$workers, mc.preschedule=FALSE)
-				names(tmp.summary) <- gsub(", ", "__", sgp.groups)
-			} else {
-				j <- k <- NULL ## To prevent R CMD check warnings
-				summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], FALSE))
-				tmp.summary <- mclapply(summary.iter, 
-					function(iter) sgpSummary(iter[1], eval(parse(text=iter[2])), tmp.simulation.dt), mc.cores=par.start$workers, mc.preschedule=FALSE)
-				names(tmp.summary) <- gsub(", ", "__", sgp.groups)
-			}
-		} # END 'MULTICORE' Flavor
-		} # END not FOREACH
+			tmp.summary <- parLapply(par.start$internal.cl, summary.iter, 
+				function(iter) sgpSummary(iter[1], eval(parse(text=iter[2])), tmp.simulation.dt))
 
+		} # END 'SNOW' Flavor
+		if (par.start$par.type=="MULTICORE") {
+			tmp.summary <- mclapply(summary.iter, 
+				function(iter) sgpSummary(iter[1], eval(parse(text=iter[2])), tmp.simulation.dt), mc.cores=par.start$workers, mc.preschedule=FALSE)
+		} # END 'MULTICORE' Flavor
+		} # END else not FOREACH
+
+		names(tmp.summary) <- gsub(", ", "__", sgp.groups)
 		return(tmp.summary)
 	} ### END summarizeSGP_INTERNAL
 
