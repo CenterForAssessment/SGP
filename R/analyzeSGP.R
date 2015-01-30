@@ -304,7 +304,7 @@ function(sgp_object,
 	if (sgp.percentiles.equated) {
 		year.for.equate <- tail(sort(unique(sgp_object@Data$YEAR)), 1)
 		if (!identical(years, year.for.equate)) {
-			message(paste("\tNOTE: Analyses involving equating only occur in most recent year. 'years' argument changed to", year.for.equate))
+			message(paste("\tNOTE: Analyses involving equating only occur in most recent year. 'years' argument changed to ", year.for.equate, ".", sep=""))
 			years <- year.for.equate
 		}
 		if (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline) {
