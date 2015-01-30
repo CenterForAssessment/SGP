@@ -516,20 +516,17 @@
 			if (!produce.all.summary.tables) ci.groups <- intersect(ci.groups, selected.summary.tables)
 		}
 
+		if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
+			summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], sgp.groups[x] %in% ci.groups))
+		} else summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], FALSE))
+		
 		## if NULL parallel.config
 		if (is.null(parallel.config)) {
-			if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
-				summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], sgp.groups[x] %in% ci.groups))
-			} else summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], FALSE))
-
 			tmp.summary[[s]] <- sgpSummary(summary.iter[[s]][1], eval(parse(text= summary.iter[[s]][2])), tmp.simulation.dt)
 		} else {
-			if (any(toupper(parallel.config) =="TEST")) {
-				tmp.summary[[1]] <- sgpSummary(summary.iter[[56]][1], eval(parse(text = summary.iter[[56]][2])), tmp.simulation.dt)
-				parallel.config <- list(BACKEND="DONE")
-			}
+			par.start <- startParallel(parallel.config, 'SUMMARY')
 		}
-		
+
 		j <- k <- NULL ## To prevent R CMD check warnings
 		
 		if (parallel.config[["BACKEND"]] == "FOREACH") {
@@ -543,11 +540,8 @@
 					return(sgpSummary(j, k, tmp.simulation.dt))
 			}
 		} else { # END FOREACH flavor
-		### SNOW and MULTICORE
-		if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
-			summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], sgp.groups[x] %in% ci.groups))
-		} else summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], FALSE))
 
+		### SNOW and MULTICORE
 		if (par.start$par.type=="SNOW") {
 			tmp.summary <- parLapply(par.start$internal.cl, summary.iter, 
 				function(iter) sgpSummary(iter[1], eval(parse(text=iter[2])), tmp.simulation.dt))
@@ -560,6 +554,7 @@
 		} # END else not FOREACH
 
 		names(tmp.summary) <- gsub(", ", "__", sgp.groups)
+		stopParallel(parallel.config, par.start)
 		return(tmp.summary)
 	} ### END summarizeSGP_INTERNAL
 
@@ -716,8 +711,6 @@
 
 	dbDisconnect(sgp_data_for_summary)
 
-	if(!is.null(parallel.config)) par.start <- startParallel(parallel.config, 'SUMMARY')
-
 	for (j in seq(length(summary.groups[["institution_multiple_membership"]])+1)) {
 		for (i in summary.groups[["institution"]]) {
 			if (j == 1) {
@@ -768,7 +761,6 @@
 
 	if (del.dir) unlink("tmp_data", recursive=TRUE, force=TRUE) else unlink("tmp_data/TMP_Summary_Data.sqlite", recursive=TRUE)
 	
-	stopParallel(parallel.config, par.start)
 	message(paste("Finished summarizeSGP", date(), "in", timetaken(started.at), "\n"))
 	return(sgp_object)
 } ## END summarizeSGP Function
