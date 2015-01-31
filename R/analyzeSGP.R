@@ -314,7 +314,7 @@ function(sgp_object,
 		sgp_object@SGP$Linkages <- equateSGP(sgp_object, state, year.for.equate)
 		data.for.equate <- copy(sgp_object@Data)
 		setkeyv(data.for.equate, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", "SCALE_SCORE"))
-		data.for.equate <- convertScaleScore(data.for.equate, year.for.equate, sgp_object@SGP$Linkages, conversion.type="NEW_TO_OLD")
+		data.for.equate <- convertScaleScore(data.for.equate, year.for.equate, sgp_object@SGP$Linkages, conversion.type="NEW_TO_OLD", state)
 		setkeyv(data.for.equate, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 		sgp_object@Data <- data.for.equate
 		equate.variable <- "SCALE_SCORE_EQUATED"
