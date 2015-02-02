@@ -21,7 +21,8 @@ outputSGP(sgp_object,
         outputSGP.directory="Data",
 	outputSGP.translate.names=TRUE,
 	outputSGP.projection.years.for.target=3,
-	outputSGP.pass.through.variables=NULL)
+	outputSGP.pass.through.variables=NULL,
+	SGPstateData=SGPstateData)
 }
 
 \arguments{
@@ -60,7 +61,10 @@ outputSGP(sgp_object,
   }
   \item{outputSGP.projection.years.for.target}{An integer argument indicating what projection to supply with regard to the number of years projected forward.
   }
-  \item{outputSGP.pass.through.variables}{A character vector of variables in @Data that are to be merged with output in RLI output.type. Default is NULL or no }
+  \item{outputSGP.pass.through.variables}{A character vector of variables in @Data that are to be merged with output in RLI output.type. Default is NULL or no.
+  }
+  \item{SGPstateData}{Argument to pass SGPstateData meta-data to function.
+  }
 }
 
 \value{Function writes data in multiple formats including .Rdata, .txt (pipe delimited) and zipped versions of .txt.  

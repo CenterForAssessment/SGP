@@ -1,7 +1,8 @@
 `getPreferredSGP` <- 
 function(tmp.data,
 	state,
-	type="COHORT_REFERENCED") {
+	type="COHORT_REFERENCED",
+	SGPstateData=SGPstateData) {
 
 	YEAR <- SGP_NORM_GROUP <- VALID_CASE <- CONTENT_AREA <- ID <- PREFERENCE <- NULL
 

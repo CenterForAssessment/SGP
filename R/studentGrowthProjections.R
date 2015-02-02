@@ -17,6 +17,7 @@ function(panel.data,	## REQUIRED
 	performance.level.cutscores,
 	calculate.sgps=TRUE,
 	convert.0and100=TRUE,
+	sgp.projections.equated=NULL,
 	projection.unit="YEAR",
 	projection.unit.label=NULL,
 	percentile.trajectory.values=NULL,
@@ -26,7 +27,8 @@ function(panel.data,	## REQUIRED
 	lag.increment=0,
 	sgp.exact.grade.progression=FALSE,
 	projcuts.digits=NULL,
-	print.time.taken=TRUE) {
+	print.time.taken=TRUE,
+	SGPstateData=SGPstateData) {
 
 	started.at=proc.time()
 	started.date <- date()

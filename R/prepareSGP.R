@@ -4,7 +4,8 @@ function(data,
 	state=NULL,
 	var.names=NULL,
 	create.additional.variables=TRUE,
-	fix.duplicates="keep.all") {
+	fix.duplicates="keep.all",
+	SGPstateData=SGPstateData) {
 
 	## Print start time
 
@@ -126,7 +127,6 @@ function(data,
 				data@Names <- SGPstateData[[state]][["Variable_Name_Lookup"]]
 			} 
 			if (identical(state, "DEMO") & !identical(data@Names, SGPstateData[[state]][["Variable_Name_Lookup"]])) {
-				suppressPackageStartupMessages(require(SGPdata))
 				data@Names <- getNames(sgpData_LONG, var.names)
 			} 
 		}

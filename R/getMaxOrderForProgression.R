@@ -1,7 +1,8 @@
 `getMaxOrderForProgression` <- 
 function(year,
 	content_area,
-	state) {
+	state,
+	SGPstateData=SGPstateData) {
 
 		if (is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[content_area]])) {
 			return(SGPstateData[[state]][["SGP_Configuration"]][["max.order.for.projection"]]) ## Returns NULL if it doesn't exist

@@ -8,7 +8,8 @@ function(sgp_object,
 	update.save.shell.only=FALSE,
 	configuration.year,
 	update.ids=NULL,
-	parallel.config=NULL) {
+	parallel.config=NULL,
+	SGPstateData=SGPstateData) {
 
 	started.at <- proc.time()
 	message(paste("\nStarted rliSGP", date()), "\n")

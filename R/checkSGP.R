@@ -1,6 +1,7 @@
 `checkSGP` <-
 function(sgp_object, 
-	state=NULL) {
+	state=NULL,
+	SGPstateData=SGPstateData) {
 
 	ID <- NULL
 

@@ -19,7 +19,8 @@ function(sgp_object,
 	sgp.use.my.coefficient.matrices,
 	calculate.simex,
 	calculate.simex.baseline,
-	year.for.equate) {
+	year.for.equate,
+	SGPstateData=SGPstateData) {
 
 	YEAR <- CONTENT_AREA <- VALID_CASE <- NULL
 

@@ -32,7 +32,8 @@ studentGrowthPlot_Styles(
            sgPlot.baseline,
 	   sgPlot.sgp.targets.timeframe,
            sgPlot.zip,
-           sgPlot.output.format)
+           sgPlot.output.format,
+	   SGPstateData=SGPstateData)
 }
 
 \arguments{
@@ -86,6 +87,8 @@ to version 0.9-9.7, this was the only way of bundling reports and was thus the d
   \item{sgPlot.zip}{A Boolean argument indicating whether to school folders.
   }
   \item{sgPlot.output.format}{Argument indicating the desired type of output format for student growth plots. Either 'PDF', 'PNG', or 'PDF_PIECES'.
+  }
+  \item{SGPstateData}{Argument to pass SGPstateData meta-data to function.
   }
 }
 

@@ -7,7 +7,8 @@ function(
 	state, 
 	variable=NULL, 
 	distribution=NULL, 
-	round=NULL) {
+	round=NULL,
+	SGPstateData=SGPstateData) {
 
 	GRADE <- CONTENT_AREA <- YEAR <- NULL
 

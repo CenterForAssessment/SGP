@@ -29,6 +29,7 @@ function(what_sgp_object=NULL,
 	goodness.of.fit.print=TRUE,
 	parallel.config=NULL,
 	sgp.sqlite = NULL,
+	SGPstateData=SGPstateData,
 	...) {
 
 		started.at <- proc.time()

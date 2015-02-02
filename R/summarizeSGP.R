@@ -11,7 +11,8 @@ function(sgp_object,
          projection.years.for.target=3,
          save.old.summaries=FALSE,
 	 highest.level.summary.grouping="STATE",
-         parallel.config=NULL) {
+         parallel.config=NULL,
+         SGPstateData=SGPstateData) {
 
 	started.at <- proc.time()
 	message(paste("\nStarted summarizeSGP", date()))

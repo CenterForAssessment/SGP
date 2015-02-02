@@ -53,7 +53,8 @@ function(sgp_object,
 		gaPlot.max.order.for.progression=NULL,
 		gaPlot.start.points="Achievement Level Cuts",
 		gaPlot.folder="Visualizations/growthAchievementPlots",
-		parallel.config=NULL) {
+		parallel.config=NULL,
+		SGPstateData=SGPstateData) {
 
 	started.at.visualizeSGP <- proc.time()
 	message(paste("\nStarted visualizeSGP", date(), "\n"))
@@ -746,7 +747,6 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 	#### Anonymize (if requested) (NOT necessary if wide data is provided)
  
 		if (sgPlot.anonymize) {
-			suppressPackageStartupMessages(require(randomNames))
 			if (!"ETHNICITY" %in% names(tmp.table)) tmp.table[["ETHNICITY"]] <- 1
 			if (!"GENDER" %in% names(tmp.table)) tmp.table[["GENDER"]] <- round(runif(dim(tmp.table)[1], min=0, max=1))
 			if ("LAST_NAME" %in% names(tmp.table)) tmp.table[,LAST_NAME:=NULL]

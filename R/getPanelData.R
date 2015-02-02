@@ -5,7 +5,8 @@ function(sgp.data,
 	sgp.iter,
 	sgp.csem=NULL,
 	sgp.scale.score.equated=NULL,
-	sgp.targets=NULL) {
+	sgp.targets=NULL,
+	SGPstateData=SGPstateData) {
 
 	YEAR <- CONTENT_AREA <- VALID_CASE <- V3 <- V5 <- ID <- GRADE <- SCALE_SCORE <- YEAR_WITHIN <- tmp.timevar <- FIRST_OBSERVATION <- LAST_OBSERVATION <- ACHIEVEMENT_LEVEL <- NULL
 

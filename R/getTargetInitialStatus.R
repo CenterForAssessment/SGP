@@ -2,7 +2,8 @@
 function(achievement_level,
 	state,
 	state.iter=NULL,
-	status.type="CATCH_UP_KEEP_UP") {
+	status.type="CATCH_UP_KEEP_UP",
+	SGPstateData=SGPstateData) {
 
 		if (!is.null(SGPstateData[[state]][['Achievement']][['Cutscore_Information']])) {
 			tmp.state.level <- which(sapply(lapply(SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]][['State_Levels']], '[[', 1), function(x) state.iter %in% x))

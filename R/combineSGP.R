@@ -16,7 +16,8 @@ function(
 	max.sgp.target.years.forward=3,
 	update.all.years=FALSE,
 	sgp.config=NULL,
-	parallel.config=NULL) {
+	parallel.config=NULL,
+	SGPstateData=SGPstateData) {
 
 	started.at <- proc.time()
 	message(paste("Started combineSGP", date()))

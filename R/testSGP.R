@@ -2,7 +2,8 @@
 function(
 	TEST_NUMBER,
 	save.results=TRUE,
-	memory.profile=FALSE) {
+	memory.profile=FALSE,
+	SGPstateData=SGPstateData) {
 
 	YEAR <- GRADE <- NULL
 
@@ -11,8 +12,6 @@ function(
 		message("\t\t1. abcSGP test using all available years.")
 		message("\t\t2. abcSGP test using all available years except most recent followed by an updated analysis using the most recent year's data.")
 	}
-
-	suppressPackageStartupMessages(require(SGPdata))
 
 	#######################################################################################################################################################
 	###
@@ -25,7 +24,6 @@ function(
 
 		options(error=recover)
 		options(warn=2)
-		suppressPackageStartupMessages(require(parallel))
 		Demonstration_SGP <- tmp.messages <- NULL
 		number.cores <- detectCores(logical=FALSE)-1 # adding logical=FALSE seems get physical cores only in Windows (which is good for SNOW/SOCK)
 
@@ -153,7 +151,6 @@ function(
 
 		options(error=recover)
 		options(warn=2)
-		suppressPackageStartupMessages(require(parallel))
 		Demonstration_SGP <- NULL
 		Demonstration_Data_LONG <- subset(sgpData_LONG, YEAR %in% c("2009_2010", "2010_2011", "2011_2012", "2012_2013"))
 		Demonstration_Data_LONG_2013_2014 <- subset(sgpData_LONG, YEAR %in% c("2013_2014"))
@@ -307,7 +304,6 @@ function(
 	for (i in toupper(TEST_NUMBER)) {
 		options(error=recover)
 		options(warn=2)
-		suppressPackageStartupMessages(require(parallel))
 		Demonstration_SGP <- ID <- CONTENT_AREA <- NULL
 		Demonstration_Data_LONG_2013_2014 <- subset(sgpData_LONG, YEAR %in% c("2013_2014"))
 		number.cores <- detectCores()-1
@@ -458,7 +454,6 @@ function(
 
 	options(error=recover)
 	options(warn=2)
-	suppressPackageStartupMessages(require(parallel))
 	number.cores <- detectCores()-1
 	Demonstration_SGP <- tmp.messages <- NULL
 
@@ -666,7 +661,6 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 
 
 	options(error=recover) # Don't use options(warn=2) - get warnings about knots and bounds from BASELINE SIMEX
-	suppressPackageStartupMessages(require(parallel))
 	number.cores <- detectCores(logical=FALSE)-1
 	Demonstration_SGP <- tmp.messages <- NULL
 
@@ -771,7 +765,6 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 
 	options(error=recover)
 	options(warn=2)
-	suppressPackageStartupMessages(require(parallel))
 	number.cores <- detectCores()-1
 	Demonstration_SGP <- tmp.messages <- NULL
 
@@ -812,7 +805,6 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 
 	options(error=recover)
 	options(warn=2)
-	suppressPackageStartupMessages(require(parallel))
 	number.cores <- detectCores()-1
         if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE = 'doParallel', "
 	Demonstration_SGP <- tmp.messages <- NULL

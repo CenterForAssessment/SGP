@@ -7,7 +7,8 @@ function(sgp_object,
 	tmp.years.content_areas.grades,
 	sgp.config=NULL,
 	projection_group.identifier=NULL,
-	parallel.config=NULL) {
+	parallel.config=NULL,
+	SGPstateData=SGPstateData) {
 
 	VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- GRADE <- YEAR_WITHIN <- NULL
 

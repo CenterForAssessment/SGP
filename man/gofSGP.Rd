@@ -16,7 +16,8 @@ gofSGP(
 	grades=NULL,
 	use.sgp="SGP",
 	output.format="PDF",
-	color.scale="reds.and.blues")
+	color.scale="reds.and.blues",
+	SGPstateData=SGPstateData)
 }
 
 \arguments{
@@ -38,6 +39,8 @@ gofSGP(
   \item{output.format}{Character vectors (defaults to 'PDF') indicating what driver to use to output results. Options currently include 'PDF', 'PNG' and 'SVG'.  'SVG' is currently experimental.
   }
   \item{color.scale}{Character vectors (defaults to 'red') indicating what color palette to use for creating percentile distribution table.
+  }
+  \item{SGPstateData}{Argument to pass SGPstateData meta-data to function.
   }
 }
 

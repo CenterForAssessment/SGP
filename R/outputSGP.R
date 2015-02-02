@@ -12,7 +12,8 @@ function(sgp_object,
 	outputSGP.directory="Data",
 	outputSGP.translate.names=TRUE,
 	outputSGP.projection.years.for.target=3,
-	outputSGP.pass.through.variables=NULL) {
+	outputSGP.pass.through.variables=NULL,
+	SGPstateData=SGPstateData) {
 
         started.at.outputSGP <- proc.time()
         message(paste("\nStarted outputSGP ", date(), ": Files produced from outputSGP saved in '", outputSGP.directory, "'\n", sep=""))
@@ -454,7 +455,6 @@ function(sgp_object,
 		#### Anonymize (if requested) (NOT necessary if wide data is provided)
  
 		if (outputSGP.anonymize) {
-			suppressPackageStartupMessages(require(randomNames))
 			if (!"ETHNICITY" %in% names(tmp.table)) tmp.table[["ETHNICITY"]] <- 1
 			if (!"GENDER" %in% names(tmp.table)) tmp.table[["GENDER"]] <- round(runif(dim(tmp.table)[1], min=0, max=1))
 			tmp.dt <- tmp.table[,list(ID, ETHNICITY, GENDER)]

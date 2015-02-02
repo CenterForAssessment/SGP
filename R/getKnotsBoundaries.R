@@ -1,7 +1,8 @@
 `getKnotsBoundaries` <- 
 function(sgp.iter,
 	state,
-	sgp.iter.type=c("Standard", "sgp.percentiles")) {
+	sgp.iter.type=c("Standard", "sgp.percentiles"),
+	SGPstateData=SGPstateData) {
 
 	if (sgp.iter.type[1]=="Standard") {
 		if (sgp.iter.type[2]=="sgp.percentiles") my.content.areas <- "sgp.content.areas"

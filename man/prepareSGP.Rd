@@ -13,7 +13,8 @@ prepareSGP(data,
 	state=NULL,
 	var.names=NULL,
 	create.additional.variables=TRUE,
-	fix.duplicates="keep.all")
+	fix.duplicates="keep.all",
+	SGPstateData=SGPstateData)
 }
 
 \arguments{
@@ -30,6 +31,8 @@ for summarizing and reporting.
   \code{HIGH_NEED_STATUS} identifying the top and bottom quartile of students in each school by year by content area by grade grouping.
   }
   \item{fix.duplicates}{Argument for future functionality intended to deal with duplicate cases in supplied long data.
+  }
+  \item{SGPstateData}{Argument to pass SGPstateData meta-data to function.
   }
 }
 

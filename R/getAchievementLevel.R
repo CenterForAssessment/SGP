@@ -5,7 +5,8 @@ function(sgp_data,
 	content_area=NULL,
 	grade=NULL,
 	achievement.level.name="ACHIEVEMENT_LEVEL",
-	scale.score.name="SCALE_SCORE") {
+	scale.score.name="SCALE_SCORE",
+	SGPstateData=SGPstateData) {
 
 	CONTENT_AREA <- YEAR <- GRADE <- STATE <- TMP_ACH_LEVEL <- SCALE_SCORE <- ACHIEVEMENT_LEVEL <- NULL
 

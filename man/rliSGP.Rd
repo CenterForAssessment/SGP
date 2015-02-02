@@ -16,7 +16,8 @@ rliSGP(
 	update.save.shell.only=FALSE,
         configuration.year,
         update.ids=NULL,
-        parallel.config=NULL)
+        parallel.config=NULL,
+	SGPstateData=SGPstateData)
 }
 
 \arguments{
@@ -41,6 +42,8 @@ is to replace it. NOTE that ID needn't be replaced in either 'sgp_object' nor 'a
 analysis. Default is NULL, no ID replacement is performed.
   }
   \item{parallel.config}{Argument passed to \code{\link{abcSGP}} or \code{\link{updateSGP}} to activate parallel processing with an appropriate backend.
+  }
+  \item{SGPstateData}{Argument to pass SGPstateData meta-data to function.
   }
 }
 

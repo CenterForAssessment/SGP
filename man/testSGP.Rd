@@ -8,7 +8,8 @@ testSGP runs large scale tests of the SGP package to test for consistent perform
 \usage{
 testSGP(TEST_NUMBER,
 	save.results=TRUE,
-	memory.profile=FALSE)
+	memory.profile=FALSE,
+	SGPstateData=SGPstateData)
 }
 
 \arguments{
@@ -17,6 +18,8 @@ testSGP(TEST_NUMBER,
   \item{save.results}{A Boolean variable, defaulting to FALSE, indicating whether the results of the analysis is saved to the working directory. 
   }
   \item{memory.profile}{A Boolean variable indicating whether to use memory profiling via \code{Rprof}.  Experimental. Defaults to FALSE. 
+  }
+  \item{SGPstateData}{Argument to pass SGPstateData meta-data to function.
   }
 }
 

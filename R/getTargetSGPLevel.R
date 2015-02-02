@@ -1,7 +1,8 @@
 `getTargetSGPLevel` <- 
 function(state,
 	state.iter=NULL,
-	target.level){
+	target.level,
+	SGPstateData=SGPstateData){
 		if (!is.null(SGPstateData[[state]][['Achievement']][['Cutscore_Information']])) {
 			tmp.state.level <- which(sapply(lapply(SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]][['State_Levels']], '[[', 1), function(x) state.iter %in% x))
 			if (target.level=="CATCH_UP_KEEP_UP") {

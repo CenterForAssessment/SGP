@@ -18,7 +18,8 @@ summarizeSGP(sgp_object,
            projection.years.for.target=3,
            save.old.summaries=FALSE,
 	   highest.level.summary.grouping="STATE",
-           parallel.config=NULL) 
+           parallel.config=NULL,
+	   SGPstateData=SGPstateData) 
 }
 
 \arguments{
@@ -95,6 +96,8 @@ The WORKERS element is a list with SUMMARY specifying the number of processors (
 Default is FOREACH as the back end, TYPE=NA and WORKERS=1, which produces summary tables sequentially: 'list(BACKEND="FOREACH", TYPE=NA, WORKERS=list(SUMMARY=1))' 
 
 Example parallel use cases are provided below.
+  }
+  \item{SGPstateData}{Argument to pass SGPstateData meta-data to function.
   }
 }
 

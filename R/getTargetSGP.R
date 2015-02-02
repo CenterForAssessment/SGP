@@ -7,7 +7,8 @@ function(sgp_object,
 	target.level,
 	max.sgp.target.years.forward=3,
 	subset.ids=NULL,
-	return.lagged.status=TRUE) {
+	return.lagged.status=TRUE,
+	SGPstateData=SGPstateData) {
 
 	VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- FIRST_OBSERVATION <- LAST_OBSERVATION <- STATE <- SGP_PROJECTION_GROUP <- NULL
 

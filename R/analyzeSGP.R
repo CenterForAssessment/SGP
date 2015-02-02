@@ -33,6 +33,7 @@ function(sgp_object,
          get.cohort.data.info=FALSE,
          sgp.sqlite=NULL,
          sgp.percentiles.equated=FALSE,
+         SGPstateData=SGPstateData,
          ...) {
 
 	started.at <- proc.time()
@@ -320,10 +321,11 @@ function(sgp_object,
 		equate.variable <- "SCALE_SCORE_EQUATED"
 		equate.label <- "EQUATED"
 		sgp.percentiles.equated <- TRUE
+		sgp.projections.equated <- list(Year=year.for.equate, Linkages=sgp_object@SGP[['Linkages']])
 		tmp_sgp_object <- list(Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]], Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]], Linkages=sgp_object@SGP[['Linkages']])
 	} else {
 		sgp.percentiles.equated <- FALSE
-		equate.variable <- equate.label <- year.for.equate <- NULL
+		equate.variable <- equate.label <- year.for.equate <- sgp.projections.equated <- NULL
 		tmp_sgp_object <- list(Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]], Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]])
 	}
 
@@ -1041,6 +1043,7 @@ function(sgp_object,
 						projection.unit=sgp.projections.projection.unit,
 						projection.unit.label=sgp.projections.projection.unit.label,
 						return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
+						sgp.projections.equated=sgp.projections.equated,
 						...))
 				}
 				tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -1078,6 +1081,7 @@ function(sgp_object,
 						projection.unit=sgp.projections.projection.unit,
 						projection.unit.label=sgp.projections.projection.unit.label,
 						return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
+						sgp.projections.equated=sgp.projections.equated,
 						...))
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -1116,6 +1120,7 @@ function(sgp_object,
 						projection.unit=sgp.projections.projection.unit,
 						projection.unit.label=sgp.projections.projection.unit.label,
 						return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
+						sgp.projections.equated=sgp.projections.equated,
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -1296,6 +1301,7 @@ function(sgp_object,
 						projection.unit=sgp.projections.projection.unit,
 						projection.unit.label=sgp.projections.projection.unit.label,
 						return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
+						sgp.projections.equated=sgp.projections.equated,
 						...))
 				}
 				tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -1334,6 +1340,7 @@ function(sgp_object,
 						projection.unit=sgp.projections.projection.unit,
 						projection.unit.label=sgp.projections.projection.unit.label,
 						return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
+						sgp.projections.equated=sgp.projections.equated,
 						...))
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -1373,6 +1380,7 @@ function(sgp_object,
 						projection.unit=sgp.projections.projection.unit,
 						projection.unit.label=sgp.projections.projection.unit.label,
 						return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
+						sgp.projections.equated=sgp.projections.equated,
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -1683,6 +1691,7 @@ function(sgp_object,
 					projection.unit=sgp.projections.projection.unit,
 					projection.unit.label=sgp.projections.projection.unit.label,
 					return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
+					sgp.projections.equated=sgp.projections.equated,
 					...)
 			suppressMessages(gc())
 			}
@@ -1762,6 +1771,7 @@ function(sgp_object,
 					projection.unit=sgp.projections.projection.unit,
 					projection.unit.label=sgp.projections.projection.unit.label,
 					return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
+					sgp.projections.equated=sgp.projections.equated,
 					...)
 			suppressMessages(gc())
 			}

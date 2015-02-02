@@ -3,7 +3,8 @@ function(list.of.splineMatrix,
 	sgp_object=NULL,
 	state=NULL,
 	content_area=NULL,
-	year=NULL) {
+	year=NULL,
+	SGPstateData=SGPstateData) {
 
 	if (is.splineMatrix(list.of.splineMatrix)) {
 		list.of.splineMatrix <- list(list.of.splineMatrix)
