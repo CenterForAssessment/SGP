@@ -31,9 +31,10 @@ function(what_sgp_object=NULL,
 	sgp.sqlite = NULL,
 	...) {
 
-		started.at <- proc.time()
-		message(paste("\nStarted updateSGP", date()), "\n")
+	started.at <- proc.time()
+	message(paste("\nStarted updateSGP", date()), "\n")
 
+	SGPstateData <- SGPstateData
 
 	### Create state (if NULL) from sgp_object (if possible)
 

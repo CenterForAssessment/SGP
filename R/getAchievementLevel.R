@@ -8,6 +8,7 @@ function(sgp_data,
 	scale.score.name="SCALE_SCORE") {
 
 	CONTENT_AREA <- YEAR <- GRADE <- STATE <- TMP_ACH_LEVEL <- SCALE_SCORE <- ACHIEVEMENT_LEVEL <- NULL
+	SGPstateData <- SGPstateData
 
 	###  Utility functions
 	

@@ -20,6 +20,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 ### Create relevant variables
 
 CUTLEVEL <- level_1_curve <- NULL ## To prevent R CMD check warnings
+SGPstateData <- SGPstateData
 number.achievement.level.regions <- length(SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Achievement_Level_Labels"]])
 achievement.level.labels <- SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Achievement_Level_Labels"]]
 number.growth.levels <- length(SGPstateData[[Report_Parameters$State]][["Growth"]][["Levels"]])

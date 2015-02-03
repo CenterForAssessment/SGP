@@ -6,6 +6,8 @@ function(sgp_object,
 	sgp.type,
 	use.cohort.for.baseline.when.missing=NULL) {
 
+	SGPstateData <- SGPstateData
+
         if (is.null(use.cohort.for.baseline.when.missing)) {
                 if (!is.null(state) && is.null(SGPstateData[[state]][["SGP_Configuration"]][["use.cohort.for.baseline.when.missing"]])) {
                         use.cohort.for.baseline.when.missing <- FALSE

@@ -26,6 +26,7 @@
 		sgPlot.output.format) {
 
 	CUTLEVEL <- ID <- CONTENT_AREA <- GRADE <- CUTSCORES <- YEAR <- NULL ## To prevent R CMD check warnings
+	SGPstateData <- SGPstateData
 
 	### Utility functions
 

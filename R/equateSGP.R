@@ -5,6 +5,7 @@ function(sgp_object,
 	equating.method="equip") {
 
 	VALID_CASE <- YEAR <- CONTENT_AREA <- GRADE <- NULL
+	SGPstateData <- SGPstateData
 
 	tmp.list <- list()
 	current.year <- SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]

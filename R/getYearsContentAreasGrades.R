@@ -5,6 +5,7 @@ function(state,
 	content_areas_domains=NULL) {
 
 	CONTENT_AREA <- NULL
+	SGPstateData <- SGPstateData
 
 	tmp.list <- list()
 	if (is.null(content_areas)) tmp.content_areas <- content_areas_domains else tmp.content_areas <- content_areas

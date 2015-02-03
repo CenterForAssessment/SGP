@@ -22,6 +22,7 @@ function(sgp_object,
 	year.for.equate) {
 
 	YEAR <- CONTENT_AREA <- VALID_CASE <- NULL
+	SGPstateData <- SGPstateData
 
 	### Define variables
 

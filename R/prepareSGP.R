@@ -12,6 +12,7 @@ function(data,
 	message(paste("\nStarted prepareSGP", date()))
 
 	VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- ID <- GRADE <- SCALE_SCORE <- DUPLICATED_CASES <- NULL
+	SGPstateData <- SGPstateData
 
 	## Get state (if possible)
 

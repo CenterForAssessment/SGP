@@ -19,6 +19,7 @@ function(sgp_object,
 	### Set variables to NULL to prevent R CMD check warnings
 
 	tmp.simulation.dt <- variable <- WEIGHT <- ENROLLMENT_STATUS <- names.type <- names.sgp <- names.output <- BY_GROWTH_ONLY <- VALID_CASE <- YEAR_WITHIN <- NULL
+	SGPstateData <- SGPstateData
 
 	
 	### Create state (if NULL) from sgp_object (if possible)

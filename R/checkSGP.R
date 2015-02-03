@@ -3,6 +3,7 @@ function(sgp_object,
 	state=NULL) {
 
 	ID <- NULL
+	SGPstateData <- SGPstateData
 
 	### Check if sgp_object is of class SGP
 

@@ -6,6 +6,8 @@ function(scale_score,
 	grade,
 	output.digits=1) {
 
+	SGPstateData <- SGPstateData
+
 	if (content_area %in% names(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]]) &&
 		grade %in% as.numeric(matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]]), "_")), 
 			ncol=2, byrow=TRUE)[,2])) {

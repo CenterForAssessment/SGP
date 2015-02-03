@@ -10,6 +10,7 @@ function(sgp_object,
 	parallel.config=NULL) {
 
 	VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- GRADE <- YEAR_WITHIN <- NULL
+	SGPstateData <- SGPstateData
 
 	### Define variables
 

@@ -18,6 +18,8 @@
 	assessment.name) { 
 
 	CUTLEVEL <- GRADE <- YEAR <- ID <- SCALE_SCORE <- level_1_curve <- V1 <- TRANSFORMED_SCALE_SCORE <- PERCENTILE <- GRADE_NUMERIC <- CONTENT_AREA <- NULL ## To prevent R CMD check warnings
+	SGPstateData <- SGPstateData
+
 	content_area <- toupper(content_area)
 	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]])) {
 		content_area.all <- unique(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]])

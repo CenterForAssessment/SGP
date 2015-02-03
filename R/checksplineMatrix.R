@@ -5,6 +5,8 @@ function(list.of.splineMatrix,
 	content_area=NULL,
 	year=NULL) {
 
+	SGPstateData <- SGPstateData
+
 	if (is.splineMatrix(list.of.splineMatrix)) {
 		list.of.splineMatrix <- list(list.of.splineMatrix)
 	}

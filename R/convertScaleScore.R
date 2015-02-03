@@ -6,6 +6,7 @@ function(tmp.data.for.equate,
 	state) {
 
 	SCALE_SCORE <- SCALE_SCORE_EQUATED <- NULL
+	SGPstateData <- SGPstateData
 
 	### Utility functions
 

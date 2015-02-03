@@ -4,6 +4,7 @@ function(state,
 	add.GRADE_NUMERIC=FALSE) {
 
 	GRADE <- GRADE_NUMERIC <- CUTSCORES <- YEAR <- CUTLEVEL <- YEAR_LAG <- NULL
+	SGPstateData <- SGPstateData
 
 	content_area.argument <- content_area
 	if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]])) {

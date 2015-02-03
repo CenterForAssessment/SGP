@@ -32,6 +32,8 @@ function(panel.data,	## REQUIRED
 	started.at=proc.time()
 	started.date <- date()
 
+	SGPstateData <- SGPstateData
+
 	##########################################################
 	###
 	### Utility functions

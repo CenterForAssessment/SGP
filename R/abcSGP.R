@@ -39,6 +39,7 @@ function(sgp_object,
 	message(paste("\nStarted abcSGP", date()), "\n")
 
 	names.type <- names.provided <- names.output <- NULL
+	SGPstateData <- SGPstateData
 
 	### Create state (if NULL) from sgp_object (if possible)
 

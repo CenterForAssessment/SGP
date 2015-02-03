@@ -8,6 +8,7 @@ function(sgp.data,
 	sgp.targets=NULL) {
 
 	YEAR <- CONTENT_AREA <- VALID_CASE <- V3 <- V5 <- ID <- GRADE <- SCALE_SCORE <- YEAR_WITHIN <- tmp.timevar <- FIRST_OBSERVATION <- LAST_OBSERVATION <- ACHIEVEMENT_LEVEL <- NULL
+	SGPstateData <- SGPstateData
 
 	if (is(sgp.data, "DBIObject")) {
 		con <- dbConnect(SQLite(), dbname = "tmp_data/TMP_SGP_Data.sqlite")
