@@ -17,8 +17,7 @@
 		bPlot.demo=FALSE,
 		bPlot.output ="PDF",
 		bPlot.format="print",
-		bPlot.folder="Visualizations/bubblePlots",
-		SGPstateData=SGPstateData) {
+		bPlot.folder="Visualizations/bubblePlots") {
 
 
 	DISTRICT_NUMBER <- DISTRICT_NAME <- SCHOOL_NUMBER <- SCHOOL_NAME <- SCHOOL_ENROLLMENT_STATUS <- YEAR <- CONTENT_AREA <- MEDIAN_SGP_COUNT <- NULL ## To prevent R CMD check warnings

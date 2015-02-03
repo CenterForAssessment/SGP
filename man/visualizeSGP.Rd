@@ -64,8 +64,7 @@ visualizeSGP(
            gaPlot.max.order.for.progression=NULL,
 	   gaPlot.start.points="Achievement Level Cuts",
            gaPlot.folder="Visualizations/growthAchievementPlots",
-           parallel.config=NULL,
-	   SGPstateData=SGPstateData)
+           parallel.config=NULL)
 }
 
 \arguments{
@@ -225,8 +224,6 @@ The WORKERS element is a list with GA_PLOTS (growth achievement plots) and SG_PL
 Default is FOREACH as the back end, TYPE=NA and both plot WORKERS=1, which produces plots sequentially: 'list(BACKEND="FOREACH", TYPE=NA, WORKERS=list(GA_PLOTS=1, SG_PLOTS=1))'
 
 Examples of various parallel configurations can be found in the examples for \code{\link{analyzeSGP}} and \code{\link{summarizeSGP}}.
-  }
-  \item{SGPstateData}{Argument to pass SGPstateData meta-data to function.
   }
 }
 

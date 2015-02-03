@@ -14,7 +14,6 @@ function(sgp_object,
 		calculate.baseline.simex=NULL,
 		goodness.of.fit.print=TRUE,
 		parallel.config=NULL,
-		SGPstateData=SGPstateData,
 		...) {
 
 

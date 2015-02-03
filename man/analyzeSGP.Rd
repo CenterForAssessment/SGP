@@ -40,7 +40,6 @@ analyzeSGP(sgp_object,
          get.cohort.data.info=FALSE,
          sgp.sqlite=NULL,
          sgp.percentiles.equated=FALSE,
-         SGPstateData=SGPstateData,
          ...)
 }
 
@@ -134,8 +133,6 @@ Example use cases are provided below.
  }
   \item{sgp.percentiles.equated}{A Boolean argument (defaults to FALSE) indicating whether equating should be used on the most recent year of test data provided. Equating allows for student growth
 projections to be calculated in across assessment transitions where the scale for the assessment changes.
-  }
-  \item{SGPstateData}{Argument to pass SGPstateData meta-data to function.
   }
   \item{...}{Arguments to be passed to \code{\link{studentGrowthPercentiles}} or \code{\link{studentGrowthProjections}} for finer control over SGP calculations. NOTE: arguments can only be passed to one lower level function at a time, and only student growth percentiles OR projections can be created but not both at the same time.
   }

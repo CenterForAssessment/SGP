@@ -3,8 +3,7 @@ function(tmp.data.for.equate,
 	tmp.year.for.equate,
 	equate.list,
 	conversion.type="NEW_TO_OLD",
-	state,
-	SGPstateData=SGPstateData) {
+	state) {
 
 	SCALE_SCORE <- SCALE_SCORE_EQUATED <- NULL
 

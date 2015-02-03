@@ -12,8 +12,7 @@ function(sgp_object,
 	outputSGP.directory="Data",
 	outputSGP.translate.names=TRUE,
 	outputSGP.projection.years.for.target=3,
-	outputSGP.pass.through.variables=NULL,
-	SGPstateData=SGPstateData) {
+	outputSGP.pass.through.variables=NULL) {
 
         started.at.outputSGP <- proc.time()
         message(paste("\nStarted outputSGP ", date(), ": Files produced from outputSGP saved in '", outputSGP.directory, "'\n", sep=""))

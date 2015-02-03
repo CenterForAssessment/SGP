@@ -23,8 +23,7 @@ growthAchievementPlot(
         baseline=FALSE,
 	output.format="PDF",
         output.folder,
-        assessment.name,
-        SGPstateData=SGPstateData)
+        assessment.name)
 }
 
 \arguments{
@@ -80,9 +79,6 @@ growthAchievementPlot(
 	\item{assessment.name}{
 	A character vector indicating the assessment.name. If missing, the supplied state is used to determine the assessment.name.
 	}
-	\item{SGPstateData}{
-	Argument to pass SGPstateData meta-data to function.
-	} 
 }
 
 \details{Typical use of the function is as part of \code{visualizeSGP} function. However, function can be used to produce growth and achievement charts. 

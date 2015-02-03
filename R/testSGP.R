@@ -2,8 +2,7 @@
 function(
 	TEST_NUMBER,
 	save.results=TRUE,
-	memory.profile=FALSE,
-	SGPstateData=SGPstateData) {
+	memory.profile=FALSE) {
 
 	YEAR <- GRADE <- NULL
 

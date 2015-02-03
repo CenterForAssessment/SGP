@@ -19,8 +19,7 @@ studentGrowthPlot(Scale_Scores,
 	Plotting_SGP_Scale_Score_Targets,
 	Cutscores,
 	Years,
-	Report_Parameters,
-	SGPstateData=SGPstateData) 
+	Report_Parameters)
 }
 \arguments{
 	\item{Scale_Scores}{
@@ -68,9 +67,6 @@ studentGrowthPlot(Scale_Scores,
 	}
 	\item{Report_Parameters}{
 		A list containing arguments: \code{Current_Year}, \code{Content_Area}, \code{State}, \code{Denote_Content_Area}, \code{SGP_Targets}, and \code{Configuration}.
-	}
-	\item{SGPstateData}{
-		Argument to pass SGPstateData meta-data to function.
 	}
 }
 \details{Function currently used as part of SGP package to produce student growth charts for states. Function is usually called from the higher level function \code{\link{visualizeSGP}} which

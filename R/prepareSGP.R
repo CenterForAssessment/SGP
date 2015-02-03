@@ -4,8 +4,7 @@ function(data,
 	state=NULL,
 	var.names=NULL,
 	create.additional.variables=TRUE,
-	fix.duplicates="keep.all",
-	SGPstateData=SGPstateData) {
+	fix.duplicates="keep.all") {
 
 	## Print start time
 

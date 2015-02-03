@@ -33,7 +33,6 @@ function(sgp_object,
          get.cohort.data.info=FALSE,
          sgp.sqlite=NULL,
          sgp.percentiles.equated=FALSE,
-         SGPstateData=SGPstateData,
          ...) {
 
 	started.at <- proc.time()

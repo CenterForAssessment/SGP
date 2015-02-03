@@ -8,8 +8,7 @@ function(sgp_object,
 	json.output=TRUE,
 	null.output.string=NULL,
 	projection.years.for.target=3,
-	output.directory=file.path("Data", "SchoolView"),
-	SGPstateData=SGPstateData) {
+	output.directory=file.path("Data", "SchoolView")) {
 
 	started.at <- proc.time()
 	message(paste("\tStarted sqliteSGP in outputSGP", date()))

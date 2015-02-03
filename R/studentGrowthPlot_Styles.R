@@ -23,8 +23,7 @@
 		sgPlot.baseline,
 		sgPlot.sgp.targets.timeframe,
 		sgPlot.zip,
-		sgPlot.output.format,
-		SGPstateData=SGPstateData) {
+		sgPlot.output.format) {
 
 	CUTLEVEL <- ID <- CONTENT_AREA <- GRADE <- CUTSCORES <- YEAR <- NULL ## To prevent R CMD check warnings
 

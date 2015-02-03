@@ -8,8 +8,7 @@ function(
 	grades=NULL,
 	use.sgp="SGP",
 	output.format="PDF",
-	color.scale="reds.and.blues",
-	SGPstateData=SGPstateData) {
+	color.scale="reds.and.blues") {
 
 	### To prevent R CMD check warnings
 

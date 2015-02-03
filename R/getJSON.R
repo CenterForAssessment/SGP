@@ -7,8 +7,7 @@ function(tmp.data,
 	years.for.percentile.trajectories,
 	data.type,
 	baseline=FALSE,
-	data.year.span.default=5,
-	SGPstateData=SGPstateData) {
+	data.year.span.default=5) {
 
 	CONTENT_AREA <- GRADE <- YEAR <- CUTLEVEL <- NULL
 

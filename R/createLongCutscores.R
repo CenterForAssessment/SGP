@@ -1,9 +1,7 @@
 `createLongCutscores` <-
 function(state,
 	content_area,
-	add.GRADE_NUMERIC=FALSE,
-	SGPstateData=SGPstateData
-   ) {
+	add.GRADE_NUMERIC=FALSE) {
 
 	GRADE <- GRADE_NUMERIC <- CUTSCORES <- YEAR <- CUTLEVEL <- YEAR_LAG <- NULL
 

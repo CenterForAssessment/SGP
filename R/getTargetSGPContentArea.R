@@ -3,8 +3,7 @@ function(grade,
 	content_area,
 	state,
 	max.sgp.target.years.forward,
-	my.sgp.target.content_area,
-	SGPstateData=SGPstateData) {
+	my.sgp.target.content_area) {
 
 	if (is.null(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]])) {
 		return(content_area)

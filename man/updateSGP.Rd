@@ -46,7 +46,6 @@ updateSGP(
 	goodness.of.fit.print=TRUE,
 	parallel.config=NULL,
 	sgp.sqlite=NULL,
-	SGPstateData=SGPstateData,
 	...)
 }
 
@@ -121,8 +120,6 @@ If missing the function will use the data to infer all the grade progressions fo
   under those functions for details.
   }
   \item{sgp.sqlite}{A Boolean argument (defaults to NULL) indicating whether a SQLite database file of the essential SGP data should be created from the \code{@Data} slot and subsequently used to extract data subsets for analyses conducted in order to reduce the amount of RAM memory required.  See full argument description in \code{\link{analyzeSGP}}.
-  }
-  \item{SGPstateData}{Argument to pass SGPstateData meta-data to function.
   }
   \item{...}{Arguments to be passed to \code{\link{abcSGP}} for finer control over SGP calculations. For example, 'parallel.config' can be supplied to abcSGP for parallel computation.
   }

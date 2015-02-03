@@ -27,8 +27,7 @@ function(panel.data,	## REQUIRED
 	lag.increment=0,
 	sgp.exact.grade.progression=FALSE,
 	projcuts.digits=NULL,
-	print.time.taken=TRUE,
-	SGPstateData=SGPstateData) {
+	print.time.taken=TRUE) {
 
 	started.at=proc.time()
 	started.date <- date()

@@ -2,8 +2,7 @@
 function(sgp_object,
 	state,
 	current.year,
-	equating.method="equip",
-	SGPstateData=SGPstateData) {
+	equating.method="equip") {
 
 	VALID_CASE <- YEAR <- CONTENT_AREA <- GRADE <- NULL
 

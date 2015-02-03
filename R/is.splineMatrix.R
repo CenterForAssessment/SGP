@@ -1,4 +1,4 @@
 `is.splineMatrix` <-
-  function(x) {
+function(x) {
 	inherits(x, "splineMatrix")
-  }
+}

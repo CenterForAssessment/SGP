@@ -53,8 +53,7 @@ studentGrowthPercentiles(panel.data,
                          parallel.config=NULL,
 			 calculate.simex=NULL,
 			 sgp.percentiles.set.seed=314159,
-			 verbose.output=FALSE,
-			 SGPstateData=SGPstateData)
+			 verbose.output=FALSE)
 }
 
 \arguments{
@@ -194,8 +193,6 @@ Useful for examining relationship between prior achievement and student growth.
   \item{sgp.percentiles.set.seed}{An integer (or NULL) argument indicating whether to set.seed to make analyses fully reproducible. To turn off, set argument to NULL. Default is 314159.
   }
   \item{verbose.output}{A Boolean argument indicating whether the function should output verbose diagnostic messages.
-  }
-  \item{SGPstateData}{Argument to pass SGPstateData meta-data to function.
   }
 } 
 

@@ -1,6 +1,5 @@
 `startParallel` <- 
-function(
-	parallel.config, 
+function(parallel.config, 
 	process,
 	qr.taus) {
 	
@@ -240,4 +239,4 @@ function(
 	if (par.type=='MULTICORE') {
 		return(list(workers=workers, par.type=par.type, TAUS.LIST=TAUS.LIST, Lower_Level_Parallel=Lower_Level_Parallel))
 	}
-}
+} ### END startParallel Funtion

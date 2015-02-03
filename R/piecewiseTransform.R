@@ -4,8 +4,7 @@ function(scale_score,
 	content_area,
 	year,
 	grade,
-	output.digits=1,
-	SGPstateData=SGPstateData) {
+	output.digits=1) {
 
 	if (content_area %in% names(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]]) &&
 		grade %in% as.numeric(matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]]), "_")), 

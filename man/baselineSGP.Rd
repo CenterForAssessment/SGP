@@ -21,7 +21,6 @@ Utility function/exemplar used to produce student growth percentiles using long 
 	calculate.baseline.simex=NULL,
 	goodness.of.fit.print=TRUE,
 	parallel.config=NULL,
-	SGPstateData=SGPstateData,
 	...)
 }
 
@@ -56,8 +55,6 @@ To utilize the maximum matrix order, set to NULL.
   \item{goodness.of.fit.print}{Boolean variable indicating whether the function will export goodness of fit plots if baseline referenced student growth percentiles are calculated. Defaults to TRUE.
   }
   \item{parallel.config}{parallel configuration argument allowing for parallel analysis by 'tau'. Defaults to NULL.
-  }
-  \item{SGPstateData}{Argument to pass SGPstateData meta-data to function.
   }
   \item{...}{Arguments to be passed internally to \code{\link{studentGrowthPercentiles}} for finer control over SGP calculations.
   }

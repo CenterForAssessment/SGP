@@ -27,8 +27,7 @@ bubblePlot_Styles(
 		bPlot.demo=FALSE,
 		bPlot.output ="PDF",
 		bPlot.format="print",
-		bPlot.folder="Visualizations/bubblePlots",
-		SGPstateData=SGPstateData)
+		bPlot.folder="Visualizations/bubblePlots")
 }
 
 \arguments{
@@ -79,8 +78,6 @@ achievement as the vertical dimension of the \code{\link{bubblePlot}}.
   \item{bPlot.format}{Either "print" or "presentation" indicating whether to optimize the plot for print form (light background) or presentation form (dark background).
   }
   \item{bPlot.folder}{Character vector indicating where \code{\link{bubblePlot}}s should be placed. Default folder is "Visualizations/bubblePlots".
-  }
-  \item{SGPstateData}{Argument to pass SGPstateData meta-data to function.
   }
 }
 

@@ -2,9 +2,7 @@
 function(state,
 	content_area,
 	year,
-	label="Cutscores",
-	SGPstateData=SGPstateData
-    ) {
+	label="Cutscores") {
 
 	tmp.cutscore.years <- sapply(strsplit(names(SGPstateData[[state]][["Achievement"]][[label]])[grep(content_area, names(SGPstateData[[state]][["Achievement"]][[label]]))], "[.]"),
 		function(x) x[2])

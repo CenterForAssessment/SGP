@@ -53,8 +53,7 @@ function(sgp_object,
 		gaPlot.max.order.for.progression=NULL,
 		gaPlot.start.points="Achievement Level Cuts",
 		gaPlot.folder="Visualizations/growthAchievementPlots",
-		parallel.config=NULL,
-		SGPstateData=SGPstateData) {
+		parallel.config=NULL) {
 
 	started.at.visualizeSGP <- proc.time()
 	message(paste("\nStarted visualizeSGP", date(), "\n"))

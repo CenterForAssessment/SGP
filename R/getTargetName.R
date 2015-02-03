@@ -5,8 +5,7 @@ function(state,
 	target.years=3,
 	target.label="SGP_TARGET",
 	projection.unit.label="YEAR",
-	projection_group.iter=NULL,
-	SGPstateData=SGPstateData) {
+	projection_group.iter=NULL) {
 
 	if (target.level=="CATCH_UP_KEEP_UP") target.level <- NULL
 	if (target.type %in% c("sgp.projections", "sgp.projections.baseline")) target.period <- "CURRENT" else target.period <- NULL

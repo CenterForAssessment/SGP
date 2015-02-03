@@ -15,8 +15,7 @@
 	baseline=FALSE,
 	output.format="PDF",
 	output.folder,
-	assessment.name,
-	SGPstateData=SGPstateData) { 
+	assessment.name) { 
 
 	CUTLEVEL <- GRADE <- YEAR <- ID <- SCALE_SCORE <- level_1_curve <- V1 <- TRANSFORMED_SCALE_SCORE <- PERCENTILE <- GRADE_NUMERIC <- CONTENT_AREA <- NULL ## To prevent R CMD check warnings
 	content_area <- toupper(content_area)

@@ -2,8 +2,7 @@
 function(state,
 	years,
 	content_areas=NULL,
-	content_areas_domains=NULL,
-	SGPstateData=SGPstateData) {
+	content_areas_domains=NULL) {
 
 	CONTENT_AREA <- NULL
 

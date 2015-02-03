@@ -34,8 +34,7 @@ studentGrowthProjections(panel.data,
                          lag.increment=0,
 			 sgp.exact.grade.progression=FALSE,
                          projcuts.digits=NULL,
-                         print.time.taken=TRUE,
-			 SGPstateData=SGPstateData)
+                         print.time.taken=TRUE)
 }
 
 \arguments{
@@ -138,8 +137,6 @@ studentGrowthProjections(panel.data,
   \item{projcuts.digits}{The number of digits (defaults to NULL/0) percentile trajectories (if requested) are formatted.
   }
   \item{print.time.taken}{Boolean argument (defaults to TRUE) indicating whether to print message indicating information on \code{studentGrowthProjections} analysis and time taken.
-  }
-  \item{SGPstateData}{Argument to pass SGPstateData meta-data to function.
   }
 }
 
