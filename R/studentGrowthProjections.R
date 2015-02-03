@@ -39,7 +39,8 @@ function(panel.data,	## REQUIRED
 	###
 	##########################################################
 
-	.smooth.bound.iso.row <- function(x, grade, tmp.year, tmp.content_area, iso=isotonize, missing.taus, na.replace) {
+	.smooth.bound.iso.row <- function(x, grade, tmp.year, tmp.content_area, iso=isotonize, missing.taus, na.replace, equated.year) {
+		if (!is.null(equated.year)) tmp.year <- equated.year
 		bnd <- eval(parse(text=paste("panel.data[['Knots_Boundaries']]", get.my.knots.boundaries.path(tmp.content_area, tmp.year), "[['loss.hoss_", grade, "']]", sep="")))
 		x[x < bnd[1]] <- bnd[1] ; x[x > bnd[2]] <- bnd[2]
 		if (!iso) return(round(x, digits=5)) # Results are the same whether NAs present or not...
@@ -233,7 +234,8 @@ function(panel.data,	## REQUIRED
 										yearIncrement(sgp.labels[['my.year']], j, lag.increment),
 										content_area.projection.sequence[j],
 										missing.taus=missing.taus, 
-										na.replace=na.replace), 
+										na.replace=na.replace,
+										yearIncrement(sgp.projections.equated[['Year']], -1)), 
 									by=eval(names(tmp.dt)[1])]
 						setnames(tmp.dt, "TEMP_2", paste("SS", grade.projection.sequence[j], content_area.projection.sequence[j], sep="."))
 						tmp.dt[,TEMP_1:=NULL]
