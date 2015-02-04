@@ -17,7 +17,7 @@
 	message(paste("\nStarted summarizeSGP", date()))
 
 	### Set variables to NULL to prevent R CMD check warnings
-	tmp.simulation.dt <- variable <- WEIGHT <- ENROLLMENT_STATUS <- names.type <- names.sgp <- names.output <- BY_GROWTH_ONLY <- VALID_CASE <- YEAR_WITHIN <- NULL
+	SIM_NUM <- tmp.simulation.dt <- variable <- WEIGHT <- ENROLLMENT_STATUS <- names.type <- names.sgp <- names.output <- BY_GROWTH_ONLY <- VALID_CASE <- YEAR_WITHIN <- NULL
 
 	### Create state (if NULL) from sgp_object (if possible)
 	if (is.null(state)) {
@@ -104,155 +104,6 @@
 			return(unlist(lapply(my.group, function(x) paste(", ", x, sep=""))))
 		}
 	}
-
-	median_na <- function(x, weight) {
-		if (is.null(weight)) {
-			median(as.numeric(x), na.rm=TRUE)
-		} else {
-			weightedMedian(as.numeric(x), w=weight, na.rm=TRUE)
-		}
-	}
-	
-	boot.median <- function(x,i) median(x[i], na.rm=TRUE)
-	
-	mean_na <- function(x, weight, result.digits=2) {
-		if (is.null(weight)) {
-			round(mean(as.numeric(x), na.rm=TRUE), digits=result.digits)
-		} else {
-			round(weighted.mean(as.numeric(x), w=weight, na.rm=TRUE), digits=result.digits)
-		}
-	}
-	
-	sd_na <- function(x, result.digits=2) round(sd(as.numeric(x), na.rm=TRUE), digits=result.digits)
-	
-	num_non_missing <- function(x) sum(!is.na(as.numeric(x)))
-	
-	sgp_standard_error <- function(x,y=1) round(y*sd(x, na.rm=TRUE)/sqrt(sum(!is.na(as.numeric(x)))), digits=2)
-
-	percent_in_category <- function(x, in.categories, of.categories, result.digits=1) { ## NOTE: x must be a factor and categories levels
-		if (!is.list(in.categories)) in.categories <- list(in.categories)
-		if (!is.list(of.categories)) of.categories <- list(of.categories)
-		tmp.result <- list()
-		tmp <- summary(x[!is.na(x)])
-		for (i in seq(length(in.categories))) {
-			tmp.result[[i]] <- round(100*sum(tmp[in.categories[[i]]])/sum(tmp[of.categories[[i]]]), digits=result.digits)
-		}
-		return(unlist(tmp.result))
-	}
-
-	percent_at_above_target <- function(sgp, target, result.digits=1) {
-		tmp.logical <- sgp >= target
-		tmp.pct <- round(sum(tmp.logical, na.rm=TRUE)/sum(!is.na(tmp.logical))*100, digits=result.digits)
-		return(tmp.pct)
-	}
-
-	boot.sgp <- function(dat, conf.quantiles=NULL, nboot=100) {
-		out <- numeric(); CI <- c(NA,NA); SE <- NA
-		if (sum(is.na(dat)) != length(dat)) {
-			for (j in 1:nboot) {
-				foo <- sample(dat,length(dat), replace=TRUE)
-				out[j] <- boot.median(foo)
-			}
-			if (!is.null(conf.quantiles)) {
-				CI <- round(as.numeric(quantile(out, conf.quantiles, na.rm=TRUE)), digits=1)
-			} else {
-				SE <- round(as.numeric(sd(out, na.rm=TRUE)), digits=1)
-			}
-		}
-		if (!is.null(conf.quantiles)) return(CI) else return(SE)
-	}
-
-	pullData <- function(state, pull.vars, sim.data = FALSE) {
-		if (sim.data) {
-			
-		}
-		tmp_data <- data.table(dbGetQuery(dbConnect(SQLite(), dbname = "tmp_data/TMP_Summary_Data.sqlite"), 
-			paste("select", paste(pull.vars, collapse = ","), "from summary_data"))) 
-		if(all((my.key <- intersect(sgp_key, variables.for.summaries)) %in% names(tmp_data))) setkeyv(tmp_data, my.key)
-		if ("ACHIEVEMENT_LEVEL" %in% names(tmp_data)) {
-			tmp_data[, ACHIEVEMENT_LEVEL := ordered(ACHIEVEMENT_LEVEL, levels = SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]])]
-		}
-		if ("ACHIEVEMENT_LEVEL_PRIOR" %in% names(tmp_data)) {
-			tmp_data[, ACHIEVEMENT_LEVEL_PRIOR := ordered(ACHIEVEMENT_LEVEL_PRIOR, levels=SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]])]
-		}
-		if ("CATCH_UP_KEEP_UP_STATUS" %in% names(tmp_data)) {
-			tmp_data[, CATCH_UP_KEEP_UP_STATUS := factor(CATCH_UP_KEEP_UP_STATUS)]
-		}
-		if ("CATCH_UP_KEEP_UP_STATUS_BASELINE" %in% names(tmp_data)) {
-			tmp_data[, CATCH_UP_KEEP_UP_STATUS_BASELINE := factor(CATCH_UP_KEEP_UP_STATUS_BASELINE)]
-		}
-		if ("MOVE_UP_STAY_UP_STATUS" %in% names(tmp_data)) {
-			tmp_data[, MOVE_UP_STAY_UP_STATUS := factor(MOVE_UP_STAY_UP_STATUS)]
-		}
-		if ("MOVE_UP_STAY_UP_STATUS_BASELINE" %in% names(tmp_data)) {
-			tmp_data[, MOVE_UP_STAY_UP_STATUS_BASELINE := factor(MOVE_UP_STAY_UP_STATUS_BASELINE)]
-		}
-		
-		return(tmp_data)
-	} 
-
-	sgpSummary <- function(sgp.groups.to.summarize, produce.confidence.interval, tmp.simulation.dt) {
-		SGP_SIM <- V1 <- V2 <- .SD <- MEDIAN_SGP_with_SHRINKAGE <- NULL ## To prevent R CMD check warning
-		tmp.sgp.summaries <- sgp.summaries
-		sgp.summaries.names <- unlist(strsplit(names(sgp.summaries), "[.]"))
-		if (produce.confidence.interval) {
-			if ("Bootstrap_CI" %in% confidence.interval.groups$TYPE) {
-				tmp.list <- list()
-				tmp.quantiles <- paste("c(", paste(confidence.interval.groups$QUANTILES, collapse=", "), ")", sep="")
-				for (i in confidence.interval.groups$VARIABLES) {
-					tmp.list[[paste("MEDIAN_", i, "_QUANTILES", sep="")]] <- paste("boot.sgp(", i, ", ", tmp.quantiles, ")", sep="")
-				}
-				tmp.sgp.summaries <- c(tmp.sgp.summaries, tmp.list)
-				sgp.summaries.names <- c(sgp.summaries.names, do.call(paste, c(data.table(expand.grid("MEDIAN", my.sgp, confidence.interval.groups$QUANTILES, "CONFIDENCE_BOUND_BOOTSTRAP"), key="Var2"), sep="_"))) 
-			} 
-			if ("Bootstrap_SE" %in% confidence.interval.groups$TYPE) {
-				tmp.list <- list()
-				for (i in confidence.interval.groups$VARIABLES) {
-					tmp.list[[paste("MEDIAN_", i, "_SE", sep="")]] <- paste("boot.sgp(", i, ")", sep="")
-				}
-				tmp.sgp.summaries <- c(tmp.sgp.summaries, tmp.list)
-				sgp.summaries.names <- c(sgp.summaries.names, do.call(paste, c(data.table(expand.grid("MEDIAN", my.sgp, "STANDARD_ERROR_BOOTSTRAP"), key="Var2"), sep="_"))) 
-			}
-		}
- 
-		ListExpr <- parse(text=paste("as.list(c(", paste(unlist(tmp.sgp.summaries), collapse=", "),"))",sep="")) 
-		ByExpr <- parse(text=paste("list(", paste(sgp.groups.to.summarize, collapse=", "), ")", sep=""))
-		
-		pull.vars <- c(unlist(sapply(dbListFields(dbConnect(SQLite(), dbname = "tmp_data/TMP_Summary_Data.sqlite"), "summary_data"), 
-			function(p) if (any(grepl(p, tmp.sgp.summaries))) return(p)), use.names=FALSE), strsplit(sgp.groups.to.summarize, ", ")[[1]])
-		
-		tmp <- pullData(state, pull.vars)[, eval(ListExpr), keyby=eval(ByExpr)]
-		setnames(tmp, (dim(tmp)[2]-length(sgp.summaries.names)+1):dim(tmp)[2], sgp.summaries.names)
-
-		if (produce.confidence.interval & "CSEM" %in% confidence.interval.groups[['TYPE']]) {
-			tmp.list.1 <- list() 
-			tmp.number.unique.cases <- dim(tmp.simulation.dt)[1]/tmp.number.simulated.sgps
-			for (i in seq(tmp.number.simulated.sgps)) {
-				tmp.subset.data <- pullData(state, pull.vars)[, c(sgp_key, 
-					unlist(strsplit(sgp.groups.to.summarize, ", "))), with=FALSE][pullData(state, pull.vars, sim.data = TRUE)[
-					seq(i, length=tmp.number.unique.cases, by=tmp.number.simulated.sgps)], allow.cartesian=TRUE]
-				tmp.list.1[[i]] <- tmp.subset.data[,list(median_na(SGP_SIM, NULL), mean_na(SGP_SIM, NULL)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")]
-			}
-			tmp.csem <- data.table(reshape(rbindlist(tmp.list.1)[,list(sd_na(V1), sd_na(V2)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")],
-				idvar=c(unlist(strsplit(sgp.groups.to.summarize, ", "))), timevar="BASELINE", direction="wide"), key=key(tmp))
-			if (length(grep("BASELINE", names(tmp.csem)))==0) {
-				setnames(tmp.csem, c("V1.COHORT", "V2.COHORT"), c("MEDIAN_SGP_STANDARD_ERROR_CSEM", "MEAN_SGP_STANDARD_ERROR_CSEM"))
-			} else {
-				setnames(tmp.csem, c("V1.COHORT", "V2.COHORT", "V1.BASELINE", "V2.BASELINE"), 
-					c("MEDIAN_SGP_STANDARD_ERROR_CSEM", "MEAN_SGP_STANDARD_ERROR_CSEM", "MEDIAN_SGP_BASELINE_STANDARD_ERROR_CSEM", "MEAN_SGP_BASELINE_STANDARD_ERROR_CSEM")) 
-			}
-			tmp <- tmp.csem[tmp]
-			setcolorder(tmp, c(grep("CSEM", names(tmp), invert=TRUE), grep("CSEM", names(tmp))))
-		}
-
-		if ('MEDIAN_SGP_STANDARD_ERROR' %in% names(tmp)) {
-			constant <- var(tmp[['MEDIAN_SGP']], na.rm=TRUE) - mean(tmp[['MEDIAN_SGP_STANDARD_ERROR']]^2, na.rm=TRUE)
-			tmp[,MEDIAN_SGP_with_SHRINKAGE := round(50 + ((tmp[['MEDIAN_SGP']]-50) * (constant/(constant+tmp[['MEDIAN_SGP_STANDARD_ERROR']]^2))))]
-		}
-
-		message(paste("\tFinished with", sgp.groups.to.summarize))
-		return(tmp)
-	} ### END sgpSummary function
 
 	combineSims <- function(sgp_object) {
 		tmp.list <- list()
@@ -483,11 +334,6 @@
 
 		tmp.summary <- list()
 
-		if (!is.null(confidence.interval.groups) & "CSEM" %in% confidence.interval.groups[['TYPE']]) {
-			tmp.simulation.dt <- combineSims(sgp_object)
-			tmp.number.simulated.sgps <- length(grep("SGP_SIM", names(sgp_object@SGP[["Simulated_SGPs"]][[1]])))
-		} else tmp.simulation.dt <- NULL
-
 		### Create summary tables
 		sgp.groups <- do.call(paste, c(expand.grid(i,
 			group.format(summary.groups[["institution_type"]]),
@@ -522,9 +368,11 @@
 		
 		## if NULL parallel.config
 		if (is.null(parallel.config)) {
-			tmp.summary[[s]] <- sgpSummary(summary.iter[[s]][1], eval(parse(text= summary.iter[[s]][2])), tmp.simulation.dt)
-		} else {
-			par.start <- startParallel(parallel.config, 'SUMMARY')
+			for (s in seq_along(summary.iter)) {
+				tmp.summary[[s]] <- sgpSummary(summary.iter[[s]][1], eval(parse(text= summary.iter[[s]][2])), 
+					tmp.simulation.dt, state, sgp.summaries, confidence.interval.groups, my.sgp, sgp_key, variables.for.summaries, sim.info)
+			}
+			parallel.config <- list(BACKEND="NONE"); par.start <- list(par.type="NONE")
 		}
 
 		j <- k <- NULL ## To prevent R CMD check warnings
@@ -534,27 +382,25 @@
 				k.iter <- iter(sgp.groups %in% ci.groups)
 			} else	k.iter <- iter(rep(FALSE, length(sgp.groups)))
 
-			tmp.summary <- foreach(j = iter(sgp.groups), k = k.iter, 
-				.options.multicore=list(preschedule = FALSE, set.seed = FALSE), .packages="SGP", .inorder=FALSE,
-				.export=c("sgpSummary", "summarizeSGP_INTERNAL"), .noexport ="sgp_object", .errorhandling = "pass") %dopar% {
-					return(sgpSummary(j, k, tmp.simulation.dt))
+			tmp.summary <- foreach(j = iter(sgp.groups), k = k.iter,
+				.export=c("tmp.simulation.dt", "state", "sgp.summaries", "confidence.interval.groups", "my.sgp", "sgp_key", "variables.for.summaries", "sim.info"),
+				.options.multicore=list(preschedule = FALSE, set.seed = FALSE), .packages="SGP", .inorder=FALSE, .errorhandling = "pass") %dopar% { 
+					return(sgpSummary(j, k, tmp.simulation.dt, state, sgp.summaries, confidence.interval.groups, my.sgp, sgp_key, variables.for.summaries, sim.info))
 			}
 		} else { # END FOREACH flavor
 
 		### SNOW and MULTICORE
 		if (par.start$par.type=="SNOW") {
 			tmp.summary <- parLapply(par.start$internal.cl, summary.iter, 
-				function(iter) sgpSummary(iter[1], eval(parse(text=iter[2])), tmp.simulation.dt))
-
+				function(iter) sgpSummary(iter[1], eval(parse(text=iter[2])), tmp.simulation.dt, state, sgp.summaries, confidence.interval.groups, my.sgp, sgp_key, variables.for.summaries, sim.info))
 		} # END 'SNOW' Flavor
 		if (par.start$par.type=="MULTICORE") {
 			tmp.summary <- mclapply(summary.iter, 
-				function(iter) sgpSummary(iter[1], eval(parse(text=iter[2])), tmp.simulation.dt), mc.cores=par.start$workers, mc.preschedule=FALSE)
+				function(iter) sgpSummary(iter[1], eval(parse(text=iter[2])), tmp.simulation.dt, state, sgp.summaries, confidence.interval.groups, my.sgp, sgp_key, variables.for.summaries, sim.info), mc.cores=par.start$workers, mc.preschedule=FALSE)
 		} # END 'MULTICORE' Flavor
 		} # END else not FOREACH
 
 		names(tmp.summary) <- gsub(", ", "__", sgp.groups)
-		stopParallel(parallel.config, par.start)
 		return(tmp.summary)
 	} ### END summarizeSGP_INTERNAL
 
@@ -694,8 +540,8 @@
 
 	### Loop and send to summarizeSGP_INTERNAL
 
-	del.dir <- dir.create("tmp_data", showWarnings=FALSE)
-	sgp_data_for_summary <- dbConnect(SQLite(), dbname = "tmp_data/TMP_Summary_Data.sqlite")
+	del.dir <- dir.create("Data/tmp_data", showWarnings=FALSE)
+	sgp_data_for_summary <- dbConnect(SQLite(), dbname = "Data/tmp_data/TMP_Summary_Data.sqlite")
 
 	if (any(!sapply(summary.groups[["growth_only_summary"]], is.null))) {
 		tmp.dt <- sgp_object@Data[data.table("VALID_CASE", content_areas.by.years), nomatch=0][, 
@@ -709,7 +555,23 @@
 				variables.for.summaries, with=FALSE][, highest.level.summary.grouping:=state, with=FALSE])
 	}	
 
+	if (!is.null(confidence.interval.groups) & "CSEM" %in% confidence.interval.groups[['TYPE']]) {
+		sim.info <- list(
+			n.simulated.sgps = length(grep("SGP_SIM", names(sgp_object@SGP[["Simulated_SGPs"]][[1]]))),
+			n.unique.cases = sum(sapply(sgp_object@SGP[["Simulated_SGPs"]], nrow)))
+		if ((!identical(.Platform$OS.type, "unix") & !is.null(parallel.config)) | !is.null(parallel.config[["SNOW_TEST"]])) { 
+			# Write tmp.simulation.dt to disk for SNOW backends in Windows (& SNOT_TEST) Only 
+			tmp.simulation.dt <- "sqlite"
+			dbWriteTable(sgp_data_for_summary, name = "sim_data", overwrite = TRUE, row.names=0, 
+				value = combineSims(sgp_object)[, SIM_NUM := 1:sim.info[['n.simulated.sgps']]])
+		} else {
+			tmp.simulation.dt <- combineSims(sgp_object)
+		}
+	} else tmp.simulation.dt <- sim.info <- NULL
+
 	dbDisconnect(sgp_data_for_summary)
+
+	if (!is.null(parallel.config))	par.start <- startParallel(parallel.config, 'SUMMARY')
 
 	for (j in seq(length(summary.groups[["institution_multiple_membership"]])+1)) {
 		for (i in summary.groups[["institution"]]) {
@@ -740,7 +602,6 @@
 				summary.groups[["growth_only_summary"]][[tmp.inst]] <- "BY_GROWTH_ONLY" # Do we have an option to NOT include "BY_GROWTH_ONLY"? (would we want this?)
 
 				### Create LONGer data and run summarizeSGP_INTERNAL
-				sgp_data_for_summary <- dbConnect(SQLite(), dbname = "tmp_data/TMP_Summary_Data.sqlite")
 				tmp.dt.long <- sgp_object@Data[data.table("VALID_CASE", content_areas.by.years), nomatch=0][,
 					variables.for.summaries, with=FALSE][, highest.level.summary.grouping:=state, with=FALSE]
 				tmp.dt.long[, BY_GROWTH_ONLY := factor(is.na(tmp.dt.long[[my.sgp[1]]]), levels=c(FALSE, TRUE), labels=c("Students without SGP", "Students with SGP"))]
@@ -750,16 +611,18 @@
 					setnames(tmp.dt.long, summary.groups[["institution_multiple_membership"]][[j-1]][["WEIGHTS"]], "WEIGHT")
 				}
 
-				dbWriteTable(sgp_data_for_summary, name = "summary_data", overwrite = TRUE, row.names=0, value = tmp.dt.long)
+				dbWriteTable(dbConnect(SQLite(), dbname = "Data/tmp_data/TMP_Summary_Data.sqlite"), 
+					name = "summary_data", overwrite = TRUE, row.names=0, value = tmp.dt.long)
 				rm(tmp.dt.long); suppressMessages(gc())
-				dbDisconnect(sgp_data_for_summary)
 
 				sgp_object@Summary[[i]] <- c(sgp_object@Summary[[i]], summarizeSGP_INTERNAL(tmp.inst))
 			} 
 		} ### End i loop over summary.groups[["institution"]]
 	} ### END j loop over multiple membership groups (if they exist)
 
-	if (del.dir) unlink("tmp_data", recursive=TRUE, force=TRUE) else unlink("tmp_data/TMP_Summary_Data.sqlite", recursive=TRUE)
+	if (!is.null(parallel.config))	stopParallel(parallel.config, par.start)
+
+	if (del.dir) unlink("tmp_data", recursive=TRUE, force=TRUE) else unlink("Data/tmp_data/TMP_Summary_Data.sqlite", recursive=TRUE)
 	
 	message(paste("Finished summarizeSGP", date(), "in", timetaken(started.at), "\n"))
 	return(sgp_object)
