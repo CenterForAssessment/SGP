@@ -237,7 +237,7 @@ function(sgp_object,
 
 		gaPlot.sgp_object <- get.object.shell(sgp_object)
 		
-		if (par.start$par.type=="FOREACH") {
+		if (parallel.config[["BACKEND"]] == "FOREACH") {
 
 			foreach(gaPlot.iter=iter(get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students, gaPlot.baseline)), .packages="SGP", .inorder=FALSE,
 				.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
@@ -255,7 +255,7 @@ function(sgp_object,
 						output.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))
 
 			} ## END dopar 
-		} ## END FOREACH
+		} else { ## END FOREACH
 		
 		if (par.start$par.type=="SNOW") {
 			
@@ -292,7 +292,7 @@ function(sgp_object,
 						output.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))}, 
 				mc.cores=par.start$workers, mc.preschedule=FALSE)
 		}
-		
+		}
 		stopParallel(parallel.config, par.start)
 		message(paste("Finished growthAchievementPlot in visualizeSGP", date(), "in", timetaken(started.at), "\n"))
 	} ## END if (growthAchievementPlot %in% plot.types)

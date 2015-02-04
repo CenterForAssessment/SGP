@@ -14,6 +14,8 @@ Changes in version: SGP_1.3-0.0
 	  o Bumped YEAR up 1.
 	  o analyzeSGP now accepts argument sgp.sqlite - if set to TRUE function will output a temporary SQLite file of essential data from SGP object's @Data slot and use SQLite queries to pull data subsets used in lower-level functions.  This option entails some time overhead for read/write to/from disk, but ultimately provides substantial RAM memory saving during computation (particularly parallel computation).  Default is NULL, in which case @Data slots larger than 1 GB are written to disk (set internally to TRUE).
 	  o Simulation data in .simex.sgp routine of studentGrowthPercentiles is now saved to .sqlite databases as a RAM memory saving measure.
+	  o Results and simulation data used in summarizeSGP to produce summary tables are now exported to temporary a .sqlite file, and utility functions have been externalized.  This provides memory savings, particularly for Windows users.
+	  o PNG versions of bubblePlots can now be produced through visualizeSGP using the bPlot.output argument.
 
 Changes in version: SGP_1.2-0.0
 
