@@ -25,6 +25,7 @@ bubblePlot_Styles(
 		bPlot.prior.achievement=TRUE, 
 		bPlot.draft=FALSE,
 		bPlot.demo=FALSE,
+		bPlot.output="PDF",
 		bPlot.format="print",
 		bPlot.folder="Visualizations/bubblePlots")
 }
@@ -71,6 +72,8 @@ achievement as the vertical dimension of the \code{\link{bubblePlot}}.
   \item{bPlot.draft}{A Boolean argument (defaults to FALSE) indicating whether to put an indicator on the chart noting that the results are draft and to not distribute. 
   }
   \item{bPlot.demo}{A Boolean argument (defaults to FALSE) indicating whether to produce demo student level plots (styles 150 and/or 153) for instructors. 
+  }
+  \item{bPlot.output}{Argument indicating the desired type of output format for bubble plots. Either 'PDF' (default) or 'PNG'.
   }
   \item{bPlot.format}{Either "print" or "presentation" indicating whether to optimize the plot for print form (light background) or presentation form (dark background).
   }
