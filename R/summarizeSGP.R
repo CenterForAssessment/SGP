@@ -540,7 +540,7 @@
 
 	### Loop and send to summarizeSGP_INTERNAL
 
-	del.dir <- dir.create("Data/tmp_data", showWarnings=FALSE)
+	del.dir <- dir.create("Data/tmp_data", recursive=TRUE, showWarnings=FALSE)
 	sgp_data_for_summary <- dbConnect(SQLite(), dbname = "Data/tmp_data/TMP_Summary_Data.sqlite")
 
 	if (any(!sapply(summary.groups[["growth_only_summary"]], is.null))) {
@@ -622,7 +622,7 @@
 
 	if (!is.null(parallel.config))	stopParallel(parallel.config, par.start)
 
-	if (del.dir) unlink("tmp_data", recursive=TRUE, force=TRUE) else unlink("Data/tmp_data/TMP_Summary_Data.sqlite", recursive=TRUE)
+	if (del.dir) unlink("Data/tmp_data", recursive=TRUE, force=TRUE) else unlink("Data/tmp_data/TMP_Summary_Data.sqlite", recursive=TRUE)
 	
 	message(paste("Finished summarizeSGP", date(), "in", timetaken(started.at), "\n"))
 	return(sgp_object)
