@@ -3,9 +3,10 @@ function(tmp.data.for.equate,
 	tmp.year.for.equate,
 	equate.list,
 	conversion.type="NEW_TO_OLD",
-	state) {
+	state,
+	interpolate.scores=FALSE) {
 
-	SCALE_SCORE <- SCALE_SCORE_EQUATED <- NULL
+	SCALE_SCORE <- SCALE_SCORE_EQUATED <- GRADE <- CONTENT_AREA <- NULL
 	SGPstateData <- SGPstateData
 
 	### Utility functions
@@ -32,27 +33,34 @@ function(tmp.data.for.equate,
 
 	### Define variables
 
-	scale.score.concordance.list <- list()
+	scale.score.concordance.table <- scale.score.concordance.functions <- list()
 	if (conversion.type=="NEW_TO_OLD") tmp.year.for.knots.boundaries <- yearIncrement(tmp.year.for.equate, -1) else tmp.year.for.knots.boundaries <- tmp.year.for.equate
 
 
 	### Create scale.score.concordance lookup
 
-	for (i in names(equate.list)) {
-		for (j in names(equate.list[[i]])) {
-			scale.score.concordance.list[[paste(i, j, sep=".")]] <- data.table(
+	for (i.iter in names(equate.list)) {
+		i <- unlist(strsplit(i.iter, "[.]"))[1]
+		for (j.iter in names(equate.list[[i.iter]])) {
+			j <- unlist(strsplit(j.iter, "_"))[2]
+			scale.score.concordance.table[[paste(i, j, sep=".")]] <- data.table(
 							VALID_CASE="VALID_CASE", 
-							CONTENT_AREA=unlist(strsplit(i, "[.]"))[1], 
+							CONTENT_AREA=i, 
 							YEAR=tmp.year.for.equate, 
-							GRADE=unlist(strsplit(j, "_"))[2], 
-							SCALE_SCORE=equate.list[[i]][[j]][[conversion.type]][['concordance']][[1]],
-							SCALE_SCORE_EQUATED=equate.list[[i]][[j]][[conversion.type]][['concordance']][[2]], 
+							GRADE=j, 
+							SCALE_SCORE=equate.list[[i.iter]][[j.iter]][[conversion.type]][['concordance']][[1]],
+							SCALE_SCORE_EQUATED=equate.list[[i.iter]][[j.iter]][[conversion.type]][['concordance']][[2]], 
 							key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", "SCALE_SCORE"))
 			tmp.boundaries <- eval(parse(text=paste("SGPstateData[[state]][['Achievement']][['Knots_Boundaries']]", get.my.knots.boundaries.path(unlist(strsplit(i, "[.]"))[1], tmp.year.for.knots.boundaries), "[['loss.hoss_", unlist(strsplit(j, "_"))[2], "']]", sep="")))
-			scale.score.concordance.list[[paste(i, j, sep=".")]][SCALE_SCORE_EQUATED < tmp.boundaries[1], SCALE_SCORE_EQUATED:=tmp.boundaries[1]]
-			scale.score.concordance.list[[paste(i, j, sep=".")]][SCALE_SCORE_EQUATED > tmp.boundaries[2], SCALE_SCORE_EQUATED:=tmp.boundaries[2]]
+			scale.score.concordance.table[[paste(i, j, sep=".")]][SCALE_SCORE_EQUATED < tmp.boundaries[1], SCALE_SCORE_EQUATED:=tmp.boundaries[1]]
+			scale.score.concordance.table[[paste(i, j, sep=".")]][SCALE_SCORE_EQUATED > tmp.boundaries[2], SCALE_SCORE_EQUATED:=tmp.boundaries[2]]
+			scale.score.concordance.functions[[paste(i, j, sep=".")]] <- splinefun(scale.score.concordance.table[[paste(i, j, sep=".")]]$SCALE_SCORE, scale.score.concordance.table[[paste(i, j, sep=".")]]$SCALE_SCORE_EQUATED, method="hyman")
 		}
 	}
 
-	return(data.table(rbindlist(scale.score.concordance.list), key=key(tmp.data.for.equate))[tmp.data.for.equate][is.na(SCALE_SCORE_EQUATED), SCALE_SCORE_EQUATED:=SCALE_SCORE])
+	if (!interpolate.scores) {
+		return(data.table(rbindlist(scale.score.concordance.table), key=key(tmp.data.for.equate))[tmp.data.for.equate][is.na(SCALE_SCORE_EQUATED), SCALE_SCORE_EQUATED:=SCALE_SCORE])
+	} else {
+		return(scale.score.concordance.functions)
+	}
 } ### END convertScaleScore function

@@ -83,7 +83,7 @@ function(panel.data,	## REQUIRED
 		}
 	}
 
-	.get.panel.data <- function(tmp.data, grade.progression, content_area.progression, num.prior=NULL, subset.tf=NULL, bound.data=TRUE) {
+	.get.panel.data <- function(tmp.data, grade.progression, content_area.progression, num.prior=NULL, subset.tf=NULL, bound.data=TRUE, equated.year=NULL) {
 		str1 <- str2 <- str3 <- NULL
 		if (is.null(num.prior)) num.prior <- length(grade.progression)
 		for (i in 1:num.prior-1) {
@@ -94,8 +94,9 @@ function(panel.data,	## REQUIRED
 		if (!is.null(subset.tf)) str1 <- paste(str1, " & subset.tf", sep="")
 		tmp.data <- tmp.data[eval(parse(text=paste(substring(str1, 4), str2, sep="")))][, c(1, str3), with=FALSE]
 		if (bound.data) {
+			if (!is.null(equated.year)) tmp.year <- equated.year else tmp.year <- as.character(sgp.labels$my.year)
 			for (i in seq(dim(tmp.data)[2]-1)) {
-				bnd <- eval(parse(text=paste("panel.data[['Knots_Boundaries']]", get.my.knots.boundaries.path(content_area.progression[i], as.character(sgp.labels$my.year)), 
+				bnd <- eval(parse(text=paste("panel.data[['Knots_Boundaries']]", get.my.knots.boundaries.path(content_area.progression[i], tmp.year), 
 					"[['loss.hoss_", grade.progression[i], "']]", sep="")))
 				tmp.data[tmp.data[[i+1]]<bnd[1], names(tmp.data)[i+1] := bnd[1], with=FALSE]
 				tmp.data[tmp.data[[i+1]]>bnd[2], names(tmp.data)[i+1] := bnd[2], with=FALSE]
@@ -207,7 +208,8 @@ function(panel.data,	## REQUIRED
 							ss.data, 
 							head(projection.matrices[[i]][[1]]@Grade_Progression[[1]], -1), 
 							head(projection.matrices[[i]][[1]]@Content_Areas[[1]], -1), 
-							subset.tf=!(ss.data[[1]] %in% completed.ids))
+							subset.tf=!(ss.data[[1]] %in% completed.ids),
+							equated.year=yearIncrement(sgp.projections.equated[['Year']], -1))
 				if (dim(tmp.dt)[1] > 0) {
 					completed.ids <- c(unique(tmp.dt[[1]]), completed.ids)
 					tmp.dt <- tmp.dt[list(rep(tmp.dt[[1]], each=100))]
@@ -236,7 +238,7 @@ function(panel.data,	## REQUIRED
 										content_area.projection.sequence[j],
 										missing.taus=missing.taus, 
 										na.replace=na.replace,
-										yearIncrement(sgp.projections.equated[['Year']], -1)), 
+										equated.year=yearIncrement(sgp.projections.equated[['Year']], -1)), 
 									by=eval(names(tmp.dt)[1])]
 						setnames(tmp.dt, "TEMP_2", paste("SS", grade.projection.sequence[j], content_area.projection.sequence[j], sep="."))
 						tmp.dt[,TEMP_1:=NULL]
@@ -246,7 +248,15 @@ function(panel.data,	## REQUIRED
 				} ## END if (dim(tmp.dt)[1] > 0)
 			} ## END if statement
 		} ## END i loop
-		rbindlist(tmp.percentile.trajectories)
+		tmp.rbind.data <- rbindlist(tmp.percentile.trajectories)
+		if (!is.null(sgp.projections.equated)) {
+			tmp.year <- sgp.projections.equated[['Year']]
+			for (j in seq_along(projection.matrices[[i]])) {
+				tmp.subject <- content_area.projection.sequence[j]; tmp.grade <- grade.projection.sequence[j]
+				tmp.rbind.data[,j+1:=sgp.projections.equated[["Linkages"]][[paste(tmp.subject, tmp.year, sep=".")]][[paste("GRADE", tmp.grade, sep="_")]][["OLD_TO_NEW"]][["interpolated_function"]](tmp.rbind.data[[j+1]]), with=FALSE]
+			}
+		}
+		return(tmp.rbind.data)
 	} ## END function
 
 	.sgp.targets <- function(data, cut, convert.0and100) {
