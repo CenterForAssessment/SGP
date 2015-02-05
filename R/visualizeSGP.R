@@ -68,6 +68,7 @@ function(sgp_object,
 	CONTENT_AREA_RESPONSIBILITY <- INSTRUCTOR_LAST_NAME <- INSTRUCTOR_FIRST_NAME <- TRANSFORMED_SCALE_SCORE <- SCALE_SCORE_ACTUAL <- CONTENT_AREA_LABELS <- NULL
 	TEMP <- TEMP_SCORE <- TEMP_GRADE <- NULL
 	SGPstateData <- SGPstateData
+	randomNames <- randomNames
 
 
 	### Create state (if missing) from sgp_object (if possible)

@@ -28,6 +28,7 @@ function(sgp_object,
 	DISADVANTAGED_STATUS <- SPECIAL_EDUCATION_STATUS <- ELL_STATUS <- HLS_CODE <- IEP_CODE <- LANGUAGE_PROFICIENCY <- GIFTED_CODE <- FRL_CODE <- STUDENT_GROWTH_ID <- MIDDLE_NAME <- NULL
 	OCTOBER_ENROLLMENT_STATUS <- NULL
 	SGPstateData <- SGPstateData
+	randomNames <- randomNames
 
 	### Create state (if missing) from sgp_object (if possible)
 
