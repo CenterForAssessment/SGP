@@ -336,8 +336,8 @@ function(sgp_object,
 	if (toupper(sgp.sqlite)=="KEEP") {keep.sqlite <- TRUE; sgp.sqlite <- TRUE} else keep.sqlite <- FALSE
 
 	if (sgp.sqlite) {
-		del.dir <- dir.create("tmp_data", showWarnings=FALSE)
-		tmp_sgp_data_for_analysis <- dbConnect(SQLite(), dbname = "tmp_data/TMP_SGP_Data.sqlite")
+		del.dir <- dir.create("Data/tmp_data", recursive=TRUE, showWarnings=FALSE)
+		tmp_sgp_data_for_analysis <- dbConnect(SQLite(), dbname = "Data/tmp_data/TMP_SGP_Data.sqlite")
 		dbWriteTable(tmp_sgp_data_for_analysis, name = "sgp_data", overwrite = TRUE,
 			value=sgp_object@Data[,intersect(names(sgp_object@Data), variables.to.get), with=FALSE]["VALID_CASE"], row.names=0)
 		sgp.data.names <- dbListFields(tmp_sgp_data_for_analysis, "sgp_data")
@@ -1821,7 +1821,7 @@ function(sgp_object,
 	} ## END sequential analyzeSGP
 
 
-	if (!keep.sqlite & sgp.sqlite) {if (del.dir) unlink("tmp_data", recursive=TRUE, force=TRUE) else unlink("tmp_data/TMP_SGP_Data.sqlite", recursive=TRUE)}
+	if (!keep.sqlite & sgp.sqlite) {if (del.dir) unlink("Data/tmp_data", recursive=TRUE, force=TRUE) else unlink("Data/tmp_data/TMP_SGP_Data.sqlite", recursive=TRUE)}
 	sgp_object@SGP <- mergeSGP(tmp_sgp_object, sgp_object@SGP)
 
 	if (goodness.of.fit.print) gof.print(sgp_object)

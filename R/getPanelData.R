@@ -11,7 +11,7 @@ function(sgp.data,
 	SGPstateData <- SGPstateData
 
 	if (is(sgp.data, "DBIObject")) {
-		con <- dbConnect(SQLite(), dbname = "tmp_data/TMP_SGP_Data.sqlite")
+		con <- dbConnect(SQLite(), dbname = "Data/tmp_data/TMP_SGP_Data.sqlite")
 		var.names <- dbListFields(con, "sgp_data")
 		sqlite.tf <- TRUE
 	} else {

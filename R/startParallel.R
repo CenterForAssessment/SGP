@@ -110,19 +110,19 @@ function(parallel.config,
 		# Weird error for MPI stopCluster(...) 'Error in NextMethod() : 'NextMethod' called from an anonymous function'  load snow first removes it.
 		# if (!is.null(parallel.config[['TYPE']]) && parallel.config[['TYPE']] == 'MPI') require(snow)  #  Don't think this is a problem any more... 08/03/12
 		if (!is.null(parallel.config[['TYPE']])) {
-			if (!parallel.config[['TYPE']] %in% c('SOCK', 'MPI')) {
-				stop("The 'snow' package will be used when 'parallel.config$TYPE' is specified and BACKEND=='PARALLEL'.  List element must be 'SOCK' or 'MPI'.")
+			if (!parallel.config[['TYPE']] %in% c('SOCK', 'PSOCK', 'MPI')) {
+				stop("The 'snow' package will be used when 'parallel.config$TYPE' is specified and BACKEND=='PARALLEL'.  List element must be 'SOCK' ('PSOCK') or 'MPI'.")
 			}
 			par.type <- 'SNOW'
 		} else {
 			if (.Platform$OS.type == "unix") par.type <- 'MULTICORE' 
-			if (.Platform$OS.type != "unix") par.type <- 'SNOW'; parallel.config[['TYPE']] <- 'SOCK'
+			if (.Platform$OS.type != "unix") par.type <- 'SNOW'; parallel.config[['TYPE']] <- 'PSOCK'
 		}
 	}
 	
 	if (par.type == 'SNOW') {
-		if (is.null(parallel.config[['TYPE']])) stop("The 'parallel.config$TYPE' must be specified ('SOCK' or 'MPI')")
-		if (!parallel.config[['TYPE']] %in% c('SOCK','MPI', 'doParallel')) stop("The 'parallel.config$TYPE' must be 'SOCK', 'MPI' or 'doParallel'.")
+		if (is.null(parallel.config[['TYPE']])) stop("The 'parallel.config$TYPE' must be specified ('PSOCK' or 'MPI')")
+		if (!parallel.config[['TYPE']] %in% c('PSOCK','MPI', 'doParallel')) stop("The 'parallel.config$TYPE' must be 'PSOCK', 'MPI' or 'doParallel'.")
 	}
 
 
@@ -215,7 +215,7 @@ function(parallel.config,
 		if(!is.null(parallel.config[['SNOW_TEST']])) par.type <- 'SNOW' # To test SNOW on Linux
 		if (parallel.config[['TYPE']]=="doParallel") {
 			if (par.type == 'SNOW') {
-				doPar.cl <- makePSOCKcluster(workers, type='SOCK')
+				doPar.cl <- makePSOCKcluster(workers)
 				registerDoParallel(doPar.cl)
 				clusterEvalQ(doPar.cl, library(SGP))
 				# foreach.options <- list(attachExportEnv=TRUE)

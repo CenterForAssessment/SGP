@@ -114,7 +114,7 @@ function will produce plots for all available instructors provided in the data w
   }
   \item{bPlot.demo}{A Boolean argument (defaults to FALSE) indicating whether to produce demo student level plots (styles 150 and/or 153) for instructors. 
   }
-  \item{bPlot.output}{Either "PDF" or "PNG" indicating whether output is created using PDF or PNG driver. 
+  \item{bPlot.output}{Argument indicating the desired type of output format for bubble plots. Either 'PDF' (default) or 'PNG'.
   }
   \item{bPlot.format}{Either "print" or "presentation" indicating whether to optimize the plot for print form (light background) or presentation form (dark background).
   }
