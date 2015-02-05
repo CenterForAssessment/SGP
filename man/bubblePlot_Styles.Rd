@@ -25,11 +25,7 @@ bubblePlot_Styles(
 		bPlot.prior.achievement=TRUE, 
 		bPlot.draft=FALSE,
 		bPlot.demo=FALSE,
-<<<<<<< HEAD
-		bPlot.output ="PDF",
-=======
 		bPlot.output="PDF",
->>>>>>> 04c123a8c2dac10b5b90bf14a235a9ae27b3657c
 		bPlot.format="print",
 		bPlot.folder="Visualizations/bubblePlots")
 }

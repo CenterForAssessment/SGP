@@ -1,5 +1,17 @@
-`sgpSummary` <- function(sgp.groups.to.summarize, produce.confidence.interval, tmp.simulation.dt, state, sgp.summaries, confidence.interval.groups, my.sgp, sgp_key, variables.for.summaries, sim.info) {
+`sgpSummary` <- 
+function(sgp.groups.to.summarize,
+	produce.confidence.interval,
+	tmp.simulation.dt,
+	state,
+	sgp.summaries,
+	confidence.interval.groups,
+	my.sgp,
+	sgp_key,
+	variables.for.summaries,
+	sim.info) {
+
 	WEIGHT <- SGP_SIM <- V1 <- V2 <- .SD <- MEDIAN_SGP_with_SHRINKAGE <- NULL ## To prevent R CMD check warning
+
 	tmp.sgp.summaries <- sgp.summaries
 	sgp.summaries.names <- unlist(strsplit(names(sgp.summaries), "[.]"))
 	if (produce.confidence.interval) {
@@ -46,8 +58,22 @@
 	return(tmp)
 } ### END sgpSummary function
 
-pullData <- function(tmp.simulation.dt, state, pull.vars, variables.for.summaries, sgp.groups.to.summarize, sgp_key, tmp_key, sim.info=NULL) {
-	SIM_NUM <- WEIGHT <- ACHIEVEMENT_LEVEL <- ACHIEVEMENT_LEVEL_PRIOR <- CATCH_UP_KEEP_UP_STATUS <- MOVE_UP_STAY_UP_STATUS <- NULL
+
+`pullData` <- 
+function(tmp.simulation.dt,
+	state,
+	pull.vars,
+	variables.for.summaries,
+	sgp.groups.to.summarize,
+	sgp_key,
+	tmp_key,
+	sim.info=NULL) {
+
+	SGP_SIM <- V1 <- V2 <- SIM_NUM <- WEIGHT <- ACHIEVEMENT_LEVEL <- ACHIEVEMENT_LEVEL_PRIOR <- CATCH_UP_KEEP_UP_STATUS <- MOVE_UP_STAY_UP_STATUS <- NULL
+	CATCH_UP_KEEP_UP_STATUS_BASELINE <- MOVE_UP_STAY_UP_STATUS_BASELINE <- NULL
+
+	SGPstateData <- SGPstateData
+
 	con <- dbConnect(SQLite(), dbname = "Data/tmp_data/TMP_Summary_Data.sqlite")
 
 	if (!is.null(sim.info)) {
@@ -99,9 +125,12 @@ pullData <- function(tmp.simulation.dt, state, pull.vars, variables.for.summarie
 	}
 	dbDisconnect(con)
 	return(tmp_data)
-} 
+} ### END pullData function
+ 
 
-median_na <- function(x, weight) {
+`median_na` <- 
+function(x,
+	weight) {
 	if (is.null(weight)) {
 		median(as.numeric(x), na.rm=TRUE)
 	} else {
@@ -109,9 +138,13 @@ median_na <- function(x, weight) {
 	}
 }
 
-boot.median <- function(x,i) median(x[i], na.rm=TRUE)
+`boot.median` <- function(x,i) median(x[i], na.rm=TRUE)
 
-mean_na <- function(x, weight, result.digits=2) {
+`mean_na` <- 
+function(x,
+	weight,
+	result.digits=2) {
+
 	if (is.null(weight)) {
 		round(mean(as.numeric(x), na.rm=TRUE), digits=result.digits)
 	} else {
@@ -119,13 +152,19 @@ mean_na <- function(x, weight, result.digits=2) {
 	}
 }
 
-sd_na <- function(x, result.digits=2) round(sd(as.numeric(x), na.rm=TRUE), digits=result.digits)
 
-num_non_missing <- function(x) sum(!is.na(as.numeric(x)))
+`sd_na` <- function(x, result.digits=2) round(sd(as.numeric(x), na.rm=TRUE), digits=result.digits)
 
-sgp_standard_error <- function(x,y=1) round(y*sd(x, na.rm=TRUE)/sqrt(sum(!is.na(as.numeric(x)))), digits=2)
+`num_non_missing` <- function(x) sum(!is.na(as.numeric(x)))
 
-percent_in_category <- function(x, in.categories, of.categories, result.digits=1) { ## NOTE: x must be a factor and categories levels
+`sgp_standard_error` <- function(x,y=1) round(y*sd(x, na.rm=TRUE)/sqrt(sum(!is.na(as.numeric(x)))), digits=2)
+
+`percent_in_category` <- 
+function(x,
+	in.categories,
+	of.categories,
+	result.digits=1) { ## NOTE: x must be a factor and categories levels
+
 	if (!is.list(in.categories)) in.categories <- list(in.categories)
 	if (!is.list(of.categories)) of.categories <- list(of.categories)
 	tmp.result <- list()
@@ -134,15 +173,25 @@ percent_in_category <- function(x, in.categories, of.categories, result.digits=1
 		tmp.result[[i]] <- round(100*sum(tmp[in.categories[[i]]])/sum(tmp[of.categories[[i]]]), digits=result.digits)
 	}
 	return(unlist(tmp.result))
-}
+} ### END percent_in_category function
 
-percent_at_above_target <- function(sgp, target, result.digits=1) {
+
+`percent_at_above_target` <- 
+function(sgp,
+	target,
+	result.digits=1) {
+
 	tmp.logical <- sgp >= target
 	tmp.pct <- round(sum(tmp.logical, na.rm=TRUE)/sum(!is.na(tmp.logical))*100, digits=result.digits)
 	return(tmp.pct)
-}
+} ### END percent_at_above_target function
 
-boot.sgp <- function(dat, conf.quantiles=NULL, nboot=100) {
+
+`boot.sgp` <- 
+function(dat,
+	conf.quantiles=NULL,
+	nboot=100) {
+
 	out <- numeric(); CI <- c(NA,NA); SE <- NA
 	if (sum(is.na(dat)) != length(dat)) {
 		for (j in 1:nboot) {
@@ -156,4 +205,4 @@ boot.sgp <- function(dat, conf.quantiles=NULL, nboot=100) {
 		}
 	}
 	if (!is.null(conf.quantiles)) return(CI) else return(SE)
-}
+} ### END boot.sgp function
