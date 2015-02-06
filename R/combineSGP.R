@@ -416,6 +416,8 @@ function(
 
 				}
 			}
+		} else {
+			sgp.projections.equated <- NULL
 		}
 
 		if (!exists("target.args")) target.args <- get.target.arguments(SGPstateData[[state]][["Growth"]][["System_Type"]], target.type, projection.unit.label) 
