@@ -68,7 +68,6 @@ function(sgp_object,
 	CONTENT_AREA_RESPONSIBILITY <- INSTRUCTOR_LAST_NAME <- INSTRUCTOR_FIRST_NAME <- TRANSFORMED_SCALE_SCORE <- SCALE_SCORE_ACTUAL <- CONTENT_AREA_LABELS <- NULL
 	TEMP <- TEMP_SCORE <- TEMP_GRADE <- NULL
 	SGPstateData <- SGPstateData
-	randomNames <- randomNames
 
 
 	### Create state (if missing) from sgp_object (if possible)
@@ -748,7 +747,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 	#### Anonymize (if requested) (NOT necessary if wide data is provided)
  
 		if (sgPlot.anonymize) {
-			suppressPackageStartupMessages(require(randomNames))
+#			suppressPackageStartupMessages(require(randomNames))
 			if (!"ETHNICITY" %in% names(tmp.table)) tmp.table[["ETHNICITY"]] <- 1
 			if (!"GENDER" %in% names(tmp.table)) tmp.table[["GENDER"]] <- round(runif(dim(tmp.table)[1], min=0, max=1))
 			if ("LAST_NAME" %in% names(tmp.table)) tmp.table[,LAST_NAME:=NULL]

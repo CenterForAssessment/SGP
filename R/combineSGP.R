@@ -400,6 +400,24 @@ function(
 	###################################################################################################
 
 	if (sgp.target.scale.scores) {
+
+		### Setup for equated scale score targets
+
+		if (!is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]])) {
+			year.for.equate <- tail(sort(unique(sgp_object@Data$YEAR)), 1)
+			if (SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]!=year.for.equate) {
+				sgp.projections.equated <- NULL
+			} else {
+				if (is.null(sgp_object@SGP[['Linkages']])) {
+					c(tmp.messages, "\tNOTE: Scale score targets based upon equated scales require pre-existing Linkages from analyzeSGP. Run analyzeSGP with sgp.percentiles.equated=TRUE to establish Linkages. 'sgp.projections.equated' is set to FALSE.\n")
+					sgp.projections.equated <- NULL
+				} else {
+					sgp.projections.equated <- list(Year=year.for.equate, Linkages=sgp_object@SGP[['Linkages']])
+
+				}
+			}
+		}
+
 		if (!exists("target.args")) target.args <- get.target.arguments(SGPstateData[[state]][["Growth"]][["System_Type"]], target.type, projection.unit.label) 
 		tmp.target.list <- list()
 		for (target.type.iter in target.args[['sgp.target.scale.scores.types']]) {
@@ -429,6 +447,7 @@ function(
 					getYearsContentAreasGrades(state, years=unique(tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter][['YEAR']]), content_areas=unique(tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter][['CONTENT_AREA']])),
 					sgp.config=sgp.config,
 					projection_group.identifier=projection_group.iter,
+					sgp.projections.equated=sgp.projections.equated,
 					parallel.config=parallel.config)
 			}
 		}

@@ -216,7 +216,13 @@ function(sgp_object,
 		} else {
 			sgp.percentiles.equated <- TRUE
 		}
+	} else {
+		if (sgp.percentiles.equated) {
+			message("\tNOTE: 'sgp.percentiles.equated' has been set to TRUE but no meta-data exists in SGPstateData associated with that transition. Equated/linked SGP analyses require meta-data embedded in 'SGPstateData' to correctly work. Contact package administrators on how such data can be added to the package.")
+			sgp.percentiles.equated <- FALSE
+		}
 	}
+
 
 	### 
 	### Utility functions
