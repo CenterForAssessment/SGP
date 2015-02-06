@@ -6,6 +6,8 @@ function(
 
 	YEAR <- GRADE <- NULL
 
+	suppressPackageStartupMessages(require(SGPdata))
+
 	if (missing(TEST_NUMBER)) {
 		message("\ttestSGP carries out testing of SGP package. Tests currently included in testSGP:\n")
 		message("\t\t1. abcSGP test using all available years.")

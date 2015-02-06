@@ -456,6 +456,7 @@ function(sgp_object,
 		#### Anonymize (if requested) (NOT necessary if wide data is provided)
  
 		if (outputSGP.anonymize) {
+			suppressPackageStartupMessages(require(randomNames))
 			if (!"ETHNICITY" %in% names(tmp.table)) tmp.table[["ETHNICITY"]] <- 1
 			if (!"GENDER" %in% names(tmp.table)) tmp.table[["GENDER"]] <- round(runif(dim(tmp.table)[1], min=0, max=1))
 			tmp.dt <- tmp.table[,list(ID, ETHNICITY, GENDER)]
