@@ -93,6 +93,7 @@ function(
 			sgp.percentiles.equated <- FALSE
 			sgp.target.scale.scores <- FALSE
 		}
+		if (sgp.target.scale.scores) sgp.projections.equated <- NULL
 	}
 
 
