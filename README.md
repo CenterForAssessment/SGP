@@ -32,7 +32,7 @@ require(SGP)
 ```R
 install.packages("devtools")
 require(devtools)
-install_github("SGP", "CenterForAssessment")
+install_github("CenterForAssessment/SGP")
 require(SGP)
 ```
 

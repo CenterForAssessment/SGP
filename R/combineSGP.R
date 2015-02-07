@@ -16,6 +16,7 @@ function(
 	max.sgp.target.years.forward=3,
 	update.all.years=FALSE,
 	sgp.config=NULL,
+	sgp.percentiles.equated=FALSE,
 	parallel.config=NULL) {
 
 	started.at <- proc.time()
@@ -72,6 +73,28 @@ function(
 	if (sgp.target.scale.scores.only) {
 		sgp.target.scale.scores <- TRUE
 	}
+
+	### Setup for equated SGPs and scale score targets
+
+	if (!is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]])) {
+		year.for.equate <- tail(sort(unique(sgp_object@Data$YEAR)), 1)
+		if (SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]!=year.for.equate) {
+			sgp.percentiles.equated <- FALSE
+			sgp.target.scale.scores <- NULL
+		} else {
+			sgp.percentiles.equated <- TRUE
+			if (sgp.target.scale.scores) {
+				sgp.projections.equated <- list(Year=year.for.equate, Linkages=sgp_object@SGP[['Linkages']])
+			}
+		}
+	} else {
+		if (sgp.percentiles.equated) {
+			message("\tNOTE: 'sgp.percentiles.equated' has been set to TRUE but no meta-data exists in SGPstateData associated with the assessment transition. Equated/linked SGP analyses require meta-data embedded in 'SGPstateData' to correctly work. Contact package administrators on how such data can be added to the package.")
+			sgp.percentiles.equated <- FALSE
+		}
+		sgp.target.scale.scores <- NULL
+	}
+
 
 	### Utility functions
 
@@ -171,7 +194,7 @@ function(
 
 	## Determine names of Cohort Referenced SGPs
 
-	tmp.names <- getPercentileTableNames(sgp_object, content_areas, state, years, "sgp.percentiles")
+	tmp.names <- getPercentileTableNames(sgp_object, content_areas, state, years, "sgp.percentiles", sgp.percentiles.equated)
 	if (length(tmp.names) == 0 & sgp.percentiles) {
 		tmp.messages <- c(tmp.messages, "\tNOTE: No cohort referenced SGP results available in SGP slot. No cohort referenced SGP results will be merged.\n")
 		sgp.percentiles <- FALSE
@@ -400,25 +423,6 @@ function(
 	###################################################################################################
 
 	if (sgp.target.scale.scores) {
-
-		### Setup for equated scale score targets
-
-		if (!is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]])) {
-			year.for.equate <- tail(sort(unique(sgp_object@Data$YEAR)), 1)
-			if (SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]!=year.for.equate) {
-				sgp.projections.equated <- NULL
-			} else {
-				if (is.null(sgp_object@SGP[['Linkages']])) {
-					c(tmp.messages, "\tNOTE: Scale score targets based upon equated scales require pre-existing Linkages from analyzeSGP. Run analyzeSGP with sgp.percentiles.equated=TRUE to establish Linkages. 'sgp.projections.equated' is set to FALSE.\n")
-					sgp.projections.equated <- NULL
-				} else {
-					sgp.projections.equated <- list(Year=year.for.equate, Linkages=sgp_object@SGP[['Linkages']])
-
-				}
-			}
-		} else {
-			sgp.projections.equated <- NULL
-		}
 
 		if (!exists("target.args")) target.args <- get.target.arguments(SGPstateData[[state]][["Growth"]][["System_Type"]], target.type, projection.unit.label) 
 		tmp.target.list <- list()
