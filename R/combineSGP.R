@@ -80,7 +80,7 @@ function(
 		year.for.equate <- tail(sort(unique(sgp_object@Data$YEAR)), 1)
 		if (SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]!=year.for.equate) {
 			sgp.percentiles.equated <- FALSE
-			sgp.target.scale.scores <- NULL
+			sgp.target.scale.scores <- FALSE
 		} else {
 			sgp.percentiles.equated <- TRUE
 			if (sgp.target.scale.scores) {
@@ -91,8 +91,8 @@ function(
 		if (sgp.percentiles.equated) {
 			message("\tNOTE: 'sgp.percentiles.equated' has been set to TRUE but no meta-data exists in SGPstateData associated with the assessment transition. Equated/linked SGP analyses require meta-data embedded in 'SGPstateData' to correctly work. Contact package administrators on how such data can be added to the package.")
 			sgp.percentiles.equated <- FALSE
+			sgp.target.scale.scores <- FALSE
 		}
-		sgp.target.scale.scores <- NULL
 	}
 
 
@@ -457,7 +457,7 @@ function(
 					parallel.config=parallel.config)
 			}
 		}
-	} ### END !is.null(sgp.target.scale.scores)
+	} ### END if(sgp.target.scale.scores)
 
 
 	### Put slot.data into @Data slot
