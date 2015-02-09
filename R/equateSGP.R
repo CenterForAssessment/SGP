@@ -1,5 +1,5 @@
 `equateSGP` <- 
-function(sgp_object,
+function(tmp.data,
 	state,
 	current.year,
 	equating.method="equip") {
@@ -11,8 +11,8 @@ function(sgp_object,
 	current.year <- SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]
 	prior.year <- yearIncrement(current.year, -1)
 
-	current.year.data <- sgp_object@Data[VALID_CASE=="VALID_CASE" & YEAR==current.year]
-	prior.year.data <- sgp_object@Data[VALID_CASE=="VALID_CASE" & YEAR==prior.year]
+	current.year.data <- tmp.data[VALID_CASE=="VALID_CASE" & YEAR==current.year]
+	prior.year.data <- tmp.data[VALID_CASE=="VALID_CASE" & YEAR==prior.year]
 	setkey(current.year.data, CONTENT_AREA, GRADE)
 	setkey(prior.year.data, CONTENT_AREA, GRADE)
 

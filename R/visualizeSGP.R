@@ -736,7 +736,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 	#### Create transformed scale scores (NOT necessary if wide data is provided)
 
 		setkeyv(tmp.table, c("CONTENT_AREA_LABELS", "YEAR", "GRADE"))
-		tmp.table <- transformScaleScore(tmp.table, sgp_object@SGP[['Linkages']])
+		tmp.table <- transformScaleScore(tmp.table, state, sgp_object@SGP[['Linkages']])
 
 	#### Change SCALE_SCORE if SCALE_SCORE_ACTUAL is in sgp_object@Data
 
