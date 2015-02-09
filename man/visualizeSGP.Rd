@@ -40,7 +40,8 @@ visualizeSGP(
            sgPlot.reports.by.instructor=FALSE,
            sgPlot.students=NULL,
            sgPlot.reports.by.student=FALSE,
-           sgPlot.reports.group.vars=list(DISTRICT_NUMBER="DISTRICT_NUMBER", SCHOOL_NUMBER="SCHOOL_NUMBER"),
+           sgPlot.reports.group.vars=
+		list(DISTRICT_NUMBER="DISTRICT_NUMBER", SCHOOL_NUMBER="SCHOOL_NUMBER"),
            sgPlot.header.footer.color="#4CB9CC",
            sgPlot.front.page=NULL,
            sgPlot.folder="Visualizations/studentGrowthPlots",
