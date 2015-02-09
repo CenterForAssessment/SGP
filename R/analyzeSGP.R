@@ -318,8 +318,8 @@ function(sgp_object,
 			message("\tNOTE: Analyses involving equating are not possible with baseline analyses. Arguments related to baseline analyses are set to FALSE.")
 			sgp.percentiles.baseline <- sgp.projections.baseline <- sgp.projections.lagged.baseline <- FALSE
 		}
-		sgp_object@SGP$Linkages <- equateSGP(sgp_object, state, year.for.equate)
 		data.for.equate <- copy(sgp_object@Data)
+		sgp_object@SGP$Linkages <- equateSGP(data.for.equate, state, year.for.equate)
 		setkeyv(data.for.equate, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", "SCALE_SCORE"))
 		data.for.equate <- convertScaleScore(data.for.equate, year.for.equate, sgp_object@SGP$Linkages, conversion.type="NEW_TO_OLD", state)
 		setkeyv(data.for.equate, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))

@@ -1,9 +1,12 @@
 `transformScaleScore` <-
 function(tmp.data,
 	state,
+	content_areas,
 	linkages) {
 
-	TRANSFORMED_SCALE_SCORE <- SCALE_SCORE <- state <- CONTENT_AREA_LABELS <- YEAR <- GRADE <- NULL
+	TRANSFORMED_SCALE_SCORE <- SCALE_SCORE <- TEMP_SCALE_SCORE <- SCALE_SCORE_EQUATED <- state <- CONTENT_AREA_LABELS <- YEAR <- GRADE <- NULL
+
+	SGPstateData <- SGPstateData
 
 	if (!is.null(linkages)) {
 
@@ -29,7 +32,12 @@ function(tmp.data,
 			tmp.data[, TEMP_SCALE_SCORE := piecewiseTransform(SCALE_SCORE, state, CONTENT_AREA_LABELS, as.character(YEAR), as.character(GRADE)), by=list(CONTENT_AREA_LABELS, YEAR, GRADE)]
 			tmp.data[YEAR %in% years.for.equate.NEW, TEMP_SCALE_SCORE:=NA]
 			tmp.data[, TEMP_SCALE_SCORE:=piecewiseTransform(TEMP_SCALE_SCORE, state, CONTENT_AREA_LABELS, as.character(YEAR), as.character(GRADE)), by=list(CONTENT_AREA_LABELS, YEAR, GRADE)]
-			tmp.data[, 
+			tmp.data[YEAR %in% years.for.equate.NEW, TEMP_SCALE_SCORE:=SCALE_SCORE] 
+			tmp.linkages <- equateSGP(tmp.data, state, year.for.equate)
+			setkeyv(tmp.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", "SCALE_SCORE"))
+			tmp.data <- convertScaleScore(tmp.data, year.for.equate, tmp.linkages, conversion.type="NEW_TO_OLD", state)
+			tmp.data[,TRANSFORMED_SCALE_SCORE := SCALE_SCORE_EQUATED]
+			return(tmp.data)
 		}
 
 
