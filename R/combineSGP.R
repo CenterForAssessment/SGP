@@ -144,9 +144,9 @@ function(
 				intersect(target.type, c("sgp.projections", "sgp.projections.baseline", "sgp.projections.lagged", "sgp.projections.lagged.baseline"))
 		}
 
-		tmp.list[['target.level']] <- "CATCH_UP_KEEP_UP"
-		if (length(grep("MUSU", SGPstateData[[state]][["SGP_Configuration"]][['sgp.target.types']])) > 0) tmp.list[['target.level']] <- c("CATCH_UP_KEEP_UP", "MOVE_UP_STAY_UP")
-		if (length(which(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")) > 1) tmp.list[['target.level']] <- c("CATCH_UP_KEEP_UP", "MOVE_UP_STAY_UP")
+		tmp.list[['target.level']] <- c("CATCH_UP_KEEP_UP", "MOVE_UP_STAY_UP")
+		if (length(which(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient"))<=1)  tmp.list[['target.level']] <- "CATCH_UP_KEEP_UP"
+		if (length(grep("MUSU", SGPstateData[[state]][["SGP_Configuration"]][['sgp.target.types']]))==0) tmp.list[['target.level']] <- "CATCH_UP_KEEP_UP"
 
 		return(tmp.list)
 	} ### END get.target.arguments
