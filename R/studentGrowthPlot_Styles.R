@@ -2,6 +2,7 @@
 	function(
 		sgPlot.data,
 		sgPlot.sgp_object,
+		sgPlot.cutscores,
 		state,
 		last.year,
 		content_areas,

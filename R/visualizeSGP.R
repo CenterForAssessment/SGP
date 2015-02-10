@@ -733,10 +733,18 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			}
 		}
 
+	#### Create LONG cutscores and transform if necessary
+
+                Cutscores <- list()
+                for (i in tmp.content_areas_domains) {
+                        Cutscores[[i]] <- createLongCutscores(state, i)
+                }
+
 	#### Create transformed scale scores (NOT necessary if wide data is provided)
 
 		setkeyv(tmp.table, c("CONTENT_AREA_LABELS", "YEAR", "GRADE"))
 		tmp.table <- transformScaleScore(tmp.table, state, tmp.content_areas_domains, sgp_object@SGP[['Linkages']])
+
 
 	#### Change SCALE_SCORE if SCALE_SCORE_ACTUAL is in sgp_object@Data
 
@@ -955,6 +963,7 @@ if (sgPlot.produce.plots) {
 		studentGrowthPlot_Styles(
 			sgPlot.data=sgPlot.data,
 			sgPlot.sgp_object=sgPlot.sgp_object,
+			sgPlot.cutscores=Cutscores,
 			state=state,
 			last.year=tmp.last.year,
 			content_areas=tmp.content_areas_domains,
@@ -990,6 +999,7 @@ if (sgPlot.produce.plots) {
 						studentGrowthPlot_Styles(
 							sgPlot.data=sgPlot.data,
 							sgPlot.sgp_object=sgPlot.sgp_object,
+							sgPlot.cutscores=Cutscores,
 							state=state,
 							last.year=tmp.last.year,
 							content_areas=tmp.content_areas_domains,
@@ -1022,6 +1032,7 @@ if (sgPlot.produce.plots) {
 				studentGrowthPlot_Styles(
 					sgPlot.data=sgPlot.data,
 					sgPlot.sgp_object=sgPlot.sgp_object,
+					sgPlot.cutscores=Cutscores,
 					state=state,
 					last.year=tmp.last.year,
 					content_areas=tmp.content_areas_domains,
@@ -1053,6 +1064,7 @@ if (sgPlot.produce.plots) {
 				studentGrowthPlot_Styles(
 					sgPlot.data=sgPlot.data,
 					sgPlot.sgp_object=sgPlot.sgp_object,
+					sgPlot.cutscores=Cutscores,
 					state=state,
 					last.year=tmp.last.year,
 					content_areas=tmp.content_areas_domains,

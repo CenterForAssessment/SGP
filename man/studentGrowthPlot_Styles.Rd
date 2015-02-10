@@ -11,6 +11,7 @@ is called by \code{\link{visualizeSGP}} to generate individual student reports. 
 studentGrowthPlot_Styles(
            sgPlot.data,
            sgPlot.sgp_object,
+           sgPlot.cutscores,
            state,
            last.year,
            content_areas,
@@ -40,6 +41,8 @@ studentGrowthPlot_Styles(
 \code{sgPlot.save.sgPlot.data} option with \code{\link{visualizeSGP}} to save wide formatted student growth plot data.
   }
   \item{sgPlot.sgp_object}{SGP object containing coefficient matrices and knots and boundaries for percentile trajectory calculations associated with JSON output.
+  }
+  \item{sgPlot.cutscores}{List of cutscores, possibly transformed, for plotting studentGrowthPlots
   }
   \item{state}{Acronym indicating state associated with the summaries for access to assessment program information embedded in \code{SGPstateData}.
   }
