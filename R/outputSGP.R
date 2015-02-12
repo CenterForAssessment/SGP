@@ -59,6 +59,10 @@ function(sgp_object,
 		outputSGP.translate.names <- SGPstateData[[state]][['SGP_Configuration']][['outputSGP.translate.names']]
 	}
 
+	if (is.null(sgp_object@Names)) {
+		outputSGP.translate.names <- FALSE
+	}
+
 	###############################################
 	###
 	### LONG_Data

@@ -737,7 +737,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 
                 Cutscores <- list()
                 for (i in tmp.content_areas_domains) {
-                        Cutscores[[i]] <- createLongCutscores(state, i)
+                        Cutscores[[i]] <- createLongCutscores(state, i, linkages=sgp_object@SGP[['Linkages']])
                 }
 
 	#### Create transformed scale scores (NOT necessary if wide data is provided)
