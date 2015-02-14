@@ -733,18 +733,12 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			}
 		}
 
-	#### Create LONG cutscores and transform if necessary
-
-                Cutscores <- list()
-                for (i in tmp.content_areas_domains) {
-                        Cutscores[[i]] <- createLongCutscores(state, i, linkages=sgp_object@SGP[['Linkages']])
-                }
-
-	#### Create transformed scale scores (NOT necessary if wide data is provided)
+	#### Create transformed scale scores and Cutscores (NOT necessary if wide data is provided)
 
 		setkeyv(tmp.table, c("CONTENT_AREA_LABELS", "YEAR", "GRADE"))
-		tmp.table <- transformScaleScore(tmp.table, state, tmp.content_areas_domains, sgp_object@SGP[['Linkages']])
-
+		tmp.list <- transformScaleScore(tmp.table, state, tmp.content_areas_domains, sgp_object@SGP[['Linkages']])
+		tmp.table <- tmp.list[['Data']]
+		Cutscores <- tmp.list[['Cutscores']]
 
 	#### Change SCALE_SCORE if SCALE_SCORE_ACTUAL is in sgp_object@Data
 

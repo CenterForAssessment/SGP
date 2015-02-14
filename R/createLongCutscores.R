@@ -4,7 +4,7 @@ function(state,
 	add.GRADE_NUMERIC=FALSE,
 	linkages) {
 
-	GRADE <- GRADE_NUMERIC <- CUTSCORES <- YEAR <- CUTLEVEL <- YEAR_LAG <- NULL
+	GRADE <- GRADE_NUMERIC <- CUTSCORES <- YEAR <- CUTLEVEL <- YEAR_LAG <- CONTENT_AREA <- SCALE_SCORE <- NULL
 	SGPstateData <- SGPstateData
 
 	content_area.argument <- content_area
@@ -140,61 +140,6 @@ function(state,
 		tmp.long.cutscores <- grades.content_areas.reported.in.state[tmp.long.cutscores]
 		tmp.long.cutscores[,YEAR_LAG:=NULL]
 	}
-
-	if (!is.null(linkages)) {
-
-		scale.transition.scenario <- c(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][['Vertical_Scale_OLD']],
-			SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][['Vertical_Scale_NEW']])
-
-		tmp.year <- linkages[['Year']]
-
-
-#for (j in seq_along(projection.matrices[[i]])) {
-#	tmp.subject <- content_area.projection.sequence[j]; tmp.grade <- grade.projection.sequence[j]
-#	tmp.rbind.data[,j+1:=linkages[["Linkages"]][[paste(tmp.subject, tmp.year, sep=".")]][[paste("GRADE", tmp.grade, sep="_")]][["OLD_TO_NEW"]][["interpolated_function"]](tmp.rbind.data[[j+1]]), with=FALSE]
-#}
-
-
-
-
-
-		### Vertical-to-Vertical scale transition
-
-		if (identical(scale.transition.scenario, c("Yes", "Yes"))) {
-
-
-
-
-
-
-
-		}
-		
-
-		### Non-Vertical-to-Vertical scale transition
-
-		if (identical(scale.transition.scenario, c("No", "Yes"))) {
-
-
-
-
-
-
-		}
-
-
-		### Non-Vertical-to-Non-Vertical scale transition
-
-		if (identical(scale.transition.scenario, c("No", "No"))) {
-
-
-
-
-
-
-		}
-
-	} ### END if (!is.null(linkages))
 
 	return(tmp.long.cutscores)
 } ## END createLongCutscores Function
