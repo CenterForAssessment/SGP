@@ -4,7 +4,8 @@ function(tmp.data,
 	content_areas,
 	linkages) {
 
-	TRANSFORMED_SCALE_SCORE <- SCALE_SCORE <- TEMP_SCALE_SCORE <- SCALE_SCORE_EQUATED <- CONTENT_AREA <- CONTENT_AREA_LABELS <- YEAR <- GRADE <- CUTSCORES <- CUTSCORES_ORIGINAL <- NULL
+	TRANSFORMED_SCALE_SCORE <- SCALE_SCORE <- TEMP_SCALE_SCORE <- SCALE_SCORE_EQUATED <- CONTENT_AREA <- CONTENT_AREA_LABELS <- YEAR <- GRADE <- GRADE_NUMERIC <- NULL
+	CUTSCORES <- CUTSCORES_ORIGINAL <- NULL
 	SGPstateData <- SGPstateData
 
 	### Create LONG cutscores
@@ -15,14 +16,25 @@ function(tmp.data,
 		Cutscores[[i]][,CUTSCORES_ORIGINAL:=CUTSCORES]
 	}
 
+	### Utility functions
+
+	get.min.max.grade <- function(Cutscores) {
+
+		if ("GRADE_NUMERIC" %in% names(Cutscores)) {
+			tmp.grades.numeric <- range(sort(type.convert(subset(Cutscores, !GRADE %in% c("GRADE_LOWER", "GRADE_UPPER"))[['GRADE_NUMERIC']])))
+			tmp.grades <- sort(subset(Cutscores, GRADE_NUMERIC %in% tmp.grades.numeric)[['GRADE']])
+		} else {
+			tmp.grades <- sort(type.convert(subset(Cutscores, !GRADE %in% c("GRADE_LOWER", "GRADE_UPPER"))[['GRADE']]))
+		}
+		return(c(tmp.grades[1], rev(tmp.grades)[1]))
+	}
+
 
 	### Return Data and Cutscores based upon whether scale score transition
 
 	if (!is.null(linkages)) {
 		scale.transition.scenario <- c(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][['Vertical_Scale_OLD']], 
 			SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][['Vertical_Scale_NEW']])
-		min.grade <- sort(type.convert(sapply(strsplit(names(linkages[[1]]), "_"), '[', 2)))[1]
-		max.grade <- tail(sort(type.convert(sapply(strsplit(names(linkages[[1]]), "_"), '[', 2))), 1)
 
 
 		### Vertical-to-Vertical scale transition
@@ -40,13 +52,14 @@ function(tmp.data,
 				for (grade.iter in unique(Cutscores[[content_area.iter]][['GRADE']])) {
 					Cutscores[[content_area.iter]][CONTENT_AREA==content_area.iter & GRADE==grade.iter & YEAR==year.for.equate,
 						CUTSCORES:=linkages[[paste(content_area.iter, year.for.equate, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['NEW_TO_OLD']][["interpolated_function"]](CUTSCORES)]
+					tmp.min.max <- get.min.max.grade(Cutscores[[content_area.iter]])
 					if (grade.iter=="GRADE_UPPER") {
-						Cutscores[[content_area.iter]][CONTENT_AREA==content_area.iter & GRADE=="GRADE_UPPER" & YEAR==year.for.equate,
-							CUTSCORES:=tmp.linkages[[paste(content_area.iter, year.for.equate, sep=".")]][[paste("GRADE", max.grade, sep="_")]][['NEW_TO_OLD']][["interpolated_function"]](CUTSCORES)]
+						Cutscores[[content_area.iter]][CONTENT_AREA=="PLACEHOLDER" & GRADE=="GRADE_UPPER" & YEAR==year.for.equate,
+							CUTSCORES:=linkages[[paste(content_area.iter, year.for.equate, sep=".")]][[paste("GRADE", tmp.min.max[2], sep="_")]][['NEW_TO_OLD']][["interpolated_function"]](CUTSCORES)]
 					}
 					if (grade.iter=="GRADE_LOWER") {
-						Cutscores[[content_area.iter]][CONTENT_AREA==content_area.iter & GRADE=="GRADE_LOWER" & YEAR==year.for.equate,
-							CUTSCORES:=tmp.linkages[[paste(content_area.iter, year.for.equate, sep=".")]][[paste("GRADE", min.grade, sep="_")]][['NEW_TO_OLD']][["interpolated_function"]](CUTSCORES)]
+						Cutscores[[content_area.iter]][CONTENT_AREA=="PLACEHOLDER" & GRADE=="GRADE_LOWER" & YEAR==year.for.equate,
+							CUTSCORES:=linkages[[paste(content_area.iter, year.for.equate, sep=".")]][[paste("GRADE", tmp.min.max[1], sep="_")]][['NEW_TO_OLD']][["interpolated_function"]](CUTSCORES)]
 					}
 				}
 			}
@@ -83,13 +96,14 @@ function(tmp.data,
 				for (grade.iter in unique(Cutscores[[content_area.iter]][['GRADE']])) {
 					Cutscores[[content_area.iter]][CONTENT_AREA==content_area.iter & GRADE==grade.iter & YEAR==year.for.equate,
 						CUTSCORES:=tmp.linkages[[paste(content_area.iter, year.for.equate, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['NEW_TO_OLD']][["interpolated_function"]](CUTSCORES)]
+					tmp.min.max <- get.min.max.grade(Cutscores[[content_area.iter]])
 					if (grade.iter=="GRADE_UPPER") {
-						Cutscores[[content_area.iter]][CONTENT_AREA==content_area.iter & GRADE=="GRADE_UPPER" & YEAR==year.for.equate,
-							CUTSCORES:=tmp.linkages[[paste(content_area.iter, year.for.equate, sep=".")]][[paste("GRADE", max.grade, sep="_")]][['NEW_TO_OLD']][["interpolated_function"]](CUTSCORES)]
+						Cutscores[[content_area.iter]][CONTENT_AREA=="PLACEHOLDER" & GRADE=="GRADE_UPPER" & YEAR==year.for.equate,
+							CUTSCORES:=tmp.linkages[[paste(content_area.iter, year.for.equate, sep=".")]][[paste("GRADE", tmp.min.max[2], sep="_")]][['NEW_TO_OLD']][["interpolated_function"]](CUTSCORES)]
 					}
 					if (grade.iter=="GRADE_LOWER") {
-						Cutscores[[content_area.iter]][CONTENT_AREA==content_area.iter & GRADE=="GRADE_LOWER" & YEAR==year.for.equate,
-							CUTSCORES:=tmp.linkages[[paste(content_area.iter, year.for.equate, sep=".")]][[paste("GRADE", min.grade, sep="_")]][['NEW_TO_OLD']][["interpolated_function"]](CUTSCORES)]
+						Cutscores[[content_area.iter]][CONTENT_AREA=="PLACEHOLDER" & GRADE=="GRADE_LOWER" & YEAR==year.for.equate,
+							CUTSCORES:=tmp.linkages[[paste(content_area.iter, year.for.equate, sep=".")]][[paste("GRADE", tmp.min.max[1], sep="_")]][['NEW_TO_OLD']][["interpolated_function"]](CUTSCORES)]
 					}
 				}
 			}

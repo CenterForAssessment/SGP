@@ -72,14 +72,16 @@ function(tmp.data,
 			tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['OLD_TO_NEW']][['concordance']]$yx[
 				tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['OLD_TO_NEW']][['concordance']]$yx > tmp.boundaries.old.to.new[2]] <-
 				tmp.boundaries.old.to.new[2]
+
+			splinefun.scale <- tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['NEW_TO_OLD']][['concordance']][['scale']]
+			splinefun.scale <- c(extendrange(splinefun.scale, f=0.2)[1], splinefun.scale, extendrange(splinefun.scale, f=0.2)[2])
+			splinefun.yx <- tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['NEW_TO_OLD']][['concordance']][['yx']]
+			splinefun.yx <- c(extendrange(splinefun.yx, f=0.2)[1], splinefun.yx, extendrange(splinefun.yx, f=0.2)[2])
+ 
 			tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['NEW_TO_OLD']]$interpolated_function <- splinefun(
-				tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['NEW_TO_OLD']][['concordance']][['scale']],
-				tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['NEW_TO_OLD']][['concordance']][['yx']],
-				method="hyman")
+				splinefun.scale, splinefun.yx, method="hyman")
 			tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['OLD_TO_NEW']]$interpolated_function <- splinefun(
-				tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['OLD_TO_NEW']][['concordance']][['scale']],
-				tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['OLD_TO_NEW']][['concordance']][['yx']],
-				method="hyman")
+				splinefun.yx, splinefun.scale, method="hyman")
 		}
 	}
 	return(tmp.list)
