@@ -739,6 +739,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 		tmp.list <- transformScaleScore(tmp.table, state, tmp.content_areas_domains, sgp_object@SGP[['Linkages']])
 		tmp.table <- tmp.list[['Data']]
 		Cutscores <- tmp.list[['Cutscores']]
+		sgp.projections.equated <- tmp.list[['sgp.projections.equated']]
 
 	#### Change SCALE_SCORE if SCALE_SCORE_ACTUAL is in sgp_object@Data
 
@@ -805,7 +806,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 
 		sgPlot.data <- sgPlot.data[, variables.to.keep, with=FALSE]
 
-	#### Merge in 1 year projections (if requested & available) and transform using piecewise.tranform (if required) (NOT NECESSARY IF WIDE data is provided)
+	#### Merge in 1 year projections (if requested & available) and transform using piecewiseTransform (if required) (NOT NECESSARY IF WIDE data is provided)
 	#### Merge in scale scores associated with SGP_TARGETs (if requested & available) and transform using piecewiseTransform (if required) (NOT NECESSARY IF WIDE data is provided)
 
 		if (sgPlot.fan | !is.null(sgPlot.sgp.targets)) {
@@ -891,7 +892,8 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 						sgPlot.data[, TEMP := piecewiseTransform(TEMP_SCORE, state, 
 										get.next.content_area(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment), 
 										yearIncrement(tmp.last.year, tmp.increment), 
-										get.next.grade(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment)), by=list(CONTENT_AREA, TEMP_GRADE)]
+										get.next.grade(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment),
+										sgp.projections.equated=sgp.projections.equated), by=list(CONTENT_AREA, TEMP_GRADE)]
 						setnames(sgPlot.data, "TEMP", paste(proj.iter, "TRANSFORMED", sep="_"))
 
 						if ("SCALE_SCORE_ACTUAL" %in% names(sgp_object@Data)) {

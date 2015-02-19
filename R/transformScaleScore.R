@@ -66,7 +66,7 @@ function(tmp.data,
 			
 			### Return data
 
-			return(list(Data=tmp.data, Cutscores=Cutscores))
+			return(list(Data=tmp.data, Cutscores=Cutscores, sgp.projections.equated=list(Year=year.for.equate, Linkages=linkages)))
 		}
 		
 
@@ -110,7 +110,7 @@ function(tmp.data,
 
 			### Return data
 
-			return(list(Data=tmp.data, Cutscores=Cutscores))
+			return(list(Data=tmp.data, Cutscores=Cutscores, sgp.projections.equated=list(Year=year.for.equate, Linkages=tmp.linkages)))
 		}
 
 
@@ -138,15 +138,14 @@ function(tmp.data,
 
 			### Return data
 
-			return(list(Data=tmp.data, Cutscores=Cutscores))
+			return(list(Data=tmp.data, Cutscores=Cutscores, sgp.projections.equated=list(Year=year.for.equate, Linkages=tmp.linkages)))
 
 		}
 
 
 	} else {
 		tmp.data[, TRANSFORMED_SCALE_SCORE := piecewiseTransform(SCALE_SCORE, state, CONTENT_AREA_LABELS, as.character(YEAR), as.character(GRADE)), by=list(CONTENT_AREA_LABELS, YEAR, GRADE)]
-		return(list(Data=tmp.data, Cutscores=Cutscores))
+		return(list(Data=tmp.data, Cutscores=Cutscores, Linkages=NULL))
 	}
 
 } ### END transformScaleScore function
-
