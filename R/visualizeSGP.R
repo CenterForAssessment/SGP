@@ -981,7 +981,8 @@ if (sgPlot.produce.plots) {
 			sgPlot.baseline=sgPlot.baseline,
 			sgPlot.sgp.targets.timeframe=sgPlot.sgp.targets.timeframe,
 			sgPlot.zip=sgPlot.zip,
-			sgPlot.output.format=sgPlot.output.format)
+			sgPlot.output.format=sgPlot.output.format,
+			sgPlot.linkages=sgp.projections.equated)
 
 	} else { ### Parallel Processing
 		
@@ -1017,7 +1018,8 @@ if (sgPlot.produce.plots) {
 							sgPlot.baseline=sgPlot.baseline,
 							sgPlot.sgp.targets.timeframe=sgPlot.sgp.targets.timeframe,
 							sgPlot.zip=sgPlot.zip,
-							sgPlot.output.format=sgPlot.output.format)
+							sgPlot.output.format=sgPlot.output.format,
+							sgPlot.linkages=sgp.projections.equated)
 			} ### END dopar
 		} ### END if FOREACH
 		
@@ -1050,7 +1052,8 @@ if (sgPlot.produce.plots) {
 					sgPlot.baseline=sgPlot.baseline,
 					sgPlot.sgp.targets.timeframe=sgPlot.sgp.targets.timeframe,
 					sgPlot.zip=sgPlot.zip,
-					sgPlot.output.format=sgPlot.output.format))
+					sgPlot.output.format=sgPlot.output.format,
+					sgPlot.linkages=sgp.projections.equated))
 		} ### END if SNOW
 		
 		if (par.start$par.type=="MULTICORE") {
@@ -1082,7 +1085,8 @@ if (sgPlot.produce.plots) {
 					sgPlot.baseline=sgPlot.baseline,
 					sgPlot.sgp.targets.timeframe=sgPlot.sgp.targets.timeframe,
 					sgPlot.zip=sgPlot.zip,
-					sgPlot.output.format=sgPlot.output.format), mc.cores=par.start$workers, mc.preschedule=FALSE)
+					sgPlot.output.format=sgPlot.output.format,
+					sgPlot.linkages=sgp.projections.equated), mc.cores=par.start$workers, mc.preschedule=FALSE)
 		}  ### END if MULTICORE
 		
 		stopParallel(parallel.config, par.start)
