@@ -5,7 +5,7 @@ function(scale_score,
 	year,
 	grade,
 	output.digits=1,
-	sgp.projections.equated) {
+	sgp.projections.equated=NULL) {
 
 	SGPstateData <- SGPstateData
 
