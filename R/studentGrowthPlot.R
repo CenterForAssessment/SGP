@@ -8,10 +8,10 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 	Grades,                               ## Vector of Grade levels for student
 	Content_Areas,                        ## Vector of Content Areas for student
 	Cuts,                                 ## Vector of NY1, NY2, and NY3 cutscores
-	Plotting_Cuts,                        ## Vector of NY1, NY2, and NY3 cutscores used for plotting (transformed if non-vertical scale)
+	Plotting_Cuts,                        ## Vector of NY1, NY2, and NY3 cutscores used for plotting (transformed if non-vertical/equated scale)
 	SGP_Targets,                          ## Vector of CUKU, CUKU_Current, MUSU, MUSU_Current (multi) year targets
 	SGP_Scale_Score_Targets,              ## Vector of CUKU, CUKU_Current, MUSU, MUSU_Current scale score targets
-	Plotting_SGP_Scale_Score_Targets,     ## Vector of CUKU, CUKU_Current, MUSU, MUSU_Current scale score targets for plotting (transformed if non-vertical scale)
+	Plotting_SGP_Scale_Score_Targets,     ## Vector of CUKU, CUKU_Current, MUSU, MUSU_Current scale score targets for plotting (transformed if non-vertical/equated scale)
 	Cutscores,                            ## data.frame of long formatted achievement level cutscores
 	Years,                                ## Vector of years corresponding to Scale_Scores, Content_Areas, ... arguments supplied
 	Report_Parameters) {                  ## list containing Current_Year, Content_Area, Content_Area_Title, State, Denote_Content_Area, SGP_Targets, Configuration, Language, Assessment_Transition
