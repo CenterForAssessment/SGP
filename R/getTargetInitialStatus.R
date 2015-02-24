@@ -24,6 +24,12 @@ function(achievement_level,
 					which(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")]
 				levels.that.are.not.proficient <- SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]][
 					which(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Not Proficient")]
+				levels.that.are.advanced <- SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]][
+					tail(which(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient"), -1)]
+				levels.that.are.not.advanced <- SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]][
+					c(which(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Not Proficient"),
+					head(which(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient"), 1))]
+
 			}
 		}
 
@@ -35,9 +41,10 @@ function(achievement_level,
 		}
 
 		if (status.type=="MOVE_UP_STAY_UP") {
+			achievement_level <- as.character(achievement_level)
 			achievement_level[achievement_level %in% levels.that.are.not.proficient] <- NA
-			achievement_level <- unclass(factor(achievement_level))
-			achievement_level[achievement_level > 2] <- 2
+			achievement_level[achievement_level %in% levels.that.are.advanced] <- 2
+			achievement_level[achievement_level %in% levels.that.are.not.advanced] <- 1
 			return(factor(achievement_level, levels=1:2, labels=c("Moving Up", "Staying Up"), ordered=FALSE))
 		}
 } ### END getTargetInitialStatus
