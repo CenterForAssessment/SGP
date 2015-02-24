@@ -17,7 +17,7 @@ function(sgp_object,
                 state <- getStateAbbreviation(tmp.name, "checkSGP")
         }
 
-	my.character.variables <- c("ID", "VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE")
+	my.character.variables <- c("ID", "VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", "ACHIEVEMENT_LEVEL")
 	my.numeric.variables <- c("SCALE_SCORE", "SCALE_SCORE_PRIOR")
 
 
