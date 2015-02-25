@@ -122,9 +122,15 @@ function(sgp_object,
 	## Check if ACHIEVEMENT_LEVEL levels are in SGPstateData
 
 	if (!is.null(state)) {
-		if (!all(levels(sgp_object@Data$ACHIEVEMENT_LEVEL) %in% SGPstateData[[state]][['Achievement']][['Levels']][['Labels']])) {
+		if (!is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]])) {
+			tmp.index <- grep("Achievement_Levels", names(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]]))
+			achievement.levels <- sort(as.vector(sapply(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][tmp.index], function(x) x[['Labels']])))
+		} else {
+			achievement.levels <- SGPstateData[[state]][['Achievement']][['Levels']][['Labels']]
+		}
+		if (!all(sort(unique(sgp_object@Data$ACHIEVEMENT_LEVEL)) %in% achievement.levels)) {
 			missing.achievement.levels <- 
-				levels(sgp_object@Data$ACHIEVEMENT_LEVEL)[!levels(sgp_object@Data$ACHIEVEMENT_LEVEL) %in% SGPstateData[[state]][['Achievement']][['Levels']][['Labels']]]
+				sort(unique(sgp_object@Data$ACHIEVEMENT_LEVEL))[!sort(unique(sgp_object@Data$ACHIEVEMENT_LEVEL)) %in% achievement.levels]
 			message(paste("\tNOTE: Achievement level(s):", paste(missing.achievement.levels, collapse=", "), "in supplied data are not contained in 'SGPstateData'.", collapse=" "))
 		}
 	}
