@@ -121,7 +121,7 @@ function(sgp_object,
 
 	## Check if ACHIEVEMENT_LEVEL levels are in SGPstateData
 
-	if (!is.null(state)) {
+	if (!is.null(state) && "ACHIEVEMENT_LEVEL" %in% names(sgp_object@Data)) {
 		if (!is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]])) {
 			tmp.index <- grep("Achievement_Levels", names(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]]))
 			achievement.levels <- sort(as.vector(sapply(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][tmp.index], function(x) x[['Labels']])))
