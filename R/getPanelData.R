@@ -328,7 +328,6 @@ function(sgp.data,
 						key="ID")[tmp.ids], key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))[SJ("VALID_CASE", sgp.iter[["sgp.projection.content.areas"]],
 						tail(head(sgp.iter[["sgp.panel.years"]], -1), length(sgp.iter[["sgp.projection.grade.sequences"]])),
 						sgp.iter[["sgp.projection.grade.sequences"]]), nomatch=0][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE]
-					tmp.data[, ACHIEVEMENT_LEVEL := ordered(ACHIEVEMENT_LEVEL, levels = SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]])]
 					tmp.data <- reshape(
 						tmp.data,
 						idvar="ID",
@@ -372,7 +371,6 @@ function(sgp.data,
 						key="ID")[tmp.ids], key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))[SJ("VALID_CASE", sgp.iter[["sgp.projection.content.areas"]],
 						tail(head(sgp.iter[["sgp.panel.years"]], -1), length(sgp.iter[["sgp.projection.grade.sequences"]])),
 						sgp.iter[["sgp.projection.grade.sequences"]]), nomatch=0][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE]
-					tmp.data[, ACHIEVEMENT_LEVEL := ordered(ACHIEVEMENT_LEVEL, levels = SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]])]
 					tmp.data <- data.table(reshape(
 						tmp.data,
 						idvar="ID",

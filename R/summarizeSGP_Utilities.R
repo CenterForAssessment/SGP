@@ -105,12 +105,6 @@ function(tmp.simulation.dt,
 	
 	tmp_data <- data.table(dbGetQuery(con, paste("select", paste(pull.vars, collapse = ","), "from summary_data"))) 
 	if(all((my.key <- intersect(sgp_key, variables.for.summaries)) %in% names(tmp_data))) setkeyv(tmp_data, my.key)
-	if ("ACHIEVEMENT_LEVEL" %in% names(tmp_data)) {
-		tmp_data[, ACHIEVEMENT_LEVEL := ordered(ACHIEVEMENT_LEVEL, levels = SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]])]
-	}
-	if ("ACHIEVEMENT_LEVEL_PRIOR" %in% names(tmp_data)) {
-		tmp_data[, ACHIEVEMENT_LEVEL_PRIOR := ordered(ACHIEVEMENT_LEVEL_PRIOR, levels=SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]])]
-	}
 	if ("CATCH_UP_KEEP_UP_STATUS" %in% names(tmp_data)) {
 		tmp_data[, CATCH_UP_KEEP_UP_STATUS := factor(CATCH_UP_KEEP_UP_STATUS)]
 	}
