@@ -8,6 +8,7 @@
 	gaPlot.grade_range,
 	gaPlot.max.order.for.progression=NULL,
 	gaPlot.start.points="Achievement Level Cuts",
+	gaPlot.subtitle=TRUE,
 	state,
 	content_area,
 	year, 
@@ -411,6 +412,19 @@
 		}
 	}
 
+	## Code for producing subtitle
+
+	if (gaPlot.subtitle) {
+		if (gaPlot.start.points=="Achievement Level Cuts") {
+			tmp.text <- paste("Student starting Grade ", gaPlot.grade_range[1], " from Level ", j, "/Level ", j+1, " cut", sep="")
+		}
+		if (gaPlot.start.points=="Achievement Percentiles") {
+			tmp.text <- paste("Student starting Grade ", gaPlot.grade_range[1], " from ", gaPlot.achievement_percentiles[j], " achievement percentile", sep="")
+		}
+		grid.text(x=0.5, y=0.05, tmp.text, gp=gpar(col="white", cex=1.2))
+
+	}
+
 	popViewport() ## pop chart.vp
 
 
@@ -547,7 +561,7 @@
 	message(paste("\tFinished", year, state.name.label, content_area, tmp.baseline.message, "growthAchievementPlot:",  date(), "in", timetaken(started.at), "\n"))
 
 	
-	} ## End loop over starting scores or students
+	} ## End loop over starting scores or students (j)
 
 	return("DONE")
 

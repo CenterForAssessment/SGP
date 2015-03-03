@@ -465,8 +465,13 @@ if (Report_Parameters$Content_Area %in% names(SGPstateData[[Report_Parameters$St
    yscale.range <- extendrange(c(low.score,high.score), f=0.15)
 }
 
-subject.report.vp <- viewport(layout = grid.layout(2, 3, widths = unit(c(1.15, 5.4, 1.5)/8.05, rep("npc", 3)), 
+if (is.null(Report_Parameters$Assessment_Transition)) {
+	subject.report.vp <- viewport(layout = grid.layout(2, 3, widths = unit(c(1.15, 5.4, 1.5)/8.05, rep("npc", 3)), 
                                               heights = unit(c(2.45, 0.9)/3.35, rep("npc", 2))), gp=gpar(fill="transparent"))
+} else {
+	subject.report.vp <- viewport(layout = grid.layout(2, 3, widths = unit(c(1.15, 5.75, 1.15)/8.05, rep("npc", 3)), 
+                                              heights = unit(c(2.45, 0.9)/3.35, rep("npc", 2))), gp=gpar(fill="transparent"))
+}
 
 growth.chart.vp <- viewport(name="growth.chart.vp",
                     layout.pos.row=1, layout.pos.col=2,
