@@ -19,7 +19,7 @@ function(panel.data,         ## REQUIRED
          print.sgp.order=FALSE, 
          calculate.sgps=TRUE, 
          rq.method="br",
-	 max.n.for.coefficient.matrices=NULL,
+         max.n.for.coefficient.matrices=NULL,
          knot.cut.percentiles=c(0.2,0.4,0.6,0.8),
          knots.boundaries.by.panel=FALSE,
          exact.grade.progression.sequence=FALSE,
@@ -326,6 +326,13 @@ function(panel.data,         ## REQUIRED
 			tmp.yr.iter <- rev(year.progression)[2:(k+1)]
 			csem.int <- matrix(nrow=dim(tmp.data)[1], ncol=length(tmp.gp.iter)) # build matrix to store interpolated csem
 			colnames(csem.int) <- paste("icsem", tmp.gp.iter, tmp.ca.iter, tmp.yr.iter, sep="")
+			
+			## the following is added by YS on 021915 to accommodate missing data when using "variable"
+			csem.tmp <- vector()
+			for (g in seq_along(tmp.gp.iter)) {
+				csem.tmp<-cbind(csem.tmp,variable[[paste("CSEM.grade", tmp.gp.iter[g], ".", tmp.ca.iter[g], sep="")]])
+			}
+			csem.tmp<-na.omit(csem.tmp)
 			
 			# interpolate csem for all scale scores except that of the last grade
 
