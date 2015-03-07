@@ -54,7 +54,8 @@ function(sgp_object,
 	############################################
 
 
-	baselineSGP_Internal <- function(sgp_object, state, years, content_areas, grade.sequences, baseline.grade.sequences.lags, knots.boundaries.iter, parallel.config, use.my.coefficient.matrices, calculate.simex) {
+	baselineSGP_Internal <- function(sgp_object, state, years, content_areas, grade.sequences, baseline.grade.sequences.lags, 
+		knots.boundaries.iter, parallel.config, use.my.coefficient.matrices, calculate.simex) {
 
 		started.at <- proc.time()
 		started.date <- date()
@@ -102,7 +103,7 @@ function(sgp_object,
 
 		### Calculate Coefficient Matrices and return list containing coefficient matrices
 		
-		if (!is.null(calculate.simex.baseline)) TMP_Coefficient_Matrices = sgp_object@SGP[["Coefficient_Matrices"]] else TMP_Coefficient_Matrices <- list()
+		if (!is.null(calculate.simex)) TMP_Coefficient_Matrices = sgp_object@SGP[["Coefficient_Matrices"]] else TMP_Coefficient_Matrices <- list()
 
 		tmp_sgp_list <- list(Coefficient_Matrices =
 			studentGrowthPercentiles(
@@ -158,7 +159,8 @@ function(sgp_object,
 	if (is.null(SGPstateData[[state]][["Baseline_splineMatrix"]])) {
 		
 		if (is.null(sgp.baseline.config)) {
-			sgp.baseline.config <- getSGPBaselineConfig(sgp_object, content_areas, grades, sgp.baseline.panel.years)
+			sgp.baseline.config <- getSGPBaselineConfig(sgp_object, content_areas, grades, sgp.baseline.panel.years, 
+				sgp.percentiles.baseline.max.order = sgp.percentiles.baseline.max.order, calculate.simex.baseline = calculate.simex.baseline)
 		} else {
 			sgp.baseline.config <- checkConfig(sgp.baseline.config, "Baseline")
 		}
@@ -193,7 +195,8 @@ function(sgp_object,
 
 	if (!is.null(calculate.simex.baseline)) {
 		if (is.null(sgp.baseline.config)) {
-			sgp.baseline.config <- getSGPBaselineConfig(sgp_object, content_areas, grades, sgp.baseline.panel.years)
+			sgp.baseline.config <- getSGPBaselineConfig(sgp_object, content_areas, grades, sgp.baseline.panel.years,
+				sgp.percentiles.baseline.max.order = sgp.percentiles.baseline.max.order, calculate.simex.baseline = calculate.simex.baseline)
 		} else {
 			sgp.baseline.config <- checkConfig(sgp.baseline.config, "Baseline")
 		}
@@ -240,7 +243,7 @@ function(sgp_object,
 		par.sgp.config <- getSGPConfig(sgp_object, state, tmp_sgp_object, content_areas, years, grades, sgp.config,
 			sgp.percentiles=FALSE, sgp.projections=FALSE, sgp.projections.lagged=FALSE,
 			sgp.percentiles.baseline=TRUE, sgp.projections.baseline=FALSE, sgp.projections.lagged.baseline=FALSE,
-			sgp.config.drop.nonsequential.grade.progression.variables=TRUE)
+			sgp.config.drop.nonsequential.grade.progression.variables=TRUE, calculate.simex.baseline = calculate.simex.baseline)
 
 		for (sgp.iter in par.sgp.config[['sgp.percentiles.baseline']]) {
 
