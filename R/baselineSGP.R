@@ -45,7 +45,10 @@ function(sgp_object,
 	} else {
 		sgp.loss.hoss.adjustment <- NULL
 	}
-
+	
+	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["sgp.minimum.default.panel.years"]])) {
+		sgp.minimum.default.panel.years <- SGPstateData[[state]][["SGP_Configuration"]][["sgp.minimum.default.panel.years"]]
+	} else sgp.minimum.default.panel.years <- 3
 
 	############################################
 	###
@@ -243,7 +246,8 @@ function(sgp_object,
 		par.sgp.config <- getSGPConfig(sgp_object, state, tmp_sgp_object, content_areas, years, grades, sgp.config,
 			sgp.percentiles=FALSE, sgp.projections=FALSE, sgp.projections.lagged=FALSE,
 			sgp.percentiles.baseline=TRUE, sgp.projections.baseline=FALSE, sgp.projections.lagged.baseline=FALSE,
-			sgp.config.drop.nonsequential.grade.progression.variables=TRUE, calculate.simex.baseline = calculate.simex.baseline)
+			sgp.config.drop.nonsequential.grade.progression.variables=TRUE, sgp.minimum.default.panel.years=sgp.minimum.default.panel.years,
+			sgp.projections.max.forward.progression.years=NULL, sgp.use.my.coefficient.matrices=TRUE, calculate.simex.baseline = calculate.simex.baseline)
 
 		for (sgp.iter in par.sgp.config[['sgp.percentiles.baseline']]) {
 
