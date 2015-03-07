@@ -433,7 +433,7 @@ function(sgp_object,
 							sgp.baseline.config=list(sgp.iter), ## NOTE: list of sgp.iter must be passed for proper iteration
 							return.matrices.only=TRUE,
 							calculate.baseline.sgps=FALSE,
-							calculate.baseline.simex=calculate.simex.baseline,
+							calculate.simex.baseline=calculate.simex.baseline,
 							parallel.config=parallel.config))
 					}
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -449,7 +449,7 @@ function(sgp_object,
 							sgp.baseline.config=list(sgp.iter), ## NOTE: list of sgp.iter must be passed for proper iteration
 							return.matrices.only=TRUE,
 							calculate.baseline.sgps=FALSE,
-							calculate.baseline.simex=calculate.simex.baseline,
+							calculate.simex.baseline=calculate.simex.baseline,
 							parallel.config=parallel.config))
 					
 						tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp, simex=TRUE)))
@@ -462,7 +462,7 @@ function(sgp_object,
 							sgp.baseline.config=list(sgp.iter), ## NOTE: list of sgp.iter must be passed for proper iteration
 							return.matrices.only=TRUE,
 							calculate.baseline.sgps=FALSE,
-							calculate.baseline.simex=calculate.simex.baseline,
+							calculate.simex.baseline=calculate.simex.baseline,
 							parallel.config=parallel.config),
 							mc.cores=par.start$workers, mc.preschedule=FALSE)
 							
@@ -482,7 +482,7 @@ function(sgp_object,
 						sgp.baseline.config=sgp.baseline.config[sgp.iter], ## NOTE: must pass list, [...], not vector, [[...]].
 						return.matrices.only=TRUE,
 						calculate.baseline.sgps=FALSE,
-						calculate.baseline.simex=calculate.simex.baseline,
+						calculate.simex.baseline=calculate.simex.baseline,
 						parallel.config=lower.level.parallel.config)
 				}
 				

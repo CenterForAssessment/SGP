@@ -11,7 +11,7 @@ function(sgp_object,
 		sgp.percentiles.baseline.max.order=3,
 		return.matrices.only=FALSE,
 		calculate.baseline.sgps=TRUE,
-		calculate.baseline.simex=NULL,
+		calculate.simex.baseline=NULL,
 		goodness.of.fit.print=TRUE,
 		parallel.config=NULL,
 		...) {
@@ -29,8 +29,8 @@ function(sgp_object,
 		state <- getStateAbbreviation(tmp.name, "baselineSGP")
 	}
 
-	if (identical(calculate.baseline.simex, TRUE)) {
-		calculate.baseline.simex <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear", save.matrices=TRUE)
+	if (identical(calculate.simex.baseline, TRUE)) {
+		calculate.simex.baseline <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear", save.matrices=TRUE)
 	}
 
 	### Syncronize "return.matrices.only" and "calculate.baseline.sgps" arguments
@@ -102,7 +102,7 @@ function(sgp_object,
 
 		### Calculate Coefficient Matrices and return list containing coefficient matrices
 		
-		if (!is.null(calculate.baseline.simex)) TMP_Coefficient_Matrices = sgp_object@SGP[["Coefficient_Matrices"]] else TMP_Coefficient_Matrices <- list()
+		if (!is.null(calculate.simex.baseline)) TMP_Coefficient_Matrices = sgp_object@SGP[["Coefficient_Matrices"]] else TMP_Coefficient_Matrices <- list()
 
 		tmp_sgp_list <- list(Coefficient_Matrices =
 			studentGrowthPercentiles(
@@ -191,7 +191,7 @@ function(sgp_object,
 	###
 	#################################################################################
 
-	if (!is.null(calculate.baseline.simex)) {
+	if (!is.null(calculate.simex.baseline)) {
 		if (is.null(sgp.baseline.config)) {
 			sgp.baseline.config <- getSGPBaselineConfig(sgp_object, content_areas, grades, sgp.baseline.panel.years)
 		} else {
@@ -211,7 +211,7 @@ function(sgp_object,
 					knots.boundaries.iter=sgp.baseline.config[[iter]],
 					parallel.config=parallel.config,
 					use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.baseline.config[[iter]][["sgp.baseline.content.areas"]], 1)),
-					calculate.simex=calculate.baseline.simex)
+					calculate.simex=calculate.simex.baseline)
 		}
 
 		sgp_object@SGP <- mergeSGP(Reduce(mergeSGP, tmp.list), sgp_object@SGP)
@@ -289,7 +289,7 @@ function(sgp_object,
 				tmp.list[[paste(ca, ".BASELINE", sep="")]] <- sgp_object@SGP[["Coefficient_Matrices"]][[paste(ca, ".BASELINE", sep="")]]
 			}
 		}
-		if (!is.null(calculate.baseline.simex)) {
+		if (!is.null(calculate.simex.baseline)) {
 			for (ca in unique(sapply(sgp.baseline.config, function(x) tail(x[["sgp.baseline.content.areas"]],1)))) {
 				tmp.list[[paste(ca, ".BASELINE.SIMEX", sep="")]] <- sgp_object@SGP[["Coefficient_Matrices"]][[paste(ca, ".BASELINE.SIMEX", sep="")]]
 			}			
