@@ -247,7 +247,7 @@ function(sgp_object,
 			sgp.percentiles=FALSE, sgp.projections=FALSE, sgp.projections.lagged=FALSE,
 			sgp.percentiles.baseline=TRUE, sgp.projections.baseline=FALSE, sgp.projections.lagged.baseline=FALSE,
 			sgp.config.drop.nonsequential.grade.progression.variables=TRUE, sgp.minimum.default.panel.years=sgp.minimum.default.panel.years,
-			sgp.projections.max.forward.progression.years=NULL, sgp.use.my.coefficient.matrices=TRUE, calculate.simex.baseline = calculate.simex.baseline)
+			sgp.projections.max.forward.progression.years=NULL, sgp.use.my.coefficient.matrices=FALSE, calculate.simex.baseline = calculate.simex.baseline)
 
 		for (sgp.iter in par.sgp.config[['sgp.percentiles.baseline']]) {
 
