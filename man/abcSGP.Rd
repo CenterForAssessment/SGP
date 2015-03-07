@@ -172,7 +172,7 @@ Demonstration_SGP <- abcSGP(sgpData_LONG)
 
 Demonstration_SGP <- abcSGP(sgpData_LONG,
 	parallel.config=list(
-            BACKEND="PARALLEL", TYPE="SOCK",
+            BACKEND="PARALLEL", TYPE="PSOCK",
             WORKERS=list(
                PERCENTILES=8, BASELINE_PERCENTILES=8, PROJECTIONS=7, LAGGED_PROJECTIONS=6,
                SUMMARY=8, 

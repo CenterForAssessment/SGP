@@ -466,7 +466,7 @@ function(panel.data,         ## REQUIRED
 					par.start <- startParallel(parallel.config, 'SIMEX')
 					
 					##  Note, that if you use the parallel.config for SIMEX here, you can also use it for TAUS in the naive analysis
-					##  Example parallel.config argument:  '... parallel.config=list(BACKEND="PARALLEL", TYPE="SOCK", WORKERS=list(SIMEX = 4, TAUS = 4))'
+					##  Example parallel.config argument:  '... parallel.config=list(BACKEND="PARALLEL", TYPE="PSOCK", WORKERS=list(SIMEX = 4, TAUS = 4))'
 					
 					##  Calculate coefficient matricies (if needed/requested)
 					if (is.null(simex.use.my.coefficient.matrices)) {
