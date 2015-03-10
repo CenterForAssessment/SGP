@@ -352,10 +352,9 @@ function(panel.data,         ## REQUIRED
 			}
 			if (!is.null(variable)){
 				for (g in seq_along(tmp.gp.iter)) {
-					csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")] <- variable[[paste("CSEM.grade", tmp.gp.iter[g], ".", tmp.ca.iter[g], sep="")]]
+					csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")] <- csem.tmp[,g]
 				}
 			}
-
 			# naive model
 			if (calculate.simex.sgps) {
 				fitted[[paste("order_", k, sep="")]] <- matrix(0, nrow=length(lambda), ncol=dim(tmp.data)[1]*length(taus))
