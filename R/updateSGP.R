@@ -24,6 +24,7 @@ function(what_sgp_object=NULL,
 	overwrite.existing.data=FALSE,
 	update.old.data.with.new=TRUE,
 	sgPlot.demo.report=TRUE,
+	plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot"),
 	outputSGP.output.type=c("LONG_Data", "LONG_FINAL_YEAR_Data", "WIDE_Data", "INSTRUCTOR_Data"),
 	sgp.config=NULL,
 	goodness.of.fit.print=TRUE,
@@ -306,7 +307,7 @@ function(what_sgp_object=NULL,
 				}		
 
 				if ("summarizeSGP" %in% steps) what_sgp_object <- summarizeSGP(what_sgp_object, state=state, parallel.config=parallel.config)
-				if ("visualizeSGP" %in% steps) visualizeSGP(what_sgp_object, state=state, sgPlot.demo.report=sgPlot.demo.report)
+				if ("visualizeSGP" %in% steps) visualizeSGP(what_sgp_object, state=state, plot.types=plot.types, sgPlot.demo.report=sgPlot.demo.report)
 				if ("outputSGP" %in% steps) outputSGP(what_sgp_object, state=state, output.type=outputSGP.output.type)
 
 
