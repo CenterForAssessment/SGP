@@ -419,7 +419,7 @@
 			tmp.text <- paste("Student starting Grade ", gaPlot.grade_range[1], " from Level ", j, "/Level ", j+1, " cut", sep="")
 		}
 		if (gaPlot.start.points=="Achievement Percentiles") {
-			tmp.text <- paste("Student starting Grade ", gaPlot.grade_range[1], " from ", getOrdinal(as.integer(100*gaPlot.achievement_percentiles[j])), " achievement percentile", sep="")
+			tmp.text <- paste("Student starting Grade ", gaPlot.grade_range[1], " from ", toOrdinal(as.integer(100*gaPlot.achievement_percentiles[j])), " achievement percentile", sep="")
 		}
 		grid.text(x=0.5, y=0.05, tmp.text, gp=gpar(col="white", cex=1.2))
 
