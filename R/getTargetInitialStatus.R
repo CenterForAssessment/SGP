@@ -16,10 +16,10 @@ function(achievement_level,
 			if (!is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]])) {
 				levels.that.are.advanced <- levels.that.are.not.advanced <- list()
 				tmp.index <- grep("Achievement_Levels", names(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]]))
-				levels.that.are.proficient <- sort(as.vector(sapply(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][tmp.index], function(x) x[['Labels']]))[
-					as.vector(sapply(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][tmp.index], function(x) x[['Proficient']]))=="Proficient"])
-				levels.that.are.not.proficient <- sort(as.vector(sapply(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][tmp.index], function(x) x[['Labels']]))[
-					as.vector(sapply(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][tmp.index], function(x) x[['Proficient']]))=="Not Proficient"])
+				levels.that.are.proficient <- sort(unlist(sapply(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][tmp.index], function(x) x[['Labels']]))[
+					unlist(sapply(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][tmp.index], function(x) x[['Proficient']]))=="Proficient"])
+				levels.that.are.not.proficient <- sort(unlist(sapply(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][tmp.index], function(x) x[['Labels']]))[
+					unlist(sapply(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][tmp.index], function(x) x[['Proficient']]))=="Not Proficient"])
 				for (i in grep("Achievement_Levels", names(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]]), value=TRUE)) {
 					levels.that.are.advanced[[i]] <- SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[i]][['Labels']][
 						tail(which(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[i]][["Proficient"]]=="Proficient"), -1)]

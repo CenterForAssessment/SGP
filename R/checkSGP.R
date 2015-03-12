@@ -124,7 +124,7 @@ function(sgp_object,
 	if (!is.null(state) && "ACHIEVEMENT_LEVEL" %in% names(sgp_object@Data)) {
 		if (!is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]])) {
 			tmp.index <- grep("Achievement_Levels", names(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]]))
-			achievement.levels <- sort(as.vector(sapply(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][tmp.index], function(x) x[['Labels']])))
+			achievement.levels <- sort(unique(unlist(sapply(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][tmp.index], function(x) x[['Labels']]))))
 		} else {
 			achievement.levels <- SGPstateData[[state]][['Achievement']][['Levels']][['Labels']]
 		}
