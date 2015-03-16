@@ -5,7 +5,8 @@ The **SGP** Package is open source software built for the **R** software environ
 ### SGP Resources
 
 * Web: [sgp.io](http://sgp.io)
-* CRAN Repo: http://cran.r-project.org/web/packages/SGP/
+* CRAN Repo: http://cran.r-project.org/package=SGP
+
 
 ### Contributors
 
