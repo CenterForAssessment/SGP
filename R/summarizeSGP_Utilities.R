@@ -157,13 +157,13 @@ function(x,
 function(x,
 	in.categories,
 	of.categories,
-	result.digits=1) { ## NOTE: x must be a factor and categories levels
+	result.digits=1) {
 
 	if (!is.list(in.categories)) in.categories <- list(in.categories)
 	if (!is.list(of.categories)) of.categories <- list(of.categories)
 	tmp.result <- list()
-	tmp <- summary(x[!is.na(x)])
-	for (i in seq(length(in.categories))) {
+	tmp <- table(x[!is.na(x)])
+	for (i in seq_along(in.categories)) {
 		tmp.result[[i]] <- round(100*sum(tmp[in.categories[[i]]])/sum(tmp[of.categories[[i]]]), digits=result.digits)
 	}
 	return(unlist(tmp.result))
