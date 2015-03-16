@@ -17,8 +17,8 @@ function(sgp_object,
 	sgp.minimum.default.panel.years,
 	sgp.projections.max.forward.progression.years,
 	sgp.use.my.coefficient.matrices,
-	calculate.simex,
-	calculate.simex.baseline,
+	calculate.simex=NULL,
+	calculate.simex.baseline=NULL,
 	year.for.equate) {
 
 	YEAR <- CONTENT_AREA <- VALID_CASE <- NULL

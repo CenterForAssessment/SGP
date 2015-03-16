@@ -110,11 +110,11 @@ Default is 3.  To utilize the maximum matrix order, set to NULL.
   }
 \item{parallel.config}{A named list with, at a minimum, two elements indicating 1) the BACKEND package to be used for parallel computation and 2) the WORKERS list to specify the number of processors to be used in each major analysis.  The BACKEND element can be set = to \code{FOREACH} or \code{PARALLEL}.  Please consult the manuals and vignettes for information of these packages!
 
-TYPE is a third element of the \code{parallel.config} list that provides necessary information when using FOREACH or PARALLEL packages as the backend. With BACKEND="FOREACH", the TYPE element specifies the flavor of 'foreach' backend.  As of version 1.0-1.0, only "doParallel" is supported.   If BACKEND = "PARALLEL", the \code{parallel} package will be used.  This package combines deprecated parallel packages \code{snow} and \code{multicore}.  Using the "snow" implementation of \code{parallel} the function will create a cluster object based on the TYPE element specified and the number of workers requested (see WORKERS list description below).  The TYPE element indicates the users preferred cluster type (either "SOCK" for socket cluster of "MPI" for an OpenMPI cluster). If Windows is the operating system, this "snow" implementation must be use and the TYPE element must = "SOCK".  Defaults are assigned based on operating system if TYPE is missing based on system OS.  Unix/Mac OS defaults to the "multicore" to avoid worker node pre-scheduling and appears to be more efficient in these operating systems.  
+TYPE is a third element of the \code{parallel.config} list that provides necessary information when using FOREACH or PARALLEL packages as the backend. With BACKEND="FOREACH", the TYPE element specifies the flavor of 'foreach' backend.  As of version 1.0-1.0, only "doParallel" is supported.   If BACKEND = "PARALLEL", the \code{parallel} package will be used.  This package combines deprecated parallel packages \code{snow} and \code{multicore}.  Using the "snow" implementation of \code{parallel} the function will create a cluster object based on the TYPE element specified and the number of workers requested (see WORKERS list description below).  The TYPE element indicates the users preferred cluster type (either "PSOCK" for socket cluster of "MPI" for an OpenMPI cluster). If Windows is the operating system, this "snow" implementation must be used and the TYPE element must = "PSOCK".  Defaults are assigned based on operating system if TYPE is missing based on system OS.  Unix/Mac OS defaults to the "multicore" to avoid worker node pre-scheduling and appears to be more efficient in these operating systems.  
 
 The WORKERS list must contain, at a minimum, a single number of processors (nodes) desired or available.  If WORKERS is specified in this manner, then the same number of processors will be used for each analysis type (sgp.percentiles, sgp.projections, ...  sgp.projections.lagged.baseline).  Alternatively, the user may specify the numbers of processors used for each analysis.  This allows for better memory management in systems that do not have enough RAM available per core.  The choice of the number of cores is a balance between the number of processors available, the amount of RAM a system has and the size of the data (sgp_object).  Each system will be different and will require some tailoring.  One rule of thumb used by the authors is to allow for 4GB of memory per core used for running large state data.  The SGP Demonstration (and data that size) requires more like 1-2GB per core.  As an example, PERCENTILES=4 and  PROJECTIONS=2 might be used on a quad core machine with 4 GB of RAM.  This will use all 4 cores available for the sgp.percentiles analysis and 2 cores for the sgp.projections analysis (which requires more memory than available).  The WORKERS list accepts these elements:   PERCENTILES, PROJECTIONS (for both cohort and baseline referenced projections), LAGGED_PROJECTIONS (for both cohort and baseline referenced lagged projections), BASELINE_MATRICES (used to produce the baseline coefficient matrices when not available in SGPstateData - very computationally intensive), BASELINE_PERCENTILES (SGP calculation only when baseline coefficient matrices have already been produced and are available - NOT very computationally intensive).
 
-Alternatively, the name of an external CLUSTER.OBJECT (SOCK or MPI) set up by the user outside of the function can be used.  
+Alternatively, the name of an external CLUSTER.OBJECT (PSOCK or MPI) set up by the user outside of the function can be used.  
 
 Example use cases are provided below.
   }
@@ -230,12 +230,12 @@ Demonstration_SGP <- analyzeSGP(
 ##  Windows users must use a snow socket cluster:
 #  possibly a quad core machine with low RAM Memory
 #  4 workers for percentiles, 2 workers for projections.
-#  Note the SOCK type cluster is used for single machines.
+#  Note the PSOCK type cluster is used for single machines.
 
 Demonstration_SGP <- prepareSGP(sgpData_LONG)
 Demonstration_SGP <- analyzeSGP(Demonstration_SGP,
 	parallel.config=list(
-		BACKEND="PARALLEL", TYPE="SOCK",
+		BACKEND="PARALLEL", TYPE="PSOCK",
 		WORKERS=list(PERCENTILES=4, 
                     PROJECTIONS=2, 
                     LAGGED_PROJECTIONS=2,
