@@ -82,5 +82,5 @@ URL: http://sgp.io, https://github.com/CenterForAssessment/SGP, http://cran.r-pr
 BugReports: https://github.com/CenterForAssessment/SGP/issues
 LazyData: Yes
 LazyDataCompression: xz
-License: GPL-2
+License: GPL-3
 ByteCompile: TRUE

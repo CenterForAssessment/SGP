@@ -22,7 +22,7 @@ Package: \tab SGP\cr
 Type: \tab Package\cr
 Version: \tab 1.3-5.0\cr
 Date: \tab 2015-3-12\cr
-License: \tab GPL-2\cr
+License: \tab GPL-3\cr
 LazyLoad: \tab yes\cr
 }
 Calculation of student growth percentiles and percentile growth trajectories/projections is typically performed by grade and subject. Data for growth percentile 
