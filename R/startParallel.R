@@ -1,6 +1,5 @@
 `startParallel` <- 
-function(
-	parallel.config, 
+function(parallel.config, 
 	process,
 	qr.taus) {
 	
@@ -110,7 +109,6 @@ function(
 	if (toupper(parallel.config[['BACKEND']]) == 'PARALLEL') {
 		# Weird error for MPI stopCluster(...) 'Error in NextMethod() : 'NextMethod' called from an anonymous function'  load snow first removes it.
 		# if (!is.null(parallel.config[['TYPE']]) && parallel.config[['TYPE']] == 'MPI') require(snow)  #  Don't think this is a problem any more... 08/03/12
-		suppressPackageStartupMessages(require(parallel))
 		if (!is.null(parallel.config[['TYPE']])) {
 			if (!parallel.config[['TYPE']] %in% c('SOCK', 'PSOCK', 'MPI')) {
 				stop("The 'snow' package will be used when 'parallel.config$TYPE' is specified and BACKEND=='PARALLEL'.  List element must be 'SOCK' ('PSOCK') or 'MPI'.")
@@ -241,4 +239,4 @@ function(
 	if (par.type=='MULTICORE') {
 		return(list(workers=workers, par.type=par.type, TAUS.LIST=TAUS.LIST, Lower_Level_Parallel=Lower_Level_Parallel))
 	}
-}
+} ### END startParallel Funtion

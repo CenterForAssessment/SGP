@@ -1,9 +1,6 @@
 `stopParallel` <- 
-function(
-		parallel.config,
-		par.start
-		) {
-	
+function(parallel.config,
+	par.start) {
 	
 	if (toupper(parallel.config[['BACKEND']]) == 'FOREACH') {
 		if (is.na(parallel.config[['TYPE']])) parallel.config[['TYPE']] <- "NA" # Stop checks on NA below.
@@ -38,4 +35,4 @@ function(
 			stopCluster(par.start$internal.cl)
 		}
 	}
-}
+} ### END stopParallel Function

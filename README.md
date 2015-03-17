@@ -5,7 +5,8 @@ The **SGP** Package is open source software built for the **R** software environ
 ### SGP Resources
 
 * Web: [sgp.io](http://sgp.io)
-* CRAN Repo: http://cran.r-project.org/web/packages/SGP/
+* CRAN Repo: http://cran.r-project.org/package=SGP
+
 
 ### Contributors
 
@@ -32,7 +33,7 @@ require(SGP)
 ```R
 install.packages("devtools")
 require(devtools)
-install_github("SGP", "CenterForAssessment")
+install_github("CenterForAssessment/SGP")
 require(SGP)
 ```
 
@@ -47,7 +48,7 @@ The [SGP Package Wiki](https://github.com/CenterForAssessment/SGP/wiki/Home) con
 
 ### References
 
-Betebenner, D. W., VanIwaarden, A., Domingue, B., and Shang, Y. (2014). SGP: Student Growth Percentiles & Percentile Growth Trajectories. 
+Betebenner, D. W., VanIwaarden, A., Domingue, B., and Shang, Y. (2015). SGP: Student Growth Percentiles & Percentile Growth Trajectories. 
 
-R Development Core Team (2014). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria.
+R Development Core Team (2015). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria.
 3-900051-07-0.

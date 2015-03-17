@@ -8,6 +8,7 @@
 	gaPlot.grade_range,
 	gaPlot.max.order.for.progression=NULL,
 	gaPlot.start.points="Achievement Level Cuts",
+	gaPlot.subtitle=TRUE,
 	state,
 	content_area,
 	year, 
@@ -18,6 +19,8 @@
 	assessment.name) { 
 
 	CUTLEVEL <- GRADE <- YEAR <- ID <- SCALE_SCORE <- level_1_curve <- V1 <- TRANSFORMED_SCALE_SCORE <- PERCENTILE <- GRADE_NUMERIC <- CONTENT_AREA <- NULL ## To prevent R CMD check warnings
+	SGPstateData <- SGPstateData
+
 	content_area <- toupper(content_area)
 	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]])) {
 		content_area.all <- unique(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]])
@@ -409,6 +412,19 @@
 		}
 	}
 
+	## Code for producing subtitle
+
+	if (gaPlot.subtitle) {
+		if (gaPlot.start.points=="Achievement Level Cuts") {
+			tmp.text <- paste("Student starting Grade ", gaPlot.grade_range[1], " from Level ", j, "/Level ", j+1, " cut", sep="")
+		}
+		if (gaPlot.start.points=="Achievement Percentiles") {
+			tmp.text <- paste("Student starting Grade ", gaPlot.grade_range[1], " from ", toOrdinal(as.integer(100*gaPlot.achievement_percentiles[j])), " achievement percentile", sep="")
+		}
+		grid.text(x=0.5, y=0.05, tmp.text, gp=gpar(col="white", cex=1.2))
+
+	}
+
 	popViewport() ## pop chart.vp
 
 
@@ -440,7 +456,7 @@
 	
 	for (i in 1:length(ach.per.axis.range)) {
 	grid.lines(c(0.95, 1.05), ach.per.axis.range[i], gp=gpar(lwd=1.5, col=format.colors.font), default.units="native")
-	grid.text(x=1.2, y=ach.per.axis.range[i], ach.per.axis.labels[i], gp=gpar(col=format.colors.font, cex=0.65), just="right", default.units="native")
+	grid.text(x=1.15, y=ach.per.axis.range[i], ach.per.axis.labels[i], gp=gpar(col=format.colors.font, cex=0.65), just="right", default.units="native")
 	}
 
 	setkey(growthAchievementPlot.data, GRADE)
@@ -462,7 +478,7 @@
 		for (i in gaPlot.percentile_trajectories){
 			grid.lines(c(-0.1, 0.1), smoothPercentileTrajectory_Functions[[as.character(i)]](gaPlot.grade_range[2]), 
 				gp=gpar(lwd=1.5, col=format.colors.growth.trajectories), default.units="native")
-			grid.text(x=unit(-0.55, "native"), y=smoothPercentileTrajectory_Functions[[as.character(i)]](gaPlot.grade_range[2]), i, 
+			grid.text(x=unit(-0.475, "native"), y=smoothPercentileTrajectory_Functions[[as.character(i)]](gaPlot.grade_range[2]), i, 
 				gp=gpar(col=format.colors.growth.trajectories, cex=0.8), just="left", default.units="native")
 		}
 	
@@ -501,10 +517,11 @@
 	pushViewport(bottom.axis.vp)
 	
 	grid.lines(gaPlot.grade_range, 0.8, gp=gpar(lwd=1.5, col=format.colors.font), default.units="native")
+	grade.label.size <- c(rep(1, 8), rep(0.9, 2), rep(0.8, 2), rep(0.7, 2))[length(tmp.unique.grades.numeric)]
 	for (i in seq_along(tmp.unique.grades.numeric)){
 		grid.lines(tmp.unique.grades.numeric[i], c(0.5, 0.8), gp=gpar(lwd=1.5, col=format.colors.font), default.units="native")
 		if (tmp.unique.grades.character[i]=="EOCT") tmp.label <- "EOCT" else tmp.label <- paste("Grade", tmp.unique.grades.numeric[i])
-		grid.text(x=tmp.unique.grades.numeric[i], y=0.25, tmp.label, gp=gpar(col=format.colors.font, cex=1.0), default.units="native")
+		grid.text(x=tmp.unique.grades.numeric[i], y=0.25, tmp.label, gp=gpar(col=format.colors.font, cex=grade.label.size), default.units="native")
 	}
 	
 	popViewport() ## pop bottom.axis.vp
@@ -544,7 +561,7 @@
 	message(paste("\tFinished", year, state.name.label, content_area, tmp.baseline.message, "growthAchievementPlot:",  date(), "in", timetaken(started.at), "\n"))
 
 	
-	} ## End loop over starting scores or students
+	} ## End loop over starting scores or students (j)
 
 	return("DONE")
 

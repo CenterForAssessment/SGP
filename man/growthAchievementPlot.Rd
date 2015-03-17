@@ -16,6 +16,7 @@ growthAchievementPlot(
         gaPlot.grade_range,
         gaPlot.max.order.for.progression=NULL,
 	gaPlot.start.points="Achievement Level Cuts",
+	gaPlot.subtitle = TRUE,
         state,
         content_area,
         year,
@@ -53,6 +54,8 @@ growthAchievementPlot(
 	\item{gaPlot.start.points}{
 	Either 'Achievement Level Cuts' or 'Achievement Percentiles' defining where the growth percentiles trajectories will start in the growth achievement plots.
 	}
+	\item{gaPlot.subtitle}{Boolean variable (defaults to TRUE) indicating whether subtitle is printed on the growth achievement chart indicating student starting point.
+	}
         \item{state}{
         A two letter acronym for the state associated with the supplied data.
         }
@@ -78,8 +81,7 @@ growthAchievementPlot(
 	}
 	\item{assessment.name}{
 	A character vector indicating the assessment.name. If missing, the supplied state is used to determine the assessment.name.
-	} 
-
+	}
 }
 
 \details{Typical use of the function is as part of \code{visualizeSGP} function. However, function can be used to produce growth and achievement charts. 

@@ -10,6 +10,7 @@ function(
 	round=NULL) {
 
 	GRADE <- CONTENT_AREA <- YEAR <- NULL
+	SGPstateData <- SGPstateData
 
 	### Define relevant variables
 

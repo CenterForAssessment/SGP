@@ -13,27 +13,29 @@ function(what_sgp_object=NULL,
 	sgp.percentiles.baseline=TRUE,
 	sgp.projections.baseline=TRUE,
 	sgp.projections.lagged.baseline=TRUE,
-	simulate.sgps = FALSE,
+	simulate.sgps=FALSE,
 	save.old.summaries=TRUE,
 	save.intermediate.results=TRUE,
-	calculate.simex = NULL,
-	calculate.simex.baseline = NULL,
+	calculate.simex=NULL,
+	calculate.simex.baseline=NULL,
 	sgp.use.my.coefficient.matrices=NULL,
 	sgp.target.scale.scores=FALSE,
 	sgp.target.scale.scores.only=FALSE,
 	overwrite.existing.data=FALSE,
 	update.old.data.with.new=TRUE,
 	sgPlot.demo.report=TRUE,
+	plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot"),
 	outputSGP.output.type=c("LONG_Data", "LONG_FINAL_YEAR_Data", "WIDE_Data", "INSTRUCTOR_Data"),
 	sgp.config=NULL,
 	goodness.of.fit.print=TRUE,
 	parallel.config=NULL,
-	sgp.sqlite = NULL,
+	sgp.sqlite=NULL,
 	...) {
 
-		started.at <- proc.time()
-		message(paste("\nStarted updateSGP", date()), "\n")
+	started.at <- proc.time()
+	message(paste("\nStarted updateSGP", date()), "\n")
 
+	SGPstateData <- SGPstateData
 
 	### Create state (if NULL) from sgp_object (if possible)
 
@@ -305,7 +307,7 @@ function(what_sgp_object=NULL,
 				}		
 
 				if ("summarizeSGP" %in% steps) what_sgp_object <- summarizeSGP(what_sgp_object, state=state, parallel.config=parallel.config)
-				if ("visualizeSGP" %in% steps) visualizeSGP(what_sgp_object, state=state, sgPlot.demo.report=sgPlot.demo.report)
+				if ("visualizeSGP" %in% steps) visualizeSGP(what_sgp_object, state=state, plot.types=plot.types, sgPlot.demo.report=sgPlot.demo.report)
 				if ("outputSGP" %in% steps) outputSGP(what_sgp_object, state=state, output.type=outputSGP.output.type)
 
 

@@ -25,6 +25,7 @@ combineSGP(sgp_object,
 	max.sgp.target.years.forward=3,
 	update.all.years=FALSE,
 	sgp.config=NULL,
+	sgp.percentiles.equated=FALSE,
 	parallel.config=NULL)
 }
 
@@ -63,6 +64,9 @@ re-merge all available data.
   }
   \item{sgp.config}{Argument (defaults to NULL) passed utilized only for target scale score calculation. If targets for end of course tests are required, user must specify configurations
   directly. See code from \code{\link{testSGP}} number 3 for an example. 
+  }
+  \item{sgp.percentiles.equated}{Boolean variable indicating whether equated percentiles are being merged. If scale score targets are being calculated, linkages will be passed to scale score targets
+for calculation.
   }
   \item{parallel.config}{Parallel configuration only used when 'sgp.target.scale.scores' is set to TRUE. Default is NULL consistent with no targets being calculated. To utilize parallel processing
   in the calculation of SGP scale score targets user must specify a list designating a backend (e.g, BACKEND='PARALLEL') and a number of workers (e.g., 'WORKERS=list(SGP_SCALE_SCORE_TARGETS=4)').

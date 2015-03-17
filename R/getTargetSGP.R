@@ -10,6 +10,7 @@ function(sgp_object,
 	return.lagged.status=TRUE) {
 
 	VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- FIRST_OBSERVATION <- LAST_OBSERVATION <- STATE <- SGP_PROJECTION_GROUP <- NULL
+	SGPstateData <- SGPstateData
 
 	### Utility functions
 

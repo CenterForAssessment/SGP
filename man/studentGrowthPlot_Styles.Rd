@@ -11,6 +11,7 @@ is called by \code{\link{visualizeSGP}} to generate individual student reports. 
 studentGrowthPlot_Styles(
            sgPlot.data,
            sgPlot.sgp_object,
+           sgPlot.cutscores,
            state,
            last.year,
            content_areas,
@@ -32,7 +33,8 @@ studentGrowthPlot_Styles(
            sgPlot.baseline,
 	   sgPlot.sgp.targets.timeframe,
            sgPlot.zip,
-           sgPlot.output.format)
+           sgPlot.output.format,
+           sgPlot.linkages)
 }
 
 \arguments{
@@ -40,6 +42,8 @@ studentGrowthPlot_Styles(
 \code{sgPlot.save.sgPlot.data} option with \code{\link{visualizeSGP}} to save wide formatted student growth plot data.
   }
   \item{sgPlot.sgp_object}{SGP object containing coefficient matrices and knots and boundaries for percentile trajectory calculations associated with JSON output.
+  }
+  \item{sgPlot.cutscores}{List of cutscores, possibly transformed, for plotting studentGrowthPlots
   }
   \item{state}{Acronym indicating state associated with the summaries for access to assessment program information embedded in \code{SGPstateData}.
   }
@@ -86,6 +90,8 @@ to version 0.9-9.7, this was the only way of bundling reports and was thus the d
   \item{sgPlot.zip}{A Boolean argument indicating whether to school folders.
   }
   \item{sgPlot.output.format}{Argument indicating the desired type of output format for student growth plots. Either 'PDF', 'PNG', or 'PDF_PIECES'.
+  }
+  \item{sgPlot.linkages}{Argument passing linkage information (defaults to NULL) associated with assessment scale transition.
   }
 }
 

@@ -16,6 +16,7 @@ function(
 	max.sgp.target.years.forward=3,
 	update.all.years=FALSE,
 	sgp.config=NULL,
+	sgp.percentiles.equated=FALSE,
 	parallel.config=NULL) {
 
 	started.at <- proc.time()
@@ -23,6 +24,7 @@ function(
 
 	ID <- CONTENT_AREA <- YEAR <- GRADE <- YEAR_INTEGER_TMP <- ACHIEVEMENT_LEVEL <- CATCH_UP_KEEP_UP_STATUS_INITIAL <- MOVE_UP_STAY_UP_STATUS_INITIAL <- VALID_CASE <- NULL
 	MOVE_UP_STAY_UP_STATUS <- CATCH_UP_KEEP_UP_STATUS <- ACHIEVEMENT_LEVEL_PRIOR <- target.type <- SGP_PROJECTION_GROUP <- NULL
+	SGPstateData <- SGPstateData
 
 	tmp.messages <- NULL
 
@@ -72,6 +74,29 @@ function(
 		sgp.target.scale.scores <- TRUE
 	}
 
+	### Setup for equated SGPs and scale score targets
+
+	if (!is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]])) {
+		year.for.equate <- tail(sort(unique(sgp_object@Data$YEAR)), 1)
+		if (SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]!=year.for.equate) {
+			sgp.percentiles.equated <- FALSE
+			sgp.target.scale.scores <- FALSE
+		} else {
+			sgp.percentiles.equated <- TRUE
+			if (sgp.target.scale.scores) {
+				sgp.projections.equated <- list(Year=year.for.equate, Linkages=sgp_object@SGP[['Linkages']])
+			}
+		}
+	} else {
+		if (sgp.percentiles.equated) {
+			message("\tNOTE: 'sgp.percentiles.equated' has been set to TRUE but no meta-data exists in SGPstateData associated with the assessment transition. Equated/linked SGP analyses require meta-data embedded in 'SGPstateData' to correctly work. Contact package administrators on how such data can be added to the package.")
+			sgp.percentiles.equated <- FALSE
+			sgp.target.scale.scores <- FALSE
+		}
+		if (sgp.target.scale.scores) sgp.projections.equated <- NULL
+	}
+
+
 	### Utility functions
 
 	get.target.arguments <- function(system.type, target.type=NULL, projection.unit.label) {
@@ -119,9 +144,9 @@ function(
 				intersect(target.type, c("sgp.projections", "sgp.projections.baseline", "sgp.projections.lagged", "sgp.projections.lagged.baseline"))
 		}
 
-		tmp.list[['target.level']] <- "CATCH_UP_KEEP_UP"
-		if (length(grep("MUSU", SGPstateData[[state]][["SGP_Configuration"]][['sgp.target.types']])) > 0) tmp.list[['target.level']] <- c("CATCH_UP_KEEP_UP", "MOVE_UP_STAY_UP")
-		if (length(which(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")) > 1) tmp.list[['target.level']] <- c("CATCH_UP_KEEP_UP", "MOVE_UP_STAY_UP")
+		tmp.list[['target.level']] <- c("CATCH_UP_KEEP_UP", "MOVE_UP_STAY_UP")
+		if (length(which(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient"))<=1)  tmp.list[['target.level']] <- "CATCH_UP_KEEP_UP"
+		if (length(grep("MUSU", SGPstateData[[state]][["SGP_Configuration"]][['sgp.target.types']]))==0) tmp.list[['target.level']] <- "CATCH_UP_KEEP_UP"
 
 		return(tmp.list)
 	} ### END get.target.arguments
@@ -170,7 +195,7 @@ function(
 
 	## Determine names of Cohort Referenced SGPs
 
-	tmp.names <- getPercentileTableNames(sgp_object, content_areas, state, years, "sgp.percentiles")
+	tmp.names <- getPercentileTableNames(sgp_object, content_areas, state, years, "sgp.percentiles", sgp.percentiles.equated)
 	if (length(tmp.names) == 0 & sgp.percentiles) {
 		tmp.messages <- c(tmp.messages, "\tNOTE: No cohort referenced SGP results available in SGP slot. No cohort referenced SGP results will be merged.\n")
 		sgp.percentiles <- FALSE
@@ -312,7 +337,7 @@ function(
 
 		if ("CATCH_UP_KEEP_UP" %in% target.args[['target.level']] & (sgp.projections.lagged | sgp.projections.lagged.baseline)) {
 
-			level.to.get <- getTargetSGPLevel(state, target.level="CATCH_UP_KEEP_UP")
+			catch.up.keep.up.levels <- getTargetAchievementLevels(state, "CATCH_UP_KEEP_UP")
 			slot.data[,CATCH_UP_KEEP_UP_STATUS_INITIAL:=getTargetInitialStatus(ACHIEVEMENT_LEVEL_PRIOR, state, status.type="CATCH_UP_KEEP_UP")]
 
 			for (i in seq_along(target.args[['my.sgp']])) {
@@ -332,15 +357,15 @@ function(
 				### CATCH_UP_KEEP_UP clean up based upon reality
 
 				slot.data[CATCH_UP_KEEP_UP_STATUS_INITIAL == "Keeping Up" & get(my.label) == "Keep Up: Yes" & 
-					as.numeric(ACHIEVEMENT_LEVEL) <= level.to.get, my.label := "Keep Up: No", with=FALSE]
+					ACHIEVEMENT_LEVEL %in% catch.up.keep.up.levels[['NO']], my.label := "Keep Up: No", with=FALSE]
 				slot.data[CATCH_UP_KEEP_UP_STATUS_INITIAL == "Catching Up" & get(my.label) == "Catch Up: No" & 
-					as.numeric(ACHIEVEMENT_LEVEL) > level.to.get, my.label := "Catch Up: Yes", with=FALSE]
+					ACHIEVEMENT_LEVEL %in% catch.up.keep.up.levels[['YES']], my.label := "Catch Up: Yes", with=FALSE]
 				slot.data[CATCH_UP_KEEP_UP_STATUS_INITIAL == "Catching Up" & get(my.label) == "Catch Up: Yes" & 
-					as.numeric(ACHIEVEMENT_LEVEL) <= level.to.get & 
+					ACHIEVEMENT_LEVEL %in% catch.up.keep.up.levels[['NO']] & 
 					GRADE == max(type.convert(GRADE[!is.na(get(target.args[['my.sgp.target']]))], as.is=TRUE)) &
 					CONTENT_AREA %in% terminal.content_areas, my.label := "Catch Up: No", with=FALSE]
 				slot.data[CATCH_UP_KEEP_UP_STATUS_INITIAL == "Keeping Up" & get(my.label) == "Keep Up: No" & 
-					as.numeric(ACHIEVEMENT_LEVEL) > level.to.get & 
+					ACHIEVEMENT_LEVEL %in% catch.up.keep.up.levels[['YES']] & 
 					GRADE == max(type.convert(GRADE[!is.na(get(target.args[['my.sgp.target']]))], as.is=TRUE)) &
 					CONTENT_AREA %in% terminal.content_areas, my.label := "Keep Up: Yes", with=FALSE]
 				slot.data[,my.label := as.factor(get(my.label)), with=FALSE]
@@ -352,7 +377,7 @@ function(
 
 		if ("MOVE_UP_STAY_UP" %in% target.args[['target.level']] & (sgp.projections.lagged | sgp.projections.lagged.baseline)) {
 
-			level.to.get <- getTargetSGPLevel(state, target.level="MOVE_UP_STAY_UP")
+			move.up.stay.up.levels <- getTargetAchievementLevels(state, "MOVE_UP_STAY_UP")
 			slot.data[,MOVE_UP_STAY_UP_STATUS_INITIAL:=getTargetInitialStatus(ACHIEVEMENT_LEVEL_PRIOR, state, status.type="MOVE_UP_STAY_UP")]
 
 			for (i in seq_along(target.args[['my.sgp']])) {
@@ -372,15 +397,15 @@ function(
 				### MOVE_UP_STAY_UP clean up based upon reality
 
 				slot.data[MOVE_UP_STAY_UP_STATUS_INITIAL == "Staying Up" & get(my.label) == "Stay Up: Yes" & 
-					as.numeric(ACHIEVEMENT_LEVEL) <= level.to.get, my.label := "Stay Up: No", with=FALSE]
+					ACHIEVEMENT_LEVEL %in% move.up.stay.up.levels[['NO']], my.label := "Stay Up: No", with=FALSE]
 				slot.data[MOVE_UP_STAY_UP_STATUS_INITIAL == "Moving Up" & get(my.label) == "Move Up: No" & 
-					as.numeric(ACHIEVEMENT_LEVEL) > level.to.get, my.label := "Move Up: Yes", with=FALSE]
+					ACHIEVEMENT_LEVEL %in% move.up.stay.up.levels[['YES']], my.label := "Move Up: Yes", with=FALSE]
 				slot.data[MOVE_UP_STAY_UP_STATUS_INITIAL == "Moving Up" & get(my.label) == "Move Up: Yes" & 
-					as.numeric(ACHIEVEMENT_LEVEL) <= level.to.get & 
+					ACHIEVEMENT_LEVEL %in% move.up.stay.up.levels[['NO']] & 
 					GRADE == max(type.convert(GRADE[!is.na(get(target.args[['my.sgp.target.move.up.stay.up']]))], as.is=TRUE)) &
 					CONTENT_AREA %in% terminal.content_areas, my.label := "Move Up: No", with=FALSE]
 				slot.data[MOVE_UP_STAY_UP_STATUS_INITIAL == "Staying Up" & get(my.label) == "Stay Up: No" & 
-					as.numeric(ACHIEVEMENT_LEVEL) > level.to.get & 
+					ACHIEVEMENT_LEVEL %in% move.up.stay.up.levels[['YES']] & 
 					GRADE == max(type.convert(GRADE[!is.na(get(target.args[['my.sgp.target.move.up.stay.up']]))], as.is=TRUE)) &
 					CONTENT_AREA %in% terminal.content_areas, my.label := "Stay Up: Yes", with=FALSE]
 				slot.data[,my.label := as.factor(get(my.label)), with=FALSE]
@@ -399,6 +424,7 @@ function(
 	###################################################################################################
 
 	if (sgp.target.scale.scores) {
+
 		if (!exists("target.args")) target.args <- get.target.arguments(SGPstateData[[state]][["Growth"]][["System_Type"]], target.type, projection.unit.label) 
 		tmp.target.list <- list()
 		for (target.type.iter in target.args[['sgp.target.scale.scores.types']]) {
@@ -428,10 +454,11 @@ function(
 					getYearsContentAreasGrades(state, years=unique(tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter][['YEAR']]), content_areas=unique(tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter][['CONTENT_AREA']])),
 					sgp.config=sgp.config,
 					projection_group.identifier=projection_group.iter,
+					sgp.projections.equated=sgp.projections.equated,
 					parallel.config=parallel.config)
 			}
 		}
-	} ### END !is.null(sgp.target.scale.scores)
+	} ### END if(sgp.target.scale.scores)
 
 
 	### Put slot.data into @Data slot

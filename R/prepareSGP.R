@@ -12,6 +12,7 @@ function(data,
 	message(paste("\nStarted prepareSGP", date()))
 
 	VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- ID <- GRADE <- SCALE_SCORE <- DUPLICATED_CASES <- NULL
+	SGPstateData <- SGPstateData
 
 	## Get state (if possible)
 
@@ -25,11 +26,10 @@ function(data,
 
 	## getNames
 
-	getNames <- function(data, var.names) {
+	getNames <- function(names.provided, var.names) {
 
 		## Get the names of the provided variables and create data frame
 
-		names.provided <- names(data)
 		variable.names.provided <- data.frame(
 			column.provided=seq_along(names.provided), 
 			names.provided=names.provided,
@@ -126,13 +126,12 @@ function(data,
 				data@Names <- SGPstateData[[state]][["Variable_Name_Lookup"]]
 			} 
 			if (identical(state, "DEMO") & !identical(data@Names, SGPstateData[[state]][["Variable_Name_Lookup"]])) {
-				suppressPackageStartupMessages(require(SGPdata))
-				data@Names <- getNames(sgpData_LONG, var.names)
+				data@Names <- getNames(SGPstateData[['DEMO']][['Variable_Name_Lookup']][['names.sgp']], var.names)
 			} 
 		}
 
 		if (!is.null(var.names)) {
-			data@Names <- getNames(data@Data, var.names)
+			data@Names <- getNames(names(data@Data), var.names)
 		}
 
 		## run checkSGP
@@ -185,7 +184,7 @@ function(data,
 		data@Version <- getVersion(data)
 		sgp_object <- data
 	} else {
-		variable.names <- getNames(data, var.names)
+		variable.names <- getNames(names(data), var.names)
 
 		## define the key
 

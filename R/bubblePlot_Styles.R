@@ -15,7 +15,7 @@
 		bPlot.prior.achievement=TRUE, 
 		bPlot.draft=FALSE,
 		bPlot.demo=FALSE,
-		bPlot.output = "PDF",
+		bPlot.output ="PDF",
 		bPlot.format="print",
 		bPlot.folder="Visualizations/bubblePlots") {
 
@@ -25,6 +25,7 @@
 	INSTRUCTOR_NUMBER <- INSTRUCTOR_NAME <- INSTRUCTOR_ENROLLMENT_STATUS <- NULL
 	SGP_TARGET <- VALID_CASE <- ENROLLMENT_STATUS <- NULL
 	SCALE_SCORE_PRIOR <- SGP_PRIOR <- SGP_TARGET_PRIOR <- ACHIEVEMENT_LEVEL_PRIOR <- CONTENT_AREA_PRIOR <- SGP_NORM_GROUP <- NULL
+	SGPstateData <- SGPstateData
 
 	### Define relevant quantities
 

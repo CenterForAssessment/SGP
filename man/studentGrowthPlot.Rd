@@ -19,7 +19,7 @@ studentGrowthPlot(Scale_Scores,
 	Plotting_SGP_Scale_Score_Targets,
 	Cutscores,
 	Years,
-	Report_Parameters) 
+	Report_Parameters)
 }
 \arguments{
 	\item{Scale_Scores}{

@@ -21,6 +21,7 @@ function(sgp_object,
 	message(paste("\tStarted baselineSGP", date(), "\n"))
 
 	VALID_CASE <- YEAR <- GRADE <- CONTENT_AREA <- YEAR_WITHIN <- COHORT_YEAR <- NULL ### To prevent R CMD check warnings
+	SGPstateData <- SGPstateData
 
 	### Create state (if NULL) from sgp_object (if possible)
 

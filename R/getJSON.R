@@ -10,6 +10,7 @@ function(tmp.data,
 	data.year.span.default=5) {
 
 	CONTENT_AREA <- GRADE <- YEAR <- CUTLEVEL <- NULL
+	SGPstateData <- SGPstateData
 
 	if (data.type=="studentGrowthPlot") {
 

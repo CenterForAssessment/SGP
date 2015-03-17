@@ -1,4 +1,4 @@
 `is.SGP` <-
-  function(x) {
+function(x) {
 	inherits(x, "SGP")
-  }
+}

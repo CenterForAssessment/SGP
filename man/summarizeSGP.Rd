@@ -18,7 +18,7 @@ summarizeSGP(sgp_object,
            projection.years.for.target=3,
            save.old.summaries=FALSE,
 	   highest.level.summary.grouping="STATE",
-           parallel.config=NULL) 
+           parallel.config=NULL)
 }
 
 \arguments{

@@ -67,6 +67,7 @@ function(sgp_object,
 	MEDIAN_SGP <- MEDIAN_SGP_COUNT <- VALID_CASE <- gaPlot.iter <- sgPlot.iter <- V1 <- variable <- INSTRUCTOR_NAME <- INSTRUCTOR_NUMBER <- NULL ## To prevent R CMD check warnings
 	CONTENT_AREA_RESPONSIBILITY <- INSTRUCTOR_LAST_NAME <- INSTRUCTOR_FIRST_NAME <- TRANSFORMED_SCALE_SCORE <- SCALE_SCORE_ACTUAL <- CONTENT_AREA_LABELS <- NULL
 	TEMP <- TEMP_SCORE <- TEMP_GRADE <- NULL
+	SGPstateData <- SGPstateData
 
 
 	### Create state (if missing) from sgp_object (if possible)
@@ -732,10 +733,13 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			}
 		}
 
-	#### Create transformed scale scores (NOT necessary if wide data is provided)
+	#### Create transformed scale scores and Cutscores (NOT necessary if wide data is provided)
 
 		setkeyv(tmp.table, c("CONTENT_AREA_LABELS", "YEAR", "GRADE"))
-		tmp.table[, TRANSFORMED_SCALE_SCORE := piecewiseTransform(SCALE_SCORE, state, CONTENT_AREA_LABELS, as.character(YEAR), as.character(GRADE)), by=list(CONTENT_AREA_LABELS, YEAR, GRADE)]
+		tmp.list <- transformScaleScore(tmp.table, state, tmp.content_areas_domains, sgp_object@SGP[['Linkages']])
+		tmp.table <- tmp.list[['Data']]
+		Cutscores <- tmp.list[['Cutscores']]
+		sgp.projections.equated <- tmp.list[['sgp.projections.equated']]
 
 	#### Change SCALE_SCORE if SCALE_SCORE_ACTUAL is in sgp_object@Data
 
@@ -746,7 +750,6 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 	#### Anonymize (if requested) (NOT necessary if wide data is provided)
  
 		if (sgPlot.anonymize) {
-			suppressPackageStartupMessages(require(randomNames))
 			if (!"ETHNICITY" %in% names(tmp.table)) tmp.table[["ETHNICITY"]] <- 1
 			if (!"GENDER" %in% names(tmp.table)) tmp.table[["GENDER"]] <- round(runif(dim(tmp.table)[1], min=0, max=1))
 			if ("LAST_NAME" %in% names(tmp.table)) tmp.table[,LAST_NAME:=NULL]
@@ -803,7 +806,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 
 		sgPlot.data <- sgPlot.data[, variables.to.keep, with=FALSE]
 
-	#### Merge in 1 year projections (if requested & available) and transform using piecewise.tranform (if required) (NOT NECESSARY IF WIDE data is provided)
+	#### Merge in 1 year projections (if requested & available) and transform using piecewiseTransform (if required) (NOT NECESSARY IF WIDE data is provided)
 	#### Merge in scale scores associated with SGP_TARGETs (if requested & available) and transform using piecewiseTransform (if required) (NOT NECESSARY IF WIDE data is provided)
 
 		if (sgPlot.fan | !is.null(sgPlot.sgp.targets)) {
@@ -889,7 +892,8 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 						sgPlot.data[, TEMP := piecewiseTransform(TEMP_SCORE, state, 
 										get.next.content_area(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment), 
 										yearIncrement(tmp.last.year, tmp.increment), 
-										get.next.grade(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment)), by=list(CONTENT_AREA, TEMP_GRADE)]
+										get.next.grade(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment),
+										sgp.projections.equated=sgp.projections.equated), by=list(CONTENT_AREA, TEMP_GRADE)]
 						setnames(sgPlot.data, "TEMP", paste(proj.iter, "TRANSFORMED", sep="_"))
 
 						if ("SCALE_SCORE_ACTUAL" %in% names(sgp_object@Data)) {
@@ -955,6 +959,7 @@ if (sgPlot.produce.plots) {
 		studentGrowthPlot_Styles(
 			sgPlot.data=sgPlot.data,
 			sgPlot.sgp_object=sgPlot.sgp_object,
+			sgPlot.cutscores=Cutscores,
 			state=state,
 			last.year=tmp.last.year,
 			content_areas=tmp.content_areas_domains,
@@ -976,7 +981,8 @@ if (sgPlot.produce.plots) {
 			sgPlot.baseline=sgPlot.baseline,
 			sgPlot.sgp.targets.timeframe=sgPlot.sgp.targets.timeframe,
 			sgPlot.zip=sgPlot.zip,
-			sgPlot.output.format=sgPlot.output.format)
+			sgPlot.output.format=sgPlot.output.format,
+			sgPlot.linkages=sgp.projections.equated)
 
 	} else { ### Parallel Processing
 		
@@ -990,6 +996,7 @@ if (sgPlot.produce.plots) {
 						studentGrowthPlot_Styles(
 							sgPlot.data=sgPlot.data,
 							sgPlot.sgp_object=sgPlot.sgp_object,
+							sgPlot.cutscores=Cutscores,
 							state=state,
 							last.year=tmp.last.year,
 							content_areas=tmp.content_areas_domains,
@@ -1011,7 +1018,8 @@ if (sgPlot.produce.plots) {
 							sgPlot.baseline=sgPlot.baseline,
 							sgPlot.sgp.targets.timeframe=sgPlot.sgp.targets.timeframe,
 							sgPlot.zip=sgPlot.zip,
-							sgPlot.output.format=sgPlot.output.format)
+							sgPlot.output.format=sgPlot.output.format,
+							sgPlot.linkages=sgp.projections.equated)
 			} ### END dopar
 		} ### END if FOREACH
 		
@@ -1022,6 +1030,7 @@ if (sgPlot.produce.plots) {
 				studentGrowthPlot_Styles(
 					sgPlot.data=sgPlot.data,
 					sgPlot.sgp_object=sgPlot.sgp_object,
+					sgPlot.cutscores=Cutscores,
 					state=state,
 					last.year=tmp.last.year,
 					content_areas=tmp.content_areas_domains,
@@ -1043,7 +1052,8 @@ if (sgPlot.produce.plots) {
 					sgPlot.baseline=sgPlot.baseline,
 					sgPlot.sgp.targets.timeframe=sgPlot.sgp.targets.timeframe,
 					sgPlot.zip=sgPlot.zip,
-					sgPlot.output.format=sgPlot.output.format))
+					sgPlot.output.format=sgPlot.output.format,
+					sgPlot.linkages=sgp.projections.equated))
 		} ### END if SNOW
 		
 		if (par.start$par.type=="MULTICORE") {
@@ -1053,6 +1063,7 @@ if (sgPlot.produce.plots) {
 				studentGrowthPlot_Styles(
 					sgPlot.data=sgPlot.data,
 					sgPlot.sgp_object=sgPlot.sgp_object,
+					sgPlot.cutscores=Cutscores,
 					state=state,
 					last.year=tmp.last.year,
 					content_areas=tmp.content_areas_domains,
@@ -1074,7 +1085,8 @@ if (sgPlot.produce.plots) {
 					sgPlot.baseline=sgPlot.baseline,
 					sgPlot.sgp.targets.timeframe=sgPlot.sgp.targets.timeframe,
 					sgPlot.zip=sgPlot.zip,
-					sgPlot.output.format=sgPlot.output.format), mc.cores=par.start$workers, mc.preschedule=FALSE)
+					sgPlot.output.format=sgPlot.output.format,
+					sgPlot.linkages=sgp.projections.equated), mc.cores=par.start$workers, mc.preschedule=FALSE)
 		}  ### END if MULTICORE
 		
 		stopParallel(parallel.config, par.start)

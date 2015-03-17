@@ -38,6 +38,7 @@ updateSGP(
 	overwrite.existing.data=FALSE,
 	update.old.data.with.new=TRUE,
 	sgPlot.demo.report=TRUE,
+	plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot"),
 	outputSGP.output.type=c("LONG_Data", 
 				"LONG_FINAL_YEAR_Data", 
 				"WIDE_Data", 
@@ -108,6 +109,8 @@ If missing the function will use the data to infer all the grade progressions fo
   }
   \item{sgPlot.demo.report}{A Boolean argument (defaults to TRUE) indicating whether updateSGP should produce just the demo student growth plots or those associated with all students in the last year.
   }
+  \item{plot.types}{A character vector (defaults to 'c(\code{\link{bubblePlot}}, \code{\link{studentGrowthPlot}}, \code{\link{growthAchievementPlot}})') indicating what plot types to export from \code{\link{visualizeSGP}}.
+  }
   \item{outputSGP.output.type}{Specifies the type of output generated as part of intermediate step when adding addition data and using old coefficient matrices. Defaults are the defaults of outputSGP,
   \code{LONG_Data}, \code{LONG_FINAL_YEAR_Data}, \code{WIDE_Data}, and \code{INSTRUCTOR_Data}.
 
@@ -119,8 +122,8 @@ If missing the function will use the data to infer all the grade progressions fo
   \item{parallel.config}{Parallel computation configuration passed to \code{\link{abcSGP}}, \code{\link{analyzeSGP}}, \code{\link{combineSGP}}, and \code{\link{summarizeSGP}}. See documentation 
   under those functions for details.
   }
- \item{sgp.sqlite}{A Boolean argument (defaults to NULL) indicating whether a SQLite database file of the essential SGP data should be created from the \code{@Data} slot and subsequently used to extract data subsets for analyses conducted in order to reduce the amount of RAM memory required.  See full argument description in \code{\link{analyzeSGP}}.
- }
+  \item{sgp.sqlite}{A Boolean argument (defaults to NULL) indicating whether a SQLite database file of the essential SGP data should be created from the \code{@Data} slot and subsequently used to extract data subsets for analyses conducted in order to reduce the amount of RAM memory required.  See full argument description in \code{\link{analyzeSGP}}.
+  }
   \item{...}{Arguments to be passed to \code{\link{abcSGP}} for finer control over SGP calculations. For example, 'parallel.config' can be supplied to abcSGP for parallel computation.
   }
 

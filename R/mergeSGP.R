@@ -6,7 +6,7 @@ function(list_1,
 
 	if (is.null(names(list_1))) return(list_2)
 	if (!is.null(names(list_2))) {
-		for (j in c("Coefficient_Matrices", "Cutscores", "Goodness_of_Fit", "Knots_Boundaries", "SGPercentiles", "SGProjections", "Simulated_SGPs", "Error_Reports")) {
+		for (j in c("Coefficient_Matrices", "Cutscores", "Goodness_of_Fit", "Knots_Boundaries", "Linkages", "SGPercentiles", "SGProjections", "Simulated_SGPs", "Error_Reports")) {
 			list_1[[j]] <- c(list_1[[j]], list_2[[j]])[!duplicated(names(c(list_1[[j]], list_2[[j]])))]
 		}
 

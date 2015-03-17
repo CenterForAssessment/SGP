@@ -23,7 +23,8 @@ studentGrowthProjections(panel.data,
                          achievement.level.prior.vname=NULL,
                          performance.level.cutscores, 
                          calculate.sgps=TRUE,
-                         convert.0and100=TRUE,    
+                         convert.0and100=TRUE,
+                         sgp.projections.equated=NULL, 
                          projection.unit="YEAR",
                          projection.unit.label=NULL,
                          percentile.trajectory.values=NULL,
@@ -108,6 +109,8 @@ studentGrowthProjections(panel.data,
   }
   \item{convert.0and100}{Boolean argument (defaults to TRUE) indicating whether conversion of growth percentiles of 0 and 100 to growth percentiles
     of 1 and 99, respectively, occurs. The default produces growth percentiles ranging from 1 to 99.
+  }
+  \item{sgp.projections.equated}{A list (defaults to NULL) specifying the Year and Linkages associated with the equating used for projection purposes.
   }
   \item{projection.unit}{Argument specifying the units in which the projections/trajectories and cuts are reported. Either \code{"GRADE"}, the default, or 
   \code{"YEAR"}.

@@ -4,6 +4,8 @@ function(achievement_level,
 	state.iter=NULL,
 	status.type="CATCH_UP_KEEP_UP") {
 
+		SGPstateData <- SGPstateData
+
 		if (!is.null(SGPstateData[[state]][['Achievement']][['Cutscore_Information']])) {
 			tmp.state.level <- which(sapply(lapply(SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]][['State_Levels']], '[[', 1), function(x) state.iter %in% x))
 			levels.that.are.proficient <- SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]][
@@ -11,10 +13,33 @@ function(achievement_level,
 			levels.that.are.not.proficient <- SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]][
 				which(SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]][["State_Levels"]][[tmp.state.level]][['Levels']]=="Not Proficient")]
 		} else {
-			levels.that.are.proficient <- SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]][
-				which(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")]
-			levels.that.are.not.proficient <- SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]][
-				which(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Not Proficient")]
+			if (!is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]])) {
+				levels.that.are.advanced <- levels.that.are.not.advanced <- list()
+				tmp.index <- grep("Achievement_Levels", names(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]]))
+				levels.that.are.proficient <- sort(unlist(sapply(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][tmp.index], function(x) x[['Labels']]))[
+					unlist(sapply(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][tmp.index], function(x) x[['Proficient']]))=="Proficient"])
+				levels.that.are.not.proficient <- sort(unlist(sapply(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][tmp.index], function(x) x[['Labels']]))[
+					unlist(sapply(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][tmp.index], function(x) x[['Proficient']]))=="Not Proficient"])
+				for (i in grep("Achievement_Levels", names(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]]), value=TRUE)) {
+					levels.that.are.advanced[[i]] <- SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[i]][['Labels']][
+						tail(which(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[i]][["Proficient"]]=="Proficient"), -1)]
+					levels.that.are.not.advanced[[i]] <- SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[i]][['Labels']][
+						c(which(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[i]][["Proficient"]]=="Not Proficient"),
+						head(which(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[i]][["Proficient"]]=="Proficient"), 1))]
+				}
+				levels.that.are.advanced <- unlist(levels.that.are.advanced)
+				levels.that.are.not.advanced <- unlist(levels.that.are.not.advanced)
+			} else {
+				levels.that.are.proficient <- SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]][
+					which(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")]
+				levels.that.are.not.proficient <- SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]][
+					which(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Not Proficient")]
+				levels.that.are.advanced <- SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]][
+					tail(which(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient"), -1)]
+				levels.that.are.not.advanced <- SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]][
+					c(which(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Not Proficient"),
+					head(which(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient"), 1))]
+			}
 		}
 
 		if (status.type=="CATCH_UP_KEEP_UP") {
@@ -25,9 +50,10 @@ function(achievement_level,
 		}
 
 		if (status.type=="MOVE_UP_STAY_UP") {
+			achievement_level <- as.character(achievement_level)
 			achievement_level[achievement_level %in% levels.that.are.not.proficient] <- NA
-			achievement_level <- unclass(factor(achievement_level))
-			achievement_level[achievement_level > 2] <- 2
+			achievement_level[achievement_level %in% levels.that.are.advanced] <- 2
+			achievement_level[achievement_level %in% levels.that.are.not.advanced] <- 1
 			return(factor(achievement_level, levels=1:2, labels=c("Moving Up", "Staying Up"), ordered=FALSE))
 		}
 } ### END getTargetInitialStatus

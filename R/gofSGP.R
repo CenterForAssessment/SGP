@@ -13,6 +13,7 @@ function(
 	### To prevent R CMD check warnings
 
 	VALID_CASE <- CONTENT_AREA <- YEAR <- SCALE_SCORE_PRIOR <- ACHIEVEMENT_LEVEL_PRIOR <- NULL
+	SGPstateData <- SGPstateData
 
 
         ### Create state (if NULL) from sgp_object (if possible)

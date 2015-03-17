@@ -3,6 +3,8 @@ function(year,
 	increment, 
 	lag=0) {
 
+	if (is.null(year)) return(NULL)
+
 	if (identical(year, "BASELINE")) {
 		return(rep("BASELINE", length(increment)))
 	} else {

@@ -4,7 +4,10 @@ function(sgp_object,
 	state=NULL,
 	years=NULL,
 	sgp.type,
+	sgp.percentiles.equated=FALSE,
 	use.cohort.for.baseline.when.missing=NULL) {
+
+	SGPstateData <- SGPstateData
 
         if (is.null(use.cohort.for.baseline.when.missing)) {
                 if (!is.null(state) && is.null(SGPstateData[[state]][["SGP_Configuration"]][["use.cohort.for.baseline.when.missing"]])) {
@@ -37,6 +40,7 @@ function(sgp_object,
 		}
 		if (length(tmp.names) > 0 & !is.null(years)) tmp.names <- tmp.names[sapply(tmp.names, function(x) getTableNameYear(x) %in% years)]
 		if (length(tmp.names) > 0 & !is.null(content_areas)) tmp.names <- tmp.names[sapply(strsplit(tmp.names, "[.]"), function(x) x[1] %in% content_areas)]
+		if (sgp.percentiles.equated) tmp.names <- grep("EQUATED", tmp.names, value=TRUE, invert=TRUE)
 		return(tmp.names)
 	}
 

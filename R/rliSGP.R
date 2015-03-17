@@ -13,7 +13,8 @@ function(sgp_object,
 	started.at <- proc.time()
 	message(paste("\nStarted rliSGP", date()), "\n")
 
-	YEAR <- GRADE <- ID <- NEW_ID <- .EACHI <- NULL 
+	YEAR <- GRADE <- ID <- NEW_ID <- .EACHI <- NULL
+	SGPstateData <- SGPstateData
 
         if (is.null(state)) {
                 tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))

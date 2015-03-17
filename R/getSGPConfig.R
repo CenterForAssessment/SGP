@@ -18,9 +18,11 @@ function(sgp_object,
 	sgp.projections.max.forward.progression.years,
 	sgp.use.my.coefficient.matrices,
 	calculate.simex=NULL,
-	calculate.simex.baseline=NULL) {
+	calculate.simex.baseline=NULL,
+	year.for.equate) {
 
 	YEAR <- CONTENT_AREA <- VALID_CASE <- NULL
+	SGPstateData <- SGPstateData
 
 	### Define variables
 
@@ -427,7 +429,11 @@ function(sgp_object,
 	if (sgp.percentiles) {
 		sgp.config.list[['sgp.percentiles']] <- par.sgp.config
 		for (i in 1:length(sgp.config.list[['sgp.percentiles']])) sgp.config.list[['sgp.percentiles']][[i]][['sgp.baseline.matrices']] <- NULL
+		if (!is.null(year.for.equate)) {
+			sgp.config.list[['sgp.percentiles.equated']] <- sgp.config.list[["sgp.percentiles"]][sapply(sgp.config.list[['sgp.percentiles']], function(x) tail(x[['sgp.panel.years']], 1))==year.for.equate]
+		}
 	}
+
 
 	if (sgp.projections | sgp.projections.lagged) {
 		tmp.config <- par.sgp.config[sapply(par.sgp.config, test.projection.iter)]

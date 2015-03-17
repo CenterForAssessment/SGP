@@ -27,6 +27,8 @@ function(sgp_object,
 	names.type <- names.provided <- names.output <- names.sgp <- STATE_ENROLLMENT_STATUS <- EMH_LEVEL <- STATE_ASSIGNED_ID <- .N <- TRANSFORMED_SCALE_SCORE <- GROUP <- STATE <- YEAR_WITHIN <- NULL
 	DISADVANTAGED_STATUS <- SPECIAL_EDUCATION_STATUS <- ELL_STATUS <- HLS_CODE <- IEP_CODE <- LANGUAGE_PROFICIENCY <- GIFTED_CODE <- FRL_CODE <- STUDENT_GROWTH_ID <- MIDDLE_NAME <- NULL
 	OCTOBER_ENROLLMENT_STATUS <- NULL
+	SGPstateData <- SGPstateData
+	randomNames <- randomNames
 
 	### Create state (if missing) from sgp_object (if possible)
 
@@ -55,6 +57,10 @@ function(sgp_object,
 
 	if (!is.null(SGPstateData[[state]][['SGP_Configuration']][['outputSGP.translate.names']])) {
 		outputSGP.translate.names <- SGPstateData[[state]][['SGP_Configuration']][['outputSGP.translate.names']]
+	}
+
+	if (is.null(sgp_object@Names)) {
+		outputSGP.translate.names <- FALSE
 	}
 
 	###############################################
@@ -454,7 +460,6 @@ function(sgp_object,
 		#### Anonymize (if requested) (NOT necessary if wide data is provided)
  
 		if (outputSGP.anonymize) {
-			suppressPackageStartupMessages(require(randomNames))
 			if (!"ETHNICITY" %in% names(tmp.table)) tmp.table[["ETHNICITY"]] <- 1
 			if (!"GENDER" %in% names(tmp.table)) tmp.table[["GENDER"]] <- round(runif(dim(tmp.table)[1], min=0, max=1))
 			tmp.dt <- tmp.table[,list(ID, ETHNICITY, GENDER)]

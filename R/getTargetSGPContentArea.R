@@ -1,5 +1,12 @@
 `getTargetSGPContentArea` <- 
-function(grade, content_area, state, max.sgp.target.years.forward, my.sgp.target.content_area) {
+function(grade,
+	content_area,
+	state,
+	max.sgp.target.years.forward,
+	my.sgp.target.content_area) {
+
+	SGPstateData <- SGPstateData
+
 	if (is.null(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]])) {
 		return(content_area)
 	} else {

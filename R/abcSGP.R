@@ -33,13 +33,13 @@ function(sgp_object,
 	plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot"),
 	outputSGP.output.type=c("LONG_Data", "LONG_FINAL_YEAR_Data", "WIDE_Data", "INSTRUCTOR_Data"),
 	verbose.output=FALSE,
-	sgp.sqlite = NULL
-    ) {
+	sgp.sqlite = NULL) {
 
         started.at <- proc.time()
 	message(paste("\nStarted abcSGP", date()), "\n")
 
 	names.type <- names.provided <- names.output <- NULL
+	SGPstateData <- SGPstateData
 
 	### Create state (if NULL) from sgp_object (if possible)
 
