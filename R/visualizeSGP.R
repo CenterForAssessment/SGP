@@ -942,7 +942,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 
 if (sgPlot.save.sgPlot.data) {
 	setkey(sgPlot.data, ID)
-	tmp.file.name <- paste(c(gsub(" ", "_", state.name), "Demonstration")[which(state==c(state.abb, "DEMO"))], "studentGrowthPlot_Data", sep="_")
+	tmp.file.name <- paste(gsub(" ", "_", getStateAbbreviation(state, type="name")), "studentGrowthPlot_Data", sep="_")
 	assign(tmp.file.name, sgPlot.data)
 	save(list=tmp.file.name, file=paste(tmp.file.name, ".Rdata", sep=""))
 }
