@@ -147,14 +147,21 @@ function(sgp_object,
 				}
 
 				### Create sgp.projection.grade.sequences (if NULL)
-				if (sgp.projections|sgp.projections.lagged|sgp.projections.baseline|sgp.projections.lagged.baseline) {
+				if (sgp.projections | sgp.projections.lagged) {
 					if (is.null(sgp.config[[a]][['sgp.projection.grade.sequences']])) {
 						par.sgp.config[[b.iter[b]]][['sgp.projection.grade.sequences']] <- head(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], -1)
 					} else par.sgp.config[[b.iter[b]]][['sgp.projection.grade.sequences']] <- as.character(sgp.config[[a]][['sgp.projection.grade.sequences']][[b]])
 				} else par.sgp.config[[b.iter[b]]][['sgp.projection.grade.sequences']] <- NULL # Make NULL here to feed into checkConfig() -> turns it to NA subsequently
 
+				### Create sgp.projection.baseline.grade.sequences (if NULL)
+				if (sgp.projections.baseline | sgp.projections.lagged.baseline) {
+					if (is.null(sgp.config[[a]][['sgp.projection.baseline.grade.sequences']])) {
+						par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.grade.sequences']] <- head(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], -1)
+					} else par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.grade.sequences']] <- as.character(sgp.config[[a]][['sgp.projection.baseline.grade.sequences']][[b]])
+				} else par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.grade.sequences']] <- NULL # Make NULL here to feed into checkConfig() -> turns it to NA subsequently
+
 				### Create sgp.projection.content.areas (if NULL)
-				if (sgp.projections|sgp.projections.lagged|sgp.projections.baseline|sgp.projections.lagged.baseline) {
+				if (sgp.projections | sgp.projections.lagged) {
 					if (is.null(sgp.config[[a]][['sgp.projection.content.areas']])) {
 						par.sgp.config[[b.iter[b]]][['sgp.projection.content.areas']] <- head(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], -1)
 					} else {
@@ -164,8 +171,19 @@ function(sgp_object,
 					}
 				} else par.sgp.config[[b.iter[b]]][['sgp.projection.content.areas']] <- NA
 
+				### Create sgp.projection.baseline.content.areas (if NULL)
+				if (sgp.projections.baseline | sgp.projections.lagged.baseline) {
+					if (is.null(sgp.config[[a]][['sgp.projection.baseline.content.areas']])) {
+						par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.content.areas']] <- head(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], -1)
+					} else {
+						if (identical(par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.grade.sequences']], "NO_PROJECTIONS")) {
+							par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.content.areas']] <- as.character(sgp.config[[a]][['sgp.projection.content.areas']])
+						}
+					}
+				} else par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.content.areas']] <- NA
+
 				### Create sgp.projection.panel.years & sgp.projection.panel.years.lags (if NULL)
-				if (sgp.projections|sgp.projections.lagged|sgp.projections.baseline|sgp.projections.lagged.baseline) {
+				if (sgp.projections | sgp.projections.lagged) {
 					if (is.null(sgp.config[[a]][['sgp.projection.panel.years']])) {
 						tmp.panel.years <- head(par.sgp.config[[b.iter[b]]][['sgp.panel.years']], -1)
 						par.sgp.config[[b.iter[b]]][['sgp.projection.panel.years']] <- 
@@ -179,15 +197,30 @@ function(sgp_object,
 					}
 				} else par.sgp.config[[b.iter[b]]][['sgp.projection.panel.years']] <- NA
 
+				### Create sgp.projection.baseline.panel.years & sgp.projection.baseline.panel.years.lags (if NULL)
+				if (sgp.projections.baseline | sgp.projections.lagged.baseline) {
+					if (is.null(sgp.config[[a]][['sgp.projection.baseline.panel.years']])) {
+						tmp.panel.years <- head(par.sgp.config[[b.iter[b]]][['sgp.panel.years']], -1)
+						par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.panel.years']] <- 
+							as.character(sapply(tmp.panel.years, yearIncrement, tail(par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']], 1)))
+						par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.panel.years.lags']] <- head(par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']], -1)
+					} else {
+						if (!identical(par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.grade.sequences']], "NO_PROJECTIONS")) {
+							par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.panel.years.lags']] <- 
+								diff(as.numeric(sapply(strsplit(par.sgp.config[[b.iter[b]]][['sgp.projection.panel.years']], '_'), '[', split.location(par.sgp.config[[b.iter[b]]][['sgp.projection.panel.years']]))))
+						}
+					}
+				} else par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.panel.years']] <- NA
+
 				### Create sgp.projection.sequence (if NULL)
-				if (sgp.projections|sgp.projections.lagged|sgp.projections.baseline|sgp.projections.lagged.baseline) {
+				if (sgp.projections | sgp.projections.lagged | sgp.projections.baseline | sgp.projections.lagged.baseline) {
 					if (is.null(sgp.config[[a]][['sgp.projection.sequence']])) {
 						par.sgp.config[[b.iter[b]]][['sgp.projection.sequence']] <- tail(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], 1)
 					}
 				}
 
 				### Create sgp.projections.max.forward.progression.years (if NULL)
-				if (sgp.projections|sgp.projections.lagged|sgp.projections.baseline|sgp.projections.lagged.baseline) {
+				if (sgp.projections | sgp.projections.lagged | sgp.projections.baseline | sgp.projections.lagged.baseline) {
 					if (is.null(sgp.config[[a]][['sgp.projections.max.forward.progression.years']])) {
 						par.sgp.config[[b.iter[b]]][['sgp.projections.max.forward.progression.years']] <- sgp.projections.max.forward.progression.years
 					}
@@ -451,11 +484,15 @@ function(sgp_object,
 		}
 		if (sgp.projections) {
 			sgp.config.list[['sgp.projections']] <- tmp.config
-			for (i in 1:length(sgp.config.list[['sgp.projections']])) sgp.config.list[['sgp.projections']][[i]][['sgp.matrices']] <- NULL
+			for (i in 1:length(sgp.config.list[['sgp.projections']])) {
+				sgp.config.list[['sgp.projections']][[i]][['sgp.matrices']] <- sgp.config.list[['sgp.projections']][[i]][['sgp.baseline.matrices']] <- NULL
+			}
 		}
 		if (sgp.projections.lagged) {
 			sgp.config.list[['sgp.projections.lagged']] <- tmp.config
-			for (i in 1:length(sgp.config.list[['sgp.projections.lagged']])) sgp.config.list[['sgp.projections.lagged']][[i]][['sgp.matrices']] <- NULL
+			for (i in 1:length(sgp.config.list[['sgp.projections.lagged']])) {
+				sgp.config.list[['sgp.projections.lagged']][[i]][['sgp.matrices']] <- sgp.config.list[['sgp.projections.lagged']][[i]][['sgp.baseline.matrices']] <- NULL
+			}
 		}
 	}
 
@@ -488,18 +525,16 @@ function(sgp_object,
 				}
 				tmp.config <- c(tmp.config, tmp.expand.config)
 			}
-			if (sgp.projections.baseline) sgp.config.list[['sgp.projections.baseline']] <- tmp.config
-			if (sgp.projections.lagged.baseline) sgp.config.list[['sgp.projections.lagged.baseline']] <- tmp.config
 		}
 		
 		if (!sgp.percentiles.baseline | length(sgp.config.list[['sgp.percentiles.baseline']]) == 0) sgp.config.list[['sgp.percentiles.baseline']] <- NULL
 		if (sgp.projections.baseline) {
 			sgp.config.list[['sgp.projections.baseline']] <- tmp.config
-			for (i in 1:length(sgp.config.list[['sgp.projections.baseline']])) sgp.config.list[['sgp.projections.baseline']][[i]][['sgp.baseline.matrices']]<-NULL
+			for (i in 1:length(sgp.config.list[['sgp.projections.baseline']])) sgp.config.list[['sgp.projections.baseline']][[i]][['sgp.baseline.matrices']] <- NULL
 		}
 		if (sgp.projections.lagged.baseline) {
 			sgp.config.list[['sgp.projections.lagged.baseline']] <- tmp.config
-			for (i in 1:length(sgp.config.list[['sgp.projections.lagged.baseline']])) sgp.config.list[['sgp.projections.lagged.baseline']][[i]][['sgp.baseline.matrices']]<-NULL
+			for (i in 1:length(sgp.config.list[['sgp.projections.lagged.baseline']])) sgp.config.list[['sgp.projections.lagged.baseline']][[i]][['sgp.baseline.matrices']] <- NULL
 		}
 	}
 

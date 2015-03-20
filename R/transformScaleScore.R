@@ -148,5 +148,4 @@ function(tmp.data,
 		tmp.data[, TRANSFORMED_SCALE_SCORE := piecewiseTransform(SCALE_SCORE, state, CONTENT_AREA_LABELS, as.character(YEAR), as.character(GRADE)), by=list(CONTENT_AREA_LABELS, YEAR, GRADE)]
 		return(list(Data=tmp.data, Cutscores=Cutscores, Linkages=NULL))
 	}
-
 } ### END transformScaleScore function
