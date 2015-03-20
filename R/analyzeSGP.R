@@ -223,7 +223,7 @@ function(sgp_object,
 		}
 	}
 
-	if (sgp.percentiles.equated & SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]]==tail(sort(unique(sgp_object@Data$YEAR)), 1)) {
+	if (sgp.percentiles.equated & identical(SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]], tail(sort(unique(sgp_object@Data$YEAR)), 1))) {
 		message("\tNOTE: 'Scale_Change' is set in SGPstateData in addition to Assessment_Transition. 'Scale_Change' will be set to NULL to accomodate Assessment_Transition analyses. Contact the package administrator to have meta-data updated to accomodate Assessment_Transition without this message.")
 		SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]] <- NULL
 	}
