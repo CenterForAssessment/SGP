@@ -2,7 +2,8 @@
 function(tmp.data,
 	state,
 	content_areas,
-	linkages) {
+	linkages,
+	slot.data) {
 
 	TRANSFORMED_SCALE_SCORE <- SCALE_SCORE <- TEMP_SCALE_SCORE <- SCALE_SCORE_EQUATED <- CONTENT_AREA <- CONTENT_AREA_LABELS <- YEAR <- GRADE <- GRADE_NUMERIC <- NULL
 	CUTSCORES <- CUTSCORES_ORIGINAL <- NULL
@@ -38,7 +39,9 @@ function(tmp.data,
 			SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[paste('Vertical_Scale', year.for.equate, sep=".")]])
 
 
+		#############################################################
 		### Vertical-to-Vertical scale transition
+		#############################################################
 
 		if (identical(scale.transition.scenario, c("Yes", "Yes"))) {
 
@@ -71,23 +74,28 @@ function(tmp.data,
 		}
 		
 
+		#######################################################
 		### Non-Vertical-to-Vertical scale transition
+		#######################################################
 
 		if (identical(scale.transition.scenario, c("No", "Yes"))) {
 
-			### Scale Score Transformation
+			### Scale Score Transformation of OLD test data
 
 			year.for.equate <- tail(sort(sapply(strsplit(names(linkages), "[.]"), '[', 2)), 1)
 			years.for.reporting <- sort(unique(tmp.data$YEAR))
 			years.for.equate.OLD <- years.for.reporting[seq(match(year.for.equate, years.for.reporting)-1)]
 			years.for.equate.NEW <- years.for.reporting[seq(match(year.for.equate, years.for.reporting), length(years.for.reporting))]
 			tmp.data[,TEMP_SCALE_SCORE:=piecewiseTransform(SCALE_SCORE, state, CONTENT_AREA_LABELS, as.character(YEAR), as.character(GRADE)), by=list(CONTENT_AREA_LABELS, YEAR, GRADE)]
+			slot.data[,TEMP_SCALE_SCORE:=piecewiseTransform(SCALE_SCORE, state, CONTENT_AREA_LABELS, as.character(YEAR), as.character(GRADE)), by=list(CONTENT_AREA_LABELS, YEAR, GRADE)]
 			tmp.data[YEAR %in% years.for.equate.NEW, TEMP_SCALE_SCORE:=SCALE_SCORE]
+			slot.data[YEAR %in% years.for.equate.NEW, TEMP_SCALE_SCORE:=SCALE_SCORE]
 			setnames(tmp.data, c("TEMP_SCALE_SCORE", "SCALE_SCORE"), c("SCALE_SCORE", "SCALE_SCORE_ORIGINAL"))
-			tmp.linkages <- equateSGP(tmp.data, state, year.for.equate)
+			setnames(slot.data, c("TEMP_SCALE_SCORE", "SCALE_SCORE"), c("SCALE_SCORE", "SCALE_SCORE_ORIGINAL"))
+			tmp.linkages <- equateSGP(slot.data, state, year.for.equate)
 			setkeyv(tmp.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", "SCALE_SCORE"))
 			tmp.data <- convertScaleScore(tmp.data, year.for.equate, tmp.linkages, conversion.type="NEW_TO_OLD", state)
-			tmp.data[,TRANSFORMED_SCALE_SCORE := SCALE_SCORE_EQUATED]
+			tmp.data[,TRANSFORMED_SCALE_SCORE:=SCALE_SCORE_EQUATED]
 			setnames(tmp.data, c("SCALE_SCORE", "SCALE_SCORE_ORIGINAL"), c("SCALE_SCORE", "TEMP_SCALE_SCORE"))
 			tmp.data[,TEMP_SCALE_SCORE:=NULL]
 
@@ -115,7 +123,9 @@ function(tmp.data,
 		}
 
 
+		###############################################################
 		### Non-Vertical-to-Non-Vertical scale transition
+		###############################################################
 
 		if (identical(scale.transition.scenario, c("No", "No"))) {
 
@@ -125,14 +135,18 @@ function(tmp.data,
 			years.for.reporting <- sort(unique(tmp.data$YEAR))
 			years.for.equate.OLD <- years.for.reporting[seq(match(year.for.equate, years.for.reporting)-1)]
 			years.for.equate.NEW <- years.for.reporting[seq(match(year.for.equate, years.for.reporting), length(years.for.reporting))]
-			tmp.data[, TEMP_SCALE_SCORE:=piecewiseTransform(SCALE_SCORE, state, CONTENT_AREA_LABELS, as.character(YEAR), as.character(GRADE)), by=list(CONTENT_AREA_LABELS, YEAR, GRADE)]
-			tmp.data[YEAR %in% years.for.equate.NEW, TEMP_SCALE_SCORE:=NA]
-			tmp.data[, TEMP_SCALE_SCORE:=piecewiseTransform(TEMP_SCALE_SCORE, state, CONTENT_AREA_LABELS, as.character(YEAR), as.character(GRADE)), by=list(CONTENT_AREA_LABELS, YEAR, GRADE)]
-			tmp.data[YEAR %in% years.for.equate.NEW, TEMP_SCALE_SCORE:=SCALE_SCORE] 
-			tmp.linkages <- equateSGP(tmp.data, state, year.for.equate)
+			tmp.data[,TEMP_SCALE_SCORE:=piecewiseTransform(SCALE_SCORE, state, CONTENT_AREA_LABELS, as.character(YEAR), as.character(GRADE)), by=list(CONTENT_AREA_LABELS, YEAR, GRADE)]
+			slot.data[,TEMP_SCALE_SCORE:=piecewiseTransform(SCALE_SCORE, state, CONTENT_AREA_LABELS, as.character(YEAR), as.character(GRADE)), by=list(CONTENT_AREA_LABELS, YEAR, GRADE)]
+			tmp.data[YEAR %in% years.for.equate.NEW, TEMP_SCALE_SCORE:=SCALE_SCORE]
+			slot.data[YEAR %in% years.for.equate.NEW, TEMP_SCALE_SCORE:=SCALE_SCORE]
+			setnames(tmp.data, c("TEMP_SCALE_SCORE", "SCALE_SCORE"), c("SCALE_SCORE", "SCALE_SCORE_ORIGINAL"))
+			setnames(slot.data, c("TEMP_SCALE_SCORE", "SCALE_SCORE"), c("SCALE_SCORE", "SCALE_SCORE_ORIGINAL"))
+			tmp.linkages <- equateSGP(slot.data, state, year.for.equate)
 			setkeyv(tmp.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", "SCALE_SCORE"))
 			tmp.data <- convertScaleScore(tmp.data, year.for.equate, tmp.linkages, conversion.type="NEW_TO_OLD", state)
-			tmp.data[,TRANSFORMED_SCALE_SCORE := SCALE_SCORE_EQUATED]
+			tmp.data[,TRANSFORMED_SCALE_SCORE:=SCALE_SCORE_EQUATED]
+			setnames(tmp.data, c("SCALE_SCORE", "SCALE_SCORE_ORIGINAL"), c("SCALE_SCORE", "TEMP_SCALE_SCORE"))
+			tmp.data[,TEMP_SCALE_SCORE:=NULL]
 
 
 			### Cutscore Transformation

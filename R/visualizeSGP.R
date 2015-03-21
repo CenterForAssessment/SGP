@@ -736,7 +736,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 	#### Create transformed scale scores and Cutscores (NOT necessary if wide data is provided)
 
 		setkeyv(tmp.table, c("CONTENT_AREA_LABELS", "YEAR", "GRADE"))
-		tmp.list <- transformScaleScore(tmp.table, state, tmp.content_areas_domains, sgp_object@SGP[['Linkages']])
+		tmp.list <- transformScaleScore(tmp.table, state, tmp.content_areas_domains, sgp_object@SGP[['Linkages']], slot.data)
 		tmp.table <- tmp.list[['Data']]
 		Cutscores <- tmp.list[['Cutscores']]
 		sgp.projections.equated <- tmp.list[['sgp.projections.equated']]
