@@ -90,7 +90,7 @@ function(tmp.data,
 			years.for.equate.NEW <- years.for.reporting[seq(match(year.for.equate, years.for.reporting), length(years.for.reporting))]
 			tmp.data[,SCALE_SCORE:=piecewiseTransform(SCALE_SCORE, state, CONTENT_AREA_LABELS, as.character(YEAR), as.character(GRADE)), by=list(CONTENT_AREA_LABELS, YEAR, GRADE)]
 			slot.data[,SCALE_SCORE:=piecewiseTransform(SCALE_SCORE, state, CONTENT_AREA_LABELS, as.character(YEAR), as.character(GRADE)), by=list(CONTENT_AREA_LABELS, YEAR, GRADE)]
-			tmp.linkages <- equateSGP(slot.data, state, year.for.equate)
+			tmp.linkages <- equateSGP(slot.data, state, year.for.equate, loss.hoss.correction=FALSE)
 			setkeyv(tmp.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", "SCALE_SCORE"))
 			tmp.data <- convertScaleScore(tmp.data, year.for.equate, tmp.linkages, conversion.type="NEW_TO_OLD", state)
 			tmp.data[,TRANSFORMED_SCALE_SCORE:=SCALE_SCORE_EQUATED]
@@ -135,7 +135,7 @@ function(tmp.data,
 			years.for.equate.NEW <- years.for.reporting[seq(match(year.for.equate, years.for.reporting), length(years.for.reporting))]
 			tmp.data[,SCALE_SCORE:=piecewiseTransform(SCALE_SCORE, state, CONTENT_AREA_LABELS, as.character(YEAR), as.character(GRADE)), by=list(CONTENT_AREA_LABELS, YEAR, GRADE)]
 			slot.data[,SCALE_SCORE:=piecewiseTransform(SCALE_SCORE, state, CONTENT_AREA_LABELS, as.character(YEAR), as.character(GRADE)), by=list(CONTENT_AREA_LABELS, YEAR, GRADE)]
-			tmp.linkages <- equateSGP(slot.data, state, year.for.equate)
+			tmp.linkages <- equateSGP(slot.data, state, year.for.equate, loss.hoss.correction=FALSE)
 			setkeyv(tmp.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", "SCALE_SCORE"))
 			tmp.data <- convertScaleScore(tmp.data, year.for.equate, tmp.linkages, conversion.type="NEW_TO_OLD", state)
 			tmp.data[,TRANSFORMED_SCALE_SCORE:=SCALE_SCORE_EQUATED]

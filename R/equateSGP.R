@@ -2,7 +2,8 @@
 function(tmp.data,
 	state,
 	current.year,
-	equating.method="equip") {
+	equating.method="equip",
+	loss.hoss.correction=TRUE) {
 
 	VALID_CASE <- YEAR <- CONTENT_AREA <- GRADE <- NULL
 	SGPstateData <- SGPstateData
@@ -56,22 +57,24 @@ function(tmp.data,
 			tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]] <- 
 				equateSGP_INTERNAL(prior.year.data[list(content_area.iter, grade.iter)], current.year.data[list(content_area.iter, grade.iter)])
 
-			tmp.boundaries.new.to.old <- 
-				eval(parse(text=paste("SGPstateData[[state]][['Achievement']][['Knots_Boundaries']]", get.my.knots.boundaries.path(content_area.iter, prior.year), "[['loss.hoss_", grade.iter, "']]", sep="")))
-			tmp.boundaries.old.to.new <- 
-				eval(parse(text=paste("SGPstateData[[state]][['Achievement']][['Knots_Boundaries']]", get.my.knots.boundaries.path(content_area.iter, current.year), "[['loss.hoss_", grade.iter, "']]", sep="")))
-			tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['NEW_TO_OLD']][['concordance']]$yx[
-				tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['NEW_TO_OLD']][['concordance']]$yx < tmp.boundaries.new.to.old[1]] <-
-				tmp.boundaries.new.to.old[1]	
-			tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['NEW_TO_OLD']][['concordance']]$yx[
-				tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['NEW_TO_OLD']][['concordance']]$yx > tmp.boundaries.new.to.old[2]] <-
-				tmp.boundaries.new.to.old[2]	
-			tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['OLD_TO_NEW']][['concordance']]$yx[
-				tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['OLD_TO_NEW']][['concordance']]$yx < tmp.boundaries.old.to.new[1]] <-
-				tmp.boundaries.old.to.new[1]	
-			tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['OLD_TO_NEW']][['concordance']]$yx[
-				tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['OLD_TO_NEW']][['concordance']]$yx > tmp.boundaries.old.to.new[2]] <-
-				tmp.boundaries.old.to.new[2]
+			if (loss.hoss.correction) {
+				tmp.boundaries.new.to.old <- 
+					eval(parse(text=paste("SGPstateData[[state]][['Achievement']][['Knots_Boundaries']]", get.my.knots.boundaries.path(content_area.iter, prior.year), "[['loss.hoss_", grade.iter, "']]", sep="")))
+				tmp.boundaries.old.to.new <- 
+					eval(parse(text=paste("SGPstateData[[state]][['Achievement']][['Knots_Boundaries']]", get.my.knots.boundaries.path(content_area.iter, current.year), "[['loss.hoss_", grade.iter, "']]", sep="")))
+				tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['NEW_TO_OLD']][['concordance']]$yx[
+					tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['NEW_TO_OLD']][['concordance']]$yx < tmp.boundaries.new.to.old[1]] <-
+					tmp.boundaries.new.to.old[1]	
+				tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['NEW_TO_OLD']][['concordance']]$yx[
+					tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['NEW_TO_OLD']][['concordance']]$yx > tmp.boundaries.new.to.old[2]] <-
+					tmp.boundaries.new.to.old[2]	
+				tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['OLD_TO_NEW']][['concordance']]$yx[
+					tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['OLD_TO_NEW']][['concordance']]$yx < tmp.boundaries.old.to.new[1]] <-
+					tmp.boundaries.old.to.new[1]	
+				tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['OLD_TO_NEW']][['concordance']]$yx[
+					tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['OLD_TO_NEW']][['concordance']]$yx > tmp.boundaries.old.to.new[2]] <-
+					tmp.boundaries.old.to.new[2]
+			}
 
 			splinefun.scale <- tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['NEW_TO_OLD']][['concordance']][['scale']]
 			splinefun.scale <- c(extendrange(splinefun.scale, f=0.2)[1], splinefun.scale, extendrange(splinefun.scale, f=0.2)[2])
