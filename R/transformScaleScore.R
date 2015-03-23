@@ -32,27 +32,27 @@ function(tmp.data,
 
 	if (!is.null(linkages)) {
 		year.for.equate <- tail(sort(sapply(strsplit(names(linkages), "[.]"), '[', 2)), 1)
-		scale.transition.scenario <- c(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][['Vertical_Scale']], 
+		assessment.transition.type <- c(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][['Vertical_Scale']], 
 			SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[paste('Vertical_Scale', year.for.equate, sep=".")]])
+
+		for (i in content_areas) {
+			Cutscores[[i]] <- createLongCutscores(state=state, content_area=i, assessment.transition.type=assessment.transition.type)
+			Cutscores[[i]][, CUTSCORES_ORIGINAL:=CUTSCORES]
+		}
 
 
 		#############################################################
 		### Vertical-to-Vertical scale transition
 		#############################################################
 
-		if (identical(scale.transition.scenario, c("Yes", "Yes"))) {
+		if (identical(assessment.transition.type, c("Yes", "Yes"))) {
 
 			### Scale Score Transformation
 
 			year.for.equate <- tail(sort(sapply(strsplit(names(linkages), "[.]"), '[', 2)), 1)
 			tmp.data[, TRANSFORMED_SCALE_SCORE:=SCALE_SCORE_EQUATED]
 
-			### Create Transformed Cutscores
-
-			for (i in content_areas) {
-				Cutscores[[i]] <- createLongCutscores(state, i)
-				Cutscores[[i]][, CUTSCORES_ORIGINAL:=CUTSCORES]
-			}
+			### Transform Cutscores
 
 			for (content_area.iter in content_areas) {  
 				for (grade.iter in unique(Cutscores[[content_area.iter]][['GRADE']])) {
@@ -80,7 +80,7 @@ function(tmp.data,
 		### Non-Vertical-to-Vertical scale transition
 		#######################################################
 
-		if (identical(scale.transition.scenario, c("No", "Yes"))) {
+		if (identical(assessment.transition.type, c("No", "Yes"))) {
 
 			### Scale Score Transformation of OLD test data
 
@@ -95,12 +95,7 @@ function(tmp.data,
 			tmp.data <- convertScaleScore(tmp.data, year.for.equate, tmp.linkages, conversion.type="NEW_TO_OLD", state)
 			tmp.data[,TRANSFORMED_SCALE_SCORE:=SCALE_SCORE_EQUATED]
 
-			### Create Transformed Cutscores
-
-			for (i in content_areas) {
-				Cutscores[[i]] <- createLongCutscores(state, i)
-				Cutscores[[i]][, CUTSCORES_ORIGINAL:=CUTSCORES]
-			}
+			### Transform Cutscores
 
 			for (content_area.iter in content_areas) {  
 				for (grade.iter in unique(Cutscores[[content_area.iter]][['GRADE']])) {
@@ -130,7 +125,7 @@ function(tmp.data,
 		### Non-Vertical-to-Non-Vertical scale transition
 		###############################################################
 
-		if (identical(scale.transition.scenario, c("No", "No"))) {
+		if (identical(assessment.transition.type, c("No", "No"))) {
 
 			### Scale Score Transformation
 
@@ -151,12 +146,8 @@ function(tmp.data,
 			setnames(tmp.data, c("SCALE_SCORE", "SCALE_SCORE_ORIGINAL"), c("SCALE_SCORE", "TEMP_SCALE_SCORE"))
 			tmp.data[,TEMP_SCALE_SCORE:=NULL]
 
-			### Create Transformed Cutscores
+			### Transform Cutscores
 
-			for (i in content_areas) {
-				Cutscores[[i]] <- createLongCutscores(state, i)
-				Cutscores[[i]][, CUTSCORES_ORIGINAL:=CUTSCORES]
-			}
 
 
 
