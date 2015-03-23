@@ -96,7 +96,7 @@ function(state,
 
 		if (!is.null(subset.year)) if (identical(subset.year, NA)) long.cutscores <- long.cutscores[is.na(YEAR)] else long.cutscores <- long.cutscores[YEAR==subset.year]
 
-		return(data.table(long.cutscores, key=c("YEAR", "CUTLEVEL")))
+		return(data.table(long.cutscores, key=c("GRADE", "CONTENT_AREA")))
 	} ### END get.long.cutscores
 
 
@@ -133,7 +133,7 @@ function(state,
 									subset.year=subset.year)
 			}
 		}
-		long.cutscores <- rbindlist(long.cutscores.list)
+		long.cutscores <- data.table(rbindlist(long.cutscores.list), key=c("GRADE", "CONTENT_AREA"))
 	}
 
 	### Add GRADE_NUMERIC
