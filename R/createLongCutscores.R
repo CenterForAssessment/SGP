@@ -29,7 +29,7 @@ function(state,
 				cutscores.year <- as.character(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]])[i], "[.]"))[2])
 
 				if (!is.null(transformed.cutscores)) {
-					cutscores.iter <- seq(length(transformed.cutscores[[content_area.iter]])-1)
+					cutscores.iter <- seq(length(transformed.cutscores[[content_area.iter]])-2)
 					cutscores <- tail(transformed.cutscores[[content_area.iter]], -1)
 					loss <- transformed.cutscores[[content_area.iter]][1]
 					hoss <- tail(transformed.cutscores[[content_area.iter]], 1)
