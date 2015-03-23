@@ -94,7 +94,7 @@ function(state,
 				as.numeric(sapply(strsplit(as.character(SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[content_area]]), "_"), function(x) x[1])))
 		}
 
-		if (!is.null(subset.year)) long.cutscores <- long.cutscores[YEAR==subset.year]
+		if (!is.null(subset.year)) if (identical(subset.year, NA)) long.cutscores <- long.cutscores[is.na(YEAR)] else long.cutscores <- long.cutscores[YEAR==subset.year]
 
 		return(data.table(long.cutscores, key=c("YEAR", "CUTLEVEL")))
 	} ### END get.long.cutscores
