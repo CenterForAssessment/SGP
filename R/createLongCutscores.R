@@ -108,8 +108,9 @@ function(state,
 				stop("Not all content areas have Transformed Achievement Level Cutscores available in SGPstateData.
 					Please augment the SGPstateData set with your data or contact the SGP package maintainer to have your data added to the SGP package.")
 		}
+		transformed.cutscores <- !is.null(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]])
 
-		long.cutscores <- get.long.cutscores(content_area)
+		long.cutscores <- get.long.cutscores(content_area, transformed.cutscores)
 
 	} else {
 		for (assessment.transition.iter in assessment.transition.type) {
