@@ -45,7 +45,9 @@ Linux: apt-get install r-base-dev (or similar).
 
 ### To use the SGP Package
 
-The [SGP Package Wiki](https://github.com/CenterForAssessment/SGP/wiki/Home) contains instructions on how to prepare data and run SGP analyses.
+* The [SGP Package Wiki](https://github.com/CenterForAssessment/SGP/wiki/Home) contains instructions on how to prepare data and run **SGP** analyses.
+* The [SGP Package Documentation](http://cran.r-project.org/web/packages/SGP/SGP.pdf) contains man pages for all functions and data sets in the the **SGP** Package.
+* Numerous [SGP Gists](https://gist.github.com/dbetebenner) provide other examples of analyses that can be performed.
 
 
 ### References
