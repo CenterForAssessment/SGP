@@ -20,12 +20,14 @@ function(scale_score,
 		}
 		tmp.tf <- tmp.test %in% names(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]]) &&
 				content_area %in% names(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[tmp.test]])
+	} else {
+		tmp.tf <- FALSE
 	}
 
 
 	if (is.null(sgp.projections.equated)) {
 		if ((content_area %in% names(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]]) &&
-			grade %in% as.numeric(matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]]), "_")), ncol=2, byrow=TRUE)[,2])) || tmp.tf) {
+			grade %in% matrix(unlist(strsplit(names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]]), "_")), ncol=2, byrow=TRUE)[,2]) || tmp.tf) {
 
 			if (!is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]])) {
 				tmp.new.cuts <- SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[tmp.test]][[content_area]]
