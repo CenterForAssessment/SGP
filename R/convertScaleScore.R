@@ -59,6 +59,7 @@ function(tmp.data.for.equate,
 	}
 
 	if (!interpolate.scores) {
+		if ("SCALE_SCORE_EQUATED" %in% names(tmp.data.for.equate)) tmp.data.for.equate[,SCALE_SCORE_EQUATED:=NULL]
 		return(data.table(rbindlist(scale.score.concordance.table), key=key(tmp.data.for.equate))[tmp.data.for.equate][is.na(SCALE_SCORE_EQUATED), SCALE_SCORE_EQUATED:=SCALE_SCORE])
 	} else {
 		return(scale.score.concordance.functions)

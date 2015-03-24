@@ -736,7 +736,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 	#### Create transformed scale scores and Cutscores (NOT necessary if wide data is provided)
 
 		setkeyv(tmp.table, c("CONTENT_AREA_LABELS", "YEAR", "GRADE"))
-		tmp.list <- transformScaleScore(tmp.table, state, tmp.content_areas_domains, sgp_object@SGP[['Linkages']])
+		tmp.list <- transformScaleScore(tmp.table, state, tmp.content_areas_domains, sgp_object@SGP[['Linkages']], slot.data)
 		tmp.table <- tmp.list[['Data']]
 		Cutscores <- tmp.list[['Cutscores']]
 		sgp.projections.equated <- tmp.list[['sgp.projections.equated']]
@@ -942,7 +942,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 
 if (sgPlot.save.sgPlot.data) {
 	setkey(sgPlot.data, ID)
-	tmp.file.name <- paste(c(gsub(" ", "_", state.name), "Demonstration")[which(state==c(state.abb, "DEMO"))], "studentGrowthPlot_Data", sep="_")
+	tmp.file.name <- paste(gsub(" ", "_", getStateAbbreviation(state, type="name")), "studentGrowthPlot_Data", sep="_")
 	assign(tmp.file.name, sgPlot.data)
 	save(list=tmp.file.name, file=paste(tmp.file.name, ".Rdata", sep=""))
 }

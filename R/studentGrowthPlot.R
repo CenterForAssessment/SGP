@@ -782,7 +782,7 @@ if (is.null(Report_Parameters[['SGP_Targets']])) {
 	}
 
 	for (i in seq_along(tmp.projection.names.list)) {
-		if (length(grep("Current", tmp.projection.names.list[[i]]) > 0)) {
+		if (length(grep("Current", tmp.projection.names.list[[i]])) > 0) {
 			tmp.projection.names <- tmp.projection.names.list[[i]]
 			tmp.projection.year <- current.year+grade.values$increment_for_projection_current
 			tmp.achievement.level <- which(head(Achievement_Levels, 1)==achievement.level.labels)

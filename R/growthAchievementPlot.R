@@ -53,7 +53,7 @@
 
 	### Create LONG cutscores
 
-	long_cutscores <- createLongCutscores(state, as.character(content_area), add.GRADE_NUMERIC=TRUE)
+	long_cutscores <- createLongCutscores(state, content_area, add.GRADE_NUMERIC=TRUE)
 
 	### Create default values
 
