@@ -1,7 +1,7 @@
 `studentGrowthPercentiles` <-
 function(panel.data,         ## REQUIRED
          sgp.labels,         ## REQUIRED
-         panel.data.vnames,
+         panel.data.vnames=NULL,
          additional.vnames.to.return=NULL,
          grade.progression,
          content_area.progression=NULL,
@@ -42,13 +42,11 @@ function(panel.data,         ## REQUIRED
          print.time.taken=TRUE,
          parallel.config=NULL,
          calculate.simex=NULL,
-	 sgp.percentiles.set.seed=314159,
+         sgp.percentiles.set.seed=314159,
          verbose.output=FALSE) {
 
 	started.at <- proc.time()
 	started.date <- date()
-
-	SGPstateData <- SGPstateData
 
 	##########################################################
 	###
@@ -273,13 +271,24 @@ function(panel.data,         ## REQUIRED
 		return(tmp)
 	} 
 
-	.simex.sgp <- function(state, variable, lambda, B, simex.sample.size, extrapolation, save.matrices, simex.use.my.coefficient.matrices=NULL, calculate.simex.sgps) {
+	.simex.sgp <- function(
+		state, variable=NULL, csem.data.vnames=NULL, csem.loss.hoss=NULL, 
+		lambda, B, simex.sample.size, extrapolation, save.matrices, simex.use.my.coefficient.matrices=NULL, calculate.simex.sgps) 
+	{
 		GRADE <- CONTENT_AREA <- YEAR <- V1 <- Lambda <- tau <- b <- .SD <- TEMP <- NULL ## To avoid R CMD check warnings
 		my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
 		if (is.logical(simex.use.my.coefficient.matrices)) if(! simex.use.my.coefficient.matrices) simex.use.my.coefficient.matrices <- NULL
+		if (!is.null(state) & !is.null(variable)) stop("SIMEX config can not use both 'state' and 'variable' elements.")
+		if (!is.null(state) & !is.null(csem.data.vnames)) stop("SIMEX config can not use both 'state' and 'csem.data.vnames' elements.")
+		if (!is.null(csem.data.vnames) & !is.null(variable)) stop("SIMEX config can not use both 'csem.data.vnames' and 'variable' elements.")
 
 		fitted <- extrap <- tmp.quantiles.simex <- simex.coef.matrices <- list()
 		loss.hoss <- matrix(nrow=2,ncol=length(tmp.gp)-1)
+		if (!is.null(csem.loss.hoss)) {
+			if (!is.list(csem.loss.hoss)) stop("SIMEX config element 'csem.loss.hoss' must be a 2 level nested list with LOSS/HOSS data for each subject (level 1) by grade (level 2).")
+			for (g in 1:ncol(loss.hoss)) {
+				loss.hoss[,g] <- csem.loss.hoss[[rev(content_area.progression)[-1][g]]][[paste("loss.hoss_", rev(tmp.gp)[-1][g], sep="")]]
+		}}
 		if (!is.null(state)) {
 			for (g in 1:ncol(loss.hoss)) {
 				loss.hoss[,g] <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[rev(content_area.progression)[-1][g]]][[paste("loss.hoss_", rev(tmp.gp)[-1][g], sep="")]]
@@ -287,7 +296,7 @@ function(panel.data,         ## REQUIRED
 		if (!is.null(variable)) {
 			for (g in 1:ncol(loss.hoss)) {
 				loss.hoss[,g] <- variable[[paste("loss.hoss_", rev(tmp.gp)[-1][g], sep="")]]
-		}}   
+		}}
 		
 		rq.mtx <- function(tmp.gp.iter, lam, rqdata) {
 			mod <- character()
@@ -326,18 +335,15 @@ function(panel.data,         ## REQUIRED
 			tmp.gp.iter <- rev(tmp.gp)[2:(k+1)]
 			tmp.ca.iter <- rev(content_area.progression)[2:(k+1)]
 			tmp.yr.iter <- rev(year.progression)[2:(k+1)]
-			csem.int <- matrix(nrow=dim(tmp.data)[1], ncol=length(tmp.gp.iter)) # build matrix to store interpolated csem
-			colnames(csem.int) <- paste("icsem", tmp.gp.iter, tmp.ca.iter, tmp.yr.iter, sep="")
-			
-			## the following is added by YS on 021915 to accommodate missing data when using "variable"
-			csem.tmp <- vector()
-			for (g in seq_along(tmp.gp.iter)) {
-				csem.tmp<-cbind(csem.tmp,variable[[paste("CSEM.grade", tmp.gp.iter[g], ".", tmp.ca.iter[g], sep="")]])
+			if (is.null(csem.data.vnames)) {
+				csem.int <- matrix(nrow=dim(tmp.data)[1], ncol=length(tmp.gp.iter)) # build matrix to store interpolated csem
+				colnames(csem.int) <- paste("icsem", tmp.gp.iter, tmp.ca.iter, tmp.yr.iter, sep="")
+			} else {
+				csem.int <- data.table(Panel_Data[,c("ID", intersect(csem.data.vnames, names(Panel_Data)))], key="ID")
+				setnames(csem.int, csem.data.vnames, paste("icsem", head(tmp.gp, -1), head(content_area.progression, -1), head(year.progression, -1), sep=""))
 			}
-			csem.tmp<-na.omit(csem.tmp)
-			
-			# interpolate csem for all scale scores except that of the last grade
 
+			# interpolate csem for all scale scores except that of the last grade
 			if (!is.null(state)) {
 				for (g in seq_along(tmp.gp.iter)) {
 					if ("YEAR" %in% names(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
@@ -352,13 +358,21 @@ function(panel.data,         ## REQUIRED
 						csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")] <- CSEM_Function(tmp.data[[tmp.num.variables-g]])
 				}
 			}
+
 			if (!is.null(variable)){
+				# the following is added by YS on 021915 to accommodate missing data when using "variable"
+				csem.tmp <- vector()
 				for (g in seq_along(tmp.gp.iter)) {
-					csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")] <- variable[[paste("CSEM.grade", tmp.gp.iter[g], ".", tmp.ca.iter[g], sep="")]]
+					csem.tmp <- cbind(csem.tmp, variable[[paste("CSEM.grade", tmp.gp.iter[g], ".", tmp.ca.iter[g], sep="")]])
+				}
+				csem.tmp <- na.omit(csem.tmp)
+			
+				for (g in seq_along(tmp.gp.iter)) {
+					csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")] <- csem.tmp[,g]
 				}
 			}
 
-			# naive model
+			## naive model
 			if (calculate.simex.sgps) {
 				fitted[[paste("order_", k, sep="")]] <- matrix(0, nrow=length(lambda), ncol=dim(tmp.data)[1]*length(taus))
 				tmp.matrix <- getsplineMatrices(
@@ -372,8 +386,10 @@ function(panel.data,         ## REQUIRED
 				fitted[[paste("order_", k, sep="")]][1,] <- as.vector(.get.percentile.predictions(tmp.data, tmp.matrix))
 			}
 			
-			# perturb data
-			
+			## perturb data
+			if (!is.null(csem.data.vnames)) {
+				tmp.data <- merge(tmp.data, csem.int, by="ID")
+			}
 			for (L in lambda[-1]) {
 				big.data <- rbindlist(replicate(B, tmp.data, simplify = FALSE))
 				big.data[, Lambda := rep(L, each=dim(tmp.data)[1]*B)]
@@ -381,11 +397,18 @@ function(panel.data,         ## REQUIRED
 				setnames(big.data, tmp.num.variables, "final_yr")
 				for (g in seq_along(tmp.gp.iter)) {
 					col.index <- tmp.num.variables-g
-					setkeyv(big.data, c(names(big.data)[col.index], "final_yr", "b"))
-					big.data.uniques <- unique(big.data)
-					big.data.uniques.indices <- which(!duplicated(big.data))
-					big.data.uniques[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="") := 
-						rep(csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")], B)[big.data.uniques.indices]]
+					if (is.null(csem.data.vnames)) {
+						setkeyv(big.data, c(names(big.data)[col.index], "final_yr", "b"))
+						big.data.uniques <- unique(big.data)
+						big.data.uniques.indices <- which(!duplicated(big.data))
+						big.data.uniques[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="") := 
+							rep(csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")], B)[big.data.uniques.indices]]
+					} else {
+						setkeyv(big.data, c(names(big.data)[col.index], "final_yr", "b", paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")))
+						# big.data.uniques <- merge(big.data, csem.int[,c("ID", paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")), with=F], by="ID")
+						# setkeyv(big.data.uniques, c(names(big.data)[col.index], "final_yr", "b", paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")))
+						big.data.uniques <- unique(big.data)
+					}
 					big.data.uniques[, TEMP := 
 						eval(parse(text=paste("big.data.uniques[[", tmp.num.variables-g, "]]+sqrt(big.data.uniques[['Lambda']])*big.data.uniques[['icsem",
 						tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], "']] * rnorm(dim(big.data.uniques)[1])", sep="")))]
@@ -467,10 +490,10 @@ function(panel.data,         ## REQUIRED
 				
 					par.start <- startParallel(parallel.config, 'SIMEX')
 					
-					##  Note, that if you use the parallel.config for SIMEX here, you can also use it for TAUS in the naive analysis
-					##  Example parallel.config argument:  '... parallel.config=list(BACKEND="PARALLEL", TYPE="PSOCK", WORKERS=list(SIMEX = 4, TAUS = 4))'
+					## Note, that if you use the parallel.config for SIMEX here, you can also use it for TAUS in the naive analysis
+					## Example parallel.config argument: '... parallel.config=list(BACKEND="PARALLEL", TYPE="PSOCK", WORKERS=list(SIMEX = 4, TAUS = 4))'
 					
-					##  Calculate coefficient matricies (if needed/requested)
+					## Calculate coefficient matricies (if needed/requested)
 					if (is.null(simex.use.my.coefficient.matrices)) {
 						if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
 							if (is.null(simex.sample.size) || dim(tmp.data)[1] <= simex.sample.size) {
@@ -519,7 +542,7 @@ function(panel.data,         ## REQUIRED
 						simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <- available.matrices[sim.iters]
 					}
 					
-					##  get percentile predictions from coefficient matricies
+					## get percentile predictions from coefficient matricies
 					if (calculate.simex.sgps) {
 						if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
 							fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- 
@@ -575,8 +598,8 @@ function(panel.data,         ## REQUIRED
 		if (is.null(save.matrices)) simex.coef.matrices <- NULL
 		if (calculate.simex.sgps) {
 			quantile.data.simex <- data.table(rbindlist(tmp.quantiles.simex), key=c("ID", "SIMEX_ORDER"))
-			setkey(quantile.data.simex, ID) # first key on ID and SIMEX_ORDER, then re-key on ID only to insure sorted order.  Don't rely on rbindlist/k ordering...
-		}  else quantile.data.simex <- data.table("ID"=NA, "SIMEX_ORDER"=NA, "SGP_SIMEX"=NA) # set up empty data.table for reshapes and subsets below.
+			setkey(quantile.data.simex, ID) # first key on ID and SIMEX_ORDER, then re-key on ID only to insure sorted order. Don't rely on rbindlist/k ordering...
+		} else quantile.data.simex <- data.table("ID"=NA, "SIMEX_ORDER"=NA, "SGP_SIMEX"=NA) # set up empty data.table for reshapes and subsets below.
 		if (print.other.gp) {
 			return(list(
 				DT = data.table(reshape(quantile.data.simex, idvar="ID", timevar="SIMEX_ORDER", direction="wide"),
@@ -756,7 +779,7 @@ function(panel.data,         ## REQUIRED
 				tmp.messages <- c(tmp.messages, "\t\tNOTE: Please specify an appropriate list for calculate.confidence.intervals including state/csem variable, confidence.quantiles, simulation.iterations, distribution and round. See help page for details. SGPs will be calculated without confidence intervals.\n")
 				csem.tf <- FALSE
 			}
-			if ("variable" %in% names(calculate.confidence.intervals) & missing(panel.data.vnames)) {
+			if ("variable" %in% names(calculate.confidence.intervals) & is.null(panel.data.vnames)) {
 				stop("To utilize a supplied CSEM variable for confidence interval calculation you must specify the variables to be used for student growth percentile calculations with the panel.data.vnames argument. See help page for details.")
 			}
 			if (all(c("state", "variable") %in% names(calculate.confidence.intervals))) {
@@ -801,7 +824,7 @@ function(panel.data,         ## REQUIRED
 			simex.tf <- FALSE
 		}
 		if (is.list(calculate.simex)) {
-			if (!("state" %in% names(calculate.simex)) & !("variable" %in% names(calculate.simex))) {
+			if (!("state" %in% names(calculate.simex)) & !("variable" %in% names(calculate.simex)) & !("csem.data.vnames" %in% names(calculate.simex))) {
 				tmp.messages <- c(tmp.messages, "\t\tNOTE: Please specify an appropriate list for calculate.simex including state/csem variable, simulation.iterations, lambda and extrapolation. See help page for details. SGPs will be calculated without measurement error correction.\n")
 				simex.tf <- FALSE
 			}
@@ -817,6 +840,7 @@ function(panel.data,         ## REQUIRED
 					message("lambda should not contain negative values. Negative values will be ignored", call. = FALSE)
 					lambda <- calculate.simex$lambda[calculate.simex$lambda >= 0]
 				} else lambda=calculate.simex$lambda
+				if (is.null(panel.data.vnames) & !is.null(calculate.simex$csem.data.vnames)) stop("Use of csem.data.vnames in SIMEX requires panel.data.vnames be provided.")
 			}
 		}
 		if (is.character(calculate.simex)) {
@@ -944,7 +968,7 @@ function(panel.data,         ## REQUIRED
 				Simulated_SGPs=Simulated_SGPs))
 	}
 
-	if (!missing(panel.data.vnames)) {
+	if (!is.null(panel.data.vnames)) {
 		if (!all(panel.data.vnames %in% names(Panel_Data))) {
 			tmp.messages <- c(tmp.messages, "\t\tNOTE: Supplied 'panel.data.vnames' are not all in the supplied Panel_Data. Analyses will continue with the intersection names contain in Panel_Data.\n")
 		}
@@ -1016,7 +1040,7 @@ function(panel.data,         ## REQUIRED
 		num.panels <- (dim(ss.data)[2]-1)/2
 	}
 
-	##  Run this check before the setup of ss.data - otherwise function chokes on negative subscripts
+	## Run this check before the setup of ss.data - otherwise function chokes on negative subscripts
 	if (exact.grade.progression.sequence & num.prior > num.panels) {
 		tmp.messages <- paste("\t\tNOTE: Supplied data together with EXACT grade progression contains fewer panel years than required. \n\t\t
 			Check data, function arguments and see help page for details.\n")
@@ -1194,7 +1218,9 @@ function(panel.data,         ## REQUIRED
 	if (simex.tf) {
 		quantile.data.simex <- .simex.sgp(
 						state=calculate.simex$state, 
-						variable=calculate.simex$variable, 
+						variable=calculate.simex$variable,
+						csem.data.vnames=calculate.simex$csem.data.vnames,
+						csem.loss.hoss=calculate.simex$csem.loss.hoss, 
 						lambda=calculate.simex$lambda, 
 						B=calculate.simex$simulation.iterations,
 						simex.sample.size=calculate.simex$simex.sample.size,
@@ -1211,7 +1237,7 @@ function(panel.data,         ## REQUIRED
 		}
 	}
 		
-	### Calculate growth percentiles (if requested),  percentile cuts (if requested), and simulated confidence intervals (if requested)
+	### Calculate growth percentiles (if requested), percentile cuts (if requested), and simulated confidence intervals (if requested)
 
 	if (calculate.sgps) {
 
@@ -1321,7 +1347,7 @@ function(panel.data,         ## REQUIRED
 					quantile.data[,SGP_STANDARD_ERROR:=round(apply(simulation.data[, -1, with=FALSE], 1, sd, na.rm=TRUE), digits=2)]
 				} else {
 					if (!(is.numeric(calculate.confidence.intervals$confidence.quantiles) & all(calculate.confidence.intervals$confidence.quantiles < 1) & 
-						all(calculate.confidence.intervals$confidence.quantiles > 0)))  {
+						all(calculate.confidence.intervals$confidence.quantiles > 0))) {
 						stop("Argument to 'calculate.confidence.intervals$confidence.quantiles' must be numeric and consist of quantiles.")
 					}
 					tmp.cq <- data.table(round(t(apply(simulation.data[, -1, with=FALSE], 1, quantile, probs = calculate.confidence.intervals$confidence.quantiles))))
@@ -1357,7 +1383,7 @@ function(panel.data,         ## REQUIRED
 					quantile.data[, SGP_NORM_GROUP:=factor(factor(ORDER, levels=seq_along(norm.groups), labels=norm.groups))]
 				}
 				quantile.data[, ORDER:=NULL]
-			} else {  # Return both ORDER and SGP_NORM_GROUP
+			} else { # Return both ORDER and SGP_NORM_GROUP
 				if (exact.grade.progression.sequence) {
 					quantile.data[, SGP_NORM_GROUP:=factor(factor(ORDER, labels=norm.groups))]
 				} else {
@@ -1402,8 +1428,8 @@ function(panel.data,         ## REQUIRED
 				setnames(tmp.gof.data, c("SCALE_SCORE", "ACHIEVEMENT_LEVEL", "CONTENT_AREA", "CONTENT_AREA_CURRENT", "YEAR_CURRENT", "GRADE_CURRENT"), 
 					c("SCALE_SCORE_PRIOR", "ACHIEVEMENT_LEVEL_PRIOR", "CONTENT_AREA_PRIOR", "CONTENT_AREA", "YEAR", "GRADE"))
 				
-				###  Rename SGP_NORM_GROUP_BASELINE for gofSGP - expecting consistent name to establish norm.group.var in that function
-				if ("SGP_NORM_GROUP_BASELINE" %in%  names(tmp.gof.data)) setnames(tmp.gof.data, "SGP_NORM_GROUP_BASELINE", "SGP_NORM_GROUP")
+				### Rename SGP_NORM_GROUP_BASELINE for gofSGP - expecting consistent name to establish norm.group.var in that function
+				if ("SGP_NORM_GROUP_BASELINE" %in% names(tmp.gof.data)) setnames(tmp.gof.data, "SGP_NORM_GROUP_BASELINE", "SGP_NORM_GROUP")
 
 				for (gof.iter in seq_along(sgps.for.gof)) {
 					Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]][['TMP_NAME']] <- gofSGP(
