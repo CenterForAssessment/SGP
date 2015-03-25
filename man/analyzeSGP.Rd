@@ -39,7 +39,6 @@ analyzeSGP(sgp_object,
          sgp.projections.projection.unit="YEAR",
          get.cohort.data.info=FALSE,
          sgp.sqlite=NULL,
-         sgp.percentiles.equated=FALSE,
          ...)
 }
 
@@ -88,9 +87,9 @@ Default is 3.  To utilize the maximum matrix order, set to NULL.
   }
   \item{simulate.sgps}{Boolean variable indicating whether to simulate SGP values for students based on test-specific Conditional Standard Errors of Measurement (CSEM).  Test CSEM data must be available for simulation and included in \code{SGPstateData}.  This argument must be set to TRUE for confidence interval construction. Defaults to TRUE.
   }
-  \item{calculate.simex}{A character state acronym or list including state/csem variable, simulation.iterations, lambda and extrapolation method. Defaults to NULL, no simex calculations performed.  Alternatively, setting the argument to TRUE sets the list up with state=state, lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear" and save.matrices=TRUE.
+  \item{calculate.simex}{A character state acronym or list including state/csem variable, csem.data.vnames, csem.loss.hoss, simulation.iterations, lambda and extrapolation method. Defaults to NULL, no simex calculations performed.  Alternatively, setting the argument to TRUE sets the list up with state=state, lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear" and save.matrices=TRUE.
   }
-  \item{calculate.simex.baseline}{A character state acronym or list including state/csem variable, simulation.iterations, lambda and extrapolation method. Defaults to NULL, no simex calculations performed.  Alternatively, setting the argument to TRUE sets the list up with state=state, lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear", save.matrices=TRUE and simex.use.my.coefficient.matrices = TRUE.  This argument is passed to \code{\link{analyzeSGP}}.
+  \item{calculate.simex.baseline}{A character state acronym or list including state/csem variable, csem.data.vnames, csem.loss.hoss, simulation.iterations, lambda and extrapolation method. Defaults to NULL, no simex calculations performed.  Alternatively, setting the argument to TRUE sets the list up with state=state, lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear", save.matrices=TRUE and simex.use.my.coefficient.matrices = TRUE.  This argument is passed to \code{\link{analyzeSGP}}.
   }
   \item{goodness.of.fit.print}{Boolean variable indicating whether to print out Goodness of Fit figures as PDF into a directory labeled Goodness of Fit. Defaults to TRUE.
   }
@@ -131,9 +130,6 @@ Example use cases are provided below.
  \item{sgp.sqlite}{A Boolean argument (defaults to NULL) indicating whether a SQLite database file of the essential SGP data should be created from the \code{@Data} slot and subsequently used to extract data subsets for analysis with \code{\link{studentGrowthPercentiles}} and 
   \code{\link{studentGrowthProjections}} functions.  The default, NULL, allows for an test of the size of the \code{@Data} object.  If greater than 1 GB \code{sgp.sqlite} is set to TRUE internally.  When TRUE, this step can take some time but can also substantially reduce the amount of RAM memory required to conduct analyses.  If set to TRUE the \code{tmp_data} directory and file "TMP_SGP_Data.sqlite" will be created.  This tmp_data directory and file are deleted by default although one may keep them if the argument is specified as the character "KEEP".  However, if an existing database of that name exists, it will be deleted and a new version created.
  }
-  \item{sgp.percentiles.equated}{A Boolean argument (defaults to FALSE) indicating whether equating should be used on the most recent year of test data provided. Equating allows for student growth
-projections to be calculated in across assessment transitions where the scale for the assessment changes.
-  }
   \item{...}{Arguments to be passed to \code{\link{studentGrowthPercentiles}} or \code{\link{studentGrowthProjections}} for finer control over SGP calculations. NOTE: arguments can only be passed to one lower level function at a time, and only student growth percentiles OR projections can be created but not both at the same time.
   }
 }
