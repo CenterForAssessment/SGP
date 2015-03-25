@@ -11,7 +11,7 @@ using the \cr
 \usage{
 studentGrowthPercentiles(panel.data,
                          sgp.labels,
-                         panel.data.vnames,
+                         panel.data.vnames=NULL,
                          additional.vnames.to.return=NULL,
                          grade.progression,
                          content_area.progression,
@@ -43,7 +43,7 @@ studentGrowthPercentiles(panel.data,
                          isotonize=TRUE,                                 
                          convert.using.loss.hoss=TRUE,                
                          goodness.of.fit=TRUE,
-			 goodness.of.fit.minimum.n=NULL,
+			goodness.of.fit.minimum.n=NULL,
                          return.prior.scale.score=TRUE,
                          return.prior.scale.score.standardized=TRUE,
                          return.norm.group.identifier=TRUE,
@@ -51,9 +51,9 @@ studentGrowthPercentiles(panel.data,
                          return.panel.data=FALSE,
                          print.time.taken=TRUE,
                          parallel.config=NULL,
-			 calculate.simex=NULL,
-			 sgp.percentiles.set.seed=314159,
-			 verbose.output=FALSE)
+			calculate.simex=NULL,
+			sgp.percentiles.set.seed=314159,
+			verbose.output=FALSE)
 }
 
 \arguments{
@@ -187,7 +187,7 @@ Useful for examining relationship between prior achievement and student growth.
   }
   \item{parallel.config}{parallel configuration argument allowing for parallel analysis by 'tau'. Defaults to NULL.
   }
-  \item{calculate.simex}{A character state acronym or list including state/csem variable, simulation.iterations, simulation.sample.size, lambda and extrapolation method. 
+  \item{calculate.simex}{A character state acronym or list including state/csem variable, csem.data.vnames, csem.loss.hoss, simulation.iterations, simulation.sample.size, lambda and extrapolation method. 
   Defaults to NULL, no simex calculations performed.
   }
   \item{sgp.percentiles.set.seed}{An integer (or NULL) argument indicating whether to set.seed to make analyses fully reproducible. To turn off, set argument to NULL. Default is 314159.
