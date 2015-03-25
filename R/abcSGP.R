@@ -39,7 +39,6 @@ function(sgp_object,
 	message(paste("\nStarted abcSGP", date()), "\n")
 
 	names.type <- names.provided <- names.output <- NULL
-	SGPstateData <- SGPstateData
 
 	### Create state (if NULL) from sgp_object (if possible)
 
@@ -68,15 +67,15 @@ function(sgp_object,
 
         ### Check for consistency between simulate.sgps and existence of CSEMs ###
 
-		if (simulate.sgps & is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
-        	        message("\tCSEMs are required in SGPstateData to simulate SGPs for confidence interval calculations. Confidence intervals will not be calculated.")
+		if (simulate.sgps & is.null(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
+        	        message("\tCSEMs are required in SGP::SGPstateData to simulate SGPs for confidence interval calculations. Confidence intervals will not be calculated.")
 			simulate.sgps <- FALSE
 		}
 
-		if (is.null(sgp.minimum.default.panel.years) & !is.null(SGPstateData[[state]][["SGP_Configuration"]][['sgp.minimum.default.panel.years']])) {
-			sgp.minimum.default.panel.years <- SGPstateData[[state]][["SGP_Configuration"]][['sgp.minimum.default.panel.years']]
+		if (is.null(sgp.minimum.default.panel.years) & !is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgp.minimum.default.panel.years']])) {
+			sgp.minimum.default.panel.years <- SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgp.minimum.default.panel.years']]
 		} 
-		if (is.null(sgp.minimum.default.panel.years) & is.null(SGPstateData[[state]][["SGP_Configuration"]][['sgp.minimum.default.panel.years']])) {
+		if (is.null(sgp.minimum.default.panel.years) & is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgp.minimum.default.panel.years']])) {
 			sgp.minimum.default.panel.years <- 3
 		} 
 
