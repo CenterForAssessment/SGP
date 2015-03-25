@@ -28,7 +28,6 @@
 		sgPlot.linkages) {
 
 	CUTLEVEL <- ID <- CONTENT_AREA <- GRADE <- CUTSCORES <- YEAR <- NULL ## To prevent R CMD check warnings
-	SGPstateData <- SGPstateData
 
 	### Utility functions
 
@@ -47,21 +46,21 @@
 
 	### Define quantities/variables related to state
 
-	if (state %in% objects(SGPstateData)) {
-		tmp.abbreviation <- SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Abbreviation"]]
+	if (state %in% objects(SGP::SGPstateData)) {
+		tmp.abbreviation <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Abbreviation"]]
 		tmp.state <- paste(state.name[state==state.abb], tmp.abbreviation)
-		tmp.organization <- SGPstateData[[state]][["Assessment_Program_Information"]][["Organization"]]
-		number.achievement.level.regions <- length(SGPstateData[[state]][["Student_Report_Information"]][["Achievement_Level_Labels"]])
-		if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["sgp.projections.max.forward.progression.grade"]])) {
-			trajectory.cuts <- sort(c(SGPstateData[[state]][["Growth"]][["Cutscores"]][['Cuts']], SGPstateData[[state]][["Student_Report_Information"]][["Projection_Fan_Limits"]]))
+		tmp.organization <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Organization"]]
+		number.achievement.level.regions <- length(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Achievement_Level_Labels"]])
+		if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["sgp.projections.max.forward.progression.grade"]])) {
+			trajectory.cuts <- sort(c(SGP::SGPstateData[[state]][["Growth"]][["Cutscores"]][['Cuts']], SGP::SGPstateData[[state]][["Student_Report_Information"]][["Projection_Fan_Limits"]]))
 			trajectory.cuts <- paste(paste("P", trajectory.cuts, sep=""), collapse="|")
 		} else {
-			trajectory.cuts <- c(1, SGPstateData[[state]][["Growth"]][["Cutscores"]][['Cuts']], 99)
+			trajectory.cuts <- c(1, SGP::SGPstateData[[state]][["Growth"]][["Cutscores"]][['Cuts']], 99)
 			trajectory.cuts <- paste(paste("P", trajectory.cuts, sep=""), collapse="|")
 		}
-		if (!is.null(SGPstateData[[state]][["Custom_Student_Report"]])) {
+		if (!is.null(SGP::SGPstateData[[state]][["Custom_Student_Report"]])) {
 			custom.isr.tf <- TRUE
-			custom.isr <- SGPstateData[[state]][["Custom_Student_Report"]]
+			custom.isr <- SGP::SGPstateData[[state]][["Custom_Student_Report"]]
 		} else custom.isr.tf <- FALSE
 	} else {
 		stop("Construction of student growth plots requires state meta-data to be included in the embedded SGPstateData set.\nPlease augment the SGPstateData set with your data or contact the SGP package maintainer to have your data added to the SGP package.")
@@ -301,7 +300,7 @@ if (reports.by.school) {
 				Cutscores=sgPlot.cutscores[[content_areas[vp]]],
 				Years=rev(sgPlot.years),
 				Report_Parameters=list(Current_Year=last.year, Content_Area=content_areas[vp], Content_Area_Title=tmp_student_data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]], 
-					State=state, SGP_Targets=sgPlot.sgp.targets, Assessment_Transition=sgPlot.linkages, Fan=SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']]))
+					State=state, SGP_Targets=sgPlot.sgp.targets, Assessment_Transition=sgPlot.linkages, Fan=SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']]))
 
 			tmp_student_data_JSON <- getJSON(
 							tmp.data=tmp.list,
@@ -505,14 +504,14 @@ if (reports.by.school) {
 				Cutscores=sgPlot.cutscores[[content_areas[vp]]],
 				Years=rev(sgPlot.years),
 				Report_Parameters=list(Current_Year=last.year, Content_Area=content_areas[vp], Content_Area_Title=tmp_student_data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]], 
-					State=state, SGP_Targets=sgPlot.sgp.targets, Assessment_Transition=sgPlot.linkages, Fan=SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']]))
+					State=state, SGP_Targets=sgPlot.sgp.targets, Assessment_Transition=sgPlot.linkages, Fan=SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']]))
 	
 			popViewport()
 		} ## END loop over content_areas
 
 
 		## Top Legend
-		if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["sgPlot.use.student.school.name"]])) {
+		if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["sgPlot.use.student.school.name"]])) {
 			student_school_name <- sort(unique(as.character(tmp_grade_data[ID==n][[paste("SCHOOL_NAME", last.year, sep=".")]])))[1] # sort to get rid of potential NA values
 			if (is.na(student_school_name)) student_school_name <- tmp_school_name
 		} else student_school_name <- tmp_school_name
@@ -712,7 +711,7 @@ if (reports.by.school) {
 				Years=rev(sgPlot.years),
 				Report_Parameters=list(Current_Year=last.year, Content_Area=content_areas[vp],
 					Content_Area_Title=tmp_student_data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]], State=state, SGP_Targets=sgPlot.sgp.targets,
-					Assessment_Transition=sgPlot.linkages, Fan=SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']]))
+					Assessment_Transition=sgPlot.linkages, Fan=SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']]))
 			popViewport()
 			dev.off()
 		} ## END loop over content_areas
@@ -1095,13 +1094,13 @@ if (reports.by.instructor) {
 					Report_Parameters=list(Current_Year=last.year, Content_Area=content_areas[vp], 
 						Content_Area_Title=tmp_student_data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]],
 						State=state, Denote_Content_Area=tmp_student_data[['CONTENT_AREA_RESPONSIBILITY']]=="Content Area Responsibility: Yes", SGP_Targets=sgPlot.sgp.targets,
-						Assessment_Transition=sgPlot.linkages, Fan=SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']]))
+						Assessment_Transition=sgPlot.linkages, Fan=SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']]))
 			popViewport()
 	
 			} ## END loop over content_areas
 	
 			## Top Legend
-			if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["sgPlot.use.student.school.name"]])) {
+			if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["sgPlot.use.student.school.name"]])) {
 				student_school_name <- sort(unique(tmp_student_data[[paste("SCHOOL_NAME", last.year, sep=".")]]))[1] # sort to get rid of potential NA values
 			} else student_school_name <- tmp_school_name
 
@@ -1276,7 +1275,7 @@ if (reports.by.instructor) {
 					Report_Parameters=list(Current_Year=last.year, Content_Area=content_areas[vp], 
 						Content_Area_Title=tmp_student_data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]],
 						State=state, Denote_Content_Area=tmp_student_data[['CONTENT_AREA_RESPONSIBILITY']]=="Content Area Responsibility: Yes", SGP_Targets=sgPlot.sgp.targets,
-						Assessment_Transition=sgPlot.linkages, Fan=SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']]))
+						Assessment_Transition=sgPlot.linkages, Fan=SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']]))
 				popViewport()
 				dev.off()
 				} ## END loop over content_areas
