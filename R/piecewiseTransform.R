@@ -13,16 +13,12 @@ function(scale_score,
 	if (!is.null(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]])) {
 		equate.year <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]
 		if (year < equate.year)  tmp.test <- "Transformed_Achievement_Level_Cutscores" else tmp.test <- NULL
-		tmp.tf <- tmp.test %in% names(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]]) &&
-				content_area %in% names(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[tmp.test]])
-	} else {
-		tmp.tf <- FALSE
-	}
+	} 
 
 
 	if (is.null(sgp.projections.equated)) {
 		if ((content_area %in% names(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]]) &&
-			grade %in% matrix(unlist(strsplit(names(SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]]), "_")), ncol=2, byrow=TRUE)[,2]) || tmp.tf) {
+			grade %in% matrix(unlist(strsplit(names(SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]]), "_")), ncol=2, byrow=TRUE)[,2]) || !is.null(tmp.test)) {
 
 			if (!is.null(new.cutscores)) {
 				tmp.new.cuts <- new.cutscores
