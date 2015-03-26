@@ -3,7 +3,6 @@ function(sgp_object,
 	state=NULL) {
 
 	ID <- NULL
-	SGPstateData <- SGPstateData
 
 	### Check if sgp_object is of class SGP
 
@@ -122,11 +121,11 @@ function(sgp_object,
 	## Check if ACHIEVEMENT_LEVEL levels are in SGPstateData
 
 	if (!is.null(state) && "ACHIEVEMENT_LEVEL" %in% names(sgp_object@Data)) {
-		if (!is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]])) {
-			tmp.index <- grep("Achievement_Levels", names(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]]))
-			achievement.levels <- sort(unique(unlist(sapply(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][tmp.index], function(x) x[['Labels']]))))
+		if (!is.null(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]])) {
+			tmp.index <- grep("Achievement_Levels", names(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]]))
+			achievement.levels <- sort(unique(unlist(sapply(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][tmp.index], function(x) x[['Labels']]))))
 		} else {
-			achievement.levels <- SGPstateData[[state]][['Achievement']][['Levels']][['Labels']]
+			achievement.levels <- SGP::SGPstateData[[state]][['Achievement']][['Levels']][['Labels']]
 		}
 		if (!all(sort(unique(sgp_object@Data$ACHIEVEMENT_LEVEL)) %in% achievement.levels)) {
 			missing.achievement.levels <- 

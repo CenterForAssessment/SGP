@@ -113,27 +113,25 @@ function(state,
 		long.cutscores <- get.long.cutscores(content_area, SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]])
 	} else {
 		long.cutscores.list <- list()
-		for (assessment.transition.iter in seq_along(assessment.transition.type)) {
-			if (assessment.transition.iter==1) {
-					tmp.index <- "Transformed_Achievement_Level_Cutscores"
-					subset.year <- NA
-			}
-			if (assessment.transition.iter==2) {
-					tmp.index <- paste("Transformed_Achievement_Level_Cutscores", 
-							SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]], sep=".")
-					subset.year <- SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]][assessment.transition.iter-1]
-			}
-			if (identical(toupper(assessment.transition.type[assessment.transition.iter]), "YES")) {
-				long.cutscores.list[[assessment.transition.iter]] <- get.long.cutscores(content_area=content_area, subset.year=subset.year)
-			} 
-			if (identical(toupper(assessment.transition.type[assessment.transition.iter]), "NO")) {
-				long.cutscores.list[[assessment.transition.iter]] <- 
-					get.long.cutscores(content_area=content_area,
-									SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[tmp.index]],
-									subset.year=subset.year)
-			}
+		if (identical(toupper(assessment.transition.type[1]), "YES")) {
+			long.cutscores.list[[1]] <- get.long.cutscores(content_area=content_area, subset.year=NA)
 		}
-		long.cutscores <- data.table(rbindlist(long.cutscores.list), key=c("GRADE", "CONTENT_AREA"))
+		if (identical(toupper(assessment.transition.type[1]), "NO")) {
+			long.cutscores.list[[1]] <- 
+				get.long.cutscores(
+					content_area=content_area,
+					SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Transformed_Achievement_Level_Cutscores"]],
+					subset.year=NA)
+		}
+		if (identical(toupper(assessment.transition.type[2]), "YES")) {
+			subset.year <- SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]
+			long.cutscores.list[[2]] <- get.long.cutscores(content_area=content_area, subset.year=subset.year)
+		}
+		if (identical(toupper(assessment.transition.type[2]), "NO")) {
+			subset.year <- SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]
+			long.cutscores.list[[2]] <- get.long.cutscores(content_area=content_area, subset.year=subset.year)
+		}
+	long.cutscores <- data.table(rbindlist(long.cutscores.list), key=c("GRADE", "CONTENT_AREA"))
 	}
 
 	### Add GRADE_NUMERIC
