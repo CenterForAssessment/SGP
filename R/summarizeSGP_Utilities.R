@@ -164,7 +164,7 @@ function(x,
 	tmp.result <- list()
 	tmp <- table(x[!is.na(x)])
 	for (i in seq_along(in.categories)) {
-		tmp.result[[i]] <- round(100*sum(tmp[in.categories[[i]]])/sum(tmp[of.categories[[i]]]), digits=result.digits)
+		tmp.result[[i]] <- round(100*sum(tmp[in.categories[[i]]], na.rm=TRUE)/sum(tmp[of.categories[[i]]], na.rm=TRUE), digits=result.digits)
 	}
 	return(unlist(tmp.result))
 } ### END percent_in_category function
