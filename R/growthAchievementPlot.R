@@ -161,7 +161,7 @@
 	### Calculate Scale Transformations (if required) 
 
 	setkey(growthAchievementPlot.data, GRADE)
-		growthAchievementPlot.data[, TRANSFORMED_SCALE_SCORE:=piecewiseTransform(SCALE_SCORE, state, as.character(content_area), as.character(YEAR), as.character(GRADE)), by=list(CONTENT_AREA, YEAR, GRADE)]
+		growthAchievementPlot.data[, TRANSFORMED_SCALE_SCORE:=piecewiseTransform(SCALE_SCORE, state, content_area, YEAR, GRADE), by=list(CONTENT_AREA, YEAR, GRADE)]
 	if (content_area %in% names(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]])) {
 		gaPlot.show.scale.transformations <- FALSE
 	}
