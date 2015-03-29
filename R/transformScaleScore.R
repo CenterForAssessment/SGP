@@ -26,10 +26,6 @@ function(tmp.data,
 		return(c(tmp.grades[1], rev(tmp.grades)[1]))
 	}
 
-	get.new.cutscores <- function(content_area, content_area_labels, year, grade, Cutscores) {
-		return(sort(Cutscores[[content_area]][list(content_area_labels, year, grade)][["CUTSCORES"]]))
-	}
-
 
 	### Return Data and Cutscores based upon whether scale score transition
 
@@ -161,7 +157,7 @@ function(tmp.data,
 					CONTENT_AREA_LABELS, 
 					YEAR, 
 					GRADE,
-					new.cutscores=get.new.cutscores(CONTENT_AREA[1], CONTENT_AREA_LABELS[1], year.for.equate, GRADE[1], Cutscores)), by=list(CONTENT_AREA_LABELS, YEAR, GRADE)]
+					new.cutscores=getNewCutscores(CONTENT_AREA[1], CONTENT_AREA_LABELS[1], year.for.equate, GRADE[1], Cutscores)), by=list(CONTENT_AREA_LABELS, YEAR, GRADE)]
 			tmp.data[,TRANSFORMED_SCALE_SCORE:=TEMP_SCALE_SCORE]
 			tmp.data[,TEMP_SCALE_SCORE:=NULL]
 
