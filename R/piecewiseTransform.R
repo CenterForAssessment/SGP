@@ -12,7 +12,15 @@ function(scale_score,
 
 	if (!is.null(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]])) {
 		equate.year <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]
-		if (year < equate.year)  tmp.test <- "Transformed_Achievement_Level_Cutscores" else tmp.test <- NULL
+		if (year < equate.year)  {
+			tmp.test <- "Transformed_Achievement_Level_Cutscores" 
+		} else {
+			if (!is.null(new.cutscores) && length(new.cutscores) > 0) {
+				tmp.test <- "NOT_NULL"
+			} else {
+				tmp.test <- NULL
+			}
+		}
 	} else {
 		tmp.test <- NULL
 	}
