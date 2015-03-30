@@ -173,6 +173,7 @@
 		## Creating the points used by lines to construct unconditional percentile curves
 
 		setkey(growthAchievementPlot.data, GRADE, CONTENT_AREA)
+		setkey(long_cutscores, GRADE, CONTENT_AREA)
 		growthAchievementPlot.data <- unique(long_cutscores[!is.na(GRADE_NUMERIC),c("GRADE", "CONTENT_AREA", "GRADE_NUMERIC"), with=FALSE])[growthAchievementPlot.data]
 		setnames(growthAchievementPlot.data, c("GRADE", "GRADE_NUMERIC"), c("GRADE_CHARACTER", "GRADE"))
 		setkeyv(growthAchievementPlot.data, "YEAR")
