@@ -364,6 +364,11 @@ function(sgp_object,
 		}
 	}
 
+	if (length(unique(tmp_sgp_data_for_analysis[["YEAR"]]))==2) {
+		message("\tNOTE: Only two years of data present. Minimum default of 3 years of panel data for SGP analyses changed to 2. Please confirm this is consistent with analyses you wish to perform.")
+		sgp.minimum.default.panel.years <- 2
+	}
+
 
 	#######################################################################################################################
 	##   Baseline SGP - compute matrices first if they are not in SGPstateData or merge them into sgp_object if in SGPstateData
