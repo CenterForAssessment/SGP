@@ -21,7 +21,7 @@ growth percentile analyses.
 Package: \tab SGP\cr
 Type: \tab Package\cr
 Version: \tab 1.3-5.9\cr
-Date: \tab 2015-3-29\cr
+Date: \tab 2015-3-31\cr
 License: \tab GPL-3\cr
 LazyLoad: \tab yes\cr
 }
