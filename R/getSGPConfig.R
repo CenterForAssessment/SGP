@@ -544,11 +544,17 @@ function(sgp_object,
 		tmp.iter <- c('sgp.percentiles', 'sgp.percentiles.baseline', 'sgp.projections', 'sgp.projections.baseline', 'sgp.projections.lagged', 'sgp.projections.lagged.baseline')
 		tmp.iter.tf <- c(sgp.percentiles, sgp.percentiles.baseline, sgp.projections, sgp.projections.baseline, sgp.projections.lagged, sgp.projections.lagged.baseline)
 		for (i in tmp.iter[tmp.iter.tf]) {
-			if (i %in% c('sgp.projections', 'sgp.projections.baseline')) {
+			if (i=='sgp.projections') {
 				tmp.content.areas.label <- 'sgp.projection.content.areas'
 				tmp.panel.years.label <- 'sgp.projection.panel.years'
 				tmp.grade.sequences.label <- 'sgp.projection.grade.sequences'
-			} else {
+			} 
+			if (i=='sgp.projections.baseline') {
+				tmp.content.areas.label <- 'sgp.projection.baseline.content.areas'
+				tmp.panel.years.label <- 'sgp.projection.baseline.panel.years'
+				tmp.grade.sequences.label <- 'sgp.projection.baseline.grade.sequences'
+			}
+			if (i %in% c('sgp.percentiles', 'sgp.percentiles.baseline', 'sgp.projections.lagged', 'sgp.projections.lagged.baseline')) {
 				tmp.content.areas.label <- 'sgp.content.areas'
 				tmp.panel.years.label <- 'sgp.panel.years'
 				tmp.grade.sequences.label <- 'sgp.grade.sequences'
