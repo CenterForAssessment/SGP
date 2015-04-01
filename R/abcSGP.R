@@ -68,16 +68,22 @@ function(sgp_object,
         ### Check for consistency between simulate.sgps and existence of CSEMs ###
 
 		if (simulate.sgps & is.null(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
-        	        message("\tCSEMs are required in SGP::SGPstateData to simulate SGPs for confidence interval calculations. Confidence intervals will not be calculated.")
+        	        message("\tCSEMs are required in SGPstateData to simulate SGPs for confidence interval calculations. Confidence intervals will not be calculated.")
 			simulate.sgps <- FALSE
 		}
 
 		if (is.null(sgp.minimum.default.panel.years) & !is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgp.minimum.default.panel.years']])) {
 			sgp.minimum.default.panel.years <- SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgp.minimum.default.panel.years']]
-		} 
+		}
+
 		if (is.null(sgp.minimum.default.panel.years) & is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgp.minimum.default.panel.years']])) {
-			sgp.minimum.default.panel.years <- 3
-		} 
+			if (length(unique(sgp_object@Data$YEAR))==2) {
+				sgp.minimum.default.panel.years <- 2
+				message("\tNOTE: Only two years of data present. Minimum default of 3 years of panel data for SGP analyses changed to 2. Please confirm this is consistent with analyses you wish to perform.")
+			} else {
+				sgp.minimum.default.panel.years <- 3
+			}
+		}
 
 		sgp_object <- analyzeSGP(
 			sgp_object=sgp_object,
