@@ -167,7 +167,12 @@ function(sgp_object,
 	}
 
 	if (is.null(sgp.minimum.default.panel.years) & is.null(SGPstateData[[state]][["SGP_Configuration"]][['sgp.minimum.default.panel.years']])) {
-		sgp.minimum.default.panel.years <- 3
+		if (length(unique(sgp_object@Data$YEAR))==2) {
+			sgp.minimum.default.panel.years <- 2
+			message("\tNOTE: Only two years of data present. Minimum default of 3 years of panel data for SGP analyses changed to 2. Please confirm this is consistent with analyses you wish to perform.")
+		} else {
+			sgp.minimum.default.panel.years <- 3
+		}
 	}
 
 	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][['sgp.projections.max.forward.progression.grade']])) {
