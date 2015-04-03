@@ -19,7 +19,6 @@
 	### Set variables to NULL to prevent R CMD check warnings
 	SIM_NUM <- tmp.simulation.dt <- variable <- WEIGHT <- ENROLLMENT_STATUS <- names.type <- names.sgp <- names.output <- BY_GROWTH_ONLY <- VALID_CASE <- YEAR_WITHIN <- NULL
 	tmp.simulation.dt <- variable <- WEIGHT <- ENROLLMENT_STATUS <- names.type <- names.sgp <- names.output <- BY_GROWTH_ONLY <- VALID_CASE <- YEAR_WITHIN <- NULL
-	SGPstateData <- SGPstateData
 
 	
 	### Create state (if NULL) from sgp_object (if possible)
@@ -29,8 +28,8 @@
 	}
 
 	### Create specific variables
-	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["highest.level.summary.grouping"]])) {
-		highest.level.summary.grouping <- SGPstateData[[state]][["SGP_Configuration"]][["highest.level.summary.grouping"]]
+	if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["highest.level.summary.grouping"]])) {
+		highest.level.summary.grouping <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["highest.level.summary.grouping"]]
 	}
 
 	sgp.data.names <- names(sgp_object@Data)
@@ -57,9 +56,9 @@
 	### define summarizeSGP.baseline
 	if (is.null(summarizeSGP.baseline)) {
 		summarizeSGP.baseline <- FALSE ## Default to cohort referenced is not set by user
-		if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort Referenced") summarizeSGP.baseline <- FALSE
-		if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Baseline Referenced") summarizeSGP.baseline <- TRUE
-		if (SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort and Baseline Referenced") summarizeSGP.baseline <- TRUE
+		if (SGP::SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort Referenced") summarizeSGP.baseline <- FALSE
+		if (SGP::SGPstateData[[state]][["Growth"]][["System_Type"]] == "Baseline Referenced") summarizeSGP.baseline <- TRUE
+		if (SGP::SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort and Baseline Referenced") summarizeSGP.baseline <- TRUE
 	}
 
 	if (summarizeSGP.baseline) {
@@ -130,9 +129,9 @@
 	summarizeSGP.config <- function(sgp_object, config.type) {
 
 		if (config.type=="sgp.summaries") {
-			all.achievement.levels <- SGPstateData[[state]][["Achievement"]][["Levels"]][[1]][!is.na(SGPstateData[[state]][["Achievement"]][["Levels"]][[2]])]
-			proficient.achievement.levels <- SGPstateData[[state]][["Achievement"]][["Levels"]][[1]][!is.na(SGPstateData[[state]][["Achievement"]][["Levels"]][[2]]) & 
-				SGPstateData[[state]][["Achievement"]][["Levels"]][[2]]=="Proficient"]
+			all.achievement.levels <- SGP::SGPstateData[[state]][["Achievement"]][["Levels"]][[1]][!is.na(SGP::SGPstateData[[state]][["Achievement"]][["Levels"]][[2]])]
+			proficient.achievement.levels <- SGP::SGPstateData[[state]][["Achievement"]][["Levels"]][[1]][!is.na(SGP::SGPstateData[[state]][["Achievement"]][["Levels"]][[2]]) & 
+				SGP::SGPstateData[[state]][["Achievement"]][["Levels"]][[2]]=="Proficient"]
 
 			get.expression <- function(character.vector) {
 				if (length(character.vector)==0) {
@@ -418,10 +417,10 @@
 		content_areas <- unique(sgp_object@Data["VALID_CASE"]$CONTENT_AREA)
 	}
 
-	if (is.null(SGPstateData[[state]][["SGP_Configuration"]][["state.multiple.year.summary"]])) {
+	if (is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["state.multiple.year.summary"]])) {
 		state.multiple.year.summary <- 3
 	} else {
-		state.multiple.year.summary <- SGPstateData[[state]][["SGP_Configuration"]][["state.multiple.year.summary"]]
+		state.multiple.year.summary <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["state.multiple.year.summary"]]
 	}
 	tmp.years <- list()
 	if (is.null(years)) {
@@ -467,7 +466,7 @@
 	selected.demographic.subgroups <- intersect(
 		c(getFromNames("demographic"), "CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STAY_UP_STATUS", "CATCH_UP_KEEP_UP_STATUS_BASELINE", "MOVE_UP_STAY_UP_STATUS_BASELINE", 
 			"ACHIEVEMENT_LEVEL_PRIOR", "HIGH_NEED_STATUS"), sgp.data.names)
-	if (is.null(SGPstateData[[state]][["Variable_Name_Lookup"]])) {
+	if (is.null(SGP::SGPstateData[[state]][["Variable_Name_Lookup"]])) {
 		selected.institution.types <- c("STATE", "DISTRICT_NUMBER", "SCHOOL_NUMBER")
 	} else {
 		selected.institution.types <- c(highest.level.summary.grouping, getFromNames("institution"))
