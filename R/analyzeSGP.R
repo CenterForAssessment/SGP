@@ -64,7 +64,7 @@ function(sgp_object,
 
 	if (simulate.sgps) {
 		if (is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
-			message("\tNOTE: CSEMs are required in SGPstateData to simulate SGPs for confidence interval calculations. SGP standard errors will not be calculated.")
+			message("\tNOTE: CSEMs are required in 'SGPstateData' to simulate SGPs for confidence interval calculations. SGP standard errors will not be calculated.")
 			calculate.confidence.intervals <- csem.variable <- NULL
 		} else {
 			calculate.confidence.intervals <- state
@@ -126,7 +126,7 @@ function(sgp_object,
 	}
 
 	if ((sgp.projections | sgp.projections.lagged | sgp.projections.baseline | sgp.projections.lagged.baseline) & is.null(SGPstateData[[state]][["Achievement"]][["Cutscores"]])) {
-		message(paste("\tNOTE: Achievement Level cutscores for state, ", state, ", are not in embedded SGPstateData. Projections and Lagged Projections will not be calculated"))
+		message(paste("\tNOTE: Achievement Level cutscores for state, ", state, ", are not in embedded 'SGPstateData'. Projections and Lagged Projections will not be calculated"))
 		sgp.projections <- sgp.projections.lagged <- sgp.projections.baseline <- sgp.projections.lagged.baseline <- FALSE
 	}
 	
@@ -223,13 +223,13 @@ function(sgp_object,
 		}
 	} else {
 		if (sgp.percentiles.equated) {
-			message("\tNOTE: 'sgp.percentiles.equated' has been set to TRUE but no meta-data exists in SGPstateData associated with that transition. Equated/linked SGP analyses require meta-data embedded in 'SGPstateData' to correctly work. Contact package administrators on how such data can be added to the package.")
+			message("\tNOTE: 'sgp.percentiles.equated' has been set to TRUE but no meta-data exists in 'SGPstateData' associated with that transition. Equated/linked SGP analyses require meta-data embedded in 'SGPstateData' to correctly work. Contact package administrators on how such data can be added to the package.")
 			sgp.percentiles.equated <- FALSE
 		}
 	}
 
 	if (sgp.percentiles.equated & identical(SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]], tail(sort(unique(sgp_object@Data$YEAR)), 1))) {
-		message("\tNOTE: 'Scale_Change' is set in SGPstateData in addition to Assessment_Transition. 'Scale_Change' will be set to NULL to accomodate Assessment_Transition analyses. Contact the package administrator to have meta-data updated to accomodate Assessment_Transition without this message.")
+		message("\tNOTE: 'Scale_Change' is set in 'SGPstateData' in addition to Assessment_Transition. 'Scale_Change' will be set to NULL to accomodate Assessment_Transition analyses. Contact the package administrator to have meta-data updated to accomodate Assessment_Transition without this message.")
 		SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]] <- NULL
 	}
 
