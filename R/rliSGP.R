@@ -2,7 +2,7 @@
 function(sgp_object,
 	additional.data,
 	state=NULL,
-	content_areas=c("MATHEMATICS", "READING", "EARLY_LITERATURE"),
+	content_areas=c("MATHEMATICS", "READING", "EARLY_LITERACY"),
 	testing.window, ### FALL, WINTER, SPRING, EARLY_SPRING, LATE_SPRING for UPDATE 
 	eow.or.update="UPDATE", ### UPDATE or EOW
 	update.save.shell.only=FALSE,
