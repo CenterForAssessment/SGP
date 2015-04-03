@@ -48,7 +48,7 @@ function(sgp_object,
 		} else {
 			if (convert.to.class=="character") {
 				for (my.variable in my.variables.to.change) {
-					message(paste("\tNOTE:", my.variable, "in", data.slot, "converted from", class(my.data[[my.variable]]), "to character."))
+					message(paste("\tNOTE:", my.variable, "in", data.slot, "converted from", paste(class(my.data[[my.variable]]), collapse=" "), "to character."))
 					my.data[,my.variable:= as.character(my.data[[my.variable]]), with=FALSE]
 				}
 			}
