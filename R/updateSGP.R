@@ -32,10 +32,11 @@ function(what_sgp_object=NULL,
 	sgp.sqlite=NULL,
 	...) {
 
+	SGPstateData <- SGP::SGPstateData ### Needed due to possible assignment of values to SGPstateData
+
 	started.at <- proc.time()
 	message(paste("\nStarted updateSGP", date()), "\n")
 
-	SGPstateData <- SGPstateData
 
 	### Create state (if NULL) from sgp_object (if possible)
 
@@ -228,7 +229,7 @@ function(what_sgp_object=NULL,
 				tmp.sgp_object.update@SGP$Coefficient_Matrices <- what_sgp_object@SGP$Coefficient_Matrices
 				
 				if (is.null(SGPstateData[[state]][["SGP_Configuration"]])) {
-					SGPstateData[[state]][["SGP_Configuration"]] <- list(return.prior.scale.score.standardized = FALSE)
+					SGPstateData[[state]][["SGP_Configuration"]] <- list(return.prior.scale.score.standardized=FALSE)
 				} else SGPstateData[[state]][["SGP_Configuration"]][["return.prior.scale.score.standardized"]] <- FALSE
 
 				tmp.sgp_object.update <- analyzeSGP(

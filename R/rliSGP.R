@@ -2,7 +2,7 @@
 function(sgp_object,
 	additional.data,
 	state=NULL,
-	content_areas=c("MATHEMATICS", "READING", "EARLY_LIT"),
+	content_areas=c("MATHEMATICS", "READING", "EARLY_LITERACY"),
 	testing.window, ### FALL, WINTER, SPRING, EARLY_SPRING, LATE_SPRING for UPDATE 
 	eow.or.update="UPDATE", ### UPDATE or EOW
 	update.save.shell.only=FALSE,
@@ -107,7 +107,7 @@ function(sgp_object,
 
 	if (eow.or.update=="UPDATE") {
 
-		RLI_SGP_UPDATE_SHELL <- updateSGP(
+		sgp_object <- updateSGP(
 			what_sgp_object=sgp_object,
 			with_sgp_data_LONG=additional.data,
 			state=state,
@@ -128,7 +128,7 @@ function(sgp_object,
 
 		if (!is.null(update.ids)) {
 			update.shell.name <- paste(state, "SGP_UPDATE_SHELL", sep="_")
-			assign(update.shell.name, RLI_SGP_UPDATE_SHELL)
+			assign(update.shell.name, sgp_object)
 			save(list=update.shell.name, paste(update.shell.name, "Rdata", sep="."))
 		}
 	} ### END UPDATE scripts
