@@ -7,8 +7,10 @@ function(sgp.iter,
 
 	if (sgp.iter.type[1]=="Standard") {
 		if (sgp.iter.type[2]=="sgp.percentiles") my.content.areas <- "sgp.content.areas"
-		if (sgp.iter.type[2] %in% c("sgp.projections", "sgp.projections.lagged")) {
-			if (!is.null(sgp.iter[['sgp.projection.sequence']])) my.content.areas <- "sgp.projection.sequence" else my.content.areas <- "sgp.projection.content.areas"
+		if (sgp.iter.type[2] %in% c("sgp.projections", "sgp.projections.baseline", "sgp.projections.lagged")) {
+			if (!is.null(sgp.iter[['sgp.projection.sequence']])) my.content.areas <- "sgp.projection.sequence" 
+			if (sgp.iter.type[2] %in% c("sgp.projections", "sgp.projections.lagged")) my.content.areas <- "sgp.projection.content.areas"
+			if (sgp.iter.type[2]=="sgp.projections.baseline") my.content.areas <- "sgp.projection.baseline.content.areas"
 		}
 		kb <- list()
 		tmp.content_areas <- unique(sgp.iter[[my.content.areas]])
