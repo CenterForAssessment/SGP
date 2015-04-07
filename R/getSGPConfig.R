@@ -207,7 +207,7 @@ function(sgp_object,
 					} else {
 						if (!identical(par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.grade.sequences']], "NO_PROJECTIONS")) {
 							par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.panel.years.lags']] <- 
-								diff(as.numeric(sapply(strsplit(par.sgp.config[[b.iter[b]]][['sgp.projection.panel.years']], '_'), '[', split.location(par.sgp.config[[b.iter[b]]][['sgp.projection.panel.years']]))))
+								diff(as.numeric(sapply(strsplit(par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.panel.years']], '_'), '[', split.location(par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.panel.years']]))))
 						}
 					}
 				} else par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.panel.years']] <- NA
@@ -560,13 +560,13 @@ function(sgp_object,
 				tmp.grade.sequences.label <- 'sgp.grade.sequences'
 			}
 			if (!is.null(content_areas)) {
-				sgp.config.list[[i]] <- sgp.config.list[[i]][sapply(sgp.config.list[[i]], function(x) tail(x[[tmp.content.areas.label]], 1) %in% content_areas)]
+				sgp.config.list[[i]] <- sgp.config.list[[i]][sapply(sgp.config.list[[i]], function(x) tail(x[[tmp.content.areas.label]], 1)) %in% content_areas]
 			}
 			if (!is.null(years)) {
-				sgp.config.list[[i]] <- sgp.config.list[[i]][sapply(sgp.config.list[[i]], function(x) tail(x[[tmp.panel.years.label]], 1) %in% years)]
+				sgp.config.list[[i]] <- sgp.config.list[[i]][sapply(sgp.config.list[[i]], function(x) tail(x[[tmp.panel.years.label]], 1)) %in% years]
 			}
 			if (!is.null(grades)) {
-				sgp.config.list[[i]] <- sgp.config.list[[i]][sapply(sgp.config.list[[i]], function(x) tail(x[[tmp.grade.sequences.label]], 1) %in% grades)]
+				sgp.config.list[[i]] <- sgp.config.list[[i]][sapply(sgp.config.list[[i]], function(x) tail(x[[tmp.grade.sequences.label]], 1)) %in% grades]
 			}
 		}
 	}

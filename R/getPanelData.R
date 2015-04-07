@@ -107,11 +107,22 @@ function(sgp.data,
 	} ### END if (sgp.type=="sgp.percentiles")
 
 
-	if (sgp.type=="sgp.projections") {
+	if (sgp.type %in% c("sgp.projections", "sgp.projections.baseline")) {
+
+		if (sgp.type=="sgp.projections") {
+			sgp.projection.content.areas.label <- "sgp.projection.content.areas"
+			sgp.projection.grade.sequences.label <- "sgp.projection.grade.sequences"
+			sgp.projection.panel.years.label <- "sgp.projection.panel.years"
+		} else {
+			sgp.projection.content.areas.label <- "sgp.projection.baseline.content.areas"
+			sgp.projection.grade.sequences.label <- "sgp.projection.baseline.grade.sequences"
+			sgp.projection.panel.years.label <- "sgp.projection.baseline.panel.years"
+		}
+
 		if ("YEAR_WITHIN" %in% var.names) {
-			tmp.lookup <- data.table(V1="VALID_CASE", tail(sgp.iter[["sgp.projection.content.areas"]], length(sgp.iter[["sgp.projection.grade.sequences"]])),
-				sapply(head(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.projection.grade.sequences"]])), yearIncrement, tail(sgp.iter$sgp.panel.years.lags, 1)),
-				sgp.iter[["sgp.projection.grade.sequences"]], head(sgp.iter[["sgp.panel.years.within"]], length(sgp.iter[["sgp.projection.grade.sequences"]])), 
+			tmp.lookup <- data.table(V1="VALID_CASE", tail(sgp.iter[[sgp.projection.content.areas.label]], length(sgp.iter[[sgp.projection.grade.sequences.label]])),
+				sapply(head(sgp.iter[["sgp.panel.years"]], length(sgp.iter[[sgp.projection.grade.sequences.label]])), yearIncrement, tail(sgp.iter$sgp.panel.years.lags, 1)),
+				sgp.iter[[sgp.projection.grade.sequences.label]], head(sgp.iter[["sgp.panel.years.within"]], length(sgp.iter[[sgp.projection.grade.sequences.label]])), 
 				FIRST_OBSERVATION=as.integer(NA), LAST_OBSERVATION=as.integer(NA))
 			tmp.lookup[grep("FIRST", V5, ignore.case=TRUE), FIRST_OBSERVATION:=1L]; tmp.lookup[grep("LAST", V5, ignore.case=TRUE), LAST_OBSERVATION:=1L]; tmp.lookup[,V5:=NULL]
 			setnames(tmp.lookup, paste("V", 1:4, sep=""), c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))
@@ -163,7 +174,7 @@ function(sgp.data,
 					idvar= "ID",
 					timevar="tmp.timevar",
 					drop=var.names[!names(tmp.lookup.list[[1]]) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR_WITHIN", "tmp.timevar", "STATE", sgp.scale.score.equated)], 
-					direction="wide"), key="ID")[sgp.targets[CONTENT_AREA==tail(sgp.iter[["sgp.projection.content.areas"]], 1) & YEAR==tail(sgp.iter[["sgp.panel.years"]], 1)], nomatch=0][,
+					direction="wide"), key="ID")[sgp.targets[CONTENT_AREA==tail(sgp.iter[[sgp.projection.content.areas.label]], 1) & YEAR==tail(sgp.iter[["sgp.panel.years"]], 1)], nomatch=0][,
 						!c("CONTENT_AREA", "YEAR"), with=FALSE]
 				setnames(tmp.data, tail(sort(grep("YEAR_WITHIN", names(tmp.data), value=TRUE)), 1), "YEAR_WITHIN")
 				if (length(setdiff(grep("YEAR_WITHIN", names(tmp.data), value=TRUE), "YEAR_WITHIN")) > 0) {
@@ -178,8 +189,8 @@ function(sgp.data,
 				return(as.data.frame(tmp.data))
 			}
 		}
-		tmp.lookup <- SJ("VALID_CASE", sgp.iter[["sgp.projection.content.areas"]], 
-			tail(sgp.iter[["sgp.projection.panel.years"]], length(sgp.iter[["sgp.projection.grade.sequences"]])), sgp.iter[["sgp.projection.grade.sequences"]])
+		tmp.lookup <- SJ("VALID_CASE", tail(sgp.iter[[sgp.projection.content.areas.label]], length(sgp.iter[[sgp.projection.grade.sequences.label]])),
+			tail(sgp.iter[[sgp.projection.panel.years.label]], length(sgp.iter[[sgp.projection.grade.sequences.label]])), sgp.iter[[sgp.projection.grade.sequences.label]])
 		# ensure lookup table is ordered by years.  NULL out key after sorted so that it doesn't corrupt the join in reshape.
 		setkey(tmp.lookup, V3)
 		setkey(tmp.lookup, NULL)
@@ -218,8 +229,8 @@ function(sgp.data,
 					idvar="ID",
 					timevar="tmp.timevar",
 					drop=var.names[!var.names %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "STATE", sgp.scale.score.equated)],
-					direction="wide"), key="ID")[sgp.targets[CONTENT_AREA==tail(sgp.iter[["sgp.projection.content.areas"]], 1) & 
-						YEAR==tail(sgp.iter[["sgp.projection.panel.years"]], 1)], nomatch=0][,!c("CONTENT_AREA", "YEAR"), with=FALSE]
+					direction="wide"), key="ID")[sgp.targets[CONTENT_AREA==tail(sgp.iter[[sgp.projection.content.areas.label]], 1) & 
+						YEAR==tail(sgp.iter[[sgp.projection.panel.years.label]], 1)], nomatch=0][,!c("CONTENT_AREA", "YEAR"), with=FALSE]
 				dbDisconnect(con)
 			} else {
 				tmp.data <- data.table(reshape(
@@ -227,8 +238,8 @@ function(sgp.data,
 					idvar="ID",
 					timevar="tmp.timevar",
 					drop=var.names[!var.names %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", "STATE", sgp.scale.score.equated)],
-					direction="wide"), key="ID")[sgp.targets[CONTENT_AREA==tail(sgp.iter[["sgp.projection.content.areas"]], 1) & 
-						YEAR==tail(sgp.iter[["sgp.projection.panel.years"]], 1)], nomatch=0][,!c("CONTENT_AREA", "YEAR"), with=FALSE]
+					direction="wide"), key="ID")[sgp.targets[CONTENT_AREA==tail(sgp.iter[[sgp.projection.content.areas.label]], 1) & 
+						YEAR==tail(sgp.iter[[sgp.projection.panel.years.label]], 1)], nomatch=0][,!c("CONTENT_AREA", "YEAR"), with=FALSE]
 			}
 
 			if ("STATE" %in% var.names && dim(tmp.data)[1]!=0) {
