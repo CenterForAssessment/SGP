@@ -207,7 +207,7 @@ function(sgp_object,
 					} else {
 						if (!identical(par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.grade.sequences']], "NO_PROJECTIONS")) {
 							par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.panel.years.lags']] <- 
-								diff(as.numeric(sapply(strsplit(par.sgp.config[[b.iter[b]]][['sgp.projection.panel.years']], '_'), '[', split.location(par.sgp.config[[b.iter[b]]][['sgp.projection.panel.years']]))))
+								diff(as.numeric(sapply(strsplit(par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.panel.years']], '_'), '[', split.location(par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.panel.years']]))))
 						}
 					}
 				} else par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.panel.years']] <- NA
