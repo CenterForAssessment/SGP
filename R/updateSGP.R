@@ -114,7 +114,7 @@ function(what_sgp_object=NULL,
 
 		if (!is.null(with_sgp_data_INSTRUCTOR_NUMBER)) {
 			what_sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']] <- 
-				data.table(rbind.fill(what_sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']], with_sgp_data_INSTRUCTOR_NUMBER),
+				data.table(rbindlist(list(what_sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']], with_sgp_data_INSTRUCTOR_NUMBER), fill=TRUE),
 					key=c("ID", "CONTENT_AREA", "YEAR"))
 		}		
 
@@ -169,7 +169,7 @@ function(what_sgp_object=NULL,
 		if(is.null(grades)) update.grades <- sort(unique(tmp_sgp_object@Data$GRADE)) else update.grades <- grades
 
 		if (overwrite.existing.data) {
-				what_sgp_object@Data <- as.data.table(rbind.fill(what_sgp_object@Data[which(YEAR!=update.years)], tmp_sgp_object@Data))
+				what_sgp_object@Data <- rbindlist(list(what_sgp_object@Data[which(YEAR!=update.years)], tmp_sgp_object@Data), fill=TRUE)
 				what_sgp_object@SGP[['Goodness_of_Fit']][grep(update.years, names(what_sgp_object@SGP[['Goodness_of_Fit']]))] <- NULL
 				what_sgp_object@SGP[['SGPercentiles']][grep(update.years, names(what_sgp_object@SGP[['SGPercentiles']]))] <- NULL
 				what_sgp_object@SGP[['SGProjections']][grep(update.years, names(what_sgp_object@SGP[['SGProjections']]))] <- NULL
@@ -219,8 +219,8 @@ function(what_sgp_object=NULL,
 
 		} else {
 			if (!is.null(sgp.use.my.coefficient.matrices)) {
-				tmp.long.data <- rbind.fill(data.table(what_sgp_object@Data, key=c("VALID_CASE", "CONTENT_AREA", "ID"))[
-					data.table(tmp_sgp_object@Data, key=c("VALID_CASE", "CONTENT_AREA", "ID"))[,list(VALID_CASE, CONTENT_AREA, ID)], nomatch='0'], tmp_sgp_object@Data)
+				tmp.long.data <- rbindlist(list(data.table(what_sgp_object@Data, key=c("VALID_CASE", "CONTENT_AREA", "ID"))[
+					data.table(tmp_sgp_object@Data, key=c("VALID_CASE", "CONTENT_AREA", "ID"))[,list(VALID_CASE, CONTENT_AREA, ID)], nomatch='0'], tmp_sgp_object@Data), fill=TRUE)
 				if ("YEAR_WITHIN" %in% names(tmp.long.data)) {
 					tmp.long.data$FIRST_OBSERVATION <- NULL
 					tmp.long.data$LAST_OBSERVATION <- NULL
@@ -278,7 +278,7 @@ function(what_sgp_object=NULL,
 
 				### Merge update with original SGP object
 
-				what_sgp_object@Data <- data.table(rbind.fill(what_sgp_object@Data, tmp_sgp_object@Data), key=getKey(what_sgp_object@Data))
+				what_sgp_object@Data <- data.table(rbindlist(list(what_sgp_object@Data, tmp_sgp_object@Data), fill=TRUE), key=getKey(what_sgp_object@Data))
 				if ("HIGH_NEED_STATUS" %in% names(what_sgp_object@Data)) {
 					what_sgp_object@Data[, HIGH_NEED_STATUS := NULL]
 					what_sgp_object <- suppressMessages(prepareSGP(what_sgp_object, state=state))
@@ -305,7 +305,7 @@ function(what_sgp_object=NULL,
 
 				if (!is.null(with_sgp_data_INSTRUCTOR_NUMBER)) {
 					what_sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']] <- 
-						data.table(rbind.fill(what_sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']], with_sgp_data_INSTRUCTOR_NUMBER),
+						data.table(rbindlist(list(what_sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']], with_sgp_data_INSTRUCTOR_NUMBER), fill=TRUE),
 							key=c("ID", "CONTENT_AREA", "YEAR"))
 				}		
 
@@ -327,9 +327,10 @@ function(what_sgp_object=NULL,
 				return(what_sgp_object)
 			} else {
 				if (update.old.data.with.new) {
-					what_sgp_object@Data <- data.table(rbind.fill(what_sgp_object@Data, tmp_sgp_object@Data), key=getKey(what_sgp_object@Data))
+					what_sgp_object@Data <- data.table(rbindlist(list(what_sgp_object@Data, tmp_sgp_object@Data), fill=TRUE), key=getKey(what_sgp_object@Data))
 				} else {
-					what_sgp_object@Data <- data.table(rbind.fill(what_sgp_object@Data[which(ID %in% tmp_sgp_object@Data$ID)], tmp_sgp_object@Data), key=getKey(what_sgp_object@Data))
+					what_sgp_object@Data <- data.table(rbindlist(list(what_sgp_object@Data[which(ID %in% tmp_sgp_object@Data$ID)], tmp_sgp_object@Data), fill=TRUE), 
+						key=getKey(what_sgp_object@Data))
 				}
 
 				if ("HIGH_NEED_STATUS" %in% names(what_sgp_object@Data)) {
@@ -341,7 +342,7 @@ function(what_sgp_object=NULL,
 
 				if (!is.null(with_sgp_data_INSTRUCTOR_NUMBER)) {
 					what_sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']] <- 
-						data.table(rbind.fill(what_sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']], with_sgp_data_INSTRUCTOR_NUMBER),
+						data.table(rbindlist(list(what_sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']], with_sgp_data_INSTRUCTOR_NUMBER), fill=TRUE),
 							key=c("ID", "CONTENT_AREA", "YEAR"))
 				}
 

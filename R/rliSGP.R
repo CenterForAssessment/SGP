@@ -150,7 +150,7 @@ function(sgp_object,
 
 			if (testing.window=="FALL") num.windows.to.keep <- 5 else num.windows.to.keep <- 6
 			if (update.save.shell.only) {
-				tmp.data <- rbind.fill(sgp_object@Data, additional.data)
+				tmp.data <- rbindlist(list(sgp_object@Data, additional.data), fill=TRUE)
 				assign(update.shell.name, prepareSGP(subset(tmp.data, YEAR %in% tail(sort(unique(tmp.data$YEAR)), num.windows.to.keep)), state=state, create.additional.variables=FALSE))
 				save(list=update.shell.name, file=paste(update.shell.name, "Rdata", sep="."))
 			} else {
@@ -205,7 +205,7 @@ function(sgp_object,
 			additional.data.unique[,GRADE:=as.character(GRADE)]
 
 			if (update.save.shell.only) {
-				tmp.data <- rbind.fill(sgp_object@Data, additional.data.unique)
+				tmp.data <- rbindlist(list(sgp_object@Data, additional.data.unique), fill=TRUE)
 				assign(update.shell.name, prepareSGP(subset(tmp.data, YEAR %in% tail(sort(unique(tmp.data$YEAR)), 6)), state=state, create.additional.variables=FALSE))
 				save(list=update.shell.name, file=paste(update.shell.name, "Rdata", sep="."))
 			} else {
