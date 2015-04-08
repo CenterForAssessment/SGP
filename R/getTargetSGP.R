@@ -127,12 +127,12 @@ function(sgp_object,
 				tmp.list[[i]] <- data.table(
 					CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
 					YEAR=getTableNameYear(i),
-					sgp_object@SGP[["SGProjections"]][[i]][,c(1,cols.to.get)])[STATE==state.iter]
+					sgp_object@SGP[["SGProjections"]][[i]][,c(1,cols.to.get),with=FALSE])[STATE==state.iter]
 			} else {
 				tmp.list[[i]] <- data.table(
 					CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
 					YEAR=getTableNameYear(i),
-					sgp_object@SGP[["SGProjections"]][[i]][,c(1,cols.to.get)])
+					sgp_object@SGP[["SGProjections"]][[i]][,c(1,cols.to.get),with=FALSE])
 			}
 		}
 
