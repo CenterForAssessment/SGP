@@ -445,7 +445,7 @@
 	for (i in names(tmp.years)) {
 		tmp.years[[i]] <- data.table(CONTENT_AREA=i, YEAR=tmp.years[[i]])
 	}
-	content_areas.by.years <- as.data.table(rbind.fill(tmp.years))
+	content_areas.by.years <- rbindlist(tmp.years)
 
 	if (is.null(sgp.summaries)) sgp.summaries <- summarizeSGP.config(sgp_object, "sgp.summaries")
 	if (is.null(summary.groups)) summary.groups <- summarizeSGP.config(sgp_object, "summary.groups")

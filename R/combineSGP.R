@@ -211,7 +211,7 @@ function(
 					sgp_object@SGP[["SGPercentiles"]][[i]])
 		}
 
-		tmp.data <- data.table(rbind.fill(tmp.list), VALID_CASE="VALID_CASE", key=key(slot.data))
+		tmp.data <- data.table(rbindlist(tmp.list, fill=TRUE), VALID_CASE="VALID_CASE", key=key(slot.data))
 
 		if (any(duplicated(tmp.data))) {
 			tmp.data <- getPreferredSGP(tmp.data, state)
@@ -256,7 +256,7 @@ function(
 			}
 		}
 
-		tmp.data <- data.table(rbind.fill(tmp.list), VALID_CASE="VALID_CASE", key=key(slot.data))
+		tmp.data <- data.table(rbindlist(tmp.list, fill=TRUE), VALID_CASE="VALID_CASE", key=key(slot.data))
 
 		if (any(duplicated(tmp.data))) {
 			tmp.data <- getPreferredSGP(tmp.data, state, type="BASELINE")

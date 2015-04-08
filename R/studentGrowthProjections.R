@@ -396,7 +396,7 @@ function(panel.data,	## REQUIRED
 					setcolorder(tmp.cuts.list[[n.state]], c("ID", "STATE", names.arg))
 				}
 			} # End loop over states (if they exist)
-			tmp.cuts <- data.table(rbind.fill(tmp.cuts.list))
+			tmp.cuts <- rbindlist(tmp.cuts.list, fill=TRUE)
 			if (dim(tmp.cuts)[1]==0) {
 				if (!trajectories.tf) {
 					return(NULL)
@@ -825,7 +825,7 @@ function(panel.data,	## REQUIRED
 		trajectories.and.cuts <- data.table(panel.data[["Panel_Data"]][,c("ID", "YEAR_WITHIN")], key="ID")[trajectories.and.cuts]
 	}
 
-	SGProjections[[tmp.path]] <- rbind.fill(as.data.frame(SGProjections[[tmp.path]]), trajectories.and.cuts)
+	SGProjections[[tmp.path]] <- rbindlist(list(SGProjections[[tmp.path]], trajectories.and.cuts), fill=TRUE)
 
 
 	### Announce Completion & Return SGP Object
