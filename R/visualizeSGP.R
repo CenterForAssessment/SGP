@@ -830,7 +830,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 				tmp.list <- list()
 				for (i in tmp.proj.names) {
 					tmp.list[[i]] <- data.table(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
-					sgp_object@SGP[["SGProjections"]][[i]][,c(1, grep("PROJ", names(sgp_object@SGP[["SGProjections"]][[i]])))])
+					sgp_object@SGP[["SGProjections"]][[i]][,c(1, grep("PROJ", names(sgp_object@SGP[["SGProjections"]][[i]]))), with=FALSE])
 				}
 				sgPlot.data <- data.table(rbindlist(tmp.list, fill=TRUE), key=c("ID", "CONTENT_AREA"))[sgPlot.data]
 			} ### END if (sgPlot.fan)
