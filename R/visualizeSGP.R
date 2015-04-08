@@ -155,7 +155,7 @@ function(sgp_object,
 			tmp.dt.list[[i]] <- tmp.dt
 		}
 
-		tmp.dt <- rbind(tmp.dt.list, fill=TRUE)
+		tmp.dt <- rbindlist(tmp.dt.list, fill=TRUE)
 
 		if (!is.null(gaPlot.students)) {
 			 tmp.dt <- merge(tmp.dt, gaPlot.students)
