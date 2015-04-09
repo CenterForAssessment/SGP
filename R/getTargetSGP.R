@@ -127,19 +127,19 @@ function(sgp_object,
 				tmp.list[[i]] <- data.table(
 					CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
 					YEAR=getTableNameYear(i),
-					sgp_object@SGP[["SGProjections"]][[i]][,c(1,cols.to.get)])[STATE==state.iter]
+					sgp_object@SGP[["SGProjections"]][[i]][,c(1,cols.to.get), with=FALSE])[STATE==state.iter]
 			} else {
 				tmp.list[[i]] <- data.table(
 					CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
 					YEAR=getTableNameYear(i),
-					sgp_object@SGP[["SGProjections"]][[i]][,c(1,cols.to.get)])
+					sgp_object@SGP[["SGProjections"]][[i]][,c(1,cols.to.get), with=FALSE])
 			}
 		}
 
 		if (!is.null(subset.ids)) {
-			tmp_object_1 <- data.table(rbind.fill(tmp.list), VALID_CASE="VALID_CASE", key=c("ID"))[subset.ids, nomatch=0]
+			tmp_object_1 <- data.table(rbindlist(tmp.list, fill=TRUE), VALID_CASE="VALID_CASE", key=c("ID"))[subset.ids, nomatch=0]
 		} else {
-			tmp_object_1 <- data.table(rbind.fill(tmp.list), VALID_CASE="VALID_CASE")
+			tmp_object_1 <- data.table(rbindlist(tmp.list, fill=TRUE), VALID_CASE="VALID_CASE")
 		}
 
 		if (!"SGP_PROJECTION_GROUP" %in% names(tmp_object_1)) tmp_object_1[,SGP_PROJECTION_GROUP:=CONTENT_AREA]
@@ -151,5 +151,5 @@ function(sgp_object,
 		}
 	} ### END for state.iter
 
-	return(data.table(rbind.fill(tmp.sgpTarget.list), key=getKey(sgp_object)))
+	return(data.table(rbindlist(tmp.sgpTarget.list, fill=TRUE), key=getKey(sgp_object)))
 } ### END getTargetSGP

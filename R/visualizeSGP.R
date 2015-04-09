@@ -118,7 +118,7 @@ function(sgp_object,
 
 	get.gaPlot.iter <- function(gaPlot.years, gaPlot.content_areas, gaPlot.students, gaPlot.baseline) {
 
-		tmp.list <- tmp.gaPlot.list <- tmp.df.list <- list()
+		tmp.list <- tmp.gaPlot.list <- tmp.dt.list <- list()
 
 		# Years 
 
@@ -148,22 +148,22 @@ function(sgp_object,
 			}
 		}
 
-		tmp.df <- rbind.fill(tmp.list)
+		tmp.dt <- rbindlist(tmp.list, fill=TRUE)
 
 		for (i in seq(length(gaPlot.baseline))) {
-			tmp.df$BASELINE <- gaPlot.baseline[i]
-			tmp.df.list[[i]] <- tmp.df
+			tmp.dt[['BASELINE']] <- gaPlot.baseline[i]
+			tmp.dt.list[[i]] <- tmp.dt
 		}
 
-		tmp.df <- rbind.fill(tmp.df.list)
+		tmp.dt <- rbindlist(tmp.dt.list, fill=TRUE)
 
 		if (!is.null(gaPlot.students)) {
-			 tmp.df <- merge(tmp.df, gaPlot.students)
-			 names(tmp.df)[dim(tmp.df)[2]] <- "ID"
+			 tmp.dt <- merge(tmp.dt, gaPlot.students)
+			 names(tmp.dt)[dim(tmp.dt)[2]] <- "ID"
 		}
 
-		for (i in seq(dim(tmp.df)[1])) {
-			tmp.gaPlot.list[[i]] <- list(YEAR=tmp.df[["YEAR"]][i], CONTENT_AREA=tmp.df[["CONTENT_AREA"]][i], ID=tmp.df[["ID"]][i], BASELINE=tmp.df[["BASELINE"]][i])
+		for (i in seq(dim(tmp.dt)[1])) {
+			tmp.gaPlot.list[[i]] <- list(YEAR=tmp.dt[["YEAR"]][i], CONTENT_AREA=tmp.dt[["CONTENT_AREA"]][i], ID=tmp.dt[["ID"]][i], BASELINE=tmp.dt[["BASELINE"]][i])
 		}
 		return(tmp.gaPlot.list)
 
@@ -830,9 +830,9 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 				tmp.list <- list()
 				for (i in tmp.proj.names) {
 					tmp.list[[i]] <- data.table(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
-					sgp_object@SGP[["SGProjections"]][[i]][,c(1, grep("PROJ", names(sgp_object@SGP[["SGProjections"]][[i]])))])
+					sgp_object@SGP[["SGProjections"]][[i]][,c(1, grep("PROJ", names(sgp_object@SGP[["SGProjections"]][[i]]))), with=FALSE])
 				}
-				sgPlot.data <- data.table(rbind.fill(tmp.list), key=c("ID", "CONTENT_AREA"))[sgPlot.data]
+				sgPlot.data <- data.table(rbindlist(tmp.list, fill=TRUE), key=c("ID", "CONTENT_AREA"))[sgPlot.data]
 			} ### END if (sgPlot.fan)
 
 			### Straight projection scale score targets
@@ -844,11 +844,11 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 				for (i in tmp.proj.cut_score.names) {
 					tmp.list[[i]] <- data.table(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1], sgp_object@SGP[["SGProjections"]][[i]], key=c("ID", "CONTENT_AREA"))
 				}
-				tmp.proj.data <- data.table(rbind.fill(tmp.list), key=c("ID", "CONTENT_AREA"))
+				tmp.proj.data <- data.table(rbindlist(tmp.list, fill=TRUE), key=c("ID", "CONTENT_AREA"))
 				sgPlot.data <- tmp.proj.data[!is.na(tmp.proj.data[[3]])][sgPlot.data] 
 				# Duplicates get made in combineSGP/getTargetScaleScore - one of which are NA's
 				# Not an elegant solution, but the above weeds them out.
-				# sgPlot.data <- data.table(rbind.fill(tmp.list), key=c("ID", "CONTENT_AREA"))[sgPlot.data]
+				# sgPlot.data <- data.table(rbindlist(tmp.list, fill=TRUE), key=c("ID", "CONTENT_AREA"))[sgPlot.data]
 			} ### END if ("sgp.projections" %in% sgPlot.sgp.targets)
 
 			### Lagged projection scale score targets
@@ -860,7 +860,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 				for (i in tmp.proj.cut_score.names.lagged) {
 					tmp.list[[i]] <- data.table(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1], sgp_object@SGP[["SGProjections"]][[i]], key=c("ID", "CONTENT_AREA"))
 				}
-				sgPlot.data <- data.table(rbind.fill(tmp.list), key=c("ID", "CONTENT_AREA"))[sgPlot.data]
+				sgPlot.data <- data.table(rbindlist(tmp.list, fill=TRUE), key=c("ID", "CONTENT_AREA"))[sgPlot.data]
 			} ### END if ("sgp.projections.lagged" %in% sgPlot.sgp.targets)
 		
 			### Transform scale scores
@@ -868,10 +868,9 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			tmp.grade.name <- paste("GRADE", tmp.last.year, sep=".")
 			setkeyv(sgPlot.data, c("CONTENT_AREA", tmp.grade.name))
 			if ("SCALE_SCORE_ACTUAL" %in% names(sgp_object@Data)) {
-				tmp.lookup <- data.table(rbind.fill(
+				tmp.lookup <- rbindlist(list(
 					sgp_object@Data[YEAR==tmp.last.year, max(SCALE_SCORE_ACTUAL, na.rm=TRUE), by=list(CONTENT_AREA, GRADE, SCALE_SCORE)],
-					sgp_object@Data[YEAR==tmp.last.year, min(SCALE_SCORE_ACTUAL, na.rm=TRUE), by=list(CONTENT_AREA, GRADE)]
-				))
+					sgp_object@Data[YEAR==tmp.last.year, min(SCALE_SCORE_ACTUAL, na.rm=TRUE), by=list(CONTENT_AREA, GRADE)]), fill=TRUE)
 				setnames(tmp.lookup, "V1", "SCALE_SCORE_ACTUAL")
 				setkey(tmp.lookup, CONTENT_AREA, GRADE, SCALE_SCORE, SCALE_SCORE_ACTUAL)
 				for (i in unique(tmp.lookup$CONTENT_AREA)) {
@@ -913,10 +912,9 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			setnames(sgPlot.data, c("CONTENT_AREA", "CONTENT_AREA_TEMP"), c(paste("CONTENT_AREA_LABELS", tmp.last.year, sep="."), "CONTENT_AREA"))
 
 			if ("SCALE_SCORE_ACTUAL" %in% names(sgp_object@Data)) {
-				tmp.lookup <- data.table(rbind.fill(
+				tmp.lookup <- rbindlist(list(
 						sgp_object@Data[YEAR==tmp.last.year, max(SCALE_SCORE_ACTUAL, na.rm=TRUE), by=list(CONTENT_AREA, GRADE, SCALE_SCORE)],
-						sgp_object@Data[YEAR==tmp.last.year, min(SCALE_SCORE_ACTUAL, na.rm=TRUE), by=list(CONTENT_AREA, GRADE)]
-				))
+						sgp_object@Data[YEAR==tmp.last.year, min(SCALE_SCORE_ACTUAL, na.rm=TRUE), by=list(CONTENT_AREA, GRADE)]), fill=TRUE)
 				setnames(tmp.lookup, "V1", "SCALE_SCORE_ACTUAL")
 				setkey(tmp.lookup, CONTENT_AREA, GRADE, SCALE_SCORE, SCALE_SCORE_ACTUAL)
 

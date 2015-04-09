@@ -103,7 +103,7 @@ function(sgp_object,
 			names(tmp.list[[k]]) <- c("ID", paste("GRADE", rev(seq_along(tmp.year.sequence[[k]])), sep="_"), 
 				paste("SCALE_SCORE", rev(seq_along(tmp.year.sequence[[k]])), sep="_")) # Use rev() in case vars are added: 1= current, 2= first prior, etc.
 		}
-		tmp.df <- rbind.fill(tmp.list)
+		tmp.dt <- rbindlist(tmp.list, fill=TRUE)
 
 		### Calculate Coefficient Matrices and return list containing coefficient matrices
 		
@@ -111,7 +111,7 @@ function(sgp_object,
 
 		tmp_sgp_list <- list(Coefficient_Matrices =
 			studentGrowthPercentiles(
-				panel.data=list(Panel_Data= tmp.df, Coefficient_Matrices = TMP_Coefficient_Matrices, #  Add Coef Matrices for SIMEX
+				panel.data=list(Panel_Data=tmp.dt, Coefficient_Matrices=TMP_Coefficient_Matrices, # Add Coef Matrices for SIMEX
 					Knots_Boundaries=getKnotsBoundaries(knots.boundaries.iter, state, c("Baseline", "sgp.percentiles"))),
 				sgp.labels=list(my.year="BASELINE", my.subject=tail(content_areas, 1)),
 				use.my.knots.boundaries=list(my.year="BASELINE", my.subject=tail(content_areas, 1)),
