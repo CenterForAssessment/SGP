@@ -33,7 +33,8 @@ function(sgp_object,
 			for (i in names(baseline_matrices)) {
 				for (j in seq_along(baseline_matrices[[i]])) {
 					baseline_matrices[[i]][[j]]@Time <- list(rep("BASELINE", length(unlist(baseline_matrices[[i]][[j]]@Time))))
-				}	
+				}
+				names(baseline_matrices[[i]]) <- sub("[.][1234]_", "_", names(baseline_matrices[[i]]))
 			}
 
 			tmp.content_areas <- unique(sapply(strsplit(names(baseline_matrices), "[.]"), '[', 1))
