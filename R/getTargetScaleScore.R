@@ -40,8 +40,8 @@ function(sgp_object,
 		my.extra.label <- "BASELINE.TARGET_SCALE_SCORES"
 		baseline.tf <- TRUE
 		lag.increment <- 0
-		my.target.type <- "sgp.projections"
-		my.content.areas <- "sgp.projection.content.areas"
+		my.target.type <- "sgp.projections.baseline"
+		my.content.areas <- "sgp.projection.baseline.content.areas"
 	}
 	if (target.type=="sgp.projections.lagged") {
 		my.extra.label <- "LAGGED.TARGET_SCALE_SCORES"
