@@ -737,12 +737,12 @@ function(sgp_object,
 						YEAR=getTableNameYear(names.iter), 
 						sgp_object@SGP[["SGPercentiles"]][[names.iter]])]
 				if (any(!output.column.order %in% names(tmp.dt))) tmp.dt[,output.column.order[!output.column.order %in% names(tmp.dt)]:=as.numeric(NA), with=FALSE]
-				setcolorder(tmp.dt, output.column.order)
+				tmp.dt <- tmp.dt[,output.column.order, with=FALSE]
 				write.table(tmp.dt, file=file.path(outputSGP.directory, "RLI", "SGPercentiles", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
 			} else {
 				output.column.order <- SGPstateData$RLI$SGP_Configuration$output.column.order$SGPercentiles
 				if (any(!output.column.order %in% names(tmp.dt))) tmp.dt[,output.column.order[!output.column.order %in% names(tmp.dt)]:=as.numeric(NA), with=FALSE]
-				setcolorder(tmp.dt, output.column.order)
+				tmp.dt <- tmp.dt[,output.column.order, with=FALSE]
 				write.table(tmp.dt, file=file.path(outputSGP.directory, "RLI", "SGPercentiles", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
 			}
 
@@ -820,12 +820,12 @@ function(sgp_object,
 						YEAR=getTableNameYear(names.iter), 
 						sgp_object@SGP[["SGProjections"]][[names.iter]])][,GROUP:=names.iter]
 				if (any(!output.column.order %in% names(tmp.dt))) tmp.dt[,output.column.order[!output.column.order %in% names(tmp.dt)]:=as.numeric(NA), with=FALSE]
-				setcolorder(tmp.dt, output.column.order)
+				tmp.dt <- tmp.dt[,output.column.order, with=FALSE]
 				write.table(tmp.dt, file=file.path(outputSGP.directory, "RLI", "SGProjections", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
 			} else {
 				tmp.dt <- sgp_object@SGP[['SGProjections']][[names.iter]][,GROUP:=names.iter]
 				if (any(!output.column.order %in% names(tmp.dt))) tmp.dt[,output.column.order[!output.column.order %in% names(tmp.dt)]:=as.numeric(NA), with=FALSE]
-				setcolorder(tmp.dt, output.column.order)
+				tmp.dt <- tmp.dt[,output.column.order, with=FALSE]
 				write.table(tmp.dt, file=file.path(outputSGP.directory, "RLI", "SGProjections", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
 			}
 

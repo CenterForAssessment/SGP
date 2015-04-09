@@ -14,8 +14,9 @@ function(sgp.iter,
 		}
 		kb <- list()
 		tmp.content_areas <- unique(sgp.iter[[my.content.areas]])
-		if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]]) & sgp.iter.type[2] %in% c("sgp.projections", "sgp.projections.lagged")) {
-			tmp.content_areas <- unique(unlist(sapply(tmp.content_areas, function(x) unique(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[x]]))))
+		if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]]) & 
+			sgp.iter.type[2] %in% c("sgp.projections", "sgp.projections.baseline", "sgp.projections.lagged")) {
+				tmp.content_areas <- unique(unlist(sapply(tmp.content_areas, function(x) unique(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[x]]))))
 		}
 		if (sgp.iter.type[2] %in% c("sgp.percentiles", "sgp.projections.lagged")) {
 			content_area.label <- tail(sgp.iter[["sgp.content.areas"]], 1)
