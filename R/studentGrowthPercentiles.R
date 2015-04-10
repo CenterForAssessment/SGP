@@ -937,17 +937,17 @@ function(panel.data,         ## REQUIRED
 	### Create Panel_Data based upon class of input data
 
 	if (is.matrix(panel.data)) {
-		Panel_Data <- panel.data <- as.data.frame(panel.data, stringsAsFactors=FALSE)
+		Panel_Data <- panel.data <- as.data.table(panel.data)
 	}
 	if (identical(class(panel.data), "list")) {
 		if (!identical(class(panel.data[["Panel_Data"]]), "data.frame")) {
-			Panel_Data <- as.data.frame(panel.data[["Panel_Data"]], stringsAsFactors=FALSE)
+			Panel_Data <- as.data.table(panel.data[["Panel_Data"]])
 	}}
 	if (identical(class(panel.data), "data.frame")) {
-		Panel_Data <- panel.data
+		Panel_Data <- as.data.table(panel.data)
 	}
 	if (identical(class(panel.data), "list")) {
-		Panel_Data <- panel.data[["Panel_Data"]]
+		Panel_Data <- as.data.table(panel.data[["Panel_Data"]])
 	}
 	
 	### Create ss.data from Panel_Data
@@ -1065,7 +1065,7 @@ function(panel.data,         ## REQUIRED
 	### Create ss.data
 
 	tmp.last <- tail(tmp.gp, 1)
-	ss.data <- data.table(ss.data[,c(1, (1+num.panels-num.prior):(1+num.panels), (1+2*num.panels-num.prior):(1+2*num.panels))], key=names(ss.data)[1])
+	ss.data <- data.table(ss.data[,c(1, (1+num.panels-num.prior):(1+num.panels), (1+2*num.panels-num.prior):(1+2*num.panels)), with=FALSE], key=names(ss.data)[1])
 	num.panels <- (dim(ss.data)[2]-1)/2
 	if (is.factor(ss.data[[1]])) ss.data[[1]] <- as.character(ss.data[[1]])
 	if (exact.grade.progression.sequence) tmp.num.prior <- num.prior else tmp.num.prior <- 1

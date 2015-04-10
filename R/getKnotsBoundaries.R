@@ -56,13 +56,13 @@ function(sgp.iter,
 
 	### Create label(s) for Knots_Boundaries
 
-	if (sgp.iter.type %in% c("sgp.percentiles")) {
+	if (sgp.iter.type=="sgp.percentiles") {
 		content_area.label <- tail(sgp.iter[["sgp.content.areas"]], 1)
 		if (!is.null(sgp.year.baseline)) tmp.year <- sgp.year.baseline else tmp.year <- tail(sgp.iter[["sgp.panel.years"]], 1)
 	}
 
-	if (sgp.iter.type %in% c("sgp.percentiles.baseline")) {
-		content_area.label <- tail(sgp.iter[["sgp.content.areas"]], 1)
+	if (sgp.iter.type=="sgp.percentiles.baseline") {
+		content_area.label <- tail(sgp.iter[["sgp.baseline.content.areas"]], 1)
 		if (!is.null(sgp.year.baseline)) tmp.year <- sgp.year.baseline else tmp.year <- tail(sgp.iter[["sgp.panel.years"]], 1)
 	}
 
@@ -71,7 +71,7 @@ function(sgp.iter,
 		if (!is.null(sgp.year.baseline)) tmp.year <- sgp.year.baseline else tmp.year <- tail(sgp.iter[["sgp.projection.panel.years"]], 1)
 	}
 
-	if (sgp.iter.type %in% c("sgp.projections.lagged")) {
+	if (sgp.iter.type=="sgp.projections.lagged") {
 		content_area.label <- tail(sgp.iter[["sgp.content.areas"]], 1)
 		if (!is.null(sgp.year.baseline)) tmp.year <- sgp.year.baseline else tmp.year <- tail(sgp.iter[["sgp.panel.years"]], 1)
 	}
