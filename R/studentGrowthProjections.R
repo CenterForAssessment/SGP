@@ -439,8 +439,8 @@ function(panel.data,	## REQUIRED
 		if (!(all(c("Panel_Data", "Coefficient_Matrices", "Knots_Boundaries") %in% names(panel.data)))) {
 			stop("Supplied panel.data missing Panel_Data, Coefficient_Matrices, and/or Knots_Boundaries. See help page for details")
 		}
-		if (!identical(class(panel.data[["Panel_Data"]]), "data.frame")) {
-			stop("Supplied panel.data$Panel_Data is not a data.frame")	 
+		if (identical(class(panel.data[["Panel_Data"]]), "data.frame")) {
+			panel.data[["Panel_Data"]] <- as.data.table(panel.data[["Panel_Data"]])
 	}}
 
 	if (missing(sgp.labels)) {
