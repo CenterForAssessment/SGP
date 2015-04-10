@@ -56,9 +56,10 @@ function(parallel.config,
 		} else stop("Both TAUS and PERCENTILES can not be executed in Parallel at the same time.")
 	}
 	if (all(c("PERCENTILES", "SIMEX") %in% names(parallel.config[['WORKERS']]))) {
-		if (as.numeric(parallel.config[['WORKERS']][['PERCENTILES']])==1) {
+		# if (as.numeric(parallel.config[['WORKERS']][['PERCENTILES']])==1) {
 			Lower_Level_Parallel <- parallel.config
-		} else stop("Both SIMEX and PERCENTILES can not be executed in Parallel at the same time.")
+			message("CAUTION:  Check yourself before you wreck yourself.  Running more processes than cores is bad for yer health.")
+		# } else stop("Both SIMEX and PERCENTILES can not be executed in Parallel at the same time.")
 	}
 	
 	if (all(c("BASELINE_PERCENTILES", "TAUS") %in% names(parallel.config[['WORKERS']]))) {
