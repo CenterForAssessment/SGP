@@ -58,7 +58,7 @@ function(parallel.config,
 	if (all(c("PERCENTILES", "SIMEX") %in% names(parallel.config[['WORKERS']]))) {
 		# if (as.numeric(parallel.config[['WORKERS']][['PERCENTILES']])==1) {
 			Lower_Level_Parallel <- parallel.config
-			message("CAUTION:  Check yourself before you wreck yourself.  Running more processes than cores is bad for yer health.")
+			# message("CAUTION:  Check yourself before you wreck yourself.  Running more processes than cores is bad for yer health.")
 		# } else stop("Both SIMEX and PERCENTILES can not be executed in Parallel at the same time.")
 	}
 	
