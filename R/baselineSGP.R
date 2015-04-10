@@ -99,9 +99,8 @@ function(sgp_object,
 			tmp.sgp.iter$sgp.grade.sequences <- tmp.sgp.iter$sgp.grade.sequences
 			if (!is.null(tmp.sgp.iter$sgp.exclude.sequences)) tmp.sgp.iter$sgp.exclude.sequences <- tmp.sgp.iter$sgp.exclude.sequences[COHORT_YEAR %in% tail(tmp.sgp.iter$sgp.panel.years, 1)]
 			tmp.list[[k]] <- getPanelData(tmp_sgp_data_for_analysis, state, "sgp.percentiles", sgp.iter = tmp.sgp.iter)[,
-				getPanelDataVnames("sgp.percentiles", tmp.sgp.iter, names(tmp_sgp_data_for_analysis))]
-			names(tmp.list[[k]]) <- c("ID", paste("GRADE", rev(seq_along(tmp.year.sequence[[k]])), sep="_"), 
-				paste("SCALE_SCORE", rev(seq_along(tmp.year.sequence[[k]])), sep="_")) # Use rev() in case vars are added: 1= current, 2= first prior, etc.
+				getPanelDataVnames("sgp.percentiles", tmp.sgp.iter, names(tmp_sgp_data_for_analysis)), with=FALSE]
+			setnames(tmp.list[[k]], c("ID", paste("GRADE", rev(seq_along(tmp.year.sequence[[k]])), sep="_"), paste("SCALE_SCORE", rev(seq_along(tmp.year.sequence[[k]])), sep="_")))
 		}
 		tmp.dt <- rbindlist(tmp.list, fill=TRUE)
 
