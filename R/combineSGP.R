@@ -133,7 +133,7 @@ function(
 		}
 		if (identical(system.type, "Cohort and Baseline Referenced")) {
 			tmp.list[['target.type']] <- intersect(target.type, c("sgp.projections", "sgp.projections.baseline", "sgp.projections.lagged", "sgp.projections.lagged.baseline"))
-			tmp.list[['my.sgp']] <- c("SGP", "SGP_BASELINE")
+			tmp.list[['my.sgp']] <- c("SGP", "SGP_BASELINE")[c(sgp.percentiles, sgp.percentiles.baseline)]
 			tmp.list[['my.sgp.target']] <- c(paste("SGP_TARGET", max.sgp.target.years.forward, projection.unit.label, sep="_"), 
 				paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, projection.unit.label, sep="_"))
 			tmp.list[['my.sgp.target.content_area']] <- c(paste("SGP_TARGET", max.sgp.target.years.forward, projection.unit.label, "CONTENT_AREA", sep="_"), 
@@ -211,7 +211,7 @@ function(
 					sgp_object@SGP[["SGPercentiles"]][[i]])
 		}
 
-		tmp.data <- data.table(rbind.fill(tmp.list), VALID_CASE="VALID_CASE", key=key(slot.data))
+		tmp.data <- data.table(rbindlist(tmp.list, fill=TRUE), VALID_CASE="VALID_CASE", key=key(slot.data))
 
 		if (any(duplicated(tmp.data))) {
 			tmp.data <- getPreferredSGP(tmp.data, state)
@@ -256,7 +256,7 @@ function(
 			}
 		}
 
-		tmp.data <- data.table(rbind.fill(tmp.list), VALID_CASE="VALID_CASE", key=key(slot.data))
+		tmp.data <- data.table(rbindlist(tmp.list, fill=TRUE), VALID_CASE="VALID_CASE", key=key(slot.data))
 
 		if (any(duplicated(tmp.data))) {
 			tmp.data <- getPreferredSGP(tmp.data, state, type="BASELINE")

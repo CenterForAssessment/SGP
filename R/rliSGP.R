@@ -2,7 +2,7 @@
 function(sgp_object,
 	additional.data,
 	state=NULL,
-	content_areas=c("MATHEMATICS", "READING", "EARLY_LIT"),
+	content_areas=c("MATHEMATICS", "READING", "EARLY_LITERACY"),
 	testing.window, ### FALL, WINTER, SPRING, EARLY_SPRING, LATE_SPRING for UPDATE 
 	eow.or.update="UPDATE", ### UPDATE or EOW
 	update.save.shell.only=FALSE,
@@ -27,17 +27,22 @@ function(sgp_object,
 
 	convertToBaseline <- function(baseline_matrices) {
 		tmp.list <- list()
-		for (i in names(baseline_matrices)) {
-			for (j in seq_along(baseline_matrices[[i]])) {
-				baseline_matrices[[i]][[j]]@Time <- list(rep("BASELINE", length(unlist(baseline_matrices[[i]][[j]]@Time))))
-			}	
-		}
+		if (is.null(baseline_matrices)) {
+			return(NULL)
+		} else {
+			for (i in names(baseline_matrices)) {
+				for (j in seq_along(baseline_matrices[[i]])) {
+					baseline_matrices[[i]][[j]]@Time <- list(rep("BASELINE", length(unlist(baseline_matrices[[i]][[j]]@Time))))
+				}
+				names(baseline_matrices[[i]]) <- sub("[.][1234]_", "_", names(baseline_matrices[[i]]))
+			}
 
-		tmp.content_areas <- unique(sapply(strsplit(names(baseline_matrices), "[.]"), '[', 1))
-		for (i in tmp.content_areas) {
-			tmp.list[[paste(i, "BASELINE", sep=".")]] <- unlist(baseline_matrices[grep(i, names(baseline_matrices))], recursive=FALSE)
+			tmp.content_areas <- unique(sapply(strsplit(names(baseline_matrices), "[.]"), '[', 1))
+			for (i in tmp.content_areas) {
+				tmp.list[[paste(i, "BASELINE", sep=".")]] <- unlist(baseline_matrices[grep(i, names(baseline_matrices))], recursive=FALSE)
+			}
+			return(tmp.list)
 		}
-		return(tmp.list)
 	}
 
 	updateIDS <- function(my.data, id.lookup) {
@@ -103,7 +108,7 @@ function(sgp_object,
 
 	if (eow.or.update=="UPDATE") {
 
-		RLI_SGP_UPDATE_SHELL <- updateSGP(
+		sgp_object <- updateSGP(
 			what_sgp_object=sgp_object,
 			with_sgp_data_LONG=additional.data,
 			state=state,
@@ -124,7 +129,7 @@ function(sgp_object,
 
 		if (!is.null(update.ids)) {
 			update.shell.name <- paste(state, "SGP_UPDATE_SHELL", sep="_")
-			assign(update.shell.name, RLI_SGP_UPDATE_SHELL)
+			assign(update.shell.name, sgp_object)
 			save(list=update.shell.name, paste(update.shell.name, "Rdata", sep="."))
 		}
 	} ### END UPDATE scripts
@@ -146,7 +151,7 @@ function(sgp_object,
 
 			if (testing.window=="FALL") num.windows.to.keep <- 5 else num.windows.to.keep <- 6
 			if (update.save.shell.only) {
-				tmp.data <- rbind.fill(sgp_object@Data, additional.data)
+				tmp.data <- rbindlist(list(sgp_object@Data, additional.data), fill=TRUE)
 				assign(update.shell.name, prepareSGP(subset(tmp.data, YEAR %in% tail(sort(unique(tmp.data$YEAR)), num.windows.to.keep)), state=state, create.additional.variables=FALSE))
 				save(list=update.shell.name, file=paste(update.shell.name, "Rdata", sep="."))
 			} else {
@@ -201,7 +206,7 @@ function(sgp_object,
 			additional.data.unique[,GRADE:=as.character(GRADE)]
 
 			if (update.save.shell.only) {
-				tmp.data <- rbind.fill(sgp_object@Data, additional.data.unique)
+				tmp.data <- rbindlist(list(sgp_object@Data, additional.data.unique), fill=TRUE)
 				assign(update.shell.name, prepareSGP(subset(tmp.data, YEAR %in% tail(sort(unique(tmp.data$YEAR)), 6)), state=state, create.additional.variables=FALSE))
 				save(list=update.shell.name, file=paste(update.shell.name, "Rdata", sep="."))
 			} else {

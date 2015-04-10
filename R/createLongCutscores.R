@@ -160,5 +160,5 @@ function(state,
 		long.cutscores[,YEAR_LAG:=NULL]
 	}
 
-	return(long.cutscores)
+	return(unique(data.table(long.cutscores, key=c("CONTENT_AREA", "YEAR", "GRADE", "CUTLEVEL"))))
 } ## END createLongCutscores Function

@@ -25,7 +25,7 @@ function(state,
 		setnames(tmp.df, c("GRADE", "YEAR")) 
 		tmp.list[[i]] <- data.table(CONTENT_AREA=i, tmp.df)
 	}
-	tmp.dt <- data.table(rbind.fill(tmp.list))
+	tmp.dt <- rbindlist(tmp.list, fill=TRUE)
 	setkeyv(tmp.dt, c("CONTENT_AREA", "GRADE", "YEAR"))
 	return(tmp.dt[!is.na(CONTENT_AREA)])
 } ## END getYearsContentAreasGrades

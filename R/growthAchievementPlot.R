@@ -138,7 +138,7 @@
 			content_area.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]],
 			year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[content_area]],
 			max.order.for.progression=gaPlot.max.order.for.progression,
-			print.time.taken=FALSE)[["SGProjections"]][[.create.path(list(my.subject=content_area, my.year=year, my.extra.label=my.extra.label))]][,-1]
+			print.time.taken=FALSE)[["SGProjections"]][[.create.path(list(my.subject=content_area, my.year=year, my.extra.label=my.extra.label))]][,-1, with=FALSE]
 	}
 
 	smoothPercentileTrajectory <- function(tmp.df, percentile, content_area, year, state) {
@@ -161,7 +161,7 @@
 	### Calculate Scale Transformations (if required) 
 
 	setkey(growthAchievementPlot.data, GRADE)
-		growthAchievementPlot.data[, TRANSFORMED_SCALE_SCORE:=piecewiseTransform(SCALE_SCORE, state, as.character(content_area), as.character(YEAR), as.character(GRADE)), by=list(CONTENT_AREA, YEAR, GRADE)]
+		growthAchievementPlot.data[, TRANSFORMED_SCALE_SCORE:=piecewiseTransform(SCALE_SCORE, state, content_area, YEAR, GRADE), by=list(CONTENT_AREA, YEAR, GRADE)]
 	if (content_area %in% names(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]])) {
 		gaPlot.show.scale.transformations <- FALSE
 	}
@@ -173,6 +173,7 @@
 		## Creating the points used by lines to construct unconditional percentile curves
 
 		setkey(growthAchievementPlot.data, GRADE, CONTENT_AREA)
+		setkey(long_cutscores, GRADE, CONTENT_AREA)
 		growthAchievementPlot.data <- unique(long_cutscores[!is.na(GRADE_NUMERIC),c("GRADE", "CONTENT_AREA", "GRADE_NUMERIC"), with=FALSE])[growthAchievementPlot.data]
 		setnames(growthAchievementPlot.data, c("GRADE", "GRADE_NUMERIC"), c("GRADE_CHARACTER", "GRADE"))
 		setkeyv(growthAchievementPlot.data, "YEAR")

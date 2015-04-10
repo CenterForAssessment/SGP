@@ -1122,7 +1122,7 @@ function(panel.data,         ## REQUIRED
 			stop("The last element in the content_area.progression must be identical to 'my.subject' of the sgp.labels. See help page for details.")
 		}
 		if (length(content_area.progression) != length(tmp.gp)) {
-			tmp.messages <- c(tmp.messages, "\tNOTE: The content_area.progression vector does not have the same number of elements as the grade.progression vector.\n")
+			tmp.messages <- c(tmp.messages, "\t\tNOTE: The content_area.progression vector does not have the same number of elements as the grade.progression vector.\n")
 		}
 	}
 
@@ -1149,7 +1149,7 @@ function(panel.data,         ## REQUIRED
 			stop("The last element in the year.progression must be identical to 'my.year' of the sgp.labels. See help page for details.")
 		}
 		if (length(year.progression) != length(tmp.gp)) {
-			tmp.messages <- c(tmp.messages, "\tNOTE: The year.progression vector does not have the same number of elements as the grade.progression vector.\n")
+			tmp.messages <- c(tmp.messages, "\t\tNOTE: The year.progression vector does not have the same number of elements as the grade.progression vector.\n")
 		}
 	}
 
@@ -1191,7 +1191,7 @@ function(panel.data,         ## REQUIRED
 		for (k in coefficient.matrix.priors) {
 			Coefficient_Matrices[[tmp.path.coefficient.matrices]][['TMP_NAME']] <- .create.coefficient.matrices(ss.data, k, by.grade, max.n.for.coefficient.matrices)
 			if (identical(Coefficient_Matrices[[tmp.path.coefficient.matrices]][['TMP_NAME']], "Insufficient N")) {
-				tmp.messages <- c(tmp.messages, paste("\tNOTE: Some grade progressions contain fewer than the minimum cohort size.",
+				tmp.messages <- c(tmp.messages, paste("\t\tNOTE: Some grade progressions contain fewer than the minimum cohort size.",
 					"\n\t\tOnly analyses with MAX grade progression", paste(rev(rev(tmp.gp)[1:k]), collapse = ', '), "will be produced given", sgp.cohort.size,
 					"indicated as minimum cohort N size. \n\t\tCheck data, function arguments and see help page for details.\n"))
 				Coefficient_Matrices[[tmp.path.coefficient.matrices]][['TMP_NAME']] <- NULL
@@ -1255,11 +1255,11 @@ function(panel.data,         ## REQUIRED
 		max.order <- max(tmp.orders)
 
 		if (max.order < num.prior) {
-			tmp.messages <- c(tmp.messages, paste("\tNOTE: Requested number of prior scores (num.prior=", num.prior, ") exceeds maximum matrix order (max.order=", 
+			tmp.messages <- c(tmp.messages, paste("\t\tNOTE: Requested number of prior scores (num.prior=", num.prior, ") exceeds maximum matrix order (max.order=", 
 			max.order, "). Only matrices of order up to max.order=", max.order, " will be used.\n", sep=""))
 		}
 		if (max.order > num.prior) {
-			tmp.messages <- c(tmp.messages, paste("\tNOTE: Maximum coefficient matrix order (max.order=", max.order, ") exceeds that of specified number of priors, 
+			tmp.messages <- c(tmp.messages, paste("\t\tNOTE: Maximum coefficient matrix order (max.order=", max.order, ") exceeds that of specified number of priors, 
 				(num.prior=", num.prior, "). Only matrices of order up to num.prior=", num.prior, " will be used.\n", sep=""))
 			tmp.matrices <- tmp.matrices[tmp.orders <= max.order]
 		}
@@ -1360,7 +1360,7 @@ function(panel.data,         ## REQUIRED
 				tmp.cq <- data.table(round(t(apply(simulation.data[, -1, with=FALSE], 1, quantile, probs = calculate.confidence.intervals$confidence.quantiles))))
 				quantile.data[,paste("SGP_", calculate.confidence.intervals$confidence.quantiles, "_CONFIDENCE_BOUND", sep=""):=tmp.cq]
 			}
-			Simulated_SGPs[[tmp.path]] <- rbind.fill(simulation.data, as.data.frame(Simulated_SGPs[[tmp.path]])) 
+			Simulated_SGPs[[tmp.path]] <- rbindlist(list(simulation.data, Simulated_SGPs[[tmp.path]]), fill=TRUE) 
 		}
 
 		if (simex.tf) quantile.data[, SGP_SIMEX:=quantile.data.simex[['DT']][["SGP_SIMEX"]]]
@@ -1502,7 +1502,7 @@ function(panel.data,         ## REQUIRED
 			quantile.data[,SCALE_SCORE_PRIOR:=NULL]
 		}
 
-		SGPercentiles[[tmp.path]] <- rbind.fill(quantile.data, as.data.frame(SGPercentiles[[tmp.path]]))
+		SGPercentiles[[tmp.path]] <- rbindlist(list(quantile.data, SGPercentiles[[tmp.path]]), fill=TRUE)
 
 	} ## End if calculate.sgps
 

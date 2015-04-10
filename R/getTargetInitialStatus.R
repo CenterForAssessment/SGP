@@ -12,6 +12,11 @@ function(achievement_level,
 				which(SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]][["State_Levels"]][[tmp.state.level]][['Levels']]=="Proficient")]
 			levels.that.are.not.proficient <- SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]][
 				which(SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]][["State_Levels"]][[tmp.state.level]][['Levels']]=="Not Proficient")]
+			levels.that.are.advanced <- SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]][
+				tail(which(SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]][["State_Levels"]][[tmp.state.level]][["Levels"]]=="Proficient"), -1)]
+			levels.that.are.not.advanced <- SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]][
+				c(which(SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]][["State_Levels"]][[tmp.state.level]][['Levels']]=="Not Proficient"),
+				head(which(SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]][["State_Levels"]][[tmp.state.level]][['Levels']]=="Proficient"), 1))]
 		} else {
 			if (!is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]])) {
 				levels.that.are.advanced <- levels.that.are.not.advanced <- list()
