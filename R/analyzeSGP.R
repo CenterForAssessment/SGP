@@ -331,9 +331,9 @@ function(sgp_object,
 		}
 		data.for.equate <- copy(sgp_object@Data)
 		sgp_object@SGP$Linkages <- equateSGP(data.for.equate, state, year.for.equate)
-		setkeyv(data.for.equate, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", "SCALE_SCORE"))
+		setkey(data.for.equate, VALID_CASE, CONTENT_AREA, YEAR, GRADE, SCALE_SCORE)
 		data.for.equate <- convertScaleScore(data.for.equate, year.for.equate, sgp_object@SGP$Linkages, conversion.type="NEW_TO_OLD", state)
-		setkeyv(data.for.equate, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
+		setkey(data.for.equate, VALID_CASE, CONTENT_AREA, YEAR, ID)
 		sgp_object@Data <- data.for.equate
 		equate.variable <- "SCALE_SCORE_EQUATED"
 		equate.label <- coefficient.matrix.type <- "EQUATED"
