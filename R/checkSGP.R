@@ -166,20 +166,17 @@ function(sgp_object,
 		}
 	}
 
-#	## Test if SCALE_SCORE and SCALE_SCORE_PRIOR are of class numeric and convert if not
-#
-#	if (!is.double(sgp_object@Data[['SCALE_SCORE']])) {
-#		sgp_object@Data[['SCALE_SCORE']] <- as.numeric(sgp_object@Data[['SCALE_SCORE']])
-#		message("\tNOTE: Converting SCALE_SCORE to class 'numeric'.")
-#	}
+	## Change table in SGPercentiles and SGProjections from data.frame to data.table
 
-#	if ("SCALE_SCORE_PRIOR" %in% names(sgp_object@Data) && !is.double(sgp_object@Data[['SCALE_SCORE_PRIOR']])) {
-#		sgp_object@Data[['SCALE_SCORE_PRIOR']] <- as.numeric(sgp_object@Data[['SCALE_SCORE_PRIOR']])
-#		message("\tNOTE: Converting SCALE_SCORE_PRIOR to class 'numeric'.")
-#	}
+	for (i in names(sgp_object@SGP[['SGPercentiles']])) {
+		if (!is.data.table(sgp_object@SGP[['SGPercentiles']][[i]])) sgp_object@SGP[['SGPercentiles']][[i]] <- as.data.table(sgp_object@SGP[['SGPercentiles']][[i]])
+	}
+
+	for (i in names(sgp_object@SGP[['SGProjections']])) {
+		if (!is.data.table(sgp_object@SGP[['SGProjections']][[i]])) sgp_object@SGP[['SGProjections']][[i]] <- as.data.table(sgp_object@SGP[['SGProjections']][[i]])
+	}
 
 	## Return sgp_object	
 
 	return(sgp_object)
-
 } ### END sgp_object

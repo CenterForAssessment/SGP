@@ -35,6 +35,8 @@ function(sgp_object,
 		lag.increment <- 0
 		my.target.type <- "sgp.projections"
 		my.content.areas <- "sgp.projection.content.areas"
+		my.grade.sequences <- "sgp.projection.grade.sequences"
+		my.panel.years.lags <- "sgp.projection.panel.years.lags"
 	}
 	if (target.type=="sgp.projections.baseline") {
 		my.extra.label <- "BASELINE.TARGET_SCALE_SCORES"
@@ -42,13 +44,17 @@ function(sgp_object,
 		lag.increment <- 0
 		my.target.type <- "sgp.projections.baseline"
 		my.content.areas <- "sgp.projection.baseline.content.areas"
+		my.grade.sequences <- "sgp.projection.baseline.grade.sequences"
+		my.panel.years.lags <- "sgp.projection.baseline.panel.years.lags"
 	}
 	if (target.type=="sgp.projections.lagged") {
 		my.extra.label <- "LAGGED.TARGET_SCALE_SCORES"
 		baseline.tf <- FALSE
 		lag.increment <- 1
 		my.target.type <- "sgp.projections.lagged"
-		my.content.areas <- "sgp.content.areas"
+		my.content.areas <- "sgp.projection.content.areas"
+		my.grade.sequences <- "sgp.projection.grade.sequences"
+		my.panel.years.lags <- "sgp.projection.panel.years.lags"
 	}
 
 	if (target.type=="sgp.projections.lagged.baseline") {
@@ -56,7 +62,9 @@ function(sgp_object,
 		baseline.tf <- TRUE
 		lag.increment <- 1
 		my.target.type <- "sgp.projections.lagged"
-		my.content.areas <- "sgp.content.areas"
+		my.content.areas <- "sgp.projection.baseline.content.areas"
+		my.grade.sequences <- "sgp.projection.baseline.grade.sequences"
+		my.panel.years.lags <- "sgp.projection.baseline.panel.years.lags"
 	}
 
 	sgp.projections.max.forward.progression.years <- 
@@ -97,7 +105,7 @@ function(sgp_object,
 					panel.data=list(
 						Panel_Data=getPanelData(tmp_sgp_data_for_analysis, state=state, my.target.type, sgp.iter, sgp.targets=sgp.targets), 
 						Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]], 
-						Knots_Boundaries=getKnotsBoundaries(sgp.iter, state, c("Standard", my.target.type))),
+						Knots_Boundaries=getKnotsBoundaries(sgp.iter, state, my.target.type)),
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[[my.content.areas]], 1), 
 						my.extra.label=my.extra.label),
 					use.my.coefficient.matrices=list(my.year=if (baseline.tf) "BASELINE" else tail(sgp.iter[["sgp.panel.years"]], 1), 
@@ -107,9 +115,9 @@ function(sgp_object,
 					max.forward.progression.years=sgp.iter[['sgp.projections.max.forward.progression.years']],
 					panel.data.vnames=getPanelDataVnames(my.target.type, sgp.iter, names(tmp_sgp_data_for_analysis)),
 					sgp.projections.equated=sgp.projections.equated,
-					grade.progression=sgp.iter[["sgp.projection.grade.sequences"]],
-					content_area.progression=sgp.iter[["sgp.projection.content.areas"]],
-					year_lags.progression=sgp.iter[["sgp.projection.panel.years.lags"]],
+					grade.progression=sgp.iter[[my.grade.sequences]],
+					content_area.progression=sgp.iter[[my.content.areas]],
+					year_lags.progression=sgp.iter[[my.panel.years.lags]],
 					max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[["sgp.panel.years"]], 1), tail(sgp.iter[[my.content.areas]], 1), state),
 					lag.increment=lag.increment,
 					grade.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
@@ -130,7 +138,7 @@ function(sgp_object,
 					panel.data=list(
 						Panel_Data=getPanelData(tmp_sgp_data_for_analysis, state=state, my.target.type, sgp.iter, sgp.targets=sgp.targets), 
 						Coefficient_Matrices=tmp_sgp_object[['Coefficient_Matrices']], 
-						Knots_Boundaries=getKnotsBoundaries(sgp.iter, state, c("Standard", my.target.type))),
+						Knots_Boundaries=getKnotsBoundaries(sgp.iter, state, my.target.type)),
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[[my.content.areas]], 1),
 						my.extra.label=my.extra.label),
 					use.my.coefficient.matrices=list(my.year=if (baseline.tf) "BASELINE" else tail(sgp.iter[["sgp.panel.years"]], 1), 
@@ -140,9 +148,9 @@ function(sgp_object,
 					max.forward.progression.years=sgp.iter[['sgp.projections.max.forward.progression.years']],
 					panel.data.vnames=getPanelDataVnames(my.target.type, sgp.iter, names(tmp_sgp_data_for_analysis)),
 					sgp.projections.equated=sgp.projections.equated,
-					grade.progression=sgp.iter[["sgp.projection.grade.sequences"]],
-					content_area.progression=sgp.iter[["sgp.projection.content.areas"]],
-					year_lags.progression=sgp.iter[["sgp.projection.panel.years.lags"]],
+					grade.progression=sgp.iter[[my.grade.sequences]],
+					content_area.progression=sgp.iter[[my.content.areas]],
+					year_lags.progression=sgp.iter[[my.panel.years.lags]],
 					max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[["sgp.panel.years"]], 1), tail(sgp.iter[[my.content.areas]], 1), state),
 					lag.increment=lag.increment,
 					grade.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
@@ -164,7 +172,7 @@ function(sgp_object,
 						panel.data=list(
 							Panel_Data=getPanelData(tmp_sgp_data_for_analysis, state=state, my.target.type, sgp.iter, sgp.targets=sgp.targets), 
 							Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]], 
-							Knots_Boundaries=getKnotsBoundaries(sgp.iter, state, c("Standard", my.target.type))),
+							Knots_Boundaries=getKnotsBoundaries(sgp.iter, state, my.target.type)),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[[my.content.areas]], 1), 
 							my.extra.label=my.extra.label),
 						use.my.coefficient.matrices=list(my.year=if (baseline.tf) "BASELINE" else tail(sgp.iter[["sgp.panel.years"]], 1), 
@@ -174,9 +182,9 @@ function(sgp_object,
 						max.forward.progression.years=sgp.iter[['sgp.projections.max.forward.progression.years']],
 						panel.data.vnames=getPanelDataVnames(my.target.type, sgp.iter, names(tmp_sgp_data_for_analysis)),
 						sgp.projections.equated=sgp.projections.equated,
-						grade.progression=sgp.iter[["sgp.projection.grade.sequences"]],
-						content_area.progression=sgp.iter[["sgp.projection.content.areas"]],
-						year_lags.progression=sgp.iter[["sgp.projection.panel.years.lags"]],
+						grade.progression=sgp.iter[[my.grade.sequences]],
+						content_area.progression=sgp.iter[[my.content.areas]],
+						year_lags.progression=sgp.iter[[my.panel.years.lags]],
 						max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[["sgp.panel.years"]], 1), tail(sgp.iter[[my.content.areas]], 1), state),
 						lag.increment=lag.increment,
 						grade.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
@@ -218,9 +226,9 @@ function(sgp_object,
 					max.forward.progression.years=sgp.iter[['sgp.projections.max.forward.progression.years']],
 					panel.data.vnames=getPanelDataVnames(my.target.type, sgp.iter, names(tmp_sgp_data_for_analysis)),
 					sgp.projections.equated=sgp.projections.equated,
-					grade.progression=sgp.iter[["sgp.projection.grade.sequences"]],
-					content_area.progression=sgp.iter[["sgp.projection.content.areas"]],
-					year_lags.progression=sgp.iter[["sgp.projection.panel.years.lags"]],
+					grade.progression=sgp.iter[[my.grade.sequences]],
+					content_area.progression=sgp.iter[[my.content.areas]],
+					year_lags.progression=sgp.iter[[my.panel.years.lags]],
 					max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[["sgp.panel.years"]], 1), tail(sgp.iter[[my.content.areas]], 1), state),
 					lag.increment=lag.increment,
 					grade.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],

@@ -341,7 +341,7 @@ function(panel.data,         ## REQUIRED
 				csem.int <- matrix(nrow=dim(tmp.data)[1], ncol=length(tmp.gp.iter)) # build matrix to store interpolated csem
 				colnames(csem.int) <- paste("icsem", tmp.gp.iter, tmp.ca.iter, tmp.yr.iter, sep="")
 			} else {
-				csem.int <- data.table(Panel_Data[,c("ID", intersect(csem.data.vnames, names(Panel_Data)))], key="ID")
+				csem.int <- data.table(Panel_Data[,c("ID", intersect(csem.data.vnames, names(Panel_Data))),with=FALSE], key="ID")
 				setnames(csem.int, csem.data.vnames, paste("icsem", head(tmp.gp, -1), head(content_area.progression, -1), head(year.progression, -1), sep=""))
 			}
 
@@ -937,17 +937,13 @@ function(panel.data,         ## REQUIRED
 	### Create Panel_Data based upon class of input data
 
 	if (is.matrix(panel.data)) {
-		Panel_Data <- panel.data <- as.data.frame(panel.data, stringsAsFactors=FALSE)
+		Panel_Data <- panel.data <- as.data.table(panel.data)
 	}
-	if (identical(class(panel.data), "list")) {
-		if (!identical(class(panel.data[["Panel_Data"]]), "data.frame")) {
-			Panel_Data <- as.data.frame(panel.data[["Panel_Data"]], stringsAsFactors=FALSE)
-	}}
 	if (identical(class(panel.data), "data.frame")) {
-		Panel_Data <- panel.data
+		Panel_Data <- as.data.table(panel.data)
 	}
-	if (identical(class(panel.data), "list")) {
-		Panel_Data <- panel.data[["Panel_Data"]]
+	if (identical(class(panel.data), "list") && !identical(class(panel.data[["Panel_Data"]]), "data.frame")) {
+			Panel_Data <- as.data.table(panel.data[["Panel_Data"]])
 	}
 	
 	### Create ss.data from Panel_Data
@@ -974,7 +970,7 @@ function(panel.data,         ## REQUIRED
 		if (!all(panel.data.vnames %in% names(Panel_Data))) {
 			tmp.messages <- c(tmp.messages, "\t\tNOTE: Supplied 'panel.data.vnames' are not all in the supplied Panel_Data. Analyses will continue with the intersection names contain in Panel_Data.\n")
 		}
-		ss.data <- Panel_Data[,intersect(panel.data.vnames, names(Panel_Data))]
+		ss.data <- Panel_Data[,intersect(panel.data.vnames, names(Panel_Data)), with=FALSE]
 	} else {
 		ss.data <- Panel_Data
 	}
@@ -1065,7 +1061,7 @@ function(panel.data,         ## REQUIRED
 	### Create ss.data
 
 	tmp.last <- tail(tmp.gp, 1)
-	ss.data <- data.table(ss.data[,c(1, (1+num.panels-num.prior):(1+num.panels), (1+2*num.panels-num.prior):(1+2*num.panels))], key=names(ss.data)[1])
+	ss.data <- data.table(ss.data[,c(1, (1+num.panels-num.prior):(1+num.panels), (1+2*num.panels-num.prior):(1+2*num.panels)), with=FALSE], key=names(ss.data)[1])
 	num.panels <- (dim(ss.data)[2]-1)/2
 	if (is.factor(ss.data[[1]])) ss.data[[1]] <- as.character(ss.data[[1]])
 	if (exact.grade.progression.sequence) tmp.num.prior <- num.prior else tmp.num.prior <- 1

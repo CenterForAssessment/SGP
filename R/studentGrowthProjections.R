@@ -297,7 +297,7 @@ function(panel.data,	## REQUIRED
 						available.states <- unique(sapply(names(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]), 
 							function(x) strsplit(x, "[.]")[[1]][2], USE.NAMES=FALSE)[content_area.index])
 						unavailable.states <- included.states[!included.states %in% available.states]
-						percentile.trajectories <- data.table(panel.data[["Panel_Data"]][,c("ID", "STATE")], key="ID")[STATE %in% available.states][percentile.trajectories][!is.na(STATE)]
+						percentile.trajectories <- data.table(panel.data[["Panel_Data"]][,c("ID", "STATE"), with=FALSE], key="ID")[STATE %in% available.states][percentile.trajectories][!is.na(STATE)]
 						tmp.traj <- percentile.trajectories[which(!duplicated(percentile.trajectories$ID))]
 						if (length(percentile.trajectory.values)==2) tmp.traj <- data.table(rbind(tmp.traj, tmp.traj), key="ID")
 
@@ -363,7 +363,7 @@ function(panel.data,	## REQUIRED
 				content_area.index <- grep(sgp.labels$my.subject, sapply(names(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]), function(x) strsplit(x, "[.]")[[1]][1], USE.NAMES=FALSE))
 				available.states <- unique(sapply(names(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]), function(x) strsplit(x, "[.]")[[1]][2], USE.NAMES=FALSE)[content_area.index])
 				unavailable.states <- included.states[!included.states %in% available.states]
-				percentile.trajectories <- data.table(panel.data[["Panel_Data"]][,c("ID", "STATE")], key="ID")[STATE %in% available.states][percentile.trajectories][!is.na(STATE)]
+				percentile.trajectories <- data.table(panel.data[["Panel_Data"]][,c("ID", "STATE"), with=FALSE], key="ID")[STATE %in% available.states][percentile.trajectories][!is.na(STATE)]
 				states <- included.states[included.states %in% available.states]
 			} else {
 				states <- NA; state.arg <- "is.na(STATE)"
@@ -439,8 +439,8 @@ function(panel.data,	## REQUIRED
 		if (!(all(c("Panel_Data", "Coefficient_Matrices", "Knots_Boundaries") %in% names(panel.data)))) {
 			stop("Supplied panel.data missing Panel_Data, Coefficient_Matrices, and/or Knots_Boundaries. See help page for details")
 		}
-		if (!identical(class(panel.data[["Panel_Data"]]), "data.frame")) {
-			stop("Supplied panel.data$Panel_Data is not a data.frame")	 
+		if (identical(class(panel.data[["Panel_Data"]]), "data.frame")) {
+			panel.data[["Panel_Data"]] <- as.data.table(panel.data[["Panel_Data"]])
 	}}
 
 	if (missing(sgp.labels)) {
@@ -638,9 +638,9 @@ function(panel.data,	## REQUIRED
 		if (!all(panel.data.vnames %in% names(panel.data[["Panel_Data"]]))) {
 			tmp.messages <- c(tmp.messages, "\t\tNOTE: Supplied 'panel.data.vnames' are not all in the supplied 'Panel_Data'.\n\t\tAnalyses will continue with the variables contained in both Panel_Data and those provided in the supplied argument 'panel.data.vnames'.\n")
 		}
-		ss.data <- as.data.table(panel.data[["Panel_Data"]][,intersect(panel.data.vnames, names(panel.data[["Panel_Data"]]))])
+		ss.data <- panel.data[["Panel_Data"]][,intersect(panel.data.vnames, names(panel.data[["Panel_Data"]])), with=FALSE]
 	} else {
-		ss.data <- as.data.table(panel.data[["Panel_Data"]])
+		ss.data <- panel.data[["Panel_Data"]]
 	}
 
 	if (dim(ss.data)[2] %% 2 != 1) {
@@ -809,12 +809,12 @@ function(panel.data,	## REQUIRED
 	trajectories.and.cuts <- .get.trajectories.and.cuts(percentile.trajectories, !is.null(percentile.trajectory.values), tf.cutscores, toupper(projection.unit))
 
 	if (!is.null(achievement.level.prior.vname)) {
-		trajectories.and.cuts <- data.table(panel.data[["Panel_Data"]][,c("ID", achievement.level.prior.vname)], key="ID")[trajectories.and.cuts]
+		trajectories.and.cuts <- data.table(panel.data[["Panel_Data"]][,c("ID", achievement.level.prior.vname), with=FALSE], key="ID")[trajectories.and.cuts]
 		setnames(trajectories.and.cuts, achievement.level.prior.vname, "ACHIEVEMENT_LEVEL_PRIOR")
 	}
 
 	if (!is.null(return.percentile.trajectory.values) && percentile.trajectory.values %in% names(panel.data$Panel_Data)) {
-		trajectories.and.cuts <- data.table(panel.data[["Panel_Data"]][,c("ID", percentile.trajectory.values)], key="ID")[trajectories.and.cuts]
+		trajectories.and.cuts <- data.table(panel.data[["Panel_Data"]][,c("ID", percentile.trajectory.values), with=FALSE], key="ID")[trajectories.and.cuts]
 	}
 
 	if (!is.null(return.projection.group.identifier)) {
@@ -822,7 +822,7 @@ function(panel.data,	## REQUIRED
 	}
 
 	if ("YEAR_WITHIN" %in% names(panel.data[["Panel_Data"]])) {
-		trajectories.and.cuts <- data.table(panel.data[["Panel_Data"]][,c("ID", "YEAR_WITHIN")], key="ID")[trajectories.and.cuts]
+		trajectories.and.cuts <- data.table(panel.data[["Panel_Data"]][,c("ID", "YEAR_WITHIN"), with=FALSE], key="ID")[trajectories.and.cuts]
 	}
 
 	SGProjections[[tmp.path]] <- rbindlist(list(SGProjections[[tmp.path]], trajectories.and.cuts), fill=TRUE)

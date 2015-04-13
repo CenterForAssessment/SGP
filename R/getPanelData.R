@@ -70,12 +70,12 @@ function(sgp.data,
 				tmp.ids <- tmp.ids[tmp.lookup.list[[1]][tmp.ids][['YEAR_WITHIN']] < tmp.lookup.list[[2]][tmp.ids][['YEAR_WITHIN']]]
 				tmp.lookup.list <- lapply(tmp.lookup.list, function(x) x[tmp.ids])
 			}
-			return(as.data.frame(reshape(
+			return(reshape(
 				rbindlist(tmp.lookup.list),
 					idvar="ID", 
 					timevar="tmp.timevar", 
 					drop=var.names[!names(tmp.lookup.list[[1]]) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR_WITHIN", "tmp.timevar", sgp.csem, sgp.scale.score.equated)], 
-					direction="wide")))
+					direction="wide"))
 		} else {
 			tmp.lookup <- SJ("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]])),
 				tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]])), sgp.iter[["sgp.grade.sequences"]])
@@ -89,19 +89,19 @@ function(sgp.data,
 					" AND GRADE in ('", paste(tmp.lookup$V4, collapse="', '"), "')",
 					" AND YEAR in ('", paste(tmp.lookup$V3, collapse="', '"), "')", sep="")), key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))
 				dbDisconnect(con)
-				return(as.data.frame(reshape(tmp.data[tmp.lookup, nomatch=0][!ID %in% tmp.exclude.ids][!ID %in% tmp.exclude.ids][,
+				return(reshape(tmp.data[tmp.lookup, nomatch=0][!ID %in% tmp.exclude.ids][!ID %in% tmp.exclude.ids][,
 						'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
 						idvar="ID",
 						timevar="tmp.timevar",
 						drop=var.names[!var.names %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", sgp.csem, sgp.scale.score.equated)],
-						direction="wide")))
+						direction="wide"))
 			} else {
-				return(as.data.frame(reshape(
+				return(reshape(
 					sgp.data[tmp.lookup, nomatch=0][!ID %in% tmp.exclude.ids][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
 						idvar="ID",
 						timevar="tmp.timevar",
 						drop=var.names[!var.names %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", sgp.csem, sgp.scale.score.equated)],
-						direction="wide")))
+						direction="wide"))
 			}
 		}
 	} ### END if (sgp.type=="sgp.percentiles")
@@ -167,7 +167,7 @@ function(sgp.data,
 						tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL, with=FALSE]
 					}
 				}
-				return(as.data.frame(tmp.data))
+				return(tmp.data)
 			} else {
 				tmp.data <- data.table(reshape(
 					rbindlist(tmp.lookup.list),
@@ -186,7 +186,7 @@ function(sgp.data,
 						tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL, with=FALSE]
 					}
 				}
-				return(as.data.frame(tmp.data))
+				return(tmp.data)
 			}
 		}
 		tmp.lookup <- SJ("VALID_CASE", tail(sgp.iter[[sgp.projection.content.areas.label]], length(sgp.iter[[sgp.projection.grade.sequences.label]])),
@@ -219,7 +219,7 @@ function(sgp.data,
 				setnames(tmp.data, tail(sort(grep("STATE", names(tmp.data), value=TRUE)), 1), "STATE")
 				if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0) tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL, with=FALSE]
 			}
-			return(as.data.frame(tmp.data))
+			return(tmp.data)
 		} else {
 			if (sqlite.tf) {
 				tmp.data <- data.table(reshape(
@@ -246,7 +246,7 @@ function(sgp.data,
 				setnames(tmp.data, tail(sort(grep("STATE", names(tmp.data), value=TRUE)), 1), "STATE")
 				if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0) tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL, with=FALSE]
 			}
-			return(as.data.frame(tmp.data))
+			return(tmp.data)
 		}
 	} ### END if (sgp.type=="sgp.projections")
 
@@ -303,7 +303,7 @@ function(sgp.data,
 						tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL, with=FALSE]
 					}
 				}
-				return(as.data.frame(tmp.data))
+				return(tmp.data)
 			} else {
 				tmp.data <- data.table(reshape(
 					rbindlist(tmp.lookup.list),
@@ -325,7 +325,7 @@ function(sgp.data,
 						tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL, with=FALSE]
 					}
 				}
-				return(as.data.frame(tmp.data))
+				return(tmp.data)
 			}
 		} else {
 			if (is.null(sgp.targets)) {
@@ -370,7 +370,7 @@ function(sgp.data,
 						tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL, with=FALSE]
 					}
 				}
-				return(as.data.frame(tmp.data))
+				return(tmp.data)
 			} else {
 				if (sqlite.tf) {
 					tmp.ids <- data.table(dbGetQuery(con, paste("select ID from sgp_data where CONTENT_AREA in ('", tail(sgp.iter[["sgp.content.areas"]], 1), "')", 
@@ -416,7 +416,7 @@ function(sgp.data,
 						tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL, with=FALSE]
 					}
 				}
-				return(as.data.frame(tmp.data))
+				return(tmp.data)
 			}
 		}
 	} ### END if (sgp.type=="sgp.projections.lagged")
