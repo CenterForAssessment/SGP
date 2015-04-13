@@ -341,7 +341,7 @@ function(panel.data,         ## REQUIRED
 				csem.int <- matrix(nrow=dim(tmp.data)[1], ncol=length(tmp.gp.iter)) # build matrix to store interpolated csem
 				colnames(csem.int) <- paste("icsem", tmp.gp.iter, tmp.ca.iter, tmp.yr.iter, sep="")
 			} else {
-				csem.int <- data.table(Panel_Data[,c("ID", intersect(csem.data.vnames, names(Panel_Data)))], key="ID")
+				csem.int <- data.table(Panel_Data[,c("ID", intersect(csem.data.vnames, names(Panel_Data))),with=FALSE], key="ID")
 				setnames(csem.int, csem.data.vnames, paste("icsem", head(tmp.gp, -1), head(content_area.progression, -1), head(year.progression, -1), sep=""))
 			}
 
@@ -939,15 +939,11 @@ function(panel.data,         ## REQUIRED
 	if (is.matrix(panel.data)) {
 		Panel_Data <- panel.data <- as.data.table(panel.data)
 	}
-	if (identical(class(panel.data), "list")) {
-		if (!identical(class(panel.data[["Panel_Data"]]), "data.frame")) {
-			Panel_Data <- as.data.table(panel.data[["Panel_Data"]])
-	}}
 	if (identical(class(panel.data), "data.frame")) {
 		Panel_Data <- as.data.table(panel.data)
 	}
-	if (identical(class(panel.data), "list")) {
-		Panel_Data <- as.data.table(panel.data[["Panel_Data"]])
+	if (identical(class(panel.data), "list") && !identical(class(panel.data[["Panel_Data"]]), "data.frame")) {
+			Panel_Data <- as.data.table(panel.data[["Panel_Data"]])
 	}
 	
 	### Create ss.data from Panel_Data

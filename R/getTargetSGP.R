@@ -137,7 +137,7 @@ function(sgp_object,
 		}
 
 		if (!is.null(subset.ids)) {
-			tmp_object_1 <- data.table(rbindlist(tmp.list, fill=TRUE), VALID_CASE="VALID_CASE", key=c("ID"))[subset.ids, nomatch=0]
+			tmp_object_1 <- data.table(rbindlist(tmp.list, fill=TRUE), VALID_CASE="VALID_CASE", key="ID")[subset.ids, nomatch=0]
 		} else {
 			tmp_object_1 <- data.table(rbindlist(tmp.list, fill=TRUE), VALID_CASE="VALID_CASE")
 		}

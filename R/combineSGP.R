@@ -195,8 +195,7 @@ function(
 
 	## Determine names of Cohort Referenced SGPs
 
-	tmp.names <- getPercentileTableNames(sgp_object, content_areas, state, years, "sgp.percentiles", sgp.percentiles.equated)
-	if (length(tmp.names) == 0 & sgp.percentiles) {
+	if (!sgp.target.scale.scores.only && length(tmp.names <- getPercentileTableNames(sgp_object, content_areas, state, years, "sgp.percentiles", sgp.percentiles.equated)) == 0 && sgp.percentiles) {
 		tmp.messages <- c(tmp.messages, "\tNOTE: No cohort referenced SGP results available in SGP slot. No cohort referenced SGP results will be merged.\n")
 		sgp.percentiles <- FALSE
 	}
@@ -232,8 +231,7 @@ function(
 
 	## Determine names of Baseline Referenced SGPs
 
-	tmp.names <- getPercentileTableNames(sgp_object, content_areas, state, years, "sgp.percentiles.baseline")
-	if (length(tmp.names) == 0 & sgp.percentiles.baseline) {
+	if (!sgp.target.scale.scores.only && length(tmp.names <- getPercentileTableNames(sgp_object, content_areas, state, years, "sgp.percentiles.baseline"))==0 && sgp.percentiles.baseline) {
 		 tmp.messages <- c(tmp.messages, "\tNOTE: No baseline referenced SGP results available in SGP slot. No baseline referenced SGP results will be merged.\n")
 		 sgp.percentiles.baseline <- FALSE
 	}
@@ -276,19 +274,19 @@ function(
 	######################################################################################
 
 
-	if (length(getPercentileTableNames(sgp_object, content_areas, state, years, "sgp.projections")) == 0 & sgp.projections) {
+	if (!sgp.target.scale.scores.only && length(getPercentileTableNames(sgp_object, content_areas, state, years, "sgp.projections"))==0 && sgp.projections) {
 		tmp.messages <- c(tmp.messages, "\tNOTE: No SGP projections available in SGP slot. No current year student growth projection targets will be produced.\n")
 		sgp.projections <- FALSE; 
 	}
-	if (length(getPercentileTableNames(sgp_object, content_areas, state, years, "sgp.projections.baseline")) == 0 & sgp.projections.baseline) {
+	if (!sgp.target.scale.scores.only && length(getPercentileTableNames(sgp_object, content_areas, state, years, "sgp.projections.baseline"))==0 && sgp.projections.baseline) {
 		tmp.messages <- c(tmp.messages, "\tNOTE: No SGP baseline projections available in SGP slot. No current year baseline student growth projection targets will be produced.\n")
 		sgp.projections.baseline <- FALSE; 
 	}
-	if (length(getPercentileTableNames(sgp_object, content_areas, state, years, "sgp.projections.lagged")) == 0 & sgp.projections.lagged) {
+	if (!sgp.target.scale.scores.only && length(getPercentileTableNames(sgp_object, content_areas, state, years, "sgp.projections.lagged"))==0 && sgp.projections.lagged) {
 		tmp.messages <- c(tmp.messages, "\tNOTE: No SGP lagged projections available in SGP slot. No student growth projection targets will be produced.\n")
 		sgp.projections.lagged <- FALSE; 
 	}
-	if (length(getPercentileTableNames(sgp_object, content_areas, state, years, "sgp.projections.lagged.baseline")) == 0 & sgp.projections.lagged.baseline) {
+	if (!sgp.target.scale.scores.only && length(getPercentileTableNames(sgp_object, content_areas, state, years, "sgp.projections.lagged.baseline"))==0 && sgp.projections.lagged.baseline) {
 		tmp.messages <- c(tmp.messages, "\tNOTE: No SGP lagged baseline projections available in SGP slot. No baseline referenced student growth projection targets will be produced.\n")
 		sgp.projections.lagged.baseline <- FALSE; 
 	}
@@ -469,5 +467,4 @@ function(
 	message(c(tmp.messages, paste("Finished combineSGP", date(), "in", timetaken(started.at), "\n"), sep=""))
 
 	return(sgp_object)
-
 } ## END combineSGP Function
