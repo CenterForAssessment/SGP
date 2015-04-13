@@ -137,7 +137,8 @@ function(sgp_object,
 	}
 	if (all(c("PERCENTILES", "SIMEX") %in% names(parallel.config[['WORKERS']]))) {
 		lower.level.parallel.config <- FALSE
-		if (as.numeric(parallel.config[['WORKERS']][['PERCENTILES']])!=1) stop("Both SIMEX and PERCENTILES can not be executed in Parallel at the same time.")
+		message("\n\tCAUTION:  Running higher- and lower-level processes in parallel at the same time.  Make sure you have enough CPU cores and memory to support this.\n")
+		# if (as.numeric(parallel.config[['WORKERS']][['PERCENTILES']])!=1) stop("Both SIMEX and PERCENTILES can not be executed in Parallel at the same time.")
 	}
 	
 	if (all(c("BASELINE_PERCENTILES", "TAUS") %in% names(parallel.config[['WORKERS']]))) {
