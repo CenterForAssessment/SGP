@@ -52,7 +52,7 @@ function(sgp_object,
 		baseline.tf <- FALSE
 		lag.increment <- 1
 		my.target.type <- "sgp.projections.lagged"
-		my.content.areas <- "sgp.content.areas"
+		my.content.areas <- "sgp.projection.content.areas"
 		my.grade.sequences <- "sgp.projection.grade.sequences"
 		my.panel.years.lags <- "sgp.projection.panel.years.lags"
 	}
@@ -62,7 +62,7 @@ function(sgp_object,
 		baseline.tf <- TRUE
 		lag.increment <- 1
 		my.target.type <- "sgp.projections.lagged"
-		my.content.areas <- "sgp.content.areas"
+		my.content.areas <- "sgp.projection.baseline.content.areas"
 		my.grade.sequences <- "sgp.projection.baseline.grade.sequences"
 		my.panel.years.lags <- "sgp.projection.baseline.panel.years.lags"
 	}
