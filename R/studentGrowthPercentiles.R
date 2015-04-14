@@ -1280,7 +1280,7 @@ function(panel.data,         ## REQUIRED
 					tmp.csem.quantiles[[j]] <- tmp.data[,names(tmp.data)[1], with=FALSE]
 					setnames(tmp.csem.quantiles[[j]], names(tmp.csem.quantiles[[j]])[1], "ID")
 					if (!is.null(additional.vnames.to.return)) {
-						tmp.csem.quantiles[[j]] <- data.table(panel.data[["Panel_Data"]][,c("ID", names(additional.vnames.to.return))], key="ID")[tmp.csem.quantiles[[j]]]
+						tmp.csem.quantiles[[j]] <- data.table(panel.data[["Panel_Data"]][,c("ID", names(additional.vnames.to.return)), with=FALSE], key="ID")[tmp.csem.quantiles[[j]]]
 						setnames(tmp.csem.quantiles[[j]], names(additional.vnames.to.return), unlist(additional.vnames.to.return))
 					}
 					for (k in seq(calculate.confidence.intervals[['simulation.iterations']])) { 
@@ -1488,7 +1488,7 @@ function(panel.data,         ## REQUIRED
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & simex.tf) setnames(quantile.data, "SGP_SIMEX", "SGP_SIMEX_BASELINE")
 
 		if (!is.null(additional.vnames.to.return)) {
-			quantile.data <- data.table(panel.data[["Panel_Data"]][,c("ID", names(additional.vnames.to.return))], key="ID")[quantile.data]
+			quantile.data <- data.table(panel.data[["Panel_Data"]][,c("ID", names(additional.vnames.to.return)), with=FALSE], key="ID")[quantile.data]
 			setnames(quantile.data, names(additional.vnames.to.return), unlist(additional.vnames.to.return))
 		}
 
