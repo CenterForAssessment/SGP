@@ -35,6 +35,7 @@ function(sgp_object,
 		lag.increment <- 0
 		my.target.type <- "sgp.projections"
 		my.content.areas <- "sgp.projection.content.areas"
+		my.content.areas.label <- "sgp.projection.content.areas"
 		my.grade.sequences <- "sgp.projection.grade.sequences"
 		my.panel.years.lags <- "sgp.projection.panel.years.lags"
 	}
@@ -44,6 +45,7 @@ function(sgp_object,
 		lag.increment <- 0
 		my.target.type <- "sgp.projections.baseline"
 		my.content.areas <- "sgp.projection.baseline.content.areas"
+		my.content.areas.label <- "sgp.projection.baseline.content.areas"
 		my.grade.sequences <- "sgp.projection.baseline.grade.sequences"
 		my.panel.years.lags <- "sgp.projection.baseline.panel.years.lags"
 	}
@@ -52,7 +54,8 @@ function(sgp_object,
 		baseline.tf <- FALSE
 		lag.increment <- 1
 		my.target.type <- "sgp.projections.lagged"
-		my.content.areas <- "sgp.content.areas"
+		my.content.areas <- "sgp.projections.content.areas"
+		my.content.areas.label <- "sgp.content.areas"
 		my.grade.sequences <- "sgp.projection.grade.sequences"
 		my.panel.years.lags <- "sgp.projection.panel.years.lags"
 	}
@@ -61,7 +64,8 @@ function(sgp_object,
 		baseline.tf <- TRUE
 		lag.increment <- 1
 		my.target.type <- "sgp.projections.lagged"
-		my.content.areas <- "sgp.content.areas"
+		my.content.areas <- "sgp.projections.baseline.content.areas"
+		my.content.areas.label <- "sgp.content.areas"
 		my.grade.sequences <- "sgp.projection.baseline.grade.sequences"
 		my.panel.years.lags <- "sgp.projection.baseline.panel.years.lags"
 	}
@@ -105,7 +109,7 @@ function(sgp_object,
 						Panel_Data=getPanelData(tmp_sgp_data_for_analysis, state=state, my.target.type, sgp.iter, sgp.targets=sgp.targets), 
 						Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]], 
 						Knots_Boundaries=getKnotsBoundaries(sgp.iter, state, my.target.type)),
-					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[[my.content.areas]], 1), 
+					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[[my.content.areas.label]], 1), 
 						my.extra.label=my.extra.label),
 					use.my.coefficient.matrices=list(my.year=if (baseline.tf) "BASELINE" else tail(sgp.iter[["sgp.panel.years"]], 1), 
 						my.subject=tail(sgp.iter[[my.content.areas]], 1)), 
@@ -138,7 +142,7 @@ function(sgp_object,
 						Panel_Data=getPanelData(tmp_sgp_data_for_analysis, state=state, my.target.type, sgp.iter, sgp.targets=sgp.targets), 
 						Coefficient_Matrices=tmp_sgp_object[['Coefficient_Matrices']], 
 						Knots_Boundaries=getKnotsBoundaries(sgp.iter, state, my.target.type)),
-					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[[my.content.areas]], 1),
+					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[[my.content.areas.label]], 1),
 						my.extra.label=my.extra.label),
 					use.my.coefficient.matrices=list(my.year=if (baseline.tf) "BASELINE" else tail(sgp.iter[["sgp.panel.years"]], 1), 
 						my.subject=tail(sgp.iter[[my.content.areas]], 1)), 
@@ -172,7 +176,7 @@ function(sgp_object,
 							Panel_Data=getPanelData(tmp_sgp_data_for_analysis, state=state, my.target.type, sgp.iter, sgp.targets=sgp.targets), 
 							Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]], 
 							Knots_Boundaries=getKnotsBoundaries(sgp.iter, state, my.target.type)),
-						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[[my.content.areas]], 1), 
+						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[[my.content.areas.label]], 1), 
 							my.extra.label=my.extra.label),
 						use.my.coefficient.matrices=list(my.year=if (baseline.tf) "BASELINE" else tail(sgp.iter[["sgp.panel.years"]], 1), 
 							my.subject=tail(sgp.iter[[my.content.areas]], 1)), 
@@ -219,7 +223,7 @@ function(sgp_object,
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[[my.content.areas]], 1), 
 						my.extra.label=my.extra.label),
 					use.my.coefficient.matrices=list(my.year=if (baseline.tf) "BASELINE" else tail(sgp.iter[["sgp.panel.years"]], 1), 
-						my.subject=tail(sgp.iter[[my.content.areas]], 1)), 
+						my.subject=tail(sgp.iter[[my.content.areas.label]], 1)), 
 					use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[[my.content.areas]], 1)),
 					performance.level.cutscores=state,
 					max.forward.progression.years=sgp.iter[['sgp.projections.max.forward.progression.years']],
