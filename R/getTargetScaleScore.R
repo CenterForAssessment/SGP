@@ -52,17 +52,16 @@ function(sgp_object,
 		baseline.tf <- FALSE
 		lag.increment <- 1
 		my.target.type <- "sgp.projections.lagged"
-		my.content.areas <- "sgp.projection.content.areas"
+		my.content.areas <- "sgp.content.areas"
 		my.grade.sequences <- "sgp.projection.grade.sequences"
 		my.panel.years.lags <- "sgp.projection.panel.years.lags"
 	}
-
 	if (target.type=="sgp.projections.lagged.baseline") {
 		my.extra.label <- "LAGGED.BASELINE.TARGET_SCALE_SCORES"
 		baseline.tf <- TRUE
 		lag.increment <- 1
 		my.target.type <- "sgp.projections.lagged"
-		my.content.areas <- "sgp.projection.baseline.content.areas"
+		my.content.areas <- "sgp.content.areas"
 		my.grade.sequences <- "sgp.projection.baseline.grade.sequences"
 		my.panel.years.lags <- "sgp.projection.baseline.panel.years.lags"
 	}
