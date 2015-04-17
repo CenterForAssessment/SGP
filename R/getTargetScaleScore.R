@@ -11,7 +11,6 @@ function(sgp_object,
 	parallel.config=NULL) {
 
 	VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- GRADE <- YEAR_WITHIN <- NULL
-	SGPstateData <- SGPstateData
 
 	### Define variables
 
@@ -27,7 +26,7 @@ function(sgp_object,
 	setkeyv(sgp_object@Data, getKey(sgp_object))
 	years.content_areas.grades <- data.table(unique(data.table(sgp_object@Data[data.table(VALID_CASE="VALID_CASE", sgp.targets, key=getKey(sgp_object))][,
 		c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"), with=FALSE], key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))), key=c("VALID_CASE", "CONTENT_AREA", "YEAR"))[
-		unique(data.table(VALID_CASE="VALID_CASE", tmp.years.content_areas.grades[,c("CONTENT_AREA", "YEAR"), with=FALSE], key=c("VALID_CASE", "CONTENT_AREA", "YEAR")))]
+		unique(data.table(VALID_CASE="VALID_CASE", tmp.years.content_areas.grades[,c("CONTENT_AREA", "YEAR"), with=FALSE], key=c("VALID_CASE", "CONTENT_AREA", "YEAR"))), nomatch=0]
 	
 	if (target.type=="sgp.projections") {
 		my.extra.label <- "TARGET_SCALE_SCORES"
@@ -123,14 +122,14 @@ function(sgp_object,
 					year_lags.progression=sgp.iter[[my.panel.years.lags]],
 					max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[["sgp.panel.years"]], 1), tail(sgp.iter[[my.content.areas]], 1), state),
 					lag.increment=lag.increment,
-					grade.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
-					content_area.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
-					year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
+					grade.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
+					content_area.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
+					year_lags.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
 					percentile.trajectory.values=target.level,
-					return.percentile.trajectory.values=SGPstateData[[state]][["SGP_Configuration"]][["return.percentile.trajectory.values"]],
+					return.percentile.trajectory.values=SGP::SGPstateData[[state]][["SGP_Configuration"]][["return.percentile.trajectory.values"]],
 					return.projection.group.identifier=projection_group.identifier,
-					calculate.sgps=!(tail(sgp.iter[["sgp.panel.years"]], 1) %in% SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[tail(sgp.iter[[my.content.areas]], 1)]]),
-					projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]]))
+					calculate.sgps=!(tail(sgp.iter[["sgp.panel.years"]], 1) %in% SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[tail(sgp.iter[[my.content.areas]], 1)]]),
+					projcuts.digits=SGP::SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]]))
 			}
 			tmp_sgp_object <- mergeSGP(tmp_sgp_object, tmp)
 			rm(tmp)
@@ -156,14 +155,14 @@ function(sgp_object,
 					year_lags.progression=sgp.iter[[my.panel.years.lags]],
 					max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[["sgp.panel.years"]], 1), tail(sgp.iter[[my.content.areas]], 1), state),
 					lag.increment=lag.increment,
-					grade.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
-					content_area.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
-					year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
+					grade.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
+					content_area.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
+					year_lags.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
 					percentile.trajectory.values=target.level,
-					return.percentile.trajectory.values=SGPstateData[[state]][["SGP_Configuration"]][["return.percentile.trajectory.values"]],
+					return.percentile.trajectory.values=SGP::SGPstateData[[state]][["SGP_Configuration"]][["return.percentile.trajectory.values"]],
 					return.projection.group.identifier=projection_group.identifier,
-					calculate.sgps=!(tail(sgp.iter[['sgp.panel.years']], 1) %in% SGPstateData[[state]][['Assessment_Program_Information']][['Scale_Change']][[tail(sgp.iter[['sgp.content.areas']], 1)]]),
-					projcuts.digits=SGPstateData[[state]][['SGP_Configuration']][['projcuts.digits']]))
+					calculate.sgps=!(tail(sgp.iter[['sgp.panel.years']], 1) %in% SGP::SGPstateData[[state]][['Assessment_Program_Information']][['Scale_Change']][[tail(sgp.iter[['sgp.content.areas']], 1)]]),
+					projcuts.digits=SGP::SGPstateData[[state]][['SGP_Configuration']][['projcuts.digits']]))
 
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
 					rm(tmp)
@@ -190,14 +189,14 @@ function(sgp_object,
 						year_lags.progression=sgp.iter[[my.panel.years.lags]],
 						max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[["sgp.panel.years"]], 1), tail(sgp.iter[[my.content.areas]], 1), state),
 						lag.increment=lag.increment,
-						grade.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
-						content_area.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
-						year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
+						grade.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
+						content_area.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
+						year_lags.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
 						percentile.trajectory.values=target.level,
-						return.percentile.trajectory.values=SGPstateData[[state]][["SGP_Configuration"]][["return.percentile.trajectory.values"]],
+						return.percentile.trajectory.values=SGP::SGPstateData[[state]][["SGP_Configuration"]][["return.percentile.trajectory.values"]],
 						return.projection.group.identifier=projection_group.identifier,
-						calculate.sgps=!(tail(sgp.iter[["sgp.panel.years"]], 1) %in% SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[tail(sgp.iter[[my.content.areas]], 1)]]),
-						projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]]),
+						calculate.sgps=!(tail(sgp.iter[["sgp.panel.years"]], 1) %in% SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[tail(sgp.iter[[my.content.areas]], 1)]]),
+						projcuts.digits=SGP::SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]]),
 						mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -234,14 +233,14 @@ function(sgp_object,
 					year_lags.progression=sgp.iter[[my.panel.years.lags]],
 					max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[["sgp.panel.years"]], 1), tail(sgp.iter[[my.content.areas]], 1), state),
 					lag.increment=lag.increment,
-					grade.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
-					content_area.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
-					year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
+					grade.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
+					content_area.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
+					year_lags.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
 					percentile.trajectory.values=target.level,
-					return.percentile.trajectory.values=SGPstateData[[state]][["SGP_Configuration"]][["return.percentile.trajectory.values"]],
+					return.percentile.trajectory.values=SGP::SGPstateData[[state]][["SGP_Configuration"]][["return.percentile.trajectory.values"]],
 					return.projection.group.identifier=projection_group.identifier,
-					calculate.sgps=!(tail(sgp.iter[["sgp.panel.years"]], 1) %in% SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[tail(sgp.iter[[my.content.areas]], 1)]]),
-					projcuts.digits=SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]])
+					calculate.sgps=!(tail(sgp.iter[["sgp.panel.years"]], 1) %in% SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[tail(sgp.iter[[my.content.areas]], 1)]]),
+					projcuts.digits=SGP::SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]])
 			} else {
 				message(paste("\n\t\tNOTE: No student records &/or no prior data for scale score target student growth projections:", tail(sgp.iter[["sgp.panel.years"]], 1),
 					tail(sgp.iter[[my.content.areas]], 1), "with", paste(head(sgp.iter[[my.content.areas]], -1), collapse=", "), "priors.\n"))
