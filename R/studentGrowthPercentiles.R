@@ -243,7 +243,8 @@ function(panel.data,         ## REQUIRED
 		TMP_TF <- SGP <- SGP_NEW <- .EACHI <- NULL
 		tmp <- data.table(ID=rep(seq(dim(data1)[1]), each=length(taus)+1), TMP_TF=as.vector(t(cbind(data1 < data2, FALSE))))[,which.min(TMP_TF)-1, by=ID][['V1']]
 		if (!is.null(sgp.quantiles.labels)) {
-			return(data.table(SGP=as.integer(tmp), key="SGP")[data.table(SGP=seq(0, length(sgp.quantiles)), SGP_NEW=sgp.quantiles.labels, key="SGP"), SGP:=SGP_NEW, by=.EACHI][['SGP']])
+			setattr(tmp <- as.factor(tmp), "levels", sgp.quantiles.labels)
+			return(as.integer(levels(tmp))[tmp])
 		} else {
 			if (!is.null(sgp.loss.hoss.adjustment)) {
 				my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
