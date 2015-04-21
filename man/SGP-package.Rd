@@ -20,8 +20,8 @@ growth percentile analyses.
 \tabular{ll}{
 Package: \tab SGP\cr
 Type: \tab Package\cr
-Version: \tab 1.3-7.0\cr
-Date: \tab 2015-4-16\cr
+Version: \tab 1.3-7.1\cr
+Date: \tab 2015-4-21\cr
 License: \tab GPL-3\cr
 LazyLoad: \tab yes\cr
 }
@@ -32,7 +32,10 @@ provided in the examples of the \code{\link{studentGrowthPercentiles}} and \code
 
 \author{Damian W. Betebenner \email{dbetebenner@nciea.org}, Adam Van Iwaarden \email{Vaniwaarden@colorado.edu}, Ben Domingue \email{ben.domingue@gmail.com} and Yi Shang \email{shangyi@gmail.com}} 
 
-\references{ 
+\references{
+Shang, Y., VanIwaarden, A., & Betebenner, D. W. (2015). Covariate measurement error correction for Student Growth 
+Percentiles using the SIMEX method. Educational Measurement: Issues and Practice, 34(1):4-14.
+
 Betebenner, D. W. (2012). Growth, standards, and accountability. In G. J. Cizek,
 \emph{Setting Performance Standards: Foundations, Methods & Innovations. 2nd Edition} (pp. 439-450). 
 New York: Routledge.

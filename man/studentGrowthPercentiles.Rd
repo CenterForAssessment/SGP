@@ -206,6 +206,9 @@ out specific grade progressions using \code{grade.progression}. Additional uses 
 }
 
 \references{
+Shang, Y., VanIwaarden, A., & Betebenner, D. W. (2015). Covariate measurement error correction for Student Growth 
+Percentiles using the SIMEX method. Educational Measurement: Issues and Practice, 34(1):4-14.
+
 Betebenner, D. W. (2012). Growth, standards, and accountability. In G. J. Cizek,
 \emph{Setting Performance Standards: Foundations, Methods & Innovations. 2nd Edition} (pp. 439-450).
 New York: Routledge.
