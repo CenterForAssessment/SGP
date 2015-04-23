@@ -636,7 +636,7 @@ function(panel.data,	## REQUIRED
  
 	if (!missing(panel.data.vnames)) {
 		if (!all(panel.data.vnames %in% names(panel.data[["Panel_Data"]]))) {
-			tmp.messages <- c(tmp.messages, "\t\tNOTE: Supplied 'panel.data.vnames' are not all in the supplied 'Panel_Data'.\n\t\tAnalyses will continue with the variables contained in both Panel_Data and those provided in the supplied argument 'panel.data.vnames'.\n")
+			tmp.messages <- c(tmp.messages, "\t\tNOTE: Supplied 'panel.data.vnames' are not all in the supplied 'Panel_Data'.\n\t\t\tAnalyses will utilize the variables contained in both Panel_Data and those provided in the supplied argument 'panel.data.vnames'.\n")
 		}
 		ss.data <- panel.data[["Panel_Data"]][,intersect(panel.data.vnames, names(panel.data[["Panel_Data"]])), with=FALSE]
 	} else {
@@ -649,7 +649,7 @@ function(panel.data,	## REQUIRED
 	num.panels <- (dim(ss.data)[2]-1)/2
 
 	if (length(grade.progression) > num.panels) {
-		tmp.messages <- c(tmp.messages, paste("\t\tNOTE: Supplied 'grade progression', grade.progression=c(", paste(grade.progression, collapse=","), "), exceeds number of panels (", num.panels, ") in provided data.\n\t\t Analyses will utilize maximum number of priors supplied by the data.\n", sep=""))
+		tmp.messages <- c(tmp.messages, paste("\t\tNOTE: Supplied 'grade progression', grade.progression=c(", paste(grade.progression, collapse=","), "), exceeds number of panels (", num.panels, ") in provided data.\n\t\t\tAnalyses will utilize maximum number of priors supplied by the data.\n", sep=""))
 		grade.progression <- tail(grade.progression, num.panels)
 		if (!is.null(content_area.progression)) content_area.progression <- tail(content_area.progression, length(grade.progression))
 		if (!is.null(year_lags.progression)) year_lags.progression <- tail(year_lags.progression, length(grade.progression)-1)
