@@ -309,7 +309,7 @@ function(panel.data,	## REQUIRED
 									 '[[', 1), function(x) state.iter %in% x))
 								cuku.level.to.get <- which.max(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscore_Information"]][[
 									'State_Levels']][[tmp.state.level]][["Levels"]]=="Proficient")-1
-								tmp.traj[which(STATE==state.iter), tmp.target.name := rep(tmp.cutscores.by.grade[cuku.level.to.get], sum(tmp.traj[['STATE']]==state.iter)/2), with=FALSE]
+								tmp.traj[which(STATE==state.iter), tmp.target.name:=tmp.cutscores.by.grade[cuku.level.to.get], with=FALSE]
 							}
 							if (length(percentile.trajectory.values)==2) {
 								tmp.state.level <- which(sapply(lapply(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscore_Information"]][['State_Levels']],
@@ -318,11 +318,11 @@ function(panel.data,	## REQUIRED
 									'State_Levels']][[tmp.state.level]][["Levels"]]=="Proficient")-1
 								musu.level.to.get <- which.max(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscore_Information"]][[
 									'State_Levels']][[tmp.state.level]][["Levels"]]=="Proficient")
-								tmp.traj[which(STATE==state.iter), tmp.target.name := rep(c(tmp.cutscores.by.grade[cuku.level.to.get], 
-									tmp.cutscores.by.grade[musu.level.to.get]), sum(tmp.traj[['STATE']]==state.iter)/2), with=FALSE]
+								tmp.traj[which(STATE==state.iter), 
+									tmp.target.name:=c(tmp.cutscores.by.grade[cuku.level.to.get], tmp.cutscores.by.grade[musu.level.to.get]),with=FALSE]
 							}
 						}
-						tmp.traj[, STATE := NULL]
+						tmp.traj[,STATE:=NULL]
 					} else {
 						my.cutscore.year <- get.my.cutscore.state.year.sgprojection(Cutscores, sgp.labels$my.subject, yearIncrement(sgp.labels$my.year, 1, lag.increment), my.state=NA)
 						tmp.cutscores.by.grade <- tmp.cutscores[[my.cutscore.year]][[paste("GRADE_", grade.projection.sequence[1], sep="")]]
@@ -636,7 +636,7 @@ function(panel.data,	## REQUIRED
  
 	if (!missing(panel.data.vnames)) {
 		if (!all(panel.data.vnames %in% names(panel.data[["Panel_Data"]]))) {
-			tmp.messages <- c(tmp.messages, "\t\tNOTE: Supplied 'panel.data.vnames' are not all in the supplied 'Panel_Data'.\n\t\tAnalyses will continue with the variables contained in both Panel_Data and those provided in the supplied argument 'panel.data.vnames'.\n")
+			tmp.messages <- c(tmp.messages, "\t\tNOTE: Supplied 'panel.data.vnames' are not all in the supplied 'Panel_Data'.\n\t\t\tAnalyses will utilize the variables contained in both Panel_Data and those provided in the supplied argument 'panel.data.vnames'.\n")
 		}
 		ss.data <- panel.data[["Panel_Data"]][,intersect(panel.data.vnames, names(panel.data[["Panel_Data"]])), with=FALSE]
 	} else {
@@ -649,7 +649,7 @@ function(panel.data,	## REQUIRED
 	num.panels <- (dim(ss.data)[2]-1)/2
 
 	if (length(grade.progression) > num.panels) {
-		tmp.messages <- c(tmp.messages, paste("\t\tNOTE: Supplied 'grade progression', grade.progression=c(", paste(grade.progression, collapse=","), "), exceeds number of panels (", num.panels, ") in provided data.\n\t\t Analyses will utilize maximum number of priors supplied by the data.\n", sep=""))
+		tmp.messages <- c(tmp.messages, paste("\t\tNOTE: Supplied 'grade progression', grade.progression=c(", paste(grade.progression, collapse=","), "), exceeds number of panels (", num.panels, ") in provided data.\n\t\t\tAnalyses will utilize maximum number of priors supplied by the data.\n", sep=""))
 		grade.progression <- tail(grade.progression, num.panels)
 		if (!is.null(content_area.progression)) content_area.progression <- tail(content_area.progression, length(grade.progression))
 		if (!is.null(year_lags.progression)) year_lags.progression <- tail(year_lags.progression, length(grade.progression)-1)
