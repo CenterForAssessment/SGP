@@ -282,8 +282,9 @@ simexSGP <- function(
 					if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
 						mtx.subset <- simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] # Save on memory copying to R SNOW workers
 						environment(.get.percentile.predictions) <- environment()
+						environment(.smooth.isotonize.row) <- environment()
 						fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- 
-							foreach(z=iter(sim.iters), .combine="+", .export=c('.get.percentile.predictions', 'tmp.gp'),
+							foreach(z=iter(sim.iters), .combine="+", .export=c('tmp.gp', 'k', 'taus'),
 								.options.multicore=par.start$foreach.options) %dopar% { # .options.snow=par.start$foreach.options
 									as.vector(.get.percentile.predictions(my.matrix=mtx.subset[[z]], my.data=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
 										paste("select ", paste(c("ID", paste('prior_', k:1, sep=""), "final_yr"), collapse=", "), " from simex_data where b in ('",z,"')", sep="")))/B)

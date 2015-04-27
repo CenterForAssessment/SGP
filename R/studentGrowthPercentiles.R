@@ -54,7 +54,7 @@ function(panel.data,         ## REQUIRED
 	###
 	##########################################################
 
-	.smooth.isotonize.row <- function(x, iso=isotonize) {
+	.smooth.isotonize.row <- function(x, iso=isotonize, sgp.loss.hoss.adjustment) {
 		if (!is.null(sgp.loss.hoss.adjustment)) {
 			my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
 			bnd <- eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['loss.hoss_", tmp.last, "']]", sep="")))
@@ -233,7 +233,7 @@ function(panel.data,         ## REQUIRED
 			mod <- paste(mod, ", bs(my.data[[", dim(my.data)[2]-k, "]], knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
 		}	
 		tmp <- eval(parse(text=paste(int, substring(mod, 2), ") %*% my.matrix", sep="")))
-		return(round(matrix(data.table(ID=rep(seq(dim(tmp)[1]), each=length(taus)), SCORE=as.vector(t(tmp)))[,.smooth.isotonize.row(SCORE), by=ID][['V1']], 
+		return(round(matrix(data.table(ID=rep(seq(dim(tmp)[1]), each=length(taus)), SCORE=as.vector(t(tmp)))[,.smooth.isotonize.row(SCORE, isotonize, sgp.loss.hoss.adjustment), by=ID][['V1']], 
 				ncol=length(taus), byrow=TRUE), digits=5))
 	}
 
