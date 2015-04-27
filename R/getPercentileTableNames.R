@@ -7,14 +7,12 @@ function(sgp_object,
 	sgp.percentiles.equated=FALSE,
 	use.cohort.for.baseline.when.missing=NULL) {
 
-	SGPstateData <- SGPstateData
-
         if (is.null(use.cohort.for.baseline.when.missing)) {
-                if (!is.null(state) && is.null(SGPstateData[[state]][["SGP_Configuration"]][["use.cohort.for.baseline.when.missing"]])) {
+                if (!is.null(state) && is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["use.cohort.for.baseline.when.missing"]])) {
                         use.cohort.for.baseline.when.missing <- FALSE
                 } 
-                if (!is.null(state) && !is.null(SGPstateData[[state]][["SGP_Configuration"]][["use.cohort.for.baseline.when.missing"]])) {
-                        use.cohort.for.baseline.when.missing <- SGPstateData[[state]][["SGP_Configuration"]][["use.cohort.for.baseline.when.missing"]]
+                if (!is.null(state) && !is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["use.cohort.for.baseline.when.missing"]])) {
+                        use.cohort.for.baseline.when.missing <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["use.cohort.for.baseline.when.missing"]]
                 }
         }
 

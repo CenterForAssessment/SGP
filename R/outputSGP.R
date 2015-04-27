@@ -27,8 +27,6 @@ function(sgp_object,
 	names.type <- names.provided <- names.output <- names.sgp <- STATE_ENROLLMENT_STATUS <- EMH_LEVEL <- STATE_ASSIGNED_ID <- .N <- TRANSFORMED_SCALE_SCORE <- GROUP <- STATE <- YEAR_WITHIN <- NULL
 	DISADVANTAGED_STATUS <- SPECIAL_EDUCATION_STATUS <- ELL_STATUS <- HLS_CODE <- IEP_CODE <- LANGUAGE_PROFICIENCY <- GIFTED_CODE <- FRL_CODE <- STUDENT_GROWTH_ID <- MIDDLE_NAME <- NULL
 	OCTOBER_ENROLLMENT_STATUS <- NULL
-	SGPstateData <- SGPstateData
-	randomNames <- randomNames
 
 	### Create state (if missing) from sgp_object (if possible)
 
@@ -50,13 +48,13 @@ function(sgp_object,
 			subset(sgp_object@Names, names.type=="demographic" & names.output==TRUE, select=names.sgp, drop=TRUE))
 	}
 
-	if (!is.null(SGPstateData[[state]][['SGP_Configuration']][['outputSGP.pass.through.variables']]) & 
-		all(SGPstateData[[state]][['SGP_Configuration']][['outputSGP.pass.through.variables']] %in% names(sgp_object@Data))) {
-			outputSGP.pass.through.variables <- SGPstateData[[state]][['SGP_Configuration']][['outputSGP.pass.through.variables']]
+	if (!is.null(SGP::SGPstateData[[state]][['SGP_Configuration']][['outputSGP.pass.through.variables']]) & 
+		all(SGP::SGPstateData[[state]][['SGP_Configuration']][['outputSGP.pass.through.variables']] %in% names(sgp_object@Data))) {
+			outputSGP.pass.through.variables <- SGP::SGPstateData[[state]][['SGP_Configuration']][['outputSGP.pass.through.variables']]
 	}
 
-	if (!is.null(SGPstateData[[state]][['SGP_Configuration']][['outputSGP.translate.names']])) {
-		outputSGP.translate.names <- SGPstateData[[state]][['SGP_Configuration']][['outputSGP.translate.names']]
+	if (!is.null(SGP::SGPstateData[[state]][['SGP_Configuration']][['outputSGP.translate.names']])) {
+		outputSGP.translate.names <- SGP::SGPstateData[[state]][['SGP_Configuration']][['outputSGP.translate.names']]
 	}
 
 	if (is.null(sgp_object@Names)) {
@@ -87,9 +85,9 @@ function(sgp_object,
 		names.in.data <- which(sgp_object@Names[['names.sgp']] %in% names(sgp_object@Data))
 		output.data <- copy(sgp_object@Data)
 		if (outputSGP.translate.names) setnames(output.data, sgp_object@Names[['names.sgp']][names.in.data], sgp_object@Names[['names.provided']][names.in.data])
-		if (!is.null(SGPstateData[[state]][['SGP_Configuration']][['output.column.order']][['SGP_Data_LONG']])) {
-			output.column.order <- c(intersect(SGPstateData[[state]][['SGP_Configuration']][['output.column.order']][['SGP_Data_LONG']], names(output.data)),
-						setdiff(names(output.data), SGPstateData[[state]][['SGP_Configuration']][['output.column.order']][['SGP_Data_LONG']]))
+		if (!is.null(SGP::SGPstateData[[state]][['SGP_Configuration']][['output.column.order']][['SGP_Data_LONG']])) {
+			output.column.order <- c(intersect(SGP::SGPstateData[[state]][['SGP_Configuration']][['output.column.order']][['SGP_Data_LONG']], names(output.data)),
+						setdiff(names(output.data), SGP::SGPstateData[[state]][['SGP_Configuration']][['output.column.order']][['SGP_Data_LONG']]))
 			setcolorder(output.data, output.column.order)
 		}
 		assign(paste(tmp.state, "SGP_LONG_Data", sep="_"), output.data)
@@ -143,9 +141,9 @@ function(sgp_object,
 		names.in.data <- which(sgp_object@Names[['names.sgp']] %in% names(sgp_object@Data))
 		output.data.final.year <- subset(sgp_object@Data, YEAR==final.year)
 		if (outputSGP.translate.names) setnames(output.data.final.year, sgp_object@Names[['names.sgp']][names.in.data], sgp_object@Names[['names.provided']][names.in.data])
-		if (!is.null(SGPstateData[[state]][['SGP_Configuration']][['output.column.order']][['SGP_Data_LONG']])) {
-			output.column.order <- c(intersect(SGPstateData[[state]][['SGP_Configuration']][['output.column.order']][['SGP_Data_LONG']], names(output.data.final.year)),
-						setdiff(names(output.data.final.year), SGPstateData[[state]][['SGP_Configuration']][['output.column.order']][['SGP_Data_LONG']]))
+		if (!is.null(SGP::SGPstateData[[state]][['SGP_Configuration']][['output.column.order']][['SGP_Data_LONG']])) {
+			output.column.order <- c(intersect(SGP::SGPstateData[[state]][['SGP_Configuration']][['output.column.order']][['SGP_Data_LONG']], names(output.data.final.year)),
+						setdiff(names(output.data.final.year), SGP::SGPstateData[[state]][['SGP_Configuration']][['output.column.order']][['SGP_Data_LONG']]))
 			setcolorder(output.data.final.year, output.column.order)
 		}
 		assign(paste(tmp.state, "SGP_LONG_Data", final.year, sep="_"), output.data.final.year)
@@ -323,10 +321,10 @@ function(sgp_object,
 
 		## Create group variable names
 
-		if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["output.groups"]])) {
-			output.groups.num <- which(!SGPstateData[[state]][["SGP_Configuration"]][["output.groups"]]==c("DISTRICT", "SCHOOL"))
+		if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["output.groups"]])) {
+			output.groups.num <- which(!SGP::SGPstateData[[state]][["SGP_Configuration"]][["output.groups"]]==c("DISTRICT", "SCHOOL"))
 			output.groups.old <- c("DISTRICT", "SCHOOL")[output.groups.num]
-			output.groups.new <- SGPstateData[[state]][["SGP_Configuration"]][["output.groups"]][output.groups.num]
+			output.groups.new <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["output.groups"]][output.groups.num]
 			setnames(sgp_object@Data, c(paste(output.groups.old, "NUMBER", sep="_"), paste(output.groups.old, "ENROLLMENT_STATUS", sep="_")), 
 				c(paste(output.groups.old, "NUMBER_OLD", sep="_"), paste(output.groups.old, "ENROLLMENT_STATUS_OLD", sep="_")))
 			setnames(sgp_object@Data, paste(output.groups.new, "NUMBER", sep="_"), paste(output.groups.old, "NUMBER", sep="_"))
@@ -466,8 +464,8 @@ function(sgp_object,
 			setkey(tmp.dt, ID)
 			tmp.dt <- tmp.dt[!duplicated(tmp.dt),]
 
-			tmp.dt[,LAST_NAME:=randomNames(gender=tmp.dt$GENDER, ethnicity=tmp.dt$ETHNICITY, which.names="last")]
-			tmp.dt[,FIRST_NAME:=randomNames(gender=tmp.dt$GENDER, ethnicity=tmp.dt$ETHNICITY, which.names="first")]
+			tmp.dt[,LAST_NAME:=randomNames::randomNames(gender=tmp.dt$GENDER, ethnicity=tmp.dt$ETHNICITY, which.names="last")]
+			tmp.dt[,FIRST_NAME:=randomNames::randomNames(gender=tmp.dt$GENDER, ethnicity=tmp.dt$ETHNICITY, which.names="first")]
 
 			names.dt <- tmp.dt[,list(ID, LAST_NAME, FIRST_NAME)]
 			setkey(names.dt, ID)
@@ -729,7 +727,7 @@ function(sgp_object,
 			dir.create(file.path(outputSGP.directory, "RLI", "SGPercentiles"), recursive=TRUE, showWarnings=FALSE)
 
 			if (!is.null(outputSGP.pass.through.variables)) {
-				output.column.order <- c(SGPstateData$RLI$SGP_Configuration$output.column.order$SGPercentiles, outputSGP.pass.through.variables)
+				output.column.order <- c(SGP::SGPstateData$RLI$SGP_Configuration$output.column.order$SGPercentiles, outputSGP.pass.through.variables)
 				tmp.dt <- sgp_object@Data[,c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", outputSGP.pass.through.variables), with=FALSE][
 					data.table(
 						VALID_CASE="VALID_CASE", 
@@ -740,7 +738,7 @@ function(sgp_object,
 				tmp.dt <- tmp.dt[,output.column.order, with=FALSE]
 				write.table(tmp.dt, file=file.path(outputSGP.directory, "RLI", "SGPercentiles", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
 			} else {
-				output.column.order <- SGPstateData$RLI$SGP_Configuration$output.column.order$SGPercentiles
+				output.column.order <- SGP::SGPstateData$RLI$SGP_Configuration$output.column.order$SGPercentiles
 				if (any(!output.column.order %in% names(tmp.dt))) tmp.dt[,output.column.order[!output.column.order %in% names(tmp.dt)]:=as.numeric(NA), with=FALSE]
 				tmp.dt <- tmp.dt[,output.column.order, with=FALSE]
 				write.table(tmp.dt, file=file.path(outputSGP.directory, "RLI", "SGPercentiles", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
@@ -771,7 +769,7 @@ function(sgp_object,
 
 		slot.data <- copy(sgp_object@Data)
 		tmp.unique.states <- sort(unique(slot.data$STATE))
-		tmp.unique.states <- intersect(tmp.unique.states, SGPstateData[["RLI"]][["Achievement"]][["Cutscore_Information"]][['Cutscore_States']])
+		tmp.unique.states <- intersect(tmp.unique.states, SGP::SGPstateData[["RLI"]][["Achievement"]][["Cutscore_Information"]][['Cutscore_States']])
 
 		for (target.level in c("CATCH_UP_KEEP_UP", "MOVE_UP_STAY_UP")) {
 			for (state.iter in tmp.unique.states) {
@@ -801,13 +799,13 @@ function(sgp_object,
 						tmp.table[,intersect(names(slot.data), c("CATCH_UP_KEEP_UP_STATUS_INITIAL_CURRENT", "MOVE_UP_STAY_UP_STATUS_INITIAL_CURRENT")) := slot.data[tmp.index][,
 							intersect(names(slot.data), c("CATCH_UP_KEEP_UP_STATUS_INITIAL_CURRENT", "MOVE_UP_STAY_UP_STATUS_INITIAL_CURRENT")), with=FALSE]][,!c("VALID_CASE", "CONTENT_AREA", "YEAR"), with=FALSE]
 				}
-				output.column.order <- SGPstateData[['RLI']][['SGP_Configuration']][['output.column.order']][['SGProjection']]
+				output.column.order <- SGP::SGPstateData[['RLI']][['SGP_Configuration']][['output.column.order']][['SGProjection']]
 			} else {
 				if (length(grep("6_TIME", names(sgp_object@SGP[['SGProjections']][[names.iter]]))) > 0) {
-					output.column.order <- SGPstateData[['RLI']][['SGP_Configuration']][['output.column.order']][['SGProjection_Target_6_TIME']]
+					output.column.order <- SGP::SGPstateData[['RLI']][['SGP_Configuration']][['output.column.order']][['SGProjection_Target_6_TIME']]
 				}
 				if (length(grep("9_TIME", names(sgp_object@SGP[['SGProjections']][[names.iter]]))) > 0) {
-					output.column.order <- SGPstateData[['RLI']][['SGP_Configuration']][['output.column.order']][['SGProjection_Target_9_TIME']]
+					output.column.order <- SGP::SGPstateData[['RLI']][['SGP_Configuration']][['output.column.order']][['SGProjection_Target_9_TIME']]
 				}
 			}
 

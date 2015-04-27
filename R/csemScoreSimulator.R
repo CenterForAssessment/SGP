@@ -10,14 +10,13 @@ function(
 	round=NULL) {
 
 	GRADE <- CONTENT_AREA <- YEAR <- NULL
-	SGPstateData <- SGPstateData
 
 	### Define relevant variables
 
 	if (is.null(round)) round <- 0.01
 	if (is.null(distribution)) distribution <- "Normal"
 	if (!is.null(state)) {
-		min.max <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]][[paste("loss.hoss_", grade, sep="")]]
+		min.max <- SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]][[paste("loss.hoss_", grade, sep="")]]
 	} else {
 		min.max <- range(scale_scores, na.rm=TRUE)
 	}
@@ -26,10 +25,10 @@ function(
 	### Create scale score dependent CSEMs
 
 	if (!is.null(state)) {
-		if ("YEAR" %in% names(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
-			Interpolation_Data <- subset(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], GRADE==grade & CONTENT_AREA==content_area & YEAR==year)
+		if ("YEAR" %in% names(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
+			Interpolation_Data <- subset(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], GRADE==grade & CONTENT_AREA==content_area & YEAR==year)
 		} else {
-			Interpolation_Data <- subset(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], GRADE==grade & CONTENT_AREA==content_area)
+			Interpolation_Data <- subset(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], GRADE==grade & CONTENT_AREA==content_area)
 		}
 		tmp.omega <- Interpolation_Function(Interpolation_Data[['SCALE_SCORE']], Interpolation_Data[['SCALE_SCORE_CSEM']])(scale_scores)
 	}

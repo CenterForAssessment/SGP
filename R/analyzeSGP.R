@@ -39,8 +39,7 @@ function(sgp_object,
 	message(paste("\nStarted analyzeSGP", date()))
 
 	VALID_CASE <- CONTENT_AREA <- YEAR <- GRADE <- ID <- YEAR_WITHIN <- .EACHI <- SCALE_SCORE <- NULL
-	SGPstateData <- SGPstateData
-
+	SGPstateData <- SGP::SGPstateData ### Needed due to possible assignment of values to SGPstateData
 
 	###
 	### Create relevant analyzeSGP variables

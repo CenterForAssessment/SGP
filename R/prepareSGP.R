@@ -6,13 +6,13 @@ function(data,
 	create.additional.variables=TRUE,
 	fix.duplicates="keep.all") {
 
+	VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- ID <- GRADE <- SCALE_SCORE <- DUPLICATED_CASES <- NULL
+	SGPstateData <- SGP::SGPstateData ### Needed due to possible assignment of values to SGPstateData
+
 	## Print start time
 
 	started.at <- proc.time()
 	message(paste("\nStarted prepareSGP", date()))
-
-	VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- ID <- GRADE <- SCALE_SCORE <- DUPLICATED_CASES <- NULL
-	SGPstateData <- SGPstateData
 
 	## Get state (if possible)
 

@@ -23,39 +23,38 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 	############################################
 
 	CUTLEVEL <- level_1_curve <- NULL ## To prevent R CMD check warnings
-	SGPstateData <- SGPstateData
 
 	if (is.null(Report_Parameters$Assessment_Transition)) {
-		achievement.level.labels <- SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Achievement_Level_Labels"]]
+		achievement.level.labels <- SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Achievement_Level_Labels"]]
 		number.achievement.level.regions <- length(achievement.level.labels)
 	} else {
-		achievement.level.labels <- SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][
-			grep("Achievement_Level_Labels", names(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]]))]
+		achievement.level.labels <- SGP::SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][
+			grep("Achievement_Level_Labels", names(SGP::SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]]))]
 		number.achievement.level.regions <- sapply(achievement.level.labels, length)
 		achievement.level.labels <- unlist(achievement.level.labels, recursive=FALSE)
 		names(achievement.level.labels) <- sapply(strsplit(names(achievement.level.labels), "[.]"), tail, 1)
 	}
-	number.growth.levels <- length(SGPstateData[[Report_Parameters$State]][["Growth"]][["Levels"]])
-	growth.level.labels <- SGPstateData[[Report_Parameters$State]][["Growth"]][["Levels"]]
-	growth.level.cutscores <- SGPstateData[[Report_Parameters$State]][["Growth"]][["Cutscores"]][["Cuts"]]
-	growth.level.cutscores.text <- SGPstateData[[Report_Parameters$State]][["Growth"]][["Cutscores"]][["Labels"]]
+	number.growth.levels <- length(SGP::SGPstateData[[Report_Parameters$State]][["Growth"]][["Levels"]])
+	growth.level.labels <- SGP::SGPstateData[[Report_Parameters$State]][["Growth"]][["Levels"]]
+	growth.level.cutscores <- SGP::SGPstateData[[Report_Parameters$State]][["Growth"]][["Cutscores"]][["Cuts"]]
+	growth.level.cutscores.text <- SGP::SGPstateData[[Report_Parameters$State]][["Growth"]][["Cutscores"]][["Labels"]]
 	if (!is.na(Report_Parameters$Content_Area_Title)) {
-		content.area.label <- SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Content_Areas_Labels"]][[Report_Parameters$Content_Area_Title]]
+		content.area.label <- SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Content_Areas_Labels"]][[Report_Parameters$Content_Area_Title]]
 	} else {
-		content.area.label <- SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Content_Areas_Labels"]][[Report_Parameters$Content_Area]]
+		content.area.label <- SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Content_Areas_Labels"]][[Report_Parameters$Content_Area]]
 	}
 
-	if (!is.null(SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["content_area.projection.sequence"]][[Report_Parameters$Content_Area]])) {
+	if (!is.null(SGP::SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["content_area.projection.sequence"]][[Report_Parameters$Content_Area]])) {
 		grades.content_areas.reported.in.state <- data.frame(
-				GRADE=SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["grade.projection.sequence"]][[Report_Parameters$Content_Area]],
-				YEAR_LAG=c(1, SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[Report_Parameters$Content_Area]]),
-				CONTENT_AREA=SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["content_area.projection.sequence"]][[Report_Parameters$Content_Area]], 
+				GRADE=SGP::SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["grade.projection.sequence"]][[Report_Parameters$Content_Area]],
+				YEAR_LAG=c(1, SGP::SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[Report_Parameters$Content_Area]]),
+				CONTENT_AREA=SGP::SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["content_area.projection.sequence"]][[Report_Parameters$Content_Area]], 
 				stringsAsFactors=FALSE
 			)
 	} else {
 		grades.content_areas.reported.in.state <- data.frame(
-				GRADE=SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Grades_Reported"]][[Report_Parameters$Content_Area]],
-				YEAR_LAG=c(1, diff(as.numeric(SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Grades_Reported"]][[Report_Parameters$Content_Area]]))),
+				GRADE=SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Grades_Reported"]][[Report_Parameters$Content_Area]],
+				YEAR_LAG=c(1, diff(as.numeric(SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Grades_Reported"]][[Report_Parameters$Content_Area]]))),
 				CONTENT_AREA=Report_Parameters$Content_Area, 
 				stringsAsFactors=FALSE
 			)
@@ -63,27 +62,27 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 
 	grades.content_areas.reported.in.state$GRADE_NUMERIC <- (as.numeric(grades.content_areas.reported.in.state$GRADE[2])-1)+c(0, cumsum(tail(grades.content_areas.reported.in.state$YEAR_LAG, -1)))
 
-	test.abbreviation <- SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Abbreviation"]]
-	level.to.get.cuku <- which.max(SGPstateData[[Report_Parameters$State]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")-1
-	level.to.get.musu <- which.max(SGPstateData[[Report_Parameters$State]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")
+	test.abbreviation <- SGP::SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Abbreviation"]]
+	level.to.get.cuku <- which.max(SGP::SGPstateData[[Report_Parameters$State]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")-1
+	level.to.get.musu <- which.max(SGP::SGPstateData[[Report_Parameters$State]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")
 
-	if (identical(SGPstateData[[Report_Parameters$State]][['Assessment_Program_Information']][['Test_Season']], "Fall")) {
-		test.season <- SGPstateData[[Report_Parameters$State]][['Assessment_Program_Information']][['Test_Season']]
+	if (identical(SGP::SGPstateData[[Report_Parameters$State]][['Assessment_Program_Information']][['Test_Season']], "Fall")) {
+		test.season <- SGP::SGPstateData[[Report_Parameters$State]][['Assessment_Program_Information']][['Test_Season']]
 	} else {
 		test.season <- NULL
 	}
 
 	achievement.level.region.colors <- paste("grey", round(seq(62, 91, length=number.achievement.level.regions)), sep="")
 	border.color <- "grey25"
-	if (is.null(SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["arrow.legend.color"]])) {
+	if (is.null(SGP::SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["arrow.legend.color"]])) {
 		arrow.legend.color <- rev(diverge_hcl(number.growth.levels, h = c(180, 40), c = 255, l = c(20, 100)))
 	} else {
-		arrow.legend.color <- SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["arrow.legend.color"]]
+		arrow.legend.color <- SGP::SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["arrow.legend.color"]]
 	}
-	if (is.null(SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["sgp.target.types"]])) {
+	if (is.null(SGP::SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["sgp.target.types"]])) {
 		sgp.target.types <- c("Scale_Score_Targets_CUKU", "Scale_Score_Targets_MUSU", "Scale_Score_Targets_Current_CUKU", "Scale_Score_Targets_Current_MUSU")
 	} else {
-		sgp.target.types <- SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["sgp.target.types"]]
+		sgp.target.types <- SGP::SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["sgp.target.types"]]
 	}
 	missing.data.symbol <- "--"
 	studentGrowthPlot.year.span <- 5
@@ -105,8 +104,8 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		if (identical("sgp.projections.lagged", Report_Parameters[['SGP_Targets']]) | identical("sgp.projections.lagged.baseline", Report_Parameters[['SGP_Targets']])) tmp.target.types <- grep("Current", names(unlist(SGP_Targets)[!is.na(unlist(SGP_Targets))]), value=TRUE, invert=TRUE)
 	}
 
-	if (!is.null(SGPstateData[[Report_Parameters$State]][['SGP_Configuration']][['sgPlot.show.content_area.progression']])) {
-		sgPlot.show.content_area.progression <- SGPstateData[[Report_Parameters$State]][['SGP_Configuration']][['sgPlot.show.content_area.progression']]
+	if (!is.null(SGP::SGPstateData[[Report_Parameters$State]][['SGP_Configuration']][['sgPlot.show.content_area.progression']])) {
+		sgPlot.show.content_area.progression <- SGP::SGPstateData[[Report_Parameters$State]][['SGP_Configuration']][['sgPlot.show.content_area.progression']]
 	} else {
 		if (is.null(Report_Parameters[['Configuration']][['Show_Content_Area_Progression']])) {
 			if (length(unique(Content_Areas[!is.na(Content_Areas)])) > 1 || !all(Content_Areas[!is.na(Content_Areas)]==Report_Parameters$Content_Area)) {
@@ -119,7 +118,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		}
 	}
 
-	if (is.null(SGPstateData[[Report_Parameters$State]][['SGP_Configuration']][['Show_Fan_Cut_Scores']])) {
+	if (is.null(SGP::SGPstateData[[Report_Parameters$State]][['SGP_Configuration']][['Show_Fan_Cut_Scores']])) {
 		show.fan.cutscores <- FALSE
 	} else {
 		show.fan.cutscores <- TRUE
@@ -173,7 +172,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		MU.label <- "Avanzar"
 		SU.label <- "Mantener"
 		target.label <- "Meta"
-		SGP_Levels <- SGPstateData[[Report_Parameters$State]][["Growth"]][["Levels"]][match(SGP_Levels, SGPstateData[[paste(head(unlist(strsplit(Report_Parameters$State, "_")), -1), collapse="_")]][["Growth"]][["Levels"]])]
+		SGP_Levels <- SGP::SGPstateData[[Report_Parameters$State]][["Growth"]][["Levels"]][match(SGP_Levels, SGP::SGPstateData[[paste(head(unlist(strsplit(Report_Parameters$State, "_")), -1), collapse="_")]][["Growth"]][["Levels"]])]
 	}
 
 	if (length(content_area.label.pieces <- strsplit(content.area.label, " ")[[1]])==1) split.content_area.tf <- FALSE else split.content_area.tf <- TRUE
@@ -206,12 +205,12 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 	}
 
 	get.my.cutscore.year <- function(state, content_area, year) {
-		if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area]])) {
+		if (!is.null(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area]])) {
 			return(NA) 
 		} else {
-			year <- tail(sort(c(SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[content_area]], year)), 1)
+			year <- tail(sort(c(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[content_area]], year)), 1)
 			tmp.cutscore.years <- 
-				sapply(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]])[grep(content_area, names(SGPstateData[[state]][["Achievement"]][["Cutscores"]]))], "[.]"), '[', 2)
+				sapply(strsplit(names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]])[grep(content_area, names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]]))], "[.]"), '[', 2)
 			if (year %in% tmp.cutscore.years) {
 				return(year)
 			} else {
@@ -376,8 +375,8 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		year.text <- head(year.text, studentGrowthPlot.year.span)
 		content_area.text <- grade.values$interp.df$CONTENT_AREA[match(gsub("-", "_", year.text), grade.values$years)]
 		content_area.text[is.na(content_area.text)] <- " "
-		for (i in which(content_area.text %in% names(SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Content_Areas_Labels"]]))) {
-			content_area.text[i] <- SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Content_Areas_Labels"]][[content_area.text[i]]]
+		for (i in which(content_area.text %in% names(SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Content_Areas_Labels"]]))) {
+			content_area.text[i] <- SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Content_Areas_Labels"]][[content_area.text[i]]]
 		}
 
 		if (grade.values$increment_for_projection_current > 0) {
@@ -463,9 +462,9 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 	current.year <- year.function(Report_Parameters$Current_Year, 0, 1)
 	xscale.range <- range(low.year,high.year) + c(-0.075, 0.1)*diff(range(low.year,high.year))
 
-	if (Report_Parameters$Content_Area %in% names(SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]])) {
+	if (Report_Parameters$Content_Area %in% names(SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]])) {
 		tmp.range <- 
-			range(head(tail(SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[Report_Parameters$Content_Area]],-1),-1), na.rm=TRUE)
+			range(head(tail(SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[Report_Parameters$Content_Area]],-1),-1), na.rm=TRUE)
 		low.score <- min(cuts.ny1,
 			Plotting_Scale_Scores,
 			tmp.range,

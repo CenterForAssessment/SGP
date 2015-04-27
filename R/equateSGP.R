@@ -6,10 +6,9 @@ function(tmp.data,
 	loss.hoss.correction=TRUE) {
 
 	VALID_CASE <- YEAR <- CONTENT_AREA <- GRADE <- NULL
-	SGPstateData <- SGPstateData
 
 	tmp.list <- list()
-	current.year <- SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]
+	current.year <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]
 	prior.year <- yearIncrement(current.year, -1)
 
 	current.year.data <- tmp.data[VALID_CASE=="VALID_CASE" & YEAR==current.year]
@@ -22,7 +21,7 @@ function(tmp.data,
 
 	get.my.knots.boundaries.path <- function(content_area, year) {
 		tmp.path.knots.boundaries <- paste(content_area, year, sep=".")
-		tmp.knots.boundaries.names <- names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]])
+		tmp.knots.boundaries.names <- names(SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]])
 		tmp.knots.boundaries.years <- sapply(strsplit(tmp.knots.boundaries.names, "[.]"), function(x) x[2])
 		if (any(!is.na(tmp.knots.boundaries.years))) {
 			if (year %in% tmp.knots.boundaries.years) {
@@ -59,9 +58,9 @@ function(tmp.data,
 
 			if (loss.hoss.correction) {
 				tmp.boundaries.new.to.old <- 
-					eval(parse(text=paste("SGPstateData[[state]][['Achievement']][['Knots_Boundaries']]", get.my.knots.boundaries.path(content_area.iter, prior.year), "[['loss.hoss_", grade.iter, "']]", sep="")))
+					eval(parse(text=paste("SGP::SGPstateData[[state]][['Achievement']][['Knots_Boundaries']]", get.my.knots.boundaries.path(content_area.iter, prior.year), "[['loss.hoss_", grade.iter, "']]", sep="")))
 				tmp.boundaries.old.to.new <- 
-					eval(parse(text=paste("SGPstateData[[state]][['Achievement']][['Knots_Boundaries']]", get.my.knots.boundaries.path(content_area.iter, current.year), "[['loss.hoss_", grade.iter, "']]", sep="")))
+					eval(parse(text=paste("SGP::SGPstateData[[state]][['Achievement']][['Knots_Boundaries']]", get.my.knots.boundaries.path(content_area.iter, current.year), "[['loss.hoss_", grade.iter, "']]", sep="")))
 				tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['NEW_TO_OLD']][['concordance']]$yx[
 					tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['NEW_TO_OLD']][['concordance']]$yx < tmp.boundaries.new.to.old[1]] <-
 					tmp.boundaries.new.to.old[1]	

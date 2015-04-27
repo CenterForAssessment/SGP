@@ -15,8 +15,6 @@ function(sgp_object,
 
 	YEAR <- DISTRICT_NUMBER <- SCHOOL_NUMBER <- CONTENT_AREA <- DISTRICT_ENROLLMENT_STATUS <- GRADE <- ETHNICITY <- STUDENTGROUP <- SCHOOL_ENROLLMENT_STATUS <- EMH_LEVEL <- MEDIAN_SGP <- NULL
 	INSTRUCTOR_NUMBER <- INSTRUCTOR_ENROLLMENT_STATUS <- TMP_ID <- NULL
-	SGPstateData <- SGPstateData
-
 
         ## Create state (if NULL) from sgp_object (if possible)
 
@@ -27,8 +25,8 @@ function(sgp_object,
 
 	## Create group variable names
 
-		if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["output.groups"]])) {
-			output.groups <- SGPstateData[[state]][["SGP_Configuration"]][["output.groups"]]
+		if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["output.groups"]])) {
+			output.groups <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["output.groups"]]
 		} else {
 			output.groups <- c("DISTRICT", "SCHOOL")
 		}
@@ -96,11 +94,11 @@ function(sgp_object,
 		}
 
 		get.grade <- function(grade) {
-			if (SGPstateData[[state]][["Assessment_Program_Information"]][["Test_Season"]]=="Fall") grade-1 else grade
+			if (SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Test_Season"]]=="Fall") grade-1 else grade
 		}
 
 		get.year <- function(year) {
-			if (SGPstateData[[state]][["Assessment_Program_Information"]][["Test_Season"]]=="Fall") {
+			if (SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Test_Season"]]=="Fall") {
 				yearIncrement(year, -1)				
 			} else {
 				return(year)
@@ -130,8 +128,8 @@ function(sgp_object,
 
 		if (is.null(years)) years <- unique(sgp_object@Data$YEAR) %w/o% NA
 		if (is.null(content_areas)) content_areas <- unique(sgp_object@Data$CONTENT_AREA) %w/o% NA
-		if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["null.output.string"]])) {
-			my.null.string <- SGPstateData[[state]][["SGP_Configuration"]][["null.output.string"]]
+		if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["null.output.string"]])) {
+			my.null.string <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["null.output.string"]]
 		} else {
 			my.null.string <- "NULL"
 		}

@@ -10,11 +10,7 @@ function(
 	output.format="PDF",
 	color.scale="reds.and.blues") {
 
-	### To prevent R CMD check warnings
-
 	VALID_CASE <- CONTENT_AREA <- YEAR <- SCALE_SCORE_PRIOR <- ACHIEVEMENT_LEVEL_PRIOR <- NULL
-	SGPstateData <- SGPstateData
-
 
         ### Create state (if NULL) from sgp_object (if possible)
 
@@ -164,7 +160,7 @@ function(
 			if (is.null(state)) {
 				tmp.prior.achievement.level.labels <- row.names(tmp.prior.achievement.level.percentages)
 			} else {
-				tmp.prior.achievement.level.labels <- names(SGPstateData[[state]][['Student_Report_Information']][['Achievement_Level_Labels']])
+				tmp.prior.achievement.level.labels <- names(SGP::SGPstateData[[state]][['Student_Report_Information']][['Achievement_Level_Labels']])
 			}
 			tmp.prior.achievement.level.base.points <- cumsum(tmp.prior.achievement.level.percentages)+(seq_along(tmp.prior.achievement.level.percentages)-1)/100
 			tmp.prior.achievement.level.centers <- tmp.prior.achievement.level.base.points-tmp.prior.achievement.level.percentages/2
