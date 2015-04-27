@@ -184,17 +184,13 @@ function(dat,
 	conf.quantiles=NULL,
 	nboot=100) {
 
-	out <- numeric(); CI <- c(NA,NA); SE <- NA
+	CI <- c(NA,NA); SE <- NA
 	if (sum(is.na(dat)) != length(dat)) {
-		for (j in 1:nboot) {
-			foo <- sample(dat,length(dat), replace=TRUE)
-			out[j] <- boot.median(foo)
-		}
+		out <- sapply(seq(nboot), function(x) boot.median(sample(dat, length(dat), replace=TRUE)))
 		if (!is.null(conf.quantiles)) {
-			CI <- round(as.numeric(quantile(out, conf.quantiles, na.rm=TRUE)), digits=1)
+			return(round(as.numeric(quantile(out, conf.quantiles, na.rm=TRUE)), digits=1))
 		} else {
-			SE <- round(as.numeric(sd(out, na.rm=TRUE)), digits=1)
+			return(round(as.numeric(sd(out, na.rm=TRUE)), digits=1))
 		}
 	}
-	if (!is.null(conf.quantiles)) return(CI) else return(SE)
 } ### END boot.sgp function
