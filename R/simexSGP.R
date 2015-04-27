@@ -11,6 +11,29 @@ simexSGP <- function(
 	if (!is.null(state) & !is.null(csem.data.vnames)) stop("SIMEX config can not use both 'state' and 'csem.data.vnames' elements.")
 	if (!is.null(csem.data.vnames) & !is.null(variable)) stop("SIMEX config can not use both 'csem.data.vnames' and 'variable' elements.")
 	
+	rq.mtx <- function(tmp.gp.iter, lam, rqdata) {
+		mod <- character()
+		s4Ks <- "Knots=list("
+		s4Bs <- "Boundaries=list("
+		for (i in seq_along(tmp.gp.iter)) {
+			knt <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['knots_", tmp.gp.iter[i], "']]", sep="")
+			bnd <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['boundaries_", tmp.gp.iter[i], "']]", sep="")
+			mod <- paste(mod, " + bs(prior_", i, ", knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
+			s4Ks <- paste(s4Ks, "knots_", tmp.gp.iter[i], "=", knt, ",", sep="")
+			s4Bs <- paste(s4Bs, "boundaries_", tmp.gp.iter[i], "=", bnd, ",", sep="")
+		}
+		tmp.mtx <-eval(parse(text=paste("rq(final_yr ~", substring(mod,4), ", tau=taus, data = rqdata, method=rq.method)[['coefficients']]", sep="")))
+		
+		tmp.version <- list(SGP_Package_Version=as.character(packageVersion("SGP")), Date_Prepared=date(), Matrix_Information=list(N=dim(rqdata)[1]))
+		
+		eval(parse(text=paste("new('splineMatrix', tmp.mtx, ", substring(s4Ks, 1, nchar(s4Ks)-1), "), ", substring(s4Bs, 1, nchar(s4Bs)-1), "), ",
+													"Content_Areas=list(as.character(tail(content_area.progression, k+1))), ",
+													"Grade_Progression=list(as.character(tail(tmp.slot.gp, k+1))), ",
+													"Time=list(as.character(tail(year.progression, k+1))), ",
+													"Time_Lags=list(as.numeric(tail(year_lags.progression, k))), ",
+													"Version=tmp.version)", sep="")))
+	}
+	
 	fitted <- extrap <- tmp.quantiles.simex <- simex.coef.matrices <- list()
 	loss.hoss <- matrix(nrow=2,ncol=length(tmp.gp)-1)
 	if (!is.null(csem.loss.hoss)) {
@@ -333,27 +356,3 @@ simexSGP <- function(
 	}
 	if(verbose) message("\tFinished SIMEX SGP calculation ", rev(content_area.progression)[1], " Grade ", rev(tmp.gp)[1], " ", date(), "\n")
 } ### END .simex.sgp function
-
-
-rq.mtx <- function(tmp.gp.iter, lam, rqdata) {
-	mod <- character()
-	s4Ks <- "Knots=list("
-	s4Bs <- "Boundaries=list("
-	for (i in seq_along(tmp.gp.iter)) {
-		knt <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['knots_", tmp.gp.iter[i], "']]", sep="")
-		bnd <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['boundaries_", tmp.gp.iter[i], "']]", sep="")
-		mod <- paste(mod, " + bs(prior_", i, ", knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
-		s4Ks <- paste(s4Ks, "knots_", tmp.gp.iter[i], "=", knt, ",", sep="")
-		s4Bs <- paste(s4Bs, "boundaries_", tmp.gp.iter[i], "=", bnd, ",", sep="")
-	}
-	tmp.mtx <-eval(parse(text=paste("rq(final_yr ~", substring(mod,4), ", tau=taus, data = rqdata, method=rq.method)[['coefficients']]", sep="")))
-	
-	tmp.version <- list(SGP_Package_Version=as.character(packageVersion("SGP")), Date_Prepared=date(), Matrix_Information=list(N=dim(rqdata)[1]))
-	
-	eval(parse(text=paste("new('splineMatrix', tmp.mtx, ", substring(s4Ks, 1, nchar(s4Ks)-1), "), ", substring(s4Bs, 1, nchar(s4Bs)-1), "), ",
-												"Content_Areas=list(as.character(tail(content_area.progression, k+1))), ",
-												"Grade_Progression=list(as.character(tail(tmp.slot.gp, k+1))), ",
-												"Time=list(as.character(tail(year.progression, k+1))), ",
-												"Time_Lags=list(as.numeric(tail(year_lags.progression, k))), ",
-												"Version=tmp.version)", sep="")))
-}
