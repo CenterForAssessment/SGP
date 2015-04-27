@@ -575,16 +575,16 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 			temp <- merge(temp, subset(Cutscores, CUTLEVEL==i), all.x=TRUE)
 			temp <- temp[order(temp$temp_id),]$CUTSCORES
 			temp[which(is.na(temp))] <- approx(temp, xout=which(is.na(temp)))$y
-			assign(paste("level_", i, "_curve", sep=""), splinefun((low.year-1):(high.year+1), temp, method="mono"))
+			assign(paste("level_", j, "_", i, "_curve", sep=""), splinefun((low.year-1):(high.year+1), temp, method="mono"))
 		}
 
 		tmp.x.points <- seq(xscale.range.list[[j]][1], xscale.range.list[[j]][2], length=round(diff(xscale.range.list[[j]])/diff(xscale.range)*40))
 		x.boundary.values.1 <- c(xscale.range.list[[j]][1], tmp.x.points, xscale.range.list[[j]][2])
-		y.boundary.values.1 <- c(yscale.range[1], eval(parse(text="level_1_curve(tmp.x.points)")), yscale.range[1])
+		y.boundary.values.1 <- c(yscale.range[1], eval(parse(text="level_", j, "_1_curve(tmp.x.points)")), yscale.range[1])
 		assign(paste("x.boundary.values.", number.achievement.level.regions[[j]], sep=""), 
 			c(xscale.range.list[[j]][1], tmp.x.points, xscale.range.list[[j]][2]))
 		assign(paste("y.boundary.values.", number.achievement.level.regions[[j]], sep=""), 
-			c(yscale.range[2], eval(parse(text=paste("level_", number.achievement.level.regions[[j]]-1, "_curve(tmp.x.points)", sep=""))), yscale.range[2]))
+			c(yscale.range[2], eval(parse(text=paste("level_", j, "_", number.achievement.level.regions[[j]]-1, "_curve(tmp.x.points)", sep=""))), yscale.range[2]))
 
 		if (number.achievement.level.regions[[j]] > 2) {
 			for (i in 2:(number.achievement.level.regions[[j]]-1)) { 
@@ -592,7 +592,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 					c(tmp.x.points, rev(tmp.x.points)))
 
 				assign(paste("y.boundary.values.", i, sep=""), 
-					eval(parse(text=paste("c(level_", i, "_curve(tmp.x.points), level_", i-1, "_curve(rev(tmp.x.points)))", sep=""))))
+					eval(parse(text=paste("c(level_", j, "_", i, "_curve(tmp.x.points), level_", j, "_", i-1, "_curve(rev(tmp.x.points)))", sep=""))))
 			}
 		}
 
@@ -724,14 +724,14 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 
 	pushViewport(left.vp)
 
-	y.boundary.legend.1 <- c(yscale.range[1], yscale.range[1], rep(level_1_curve(xscale.range[1]), 2))
-	assign(paste("y.boundary.legend.", number.achievement.level.regions, sep=""),
-		c(yscale.range[2], yscale.range[2], rep(eval(parse(text=paste("level_", number.achievement.level.regions-1, "_curve(xscale.range[1])", sep=""))), 2))) 
+	y.boundary.legend.1 <- c(yscale.range[1], yscale.range[1], rep(level_1_1_curve(xscale.range[1]), 2))
+	assign(paste("y.boundary.legend.", number.achievement.level.regions[[1]], sep=""),
+		c(yscale.range[2], yscale.range[2], rep(eval(parse(text=paste("level_1", "_", number.achievement.level.regions[[1]]-1, "_curve(xscale.range[1])", sep=""))), 2))) 
 
 	if (number.achievement.level.regions > 2) {
 		for (i in 2:(number.achievement.level.regions-1)) { 
 			assign(paste("y.boundary.legend.", i, sep=""),
-				eval(parse(text=paste("c(rep(level_", i-1, "_curve(xscale.range[1]), 2), rep(level_", i, "_curve(xscale.range[1]), 2))", sep=""))))
+				eval(parse(text=paste("c(rep(level_1", "_", i-1, "_curve(xscale.range[1]), 2), rep(level_1", "_", i, "_curve(xscale.range[1]), 2))", sep=""))))
 		}
 	}
 
@@ -742,15 +742,15 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		gp=gpar(fill=achievement.level.region.colors[i], lwd=0.5, col=border.color, alpha=0.7))
 	}
 
-	grid.text(x=0.94, y=(level_1_curve(xscale.range[1]) + yscale.range[1])/2, names(achievement.level.labels)[1], 
+	grid.text(x=0.94, y=(level_1_1_curve(xscale.range[1]) + yscale.range[1])/2, names(achievement.level.labels)[1], 
 		gp=gpar(col=border.color, fontface=2, fontfamily="Helvetica-Narrow", cex=.85), default.units="native", just="right")
-	grid.text(x=0.94, y=(eval(parse(text=paste("level_", number.achievement.level.regions-1, "_curve(xscale.range[1])", sep=""))) + yscale.range[2])/2, 
+	grid.text(x=0.94, y=(eval(parse(text=paste("level_1", "_", number.achievement.level.regions-1, "_curve(xscale.range[1])", sep=""))) + yscale.range[2])/2, 
 		names(achievement.level.labels)[number.achievement.level.regions], 
 		gp=gpar(col=border.color, fontface=2, fontfamily="Helvetica-Narrow", cex=.85), default.units="native", just="right")
 
 	if (number.achievement.level.regions > 2) {
 		for (i in 2:(number.achievement.level.regions-1)) {
-		grid.text(x=.94, y=(eval(parse(text=paste("(level_", i-1, "_curve(xscale.range[1]) + level_", i, "_curve(xscale.range[1]))/2", sep="")))),
+		grid.text(x=.94, y=(eval(parse(text=paste("(level_1", "_", i-1, "_curve(xscale.range[1]) + level_1", "_", i, "_curve(xscale.range[1]))/2", sep="")))),
 			names(achievement.level.labels)[i], 
 			gp=gpar(col=border.color, fontface=2, fontfamily="Helvetica-Narrow", cex=.85), default.units="native", just="right")
 		}

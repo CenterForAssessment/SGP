@@ -192,6 +192,6 @@ function(dat,
 		} else {
 			SE <- round(sd(out, na.rm=TRUE), digits=1)
 		}
-		if (!is.null(conf.quantiles)) return(CI) else return(SE)
 	}
+	if (!is.null(conf.quantiles)) return(CI) else return(SE)
 } ### END boot.sgp function
