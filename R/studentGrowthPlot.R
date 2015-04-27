@@ -666,7 +666,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 				current.year.x.coor <- current.year
 				current.year.x.coor.lag <- min(which(!is.na(tail(Scale_Scores, -1))), na.rm=TRUE)
 				x.coor.label.adjustment <- -0.075; label.position <- "right"
-				tmp.achievement.level <- which(tail(head(Achievement_Levels, current.year.x.coor.lag+1), 1)==achievement.level.labels[[2]])
+				tmp.achievement.level <- which(tail(head(Achievement_Levels, current.year.x.coor.lag+1), 1)==achievement.level.labels[[1]])
 				show.targets <- TRUE
 			} else {
 				current.year.x.coor <- current.year+grade.values$increment_for_projection_current
@@ -809,7 +809,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 				tmp.projection.names <- tmp.projection.names.list[[i]]
 				tmp.projection.year <- current.year
 				tmp.projection.year.lag <- min(which(!is.na(tail(Scale_Scores, -1))), na.rm=TRUE)
-				tmp.achievement.level <- which(tail(head(Achievement_Levels, tmp.projection.year.lag+1), 1)==achievement.level.labels[[2]])
+				tmp.achievement.level <- which(tail(head(Achievement_Levels, tmp.projection.year.lag+1), 1)==achievement.level.labels[[1]])
 			}
 			if ((length(grep("CUKU", tmp.projection.names)) > 0 & tmp.achievement.level <= level.to.get.cuku) | length(grep("MUSU", tmp.projection.names))==0) {
 				level.to.get.cuku.label <- names(achievement.level.labels[[2]])[level.to.get.cuku+1]
