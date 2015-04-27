@@ -185,12 +185,13 @@ function(dat,
 	nboot=100) {
 
 	CI <- c(NA,NA); SE <- NA
-	if (sum(is.na(dat)) != length(dat)) {
+	if (!all(is.na(dat))) {
 		out <- sapply(seq(nboot), function(x) boot.median(sample(dat, length(dat), replace=TRUE)))
 		if (!is.null(conf.quantiles)) {
-			return(round(as.numeric(quantile(out, conf.quantiles, na.rm=TRUE)), digits=1))
+			 CI <- round(quantile(out, conf.quantiles, na.rm=TRUE), digits=1)
 		} else {
-			return(round(as.numeric(sd(out, na.rm=TRUE)), digits=1))
+			SE <- round(sd(out, na.rm=TRUE), digits=1)
 		}
+		if (!is.null(conf.quantiles)) return(CI) else return(SE)
 	}
 } ### END boot.sgp function

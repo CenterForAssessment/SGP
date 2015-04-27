@@ -578,7 +578,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 			assign(paste("level_", i, "_curve", sep=""), splinefun((low.year-1):(high.year+1), temp, method="mono"))
 		}
 
-		tmp.x.points <- seq(xscale.range.list[[j]][1], xscale.range.list[[j]][2], length=40)
+		tmp.x.points <- seq(xscale.range.list[[j]][1], xscale.range.list[[j]][2], length=round(diff(xscale.range.list[[j]])/diff(xscale.range)*40))
 		x.boundary.values.1 <- c(xscale.range.list[[j]][1], tmp.x.points, xscale.range.list[[j]][2])
 		y.boundary.values.1 <- c(yscale.range[1], eval(parse(text="level_1_curve(tmp.x.points)")), yscale.range[1])
 		assign(paste("x.boundary.values.", number.achievement.level.regions[[j]], sep=""), 
