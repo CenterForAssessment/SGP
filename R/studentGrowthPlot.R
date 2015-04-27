@@ -581,10 +581,10 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		tmp.x.points <- seq(xscale.range.list[[j]][1], xscale.range.list[[j]][2], length=40)
 		x.boundary.values.1 <- c(xscale.range.list[[j]][1], tmp.x.points, xscale.range.list[[j]][2])
 		y.boundary.values.1 <- c(yscale.range[1], eval(parse(text="level_1_curve(tmp.x.points)")), yscale.range[1])
-		assign(paste("x.boundary.values.", number.achievement.level.regions, sep=""), 
+		assign(paste("x.boundary.values.", number.achievement.level.regions[[j]], sep=""), 
 			c(xscale.range.list[[j]][1], tmp.x.points, xscale.range.list[[j]][2]))
-		assign(paste("y.boundary.values.", number.achievement.level.regions, sep=""), 
-			c(yscale.range[2], eval(parse(text=paste("level_", number.achievement.level.regions-1, "_curve(tmp.x.points)", sep=""))), yscale.range[2]))
+		assign(paste("y.boundary.values.", number.achievement.level.regions[[j]], sep=""), 
+			c(yscale.range[2], eval(parse(text=paste("level_", number.achievement.level.regions[[j]]-1, "_curve(tmp.x.points)", sep=""))), yscale.range[2]))
 
 		if (number.achievement.level.regions[[j]] > 2) {
 			for (i in 2:(number.achievement.level.regions[[j]]-1)) { 
