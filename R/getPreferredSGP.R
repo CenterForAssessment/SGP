@@ -4,7 +4,6 @@ function(tmp.data,
 	type="COHORT_REFERENCED") {
 
 	YEAR <- SGP_NORM_GROUP <- VALID_CASE <- CONTENT_AREA <- ID <- PREFERENCE <- NULL
-	SGPstateData <- SGPstateData
 
 	if (type=="TARGET") {
 		tmp.sgp.norm.group.variables <- c("SGP_PROJECTION_GROUP", "PREFERENCE")
@@ -19,23 +18,23 @@ function(tmp.data,
 	}
 
 	if (type=="TARGET") {
-		if (!is.null(SGPstateData[[state]][['SGP_Progression_Preference']])) {
-			setkeyv(SGPstateData[[state]][['SGP_Progression_Preference']], tmp.sgp.norm.group.variables)
+		if (!is.null(SGP::SGPstateData[[state]][['SGP_Progression_Preference']])) {
+			setkeyv(SGP::SGPstateData[[state]][['SGP_Progression_Preference']], tmp.sgp.norm.group.variables)
 			setkeyv(tmp.data, tmp.sgp.norm.group.variables[1])
 		} else {
 			stop("\tNOTE: Multiple Projections exist for individual students. Please examine results in @SGP[['SGProjections']].")
 		}
-		tmp.data <- data.table(SGPstateData[[state]][['SGP_Progression_Preference']][,tmp.sgp.norm.group.variables,with=FALSE][tmp.data], 
+		tmp.data <- data.table(SGP::SGPstateData[[state]][['SGP_Progression_Preference']][,tmp.sgp.norm.group.variables,with=FALSE][tmp.data], 
 			key=c(getKey(tmp.data), "PREFERENCE"))
 	} else {
-		if (!is.null(SGPstateData[[state]][['SGP_Norm_Group_Preference']])) {
+		if (!is.null(SGP::SGPstateData[[state]][['SGP_Norm_Group_Preference']])) {
 			message(paste(tmp.message, state, ".", sep=""))
-			setkeyv(SGPstateData[[state]][['SGP_Norm_Group_Preference']], tmp.sgp.norm.group.variables[1:2])
+			setkeyv(SGP::SGPstateData[[state]][['SGP_Norm_Group_Preference']], tmp.sgp.norm.group.variables[1:2])
 			setkeyv(tmp.data, tmp.sgp.norm.group.variables[1:2])
 		} else {
 			stop("\tNOTE: Multiple SGPs exist for individual students. Please examine results in @SGP[['SGPercentiles']].")
 		}
-		tmp.data <- data.table(SGPstateData[[state]][['SGP_Norm_Group_Preference']][,tmp.sgp.norm.group.variables,with=FALSE][tmp.data], 
+		tmp.data <- data.table(SGP::SGPstateData[[state]][['SGP_Norm_Group_Preference']][,tmp.sgp.norm.group.variables,with=FALSE][tmp.data], 
 			key=c(getKey(tmp.data), "PREFERENCE"))
 	}
 	setkeyv(tmp.data, getKey(tmp.data))

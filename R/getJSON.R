@@ -10,7 +10,6 @@ function(tmp.data,
 	data.year.span.default=5) {
 
 	CONTENT_AREA <- GRADE <- YEAR <- CUTLEVEL <- NULL
-	SGPstateData <- SGPstateData
 
 	if (data.type=="studentGrowthPlot") {
 
@@ -128,9 +127,9 @@ function(tmp.data,
 				grade.progression=rev(tmp.data[['Grades']])[tmp.indices],
 				content_area.progression=rev(tmp.data[['Content_Areas']])[tmp.indices],
 				year_lags.progression=diff(as.numeric(sapply(strsplit(rev(tmp.data[['Years']])[tmp.indices], "_"), '[', 2))),
-				grade.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[content_area]],
-				content_area.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]],
-				year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[content_area]],
+				grade.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[content_area]],
+				content_area.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]],
+				year_lags.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[content_area]],
 				projcuts.digits=2,
 				projection.unit="GRADE",
 				percentile.trajectory.values=percentile.trajectory.values,
@@ -170,17 +169,17 @@ function(tmp.data,
 
 		### Create grades.content_areas.reported.in.state
 	
-		if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]])) {
+		if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]])) {
 			grades.content_areas.reported.in.state <- data.frame(
-						GRADE=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[content_area]],
-						YEAR_LAG=c(1, SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[content_area]]),
-						CONTENT_AREA=SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]], 
+						GRADE=SGP::SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[content_area]],
+						YEAR_LAG=c(1, SGP::SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[content_area]]),
+						CONTENT_AREA=SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]], 
 						stringsAsFactors=FALSE
 						)
 		} else {
 			grades.content_areas.reported.in.state <- data.frame(
-					GRADE=SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]],
-					YEAR_LAG=c(1, diff(as.numeric(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]]))),
+					GRADE=SGP::SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]],
+					YEAR_LAG=c(1, diff(as.numeric(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]]))),
 					CONTENT_AREA=content_area, 
 					stringsAsFactors=FALSE
 					)

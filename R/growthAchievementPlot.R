@@ -19,15 +19,14 @@
 	assessment.name) { 
 
 	CUTLEVEL <- GRADE <- YEAR <- ID <- SCALE_SCORE <- level_1_curve <- V1 <- TRANSFORMED_SCALE_SCORE <- PERCENTILE <- GRADE_NUMERIC <- CONTENT_AREA <- NULL ## To prevent R CMD check warnings
-	SGPstateData <- SGPstateData
 
 	content_area <- toupper(content_area)
-	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]])) {
-		content_area.all <- unique(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]])
+	if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]])) {
+		content_area.all <- unique(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]])
 	} else {
 		content_area.all <- content_area
 	}
-	number.achievement.level.regions <- length(SGPstateData[[state]][["Student_Report_Information"]][["Achievement_Level_Labels"]])
+	number.achievement.level.regions <- length(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Achievement_Level_Labels"]])
 
 	## State stuff
 
@@ -40,7 +39,7 @@
 
 	### Test if scale change has occured in the requested year
 
-	if (year %in% SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[content_area]]) {
+	if (year %in% SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[content_area]]) {
 
 		message(paste("\tNOTE: Based upon state scale changes in ", capwords(year), ". student growth projections are not possible. No ",
 			capwords(year), " ", content_area, " growth and achievement plot will be generated.\n", sep=""))
@@ -58,14 +57,14 @@
 	### Create default values
 
 	if (missing(gaPlot.grade_range)) {
-		if (is.null(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])) {
-			stop("\tNOTE: No grade range is available from supplied argument or SGPstateData to construct growth and achievement plots.\n")
+		if (is.null(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])) {
+			stop("\tNOTE: No grade range is available from supplied argument or SGP::SGPstateData to construct growth and achievement plots.\n")
 		}
 		gaPlot.grade_range <- range(long_cutscores$GRADE_NUMERIC, na.rm=TRUE)
 	}
 
 	if (!missing(state) & missing(gaPlot.percentile_trajectories)) {
-		gaPlot.percentile_trajectories <- round(sort(unique(c(10, 50, 90, SGPstateData[[state]][["Growth"]][["Cutscores"]][["Cuts"]]))/5)) * 5
+		gaPlot.percentile_trajectories <- round(sort(unique(c(10, 50, 90, SGP::SGPstateData[[state]][["Growth"]][["Cutscores"]][["Cuts"]]))/5)) * 5
 	} 
 	if (missing(state) & missing(gaPlot.percentile_trajectories)) {
 		gaPlot.percentile_trajectories <- c(10, 35, 50, 65, 90)
@@ -81,11 +80,11 @@
 	if (missing(assessment.name) & missing(state)) {
 		assessment.name <- NULL
 	} else {
-		assessment.name <- SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Abbreviation"]]
+		assessment.name <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Abbreviation"]]
 	}
 
 	if (nchar(content_area) > 12)  {
-		content_area.label <- capwords(SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Labels"]][[content_area]])
+		content_area.label <- capwords(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Labels"]][[content_area]])
 	} else {
 		content_area.label <- capwords(content_area)
 	}
@@ -134,9 +133,9 @@
 			projection.unit="GRADE",
 			percentile.trajectory.values=percentile,
 			grade.progression=tmp.grades,
-			grade.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[content_area]],
-			content_area.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]],
-			year_lags.projection.sequence=SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[content_area]],
+			grade.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[content_area]],
+			content_area.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]],
+			year_lags.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[content_area]],
 			max.order.for.progression=gaPlot.max.order.for.progression,
 			print.time.taken=FALSE)[["SGProjections"]][[.create.path(list(my.subject=content_area, my.year=year, my.extra.label=my.extra.label))]][,-1, with=FALSE]
 	}
@@ -146,7 +145,7 @@
 		trajectories <- c(tail(as.numeric(tmp.df), (dim(tmp.df)[2]-1)/2), as.numeric(tmp.trajectories))
 		grade.sequence <- c(tmp.df[1,2:((dim(tmp.df)[2]+1)/2)], head(setdiff(tmp.unique.grades.numeric, tmp.df[1,2:((dim(tmp.df)[2]+1)/2)]), length(tmp.trajectories)))
 
-		if (content_area %in% names(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]])) {
+		if (content_area %in% names(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]])) {
 			tmp.spline.fun <- splinefun(grade.sequence, trajectories)
 			tmp.function <- function(grades) {
 				sapply(grades, function(x) piecewiseTransform(tmp.spline.fun(x), state, as.character(content_area), as.character(year), as.character(x)))
@@ -162,7 +161,7 @@
 
 	setkey(growthAchievementPlot.data, GRADE)
 		growthAchievementPlot.data[, TRANSFORMED_SCALE_SCORE:=piecewiseTransform(SCALE_SCORE, state, content_area, YEAR, GRADE), by=list(CONTENT_AREA, YEAR, GRADE)]
-	if (content_area %in% names(SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]])) {
+	if (content_area %in% names(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]])) {
 		gaPlot.show.scale.transformations <- FALSE
 	}
 
@@ -210,7 +209,7 @@
 
 	if (is.null(gaPlot.students)) {
 		my.cutscore.label <- getMyLabel(state, content_area, as.character(year))
-		start.cuts <- SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.cutscore.label]]
+		start.cuts <- SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.cutscore.label]]
 		if (gaPlot.start.points=="Achievement Level Cuts") {
 			start.cuts.values <- start.cuts[[1]]
 		} 
@@ -259,7 +258,7 @@
 ## Create viewports
 ##
 
-	if (is.null(SGPstateData[[state]][["Achievement"]][["College_Readiness_Cutscores"]])) {
+	if (is.null(SGP::SGPstateData[[state]][["Achievement"]][["College_Readiness_Cutscores"]])) {
 		growth.achievement.vp <- viewport(layout = grid.layout(6, 3, widths = unit(c(1.5, 6.5, 0.5), rep("inches", 3)), 
 			heights = unit(c(0.25, 1.15, 0.35, 8.25, 0.5, 0.35), rep("inches", 6))))
 	} else {
@@ -473,7 +472,7 @@
 
 	pushViewport(right.axis.vp)
 	
-	if (is.null(SGPstateData[[state]][["Achievement"]][["College_Readiness_Cutscores"]])) {
+	if (is.null(SGP::SGPstateData[[state]][["Achievement"]][["College_Readiness_Cutscores"]])) {
 		grid.lines(0.1, gp.axis.range, gp=gpar(lwd=1.5, col=format.colors.growth.trajectories), default.units="native")
 	
 		for (i in gaPlot.percentile_trajectories){
@@ -491,7 +490,7 @@
 				gp=gpar(col=format.colors.growth.trajectories, cex=1.0), rot=90, default.units="native")
 		}
 	} else {
-		tmp.cut <- as.numeric(SGPstateData[[state]][["Achievement"]][["College_Readiness_Cutscores"]][[content_area]])
+		tmp.cut <- as.numeric(SGP::SGPstateData[[state]][["Achievement"]][["College_Readiness_Cutscores"]][[content_area]])
 		grid.polygon(x=c(0.05, 0.05, 0.35, 0.35), y=c(gp.axis.range[1], tmp.cut, tmp.cut, gp.axis.range[1]), default.units="native", 
 			gp=gpar(col=format.colors.font, fill="red", lwd=1.5))
 		grid.text(x=0.2, y=(gp.axis.range[1]+tmp.cut)/2, "Not College Ready", gp=gpar(col=format.colors.font, cex=0.5), rot=90, default.units="native")
@@ -537,7 +536,7 @@
 	grid.roundrect(width=unit(0.95, "npc"), r=unit(0.025, "snpc"), gp=gpar(col=format.colors.font, lwd=1.6))
 	grid.text(x=0.5, y=0.675, paste(state.name.label, ": ", pretty_year(year), " ", content_area.label, sep=""), 
 		gp=gpar(col=format.colors.font, cex=2.65), default.units="native")
-	if (is.null(SGPstateData[[state]][["Achievement"]][["College_Readiness_Cutscores"]])) {
+	if (is.null(SGP::SGPstateData[[state]][["Achievement"]][["College_Readiness_Cutscores"]])) {
 		grid.text(x=0.5, y=0.275, "Norm & Criterion Referenced Growth & Achievement", 
 			gp=gpar(col=format.colors.font, cex=2.0), default.units="native")
 	} else {

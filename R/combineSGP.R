@@ -24,7 +24,6 @@ function(
 
 	ID <- CONTENT_AREA <- YEAR <- GRADE <- YEAR_INTEGER_TMP <- ACHIEVEMENT_LEVEL <- CATCH_UP_KEEP_UP_STATUS_INITIAL <- MOVE_UP_STAY_UP_STATUS_INITIAL <- VALID_CASE <- NULL
 	MOVE_UP_STAY_UP_STATUS <- CATCH_UP_KEEP_UP_STATUS <- ACHIEVEMENT_LEVEL_PRIOR <- target.type <- SGP_PROJECTION_GROUP <- NULL
-	SGPstateData <- SGPstateData
 
 	tmp.messages <- NULL
 
@@ -53,19 +52,19 @@ function(
 
 	### Create SGP_TARGET_CONTENT_AREA in certain cases
 
-	if (is.null(sgp.target.content_areas) & any(sapply(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]], function(x) length(unique(x))) > 1)) {
+	if (is.null(sgp.target.content_areas) & any(sapply(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]], function(x) length(unique(x))) > 1)) {
 		sgp.target.content_areas <- TRUE
 		tmp.messages <- c(tmp.messages, "\tNOTE: Multple content areas detected for student growth targets. 'sgp.target.content_areas set to TRUE.\n")
 	}
 
 	### Check to see if max.sgp.target.years.forward if configured in SGPstateData
 
-	if (!is.null(SGPstateData[[state]][['SGP_Configuration']][['max.sgp.target.years.forward']])) {
-		max.sgp.target.years.forward <- SGPstateData[[state]][['SGP_Configuration']][['max.sgp.target.years.forward']]
+	if (!is.null(SGP::SGPstateData[[state]][['SGP_Configuration']][['max.sgp.target.years.forward']])) {
+		max.sgp.target.years.forward <- SGP::SGPstateData[[state]][['SGP_Configuration']][['max.sgp.target.years.forward']]
 	}
 
-	if (!is.null(SGPstateData[[state]][['SGP_Configuration']][['sgp.projections.projection.unit.label']])) {
-		projection.unit.label <- SGPstateData[[state]][['SGP_Configuration']][['sgp.projections.projection.unit.label']]
+	if (!is.null(SGP::SGPstateData[[state]][['SGP_Configuration']][['sgp.projections.projection.unit.label']])) {
+		projection.unit.label <- SGP::SGPstateData[[state]][['SGP_Configuration']][['sgp.projections.projection.unit.label']]
 	} else {
 		projection.unit.label <- "YEAR"
 	}
@@ -76,9 +75,9 @@ function(
 
 	### Setup for equated SGPs and scale score targets
 
-	if (!is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]])) {
+	if (!is.null(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]])) {
 		year.for.equate <- tail(sort(unique(sgp_object@Data$YEAR)), 1)
-		if (SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]!=year.for.equate) {
+		if (SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]!=year.for.equate) {
 			sgp.percentiles.equated <- FALSE
 			sgp.target.scale.scores <- FALSE
 		} else {
@@ -145,8 +144,8 @@ function(
 		}
 
 		tmp.list[['target.level']] <- c("CATCH_UP_KEEP_UP", "MOVE_UP_STAY_UP")
-		if (length(which(SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient"))<=1)  tmp.list[['target.level']] <- "CATCH_UP_KEEP_UP"
-		if (length(grep("MUSU", SGPstateData[[state]][["SGP_Configuration"]][['sgp.target.types']]))==0) tmp.list[['target.level']] <- "CATCH_UP_KEEP_UP"
+		if (length(which(SGP::SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient"))<=1)  tmp.list[['target.level']] <- "CATCH_UP_KEEP_UP"
+		if (length(grep("MUSU", SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgp.target.types']]))==0) tmp.list[['target.level']] <- "CATCH_UP_KEEP_UP"
 
 		return(tmp.list)
 	} ### END get.target.arguments
@@ -297,7 +296,7 @@ function(
  
 	if ((sgp.projections | sgp.projections.baseline | sgp.projections.lagged | sgp.projections.lagged.baseline) & !sgp.target.scale.scores.only) {
 
-		target.args <- get.target.arguments(SGPstateData[[state]][["Growth"]][["System_Type"]], target.type, projection.unit.label)
+		target.args <- get.target.arguments(SGP::SGPstateData[[state]][["Growth"]][["System_Type"]], target.type, projection.unit.label)
 
 		for (target.type.iter in target.args[['target.type']]) {
 			for (target.level.iter in target.args[['target.level']]) {
@@ -319,8 +318,8 @@ function(
 		### SGP_TARGET_CONTENT_AREA calculation
 
 		terminal.content_areas <- unique(slot.data[!is.na(target.args[['my.sgp.target']][1])][['CONTENT_AREA']])
-		if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]])) {
-			terminal.content_areas <- intersect(terminal.content_areas, sapply(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]], tail, 1))
+		if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]])) {
+			terminal.content_areas <- intersect(terminal.content_areas, sapply(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]], tail, 1))
 		}
 
 		if (!is.null(sgp.target.content_areas) && sgp.target.content_areas) {
@@ -423,7 +422,7 @@ function(
 
 	if (sgp.target.scale.scores) {
 
-		if (!exists("target.args")) target.args <- get.target.arguments(SGPstateData[[state]][["Growth"]][["System_Type"]], target.type, projection.unit.label) 
+		if (!exists("target.args")) target.args <- get.target.arguments(SGP::SGPstateData[[state]][["Growth"]][["System_Type"]], target.type, projection.unit.label) 
 		tmp.target.list <- list()
 		for (target.type.iter in target.args[['sgp.target.scale.scores.types']]) {
 			for (target.level.iter in target.args[['target.level']]) {

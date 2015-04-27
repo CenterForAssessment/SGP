@@ -7,13 +7,12 @@ function(tmp.data.for.equate,
 	interpolate.scores=FALSE) {
 
 	SCALE_SCORE <- SCALE_SCORE_EQUATED <- GRADE <- CONTENT_AREA <- NULL
-	SGPstateData <- SGPstateData
 
 	### Utility functions
 
 	get.my.knots.boundaries.path <- function(content_area, year) {
 		tmp.path.knots.boundaries <- paste(content_area, year, sep=".")
-		tmp.knots.boundaries.names <- names(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]])
+		tmp.knots.boundaries.names <- names(SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]])
 		tmp.knots.boundaries.years <- sapply(strsplit(tmp.knots.boundaries.names, "[.]"), function(x) x[2])
 		if (any(!is.na(tmp.knots.boundaries.years))) {
 			if (year %in% tmp.knots.boundaries.years) {
@@ -51,7 +50,7 @@ function(tmp.data.for.equate,
 							SCALE_SCORE=equate.list[[i.iter]][[j.iter]][[conversion.type]][['concordance']][[1]],
 							SCALE_SCORE_EQUATED=equate.list[[i.iter]][[j.iter]][[conversion.type]][['concordance']][[2]], 
 							key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", "SCALE_SCORE"))
-			tmp.boundaries <- eval(parse(text=paste("SGPstateData[[state]][['Achievement']][['Knots_Boundaries']]", get.my.knots.boundaries.path(unlist(strsplit(i, "[.]"))[1], tmp.year.for.knots.boundaries), "[['loss.hoss_", unlist(strsplit(j, "_"))[2], "']]", sep="")))
+			tmp.boundaries <- eval(parse(text=paste("SGP::SGPstateData[[state]][['Achievement']][['Knots_Boundaries']]", get.my.knots.boundaries.path(unlist(strsplit(i, "[.]"))[1], tmp.year.for.knots.boundaries), "[['loss.hoss_", unlist(strsplit(j, "_"))[2], "']]", sep="")))
 			scale.score.concordance.table[[paste(i, j, sep=".")]][SCALE_SCORE_EQUATED < tmp.boundaries[1], SCALE_SCORE_EQUATED:=tmp.boundaries[1]]
 			scale.score.concordance.table[[paste(i, j, sep=".")]][SCALE_SCORE_EQUATED > tmp.boundaries[2], SCALE_SCORE_EQUATED:=tmp.boundaries[2]]
 			scale.score.concordance.functions[[paste(i, j, sep=".")]] <- splinefun(scale.score.concordance.table[[paste(i, j, sep=".")]]$SCALE_SCORE, scale.score.concordance.table[[paste(i, j, sep=".")]]$SCALE_SCORE_EQUATED, method="hyman")

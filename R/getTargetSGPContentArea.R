@@ -5,20 +5,18 @@ function(grade,
 	max.sgp.target.years.forward,
 	my.sgp.target.content_area) {
 
-	SGPstateData <- SGPstateData
-
-	if (is.null(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]])) {
+	if (is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]])) {
 		return(content_area)
 	} else {
-		tmp.content_areas.by.grade <- paste(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]], 
-						SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[content_area]], sep=".")
+		tmp.content_areas.by.grade <- paste(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]], 
+						SGP::SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[content_area]], sep=".")
 		tmp.index <- match(paste(content_area, grade, sep="."), tmp.content_areas.by.grade)
 		if (is.na(tmp.index)) {
 			message(paste("\tNOTE: '", content_area, "', GRADE '", grade, "' combination is not in current @Data. Will return ", content_area, " for '", my.sgp.target.content_area, "'.", sep=""))
 			return(content_area)
 		} else {
-			return(SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]][
-				min(tmp.index+max.sgp.target.years.forward, length(SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[content_area]]))])
+			return(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]][
+				min(tmp.index+max.sgp.target.years.forward, length(SGP::SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[content_area]]))])
 		}
 	}
 } ### END getTargetSGPContentArea

@@ -32,8 +32,6 @@ function(panel.data,	## REQUIRED
 	started.at=proc.time()
 	started.date <- date()
 
-	SGPstateData <- SGPstateData
-
 	##########################################################
 	###
 	### Utility functions
@@ -292,9 +290,9 @@ function(panel.data,	## REQUIRED
 					tmp.target.name <- tail(names(tmp.traj), 1)
 					if ("STATE" %in% names(panel.data[["Panel_Data"]])) {
 						included.states <- unique(panel.data[["Panel_Data"]][['STATE']])
-						content_area.index <- grep(sgp.labels$my.subject, sapply(names(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]), 
+						content_area.index <- grep(sgp.labels$my.subject, sapply(names(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]), 
 							function(x) strsplit(x, "[.]")[[1]][1], USE.NAMES=FALSE))
-						available.states <- unique(sapply(names(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]), 
+						available.states <- unique(sapply(names(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]), 
 							function(x) strsplit(x, "[.]")[[1]][2], USE.NAMES=FALSE)[content_area.index])
 						unavailable.states <- included.states[!included.states %in% available.states]
 						percentile.trajectories <- data.table(panel.data[["Panel_Data"]][,c("ID", "STATE"), with=FALSE], key="ID")[STATE %in% available.states][percentile.trajectories][!is.na(STATE)]
@@ -305,18 +303,18 @@ function(panel.data,	## REQUIRED
 							my.cutscore.year <- get.my.cutscore.state.year.sgprojection(Cutscores, sgp.labels$my.subject, yearIncrement(sgp.labels$my.year, 1, lag.increment), my.state=state.iter)
 							tmp.cutscores.by.grade <- tmp.cutscores[[my.cutscore.year]][[paste("GRADE_", grade.projection.sequence[1], sep="")]]
 							if (length(percentile.trajectory.values)==1) {
-								tmp.state.level <- which(sapply(lapply(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscore_Information"]][['State_Levels']],
+								tmp.state.level <- which(sapply(lapply(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscore_Information"]][['State_Levels']],
 									 '[[', 1), function(x) state.iter %in% x))
-								cuku.level.to.get <- which.max(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscore_Information"]][[
+								cuku.level.to.get <- which.max(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscore_Information"]][[
 									'State_Levels']][[tmp.state.level]][["Levels"]]=="Proficient")-1
 								tmp.traj[which(STATE==state.iter), tmp.target.name:=tmp.cutscores.by.grade[cuku.level.to.get], with=FALSE]
 							}
 							if (length(percentile.trajectory.values)==2) {
-								tmp.state.level <- which(sapply(lapply(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscore_Information"]][['State_Levels']],
+								tmp.state.level <- which(sapply(lapply(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscore_Information"]][['State_Levels']],
 									 '[[', 1), function(x) state.iter %in% x))
-								cuku.level.to.get <- which.max(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscore_Information"]][[
+								cuku.level.to.get <- which.max(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscore_Information"]][[
 									'State_Levels']][[tmp.state.level]][["Levels"]]=="Proficient")-1
-								musu.level.to.get <- which.max(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscore_Information"]][[
+								musu.level.to.get <- which.max(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscore_Information"]][[
 									'State_Levels']][[tmp.state.level]][["Levels"]]=="Proficient")
 								tmp.traj[which(STATE==state.iter), 
 									tmp.target.name:=c(tmp.cutscores.by.grade[cuku.level.to.get], tmp.cutscores.by.grade[musu.level.to.get]),with=FALSE]
@@ -327,12 +325,12 @@ function(panel.data,	## REQUIRED
 						my.cutscore.year <- get.my.cutscore.state.year.sgprojection(Cutscores, sgp.labels$my.subject, yearIncrement(sgp.labels$my.year, 1, lag.increment), my.state=NA)
 						tmp.cutscores.by.grade <- tmp.cutscores[[my.cutscore.year]][[paste("GRADE_", grade.projection.sequence[1], sep="")]]
 						if (length(percentile.trajectory.values)==1) {
-							cuku.level.to.get <- which.max(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")-1
+							cuku.level.to.get <- which.max(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")-1
 							tmp.target.scores <- rep(tmp.cutscores.by.grade[cuku.level.to.get], length(unique(tmp.traj[['ID']])))
 						}
 						if (length(percentile.trajectory.values)==2) {
-							cuku.level.to.get <- which.max(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")-1
-							musu.level.to.get <- which.max(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")
+							cuku.level.to.get <- which.max(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")-1
+							musu.level.to.get <- which.max(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")
 							tmp.target.scores <- rep(c(tmp.cutscores.by.grade[cuku.level.to.get], tmp.cutscores.by.grade[musu.level.to.get]), length(unique(tmp.traj[['ID']])))
 						}
 						tmp.target.scores[is.na(tmp.traj[[tmp.target.name]])] <- NA
@@ -360,8 +358,8 @@ function(panel.data,	## REQUIRED
 
 			if ("STATE" %in% names(panel.data[["Panel_Data"]])) {
 				included.states <- unique(panel.data[["Panel_Data"]][['STATE']]); state.arg <- "STATE == states[n.state]"
-				content_area.index <- grep(sgp.labels$my.subject, sapply(names(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]), function(x) strsplit(x, "[.]")[[1]][1], USE.NAMES=FALSE))
-				available.states <- unique(sapply(names(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]), function(x) strsplit(x, "[.]")[[1]][2], USE.NAMES=FALSE)[content_area.index])
+				content_area.index <- grep(sgp.labels$my.subject, sapply(names(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]), function(x) strsplit(x, "[.]")[[1]][1], USE.NAMES=FALSE))
+				available.states <- unique(sapply(names(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]), function(x) strsplit(x, "[.]")[[1]][2], USE.NAMES=FALSE)[content_area.index])
 				unavailable.states <- included.states[!included.states %in% available.states]
 				percentile.trajectories <- data.table(panel.data[["Panel_Data"]][,c("ID", "STATE"), with=FALSE], key="ID")[STATE %in% available.states][percentile.trajectories][!is.na(STATE)]
 				states <- included.states[included.states %in% available.states]
@@ -478,7 +476,7 @@ function(panel.data,	## REQUIRED
 			}
 		}
 		if (is.character(use.my.knots.boundaries)) {
-			if (!use.my.knots.boundaries %in% objects(SGPstateData)) {
+			if (!use.my.knots.boundaries %in% objects(SGP::SGPstateData)) {
 				stop(paste("Knots and Boundaries are currently not implemented for the state (", use.my.knots.boundaries, ") indicated. Please contact the SGP package administrator to have your Knots and Boundaries included in the package", sep=""))
 			}
 		}
@@ -493,8 +491,8 @@ function(panel.data,	## REQUIRED
 		}
 		tmp.path.coefficient.matrices <- .create.path(use.my.coefficient.matrices)
 		if (is.null(panel.data[["Coefficient_Matrices"]]) | is.null(panel.data[["Coefficient_Matrices"]][[tmp.path.coefficient.matrices]])) {
-			if (length(grep("BASELINE", sgp.labels[['my.extra.label']])) > 0 & !is.null(SGPstateData[[performance.level.cutscores]][["Baseline_splineMatrix"]])) {
-				panel.data[["Coefficient_Matrices"]][[tmp.path.coefficient.matrices]] <- SGPstateData[[performance.level.cutscores]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]]
+			if (length(grep("BASELINE", sgp.labels[['my.extra.label']])) > 0 & !is.null(SGP::SGPstateData[[performance.level.cutscores]][["Baseline_splineMatrix"]])) {
+				panel.data[["Coefficient_Matrices"]][[tmp.path.coefficient.matrices]] <- SGP::SGPstateData[[performance.level.cutscores]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]]
 			} else {
 				message("\tNOTE: Coefficient matrices indicated by argument use.my.coefficient.matrices are not included.")
 				return(NULL)
@@ -526,19 +524,19 @@ function(panel.data,	## REQUIRED
 
 	if (!missing(performance.level.cutscores)) {
 		if (is.character(performance.level.cutscores)) {
-			if (!(performance.level.cutscores %in% objects(SGPstateData))) {
+			if (!(performance.level.cutscores %in% objects(SGP::SGPstateData))) {
 				tmp.messages <- c(tmp.messages, "\t\tNOTE: To use state cutscores, supply an appropriate two letter state abbreviation. \nRequested state may not be included. See help page for details.\n")
 				tf.cutscores <- FALSE
 			}
-			if (is.null(names(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]))) {
+			if (is.null(names(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]))) {
 				tmp.messages <- c(tmp.messages, "\t\tNOTE: Cutscores are currently not implemented for the state indicated. \nPlease contact the SGP package administrator to have your cutscores included in the package.\n")
 				tf.cutscores <- FALSE
 			}
-			if (!sgp.labels$my.subject %in% unique(sapply(names(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]), function(x) strsplit(x, "[.]")[[1]][1], USE.NAMES=FALSE))) {
+			if (!sgp.labels$my.subject %in% unique(sapply(names(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]), function(x) strsplit(x, "[.]")[[1]][1], USE.NAMES=FALSE))) {
 				tmp.messages <- c(tmp.messages, paste("\t\tNOTE: Cutscores provided in SGPstateData does not include", sgp.labels$my.subject, "(CASE SENSITIVE). See help page for details.\n"))
 				tf.cutscores <- FALSE
 			} else {
-				tmp.cutscores <- SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]
+				tmp.cutscores <- SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]
 				if (!is.character(percentile.trajectory.values)) tf.cutscores <- TRUE else tf.cutscores <- FALSE
 		}}
 		if (is.list(performance.level.cutscores)) {
@@ -790,8 +788,8 @@ function(panel.data,	## REQUIRED
 		tmp.cutscore.grade.content_area <- unlist(sapply(seq_along(tmp.cutscores), function(x) paste(names(tmp.cutscores)[x], names(tmp.cutscores[[x]]), sep=".")))
 		if ("STATE" %in% names(panel.data[["Panel_Data"]])) {
 			included.states <- unique(panel.data[["Panel_Data"]][['STATE']]); state.arg <- "STATE == states[n.state]"
-			content_area.index <- grep(sgp.labels$my.subject, sapply(names(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]), function(x) strsplit(x, "[.]")[[1]][1], USE.NAMES=FALSE))
-			available.states <- unique(sapply(names(SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]), function(x) strsplit(x, "[.]")[[1]][2], USE.NAMES=FALSE)[content_area.index])
+			content_area.index <- grep(sgp.labels$my.subject, sapply(names(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]), function(x) strsplit(x, "[.]")[[1]][1], USE.NAMES=FALSE))
+			available.states <- unique(sapply(names(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]), function(x) strsplit(x, "[.]")[[1]][2], USE.NAMES=FALSE)[content_area.index])
 			unavailable.states <- included.states[!included.states %in% available.states]
 			if (length(unavailable.states) > 0) {
 				tmp.messages <- c(tmp.messages, paste("\t\tNOTE: The required state specific cutscores for ", sgp.labels$my.subject, " provided in SGPstateData do not include: ", 

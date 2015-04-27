@@ -10,7 +10,6 @@ function(sgp_object,
 	return.lagged.status=TRUE) {
 
 	VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- FIRST_OBSERVATION <- LAST_OBSERVATION <- STATE <- SGP_PROJECTION_GROUP <- NULL
-	SGPstateData <- SGPstateData
 
 	### Utility functions
 
@@ -49,14 +48,14 @@ function(sgp_object,
 
 		if (dim(tmp_object_1)[1] > 0) {
 			num.years.available <- length(grep("LEVEL_[123456789]", names(tmp_object_1)))
-			if (projection_group.iter %in% names(SGPstateData[[state]][['SGP_Configuration']][['grade.projection.sequence']])) {
-				num.years.to.get <- min(SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]], num.years.available)
-				if (!is.null(SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]])) {
-					num.years.to.get.label <- SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]]
+			if (projection_group.iter %in% names(SGP::SGPstateData[[state]][['SGP_Configuration']][['grade.projection.sequence']])) {
+				num.years.to.get <- min(SGP::SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]], num.years.available)
+				if (!is.null(SGP::SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]])) {
+					num.years.to.get.label <- SGP::SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]]
 				} else {
 					num.years.to.get.label <- max.sgp.target.years.forward
 				}
-				num.years.to.get.label <- SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]]
+				num.years.to.get.label <- SGP::SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]]
 			} else {
 				num.years.to.get <- min(max.sgp.target.years.forward, num.years.available)
 				num.years.to.get.label <- max.sgp.target.years.forward
@@ -93,8 +92,8 @@ function(sgp_object,
 
 	catch_keep_move_functions <- c(min, max)
 
-	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["sgp.projections.projection.unit.label"]])) {
-		sgp.projections.projection.unit.label <- SGPstateData[[state]][["SGP_Configuration"]][["sgp.projections.projection.unit.label"]]
+	if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["sgp.projections.projection.unit.label"]])) {
+		sgp.projections.projection.unit.label <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["sgp.projections.projection.unit.label"]]
 	} else {
 		sgp.projections.projection.unit.label <- "YEAR"
 	}

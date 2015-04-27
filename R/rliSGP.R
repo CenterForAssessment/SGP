@@ -10,11 +10,10 @@ function(sgp_object,
 	update.ids=NULL,
 	parallel.config=NULL) {
 
+	YEAR <- GRADE <- ID <- NEW_ID <- .EACHI <- NULL
+
 	started.at <- proc.time()
 	message(paste("\nStarted rliSGP", date()), "\n")
-
-	YEAR <- GRADE <- ID <- NEW_ID <- .EACHI <- NULL
-	SGPstateData <- SGPstateData
 
         if (is.null(state)) {
                 tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
@@ -67,7 +66,7 @@ function(sgp_object,
 	getRLIConfig <- function(content_areas, configuration.year, testing.window) {
 		tmp.list <- list()
 		for (i in content_areas) {
-			tmp.list[[i]] <- SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, i, testing.window)
+			tmp.list[[i]] <- SGP::SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, i, testing.window)
 		}
 		return(unlist(tmp.list, recursive=FALSE))
 	}

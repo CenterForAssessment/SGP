@@ -25,7 +25,6 @@
 	INSTRUCTOR_NUMBER <- INSTRUCTOR_NAME <- INSTRUCTOR_ENROLLMENT_STATUS <- NULL
 	SGP_TARGET <- VALID_CASE <- ENROLLMENT_STATUS <- NULL
 	SCALE_SCORE_PRIOR <- SGP_PRIOR <- SGP_TARGET_PRIOR <- ACHIEVEMENT_LEVEL_PRIOR <- CONTENT_AREA_PRIOR <- SGP_NORM_GROUP <- NULL
-	SGPstateData <- SGPstateData
 
 	### Define relevant quantities
 
@@ -33,7 +32,7 @@
 
 	if (state %in% c(state.abb, "DEMO")) {
 		state.name.label <- c(state.name, "DEMONSTRATION")[state==c(state.abb, "DEMO")]
-		test.abbreviation.label <- SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Abbreviation"]]
+		test.abbreviation.label <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Abbreviation"]]
 	} else {
 		state.name.label <- test.abbreviation.label <- state
 	}
@@ -1829,8 +1828,8 @@ if (22 %in% bPlot.styles) {
 		### Utility functions
 
 		get.my.cutscore.year <- function(state, content_area, year) {
-			tmp.cutscore.years <- sapply(strsplit(names(SGPstateData[[state]][["Achievement"]][["Cutscores"]])[
-				grep(content_area, names(SGPstateData[[state]][["Achievement"]][["Cutscores"]]))], "[.]"), function(x) x[2])
+			tmp.cutscore.years <- sapply(strsplit(names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]])[
+				grep(content_area, names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]]))], "[.]"), function(x) x[2])
 			if (any(!is.na(tmp.cutscore.years))) {
 				if (year %in% tmp.cutscore.years) {
 					return(paste(content_area, year, sep="."))
@@ -1910,7 +1909,7 @@ if (22 %in% bPlot.styles) {
 
 		tmp.bPlot.data <- tmp.bPlot.data.1[SCHOOL_NUMBER==tmp.unique.schools[school.iter] & !is.na(SGP) & !is.na(SCALE_SCORE)]
 
-		for (grade.iter in intersect(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area.iter]],
+		for (grade.iter in intersect(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area.iter]],
 			sort(unique(tmp.bPlot.data$GRADE)))) { 
 				
 		bPlot.data <- subset(tmp.bPlot.data, GRADE==grade.iter)
@@ -1932,10 +1931,10 @@ if (22 %in% bPlot.styles) {
 
 		my.content_area <- get.my.cutscore.year(state, content_area.iter, as.character(year.iter))
 		tmp.y.range <- extendrange(c(bPlot.data[["SCALE_SCORE"]],
-			SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.content_area]][[paste("GRADE", grade.iter, sep="_")]]), f=0.1)
-		tmp.loss.hoss <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area.iter]][[paste("loss.hoss", grade.iter, sep="_")]]
+			SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.content_area]][[paste("GRADE", grade.iter, sep="_")]]), f=0.1)
+		tmp.loss.hoss <- SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area.iter]][[paste("loss.hoss", grade.iter, sep="_")]]
 		tmp.y.ticks <- sort(c(max(tmp.loss.hoss[1], tmp.y.range[1]), min(tmp.loss.hoss[2], tmp.y.range[2]),
-			SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.content_area]][[paste("GRADE", grade.iter, sep="_")]])) 
+			SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.content_area]][[paste("GRADE", grade.iter, sep="_")]])) 
 
 		# Get median SGP for grade, school, content area combination
 
@@ -2001,7 +2000,7 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_X_TICKS_SIZE=c(rep(0.7, 5), 1, rep(0.7, 5)),
 			bubble_plot_configs.BUBBLE_Y_TICKS=tmp.y.ticks,
 			bubble_plot_configs.BUBBLE_Y_BANDS=tmp.y.ticks,
-			bubble_plot_configs.BUBBLE_Y_BAND_LABELS=SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]],
+			bubble_plot_configs.BUBBLE_Y_BAND_LABELS=SGP::SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]],
 			bubble_plot_configs.BUBBLE_SUBSET_INCREASE=0.00,
 			bubble_plot_configs.BUBBLE_COLOR="blue",
 			bubble_plot_configs.BUBBLE_SUBSET_ALPHA=list(Transparent=0.3, Opaque=0.9),
@@ -2054,7 +2053,7 @@ if (22 %in% bPlot.styles) {
 
 			if (bPlot.demo) {
 				tmp.ids <- list()
-				tmp.grades.reported <- SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area.iter]][-1]
+				tmp.grades.reported <- SGP::SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area.iter]][-1]
 				tmp.grades.reported <- tmp.grades.reported[tmp.grades.reported %in% unique(slot.data)["VALID_CASE"][["GRADE"]]]
 				for (i in seq_along(tmp.grades.reported)) {
 					tmp.ids[[i]] <- as.character(sample(unique(slot.data[SJ("VALID_CASE", year.iter, content_area.iter, tmp.grades.reported[i])][['ID']]), 30))
@@ -2090,7 +2089,7 @@ if (22 %in% bPlot.styles) {
 		
 				if (dim(bPlot.data)[1] > 0) {
 		
-				for (grade.iter in intersect(SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area.iter]],
+				for (grade.iter in intersect(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area.iter]],
 					sort(unique(bPlot.data$GRADE)))) { ### Loop over unique grades levels for instructor (usually only one)
 			
 			# Anonymize district, school and student names (if requested)
@@ -2109,10 +2108,10 @@ if (22 %in% bPlot.styles) {
 	
 				my.content_area <- get.my.cutscore.year(state, content_area.iter, as.character(bPlot.labels$y.year)) 
 				tmp.y.range <- extendrange(c(bPlot.data[["SCALE_SCORE"]], 
-					SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.content_area]][[paste("GRADE", grade.iter, sep="_")]]), f=0.1)
-				tmp.loss.hoss <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area.iter]][[paste("loss.hoss", grade.iter, sep="_")]]
+					SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.content_area]][[paste("GRADE", grade.iter, sep="_")]]), f=0.1)
+				tmp.loss.hoss <- SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area.iter]][[paste("loss.hoss", grade.iter, sep="_")]]
 				tmp.y.ticks <- sort(c(max(tmp.loss.hoss[1], tmp.y.range[1]), min(tmp.loss.hoss[2], tmp.y.range[2]),
-					SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.content_area]][[paste("GRADE", grade.iter, sep="_")]])) 
+					SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.content_area]][[paste("GRADE", grade.iter, sep="_")]])) 
 	
 			# Get median SGP for grade, school, content area combination
 	
@@ -2164,7 +2163,7 @@ if (22 %in% bPlot.styles) {
 					bubble_plot_configs.BUBBLE_X_TICKS_SIZE=c(rep(0.7, 5), 1, rep(0.7, 5)),
 					bubble_plot_configs.BUBBLE_Y_TICKS=tmp.y.ticks,
 					bubble_plot_configs.BUBBLE_Y_BANDS=tmp.y.ticks,
-					bubble_plot_configs.BUBBLE_Y_BAND_LABELS=SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]],
+					bubble_plot_configs.BUBBLE_Y_BAND_LABELS=SGP::SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]],
 					bubble_plot_configs.BUBBLE_SUBSET_INCREASE=0.00,
 					bubble_plot_configs.BUBBLE_COLOR="blue",
 					bubble_plot_configs.BUBBLE_SUBSET_ALPHA=list(Transparent=0.3, Opaque=0.9),
@@ -2221,7 +2220,7 @@ if (22 %in% bPlot.styles) {
 
 			if (bPlot.demo) {
 				tmp.ids <- list()
-				tmp.grades.reported <- SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area.iter]][-1]
+				tmp.grades.reported <- SGP::SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area.iter]][-1]
 				tmp.grades.reported <- tmp.grades.reported[tmp.grades.reported %in% unique(slot.data)["VALID_CASE"][["GRADE"]]]
 				for (i in seq_along(tmp.grades.reported)) {
 					tmp.ids[[i]] <- as.character(sample(unique(slot.data[SJ("VALID_CASE", year.iter, content_area.iter, tmp.grades.reported[i])][['ID']]), 30))
@@ -2279,10 +2278,10 @@ if (22 %in% bPlot.styles) {
 
 			my.content_area <- get.my.cutscore.year(state, content_area.iter, as.character(bPlot.labels$y.year)) 
 			tmp.y.range <- extendrange(c(bPlot.data[["SCALE_SCORE"]], 
-				SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.content_area]][[paste("GRADE", grade.iter, sep="_")]]), f=0.1)
-			tmp.loss.hoss <- SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area.iter]][[paste("loss.hoss", grade.iter, sep="_")]]
+				SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.content_area]][[paste("GRADE", grade.iter, sep="_")]]), f=0.1)
+			tmp.loss.hoss <- SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area.iter]][[paste("loss.hoss", grade.iter, sep="_")]]
 			tmp.y.ticks <- sort(c(max(tmp.loss.hoss[1], tmp.y.range[1]), min(tmp.loss.hoss[2], tmp.y.range[2]),
-				SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.content_area]][[paste("GRADE", grade.iter, sep="_")]])) 
+				SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.content_area]][[paste("GRADE", grade.iter, sep="_")]])) 
 
 		# Get median SGP for grade, school, content area combination
 		# Report 'Official' Median.  Should be the same as median(bPlot.data$SGP, na.rm=TRUE).  Use that if NULL for some reason (prevents error)
@@ -2343,7 +2342,7 @@ if (22 %in% bPlot.styles) {
 				bubble_plot_configs.BUBBLE_X_TICKS_SIZE=c(rep(0.7, 5), 1, rep(0.7, 5)),
 				bubble_plot_configs.BUBBLE_Y_TICKS=tmp.y.ticks,
 				bubble_plot_configs.BUBBLE_Y_BANDS=tmp.y.ticks,
-				bubble_plot_configs.BUBBLE_Y_BAND_LABELS=SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]],
+				bubble_plot_configs.BUBBLE_Y_BAND_LABELS=SGP::SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]],
 				bubble_plot_configs.BUBBLE_SUBSET_INCREASE=0.00,
 				bubble_plot_configs.BUBBLE_COLOR="blue",
 				bubble_plot_configs.BUBBLE_SUBSET_ALPHA=list(Transparent=0.3, Opaque=0.9),

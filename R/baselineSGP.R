@@ -21,7 +21,6 @@ function(sgp_object,
 	message(paste("\tStarted baselineSGP", date(), "\n"))
 
 	VALID_CASE <- YEAR <- GRADE <- CONTENT_AREA <- YEAR_WITHIN <- COHORT_YEAR <- NULL ### To prevent R CMD check warnings
-	SGPstateData <- SGPstateData
 
 	### Create state (if NULL) from sgp_object (if possible)
 
@@ -41,14 +40,14 @@ function(sgp_object,
 		calculate.baseline.sgps <- FALSE
 	}
 
-	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["sgp.loss.hoss.adjustment"]])) {
-		sgp.loss.hoss.adjustment <- SGPstateData[[state]][["SGP_Configuration"]][["sgp.loss.hoss.adjustment"]]
+	if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["sgp.loss.hoss.adjustment"]])) {
+		sgp.loss.hoss.adjustment <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["sgp.loss.hoss.adjustment"]]
 	} else {
 		sgp.loss.hoss.adjustment <- NULL
 	}
 	
-	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["sgp.minimum.default.panel.years"]])) {
-		sgp.minimum.default.panel.years <- SGPstateData[[state]][["SGP_Configuration"]][["sgp.minimum.default.panel.years"]]
+	if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["sgp.minimum.default.panel.years"]])) {
+		sgp.minimum.default.panel.years <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["sgp.minimum.default.panel.years"]]
 	} else sgp.minimum.default.panel.years <- 3
 
 	############################################
@@ -159,7 +158,7 @@ function(sgp_object,
 	###
 	#################################################################################
 
-	if (is.null(SGPstateData[[state]][["Baseline_splineMatrix"]])) {
+	if (is.null(SGP::SGPstateData[[state]][["Baseline_splineMatrix"]])) {
 		
 		if (is.null(sgp.baseline.config)) {
 			sgp.baseline.config <- getSGPBaselineConfig(sgp_object, content_areas, grades, sgp.baseline.panel.years, 
@@ -186,7 +185,7 @@ function(sgp_object,
 
 		sgp_object@SGP <- mergeSGP(Reduce(mergeSGP, tmp.list), sgp_object@SGP)
 	} else {
-		sgp_object@SGP <- mergeSGP(sgp_object@SGP, SGPstateData[[state]][["Baseline_splineMatrix"]])
+		sgp_object@SGP <- mergeSGP(sgp_object@SGP, SGP::SGPstateData[[state]][["Baseline_splineMatrix"]])
 	}
 
 
@@ -267,7 +266,7 @@ function(sgp_object,
 					content_area.progression=tail(sgp.iter[['sgp.content.areas']], min(sgp.iter[['sgp.baseline.max.order']], sgp.percentiles.baseline.max.order)+1),
 					year.progression=rep("BASELINE", length(sgp.iter[['sgp.content.areas']])),
 					num.prior =min(sgp.iter[['sgp.baseline.max.order']], sgp.percentiles.baseline.max.order),
-					percentile.cuts=SGPstateData[[state]][['SGP_Configuration']][['percentile.cuts']],
+					percentile.cuts=SGP::SGPstateData[[state]][['SGP_Configuration']][['percentile.cuts']],
 					drop.nonsequential.grade.progression.variables=FALSE,
 					exact.grade.progression.sequence=sgp.iter[['sgp.exact.grade.progression']],
 					sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
@@ -292,7 +291,7 @@ function(sgp_object,
 
 	if (return.matrices.only) {
 		tmp.list <- list()
-		if (is.null(SGPstateData[[state]][["Baseline_splineMatrix"]])) {
+		if (is.null(SGP::SGPstateData[[state]][["Baseline_splineMatrix"]])) {
 			for (ca in unique(sapply(sgp.baseline.config, function(x) tail(x[["sgp.baseline.content.areas"]],1)))) {
 				tmp.list[[paste(ca, ".BASELINE", sep="")]] <- sgp_object@SGP[["Coefficient_Matrices"]][[paste(ca, ".BASELINE", sep="")]]
 			}
