@@ -740,16 +740,16 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		gp=gpar(fill=achievement.level.region.colors[[1]][i], lwd=0.5, col=border.color, alpha=0.7))
 	}
 
-	grid.text(x=0.94, y=(level_1_1_curve(xscale.range[1]) + yscale.range[1])/2, names(achievement.level.labels)[1], 
+	grid.text(x=0.94, y=(level_1_1_curve(xscale.range[1]) + yscale.range[1])/2, names(achievement.level.labels[[1]])[1], 
 		gp=gpar(col=border.color, fontface=2, fontfamily="Helvetica-Narrow", cex=.85), default.units="native", just="right")
 	grid.text(x=0.94, y=(eval(parse(text=paste("level_1", "_", number.achievement.level.regions[[1]]-1, "_curve(xscale.range[1])", sep=""))) + yscale.range[2])/2, 
-		names(achievement.level.labels)[number.achievement.level.regions[[1]]], 
+		names(achievement.level.labels[[1]])[number.achievement.level.regions[[1]]], 
 		gp=gpar(col=border.color, fontface=2, fontfamily="Helvetica-Narrow", cex=.85), default.units="native", just="right")
 
 	if (number.achievement.level.regions[[1]] > 2) {
 		for (i in 2:(number.achievement.level.regions[[1]]-1)) {
 		grid.text(x=.94, y=(eval(parse(text=paste("(level_1", "_", i-1, "_curve(xscale.range[1]) + level_1", "_", i, "_curve(xscale.range[1]))/2", sep="")))),
-			names(achievement.level.labels)[i], 
+			names(achievement.level.labels[[1]])[i], 
 			gp=gpar(col=border.color, fontface=2, fontfamily="Helvetica-Narrow", cex=.85), default.units="native", just="right")
 		}
 	}
@@ -804,15 +804,15 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 			if (length(grep("Current", tmp.projection.names.list[[i]])) > 0) {
 				tmp.projection.names <- tmp.projection.names.list[[i]]
 				tmp.projection.year <- current.year+grade.values$increment_for_projection_current
-				tmp.achievement.level <- which(head(Achievement_Levels, 1)==achievement.level.labels)
+				tmp.achievement.level <- which(head(Achievement_Levels, 1)==achievement.level.labels[[2]])
 			} else {
 				tmp.projection.names <- tmp.projection.names.list[[i]]
 				tmp.projection.year <- current.year
 				tmp.projection.year.lag <- min(which(!is.na(tail(Scale_Scores, -1))), na.rm=TRUE)
-				tmp.achievement.level <- which(tail(head(Achievement_Levels, tmp.projection.year.lag+1), 1)==achievement.level.labels)
+				tmp.achievement.level <- which(tail(head(Achievement_Levels, tmp.projection.year.lag+1), 1)==achievement.level.labels[[2]])
 			}
 			if ((length(grep("CUKU", tmp.projection.names)) > 0 & tmp.achievement.level <= level.to.get.cuku) | length(grep("MUSU", tmp.projection.names))==0) {
-				level.to.get.cuku.label <- names(achievement.level.labels)[level.to.get.cuku+1]
+				level.to.get.cuku.label <- names(achievement.level.labels[[2]])[level.to.get.cuku+1]
 				grid.text(x=tmp.projection.year, y=1.35, 
 					paste(level.to.get.cuku.label, " (", SGP_Scale_Score_Targets[[grep("CUKU", tmp.projection.names, value=TRUE)]][['NY1']], ")", sep=""),
 					gp=gpar(col=border.color, cex=.4), default.units="native")
@@ -820,8 +820,8 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 					paste(CU.label, " (", SGP_Targets[[grep("CUKU", tmp.projection.names, value=TRUE)]], ")", sep=""),
 					gp=gpar(col=border.color, cex=.4), default.units="native")
 			} else {
-				level.to.get.cuku.label <- names(achievement.level.labels)[level.to.get.cuku+1]
-				level.to.get.musu.label <- names(achievement.level.labels)[level.to.get.musu+1]
+				level.to.get.cuku.label <- names(achievement.level.labels[[2]])[level.to.get.cuku+1]
+				level.to.get.musu.label <- names(achievement.level.labels[[2]])[level.to.get.musu+1]
 				grid.text(x=tmp.projection.year, y=1.35, 
 					paste(level.to.get.cuku.label, " (", SGP_Scale_Score_Targets[[grep("CUKU", tmp.projection.names, value=TRUE)]][['NY1']], ")/", level.to.get.musu.label, " (", SGP_Scale_Score_Targets[[grep("MUSU", tmp.projection.names, value=TRUE)]][['NY1']], ")", sep=""),
 					gp=gpar(col=border.color, cex=.4), default.units="native")
@@ -977,16 +977,16 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 			gp=gpar(fill=achievement.level.region.colors[[2]][i], lwd=0.5, col=border.color, alpha=0.7))
 		}
 
-		grid.text(x=0.94, y=(level_2_1_curve(xscale.range[1]) + yscale.range[1])/2, names(achievement.level.labels)[1], 
+		grid.text(x=0.94, y=(level_2_1_curve(xscale.range[1]) + yscale.range[1])/2, names(achievement.level.labels[[2]])[1], 
 			gp=gpar(col=border.color, fontface=2, fontfamily="Helvetica-Narrow", cex=.85), default.units="native", just="left")
 		grid.text(x=0.94, y=(eval(parse(text=paste("level_2", "_", number.achievement.level.regions[[2]]-1, "_curve(xscale.range[1])", sep=""))) + yscale.range[2])/2, 
-			names(achievement.level.labels)[number.achievement.level.regions[[2]]], 
+			names(achievement.level.labels[[2]])[number.achievement.level.regions[[2]]], 
 			gp=gpar(col=border.color, fontface=2, fontfamily="Helvetica-Narrow", cex=.85), default.units="native", just="left")
 
 		if (number.achievement.level.regions[[2]] > 2) {
 			for (i in 2:(number.achievement.level.regions[[2]]-1)) {
 			grid.text(x=.94, y=(eval(parse(text=paste("(level_2", "_", i-1, "_curve(xscale.range[1]) + level_2", "_", i, "_curve(xscale.range[1]))/2", sep="")))),
-				names(achievement.level.labels)[i], 
+				names(achievement.level.labels[[2]])[i], 
 				gp=gpar(col=border.color, fontface=2, fontfamily="Helvetica-Narrow", cex=.85), default.units="native", just="left")
 			}
 		}
