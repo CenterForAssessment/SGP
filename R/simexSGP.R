@@ -284,7 +284,7 @@ simexSGP <- function(
 						environment(.get.percentile.predictions) <- environment()
 						environment(.smooth.isotonize.row) <- environment()
 						fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- 
-							foreach(z=iter(sim.iters), .combine="+", .export=c('tmp.gp', 'k', 'taus'),
+							foreach(z=iter(sim.iters), .combine="+", .export=c('tmp.gp', 'k', 'taus', 'sgp.loss.hoss.adjustment', 'isotonize'),
 								.options.multicore=par.start$foreach.options) %dopar% { # .options.snow=par.start$foreach.options
 									as.vector(.get.percentile.predictions(my.matrix=mtx.subset[[z]], my.data=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
 										paste("select ", paste(c("ID", paste('prior_', k:1, sep=""), "final_yr"), collapse=", "), " from simex_data where b in ('",z,"')", sep="")))/B)
