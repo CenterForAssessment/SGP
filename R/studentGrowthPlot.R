@@ -465,7 +465,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		xscale.range.list <- list(xscale.range) 
 	} else {
 		tmp.year.cut <- year.function(Report_Parameters$Assessment_Transition$Year, 0, 1)
-		if (tmp.year.cut-0.5 <= xscale.range[1]) xscale.range[1] <- tmp.year.cut-1
+		if (tmp.year.cut-0.5 <= xscale.range[1]) xscale.range[1] <- tmp.year.cut-0.9
 		xscale.range.list <- list(c(xscale.range[1], tmp.year.cut), c(tmp.year.cut, xscale.range[2]))
 	}
 
@@ -578,11 +578,11 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 			assign(paste("level_", i, "_curve", sep=""), splinefun((low.year-1):(high.year+1), temp, method="mono"))
 		}
 
-		tmp.x.points <- seq(xscale.range[[j]][1], xscale.range[[j]][2], length=40)
-		x.boundary.values.1 <- c(xscale.range[[j]][1], tmp.x.points, xscale.range[[j]][2])
+		tmp.x.points <- seq(xscale.range.list[[j]][1], xscale.range.list[[j]][2], length=40)
+		x.boundary.values.1 <- c(xscale.range.list[[j]][1], tmp.x.points, xscale.range.list[[j]][2])
 		y.boundary.values.1 <- c(yscale.range[1], eval(parse(text="level_1_curve(tmp.x.points)")), yscale.range[1])
 		assign(paste("x.boundary.values.", number.achievement.level.regions, sep=""), 
-			c(xscale.range[[j]][1], tmp.x.points, xscale.range[[j]][2]))
+			c(xscale.range.list[[j]][1], tmp.x.points, xscale.range.list[[j]][2]))
 		assign(paste("y.boundary.values.", number.achievement.level.regions, sep=""), 
 			c(yscale.range[2], eval(parse(text=paste("level_", number.achievement.level.regions-1, "_curve(tmp.x.points)", sep=""))), yscale.range[2]))
 
