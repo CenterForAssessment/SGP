@@ -2,6 +2,8 @@ simexSGP <- function(
 	state, variable=NULL, csem.data.vnames=NULL, csem.loss.hoss=NULL, 
 	lambda, B, simex.sample.size, extrapolation, save.matrices, simex.use.my.coefficient.matrices=NULL, calculate.simex.sgps, verbose=FALSE) 
 {
+	
+	if(is.null(verbose)) verbose <- FALSE
 	if(verbose) message("\n\tStarted SIMEX SGP calculation ", rev(content_area.progression)[1], " Grade ", rev(tmp.gp)[1], " ", date())
 	
 	GRADE <- CONTENT_AREA <- YEAR <- V1 <- Lambda <- tau <- b <- .SD <- TEMP <- NULL ## To avoid R CMD check warnings
