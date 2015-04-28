@@ -666,13 +666,29 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 				current.year.x.coor <- current.year
 				current.year.x.coor.lag <- min(which(!is.na(tail(Scale_Scores, -1))), na.rm=TRUE)
 				x.coor.label.adjustment <- -0.075; label.position <- "right"
-				tmp.achievement.level <- which(tail(head(Achievement_Levels, current.year.x.coor.lag+1), 1)==achievement.level.labels[[1]])
+				if (is.null(Report_Parameters$Assessment_Transition)) {
+					tmp.achievement.level <- which(tail(head(Achievement_Levels, current.year.x.coor.lag+1), 1)==achievement.level.labels[[1]])
+				} else {
+					if (year.function(Report_Parameters$Assessment_Transition$Year, 0, 1) >= current.year.x.coor) {
+						tmp.achievement.level <- which(head(Achievement_Levels, 1)==achievement.level.labels[[2]])
+					} else {
+						tmp.achievement.level <- which(head(Achievement_Levels, 1)==achievement.level.labels[[1]])
+					}
+				}
 				show.targets <- TRUE
 			} else {
 				current.year.x.coor <- current.year+grade.values$increment_for_projection_current
 				current.year.x.coor.lag <- grade.values$increment_for_projection_current
 				x.coor.label.adjustment <- 0.075; label.position <- "left"
-				tmp.achievement.level <- which(head(Achievement_Levels, 1)==achievement.level.labels[[2]])
+				if (is.null(Report_Parameters$Assessment_Transition)) {
+					tmp.achievement.level <- which(head(Achievement_Levels, 1)==achievement.level.labels[[1]])
+				} else {
+					if (year.function(Report_Parameters$Assessment_Transition$Year, 0, 1) >= current.year.x.coor) {
+						tmp.achievement.level <- which(head(Achievement_Levels, 1)==achievement.level.labels[[2]])
+					} else {
+						tmp.achievement.level <- which(head(Achievement_Levels, 1)==achievement.level.labels[[1]])
+					}
+				}
 				show.targets <- show.fan
 			}
 
