@@ -9,7 +9,7 @@ simexSGP <- function(
 	## To avoid R CMD check warnings
 	#  NULL for data.table and objects established later
 	GRADE <- CONTENT_AREA <- YEAR <- V1 <- Lambda <- tau <- b <- .SD <- TEMP <- NULL
-	#  Set objects passed from studentGrowthPercentiles' environment to themselves
+	#  Set objects passed from studentGrowthPercentiles' environment to themselves (in order of R CMD check warnings issued)
 	content_area.progression <- content_area.progression
 	tmp.gp <- tmp.gp
 	get.my.knots.boundaries.path <- get.my.knots.boundaries.path
@@ -17,7 +17,7 @@ simexSGP <- function(
 	use.my.coefficient.matrices <- use.my.coefficient.matrices
 	exact.grade.progression.sequence <- exact.grade.progression.sequence
 	num.prior <- num.prior
-	coefficient.matrix.priors <- coefficient.matrix.priors
+	if (is.null(simex.use.my.coefficient.matrices)) coefficient.matrix.priors <- coefficient.matrix.priors else coefficient.matrix.priors <- NULL
 	.get.panel.data <- .get.panel.data
 	ss.data <- ss.data
 	by.grade <- by.grade
