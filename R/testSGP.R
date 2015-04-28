@@ -730,8 +730,8 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 
 	if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
 
-	cat("#####        Begin testSGP test number 4, Part 2            #####\n", fill=TRUE)
-	cat("##           EOCT Baseline Tests with custom sgp.config.       ##\n", fill=TRUE)
+	cat("\n\t#####        Begin testSGP test number 4, Part 2            #####\n", fill=TRUE)
+	cat("\t##           EOCT Baseline Tests with custom sgp.config.       ##\n", fill=TRUE)
 
 	cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 
