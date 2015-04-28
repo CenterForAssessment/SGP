@@ -820,12 +820,20 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 			if (length(grep("Current", tmp.projection.names.list[[i]])) > 0) {
 				tmp.projection.names <- tmp.projection.names.list[[i]]
 				tmp.projection.year <- current.year+grade.values$increment_for_projection_current
-				tmp.achievement.level <- which(head(Achievement_Levels, 1)==achievement.level.labels[[2]])
+				if (!is.null(Report_Parameters$Assessment_Transition) && year.function(Report_Parameters$Assessment_Transition$Year, 0, 1) >= tmp.projection.year) {
+					tmp.achievement.level <- which(head(Achievement_Levels, 1)==achievement.level.labels[[2]])
+				} else {
+					tmp.achievement.level <- which(head(Achievement_Levels, 1)==achievement.level.labels[[1]])
+				}
 			} else {
 				tmp.projection.names <- tmp.projection.names.list[[i]]
 				tmp.projection.year <- current.year
 				tmp.projection.year.lag <- min(which(!is.na(tail(Scale_Scores, -1))), na.rm=TRUE)
-				tmp.achievement.level <- which(tail(head(Achievement_Levels, tmp.projection.year.lag+1), 1)==achievement.level.labels[[1]])
+				if (!is.null(Report_Parameters$Assessment_Transition) && year.function(Report_Parameters$Assessment_Transition$Year, 0, 1) >= tmp.projection.year.lag) {
+					tmp.achievement.level <- which(tail(head(Achievement_Levels, tmp.projection.year.lag+1), 1)==achievement.level.labels[[2]])
+				} else {
+					tmp.achievement.level <- which(tail(head(Achievement_Levels, tmp.projection.year.lag+1), 1)==achievement.level.labels[[1]])
+				}
 			}
 			if ((length(grep("CUKU", tmp.projection.names)) > 0 & tmp.achievement.level <= level.to.get.cuku) | length(grep("MUSU", tmp.projection.names))==0) {
 				level.to.get.cuku.label <- names(achievement.level.labels[[2]])[level.to.get.cuku+1]
