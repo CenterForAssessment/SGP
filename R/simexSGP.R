@@ -14,10 +14,8 @@ simexSGP <- function(
 	tmp.gp <- tmp.gp
 	get.my.knots.boundaries.path <- get.my.knots.boundaries.path
 	sgp.labels <- sgp.labels
-	use.my.coefficient.matrices <- use.my.coefficient.matrices
 	exact.grade.progression.sequence <- exact.grade.progression.sequence
 	num.prior <- num.prior
-	if (is.null(simex.use.my.coefficient.matrices)) coefficient.matrix.priors <- coefficient.matrix.priors else coefficient.matrix.priors <- NULL
 	.get.panel.data <- .get.panel.data
 	ss.data <- ss.data
 	by.grade <- by.grade
@@ -83,14 +81,12 @@ simexSGP <- function(
 			loss.hoss[,g] <- variable[[paste("loss.hoss_", rev(tmp.gp)[-1][g], sep="")]]
 		}}
 
-	if (!is.null(use.my.coefficient.matrices)) { # Passed implicitly from studentGrowthPercentiles arguments
-		if (exact.grade.progression.sequence) {
-			simex.matrix.priors <- num.prior
-		} else {
-			simex.matrix.priors <- seq(num.prior)
-		}
-	} else simex.matrix.priors <- coefficient.matrix.priors
-	
+	if (exact.grade.progression.sequence) {
+		simex.matrix.priors <- num.prior
+	} else {
+		simex.matrix.priors <- seq(num.prior)
+	}
+
 	for (k in simex.matrix.priors) {
 		tmp.data <- .get.panel.data(ss.data, k, by.grade)
 		tmp.num.variables <- dim(tmp.data)[2]
