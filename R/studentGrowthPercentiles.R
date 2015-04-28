@@ -594,7 +594,7 @@ function(panel.data,         ## REQUIRED
 	if (identical(class(panel.data), "data.frame")) {
 		Panel_Data <- as.data.table(panel.data)
 	}
-	if (identical(class(panel.data), "list") && !identical(class(panel.data[["Panel_Data"]]), "data.frame")) {
+	if (identical(class(panel.data), "list") && !is.data.table(panel.data[["Panel_Data"]])) {
 			Panel_Data <- as.data.table(panel.data[["Panel_Data"]])
 	}
 	

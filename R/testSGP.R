@@ -728,7 +728,7 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 	expression.to.evaluate <- 
 		paste("\nDemonstration_SGP <- analyzeSGP(\n\tsgp_object= Demonstration_SGP,\n\tsgp.config=sgp.config,\n\tsgp.percentiles=FALSE,\n\tsgp.projections=FALSE,\n\tsgp.projections.lagged=FALSE,\n\tsgp.percentiles.baseline=TRUE,\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsimulate.sgps=FALSE,\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(BASELINE_PERCENTILES=", number.cores, "))\n)\nDemonstration_SGP <- combineSGP(Demonstration_SGP)", sep="")
 
-	if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
+	if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "dir.create('Data', show.warnings=FALSE)", "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
 
 	cat("#####        Begin testSGP test number 4, Part 2            #####\n", fill=TRUE)
 	cat("##           EOCT Baseline Tests with custom sgp.config.       ##\n", fill=TRUE)
@@ -779,144 +779,153 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 	Demonstration_SGP <- ACHIEVEMENT_LEVEL <- HIGH_NEED_STATUS <- tmp.messages <- NULL
 	sgpData_LONG <- SGPdata::sgpData_LONG
 
-	### Modify latest year data sgpData_LONG
+	##### STEP 1: Run analyses for year prior to assessment change in 2014-2015
 
-	sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'MATHEMATICS' & sgpData_LONG$YEAR == '2014_2015'] <- 
-		sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'MATHEMATICS' & sgpData_LONG$YEAR == '2014_2015'] + 1000
-	sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'READING' & sgpData_LONG$YEAR == '2014_2015'] <- 
-		sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'READING' & sgpData_LONG$YEAR == '2014_2015'] + 1200
+		##### Create LONG Data set for STEP 1 analysis.
 
-	### Modify SGPstateData
+		sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'MATHEMATICS' & sgpData_LONG$YEAR == '2014_2015'] <- 
+			sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'MATHEMATICS' & sgpData_LONG$YEAR == '2014_2015'] + 1000
+		sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'READING' & sgpData_LONG$YEAR == '2014_2015'] <- 
+			sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'READING' & sgpData_LONG$YEAR == '2014_2015'] + 1200
 
-	SGPstateData[["DEMO"]][["Achievement"]][["Knots_Boundaries"]] <- c(
-		SGPstateData[["DEMO"]][["Achievement"]][["Knots_Boundaries"]],
-		list(MATHEMATICS.2014_2015=list(
-			boundaries_3=c(1150, 1700),
-			boundaries_4=c(1180, 1780),
-			boundaries_5=c(1220, 1800),
-			boundaries_6=c(1240, 1830),
-			boundaries_7=c(1280, 1860),
-			boundaries_8=c(1310, 1890),
-			boundaries_9=c(1340, 1920),
-			boundaries_10=c(1370, 1950),
-			knots_3=c(1392, 1440, 1481, 1529),
-			knots_4=c(1425, 1470, 1506, 1546),
-			knots_5=c(1452, 1495, 1530, 1569),
-			knots_6=c(1465, 1509, 1546, 1588),
-			knots_7=c(1490, 1530, 1565, 1600),
-			knots_8=c(1500, 1545, 1580, 1620),
-			knots_9=c(1515, 1560, 1595, 1630),
-			knots_10=c(1530, 1575, 1610, 1645),
-			loss.hoss_3=c(1150, 1700),
-			loss.hoss_4=c(1180, 1780),
-			loss.hoss_5=c(1220, 1800),
-			loss.hoss_6=c(1240, 1830),
-			loss.hoss_7=c(1280, 1860),
-			loss.hoss_8=c(1310, 1890),
-			loss.hoss_9=c(1340, 1920),
-			loss.hoss_10=c(1370, 1950)),
-	READING.2014_2015=list(
-			boundaries_3=c(1350, 1995),
-			boundaries_4=c(1380, 2140),
-			boundaries_5=c(1420, 2155),
-			boundaries_6=c(1460, 2170),
-			boundaries_7=c(1500, 2180),
-			boundaries_8=c(1530, 2190),
-			boundaries_9=c(1550, 2195),
-			boundaries_10=c(1570, 2199),
-			knots_3=c(1710, 1750, 1780, 1815),
-			knots_4=c(1742, 1780, 1806, 1835),
-			knots_5=c(1762, 1802, 1832, 1865),
-			knots_6=c(1775, 1815, 1845, 1875),
-			knots_7=c(1786, 1825, 1855, 1890),
-			knots_8=c(1805, 1842, 1870, 1902),
-			knots_9=c(1820, 1855, 1880, 1906),
-			knots_10=c(1842, 1875, 1900, 1930),
-			loss.hoss_3=c(1350, 1995),
-			loss.hoss_4=c(1380, 2140),
-			loss.hoss_5=c(1420, 2155),
-			loss.hoss_6=c(1460, 2170),
-			loss.hoss_7=c(1500, 2180),
-			loss.hoss_8=c(1530, 2190),
-			loss.hoss_9=c(1550, 2195),
-			loss.hoss_10=c(1570, 2199))))
+		Demonstration_Data_LONG <- as.data.table(subset(SGPdata_LONG, YEAR!="2014_2015"))
+		Demonstration_Data_LONG_2014_2015 <- as.data.table(subset(sgpData_LONG, YEAR=="2014_2015"))[,ACHIEVEMENT_LEVEL:=NULL]
+		Demonstration_Data_LONG_2014_2015 <- prepareSGP(Demonstration_Data_LONG_2014_2015)@Data
+		Demonstration_Data_LONG_2014_2015[, HIGH_NEED_STATUS:=NULL]
+		setcolorder(Demonstration_Data_LONG_2014_2015, names(Demonstration_Data_LONG))
 
-	SGPstateData[["DEMO"]][["Achievement"]][["Cutscores"]] <- c(
-		SGPstateData[["DEMO"]][["Achievement"]][["Cutscores"]],
-		list(MATHEMATICS.2014_2015=list(
-			GRADE_3=c(1335, 1419, 1510, 1560),
-			GRADE_4=c(1383, 1455, 1538, 1588),
-			GRADE_5=c(1422, 1494, 1562, 1612),
-			GRADE_6=c(1454, 1520, 1589, 1639),
-			GRADE_7=c(1487, 1559, 1614, 1664),
-			GRADE_8=c(1521, 1577, 1628, 1678),
-			GRADE_9=c(1548, 1602, 1652, 1702),
-			GRADE_10=c(1562, 1627, 1692, 1742)),
+		### Calculate SGPs
+
+		expression.to.evaluate <- 
+			paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=Demonstration_Data_LONG,\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.sqlite=", sgp.sqlite, ",\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
+
+
+
+
+	##### STEP 2: Create SGPs for assessment transtion year
+
+		##### Modify SGPstateData
+
+		SGPstateData[["DEMO"]][["Achievement"]][["Knots_Boundaries"]] <- c(
+			SGPstateData[["DEMO"]][["Achievement"]][["Knots_Boundaries"]],
+			list(MATHEMATICS.2014_2015=list(
+				boundaries_3=c(1150, 1700),
+				boundaries_4=c(1180, 1780),
+				boundaries_5=c(1220, 1800),
+				boundaries_6=c(1240, 1830),
+				boundaries_7=c(1280, 1860),
+				boundaries_8=c(1310, 1890),
+				boundaries_9=c(1340, 1920),
+				boundaries_10=c(1370, 1950),
+				knots_3=c(1392, 1440, 1481, 1529),
+				knots_4=c(1425, 1470, 1506, 1546),
+				knots_5=c(1452, 1495, 1530, 1569),
+				knots_6=c(1465, 1509, 1546, 1588),
+				knots_7=c(1490, 1530, 1565, 1600),
+				knots_8=c(1500, 1545, 1580, 1620),
+				knots_9=c(1515, 1560, 1595, 1630),
+				knots_10=c(1530, 1575, 1610, 1645),
+				loss.hoss_3=c(1150, 1700),
+				loss.hoss_4=c(1180, 1780),
+				loss.hoss_5=c(1220, 1800),
+				loss.hoss_6=c(1240, 1830),
+				loss.hoss_7=c(1280, 1860),
+				loss.hoss_8=c(1310, 1890),
+				loss.hoss_9=c(1340, 1920),
+				loss.hoss_10=c(1370, 1950)),
 		READING.2014_2015=list(
-			GRADE_3=c(1666, 1726, 1856, 1906),
-			GRADE_4=c(1717, 1772, 1871, 1921),
-			GRADE_5=c(1738, 1788, 1891, 1941),
-			GRADE_6=c(1743, 1800, 1896, 1946),
-			GRADE_7=c(1767, 1820, 1916, 1966),
-			GRADE_8=c(1778, 1832, 1924, 1974),
-			GRADE_9=c(1785, 1842, 1939, 1989),
-			GRADE_10=c(1807, 1863, 1947, 1997))))
+				boundaries_3=c(1350, 1995),
+				boundaries_4=c(1380, 2140),
+				boundaries_5=c(1420, 2155),
+				boundaries_6=c(1460, 2170),
+				boundaries_7=c(1500, 2180),
+				boundaries_8=c(1530, 2190),
+				boundaries_9=c(1550, 2195),
+				boundaries_10=c(1570, 2199),
+				knots_3=c(1710, 1750, 1780, 1815),
+				knots_4=c(1742, 1780, 1806, 1835),
+				knots_5=c(1762, 1802, 1832, 1865),
+				knots_6=c(1775, 1815, 1845, 1875),
+				knots_7=c(1786, 1825, 1855, 1890),
+				knots_8=c(1805, 1842, 1870, 1902),
+				knots_9=c(1820, 1855, 1880, 1906),
+				knots_10=c(1842, 1875, 1900, 1930),
+				loss.hoss_3=c(1350, 1995),
+				loss.hoss_4=c(1380, 2140),
+				loss.hoss_5=c(1420, 2155),
+				loss.hoss_6=c(1460, 2170),
+				loss.hoss_7=c(1500, 2180),
+				loss.hoss_8=c(1530, 2190),
+				loss.hoss_9=c(1550, 2195),
+				loss.hoss_10=c(1570, 2199))))
+	
+		SGPstateData[["DEMO"]][["Achievement"]][["Cutscores"]] <- c(
+			SGPstateData[["DEMO"]][["Achievement"]][["Cutscores"]],
+			list(MATHEMATICS.2014_2015=list(
+				GRADE_3=c(1335, 1419, 1510, 1560),
+				GRADE_4=c(1383, 1455, 1538, 1588),
+				GRADE_5=c(1422, 1494, 1562, 1612),
+				GRADE_6=c(1454, 1520, 1589, 1639),
+				GRADE_7=c(1487, 1559, 1614, 1664),
+				GRADE_8=c(1521, 1577, 1628, 1678),
+				GRADE_9=c(1548, 1602, 1652, 1702),
+				GRADE_10=c(1562, 1627, 1692, 1742)),
+			READING.2014_2015=list(
+				GRADE_3=c(1666, 1726, 1856, 1906),
+				GRADE_4=c(1717, 1772, 1871, 1921),
+				GRADE_5=c(1738, 1788, 1891, 1941),
+				GRADE_6=c(1743, 1800, 1896, 1946),
+				GRADE_7=c(1767, 1820, 1916, 1966),
+				GRADE_8=c(1778, 1832, 1924, 1974),
+				GRADE_9=c(1785, 1842, 1939, 1989),
+				GRADE_10=c(1807, 1863, 1947, 1997))))
+	
+		SGPstateData[["DEMO"]][["Achievement"]][["Levels"]] <-
+			list(
+				Labels=c("Level 1", "Level 2", "Level 3", "Level 4", "Level 5"),
+				Proficient=c("Not Proficient", "Not Proficient", "Not Proficient", "Proficient", "Proficient"))
 
-#	SGPstateData[["DEMO"]][["Achievement"]][["Levels"]] <-
-#		list(
-#			Labels=c("Unsatisfactory", "Partially Proficient", "Proficient", "Advanced", "No Score"),
-#			Proficient=c("Not Proficient", "Not Proficient", "Proficient", "Proficient", NA))
+		SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]] <-
+			list(
+				Assessment_Abbreviation="DEMO_OLD",
+				Assessment_Abbreviation.2014_2015="DEMO_NEW",
+				Assessment_Name="Old Demonstration Student Assessment Program",
+				Assessment_Name.2014_2015="New Demonstration Student Assessment Program",
+				Achievement_Levels=list(
+					Labels=c("Unsatisfactory", "Partially Proficient", "Proficient", "Advanced", "No Score"),
+					Proficient=c("Not Proficient", "Not Proficient", "Proficient", "Proficient", NA)),
+				Achievement_Levels.2014_2015=list(
+					Labels=c("Level 1", "Level 2", "Level 3", "Level 4", "Level 5"),
+					Proficient=c("Not Proficient", "Not Proficient", "Not Proficient", "Proficient", "Proficient")),
+				Achievement_Level_Labels=list(
+					"Unsatisfactory"="Unsatisfactory",
+					"Part Proficient"="Proficient",
+					"Proficient"="Proficient",
+					"Advanced"="Advanced"),
+				Achievement_Level_Labels.2014_2015=list(
+					"Level 1"="Level 1",
+					"Level 2"="Level 2",
+					"Level 3"="Level 3",
+					"Level 4"="Level 4",
+					"Level 5"="Level 5"),
+				Content_Areas_Labels=list(MATHEMATICS="Math", READING="Reading"),
+				Content_Areas_Labels.2014_2015=list(MATHEMATICS="Math", READING="Reading"),
+#				Transformed_Achievement_Level_Cutscores=list(MATHEMATICS=c(100,200,300,400,500), READING=c(100,200,300,400,500)),
+#				Transformed_Achievement_Level_Cutscores.2014_2015=list(MATHEMATICS=c(100,200,300,400,500,600), READING=c(100,200,300,400,500,600)),
+				Vertical_Scale="Yes",
+				Vertical_Scale.2014_2015="Yes",
+				Year="2014_2015"
+		)
 
-	SGPstateData[["DEMO"]][["Achievement"]][["Levels"]] <-
-		list(
-			Labels=c("Level 1", "Level 2", "Level 3", "Level 4", "Level 5"),
-			Proficient=c("Not Proficient", "Not Proficient", "Not Proficient", "Proficient", "Proficient"))
-
-	SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]] <-
-		list(
-                Assessment_Abbreviation="DEMO_OLD",
-                Assessment_Abbreviation.2014_2015="DEMO_NEW",
-                Assessment_Name="Old Demonstration Student Assessment Program",
-                Assessment_Name.2014_2015="New Demonstration Student Assessment Program",
-                Achievement_Levels=list(
-                        Labels=c("Unsatisfactory", "Partially Proficient", "Proficient", "Advanced", "No Score"),
-                        Proficient=c("Not Proficient", "Not Proficient", "Proficient", "Proficient", NA)),
-                Achievement_Levels.2014_2015=list(
-                        Labels=c("Level 1", "Level 2", "Level 3", "Level 4", "Level 5"),
-                        Proficient=c("Not Proficient", "Not Proficient", "Not Proficient", "Proficient", "Proficient")),
-		Achievement_Level_Labels=list(
-			"Below Basic"="Below Basic",
-			"Basic"="Basic",
-			"Proficient"="Proficient",
-			"Advanced"="Advanced"),
-		Achievement_Level_Labels.2014_2015=list(
-			"Level 1"="Level 1",
-			"Level 2"="Level 2",
-			"Level 3"="Level 3",
-			"Level 4"="Level 4",
-			"Level 5"="Level 5"),
-		Content_Areas_Labels=list(MATHEMATICS="Math", READING="Reading"),
-		Content_Areas_Labels.2014_2015=list(MATHEMATICS="Math", READING="Reading"),
-#		Transformed_Achievement_Level_Cutscores=list(MATHEMATICS=c(100,200,300,400,500), READING=c(100,200,300,400,500)),
-#		Transformed_Achievement_Level_Cutscores.2014_2015=list(MATHEMATICS=c(100,200,300,400,500,600), READING=c(100,200,300,400,500,600)),
-		Vertical_Scale="Yes",
-		Vertical_Scale.2014_2015="Yes",
-                Year="2014_2015"
-        )
-
-	SGPstateData[["DEMO"]][["Growth"]][["System_Type"]] <- "Cohort Referenced"
+		SGPstateData[["DEMO"]][["Growth"]][["System_Type"]] <- "Cohort Referenced"
 
 
-	### Create LONG data
+		### Create LONG data for update
 
-	Demonstration_Data_LONG <- as.data.table(subset(SGPdata::sgpData_LONG, YEAR!="2014_2015"))
-	Demonstration_Data_LONG[,ACHIEVEMENT_LEVEL := as.character(Demonstration_Data_LONG$ACHIEVEMENT_LEVEL)]
-	Demonstration_Data_LONG_2014_2015 <- as.data.table(subset(SGPdata::sgpData_LONG, YEAR=="2014_2015"))[,ACHIEVEMENT_LEVEL:=NULL]
-	Demonstration_Data_LONG_2014_2015 <- prepareSGP(Demonstration_Data_LONG_2014_2015)@Data
-	Demonstration_Data_LONG_2014_2015[, HIGH_NEED_STATUS:=NULL]
-	Demonstration_Data_LONG_2014_2015[, ACHIEVEMENT_LEVEL:=as.character(ACHIEVEMENT_LEVEL)]
-	setcolorder(Demonstration_Data_LONG_2014_2015, names(Demonstration_Data_LONG))
-	Demonstration_Data_LONG <- rbindlist(list(Demonstration_Data_LONG, Demonstration_Data_LONG_2014_2015))
+		Demonstration_Data_LONG_2014_2015 <- as.data.table(subset(sgpData_LONG, YEAR=="2014_2015"))[,ACHIEVEMENT_LEVEL:=NULL]
+		Demonstration_Data_LONG_2014_2015 <- prepareSGP(Demonstration_Data_LONG_2014_2015)@Data
+		Demonstration_Data_LONG_2014_2015[, HIGH_NEED_STATUS:=NULL]
+		setcolorder(Demonstration_Data_LONG_2014_2015, names(Demonstration_Data_LONG))
 
 
 	### Create SGPs
@@ -961,9 +970,9 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 	SGPstateData[['DEMO']][['Baseline_splineMatrix']] <- NULL
 
 	expression.to.evaluate <- 
-		paste("\nDemonstration_SGP <- abcSGP(\n\tsgp_object=SGPdata::sgpData_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP', 'outputSGP'),\n\tyears='2014_2015',\n\tcontent_areas='MATHEMATICS',\n\tsgp.percentiles=FALSE,\n\tsgp.projections=FALSE,\n\tsgp.projections.lagged=FALSE,\n\tsgp.percentiles.baseline=TRUE,\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(BASELINE_PERCENTILES=", number.cores, ", BASELINE_MATRICES=", number.cores, "))\n)", sep="")
+		paste("\nDemonstration_SGP <- abcSGP(\n\tsgp_object=SGPdata::sgpData_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\tyears='2014_2015',\n\tcontent_areas='MATHEMATICS',\n\tsgp.percentiles=FALSE,\n\tsgp.projections=FALSE,\n\tsgp.projections.lagged=FALSE,\n\tsgp.percentiles.baseline=TRUE,\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(BASELINE_PERCENTILES=", number.cores, ", BASELINE_MATRICES=", number.cores, "))\n)", sep="")
 
-	if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
+	if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "dir.create('Data', show.warnings=FALSE)", "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
 
 	cat("#####        Begin testSGP test number 6            #####\n", fill=TRUE)
 	cat("##           Basic Baseline Coefficient Matrix Test.       ##\n", fill=TRUE)
