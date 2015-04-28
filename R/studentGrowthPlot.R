@@ -25,8 +25,8 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 	CUTLEVEL <- level_1_1_curve <- level_2_1_curve <- NULL ## To prevent R CMD check warnings
 
 	if (is.null(Report_Parameters$Assessment_Transition)) {
-		achievement.level.labels <- SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Achievement_Level_Labels"]]
-		number.achievement.level.regions <- list(length(achievement.level.labels))
+		achievement.level.labels <- list(SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Achievement_Level_Labels"]])
+		number.achievement.level.regions <- sapply(achievement.level.labels, length)
 	} else {
 		achievement.level.labels <- SGP::SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][
 			grep("Achievement_Level_Labels", names(SGP::SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]]))]
