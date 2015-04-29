@@ -38,7 +38,7 @@ function(panel.data,         ## REQUIRED
          return.prior.scale.score.standardized=TRUE,
          return.norm.group.identifier=TRUE,
          return.norm.group.scale.scores=NULL,
-         return.panel.data=FALSE,
+         return.panel.data=identical(parent.frame(), .GlobalEnv),
          print.time.taken=TRUE,
          parallel.config=NULL,
          calculate.simex=NULL,
