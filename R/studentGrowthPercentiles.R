@@ -38,7 +38,7 @@ function(panel.data,         ## REQUIRED
          return.prior.scale.score.standardized=TRUE,
          return.norm.group.identifier=TRUE,
          return.norm.group.scale.scores=NULL,
-         return.panel.data=FALSE,
+         return.panel.data=identical(parent.frame(), .GlobalEnv),
          print.time.taken=TRUE,
          parallel.config=NULL,
          calculate.simex=NULL,
@@ -1146,7 +1146,7 @@ function(panel.data,         ## REQUIRED
 			setnames(quantile.data, names(additional.vnames.to.return), unlist(additional.vnames.to.return))
 		}
 
-		if (identical(print.sgp.order, TRUE)) setnames(quantile.data, "SGP_ORDER", "SGP_BASELINE_ORDER")
+		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & identical(print.sgp.order, TRUE)) setnames(quantile.data, "SGP_ORDER", "SGP_BASELINE_ORDER")
 
 		if (!return.prior.scale.score) {
 			quantile.data[,SCALE_SCORE_PRIOR:=NULL]

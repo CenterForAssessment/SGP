@@ -1,15 +1,27 @@
-simexSGP <- function(
-	state, variable=NULL, csem.data.vnames=NULL, csem.loss.hoss=NULL, 
-	lambda, B, simex.sample.size, extrapolation, save.matrices, simex.use.my.coefficient.matrices=NULL, calculate.simex.sgps, verbose=FALSE) 
-{
+`simexSGP` <- 
+function(
+	state,
+	variable=NULL,
+	csem.data.vnames=NULL,
+	csem.loss.hoss=NULL, 
+	lambda,
+	B,
+	simex.sample.size,
+	extrapolation,
+	save.matrices,
+	simex.use.my.coefficient.matrices=NULL,
+	calculate.simex.sgps,
+	verbose=FALSE) {
 	
 	if(is.null(verbose)) verbose <- FALSE
 	if(verbose) message("\n\tStarted SIMEX SGP calculation ", rev(content_area.progression)[1], " Grade ", rev(tmp.gp)[1], " ", date())
 	
-	## To avoid R CMD check warnings
-	#  NULL for data.table and objects established later
+	### To avoid R CMD check warnings & NULL for data.table and objects established later
+
 	GRADE <- CONTENT_AREA <- YEAR <- V1 <- Lambda <- tau <- b <- .SD <- TEMP <- NULL
-	#  Set objects passed from studentGrowthPercentiles' environment to themselves (in order of R CMD check warnings issued)
+
+	###  Set objects passed from studentGrowthPercentiles' environment to themselves (in order of R CMD check warnings issued)
+
 	content_area.progression <- content_area.progression
 	tmp.gp <- tmp.gp
 	get.my.knots.boundaries.path <- get.my.knots.boundaries.path
@@ -43,6 +55,8 @@ simexSGP <- function(
 	if (!is.null(state) & !is.null(variable)) stop("SIMEX config can not use both 'state' and 'variable' elements.")
 	if (!is.null(state) & !is.null(csem.data.vnames)) stop("SIMEX config can not use both 'state' and 'csem.data.vnames' elements.")
 	if (!is.null(csem.data.vnames) & !is.null(variable)) stop("SIMEX config can not use both 'csem.data.vnames' and 'variable' elements.")
+
+	### Utility functions
 	
 	rq.mtx <- function(tmp.gp.iter, lam, rqdata) {
 		mod <- character()
@@ -389,4 +403,4 @@ simexSGP <- function(
 		}
 	}
 	if(verbose) message("\tFinished SIMEX SGP calculation ", rev(content_area.progression)[1], " Grade ", rev(tmp.gp)[1], " ", date(), "\n")
-} ### END .simex.sgp function
+} ### END simexSGP function

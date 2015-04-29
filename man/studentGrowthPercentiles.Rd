@@ -48,7 +48,7 @@ studentGrowthPercentiles(panel.data,
                          return.prior.scale.score.standardized=TRUE,
                          return.norm.group.identifier=TRUE,
                          return.norm.group.scale.scores=NULL,
-                         return.panel.data=FALSE,
+                         return.panel.data=identical(parent.frame(), .GlobalEnv),
                          print.time.taken=TRUE,
                          parallel.config=NULL,
 			calculate.simex=NULL,
@@ -181,7 +181,8 @@ Useful for examining relationship between prior achievement and student growth.
   \item{return.norm.group.scale.scores}{Boolean argument (defaults. to NULL) indicating whether to return a comma separated character vector of the scores associated with the SGP_NORM_GROUP to
   which the student belongs.
   }
-  \item{return.panel.data}{Boolean argument indicating whether to return the original data provided in \code{panel.data$Panel_Data} in the SGP list of results.  Defaults to FALSE which returns a NULL list element.
+  \item{return.panel.data}{Boolean argument indicating whether to return the original data provided in \code{panel.data$Panel_Data} in the SGP list of results. 
+  Defaults to 'identical(parent.frame(), .GlobalEnv)': If the parent environment from which the function is called is .GlobalEnv, then FALSE, otherwise TRUE.
   }
   \item{print.time.taken}{Boolean argument (defaults to TRUE) indicating whether to print message indicating information on \code{studentGrowthPercentiles} analysis and time taken.
   }
@@ -341,7 +342,6 @@ for (i in seq_along(my.grade.sequences)) {
 		sgp.labels=list(my.year=2015, my.subject="Reading"),
 		growth.levels="DEMO",
 		goodness.of.fit="DEMO",
-		return.panel.data=TRUE,
 		grade.progression=my.grade.sequences[[i]])
 }
 
@@ -369,8 +369,7 @@ for (i in seq_along(my.grade.sequences)) {
 			"GRADE_2011", "GRADE_2012", "GRADE_2013",
 			"SS_2010", "SS_2011", "SS_2012", "SS_2013"),
 		sgp.labels=list(my.year=2013, my.subject="Reading"),
-		grade.progression=my.grade.sequences[[i]]),
-		return.panel.data=TRUE
+		grade.progression=my.grade.sequences[[i]])
 }
 
 
@@ -384,8 +383,7 @@ for (i in seq_along(my.grade.sequences)) {
 	calculate.confidence.intervals=list(state="DEMO", 
 	confidence.quantiles=c(0.1, 0.9), simulation.iterations=100, 
 		distribution="Normal", round=1),
-	grade.progression=my.grade.sequences[[i]]),
-	return.panel.data=TRUE
+	grade.progression=my.grade.sequences[[i]])
 }
 
 ### Example showing how to use pre-calculated coefficient
@@ -398,8 +396,7 @@ for (i in seq_along(my.grade.sequences)) {
 	my.sgpData <- studentGrowthPercentiles(panel.data=my.sgpData,
 		sgp.labels=list(my.year=2015, my.subject="Reading"),
 		growth.levels="DEMO",
-		grade.progression=my.grade.sequences[[i]]),
-		return.panel.data=TRUE
+		grade.progression=my.grade.sequences[[i]])
 }
 
 percentiles.1st.run <- my.sgpData$SGPercentiles$READING.2015 
@@ -419,8 +416,7 @@ for (i in seq_along(my.grade.sequences)) {
 		use.my.knots.boundaries=list(my.year=2015, my.subject="Reading"),
 		use.my.coefficient.matrices=list(my.year=2015, my.subject="Reading"),
 		growth.levels="DEMO",
-		grade.progression=my.grade.sequences[[i]]),
-		return.panel.data=TRUE
+		grade.progression=my.grade.sequences[[i]])
 }
 
 percentiles.2nd.run <- my.sgpData$SGPercentiles$READING.2015 
