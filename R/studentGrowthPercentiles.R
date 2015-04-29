@@ -1146,7 +1146,7 @@ function(panel.data,         ## REQUIRED
 			setnames(quantile.data, names(additional.vnames.to.return), unlist(additional.vnames.to.return))
 		}
 
-		if (identical(print.sgp.order, TRUE)) setnames(quantile.data, "SGP_ORDER", "SGP_BASELINE_ORDER")
+		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & identical(print.sgp.order, TRUE)) setnames(quantile.data, "SGP_ORDER", "SGP_BASELINE_ORDER")
 
 		if (!return.prior.scale.score) {
 			quantile.data[,SCALE_SCORE_PRIOR:=NULL]
