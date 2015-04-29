@@ -23,6 +23,7 @@ function(
 		options(error=recover)
 		options(warn=2)
 		Demonstration_SGP <- tmp.messages <- NULL
+		tmp.messages <- "##### Begin testSGP test number 0 #####\n\n"
 
 		### Part 1
 
@@ -39,7 +40,7 @@ function(
 	
 		### TEST of SGP Variable
 
-		tmp.messages <- c(tmp.messages, "\t\t##### Results of testSGP test number 0: Part 1 #####\n")
+		tmp.messages <- c(tmp.messages, "\t##### Results of testSGP test number 0: Part 1 #####\n")
 
 		if (identical(sum(Demonstration_SGP[['SGPercentiles']][['READING.2015']][['SGP']]), 1707319L)) {
 			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 1: OK\n")
@@ -97,7 +98,7 @@ function(
 	
 		### TEST of dimension of table READING.2015.LAGGED dimensions
 
-		tmp.messages <- c(tmp.messages, "\t\t##### Results of testSGP test number 0: Part 2 #####\n")
+		tmp.messages <- c(tmp.messages, "\t##### Results of testSGP test number 0: Part 2 #####\n")
 
 		if (identical(dim(Demonstration_SGP$SGProjections[['READING.2015.LAGGED']]), c(36478L, 511L))) {
 			tmp.messages <- c(tmp.messages, "\t\tTest of READING.2015.LAGGED table dimensions, part 2: OK\n")
@@ -295,7 +296,7 @@ function(
 	
 		### TEST of SGP variable
 
-		tmp.messages <- c(tmp.messages, "\t\t##### Results of testSGP test number 2a: Part 1 #####\n")
+		tmp.messages <- c(tmp.messages, "\t##### Results of testSGP test number 2a: Part 1 #####\n")
 
 		if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 5668654L)) {
 			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 1: OK\n")
@@ -361,7 +362,7 @@ function(
 
 		### TEST of variable values
 
-		tmp.messages <- c(tmp.messages, "\n\t\t##### Results of testSGP test number 2a: Part 2 #####\n")
+		tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number 2a: Part 2 #####\n")
 
 		### TEST of SGP variable
 
