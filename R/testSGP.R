@@ -14,6 +14,50 @@ function(
 
 	#######################################################################################################################################################
 	###
+	### TEST NUMBER 0: Test of studentGrowthPercentiles, studentGrowthProjections, and sgpData
+	###
+	#######################################################################################################################################################
+
+	if ("0" %in% toupper(TEST_NUMBER)) {
+
+		options(error=recover)
+		options(warn=2)
+		tmp.messages <- NULL
+
+		### Part 1
+
+		my.sgpData <- list(Panel_Data=SGPdata::sgpData)
+		my.grade.sequences <- list(3:4, 3:5, 3:6, 3:7, 4:8)
+
+		expression.to.evaluate <- 
+			paste("my.sgpData <- list(Panel_Data=SGPdata::sgpData)\nmy.grade.sequences <- list(3:4, 3:5, 3:6, 3:7, 4:8)\nfor (i in seq_along(my.grade.sequences)) {\n\tmy.sgpData <- studentGrowthPercentiles(\n\t\tpanel.data=my.sgpData,\n\t\tsgp.labels=list(my.year=2015, my.subject='Reading'),\n\t\tgrowth.levels='DEMO',\n\t\tgoodness.of.fit='DEMO',\n\t\tgrade.progression=my.grade.sequences[[i]],\n\t\tprint.sgp.order=TRUE,\n\t\tverbose.output=TRUE,\n\t\tmax.order.for.percentile=3,\n\t\treturn.norm.group.scale.scores=TRUE)\n}", sep="")
+
+		cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
+
+		if (memory.profile) {
+			Rprof("testSGP(0)_Memory_Profile_Part_1.out", memory.profiling=TRUE)
+		}
+
+		eval(parse(text=expression.to.evaluate))
+	
+		### TEST of SGP variable
+
+		tmp.messages <- c(tmp.messages, "\t\t##### Results of testSGP test number 0: Part 1 #####\n")
+
+		if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 5668654L)) {
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 1: OK\n")
+		} else {
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 1: FAIL\n")
+		}
+
+
+
+
+	 } ### End TEST_NUMBER 0
+
+
+	#######################################################################################################################################################
+	###
 	### TEST NUMBER 1: Test of abcSGP on sgpData_LONG
 	###
 	#######################################################################################################################################################
