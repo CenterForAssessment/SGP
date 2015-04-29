@@ -38,16 +38,16 @@ testSGP('1b')
 
 ## testSGP(2): Various tests of updateSGP functionality.
 ## testSGP('2a'): Test of updateSGP performing SGP analyses in two steps: 
-##	Create what_sgp_object: 2010-2011 to 2012-2013 followed by adding with_sgp_data_LONG 2014-2015 using
+##	Create what_sgp_object: 2010-2011 to 2013-2014 then add with_sgp_data_LONG 2014-2015 using
 ##	overwrite.existing.data=FALSE and sgp.use.my.coefficient.matrices=FALSE.
 ## testSGP('2b'): Test of updateSGP performing SGP analyses in two steps: 
-## 	Create what_sgp_object: 2010-2011 to 2013-2014 followed by adding with_sgp_data_LONG 2014-2015 using
+## 	Create what_sgp_object: 2010-2011 to 2013-2014 then add with_sgp_data_LONG 2014-2015 using
 ##	overwrite.existing.data=TRUE and sgp.use.my.coefficient.matrices=FALSE.
 ## testSGP('2c'): Test of updateSGP performing SGP analyses in two steps:
-##	Create what_sgp_object: 2010-2011 to 2013-2014 followed by adding with_sgp_data_LONG 2014-2015 using
+##	Create what_sgp_object: 2010-2011 to 2013-2014 then add with_sgp_data_LONG 2014-2015 using
 ##	overwrite.existing.data=TRUE and sgp.use.my.coefficient.matrices=TRUE.
 ## testSGP('2d'): Test of updateSGP performing SGP analyses in two steps:
-##	Create what_sgp_object: 2010-2011 to 2013-2014 followed by adding with_sgp_data_LONG 2014-2015 using
+##	Create what_sgp_object: 2010-2011 to 2013-2014 then add with_sgp_data_LONG 2014-2015 using
 ##	overwrite.existing.data=FALSE and sgp.use.my.coefficient.matrices=TRUE.
 testSGP('2a')
 testSGP('2b')
