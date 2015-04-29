@@ -57,7 +57,7 @@ function(
 
 		### TEST of SCALE_SCORE_PRIOR Variable
 
-		if (identical(sum(Demonstration_SGP[['SGPercentiles']][['READING.2015']][['SCALE_SCORE_PRIOR']]), 20707938L)) {
+		if (identical(sum(Demonstration_SGP[['SGPercentiles']][['READING.2015']][['SCALE_SCORE_PRIOR']]), 20707938)) {
 			tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_PRIOR, part 1: OK\n")
 		} else {
 			tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_PRIOR, part 1: FAIL\n")
