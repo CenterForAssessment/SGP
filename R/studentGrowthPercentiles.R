@@ -853,11 +853,11 @@ function(panel.data,         ## REQUIRED
 				tmp.coefficient.matrix.name <- get.coefficient.matrix.name(tmp.last, k)
 				tmp.grade.names <- paste("Grade", 
 					rev(head(unlist(Coefficient_Matrices[[tmp.path.coefficient.matrices]][[tmp.coefficient.matrix.name]]@Grade_Progression), -1)))
+				Verbose_Messages <- c(Verbose_Messages, paste("\t\tNOTE: Coefficient Matrix ", tmp.coefficient.matrix.name, " created using:\n", sep=""))
 				for (l in seq_along(tmp.grade.names)) {
 					tmp.knots <- paste(tmp.grade.names[l], Coefficient_Matrices[[tmp.path.coefficient.matrices]][[tmp.coefficient.matrix.name]]@Knots[l])
 					tmp.boundaries <- paste(tmp.grade.names[l], Coefficient_Matrices[[tmp.path.coefficient.matrices]][[tmp.coefficient.matrix.name]]@Boundaries[l])
-					Verbose_Messages <- c(Verbose_Messages, paste("\t\tNOTE: Coefficient Matrix ", tmp.coefficient.matrix.name, 
-						" created using Knots: ", tmp.knots, " and Boundaries: ", tmp.boundaries, ".\n", sep=""))
+					Verbose_Messages <- c(Verbose_Messages, paste("\t\t\tKnots: ", tmp.knots, " and Boundaries: ", tmp.boundaries, ".\n", sep=""))
 				}
 			}
 		}

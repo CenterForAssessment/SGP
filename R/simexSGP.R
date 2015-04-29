@@ -2,9 +2,42 @@ simexSGP <- function(
 	state, variable=NULL, csem.data.vnames=NULL, csem.loss.hoss=NULL, 
 	lambda, B, simex.sample.size, extrapolation, save.matrices, simex.use.my.coefficient.matrices=NULL, calculate.simex.sgps, verbose=FALSE) 
 {
+	
+	if(is.null(verbose)) verbose <- FALSE
 	if(verbose) message("\n\tStarted SIMEX SGP calculation ", rev(content_area.progression)[1], " Grade ", rev(tmp.gp)[1], " ", date())
 	
-	GRADE <- CONTENT_AREA <- YEAR <- V1 <- Lambda <- tau <- b <- .SD <- TEMP <- NULL ## To avoid R CMD check warnings
+	## To avoid R CMD check warnings
+	#  NULL for data.table and objects established later
+	GRADE <- CONTENT_AREA <- YEAR <- V1 <- Lambda <- tau <- b <- .SD <- TEMP <- NULL
+	#  Set objects passed from studentGrowthPercentiles' environment to themselves (in order of R CMD check warnings issued)
+	content_area.progression <- content_area.progression
+	tmp.gp <- tmp.gp
+	get.my.knots.boundaries.path <- get.my.knots.boundaries.path
+	sgp.labels <- sgp.labels
+	use.my.coefficient.matrices <- use.my.coefficient.matrices
+	exact.grade.progression.sequence <- exact.grade.progression.sequence
+	num.prior <- num.prior
+	if (is.null(simex.use.my.coefficient.matrices)) coefficient.matrix.priors <- coefficient.matrix.priors else coefficient.matrix.priors <- NULL
+	.get.panel.data <- .get.panel.data
+	ss.data <- ss.data
+	by.grade <- by.grade
+	year.progression <- year.progression
+	Panel_Data <- Panel_Data
+	taus <- taus
+	Coefficient_Matrices <- Coefficient_Matrices
+	tmp.path.coefficient.matrices <- tmp.path.coefficient.matrices
+	grade.progression <- grade.progression
+	year_lags.progression <- year_lags.progression
+	knot.cut.percentiles <- knot.cut.percentiles
+	ID <- ID
+	parallel.config <- parallel.config
+	isotonize <- isotonize
+	sgp.loss.hoss.adjustment <- sgp.loss.hoss.adjustment
+	.get.quantiles <- .get.quantiles
+	print.other.gp <- print.other.gp
+	print.sgp.order <- print.sgp.order
+	return.norm.group.identifier <- return.norm.group.identifier
+	
 	my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
 	if (is.logical(simex.use.my.coefficient.matrices)) if(! simex.use.my.coefficient.matrices) simex.use.my.coefficient.matrices <- NULL
 	if (!is.null(state) & !is.null(variable)) stop("SIMEX config can not use both 'state' and 'variable' elements.")
