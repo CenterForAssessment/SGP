@@ -98,7 +98,7 @@ function(
 	
 		### TEST of dimension of table READING.2015.LAGGED dimensions
 
-		tmp.messages <- c(tmp.messages, "\t##### Results of testSGP test number 0: Part 2 #####\n")
+		tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number 0: Part 2 #####\n")
 
 		if (identical(dim(Demonstration_SGP$SGProjections[['READING.2015.LAGGED']]), c(36478L, 511L))) {
 			tmp.messages <- c(tmp.messages, "\t\tTest of READING.2015.LAGGED table dimensions, part 2: OK\n")
