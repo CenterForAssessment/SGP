@@ -37,16 +37,67 @@ function(
 
 		eval(parse(text=expression.to.evaluate))
 	
-		### TEST of SGP variable
+		### TEST of SGP Variable
 
 		tmp.messages <- c(tmp.messages, "\t\t##### Results of testSGP test number 0: Part 1 #####\n")
 
-		if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 5668654L)) {
+		if (identical(sum(my.sgpData[['SGPercentiles']][['READING.2015']][['SGP']]), 1707319L)) {
 			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 1: OK\n")
 		} else {
 			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 1: FAIL\n")
 		}
 
+		### TEST of SGP_ORDER_1 Variable
+
+		if (identical(sum(my.sgpData[['SGPercentiles']][['READING.2015']][['SGP_ORDER_1']]), 1708589L)) {
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_ORDER_1, part 1: OK\n")
+		} else {
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_ORDER_1, part 1: FAIL\n")
+		}
+
+		### TEST of SCALE_SCORE_PRIOR Variable
+
+		if (identical(sum(my.sgpData[['SGPercentiles']][['READING.2015']][['SCALE_SCORE_PRIOR']]), 20707938L)) {
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_PRIOR, part 1: OK\n")
+		} else {
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_PRIOR, part 1: FAIL\n")
+		}
+
+		### TEST of SGP_ORDER Variable
+
+		if (identical(as.vector(table(my.sgpData$SGPercentiles[['READING.2015']][['SGP_ORDER']])), c(8666L, 7639L, 17920L))) {
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_ORDER, part 1: OK\n")
+		} else {
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_ORDER, part 1: FAIL\n")
+		}
+
+		### TEST of SGP_LEVEL Variable
+
+		if (identical(as.vector(table(my.sgpData$SGPercentiles[['READING.2015']][['SGP_LEVEL']])), c(6740L, 6824L, 7176L, 6835L, 6650L))) {
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_LEVEL, part 1: OK\n")
+		} else {
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_LEVEL, part 1: FAIL\n")
+		}
+
+		tmp.messages <- c(tmp.messages, "\t##### End testSGP test number 0: Part 1 #####\n")
+
+
+		### Part 2
+
+		expression.to.evaluate <- 
+			paste("my.sgpData$Panel_Data <- SGPdata::sgpData[,c('ID','GRADE_2011','GRADE_2012','GRADE_2013','GRADE_2014','SS_2011','SS_2012','SS_2013','SS_2014')]\nmy.grade.progressions <- list(3, 3:4, 3:5, 3:6, 4:7)\nfor (i in seq_along(my.grade.progressions)) {\n\tmy.sgpData <- studentGrowthProjections(\n\t\tpanel.data=my.sgpData,\n\t\tsgp.labels=list(my.year=2015, my.subject='Reading', my.extra.label='LAGGED'),\n\t\tuse.my.coefficient.matrices=list(my.year=2015, my.subject='Reading'),\n\t\tprojcuts.digits=0,\n\t\tperformance.level.cutscores='DEMO',\n\t\tpercentile.trajectory.values=1:99,\n\t\tlag.increment=1,\n\t\tgrade.progression=my.grade.progressions[[i]])\n}", sep="")
+
+		cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
+
+		if (memory.profile) {
+			Rprof("testSGP(0)_Memory_Profile_Part_2.out", memory.profiling=TRUE)
+		}
+
+		eval(parse(text=expression.to.evaluate))
+	
+		### TEST of SGP Variable
+
+		cat(tmp.messages)
 
 
 
