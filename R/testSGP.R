@@ -254,13 +254,13 @@ function(
 	###
 	### TEST NUMBER 2: Various tests of updateSGP functionality.
 	###
-	### TEST NUMBER 2a: Test of updateSGP performing SGP analyses in two steps: Create what_sgp_object: 2009-2010 to 2012-2013 followed by adding with_sgp_data_LONG 2013-2014 using
+	### TEST NUMBER 2a: Test of updateSGP performing SGP analyses in two steps: Create what_sgp_object: 2010-2011 to 2012-2013 followed by adding with_sgp_data_LONG 2014-2015 using
 	###			overwrite.existing.data=FALSE and sgp.use.my.coefficient.matrices=FALSE.
-	### TEST NUMBER 2b: Test of updateSGP performing SGP analyses in two steps: Create what_sgp_object: 2009-2010 to 2013-2014 followed by adding with_sgp_data_LONG 2013-2014 using
+	### TEST NUMBER 2b: Test of updateSGP performing SGP analyses in two steps: Create what_sgp_object: 2010-2011 to 2013-2014 followed by adding with_sgp_data_LONG 2014-2015 using
 	###			overwrite.existing.data=TRUE and sgp.use.my.coefficient.matrices=FALSE.
-	### TEST NUMBER 2c: Test of updateSGP performing SGP analyses in two steps: Create what_sgp_object: 2009-2010 to 2013-2014 followed by adding with_sgp_data_LONG 2013-2014 using
+	### TEST NUMBER 2c: Test of updateSGP performing SGP analyses in two steps: Create what_sgp_object: 2010-2011 to 2013-2014 followed by adding with_sgp_data_LONG 2014-2015 using
 	###			overwrite.existing.data=TRUE and sgp.use.my.coefficient.matrices=TRUE.
-	### TEST NUMBER 2d: Test of updateSGP performing SGP analyses in two steps: Create what_sgp_object: 2009-2010 to 2013-2014 followed by adding with_sgp_data_LONG 2013-2014 using
+	### TEST NUMBER 2d: Test of updateSGP performing SGP analyses in two steps: Create what_sgp_object: 2010-2011 to 2013-2014 followed by adding with_sgp_data_LONG 2014-2015 using
 	###			overwrite.existing.data=FALSE and sgp.use.my.coefficient.matrices=TRUE.
 	###
 	#########################################################################################################################################################################
