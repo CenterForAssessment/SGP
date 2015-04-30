@@ -897,7 +897,9 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 	Demonstration_SGP <- ACHIEVEMENT_LEVEL <- HIGH_NEED_STATUS <- tmp.messages <- NULL
 	sgpData_LONG <- SGPdata::sgpData_LONG
 
+	##############################################################################
 	##### STEP 1: Run analyses for year prior to assessment change in 2014-2015
+	##############################################################################
 
 		##### Create LONG Data set for STEP 1 analysis.
 
@@ -918,7 +920,9 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 			paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=Demonstration_Data_LONG,\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.sqlite=", sgp.sqlite, ",\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
 
 
+	##############################################################################
 	##### STEP 2: Create SGPs for assessment transtion year
+	##############################################################################
 
 		##### Modify SGPstateData
 
@@ -1001,6 +1005,8 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 				Labels=c("Level 1", "Level 2", "Level 3", "Level 4", "Level 5"),
 				Proficient=c("Not Proficient", "Not Proficient", "Not Proficient", "Proficient", "Proficient"))
 
+		SGPstateData[["DEMO"]][["Growth"]][["System_Type"]] <- "Cohort Referenced"
+
 		SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]] <-
 			list(
 				Assessment_Abbreviation="DEMO_OLD",
@@ -1026,41 +1032,35 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 					"Level 5"="Level 5"),
 				Content_Areas_Labels=list(MATHEMATICS="Math", READING="Reading"),
 				Content_Areas_Labels.2014_2015=list(MATHEMATICS="Math", READING="Reading"),
-#				Transformed_Achievement_Level_Cutscores=list(MATHEMATICS=c(100,200,300,400,500), READING=c(100,200,300,400,500)),
-#				Transformed_Achievement_Level_Cutscores.2014_2015=list(MATHEMATICS=c(100,200,300,400,500,600), READING=c(100,200,300,400,500,600)),
-				Vertical_Scale="Yes",
-				Vertical_Scale.2014_2015="Yes",
+		##### SCENARIO 1 Yes,Yes
+		#               Vertical_Scale="Yes",
+		#               Vertical_Scale.2014_2015="Yes",
+		##### SCENARIO 2 No,Yes
+		#               Vertical_Scale="No",
+		#               Vertical_Scale.2014_2015="Yes",
+		#               Transformed_Achievement_Level_Cutscores=list(MATHEMATICS=c(100,200,300,400,500), READING=c(100,200,300,400,500)),
+		##### SCENARIO 3 No,No
+		                Vertical_Scale="No",
+		                Vertical_Scale.2014_2015="No",
+		                Transformed_Achievement_Level_Cutscores=list(MATHEMATICS=c(100,200,300,400,500), READING=c(100,200,300,400,500)),
+		                Transformed_Achievement_Level_Cutscores.2013_2014=list(MATHEMATICS=c(100,200,300,400,500,600), READING=c(100,200,300,400,500,600)),
 				Year="2014_2015"
 		)
 
-		SGPstateData[["DEMO"]][["Growth"]][["System_Type"]] <- "Cohort Referenced"
+		### updateSGP
 
-
-		### Create LONG data for update
-
-		Demonstration_Data_LONG_2014_2015 <- as.data.table(subset(sgpData_LONG, YEAR=="2014_2015"))[,ACHIEVEMENT_LEVEL:=NULL]
-		Demonstration_Data_LONG_2014_2015 <- prepareSGP(Demonstration_Data_LONG_2014_2015)@Data
-		Demonstration_Data_LONG_2014_2015[, HIGH_NEED_STATUS:=NULL]
-		setcolorder(Demonstration_Data_LONG_2014_2015, names(Demonstration_Data_LONG))
-
-
-	### Create SGPs
-
-	Demonstration_SGP <- abcSGP(
-		Demonstration_Data_LONG,
-		sgp.percentiles=TRUE,
-		sgp.projections=TRUE,
-		sgp.projections.lagged=TRUE,
-		sgp.percentiles.baseline=FALSE,
-		sgp.projections.baseline=FALSE,
-		sgp.projections.lagged.baseline=FALSE,
-		sgp.target.scale.scores=TRUE,
-		save.intermediate.results=FALSE,
-		parallel.config=list(BACKEND="PARALLEL", WORKERS=list(PERCENTILES=4, PROJECTIONS=4, LAGGED_PROJECTIONS=4, SGP_SCALE_SCORE_TARGETS=4, SUMMARY=4)))
-
-
-
-
+		Demonstration_SGP <- updateSGP(
+			Demonstration_SGP,
+			Demonstration_Data_LONG_2014_2015,
+			sgp.percentiles=TRUE,
+			sgp.projections=TRUE,
+			sgp.projections.lagged=TRUE,
+			sgp.percentiles.baseline=FALSE,
+			sgp.projections.baseline=FALSE,
+			sgp.projections.lagged.baseline=FALSE,
+			sgp.target.scale.scores=TRUE,
+			save.intermediate.results=FALSE,
+			parallel.config=list(BACKEND="PARALLEL", WORKERS=list(PERCENTILES=4, PROJECTIONS=4, LAGGED_PROJECTIONS=4, SGP_SCALE_SCORE_TARGETS=4, SUMMARY=4)))
 
 	} ### End TEST_NUMBER 5
 
