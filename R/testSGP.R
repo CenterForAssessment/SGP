@@ -2,6 +2,7 @@
 function(
 	TEST_NUMBER,
 	save.results=TRUE,
+	test.option=NULL,
 	memory.profile=FALSE) {
 
 	YEAR <- GRADE <- NULL
@@ -896,6 +897,7 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 	number.cores <- detectCores()-1
 	Demonstration_SGP <- ACHIEVEMENT_LEVEL <- HIGH_NEED_STATUS <- tmp.messages <- NULL
 	sgpData_LONG <- SGPdata::sgpData_LONG
+	if (is.null(test.option)) test.option <- c("Yes", "Yes")
 
 	##############################################################################
 	##### STEP 1: Run analyses for year prior to assessment change in 2014-2015
@@ -1032,20 +1034,27 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 					"Level 5"="Level 5"),
 				Content_Areas_Labels=list(MATHEMATICS="Math", READING="Reading"),
 				Content_Areas_Labels.2014_2015=list(MATHEMATICS="Math", READING="Reading"),
-		##### SCENARIO 1 Yes,Yes
-		#               Vertical_Scale="Yes",
-		#               Vertical_Scale.2014_2015="Yes",
-		##### SCENARIO 2 No,Yes
-		#               Vertical_Scale="No",
-		#               Vertical_Scale.2014_2015="Yes",
-		#               Transformed_Achievement_Level_Cutscores=list(MATHEMATICS=c(100,200,300,400,500), READING=c(100,200,300,400,500)),
-		##### SCENARIO 3 No,No
-		                Vertical_Scale="No",
-		                Vertical_Scale.2014_2015="No",
-		                Transformed_Achievement_Level_Cutscores=list(MATHEMATICS=c(100,200,300,400,500), READING=c(100,200,300,400,500)),
-		                Transformed_Achievement_Level_Cutscores.2013_2014=list(MATHEMATICS=c(100,200,300,400,500,600), READING=c(100,200,300,400,500,600)),
 				Year="2014_2015"
 		)
+
+		if (test.option==c("Yes", "Yes")) {
+			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale"]] <- "Yes"
+			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale.2014_2015"]] <- "Yes"
+		}
+		if (test.option==c("No", "Yes")) {
+			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale"]] <- "No"
+			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale.2014_2015"]] <- "Yes"
+			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Transformed_Achievement_Level_Cutscores"]] <- 
+				list(MATHEMATICS=c(100,200,300,400,500), READING=c(100,200,300,400,500))
+		}
+		if (test.option==c("No", "No")) {
+			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale"]] <- "No"
+			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale.2014_2015"]] <- "No"
+			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Transformed_Achievement_Level_Cutscores"]] <- 
+				list(MATHEMATICS=c(100,200,300,400,500), READING=c(100,200,300,400,500))
+			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Transformed_Achievement_Level_Cutscores.2014_2015"]] <- 
+				list(MATHEMATICS=c(100,200,300,400,500), READING=c(100,200,300,400,500))
+		}
 
 		### updateSGP
 
