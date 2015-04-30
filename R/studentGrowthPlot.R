@@ -531,6 +531,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 	} else {
 		growth.and.margins.vp <- viewport(name="growth.and.margins.vp",
 			layout.pos.row=1, layout.pos.col=1:3)
+		bottom.right.vp.size <- 1.05
 	}
 
 	bottom.vp <- viewport(name="bottom.vp",
