@@ -94,6 +94,7 @@ function(
 			Rprof("testSGP(0)_Memory_Profile_Part_2.out", memory.profiling=TRUE)
 		}
 
+		if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "dir.create('Data', show.warnings=FALSE)", "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
 		eval(parse(text=expression.to.evaluate))
 	
 		### TEST of dimension of table READING.2015.LAGGED dimensions
@@ -917,8 +918,6 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 			paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=Demonstration_Data_LONG,\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.sqlite=", sgp.sqlite, ",\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
 
 
-
-
 	##### STEP 2: Create SGPs for assessment transtion year
 
 		##### Modify SGPstateData
@@ -1049,8 +1048,6 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 
 	Demonstration_SGP <- abcSGP(
 		Demonstration_Data_LONG,
-#		steps=c("prepareSGP", "analyzeSGP", "combineSGP", "summarizeSGP"),
-		steps=c("prepareSGP", "analyzeSGP", "combineSGP"),
 		sgp.percentiles=TRUE,
 		sgp.projections=TRUE,
 		sgp.projections.lagged=TRUE,
