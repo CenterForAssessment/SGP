@@ -26,7 +26,7 @@ function(scale_score,
 	}
 
 
-	if (is.null(sgp.projections.equated)) {
+	if (is.null(sgp.projections.equated) | !is.null(tmp.test)) {
 		if ((content_area %in% names(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]]) &&
 			grade %in% matrix(unlist(strsplit(names(SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]]), "_")), ncol=2, byrow=TRUE)[,2]) || !is.null(tmp.test)) {
 
