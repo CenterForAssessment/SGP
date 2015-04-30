@@ -106,7 +106,6 @@ function(sgp_object,
 		}
 	} ### END get.max.order.for.progression
 
-
 	get.sgPlot.iter <- function(districts.and.schools) {
 		tmp.list <- list()
 		for (k in 1:dim(districts.and.schools)[1]) {
@@ -114,7 +113,6 @@ function(sgp_object,
 		}
 		return(tmp.list)
 	} ### END get.sgPlot.iter
-
 
 	get.gaPlot.iter <- function(gaPlot.years, gaPlot.content_areas, gaPlot.students, gaPlot.baseline) {
 
@@ -853,7 +851,8 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 
 			### Lagged projection scale score targets
 
-			if (any(c("sgp.projections.lagged", "sgp.projections.lagged.baseline") %in% sgPlot.sgp.targets) & any(tmp.proj.cut_score.names.lagged %in% names(sgp_object@SGP[["SGProjections"]]))) {
+			if (any(c("sgp.projections.lagged", "sgp.projections.lagged.baseline") %in% sgPlot.sgp.targets) & 
+				any(tmp.proj.cut_score.names.lagged %in% names(sgp_object@SGP[["SGProjections"]]))) {
 
 				setkeyv(sgPlot.data, c("ID", "CONTENT_AREA"))
 				tmp.list <- list()
