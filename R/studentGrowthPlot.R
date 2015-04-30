@@ -70,7 +70,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		test.season <- NULL
 	}
 
-	achievement.level.region.colors <- sapply(number.achievement.level.regions, function(x) paste("grey", round(seq(62, 91, x)), sep=""))
+	achievement.level.region.colors <- lapply(number.achievement.level.regions, function(x) paste("grey", round(seq(62, 91, length=x)), sep=""))
 
 	border.color <- "grey25"
 	if (is.null(SGP::SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["arrow.legend.color"]])) {
@@ -495,7 +495,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		subject.report.vp <- viewport(layout = grid.layout(2, 3, widths = unit(c(1.15, 5.4, 1.5)/8.05, rep("npc", 3)), 
 						heights = unit(c(2.45, 0.9)/3.35, rep("npc", 2))), gp=gpar(fill="transparent"))
 	} else {
-		subject.report.vp <- viewport(layout = grid.layout(2, 3, widths = unit(c(1.15, 5.75, 1.15)/8.05, rep("npc", 3)), 
+		subject.report.vp <- viewport(layout = grid.layout(2, 3, widths = unit(c(1.15, 5.65, 1.25)/8.05, rep("npc", 3)), 
 						heights = unit(c(2.45, 0.9)/3.35, rep("npc", 2))), gp=gpar(fill="transparent"))
 	}
 
@@ -893,11 +893,11 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 
 	pushViewport(bottom.right.vp)
 	if (is.null(Report_Parameters[['SGP_Targets']])) {
-		grid.text(x=0.1, y=1.5, achievement.label, gp=gpar(col=border.color, cex= bottom.right.vp.size), just="left", default.units="native")
-		grid.text(x=0.1, y=.5, growth.label, gp=gpar(col=border.color, cex= bottom.right.vp.size), just="left", default.units="native")
+		grid.text(x=0.1, y=1.5, achievement.label, gp=gpar(col=border.color, cex=bottom.right.vp.size), just="left", default.units="native")
+		grid.text(x=0.1, y=.5, growth.label, gp=gpar(col=border.color, cex=bottom.right.vp.size), just="left", default.units="native")
 	} else {
-		grid.text(x=0.1, y=1.65, achievement.label, gp=gpar(col=border.color, cex= bottom.right.vp.size+0.1), just="left", default.units="native")
-		grid.text(x=0.1, y=0.55, growth.label, gp=gpar(col=border.color, cex= bottom.right.vp.size+0.1), just="left", default.units="native")
+		grid.text(x=0.1, y=1.65, achievement.label, gp=gpar(col=border.color, cex=bottom.right.vp.size+0.1), just="left", default.units="native")
+		grid.text(x=0.1, y=0.55, growth.label, gp=gpar(col=border.color, cex=bottom.right.vp.size+0.1), just="left", default.units="native")
 	}
 	popViewport()
 
@@ -987,14 +987,14 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 	} else { ### right.vp with ASSESSMENT_TRANSITION
 		pushViewport(right.vp)
 
-		y.boundary.legend.1 <- c(yscale.range[1], yscale.range[1], rep(level_2_1_curve(xscale.range[1]), 2))
+		y.boundary.legend.1 <- c(yscale.range[1], yscale.range[1], rep(level_2_1_curve(xscale.range[2]), 2))
 		assign(paste("y.boundary.legend.", number.achievement.level.regions[[2]], sep=""),
-			c(yscale.range[2], yscale.range[2], rep(eval(parse(text=paste("level_2", "_", number.achievement.level.regions[[2]]-1, "_curve(xscale.range[1])", sep=""))), 2))) 
+			c(yscale.range[2], yscale.range[2], rep(eval(parse(text=paste("level_2", "_", number.achievement.level.regions[[2]]-1, "_curve(xscale.range[2])", sep=""))), 2))) 
 	
 		if (number.achievement.level.regions[[2]] > 2) {
 			for (i in 2:(number.achievement.level.regions[[2]]-1)) { 
 				assign(paste("y.boundary.legend.", i, sep=""),
-					eval(parse(text=paste("c(rep(level_2", "_", i-1, "_curve(xscale.range[1]), 2), rep(level_2", "_", i, "_curve(xscale.range[1]), 2))", sep=""))))
+					eval(parse(text=paste("c(rep(level_2", "_", i-1, "_curve(xscale.range[2]), 2), rep(level_2", "_", i, "_curve(xscale.range[2]), 2))", sep=""))))
 			}
 		}
 
@@ -1005,15 +1005,15 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 			gp=gpar(fill=achievement.level.region.colors[[2]][i], lwd=0.5, col=border.color, alpha=0.7))
 		}
 
-		grid.text(x=0.06, y=(level_2_1_curve(xscale.range[1]) + yscale.range[1])/2, names(achievement.level.labels[[2]])[1], 
+		grid.text(x=0.06, y=(level_2_1_curve(xscale.range[2]) + yscale.range[1])/2, names(achievement.level.labels[[2]])[1], 
 			gp=gpar(col=border.color, fontface=2, fontfamily="Helvetica-Narrow", cex=.85), default.units="native", just="left")
-		grid.text(x=0.06, y=(eval(parse(text=paste("level_2", "_", number.achievement.level.regions[[2]]-1, "_curve(xscale.range[1])", sep=""))) + yscale.range[2])/2, 
+		grid.text(x=0.06, y=(eval(parse(text=paste("level_2", "_", number.achievement.level.regions[[2]]-1, "_curve(xscale.range[2])", sep=""))) + yscale.range[2])/2, 
 			names(achievement.level.labels[[2]])[number.achievement.level.regions[[2]]], 
 			gp=gpar(col=border.color, fontface=2, fontfamily="Helvetica-Narrow", cex=.85), default.units="native", just="left")
 
 		if (number.achievement.level.regions[[2]] > 2) {
 			for (i in 2:(number.achievement.level.regions[[2]]-1)) {
-			grid.text(x=.06, y=(eval(parse(text=paste("(level_2", "_", i-1, "_curve(xscale.range[1]) + level_2", "_", i, "_curve(xscale.range[1]))/2", sep="")))),
+			grid.text(x=.06, y=(eval(parse(text=paste("(level_2", "_", i-1, "_curve(xscale.range[2]) + level_2", "_", i, "_curve(xscale.range[2]))/2", sep="")))),
 				names(achievement.level.labels[[2]])[i], 
 				gp=gpar(col=border.color, fontface=2, fontfamily="Helvetica-Narrow", cex=.85), default.units="native", just="left")
 			}

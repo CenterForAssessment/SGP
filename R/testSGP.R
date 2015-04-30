@@ -1052,8 +1052,6 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale.2014_2015"]] <- "No"
 			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Transformed_Achievement_Level_Cutscores"]] <- 
 				list(MATHEMATICS=c(100,200,300,400,500), READING=c(100,200,300,400,500))
-			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Transformed_Achievement_Level_Cutscores.2014_2015"]] <- 
-				list(MATHEMATICS=c(100,200,300,400,500), READING=c(100,200,300,400,500))
 		}
 
 		### updateSGP
