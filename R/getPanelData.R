@@ -20,7 +20,7 @@ function(sgp.data,
 	
 	if (sgp.type=="sgp.percentiles") {
 
-		if(!is.null(tmp.exclude.lookup <- sgp.iter$sgp.exclude.sequences)) {
+		if (!is.null(tmp.exclude.lookup <- sgp.iter$sgp.exclude.sequences)) {
 			if (is.data.table(tmp.exclude.lookup)) {
 				tmp.exclude.lookup <- setkey(data.table(tmp.exclude.lookup[, list(VALID_CASE, CONTENT_AREA, YEAR, GRADE)]))
 			} else stop("Element 'sgp.exclude.sequences' of sgp.config must be a data table with variables 'VALID_CASE', 'CONTENT_AREA', 'YEAR', and 'GRADE'.")

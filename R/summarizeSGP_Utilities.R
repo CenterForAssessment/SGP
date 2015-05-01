@@ -102,7 +102,7 @@ function(tmp.simulation.dt,
 	}
 	
 	tmp_data <- data.table(dbGetQuery(con, paste("select", paste(pull.vars, collapse = ","), "from summary_data"))) 
-	if(all((my.key <- intersect(sgp_key, variables.for.summaries)) %in% names(tmp_data))) setkeyv(tmp_data, my.key)
+	if (all((my.key <- intersect(sgp_key, variables.for.summaries)) %in% names(tmp_data))) setkeyv(tmp_data, my.key)
 	if ("CATCH_UP_KEEP_UP_STATUS" %in% names(tmp_data)) {
 		tmp_data[, CATCH_UP_KEEP_UP_STATUS := factor(CATCH_UP_KEEP_UP_STATUS)]
 	}

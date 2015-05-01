@@ -464,7 +464,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 	} else {
 		tmp.year.cut <- year.function(Report_Parameters$Assessment_Transition$Year, 0, 1)-0.5
 		if (tmp.year.cut <= xscale.range[1]) xscale.range[1] <- tmp.year.cut-0.9
-		xscale.range.list <- list(c(xscale.range[1], tmp.year.cut), c(tmp.year.cut, xscale.range[2]))
+		xscale.range.list <- list(c(xscale.range[1], tmp.year.cut-0.025), c(tmp.year.cut+0.025, xscale.range[2]))
 	}
 
 	if (Report_Parameters$Content_Area %in% names(SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]])) {
@@ -601,6 +601,12 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 				default.units="native",
 				gp=gpar(fill=achievement.level.region.colors[[j]][i], lwd=0.8, col="white"))
 		}
+	}
+
+	if (!is.null(Report_Parameters$Assessment_Transition)) {
+		grid.lines(x=tmp.year.cut, y=yscale.range, default.units="native", gp=gpar(lwd=1.0, col=border.color))
+		grid.lines(x=tmp.year.cut+0.025, y=yscale.range, default.units="native", gp=gpar(lwd=0.3, col=border.color))
+		grid.lines(x=tmp.year.cut-0.025, y=yscale.range, default.units="native", gp=gpar(lwd=0.3, col=border.color))
 	}
 
 	if (grade.values$year_span == 0) {
