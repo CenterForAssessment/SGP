@@ -470,7 +470,7 @@ function(panel.data,         ## REQUIRED
 		csem.tf <- FALSE
 	}
 
-	if(is.logical(calculate.simex)) if(!calculate.simex) calculate.simex <- NULL # check for calculate.simex=FALSE - same as calculate.simex=NULL
+	if (is.logical(calculate.simex) && !calculate.simex) calculate.simex <- NULL # check for calculate.simex=FALSE - same as calculate.simex=NULL
 	if (!is.null(calculate.simex)) {
 		simex.tf <- TRUE
 		if (!is.character(calculate.simex) & !is.list(calculate.simex)) {
@@ -881,7 +881,7 @@ function(panel.data,         ## REQUIRED
 			calculate.simex.sgps=calculate.sgps,
 			verbose=calculate.simex$verbose)
 								 
-		if(!is.null(quantile.data.simex[['MATRICES']])) {
+		if (!is.null(quantile.data.simex[['MATRICES']])) {
 			tmp_sgp_1 <- list(Coefficient_Matrices = list(TMP_SIMEX=Coefficient_Matrices[[paste(tmp.path.coefficient.matrices, '.SIMEX', sep="")]]))
 			tmp_sgp_2 <- list(Coefficient_Matrices = list(TMP_SIMEX=quantile.data.simex[['MATRICES']]))
 			tmp_sgp_combined <- mergeSGP(tmp_sgp_1, tmp_sgp_2)

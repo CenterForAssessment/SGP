@@ -213,7 +213,7 @@ function(parallel.config,
 			# registerDoSNOW(doPar.cl)
 			# return(list(doPar.cl=doPar.cl, foreach.options=foreach.options, par.type=par.type))
 		# }
-		if(!is.null(parallel.config[['SNOW_TEST']])) par.type <- 'SNOW' # To test SNOW on Linux
+		if (!is.null(parallel.config[['SNOW_TEST']])) par.type <- 'SNOW' # To test SNOW on Linux
 		if (parallel.config[['TYPE']]=="doParallel") {
 			if (par.type == 'SNOW') {
 				doPar.cl <- makePSOCKcluster(workers)

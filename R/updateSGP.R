@@ -163,10 +163,10 @@ function(what_sgp_object=NULL,
 
 		HIGH_NEED_STATUS <- YEAR <- ID <- VALID_CASE <- CONTENT_AREA <- FIRST_OBSERVATION <- LAST_OBSERVATION <- NULL
 		tmp_sgp_object <- prepareSGP(with_sgp_data_LONG, state=state, create.additional.variables=FALSE)
-		if(!is.null(sgp.config)) years <- unique(sapply(lapply(sgp.config, '[[', 'sgp.panel.years'), tail, 1))
-		if(is.null(years)) update.years <- sort(unique(tmp_sgp_object@Data$YEAR)) else update.years <- years
-		if(is.null(content_areas)) update.content_areas <- sort(unique(tmp_sgp_object@Data$CONTENT_AREA)) else update.content_areas <- content_areas
-		if(is.null(grades)) update.grades <- sort(unique(tmp_sgp_object@Data$GRADE)) else update.grades <- grades
+		if (!is.null(sgp.config)) years <- unique(sapply(lapply(sgp.config, '[[', 'sgp.panel.years'), tail, 1))
+		if (is.null(years)) update.years <- sort(unique(tmp_sgp_object@Data$YEAR)) else update.years <- years
+		if (is.null(content_areas)) update.content_areas <- sort(unique(tmp_sgp_object@Data$CONTENT_AREA)) else update.content_areas <- content_areas
+		if (is.null(grades)) update.grades <- sort(unique(tmp_sgp_object@Data$GRADE)) else update.grades <- grades
 
 		if (overwrite.existing.data) {
 				what_sgp_object@Data <- rbindlist(list(what_sgp_object@Data[which(YEAR!=update.years)], tmp_sgp_object@Data), fill=TRUE)

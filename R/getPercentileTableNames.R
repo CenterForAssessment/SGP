@@ -46,7 +46,7 @@ function(sgp_object,
 		tmp.target.names <- grep("TARGET_SCALE_SCORES", names(sgp_object@SGP$SGProjections), value=TRUE)
 		tmp.lagged.names <- grep("LAGGED", names(sgp_object@SGP$SGProjections), value=TRUE)
 		tmp.sgp.projections.names <- setdiff(names(sgp_object@SGP$SGProjections), c(tmp.target.names, tmp.lagged.names))
-		if(!is.null(tmp.sgp.projections.names)) {
+		if (!is.null(tmp.sgp.projections.names)) {
 		tmp.baseline.names <- grep("BASELINE", tmp.sgp.projections.names, value=TRUE)
 		if (sgp.type=="sgp.projections") tmp.names <- setdiff(tmp.sgp.projections.names, tmp.baseline.names)
 		if (sgp.type=="sgp.projections.baseline") {
