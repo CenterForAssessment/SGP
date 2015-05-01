@@ -2,6 +2,7 @@
 function(
 	TEST_NUMBER,
 	save.results=TRUE,
+	test.option=NULL,
 	memory.profile=FALSE) {
 
 	YEAR <- GRADE <- NULL
@@ -94,6 +95,7 @@ function(
 			Rprof("testSGP(0)_Memory_Profile_Part_2.out", memory.profiling=TRUE)
 		}
 
+		if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "dir.create('Data', showWarnings=FALSE)", "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
 		eval(parse(text=expression.to.evaluate))
 	
 		### TEST of dimension of table READING.2015.LAGGED dimensions
@@ -845,7 +847,7 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 	expression.to.evaluate <- 
 		paste("\nDemonstration_SGP <- analyzeSGP(\n\tsgp_object= Demonstration_SGP,\n\tsgp.config=sgp.config,\n\tsgp.percentiles=FALSE,\n\tsgp.projections=FALSE,\n\tsgp.projections.lagged=FALSE,\n\tsgp.percentiles.baseline=TRUE,\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsimulate.sgps=FALSE,\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(BASELINE_PERCENTILES=", number.cores, "))\n)\nDemonstration_SGP <- combineSGP(Demonstration_SGP)", sep="")
 
-	if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "dir.create('Data', show.warnings=FALSE)", "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
+	if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "dir.create('Data', showWarnings=FALSE)", "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
 
 	cat("\n\t#####        Begin testSGP test number 4, Part 2            #####\n", fill=TRUE)
 	cat("\t##           EOCT Baseline Tests with custom sgp.config.       ##\n", fill=TRUE)
@@ -895,8 +897,11 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 	number.cores <- detectCores()-1
 	Demonstration_SGP <- ACHIEVEMENT_LEVEL <- HIGH_NEED_STATUS <- tmp.messages <- NULL
 	sgpData_LONG <- SGPdata::sgpData_LONG
+	if (is.null(test.option)) test.option <- c("Yes", "Yes")
 
+	##############################################################################
 	##### STEP 1: Run analyses for year prior to assessment change in 2014-2015
+	##############################################################################
 
 		##### Create LONG Data set for STEP 1 analysis.
 
@@ -917,9 +922,9 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 			paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=Demonstration_Data_LONG,\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.sqlite=", sgp.sqlite, ",\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
 
 
-
-
+	##############################################################################
 	##### STEP 2: Create SGPs for assessment transtion year
+	##############################################################################
 
 		##### Modify SGPstateData
 
@@ -1002,6 +1007,8 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 				Labels=c("Level 1", "Level 2", "Level 3", "Level 4", "Level 5"),
 				Proficient=c("Not Proficient", "Not Proficient", "Not Proficient", "Proficient", "Proficient"))
 
+		SGPstateData[["DEMO"]][["Growth"]][["System_Type"]] <- "Cohort Referenced"
+
 		SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]] <-
 			list(
 				Assessment_Abbreviation="DEMO_OLD",
@@ -1027,43 +1034,40 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 					"Level 5"="Level 5"),
 				Content_Areas_Labels=list(MATHEMATICS="Math", READING="Reading"),
 				Content_Areas_Labels.2014_2015=list(MATHEMATICS="Math", READING="Reading"),
-#				Transformed_Achievement_Level_Cutscores=list(MATHEMATICS=c(100,200,300,400,500), READING=c(100,200,300,400,500)),
-#				Transformed_Achievement_Level_Cutscores.2014_2015=list(MATHEMATICS=c(100,200,300,400,500,600), READING=c(100,200,300,400,500,600)),
-				Vertical_Scale="Yes",
-				Vertical_Scale.2014_2015="Yes",
 				Year="2014_2015"
 		)
 
-		SGPstateData[["DEMO"]][["Growth"]][["System_Type"]] <- "Cohort Referenced"
+		if (test.option==c("Yes", "Yes")) {
+			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale"]] <- "Yes"
+			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale.2014_2015"]] <- "Yes"
+		}
+		if (test.option==c("No", "Yes")) {
+			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale"]] <- "No"
+			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale.2014_2015"]] <- "Yes"
+			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Transformed_Achievement_Level_Cutscores"]] <- 
+				list(MATHEMATICS=c(100,200,300,400,500), READING=c(100,200,300,400,500))
+		}
+		if (test.option==c("No", "No")) {
+			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale"]] <- "No"
+			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale.2014_2015"]] <- "No"
+			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Transformed_Achievement_Level_Cutscores"]] <- 
+				list(MATHEMATICS=c(100,200,300,400,500), READING=c(100,200,300,400,500))
+		}
 
+		### updateSGP
 
-		### Create LONG data for update
-
-		Demonstration_Data_LONG_2014_2015 <- as.data.table(subset(sgpData_LONG, YEAR=="2014_2015"))[,ACHIEVEMENT_LEVEL:=NULL]
-		Demonstration_Data_LONG_2014_2015 <- prepareSGP(Demonstration_Data_LONG_2014_2015)@Data
-		Demonstration_Data_LONG_2014_2015[, HIGH_NEED_STATUS:=NULL]
-		setcolorder(Demonstration_Data_LONG_2014_2015, names(Demonstration_Data_LONG))
-
-
-	### Create SGPs
-
-	Demonstration_SGP <- abcSGP(
-		Demonstration_Data_LONG,
-#		steps=c("prepareSGP", "analyzeSGP", "combineSGP", "summarizeSGP"),
-		steps=c("prepareSGP", "analyzeSGP", "combineSGP"),
-		sgp.percentiles=TRUE,
-		sgp.projections=TRUE,
-		sgp.projections.lagged=TRUE,
-		sgp.percentiles.baseline=FALSE,
-		sgp.projections.baseline=FALSE,
-		sgp.projections.lagged.baseline=FALSE,
-		sgp.target.scale.scores=TRUE,
-		save.intermediate.results=FALSE,
-		parallel.config=list(BACKEND="PARALLEL", WORKERS=list(PERCENTILES=4, PROJECTIONS=4, LAGGED_PROJECTIONS=4, SGP_SCALE_SCORE_TARGETS=4, SUMMARY=4)))
-
-
-
-
+		Demonstration_SGP <- updateSGP(
+			Demonstration_SGP,
+			Demonstration_Data_LONG_2014_2015,
+			sgp.percentiles=TRUE,
+			sgp.projections=TRUE,
+			sgp.projections.lagged=TRUE,
+			sgp.percentiles.baseline=FALSE,
+			sgp.projections.baseline=FALSE,
+			sgp.projections.lagged.baseline=FALSE,
+			sgp.target.scale.scores=TRUE,
+			save.intermediate.results=FALSE,
+			parallel.config=list(BACKEND="PARALLEL", WORKERS=list(PERCENTILES=4, PROJECTIONS=4, LAGGED_PROJECTIONS=4, SGP_SCALE_SCORE_TARGETS=4, SUMMARY=4)))
 
 	} ### End TEST_NUMBER 5
 
@@ -1089,7 +1093,7 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 	expression.to.evaluate <- 
 		paste("\nDemonstration_SGP <- abcSGP(\n\tsgp_object=SGPdata::sgpData_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\tyears='2014_2015',\n\tcontent_areas='MATHEMATICS',\n\tsgp.percentiles=FALSE,\n\tsgp.projections=FALSE,\n\tsgp.projections.lagged=FALSE,\n\tsgp.percentiles.baseline=TRUE,\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(BASELINE_PERCENTILES=", number.cores, ", BASELINE_MATRICES=", number.cores, "))\n)", sep="")
 
-	if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "dir.create('Data', show.warnings=FALSE)", "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
+	if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "dir.create('Data', showWarnings=FALSE)", "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
 
 	cat("#####        Begin testSGP test number 6            #####\n", fill=TRUE)
 	cat("##           Basic Baseline Coefficient Matrix Test.       ##\n", fill=TRUE)
