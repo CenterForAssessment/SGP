@@ -68,6 +68,13 @@ function(sgp_object,
 		my.grade.sequences <- "sgp.projection.baseline.grade.sequences"
 		my.panel.years.lags <- "sgp.projection.baseline.panel.years.lags"
 	}
+	if (!is.null(sgp.projections.equated)) {
+		year.for.equate <- sgp.projections.equated$Year
+		equate.variable <- "SCALE_SCORE_EQUATED"
+		equate.label <- coefficient.matrix.type <- "EQUATED"
+	} else {
+		year.for.equate <- equate.variable <- equate.label <- NULL
+	}
 
 	sgp.projections.max.forward.progression.years <- 
 		as.numeric(sapply(unlist(strsplit(target.level[1], "_")), type.convert)[!sapply(lapply(unlist(strsplit(target.level[1], "_")), type.convert), is.factor)])
@@ -91,7 +98,8 @@ function(sgp_object,
 				sgp.projections.max.forward.progression.years=sgp.projections.max.forward.progression.years,
 				sgp.use.my.coefficient.matrices=NULL,
 				calculate.simex=NULL,
-				calculate.simex.baseline=NULL)
+				calculate.simex.baseline=NULL,
+				year.for.equate=year.for.equate)
 	
 
 	### Calculate targets
@@ -105,17 +113,17 @@ function(sgp_object,
 				.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
 				return(studentGrowthProjections(
 					panel.data=list(
-						Panel_Data=getPanelData(tmp_sgp_data_for_analysis, state=state, my.target.type, sgp.iter, sgp.targets=sgp.targets), 
+						Panel_Data=getPanelData(tmp_sgp_data_for_analysis, state=state, my.target.type, sgp.iter, sgp.targets=sgp.targets, sgp.scale.score.equated=equate.variable), 
 						Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]], 
 						Knots_Boundaries=getKnotsBoundaries(sgp.iter, state, my.target.type)),
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[[my.content.areas.label]], 1), 
 						my.extra.label=my.extra.label),
 					use.my.coefficient.matrices=list(my.year=if (baseline.tf) "BASELINE" else tail(sgp.iter[["sgp.panel.years"]], 1), 
-						my.subject=tail(sgp.iter[[my.content.areas]], 1)), 
+						my.subject=tail(sgp.iter[[my.content.areas]], 1), my.extra.label=equate.label), 
 					use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[[my.content.areas.label]], 1)),
 					performance.level.cutscores=state,
 					max.forward.progression.years=sgp.iter[['sgp.projections.max.forward.progression.years']],
-					panel.data.vnames=getPanelDataVnames(my.target.type, sgp.iter, names(tmp_sgp_data_for_analysis)),
+					panel.data.vnames=getPanelDataVnames(my.target.type, sgp.iter, names(tmp_sgp_data_for_analysis), equate.variable),
 					sgp.projections.equated=sgp.projections.equated,
 					grade.progression=sgp.iter[[my.grade.sequences]],
 					content_area.progression=sgp.iter[[my.content.areas]],
@@ -138,17 +146,17 @@ function(sgp_object,
 			if (par.start$par.type == 'SNOW') {
 				tmp <- clusterApplyLB(par.start$internal.cl, par.sgp.config[[target.type]], function(sgp.iter) studentGrowthProjections(
 					panel.data=list(
-						Panel_Data=getPanelData(tmp_sgp_data_for_analysis, state=state, my.target.type, sgp.iter, sgp.targets=sgp.targets), 
+						Panel_Data=getPanelData(tmp_sgp_data_for_analysis, state=state, my.target.type, sgp.iter, sgp.targets=sgp.targets, sgp.scale.score.equated=equate.variable), 
 						Coefficient_Matrices=tmp_sgp_object[['Coefficient_Matrices']], 
 						Knots_Boundaries=getKnotsBoundaries(sgp.iter, state, my.target.type)),
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[[my.content.areas.label]], 1),
 						my.extra.label=my.extra.label),
 					use.my.coefficient.matrices=list(my.year=if (baseline.tf) "BASELINE" else tail(sgp.iter[["sgp.panel.years"]], 1), 
-						my.subject=tail(sgp.iter[[my.content.areas]], 1)), 
+						my.subject=tail(sgp.iter[[my.content.areas]], 1), my.extra.label=equate.label), 
 					use.my.knots.boundaries=list(my.year=tail(sgp.iter[['sgp.panel.years']], 1), my.subject=tail(sgp.iter[[my.content.areas.label]], 1)),
 					performance.level.cutscores=state,
 					max.forward.progression.years=sgp.iter[['sgp.projections.max.forward.progression.years']],
-					panel.data.vnames=getPanelDataVnames(my.target.type, sgp.iter, names(tmp_sgp_data_for_analysis)),
+					panel.data.vnames=getPanelDataVnames(my.target.type, sgp.iter, names(tmp_sgp_data_for_analysis), equate.variable),
 					sgp.projections.equated=sgp.projections.equated,
 					grade.progression=sgp.iter[[my.grade.sequences]],
 					content_area.progression=sgp.iter[[my.content.areas]],
@@ -172,17 +180,17 @@ function(sgp_object,
 				if (par.start$par.type == 'MULTICORE') {
 					tmp <- mclapply(par.sgp.config[[target.type]], function(sgp.iter) studentGrowthProjections(
 						panel.data=list(
-							Panel_Data=getPanelData(tmp_sgp_data_for_analysis, state=state, my.target.type, sgp.iter, sgp.targets=sgp.targets), 
+							Panel_Data=getPanelData(tmp_sgp_data_for_analysis, state=state, my.target.type, sgp.iter, sgp.targets=sgp.targets, sgp.scale.score.equated=equate.variable), 
 							Coefficient_Matrices=tmp_sgp_object[["Coefficient_Matrices"]], 
 							Knots_Boundaries=getKnotsBoundaries(sgp.iter, state, my.target.type)),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[[my.content.areas.label]], 1), 
 							my.extra.label=my.extra.label),
 						use.my.coefficient.matrices=list(my.year=if (baseline.tf) "BASELINE" else tail(sgp.iter[["sgp.panel.years"]], 1), 
-							my.subject=tail(sgp.iter[[my.content.areas]], 1)), 
+							my.subject=tail(sgp.iter[[my.content.areas]], 1), my.extra.label=equate.label), 
 						use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[[my.content.areas.label]], 1)),
 						performance.level.cutscores=state,
 						max.forward.progression.years=sgp.iter[['sgp.projections.max.forward.progression.years']],
-						panel.data.vnames=getPanelDataVnames(my.target.type, sgp.iter, names(tmp_sgp_data_for_analysis)),
+						panel.data.vnames=getPanelDataVnames(my.target.type, sgp.iter, names(tmp_sgp_data_for_analysis), equate.variable),
 						sgp.projections.equated=sgp.projections.equated,
 						grade.progression=sgp.iter[[my.grade.sequences]],
 						content_area.progression=sgp.iter[[my.content.areas]],
@@ -212,7 +220,7 @@ function(sgp_object,
 	} else { ### END if (!is.null(parallel.config))
 
 		for (sgp.iter in par.sgp.config[[target.type]]) {
-			panel.data=within(tmp_sgp_object, assign("Panel_Data", getPanelData(tmp_sgp_data_for_analysis, state=state, my.target.type, sgp.iter, sgp.targets=sgp.targets)))
+			panel.data=within(tmp_sgp_object, assign("Panel_Data", getPanelData(tmp_sgp_data_for_analysis, state=state, my.target.type, sgp.iter, sgp.targets=sgp.targets, sgp.scale.score.equated=equate.variable)))
 			panel.data[['Coefficient_Matrices']] <- tmp_sgp_object[['Coefficient_Matrices']]
 			panel.data[['Knots_Boundaries']] <- tmp_sgp_object[['Knots_Boundaries']]
 
@@ -222,11 +230,11 @@ function(sgp_object,
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[[my.content.areas]], 1), 
 						my.extra.label=my.extra.label),
 					use.my.coefficient.matrices=list(my.year=if (baseline.tf) "BASELINE" else tail(sgp.iter[["sgp.panel.years"]], 1), 
-						my.subject=tail(sgp.iter[[my.content.areas.label]], 1)), 
+						my.subject=tail(sgp.iter[[my.content.areas.label]], 1), my.extra.label=equate.label), 
 					use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[[my.content.areas.label]], 1)),
 					performance.level.cutscores=state,
 					max.forward.progression.years=sgp.iter[['sgp.projections.max.forward.progression.years']],
-					panel.data.vnames=getPanelDataVnames(my.target.type, sgp.iter, names(tmp_sgp_data_for_analysis)),
+					panel.data.vnames=getPanelDataVnames(my.target.type, sgp.iter, names(tmp_sgp_data_for_analysis), equate.variable),
 					sgp.projections.equated=sgp.projections.equated,
 					grade.progression=sgp.iter[[my.grade.sequences]],
 					content_area.progression=sgp.iter[[my.content.areas]],
