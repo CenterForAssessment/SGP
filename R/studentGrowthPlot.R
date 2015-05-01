@@ -604,9 +604,9 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 	}
 
 	if (!is.null(Report_Parameters$Assessment_Transition)) {
-		grid.lines(x=tmp.year.cut, y=yscale.range, default.units="native", gp=gpar(lwd=1.0, col=border.color))
-		grid.lines(x=tmp.year.cut+0.025, y=yscale.range, default.units="native", gp=gpar(lwd=0.3, col=border.color))
-		grid.lines(x=tmp.year.cut-0.025, y=yscale.range, default.units="native", gp=gpar(lwd=0.3, col=border.color))
+		grid.lines(x=tmp.year.cut, y=yscale.range, default.units="native", gp=gpar(lwd=1.8, col=border.color))
+		grid.lines(x=tmp.year.cut+0.028, y=yscale.range, default.units="native", gp=gpar(lwd=0.4, col=border.color))
+		grid.lines(x=tmp.year.cut-0.028, y=yscale.range, default.units="native", gp=gpar(lwd=0.4, col=border.color))
 	}
 
 	if (grade.values$year_span == 0) {
