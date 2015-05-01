@@ -14,9 +14,17 @@ function(sgp_object,
 
 	### Define variables
 
+	if (!is.null(sgp.projections.equated)) {
+		year.for.equate <- sgp.projections.equated$Year
+		equate.variable <- "SCALE_SCORE_EQUATED"
+		equate.label <- coefficient.matrix.type <- "EQUATED"
+	} else {
+		year.for.equate <- equate.variable <- equate.label <- NULL
+	}
+
 	tmp_sgp_object <- list(Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]], Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]])
 	setkey(sgp_object@Data, VALID_CASE, ID)
-	variables.to.get <- c("VALID_CASE", "YEAR", "CONTENT_AREA", "GRADE", "ID", "SCALE_SCORE", "YEAR_WITHIN", "FIRST_OBSERVATION", "LAST_OBSERVATION", "STATE")
+	variables.to.get <- c("VALID_CASE", "YEAR", "CONTENT_AREA", "GRADE", "ID", "SCALE_SCORE", "YEAR_WITHIN", "FIRST_OBSERVATION", "LAST_OBSERVATION", "STATE", equate.variable)
 	tmp_sgp_data_for_analysis <- sgp_object@Data[SJ("VALID_CASE", unique(sgp.targets[['ID']]))][, intersect(names(sgp_object@Data), variables.to.get), with=FALSE]
 	if ("YEAR_WITHIN" %in% names(tmp_sgp_data_for_analysis)) {
 		setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE, YEAR_WITHIN)
@@ -67,13 +75,6 @@ function(sgp_object,
 		my.content.areas.label <- "sgp.content.areas"
 		my.grade.sequences <- "sgp.projection.baseline.grade.sequences"
 		my.panel.years.lags <- "sgp.projection.baseline.panel.years.lags"
-	}
-	if (!is.null(sgp.projections.equated)) {
-		year.for.equate <- sgp.projections.equated$Year
-		equate.variable <- "SCALE_SCORE_EQUATED"
-		equate.label <- coefficient.matrix.type <- "EQUATED"
-	} else {
-		year.for.equate <- equate.variable <- equate.label <- NULL
 	}
 
 	sgp.projections.max.forward.progression.years <- 
