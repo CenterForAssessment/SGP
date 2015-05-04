@@ -676,34 +676,24 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 			if (length(grep("Current", i))==0) {
 				current.year.x.coor <- current.year
 				current.year.x.coor.lag <- min(which(!is.na(tail(Scale_Scores, -1))), na.rm=TRUE)
-				x.coor.label.adjustment <- -0.075; label.position <- "right"
+				x.coor.label.adjustment <- -0.075; label.position <- "right"; tmp.index <- 1
 				if (is.null(Report_Parameters$Assessment_Transition)) {
-					tmp.achievement.level <- which(tail(head(Achievement_Levels, current.year.x.coor.lag+1), 1)==achievement.level.labels[[1]])
+					tmp.achievement.level <- which(tail(head(Achievement_Levels, current.year.x.coor.lag+1), 1)==achievement.level.labels[[tmp.index]])
 				} else {
-					if (year.function(Report_Parameters$Assessment_Transition$Year, 0, 1) <= current.year.x.coor-current.year.x.coor.lag) {
-						tmp.index <- 2
-					} else {
-						tmp.index <- 1
-					}
+					if (year.function(Report_Parameters$Assessment_Transition$Year, 0, 1) <= current.year.x.coor-current.year.x.coor.lag) tmp.index <- 2
 					tmp.achievement.level <- which(tail(head(Achievement_Levels, current.year.x.coor.lag+1), 1)==achievement.level.labels[[tmp.index]])
 				}
 				show.targets <- TRUE
 			} else {
 				current.year.x.coor <- current.year+grade.values$increment_for_projection_current
 				current.year.x.coor.lag <- grade.values$increment_for_projection_current
-				x.coor.label.adjustment <- 0.075; label.position <- "left"
+				x.coor.label.adjustment <- 0.075; label.position <- "left"; tmp.index <- 1; show.targets <- show.fan
 				if (is.null(Report_Parameters$Assessment_Transition)) {
-					tmp.achievement.level <- which(head(Achievement_Levels, 1)==achievement.level.labels[[1]])
-					tmp.index <- 1
+					tmp.achievement.level <- which(head(Achievement_Levels, 1)==achievement.level.labels[[tmp.index]])
 				} else {
-					if (year.function(Report_Parameters$Assessment_Transition$Year, 0, 1) <= current.year.x.coor) {
-						tmp.index <- 2
-					} else {
-						tmp.index <- 1
-					}
+					if (year.function(Report_Parameters$Assessment_Transition$Year, 0, 1) <= current.year.x.coor) tmp.index <- 2
 					tmp.achievement.level <- which(head(Achievement_Levels, 1)==achievement.level.labels[[tmp.index]])
 				}
-				show.targets <- show.fan
 			}
 
 			if (show.targets) {
