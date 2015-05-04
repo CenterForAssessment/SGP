@@ -1095,7 +1095,7 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 					Proficient=c("Not Proficient", "Not Proficient", "Not Proficient", "Proficient", "Proficient")),
 				Achievement_Level_Labels=list(
 					"Unsatisfactory"="Unsatisfactory",
-					"Part Proficient"="Proficient",
+					"Part Proficient"="Partially Proficient",
 					"Proficient"="Proficient",
 					"Advanced"="Advanced"),
 				Achievement_Level_Labels.2014_2015=list(
