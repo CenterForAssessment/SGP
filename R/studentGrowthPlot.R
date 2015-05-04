@@ -694,6 +694,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 				x.coor.label.adjustment <- 0.075; label.position <- "left"
 				if (is.null(Report_Parameters$Assessment_Transition)) {
 					tmp.achievement.level <- which(head(Achievement_Levels, 1)==achievement.level.labels[[1]])
+					tmp.index <- 1
 				} else {
 					if (year.function(Report_Parameters$Assessment_Transition$Year, 0, 1) <= current.year.x.coor) {
 						tmp.index <- 2
