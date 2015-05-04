@@ -2,7 +2,7 @@
 function(
 	TEST_NUMBER,
 	save.results=TRUE,
-	test.option=NULL,
+	test.option=list(),
 	memory.profile=FALSE) {
 
 	YEAR <- GRADE <- NULL
@@ -897,7 +897,8 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 	number.cores <- detectCores()-1
 	Demonstration_SGP <- ACHIEVEMENT_LEVEL <- HIGH_NEED_STATUS <- tmp.messages <- NULL
 	sgpData_LONG <- SGPdata::sgpData_LONG
-	if (is.null(test.option)) test.option <- c("Yes", "Yes")
+	if (is.null(test.option[['Scale_Transition_Types']])) test.option[['Scale_Transition_Types']] <- c("Vertical", "Vertical")
+	if (is.null(test.option[['Scale_Transition_Adjustments']])) test.option[['Scale_Transition_Adjustments']] <- list(MATHEMATICS=2100, READING=2200)
 
 	##############################################################################
 	##### STEP 1: Run analyses for year prior to assessment change in 2014-2015
@@ -906,9 +907,9 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 		##### Create LONG Data set for STEP 1 analysis.
 
 		sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'MATHEMATICS' & sgpData_LONG$YEAR == '2014_2015'] <- 
-			sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'MATHEMATICS' & sgpData_LONG$YEAR == '2014_2015'] + 1000
+			sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'MATHEMATICS' & sgpData_LONG$YEAR == '2014_2015'] + test.options[['Scale_Transition_Adjustments']][['MATHEMATICS']]
 		sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'READING' & sgpData_LONG$YEAR == '2014_2015'] <- 
-			sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'READING' & sgpData_LONG$YEAR == '2014_2015'] + 1200
+			sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'READING' & sgpData_LONG$YEAR == '2014_2015'] + test.options[['Scale_Transition_Adjustments']][['READING']]
 
 		Demonstration_Data_LONG <- as.data.table(subset(sgpData_LONG, YEAR!="2014_2015"))
 		Demonstration_Data_LONG_2014_2015 <- as.data.table(subset(sgpData_LONG, YEAR=="2014_2015"))[,ACHIEVEMENT_LEVEL:=NULL]
@@ -931,76 +932,100 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 		SGPstateData[["DEMO"]][["Achievement"]][["Knots_Boundaries"]] <- c(
 			SGPstateData[["DEMO"]][["Achievement"]][["Knots_Boundaries"]],
 			list(MATHEMATICS.2014_2015=list(
-				boundaries_3=c(1150, 1700),
-				boundaries_4=c(1180, 1780),
-				boundaries_5=c(1220, 1800),
-				boundaries_6=c(1240, 1830),
-				boundaries_7=c(1280, 1860),
-				boundaries_8=c(1310, 1890),
-				boundaries_9=c(1340, 1920),
-				boundaries_10=c(1370, 1950),
-				knots_3=c(1392, 1440, 1481, 1529),
-				knots_4=c(1425, 1470, 1506, 1546),
-				knots_5=c(1452, 1495, 1530, 1569),
-				knots_6=c(1465, 1509, 1546, 1588),
-				knots_7=c(1490, 1530, 1565, 1600),
-				knots_8=c(1500, 1545, 1580, 1620),
-				knots_9=c(1515, 1560, 1595, 1630),
-				knots_10=c(1530, 1575, 1610, 1645),
-				loss.hoss_3=c(1150, 1700),
-				loss.hoss_4=c(1180, 1780),
-				loss.hoss_5=c(1220, 1800),
-				loss.hoss_6=c(1240, 1830),
-				loss.hoss_7=c(1280, 1860),
-				loss.hoss_8=c(1310, 1890),
-				loss.hoss_9=c(1340, 1920),
-				loss.hoss_10=c(1370, 1950)),
+				boundaries_3=c(150, 700)+test.options[['Scale_Transition_Adjustments']][['MATHEMATICS']],
+				boundaries_4=c(180, 780)+test.options[['Scale_Transition_Adjustments']][['MATHEMATICS']],
+				boundaries_5=c(220, 800)+test.options[['Scale_Transition_Adjustments']][['MATHEMATICS']],
+				boundaries_6=c(240, 830)+test.options[['Scale_Transition_Adjustments']][['MATHEMATICS']],
+				boundaries_7=c(280, 860)+test.options[['Scale_Transition_Adjustments']][['MATHEMATICS']],
+				boundaries_8=c(310, 890)+test.options[['Scale_Transition_Adjustments']][['MATHEMATICS']],
+				boundaries_9=c(340, 920)+test.options[['Scale_Transition_Adjustments']][['MATHEMATICS']],
+				boundaries_10=c(370, 950)+test.options[['Scale_Transition_Adjustments']][['MATHEMATICS']],
+				knots_3=c(392, 440, 481, 529)+test.options[['Scale_Transition_Adjustments']][['MATHEMATICS']],
+				knots_4=c(425, 470, 506, 546)+test.options[['Scale_Transition_Adjustments']][['MATHEMATICS']],
+				knots_5=c(452, 495, 530, 569)+test.options[['Scale_Transition_Adjustments']][['MATHEMATICS']],
+				knots_6=c(465, 509, 546, 588)+test.options[['Scale_Transition_Adjustments']][['MATHEMATICS']],
+				knots_7=c(490, 530, 565, 600)+test.options[['Scale_Transition_Adjustments']][['MATHEMATICS']],
+				knots_8=c(500, 545, 580, 620)+test.options[['Scale_Transition_Adjustments']][['MATHEMATICS']],
+				knots_9=c(515, 560, 595, 630)+test.options[['Scale_Transition_Adjustments']][['MATHEMATICS']],
+				knots_10=c(530, 575, 610, 645)+test.options[['Scale_Transition_Adjustments']][['MATHEMATICS']],
+				loss.hoss_3=c(150, 700)+test.options[['Scale_Transition_Adjustments']][['MATHEMATICS']],
+				loss.hoss_4=c(180, 780)+test.options[['Scale_Transition_Adjustments']][['MATHEMATICS']],
+				loss.hoss_5=c(220, 800)+test.options[['Scale_Transition_Adjustments']][['MATHEMATICS']],
+				loss.hoss_6=c(240, 830)+test.options[['Scale_Transition_Adjustments']][['MATHEMATICS']],
+				loss.hoss_7=c(280, 860)+test.options[['Scale_Transition_Adjustments']][['MATHEMATICS']],
+				loss.hoss_8=c(310, 890)+test.options[['Scale_Transition_Adjustments']][['MATHEMATICS']],
+				loss.hoss_9=c(340, 920)+test.options[['Scale_Transition_Adjustments']][['MATHEMATICS']],
+				loss.hoss_10=c(370, 950)+test.options[['Scale_Transition_Adjustments']][['MATHEMATICS']]),
 		READING.2014_2015=list(
-				boundaries_3=c(1350, 1995),
-				boundaries_4=c(1380, 2140),
-				boundaries_5=c(1420, 2155),
-				boundaries_6=c(1460, 2170),
-				boundaries_7=c(1500, 2180),
-				boundaries_8=c(1530, 2190),
-				boundaries_9=c(1550, 2195),
-				boundaries_10=c(1570, 2199),
-				knots_3=c(1710, 1750, 1780, 1815),
-				knots_4=c(1742, 1780, 1806, 1835),
-				knots_5=c(1762, 1802, 1832, 1865),
-				knots_6=c(1775, 1815, 1845, 1875),
-				knots_7=c(1786, 1825, 1855, 1890),
-				knots_8=c(1805, 1842, 1870, 1902),
-				knots_9=c(1820, 1855, 1880, 1906),
-				knots_10=c(1842, 1875, 1900, 1930),
-				loss.hoss_3=c(1350, 1995),
-				loss.hoss_4=c(1380, 2140),
-				loss.hoss_5=c(1420, 2155),
-				loss.hoss_6=c(1460, 2170),
-				loss.hoss_7=c(1500, 2180),
-				loss.hoss_8=c(1530, 2190),
-				loss.hoss_9=c(1550, 2195),
-				loss.hoss_10=c(1570, 2199))))
-	
+				boundaries_3=c(150, 795)+test.options[['Scale_Transition_Adjustments']][['READING']],
+				boundaries_4=c(180, 940)+test.options[['Scale_Transition_Adjustments']][['READING']],
+				boundaries_5=c(220, 955)+test.options[['Scale_Transition_Adjustments']][['READING']],
+				boundaries_6=c(260, 970)+test.options[['Scale_Transition_Adjustments']][['READING']],
+				boundaries_7=c(300, 980)+test.options[['Scale_Transition_Adjustments']][['READING']],
+				boundaries_8=c(330, 990)+test.options[['Scale_Transition_Adjustments']][['READING']],
+				boundaries_9=c(350, 995)+test.options[['Scale_Transition_Adjustments']][['READING']],
+				boundaries_10=c(370, 999)+test.options[['Scale_Transition_Adjustments']][['READING']],
+				knots_3=c(510, 550, 580, 615)+test.options[['Scale_Transition_Adjustments']][['READING']],
+				knots_4=c(542, 580, 606, 635)+test.options[['Scale_Transition_Adjustments']][['READING']],
+				knots_5=c(562, 602, 632, 665)+test.options[['Scale_Transition_Adjustments']][['READING']],
+				knots_6=c(575, 615, 645, 675)+test.options[['Scale_Transition_Adjustments']][['READING']],
+				knots_7=c(586, 625, 655, 690)+test.options[['Scale_Transition_Adjustments']][['READING']],
+				knots_8=c(605, 642, 670, 702)+test.options[['Scale_Transition_Adjustments']][['READING']],
+				knots_9=c(620, 655, 680, 706)+test.options[['Scale_Transition_Adjustments']][['READING']],
+				knots_10=c(642, 675, 700, 730)+test.options[['Scale_Transition_Adjustments']][['READING']],
+				loss.hoss_3=c(150, 795)+test.options[['Scale_Transition_Adjustments']][['READING']],
+				loss.hoss_4=c(180, 940)+test.options[['Scale_Transition_Adjustments']][['READING']],
+				loss.hoss_5=c(220, 955)+test.options[['Scale_Transition_Adjustments']][['READING']],
+				loss.hoss_6=c(260, 970)+test.options[['Scale_Transition_Adjustments']][['READING']],
+				loss.hoss_7=c(300, 980)+test.options[['Scale_Transition_Adjustments']][['READING']],
+				loss.hoss_8=c(330, 990)+test.options[['Scale_Transition_Adjustments']][['READING']],
+				loss.hoss_9=c(350, 995)+test.options[['Scale_Transition_Adjustments']][['READING']],
+				loss.hoss_10=c(370, 999)+test.options[['Scale_Transition_Adjustments']][['READING']]),
+		ALGEBRA_I.2014_2015=list(
+				boundaries_EOCT=c(340, 920)+test.options[['Scale_Transition_Adjustments']][['MATHEMATICS']],
+				knots_EOCT=c(515, 560, 595, 630)+test.options[['Scale_Transition_Adjustments']][['MATHEMATICS']],
+				loss.hoss_EOCT=c(340, 920)+test.options[['Scale_Transition_Adjustments']][['MATHEMATICS']]),
+		ALGEBRA_II=list(
+				boundaries_EOCT=c(370, 950)+test.options[['Scale_Transition_Adjustments']][['MATHEMATICS']],
+				knots_EOCT=c(530, 575, 610, 645)+test.options[['Scale_Transition_Adjustments']][['MATHEMATICS']],
+				loss.hoss_EOCT=c(370, 950)+test.options[['Scale_Transition_Adjustments']][['MATHEMATICS']]),
+		GRADE_9_LIT=list(
+				boundaries_EOCT=c(350, 995)+test.options[['Scale_Transition_Adjustments']][['READING']],
+				knots_EOCT=c(620, 655, 680, 706)+test.options[['Scale_Transition_Adjustments']][['READING']],
+				loss.hoss_EOCT=c(350, 995)+test.options[['Scale_Transition_Adjustments']][['READING']]),
+		AMERICAN_LIT=list(
+				boundaries_EOCT=c(370, 999)+test.options[['Scale_Transition_Adjustments']][['READING']],
+				knots_EOCT=c(642, 675, 700, 730)+test.options[['Scale_Transition_Adjustments']][['READING']],
+				loss.hoss_EOCT=c(370, 999)+test.options[['Scale_Transition_Adjustments']][['READING']])))
+
 		SGPstateData[["DEMO"]][["Achievement"]][["Cutscores"]] <- c(
 			SGPstateData[["DEMO"]][["Achievement"]][["Cutscores"]],
 			list(MATHEMATICS.2014_2015=list(
-				GRADE_3=c(1335, 1419, 1510, 1560),
-				GRADE_4=c(1383, 1455, 1538, 1588),
-				GRADE_5=c(1422, 1494, 1562, 1612),
-				GRADE_6=c(1454, 1520, 1589, 1639),
-				GRADE_7=c(1487, 1559, 1614, 1664),
-				GRADE_8=c(1521, 1577, 1628, 1678),
-				GRADE_9=c(1548, 1602, 1652, 1702),
-				GRADE_10=c(1562, 1627, 1692, 1742)),
+				GRADE_3=as.integer(quantile(subset(sgpData_LONG, GRADE==3 & CONTENT_AREA=="MATHEMATICS" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9))),
+				GRADE_4=as.integer(quantile(subset(sgpData_LONG, GRADE==4 & CONTENT_AREA=="MATHEMATICS" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9))),
+				GRADE_5=as.integer(quantile(subset(sgpData_LONG, GRADE==5 & CONTENT_AREA=="MATHEMATICS" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9))),
+				GRADE_6=as.integer(quantile(subset(sgpData_LONG, GRADE==6 & CONTENT_AREA=="MATHEMATICS" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9))),
+				GRADE_7=as.integer(quantile(subset(sgpData_LONG, GRADE==7 & CONTENT_AREA=="MATHEMATICS" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9))),
+				GRADE_8=as.integer(quantile(subset(sgpData_LONG, GRADE==8 & CONTENT_AREA=="MATHEMATICS" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9))),
+				GRADE_9=as.integer(quantile(subset(sgpData_LONG, GRADE==9 & CONTENT_AREA=="MATHEMATICS" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9))),
+				GRADE_10=as.integer(quantile(subset(sgpData_LONG, GRADE==10 & CONTENT_AREA=="MATHEMATICS" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9)))),
 			READING.2014_2015=list(
-				GRADE_3=c(1666, 1726, 1856, 1906),
-				GRADE_4=c(1717, 1772, 1871, 1921),
-				GRADE_5=c(1738, 1788, 1891, 1941),
-				GRADE_6=c(1743, 1800, 1896, 1946),
-				GRADE_7=c(1767, 1820, 1916, 1966),
-				GRADE_8=c(1778, 1832, 1924, 1974),
-				GRADE_9=c(1785, 1842, 1939, 1989),
-				GRADE_10=c(1807, 1863, 1947, 1997))))
+				GRADE_3=as.integer(quantile(subset(sgpData_LONG, GRADE==3 & CONTENT_AREA=="READING" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9))),
+				GRADE_4=as.integer(quantile(subset(sgpData_LONG, GRADE==4 & CONTENT_AREA=="READING" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9))),
+				GRADE_5=as.integer(quantile(subset(sgpData_LONG, GRADE==5 & CONTENT_AREA=="READING" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9))),
+				GRADE_6=as.integer(quantile(subset(sgpData_LONG, GRADE==6 & CONTENT_AREA=="READING" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9))),
+				GRADE_7=as.integer(quantile(subset(sgpData_LONG, GRADE==7 & CONTENT_AREA=="READING" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9))),
+				GRADE_8=as.integer(quantile(subset(sgpData_LONG, GRADE==8 & CONTENT_AREA=="READING" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9))),
+				GRADE_9=as.integer(quantile(subset(sgpData_LONG, GRADE==9 & CONTENT_AREA=="READING" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9))),
+				GRADE_10=as.integer(quantile(subset(sgpData_LONG, GRADE==10 & CONTENT_AREA=="READING" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9)))),
+			ALGEBRA_I=list(
+				GRADE_EOCT=as.integer(quantile(subset(sgpData_LONG, GRADE==9 & CONTENT_AREA=="MATHEMATICS" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9)))),
+			ALGEBRA_II=list(
+				GRADE_EOCT=as.integer(quantile(subset(sgpData_LONG, GRADE==10 & CONTENT_AREA=="MATHEMATICS" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9)))),
+			GRADE_9_LIT=list(
+				GRADE_EOCT=as.integer(quantile(subset(sgpData_LONG, GRADE==9 & CONTENT_AREA=="READING" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9)))),
+			AMERICAN_LIT=list(
+				GRADE_EOCT=as.integer(quantile(subset(sgpData_LONG, GRADE==10 & CONTENT_AREA=="READING" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9))))))
 	
 		SGPstateData[["DEMO"]][["Achievement"]][["Levels"]] <-
 			list(
@@ -1037,17 +1062,17 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 				Year="2014_2015"
 		)
 
-		if (test.option==c("Yes", "Yes")) {
+		if (test.option[['Scale_Transition_Types']]==c("Vertical", "Vertical")) {
 			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale"]] <- "Yes"
 			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale.2014_2015"]] <- "Yes"
 		}
-		if (test.option==c("No", "Yes")) {
+		if (test.option[['Scale_Transition_Types']]==c("Non-Vertical", "Vertical")) {
 			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale"]] <- "No"
 			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale.2014_2015"]] <- "Yes"
 			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Transformed_Achievement_Level_Cutscores"]] <- 
 				list(MATHEMATICS=c(100,200,300,400,500), READING=c(100,200,300,400,500))
 		}
-		if (test.option==c("No", "No")) {
+		if (test.option[['Scale_Transition_Types']]==c("Non-Vertical", "Non-Vertical")) {
 			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale"]] <- "No"
 			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale.2014_2015"]] <- "No"
 			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Transformed_Achievement_Level_Cutscores"]] <- 
