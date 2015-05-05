@@ -29,11 +29,11 @@ simexSGP <- function(
 		tmp.version <- list(SGP_Package_Version=as.character(packageVersion("SGP")), Date_Prepared=date(), Matrix_Information=list(N=dim(rqdata)[1]))
 		
 		eval(parse(text=paste("new('splineMatrix', tmp.mtx, ", substring(s4Ks, 1, nchar(s4Ks)-1), "), ", substring(s4Bs, 1, nchar(s4Bs)-1), "), ",
-													"Content_Areas=list(as.character(tail(content_area.progression, k+1))), ",
-													"Grade_Progression=list(as.character(tail(tmp.slot.gp, k+1))), ",
-													"Time=list(as.character(tail(year.progression, k+1))), ",
-													"Time_Lags=list(as.numeric(tail(year_lags.progression, k))), ",
-													"Version=tmp.version)", sep="")))
+			"Content_Areas=list(as.character(tail(content_area.progression, k+1))), ",
+			"Grade_Progression=list(as.character(tail(tmp.slot.gp, k+1))), ",
+			"Time=list(as.character(tail(year.progression, k+1))), ",
+			"Time_Lags=list(as.numeric(tail(year_lags.progression, k))), ",
+			"Version=tmp.version)", sep="")))
 	}
 	
 	fitted <- extrap <- tmp.quantiles.simex <- simex.coef.matrices <- list()
@@ -79,10 +79,10 @@ simexSGP <- function(
 			for (g in seq_along(tmp.gp.iter)) {
 				if ("YEAR" %in% names(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
 					CSEM_Data <- subset(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], 
-															GRADE==tmp.gp.iter[g] & CONTENT_AREA== tmp.ca.iter[g] & YEAR==tmp.yr.iter[g])
+						GRADE==tmp.gp.iter[g] & CONTENT_AREA== tmp.ca.iter[g] & YEAR==tmp.yr.iter[g])
 				} else {
 					CSEM_Data <- subset(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], 
-															GRADE==tmp.gp.iter[g] & CONTENT_AREA== tmp.ca.iter[g])
+						GRADE==tmp.gp.iter[g] & CONTENT_AREA== tmp.ca.iter[g])
 				}
 				if (dim(CSEM_Data)[1] == 0) stop(paste('CSEM data for', tmp.ca.iter[g], 'Grade', tmp.gp.iter[g], 'is required to use SIMEX functionality, but is not available in SGPstateData.  Please contact package administrators to add CSEM data.'))
 				CSEM_Function <- splinefun(CSEM_Data[["SCALE_SCORE"]], CSEM_Data[["SCALE_SCORE_CSEM"]], method="natural")
@@ -135,7 +135,7 @@ simexSGP <- function(
 					big.data.uniques <- unique(big.data)
 					big.data.uniques.indices <- which(!duplicated(big.data))
 					big.data.uniques[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="") := 
-													 	rep(csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")], B)[big.data.uniques.indices]]
+						rep(csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")], B)[big.data.uniques.indices]]
 				} else {
 					setkeyv(big.data, c(names(big.data)[col.index], "final_yr", "b", paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")))
 					# big.data.uniques <- merge(big.data, csem.int[,c("ID", paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")), with=F], by="ID")
@@ -143,8 +143,8 @@ simexSGP <- function(
 					big.data.uniques <- unique(big.data)
 				}
 				big.data.uniques[, TEMP := 
-												 	eval(parse(text=paste("big.data.uniques[[", tmp.num.variables-g, "]]+sqrt(big.data.uniques[['Lambda']])*big.data.uniques[['icsem",
-												 												tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], "']] * rnorm(dim(big.data.uniques)[1])", sep="")))]
+					eval(parse(text=paste("big.data.uniques[[", tmp.num.variables-g, "]]+sqrt(big.data.uniques[['Lambda']])*big.data.uniques[['icsem",
+						tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], "']] * rnorm(dim(big.data.uniques)[1])", sep="")))]
 				big.data.uniques[big.data.uniques[[col.index]] < loss.hoss[1,g], col.index := loss.hoss[1,g], with=FALSE]
 				big.data.uniques[big.data.uniques[[col.index]] > loss.hoss[2,g], col.index := loss.hoss[2,g], with=FALSE]
 				if (is.null(key(big.data.uniques))) setkeyv(big.data.uniques, key(big.data)) 
@@ -171,7 +171,7 @@ simexSGP <- function(
 			dir.create("tmp_data", recursive=TRUE, showWarnings=FALSE)
 			if (!exists('year.progression.for.norm.group')) year.progression.for.norm.group <- year.progression # Needed during Baseline Matrix construction
 			tmp.dbname <- paste("tmp_data/", paste(tail(paste(year.progression.for.norm.group, 
-																												paste(content_area.progression, grade.progression, sep="_"), sep="_"), num.prior+1), collapse="-"), ".sqlite", sep="")
+				paste(content_area.progression, grade.progression, sep="_"), sep="_"), num.prior+1), collapse="-"), ".sqlite", sep="")
 			con <- dbConnect(SQLite(), dbname = tmp.dbname)
 			dbWriteTable(con, name = "simex_data", value=big.data, overwrite=TRUE, row.names=0)
 			dbDisconnect(con)
@@ -235,42 +235,41 @@ simexSGP <- function(
 						if (is.null(simex.sample.size) || dim(tmp.data)[1] <= simex.sample.size) {
 							simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <- 
 								foreach(z=iter(sim.iters), .packages=c("quantreg", "data.table"), 
-												.export=c("Knots_Boundaries", "rq.method", "taus", "content_area.progression", "tmp.slot.gp", "year.progression", "year_lags.progression"),
-												.options.mpi=par.start$foreach.options, .options.multicore=par.start$foreach.options, .options.snow=par.start$foreach.options) %dopar% {
-													rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
-																																						paste("select * from simex_data where b in ('", z, "')", sep="")))
-												}
+									.export=c("Knots_Boundaries", "rq.method", "taus", "content_area.progression", "tmp.slot.gp", "year.progression", "year_lags.progression"),
+									.options.mpi=par.start$foreach.options, .options.multicore=par.start$foreach.options, .options.snow=par.start$foreach.options) %dopar% {
+										rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
+											paste("select * from simex_data where b in ('", z, "')", sep="")))
+								}
 						} else {
 							simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
 								foreach(z=iter(sim.iters), .packages=c("quantreg", "data.table"), 
-												.export=c("Knots_Boundaries", "rq.method", "taus", "content_area.progression", "tmp.slot.gp", "year.progression", "year_lags.progression"),
-												.options.mpi=par.start$foreach.options, .options.multicore=par.start$foreach.options, .options.snow=par.start$foreach.options) %dopar% {
-													rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
-																																						paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq(dim(tmp.data)[1]), simex.sample.size),])
-												}
+									.export=c("Knots_Boundaries", "rq.method", "taus", "content_area.progression", "tmp.slot.gp", "year.progression", "year_lags.progression"),
+									.options.mpi=par.start$foreach.options, .options.multicore=par.start$foreach.options, .options.snow=par.start$foreach.options) %dopar% {
+										rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
+											paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq(dim(tmp.data)[1]), simex.sample.size),])
+								}
 						}
 					} else {
 						if (par.start$par.type == 'MULTICORE') {
 							if (is.null(simex.sample.size) || dim(tmp.data)[1] <= simex.sample.size) {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <- 
 									mclapply(sim.iters, function(z) rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
-																																																		paste("select * from simex_data where b in ('", z, "')", sep=""))), mc.cores=par.start$workers)
+										paste("select * from simex_data where b in ('", z, "')", sep=""))), mc.cores=par.start$workers)
 							} else {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <- 
 									mclapply(sim.iters, function(z) rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
-																																																		paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq(dim(tmp.data)[1]), simex.sample.size),]), 
-													 mc.cores=par.start$workers)
+										paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq(dim(tmp.data)[1]), simex.sample.size),]), mc.cores=par.start$workers)
 							}
 						}
 						if (par.start$par.type == 'SNOW') {
 							if (is.null(simex.sample.size) || dim(tmp.data)[1] <= simex.sample.size) {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <- 
 									parLapply(par.start$internal.cl, sim.iters, function(z) rq.mtx(tmp.gp.iter[1:k], lam=L, 
-																																								 rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname), paste("select * from simex_data where b in ('", z, "')", sep=""))))
+										rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname), paste("select * from simex_data where b in ('", z, "')", sep=""))))
 							} else {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
 									parLapply(par.start$internal.cl, sim.iters, function(z) rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
-																																																														paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq(dim(tmp.data)[1]), simex.sample.size),]))
+										paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq(dim(tmp.data)[1]), simex.sample.size),]))
 							}
 						}
 					}
@@ -295,8 +294,8 @@ simexSGP <- function(
 						if (par.start$par.type == 'MULTICORE') {
 							tmp.fitted <- mclapply(seq_along(sim.iters), function(z) {
 								as.vector(.get.percentile.predictions(dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
-																																 paste("select ", paste(c("ID", paste('prior_', k:1, sep=""), "final_yr"), collapse=", ")," from simex_data where b in ('",z,"')", sep="")), 
-																											simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]])/B)
+									paste("select ", paste(c("ID", paste('prior_', k:1, sep=""), "final_yr"), collapse=", ")," from simex_data where b in ('",z,"')", sep="")), 
+									simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]])/B)
 							}, mc.cores=par.start$workers)
 							
 							fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- tmp.fitted[[1]]
@@ -307,8 +306,8 @@ simexSGP <- function(
 						if (par.start$par.type == 'SNOW') {
 							tmp.fitted <- parLapply(par.start$internal.cl, seq_along(sim.iters), function(z) { 
 								as.vector(.get.percentile.predictions(dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
-																																 paste("select ", paste(c("ID", paste('prior_', k:1, sep=""), "final_yr"), collapse=", ")," from simex_data where b in ('",z,"')", sep="")), 
-																											simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]])/B)
+									paste("select ", paste(c("ID", paste('prior_', k:1, sep=""), "final_yr"), collapse=", ")," from simex_data where b in ('",z,"')", sep="")), 
+									simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]])/B)
 							})
 							
 							fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- tmp.fitted[[1]]
@@ -326,8 +325,8 @@ simexSGP <- function(
 		
 		if (calculate.simex.sgps) {
 			switch(extrapolation,
-						 LINEAR = fit <- lm(fitted[[paste("order_", k, sep="")]] ~ lambda),
-						 QUADRATIC = fit <- lm(fitted[[paste("order_", k, sep="")]] ~ lambda + I(lambda^2)))
+				LINEAR = fit <- lm(fitted[[paste("order_", k, sep="")]] ~ lambda),
+				QUADRATIC = fit <- lm(fitted[[paste("order_", k, sep="")]] ~ lambda + I(lambda^2)))
 			extrap[[paste("order_", k, sep="")]] <- t(apply(matrix(predict(fit, newdata=data.frame(lambda=-1)), nrow=dim(tmp.data)[1]), 1, .smooth.isotonize.row, isotonize, sgp.loss.hoss.adjustment))
 			tmp.quantiles.simex[[k]] <- data.table(ID=tmp.data[["ID"]], SIMEX_ORDER=k, 
 																						 SGP_SIMEX=.get.quantiles(extrap[[paste("order_", k, sep="")]], tmp.data[[tmp.num.variables]]))
@@ -344,7 +343,7 @@ simexSGP <- function(
 	if (print.other.gp) {
 		return(list(
 			DT = data.table(reshape(quantile.data.simex, idvar="ID", timevar="SIMEX_ORDER", direction="wide"),
-											SGP_SIMEX=quantile.data.simex[c(which(!duplicated(quantile.data.simex))[-1]-1L, nrow(quantile.data.simex))][["SGP_SIMEX"]]),
+			SGP_SIMEX=quantile.data.simex[c(which(!duplicated(quantile.data.simex))[-1]-1L, nrow(quantile.data.simex))][["SGP_SIMEX"]]),
 			MATRICES = simex.coef.matrices))
 	} else {
 		if (print.sgp.order | return.norm.group.identifier) {
