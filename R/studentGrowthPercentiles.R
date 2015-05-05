@@ -279,9 +279,10 @@ function(panel.data,         ## REQUIRED
 	###
 	simex.sgp <- function(
 		state, variable=NULL, csem.data.vnames=NULL, csem.loss.hoss=NULL, 
-		lambda, B, simex.sample.size, extrapolation, save.matrices, simex.use.my.coefficient.matrices=NULL, calculate.simex.sgps, verbose=FALSE) 
+		lambda, B, simex.sample.size, extrapolation, save.matrices, simex.use.my.coefficient.matrices=NULL, calculate.simex.sgps, dependent.error=FALSE, verbose=FALSE) 
 	{
 
+		if (is.null(dependent.error)) dependent.error <- FALSE
 		if (is.null(verbose)) verbose <- FALSE
 		if (verbose) message("\n\tStarted SIMEX SGP calculation ", rev(content_area.progression)[1], " Grade ", rev(tmp.gp)[1], " ", date())
 
@@ -316,19 +317,27 @@ function(panel.data,         ## REQUIRED
 		}
 
 		fitted <- extrap <- tmp.quantiles.simex <- simex.coef.matrices <- list()
-		loss.hoss <- matrix(nrow=2,ncol=length(tmp.gp)-1)
+		if (dependent.error) {
+			loss.hoss <- matrix(nrow=2, ncol=length(tmp.gp))
+			lh.ca <- rev(content_area.progression)
+			lh.gp <- rev(tmp.gp)
+		} else {
+			loss.hoss <- matrix(nrow=2, ncol=length(tmp.gp)-1)
+			lh.ca <- rev(content_area.progression)[-1]
+			lh.gp <- rev(tmp.gp)[-1]
+		}
 		if (!is.null(csem.loss.hoss)) {
 			if (!is.list(csem.loss.hoss)) stop("SIMEX config element 'csem.loss.hoss' must be a 2 level nested list with LOSS/HOSS data for each subject (level 1) by grade (level 2).")
 			for (g in 1:ncol(loss.hoss)) {
-				loss.hoss[,g] <- csem.loss.hoss[[rev(content_area.progression)[-1][g]]][[paste("loss.hoss_", rev(tmp.gp)[-1][g], sep="")]]
+				loss.hoss[,g] <- csem.loss.hoss[[lh.ca[g]]][[paste("loss.hoss_", lh.gp[g], sep="")]]
 			}}
 		if (!is.null(state)) {
 			for (g in 1:ncol(loss.hoss)) {
-				loss.hoss[,g] <- SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[rev(content_area.progression)[-1][g]]][[paste("loss.hoss_", rev(tmp.gp)[-1][g], sep="")]]
+				loss.hoss[,g] <- SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[lh.ca[g]]][[paste("loss.hoss_", lh.gp[g], sep="")]]
 			}}
 		if (!is.null(variable)) {
 			for (g in 1:ncol(loss.hoss)) {
-				loss.hoss[,g] <- variable[[paste("loss.hoss_", rev(tmp.gp)[-1][g], sep="")]]
+				loss.hoss[,g] <- variable[[paste("loss.hoss_", lh.gp[g], sep="")]]
 			}}
 
 		if (!is.null(use.my.coefficient.matrices)) { # Passed implicitly from studentGrowthPercentiles arguments
@@ -343,11 +352,20 @@ function(panel.data,         ## REQUIRED
 			tmp.data <- .get.panel.data(ss.data, k, by.grade)
 			tmp.num.variables <- dim(tmp.data)[2]
 			tmp.gp.iter <- rev(tmp.gp)[2:(k+1)]
-			tmp.ca.iter <- rev(content_area.progression)[2:(k+1)]
-			tmp.yr.iter <- rev(year.progression)[2:(k+1)]
+			if (dependent.error) {
+				perturb.var <- rev(tmp.gp)[1:(k+1)]
+				start.index <- 1
+				num.perturb.vars <- tmp.num.variables+1
+			} else {
+				perturb.var <- tmp.gp.iter
+				start.index <- 2
+				num.perturb.vars <- tmp.num.variables
+			}
+			tmp.ca.iter <- rev(content_area.progression)[start.index:(k+1)]
+			tmp.yr.iter <- rev(year.progression)[start.index:(k+1)]
 			if (is.null(csem.data.vnames)) {
-				csem.int <- matrix(nrow=dim(tmp.data)[1], ncol=length(tmp.gp.iter)) # build matrix to store interpolated csem
-				colnames(csem.int) <- paste("icsem", tmp.gp.iter, tmp.ca.iter, tmp.yr.iter, sep="")
+				csem.int <- matrix(nrow=dim(tmp.data)[1], ncol=length(perturb.var)) # build matrix to store interpolated csem
+				colnames(csem.int) <- paste("icsem", perturb.var, tmp.ca.iter, tmp.yr.iter, sep="")
 			} else {
 				csem.int <- data.table(Panel_Data[,c("ID", intersect(csem.data.vnames, names(Panel_Data))),with=FALSE], key="ID")
 				setnames(csem.int, csem.data.vnames, paste("icsem", head(tmp.gp, -1), head(content_area.progression, -1), head(year.progression, -1), sep=""))
@@ -355,30 +373,30 @@ function(panel.data,         ## REQUIRED
 			
 			# interpolate csem for all scale scores except that of the last grade
 			if (!is.null(state)) {
-				for (g in seq_along(tmp.gp.iter)) {
+				for (g in seq_along(perturb.var)) {
 					if ("YEAR" %in% names(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
 						CSEM_Data <- subset(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], 
-							GRADE==tmp.gp.iter[g] & CONTENT_AREA== tmp.ca.iter[g] & YEAR==tmp.yr.iter[g])
+							GRADE==perturb.var[g] & CONTENT_AREA== tmp.ca.iter[g] & YEAR==tmp.yr.iter[g])
 					} else {
 						CSEM_Data <- subset(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], 
-							GRADE==tmp.gp.iter[g] & CONTENT_AREA== tmp.ca.iter[g])
+							GRADE==perturb.var[g] & CONTENT_AREA== tmp.ca.iter[g])
 					}
-					if (dim(CSEM_Data)[1] == 0) stop(paste('CSEM data for', tmp.ca.iter[g], 'Grade', tmp.gp.iter[g], 'is required to use SIMEX functionality, but is not available in SGPstateData.  Please contact package administrators to add CSEM data.'))
+					if (dim(CSEM_Data)[1] == 0) stop(paste('CSEM data for', tmp.ca.iter[g], 'Grade', perturb.var[g], 'is required to use SIMEX functionality, but is not available in SGPstateData.  Please contact package administrators to add CSEM data.'))
 					CSEM_Function <- splinefun(CSEM_Data[["SCALE_SCORE"]], CSEM_Data[["SCALE_SCORE_CSEM"]], method="natural")
-					csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")] <- CSEM_Function(tmp.data[[tmp.num.variables-g]])
+					csem.int[, paste("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")] <- CSEM_Function(tmp.data[[num.perturb.vars-g]])
 				}
 			}
 			
 			if (!is.null(variable)){
 				# the following is added by YS on 021915 to accommodate missing data when using "variable"
 				csem.tmp <- vector()
-				for (g in seq_along(tmp.gp.iter)) {
-					csem.tmp <- cbind(csem.tmp, variable[[paste("CSEM.grade", tmp.gp.iter[g], ".", tmp.ca.iter[g], sep="")]])
+				for (g in seq_along(perturb.var)) {
+					csem.tmp <- cbind(csem.tmp, variable[[paste("CSEM.grade", perturb.var[g], ".", tmp.ca.iter[g], sep="")]])
 				}
 				csem.tmp <- na.omit(csem.tmp)
 				
-				for (g in seq_along(tmp.gp.iter)) {
-					csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")] <- csem.tmp[,g]
+				for (g in seq_along(perturb.var)) {
+					csem.int[, paste("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")] <- csem.tmp[,g]
 				}
 			}
 			
@@ -404,48 +422,51 @@ function(panel.data,         ## REQUIRED
 			}
 			for (L in lambda[-1]) {
 				big.data <- rbindlist(replicate(B, tmp.data, simplify = FALSE))
-				big.data[, Lambda := rep(L, each=dim(tmp.data)[1]*B)]
+				# big.data[, Lambda := rep(L, each=dim(tmp.data)[1]*B)]
 				big.data[, b := rep(1:B, each=dim(tmp.data)[1])]
-				setnames(big.data, tmp.num.variables, "final_yr")
-				for (g in seq_along(tmp.gp.iter)) {
-					col.index <- tmp.num.variables-g
+				if (dependent.error) {
+					tmp.names <- "b"
+				} else {
+					setnames(big.data, tmp.num.variables, "final_yr")
+					tmp.names <- c("final_yr", "b")
+				}
+				for (g in seq_along(perturb.var)) {
+					col.index <- num.perturb.vars-g
 					if (is.null(csem.data.vnames)) {
-						setkeyv(big.data, c(names(big.data)[col.index], "final_yr", "b"))
+						setkeyv(big.data, c(names(big.data)[col.index], tmp.names))
 						big.data.uniques <- unique(big.data)
 						big.data.uniques.indices <- which(!duplicated(big.data))
-						big.data.uniques[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="") := 
-							rep(csem.int[, paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")], B)[big.data.uniques.indices]]
+						big.data.uniques[, paste("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="") := 
+							rep(csem.int[, paste("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")], B)[big.data.uniques.indices]]
 					} else {
-						setkeyv(big.data, c(names(big.data)[col.index], "final_yr", "b", paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")))
-						# big.data.uniques <- merge(big.data, csem.int[,c("ID", paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")), with=F], by="ID")
-						# setkeyv(big.data.uniques, c(names(big.data)[col.index], "final_yr", "b", paste("icsem", tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")))
+						setkeyv(big.data, c(names(big.data)[col.index], tmp.names, paste("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")))
 						big.data.uniques <- unique(big.data)
 					}
-					big.data.uniques[, TEMP := 
-						eval(parse(text=paste("big.data.uniques[[", tmp.num.variables-g, "]]+sqrt(big.data.uniques[['Lambda']])*big.data.uniques[['icsem",
-							tmp.gp.iter[g], tmp.ca.iter[g], tmp.yr.iter[g], "']] * rnorm(dim(big.data.uniques)[1])", sep="")))]
+					big.data.uniques[, TEMP := eval(parse(text=paste("big.data.uniques[[", num.perturb.vars-g, "]]+sqrt(L)*big.data.uniques[['icsem",
+						perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], "']] * rnorm(dim(big.data.uniques)[1])", sep="")))]
 					big.data.uniques[big.data.uniques[[col.index]] < loss.hoss[1,g], col.index := loss.hoss[1,g], with=FALSE]
 					big.data.uniques[big.data.uniques[[col.index]] > loss.hoss[2,g], col.index := loss.hoss[2,g], with=FALSE]
 					if (is.null(key(big.data.uniques))) setkeyv(big.data.uniques, key(big.data)) 
-					big.data[, tmp.num.variables-g := big.data.uniques[,c(key(big.data), "TEMP"), with=FALSE][big.data][['TEMP']]]
+					big.data[, num.perturb.vars-g := big.data.uniques[,c(key(big.data), "TEMP"), with=FALSE][big.data][['TEMP']]]
 					
 					if (is.null(simex.use.my.coefficient.matrices)) {
 						ks <- big.data[, as.list(as.vector(unlist(round(quantile(big.data[[col.index]], probs=knot.cut.percentiles, na.rm=TRUE), digits=3))))] # Knots
 						bs <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.1), digits=3)))] # Boundaries
 						lh <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.0), digits=3)))] # LOSS/HOSS
 						
-						eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['knots_", tmp.gp.iter[g], 
+						eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['knots_", perturb.var[g], 
 																	"']] <- c(ks[,V1], ks[,V2], ks[,V3], ks[,V4])", sep="")))
-						eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['boundaries_", tmp.gp.iter[g], 
+						eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['boundaries_", perturb.var[g], 
 																	"']] <- c(bs[,V1], bs[,V2])", sep="")))
-						eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['loss.hoss_", tmp.gp.iter[g], 
+						eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['loss.hoss_", perturb.var[g], 
 																	"']] <- c(lh[,V1], lh[,V2])", sep="")))
 					}
 					
-					setnames(big.data, tmp.num.variables-g, paste("prior_",g,sep=""))
+					if (dependent.error) setnames(big.data, num.perturb.vars-g, paste("prior_", g-1, sep="")) else setnames(big.data, num.perturb.vars-g, paste("prior_", g, sep=""))
 					setkey(big.data, b, ID)
 				}
-				
+				if (dependent.error) setnames(big.data, tmp.num.variables, "final_yr")
+
 				## Write big.data to disk and remove from memory
 				dir.create("tmp_data", recursive=TRUE, showWarnings=FALSE)
 				if (!exists('year.progression.for.norm.group')) year.progression.for.norm.group <- year.progression # Needed during Baseline Matrix construction
@@ -608,7 +629,7 @@ function(panel.data,         ## REQUIRED
 					QUADRATIC = fit <- lm(fitted[[paste("order_", k, sep="")]] ~ lambda + I(lambda^2)))
 				extrap[[paste("order_", k, sep="")]] <- t(apply(matrix(predict(fit, newdata=data.frame(lambda=-1)), nrow=dim(tmp.data)[1]), 1, .smooth.isotonize.row, isotonize, sgp.loss.hoss.adjustment))
 				tmp.quantiles.simex[[k]] <- data.table(ID=tmp.data[["ID"]], SIMEX_ORDER=k, 
-																							 SGP_SIMEX=.get.quantiles(extrap[[paste("order_", k, sep="")]], tmp.data[[tmp.num.variables]]))
+					SGP_SIMEX=.get.quantiles(extrap[[paste("order_", k, sep="")]], tmp.data[[tmp.num.variables]]))
 			}
 		} ### END for (k in simex.matrix.priors)
 		
