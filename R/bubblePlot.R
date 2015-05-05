@@ -324,7 +324,7 @@ if (!is.null(bubble_plot_configs.BUBBLE_X_BANDS) | !is.null(bubble_plot_configs.
 grid.rect(width=1, height=1, gp=gpar(fill=format.colors.quadrant[1], lwd=0.5, col=format.colors.border))
 }
 
-if(!is.null(bubble_plot_configs.BUBBLE_PLOT_BACKGROUND_LABELS)) {
+if (!is.null(bubble_plot_configs.BUBBLE_PLOT_BACKGROUND_LABELS)) {
 grid.text(x=0.05, y=0.15, paste("Lower", bubble_plot_configs.BUBBLE_PLOT_BACKGROUND_LABELS[1]), gp=gpar(cex=1.8, fontface=2, col=format.colors.quadrant[2]), just="left")
 grid.text(x=0.05, y=0.08, paste("Lower",  bubble_plot_configs.BUBBLE_PLOT_BACKGROUND_LABELS[2]), gp=gpar(cex=1.8, fontface=2, col=format.colors.quadrant[2]), just="left")
 grid.text(x=0.95, y=0.15, paste("Higher",  bubble_plot_configs.BUBBLE_PLOT_BACKGROUND_LABELS[1]), gp=gpar(cex=1.8, fontface=2, col=format.colors.quadrant[2]), just="right")
@@ -643,7 +643,7 @@ grid.rect(width=0.9, height=1, gp=gpar(lwd=0.5, col=format.colors.border))
 
 y.coors <- (0.85+c(0, -0.0375, -0.075, -0.12, -0.175))[1:num.sizes]
 grid.text(x=0.5, y=y.coors[1]+0.05, bubble_plot_titles.LEGEND1, gp=gpar(col=format.colors.font[1], fontface=2, cex=1.2))
-if(!is.null(bubble_plot_data.SUBSET)) {
+if (!is.null(bubble_plot_data.SUBSET)) {
   bubble.legend.alpha <- 0.9
   bubble.legend.color <- rep(bubblecolor(unclass(tmp.LEVELS[bubble_plot_data.SUBSET]))[1], length=num.sizes)
 } else {

@@ -4,5 +4,9 @@ function(content_area,
 	year,
 	grade,
 	Cutscores) {
-	return(sort(Cutscores[[content_area]][list(content_area_labels, year, grade)][["CUTSCORES"]]))
+	if (is.na(content_area) | is.na(grade)) {
+		return(NULL)
+	} else {
+		return(sort(Cutscores[[content_area]][list(content_area_labels, year, grade)][["CUTSCORES"]]))
+	}
 }

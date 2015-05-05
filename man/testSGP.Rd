@@ -8,6 +8,7 @@ testSGP runs large scale tests of the SGP package to test for consistent perform
 \usage{
 testSGP(TEST_NUMBER,
 	save.results=TRUE,
+	test.option=NULL,
 	memory.profile=FALSE)
 }
 
@@ -16,6 +17,8 @@ testSGP(TEST_NUMBER,
   }
   \item{save.results}{A Boolean variable, defaulting to FALSE, indicating whether the results of the analysis is saved to the working directory. 
   }
+  \item{test.option}{A charater string (defaults to NULL) supplying a test option to the given test specified by TEST_NUMBER. Argument is test specific. See source code for testSGP for possible
+  arguments.}
   \item{memory.profile}{A Boolean variable indicating whether to use memory profiling via \code{Rprof}.  Experimental. Defaults to FALSE. 
   }
 }
@@ -29,12 +32,30 @@ testSGP(TEST_NUMBER,
 
 \examples{
 \dontrun{
-## testSGP(1) runs abcSGP for all years in sgpData_LONG
-testSGP(1)
+## testSGP(0): Test of studentGrowthPercentiles, studentGrowthProjections, and sgpData
+testSGP(0)
 
-## testSGP(2) runs abcSGP for all years in sgpData_LONG except most recent year than adds 
-## in most recent year and runs current year analyses using updateSGP
-testSGP(2)
+## testSGP(1) & testSGP('1b') runs abcSGP for all years in sgpData_LONG with/without sqliteSGP
+testSGP(1) 
+testSGP('1b')
+
+## testSGP(2): Various tests of updateSGP functionality.
+## testSGP('2a'): Test of updateSGP performing SGP analyses in two steps: 
+##	Create what_sgp_object: 2010-2011 to 2013-2014 then add with_sgp_data_LONG 2014-2015 using
+##	overwrite.existing.data=FALSE and sgp.use.my.coefficient.matrices=FALSE.
+## testSGP('2b'): Test of updateSGP performing SGP analyses in two steps: 
+## 	Create what_sgp_object: 2010-2011 to 2013-2014 then add with_sgp_data_LONG 2014-2015 using
+##	overwrite.existing.data=TRUE and sgp.use.my.coefficient.matrices=FALSE.
+## testSGP('2c'): Test of updateSGP performing SGP analyses in two steps:
+##	Create what_sgp_object: 2010-2011 to 2013-2014 then add with_sgp_data_LONG 2014-2015 using
+##	overwrite.existing.data=TRUE and sgp.use.my.coefficient.matrices=TRUE.
+## testSGP('2d'): Test of updateSGP performing SGP analyses in two steps:
+##	Create what_sgp_object: 2010-2011 to 2013-2014 then add with_sgp_data_LONG 2014-2015 using
+##	overwrite.existing.data=FALSE and sgp.use.my.coefficient.matrices=TRUE.
+testSGP('2a')
+testSGP('2b')
+testSGP('2c')
+testSGP('2d')
 
 ## testSGP(3) runs abcSGP on grade progressions including End of Course Tests in Mathematics 
 ## (Algebra I and Algebra II) and Reading (Grade 9 Literature and American Literature)

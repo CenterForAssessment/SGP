@@ -102,7 +102,7 @@ function(tmp.simulation.dt,
 	}
 	
 	tmp_data <- data.table(dbGetQuery(con, paste("select", paste(pull.vars, collapse = ","), "from summary_data"))) 
-	if(all((my.key <- intersect(sgp_key, variables.for.summaries)) %in% names(tmp_data))) setkeyv(tmp_data, my.key)
+	if (all((my.key <- intersect(sgp_key, variables.for.summaries)) %in% names(tmp_data))) setkeyv(tmp_data, my.key)
 	if ("CATCH_UP_KEEP_UP_STATUS" %in% names(tmp_data)) {
 		tmp_data[, CATCH_UP_KEEP_UP_STATUS := factor(CATCH_UP_KEEP_UP_STATUS)]
 	}
@@ -184,16 +184,13 @@ function(dat,
 	conf.quantiles=NULL,
 	nboot=100) {
 
-	out <- numeric(); CI <- c(NA,NA); SE <- NA
-	if (sum(is.na(dat)) != length(dat)) {
-		for (j in 1:nboot) {
-			foo <- sample(dat,length(dat), replace=TRUE)
-			out[j] <- boot.median(foo)
-		}
+	CI <- c(NA,NA); SE <- NA
+	if (!all(is.na(dat))) {
+		out <- sapply(seq(nboot), function(x) boot.median(sample(dat, length(dat), replace=TRUE)))
 		if (!is.null(conf.quantiles)) {
-			CI <- round(as.numeric(quantile(out, conf.quantiles, na.rm=TRUE)), digits=1)
+			 CI <- round(quantile(out, conf.quantiles, na.rm=TRUE), digits=1)
 		} else {
-			SE <- round(as.numeric(sd(out, na.rm=TRUE)), digits=1)
+			SE <- round(sd(out, na.rm=TRUE), digits=1)
 		}
 	}
 	if (!is.null(conf.quantiles)) return(CI) else return(SE)

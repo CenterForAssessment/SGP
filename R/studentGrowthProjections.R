@@ -104,7 +104,7 @@ function(panel.data,	## REQUIRED
 	}
 
 	get.my.cutscore.state.year.sgprojection <- function(Cutscores, content_area, year, my.state) {
-		if(!is.na(my.state)) {
+		if (!is.na(my.state)) {
 			tmp.cutscore.state <- sapply(strsplit(names(Cutscores)[grep(content_area, names(Cutscores))], "[.]"), function(x) x[2])
 			if (my.state %in% tmp.cutscore.state) {
 				content_area <- paste(content_area, my.state, sep=".")

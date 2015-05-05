@@ -1538,7 +1538,7 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "Instructor", "Style_55", 
 				paste("District", district_number.iter, sep="_"), bPlot.levels.iter),
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
-			} # END if(...)
+			} # END if (...)
 		} ## END loop over y.variable.iter
 		} ## END loop over levels.iter
 		} ## End loop over district_number.iter

@@ -179,10 +179,10 @@ my.grade.sequences <- list(3:4, 3:5, 3:6, 3:7, 4:8)
 my.sgpData <- list(Panel_Data = sgpData)
 
 for (i in seq_along(my.grade.sequences)) {
-     my.sgpData <- studentGrowthPercentiles(panel.data=my.sgpData,
-                     sgp.labels=list(my.year=2014, my.subject="Reading"),
-                     use.my.knots.boundaries="DEMO",
-                     grade.progression=my.grade.sequences[[i]])
+	my.sgpData <- studentGrowthPercentiles(panel.data=my.sgpData,
+		sgp.labels=list(my.year=2014, my.subject="Reading"),
+		use.my.knots.boundaries="DEMO",
+		grade.progression=my.grade.sequences[[i]])
 }
 
 ## Calculate Growth Projections
@@ -190,16 +190,17 @@ for (i in seq_along(my.grade.sequences)) {
 my.grade.progressions <- list(3, 3:4, 3:5, 3:6, 4:7)
 
 for (i in seq_along(my.grade.progressions)) {
-     my.sgpData <- studentGrowthProjections(panel.data=my.sgpData,
-                      sgp.labels=list(my.year=2014, my.subject="Reading"),
-                      projcuts.digits=0,
-                      projection.unit="GRADE",
-                      performance.level.cutscores="DEMO",
-                      percentile.trajectory.values=c(25, 50, 75),
-                      grade.progression=my.grade.progressions[[i]])
+	my.sgpData <- studentGrowthProjections(panel.data=my.sgpData,
+		sgp.labels=list(my.year=2014, my.subject="Reading"),
+		projcuts.digits=0,
+		projection.unit="GRADE",
+		performance.level.cutscores="DEMO",
+		percentile.trajectory.values=c(25, 50, 75),
+		grade.progression=my.grade.progressions[[i]])
 }
 
 ##  Save the Student Growth Projections Results to a .csv file:
+
 write.csv(my.sgpData$SGProjections$READING.2014, 
 file= "2014_Reading_SGProjections.csv", row.names=FALSE, quote=FALSE)
 }  

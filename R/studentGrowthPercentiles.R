@@ -38,7 +38,7 @@ function(panel.data,         ## REQUIRED
          return.prior.scale.score.standardized=TRUE,
          return.norm.group.identifier=TRUE,
          return.norm.group.scale.scores=NULL,
-         return.panel.data=FALSE,
+         return.panel.data=identical(parent.frame(), .GlobalEnv),
          print.time.taken=TRUE,
          parallel.config=NULL,
          calculate.simex=NULL,
@@ -470,7 +470,7 @@ function(panel.data,         ## REQUIRED
 		csem.tf <- FALSE
 	}
 
-	if(is.logical(calculate.simex)) if(!calculate.simex) calculate.simex <- NULL # check for calculate.simex=FALSE - same as calculate.simex=NULL
+	if (is.logical(calculate.simex) && !calculate.simex) calculate.simex <- NULL # check for calculate.simex=FALSE - same as calculate.simex=NULL
 	if (!is.null(calculate.simex)) {
 		simex.tf <- TRUE
 		if (!is.character(calculate.simex) & !is.list(calculate.simex)) {
@@ -594,7 +594,7 @@ function(panel.data,         ## REQUIRED
 	if (identical(class(panel.data), "data.frame")) {
 		Panel_Data <- as.data.table(panel.data)
 	}
-	if (identical(class(panel.data), "list") && !identical(class(panel.data[["Panel_Data"]]), "data.frame")) {
+	if (identical(class(panel.data), "list") && !is.data.table(panel.data[["Panel_Data"]])) {
 			Panel_Data <- as.data.table(panel.data[["Panel_Data"]])
 	}
 	
@@ -853,11 +853,11 @@ function(panel.data,         ## REQUIRED
 				tmp.coefficient.matrix.name <- get.coefficient.matrix.name(tmp.last, k)
 				tmp.grade.names <- paste("Grade", 
 					rev(head(unlist(Coefficient_Matrices[[tmp.path.coefficient.matrices]][[tmp.coefficient.matrix.name]]@Grade_Progression), -1)))
+				Verbose_Messages <- paste("\t\tNOTE: Coefficient Matrix ", tmp.coefficient.matrix.name, " created using:", sep="")
 				for (l in seq_along(tmp.grade.names)) {
 					tmp.knots <- paste(tmp.grade.names[l], Coefficient_Matrices[[tmp.path.coefficient.matrices]][[tmp.coefficient.matrix.name]]@Knots[l])
 					tmp.boundaries <- paste(tmp.grade.names[l], Coefficient_Matrices[[tmp.path.coefficient.matrices]][[tmp.coefficient.matrix.name]]@Boundaries[l])
-					Verbose_Messages <- c(Verbose_Messages, paste("\t\tNOTE: Coefficient Matrix ", tmp.coefficient.matrix.name, 
-						" created using Knots: ", tmp.knots, " and Boundaries: ", tmp.boundaries, ".\n", sep=""))
+					Verbose_Messages <- c(Verbose_Messages, paste("\n\t\t\tKnots: ", tmp.knots, " and Boundaries: ", tmp.boundaries, ".", sep=""))
 				}
 			}
 		}
@@ -881,7 +881,7 @@ function(panel.data,         ## REQUIRED
 			calculate.simex.sgps=calculate.sgps,
 			verbose=calculate.simex$verbose)
 								 
-		if(!is.null(quantile.data.simex[['MATRICES']])) {
+		if (!is.null(quantile.data.simex[['MATRICES']])) {
 			tmp_sgp_1 <- list(Coefficient_Matrices = list(TMP_SIMEX=Coefficient_Matrices[[paste(tmp.path.coefficient.matrices, '.SIMEX', sep="")]]))
 			tmp_sgp_2 <- list(Coefficient_Matrices = list(TMP_SIMEX=quantile.data.simex[['MATRICES']]))
 			tmp_sgp_combined <- mergeSGP(tmp_sgp_1, tmp_sgp_2)
@@ -1146,7 +1146,7 @@ function(panel.data,         ## REQUIRED
 			setnames(quantile.data, names(additional.vnames.to.return), unlist(additional.vnames.to.return))
 		}
 
-		if (identical(print.sgp.order, TRUE)) setnames(quantile.data, "SGP_ORDER", "SGP_BASELINE_ORDER")
+		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & identical(print.sgp.order, TRUE)) setnames(quantile.data, "SGP_ORDER", "SGP_BASELINE_ORDER")
 
 		if (!return.prior.scale.score) {
 			quantile.data[,SCALE_SCORE_PRIOR:=NULL]

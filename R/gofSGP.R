@@ -359,7 +359,7 @@ function(
 					}
 					## Set up more rigorous search for prior achievement.
 					if ("ACHIEVEMENT_LEVEL_PRIOR" %in% names(tmp.data.final)) tmp.prior.ach <- TRUE else tmp.prior.ach <- FALSE
-					if (tmp.prior.ach) if(!all(tmp.data.final$ACHIEVEMENT_LEVEL_PRIOR %in% NA)) tmp.prior.ach <- TRUE else {
+					if (tmp.prior.ach && !all(tmp.data.final$ACHIEVEMENT_LEVEL_PRIOR %in% NA)) tmp.prior.ach <- TRUE else {
 						tmp.prior.ach <- FALSE
 						with.prior.achievement.level <- FALSE
 						tmp.data.final[, ACHIEVEMENT_LEVEL_PRIOR := NULL]

@@ -106,7 +106,6 @@ function(sgp_object,
 		}
 	} ### END get.max.order.for.progression
 
-
 	get.sgPlot.iter <- function(districts.and.schools) {
 		tmp.list <- list()
 		for (k in 1:dim(districts.and.schools)[1]) {
@@ -114,7 +113,6 @@ function(sgp_object,
 		}
 		return(tmp.list)
 	} ### END get.sgPlot.iter
-
 
 	get.gaPlot.iter <- function(gaPlot.years, gaPlot.content_areas, gaPlot.students, gaPlot.baseline) {
 
@@ -317,10 +315,10 @@ if ("studentGrowthPlot" %in% plot.types) {
 			if (is.na(as.numeric(grade))) {
 				tmp.index <- which(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tmp.domain]] == content_area)
 			} else tmp.index <- which(SGP::SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[tmp.domain]] == grade)
-			SGP::SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[tmp.domain]][tmp.index + increment]
+			as.character(SGP::SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[tmp.domain]][tmp.index + increment])
 		} else {
 			tmp.grades.reported <- SGP::SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]]
-			c(tmp.grades.reported, NA)[match(grade, tmp.grades.reported) + increment]
+			as.character(c(tmp.grades.reported, NA)[match(grade, tmp.grades.reported) + increment])
 		}
 	}
 
@@ -853,7 +851,8 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 
 			### Lagged projection scale score targets
 
-			if (any(c("sgp.projections.lagged", "sgp.projections.lagged.baseline") %in% sgPlot.sgp.targets) & any(tmp.proj.cut_score.names.lagged %in% names(sgp_object@SGP[["SGProjections"]]))) {
+			if (any(c("sgp.projections.lagged", "sgp.projections.lagged.baseline") %in% sgPlot.sgp.targets) & 
+				any(tmp.proj.cut_score.names.lagged %in% names(sgp_object@SGP[["SGProjections"]]))) {
 
 				setkeyv(sgPlot.data, c("ID", "CONTENT_AREA"))
 				tmp.list <- list()
@@ -894,7 +893,13 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 										yearIncrement(tmp.last.year, tmp.increment), 
 										get.next.grade(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment),
 										sgp.projections.equated=sgp.projections.equated,
-										getNewCutscores(get.next.content_area(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment), get.next.content_area(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment), yearIncrement(tmp.last.year, tmp.increment), get.next.grade(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment), Cutscores)), by=list(CONTENT_AREA, TEMP_GRADE)]
+										new.cutscores=getNewCutscores(
+											get.next.content_area(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment),
+											get.next.content_area(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment),
+											yearIncrement(tmp.last.year, tmp.increment),
+											get.next.grade(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment),
+											Cutscores)), 
+							by=list(CONTENT_AREA, TEMP_GRADE)]
 						setnames(sgPlot.data, "TEMP", paste(proj.iter, "TRANSFORMED", sep="_"))
 
 						if ("SCALE_SCORE_ACTUAL" %in% names(sgp_object@Data)) {

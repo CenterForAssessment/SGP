@@ -455,7 +455,7 @@ function(
 					parallel.config=parallel.config)
 			}
 		}
-	} ### END if(sgp.target.scale.scores)
+	} ### END if (sgp.target.scale.scores)
 
 
 	### Put slot.data into @Data slot
