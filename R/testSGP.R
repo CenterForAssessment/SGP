@@ -893,7 +893,6 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 	if (5 %in% TEST_NUMBER) {
 
 	options(error=recover)
-#	options(warn=2)
 	number.cores <- detectCores()-1
 	Demonstration_SGP <- ACHIEVEMENT_LEVEL <- HIGH_NEED_STATUS <- tmp.messages <- NULL
 	if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE = 'doParallel', "
@@ -913,10 +912,6 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 			sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'READING' & sgpData_LONG$YEAR == '2014_2015'] + test.option[['Scale_Transition_Adjustments']][['READING']]
 
 		Demonstration_Data_LONG <- as.data.table(subset(sgpData_LONG, YEAR!="2014_2015"))
-		Demonstration_Data_LONG_2014_2015 <- as.data.table(subset(sgpData_LONG, YEAR=="2014_2015"))[,ACHIEVEMENT_LEVEL:=NULL]
-		Demonstration_Data_LONG_2014_2015 <- prepareSGP(Demonstration_Data_LONG_2014_2015)@Data
-		Demonstration_Data_LONG_2014_2015[, HIGH_NEED_STATUS:=NULL]
-		setcolorder(Demonstration_Data_LONG_2014_2015, names(Demonstration_Data_LONG))
 
 		### Calculate SGPs
 
@@ -1083,8 +1078,8 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 
 		SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]] <-
 			list(
-				Assessment_Abbreviation="DEMO_OLD",
-				Assessment_Abbreviation.2014_2015="DEMO_NEW",
+				Assessment_Abbreviation="DEMO Old",
+				Assessment_Abbreviation.2014_2015="DEMO New",
 				Assessment_Name="Old Demonstration Student Assessment Program",
 				Assessment_Name.2014_2015="New Demonstration Student Assessment Program",
 				Achievement_Levels=list(
@@ -1125,6 +1120,14 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Transformed_Achievement_Level_Cutscores"]] <- 
 				list(MATHEMATICS=c(100,200,300,400,500), READING=c(100,200,300,400,500))
 		}
+
+
+		##### Create LONG Data set for STEP 2 update.
+
+		Demonstration_Data_LONG_2014_2015 <- as.data.table(subset(sgpData_LONG, YEAR=="2014_2015"))[,ACHIEVEMENT_LEVEL:=NULL]
+		Demonstration_Data_LONG_2014_2015 <- prepareSGP(Demonstration_Data_LONG_2014_2015)@Data
+		Demonstration_Data_LONG_2014_2015[, HIGH_NEED_STATUS:=NULL]
+		setcolorder(Demonstration_Data_LONG_2014_2015, names(Demonstration_Data_LONG))
 
 		### updateSGP
 
