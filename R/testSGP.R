@@ -1156,11 +1156,26 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 2: FAIL\n")
 		}
 
+		### TEST of SCALE_SCORE_EQUATED variable
+
+		if (identical(as.integer(sum(Demonstration_SGP@Data$SCALE_SCORE_EQUATED, na.rm=TRUE)), 216419227L)) {
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_EQUATED, part 2: OK\n")
+		} else {
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_EQUATED, part 2: FAIL\n")
+		}
+
+		### TEST of SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1 variable
+
+		if (identical(as.integer(sum(Demonstration_SGP@SGP$SGProjections[["READING.2014_2015.LAGGED.TARGET_SCALE_SCORES"]][['SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1']])), 82970238L)) {
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1, part 2: OK\n")
+		} else {
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1, part 2: FAIL\n")
+		}
+
 		tmp.messages <- c(tmp.messages, "\t##### End testSGP test number 5: Part 2 #####\n")
 
 		tmp.messages <- c(tmp.messages, "\n##### End testSGP test number 5 #####\n")
 		cat(tmp.messages)
-
 
 	} ### End TEST_NUMBER 5
 
