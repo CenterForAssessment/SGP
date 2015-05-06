@@ -39,7 +39,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		level.to.get.musu <- sapply(achievement.levels.proficiency, function(x) which.max(x[['Proficient']]=="Proficient"))
 		if (identical(Report_Parameters[['Assessment_Transition']][['Assessment_Transition_Type']], c("No", "No")) &&
 			!is.na(Grades[which(Years==Report_Parameters[['Assessment_Transition']][['Year']])])) {
-			Cutscores[CONTENT_AREA==Report_Parameters[['Content_Area']] & YEAR==Report_Parameters$Assessment_Transition$Year,
+			Cutscores[YEAR==Report_Parameters$Assessment_Transition$Year,
 				CUTSCORES:=Cutscores[CONTENT_AREA==Report_Parameters[['Content_Area']] & GRADE==Grades[which(Years==Report_Parameters[['Assessment_Transition']][['Year']])] & 
 					YEAR==Report_Parameters$Assessment_Transition$Year][['CUTSCORES']]]
 		}
