@@ -470,7 +470,6 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 	current.year <- year.function(Report_Parameters$Current_Year, 0, 1)
 	xscale.range <- range(low.year,high.year) + c(-0.075, 0.1)*diff(range(low.year,high.year))
 	if (is.null(Report_Parameters$Assessment_Transition)) {
-		tmp.year.cut
 		xscale.range.list <- list(xscale.range) 
 	} else {
 		tmp.year.cut <- year.function(Report_Parameters$Assessment_Transition$Year, 0, 1)-0.5
