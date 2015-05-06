@@ -48,7 +48,6 @@ function(tmp.data,
 
 			### Scale Score Transformation
 
-			year.for.equate <- tail(sort(sapply(strsplit(names(linkages), "[.]"), '[', 2)), 1)
 			tmp.data[, TRANSFORMED_SCALE_SCORE:=SCALE_SCORE_EQUATED]
 
 			### Transform Cutscores
@@ -83,7 +82,6 @@ function(tmp.data,
 
 			### Scale Score Transformation of OLD test data
 
-			year.for.equate <- tail(sort(sapply(strsplit(names(linkages), "[.]"), '[', 2)), 1)
 			tmp.data[,SCALE_SCORE:=piecewiseTransform(SCALE_SCORE, state, CONTENT_AREA_LABELS, as.character(YEAR), as.character(GRADE)), by=list(CONTENT_AREA_LABELS, YEAR, GRADE)]
 			slot.data[,SCALE_SCORE:=piecewiseTransform(SCALE_SCORE, state, CONTENT_AREA_LABELS, as.character(YEAR), as.character(GRADE)), by=list(CONTENT_AREA_LABELS, YEAR, GRADE)]
 			tmp.linkages <- equateSGP(slot.data, state, year.for.equate, "linear", loss.hoss.correction=FALSE)
@@ -125,7 +123,6 @@ function(tmp.data,
 
 			### Scale Score Transformation of OLD & NEW test data
 
-			year.for.equate <- tail(sort(sapply(strsplit(names(linkages), "[.]"), '[', 2)), 1)
 			slot.data[,SCALE_SCORE:=piecewiseTransform(SCALE_SCORE, state, CONTENT_AREA_LABELS, YEAR, GRADE), by=list(CONTENT_AREA_LABELS, YEAR, GRADE)]
 			tmp.linkages <- equateSGP(slot.data, state, year.for.equate, "linear", loss.hoss.correction=FALSE)
 
@@ -163,7 +160,7 @@ function(tmp.data,
 
 			### Return data
 
-			return(list(Data=tmp.data, Cutscores=Cutscores, sgp.projections.equated=list(Year=year.for.equate, Linkages=tmp.linkages)))
+			return(list(Data=tmp.data, Cutscores=Cutscores, sgp.projections.equated=list(Year=year.for.equate, Linkages=tmp.linkages, Assessment_Transition_Type=assessment.transition.type)))
 		}
 	} else {
 		for (i in content_areas) {
