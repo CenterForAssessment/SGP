@@ -2,7 +2,7 @@
 \alias{rliSGP}
 \title{Wrapper function associated with SGP analyses for Renaissance Learning Incorporated (RLI) interim STAR assessments.}
 \description{
-rliSGP is a wrapper function design to expediate SGP analyses on Renaissance Learning Incorporated (RLI) interim STAR assessments.
+rliSGP is a wrapper function design to expedite SGP analyses on Renaissance Learning Incorporated (RLI) interim STAR assessments.
 }
 
 \usage{
