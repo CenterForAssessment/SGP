@@ -43,6 +43,7 @@ function(panel.data,         ## REQUIRED
          parallel.config=NULL,
          calculate.simex=NULL,
          sgp.percentiles.set.seed=314159,
+         sgp.percentiles.equated=NULL,
          verbose.output=FALSE) {
 
 	started.at <- proc.time()

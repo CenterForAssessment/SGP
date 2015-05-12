@@ -53,6 +53,7 @@ studentGrowthPercentiles(panel.data,
                          parallel.config=NULL,
 			calculate.simex=NULL,
 			sgp.percentiles.set.seed=314159,
+			sgp.percentiles.equated=NULL,
 			verbose.output=FALSE)
 }
 
@@ -192,6 +193,8 @@ Useful for examining relationship between prior achievement and student growth.
   Defaults to NULL, no simex calculations performed.
   }
   \item{sgp.percentiles.set.seed}{An integer (or NULL) argument indicating whether to set.seed to make analyses fully reproducible. To turn off, set argument to NULL. Default is 314159.
+  }
+  \item{sgp.percentiles.equated}{An object containing information (linkages, year, ...) on equating done for calculating student growth percentiles.
   }
   \item{verbose.output}{A Boolean argument indicating whether the function should output verbose diagnostic messages.
   }

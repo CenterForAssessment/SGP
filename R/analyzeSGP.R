@@ -332,13 +332,13 @@ function(sgp_object,
 		data.for.equate <- copy(sgp_object@Data)
 		sgp_object@SGP$Linkages <- equateSGP(data.for.equate, state, year.for.equate)
 		setkey(data.for.equate, VALID_CASE, CONTENT_AREA, YEAR, GRADE, SCALE_SCORE)
-		data.for.equate <- convertScaleScore(data.for.equate, year.for.equate, sgp_object@SGP$Linkages, conversion.type="NEW_TO_OLD", state)
+		data.for.equate <- convertScaleScore(data.for.equate, year.for.equate, sgp_object@SGP$Linkages, conversion.type="OLD_TO_NEW", state)
 		setkey(data.for.equate, VALID_CASE, CONTENT_AREA, YEAR, ID)
 		sgp_object@Data <- data.for.equate
 		equate.variable <- "SCALE_SCORE_EQUATED"
 		equate.label <- coefficient.matrix.type <- "EQUATED"
 		sgp.percentiles.equated <- TRUE
-		sgp.projections.equated <- list(Year=year.for.equate, Linkages=sgp_object@SGP[['Linkages']])
+		sgp.projections.equated <- list(State=state, Year=year.for.equate, Linkages=sgp_object@SGP[['Linkages']])
 		tmp_sgp_object <- list(Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]], Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]], Linkages=sgp_object@SGP[['Linkages']])
 	} else {
 		sgp.percentiles.equated <- FALSE
@@ -793,6 +793,7 @@ function(sgp_object,
 						print.other.gp=print.other.gp,
 						calculate.simex=sgp.iter[["sgp.calculate.simex"]],
 						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
+						sgp.percentiles.equated=sgp.projections.equated,
 						...))
 					}
 				tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -833,6 +834,7 @@ function(sgp_object,
 						print.other.gp=print.other.gp,
 						calculate.simex=sgp.iter[["sgp.calculate.simex"]],
 						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
+						sgp.percentiles.equated=sgp.projections.equated,
 						...))
 
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -875,6 +877,7 @@ function(sgp_object,
 						calculate.simex=sgp.iter[["sgp.calculate.simex"]],
 						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 						parallel.config=par.start$Lower_Level_Parallel,
+						sgp.percentiles.equated=sgp.projections.equated,
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -1634,6 +1637,7 @@ function(sgp_object,
 					parallel.config=lower.level.parallel.config,
 					calculate.simex=sgp.iter[["sgp.calculate.simex"]],
 					max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
+					sgp.percentiles.equated=sgp.projections.equated,
 					...)
 			}
 			suppressMessages(gc())
