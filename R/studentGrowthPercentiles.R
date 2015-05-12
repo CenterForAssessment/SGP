@@ -279,10 +279,10 @@ function(panel.data,         ## REQUIRED
 	###
 	simex.sgp <- function(
 		state, variable=NULL, csem.data.vnames=NULL, csem.loss.hoss=NULL, 
-		lambda, B, simex.sample.size, extrapolation, save.matrices, simex.use.my.coefficient.matrices=NULL, calculate.simex.sgps, dependent.error=FALSE, verbose=FALSE) 
+		lambda, B, simex.sample.size, extrapolation, save.matrices, simex.use.my.coefficient.matrices=NULL, calculate.simex.sgps, dependent.var.error=FALSE, verbose=FALSE) 
 	{
 
-		if (is.null(dependent.error)) dependent.error <- FALSE
+		if (is.null(dependent.var.error)) dependent.var.error <- FALSE
 		if (is.null(verbose)) verbose <- FALSE
 		if (verbose) message("\n\tStarted SIMEX SGP calculation ", rev(content_area.progression)[1], " Grade ", rev(tmp.gp)[1], " ", date())
 
@@ -317,7 +317,7 @@ function(panel.data,         ## REQUIRED
 		}
 
 		fitted <- extrap <- tmp.quantiles.simex <- simex.coef.matrices <- list()
-		if (dependent.error) {
+		if (dependent.var.error) {
 			loss.hoss <- matrix(nrow=2, ncol=length(tmp.gp))
 			lh.ca <- rev(content_area.progression)
 			lh.gp <- rev(tmp.gp)
@@ -352,7 +352,7 @@ function(panel.data,         ## REQUIRED
 			tmp.data <- .get.panel.data(ss.data, k, by.grade)
 			tmp.num.variables <- dim(tmp.data)[2]
 			tmp.gp.iter <- rev(tmp.gp)[2:(k+1)]
-			if (dependent.error) {
+			if (dependent.var.error) {
 				perturb.var <- rev(tmp.gp)[1:(k+1)]
 				start.index <- 1
 				num.perturb.vars <- tmp.num.variables+1
@@ -424,7 +424,7 @@ function(panel.data,         ## REQUIRED
 				big.data <- rbindlist(replicate(B, tmp.data, simplify = FALSE))
 				# big.data[, Lambda := rep(L, each=dim(tmp.data)[1]*B)]
 				big.data[, b := rep(1:B, each=dim(tmp.data)[1])]
-				if (dependent.error) {
+				if (dependent.var.error) {
 					tmp.names <- "b"
 				} else {
 					setnames(big.data, tmp.num.variables, "final_yr")
@@ -462,10 +462,10 @@ function(panel.data,         ## REQUIRED
 																	"']] <- c(lh[,V1], lh[,V2])", sep="")))
 					}
 					
-					if (dependent.error) setnames(big.data, num.perturb.vars-g, paste("prior_", g-1, sep="")) else setnames(big.data, num.perturb.vars-g, paste("prior_", g, sep=""))
+					if (dependent.var.error) setnames(big.data, num.perturb.vars-g, paste("prior_", g-1, sep="")) else setnames(big.data, num.perturb.vars-g, paste("prior_", g, sep=""))
 					setkey(big.data, b, ID)
 				}
-				if (dependent.error) setnames(big.data, tmp.num.variables, "final_yr")
+				if (dependent.var.error) setnames(big.data, tmp.num.variables, "final_yr")
 
 				## Write big.data to disk and remove from memory
 				dir.create("tmp_data", recursive=TRUE, showWarnings=FALSE)
@@ -585,7 +585,7 @@ function(panel.data,         ## REQUIRED
 							environment(.get.percentile.predictions) <- environment()
 							environment(.smooth.isotonize.row) <- environment()
 							fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- 
-								foreach(z=iter(sim.iters), .combine="+", .export=c('tmp.gp', 'k', 'taus', 'sgp.loss.hoss.adjustment', 'isotonize'),
+								foreach(z=iter(sim.iters), .combine="+", .export=c('tmp.gp', 'taus', 'sgp.loss.hoss.adjustment', 'isotonize'),
 									.options.multicore=par.start$foreach.options) %dopar% { # .options.snow=par.start$foreach.options
 										as.vector(.get.percentile.predictions(my.matrix=mtx.subset[[z]], my.data=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
 											paste("select ", paste(c("ID", paste('prior_', k:1, sep=""), "final_yr"), collapse=", "), " from simex_data where b in ('",z,"')", sep="")))/B)
