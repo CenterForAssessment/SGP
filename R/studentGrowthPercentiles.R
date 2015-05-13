@@ -124,25 +124,29 @@ function(panel.data,         ## REQUIRED
 	}
 
 	get.my.knots.boundaries.path <- function(content_area, year) {
-		tmp.knots.boundaries.names <- 
-			names(Knots_Boundaries[[tmp.path.knots.boundaries]])[content_area==sapply(strsplit(names(Knots_Boundaries[[tmp.path.knots.boundaries]]), "[.]"), '[', 1)]
-		if (length(tmp.knots.boundaries.names)==0) {
-			return(paste("[['", tmp.path.knots.boundaries, "']]", sep=""))
-		} else {
-			tmp.knots.boundaries.years <- sapply(strsplit(tmp.knots.boundaries.names, "[.]"), function(x) x[2])
-			if (any(!is.na(tmp.knots.boundaries.years))) {
-				if (year %in% tmp.knots.boundaries.years) {
-					return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, ".", year, "']]", sep=""))
-				} else {
-					if (year==sort(c(year, tmp.knots.boundaries.years))[1]) {
-						return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, "']]", sep=""))
-					} else {
-						return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, ".", rev(sort(tmp.knots.boundaries.years))[1], "']]", sep=""))
-					}
-				}
+		if (is.null(sgp.percentiles.equated)) {
+			tmp.knots.boundaries.names <- 
+				names(Knots_Boundaries[[tmp.path.knots.boundaries]])[content_area==sapply(strsplit(names(Knots_Boundaries[[tmp.path.knots.boundaries]]), "[.]"), '[', 1)]
+			if (length(tmp.knots.boundaries.names)==0) {
+				return(paste("[['", tmp.path.knots.boundaries, "']]", sep=""))
 			} else {
-				return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, "']]", sep=""))
+				tmp.knots.boundaries.years <- sapply(strsplit(tmp.knots.boundaries.names, "[.]"), function(x) x[2])
+				if (any(!is.na(tmp.knots.boundaries.years))) {
+					if (year %in% tmp.knots.boundaries.years) {
+						return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, ".", year, "']]", sep=""))
+					} else {
+						if (year==sort(c(year, tmp.knots.boundaries.years))[1]) {
+							return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, "']]", sep=""))
+						} else {
+							return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, ".", rev(sort(tmp.knots.boundaries.years))[1], "']]", sep=""))
+						}
+					}
+				} else {
+					return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, "']]", sep=""))
+				}
 			}
+		} else {
+			return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, ".", sgp.percentiles.equated[['Year']], "']]", sep=""))
 		}
 	}
 
