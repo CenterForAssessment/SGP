@@ -365,7 +365,7 @@ function(
 						with.prior.achievement.level <- FALSE
 						if ("ACHIEVEMENT_LEVEL_PRIOR" %in% names(tmp.data.final)) tmp.data.final[, ACHIEVEMENT_LEVEL_PRIOR:=NULL]
 						my.width <- 8.5; my.height <- 5.5
-						message(paste("\tNOTE: ACHIEVEMENT_LEVEL_PRIOR variable does not include data for", content_areas.iter,"- Prior Achievement Level plot panel will not be produced."))
+						message(paste("\tNOTE:", content_areas.iter, "data does not include ACHIEVEMENT_LEVEL_PRIOR variable. Prior Achievement Level plot panel will not be included in goodness of fit plot."))
 					}
 					if (tmp.prior.ach) {
 						if ("CONTENT_AREA_PRIOR" %in% names(tmp.data.final)) content_areas_prior <- tmp.data.final[["CONTENT_AREA_PRIOR"]][1]

@@ -44,6 +44,7 @@ function(panel.data,         ## REQUIRED
          calculate.simex=NULL,
          sgp.percentiles.set.seed=314159,
          sgp.percentiles.equated=NULL,
+         sgp.time=NULL,
          verbose.output=FALSE) {
 
 	started.at <- proc.time()
@@ -555,6 +556,14 @@ function(panel.data,         ## REQUIRED
 
 	if (!is.null(sgp.percentiles.set.seed)) set.seed(as.integer(sgp.percentiles.set.seed))
 
+	if (!is.null(sgp.time)) {
+		if (identical(sgp.time, TRUE)) sgp.time <- list(TIME="TIME", TIME_LAG="TIME_LAG")
+		if (is.list(sgp.time) && !all(c("TIME", "TIME_LAG") %in% names(sgp.time))) {
+			tmp.messages <- c(tmp.messages, "\t\tNOTE: 'TIME' and 'TIME_LAG' are not contained in list supplied to 'sgp.time' argument. sgp.time is set to NULL")
+			sgp.time <- NULL
+		}
+	}
+
 	### Create object to store the studentGrowthPercentiles objects
 
 	tmp.objects <- c("Coefficient_Matrices", "Cutscores", "Goodness_of_Fit", "Knots_Boundaries", "Panel_Data", "SGPercentiles", "SGProjections", "Simulated_SGPs") 
@@ -760,7 +769,6 @@ function(panel.data,         ## REQUIRED
 				SGProjections=SGProjections,
 				Simulated_SGPs=Simulated_SGPs))
 	}
-
 
 	### PROGRESSION variable creation:
 
