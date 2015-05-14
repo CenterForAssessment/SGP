@@ -596,7 +596,7 @@ function(panel.data,         ## REQUIRED
 	if (is.matrix(panel.data)) {
 		Panel_Data <- panel.data <- as.data.table(panel.data)
 	}
-	if (identical(class(panel.data), "data.frame")) {
+	if (is.data.frame(panel.data)) {
 		Panel_Data <- as.data.table(panel.data)
 	}
 	if (identical(class(panel.data), "list") && !is.data.table(panel.data[["Panel_Data"]])) {

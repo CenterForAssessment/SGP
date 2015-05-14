@@ -37,6 +37,12 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 			grep("Achievement_Levels", names(SGP::SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]]))]
 		level.to.get.cuku <- sapply(achievement.levels.proficiency, function(x) which.max(x[['Proficient']]=="Proficient")-1)  
 		level.to.get.musu <- sapply(achievement.levels.proficiency, function(x) which.max(x[['Proficient']]=="Proficient"))
+		if (identical(Report_Parameters[['Assessment_Transition']][['Assessment_Transition_Type']], c("No", "Yes")) &&
+			!is.na(Grades[which(Years==Report_Parameters[['Assessment_Transition']][['Year']])])) {
+			Cutscores[YEAR==Report_Parameters$Assessment_Transition$Year,
+				CUTSCORES:=Cutscores[CONTENT_AREA==Report_Parameters[['Content_Area']] & GRADE==Grades[which(Years==Report_Parameters[['Assessment_Transition']][['Year']])] & 
+					YEAR==Report_Parameters$Assessment_Transition$Year][['CUTSCORES']]]
+		}
 		if (identical(Report_Parameters[['Assessment_Transition']][['Assessment_Transition_Type']], c("No", "No")) &&
 			!is.na(Grades[which(Years==Report_Parameters[['Assessment_Transition']][['Year']])])) {
 			Cutscores[YEAR==Report_Parameters$Assessment_Transition$Year,
