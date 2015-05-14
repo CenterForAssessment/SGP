@@ -561,6 +561,11 @@ function(panel.data,         ## REQUIRED
 		if (is.list(sgp.time) && !all(c("TIME", "TIME_LAG") %in% names(sgp.time))) {
 			tmp.messages <- c(tmp.messages, "\t\tNOTE: 'TIME' and 'TIME_LAG' are not contained in list supplied to 'sgp.time' argument. sgp.time is set to NULL")
 			sgp.time <- NULL
+		} else {
+			if (!((all(unlist(sgp.time) %in% names(panel.data))) | (all(unlist(sgp.time) %in% names(panel.data$Panel_Data))))) {
+				tmp.messages <- c(tmp.messages, "\t\tNOTE: Variables", paste(unlist(sgp.time), collapse=", "), "are not all contained in the supplied 'panel.data'. 'sgp.time' is set to NULL.\n")
+				sgp.time <- NULL
+			}
 		}
 	}
 
