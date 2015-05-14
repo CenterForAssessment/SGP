@@ -170,6 +170,10 @@ function(panel.data,         ## REQUIRED
 			s4Ks <- paste(s4Ks, "knots_", tmp.gp.iter[i], "=", knt, ",", sep="")
 			s4Bs <- paste(s4Bs, "boundaries_", tmp.gp.iter[i], "=", bnd, ",", sep="")
 		}
+		if (!is.null(sgp.time)) {
+			tmp.data <- data.table(Panel_Data[,c("ID", unlist(sgp.time)), with=FALSE], key="ID")[tmp.data][,c(names(tmp.data), unlist(sgp.time)), with=FALSE]
+			mod <- paste(mod, " + I(tmp.data[['TIME']]) + I(tmp.data[['TIME_LAG']])", sep="")
+		}
 		if (is.null(parallel.config)) {
 			tmp.mtx <- eval(parse(text=paste("rq(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=taus, data=tmp.data, method=rq.method)[['coefficients']]", sep="")))
 		} else {
@@ -197,7 +201,13 @@ function(panel.data,         ## REQUIRED
 			stopParallel(parallel.config, par.start)
 		}
 
-		tmp.version <- list(SGP_Package_Version=as.character(packageVersion("SGP")), Date_Prepared=date(), Matrix_Information=list(N=dim(tmp.data)[1]))
+		tmp.version <- list(
+			SGP_Package_Version=as.character(packageVersion("SGP")), 
+			Date_Prepared=date(), 
+			Matrix_Information=list(
+				N=dim(tmp.data)[1],
+				Model=paste("rq(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=taus, data=tmp.data, method=rq.method)[['coefficients']]", sep=""),
+				SGPt=unlist(sgp.time)))
 
 		eval(parse(text=paste("new('splineMatrix', tmp.mtx, ", substring(s4Ks, 1, nchar(s4Ks)-1), "), ", substring(s4Bs, 1, nchar(s4Bs)-1), "), ",
 			"Content_Areas=list(as.character(tail(content_area.progression, k+1))), ",
@@ -237,7 +247,11 @@ function(panel.data,         ## REQUIRED
 			knt <- paste("my.matrix@Knots[[", k, "]]", sep="")
 			bnd <- paste("my.matrix@Boundaries[[", k, "]]", sep="")
 			mod <- paste(mod, ", bs(my.data[[", dim(my.data)[2]-k, "]], knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
-		}	
+		}
+		if (!is.null(sgp.time)) {
+			my.data <- data.table(Panel_Data[,c("ID", unlist(sgp.time)), with=FALSE], key="ID")[my.data][,c(names(my.data), unlist(sgp.time)), with=FALSE]
+			mod <- paste(mod, ", my.data[['TIME']], my.data[['TIME_LAG']]", sep="")
+		}
 		tmp <- eval(parse(text=paste(int, substring(mod, 2), ") %*% my.matrix", sep="")))
 		return(round(matrix(data.table(ID=rep(seq(dim(tmp)[1]), each=length(taus)), SCORE=as.vector(t(tmp)))[,.smooth.isotonize.row(SCORE, isotonize, sgp.loss.hoss.adjustment), by=ID][['V1']], 
 				ncol=length(taus), byrow=TRUE), digits=5))
@@ -635,6 +649,10 @@ function(panel.data,         ## REQUIRED
 				SGPercentiles=SGPercentiles,
 				SGProjections=SGProjections,
 				Simulated_SGPs=Simulated_SGPs))
+	}
+
+	if (!is.null(sgp.time)) {
+		setnames(Panel_Data, unlist(sgp.time), c("TIME", "TIME_LAG"))
 	}
 
 	if (!is.null(panel.data.vnames)) {
