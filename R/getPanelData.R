@@ -5,7 +5,8 @@ function(sgp.data,
 	sgp.iter,
 	sgp.csem=NULL,
 	sgp.scale.score.equated=NULL,
-	sgp.targets=NULL) {
+	sgp.targets=NULL,
+	SGPt=NULL) {
 
 	YEAR <- CONTENT_AREA <- VALID_CASE <- V3 <- V5 <- ID <- GRADE <- SCALE_SCORE <- YEAR_WITHIN <- tmp.timevar <- FIRST_OBSERVATION <- LAST_OBSERVATION <- ACHIEVEMENT_LEVEL <- NULL
 
@@ -17,6 +18,11 @@ function(sgp.data,
 		var.names <- names(sgp.data)
 		sqlite.tf <- FALSE
 	}
+
+
+	###
+	### sgp.percentiles
+	###
 	
 	if (sgp.type=="sgp.percentiles") {
 
@@ -73,7 +79,7 @@ function(sgp.data,
 				rbindlist(tmp.lookup.list),
 					idvar="ID", 
 					timevar="tmp.timevar", 
-					drop=var.names[!names(tmp.lookup.list[[1]]) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR_WITHIN", "tmp.timevar", sgp.csem, sgp.scale.score.equated)], 
+					drop=var.names[!names(tmp.lookup.list[[1]]) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR_WITHIN", "tmp.timevar", sgp.csem, sgp.scale.score.equated, SGPt)], 
 					direction="wide"))
 		} else {
 			tmp.lookup <- SJ("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]])),
@@ -92,20 +98,24 @@ function(sgp.data,
 						'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
 						idvar="ID",
 						timevar="tmp.timevar",
-						drop=var.names[!var.names %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", sgp.csem, sgp.scale.score.equated)],
+						drop=var.names[!var.names %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", sgp.csem, sgp.scale.score.equated, SGPt)],
 						direction="wide"))
 			} else {
 				return(reshape(
 					sgp.data[tmp.lookup, nomatch=0][!ID %in% tmp.exclude.ids][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
 						idvar="ID",
 						timevar="tmp.timevar",
-						drop=var.names[!var.names %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", sgp.csem, sgp.scale.score.equated)],
+						drop=var.names[!var.names %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", sgp.csem, sgp.scale.score.equated, SGPt)],
 						direction="wide"))
 			}
 		}
 	} ### END if (sgp.type=="sgp.percentiles")
 
 
+	###
+	### sgp.projections & sgp.projections.baseline
+	###
+	
 	if (sgp.type %in% c("sgp.projections", "sgp.projections.baseline")) {
 
 		if (sgp.type=="sgp.projections") {
@@ -250,6 +260,10 @@ function(sgp.data,
 	} ### END if (sgp.type=="sgp.projections")
 
 
+	###
+	### sgp.projections.lagged
+	###
+	
 	if (sgp.type=="sgp.projections.lagged") {
 		if ("YEAR_WITHIN" %in% var.names) {
 			setkeyv(sgp.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", tail(sgp.iter[["sgp.panel.years.within"]], 1)))

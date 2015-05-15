@@ -44,7 +44,7 @@ function(panel.data,         ## REQUIRED
          calculate.simex=NULL,
          sgp.percentiles.set.seed=314159,
          sgp.percentiles.equated=NULL,
-         sgp.time=NULL,
+         SGPt=NULL,
          verbose.output=FALSE) {
 
 	started.at <- proc.time()
@@ -170,8 +170,8 @@ function(panel.data,         ## REQUIRED
 			s4Ks <- paste(s4Ks, "knots_", tmp.gp.iter[i], "=", knt, ",", sep="")
 			s4Bs <- paste(s4Bs, "boundaries_", tmp.gp.iter[i], "=", bnd, ",", sep="")
 		}
-		if (!is.null(sgp.time)) {
-			tmp.data <- data.table(Panel_Data[,c("ID", unlist(sgp.time)), with=FALSE], key="ID")[tmp.data][,c(names(tmp.data), unlist(sgp.time)), with=FALSE]
+		if (!is.null(SGPt)) {
+			tmp.data <- data.table(Panel_Data[,c("ID", unlist(SGPt)), with=FALSE], key="ID")[tmp.data][,c(names(tmp.data), unlist(SGPt)), with=FALSE]
 			mod <- paste(mod, " + I(tmp.data[['TIME']]) + I(tmp.data[['TIME_LAG']])", sep="")
 		}
 		if (is.null(parallel.config)) {
@@ -207,7 +207,7 @@ function(panel.data,         ## REQUIRED
 			Matrix_Information=list(
 				N=dim(tmp.data)[1],
 				Model=paste("rq(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=taus, data=tmp.data, method=rq.method)[['coefficients']]", sep=""),
-				SGPt=unlist(sgp.time)))
+				SGPt=unlist(SGPt)))
 
 		eval(parse(text=paste("new('splineMatrix', tmp.mtx, ", substring(s4Ks, 1, nchar(s4Ks)-1), "), ", substring(s4Bs, 1, nchar(s4Bs)-1), "), ",
 			"Content_Areas=list(as.character(tail(content_area.progression, k+1))), ",
@@ -248,8 +248,8 @@ function(panel.data,         ## REQUIRED
 			bnd <- paste("my.matrix@Boundaries[[", k, "]]", sep="")
 			mod <- paste(mod, ", bs(my.data[[", dim(my.data)[2]-k, "]], knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
 		}
-		if (!is.null(sgp.time)) {
-			my.data <- data.table(Panel_Data[,c("ID", unlist(sgp.time)), with=FALSE], key="ID")[my.data][,c(names(my.data), unlist(sgp.time)), with=FALSE]
+		if (!is.null(SGPt)) {
+			my.data <- data.table(Panel_Data[,c("ID", unlist(SGPt)), with=FALSE], key="ID")[my.data][,c(names(my.data), unlist(SGPt)), with=FALSE]
 			mod <- paste(mod, ", my.data[['TIME']], my.data[['TIME_LAG']]", sep="")
 		}
 		tmp <- eval(parse(text=paste(int, substring(mod, 2), ") %*% my.matrix", sep="")))
@@ -570,15 +570,15 @@ function(panel.data,         ## REQUIRED
 
 	if (!is.null(sgp.percentiles.set.seed)) set.seed(as.integer(sgp.percentiles.set.seed))
 
-	if (!is.null(sgp.time)) {
-		if (identical(sgp.time, TRUE)) sgp.time <- list(TIME="TIME", TIME_LAG="TIME_LAG")
-		if (is.list(sgp.time) && !all(c("TIME", "TIME_LAG") %in% names(sgp.time))) {
-			tmp.messages <- c(tmp.messages, "\t\tNOTE: 'TIME' and 'TIME_LAG' are not contained in list supplied to 'sgp.time' argument. sgp.time is set to NULL")
-			sgp.time <- NULL
+	if (!is.null(SGPt)) {
+		if (identical(SGPt, TRUE)) SGPt <- list(TIME="TIME", TIME_LAG="TIME_LAG")
+		if (is.list(SGPt) && !all(c("TIME", "TIME_LAG") %in% names(SGPt))) {
+			tmp.messages <- c(tmp.messages, "\t\tNOTE: 'TIME' and 'TIME_LAG' are not contained in list supplied to 'SGPt' argument. SGPt is set to NULL")
+			SGPt <- NULL
 		} else {
-			if (!((all(unlist(sgp.time) %in% names(panel.data))) | (all(unlist(sgp.time) %in% names(panel.data$Panel_Data))))) {
-				tmp.messages <- c(tmp.messages, "\t\tNOTE: Variables", paste(unlist(sgp.time), collapse=", "), "are not all contained in the supplied 'panel.data'. 'sgp.time' is set to NULL.\n")
-				sgp.time <- NULL
+			if (!((all(unlist(SGPt) %in% names(panel.data))) | (all(unlist(SGPt) %in% names(panel.data$Panel_Data))))) {
+				tmp.messages <- c(tmp.messages, "\t\tNOTE: Variables", paste(unlist(SGPt), collapse=", "), "are not all contained in the supplied 'panel.data'. 'SGPt' is set to NULL.\n")
+				SGPt <- NULL
 			}
 		}
 	}
@@ -651,8 +651,8 @@ function(panel.data,         ## REQUIRED
 				Simulated_SGPs=Simulated_SGPs))
 	}
 
-	if (!is.null(sgp.time)) {
-		setnames(Panel_Data, unlist(sgp.time), c("TIME", "TIME_LAG"))
+	if (!is.null(SGPt)) {
+		setnames(Panel_Data, unlist(SGPt), c("TIME", "TIME_LAG"))
 	}
 
 	if (!is.null(panel.data.vnames)) {

@@ -119,7 +119,7 @@ function(state,
 			long.cutscores.list[[1]] <- 
 				get.long.cutscores(
 					content_area=content_area,
-					SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Transformed_Achievement_Level_Cutscores"]],
+					transformed.cutscores=SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Transformed_Achievement_Level_Cutscores"]],
 					subset.year=NA)
 		}
 		if (identical(toupper(assessment.transition.type[2]), "YES")) {

@@ -5,8 +5,8 @@ function(tmp.data,
 	linkages,
 	slot.data) {
 
-	TRANSFORMED_SCALE_SCORE <- SCALE_SCORE <- TEMP_SCALE_SCORE <- SCALE_SCORE_EQUATED <- CONTENT_AREA <- CONTENT_AREA_LABELS <- YEAR <- GRADE <- GRADE_NUMERIC <- NULL
-	CUTSCORES <- CUTSCORES_ORIGINAL <- NULL
+	TRANSFORMED_SCALE_SCORE <- SCALE_SCORE <- TEMP_SCALE_SCORE <- SCALE_SCORE_EQUATED <- CONTENT_AREA <- CONTENT_AREA_LABELS <- YEAR <- GRADE <- GRADE_NUMERIC <- ID <- NULL
+	CUTSCORES <- CUTSCORES_ORIGINAL <- GRADE_FOR_CUTSCORES <- NULL
 
 	### Create relevant variables
 
@@ -30,6 +30,9 @@ function(tmp.data,
 	### Return Data and Cutscores based upon whether scale score transition
 
 	if (!is.null(linkages)) {
+
+		### Define variables
+
 		year.for.equate <- tail(sort(sapply(strsplit(names(linkages), "[.]"), '[', 2)), 1)
 		assessment.transition.type <- c(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][['Vertical_Scale']], 
 			SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[paste('Vertical_Scale', year.for.equate, sep=".")]])
@@ -40,130 +43,113 @@ function(tmp.data,
 		}
 
 
+		### Transform Cutscores
+
+		for (content_area.iter in content_areas) {  
+			for (grade.iter in unique(Cutscores[[content_area.iter]][['GRADE']])) {
+				Cutscores[[content_area.iter]][CONTENT_AREA==content_area.iter & GRADE==grade.iter & (is.na(YEAR) | YEAR < year.for.equate),
+					CUTSCORES:=linkages[[paste(content_area.iter, year.for.equate, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['OLD_TO_NEW']][["interpolated_function"]](CUTSCORES)]
+				tmp.min.max <- get.min.max.grade(Cutscores[[content_area.iter]])
+				if (grade.iter=="GRADE_UPPER") {
+					Cutscores[[content_area.iter]][CONTENT_AREA=="PLACEHOLDER" & GRADE=="GRADE_UPPER" & (is.na(YEAR) | YEAR < year.for.equate),
+						CUTSCORES:=linkages[[paste(content_area.iter, year.for.equate, sep=".")]][[paste("GRADE", tmp.min.max[2], sep="_")]][['OLD_TO_NEW']][["interpolated_function"]](CUTSCORES)]
+				}
+				if (grade.iter=="GRADE_LOWER") {
+					Cutscores[[content_area.iter]][CONTENT_AREA=="PLACEHOLDER" & GRADE=="GRADE_LOWER" & (is.na(YEAR) | YEAR < year.for.equate),
+						CUTSCORES:=linkages[[paste(content_area.iter, year.for.equate, sep=".")]][[paste("GRADE", tmp.min.max[1], sep="_")]][['OLD_TO_NEW']][["interpolated_function"]](CUTSCORES)]
+				}
+			}
+		}
+			
 		#############################################################
-		### Vertical-to-Vertical scale transition
+		### Vertical to Vertical scale transition
 		#############################################################
 
 		if (identical(assessment.transition.type, c("Yes", "Yes"))) {
 
-			### Scale Score Transformation
+			### Create TRANSFORMED_SCALE_SCORE
 
 			tmp.data[, TRANSFORMED_SCALE_SCORE:=SCALE_SCORE_EQUATED]
-
-			### Transform Cutscores
-
-			for (content_area.iter in content_areas) {  
-				for (grade.iter in unique(Cutscores[[content_area.iter]][['GRADE']])) {
-					Cutscores[[content_area.iter]][CONTENT_AREA==content_area.iter & GRADE==grade.iter & (is.na(YEAR) | YEAR < year.for.equate),
-						CUTSCORES:=linkages[[paste(content_area.iter, year.for.equate, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['OLD_TO_NEW']][["interpolated_function"]](CUTSCORES)]
-					tmp.min.max <- get.min.max.grade(Cutscores[[content_area.iter]])
-					if (grade.iter=="GRADE_UPPER") {
-						Cutscores[[content_area.iter]][CONTENT_AREA=="PLACEHOLDER" & GRADE=="GRADE_UPPER" & (is.na(YEAR) | YEAR < year.for.equate),
-							CUTSCORES:=linkages[[paste(content_area.iter, year.for.equate, sep=".")]][[paste("GRADE", tmp.min.max[2], sep="_")]][['OLD_TO_NEW']][["interpolated_function"]](CUTSCORES)]
-					}
-					if (grade.iter=="GRADE_LOWER") {
-						Cutscores[[content_area.iter]][CONTENT_AREA=="PLACEHOLDER" & GRADE=="GRADE_LOWER" & (is.na(YEAR) | YEAR < year.for.equate),
-							CUTSCORES:=linkages[[paste(content_area.iter, year.for.equate, sep=".")]][[paste("GRADE", tmp.min.max[1], sep="_")]][['OLD_TO_NEW']][["interpolated_function"]](CUTSCORES)]
-					}
-				}
-			}
-			
-			### Return data
-
-			return(list(Data=tmp.data, Cutscores=Cutscores, sgp.projections.equated=list(Year=year.for.equate, Linkages=linkages)))
 		}
 		
 
 		#######################################################
-		### Non-Vertical-to-Vertical scale transition
+		### Non-Vertical to Vertical scale transition
 		#######################################################
 
 		if (identical(assessment.transition.type, c("No", "Yes"))) {
 
-			### Create linkages from piecewiseTransformed slot.data
+			### Create TRANSFORMED_SCALE_SCORE
 
-			slot.data[,SCALE_SCORE:=piecewiseTransform(SCALE_SCORE, state, CONTENT_AREA_LABELS, YEAR, GRADE), by=list(CONTENT_AREA_LABELS, YEAR, GRADE)]
-			tmp.linkages <- equateSGP(slot.data, state, year.for.equate, "linear")
-
-			### Transform Cutscores
-
-			for (content_area.iter in content_areas) {
-				for (grade.iter in unique(Cutscores[[content_area.iter]][['GRADE']])) {
-					Cutscores[[content_area.iter]][CONTENT_AREA==content_area.iter & GRADE==grade.iter & (is.na(YEAR) | YEAR < year.for.equate),
-						CUTSCORES:=tmp.linkages[[paste(content_area.iter, year.for.equate, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['OLD_TO_NEW']][["interpolated_function"]](CUTSCORES)]
-					tmp.min.max <- get.min.max.grade(Cutscores[[content_area.iter]])
-
-					if (grade.iter=="GRADE_UPPER") {
-						Cutscores[[content_area.iter]][CONTENT_AREA=="PLACEHOLDER" & GRADE=="GRADE_UPPER" & (is.na(YEAR) | YEAR < year.for.equate),
-							CUTSCORES:=tmp.linkages[[paste(content_area.iter, year.for.equate, sep=".")]][[paste("GRADE", tmp.min.max[2], sep="_")]][['OLD_TO_NEW']][["interpolated_function"]](CUTSCORES)]
-					}
-
-					if (grade.iter=="GRADE_LOWER") {
-						Cutscores[[content_area.iter]][CONTENT_AREA=="PLACEHOLDER" & GRADE=="GRADE_LOWER" & (is.na(YEAR) | YEAR < year.for.equate),
-							CUTSCORES:=tmp.linkages[[paste(content_area.iter, year.for.equate, sep=".")]][[paste("GRADE", tmp.min.max[1], sep="_")]][['OLD_TO_NEW']][["interpolated_function"]](CUTSCORES)]
-					}
-				}
-			}
-
-			tmp.data[!is.na(CONTENT_AREA_LABELS), 
+			tmp.data[!is.na(CONTENT_AREA_LABELS) & YEAR < year.for.equate, GRADE_FOR_CUTSCORES:=max(GRADE, na.rm=TRUE), by=list(CONTENT_AREA_LABELS, ID)]
+			tmp.data[!is.na(CONTENT_AREA_LABELS) & YEAR < year.for.equate,
 				TRANSFORMED_SCALE_SCORE:=piecewiseTransform(
 					SCALE_SCORE, 
 					state, 
 					CONTENT_AREA_LABELS, 
 					YEAR, 
 					GRADE,
-					new.cutscores=getNewCutscores(CONTENT_AREA[1], CONTENT_AREA_LABELS[1], YEAR[1], GRADE[1], Cutscores)), by=list(CONTENT_AREA_LABELS, YEAR, GRADE)]
+					new.cutscores=sort(Cutscores[[CONTENT_AREA_LABELS[1]]][list(CONTENT_AREA_LABELS[1], as.character(NA), GRADE_FOR_CUTSCORES[1])][['CUTSCORES']])), by=list(CONTENT_AREA_LABELS, YEAR, GRADE)]
+			tmp.data[!is.na(CONTENT_AREA_LABELS) & YEAR >= year.for.equate, TRANSFORMED_SCALE_SCORE:=SCALE_SCORE_EQUATED]
+			tmp.data[,GRADE_FOR_CUTSCORES:=NULL]
+		}
 
-			### Return data
 
-			return(list(Data=tmp.data, Cutscores=Cutscores, sgp.projections.equated=list(Year=year.for.equate, Linkages=tmp.linkages, Assessment_Transition_Type=assessment.transition.type)))
+		#######################################################
+		### Vertical to Non-Vertical scale transition
+		#######################################################
+
+		if (identical(assessment.transition.type, c("Yes", "No"))) {
+
+			### Create TRANSFORMED_SCALE_SCORE
+
+			tmp.data[!is.na(CONTENT_AREA_LABELS) & YEAR >= year.for.equate, GRADE_FOR_CUTSCORES:=min(GRADE, na.rm=TRUE), by=list(CONTENT_AREA_LABELS, ID)]
+			tmp.data[!is.na(CONTENT_AREA_LABELS) & YEAR >= year.for.equate,
+				TRANSFORMED_SCALE_SCORE:=piecewiseTransform(
+					SCALE_SCORE, 
+					state, 
+					CONTENT_AREA_LABELS, 
+					YEAR, 
+					GRADE,
+					new.cutscores=sort(Cutscores[[CONTENT_AREA_LABELS[1]]][list(CONTENT_AREA_LABELS[1], as.character(NA), GRADE_FOR_CUTSCORES[1])][['CUTSCORES']])), by=list(CONTENT_AREA_LABELS, YEAR, GRADE)]
+			tmp.data[!is.na(CONTENT_AREA_LABELS) & YEAR < year.for.equate, TRANSFORMED_SCALE_SCORE:=SCALE_SCORE_EQUATED]
+			tmp.data[,GRADE_FOR_CUTSCORES:=NULL]
 		}
 
 
 		###############################################################
-		### Non-Vertical-to-Non-Vertical scale transition
+		### Non-Vertical to Non-Vertical scale transition
 		###############################################################
 
 		if (identical(assessment.transition.type, c("No", "No"))) {
 
-			### Create linkages from piecewiseTransformed slot.data
+			### Create TRANSFORMED_SCALE_SCORE
 
-			slot.data[,SCALE_SCORE:=piecewiseTransform(SCALE_SCORE, state, CONTENT_AREA_LABELS, YEAR, GRADE), by=list(CONTENT_AREA_LABELS, YEAR, GRADE)]
-			tmp.linkages <- equateSGP(slot.data, state, year.for.equate, "linear")
-
-			### Transform Cutscores
-
-			for (content_area.iter in content_areas) {
-				for (grade.iter in unique(Cutscores[[content_area.iter]][['GRADE']])) {
-					Cutscores[[content_area.iter]][CONTENT_AREA==content_area.iter & GRADE==grade.iter & (is.na(YEAR) | YEAR < year.for.equate),
-						CUTSCORES:=tmp.linkages[[paste(content_area.iter, year.for.equate, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['OLD_TO_NEW']][["interpolated_function"]](CUTSCORES)]
-					tmp.min.max <- get.min.max.grade(Cutscores[[content_area.iter]])
-
-					if (grade.iter=="GRADE_UPPER") {
-						Cutscores[[content_area.iter]][CONTENT_AREA=="PLACEHOLDER" & GRADE=="GRADE_UPPER" & (is.na(YEAR) | YEAR < year.for.equate),
-							CUTSCORES:=tmp.linkages[[paste(content_area.iter, year.for.equate, sep=".")]][[paste("GRADE", tmp.min.max[2], sep="_")]][['OLD_TO_NEW']][["interpolated_function"]](CUTSCORES)]
-					}
-
-					if (grade.iter=="GRADE_LOWER") {
-						Cutscores[[content_area.iter]][CONTENT_AREA=="PLACEHOLDER" & GRADE=="GRADE_LOWER" & (is.na(YEAR) | YEAR < year.for.equate),
-							CUTSCORES:=tmp.linkages[[paste(content_area.iter, year.for.equate, sep=".")]][[paste("GRADE", tmp.min.max[1], sep="_")]][['OLD_TO_NEW']][["interpolated_function"]](CUTSCORES)]
-					}
-				}
-			}
-
-			tmp.data[!is.na(CONTENT_AREA_LABELS),
+			tmp.data[!is.na(CONTENT_AREA_LABELS) & YEAR < year.for.equate, GRADE_FOR_CUTSCORES:=max(GRADE, na.rm=TRUE), by=list(CONTENT_AREA_LABELS, ID)]
+			tmp.data[!is.na(CONTENT_AREA_LABELS) & YEAR < year.for.equate,
 				TRANSFORMED_SCALE_SCORE:=piecewiseTransform(
 					SCALE_SCORE, 
 					state, 
 					CONTENT_AREA_LABELS, 
 					YEAR, 
 					GRADE,
-					new.cutscores=getNewCutscores(CONTENT_AREA[1], CONTENT_AREA_LABELS[1], YEAR[1], GRADE[1], Cutscores)), by=list(CONTENT_AREA_LABELS, YEAR, GRADE)]
+					new.cutscores=sort(Cutscores[[CONTENT_AREA_LABELS[1]]][list(CONTENT_AREA_LABELS[1], as.character(NA), GRADE_FOR_CUTSCORES[1])][['CUTSCORES']])), by=list(CONTENT_AREA_LABELS, YEAR, GRADE)]
 
-			### Return data
-
-			return(list(Data=tmp.data, Cutscores=Cutscores, sgp.projections.equated=list(Year=year.for.equate, Linkages=tmp.linkages, Assessment_Transition_Type=assessment.transition.type)))
+			tmp.data[!is.na(CONTENT_AREA_LABELS) & YEAR >= year.for.equate, GRADE_FOR_CUTSCORES:=min(GRADE, na.rm=TRUE), by=list(CONTENT_AREA_LABELS, ID)]
+			tmp.data[!is.na(CONTENT_AREA_LABELS) & YEAR >= year.for.equate,
+				TRANSFORMED_SCALE_SCORE:=piecewiseTransform(
+					SCALE_SCORE, 
+					state, 
+					CONTENT_AREA_LABELS, 
+					YEAR, 
+					GRADE,
+					new.cutscores=sort(Cutscores[[CONTENT_AREA_LABELS[1]]][list(CONTENT_AREA_LABELS[1], as.character(NA), GRADE_FOR_CUTSCORES[1])][['CUTSCORES']])), by=list(CONTENT_AREA_LABELS, YEAR, GRADE)]
+			tmp.data[,GRADE_FOR_CUTSCORES:=NULL]
 		}
+
+		### Return data
+
+		return(list(Data=tmp.data, Cutscores=Cutscores, sgp.projections.equated=list(Year=year.for.equate, Linkages=linkages, Assessment_Transition_Type=assessment.transition.type)))
 	} else {
 		for (i in content_areas) {
 			Cutscores[[i]] <- createLongCutscores(state, i)
