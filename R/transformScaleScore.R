@@ -65,7 +65,7 @@ function(tmp.data,
 		### Vertical to Vertical scale transition
 		#############################################################
 
-		if (identical(assessment.transition.type, c("Yes", "Yes"))) {
+		if (identical(toupper(assessment.transition.type), c("YES", "YES"))) {
 
 			### Create TRANSFORMED_SCALE_SCORE
 
@@ -77,11 +77,11 @@ function(tmp.data,
 		### Non-Vertical to Vertical scale transition
 		#######################################################
 
-		if (identical(assessment.transition.type, c("No", "Yes"))) {
+		if (identical(toupper(assessment.transition.type), c("NO", "YES"))) {
 
 			### Create TRANSFORMED_SCALE_SCORE
 
-			tmp.data[!is.na(CONTENT_AREA_LABELS) & YEAR < year.for.equate, GRADE_FOR_CUTSCORES:=max(GRADE, na.rm=TRUE), by=list(CONTENT_AREA_LABELS, ID)]
+			tmp.data[!is.na(CONTENT_AREA_LABELS) & YEAR < year.for.equate, GRADE_FOR_CUTSCORES:=tail(mixedsort(sort(GRADE)), 1), by=list(CONTENT_AREA_LABELS, ID)]
 			tmp.data[!is.na(CONTENT_AREA_LABELS) & YEAR < year.for.equate,
 				TRANSFORMED_SCALE_SCORE:=piecewiseTransform(
 					SCALE_SCORE, 
@@ -99,11 +99,11 @@ function(tmp.data,
 		### Vertical to Non-Vertical scale transition
 		#######################################################
 
-		if (identical(assessment.transition.type, c("Yes", "No"))) {
+		if (identical(toupper(assessment.transition.type), c("YES", "NO"))) {
 
 			### Create TRANSFORMED_SCALE_SCORE
 
-			tmp.data[!is.na(CONTENT_AREA_LABELS) & YEAR >= year.for.equate, GRADE_FOR_CUTSCORES:=min(GRADE, na.rm=TRUE), by=list(CONTENT_AREA_LABELS, ID)]
+			tmp.data[!is.na(CONTENT_AREA_LABELS) & YEAR >= year.for.equate, GRADE_FOR_CUTSCORES:=head(mixedsort(sort(GRADE)), 1), by=list(CONTENT_AREA_LABELS, ID)]
 			tmp.data[!is.na(CONTENT_AREA_LABELS) & YEAR >= year.for.equate,
 				TRANSFORMED_SCALE_SCORE:=piecewiseTransform(
 					SCALE_SCORE, 
@@ -121,11 +121,11 @@ function(tmp.data,
 		### Non-Vertical to Non-Vertical scale transition
 		###############################################################
 
-		if (identical(assessment.transition.type, c("No", "No"))) {
+		if (identical(toupper(assessment.transition.type), c("NO", "NO"))) {
 
 			### Create TRANSFORMED_SCALE_SCORE
 
-			tmp.data[!is.na(CONTENT_AREA_LABELS) & YEAR < year.for.equate, GRADE_FOR_CUTSCORES:=max(GRADE, na.rm=TRUE), by=list(CONTENT_AREA_LABELS, ID)]
+			tmp.data[!is.na(CONTENT_AREA_LABELS) & YEAR < year.for.equate, GRADE_FOR_CUTSCORES:=tail(mixedsort(sort(GRADE)), 1), by=list(CONTENT_AREA_LABELS, ID)]
 			tmp.data[!is.na(CONTENT_AREA_LABELS) & YEAR < year.for.equate,
 				TRANSFORMED_SCALE_SCORE:=piecewiseTransform(
 					SCALE_SCORE, 
@@ -135,7 +135,7 @@ function(tmp.data,
 					GRADE,
 					new.cutscores=sort(Cutscores[[CONTENT_AREA_LABELS[1]]][list(CONTENT_AREA_LABELS[1], as.character(NA), GRADE_FOR_CUTSCORES[1])][['CUTSCORES']])), by=list(CONTENT_AREA_LABELS, YEAR, GRADE)]
 
-			tmp.data[!is.na(CONTENT_AREA_LABELS) & YEAR >= year.for.equate, GRADE_FOR_CUTSCORES:=min(GRADE, na.rm=TRUE), by=list(CONTENT_AREA_LABELS, ID)]
+			tmp.data[!is.na(CONTENT_AREA_LABELS) & YEAR >= year.for.equate, GRADE_FOR_CUTSCORES:=head(mixedsort(sort(GRADE)), 1), by=list(CONTENT_AREA_LABELS, ID)]
 			tmp.data[!is.na(CONTENT_AREA_LABELS) & YEAR >= year.for.equate,
 				TRANSFORMED_SCALE_SCORE:=piecewiseTransform(
 					SCALE_SCORE, 
