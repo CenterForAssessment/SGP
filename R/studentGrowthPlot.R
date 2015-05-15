@@ -369,11 +369,11 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 
 	grade.values <- interpolate.grades(Grades, Content_Areas, studentGrowthPlot.year.span)
 
-	if (!is.null(Report_Parameters[['Assessment_Transition']][['Assessment_Transition_Type']]) && !is.na(Grades[which(Years==Report_Parameters[['Assessment_Transition']][['Year']])])) {
+	if (!is.null(Report_Parameters[['Assessment_Transition']][['Assessment_Transition_Type']])) {
 		if (identical(toupper(Report_Parameters[['Assessment_Transition']][['Assessment_Transition_Type']][1]), "NO")) {
 			Cutscores[is.na(YEAR) | YEAR < Report_Parameters$Assessment_Transition$Year,
 				CUTSCORES:=Cutscores[CONTENT_AREA==Report_Parameters[['Content_Area']] & 
-					GRADE==grade.values[['interp.df']][['GRADE']][which(grade.values[['years']]==Report_Parameters[['Assessment_Transition']][['Year']])] &
+					GRADE==grade.values[['interp.df']][['GRADE']][which(grade.values[['years']]==Report_Parameters[['Assessment_Transition']][['Year']])-1] &
 					(is.na(YEAR) | YEAR < Report_Parameters$Assessment_Transition$Year)][['CUTSCORES']]]
 		}
 		if (identical(toupper(Report_Parameters[['Assessment_Transition']][['Assessment_Transition_Type']][2]), "NO")) {
