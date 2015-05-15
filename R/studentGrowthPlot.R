@@ -372,13 +372,13 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 	if (!is.null(Report_Parameters[['Assessment_Transition']][['Assessment_Transition_Type']])) {
 		if (identical(toupper(Report_Parameters[['Assessment_Transition']][['Assessment_Transition_Type']][1]), "NO")) {
 			Cutscores[is.na(YEAR) | YEAR < Report_Parameters$Assessment_Transition$Year,
-				CUTSCORES:=Cutscores[CONTENT_AREA==Report_Parameters[['Content_Area']] & 
+				CUTSCORES:=Cutscores[
 					GRADE==grade.values[['interp.df']][['GRADE']][which(grade.values[['years']]==Report_Parameters[['Assessment_Transition']][['Year']])-1] &
 					(is.na(YEAR) | YEAR < Report_Parameters$Assessment_Transition$Year)][['CUTSCORES']]]
 		}
 		if (identical(toupper(Report_Parameters[['Assessment_Transition']][['Assessment_Transition_Type']][2]), "NO")) {
 			Cutscores[YEAR >= Report_Parameters$Assessment_Transition$Year,
-				CUTSCORES:=Cutscores[CONTENT_AREA==Report_Parameters[['Content_Area']] & 
+				CUTSCORES:=Cutscores[
 					GRADE==grade.values[['interp.df']][['GRADE']][which(grade.values[['years']]==Report_Parameters[['Assessment_Transition']][['Year']])] &
 					YEAR >= Report_Parameters$Assessment_Transition$Year][['CUTSCORES']]] 
 		}
