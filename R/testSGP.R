@@ -1156,6 +1156,14 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 2: FAIL\n")
 		}
 
+		### TEST of SGP variable from equated analyses
+
+		if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][['READING.2014_2015.EQUATED']][['SGP']], na.rm=TRUE), 1439290L)) {
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP from equated analysis, part 2: OK\n")
+		} else {
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP from equated analysis, part 2: FAIL\n")
+		}
+
 		### TEST of SCALE_SCORE_EQUATED variable
 
 		if (identical(as.integer(sum(Demonstration_SGP@Data$SCALE_SCORE_EQUATED, na.rm=TRUE)), 1003847837L)) {
