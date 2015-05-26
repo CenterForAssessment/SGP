@@ -37,12 +37,6 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 			grep("Achievement_Levels", names(SGP::SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]]))]
 		level.to.get.cuku <- sapply(achievement.levels.proficiency, function(x) which.max(x[['Proficient']]=="Proficient")-1)  
 		level.to.get.musu <- sapply(achievement.levels.proficiency, function(x) which.max(x[['Proficient']]=="Proficient"))
-		if (identical(Report_Parameters[['Assessment_Transition']][['Assessment_Transition_Type']], c("No", "No")) &&
-			!is.na(Grades[which(Years==Report_Parameters[['Assessment_Transition']][['Year']])])) {
-			Cutscores[YEAR==Report_Parameters$Assessment_Transition$Year,
-				CUTSCORES:=Cutscores[CONTENT_AREA==Report_Parameters[['Content_Area']] & GRADE==Grades[which(Years==Report_Parameters[['Assessment_Transition']][['Year']])] & 
-					YEAR==Report_Parameters$Assessment_Transition$Year][['CUTSCORES']]]
-		}
 	}
 	number.growth.levels <- length(SGP::SGPstateData[[Report_Parameters$State]][["Growth"]][["Levels"]])
 	growth.level.labels <- SGP::SGPstateData[[Report_Parameters$State]][["Growth"]][["Levels"]]
@@ -375,6 +369,25 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 
 	grade.values <- interpolate.grades(Grades, Content_Areas, studentGrowthPlot.year.span)
 
+	if (!is.null(Report_Parameters[['Assessment_Transition']][['Assessment_Transition_Type']])) {
+		if (identical(toupper(Report_Parameters[['Assessment_Transition']][['Assessment_Transition_Type']][1]), "NO")) {
+			tmp.cutscore.grade <- tail(mixedsort(sort(head(rev(Grades), -1))), 1)
+			if (length(tmp.cutscore.grade)==0) {
+				tmp.cutscore.grade <- grade.values[['interp.df']][['GRADE']][which(grade.values[['years']]==Report_Parameters[['Assessment_Transition']][['Year']])-1]
+			}
+			Cutscores$CUTSCORES[is.na(Cutscores$YEAR) | Cutscores$YEAR < Report_Parameters$Assessment_Transition$Year] <-
+				Cutscores[Cutscores$GRADE==tmp.cutscore.grade & (is.na(Cutscores$YEAR) | Cutscores$YEAR < Report_Parameters$Assessment_Transition$Year)][['CUTSCORES']]
+		}
+		if (identical(toupper(Report_Parameters[['Assessment_Transition']][['Assessment_Transition_Type']][2]), "NO")) {
+			tmp.cutscore.grade <- head(mixedsort(sort(head(rev(Grades), -1))), 1)
+			if (length(tmp.cutscore.grade)==0) {
+				tmp.cutscore.grade <- grade.values[['interp.df']][['GRADE']][which(grade.values[['years']]==Report_Parameters[['Assessment_Transition']][['Year']])]
+			}
+			Cutscores$CUTSCORES[Cutscores$YEAR >= Report_Parameters$Assessment_Transition$Year] <- 
+				Cutscores[Cutscores$GRADE==tmp.cutscore.grade & Cutscores$YEAR >= Report_Parameters$Assessment_Transition$Year][['CUTSCORES']]
+		}
+	}
+
 	if (grade.values$year_span > 0) {
 		low.year <- year.function(Report_Parameters$Current_Year, (1-grade.values$year_span), 1)
 		high.year <- year.function(Report_Parameters$Current_Year, studentGrowthPlot.year.span-grade.values$year_span, 1)
@@ -465,7 +478,6 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		cuts.ny1 <- rep(NA, number.growth.levels+1)
 		cuts.ny1.text <- rep(NA, number.growth.levels+1)
 	}
-
 
 	current.year <- year.function(Report_Parameters$Current_Year, 0, 1)
 	xscale.range <- range(low.year,high.year) + c(-0.075, 0.1)*diff(range(low.year,high.year))

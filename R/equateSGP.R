@@ -2,8 +2,7 @@
 function(tmp.data,
 	state,
 	current.year,
-	equating.method="equip",
-	loss.hoss.correction=TRUE) {
+	equating.method="equip") {
 
 	VALID_CASE <- YEAR <- CONTENT_AREA <- GRADE <- NULL
 
@@ -56,34 +55,12 @@ function(tmp.data,
 			tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]] <- 
 				equateSGP_INTERNAL(prior.year.data[list(content_area.iter, grade.iter)], current.year.data[list(content_area.iter, grade.iter)])
 
-			if (loss.hoss.correction) {
-				tmp.boundaries.new.to.old <- 
-					eval(parse(text=paste("SGP::SGPstateData[[state]][['Achievement']][['Knots_Boundaries']]", get.my.knots.boundaries.path(content_area.iter, prior.year), "[['loss.hoss_", grade.iter, "']]", sep="")))
-				tmp.boundaries.old.to.new <- 
-					eval(parse(text=paste("SGP::SGPstateData[[state]][['Achievement']][['Knots_Boundaries']]", get.my.knots.boundaries.path(content_area.iter, current.year), "[['loss.hoss_", grade.iter, "']]", sep="")))
-				tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['NEW_TO_OLD']][['concordance']]$yx[
-					tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['NEW_TO_OLD']][['concordance']]$yx < tmp.boundaries.new.to.old[1]] <-
-					tmp.boundaries.new.to.old[1]	
-				tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['NEW_TO_OLD']][['concordance']]$yx[
-					tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['NEW_TO_OLD']][['concordance']]$yx > tmp.boundaries.new.to.old[2]] <-
-					tmp.boundaries.new.to.old[2]	
-				tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['OLD_TO_NEW']][['concordance']]$yx[
-					tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['OLD_TO_NEW']][['concordance']]$yx < tmp.boundaries.old.to.new[1]] <-
-					tmp.boundaries.old.to.new[1]	
-				tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['OLD_TO_NEW']][['concordance']]$yx[
-					tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['OLD_TO_NEW']][['concordance']]$yx > tmp.boundaries.old.to.new[2]] <-
-					tmp.boundaries.old.to.new[2]
-			}
-
-			splinefun.scale <- tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['NEW_TO_OLD']][['concordance']][['scale']]
-			splinefun.scale <- c(extendrange(splinefun.scale, f=0.2)[1], splinefun.scale, extendrange(splinefun.scale, f=0.2)[2])
-			splinefun.yx <- tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['NEW_TO_OLD']][['concordance']][['yx']]
-			splinefun.yx <- c(extendrange(splinefun.yx, f=0.2)[1], splinefun.yx, extendrange(splinefun.yx, f=0.2)[2])
- 
-			tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['NEW_TO_OLD']]$interpolated_function <- splinefun(
-				splinefun.scale, splinefun.yx, method="hyman")
-			tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['OLD_TO_NEW']]$interpolated_function <- splinefun(
-				splinefun.yx, splinefun.scale, method="hyman")
+			approxfun.scale <- tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['NEW_TO_OLD']][['concordance']][['scale']]
+			approxfun.yx <- tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['NEW_TO_OLD']][['concordance']][['yx']]
+			tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['NEW_TO_OLD']]$interpolated_function <- approxfun(
+				approxfun.scale, approxfun.yx, rule=2)
+			tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['OLD_TO_NEW']]$interpolated_function <- approxfun(
+				approxfun.yx, approxfun.scale, rule=2)
 		}
 	}
 	return(tmp.list)
