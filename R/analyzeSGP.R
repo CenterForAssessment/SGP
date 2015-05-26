@@ -667,6 +667,7 @@ function(sgp_object,
 						calculate.simex=sgp.iter[["sgp.calculate.simex"]],
 						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 						SGPt=if (is.null(SGPt)) NULL else list(TIME="TIME", TIME_LAG="TIME_LAG"),
+						parallel.config=par.start$Lower_Level_Parallel,
 						...))
 					}
 				tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -707,6 +708,7 @@ function(sgp_object,
 						calculate.simex=sgp.iter[["sgp.calculate.simex"]],
 						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 						SGPt=if (is.null(SGPt)) NULL else list(TIME="TIME", TIME_LAG="TIME_LAG"),
+						parallel.config=par.start$Lower_Level_Parallel,
 						...))
 
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
