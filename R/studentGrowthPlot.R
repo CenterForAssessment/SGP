@@ -371,16 +371,20 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 
 	if (!is.null(Report_Parameters[['Assessment_Transition']][['Assessment_Transition_Type']])) {
 		if (identical(toupper(Report_Parameters[['Assessment_Transition']][['Assessment_Transition_Type']][1]), "NO")) {
-			Cutscores[is.na(YEAR) | YEAR < Report_Parameters$Assessment_Transition$Year,
-				CUTSCORES:=Cutscores[
-					GRADE==grade.values[['interp.df']][['GRADE']][which(grade.values[['years']]==Report_Parameters[['Assessment_Transition']][['Year']])-1] &
-					(is.na(YEAR) | YEAR < Report_Parameters$Assessment_Transition$Year)][['CUTSCORES']]]
+			tmp.cutscore.grade <- tail(mixedsort(sort(head(rev(Grades), -1))), 1)
+			if (length(tmp.cutscore.grade)==0) {
+				tmp.cutscore.grade <- grade.values[['interp.df']][['GRADE']][which(grade.values[['years']]==Report_Parameters[['Assessment_Transition']][['Year']])-1]
+			}
+			Cutscores$CUTSCORES[is.na(Cutscores$YEAR) | Cutscores$YEAR < Report_Parameters$Assessment_Transition$Year] <-
+				Cutscores[Cutscores$GRADE==tmp.cutscore.grade & (is.na(Cutscores$YEAR) | Cutscores$YEAR < Report_Parameters$Assessment_Transition$Year)][['CUTSCORES']]
 		}
 		if (identical(toupper(Report_Parameters[['Assessment_Transition']][['Assessment_Transition_Type']][2]), "NO")) {
-			Cutscores[YEAR >= Report_Parameters$Assessment_Transition$Year,
-				CUTSCORES:=Cutscores[
-					GRADE==grade.values[['interp.df']][['GRADE']][which(grade.values[['years']]==Report_Parameters[['Assessment_Transition']][['Year']])] &
-					YEAR >= Report_Parameters$Assessment_Transition$Year][['CUTSCORES']]] 
+			tmp.cutscore.grade <- head(mixedsort(sort(head(rev(Grades), -1))), 1)
+			if (length(tmp.cutscore.grade)==0) {
+				tmp.cutscore.grade <- grade.values[['interp.df']][['GRADE']][which(grade.values[['years']]==Report_Parameters[['Assessment_Transition']][['Year']])]
+			}
+			Cutscores$CUTSCORES[Cutscores$YEAR >= Report_Parameters$Assessment_Transition$Year] <- 
+				Cutscores[Cutscores$GRADE==tmp.cutscore.grade & Cutscores$YEAR >= Report_Parameters$Assessment_Transition$Year][['CUTSCORES']]
 		}
 	}
 

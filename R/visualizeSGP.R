@@ -784,8 +784,8 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 
 	#### Reshape data (NOT NECESSARY IF WIDE data is provided)
 
-		variables.to.keep <- c("VALID_CASE", "ID", "LAST_NAME", "FIRST_NAME", "CONTENT_AREA", "CONTENT_AREA_LABELS", "YEAR", "GRADE", 
-			"SCALE_SCORE", "TRANSFORMED_SCALE_SCORE", "ACHIEVEMENT_LEVEL", my.sgp, my.sgp.level, my.sgp.targets, "SCHOOL_NAME", "SCHOOL_NUMBER", "DISTRICT_NAME", "DISTRICT_NUMBER")
+		variables.to.keep <- c("VALID_CASE", "ID", "LAST_NAME", "FIRST_NAME", "CONTENT_AREA", "CONTENT_AREA_LABELS", "YEAR", "GRADE", "SCALE_SCORE", "TRANSFORMED_SCALE_SCORE", 
+			"ACHIEVEMENT_LEVEL", my.sgp, my.sgp.level, my.sgp.targets, "SCHOOL_NAME", "SCHOOL_NUMBER", "DISTRICT_NAME", "DISTRICT_NUMBER")
 
 		sgPlot.data <- reshape(tmp.table[,variables.to.keep, with=FALSE],
 			idvar=c("ID", "CONTENT_AREA"),
