@@ -94,12 +94,22 @@ function(sgp.data,
 					" AND GRADE in ('", paste(tmp.lookup$V4, collapse="', '"), "')",
 					" AND YEAR in ('", paste(tmp.lookup$V3, collapse="', '"), "')", sep="")), key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))
 				dbDisconnect(con)
-				return(reshape(tmp.data[tmp.lookup, nomatch=0][!ID %in% tmp.exclude.ids][!ID %in% tmp.exclude.ids][,
-						'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
-						idvar="ID",
-						timevar="tmp.timevar",
-						drop=var.names[!var.names %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", sgp.csem, sgp.scale.score.equated, SGPt)],
-						direction="wide"))
+				if (is.null(SGPt)) {
+					return(reshape(tmp.data[tmp.lookup, nomatch=0][!ID %in% tmp.exclude.ids][,
+							'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
+							idvar="ID",
+							timevar="tmp.timevar",
+							drop=var.names[!var.names %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", sgp.csem, sgp.scale.score.equated, SGPt)],
+							direction="wide"))
+				} else {
+					return(reshape(tmp.data[tmp.lookup, nomatch=0][!ID %in% tmp.exclude.ids][,
+							'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE][,
+							c("TIME", "TIME_LAG"):=list()],
+							idvar="ID",
+							timevar="tmp.timevar",
+							drop=var.names[!var.names %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", sgp.csem, sgp.scale.score.equated, SGPt)],
+							direction="wide"))
+				}
 			} else {
 				return(reshape(
 					sgp.data[tmp.lookup, nomatch=0][!ID %in% tmp.exclude.ids][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],

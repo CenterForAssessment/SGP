@@ -35,7 +35,7 @@
 	} else {
 		state.name.label <- test.abbreviation.label <- state
 	}
-		state.name.file.label <- gsub("_", " ", state.name.label)
+	state.name.file.label <- gsub(" ", "_", state.name.label)
 
 	### Test if scale change has occured in the requested year
 

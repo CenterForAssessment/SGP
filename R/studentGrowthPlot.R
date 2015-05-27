@@ -30,11 +30,11 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		level.to.get.cuku <- list(which.max(SGP::SGPstateData[[Report_Parameters$State]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")-1)
 		level.to.get.musu <- list(which.max(SGP::SGPstateData[[Report_Parameters$State]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient"))
 	} else {
-		achievement.level.labels <- SGP::SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][
-			grep("Achievement_Level_Labels", names(SGP::SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]]))]
+		achievement.level.labels <- SGP::SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Transition"]][
+			grep("Achievement_Level_Labels", names(SGP::SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Transition"]]))]
 		number.achievement.level.regions <- sapply(achievement.level.labels, length)
-		achievement.levels.proficiency <- SGP::SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][
-			grep("Achievement_Levels", names(SGP::SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]]))]
+		achievement.levels.proficiency <- SGP::SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Transition"]][
+			grep("Achievement_Levels", names(SGP::SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Transition"]]))]
 		level.to.get.cuku <- sapply(achievement.levels.proficiency, function(x) which.max(x[['Proficient']]=="Proficient")-1)  
 		level.to.get.musu <- sapply(achievement.levels.proficiency, function(x) which.max(x[['Proficient']]=="Proficient"))
 	}
@@ -383,7 +383,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 			if (length(tmp.cutscore.grade)==0) {
 				tmp.cutscore.grade <- grade.values[['interp.df']][['GRADE']][which(grade.values[['years']]==Report_Parameters[['Assessment_Transition']][['Year']])]
 			}
-			Cutscores$CUTSCORES[Cutscores$YEAR >= Report_Parameters$Assessment_Transition$Year] <- 
+			Cutscores$CUTSCORES[!is.na(Cutscores$YEAR) & Cutscores$YEAR >= Report_Parameters$Assessment_Transition$Year] <- 
 				Cutscores[Cutscores$GRADE==tmp.cutscore.grade & Cutscores$YEAR >= Report_Parameters$Assessment_Transition$Year][['CUTSCORES']]
 		}
 	}
