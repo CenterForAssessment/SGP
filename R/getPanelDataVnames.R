@@ -2,7 +2,8 @@
 function(sgp.type,
 	sgp.iter,
 	sgp.data.names,
-	scale.score.variable.name=NULL) {
+	scale.score.variable.name=NULL,
+	SGPt=NULL) {
 
 	if (is.null(scale.score.variable.name)) scale.score.variable.name <- "SCALE_SCORE"
 
@@ -14,12 +15,20 @@ function(sgp.type,
 				paste(scale.score.variable.name, tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]])),
 				tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]])), 
 				tail(sgp.iter[["sgp.panel.years.within"]], length(sgp.iter[["sgp.grade.sequences"]])), sep=".")))
-		} else {
+		}
+
+		if (!is.null(SGPt)) {
 			return(c("ID", paste("GRADE", tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]])), 
 				tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]])), sep="."), 
 				paste(scale.score.variable.name, tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]])),
-				tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]])), sep=".")))
+				tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]])), sep="."),
+				paste(c("TIME", "TIME_LAG"), tail(sgp.iter[["sgp.panel.years"]], 1), tail(sgp.iter[["sgp.content.areas"]], 1), sep=".")))
 		}
+
+		return(c("ID", paste("GRADE", tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]])), 
+			tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]])), sep="."), 
+			paste(scale.score.variable.name, tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]])),
+			tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]])), sep=".")))
 	}
 
 	if (sgp.type=="sgp.percentiles.baseline") {
@@ -30,12 +39,20 @@ function(sgp.type,
 				paste(scale.score.variable.name, tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.baseline.grade.sequences"]])),
 				tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.baseline.grade.sequences"]])), 
 				tail(sgp.iter[["sgp.panel.years.within"]], length(sgp.iter[["sgp.baseline.grade.sequences"]])), sep=".")))
-		} else {
+		}
+
+		if (!is.null(SGPt)) {
 			return(c("ID", paste("GRADE", tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.baseline.grade.sequences"]])), 
 				tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.baseline.grade.sequences"]])), sep="."), 
 				paste(scale.score.variable.name, tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.baseline.grade.sequences"]])),
-				tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.baseline.grade.sequences"]])), sep=".")))
+				tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.baseline.grade.sequences"]])), sep="."),
+				paste(c("TIME", "TIME_LAG"), tail(sgp.iter[["sgp.panel.years"]], 1), tail(sgp.iter[["sgp.content.areas"]], 1), sep=".")))
 		}
+		
+		return(c("ID", paste("GRADE", tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.baseline.grade.sequences"]])), 
+			tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.baseline.grade.sequences"]])), sep="."), 
+			paste(scale.score.variable.name, tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.baseline.grade.sequences"]])),
+			tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.baseline.grade.sequences"]])), sep=".")))
 	}
 
 	if (sgp.type=="sgp.percentiles.to.return") {

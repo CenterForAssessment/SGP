@@ -8,7 +8,7 @@ function(sgp.data,
 	sgp.targets=NULL,
 	SGPt=NULL) {
 
-	YEAR <- CONTENT_AREA <- VALID_CASE <- V3 <- V5 <- ID <- GRADE <- SCALE_SCORE <- YEAR_WITHIN <- tmp.timevar <- FIRST_OBSERVATION <- LAST_OBSERVATION <- ACHIEVEMENT_LEVEL <- NULL
+	YEAR <- CONTENT_AREA <- VALID_CASE <- V3 <- V5 <- ID <- GRADE <- SCALE_SCORE <- YEAR_WITHIN <- tmp.timevar <- FIRST_OBSERVATION <- LAST_OBSERVATION <- ACHIEVEMENT_LEVEL <- DATE<- NULL
 
 	if (is(sgp.data, "DBIObject")) {
 		con <- dbConnect(SQLite(), dbname = "Data/tmp_data/TMP_SGP_Data.sqlite")
@@ -99,24 +99,35 @@ function(sgp.data,
 							'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
 							idvar="ID",
 							timevar="tmp.timevar",
-							drop=var.names[!var.names %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", sgp.csem, sgp.scale.score.equated, SGPt)],
+							drop=var.names[!var.names %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", sgp.csem, sgp.scale.score.equated)],
 							direction="wide"))
 				} else {
 					return(reshape(tmp.data[tmp.lookup, nomatch=0][!ID %in% tmp.exclude.ids][,
 							'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE][,
-							c("TIME", "TIME_LAG"):=list()],
+							c("TIME", "TIME_LAG"):=list(as.numeric(DATE), as.numeric(DATE-c(NA, DATE[-.N]))), by=ID],
 							idvar="ID",
 							timevar="tmp.timevar",
-							drop=var.names[!var.names %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", sgp.csem, sgp.scale.score.equated, SGPt)],
+							drop=var.names[!var.names %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", sgp.csem, sgp.scale.score.equated, "TIME", "TIME_LAG")],
 							direction="wide"))
 				}
 			} else {
-				return(reshape(
-					sgp.data[tmp.lookup, nomatch=0][!ID %in% tmp.exclude.ids][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
-						idvar="ID",
-						timevar="tmp.timevar",
-						drop=var.names[!var.names %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", sgp.csem, sgp.scale.score.equated, SGPt)],
-						direction="wide"))
+				if (is.null(SGPt)) {
+					return(reshape(
+							sgp.data[tmp.lookup, nomatch=0][!ID %in% tmp.exclude.ids][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
+							idvar="ID",
+							timevar="tmp.timevar",
+							drop=var.names[!var.names %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", sgp.csem, sgp.scale.score.equated)],
+							direction="wide"))
+				} else {
+					return(reshape(
+							sgp.data[tmp.lookup, nomatch=0][!ID %in% tmp.exclude.ids][,
+							'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE][,
+							c("TIME", "TIME_LAG"):=list(as.numeric(DATE), as.numeric(DATE-c(NA, DATE[-.N]))), by=ID],
+							idvar="ID",
+							timevar="tmp.timevar",
+							drop=var.names[!var.names %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", sgp.csem, sgp.scale.score.equated, "TIME", "TIME_LAG")],
+							direction="wide"))
+				}
 			}
 		}
 	} ### END if (sgp.type=="sgp.percentiles")
