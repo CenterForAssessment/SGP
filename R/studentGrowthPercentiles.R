@@ -171,7 +171,7 @@ function(panel.data,         ## REQUIRED
 			s4Bs <- paste(s4Bs, "boundaries_", tmp.gp.iter[i], "=", bnd, ",", sep="")
 		}
 		if (!is.null(SGPt)) {
-			tmp.data <- data.table(Panel_Data[,c("ID", unlist(SGPt)), with=FALSE], key="ID")[tmp.data][,c(names(tmp.data), unlist(SGPt)), with=FALSE]
+			tmp.data <- data.table(Panel_Data[,c("ID", "TIME", "TIME_LAG"), with=FALSE], key="ID")[tmp.data][,c(names(tmp.data), "TIME", "TIME_LAG"), with=FALSE]
 			mod <- paste(mod, " + I(tmp.data[['TIME']]) + I(tmp.data[['TIME_LAG']])", sep="")
 		}
 		if (is.null(parallel.config)) {
@@ -249,7 +249,7 @@ function(panel.data,         ## REQUIRED
 			mod <- paste(mod, ", bs(my.data[[", dim(my.data)[2]-k, "]], knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
 		}
 		if (!is.null(SGPt)) {
-			my.data <- data.table(Panel_Data[,c("ID", unlist(SGPt)), with=FALSE], key="ID")[my.data][,c(names(my.data), unlist(SGPt)), with=FALSE]
+			my.data <- data.table(Panel_Data[,c("ID", "TIME", "TIME_LAG"), with=FALSE], key="ID")[my.data][,c(names(my.data), "TIME", "TIME_LAG"), with=FALSE]
 			mod <- paste(mod, ", my.data[['TIME']], my.data[['TIME_LAG']]", sep="")
 		}
 		tmp <- eval(parse(text=paste(int, substring(mod, 2), ") %*% my.matrix", sep="")))
@@ -429,7 +429,7 @@ function(panel.data,         ## REQUIRED
 					tail(grade.progression, k+1),
 					tail(year.progression, k+1),
 					tail(year_lags.progression, k),
-					my.matrix.order=k)[[1]]
+					my.matrix.order=k, my.matrix.time.dependency=SGPt)[[1]]
 				
 				fitted[[paste("order_", k, sep="")]][1,] <- as.vector(.get.percentile.predictions(tmp.data, tmp.matrix))
 			}
@@ -510,7 +510,7 @@ function(panel.data,         ## REQUIRED
 						tail(year_lags.progression, k),
 						my.exact.grade.progression.sequence=TRUE,
 						return.multiple.matrices=TRUE,
-						my.matrix.order=k), recursive=FALSE)
+						my.matrix.order=k, my.matrix.time.dependency=SGPt), recursive=FALSE)
 					
 					if (length(available.matrices) > B) sim.iters <- sample(1:length(available.matrices), B) # Stays as 1:B when length(available.matrices) == B
 					if (length(available.matrices) < B) sim.iters <- sample(1:length(available.matrices), B, replace=TRUE)
@@ -1047,6 +1047,7 @@ function(panel.data,         ## REQUIRED
 	} else {
 		ss.data <- Panel_Data
 	}
+
 	if (dim(ss.data)[2] %% 2 != 1) {
 		stop(paste("Number of columns of supplied panel data (", dim(ss.data)[2], ") does not conform to data requirements. See help page for details."))
 	}
@@ -1318,7 +1319,8 @@ function(panel.data,         ## REQUIRED
 					grade.progression, 
 					year.progression,
 					year_lags.progression,
-					exact.grade.progression.sequence)
+					exact.grade.progression.sequence,
+					my.matrix.time.dependency=SGPt)
 
 		tmp.orders <- sapply(tmp.matrices, function(x) length(x@Grade_Progression[[1]])-1)
 		max.order <- max(tmp.orders)
