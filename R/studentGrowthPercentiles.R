@@ -577,9 +577,9 @@ function(panel.data,         ## REQUIRED
 						simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <- available.matrices[sim.iters]
 					}
 					
-					if (!all(sapply(simex.coef.matrices[[2]][[2]], is.splineMatrix))) {
+					if (!all(sapply(simex.coef.matrices[[k]][[L]], is.splineMatrix))) {
 						recalc.index <- which(!sapply(simex.coef.matrices[[2]][[2]], is.splineMatrix))
-						message("\n\t\t", rev(content_area.progression)[1], " Grade ", rev(tmp.gp)[1], " Order ", k, " Coefficient Matrix process(es) ", recalc.index, "FAILED!  Attempting to recalculate sequentially...")))
+						message("\n\t\t", rev(content_area.progression)[1], " Grade ", rev(tmp.gp)[1], " Order ", k, " Coefficient Matrix process(es) ", recalc.index, "FAILED!  Attempting to recalculate sequentially..."))
 						for (z in seq_along(recalc.index)) {
 							if (is.null(simex.sample.size) || dim(tmp.data)[1] <= simex.sample.size) {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]] <-
