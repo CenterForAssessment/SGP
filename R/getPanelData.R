@@ -218,7 +218,8 @@ function(sgp.data,
 				}
 				return(tmp.data)
 			}
-		}
+		} ### END if ("YEAR_WITHIN" %in% var.names)
+
 		tmp.lookup <- SJ("VALID_CASE", tail(sgp.iter[[sgp.projection.content.areas.label]], length(sgp.iter[[sgp.projection.grade.sequences.label]])),
 			tail(sgp.iter[[sgp.projection.panel.years.label]], length(sgp.iter[[sgp.projection.grade.sequences.label]])), sgp.iter[[sgp.projection.grade.sequences.label]])
 		# ensure lookup table is ordered by years.  NULL out key after sorted so that it doesn't corrupt the join in reshape.
