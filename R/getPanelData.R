@@ -79,7 +79,7 @@ function(sgp.data,
 				rbindlist(tmp.lookup.list),
 					idvar="ID", 
 					timevar="tmp.timevar", 
-					drop=var.names[!names(tmp.lookup.list[[1]]) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR_WITHIN", "tmp.timevar", sgp.csem, sgp.scale.score.equated, SGPt)], 
+					drop=var.names[!names(tmp.lookup.list[[1]]) %in% c("ID", "GRADE", "SCALE_SCORE", "YEAR_WITHIN", "tmp.timevar", sgp.csem, sgp.scale.score.equated)], 
 					direction="wide"))
 		} else {
 			tmp.lookup <- SJ("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]])),
