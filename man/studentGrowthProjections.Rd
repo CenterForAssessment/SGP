@@ -30,10 +30,12 @@ studentGrowthProjections(panel.data,
                          percentile.trajectory.values=NULL,
                          return.percentile.trajectory.values=NULL,
                          return.projection.group.identifier=NULL,
+                         return.projection.group.scale.scores=NULL,
                          isotonize=TRUE,
                          lag.increment=0,
 			 sgp.exact.grade.progression=FALSE,
                          projcuts.digits=NULL,
+                         SGPt=NULL,
                          print.time.taken=TRUE)
 }
 
@@ -127,6 +129,8 @@ studentGrowthProjections(panel.data,
   }
   \item{return.projection.group.identifier}{A Boolean variable indicating whether to return the projection group identifier to distinguish different projection trajectories. Defaults to NULL/FALSE.
   }
+  \item{return.projection.group.scale.scores}{A Boolean variable indicating whether to return the projection group identifier scale scores. Defaults to NULL/FALSE.
+  }
   \item{isotonize}{Boolean argument (defaults to TRUE) indicating whether quantile regression results are isotonized to prevent quantile crossing following 
   the methods derived by Chernozhukov, Fernandez-Val and Glichon (2010).
   }
@@ -135,6 +139,8 @@ studentGrowthProjections(panel.data,
   \item{sgp.exact.grade.progression}{A Boolean argument (defaults to FALSE) indicating whether to use the exact grade progression supplied or all orders up to the grade progression supplied.
   }
   \item{projcuts.digits}{The number of digits (defaults to NULL/0) percentile trajectories (if requested) are formatted.
+  }
+  \item{SGPt}{Character vector indicating the name of the 'DATE' variable to be used for time dependent student growth projection calculations. Defaults to NULL, non-time-dependent SGP calculations.
   }
   \item{print.time.taken}{Boolean argument (defaults to TRUE) indicating whether to print message indicating information on \code{studentGrowthProjections} analysis and time taken.
   }

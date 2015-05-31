@@ -420,6 +420,10 @@ if ("studentGrowthPlot" %in% plot.types) {
 			sgPlot.demo.report <- FALSE
 		}
 
+		if (!is.null(SGP::SGPstateData[[state]][['SGP_Configuration']][['sgPlot.output.format']])) {
+			sgPlot.output.format <- SGP::SGPstateData[[state]][['SGP_Configuration']][['sgPlot.output.format']]
+		}
+
 
 ################################################
 ######## IF sgPlot.wide.data is supplied 

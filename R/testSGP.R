@@ -87,7 +87,7 @@ function(
 		### Part 2
 
 		expression.to.evaluate <- 
-			paste("Demonstration_SGP$Panel_Data <- SGPdata::sgpData[,c('ID','GRADE_2011','GRADE_2012','GRADE_2013','GRADE_2014','SS_2011','SS_2012','SS_2013','SS_2014')]\nmy.grade.progressions <- list(3, 3:4, 3:5, 3:6, 4:7)\nfor (i in seq_along(my.grade.progressions)) {\n\tDemonstration_SGP <- studentGrowthProjections(\n\t\tpanel.data=Demonstration_SGP,\n\t\tsgp.labels=list(my.year=2015, my.subject='Reading', my.extra.label='LAGGED'),\n\t\tuse.my.coefficient.matrices=list(my.year=2015, my.subject='Reading'),\n\t\tprojcuts.digits=0,\n\t\tperformance.level.cutscores='DEMO',\n\t\tpercentile.trajectory.values=1:99,\n\t\tlag.increment=1,\n\t\tgrade.progression=my.grade.progressions[[i]])\n}", sep="")
+			paste("Demonstration_SGP$Panel_Data <- SGPdata::sgpData[,c('ID','GRADE_2011','GRADE_2012','GRADE_2013','GRADE_2014','SS_2011','SS_2012','SS_2013','SS_2014')]\nmy.grade.progressions <- list(3, 3:4, 3:5, 3:6, 4:7)\nfor (i in seq_along(my.grade.progressions)) {\n\tDemonstration_SGP <- studentGrowthProjections(\n\t\tpanel.data=Demonstration_SGP,\n\t\tsgp.labels=list(my.year=2015, my.subject='Reading', my.extra.label='LAGGED'),\n\t\tuse.my.coefficient.matrices=list(my.year=2015, my.subject='Reading'),\n\t\tprojcuts.digits=0,\n\t\tperformance.level.cutscores='DEMO',\n\t\tpercentile.trajectory.values=1:99,\n\t\tlag.increment=1,\n\t\tgrade.progression=my.grade.progressions[[i]],\n\t\treturn.projection.group.identifier='READING',\n\t\treturn.projection.group.scale.scores=TRUE)\n}", sep="")
 
 		cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 
@@ -102,7 +102,7 @@ function(
 
 		tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number 0: Part 2 #####\n")
 
-		if (identical(dim(Demonstration_SGP$SGProjections[['READING.2015.LAGGED']]), c(36478L, 511L))) {
+		if (identical(dim(Demonstration_SGP$SGProjections[['READING.2015.LAGGED']]), c(36478L, 513L))) {
 			tmp.messages <- c(tmp.messages, "\t\tTest of READING.2015.LAGGED table dimensions, part 2: OK\n")
 		} else {
 			tmp.messages <- c(tmp.messages, "\t\tTest of READING.2015.LAGGED table dimensions, part 2: FAIL\n")
@@ -1156,9 +1156,17 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 2: FAIL\n")
 		}
 
+		### TEST of SGP variable from equated analyses
+
+		if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][['READING.2014_2015.EQUATED']][['SGP']], na.rm=TRUE), 1439290L)) {
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP from equated analysis, part 2: OK\n")
+		} else {
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP from equated analysis, part 2: FAIL\n")
+		}
+
 		### TEST of SCALE_SCORE_EQUATED variable
 
-		if (identical(as.integer(sum(Demonstration_SGP@Data$SCALE_SCORE_EQUATED, na.rm=TRUE)), 216419227L)) {
+		if (identical(as.integer(sum(Demonstration_SGP@Data$SCALE_SCORE_EQUATED, na.rm=TRUE)), 1003847837L)) {
 			tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_EQUATED, part 2: OK\n")
 		} else {
 			tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_EQUATED, part 2: FAIL\n")
@@ -1166,7 +1174,7 @@ table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE
 
 		### TEST of SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1 variable
 
-		if (identical(as.integer(sum(Demonstration_SGP@SGP$SGProjections[["READING.2014_2015.LAGGED.TARGET_SCALE_SCORES"]][['SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1']])), 82970238L)) {
+		if (identical(as.integer(sum(Demonstration_SGP@SGP$SGProjections[["READING.2014_2015.LAGGED.TARGET_SCALE_SCORES"]][['SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1']])), 82971055L)) {
 			tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1, part 2: OK\n")
 		} else {
 			tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1, part 2: FAIL\n")
