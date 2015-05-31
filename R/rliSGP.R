@@ -90,6 +90,7 @@ function(sgp_object,
 
 	if (!is.null(update.ids) && !is.data.table(update.ids)) update.ids <- as.data.table(update.ids)
 
+	if (state=="RLI_UK") content_areas <- "READING"
 
 	### Update IDS if requested
 
