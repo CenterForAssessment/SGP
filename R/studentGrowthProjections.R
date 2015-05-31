@@ -819,6 +819,11 @@ function(panel.data,	## REQUIRED
 		trajectories.and.cuts[,SGP_PROJECTION_GROUP:=return.projection.group.identifier]
 	}
 
+	if (!is.null(return.projection.group.scale.scores)) {
+		ss.data[,SGP_PROJECTION_GROUP_SCALE_SCORE:=do.call(paste, c(ss.data[,seq(dim(ss.data)[2]-num.panels+1, dim(ss.data)[2]),with=FALSE], list(sep="; ")))]
+		trajectories.and.cuts <- data.table(ss.data[,c("ID", "SGP_PROJECTION_GROUP_SCALE_SCORE"), with=FALSE], key="ID")[trajectories.and.cuts]
+	}
+
 	if ("YEAR_WITHIN" %in% names(panel.data[["Panel_Data"]])) {
 		trajectories.and.cuts <- data.table(panel.data[["Panel_Data"]][,c("ID", "YEAR_WITHIN"), with=FALSE], key="ID")[trajectories.and.cuts]
 	}
