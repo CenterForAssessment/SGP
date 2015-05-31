@@ -34,6 +34,7 @@ studentGrowthProjections(panel.data,
                          lag.increment=0,
 			 sgp.exact.grade.progression=FALSE,
                          projcuts.digits=NULL,
+                         SGPt=NULL,
                          print.time.taken=TRUE)
 }
 
@@ -135,6 +136,8 @@ studentGrowthProjections(panel.data,
   \item{sgp.exact.grade.progression}{A Boolean argument (defaults to FALSE) indicating whether to use the exact grade progression supplied or all orders up to the grade progression supplied.
   }
   \item{projcuts.digits}{The number of digits (defaults to NULL/0) percentile trajectories (if requested) are formatted.
+  }
+  \item{SGPt}{Character vector indicating the name of the 'DATE' variable to be used for time dependent student growth projection calculations. Defaults to NULL, non-time-dependent SGP calculations.
   }
   \item{print.time.taken}{Boolean argument (defaults to TRUE) indicating whether to print message indicating information on \code{studentGrowthProjections} analysis and time taken.
   }

@@ -27,6 +27,7 @@ function(panel.data,	## REQUIRED
 	lag.increment=0,
 	sgp.exact.grade.progression=FALSE,
 	projcuts.digits=NULL,
+	SGPt=NULL,
 	print.time.taken=TRUE) {
 
 	started.at=proc.time()
