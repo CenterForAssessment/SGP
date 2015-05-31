@@ -30,6 +30,7 @@ studentGrowthProjections(panel.data,
                          percentile.trajectory.values=NULL,
                          return.percentile.trajectory.values=NULL,
                          return.projection.group.identifier=NULL,
+                         return.projection.group.scale.scores=NULL,
                          isotonize=TRUE,
                          lag.increment=0,
 			 sgp.exact.grade.progression=FALSE,
@@ -127,6 +128,8 @@ studentGrowthProjections(panel.data,
   \item{return.percentile.trajectory.values}{A Boolean variable indicating whether to return the percentile trajectory values when they are supplied as targets via panel.data. Default is NULL/FALSE.
   }
   \item{return.projection.group.identifier}{A Boolean variable indicating whether to return the projection group identifier to distinguish different projection trajectories. Defaults to NULL/FALSE.
+  }
+  \item{return.projection.group.scale.scores}{A Boolean variable indicating whether to return the projection group identifier scale scores. Defaults to NULL/FALSE.
   }
   \item{isotonize}{Boolean argument (defaults to TRUE) indicating whether quantile regression results are isotonized to prevent quantile crossing following 
   the methods derived by Chernozhukov, Fernandez-Val and Glichon (2010).

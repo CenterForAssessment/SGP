@@ -23,6 +23,7 @@ function(panel.data,	## REQUIRED
 	percentile.trajectory.values=NULL,
 	return.percentile.trajectory.values=NULL,
 	return.projection.group.identifier=NULL,
+	return.projection.group.scale.scores=NULL,
 	isotonize=TRUE,
 	lag.increment=0,
 	sgp.exact.grade.progression=FALSE,
