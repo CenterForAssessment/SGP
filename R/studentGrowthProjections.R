@@ -420,7 +420,7 @@ function(panel.data,	## REQUIRED
 	###
 	############################################################################
 
-	ID <- tmp.messages <- SGP_PROJECTION_GROUP <- NULL
+	ID <- tmp.messages <- SGP_PROJECTION_GROUP <- SGP_PROJECTION_GROUP_SCALE_SCORES <- NULL
 
 	if (!calculate.sgps) {
 		tmp.messages <- c(tmp.messages, paste("\t\tNOTE: Student growth projections not calculated for", sgp.labels$my.year, sgp.labels$my.subject, "due to argument calculate.sgps=FALSE.\n"))
@@ -820,8 +820,8 @@ function(panel.data,	## REQUIRED
 	}
 
 	if (!is.null(return.projection.group.scale.scores)) {
-		ss.data[,SGP_PROJECTION_GROUP_SCALE_SCORE:=do.call(paste, c(ss.data[,seq(dim(ss.data)[2]-num.panels+1, dim(ss.data)[2]),with=FALSE], list(sep="; ")))]
-		trajectories.and.cuts <- data.table(ss.data[,c("ID", "SGP_PROJECTION_GROUP_SCALE_SCORE"), with=FALSE], key="ID")[trajectories.and.cuts]
+		ss.data[,SGP_PROJECTION_GROUP_SCALE_SCORES:=do.call(paste, c(ss.data[,seq(dim(ss.data)[2]-num.panels+1, dim(ss.data)[2]),with=FALSE], list(sep="; ")))]
+		trajectories.and.cuts <- data.table(ss.data[,c("ID", "SGP_PROJECTION_GROUP_SCALE_SCORES"), with=FALSE], key="ID")[trajectories.and.cuts]
 	}
 
 	if ("YEAR_WITHIN" %in% names(panel.data[["Panel_Data"]])) {
