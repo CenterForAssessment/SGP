@@ -800,7 +800,7 @@ function(panel.data,	## REQUIRED
 
 		if (is.null(time_lag.projection.sequence)) {
 			time_lag.projection.sequence <- lapply(time.projection.sequence, function(x) data.table(x[1]-as.numeric(panel.data$Panel_Data[[SGPt]])+365)[,paste("LAG", seq(2:length(grade.projection.sequence.matrices)), sep=""):=365])
-			time_lag.projection.sequence <- rep(list(time_lag.projections.sequence), length(grade.projection.sequence.matrices))
+			time_lag.projection.sequence <- rep(list(time_lag.projection.sequence), length(grade.projection.sequence.matrices))
 		} else {
 			time_lag.projection.sequence <- "stuff"
 		}

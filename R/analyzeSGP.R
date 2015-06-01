@@ -131,11 +131,6 @@ function(sgp_object,
 		sgp.config.drop.nonsequential.grade.progression.variables <- FALSE
 	}
 
-	if ((sgp.projections | sgp.projections.lagged | sgp.projections.baseline | sgp.projections.lagged.baseline) & is.null(SGPstateData[[state]][["Achievement"]][["Cutscores"]])) {
-		message(paste("\tNOTE: Achievement Level cutscores for state, ", state, ", are not in embedded 'SGPstateData'. Projections and Lagged Projections will not be calculated", sep=""))
-		sgp.projections <- sgp.projections.lagged <- sgp.projections.baseline <- sgp.projections.lagged.baseline <- FALSE
-	}
-	
 	lower.level.parallel.config <- TRUE
 	if (all(c("PERCENTILES", "TAUS") %in% names(parallel.config[['WORKERS']]))) {
 		lower.level.parallel.config <- FALSE
