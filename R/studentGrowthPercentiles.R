@@ -207,7 +207,7 @@ function(panel.data,         ## REQUIRED
 			Matrix_Information=list(
 				N=dim(tmp.data)[1],
 				Model=paste("rq(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=taus, data=tmp.data, method=rq.method)[['coefficients']]", sep=""),
-				SGPt=unlist(SGPt)))
+				SGPt=if (is.null(SGPt)) NULL else list(VARIABLES=unlist(SGPt), MAX_TIME=max(tmp.data$TIME, na.rm=TRUE))))
 
 		eval(parse(text=paste("new('splineMatrix', tmp.mtx, ", substring(s4Ks, 1, nchar(s4Ks)-1), "), ", substring(s4Bs, 1, nchar(s4Bs)-1), "), ",
 			"Content_Areas=list(as.character(tail(content_area.progression, k+1))), ",
@@ -429,7 +429,8 @@ function(panel.data,         ## REQUIRED
 					tail(grade.progression, k+1),
 					tail(year.progression, k+1),
 					tail(year_lags.progression, k),
-					my.matrix.order=k, my.matrix.time.dependency=SGPt)[[1]]
+					my.matrix.order=k, 
+					my.matrix.time.dependency=SGPt)[[1]]
 				
 				fitted[[paste("order_", k, sep="")]][1,] <- as.vector(.get.percentile.predictions(tmp.data, tmp.matrix))
 			}
@@ -510,7 +511,8 @@ function(panel.data,         ## REQUIRED
 						tail(year_lags.progression, k),
 						my.exact.grade.progression.sequence=TRUE,
 						return.multiple.matrices=TRUE,
-						my.matrix.order=k, my.matrix.time.dependency=SGPt), recursive=FALSE)
+						my.matrix.order=k, 
+						my.matrix.time.dependency=SGPt), recursive=FALSE)
 					
 					if (length(available.matrices) > B) sim.iters <- sample(1:length(available.matrices), B) # Stays as 1:B when length(available.matrices) == B
 					if (length(available.matrices) < B) sim.iters <- sample(1:length(available.matrices), B, replace=TRUE)

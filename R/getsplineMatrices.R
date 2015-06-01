@@ -27,7 +27,7 @@ function(
 					identical(my.matrix@Grade_Progression[[1]], as.character(tail(my.matrix.grade.progression, my.order[i]+1))) & 
 					identical(my.matrix@Time[[1]], as.character(tail(my.matrix.time.progression, my.order[i]+1))) &
 					identical(all.equal(as.numeric(my.matrix@Time_Lags[[1]]), as.numeric(tail(my.matrix.time.progression.lags, my.order[i]))), TRUE) &
-					identical(names(my.matrix@Version[['Matrix_Information']][['SGPt']]), names(my.matrix.time.dependency))
+					identical(names(my.matrix@Version[['Matrix_Information']][['SGPt']][['VARIABLES']]), names(my.matrix.time.dependency))
 			tmp.df[i,2] <-	my.order[i]
 			tmp.df[i,3] <- tail(my.matrix@Grade_Progression[[1]], 1)
 		}

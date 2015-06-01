@@ -170,7 +170,8 @@ function(panel.data,	## REQUIRED
 						tmp.years,
 						tmp.years_lags,
 						return.highest.order.matrix=TRUE,
-						my.matrix.highest.order=max.order.for.progression)
+						my.matrix.highest.order=max.order.for.progression,
+						my.matrix.time.dependency=if (is.null(SGPt)) NULL else list(TIME="TIME", TIME_LAG="TIME_LAG"))
 				if (length(tmp.matrix) == 0) {
 					# Reverse tmp.years to find COHORT or BASELINE analog
 					if (length(grep("BASELINE", sgp.labels[['my.extra.label']])) > 0) {
@@ -186,7 +187,8 @@ function(panel.data,	## REQUIRED
 						tmp.years2,
 						tmp.years_lags,
 						return.highest.order.matrix=TRUE,
-						my.matrix.highest.order=max.order.for.progression)
+						my.matrix.highest.order=max.order.for.progression,
+						my.matrix.time.dependency=if (is.null(SGPt)) NULL else list(TIME="TIME", TIME_LAG="TIME_LAG"))
 					if (length(tmp.matrix) == 0) next
 					tmp.matrix[[1]]@Time[[1]] <- tmp.years  # Overwrite @Time slot to make function think the type is consistent
 				}
@@ -731,19 +733,25 @@ function(panel.data,	## REQUIRED
 	grade.content_area.progression <- paste(content_area.progression, paste("GRADE", grade.progression, sep="_"), sep=".")
 	grade.content_area.projection.sequence <- paste(content_area.projection.sequence, paste("GRADE", grade.projection.sequence, sep="_"), sep=".")
 	tmp.index <- seq(which(tail(grade.content_area.progression, 1)==grade.content_area.projection.sequence)+1, length(grade.projection.sequence))
+
 	if (!is.null(max.forward.progression.grade)) {
 		tmp.index <- intersect(tmp.index, which(sapply(grade.projection.sequence, function(x) type.convert(x, as.is=TRUE) <= type.convert(as.character(max.forward.progression.grade), as.is=TRUE))))
 	}
+
 	if (!is.null(max.forward.progression.years)) tmp.index <- head(tmp.index, max.forward.progression.years)
+
 	grade.projection.sequence <- grade.projection.sequence[tmp.index]
 	content_area.projection.sequence <- content_area.projection.sequence[tmp.index]
+
 	if (is.null(year_lags.projection.sequence)) { ### NOTE same length as grade.projection.sequence for lag between progression and projection sequence
 		if (is.numeric(type.convert(grade.projection.sequence))) {
 			year_lags.projection.sequence <- diff(as.numeric(c(tail(grade.progression, 1), grade.projection.sequence)))
 		} else {
 			year_lags.projection.sequence <- rep(1, length(grade.projection.sequence))
 		}
-	} else year_lags.projection.sequence <- year_lags.projection.sequence[tmp.index-1]
+	} else {
+		year_lags.projection.sequence <- year_lags.projection.sequence[tmp.index-1]
+	}
 	grade.content_area.projection.sequence <- grade.content_area.projection.sequence[tmp.index]
 
 	### Test to see if ss.data has cases to analyze and configuration has elements to answer
@@ -776,6 +784,14 @@ function(panel.data,	## REQUIRED
 							year_lags.projection.sequence,
 							sgp.exact.grade.progression) 
 
+
+	### Calculate time.projection.sequence and time_lag.projection.sequence (for SGPt)
+
+	if (!is.null(SGPt)) {
+		time.projection.sequence <- "stuff"
+		
+		time_lag.projection.sequence <- "stuff"
+	}
 
 	### Calculate percentile trajectories
 
