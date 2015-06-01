@@ -1553,14 +1553,10 @@ function(panel.data,         ## REQUIRED
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & tf.growth.levels) setnames(quantile.data, "SGP_LEVEL", "SGP_LEVEL_BASELINE")
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & "SGP_STANDARD_ERROR" %in% names(quantile.data)) setnames(quantile.data, "SGP_STANDARD_ERROR", "SGP_BASELINE_STANDARD_ERROR")
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & identical(return.norm.group.scale.scores, TRUE)) {
-			setnames(quantile.data, "SGP_NORM_GROUP_SCALE_SCORES", "SGP_NORM_GROUP_BASELINE_SCALE_SCORES")
+			setnames(quantile.data, gsub("SGP_ORDER", "SGP_BASELINE_ORDER", names(quantile.data)))
 		}
-		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & identical(return.norm.group.identifier, TRUE)) {
-			setnames(quantile.data, "SGP_NORM_GROUP", "SGP_NORM_GROUP_BASELINE")
-		}
-		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & print.other.gp) {
-			my.tmp.names <- grep("SGP_ORDER", names(quantile.data), value=TRUE)
-			setnames(quantile.data, my.tmp.names, gsub("SGP_ORDER", "SGP_BASELINE_ORDER", my.tmp.names))
+		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & identical(return.norm.group.scale.scores, TRUE)) {
+			setnames(quantile.data, gsub("SGP_NORM_GROUP", "SGP_NORM_GROUP_BASELINE", names(quantile.data)))
 		}
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & simex.tf) setnames(quantile.data, "SGP_SIMEX", "SGP_SIMEX_BASELINE")
 
@@ -1568,8 +1564,6 @@ function(panel.data,         ## REQUIRED
 			quantile.data <- data.table(panel.data[["Panel_Data"]][,c("ID", names(additional.vnames.to.return)), with=FALSE], key="ID")[quantile.data]
 			setnames(quantile.data, names(additional.vnames.to.return), unlist(additional.vnames.to.return))
 		}
-
-		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & identical(print.sgp.order, TRUE)) setnames(quantile.data, "SGP_ORDER", "SGP_BASELINE_ORDER")
 
 		if (!return.prior.scale.score) {
 			quantile.data[,SCALE_SCORE_PRIOR:=NULL]

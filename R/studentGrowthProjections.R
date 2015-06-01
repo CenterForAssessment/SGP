@@ -7,6 +7,8 @@ function(panel.data,	## REQUIRED
 	grade.projection.sequence=NULL,
 	content_area.projection.sequence=NULL,
 	year_lags.projection.sequence=NULL,
+	time.projection.sequence=NULL,
+	time_lag.projection.sequence=NULL,
 	max.forward.progression.years=NULL,
 	max.forward.progression.grade=NULL,
 	max.order.for.progression=NULL,
@@ -141,7 +143,8 @@ function(panel.data,	## REQUIRED
 							grade.projection.sequence, 
 							content_area.projection.sequence, 
 							year_lags.projection.sequence,
-							sgp.exact.grade.progression) {
+							sgp.exact.grade.progression,
+							SGPt) {
 
 		add.missing.taus.to.matrix <- function(my.matrix) {
 			augmented.mtx <- matrix(NA, nrow=nrow(my.matrix), ncol=100)
@@ -782,15 +785,25 @@ function(panel.data,	## REQUIRED
 							grade.projection.sequence, 
 							content_area.projection.sequence,
 							year_lags.projection.sequence,
-							sgp.exact.grade.progression) 
+							sgp.exact.grade.progression,
+							SGPt) 
 
 
 	### Calculate time.projection.sequence and time_lag.projection.sequence (for SGPt)
 
 	if (!is.null(SGPt)) {
-		time.projection.sequence <- "stuff"
-		
-		time_lag.projection.sequence <- "stuff"
+		if (is.null(time.projection.sequence)) {
+			time.projection.sequence <- lapply(grade.projection.sequence.matrices, function(x) sapply(x, function(y) y@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]))
+		} else {
+			time.projection.sequence <- rep(list(time.projection.sequence), length(grade.projection.sequence.matrices))
+		}
+
+		if (is.null(time_lag.projection.sequence)) {
+			time_lag.projection.sequence <- lapply(time.projection.sequence, function(x) data.table(x[1]-as.numeric(panel.data$Panel_Data[[SGPt]])+365)[,paste("LAG", seq(2:length(grade.projection.sequence.matrices)), sep=""):=365])
+			time_lag.projection.sequence <- rep(list(time_lag.projections.sequence), length(grade.projection.sequence.matrices))
+		} else {
+			time_lag.projection.sequence <- "stuff"
+		}
 	}
 
 	### Calculate percentile trajectories

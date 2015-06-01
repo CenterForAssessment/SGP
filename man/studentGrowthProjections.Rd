@@ -14,6 +14,8 @@ studentGrowthProjections(panel.data,
                          grade.projection.sequence=NULL,
                          content_area.projection.sequence=NULL,
                          year_lags.projection.sequence=NULL,
+                         time.projection.sequence=NULL,
+                         time_lag.projection.sequence=NULL,
                          max.forward.progression.years=NULL,
                          max.forward.progression.grade=NULL, 
                          max.order.for.progression,  
@@ -64,6 +66,12 @@ studentGrowthProjections(panel.data,
   \item{content_area.projection.sequence}{Argument to manually supply content area sequence over which projection is made. Defaults to NULL and assumes current year content area is repeated going forward.
   }
   \item{year_lags.projection.sequence}{Argument to manually supply year lags sequence over which projection is made. Length of supplied sequence should be 1 less than length of supplied 'grade.projection.sequence' and 'content_area.projection.sequence'. Defaults to NULL and assumes annual (1 year lags).
+  }
+  \item{time.projection.sequence}{Argument to manually supply SGPt time.projection sequence that coefficient matrices utilize to produce percentile predictions.
+    Defaults to NULL and utilizes splineMatrix information.
+  }
+  \item{time_lag.projection.sequence}{Argument to manually supply SGPt time_lag.projection sequence that coefficient matrices utilize to produce percentile predictions.
+    Defaults to NULL and infers lags based upon an annual progression.
   }
   \item{max.forward.progression.years}{The MAXIMUM number of years/grades/time periods to project forward conditional upon available coefficient matrices. If missing/NULL (the default), function
   will project forward as far as allowed by available coefficient matrices. 
