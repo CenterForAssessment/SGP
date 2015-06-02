@@ -545,7 +545,7 @@ function(panel.data,	## REQUIRED
 				tf.cutscores <- FALSE
 			}
 			if (is.null(names(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]))) {
-				tmp.messages <- c(tmp.messages, "\t\tNOTE: Cutscores are currently not implemented for the state indicated. \nPlease contact the SGP package administrator to have your cutscores included in the package.\n")
+				tmp.messages <- c(tmp.messages, "\t\tNOTE: Cutscores are currently not implemented for the state indicated.\n\t\t\tPlease contact the SGP package administrator to have your cutscores included in the package.\n")
 				tf.cutscores <- FALSE
 			}
 			if (!sgp.labels$my.subject %in% unique(sapply(names(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]), function(x) strsplit(x, "[.]")[[1]][1], USE.NAMES=FALSE))) {
