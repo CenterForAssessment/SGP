@@ -7,8 +7,6 @@ function(panel.data,	## REQUIRED
 	grade.projection.sequence=NULL,
 	content_area.projection.sequence=NULL,
 	year_lags.projection.sequence=NULL,
-	time.projection.sequence=NULL,
-	time_lag.projection.sequence=NULL,
 	max.forward.progression.years=NULL,
 	max.forward.progression.grade=NULL,
 	max.order.for.progression=NULL,
@@ -209,7 +207,7 @@ function(panel.data,	## REQUIRED
 	.get.percentile.trajectories <- function(ss.data, projection.matrices) {
 
 		tmp.percentile.trajectories <- list()
-		completed.ids <- TEMP_1 <- TEMP_2 <-NULL
+		completed.ids <- TEMP_1 <- TEMP_2 <- TIME <- TIME_LAG <- NULL
 
 		for (i in seq_along(projection.matrices)) {
 			if (any(!ss.data[[1]] %in% completed.ids)) {
@@ -219,6 +217,7 @@ function(panel.data,	## REQUIRED
 							head(projection.matrices[[i]][[1]]@Content_Areas[[1]], -1), 
 							subset.tf=!(ss.data[[1]] %in% completed.ids),
 							equated.year=yearIncrement(sgp.projections.equated[['Year']], -1))
+
 				if (dim(tmp.dt)[1] > 0) {
 					completed.ids <- c(unique(tmp.dt[[1]]), completed.ids)
 					tmp.dt <- tmp.dt[list(rep(tmp.dt[[1]], each=100))]
@@ -227,23 +226,29 @@ function(panel.data,	## REQUIRED
 					for (j in seq_along(projection.matrices[[i]])) {
 						tmp.matrix <- projection.matrices[[i]][[j]]
 						mod <- character()
-						int <- "cbind(rep(1, dim(tmp.dt)[1]),"
+						int <- "data.table(ID=tmp.dt[[1]], rep(1, dim(tmp.dt)[1]),"
 						for (k in seq_along(projection.matrices[[i]][[j]]@Time_Lags[[1]])) {
 							knt <- paste("tmp.matrix@Knots[[", k, "]]", sep="")
 							bnd <- paste("tmp.matrix@Boundaries[[", k, "]]", sep="")
 							mod <- paste(mod, ", bs(tmp.dt[[", dim(tmp.dt)[2]-k+1, "]], knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
 						}
 
+						tmp.scores <- eval(parse(text=paste(int, substring(mod, 2), ", key='ID')", sep="")))
+
 						if (!is.null(SGPt)) {
-							modSGPt <- paste(", time.projection.sequence[[", i, "]][[", j, "]], time_lag.projection.sequence[[", i, "]][[", j, "]]", sep="")
-						} else {
-							modSGPt <- NULL
+							tmp.scores[,TIME:=tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]]
+							if (j==1) {
+								tmp.scores <- data.table(panel.data$Panel_Data[,c("ID", SGPt), with=FALSE], key="ID")[tmp.scores]
+								tmp.scores[,TIME_LAG:=TIME-as.numeric(get(SGPt))+365]
+								tmp.scores[,SGPt:=NULL, with=FALSE]	
+							} else {
+								tmp.scores[,TIME_LAG:=365]
+							}
 						}
 
-						tmp.scores <- eval(parse(text=paste(int, substring(mod, 2), modSGPt, ")", sep="")))
-
 						for (m in seq(100)) {
-							tmp.dt[m+100*(seq(dim(tmp.dt)[1]/100)-1), TEMP_1:=tmp.scores[m+100*(seq(dim(tmp.dt)[1]/100)-1),] %*% tmp.matrix@.Data[,m]]
+							tmp.dt[m+100*(seq(dim(tmp.dt)[1]/100)-1), 
+								TEMP_1:=as.matrix(tmp.scores[,-1,with=FALSE])[m+100*(seq(dim(tmp.dt)[1]/100)-1),] %*% tmp.matrix@.Data[,m]]
 						}
 
 						tmp.dt[,TEMP_2:=.smooth.bound.iso.row(
@@ -794,24 +799,6 @@ function(panel.data,	## REQUIRED
 							sgp.exact.grade.progression,
 							SGPt) 
 
-
-	### Calculate time.projection.sequence and time_lag.projection.sequence (for SGPt)
-
-	if (!is.null(SGPt)) {
-		if (is.null(time.projection.sequence)) {
-			time.projection.sequence <- lapply(grade.projection.sequence.matrices, function(x) sapply(x, function(y) y@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]))
-		} else {
-			time.projection.sequence <- rep(list(time.projection.sequence), length(grade.projection.sequence.matrices))
-		}
-
-		if (is.null(time_lag.projection.sequence)) {
-			time_lag.projection.sequence <- 
-				data.table(time.projection.sequence[[1]][1]-as.numeric(panel.data$Panel_Data[[SGPt]])+365)[,paste("LAG", seq(2:length(grade.projection.sequence.matrices)), sep=""):=365]
-			time_lag.projection.sequence <- rep(list(time_lag.projection.sequence), length(grade.projection.sequence.matrices))
-		} else {
-			time_lag.projection.sequence <- "stuff"
-		}
-	}
 
 	### Calculate percentile trajectories
 
