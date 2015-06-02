@@ -234,7 +234,13 @@ function(panel.data,	## REQUIRED
 							mod <- paste(mod, ", bs(tmp.dt[[", dim(tmp.dt)[2]-k+1, "]], knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
 						}
 
-						tmp.scores <- eval(parse(text=paste(int, substring(mod, 2), ")", sep="")))
+						if (!is.null(SGPt)) {
+							modSGPt <- paste(", time.projection.sequence[[", i, "]][[", j, "]], time_lag.projection.sequence[[", i, "]][[", j, "]]", sep="")
+						} else {
+							modSGPt <- NULL
+						}
+
+						tmp.scores <- eval(parse(text=paste(int, substring(mod, 2), modSGPt, ")", sep="")))
 
 						for (m in seq(100)) {
 							tmp.dt[m+100*(seq(dim(tmp.dt)[1]/100)-1), TEMP_1:=tmp.scores[m+100*(seq(dim(tmp.dt)[1]/100)-1),] %*% tmp.matrix@.Data[,m]]
@@ -799,7 +805,8 @@ function(panel.data,	## REQUIRED
 		}
 
 		if (is.null(time_lag.projection.sequence)) {
-			time_lag.projection.sequence <- lapply(time.projection.sequence, function(x) data.table(x[1]-as.numeric(panel.data$Panel_Data[[SGPt]])+365)[,paste("LAG", seq(2:length(grade.projection.sequence.matrices)), sep=""):=365])
+			time_lag.projection.sequence <- 
+				data.table(time.projection.sequence[[1]][1]-as.numeric(panel.data$Panel_Data[[SGPt]])+365)[,paste("LAG", seq(2:length(grade.projection.sequence.matrices)), sep=""):=365]
 			time_lag.projection.sequence <- rep(list(time_lag.projection.sequence), length(grade.projection.sequence.matrices))
 		} else {
 			time_lag.projection.sequence <- "stuff"
