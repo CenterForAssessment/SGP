@@ -24,6 +24,7 @@ function(panel.data,	## REQUIRED
 	return.percentile.trajectory.values=NULL,
 	return.projection.group.identifier=NULL,
 	return.projection.group.scale.scores=NULL,
+	return.projection.group.dates=NULL,
 	isotonize=TRUE,
 	lag.increment=0,
 	sgp.exact.grade.progression=FALSE,
@@ -845,6 +846,11 @@ function(panel.data,	## REQUIRED
 	if (!is.null(return.projection.group.scale.scores)) {
 		ss.data[,SGP_PROJECTION_GROUP_SCALE_SCORES:=do.call(paste, c(ss.data[,seq(dim(ss.data)[2]-num.panels+1, dim(ss.data)[2]),with=FALSE], list(sep="; ")))]
 		trajectories.and.cuts <- data.table(ss.data[,c("ID", "SGP_PROJECTION_GROUP_SCALE_SCORES"), with=FALSE], key="ID")[trajectories.and.cuts]
+	}
+
+	if (!is.null(return.projection.group.dates)) {
+
+
 	}
 
 	if ("YEAR_WITHIN" %in% names(panel.data[["Panel_Data"]])) {
