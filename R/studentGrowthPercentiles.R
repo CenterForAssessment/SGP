@@ -1477,12 +1477,12 @@ function(panel.data,         ## REQUIRED
 		}
 
 		if (!is.null(return.norm.group.dates)) {
-			my.tmp <- data.table(Panel_Data[,c("ID", grep(return.norm.group.dates, names(Panel_Data), value=TRUE)), with=FALSE], key="ID")[quantile.data$ID,-1,with=FALSE]
+			my.tmp <- data.table(Panel_Data[,c("ID", grep(return.norm.group.dates, names(Panel_Data), value=TRUE)), with=FALSE], key="ID")[list(quantile.data$ID),-1,with=FALSE]
 			quantile.data[,SGP_NORM_GROUP_DATES:=gsub("NA; ", "", do.call(paste, c(as.data.table(lapply(my.tmp, function(x) as.Date(x, origin="1970-01-01"))), list(sep="; "))))]
 		}
 
 		if (return.norm.group.scale.scores) {
-			my.tmp <- data.table(Panel_Data[,c("ID", names(tmp.data)[-1]), with=FALSE], key="ID")[quantile.data$ID,-1,with=FALSE]
+			my.tmp <- data.table(ss.data[,c("ID", names(tmp.data)[-1]), with=FALSE], key="ID")[list(quantile.data$ID),-1,with=FALSE]
 			quantile.data[,SGP_NORM_GROUP_SCALE_SCORES:=gsub("NA; ", "", do.call(paste, c(my.tmp, list(sep="; "))))]
 		}
 
