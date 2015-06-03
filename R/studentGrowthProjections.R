@@ -437,7 +437,7 @@ function(panel.data,	## REQUIRED
 	###
 	############################################################################
 
-	ID <- tmp.messages <- SGP_PROJECTION_GROUP <- SGP_PROJECTION_GROUP_SCALE_SCORES <- NULL
+	ID <- tmp.messages <- SGP_PROJECTION_GROUP <- SGP_PROJECTION_GROUP_SCALE_SCORES <- SGP_PROJECTION_GROUP_DATES <- NULL
 
 	if (!calculate.sgps) {
 		tmp.messages <- c(tmp.messages, paste("\t\tNOTE: Student growth projections not calculated for", sgp.labels$my.year, sgp.labels$my.subject, "due to argument calculate.sgps=FALSE.\n"))
@@ -607,6 +607,14 @@ function(panel.data,	## REQUIRED
 
 	if (is.null(projection.unit.label)) {
 		projection.unit.label <- projection.unit
+	}
+
+	if (!is.null(return.projection.group.dates) && is.null(SGPt)) {
+		return.projection.group.dates <- NULL
+	}
+
+	if (identical(return.projection.group.dates, TRUE)) {
+		return.projection.group.dates <- "DATE[.]"
 	}
 
 
@@ -844,13 +852,14 @@ function(panel.data,	## REQUIRED
 	}
 
 	if (!is.null(return.projection.group.scale.scores)) {
-		ss.data[,SGP_PROJECTION_GROUP_SCALE_SCORES:=do.call(paste, c(ss.data[,seq(dim(ss.data)[2]-num.panels+1, dim(ss.data)[2]),with=FALSE], list(sep="; ")))]
-		trajectories.and.cuts <- data.table(ss.data[,c("ID", "SGP_PROJECTION_GROUP_SCALE_SCORES"), with=FALSE], key="ID")[trajectories.and.cuts]
+		my.tmp <- data.table(ss.data[,c("ID", grep("SS[.]", names(ss.data), value=TRUE)), with=FALSE], key="ID")[list(trajectories.and.cuts$ID),-1,with=FALSE]
+		trajectories.and.cuts[,SGP_PROJECTION_GROUP_SCALE_SCORES:=gsub("NA; ", "", do.call(paste, c(my.tmp, list(sep="; "))))]
 	}
 
 	if (!is.null(return.projection.group.dates)) {
-
-
+		my.tmp <- data.table(panel.data$Panel_Data[,c("ID", grep(return.projection.group.dates, names(panel.data$Panel_Data), value=TRUE)), with=FALSE], key="ID")[
+			list(trajectories.and.cuts$ID),-1,with=FALSE]
+		trajectories.and.cuts[,SGP_PROJECTION_GROUP_DATES:=gsub("NA; ", "", do.call(paste, c(my.tmp, list(sep="; "))))]
 	}
 
 	if ("YEAR_WITHIN" %in% names(panel.data[["Panel_Data"]])) {

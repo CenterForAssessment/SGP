@@ -84,7 +84,6 @@ function(sgp_object,
 		sgp.loss.hoss.adjustment <- NULL
 	}
 
-
 	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["return.norm.group.scale.scores"]])) {
 		return.norm.group.scale.scores <- SGPstateData[[state]][["SGP_Configuration"]][["return.norm.group.scale.scores"]]
 	} else {
@@ -101,6 +100,18 @@ function(sgp_object,
 		return.projection.group.scale.scores <- SGPstateData[[state]][["SGP_Configuration"]][["return.projection.group.scale.scores"]]
 	} else {
 		return.projection.group.scale.scores <- NULL
+	}
+
+	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["return.projection.group.scale.scores"]])) {
+		return.projection.group.scale.scores <- SGPstateData[[state]][["SGP_Configuration"]][["return.projection.group.scale.scores"]]
+	} else {
+		return.projection.group.scale.scores <- NULL
+	}
+
+	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["return.projection.group.dates"]])) {
+		return.projection.group.dates <- SGPstateData[[state]][["SGP_Configuration"]][["return.projection.group.dates"]]
+	} else {
+		return.projection.group.dates <- NULL
 	}
 
 	if (!is.null(SGPstateData[[state]][["Growth"]][["Cutscores"]][["Cuts"]])) {
@@ -1099,6 +1110,7 @@ function(sgp_object,
 						projection.unit.label=sgp.projections.projection.unit.label,
 						return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 						return.projection.group.scale.scores=return.projection.group.scale.scores,
+						return.projection.group.dates=return.projection.group.dates,
 						sgp.projections.equated=sgp.projections.equated,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections"),
 						...))
@@ -1139,6 +1151,7 @@ function(sgp_object,
 						projection.unit.label=sgp.projections.projection.unit.label,
 						return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 						return.projection.group.scale.scores=return.projection.group.scale.scores,
+						return.projection.group.dates=return.projection.group.dates,
 						sgp.projections.equated=sgp.projections.equated,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections"),
 						...))
@@ -1180,6 +1193,7 @@ function(sgp_object,
 						projection.unit.label=sgp.projections.projection.unit.label,
 						return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 						return.projection.group.scale.scores=return.projection.group.scale.scores,
+						return.projection.group.dates=return.projection.group.dates,
 						sgp.projections.equated=sgp.projections.equated,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections"),
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
@@ -1237,6 +1251,7 @@ function(sgp_object,
 						projection.unit.label=sgp.projections.projection.unit.label,
 						return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 						return.projection.group.scale.scores=return.projection.group.scale.scores,
+						return.projection.group.dates=return.projection.group.dates,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.baseline"),
 						...))
 				}
@@ -1278,6 +1293,7 @@ function(sgp_object,
 						projection.unit.label=sgp.projections.projection.unit.label,
 						return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 						return.projection.group.scale.scores=return.projection.group.scale.scores,
+						return.projection.group.dates=return.projection.group.dates,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.baseline"),
 						...))
 	
@@ -1320,6 +1336,7 @@ function(sgp_object,
 						projection.unit.label=sgp.projections.projection.unit.label,
 						return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 						return.projection.group.scale.scores=return.projection.group.scale.scores,
+						return.projection.group.dates=return.projection.group.dates,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.baseline"),
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 	
@@ -1375,6 +1392,7 @@ function(sgp_object,
 						projection.unit.label=sgp.projections.projection.unit.label,
 						return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 						return.projection.group.scale.scores=return.projection.group.scale.scores,
+						return.projection.group.dates=return.projection.group.dates,
 						sgp.projections.equated=sgp.projections.equated,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.lagged"),
 						...))
@@ -1416,6 +1434,7 @@ function(sgp_object,
 						projection.unit.label=sgp.projections.projection.unit.label,
 						return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 						return.projection.group.scale.scores=return.projection.group.scale.scores,
+						return.projection.group.dates=return.projection.group.dates,
 						sgp.projections.equated=sgp.projections.equated,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.lagged"),
 						...))
@@ -1458,6 +1477,7 @@ function(sgp_object,
 						projection.unit.label=sgp.projections.projection.unit.label,
 						return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 						return.projection.group.scale.scores=return.projection.group.scale.scores,
+						return.projection.group.dates=return.projection.group.dates,
 						sgp.projections.equated=sgp.projections.equated,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.lagged"),
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
@@ -1513,6 +1533,7 @@ function(sgp_object,
 						projection.unit.label=sgp.projections.projection.unit.label,
 						return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 						return.projection.group.scale.scores=return.projection.group.scale.scores,
+						return.projection.group.dates=return.projection.group.dates,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.lagged.baseline"),
 						...))
 				}
@@ -1553,6 +1574,7 @@ function(sgp_object,
 					projection.unit.label=sgp.projections.projection.unit.label,
 					return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 					return.projection.group.scale.scores=return.projection.group.scale.scores,
+					return.projection.group.dates=return.projection.group.dates,
 					SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.lagged.baseline"),
 					...))
 
@@ -1593,6 +1615,7 @@ function(sgp_object,
 					projection.unit.label=sgp.projections.projection.unit.label,
 					return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 					return.projection.group.scale.scores=return.projection.group.scale.scores,
+					return.projection.group.dates=return.projection.group.dates,
 					SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.lagged.baseline"),
 					...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 
@@ -1785,6 +1808,7 @@ function(sgp_object,
 					projection.unit.label=sgp.projections.projection.unit.label,
 					return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 					return.projection.group.scale.scores=return.projection.group.scale.scores,
+					return.projection.group.dates=return.projection.group.dates,
 					sgp.projections.equated=sgp.projections.equated,
 					SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections"),
 					...)
@@ -1829,6 +1853,7 @@ function(sgp_object,
 					projection.unit.label=sgp.projections.projection.unit.label,
 					return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 					return.projection.group.scale.scores=return.projection.group.scale.scores,
+					return.projection.group.dates=return.projection.group.dates,
 					SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.baseline"),
 					...)
 			suppressMessages(gc())
@@ -1871,6 +1896,7 @@ function(sgp_object,
 					projection.unit.label=sgp.projections.projection.unit.label,
 					return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 					return.projection.group.scale.scores=return.projection.group.scale.scores,
+					return.projection.group.dates=return.projection.group.dates,
 					sgp.projections.equated=sgp.projections.equated,
 					SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.lagged"),
 					...)
@@ -1913,6 +1939,7 @@ function(sgp_object,
 					projection.unit.label=sgp.projections.projection.unit.label,
 					return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 					return.projection.group.scale.scores=return.projection.group.scale.scores,
+					return.projection.group.dates=return.projection.group.dates,
 					SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.lagged.baseline"),
 					...)
 			suppressMessages(gc())
