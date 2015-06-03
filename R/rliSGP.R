@@ -8,6 +8,7 @@ function(sgp_object,
 	update.save.shell.only=FALSE,
 	configuration.year,
 	update.ids=NULL,
+	SGPt=NULL,
 	parallel.config=NULL) {
 
 	YEAR <- GRADE <- ID <- NEW_ID <- .EACHI <- NULL
