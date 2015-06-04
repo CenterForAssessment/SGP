@@ -24,6 +24,7 @@ function(panel.data,	## REQUIRED
 	return.percentile.trajectory.values=NULL,
 	return.projection.group.identifier=NULL,
 	return.projection.group.scale.scores=NULL,
+	return.projection.group.dates=NULL,
 	isotonize=TRUE,
 	lag.increment=0,
 	sgp.exact.grade.progression=FALSE,
@@ -141,7 +142,8 @@ function(panel.data,	## REQUIRED
 							grade.projection.sequence, 
 							content_area.projection.sequence, 
 							year_lags.projection.sequence,
-							sgp.exact.grade.progression) {
+							sgp.exact.grade.progression,
+							SGPt) {
 
 		add.missing.taus.to.matrix <- function(my.matrix) {
 			augmented.mtx <- matrix(NA, nrow=nrow(my.matrix), ncol=100)
@@ -170,7 +172,8 @@ function(panel.data,	## REQUIRED
 						tmp.years,
 						tmp.years_lags,
 						return.highest.order.matrix=TRUE,
-						my.matrix.highest.order=max.order.for.progression)
+						my.matrix.highest.order=max.order.for.progression,
+						my.matrix.time.dependency=if (is.null(SGPt)) NULL else list(TIME="TIME", TIME_LAG="TIME_LAG"))
 				if (length(tmp.matrix) == 0) {
 					# Reverse tmp.years to find COHORT or BASELINE analog
 					if (length(grep("BASELINE", sgp.labels[['my.extra.label']])) > 0) {
@@ -186,7 +189,8 @@ function(panel.data,	## REQUIRED
 						tmp.years2,
 						tmp.years_lags,
 						return.highest.order.matrix=TRUE,
-						my.matrix.highest.order=max.order.for.progression)
+						my.matrix.highest.order=max.order.for.progression,
+						my.matrix.time.dependency=if (is.null(SGPt)) NULL else list(TIME="TIME", TIME_LAG="TIME_LAG"))
 					if (length(tmp.matrix) == 0) next
 					tmp.matrix[[1]]@Time[[1]] <- tmp.years  # Overwrite @Time slot to make function think the type is consistent
 				}
@@ -204,7 +208,7 @@ function(panel.data,	## REQUIRED
 	.get.percentile.trajectories <- function(ss.data, projection.matrices) {
 
 		tmp.percentile.trajectories <- list()
-		completed.ids <- TEMP_1 <- TEMP_2 <-NULL
+		completed.ids <- TEMP_1 <- TEMP_2 <- TIME <- TIME_LAG <- NULL
 
 		for (i in seq_along(projection.matrices)) {
 			if (any(!ss.data[[1]] %in% completed.ids)) {
@@ -214,6 +218,7 @@ function(panel.data,	## REQUIRED
 							head(projection.matrices[[i]][[1]]@Content_Areas[[1]], -1), 
 							subset.tf=!(ss.data[[1]] %in% completed.ids),
 							equated.year=yearIncrement(sgp.projections.equated[['Year']], -1))
+
 				if (dim(tmp.dt)[1] > 0) {
 					completed.ids <- c(unique(tmp.dt[[1]]), completed.ids)
 					tmp.dt <- tmp.dt[list(rep(tmp.dt[[1]], each=100))]
@@ -222,17 +227,29 @@ function(panel.data,	## REQUIRED
 					for (j in seq_along(projection.matrices[[i]])) {
 						tmp.matrix <- projection.matrices[[i]][[j]]
 						mod <- character()
-						int <- "cbind(rep(1, dim(tmp.dt)[1]),"
+						int <- "data.table(ID=tmp.dt[[1]], rep(1, dim(tmp.dt)[1]),"
 						for (k in seq_along(projection.matrices[[i]][[j]]@Time_Lags[[1]])) {
 							knt <- paste("tmp.matrix@Knots[[", k, "]]", sep="")
 							bnd <- paste("tmp.matrix@Boundaries[[", k, "]]", sep="")
 							mod <- paste(mod, ", bs(tmp.dt[[", dim(tmp.dt)[2]-k+1, "]], knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
 						}
 
-						tmp.scores <- eval(parse(text=paste(int, substring(mod, 2), ")", sep="")))
+						tmp.scores <- eval(parse(text=paste(int, substring(mod, 2), ", key='ID')", sep="")))
+
+						if (!is.null(SGPt)) {
+							tmp.scores[,TIME:=tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]]
+							if (j==1) {
+								tmp.scores <- data.table(panel.data$Panel_Data[,c("ID", SGPt), with=FALSE], key="ID")[tmp.scores]
+								tmp.scores[,TIME_LAG:=TIME-as.numeric(get(SGPt))+365]
+								tmp.scores[,SGPt:=NULL, with=FALSE]	
+							} else {
+								tmp.scores[,TIME_LAG:=365]
+							}
+						}
 
 						for (m in seq(100)) {
-							tmp.dt[m+100*(seq(dim(tmp.dt)[1]/100)-1), TEMP_1:=tmp.scores[m+100*(seq(dim(tmp.dt)[1]/100)-1),] %*% tmp.matrix@.Data[,m]]
+							tmp.dt[m+100*(seq(dim(tmp.dt)[1]/100)-1), 
+								TEMP_1:=as.matrix(tmp.scores[,-1,with=FALSE])[m+100*(seq(dim(tmp.dt)[1]/100)-1),] %*% tmp.matrix@.Data[,m]]
 						}
 
 						tmp.dt[,TEMP_2:=.smooth.bound.iso.row(
@@ -420,7 +437,7 @@ function(panel.data,	## REQUIRED
 	###
 	############################################################################
 
-	ID <- tmp.messages <- SGP_PROJECTION_GROUP <- SGP_PROJECTION_GROUP_SCALE_SCORES <- NULL
+	ID <- tmp.messages <- SGP_PROJECTION_GROUP <- SGP_PROJECTION_GROUP_SCALE_SCORES <- SGP_PROJECTION_GROUP_DATES <- NULL
 
 	if (!calculate.sgps) {
 		tmp.messages <- c(tmp.messages, paste("\t\tNOTE: Student growth projections not calculated for", sgp.labels$my.year, sgp.labels$my.subject, "due to argument calculate.sgps=FALSE.\n"))
@@ -529,7 +546,7 @@ function(panel.data,	## REQUIRED
 				tf.cutscores <- FALSE
 			}
 			if (is.null(names(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]))) {
-				tmp.messages <- c(tmp.messages, "\t\tNOTE: Cutscores are currently not implemented for the state indicated. \nPlease contact the SGP package administrator to have your cutscores included in the package.\n")
+				tmp.messages <- c(tmp.messages, "\t\tNOTE: Cutscores are currently not implemented for the state indicated.\n\t\t\tPlease contact the SGP package administrator to have your cutscores included in the package.\n")
 				tf.cutscores <- FALSE
 			}
 			if (!sgp.labels$my.subject %in% unique(sapply(names(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]), function(x) strsplit(x, "[.]")[[1]][1], USE.NAMES=FALSE))) {
@@ -590,6 +607,14 @@ function(panel.data,	## REQUIRED
 
 	if (is.null(projection.unit.label)) {
 		projection.unit.label <- projection.unit
+	}
+
+	if (!is.null(return.projection.group.dates) && is.null(SGPt)) {
+		return.projection.group.dates <- NULL
+	}
+
+	if (identical(return.projection.group.dates, TRUE)) {
+		return.projection.group.dates <- "DATE[.]"
 	}
 
 
@@ -731,19 +756,25 @@ function(panel.data,	## REQUIRED
 	grade.content_area.progression <- paste(content_area.progression, paste("GRADE", grade.progression, sep="_"), sep=".")
 	grade.content_area.projection.sequence <- paste(content_area.projection.sequence, paste("GRADE", grade.projection.sequence, sep="_"), sep=".")
 	tmp.index <- seq(which(tail(grade.content_area.progression, 1)==grade.content_area.projection.sequence)+1, length(grade.projection.sequence))
+
 	if (!is.null(max.forward.progression.grade)) {
 		tmp.index <- intersect(tmp.index, which(sapply(grade.projection.sequence, function(x) type.convert(x, as.is=TRUE) <= type.convert(as.character(max.forward.progression.grade), as.is=TRUE))))
 	}
+
 	if (!is.null(max.forward.progression.years)) tmp.index <- head(tmp.index, max.forward.progression.years)
+
 	grade.projection.sequence <- grade.projection.sequence[tmp.index]
 	content_area.projection.sequence <- content_area.projection.sequence[tmp.index]
+
 	if (is.null(year_lags.projection.sequence)) { ### NOTE same length as grade.projection.sequence for lag between progression and projection sequence
 		if (is.numeric(type.convert(grade.projection.sequence))) {
 			year_lags.projection.sequence <- diff(as.numeric(c(tail(grade.progression, 1), grade.projection.sequence)))
 		} else {
 			year_lags.projection.sequence <- rep(1, length(grade.projection.sequence))
 		}
-	} else year_lags.projection.sequence <- year_lags.projection.sequence[tmp.index-1]
+	} else {
+		year_lags.projection.sequence <- year_lags.projection.sequence[tmp.index-1]
+	}
 	grade.content_area.projection.sequence <- grade.content_area.projection.sequence[tmp.index]
 
 	### Test to see if ss.data has cases to analyze and configuration has elements to answer
@@ -774,7 +805,8 @@ function(panel.data,	## REQUIRED
 							grade.projection.sequence, 
 							content_area.projection.sequence,
 							year_lags.projection.sequence,
-							sgp.exact.grade.progression) 
+							sgp.exact.grade.progression,
+							SGPt) 
 
 
 	### Calculate percentile trajectories
@@ -820,8 +852,14 @@ function(panel.data,	## REQUIRED
 	}
 
 	if (!is.null(return.projection.group.scale.scores)) {
-		ss.data[,SGP_PROJECTION_GROUP_SCALE_SCORES:=do.call(paste, c(ss.data[,seq(dim(ss.data)[2]-num.panels+1, dim(ss.data)[2]),with=FALSE], list(sep="; ")))]
-		trajectories.and.cuts <- data.table(ss.data[,c("ID", "SGP_PROJECTION_GROUP_SCALE_SCORES"), with=FALSE], key="ID")[trajectories.and.cuts]
+		my.tmp <- data.table(ss.data[,c("ID", grep("SS[.]", names(ss.data), value=TRUE)), with=FALSE], key="ID")[list(trajectories.and.cuts$ID),-1,with=FALSE]
+		trajectories.and.cuts[,SGP_PROJECTION_GROUP_SCALE_SCORES:=gsub("NA; ", "", do.call(paste, c(my.tmp, list(sep="; "))))]
+	}
+
+	if (!is.null(return.projection.group.dates)) {
+		my.tmp <- data.table(panel.data$Panel_Data[,c("ID", grep(return.projection.group.dates, names(panel.data$Panel_Data), value=TRUE)), with=FALSE], key="ID")[
+			list(trajectories.and.cuts$ID),-1,with=FALSE]
+		trajectories.and.cuts[,SGP_PROJECTION_GROUP_DATES:=gsub("NA; ", "", do.call(paste, c(my.tmp, list(sep="; "))))]
 	}
 
 	if ("YEAR_WITHIN" %in% names(panel.data[["Panel_Data"]])) {

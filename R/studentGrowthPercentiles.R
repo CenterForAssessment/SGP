@@ -38,6 +38,7 @@ function(panel.data,         ## REQUIRED
          return.prior.scale.score.standardized=TRUE,
          return.norm.group.identifier=TRUE,
          return.norm.group.scale.scores=NULL,
+         return.norm.group.dates=NULL,
          return.panel.data=identical(parent.frame(), .GlobalEnv),
          print.time.taken=TRUE,
          parallel.config=NULL,
@@ -207,7 +208,7 @@ function(panel.data,         ## REQUIRED
 			Matrix_Information=list(
 				N=dim(tmp.data)[1],
 				Model=paste("rq(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=taus, data=tmp.data, method=rq.method)[['coefficients']]", sep=""),
-				SGPt=unlist(SGPt)))
+				SGPt=if (is.null(SGPt)) NULL else list(VARIABLES=unlist(SGPt), MAX_TIME=max(tmp.data$TIME, na.rm=TRUE))))
 
 		eval(parse(text=paste("new('splineMatrix', tmp.mtx, ", substring(s4Ks, 1, nchar(s4Ks)-1), "), ", substring(s4Bs, 1, nchar(s4Bs)-1), "), ",
 			"Content_Areas=list(as.character(tail(content_area.progression, k+1))), ",
@@ -429,7 +430,8 @@ function(panel.data,         ## REQUIRED
 					tail(grade.progression, k+1),
 					tail(year.progression, k+1),
 					tail(year_lags.progression, k),
-					my.matrix.order=k, my.matrix.time.dependency=SGPt)[[1]]
+					my.matrix.order=k, 
+					my.matrix.time.dependency=SGPt)[[1]]
 				
 				fitted[[paste("order_", k, sep="")]][1,] <- as.vector(.get.percentile.predictions(tmp.data, tmp.matrix))
 			}
@@ -510,7 +512,8 @@ function(panel.data,         ## REQUIRED
 						tail(year_lags.progression, k),
 						my.exact.grade.progression.sequence=TRUE,
 						return.multiple.matrices=TRUE,
-						my.matrix.order=k, my.matrix.time.dependency=SGPt), recursive=FALSE)
+						my.matrix.order=k, 
+						my.matrix.time.dependency=SGPt), recursive=FALSE)
 					
 					if (length(available.matrices) > B) sim.iters <- sample(1:length(available.matrices), B) # Stays as 1:B when length(available.matrices) == B
 					if (length(available.matrices) < B) sim.iters <- sample(1:length(available.matrices), B, replace=TRUE)
@@ -967,11 +970,19 @@ function(panel.data,         ## REQUIRED
 		}
 	}
 
+	if (is.null(SGPt) && !is.null(return.norm.group.dates)) {
+		return.norm.group.dates <- NULL
+	}
+
+	if (identical(return.norm.group.dates, TRUE)) {
+		return.norm.group.dates <- "TIME[.]"
+	}
+
 	### Create object to store the studentGrowthPercentiles objects
 
 	tmp.objects <- c("Coefficient_Matrices", "Cutscores", "Goodness_of_Fit", "Knots_Boundaries", "Panel_Data", "SGPercentiles", "SGProjections", "Simulated_SGPs") 
 	Coefficient_Matrices <- Cutscores <- Goodness_of_Fit <- Knots_Boundaries <- Panel_Data <- SGPercentiles <- SGProjections <- Simulated_SGPs <- SGP_STANDARD_ERROR <- Verbose_Messages <- NULL
-	SGP_SIMEX <- SGP_NORM_GROUP_SCALE_SCORES <- SGP_NORM_GROUP <- NULL
+	SGP_SIMEX <- SGP_NORM_GROUP_SCALE_SCORES <- SGP_NORM_GROUP_DATES <- SGP_NORM_GROUP <- NULL
 
 	if (identical(class(panel.data), "list")) {
 		for (i in tmp.objects) {
@@ -1379,7 +1390,6 @@ function(panel.data,         ## REQUIRED
 				}
 				if ((is.character(goodness.of.fit) | goodness.of.fit==TRUE | return.prior.scale.score) & j==1) prior.ss <- tmp.data[[dim(tmp.data)[2]-1]]
 				if (exact.grade.progression.sequence & return.prior.scale.score) prior.ss <- tmp.data[[dim(tmp.data)[2]-1]]
-				if (!is.null(return.norm.group.scale.scores)) tmp.quantiles[[j]][, SGP_NORM_GROUP_SCALE_SCORES:=do.call(paste, c(tmp.data[,-1,with=FALSE], list(sep="; ")))]
 			} ### END if (dim(tmp.data)[1] > 0)
 		} ## END j loop
 
@@ -1466,6 +1476,16 @@ function(panel.data,         ## REQUIRED
 			}
 		}
 
+		if (!is.null(return.norm.group.dates)) {
+			my.tmp <- data.table(Panel_Data[,c("ID", grep(return.norm.group.dates, names(Panel_Data), value=TRUE)), with=FALSE], key="ID")[list(quantile.data$ID),-1,with=FALSE]
+			quantile.data[,SGP_NORM_GROUP_DATES:=gsub("NA; ", "", do.call(paste, c(as.data.table(lapply(my.tmp, function(x) as.Date(x, origin="1970-01-01"))), list(sep="; "))))]
+		}
+
+		if (return.norm.group.scale.scores) {
+			my.tmp <- data.table(ss.data[,c("ID", names(tmp.data)[-1]), with=FALSE], key="ID")[list(quantile.data$ID),-1,with=FALSE]
+			quantile.data[,SGP_NORM_GROUP_SCALE_SCORES:=gsub("NA; ", "", do.call(paste, c(my.tmp, list(sep="; "))))]
+		}
+
 		if ((is.character(goodness.of.fit) | goodness.of.fit==TRUE) & dim(quantile.data)[1] <= goodness.of.fit.minimum.n) {
 			message("\tNOTE: Due to small number of cases (", dim(quantile.data)[1], ") no goodness of fit plots produced.")
 			goodness.of.fit <- FALSE
@@ -1549,25 +1569,15 @@ function(panel.data,         ## REQUIRED
 
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, "SGP", "SGP_BASELINE")
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & tf.growth.levels) setnames(quantile.data, "SGP_LEVEL", "SGP_LEVEL_BASELINE")
-		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & "SGP_STANDARD_ERROR" %in% names(quantile.data)) setnames(quantile.data, "SGP_STANDARD_ERROR", "SGP_BASELINE_STANDARD_ERROR")
-		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & identical(return.norm.group.scale.scores, TRUE)) {
-			setnames(quantile.data, "SGP_NORM_GROUP_SCALE_SCORES", "SGP_NORM_GROUP_BASELINE_SCALE_SCORES")
-		}
-		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & identical(return.norm.group.identifier, TRUE)) {
-			setnames(quantile.data, "SGP_NORM_GROUP", "SGP_NORM_GROUP_BASELINE")
-		}
-		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & print.other.gp) {
-			my.tmp.names <- grep("SGP_ORDER", names(quantile.data), value=TRUE)
-			setnames(quantile.data, my.tmp.names, gsub("SGP_ORDER", "SGP_BASELINE_ORDER", my.tmp.names))
-		}
+		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, gsub("SGP_STANDARD_ERROR", "SGP_BASELINE_STANDARD_ERROR", names(quantile.data)))
+		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, gsub("SGP_ORDER", "SGP_BASELINE_ORDER", names(quantile.data)))
+		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, gsub("SGP_NORM_GROUP", "SGP_NORM_GROUP_BASELINE", names(quantile.data)))
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & simex.tf) setnames(quantile.data, "SGP_SIMEX", "SGP_SIMEX_BASELINE")
 
 		if (!is.null(additional.vnames.to.return)) {
 			quantile.data <- data.table(panel.data[["Panel_Data"]][,c("ID", names(additional.vnames.to.return)), with=FALSE], key="ID")[quantile.data]
 			setnames(quantile.data, names(additional.vnames.to.return), unlist(additional.vnames.to.return))
 		}
-
-		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & identical(print.sgp.order, TRUE)) setnames(quantile.data, "SGP_ORDER", "SGP_BASELINE_ORDER")
 
 		if (!return.prior.scale.score) {
 			quantile.data[,SCALE_SCORE_PRIOR:=NULL]

@@ -30,6 +30,7 @@ function(what_sgp_object=NULL,
 	goodness.of.fit.print=TRUE,
 	parallel.config=NULL,
 	sgp.sqlite=NULL,
+	SGPt=NULL,
 	...) {
 
 	SGPstateData <- SGP::SGPstateData ### Needed due to possible assignment of values to SGPstateData

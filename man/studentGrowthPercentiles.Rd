@@ -43,11 +43,12 @@ studentGrowthPercentiles(panel.data,
                          isotonize=TRUE,                                 
                          convert.using.loss.hoss=TRUE,                
                          goodness.of.fit=TRUE,
-			goodness.of.fit.minimum.n=NULL,
+                         goodness.of.fit.minimum.n=NULL,
                          return.prior.scale.score=TRUE,
                          return.prior.scale.score.standardized=TRUE,
                          return.norm.group.identifier=TRUE,
                          return.norm.group.scale.scores=NULL,
+                         return.norm.group.dates=NULL,
                          return.panel.data=identical(parent.frame(), .GlobalEnv),
                          print.time.taken=TRUE,
                          parallel.config=NULL,
@@ -175,13 +176,16 @@ to calculate the lags/differences based upon the supplied years.
   \item{return.prior.scale.score}{Boolean argument (defaults to TRUE) indicating whether to include the prior scale score in the SGP data output. Useful for examining relationship between prior 
    achievement and student growth.
   }
-  \item{return.prior.scale.score.standardized}{Boolean argument (default to TRUE) indicating whether to include the standardized prior scale score in the SGP data output. 
+  \item{return.prior.scale.score.standardized}{Boolean argument (defaults to TRUE) indicating whether to include the standardized prior scale score in the SGP data output. 
 Useful for examining relationship between prior achievement and student growth.
   }
-  \item{return.norm.group.identifier}{Boolean argument (default to TRUE) indicating whether to include the content areas and years that form students' specific norm group in the SGP data output.
+  \item{return.norm.group.identifier}{Boolean argument (defaults to TRUE) indicating whether to include the content areas and years that form students' specific norm group in the SGP data output.
   }
-  \item{return.norm.group.scale.scores}{Boolean argument (defaults. to NULL) indicating whether to return a comma separated character vector of the scores associated with the SGP_NORM_GROUP to
+  \item{return.norm.group.scale.scores}{Boolean argument (defaults to NULL) indicating whether to return a semi-colon separated character vector of the scores associated with the SGP_NORM_GROUP to
   which the student belongs.
+  }
+  \item{return.norm.group.dates}{Boolean argument or character string (defaults. to NULL) indicating whether to return a semi-colon separated character vector of the dates associated 
+  with time dependent SGPt calculations. If TRUE is supplied, 'DATE' is the assumed name for the date variable.
   }
   \item{return.panel.data}{Boolean argument indicating whether to return the original data provided in \code{panel.data$Panel_Data} in the SGP list of results. 
   Defaults to 'identical(parent.frame(), .GlobalEnv)': If the parent environment from which the function is called is .GlobalEnv, then FALSE, otherwise TRUE.
