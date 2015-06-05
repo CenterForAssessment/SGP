@@ -64,10 +64,10 @@ function(sgp_object,
 		}
 	}
 
-	getRLIConfig <- function(content_areas, configuration.year, testing.window) {
+	getRLIConfig <- function(content_areas, configuration.year, testing.window, SGPt) {
 		tmp.list <- list()
 		for (i in content_areas) {
-			tmp.list[[i]] <- SGP::SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, i, testing.window)
+			tmp.list[[i]] <- SGP::SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, i, testing.window, SGPt)
 		}
 		return(unlist(tmp.list, recursive=FALSE))
 	}
@@ -126,7 +126,7 @@ function(sgp_object,
 			goodness.of.fit.print=FALSE,
 			update.old.data.with.new=FALSE,
 			parallel.config=parallel.config,
-			sgp.config=getRLIConfig(content_areas, configuration.year, testing.window))
+			sgp.config=getRLIConfig(content_areas, configuration.year, testing.window, SGPt))
 
 		if (!is.null(update.ids)) {
 			update.shell.name <- paste(state, "SGP_UPDATE_SHELL", sep="_")
@@ -173,7 +173,7 @@ function(sgp_object,
 					update.old.data.with.new=TRUE,
 					goodness.of.fit.print=FALSE,
 					parallel.config=parallel.config,
-					sgp.config=getRLIConfig(content_areas, configuration.year, testing.window))
+					sgp.config=getRLIConfig(content_areas, configuration.year, testing.window, SGPt))
 
 				### Create and save new UPDATE_SHELL
 
@@ -228,7 +228,7 @@ function(sgp_object,
 					update.old.data.with.new=FALSE,
 					goodness.of.fit.print=FALSE,
 					parallel.config=parallel.config,
-					sgp.config=getRLIConfig(content_areas, configuration.year, "EARLY_SPRING"))
+					sgp.config=getRLIConfig(content_areas, configuration.year, "EARLY_SPRING", SGPt))
 
 				### Convert and save coefficient matrices
 
@@ -258,7 +258,7 @@ function(sgp_object,
 					update.old.data.with.new=TRUE,
 					goodness.of.fit.print=FALSE,
 					parallel.config=parallel.config,
-					sgp.config=getRLIConfig(content_areas, configuration.year, testing.window))
+					sgp.config=getRLIConfig(content_areas, configuration.year, testing.window, SGPt))
 
 
 				### Create and save new UPDATE_SHELL
