@@ -203,7 +203,7 @@ function(sgp_object,
 			additional.data.unique <- additional.data[!(which(duplicated(additional.data))-1)]
 			additional.data.unique[,YEAR:=paste(configuration.year, "3", sep=".")]
 			additional.data.unique[,GRADE:=as.factor(GRADE)]
-			levels(additional.data.unique$GRADE) <- sub(".4", ".3", levels(additional.data.unique$GRADE))
+			levels(additional.data.unique$GRADE) <- sub("[.]4", ".3", levels(additional.data.unique$GRADE))
 			additional.data.unique[,GRADE:=as.character(GRADE)]
 
 			if (update.save.shell.only) {
