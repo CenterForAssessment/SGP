@@ -239,16 +239,16 @@ function(panel.data,	## REQUIRED
 						if (!is.null(SGPt)) {
 							if (j==1) {
 								tmp.scores <- data.table(panel.data$Panel_Data[,c("ID", SGPt), with=FALSE], key="ID")[tmp.scores]
-								tmp.index <- which(findInterval(sapply(1:20, function(x) {
+								tmp.index <- which(findInterval(sapply(0:20, function(x) {
 											(tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]+365*x)-as.numeric(tmp.scores[1][[SGPt]])}), 
-											tmp.matrix@Version[['Matrix_Information']][['SGPt']][['RANGE_TIME_LAG']])==1)[1]
+											tmp.matrix@Version[['Matrix_Information']][['SGPt']][['RANGE_TIME_LAG']])==1)[1]-1
 								tmp.max.time <- tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]
 								tmp.scores[,TIME_LAG:=(tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]+365*tmp.index)-as.numeric(get(SGPt))]
 								tmp.scores[,SGPt:=NULL, with=FALSE]
 							} else {
-								tmp.index <- which(findInterval(sapply(1:20, function(x) {
+								tmp.index <- which(findInterval(sapply(0:20, function(x) {
 											(tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]+365*x)-as.numeric(tmp.max.time)}), 
-											tmp.matrix@Version[['Matrix_Information']][['SGPt']][['RANGE_TIME_LAG']])==1)[1]
+											tmp.matrix@Version[['Matrix_Information']][['SGPt']][['RANGE_TIME_LAG']])==1)[1]-1
 								tmp.scores[,TIME_LAG:=(tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]+365*tmp.index)-tmp.max.time]
 								
 							}
