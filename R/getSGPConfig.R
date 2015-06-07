@@ -19,7 +19,8 @@ function(sgp_object,
 	sgp.use.my.coefficient.matrices,
 	calculate.simex=NULL,
 	calculate.simex.baseline=NULL,
-	year.for.equate) {
+	year.for.equate=NULL,
+	SGPt=NULL) {
 
 	YEAR <- CONTENT_AREA <- VALID_CASE <- NULL
 
@@ -274,6 +275,7 @@ function(sgp_object,
 							my.matrix.grade.progression=par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 
 							my.matrix.time.progression=par.sgp.config[[b.iter[b]]][['sgp.panel.years']],
 							my.matrix.time.progression.lags=par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']],
+							my.matrix.time.dependency=if (is.null(SGPt)) NULL else list(TIME="TIME", TIME_LAG="TIME_LAG"),
 							what.to.return="ORDERS")
 						tmp.max.order <- max(tmp.orders)
 	
@@ -289,6 +291,7 @@ function(sgp_object,
 								my.matrix.grade.progression=par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']],
 								my.matrix.time.progression=par.sgp.config[[b.iter[b]]][['sgp.panel.years']],
 								my.matrix.time.progression.lags=par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']],
+								my.matrix.time.dependency=if (is.null(SGPt)) NULL else list(TIME="TIME", TIME_LAG="TIME_LAG"),
 								my.exact.grade.progression.sequence=TRUE,
 								return.multiple.matrices=TRUE,
 								my.matrix.order=k), recursive=FALSE)
@@ -305,6 +308,7 @@ function(sgp_object,
 						my.matrix.grade.progression=par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 
 						my.matrix.time.progression=par.sgp.config[[b.iter[b]]][['sgp.panel.years']],
 						my.matrix.time.progression.lags=par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']],
+						my.matrix.time.dependency=if (is.null(SGPt)) NULL else list(TIME="TIME", TIME_LAG="TIME_LAG"),
 						what.to.return="ORDERS")
 					tmp.max.order <- max(tmp.orders)
 
@@ -317,6 +321,7 @@ function(sgp_object,
 							my.matrix.grade.progression=tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], k+1), 
 							my.matrix.time.progression=tail(par.sgp.config[[b.iter[b]]][['sgp.panel.years']], k+1),
 							my.matrix.time.progression.lags=tail(par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']], k+1),
+							my.matrix.time.dependency=if (is.null(SGPt)) NULL else list(TIME="TIME", TIME_LAG="TIME_LAG"),
 							my.exact.grade.progression.sequence=TRUE, my.matrix.order=k)[[1]]
 					}
 
@@ -353,6 +358,7 @@ function(sgp_object,
 							my.matrix.grade.progression=par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 
 							my.matrix.time.progression=rep("BASELINE", length(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']])),
 							my.matrix.time.progression.lags=par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']],
+							my.matrix.time.dependency=if (is.null(SGPt)) NULL else list(TIME="TIME", TIME_LAG="TIME_LAG"),
 							what.to.return="ORDERS")
 
 						if (length(tmp.orders) > 0) {
@@ -368,6 +374,7 @@ function(sgp_object,
 									my.matrix.grade.progression=tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], k+1), 
 									my.matrix.time.progression=tail(rep("BASELINE", length(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']])), k+1),
 									my.matrix.time.progression.lags=tail(par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']], k+1),
+									my.matrix.time.dependency=if (is.null(SGPt)) NULL else list(TIME="TIME", TIME_LAG="TIME_LAG"),
 									my.exact.grade.progression.sequence=TRUE, my.matrix.order=k)[[1]]
 							}
 							
@@ -383,6 +390,7 @@ function(sgp_object,
 										my.matrix.grade.progression=par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']],
 										my.matrix.time.progression=rep("BASELINE", length(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']])),
 										my.matrix.time.progression.lags=par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']],
+										my.matrix.time.dependency=if (is.null(SGPt)) NULL else list(TIME="TIME", TIME_LAG="TIME_LAG"),
 										my.exact.grade.progression.sequence=TRUE,
 										return.multiple.matrices=TRUE,
 										my.matrix.order=k), recursive=FALSE)

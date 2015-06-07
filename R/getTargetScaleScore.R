@@ -101,7 +101,8 @@ function(sgp_object,
 				sgp.use.my.coefficient.matrices=NULL,
 				calculate.simex=NULL,
 				calculate.simex.baseline=NULL,
-				year.for.equate=year.for.equate)
+				year.for.equate=year.for.equate,
+				SGPt=SGPt)
 	
 
 	### Calculate targets
