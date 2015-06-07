@@ -804,8 +804,8 @@ function(sgp_object,
 				if (length(grep("6_TIME", names(sgp_object@SGP[['SGProjections']][[names.iter]]))) > 0) {
 					output.column.order <- SGP::SGPstateData[['RLI']][['SGP_Configuration']][['output.column.order']][['SGProjection_Target_6_TIME']]
 				}
-				if (length(grep("9_TIME", names(sgp_object@SGP[['SGProjections']][[names.iter]]))) > 0) {
-					output.column.order <- SGP::SGPstateData[['RLI']][['SGP_Configuration']][['output.column.order']][['SGProjection_Target_9_TIME']]
+				if (length(grep("10_TIME", names(sgp_object@SGP[['SGProjections']][[names.iter]]))) > 0) {
+					output.column.order <- SGP::SGPstateData[['RLI']][['SGP_Configuration']][['output.column.order']][['SGProjection_Target_10_TIME']]
 				}
 			}
 
