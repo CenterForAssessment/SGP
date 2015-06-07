@@ -107,7 +107,8 @@ function(sgp_object,
 			goodness.of.fit.print=goodness.of.fit.print,
 			parallel.config=parallel.config,
 			verbose.output=verbose.output,
-			sgp.sqlite=sgp.sqlite)
+			sgp.sqlite=sgp.sqlite,
+			SGPt=SGPt)
 
                 if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
 	}
@@ -130,6 +131,7 @@ function(sgp_object,
 			sgp.target.scale.scores=sgp.target.scale.scores,
 			sgp.target.scale.scores.only=sgp.target.scale.scores.only,
 			sgp.config=sgp.config,
+			SGPt=SGPt,
 			parallel.config=parallel.config)
 
                 if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")

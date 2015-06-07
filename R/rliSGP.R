@@ -125,6 +125,7 @@ function(sgp_object,
 			outputSGP.output.type="RLI",
 			goodness.of.fit.print=FALSE,
 			update.old.data.with.new=FALSE,
+			SGPt=SGPt,
 			parallel.config=parallel.config,
 			sgp.config=getRLIConfig(content_areas, configuration.year, testing.window, SGPt))
 
@@ -172,6 +173,7 @@ function(sgp_object,
 					outputSGP.output.type="RLI",
 					update.old.data.with.new=TRUE,
 					goodness.of.fit.print=FALSE,
+					SGPt=SGPt,
 					parallel.config=parallel.config,
 					sgp.config=getRLIConfig(content_areas, configuration.year, testing.window, SGPt))
 
@@ -227,6 +229,7 @@ function(sgp_object,
 					sgp.projections.lagged.baseline=FALSE,
 					update.old.data.with.new=FALSE,
 					goodness.of.fit.print=FALSE,
+					SGPt=SGPt,
 					parallel.config=parallel.config,
 					sgp.config=getRLIConfig(content_areas, configuration.year, "EARLY_SPRING", SGPt))
 
@@ -257,6 +260,7 @@ function(sgp_object,
 					outputSGP.output.type="RLI",
 					update.old.data.with.new=TRUE,
 					goodness.of.fit.print=FALSE,
+					SGPt=SGPt,
 					parallel.config=parallel.config,
 					sgp.config=getRLIConfig(content_areas, configuration.year, testing.window, SGPt))
 
