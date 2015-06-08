@@ -712,7 +712,7 @@ function(panel.data,         ## REQUIRED
 			stop("Supplied panel.data$Panel_Data is not a data.frame or a data.table")
 		}
 	}
-	if (identical(class(panel.data), "list") & !is.null(panel.data[['Coefficient_Matrices']])) {
+	if (identical(class(panel.data), "list") && !is.null(panel.data[['Coefficient_Matrices']])) {
 		panel.data[['Coefficient_Matrices']] <- checksplineMatrix(panel.data[['Coefficient_Matrices']])
 	}
 
@@ -982,6 +982,10 @@ function(panel.data,         ## REQUIRED
 
 	if (identical(return.norm.group.dates, TRUE)) {
 		return.norm.group.dates <- "TIME[.]"
+	}
+
+	if (identical(return.norm.group.scale.scores, FALSE)) {
+		return.norm.group.scale.scores <- NULL
 	}
 
 	### Create object to store the studentGrowthPercentiles objects
@@ -1487,7 +1491,7 @@ function(panel.data,         ## REQUIRED
 			quantile.data[,SGP_NORM_GROUP_DATES:=gsub("NA; ", "", do.call(paste, c(as.data.table(lapply(my.tmp, function(x) as.Date(x, origin="1970-01-01"))), list(sep="; "))))]
 		}
 
-		if (return.norm.group.scale.scores) {
+		if (!is.null(return.norm.group.scale.scores)) {
 			my.tmp <- data.table(ss.data[,c("ID", names(tmp.data)[-1]), with=FALSE], key="ID")[list(quantile.data$ID),-1,with=FALSE]
 			quantile.data[,SGP_NORM_GROUP_SCALE_SCORES:=gsub("NA; ", "", do.call(paste, c(my.tmp, list(sep="; "))))]
 		}

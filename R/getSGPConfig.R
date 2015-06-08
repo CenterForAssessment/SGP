@@ -492,15 +492,15 @@ function(sgp_object,
 
 	if (sgp.projections | sgp.projections.lagged) {
 		tmp.config <- par.sgp.config[sapply(par.sgp.config, test.projection.iter)]
-		if (length(tmp.config) > 0) for (f in 1:length(tmp.config)) tmp.config[[f]]$sgp.exact.grade.progression <- FALSE
-		while (any(sapply(tmp.config, function(x) length(x$sgp.projection.sequence)>1))) {
-			tmp.index <- which(any(sapply(tmp.config, function(x) length(x$sgp.projection.sequence)>1)))[1]
+		if (length(tmp.config) > 0) for (f in 1:length(tmp.config)) tmp.config[[f]][['sgp.exact.grade.progression']] <- FALSE
+		while (any(sapply(tmp.config, function(x) length(x[['sgp.projection.sequence']])>1))) {
+			tmp.index <- which(any(sapply(tmp.config, function(x) length(x[['sgp.projection.sequence']])>1)))[1]
 			tmp.iter <- tmp.config[[tmp.index]]
 			tmp.config <- tmp.config[-tmp.index]
 			tmp.expand.config <- list()
-			for (j in 1:length(tmp.iter$sgp.projection.sequence)) {
+			for (j in 1:length(tmp.iter[['sgp.projection.sequence']])) {
 				tmp.expand.config[[j]] <- tmp.iter
-				tmp.expand.config[[j]]$sgp.projection.sequence <- tmp.expand.config[[j]]$sgp.projection.sequence[j]
+				tmp.expand.config[[j]][['sgp.projection.sequence']] <- tmp.expand.config[[j]][['sgp.projection.sequence']][j]
 			}
 			tmp.config <- c(tmp.config, tmp.expand.config)
 		}
@@ -536,9 +536,10 @@ function(sgp_object,
 		}
 
 		if (length(sgp.config.list[['sgp.percentiles.baseline']]) > 0) {
-			for (i in 1:length(sgp.config.list[['sgp.percentiles.baseline']])) sgp.config.list[['sgp.percentiles.baseline']][[i]][['sgp.matrices']] <- NULL
+			for (i in seq_along(sgp.config.list[['sgp.percentiles.baseline']])) sgp.config.list[['sgp.percentiles.baseline']][[i]][['sgp.matrices']] <- NULL
 			tmp.config <- sgp.config.list[['sgp.percentiles.baseline']][sapply(sgp.config.list[['sgp.percentiles.baseline']], test.projection.iter)]
-			if (length(tmp.config) > 0) for (f in 1:length(tmp.config)) tmp.config[[f]]$sgp.exact.grade.progression <- FALSE
+			if (length(tmp.config) > 0) for (f in seq_along(tmp.config)) tmp.config[[f]][['sgp.exact.grade.progression']] <- FALSE
+			sgp.config.list[['sgp.percentiles.baseline']] <- tmp.config
 		}
 
 		if (sgp.projections.baseline | sgp.projections.lagged.baseline) {
@@ -547,7 +548,7 @@ function(sgp_object,
 				tmp.iter <- tmp.config[[tmp.index]]
 				tmp.config <- tmp.config[-tmp.index]
 				tmp.expand.config <- list()
-				for (j in 1:length(tmp.iter$sgp.projection.sequence)) {
+				for (j in seq_along(tmp.iter$sgp.projection.sequence)) {
 					tmp.expand.config[[j]] <- tmp.iter
 					tmp.expand.config[[j]]$sgp.projection.sequence <- tmp.expand.config[[j]]$sgp.projection.sequence[j]
 				}
@@ -558,11 +559,11 @@ function(sgp_object,
 		if (!sgp.percentiles.baseline | length(sgp.config.list[['sgp.percentiles.baseline']]) == 0) sgp.config.list[['sgp.percentiles.baseline']] <- NULL
 		if (sgp.projections.baseline) {
 			sgp.config.list[['sgp.projections.baseline']] <- tmp.config
-			for (i in 1:length(sgp.config.list[['sgp.projections.baseline']])) sgp.config.list[['sgp.projections.baseline']][[i]][['sgp.baseline.matrices']] <- NULL
+			for (i in seq_along(sgp.config.list[['sgp.projections.baseline']])) sgp.config.list[['sgp.projections.baseline']][[i]][['sgp.baseline.matrices']] <- NULL
 		}
 		if (sgp.projections.lagged.baseline) {
 			sgp.config.list[['sgp.projections.lagged.baseline']] <- tmp.config
-			for (i in 1:length(sgp.config.list[['sgp.projections.lagged.baseline']])) sgp.config.list[['sgp.projections.lagged.baseline']][[i]][['sgp.baseline.matrices']] <- NULL
+			for (i in seq_along(sgp.config.list[['sgp.projections.lagged.baseline']])) sgp.config.list[['sgp.projections.lagged.baseline']][[i]][['sgp.baseline.matrices']] <- NULL
 		}
 	}
 
@@ -603,7 +604,7 @@ function(sgp_object,
 	### Clean up percentile configs for easier reading (don't do for projections - still depend on percentiles elements)
 
 	for (p in grep('sgp.percentiles', names(sgp.config.list))) {
-		for (l in 1:length(sgp.config.list[[p]])) {
+		for (l in seq_along(sgp.config.list[[p]])) {
 			sgp.config.list[[p]][[l]] <- sgp.config.list[[p]][[l]][-grep("projection", names(sgp.config.list[[p]][[l]]))]
 		}
 	}
