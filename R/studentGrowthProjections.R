@@ -246,7 +246,6 @@ function(panel.data,	## REQUIRED
 											(tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]+365*x)-as.numeric(mean(tmp.scores[[SGPt]]))}), 
 											tmp.matrix@Version[['Matrix_Information']][['SGPt']][['RANGE_TIME_LAG']])==1)[1]]
 									tmp.scores[,TIME_LAG:=(k+365*tmp.index)-as.numeric(get(SGPt))]
-									tmp.scores[,SGPt:=NULL, with=FALSE]
 
 									for (m in seq(100)) {
 										tmp.dt[m+100*(seq(dim(tmp.dt)[1]/100)-1), 
@@ -266,6 +265,7 @@ function(panel.data,	## REQUIRED
 									tmp.dt[,TEMP_1:=NULL]
 									label.iter <- label.iter + 1
 								}
+								tmp.scores[,SGPt:=NULL, with=FALSE]
 								tmp.max.time <- k
 							} else {
 								tmp.scores[,TIME:=tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]]
