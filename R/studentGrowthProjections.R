@@ -226,6 +226,7 @@ function(panel.data,	## REQUIRED
 
 					for (j in seq_along(projection.matrices[[i]])) {
 						tmp.matrix <- projection.matrices[[i]][[j]]
+						label.iter <- 1
 						mod <- character()
 						int <- "data.table(ID=tmp.dt[[1]], rep(1, dim(tmp.dt)[1]),"
 						for (k in seq_along(projection.matrices[[i]][[j]]@Time_Lags[[1]])) {
@@ -237,40 +238,80 @@ function(panel.data,	## REQUIRED
 						tmp.scores <- eval(parse(text=paste(int, substring(mod, 2), ", key='ID')", sep="")))
 
 						if (!is.null(SGPt)) {
-							tmp.scores[,TIME:=tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]]
 							if (j==1) {
 								tmp.scores <- data.table(panel.data$Panel_Data[,c("ID", SGPt), with=FALSE], key="ID")[tmp.scores]
-								tmp.index <- (-20:20)[which(findInterval(sapply(-20:20, function(x) {
+								for (k in unlist(tmp.matrix@Version[['Matrix_Information']][['SGPt']][c("MAX_TIME_PRIOR", "MAX_TIME")])) {
+									tmp.scores[,TIME:=k]
+									tmp.index <- (-20:20)[which(findInterval(sapply(-20:20, function(x) {
 											(tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]+365*x)-as.numeric(mean(tmp.scores[[SGPt]]))}), 
 											tmp.matrix@Version[['Matrix_Information']][['SGPt']][['RANGE_TIME_LAG']])==1)[1]]
-								tmp.scores[,TIME_LAG:=(tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]+365*tmp.index)-as.numeric(get(SGPt))]
-								tmp.max.time <- tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]
+									tmp.scores[,TIME_LAG:=(k+365*tmp.index)-as.numeric(get(SGPt))]
+
+									for (m in seq(100)) {
+										tmp.dt[m+100*(seq(dim(tmp.dt)[1]/100)-1), 
+											TEMP_1:=as.matrix(tmp.scores[,-1,with=FALSE])[m+100*(seq(dim(tmp.dt)[1]/100)-1),] %*% tmp.matrix@.Data[,m]]
+									}
+
+									tmp.dt[,TEMP_2:=.smooth.bound.iso.row(
+											TEMP_1, 
+											grade.projection.sequence[j], 
+											yearIncrement(sgp.labels[['my.year']], j, lag.increment),
+											content_area.projection.sequence[j],
+											missing.taus=missing.taus, 
+											na.replace=na.replace,
+											equated.year=yearIncrement(sgp.projections.equated[['Year']], -1)), 
+										by=eval(names(tmp.dt)[1])]
+									setnames(tmp.dt, "TEMP_2", paste("SS", grade.projection.sequence[label.iter], content_area.projection.sequence[label.iter], sep="."))
+									tmp.dt[,TEMP_1:=NULL]
+									label.iter <- label.iter + 1
+								}
 								tmp.scores[,SGPt:=NULL, with=FALSE]
+								tmp.max.time <- k
 							} else {
+								tmp.scores[,TIME:=tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]]
 								tmp.index <- (-20:20)[which(findInterval(sapply(-20:20, function(x) {
 											(tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]+365*x)-as.numeric(tmp.max.time)}), 
 											tmp.matrix@Version[['Matrix_Information']][['SGPt']][['RANGE_TIME_LAG']])==1)[1]]
 								tmp.scores[,TIME_LAG:=(tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]+365*tmp.index)-tmp.max.time]
 								tmp.max.time <- tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]
+
+								for (m in seq(100)) {
+									tmp.dt[m+100*(seq(dim(tmp.dt)[1]/100)-1), 
+										TEMP_1:=as.matrix(tmp.scores[,-1,with=FALSE])[m+100*(seq(dim(tmp.dt)[1]/100)-1),] %*% tmp.matrix@.Data[,m]]
+								}
+
+								tmp.dt[,TEMP_2:=.smooth.bound.iso.row(
+											TEMP_1, 
+											grade.projection.sequence[j], 
+											yearIncrement(sgp.labels[['my.year']], j, lag.increment),
+											content_area.projection.sequence[j],
+											missing.taus=missing.taus, 
+											na.replace=na.replace,
+											equated.year=yearIncrement(sgp.projections.equated[['Year']], -1)), 
+										by=eval(names(tmp.dt)[1])]
+								setnames(tmp.dt, "TEMP_2", paste("SS", grade.projection.sequence[label.iter], content_area.projection.sequence[label.iter], sep="."))
+								tmp.dt[,TEMP_1:=NULL]
+								label.iter <- label.iter + 1
 							}
-						}
+						} else {
+							for (m in seq(100)) {
+								tmp.dt[m+100*(seq(dim(tmp.dt)[1]/100)-1), 
+									TEMP_1:=as.matrix(tmp.scores[,-1,with=FALSE])[m+100*(seq(dim(tmp.dt)[1]/100)-1),] %*% tmp.matrix@.Data[,m]]
+							}
 
-						for (m in seq(100)) {
-							tmp.dt[m+100*(seq(dim(tmp.dt)[1]/100)-1), 
-								TEMP_1:=as.matrix(tmp.scores[,-1,with=FALSE])[m+100*(seq(dim(tmp.dt)[1]/100)-1),] %*% tmp.matrix@.Data[,m]]
+							tmp.dt[,TEMP_2:=.smooth.bound.iso.row(
+											TEMP_1, 
+											grade.projection.sequence[j], 
+											yearIncrement(sgp.labels[['my.year']], j, lag.increment),
+											content_area.projection.sequence[j],
+											missing.taus=missing.taus, 
+											na.replace=na.replace,
+											equated.year=yearIncrement(sgp.projections.equated[['Year']], -1)), 
+										by=eval(names(tmp.dt)[1])]
+							setnames(tmp.dt, "TEMP_2", paste("SS", grade.projection.sequence[label.iter], content_area.projection.sequence[label.iter], sep="."))
+							tmp.dt[,TEMP_1:=NULL]
+							label.iter <- label.iter + 1
 						}
-
-						tmp.dt[,TEMP_2:=.smooth.bound.iso.row(
-										TEMP_1, 
-										grade.projection.sequence[j], 
-										yearIncrement(sgp.labels[['my.year']], j, lag.increment),
-										content_area.projection.sequence[j],
-										missing.taus=missing.taus, 
-										na.replace=na.replace,
-										equated.year=yearIncrement(sgp.projections.equated[['Year']], -1)), 
-									by=eval(names(tmp.dt)[1])]
-						setnames(tmp.dt, "TEMP_2", paste("SS", grade.projection.sequence[j], content_area.projection.sequence[j], sep="."))
-						tmp.dt[,TEMP_1:=NULL]
 					} ## END j loop
 					tmp.percentile.trajectories[[i]] <- tmp.dt[,c("ID", paste("SS", grade.projection.sequence, content_area.projection.sequence, sep=".")), with=FALSE]
 					rm(tmp.dt); suppressMessages(gc())
