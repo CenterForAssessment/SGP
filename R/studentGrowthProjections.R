@@ -223,10 +223,10 @@ function(panel.data,	## REQUIRED
 					completed.ids <- c(unique(tmp.dt[[1]]), completed.ids)
 					tmp.dt <- tmp.dt[list(rep(tmp.dt[[1]], each=100))]
 					missing.taus <- FALSE; na.replace <- NULL # put these outside of j loop so that stays true/non-null if only SOME of coef matrices have missing column/taus.
+					label.iter <- 1
 
 					for (j in seq_along(projection.matrices[[i]])) {
 						tmp.matrix <- projection.matrices[[i]][[j]]
-						label.iter <- 1
 						mod <- character()
 						int <- "data.table(ID=tmp.dt[[1]], rep(1, dim(tmp.dt)[1]),"
 						for (k in seq_along(projection.matrices[[i]][[j]]@Time_Lags[[1]])) {
@@ -238,6 +238,8 @@ function(panel.data,	## REQUIRED
 						tmp.scores <- eval(parse(text=paste(int, substring(mod, 2), ", key='ID')", sep="")))
 
 						if (!is.null(SGPt)) {
+							grade.projection.sequence.labels <- c(tail(grade.progression, 1), grade.projection.sequence)
+							content_area.projection.sequence.labels <- c(tail(content_area.progression, 1), content_area.projection.sequence)
 							if (j==1) {
 								tmp.scores <- data.table(panel.data$Panel_Data[,c("ID", SGPt), with=FALSE], key="ID")[tmp.scores]
 								for (k in unlist(tmp.matrix@Version[['Matrix_Information']][['SGPt']][c("MAX_TIME_PRIOR", "MAX_TIME")])) {
@@ -249,7 +251,7 @@ function(panel.data,	## REQUIRED
 
 									for (m in seq(100)) {
 										tmp.dt[m+100*(seq(dim(tmp.dt)[1]/100)-1), 
-											TEMP_1:=as.matrix(tmp.scores[,-1,with=FALSE])[m+100*(seq(dim(tmp.dt)[1]/100)-1),] %*% tmp.matrix@.Data[,m]]
+											TEMP_1:=as.matrix(tmp.scores[,c(-1,-2),with=FALSE])[m+100*(seq(dim(tmp.dt)[1]/100)-1),] %*% tmp.matrix@.Data[,m]]
 									}
 
 									tmp.dt[,TEMP_2:=.smooth.bound.iso.row(
@@ -261,7 +263,7 @@ function(panel.data,	## REQUIRED
 											na.replace=na.replace,
 											equated.year=yearIncrement(sgp.projections.equated[['Year']], -1)), 
 										by=eval(names(tmp.dt)[1])]
-									setnames(tmp.dt, "TEMP_2", paste("SS", grade.projection.sequence[label.iter], content_area.projection.sequence[label.iter], sep="."))
+									setnames(tmp.dt, "TEMP_2", paste("SS", grade.projection.sequence.labels[label.iter], content_area.projection.sequence.labels[label.iter], sep="."))
 									tmp.dt[,TEMP_1:=NULL]
 									label.iter <- label.iter + 1
 								}
@@ -289,7 +291,7 @@ function(panel.data,	## REQUIRED
 											na.replace=na.replace,
 											equated.year=yearIncrement(sgp.projections.equated[['Year']], -1)), 
 										by=eval(names(tmp.dt)[1])]
-								setnames(tmp.dt, "TEMP_2", paste("SS", grade.projection.sequence[label.iter], content_area.projection.sequence[label.iter], sep="."))
+								setnames(tmp.dt, "TEMP_2", paste("SS", grade.projection.sequence.labels[label.iter], content_area.projection.sequence.labels[label.iter], sep="."))
 								tmp.dt[,TEMP_1:=NULL]
 								label.iter <- label.iter + 1
 							}
@@ -313,7 +315,8 @@ function(panel.data,	## REQUIRED
 							label.iter <- label.iter + 1
 						}
 					} ## END j loop
-					tmp.percentile.trajectories[[i]] <- tmp.dt[,c("ID", paste("SS", grade.projection.sequence, content_area.projection.sequence, sep=".")), with=FALSE]
+					tmp.percentile.trajectories[[i]] <- tmp.dt
+#					tmp.percentile.trajectories[[i]] <- tmp.dt[,c("ID", paste("SS", grade.projection.sequence, content_area.projection.sequence, sep=".")), with=FALSE]
 					rm(tmp.dt); suppressMessages(gc())
 				} ## END if (dim(tmp.dt)[1] > 0)
 			} ## END if statement
