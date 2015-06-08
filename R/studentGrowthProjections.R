@@ -246,11 +246,11 @@ function(panel.data,	## REQUIRED
 									tmp.scores[,TIME:=k]
 									tmp.index <- (-20:20)[which(findInterval(sapply(-20:20, function(x) {
 											(tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]+365*x)-as.numeric(mean(tmp.scores[[SGPt]]))}), 
-											tmp.matrix@Version[['Matrix_Information']][['SGPt']][['RANGE_TIME_LAG']])==1)[1]]
+											tmp.matrix@Version[['Matrix_Information']][['SGPt']][['RANGE_TIME_LAG']], rightmost.closed=TRUE)==1)[1]]
 									if (is.na(tmp.index)) {
 										tmp.index <- (-20:20)[which(findInterval(sapply(-20:20, function(x) {
 											(tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]+365*x)-as.numeric(max(tmp.scores[[SGPt]]))}), 
-											tmp.matrix@Version[['Matrix_Information']][['SGPt']][['RANGE_TIME_LAG']])==1)[1]]
+											tmp.matrix@Version[['Matrix_Information']][['SGPt']][['RANGE_TIME_LAG']], rightmost.closed=TRUE)==1)[1]]
 									}
 									tmp.scores[,TIME_LAG:=(k+365*tmp.index)-as.numeric(get(SGPt))]
 
