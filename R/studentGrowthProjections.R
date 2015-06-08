@@ -238,7 +238,7 @@ function(panel.data,	## REQUIRED
 						tmp.scores <- eval(parse(text=paste(int, substring(mod, 2), ", key='ID')", sep="")))
 
 						if (!is.null(SGPt)) {
-							grade.projection.sequence.labels <- c(tail(grade.progression, 1), grade.projection.sequence)
+							grade.projection.sequence.labels <- c(paste(tail(grade.progression, 1), "EOW", sep="."), grade.projection.sequence)
 							content_area.projection.sequence.labels <- c(tail(content_area.progression, 1), content_area.projection.sequence)
 							if (j==1) {
 								tmp.scores <- data.table(panel.data$Panel_Data[,c("ID", SGPt), with=FALSE], key="ID")[tmp.scores]
@@ -296,6 +296,8 @@ function(panel.data,	## REQUIRED
 								label.iter <- label.iter + 1
 							}
 						} else {
+							grade.projection.sequence.labels <- grade.projection.sequence
+							content_area.projection.sequence.labels <- content_area.projection.sequence
 							for (m in seq(100)) {
 								tmp.dt[m+100*(seq(dim(tmp.dt)[1]/100)-1), 
 									TEMP_1:=as.matrix(tmp.scores[,-1,with=FALSE])[m+100*(seq(dim(tmp.dt)[1]/100)-1),] %*% tmp.matrix@.Data[,m]]
@@ -310,13 +312,12 @@ function(panel.data,	## REQUIRED
 											na.replace=na.replace,
 											equated.year=yearIncrement(sgp.projections.equated[['Year']], -1)), 
 										by=eval(names(tmp.dt)[1])]
-							setnames(tmp.dt, "TEMP_2", paste("SS", grade.projection.sequence[label.iter], content_area.projection.sequence[label.iter], sep="."))
+							setnames(tmp.dt, "TEMP_2", paste("SS", grade.projection.sequence.labels[label.iter], content_area.projection.sequence.labels[label.iter], sep="."))
 							tmp.dt[,TEMP_1:=NULL]
 							label.iter <- label.iter + 1
 						}
 					} ## END j loop
-					tmp.percentile.trajectories[[i]] <- tmp.dt
-#					tmp.percentile.trajectories[[i]] <- tmp.dt[,c("ID", paste("SS", grade.projection.sequence, content_area.projection.sequence, sep=".")), with=FALSE]
+					tmp.percentile.trajectories[[i]] <- tmp.dt[,c("ID", paste("SS", grade.projection.sequence.labels, content_area.projection.sequence.labels, sep=".")), with=FALSE]
 					rm(tmp.dt); suppressMessages(gc())
 				} ## END if (dim(tmp.dt)[1] > 0)
 			} ## END if statement
@@ -338,6 +339,17 @@ function(panel.data,	## REQUIRED
 
 	.get.trajectories.and.cuts <- function(percentile.trajectories, trajectories.tf, cuts.tf, projection.unit=projection.unit) {
 		CUT <- STATE <- NULL
+
+		if (!is.null(SGPt)) {
+			grade.projection.sequence <- c(tail(grade.progression, 1), grade.projection.sequence)
+			content_area.projection.sequence <- c(tail(content_area.progression, 1), content_area.projection.sequence)
+			grade.projection.sequence.labels <- c(paste(tail(grade.progression, 1), "EOW", sep="."), grade.projection.sequence)
+		} else {
+			grade.projection.sequence.labels <- grade.projection.sequence
+		}
+
+		### Trajectories
+
 		if (trajectories.tf) {
 			if (is.numeric(percentile.trajectory.values)) {
 				tmp.name.prefix <- "P"
@@ -412,14 +424,17 @@ function(panel.data,	## REQUIRED
 
 			if (length(grep("CURRENT", percentile.trajectory.values))!=0) percentile.trajectory.values <- unlist(strsplit(percentile.trajectory.values, "_CURRENT"))
 			if (projection.unit=="GRADE") {
-				tmp.vec <- expand.grid(tmp.name.prefix, percentile.trajectory.values, paste("_PROJ_", projection.unit.label, "_", sep=""), paste(grade.projection.sequence, content_area.projection.sequence, sep="_"), lag.increment.label)[1:(length(percentile.trajectory.values)*tmp.num.years.forward),]
+				tmp.vec <- expand.grid(tmp.name.prefix, percentile.trajectory.values, paste("_PROJ_", projection.unit.label, "_", sep=""), paste(grade.projection.sequence.labels, content_area.projection.sequence, sep="_"), lag.increment.label)[1:(length(percentile.trajectory.values)*tmp.num.years.forward),]
 			} else {
-				tmp.vec <- expand.grid(tmp.name.prefix, percentile.trajectory.values, paste("_PROJ_", projection.unit.label, "_", sep=""), seq_along(grade.projection.sequence), lag.increment.label)[1:(length(percentile.trajectory.values)*tmp.num.years.forward),]
+				tmp.vec <- expand.grid(tmp.name.prefix, percentile.trajectory.values, paste("_PROJ_", projection.unit.label, "_", sep=""), seq_along(grade.projection.sequence.labels), lag.increment.label)[1:(length(percentile.trajectory.values)*tmp.num.years.forward),]
 			}
 			tmp.vec <- tmp.vec[order(tmp.vec$Var2),]
 			setnames(trajectories, c("ID", do.call(paste, c(tmp.vec, sep=""))))
 			if (!cuts.tf) return(trajectories)
 		}
+
+		### Cuts
+
 		if (cuts.tf) {
 			setkey(percentile.trajectories, ID)
 			tmp.cuts.list <- list()
@@ -447,7 +462,7 @@ function(panel.data,	## REQUIRED
  						for (j in seq_along(tmp.cutscores.by.grade)) {
  							cuts.arg[k] <- paste(".sgp.targets(SS", ".", grade.projection.sequence[i], ".", content_area.projection.sequence[i], ", ", tmp.cutscores.by.grade[j], ", ", convert.0and100, ")", sep="")
 							if (projection.unit=="GRADE") {
-								names.arg[k] <- paste("LEVEL_", j, "_SGP_TARGET_", projection.unit.label, "_", grade.projection.sequence[i], lag.increment.label, sep="")
+								names.arg[k] <- paste("LEVEL_", j, "_SGP_TARGET_", projection.unit.label, "_", grade.projection.sequence.labels[i], lag.increment.label, sep="")
 							} else {
 								names.arg[k] <- paste("LEVEL_", j, "_SGP_TARGET_", projection.unit.label, "_", i, lag.increment.label, sep="")
 							}
