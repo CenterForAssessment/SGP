@@ -763,11 +763,8 @@ function(panel.data,	## REQUIRED
 
 	grade.content_area.progression <- paste(content_area.progression, paste("GRADE", grade.progression, sep="_"), sep=".")
 	grade.content_area.projection.sequence <- paste(content_area.projection.sequence, paste("GRADE", grade.projection.sequence, sep="_"), sep=".")
-	if (is.null(SGPt)) {
-		tmp.index <- seq(which(tail(grade.content_area.progression, 1)==grade.content_area.projection.sequence)+1, length(grade.projection.sequence))
-	} else { ### For within window projection need to get MAX_TIME from initial matrix
-		tmp.index <- seq(which(tail(grade.content_area.progression, 1)==grade.content_area.projection.sequence), length(grade.projection.sequence))
-	}
+
+	tmp.index <- seq(which(tail(grade.content_area.progression, 1)==grade.content_area.projection.sequence)+1, length(grade.projection.sequence))
 
 	if (!is.null(max.forward.progression.grade)) {
 		tmp.index <- intersect(tmp.index, which(sapply(grade.projection.sequence, function(x) type.convert(x, as.is=TRUE) <= type.convert(as.character(max.forward.progression.grade), as.is=TRUE))))
