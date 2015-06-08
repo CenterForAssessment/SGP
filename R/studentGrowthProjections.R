@@ -247,6 +247,11 @@ function(panel.data,	## REQUIRED
 									tmp.index <- (-20:20)[which(findInterval(sapply(-20:20, function(x) {
 											(tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]+365*x)-as.numeric(mean(tmp.scores[[SGPt]]))}), 
 											tmp.matrix@Version[['Matrix_Information']][['SGPt']][['RANGE_TIME_LAG']])==1)[1]]
+									if (is.na(tmp.index)) {
+										tmp.index <- (-20:20)[which(findInterval(sapply(-20:20, function(x) {
+											(tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]+365*x)-as.numeric(max(tmp.scores[[SGPt]]))}), 
+											tmp.matrix@Version[['Matrix_Information']][['SGPt']][['RANGE_TIME_LAG']])==1)[1]]
+									}
 									tmp.scores[,TIME_LAG:=(k+365*tmp.index)-as.numeric(get(SGPt))]
 
 									for (m in seq(100)) {
@@ -341,9 +346,9 @@ function(panel.data,	## REQUIRED
 		CUT <- STATE <- NULL
 
 		if (!is.null(SGPt)) {
-			grade.projection.sequence <- c(tail(grade.progression, 1), grade.projection.sequence)
 			content_area.projection.sequence <- c(tail(content_area.progression, 1), content_area.projection.sequence)
 			grade.projection.sequence.labels <- c(paste(tail(grade.progression, 1), "EOW", sep="."), grade.projection.sequence)
+			grade.projection.sequence <- c(tail(grade.progression, 1), grade.projection.sequence)
 		} else {
 			grade.projection.sequence.labels <- grade.projection.sequence
 		}
@@ -460,7 +465,7 @@ function(panel.data,	## REQUIRED
  	
  					if (!is.null(tmp.cutscores.by.grade)) {
  						for (j in seq_along(tmp.cutscores.by.grade)) {
- 							cuts.arg[k] <- paste(".sgp.targets(SS", ".", grade.projection.sequence[i], ".", content_area.projection.sequence[i], ", ", tmp.cutscores.by.grade[j], ", ", convert.0and100, ")", sep="")
+ 							cuts.arg[k] <- paste(".sgp.targets(SS", ".", grade.projection.sequence.labels[i], ".", content_area.projection.sequence[i], ", ", tmp.cutscores.by.grade[j], ", ", convert.0and100, ")", sep="")
 							if (projection.unit=="GRADE") {
 								names.arg[k] <- paste("LEVEL_", j, "_SGP_TARGET_", projection.unit.label, "_", grade.projection.sequence.labels[i], lag.increment.label, sep="")
 							} else {
