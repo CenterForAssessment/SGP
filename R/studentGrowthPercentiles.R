@@ -208,7 +208,7 @@ function(panel.data,         ## REQUIRED
 			Matrix_Information=list(
 				N=dim(tmp.data)[1],
 				Model=paste("rq(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=taus, data=tmp.data, method=rq.method)[['coefficients']]", sep=""),
-				SGPt=if (is.null(SGPt)) NULL else list(VARIABLES=unlist(SGPt), MAX_TIME=max(tmp.data$TIME, na.rm=TRUE))))
+				SGPt=if (is.null(SGPt)) NULL else list(VARIABLES=unlist(SGPt), MAX_TIME=max(tmp.data$TIME, na.rm=TRUE), MAX_TIME_PRIOR=max(tmp.data$TIME-tmp.data$TIME_LAG, na.rm=TRUE), RANGE_TIME_LAG=range(tmp.data$TIME_LAG))))
 
 		eval(parse(text=paste("new('splineMatrix', tmp.mtx, ", substring(s4Ks, 1, nchar(s4Ks)-1), "), ", substring(s4Bs, 1, nchar(s4Bs)-1), "), ",
 			"Content_Areas=list(as.character(tail(content_area.progression, k+1))), ",
@@ -327,7 +327,13 @@ function(panel.data,         ## REQUIRED
 			}
 			tmp.mtx <-eval(parse(text=paste("rq(final_yr ~", substring(mod,4), ", tau=taus, data = rqdata, method=rq.method)[['coefficients']]", sep="")))
 			
-			tmp.version <- list(SGP_Package_Version=as.character(packageVersion("SGP")), Date_Prepared=date(), Matrix_Information=list(N=dim(rqdata)[1]))
+			tmp.version <- list(
+					SGP_Package_Version=as.character(packageVersion("SGP")), 
+					Date_Prepared=date(), 
+					Matrix_Information=list(
+						N=dim(rqdata)[1],
+						Model=paste("rq(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=taus, data=tmp.data, method=rq.method)[['coefficients']]", sep=""),
+						SGPt=if (is.null(SGPt)) NULL else list(VARIABLES=unlist(SGPt), MAX_TIME=max(tmp.data$TIME, na.rm=TRUE), MAX_TIME_PRIOR=max(tmp.data$TIME-tmp.data$TIME_LAG, na.rm=TRUE), RANGE_TIME_LAG=range(tmp.data$TIME_LAG))))
 			
 			eval(parse(text=paste("new('splineMatrix', tmp.mtx, ", substring(s4Ks, 1, nchar(s4Ks)-1), "), ", substring(s4Bs, 1, nchar(s4Bs)-1), "), ",
 				"Content_Areas=list(as.character(tail(content_area.progression, k+1))), ",
@@ -706,7 +712,7 @@ function(panel.data,         ## REQUIRED
 			stop("Supplied panel.data$Panel_Data is not a data.frame or a data.table")
 		}
 	}
-	if (identical(class(panel.data), "list") & !is.null(panel.data[['Coefficient_Matrices']])) {
+	if (identical(class(panel.data), "list") && !is.null(panel.data[['Coefficient_Matrices']])) {
 		panel.data[['Coefficient_Matrices']] <- checksplineMatrix(panel.data[['Coefficient_Matrices']])
 	}
 
@@ -976,6 +982,10 @@ function(panel.data,         ## REQUIRED
 
 	if (identical(return.norm.group.dates, TRUE)) {
 		return.norm.group.dates <- "TIME[.]"
+	}
+
+	if (identical(return.norm.group.scale.scores, FALSE)) {
+		return.norm.group.scale.scores <- NULL
 	}
 
 	### Create object to store the studentGrowthPercentiles objects
@@ -1481,7 +1491,7 @@ function(panel.data,         ## REQUIRED
 			quantile.data[,SGP_NORM_GROUP_DATES:=gsub("NA; ", "", do.call(paste, c(as.data.table(lapply(my.tmp, function(x) as.Date(x, origin="1970-01-01"))), list(sep="; "))))]
 		}
 
-		if (return.norm.group.scale.scores) {
+		if (!is.null(return.norm.group.scale.scores)) {
 			my.tmp <- data.table(ss.data[,c("ID", names(tmp.data)[-1]), with=FALSE], key="ID")[list(quantile.data$ID),-1,with=FALSE]
 			quantile.data[,SGP_NORM_GROUP_SCALE_SCORES:=gsub("NA; ", "", do.call(paste, c(my.tmp, list(sep="; "))))]
 		}

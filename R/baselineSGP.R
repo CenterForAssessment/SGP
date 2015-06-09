@@ -14,6 +14,7 @@ function(sgp_object,
 		calculate.simex.baseline=NULL,
 		goodness.of.fit.print=TRUE,
 		parallel.config=NULL,
+		SGPt=NULL,
 		...) {
 
 
@@ -49,6 +50,15 @@ function(sgp_object,
 	if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["sgp.minimum.default.panel.years"]])) {
 		sgp.minimum.default.panel.years <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["sgp.minimum.default.panel.years"]]
 	} else sgp.minimum.default.panel.years <- 3
+
+	if (!is.null(SGPt)) {
+		if (identical(SGPt, TRUE)) SGPt <- "DATE"
+		if (!all(SGPt %in% names(sgp_object@Data))) {
+			tmp.messages <- c(tmp.messages, "\t\tNOTE: Variables", paste(SGPt, collapse=", "), "are not all contained in the supplied 'sgp_object@Data'. 'SGPt' is set to NULL.\n")
+			SGPt <- NULL
+		}
+	}
+
 
 	############################################
 	###
@@ -125,6 +135,7 @@ function(sgp_object,
 				print.time.taken=FALSE,
 				parallel.config=parallel.config,
 				calculate.simex=calculate.simex,
+				SGPt=SGPt,
 				...)[["Coefficient_Matrices"]])
 
 		message(paste("\tStarted baselineSGP Coefficient Matrix Calculation:", started.date))
@@ -246,7 +257,7 @@ function(sgp_object,
 			sgp.percentiles=FALSE, sgp.projections=FALSE, sgp.projections.lagged=FALSE,
 			sgp.percentiles.baseline=TRUE, sgp.projections.baseline=FALSE, sgp.projections.lagged.baseline=FALSE,
 			sgp.config.drop.nonsequential.grade.progression.variables=TRUE, sgp.minimum.default.panel.years=sgp.minimum.default.panel.years,
-			sgp.projections.max.forward.progression.years=NULL, sgp.use.my.coefficient.matrices=NULL, calculate.simex.baseline = calculate.simex.baseline)
+			sgp.projections.max.forward.progression.years=NULL, sgp.use.my.coefficient.matrices=NULL, calculate.simex.baseline=calculate.simex.baseline, SGPt=SGPt)
 
 		for (sgp.iter in par.sgp.config[['sgp.percentiles.baseline']]) {
 
@@ -270,6 +281,7 @@ function(sgp_object,
 					drop.nonsequential.grade.progression.variables=FALSE,
 					exact.grade.progression.sequence=sgp.iter[['sgp.exact.grade.progression']],
 					sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
+					SGPt=SGPt,
 					...)
 
 		} ### END sgp.iter loop

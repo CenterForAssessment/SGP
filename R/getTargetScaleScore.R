@@ -23,9 +23,18 @@ function(sgp_object,
 		year.for.equate <- equate.variable <- equate.label <- NULL
 	}
 
+	if (!is.null(SGPt)) {
+		if (identical(SGPt, TRUE)) SGPt <- "DATE"
+		if (!all(SGPt %in% names(sgp_object@Data))) {
+			tmp.messages <- c(tmp.messages, "\t\tNOTE: Variables", paste(SGPt, collapse=", "), "are not all contained in the supplied 'sgp_object@Data'. 'SGPt' is set to NULL.\n")
+			SGPt <- NULL
+		}
+	}
+
+
 	tmp_sgp_object <- list(Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]], Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]])
 	setkey(sgp_object@Data, VALID_CASE, ID)
-	variables.to.get <- c("VALID_CASE", "YEAR", "CONTENT_AREA", "GRADE", "ID", "SCALE_SCORE", "YEAR_WITHIN", "FIRST_OBSERVATION", "LAST_OBSERVATION", "STATE", equate.variable)
+	variables.to.get <- c("VALID_CASE", "YEAR", "CONTENT_AREA", "GRADE", "ID", "SCALE_SCORE", "YEAR_WITHIN", "FIRST_OBSERVATION", "LAST_OBSERVATION", "STATE", equate.variable, SGPt)
 	tmp_sgp_data_for_analysis <- sgp_object@Data[SJ("VALID_CASE", unique(sgp.targets[['ID']]))][, intersect(names(sgp_object@Data), variables.to.get), with=FALSE]
 	if ("YEAR_WITHIN" %in% names(tmp_sgp_data_for_analysis)) {
 		setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE, YEAR_WITHIN)
@@ -101,7 +110,8 @@ function(sgp_object,
 				sgp.use.my.coefficient.matrices=NULL,
 				calculate.simex=NULL,
 				calculate.simex.baseline=NULL,
-				year.for.equate=year.for.equate)
+				year.for.equate=year.for.equate,
+				SGPt=SGPt)
 	
 
 	### Calculate targets
