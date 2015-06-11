@@ -411,7 +411,7 @@ function(sgp_object,
 
 	if (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline) {
 
-		if (is.null(SGPstateData[[state]][["Baseline_splineMatrix"]])) {
+		if (is.null(sgp.use.my.sgp_object.baseline.coefficient.matrices) && is.null(SGPstateData[[state]][["Baseline_splineMatrix"]])) {
 			if (is.null(sgp.baseline.config)) {
 				sgp.baseline.config <- getSGPBaselineConfig(sgp_object, content_areas, grades, sgp.baseline.panel.years, sgp.percentiles.baseline.max.order)
 			} else {
