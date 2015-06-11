@@ -8,7 +8,7 @@ function(tmp.data,
 
 	tmp.list <- list()
 	current.year <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]
-	prior.year <- yearIncrement(current.year, -1)
+	prior.year <- tail(head(sort(unique(tmp.data$YEAR)), -1), 1)
 
 	current.year.data <- tmp.data[VALID_CASE=="VALID_CASE" & YEAR==current.year]
 	prior.year.data <- tmp.data[VALID_CASE=="VALID_CASE" & YEAR==prior.year]

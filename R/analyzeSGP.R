@@ -261,6 +261,8 @@ function(sgp_object,
 		}
 	}
 
+	if (identical(sgp.use.my.sgp_object.baseline.coefficient.matrices, FALSE)) sgp.use.my.sgp_object.baseline.coefficient.matrices <- NULL
+
 	if (!is.null(sgp.use.my.sgp_object.baseline.coefficient.matrices) && length(grep("BASELINE", names(sgp_object@SGP$Coefficient_Matrices)))==0) {
 		sgp.use.my.sgp_object.baseline.coefficient.matrices <- NULL
 	}
