@@ -15,6 +15,9 @@ rliSGP(
         eow.or.update="UPDATE",
 	update.save.shell.only=FALSE,
         configuration.year,
+	sgp.percentiles.baseline=TRUE,
+	sgp.projections.baseline=TRUE,
+	sgp.target.scale.scores=TRUE,
         update.ids=NULL,
 	SGPt=NULL,
         parallel.config=NULL)
@@ -36,6 +39,12 @@ rliSGP(
   \item{update.save.shell.only}{Boolean argument indicating whether End of Window processing should only produce/save RLI_SGP_UPDATE_SHELL and bypass coefficient matrix production.
   }
   \item{configuration.year}{Year associated with SGP analyses (configuration year) to be used.
+  }
+  \item{sgp.percentiles.baseline}{Boolean variable passed to \code{\link{updateSGP}} to control whether baseline student growth percentiles are calculated. Default is TRUE.
+  }
+  \item{sgp.projections.baseline}{Boolean variable passed to \code{\link{updateSGP}} to control whether baseline student growth projections are calculated. Default is TRUE.
+  }
+  \item{sgp.target.scale.scores}{Boolean variable passed to \code{\link{updateSGP}} to control whether scale score targets are calculated. Default is TRUE.
   }
   \item{update.ids}{Argument that allows ID to be updated based upon a supplied two column data frame where the first column represents the ORIGINAL/OLD ID and the second column the NEW ID that
 is to replace it. NOTE that ID needn't be replaced in either 'sgp_object' nor 'additional.data' that are provided as part of the 'rliSGP' call. Substitution will occur on entire data set before
