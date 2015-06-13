@@ -635,6 +635,16 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		grid.lines(x=tmp.year.cut, y=yscale.range, default.units="native", gp=gpar(lwd=1.8, col=border.color))
 		grid.lines(x=tmp.year.cut+0.028, y=yscale.range, default.units="native", gp=gpar(lwd=0.4, col=border.color))
 		grid.lines(x=tmp.year.cut-0.028, y=yscale.range, default.units="native", gp=gpar(lwd=0.4, col=border.color))
+
+		if (grade.values$year_span != 0) {
+			for (j in seq(length(Report_Parameters$Assessment_Transition[['Year']])+1)) {
+				tmp.transition.names <- names(SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Transition"]])
+				tmp.test.abbreviation <- 
+					unlist(SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Transition"]][grep('Assessment_Abbreviation', tmp.transition.names)])
+				grid.text(x=(xscale.range.list[[j]][1] + xscale.range.list[[j]][2])/2, y=(yscale.range[1]+yscale.range[2])/2, tmp.test.abbreviation[j], 
+					default.units="native", gp=gpar(col="white", fontface=2, cex=1.6, alpha=0.5))
+			}
+		}
 	}
 
 	if (grade.values$year_span == 0) {
