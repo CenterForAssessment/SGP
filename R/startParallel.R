@@ -34,7 +34,7 @@ function(parallel.config,
 	###  Basic checks - default to ANY percentiles or projections WORKERS.
 	
 	if (is.numeric(parallel.config[['WORKERS']])) {
-		message(paste("\t", process, " workers not specified.  Numeric value from WORKERS (", parallel.config[['WORKERS']], ") will be used for all processes.\n", sep=""))
+		message(paste("\t\tNOTE: ", process, " workers not specified.  Numeric value from WORKERS (", parallel.config[['WORKERS']], ") will be used for all processes.\n", sep=""))
 		parallel.config[['WORKERS']][[process]] <- parallel.config[['WORKERS']]
 	}
 	if (is.null(parallel.config[['WORKERS']][[process]])) {
@@ -42,7 +42,7 @@ function(parallel.config,
 			 tmp.indx <- grep(strsplit(process, "_")[[1]][2], names(parallel.config[['WORKERS']]))
 			 if (any(!is.na(tmp.indx))) {
 				 parallel.config[['WORKERS']][[process]] <- parallel.config[['WORKERS']][[tmp.indx]]
-				 message(paste(process, "workers not defined specifically.", names(parallel.config[['WORKERS']][tmp.indx]), 
+				 message(paste("\t\tNOTE: ", process, "workers not defined specifically.", names(parallel.config[['WORKERS']][tmp.indx]), 
 				 	"WORKERS will be used  (", parallel.config[['WORKERS']][tmp.indx], "worker processors)."))
 			 }
 		} # See if still NULL and stop:
@@ -58,7 +58,7 @@ function(parallel.config,
 	if (all(c("PERCENTILES", "SIMEX") %in% names(parallel.config[['WORKERS']]))) {
 		# if (as.numeric(parallel.config[['WORKERS']][['PERCENTILES']])==1) {
 			Lower_Level_Parallel <- parallel.config
-			# message("CAUTION:  Check yourself before you wreck yourself.  Running more processes than cores is bad for yer health.")
+			# message("\t\t NOTE: CAUTION:  Check yourself before you wreck yourself.  Running more processes than cores is bad for yer health.")
 		# } else stop("Both SIMEX and PERCENTILES can not be executed in Parallel at the same time.")
 	}
 	
