@@ -7,7 +7,7 @@ function(sgp_object,
 	grades=NULL,
 	prepareSGP.var.names=NULL,
 	prepareSGP.create.additional.variables=FALSE,
-	sgp.percentiles=TRUE, 
+	sgp.percentiles=TRUE,
 	sgp.projections=TRUE,
 	sgp.projections.lagged=TRUE,
 	sgp.percentiles.baseline=TRUE,
@@ -34,6 +34,7 @@ function(sgp_object,
 	outputSGP.output.type=c("LONG_Data", "LONG_FINAL_YEAR_Data", "WIDE_Data", "INSTRUCTOR_Data"),
 	verbose.output=FALSE,
 	sgp.sqlite = NULL,
+	sgp.percentiles.equated=FALSE,
 	SGPt=NULL) {
 
         started.at <- proc.time()
@@ -108,6 +109,7 @@ function(sgp_object,
 			parallel.config=parallel.config,
 			verbose.output=verbose.output,
 			sgp.sqlite=sgp.sqlite,
+			sgp.percentiles.equated=sgp.percentiles.equated,
 			SGPt=SGPt)
 
                 if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")

@@ -3,15 +3,18 @@ function(sgp_object,
 	additional.data,
 	state=NULL,
 	content_areas=c("MATHEMATICS", "READING", "EARLY_LITERACY"),
-	testing.window, ### FALL, WINTER, SPRING, EARLY_SPRING, LATE_SPRING for UPDATE 
+	testing.window, ### FALL, WINTER, SPRING 
 	eow.or.update="UPDATE", ### UPDATE or EOW
 	update.save.shell.only=FALSE,
 	configuration.year,
+	sgp.percentiles.baseline=TRUE,
+	sgp.projections.baseline=TRUE,
+	sgp.target.scale.scores=TRUE,
 	update.ids=NULL,
 	SGPt=NULL,
 	parallel.config=NULL) {
 
-	YEAR <- GRADE <- ID <- NEW_ID <- .EACHI <- NULL
+	YEAR <- GRADE <- ID <- NEW_ID <- .EACHI <- DATE <- NULL
 
 	started.at <- proc.time()
 	message(paste("\nStarted rliSGP", date()), "\n")
@@ -89,6 +92,8 @@ function(sgp_object,
 
 	if (!is.data.table(additional.data)) additional.data <- as.data.table(additional.data)
 
+	if ("DATE" %in% names(additional.data)) additional.data[,DATE:=as.Date(DATE)]
+
 	if (!is.null(update.ids) && !is.data.table(update.ids)) update.ids <- as.data.table(update.ids)
 
 	if (state=="RLI_UK") content_areas <- "READING"
@@ -118,10 +123,10 @@ function(sgp_object,
 			sgp.percentiles=FALSE,
 			sgp.projections=FALSE,
 			sgp.projections.lagged=FALSE,
-			sgp.percentiles.baseline=TRUE,
-			sgp.projections.baseline=TRUE,
+			sgp.percentiles.baseline=sgp.percentiles.baseline,
+			sgp.projections.baseline=sgp.projections.baseline,
 			sgp.projections.lagged.baseline=FALSE,
-			sgp.target.scale.scores.only=TRUE,
+			sgp.target.scale.scores.only=sgp.target.scale.scores,
 			outputSGP.output.type="RLI",
 			goodness.of.fit.print=FALSE,
 			update.old.data.with.new=FALSE,
@@ -166,10 +171,10 @@ function(sgp_object,
 					sgp.percentiles=TRUE,
 					sgp.projections=FALSE,
 					sgp.projections.lagged=FALSE,
-					sgp.percentiles.baseline=TRUE,
-					sgp.projections.baseline=TRUE,
+					sgp.percentiles.baseline=sgp.percentiles.baseline,
+					sgp.projections.baseline=sgp.projections.baseline,
 					sgp.projections.lagged.baseline=FALSE,
-					sgp.target.scale.scores.only=TRUE,
+					sgp.target.scale.scores.only=sgp.target.scale.scores,
 					outputSGP.output.type="RLI",
 					update.old.data.with.new=TRUE,
 					goodness.of.fit.print=FALSE,
@@ -253,10 +258,10 @@ function(sgp_object,
 					sgp.percentiles=TRUE,
 					sgp.projections=FALSE,
 					sgp.projections.lagged=FALSE,
-					sgp.percentiles.baseline=TRUE,
-					sgp.projections.baseline=TRUE,
+					sgp.percentiles.baseline=sgp.percentiles.baseline,
+					sgp.projections.baseline=sgp.projections.baseline,
 					sgp.projections.lagged.baseline=FALSE,
-					sgp.target.scale.scores.only=TRUE,
+					sgp.target.scale.scores.only=sgp.target.scale.scores,
 					outputSGP.output.type="RLI",
 					update.old.data.with.new=TRUE,
 					goodness.of.fit.print=FALSE,

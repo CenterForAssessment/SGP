@@ -17,6 +17,7 @@ function(sgp_object,
          sgp.projections.max.forward.progression.grade=NULL,
          sgp.minimum.default.panel.years=NULL,
          sgp.use.my.coefficient.matrices=NULL,
+         sgp.use.my.sgp_object.baseline.coefficient.matrices=NULL,
          simulate.sgps=TRUE,
          calculate.simex=NULL,
          calculate.simex.baseline=NULL,
@@ -260,6 +261,16 @@ function(sgp_object,
 		}
 	}
 
+	if (identical(sgp.use.my.sgp_object.baseline.coefficient.matrices, FALSE)) sgp.use.my.sgp_object.baseline.coefficient.matrices <- NULL
+
+	if (!is.null(sgp.use.my.sgp_object.baseline.coefficient.matrices) && length(grep("BASELINE", names(sgp_object@SGP$Coefficient_Matrices)))==0) {
+		sgp.use.my.sgp_object.baseline.coefficient.matrices <- NULL
+	}
+
+	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][['sgp.use.my.sgp_object.baseline.coefficient.matrices']]) && is.null(sgp.use.my.sgp_object.baseline.coefficient.matrices)) {
+		sgp.use.my.sgp_object.baseline.coefficient.matrices <- SGPstateData[[state]][["SGP_Configuration"]][['sgp.use.my.sgp_object.baseline.coefficient.matrices']]
+	}
+
 	### 
 	### Utility functions
 	###
@@ -402,7 +413,7 @@ function(sgp_object,
 
 	if (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline) {
 
-		if (is.null(SGPstateData[[state]][["Baseline_splineMatrix"]])) {
+		if (is.null(sgp.use.my.sgp_object.baseline.coefficient.matrices) && is.null(SGPstateData[[state]][["Baseline_splineMatrix"]])) {
 			if (is.null(sgp.baseline.config)) {
 				sgp.baseline.config <- getSGPBaselineConfig(sgp_object, content_areas, grades, sgp.baseline.panel.years, sgp.percentiles.baseline.max.order)
 			} else {
@@ -479,7 +490,7 @@ function(sgp_object,
 			save(list=paste(state, "_Baseline_Matrices", sep=""), file=paste(state, "_Baseline_Matrices.Rdata", sep=""))
 			message("\n\tFinished Calculating Baseline Coefficient Matrices\n")
 		} else {
-			tmp_sgp_object <- mergeSGP(tmp_sgp_object, SGPstateData[[state]][["Baseline_splineMatrix"]])
+			if (is.null(sgp.use.my.sgp_object.baseline.coefficient.matrices)) tmp_sgp_object <- mergeSGP(tmp_sgp_object, SGPstateData[[state]][["Baseline_splineMatrix"]])
 		}
 		suppressMessages(gc()) # clean up
 	} # END Get/Compute baseline coefficient matrices

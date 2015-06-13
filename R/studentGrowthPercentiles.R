@@ -981,7 +981,7 @@ function(panel.data,         ## REQUIRED
 	}
 
 	if (identical(return.norm.group.dates, TRUE)) {
-		return.norm.group.dates <- "TIME[.]"
+		return.norm.group.dates <- "TIME[!_]"
 	}
 
 	if (identical(return.norm.group.scale.scores, FALSE)) {
