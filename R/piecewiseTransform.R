@@ -54,7 +54,7 @@ function(scale_score,
 		}
 	} else {
 		if (!is.na(content_area) & !is.na(grade)) {
-			sgp.projections.equated[['Linkages']][[paste(content_area, sgp.projections.equated[['Year']], sep=".")]][[paste("GRADE", grade, sep="_")]][['NEW_TO_OLD']][['interpolated_function']](scale_score)
+			sgp.projections.equated[['Linkages']][[paste(content_area, sgp.projections.equated[['Year']], sep=".")]][[paste("GRADE", grade, sep="_")]][['OLD_TO_NEW']][['interpolated_function']](scale_score)
 		} else {
 			as.numeric(scale_score)
 		}

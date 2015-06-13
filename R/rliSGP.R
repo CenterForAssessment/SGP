@@ -3,14 +3,18 @@ function(sgp_object,
 	additional.data,
 	state=NULL,
 	content_areas=c("MATHEMATICS", "READING", "EARLY_LITERACY"),
-	testing.window, ### FALL, WINTER, SPRING, EARLY_SPRING, LATE_SPRING for UPDATE 
+	testing.window, ### FALL, WINTER, SPRING 
 	eow.or.update="UPDATE", ### UPDATE or EOW
 	update.save.shell.only=FALSE,
 	configuration.year,
+	sgp.percentiles.baseline=TRUE,
+	sgp.projections.baseline=TRUE,
+	sgp.target.scale.scores=TRUE,
 	update.ids=NULL,
+	SGPt=NULL,
 	parallel.config=NULL) {
 
-	YEAR <- GRADE <- ID <- NEW_ID <- .EACHI <- NULL
+	YEAR <- GRADE <- ID <- NEW_ID <- .EACHI <- DATE <- NULL
 
 	started.at <- proc.time()
 	message(paste("\nStarted rliSGP", date()), "\n")
@@ -63,10 +67,10 @@ function(sgp_object,
 		}
 	}
 
-	getRLIConfig <- function(content_areas, configuration.year, testing.window) {
+	getRLIConfig <- function(content_areas, configuration.year, testing.window, SGPt) {
 		tmp.list <- list()
 		for (i in content_areas) {
-			tmp.list[[i]] <- SGP::SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, i, testing.window)
+			tmp.list[[i]] <- SGP::SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, i, testing.window, SGPt)
 		}
 		return(unlist(tmp.list, recursive=FALSE))
 	}
@@ -88,8 +92,11 @@ function(sgp_object,
 
 	if (!is.data.table(additional.data)) additional.data <- as.data.table(additional.data)
 
+	if ("DATE" %in% names(additional.data)) additional.data[,DATE:=as.Date(DATE)]
+
 	if (!is.null(update.ids) && !is.data.table(update.ids)) update.ids <- as.data.table(update.ids)
 
+	if (state=="RLI_UK") content_areas <- "READING"
 
 	### Update IDS if requested
 
@@ -116,15 +123,16 @@ function(sgp_object,
 			sgp.percentiles=FALSE,
 			sgp.projections=FALSE,
 			sgp.projections.lagged=FALSE,
-			sgp.percentiles.baseline=TRUE,
-			sgp.projections.baseline=TRUE,
+			sgp.percentiles.baseline=sgp.percentiles.baseline,
+			sgp.projections.baseline=sgp.projections.baseline,
 			sgp.projections.lagged.baseline=FALSE,
-			sgp.target.scale.scores.only=TRUE,
+			sgp.target.scale.scores.only=sgp.target.scale.scores,
 			outputSGP.output.type="RLI",
 			goodness.of.fit.print=FALSE,
 			update.old.data.with.new=FALSE,
+			SGPt=SGPt,
 			parallel.config=parallel.config,
-			sgp.config=getRLIConfig(content_areas, configuration.year, testing.window))
+			sgp.config=getRLIConfig(content_areas, configuration.year, testing.window, SGPt))
 
 		if (!is.null(update.ids)) {
 			update.shell.name <- paste(state, "SGP_UPDATE_SHELL", sep="_")
@@ -163,15 +171,16 @@ function(sgp_object,
 					sgp.percentiles=TRUE,
 					sgp.projections=FALSE,
 					sgp.projections.lagged=FALSE,
-					sgp.percentiles.baseline=TRUE,
-					sgp.projections.baseline=TRUE,
+					sgp.percentiles.baseline=sgp.percentiles.baseline,
+					sgp.projections.baseline=sgp.projections.baseline,
 					sgp.projections.lagged.baseline=FALSE,
-					sgp.target.scale.scores.only=TRUE,
+					sgp.target.scale.scores.only=sgp.target.scale.scores,
 					outputSGP.output.type="RLI",
 					update.old.data.with.new=TRUE,
 					goodness.of.fit.print=FALSE,
+					SGPt=SGPt,
 					parallel.config=parallel.config,
-					sgp.config=getRLIConfig(content_areas, configuration.year, testing.window))
+					sgp.config=getRLIConfig(content_areas, configuration.year, testing.window, SGPt))
 
 				### Create and save new UPDATE_SHELL
 
@@ -201,7 +210,7 @@ function(sgp_object,
 			additional.data.unique <- additional.data[!(which(duplicated(additional.data))-1)]
 			additional.data.unique[,YEAR:=paste(configuration.year, "3", sep=".")]
 			additional.data.unique[,GRADE:=as.factor(GRADE)]
-			levels(additional.data.unique$GRADE) <- sub(".4", ".3", levels(additional.data.unique$GRADE))
+			levels(additional.data.unique$GRADE) <- sub("[.]4", ".3", levels(additional.data.unique$GRADE))
 			additional.data.unique[,GRADE:=as.character(GRADE)]
 
 			if (update.save.shell.only) {
@@ -225,8 +234,9 @@ function(sgp_object,
 					sgp.projections.lagged.baseline=FALSE,
 					update.old.data.with.new=FALSE,
 					goodness.of.fit.print=FALSE,
+					SGPt=SGPt,
 					parallel.config=parallel.config,
-					sgp.config=getRLIConfig(content_areas, configuration.year, "EARLY_SPRING"))
+					sgp.config=getRLIConfig(content_areas, configuration.year, "EARLY_SPRING", SGPt))
 
 				### Convert and save coefficient matrices
 
@@ -248,15 +258,16 @@ function(sgp_object,
 					sgp.percentiles=TRUE,
 					sgp.projections=FALSE,
 					sgp.projections.lagged=FALSE,
-					sgp.percentiles.baseline=TRUE,
-					sgp.projections.baseline=TRUE,
+					sgp.percentiles.baseline=sgp.percentiles.baseline,
+					sgp.projections.baseline=sgp.projections.baseline,
 					sgp.projections.lagged.baseline=FALSE,
-					sgp.target.scale.scores.only=TRUE,
+					sgp.target.scale.scores.only=sgp.target.scale.scores,
 					outputSGP.output.type="RLI",
 					update.old.data.with.new=TRUE,
 					goodness.of.fit.print=FALSE,
+					SGPt=SGPt,
 					parallel.config=parallel.config,
-					sgp.config=getRLIConfig(content_areas, configuration.year, testing.window))
+					sgp.config=getRLIConfig(content_areas, configuration.year, testing.window, SGPt))
 
 
 				### Create and save new UPDATE_SHELL

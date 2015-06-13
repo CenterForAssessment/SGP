@@ -43,16 +43,19 @@ studentGrowthPercentiles(panel.data,
                          isotonize=TRUE,                                 
                          convert.using.loss.hoss=TRUE,                
                          goodness.of.fit=TRUE,
-			goodness.of.fit.minimum.n=NULL,
+                         goodness.of.fit.minimum.n=NULL,
                          return.prior.scale.score=TRUE,
                          return.prior.scale.score.standardized=TRUE,
                          return.norm.group.identifier=TRUE,
                          return.norm.group.scale.scores=NULL,
+                         return.norm.group.dates=NULL,
                          return.panel.data=identical(parent.frame(), .GlobalEnv),
                          print.time.taken=TRUE,
                          parallel.config=NULL,
 			calculate.simex=NULL,
 			sgp.percentiles.set.seed=314159,
+			sgp.percentiles.equated=NULL,
+			SGPt=NULL,
 			verbose.output=FALSE)
 }
 
@@ -173,13 +176,16 @@ to calculate the lags/differences based upon the supplied years.
   \item{return.prior.scale.score}{Boolean argument (defaults to TRUE) indicating whether to include the prior scale score in the SGP data output. Useful for examining relationship between prior 
    achievement and student growth.
   }
-  \item{return.prior.scale.score.standardized}{Boolean argument (default to TRUE) indicating whether to include the standardized prior scale score in the SGP data output. 
+  \item{return.prior.scale.score.standardized}{Boolean argument (defaults to TRUE) indicating whether to include the standardized prior scale score in the SGP data output. 
 Useful for examining relationship between prior achievement and student growth.
   }
-  \item{return.norm.group.identifier}{Boolean argument (default to TRUE) indicating whether to include the content areas and years that form students' specific norm group in the SGP data output.
+  \item{return.norm.group.identifier}{Boolean argument (defaults to TRUE) indicating whether to include the content areas and years that form students' specific norm group in the SGP data output.
   }
-  \item{return.norm.group.scale.scores}{Boolean argument (defaults. to NULL) indicating whether to return a comma separated character vector of the scores associated with the SGP_NORM_GROUP to
+  \item{return.norm.group.scale.scores}{Boolean argument (defaults to NULL) indicating whether to return a semi-colon separated character vector of the scores associated with the SGP_NORM_GROUP to
   which the student belongs.
+  }
+  \item{return.norm.group.dates}{Boolean argument or character string (defaults. to NULL) indicating whether to return a semi-colon separated character vector of the dates associated 
+  with time dependent SGPt calculations. If TRUE is supplied, 'DATE' is the assumed name for the date variable.
   }
   \item{return.panel.data}{Boolean argument indicating whether to return the original data provided in \code{panel.data$Panel_Data} in the SGP list of results. 
   Defaults to 'identical(parent.frame(), .GlobalEnv)': If the parent environment from which the function is called is .GlobalEnv, then FALSE, otherwise TRUE.
@@ -192,6 +198,12 @@ Useful for examining relationship between prior achievement and student growth.
   Defaults to NULL, no simex calculations performed.
   }
   \item{sgp.percentiles.set.seed}{An integer (or NULL) argument indicating whether to set.seed to make analyses fully reproducible. To turn off, set argument to NULL. Default is 314159.
+  }
+  \item{sgp.percentiles.equated}{An object containing information (linkages, year, ...) on equating done for calculating student growth percentiles.
+  }
+  \item{SGPt}{An argument supplied to implement time-dependent SGP analyses (SGPt). Default is NULL giving standard, non-time dependent argument. If set to TRUE, the function assumes the 
+  variables 'TIME' and 'TIME_LAG' are supplied as part of the panel.data. To specify other names, supply a list of the form: list(TIME='my_time_name', TIME_LAG='my_time_lag_name'), substituting
+  your variable names. 
   }
   \item{verbose.output}{A Boolean argument indicating whether the function should output verbose diagnostic messages.
   }
@@ -352,6 +364,7 @@ file="2015_Reading_SGPercentiles.csv", row.names=FALSE, quote=FALSE, na="")
 
 # Create PDFs of all Goodness of Fit results:
 
+require(grid)
 for (i in names(my.sgpData$Goodness_of_Fit$READING.2015)) {
 	pdf(file=paste(i, "_Reading_2015_GOF.pdf", sep=""), width=8.5, height=11)
 	grid.draw(my.sgpData[["Goodness_of_Fit"]][["READING.2015"]][[i]])

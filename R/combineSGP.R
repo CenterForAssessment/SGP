@@ -17,6 +17,7 @@ function(
 	update.all.years=FALSE,
 	sgp.config=NULL,
 	sgp.percentiles.equated=FALSE,
+	SGPt=NULL,
 	parallel.config=NULL) {
 
 	started.at <- proc.time()
@@ -451,7 +452,8 @@ function(
 					getYearsContentAreasGrades(state, years=unique(tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter][['YEAR']]), content_areas=unique(tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter][['CONTENT_AREA']])),
 					sgp.config=sgp.config,
 					projection_group.identifier=projection_group.iter,
-					sgp.projections.equated=sgp.projections.equated,
+					sgp.projections.equated=if (length(grep("baseline", target.type.iter) > 0)) NULL else sgp.projections.equated,
+					SGPt=SGPt,
 					parallel.config=parallel.config)
 			}
 		}

@@ -47,6 +47,7 @@ updateSGP(
 	goodness.of.fit.print=TRUE,
 	parallel.config=NULL,
 	sgp.sqlite=NULL,
+	SGPt=NULL,
 	...)
 }
 
@@ -104,7 +105,7 @@ If missing the function will use the data to infer all the grade progressions fo
   }
   \item{overwrite.existing.data}{A Boolean argument (defaults to FALSE) indicating whether updateSGP should overwrite existing data/results from an earlier run as part of updateSGP.
   }
-  \item{update.old.data.with.new}{A Boolean argument (defaults to TRUE) indicating whether updateSGP should add new data supplied in arugment with_SGP_Data_LONG to existing longitudinal data
+  \item{update.old.data.with.new}{A Boolean argument (defaults to TRUE) indicating whether updateSGP should add new data supplied in argument with_SGP_Data_LONG to existing longitudinal data
   or reduce data set to run analyses on only that which is provided. 
   }
   \item{sgPlot.demo.report}{A Boolean argument (defaults to TRUE) indicating whether updateSGP should produce just the demo student growth plots or those associated with all students in the last year.
@@ -123,6 +124,8 @@ If missing the function will use the data to infer all the grade progressions fo
   under those functions for details.
   }
   \item{sgp.sqlite}{A Boolean argument (defaults to NULL) indicating whether a SQLite database file of the essential SGP data should be created from the \code{@Data} slot and subsequently used to extract data subsets for analyses conducted in order to reduce the amount of RAM memory required.  See full argument description in \code{\link{analyzeSGP}}.
+  }
+  \item{SGPt}{Argument (defaults to NULL) indicating whether time dependent student growth percentile (SGPt) are calculate.
   }
   \item{...}{Arguments to be passed to \code{\link{abcSGP}} for finer control over SGP calculations. For example, 'parallel.config' can be supplied to abcSGP for parallel computation.
   }

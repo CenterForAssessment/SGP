@@ -7,7 +7,7 @@ function(sgp_object,
 	grades=NULL,
 	prepareSGP.var.names=NULL,
 	prepareSGP.create.additional.variables=FALSE,
-	sgp.percentiles=TRUE, 
+	sgp.percentiles=TRUE,
 	sgp.projections=TRUE,
 	sgp.projections.lagged=TRUE,
 	sgp.percentiles.baseline=TRUE,
@@ -33,7 +33,9 @@ function(sgp_object,
 	plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot"),
 	outputSGP.output.type=c("LONG_Data", "LONG_FINAL_YEAR_Data", "WIDE_Data", "INSTRUCTOR_Data"),
 	verbose.output=FALSE,
-	sgp.sqlite = NULL) {
+	sgp.sqlite = NULL,
+	sgp.percentiles.equated=FALSE,
+	SGPt=NULL) {
 
         started.at <- proc.time()
 	message(paste("\nStarted abcSGP", date()), "\n")
@@ -106,7 +108,9 @@ function(sgp_object,
 			goodness.of.fit.print=goodness.of.fit.print,
 			parallel.config=parallel.config,
 			verbose.output=verbose.output,
-			sgp.sqlite=sgp.sqlite)
+			sgp.sqlite=sgp.sqlite,
+			sgp.percentiles.equated=sgp.percentiles.equated,
+			SGPt=SGPt)
 
                 if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
 	}
@@ -129,6 +133,7 @@ function(sgp_object,
 			sgp.target.scale.scores=sgp.target.scale.scores,
 			sgp.target.scale.scores.only=sgp.target.scale.scores.only,
 			sgp.config=sgp.config,
+			SGPt=SGPt,
 			parallel.config=parallel.config)
 
                 if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")

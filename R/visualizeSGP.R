@@ -66,7 +66,7 @@ function(sgp_object,
 	SCHOOL_ENROLLMENT_STATUS <- LAST_NAME <- FIRST_NAME <- NULL ## To prevent R CMD check warnings
 	MEDIAN_SGP <- MEDIAN_SGP_COUNT <- VALID_CASE <- gaPlot.iter <- sgPlot.iter <- V1 <- variable <- INSTRUCTOR_NAME <- INSTRUCTOR_NUMBER <- NULL ## To prevent R CMD check warnings
 	CONTENT_AREA_RESPONSIBILITY <- INSTRUCTOR_LAST_NAME <- INSTRUCTOR_FIRST_NAME <- TRANSFORMED_SCALE_SCORE <- SCALE_SCORE_ACTUAL <- CONTENT_AREA_LABELS <- NULL
-	TEMP <- TEMP_SCORE <- TEMP_GRADE <- NULL
+	TEMP <- TEMP_SCORE <- TEMP_GRADE <- SGP_PROJECTION_GROUP <- NULL
 
 
 	### Create state (if missing) from sgp_object (if possible)
@@ -420,6 +420,10 @@ if ("studentGrowthPlot" %in% plot.types) {
 			sgPlot.demo.report <- FALSE
 		}
 
+		if (!is.null(SGP::SGPstateData[[state]][['SGP_Configuration']][['sgPlot.output.format']])) {
+			sgPlot.output.format <- SGP::SGPstateData[[state]][['SGP_Configuration']][['sgPlot.output.format']]
+		}
+
 
 ################################################
 ######## IF sgPlot.wide.data is supplied 
@@ -547,12 +551,14 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 
 	if (is.null(sgPlot.years)) {
 		tmp.years <- sort(unique(slot.data["VALID_CASE"][["YEAR"]])) 
-		tmp.years.subset <- tail(tmp.years, sgPlot.year.span)
-		tmp.last.year <- tail(tmp.years, 1)
+		tmp.years.filled <- yearIncrement(tmp.years[1], seq(diff(range(as.numeric(sapply(strsplit(tmp.years, "_"), tail, 1))))+1)-1)
+		tmp.years.subset <- tail(tmp.years.filled, sgPlot.year.span)
+		tmp.last.year <- tail(tmp.years.filled, 1)
 	} else {
 		tmp.years <- sort(unique(slot.data["VALID_CASE"][["YEAR"]])) 
-		tmp.years.subset <- tail(tmp.years[1:which(tmp.years==tail(sort(sgPlot.years), 1))], sgPlot.year.span)
-		tmp.last.year <- tail(tmp.years, 1)
+		tmp.years.filled <- yearIncrement(tmp.years[1], seq(diff(range(as.numeric(sapply(strsplit(tmp.years, "_"), tail, 1))))+1)-1)
+		tmp.years.subset <- tail(tmp.years.filled[1:which(tmp.years.filled==tail(sort(sgPlot.years), 1))], sgPlot.year.span)
+		tmp.last.year <- tail(tmp.years.filled, 1)
 	}
 
 	#### Content area stuff (NECESSARY regardless of whether sgPlot.students is provided)
@@ -702,12 +708,12 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			report.ids <- unique(slot.data[tmp.districts.and.schools][["ID"]])
 			if (sgPlot.reports.by.instructor) report.ids <- intersect(student.teacher.lookup[['ID']], report.ids)
 			setkeyv(slot.data, c("CONTENT_AREA", "GRADE", "YEAR"))
-			tmp.table <- data.table(slot.data[getYearsContentAreasGrades(state, years=tmp.years, content_areas_domains=tmp.content_areas_domains), nomatch=0], 
-				key=c("ID", "CONTENT_AREA", "YEAR", "VALID_CASE"))[CJ(report.ids, tmp.content_areas_domains, tmp.years, "VALID_CASE")]
+			tmp.table <- data.table(slot.data[getYearsContentAreasGrades(state, years=tmp.years.filled, content_areas_domains=tmp.content_areas_domains), nomatch=0], 
+				key=c("ID", "CONTENT_AREA", "YEAR", "VALID_CASE"))[CJ(report.ids, tmp.content_areas_domains, tmp.years.filled, "VALID_CASE")]
 		} else {
 			report.ids <- sgPlot.students
 			setkeyv(slot.data, c("CONTENT_AREA", "GRADE", "YEAR"))
-			tmp.table <- data.table(slot.data[getYearsContentAreasGrades(state, years=tmp.years, content_areas_domains=tmp.content_areas_domains), nomatch=0], 
+			tmp.table <- data.table(slot.data[getYearsContentAreasGrades(state, years=tmp.years.filled, content_areas_domains=tmp.content_areas_domains), nomatch=0], 
 				key=c("VALID_CASE", "ID", "CONTENT_AREA", "YEAR"))[CJ("VALID_CASE", report.ids, tmp.content_areas_domains, tmp.years)]
 			setkeyv(tmp.table, c("VALID_CASE", "YEAR", "CONTENT_AREA", "DISTRICT_NUMBER", "SCHOOL_NUMBER"))
 			tmp.districts.and.schools <- tmp.table[CJ("VALID_CASE", tmp.last.year, tmp.content_areas_domains)][, list(DISTRICT_NUMBER, SCHOOL_NUMBER)]
@@ -784,8 +790,8 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 
 	#### Reshape data (NOT NECESSARY IF WIDE data is provided)
 
-		variables.to.keep <- c("VALID_CASE", "ID", "LAST_NAME", "FIRST_NAME", "CONTENT_AREA", "CONTENT_AREA_LABELS", "YEAR", "GRADE", 
-			"SCALE_SCORE", "TRANSFORMED_SCALE_SCORE", "ACHIEVEMENT_LEVEL", my.sgp, my.sgp.level, my.sgp.targets, "SCHOOL_NAME", "SCHOOL_NUMBER", "DISTRICT_NAME", "DISTRICT_NUMBER")
+		variables.to.keep <- c("VALID_CASE", "ID", "LAST_NAME", "FIRST_NAME", "CONTENT_AREA", "CONTENT_AREA_LABELS", "YEAR", "GRADE", "SCALE_SCORE", "TRANSFORMED_SCALE_SCORE", 
+			"ACHIEVEMENT_LEVEL", my.sgp, my.sgp.level, my.sgp.targets, "SCHOOL_NAME", "SCHOOL_NUMBER", "DISTRICT_NAME", "DISTRICT_NUMBER")
 
 		sgPlot.data <- reshape(tmp.table[,variables.to.keep, with=FALSE],
 			idvar=c("ID", "CONTENT_AREA"),
@@ -793,10 +799,10 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			drop=c("VALID_CASE"),
 			direction="wide")
 
-		variables.to.keep <- c("ID", "CONTENT_AREA", paste("CONTENT_AREA_LABELS", tmp.years, sep="."),
-			paste("LAST_NAME", tmp.last.year, sep="."), paste("FIRST_NAME", tmp.last.year, sep="."), paste("GRADE", tmp.years, sep="."), 
-			paste(my.sgp, tmp.years, sep="."), paste("SCALE_SCORE", tmp.years, sep="."), paste("TRANSFORMED_SCALE_SCORE", tmp.years, sep="."), 
-			paste("ACHIEVEMENT_LEVEL", tmp.years, sep="."), paste(my.sgp.level, tmp.years, sep="."),
+		variables.to.keep <- c("ID", "CONTENT_AREA", paste("CONTENT_AREA_LABELS", tmp.years.filled, sep="."),
+			paste("LAST_NAME", tmp.last.year, sep="."), paste("FIRST_NAME", tmp.last.year, sep="."), paste("GRADE", tmp.years.filled, sep="."), 
+			paste(my.sgp, tmp.years.filled, sep="."), paste("SCALE_SCORE", tmp.years.filled, sep="."), paste("TRANSFORMED_SCALE_SCORE", tmp.years.filled, sep="."), 
+			paste("ACHIEVEMENT_LEVEL", tmp.years.filled, sep="."), paste(my.sgp.level, tmp.years.filled, sep="."),
 			paste("SCHOOL_NAME", tmp.last.year, sep="."), paste("SCHOOL_NUMBER", tmp.last.year, sep="."), 
 			paste("DISTRICT_NAME", tmp.last.year, sep="."), paste("DISTRICT_NUMBER", tmp.last.year, sep="."))
 		if (!is.null(my.sgp.targets)) variables.to.keep <- c(variables.to.keep, paste(my.sgp.targets, tmp.last.year, sep="."))
@@ -830,7 +836,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 					tmp.list[[i]] <- data.table(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
 					sgp_object@SGP[["SGProjections"]][[i]][,c(1, grep("PROJ", names(sgp_object@SGP[["SGProjections"]][[i]]))), with=FALSE])
 				}
-				sgPlot.data <- data.table(rbindlist(tmp.list, fill=TRUE), key=c("ID", "CONTENT_AREA"))[sgPlot.data]
+				sgPlot.data <- data.table(rbindlist(tmp.list, fill=TRUE), key=c("ID", "CONTENT_AREA"))[sgPlot.data][,SGP_PROJECTION_GROUP:=NULL]
 			} ### END if (sgPlot.fan)
 
 			### Straight projection scale score targets
@@ -842,11 +848,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 				for (i in tmp.proj.cut_score.names) {
 					tmp.list[[i]] <- data.table(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1], sgp_object@SGP[["SGProjections"]][[i]], key=c("ID", "CONTENT_AREA"))
 				}
-				tmp.proj.data <- data.table(rbindlist(tmp.list, fill=TRUE), key=c("ID", "CONTENT_AREA"))
-				sgPlot.data <- tmp.proj.data[!is.na(tmp.proj.data[[3]])][sgPlot.data] 
-				# Duplicates get made in combineSGP/getTargetScaleScore - one of which are NA's
-				# Not an elegant solution, but the above weeds them out.
-				# sgPlot.data <- data.table(rbindlist(tmp.list, fill=TRUE), key=c("ID", "CONTENT_AREA"))[sgPlot.data]
+				sgPlot.data <- data.table(rbindlist(tmp.list, fill=TRUE), key=c("ID", "CONTENT_AREA"))[sgPlot.data][,SGP_PROJECTION_GROUP:=NULL]
 			} ### END if ("sgp.projections" %in% sgPlot.sgp.targets)
 
 			### Lagged projection scale score targets
@@ -859,7 +861,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 				for (i in tmp.proj.cut_score.names.lagged) {
 					tmp.list[[i]] <- data.table(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1], sgp_object@SGP[["SGProjections"]][[i]], key=c("ID", "CONTENT_AREA"))
 				}
-				sgPlot.data <- data.table(rbindlist(tmp.list, fill=TRUE), key=c("ID", "CONTENT_AREA"))[sgPlot.data]
+				sgPlot.data <- data.table(rbindlist(tmp.list, fill=TRUE), key=c("ID", "CONTENT_AREA"))[sgPlot.data][,SGP_PROJECTION_GROUP:=NULL]
 			} ### END if ("sgp.projections.lagged" %in% sgPlot.sgp.targets)
 		
 			### Transform scale scores
@@ -884,8 +886,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 				if (length(grep(paste("PROJ_YEAR", i, sep="_"), names(sgPlot.data))) > 0) {
 					for (proj.iter in grep(paste("PROJ_YEAR", i, sep="_"), names(sgPlot.data), value=TRUE)) {
 						if (length(grep("CURRENT", proj.iter)) > 0) tmp.increment <- i else tmp.increment <- i-1
-						setnames(sgPlot.data, proj.iter, "TEMP_SCORE")
-						setnames(sgPlot.data, tmp.grade.name, "TEMP_GRADE")
+						setnames(sgPlot.data, c(proj.iter, tmp.grade.name), c("TEMP_SCORE", "TEMP_GRADE"))
 						sgPlot.data[, TEMP:=piecewiseTransform(
 										TEMP_SCORE,
 										state, 
@@ -900,7 +901,6 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 											get.next.grade(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment),
 											Cutscores)), 
 							by=list(CONTENT_AREA, TEMP_GRADE)]
-						setnames(sgPlot.data, "TEMP", paste(proj.iter, "TRANSFORMED", sep="_"))
 
 						if ("SCALE_SCORE_ACTUAL" %in% names(sgp_object@Data)) {
 							sgPlot.data[, TEMP_SCORE := get.actual.scores(TEMP_SCORE, 
@@ -908,8 +908,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 								get.next.grade(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment)), by=list(CONTENT_AREA, TEMP_GRADE)]
 						}
 
-						setnames(sgPlot.data, "TEMP_SCORE", proj.iter)
-						setnames(sgPlot.data, "TEMP_GRADE", tmp.grade.name)
+						setnames(sgPlot.data, c("TEMP", "TEMP_SCORE", "TEMP_GRADE"), c(paste(proj.iter, "TRANSFORMED", sep="_"), proj.iter, tmp.grade.name))
 					}
 				}
 			}
@@ -947,7 +946,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 
 if (sgPlot.save.sgPlot.data) {
 	setkey(sgPlot.data, ID)
-	tmp.file.name <- paste(gsub(" ", "_", getStateAbbreviation(state, type="name")), "studentGrowthPlot_Data", sep="_")
+	tmp.file.name <- paste(gsub(" ", "_", capwords(getStateAbbreviation(state, type="name"))), "studentGrowthPlot_Data", sep="_")
 	assign(tmp.file.name, sgPlot.data)
 	save(list=tmp.file.name, file=paste(tmp.file.name, ".Rdata", sep=""))
 }

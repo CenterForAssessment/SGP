@@ -62,9 +62,9 @@
 	}
 
 	if (summarizeSGP.baseline) {
-		my.sgp <- intersect(sgp.data.names, c("SGP", "SGP_BASELINE", "SGP_SIMEX", "SGP_SIMEX_BASELINE")) 
+		my.sgp <- intersect(sgp.data.names, c("SGP", "SGP_BASELINE", "SGP_SIMEX", "SGP_SIMEX_BASELINE", "SGP_EQUATED")) 
 	} else {
-		my.sgp <- intersect(sgp.data.names, c("SGP", "SGP_SIMEX"))
+		my.sgp <- intersect(sgp.data.names, c("SGP", "SGP_SIMEX", "SGP_EQUATED"))
 	}
 
 	my.sgp.target <- paste("SGP_TARGET", projection.years.for.target, "YEAR", sep="_")

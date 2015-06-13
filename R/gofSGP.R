@@ -358,13 +358,14 @@ function(
 						tmp.data.final <- tmp.data_1[!is.na(tmp.data_1[[use.sgp]]) & !is.na(SCALE_SCORE_PRIOR) & grepl(norm.group.iter, tmp.data_1[[norm.group.var]]),]
 					}
 					## Set up more rigorous search for prior achievement.
-					if ("ACHIEVEMENT_LEVEL_PRIOR" %in% names(tmp.data.final)) tmp.prior.ach <- TRUE else tmp.prior.ach <- FALSE
-					if (tmp.prior.ach && !all(tmp.data.final$ACHIEVEMENT_LEVEL_PRIOR %in% NA)) tmp.prior.ach <- TRUE else {
+					if ("ACHIEVEMENT_LEVEL_PRIOR" %in% names(tmp.data.final) && !all(is.na(tmp.data.final[['ACHIEVEMENT_LEVEL_PRIOR']]))) {
+						tmp.prior.ach <- TRUE
+					} else {
 						tmp.prior.ach <- FALSE
 						with.prior.achievement.level <- FALSE
-						tmp.data.final[, ACHIEVEMENT_LEVEL_PRIOR := NULL]
+						if ("ACHIEVEMENT_LEVEL_PRIOR" %in% names(tmp.data.final)) tmp.data.final[, ACHIEVEMENT_LEVEL_PRIOR:=NULL]
 						my.width <- 8.5; my.height <- 5.5
-						message(paste("ACHIEVEMENT_LEVEL_PRIOR variable does not include data for", content_areas.iter,"- Prior Achievement Level plot panel will not be produced."))
+						message(paste("\tNOTE:", content_areas.iter, "data does not include ACHIEVEMENT_LEVEL_PRIOR variable. Prior Achievement Level plot panel will not be included in goodness of fit plot."))
 					}
 					if (tmp.prior.ach) {
 						if ("CONTENT_AREA_PRIOR" %in% names(tmp.data.final)) content_areas_prior <- tmp.data.final[["CONTENT_AREA_PRIOR"]][1]

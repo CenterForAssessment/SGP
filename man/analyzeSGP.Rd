@@ -24,6 +24,7 @@ analyzeSGP(sgp_object,
          sgp.projections.max.forward.progression.grade=NULL,
          sgp.minimum.default.panel.years=NULL,
          sgp.use.my.coefficient.matrices=NULL,
+         sgp.use.my.sgp_object.baseline.coefficient.matrices=NULL,
          simulate.sgps=TRUE,
          calculate.simex=NULL,
          calculate.simex.baseline=NULL,
@@ -40,6 +41,7 @@ analyzeSGP(sgp_object,
          get.cohort.data.info=FALSE,
          sgp.sqlite=NULL,
          sgp.percentiles.equated=FALSE,
+         SGPt=NULL,
          ...)
 }
 
@@ -85,6 +87,9 @@ Default is 3.  To utilize the maximum matrix order, set to NULL.
   }
   \item{sgp.use.my.coefficient.matrices}{Argument, defaults to NULL, indicating whether to use coefficient matrices embedded in argument supplied to 'sgp_object' to calculate student growth 
   percentiles.
+  }
+  \item{sgp.use.my.sgp_object.baseline.coefficient.matrices}{Argument, defaults to NULL (FALSE), indicating whether to utilize baseline matrices embedded in supplied \code{sgp_object} and not
+  utilize baseline matrices embedded in \code{SGPstateData}.
   }
   \item{simulate.sgps}{Boolean variable indicating whether to simulate SGP values for students based on test-specific Conditional Standard Errors of Measurement (CSEM).  Test CSEM data must be available for simulation and included in \code{SGPstateData}.  This argument must be set to TRUE for confidence interval construction. Defaults to TRUE.
   }
@@ -133,6 +138,10 @@ Example use cases are provided below.
  }
   \item{sgp.percentiles.equated}{A Boolean argument (defaults to FALSE) indicating whether equating should be used on the most recent year of test data provided. Equating allows for student growth
 projections to be calculated in across assessment transitions where the scale for the assessment changes.
+  }
+  \item{SGPt}{An argument supplied to implement time-dependent SGP analyses (SGPt). Default is NULL giving standard, non-time dependent argument. If set to TRUE, the function assumes the
+  variables 'TIME' and 'TIME_LAG' are supplied as part of the panel.data. To specify other names, supply a list of the form: list(TIME='my_time_name', TIME_LAG='my_time_lag_name'), substituting
+  your variable names.
   }
   \item{...}{Arguments to be passed to \code{\link{studentGrowthPercentiles}} or \code{\link{studentGrowthProjections}} for finer control over SGP calculations. NOTE: arguments can only be passed to one lower level function at a time, and only student growth percentiles OR projections can be created but not both at the same time.
   }

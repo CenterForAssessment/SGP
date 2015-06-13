@@ -30,6 +30,7 @@ function(what_sgp_object=NULL,
 	goodness.of.fit.print=TRUE,
 	parallel.config=NULL,
 	sgp.sqlite=NULL,
+	SGPt=NULL,
 	...) {
 
 	SGPstateData <- SGP::SGPstateData ### Needed due to possible assignment of values to SGPstateData
@@ -144,6 +145,7 @@ function(what_sgp_object=NULL,
 					plot.types=plot.types,
 					goodness.of.fit.print=goodness.of.fit.print,
 					outputSGP.output.type=outputSGP.output.type,
+					SGPt=SGPt,
 					parallel.config=parallel.config,
 					...
 					)
@@ -209,6 +211,7 @@ function(what_sgp_object=NULL,
 						plot.types=plot.types,
 						goodness.of.fit.print=goodness.of.fit.print,
 						outputSGP.output.type=outputSGP.output.type,
+						SGPt=SGPt,
 						parallel.config=parallel.config,
 						...)
 
@@ -245,13 +248,14 @@ function(what_sgp_object=NULL,
 							sgp.projections.baseline=sgp.projections.baseline,
 							sgp.projections.lagged.baseline=sgp.projections.lagged.baseline,
 							sgp.use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
-							calculate.simex = calculate.simex,
+							calculate.simex=calculate.simex,
 							calculate.simex.baseline=calculate.simex.baseline,
-							simulate.sgps = simulate.sgps,
+							simulate.sgps=simulate.sgps,
 							sgp.config=sgp.config,
 							parallel.config=parallel.config,
 							goodness.of.fit.print=FALSE,
-							sgp.sqlite= sgp.sqlite,
+							sgp.sqlite=sgp.sqlite,
+							SGPt=SGPt,
 							...)
 							
 				if ("combineSGP" %in% steps) {
@@ -264,7 +268,8 @@ function(what_sgp_object=NULL,
 												sgp.projections.baseline=sgp.projections.baseline,
 												sgp.projections.lagged.baseline=sgp.projections.lagged.baseline,
 												sgp.target.scale.scores=sgp.target.scale.scores,
-												sgp.target.scale.scores.only=sgp.target.scale.scores.only))
+												sgp.target.scale.scores.only=sgp.target.scale.scores.only,
+												SGPt=SGPt))
 				}
 
 				### Output of INTERMEDIATE results including full student history
@@ -297,7 +302,8 @@ function(what_sgp_object=NULL,
 						sgp.projections.baseline=sgp.projections.baseline,
 						sgp.projections.lagged.baseline=sgp.projections.lagged.baseline,
 						sgp.target.scale.scores=sgp.target.scale.scores,
-						sgp.target.scale.scores.only=sgp.target.scale.scores.only)
+						sgp.target.scale.scores.only=sgp.target.scale.scores.only,
+						SGPt=SGPt)
 				}
 
 
@@ -374,6 +380,7 @@ function(what_sgp_object=NULL,
 							plot.types=plot.types,
 							goodness.of.fit.print=goodness.of.fit.print,
 							outputSGP.output.type=outputSGP.output.type,
+							SGPt=SGPt,
 							parallel.config=parallel.config,
 							...)
 

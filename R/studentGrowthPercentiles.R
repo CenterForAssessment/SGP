@@ -38,11 +38,14 @@ function(panel.data,         ## REQUIRED
          return.prior.scale.score.standardized=TRUE,
          return.norm.group.identifier=TRUE,
          return.norm.group.scale.scores=NULL,
+         return.norm.group.dates=NULL,
          return.panel.data=identical(parent.frame(), .GlobalEnv),
          print.time.taken=TRUE,
          parallel.config=NULL,
          calculate.simex=NULL,
          sgp.percentiles.set.seed=314159,
+         sgp.percentiles.equated=NULL,
+         SGPt=NULL,
          verbose.output=FALSE) {
 
 	started.at <- proc.time()
@@ -123,25 +126,29 @@ function(panel.data,         ## REQUIRED
 	}
 
 	get.my.knots.boundaries.path <- function(content_area, year) {
-		tmp.knots.boundaries.names <- 
-			names(Knots_Boundaries[[tmp.path.knots.boundaries]])[content_area==sapply(strsplit(names(Knots_Boundaries[[tmp.path.knots.boundaries]]), "[.]"), '[', 1)]
-		if (length(tmp.knots.boundaries.names)==0) {
-			return(paste("[['", tmp.path.knots.boundaries, "']]", sep=""))
-		} else {
-			tmp.knots.boundaries.years <- sapply(strsplit(tmp.knots.boundaries.names, "[.]"), function(x) x[2])
-			if (any(!is.na(tmp.knots.boundaries.years))) {
-				if (year %in% tmp.knots.boundaries.years) {
-					return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, ".", year, "']]", sep=""))
-				} else {
-					if (year==sort(c(year, tmp.knots.boundaries.years))[1]) {
-						return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, "']]", sep=""))
-					} else {
-						return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, ".", rev(sort(tmp.knots.boundaries.years))[1], "']]", sep=""))
-					}
-				}
+		if (is.null(sgp.percentiles.equated)) {
+			tmp.knots.boundaries.names <- 
+				names(Knots_Boundaries[[tmp.path.knots.boundaries]])[content_area==sapply(strsplit(names(Knots_Boundaries[[tmp.path.knots.boundaries]]), "[.]"), '[', 1)]
+			if (length(tmp.knots.boundaries.names)==0) {
+				return(paste("[['", tmp.path.knots.boundaries, "']]", sep=""))
 			} else {
-				return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, "']]", sep=""))
+				tmp.knots.boundaries.years <- sapply(strsplit(tmp.knots.boundaries.names, "[.]"), function(x) x[2])
+				if (any(!is.na(tmp.knots.boundaries.years))) {
+					if (year %in% tmp.knots.boundaries.years) {
+						return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, ".", year, "']]", sep=""))
+					} else {
+						if (year==sort(c(year, tmp.knots.boundaries.years))[1]) {
+							return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, "']]", sep=""))
+						} else {
+							return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, ".", rev(sort(tmp.knots.boundaries.years))[1], "']]", sep=""))
+						}
+					}
+				} else {
+					return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, "']]", sep=""))
+				}
 			}
+		} else {
+			return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, ".", sgp.percentiles.equated[['Year']], "']]", sep=""))
 		}
 	}
 
@@ -163,6 +170,10 @@ function(panel.data,         ## REQUIRED
 			mod <- paste(mod, " + bs(tmp.data[[", tmp.num.variables-i, "]], knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
 			s4Ks <- paste(s4Ks, "knots_", tmp.gp.iter[i], "=", knt, ",", sep="")
 			s4Bs <- paste(s4Bs, "boundaries_", tmp.gp.iter[i], "=", bnd, ",", sep="")
+		}
+		if (!is.null(SGPt)) {
+			tmp.data <- data.table(Panel_Data[,c("ID", "TIME", "TIME_LAG"), with=FALSE], key="ID")[tmp.data][,c(names(tmp.data), "TIME", "TIME_LAG"), with=FALSE]
+			mod <- paste(mod, " + I(tmp.data[['TIME']]) + I(tmp.data[['TIME_LAG']])", sep="")
 		}
 		if (is.null(parallel.config)) {
 			tmp.mtx <- eval(parse(text=paste("rq(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=taus, data=tmp.data, method=rq.method)[['coefficients']]", sep="")))
@@ -191,7 +202,13 @@ function(panel.data,         ## REQUIRED
 			stopParallel(parallel.config, par.start)
 		}
 
-		tmp.version <- list(SGP_Package_Version=as.character(packageVersion("SGP")), Date_Prepared=date(), Matrix_Information=list(N=dim(tmp.data)[1]))
+		tmp.version <- list(
+			SGP_Package_Version=as.character(packageVersion("SGP")), 
+			Date_Prepared=date(), 
+			Matrix_Information=list(
+				N=dim(tmp.data)[1],
+				Model=paste("rq(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=taus, data=tmp.data, method=rq.method)[['coefficients']]", sep=""),
+				SGPt=if (is.null(SGPt)) NULL else list(VARIABLES=unlist(SGPt), MAX_TIME=max(tmp.data$TIME, na.rm=TRUE), MAX_TIME_PRIOR=max(tmp.data$TIME-tmp.data$TIME_LAG, na.rm=TRUE), RANGE_TIME_LAG=range(tmp.data$TIME_LAG))))
 
 		eval(parse(text=paste("new('splineMatrix', tmp.mtx, ", substring(s4Ks, 1, nchar(s4Ks)-1), "), ", substring(s4Bs, 1, nchar(s4Bs)-1), "), ",
 			"Content_Areas=list(as.character(tail(content_area.progression, k+1))), ",
@@ -231,7 +248,11 @@ function(panel.data,         ## REQUIRED
 			knt <- paste("my.matrix@Knots[[", k, "]]", sep="")
 			bnd <- paste("my.matrix@Boundaries[[", k, "]]", sep="")
 			mod <- paste(mod, ", bs(my.data[[", dim(my.data)[2]-k, "]], knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
-		}	
+		}
+		if (!is.null(SGPt)) {
+			my.data <- data.table(Panel_Data[,c("ID", "TIME", "TIME_LAG"), with=FALSE], key="ID")[my.data][,c(names(my.data), "TIME", "TIME_LAG"), with=FALSE]
+			mod <- paste(mod, ", my.data[['TIME']], my.data[['TIME_LAG']]", sep="")
+		}
 		tmp <- eval(parse(text=paste(int, substring(mod, 2), ") %*% my.matrix", sep="")))
 		return(round(matrix(data.table(ID=rep(seq(dim(tmp)[1]), each=length(taus)), SCORE=as.vector(t(tmp)))[,.smooth.isotonize.row(SCORE, isotonize, sgp.loss.hoss.adjustment), by=ID][['V1']], 
 				ncol=length(taus), byrow=TRUE), digits=5))
@@ -306,7 +327,13 @@ function(panel.data,         ## REQUIRED
 			}
 			tmp.mtx <-eval(parse(text=paste("rq(final_yr ~", substring(mod,4), ", tau=taus, data = rqdata, method=rq.method)[['coefficients']]", sep="")))
 			
-			tmp.version <- list(SGP_Package_Version=as.character(packageVersion("SGP")), Date_Prepared=date(), Matrix_Information=list(N=dim(rqdata)[1]))
+			tmp.version <- list(
+					SGP_Package_Version=as.character(packageVersion("SGP")), 
+					Date_Prepared=date(), 
+					Matrix_Information=list(
+						N=dim(rqdata)[1],
+						Model=paste("rq(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=taus, data=tmp.data, method=rq.method)[['coefficients']]", sep=""),
+						SGPt=if (is.null(SGPt)) NULL else list(VARIABLES=unlist(SGPt), MAX_TIME=max(tmp.data$TIME, na.rm=TRUE), MAX_TIME_PRIOR=max(tmp.data$TIME-tmp.data$TIME_LAG, na.rm=TRUE), RANGE_TIME_LAG=range(tmp.data$TIME_LAG))))
 			
 			eval(parse(text=paste("new('splineMatrix', tmp.mtx, ", substring(s4Ks, 1, nchar(s4Ks)-1), "), ", substring(s4Bs, 1, nchar(s4Bs)-1), "), ",
 				"Content_Areas=list(as.character(tail(content_area.progression, k+1))), ",
@@ -409,7 +436,8 @@ function(panel.data,         ## REQUIRED
 					tail(grade.progression, k+1),
 					tail(year.progression, k+1),
 					tail(year_lags.progression, k),
-					my.matrix.order=k)[[1]]
+					my.matrix.order=k, 
+					my.matrix.time.dependency=SGPt)[[1]]
 				
 				fitted[[paste("order_", k, sep="")]][1,] <- as.vector(.get.percentile.predictions(tmp.data, tmp.matrix))
 			}
@@ -490,7 +518,8 @@ function(panel.data,         ## REQUIRED
 						tail(year_lags.progression, k),
 						my.exact.grade.progression.sequence=TRUE,
 						return.multiple.matrices=TRUE,
-						my.matrix.order=k), recursive=FALSE)
+						my.matrix.order=k, 
+						my.matrix.time.dependency=SGPt), recursive=FALSE)
 					
 					if (length(available.matrices) > B) sim.iters <- sample(1:length(available.matrices), B) # Stays as 1:B when length(available.matrices) == B
 					if (length(available.matrices) < B) sim.iters <- sample(1:length(available.matrices), B, replace=TRUE)
@@ -699,7 +728,7 @@ function(panel.data,         ## REQUIRED
 			stop("Supplied panel.data$Panel_Data is not a data.frame or a data.table")
 		}
 	}
-	if (identical(class(panel.data), "list") & !is.null(panel.data[['Coefficient_Matrices']])) {
+	if (identical(class(panel.data), "list") && !is.null(panel.data[['Coefficient_Matrices']])) {
 		panel.data[['Coefficient_Matrices']] <- checksplineMatrix(panel.data[['Coefficient_Matrices']])
 	}
 
@@ -950,11 +979,36 @@ function(panel.data,         ## REQUIRED
 
 	if (!is.null(sgp.percentiles.set.seed)) set.seed(as.integer(sgp.percentiles.set.seed))
 
+	if (!is.null(SGPt)) {
+		if (identical(SGPt, TRUE)) SGPt <- list(TIME="TIME", TIME_LAG="TIME_LAG")
+		if (is.list(SGPt) && !all(c("TIME", "TIME_LAG") %in% names(SGPt))) {
+			tmp.messages <- c(tmp.messages, "\t\tNOTE: 'TIME' and 'TIME_LAG' are not contained in list supplied to 'SGPt' argument. SGPt is set to NULL")
+			SGPt <- NULL
+		} else {
+			if (!((all(unlist(SGPt) %in% names(panel.data))) | (all(unlist(SGPt) %in% names(panel.data$Panel_Data))))) {
+				tmp.messages <- c(tmp.messages, "\t\tNOTE: Variables", paste(unlist(SGPt), collapse=", "), "are not all contained in the supplied 'panel.data'. 'SGPt' is set to NULL.\n")
+				SGPt <- NULL
+			}
+		}
+	}
+
+	if (is.null(SGPt) && !is.null(return.norm.group.dates)) {
+		return.norm.group.dates <- NULL
+	}
+
+	if (identical(return.norm.group.dates, TRUE)) {
+		return.norm.group.dates <- "TIME[!_]"
+	}
+
+	if (identical(return.norm.group.scale.scores, FALSE)) {
+		return.norm.group.scale.scores <- NULL
+	}
+
 	### Create object to store the studentGrowthPercentiles objects
 
 	tmp.objects <- c("Coefficient_Matrices", "Cutscores", "Goodness_of_Fit", "Knots_Boundaries", "Panel_Data", "SGPercentiles", "SGProjections", "Simulated_SGPs") 
 	Coefficient_Matrices <- Cutscores <- Goodness_of_Fit <- Knots_Boundaries <- Panel_Data <- SGPercentiles <- SGProjections <- Simulated_SGPs <- SGP_STANDARD_ERROR <- Verbose_Messages <- NULL
-	SGP_SIMEX <- SGP_NORM_GROUP_SCALE_SCORES <- SGP_NORM_GROUP <- NULL
+	SGP_SIMEX <- SGP_NORM_GROUP_SCALE_SCORES <- SGP_NORM_GROUP_DATES <- SGP_NORM_GROUP <- NULL
 
 	if (identical(class(panel.data), "list")) {
 		for (i in tmp.objects) {
@@ -991,7 +1045,7 @@ function(panel.data,         ## REQUIRED
 	if (is.matrix(panel.data)) {
 		Panel_Data <- panel.data <- as.data.table(panel.data)
 	}
-	if (identical(class(panel.data), "data.frame")) {
+	if (is.data.frame(panel.data)) {
 		Panel_Data <- as.data.table(panel.data)
 	}
 	if (identical(class(panel.data), "list") && !is.data.table(panel.data[["Panel_Data"]])) {
@@ -1018,6 +1072,10 @@ function(panel.data,         ## REQUIRED
 				Simulated_SGPs=Simulated_SGPs))
 	}
 
+	if (!is.null(SGPt)) {
+		setnames(Panel_Data, unlist(SGPt), c("TIME", "TIME_LAG"))
+	}
+
 	if (!is.null(panel.data.vnames)) {
 		if (!all(panel.data.vnames %in% names(Panel_Data))) {
 			tmp.messages <- c(tmp.messages, "\t\tNOTE: Supplied 'panel.data.vnames' are not all in the supplied Panel_Data. Analyses will continue with the intersection names contain in Panel_Data.\n")
@@ -1026,6 +1084,7 @@ function(panel.data,         ## REQUIRED
 	} else {
 		ss.data <- Panel_Data
 	}
+
 	if (dim(ss.data)[2] %% 2 != 1) {
 		stop(paste("Number of columns of supplied panel data (", dim(ss.data)[2], ") does not conform to data requirements. See help page for details."))
 	}
@@ -1155,7 +1214,6 @@ function(panel.data,         ## REQUIRED
 				SGProjections=SGProjections,
 				Simulated_SGPs=Simulated_SGPs))
 	}
-
 
 	### PROGRESSION variable creation:
 
@@ -1298,7 +1356,8 @@ function(panel.data,         ## REQUIRED
 					grade.progression, 
 					year.progression,
 					year_lags.progression,
-					exact.grade.progression.sequence)
+					exact.grade.progression.sequence,
+					my.matrix.time.dependency=SGPt)
 
 		tmp.orders <- sapply(tmp.matrices, function(x) length(x@Grade_Progression[[1]])-1)
 		max.order <- max(tmp.orders)
@@ -1357,7 +1416,6 @@ function(panel.data,         ## REQUIRED
 				}
 				if ((is.character(goodness.of.fit) | goodness.of.fit==TRUE | return.prior.scale.score) & j==1) prior.ss <- tmp.data[[dim(tmp.data)[2]-1]]
 				if (exact.grade.progression.sequence & return.prior.scale.score) prior.ss <- tmp.data[[dim(tmp.data)[2]-1]]
-				if (!is.null(return.norm.group.scale.scores)) tmp.quantiles[[j]][, SGP_NORM_GROUP_SCALE_SCORES:=do.call(paste, c(tmp.data[,-1,with=FALSE], list(sep="; ")))]
 			} ### END if (dim(tmp.data)[1] > 0)
 		} ## END j loop
 
@@ -1444,6 +1502,16 @@ function(panel.data,         ## REQUIRED
 			}
 		}
 
+		if (!is.null(return.norm.group.dates)) {
+			my.tmp <- data.table(Panel_Data[,c("ID", grep(return.norm.group.dates, names(Panel_Data), value=TRUE)), with=FALSE], key="ID")[list(quantile.data$ID),-1,with=FALSE]
+			quantile.data[,SGP_NORM_GROUP_DATES:=gsub("NA; ", "", do.call(paste, c(as.data.table(lapply(my.tmp, function(x) as.Date(x, origin="1970-01-01"))), list(sep="; "))))]
+		}
+
+		if (!is.null(return.norm.group.scale.scores)) {
+			my.tmp <- data.table(ss.data[,c("ID", names(tmp.data)[-1]), with=FALSE], key="ID")[list(quantile.data$ID),-1,with=FALSE]
+			quantile.data[,SGP_NORM_GROUP_SCALE_SCORES:=gsub("NA; ", "", do.call(paste, c(my.tmp, list(sep="; "))))]
+		}
+
 		if ((is.character(goodness.of.fit) | goodness.of.fit==TRUE) & dim(quantile.data)[1] <= goodness.of.fit.minimum.n) {
 			message("\tNOTE: Due to small number of cases (", dim(quantile.data)[1], ") no goodness of fit plots produced.")
 			goodness.of.fit <- FALSE
@@ -1527,25 +1595,15 @@ function(panel.data,         ## REQUIRED
 
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, "SGP", "SGP_BASELINE")
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & tf.growth.levels) setnames(quantile.data, "SGP_LEVEL", "SGP_LEVEL_BASELINE")
-		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & "SGP_STANDARD_ERROR" %in% names(quantile.data)) setnames(quantile.data, "SGP_STANDARD_ERROR", "SGP_BASELINE_STANDARD_ERROR")
-		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & identical(return.norm.group.scale.scores, TRUE)) {
-			setnames(quantile.data, "SGP_NORM_GROUP_SCALE_SCORES", "SGP_NORM_GROUP_BASELINE_SCALE_SCORES")
-		}
-		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & identical(return.norm.group.identifier, TRUE)) {
-			setnames(quantile.data, "SGP_NORM_GROUP", "SGP_NORM_GROUP_BASELINE")
-		}
-		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & print.other.gp) {
-			my.tmp.names <- grep("SGP_ORDER", names(quantile.data), value=TRUE)
-			setnames(quantile.data, my.tmp.names, gsub("SGP_ORDER", "SGP_BASELINE_ORDER", my.tmp.names))
-		}
+		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, gsub("SGP_STANDARD_ERROR", "SGP_BASELINE_STANDARD_ERROR", names(quantile.data)))
+		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, gsub("SGP_ORDER", "SGP_BASELINE_ORDER", names(quantile.data)))
+		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, gsub("SGP_NORM_GROUP", "SGP_NORM_GROUP_BASELINE", names(quantile.data)))
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & simex.tf) setnames(quantile.data, "SGP_SIMEX", "SGP_SIMEX_BASELINE")
 
 		if (!is.null(additional.vnames.to.return)) {
 			quantile.data <- data.table(panel.data[["Panel_Data"]][,c("ID", names(additional.vnames.to.return)), with=FALSE], key="ID")[quantile.data]
 			setnames(quantile.data, names(additional.vnames.to.return), unlist(additional.vnames.to.return))
 		}
-
-		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & identical(print.sgp.order, TRUE)) setnames(quantile.data, "SGP_ORDER", "SGP_BASELINE_ORDER")
 
 		if (!return.prior.scale.score) {
 			quantile.data[,SCALE_SCORE_PRIOR:=NULL]

@@ -2,7 +2,7 @@
 \alias{rliSGP}
 \title{Wrapper function associated with SGP analyses for Renaissance Learning Incorporated (RLI) interim STAR assessments.}
 \description{
-rliSGP is a wrapper function design to expediate SGP analyses on Renaissance Learning Incorporated (RLI) interim STAR assessments.
+rliSGP is a wrapper function design to expedite SGP analyses on Renaissance Learning Incorporated (RLI) interim STAR assessments.
 }
 
 \usage{
@@ -15,7 +15,11 @@ rliSGP(
         eow.or.update="UPDATE",
 	update.save.shell.only=FALSE,
         configuration.year,
+	sgp.percentiles.baseline=TRUE,
+	sgp.projections.baseline=TRUE,
+	sgp.target.scale.scores=TRUE,
         update.ids=NULL,
+	SGPt=NULL,
         parallel.config=NULL)
 }
 
@@ -36,9 +40,17 @@ rliSGP(
   }
   \item{configuration.year}{Year associated with SGP analyses (configuration year) to be used.
   }
+  \item{sgp.percentiles.baseline}{Boolean variable passed to \code{\link{updateSGP}} to control whether baseline student growth percentiles are calculated. Default is TRUE.
+  }
+  \item{sgp.projections.baseline}{Boolean variable passed to \code{\link{updateSGP}} to control whether baseline student growth projections are calculated. Default is TRUE.
+  }
+  \item{sgp.target.scale.scores}{Boolean variable passed to \code{\link{updateSGP}} to control whether scale score targets are calculated. Default is TRUE.
+  }
   \item{update.ids}{Argument that allows ID to be updated based upon a supplied two column data frame where the first column represents the ORIGINAL/OLD ID and the second column the NEW ID that
 is to replace it. NOTE that ID needn't be replaced in either 'sgp_object' nor 'additional.data' that are provided as part of the 'rliSGP' call. Substitution will occur on entire data set before
 analysis. Default is NULL, no ID replacement is performed.
+  }
+  \item{SGPt}{Argument indicating whether to perform time dependent SGP (SGPt) analyses. Current default is NULL (FALSE), but will transition to true Summer 2015.
   }
   \item{parallel.config}{Argument passed to \code{\link{abcSGP}} or \code{\link{updateSGP}} to activate parallel processing with an appropriate backend.
   }
