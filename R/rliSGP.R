@@ -14,7 +14,7 @@ function(sgp_object,
 	SGPt=NULL,
 	parallel.config=NULL) {
 
-	YEAR <- GRADE <- ID <- NEW_ID <- .EACHI <- NULL
+	YEAR <- GRADE <- ID <- NEW_ID <- .EACHI <- DATE <- NULL
 
 	started.at <- proc.time()
 	message(paste("\nStarted rliSGP", date()), "\n")
@@ -91,6 +91,8 @@ function(sgp_object,
 	}
 
 	if (!is.data.table(additional.data)) additional.data <- as.data.table(additional.data)
+
+	if ("DATE" %in% names(additional.data)) additional.data[,DATE:=as.Date(DATE)]
 
 	if (!is.null(update.ids) && !is.data.table(update.ids)) update.ids <- as.data.table(update.ids)
 
