@@ -361,7 +361,7 @@ function(sgp_object,
 			message(paste("\tNOTE: Analyses involving equating only occur in most recent year. 'years' argument changed to ", year.for.equate, ".", sep=""))
 			years <- year.for.equate
 		}
-		if (is.null(SGPstateData[["WIDA_MI"]][["Assessment_Program_Information"]][["Assessment_Transition"]][['Baseline_Projections_in_Transition_Year']]) & 
+		if (is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][['Baseline_Projections_in_Transition_Year']]) & 
 			(sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline)) {
 				message("\tNOTE: Analyses involving equating are not possible with baseline analyses. Arguments related to baseline analyses are set to FALSE.")
 				sgp.percentiles.baseline <- sgp.projections.baseline <- sgp.projections.lagged.baseline <- FALSE

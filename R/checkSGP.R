@@ -18,6 +18,7 @@ function(sgp_object,
 
 	my.character.variables <- c("ID", "VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", "ACHIEVEMENT_LEVEL")
 	my.numeric.variables <- c("SCALE_SCORE", "SCALE_SCORE_PRIOR")
+	my.Date.variables <- c("DATE")
 
 
 	###
@@ -36,10 +37,13 @@ function(sgp_object,
 			if (check.class=="numeric") {
 				return(sapply(my.variables.to.check, function(x) x %in% names(my.data) && !is.double(my.data[[x]]), USE.NAMES=FALSE))
 			}
+			if (check.class=="Date") {
+				return(sapply(my.variables.to.check, function(x) x %in% names(my.data) && !inherits(my.data[[x]], "Date"), USE.NAMES=FALSE))
+			}
 		}
 	}
 
-	## checkchangeVariableClassVariableClass
+	## changeVariableClass
 
 	changeVariableClass <- function(my.data, my.variables.to.change, data.slot, convert.to.class) {
 		if (!data.slot=="@Data" & !data.slot=="@Data_Supplementary") {
@@ -49,13 +53,19 @@ function(sgp_object,
 			if (convert.to.class=="character") {
 				for (my.variable in my.variables.to.change) {
 					message(paste("\tNOTE:", my.variable, "in", data.slot, "converted from", paste(class(my.data[[my.variable]]), collapse=" "), "to character."))
-					my.data[,my.variable:= as.character(my.data[[my.variable]]), with=FALSE]
+					my.data[,my.variable:=as.character(my.data[[my.variable]]), with=FALSE]
 				}
 			}
 			if (convert.to.class=="numeric") {
 				for (my.variable in my.variables.to.change) {
 					message(paste("\tNOTE:", my.variable, "in", data.slot, "converted from", class(my.data[[my.variable]]), "to numeric."))
-					my.data[,my.variable:= as.numeric(my.data[[my.variable]]), with=FALSE]
+					my.data[,my.variable:=as.numeric(my.data[[my.variable]]), with=FALSE]
+				}
+			}
+			if (convert.to.class=="Date") {
+				for (my.variable in my.variables.to.change) {
+					message(paste("\tNOTE:", my.variable, "in", data.slot, "converted from", class(my.data[[my.variable]]), "to Date assuming XXXX-XX-XX format."))
+					my.data[,my.variable:=as.Date(my.data[[my.variable]]), with=FALSE]
 				}
 			}
 		}
@@ -77,6 +87,10 @@ function(sgp_object,
 
 	if (any(tmp.check <- checkVariableClass(sgp_object@Data, "numeric", my.numeric.variables, id.only=FALSE))) {
 		sgp_object@Data <- changeVariableClass(sgp_object@Data, my.numeric.variables[tmp.check], data.slot="@Data", convert.to.class="numeric")
+	}
+
+	if (any(tmp.check <- checkVariableClass(sgp_object@Data, "Date", my.Date.variables, id.only=FALSE))) {
+		sgp_object@Data <- changeVariableClass(sgp_object@Data, my.Date.variables[tmp.check], data.slot="@Data", convert.to.class="Date")
 	}
 
 	## Check class of variables in @Data_Supplementary
