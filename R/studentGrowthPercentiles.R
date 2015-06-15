@@ -552,13 +552,6 @@ function(panel.data,         ## REQUIRED
 					}
 				} else {	# Parallel over sim.iters
 					
-					##  Force all parallel processing of SIMEX to use FOREACH, doParallel and SNOW_TEST (unless SIMEX_TEST is specified)
-					if (is.null(parallel.config[['SIMEX_TEST']])) {
-						parallel.config[['BACKEND']] <- "FOREACH"
-						parallel.config[['TYPE']] <- "doParallel"
-						parallel.config[['SNOW_TEST']] <- TRUE
-					}
-
 					par.start <- startParallel(parallel.config, 'SIMEX')
 					
 					## Note, that if you use the parallel.config for SIMEX here, you can also use it for TAUS in the naive analysis
