@@ -1503,7 +1503,8 @@ function(panel.data,         ## REQUIRED
 		}
 
 		if (!is.null(return.norm.group.dates)) {
-			my.tmp <- data.table(Panel_Data[,c("ID", grep(return.norm.group.dates, names(Panel_Data), value=TRUE)), with=FALSE], key="ID")[list(quantile.data$ID),-1,with=FALSE]
+			my.tmp <- data.table(Panel_Data[,c("ID", setdiff(grep("TIME", names(Panel_Data), value=TRUE), grep("TIME_LAG", names(Panel_Data), value=TRUE))), with=FALSE], 
+				key="ID")[list(quantile.data$ID),-1,with=FALSE]
 			quantile.data[,SGP_NORM_GROUP_DATES:=gsub("NA; ", "", do.call(paste, c(as.data.table(lapply(my.tmp, function(x) as.Date(x, origin="1970-01-01"))), list(sep="; "))))]
 		}
 
