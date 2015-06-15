@@ -794,31 +794,19 @@ SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
 
 
 	options(error=recover) # Don't use options(warn=2) - get warnings about knots and bounds from BASELINE SIMEX
-	number.cores <- detectCores(logical=FALSE)-1
+	number.cores <- detectCores(logical=FALSE)
 	Demonstration_SGP <- tmp.messages <- NULL
 
 	if (is.null(test.option[['parallel.config']])) {
-		# if (number.cores > 14 & .Platform$OS.type == "unix") {
-		# 	extra.workers <- floor((number.cores-5)/5)
-		# 	workers.list <- paste("list(PERCENTILES = 5, BASELINE_PERCENTILES = 5, SIMEX = ", extra.workers, ", TAUS = ", extra.workers, ")", sep="")
-		# } else {
-		# 	workers.list <- paste("list(PERCENTILES = ", number.cores, ", BASELINE_PERCENTILES = ", number.cores, ")", sep="")
-		# }
-		# parallel.config <- paste("list(BACKEND = 'PARALLEL', WORKERS = ", workers.list, ")", sep="")
 		if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE = 'doParallel', "
 		if (.Platform$OS.type != "unix") {
 			parallel.config <- paste("list(BACKEND='FOREACH', TYPE = 'doParallel', WORKERS = list(SIMEX = ", number.cores, ", TAUS = ", number.cores, "))", sep="")
-
-				list(, WORKERS = workers.list)
 		} else 	parallel.config <- paste("list(BACKEND = 'PARALLEL', WORKERS = list(SIMEX = ", number.cores, ", TAUS = ", number.cores, "))", sep="")
-
 	}
 
 	expression.to.evaluate <- 
 		paste("\nDemonstration_SGP <- prepareSGP(sgpData_LONG, create.additional.variables=FALSE)\n\nDemonstration_SGP <- analyzeSGP(\n\tsgp_object=Demonstration_SGP,\n\tyears='2014_2015',\n\tcontent_areas='READING',\n\tsgp.percentiles.baseline.max.order=2,\n\tsgp.percentiles=TRUE,\n\tsgp.projections=FALSE,\n\tsgp.projections.lagged=FALSE,\n\tsgp.percentiles.baseline=", calculate.simex.baseline,",\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsimulate.sgps=FALSE,\n\tcalculate.simex=TRUE,\n\tcalculate.simex.baseline=", calculate.simex.baseline,",\n\tparallel.config=", parallel.config,"\n)\n", sep="")
 		
-		#parallel.config=list(BACKEND='PARALLEL', WORKERS=list(SIMEX=", number.cores, ", TAUS=", number.cores, "))\n)\n", sep="")
-
 	cat("#####  Begin testSGP test number 4, Part 1                                    #####", fill=TRUE)
 	cat("##     Grade-Level, Cohort and Baseline Tests with auto sgp.config construction. ##\n", fill=TRUE)
 
@@ -834,7 +822,8 @@ SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
 
 	tmp.messages <- ("\t##            Results of testSGP test number 4, Part 1            ##\n\n")
 	
-	if (identical(sum(Demonstration_SGP@SGP$SGPercentiles$READING.2014_2015$SGP_SIMEX), 1029023L)) {
+#	if (identical(sum(Demonstration_SGP@SGP$SGPercentiles$READING.2014_2015$SGP_SIMEX), 1029023L )) { # PERCENTILES & foreach SIMEX & TAUS 
+	if (identical(sum(Demonstration_SGP@SGP$SGPercentiles$READING.2014_2015$SGP_SIMEX), 1028916L)) { # SIMEX & TAUS
 		tmp.messages <- c(tmp.messages, "\tTest of variable SGP_SIMEX: OK\n")
 	} else {
 		tmp.messages <- c(tmp.messages, "\tTest of variable SGP_SIMEX: FAIL\n")
@@ -842,7 +831,7 @@ SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
 
 	### TEST of SGP_SIMEX_BASELINE variable
 	if (calculate.simex.baseline) {	
-		if (identical(sum(Demonstration_SGP@SGP$SGPercentiles$READING.2014_2015.BASELINE$SGP_SIMEX_BASELINE), 1034475L)) {
+		if (identical(sum(Demonstration_SGP@SGP$SGPercentiles$READING.2014_2015.BASELINE$SGP_SIMEX_BASELINE), 1034495L)) { # 1034475L
 			tmp.messages <- c(tmp.messages, "\tTest of variable SGP_SIMEX_BASELINE: OK\n")
 		} else {
 			tmp.messages <- c(tmp.messages, "\tTest of variable SGP_SIMEX_BASELINE: FAIL\n")
@@ -887,34 +876,34 @@ SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
 
 	tmp.messages <- ("\t##            Results of testSGP test number 4, Part 2            ##\n\n")
 	
-	if (identical(sum(Demonstration_SGP@SGP$SGPercentiles$AMERICAN_LIT.2014_2015$SGP_SIMEX), 211591L)) {
+	if (identical(sum(Demonstration_SGP@SGP$SGPercentiles$AMERICAN_LIT.2014_2015$SGP_SIMEX), 211591L)) { # 211555L
 		tmp.messages <- c(tmp.messages, "\tTest of AMERICAN_LIT SGP_SIMEX: OK\n")
 	} else {
 		tmp.messages <- c(tmp.messages, "\tTest of AMERICAN_LIT SGP_SIMEX: FAIL\n")
 	}
-	if (identical(sum(Demonstration_SGP@SGP$SGPercentiles$ALGEBRA_II.2014_2015$SGP_SIMEX), 212383L)) {
+	if (identical(sum(Demonstration_SGP@SGP$SGPercentiles$ALGEBRA_II.2014_2015$SGP_SIMEX), 212383L)) { # 212383L
 		tmp.messages <- c(tmp.messages, "\tTest of ALGEBRA_II SGP_SIMEX: OK\n")
 	} else {
 		tmp.messages <- c(tmp.messages, "\tTest of ALGEBRA_II SGP_SIMEX: FAIL\n")
 	}
-	if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX, na.rm=TRUE), 1465489L)) {
+	if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX, na.rm=TRUE), 1452890L)) { # 1452961L
 		tmp.messages <- c(tmp.messages, "\tTest of @Data variable SGP_SIMEX: OK\n")
 	} else {
 		tmp.messages <- c(tmp.messages, "\tTest of @Data variable SGP_SIMEX: FAIL\n")
 	}
 
 	if (calculate.simex.baseline) {
-		if (identical(sum(Demonstration_SGP@SGP$SGPercentiles$AMERICAN_LIT.2014_2015.BASELINE$SGP_SIMEX_BASELINE), 218029L)) {
+		if (identical(sum(Demonstration_SGP@SGP$SGPercentiles$AMERICAN_LIT.2014_2015.BASELINE$SGP_SIMEX_BASELINE), 218071L)) { # 218029L
 			tmp.messages <- c(tmp.messages, "\tTest of AMERICAN_LIT SGP_SIMEX_BASELINE: OK\n")
 		} else {
 			tmp.messages <- c(tmp.messages, "\tTest of AMERICAN_LIT SGP_SIMEX_BASELINE: FAIL\n")
 		}
-		if (identical(sum(Demonstration_SGP@SGP$SGPercentiles$ALGEBRA_II.2014_2015.BASELINE$SGP_SIMEX_BASELINE), 212985L)) {
+		if (identical(sum(Demonstration_SGP@SGP$SGPercentiles$ALGEBRA_II.2014_2015.BASELINE$SGP_SIMEX_BASELINE), 213062L)) { # 212985L
 			tmp.messages <- c(tmp.messages, "\tTest of ALGEBRA_II SGP_SIMEX_BASELINE: OK\n")
 		} else {
 			tmp.messages <- c(tmp.messages, "\tTest of ALGEBRA_II SGP_SIMEX_BASELINE: FAIL\n")
 		}
-		if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX_BASELINE, na.rm=TRUE), 1465489L)) {
+		if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX_BASELINE, na.rm=TRUE), 1465628L)) { # 1465489L
 			tmp.messages <- c(tmp.messages, "\tTest of @Data variable SGP_SIMEX_BASELINE: OK\n")
 		} else {
 			tmp.messages <- c(tmp.messages, "\tTest of @Data variable SGP_SIMEX_BASELINE: FAIL\n")
