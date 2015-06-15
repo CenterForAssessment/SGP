@@ -909,7 +909,7 @@ SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
 			tmp.messages <- c(tmp.messages, "\tTest of @Data variable SGP_SIMEX_BASELINE: FAIL\n")
 		}
 	}
-	tmp.messages <- c(tmp.messages, "\n\t#####         End testSGP test number 4, Part 2             #####\n\n", "#####  End testSGP test number 4                                   #####\n")
+	tmp.messages <- c(tmp.messages, "\n\t#####         End testSGP test number 4, Part 2             #####\n\n\t", "#####  End testSGP test number 4                                   #####\n\n\n")
 	cat(tmp.messages)
 	} ### End TEST_NUMBER 4
 
