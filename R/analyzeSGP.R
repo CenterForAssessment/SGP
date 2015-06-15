@@ -172,7 +172,7 @@ function(sgp_object,
 
 	if (any(c("SIMEX", "TAUS") %in% names(parallel.config[['WORKERS']]))) {
 		lower.level.parallel.config <- parallel.config
-		# parallel.config <- NULL
+		if (length(names(parallel.config[['WORKERS']])) <= 2) parallel.config <- NULL # Only NULL out parallel.config if ONLY SIMEX and TAUS are requested
 	} else lower.level.parallel.config <- NULL
 
 	if (identical(calculate.simex, TRUE)) {
