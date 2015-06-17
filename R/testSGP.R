@@ -169,81 +169,81 @@ function(
 		tmp.messages <- ("\t##### Results of testSGP test number 1 #####\n\n")
 
 		if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 8565260L)) {
-			tmp.messages <- c(tmp.messages, "\tTest of variable SGP: OK\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP: OK\n")
 		} else {
-			tmp.messages <- c(tmp.messages, "\tTest of variable SGP: FAIL\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP: FAIL\n")
 		}
 
 		### TEST of SGP_BASELINE variable
 	
 		if (identical(sum(Demonstration_SGP@Data$SGP_BASELINE, na.rm=TRUE), 8573825L)) {
-			tmp.messages <- c(tmp.messages, "\tTest of variable SGP_BASELINE: OK\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE: OK\n")
 		} else {
-			tmp.messages <- c(tmp.messages, "\tTest of variable SGP_BASELINE: FAIL\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE: FAIL\n")
 		}
 
 		### TEST of SGP_TARGET_3_YEAR variable
 
 		if (identical(sum(Demonstration_SGP@Data$SGP_TARGET_3_YEAR, na.rm=TRUE), 7796624L)) {
-			tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_3_YEAR: OK\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR: OK\n")
 		} else {
-			tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_3_YEAR: FAIL\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR: FAIL\n")
 		}
 
 		### TEST of SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR variable
 	
 		if (identical(sum(Demonstration_SGP@Data$SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, na.rm=TRUE), 9201802L)) {
-			tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR: OK\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR: OK\n")
 		} else {
-			tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR: FAIL\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR: FAIL\n")
 		}
 
 		### TEST of CATCH_UP_KEEP_UP_STATUS variable
 
 		if (identical(as.numeric(table(Demonstration_SGP@Data$CATCH_UP_KEEP_UP_STATUS)), c(41099, 10837, 35560, 84390))) {
-			tmp.messages <- c(tmp.messages, "\tTest of variable CATCH_UP_KEEP_UP_STATUS: OK\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable CATCH_UP_KEEP_UP_STATUS: OK\n")
 		} else {
-			tmp.messages <- c(tmp.messages, "\tTest of variable CATCH_UP_KEEP_UP_STATUS: FAIL\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable CATCH_UP_KEEP_UP_STATUS: FAIL\n")
 		}
 
 		### TEST of MOVE_UP_STAY_UP_STATUS variable
 
 		if (identical(as.numeric(table(Demonstration_SGP@Data$MOVE_UP_STAY_UP_STATUS)), c(72953, 15043, 18336, 13618))) {
-			tmp.messages <- c(tmp.messages, "\tTest of variable MOVE_UP_STAY_UP_STATUS: OK\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable MOVE_UP_STAY_UP_STATUS: OK\n")
 		} else {
-			tmp.messages <- c(tmp.messages, "\tTest of variable MOVE_UP_STAY_UP_STATUS: FAIL\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable MOVE_UP_STAY_UP_STATUS: FAIL\n")
 		}
 
 		### TEST of SCALE_SCORE_PRIOR variable
 
 		if (identical(sum(Demonstration_SGP@Data$SCALE_SCORE_PRIOR, na.rm=TRUE), 100865095)) {
-			tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_PRIOR: OK\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_PRIOR: OK\n")
 		} else {
-			tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_PRIOR: FAIL\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_PRIOR: FAIL\n")
 		}
 
 		### TEST of SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1 variable for READING.2014_2015 scale score targets
 
 		if (identical(as.integer(sum(Demonstration_SGP@SGP$SGProjections$READING.2014_2015.LAGGED.TARGET_SCALE_SCORES$SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1)), 18313900L)) {
-			tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1: OK\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1: OK\n")
 		} else {
-			tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1: FAIL\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1: FAIL\n")
 		}
 	
 		### TEST of MEDIAN_SGP variable
 
 		if (identical(sum(Demonstration_SGP@Summary$SCHOOL_NUMBER[["SCHOOL_NUMBER__SCHOOL_ENROLLMENT_STATUS"]]$MEDIAN_SGP, na.rm=TRUE), 9140.5)) {
-			tmp.messages <- c(tmp.messages, "\tTest of variable MEDIAN_SGP: OK\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable MEDIAN_SGP: OK\n")
 		} else {
-			tmp.messages <- c(tmp.messages, "\tTest of variable MEDIAN_SGP: FAIL\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable MEDIAN_SGP: FAIL\n")
 		}
 
 		### TEST of PERCENT_AT_ABOVE_PROFICIENT_PRIOR variable
 
 		if (identical(sum(Demonstration_SGP@Summary$SCHOOL_NUMBER[["SCHOOL_NUMBER__SCHOOL_ENROLLMENT_STATUS"]]$PERCENT_AT_ABOVE_PROFICIENT_PRIOR, na.rm=TRUE), 12894.2)) {
-			tmp.messages <- c(tmp.messages, "\tTest of variable PERCENT_AT_ABOVE_PROFICIENT_PRIOR: OK\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable PERCENT_AT_ABOVE_PROFICIENT_PRIOR: OK\n")
 		} else {
-			tmp.messages <- c(tmp.messages, "\tTest of variable PERCENT_AT_ABOVE_PROFICIENT_PRIOR: FAIL\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable PERCENT_AT_ABOVE_PROFICIENT_PRIOR: FAIL\n")
 		}
 
 		tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number", TEST_NUMBER, "#####\n"))
@@ -824,17 +824,17 @@ SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
 	
 #	if (identical(sum(Demonstration_SGP@SGP$SGPercentiles$READING.2014_2015$SGP_SIMEX), 1029023L )) { # PERCENTILES & foreach SIMEX & TAUS 
 	if (identical(sum(Demonstration_SGP@SGP$SGPercentiles$READING.2014_2015$SGP_SIMEX), 1028916L)) { # SIMEX & TAUS
-		tmp.messages <- c(tmp.messages, "\tTest of variable SGP_SIMEX: OK\n")
+		tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX: OK\n")
 	} else {
-		tmp.messages <- c(tmp.messages, "\tTest of variable SGP_SIMEX: FAIL\n")
+		tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX: FAIL\n")
 	}
 
 	### TEST of SGP_SIMEX_BASELINE variable
 	if (calculate.simex.baseline) {	
 		if (identical(sum(Demonstration_SGP@SGP$SGPercentiles$READING.2014_2015.BASELINE$SGP_SIMEX_BASELINE), 1034495L)) { # 1034475L
-			tmp.messages <- c(tmp.messages, "\tTest of variable SGP_SIMEX_BASELINE: OK\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX_BASELINE: OK\n")
 		} else {
-			tmp.messages <- c(tmp.messages, "\tTest of variable SGP_SIMEX_BASELINE: FAIL\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX_BASELINE: FAIL\n")
 		}
 	}
 	tmp.messages <- c(tmp.messages, "\n\t##### End testSGP test number 4, Part 1 #####\n")
@@ -861,7 +861,7 @@ SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
 
 	if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "dir.create('Data', showWarnings=FALSE)", "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
 
-	cat("\n\t##### Begin testSGP test number 4, Part 2 #####\n", fill=TRUE)
+	cat("\n\t##### Begin testSGP test number 4, Part 2 #####", fill=TRUE)
 	cat("\t## EOCT Baseline Tests with custom sgp.config. ##\n", fill=TRUE)
 
 	cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
@@ -877,39 +877,40 @@ SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
 	tmp.messages <- ("\t##### Results of testSGP test number 4, Part 2 #####\n\n")
 	
 	if (identical(sum(Demonstration_SGP@SGP$SGPercentiles$AMERICAN_LIT.2014_2015$SGP_SIMEX), 211591L)) { # 211555L
-		tmp.messages <- c(tmp.messages, "\tTest of AMERICAN_LIT SGP_SIMEX: OK\n")
+		tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX: OK\n")
 	} else {
-		tmp.messages <- c(tmp.messages, "\tTest of AMERICAN_LIT SGP_SIMEX: FAIL\n")
+		tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX: FAIL\n")
 	}
 	if (identical(sum(Demonstration_SGP@SGP$SGPercentiles$ALGEBRA_II.2014_2015$SGP_SIMEX), 212383L)) { # 212383L
-		tmp.messages <- c(tmp.messages, "\tTest of ALGEBRA_II SGP_SIMEX: OK\n")
+		tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II SGP_SIMEX: OK\n")
 	} else {
-		tmp.messages <- c(tmp.messages, "\tTest of ALGEBRA_II SGP_SIMEX: FAIL\n")
+		tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II SGP_SIMEX: FAIL\n")
 	}
 	if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX, na.rm=TRUE), 1452890L)) { # 1452961L
-		tmp.messages <- c(tmp.messages, "\tTest of @Data variable SGP_SIMEX: OK\n")
+		tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX: OK\n")
 	} else {
-		tmp.messages <- c(tmp.messages, "\tTest of @Data variable SGP_SIMEX: FAIL\n")
+		tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX: FAIL\n")
 	}
 
 	if (calculate.simex.baseline) {
 		if (identical(sum(Demonstration_SGP@SGP$SGPercentiles$AMERICAN_LIT.2014_2015.BASELINE$SGP_SIMEX_BASELINE), 218071L)) { # 218029L
-			tmp.messages <- c(tmp.messages, "\tTest of AMERICAN_LIT SGP_SIMEX_BASELINE: OK\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX_BASELINE: OK\n")
 		} else {
-			tmp.messages <- c(tmp.messages, "\tTest of AMERICAN_LIT SGP_SIMEX_BASELINE: FAIL\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX_BASELINE: FAIL\n")
 		}
 		if (identical(sum(Demonstration_SGP@SGP$SGPercentiles$ALGEBRA_II.2014_2015.BASELINE$SGP_SIMEX_BASELINE), 213062L)) { # 212985L
-			tmp.messages <- c(tmp.messages, "\tTest of ALGEBRA_II SGP_SIMEX_BASELINE: OK\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II SGP_SIMEX_BASELINE: OK\n")
 		} else {
-			tmp.messages <- c(tmp.messages, "\tTest of ALGEBRA_II SGP_SIMEX_BASELINE: FAIL\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II SGP_SIMEX_BASELINE: FAIL\n")
 		}
 		if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX_BASELINE, na.rm=TRUE), 1465628L)) { # 1465489L
-			tmp.messages <- c(tmp.messages, "\tTest of @Data variable SGP_SIMEX_BASELINE: OK\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX_BASELINE: OK\n")
 		} else {
-			tmp.messages <- c(tmp.messages, "\tTest of @Data variable SGP_SIMEX_BASELINE: FAIL\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX_BASELINE: FAIL\n")
 		}
 	}
-	tmp.messages <- c(tmp.messages, "\n\t##### End testSGP test number 4, Part 2 #####\n\n\t", "##### End testSGP test number 4 #####\n\n\n")
+	tmp.messages <- c(tmp.messages, "\t##### End testSGP test number 4, Part 2 #####\n")
+	tmp.messages <- c(tmp.messages, "\n##### End testSGP test number 4 #####\n")
 	cat(tmp.messages)
 	} ### End TEST_NUMBER 4
 
@@ -1257,9 +1258,9 @@ SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
 	tmp.messages <- ("\t##### Results of testSGP test number 6 #####\n\n")
 	
 	if (identical(sum(Demonstration_SGP@Data$SGP_BASELINE, na.rm=TRUE), 1469353L)) {
-		tmp.messages <- c(tmp.messages, "\tTest of SGP_BASELINE: OK\n")
+		tmp.messages <- c(tmp.messages, "\t\tTest of SGP_BASELINE: OK\n")
 	} else {
-		tmp.messages <- c(tmp.messages, "\tTest of SGP_BASELINE: FAIL\n")
+		tmp.messages <- c(tmp.messages, "\t\tTest of SGP_BASELINE: FAIL\n")
 	}
 	tmp.messages <- c(tmp.messages, "\n\t##### End testSGP test number 6 #####\n")
 	cat(tmp.messages)
