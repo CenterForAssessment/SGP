@@ -82,7 +82,7 @@ function(sgp_object,
 		stop("\tPlease supply either 'FALL', 'WINTER', or 'SPRING' for the testing.window argument.")
 	}
 
-	if (!is.data.table(additional.data)) additional.data <- as.data.table(additional.data)
+	if (!is.null(additional.data) && !is.data.table(additional.data)) additional.data <- as.data.table(additional.data)
 
 	if ("DATE" %in% names(additional.data)) additional.data[,DATE:=as.Date(DATE)]
 
