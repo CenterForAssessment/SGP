@@ -166,12 +166,12 @@ function(
 
 		### TEST of SGP variable
 
-		tmp.messages <- ("\t##### Results of testSGP test number 1 #####\n\n")
+		tmp.messages <- ("##### Results of testSGP test number 1 #####\n\n")
 
 		if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 8565260L)) {
-			tmp.messages <- c(tmp.messages, "\tTest of variable SGP: OK\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP: OK\n")
 		} else {
-			tmp.messages <- c(tmp.messages, "\tTest of variable SGP: FAIL\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP: FAIL\n")
 		}
 
 		### TEST of SGP_BASELINE variable
@@ -807,8 +807,8 @@ SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
 	expression.to.evaluate <- 
 		paste("\nDemonstration_SGP <- prepareSGP(sgpData_LONG, create.additional.variables=FALSE)\n\nDemonstration_SGP <- analyzeSGP(\n\tsgp_object=Demonstration_SGP,\n\tyears='2014_2015',\n\tcontent_areas='READING',\n\tsgp.percentiles.baseline.max.order=2,\n\tsgp.percentiles=TRUE,\n\tsgp.projections=FALSE,\n\tsgp.projections.lagged=FALSE,\n\tsgp.percentiles.baseline=", calculate.simex.baseline,",\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsimulate.sgps=FALSE,\n\tcalculate.simex=TRUE,\n\tcalculate.simex.baseline=", calculate.simex.baseline,",\n\tparallel.config=", parallel.config,"\n)\n", sep="")
 		
-	cat("#####  Begin testSGP test number 4, Part 1                                    #####", fill=TRUE)
-	cat("##     Grade-Level, Cohort and Baseline Tests with auto sgp.config construction. ##\n", fill=TRUE)
+	cat("##### Begin testSGP test number 4, Part 1 #####", fill=TRUE)
+	cat("## Grade-Level, Cohort and Baseline Tests with auto sgp.config construction. ##\n", fill=TRUE)
 
 	cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 
@@ -820,24 +820,24 @@ SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
 
 	### TEST of SGP_SIMEX variable
 
-	tmp.messages <- ("\t##            Results of testSGP test number 4, Part 1            ##\n\n")
+	tmp.messages <- ("\t##### Results of testSGP test number 4, Part 1 #####\n\n")
 	
 #	if (identical(sum(Demonstration_SGP@SGP$SGPercentiles$READING.2014_2015$SGP_SIMEX), 1029023L )) { # PERCENTILES & foreach SIMEX & TAUS 
 	if (identical(sum(Demonstration_SGP@SGP$SGPercentiles$READING.2014_2015$SGP_SIMEX), 1028916L)) { # SIMEX & TAUS
-		tmp.messages <- c(tmp.messages, "\tTest of variable SGP_SIMEX: OK\n")
+		tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX: OK\n")
 	} else {
-		tmp.messages <- c(tmp.messages, "\tTest of variable SGP_SIMEX: FAIL\n")
+		tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX: FAIL\n")
 	}
 
 	### TEST of SGP_SIMEX_BASELINE variable
 	if (calculate.simex.baseline) {	
 		if (identical(sum(Demonstration_SGP@SGP$SGPercentiles$READING.2014_2015.BASELINE$SGP_SIMEX_BASELINE), 1034495L)) { # 1034475L
-			tmp.messages <- c(tmp.messages, "\tTest of variable SGP_SIMEX_BASELINE: OK\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX_BASELINE: OK\n")
 		} else {
-			tmp.messages <- c(tmp.messages, "\tTest of variable SGP_SIMEX_BASELINE: FAIL\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX_BASELINE: FAIL\n")
 		}
 	}
-	tmp.messages <- c(tmp.messages, "\n\t#####         End testSGP test number 4, Part 1             #####\n")
+	tmp.messages <- c(tmp.messages, "\n\t##### End testSGP test number 4, Part 1 #####\n")
 	cat(tmp.messages)
 
 	sgp.config <- list(
@@ -861,8 +861,8 @@ SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
 
 	if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "dir.create('Data', showWarnings=FALSE)", "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
 
-	cat("\n\t#####        Begin testSGP test number 4, Part 2            #####\n", fill=TRUE)
-	cat("\t##           EOCT Baseline Tests with custom sgp.config.       ##\n", fill=TRUE)
+	cat("\n\t##### Begin testSGP test number 4, Part 2 #####", fill=TRUE)
+	cat("\t## EOCT Baseline Tests with custom sgp.config. ##\n", fill=TRUE)
 
 	cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 
@@ -874,42 +874,43 @@ SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
 
 	### TEST of SGP_SIMEX and SGP_SIMEX_BASELINE variable
 
-	tmp.messages <- ("\t##            Results of testSGP test number 4, Part 2            ##\n\n")
+	tmp.messages <- ("\t##### Results of testSGP test number 4, Part 2 #####\n\n")
 	
 	if (identical(sum(Demonstration_SGP@SGP$SGPercentiles$AMERICAN_LIT.2014_2015$SGP_SIMEX), 211591L)) { # 211555L
-		tmp.messages <- c(tmp.messages, "\tTest of AMERICAN_LIT SGP_SIMEX: OK\n")
+		tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX: OK\n")
 	} else {
-		tmp.messages <- c(tmp.messages, "\tTest of AMERICAN_LIT SGP_SIMEX: FAIL\n")
+		tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX: FAIL\n")
 	}
 	if (identical(sum(Demonstration_SGP@SGP$SGPercentiles$ALGEBRA_II.2014_2015$SGP_SIMEX), 212383L)) { # 212383L
-		tmp.messages <- c(tmp.messages, "\tTest of ALGEBRA_II SGP_SIMEX: OK\n")
+		tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II SGP_SIMEX: OK\n")
 	} else {
-		tmp.messages <- c(tmp.messages, "\tTest of ALGEBRA_II SGP_SIMEX: FAIL\n")
+		tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II SGP_SIMEX: FAIL\n")
 	}
 	if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX, na.rm=TRUE), 1452890L)) { # 1452961L
-		tmp.messages <- c(tmp.messages, "\tTest of @Data variable SGP_SIMEX: OK\n")
+		tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX: OK\n")
 	} else {
-		tmp.messages <- c(tmp.messages, "\tTest of @Data variable SGP_SIMEX: FAIL\n")
+		tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX: FAIL\n")
 	}
 
 	if (calculate.simex.baseline) {
 		if (identical(sum(Demonstration_SGP@SGP$SGPercentiles$AMERICAN_LIT.2014_2015.BASELINE$SGP_SIMEX_BASELINE), 218071L)) { # 218029L
-			tmp.messages <- c(tmp.messages, "\tTest of AMERICAN_LIT SGP_SIMEX_BASELINE: OK\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX_BASELINE: OK\n")
 		} else {
-			tmp.messages <- c(tmp.messages, "\tTest of AMERICAN_LIT SGP_SIMEX_BASELINE: FAIL\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX_BASELINE: FAIL\n")
 		}
 		if (identical(sum(Demonstration_SGP@SGP$SGPercentiles$ALGEBRA_II.2014_2015.BASELINE$SGP_SIMEX_BASELINE), 213062L)) { # 212985L
-			tmp.messages <- c(tmp.messages, "\tTest of ALGEBRA_II SGP_SIMEX_BASELINE: OK\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II SGP_SIMEX_BASELINE: OK\n")
 		} else {
-			tmp.messages <- c(tmp.messages, "\tTest of ALGEBRA_II SGP_SIMEX_BASELINE: FAIL\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II SGP_SIMEX_BASELINE: FAIL\n")
 		}
 		if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX_BASELINE, na.rm=TRUE), 1465628L)) { # 1465489L
-			tmp.messages <- c(tmp.messages, "\tTest of @Data variable SGP_SIMEX_BASELINE: OK\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX_BASELINE: OK\n")
 		} else {
-			tmp.messages <- c(tmp.messages, "\tTest of @Data variable SGP_SIMEX_BASELINE: FAIL\n")
+			tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX_BASELINE: FAIL\n")
 		}
 	}
-	tmp.messages <- c(tmp.messages, "\n\t#####         End testSGP test number 4, Part 2             #####\n\n\t", "#####  End testSGP test number 4                                   #####\n\n\n")
+	tmp.messages <- c(tmp.messages, "\t##### End testSGP test number 4, Part 2 #####\n")
+	tmp.messages <- c(tmp.messages, "\n##### End testSGP test number 4 #####\n")
 	cat(tmp.messages)
 	} ### End TEST_NUMBER 4
 
@@ -1241,8 +1242,8 @@ SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
 
 	if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "dir.create('Data', showWarnings=FALSE)", "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
 
-	cat("#####        Begin testSGP test number 6            #####\n", fill=TRUE)
-	cat("##           Basic Baseline Coefficient Matrix Test.       ##\n", fill=TRUE)
+	cat("##### Begin testSGP test number 6 #####\n", fill=TRUE)
+	cat("## Basic Baseline Coefficient Matrix Test. ##\n", fill=TRUE)
 
 	cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 
@@ -1254,14 +1255,14 @@ SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
 
 	### TEST of SGP_BASELINE variable
 
-	tmp.messages <- ("\t#####            Results of testSGP test number 6           #####\n\n")
+	tmp.messages <- ("\t##### Results of testSGP test number 6 #####\n\n")
 	
 	if (identical(sum(Demonstration_SGP@Data$SGP_BASELINE, na.rm=TRUE), 1469353L)) {
-		tmp.messages <- c(tmp.messages, "\tTest of SGP_BASELINE: OK\n")
+		tmp.messages <- c(tmp.messages, "\t\tTest of SGP_BASELINE: OK\n")
 	} else {
-		tmp.messages <- c(tmp.messages, "\tTest of SGP_BASELINE: FAIL\n")
+		tmp.messages <- c(tmp.messages, "\t\tTest of SGP_BASELINE: FAIL\n")
 	}
-	tmp.messages <- c(tmp.messages, "\n\t#####         End testSGP test number 6             #####\n")
+	tmp.messages <- c(tmp.messages, "\n\t##### End testSGP test number 6 #####\n")
 	cat(tmp.messages)
 	} ### End TEST_NUMBER 6
 } ### END testSGP Function
