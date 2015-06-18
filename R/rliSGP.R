@@ -91,6 +91,13 @@ function(sgp_object,
 
 	if (state=="RLI_UK") content_areas <- "READING"
 
+
+	### Create variables
+
+	update.shell.name <- paste(state, "SGP_UPDATE_SHELL", sep="_")
+	if (testing.window=="FALL") num.windows.to.keep <- 5 else num.windows.to.keep <- 6
+
+
 	### Update IDS if requested
 
 	if (!is.null(update.ids)) {
@@ -132,6 +139,12 @@ function(sgp_object,
 			assign(update.shell.name, sgp_object)
 			save(list=update.shell.name, paste(update.shell.name, "Rdata", sep="."))
 		}
+
+		if (update.save.shell.only) {
+			assign(update.shell.name, prepareSGP(subset(sgp_object@Data, YEAR %in% tail(sort(unique(sgp_object@Data$YEAR)), num.windows.to.keep)), 
+				state=state, create.additional.variables=FALSE))
+			save(list=update.shell.name, file=paste(update.shell.name, "Rdata", sep="."))
+		}
 	} ### END UPDATE scripts
 
 
@@ -142,9 +155,6 @@ function(sgp_object,
 	###############################################################################
 
 	if (eow.or.update=="EOW") {
-
-		update.shell.name <- paste(state, "SGP_UPDATE_SHELL", sep="_")
-		if (testing.window=="FALL") num.windows.to.keep <- 5 else num.windows.to.keep <- 6
 
 		if (update.save.shell.only) {
 			tmp.data <- rbindlist(list(sgp_object@Data, additional.data), fill=TRUE)
@@ -173,7 +183,8 @@ function(sgp_object,
 
 			### Create and save new UPDATE_SHELL
 
-			assign(update.shell.name, prepareSGP(subset(sgp_object@Data, YEAR %in% tail(sort(unique(sgp_object@Data$YEAR)), num.windows.to.keep)), state=state, create.additional.variables=FALSE))
+			assign(update.shell.name, prepareSGP(subset(sgp_object@Data, YEAR %in% tail(sort(unique(sgp_object@Data$YEAR)), num.windows.to.keep)), 
+				state=state, create.additional.variables=FALSE))
 			save(list=update.shell.name, file=paste(update.shell.name, "Rdata", sep="."))
 
 
