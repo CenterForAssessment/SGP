@@ -262,15 +262,16 @@ function(sgp_object,
 		}
 	}
 
+	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][['sgp.use.my.sgp_object.baseline.coefficient.matrices']]) && is.null(sgp.use.my.sgp_object.baseline.coefficient.matrices)) {
+		sgp.use.my.sgp_object.baseline.coefficient.matrices <- SGPstateData[[state]][["SGP_Configuration"]][['sgp.use.my.sgp_object.baseline.coefficient.matrices']]
+	}
+
 	if (identical(sgp.use.my.sgp_object.baseline.coefficient.matrices, FALSE)) sgp.use.my.sgp_object.baseline.coefficient.matrices <- NULL
 
 	if (!is.null(sgp.use.my.sgp_object.baseline.coefficient.matrices) && length(grep("BASELINE", names(sgp_object@SGP$Coefficient_Matrices)))==0) {
 		sgp.use.my.sgp_object.baseline.coefficient.matrices <- NULL
 	}
 
-	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][['sgp.use.my.sgp_object.baseline.coefficient.matrices']]) && is.null(sgp.use.my.sgp_object.baseline.coefficient.matrices)) {
-		sgp.use.my.sgp_object.baseline.coefficient.matrices <- SGPstateData[[state]][["SGP_Configuration"]][['sgp.use.my.sgp_object.baseline.coefficient.matrices']]
-	}
 
 	### 
 	### Utility functions

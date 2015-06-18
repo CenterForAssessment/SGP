@@ -17,6 +17,7 @@ rliSGP(
         configuration.year,
 	sgp.percentiles.baseline=TRUE,
 	sgp.projections.baseline=TRUE,
+	sgp.projections.lagged.baseline=FALSE,
 	sgp.target.scale.scores=TRUE,
         update.ids=NULL,
 	SGPt=NULL,
@@ -43,6 +44,8 @@ rliSGP(
   \item{sgp.percentiles.baseline}{Boolean variable passed to \code{\link{updateSGP}} to control whether baseline student growth percentiles are calculated. Default is TRUE.
   }
   \item{sgp.projections.baseline}{Boolean variable passed to \code{\link{updateSGP}} to control whether baseline student growth projections are calculated. Default is TRUE.
+  }
+  \item{sgp.projections.lagged.baseline}{Boolean variable passed to \code{\link{updateSGP}} to control whether lagged baseline student growth projections are calculated. Default is FALSE.
   }
   \item{sgp.target.scale.scores}{Boolean variable passed to \code{\link{updateSGP}} to control whether scale score targets are calculated. Default is TRUE.
   }

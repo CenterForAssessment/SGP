@@ -9,6 +9,7 @@ function(sgp_object,
 	configuration.year,
 	sgp.percentiles.baseline=TRUE,
 	sgp.projections.baseline=TRUE,
+	sgp.projections.lagged.baseline=FALSE,
 	sgp.target.scale.scores=TRUE,
 	update.ids=NULL,
 	SGPt=NULL,
@@ -117,7 +118,7 @@ function(sgp_object,
 			sgp.projections.lagged=FALSE,
 			sgp.percentiles.baseline=sgp.percentiles.baseline,
 			sgp.projections.baseline=sgp.projections.baseline,
-			sgp.projections.lagged.baseline=FALSE,
+			sgp.projections.lagged.baseline=sgp.projections.lagged.baseline,
 			sgp.target.scale.scores.only=sgp.target.scale.scores,
 			outputSGP.output.type="RLI",
 			goodness.of.fit.print=FALSE,
@@ -143,7 +144,7 @@ function(sgp_object,
 	if (eow.or.update=="EOW") {
 
 		update.shell.name <- paste(state, "SGP_UPDATE_SHELL", sep="_")
-		num.windows.to.keep <- 2
+		if (testing.window=="FALL") num.windows.to.keep <- 5 else num.windows.to.keep <- 6
 
 		if (update.save.shell.only) {
 			tmp.data <- rbindlist(list(sgp_object@Data, additional.data), fill=TRUE)
@@ -161,7 +162,7 @@ function(sgp_object,
 				sgp.projections.lagged=FALSE,
 				sgp.percentiles.baseline=sgp.percentiles.baseline,
 				sgp.projections.baseline=sgp.projections.baseline,
-				sgp.projections.lagged.baseline=FALSE,
+				sgp.projections.lagged.baseline=sgp.projections.lagged.baseline,
 				sgp.target.scale.scores.only=sgp.target.scale.scores,
 				outputSGP.output.type="RLI",
 				update.old.data.with.new=TRUE,
