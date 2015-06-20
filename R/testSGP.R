@@ -169,9 +169,9 @@ function(
 		tmp.messages <- ("##### Results of testSGP test number 1 #####\n\n")
 
 		if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 8565260L)) {
-			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP: OK\n")
+			tmp.messages <- c(tmp.messages, "\tTest of variable SGP: OK\n")
 		} else {
-			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP: FAIL\n")
+			tmp.messages <- c(tmp.messages, "\tTest of variable SGP: FAIL\n")
 		}
 
 		### TEST of SGP_BASELINE variable
