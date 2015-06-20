@@ -288,15 +288,26 @@ function(sgp.data,
 	### sgp.projections.lagged
 	###
 	
-	if (sgp.type=="sgp.projections.lagged") {
+	if (sgp.type %in% c("sgp.projections.lagged", "sgp.projections.lagged.baseline")) {
+
+		if (sgp.type=="sgp.projections.lagged") {
+			sgp.projection.content.areas.label <- "sgp.projection.content.areas"
+			sgp.projection.grade.sequences.label <- "sgp.projection.grade.sequences"
+			sgp.projection.panel.years.label <- "sgp.projection.panel.years"
+		} else {
+			sgp.projection.content.areas.label <- "sgp.projection.baseline.content.areas"
+			sgp.projection.grade.sequences.label <- "sgp.projection.baseline.grade.sequences"
+			sgp.projection.panel.years.label <- "sgp.projection.baseline.panel.years"
+		}
+
 		if ("YEAR_WITHIN" %in% var.names) {
 			setkeyv(sgp.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", tail(sgp.iter[["sgp.panel.years.within"]], 1)))
 			tmp.ids <- sgp.data[SJ("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], 1), tail(sgp.iter[["sgp.panel.years"]], 1), 
 				tail(sgp.iter[["sgp.grade.sequences"]], 1), 1)][,"ID", with=FALSE]
 			tmp.data <- data.table(sgp.data, key="ID")[tmp.ids]
-			tmp.lookup <- data.table(V1="VALID_CASE", tail(sgp.iter[["sgp.projection.content.areas"]], length(sgp.iter[["sgp.projection.grade.sequences"]])),
-				head(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.projection.grade.sequences"]])), sgp.iter[["sgp.projection.grade.sequences"]],
-				head(sgp.iter[["sgp.panel.years.within"]], length(sgp.iter[["sgp.projection.grade.sequences"]])), FIRST_OBSERVATION=as.integer(NA), LAST_OBSERVATION=as.integer(NA))
+			tmp.lookup <- data.table(V1="VALID_CASE", tail(sgp.iter[[sgp.projection.content.areas.label]], length(sgp.iter[[sgp.projection.grade.sequences.label]])),
+				head(sgp.iter[["sgp.panel.years"]], length(sgp.iter[[sgp.projection.grade.sequences.label]])), sgp.iter[[sgp.projection.grade.sequences.label]],
+				head(sgp.iter[["sgp.panel.years.within"]], length(sgp.iter[[sgp.projection.grade.sequences.label]])), FIRST_OBSERVATION=as.integer(NA), LAST_OBSERVATION=as.integer(NA))
 			tmp.lookup[grep("FIRST", V5, ignore.case=TRUE), FIRST_OBSERVATION:=1L]; tmp.lookup[grep("LAST", V5, ignore.case=TRUE), LAST_OBSERVATION:=1L]; tmp.lookup[,V5:=NULL]
 			setnames(tmp.lookup, paste("V", 1:4, sep=""), c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))
 			
@@ -375,9 +386,9 @@ function(sgp.data,
 					tmp.data <- data.table(data.table(dbGetQuery(con, 
 						paste("select * from sgp_data where GRADE in ('", paste(sgp.iter[["sgp.grade.sequences"]], collapse="', '"), "')",
 							" AND YEAR in ('", paste(sgp.iter[["sgp.panel.years"]], collapse="', '"), "')", sep="")), 
-						key="ID")[tmp.ids], key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))[SJ("VALID_CASE", sgp.iter[["sgp.projection.content.areas"]],
-						tail(head(sgp.iter[["sgp.panel.years"]], -1), length(sgp.iter[["sgp.projection.grade.sequences"]])),
-						sgp.iter[["sgp.projection.grade.sequences"]]), nomatch=0][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE]
+						key="ID")[tmp.ids], key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))[SJ("VALID_CASE", sgp.iter[[sgp.projection.content.areas.label]],
+						tail(head(sgp.iter[["sgp.panel.years"]], -1), length(sgp.iter[[sgp.projection.grade.sequences.label]])),
+						sgp.iter[[sgp.projection.grade.sequences.label]]), nomatch=0][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE]
 					tmp.data <- reshape(
 						tmp.data,
 						idvar="ID",
@@ -393,9 +404,9 @@ function(sgp.data,
 								tail(sgp.iter[["sgp.content.areas"]], 1), 
 								tail(sgp.iter[["sgp.panel.years"]], 1), 
 								tail(sgp.iter[["sgp.grade.sequences"]], 1))][,"ID", with=FALSE]], key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))[
-							SJ("VALID_CASE", sgp.iter[["sgp.projection.content.areas"]],
-								tail(head(sgp.iter[["sgp.panel.years"]], -1), length(sgp.iter[["sgp.projection.grade.sequences"]])),
-								sgp.iter[["sgp.projection.grade.sequences"]]), nomatch=0][,
+							SJ("VALID_CASE", sgp.iter[[sgp.projection.content.areas.label]],
+								tail(head(sgp.iter[["sgp.panel.years"]], -1), length(sgp.iter[[sgp.projection.grade.sequences.label]])),
+								sgp.iter[[sgp.projection.grade.sequences.label]]), nomatch=0][,
 								'tmp.timevar' := paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
 						idvar="ID",
 						timevar="tmp.timevar",
@@ -418,9 +429,9 @@ function(sgp.data,
 					tmp.data <- data.table(data.table(dbGetQuery(con, 
 						paste("select * from sgp_data where GRADE in ('", paste(sgp.iter[["sgp.grade.sequences"]], collapse="', '"), "')",
 							" AND YEAR in ('", paste(sgp.iter[["sgp.panel.years"]], collapse="', '"), "')", sep="")), 
-						key="ID")[tmp.ids], key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))[SJ("VALID_CASE", sgp.iter[["sgp.projection.content.areas"]],
-						tail(head(sgp.iter[["sgp.panel.years"]], -1), length(sgp.iter[["sgp.projection.grade.sequences"]])),
-						sgp.iter[["sgp.projection.grade.sequences"]]), nomatch=0][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE]
+						key="ID")[tmp.ids], key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))[SJ("VALID_CASE", sgp.iter[[sgp.projection.content.areas.label]],
+						tail(head(sgp.iter[["sgp.panel.years"]], -1), length(sgp.iter[[sgp.projection.grade.sequences.label]])),
+						sgp.iter[[sgp.projection.grade.sequences.label]]), nomatch=0][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE]
 
 						tmp.data <- data.table(reshape(
 							tmp.data,
@@ -439,9 +450,9 @@ function(sgp.data,
 								tail(sgp.iter[["sgp.panel.years"]], 1), 
 								tail(sgp.iter[["sgp.grade.sequences"]], 1))][,"ID", with=FALSE]], 
 						key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))[
-						SJ("VALID_CASE", sgp.iter[["sgp.projection.content.areas"]], 
-							tail(head(sgp.iter[["sgp.panel.years"]], -1), length(sgp.iter[["sgp.projection.grade.sequences"]])),
-							sgp.iter[["sgp.projection.grade.sequences"]]), nomatch=0][,
+						SJ("VALID_CASE", sgp.iter[[sgp.projection.content.areas.label]], 
+							tail(head(sgp.iter[["sgp.panel.years"]], -1), length(sgp.iter[[sgp.projection.grade.sequences.label]])),
+							sgp.iter[[sgp.projection.grade.sequences.label]]), nomatch=0][,
 							'tmp.timevar' := paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
 					idvar="ID",
 					timevar="tmp.timevar",
