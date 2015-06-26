@@ -147,7 +147,7 @@ function(data,
 		if (!identical(key(data@Data), tmp.key)) {
 			setkeyv(data@Data, tmp.key)
 			if (any(duplicated(data@Data["VALID_CASE"]))) {
-				message(paste("\tWARNING: @Data keyed by", paste(tmp.key, collapse=", "), "has duplicate cases. Subsequent merges will likely be corrupt."))
+				message(paste("\tWARNING: @Data keyed by", paste(tmp.key, collapse=", "), "has duplicate cases. Subsequent joins/merges will likely be corrupt."))
 				message("\tNOTE: Duplicate cases are available in current workspace as 'DUPLICATED_CASES' and saved as 'DUPLICATED_CASES.Rdata'.")
 				assign("DUPLICATED_CASES", 
 					data@Data["VALID_CASE"][unique(data@Data["VALID_CASE"][duplicated(data@Data["VALID_CASE"]), c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE])])
@@ -196,7 +196,7 @@ function(data,
 		setnames(data, which(!is.na(variable.names$names.sgp)), variable.names$names.sgp[!is.na(variable.names$names.sgp)])
 		setkeyv(data, tmp.key)
 		if (any(duplicated(data["VALID_CASE"]))) {
-			message(paste("\tWARNING: Data keyed by", paste(tmp.key, collapse=", "), "has duplicate cases. Subsequent merges will be corrupted."))
+			message(paste("\tWARNING: Data keyed by", paste(tmp.key, collapse=", "), "has duplicate cases. Subsequent joins/merges will be corrupted."))
 			message("\tNOTE: Duplicate cases are available in current workspace as 'DUPLICATED_CASES' and saved as 'DUPLICATED_CASES.Rdata'.")
 			assign("DUPLICATED_CASES", data["VALID_CASE"][duplicated(data["VALID_CASE"])][,tmp.key, with=FALSE])
 			assign("DUPLICATED_CASES", data["VALID_CASE"][unique(data["VALID_CASE"][duplicated(data["VALID_CASE"]), c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE])])

@@ -40,7 +40,7 @@ function(sgp_object,
 	started.at <- proc.time()
 	message(paste("\nStarted analyzeSGP", date()))
 
-	VALID_CASE <- CONTENT_AREA <- YEAR <- GRADE <- ID <- YEAR_WITHIN <- .EACHI <- SCALE_SCORE <- NULL
+	VALID_CASE <- CONTENT_AREA <- YEAR <- GRADE <- ID <- YEAR_WITHIN <- SCALE_SCORE <- NULL
 	SGPstateData <- SGP::SGPstateData ### Needed due to possible assignment of values to SGPstateData
 
 	###
