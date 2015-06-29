@@ -31,6 +31,7 @@ function(what_sgp_object=NULL,
 	parallel.config=NULL,
 	sgp.sqlite=NULL,
 	SGPt=NULL,
+	fix.duplicates=NULL,
 	...) {
 
 	SGPstateData <- SGP::SGPstateData ### Needed due to possible assignment of values to SGPstateData
@@ -164,7 +165,7 @@ function(what_sgp_object=NULL,
 	if (!is.null(with_sgp_data_LONG)) {
 
 		HIGH_NEED_STATUS <- YEAR <- ID <- VALID_CASE <- CONTENT_AREA <- FIRST_OBSERVATION <- LAST_OBSERVATION <- NULL
-		tmp_sgp_object <- prepareSGP(with_sgp_data_LONG, state=state, create.additional.variables=FALSE)
+		tmp_sgp_object <- prepareSGP(with_sgp_data_LONG, state=state, create.additional.variables=FALSE, fix.duplicates=NULL)
 		if (!is.null(sgp.config)) years <- unique(sapply(lapply(sgp.config, '[[', 'sgp.panel.years'), tail, 1))
 		if (is.null(years)) update.years <- sort(unique(tmp_sgp_object@Data$YEAR)) else update.years <- years
 		if (is.null(content_areas)) update.content_areas <- sort(unique(tmp_sgp_object@Data$CONTENT_AREA)) else update.content_areas <- content_areas
@@ -182,7 +183,7 @@ function(what_sgp_object=NULL,
 
 			if ("HIGH_NEED_STATUS" %in% names(what_sgp_object@Data)) {
 				what_sgp_object@Data[['HIGH_NEED_STATUS']] <- NULL
-				what_sgp_object <- suppressMessages(prepareSGP(what_sgp_object, state=state))
+				what_sgp_object <- suppressMessages(prepareSGP(what_sgp_object, state=state, fix.duplicates=fix.duplicates))
 			}
 
 			what_sgp_object <- abcSGP(
@@ -228,7 +229,7 @@ function(what_sgp_object=NULL,
 					tmp.long.data$FIRST_OBSERVATION <- NULL
 					tmp.long.data$LAST_OBSERVATION <- NULL
 				}
-				tmp.sgp_object.update <- prepareSGP(tmp.long.data, state=state, create.additional.variables=FALSE)
+				tmp.sgp_object.update <- prepareSGP(tmp.long.data, state=state, create.additional.variables=FALSE, fix.duplicates=fix.duplicates)
 				tmp.sgp_object.update@SGP$Coefficient_Matrices <- what_sgp_object@SGP$Coefficient_Matrices
 				
 				if (is.null(SGPstateData[[state]][["SGP_Configuration"]])) {
@@ -286,7 +287,7 @@ function(what_sgp_object=NULL,
 				what_sgp_object@Data <- data.table(rbindlist(list(what_sgp_object@Data, tmp_sgp_object@Data), fill=TRUE), key=getKey(what_sgp_object@Data))
 				if ("HIGH_NEED_STATUS" %in% names(what_sgp_object@Data)) {
 					what_sgp_object@Data[, HIGH_NEED_STATUS := NULL]
-					what_sgp_object <- suppressMessages(prepareSGP(what_sgp_object, state=state))
+					what_sgp_object <- suppressMessages(prepareSGP(what_sgp_object, state=state, fix.duplicates=fix.duplicates))
 				}
 				what_sgp_object@SGP <- mergeSGP(what_sgp_object@SGP, tmp.sgp_object.update@SGP)
 
@@ -324,7 +325,7 @@ function(what_sgp_object=NULL,
 				if ("YEAR_WITHIN" %in% names(what_sgp_object@Data)) {
 					what_sgp_object@Data[, LAST_OBSERVATION := NULL]
 					what_sgp_object@Data[, FIRST_OBSERVATION := NULL]
-					what_sgp_object <- suppressMessages(prepareSGP(what_sgp_object, state=state))
+					what_sgp_object <- suppressMessages(prepareSGP(what_sgp_object, state=state, fix.duplicates=fix.duplicates))
 				}
 
 				### Print finish and return SGP object
@@ -341,8 +342,11 @@ function(what_sgp_object=NULL,
 
 				if ("HIGH_NEED_STATUS" %in% names(what_sgp_object@Data)) {
 					what_sgp_object@Data[['HIGH_NEED_STATUS']] <- NULL
-					what_sgp_object <- suppressMessages(prepareSGP(what_sgp_object, state=state))
 				}
+
+				### prepareSGP
+
+				what_sgp_object <- prepareSGP(what_sgp_object, state=state, fix.duplicates=fix.duplicates)
 
 				### Add in INSTRUCTOR_NUMBER data for summarizeSGP if supplied
 

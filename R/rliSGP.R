@@ -132,6 +132,7 @@ function(sgp_object,
 			goodness.of.fit.print=FALSE,
 			update.old.data.with.new=FALSE,
 			SGPt=SGPt,
+			fix.duplicates="KEEP.ALL",
 			parallel.config=parallel.config,
 			sgp.config=getRLIConfig(content_areas, configuration.year, testing.window, SGPt))
 

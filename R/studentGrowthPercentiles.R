@@ -259,7 +259,7 @@ function(panel.data,         ## REQUIRED
 	}
 
 	.get.quantiles <- function(data1, data2) {
-		TMP_TF <- SGP <- SGP_NEW <- .EACHI <- NULL
+		TMP_TF <- SGP <- SGP_NEW <- NULL
 		tmp <- data.table(ID=rep(seq(dim(data1)[1]), each=length(taus)+1), TMP_TF=as.vector(t(cbind(data1 < data2, FALSE))))[,which.min(TMP_TF)-1, by=ID][['V1']]
 		if (!is.null(sgp.quantiles.labels)) {
 			setattr(tmp <- as.factor(tmp), "levels", sgp.quantiles.labels)
