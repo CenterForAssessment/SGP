@@ -280,9 +280,9 @@ function(data,
 				}
 				sgp_object@Data <- rbindlist(list(sgp_object@Data[!unique(c(tmp.dups.index, tmp.dups.index.to.remove))], rbindlist(tmp.duplicates.list)))
 				setkeyv(sgp_object@Data, getKey(sgp_object))
-				message(paste("\tNOTE: Additional cases created from duplicate cases in current year. Modified IDs include suffix '_DUPS_***' in @Data."))
+				message("\tNOTE: Additional cases created from duplicate cases in current year. Modified IDs include suffix '_DUPS_***' in @Data.")
 			} else {
-				message(paste("\tNOTE: Duplicate case modification is only available when duplicates reside in last year of data. Duplicate cases are NOT fixed."))
+				message("\tNOTE: Duplicate case modification is only available when duplicates reside in last year of data. Duplicate cases are NOT fixed.")
 			}
 		} ### End KEEP.ALL
 	}
