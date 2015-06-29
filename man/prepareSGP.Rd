@@ -13,7 +13,7 @@ prepareSGP(data,
 	state=NULL,
 	var.names=NULL,
 	create.additional.variables=TRUE,
-	fix.duplicates="keep.all")
+	fix.duplicates=NULL)
 }
 
 \arguments{
@@ -29,7 +29,9 @@ for summarizing and reporting.
   \item{create.additional.variables}{Boolean argument indicating whether prepareSGP should create additional variables often used in analyses. For example, the function can create a variable
   \code{HIGH_NEED_STATUS} identifying the top and bottom quartile of students in each school by year by content area by grade grouping.
   }
-  \item{fix.duplicates}{Argument for future functionality intended to deal with duplicate cases in supplied long data.
+  \item{fix.duplicates}{Argument to control how \code{prepareSGP} deals with duplicate records based upon the key of VALID_CASE, CONTENT_AREA, YEAR, and ID. 
+  The function currently warns of duplicate records and doesn't modify data. If set to TRUE, \code{prepareSGP} tries to  
+  fix the duplicate individual records by adding a '_DUP_***' suffix to the duplicate ID in order to create unique records based upon the key.
   }
 }
 
