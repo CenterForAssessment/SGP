@@ -262,10 +262,10 @@ function(data,
 
 	} ### end if (create.additional.variables)
 
-	if (!is.null(fix.duplicates)) {
+	if (!is.null(fix.duplicates) && !is.null(DUPLICATED_CASES)) {
 
 		if (identical(toupper(fix.duplicates), "KEEP.ALL")) {
-			if (all(unique(DUPLICATED_CASES$YEAR) %in% (tmp.last.year <- tail(sort(unique(data$YEAR)), 1)))) {
+			if (all(unique(DUPLICATED_CASES$YEAR) %in% (tmp.last.year <- tail(sort(unique(sgp_object@Data$YEAR)), 1)))) {
 				tmp.dups.index <- 
 					sgp_object@Data["VALID_CASE"][
 						unique(sgp_object@Data["VALID_CASE"][
