@@ -1197,7 +1197,7 @@ function(panel.data,         ## REQUIRED
 	} 
 
 	if (max.cohort.size < sgp.cohort.size) {
-		tmp.messages <- paste("\t\tNOTE: Supplied data together with grade progression contains fewer than the minimum cohort size. \n\t\tOnly", max.cohort.size, 
+		tmp.messages <- paste("\t\tNOTE: Supplied data together with grade progression contains fewer than the minimum cohort size.\n\t\tOnly", max.cohort.size, 
 			"valid cases provided with", sgp.cohort.size, "indicated as minimum cohort N size. Check data, function arguments and see help page for details.\n")
 		message(paste("\tStarted studentGrowthPercentiles", started.date))
 		message(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", 
@@ -1222,13 +1222,14 @@ function(panel.data,         ## REQUIRED
 		content_area.progression <- rep(sgp.labels$my.subject, length(tmp.gp))
 	} else {
 		if (!identical(class(content_area.progression), "character")) {
-			stop("content_area.progression should be a character vector. See help page for details.")
+			stop("The 'content_area.progression' vector/argument should be a character vector. See help page for details.")
 		}
 		if (!identical(tail(content_area.progression, 1), sgp.labels[['my.subject']])) {
-			stop("The last element in the content_area.progression must be identical to 'my.subject' of the sgp.labels. See help page for details.")
+			stop("The last element in the 'content_area.progression' vector/argument must be identical to 'my.subject' of the sgp.labels. See help page for details.")
 		}
 		if (length(content_area.progression) != length(tmp.gp)) {
-			tmp.messages <- c(tmp.messages, "\t\tNOTE: The content_area.progression vector does not have the same number of elements as the grade.progression vector.\n")
+			tmp.messages <- c(tmp.messages, "\t\tNOTE: The 'content_area.progression' vector/argument does not have the same number of elements as the 'grade.progression' vector/argument.\n\t\t\t'content_area.progression' will be trimmed based upon the length of 'grade.progression'.\n")
+			content_area.progression <- tail(content_area.progression, length(tmp.gp))
 		}
 	}
 
@@ -1236,17 +1237,18 @@ function(panel.data,         ## REQUIRED
 		if (is.character(type.convert(as.character(grade.progression), as.is=TRUE))) {
 			stop("\tNOTE: Non-numeric grade progressions must be accompanied by arguments 'year.progression' and 'year_lags.progression'")
 		} else {
-			year.progression <- year.progression.for.norm.group <- rev(yearIncrement(sgp.labels[['my.year']], c(0, -cumsum(rev(diff(type.convert(as.character(grade.progression))))))))
+			year.progression <- year.progression.for.norm.group <- 
+				tail(rev(yearIncrement(sgp.labels[['my.year']], c(0, -cumsum(rev(diff(type.convert(as.character(grade.progression)))))))), length(tmp.gp))
 		}
 	}
 
 	if (is.null(year.progression) & !is.null(year_lags.progression)) {
 		if (!identical(sgp.labels[['my.extra.label']], "BASELINE")) {
-			year.progression <- year.progression.for.norm.group <- rev(yearIncrement(sgp.labels[['my.year']], c(0, -cumsum(rev(year_lags.progression)))))
+			year.progression <- year.progression.for.norm.group <- tail(rev(yearIncrement(sgp.labels[['my.year']], c(0, -cumsum(rev(year_lags.progression))))), length(tmp.gp))
 		}
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) {
 			year.progression <- rep("BASELINE", length(tmp.gp))
-			year.progression.for.norm.group <- rev(yearIncrement(sgp.labels[['my.year']], c(0, -cumsum(rev(year_lags.progression)))))
+			year.progression.for.norm.group <- tail(rev(yearIncrement(sgp.labels[['my.year']], c(0, -cumsum(rev(year_lags.progression))))), length(tmp.gp))
 		}
 		if (!identical(class(year.progression), "character")) {
 			stop("year.area.progression should be a character vector. See help page for details.")
@@ -1260,6 +1262,7 @@ function(panel.data,         ## REQUIRED
 	}
 
 	if (!is.null(year.progression) & is.null(year_lags.progression)) {
+		year.progression <- tail(year.progression, length(tmp.gp))
 		if (year.progression[1] == "BASELINE") {
 			year_lags.progression <- rep(1, length(year.progression)-1)
 			year.progression.for.norm.group <- year.progression
