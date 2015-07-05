@@ -237,7 +237,7 @@ function(panel.data,	## REQUIRED
 							mod <- paste(mod, ", bs(tmp.dt[[", dim(tmp.dt)[2]-k+1, "]], knots=", knt, ", Boundary.knots=", bnd, ")", sep="")
 						}
 
-						tmp.scores <- eval(parse(text=paste(int, substring(mod, 2), ", key='ID')", sep="")))[,TMP_KEY:=1:100]
+						tmp.scores <- eval(parse(text=paste(int, substring(mod, 2), ", key='ID')", sep="")))
 
 						if (!is.null(SGPt)) {
 							grade.projection.sequence.labels <- c(paste(tail(grade.progression, 1), "EOW", sep="."), grade.projection.sequence)
@@ -250,6 +250,7 @@ function(panel.data,	## REQUIRED
 										(tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]+365*x)-as.numeric(max(tmp.scores[[SGPt]]))}) >
 										tmp.matrix@Version[['Matrix_Information']][['SGPt']][['RANGE_TIME_LAG']][1])]
 									tmp.scores[,TIME_LAG:=(k+365*tmp.index)-as.numeric(get(SGPt))]
+									tmp.scores[,TMP_KEY:=1:100]
 									tmp.dt[,TEMP_1:=tmp.scores[, as.matrix(.SD) %*% tmp.matrix@.Data[,TMP_KEY], by=TMP_KEY, .SDcols=3:(dim(tmp.scores)[2]-1)][['V1']]]
 
 									tmp.dt[,TEMP_2:=.smooth.bound.iso.row(
@@ -273,6 +274,7 @@ function(panel.data,	## REQUIRED
 									(tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]+365*x)-as.numeric(tmp.max.time)}) >
 									tmp.matrix@Version[['Matrix_Information']][['SGPt']][['RANGE_TIME_LAG']][1])]
 								tmp.scores[,TIME_LAG:=(tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]+365*tmp.index)-tmp.max.time]
+								tmp.scores[,TMP_KEY:=1:100]
 								tmp.max.time <- tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]
 								tmp.dt[,TEMP_1:=tmp.scores[, as.matrix(.SD) %*% tmp.matrix@.Data[,TMP_KEY], by=TMP_KEY, .SDcols=2:(dim(tmp.scores)[2]-1)][['V1']]]
 
@@ -292,6 +294,7 @@ function(panel.data,	## REQUIRED
 						} else {
 							grade.projection.sequence.labels <- grade.projection.sequence
 							content_area.projection.sequence.labels <- content_area.projection.sequence
+							tmp.scores[,TMP_KEY:=1:100]
 							tmp.dt[,TEMP_1:=tmp.scores[, as.matrix(.SD) %*% tmp.matrix@.Data[,TMP_KEY], by=TMP_KEY, .SDcols=2:(dim(tmp.scores)[2]-1)][['V1']]]
 
 							tmp.dt[,TEMP_2:=.smooth.bound.iso.row(
