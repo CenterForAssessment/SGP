@@ -112,12 +112,18 @@ function(sgp.data,
 				}
 			} else {
 				if (is.null(SGPt)) {
-					return(reshape(
-							sgp.data[tmp.lookup, nomatch=0][!ID %in% tmp.exclude.ids][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
-							idvar="ID",
-							timevar="tmp.timevar",
-							drop=var.names[!var.names %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", sgp.csem, sgp.scale.score.equated)],
-							direction="wide"))
+#					return(reshape(
+#							sgp.data[tmp.lookup, nomatch=0][!ID %in% tmp.exclude.ids][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE],
+#							idvar="ID",
+#							timevar="tmp.timevar",
+#							drop=var.names[!var.names %in% c("ID", "GRADE", "SCALE_SCORE", "tmp.timevar", sgp.csem, sgp.scale.score.equated)],
+#							direction="wide"))
+					my.tmp <- dcast(
+							sgp.data[tmp.lookup, nomatch=0][!ID %in% tmp.exclude.ids][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE], 
+							ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", sgp.csem, sgp.scale.score.equated))
+					sapply(c("GRADE", "SCALE_SCORE", sgp.csem, sgp.scale.score.equated), 
+						function(x) setnames(my.tmp, grep(x, names(my.tmp), value=TRUE), gsub(paste(x, "_", sep=""), paste(x, ".", sep=""), grep(x, names(my.tmp), value=TRUE))))
+					return(my.tmp)
 				} else {
 					return(reshape(
 							sgp.data[tmp.lookup, nomatch=0][!ID %in% tmp.exclude.ids][,
