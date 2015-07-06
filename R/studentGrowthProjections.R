@@ -230,7 +230,7 @@ function(panel.data,	## REQUIRED
 					for (j in seq_along(projection.matrices[[i]])) {
 						tmp.matrix <- projection.matrices[[i]][[j]]
 						mod <- character()
-						int <- "data.table(ID=tmp.dt[[1]], rep(1, dim(tmp.dt)[1]),"
+						int <- "data.table(ID=tmp.dt[[1]], INT=1L,"
 						for (k in seq_along(projection.matrices[[i]][[j]]@Time_Lags[[1]])) {
 							knt <- paste("tmp.matrix@Knots[[", k, "]]", sep="")
 							bnd <- paste("tmp.matrix@Boundaries[[", k, "]]", sep="")
@@ -262,7 +262,8 @@ function(panel.data,	## REQUIRED
 											na.replace=na.replace,
 											equated.year=yearIncrement(sgp.projections.equated[['Year']], -1))]
 
-									setnames(tmp.dt, "TEMP_2", paste("SS", grade.projection.sequence.labels[label.iter], content_area.projection.sequence.labels[label.iter], sep="."))
+									setnames(tmp.dt, "TEMP_2", 
+										paste("SS", grade.projection.sequence.labels[label.iter], content_area.projection.sequence.labels[label.iter], sep="."))
 									tmp.dt[,TEMP_1:=NULL]
 									label.iter <- label.iter + 1
 								}
@@ -287,7 +288,8 @@ function(panel.data,	## REQUIRED
 											na.replace=na.replace,
 											equated.year=yearIncrement(sgp.projections.equated[['Year']], -1))]
 
-								setnames(tmp.dt, "TEMP_2", paste("SS", grade.projection.sequence.labels[label.iter], content_area.projection.sequence.labels[label.iter], sep="."))
+								setnames(tmp.dt, "TEMP_2", 
+									paste("SS", grade.projection.sequence.labels[label.iter], content_area.projection.sequence.labels[label.iter], sep="."))
 								tmp.dt[,TEMP_1:=NULL]
 								label.iter <- label.iter + 1
 							}
@@ -306,13 +308,15 @@ function(panel.data,	## REQUIRED
 											na.replace=na.replace,
 											equated.year=yearIncrement(sgp.projections.equated[['Year']], -1))]
 
-							setnames(tmp.dt, "TEMP_2", paste("SS", grade.projection.sequence.labels[label.iter], content_area.projection.sequence.labels[label.iter], sep="."))
+							setnames(tmp.dt, "TEMP_2", 
+								paste("SS", grade.projection.sequence.labels[label.iter], content_area.projection.sequence.labels[label.iter], sep="."))
 							tmp.dt[,TEMP_1:=NULL]
 							label.iter <- label.iter + 1
 						}
 					} ## END j loop
 					setkeyv(tmp.dt, names(tmp.dt)[1])
-					tmp.percentile.trajectories[[i]] <- tmp.dt[,c("ID", paste("SS", grade.projection.sequence.labels, content_area.projection.sequence.labels, sep=".")), with=FALSE]
+					tmp.percentile.trajectories[[i]] <- 
+						tmp.dt[,c("ID", paste("SS", grade.projection.sequence.labels, content_area.projection.sequence.labels, sep=".")), with=FALSE]
 					rm(tmp.dt); suppressMessages(gc())
 				} ## END if (dim(tmp.dt)[1] > 0)
 			} ## END if statement
