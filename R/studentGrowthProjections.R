@@ -17,6 +17,7 @@ function(panel.data,	## REQUIRED
 	performance.level.cutscores,
 	calculate.sgps=TRUE,
 	convert.0and100=TRUE,
+	trajectories.chunk.size=50000,
 	sgp.projections.equated=NULL,
 	projection.unit="YEAR",
 	projection.unit.label=NULL,
@@ -60,6 +61,10 @@ function(panel.data,	## REQUIRED
 
 	.create.path <- function(labels, pieces=c("my.subject", "my.year", "my.extra.label")) {
 		sub(' ', '_', toupper(sub('\\.+$', '', paste(unlist(sapply(labels[pieces], as.character)), collapse="."))))
+	}
+
+	.get.trajectory.chunks <- function(seq.for.data) {
+		split(seq.for.data, ceiling(seq.for.data/trajectories.chunk.size))
 	}
 
 	get.my.knots.boundaries.path <- function(content_area, year) {
@@ -503,7 +508,7 @@ function(panel.data,	## REQUIRED
 	###
 	############################################################################
 
-	ID <- tmp.messages <- SGP_PROJECTION_GROUP <- SGP_PROJECTION_GROUP_SCALE_SCORES <- SGP_PROJECTION_GROUP_DATES <- NULL
+	ID <- tmp.messages <- SGP_PROJECTION_GROUP <- SGP_PROJECTION_GROUP_SCALE_SCORES <- SGP_PROJECTION_GROUP_DATES <- index <- NULL
 
 	if (!calculate.sgps) {
 		tmp.messages <- c(tmp.messages, paste("\t\tNOTE: Student growth projections not calculated for", sgp.labels$my.year, sgp.labels$my.subject, "due to argument calculate.sgps=FALSE.\n"))
@@ -878,7 +883,11 @@ function(panel.data,	## REQUIRED
 
 	### Calculate percentile trajectories
 
-	percentile.trajectories <- .get.percentile.trajectories(ss.data, grade.projection.sequence.matrices)
+	if (dim(ss.data)[1]/trajectories.chunk.size > 1.5) {
+		percentile.trajectories <- rbindlist(lapply(.get.trajectory.chunks(seq(dim(ss.data)[1])), function(index) .get.percentile.trajectories(ss.data[index], grade.projection.sequence.matrices)))
+	} else {
+		percentile.trajectories <- .get.percentile.trajectories(ss.data, grade.projection.sequence.matrices)
+	}
 
 
 	### Select specific percentile trajectories and calculate cutscores
