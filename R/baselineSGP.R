@@ -126,7 +126,7 @@ function(sgp_object,
 				use.my.coefficient.matrices= use.my.coefficient.matrices,
 				calculate.sgps=FALSE,
 				goodness.of.fit=FALSE,
-				drop.nonsequential.grade.progression.variables=FALSE, # taken care of in data reshape above.
+				drop.nonsequential.grade.progression.variables=FALSE,
 				grade.progression=grade.sequences,
 				content_area.progression=content_areas,
 				year.progression=rep("BASELINE", length(content_areas)),
