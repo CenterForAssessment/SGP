@@ -180,7 +180,6 @@ function(dat,
 
 	CI <- c(NA,NA); SE <- NA
 	if (!all(is.na(dat))) {
-#		out <- data.table(matrix(sample(dat, length(dat)*nboot, replace=TRUE), ncol=nboot))[,lapply(.SD, median, na.rm=TRUE)]
 		out <- sapply(seq(nboot), function(x) median(sample(dat, length(dat), replace=TRUE), na.rm=TRUE))
 		if (!is.null(conf.quantiles)) {
 			CI <- round(quantile(out, conf.quantiles, na.rm=TRUE), digits=1)
