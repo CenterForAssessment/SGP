@@ -1,6 +1,5 @@
 `getPanelData` <- 
 function(sgp.data,
-	state=NULL,
 	sgp.type,
 	sgp.iter,
 	sgp.csem=NULL,
