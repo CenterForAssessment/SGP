@@ -94,7 +94,7 @@ function(sgp_object,
 
 	### Create variables
 
-	update.shell.name <- paste(state, "SGP_UPDATE_SHELL", sep="_")
+	if (is.null(SGPt)) update.shell.name <- paste(state, "SGP_UPDATE_SHELL", sep="_") else update.shell.name <- paste(state, "SGPt_UPDATE_SHELL", sep="_")
 	if (testing.window=="FALL") num.windows.to.keep <- 5 else num.windows.to.keep <- 6
 
 
@@ -137,7 +137,6 @@ function(sgp_object,
 			sgp.config=getRLIConfig(content_areas, configuration.year, testing.window, SGPt))
 
 		if (!is.null(update.ids)) {
-			update.shell.name <- paste(state, "SGP_UPDATE_SHELL", sep="_")
 			assign(update.shell.name, sgp_object)
 			save(list=update.shell.name, paste(update.shell.name, "Rdata", sep="."))
 		}
