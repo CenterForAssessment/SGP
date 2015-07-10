@@ -2,6 +2,7 @@ Changes in version: SGP_1.4-0.0
 
   USER VISIBLE CHANGES:
 
+	  o Package accomdates assessment transitions with equating from old to new test.
 	  o Adding ability to generate student reports for examining showing two different tests.
 	  o SGP package now calculates time dependent student growth percentiles/projections (SGPt).
 
