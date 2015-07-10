@@ -109,8 +109,7 @@
 
 	combineSims <- function(sgp_object) {
 		tmp.list <- list()
-		tmp.names <- names(sgp_object@SGP[["Simulated_SGPs"]]) 
-		for (i in tmp.names) {
+		for (i in names(sgp_object@SGP[["Simulated_SGPs"]])) {
 			if (length(grep("BASELINE", i) > 0)) tmp.baseline <- "BASELINE" else tmp.baseline <- "COHORT"
 			if ("YEAR_WITHIN" %in% names(sgp_object@SGP[["Simulated_SGPs"]][[i]])) columns.to.omit <- -c(1,2) else columns.to.omit <- -1
 			tmp.list[[i]] <- data.table(
