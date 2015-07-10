@@ -107,7 +107,7 @@ function(sgp_object,
 			tmp.sgp.iter$sgp.panel.years <- tmp.year.sequence[[k]]
 			tmp.sgp.iter$sgp.grade.sequences <- tmp.sgp.iter$sgp.grade.sequences
 			if (!is.null(tmp.sgp.iter$sgp.exclude.sequences)) tmp.sgp.iter$sgp.exclude.sequences <- tmp.sgp.iter$sgp.exclude.sequences[COHORT_YEAR %in% tail(tmp.sgp.iter$sgp.panel.years, 1)]
-			tmp.list[[k]] <- getPanelData(tmp_sgp_data_for_analysis, state, "sgp.percentiles", sgp.iter = tmp.sgp.iter)[,
+			tmp.list[[k]] <- getPanelData(tmp_sgp_data_for_analysis, "sgp.percentiles", sgp.iter = tmp.sgp.iter)[,
 				getPanelDataVnames("sgp.percentiles", tmp.sgp.iter, names(tmp_sgp_data_for_analysis)), with=FALSE]
 			setnames(tmp.list[[k]], c("ID", paste("GRADE", rev(seq_along(tmp.year.sequence[[k]])), sep="_"), paste("SCALE_SCORE", rev(seq_along(tmp.year.sequence[[k]])), sep="_")))
 		}
@@ -126,7 +126,7 @@ function(sgp_object,
 				use.my.coefficient.matrices= use.my.coefficient.matrices,
 				calculate.sgps=FALSE,
 				goodness.of.fit=FALSE,
-				drop.nonsequential.grade.progression.variables=FALSE, # taken care of in data reshape above.
+				drop.nonsequential.grade.progression.variables=FALSE,
 				grade.progression=grade.sequences,
 				content_area.progression=content_areas,
 				year.progression=rep("BASELINE", length(content_areas)),
@@ -261,7 +261,7 @@ function(sgp_object,
 
 		for (sgp.iter in par.sgp.config[['sgp.percentiles.baseline']]) {
 
-			panel.data=within(tmp_sgp_object, assign("Panel_Data", getPanelData(tmp_sgp_data_for_analysis, state, "sgp.percentiles", sgp.iter)))
+			panel.data=within(tmp_sgp_object, assign("Panel_Data", getPanelData(tmp_sgp_data_for_analysis, "sgp.percentiles", sgp.iter)))
 			tmp.knots.boundaries <- getKnotsBoundaries(sgp.iter, state, "sgp.percentiles") # Get specific knots and boundaries in case course sequence is different
 			panel.data[["Knots_Boundaries"]][[names(tmp.knots.boundaries)]] <- tmp.knots.boundaries[[names(tmp.knots.boundaries)]]
 

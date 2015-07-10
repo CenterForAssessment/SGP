@@ -70,9 +70,6 @@ function(
 		projection.unit.label <- "YEAR"
 	}
 
-	if (sgp.target.scale.scores.only) {
-		sgp.target.scale.scores <- TRUE
-	}
 
 	### Setup for equated SGPs and scale score targets
 

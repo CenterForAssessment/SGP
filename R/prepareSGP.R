@@ -4,9 +4,9 @@ function(data,
 	state=NULL,
 	var.names=NULL,
 	create.additional.variables=TRUE,
-	fix.duplicates="keep.all") {
+	fix.duplicates=NULL) {
 
-	VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- ID <- GRADE <- SCALE_SCORE <- DUPLICATED_CASES <- NULL
+	VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- ID <- GRADE <- SCALE_SCORE <- DUPLICATED_CASES <- tmp.dups.index.to.remove <- NULL
 	SGPstateData <- SGP::SGPstateData ### Needed due to possible assignment of values to SGPstateData
 
 	## Print start time
@@ -138,21 +138,15 @@ function(data,
 
 		data <- checkSGP(data, state=state)
 
-		## define the key
-
-		if ("YEAR_WITHIN" %in% names(data@Data)) tmp.key <- c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", "YEAR_WITHIN") else tmp.key <- c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID")
-
 		## Key data.table and check for duplicate cases
 
-		if (!identical(key(data@Data), tmp.key)) {
-			setkeyv(data@Data, tmp.key)
-			if (any(duplicated(data@Data["VALID_CASE"]))) {
-				message(paste("\tWARNING: @Data keyed by", paste(tmp.key, collapse=", "), "has duplicate cases. Subsequent merges will likely be corrupt."))
-				message("\tNOTE: Duplicate cases are available in current workspace as 'DUPLICATED_CASES' and saved as 'DUPLICATED_CASES.Rdata'.")
-				assign("DUPLICATED_CASES", 
-					data@Data["VALID_CASE"][unique(data@Data["VALID_CASE"][duplicated(data@Data["VALID_CASE"]), c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE])])
-				save(DUPLICATED_CASES, file="DUPLICATED_CASES.Rdata")
-			}
+		setkeyv(data@Data, getKey(data))
+		if (any(duplicated(data@Data["VALID_CASE"]))) {
+			message(paste("\tWARNING: @Data keyed by", paste(getKey(data), collapse=", "), "has duplicate cases. Subsequent joins/merges will likely be corrupt."))
+			message("\tNOTE: Duplicate cases are available in current workspace as 'DUPLICATED_CASES' and saved as 'DUPLICATED_CASES.Rdata'.")
+			assign("DUPLICATED_CASES", 
+				data@Data["VALID_CASE"][unique(data@Data["VALID_CASE"][duplicated(data@Data["VALID_CASE"]), c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE])])
+			save(DUPLICATED_CASES, file="DUPLICATED_CASES.Rdata")
 		}
 
 		## Check for knots and boundaries
@@ -168,7 +162,7 @@ function(data,
 
 		if ("YEAR_WITHIN" %in% names(data@Data) & !all(c("FIRST", "LAST") %in% names(data@Data))) {
 			data@Data <- getFirstAndLastInGroup(data@Data)
-			setkeyv(data@Data, getKey(data@Data))
+			setkeyv(data@Data, getKey(data))
 		}
 
 		if (!.hasSlot(data, "Data_Supplementary")) data@Data_Supplementary <- NULL
@@ -186,19 +180,14 @@ function(data,
 	} else {
 		variable.names <- getNames(names(data), var.names)
 
-		## define the key
-
-		if ("YEAR_WITHIN" %in% names(data)) tmp.key <- c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", "YEAR_WITHIN") else tmp.key <- c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID")
-
 		##  Create keyed data.table and check for duplicate cases
 
 		data <- as.data.table(data)
 		setnames(data, which(!is.na(variable.names$names.sgp)), variable.names$names.sgp[!is.na(variable.names$names.sgp)])
-		setkeyv(data, tmp.key)
+		setkeyv(data, getKey(data))
 		if (any(duplicated(data["VALID_CASE"]))) {
-			message(paste("\tWARNING: Data keyed by", paste(tmp.key, collapse=", "), "has duplicate cases. Subsequent merges will be corrupted."))
+			message(paste("\tWARNING: Data keyed by", paste(getKey(data), collapse=", "), "has duplicate cases. Subsequent joins/merges will be corrupted."))
 			message("\tNOTE: Duplicate cases are available in current workspace as 'DUPLICATED_CASES' and saved as 'DUPLICATED_CASES.Rdata'.")
-			assign("DUPLICATED_CASES", data["VALID_CASE"][duplicated(data["VALID_CASE"])][,tmp.key, with=FALSE])
 			assign("DUPLICATED_CASES", data["VALID_CASE"][unique(data["VALID_CASE"][duplicated(data["VALID_CASE"]), c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE])])
 			save(DUPLICATED_CASES, file="DUPLICATED_CASES.Rdata")
 		}
@@ -234,17 +223,9 @@ function(data,
 	} ## END else
 
 
-	#########################################################################
-	###
-	### Tidy up variables (could be validity checks, e.g., duplicate cases)
-	###
-	#########################################################################
-
-
-
 	#################################################################
 	###
-	### Add additional variables
+	### Add additional variables, correct duplicates, ...
 	###
 	#################################################################
 
@@ -280,6 +261,31 @@ function(data,
 		}
 
 	} ### end if (create.additional.variables)
+
+	if (!is.null(fix.duplicates) && !is.null(DUPLICATED_CASES)) {
+
+		if (identical(toupper(fix.duplicates), "KEEP.ALL")) {
+			if (all(unique(DUPLICATED_CASES$YEAR) %in% (tmp.last.year <- tail(sort(unique(sgp_object@Data$YEAR)), 1)))) {
+				tmp.dups.index <- 
+					sgp_object@Data["VALID_CASE"][
+						unique(sgp_object@Data["VALID_CASE"][
+							duplicated(sgp_object@Data["VALID_CASE"]) & YEAR==tmp.last.year, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE]), which=TRUE]
+				tmp.duplicates.list <- list()
+				for (dup.iter in seq_along(tmp.dups.index)) {
+					tmp.dups.index.past <- 
+						sgp_object@Data[YEAR!=tmp.last.year & ID==sgp_object@Data[tmp.dups.index[dup.iter]][['ID']] & CONTENT_AREA==sgp_object@Data[tmp.dups.index[dup.iter]][['CONTENT_AREA']], which=TRUE]
+					tmp.duplicates.list[[as.character(tmp.dups.index[dup.iter])]] <- rbindlist(list(sgp_object@Data[tmp.dups.index.past], sgp_object@Data[tmp.dups.index[dup.iter]]))
+					tmp.duplicates.list[[as.character(tmp.dups.index[dup.iter])]][,ID:=paste(ID, "DUPS", dup.iter, sep="_")]
+					tmp.dups.index.to.remove <- c(tmp.dups.index.to.remove, tmp.dups.index.past)
+				}
+				sgp_object@Data <- rbindlist(list(sgp_object@Data[!unique(c(tmp.dups.index, tmp.dups.index.to.remove))], rbindlist(tmp.duplicates.list)))
+				setkeyv(sgp_object@Data, getKey(sgp_object))
+				message("\tNOTE: Additional cases created from duplicate cases in current year. Modified IDs include suffix '_DUPS_***' in @Data.")
+			} else {
+				message("\tNOTE: Duplicate case modification is only available when duplicates reside in last year of data. Duplicate cases are NOT fixed.")
+			}
+		} ### End KEEP.ALL
+	}
 
 	##  Print finish time
 	message(paste("Finished prepareSGP", date(), "in", timetaken(started.at), "\n"))

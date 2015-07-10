@@ -9,6 +9,7 @@ function(sgp_object,
 	configuration.year,
 	sgp.percentiles.baseline=TRUE,
 	sgp.projections.baseline=TRUE,
+	sgp.projections.lagged.baseline=FALSE,
 	sgp.target.scale.scores=TRUE,
 	update.ids=NULL,
 	SGPt=NULL,
@@ -82,13 +83,20 @@ function(sgp_object,
 		stop("\tPlease supply either 'FALL', 'WINTER', or 'SPRING' for the testing.window argument.")
 	}
 
-	if (!is.data.table(additional.data)) additional.data <- as.data.table(additional.data)
+	if (!is.null(additional.data) && !is.data.table(additional.data)) additional.data <- as.data.table(additional.data)
 
 	if ("DATE" %in% names(additional.data)) additional.data[,DATE:=as.Date(DATE)]
 
 	if (!is.null(update.ids) && !is.data.table(update.ids)) update.ids <- as.data.table(update.ids)
 
 	if (state=="RLI_UK") content_areas <- "READING"
+
+
+	### Create variables
+
+	if (is.null(SGPt)) update.shell.name <- paste(state, "SGP_UPDATE_SHELL", sep="_") else update.shell.name <- paste(state, "SGPt_UPDATE_SHELL", sep="_")
+	if (testing.window=="FALL") num.windows.to.keep <- 5 else num.windows.to.keep <- 6
+
 
 	### Update IDS if requested
 
@@ -117,19 +125,26 @@ function(sgp_object,
 			sgp.projections.lagged=FALSE,
 			sgp.percentiles.baseline=sgp.percentiles.baseline,
 			sgp.projections.baseline=sgp.projections.baseline,
-			sgp.projections.lagged.baseline=FALSE,
-			sgp.target.scale.scores.only=sgp.target.scale.scores,
+			sgp.projections.lagged.baseline=sgp.projections.lagged.baseline,
+			sgp.target.scale.scores=sgp.target.scale.scores,
+			sgp.target.scale.scores.only=TRUE,
 			outputSGP.output.type="RLI",
 			goodness.of.fit.print=FALSE,
 			update.old.data.with.new=FALSE,
 			SGPt=SGPt,
+			fix.duplicates="KEEP.ALL",
 			parallel.config=parallel.config,
 			sgp.config=getRLIConfig(content_areas, configuration.year, testing.window, SGPt))
 
 		if (!is.null(update.ids)) {
-			update.shell.name <- paste(state, "SGP_UPDATE_SHELL", sep="_")
 			assign(update.shell.name, sgp_object)
 			save(list=update.shell.name, paste(update.shell.name, "Rdata", sep="."))
+		}
+
+		if (update.save.shell.only) {
+			assign(update.shell.name, prepareSGP(subset(sgp_object@Data, YEAR %in% tail(sort(unique(sgp_object@Data$YEAR)), num.windows.to.keep)), 
+				state=state, create.additional.variables=FALSE))
+			save(list=update.shell.name, file=paste(update.shell.name, "Rdata", sep="."))
 		}
 	} ### END UPDATE scripts
 
@@ -141,9 +156,6 @@ function(sgp_object,
 	###############################################################################
 
 	if (eow.or.update=="EOW") {
-
-		update.shell.name <- paste(state, "SGP_UPDATE_SHELL", sep="_")
-		num.windows.to.keep <- 2
 
 		if (update.save.shell.only) {
 			tmp.data <- rbindlist(list(sgp_object@Data, additional.data), fill=TRUE)
@@ -161,8 +173,9 @@ function(sgp_object,
 				sgp.projections.lagged=FALSE,
 				sgp.percentiles.baseline=sgp.percentiles.baseline,
 				sgp.projections.baseline=sgp.projections.baseline,
-				sgp.projections.lagged.baseline=FALSE,
-				sgp.target.scale.scores.only=sgp.target.scale.scores,
+				sgp.projections.lagged.baseline=sgp.projections.lagged.baseline,
+				sgp.target.scale.scores=sgp.target.scale.scores,
+				sgp.target.scale.scores.only=TRUE,
 				outputSGP.output.type="RLI",
 				update.old.data.with.new=TRUE,
 				goodness.of.fit.print=FALSE,
@@ -172,7 +185,8 @@ function(sgp_object,
 
 			### Create and save new UPDATE_SHELL
 
-			assign(update.shell.name, prepareSGP(subset(sgp_object@Data, YEAR %in% tail(sort(unique(sgp_object@Data$YEAR)), num.windows.to.keep)), state=state, create.additional.variables=FALSE))
+			assign(update.shell.name, prepareSGP(subset(sgp_object@Data, YEAR %in% tail(sort(unique(sgp_object@Data$YEAR)), num.windows.to.keep)), 
+				state=state, create.additional.variables=FALSE))
 			save(list=update.shell.name, file=paste(update.shell.name, "Rdata", sep="."))
 
 

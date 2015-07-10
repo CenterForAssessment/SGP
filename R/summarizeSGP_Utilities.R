@@ -130,8 +130,6 @@ function(x,
 	}
 }
 
-`boot.median` <- function(x,i) median(x[i], na.rm=TRUE)
-
 `mean_na` <- 
 function(x,
 	weight,
@@ -159,12 +157,8 @@ function(x,
 
 	if (!is.list(in.categories)) in.categories <- list(in.categories)
 	if (!is.list(of.categories)) of.categories <- list(of.categories)
-	tmp.result <- list()
 	tmp <- table(x[!is.na(x)])
-	for (i in seq_along(in.categories)) {
-		tmp.result[[i]] <- round(100*sum(tmp[in.categories[[i]]], na.rm=TRUE)/sum(tmp[of.categories[[i]]], na.rm=TRUE), digits=result.digits)
-	}
-	return(unlist(tmp.result))
+	return(unlist(lapply(seq_along(in.categories), function(i) round(100*sum(tmp[in.categories[[i]]], na.rm=TRUE)/sum(tmp[of.categories[[i]]], na.rm=TRUE), digits=result.digits))))
 } ### END percent_in_category function
 
 
@@ -186,9 +180,9 @@ function(dat,
 
 	CI <- c(NA,NA); SE <- NA
 	if (!all(is.na(dat))) {
-		out <- sapply(seq(nboot), function(x) boot.median(sample(dat, length(dat), replace=TRUE)))
+		out <- sapply(seq(nboot), function(x) median(sample(dat, length(dat), replace=TRUE), na.rm=TRUE))
 		if (!is.null(conf.quantiles)) {
-			 CI <- round(quantile(out, conf.quantiles, na.rm=TRUE), digits=1)
+			CI <- round(quantile(out, conf.quantiles, na.rm=TRUE), digits=1)
 		} else {
 			SE <- round(sd(out, na.rm=TRUE), digits=1)
 		}

@@ -201,10 +201,8 @@ function(sgp_object,
 		} else {
 			long_data_tmp[,YEAR_BY_CONTENT_AREA := paste(YEAR, CONTENT_AREA, sep=".")]
 		}
-		assign(paste(tmp.state, "SGP_WIDE_Data", sep="_"), reshape(long_data_tmp["VALID_CASE"], idvar="ID", 
-			timevar="YEAR_BY_CONTENT_AREA", drop=c("VALID_CASE", "CONTENT_AREA", "YEAR"), direction="wide"))
-		eval(parse(text=paste("setkey(", tmp.state, "_SGP_WIDE_Data, ID)", sep="")))
-
+		assign(paste(tmp.state, "SGP_WIDE_Data", sep="_"), dcast(long_data_tmp, ID ~ YEAR_BY_CONTENT_AREA, 
+			value.var=setdiff(names(long_data_tmp), c("ID", "YEAR_BY_CONTENT_AREA", "VALID_CASE", "CONTENT_AREA", "YEAR")), sep="."))
 		save(list=paste(tmp.state, "SGP_WIDE_Data", sep="_"), file=file.path(outputSGP.directory, paste(tmp.state, "SGP_WIDE_Data.Rdata", sep="_")))
 		write.table(get(paste(tmp.state, "SGP_WIDE_Data", sep="_")), 
 			file=file.path(outputSGP.directory, paste(tmp.state, "SGP_WIDE_Data.txt", sep="_")), sep="|", quote=FALSE, row.names=FALSE, na="")
@@ -735,12 +733,12 @@ function(sgp_object,
 						YEAR=getTableNameYear(names.iter), 
 						sgp_object@SGP[["SGPercentiles"]][[names.iter]])]
 				if (any(!output.column.order %in% names(tmp.dt))) tmp.dt[,output.column.order[!output.column.order %in% names(tmp.dt)]:=as.numeric(NA), with=FALSE]
-				tmp.dt <- tmp.dt[,output.column.order, with=FALSE]
+				tmp.dt <- tmp.dt[,ID:=gsub("_DUPS_[1-9]*", "", ID)][,output.column.order, with=FALSE]
 				write.table(tmp.dt, file=file.path(outputSGP.directory, "RLI", "SGPercentiles", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
 			} else {
 				output.column.order <- SGP::SGPstateData$RLI$SGP_Configuration$output.column.order$SGPercentiles
 				if (any(!output.column.order %in% names(tmp.dt))) tmp.dt[,output.column.order[!output.column.order %in% names(tmp.dt)]:=as.numeric(NA), with=FALSE]
-				tmp.dt <- tmp.dt[,output.column.order, with=FALSE]
+				tmp.dt <- tmp.dt[,ID:=gsub("_DUPS_[1-9]*", "", ID)][,output.column.order, with=FALSE]
 				write.table(tmp.dt, file=file.path(outputSGP.directory, "RLI", "SGPercentiles", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
 			}
 
@@ -818,12 +816,12 @@ function(sgp_object,
 						YEAR=getTableNameYear(names.iter), 
 						sgp_object@SGP[["SGProjections"]][[names.iter]])][,GROUP:=names.iter]
 				if (any(!output.column.order %in% names(tmp.dt))) tmp.dt[,output.column.order[!output.column.order %in% names(tmp.dt)]:=as.numeric(NA), with=FALSE]
-				tmp.dt <- tmp.dt[,output.column.order, with=FALSE]
+				tmp.dt <- tmp.dt[,ID:=gsub("_DUPS_[1-9]*", "", ID)][,output.column.order, with=FALSE]
 				write.table(tmp.dt, file=file.path(outputSGP.directory, "RLI", "SGProjections", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
 			} else {
 				tmp.dt <- sgp_object@SGP[['SGProjections']][[names.iter]][,GROUP:=names.iter]
 				if (any(!output.column.order %in% names(tmp.dt))) tmp.dt[,output.column.order[!output.column.order %in% names(tmp.dt)]:=as.numeric(NA), with=FALSE]
-				tmp.dt <- tmp.dt[,output.column.order, with=FALSE]
+				tmp.dt <- tmp.dt[,ID:=gsub("_DUPS_[1-9]*", "", ID)][,output.column.order, with=FALSE]
 				write.table(tmp.dt, file=file.path(outputSGP.directory, "RLI", "SGProjections", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
 			}
 
