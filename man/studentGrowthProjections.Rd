@@ -24,6 +24,7 @@ studentGrowthProjections(panel.data,
                          performance.level.cutscores, 
                          calculate.sgps=TRUE,
                          convert.0and100=TRUE,
+                         trajectories.chunk.size=50000,
                          sgp.projections.equated=NULL, 
                          projection.unit="YEAR",
                          projection.unit.label=NULL,
@@ -112,6 +113,9 @@ studentGrowthProjections(panel.data,
   }
   \item{convert.0and100}{Boolean argument (defaults to TRUE) indicating whether conversion of growth percentiles of 0 and 100 to growth percentiles
     of 1 and 99, respectively, occurs. The default produces growth percentiles ranging from 1 to 99.
+  }
+  \item{trajectories.chunk.size}{To enhance speed, large data sets are broken up into smaller data sets before trajectories and cuts are calculated. The default chunk.size is 50,000 and is utilized
+  when data sets of over 150 percent of the \code{trajectory.chunk.size} are passed to \code{.get.percentile.trajectories} and \code{.get.trajectories.and.cuts}.  
   }
   \item{sgp.projections.equated}{A list (defaults to NULL) specifying the Year and Linkages associated with the equating used for projection purposes.
   }

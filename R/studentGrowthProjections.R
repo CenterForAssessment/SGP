@@ -17,6 +17,7 @@ function(panel.data,	## REQUIRED
 	performance.level.cutscores,
 	calculate.sgps=TRUE,
 	convert.0and100=TRUE,
+	trajectories.chunk.size=50000,
 	sgp.projections.equated=NULL,
 	projection.unit="YEAR",
 	projection.unit.label=NULL,
@@ -41,23 +42,29 @@ function(panel.data,	## REQUIRED
 	###
 	##########################################################
 
-	.smooth.bound.iso.row <- function(x, grade, tmp.year, tmp.content_area, iso=isotonize, missing.taus, na.replace, equated.year) {
+	.smooth.bound.iso.row <- function(tmp.dt, grade, tmp.year, tmp.content_area, iso=isotonize, missing.taus, na.replace, equated.year) {
+		X <- NULL
 		if (!is.null(equated.year)) tmp.year <- equated.year
 		bnd <- eval(parse(text=paste("panel.data[['Knots_Boundaries']]", get.my.knots.boundaries.path(tmp.content_area, tmp.year), "[['loss.hoss_", grade, "']]", sep="")))
-		x[x < bnd[1]] <- bnd[1] ; x[x > bnd[2]] <- bnd[2]
-		if (!iso) return(round(x, digits=5)) # Results are the same whether NAs present or not...
+		tmp.dt[X < bnd[1], X:=bnd[1]] 
+		tmp.dt[X > bnd[2], X:=bnd[2]]
+		if (!iso) return(round(tmp.dt[['X']], digits=5)) # Results are the same whether NAs present or not...
 		if (iso & missing.taus) {
-			na.row <- rep(NA,100)
-			na.row[na.replace] <- round(sort(x[!is.na(x)]), digits=5)
+			na.row <- rep(NA,length(tmp.dt[['X']]))
+			na.row[na.replace] <- round(data.table(tmp.dt[!is.na(X)], key=c("ID", "X"))[['X']], digits=5)
 			return(na.row)
 		} else {
-			x[which(is.na(x))] <- approx(x, xout=which(is.na(x)))$y
-			return(round(sort(x), digits=5))
+			setkey(tmp.dt, ID, X)
+			return(round(tmp.dt[unlist(lapply(1:100, function(x) seq(x, dim(tmp.dt)[1], by=100)))][['X']], digits=5))
 		}
 	}
 
 	.create.path <- function(labels, pieces=c("my.subject", "my.year", "my.extra.label")) {
 		sub(' ', '_', toupper(sub('\\.+$', '', paste(unlist(sapply(labels[pieces], as.character)), collapse="."))))
+	}
+
+	.get.trajectory.chunks <- function(seq.for.data) {
+		split(seq.for.data, ceiling(seq.for.data/trajectories.chunk.size))
 	}
 
 	get.my.knots.boundaries.path <- function(content_area, year) {
@@ -208,7 +215,7 @@ function(panel.data,	## REQUIRED
 	.get.percentile.trajectories <- function(ss.data, projection.matrices) {
 
 		tmp.percentile.trajectories <- list()
-		completed.ids <- TEMP_1 <- TEMP_2 <- TIME <- TIME_LAG <- NULL
+		completed.ids <- TEMP_1 <- TEMP_2 <- TIME <- TIME_LAG <- TMP_KEY <- NULL
 
 		for (i in seq_along(projection.matrices)) {
 			if (any(!ss.data[[1]] %in% completed.ids)) {
@@ -221,14 +228,14 @@ function(panel.data,	## REQUIRED
 
 				if (dim(tmp.dt)[1] > 0) {
 					completed.ids <- c(unique(tmp.dt[[1]]), completed.ids)
-					tmp.dt <- tmp.dt[list(rep(tmp.dt[[1]], each=100))]
+					tmp.dt <- tmp.dt[list(rep(tmp.dt[[1]], 100))]
 					missing.taus <- FALSE; na.replace <- NULL # put these outside of j loop so that stays true/non-null if only SOME of coef matrices have missing column/taus.
 					label.iter <- 1
 
 					for (j in seq_along(projection.matrices[[i]])) {
 						tmp.matrix <- projection.matrices[[i]][[j]]
 						mod <- character()
-						int <- "data.table(ID=tmp.dt[[1]], rep(1, dim(tmp.dt)[1]),"
+						int <- "data.table(ID=tmp.dt[[1]], INT=1L,"
 						for (k in seq_along(projection.matrices[[i]][[j]]@Time_Lags[[1]])) {
 							knt <- paste("tmp.matrix@Knots[[", k, "]]", sep="")
 							bnd <- paste("tmp.matrix@Boundaries[[", k, "]]", sep="")
@@ -248,22 +255,20 @@ function(panel.data,	## REQUIRED
 										(tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]+365*x)-as.numeric(max(tmp.scores[[SGPt]]))}) >
 										tmp.matrix@Version[['Matrix_Information']][['SGPt']][['RANGE_TIME_LAG']][1])]
 									tmp.scores[,TIME_LAG:=(k+365*tmp.index)-as.numeric(get(SGPt))]
-
-									for (m in seq(100)) {
-										tmp.dt[m+100*(seq(dim(tmp.dt)[1]/100)-1), 
-											TEMP_1:=as.matrix(tmp.scores[,c(-1,-2),with=FALSE])[m+100*(seq(dim(tmp.dt)[1]/100)-1),] %*% tmp.matrix@.Data[,m]]
-									}
+									tmp.scores[,TMP_KEY:=1:100]
+									tmp.dt[,TEMP_1:=tmp.scores[, as.matrix(.SD) %*% tmp.matrix@.Data[,TMP_KEY], by=TMP_KEY, .SDcols=3:(dim(tmp.scores)[2]-1)][['V1']]]
 
 									tmp.dt[,TEMP_2:=.smooth.bound.iso.row(
-											TEMP_1, 
+											data.table(ID=tmp.dt[[1]], X=TEMP_1), 
 											grade.projection.sequence[j], 
 											yearIncrement(sgp.labels[['my.year']], j, lag.increment),
 											content_area.projection.sequence[j],
 											missing.taus=missing.taus, 
 											na.replace=na.replace,
-											equated.year=yearIncrement(sgp.projections.equated[['Year']], -1)), 
-										by=eval(names(tmp.dt)[1])]
-									setnames(tmp.dt, "TEMP_2", paste("SS", grade.projection.sequence.labels[label.iter], content_area.projection.sequence.labels[label.iter], sep="."))
+											equated.year=yearIncrement(sgp.projections.equated[['Year']], -1))]
+
+									setnames(tmp.dt, "TEMP_2", 
+										paste("SS", grade.projection.sequence.labels[label.iter], content_area.projection.sequence.labels[label.iter], sep="."))
 									tmp.dt[,TEMP_1:=NULL]
 									label.iter <- label.iter + 1
 								}
@@ -275,49 +280,48 @@ function(panel.data,	## REQUIRED
 									(tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]+365*x)-as.numeric(tmp.max.time)}) >
 									tmp.matrix@Version[['Matrix_Information']][['SGPt']][['RANGE_TIME_LAG']][1])]
 								tmp.scores[,TIME_LAG:=(tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]+365*tmp.index)-tmp.max.time]
+								tmp.scores[,TMP_KEY:=1:100]
 								tmp.max.time <- tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]
-
-								for (m in seq(100)) {
-									tmp.dt[m+100*(seq(dim(tmp.dt)[1]/100)-1), 
-										TEMP_1:=as.matrix(tmp.scores[,-1,with=FALSE])[m+100*(seq(dim(tmp.dt)[1]/100)-1),] %*% tmp.matrix@.Data[,m]]
-								}
+								tmp.dt[,TEMP_1:=tmp.scores[, as.matrix(.SD) %*% tmp.matrix@.Data[,TMP_KEY], by=TMP_KEY, .SDcols=2:(dim(tmp.scores)[2]-1)][['V1']]]
 
 								tmp.dt[,TEMP_2:=.smooth.bound.iso.row(
-											TEMP_1, 
+											data.table(ID=tmp.dt[[1]], X=TEMP_1), 
 											grade.projection.sequence[j], 
 											yearIncrement(sgp.labels[['my.year']], j, lag.increment),
 											content_area.projection.sequence[j],
 											missing.taus=missing.taus, 
 											na.replace=na.replace,
-											equated.year=yearIncrement(sgp.projections.equated[['Year']], -1)), 
-										by=eval(names(tmp.dt)[1])]
-								setnames(tmp.dt, "TEMP_2", paste("SS", grade.projection.sequence.labels[label.iter], content_area.projection.sequence.labels[label.iter], sep="."))
+											equated.year=yearIncrement(sgp.projections.equated[['Year']], -1))]
+
+								setnames(tmp.dt, "TEMP_2", 
+									paste("SS", grade.projection.sequence.labels[label.iter], content_area.projection.sequence.labels[label.iter], sep="."))
 								tmp.dt[,TEMP_1:=NULL]
 								label.iter <- label.iter + 1
 							}
 						} else {
 							grade.projection.sequence.labels <- grade.projection.sequence
 							content_area.projection.sequence.labels <- content_area.projection.sequence
-							for (m in seq(100)) {
-								tmp.dt[m+100*(seq(dim(tmp.dt)[1]/100)-1), 
-									TEMP_1:=as.matrix(tmp.scores[,-1,with=FALSE])[m+100*(seq(dim(tmp.dt)[1]/100)-1),] %*% tmp.matrix@.Data[,m]]
-							}
+							tmp.scores[,TMP_KEY:=1:100]
+							tmp.dt[,TEMP_1:=tmp.scores[, as.matrix(.SD) %*% tmp.matrix@.Data[,TMP_KEY], by=TMP_KEY, .SDcols=2:(dim(tmp.scores)[2]-1)][['V1']]]
 
 							tmp.dt[,TEMP_2:=.smooth.bound.iso.row(
-											TEMP_1, 
+											data.table(ID=tmp.dt[[1]], X=TEMP_1), 
 											grade.projection.sequence[j], 
 											yearIncrement(sgp.labels[['my.year']], j, lag.increment),
 											content_area.projection.sequence[j],
 											missing.taus=missing.taus, 
 											na.replace=na.replace,
-											equated.year=yearIncrement(sgp.projections.equated[['Year']], -1)), 
-										by=eval(names(tmp.dt)[1])]
-							setnames(tmp.dt, "TEMP_2", paste("SS", grade.projection.sequence.labels[label.iter], content_area.projection.sequence.labels[label.iter], sep="."))
+											equated.year=yearIncrement(sgp.projections.equated[['Year']], -1))]
+
+							setnames(tmp.dt, "TEMP_2", 
+								paste("SS", grade.projection.sequence.labels[label.iter], content_area.projection.sequence.labels[label.iter], sep="."))
 							tmp.dt[,TEMP_1:=NULL]
 							label.iter <- label.iter + 1
 						}
 					} ## END j loop
-					tmp.percentile.trajectories[[i]] <- tmp.dt[,c("ID", paste("SS", grade.projection.sequence.labels, content_area.projection.sequence.labels, sep=".")), with=FALSE]
+					setkeyv(tmp.dt, names(tmp.dt)[1])
+					tmp.percentile.trajectories[[i]] <- 
+						tmp.dt[,c("ID", paste("SS", grade.projection.sequence.labels, content_area.projection.sequence.labels, sep=".")), with=FALSE]
 					rm(tmp.dt); suppressMessages(gc())
 				} ## END if (dim(tmp.dt)[1] > 0)
 			} ## END if statement
@@ -504,7 +508,7 @@ function(panel.data,	## REQUIRED
 	###
 	############################################################################
 
-	ID <- tmp.messages <- SGP_PROJECTION_GROUP <- SGP_PROJECTION_GROUP_SCALE_SCORES <- SGP_PROJECTION_GROUP_DATES <- NULL
+	ID <- tmp.messages <- SGP_PROJECTION_GROUP <- SGP_PROJECTION_GROUP_SCALE_SCORES <- SGP_PROJECTION_GROUP_DATES <- index <- NULL
 
 	if (!calculate.sgps) {
 		tmp.messages <- c(tmp.messages, paste("\t\tNOTE: Student growth projections not calculated for", sgp.labels$my.year, sgp.labels$my.subject, "due to argument calculate.sgps=FALSE.\n"))
@@ -879,7 +883,11 @@ function(panel.data,	## REQUIRED
 
 	### Calculate percentile trajectories
 
-	percentile.trajectories <- .get.percentile.trajectories(ss.data, grade.projection.sequence.matrices)
+	if (dim(ss.data)[1]/trajectories.chunk.size > 1.5) {
+		percentile.trajectories <- rbindlist(lapply(.get.trajectory.chunks(seq(dim(ss.data)[1])), function(index) .get.percentile.trajectories(ss.data[index], grade.projection.sequence.matrices)))
+	} else {
+		percentile.trajectories <- .get.percentile.trajectories(ss.data, grade.projection.sequence.matrices)
+	}
 
 
 	### Select specific percentile trajectories and calculate cutscores

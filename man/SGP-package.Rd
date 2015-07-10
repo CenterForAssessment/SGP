@@ -11,17 +11,16 @@ that make use of them including: \code{\link{prepareSGP}}, \code{\link{analyzeSG
 longitudinal assessment data.  These norm- and criterion-referenced growth values are currently used in a number of states for many purposes including diagnostic and accountability. 
 The functions employ quantile regression (using the \code{quantreg} package) to estimate the conditional density for current achievement using each student's achievement history. 
 Percentile growth projections/trajectories are calculated using the coefficient matrices derived from the student growth percentile analyses. These quantities
-are summarized in a variety of ways to describe student growth. As of the 0.2-0.0 release, the package also includes the graphics functions 
-\code{\link{bubblePlot}}, \code{\link{studentGrowthPlot}}, and \code{\link{growthAchievementPlot}} to produce high quality graphical representations associated with the student 
-growth percentile analyses.
+are summarized in a variety of ways to describe student growth. Beginning with version 1.4-0.0, the SGP package also calculate time dependent SGPs (SGPt) and allows for student
+growth projections to be calculated across assessment transitions by equating the two tests.
 }
 
 \details{
 \tabular{ll}{
 Package: \tab SGP\cr
 Type: \tab Package\cr
-Version: \tab 1.3-9.10\cr
-Date: \tab 2015-6-30\cr
+Version: \tab 1.3-9.18\cr
+Date: \tab 2015-7-10\cr
 License: \tab GPL-3\cr
 LazyLoad: \tab yes\cr
 }
