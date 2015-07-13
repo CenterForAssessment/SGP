@@ -180,7 +180,7 @@ function(dat,
 
 	CI <- c(NA,NA); SE <- NA
 	if (!all(is.na(dat))) {
-		out <- sapply(seq(nboot), function(x) median(sample(dat, length(dat), replace=TRUE), na.rm=TRUE))
+		out <- sapply(seq.int(nboot), function(x) median(sample(dat, length(dat), replace=TRUE), na.rm=TRUE))
 		if (!is.null(conf.quantiles)) {
 			CI <- round(quantile(out, conf.quantiles, na.rm=TRUE), digits=1)
 		} else {
