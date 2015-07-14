@@ -9,7 +9,7 @@ function(
 	distribution=NULL, 
 	round=NULL) {
 
-	GRADE <- CONTENT_AREA <- YEAR <- NULL
+	GRADE <- CONTENT_AREA <- YEAR <- SS <- NULL
 
 	### Define relevant variables
 

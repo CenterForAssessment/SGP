@@ -31,7 +31,7 @@ function(sgp_object,
 	}
 
 	if (identical(calculate.simex.baseline, TRUE)) {
-		calculate.simex.baseline <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear", save.matrices=TRUE)
+		calculate.simex.baseline <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE)
 	}
 
 	### Syncronize "return.matrices.only" and "calculate.baseline.sgps" arguments

@@ -49,12 +49,12 @@ function(what_sgp_object=NULL,
 
 	if (identical(calculate.simex, TRUE)) {
 		##  Enforce that simex.use.my.coefficient.matrices must be TRUE for updating COHORT SIMEX SGPs
-		calculate.simex <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear", save.matrices=TRUE, simex.use.my.coefficient.matrices = TRUE)
+		calculate.simex <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE, simex.use.my.coefficient.matrices = TRUE)
 	}
 
 	if (identical(calculate.simex.baseline, TRUE)) {
 		##  Enforce that simex.use.my.coefficient.matrices must be TRUE for updating BASELINE SIMEX SGPs
-		calculate.simex.baseline <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear", save.matrices=TRUE, simex.use.my.coefficient.matrices = TRUE)
+		calculate.simex.baseline <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE, simex.use.my.coefficient.matrices = TRUE)
 	}
 
 	### Utility functions
