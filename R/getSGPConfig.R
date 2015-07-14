@@ -538,7 +538,6 @@ function(sgp_object,
 		if (length(sgp.config.list[['sgp.percentiles.baseline']]) > 0) {
 			for (i in seq_along(sgp.config.list[['sgp.percentiles.baseline']])) sgp.config.list[['sgp.percentiles.baseline']][[i]][['sgp.matrices']] <- NULL
 			tmp.config <- sgp.config.list[['sgp.percentiles.baseline']][sapply(sgp.config.list[['sgp.percentiles.baseline']], test.projection.iter)]
-			if (length(tmp.config) > 0) for (f in seq_along(tmp.config)) tmp.config[[f]][['sgp.exact.grade.progression']] <- FALSE
 			sgp.config.list[['sgp.percentiles.baseline']] <- tmp.config
 		}
 
