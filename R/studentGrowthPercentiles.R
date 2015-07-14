@@ -1391,27 +1391,49 @@ function(panel.data,         ## REQUIRED
 						tmp.csem.variable <- NULL
 					}
 
-					tmp.csem.quantiles[[j]] <- tmp.data[,names(tmp.data)[1], with=FALSE]
-					setnames(tmp.csem.quantiles[[j]], names(tmp.csem.quantiles[[j]])[1], "ID")
-					if (!is.null(additional.vnames.to.return)) {
-						tmp.csem.quantiles[[j]] <- data.table(panel.data[["Panel_Data"]][,c("ID", names(additional.vnames.to.return)), with=FALSE], key="ID")[tmp.csem.quantiles[[j]]]
-						setnames(tmp.csem.quantiles[[j]], names(additional.vnames.to.return), unlist(additional.vnames.to.return))
-					}
-					for (k in seq(calculate.confidence.intervals[['simulation.iterations']])) { 
-						tmp.csem.quantiles[[j]][,TEMP_SGP_SIM:=.get.quantiles(
-								tmp.predictions, 
-								csemScoreSimulator(
-									scale_scores=tmp.data[[dim(tmp.data)[2]]],
-									grade=tmp.last,
-									content_area=sgp.labels[['my.subject']],
-									year=sgp.labels[['my.year']],
-									state=calculate.confidence.intervals[['state']],
-									variable=tmp.csem.variable,
-									distribution=calculate.confidence.intervals[['distribution']],
-									round=calculate.confidence.intervals[['round']]))]
-						setnames(tmp.csem.quantiles[[j]], "TEMP_SGP_SIM", paste("SGP_SIM", k, sep="_"))
-					} ## END k loop
+					tmp.csem.quantiles[[j]] <- data.table(
+									tmp.data[,c(names(tmp.data)[1], names(additional.vnames.to.return)), with=FALSE],
+									as.data.table(replicate(calculate.confidence.intervals[['simulation.iterations']],
+												.get.quantiles(
+													tmp.predictions, 
+													csemScoreSimulator(
+													scale_scores=tmp.data[[dim(tmp.data)[2]]],
+													grade=tmp.last,
+													content_area=sgp.labels[['my.subject']],
+													year=sgp.labels[['my.year']],
+													state=calculate.confidence.intervals[['state']],
+													variable=tmp.csem.variable,
+													distribution=calculate.confidence.intervals[['distribution']],
+													round=calculate.confidence.intervals[['round']])))))
+					setnames(tmp.csem.quantiles[[j]], paste("V", seq(calculate.confidence.intervals[['simulation.iterations']]), sep=""),
+										paste("SGP_SIM", seq(calculate.confidence.intervals[['simulation.iterations']]), sep="_"))
 				} ## END CSEM analysis
+
+#					}
+#
+#					tmp.csem.quantiles[[j]] <- tmp.data[,names(tmp.data)[1], with=FALSE]
+#					setnames(tmp.csem.quantiles[[j]], names(tmp.csem.quantiles[[j]])[1], "ID")
+#					if (!is.null(additional.vnames.to.return)) {
+#						tmp.csem.quantiles[[j]] <- data.table(panel.data[["Panel_Data"]][,c("ID", names(additional.vnames.to.return)), with=FALSE], key="ID")[tmp.csem.quantiles[[j]]]
+#						setnames(tmp.csem.quantiles[[j]], names(additional.vnames.to.return), unlist(additional.vnames.to.return))
+#					}
+#					tmp.csem.quantiles[[j]] <- 
+#						as.data.table
+#					for (k in seq(calculate.confidence.intervals[['simulation.iterations']])) { 
+#						tmp.csem.quantiles[[j]][,TEMP_SGP_SIM:=.get.quantiles(
+#								tmp.predictions, 
+#								csemScoreSimulator(
+#									scale_scores=tmp.data[[dim(tmp.data)[2]]],
+#									grade=tmp.last,
+#									content_area=sgp.labels[['my.subject']],
+#									year=sgp.labels[['my.year']],
+#									state=calculate.confidence.intervals[['state']],
+#									variable=tmp.csem.variable,
+#									distribution=calculate.confidence.intervals[['distribution']],
+#									round=calculate.confidence.intervals[['round']]))]
+#						setnames(tmp.csem.quantiles[[j]], "TEMP_SGP_SIM", paste("SGP_SIM", k, sep="_"))
+#					} ## END k loop
+#				} ## END CSEM analysis
 
 				if (!is.null(percentile.cuts)) {
 					tmp.percentile.cuts[[j]] <- data.table(ID=tmp.data[[1]], .get.percentile.cuts(tmp.predictions))
