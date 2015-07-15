@@ -1,4 +1,4 @@
-`getPanelData_NEW` <- 
+`getPanelData` <- 
 function(sgp.data,
 	sgp.type,
 	sgp.iter,
