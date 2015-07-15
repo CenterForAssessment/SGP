@@ -136,7 +136,8 @@ function(x,
 	result.digits=2) {
 
 	if (is.null(weight)) {
-		round(.Internal(mean(as.numeric(x[!is.na(x)]))), digits=result.digits)
+		tmp.x <- x[!is.na(x)]
+		round(sum(tmp.x)/length(tmp.x), digits=result.digits)
 	} else {
 		round(weighted.mean(as.numeric(x), w=weight, na.rm=TRUE), digits=result.digits)
 	}
