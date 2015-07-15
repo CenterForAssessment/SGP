@@ -55,7 +55,7 @@ function(panel.data,	## REQUIRED
 			return(na.row)
 		} else {
 			setkey(tmp.dt, ID, X)
-			return(round(tmp.dt[unlist(lapply(1:100, function(x) seq(x, dim(tmp.dt)[1], by=100)))][['X']], digits=5))
+			return(round(tmp.dt[unlist(lapply(1:100, function(x) seq.int(x, dim(tmp.dt)[1], by=100)))][['X']], digits=5))
 		}
 	}
 
@@ -884,7 +884,7 @@ function(panel.data,	## REQUIRED
 	### Calculate percentile trajectories
 
 	if (dim(ss.data)[1]/trajectories.chunk.size > 1.5) {
-		percentile.trajectories <- rbindlist(lapply(.get.trajectory.chunks(seq(dim(ss.data)[1])), function(index) .get.percentile.trajectories(ss.data[index], grade.projection.sequence.matrices)))
+		percentile.trajectories <- rbindlist(lapply(.get.trajectory.chunks(seq.int(dim(ss.data)[1])), function(index) .get.percentile.trajectories(ss.data[index], grade.projection.sequence.matrices)))
 	} else {
 		percentile.trajectories <- .get.percentile.trajectories(ss.data, grade.projection.sequence.matrices)
 	}

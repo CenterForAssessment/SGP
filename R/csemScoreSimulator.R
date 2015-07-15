@@ -9,7 +9,7 @@ function(
 	distribution=NULL, 
 	round=NULL) {
 
-	GRADE <- CONTENT_AREA <- YEAR <- NULL
+	GRADE <- CONTENT_AREA <- YEAR <- SS <- NULL
 
 	### Define relevant variables
 
@@ -35,8 +35,8 @@ function(
 	if (!is.null(variable)) tmp.omega <- variable
 
 	if (distribution=="Skew-Normal") tmp.alpha <- tan((pi/2)*((min.max[1]+min.max[2]) - 2*scale_scores)/(min.max[2]-min.max[1])) else tmp.alpha <- 0
-	tmp.score <- round_any(as.numeric(rsn(length(scale_scores), xi=scale_scores, omega=tmp.omega, alpha=tmp.alpha)), round)
-	tmp.score[tmp.score < min.max[1]] <- min.max[1]
-	tmp.score[tmp.score > min.max[2]] <- min.max[2]
-	return(tmp.score)
+	tmp.score <- data.table(SS=round_any(as.numeric(rsn(length(scale_scores), xi=scale_scores, omega=tmp.omega, alpha=tmp.alpha)), round))
+	tmp.score[SS < min.max[1], SS:=min.max[1]]
+	tmp.score[SS > min.max[2], SS:=min.max[2]]
+	return(tmp.score[['SS']])
 } ### END csemScoreSimulator

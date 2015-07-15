@@ -258,25 +258,25 @@ function(panel.data,         ## REQUIRED
 	}
 
 	.get.quantiles <- function(data1, data2) {
-		TMP_TF <- SGP <- SGP_NEW <- NULL
-		tmp <- data.table(ID=rep(seq(dim(data1)[1]), each=length(taus)+1), TMP_TF=as.vector(t(cbind(data1 < data2, FALSE))))[,which.min(TMP_TF)-1, by=ID][['V1']]
+		TMP_TF <- SGP <- SGP_NEW <- V1 <- NULL
+#		tmp <- data.table(ID=rep(seq.int(dim(data1)[1]), each=length(taus)+1))[, TMP_TF:=as.vector(t(cbind(data1 < data2, FALSE)))][,which.min(TMP_TF)-1L, by=ID]
+		tmp <- as.data.table(max.col(cbind(data1 < data2, FALSE), "last"))[V1==101,V1:=0]
 		if (!is.null(sgp.quantiles.labels)) {
-			setattr(tmp <- as.factor(tmp), "levels", sgp.quantiles.labels)
-			return(as.integer(levels(tmp))[tmp])
+			setattr(tmp[['V1']] <- as.factor(tmp[['V1']]), "levels", sgp.quantiles.labels)
+			return(as.integer(levels(tmp[['V1']]))[tmp[['V1']]])
 		} else {
 			if (!is.null(sgp.loss.hoss.adjustment)) {
 				my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
 				tmp.hoss <- eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['loss.hoss_", tmp.last, "']][2]", sep="")))
-				tmp.index <- which(data2==tmp.hoss)
-				if (length(tmp.index) > 0) {
-					tmp[tmp.index] <- apply(cbind(data1 > data2, TRUE)[tmp.index,,drop=FALSE], 1, function(x) which.max(x)-1)
+				if (length(tmp.index <- which(data2>=tmp.hoss)) > 0) {
+					tmp[tmp.index, V1:=apply(data.table(data1 > data2, TRUE)[tmp.index], 1, function(x) which.max(x)-1L)]
 				}
 			}
 			if (convert.0and100) {
-				tmp[tmp==0] <- 1
-				tmp[tmp==100] <- 99
+				tmp[V1==0, V1:=1L]
+				tmp[V1==100, V1:=99L]
 			}
-			return(as.integer(tmp))
+			return(tmp[['V1']])
 		}
 	}
 
@@ -1391,26 +1391,22 @@ function(panel.data,         ## REQUIRED
 						tmp.csem.variable <- NULL
 					}
 
-					tmp.csem.quantiles[[j]] <- tmp.data[,names(tmp.data)[1], with=FALSE]
-					setnames(tmp.csem.quantiles[[j]], names(tmp.csem.quantiles[[j]])[1], "ID")
-					if (!is.null(additional.vnames.to.return)) {
-						tmp.csem.quantiles[[j]] <- data.table(panel.data[["Panel_Data"]][,c("ID", names(additional.vnames.to.return)), with=FALSE], key="ID")[tmp.csem.quantiles[[j]]]
-						setnames(tmp.csem.quantiles[[j]], names(additional.vnames.to.return), unlist(additional.vnames.to.return))
-					}
-					for (k in seq(calculate.confidence.intervals[['simulation.iterations']])) { 
-						tmp.csem.quantiles[[j]][,TEMP_SGP_SIM:=.get.quantiles(
-								tmp.predictions, 
-								csemScoreSimulator(
-									scale_scores=tmp.data[[dim(tmp.data)[2]]],
-									grade=tmp.last,
-									content_area=sgp.labels[['my.subject']],
-									year=sgp.labels[['my.year']],
-									state=calculate.confidence.intervals[['state']],
-									variable=tmp.csem.variable,
-									distribution=calculate.confidence.intervals[['distribution']],
-									round=calculate.confidence.intervals[['round']]))]
-						setnames(tmp.csem.quantiles[[j]], "TEMP_SGP_SIM", paste("SGP_SIM", k, sep="_"))
-					} ## END k loop
+					tmp.csem.quantiles[[j]] <- data.table(
+									tmp.data[,c(names(tmp.data)[1], names(additional.vnames.to.return)), with=FALSE],
+									as.data.table(replicate(calculate.confidence.intervals[['simulation.iterations']],
+												.get.quantiles(
+													tmp.predictions, 
+													csemScoreSimulator(
+													scale_scores=tmp.data[[dim(tmp.data)[2]]],
+													grade=tmp.last,
+													content_area=sgp.labels[['my.subject']],
+													year=sgp.labels[['my.year']],
+													state=calculate.confidence.intervals[['state']],
+													variable=tmp.csem.variable,
+													distribution=calculate.confidence.intervals[['distribution']],
+													round=calculate.confidence.intervals[['round']])))))
+					setnames(tmp.csem.quantiles[[j]], paste("V", seq(calculate.confidence.intervals[['simulation.iterations']]), sep=""),
+										paste("SGP_SIM", seq(calculate.confidence.intervals[['simulation.iterations']]), sep="_"))
 				} ## END CSEM analysis
 
 				if (!is.null(percentile.cuts)) {

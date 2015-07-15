@@ -29,7 +29,7 @@ function(
 		### Part 1
 
 		expression.to.evaluate <- 
-			paste("Demonstration_SGP <- list(Panel_Data=SGPdata::sgpData)\nmy.grade.sequences <- list(3:4, 3:5, 3:6, 3:7, 4:8)\nfor (i in seq_along(my.grade.sequences)) {\n\tDemonstration_SGP <- studentGrowthPercentiles(\n\t\tpanel.data=Demonstration_SGP,\n\t\tsgp.labels=list(my.year=2015, my.subject='Reading'),\n\t\tgrowth.levels='DEMO',\n\t\tgoodness.of.fit='DEMO',\n\t\tgrade.progression=my.grade.sequences[[i]],\n\t\tprint.sgp.order=TRUE,\n\t\tprint.other.gp=TRUE,\n\t\tverbose.output=TRUE,\n\t\tmax.order.for.percentile=3,\n\t\treturn.norm.group.scale.scores=TRUE,\n\t\treturn.panel.data=TRUE)\n}", sep="")
+			paste("Demonstration_SGP <- list(Panel_Data=SGPdata::sgpData)\nmy.grade.sequences <- list(3:4, 3:5, 3:6, 3:7, 4:8)\nfor (i in seq_along(my.grade.sequences)) {\n\tDemonstration_SGP <- studentGrowthPercentiles(\n\t\tpanel.data=Demonstration_SGP,\n\t\tsgp.labels=list(my.year=2015, my.subject='Reading'),\n\t\tgrowth.levels='DEMO',\n\t\tgoodness.of.fit='DEMO',\n\t\tgrade.progression=my.grade.sequences[[i]],\n\t\tprint.sgp.order=TRUE,\n\tcalculate.confidence.intervals='DEMO',\n\t\tprint.other.gp=TRUE,\n\t\tverbose.output=TRUE,\n\t\tmax.order.for.percentile=3,\n\t\treturn.norm.group.scale.scores=TRUE,\n\t\treturn.panel.data=TRUE)\n}", sep="")
 
 		cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 
@@ -143,7 +143,7 @@ function(
 		options(error=recover)
 		options(warn=2)
 		Demonstration_SGP <- tmp.messages <- NULL
-		number.cores <- detectCores(logical=FALSE)-1 # adding logical=FALSE seems get physical cores only in Windows (which is good for SNOW/SOCK)
+		number.cores <- detectCores(logical=FALSE) # adding logical=FALSE seems get physical cores only in Windows (which is good for SNOW/SOCK)
 
 		if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE = 'doParallel', "
 		if (toupper(TEST_NUMBER) == "1B") sgp.sqlite <- TRUE else sgp.sqlite <- FALSE
@@ -280,7 +280,7 @@ function(
 		Demonstration_SGP <- NULL
 		Demonstration_Data_LONG <- subset(SGPdata::sgpData_LONG, YEAR %in% c("2010_2011", "2011_2012", "2012_2013", "2013_2014"))
 		Demonstration_Data_LONG_2014_2015 <- subset(SGPdata::sgpData_LONG, YEAR %in% c("2014_2015"))
-		number.cores <- detectCores()-1
+		number.cores <- detectCores(logical=FALSE)
 		tmp.messages <- "##### Begin testSGP test number 2a #####\n\n"
 
 		### Part 1
@@ -432,7 +432,7 @@ function(
 		options(warn=2)
 		Demonstration_SGP <- ID <- CONTENT_AREA <- NULL
 		Demonstration_Data_LONG_2014_2015 <- subset(SGPdata::sgpData_LONG, YEAR %in% c("2014_2015"))
-		number.cores <- detectCores()-1
+		number.cores <- detectCores(logical=FALSE)
 
 		############################################################
 		### Part 1: Required for all Tests 2b, 2c, and 2d
@@ -580,7 +580,7 @@ function(
 
 	options(error=recover)
 	options(warn=2)
-	number.cores <- detectCores()-1
+	number.cores <- detectCores(logical=FALSE)
 	Demonstration_SGP <- tmp.messages <- NULL
 	sgpData_LONG <- SGPdata::sgpData_LONG
 
@@ -924,7 +924,7 @@ SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
 	if (5 %in% TEST_NUMBER) {
 
 	options(error=recover)
-	number.cores <- detectCores()-1
+	number.cores <- detectCores(logical=FALSE)
 	Demonstration_SGP <- ACHIEVEMENT_LEVEL <- HIGH_NEED_STATUS <- tmp.messages <- NULL
 	if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE = 'doParallel', "
 	sgpData_LONG <- SGPdata::sgpData_LONG
@@ -1229,7 +1229,7 @@ SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
 
 	options(error=recover)
 	options(warn=2)
-	number.cores <- detectCores()-1
+	number.cores <- detectCores(logical=FALSE)
         if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE = 'doParallel', "
 	Demonstration_SGP <- tmp.messages <- NULL
 
