@@ -423,8 +423,12 @@ function(panel.data,	## REQUIRED
 				}
 			}
 			tmp.traj[,2:dim(tmp.traj)[2] := round(tmp.traj[,2:dim(tmp.traj)[2], with=FALSE], digits=projcuts.digits), with=FALSE]
-			trajectories <- data.table(reshape(tmp.traj[, CUT:=rep(percentile.trajectory.values, dim(tmp.traj)[1]/length(percentile.trajectory.values))], 
-				idvar="ID", timevar="CUT", direction="wide"), key="ID")
+
+			trajectories <- ddcast(tmp.traj[, CUT:=rep(percentile.trajectory.values, dim(tmp.traj)[1]/length(percentile.trajectory.values))],
+						ID ~ CUT, value.var=setdiff(names(tmp.traj), c("ID", "CUT")), sep=".")
+
+#			trajectories <- data.table(reshape(tmp.traj[, CUT:=rep(percentile.trajectory.values, dim(tmp.traj)[1]/length(percentile.trajectory.values))], 
+#				idvar="ID", timevar="CUT", direction="wide"), key="ID")
 
 			if (length(grep("CURRENT", percentile.trajectory.values))!=0) percentile.trajectory.values <- unlist(strsplit(percentile.trajectory.values, "_CURRENT"))
 			if (projection.unit=="GRADE") {
@@ -432,7 +436,7 @@ function(panel.data,	## REQUIRED
 			} else {
 				tmp.vec <- expand.grid(tmp.name.prefix, percentile.trajectory.values, paste("_PROJ_", projection.unit.label, "_", sep=""), seq_along(grade.projection.sequence.labels), lag.increment.label)[1:(length(percentile.trajectory.values)*tmp.num.years.forward),]
 			}
-			tmp.vec <- tmp.vec[order(tmp.vec$Var2),]
+#			tmp.vec <- tmp.vec[order(tmp.vec$Var2),]
 			setnames(trajectories, c("ID", do.call(paste, c(tmp.vec, sep=""))))
 			if (!cuts.tf) return(trajectories)
 		}
