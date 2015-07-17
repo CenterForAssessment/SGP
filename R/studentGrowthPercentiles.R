@@ -1624,7 +1624,7 @@ function(panel.data,         ## REQUIRED
 				paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
 		}
 		if (verbose.output) message(Verbose_Messages)
-		message(c(tmp.messages, "\tFinished SGP Student Growth Percentile Analysis: ", date(), " in ", timetaken(started.at), "\n")) 
+		message(c(tmp.messages, "\tFinished SGP Student Growth Percentile Analysis: ", date(), " in ", convertTime(timetaken(started.at)), "\n")) 
 	}
 
 	list(Coefficient_Matrices=Coefficient_Matrices,

@@ -948,7 +948,7 @@ function(panel.data,	## REQUIRED
 	if (print.time.taken) {
 		message(paste("\tStarted studentGrowthProjections:", started.date))
 		message(paste("\t\tContent Area: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, " (N=", format(dim(trajectories.and.cuts)[1], big.mark=","), ")", sep="")) 
-		message(c(tmp.messages, "\tFinished studentGrowthProjections: ", date(), " in ", timetaken(started.at), "\n"))
+		message(c(tmp.messages, "\tFinished studentGrowthProjections: ", date(), " in ", convertTime(timetaken(started.at)), "\n"))
 	} 
 
 	list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],

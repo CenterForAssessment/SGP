@@ -24,6 +24,7 @@ function(
 		options(error=recover)
 		options(warn=2)
 		Demonstration_SGP <- tmp.messages <- NULL
+		started.at <- proc.time()
 		tmp.messages <- "##### Begin testSGP test number 0 #####\n\n"
 
 		### Part 1
@@ -37,6 +38,7 @@ function(
 			Rprof("testSGP(0)_Memory_Profile_Part_1.out", memory.profiling=TRUE)
 		}
 
+		started.at <- proc.time()
 		eval(parse(text=expression.to.evaluate))
 	
 		### TEST of SGP Variable
@@ -81,7 +83,7 @@ function(
 			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_LEVEL, part 1: FAIL\n")
 		}
 
-		tmp.messages <- c(tmp.messages, "\t##### End testSGP test number 0: Part 1 #####\n")
+		tmp.messages <- c(tmp.messages, "\t##### End testSGP test number 0, Part 1: ", convertTime(timetaken(started.at)), "#####\n")
 
 
 		### Part 2
@@ -96,6 +98,7 @@ function(
 		}
 
 		if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "dir.create('Data', showWarnings=FALSE)", "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
+		started.at.2 <- proc.time()
 		eval(parse(text=expression.to.evaluate))
 	
 		### TEST of dimension of table READING.2015.LAGGED dimensions
@@ -124,8 +127,8 @@ function(
 			tmp.messages <- c(tmp.messages, "\t\tTest of variable P84_PROJ_YEAR_4, part 2: FAIL\n")
 		}
 
-		tmp.messages <- c(tmp.messages, "\t##### End testSGP test number 0: Part 2 #####\n")
-		tmp.messages <- c(tmp.messages, "\n##### End testSGP test number 0 #####\n")
+		tmp.messages <- c(tmp.messages, "\t##### End testSGP test number 0, Part 2: ", convertTime(timetaken(started.at.2)), "#####\n")
+		tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 0: ", convertTime(timetaken(started.at)), "#####\n"))
 		cat(tmp.messages)
 
 	 } ### End TEST_NUMBER 0
