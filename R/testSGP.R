@@ -249,7 +249,7 @@ function(
 			tmp.messages <- c(tmp.messages, "\tTest of variable PERCENT_AT_ABOVE_PROFICIENT_PRIOR: FAIL\n")
 		}
 
-		tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number ", TEST_NUMBER, ":  ", convertTime(timetaken(started.at.overall)), "#####\n", sep=""))
+		tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number ", TEST_NUMBER, ":  ", convertTime(timetaken(started.at.overall)), " #####\n", sep=""))
 		cat(tmp.messages)
 
 	} ### End TEST_NUMBER 1 & 1B
