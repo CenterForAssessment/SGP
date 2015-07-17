@@ -685,18 +685,18 @@ function(panel.data,         ## REQUIRED
 		} else quantile.data.simex <- data.table("ID"=NA, "SIMEX_ORDER"=NA, "SGP_SIMEX"=NA) # set up empty data.table for reshapes and subsets below.
 		if (print.other.gp) {
 			return(list(
-				DT = data.table(reshape(quantile.data.simex, idvar="ID", timevar="SIMEX_ORDER", direction="wide"),
+				DT=data.table(ddcast(quantile.data.simex, ID~SIMEX_ORDER, var.names=setdiff(names(quantile.data.simex), c("ID", "SIMEX_ORDER")), sep="."),
 				SGP_SIMEX=quantile.data.simex[c(which(!duplicated(quantile.data.simex))[-1]-1L, nrow(quantile.data.simex))][["SGP_SIMEX"]]),
 				MATRICES = simex.coef.matrices))
 		} else {
 			if (print.sgp.order | return.norm.group.identifier) {
 				return(list(
-					DT = quantile.data.simex[c(which(!duplicated(quantile.data.simex))[-1]-1L, nrow(quantile.data.simex))],
-					MATRICES = simex.coef.matrices))
+					DT=quantile.data.simex[c(which(!duplicated(quantile.data.simex))[-1]-1L, nrow(quantile.data.simex))],
+					MATRICES=simex.coef.matrices))
 			} else {
 				return(list(
-					DT = quantile.data.simex[c(which(!duplicated(quantile.data.simex))[-1]-1L, nrow(quantile.data.simex)), c("ID", "SGP_SIMEX"), with=FALSE],
-					MATRICES = simex.coef.matrices))
+					DT=quantile.data.simex[c(which(!duplicated(quantile.data.simex))[-1]-1L, nrow(quantile.data.simex)), c("ID", "SGP_SIMEX"), with=FALSE],
+					MATRICES=simex.coef.matrices))
 			}
 		}
 		if (verbose) message("\tFinished SIMEX SGP calculation ", rev(content_area.progression)[1], " Grade ", rev(tmp.gp)[1], " ", date(), "\n")
