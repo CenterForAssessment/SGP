@@ -1057,7 +1057,7 @@ function(panel.data,         ## REQUIRED
 		message(paste("\tStarted studentGrowthPercentiles", started.date))
 		message(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", 
 			paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
-		message(paste(tmp.messages, "\tFinished SGP Student Growth Percentile Analysis", date(), "in", timetaken(started.at), "\n"))
+		message(paste(tmp.messages, "\tFinished SGP Student Growth Percentile Analysis", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 		return(
 			list(Coefficient_Matrices=Coefficient_Matrices,
@@ -1181,7 +1181,7 @@ function(panel.data,         ## REQUIRED
 		message(paste("\tStarted studentGrowthPercentiles", started.date))
 		message(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", 
 			paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
-		message(paste(tmp.messages, "\tFinished SGP Student Growth Percentile Analysis", date(), "in", timetaken(started.at), "\n"))
+		message(paste(tmp.messages, "\tFinished SGP Student Growth Percentile Analysis", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 		return(
 			list(Coefficient_Matrices=Coefficient_Matrices,

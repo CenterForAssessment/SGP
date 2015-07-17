@@ -203,5 +203,5 @@ function(sgp_object,
 		}
 	} ### END END_OF_WINDOW scripts
 
-	message(paste("Finished rliSGP", date(), "in", timetaken(started.at), "\n"))
+	message(paste("Finished rliSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
 } ### END rliSGP

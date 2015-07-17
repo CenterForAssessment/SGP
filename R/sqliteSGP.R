@@ -599,6 +599,6 @@ function(sgp_object,
 
 	dbDisconnect(db)
 
-	message(paste("\tFinished sqliteSGP in outputSGP", date(), "in", timetaken(started.at), "\n"))
+	message(paste("\tFinished sqliteSGP in outputSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 } ### END sqliteSGP

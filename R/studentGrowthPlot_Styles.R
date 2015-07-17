@@ -754,7 +754,7 @@ if (reports.by.school) {
 	}
 
 	message(paste("\tStarted", last.year, tmp_school_name, "student growth plots:", started.date))
-	message(paste("\tFinished", last.year, tmp_school_name, "student growth plots:", date(), "in", timetaken(started.at), "\n"))
+	message(paste("\tFinished", last.year, tmp_school_name, "student growth plots:", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 	} ## END for loop for SCHOOLS (j)
 	} ## END for loop for DISTRICTS (i)
@@ -1315,7 +1315,7 @@ if (reports.by.instructor) {
 		}
 
 		message(paste("\tStarted", last.year, tmp_school_name, "Instructor:", tmp_instructor_name, "student growth plots:", started.date))
-		message(paste("\tFinished", last.year, tmp_school_name, "Instructor:", tmp_instructor_name, "student growth plots:", date(), "in", timetaken(started.at), "\n"))
+		message(paste("\tFinished", last.year, tmp_school_name, "Instructor:", tmp_instructor_name, "student growth plots:", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 	} ## END for loop for INSTRUCTORS (k)
 	} ## END for loop for SCHOOLS (j)
