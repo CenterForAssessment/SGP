@@ -767,7 +767,7 @@ SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
 	sgpData_LONG <- SGPdata::sgpData_LONG
 
 	if (is.null(test.option[['calculate.simex.baseline']])) calculate.simex.baseline <- FALSE else calculate.simex.baseline <- TRUE
-	simex.parameters <- list(state='DEMO', lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear", save.matrices=TRUE)
+	simex.parameters <- "list(state='DEMO', lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation='linear', save.matrices=TRUE)"
 
 	###  The test of SIMEX baseline functionality requires the DEMO SIMEX matrices to be loaded manually.
 	# SGPstateData[["DEMO"]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <- c(SGPstateData[["DEMO"]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]], DEMO_SIMEX_Baseline_Matrices)
