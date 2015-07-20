@@ -388,7 +388,7 @@ function(sgp_object,
 	variables.to.get <- c("VALID_CASE", "YEAR", "CONTENT_AREA", "GRADE", "ID", "SCALE_SCORE", "ACHIEVEMENT_LEVEL", "YEAR_WITHIN", "FIRST_OBSERVATION", "LAST_OBSERVATION", 
 				"STATE", csem.variable, equate.variable, SGPt)
 	
-	if (is.null(sgp.sqlite)) if (as.numeric(strsplit(format(object.size(sgp_object@Data), units="GB"), " Gb")[[1]]) > 1) sgp.sqlite <- TRUE else sgp.sqlite <- FALSE
+	if (is.null(SGPt) && is.null(sgp.sqlite) && as.numeric(strsplit(format(object.size(sgp_object@Data), units="GB"), " Gb")[[1]]) > 1) sgp.sqlite <- TRUE else sgp.sqlite <- FALSE
 	if (toupper(sgp.sqlite)=="KEEP") {keep.sqlite <- TRUE; sgp.sqlite <- TRUE} else keep.sqlite <- FALSE
 
 	if (sgp.sqlite) {
@@ -1970,6 +1970,6 @@ function(sgp_object,
 	if (goodness.of.fit.print) gof.print(sgp_object)
 	setkeyv(sgp_object@Data, getKey(sgp_object)) # re-key data for combineSGP, etc.
 	sgp_object@Version[["analyzeSGP"]][[as.character(gsub("-", "_", Sys.Date()))]] <- as.character(packageVersion("SGP"))
-	message(paste("Finished analyzeSGP", date(), "in", timetaken(started.at), "\n"))
+	message(paste("Finished analyzeSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
 	return(sgp_object)
 } ## END analyzeSGP Function

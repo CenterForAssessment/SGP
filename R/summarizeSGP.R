@@ -625,6 +625,6 @@
 
 	if (del.dir) unlink("Data/tmp_data", recursive=TRUE, force=TRUE) else unlink("Data/tmp_data/TMP_Summary_Data.sqlite", recursive=TRUE)
 	
-	message(paste("Finished summarizeSGP", date(), "in", timetaken(started.at), "\n"))
+	message(paste("Finished summarizeSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
 	return(sgp_object)
 } ## END summarizeSGP Function

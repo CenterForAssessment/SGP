@@ -209,7 +209,7 @@ function(sgp_object,
 			bPlot.format=bPlot.format,
 			bPlot.folder=bPlot.folder)
 
-		message(paste("Finished bubblePlot in visualizeSGP", date(), "in", timetaken(started.at), "\n"))
+		message(paste("Finished bubblePlot in visualizeSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
 	} ## END bubblePlot %in% plot.types	
 
 
@@ -292,7 +292,7 @@ function(sgp_object,
 		}
 		}
 		stopParallel(parallel.config, par.start)
-		message(paste("Finished growthAchievementPlot in visualizeSGP", date(), "in", timetaken(started.at), "\n"))
+		message(paste("Finished growthAchievementPlot in visualizeSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
 	} ## END if (growthAchievementPlot %in% plot.types)
 
 
@@ -1098,10 +1098,10 @@ if (sgPlot.produce.plots) {
 	} # END else Parallel Processing
 } ## END if (sgPlot.produce.plots) 
 
-	message(paste("Finished studentGrowthPlot in visualizeSGP", date(), "in", timetaken(started.at), "\n"))
+	message(paste("Finished studentGrowthPlot in visualizeSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 } ## END if ("studentGrowthPlot" %in% plot.types) 
 
-	message(paste("Finished visualizeSGP", date(), "in", timetaken(started.at.visualizeSGP), "\n"))
+	message(paste("Finished visualizeSGP", date(), "in", convertTime(timetaken(started.at.visualizeSGP)), "\n"))
 
 } ## END visualizeSGP Function

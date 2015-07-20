@@ -20,7 +20,7 @@ rliSGP(
 	sgp.projections.lagged.baseline=FALSE,
 	sgp.target.scale.scores=TRUE,
         update.ids=NULL,
-	SGPt=NULL,
+	SGPt=TRUE,
         parallel.config=NULL)
 }
 
@@ -53,7 +53,7 @@ rliSGP(
 is to replace it. NOTE that ID needn't be replaced in either 'sgp_object' nor 'additional.data' that are provided as part of the 'rliSGP' call. Substitution will occur on entire data set before
 analysis. Default is NULL, no ID replacement is performed.
   }
-  \item{SGPt}{Argument indicating whether to perform time dependent SGP (SGPt) analyses. Current default is NULL (FALSE), but will transition to true Summer 2015.
+  \item{SGPt}{Argument indicating whether to perform time dependent SGP (SGPt) analyses. Current default is TRUE based upon transition to SGPt in Summer 2015.
   }
   \item{parallel.config}{Argument passed to \code{\link{abcSGP}} or \code{\link{updateSGP}} to activate parallel processing with an appropriate backend.
   }

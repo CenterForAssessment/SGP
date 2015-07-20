@@ -12,7 +12,7 @@ function(sgp_object,
 	sgp.projections.lagged.baseline=FALSE,
 	sgp.target.scale.scores=TRUE,
 	update.ids=NULL,
-	SGPt=NULL,
+	SGPt=TRUE,
 	parallel.config=NULL) {
 
 	YEAR <- GRADE <- ID <- NEW_ID <- .EACHI <- DATE <- NULL
@@ -203,5 +203,5 @@ function(sgp_object,
 		}
 	} ### END END_OF_WINDOW scripts
 
-	message(paste("Finished rliSGP", date(), "in", timetaken(started.at), "\n"))
+	message(paste("Finished rliSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
 } ### END rliSGP
