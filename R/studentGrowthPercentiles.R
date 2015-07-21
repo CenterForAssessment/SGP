@@ -530,11 +530,11 @@ function(panel.data,         ## REQUIRED
 							if (is.null(simex.sample.size) || dim(tmp.data)[1] <= simex.sample.size) {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]] <-
 									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname), 
-																																		paste("select * from simex_data where b in ('", z, "')", sep="")))
+									paste("select * from simex_data where b in ('", z, "')", sep="")))
 							} else {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]] <-
 									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname), 
-																																		paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq(dim(tmp.data)[1]), simex.sample.size),])
+									paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq(dim(tmp.data)[1]), simex.sample.size),])
 							}
 						}
 					} else simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <- available.matrices[sim.iters]
@@ -544,8 +544,8 @@ function(panel.data,         ## REQUIRED
 						for (z in seq_along(sim.iters)) {
 							fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + 
 								as.vector(.get.percentile.predictions(dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname), 
-																																 paste("select ", paste(c("ID", paste('prior_', k:1, sep=""), "final_yr"), collapse=", "), " from simex_data where b in ('", z, "')", sep="")), 
-																											simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]])/B)
+								paste("select ", paste(c("ID", paste('prior_', k:1, sep=""), "final_yr"), collapse=", "), " from simex_data where b in ('", z, "')", sep="")), 
+					simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]])/B)
 						}
 					}
 				} else {	# Parallel over sim.iters
