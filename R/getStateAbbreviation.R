@@ -4,8 +4,8 @@ function(
 	SGPfunction=NULL,
 	type="Abbreviation") {
 
-	my.state.abbreviations <- c(state.abb, "ABQ", "AOB", "ATI", rep("DEMO", 2), "GUA", "RLI_UK", "RLI", "WIDA_CO", "WIDA_MA", "WIDA_MI", "WIDA") ### NOTE: Add abbreviations ALPHABETICALLY
-	my.state.names <- c(state.name, "ALBUQUERQUE", "AOB", "ATI", "DEMONSTRATION", "SGPDATA LONG", "GUATEMALA", "RLI UK", "RLI", "WIDA CO", "WIDA MA", "WIDA MI", "WIDA") ### NOTE: Add state names ALPHABETICALLY - need compound abbreviations/names first (e.g. WIDA_CO before WIDA)
+	my.state.abbreviations <- c(datasets::state.abb, "ABQ", "AOB", "ATI", rep("DEMO", 2), "GUA", "RLI_UK", "RLI", "WIDA_CO", "WIDA_MA", "WIDA_MI", "WIDA") ### NOTE: Add abbreviations ALPHABETICALLY
+	my.state.names <- c(datasets::state.name, "ALBUQUERQUE", "AOB", "ATI", "DEMONSTRATION", "SGPDATA LONG", "GUATEMALA", "RLI UK", "RLI", "WIDA CO", "WIDA MA", "WIDA MI", "WIDA") ### NOTE: Add state names ALPHABETICALLY - need compound abbreviations/names first (e.g. WIDA_CO before WIDA)
 	if (type=="Abbreviation") {
 		tmp.name.position <- sapply(my.state.names, function(x) regexpr(toupper(x), supplied.name))
 	} else {

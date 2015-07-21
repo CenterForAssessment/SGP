@@ -30,8 +30,8 @@
 
 	## State stuff
 
-	if (state %in% c(state.abb, "DEMO")) {
-		state.name.label <- c(state.name, "Demonstration")[state==c(state.abb, "DEMO")]
+	if (state %in% c(datasets::state.abb, "DEMO")) {
+		state.name.label <- c(datasets::state.name, "Demonstration")[state==c(datasets::state.abb, "DEMO")]
 	} else {
 		state.name.label <- test.abbreviation.label <- state
 	}

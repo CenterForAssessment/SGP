@@ -38,8 +38,8 @@ function(sgp_object,
 
 	## Create/Set database
 
-		if (state %in% c(state.abb, "DEMO")) {
-			tmp.state <- gsub(" ", "_", c(state.name, "Demonstration")[state==c(state.abb, "DEMO")])
+		if (state %in% c(datasets::state.abb, "DEMO")) {
+			tmp.state <- gsub(" ", "_", c(datasets::state.name, "Demonstration")[state==c(datasets::state.abb, "DEMO")])
 		} else {
 			tmp.state <- gsub(" ", "_", state)
 		}
