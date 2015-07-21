@@ -30,8 +30,8 @@
 
 	# State stuff
 
-	if (state %in% c(state.abb, "DEMO")) {
-		state.name.label <- c(state.name, "DEMONSTRATION")[state==c(state.abb, "DEMO")]
+	if (state %in% c(datasets::state.abb, "DEMO")) {
+		state.name.label <- c(datasets::state.name, "DEMONSTRATION")[state==c(datasets::state.abb, "DEMO")]
 		test.abbreviation.label <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Abbreviation"]]
 	} else {
 		state.name.label <- test.abbreviation.label <- state
