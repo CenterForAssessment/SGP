@@ -273,7 +273,8 @@ function(data,
 				tmp.current.dups <- data.table(sgp_object@Data[unique(tmp.dups.index)][YEAR==tmp.last.year], key=c("VALID_CASE", "CONTENT_AREA", "ID"))
 				tmp.all.extended <- data.table(rbindlist(list(tmp.past.dups.extended, tmp.current.dups, tmp.unique.data)), key=getKey(sgp_object))
 				setkeyv(sgp_object@Data, getKey(sgp_object))
-				sgp_object@Data <- tmp.all.extended[,ID:=paste(ID, "DUPS", tmp.all.extended[,seq.int(.N), by=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID")][['V1']], sep="_")]
+				sgp_object@Data <- tmp.all.extended[,ID:=paste(ID, "DUPS", tmp.all.extended[,seq.int(.N), by=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID")][['V1']], sep="_")][,
+					ID:=gsub("_DUPS_1", "", ID)]
 				setkeyv(sgp_object@Data, getKey(sgp_object))
 				message("\tNOTE: Additional cases created from duplicate cases in current year. Modified IDs include suffix '_DUPS_***' in @Data.")
 			} else {
