@@ -478,11 +478,8 @@ function(sgp_object,
 			"SCALE_SCORE", "TRANSFORMED_SCALE_SCORE", "ACHIEVEMENT_LEVEL", "SGP", getTargetName(target.years=outputSGP.projection.years.for.target),
 			"SCHOOL_NUMBER", "DISTRICT_NUMBER", outputSGP.student.groups, "SCHOOL_ENROLLMENT_STATUS", "DISTRICT_ENROLLMENT_STATUS", "STATE_ENROLLMENT_STATUS")
 
-		outputSGP.data <- reshape(unclass.data.table(tmp.table)[, variables.to.keep, with=FALSE],
-			idvar=c("ID", "CONTENT_AREA"),
-			timevar="YEAR",
-			drop=c("VALID_CASE"),
-			direction="wide")
+		sgPlot.data <- ddcast(unclass.data.table(tmp.table)[,setdiff(variables.to.keep, "VALID_CASE"), with=FALSE], ID + CONTENT_AREA ~ YEAR,
+			value.var=setdiff(variables.to.keep, c("VALID_CASE", "ID", "CONTENT_AREA", "YEAR")), sep=".")
 
 
 		#### Merge in 1, 2, and 3 year projections 

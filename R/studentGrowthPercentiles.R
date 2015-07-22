@@ -253,7 +253,7 @@ function(panel.data,         ## REQUIRED
 			mod <- paste(mod, ", my.data[['TIME']], my.data[['TIME_LAG']]", sep="")
 		}
 		tmp <- eval(parse(text=paste("cbind(1L, ", substring(mod, 2), ") %*% my.matrix", sep="")))
-		return(round(matrix(data.table(ID=rep(seq(dim(tmp)[1]), each=length(taus)), SCORE=as.vector(t(tmp)))[,.smooth.isotonize.row(SCORE, isotonize, sgp.loss.hoss.adjustment), by=ID][['V1']], 
+		return(round(matrix(data.table(ID=rep(seq.int(dim(tmp)[1]), each=length(taus)), SCORE=as.vector(t(tmp)))[,.smooth.isotonize.row(SCORE, isotonize, sgp.loss.hoss.adjustment), by=ID][['V1']], 
 				ncol=length(taus), byrow=TRUE), digits=5))
 	}
 
@@ -534,7 +534,7 @@ function(panel.data,         ## REQUIRED
 							} else {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]] <-
 									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname), 
-									paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq(dim(tmp.data)[1]), simex.sample.size),])
+									paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq.int(dim(tmp.data)[1]), simex.sample.size),])
 							}
 						}
 					} else simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <- available.matrices[sim.iters]
@@ -573,7 +573,7 @@ function(panel.data,         ## REQUIRED
 										.export=c("Knots_Boundaries", "rq.method", "taus", "content_area.progression", "tmp.slot.gp", "year.progression", "year_lags.progression", "SGPt"),
 										.options.mpi=par.start$foreach.options, .options.multicore=par.start$foreach.options, .options.snow=par.start$foreach.options) %dopar% {
 											rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
-												paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq(dim(tmp.data)[1]), simex.sample.size),])
+												paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq.int(dim(tmp.data)[1]), simex.sample.size),])
 									}
 							}
 						} else {
@@ -585,7 +585,7 @@ function(panel.data,         ## REQUIRED
 								} else {
 									simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <- 
 										mclapply(sim.iters, function(z) rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
-											paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq(dim(tmp.data)[1]), simex.sample.size),]), mc.cores=par.start$workers)
+											paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq.int(dim(tmp.data)[1]), simex.sample.size),]), mc.cores=par.start$workers)
 								}
 							}
 							if (par.start$par.type == 'SNOW') {
@@ -596,7 +596,7 @@ function(panel.data,         ## REQUIRED
 								} else {
 									simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
 										parLapply(par.start$internal.cl, sim.iters, function(z) rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
-											paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq(dim(tmp.data)[1]), simex.sample.size),]))
+											paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq.int(dim(tmp.data)[1]), simex.sample.size),]))
 								}
 							}
 						}
@@ -615,7 +615,7 @@ function(panel.data,         ## REQUIRED
 							} else {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]] <-
 									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname), 
-										paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq(dim(tmp.data)[1]), simex.sample.size),])
+										paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq.int(dim(tmp.data)[1]), simex.sample.size),])
 							}
 						}
 					}
@@ -682,10 +682,10 @@ function(panel.data,         ## REQUIRED
 		if (calculate.simex.sgps) {
 			quantile.data.simex <- data.table(rbindlist(tmp.quantiles.simex), key=c("ID", "SIMEX_ORDER"))
 			setkey(quantile.data.simex, ID) # first key on ID and SIMEX_ORDER, then re-key on ID only to insure sorted order. Don't rely on rbindlist/k ordering...
-		} else quantile.data.simex <- data.table("ID"=NA, "SIMEX_ORDER"=NA, "SGP_SIMEX"=NA) # set up empty data.table for reshapes and subsets below.
+		} else quantile.data.simex <- data.table("ID"=NA, "SIMEX_ORDER"=NA, "SGP_SIMEX"=NA) # set up empty data.table for ddcast and subsets below.
 		if (print.other.gp) {
 			return(list(
-				DT=data.table(ddcast(quantile.data.simex, ID~SIMEX_ORDER, var.names=setdiff(names(quantile.data.simex), c("ID", "SIMEX_ORDER")), sep="."),
+				DT=data.table(ddcast(quantile.data.simex, ID~SIMEX_ORDER, var.names=setdiff(names(quantile.data.simex), c("ID", "SIMEX_ORDER")), sep="_SIMEX_ORDER_"),
 				SGP_SIMEX=quantile.data.simex[c(which(!duplicated(quantile.data.simex))[-1]-1L, nrow(quantile.data.simex))][["SGP_SIMEX"]]),
 				MATRICES = simex.coef.matrices))
 		} else {
@@ -1419,7 +1419,7 @@ function(panel.data,         ## REQUIRED
 		quantile.data <- data.table(rbindlist(tmp.quantiles), key="ID")
 
 		if (print.other.gp) {
-			quantile.data <- data.table(reshape(quantile.data, idvar="ID", timevar="ORDER", direction="wide", sep="_ORDER_"),
+			quantile.data <- data.table(ddcast(quantile.data, ID ~ ORDER, var.names=setdiff(names(quantile.data), c("ID", "ORDER")), sep="_ORDER_"),
 				SGP=quantile.data[c(which(!duplicated(quantile.data))[-1]-1L, nrow(quantile.data))][["SGP"]],
 				ORDER=as.integer(quantile.data[c(which(!duplicated(quantile.data))[-1]-1L, nrow(quantile.data))][["ORDER"]]))
 		} else {

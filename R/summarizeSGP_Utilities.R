@@ -184,7 +184,6 @@ function(dat,
 	if (!all(is.na(dat))) {
 		dat.no.na <- dat[!is.na(dat)]
 		out <- data.table(ID=rep(seq_along(dat.no.na)), SCORE=dat.no.na[sample.int(length(dat.no.na), length(dat.no.na)*nboot, replace=TRUE)])[,median(SCORE), by=ID][['V1']]
-#		out <- replicate(nboot, median(sample(dat, length(dat), replace=TRUE), na.rm=TRUE))
 		if (!is.null(conf.quantiles)) {
 			CI <- round(quantile(out, conf.quantiles, na.rm=TRUE), digits=1)
 		} else {
