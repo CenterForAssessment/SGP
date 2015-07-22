@@ -7,13 +7,13 @@ function(
 	state, 
 	variable=NULL, 
 	distribution=NULL, 
-	round=NULL) {
+	round.digits=NULL) {
 
 	GRADE <- CONTENT_AREA <- YEAR <- SS <- NULL
 
 	### Define relevant variables
 
-	if (is.null(round)) round <- 0.01
+	if (is.null(round.digits)) round.digits <- 2
 	if (is.null(distribution)) distribution <- "Normal"
 	if (!is.null(state)) {
 		min.max <- SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]][[paste("loss.hoss_", grade, sep="")]]
@@ -34,9 +34,13 @@ function(
 	}
 	if (!is.null(variable)) tmp.omega <- variable
 
-	if (distribution=="Skew-Normal") tmp.alpha <- tan((pi/2)*((min.max[1]+min.max[2]) - 2*scale_scores)/(min.max[2]-min.max[1])) else tmp.alpha <- 0
-	tmp.score <- data.table(SS=round_any(as.numeric(rsn(length(scale_scores), xi=scale_scores, omega=tmp.omega, alpha=tmp.alpha)), round))
-	tmp.score[SS < min.max[1], SS:=min.max[1]]
-	tmp.score[SS > min.max[2], SS:=min.max[2]]
-	return(tmp.score[['SS']])
+	if (distribution=="Skew-Normal") {
+		tmp.scores <- round(as.numeric(rsn(length(scale_scores), xi=scale_scores, omega=tmp.omega,
+			alpha=tan((pi/2)*((min.max[1]+min.max[2]) - 2*scale_scores)/(min.max[2]-min.max[1])))), digits=round.digits)
+	} else {
+		tmp.scores <- round(rnorm(length(scale_scores), scale_scores, tmp.omega), digits=round.digits)
+	}
+	tmp.scores[tmp.scores < min.max[1]] <- min.max[1]
+	tmp.scores[tmp.scores > min.max[2]] <- min.max[2]
+	return(tmp.scores)
 } ### END csemScoreSimulator

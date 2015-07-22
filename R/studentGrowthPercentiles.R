@@ -684,8 +684,11 @@ function(panel.data,         ## REQUIRED
 			setkey(quantile.data.simex, ID) # first key on ID and SIMEX_ORDER, then re-key on ID only to insure sorted order. Don't rely on rbindlist/k ordering...
 		} else quantile.data.simex <- data.table("ID"=NA, "SIMEX_ORDER"=NA, "SGP_SIMEX"=NA) # set up empty data.table for ddcast and subsets below.
 		if (print.other.gp) {
+			quantile.data.simex <- ddcast(quantile.data.simex, ID~SIMEX_ORDER, value.var=setdiff(names(quantile.data.simex), c("ID", "SIMEX_ORDER")), sep="_SIMEX_ORDER_")
+			setnames(quantile.data.simex, setdiff(names(quantile.data.simex), c("ID", "SGP_SIMEX", "SIMEX_ORDER")), paste("SGP_SIMEX_ORDER", 
+				setdiff(names(quantile.data.simex), c("ID", "SGP_SIMEX", "SIMEX_ORDER")), sep="_"))	
 			return(list(
-				DT=data.table(ddcast(quantile.data.simex, ID~SIMEX_ORDER, var.names=setdiff(names(quantile.data.simex), c("ID", "SIMEX_ORDER")), sep="_SIMEX_ORDER_"),
+				DT=data.table(quantile.data.simex,
 				SGP_SIMEX=quantile.data.simex[c(which(!duplicated(quantile.data.simex))[-1]-1L, nrow(quantile.data.simex))][["SGP_SIMEX"]]),
 				MATRICES = simex.coef.matrices))
 		} else {
@@ -1403,7 +1406,7 @@ function(panel.data,         ## REQUIRED
 													state=calculate.confidence.intervals[['state']],
 													variable=tmp.csem.variable,
 													distribution=calculate.confidence.intervals[['distribution']],
-													round=calculate.confidence.intervals[['round']])))))
+													round.digits=calculate.confidence.intervals[['round']])))))
 					setnames(tmp.csem.quantiles[[j]], paste("V", seq(calculate.confidence.intervals[['simulation.iterations']]), sep=""),
 										paste("SGP_SIM", seq(calculate.confidence.intervals[['simulation.iterations']]), sep="_"))
 				} ## END CSEM analysis
@@ -1419,9 +1422,10 @@ function(panel.data,         ## REQUIRED
 		quantile.data <- data.table(rbindlist(tmp.quantiles), key="ID")
 
 		if (print.other.gp) {
-			quantile.data <- data.table(ddcast(quantile.data, ID ~ ORDER, var.names=setdiff(names(quantile.data), c("ID", "ORDER")), sep="_ORDER_"),
+			quantile.data <- data.table(ddcast(quantile.data, ID ~ ORDER, value.var=setdiff(names(quantile.data), c("ID", "ORDER"))),
 				SGP=quantile.data[c(which(!duplicated(quantile.data))[-1]-1L, nrow(quantile.data))][["SGP"]],
 				ORDER=as.integer(quantile.data[c(which(!duplicated(quantile.data))[-1]-1L, nrow(quantile.data))][["ORDER"]]))
+			setnames(quantile.data, setdiff(names(quantile.data), c("ID", "SGP", "ORDER")), paste("SGP_ORDER", setdiff(names(quantile.data), c("ID", "SGP", "ORDER")), sep="_"))
 		} else {
 			if (print.sgp.order | return.norm.group.identifier) {
 				quantile.data <- quantile.data[c(which(!duplicated(quantile.data))[-1]-1L, nrow(quantile.data))]
