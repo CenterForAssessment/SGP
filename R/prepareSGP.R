@@ -266,12 +266,12 @@ function(data,
 
 		if (identical(toupper(fix.duplicates), "KEEP.ALL")) {
 			if (all(unique(DUPLICATED_CASES$YEAR) %in% (tmp.last.year <- tail(sort(unique(sgp_object@Data$YEAR)), 1)))) {
-				tmp.dups <- data.table(sgp_object@Data[duplicated(sgp_object@Data)][, c("VALID_CASE", "CONTENT_AREA", "ID"), with=FALSE], key=c("VALID_CASE", "CONTENT_AREA", "ID"))
+				tmp.dups.index <- data.table(sgp_object@Data[duplicated(sgp_object@Data)][, c("VALID_CASE", "CONTENT_AREA", "ID"), with=FALSE], key=c("VALID_CASE", "CONTENT_AREA", "ID"))
 				setkey(sgp_object@Data, VALID_CASE, CONTENT_AREA, ID)
-				tmp.unique.data <- sgp_object@Data[!tmp.dups]
-				tmp.past.data.extended <- sgp_object@Data[YEAR!=tmp.last.year][tmp.dups, allow.cartesian=TRUE]
-				tmp.current.dups <- data.table(sgp_object@Data[unique(tmp.dups)][YEAR==tmp.last.year], key=c("VALID_CASE", "CONTENT_AREA", "ID"))
-				tmp.all.extended <- data.table(rbindlist(list(tmp.past.data.extended, tmp.current.dups, tmp.unique.data)), key=getKey(sgp_object))
+				tmp.unique.data <- sgp_object@Data[!tmp.dups.index]
+				tmp.past.dups.extended <- sgp_object@Data[YEAR!=tmp.last.year][tmp.dups.index, allow.cartesian=TRUE, nomatch=0]
+				tmp.current.dups <- data.table(sgp_object@Data[unique(tmp.dups.index)][YEAR==tmp.last.year], key=c("VALID_CASE", "CONTENT_AREA", "ID"))
+				tmp.all.extended <- data.table(rbindlist(list(tmp.past.dups.extended, tmp.current.dups, tmp.unique.data)), key=getKey(sgp_object))
 				setkeyv(sgp_object@Data, getKey(sgp_object))
 				sgp_object@Data <- tmp.all.extended[,ID:=paste(ID, "DUPS", tmp.all.extended[,seq.int(.N), by=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID")][['V1']], sep="_")]
 				setkeyv(sgp_object@Data, getKey(sgp_object))
