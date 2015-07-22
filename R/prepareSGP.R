@@ -263,16 +263,17 @@ function(data,
 	} ### end if (create.additional.variables)
 
 	if (!is.null(fix.duplicates) && !is.null(DUPLICATED_CASES)) {
-
 		if (identical(toupper(fix.duplicates), "KEEP.ALL")) {
 			if (all(unique(DUPLICATED_CASES$YEAR) %in% (tmp.last.year <- tail(sort(unique(sgp_object@Data$YEAR)), 1)))) {
-				tmp.dups <- data.table(unique(sgp_object@Data[duplicated(sgp_object@Data)])[, c("VALID_CASE", "CONTENT_AREA", "ID"), with=FALSE], key=c("VALID_CASE", "CONTENT_AREA", "ID"))
+				tmp.dups.index <- data.table(unique(sgp_object@Data[duplicated(sgp_object@Data)][, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE])[
+					sgp_object@Data, nomatch=0][,c("VALID_CASE", "CONTENT_AREA", "ID"), with=FALSE], key=c("VALID_CASE", "CONTENT_AREA", "ID"))
 				setkey(sgp_object@Data, VALID_CASE, CONTENT_AREA, ID)
-				tmp.unique.data <- sgp_object@Data[!tmp.dups]
-				tmp.past.data <- sgp_object@Data[YEAR!=tmp.last.year][tmp.dups]
-				tmp.current.dups <- data.table(sgp_object@Data[tmp.dups][YEAR==tmp.last.year], key=c("VALID_CASE", "CONTENT_AREA", "ID"))
-				tmp.duplicates.list <- lapply(seq(dim(tmp.current.dups)[1]), function(dup.iter) rbindlist(list(tmp.past.data[tmp.current.dups[dup.iter, c("VALID_CASE", "CONTENT_AREA", "ID"), with=FALSE], nomatch=0], tmp.current.dups[dup.iter]))[,ID:=paste(ID, "DUPS", dup.iter, sep="_")])
-				sgp_object@Data <- rbindlist(list(rbindlist(tmp.duplicates.list), tmp.unique.data))
+				tmp.unique.data <- sgp_object@Data[!tmp.dups.index]
+				tmp.past.dups.extended <- sgp_object@Data[YEAR!=tmp.last.year][tmp.dups.index, allow.cartesian=TRUE, nomatch=0]
+				tmp.current.dups <- data.table(sgp_object@Data[unique(tmp.dups.index)][YEAR==tmp.last.year], key=c("VALID_CASE", "CONTENT_AREA", "ID"))
+				tmp.all.dups.extended <- data.table(rbindlist(list(tmp.past.dups.extended, tmp.current.dups)), key=getKey(sgp_object))
+				tmp.all.dups.extended[,ID:=paste(ID, "DUPS", tmp.all.dups.extended[,seq.int(.N), by=eval(getKey(sgp_object))][['V1']], sep="_")]
+				sgp_object@Data <- rbindlist(list(tmp.unique.data, tmp.all.dups.extended))
 				setkeyv(sgp_object@Data, getKey(sgp_object))
 				message("\tNOTE: Additional cases created from duplicate cases in current year. Modified IDs include suffix '_DUPS_***' in @Data.")
 			} else {
