@@ -289,11 +289,11 @@ sgp_g8_DEMO <- studentGrowthPercentiles(
 ## Load 'grid' package to access grid.draw function
 
 require(grid)
-grid.draw(sgp_g4$Goodness_of_Fit$READING.2054$GRADE_4)
+grid.draw(sgp_g4$Goodness_of_Fit$READING.2054[[1]])
 
 require(grid)
 pdf(file="Grade_4_Reading_2015_GOF.pdf", width=8.5, height=4.5)
-grid.draw(sgp_g4$Goodness_of_Fit$READING.2015$GRADE_4)
+grid.draw(sgp_g4$Goodness_of_Fit$READING.2015[[1]])
 dev.off()
 
 # Other grades
