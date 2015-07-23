@@ -9,7 +9,6 @@ function(tmp.data.for.equate,
 
 	### Define variables
 
-	scale.score.concordance.table <- scale.score.concordance.functions <- list()
 	tmp.unique.years <- unique(tmp.data.for.equate$YEAR)
 
 	if (conversion.type=="NEW_TO_OLD") {
