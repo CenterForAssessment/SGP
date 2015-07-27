@@ -9,7 +9,7 @@ function(
 	distribution=NULL, 
 	round.digits=NULL) {
 
-	GRADE <- CONTENT_AREA <- YEAR <- SS <- NULL
+	GRADE <- CONTENT_AREA <- YEAR <- SIM <- NULL
 
 	### Define relevant variables
 
@@ -35,12 +35,12 @@ function(
 	if (!is.null(variable)) tmp.omega <- variable
 
 	if (distribution=="Skew-Normal") {
-		tmp.scores <- round(as.numeric(rsn(length(scale_scores), xi=scale_scores, omega=tmp.omega,
-			alpha=tan((pi/2)*((min.max[1]+min.max[2]) - 2*scale_scores)/(min.max[2]-min.max[1])))), digits=round.digits)
+		tmp.scores <- data.table(SIM=round(rsn(length(scale_scores), xi=scale_scores, omega=tmp.omega,
+			alpha=tan((pi/2)*((min.max[1]+min.max[2]) - 2*scale_scores)/(min.max[2]-min.max[1]))), digits=round.digits))
 	} else {
-		tmp.scores <- round(rnorm(length(scale_scores), scale_scores, tmp.omega), digits=round.digits)
+		tmp.scores <- data.table(SIM=round(rnorm(length(scale_scores), scale_scores, tmp.omega), digits=round.digits))
 	}
-	tmp.scores[tmp.scores < min.max[1]] <- min.max[1]
-	tmp.scores[tmp.scores > min.max[2]] <- min.max[2]
-	return(tmp.scores)
+	tmp.scores[SIM < min.max[1], SIM:=min.max[1]]
+	tmp.scores[SIM > min.max[2], SIM:=min.max[2]]
+	return(tmp.scores[['SIM']])
 } ### END csemScoreSimulator

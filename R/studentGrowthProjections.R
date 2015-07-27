@@ -322,7 +322,6 @@ function(panel.data,	## REQUIRED
 					setkeyv(tmp.dt, names(tmp.dt)[1])
 					tmp.percentile.trajectories[[i]] <- 
 						tmp.dt[,c("ID", paste("SS", grade.projection.sequence.labels, content_area.projection.sequence.labels, sep=".")), with=FALSE]
-					rm(tmp.dt); suppressMessages(gc())
 				} ## END if (dim(tmp.dt)[1] > 0)
 			} ## END if statement
 		} ## END i loop

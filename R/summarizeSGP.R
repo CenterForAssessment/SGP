@@ -549,7 +549,6 @@
 			variables.for.summaries, with=FALSE][, highest.level.summary.grouping:=state, with=FALSE]
 		dbWriteTable(sgp_data_for_summary, name = "summary_data", overwrite = TRUE, row.names=0, value = tmp.dt[,
 			BY_GROWTH_ONLY := factor(is.na(tmp.dt[[my.sgp[1]]]), levels=c(FALSE, TRUE), labels=c("Students without SGP", "Students with SGP"))])
-		rm(tmp.dt); suppressMessages(gc())
 	} else {
 		dbWriteTable(sgp_data_for_summary, name = "summary_data", overwrite = TRUE, row.names=0, 
 			value = sgp_object@Data[data.table("VALID_CASE", content_areas.by.years), nomatch=0][, 
@@ -614,7 +613,6 @@
 
 				dbWriteTable(dbConnect(SQLite(), dbname = "Data/tmp_data/TMP_Summary_Data.sqlite"), 
 					name = "summary_data", overwrite = TRUE, row.names=0, value = tmp.dt.long)
-				rm(tmp.dt.long); suppressMessages(gc())
 
 				sgp_object@Summary[[i]] <- c(sgp_object@Summary[[i]], summarizeSGP_INTERNAL(tmp.inst))
 			} 

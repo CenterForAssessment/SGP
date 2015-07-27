@@ -218,7 +218,6 @@ function(
 		slot.data[tmp.index, variables.to.merge := tmp.data[, variables.to.merge, with=FALSE], with=FALSE, nomatch=0]
 
 		setkeyv(slot.data, getKey(slot.data))
-		rm(tmp.list); suppressMessages(gc())
 	}
 
 
@@ -262,7 +261,6 @@ function(
 		slot.data[tmp.index, variables.to.merge := tmp.data[, variables.to.merge, with=FALSE], with=FALSE, nomatch=0]
 
 		setkeyv(slot.data, getKey(slot.data))
-		rm(tmp.list); suppressMessages(gc())
 	}
 
 
