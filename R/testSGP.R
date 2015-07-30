@@ -763,11 +763,20 @@ SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
 
 	sgpData_LONG <- SGPdata::sgpData_LONG
 
-	if (is.null(test.option[['calculate.simex.baseline']])) calculate.simex.baseline <- FALSE else calculate.simex.baseline <- TRUE
+	if (is.null(test.option[['calculate.simex.baseline']])) {
+		calculate.simex.baseline <- baseline.sgps <- FALSE
+	} else {
+		baseline.sgps <- TRUE
+		if (is.list(test.option[['calculate.simex.baseline']])) {
+			calculate.simex.baseline <- test.option[['calculate.simex.baseline']]
+		} else {
+			calculate.simex.baseline <- list(state='DEMO', lambda=as.numeric(seq(0,2,0.5)), simulation.iterations = 50, extrapolation='linear', save.matrices=TRUE)
+		}
+	}
 
 	###  The test of SIMEX baseline functionality requires the DEMO SIMEX matrices to be loaded manually.
 	# SGPstateData[["DEMO"]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <- c(SGPstateData[["DEMO"]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]], DEMO_SIMEX_Baseline_Matrices)
-	if (calculate.simex.baseline) {
+	if (baseline.sgps) {
 		if (!any(grepl(".BASELINE.SIMEX", names(SGPstateData[["DEMO"]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]])))) {
 			stop("\n\tThis test requires the DEMO SIMEX matrices to be loaded manually.\n\t\t
 			SGPstateData[['DEMO']][['Baseline_splineMatrix']][['Coefficient_Matrices']] <- c(SGPstateData[['DEMO']][['Baseline_splineMatrix']][['Coefficient_Matrices']], DEMO_SIMEX_Baseline_Matrices)\n\n")
@@ -803,9 +812,9 @@ SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
 			parallel.config <- paste("list(BACKEND='FOREACH', TYPE = 'doParallel', WORKERS = list(SIMEX = ", number.cores, ", TAUS = ", number.cores, "))", sep="")
 		} else 	parallel.config <- paste("list(BACKEND = 'PARALLEL', WORKERS = list(SIMEX = ", number.cores, ", TAUS = ", number.cores, "))", sep="")
 	}
-
+	
 	expression.to.evaluate <- 
-		paste("\nDemonstration_SGP <- prepareSGP(sgpData_LONG, create.additional.variables=FALSE)\n\nDemonstration_SGP <- analyzeSGP(\n\tsgp_object=Demonstration_SGP,\n\tyears='2014_2015',\n\tcontent_areas='READING',\n\tsgp.percentiles.baseline.max.order=2,\n\tsgp.percentiles=TRUE,\n\tsgp.projections=FALSE,\n\tsgp.projections.lagged=FALSE,\n\tsgp.percentiles.baseline=", calculate.simex.baseline,",\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsimulate.sgps=FALSE,\n\tcalculate.simex=TRUE,\n\tcalculate.simex.baseline=", calculate.simex.baseline,",\n\tparallel.config=", parallel.config,"\n)\n", sep="")
+		paste("\nDemonstration_SGP <- prepareSGP(sgpData_LONG, create.additional.variables=FALSE)\n\nDemonstration_SGP <- analyzeSGP(\n\tsgp_object=Demonstration_SGP,\n\tyears='2014_2015',\n\tcontent_areas='READING',\n\tsgp.percentiles.baseline.max.order=2,\n\tsgp.percentiles=TRUE,\n\tsgp.projections=FALSE,\n\tsgp.projections.lagged=FALSE,\n\tsgp.percentiles.baseline=", baseline.sgps,",\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsimulate.sgps=FALSE,\n\tcalculate.simex=list(state='DEMO', lambda=as.numeric(seq(0,2,0.5)), simulation.iterations = 50, extrapolation='linear', save.matrices=TRUE),\n\tcalculate.simex.baseline=", calculate.simex.baseline,",\n\tparallel.config=", parallel.config,"\n)\n", sep="")
 		
 	cat("##### Begin testSGP test number 4, Part 1 #####", fill=TRUE)
 	cat("## Grade-Level, Cohort and Baseline Tests with auto sgp.config construction. ##\n", fill=TRUE)
@@ -830,7 +839,7 @@ SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
 	}
 
 	### TEST of SGP_SIMEX_BASELINE variable
-	if (calculate.simex.baseline) {	
+	if (baseline.sgps) {	
 		if (identical(sum(Demonstration_SGP@SGP$SGPercentiles$READING.2014_2015.BASELINE$SGP_SIMEX_BASELINE), 1034495L)) { # 1034475L
 			tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX_BASELINE: OK\n")
 		} else {
@@ -845,19 +854,19 @@ SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
 			sgp.content.areas=c('READING', 'GRADE_9_LIT', 'AMERICAN_LIT'),
 			sgp.panel.years=c('2012_2013', '2013_2014', '2014_2015'),
 			sgp.grade.sequences=list(c(8, 'EOCT', 'EOCT')),
-			sgp.calculate.simex=TRUE,
+			sgp.calculate.simex=list(state='DEMO', lambda=as.numeric(seq(0,2,0.5)), simulation.iterations = 50, extrapolation='linear', save.matrices=TRUE),
 			sgp.calculate.simex.baseline=calculate.simex.baseline),
 	
 		 ALGEBRA_II.2014_2015 = list(
 			sgp.content.areas=c('MATHEMATICS', 'ALGEBRA_I', 'ALGEBRA_II'),
 			sgp.panel.years=c('2012_2013', '2013_2014', '2014_2015'),
 			sgp.grade.sequences=list(c(8, 'EOCT', 'EOCT')),
-			sgp.calculate.simex=TRUE,
+			sgp.calculate.simex=list(state='DEMO', lambda=as.numeric(seq(0,2,0.5)), simulation.iterations = 50, extrapolation='linear', save.matrices=TRUE),
 			sgp.calculate.simex.baseline=calculate.simex.baseline)
 	)
 
 	expression.to.evaluate <- 
-		paste("\nDemonstration_SGP <- analyzeSGP(\n\tsgp_object= Demonstration_SGP,\n\tsgp.config=sgp.config,\n\tsgp.percentiles=TRUE,\n\tsgp.projections=FALSE,\n\tsgp.projections.lagged=FALSE,\n\tsgp.percentiles.baseline=", calculate.simex.baseline, ",\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsimulate.sgps=FALSE,\n\tparallel.config=", parallel.config,"\n)\nDemonstration_SGP <- combineSGP(Demonstration_SGP)", sep="")
+		paste("\nDemonstration_SGP <- analyzeSGP(\n\tsgp_object= Demonstration_SGP,\n\tsgp.config=sgp.config,\n\tsgp.percentiles=TRUE,\n\tsgp.projections=FALSE,\n\tsgp.projections.lagged=FALSE,\n\tsgp.percentiles.baseline=", baseline.sgps, ",\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsimulate.sgps=FALSE,\n\tparallel.config=", parallel.config,"\n)\nDemonstration_SGP <- combineSGP(Demonstration_SGP)", sep="")
 
 	if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "dir.create('Data', showWarnings=FALSE)", "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
 
@@ -892,7 +901,7 @@ SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
 		tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX: FAIL\n")
 	}
 
-	if (calculate.simex.baseline) {
+	if (baseline.sgps) {
 		if (identical(sum(Demonstration_SGP@SGP$SGPercentiles$AMERICAN_LIT.2014_2015.BASELINE$SGP_SIMEX_BASELINE), 218071L)) { # 218029L
 			tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX_BASELINE: OK\n")
 		} else {
