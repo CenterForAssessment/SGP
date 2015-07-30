@@ -30,8 +30,8 @@
 
 	# State stuff
 
-	if (state %in% c(state.abb, "DEMO")) {
-		state.name.label <- c(state.name, "DEMONSTRATION")[state==c(state.abb, "DEMO")]
+	if (state %in% c(datasets::state.abb, "DEMO")) {
+		state.name.label <- c(datasets::state.name, "DEMONSTRATION")[state==c(datasets::state.abb, "DEMO")]
 		test.abbreviation.label <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Abbreviation"]]
 	} else {
 		state.name.label <- test.abbreviation.label <- state
@@ -368,7 +368,7 @@ if (1 %in% bPlot.styles) {
 		} ## End loop over content_area.iter
 		} ## End loop over year.iter
 
-		message(paste("\tFinished bubblePlot Style 1", date(), "in", timetaken(started.at), "\n"))
+		message(paste("\tFinished bubblePlot Style 1", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 } ## END bubblePlot style 1
 
@@ -498,7 +498,7 @@ if (2 %in% bPlot.styles) {
 		} ## End loop over year.iter
 		} ## End loop over bPlot.levels.iter
 
-		message(paste("\tFinished bubblePlot Style 2", date(), "in", timetaken(started.at), "\n"))
+		message(paste("\tFinished bubblePlot Style 2", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 } ## END bubblePlot style 2
 
@@ -616,7 +616,7 @@ if (3 %in% bPlot.styles) {
 		} ## End loop over content_area.iter
 		} ## End loop over year.iter
 
-		message(paste("\tFinished bubblePlot Style 3", date(), "in", timetaken(started.at), "\n"))
+		message(paste("\tFinished bubblePlot Style 3", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 } ## END bubblePlot style 3
 
@@ -714,7 +714,7 @@ if (10 %in% bPlot.styles) {
 		} ## End loop over content_area.iter
 		} ## End loop over year.iter
 
-		message(paste("\tFinished bubblePlot Style 10", date(), "in", timetaken(started.at), "\n"))
+		message(paste("\tFinished bubblePlot Style 10", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 } ## END bubblePlot style 10
 
@@ -851,7 +851,7 @@ if (10 %in% bPlot.styles) {
 		} ## End loop over year.iter
 		} ## End loop over bPlot.levels.iter
 
-		message(paste("\tFinished bubblePlot Style 11", date(), "in", timetaken(started.at), "\n"))
+		message(paste("\tFinished bubblePlot Style 11", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 } ## END bubblePlot style 11
 
@@ -949,7 +949,7 @@ if (20 %in% bPlot.styles) {
 		} ## End loop over content_area.iter
 		} ## End loop over year.iter
 
-		message(paste("\tFinished bubblePlot Style 20", date(), "in", timetaken(started.at), "\n"))
+		message(paste("\tFinished bubblePlot Style 20", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 } ## END bubblePlot style 20
 
@@ -1069,7 +1069,7 @@ if (21 %in% bPlot.styles) {
 		} ## End loop over content_area.iter
 		} ## End loop over year.iter
 
-		message(paste("\tFinished bubblePlot Style 21", date(), "in", timetaken(started.at), "\n"))
+		message(paste("\tFinished bubblePlot Style 21", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 } ## END bubblePlot style 21
 
@@ -1195,7 +1195,7 @@ if (22 %in% bPlot.styles) {
 		} ## End loop over content_area.iter
 		} ## End loop over year.iter
 
-		message(paste("\tFinished bubblePlot Style 22", date(), "in", timetaken(started.at), "\n"))
+		message(paste("\tFinished bubblePlot Style 22", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 } ## END bubblePlot style 22
 
@@ -1293,7 +1293,7 @@ if (22 %in% bPlot.styles) {
 		} ## End loop over school_number.iter
 		} ## End loop over year.iter
 
-		message(paste("\tFinished bubblePlot Style 50", date(), "in", timetaken(started.at), "\n"))
+		message(paste("\tFinished bubblePlot Style 50", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 	} ## END bubblePlot style 50
 
@@ -1390,7 +1390,7 @@ if (22 %in% bPlot.styles) {
 		} ## End loop over content_area.iter
 		} ## End loop over year.iter
 
-		message(paste("\tFinished bubblePlot Style 53", date(), "in", timetaken(started.at), "\n"))
+		message(paste("\tFinished bubblePlot Style 53", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 	} ## END bubblePlot style 53
 
@@ -1546,7 +1546,7 @@ if (22 %in% bPlot.styles) {
 		} ## End loop over year.iter
 		} ## End loop over bPlot.levels.iter
 
-		message(paste("\tFinished bubblePlot Style 55", date(), "in", timetaken(started.at), "\n"))
+		message(paste("\tFinished bubblePlot Style 55", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 	} ## END bubblePlot style 55
 
@@ -1646,7 +1646,7 @@ if (22 %in% bPlot.styles) {
 		} ## End loop over content_area.iter
 		} ## End loop over year.iter
 
-		message(paste("\tFinished bubblePlot Style 57", date(), "in", timetaken(started.at), "\n"))
+		message(paste("\tFinished bubblePlot Style 57", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 	} ## END bubblePlot style 57
 
@@ -1800,7 +1800,7 @@ if (22 %in% bPlot.styles) {
 		} ## End loop over year.iter
 		} ## End loop over bPlot.levels.iter
 
-		message(paste("\tFinished bubblePlot Style 59", date(), "in", timetaken(started.at), "\n"))
+		message(paste("\tFinished bubblePlot Style 59", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 } ## END bubblePlot style 59
 
@@ -2023,7 +2023,7 @@ if (22 %in% bPlot.styles) {
 		} ## END content_area.iter loop
 		} ## END year.iter loop
 
-		message(paste("\tFinished bubblePlot Style 100", date(), "in", timetaken(started.at), "\n"))
+		message(paste("\tFinished bubblePlot Style 100", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 	} ## END if bubblePlot style 100
 
@@ -2188,7 +2188,7 @@ if (22 %in% bPlot.styles) {
 			} ## END content_area.iter loop
 			} ## END year.iter loop
 
-		message(paste("\tFinished bubblePlot Style 150", date(), "in", timetaken(started.at), "\n"))
+		message(paste("\tFinished bubblePlot Style 150", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 	} ## END if bubblePlot style 150
 
@@ -2367,7 +2367,7 @@ if (22 %in% bPlot.styles) {
 		} ## END content_area.iter loop
 		} ## END year.iter loop
 
-		message(paste("\tFinished bubblePlot Style 153", date(), "in", timetaken(started.at), "\n"))
+		message(paste("\tFinished bubblePlot Style 153", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 	} ## END if bubblePlot style 153
 

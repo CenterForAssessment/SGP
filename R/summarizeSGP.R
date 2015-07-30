@@ -109,13 +109,12 @@
 
 	combineSims <- function(sgp_object) {
 		tmp.list <- list()
-		tmp.names <- names(sgp_object@SGP[["Simulated_SGPs"]]) 
-		for (i in tmp.names) {
+		for (i in names(sgp_object@SGP[["Simulated_SGPs"]])) {
 			if (length(grep("BASELINE", i) > 0)) tmp.baseline <- "BASELINE" else tmp.baseline <- "COHORT"
 			if ("YEAR_WITHIN" %in% names(sgp_object@SGP[["Simulated_SGPs"]][[i]])) columns.to.omit <- -c(1,2) else columns.to.omit <- -1
 			tmp.list[[i]] <- data.table(
 				ID=rep(sgp_object@SGP[["Simulated_SGPs"]][[i]][["ID"]], each=length(grep("SGP_SIM", names(sgp_object@SGP[["Simulated_SGPs"]][[i]])))),
-				SGP_SIM=as.integer(as.matrix(t(sgp_object@SGP[["Simulated_SGPs"]][[i]][,columns.to.omit]))))[,
+				SGP_SIM=as.integer(as.matrix(t(sgp_object@SGP[["Simulated_SGPs"]][[i]][,columns.to.omit, with=FALSE]))))[,
 				"CONTENT_AREA":=unlist(strsplit(i, "[.]"))[1]][,
 				"YEAR":=unlist(strsplit(i, "[.]"))[2]][,
 				"BASELINE":=tmp.baseline]
@@ -626,6 +625,6 @@
 
 	if (del.dir) unlink("Data/tmp_data", recursive=TRUE, force=TRUE) else unlink("Data/tmp_data/TMP_Summary_Data.sqlite", recursive=TRUE)
 	
-	message(paste("Finished summarizeSGP", date(), "in", timetaken(started.at), "\n"))
+	message(paste("Finished summarizeSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
 	return(sgp_object)
 } ## END summarizeSGP Function

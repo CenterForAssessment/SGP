@@ -42,9 +42,9 @@ function(
 
 	if (is.null(state)) {
 		tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
-		tmp.name.position <- sapply(c(state.name, "AOB", "DEMONSTRATION"), function(x) regexpr(toupper(x), tmp.name))
+		tmp.name.position <- sapply(c(datasets::state.name, "AOB", "DEMONSTRATION"), function(x) regexpr(toupper(x), tmp.name))
 		if (any(tmp.name.position!=-1)) {
-			state <- c(state.abb, "AOB", "DEMO")[which(names(sort(tmp.name.position[tmp.name.position!=-1])[1])==c(state.name, "AOB", "DEMONSTRATION"))]
+			state <- c(datasets::state.abb, "AOB", "DEMO")[which(names(sort(tmp.name.position[tmp.name.position!=-1])[1])==c(datasets::state.name, "AOB", "DEMONSTRATION"))]
 		} else {
 			tmp.messages <- c(tmp.messages, "\tNOTE: argument 'state' required for target SGP calculation. Target SGPs will not be calculated.\n")
 			sgp.projections.lagged <- sgp.projections.lagged.baseline <- FALSE
@@ -462,7 +462,7 @@ function(
 	setkeyv(slot.data, getKey(slot.data))
 	sgp_object@Data <- slot.data
 
-	message(c(tmp.messages, paste("Finished combineSGP", date(), "in", timetaken(started.at), "\n"), sep=""))
+	message(c(tmp.messages, paste("Finished combineSGP", date(), "in", convertTime(timetaken(started.at)), "\n"), sep=""))
 
 	return(sgp_object)
 } ## END combineSGP Function

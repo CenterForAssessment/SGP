@@ -38,8 +38,8 @@ function(sgp_object,
 
 	## Create/Set database
 
-		if (state %in% c(state.abb, "DEMO")) {
-			tmp.state <- gsub(" ", "_", c(state.name, "Demonstration")[state==c(state.abb, "DEMO")])
+		if (state %in% c(datasets::state.abb, "DEMO")) {
+			tmp.state <- gsub(" ", "_", c(datasets::state.name, "Demonstration")[state==c(datasets::state.abb, "DEMO")])
 		} else {
 			tmp.state <- gsub(" ", "_", state)
 		}
@@ -276,7 +276,7 @@ function(sgp_object,
 			setnames(tmp.list[[i]], 4, "STUDENTGROUP")
 		}
 
-		tmp <- as.data.frame(convert.variables(subset(rbind.fill(tmp.list), 
+		tmp <- as.data.frame(convert.variables(subset(rbindlist(tmp.list, fill=TRUE), 
 			!is.na(get(group.number[1])) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(STUDENTGROUP) & get(group.enroll.status[1])==group.enroll.status.label[1] &
 			!is.na(MEDIAN_SGP))))
 
@@ -316,7 +316,7 @@ function(sgp_object,
 			setnames(tmp.list[[i]], 5, "STUDENTGROUP")
 		}
 
-		tmp <- as.data.frame(convert.variables(subset(rbind.fill(tmp.list), 
+		tmp <- as.data.frame(convert.variables(subset(rbindlist(tmp.list, fill=TRUE), 
 			!is.na(get(group.number[1])) & YEAR %in% years & CONTENT_AREA %in% content_areas & !is.na(STUDENTGROUP) & get(group.enroll.status[1])==group.enroll.status.label[1] &
 			!is.na(MEDIAN_SGP))))
 		tmp <- convert.names(tmp)
@@ -447,7 +447,7 @@ function(sgp_object,
 			setnames(tmp.list[[i]], 5, "STUDENTGROUP")
 		}
 
-		tmp <- as.data.frame(convert.variables(subset(rbind.fill(tmp.list), 
+		tmp <- as.data.frame(convert.variables(subset(rbindlist(tmp.list, fill=TRUE), 
 			!is.na(get(group.number[2])) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(STUDENTGROUP) & get(group.enroll.status[2])==group.enroll.status.label[2] &
 			!is.na(MEDIAN_SGP))))
 		tmp <- as.data.frame(merge(tmp, as.data.frame(tmp.school.and.district.by.year), all.x=TRUE)) 
@@ -573,7 +573,7 @@ function(sgp_object,
 			setnames(tmp.list[[i]], 4, "STUDENTGROUP")
 		}
 
-		tmp <- data.table(convert.names(convert.variables(subset(rbind.fill(tmp.list), 
+		tmp <- data.table(convert.names(convert.variables(subset(rbindlist(tmp.list, fill=TRUE), 
 			!is.na(get(group.number[1])) & !is.na(STUDENTGROUP) & get(group.enroll.status[1])==group.enroll.status.label[1]))), 
 			key=c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "STUDENTGROUP"))
                 tmp <- as.data.frame(data.table(tmp[!duplicated(tmp)]))
@@ -599,6 +599,6 @@ function(sgp_object,
 
 	dbDisconnect(db)
 
-	message(paste("\tFinished sqliteSGP in outputSGP", date(), "in", timetaken(started.at), "\n"))
+	message(paste("\tFinished sqliteSGP in outputSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 } ### END sqliteSGP

@@ -31,7 +31,7 @@ function(sgp_object,
 	}
 
 	if (identical(calculate.simex.baseline, TRUE)) {
-		calculate.simex.baseline <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear", save.matrices=TRUE)
+		calculate.simex.baseline <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE)
 	}
 
 	### Syncronize "return.matrices.only" and "calculate.baseline.sgps" arguments
@@ -140,7 +140,7 @@ function(sgp_object,
 
 		message(paste("\tStarted baselineSGP Coefficient Matrix Calculation:", started.date))
 		message(paste("\tContent Area: ", tail(content_areas, 1), ", Grade Progression: ", paste(grade.sequences, collapse=", "), ". ", sep=""))
-		message(paste("\tFinished baselineSGP Coefficient Matrix Calculation ", date(), " in ", timetaken(started.at), ".\n", sep=""))
+		message(paste("\tFinished baselineSGP Coefficient Matrix Calculation ", date(), " in ", convertTime(timetaken(started.at)), ".\n", sep=""))
 
 		return(tmp_sgp_list)
 
@@ -299,7 +299,7 @@ function(sgp_object,
 	###
 	############################################################
 
-	message(paste("\tFinished baselineSGP", date(), "in", timetaken(started.at), "\n"))
+	message(paste("\tFinished baselineSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 	if (return.matrices.only) {
 		tmp.list <- list()

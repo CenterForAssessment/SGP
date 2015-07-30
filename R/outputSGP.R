@@ -71,8 +71,8 @@ function(sgp_object,
 
 		### Create state name
 
-		if (state %in% c(state.abb, "DEMO")) {
-			tmp.state <- gsub(" ", "_", c(state.name, "Demonstration")[state==c(state.abb, "DEMO")])
+		if (state %in% c(datasets::state.abb, "DEMO")) {
+			tmp.state <- gsub(" ", "_", c(datasets::state.name, "Demonstration")[state==c(datasets::state.abb, "DEMO")])
 		} else {
 			tmp.state <- gsub(" ", "_", state)
 		}
@@ -111,7 +111,7 @@ function(sgp_object,
 			}
 		}
 
-		message(paste("\tFinished LONG data production in outputSGP", date(), "in", timetaken(started.at), "\n"))
+		message(paste("\tFinished LONG data production in outputSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 	} ### END if LONG_Data %in% output.type
 
@@ -126,8 +126,8 @@ function(sgp_object,
 
 		### Create state name
 
-		if (state %in% c(state.abb, "DEMO")) {
-			tmp.state <- gsub(" ", "_", c(state.name, "Demonstration")[state==c(state.abb, "DEMO")])
+		if (state %in% c(datasets::state.abb, "DEMO")) {
+			tmp.state <- gsub(" ", "_", c(datasets::state.name, "Demonstration")[state==c(datasets::state.abb, "DEMO")])
 		} else {
 			tmp.state <- gsub(" ", "_", state)
 		}
@@ -168,7 +168,7 @@ function(sgp_object,
 			}
 		}
 
-		message(paste("\tFinished LONG FINAL YEAR data production in outputSGP", date(), "in", timetaken(started.at), "\n"))
+		message(paste("\tFinished LONG FINAL YEAR data production in outputSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 	} ### END if LONG_FINAL_YEAR_Data %in% output.type
 
@@ -183,8 +183,8 @@ function(sgp_object,
 
 		### Create state name
 
-		if (state %in% c(state.abb, "DEMO")) {
-			tmp.state <- gsub(" ", "_", c(state.name, "Demonstration")[state==c(state.abb, "DEMO")])
+		if (state %in% c(datasets::state.abb, "DEMO")) {
+			tmp.state <- gsub(" ", "_", c(datasets::state.name, "Demonstration")[state==c(datasets::state.abb, "DEMO")])
 		} else {
 			tmp.state <- gsub(" ", "_", state)
 		}
@@ -201,7 +201,7 @@ function(sgp_object,
 		} else {
 			long_data_tmp[,YEAR_BY_CONTENT_AREA := paste(YEAR, CONTENT_AREA, sep=".")]
 		}
-		assign(paste(tmp.state, "SGP_WIDE_Data", sep="_"), dcast(long_data_tmp, ID ~ YEAR_BY_CONTENT_AREA, 
+		assign(paste(tmp.state, "SGP_WIDE_Data", sep="_"), ddcast(long_data_tmp, ID ~ YEAR_BY_CONTENT_AREA,
 			value.var=setdiff(names(long_data_tmp), c("ID", "YEAR_BY_CONTENT_AREA", "VALID_CASE", "CONTENT_AREA", "YEAR")), sep="."))
 		save(list=paste(tmp.state, "SGP_WIDE_Data", sep="_"), file=file.path(outputSGP.directory, paste(tmp.state, "SGP_WIDE_Data.Rdata", sep="_")))
 		write.table(get(paste(tmp.state, "SGP_WIDE_Data", sep="_")), 
@@ -225,7 +225,7 @@ function(sgp_object,
 			}
 		}
 
-		message(paste("\tFinished WIDE data production in outputSGP", date(), "in", timetaken(started.at), "\n"))
+		message(paste("\tFinished WIDE data production in outputSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 	} ### END if WIDE_Data %in% output.type
 
@@ -240,8 +240,8 @@ function(sgp_object,
 
 		### Create state name
 
-		if (state %in% c(state.abb, "DEMO")) {
-			tmp.state <- gsub(" ", "_", c(state.name, "Demonstration")[state==c(state.abb, "DEMO")])
+		if (state %in% c(datasets::state.abb, "DEMO")) {
+			tmp.state <- gsub(" ", "_", c(datasets::state.name, "Demonstration")[state==c(datasets::state.abb, "DEMO")])
 		} else {
 			tmp.state <- gsub(" ", "_", state)
 		}
@@ -276,7 +276,7 @@ function(sgp_object,
 			}
 		}
 
-		message(paste("\tFinished INSTRUCTOR data production in outputSGP", date(), "in", timetaken(started.at), "\n"))
+		message(paste("\tFinished INSTRUCTOR data production in outputSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 	} ### END if INSTRUCTOR_Data %in% output.type
 
@@ -478,11 +478,8 @@ function(sgp_object,
 			"SCALE_SCORE", "TRANSFORMED_SCALE_SCORE", "ACHIEVEMENT_LEVEL", "SGP", getTargetName(target.years=outputSGP.projection.years.for.target),
 			"SCHOOL_NUMBER", "DISTRICT_NUMBER", outputSGP.student.groups, "SCHOOL_ENROLLMENT_STATUS", "DISTRICT_ENROLLMENT_STATUS", "STATE_ENROLLMENT_STATUS")
 
-		outputSGP.data <- reshape(unclass.data.table(tmp.table)[, variables.to.keep, with=FALSE],
-			idvar=c("ID", "CONTENT_AREA"),
-			timevar="YEAR",
-			drop=c("VALID_CASE"),
-			direction="wide")
+		sgPlot.data <- ddcast(unclass.data.table(tmp.table)[,setdiff(variables.to.keep, "VALID_CASE"), with=FALSE], ID + CONTENT_AREA ~ YEAR,
+			value.var=setdiff(variables.to.keep, c("VALID_CASE", "ID", "CONTENT_AREA", "YEAR")), sep=".")
 
 
 		#### Merge in 1, 2, and 3 year projections 
@@ -704,7 +701,7 @@ function(sgp_object,
 		dir.create(file.path(outputSGP.directory, "SchoolView", "RDATA"), recursive=TRUE, showWarnings=FALSE)
 		save(STUDENT_GROWTH, file=file.path(outputSGP.directory, "SchoolView", "RDATA", "STUDENT_GROWTH.Rdata"))
 
-		message(paste("\tFinished SchoolView STUDENT_GROWTH data production in outputSGP", date(), "in", timetaken(started.at), "\n"))
+		message(paste("\tFinished SchoolView STUDENT_GROWTH data production in outputSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 	} ## End if SchoolView %in% output.type
 
@@ -733,12 +730,12 @@ function(sgp_object,
 						YEAR=getTableNameYear(names.iter), 
 						sgp_object@SGP[["SGPercentiles"]][[names.iter]])]
 				if (any(!output.column.order %in% names(tmp.dt))) tmp.dt[,output.column.order[!output.column.order %in% names(tmp.dt)]:=as.numeric(NA), with=FALSE]
-				tmp.dt <- tmp.dt[,ID:=gsub("_DUPS_[1-9]*", "", ID)][,output.column.order, with=FALSE]
+				tmp.dt <- tmp.dt[,ID:=gsub("_DUPS_[0-9]*", "", ID)][,output.column.order, with=FALSE]
 				write.table(tmp.dt, file=file.path(outputSGP.directory, "RLI", "SGPercentiles", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
 			} else {
 				output.column.order <- SGP::SGPstateData$RLI$SGP_Configuration$output.column.order$SGPercentiles
 				if (any(!output.column.order %in% names(tmp.dt))) tmp.dt[,output.column.order[!output.column.order %in% names(tmp.dt)]:=as.numeric(NA), with=FALSE]
-				tmp.dt <- tmp.dt[,ID:=gsub("_DUPS_[1-9]*", "", ID)][,output.column.order, with=FALSE]
+				tmp.dt <- tmp.dt[,ID:=gsub("_DUPS_[0-9]*", "", ID)][,output.column.order, with=FALSE]
 				write.table(tmp.dt, file=file.path(outputSGP.directory, "RLI", "SGPercentiles", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
 			}
 
@@ -816,12 +813,12 @@ function(sgp_object,
 						YEAR=getTableNameYear(names.iter), 
 						sgp_object@SGP[["SGProjections"]][[names.iter]])][,GROUP:=names.iter]
 				if (any(!output.column.order %in% names(tmp.dt))) tmp.dt[,output.column.order[!output.column.order %in% names(tmp.dt)]:=as.numeric(NA), with=FALSE]
-				tmp.dt <- tmp.dt[,ID:=gsub("_DUPS_[1-9]*", "", ID)][,output.column.order, with=FALSE]
+				tmp.dt <- tmp.dt[,ID:=gsub("_DUPS_[0-9]*", "", ID)][,output.column.order, with=FALSE]
 				write.table(tmp.dt, file=file.path(outputSGP.directory, "RLI", "SGProjections", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
 			} else {
 				tmp.dt <- sgp_object@SGP[['SGProjections']][[names.iter]][,GROUP:=names.iter]
 				if (any(!output.column.order %in% names(tmp.dt))) tmp.dt[,output.column.order[!output.column.order %in% names(tmp.dt)]:=as.numeric(NA), with=FALSE]
-				tmp.dt <- tmp.dt[,ID:=gsub("_DUPS_[1-9]*", "", ID)][,output.column.order, with=FALSE]
+				tmp.dt <- tmp.dt[,ID:=gsub("_DUPS_[0-9]*", "", ID)][,output.column.order, with=FALSE]
 				write.table(tmp.dt, file=file.path(outputSGP.directory, "RLI", "SGProjections", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
 			}
 
@@ -844,13 +841,13 @@ function(sgp_object,
 			}
 		}
 
-		message(paste("\tFinished RLI in outputSGP", date(), "in", timetaken(started.at), "\n"))
+		message(paste("\tFinished RLI in outputSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 	} ## End if RLI %in% output.type
 
 
 	setkeyv(sgp_object@Data, getKey(sgp_object))
-	message(paste("Finished outputSGP", date(), "in", timetaken(started.at.outputSGP), "\n"))
+	message(paste("Finished outputSGP", date(), "in", convertTime(timetaken(started.at.outputSGP)), "\n"))
 
 } ## END outputSGP
 

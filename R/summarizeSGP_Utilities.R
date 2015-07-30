@@ -78,13 +78,13 @@ function(tmp.simulation.dt,
 		tmp.list.1 <- list()
 		tmp_data <- data.table(dbGetQuery(con, paste("select", paste(pull.vars, collapse = ","), "from summary_data")), key = sgp_key)
 		if (is.data.frame(tmp.simulation.dt)) {
-			for (i in seq(sim.info[['n.simulated.sgps']])) {
+			for (i in seq.int(sim.info[['n.simulated.sgps']])) {
 				tmp.subset.data <- tmp_data[,c(key(tmp_data), unlist(strsplit(sgp.groups.to.summarize, ", "))), with=FALSE][
-					tmp.simulation.dt[seq(i, length=sim.info[['n.unique.cases']], by=sim.info[['n.simulated.sgps']])], allow.cartesian=TRUE]
+					tmp.simulation.dt[seq.int(i, length.out=sim.info[['n.unique.cases']], by=sim.info[['n.simulated.sgps']])], allow.cartesian=TRUE]
 				tmp.list.1[[i]] <- tmp.subset.data[,list(median_na(SGP_SIM, NULL), mean_na(SGP_SIM, NULL)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")]
 			}
 		} else {
-			for (i in seq(sim.info[['n.simulated.sgps']])) {
+			for (i in seq.int(sim.info[['n.simulated.sgps']])) {
 				tmp.list.1[[i]] <- tmp_data[data.table(dbGetQuery(con, paste("select * from sim_data where SIM_NUM =", i)), key = sgp_key), allow.cartesian=TRUE][,
 					list(median_na(SGP_SIM, NULL), mean_na(SGP_SIM, NULL)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")]
 			}
@@ -136,7 +136,8 @@ function(x,
 	result.digits=2) {
 
 	if (is.null(weight)) {
-		round(mean(as.numeric(x), na.rm=TRUE), digits=result.digits)
+		tmp.x <- x[!is.na(x)]
+		round(sum(tmp.x)/length(tmp.x), digits=result.digits)
 	} else {
 		round(weighted.mean(as.numeric(x), w=weight, na.rm=TRUE), digits=result.digits)
 	}
@@ -178,9 +179,11 @@ function(dat,
 	conf.quantiles=NULL,
 	nboot=100) {
 
+	ID <- SCORE <- NULL
 	CI <- c(NA,NA); SE <- NA
 	if (!all(is.na(dat))) {
-		out <- sapply(seq(nboot), function(x) median(sample(dat, length(dat), replace=TRUE), na.rm=TRUE))
+		dat.no.na <- dat[!is.na(dat)]
+		out <- data.table(ID=rep(seq_along(dat.no.na)), SCORE=dat.no.na[sample.int(length(dat.no.na), length(dat.no.na)*nboot, replace=TRUE)])[,median(SCORE), by=ID][['V1']]
 		if (!is.null(conf.quantiles)) {
 			CI <- round(quantile(out, conf.quantiles, na.rm=TRUE), digits=1)
 		} else {

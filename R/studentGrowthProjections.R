@@ -55,7 +55,7 @@ function(panel.data,	## REQUIRED
 			return(na.row)
 		} else {
 			setkey(tmp.dt, ID, X)
-			return(round(tmp.dt[unlist(lapply(1:100, function(x) seq(x, dim(tmp.dt)[1], by=100)))][['X']], digits=5))
+			return(round(tmp.dt[unlist(lapply(1:100, function(x) seq.int(x, dim(tmp.dt)[1], by=100)))][['X']], digits=5))
 		}
 	}
 
@@ -423,16 +423,14 @@ function(panel.data,	## REQUIRED
 				}
 			}
 			tmp.traj[,2:dim(tmp.traj)[2] := round(tmp.traj[,2:dim(tmp.traj)[2], with=FALSE], digits=projcuts.digits), with=FALSE]
-			trajectories <- data.table(reshape(tmp.traj[, CUT:=rep(percentile.trajectory.values, dim(tmp.traj)[1]/length(percentile.trajectory.values))], 
-				idvar="ID", timevar="CUT", direction="wide"), key="ID")
-
+			trajectories <- ddcast(tmp.traj[, CUT:=rep(percentile.trajectory.values, dim(tmp.traj)[1]/length(percentile.trajectory.values))],
+						ID ~ CUT, value.var=setdiff(names(tmp.traj), c("ID", "CUT")), sep=".")
 			if (length(grep("CURRENT", percentile.trajectory.values))!=0) percentile.trajectory.values <- unlist(strsplit(percentile.trajectory.values, "_CURRENT"))
 			if (projection.unit=="GRADE") {
 				tmp.vec <- expand.grid(tmp.name.prefix, percentile.trajectory.values, paste("_PROJ_", projection.unit.label, "_", sep=""), paste(grade.projection.sequence.labels, content_area.projection.sequence, sep="_"), lag.increment.label)[1:(length(percentile.trajectory.values)*tmp.num.years.forward),]
 			} else {
 				tmp.vec <- expand.grid(tmp.name.prefix, percentile.trajectory.values, paste("_PROJ_", projection.unit.label, "_", sep=""), seq_along(grade.projection.sequence.labels), lag.increment.label)[1:(length(percentile.trajectory.values)*tmp.num.years.forward),]
 			}
-			tmp.vec <- tmp.vec[order(tmp.vec$Var2),]
 			setnames(trajectories, c("ID", do.call(paste, c(tmp.vec, sep=""))))
 			if (!cuts.tf) return(trajectories)
 		}
@@ -715,7 +713,7 @@ function(panel.data,	## REQUIRED
 		tmp.messages <- c(tmp.messages, "\t\tNOTE: Supplied data together with grade progression contains no data for analysis. Check data, function arguments and see help page for details.\n")
 		message(paste("\tStarted studentGrowthProjections", started.date))
 		message(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
-		message(c(tmp.messages, "\tFinished studentGrowthProjections: ", date(), " in ", timetaken(started.at), "\n"))
+		message(c(tmp.messages, "\tFinished studentGrowthProjections: ", date(), " in ", convertTime(timetaken(started.at)), "\n"))
 
 		return(
 			list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],
@@ -855,7 +853,7 @@ function(panel.data,	## REQUIRED
 		tmp.messages <- c(tmp.messages, "\t\tNOTE: Supplied data together with grade progression contains no data for analysis. Check data, function arguments and see help page for details.\n")
 		message(paste("\tStarted studentGrowthProjections", started.date))
 		message(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
-		message(c(tmp.messages, "\tFinished studentGrowthProjections: ", date(), " in ", timetaken(started.at), "\n"))
+		message(c(tmp.messages, "\tFinished studentGrowthProjections: ", date(), " in ", convertTime(timetaken(started.at)), "\n"))
 
 		return(
 			list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],
@@ -884,7 +882,7 @@ function(panel.data,	## REQUIRED
 	### Calculate percentile trajectories
 
 	if (dim(ss.data)[1]/trajectories.chunk.size > 1.5) {
-		percentile.trajectories <- rbindlist(lapply(.get.trajectory.chunks(seq(dim(ss.data)[1])), function(index) .get.percentile.trajectories(ss.data[index], grade.projection.sequence.matrices)))
+		percentile.trajectories <- rbindlist(lapply(.get.trajectory.chunks(seq.int(dim(ss.data)[1])), function(index) .get.percentile.trajectories(ss.data[index], grade.projection.sequence.matrices)))
 	} else {
 		percentile.trajectories <- .get.percentile.trajectories(ss.data, grade.projection.sequence.matrices)
 	}
@@ -950,7 +948,7 @@ function(panel.data,	## REQUIRED
 	if (print.time.taken) {
 		message(paste("\tStarted studentGrowthProjections:", started.date))
 		message(paste("\t\tContent Area: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, " (N=", format(dim(trajectories.and.cuts)[1], big.mark=","), ")", sep="")) 
-		message(c(tmp.messages, "\tFinished studentGrowthProjections: ", date(), " in ", timetaken(started.at), "\n"))
+		message(c(tmp.messages, "\tFinished studentGrowthProjections: ", date(), " in ", convertTime(timetaken(started.at)), "\n"))
 	} 
 
 	list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],

@@ -209,7 +209,7 @@ function(sgp_object,
 			bPlot.format=bPlot.format,
 			bPlot.folder=bPlot.folder)
 
-		message(paste("Finished bubblePlot in visualizeSGP", date(), "in", timetaken(started.at), "\n"))
+		message(paste("Finished bubblePlot in visualizeSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
 	} ## END bubblePlot %in% plot.types	
 
 
@@ -292,7 +292,7 @@ function(sgp_object,
 		}
 		}
 		stopParallel(parallel.config, par.start)
-		message(paste("Finished growthAchievementPlot in visualizeSGP", date(), "in", timetaken(started.at), "\n"))
+		message(paste("Finished growthAchievementPlot in visualizeSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
 	} ## END if (growthAchievementPlot %in% plot.types)
 
 
@@ -793,11 +793,8 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 		variables.to.keep <- c("VALID_CASE", "ID", "LAST_NAME", "FIRST_NAME", "CONTENT_AREA", "CONTENT_AREA_LABELS", "YEAR", "GRADE", "SCALE_SCORE", "TRANSFORMED_SCALE_SCORE", 
 			"ACHIEVEMENT_LEVEL", my.sgp, my.sgp.level, my.sgp.targets, "SCHOOL_NAME", "SCHOOL_NUMBER", "DISTRICT_NAME", "DISTRICT_NUMBER")
 
-		sgPlot.data <- reshape(tmp.table[,variables.to.keep, with=FALSE],
-			idvar=c("ID", "CONTENT_AREA"),
-			timevar="YEAR",
-			drop=c("VALID_CASE"),
-			direction="wide")
+		sgPlot.data <- ddcast(tmp.table[,setdiff(variables.to.keep, "VALID_CASE"), with=FALSE], ID + CONTENT_AREA ~ YEAR, 
+			value.var=setdiff(variables.to.keep, c("VALID_CASE", "ID", "CONTENT_AREA", "YEAR")), sep=".")
 
 		variables.to.keep <- c("ID", "CONTENT_AREA", paste("CONTENT_AREA_LABELS", tmp.years.filled, sep="."),
 			paste("LAST_NAME", tmp.last.year, sep="."), paste("FIRST_NAME", tmp.last.year, sep="."), paste("GRADE", tmp.years.filled, sep="."), 
@@ -1098,10 +1095,10 @@ if (sgPlot.produce.plots) {
 	} # END else Parallel Processing
 } ## END if (sgPlot.produce.plots) 
 
-	message(paste("Finished studentGrowthPlot in visualizeSGP", date(), "in", timetaken(started.at), "\n"))
+	message(paste("Finished studentGrowthPlot in visualizeSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 } ## END if ("studentGrowthPlot" %in% plot.types) 
 
-	message(paste("Finished visualizeSGP", date(), "in", timetaken(started.at.visualizeSGP), "\n"))
+	message(paste("Finished visualizeSGP", date(), "in", convertTime(timetaken(started.at.visualizeSGP)), "\n"))
 
 } ## END visualizeSGP Function

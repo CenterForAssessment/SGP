@@ -48,7 +48,7 @@
 
 	if (state %in% objects(SGP::SGPstateData)) {
 		tmp.abbreviation <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Abbreviation"]]
-		tmp.state <- paste(state.name[state==state.abb], tmp.abbreviation)
+		tmp.state <- paste(datasets::state.name[state==datasets::state.abb], tmp.abbreviation)
 		tmp.organization <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Organization"]]
 		number.achievement.level.regions <- length(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Achievement_Level_Labels"]])
 		if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["sgp.projections.max.forward.progression.grade"]])) {
@@ -754,7 +754,7 @@ if (reports.by.school) {
 	}
 
 	message(paste("\tStarted", last.year, tmp_school_name, "student growth plots:", started.date))
-	message(paste("\tFinished", last.year, tmp_school_name, "student growth plots:", date(), "in", timetaken(started.at), "\n"))
+	message(paste("\tFinished", last.year, tmp_school_name, "student growth plots:", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 	} ## END for loop for SCHOOLS (j)
 	} ## END for loop for DISTRICTS (i)
@@ -1315,7 +1315,7 @@ if (reports.by.instructor) {
 		}
 
 		message(paste("\tStarted", last.year, tmp_school_name, "Instructor:", tmp_instructor_name, "student growth plots:", started.date))
-		message(paste("\tFinished", last.year, tmp_school_name, "Instructor:", tmp_instructor_name, "student growth plots:", date(), "in", timetaken(started.at), "\n"))
+		message(paste("\tFinished", last.year, tmp_school_name, "Instructor:", tmp_instructor_name, "student growth plots:", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 	} ## END for loop for INSTRUCTORS (k)
 	} ## END for loop for SCHOOLS (j)

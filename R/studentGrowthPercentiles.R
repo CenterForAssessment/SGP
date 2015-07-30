@@ -253,30 +253,29 @@ function(panel.data,         ## REQUIRED
 			mod <- paste(mod, ", my.data[['TIME']], my.data[['TIME_LAG']]", sep="")
 		}
 		tmp <- eval(parse(text=paste("cbind(1L, ", substring(mod, 2), ") %*% my.matrix", sep="")))
-		return(round(matrix(data.table(ID=rep(seq(dim(tmp)[1]), each=length(taus)), SCORE=as.vector(t(tmp)))[,.smooth.isotonize.row(SCORE, isotonize, sgp.loss.hoss.adjustment), by=ID][['V1']], 
+		return(round(matrix(data.table(ID=rep(seq.int(dim(tmp)[1]), each=length(taus)), SCORE=as.vector(t(tmp)))[,.smooth.isotonize.row(SCORE, isotonize, sgp.loss.hoss.adjustment), by=ID][['V1']], 
 				ncol=length(taus), byrow=TRUE), digits=5))
 	}
 
 	.get.quantiles <- function(data1, data2) {
-		TMP_TF <- SGP <- SGP_NEW <- NULL
-		tmp <- data.table(ID=rep(seq(dim(data1)[1]), each=length(taus)+1), TMP_TF=as.vector(t(cbind(data1 < data2, FALSE))))[,which.min(TMP_TF)-1, by=ID][['V1']]
+		V1 <- NULL
+		tmp <- as.data.table(max.col(cbind(data1 < data2, FALSE), "last"))[V1==101,V1:=0]
 		if (!is.null(sgp.quantiles.labels)) {
-			setattr(tmp <- as.factor(tmp), "levels", sgp.quantiles.labels)
-			return(as.integer(levels(tmp))[tmp])
+			setattr(tmp[['V1']] <- as.factor(tmp[['V1']]), "levels", sgp.quantiles.labels)
+			return(as.integer(levels(tmp[['V1']]))[tmp[['V1']]])
 		} else {
 			if (!is.null(sgp.loss.hoss.adjustment)) {
 				my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
 				tmp.hoss <- eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['loss.hoss_", tmp.last, "']][2]", sep="")))
-				tmp.index <- which(data2==tmp.hoss)
-				if (length(tmp.index) > 0) {
-					tmp[tmp.index] <- apply(cbind(data1 > data2, TRUE)[tmp.index,,drop=FALSE], 1, function(x) which.max(x)-1)
+				if (length(tmp.index <- which(data2>=tmp.hoss)) > 0) {
+					tmp[tmp.index, V1:=apply(data.table(data1 > data2, TRUE)[tmp.index], 1, function(x) which.max(x)-1L)]
 				}
 			}
 			if (convert.0and100) {
-				tmp[tmp==0] <- 1
-				tmp[tmp==100] <- 99
+				tmp[V1==0, V1:=1L]
+				tmp[V1==100, V1:=99L]
 			}
-			return(as.integer(tmp))
+			return(tmp[['V1']])
 		}
 	}
 
@@ -531,11 +530,11 @@ function(panel.data,         ## REQUIRED
 							if (is.null(simex.sample.size) || dim(tmp.data)[1] <= simex.sample.size) {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]] <-
 									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname), 
-																																		paste("select * from simex_data where b in ('", z, "')", sep="")))
+									paste("select * from simex_data where b in ('", z, "')", sep="")))
 							} else {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]] <-
 									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname), 
-																																		paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq(dim(tmp.data)[1]), simex.sample.size),])
+									paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq.int(dim(tmp.data)[1]), simex.sample.size),])
 							}
 						}
 					} else simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <- available.matrices[sim.iters]
@@ -545,8 +544,8 @@ function(panel.data,         ## REQUIRED
 						for (z in seq_along(sim.iters)) {
 							fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + 
 								as.vector(.get.percentile.predictions(dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname), 
-																																 paste("select ", paste(c("ID", paste('prior_', k:1, sep=""), "final_yr"), collapse=", "), " from simex_data where b in ('", z, "')", sep="")), 
-																											simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]])/B)
+								paste("select ", paste(c("ID", paste('prior_', k:1, sep=""), "final_yr"), collapse=", "), " from simex_data where b in ('", z, "')", sep="")), 
+					simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]])/B)
 						}
 					}
 				} else {	# Parallel over sim.iters
@@ -574,7 +573,7 @@ function(panel.data,         ## REQUIRED
 										.export=c("Knots_Boundaries", "rq.method", "taus", "content_area.progression", "tmp.slot.gp", "year.progression", "year_lags.progression", "SGPt"),
 										.options.mpi=par.start$foreach.options, .options.multicore=par.start$foreach.options, .options.snow=par.start$foreach.options) %dopar% {
 											rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
-												paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq(dim(tmp.data)[1]), simex.sample.size),])
+												paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq.int(dim(tmp.data)[1]), simex.sample.size),])
 									}
 							}
 						} else {
@@ -586,7 +585,7 @@ function(panel.data,         ## REQUIRED
 								} else {
 									simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <- 
 										mclapply(sim.iters, function(z) rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
-											paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq(dim(tmp.data)[1]), simex.sample.size),]), mc.cores=par.start$workers)
+											paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq.int(dim(tmp.data)[1]), simex.sample.size),]), mc.cores=par.start$workers)
 								}
 							}
 							if (par.start$par.type == 'SNOW') {
@@ -597,7 +596,7 @@ function(panel.data,         ## REQUIRED
 								} else {
 									simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
 										parLapply(par.start$internal.cl, sim.iters, function(z) rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
-											paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq(dim(tmp.data)[1]), simex.sample.size),]))
+											paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq.int(dim(tmp.data)[1]), simex.sample.size),]))
 								}
 							}
 						}
@@ -616,7 +615,7 @@ function(panel.data,         ## REQUIRED
 							} else {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]] <-
 									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname), 
-										paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq(dim(tmp.data)[1]), simex.sample.size),])
+										paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq.int(dim(tmp.data)[1]), simex.sample.size),])
 							}
 						}
 					}
@@ -683,21 +682,24 @@ function(panel.data,         ## REQUIRED
 		if (calculate.simex.sgps) {
 			quantile.data.simex <- data.table(rbindlist(tmp.quantiles.simex), key=c("ID", "SIMEX_ORDER"))
 			setkey(quantile.data.simex, ID) # first key on ID and SIMEX_ORDER, then re-key on ID only to insure sorted order. Don't rely on rbindlist/k ordering...
-		} else quantile.data.simex <- data.table("ID"=NA, "SIMEX_ORDER"=NA, "SGP_SIMEX"=NA) # set up empty data.table for reshapes and subsets below.
+		} else quantile.data.simex <- data.table("ID"=NA, "SIMEX_ORDER"=NA, "SGP_SIMEX"=NA) # set up empty data.table for ddcast and subsets below.
 		if (print.other.gp) {
+			quantile.data.simex <- ddcast(quantile.data.simex, ID~SIMEX_ORDER, value.var=setdiff(names(quantile.data.simex), c("ID", "SIMEX_ORDER")), sep="_SIMEX_ORDER_")
+			setnames(quantile.data.simex, setdiff(names(quantile.data.simex), c("ID", "SGP_SIMEX", "SIMEX_ORDER")), paste("SGP_SIMEX_ORDER", 
+				setdiff(names(quantile.data.simex), c("ID", "SGP_SIMEX", "SIMEX_ORDER")), sep="_"))	
 			return(list(
-				DT = data.table(reshape(quantile.data.simex, idvar="ID", timevar="SIMEX_ORDER", direction="wide"),
+				DT=data.table(quantile.data.simex,
 				SGP_SIMEX=quantile.data.simex[c(which(!duplicated(quantile.data.simex))[-1]-1L, nrow(quantile.data.simex))][["SGP_SIMEX"]]),
 				MATRICES = simex.coef.matrices))
 		} else {
 			if (print.sgp.order | return.norm.group.identifier) {
 				return(list(
-					DT = quantile.data.simex[c(which(!duplicated(quantile.data.simex))[-1]-1L, nrow(quantile.data.simex))],
-					MATRICES = simex.coef.matrices))
+					DT=quantile.data.simex[c(which(!duplicated(quantile.data.simex))[-1]-1L, nrow(quantile.data.simex))],
+					MATRICES=simex.coef.matrices))
 			} else {
 				return(list(
-					DT = quantile.data.simex[c(which(!duplicated(quantile.data.simex))[-1]-1L, nrow(quantile.data.simex)), c("ID", "SGP_SIMEX"), with=FALSE],
-					MATRICES = simex.coef.matrices))
+					DT=quantile.data.simex[c(which(!duplicated(quantile.data.simex))[-1]-1L, nrow(quantile.data.simex)), c("ID", "SGP_SIMEX"), with=FALSE],
+					MATRICES=simex.coef.matrices))
 			}
 		}
 		if (verbose) message("\tFinished SIMEX SGP calculation ", rev(content_area.progression)[1], " Grade ", rev(tmp.gp)[1], " ", date(), "\n")
@@ -1058,7 +1060,7 @@ function(panel.data,         ## REQUIRED
 		message(paste("\tStarted studentGrowthPercentiles", started.date))
 		message(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", 
 			paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
-		message(paste(tmp.messages, "\tFinished SGP Student Growth Percentile Analysis", date(), "in", timetaken(started.at), "\n"))
+		message(paste(tmp.messages, "\tFinished SGP Student Growth Percentile Analysis", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 		return(
 			list(Coefficient_Matrices=Coefficient_Matrices,
@@ -1182,7 +1184,7 @@ function(panel.data,         ## REQUIRED
 		message(paste("\tStarted studentGrowthPercentiles", started.date))
 		message(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", 
 			paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
-		message(paste(tmp.messages, "\tFinished SGP Student Growth Percentile Analysis", date(), "in", timetaken(started.at), "\n"))
+		message(paste(tmp.messages, "\tFinished SGP Student Growth Percentile Analysis", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 		return(
 			list(Coefficient_Matrices=Coefficient_Matrices,
@@ -1391,26 +1393,22 @@ function(panel.data,         ## REQUIRED
 						tmp.csem.variable <- NULL
 					}
 
-					tmp.csem.quantiles[[j]] <- tmp.data[,names(tmp.data)[1], with=FALSE]
-					setnames(tmp.csem.quantiles[[j]], names(tmp.csem.quantiles[[j]])[1], "ID")
-					if (!is.null(additional.vnames.to.return)) {
-						tmp.csem.quantiles[[j]] <- data.table(panel.data[["Panel_Data"]][,c("ID", names(additional.vnames.to.return)), with=FALSE], key="ID")[tmp.csem.quantiles[[j]]]
-						setnames(tmp.csem.quantiles[[j]], names(additional.vnames.to.return), unlist(additional.vnames.to.return))
-					}
-					for (k in seq(calculate.confidence.intervals[['simulation.iterations']])) { 
-						tmp.csem.quantiles[[j]][,TEMP_SGP_SIM:=.get.quantiles(
-								tmp.predictions, 
-								csemScoreSimulator(
-									scale_scores=tmp.data[[dim(tmp.data)[2]]],
-									grade=tmp.last,
-									content_area=sgp.labels[['my.subject']],
-									year=sgp.labels[['my.year']],
-									state=calculate.confidence.intervals[['state']],
-									variable=tmp.csem.variable,
-									distribution=calculate.confidence.intervals[['distribution']],
-									round=calculate.confidence.intervals[['round']]))]
-						setnames(tmp.csem.quantiles[[j]], "TEMP_SGP_SIM", paste("SGP_SIM", k, sep="_"))
-					} ## END k loop
+					tmp.csem.quantiles[[j]] <- data.table(
+									tmp.data[,c(names(tmp.data)[1], names(additional.vnames.to.return)), with=FALSE],
+									as.data.table(replicate(calculate.confidence.intervals[['simulation.iterations']],
+												.get.quantiles(
+													tmp.predictions, 
+													csemScoreSimulator(
+													scale_scores=tmp.data[[dim(tmp.data)[2]]],
+													grade=tmp.last,
+													content_area=sgp.labels[['my.subject']],
+													year=sgp.labels[['my.year']],
+													state=calculate.confidence.intervals[['state']],
+													variable=tmp.csem.variable,
+													distribution=calculate.confidence.intervals[['distribution']],
+													round.digits=calculate.confidence.intervals[['round']])))))
+					setnames(tmp.csem.quantiles[[j]], paste("V", seq(calculate.confidence.intervals[['simulation.iterations']]), sep=""),
+										paste("SGP_SIM", seq(calculate.confidence.intervals[['simulation.iterations']]), sep="_"))
 				} ## END CSEM analysis
 
 				if (!is.null(percentile.cuts)) {
@@ -1424,9 +1422,10 @@ function(panel.data,         ## REQUIRED
 		quantile.data <- data.table(rbindlist(tmp.quantiles), key="ID")
 
 		if (print.other.gp) {
-			quantile.data <- data.table(reshape(quantile.data, idvar="ID", timevar="ORDER", direction="wide", sep="_ORDER_"),
+			quantile.data <- data.table(ddcast(quantile.data, ID ~ ORDER, value.var=setdiff(names(quantile.data), c("ID", "ORDER"))),
 				SGP=quantile.data[c(which(!duplicated(quantile.data))[-1]-1L, nrow(quantile.data))][["SGP"]],
 				ORDER=as.integer(quantile.data[c(which(!duplicated(quantile.data))[-1]-1L, nrow(quantile.data))][["ORDER"]]))
+			setnames(quantile.data, setdiff(names(quantile.data), c("ID", "SGP", "ORDER")), paste("SGP_ORDER", setdiff(names(quantile.data), c("ID", "SGP", "ORDER")), sep="_"))
 		} else {
 			if (print.sgp.order | return.norm.group.identifier) {
 				quantile.data <- quantile.data[c(which(!duplicated(quantile.data))[-1]-1L, nrow(quantile.data))]
@@ -1629,7 +1628,7 @@ function(panel.data,         ## REQUIRED
 				paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
 		}
 		if (verbose.output) message(Verbose_Messages)
-		message(c(tmp.messages, "\tFinished SGP Student Growth Percentile Analysis: ", date(), " in ", timetaken(started.at), "\n")) 
+		message(c(tmp.messages, "\tFinished SGP Student Growth Percentile Analysis: ", date(), " in ", convertTime(timetaken(started.at)), "\n")) 
 	}
 
 	list(Coefficient_Matrices=Coefficient_Matrices,
