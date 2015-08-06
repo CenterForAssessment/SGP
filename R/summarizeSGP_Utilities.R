@@ -10,7 +10,7 @@ function(sgp.groups.to.summarize,
 	variables.for.summaries,
 	sim.info) {
 
-	WEIGHT <- SGP_SIM <- V1 <- V2 <- .SD <- MEDIAN_SGP_with_SHRINKAGE <- NULL ## To prevent R CMD check warning
+	MEDIAN_SGP_with_SHRINKAGE <- NULL
 
 	tmp.sgp.summaries <- sgp.summaries
 	sgp.summaries.names <- unlist(strsplit(names(sgp.summaries), "[.]"))

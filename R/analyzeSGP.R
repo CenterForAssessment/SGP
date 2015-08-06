@@ -494,7 +494,6 @@ function(sgp_object,
 		} else {
 			if (is.null(sgp.use.my.sgp_object.baseline.coefficient.matrices)) tmp_sgp_object <- mergeSGP(tmp_sgp_object, SGPstateData[[state]][["Baseline_splineMatrix"]])
 		}
-		suppressMessages(gc()) # clean up
 	} # END Get/Compute baseline coefficient matrices
 
 
@@ -604,7 +603,6 @@ function(sgp_object,
 			save(list=paste(state, "_SIMEX_Baseline_Matrices", sep=""), file=paste(state, "_SIMEX_Baseline_Matrices.Rdata", sep=""), compress="xz")
 			
 			message("\n\tFinished Calculating SIMEX Baseline Coefficient Matrices\n")
-			rm(tmp);suppressMessages(gc()) # clean up
 		} # END Compute SIMEX baseline coefficient matrices
 		
 		##  Enforce that simex.use.my.coefficient.matrices must be TRUE and save.matrices is FALSE for BASELINE SIMEX calculations below
@@ -795,7 +793,6 @@ function(sgp_object,
 				} # End MULTICORE
 			} # #END not FOREACH
 			stopParallel(parallel.config, par.start)
-			rm(tmp);suppressMessages(gc()) # clean up
 		} #END if (sgp.percentiles)
 
 
@@ -941,7 +938,6 @@ function(sgp_object,
 				} # End MULTICORE
 			} # #END not FOREACH
 			stopParallel(parallel.config, par.start)
-			rm(tmp);suppressMessages(gc()) # clean up
 		} #END if (sgp.percentiles)
 
 
@@ -1079,7 +1075,6 @@ function(sgp_object,
 				} # End MULTICORE
 			} # END parallel flavors
 			stopParallel(parallel.config, par.start)
-			rm(tmp);suppressMessages(gc()) # clean up
 		} ## END if sgp.percentiles.baseline
 
 
@@ -1219,7 +1214,6 @@ function(sgp_object,
 				} # End MULTICORE
 			} # END parallel flavors
 			stopParallel(parallel.config, par.start)
-			rm(tmp);suppressMessages(gc()) # clean up
 		} ## END if sgp.projections
 
 
@@ -1361,7 +1355,6 @@ function(sgp_object,
 				} # End MULTICORE
 			} # END parallel flavors
 			stopParallel(parallel.config, par.start)
-			rm(tmp);suppressMessages(gc()) # clean up
 		} ## END if sgp.projections.baseline
 
 
@@ -1503,7 +1496,6 @@ function(sgp_object,
 				} # End MULTICORE
 			} # END parallel flavors
 			stopParallel(parallel.config, par.start)
-			rm(tmp);suppressMessages(gc()) # clean up
 		} ## END if sgp.projections.lagged
 
 
@@ -1640,7 +1632,6 @@ function(sgp_object,
 				} # End MULTICORE
 			} # END parallel flavors
 			stopParallel(parallel.config, par.start)
-			rm(tmp);suppressMessages(gc()) # clean up
 		} ## END if sgp.projections.lagged.baseline
 	}  ## END if (!is.null(parallel.config))
 
@@ -1693,7 +1684,6 @@ function(sgp_object,
 					SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.percentiles"),
 					...)
 			}
-			suppressMessages(gc())
 		} ## END if sgp.percentiles
 
 
@@ -1739,7 +1729,6 @@ function(sgp_object,
 					SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.percentiles.equated"),
 					...)
 			}
-			suppressMessages(gc())
 		} ## END if sgp.percentiles.equated
 
 
@@ -1782,7 +1771,6 @@ function(sgp_object,
 					SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.percentiles.baseline"),
 					...)
 			}
-			suppressMessages(gc())
 		} ## END if sgp.percentiles.baseline
 
 	
@@ -1825,7 +1813,6 @@ function(sgp_object,
 					sgp.projections.equated=sgp.projections.equated,
 					SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections"),
 					...)
-			suppressMessages(gc())
 			}
 		} ## END if sgp.projections
 
@@ -1869,7 +1856,6 @@ function(sgp_object,
 					return.projection.group.dates=return.projection.group.dates,
 					SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.baseline"),
 					...)
-			suppressMessages(gc())
 			}
 		} ## END if sgp.projections.baseline
 	
@@ -1913,7 +1899,6 @@ function(sgp_object,
 					sgp.projections.equated=sgp.projections.equated,
 					SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.lagged"),
 					...)
-			suppressMessages(gc())
 			}
 		} ## END sgp.projections.lagged
 
@@ -1955,7 +1940,6 @@ function(sgp_object,
 					return.projection.group.dates=return.projection.group.dates,
 					SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.lagged.baseline"),
 					...)
-			suppressMessages(gc())
 			}
 		} ## END sgp.projections.lagged.baseline
 

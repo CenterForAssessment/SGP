@@ -231,7 +231,6 @@ function(sgp_object,
 				} # End MULTICORE
 			} # END parallel flavors
 		stopParallel(parallel.config, par.start)
-		suppressMessages(gc()) # clean up
 	} else { ### END if (!is.null(parallel.config))
 
 		for (sgp.iter in par.sgp.config[[target.type]]) {
@@ -269,7 +268,6 @@ function(sgp_object,
 				message(paste("\n\t\tNOTE: No student records &/or no prior data for scale score target student growth projections:", tail(sgp.iter[["sgp.panel.years"]], 1),
 					tail(sgp.iter[[my.content.areas]], 1), "with", paste(head(sgp.iter[[my.content.areas]], -1), collapse=", "), "priors.\n"))
 			}
-		suppressMessages(gc())
 		}
 	} ### END if (is.null(parallel.config))
 

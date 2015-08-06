@@ -63,23 +63,9 @@ function(panel.data,         ## REQUIRED
 			bnd <- eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['loss.hoss_", tmp.last, "']]", sep="")))
 			x[x > bnd[2]] <- bnd[2]
 		}
-		x[which(is.na(x))] <- approx(x, xout=which(is.na(x)))$y
+#		x[which(is.na(x))] <- approx(x, xout=which(is.na(x)))$y
 		if (iso) return(sort(x))
 		else return(x)
-	}
-
-	.smooth.bound.iso.row <- function(x, grade, tmp.year, tmp.content_area, iso=isotonize, missing.taus, na.replace) {
-		bnd <- eval(parse(text=paste("panel.data[['Knots_Boundaries']]", get.my.knots.boundaries.path(tmp.content_area, tmp.year), "[['loss.hoss_", grade, "']]", sep="")))
-		x[x < bnd[1]] <- bnd[1] ; x[x > bnd[2]] <- bnd[2]
-		if (!iso) return(round(x, digits=5)) # Results are the same whether NAs present or not...
-		if (iso & missing.taus) {
-			na.row <- rep(NA,100)
-			na.row[na.replace] <- round(sort(x[!is.na(x)]), digits=5)
-			return(na.row)
-		} else {
-			x[which(is.na(x))] <- approx(x, xout=which(is.na(x)))$y
-			return(round(sort(x), digits=5))
-		}
 	}
 
 	.create.path <- function(labels, pieces=c("my.subject", "my.year", "my.extra.label")) {
@@ -501,7 +487,6 @@ function(panel.data,         ## REQUIRED
 				con <- dbConnect(SQLite(), dbname = tmp.dbname)
 				dbWriteTable(con, name = "simex_data", value=big.data, overwrite=TRUE, row.names=0)
 				dbDisconnect(con)
-				rm(big.data);suppressMessages(gc())
 				
 				## Establish the simulation iterations - either 1) 1:B, or 2) a sample of either B or the number of previously computed matrices
 				sim.iters <- 1:B
