@@ -763,15 +763,17 @@ function(sgp_object,
 		## Create CATCH_UP_KEEP_UP_INITIAL/MOVE_UP_STAY_UP_INITIAL variables
 
 		slot.data <- copy(sgp_object@Data)
+		setkey(slot.data, STATE)
 		tmp.unique.states <- sort(unique(slot.data$STATE))
 		tmp.unique.states <- intersect(tmp.unique.states, SGP::SGPstateData[["RLI"]][["Achievement"]][["Cutscore_Information"]][['Cutscore_States']])
 
 		for (target.level in c("CATCH_UP_KEEP_UP", "MOVE_UP_STAY_UP")) {
 			for (state.iter in tmp.unique.states) {
-				slot.data[STATE==state.iter, paste(target.level, "STATUS_INITIAL", sep="_") :=
-					getTargetInitialStatus(slot.data[STATE==state.iter][['ACHIEVEMENT_LEVEL']], state, state.iter, target.level), with=FALSE]
+				slot.data[state.iter, paste(target.level, "STATUS_INITIAL", sep="_") :=
+					getTargetInitialStatus(slot.data[state.iter][['ACHIEVEMENT_LEVEL']], state, state.iter, target.level), with=FALSE]
 			}
 		}
+		setkey(slot.data, VALID_CASE, CONTENT_AREA, YEAR, ID)
 
 		if (any(c("CATCH_UP_KEEP_UP_STATUS_INITIAL", "MOVE_UP_STAY_UP_STATUS_INITIAL") %in% names(slot.data))) {
 			setnames(slot.data, intersect(names(slot.data), c("CATCH_UP_KEEP_UP_STATUS_INITIAL", "MOVE_UP_STAY_UP_STATUS_INITIAL")), 

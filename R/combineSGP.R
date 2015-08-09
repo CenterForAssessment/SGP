@@ -142,7 +142,10 @@ function(
 		}
 
 		tmp.list[['target.level']] <- c("CATCH_UP_KEEP_UP", "MOVE_UP_STAY_UP")
-		if (length(which(SGP::SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient"))<=1)  tmp.list[['target.level']] <- "CATCH_UP_KEEP_UP"
+		if (!is.null(SGP::SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]) && 
+			length(which(SGP::SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")) <= 1) {
+			tmp.list[['target.level']] <- "CATCH_UP_KEEP_UP"
+		}
 		if (length(grep("MUSU", SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgp.target.types']]))==0) tmp.list[['target.level']] <- "CATCH_UP_KEEP_UP"
 
 		return(tmp.list)
