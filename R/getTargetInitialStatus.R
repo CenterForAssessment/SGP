@@ -46,17 +46,15 @@ function(achievement_level,
 		}
 
 		if (status.type=="CATCH_UP_KEEP_UP") {
-			achievement_level <- as.character(achievement_level)
 			achievement_level[achievement_level %in% levels.that.are.proficient] <- 2
 			achievement_level[achievement_level %in% levels.that.are.not.proficient] <- 1
-			return(factor(achievement_level, levels=1:2, labels=c("Catching Up", "Keeping Up"), ordered=FALSE))
+			return(factor(achievement_level, levels=1:2, labels=c("Catching Up", "Keeping Up")))
 		}
 
 		if (status.type=="MOVE_UP_STAY_UP") {
-			achievement_level <- as.character(achievement_level)
 			achievement_level[achievement_level %in% levels.that.are.not.proficient] <- NA
 			achievement_level[achievement_level %in% levels.that.are.advanced] <- 2
 			achievement_level[achievement_level %in% levels.that.are.not.advanced] <- 1
-			return(factor(achievement_level, levels=1:2, labels=c("Moving Up", "Staying Up"), ordered=FALSE))
+			return(factor(factor(achievement_level, levels=1:2, labels=c("Moving Up", "Staying Up"))))
 		}
 } ### END getTargetInitialStatus

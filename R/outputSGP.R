@@ -770,7 +770,7 @@ function(sgp_object,
 		for (target.level in c("CATCH_UP_KEEP_UP", "MOVE_UP_STAY_UP")) {
 			for (state.iter in tmp.unique.states) {
 				slot.data[state.iter, paste(target.level, "STATUS_INITIAL", sep="_") :=
-					getTargetInitialStatus(slot.data[state.iter][['ACHIEVEMENT_LEVEL']], state, state.iter, target.level), with=FALSE]
+					as.character(getTargetInitialStatus(slot.data[state.iter][['ACHIEVEMENT_LEVEL']], state, state.iter, target.level)), with=FALSE]
 			}
 		}
 		setkey(slot.data, VALID_CASE, CONTENT_AREA, YEAR, ID)

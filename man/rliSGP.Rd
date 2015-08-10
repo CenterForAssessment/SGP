@@ -21,6 +21,7 @@ rliSGP(
 	sgp.target.scale.scores=TRUE,
         update.ids=NULL,
 	SGPt=TRUE,
+	save.intermediate.results=FALSE,
         parallel.config=NULL)
 }
 
@@ -54,6 +55,9 @@ is to replace it. NOTE that ID needn't be replaced in either 'sgp_object' nor 'a
 analysis. Default is NULL, no ID replacement is performed.
   }
   \item{SGPt}{Argument indicating whether to perform time dependent SGP (SGPt) analyses. Current default is TRUE based upon transition to SGPt in Summer 2015.
+  }
+  \item{save.intermediate.results}{Boolean variable passed to \code{\link{updateSGP}} indicating whether to save intermediate results from \code{\link{prepareSGP}}, \code{\link{analyzeSGP}}, and
+  \code{\link{combineSGP}} as part of the \code{rliSGP} analyses.
   }
   \item{parallel.config}{Argument passed to \code{\link{abcSGP}} or \code{\link{updateSGP}} to activate parallel processing with an appropriate backend.
   }
