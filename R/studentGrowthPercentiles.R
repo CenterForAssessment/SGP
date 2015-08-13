@@ -142,7 +142,7 @@ function(panel.data,         ## REQUIRED
 		tmp.data <- .get.panel.data(data, k, by.grade)
 		if (dim(tmp.data)[1]==0) return(NULL)
 		if (dim(tmp.data)[1] < sgp.cohort.size) return("Insufficient N")
-		if (!is.null(max.n.for.coefficient.matrices) && dim(tmp.data)[1] > max.n.for.coefficient.matrices) tmp.data <- tmp.data[sample(seq(dim(tmp.data)[1]), max.n.for.coefficient.matrices)]
+		if (!is.null(max.n.for.coefficient.matrices) && dim(tmp.data)[1] > max.n.for.coefficient.matrices) tmp.data <- tmp.data[sample(seq.int(dim(tmp.data)[1]), max.n.for.coefficient.matrices)]
 		tmp.num.variables <- dim(tmp.data)[2]
 		mod <- character()
 		s4Ks <- "Knots=list("
