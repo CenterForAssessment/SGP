@@ -27,10 +27,10 @@
 			Demonstration_SGP <- tmp.messages <- NULL
 
 			if (is.null(test.option[['parallel.config']])) {
-				if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE = 'doParallel', "
+				if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
 				if (.Platform$OS.type != "unix") {
-					parallel.config <- paste("list(BACKEND = 'FOREACH', TYPE = 'doParallel', WORKERS = list(TAUS = ", number.cores, "))", sep="")
-				} else  parallel.config <- paste("list(BACKEND = 'PARALLEL', WORKERS = list(TAUS = ", number.cores, "))", sep="")
+					parallel.config <- paste("list(BACKEND='FOREACH', TYPE='doParallel', WORKERS=list(TAUS=", number.cores, "))", sep="")
+				} else  parallel.config <- paste("list(BACKEND='PARALLEL', WORKERS=list(TAUS=", number.cores, "))", sep="")
 			}
 
 			tmp.messages <- "##### Begin testSGP test number 0 #####\n\n"
@@ -156,11 +156,11 @@
 			Demonstration_SGP <- tmp.messages <- NULL
 			number.cores <- detectCores(logical=FALSE) # adding logical=FALSE seems get physical cores only in Windows (which is good for SNOW/SOCK)
 			
-			if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE = 'doParallel', "
+			if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
 			if (toupper(TEST_NUMBER) == "1B") sgp.sqlite <- TRUE else sgp.sqlite <- FALSE
 			
 			expression.to.evaluate <- 
-				paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=SGPdata::sgpData_LONG,\n\tdata_supplementary=list(INSTRUCTOR_NUMBER=SGPdata::sgpData_INSTRUCTOR_NUMBER),\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.sqlite=", sgp.sqlite, ",\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES = ", number.cores, ", PROJECTIONS = ", number.cores, ", LAGGED_PROJECTIONS = ", number.cores, ", SGP_SCALE_SCORE_TARGETS = ", number.cores, ", SUMMARY = ", number.cores, ", GA_PLOTS = ", number.cores, ", SG_PLOTS = 1))\n)\n", sep="")
+				paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=SGPdata::sgpData_LONG,\n\tdata_supplementary=list(INSTRUCTOR_NUMBER=SGPdata::sgpData_INSTRUCTOR_NUMBER),\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.sqlite=", sgp.sqlite, ",\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
 			
 			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
 			
@@ -298,7 +298,7 @@
 			### Part 1
 			
 			expression.to.evaluate <- 
-				paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=Demonstration_Data_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES = ", number.cores, ", BASELINE_PERCENTILES = ", number.cores, ", PROJECTIONS = ", number.cores, ", LAGGED_PROJECTIONS = ", number.cores, ", SGP_SCALE_SCORE_TARGETS = ", number.cores, ", SUMMARY = ", number.cores, ", GA_PLOTS = ", number.cores, ", SG_PLOTS = 1))\n)\n", sep="")
+				paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=Demonstration_Data_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
 			
 			cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 			
@@ -364,7 +364,7 @@
 			### Part 2
 			
 			expression.to.evaluate <- 
-				paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=Demonstration_Data_LONG_2014_2015,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\tsgp.target.scale.scores=TRUE,\n\tsgPlot.demo.report=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES = ", number.cores, ", BASELINE_PERCENTILES = ", number.cores, ", PROJECTIONS = ", number.cores, ", LAGGED_PROJECTIONS = ", number.cores, ", SGP_SCALE_SCORE_TARGETS = ", number.cores, ", SUMMARY = ", number.cores, ", GA_PLOTS = ", number.cores, ", SG_PLOTS = 1))\n)\n", sep="")
+				paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=Demonstration_Data_LONG_2014_2015,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\tsgp.target.scale.scores=TRUE,\n\tsgPlot.demo.report=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
 			
 			cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 			
@@ -454,7 +454,7 @@
 				tmp.messages <- c(tmp.messages, paste("\t##### Begin testSGP test number ", capwords(i), ": Part 1 #####\n\n", sep=""))
 				
 				expression.to.evaluate <- 
-					paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=SGPdata::sgpData_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\tyears='2014_2015',\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES = ", number.cores, ", BASELINE_PERCENTILES = ", number.cores, ", PROJECTIONS = ", number.cores, ", LAGGED_PROJECTIONS = ", number.cores, "))\n)\n", sep="")
+					paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=SGPdata::sgpData_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\tyears='2014_2015',\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, "))\n)\n", sep="")
 				
 				cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 				
@@ -478,7 +478,7 @@
 					Demonstration_Data_LONG_2014_2015 <- subset(SGPdata::sgpData_LONG, YEAR %in% c("2014_2015"))
 					
 					expression.to.evaluate <- 
-						paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=Demonstration_Data_LONG_2014_2015,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\toverwrite.existing.data=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgPlot.demo.report=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES = ", number.cores, ", BASELINE_PERCENTILES = ", number.cores, ", PROJECTIONS = ", number.cores, ", LAGGED_PROJECTIONS = ", number.cores, ", SGP_SCALE_SCORE_TARGETS = ", number.cores, ", SUMMARY = ", number.cores, ", GA_PLOTS = ", number.cores, ", SG_PLOTS = 1))\n)\n", sep="")
+						paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=Demonstration_Data_LONG_2014_2015,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\toverwrite.existing.data=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgPlot.demo.report=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
 					
 					cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 					
@@ -490,7 +490,7 @@
 					Demonstration_Data_LONG_2014_2015 <- subset(SGPdata::sgpData_LONG, YEAR %in% c("2014_2015"))
 					
 					expression.to.evaluate <- 
-						paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=Demonstration_Data_LONG_2014_2015,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\toverwrite.existing.data=TRUE,\n\tsgp.use.my.coefficient.matrices=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgPlot.demo.report=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES = ", number.cores, ", BASELINE_PERCENTILES = ", number.cores, ", PROJECTIONS = ", number.cores, ", LAGGED_PROJECTIONS = ", number.cores, ", SGP_SCALE_SCORE_TARGETS = ", number.cores, ", SUMMARY = ", number.cores, ", GA_PLOTS = ", number.cores, ", SG_PLOTS = 1))\n)\n", sep="")
+						paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=Demonstration_Data_LONG_2014_2015,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\toverwrite.existing.data=TRUE,\n\tsgp.use.my.coefficient.matrices=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgPlot.demo.report=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
 					
 					cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 					
@@ -519,7 +519,7 @@
 					Demonstration_SGP@SGP$SGProjections$READING.2014_2015.LAGGED.BASELINE <- subset(Demonstration_SGP@SGP$SGProjections$READING.2014_2015.LAGGED.BASELINE, !ID %in% tmp.group.1)
 					
 					expression.to.evaluate <- 
-						paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=with_sgp_data_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\tsgp.use.my.coefficient.matrices=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgPlot.demo.report=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES = ", number.cores, ", BASELINE_PERCENTILES = ", number.cores, ", PROJECTIONS = ", number.cores, ", LAGGED_PROJECTIONS = ", number.cores, ", SGP_SCALE_SCORE_TARGETS = ", number.cores, ", SUMMARY = ", number.cores, ", GA_PLOTS = ", number.cores, ", SG_PLOTS = 1))\n)\n", sep="")
+						paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=with_sgp_data_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\tsgp.use.my.coefficient.matrices=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgPlot.demo.report=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
 					
 					cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 					
@@ -656,42 +656,42 @@
 			### Create configurations
 			
 			READING_2014_2015.config <- list(
-				READING.2014_2015 = list(
+				READING.2014_2015=list(
 					sgp.content.areas=c('READING', 'READING', 'READING', 'READING', 'READING'),
 					sgp.panel.years=c('2010_2011', '2011_2012', '2012_2013', '2013_2014', '2014_2015'),
 					sgp.grade.sequences=list(3:4, 3:5, 3:6, 3:7, 4:8))
 			)
 			
 			GRADE_9_LIT_2014_2015.config <- list(
-				GRADE_9_LIT.2014_2015 = list(
+				GRADE_9_LIT.2014_2015=list(
 					sgp.content.areas=c('READING', 'READING', 'READING', 'READING', 'GRADE_9_LIT'),
 					sgp.panel.years=c('2010_2011', '2011_2012', '2012_2013', '2013_2014', '2014_2015'),
 					sgp.grade.sequences=list(c(5:8, 'EOCT')))
 			)
 			
 			AMERICAN_LIT_2014_2015.config <- list(
-				AMERICAN_LIT.2014_2015 = list(
+				AMERICAN_LIT.2014_2015=list(
 					sgp.content.areas=c('READING', 'READING', 'READING', 'GRADE_9_LIT', 'AMERICAN_LIT'),
 					sgp.panel.years=c('2010_2011', '2011_2012', '2012_2013', '2013_2014', '2014_2015'),
 					sgp.grade.sequences=list(c(6:8, 'EOCT', 'EOCT')))
 			)
 			
 			MATHEMATICS_2014_2015.config <- list(
-				MATHEMATICS.2014_2015 = list(
+				MATHEMATICS.2014_2015=list(
 					sgp.content.areas=c('MATHEMATICS', 'MATHEMATICS', 'MATHEMATICS', 'MATHEMATICS', 'MATHEMATICS'),
 					sgp.panel.years=c('2010_2011', '2011_2012', '2012_2013', '2013_2014', '2014_2015'),
 					sgp.grade.sequences=list(3:4, 3:5, 3:6, 3:7, 4:8))
 			)
 			
 			ALGEBRA_I_2014_2015.config <- list(
-				ALGEBRA_I.2014_2015 = list(
+				ALGEBRA_I.2014_2015=list(
 					sgp.content.areas=c('MATHEMATICS', 'MATHEMATICS', 'MATHEMATICS', 'MATHEMATICS', 'ALGEBRA_I'),
 					sgp.panel.years=c('2010_2011', '2011_2012', '2012_2013', '2013_2014', '2014_2015'),
 					sgp.grade.sequences=list(c(5:8, 'EOCT')))
 			)
 			
 			ALGEBRA_II_2014_2015.config <- list(
-				ALGEBRA_II.2014_2015 = list(
+				ALGEBRA_II.2014_2015=list(
 					sgp.content.areas=c('MATHEMATICS', 'MATHEMATICS', 'MATHEMATICS', 'ALGEBRA_I', 'ALGEBRA_II'),
 					sgp.panel.years=c('2010_2011', '2011_2012', '2012_2013', '2013_2014', '2014_2015'),
 					sgp.grade.sequences=list(c(6:8, 'EOCT', 'EOCT')))
@@ -700,7 +700,7 @@
 			sgp.config <- c(READING_2014_2015.config, MATHEMATICS_2014_2015.config, GRADE_9_LIT_2014_2015.config, AMERICAN_LIT_2014_2015.config, ALGEBRA_I_2014_2015.config, ALGEBRA_II_2014_2015.config)
 			
 			expression.to.evaluate <- 
-				paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=sgpData_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP', 'summarizeSGP', 'visualizeSGP'),\n\tsimulate.sgps=FALSE,\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.config=sgp.config,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES = ", number.cores, ", BASELINE_PERCENTILES = ", number.cores, ", PROJECTIONS = ", number.cores, ", LAGGED_PROJECTIONS = ", number.cores, ", SGP_SCALE_SCORE_TARGETS = ", number.cores, ", SUMMARY = ", number.cores, ", GA_PLOTS = ", number.cores, ", SG_PLOTS = 1))\n)\n", sep="")
+				paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=sgpData_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP', 'summarizeSGP', 'visualizeSGP'),\n\tsimulate.sgps=FALSE,\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.config=sgp.config,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
 			
 			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
 			
@@ -811,10 +811,10 @@
 			Demonstration_SGP <- tmp.messages <- NULL
 			
 			if (is.null(test.option[['parallel.config']])) {
-				if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE = 'doParallel', "
+				if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
 				if (.Platform$OS.type != "unix") {
-					parallel.config <- paste("list(BACKEND='FOREACH', TYPE = 'doParallel', WORKERS = list(SIMEX = ", number.cores, ", TAUS = ", number.cores, "))", sep="")
-				} else 	parallel.config <- paste("list(BACKEND = 'PARALLEL', WORKERS = list(SIMEX = ", number.cores, ", TAUS = ", number.cores, "))", sep="")
+					parallel.config <- paste("list(BACKEND='FOREACH', TYPE='doParallel', WORKERS=list(SIMEX=", number.cores, ", TAUS=", number.cores, "))", sep="")
+				} else 	parallel.config <- paste("list(BACKEND='PARALLEL', WORKERS=list(SIMEX=", number.cores, ", TAUS=", number.cores, "))", sep="")
 			}
 			
 			expression.to.evaluate <- 
@@ -855,14 +855,14 @@
 			cat(tmp.messages)
 			
 			sgp.config <- list(
-				AMERICAN_LIT.2014_2015 = list(
+				AMERICAN_LIT.2014_2015=list(
 					sgp.content.areas=c('READING', 'GRADE_9_LIT', 'AMERICAN_LIT'),
 					sgp.panel.years=c('2012_2013', '2013_2014', '2014_2015'),
 					sgp.grade.sequences=list(c(8, 'EOCT', 'EOCT')),
 					sgp.calculate.simex=eval(parse(text=simex.parameters)),
 					sgp.calculate.simex.baseline=simex.parameters),
 				
-				ALGEBRA_II.2014_2015 = list(
+				ALGEBRA_II.2014_2015=list(
 					sgp.content.areas=c('MATHEMATICS', 'ALGEBRA_I', 'ALGEBRA_II'),
 					sgp.panel.years=c('2012_2013', '2013_2014', '2014_2015'),
 					sgp.grade.sequences=list(c(8, 'EOCT', 'EOCT')),
@@ -941,7 +941,7 @@
 			options(error=recover)
 			number.cores <- detectCores(logical=FALSE)
 			Demonstration_SGP <- ACHIEVEMENT_LEVEL <- HIGH_NEED_STATUS <- tmp.messages <- NULL
-			if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE = 'doParallel', "
+			if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
 			sgpData_LONG <- SGPdata::sgpData_LONG
 			if (is.null(test.option[['Scale_Transition_Types']])) test.option[['Scale_Transition_Types']] <- c("Vertical", "Vertical")
 			if (is.null(test.option[['Scale_Transition_Adjustments']])) test.option[['Scale_Transition_Adjustments']] <- list(MATHEMATICS=2100, READING=2200)
@@ -962,7 +962,7 @@
 			### Calculate SGPs
 			
 			expression.to.evaluate <- 
-				paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=Demonstration_Data_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP', 'visualizeSGP'),\n\tplot.types=c('studentGrowthPlot', 'growthAchievementPlot'),\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(PERCENTILES = ", number.cores, ", BASELINE_PERCENTILES = ", number.cores, ", PROJECTIONS = ", number.cores, ", LAGGED_PROJECTIONS = ", number.cores, ", SGP_SCALE_SCORE_TARGETS = ", number.cores, ", SUMMARY = ", number.cores, ", GA_PLOTS = ", number.cores, ", SG_PLOTS = 1))\n)\n", sep="")
+				paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=Demonstration_Data_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP', 'visualizeSGP'),\n\tplot.types=c('studentGrowthPlot', 'growthAchievementPlot'),\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
 			
 			cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 			
@@ -1178,7 +1178,7 @@
 			### updateSGP
 			
 			expression.to.evaluate <- 
-				paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=Demonstration_Data_LONG_2014_2015,\n\tsgp.percentiles=TRUE,\n\tsgp.projections=TRUE,\n\tsgp.projections.lagged=TRUE,\n\tsgp.percentiles.baseline=FALSE,\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsave.intermediate.results=FALSE,\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(PERCENTILES = ", number.cores, ", BASELINE_PERCENTILES = ", number.cores, ", PROJECTIONS = ", number.cores, ", LAGGED_PROJECTIONS = ", number.cores, ", SGP_SCALE_SCORE_TARGETS = ", number.cores, ", SUMMARY = ", number.cores, ", GA_PLOTS = ", number.cores, ", SG_PLOTS = 1))\n)\n", sep="")
+				paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=Demonstration_Data_LONG_2014_2015,\n\tsgp.percentiles=TRUE,\n\tsgp.projections=TRUE,\n\tsgp.projections.lagged=TRUE,\n\tsgp.percentiles.baseline=FALSE,\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsave.intermediate.results=FALSE,\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
 			
 			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
 			
@@ -1245,7 +1245,7 @@
 			options(error=recover)
 			options(warn=2)
 			number.cores <- detectCores(logical=FALSE)
-			if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE = 'doParallel', "
+			if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
 			Demonstration_SGP <- tmp.messages <- NULL
 			
 			### Modify SGPstateData
