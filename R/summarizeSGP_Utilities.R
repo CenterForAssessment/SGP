@@ -91,10 +91,6 @@ function(tmp.simulation.dt,
 			dbDisconnect(con)
 		}
 
-#		assign(paste(tmp.state, "SGP_WIDE_Data", sep="_"), ddcast(long_data_tmp, ID ~ YEAR_BY_CONTENT_AREA,
-#                        value.var=setdiff(names(long_data_tmp), c("ID", "YEAR_BY_CONTENT_AREA", "VALID_CASE", "CONTENT_AREA", "YEAR")), sep="."))
-#		tmp.csem <- data.table(ddcast(rbindlist(tmp.list.1)[,list(sd_na(V1), sd_na(V2)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")],
-#			c(unlist(strsplit(sgp.groups.to.summarize, ", "))) ~ BASELINE), key = tmp_key)
 		tmp.csem <- data.table(reshape(rbindlist(tmp.list.1)[,list(sd_na(V1), sd_na(V2)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")],
 			idvar=c(unlist(strsplit(sgp.groups.to.summarize, ", "))), timevar="BASELINE", direction="wide"), key = tmp_key)
 		if (length(grep("BASELINE", names(tmp.csem)))==0) {
