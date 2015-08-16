@@ -184,7 +184,7 @@ function(dat,
 	CI <- c(NA,NA); SE <- NA
 	if (!all(is.na(dat))) {
 		dat.no.na <- dat[!is.na(dat)]
-		out <- data.table(ID=rep(seq_along(dat.no.na)), SCORE=dat.no.na[sample.int(length(dat.no.na), length(dat.no.na)*nboot, replace=TRUE)])[,median(SCORE), by=ID][['V1']]
-		if (!is.null(conf.quantiles)) round(quantile(out, conf.quantiles, na.rm=TRUE), digits=1) else round(sd(out, na.rm=TRUE), digits=1)
+		out <- data.table(ID=rep(seq.int(nboot)), SCORE=dat.no.na[sample.int(length(dat.no.na), length(dat.no.na)*nboot, replace=TRUE)])[,median(SCORE), by=ID][['V1']]
+		if (!is.null(conf.quantiles)) return(round(quantile(out, conf.quantiles, na.rm=TRUE), digits=1)) else return(round(sd(out, na.rm=TRUE), digits=1))
 	}
 } ### END boot.sgp function
