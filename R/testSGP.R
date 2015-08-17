@@ -23,13 +23,22 @@
 			
 			options(error=recover)
 			options(warn=2)
+			number.cores <- detectCores(logical=FALSE)
 			Demonstration_SGP <- tmp.messages <- NULL
+
+			if (is.null(test.option[['parallel.config']])) {
+				if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
+				if (.Platform$OS.type != "unix") {
+					parallel.config <- paste("list(BACKEND='FOREACH', TYPE='doParallel', WORKERS=list(TAUS=", number.cores, "))", sep="")
+				} else  parallel.config <- paste("list(BACKEND='PARALLEL', WORKERS=list(TAUS=", number.cores, "))", sep="")
+			}
+
 			tmp.messages <- "##### Begin testSGP test number 0 #####\n\n"
 			
 			### Part 1
 			
 			expression.to.evaluate <- 
-				paste("Demonstration_SGP <- list(Panel_Data=SGPdata::sgpData)\nmy.grade.sequences <- list(3:4, 3:5, 3:6, 3:7, 4:8)\nfor (i in seq_along(my.grade.sequences)) {\n\tDemonstration_SGP <- studentGrowthPercentiles(\n\t\tpanel.data=Demonstration_SGP,\n\t\tsgp.labels=list(my.year=2015, my.subject='Reading'),\n\t\tgrowth.levels='DEMO',\n\t\tgoodness.of.fit='DEMO',\n\t\tgrade.progression=my.grade.sequences[[i]],\n\t\tprint.sgp.order=TRUE,\n\t\tcalculate.confidence.intervals='DEMO',\n\t\tprint.other.gp=TRUE,\n\t\tverbose.output=TRUE,\n\t\tmax.order.for.percentile=3,\n\t\treturn.norm.group.scale.scores=TRUE,\n\t\treturn.panel.data=TRUE)\n}", sep="")
+				paste("Demonstration_SGP <- list(Panel_Data=SGPdata::sgpData)\nmy.grade.sequences <- list(3:4, 3:5, 3:6, 3:7, 4:8)\nfor (i in seq_along(my.grade.sequences)) {\n\tDemonstration_SGP <- studentGrowthPercentiles(\n\t\tpanel.data=Demonstration_SGP,\n\t\tsgp.labels=list(my.year=2015, my.subject='Reading'),\n\t\tgrowth.levels='DEMO',\n\t\tgoodness.of.fit='DEMO',\n\t\tgrade.progression=my.grade.sequences[[i]],\n\t\tprint.sgp.order=TRUE,\n\t\tcalculate.confidence.intervals='DEMO',\n\t\tprint.other.gp=TRUE,\n\t\tverbose.output=TRUE,\n\t\tmax.order.for.percentile=3,\n\t\treturn.norm.group.scale.scores=TRUE,\n\t\treturn.panel.data=TRUE,\n\t\tparallel.config=", parallel.config,")\n}", sep="")
 			
 			cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 			
@@ -147,7 +156,7 @@
 			Demonstration_SGP <- tmp.messages <- NULL
 			number.cores <- detectCores(logical=FALSE) # adding logical=FALSE seems get physical cores only in Windows (which is good for SNOW/SOCK)
 			
-			if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE = 'doParallel', "
+			if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
 			if (toupper(TEST_NUMBER) == "1B") sgp.sqlite <- TRUE else sgp.sqlite <- FALSE
 			
 			expression.to.evaluate <- 
@@ -647,42 +656,42 @@
 			### Create configurations
 			
 			READING_2014_2015.config <- list(
-				READING.2014_2015 = list(
+				READING.2014_2015=list(
 					sgp.content.areas=c('READING', 'READING', 'READING', 'READING', 'READING'),
 					sgp.panel.years=c('2010_2011', '2011_2012', '2012_2013', '2013_2014', '2014_2015'),
 					sgp.grade.sequences=list(3:4, 3:5, 3:6, 3:7, 4:8))
 			)
 			
 			GRADE_9_LIT_2014_2015.config <- list(
-				GRADE_9_LIT.2014_2015 = list(
+				GRADE_9_LIT.2014_2015=list(
 					sgp.content.areas=c('READING', 'READING', 'READING', 'READING', 'GRADE_9_LIT'),
 					sgp.panel.years=c('2010_2011', '2011_2012', '2012_2013', '2013_2014', '2014_2015'),
 					sgp.grade.sequences=list(c(5:8, 'EOCT')))
 			)
 			
 			AMERICAN_LIT_2014_2015.config <- list(
-				AMERICAN_LIT.2014_2015 = list(
+				AMERICAN_LIT.2014_2015=list(
 					sgp.content.areas=c('READING', 'READING', 'READING', 'GRADE_9_LIT', 'AMERICAN_LIT'),
 					sgp.panel.years=c('2010_2011', '2011_2012', '2012_2013', '2013_2014', '2014_2015'),
 					sgp.grade.sequences=list(c(6:8, 'EOCT', 'EOCT')))
 			)
 			
 			MATHEMATICS_2014_2015.config <- list(
-				MATHEMATICS.2014_2015 = list(
+				MATHEMATICS.2014_2015=list(
 					sgp.content.areas=c('MATHEMATICS', 'MATHEMATICS', 'MATHEMATICS', 'MATHEMATICS', 'MATHEMATICS'),
 					sgp.panel.years=c('2010_2011', '2011_2012', '2012_2013', '2013_2014', '2014_2015'),
 					sgp.grade.sequences=list(3:4, 3:5, 3:6, 3:7, 4:8))
 			)
 			
 			ALGEBRA_I_2014_2015.config <- list(
-				ALGEBRA_I.2014_2015 = list(
+				ALGEBRA_I.2014_2015=list(
 					sgp.content.areas=c('MATHEMATICS', 'MATHEMATICS', 'MATHEMATICS', 'MATHEMATICS', 'ALGEBRA_I'),
 					sgp.panel.years=c('2010_2011', '2011_2012', '2012_2013', '2013_2014', '2014_2015'),
 					sgp.grade.sequences=list(c(5:8, 'EOCT')))
 			)
 			
 			ALGEBRA_II_2014_2015.config <- list(
-				ALGEBRA_II.2014_2015 = list(
+				ALGEBRA_II.2014_2015=list(
 					sgp.content.areas=c('MATHEMATICS', 'MATHEMATICS', 'MATHEMATICS', 'ALGEBRA_I', 'ALGEBRA_II'),
 					sgp.panel.years=c('2010_2011', '2011_2012', '2012_2013', '2013_2014', '2014_2015'),
 					sgp.grade.sequences=list(c(6:8, 'EOCT', 'EOCT')))
@@ -802,10 +811,10 @@
 			Demonstration_SGP <- tmp.messages <- NULL
 			
 			if (is.null(test.option[['parallel.config']])) {
-				if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE = 'doParallel', "
+				if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
 				if (.Platform$OS.type != "unix") {
-					parallel.config <- paste("list(BACKEND='FOREACH', TYPE = 'doParallel', WORKERS = list(SIMEX = ", number.cores, ", TAUS = ", number.cores, "))", sep="")
-				} else 	parallel.config <- paste("list(BACKEND = 'PARALLEL', WORKERS = list(SIMEX = ", number.cores, ", TAUS = ", number.cores, "))", sep="")
+					parallel.config <- paste("list(BACKEND='FOREACH', TYPE='doParallel', WORKERS=list(SIMEX=", number.cores, ", TAUS=", number.cores, "))", sep="")
+				} else 	parallel.config <- paste("list(BACKEND='PARALLEL', WORKERS=list(SIMEX=", number.cores, ", TAUS=", number.cores, "))", sep="")
 			}
 			
 			expression.to.evaluate <- 
@@ -846,14 +855,14 @@
 			cat(tmp.messages)
 			
 			sgp.config <- list(
-				AMERICAN_LIT.2014_2015 = list(
+				AMERICAN_LIT.2014_2015=list(
 					sgp.content.areas=c('READING', 'GRADE_9_LIT', 'AMERICAN_LIT'),
 					sgp.panel.years=c('2012_2013', '2013_2014', '2014_2015'),
 					sgp.grade.sequences=list(c(8, 'EOCT', 'EOCT')),
 					sgp.calculate.simex=eval(parse(text=simex.parameters)),
 					sgp.calculate.simex.baseline=simex.parameters),
 				
-				ALGEBRA_II.2014_2015 = list(
+				ALGEBRA_II.2014_2015=list(
 					sgp.content.areas=c('MATHEMATICS', 'ALGEBRA_I', 'ALGEBRA_II'),
 					sgp.panel.years=c('2012_2013', '2013_2014', '2014_2015'),
 					sgp.grade.sequences=list(c(8, 'EOCT', 'EOCT')),
@@ -932,7 +941,7 @@
 			options(error=recover)
 			number.cores <- detectCores(logical=FALSE)
 			Demonstration_SGP <- ACHIEVEMENT_LEVEL <- HIGH_NEED_STATUS <- tmp.messages <- NULL
-			if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE = 'doParallel', "
+			if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
 			sgpData_LONG <- SGPdata::sgpData_LONG
 			if (is.null(test.option[['Scale_Transition_Types']])) test.option[['Scale_Transition_Types']] <- c("Vertical", "Vertical")
 			if (is.null(test.option[['Scale_Transition_Adjustments']])) test.option[['Scale_Transition_Adjustments']] <- list(MATHEMATICS=2100, READING=2200)
@@ -1236,7 +1245,7 @@
 			options(error=recover)
 			options(warn=2)
 			number.cores <- detectCores(logical=FALSE)
-			if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE = 'doParallel', "
+			if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
 			Demonstration_SGP <- tmp.messages <- NULL
 			
 			### Modify SGPstateData

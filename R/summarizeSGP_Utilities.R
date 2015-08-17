@@ -90,6 +90,7 @@ function(tmp.simulation.dt,
 			}
 			dbDisconnect(con)
 		}
+
 		tmp.csem <- data.table(reshape(rbindlist(tmp.list.1)[,list(sd_na(V1), sd_na(V2)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")],
 			idvar=c(unlist(strsplit(sgp.groups.to.summarize, ", "))), timevar="BASELINE", direction="wide"), key = tmp_key)
 		if (length(grep("BASELINE", names(tmp.csem)))==0) {
@@ -183,12 +184,8 @@ function(dat,
 	CI <- c(NA,NA); SE <- NA
 	if (!all(is.na(dat))) {
 		dat.no.na <- dat[!is.na(dat)]
-		out <- data.table(ID=rep(seq_along(dat.no.na)), SCORE=dat.no.na[sample.int(length(dat.no.na), length(dat.no.na)*nboot, replace=TRUE)])[,median(SCORE), by=ID][['V1']]
-		if (!is.null(conf.quantiles)) {
-			CI <- round(quantile(out, conf.quantiles, na.rm=TRUE), digits=1)
-		} else {
-			SE <- round(sd(out, na.rm=TRUE), digits=1)
-		}
+		out <- data.table(ID=rep(seq.int(nboot)), SCORE=dat.no.na[sample.int(length(dat.no.na), length(dat.no.na)*nboot, replace=TRUE)])[,median(SCORE), by=ID][['V1']]
+		if (!is.null(conf.quantiles)) CI <- round(quantile(out, conf.quantiles), digits=1) else SE <- round(sd(out), digits=1)
 	}
 	if (!is.null(conf.quantiles)) return(CI) else return(SE)
 } ### END boot.sgp function

@@ -63,7 +63,6 @@ function(panel.data,         ## REQUIRED
 			bnd <- eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['loss.hoss_", tmp.last, "']]", sep="")))
 			x[x > bnd[2]] <- bnd[2]
 		}
-#		x[which(is.na(x))] <- approx(x, xout=which(is.na(x)))$y
 		if (iso) return(sort(x))
 		else return(x)
 	}
