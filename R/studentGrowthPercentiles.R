@@ -1539,7 +1539,7 @@ function(panel.data,         ## REQUIRED
 				sgps.for.gof.path <- tmp.path
 			}
 			if (is.character(goodness.of.fit) & goodness.of.fit %in% objects(SGP::SGPstateData) &&
-				!is.null(SGP::SGPstateData[[goodness.of.fit]][['Achievement']][['Cutscores']][[get.prior.cutscore.path(rev(content_area.progression)[2], yearIncrement(rev(year.progression)[i+1], 1, year_lags.progression[1]))]][[paste("GRADE_", rev(tmp.gp)[2], sep="")]])) {
+				!is.null(SGP::SGPstateData[[goodness.of.fit]][['Achievement']][['Cutscores']][[get.prior.cutscore.path(rev(content_area.progression)[2], yearIncrement(rev(year.progression)[2], 1, year_lags.progression[1]))]][[paste("GRADE_", rev(tmp.gp)[2], sep="")]])) {
 				GRADE <- YEAR <- CONTENT_AREA <- NULL
 				tmp.gof.data <- getAchievementLevel(
 							sgp_data=data.table(
