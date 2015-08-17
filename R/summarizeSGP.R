@@ -370,7 +370,7 @@
 		## if NULL parallel.config
 		if (is.null(parallel.config)) {
 			for (s in seq_along(summary.iter)) {
-				tmp.summary[[s]] <- sgpSummary(summary.iter[[s]][1], eval(parse(text= summary.iter[[s]][2])), 
+				tmp.summary[[s]] <- sgpSummary(summary.iter[[s]][1], eval(parse(text=summary.iter[[s]][2])), 
 					tmp.simulation.dt, state, sgp.summaries, confidence.interval.groups, my.sgp, sgp_key, variables.for.summaries, sim.info)
 			}
 			parallel.config <- list(BACKEND="NONE"); par.start <- list(par.type="NONE")
