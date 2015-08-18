@@ -67,6 +67,18 @@ function(panel.data,         ## REQUIRED
 		if (iso) return(sort(x, method="quick")) else return(x)
 	}
 
+	.smooth.bound.iso.row <- function(tmp.dt, iso=isotonize, sgp.loss.hoss.adjustment) {
+		X <- NULL
+		if (!is.null(sgp.loss.hoss.adjustment)) {
+			my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
+			bnd <- eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['loss.hoss_", tmp.last, "']]", sep="")))
+			tmp.dt[X < bnd[1], X:=bnd[1]]
+			tmp.dt[X > bnd[2], X:=bnd[2]]
+		}
+		if (iso) setkey(tmp.dt, ID, X)
+		return(tmp.dt[['X']])
+	}
+
 	.create.path <- function(labels, pieces=c("my.subject", "my.year", "my.extra.label")) {
 		sub(' ', '_', toupper(sub('\\.+$', '', paste(unlist(sapply(labels[pieces], as.character)), collapse="."))))
 	}
@@ -265,8 +277,8 @@ function(panel.data,         ## REQUIRED
 			mod <- paste(mod, ", my.data[['TIME']], my.data[['TIME_LAG']]", sep="")
 		}
 		tmp <- eval(parse(text=paste("cbind(1L, ", substring(mod, 2), ") %*% my.matrix", sep="")))
-		return(round(matrix(data.table(ID=rep(seq.int(dim(tmp)[1]), each=length(taus)), SCORE=as.vector(t(tmp)))[,
-			.smooth.isotonize.row(SCORE, isotonize, sgp.loss.hoss.adjustment), by=ID][['V1']], ncol=length(taus), byrow=TRUE), digits=5))
+		return(round(matrix(.smooth.bound.iso.row(data.table(ID=rep(seq.int(dim(tmp)[1]), each=length(taus)), X=as.vector(t(tmp))), isotonize, sgp.loss.hoss.adjustment), 
+			ncol=length(taus), byrow=TRUE), digits=5))
 	}
 
 	.get.quantiles <- function(data1, data2) {
