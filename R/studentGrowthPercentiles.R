@@ -81,7 +81,7 @@ function(panel.data,         ## REQUIRED
 		}
 
 		if (by.grade) {
-			tmp.grades <- as.vector(sapply(data[,2:(2+num.panels-2), with=FALSE], as.character))
+			tmp.grades <- unlist(lapply(data[,2:(2+num.panels-2), with=FALSE], as.character), use.names=FALSE)
 		} else {
 			tmp.grades <- rep(head(tmp.gp, -1), each=dim(data)[1])
 		}
@@ -90,8 +90,8 @@ function(panel.data,         ## REQUIRED
 			VALID_CASE="VALID_CASE",
 			CONTENT_AREA=rep(head(content_area.progression, -1), each=dim(data)[1]),
 			GRADE=tmp.grades, 
-			SCALE_SCORE=as.vector(sapply(data[,(2+num.panels):(2+2*num.panels-2), with=FALSE], as.numeric)),
-			YEAR=tmp.years, key=c("VALID_CASE", "CONTENT_AREA", "YEAR")) 
+			SCALE_SCORE=unlist(lapply(data[,(2+num.panels):(2+2*num.panels-2), with=FALSE], as.numeric), use.names=FALSE),
+			YEAR=tmp.years, key=c("VALID_CASE", "CONTENT_AREA", "GRADE")) 
 
 		createKnotsBoundaries(tmp.stack, knot.cut.percentiles)
 	}
@@ -238,8 +238,8 @@ function(panel.data,         ## REQUIRED
 			mod <- paste(mod, ", my.data[['TIME']], my.data[['TIME_LAG']]", sep="")
 		}
 		tmp <- eval(parse(text=paste("cbind(1L, ", substring(mod, 2), ") %*% my.matrix", sep="")))
-		return(round(matrix(data.table(ID=rep(seq.int(dim(tmp)[1]), each=length(taus)), SCORE=as.vector(t(tmp)))[,.smooth.isotonize.row(SCORE, isotonize, sgp.loss.hoss.adjustment), by=ID][['V1']], 
-				ncol=length(taus), byrow=TRUE), digits=5))
+		return(round(matrix(data.table(ID=rep(seq.int(dim(tmp)[1]), each=length(taus)), SCORE=as.vector(t(tmp)))[,
+			.smooth.isotonize.row(SCORE, isotonize, sgp.loss.hoss.adjustment), by=ID][['V1']], ncol=length(taus), byrow=TRUE), digits=5))
 	}
 
 	.get.quantiles <- function(data1, data2) {
