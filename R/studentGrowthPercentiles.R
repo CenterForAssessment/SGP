@@ -61,10 +61,10 @@ function(panel.data,         ## REQUIRED
 		if (!is.null(sgp.loss.hoss.adjustment)) {
 			my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
 			bnd <- eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['loss.hoss_", tmp.last, "']]", sep="")))
+			x[x < bnd[1]] <- bnd[1]
 			x[x > bnd[2]] <- bnd[2]
 		}
-		if (iso) return(sort(x))
-		else return(x)
+		if (iso) return(sort(x, method="quick")) else return(x)
 	}
 
 	.create.path <- function(labels, pieces=c("my.subject", "my.year", "my.extra.label")) {
