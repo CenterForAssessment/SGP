@@ -57,16 +57,6 @@ function(panel.data,         ## REQUIRED
 	###
 	##########################################################
 
-#	.smooth.isotonize.row <- function(x, iso=isotonize, sgp.loss.hoss.adjustment) {
-#		if (!is.null(sgp.loss.hoss.adjustment)) {
-#			my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
-#			bnd <- eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['loss.hoss_", tmp.last, "']]", sep="")))
-#			x[x < bnd[1]] <- bnd[1]
-#			x[x > bnd[2]] <- bnd[2]
-#		}
-#		if (iso) return(sort(x, method="quick")) else return(x)
-#	}
-
 	.smooth.bound.iso.row <- function(tmp.dt, iso=isotonize, sgp.loss.hoss.adjustment) {
 		X <- NULL
 		if (!is.null(sgp.loss.hoss.adjustment)) {
@@ -650,7 +640,6 @@ function(panel.data,         ## REQUIRED
 							mtx.subset <- simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] # Save on memory copying to R SNOW workers
 							environment(.get.percentile.predictions) <- environment()
 							environment(.smooth.bound.iso.row) <- environment()
-#							environment(.smooth.isotonize.row) <- environment()
 							fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- 
 								foreach(z=iter(sim.iters), .combine="+", .export=c('tmp.gp', 'taus', 'sgp.loss.hoss.adjustment', 'isotonize', 'SGPt'),
 									.options.multicore=par.start$foreach.options) %dopar% { # .options.snow=par.start$foreach.options
@@ -667,10 +656,6 @@ function(panel.data,         ## REQUIRED
 
 								fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- Reduce('+', tmp.fitted)
 								
-#								fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- tmp.fitted[[1]]
-#								for (s in seq_along(sim.iters[-1])) {
-#									fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + tmp.fitted[[s]]
-#								}
 							}
 							if (par.start$par.type == 'SNOW') {
 								tmp.fitted <- parLapply(par.start$internal.cl, seq_along(sim.iters), function(z) { 
@@ -681,10 +666,6 @@ function(panel.data,         ## REQUIRED
 								
 								fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- Reduce('+', tmp.fitted)
 								
-#								fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- tmp.fitted[[1]]
-#								for (s in seq_along(sim.iters[-1])) {
-#									fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] + tmp.fitted[[s]]
-#								}
 							}
 						}
 					}
@@ -701,8 +682,6 @@ function(panel.data,         ## REQUIRED
 				extrap[[paste("order_", k, sep="")]] <- 
 					matrix(.smooth.bound.iso.row(data.table(ID=seq.int(dim(tmp.data)[1]), X=predict(fit, newdata=data.frame(lambda=-1))[1,]), isotonize, sgp.loss.hoss.adjustment),
 						ncol=length(taus), byrow=TRUE)
-#				extrap[[paste("order_", k, sep="")]] <- 
-#					t(apply(matrix(predict(fit, newdata=data.frame(lambda=-1)), nrow=dim(tmp.data)[1]), 1, .smooth.isotonize.row, isotonize, sgp.loss.hoss.adjustment))
 				tmp.quantiles.simex[[k]] <- data.table(ID=tmp.data[["ID"]], SIMEX_ORDER=k, 
 					SGP_SIMEX=.get.quantiles(extrap[[paste("order_", k, sep="")]], tmp.data[[tmp.num.variables]]))
 			}
