@@ -665,7 +665,7 @@ function(panel.data,         ## REQUIRED
 										simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]])/B)
 								}, mc.cores=par.start$workers)
 
-								fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- do.call(sum, tmp.fitted)
+								fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- Reduce('+', tmp.fitted)
 								
 #								fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- tmp.fitted[[1]]
 #								for (s in seq_along(sim.iters[-1])) {
@@ -679,7 +679,7 @@ function(panel.data,         ## REQUIRED
 										simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]])/B)
 								})
 								
-								fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- do.call(sum, tmp.fitted)
+								fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- Reduce('+', tmp.fitted)
 								
 #								fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- tmp.fitted[[1]]
 #								for (s in seq_along(sim.iters[-1])) {
