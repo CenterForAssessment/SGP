@@ -131,6 +131,7 @@ function(x,
 	}
 }
 
+
 `mean_na` <- 
 function(x,
 	weight,
@@ -147,9 +148,12 @@ function(x,
 
 `sd_na` <- function(x, result.digits=2) round(sd(as.numeric(x), na.rm=TRUE), digits=result.digits)
 
+
 `num_non_missing` <- function(x) length(x[!is.na(x)])
 
+
 `sgp_standard_error` <- function(x,y=1) round(y*sd(x, na.rm=TRUE)/sqrt(sum(!is.na(as.numeric(x)))), digits=2)
+
 
 `percent_in_category` <- 
 function(x,
