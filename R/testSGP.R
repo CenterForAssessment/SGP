@@ -1231,7 +1231,6 @@
 			}
 			
 			tmp.messages <- c(tmp.messages, "\t##### End testSGP test number 5: Part 2 #####\n")
-			
 			tmp.messages <- c(tmp.messages, "\n##### End testSGP test number 5 #####\n")
 			cat(tmp.messages)
 			
@@ -1269,7 +1268,8 @@
 			if (memory.profile) {
 				Rprof("testSGP(6)_Memory_Profile.out", memory.profiling=TRUE)
 			}
-			
+
+			started.at.overall <- proc.time()
 			eval(parse(text=expression.to.evaluate))
 			
 			### TEST of SGP_BASELINE variable
@@ -1281,7 +1281,8 @@
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of SGP_BASELINE: FAIL\n")
 			}
-			tmp.messages <- c(tmp.messages, "\n\t##### End testSGP test number 6 #####\n")
+
+			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 6: ", convertTime(timetaken(started.at.overall)), "#####\n"))
 			cat(tmp.messages)
 		} ### End TEST_NUMBER 6
 	} ### END testSGP Function
