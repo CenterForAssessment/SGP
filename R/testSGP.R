@@ -305,7 +305,8 @@
 			if (memory.profile) {
 				Rprof("testSGP(2a)_Memory_Profile_Part_1.out", memory.profiling=TRUE)
 			}
-			
+
+			started.at.overall <- proc.time()
 			eval(parse(text=expression.to.evaluate))
 			
 			### TEST of SGP variable
@@ -358,9 +359,9 @@
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable MOVE_UP_STAY_UP_STATUS, part 1: FAIL\n")
 			}
 			
-			tmp.messages <- c(tmp.messages, "\t##### End testSGP test number 2a: Part 1 #####\n")
-			
-			
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 2a: Part 1: ", convertTime(timetaken(started.at.overall)), " #####\n", sep=""))
+
+
 			### Part 2
 			
 			expression.to.evaluate <- 
@@ -371,7 +372,8 @@
 			if (memory.profile) {
 				Rprof("testSGP(2a)_Memory_Profile_Part_2.out", memory.profiling=TRUE)
 			}
-			
+
+			started.at.intermediate <- proc.time()
 			eval(parse(text=expression.to.evaluate))
 			
 			### TEST of variable values
@@ -426,9 +428,8 @@
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable MOVE_UP_STAY_UP_STATUS, part 2: FAIL\n")
 			}
 			
-			tmp.messages <- c(tmp.messages, "\t##### End testSGP test number 2a: Part 2 #####\n")
-			
-			tmp.messages <- c(tmp.messages, "\n##### End testSGP test number 2a #####\n")
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 2a, Part 2: ", convertTime(timetaken(started.at.intermediate)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 2a: ", convertTime(timetaken(started.at.overall)), "#####\n"))
 			cat(tmp.messages)
 			
 		} ### End TEST_NUMBER 2a
@@ -461,11 +462,11 @@
 				if (memory.profile) {
 					Rprof("testSGP(2)_Memory_Profile_Part_1.out", memory.profiling=TRUE)
 				}
-				
+
+				started.at.overall <- proc.time()
 				eval(parse(text=expression.to.evaluate))
 				
-				tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number ", capwords(i), ": Part 1 #####\n", sep=""))
-				
+				tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number ", capwords(i), ": Part 1: ", convertTime(timetaken(started.at.overall)), " #####\n", sep=""))				
 				
 				#############################################################
 				### Part 2 
@@ -481,7 +482,8 @@
 						paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=Demonstration_Data_LONG_2014_2015,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\toverwrite.existing.data=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgPlot.demo.report=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
 					
 					cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
-					
+
+					started.at.intermediate <- proc.time()
 					eval(parse(text=expression.to.evaluate))
 				} ### End TEST 2b
 				
@@ -493,7 +495,8 @@
 						paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=Demonstration_Data_LONG_2014_2015,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\toverwrite.existing.data=TRUE,\n\tsgp.use.my.coefficient.matrices=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgPlot.demo.report=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
 					
 					cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
-					
+
+					started.at.intermediate <- proc.time()
 					eval(parse(text=expression.to.evaluate))
 				} ### End TEST 2c
 				
@@ -517,12 +520,13 @@
 					Demonstration_SGP@SGP$SGProjections$READING.2014_2015.BASELINE <- subset(Demonstration_SGP@SGP$SGProjections$READING.2014_2015.BASELINE, !ID %in% tmp.group.1)
 					Demonstration_SGP@SGP$SGProjections$READING.2014_2015.LAGGED <- subset(Demonstration_SGP@SGP$SGProjections$READING.2014_2015.LAGGED, !ID %in% tmp.group.1)
 					Demonstration_SGP@SGP$SGProjections$READING.2014_2015.LAGGED.BASELINE <- subset(Demonstration_SGP@SGP$SGProjections$READING.2014_2015.LAGGED.BASELINE, !ID %in% tmp.group.1)
-					
+
 					expression.to.evaluate <- 
 						paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=with_sgp_data_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\tsgp.use.my.coefficient.matrices=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgPlot.demo.report=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
 					
 					cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
-					
+
+					started.at.intermediate <- proc.time()
 					eval(parse(text=expression.to.evaluate))
 				} ### End TEST 2d
 				
@@ -576,8 +580,8 @@
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable MOVE_UP_STAY_UP_STATUS, part 2: FAIL\n")
 				}
 				
-				tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number ", capwords(i), ": Part 2 #####\n", sep=""))
-				tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number", capwords(i), "#####\n"))
+				tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number ", capwords(i), ", Part 2: ", convertTime(timetaken(started.at.intermediate)), " #####\n", sep=""))
+				tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number ", capwords(i), ": ", convertTime(timetaken(started.at.overall)), " #####\n", sep=""))
 				cat(tmp.messages)
 			} ### End for (i in TEST_NUMBER)
 		} ### End TEST_NUMBER 2b, 2c, 2d
