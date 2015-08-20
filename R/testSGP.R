@@ -715,7 +715,8 @@
 			if (memory.profile) {
 				Rprof("testSGP(3)_Memory_Profile.out", memory.profiling=TRUE)
 			}
-			
+
+			started.at.overall <- proc.time()
 			eval(parse(text=expression.to.evaluate))
 			
 			if (memory.profile) {
@@ -763,8 +764,8 @@
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable MOVE_UP_STAY_UP_STATUS: FAIL\n")
 			}
-			
-			tmp.messages <- c(tmp.messages, "\n##### End testSGP test number 3 #####\n")
+
+			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 3: ", convertTime(timetaken(started.at.overall)), "#####\n"))
 			cat(tmp.messages)
 		} ### End TEST_NUMBER 3
 		
