@@ -55,7 +55,6 @@ function(sgp_object,
 				} else {
 					num.years.to.get.label <- max.sgp.target.years.forward
 				}
-				num.years.to.get.label <- SGP::SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]]
 			} else {
 				num.years.to.get <- min(max.sgp.target.years.forward, num.years.available)
 				num.years.to.get.label <- max.sgp.target.years.forward
