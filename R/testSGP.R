@@ -1207,7 +1207,7 @@
 			
 			### TEST of SGP variable
 			
-			if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 8565260L)) {
+			if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 5668654L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 2: FAIL\n")
@@ -1215,7 +1215,7 @@
 			
 			### TEST of SGP variable from equated analyses
 			
-			if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][['READING.2014_2015.EQUATED']][['SGP']], na.rm=TRUE), 1439290L)) {
+			if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][['READING.2013_2014.EQUATED']][['SGP']], na.rm=TRUE), 1418003L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP from equated analysis, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP from equated analysis, part 2: FAIL\n")
@@ -1223,7 +1223,7 @@
 			
 			### TEST of SCALE_SCORE_EQUATED variable
 			
-			if (identical(as.integer(sum(Demonstration_SGP@Data$SCALE_SCORE_EQUATED, na.rm=TRUE)), 1003847837L)) {
+			if (identical(as.integer(sum(Demonstration_SGP@Data$SCALE_SCORE_EQUATED, na.rm=TRUE)), 796049037L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_EQUATED, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_EQUATED, part 2: FAIL\n")
@@ -1231,7 +1231,7 @@
 			
 			### TEST of SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1 variable
 			
-			if (identical(as.integer(sum(Demonstration_SGP@SGP$SGProjections[["READING.2014_2015.LAGGED.TARGET_SCALE_SCORES"]][['SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1']])), 82971055L)) {
+			if (identical(as.integer(sum(Demonstration_SGP@SGP$SGProjections[["READING.2013_2014.LAGGED.TARGET_SCALE_SCORES"]][['SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1']])), 82327526L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1, part 2: FAIL\n")
