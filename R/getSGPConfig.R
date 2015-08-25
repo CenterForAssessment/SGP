@@ -41,6 +41,15 @@ function(sgp_object,
 	if (is.null(calculate.simex)) calculate.simex <- FALSE
 	if (is.null(calculate.simex.baseline)) calculate.simex.baseline <- FALSE
 
+	if (!is.null(year.for.equate)) {
+		sgp.percentiles.equated <- TRUE
+		grades.for.equate <- intersect(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][['Grades_Tested']],
+			SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[paste('Grades_Tested', year.for.equate, sep=".")]])
+	} else {
+		sgp.percentiles.equated <- FALSE
+	}
+
+
 	### get.config function
 
 	get.config <- function(content_area, year, grades) {
@@ -483,10 +492,17 @@ function(sgp_object,
 	if (sgp.percentiles) {
 		sgp.config.list[['sgp.percentiles']] <- par.sgp.config
 		for (i in 1:length(sgp.config.list[['sgp.percentiles']])) sgp.config.list[['sgp.percentiles']][[i]][['sgp.baseline.matrices']] <- NULL
-		if (!is.null(year.for.equate)) {
-			sgp.config.list[['sgp.percentiles.equated']] <- sgp.config.list[["sgp.percentiles"]][sapply(sgp.config.list[['sgp.percentiles']], function(x) tail(x[['sgp.panel.years']], 1))==year.for.equate]
-		}
 		sgp.config.list[['sgp.percentiles']] <- par.sgp.config[which(sapply(par.sgp.config, function(x) !identical(x[['sgp.grade.sequences']], "NO_PERCENTILES")))]
+	}
+
+	if (sgp.percentiles.equated) {
+			sgp.config.list[['sgp.percentiles.equated']] <- 
+				sgp.config.list[["sgp.percentiles"]][sapply(sgp.config.list[['sgp.percentiles']], function(x) tail(x[['sgp.panel.years']], 1))==year.for.equate]
+			if (!is.null(grades.for.equate)) {
+				sgp.config.list[['sgp.percentiles.equated']] <- 
+					sgp.config.list[['sgp.percentiles.equated']][which(sapply(sgp.config.list[['sgp.percentiles.equated']], 
+												function(x) tail(x[['sgp.grade.sequences']], 1) %in% grades.for.equate))]
+			}
 	}
 
 
@@ -504,6 +520,7 @@ function(sgp_object,
 			}
 			tmp.config <- c(tmp.config, tmp.expand.config)
 		}
+		if (!is.null(grades.for.equate)) tmp.config <- tmp.config[which(sapply(tmp.config, function(x) tail(x[['sgp.grade.sequences']], 1) %in% grades.for.equate))]
 		if (sgp.projections) {
 			sgp.config.list[['sgp.projections']] <- tmp.config
 			for (i in 1:length(sgp.config.list[['sgp.projections']])) {

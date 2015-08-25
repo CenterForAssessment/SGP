@@ -116,51 +116,48 @@ function(panel.data,         ## REQUIRED
 		if (is.null(sgp.percentiles.equated)) {
 			tmp.knots.boundaries.names <- 
 				names(Knots_Boundaries[[tmp.path.knots.boundaries]])[content_area==sapply(strsplit(names(Knots_Boundaries[[tmp.path.knots.boundaries]]), "[.]"), '[', 1)]
+			tmp.knots.boundaries.years <- sapply(strsplit(tmp.knots.boundaries.names, "[.]"), function(x) x[2])
 			if (length(tmp.knots.boundaries.names)==0) {
 				return(paste("[['", tmp.path.knots.boundaries, "']]", sep=""))
 			} else {
-				tmp.knots.boundaries.years <- sapply(strsplit(tmp.knots.boundaries.names, "[.]"), function(x) x[2])
-				if (any(!is.na(tmp.knots.boundaries.years))) {
-					if (year %in% tmp.knots.boundaries.years) {
-						return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, ".", year, "']]", sep=""))
-					} else {
-						if (year==sort(c(year, tmp.knots.boundaries.years))[1]) {
-							return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, "']]", sep=""))
-						} else {
-							return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, ".", rev(sort(tmp.knots.boundaries.years))[1], "']]", sep=""))
-						}
-					}
-				} else {
-					return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, "']]", sep=""))
-				}
+				tmp.sum <- sum(year >= sort(tmp.knots.boundaries.years), na.rm=TRUE)
+				return(paste("[['", tmp.path.knots.boundaries, "']][['", paste(c(content_area, sort(tmp.knots.boundaries.years)[tmp.sum]), collapse="."), "']]", sep=""))
 			}
 		} else {
 			return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, ".", sgp.percentiles.equated[['Year']], "']]", sep=""))
 		}
 	}
 
+#			if (length(tmp.knots.boundaries.names)==0) {
+#				return(paste("[['", tmp.path.knots.boundaries, "']]", sep=""))
+#			} else {
+#				tmp.knots.boundaries.years <- sapply(strsplit(tmp.knots.boundaries.names, "[.]"), function(x) x[2])
+#				if (any(!is.na(tmp.knots.boundaries.years))) {
+#					if (year %in% tmp.knots.boundaries.years) {
+#						return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, ".", year, "']]", sep=""))
+#					} else {
+#						if (year==sort(c(year, tmp.knots.boundaries.years))[1]) {
+#							return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, "']]", sep=""))
+#						} else {
+#							return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, ".", rev(sort(tmp.knots.boundaries.years))[1], "']]", sep=""))
+#						}
+#					}
+#				} else {
+#					return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, "']]", sep=""))
+#				}
+#			}
+#		} else {
+#			return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, ".", sgp.percentiles.equated[['Year']], "']]", sep=""))
+#		}
+#	}
+
 	get.prior.cutscore.path <- function(content_area, year) {
 		if (is.null(sgp.percentiles.equated)) {
 			tmp.cutscores <- grep(content_area, names(SGP::SGPstateData[[goodness.of.fit]][['Achievement']][['Cutscores']]), value=TRUE)
 			tmp.cutscores.names <- tmp.cutscores[content_area==sapply(strsplit(tmp.cutscores, "[.]"), '[', 1)]
-			if (length(tmp.cutscores.names)==1) {
-				return(tmp.cutscores.names)
-			} else {
-				tmp.cutscores.years <- sapply(strsplit(tmp.cutscores.names, "[.]"), function(x) x[2])
-				if (any(!is.na(tmp.cutscores.years))) {
-					if (year %in% tmp.cutscores.years) {
-						return(paste(content_area, year, sep="."))
-					} else {
-						if (year==sort(c(year, tmp.cutscores.years))[1]) {
-							return(content_area)
-						} else {
-							return(paste(content_area, rev(sort(tmp.cutscores.years))[1], sep="."))
-						}
-					}
-				} else {
-					return(content_area)
-				}
-			}
+			tmp.cutscores.years <- sapply(strsplit(tmp.cutscores.names, "[.]"), function(x) x[2])
+			tmp.sum <- sum(year >= sort(tmp.cutscores.years), na.rm=TRUE)
+			return(paste(c(content_area, sort(tmp.cutscores.years)[tmp.sum]), collapse="."))
 		} else {
 			return(paste(content_area, sgp.percentiles.equated[['Year']], sep="."))
 		}

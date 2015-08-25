@@ -1154,6 +1154,8 @@
 						"Level 5"="Level 5"),
 					Content_Areas_Labels=list(MATHEMATICS="Math", READING="Reading"),
 					Content_Areas_Labels.2013_2014=list(MATHEMATICS="Math", READING="Reading"),
+					Grades_Tested=c(3,4,5,6,7,8,9,10),
+					Grades_Tested.2014=c(3,4,5,6,7,8,9,10),
 					Year="2013_2014"
 				)
 			

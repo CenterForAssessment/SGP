@@ -9,6 +9,9 @@ function(tmp.data,
 	tmp.list <- list()
 	current.year <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]
 	prior.year <- tail(head(sort(unique(tmp.data$YEAR)), -1), 1)
+	grades.for.equate <- as.character(intersect(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][['Grades_Tested']],
+                        SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[paste('Grades_Tested', current.year, sep=".")]]))
+
 
 	current.year.data <- tmp.data[VALID_CASE=="VALID_CASE" & YEAR==current.year]
 	prior.year.data <- tmp.data[VALID_CASE=="VALID_CASE" & YEAR==prior.year]
@@ -51,7 +54,7 @@ function(tmp.data,
 	### Loop over GRADE and CONTENT_AREA
 
 	for (content_area.iter in unique(current.year.data$CONTENT_AREA)) {
-		for (grade.iter in unique(current.year.data$GRADE)) {
+		for (grade.iter in grades.for.equate) {
 			tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]] <- 
 				equateSGP_INTERNAL(prior.year.data[list(content_area.iter, grade.iter)], current.year.data[list(content_area.iter, grade.iter)])
 
