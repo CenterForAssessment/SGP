@@ -520,7 +520,7 @@ function(sgp_object,
 			}
 			tmp.config <- c(tmp.config, tmp.expand.config)
 		}
-		if (!is.null(years.for.equate)) tmp.config <- tmp.config[which(sapply(tmp.config, function(x) tail(x[['sgp.grade.sequences']], 1) %in% grades.for.equate))]
+		if (!is.null(year.for.equate)) tmp.config <- tmp.config[which(sapply(tmp.config, function(x) tail(x[['sgp.grade.sequences']], 1) %in% grades.for.equate))]
 		if (sgp.projections) {
 			sgp.config.list[['sgp.projections']] <- tmp.config
 			for (i in 1:length(sgp.config.list[['sgp.projections']])) {
