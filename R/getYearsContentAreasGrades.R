@@ -8,11 +8,14 @@ function(state,
 
 	tmp.list <- list()
 	if (is.null(content_areas)) tmp.content_areas <- content_areas_domains else tmp.content_areas <- content_areas
-	for (i in intersect(names(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]]), tmp.content_areas)) {
+	year.for.transition <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]
+
+
+	for (i in intersect(names(SGP::SGPstateData[[state]][["Student_Report_Information"]][[paste(c("Grades_Reported", year.for.transition), collapse=".")]]), tmp.content_areas)) {
 		if (!is.null(content_areas_domains) && !is.null(SGP::SGPstateData[[state]][["Student_Report_Information"]][['Content_Areas_Domains']])) {
 			tmp.df <- data.frame(GRADE=as.character(unique(unlist(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][grep(i, SGP::SGPstateData[[state]][["Student_Report_Information"]][['Content_Areas_Domains']])]))), stringsAsFactors=FALSE)
 		} else {
-			tmp.df <- data.frame(GRADE=as.character(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[i]]), stringsAsFactors=FALSE)
+			tmp.df <- data.frame(GRADE=as.character(SGP::SGPstateData[[state]][["Student_Report_Information"]][[paste(c("Grades_Reported", year.for.transition), collapse=".")]][[i]]), stringsAsFactors=FALSE)
 		}
 
 		if (!is.null(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[i]])) {
