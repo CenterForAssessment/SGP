@@ -31,6 +31,7 @@ function(what_sgp_object=NULL,
 	parallel.config=NULL,
 	sgp.sqlite=NULL,
 	SGPt=NULL,
+	sgp.percentiles.equated=FALSE,
 	fix.duplicates=NULL,
 	...) {
 
@@ -147,6 +148,7 @@ function(what_sgp_object=NULL,
 					goodness.of.fit.print=goodness.of.fit.print,
 					outputSGP.output.type=outputSGP.output.type,
 					SGPt=SGPt,
+					sgp.percentiles.equated=sgp.percentiles.equated,
 					parallel.config=parallel.config,
 					...
 					)
@@ -213,6 +215,7 @@ function(what_sgp_object=NULL,
 						goodness.of.fit.print=goodness.of.fit.print,
 						outputSGP.output.type=outputSGP.output.type,
 						SGPt=SGPt,
+						sgp.percentiles.equated=sgp.percentiles.equated,
 						parallel.config=parallel.config,
 						...)
 
@@ -253,10 +256,11 @@ function(what_sgp_object=NULL,
 							calculate.simex.baseline=calculate.simex.baseline,
 							simulate.sgps=simulate.sgps,
 							sgp.config=sgp.config,
-							parallel.config=parallel.config,
 							goodness.of.fit.print=FALSE,
 							sgp.sqlite=sgp.sqlite,
 							SGPt=SGPt,
+							sgp.percentiles.equated=sgp.percentiles.equated,
+							parallel.config=parallel.config,
 							...)
 							
 				if ("combineSGP" %in% steps) {
@@ -385,6 +389,7 @@ function(what_sgp_object=NULL,
 							goodness.of.fit.print=goodness.of.fit.print,
 							outputSGP.output.type=outputSGP.output.type,
 							SGPt=SGPt,
+							sgp.percentiles.equated=sgp.percentiles.equated,
 							parallel.config=parallel.config,
 							...)
 

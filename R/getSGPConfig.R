@@ -49,6 +49,8 @@ function(sgp_object,
 		sgp.percentiles.equated <- FALSE
 	}
 
+	year.for.scale.change <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]]
+
 
 	### get.config function
 
@@ -372,7 +374,15 @@ function(sgp_object,
 
 						if (length(tmp.orders) > 0) {
 							tmp.matrices.tf <- TRUE
-							tmp.max.order <- max(tmp.orders)
+							if (!is.null(year.for.scale.change[[tail(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], 1)]]) & 
+								year.for.scale.change[[tail(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], 1)]] < tail(par.sgp.config[[b.iter[b]]][['sgp.panel.years']], 1)) {
+								tmp.max.order <-
+									min(max(tmp.orders),
+										as.numeric(tail(par.sgp.config[[b.iter[b]]][['sgp.panel.years']], 1))-
+										as.numeric(tail(unlist(strsplit(year.for.scale.change[[tail(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], 1)]], "_")), 1)))
+							} else {
+								tmp.max.order <- max(tmp.orders)
+							}
 							
 							if (par.sgp.config[[b.iter[b]]][['sgp.exact.grade.progression']]) ord.iter <- tmp.max.order else ord.iter <- seq_along(tmp.orders)
 							for (k in ord.iter) {
