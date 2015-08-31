@@ -20,7 +20,7 @@ function(
 	} else {
 		min.max <- range(scale_scores, na.rm=TRUE)
 	}
-	Interpolation_Function <- function(scale_score, variance) return(splinefun(scale_score, variance/round.digits, method="natural"))
+	Interpolation_Function <- function(scale_score, variance) return(splinefun(scale_score, variance, method="natural"))
 
 	### Create scale score dependent CSEMs
 

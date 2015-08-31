@@ -33,7 +33,7 @@ function(sgp_object,
          sgp.projections.projection.unit="YEAR",
          get.cohort.data.info=FALSE,
          sgp.sqlite=NULL,
-         sgp.percentiles.equated=FALSE,
+         sgp.percentiles.equated=NULL,
          SGPt=NULL,
          ...) {
 
@@ -236,14 +236,14 @@ function(sgp_object,
 		}
 	}
 
-	if (!is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]])) {
+	if (!is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]) && !identical(sgp.percentiles.equated, FALSE)) {
 		if (SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]!=tail(sort(unique(sgp_object@Data$YEAR)), 1)) {
 			sgp.percentiles.equated <- FALSE
 		} else {
 			sgp.percentiles.equated <- TRUE
 		}
 	} else {
-		if (sgp.percentiles.equated) {
+		if (identical(sgp.percentiles.equated, TRUE)) {
 			message("\tNOTE: 'sgp.percentiles.equated' has been set to TRUE but no meta-data exists in 'SGPstateData' associated with that transition. Equated/linked SGP analyses require meta-data embedded in 'SGPstateData' to correctly work. Contact package administrators on how such data can be added to the package.")
 			sgp.percentiles.equated <- FALSE
 		}
@@ -359,6 +359,7 @@ function(sgp_object,
 
 	if (sgp.percentiles.equated) {
 		year.for.equate <- tail(sort(unique(sgp_object@Data$YEAR)), 1)
+		content_areas.for.equate <- unique(sgp_object@Data[YEAR==year.for.equate]$CONTENT_AREA)
 		if (!identical(years, year.for.equate)) {
 			message(paste("\tNOTE: Analyses involving equating only occur in most recent year. 'years' argument changed to ", year.for.equate, ".", sep=""))
 			years <- year.for.equate
@@ -368,7 +369,7 @@ function(sgp_object,
 				message("\tNOTE: Analyses involving equating are not possible with baseline analyses. Arguments related to baseline analyses are set to FALSE.")
 				sgp.percentiles.baseline <- sgp.projections.baseline <- sgp.projections.lagged.baseline <- FALSE
 		}
-		if (!all(paste(content_areas, year.for.equate, sep=".") %in% names(SGPstateData[[state]][['Achievement']][['Knots_Boundaries']]))) {
+		if (!all(paste(content_areas.for.equate, year.for.equate, sep=".") %in% names(SGPstateData[[state]][['Achievement']][['Knots_Boundaries']]))) {
 			tmp.knots.boundaries <- createKnotsBoundaries(sgp_object@Data[YEAR==year.for.equate])
 			names(tmp.knots.boundaries) <- paste(names(tmp.knots.boundaries), year.for.equate, sep=".")
 			SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]] <- c(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]], tmp.knots.boundaries)

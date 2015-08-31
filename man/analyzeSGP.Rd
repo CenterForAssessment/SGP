@@ -40,7 +40,7 @@ analyzeSGP(sgp_object,
          sgp.projections.projection.unit="YEAR",
          get.cohort.data.info=FALSE,
          sgp.sqlite=NULL,
-         sgp.percentiles.equated=FALSE,
+         sgp.percentiles.equated=NULL,
          SGPt=NULL,
          ...)
 }
@@ -136,7 +136,7 @@ Example use cases are provided below.
  \item{sgp.sqlite}{A Boolean argument (defaults to NULL) indicating whether a SQLite database file of the essential SGP data should be created from the \code{@Data} slot and subsequently used to extract data subsets for analysis with \code{\link{studentGrowthPercentiles}} and 
   \code{\link{studentGrowthProjections}} functions.  The default, NULL, allows for an test of the size of the \code{@Data} object.  If greater than 1 GB \code{sgp.sqlite} is set to TRUE internally.  When TRUE, this step can take some time but can also substantially reduce the amount of RAM memory required to conduct analyses.  If set to TRUE the \code{tmp_data} directory and file "TMP_SGP_Data.sqlite" will be created.  This tmp_data directory and file are deleted by default although one may keep them if the argument is specified as the character "KEEP".  However, if an existing database of that name exists, it will be deleted and a new version created.
  }
-  \item{sgp.percentiles.equated}{A Boolean argument (defaults to FALSE) indicating whether equating should be used on the most recent year of test data provided. Equating allows for student growth
+  \item{sgp.percentiles.equated}{A Boolean argument (defaults to NULL/FALSE) indicating whether equating should be used on the most recent year of test data provided. Equating allows for student growth
 projections to be calculated in across assessment transitions where the scale for the assessment changes.
   }
   \item{SGPt}{An argument supplied to implement time-dependent SGP analyses (SGPt). Default is NULL giving standard, non-time dependent argument. If set to TRUE, the function assumes the
