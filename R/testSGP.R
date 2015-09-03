@@ -1270,6 +1270,34 @@
 			started.at.intermediate <- proc.time()
 			eval(parse(text=expression.to.evaluate))
 
+			### TEST of variable values
+			
+			tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number 5: Part 3 #####\n")
+			
+			### TEST of SGP variable
+			
+			if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 8565260L)) {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 3: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 3: FAIL\n")
+			}
+
+			### TEST of LEVEL_1_SGP_TARGET_YEAR_1_CURRENT variable
+			
+			if (identical(as.integer(sum(Demonstration_SGP@SGP[['SGProjections']][['READING.2014_2015']][['LEVEL_1_SGP_TARGET_YEAR_1_CURRENT']], na.rm=TRUE)), 987731L)) {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable LEVEL_1_SGP_TARGET_YEAR_1_CURRENT, part 3: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable LEVEL_1_SGP_TARGET_YEAR_1_CURRENT, part 3: FAIL\n")
+			}
+			
+			### TEST of ACHIEVEMENT_LEVEL_PRIOR Variable in MATHEMATICS.2014_2015.LAGGED projections
+			
+			if (identical(as.vector(table(Demonstration_SGP@SGP[['SGProjections']][['MATHEMATICS.2014_2015.LAGGED']][['ACHIEVEMENT_LEVEL_PRIOR']])), c(8178L, 4316L, 5991L, 7552L, 3145L))) {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable ACHIEVEMENT_LEVEL_PRIOR, part 3: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable ACHIEVEMENT_LEVEL_PRIOR, part 3: FAIL\n")
+			}
+			
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 5, Part 3: ", convertTime(timetaken(started.at.intermediate)), "#####\n"))
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 5: ", convertTime(timetaken(started.at.overall)), "#####\n"))
 			cat(tmp.messages)
