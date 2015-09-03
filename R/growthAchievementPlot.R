@@ -99,22 +99,11 @@
 
 	pretty_year <- function(x) sub("_", "-", x)
 
-	myround_up <- function(x) {
-		temp <- x/10^floor(log(x, 10))
-		roundup <- function(y) trunc(y+0.5)
-		if (roundup(temp) <= temp) z <- roundup(temp)+0.5
-		else z <- roundup(temp)
-		return(z*10^floor(log(x,10)))
+	myround <- function(low.and.high) {
+		base <- 5*10^(floor(log(diff(low.and.high), 10))-1)
+		return(c(base*ceiling(low.and.high[1]/base), base*floor(low.and.high[2]/base)))
 	}
-
-	myround_down <- function(x) {
-		temp <- x/10^floor(log(x, 10))
-		roundup <- function(y) trunc(y+0.5)
-		if (roundup(temp) >= temp) z <- roundup(temp)-0.5
-		else z <- roundup(temp)
-		return(z*10^floor(log(x,10)))
-	}
-
+		
 	gaPlot.percentile_trajectories_Internal <- function(tmp.df, percentile, content_area, year, state) {
 
 		.create.path <- function(labels, pieces=c("my.subject", "my.year", "my.extra.label")) {
@@ -435,7 +424,7 @@
 	pushViewport(left.axis.vp)
 	
 	if (gaPlot.show.scale.transformations) {
-		 ss.axis.range <- c(myround_up(yscale.range[1]), myround_down(yscale.range[2]))
+		 ss.axis.range <- myround(yscale.range)
 		 grid.lines(0.6, ss.axis.range, gp=gpar(lwd=1.5, col=format.colors.font), default.units="native")
 		 tmp.diff <- ss.axis.range[2]-ss.axis.range[1]
 		 if (tmp.diff < 2.5) my.by <- 0.25
@@ -446,17 +435,17 @@
 		 if (tmp.diff >= 250 & tmp.diff < 1000) my.by <- 50
 		 if (tmp.diff >= 1000 & tmp.diff < 5000) my.by <- 250
 		 for (i in seq(ss.axis.range[1], ss.axis.range[2], by=my.by)) {
-		 grid.lines(c(0.5, 0.6), i, gp=gpar(lwd=1.5, col=format.colors.font), default.units="native")
-		 grid.text(x=0.45, y=i, formatC(i, digits=0, format="f"), gp=gpar(col=format.colors.font, cex=0.8), just="right", default.units="native")
+			 grid.lines(c(0.5, 0.6), i, gp=gpar(lwd=1.5, col=format.colors.font), default.units="native")
+			 grid.text(x=0.45, y=i, formatC(i, digits=0, format="f"), gp=gpar(col=format.colors.font, cex=0.8), just="right", default.units="native")
 		 }
-			grid.text(x=unit(0.15, "native"), y=0.5, "Scale Score", gp=gpar(col=format.colors.font, cex=1.0), rot=90)
+		grid.text(x=unit(0.15, "native"), y=0.5, "Scale Score", gp=gpar(col=format.colors.font, cex=1.0), rot=90)
 	}
 	
 	grid.lines(0.95, ach.per.axis.range, gp=gpar(lwd=1.5, col=format.colors.font), default.units="native")
 	
 	for (i in 1:length(ach.per.axis.range)) {
-	grid.lines(c(0.95, 1.05), ach.per.axis.range[i], gp=gpar(lwd=1.5, col=format.colors.font), default.units="native")
-	grid.text(x=1.15, y=ach.per.axis.range[i], ach.per.axis.labels[i], gp=gpar(col=format.colors.font, cex=0.65), just="right", default.units="native")
+		grid.lines(c(0.95, 1.05), ach.per.axis.range[i], gp=gpar(lwd=1.5, col=format.colors.font), default.units="native")
+		grid.text(x=1.15, y=ach.per.axis.range[i], ach.per.axis.labels[i], gp=gpar(col=format.colors.font, cex=0.65), just="right", default.units="native")
 	}
 
 	setkey(growthAchievementPlot.data, GRADE)

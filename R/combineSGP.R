@@ -77,12 +77,10 @@ function(
 		year.for.equate <- tail(sort(unique(sgp_object@Data$YEAR)), 1)
 		if (SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]!=year.for.equate) {
 			sgp.percentiles.equated <- FALSE
-			sgp.target.scale.scores <- FALSE
+			if (sgp.target.scale.scores) sgp.projections.equated <- NULL
 		} else {
 			sgp.percentiles.equated <- TRUE
-			if (sgp.target.scale.scores) {
-				sgp.projections.equated <- list(Year=year.for.equate, Linkages=sgp_object@SGP[['Linkages']])
-			}
+			if (sgp.target.scale.scores) sgp.projections.equated <- list(Year=year.for.equate, Linkages=sgp_object@SGP[['Linkages']])
 		}
 	} else {
 		if (sgp.percentiles.equated) {

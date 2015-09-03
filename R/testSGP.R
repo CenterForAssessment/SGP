@@ -1128,6 +1128,8 @@
 					Proficient=c("Not Proficient", "Not Proficient", "Not Proficient", "Proficient", "Proficient"))
 			
 			SGPstateData[["DEMO"]][["Growth"]][["System_Type"]] <- "Cohort Referenced"
+
+			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Scale_Change"]] <- list(MATHEMATICS="2013_2014", READING="2013_2014")
 			
 			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]] <-
 				list(
@@ -1179,18 +1181,18 @@
 			### Create Data for Steps 2 & 3 with ACHIEVEMENT_LEVEL based upon new SGPstateData
 
 			Demonstration_Data_LONG_STEP_2 <- as.data.table(subset(sgpData_LONG, YEAR %in% years.step.2))[,ACHIEVEMENT_LEVEL:=NULL]
-			Demonstration_Data_LONG_STEP_2 <- prepareSGP(Demonstration_Data_LONG_STEP_2)@Data
+			Demonstration_Data_LONG_STEP_2 <- suppressMessages(prepareSGP(Demonstration_Data_LONG_STEP_2)@Data)
 			Demonstration_Data_LONG_STEP_2[, HIGH_NEED_STATUS:=NULL]
 			setcolorder(Demonstration_Data_LONG_STEP_2, names(Demonstration_Data_LONG_STEP_1))
 			Demonstration_Data_LONG_STEP_3 <- as.data.table(subset(sgpData_LONG, YEAR %in% years.step.3))[,ACHIEVEMENT_LEVEL:=NULL]
-			Demonstration_Data_LONG_STEP_3 <- prepareSGP(Demonstration_Data_LONG_STEP_3)@Data
+			Demonstration_Data_LONG_STEP_3 <- suppressMessages(prepareSGP(Demonstration_Data_LONG_STEP_3)@Data)
 			Demonstration_Data_LONG_STEP_3[, HIGH_NEED_STATUS:=NULL]
 			setcolorder(Demonstration_Data_LONG_STEP_3, names(Demonstration_Data_LONG_STEP_3))
 			
 			### updateSGP
 			
 			expression.to.evaluate <- 
-				paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=Demonstration_Data_LONG_STEP_2,\n\tsgp.percentiles=TRUE,\n\tsgp.projections=TRUE,\n\tsgp.projections.lagged=TRUE,\n\tsgp.percentiles.baseline=FALSE,\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsave.intermediate.results=FALSE,\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
+				paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=Demonstration_Data_LONG_STEP_2,\n\tsgp.percentiles=TRUE,\n\tsgp.projections=TRUE,\n\tsgp.projections.lagged=TRUE,\n\tsgp.percentiles.baseline=FALSE,\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.percentiles.equated=TRUE,\n\tsave.intermediate.results=FALSE,\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
 			
 			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
 
@@ -1247,7 +1249,7 @@
 			##############################################################################
 			
 			### updateSGP
-			
+debug(combineSGP)	
 			expression.to.evaluate <- 
 				paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=Demonstration_Data_LONG_STEP_3,\n\tsgp.percentiles=TRUE,\n\tsgp.projections=TRUE,\n\tsgp.projections.lagged=TRUE,\n\tsgp.percentiles.baseline=FALSE,\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsave.intermediate.results=FALSE,\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
 			
@@ -1256,7 +1258,7 @@
 			cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 			
 			if (memory.profile) {
-				Rprof("testSGP(5)_Memory_Profile_Part_2.out", memory.profiling=TRUE)
+				Rprof("testSGP(5)_Memory_Profile_Part_3.out", memory.profiling=TRUE)
 			}
 			
 			started.at.intermediate <- proc.time()

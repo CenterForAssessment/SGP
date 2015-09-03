@@ -20,6 +20,7 @@ function(sgp_object,
 	calculate.simex=NULL,
 	calculate.simex.baseline=NULL,
 	year.for.equate=NULL,
+	sgp.percentiles.equated=NULL,
 	SGPt=NULL) {
 
 	YEAR <- CONTENT_AREA <- VALID_CASE <- NULL
@@ -42,9 +43,9 @@ function(sgp_object,
 	if (is.null(calculate.simex.baseline)) calculate.simex.baseline <- FALSE
 
 	if (!is.null(year.for.equate)) {
-		sgp.percentiles.equated <- TRUE
 		grades.for.equate <- intersect(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][['Grades_Tested']],
 			SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[paste('Grades_Tested', year.for.equate, sep=".")]])
+		if (!identical(sgp.percentiles.equated, FALSE)) sgp.percentiles.equated <- TRUE
 	} else {
 		sgp.percentiles.equated <- FALSE
 	}
@@ -374,7 +375,7 @@ function(sgp_object,
 
 						if (length(tmp.orders) > 0) {
 							tmp.matrices.tf <- TRUE
-							if (!is.null(year.for.scale.change[[tail(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], 1)]]) & 
+							if (!is.null(year.for.scale.change[[tail(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], 1)]]) && 
 								year.for.scale.change[[tail(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], 1)]] < tail(par.sgp.config[[b.iter[b]]][['sgp.panel.years']], 1)) {
 								tmp.max.order <-
 									min(max(tmp.orders),
