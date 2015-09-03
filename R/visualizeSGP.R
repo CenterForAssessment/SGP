@@ -95,7 +95,8 @@ function(sgp_object,
 			if (is.null(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[content_area]])) {
 				return(NULL)
 			} else {
-				tmp <- as.numeric(tail(unlist(strsplit(as.character(year), "_")), 1)) - as.numeric(tail(unlist(strsplit(as.character(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[content_area]]), "_")), 1))
+				tmp <- as.numeric(tail(unlist(strsplit(as.character(year), "_")), 1)) - 
+					as.numeric(tail(unlist(strsplit(as.character(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[content_area]]), "_")), 1))
 				if (tmp < 0) return(NULL)
 				if (tmp > 0) return(as.numeric(tmp))
 				if (tmp==0) message(paste("\tNOTE: Based upon state scale changes in ", pretty_year(year), 

@@ -946,6 +946,7 @@
 			sgpData_LONG <- SGPdata::sgpData_LONG
 			if (is.null(test.option[['Scale_Transition_Types']])) test.option[['Scale_Transition_Types']] <- c("Vertical", "Vertical")
 			if (is.null(test.option[['Scale_Transition_Adjustments']])) test.option[['Scale_Transition_Adjustments']] <- list(MATHEMATICS=2100, READING=2200)
+			if (is.null(test.option[['Earliest_Year_Reported']])) test.option[['Earliest_Year_Reported']] <- list(MATHEMATICS="2013_2014", READING="2013_2014")
 
 			##############################################################################
 			##### STEP 1: Run analyses for year prior to assessment change in 2013-2014
@@ -1247,9 +1248,14 @@
 			##############################################################################
 			##### STEP 3: Create SGPs for year after assessment transtion year
 			##############################################################################
-			
+
+			##### Modify SGPstateData
+
+			SGPstateData[["DEMO"]][["Student_Report_Information"]][["Earliest_Year_Reported"]] <- test.option[['Earliest_Year_Reported']]
+
+
 			### updateSGP
-debug(combineSGP)	
+
 			expression.to.evaluate <- 
 				paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=Demonstration_Data_LONG_STEP_3,\n\tsgp.percentiles=TRUE,\n\tsgp.projections=TRUE,\n\tsgp.projections.lagged=TRUE,\n\tsgp.percentiles.baseline=FALSE,\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsave.intermediate.results=FALSE,\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
 			
