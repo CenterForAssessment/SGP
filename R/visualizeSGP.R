@@ -45,6 +45,7 @@ function(sgp_object,
 		sgPlot.zip=TRUE,
 		sgPlot.output.format="PDF",
 		sgPlot.year.span=5,
+		sgPlot.plot.test.transition=TRUE,
 		gaPlot.years=NULL,
 		gaPlot.content_areas=NULL, 
 		gaPlot.students=NULL,
@@ -373,6 +374,10 @@ if ("studentGrowthPlot" %in% plot.types) {
 
 		if (!is.null(SGP::SGPstateData[[state]][['SGP_Configuration']][['sgPlot.fan']])) {
 			sgPlot.fan <- SGP::SGPstateData[[state]][['SGP_Configuration']][['sgPlot.fan']]
+		}
+
+		if (!is.null(SGP::SGPstateData[[state]][['SGP_Configuration']][['sgPlot.plot.test.transition']])) {
+			sgPlot.plot.test.transition <- SGP::SGPstateData[[state]][['SGP_Configuration']][['sgPlot.plot.test.transition']]
 		}
 
 		if (identical(sgPlot.sgp.targets, TRUE)) {
@@ -742,7 +747,11 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 	#### Create transformed scale scores and Cutscores (NOT necessary if wide data is provided)
 
 		setkeyv(tmp.table, c("CONTENT_AREA_LABELS", "YEAR", "GRADE"))
-		tmp.list <- transformScaleScore(tmp.table, state, tmp.content_areas_domains, sgp_object@SGP[['Linkages']], slot.data)
+		if (sgPlot.plot.test.transition) {
+			tmp.list <- transformScaleScore(tmp.table, state, tmp.content_areas_domains, sgp_object@SGP[['Linkages']], slot.data)
+		} else {
+			tmp.list <- transformScaleScore(tmp.table, state, tmp.content_areas_domains, NULL, slot.data)
+		}
 		tmp.table <- tmp.list[['Data']]
 		Cutscores <- tmp.list[['Cutscores']]
 		sgp.projections.equated <- tmp.list[['sgp.projections.equated']]

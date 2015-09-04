@@ -1252,7 +1252,7 @@
 			##### Modify SGPstateData
 
 			SGPstateData[["DEMO"]][["Student_Report_Information"]][["Earliest_Year_Reported"]] <- test.option[['Earliest_Year_Reported']]
-
+			SGPstateData[["DEMO"]][['SGP_Configuration']][['sgPlot.plot.test.transition']] <- FALSE
 
 			### updateSGP
 
