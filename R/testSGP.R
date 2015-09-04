@@ -1161,7 +1161,20 @@
 					Grades_Tested.2013_2014=c(3,4,5,6,7,8,9,10),
 					Year="2013_2014"
 				)
-			
+
+			SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
+				list(
+					Vertical_Scale="Yes",
+					Projection_Fan_Limits=c(5, 95),
+					Content_Areas_Labels=list(MATHEMATICS="Math", READING="Reading"),
+					Grades_Reported=list(MATHEMATICS=c(3,4,5,6,7,8,9,10), READING=c(3,4,5,6,7,8,9,10)),
+					Achievement_Level_Labels=list(
+						"Level 1"="Level 1",
+						"Level 2"="Level 2",
+						"Level 3"="Level 3",
+						"Level 4"="Level 4",
+						"Level 5"="Level 5"))
+
 			if (identical(toupper(test.option[['Scale_Transition_Types']]), c("VERTICAL", "VERTICAL"))) {
 				SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale"]] <- "Yes"
 				SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale.2013_2014"]] <- "Yes"
