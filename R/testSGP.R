@@ -946,7 +946,7 @@
 			sgpData_LONG <- SGPdata::sgpData_LONG
 			if (is.null(test.option[['Scale_Transition_Types']])) test.option[['Scale_Transition_Types']] <- c("Vertical", "Vertical")
 			if (is.null(test.option[['Scale_Transition_Adjustments']])) test.option[['Scale_Transition_Adjustments']] <- list(MATHEMATICS=2100, READING=2200)
-			if (is.null(test.option[['Earliest_Year_Reported']])) test.option[['Earliest_Year_Reported']] <- list(MATHEMATICS="2013_2014", READING="2013_2014")
+			if (identical(test.option[['Earliest_Year_Reported']], TRUE)) test.option[['Earliest_Year_Reported']] <- list(MATHEMATICS="2013_2014", READING="2013_2014")
 
 			##############################################################################
 			##### PART 1: Run analyses for year prior to assessment change in 2013-2014
