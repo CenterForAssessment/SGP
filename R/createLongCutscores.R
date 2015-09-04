@@ -13,7 +13,8 @@ function(state,
 	if (!is.null(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]])) {
 		content_area <- unique(names(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]])[
 			SGP::SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]]==content_area])
-	}
+	} 
+	if (length(content_area)>1) multiple.content_areas <- TRUE else multiple.content_areas <- FALSE
 
 
 	### Utility functions
@@ -21,63 +22,61 @@ function(state,
 	get.long.cutscores <- function(content_area, transformed.cutscores=NULL, subset.year=NULL) {
 
 		cutscore.list <- list()
-		for (content_area.iter in content_area) {
-			for (i in grep(content_area.iter, sapply(strsplit(names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]]), '[.]'), '[', 1))) {
-				cutscores.content_area <- unlist(strsplit(names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]])[i], '[.]'))[1]
-				grades <- as.character(matrix(unlist(strsplit(names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[i]]), "_")), ncol=2, byrow=TRUE)[,2])
-				cutscores.year <- as.character(unlist(strsplit(names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]])[i], "[.]"))[2])
+		for (i in grep(content_area, sapply(strsplit(names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]]), '[.]'), '[', 1))) {
+			cutscores.content_area <- unlist(strsplit(names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]])[i], '[.]'))[1]
+			grades <- as.character(matrix(unlist(strsplit(names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[i]]), "_")), ncol=2, byrow=TRUE)[,2])
+			cutscores.year <- as.character(unlist(strsplit(names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]])[i], "[.]"))[2])
 
-				if (!is.null(transformed.cutscores)) {
-					cutscores.iter <- seq(length(transformed.cutscores[[content_area.iter]])-2)
-					cutscores <- tail(transformed.cutscores[[content_area.iter]], -1)
-					loss <- transformed.cutscores[[content_area.iter]][1]
-					hoss <- tail(transformed.cutscores[[content_area.iter]], 1)
+			if (!is.null(transformed.cutscores)) {
+				cutscores.iter <- seq(length(transformed.cutscores[[content_area]])-2)
+				cutscores <- tail(transformed.cutscores[[content_area]], -1)
+				loss <- transformed.cutscores[[content_area]][1]
+				hoss <- tail(transformed.cutscores[[content_area]], 1)
+			} else {
+				cutscores.iter <- seq(length(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[i]][[1]]))
+				cutscores <- as.data.table(matrix(unlist(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[i]]),
+					ncol=length(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[i]][[1]]), byrow=TRUE))
+				if (names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]])[i] %in% names(SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]])) {
+					loss.hoss.label <- names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]])[i]
 				} else {
-					cutscores.iter <- seq(length(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[i]][[1]]))
-					cutscores <- as.data.table(matrix(unlist(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[i]]),
-						ncol=length(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[i]][[1]]), byrow=TRUE))
-					if (names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]])[i] %in% names(SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]])) {
-						loss.hoss.label <- names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]])[i]
-					} else {
-						loss.hoss.label <- cutscores.content_area
-					}
-					loss <- sapply(SGP::SGPstateData[[state]][['Achievement']][['Knots_Boundaries']][[loss.hoss.label]][
-							grep("loss.hoss", names(SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[loss.hoss.label]]))], '[', 1)
-					loss <- as.numeric(loss[sapply(strsplit(names(loss), "_"), '[', 2) %in% grades])
-					hoss <- sapply(SGP::SGPstateData[[state]][['Achievement']][['Knots_Boundaries']][[loss.hoss.label]][
-							grep("loss.hoss", names(SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[loss.hoss.label]]))], '[', 2)
-					hoss <- as.numeric(hoss[sapply(strsplit(names(hoss), "_"), '[', 2) %in% grades])
+					loss.hoss.label <- cutscores.content_area
 				}
-
-				for (j in cutscores.iter) {
-					cutscore.list[[paste(i, j, sep="_")]] <- data.table(
-						GRADE=grades,
-						CONTENT_AREA=cutscores.content_area,
-						CUTLEVEL=as.character(j),
-						CUTSCORES=cutscores[[j]],
-						YEAR=cutscores.year)
-					cutscore.list[[paste(i, j, sep="_")]] <- subset(cutscore.list[[paste(i, j, sep="_")]],
-						GRADE %in% SGP::SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area.iter]])
-				}
-
-				cutscore.list[[paste(i, "LOSS", sep="_")]] <- data.table(
-					GRADE=grades,
-					CONTENT_AREA=cutscores.content_area,
-					CUTLEVEL="LOSS",
-					CUTSCORES=loss,
-					YEAR=cutscores.year)
-				cutscore.list[[paste(i, "LOSS", sep="_")]] <- subset(cutscore.list[[paste(i, "LOSS", sep="_")]], 
-					GRADE %in% SGP::SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area.iter]])
-						
-				cutscore.list[[paste(i, "HOSS", sep="_")]] <- data.table(
-					GRADE=grades,
-					CONTENT_AREA=cutscores.content_area,
-					CUTLEVEL="HOSS",
-					CUTSCORES=hoss,
-					YEAR=cutscores.year)
-				cutscore.list[[paste(i, "HOSS", sep="_")]] <- subset(cutscore.list[[paste(i, "HOSS", sep="_")]], 
-					GRADE %in% SGP::SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area.iter]])
+				loss <- sapply(SGP::SGPstateData[[state]][['Achievement']][['Knots_Boundaries']][[loss.hoss.label]][
+						grep("loss.hoss", names(SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[loss.hoss.label]]))], '[', 1)
+				loss <- as.numeric(loss[sapply(strsplit(names(loss), "_"), '[', 2) %in% grades])
+				hoss <- sapply(SGP::SGPstateData[[state]][['Achievement']][['Knots_Boundaries']][[loss.hoss.label]][
+						grep("loss.hoss", names(SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[loss.hoss.label]]))], '[', 2)
+				hoss <- as.numeric(hoss[sapply(strsplit(names(hoss), "_"), '[', 2) %in% grades])
 			}
+
+			for (j in cutscores.iter) {
+				cutscore.list[[paste(i, j, sep="_")]] <- data.table(
+					GRADE=grades,
+					CONTENT_AREA=cutscores.content_area,
+					CUTLEVEL=as.character(j),
+					CUTSCORES=cutscores[[j]],
+					YEAR=cutscores.year)
+				cutscore.list[[paste(i, j, sep="_")]] <- subset(cutscore.list[[paste(i, j, sep="_")]],
+					GRADE %in% SGP::SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])
+			}
+
+			cutscore.list[[paste(i, "LOSS", sep="_")]] <- data.table(
+				GRADE=grades,
+				CONTENT_AREA=cutscores.content_area,
+				CUTLEVEL="LOSS",
+				CUTSCORES=loss,
+				YEAR=cutscores.year)
+			cutscore.list[[paste(i, "LOSS", sep="_")]] <- subset(cutscore.list[[paste(i, "LOSS", sep="_")]], 
+				GRADE %in% SGP::SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])
+					
+			cutscore.list[[paste(i, "HOSS", sep="_")]] <- data.table(
+				GRADE=grades,
+				CONTENT_AREA=cutscores.content_area,
+				CUTLEVEL="HOSS",
+				CUTSCORES=hoss,
+				YEAR=cutscores.year)
+			cutscore.list[[paste(i, "HOSS", sep="_")]] <- subset(cutscore.list[[paste(i, "HOSS", sep="_")]], 
+				GRADE %in% SGP::SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])
 		}
 	
 		### Add GRADE_LOWER/GRADE_UPPER
@@ -109,10 +108,12 @@ function(state,
 				stop("Not all content areas have Transformed Achievement Level Cutscores available in SGP::SGPstateData.
 					Please augment the SGP::SGPstateData set with your data or contact the SGP package maintainer to have your data added to the SGP package.")
 		}
-		long.cutscores <- get.long.cutscores(content_area, SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]])
-	} else {
-		long.cutscores <- get.long.cutscores(content_area)
-	}
+		 tmp.transformed.cutscores <- SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]]
+	} else tmp.transformed.cutscores <- NULL
+
+	if (multiple.content_areas) {
+		long.cutscores <- rbindlist(lapply(content_area, function(x) get.long.cutscores(x, tmp.transformed.cutscores)))
+	} else long.cutscores <- get.long.cutscores(content_area, tmp.transformed.cutscores)
 
 	### Add GRADE_NUMERIC
 
