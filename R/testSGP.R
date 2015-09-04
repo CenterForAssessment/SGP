@@ -40,7 +40,7 @@
 			expression.to.evaluate <- 
 				paste("Demonstration_SGP <- list(Panel_Data=SGPdata::sgpData)\nmy.grade.sequences <- list(3:4, 3:5, 3:6, 3:7, 4:8)\nfor (i in seq_along(my.grade.sequences)) {\n\tDemonstration_SGP <- studentGrowthPercentiles(\n\t\tpanel.data=Demonstration_SGP,\n\t\tsgp.labels=list(my.year=2015, my.subject='Reading'),\n\t\tgrowth.levels='DEMO',\n\t\tgoodness.of.fit='DEMO',\n\t\tgrade.progression=my.grade.sequences[[i]],\n\t\tprint.sgp.order=TRUE,\n\t\tcalculate.confidence.intervals='DEMO',\n\t\tprint.other.gp=TRUE,\n\t\tverbose.output=TRUE,\n\t\tmax.order.for.percentile=3,\n\t\treturn.norm.group.scale.scores=TRUE,\n\t\treturn.panel.data=TRUE,\n\t\tparallel.config=", parallel.config,")\n}", sep="")
 			
-			cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
+			cat(paste("EVALUATING Test Number 0, Part 1:\n", expression.to.evaluate, sep=""), fill=TRUE)
 			
 			if (memory.profile) {
 				Rprof("testSGP(0)_Memory_Profile_Part_1.out", memory.profiling=TRUE)
@@ -99,7 +99,7 @@
 			expression.to.evaluate <- 
 				paste("Demonstration_SGP$Panel_Data <- SGPdata::sgpData[,c('ID','GRADE_2011','GRADE_2012','GRADE_2013','GRADE_2014','SS_2011','SS_2012','SS_2013','SS_2014')]\nmy.grade.progressions <- list(3, 3:4, 3:5, 3:6, 4:7)\nfor (i in seq_along(my.grade.progressions)) {\n\tDemonstration_SGP <- studentGrowthProjections(\n\t\tpanel.data=Demonstration_SGP,\n\t\tsgp.labels=list(my.year=2015, my.subject='Reading', my.extra.label='LAGGED'),\n\t\tuse.my.coefficient.matrices=list(my.year=2015, my.subject='Reading'),\n\t\tprojcuts.digits=0,\n\t\tperformance.level.cutscores='DEMO',\n\t\tpercentile.trajectory.values=1:99,\n\t\tlag.increment=1,\n\t\tgrade.progression=my.grade.progressions[[i]],\n\t\treturn.projection.group.identifier='READING',\n\t\treturn.projection.group.scale.scores=TRUE)\n}", sep="")
 			
-			cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
+			cat(paste("EVALUATING Test Number 0, Part 2:\n", expression.to.evaluate, sep=""), fill=TRUE)
 			
 			if (memory.profile) {
 				Rprof("testSGP(0)_Memory_Profile_Part_2.out", memory.profiling=TRUE)
@@ -949,7 +949,7 @@
 			if (is.null(test.option[['Earliest_Year_Reported']])) test.option[['Earliest_Year_Reported']] <- list(MATHEMATICS="2013_2014", READING="2013_2014")
 
 			##############################################################################
-			##### STEP 1: Run analyses for year prior to assessment change in 2013-2014
+			##### PART 1: Run analyses for year prior to assessment change in 2013-2014
 			##############################################################################
 			
 			##### Create data sets for Step 1 (2 & 3 after new SGPstateData put in place)
@@ -971,7 +971,7 @@
 			expression.to.evaluate <- 
 				paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=Demonstration_Data_LONG_STEP_1,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP', 'visualizeSGP'),\n\tplot.types=c('studentGrowthPlot', 'growthAchievementPlot'),\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
 			
-			cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
+			cat(paste("EVALUATING Test Number 5, Part 1:\n", expression.to.evaluate, sep=""), fill=TRUE)
 			
 			if (memory.profile) {
 				Rprof("testSGP(5)_Memory_Profile_Part_1.out", memory.profiling=TRUE)
@@ -1020,7 +1020,7 @@
 
 			
 			##############################################################################
-			##### STEP 2: Create SGPs for assessment transtion year
+			##### PART 2: Create SGPs for assessment transtion year
 			##############################################################################
 			
 			##### Modify SGPstateData
@@ -1197,7 +1197,7 @@
 			
 			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
 
-			cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
+			cat(paste("EVALUATING Test Number 5, Part 2:\n", expression.to.evaluate, sep=""), fill=TRUE)
 			
 			if (memory.profile) {
 				Rprof("testSGP(5)_Memory_Profile_Part_2.out", memory.profiling=TRUE)
@@ -1261,7 +1261,7 @@
 			
 			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
 
-			cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
+			cat(paste("EVALUATING Test Number 5, Part 3:\n", expression.to.evaluate, sep=""), fill=TRUE)
 			
 			if (memory.profile) {
 				Rprof("testSGP(5)_Memory_Profile_Part_3.out", memory.profiling=TRUE)
@@ -1330,7 +1330,7 @@
 			cat("##### Begin testSGP test number 6 #####\n", fill=TRUE)
 			cat("## Basic Baseline Coefficient Matrix Test. ##\n", fill=TRUE)
 			
-			cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
+			cat(paste("EVALUATING Test Number 6:\n", expression.to.evaluate, sep=""), fill=TRUE)
 			
 			if (memory.profile) {
 				Rprof("testSGP(6)_Memory_Profile.out", memory.profiling=TRUE)

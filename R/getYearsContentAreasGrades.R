@@ -17,8 +17,8 @@ function(state,
 			tmp.dt <- data.table(GRADE=as.character(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[i]]))
 		}
 
-		if (!is.null(earliest_year_reported)) {
-			tmp.years.diff <- as.numeric(tail(unlist(strsplit(tail(sort(years), 1), "_")), 1))-as.numeric(tail(unlist(strsplit(earliest_year_reported, "_")), 1))
+		if (!is.null(earliest_year_reported[[i]])) {
+			tmp.years.diff <- as.numeric(tail(unlist(strsplit(tail(sort(years), 1), "_")), 1))-as.numeric(tail(unlist(strsplit(earliest_year_reported[[i]], "_")), 1))
 			tmp.dt <- CJ(tmp.dt$GRADE, intersect(yearIncrement(tail(sort(years), 1), c(-seq(tmp.years.diff), 0)), years))
 		} else {
 			tmp.dt <- CJ(tmp.dt$GRADE, years)
