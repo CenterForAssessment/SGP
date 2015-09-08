@@ -20,6 +20,7 @@ function(sgp_object,
 	calculate.simex=NULL,
 	calculate.simex.baseline=NULL,
 	year.for.equate=NULL,
+	sgp.percentiles.equated=NULL,
 	SGPt=NULL) {
 
 	YEAR <- CONTENT_AREA <- VALID_CASE <- NULL
@@ -40,6 +41,17 @@ function(sgp_object,
 	###  If calculate.simex's are FALSE, set to NULL for consistent treatment
 	if (is.null(calculate.simex)) calculate.simex <- FALSE
 	if (is.null(calculate.simex.baseline)) calculate.simex.baseline <- FALSE
+
+	if (!is.null(year.for.equate)) {
+		grades.for.equate <- intersect(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][['Grades_Tested']],
+			SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[paste('Grades_Tested', year.for.equate, sep=".")]])
+		if (!identical(sgp.percentiles.equated, FALSE)) sgp.percentiles.equated <- TRUE
+	} else {
+		sgp.percentiles.equated <- FALSE
+	}
+
+	year.for.scale.change <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]]
+
 
 	### get.config function
 
@@ -363,7 +375,15 @@ function(sgp_object,
 
 						if (length(tmp.orders) > 0) {
 							tmp.matrices.tf <- TRUE
-							tmp.max.order <- max(tmp.orders)
+							if (!is.null(year.for.scale.change[[tail(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], 1)]]) && 
+								year.for.scale.change[[tail(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], 1)]] < tail(par.sgp.config[[b.iter[b]]][['sgp.panel.years']], 1)) {
+								tmp.max.order <-
+									min(max(tmp.orders),
+										as.numeric(tail(par.sgp.config[[b.iter[b]]][['sgp.panel.years']], 1))-
+										as.numeric(tail(unlist(strsplit(year.for.scale.change[[tail(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], 1)]], "_")), 1)))
+							} else {
+								tmp.max.order <- max(tmp.orders)
+							}
 							
 							if (par.sgp.config[[b.iter[b]]][['sgp.exact.grade.progression']]) ord.iter <- tmp.max.order else ord.iter <- seq_along(tmp.orders)
 							for (k in ord.iter) {
@@ -483,10 +503,17 @@ function(sgp_object,
 	if (sgp.percentiles) {
 		sgp.config.list[['sgp.percentiles']] <- par.sgp.config
 		for (i in 1:length(sgp.config.list[['sgp.percentiles']])) sgp.config.list[['sgp.percentiles']][[i]][['sgp.baseline.matrices']] <- NULL
-		if (!is.null(year.for.equate)) {
-			sgp.config.list[['sgp.percentiles.equated']] <- sgp.config.list[["sgp.percentiles"]][sapply(sgp.config.list[['sgp.percentiles']], function(x) tail(x[['sgp.panel.years']], 1))==year.for.equate]
-		}
 		sgp.config.list[['sgp.percentiles']] <- par.sgp.config[which(sapply(par.sgp.config, function(x) !identical(x[['sgp.grade.sequences']], "NO_PERCENTILES")))]
+	}
+
+	if (sgp.percentiles.equated) {
+			sgp.config.list[['sgp.percentiles.equated']] <- 
+				sgp.config.list[["sgp.percentiles"]][sapply(sgp.config.list[['sgp.percentiles']], function(x) tail(x[['sgp.panel.years']], 1))==year.for.equate]
+			if (!is.null(grades.for.equate)) {
+				sgp.config.list[['sgp.percentiles.equated']] <- 
+					sgp.config.list[['sgp.percentiles.equated']][which(sapply(sgp.config.list[['sgp.percentiles.equated']], 
+												function(x) tail(x[['sgp.grade.sequences']], 1) %in% grades.for.equate))]
+			}
 	}
 
 
@@ -504,6 +531,7 @@ function(sgp_object,
 			}
 			tmp.config <- c(tmp.config, tmp.expand.config)
 		}
+		if (!is.null(year.for.equate)) tmp.config <- tmp.config[which(sapply(tmp.config, function(x) tail(x[['sgp.grade.sequences']], 1) %in% grades.for.equate))]
 		if (sgp.projections) {
 			sgp.config.list[['sgp.projections']] <- tmp.config
 			for (i in 1:length(sgp.config.list[['sgp.projections']])) {

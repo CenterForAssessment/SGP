@@ -2,7 +2,8 @@
 function(state,
 	years,
 	content_areas=NULL,
-	content_areas_domains=NULL) {
+	content_areas_domains=NULL,
+	earliest_year_reported=NULL) {
 
 	CONTENT_AREA <- NULL
 
@@ -10,19 +11,21 @@ function(state,
 	if (is.null(content_areas)) tmp.content_areas <- content_areas_domains else tmp.content_areas <- content_areas
 	for (i in intersect(names(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]]), tmp.content_areas)) {
 		if (!is.null(content_areas_domains) && !is.null(SGP::SGPstateData[[state]][["Student_Report_Information"]][['Content_Areas_Domains']])) {
-			tmp.df <- data.frame(GRADE=as.character(unique(unlist(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][grep(i, SGP::SGPstateData[[state]][["Student_Report_Information"]][['Content_Areas_Domains']])]))), stringsAsFactors=FALSE)
+			tmp.dt <- data.table(GRADE=as.character(unique(unlist(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][
+					grep(i, SGP::SGPstateData[[state]][["Student_Report_Information"]][['Content_Areas_Domains']])]))))
 		} else {
-			tmp.df <- data.frame(GRADE=as.character(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[i]]), stringsAsFactors=FALSE)
+			tmp.dt <- data.table(GRADE=as.character(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[i]]))
 		}
 
-		if (!is.null(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[i]])) {
-			tmp.df <- CJ(tmp.df$GRADE, intersect(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[i]]:tail(sort(years), 1), years))
+		if (!is.null(earliest_year_reported[[i]])) {
+			tmp.years.diff <- as.numeric(tail(unlist(strsplit(tail(sort(years), 1), "_")), 1))-as.numeric(tail(unlist(strsplit(earliest_year_reported[[i]], "_")), 1))
+			tmp.dt <- CJ(tmp.dt$GRADE, intersect(yearIncrement(tail(sort(years), 1), c(-seq(tmp.years.diff), 0)), years))
 		} else {
-			tmp.df <- CJ(tmp.df$GRADE, years)
+			tmp.dt <- CJ(tmp.dt$GRADE, years)
 		}
 
-		setnames(tmp.df, c("GRADE", "YEAR")) 
-		tmp.list[[i]] <- data.table(CONTENT_AREA=i, tmp.df)
+		setnames(tmp.dt, c("GRADE", "YEAR")) 
+		tmp.list[[i]] <- data.table(CONTENT_AREA=i, tmp.dt)
 	}
 	tmp.dt <- rbindlist(tmp.list, fill=TRUE)
 	setkeyv(tmp.dt, c("CONTENT_AREA", "GRADE", "YEAR"))

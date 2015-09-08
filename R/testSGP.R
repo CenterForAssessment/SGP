@@ -40,7 +40,7 @@
 			expression.to.evaluate <- 
 				paste("Demonstration_SGP <- list(Panel_Data=SGPdata::sgpData)\nmy.grade.sequences <- list(3:4, 3:5, 3:6, 3:7, 4:8)\nfor (i in seq_along(my.grade.sequences)) {\n\tDemonstration_SGP <- studentGrowthPercentiles(\n\t\tpanel.data=Demonstration_SGP,\n\t\tsgp.labels=list(my.year=2015, my.subject='Reading'),\n\t\tgrowth.levels='DEMO',\n\t\tgoodness.of.fit='DEMO',\n\t\tgrade.progression=my.grade.sequences[[i]],\n\t\tprint.sgp.order=TRUE,\n\t\tcalculate.confidence.intervals='DEMO',\n\t\tprint.other.gp=TRUE,\n\t\tverbose.output=TRUE,\n\t\tmax.order.for.percentile=3,\n\t\treturn.norm.group.scale.scores=TRUE,\n\t\treturn.panel.data=TRUE,\n\t\tparallel.config=", parallel.config,")\n}", sep="")
 			
-			cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
+			cat(paste("EVALUATING Test Number 0, Part 1:\n", expression.to.evaluate, sep=""), fill=TRUE)
 			
 			if (memory.profile) {
 				Rprof("testSGP(0)_Memory_Profile_Part_1.out", memory.profiling=TRUE)
@@ -99,7 +99,7 @@
 			expression.to.evaluate <- 
 				paste("Demonstration_SGP$Panel_Data <- SGPdata::sgpData[,c('ID','GRADE_2011','GRADE_2012','GRADE_2013','GRADE_2014','SS_2011','SS_2012','SS_2013','SS_2014')]\nmy.grade.progressions <- list(3, 3:4, 3:5, 3:6, 4:7)\nfor (i in seq_along(my.grade.progressions)) {\n\tDemonstration_SGP <- studentGrowthProjections(\n\t\tpanel.data=Demonstration_SGP,\n\t\tsgp.labels=list(my.year=2015, my.subject='Reading', my.extra.label='LAGGED'),\n\t\tuse.my.coefficient.matrices=list(my.year=2015, my.subject='Reading'),\n\t\tprojcuts.digits=0,\n\t\tperformance.level.cutscores='DEMO',\n\t\tpercentile.trajectory.values=1:99,\n\t\tlag.increment=1,\n\t\tgrade.progression=my.grade.progressions[[i]],\n\t\treturn.projection.group.identifier='READING',\n\t\treturn.projection.group.scale.scores=TRUE)\n}", sep="")
 			
-			cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
+			cat(paste("EVALUATING Test Number 0, Part 2:\n", expression.to.evaluate, sep=""), fill=TRUE)
 			
 			if (memory.profile) {
 				Rprof("testSGP(0)_Memory_Profile_Part_2.out", memory.profiling=TRUE)
@@ -138,7 +138,6 @@
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 0, Part 2: ", convertTime(timetaken(started.at.intermediate)), "#####\n"))
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 0: ", convertTime(timetaken(started.at.overall)), "#####\n"))
 			cat(tmp.messages)
-			
 		} ### End TEST_NUMBER 0
 		
 		
@@ -260,7 +259,6 @@
 			
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number ", TEST_NUMBER, ":  ", convertTime(timetaken(started.at.overall)), " #####\n", sep=""))
 			cat(tmp.messages)
-			
 		} ### End TEST_NUMBER 1 & 1B
 		
 		
@@ -431,7 +429,6 @@
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 2a, Part 2: ", convertTime(timetaken(started.at.intermediate)), "#####\n"))
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 2a: ", convertTime(timetaken(started.at.overall)), "#####\n"))
 			cat(tmp.messages)
-			
 		} ### End TEST_NUMBER 2a
 		
 		
@@ -855,7 +852,7 @@
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX_BASELINE: FAIL\n")
 				}
 			}
-			tmp.messages <- c(tmp.messages, "\n\t##### End testSGP test number 4, Part 1: ", convertTime(timetaken(started.at.overall)), "#####\n")
+			tmp.messages <- c(tmp.messages, paste("\n\t##### End testSGP test number 4, Part 1: ", convertTime(timetaken(started.at.overall)), "#####\n"))
 			cat(tmp.messages)
 			
 			sgp.config <- list(
@@ -931,7 +928,7 @@
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 4, Part 2: ", convertTime(timetaken(started.at.intermediate)), "#####\n"))
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 4: ", convertTime(timetaken(started.at.overall)), "#####\n"))
 			cat(tmp.messages)
-			} ### End TEST_NUMBER 4
+		} ### End TEST_NUMBER 4
 		
 		
 		#######################################################################################################################################################
@@ -949,31 +946,38 @@
 			sgpData_LONG <- SGPdata::sgpData_LONG
 			if (is.null(test.option[['Scale_Transition_Types']])) test.option[['Scale_Transition_Types']] <- c("Vertical", "Vertical")
 			if (is.null(test.option[['Scale_Transition_Adjustments']])) test.option[['Scale_Transition_Adjustments']] <- list(MATHEMATICS=2100, READING=2200)
-			
+			if (identical(test.option[['Earliest_Year_Reported']], TRUE)) test.option[['Earliest_Year_Reported']] <- list(MATHEMATICS="2013_2014", READING="2013_2014")
+
 			##############################################################################
-			##### STEP 1: Run analyses for year prior to assessment change in 2014-2015
+			##### PART 1: Run analyses for year prior to assessment change in 2013-2014
 			##############################################################################
 			
-			##### Create LONG Data set for STEP 1 analysis.
+			##### Create data sets for Step 1 (2 & 3 after new SGPstateData put in place)
+
+			years <- sort(unique(sgpData_LONG$YEAR))
+			years.step.1 <- years[1:3]; years.step.2 <- years[4]; years.step.3 <- years[5]
+
+			sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'MATHEMATICS' & sgpData_LONG$YEAR %in% c(years.step.2, years.step.3)] <- 
+				sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'MATHEMATICS' & sgpData_LONG$YEAR %in% c(years.step.2, years.step.3)] + 
+				test.option[['Scale_Transition_Adjustments']][['MATHEMATICS']]
+			sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'READING' & sgpData_LONG$YEAR %in% c(years.step.2, years.step.3)] <- 
+				sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'READING' & sgpData_LONG$YEAR %in% c(years.step.2, years.step.3)] +
+				test.option[['Scale_Transition_Adjustments']][['READING']]
 			
-			sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'MATHEMATICS' & sgpData_LONG$YEAR == '2014_2015'] <- 
-				sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'MATHEMATICS' & sgpData_LONG$YEAR == '2014_2015'] + test.option[['Scale_Transition_Adjustments']][['MATHEMATICS']]
-			sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'READING' & sgpData_LONG$YEAR == '2014_2015'] <- 
-				sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'READING' & sgpData_LONG$YEAR == '2014_2015'] + test.option[['Scale_Transition_Adjustments']][['READING']]
-			
-			Demonstration_Data_LONG <- as.data.table(subset(sgpData_LONG, YEAR!="2014_2015"))
-			
+			Demonstration_Data_LONG_STEP_1 <- as.data.table(subset(sgpData_LONG, YEAR %in% years.step.1))
+
 			### Calculate SGPs
 			
 			expression.to.evaluate <- 
-				paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=Demonstration_Data_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP', 'visualizeSGP'),\n\tplot.types=c('studentGrowthPlot', 'growthAchievementPlot'),\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
+				paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=Demonstration_Data_LONG_STEP_1,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP', 'visualizeSGP'),\n\tplot.types=c('studentGrowthPlot', 'growthAchievementPlot'),\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\toutputSGP.output.type='LONG_FINAL_YEAR_Data',\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
 			
-			cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
+			cat(paste("EVALUATING Test Number 5, Part 1:\n", expression.to.evaluate, sep=""), fill=TRUE)
 			
 			if (memory.profile) {
 				Rprof("testSGP(5)_Memory_Profile_Part_1.out", memory.profiling=TRUE)
 			}
-			
+
+			started.at.overall <- proc.time()
 			eval(parse(text=expression.to.evaluate))
 			
 			### TEST of variable values
@@ -982,7 +986,7 @@
 			
 			### TEST of SGP variable
 			
-			if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 5668654L)) {
+			if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 2810958L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 1: FAIL\n")
@@ -990,7 +994,7 @@
 			
 			### TEST of SGP_BASELINE variable
 			
-			if (identical(sum(Demonstration_SGP@Data$SGP_BASELINE, na.rm=TRUE), 5667488L)) {
+			if (identical(sum(Demonstration_SGP@Data$SGP_BASELINE, na.rm=TRUE), 2844420L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 1: FAIL\n")
@@ -998,7 +1002,7 @@
 			
 			### TEST of SGP_TARGET_3_YEAR variable
 			
-			if (identical(sum(Demonstration_SGP@Data$SGP_TARGET_3_YEAR, na.rm=TRUE), 5245437L)) {
+			if (identical(sum(Demonstration_SGP@Data$SGP_TARGET_3_YEAR, na.rm=TRUE), 2548595L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR, part 1: FAIL\n")
@@ -1006,24 +1010,24 @@
 			
 			### TEST of SCALE_SCORE_PRIOR_STANDARDIZED variable
 			
-			if (identical(median(Demonstration_SGP@Data$SCALE_SCORE_PRIOR_STANDARDIZED, na.rm=TRUE), 0.052)) {
+			if (identical(median(Demonstration_SGP@Data$SCALE_SCORE_PRIOR_STANDARDIZED, na.rm=TRUE), 0.059)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_PRIOR_STANDARDIZED, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_PRIOR_STANDARDIZED, part 1: FAIL\n")
 			}
 			
-			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 5: Part 1 #####\n", sep=""))
-			
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 5, Part 1: ", convertTime(timetaken(started.at.overall)), "#####\n"))			
+
 			
 			##############################################################################
-			##### STEP 2: Create SGPs for assessment transtion year
+			##### PART 2: Create SGPs for assessment transtion year
 			##############################################################################
 			
 			##### Modify SGPstateData
 			
 			SGPstateData[["DEMO"]][["Achievement"]][["Knots_Boundaries"]] <- c(
 				SGPstateData[["DEMO"]][["Achievement"]][["Knots_Boundaries"]],
-				list(MATHEMATICS.2014_2015=list(
+				list(MATHEMATICS.2013_2014=list(
 					boundaries_3=c(150, 700)+test.option[['Scale_Transition_Adjustments']][['MATHEMATICS']],
 					boundaries_4=c(180, 780)+test.option[['Scale_Transition_Adjustments']][['MATHEMATICS']],
 					boundaries_5=c(220, 800)+test.option[['Scale_Transition_Adjustments']][['MATHEMATICS']],
@@ -1048,76 +1052,76 @@
 					loss.hoss_8=c(310, 890)+test.option[['Scale_Transition_Adjustments']][['MATHEMATICS']],
 					loss.hoss_9=c(340, 920)+test.option[['Scale_Transition_Adjustments']][['MATHEMATICS']],
 					loss.hoss_10=c(370, 950)+test.option[['Scale_Transition_Adjustments']][['MATHEMATICS']]),
-					READING.2014_2015=list(
-						boundaries_3=c(150, 795)+test.option[['Scale_Transition_Adjustments']][['READING']],
-						boundaries_4=c(180, 940)+test.option[['Scale_Transition_Adjustments']][['READING']],
-						boundaries_5=c(220, 955)+test.option[['Scale_Transition_Adjustments']][['READING']],
-						boundaries_6=c(260, 970)+test.option[['Scale_Transition_Adjustments']][['READING']],
-						boundaries_7=c(300, 980)+test.option[['Scale_Transition_Adjustments']][['READING']],
-						boundaries_8=c(330, 990)+test.option[['Scale_Transition_Adjustments']][['READING']],
-						boundaries_9=c(350, 995)+test.option[['Scale_Transition_Adjustments']][['READING']],
-						boundaries_10=c(370, 999)+test.option[['Scale_Transition_Adjustments']][['READING']],
-						knots_3=c(510, 550, 580, 615)+test.option[['Scale_Transition_Adjustments']][['READING']],
-						knots_4=c(542, 580, 606, 635)+test.option[['Scale_Transition_Adjustments']][['READING']],
-						knots_5=c(562, 602, 632, 665)+test.option[['Scale_Transition_Adjustments']][['READING']],
-						knots_6=c(575, 615, 645, 675)+test.option[['Scale_Transition_Adjustments']][['READING']],
-						knots_7=c(586, 625, 655, 690)+test.option[['Scale_Transition_Adjustments']][['READING']],
-						knots_8=c(605, 642, 670, 702)+test.option[['Scale_Transition_Adjustments']][['READING']],
-						knots_9=c(620, 655, 680, 706)+test.option[['Scale_Transition_Adjustments']][['READING']],
-						knots_10=c(642, 675, 700, 730)+test.option[['Scale_Transition_Adjustments']][['READING']],
-						loss.hoss_3=c(150, 795)+test.option[['Scale_Transition_Adjustments']][['READING']],
-						loss.hoss_4=c(180, 940)+test.option[['Scale_Transition_Adjustments']][['READING']],
-						loss.hoss_5=c(220, 955)+test.option[['Scale_Transition_Adjustments']][['READING']],
-						loss.hoss_6=c(260, 970)+test.option[['Scale_Transition_Adjustments']][['READING']],
-						loss.hoss_7=c(300, 980)+test.option[['Scale_Transition_Adjustments']][['READING']],
-						loss.hoss_8=c(330, 990)+test.option[['Scale_Transition_Adjustments']][['READING']],
-						loss.hoss_9=c(350, 995)+test.option[['Scale_Transition_Adjustments']][['READING']],
-						loss.hoss_10=c(370, 999)+test.option[['Scale_Transition_Adjustments']][['READING']]),
-					ALGEBRA_I.2014_2015=list(
-						boundaries_EOCT=c(340, 920)+test.option[['Scale_Transition_Adjustments']][['MATHEMATICS']],
-						knots_EOCT=c(515, 560, 595, 630)+test.option[['Scale_Transition_Adjustments']][['MATHEMATICS']],
-						loss.hoss_EOCT=c(340, 920)+test.option[['Scale_Transition_Adjustments']][['MATHEMATICS']]),
-					ALGEBRA_II=list(
-						boundaries_EOCT=c(370, 950)+test.option[['Scale_Transition_Adjustments']][['MATHEMATICS']],
-						knots_EOCT=c(530, 575, 610, 645)+test.option[['Scale_Transition_Adjustments']][['MATHEMATICS']],
-						loss.hoss_EOCT=c(370, 950)+test.option[['Scale_Transition_Adjustments']][['MATHEMATICS']]),
-					GRADE_9_LIT=list(
-						boundaries_EOCT=c(350, 995)+test.option[['Scale_Transition_Adjustments']][['READING']],
-						knots_EOCT=c(620, 655, 680, 706)+test.option[['Scale_Transition_Adjustments']][['READING']],
-						loss.hoss_EOCT=c(350, 995)+test.option[['Scale_Transition_Adjustments']][['READING']]),
-					AMERICAN_LIT=list(
-						boundaries_EOCT=c(370, 999)+test.option[['Scale_Transition_Adjustments']][['READING']],
-						knots_EOCT=c(642, 675, 700, 730)+test.option[['Scale_Transition_Adjustments']][['READING']],
-						loss.hoss_EOCT=c(370, 999)+test.option[['Scale_Transition_Adjustments']][['READING']])))
+				READING.2013_2014=list(
+					boundaries_3=c(150, 795)+test.option[['Scale_Transition_Adjustments']][['READING']],
+					boundaries_4=c(180, 940)+test.option[['Scale_Transition_Adjustments']][['READING']],
+					boundaries_5=c(220, 955)+test.option[['Scale_Transition_Adjustments']][['READING']],
+					boundaries_6=c(260, 970)+test.option[['Scale_Transition_Adjustments']][['READING']],
+					boundaries_7=c(300, 980)+test.option[['Scale_Transition_Adjustments']][['READING']],
+					boundaries_8=c(330, 990)+test.option[['Scale_Transition_Adjustments']][['READING']],
+					boundaries_9=c(350, 995)+test.option[['Scale_Transition_Adjustments']][['READING']],
+					boundaries_10=c(370, 999)+test.option[['Scale_Transition_Adjustments']][['READING']],
+					knots_3=c(510, 550, 580, 615)+test.option[['Scale_Transition_Adjustments']][['READING']],
+					knots_4=c(542, 580, 606, 635)+test.option[['Scale_Transition_Adjustments']][['READING']],
+					knots_5=c(562, 602, 632, 665)+test.option[['Scale_Transition_Adjustments']][['READING']],
+					knots_6=c(575, 615, 645, 675)+test.option[['Scale_Transition_Adjustments']][['READING']],
+					knots_7=c(586, 625, 655, 690)+test.option[['Scale_Transition_Adjustments']][['READING']],
+					knots_8=c(605, 642, 670, 702)+test.option[['Scale_Transition_Adjustments']][['READING']],
+					knots_9=c(620, 655, 680, 706)+test.option[['Scale_Transition_Adjustments']][['READING']],
+					knots_10=c(642, 675, 700, 730)+test.option[['Scale_Transition_Adjustments']][['READING']],
+					loss.hoss_3=c(150, 795)+test.option[['Scale_Transition_Adjustments']][['READING']],
+					loss.hoss_4=c(180, 940)+test.option[['Scale_Transition_Adjustments']][['READING']],
+					loss.hoss_5=c(220, 955)+test.option[['Scale_Transition_Adjustments']][['READING']],
+					loss.hoss_6=c(260, 970)+test.option[['Scale_Transition_Adjustments']][['READING']],
+					loss.hoss_7=c(300, 980)+test.option[['Scale_Transition_Adjustments']][['READING']],
+					loss.hoss_8=c(330, 990)+test.option[['Scale_Transition_Adjustments']][['READING']],
+					loss.hoss_9=c(350, 995)+test.option[['Scale_Transition_Adjustments']][['READING']],
+					loss.hoss_10=c(370, 999)+test.option[['Scale_Transition_Adjustments']][['READING']]),
+				ALGEBRA_I.2013_2014=list(
+					boundaries_EOCT=c(340, 920)+test.option[['Scale_Transition_Adjustments']][['MATHEMATICS']],
+					knots_EOCT=c(515, 560, 595, 630)+test.option[['Scale_Transition_Adjustments']][['MATHEMATICS']],
+					loss.hoss_EOCT=c(340, 920)+test.option[['Scale_Transition_Adjustments']][['MATHEMATICS']]),
+				ALGEBRA_II.2013_2014=list(
+					boundaries_EOCT=c(370, 950)+test.option[['Scale_Transition_Adjustments']][['MATHEMATICS']],
+					knots_EOCT=c(530, 575, 610, 645)+test.option[['Scale_Transition_Adjustments']][['MATHEMATICS']],
+					loss.hoss_EOCT=c(370, 950)+test.option[['Scale_Transition_Adjustments']][['MATHEMATICS']]),
+				GRADE_9_LIT.2013_2014=list(
+					boundaries_EOCT=c(350, 995)+test.option[['Scale_Transition_Adjustments']][['READING']],
+					knots_EOCT=c(620, 655, 680, 706)+test.option[['Scale_Transition_Adjustments']][['READING']],
+					loss.hoss_EOCT=c(350, 995)+test.option[['Scale_Transition_Adjustments']][['READING']]),
+				AMERICAN_LIT.2013_2014=list(
+					boundaries_EOCT=c(370, 999)+test.option[['Scale_Transition_Adjustments']][['READING']],
+					knots_EOCT=c(642, 675, 700, 730)+test.option[['Scale_Transition_Adjustments']][['READING']],
+					loss.hoss_EOCT=c(370, 999)+test.option[['Scale_Transition_Adjustments']][['READING']])))
 			
 			SGPstateData[["DEMO"]][["Achievement"]][["Cutscores"]] <- c(
 				SGPstateData[["DEMO"]][["Achievement"]][["Cutscores"]],
-				list(MATHEMATICS.2014_2015=list(
-					GRADE_3=as.integer(quantile(subset(sgpData_LONG, GRADE==3 & CONTENT_AREA=="MATHEMATICS" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9))),
-					GRADE_4=as.integer(quantile(subset(sgpData_LONG, GRADE==4 & CONTENT_AREA=="MATHEMATICS" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9))),
-					GRADE_5=as.integer(quantile(subset(sgpData_LONG, GRADE==5 & CONTENT_AREA=="MATHEMATICS" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9))),
-					GRADE_6=as.integer(quantile(subset(sgpData_LONG, GRADE==6 & CONTENT_AREA=="MATHEMATICS" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9))),
-					GRADE_7=as.integer(quantile(subset(sgpData_LONG, GRADE==7 & CONTENT_AREA=="MATHEMATICS" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9))),
-					GRADE_8=as.integer(quantile(subset(sgpData_LONG, GRADE==8 & CONTENT_AREA=="MATHEMATICS" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9))),
-					GRADE_9=as.integer(quantile(subset(sgpData_LONG, GRADE==9 & CONTENT_AREA=="MATHEMATICS" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9))),
-					GRADE_10=as.integer(quantile(subset(sgpData_LONG, GRADE==10 & CONTENT_AREA=="MATHEMATICS" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9)))),
-					READING.2014_2015=list(
-						GRADE_3=as.integer(quantile(subset(sgpData_LONG, GRADE==3 & CONTENT_AREA=="READING" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9))),
-						GRADE_4=as.integer(quantile(subset(sgpData_LONG, GRADE==4 & CONTENT_AREA=="READING" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9))),
-						GRADE_5=as.integer(quantile(subset(sgpData_LONG, GRADE==5 & CONTENT_AREA=="READING" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9))),
-						GRADE_6=as.integer(quantile(subset(sgpData_LONG, GRADE==6 & CONTENT_AREA=="READING" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9))),
-						GRADE_7=as.integer(quantile(subset(sgpData_LONG, GRADE==7 & CONTENT_AREA=="READING" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9))),
-						GRADE_8=as.integer(quantile(subset(sgpData_LONG, GRADE==8 & CONTENT_AREA=="READING" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9))),
-						GRADE_9=as.integer(quantile(subset(sgpData_LONG, GRADE==9 & CONTENT_AREA=="READING" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9))),
-						GRADE_10=as.integer(quantile(subset(sgpData_LONG, GRADE==10 & CONTENT_AREA=="READING" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9)))),
-					ALGEBRA_I=list(
-						GRADE_EOCT=as.integer(quantile(subset(sgpData_LONG, GRADE==9 & CONTENT_AREA=="MATHEMATICS" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9)))),
-					ALGEBRA_II=list(
-						GRADE_EOCT=as.integer(quantile(subset(sgpData_LONG, GRADE==10 & CONTENT_AREA=="MATHEMATICS" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9)))),
-					GRADE_9_LIT=list(
-						GRADE_EOCT=as.integer(quantile(subset(sgpData_LONG, GRADE==9 & CONTENT_AREA=="READING" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9)))),
-					AMERICAN_LIT=list(
-						GRADE_EOCT=as.integer(quantile(subset(sgpData_LONG, GRADE==10 & CONTENT_AREA=="READING" & YEAR=="2014_2015")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9))))))
+				list(MATHEMATICS.2013_2014=list(
+					GRADE_3=as.integer(quantile(subset(sgpData_LONG, GRADE==3 & CONTENT_AREA=="MATHEMATICS" & YEAR=="2013_2014")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9), na.rm=TRUE)),
+					GRADE_4=as.integer(quantile(subset(sgpData_LONG, GRADE==4 & CONTENT_AREA=="MATHEMATICS" & YEAR=="2013_2014")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9), na.rm=TRUE)),
+					GRADE_5=as.integer(quantile(subset(sgpData_LONG, GRADE==5 & CONTENT_AREA=="MATHEMATICS" & YEAR=="2013_2014")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9), na.rm=TRUE)),
+					GRADE_6=as.integer(quantile(subset(sgpData_LONG, GRADE==6 & CONTENT_AREA=="MATHEMATICS" & YEAR=="2013_2014")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9), na.rm=TRUE)),
+					GRADE_7=as.integer(quantile(subset(sgpData_LONG, GRADE==7 & CONTENT_AREA=="MATHEMATICS" & YEAR=="2013_2014")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9), na.rm=TRUE)),
+					GRADE_8=as.integer(quantile(subset(sgpData_LONG, GRADE==8 & CONTENT_AREA=="MATHEMATICS" & YEAR=="2013_2014")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9), na.rm=TRUE)),
+					GRADE_9=as.integer(quantile(subset(sgpData_LONG, GRADE==9 & CONTENT_AREA=="MATHEMATICS" & YEAR=="2013_2014")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9), na.rm=TRUE)),
+					GRADE_10=as.integer(quantile(subset(sgpData_LONG, GRADE==10 & CONTENT_AREA=="MATHEMATICS" & YEAR=="2013_2014")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9), na.rm=TRUE))),
+				READING.2013_2014=list(
+					GRADE_3=as.integer(quantile(subset(sgpData_LONG, GRADE==3 & CONTENT_AREA=="READING" & YEAR=="2013_2014")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9), na.rm=TRUE)),
+					GRADE_4=as.integer(quantile(subset(sgpData_LONG, GRADE==4 & CONTENT_AREA=="READING" & YEAR=="2013_2014")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9), na.rm=TRUE)),
+					GRADE_5=as.integer(quantile(subset(sgpData_LONG, GRADE==5 & CONTENT_AREA=="READING" & YEAR=="2013_2014")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9), na.rm=TRUE)),
+					GRADE_6=as.integer(quantile(subset(sgpData_LONG, GRADE==6 & CONTENT_AREA=="READING" & YEAR=="2013_2014")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9), na.rm=TRUE)),
+					GRADE_7=as.integer(quantile(subset(sgpData_LONG, GRADE==7 & CONTENT_AREA=="READING" & YEAR=="2013_2014")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9), na.rm=TRUE)),
+					GRADE_8=as.integer(quantile(subset(sgpData_LONG, GRADE==8 & CONTENT_AREA=="READING" & YEAR=="2013_2014")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9), na.rm=TRUE)),
+					GRADE_9=as.integer(quantile(subset(sgpData_LONG, GRADE==9 & CONTENT_AREA=="READING" & YEAR=="2013_2014")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9), na.rm=TRUE)),
+					GRADE_10=as.integer(quantile(subset(sgpData_LONG, GRADE==10 & CONTENT_AREA=="READING" & YEAR=="2013_2014")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9), na.rm=TRUE))),
+				ALGEBRA_I.2013_2014=list(
+					GRADE_EOCT=as.integer(quantile(subset(sgpData_LONG, GRADE==9 & CONTENT_AREA=="MATHEMATICS" & YEAR=="2013_2014")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9), na.rm=TRUE))),
+				ALGEBRA_II.2013_2014=list(
+					GRADE_EOCT=as.integer(quantile(subset(sgpData_LONG, GRADE==10 & CONTENT_AREA=="MATHEMATICS" & YEAR=="2013_2014")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9), na.rm=TRUE))),
+				GRADE_9_LIT.2013_2014=list(
+					GRADE_EOCT=as.integer(quantile(subset(sgpData_LONG, GRADE==9 & CONTENT_AREA=="READING" & YEAR=="2013_2014")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9), na.rm=TRUE))),
+				AMERICAN_LIT.2013_2014=list(
+					GRADE_EOCT=as.integer(quantile(subset(sgpData_LONG, GRADE==10 & CONTENT_AREA=="READING" & YEAR=="2013_2014")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9), na.rm=TRUE)))))
 			
 			SGPstateData[["DEMO"]][["Achievement"]][["Levels"]] <-
 				list(
@@ -1125,17 +1129,19 @@
 					Proficient=c("Not Proficient", "Not Proficient", "Not Proficient", "Proficient", "Proficient"))
 			
 			SGPstateData[["DEMO"]][["Growth"]][["System_Type"]] <- "Cohort Referenced"
+
+			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Scale_Change"]] <- list(MATHEMATICS="2013_2014", READING="2013_2014")
 			
 			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]] <-
 				list(
 					Assessment_Abbreviation="DEMO Old",
-					Assessment_Abbreviation.2014_2015="DEMO New",
+					Assessment_Abbreviation.2013_2014="DEMO New",
 					Assessment_Name="Old Demonstration Student Assessment Program",
-					Assessment_Name.2014_2015="New Demonstration Student Assessment Program",
+					Assessment_Name.2013_2014="New Demonstration Student Assessment Program",
 					Achievement_Levels=list(
 						Labels=c("Unsatisfactory", "Partially Proficient", "Proficient", "Advanced", "No Score"),
 						Proficient=c("Not Proficient", "Not Proficient", "Proficient", "Proficient", NA)),
-					Achievement_Levels.2014_2015=list(
+					Achievement_Levels.2013_2014=list(
 						Labels=c("Level 1", "Level 2", "Level 3", "Level 4", "Level 5"),
 						Proficient=c("Not Proficient", "Not Proficient", "Not Proficient", "Proficient", "Proficient")),
 					Achievement_Level_Labels=list(
@@ -1143,55 +1149,74 @@
 						"Part Proficient"="Partially Proficient",
 						"Proficient"="Proficient",
 						"Advanced"="Advanced"),
-					Achievement_Level_Labels.2014_2015=list(
+					Achievement_Level_Labels.2013_2014=list(
 						"Level 1"="Level 1",
 						"Level 2"="Level 2",
 						"Level 3"="Level 3",
 						"Level 4"="Level 4",
 						"Level 5"="Level 5"),
 					Content_Areas_Labels=list(MATHEMATICS="Math", READING="Reading"),
-					Content_Areas_Labels.2014_2015=list(MATHEMATICS="Math", READING="Reading"),
-					Year="2014_2015"
+					Content_Areas_Labels.2013_2014=list(MATHEMATICS="Math", READING="Reading"),
+					Grades_Tested=c(3,4,5,6,7,8,9,10),
+					Grades_Tested.2013_2014=c(3,4,5,6,7,8,9,10),
+					Year="2013_2014"
 				)
-			
+
+			SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
+				list(
+					Vertical_Scale="Yes",
+					Projection_Fan_Limits=c(5, 95),
+					Content_Areas_Labels=list(MATHEMATICS="Math", READING="Reading"),
+					Grades_Reported=list(MATHEMATICS=c(3,4,5,6,7,8,9,10), READING=c(3,4,5,6,7,8,9,10)),
+					Achievement_Level_Labels=list(
+						"Level 1"="Level 1",
+						"Level 2"="Level 2",
+						"Level 3"="Level 3",
+						"Level 4"="Level 4",
+						"Level 5"="Level 5"))
+
 			if (identical(toupper(test.option[['Scale_Transition_Types']]), c("VERTICAL", "VERTICAL"))) {
 				SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale"]] <- "Yes"
-				SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale.2014_2015"]] <- "Yes"
+				SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale.2013_2014"]] <- "Yes"
 			}
 			if (identical(toupper(test.option[['Scale_Transition_Types']]), c("NON-VERTICAL", "VERTICAL"))) {
 				SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale"]] <- "No"
-				SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale.2014_2015"]] <- "Yes"
+				SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale.2013_2014"]] <- "Yes"
 				SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Transformed_Achievement_Level_Cutscores"]] <- 
 					list(MATHEMATICS=c(100,200,300,400,500), READING=c(100,200,300,400,500))
 			}
 			if (identical(toupper(test.option[['Scale_Transition_Types']]), c("NON-VERTICAL", "NON-VERTICAL"))) {
 				SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale"]] <- "No"
-				SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale.2014_2015"]] <- "No"
+				SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale.2013_2014"]] <- "No"
 				SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Transformed_Achievement_Level_Cutscores"]] <- 
 					list(MATHEMATICS=c(100,200,300,400,500), READING=c(100,200,300,400,500))
 			}
-			
-			
-			##### Create LONG Data set for STEP 2 update.
-			
-			Demonstration_Data_LONG_2014_2015 <- as.data.table(subset(sgpData_LONG, YEAR=="2014_2015"))[,ACHIEVEMENT_LEVEL:=NULL]
-			Demonstration_Data_LONG_2014_2015 <- prepareSGP(Demonstration_Data_LONG_2014_2015)@Data
-			Demonstration_Data_LONG_2014_2015[, HIGH_NEED_STATUS:=NULL]
-			setcolorder(Demonstration_Data_LONG_2014_2015, names(Demonstration_Data_LONG))
+
+			### Create Data for Steps 2 & 3 with ACHIEVEMENT_LEVEL based upon new SGPstateData
+
+			Demonstration_Data_LONG_STEP_2 <- as.data.table(subset(sgpData_LONG, YEAR %in% years.step.2))[,ACHIEVEMENT_LEVEL:=NULL]
+			Demonstration_Data_LONG_STEP_2 <- suppressMessages(prepareSGP(Demonstration_Data_LONG_STEP_2)@Data)
+			Demonstration_Data_LONG_STEP_2[, HIGH_NEED_STATUS:=NULL]
+			setcolorder(Demonstration_Data_LONG_STEP_2, names(Demonstration_Data_LONG_STEP_1))
+			Demonstration_Data_LONG_STEP_3 <- as.data.table(subset(sgpData_LONG, YEAR %in% years.step.3))[,ACHIEVEMENT_LEVEL:=NULL]
+			Demonstration_Data_LONG_STEP_3 <- suppressMessages(prepareSGP(Demonstration_Data_LONG_STEP_3)@Data)
+			Demonstration_Data_LONG_STEP_3[, HIGH_NEED_STATUS:=NULL]
+			setcolorder(Demonstration_Data_LONG_STEP_3, names(Demonstration_Data_LONG_STEP_3))
 			
 			### updateSGP
 			
 			expression.to.evaluate <- 
-				paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=Demonstration_Data_LONG_2014_2015,\n\tsgp.percentiles=TRUE,\n\tsgp.projections=TRUE,\n\tsgp.projections.lagged=TRUE,\n\tsgp.percentiles.baseline=FALSE,\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsave.intermediate.results=FALSE,\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
+				paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=Demonstration_Data_LONG_STEP_2,\n\tsgp.percentiles=TRUE,\n\tsgp.projections=TRUE,\n\tsgp.projections.lagged=TRUE,\n\tsgp.percentiles.baseline=FALSE,\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.percentiles.equated=TRUE,\n\tsave.intermediate.results=FALSE,\n\toutputSGP.output.type='LONG_FINAL_YEAR_Data',\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
 			
 			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
-			
-			cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
+
+			cat(paste("EVALUATING Test Number 5, Part 2:\n", expression.to.evaluate, sep=""), fill=TRUE)
 			
 			if (memory.profile) {
 				Rprof("testSGP(5)_Memory_Profile_Part_2.out", memory.profiling=TRUE)
 			}
 			
+			started.at.intermediate <- proc.time()
 			eval(parse(text=expression.to.evaluate))
 			
 			### TEST of variable values
@@ -1200,7 +1225,7 @@
 			
 			### TEST of SGP variable
 			
-			if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 8565260L)) {
+			if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 5668654L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 2: FAIL\n")
@@ -1208,7 +1233,7 @@
 			
 			### TEST of SGP variable from equated analyses
 			
-			if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][['READING.2014_2015.EQUATED']][['SGP']], na.rm=TRUE), 1439290L)) {
+			if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][['READING.2013_2014.EQUATED']][['SGP']], na.rm=TRUE), 1418003L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP from equated analysis, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP from equated analysis, part 2: FAIL\n")
@@ -1216,7 +1241,7 @@
 			
 			### TEST of SCALE_SCORE_EQUATED variable
 			
-			if (identical(as.integer(sum(Demonstration_SGP@Data$SCALE_SCORE_EQUATED, na.rm=TRUE)), 1003847837L)) {
+			if (identical(as.integer(sum(Demonstration_SGP@Data$SCALE_SCORE_EQUATED, na.rm=TRUE)), 796049037L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_EQUATED, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_EQUATED, part 2: FAIL\n")
@@ -1224,17 +1249,71 @@
 			
 			### TEST of SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1 variable
 			
-			if (identical(as.integer(sum(Demonstration_SGP@SGP$SGProjections[["READING.2014_2015.LAGGED.TARGET_SCALE_SCORES"]][['SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1']])), 82971055L)) {
+			if (identical(as.integer(sum(Demonstration_SGP@SGP$SGProjections[["READING.2013_2014.LAGGED.TARGET_SCALE_SCORES"]][['SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1']])), 82327526L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1, part 2: FAIL\n")
 			}
 			
-			tmp.messages <- c(tmp.messages, "\t##### End testSGP test number 5: Part 2 #####\n")
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 5, Part 2: ", convertTime(timetaken(started.at.intermediate)), "#####\n"))
+
+
+			##############################################################################
+			##### STEP 3: Create SGPs for year after assessment transtion year
+			##############################################################################
+
+			##### Modify SGPstateData
+
+			SGPstateData[["DEMO"]][["Student_Report_Information"]][["Earliest_Year_Reported"]] <- test.option[['Earliest_Year_Reported']]
+			SGPstateData[["DEMO"]][['SGP_Configuration']][['sgPlot.plot.test.transition']] <- FALSE
+
+			### updateSGP
+
+			expression.to.evaluate <- 
+				paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=Demonstration_Data_LONG_STEP_3,\n\tsgp.percentiles=TRUE,\n\tsgp.projections=TRUE,\n\tsgp.projections.lagged=TRUE,\n\tsgp.percentiles.baseline=FALSE,\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsave.intermediate.results=FALSE,\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
 			
-			tmp.messages <- c(tmp.messages, "\n##### End testSGP test number 5 #####\n")
+			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
+
+			cat(paste("EVALUATING Test Number 5, Part 3:\n", expression.to.evaluate, sep=""), fill=TRUE)
+			
+			if (memory.profile) {
+				Rprof("testSGP(5)_Memory_Profile_Part_3.out", memory.profiling=TRUE)
+			}
+			
+			started.at.intermediate <- proc.time()
+			eval(parse(text=expression.to.evaluate))
+
+			### TEST of variable values
+			
+			tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number 5: Part 3 #####\n")
+			
+			### TEST of SGP variable
+			
+			if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 8565260L)) {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 3: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 3: FAIL\n")
+			}
+
+			### TEST of LEVEL_1_SGP_TARGET_YEAR_1_CURRENT variable
+			
+			if (identical(as.integer(sum(Demonstration_SGP@SGP[['SGProjections']][['READING.2014_2015']][['LEVEL_1_SGP_TARGET_YEAR_1_CURRENT']], na.rm=TRUE)), 987731L)) {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable LEVEL_1_SGP_TARGET_YEAR_1_CURRENT, part 3: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable LEVEL_1_SGP_TARGET_YEAR_1_CURRENT, part 3: FAIL\n")
+			}
+			
+			### TEST of ACHIEVEMENT_LEVEL_PRIOR Variable in MATHEMATICS.2014_2015.LAGGED projections
+			
+			if (identical(as.vector(table(Demonstration_SGP@SGP[['SGProjections']][['MATHEMATICS.2014_2015.LAGGED']][['ACHIEVEMENT_LEVEL_PRIOR']])), c(8178L, 4316L, 5991L, 7552L, 3145L))) {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable ACHIEVEMENT_LEVEL_PRIOR, part 3: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable ACHIEVEMENT_LEVEL_PRIOR, part 3: FAIL\n")
+			}
+			
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 5, Part 3: ", convertTime(timetaken(started.at.intermediate)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 5: ", convertTime(timetaken(started.at.overall)), "#####\n"))
 			cat(tmp.messages)
-			
 		} ### End TEST_NUMBER 5
 		
 		
@@ -1264,12 +1343,13 @@
 			cat("##### Begin testSGP test number 6 #####\n", fill=TRUE)
 			cat("## Basic Baseline Coefficient Matrix Test. ##\n", fill=TRUE)
 			
-			cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
+			cat(paste("EVALUATING Test Number 6:\n", expression.to.evaluate, sep=""), fill=TRUE)
 			
 			if (memory.profile) {
 				Rprof("testSGP(6)_Memory_Profile.out", memory.profiling=TRUE)
 			}
-			
+
+			started.at.overall <- proc.time()
 			eval(parse(text=expression.to.evaluate))
 			
 			### TEST of SGP_BASELINE variable
@@ -1281,7 +1361,8 @@
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of SGP_BASELINE: FAIL\n")
 			}
-			tmp.messages <- c(tmp.messages, "\n\t##### End testSGP test number 6 #####\n")
+
+			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 6: ", convertTime(timetaken(started.at.overall)), "#####\n"))
 			cat(tmp.messages)
 		} ### End TEST_NUMBER 6
 	} ### END testSGP Function

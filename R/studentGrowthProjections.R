@@ -76,25 +76,14 @@ function(panel.data,	## REQUIRED
 				return(paste("[['", tmp.path.knots.boundaries, "']]", sep=""))
 			} else {
 				tmp.knots.boundaries.years <- sapply(strsplit(tmp.knots.boundaries.names, "[.]"), function(x) x[2])
-				if (any(!is.na(tmp.knots.boundaries.years))) {
-					if (year %in% tmp.knots.boundaries.years) {
-						return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, ".", year, "']]", sep=""))
-					} else {
-						if (year==sort(c(year, tmp.knots.boundaries.years))[1]) {
-							return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, "']]", sep=""))
-						} else {
-							return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, ".", rev(sort(tmp.knots.boundaries.years))[1], "']]", sep=""))
-						}
-					}
-				} else {
-					return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, "']]", sep=""))
-				}
+				tmp.sum <- sum(year >= sort(tmp.knots.boundaries.years), na.rm=TRUE)
+				return(paste("[['", tmp.path.knots.boundaries, "']][['", paste(c(content_area, sort(tmp.knots.boundaries.years)[tmp.sum]), collapse="."), "']]", sep=""))
 			}
 		} else {
 			return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, ".", sgp.projections.equated[['Year']], "']]", sep=""))
 		}
 	}
-	
+
 	.get.panel.data <- function(tmp.data, grade.progression, content_area.progression, num.prior=NULL, subset.tf=NULL, bound.data=TRUE, equated.year=NULL) {
 		str1 <- str2 <- str3 <- NULL
 		if (is.null(num.prior)) num.prior <- length(grade.progression)

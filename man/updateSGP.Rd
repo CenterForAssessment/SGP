@@ -48,6 +48,7 @@ updateSGP(
 	parallel.config=NULL,
 	sgp.sqlite=NULL,
 	SGPt=NULL,
+	sgp.percentiles.equated=FALSE,
 	fix.duplicates=NULL,
 	...)
 }
@@ -127,6 +128,8 @@ If missing the function will use the data to infer all the grade progressions fo
   \item{sgp.sqlite}{A Boolean argument (defaults to NULL) indicating whether a SQLite database file of the essential SGP data should be created from the \code{@Data} slot and subsequently used to extract data subsets for analyses conducted in order to reduce the amount of RAM memory required.  See full argument description in \code{\link{analyzeSGP}}.
   }
   \item{SGPt}{Argument (defaults to NULL) indicating whether time dependent student growth percentile (SGPt) are calculate.
+  }
+  \item{sgp.percentiles.equated}{Argument (defaults to FALSE) passed to \code{\link{abcSGP}} and \code{\link{analyzeSGP}} indicating whether equated SGP are to be calculated.
   }
   \item{fix.duplicates}{Argument to control how \code{prepareSGP} deals with duplicate records based upon the key of VALID_CASE, CONTENT_AREA, YEAR, and ID.
   The function currently warns of duplicate records and doesn't modify data. If set to TRUE, \code{prepareSGP} tries to

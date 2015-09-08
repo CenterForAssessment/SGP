@@ -57,6 +57,7 @@ visualizeSGP(
            sgPlot.zip=TRUE,
            sgPlot.output.format="PDF",
 	   sgPlot.year.span=5,
+           sgPlot.plot.test.transition=TRUE,
            gaPlot.years=NULL,
            gaPlot.content_areas=NULL,
            gaPlot.students=NULL,
@@ -194,6 +195,9 @@ provided the function produces \code{\link{studentGrowthPlot}}s for ALL students
   \item{sgPlot.output.format}{Argument indicating the desired type of output format for student growth plots. Either 'PDF' (default), 'PNG', 'PDF_PIECES', or 'JSON'.
   }
   \item{sgPlot.year.span}{Integer argument (defaults to 5) indicating the number of years to display for the pdf student growth plot.
+  }
+  \item{sgPlot.plot.test.transition}{Boolean argument (defaults to TRUE) indicating whether test transition data will be used IF it's available. Setting to FALSE ignore previous 
+  test transition data, which would indicate a desire to 'forget the past'.
   }
   \item{gaPlot.years}{A vector indicating the year(s) for which to produce \code{\link{growthAchievementPlot}}s. If missing the function will use the last year available 
   in the data to produce the \code{\link{growthAchievementPlot}}s.
