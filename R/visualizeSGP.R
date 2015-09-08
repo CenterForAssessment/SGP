@@ -817,7 +817,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			value.var=setdiff(variables.to.keep, c("VALID_CASE", "ID", "CONTENT_AREA", "YEAR")), sep=".")
 		sgPlot.data <- sgPlot.data[!is.na(sgPlot.data[[paste("CONTENT_AREA_LABELS", tmp.last.year, sep=".")]])] # Trim down data when not all CONTENT_AREA_LABELS == CONTENT_AREA
 		setnames(sgPlot.data, names(sgPlot.data), gsub("CONTENT_AREA_LABELS.1", "CONTENT_AREA_LABELS", names(sgPlot.data)))
-#		sgPlot.data[, CONTENT_AREA_LABELS := NULL] # Don't want this single variable, but need to use it in ddcast formula above to ensure unique cases.  Keep CONTENT_AREA_LABELS.20** (wide)
+		sgPlot.data[, CONTENT_AREA_LABELS := NULL] # Don't want this single variable, but need to use it in ddcast formula above to ensure unique cases.  Keep CONTENT_AREA_LABELS.20** (wide)
 
 		variables.to.keep <- c("ID", "CONTENT_AREA", paste("CONTENT_AREA_LABELS", tmp.years.filled, sep="."),
 		# variables.to.keep <- c("ID", "CONTENT_AREA", "CONTENT_AREA_LABELS",
