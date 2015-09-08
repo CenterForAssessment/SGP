@@ -265,16 +265,7 @@ function(data,
 	if (!is.null(fix.duplicates) && !is.null(DUPLICATED_CASES)) {
 		if (identical(toupper(fix.duplicates), "KEEP.ALL")) {
 			if (all(unique(DUPLICATED_CASES$YEAR) %in% (tmp.last.year <- tail(sort(unique(sgp_object@Data$YEAR)), 1)))) {
-				tmp.dups.index <- data.table(unique(sgp_object@Data[duplicated(sgp_object@Data)][, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE])[
-					sgp_object@Data, nomatch=0][,c("VALID_CASE", "CONTENT_AREA", "ID"), with=FALSE], key=c("VALID_CASE", "CONTENT_AREA", "ID"))
-				setkey(sgp_object@Data, VALID_CASE, CONTENT_AREA, ID)
-				tmp.unique.data <- sgp_object@Data[!tmp.dups.index]
-				tmp.past.dups.extended <- sgp_object@Data[YEAR!=tmp.last.year][tmp.dups.index, allow.cartesian=TRUE, nomatch=0]
-				tmp.current.dups <- data.table(sgp_object@Data[unique(tmp.dups.index)][YEAR==tmp.last.year], key=c("VALID_CASE", "CONTENT_AREA", "ID"))
-				tmp.all.dups.extended <- data.table(rbindlist(list(tmp.past.dups.extended, tmp.current.dups)), key=getKey(sgp_object))
-				tmp.all.dups.extended[,ID:=paste(ID, "DUPS", tmp.all.dups.extended[,seq.int(.N), by=eval(getKey(sgp_object))][['V1']], sep="_")]
-				sgp_object@Data <- rbindlist(list(tmp.unique.data, tmp.all.dups.extended))
-				setkeyv(sgp_object@Data, getKey(sgp_object))
+				sgp_object@Data <- createUniqueLongData(sgp_object@Data)
 				message("\tNOTE: Additional cases created from duplicate cases in current year. Modified IDs include suffix '_DUPS_***' in @Data.")
 			} else {
 				message("\tNOTE: Duplicate case modification is only available when duplicates reside in last year of data. Duplicate cases are NOT fixed.")
