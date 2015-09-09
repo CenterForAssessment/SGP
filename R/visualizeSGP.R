@@ -813,11 +813,10 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 		variables.to.keep <- c("VALID_CASE", "ID", "LAST_NAME", "FIRST_NAME", "CONTENT_AREA", "CONTENT_AREA_LABELS", "YEAR", "GRADE", "SCALE_SCORE", "TRANSFORMED_SCALE_SCORE", 
 			"ACHIEVEMENT_LEVEL", my.sgp, my.sgp.level, my.sgp.targets, "SCHOOL_NAME", "SCHOOL_NUMBER", "DISTRICT_NAME", "DISTRICT_NUMBER")
 
-		sgPlot.data <- ddcast(tmp.table[,setdiff(variables.to.keep, "VALID_CASE"), with=FALSE], ID + CONTENT_AREA ~ YEAR,
+		sgPlot.data <- data.table(tmp.table[,setdiff(variables.to.keep, "VALID_CASE"), with=FALSE], key=c("ID", "CONTENT_AREA", "YEAR"))
+		if (any(duplicated(sgPlot.data))) sgPlot.data <- createUniqueLongData(sgPlot.data)
+		sgPlot.data <- ddcast(sgPlot.data, ID + CONTENT_AREA ~ YEAR,
 			value.var=setdiff(variables.to.keep, c("VALID_CASE", "ID", "CONTENT_AREA", "YEAR")), sep=".")
-		sgPlot.data <- sgPlot.data[!is.na(sgPlot.data[[paste("CONTENT_AREA_LABELS", tmp.last.year, sep=".")]])] # Trim down data when not all CONTENT_AREA_LABELS == CONTENT_AREA
-		setnames(sgPlot.data, names(sgPlot.data), gsub("CONTENT_AREA_LABELS.1", "CONTENT_AREA_LABELS", names(sgPlot.data)))
-		sgPlot.data[, CONTENT_AREA_LABELS := NULL] # Don't want this single variable, but need to use it in ddcast formula above to ensure unique cases.  Keep CONTENT_AREA_LABELS.20** (wide)
 
 		variables.to.keep <- c("ID", "CONTENT_AREA", paste("CONTENT_AREA_LABELS", tmp.years.filled, sep="."),
 		# variables.to.keep <- c("ID", "CONTENT_AREA", "CONTENT_AREA_LABELS",
@@ -836,7 +835,6 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 		if (sgPlot.fan | !is.null(sgPlot.sgp.targets)) {
 
 			setnames(sgPlot.data, c(paste("CONTENT_AREA_LABELS", tmp.last.year, sep="."), "CONTENT_AREA"), c("CONTENT_AREA", "CONTENT_AREA_TEMP"))
-			# setnames(sgPlot.data, c("CONTENT_AREA_LABELS", "CONTENT_AREA"), c("CONTENT_AREA", "CONTENT_AREA_TEMP"))
 			tmp.content_areas <- sort(unique(sgPlot.data[["CONTENT_AREA"]]))
 
 			if (sgPlot.baseline) {
@@ -904,13 +902,12 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 				}
 			}
 
-			ss.index <- which(!is.na(sgPlot.data[[paste("SCALE_SCORE", tmp.last.year, sep=".")]]))
 			for (i in seq(8)) {
 				if (length(grep(paste("PROJ_YEAR", i, sep="_"), names(sgPlot.data))) > 0) {
 					for (proj.iter in grep(paste("PROJ_YEAR", i, sep="_"), names(sgPlot.data), value=TRUE)) {
 						if (length(grep("CURRENT", proj.iter)) > 0) tmp.increment <- i else tmp.increment <- i-1
 						setnames(sgPlot.data, c(proj.iter, tmp.grade.name), c("TEMP_SCORE", "TEMP_GRADE"))
-						sgPlot.data[ss.index, TEMP:=piecewiseTransform(
+						sgPlot.data[, TEMP:=piecewiseTransform(
 										TEMP_SCORE,
 										state, 
 										get.next.content_area(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment), 
