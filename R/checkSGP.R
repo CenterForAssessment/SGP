@@ -1,5 +1,5 @@
 `checkSGP` <-
-function(sgp_object, 
+function(sgp_object,
 	state=NULL) {
 
 	ID <- NULL
@@ -48,7 +48,7 @@ function(sgp_object,
 	changeVariableClass <- function(my.data, my.variables.to.change, data.slot, convert.to.class) {
 		if (!data.slot=="@Data" & !data.slot=="@Data_Supplementary") {
 			message(paste("\tNOTE: ID in", data.slot, "converted from factor to character."))
-			my.data[,ID:=as.character(my.data[["ID"]])]			
+			my.data[,ID:=as.character(my.data[["ID"]])]
 		} else {
 			if (convert.to.class=="character") {
 				for (my.variable in my.variables.to.change) {
@@ -94,15 +94,15 @@ function(sgp_object,
 	}
 
 	## Check class of variables in @Data_Supplementary
-	
+
 	if (!is.null(sgp_object@Data_Supplementary)) {
 		for(j in 1:length(sgp_object@Data_Supplementary)) {
 			if (any(tmp.check <- checkVariableClass(sgp_object@Data_Supplementary[[j]], "character", my.character.variables, id.only=FALSE))) {
-				sgp_object@Data_Supplementary[[j]] <- 
+				sgp_object@Data_Supplementary[[j]] <-
 					changeVariableClass(sgp_object@Data_Supplementary[[j]], my.character.variables[tmp.check], data.slot="@Data_Supplementary", convert.to.class="character")
 			}
 			if (any(tmp.check <- checkVariableClass(sgp_object@Data_Supplementary[[j]], "numeric", my.numeric.variables, id.only=FALSE))) {
-				sgp_object@Data_Supplementary[[j]] <- 
+				sgp_object@Data_Supplementary[[j]] <-
 					changeVariableClass(sgp_object@Data_Supplementary[[j]], my.numeric.variables[tmp.check], data.slot="@Data_Supplementary", convert.to.class="numeric")
 			}
 		}
@@ -142,7 +142,7 @@ function(sgp_object,
 			achievement.levels <- SGP::SGPstateData[[state]][['Achievement']][['Levels']][['Labels']]
 		}
 		if (!all(sort(unique(sgp_object@Data$ACHIEVEMENT_LEVEL)) %in% achievement.levels)) {
-			missing.achievement.levels <- 
+			missing.achievement.levels <-
 				sort(unique(sgp_object@Data$ACHIEVEMENT_LEVEL))[!sort(unique(sgp_object@Data$ACHIEVEMENT_LEVEL)) %in% achievement.levels]
 			message(paste("\tNOTE: Achievement level(s):", paste(missing.achievement.levels, collapse=", "), "in supplied data are not contained in 'SGPstateData'.", collapse=" "))
 		}
@@ -190,7 +190,8 @@ function(sgp_object,
 		if (!is.data.table(sgp_object@SGP[['SGProjections']][[i]])) sgp_object@SGP[['SGProjections']][[i]] <- as.data.table(sgp_object@SGP[['SGProjections']][[i]])
 	}
 
-	## Return sgp_object	
+	## Return sgp_object
 
+	setkeyv(sgp_object, getKey(sgp_object))
 	return(sgp_object)
 } ### END sgp_object

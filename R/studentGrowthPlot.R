@@ -107,8 +107,9 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		if (identical("sgp.projections.lagged", Report_Parameters[['SGP_Targets']]) | identical("sgp.projections.lagged.baseline", Report_Parameters[['SGP_Targets']])) tmp.target.types <- grep("Current", names(unlist(SGP_Targets)[!is.na(unlist(SGP_Targets))]), value=TRUE, invert=TRUE)
 	}
 
-	if (!is.null(SGP::SGPstateData[[Report_Parameters$State]][['SGP_Configuration']][['sgPlot.show.content_area.progression']])) {
-		sgPlot.show.content_area.progression <- SGP::SGPstateData[[Report_Parameters$State]][['SGP_Configuration']][['sgPlot.show.content_area.progression']]
+	if (!is.null(SGP::SGPstateData[[Report_Parameters$State]][['SGP_Configuration']][['sgPlot.show.content_area.progression']]) |
+		!is.null(Report_Parameters[['Configuration']][['Assessment_Transition']])) {
+			sgPlot.show.content_area.progression <- SGP::SGPstateData[[Report_Parameters$State]][['SGP_Configuration']][['sgPlot.show.content_area.progression']]
 	} else {
 		if (is.null(Report_Parameters[['Configuration']][['Show_Content_Area_Progression']])) {
 			if (length(unique(Content_Areas[!is.na(Content_Areas)])) > 1 || !all(Content_Areas[!is.na(Content_Areas)]==Report_Parameters$Content_Area)) {
@@ -340,7 +341,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 					increment_for_projection_current=year.increment.for.projection.current,
 					years=yearIncrement(Report_Parameters$Current_Year, seq(1-max(which(grades[1]==temp.grades.content_areas$GRADE_NUMERIC)), length=dim(temp.grades.content_areas)[1]))))
 			}
-		}
+				}
 	} ### END interpolate.grades function
 
 	year.function <- function(year, add.sub, vec.length, output.type="numeric", season=NULL) {
@@ -649,8 +650,13 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 				tmp.transition.names <- names(SGP::SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Transition"]])
 				tmp.test.abbreviation <-
 					unlist(SGP::SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Transition"]][grep('Assessment_Abbreviation', tmp.transition.names)])
-				grid.text(x=(xscale.range.list[[j]][1] + xscale.range.list[[j]][2])/2, y=(yscale.range[1]+yscale.range[2])/2, tmp.test.abbreviation[j],
-					default.units="native", gp=gpar(col="white", fontface=2, cex=1.6, alpha=0.5))
+				tmp.test.abbreviation.text <- rep(" ", length(year.text))
+				tmp.test.abbreviation.text[which((low.year:high.year < Report_Parameters$Assessment_Transition$Year)[which(year.text!=" ")])] <-
+					tmp.test.abbreviation[1]
+				tmp.test.abbreviation.text[which((low.year:high.year >= Report_Parameters$Assessment_Transition$Year)[which(year.text!=" ")])] <-
+					tmp.test.abbreviation[2]
+				grid.text(x=low.year:high.year, y=convertY(unit(0.07, "npc"), "native"), tmp.test.abbreviation.text, gp=gpar(col="white", cex=0.7), default.units="native")
+				grid.text(x=low.year:high.year, y=convertY(unit(0.035, "npc"), "native"), sapply(content_area.text, capwords), gp=gpar(col="white", cex=0.7), default.units="native")
 			}
 		}
 	}
@@ -659,7 +665,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		grid.text(x=0.5, y=0.5, paste("No", test.abbreviation, "Data"), gp=gpar(col=border.color, cex=2))
 	}
 
-	if (sgPlot.show.content_area.progression) {
+	if (is.null(Report_Parameters$Assessment_Transition) && sgPlot.show.content_area.progression) {
 		grid.text(x=low.year:high.year, y=convertY(unit(0.05, "npc"), "native"), sapply(content_area.text, capwords), gp=gpar(col="white", cex=0.75), default.units="native")
 	}
 
