@@ -192,6 +192,6 @@ function(sgp_object,
 
 	## Return sgp_object
 
-	setkeyv(sgp_object, getKey(sgp_object))
+	setkeyv(sgp_object@Data, getKey(sgp_object))
 	return(sgp_object)
 } ### END sgp_object
