@@ -47,7 +47,7 @@ abcSGP(sgp_object,
 				"INSTRUCTOR_Data"),
 	verbose.output=FALSE,
 	sgp.sqlite=NULL,
-	sgp.percentiles.equated=FALSE,
+	sgp.percentiles.equated=NULL,
 	SGPt=NULL) 
 }
 
@@ -145,8 +145,9 @@ If missing the function will use the data to infer all the grade progressions fo
   \item{sgp.sqlite}{A Boolean argument (defaults to NULL) indicating whether a SQLite database file of the essential SGP data should be created from the \code{@Data} slot and subsequently 
   used to extract data subsets for analyses conducted in order to reduce the amount of RAM memory required.  See full argument description in \code{\link{analyzeSGP}}.
   }
-  \item{sgp.percentiles.equated}{A Boolean argument (defaults to FALSE) passed to \code{\link{analyzeSGP}} indicating whether equating should be used on the most 
-  recent year of test data provided. Equating allows for student growth projections to be calculated in across assessment transitions where the scale for the assessment changes.
+  \item{sgp.percentiles.equated}{A Boolean argument (defaults to NULL, which calculates equated results if in the equating year) passed to \code{\link{analyzeSGP}}
+  indicating whether equating should be used on the most recent year of test data provided. Equating allows for student growth projections to be calculated in 
+  across assessment transitions where the scale for the assessment changes.
   }
   \item{SGPt}{Argument (defaults to NULL) indicating whether to perform time dependent SGP analyses (SGPt). 
   }
