@@ -22,12 +22,12 @@ function(state,
 	get.long.cutscores <- function(content_area, transformed.cutscores=NULL, subset.year=NULL) {
 
 		cutscore.list <- list()
-		for (i in grep(content_area, sapply(strsplit(names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]]), '[.]'), '[', 1))) {
+		for (i in grep(paste("^", content_area, "$", sep=""), sapply(strsplit(names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]]), '[.]'), '[', 1))) {
 			cutscores.content_area <- unlist(strsplit(names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]])[i], '[.]'))[1]
 			grades <- as.character(matrix(unlist(strsplit(names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[i]]), "_")), ncol=2, byrow=TRUE)[,2])
 			cutscores.year <- as.character(unlist(strsplit(names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]])[i], "[.]"))[2])
 
-			if (!is.null(transformed.cutscores)) {
+			if (!is.null(transformed.cutscores) & content_area %in% names(transformed.cutscores)) {
 				cutscores.iter <- seq(length(transformed.cutscores[[content_area]])-2)
 				cutscores <- tail(transformed.cutscores[[content_area]], -1)
 				loss <- transformed.cutscores[[content_area]][1]
@@ -108,7 +108,7 @@ function(state,
 				stop("Not all content areas have Transformed Achievement Level Cutscores available in SGP::SGPstateData.
 					Please augment the SGP::SGPstateData set with your data or contact the SGP package maintainer to have your data added to the SGP package.")
 		}
-		 tmp.transformed.cutscores <- SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]]
+		tmp.transformed.cutscores <- SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]]
 	} else tmp.transformed.cutscores <- NULL
 
 	if (multiple.content_areas) {
