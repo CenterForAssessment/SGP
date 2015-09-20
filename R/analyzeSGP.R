@@ -624,7 +624,8 @@ function(sgp_object,
 	setkeyv(sgp_object@Data, getKey(sgp_object))
 	par.sgp.config <- getSGPConfig(sgp_object, state, tmp_sgp_object, content_areas, years, grades, sgp.config, trim.sgp.config, sgp.percentiles, sgp.projections, sgp.projections.lagged,
 		sgp.percentiles.baseline, sgp.projections.baseline, sgp.projections.lagged.baseline, sgp.config.drop.nonsequential.grade.progression.variables,
-		sgp.minimum.default.panel.years, sgp.projections.max.forward.progression.years, sgp.use.my.coefficient.matrices, calculate.simex, calculate.simex.baseline, year.for.equate, SGPt)
+		sgp.minimum.default.panel.years, sgp.projections.max.forward.progression.years, sgp.use.my.coefficient.matrices, calculate.simex, calculate.simex.baseline, year.for.equate,
+        sgp.percentiles.equated, SGPt)
 
 	if (sgp.projections & length(par.sgp.config[['sgp.projections']])==0) {
 		message("\tNOTE: No configurations are present for cohort referenced projections. No cohort referenced projections will be calculated.")
