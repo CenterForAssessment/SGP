@@ -623,6 +623,10 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 			}
 		}
 
+		## Keep achievement level bands from extending outside of chart box
+		eval(parse(text=paste("y.boundary.values.", seq(number.achievement.level.regions[[j]]), "[y.boundary.values.", seq(number.achievement.level.regions[[j]]), " > max(yscale.range)] <- max(yscale.range)", sep="")))
+		eval(parse(text=paste("y.boundary.values.", seq(number.achievement.level.regions[[j]]), "[y.boundary.values.", seq(number.achievement.level.regions[[j]]), " < min(yscale.range)] <- min(yscale.range)", sep="")))
+
 		for (i in seq(number.achievement.level.regions[[j]])) {
 			grid.polygon(x=get(paste("x.boundary.values.", i, sep="")),
 				y=get(paste("y.boundary.values.", i, sep="")),
