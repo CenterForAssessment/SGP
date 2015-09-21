@@ -14,6 +14,7 @@ function(sgp_object,
 	update.ids=NULL,
 	SGPt=TRUE,
 	save.intermediate.results=FALSE,
+	coefficient.matrices=NULL,
 	parallel.config=NULL) {
 
 	YEAR <- GRADE <- ID <- NEW_ID <- .EACHI <- DATE <- NULL
@@ -91,6 +92,8 @@ function(sgp_object,
 	if (!is.null(update.ids) && !is.data.table(update.ids)) update.ids <- as.data.table(update.ids)
 
 	if (state=="RLI_UK") content_areas <- "READING"
+
+	if (!is.null(coefficient.matrices)) SGPstateData[[state]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <- coefficient.matrices
 
 
 	### Create variables
