@@ -241,7 +241,7 @@ if (reports.by.school) {
 			tmp_content_areas <- tmp_all_student_data[["CONTENT_AREA"]]
 			tmp_all_student_data[["CONTENT_AREA"]] <- tmp_content_areas <- unlist(sapply(unique(tmp_content_areas), function(x) paste(x, which(tmp_content_areas==x), sep="."), USE.NAMES=FALSE))
 		} else tmp_content_areas <- content_areas
-		num.plots <- length(tmp_content_areas)
+		num.charts <- length(tmp_content_areas)
 
 		if ("JSON" %in% sgPlot.output.format) {
 	
@@ -359,15 +359,15 @@ if (reports.by.school) {
 
 		## Start pdf device
 		
-		if (num.plots %in% c(1,2)) {
+		if (num.charts %in% c(1,2)) {
 			report.width=11
 			report.height=8.5
 		}
-		if (num.plots==3) {
+		if (num.charts==3) {
 			report.width=8.5
 			report.height=11
 		}
-		if (num.plots==4) {
+		if (num.charts==4) {
 			report.width=8.5
 			report.height=11
 			# report.width=11
@@ -375,13 +375,13 @@ if (reports.by.school) {
 			# report.width=17
 			# report.height=11
 		}
-		if (num.plots==5) {
+		if (num.charts==5) {
 			report.width=8.5
 			report.height=11
 			# report.width=11
 			# report.height=17
 		}
-		if (!num.plots %in% 1:5) {
+		if (!num.charts %in% 1:5) {
 			stop("Individual Student Report Templates currently only available for situations with 1, 2, 3, 4 or 5 content areas.")
 		}
 
@@ -394,10 +394,9 @@ if (reports.by.school) {
 		###
 		########################################################################################################
 
-		page.count <- 1 # redefined below if necessary
-		page.content_areas <- list(1:num.plots)
+		page.count <- 1; page.content_areas <- list(1:num.charts); legend.tf <- FALSE # redefined below if necessary
 
-		if (num.plots==1) {
+		if (num.charts==1) {
 			report.vp <- viewport(layout = grid.layout(5, 4, widths = unit(c(2.5, 0.1, 8.3, 0.1), rep("inches", 4)), 
 				heights = unit(c(0.55, 0.2, 7, 0.25, 0.5), rep("inches", 5))))
 
@@ -407,7 +406,7 @@ if (reports.by.school) {
 			left.legend.vp <- viewport(layout.pos.row=2:4, layout.pos.col=1)
 		}
 
-		if (num.plots==2) {
+		if (num.charts==2) {
 			report.vp <- viewport(layout = grid.layout(7, 4, widths = unit(c(2.5, 0.1, 8.3, 0.1), rep("inches", 4)), 
 				heights = unit(c(0.35, 0.2, 3.55, 0.25, 3.55, 0.2, 0.4), rep("inches", 7))))
 
@@ -418,7 +417,7 @@ if (reports.by.school) {
 			left.legend.vp <- viewport(layout.pos.row=2:6, layout.pos.col=1)
 		}
 
-		if (num.plots==3) {
+		if (num.charts==3) {
 			report.vp <- viewport(layout = grid.layout(9, 3, widths = unit(c(0.125, 8.3, 0.075), rep("inches", 3)), 
 				heights = unit(c(0.35, 0.1, 3.256, 0.14, 3.256, 0.14, 3.256, 0.1, 0.4), rep("inches", 9))))
 
@@ -429,21 +428,43 @@ if (reports.by.school) {
 			bottom.border.vp <- viewport(layout.pos.row=9, layout.pos.col=1:3)
 		}
 
-		if (num.plots==4) {
-			report.vp <- viewport(layout = grid.layout(7, 3, widths = unit(c(0.125, 8.3, 0.075), rep("inches", 3)), 
-				heights = unit(c(0.4, 0.75, 4, 0.5, 4, 0.85, 0.5), rep("inches", 7))))
+		if (num.charts==4) {
+			# report.vp <- viewport(layout = grid.layout(7, 3, widths = unit(c(0.125, 8.3, 0.075), rep("inches", 3)), 
+			# 	heights = unit(c(0.4, 0.75, 4, 0.5, 4, 0.85, 0.5), rep("inches", 7))))
 
-			page.content_areas <- list(1:2, 3:4)
+			# page.content_areas <- list(1:2, 3:4)
 
-			content_area_1.vp <- viewport(layout.pos.row=3, layout.pos.col=2)
-			content_area_2.vp <- viewport(layout.pos.row=5, layout.pos.col=2)
-			content_area_3.vp <- viewport(layout.pos.row=3, layout.pos.col=2)
-			content_area_4.vp <- viewport(layout.pos.row=5, layout.pos.col=2)
-			top.border.vp <- viewport(layout.pos.row=1, layout.pos.col=1:3)
-			bottom.border.vp <- viewport(layout.pos.row=7, layout.pos.col=1:3)
+			# content_area_1.vp <- viewport(layout.pos.row=3, layout.pos.col=2)
+			# content_area_2.vp <- viewport(layout.pos.row=5, layout.pos.col=2)
+			# content_area_3.vp <- viewport(layout.pos.row=3, layout.pos.col=2)
+			# content_area_4.vp <- viewport(layout.pos.row=5, layout.pos.col=2)
+			# top.border.vp <- viewport(layout.pos.row=1, layout.pos.col=1:3)
+			# bottom.border.vp <- viewport(layout.pos.row=7, layout.pos.col=1:3)
 
-			page.count <- 2
+			if (!is.null(Four_Charts <- SGP::SGPstateData[[state]][["Student_Report_Information"]][["Two_Page_Layout"]][["Four_Charts"]])) {
+				page.count <- 2
+				report.vp <- Four_Charts[["report.vp"]]
+				page.content_areas <- Four_Charts[["page.content_areas"]]
+				content_area_1.vp <- Four_Charts[["content_area_1.vp"]]
+				content_area_2.vp <- Four_Charts[["content_area_2.vp"]]
+				content_area_3.vp <- Four_Charts[["content_area_3.vp"]]
+				content_area_4.vp <- Four_Charts[["content_area_4.vp"]]
+				top.border.vp <- Four_Charts[["top.border.vp"]]
+				bottom.border.vp <- Four_Charts[["bottom.border.vp"]]
+				if (!is.null(Four_Charts[["left.legend.vp"]])) {left.legend.vp <- Four_Charts[["left.legend.vp"]]; legend.tf <- TRUE}
+			} else { ###  17 x 11 Default
+				report.vp <- viewport(layout = grid.layout(7, 6, widths = unit(c(2.5, 0.15, 7, 0.2, 7, 0.15), rep("inches", 6)), 
+					heights = unit((11/8.5)*c(0.35, 0.2, 3.55, 0.25, 3.55, 0.2, 0.4), rep("inches", 7))))
 
+				content_area_1.vp <- viewport(layout.pos.row=3, layout.pos.col=3)
+				content_area_2.vp <- viewport(layout.pos.row=3, layout.pos.col=5)
+				content_area_3.vp <- viewport(layout.pos.row=5, layout.pos.col=3)
+				content_area_4.vp <- viewport(layout.pos.row=5, layout.pos.col=5)
+				top.border.vp <- viewport(layout.pos.row=1, layout.pos.col=1:6)
+				bottom.border.vp <- viewport(layout.pos.row=7, layout.pos.col=1:6)
+				left.legend.vp <- viewport(layout.pos.row=2:6, layout.pos.col=1)
+				legend.tf <- TRUE
+			}
 			###  11 x 8.5 - Panels generally are too small
 			# report.vp <- viewport(layout = grid.layout(7, 5, widths = unit(c(0.15, 5.3, 0.1, 5.3, 0.15), rep("inches", 5)), 
 			# 	heights = unit(c(0.35, 0.2, 3.55, 0.25, 3.55, 0.2, 0.4), rep("inches", 7))))
@@ -455,47 +476,46 @@ if (reports.by.school) {
 			# top.border.vp <- viewport(layout.pos.row=1, layout.pos.col=1:5)
 			# bottom.border.vp <- viewport(layout.pos.row=7, layout.pos.col=1:5)
 			# #  No Legend
-
-			###  17 x 11
-			# report.vp <- viewport(layout = grid.layout(7, 6, widths = unit(c(2.5, 0.15, 7, 0.2, 7, 0.15), rep("inches", 6)), 
-			# 	heights = unit((11/8.5)*c(0.35, 0.2, 3.55, 0.25, 3.55, 0.2, 0.4), rep("inches", 7))))
-
-			# content_area_1.vp <- viewport(layout.pos.row=3, layout.pos.col=3)
-			# content_area_2.vp <- viewport(layout.pos.row=3, layout.pos.col=5)
-			# content_area_3.vp <- viewport(layout.pos.row=5, layout.pos.col=3)
-			# content_area_4.vp <- viewport(layout.pos.row=5, layout.pos.col=5)
-			# top.border.vp <- viewport(layout.pos.row=1, layout.pos.col=1:6)
-			# bottom.border.vp <- viewport(layout.pos.row=7, layout.pos.col=1:6)
-			# left.legend.vp <- viewport(layout.pos.row=2:6, layout.pos.col=1)
 		}
 
-		if (num.plots==5) {
-			report.vp <- viewport(layout = grid.layout(9, 3, widths = unit(c(0.125, 8.3, 0.075), rep("inches", 3)), 
-				heights = unit(c(0.35, 0.1, 3.256, 0.14, 3.256, 0.14, 3.256, 0.1, 0.4), rep("inches", 9))))
+		if (num.charts==5) {
+			# report.vp <- viewport(layout = grid.layout(9, 3, widths = unit(c(0.125, 8.3, 0.075), rep("inches", 3)), 
+			# 	heights = unit(c(0.35, 0.1, 3.256, 0.14, 3.256, 0.14, 3.256, 0.1, 0.4), rep("inches", 9))))
 
-			page.content_areas <- list(1:3, 4:5)
+			# page.content_areas <- list(1:3, 4:5)
 
-			content_area_1.vp <- viewport(layout.pos.row=3, layout.pos.col=2)  # 1st Page
-			content_area_2.vp <- viewport(layout.pos.row=5, layout.pos.col=2)
-			content_area_3.vp <- viewport(layout.pos.row=7, layout.pos.col=2)
-			content_area_4.vp <- viewport(layout.pos.row=3, layout.pos.col=2)  # 2nd Page
-			content_area_5.vp <- viewport(layout.pos.row=5, layout.pos.col=2)
-			top.border.vp <- viewport(layout.pos.row=1, layout.pos.col=1:3)
-			bottom.border.vp <- viewport(layout.pos.row=9, layout.pos.col=1:3)
-
-			page.count <- 2
-
-			###  17 x 11
-			# report.vp <- viewport(layout = grid.layout(13, 3, widths = unit((11/8.5)*c(0.125, 8.3, 0.075), rep("inches", 3)), 
-			# 	heights = unit(c(0.3, 0.10, 3.25, 0.15, 3.25, 0.15, 3.35, 0.15, 3.25, 0.15, 3.25, 0.10, 0.3), rep("inches", 9))))
-
-			# content_area_1.vp <- viewport(layout.pos.row=3, layout.pos.col=2)
+			# content_area_1.vp <- viewport(layout.pos.row=3, layout.pos.col=2)  # 1st Page
 			# content_area_2.vp <- viewport(layout.pos.row=5, layout.pos.col=2)
 			# content_area_3.vp <- viewport(layout.pos.row=7, layout.pos.col=2)
-			# content_area_4.vp <- viewport(layout.pos.row=9, layout.pos.col=2)
-			# content_area_5.vp <- viewport(layout.pos.row=11, layout.pos.col=2)
+			# content_area_4.vp <- viewport(layout.pos.row=3, layout.pos.col=2)  # 2nd Page
+			# content_area_5.vp <- viewport(layout.pos.row=5, layout.pos.col=2)
 			# top.border.vp <- viewport(layout.pos.row=1, layout.pos.col=1:3)
-			# bottom.border.vp <- viewport(layout.pos.row=13, layout.pos.col=1:3)
+			# bottom.border.vp <- viewport(layout.pos.row=9, layout.pos.col=1:3)
+
+			if (!is.null(Five_Charts <- SGP::SGPstateData[[state]][["Student_Report_Information"]][["Two_Page_Layout"]][["Five_Charts"]])) {
+				page.count <- 2
+				report.vp <- Five_Charts[["report.vp"]]
+				page.content_areas <- Five_Charts[["page.content_areas"]]
+				content_area_1.vp <- Five_Charts[["content_area_1.vp"]]
+				content_area_2.vp <- Five_Charts[["content_area_2.vp"]]
+				content_area_3.vp <- Five_Charts[["content_area_3.vp"]]
+				content_area_4.vp <- Five_Charts[["content_area_4.vp"]]
+				content_area_5.vp <- Five_Charts[["content_area_5.vp"]]
+				top.border.vp <- Five_Charts[["top.border.vp"]]
+				bottom.border.vp <- Five_Charts[["bottom.border.vp"]]
+				if (!is.null(Five_Charts[["left.legend.vp"]])) {left.legend.vp <- Five_Charts[["left.legend.vp"]]; legend.tf <- TRUE}
+			} else { ###  17 x 11 Default
+				report.vp <- viewport(layout = grid.layout(13, 3, widths = unit((11/8.5)*c(0.125, 8.3, 0.075), rep("inches", 3)), 
+					heights = unit(c(0.3, 0.10, 3.25, 0.15, 3.25, 0.15, 3.35, 0.15, 3.25, 0.15, 3.25, 0.10, 0.3), rep("inches", 9))))
+
+				content_area_1.vp <- viewport(layout.pos.row=3, layout.pos.col=2)
+				content_area_2.vp <- viewport(layout.pos.row=5, layout.pos.col=2)
+				content_area_3.vp <- viewport(layout.pos.row=7, layout.pos.col=2)
+				content_area_4.vp <- viewport(layout.pos.row=9, layout.pos.col=2)
+				content_area_5.vp <- viewport(layout.pos.row=11, layout.pos.col=2)
+				top.border.vp <- viewport(layout.pos.row=1, layout.pos.col=1:3)
+				bottom.border.vp <- viewport(layout.pos.row=13, layout.pos.col=1:3)
+			}
 		}
 
 		for (pages in 1:page.count) {
@@ -503,7 +523,7 @@ if (reports.by.school) {
 
 		for (vp in page.content_areas[[pages]]) {
 			tmp_student_data <- as.data.frame(tmp_all_student_data[CONTENT_AREA==tmp_content_areas[vp]])
-			if (dim(tmp_student_data)[1]==0) tmp_student_data <- as.data.frame(data.table(tmp_student_data)[NA][,CONTENT_AREA := tmp_content_areas[vp]])
+			if (dim(tmp_student_data)[1]==0) tmp_student_data <- as.data.frame(data.table(tmp_student_data)[NA][,c("CONTENT_AREA", paste("CONTENT_AREA_LABELS", last.year, sep=".")) := tmp_content_areas[vp]])
 			pushViewport(get(paste("content_area_", vp, ".vp", sep="")))
 			studentGrowthPlot(
 				Scale_Scores=as.numeric(subset(tmp_student_data, select=paste("SCALE_SCORE", rev(sgPlot.years), sep="."))),
@@ -601,7 +621,7 @@ if (reports.by.school) {
 
 		## Left Legend (Only with one or two content areas depicted)
 
-		if (num.plots %in% c(1,2)) { #,4
+		if (num.charts %in% c(1,2) | legend.tf) { #,4
 
 			pushViewport(left.legend.vp)
 	
@@ -1003,23 +1023,23 @@ if (reports.by.instructor) {
 			####################################################################################################################################################
 	
 			## Start pdf device		
-			if (num.plots %in% c(1,2)) {
+			if (num.charts %in% c(1,2)) {
 				report.width=11
 				report.height=8.5
 			}
-			if (num.plots==3) {
+			if (num.charts==3) {
 				report.width=8.5
 				report.height=11
 			}
-			if (num.plots==4) {
+			if (num.charts==4) {
 				report.width=17
 				report.height=11
 			}
-			if (num.plots==5) {
+			if (num.charts==5) {
 				report.width=11
 				report.height=17
 			}
-			if (!num.plots %in% 1:5) {
+			if (!num.charts %in% 1:5) {
 				stop("Individual Student Report Templates currently only available for situations with 1, 2, 3, 4 or 5 content areas.")
 			}
 	
@@ -1032,7 +1052,7 @@ if (reports.by.instructor) {
 			###
 			########################################################################################################
 	
-			if (num.plots==1) {
+			if (num.charts==1) {
 				report.vp <- viewport(layout = grid.layout(5, 4, widths = unit(c(2.5, 0.1, 8.3, 0.1), rep("inches", 4)), 
 					heights = unit(c(0.55, 0.2, 7, 0.25, 0.5), rep("inches", 5))))
 	
@@ -1042,7 +1062,7 @@ if (reports.by.instructor) {
 				left.legend.vp <- viewport(layout.pos.row=2:4, layout.pos.col=1)
 			}
 	
-			if (num.plots==2) {
+			if (num.charts==2) {
 				report.vp <- viewport(layout = grid.layout(7, 4, widths = unit(c(2.5, 0.1, 8.3, 0.1), rep("inches", 4)), 
 					heights = unit(c(0.35, 0.2, 3.55, 0.25, 3.55, 0.2, 0.4), rep("inches", 7))))
 	
@@ -1053,7 +1073,7 @@ if (reports.by.instructor) {
 				left.legend.vp <- viewport(layout.pos.row=2:6, layout.pos.col=1)
 			}
 	
-			if (num.plots==3) {
+			if (num.charts==3) {
 				report.vp <- viewport(layout = grid.layout(9, 3, widths = unit(c(0.125, 8.3, 0.075), rep("inches", 3)), 
 					heights = unit(c(0.35, 0.1, 3.256, 0.14, 3.256, 0.14, 3.256, 0.1, 0.4), rep("inches", 9))))
 	
@@ -1064,7 +1084,7 @@ if (reports.by.instructor) {
 				bottom.border.vp <- viewport(layout.pos.row=9, layout.pos.col=1:3)
 			}
 	
-			if (num.plots==4) {
+			if (num.charts==4) {
 				report.vp <- viewport(layout = grid.layout(7, 6, widths = unit(c(2.5, 0.15, 7, 0.2, 7, 0.15), rep("inches", 6)), 
 					heights = unit((11/8.5)*c(0.35, 0.2, 3.55, 0.25, 3.55, 0.2, 0.4), rep("inches", 7))))
 	
@@ -1077,7 +1097,7 @@ if (reports.by.instructor) {
 				left.legend.vp <- viewport(layout.pos.row=2:6, layout.pos.col=1)
 			}
 	
-			if (num.plots==5) {
+			if (num.charts==5) {
 				report.vp <- viewport(layout = grid.layout(13, 3, widths = unit((11/8.5)*c(0.125, 8.3, 0.075), rep("inches", 3)), 
 					heights = unit(c(0.3, 0.10, 3.25, 0.15, 3.25, 0.15, 3.35, 0.15, 3.25, 0.15, 3.25, 0.10, 0.3), rep("inches", 9))))
 	
@@ -1191,7 +1211,7 @@ if (reports.by.instructor) {
 	
 			## Left Legend (Only with one or two content areas depicted)
 	
-			if (num.plots %in% c(1,2,4)) {
+			if (num.charts %in% c(1,2,4)) {
 				pushViewport(left.legend.vp)
 		
 				# Interpretation
