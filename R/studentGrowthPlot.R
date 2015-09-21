@@ -84,7 +84,9 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		sgp.target.types <- SGP::SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["sgp.target.types"]]
 	}
 	missing.data.symbol <- "--"
-	studentGrowthPlot.year.span <- 5
+	if (!is.null(my.year.span <- SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["sgPlot.year.span"]])) {
+		studentGrowthPlot.year.span <- my.year.span
+	} else studentGrowthPlot.year.span <- 5
 	if (is.null(Report_Parameters[['Denote_Content_Area']]) || Report_Parameters[['Denote_Content_Area']]==FALSE) {
 		legend.fill.color <- "white"
 	} else {
