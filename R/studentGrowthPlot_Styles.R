@@ -236,10 +236,18 @@ if (reports.by.school) {
 				file_name_json <- n
 			}
 	
+		tmp_all_student_data <- tmp_grade_data[ID==n]
+		if (length(content_areas) < dim(tmp_all_student_data)[1] | any(duplicated(tmp_all_student_data[["CONTENT_AREA"]]))) {
+			tmp_content_areas <- tmp_all_student_data[["CONTENT_AREA"]]
+			tmp_all_student_data[["CONTENT_AREA"]] <- tmp_content_areas <- unlist(sapply(unique(tmp_content_areas), function(x) paste(x, which(tmp_content_areas==x), sep="."), USE.NAMES=FALSE))
+		} else tmp_content_areas <- content_areas
+		num.charts <- length(tmp_content_areas)
+
 		if ("JSON" %in% sgPlot.output.format) {
 	
-			for (vp in seq_along(content_areas)) {
-				tmp_student_data <- as.data.frame(tmp_grade_data[ID==n & CONTENT_AREA==content_areas[vp]])
+			for (vp in seq_along(tmp_content_areas)) {
+				tmp_student_data <- as.data.frame(tmp_all_student_data[CONTENT_AREA==tmp_content_areas[vp]])
+				if (dim(tmp_student_data)[1]==0) tmp_student_data <- as.data.frame(data.table(tmp_student_data)[NA][,CONTENT_AREA := tmp_content_areas[vp]])
 				tmp.list <- list(
 					Scale_Scores_TEXT=as.numeric(subset(tmp_student_data, select=paste("SCALE_SCORE", rev(sgPlot.years), sep="."))),
 					Scale_Scores=as.numeric(subset(tmp_student_data, select=paste("TRANSFORMED_SCALE_SCORE", rev(sgPlot.years), sep="."))),
@@ -297,16 +305,16 @@ if (reports.by.school) {
 					NY1=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_1_CURRENT_TRANSFORMED", sep="_")]]),
 					NY2=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_2_CURRENT_TRANSFORMED", sep="_")]]),
 					NY3=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_3_CURRENT_TRANSFORMED", sep="_")]]))),
-				Cutscores=sgPlot.cutscores[[content_areas[vp]]],
+				Cutscores=sgPlot.cutscores[[strsplit(tmp_content_areas[vp], "[.]")[[1]][1]]],
 				Years=rev(sgPlot.years),
-				Report_Parameters=list(Current_Year=last.year, Content_Area=content_areas[vp], Content_Area_Title=tmp_student_data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]], 
+				Report_Parameters=list(Current_Year=last.year, Content_Area=strsplit(tmp_content_areas[vp], "[.]")[[1]][1], Content_Area_Title=tmp_student_data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]], 
 					State=state, SGP_Targets=sgPlot.sgp.targets, Assessment_Transition=sgPlot.linkages, Fan=SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']]))
 
 			tmp_student_data_JSON <- getJSON(
 							tmp.data=tmp.list,
 							sgPlot.sgp_object=sgPlot.sgp_object,
 							state=state, 
-							content_area=content_areas[vp], 
+							content_area=strsplit(tmp_content_areas[vp], "[.]")[[1]][1],
 							year=last.year,
 							years.for.percentile.trajectories=yearIncrement(last.year, c(0,-1)),
 							baseline=sgPlot.baseline, 
@@ -351,23 +359,29 @@ if (reports.by.school) {
 
 		## Start pdf device
 		
-		if (length(content_areas) %in% c(1,2)) {
+		if (num.charts %in% c(1,2)) {
 			report.width=11
 			report.height=8.5
 		}
-		if (length(content_areas)==3) {
+		if (num.charts==3) {
 			report.width=8.5
 			report.height=11
 		}
-		if (length(content_areas)==4) {
-			report.width=17
+		if (num.charts==4) {
+			report.width=8.5
 			report.height=11
+			# report.width=11
+			# report.height=8.5
+			# report.width=17
+			# report.height=11
 		}
-		if (length(content_areas)==5) {
-			report.width=11
-			report.height=17
+		if (num.charts==5) {
+			report.width=8.5
+			report.height=11
+			# report.width=11
+			# report.height=17
 		}
-		if (!length(content_areas) %in% 1:5) {
+		if (!num.charts %in% 1:5) {
 			stop("Individual Student Report Templates currently only available for situations with 1, 2, 3, 4 or 5 content areas.")
 		}
 
@@ -380,7 +394,9 @@ if (reports.by.school) {
 		###
 		########################################################################################################
 
-		if (length(content_areas)==1) {
+		page.count <- 1; page.content_areas <- list(1:num.charts); legend.tf <- FALSE # redefined below if necessary
+
+		if (num.charts==1) {
 			report.vp <- viewport(layout = grid.layout(5, 4, widths = unit(c(2.5, 0.1, 8.3, 0.1), rep("inches", 4)), 
 				heights = unit(c(0.55, 0.2, 7, 0.25, 0.5), rep("inches", 5))))
 
@@ -390,7 +406,7 @@ if (reports.by.school) {
 			left.legend.vp <- viewport(layout.pos.row=2:4, layout.pos.col=1)
 		}
 
-		if (length(content_areas)==2) {
+		if (num.charts==2) {
 			report.vp <- viewport(layout = grid.layout(7, 4, widths = unit(c(2.5, 0.1, 8.3, 0.1), rep("inches", 4)), 
 				heights = unit(c(0.35, 0.2, 3.55, 0.25, 3.55, 0.2, 0.4), rep("inches", 7))))
 
@@ -401,7 +417,7 @@ if (reports.by.school) {
 			left.legend.vp <- viewport(layout.pos.row=2:6, layout.pos.col=1)
 		}
 
-		if (length(content_areas)==3) {
+		if (num.charts==3) {
 			report.vp <- viewport(layout = grid.layout(9, 3, widths = unit(c(0.125, 8.3, 0.075), rep("inches", 3)), 
 				heights = unit(c(0.35, 0.1, 3.256, 0.14, 3.256, 0.14, 3.256, 0.1, 0.4), rep("inches", 9))))
 
@@ -412,36 +428,102 @@ if (reports.by.school) {
 			bottom.border.vp <- viewport(layout.pos.row=9, layout.pos.col=1:3)
 		}
 
-		if (length(content_areas)==4) {
-			report.vp <- viewport(layout = grid.layout(7, 6, widths = unit(c(2.5, 0.15, 7, 0.2, 7, 0.15), rep("inches", 6)), 
-				heights = unit((11/8.5)*c(0.35, 0.2, 3.55, 0.25, 3.55, 0.2, 0.4), rep("inches", 7))))
+		if (num.charts==4) {
+			# report.vp <- viewport(layout = grid.layout(7, 3, widths = unit(c(0.125, 8.3, 0.075), rep("inches", 3)), 
+			# 	heights = unit(c(0.4, 0.75, 4, 0.5, 4, 0.85, 0.5), rep("inches", 7))))
 
-			content_area_1.vp <- viewport(layout.pos.row=3, layout.pos.col=3)
-			content_area_2.vp <- viewport(layout.pos.row=3, layout.pos.col=5)
-			content_area_3.vp <- viewport(layout.pos.row=5, layout.pos.col=3)
-			content_area_4.vp <- viewport(layout.pos.row=5, layout.pos.col=5)
-			top.border.vp <- viewport(layout.pos.row=1, layout.pos.col=1:6)
-			bottom.border.vp <- viewport(layout.pos.row=7, layout.pos.col=1:6)
-			left.legend.vp <- viewport(layout.pos.row=2:6, layout.pos.col=1)
+			# page.content_areas <- list(1:2, 3:4)
+
+			# content_area_1.vp <- viewport(layout.pos.row=3, layout.pos.col=2)
+			# content_area_2.vp <- viewport(layout.pos.row=5, layout.pos.col=2)
+			# content_area_3.vp <- viewport(layout.pos.row=3, layout.pos.col=2)
+			# content_area_4.vp <- viewport(layout.pos.row=5, layout.pos.col=2)
+			# top.border.vp <- viewport(layout.pos.row=1, layout.pos.col=1:3)
+			# bottom.border.vp <- viewport(layout.pos.row=7, layout.pos.col=1:3)
+
+			if (!is.null(Four_Charts <- SGP::SGPstateData[[state]][["Student_Report_Information"]][["Two_Page_Layout"]][["Four_Charts"]])) {
+				page.count <- 2
+				report.vp <- Four_Charts[["report.vp"]]
+				page.content_areas <- Four_Charts[["page.content_areas"]]
+				content_area_1.vp <- Four_Charts[["content_area_1.vp"]]
+				content_area_2.vp <- Four_Charts[["content_area_2.vp"]]
+				content_area_3.vp <- Four_Charts[["content_area_3.vp"]]
+				content_area_4.vp <- Four_Charts[["content_area_4.vp"]]
+				top.border.vp <- Four_Charts[["top.border.vp"]]
+				bottom.border.vp <- Four_Charts[["bottom.border.vp"]]
+				if (!is.null(Four_Charts[["left.legend.vp"]])) {left.legend.vp <- Four_Charts[["left.legend.vp"]]; legend.tf <- TRUE}
+			} else { ###  17 x 11 Default
+				report.vp <- viewport(layout = grid.layout(7, 6, widths = unit(c(2.5, 0.15, 7, 0.2, 7, 0.15), rep("inches", 6)), 
+					heights = unit((11/8.5)*c(0.35, 0.2, 3.55, 0.25, 3.55, 0.2, 0.4), rep("inches", 7))))
+
+				content_area_1.vp <- viewport(layout.pos.row=3, layout.pos.col=3)
+				content_area_2.vp <- viewport(layout.pos.row=3, layout.pos.col=5)
+				content_area_3.vp <- viewport(layout.pos.row=5, layout.pos.col=3)
+				content_area_4.vp <- viewport(layout.pos.row=5, layout.pos.col=5)
+				top.border.vp <- viewport(layout.pos.row=1, layout.pos.col=1:6)
+				bottom.border.vp <- viewport(layout.pos.row=7, layout.pos.col=1:6)
+				left.legend.vp <- viewport(layout.pos.row=2:6, layout.pos.col=1)
+				legend.tf <- TRUE
+			}
+			###  11 x 8.5 - Panels generally are too small
+			# report.vp <- viewport(layout = grid.layout(7, 5, widths = unit(c(0.15, 5.3, 0.1, 5.3, 0.15), rep("inches", 5)), 
+			# 	heights = unit(c(0.35, 0.2, 3.55, 0.25, 3.55, 0.2, 0.4), rep("inches", 7))))
+
+			# content_area_1.vp <- viewport(layout.pos.row=3, layout.pos.col=2)
+			# content_area_2.vp <- viewport(layout.pos.row=3, layout.pos.col=4)
+			# content_area_3.vp <- viewport(layout.pos.row=5, layout.pos.col=2)
+			# content_area_4.vp <- viewport(layout.pos.row=5, layout.pos.col=4)
+			# top.border.vp <- viewport(layout.pos.row=1, layout.pos.col=1:5)
+			# bottom.border.vp <- viewport(layout.pos.row=7, layout.pos.col=1:5)
+			# #  No Legend
 		}
 
-		if (length(content_areas)==5) {
-			report.vp <- viewport(layout = grid.layout(13, 3, widths = unit((11/8.5)*c(0.125, 8.3, 0.075), rep("inches", 3)), 
-				heights = unit(c(0.3, 0.10, 3.25, 0.15, 3.25, 0.15, 3.35, 0.15, 3.25, 0.15, 3.25, 0.10, 0.3), rep("inches", 9))))
+		if (num.charts==5) {
+			# report.vp <- viewport(layout = grid.layout(9, 3, widths = unit(c(0.125, 8.3, 0.075), rep("inches", 3)), 
+			# 	heights = unit(c(0.35, 0.1, 3.256, 0.14, 3.256, 0.14, 3.256, 0.1, 0.4), rep("inches", 9))))
 
-			content_area_1.vp <- viewport(layout.pos.row=3, layout.pos.col=2)
-			content_area_2.vp <- viewport(layout.pos.row=5, layout.pos.col=2)
-			content_area_3.vp <- viewport(layout.pos.row=7, layout.pos.col=2)
-			content_area_4.vp <- viewport(layout.pos.row=9, layout.pos.col=2)
-			content_area_5.vp <- viewport(layout.pos.row=11, layout.pos.col=2)
-			top.border.vp <- viewport(layout.pos.row=1, layout.pos.col=1:3)
-			bottom.border.vp <- viewport(layout.pos.row=13, layout.pos.col=1:3)
+			# page.content_areas <- list(1:3, 4:5)
+
+			# content_area_1.vp <- viewport(layout.pos.row=3, layout.pos.col=2)  # 1st Page
+			# content_area_2.vp <- viewport(layout.pos.row=5, layout.pos.col=2)
+			# content_area_3.vp <- viewport(layout.pos.row=7, layout.pos.col=2)
+			# content_area_4.vp <- viewport(layout.pos.row=3, layout.pos.col=2)  # 2nd Page
+			# content_area_5.vp <- viewport(layout.pos.row=5, layout.pos.col=2)
+			# top.border.vp <- viewport(layout.pos.row=1, layout.pos.col=1:3)
+			# bottom.border.vp <- viewport(layout.pos.row=9, layout.pos.col=1:3)
+
+			if (!is.null(Five_Charts <- SGP::SGPstateData[[state]][["Student_Report_Information"]][["Two_Page_Layout"]][["Five_Charts"]])) {
+				page.count <- 2
+				report.vp <- Five_Charts[["report.vp"]]
+				page.content_areas <- Five_Charts[["page.content_areas"]]
+				content_area_1.vp <- Five_Charts[["content_area_1.vp"]]
+				content_area_2.vp <- Five_Charts[["content_area_2.vp"]]
+				content_area_3.vp <- Five_Charts[["content_area_3.vp"]]
+				content_area_4.vp <- Five_Charts[["content_area_4.vp"]]
+				content_area_5.vp <- Five_Charts[["content_area_5.vp"]]
+				top.border.vp <- Five_Charts[["top.border.vp"]]
+				bottom.border.vp <- Five_Charts[["bottom.border.vp"]]
+				if (!is.null(Five_Charts[["left.legend.vp"]])) {left.legend.vp <- Five_Charts[["left.legend.vp"]]; legend.tf <- TRUE}
+			} else { ###  17 x 11 Default
+				report.vp <- viewport(layout = grid.layout(13, 3, widths = unit((11/8.5)*c(0.125, 8.3, 0.075), rep("inches", 3)), 
+					heights = unit(c(0.3, 0.10, 3.25, 0.15, 3.25, 0.15, 3.35, 0.15, 3.25, 0.15, 3.25, 0.10, 0.3), rep("inches", 9))))
+
+				content_area_1.vp <- viewport(layout.pos.row=3, layout.pos.col=2)
+				content_area_2.vp <- viewport(layout.pos.row=5, layout.pos.col=2)
+				content_area_3.vp <- viewport(layout.pos.row=7, layout.pos.col=2)
+				content_area_4.vp <- viewport(layout.pos.row=9, layout.pos.col=2)
+				content_area_5.vp <- viewport(layout.pos.row=11, layout.pos.col=2)
+				top.border.vp <- viewport(layout.pos.row=1, layout.pos.col=1:3)
+				bottom.border.vp <- viewport(layout.pos.row=13, layout.pos.col=1:3)
+			}
 		}
 
+		for (pages in 1:page.count) {
 		pushViewport(report.vp)
 
-		for (vp in seq_along(content_areas)) {
-			tmp_student_data <- as.data.frame(tmp_grade_data[ID==n & CONTENT_AREA==content_areas[vp]])
+		for (vp in page.content_areas[[pages]]) {
+			tmp_student_data <- as.data.frame(tmp_all_student_data[CONTENT_AREA==tmp_content_areas[vp]])
+			if (dim(tmp_student_data)[1]==0) tmp_student_data <- as.data.frame(data.table(tmp_student_data)[NA][,c("CONTENT_AREA", paste("CONTENT_AREA_LABELS", last.year, sep=".")) := tmp_content_areas[vp]])
 			pushViewport(get(paste("content_area_", vp, ".vp", sep="")))
 			studentGrowthPlot(
 				Scale_Scores=as.numeric(subset(tmp_student_data, select=paste("SCALE_SCORE", rev(sgPlot.years), sep="."))),
@@ -501,14 +583,13 @@ if (reports.by.school) {
 						NY1=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_1_CURRENT_TRANSFORMED", sep="_")]]),
 						NY2=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_2_CURRENT_TRANSFORMED", sep="_")]]),
 						NY3=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_3_CURRENT_TRANSFORMED", sep="_")]]))),
-				Cutscores=sgPlot.cutscores[[content_areas[vp]]],
+				Cutscores=sgPlot.cutscores[[strsplit(tmp_content_areas[vp], "[.]")[[1]][1]]],
 				Years=rev(sgPlot.years),
-				Report_Parameters=list(Current_Year=last.year, Content_Area=content_areas[vp], Content_Area_Title=tmp_student_data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]], 
+				Report_Parameters=list(Current_Year=last.year, Content_Area=strsplit(tmp_content_areas[vp], "[.]")[[1]][1], Content_Area_Title=tmp_student_data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]], 
 					State=state, SGP_Targets=sgPlot.sgp.targets, Assessment_Transition=sgPlot.linkages, Fan=SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']]))
 	
 			popViewport()
-		} ## END loop over content_areas
-
+		} ## END loop over tmp_content_areas
 
 		## Top Legend
 		if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["sgPlot.use.student.school.name"]])) {
@@ -520,6 +601,7 @@ if (reports.by.school) {
 		grid.rect(gp=gpar(fill=sgPlot.header.footer.color, col=sgPlot.header.footer.color))
 		grid.text(x=0.025, y=0.5, paste(FIRST_NAME, " ", LAST_NAME, sep=""),
 			gp=gpar(fontface="bold", fontfamily="Helvetica-Narrow", col="white", cex=1.65), just="left", default.units="native")
+		if (page.count > 1) grid.text(x=0.475, y=0.5, paste("Page", pages), gp=gpar(fontface="bold", fontfamily="Helvetica-Narrow", col="white", cex=1.65), just="center", default.units="native")
 		grid.text(x=0.975, y=0.5, student_school_name, gp=gpar(fontface="bold", fontfamily="Helvetica-Narrow", col="white", cex=1.65), just="right", default.units="native")
 		popViewport()
 
@@ -532,15 +614,14 @@ if (reports.by.school) {
 		grid.text(x=0.02, y=0.30, paste(copyright.text, " Distributed by the ", tmp.organization$Abbreviation, ".", sep=""), 
 			gp=gpar(cex=0.8, col="white"), default.units="native", just="left")
 
-#		grid.text(x=0.995, y=0.18, copyright.text, gp=gpar(col="white", cex=0.45), default.units="native", just="right")
-#		grid.text(x=unit(0.992, "native")-convertWidth(grobWidth(textGrob(copyright.text, gp=gpar(cex=0.45))), "native"), y=0.19, "\\co", 
-#			gp=gpar(col="white", cex=0.55, fontfamily="HersheySymbol"), default.units="native", just="right")
+		# grid.text(x=0.995, y=0.18, copyright.text, gp=gpar(col="white", cex=0.45), default.units="native", just="right")
+		# grid.text(x=unit(0.992, "native")-convertWidth(grobWidth(textGrob(copyright.text, gp=gpar(cex=0.45))), "native"), y=0.19, "\\co", 
+		#	 gp=gpar(col="white", cex=0.55, fontfamily="HersheySymbol"), default.units="native", just="right")
 		popViewport()
-
 
 		## Left Legend (Only with one or two content areas depicted)
 
-		if (length(content_areas) %in% c(1,2,4)) {
+		if (num.charts %in% c(1,2) | legend.tf) { #,4
 
 			pushViewport(left.legend.vp)
 	
@@ -616,6 +697,9 @@ if (reports.by.school) {
 			
 		} ## END Left legend
 
+		if (page.count > 1 & pages < max(page.count))	grid.newpage()
+		} ## END loop over pages
+
 		## Turn pdf device off
 		dev.off()
 		} else { 
@@ -640,14 +724,15 @@ if (reports.by.school) {
 	if (any(c("PNG", "PDF_PIECES") %in% sgPlot.output.format)) {
 		report.png.vp <- viewport(width = unit(8.1, "inches"), height = unit(3.64, "inches"))
 
-		for (vp in seq_along(content_areas)) {
+		for (vp in seq_along(tmp_content_areas)) {
 			if ("PNG" %in% sgPlot.output.format) {
 				Cairo(file.path(path.to.pdfs, paste(paste(n, vp, sep="_"), "png", sep=".")), width=8.2, height=3.74, units="in", dpi=144, pointsize=10.5, bg="transparent")
 			} else {
 				pdf(file.path(path.to.pdfs, paste(paste(n, vp, sep="_"), "pdf", sep=".")), width=8.2, height=3.74, version="1.4") 
 			}
 
-			tmp_student_data <- as.data.frame(tmp_grade_data[ID==n & CONTENT_AREA==content_areas[vp]])
+			tmp_student_data <- as.data.frame(tmp_all_student_data[CONTENT_AREA==tmp_content_areas[vp]])
+			if (dim(tmp_student_data)[1]==0) tmp_student_data <- as.data.frame(data.table(tmp_student_data)[NA][,CONTENT_AREA := tmp_content_areas[vp]])
 			pushViewport(report.png.vp)
 			studentGrowthPlot(
 				Scale_Scores=as.numeric(subset(tmp_student_data, select=paste("SCALE_SCORE", rev(sgPlot.years), sep="."))),
@@ -707,14 +792,13 @@ if (reports.by.school) {
 						NY1=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_1_CURRENT_TRANSFORMED", sep="_")]]),
 						NY2=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_2_CURRENT_TRANSFORMED", sep="_")]]),
 						NY3=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_3_CURRENT_TRANSFORMED", sep="_")]]))),
-				Cutscores=sgPlot.cutscores[[content_areas[vp]]],
+				Cutscores=sgPlot.cutscores[[strsplit(tmp_content_areas[vp], "[.]")[[1]][1]]],
 				Years=rev(sgPlot.years),
-				Report_Parameters=list(Current_Year=last.year, Content_Area=content_areas[vp],
-					Content_Area_Title=tmp_student_data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]], State=state, SGP_Targets=sgPlot.sgp.targets,
+				Report_Parameters=list(Current_Year=last.year, Content_Area=strsplit(tmp_content_areas[vp], "[.]")[[1]][1], Content_Area_Title=tmp_student_data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]], State=state, SGP_Targets=sgPlot.sgp.targets,
 					Assessment_Transition=sgPlot.linkages, Fan=SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']]))
 			popViewport()
 			dev.off()
-		} ## END loop over content_areas
+		} ## END loop over tmp_content_areas
 	} ### END if ("PNG" %in% sgPlot.output.format)
 	
 	} ## END for loop for STUDENTS (n)
@@ -939,23 +1023,23 @@ if (reports.by.instructor) {
 			####################################################################################################################################################
 	
 			## Start pdf device		
-			if (length(content_areas) %in% c(1,2)) {
+			if (num.charts %in% c(1,2)) {
 				report.width=11
 				report.height=8.5
 			}
-			if (length(content_areas)==3) {
+			if (num.charts==3) {
 				report.width=8.5
 				report.height=11
 			}
-			if (length(content_areas)==4) {
+			if (num.charts==4) {
 				report.width=17
 				report.height=11
 			}
-			if (length(content_areas)==5) {
+			if (num.charts==5) {
 				report.width=11
 				report.height=17
 			}
-			if (!length(content_areas) %in% 1:5) {
+			if (!num.charts %in% 1:5) {
 				stop("Individual Student Report Templates currently only available for situations with 1, 2, 3, 4 or 5 content areas.")
 			}
 	
@@ -968,7 +1052,7 @@ if (reports.by.instructor) {
 			###
 			########################################################################################################
 	
-			if (length(content_areas)==1) {
+			if (num.charts==1) {
 				report.vp <- viewport(layout = grid.layout(5, 4, widths = unit(c(2.5, 0.1, 8.3, 0.1), rep("inches", 4)), 
 					heights = unit(c(0.55, 0.2, 7, 0.25, 0.5), rep("inches", 5))))
 	
@@ -978,7 +1062,7 @@ if (reports.by.instructor) {
 				left.legend.vp <- viewport(layout.pos.row=2:4, layout.pos.col=1)
 			}
 	
-			if (length(content_areas)==2) {
+			if (num.charts==2) {
 				report.vp <- viewport(layout = grid.layout(7, 4, widths = unit(c(2.5, 0.1, 8.3, 0.1), rep("inches", 4)), 
 					heights = unit(c(0.35, 0.2, 3.55, 0.25, 3.55, 0.2, 0.4), rep("inches", 7))))
 	
@@ -989,7 +1073,7 @@ if (reports.by.instructor) {
 				left.legend.vp <- viewport(layout.pos.row=2:6, layout.pos.col=1)
 			}
 	
-			if (length(content_areas)==3) {
+			if (num.charts==3) {
 				report.vp <- viewport(layout = grid.layout(9, 3, widths = unit(c(0.125, 8.3, 0.075), rep("inches", 3)), 
 					heights = unit(c(0.35, 0.1, 3.256, 0.14, 3.256, 0.14, 3.256, 0.1, 0.4), rep("inches", 9))))
 	
@@ -1000,7 +1084,7 @@ if (reports.by.instructor) {
 				bottom.border.vp <- viewport(layout.pos.row=9, layout.pos.col=1:3)
 			}
 	
-			if (length(content_areas)==4) {
+			if (num.charts==4) {
 				report.vp <- viewport(layout = grid.layout(7, 6, widths = unit(c(2.5, 0.15, 7, 0.2, 7, 0.15), rep("inches", 6)), 
 					heights = unit((11/8.5)*c(0.35, 0.2, 3.55, 0.25, 3.55, 0.2, 0.4), rep("inches", 7))))
 	
@@ -1013,7 +1097,7 @@ if (reports.by.instructor) {
 				left.legend.vp <- viewport(layout.pos.row=2:6, layout.pos.col=1)
 			}
 	
-			if (length(content_areas)==5) {
+			if (num.charts==5) {
 				report.vp <- viewport(layout = grid.layout(13, 3, widths = unit((11/8.5)*c(0.125, 8.3, 0.075), rep("inches", 3)), 
 					heights = unit(c(0.3, 0.10, 3.25, 0.15, 3.25, 0.15, 3.35, 0.15, 3.25, 0.15, 3.25, 0.10, 0.3), rep("inches", 9))))
 	
@@ -1028,8 +1112,9 @@ if (reports.by.instructor) {
 	
 			pushViewport(report.vp)
 	
-			for (vp in seq_along(content_areas)) {
-				tmp_student_data <- as.data.frame(tmp_grade_data[ID==n & CONTENT_AREA==content_areas[vp]])
+			for (vp in seq_along(tmp_content_areas)) {
+				tmp_student_data <- as.data.frame(tmp_all_student_data[CONTENT_AREA==tmp_content_areas[vp]])
+				if (dim(tmp_student_data)[1]==0) tmp_student_data <- as.data.frame(data.table(tmp_student_data)[NA][,CONTENT_AREA := tmp_content_areas[vp]])
 				pushViewport(get(paste("content_area_", vp, ".vp", sep="")))
 				studentGrowthPlot(
 					Scale_Scores=as.numeric(subset(tmp_student_data, select=paste("SCALE_SCORE", rev(sgPlot.years), sep="."))),
@@ -1089,15 +1174,15 @@ if (reports.by.instructor) {
 							NY1=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_1_CURRENT_TRANSFORMED", sep="_")]]),
 							NY2=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_2_CURRENT_TRANSFORMED", sep="_")]]),
 							NY3=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_3_CURRENT_TRANSFORMED", sep="_")]]))),
-					Cutscores=sgPlot.cutscores[[content_areas[vp]]],
+					Cutscores=sgPlot.cutscores[[strsplit(tmp_content_areas[vp], "[.]")[[1]][1]]],
 					Years=rev(sgPlot.years),
-					Report_Parameters=list(Current_Year=last.year, Content_Area=content_areas[vp], 
+					Report_Parameters=list(Current_Year=last.year, Content_Area=strsplit(tmp_content_areas[vp], "[.]")[[1]][1],
 						Content_Area_Title=tmp_student_data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]],
 						State=state, Denote_Content_Area=tmp_student_data[['CONTENT_AREA_RESPONSIBILITY']]=="Content Area Responsibility: Yes", SGP_Targets=sgPlot.sgp.targets,
 						Assessment_Transition=sgPlot.linkages, Fan=SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']]))
 			popViewport()
 	
-			} ## END loop over content_areas
+			} ## END loop over tmp_content_areas
 	
 			## Top Legend
 			if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["sgPlot.use.student.school.name"]])) {
@@ -1106,7 +1191,7 @@ if (reports.by.instructor) {
 
 			pushViewport(top.border.vp)
 			grid.rect(gp=gpar(fill=sgPlot.header.footer.color, col=sgPlot.header.footer.color))
-			grid.text(x=0.025, y=0.5, paste(FIRST_NAME, " ", LAST_NAME, sep="") , 
+			grid.text(x=0.025, y=0.5, paste(FIRST_NAME, " ", LAST_NAME, sep=""), 
 				gp=gpar(fontface="bold", fontfamily="Helvetica-Narrow", col="white", cex=1.65), just="left", default.units="native")
 			grid.text(x=0.975, y=0.5, paste(student_school_name, ": ", FIRST_NAME_TEACHER, " ", LAST_NAME_TEACHER, sep=""), 
 				gp=gpar(fontface="bold", fontfamily="Helvetica-Narrow", col="white", cex=1.65), just="right", default.units="native")
@@ -1126,7 +1211,7 @@ if (reports.by.instructor) {
 	
 			## Left Legend (Only with one or two content areas depicted)
 	
-			if (length(content_areas) %in% c(1,2,4)) {
+			if (num.charts %in% c(1,2,4)) {
 				pushViewport(left.legend.vp)
 		
 				# Interpretation
@@ -1203,14 +1288,15 @@ if (reports.by.instructor) {
 		if (any(c("PNG", "PDF_PIECES") %in% sgPlot.output.format)) {
 			report.png.vp <- viewport(width = unit(8.1, "inches"), height = unit(3.64, "inches"))
 	
-			for (vp in seq_along(content_areas)) {
+			for (vp in seq_along(tmp_content_areas)) {
 				if ("PNG" %in% sgPlot.output.format) {
 					Cairo(file.path(path.to.pdfs, paste(paste(n, vp, sep="_"), "png", sep=".")), width=8.2, height=3.74, units="in", dpi=144, pointsize=10.5, bg="transparent")
 				} else {
 					pdf(file.path(path.to.pdfs, paste(paste(n, vp, sep="_"), "pdf", sep=".")), width=8.2, height=3.74, version="1.4") 
 				}
 	
-				tmp_student_data <- as.data.frame(tmp_grade_data[ID==n & CONTENT_AREA==content_areas[vp]])
+				tmp_student_data <- as.data.frame(tmp_all_student_data[CONTENT_AREA==tmp_content_areas[vp]])
+				if (dim(tmp_student_data)[1]==0) tmp_student_data <- as.data.frame(data.table(tmp_student_data)[NA][,CONTENT_AREA := tmp_content_areas[vp]])
 				pushViewport(report.png.vp)
 				studentGrowthPlot(
 					Scale_Scores=as.numeric(subset(tmp_student_data, select=paste("SCALE_SCORE", rev(sgPlot.years), sep="."))),
@@ -1270,15 +1356,15 @@ if (reports.by.instructor) {
 							NY1=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_1_CURRENT_TRANSFORMED", sep="_")]]),
 							NY2=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_2_CURRENT_TRANSFORMED", sep="_")]]),
 							NY3=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_3_CURRENT_TRANSFORMED", sep="_")]]))),
-					Cutscores=sgPlot.cutscores[[content_areas[vp]]],
+					Cutscores=sgPlot.cutscores[[strsplit(tmp_content_areas[vp], "[.]")[[1]][1]]],
 					Years=rev(sgPlot.years),
-					Report_Parameters=list(Current_Year=last.year, Content_Area=content_areas[vp], 
+					Report_Parameters=list(Current_Year=last.year, Content_Area=strsplit(tmp_content_areas[vp], "[.]")[[1]][1],
 						Content_Area_Title=tmp_student_data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]],
 						State=state, Denote_Content_Area=tmp_student_data[['CONTENT_AREA_RESPONSIBILITY']]=="Content Area Responsibility: Yes", SGP_Targets=sgPlot.sgp.targets,
 						Assessment_Transition=sgPlot.linkages, Fan=SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']]))
 				popViewport()
 				dev.off()
-				} ## END loop over content_areas
+				} ## END loop over tmp_content_areas
 			} ### END if ("PNG" %in% sgPlot.output.format)
 			} ## END for loop for STUDENTS (n)
 		} ## END for loop for GRADES (l)

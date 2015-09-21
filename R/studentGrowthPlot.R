@@ -42,12 +42,8 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 	growth.level.labels <- SGP::SGPstateData[[Report_Parameters$State]][["Growth"]][["Levels"]]
 	growth.level.cutscores <- SGP::SGPstateData[[Report_Parameters$State]][["Growth"]][["Cutscores"]][["Cuts"]]
 	growth.level.cutscores.text <- SGP::SGPstateData[[Report_Parameters$State]][["Growth"]][["Cutscores"]][["Labels"]]
-	if (!is.na(Report_Parameters$Content_Area_Title)) {
-		content.area.label <- SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Content_Areas_Labels"]][[Report_Parameters$Content_Area_Title]]
-	} else {
-		content.area.label <- SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Content_Areas_Labels"]][[Report_Parameters$Content_Area]]
-	}
-
+	content.area.label <- SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Content_Areas_Labels"]][[Report_Parameters$Content_Area_Title]]
+	
 	if (!is.null(SGP::SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["content_area.projection.sequence"]][[Report_Parameters$Content_Area]])) {
 		grades.content_areas.reported.in.state <- data.frame(
 				GRADE=SGP::SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["grade.projection.sequence"]][[Report_Parameters$Content_Area]],
@@ -88,7 +84,9 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		sgp.target.types <- SGP::SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["sgp.target.types"]]
 	}
 	missing.data.symbol <- "--"
-	studentGrowthPlot.year.span <- 5
+	if (!is.null(my.year.span <- SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["sgPlot.year.span"]])) {
+		studentGrowthPlot.year.span <- my.year.span
+	} else studentGrowthPlot.year.span <- 5
 	if (is.null(Report_Parameters[['Denote_Content_Area']]) || Report_Parameters[['Denote_Content_Area']]==FALSE) {
 		legend.fill.color <- "white"
 	} else {
@@ -490,7 +488,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		xscale.range.list <- list(c(xscale.range[1], tmp.year.cut-0.025), c(tmp.year.cut+0.025, xscale.range[2]))
 	}
 
-	if (Report_Parameters$Content_Area %in% names(SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]])) {
+	if (Report_Parameters$Content_Area_Title %in% names(SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]])) {
 		tmp.range <- 
 			range(head(tail(SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[Report_Parameters$Content_Area]],-1),-1), na.rm=TRUE)
 		low.score <- min(cuts.ny1,
@@ -622,6 +620,10 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 					eval(parse(text=paste("c(level_", j, "_", i, "_curve(tmp.x.points), level_", j, "_", i-1, "_curve(rev(tmp.x.points)))", sep=""))))
 			}
 		}
+
+		## Keep achievement level bands from extending outside of chart box
+		eval(parse(text=paste("y.boundary.values.", seq(number.achievement.level.regions[[j]]), "[y.boundary.values.", seq(number.achievement.level.regions[[j]]), " > max(yscale.range)] <- max(yscale.range)", sep="")))
+		eval(parse(text=paste("y.boundary.values.", seq(number.achievement.level.regions[[j]]), "[y.boundary.values.", seq(number.achievement.level.regions[[j]]), " < min(yscale.range)] <- min(yscale.range)", sep="")))
 
 		for (i in seq(number.achievement.level.regions[[j]])) {
 			grid.polygon(x=get(paste("x.boundary.values.", i, sep="")),

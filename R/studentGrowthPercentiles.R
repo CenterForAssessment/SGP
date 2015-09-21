@@ -131,10 +131,12 @@ function(panel.data,         ## REQUIRED
 	get.prior.cutscore.path <- function(content_area, year) {
 		if (is.null(sgp.percentiles.equated)) {
 			tmp.cutscores <- grep(content_area, names(SGP::SGPstateData[[goodness.of.fit]][['Achievement']][['Cutscores']]), value=TRUE)
-			tmp.cutscores.names <- tmp.cutscores[content_area==sapply(strsplit(tmp.cutscores, "[.]"), '[', 1)]
-			tmp.cutscores.years <- sapply(strsplit(tmp.cutscores.names, "[.]"), function(x) x[2])
-			tmp.sum <- sum(year >= sort(tmp.cutscores.years), na.rm=TRUE)
-			return(paste(c(content_area, sort(tmp.cutscores.years)[tmp.sum]), collapse="."))
+			if (length(tmp.cutscores) > 0) {
+				tmp.cutscores.names <- tmp.cutscores[content_area==sapply(strsplit(tmp.cutscores, "[.]"), '[', 1)]
+				tmp.cutscores.years <- sapply(strsplit(tmp.cutscores.names, "[.]"), function(x) x[2])
+				tmp.sum <- sum(year >= sort(tmp.cutscores.years), na.rm=TRUE)
+				return(paste(c(content_area, sort(tmp.cutscores.years)[tmp.sum]), collapse="."))
+			} else return(content_area)
 		} else {
 			return(paste(content_area, sgp.percentiles.equated[['Year']], sep="."))
 		}
