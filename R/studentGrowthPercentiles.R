@@ -243,7 +243,7 @@ function(panel.data,         ## REQUIRED
 			tmp.index <- (-20:20)[which.max(sapply(-20:20, function(x) {
 				(my.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]+365*x)-as.numeric(max(my.data[["TIME"]]))}) >
 				my.matrix@Version[['Matrix_Information']][['SGPt']][['RANGE_TIME_LAG']][1])]
-			if (tmp.index != 0) my.data[,TIME:=TIME+365*tmp.index]
+			if (tmp.index != 0) my.data[,TIME:=TIME+365*-tmp.index]
 			mod <- paste(mod, ", my.data[['TIME']], my.data[['TIME_LAG']]", sep="")
 		}
 		tmp <- eval(parse(text=paste("cbind(1L, ", substring(mod, 2), ") %*% my.matrix", sep="")))
