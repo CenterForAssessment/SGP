@@ -240,9 +240,10 @@ function(panel.data,         ## REQUIRED
 		}
 		if (!is.null(SGPt)) {
 			my.data <- data.table(Panel_Data[,c("ID", "TIME", "TIME_LAG"), with=FALSE], key="ID")[my.data][,c(names(my.data), "TIME", "TIME_LAG"), with=FALSE]
-			tmp.index <- (-20:20)[which.max(sapply(-20:20, function(x) {
-				(my.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]+365*x)-as.numeric(max(my.data[["TIME"]]))}) >
-				my.matrix@Version[['Matrix_Information']][['SGPt']][['RANGE_TIME_LAG']][1])]
+            tmp.index <- 1
+#			tmp.index <- (-20:20)[which.max(sapply(-20:20, function(x) {
+#				(my.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]+365*x)-as.numeric(max(my.data[["TIME"]]))}) >
+#				my.matrix@Version[['Matrix_Information']][['SGPt']][['RANGE_TIME_LAG']][1])]
 			if (tmp.index != 0) my.data[,TIME:=TIME+365*-tmp.index]
 			mod <- paste(mod, ", my.data[['TIME']], my.data[['TIME_LAG']]", sep="")
 		}
