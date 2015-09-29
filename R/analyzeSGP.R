@@ -232,7 +232,11 @@ function(sgp_object,
 		if (!goodness.of.fit.print){
 			goodness.of.fit.print.arg <- FALSE
 		} else {
-			goodness.of.fit.print.arg <- state
+            if (identical(SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.achievement.level.prior"]], FALSE)) {   ### For RLI and RLI_UK
+			         goodness.of.fit.print.arg <- TRUE
+            } else {
+			        goodness.of.fit.print.arg <- state
+            }
 		}
 	}
 
