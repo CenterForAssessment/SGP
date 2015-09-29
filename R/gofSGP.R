@@ -1,4 +1,4 @@
-`gofSGP` <- 
+`gofSGP` <-
 function(
 	sgp_object,
 	state=NULL,
@@ -36,14 +36,14 @@ function(
 		my.width <- 8.5; my.height <- 5.5
 		variables.to.get <- c("SCALE_SCORE_PRIOR", use.sgp, "GRADE", norm.group.var)
 	}
-	
-		
+
+
 	### Utility functions
 
 	pretty_year <- function(x) sub("_", "-", x)
 
 	gof.draw <- function(content_area.year.grade.data, content_area, year, grade, content_areas_prior, file.extra.label, plot.name) {
-		
+
 		if (!"GROB" %in% output.format) {
 			if (is.null(file.extra.label)) {
 				file.path <- file.path("Goodness_of_Fit", paste(content_area, year, sep="."))
@@ -55,19 +55,19 @@ function(
 
 			if ("PDF" %in% output.format) {
 				pdf(file=paste(file.path, "/", tmp.plot.name, ".pdf", sep=""), width=my.width, height=my.height)
-				grid.draw(.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale, 
+				grid.draw(.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale,
 					with.prior.achievement.level=with.prior.achievement.level, content_areas_prior=content_areas_prior))
 				dev.off()
 			}
 			if ("PNG" %in% output.format) {
 				Cairo(file=paste(file.path, "/", tmp.plot.name, ".png", sep=""), width=my.width, height=my.height, units="in", dpi=144, pointsize=10.5, bg="transparent")
-				grid.draw(.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale, 
+				grid.draw(.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale,
 					with.prior.achievement.level=with.prior.achievement.level, content_areas_prior=content_areas_prior))
 				dev.off()
 			}
 			if ("SVG" %in% output.format) {
 				CairoSVG(file=paste(file.path, "/", tmp.plot.name, ".svg", sep=""), width=my.width, height=my.height, dpi=72, pointsize=10.5, bg="transparent")
-				grid.draw(.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale, 
+				grid.draw(.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale,
 					with.prior.achievement.level=with.prior.achievement.level, content_areas_prior=content_areas_prior))
 				dev.off()
 			}
@@ -78,7 +78,7 @@ function(
 		}
 	}
 
-	.goodness.of.fit <- 
+	.goodness.of.fit <-
 		function(data1, content_area, year, grade, color.scale="reds", with.prior.achievement.level=FALSE, content_areas_prior=NULL) {
 
 		.cell.color <- function(x){
@@ -204,23 +204,23 @@ function(
 
 				textGrob(x=unit(0.5, "npc"), y=unit(1.15, "native"), "SGP Deciles by Prior Achievement Level", gp=gpar(cex=1.7), vp="prior_achievement_level"),
 				roundrectGrob(width=0.98, r=unit(2, "mm"), vp="prior_achievement_level"),
-				rectGrob(x=rep(50, length(tmp.prior.achievement.level.base.points)), y=tmp.prior.achievement.level.base.points, 
-					width=rep(100, length(tmp.prior.achievement.level.base.points)), height=tmp.prior.achievement.level.percentages, 
+				rectGrob(x=rep(50, length(tmp.prior.achievement.level.base.points)), y=tmp.prior.achievement.level.base.points,
+					width=rep(100, length(tmp.prior.achievement.level.base.points)), height=tmp.prior.achievement.level.percentages,
 					just=c("center", "top"), vp="prior_achievement_level", default.units="native",
 					gp=gpar(col="black", fill=tmp.prior.achievement.level.colors)),
-				textGrob(x=-2, y=tmp.prior.achievement.level.centers, tmp.prior.achievement.level.labels, default.units="native", 
+				textGrob(x=-2, y=tmp.prior.achievement.level.centers, tmp.prior.achievement.level.labels, default.units="native",
 					just="right", vp="prior_achievement_level", gp=gpar(cex=0.8)),
 				textGrob(x=-25, y=0.5, tmp.prior.content.area.label, gp=gpar(cex=1), default.units="native", rot=90, vp="prior_achievement_level"),
-				textGrob(x=101, y=tmp.prior.achievement.level.centers, tmp.prior.achievement.level.percentages.labels, default.units="native", 
+				textGrob(x=101, y=tmp.prior.achievement.level.centers, tmp.prior.achievement.level.percentages.labels, default.units="native",
 					just="left", vp="prior_achievement_level", gp=gpar(cex=0.7)),
 				linesGrob(c(1,99), -0.05, gp=gpar(lwd=1.0), default.units="native", vp="prior_achievement_level"),
 				polylineGrob(y=rep(c(-0.075,-0.05), 11), x=rep(c(1,1:9*10, 99), each=2), id=rep(1:11, each=2), default.units="native", vp="prior_achievement_level"),
 				textGrob(x=c(1,1:9*10,99), y=-0.115, as.character(c(1,1:9*10,99)), gp=gpar(cex=0.8), default.units="native", vp="prior_achievement_level"),
 				textGrob(y=-0.18, x=50, "Median Student Growth Percentile", gp=gpar(cex=0.8), default.units="native", vp="prior_achievement_level"),
-				polylineGrob(x=rep(unlist(tmp.prior.achievement.level.quantiles), each=2), 
+				polylineGrob(x=rep(unlist(tmp.prior.achievement.level.quantiles), each=2),
 				y=as.numeric(rbind(rep(tmp.prior.achievement.level.base.points, each=9), rep(tmp.prior.achievement.level.base.points-tmp.prior.achievement.level.percentages, each=9))),
-				id=rep(1:length(unlist(tmp.prior.achievement.level.quantiles)), each=2), 
-				gp=gpar(lwd=c(rep(0.4,4),1.4,rep(0.4,4)), col=c(rep("grey75",4),"white",rep("grey75",4)), lty=c(rep(2,4),1,rep(2,4))), 
+				id=rep(1:length(unlist(tmp.prior.achievement.level.quantiles)), each=2),
+				gp=gpar(lwd=c(rep(0.4,4),1.4,rep(0.4,4)), col=c(rep("grey75",4),"white",rep("grey75",4)), lty=c(rep(2,4),1,rep(2,4))),
 				vp="prior_achievement_level", default.units="native"),
 
 			### table
@@ -323,12 +323,12 @@ function(
 		my.extra.label <- "SGP"
 		file.extra.label <- NULL
 	}
-	 
+
 	### Get arguments
 
 	if (is.null(years)) {
 		years <- unique(tmp.data[!is.na(tmp.data[[use.sgp]]),][['YEAR']])
-	} 
+	}
 
 	if (is.null(content_areas)) {
 		content_areas <- unique(tmp.data[!is.na(tmp.data[[use.sgp]]),][['CONTENT_AREA']])
@@ -342,14 +342,14 @@ function(
 			if (is.null(grades)) {
 				grades <- sort(unique(tmp.data_1[!is.na(tmp.data_1[[use.sgp]]),][['GRADE']]))
 			}
-			
+
 			if (all(grades=="EOCT")) { # use grade progression norm groups for EOCT subjects
 				tmp.norm.group <- unlist(unique(tmp.data_1[[norm.group.var]]), use.names=FALSE)
 				##  Remove norm groups that are subsets of larger ones:
 				# tmp.norm.group <- tmp.norm.group[sapply(1:length(tmp.norm.group), function(f) !any(grepl(tmp.norm.group[f], tmp.norm.group[-f])))]
 				tmp.norm.group <- tmp.norm.group[!is.na(tmp.norm.group)]
 			} else tmp.norm.group <- NA
-			
+
 			for (grades.iter in grades) {
 				for (norm.group.iter in tmp.norm.group) {
 					if (all(is.na(tmp.norm.group))) {
@@ -371,22 +371,22 @@ function(
 						if ("CONTENT_AREA_PRIOR" %in% names(tmp.data.final)) content_areas_prior <- tmp.data.final[["CONTENT_AREA_PRIOR"]][1]
 						gof.object <- gof.draw(
 							data.frame(
-								SCALE_SCORE_PRIOR=tmp.data.final[['SCALE_SCORE_PRIOR']], 
-								SGP=tmp.data.final[[use.sgp]], 
-								ACHIEVEMENT_LEVEL_PRIOR=tmp.data.final[['ACHIEVEMENT_LEVEL_PRIOR']]), 
+								SCALE_SCORE_PRIOR=tmp.data.final[['SCALE_SCORE_PRIOR']],
+								SGP=tmp.data.final[[use.sgp]],
+								ACHIEVEMENT_LEVEL_PRIOR=tmp.data.final[['ACHIEVEMENT_LEVEL_PRIOR']]),
 								content_area=content_areas.iter,
 								content_areas_prior=content_areas_prior,
-								year=years.iter, 
+								year=years.iter,
 								grade=grades.iter,
 								file.extra.label=file.extra.label,
 								plot.name=norm.group.iter)
 					} else {
 						gof.object <- gof.draw(
 							data.frame(
-								SCALE_SCORE_PRIOR=tmp.data.final[['SCALE_SCORE_PRIOR']], 
-								SGP=tmp.data.final[[use.sgp]]), 
-								content_area=content_areas.iter, 
-								year=years.iter, 
+								SCALE_SCORE_PRIOR=tmp.data.final[['SCALE_SCORE_PRIOR']],
+								SGP=tmp.data.final[[use.sgp]]),
+								content_area=content_areas.iter,
+								year=years.iter,
 								grade=grades.iter,
 								file.extra.label=file.extra.label,
 								plot.name=norm.group.iter)

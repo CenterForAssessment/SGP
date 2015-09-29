@@ -31,7 +31,7 @@ function(what_sgp_object=NULL,
 	parallel.config=NULL,
 	sgp.sqlite=NULL,
 	SGPt=NULL,
-	sgp.percentiles.equated=FALSE,
+	sgp.percentiles.equated=NULL,
 	fix.duplicates=NULL,
 	...) {
 

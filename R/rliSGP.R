@@ -3,7 +3,7 @@ function(sgp_object,
 	additional.data,
 	state=NULL,
 	content_areas=c("MATHEMATICS", "READING", "EARLY_LITERACY"),
-	testing.window, ### FALL, WINTER, SPRING 
+	testing.window, ### FALL, WINTER, SPRING
 	eow.or.update="UPDATE", ### UPDATE or EOW
 	update.save.shell.only=FALSE,
 	configuration.year,
@@ -14,6 +14,8 @@ function(sgp_object,
 	update.ids=NULL,
 	SGPt=TRUE,
 	save.intermediate.results=FALSE,
+	coefficient.matrices=NULL,
+	goodness.of.fit.print=FALSE,
 	parallel.config=NULL) {
 
 	YEAR <- GRADE <- ID <- NEW_ID <- .EACHI <- DATE <- NULL
@@ -72,7 +74,7 @@ function(sgp_object,
 	getRLIConfig <- function(content_areas, configuration.year, testing.window, SGPt) {
 		tmp.list <- list()
 		for (i in content_areas) {
-			tmp.list[[i]] <- SGP::SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, i, testing.window, SGPt)
+			tmp.list[[i]] <- SGP::SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, i, testing.window)
 		}
 		return(unlist(tmp.list, recursive=FALSE))
 	}
@@ -91,6 +93,8 @@ function(sgp_object,
 	if (!is.null(update.ids) && !is.data.table(update.ids)) update.ids <- as.data.table(update.ids)
 
 	if (state=="RLI_UK") content_areas <- "READING"
+
+	if (!is.null(coefficient.matrices)) SGPstateData[[state]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <- coefficient.matrices
 
 
 	### Create variables
@@ -130,7 +134,7 @@ function(sgp_object,
 			sgp.target.scale.scores=sgp.target.scale.scores,
 			sgp.target.scale.scores.only=TRUE,
 			outputSGP.output.type="RLI",
-			goodness.of.fit.print=FALSE,
+			goodness.of.fit.print=goodness.of.fit.print,
 			update.old.data.with.new=FALSE,
 			SGPt=SGPt,
 			fix.duplicates="KEEP.ALL",
@@ -143,7 +147,7 @@ function(sgp_object,
 		}
 
 		if (update.save.shell.only) {
-			assign(update.shell.name, prepareSGP(subset(sgp_object@Data, YEAR %in% tail(sort(unique(sgp_object@Data$YEAR)), num.windows.to.keep)), 
+			assign(update.shell.name, prepareSGP(subset(sgp_object@Data, YEAR %in% tail(sort(unique(sgp_object@Data$YEAR)), num.windows.to.keep)),
 				state=state, create.additional.variables=FALSE))
 			save(list=update.shell.name, file=paste(update.shell.name, "Rdata", sep="."))
 		}
@@ -179,14 +183,14 @@ function(sgp_object,
 				sgp.target.scale.scores.only=TRUE,
 				outputSGP.output.type="RLI",
 				update.old.data.with.new=TRUE,
-				goodness.of.fit.print=FALSE,
+				goodness.of.fit.print=goodness.of.fit.print,
 				SGPt=SGPt,
 				parallel.config=parallel.config,
 				sgp.config=getRLIConfig(content_areas, configuration.year, testing.window, SGPt))
 
 			### Create and save new UPDATE_SHELL
 
-			assign(update.shell.name, prepareSGP(subset(sgp_object@Data, YEAR %in% tail(sort(unique(sgp_object@Data$YEAR)), num.windows.to.keep)), 
+			assign(update.shell.name, prepareSGP(subset(sgp_object@Data, YEAR %in% tail(sort(unique(sgp_object@Data$YEAR)), num.windows.to.keep)),
 				state=state, create.additional.variables=FALSE))
 			save(list=update.shell.name, file=paste(update.shell.name, "Rdata", sep="."))
 
@@ -197,9 +201,9 @@ function(sgp_object,
 			if (testing.window=="WINTER") tmp.separator <- "2"
 			if (testing.window=="SPRING") tmp.separator <- "3"
 			tmp.index <- grep(configuration.year, names(sgp_object@SGP$Coefficient_Matrices))
-			assign(paste(state, "_Baseline_Matrices_", paste(yearIncrement(configuration.year, 1), tmp.separator, sep="."), sep=""), 
+			assign(paste(state, "_Baseline_Matrices_", paste(yearIncrement(configuration.year, 1), tmp.separator, sep="."), sep=""),
 				convertToBaseline(sgp_object@SGP$Coefficient_Matrices[tmp.index]))
-			save(list=paste(state, "_Baseline_Matrices_", paste(yearIncrement(configuration.year, 1), tmp.separator, sep="."), sep=""), 
+			save(list=paste(state, "_Baseline_Matrices_", paste(yearIncrement(configuration.year, 1), tmp.separator, sep="."), sep=""),
 				file=paste(state, "_Baseline_Matrices_", paste(yearIncrement(configuration.year, 1), tmp.separator, "Rdata", sep="."), sep=""))
 		}
 	} ### END END_OF_WINDOW scripts

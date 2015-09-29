@@ -22,6 +22,8 @@ rliSGP(
         update.ids=NULL,
 	SGPt=TRUE,
 	save.intermediate.results=FALSE,
+	coefficient.matrices=NULL,
+	goodness.of.fit.print=FALSE,
         parallel.config=NULL)
 }
 
@@ -58,6 +60,10 @@ analysis. Default is NULL, no ID replacement is performed.
   }
   \item{save.intermediate.results}{Boolean variable passed to \code{\link{updateSGP}} indicating whether to save intermediate results from \code{\link{prepareSGP}}, \code{\link{analyzeSGP}}, and
   \code{\link{combineSGP}} as part of the \code{rliSGP} analyses.
+  }
+  \item{coefficient.matrices}{List of baseline matrices to be used for analyses (overrides what exists in \code{SGPstateData}). Defaults to NULL (use those in \code{SGPstateData}). 
+  }
+  \item{goodness.of.fit.print}{Boolean argument passed to \code{\link{updateSGP}} indicating whether to print goodness of fit plots associated with outcome. Default is FALSE.
   }
   \item{parallel.config}{Argument passed to \code{\link{abcSGP}} or \code{\link{updateSGP}} to activate parallel processing with an appropriate backend.
   }

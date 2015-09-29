@@ -1,5 +1,5 @@
 `checkSGP` <-
-function(sgp_object, 
+function(sgp_object,
 	state=NULL) {
 
 	ID <- NULL
@@ -16,7 +16,7 @@ function(sgp_object,
                 state <- getStateAbbreviation(tmp.name, "checkSGP")
         }
 
-	my.character.variables <- c("ID", "VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", "ACHIEVEMENT_LEVEL")
+	my.character.variables <- c("ID", "VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", "ACHIEVEMENT_LEVEL", "ACHIEVEMENT_LEVEL_PRIOR")
 	my.numeric.variables <- c("SCALE_SCORE", "SCALE_SCORE_PRIOR")
 	my.Date.variables <- c("DATE")
 
@@ -46,9 +46,10 @@ function(sgp_object,
 	## changeVariableClass
 
 	changeVariableClass <- function(my.data, my.variables.to.change, data.slot, convert.to.class) {
-		if (!data.slot=="@Data" & !data.slot=="@Data_Supplementary") {
+		if (!is.data.table(my.data)) my.data <- as.data.table(my.data)
+		if (!is.character(my.data[['ID']]) & !data.slot=="@Data" & !data.slot=="@Data_Supplementary") {
 			message(paste("\tNOTE: ID in", data.slot, "converted from factor to character."))
-			my.data[,ID:=as.character(my.data[["ID"]])]			
+			my.data[,ID:=as.character(my.data[["ID"]])]
 		} else {
 			if (convert.to.class=="character") {
 				for (my.variable in my.variables.to.change) {
@@ -94,15 +95,15 @@ function(sgp_object,
 	}
 
 	## Check class of variables in @Data_Supplementary
-	
+
 	if (!is.null(sgp_object@Data_Supplementary)) {
 		for(j in 1:length(sgp_object@Data_Supplementary)) {
 			if (any(tmp.check <- checkVariableClass(sgp_object@Data_Supplementary[[j]], "character", my.character.variables, id.only=FALSE))) {
-				sgp_object@Data_Supplementary[[j]] <- 
+				sgp_object@Data_Supplementary[[j]] <-
 					changeVariableClass(sgp_object@Data_Supplementary[[j]], my.character.variables[tmp.check], data.slot="@Data_Supplementary", convert.to.class="character")
 			}
 			if (any(tmp.check <- checkVariableClass(sgp_object@Data_Supplementary[[j]], "numeric", my.numeric.variables, id.only=FALSE))) {
-				sgp_object@Data_Supplementary[[j]] <- 
+				sgp_object@Data_Supplementary[[j]] <-
 					changeVariableClass(sgp_object@Data_Supplementary[[j]], my.numeric.variables[tmp.check], data.slot="@Data_Supplementary", convert.to.class="numeric")
 			}
 		}
@@ -114,22 +115,26 @@ function(sgp_object,
 		sgp_object@SGP[["Coefficient_Matrices"]] <- checksplineMatrix(sgp_object@SGP[["Coefficient_Matrices"]], sgp_object, state)
 	}
 
-	## Check class of variables in @SGP$SGPercentiles and @SGP$SGProjections
+	## Check class of variables in @SGP$SGPercentiles
 
 	if (any(SGPctls.tf <- sapply(sgp_object@SGP[['SGPercentiles']], checkVariableClass))) {
-		tmp.data <- sgp_object@SGP[['SGPercentiles']]
 		for (i in which(SGPctls.tf)) {
-			tmp.data[[i]] <- changeVariableClass(tmp.data[[i]], data.slot=paste('SGPercentiles', names(sgp_object@SGP[['SGPercentiles']])[i]))
+			sgp_object@SGP[['SGPercentiles']][[i]] <- changeVariableClass(sgp_object@SGP[['SGPercentiles']][[i]], data.slot=paste('SGPercentiles', names(sgp_object@SGP[['SGPercentiles']])[i]))
 		}
-		tmp.data -> sgp_object@SGP[['SGPercentiles']]
 	}
 
+	## Check class of variables in @SGP$SGProjections
+
 	if (any(SGPrjns.tf <- sapply(sgp_object@SGP[['SGProjections']], checkVariableClass))) {
-		tmp.data <- sgp_object@SGP[['SGProjections']]
 		for (i in which(SGPrjns.tf)) {
-			tmp.data[[i]] <- changeVariableClass(tmp.data[[i]], data.slot=paste('SGProjections', names(sgp_object@SGP[['SGProjections']])[i]))
+			sgp_object@SGP[['SGProjections']][[i]] <- changeVariableClass(sgp_object@SGP[['SGProjections']][[i]], data.slot=paste('SGProjections', names(sgp_object@SGP[['SGProjections']])[i]))
 		}
-		tmp.data -> sgp_object@SGP[['SGProjections']]
+	}
+
+	if (any(SGPrjns.tf <- sapply(sgp_object@SGP[['SGProjections']], function(x) checkVariableClass(x, "character", 'ACHIEVEMENT_LEVEL_PRIOR', id.only=FALSE)))) {
+		for (i in which(SGPrjns.tf)) {
+			sgp_object@SGP[['SGProjections']][[i]] <- changeVariableClass(sgp_object@SGP[['SGProjections']][[i]], 'ACHIEVEMENT_LEVEL_PRIOR', data.slot=paste('SGProjections', names(sgp_object@SGP[['SGProjections']])[i]), convert.to.class="character")
+		}
 	}
 
 	## Check if ACHIEVEMENT_LEVEL levels are in SGPstateData
@@ -142,7 +147,7 @@ function(sgp_object,
 			achievement.levels <- SGP::SGPstateData[[state]][['Achievement']][['Levels']][['Labels']]
 		}
 		if (!all(sort(unique(sgp_object@Data$ACHIEVEMENT_LEVEL)) %in% achievement.levels)) {
-			missing.achievement.levels <- 
+			missing.achievement.levels <-
 				sort(unique(sgp_object@Data$ACHIEVEMENT_LEVEL))[!sort(unique(sgp_object@Data$ACHIEVEMENT_LEVEL)) %in% achievement.levels]
 			message(paste("\tNOTE: Achievement level(s):", paste(missing.achievement.levels, collapse=", "), "in supplied data are not contained in 'SGPstateData'.", collapse=" "))
 		}
@@ -190,7 +195,8 @@ function(sgp_object,
 		if (!is.data.table(sgp_object@SGP[['SGProjections']][[i]])) sgp_object@SGP[['SGProjections']][[i]] <- as.data.table(sgp_object@SGP[['SGProjections']][[i]])
 	}
 
-	## Return sgp_object	
+	## Return sgp_object
 
+	setkeyv(sgp_object@Data, getKey(sgp_object))
 	return(sgp_object)
 } ### END sgp_object

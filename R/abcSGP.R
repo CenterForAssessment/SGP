@@ -34,7 +34,7 @@ function(sgp_object,
 	outputSGP.output.type=c("LONG_Data", "LONG_FINAL_YEAR_Data", "WIDE_Data", "INSTRUCTOR_Data"),
 	verbose.output=FALSE,
 	sgp.sqlite = NULL,
-	sgp.percentiles.equated=FALSE,
+	sgp.percentiles.equated=NULL,
 	SGPt=NULL) {
 
         started.at <- proc.time()

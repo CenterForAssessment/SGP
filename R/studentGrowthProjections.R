@@ -320,12 +320,13 @@ function(panel.data,	## REQUIRED
 
 	.sgp.targets <- function(data, cut, convert.0and100) {
 		if (is.na(cut)) {
-			return(rep(NA, length(data)))
+			return(as.integer(NA))
 		} else {
 			tmp <- which.min(c(data < cut, FALSE))
-			tmp[tmp==101] <- 100
-			if (convert.0and100) {tmp[tmp==0] <- 1; tmp[tmp==100] <- 99}
-			return(as.integer(tmp))
+			if (tmp==101) tmp <- 100
+			if (convert.0and100 && tmp==0) return(1L)
+			if (convert.0and100 && tmp==100) return(99L) 
+			return(tmp)
 		}
 	}
 
