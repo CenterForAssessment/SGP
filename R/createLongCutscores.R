@@ -4,13 +4,15 @@ function(state,
 	add.GRADE_NUMERIC=FALSE,
 	assessment.transition.type=NULL) {
 
-	GRADE <- GRADE_NUMERIC <- CUTSCORES <- YEAR <- CUTLEVEL <- YEAR_LAG <- CONTENT_AREA <- SCALE_SCORE <- NULL
+	GRADE <- GRADE_NUMERIC <- CUTSCORES <- YEAR <- CUTLEVEL <- YEAR_LAG <- CONTENT_AREA <- SCALE_SCORE <- first.content_area <- last.content_area <- NULL
 
 	### Create relevant variables
 
 	tmp.cutscore.list <- list()
 	content_area.argument <- content_area
 	if (!is.null(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]])) {
+		first.content_area <- head(names(which(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]]==content_area)),1)
+		last.content_area <- tail(names(which(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]]==content_area)),1)
 		content_area <- unique(names(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]])[
 			SGP::SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]]==content_area])
 	} 
@@ -80,10 +82,22 @@ function(state,
 		}
 	
 		### Add GRADE_LOWER/GRADE_UPPER
-
 		long.cutscores <- rbindlist(cutscore.list)
-		extension.cutscores <- 
-			data.table(CONTENT_AREA="PLACEHOLDER", GRADE=c("GRADE_LOWER", "GRADE_UPPER"), long.cutscores[,list(CUTSCORES=extendrange(CUTSCORES, f=0.15)), by=list(YEAR, CUTLEVEL)])
+		if (all(long.cutscores$GRADE == "EOCT")) {
+			if (content_area == last.content_area) {
+				extension.cutscores <- 
+					# data.table(CONTENT_AREA="PLACEHOLDER", GRADE="GRADE_UPPER", subset(long.cutscores, !is.na(as.numeric(CUTLEVEL)))[,list(CUTSCORES=CUTSCORES+CUTSCORES*0.15), by=list(YEAR, CUTLEVEL)])
+					# data.table(CONTENT_AREA="PLACEHOLDER", GRADE="GRADE_UPPER", long.cutscores[,list(CUTSCORES=CUTSCORES+CUTSCORES*0.15), by=list(YEAR, CUTLEVEL)])
+					data.table(CONTENT_AREA="PLACEHOLDER", GRADE="GRADE_UPPER", long.cutscores[,list(CUTSCORES=extendrange(rnorm(rep(CUTSCORES, 1000), CUTSCORES, CUTSCORES/500), f=0.075)[2]), by=list(YEAR, CUTLEVEL)])
+			} else {
+				extension.cutscores <- 
+					data.table(CONTENT_AREA="PLACEHOLDER", GRADE="GRADE_LOWER", long.cutscores[,list(CUTSCORES=extendrange(rnorm(rep(CUTSCORES, 1000), CUTSCORES, CUTSCORES/500), f=0.075)[1]), by=list(YEAR, CUTLEVEL)])
+
+			}
+		} else {
+			extension.cutscores <- 
+				data.table(CONTENT_AREA="PLACEHOLDER", GRADE=c("GRADE_LOWER", "GRADE_UPPER"), long.cutscores[,list(CUTSCORES=extendrange(CUTSCORES, f=0.15)), by=list(YEAR, CUTLEVEL)])
+		}
 		long.cutscores <- rbindlist(list(long.cutscores, setcolorder(extension.cutscores, names(cutscore.list[[1]]))))
 		setkeyv(long.cutscores, c("GRADE", "CONTENT_AREA"))
 
@@ -93,6 +107,13 @@ function(state,
 		}
 
 		if (!is.null(subset.year)) if (identical(subset.year, NA)) long.cutscores <- long.cutscores[is.na(YEAR)] else long.cutscores <- long.cutscores[YEAR==subset.year]
+
+		if (multiple.content_areas) {
+			if (content_area %in% c(first.content_area, last.content_area)) {
+				if (content_area == first.content_area) long.cutscores <- long.cutscores[GRADE!="GRADE_UPPER"]
+				if (content_area == last.content_area) long.cutscores <- long.cutscores[GRADE!="GRADE_LOWER"]
+			} else long.cutscores <- long.cutscores[!GRADE %in% c("GRADE_LOWER", "GRADE_UPPER")]
+		}
 
 		return(data.table(long.cutscores, key=c("GRADE", "CONTENT_AREA")))
 	} ### END get.long.cutscores
@@ -112,7 +133,7 @@ function(state,
 	} else tmp.transformed.cutscores <- NULL
 
 	if (multiple.content_areas) {
-		long.cutscores <- rbindlist(lapply(content_area, function(x) get.long.cutscores(x, tmp.transformed.cutscores)))
+		long.cutscores <- data.table(rbindlist(lapply(content_area, function(x) get.long.cutscores(x, tmp.transformed.cutscores))), key=c("GRADE", "CONTENT_AREA"))
 	} else long.cutscores <- get.long.cutscores(content_area, tmp.transformed.cutscores)
 
 	### Add GRADE_NUMERIC
