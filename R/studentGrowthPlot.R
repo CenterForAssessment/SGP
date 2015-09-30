@@ -608,7 +608,11 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 			temp$YEAR <- sapply(temp$YEAR, function(x) get.my.cutscore.year(Report_Parameters$State, Report_Parameters$Content_Area, as.character(x)))
 			temp <- merge(temp, subset(Cutscores, CUTLEVEL==i), all.x=TRUE)
 			temp <- temp[order(temp$temp_id),]$CUTSCORES
-			temp[which(is.na(temp))] <- approx(temp, xout=which(is.na(temp)), rule=2)$y
+			if (length(temp[which(!is.na(temp))])==1) {
+				temp[which(is.na(temp))] <- temp[which(!is.na(temp))]
+			} else {
+				temp[which(is.na(temp))] <- approx(temp, xout=which(is.na(temp)), rule=2)$y
+			}
 			assign(paste("level_", j, "_", i, "_curve", sep=""), splinefun(((low.year-1):(high.year+1))[tmp.year.sequence[[j]]], temp[tmp.year.sequence[[j]]], method="natural"))
 		}
 
