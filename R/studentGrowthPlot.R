@@ -516,7 +516,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 			na.rm=TRUE)
 		high.score <- max(cuts.ny1,
 			Plotting_Scale_Scores,
-			Cutscores$CUTSCORES[Cutscores$GRADE==tail(grade.values$interp.df$GRADE, 1) & Cutscores$CUTLEVEL==tail(number.achievement.level.regions, 1)-1],
+			Cutscores$CUTSCORES[Cutscores$GRADE==tail(grade.values$interp.df$GRADE, 1) & Cutscores$CUTLEVEL %in% (number.achievement.level.regions-1)],
 			na.rm=TRUE)
 		yscale.range <- extendrange(c(low.score,high.score), f=0.15)
 	}
