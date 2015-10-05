@@ -259,6 +259,7 @@ function(sgp_object,
 			tmp.messages <- c(tmp.messages, "\t\tNOTE: Variables", paste(SGPt, collapse=", "), "are not all contained in the supplied 'sgp_object@Data'. 'SGPt' is set to NULL.\n")
 			SGPt <- NULL
 		}
+        SGPt.max.time <- SGPstateData[['state']][['SGP_Configuration']][['SGPt.max.time']]
 	}
 
 	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][['sgp.use.my.sgp_object.baseline.coefficient.matrices']]) && is.null(sgp.use.my.sgp_object.baseline.coefficient.matrices)) {
@@ -709,6 +710,7 @@ function(sgp_object,
 						calculate.simex=sgp.iter[["sgp.calculate.simex"]],
 						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.percentiles"),
+                        SGPt.max.time=SGPt.max.time,
 						parallel.config=par.start$Lower_Level_Parallel,
 						...))
 					}
@@ -751,6 +753,7 @@ function(sgp_object,
 						calculate.simex=sgp.iter[["sgp.calculate.simex"]],
 						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.percentiles"),
+                        SGPt.max.time=SGPt.max.time,
 						parallel.config=par.start$Lower_Level_Parallel,
 						...))
 
@@ -794,6 +797,7 @@ function(sgp_object,
 						calculate.simex=sgp.iter[["sgp.calculate.simex"]],
 						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.percentiles"),
+                        SGPt.max.time=SGPt.max.time,
 						parallel.config=par.start$Lower_Level_Parallel,
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 
@@ -852,6 +856,7 @@ function(sgp_object,
 						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 						sgp.percentiles.equated=sgp.projections.equated,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.percentiles.equated"),
+                        SGPt.max.time=SGPt.max.time,
 						...))
 					}
 				tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -895,6 +900,7 @@ function(sgp_object,
 						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 						sgp.percentiles.equated=sgp.projections.equated,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.percentiles.equated"),
+                        SGPt.max.time=SGPt.max.time,
 						...))
 
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -939,6 +945,7 @@ function(sgp_object,
 						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 						sgp.percentiles.equated=sgp.projections.equated,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.percentiles.equated"),
+                        SGPt.max.time=SGPt.max.time,
 						parallel.config=par.start$Lower_Level_Parallel,
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 
@@ -995,6 +1002,7 @@ function(sgp_object,
 						print.other.gp=print.other.gp,
 						calculate.simex=sgp.iter[["sgp.calculate.simex.baseline"]],
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.percentiles.baseline"),
+                        SGPt.max.time=SGPt.max.time,
 						...))
 				}
 				tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -1035,6 +1043,7 @@ function(sgp_object,
 						print.other.gp=print.other.gp,
 						calculate.simex=sgp.iter[["sgp.calculate.simex.baseline"]],
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.percentiles.baseline"),
+                        SGPt.max.time=SGPt.max.time,
 						...))
 
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
@@ -1076,6 +1085,7 @@ function(sgp_object,
 						print.other.gp=print.other.gp,
 						calculate.simex=sgp.iter[["sgp.calculate.simex.baseline"]],
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.percentiles.baseline"),
+                        SGPt.max.time=SGPt.max.time,
 						parallel.config=par.start$Lower_Level_Parallel,
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 
@@ -1721,6 +1731,7 @@ function(sgp_object,
 					calculate.simex=sgp.iter[["sgp.calculate.simex"]],
 					max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 					SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.percentiles"),
+                    SGPt.max.time=SGPt.max.time,
 					...)
 			}
 		} ## END if sgp.percentiles
@@ -1766,6 +1777,7 @@ function(sgp_object,
 					max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 					sgp.percentiles.equated=sgp.projections.equated,
 					SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.percentiles.equated"),
+                    SGPt.max.time=SGPt.max.time,
 					...)
 			}
 		} ## END if sgp.percentiles.equated
@@ -1808,6 +1820,7 @@ function(sgp_object,
 					parallel.config=lower.level.parallel.config,
 					calculate.simex=sgp.iter[["sgp.calculate.simex.baseline"]],
 					SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.percentiles.baseline"),
+                    SGPt.max.time=SGPt.max.time,
 					...)
 			}
 		} ## END if sgp.percentiles.baseline

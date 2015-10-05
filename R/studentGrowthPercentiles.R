@@ -46,6 +46,7 @@ function(panel.data,         ## REQUIRED
          sgp.percentiles.set.seed=314159,
          sgp.percentiles.equated=NULL,
          SGPt=NULL,
+         SGPt.max.time=NULL,
          verbose.output=FALSE) {
 
 	started.at <- proc.time()
@@ -230,7 +231,7 @@ function(panel.data,         ## REQUIRED
 		return(paste("qrmatrix_", tmp.last, "_", k, sep=""))
 	}
 
-	.get.percentile.predictions <- function(my.data, my.matrix) {
+	.get.percentile.predictions <- function(my.data, my.matrix, SGPt.max.time=NULL) {
 		SCORE <- TIME <- NULL
 		mod <- character()
 		for (k in seq_along(my.matrix@Time_Lags[[1]])) {
@@ -240,7 +241,9 @@ function(panel.data,         ## REQUIRED
 		}
 		if (!is.null(SGPt)) {
 			my.data <- data.table(Panel_Data[,c("ID", "TIME", "TIME_LAG"), with=FALSE], key="ID")[my.data][,c(names(my.data), "TIME", "TIME_LAG"), with=FALSE]
-            tmp.time.shift.index <- getTimeShiftIndex(my.data, my.matrix)
+            tmp.time.shift.index <- getTimeShiftIndex(max(as.numeric(my.data[['TIME']])), my.matrix)
+            if (is.null(SGPt.max.time) && tmp.time.shift.index != 0) my.data[,TIME:=TIME+365*-tmp.time.shift.index]
+            if (!is.null(SGPt.max.time)) my.data[,TIME:=my.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]]
 			if (tmp.time.shift.index != 0) my.data[,TIME:=TIME+365*-tmp.time.shift.index]
 			mod <- paste(mod, ", my.data[['TIME']], my.data[['TIME_LAG']]", sep="")
 		}
@@ -1401,7 +1404,7 @@ function(panel.data,         ## REQUIRED
 				} ## END CSEM analysis
 
 				if (!is.null(percentile.cuts)) {
-					tmp.percentile.cuts[[j]] <- data.table(ID=tmp.data[[1]], .get.percentile.cuts(tmp.predictions))
+                    if (!is.null(SGPt.max.time)) tmp.percentile.cuts[[paste("ORDER", j, "MAX_TIME", sep="_")]] <- data.table(ID=tmp.data[[1]], .get.percentile.cuts(.get.percentile.predictions(tmp.data, tmp.matrix, SGPt.max.time)))
 				}
 				if ((is.character(goodness.of.fit) | goodness.of.fit==TRUE | return.prior.scale.score) & j==1) prior.ss <- tmp.data[[dim(tmp.data)[2]-1]]
 				if (exact.grade.progression.sequence & return.prior.scale.score) prior.ss <- tmp.data[[dim(tmp.data)[2]-1]]
