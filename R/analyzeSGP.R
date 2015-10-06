@@ -259,7 +259,7 @@ function(sgp_object,
 			tmp.messages <- c(tmp.messages, "\t\tNOTE: Variables", paste(SGPt, collapse=", "), "are not all contained in the supplied 'sgp_object@Data'. 'SGPt' is set to NULL.\n")
 			SGPt <- NULL
 		}
-        SGPt.max.time <- SGPstateData[['state']][['SGP_Configuration']][['SGPt.max.time']]
+        SGPt.max.time <- SGPstateData[[state]][['SGP_Configuration']][['SGPt.max.time']]
 	}
 
 	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][['sgp.use.my.sgp_object.baseline.coefficient.matrices']]) && is.null(sgp.use.my.sgp_object.baseline.coefficient.matrices)) {
