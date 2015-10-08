@@ -226,8 +226,9 @@ function(what_sgp_object=NULL,
 
 		} else {
 			if (!is.null(sgp.use.my.coefficient.matrices)) {
-				tmp.long.data <- rbindlist(list(data.table(what_sgp_object@Data, key=c("VALID_CASE", "CONTENT_AREA", "ID"))[
-					data.table(tmp_sgp_object@Data, key=c("VALID_CASE", "CONTENT_AREA", "ID"))[,list(VALID_CASE, CONTENT_AREA, ID)], nomatch='0'], tmp_sgp_object@Data), fill=TRUE)
+				# Extract score histories.  Don't use CONTENT_AREA due to potential use of EOCT course progressions.
+				tmp.long.data <- rbindlist(list(data.table(what_sgp_object@Data, key=c("VALID_CASE", "ID"))[
+					unique(data.table(tmp_sgp_object@Data, key=c("VALID_CASE", "ID"))[,list(VALID_CASE, ID)]), nomatch=0], tmp_sgp_object@Data), fill=TRUE)
 				if ("YEAR_WITHIN" %in% names(tmp.long.data)) {
 					tmp.long.data$FIRST_OBSERVATION <- NULL
 					tmp.long.data$LAST_OBSERVATION <- NULL
@@ -294,6 +295,23 @@ function(what_sgp_object=NULL,
 					what_sgp_object <- suppressMessages(prepareSGP(what_sgp_object, state=state, fix.duplicates=fix.duplicates))
 				}
 				what_sgp_object@SGP <- mergeSGP(what_sgp_object@SGP, tmp.sgp_object.update@SGP)
+
+				### Filter out any exact duplicates in projections and percentiles (duplicates because score histories not subsetted based on CONTENT_AREA).
+				if (sgp.projections | sgp.projections.lagged | sgp.projections.baseline | sgp.projections.lagged.baseline) {
+					for (ca in grep(update.years, names(what_sgp_object@SGP[["SGProjections"]]), value=TRUE)) {
+						tmp_proj <- data.table(what_sgp_object@SGP[["SGProjections"]][[ca]])
+						setkey(tmp_proj)
+						what_sgp_object@SGP[["SGProjections"]][[ca]]<- tmp_proj[!duplicated(tmp_proj)]
+					}
+				}
+
+				if (sgp.percentiles | sgp.percentiles.baseline) {
+					for (ca in grep(update.years, names(what_sgp_object@SGP[["SGPercentiles"]]), value=TRUE)) {
+						tmp_sgp <- data.table(what_sgp_object@SGP[["SGPercentiles"]][[ca]])
+						setkeyv(tmp_sgp, c("ID", "SGP",  "SGP_NORM_GROUP"))
+						what_sgp_object@SGP[["SGPercentiles"]][[ca]]<- tmp_sgp[!duplicated(tmp_sgp)]
+					}
+				}
 
 				if ("combineSGP" %in% steps) {
 					what_sgp_object <- combineSGP(
