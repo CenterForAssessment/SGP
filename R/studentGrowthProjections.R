@@ -241,10 +241,10 @@ function(panel.data,	## REQUIRED
 								for (k in unlist(tmp.matrix@Version[['Matrix_Information']][['SGPt']][c("MAX_TIME_PRIOR", "MAX_TIME")])) {
 									tmp.scores[,TIME:=k]
 									tmp.time.shift.index <- getTimeShiftIndex(as.numeric(max(tmp.scores[[SGPt]])), tmp.matrix)
-#									tmp.index <- (-20:20)[which.max(sapply(-20:20, function(x) {
-#										(tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]+365*x)-as.numeric(max(tmp.scores[[SGPt]]))}) >
-#										tmp.matrix@Version[['Matrix_Information']][['SGPt']][['RANGE_TIME_LAG']][1])]
 									tmp.scores[,TIME_LAG:=(k+365*tmp.time.shift.index)-as.numeric(get(SGPt))]
+### TEMP TEST CODE
+						            if (max(tmp.scores$TIME_LAG, na.rm=TRUE) > tmp.matrix@Version[['Matrix_Information']][['SGPt']][['RANGE_TIME_LAG']][2]+30 | min(tmp.scores$TIME_LAG, na.rm=TRUE) < tmp.matrix@Version[['Matrix_Information']][['SGPt']][['RANGE_TIME_LAG']][1]-30 ) stop("Matrix Misfit with TIME data!!!")
+###
 									tmp.scores[,TMP_KEY:=1:100]
 									tmp.dt[,TEMP_1:=tmp.scores[, as.matrix(.SD) %*% tmp.matrix@.Data[,TMP_KEY], by=TMP_KEY, .SDcols=3:(dim(tmp.scores)[2]-1)][['V1']]]
 
@@ -267,10 +267,10 @@ function(panel.data,	## REQUIRED
 							} else {
 								tmp.scores[,TIME:=tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]]
 								tmp.time.shift.index <- getTimeShiftIndex(as.numeric(tmp.max.time), tmp.matrix)
-#								tmp.index <- (-20:20)[which.max(sapply(-20:20, function(x) {
-#									(tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]+365*x)-as.numeric(tmp.max.time)}) >
-#									tmp.matrix@Version[['Matrix_Information']][['SGPt']][['RANGE_TIME_LAG']][1])]
 								tmp.scores[,TIME_LAG:=(tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]+365*tmp.time.shift.index)-tmp.max.time]
+### TEMP TEST CODE
+					            if (max(tmp.scores$TIME_LAG, na.rm=TRUE) > tmp.matrix@Version[['Matrix_Information']][['SGPt']][['RANGE_TIME_LAG']][2]+30 | min(tmp.scores$TIME_LAG, na.rm=TRUE) < tmp.matrix@Version[['Matrix_Information']][['SGPt']][['RANGE_TIME_LAG']][1]-30 ) stop("Matrix Misfit with TIME data!!!")
+####
 								tmp.scores[,TMP_KEY:=1:100]
 								tmp.max.time <- tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]
 								tmp.dt[,TEMP_1:=tmp.scores[, as.matrix(.SD) %*% tmp.matrix@.Data[,TMP_KEY], by=TMP_KEY, .SDcols=2:(dim(tmp.scores)[2]-1)][['V1']]]

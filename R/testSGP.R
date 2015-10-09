@@ -1365,4 +1365,26 @@
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 6: ", convertTime(timetaken(started.at.overall)), "#####\n"))
 			cat(tmp.messages)
 		} ### End TEST_NUMBER 6
+
+
+		#######################################################################################################################################################
+		###
+		### TEST NUMBER RLI: Test of SGPt functionality
+		###
+		#######################################################################################################################################################
+		
+		if ("RLI" %in% TEST_NUMBER) {
+			
+			options(error=recover)
+			options(warn=2)
+			number.cores <- detectCores(logical=FALSE)
+			if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
+			Demonstration_SGP <- tmp.messages <- NULL
+
+
+
+
+
+
+		} ### End TEST_NUMBER RLI
 	} ### END testSGP Function
