@@ -8,6 +8,8 @@ function(x,
 	x <- gsub("_", " ", x)
 	x <- gsub("[.]", " ", x)
 	x <- gsub("^ *|(?<= ) | *$", "", x, perl=T)
+	x <- gsub("[(]", "( ", x)
+	x <- gsub("[)]", " )", x)
 
 	if (identical(x, "")) {
 		return("")
@@ -28,6 +30,7 @@ function(x,
 		}
 		s.new <- unlist(strsplit(s.new, split="[.]"))
 		if (length(s.new) > 1) s.new <- paste(toupper(substring(s.new,1,1)), substring(s.new,2), sep="", collapse=".")
+		s.new <- gsub(" [)]", ")", gsub("[(] ", "(", s.new))
 		return(s.new)
 	}
 } ### END capwords

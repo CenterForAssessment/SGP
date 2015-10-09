@@ -14,7 +14,7 @@ function(
 	what.to.return="MATRICES") {
 
 	Matrix_TF <- Order <- Grade <- NULL
-
+	if (is.null(my.exact.grade.progression.sequence)) my.exact.grade.progression.sequence <- FALSE
 
 	### Utility functions
 
