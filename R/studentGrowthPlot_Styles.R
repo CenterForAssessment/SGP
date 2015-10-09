@@ -239,7 +239,8 @@ if (reports.by.school) {
 		tmp_all_student_data <- tmp_grade_data[ID==n]
 		if (length(content_areas) < dim(tmp_all_student_data)[1] | any(duplicated(tmp_all_student_data[["CONTENT_AREA"]]))) {
 			tmp_content_areas <- tmp_all_student_data[["CONTENT_AREA"]]
-			tmp_all_student_data[["CONTENT_AREA"]] <- tmp_content_areas <- unlist(sapply(unique(tmp_content_areas), function(x) paste(x, which(tmp_content_areas==x), sep="."), USE.NAMES=FALSE))
+			tmp_index <- unlist(sapply(unique(tmp_content_areas), function(x) which(tmp_content_areas==x), USE.NAMES=FALSE))
+			tmp_all_student_data[["CONTENT_AREA"]] <- tmp_content_areas <- unlist(sapply(unique(tmp_content_areas), function(x) paste(x, which(tmp_content_areas==x), sep="."), USE.NAMES=FALSE))[tmp_index]
 		} else tmp_content_areas <- content_areas
 		num.charts <- length(tmp_content_areas)
 
@@ -327,7 +328,7 @@ if (reports.by.school) {
 	if ("PDF" %in% sgPlot.output.format) {
 		if (!reports.by.student) {
 			################################ SCHOOL Report Catalog LaTeX Code ###################################################################################
-			if (is.null(sgPlot.front.page)) {
+			if (is.null(sgPlot.front.page) | !is.null(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Include_Front_Page_in_School_Catalog"]])) {
 			cat(paste("\\pdfbookmark[2]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", student_number, ")", sep=""), "}{", n , "}\n\\includepdf[pages={1-}, fitpaper=true]{", 
 				path.to.pdfs, "/", file_name, "}\n", sep=""), file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE)
 			} else {

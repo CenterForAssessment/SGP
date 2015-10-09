@@ -1399,9 +1399,13 @@ function(panel.data,         ## REQUIRED
 					} else {
 						tmp.csem.variable <- NULL
 					}
+					if (!is.null(additional.vnames.to.return)) {
+						tmp.id.etc <- panel.data[["Panel_Data"]][,c("ID", names(additional.vnames.to.return)), with=FALSE][tmp.data[, names(tmp.data)[1], with=FALSE]]
+						setnames(tmp.id.etc, names(additional.vnames.to.return), unlist(additional.vnames.to.return))
+					}	else tmp.id.etc <- tmp.data[, names(tmp.data)[1], with=FALSE]
 
 					tmp.csem.quantiles[[j]] <- data.table(
-									tmp.data[,c(names(tmp.data)[1], names(additional.vnames.to.return)), with=FALSE],
+									tmp.id.etc,
 									as.data.table(replicate(calculate.confidence.intervals[['simulation.iterations']],
 												.get.quantiles(
 													tmp.predictions,
