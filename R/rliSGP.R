@@ -1,6 +1,6 @@
 `rliSGP` <-
 function(sgp_object,
-	additional.data,
+	additional.data=NULL,
 	state=NULL,
 	content_areas=c("MATHEMATICS", "READING", "EARLY_LITERACY"),
 	testing.window, ### FALL, WINTER, SPRING
@@ -96,6 +96,17 @@ function(sgp_object,
 
 	if (!is.null(coefficient.matrices)) SGPstateData[[state]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <- coefficient.matrices
 
+	if (is.data.frame(sgp_object)) {
+		sgp_object <- data.table(sgp_object, key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
+		tmp.last.year <- tail(sort(unique(sgp_object[['YEAR']])), 1)
+		additional.data <- sgp_object[YEAR==tmp.last.year]
+		sgp_object <- new("SGP", Data=suppressMessages(prepareSGP(sgp_object[YEAR!=tmp.last.year], state=state)@Data), Version=getVersion(data))
+		if (is.null(coefficient.matrices) && length(find.package("RLImatrices", quiet=TRUE))) {
+			eval(parse(text="require(RLImatrices)"))
+			SGPstateData[[state]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <-
+			eval(parse(text=paste(paste(state, "SGPt_Baseline_Matrices", sep="_"), "$", paste(state, "SGPt_Baseline_Matrices", tmp.last.year, sep="_"), sep="")))
+		}
+	}
 
 	### Create variables
 

@@ -8,7 +8,7 @@ rliSGP is a wrapper function design to expedite SGP analyses on Renaissance Lear
 \usage{
 rliSGP(
 	sgp_object,
-        additional.data,
+    additional.data=NULL,
 	state=NULL,
 	content_areas=c("MATHEMATICS", "READING", "EARLY_LITERACY"),
         testing.window,
@@ -28,9 +28,10 @@ rliSGP(
 }
 
 \arguments{
-  \item{sgp_object}{The SGP object from which the goodness-of-fit data will be used. 
+  \item{sgp_object}{The SGP object from which the goodness-of-fit data will be used.
   }
-  \item{additional.data}{Current window's data for UPDATE or EOW (end of window) processing. 
+  \item{additional.data}{Current window's data for UPDATE or EOW (end of window) processing. Can be NULL if new data all fed into argument
+  'sgp_object' as data.frame.
   }
   \item{state}{Abbreviation for STATE/ORGANIZATION being analyzed. Currently only available for 'RLI' or 'RLI_UK'.
   }
@@ -38,7 +39,7 @@ rliSGP(
   }
   \item{testing.window}{Argument indicating testing window being analyzed. Either 'FALL', 'WINTER', 'SPRING', 'EARLY_SPRING', 'LATE_SPRING' indicating what testing window's data is being analyzed.
   }
-  \item{eow.or.update}{Argument indicating whether end-of-window or within-window updates are being done. Either 'EOW' (end of window) or 'UPDATE' (within window). 
+  \item{eow.or.update}{Argument indicating whether end-of-window or within-window updates are being done. Either 'EOW' (end of window) or 'UPDATE' (within window).
   }
   \item{update.save.shell.only}{Boolean argument indicating whether End of Window processing should only produce/save RLI_SGP_UPDATE_SHELL and bypass coefficient matrix production.
   }
@@ -61,7 +62,7 @@ analysis. Default is NULL, no ID replacement is performed.
   \item{save.intermediate.results}{Boolean variable passed to \code{\link{updateSGP}} indicating whether to save intermediate results from \code{\link{prepareSGP}}, \code{\link{analyzeSGP}}, and
   \code{\link{combineSGP}} as part of the \code{rliSGP} analyses.
   }
-  \item{coefficient.matrices}{List of baseline matrices to be used for analyses (overrides what exists in \code{SGPstateData}). Defaults to NULL (use those in \code{SGPstateData}). 
+  \item{coefficient.matrices}{List of baseline matrices to be used for analyses (overrides what exists in \code{SGPstateData}). Defaults to NULL (use those in \code{SGPstateData}).
   }
   \item{goodness.of.fit.print}{Boolean argument passed to \code{\link{updateSGP}} indicating whether to print goodness of fit plots associated with outcome. Default is FALSE.
   }
@@ -80,10 +81,10 @@ analysis. Default is NULL, no ID replacement is performed.
 
 
 
-####### For End-of-Window processing 
+####### For End-of-Window processing
 
 
-}  
+}
 }
 
 \keyword{documentation}
