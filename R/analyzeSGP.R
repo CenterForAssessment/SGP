@@ -264,7 +264,9 @@ function(sgp_object,
 			SGPt <- NULL
 		}
         SGPt.max.time <- SGPstateData[[state]][['SGP_Configuration']][['SGPt.max.time']]
-	}
+	} else {
+        SGPt.max.time <- NULL
+    }
 
 	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][['sgp.use.my.sgp_object.baseline.coefficient.matrices']]) && is.null(sgp.use.my.sgp_object.baseline.coefficient.matrices)) {
 		sgp.use.my.sgp_object.baseline.coefficient.matrices <- SGPstateData[[state]][["SGP_Configuration"]][['sgp.use.my.sgp_object.baseline.coefficient.matrices']]
