@@ -46,6 +46,7 @@ function(panel.data,         ## REQUIRED
          sgp.percentiles.set.seed=314159,
          sgp.percentiles.equated=NULL,
          SGPt=NULL,
+         SGPt.max.time=NULL,
          verbose.output=FALSE) {
 
 	started.at <- proc.time()
@@ -230,8 +231,8 @@ function(panel.data,         ## REQUIRED
 		return(paste("qrmatrix_", tmp.last, "_", k, sep=""))
 	}
 
-	.get.percentile.predictions <- function(my.data, my.matrix) {
-		SCORE <- TIME <- NULL
+	.get.percentile.predictions <- function(my.data, my.matrix, SGPt.max.time=NULL) {
+		SCORE <- TIME <- TIME_LAG <- NULL
 		mod <- character()
 		for (k in seq_along(my.matrix@Time_Lags[[1]])) {
 			knt <- paste("my.matrix@Knots[[", k, "]]", sep="")
@@ -240,8 +241,14 @@ function(panel.data,         ## REQUIRED
 		}
 		if (!is.null(SGPt)) {
 			my.data <- data.table(Panel_Data[,c("ID", "TIME", "TIME_LAG"), with=FALSE], key="ID")[my.data][,c(names(my.data), "TIME", "TIME_LAG"), with=FALSE]
-            tmp.time.shift.index <- getTimeShiftIndex(my.data, my.matrix)
-			if (tmp.time.shift.index != 0) my.data[,TIME:=TIME+365*-tmp.time.shift.index]
+            tmp.time.shift.index <- getTimeShiftIndex(max(as.numeric(my.data[['TIME']])), my.matrix)
+### TEMP TEST CODE
+            if (max(my.data$TIME+365*-tmp.time.shift.index, na.rm=TRUE) > my.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]+30) stop("Matrix Misfit with TIME data!!!")
+            if (is.null(SGPt.max.time) && tmp.time.shift.index != 0) my.data[,TIME:=TIME+365*-tmp.time.shift.index]
+            if (!is.null(SGPt.max.time)) {
+                my.data[,TIME_LAG:=TIME_LAG+my.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]-(TIME+365*-tmp.time.shift.index)]
+                my.data[,TIME:=my.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]]
+            }
 			mod <- paste(mod, ", my.data[['TIME']], my.data[['TIME_LAG']]", sep="")
 		}
 		tmp <- eval(parse(text=paste("cbind(1L, ", substring(mod, 2), ") %*% my.matrix", sep="")))
@@ -283,6 +290,12 @@ function(panel.data,         ## REQUIRED
 		return(tmp)
 	}
 
+    .get.best.cuts <- function(list.of.cuts, label.suffix=NULL) {
+        cuts.best <- data.table(rbindlist(list.of.cuts), key="ID")
+        cuts.best <- cuts.best[c(which(!duplicated(cuts.best))[-1]-1, nrow(cuts.best))][,-1, with=FALSE]
+        if (!is.null(label.suffix)) setnames(cuts.best, names(cuts.best), paste(names(cuts.best), label.suffix, sep="_"))
+        return(cuts.best)
+    }
 	split.location <- function(years) sapply(strsplit(years, '_'), length)[1]
 
 	###
@@ -986,6 +999,10 @@ function(panel.data,         ## REQUIRED
 		return.norm.group.dates <- NULL
 	}
 
+    if (!is.null(SGPt.max.time) && is.null(SGPt)) {
+        SGPt.max.time <- NULL
+    }
+
 	if (identical(return.norm.group.dates, TRUE)) {
 		return.norm.group.dates <- "TIME[!_]"
 	}
@@ -993,6 +1010,7 @@ function(panel.data,         ## REQUIRED
 	if (identical(return.norm.group.scale.scores, FALSE)) {
 		return.norm.group.scale.scores <- NULL
 	}
+
 
 	### Create object to store the studentGrowthPercentiles objects
 
@@ -1405,7 +1423,8 @@ function(panel.data,         ## REQUIRED
 				} ## END CSEM analysis
 
 				if (!is.null(percentile.cuts)) {
-					tmp.percentile.cuts[[j]] <- data.table(ID=tmp.data[[1]], .get.percentile.cuts(tmp.predictions))
+                    tmp.percentile.cuts[[paste("ORDER", j, sep="_")]] <- data.table(ID=tmp.data[[1]], .get.percentile.cuts(tmp.predictions))
+                    if (!is.null(SGPt.max.time)) tmp.percentile.cuts[[paste("ORDER", j, "MAX_TIME", sep="_")]] <- data.table(ID=tmp.data[[1]], .get.percentile.cuts(.get.percentile.predictions(tmp.data, tmp.matrix, SGPt.max.time)))
 				}
 				if ((is.character(goodness.of.fit) | goodness.of.fit==TRUE | return.prior.scale.score) & j==1) prior.ss <- tmp.data[[dim(tmp.data)[2]-1]]
 				if (exact.grade.progression.sequence & return.prior.scale.score) prior.ss <- tmp.data[[dim(tmp.data)[2]-1]]
@@ -1467,9 +1486,8 @@ function(panel.data,         ## REQUIRED
 		if (simex.tf) quantile.data[, SGP_SIMEX:=quantile.data.simex[['DT']][["SGP_SIMEX"]]]
 
 		if (!is.null(percentile.cuts)){
-			cuts.best <- data.table(rbindlist(tmp.percentile.cuts), key="ID")
-			cuts.best <- cuts.best[c(which(!duplicated(cuts.best))[-1]-1, nrow(cuts.best))][,-1, with=FALSE]
-			quantile.data <- data.table(quantile.data, cuts.best)
+			quantile.data <- data.table(quantile.data, .get.best.cuts(tmp.percentile.cuts[grep("MAX_TIME", names(tmp.percentile.cuts), invert=TRUE)]))
+            if (!is.null(SGPt.max.time)) quantile.data <- data.table(quantile.data, .get.best.cuts(tmp.percentile.cuts[grep("MAX_TIME", names(tmp.percentile.cuts))], "MAX_TIME"))
 		}
 
 		if (print.sgp.order | return.norm.group.identifier) {

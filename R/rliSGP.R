@@ -1,12 +1,12 @@
 `rliSGP` <-
 function(sgp_object,
-	additional.data,
+	additional.data=NULL,
 	state=NULL,
 	content_areas=c("MATHEMATICS", "READING", "EARLY_LITERACY"),
-	testing.window, ### FALL, WINTER, SPRING
+	testing.window=NULL, ### FALL, WINTER, SPRING
 	eow.or.update="UPDATE", ### UPDATE or EOW
 	update.save.shell.only=FALSE,
-	configuration.year,
+	configuration.year=NULL,
 	sgp.percentiles.baseline=TRUE,
 	sgp.projections.baseline=TRUE,
 	sgp.projections.lagged.baseline=FALSE,
@@ -82,10 +82,6 @@ function(sgp_object,
 
 	### Tests for arguments
 
-	if (missing(testing.window) || length(testing.window) != 1 || !testing.window %in% c("FALL", "WINTER", "SPRING")) {
-		stop("\tPlease supply either 'FALL', 'WINTER', or 'SPRING' for the testing.window argument.")
-	}
-
 	if (!is.null(additional.data) && !is.data.table(additional.data)) additional.data <- as.data.table(additional.data)
 
 	if ("DATE" %in% names(additional.data)) additional.data[,DATE:=as.Date(DATE)]
@@ -96,6 +92,25 @@ function(sgp_object,
 
 	if (!is.null(coefficient.matrices)) SGPstateData[[state]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <- coefficient.matrices
 
+	if (is.data.frame(sgp_object)) {
+		sgp_object <- data.table(sgp_object, key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
+		tmp.last.year <- tail(sort(unique(sgp_object[['YEAR']])), 1)
+		additional.data <- sgp_object[YEAR==tmp.last.year]
+		sgp_object <- new("SGP", Data=suppressMessages(prepareSGP(sgp_object[YEAR!=tmp.last.year], state=state)@Data), Version=getVersion(data))
+		if (is.null(coefficient.matrices) && length(find.package("RLImatrices", quiet=TRUE))) {
+			eval(parse(text="require(RLImatrices)"))
+			SGPstateData[[state]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <-
+			eval(parse(text=paste(paste(state, "SGPt_Baseline_Matrices", sep="_"), "$", paste(state, "SGPt_Baseline_Matrices", tmp.last.year, sep="_"), sep="")))
+		}
+	}
+
+	if (!is.null(testing.window) && (length(testing.window) != 1 || !testing.window %in% c("FALL", "WINTER", "SPRING"))) {
+		stop("\tPlease supply either 'FALL', 'WINTER', or 'SPRING' for the testing.window argument.")
+	} else {
+		testing.window <- c("FALL", "WINTER", "SPRING")[as.numeric(tail(unlist(strsplit(tail(sort(unique(additional.data[['YEAR']])), 1), '[.]')), 1))]
+	}
+
+	if (is.null(configuration.year)) configuration.year <- head(unlist(strsplit(tail(sort(unique(additional.data[['YEAR']])), 1), '[.]')), 1)
 
 	### Create variables
 
