@@ -3,10 +3,10 @@ function(sgp_object,
 	additional.data=NULL,
 	state=NULL,
 	content_areas=c("MATHEMATICS", "READING", "EARLY_LITERACY"),
-	testing.window, ### FALL, WINTER, SPRING
+	testing.window=NULL, ### FALL, WINTER, SPRING
 	eow.or.update="UPDATE", ### UPDATE or EOW
 	update.save.shell.only=FALSE,
-	configuration.year,
+	configuration.year=NULL,
 	sgp.percentiles.baseline=TRUE,
 	sgp.projections.baseline=TRUE,
 	sgp.projections.lagged.baseline=FALSE,
@@ -82,10 +82,6 @@ function(sgp_object,
 
 	### Tests for arguments
 
-	if (missing(testing.window) || length(testing.window) != 1 || !testing.window %in% c("FALL", "WINTER", "SPRING")) {
-		stop("\tPlease supply either 'FALL', 'WINTER', or 'SPRING' for the testing.window argument.")
-	}
-
 	if (!is.null(additional.data) && !is.data.table(additional.data)) additional.data <- as.data.table(additional.data)
 
 	if ("DATE" %in% names(additional.data)) additional.data[,DATE:=as.Date(DATE)]
@@ -107,6 +103,14 @@ function(sgp_object,
 			eval(parse(text=paste(paste(state, "SGPt_Baseline_Matrices", sep="_"), "$", paste(state, "SGPt_Baseline_Matrices", tmp.last.year, sep="_"), sep="")))
 		}
 	}
+
+	tmp.configuration.year <- head(unlist(strsplit(tail(sort(unique(additional.data[['YEAR']])), 1), '[.]')), 1)
+	tmp.testing.window <- c("FALL", "WINDOW", "SPRING")[tail(unlist(strsplit(tail(sort(unique(additional.data[['YEAR']])), 1), '[.]')), 1)]
+
+	if (length(testing.window) != 1 || !testing.window %in% c("FALL", "WINTER", "SPRING")) {
+		stop("\tPlease supply either 'FALL', 'WINTER', or 'SPRING' for the testing.window argument.")
+	}
+
 
 	### Create variables
 
