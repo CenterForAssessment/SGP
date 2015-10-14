@@ -104,13 +104,13 @@ function(sgp_object,
 		}
 	}
 
-	tmp.configuration.year <- head(unlist(strsplit(tail(sort(unique(additional.data[['YEAR']])), 1), '[.]')), 1)
-	tmp.testing.window <- c("FALL", "WINTER", "SPRING")[as.numeric(tail(unlist(strsplit(tail(sort(unique(additional.data[['YEAR']])), 1), '[.]')), 1))]
-
 	if (!is.null(testing.window) && (length(testing.window) != 1 || !testing.window %in% c("FALL", "WINTER", "SPRING"))) {
 		stop("\tPlease supply either 'FALL', 'WINTER', or 'SPRING' for the testing.window argument.")
+	} else {
+		testing.window <- c("FALL", "WINTER", "SPRING")[as.numeric(tail(unlist(strsplit(tail(sort(unique(additional.data[['YEAR']])), 1), '[.]')), 1))]
 	}
 
+	if (is.null(configuration.year)) configuration.year <- head(unlist(strsplit(tail(sort(unique(additional.data[['YEAR']])), 1), '[.]')), 1)
 
 	### Create variables
 
