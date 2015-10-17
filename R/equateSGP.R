@@ -1,4 +1,4 @@
-`equateSGP` <- 
+`equateSGP` <-
 function(tmp.data,
 	state,
 	current.year,
@@ -8,12 +8,14 @@ function(tmp.data,
 
 	tmp.list <- list()
 	current.year <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]
+	equate.interval.digits <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Equate_Interval_Digits"]]
+	if (is.null(equate.interval.digits)) equate.interval.digits <- 0
 	prior.year <- tail(head(sort(unique(tmp.data$YEAR)), -1), 1)
 	grades.for.equate <- as.character(intersect(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][['Grades_Tested']],
                         SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[paste('Grades_Tested', current.year, sep=".")]]))
-
-
 	current.year.data <- tmp.data[VALID_CASE=="VALID_CASE" & YEAR==current.year]
+	content_areas.for.equate <- intersect(unique(current.year.data$CONTENT_AREA),
+		names(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Content_Areas_Labels"]]))
 	prior.year.data <- tmp.data[VALID_CASE=="VALID_CASE" & YEAR==prior.year]
 	setkey(current.year.data, CONTENT_AREA, GRADE)
 	setkey(prior.year.data, CONTENT_AREA, GRADE)
@@ -41,21 +43,27 @@ function(tmp.data,
 	}
 
 	equateSGP_INTERNAL <- function(prior.year.data, current.year.data) {
+		current.year.data.range <- round(range(current.year.data[['SCALE_SCORE']], na.rm=TRUE), digits=equate.interval.digits)
+		prior.year.data.range <- round(range(prior.year.data[['SCALE_SCORE']], na.rm=TRUE), digits=equate.interval.digits)
 		return(list(
 			NEW_TO_OLD=equate(
-			freqtab(current.year.data[['SCALE_SCORE']], scales=seq(min(current.year.data[['SCALE_SCORE']], na.rm=TRUE), max(current.year.data[['SCALE_SCORE']], na.rm=TRUE))),
-			freqtab(prior.year.data[['SCALE_SCORE']], scales=seq(min(prior.year.data[['SCALE_SCORE']], na.rm=TRUE), max(prior.year.data[['SCALE_SCORE']], na.rm=TRUE))), type=equating.method),
+				freqtab(as.numeric(as.character(round(current.year.data[['SCALE_SCORE']], digits=equate.interval.digits))),
+					scales=as.numeric(as.character(round(seq(current.year.data.range[1], current.year.data.range[2], by=0.1^equate.interval.digits), digits=equate.interval.digits)))),
+				freqtab(as.numeric(as.character(round(prior.year.data[['SCALE_SCORE']], digits=equate.interval.digits))),
+					scales=as.numeric(as.character(round(seq(prior.year.data.range[1], prior.year.data.range[2], by=0.1^equate.interval.digits), digits=equate.interval.digits)))), type=equating.method),
 			OLD_TO_NEW=equate(
-			freqtab(prior.year.data[['SCALE_SCORE']], scales=seq(min(prior.year.data[['SCALE_SCORE']], na.rm=TRUE), max(prior.year.data[['SCALE_SCORE']], na.rm=TRUE))),
-			freqtab(current.year.data[['SCALE_SCORE']], scales=seq(min(current.year.data[['SCALE_SCORE']], na.rm=TRUE), max(current.year.data[['SCALE_SCORE']], na.rm=TRUE))), type=equating.method)
-			))
+				freqtab(as.numeric(as.character(round(prior.year.data[['SCALE_SCORE']], digits=equate.interval.digits))),
+					scales=as.numeric(as.character(round(seq(prior.year.data.range[1], prior.year.data.range[2], by=0.1^equate.interval.digits), digits=equate.interval.digits)))),
+				freqtab(as.numeric(as.character(round(current.year.data[['SCALE_SCORE']], digits=equate.interval.digits))),
+					scales=as.numeric(as.character(round(seq(current.year.data.range[1], current.year.data.range[2], by=0.1^equate.interval.digits), digits=equate.interval.digits)))), type=equating.method)
+		))
 	}
 
 	### Loop over GRADE and CONTENT_AREA
 
-	for (content_area.iter in unique(current.year.data$CONTENT_AREA)) {
+	for (content_area.iter in content_areas.for.equate) {
 		for (grade.iter in grades.for.equate) {
-			tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]] <- 
+			tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]] <-
 				equateSGP_INTERNAL(prior.year.data[list(content_area.iter, grade.iter)], current.year.data[list(content_area.iter, grade.iter)])
 
 			approxfun.scale <- tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['NEW_TO_OLD']][['concordance']][['scale']]
