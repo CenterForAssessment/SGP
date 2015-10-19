@@ -364,8 +364,8 @@ function(sgp_object,
 	#######################################################################################################################
 
 	if (sgp.percentiles.equated) {
-        if (!is.null(sgp.use.my.coefficient.matrices)) {
-		    year.for.equate <- tail(sort(unique(sgp_object@Data$YEAR)), 1)
+		year.for.equate <- tail(sort(unique(sgp_object@Data$YEAR)), 1)
+        if (is.null(sgp.use.my.coefficient.matrices)) {
 		    content_areas.for.equate <- unique(sgp_object@Data[YEAR==year.for.equate]$CONTENT_AREA)
             if (!identical(years, year.for.equate)) {
                 message(paste("\tNOTE: Analyses involving equating only occur in most recent year. 'years' argument changed to ", year.for.equate, ".", sep=""))
