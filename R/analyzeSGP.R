@@ -364,7 +364,7 @@ function(sgp_object,
 	#######################################################################################################################
 
 	if (sgp.percentiles.equated) {
-        if (!sgp.use.my.coefficient.matrices) {
+        if (!is.null(sgp.use.my.coefficient.matrices)) {
 		    year.for.equate <- tail(sort(unique(sgp_object@Data$YEAR)), 1)
 		    content_areas.for.equate <- unique(sgp_object@Data[YEAR==year.for.equate]$CONTENT_AREA)
             if (!identical(years, year.for.equate)) {
