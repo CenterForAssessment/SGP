@@ -15,7 +15,7 @@ function(tmp.data,
                         SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[paste('Grades_Tested', current.year, sep=".")]]))
 	current.year.data <- tmp.data[VALID_CASE=="VALID_CASE" & YEAR==current.year]
 	content_areas.for.equate <- intersect(unique(current.year.data$CONTENT_AREA),
-		names(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Content_Areas_Labels"]]))
+		names(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Content_Areas_Labels"]]))
 	prior.year.data <- tmp.data[VALID_CASE=="VALID_CASE" & YEAR==prior.year]
 	setkey(current.year.data, CONTENT_AREA, GRADE)
 	setkey(prior.year.data, CONTENT_AREA, GRADE)

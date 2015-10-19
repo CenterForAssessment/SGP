@@ -364,34 +364,36 @@ function(sgp_object,
 	#######################################################################################################################
 
 	if (sgp.percentiles.equated) {
-		year.for.equate <- tail(sort(unique(sgp_object@Data$YEAR)), 1)
-		content_areas.for.equate <- unique(sgp_object@Data[YEAR==year.for.equate]$CONTENT_AREA)
-		if (!identical(years, year.for.equate)) {
-			message(paste("\tNOTE: Analyses involving equating only occur in most recent year. 'years' argument changed to ", year.for.equate, ".", sep=""))
-			years <- year.for.equate
-		}
-		if (is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][['Baseline_Projections_in_Transition_Year']]) &
-			(sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline)) {
-				message("\tNOTE: Analyses involving equating are not possible with baseline analyses. Arguments related to baseline analyses are set to FALSE.")
-				sgp.percentiles.baseline <- sgp.projections.baseline <- sgp.projections.lagged.baseline <- FALSE
-		}
-		if (!all(paste(content_areas.for.equate, year.for.equate, sep=".") %in% names(SGPstateData[[state]][['Achievement']][['Knots_Boundaries']]))) {
-			tmp.knots.boundaries <- createKnotsBoundaries(sgp_object@Data[YEAR==year.for.equate])
-			names(tmp.knots.boundaries) <- paste(names(tmp.knots.boundaries), year.for.equate, sep=".")
-			SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]] <- c(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]], tmp.knots.boundaries)
-			assign(paste(state, "Knots_Boundaries", sep="_"), SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]])
-			save(list=paste(state, "Knots_Boundaries", sep="_"), file=paste(state, "Knots_Boundaries.Rdata", sep="_"))
-			message(paste("\tNOTE: Knots and Boundaries do not exist for ", year.for.equate, " in state provided.\n\tThey have been produced, embedded in SGPstateData, and are available using state=", state, " for subsequent analyses and saved to your working directory '", getwd(), "'.", sep=""))
-		}
-		data.for.equate <- copy(sgp_object@Data)
-		sgp_object@SGP$Linkages <- equateSGP(data.for.equate, state, year.for.equate)
-		setkey(data.for.equate, VALID_CASE, CONTENT_AREA, YEAR, GRADE, SCALE_SCORE)
-		data.for.equate <- convertScaleScore(data.for.equate, year.for.equate, sgp_object@SGP$Linkages, conversion.type="OLD_TO_NEW", state)
-        Scale_Score_Linkages <- unique(data.for.equate)[!is.na(SCALE_SCORE), c("CONTENT_AREA", "YEAR", "GRADE", "SCALE_SCORE", "SCALE_SCORE_EQUATED"), with=FALSE]
-        write.table(Scale_Score_Linkages, file="Scale_Score_Linkages.txt", row.names=FALSE, na="", quote=FALSE, sep="|")
-        save(Scale_Score_Linkages, file="Scale_Score_Linkages.Rdata")
-		setkey(data.for.equate, VALID_CASE, CONTENT_AREA, YEAR, ID)
-		sgp_object@Data <- data.for.equate
+        if (!sgp.use.my.coefficient.matrices) {
+		    year.for.equate <- tail(sort(unique(sgp_object@Data$YEAR)), 1)
+		    content_areas.for.equate <- unique(sgp_object@Data[YEAR==year.for.equate]$CONTENT_AREA)
+            if (!identical(years, year.for.equate)) {
+                message(paste("\tNOTE: Analyses involving equating only occur in most recent year. 'years' argument changed to ", year.for.equate, ".", sep=""))
+                years <- year.for.equate
+            }
+            if (is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][['Baseline_Projections_in_Transition_Year']]) &
+                (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline)) {
+                    message("\tNOTE: Analyses involving equating are not possible with baseline analyses. Arguments related to baseline analyses are set to FALSE.")
+                    sgp.percentiles.baseline <- sgp.projections.baseline <- sgp.projections.lagged.baseline <- FALSE
+            }
+            if (!all(paste(content_areas.for.equate, year.for.equate, sep=".") %in% names(SGPstateData[[state]][['Achievement']][['Knots_Boundaries']]))) {
+                tmp.knots.boundaries <- createKnotsBoundaries(sgp_object@Data[YEAR==year.for.equate])
+                names(tmp.knots.boundaries) <- paste(names(tmp.knots.boundaries), year.for.equate, sep=".")
+                SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]] <- c(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]], tmp.knots.boundaries)
+                assign(paste(state, "Knots_Boundaries", sep="_"), SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]])
+                save(list=paste(state, "Knots_Boundaries", sep="_"), file=paste(state, "Knots_Boundaries.Rdata", sep="_"))
+                message(paste("\tNOTE: Knots and Boundaries do not exist for ", year.for.equate, " in state provided.\n\tThey have been produced, embedded in SGPstateData, and are available using state=", state, " for subsequent analyses and saved to your working directory '", getwd(), "'.", sep=""))
+            }
+            data.for.equate <- copy(sgp_object@Data)
+            sgp_object@SGP$Linkages <- equateSGP(data.for.equate, state, year.for.equate)
+            setkey(data.for.equate, VALID_CASE, CONTENT_AREA, YEAR, GRADE, SCALE_SCORE)
+            data.for.equate <- convertScaleScore(data.for.equate, year.for.equate, sgp_object@SGP$Linkages, conversion.type="OLD_TO_NEW", state)
+            Scale_Score_Linkages <- unique(data.for.equate)[!is.na(SCALE_SCORE), c("CONTENT_AREA", "YEAR", "GRADE", "SCALE_SCORE", "SCALE_SCORE_EQUATED"), with=FALSE]
+            write.table(Scale_Score_Linkages, file="Scale_Score_Linkages.txt", row.names=FALSE, na="", quote=FALSE, sep="|")
+            save(Scale_Score_Linkages, file="Scale_Score_Linkages.Rdata")
+            setkey(data.for.equate, VALID_CASE, CONTENT_AREA, YEAR, ID)
+            sgp_object@Data <- data.for.equate
+        }
 		equate.variable <- "SCALE_SCORE_EQUATED"
 		equate.label <- coefficient.matrix.type <- "EQUATED"
 		sgp.percentiles.equated <- TRUE

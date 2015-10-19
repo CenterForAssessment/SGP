@@ -1,11 +1,11 @@
-`getStateAbbreviation` <- 
+`getStateAbbreviation` <-
 function(
 	supplied.name,
 	SGPfunction=NULL,
 	type="Abbreviation") {
 
-	my.state.abbreviations <- c(datasets::state.abb, "ABQ", "AOB", "ATI", rep("DEMO", 2), "GUA", "RLI_UK", "RLI", "WIDA_CO", "WIDA_MA", "WIDA_MI", "WIDA") ### NOTE: Add abbreviations ALPHABETICALLY
-	my.state.names <- c(datasets::state.name, "ALBUQUERQUE", "AOB", "ATI", "DEMONSTRATION", "SGPDATA LONG", "GUATEMALA", "RLI UK", "RLI", "WIDA CO", "WIDA MA", "WIDA MI", "WIDA") ### NOTE: Add state names ALPHABETICALLY - need compound abbreviations/names first (e.g. WIDA_CO before WIDA)
+	my.state.abbreviations <- c(setdiff(datasets::state.abb, "MA"), "ABQ", "AOB", "ATI", rep("DEMO", 2), "GUA", "MA_MCAS", "MA_PARCC", "MA", "RLI_UK", "RLI", "WIDA_CO", "WIDA_MA", "WIDA_MI", "WIDA_NV", "WIDA") ### NOTE: Add abbreviations ALPHABETICALLY
+	my.state.names <- c(setdiff(datasets::state.name, "Massachusetts"), "ALBUQUERQUE", "AOB", "ATI", "DEMONSTRATION", "SGPDATA LONG", "GUATEMALA", "MASSACHUSETTS MCAS", "MASSACHUSETTS PARCC", "MASSACHUSETTS", "RLI UK", "RLI", "WIDA CO", "WIDA MA", "WIDA MI", "WIDA NV", "WIDA") ### NOTE: Add state names ALPHABETICALLY - need compound abbreviations/names first (e.g. WIDA_CO before WIDA)
 	if (type=="Abbreviation") {
 		tmp.name.position <- sapply(my.state.names, function(x) regexpr(toupper(x), supplied.name))
 	} else {
@@ -25,4 +25,3 @@ function(
 			}
 		}
 } ### END getStateAbbreviation
-
