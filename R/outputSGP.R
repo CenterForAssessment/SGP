@@ -28,12 +28,15 @@ function(sgp_object,
 	DISADVANTAGED_STATUS <- SPECIAL_EDUCATION_STATUS <- ELL_STATUS <- HLS_CODE <- IEP_CODE <- LANGUAGE_PROFICIENCY <- GIFTED_CODE <- FRL_CODE <- STUDENT_GROWTH_ID <- MIDDLE_NAME <- NULL
 	OCTOBER_ENROLLMENT_STATUS <- NULL
 
-	### Create state (if missing) from sgp_object (if possible)
+	### Create state (if missing) and tmp.state from sgp_object (if possible)
 
         if (is.null(state)) {
                 tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
                 state <- getStateAbbreviation(tmp.name, "outputSGP")
         }
+
+	tmp.state <- gsub(" ", "_", getStateAbbreviation(state, type="LONG"))
+
 
 	### If sgp_object is a data.frame or data.table, embed in an SGP object
 
@@ -68,14 +71,6 @@ function(sgp_object,
 	###############################################
 
 	if ("LONG_Data" %in% output.type) {
-
-		### Create state name
-
-		if (state %in% c(datasets::state.abb, "DEMO")) {
-			tmp.state <- gsub(" ", "_", c(datasets::state.name, "Demonstration")[state==c(datasets::state.abb, "DEMO")])
-		} else {
-			tmp.state <- gsub(" ", "_", state)
-		}
 
 		### Write LONG table
 
@@ -123,14 +118,6 @@ function(sgp_object,
 	###############################################
 
 	if ("LONG_FINAL_YEAR_Data" %in% output.type) {
-
-		### Create state name
-
-		if (state %in% c(datasets::state.abb, "DEMO")) {
-			tmp.state <- gsub(" ", "_", c(datasets::state.name, "Demonstration")[state==c(datasets::state.abb, "DEMO")])
-		} else {
-			tmp.state <- gsub(" ", "_", state)
-		}
 
 		### Write LONG table
 
@@ -181,14 +168,6 @@ function(sgp_object,
 
 	if ("WIDE_Data" %in% output.type) {
 
-		### Create state name
-
-		if (state %in% c(datasets::state.abb, "DEMO")) {
-			tmp.state <- gsub(" ", "_", c(datasets::state.name, "Demonstration")[state==c(datasets::state.abb, "DEMO")])
-		} else {
-			tmp.state <- gsub(" ", "_", state)
-		}
-
 		### Write WIDE table
 
 		started.at <- proc.time()
@@ -237,14 +216,6 @@ function(sgp_object,
 	###############################################
 
 	if ("INSTRUCTOR_Data" %in% output.type && "INSTRUCTOR_NUMBER" %in% names(sgp_object@Data_Supplementary)) {
-
-		### Create state name
-
-		if (state %in% c(datasets::state.abb, "DEMO")) {
-			tmp.state <- gsub(" ", "_", c(datasets::state.name, "Demonstration")[state==c(datasets::state.abb, "DEMO")])
-		} else {
-			tmp.state <- gsub(" ", "_", state)
-		}
 
 		### Write WIDE table
 
