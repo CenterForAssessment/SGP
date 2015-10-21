@@ -78,16 +78,16 @@ function(sgp_object,
 
 		"%w/o%" <- function(x, y) x[!x %in% y]
 
-		convert.variables <- function(tmp.df) {
+		convert.variables <- function(tmp.df, factor.variables=NULL) {
 			if (length(grep("_", tmp.df$YEAR)) > 0) {
 				tmp.df$YEAR <- sapply(strsplit(tmp.df$YEAR, "_"), '[', 2)
 			}
 			if (is.character(tmp.df$CONTENT_AREA)) {
 				tmp.df$CONTENT_AREA <- as.factor(tmp.df$CONTENT_AREA)
 			}
-			tmp.factor.names <- names(tmp.df)[sapply(tmp.df, class)=="factor"] %w/o% c(group.number[2], group.number[1], "INSTRUCTOR_NUMBER")
+			tmp.factor.names <- c(factor.variables, names(tmp.df)[sapply(tmp.df, class)=="factor"] %w/o% c(group.number[2], group.number[1], "INSTRUCTOR_NUMBER"))
 			for (i in tmp.factor.names) {
-				tmp.df[[i]] <- unclass(tmp.df[[i]])
+				tmp.df[[i]] <- unclass(as.factor(tmp.df[[i]]))
 			}
 			tmp.df[sapply(tmp.df, is.nan)] <- NA
 			return(tmp.df)
@@ -212,7 +212,7 @@ function(sgp_object,
 
 		tmp <- as.data.frame(convert.variables(subset(sgp_object@Summary[[group.number[1]]][[paste(group.number[1], "CONTENT_AREA__YEAR__ETHNICITY", group.enroll.status[1], sep="__")]],
 			!is.na(get(group.number[1])) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(ETHNICITY) & get(group.enroll.status[1])==group.enroll.status.label[1] &
-			!is.na(MEDIAN_SGP))))
+			!is.na(MEDIAN_SGP)), factor.variables="ETHNICITY"))
 		tmp <- convert.names(tmp)
 		tmp$ENROLLMENT_PERCENTAGE <- NA
 		tmp <- tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))]
@@ -241,7 +241,7 @@ function(sgp_object,
 
 		tmp <- as.data.frame(convert.variables(subset(sgp_object@Summary[[group.number[1]]][[paste(group.number[1], "CONTENT_AREA__YEAR__GRADE__ETHNICITY", group.enroll.status[1], sep="__")]],
 			!is.na(get(group.number[1])) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(GRADE) & !is.na(ETHNICITY) &
-			get(group.enroll.status[1])==group.enroll.status.label[1] & !is.na(MEDIAN_SGP))))
+			get(group.enroll.status[1])==group.enroll.status.label[1] & !is.na(MEDIAN_SGP)), convert.variables="ETHNICITY"))
 		tmp <- convert.names(tmp)
 		tmp <- tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))]
 
@@ -278,7 +278,7 @@ function(sgp_object,
 
 		tmp <- as.data.frame(convert.variables(subset(rbindlist(tmp.list, fill=TRUE),
 			!is.na(get(group.number[1])) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(STUDENTGROUP) & get(group.enroll.status[1])==group.enroll.status.label[1] &
-			!is.na(MEDIAN_SGP))))
+			!is.na(MEDIAN_SGP)), factor.variables="STUDENTGROUP"))
 
 		tmp <- convert.names(tmp)
 		tmp$ENROLLMENT_PERCENTAGE <- NA
@@ -318,7 +318,7 @@ function(sgp_object,
 
 		tmp <- as.data.frame(convert.variables(subset(rbindlist(tmp.list, fill=TRUE),
 			!is.na(get(group.number[1])) & YEAR %in% years & CONTENT_AREA %in% content_areas & !is.na(STUDENTGROUP) & get(group.enroll.status[1])==group.enroll.status.label[1] &
-			!is.na(MEDIAN_SGP))))
+			!is.na(MEDIAN_SGP)), factor.variables="STUDENTGROUP"))
 		tmp <- convert.names(tmp)
                 tmp <- data.table(tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))], key=c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "GRADE", "STUDENTGROUP"))
                 tmp <- as.data.frame(tmp[!duplicated(tmp)])
@@ -408,7 +408,7 @@ function(sgp_object,
 
 		tmp <- as.data.frame(convert.variables(subset(sgp_object@Summary[[group.number[2]]][[paste(group.number[2], "EMH_LEVEL__CONTENT_AREA__YEAR__ETHNICITY", group.enroll.status[2], sep="__")]],
 			!is.na(get(group.number[2])) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(ETHNICITY) & get(group.enroll.status[2])==group.enroll.status.label[2] &
-			!is.na(MEDIAN_SGP))))
+			!is.na(MEDIAN_SGP)), factor.variables="ETHNICITY"))
 		tmp <- data.frame(merge(tmp, as.data.frame(tmp.school.and.district.by.year), all.x=TRUE))
 		tmp <- convert.names(tmp)
 		tmp$ENROLLMENT_PERCENTAGE <- NA
@@ -449,7 +449,7 @@ function(sgp_object,
 
 		tmp <- as.data.frame(convert.variables(subset(rbindlist(tmp.list, fill=TRUE),
 			!is.na(get(group.number[2])) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(STUDENTGROUP) & get(group.enroll.status[2])==group.enroll.status.label[2] &
-			!is.na(MEDIAN_SGP))))
+			!is.na(MEDIAN_SGP)), factor.variables="STUDENTGROUP"))
 		tmp <- as.data.frame(merge(tmp, as.data.frame(tmp.school.and.district.by.year), all.x=TRUE))
 		tmp <- convert.names(tmp)
 		tmp$ENROLLMENT_PERCENTAGE <- NA
