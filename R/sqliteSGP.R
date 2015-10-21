@@ -241,7 +241,7 @@ function(sgp_object,
 
 		tmp <- as.data.frame(convert.variables(subset(sgp_object@Summary[[group.number[1]]][[paste(group.number[1], "CONTENT_AREA__YEAR__GRADE__ETHNICITY", group.enroll.status[1], sep="__")]],
 			!is.na(get(group.number[1])) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(GRADE) & !is.na(ETHNICITY) &
-			get(group.enroll.status[1])==group.enroll.status.label[1] & !is.na(MEDIAN_SGP)), convert.variables="ETHNICITY"))
+			get(group.enroll.status[1])==group.enroll.status.label[1] & !is.na(MEDIAN_SGP)), factor.variables="ETHNICITY"))
 		tmp <- convert.names(tmp)
 		tmp <- tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))]
 
