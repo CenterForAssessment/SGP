@@ -462,7 +462,7 @@ function(sgp_object,
 				tmp.list <- list()
 				for (i in tmp.proj.names) {
 					tmp.list[[i]] <- data.table(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
-						sgp_object@SGP[["SGProjections"]][[i]][,c(1, grep(paste("PROJ_YEAR", j, sep="_"), names(sgp_object@SGP[["SGProjections"]][[i]])))])
+						sgp_object@SGP[["SGProjections"]][[i]][,c(1, grep(paste("PROJ_YEAR", j, sep="_"), names(sgp_object@SGP[["SGProjections"]][[i]]))), with=FALSE])
 				}
 				outputSGP.data <- data.table(convert.variables(rbindlist(tmp.list, fill=TRUE)), key=paste(key(outputSGP.data), collapse=","))[outputSGP.data]
 				tmp.grade.name <- paste("GRADE", tmp.last.year.short, sep=".")
