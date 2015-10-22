@@ -1,26 +1,26 @@
-`testSGP` <- 
+`testSGP` <-
 	function(
 		TEST_NUMBER,
 		save.results=TRUE,
 		test.option=list(),
 		memory.profile=FALSE) {
-		
+
 		YEAR <- GRADE <- NULL
-		
+
 		if (missing(TEST_NUMBER)) {
 			message("\ttestSGP carries out testing of SGP package. Tests currently included in testSGP:\n")
 			message("\t\t1. abcSGP test using all available years.")
 			message("\t\t2. abcSGP test using all available years except most recent followed by an updated analysis using the most recent year's data.")
 		}
-		
+
 		#######################################################################################################################################################
 		###
 		### TEST NUMBER 0: Test of studentGrowthPercentiles, studentGrowthProjections, and sgpData
 		###
 		#######################################################################################################################################################
-		
+
 		if ("0" %in% toupper(TEST_NUMBER)) {
-			
+
 			options(error=recover)
 			options(warn=2)
 			number.cores <- detectCores(logical=FALSE)
@@ -34,234 +34,240 @@
 			}
 
 			tmp.messages <- "##### Begin testSGP test number 0 #####\n\n"
-			
+
 			### Part 1
-			
-			expression.to.evaluate <- 
+
+			expression.to.evaluate <-
 				paste("Demonstration_SGP <- list(Panel_Data=SGPdata::sgpData)\nmy.grade.sequences <- list(3:4, 3:5, 3:6, 3:7, 4:8)\nfor (i in seq_along(my.grade.sequences)) {\n\tDemonstration_SGP <- studentGrowthPercentiles(\n\t\tpanel.data=Demonstration_SGP,\n\t\tsgp.labels=list(my.year=2015, my.subject='Reading'),\n\t\tgrowth.levels='DEMO',\n\t\tgoodness.of.fit='DEMO',\n\t\tgrade.progression=my.grade.sequences[[i]],\n\t\tpercentile.cuts=c(1,35,50,65,99),\n\t\tprint.sgp.order=TRUE,\n\t\tcalculate.confidence.intervals='DEMO',\n\t\tprint.other.gp=TRUE,\n\t\tverbose.output=TRUE,\n\t\tmax.order.for.percentile=3,\n\t\treturn.norm.group.scale.scores=TRUE,\n\t\treturn.panel.data=TRUE,\n\t\tparallel.config=", parallel.config,")\n}", sep="")
-			
+
 			cat(paste("EVALUATING Test Number 0, Part 1:\n", expression.to.evaluate, sep=""), fill=TRUE)
-			
+
 			if (memory.profile) {
 				Rprof("testSGP(0)_Memory_Profile_Part_1.out", memory.profiling=TRUE)
 			}
-			
+
 			started.at.overall <- proc.time()
 			eval(parse(text=expression.to.evaluate))
-			
+
 			### TEST of SGP Variable
-			
+
 			tmp.messages <- c(tmp.messages, "\t##### Results of testSGP test number 0: Part 1 #####\n")
-			
+
 			if (identical(sum(Demonstration_SGP[['SGPercentiles']][['READING.2015']][['SGP']]), 1707319L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 1: FAIL\n")
 			}
-			
+
 			### TEST of SGP_ORDER_1 Variable
-			
+
 			if (identical(sum(Demonstration_SGP[['SGPercentiles']][['READING.2015']][['SGP_ORDER_1']]), 1708589L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_ORDER_1, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_ORDER_1, part 1: FAIL\n")
 			}
-			
+
 			### TEST of SCALE_SCORE_PRIOR Variable
-			
+
 			if (identical(sum(Demonstration_SGP[['SGPercentiles']][['READING.2015']][['SCALE_SCORE_PRIOR']]), 20707938)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_PRIOR, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_PRIOR, part 1: FAIL\n")
 			}
-			
+
 			### TEST of SGP_ORDER Variable
-			
+
 			if (identical(as.vector(table(Demonstration_SGP$SGPercentiles[['READING.2015']][['SGP_ORDER']])), c(8666L, 7639L, 17920L))) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_ORDER, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_ORDER, part 1: FAIL\n")
 			}
-			
+
 			### TEST of SGP_LEVEL Variable
-			
+
 			if (identical(as.vector(table(Demonstration_SGP$SGPercentiles[['READING.2015']][['SGP_LEVEL']])), c(6740L, 6824L, 7176L, 6835L, 6650L))) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_LEVEL, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_LEVEL, part 1: FAIL\n")
 			}
-			
+
 			tmp.messages <- c(tmp.messages, "\t##### End testSGP test number 0, Part 1: ", convertTime(timetaken(started.at.overall)), "#####\n")
-			
-			
+
+
 			### Part 2
-			
-			expression.to.evaluate <- 
+
+			expression.to.evaluate <-
 				paste("Demonstration_SGP$Panel_Data <- SGPdata::sgpData[,c('ID','GRADE_2011','GRADE_2012','GRADE_2013','GRADE_2014','SS_2011','SS_2012','SS_2013','SS_2014')]\nmy.grade.progressions <- list(3, 3:4, 3:5, 3:6, 4:7)\nfor (i in seq_along(my.grade.progressions)) {\n\tDemonstration_SGP <- studentGrowthProjections(\n\t\tpanel.data=Demonstration_SGP,\n\t\tsgp.labels=list(my.year=2015, my.subject='Reading', my.extra.label='LAGGED'),\n\t\tuse.my.coefficient.matrices=list(my.year=2015, my.subject='Reading'),\n\t\tprojcuts.digits=0,\n\t\tperformance.level.cutscores='DEMO',\n\t\tpercentile.trajectory.values=1:99,\n\t\tlag.increment=1,\n\t\tgrade.progression=my.grade.progressions[[i]],\n\t\treturn.projection.group.identifier='READING',\n\t\treturn.projection.group.scale.scores=TRUE)\n}", sep="")
-			
+
 			cat(paste("EVALUATING Test Number 0, Part 2:\n", expression.to.evaluate, sep=""), fill=TRUE)
-			
+
 			if (memory.profile) {
 				Rprof("testSGP(0)_Memory_Profile_Part_2.out", memory.profiling=TRUE)
 			}
-			
+
 			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "dir.create('Data', showWarnings=FALSE)", "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
 			started.at.intermediate <- proc.time()
 			eval(parse(text=expression.to.evaluate))
-			
+
 			### TEST of dimension of table READING.2015.LAGGED dimensions
-			
+
 			tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number 0: Part 2 #####\n")
-			
+
 			if (identical(dim(Demonstration_SGP$SGProjections[['READING.2015.LAGGED']]), c(36478L, 513L))) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of READING.2015.LAGGED table dimensions, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of READING.2015.LAGGED table dimensions, part 2: FAIL\n")
 			}
-			
+
 			### TEST of LEVEL_1_SGP_TARGET_YEAR_1 Variable
-			
+
 			if (identical(sum(Demonstration_SGP$SGProjections[['READING.2015.LAGGED']][['LEVEL_1_SGP_TARGET_YEAR_1']]), 402866L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable LEVEL_1_SGP_TARGET_YEAR_1, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable LEVEL_1_SGP_TARGET_YEAR_1, part 2: FAIL\n")
 			}
-			
+
 			### TEST of P84_PROJ_YEAR_4 Variable
-			
+
 			if (identical(sum(Demonstration_SGP$SGProjections[['READING.2015.LAGGED']][['P84_PROJ_YEAR_4']], na.rm=TRUE), 10545791)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable P84_PROJ_YEAR_4, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable P84_PROJ_YEAR_4, part 2: FAIL\n")
 			}
-			
+
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 0, Part 2: ", convertTime(timetaken(started.at.intermediate)), "#####\n"))
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 0: ", convertTime(timetaken(started.at.overall)), "#####\n"))
 			cat(tmp.messages)
 		} ### End TEST_NUMBER 0
-		
-		
+
+
 		#######################################################################################################################################################
 		###
 		### TEST NUMBER 1: Test of abcSGP on sgpData_LONG
 		###
 		#######################################################################################################################################################
-		
+
 		if (any(c("1", "1B") %in% toupper(TEST_NUMBER))) {
 			if (all(c("1", "1B") %in% toupper(TEST_NUMBER))) TEST_NUMBER <- "1B"
-			
+
 			options(error=recover)
 			options(warn=2)
 			Demonstration_SGP <- tmp.messages <- NULL
 			number.cores <- detectCores(logical=FALSE) # adding logical=FALSE seems get physical cores only in Windows (which is good for SNOW/SOCK)
-			
-			if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
+
+			if (is.null(test.option[['parallel.config']])) {
+				if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
+				if (.Platform$OS.type != "unix") {
+					parallel.config <- paste("list(BACKEND='FOREACH', TYPE='doParallel', WORKERS=list(TAUS=", number.cores, "))", sep="")
+				} else  parallel.config <- paste("list(BACKEND='PARALLEL', WORKERS=list(TAUS=", number.cores, "))", sep="")
+			}
+
 			if (toupper(TEST_NUMBER) == "1B") sgp.sqlite <- TRUE else sgp.sqlite <- FALSE
-			
-			expression.to.evaluate <- 
+
+			expression.to.evaluate <-
 				paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=SGPdata::sgpData_LONG,\n\tdata_supplementary=list(INSTRUCTOR_NUMBER=SGPdata::sgpData_INSTRUCTOR_NUMBER),\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.sqlite=", sgp.sqlite, ",\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
-			
+
 			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
-			
+
 			cat(paste("##### Begin testSGP test number", TEST_NUMBER, "#####\n"), fill=TRUE)
 			cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
-			
+
 			if (memory.profile) Rprof("testSGP(1)_Memory_Profile.out", memory.profiling=TRUE)
-			
-			started.at.overall <- proc.time()	
+
+			started.at.overall <- proc.time()
 			eval(parse(text=expression.to.evaluate))
-			
+
 			if (memory.profile) {
 				Rprof(NULL)
 			}
-			
+
 			### TEST of SGP variable
-			
+
 			tmp.messages <- ("##### Results of testSGP test number 1 #####\n\n")
-			
+
 			if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 8565260L)) {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP: FAIL\n")
 			}
-			
+
 			### TEST of SGP_BASELINE variable
-			
+
 			if (identical(sum(Demonstration_SGP@Data$SGP_BASELINE, na.rm=TRUE), 8573825L)) {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_BASELINE: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_BASELINE: FAIL\n")
 			}
-			
+
 			### TEST of SGP_TARGET_3_YEAR variable
-			
+
 			if (identical(sum(Demonstration_SGP@Data$SGP_TARGET_3_YEAR, na.rm=TRUE), 7796624L)) {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_3_YEAR: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_3_YEAR: FAIL\n")
 			}
-			
+
 			### TEST of SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR variable
-			
+
 			if (identical(sum(Demonstration_SGP@Data$SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, na.rm=TRUE), 9201802L)) {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR: FAIL\n")
 			}
-			
+
 			### TEST of CATCH_UP_KEEP_UP_STATUS variable
-			
+
 			if (identical(as.numeric(table(Demonstration_SGP@Data$CATCH_UP_KEEP_UP_STATUS)), c(41099, 10837, 35560, 84390))) {
 				tmp.messages <- c(tmp.messages, "\tTest of variable CATCH_UP_KEEP_UP_STATUS: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable CATCH_UP_KEEP_UP_STATUS: FAIL\n")
 			}
-			
+
 			### TEST of MOVE_UP_STAY_UP_STATUS variable
-			
+
 			if (identical(as.numeric(table(Demonstration_SGP@Data$MOVE_UP_STAY_UP_STATUS)), c(72953, 15043, 18336, 13618))) {
 				tmp.messages <- c(tmp.messages, "\tTest of variable MOVE_UP_STAY_UP_STATUS: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable MOVE_UP_STAY_UP_STATUS: FAIL\n")
 			}
-			
+
 			### TEST of SCALE_SCORE_PRIOR variable
-			
+
 			if (identical(sum(Demonstration_SGP@Data$SCALE_SCORE_PRIOR, na.rm=TRUE), 100865095)) {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_PRIOR: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_PRIOR: FAIL\n")
 			}
-			
+
 			### TEST of SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1 variable for READING.2014_2015 scale score targets
-			
+
 			if (identical(as.integer(sum(Demonstration_SGP@SGP$SGProjections$READING.2014_2015.LAGGED.TARGET_SCALE_SCORES$SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1)), 18313900L)) {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1: FAIL\n")
 			}
-			
+
 			### TEST of MEDIAN_SGP variable
-			
+
 			if (identical(sum(Demonstration_SGP@Summary$SCHOOL_NUMBER[["SCHOOL_NUMBER__SCHOOL_ENROLLMENT_STATUS"]]$MEDIAN_SGP, na.rm=TRUE), 9140.5)) {
 				tmp.messages <- c(tmp.messages, "\tTest of variable MEDIAN_SGP: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable MEDIAN_SGP: FAIL\n")
 			}
-			
+
 			### TEST of PERCENT_AT_ABOVE_PROFICIENT_PRIOR variable
-			
+
 			if (identical(sum(Demonstration_SGP@Summary$SCHOOL_NUMBER[["SCHOOL_NUMBER__SCHOOL_ENROLLMENT_STATUS"]]$PERCENT_AT_ABOVE_PROFICIENT_PRIOR, na.rm=TRUE), 12894.2)) {
 				tmp.messages <- c(tmp.messages, "\tTest of variable PERCENT_AT_ABOVE_PROFICIENT_PRIOR: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable PERCENT_AT_ABOVE_PROFICIENT_PRIOR: FAIL\n")
 			}
-			
+
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number ", TEST_NUMBER, ":  ", convertTime(timetaken(started.at.overall)), " #####\n", sep=""))
 			cat(tmp.messages)
 		} ### End TEST_NUMBER 1 & 1B
-		
-		
+
+
 		##########################################################################################################################################################################
 		###
 		### TEST NUMBER 2: Various tests of updateSGP functionality.
@@ -276,15 +282,15 @@
 		###			overwrite.existing.data=FALSE and sgp.use.my.coefficient.matrices=TRUE.
 		###
 		#########################################################################################################################################################################
-		
+
 		if (identical(TEST_NUMBER, 2)) TEST_NUMBER <- c("2A", "2B", "2C")
-		
+
 		################################
 		### TEST NUMBER 2a
 		################################
-		
+
 		if ('2A' %in% toupper(TEST_NUMBER)) {
-			
+
 			options(error=recover)
 			options(warn=2)
 			Demonstration_SGP <- NULL
@@ -292,211 +298,211 @@
 			Demonstration_Data_LONG_2014_2015 <- subset(SGPdata::sgpData_LONG, YEAR %in% c("2014_2015"))
 			number.cores <- detectCores(logical=FALSE)
 			tmp.messages <- "##### Begin testSGP test number 2a #####\n\n"
-			
+
 			### Part 1
-			
-			expression.to.evaluate <- 
+
+			expression.to.evaluate <-
 				paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=Demonstration_Data_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
-			
+
 			cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
-			
+
 			if (memory.profile) {
 				Rprof("testSGP(2a)_Memory_Profile_Part_1.out", memory.profiling=TRUE)
 			}
 
 			started.at.overall <- proc.time()
 			eval(parse(text=expression.to.evaluate))
-			
+
 			### TEST of SGP variable
-			
+
 			tmp.messages <- c(tmp.messages, "\t##### Results of testSGP test number 2a: Part 1 #####\n")
-			
+
 			if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 5668654L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 1: FAIL\n")
 			}
-			
+
 			### TEST of SGP_BASELINE variable
-			
+
 			if (identical(sum(Demonstration_SGP@Data$SGP_BASELINE, na.rm=TRUE), 5667488L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 1: FAIL\n")
 			}
-			
+
 			### TEST of SGP_TARGET_3_YEAR variable
-			
+
 			if (identical(sum(Demonstration_SGP@Data$SGP_TARGET_3_YEAR, na.rm=TRUE), 5245437L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR, part 1: FAIL\n")
 			}
-			
+
 			### TEST of SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR variable
-			
+
 			if (identical(sum(Demonstration_SGP@Data$SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, na.rm=TRUE), 6088129L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, part 1: FAIL\n")
 			}
-			
+
 			### TEST of CATCH_UP_KEEP_UP_STATUS variable
-			
+
 			if (identical(as.numeric(table(Demonstration_SGP@Data$CATCH_UP_KEEP_UP_STATUS)), c(27122, 6990, 24358, 55283))) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable CATCH_UP_KEEP_UP_STATUS, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable CATCH_UP_KEEP_UP_STATUS, part 1: FAIL\n")
 			}
-			
+
 			### TEST of MOVE_UP_STAY_UP_STATUS variable
-			
+
 			if (identical(as.numeric(table(Demonstration_SGP@Data$MOVE_UP_STAY_UP_STATUS)), c(48152, 10396, 12150, 8943))) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable MOVE_UP_STAY_UP_STATUS, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable MOVE_UP_STAY_UP_STATUS, part 1: FAIL\n")
 			}
-			
+
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 2a: Part 1: ", convertTime(timetaken(started.at.overall)), " #####\n", sep=""))
 
 
 			### Part 2
-			
-			expression.to.evaluate <- 
+
+			expression.to.evaluate <-
 				paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=Demonstration_Data_LONG_2014_2015,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\tsgp.target.scale.scores=TRUE,\n\tsgPlot.demo.report=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
-			
+
 			cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
-			
+
 			if (memory.profile) {
 				Rprof("testSGP(2a)_Memory_Profile_Part_2.out", memory.profiling=TRUE)
 			}
 
 			started.at.intermediate <- proc.time()
 			eval(parse(text=expression.to.evaluate))
-			
+
 			### TEST of variable values
-			
+
 			tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number 2a: Part 2 #####\n")
-			
+
 			### TEST of SGP variable
-			
+
 			if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 8565260L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 2: FAIL\n")
 			}
-			
+
 			### TEST of SGP_BASELINE variable
-			
+
 			if (identical(sum(Demonstration_SGP@Data$SGP_BASELINE, na.rm=TRUE), 8573825L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 2: FAIL\n")
 			}
-			
+
 			### TEST of SGP_TARGET variable
-			
+
 			if (identical(sum(Demonstration_SGP@Data$SGP_TARGET_3_YEAR, na.rm=TRUE), 7796624L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR, part 2: FAIL\n")
 			}
-			
+
 			### TEST of SGP_TARGET_MOVE_UP_STAY_UP variable
-			
+
 			if (identical(sum(Demonstration_SGP@Data$SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, na.rm=TRUE), 9201802L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, part 2: FAIL\n")
 			}
-			
+
 			### TEST of CATCH_UP_KEEP_UP_STATUS variable
-			
+
 			if (identical(as.numeric(table(Demonstration_SGP@Data$CATCH_UP_KEEP_UP_STATUS)), c(41099, 10837, 35560, 84390))) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable CATCH_UP_KEEP_UP_STATUS, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable CATCH_UP_KEEP_UP_STATUS, part 2: FAIL\n")
 			}
-			
+
 			### TEST of MOVE_UP_STAY_UP_STATUS variable
-			
+
 			if (identical(as.numeric(table(Demonstration_SGP@Data$MOVE_UP_STAY_UP_STATUS)), c(72953, 15043, 18336, 13618))) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable MOVE_UP_STAY_UP_STATUS, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable MOVE_UP_STAY_UP_STATUS, part 2: FAIL\n")
 			}
-			
+
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 2a, Part 2: ", convertTime(timetaken(started.at.intermediate)), "#####\n"))
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 2a: ", convertTime(timetaken(started.at.overall)), "#####\n"))
 			cat(tmp.messages)
 		} ### End TEST_NUMBER 2a
-		
-		
+
+
 		################################
 		### TEST NUMBER 2b, 2c, 2d
 		################################
 		if (any(toupper(TEST_NUMBER) %in% c('2B', '2C', '2D'))) {
-			
+
 			for (i in toupper(TEST_NUMBER)) {
 				options(error=recover)
 				options(warn=2)
 				Demonstration_SGP <- ID <- CONTENT_AREA <- NULL
 				Demonstration_Data_LONG_2014_2015 <- subset(SGPdata::sgpData_LONG, YEAR %in% c("2014_2015"))
 				number.cores <- detectCores(logical=FALSE)
-				
+
 				############################################################
 				### Part 1: Required for all Tests 2b, 2c, and 2d
 				############################################################
-				
+
 				tmp.messages <- paste("##### Begin testSGP test number", capwords(i), "#####\n\n")
 				tmp.messages <- c(tmp.messages, paste("\t##### Begin testSGP test number ", capwords(i), ": Part 1 #####\n\n", sep=""))
-				
-				expression.to.evaluate <- 
+
+				expression.to.evaluate <-
 					paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=SGPdata::sgpData_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\tyears='2014_2015',\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, "))\n)\n", sep="")
-				
+
 				cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
-				
+
 				if (memory.profile) {
 					Rprof("testSGP(2)_Memory_Profile_Part_1.out", memory.profiling=TRUE)
 				}
 
 				started.at.overall <- proc.time()
 				eval(parse(text=expression.to.evaluate))
-				
-				tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number ", capwords(i), ": Part 1: ", convertTime(timetaken(started.at.overall)), " #####\n", sep=""))				
-				
+
+				tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number ", capwords(i), ": Part 1: ", convertTime(timetaken(started.at.overall)), " #####\n", sep=""))
+
 				#############################################################
-				### Part 2 
+				### Part 2
 				#############################################################
-				
+
 				tmp.messages <- c(tmp.messages, paste("\n\t##### Begin testSGP test number ", capwords(i), ": Part 2 #####\n\n", sep=""))
-				
+
 				### TEST 2b ###
 				if (i=='2B') {
 					Demonstration_Data_LONG_2014_2015 <- subset(SGPdata::sgpData_LONG, YEAR %in% c("2014_2015"))
-					
-					expression.to.evaluate <- 
+
+					expression.to.evaluate <-
 						paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=Demonstration_Data_LONG_2014_2015,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\toverwrite.existing.data=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgPlot.demo.report=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
-					
+
 					cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 
 					started.at.intermediate <- proc.time()
 					eval(parse(text=expression.to.evaluate))
 				} ### End TEST 2b
-				
+
 				### TEST 2c ###
 				if (i=='2C') {
 					Demonstration_Data_LONG_2014_2015 <- subset(SGPdata::sgpData_LONG, YEAR %in% c("2014_2015"))
-					
-					expression.to.evaluate <- 
+
+					expression.to.evaluate <-
 						paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=Demonstration_Data_LONG_2014_2015,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\toverwrite.existing.data=TRUE,\n\tsgp.use.my.coefficient.matrices=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgPlot.demo.report=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
-					
+
 					cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 
 					started.at.intermediate <- proc.time()
 					eval(parse(text=expression.to.evaluate))
 				} ### End TEST 2c
-				
+
 				### TEST 2d ###
 				if (i=='2D') {
 					Demonstration_Data_LONG_2014_2015 <- subset(SGPdata::sgpData_LONG, YEAR %in% c("2014_2015"))
@@ -518,96 +524,96 @@
 					Demonstration_SGP@SGP$SGProjections$READING.2014_2015.LAGGED <- subset(Demonstration_SGP@SGP$SGProjections$READING.2014_2015.LAGGED, !ID %in% tmp.group.1)
 					Demonstration_SGP@SGP$SGProjections$READING.2014_2015.LAGGED.BASELINE <- subset(Demonstration_SGP@SGP$SGProjections$READING.2014_2015.LAGGED.BASELINE, !ID %in% tmp.group.1)
 
-					expression.to.evaluate <- 
+					expression.to.evaluate <-
 						paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=with_sgp_data_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\tsgp.use.my.coefficient.matrices=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgPlot.demo.report=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
-					
+
 					cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 
 					started.at.intermediate <- proc.time()
 					eval(parse(text=expression.to.evaluate))
 				} ### End TEST 2d
-				
+
 				### TEST of SGP variable
-				
+
 				tmp.messages <- c(tmp.messages, paste("\t\t##### Results of testSGP test number", capwords(i), "#####\n"))
-				
+
 				if (identical(sum(Demonstration_SGP@Data[YEAR=="2014_2015"]$SGP, na.rm=TRUE), 2896606L)) {
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 2: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 2: FAIL\n")
 				}
-				
+
 				### TEST of SGP_BASELINE variable
-				
+
 				if (identical(sum(Demonstration_SGP@Data[YEAR=="2014_2015"]$SGP_BASELINE, na.rm=TRUE), 2906337L)) {
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 2: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 2: FAIL\n")
 				}
-				
+
 				### TEST of SGP_TARGET_3_YEAR variable
-				
+
 				if (identical(sum(Demonstration_SGP@Data[YEAR=="2014_2015"]$SGP_TARGET_3_YEAR, na.rm=TRUE), 2551187L)) {
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR, part 2: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR, part 2: FAIL\n")
 				}
-				
+
 				### TEST of SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR variable
-				
+
 				if (identical(sum(Demonstration_SGP@Data[YEAR=="2014_2015"]$SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, na.rm=TRUE), 3113673L)) {
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, part 2: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, part 2: FAIL\n")
 				}
-				
+
 				### TEST of CATCH_UP_KEEP_UP_STATUS variable
-				
+
 				if (identical(as.numeric(table(Demonstration_SGP@Data[YEAR=="2014_2015"]$CATCH_UP_KEEP_UP_STATUS)), c(13977, 3847, 11202, 29107))) {
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable CATCH_UP_KEEP_UP_STATUS, part 2: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable CATCH_UP_KEEP_UP_STATUS, part 2: FAIL\n")
 				}
-				
+
 				### TEST of MOVE_UP_STAY_UP_STATUS variable
-				
+
 				if (identical(as.numeric(table(Demonstration_SGP@Data[YEAR=="2014_2015"]$MOVE_UP_STAY_UP_STATUS)), c(24801, 4647, 6186, 4675))) {
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable MOVE_UP_STAY_UP_STATUS, part 2: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable MOVE_UP_STAY_UP_STATUS, part 2: FAIL\n")
 				}
-				
+
 				tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number ", capwords(i), ", Part 2: ", convertTime(timetaken(started.at.intermediate)), " #####\n", sep=""))
 				tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number ", capwords(i), ": ", convertTime(timetaken(started.at.overall)), " #####\n", sep=""))
 				cat(tmp.messages)
 			} ### End for (i in TEST_NUMBER)
 		} ### End TEST_NUMBER 2b, 2c, 2d
-		
+
 		#######################################################################################################################################################
 		###
-		### TEST NUMBER 3: Test of EOCT like student growth projections  
+		### TEST NUMBER 3: Test of EOCT like student growth projections
 		###
 		#######################################################################################################################################################
-		
+
 		if (3 %in% TEST_NUMBER) {
-			
+
 			options(error=recover)
 			options(warn=2)
 			number.cores <- detectCores(logical=FALSE)
 			Demonstration_SGP <- tmp.messages <- NULL
 			sgpData_LONG <- SGPdata::sgpData_LONG
-			
+
 			### Add EOCT courses to sgpData_LONG
-			
+
 			sgpData_LONG$CONTENT_AREA[sgpData_LONG$CONTENT_AREA == 'MATHEMATICS' & sgpData_LONG$GRADE == '9'] <- 'ALGEBRA_I'
 			sgpData_LONG$CONTENT_AREA[sgpData_LONG$CONTENT_AREA == 'MATHEMATICS' & sgpData_LONG$GRADE == '10'] <- 'ALGEBRA_II'
 			sgpData_LONG$CONTENT_AREA[sgpData_LONG$CONTENT_AREA == 'READING' & sgpData_LONG$GRADE == '9'] <- 'GRADE_9_LIT'
 			sgpData_LONG$CONTENT_AREA[sgpData_LONG$CONTENT_AREA == 'READING' & sgpData_LONG$GRADE == '10'] <- 'AMERICAN_LIT'
 			sgpData_LONG$GRADE_REPORTED <- sgpData_LONG$GRADE
 			sgpData_LONG$GRADE[sgpData_LONG$CONTENT_AREA %in% c('ALGEBRA_I', 'ALGEBRA_II', 'GRADE_9_LIT', 'AMERICAN_LIT')] <-  'EOCT'
-			
+
 			### Modify SGPstateData
-			
+
 			SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
 				list(
 					# Transformed_Achievement_Level_Cutscores=list(MATHEMATICS=c(0,100,200,300,400), READING=c(0,100,200,300,400), GRADE_9_LIT=c(0,100,200,300,400), AMERICAN_LIT=c(0,100,200,300,400), ALGEBRA_I=c(0,100,200,300,400), ALGEBRA_II=c(0,100,200,300,400)), ### FOR TESTING
@@ -618,11 +624,11 @@
 					Grades_Reported=list(MATHEMATICS=c("3","4","5","6","7","8"), READING=c("3","4","5","6","7","8"), GRADE_9_LIT="EOCT", AMERICAN_LIT="EOCT", ALGEBRA_I="EOCT", ALGEBRA_II="EOCT"),
 					Grades_Reported_Domains=list(MATHEMATICS=c("3","4","5","6","7","8","EOCT"), READING=c("3","4","5","6","7","8","EOCT")),
 					Achievement_Level_Labels=list(
-						"Unsatisfactory"="Unsatisfactory", 
-						"Part Proficient"="Partially Proficient", 
-						"Proficient"="Proficient", 
+						"Unsatisfactory"="Unsatisfactory",
+						"Part Proficient"="Partially Proficient",
+						"Proficient"="Proficient",
 						"Advanced"="Advanced"))
-			
+
 			SGPstateData[["DEMO"]][["SGP_Configuration"]][["grade.projection.sequence"]] <- list(
 				READING=c("3", "4", "5", "6", "7", "8", "EOCT", "EOCT"),
 				MATHEMATICS=c("3", "4", "5", "6", "7", "8", "EOCT", "EOCT"),
@@ -651,111 +657,111 @@
 				AMERICAN_LIT=3,
 				ALGEBRA_I=3,
 				ALGEBRA_II=3)
-			
+
 			SGPstateData[["DEMO"]][['SGP_Configuration']][['sgPlot.show.content_area.progression']] <- TRUE
-			
+
 			### Create configurations
-			
+
 			READING_2014_2015.config <- list(
 				READING.2014_2015=list(
 					sgp.content.areas=c('READING', 'READING', 'READING', 'READING', 'READING'),
 					sgp.panel.years=c('2010_2011', '2011_2012', '2012_2013', '2013_2014', '2014_2015'),
 					sgp.grade.sequences=list(3:4, 3:5, 3:6, 3:7, 4:8))
 			)
-			
+
 			GRADE_9_LIT_2014_2015.config <- list(
 				GRADE_9_LIT.2014_2015=list(
 					sgp.content.areas=c('READING', 'READING', 'READING', 'READING', 'GRADE_9_LIT'),
 					sgp.panel.years=c('2010_2011', '2011_2012', '2012_2013', '2013_2014', '2014_2015'),
 					sgp.grade.sequences=list(c(5:8, 'EOCT')))
 			)
-			
+
 			AMERICAN_LIT_2014_2015.config <- list(
 				AMERICAN_LIT.2014_2015=list(
 					sgp.content.areas=c('READING', 'READING', 'READING', 'GRADE_9_LIT', 'AMERICAN_LIT'),
 					sgp.panel.years=c('2010_2011', '2011_2012', '2012_2013', '2013_2014', '2014_2015'),
 					sgp.grade.sequences=list(c(6:8, 'EOCT', 'EOCT')))
 			)
-			
+
 			MATHEMATICS_2014_2015.config <- list(
 				MATHEMATICS.2014_2015=list(
 					sgp.content.areas=c('MATHEMATICS', 'MATHEMATICS', 'MATHEMATICS', 'MATHEMATICS', 'MATHEMATICS'),
 					sgp.panel.years=c('2010_2011', '2011_2012', '2012_2013', '2013_2014', '2014_2015'),
 					sgp.grade.sequences=list(3:4, 3:5, 3:6, 3:7, 4:8))
 			)
-			
+
 			ALGEBRA_I_2014_2015.config <- list(
 				ALGEBRA_I.2014_2015=list(
 					sgp.content.areas=c('MATHEMATICS', 'MATHEMATICS', 'MATHEMATICS', 'MATHEMATICS', 'ALGEBRA_I'),
 					sgp.panel.years=c('2010_2011', '2011_2012', '2012_2013', '2013_2014', '2014_2015'),
 					sgp.grade.sequences=list(c(5:8, 'EOCT')))
 			)
-			
+
 			ALGEBRA_II_2014_2015.config <- list(
 				ALGEBRA_II.2014_2015=list(
 					sgp.content.areas=c('MATHEMATICS', 'MATHEMATICS', 'MATHEMATICS', 'ALGEBRA_I', 'ALGEBRA_II'),
 					sgp.panel.years=c('2010_2011', '2011_2012', '2012_2013', '2013_2014', '2014_2015'),
 					sgp.grade.sequences=list(c(6:8, 'EOCT', 'EOCT')))
 			)
-			
+
 			sgp.config <- c(READING_2014_2015.config, MATHEMATICS_2014_2015.config, GRADE_9_LIT_2014_2015.config, AMERICAN_LIT_2014_2015.config, ALGEBRA_I_2014_2015.config, ALGEBRA_II_2014_2015.config)
-			
-			expression.to.evaluate <- 
+
+			expression.to.evaluate <-
 				paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=sgpData_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP', 'summarizeSGP', 'visualizeSGP'),\n\tsimulate.sgps=FALSE,\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.config=sgp.config,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
-			
+
 			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
-			
+
 			cat("##### Begin testSGP test number 3 #####\n", fill=TRUE)
-			
+
 			cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
-			
+
 			if (memory.profile) {
 				Rprof("testSGP(3)_Memory_Profile.out", memory.profiling=TRUE)
 			}
 
 			started.at.overall <- proc.time()
 			eval(parse(text=expression.to.evaluate))
-			
+
 			if (memory.profile) {
 				Rprof(NULL)
 			}
-			
+
 			### TEST of SGP variable
-			
+
 			tmp.messages <- ("\t##### Results of testSGP test number 3 #####\n\n")
-			
+
 			if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 2896606L)) {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP: FAIL\n")
 			}
-			
+
 			### TEST of SGP_TARGET_3_YEAR variable
-			
+
 			if (identical(sum(Demonstration_SGP@Data$SGP_TARGET_3_YEAR, na.rm=TRUE), 2551187L)) {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_3_YEAR: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_3_YEAR: FAIL\n")
 			}
-			
+
 			### TEST of SGP_TARGET_MOVE_UP_STAY_UP variable
-			
+
 			if (identical(sum(Demonstration_SGP@Data$SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, na.rm=TRUE), 3113673L)) {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR: FAIL\n")
 			}
-			
+
 			### TEST of CATCH_UP_KEEP_UP_STATUS variable
-			
+
 			if (identical(as.numeric(table(Demonstration_SGP@Data$CATCH_UP_KEEP_UP_STATUS)), c(13977, 3847, 11202, 29107))) {
 				tmp.messages <- c(tmp.messages, "\tTest of variable CATCH_UP_KEEP_UP_STATUS: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable CATCH_UP_KEEP_UP_STATUS: FAIL\n")
 			}
-			
+
 			### TEST of MOVE_UP_STAY_UP_STATUS variable
-			
+
 			if (identical(as.numeric(table(Demonstration_SGP@Data$MOVE_UP_STAY_UP_STATUS)), c(24801, 4647, 6186, 4675))) {
 				tmp.messages <- c(tmp.messages, "\tTest of variable MOVE_UP_STAY_UP_STATUS: OK\n")
 			} else {
@@ -765,21 +771,21 @@
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 3: ", convertTime(timetaken(started.at.overall)), "#####\n"))
 			cat(tmp.messages)
 		} ### End TEST_NUMBER 3
-		
-		
+
+
 		#######################################################################################################################################################
 		###
 		### TEST NUMBER 4: Test of SIMEX Measurement Error Correction Functionality
 		###
 		#######################################################################################################################################################
-		
+
 		if (4 %in% TEST_NUMBER) {
-			
+
 			sgpData_LONG <- SGPdata::sgpData_LONG
-			
+
 			if (is.null(test.option[['calculate.simex.baseline']])) calculate.simex.baseline <- FALSE else calculate.simex.baseline <- TRUE
 			simex.parameters <- "list(state='DEMO', lambda=seq(0,2,0.5), simulation.iterations=50, extrapolation='linear', save.matrices=TRUE)"
-			
+
 			###  The test of SIMEX baseline functionality requires the DEMO SIMEX matrices to be loaded manually.
 			# SGPstateData[["DEMO"]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <- c(SGPstateData[["DEMO"]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]], DEMO_SIMEX_Baseline_Matrices)
 			if (calculate.simex.baseline) {
@@ -788,7 +794,7 @@
 							 SGPstateData[['DEMO']][['Baseline_splineMatrix']][['Coefficient_Matrices']] <- c(SGPstateData[['DEMO']][['Baseline_splineMatrix']][['Coefficient_Matrices']], DEMO_SIMEX_Baseline_Matrices)\n\n")
 				}
 				}
-			
+
 			SGPstateData[["DEMO"]][["SGP_Configuration"]][["max.order.for.percentile"]] <- 2
 			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]] <- data.table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]])
 			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]][which(GRADE==9 & CONTENT_AREA == "READING"), CONTENT_AREA := "GRADE_9_LIT"]
@@ -796,56 +802,56 @@
 			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]][which(GRADE==9 & CONTENT_AREA == "MATHEMATICS"), CONTENT_AREA := "ALGEBRA_I"]
 			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]][which(GRADE==10 & CONTENT_AREA == "MATHEMATICS"), CONTENT_AREA := "ALGEBRA_II"]
 			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]][which(GRADE %in% 9:10), GRADE := "EOCT"]
-			
+
 			# table(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$GRADE, SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]]$CONTENT_AREA)
 			### Add EOCT courses to sgpData_LONG
-			
+
 			sgpData_LONG$CONTENT_AREA[sgpData_LONG$CONTENT_AREA == 'MATHEMATICS' & sgpData_LONG$GRADE == '9'] <- 'ALGEBRA_I'
 			sgpData_LONG$CONTENT_AREA[sgpData_LONG$CONTENT_AREA == 'MATHEMATICS' & sgpData_LONG$GRADE == '10'] <- 'ALGEBRA_II'
 			sgpData_LONG$CONTENT_AREA[sgpData_LONG$CONTENT_AREA == 'READING' & sgpData_LONG$GRADE == '9'] <- 'GRADE_9_LIT'
 			sgpData_LONG$CONTENT_AREA[sgpData_LONG$CONTENT_AREA == 'READING' & sgpData_LONG$GRADE == '10'] <- 'AMERICAN_LIT'
 			sgpData_LONG$GRADE_REPORTED <- sgpData_LONG$GRADE
 			sgpData_LONG$GRADE[sgpData_LONG$CONTENT_AREA %in% c('ALGEBRA_I', 'ALGEBRA_II', 'GRADE_9_LIT', 'AMERICAN_LIT')] <-  'EOCT'
-			
-			
+
+
 			options(error=recover) # Don't use options(warn=2) - get warnings about knots and bounds from BASELINE SIMEX
 			number.cores <- detectCores(logical=FALSE)
 			Demonstration_SGP <- tmp.messages <- NULL
-			
+
 			if (is.null(test.option[['parallel.config']])) {
 				if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
 				if (.Platform$OS.type != "unix") {
 					parallel.config <- paste("list(BACKEND='FOREACH', TYPE='doParallel', WORKERS=list(SIMEX=", number.cores, ", TAUS=", number.cores, "))", sep="")
 				} else 	parallel.config <- paste("list(BACKEND='PARALLEL', WORKERS=list(SIMEX=", number.cores, ", TAUS=", number.cores, "))", sep="")
 			}
-			
-			expression.to.evaluate <- 
+
+			expression.to.evaluate <-
 				paste("\nDemonstration_SGP <- prepareSGP(sgpData_LONG, create.additional.variables=FALSE)\n\nDemonstration_SGP <- analyzeSGP(\n\tsgp_object=Demonstration_SGP,\n\tyears='2014_2015',\n\tcontent_areas='READING',\n\tsgp.percentiles.baseline.max.order=2,\n\tsgp.percentiles=TRUE,\n\tsgp.projections=FALSE,\n\tsgp.projections.lagged=FALSE,\n\tsgp.percentiles.baseline=", calculate.simex.baseline,",\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsimulate.sgps=FALSE,\n\tcalculate.simex=", simex.parameters, ",\n\tcalculate.simex.baseline=", simex.parameters,",\n\tparallel.config=", parallel.config,"\n)\n", sep="")
-			
+
 			cat("##### Begin testSGP test number 4, Part 1 #####", fill=TRUE)
 			cat("## Grade-Level, Cohort and Baseline Tests with auto sgp.config construction. ##\n", fill=TRUE)
-			
+
 			cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
-			
+
 			if (memory.profile) {
 				Rprof("testSGP(4.1)_Memory_Profile.out", memory.profiling=TRUE)
 			}
-			
-			started.at.overall <- proc.time()	
+
+			started.at.overall <- proc.time()
 			eval(parse(text=expression.to.evaluate))
-			
+
 			### TEST of SGP_SIMEX variable
-			
+
 			tmp.messages <- ("\t##### Results of testSGP test number 4, Part 1 #####\n\n")
-			
+
 			if (identical(sum(Demonstration_SGP@SGP$SGPercentiles$READING.2014_2015$SGP_SIMEX), 1029023L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX: FAIL\n")
 			}
-			
+
 			### TEST of SGP_SIMEX_BASELINE variable
-			if (calculate.simex.baseline) {	
+			if (calculate.simex.baseline) {
 				if (identical(sum(Demonstration_SGP@SGP$SGPercentiles$READING.2014_2015.BASELINE$SGP_SIMEX_BASELINE), 1034475L)) {
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX_BASELINE: OK\n")
 				} else {
@@ -854,7 +860,7 @@
 			}
 			tmp.messages <- c(tmp.messages, paste("\n\t##### End testSGP test number 4, Part 1: ", convertTime(timetaken(started.at.overall)), "#####\n"))
 			cat(tmp.messages)
-			
+
 			sgp.config <- list(
 				AMERICAN_LIT.2014_2015=list(
 					sgp.content.areas=c('READING', 'GRADE_9_LIT', 'AMERICAN_LIT'),
@@ -862,7 +868,7 @@
 					sgp.grade.sequences=list(c(8, 'EOCT', 'EOCT')),
 					sgp.calculate.simex=eval(parse(text=simex.parameters)),
 					sgp.calculate.simex.baseline=simex.parameters),
-				
+
 				ALGEBRA_II.2014_2015=list(
 					sgp.content.areas=c('MATHEMATICS', 'ALGEBRA_I', 'ALGEBRA_II'),
 					sgp.panel.years=c('2012_2013', '2013_2014', '2014_2015'),
@@ -870,28 +876,28 @@
 					sgp.calculate.simex=eval(parse(text=simex.parameters)),
 					sgp.calculate.simex.baseline=simex.parameters)
 			)
-			
-			expression.to.evaluate <- 
+
+			expression.to.evaluate <-
 				paste("\nDemonstration_SGP <- analyzeSGP(\n\tsgp_object= Demonstration_SGP,\n\tsgp.config=sgp.config,\n\tsgp.percentiles=TRUE,\n\tsgp.projections=FALSE,\n\tsgp.projections.lagged=FALSE,\n\tsgp.percentiles.baseline=", calculate.simex.baseline, ",\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsimulate.sgps=FALSE,\n\tparallel.config=", parallel.config,"\n)\nDemonstration_SGP <- combineSGP(Demonstration_SGP)", sep="")
-			
+
 			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "dir.create('Data', showWarnings=FALSE)", "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
-			
+
 			cat("\n\t##### Begin testSGP test number 4, Part 2 #####", fill=TRUE)
 			cat("\t## EOCT Baseline Tests with custom sgp.config. ##\n", fill=TRUE)
-			
+
 			cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
-			
+
 			if (memory.profile) {
 				Rprof("testSGP(4.2)_Memory_Profile.out", memory.profiling=TRUE)
 			}
-			
-			started.at.intermediate <- proc.time()	
+
+			started.at.intermediate <- proc.time()
 			eval(parse(text=expression.to.evaluate))
-			
+
 			### TEST of SGP_SIMEX and SGP_SIMEX_BASELINE variable
-			
+
 			tmp.messages <- ("\t##### Results of testSGP test number 4, Part 2 #####\n\n")
-			
+
 			if (identical(sum(Demonstration_SGP@SGP$SGPercentiles$AMERICAN_LIT.2014_2015$SGP_SIMEX), 211555L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX: OK\n")
 			} else {
@@ -907,7 +913,7 @@
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX: FAIL\n")
 			}
-			
+
 			if (calculate.simex.baseline) {
 				if (identical(sum(Demonstration_SGP@SGP$SGPercentiles$AMERICAN_LIT.2014_2015.BASELINE$SGP_SIMEX_BASELINE), 218029L)) {
 					tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX_BASELINE: OK\n")
@@ -929,16 +935,16 @@
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 4: ", convertTime(timetaken(started.at.overall)), "#####\n"))
 			cat(tmp.messages)
 		} ### End TEST_NUMBER 4
-		
-		
+
+
 		#######################################################################################################################################################
 		###
 		### TEST NUMBER 5: Test of assessment change functionality
 		###
 		#######################################################################################################################################################
-		
+
 		if (5 %in% TEST_NUMBER) {
-			
+
 			options(error=recover)
 			number.cores <- detectCores(logical=FALSE)
 			Demonstration_SGP <- ACHIEVEMENT_LEVEL <- HIGH_NEED_STATUS <- tmp.messages <- NULL
@@ -951,80 +957,80 @@
 			##############################################################################
 			##### PART 1: Run analyses for year prior to assessment change in 2013-2014
 			##############################################################################
-			
+
 			##### Create data sets for Step 1 (2 & 3 after new SGPstateData put in place)
 
 			years <- sort(unique(sgpData_LONG$YEAR))
 			years.step.1 <- years[1:3]; years.step.2 <- years[4]; years.step.3 <- years[5]
 
-			sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'MATHEMATICS' & sgpData_LONG$YEAR %in% c(years.step.2, years.step.3)] <- 
-				sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'MATHEMATICS' & sgpData_LONG$YEAR %in% c(years.step.2, years.step.3)] + 
+			sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'MATHEMATICS' & sgpData_LONG$YEAR %in% c(years.step.2, years.step.3)] <-
+				sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'MATHEMATICS' & sgpData_LONG$YEAR %in% c(years.step.2, years.step.3)] +
 				test.option[['Scale_Transition_Adjustments']][['MATHEMATICS']]
-			sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'READING' & sgpData_LONG$YEAR %in% c(years.step.2, years.step.3)] <- 
+			sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'READING' & sgpData_LONG$YEAR %in% c(years.step.2, years.step.3)] <-
 				sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'READING' & sgpData_LONG$YEAR %in% c(years.step.2, years.step.3)] +
 				test.option[['Scale_Transition_Adjustments']][['READING']]
-			
+
 			Demonstration_Data_LONG_STEP_1 <- as.data.table(subset(sgpData_LONG, YEAR %in% years.step.1))
 
 			### Calculate SGPs
-			
-			expression.to.evaluate <- 
+
+			expression.to.evaluate <-
 				paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=Demonstration_Data_LONG_STEP_1,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP', 'visualizeSGP'),\n\tplot.types=c('studentGrowthPlot', 'growthAchievementPlot'),\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\toutputSGP.output.type='LONG_FINAL_YEAR_Data',\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
-			
+
 			cat(paste("EVALUATING Test Number 5, Part 1:\n", expression.to.evaluate, sep=""), fill=TRUE)
-			
+
 			if (memory.profile) {
 				Rprof("testSGP(5)_Memory_Profile_Part_1.out", memory.profiling=TRUE)
 			}
 
 			started.at.overall <- proc.time()
 			eval(parse(text=expression.to.evaluate))
-			
+
 			### TEST of variable values
-			
+
 			tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number 5: Part 1 #####\n")
-			
+
 			### TEST of SGP variable
-			
+
 			if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 2810958L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 1: FAIL\n")
 			}
-			
+
 			### TEST of SGP_BASELINE variable
-			
+
 			if (identical(sum(Demonstration_SGP@Data$SGP_BASELINE, na.rm=TRUE), 2844420L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 1: FAIL\n")
 			}
-			
+
 			### TEST of SGP_TARGET_3_YEAR variable
-			
+
 			if (identical(sum(Demonstration_SGP@Data$SGP_TARGET_3_YEAR, na.rm=TRUE), 2548595L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR, part 1: FAIL\n")
 			}
-			
+
 			### TEST of SCALE_SCORE_PRIOR_STANDARDIZED variable
-			
+
 			if (identical(median(Demonstration_SGP@Data$SCALE_SCORE_PRIOR_STANDARDIZED, na.rm=TRUE), 0.059)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_PRIOR_STANDARDIZED, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_PRIOR_STANDARDIZED, part 1: FAIL\n")
 			}
-			
-			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 5, Part 1: ", convertTime(timetaken(started.at.overall)), "#####\n"))			
 
-			
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 5, Part 1: ", convertTime(timetaken(started.at.overall)), "#####\n"))
+
+
 			##############################################################################
 			##### PART 2: Create SGPs for assessment transtion year
 			##############################################################################
-			
+
 			##### Modify SGPstateData
-			
+
 			SGPstateData[["DEMO"]][["Achievement"]][["Knots_Boundaries"]] <- c(
 				SGPstateData[["DEMO"]][["Achievement"]][["Knots_Boundaries"]],
 				list(MATHEMATICS.2013_2014=list(
@@ -1093,7 +1099,7 @@
 					boundaries_EOCT=c(370, 999)+test.option[['Scale_Transition_Adjustments']][['READING']],
 					knots_EOCT=c(642, 675, 700, 730)+test.option[['Scale_Transition_Adjustments']][['READING']],
 					loss.hoss_EOCT=c(370, 999)+test.option[['Scale_Transition_Adjustments']][['READING']])))
-			
+
 			SGPstateData[["DEMO"]][["Achievement"]][["Cutscores"]] <- c(
 				SGPstateData[["DEMO"]][["Achievement"]][["Cutscores"]],
 				list(MATHEMATICS.2013_2014=list(
@@ -1122,16 +1128,16 @@
 					GRADE_EOCT=as.integer(quantile(subset(sgpData_LONG, GRADE==9 & CONTENT_AREA=="READING" & YEAR=="2013_2014")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9), na.rm=TRUE))),
 				AMERICAN_LIT.2013_2014=list(
 					GRADE_EOCT=as.integer(quantile(subset(sgpData_LONG, GRADE==10 & CONTENT_AREA=="READING" & YEAR=="2013_2014")[['SCALE_SCORE']], probs=c(0.3, 0.45, 0.65, 0.9), na.rm=TRUE)))))
-			
+
 			SGPstateData[["DEMO"]][["Achievement"]][["Levels"]] <-
 				list(
 					Labels=c("Level 1", "Level 2", "Level 3", "Level 4", "Level 5"),
 					Proficient=c("Not Proficient", "Not Proficient", "Not Proficient", "Proficient", "Proficient"))
-			
+
 			SGPstateData[["DEMO"]][["Growth"]][["System_Type"]] <- "Cohort Referenced"
 
 			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Scale_Change"]] <- list(MATHEMATICS="2013_2014", READING="2013_2014")
-			
+
 			SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]] <-
 				list(
 					Assessment_Abbreviation="DEMO Old",
@@ -1182,13 +1188,13 @@
 			if (identical(toupper(test.option[['Scale_Transition_Types']]), c("NON-VERTICAL", "VERTICAL"))) {
 				SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale"]] <- "No"
 				SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale.2013_2014"]] <- "Yes"
-				SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Transformed_Achievement_Level_Cutscores"]] <- 
+				SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Transformed_Achievement_Level_Cutscores"]] <-
 					list(MATHEMATICS=c(100,200,300,400,500), READING=c(100,200,300,400,500))
 			}
 			if (identical(toupper(test.option[['Scale_Transition_Types']]), c("NON-VERTICAL", "NON-VERTICAL"))) {
 				SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale"]] <- "No"
 				SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale.2013_2014"]] <- "No"
-				SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Transformed_Achievement_Level_Cutscores"]] <- 
+				SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Transformed_Achievement_Level_Cutscores"]] <-
 					list(MATHEMATICS=c(100,200,300,400,500), READING=c(100,200,300,400,500))
 			}
 
@@ -1202,59 +1208,59 @@
 			Demonstration_Data_LONG_STEP_3 <- suppressMessages(prepareSGP(Demonstration_Data_LONG_STEP_3)@Data)
 			Demonstration_Data_LONG_STEP_3[, HIGH_NEED_STATUS:=NULL]
 			setcolorder(Demonstration_Data_LONG_STEP_3, names(Demonstration_Data_LONG_STEP_3))
-			
+
 			### updateSGP
-			
-			expression.to.evaluate <- 
+
+			expression.to.evaluate <-
 				paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=Demonstration_Data_LONG_STEP_2,\n\tsgp.percentiles=TRUE,\n\tsgp.projections=TRUE,\n\tsgp.projections.lagged=TRUE,\n\tsgp.percentiles.baseline=FALSE,\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.percentiles.equated=TRUE,\n\tsave.intermediate.results=FALSE,\n\toutputSGP.output.type='LONG_FINAL_YEAR_Data',\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
-			
+
 			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
 
 			cat(paste("EVALUATING Test Number 5, Part 2:\n", expression.to.evaluate, sep=""), fill=TRUE)
-			
+
 			if (memory.profile) {
 				Rprof("testSGP(5)_Memory_Profile_Part_2.out", memory.profiling=TRUE)
 			}
-			
+
 			started.at.intermediate <- proc.time()
 			eval(parse(text=expression.to.evaluate))
-			
+
 			### TEST of variable values
-			
+
 			tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number 5: Part 2 #####\n")
-			
+
 			### TEST of SGP variable
-			
+
 			if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 5668654L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 2: FAIL\n")
 			}
-			
+
 			### TEST of SGP variable from equated analyses
-			
+
 			if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][['READING.2013_2014.EQUATED']][['SGP']], na.rm=TRUE), 1418003L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP from equated analysis, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP from equated analysis, part 2: FAIL\n")
 			}
-			
+
 			### TEST of SCALE_SCORE_EQUATED variable
-			
+
 			if (identical(as.integer(sum(Demonstration_SGP@Data$SCALE_SCORE_EQUATED, na.rm=TRUE)), 796049037L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_EQUATED, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_EQUATED, part 2: FAIL\n")
 			}
-			
+
 			### TEST of SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1 variable
-			
+
 			if (identical(as.integer(sum(Demonstration_SGP@SGP$SGProjections[["READING.2013_2014.LAGGED.TARGET_SCALE_SCORES"]][['SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1']])), 82327526L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1, part 2: FAIL\n")
 			}
-			
+
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 5, Part 2: ", convertTime(timetaken(started.at.intermediate)), "#####\n"))
 
 
@@ -1269,26 +1275,26 @@
 
 			### updateSGP
 
-			expression.to.evaluate <- 
+			expression.to.evaluate <-
 				paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=Demonstration_Data_LONG_STEP_3,\n\tsgp.percentiles=TRUE,\n\tsgp.projections=TRUE,\n\tsgp.projections.lagged=TRUE,\n\tsgp.percentiles.baseline=FALSE,\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsave.intermediate.results=FALSE,\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
-			
+
 			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
 
 			cat(paste("EVALUATING Test Number 5, Part 3:\n", expression.to.evaluate, sep=""), fill=TRUE)
-			
+
 			if (memory.profile) {
 				Rprof("testSGP(5)_Memory_Profile_Part_3.out", memory.profiling=TRUE)
 			}
-			
+
 			started.at.intermediate <- proc.time()
 			eval(parse(text=expression.to.evaluate))
 
 			### TEST of variable values
-			
+
 			tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number 5: Part 3 #####\n")
-			
+
 			### TEST of SGP variable
-			
+
 			if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 8565260L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 3: OK\n")
 			} else {
@@ -1296,66 +1302,66 @@
 			}
 
 			### TEST of LEVEL_1_SGP_TARGET_YEAR_1_CURRENT variable
-			
+
 			if (identical(as.integer(sum(Demonstration_SGP@SGP[['SGProjections']][['READING.2014_2015']][['LEVEL_1_SGP_TARGET_YEAR_1_CURRENT']], na.rm=TRUE)), 987731L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable LEVEL_1_SGP_TARGET_YEAR_1_CURRENT, part 3: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable LEVEL_1_SGP_TARGET_YEAR_1_CURRENT, part 3: FAIL\n")
 			}
-			
+
 			### TEST of ACHIEVEMENT_LEVEL_PRIOR Variable in MATHEMATICS.2014_2015.LAGGED projections
-			
+
 			if (identical(as.vector(table(Demonstration_SGP@SGP[['SGProjections']][['MATHEMATICS.2014_2015.LAGGED']][['ACHIEVEMENT_LEVEL_PRIOR']])), c(8178L, 4316L, 5991L, 7552L, 3145L))) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable ACHIEVEMENT_LEVEL_PRIOR, part 3: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable ACHIEVEMENT_LEVEL_PRIOR, part 3: FAIL\n")
 			}
-			
+
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 5, Part 3: ", convertTime(timetaken(started.at.intermediate)), "#####\n"))
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 5: ", convertTime(timetaken(started.at.overall)), "#####\n"))
 			cat(tmp.messages)
 		} ### End TEST_NUMBER 5
-		
-		
+
+
 		#######################################################################################################################################################
 		###
 		### TEST NUMBER 6: Test of baseline coefficient matrix generation functionality
 		###
 		#######################################################################################################################################################
-		
+
 		if (6 %in% TEST_NUMBER) {
-			
+
 			options(error=recover)
 			options(warn=2)
 			number.cores <- detectCores(logical=FALSE)
 			if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
 			Demonstration_SGP <- tmp.messages <- NULL
-			
+
 			### Modify SGPstateData
-			
+
 			SGPstateData[['DEMO']][['Baseline_splineMatrix']] <- NULL
-			
-			expression.to.evaluate <- 
+
+			expression.to.evaluate <-
 				paste("\nDemonstration_SGP <- abcSGP(\n\tsgp_object=SGPdata::sgpData_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\tyears='2014_2015',\n\tcontent_areas='MATHEMATICS',\n\tsgp.percentiles=FALSE,\n\tsgp.projections=FALSE,\n\tsgp.projections.lagged=FALSE,\n\tsgp.percentiles.baseline=TRUE,\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(BASELINE_PERCENTILES=", number.cores, ", BASELINE_MATRICES=", number.cores, "))\n)", sep="")
-			
+
 			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "dir.create('Data', showWarnings=FALSE)", "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
-			
+
 			cat("##### Begin testSGP test number 6 #####\n", fill=TRUE)
 			cat("## Basic Baseline Coefficient Matrix Test. ##\n", fill=TRUE)
-			
+
 			cat(paste("EVALUATING Test Number 6:\n", expression.to.evaluate, sep=""), fill=TRUE)
-			
+
 			if (memory.profile) {
 				Rprof("testSGP(6)_Memory_Profile.out", memory.profiling=TRUE)
 			}
 
 			started.at.overall <- proc.time()
 			eval(parse(text=expression.to.evaluate))
-			
+
 			### TEST of SGP_BASELINE variable
-			
+
 			tmp.messages <- ("\t##### Results of testSGP test number 6 #####\n\n")
-			
+
 			if (identical(sum(Demonstration_SGP@Data$SGP_BASELINE, na.rm=TRUE), 1469353L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of SGP_BASELINE: OK\n")
 			} else {
@@ -1372,19 +1378,153 @@
 		### TEST NUMBER RLI: Test of SGPt functionality
 		###
 		#######################################################################################################################################################
-		
+
 		if ("RLI" %in% TEST_NUMBER) {
-			
+
+			eval(parse(text="require(RLImatrices)"))
 			options(error=recover)
 			options(warn=2)
 			number.cores <- detectCores(logical=FALSE)
-			if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
-			Demonstration_SGP <- tmp.messages <- NULL
+
+			if (is.null(test.option[['parallel.config']])) {
+				if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
+				if (.Platform$OS.type != "unix") {
+					parallel.config <- paste("list(BACKEND='FOREACH', TYPE='doParallel', WORKERS=list(TAUS=", number.cores, "))", sep="")
+				} else  parallel.config <- paste("list(BACKEND='PARALLEL', WORKERS=list(TAUS=", number.cores, "))", sep="")
+			}
+
+			tmp.messages <- RLI_SGPt_PART_1 <- RLI_SGPt_PART_2 <- NULL
+			tmp.last.window <- tail(sort(unique(SGPdata::sgptData_LONG[['YEAR']])), 1)
+
+			###############################################################################
+			### PART 1: Using RLI_SGPt_UPDATE_SHELL
+			###############################################################################
+
+			RLI_Data_LONG_UPDATE <- SGPdata::sgptData_LONG[YEAR %in% tmp.last.window]
+			RLI_SGPt_UPDATE_SHELL <- suppressMessages(prepareSGP(SGPdata::sgptData_LONG[!YEAR %in% tmp.last.window], state="RLI"))
+			SGPstateData[["RLI"]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <-
+				eval(parse(text=paste("RLI_SGPt_Baseline_Matrices[['RLI_SGPt_Baseline_Matrices_2014_2015.3']]")))
+
+			### Calculate SGPs
+
+			expression.to.evaluate <-
+				paste("RLI_SGPt_PART_1 <- rliSGP(\n\tsgp_object=RLI_SGPt_UPDATE_SHELL,\n\tadditional.data=RLI_Data_LONG_UPDATE,\n\ttesting.window='SPRING',\n\teow.or.update='UPDATE',configuration.year='2014_2015',\n\treturn.updated.shell=TRUE,\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, "))\n)\n", sep="")
+
+			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(RLI_SGPt_PART_1, file='Data/RLI_SGPt_PART_1.Rdata')", sep="\n")
+
+			cat(paste("EVALUATING Test Number RLI, Part 1:\n", expression.to.evaluate, sep=""), fill=TRUE)
+
+			if (memory.profile) {
+				Rprof("testSGP(RLI)_Memory_Profile_Part_1.out", memory.profiling=TRUE)
+			}
+
+			started.at.overall <- proc.time()
+			eval(parse(text=expression.to.evaluate))
+			file.rename("Data/RLI", "Data/RLI_PART_1")
+
+			### TEST of variable values
+
+			tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number RLI: Part 1 #####\n")
+
+			### TEST of SGP variable from READING
+
+			if (identical(sum(RLI_SGPt_PART_1@SGP[['SGPercentiles']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['SGP_BASELINE']], na.rm=TRUE), 107188L)) {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 1: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 1: FAIL\n")
+			}
+
+			### TEST of SGP_TARGET_BASELINE_10_TIME_CURRENT variable from READING
+
+			if (identical(sum(RLI_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", "TARGET_SCALE_SCORES", sep=".")]][['SGP_TARGET_BASELINE_10_TIME_CURRENT']], na.rm=TRUE), 45054L)) {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_BASELINE_10_TIME_CURRENT, part 1: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_BASELINE_10_TIME_CURRENT, part 1: FAIL\n")
+			}
+
+			### TEST of P50_PROJ_TIME_1_CURRENT variable from READING
+
+			if (identical(sum(RLI_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['P50_PROJ_TIME_1_CURRENT']], na.rm=TRUE), 533302)) {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_BASELINE_10_TIME_CURRENT, part 1: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_BASELINE_10_TIME_CURRENT, part 1: FAIL\n")
+			}
+
+			### TEST of READING SGPercentiles output
+
+			invisible(unzip(paste("Data/RLI_PART_1/SGPercentiles/READING", tmp.last.window, "BASELINE.txt.zip", sep=".")))
+			tmp.data <- fread(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
+			unlink(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
+
+			if (identical(dim(tmp.data), c(2179L, 10L))) {
+				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGPercentiles output, part 1: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGPercentiles output, part 1: FAIL\n")
+			}
+
+			### TEST of READING SGProjections output
+
+			invisible(unzip(paste("Data/RLI_PART_1/SGProjections/READING", tmp.last.window, "BASELINE.txt.zip", sep=".")))
+			tmp.data <- fread(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
+			unlink(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
+
+			if (identical(dim(tmp.data), c(981L, 118L))) {
+				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGProjections output, part 1: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGProjections output, part 1: FAIL\n")
+			}
+
+			### TEST of READING SGProjections TARGETS output
+
+			invisible(unzip(paste("Data/RLI_PART_1/SGProjections/READING", tmp.last.window, "BASELINE.TARGET_SCALE_SCORES.txt.zip", sep=".")))
+			tmp.data <- fread(paste("READING", tmp.last.window, "BASELINE.TARGET_SCALE_SCORES.txt", sep="."))
+			unlink(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
+
+			if (identical(dim(tmp.data), c(867L, 25L))) {
+				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGProjections output, part 1: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGProjections output, part 1: FAIL\n")
+			}
+
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI, Part 1: ", convertTime(timetaken(started.at.overall)), "#####\n"))
 
 
+			###############################################################################
+			### PART 2: Using LONG Data
+			###############################################################################
 
+			RLI_SGPt_Data_LONG <- SGPdata::sgptData_LONG
 
+			### Calculate SGPs
 
+			expression.to.evaluate <-
+				paste("RLI_SGPt_PART_2 <- rliSGP(\n\tsgp_object=RLI_SGPt_Data_LONG,\n\treturn.updated.shell=TRUE,\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, "))\n)\n", sep="")
 
+			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(RLI_SGPt_PART_2, file='Data/RLI_SGPt_PART_2.Rdata')", sep="\n")
+
+			cat(paste("EVALUATING Test Number RLI, Part 2:\n", expression.to.evaluate, sep=""), fill=TRUE)
+
+			if (memory.profile) {
+				Rprof("testSGP(RLI)_Memory_Profile_Part_2.out", memory.profiling=TRUE)
+			}
+
+			started.at.overall <- proc.time()
+			eval(parse(text=expression.to.evaluate))
+			file.rename("Data/RLI", "Data/RLI_PART_2")
+
+			### TEST of variable values
+
+			tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number RLI: Part 2 #####\n")
+
+			### TEST of equality between RLI_SGPt_PART_1 and RLI_SGPt_PART_2
+
+			if (identical(RLI_SGPt_PART_1@SGP, RLI_SGPt_PART_2@SGP)) {
+				tmp.messages <- c(tmp.messages, "\t\tTest of equatity of RLI_PART_1 and RLI_PART_2, part 2: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\t\tTest of equatity of RLI_PART_1 and RLI_PART_2, part 2: FAIL\n")
+			}
+
+			tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number RLI: Part 2 #####\n")
+			cat(tmp.messages)
 		} ### End TEST_NUMBER RLI
 	} ### END testSGP Function

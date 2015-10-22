@@ -61,33 +61,33 @@ function(sgp_object,
 	## Utility functions
 
 		strtail <- function(s, n=1) {
-			if (n < 0) substring(s, 1-n) 
+			if (n < 0) substring(s, 1-n)
 			else substring(s, nchar(s)-n+1)
 		}
 
 		strhead <- function(s,n=1) {
-			if (n < 0) substr(s, 1, nchar(s)+n) 
+			if (n < 0) substr(s, 1, nchar(s)+n)
 			else substr(s, 1, n)
 		}
 
 		sqlite.create.table <- function(table.name, field.types, primary.key) {
-			tmp.sql <- paste("CREATE TABLE ", table.name, " (", paste(field.types, collapse=", "), 
+			tmp.sql <- paste("CREATE TABLE ", table.name, " (", paste(field.types, collapse=", "),
 				", PRIMARY KEY (", paste(primary.key, collapse=", "), "))", sep="")
 			return(tmp.sql)
 		}
 
 		"%w/o%" <- function(x, y) x[!x %in% y]
 
-		convert.variables <- function(tmp.df) {
+		convert.variables <- function(tmp.df, factor.variables=NULL) {
 			if (length(grep("_", tmp.df$YEAR)) > 0) {
 				tmp.df$YEAR <- sapply(strsplit(tmp.df$YEAR, "_"), '[', 2)
 			}
 			if (is.character(tmp.df$CONTENT_AREA)) {
 				tmp.df$CONTENT_AREA <- as.factor(tmp.df$CONTENT_AREA)
 			}
-			tmp.factor.names <- names(tmp.df)[sapply(tmp.df, class)=="factor"] %w/o% c(group.number[2], group.number[1], "INSTRUCTOR_NUMBER")
+			tmp.factor.names <- c(factor.variables, names(tmp.df)[sapply(tmp.df, class)=="factor"] %w/o% c(group.number[2], group.number[1], "INSTRUCTOR_NUMBER"))
 			for (i in tmp.factor.names) {
-				tmp.df[[i]] <- unclass(tmp.df[[i]])
+				tmp.df[[i]] <- unclass(as.factor(tmp.df[[i]]))
 			}
 			tmp.df[sapply(tmp.df, is.nan)] <- NA
 			return(tmp.df)
@@ -99,7 +99,7 @@ function(sgp_object,
 
 		get.year <- function(year) {
 			if (SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Test_Season"]]=="Fall") {
-				yearIncrement(year, -1)				
+				yearIncrement(year, -1)
 			} else {
 				return(year)
 			}
@@ -146,7 +146,7 @@ function(sgp_object,
 
 	### Table 1. DISTRICT
 
-		field.types <- c( 
+		field.types <- c(
 			"DISTRICT_NUMBER TEXT NOT NULL",
 			"CONTENT_AREA TEXT NOT NULL",
 			"YEAR INTEGER NOT NULL",
@@ -163,7 +163,7 @@ function(sgp_object,
 		tmp <- tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))]
 
 		dbGetQuery(db, sqlite.create.table("DISTRICT", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA")))
-		dbWriteTable(db, "DISTRICT", tmp, row.names=FALSE, append=TRUE) 
+		dbWriteTable(db, "DISTRICT", tmp, row.names=FALSE, append=TRUE)
 
 		if (text.output) write.table(tmp, file=file.path(text.output.directory, "DISTRICT.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
 		if (json.output) cat(toJSON(tmp), file=file.path(json.output.directory, "DISTRICT.json"))
@@ -171,7 +171,7 @@ function(sgp_object,
 
 	### Table 2. DISTRICT_GRADE
 
-		field.types <- c( 
+		field.types <- c(
 			"DISTRICT_NUMBER TEXT NOT NULL",
 			"CONTENT_AREA TEXT NOT NULL",
 			"YEAR INTEGER NOT NULL",
@@ -189,7 +189,7 @@ function(sgp_object,
 		tmp <- tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))]
 
 		dbGetQuery(db, sqlite.create.table("DISTRICT_GRADE", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "GRADE")))
-		dbWriteTable(db, "DISTRICT_GRADE", tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))], row.names=FALSE, append=TRUE) 
+		dbWriteTable(db, "DISTRICT_GRADE", tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))], row.names=FALSE, append=TRUE)
 
 		if (text.output) write.table(tmp, file=file.path(text.output.directory, "DISTRICT_GRADE.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
 		if (json.output) cat(toJSON(tmp), file=file.path(json.output.directory, "DISTRICT_GRADE.json"))
@@ -212,13 +212,13 @@ function(sgp_object,
 
 		tmp <- as.data.frame(convert.variables(subset(sgp_object@Summary[[group.number[1]]][[paste(group.number[1], "CONTENT_AREA__YEAR__ETHNICITY", group.enroll.status[1], sep="__")]],
 			!is.na(get(group.number[1])) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(ETHNICITY) & get(group.enroll.status[1])==group.enroll.status.label[1] &
-			!is.na(MEDIAN_SGP))))
+			!is.na(MEDIAN_SGP)), factor.variables="ETHNICITY"))
 		tmp <- convert.names(tmp)
 		tmp$ENROLLMENT_PERCENTAGE <- NA
 		tmp <- tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))]
 
 		dbGetQuery(db, sqlite.create.table("DISTRICT_ETHNICITY", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "ETHNICITY")))
-		dbWriteTable(db, "DISTRICT_ETHNICITY", tmp, row.names=FALSE, append=TRUE) 
+		dbWriteTable(db, "DISTRICT_ETHNICITY", tmp, row.names=FALSE, append=TRUE)
 
 		if (text.output) write.table(tmp, file=file.path(text.output.directory, "DISTRICT_ETHNICITY.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
 		if (json.output) cat(toJSON(tmp), file=file.path(json.output.directory, "DISTRICT_ETHNICITY.json"))
@@ -240,13 +240,13 @@ function(sgp_object,
 			"PERCENT_AT_ABOVE_PROFICIENT_COUNT INTEGER")
 
 		tmp <- as.data.frame(convert.variables(subset(sgp_object@Summary[[group.number[1]]][[paste(group.number[1], "CONTENT_AREA__YEAR__GRADE__ETHNICITY", group.enroll.status[1], sep="__")]],
-			!is.na(get(group.number[1])) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(GRADE) & !is.na(ETHNICITY) & 
-			get(group.enroll.status[1])==group.enroll.status.label[1] & !is.na(MEDIAN_SGP))))
+			!is.na(get(group.number[1])) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(GRADE) & !is.na(ETHNICITY) &
+			get(group.enroll.status[1])==group.enroll.status.label[1] & !is.na(MEDIAN_SGP)), factor.variables="ETHNICITY"))
 		tmp <- convert.names(tmp)
 		tmp <- tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))]
 
 		dbGetQuery(db, sqlite.create.table("DISTRICT_GRADE_ETHNICITY", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "GRADE", "ETHNICITY")))
-		dbWriteTable(db, "DISTRICT_GRADE_ETHNICITY", tmp, row.names=FALSE, append=TRUE) 
+		dbWriteTable(db, "DISTRICT_GRADE_ETHNICITY", tmp, row.names=FALSE, append=TRUE)
 
 		if (text.output) write.table(tmp, file=file.path(text.output.directory, "DISTRICT_GRADE_ETHNICITY.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
 		if (json.output) cat(toJSON(tmp), file=file.path(json.output.directory, "DISTRICT_GRADE_ETHNICITY.json"))
@@ -276,17 +276,17 @@ function(sgp_object,
 			setnames(tmp.list[[i]], 4, "STUDENTGROUP")
 		}
 
-		tmp <- as.data.frame(convert.variables(subset(rbindlist(tmp.list, fill=TRUE), 
+		tmp <- as.data.frame(convert.variables(subset(rbindlist(tmp.list, fill=TRUE),
 			!is.na(get(group.number[1])) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(STUDENTGROUP) & get(group.enroll.status[1])==group.enroll.status.label[1] &
-			!is.na(MEDIAN_SGP))))
+			!is.na(MEDIAN_SGP)), factor.variables="STUDENTGROUP"))
 
 		tmp <- convert.names(tmp)
-		tmp$ENROLLMENT_PERCENTAGE <- NA 
+		tmp$ENROLLMENT_PERCENTAGE <- NA
 		tmp <- data.table(tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))], key=c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "STUDENTGROUP"))
 		tmp <- as.data.frame(data.table(tmp[!duplicated(tmp)]))
 
 		dbGetQuery(db, sqlite.create.table("DISTRICT_STUDENTGROUP", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "STUDENTGROUP")))
-		dbWriteTable(db, "DISTRICT_STUDENTGROUP", tmp, row.names=FALSE, append=TRUE) 
+		dbWriteTable(db, "DISTRICT_STUDENTGROUP", tmp, row.names=FALSE, append=TRUE)
 
 		if (text.output) write.table(tmp, file=file.path(text.output.directory, "DISTRICT_STUDENTGROUP.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
 		if (json.output) cat(toJSON(tmp), file=file.path(json.output.directory, "DISTRICT_STUDENTGROUP.json"))
@@ -316,15 +316,15 @@ function(sgp_object,
 			setnames(tmp.list[[i]], 5, "STUDENTGROUP")
 		}
 
-		tmp <- as.data.frame(convert.variables(subset(rbindlist(tmp.list, fill=TRUE), 
+		tmp <- as.data.frame(convert.variables(subset(rbindlist(tmp.list, fill=TRUE),
 			!is.na(get(group.number[1])) & YEAR %in% years & CONTENT_AREA %in% content_areas & !is.na(STUDENTGROUP) & get(group.enroll.status[1])==group.enroll.status.label[1] &
-			!is.na(MEDIAN_SGP))))
+			!is.na(MEDIAN_SGP)), factor.variables="STUDENTGROUP"))
 		tmp <- convert.names(tmp)
                 tmp <- data.table(tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))], key=c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "GRADE", "STUDENTGROUP"))
                 tmp <- as.data.frame(tmp[!duplicated(tmp)])
 
 		dbGetQuery(db, sqlite.create.table("DISTRICT_GRADE_STUDENTGROUP", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "GRADE", "STUDENTGROUP")))
-		dbWriteTable(db, "DISTRICT_GRADE_STUDENTGROUP", tmp, row.names=FALSE, append=TRUE) 
+		dbWriteTable(db, "DISTRICT_GRADE_STUDENTGROUP", tmp, row.names=FALSE, append=TRUE)
 
 		if (text.output) write.table(tmp, file=file.path(text.output.directory, "DISTRICT_GRADE_STUDENTGROUP.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
 		if (json.output) cat(toJSON(tmp), file=file.path(json.output.directory, "DISTRICT_GRADE_STUDENTGROUP.json"))
@@ -348,12 +348,12 @@ function(sgp_object,
 		tmp <- as.data.frame(convert.variables(subset(sgp_object@Summary[[group.number[2]]][[paste(group.number[2], "EMH_LEVEL__CONTENT_AREA__YEAR", group.enroll.status[2], sep="__")]],
 			!is.na(get(group.enroll.status[2])) & !is.na(get(group.number[2])) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & get(group.enroll.status[2])==group.enroll.status.label[2] &
 			!is.na(MEDIAN_SGP))))
-		tmp <- as.data.frame(merge(tmp, as.data.frame(tmp.school.and.district.by.year), all.x=TRUE)) 
+		tmp <- as.data.frame(merge(tmp, as.data.frame(tmp.school.and.district.by.year), all.x=TRUE))
 		tmp <- convert.names(tmp)
 		tmp <- tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))]
 
 		dbGetQuery(db, sqlite.create.table("SCHOOL", field.types, c("YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER", "EMH_LEVEL", "CONTENT_AREA")))
-		dbWriteTable(db, "SCHOOL", tmp, row.names=FALSE, append=TRUE) 
+		dbWriteTable(db, "SCHOOL", tmp, row.names=FALSE, append=TRUE)
 
 		if (text.output) write.table(tmp, file=file.path(text.output.directory, "SCHOOL.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
 		if (json.output) cat(toJSON(tmp), file=file.path(json.output.directory, "SCHOOL.json"))
@@ -378,12 +378,12 @@ function(sgp_object,
 		tmp <- as.data.frame(convert.variables(subset(sgp_object@Summary[[group.number[2]]][[paste(group.number[2], "EMH_LEVEL__CONTENT_AREA__YEAR__GRADE", group.enroll.status[2], sep="__")]],
 			!is.na(get(group.number[2])) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(GRADE) & get(group.enroll.status[2])==group.enroll.status.label[2] &
 			!is.na(MEDIAN_SGP))))
-		tmp <- data.frame(merge(tmp, as.data.frame(tmp.school.and.district.by.year), all.x=TRUE)) 
+		tmp <- data.frame(merge(tmp, as.data.frame(tmp.school.and.district.by.year), all.x=TRUE))
 		tmp <- convert.names(tmp)
 		tmp <- tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))]
 
 		dbGetQuery(db, sqlite.create.table("SCHOOL_GRADE", field.types, c("YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER", "EMH_LEVEL", "GRADE", "CONTENT_AREA")))
-		dbWriteTable(db, "SCHOOL_GRADE", tmp, row.names=FALSE, append=TRUE) 
+		dbWriteTable(db, "SCHOOL_GRADE", tmp, row.names=FALSE, append=TRUE)
 
 		if (text.output) write.table(tmp, file=file.path(text.output.directory, "SCHOOL_GRADE.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
 		if (json.output) cat(toJSON(tmp), file=file.path(json.output.directory, "SCHOOL_GRADE.json"))
@@ -408,14 +408,14 @@ function(sgp_object,
 
 		tmp <- as.data.frame(convert.variables(subset(sgp_object@Summary[[group.number[2]]][[paste(group.number[2], "EMH_LEVEL__CONTENT_AREA__YEAR__ETHNICITY", group.enroll.status[2], sep="__")]],
 			!is.na(get(group.number[2])) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(ETHNICITY) & get(group.enroll.status[2])==group.enroll.status.label[2] &
-			!is.na(MEDIAN_SGP))))
-		tmp <- data.frame(merge(tmp, as.data.frame(tmp.school.and.district.by.year), all.x=TRUE)) 
+			!is.na(MEDIAN_SGP)), factor.variables="ETHNICITY"))
+		tmp <- data.frame(merge(tmp, as.data.frame(tmp.school.and.district.by.year), all.x=TRUE))
 		tmp <- convert.names(tmp)
 		tmp$ENROLLMENT_PERCENTAGE <- NA
 		tmp <- tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))]
 
 		dbGetQuery(db, sqlite.create.table("SCHOOL_ETHNICITY", field.types, c("YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER", "EMH_LEVEL", "CONTENT_AREA", "ETHNICITY")))
-		dbWriteTable(db, "SCHOOL_ETHNICITY", tmp, row.names=FALSE, append=TRUE) 
+		dbWriteTable(db, "SCHOOL_ETHNICITY", tmp, row.names=FALSE, append=TRUE)
 
 		if (text.output) write.table(tmp, file=file.path(text.output.directory, "SCHOOL_ETHNICITY.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
 		if (json.output) cat(toJSON(tmp), file=file.path(json.output.directory, "SCHOOL_ETHNICITY.json"))
@@ -447,18 +447,18 @@ function(sgp_object,
 			setnames(tmp.list[[i]], 5, "STUDENTGROUP")
 		}
 
-		tmp <- as.data.frame(convert.variables(subset(rbindlist(tmp.list, fill=TRUE), 
+		tmp <- as.data.frame(convert.variables(subset(rbindlist(tmp.list, fill=TRUE),
 			!is.na(get(group.number[2])) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(STUDENTGROUP) & get(group.enroll.status[2])==group.enroll.status.label[2] &
-			!is.na(MEDIAN_SGP))))
-		tmp <- as.data.frame(merge(tmp, as.data.frame(tmp.school.and.district.by.year), all.x=TRUE)) 
+			!is.na(MEDIAN_SGP)), factor.variables="STUDENTGROUP"))
+		tmp <- as.data.frame(merge(tmp, as.data.frame(tmp.school.and.district.by.year), all.x=TRUE))
 		tmp <- convert.names(tmp)
 		tmp$ENROLLMENT_PERCENTAGE <- NA
                 tmp <- data.table(tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))], key=c("YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER", "EMH_LEVEL", "CONTENT_AREA", "STUDENTGROUP"))
                 tmp <- as.data.frame(tmp[!duplicated(tmp)])
 
-		dbGetQuery(db, sqlite.create.table("SCHOOL_STUDENTGROUP", field.types, 
+		dbGetQuery(db, sqlite.create.table("SCHOOL_STUDENTGROUP", field.types,
 			c("YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER", "EMH_LEVEL", "CONTENT_AREA", "STUDENTGROUP")))
-		dbWriteTable(db, "SCHOOL_STUDENTGROUP", tmp, row.names=FALSE, append=TRUE) 
+		dbWriteTable(db, "SCHOOL_STUDENTGROUP", tmp, row.names=FALSE, append=TRUE)
 
 		if (text.output) write.table(tmp, file=file.path(text.output.directory, "SCHOOL_STUDENTGROUP.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
 		if (json.output) cat(toJSON(tmp), file=file.path(json.output.directory, "SCHOOL_STUDENTGROUP.json"))
@@ -466,7 +466,7 @@ function(sgp_object,
 
 	## Table 11. SCHOOL_TEACHER
 
-	if (any(c(paste(group.number[2], "INSTRUCTOR_NUMBER__EMH_LEVEL__CONTENT_AREA__YEAR", sep="__"), 
+	if (any(c(paste(group.number[2], "INSTRUCTOR_NUMBER__EMH_LEVEL__CONTENT_AREA__YEAR", sep="__"),
 		paste(group.number[2], "INSTRUCTOR_NUMBER__EMH_LEVEL__CONTENT_AREA__YEAR__INSTRUCTOR_ENROLLMENT_STATUS", sep="__")) %in% names(sgp_object@Summary[[group.number[2]]]))) {
 
 		field.types <- c(
@@ -482,16 +482,16 @@ function(sgp_object,
 			"PERCENT_AT_ABOVE_PROFICIENT REAL",
 			"MEDIAN_SGP_COUNT INTEGER",
 			"PERCENT_AT_ABOVE_PROFICIENT_COUNT INTEGER")
-	
-		if (paste(group.number[2], "INSTRUCTOR_NUMBER__EMH_LEVEL__CONTENT_AREA__YEAR__INSTRUCTOR_ENROLLMENT_STATUS", sep="__") %in% names(sgp_object@Summary[[group.number[2]]])) {	
+
+		if (paste(group.number[2], "INSTRUCTOR_NUMBER__EMH_LEVEL__CONTENT_AREA__YEAR__INSTRUCTOR_ENROLLMENT_STATUS", sep="__") %in% names(sgp_object@Summary[[group.number[2]]])) {
 			tmp.table.name <- paste(group.number[2], "INSTRUCTOR_NUMBER__EMH_LEVEL__CONTENT_AREA__YEAR__INSTRUCTOR_ENROLLMENT_STATUS", sep="__")
 			tmp <- as.data.frame(convert.variables(subset(sgp_object@Summary[[group.number[2]]][[tmp.table.name]],
-				!is.na(get(group.number[2])) & !is.na(INSTRUCTOR_NUMBER) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & 
+				!is.na(get(group.number[2])) & !is.na(INSTRUCTOR_NUMBER) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years &
 				INSTRUCTOR_ENROLLMENT_STATUS=="Enrolled Instructor: Yes" & !is.na(MEDIAN_SGP))))
 		} else {
 			tmp.table.name <- paste(group.number[2], "INSTRUCTOR_NUMBER__EMH_LEVEL__CONTENT_AREA__YEAR", sep="__")
 			tmp <- as.data.frame(convert.variables(subset(sgp_object@Summary[[group.number[2]]][[tmp.table.name]],
-				!is.na(get(group.number[2])) & !is.na(INSTRUCTOR_NUMBER) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years & 
+				!is.na(get(group.number[2])) & !is.na(INSTRUCTOR_NUMBER) & !is.na(EMH_LEVEL) & CONTENT_AREA %in% content_areas & YEAR %in% years &
 				!is.na(MEDIAN_SGP))))
 		}
 
@@ -500,7 +500,7 @@ function(sgp_object,
 		tmp <- tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))]
 
 		dbGetQuery(db, sqlite.create.table("SCHOOL_TEACHER", field.types, c("YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER", "TEACHER_USID", "EMH_LEVEL", "CONTENT_AREA")))
-		dbWriteTable(db, "SCHOOL_TEACHER", tmp, row.names=FALSE, append=TRUE) 
+		dbWriteTable(db, "SCHOOL_TEACHER", tmp, row.names=FALSE, append=TRUE)
 
 		if (text.output) write.table(tmp, file=file.path(text.output.directory, "SCHOOL_TEACHER.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
 		if (json.output) cat(toJSON(tmp), file=file.path(json.output.directory, "SCHOOL_TEACHER.json"))
@@ -521,7 +521,7 @@ function(sgp_object,
 		tmp <- subset(sgp_object@Summary[[group.number[1]]][[paste(group.number[1], "CONTENT_AREA__YEAR", group.enroll.status[1], sep="__")]],
 			!is.na(get(group.number[1])) & CONTENT_AREA %in% content_areas & YEAR %in% years & get(group.enroll.status[1])==group.enroll.status.label[1])
 		tmp.CONTENT_AREA <- data.frame(
-			KEY_VALUE_KEY="CONTENT_AREA", 
+			KEY_VALUE_KEY="CONTENT_AREA",
 			KEY_VALUE_CODE=seq_along(unique(tmp$CONTENT_AREA)),
 			KEY_VALUE_TEXT=sapply(sort(unique(tmp$CONTENT_AREA)), capwords))
 
@@ -530,8 +530,8 @@ function(sgp_object,
 		tmp <- convert.variables(subset(sgp_object@Summary[[group.number[1]]][[paste(group.number[1], "CONTENT_AREA__YEAR", group.enroll.status[1], sep="__")]],
 			!is.na(get(group.number[1])) & CONTENT_AREA %in% content_areas & YEAR %in% years & get(group.enroll.status[1])==group.enroll.status.label[1]))
 		tmp.YEAR <- data.frame(
-			KEY_VALUE_KEY="YEAR", 
-			KEY_VALUE_CODE=sort(unique(tmp$YEAR)), 
+			KEY_VALUE_KEY="YEAR",
+			KEY_VALUE_CODE=sort(unique(tmp$YEAR)),
 			KEY_VALUE_TEXT=paste(as.numeric(sapply(sort(unique(tmp$YEAR)), get.year))-1, "-", sapply(sort(unique(tmp$YEAR)), get.year), sep=""))
 
 		# GRADE
@@ -539,8 +539,8 @@ function(sgp_object,
 		tmp <- subset(as.data.frame(sgp_object@Summary[[group.number[1]]][[paste(group.number[1], "CONTENT_AREA__YEAR__GRADE", group.enroll.status[1], sep="__")]]),
 			!is.na(get(group.number[1])) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(GRADE) & get(group.enroll.status[1])==group.enroll.status.label[1])
 		tmp.GRADE <- data.frame(
-			KEY_VALUE_KEY="GRADE", 
-			KEY_VALUE_CODE=sort(unique(as.integer(tmp$GRADE))), 
+			KEY_VALUE_KEY="GRADE",
+			KEY_VALUE_CODE=sort(unique(as.integer(tmp$GRADE))),
 			KEY_VALUE_TEXT=paste("Grade", get.grade(sort(unique(as.integer(tmp$GRADE))))))
 
 		# EMH_LEVEL
@@ -550,17 +550,17 @@ function(sgp_object,
 		if (!is.factor(tmp$EMH_LEVEL)) tmp[['EMH_LEVEL']] <- as.factor(tmp[['EMH_LEVEL']])
 		tmp.EMH <- data.frame(
 			KEY_VALUE_KEY="EMH_LEVEL",
-			KEY_VALUE_CODE=strhead(levels(tmp$EMH_LEVEL)[sort(unique(as.integer(tmp$EMH_LEVEL)))], 1), ## TEMP fix until EMH_LEVEL is fixed up
-			KEY_VALUE_TEXT= levels(tmp$EMH_LEVEL)[sort(unique(as.integer(tmp$EMH_LEVEL)))])
+			KEY_VALUE_CODE=strhead(levels(as.factor(tmp$EMH_LEVEL))[sort(unique(as.integer(as.factor(tmp$EMH_LEVEL))))], 1), ## TEMP fix until EMH_LEVEL is fixed up
+			KEY_VALUE_TEXT= levels(as.factor(tmp$EMH_LEVEL))[sort(unique(as.integer(as.factor(tmp$EMH_LEVEL))))])
 
 		# ETHNICITY
 
 		tmp <- subset(as.data.frame(sgp_object@Summary[[group.number[1]]][[paste(group.number[1], "CONTENT_AREA__YEAR__ETHNICITY", group.enroll.status[1], sep="__")]]),
 			!is.na(get(group.number[1])) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(ETHNICITY) & get(group.enroll.status[1])==group.enroll.status.label[1])
 		tmp.ETHNICITY <- data.frame(
-			KEY_VALUE_KEY="ETHNICITY", 
-			KEY_VALUE_CODE=sort(unique(as.integer(tmp$ETHNICITY))), 
-			KEY_VALUE_TEXT=levels(tmp$ETHNICITY)[sort(unique(as.integer(tmp$ETHNICITY)))])
+			KEY_VALUE_KEY="ETHNICITY",
+			KEY_VALUE_CODE=sort(unique(as.integer(as.factor(tmp$ETHNICITY)))),
+			KEY_VALUE_TEXT=levels(as.factor(tmp$ETHNICITY))[sort(unique(as.integer(as.factor(tmp$ETHNICITY))))])
 
 		# STUDENTGROUP
 
@@ -573,22 +573,22 @@ function(sgp_object,
 			setnames(tmp.list[[i]], 4, "STUDENTGROUP")
 		}
 
-		tmp <- data.table(convert.names(convert.variables(subset(rbindlist(tmp.list, fill=TRUE), 
-			!is.na(get(group.number[1])) & !is.na(STUDENTGROUP) & get(group.enroll.status[1])==group.enroll.status.label[1]))), 
+		tmp <- data.table(convert.names(convert.variables(subset(rbindlist(tmp.list, fill=TRUE),
+			!is.na(get(group.number[1])) & !is.na(STUDENTGROUP) & get(group.enroll.status[1])==group.enroll.status.label[1]))),
 			key=c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "STUDENTGROUP"))
                 tmp <- as.data.frame(data.table(tmp[!duplicated(tmp)]))
 
 		tmp.STUDENTGROUP <- data.frame(
 			KEY_VALUE_KEY="STUDENT_GROUP", ### NOTE: Must have underscore. It's an older version of the table
-			KEY_VALUE_CODE=sort(unique(as.integer(tmp$STUDENTGROUP))),
-			KEY_VALUE_TEXT=levels(tmp$STUDENTGROUP)[sort(unique(as.integer(tmp$STUDENTGROUP)))])
+			KEY_VALUE_CODE=sort(unique(as.integer(as.factor(tmp$STUDENTGROUP)))),
+			KEY_VALUE_TEXT=levels(as.factor(tmp$STUDENTGROUP))[sort(unique(as.integer(as.factor(tmp$STUDENTGROUP))))])
 
 
 		tmp <- rbind(tmp.CONTENT_AREA, tmp.YEAR, tmp.GRADE, tmp.EMH, tmp.ETHNICITY, tmp.STUDENTGROUP)
 		tmp <- data.frame(KEY_VALUE_ID=1:dim(tmp)[1], tmp)
 
 		dbGetQuery(db, sqlite.create.table("KEY_VALUE_LOOKUP", field.types, "KEY_VALUE_ID"))
-		dbWriteTable(db, "KEY_VALUE_LOOKUP", tmp, row.names=FALSE, append=TRUE) 
+		dbWriteTable(db, "KEY_VALUE_LOOKUP", tmp, row.names=FALSE, append=TRUE)
 
 		if (text.output) write.table(tmp, file=file.path(text.output.directory, "KEY_VALUE_LOOKUP.dat"), row.names=FALSE, na=my.null.string, quote=FALSE, sep="|")
 		if (json.output) cat(toJSON(tmp), file=file.path(json.output.directory, "KEY_VALUE_LOOKUP.json"))
