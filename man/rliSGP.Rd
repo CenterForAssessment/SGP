@@ -11,20 +11,21 @@ rliSGP(
     additional.data=NULL,
 	state=NULL,
 	content_areas=c("MATHEMATICS", "READING", "EARLY_LITERACY"),
-        testing.window,
-        eow.or.update="UPDATE",
+    testing.window,
+    eow.or.update="UPDATE",
 	update.save.shell.only=FALSE,
-        configuration.year,
+    configuration.year,
 	sgp.percentiles.baseline=TRUE,
 	sgp.projections.baseline=TRUE,
 	sgp.projections.lagged.baseline=FALSE,
 	sgp.target.scale.scores=TRUE,
-        update.ids=NULL,
+    update.ids=NULL,
 	SGPt=TRUE,
 	save.intermediate.results=FALSE,
 	coefficient.matrices=NULL,
 	goodness.of.fit.print=FALSE,
-        parallel.config=NULL)
+	return.updated.shell=FALSE,
+    parallel.config=NULL)
 }
 
 \arguments{
@@ -65,6 +66,8 @@ analysis. Default is NULL, no ID replacement is performed.
   \item{coefficient.matrices}{List of baseline matrices to be used for analyses (overrides what exists in \code{SGPstateData}). Defaults to NULL (use those in \code{SGPstateData}).
   }
   \item{goodness.of.fit.print}{Boolean argument passed to \code{\link{updateSGP}} indicating whether to print goodness of fit plots associated with outcome. Default is FALSE.
+  }
+  \item{return.updated.shell}{Boolean argument (defaults to FALSE) indicating whether to return \code{sgp_object} as part of call to \code{rliSGP}.
   }
   \item{parallel.config}{Argument passed to \code{\link{abcSGP}} or \code{\link{updateSGP}} to activate parallel processing with an appropriate backend.
   }

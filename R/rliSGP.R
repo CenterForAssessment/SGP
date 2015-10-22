@@ -16,6 +16,7 @@ function(sgp_object,
 	save.intermediate.results=FALSE,
 	coefficient.matrices=NULL,
 	goodness.of.fit.print=FALSE,
+	return.updated.shell=FALSE,
 	parallel.config=NULL) {
 
 	YEAR <- GRADE <- ID <- NEW_ID <- .EACHI <- DATE <- NULL
@@ -222,6 +223,11 @@ function(sgp_object,
 				file=paste(state, "_Baseline_Matrices_", paste(yearIncrement(configuration.year, 1), tmp.separator, "Rdata", sep="."), sep=""))
 		}
 	} ### END END_OF_WINDOW scripts
+
+
+	### Return SGP object if requested
+
+	if (return.updated.shell) return(sgp_object)
 
 	message(paste("Finished rliSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
 } ### END rliSGP
