@@ -829,7 +829,7 @@
 				paste("\nDemonstration_SGP <- prepareSGP(sgpData_LONG, create.additional.variables=FALSE)\n\nDemonstration_SGP <- analyzeSGP(\n\tsgp_object=Demonstration_SGP,\n\tyears='2014_2015',\n\tcontent_areas='READING',\n\tsgp.percentiles.baseline.max.order=2,\n\tsgp.percentiles=TRUE,\n\tsgp.projections=FALSE,\n\tsgp.projections.lagged=FALSE,\n\tsgp.percentiles.baseline=", calculate.simex.baseline,",\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsimulate.sgps=FALSE,\n\tcalculate.simex=", simex.parameters, ",\n\tcalculate.simex.baseline=", simex.parameters,",\n\tparallel.config=", parallel.config,"\n)\n", sep="")
 
 			cat("##### Begin testSGP test number 4, Part 1 #####", fill=TRUE)
-			cat("## Grade-Level, Cohort and Baseline Tests with auto sgp.config construction. ##\n", fill=TRUE)
+			cat("#### Grade-Level, Cohort and Baseline Tests with auto sgp.config construction. ####\n", fill=TRUE)
 
 			cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 
@@ -859,7 +859,6 @@
 				}
 			}
 			tmp.messages <- c(tmp.messages, paste("\n\t##### End testSGP test number 4, Part 1: ", convertTime(timetaken(started.at.overall)), "#####\n"))
-			cat(tmp.messages)
 
 			sgp.config <- list(
 				AMERICAN_LIT.2014_2015=list(
@@ -883,7 +882,7 @@
 			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "dir.create('Data', showWarnings=FALSE)", "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
 
 			cat("\n\t##### Begin testSGP test number 4, Part 2 #####", fill=TRUE)
-			cat("\t## EOCT Baseline Tests with custom sgp.config. ##\n", fill=TRUE)
+			cat("#### EOCT Baseline Tests with custom sgp.config. ####\n", fill=TRUE)
 
 			cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 
@@ -896,7 +895,7 @@
 
 			### TEST of SGP_SIMEX and SGP_SIMEX_BASELINE variable
 
-			tmp.messages <- ("\t##### Results of testSGP test number 4, Part 2 #####\n\n")
+			tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number 4, Part 2 #####\n\n")
 
 			if (identical(sum(Demonstration_SGP@SGP$SGPercentiles$AMERICAN_LIT.2014_2015$SGP_SIMEX), 211555L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX: OK\n")
