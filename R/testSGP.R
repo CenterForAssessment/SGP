@@ -1477,7 +1477,7 @@
 
 			invisible(unzip(paste("Data/RLI_PART_1/SGProjections/READING", tmp.last.window, "BASELINE.TARGET_SCALE_SCORES.txt.zip", sep=".")))
 			tmp.data <- fread(paste("READING", tmp.last.window, "BASELINE.TARGET_SCALE_SCORES.txt", sep="."))
-			unlink(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
+			unlink(paste("READING", tmp.last.window, "BASELINE.TARGET_SCALE_SCORES.txt", sep="."))
 
 			if (identical(dim(tmp.data), c(867L, 25L))) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGProjections output, part 1: OK\n")
