@@ -1515,12 +1515,12 @@
 
 			tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number RLI: Part 2 #####\n")
 
-			### TEST of equality between RLI_SGPt_PART_1 and RLI_SGPt_PART_2
+			### TEST of equality between RLI_SGPt_PART_1@SGP and RLI_SGPt_PART_2@SGP
 
 			if (identical(RLI_SGPt_PART_1@SGP, RLI_SGPt_PART_2@SGP)) {
-				tmp.messages <- c(tmp.messages, "\t\tTest of equatity of RLI_PART_1 and RLI_PART_2, part 2: OK\n")
+				tmp.messages <- c(tmp.messages, "\t\tTest of equatity of RLI_PART_1@SGP and RLI_PART_2@SGP, part 2: OK\n")
 			} else {
-				tmp.messages <- c(tmp.messages, "\t\tTest of equatity of RLI_PART_1 and RLI_PART_2, part 2: FAIL\n")
+				tmp.messages <- c(tmp.messages, "\t\tTest of equatity of RLI_PART_1@SGP and RLI_PART_2@SGP, part 2: FAIL\n")
 			}
 
 			tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number RLI: Part 2 #####\n")
