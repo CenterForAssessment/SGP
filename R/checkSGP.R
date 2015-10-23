@@ -65,7 +65,7 @@ function(sgp_object,
 			}
 			if (convert.to.class=="Date") {
 				for (my.variable in my.variables.to.change) {
-					message(paste("\tNOTE:", my.variable, "in", data.slot, "converted from", class(my.data[[my.variable]]), "to Date assuming XXXX-XX-XX format."))
+					message(paste("\tNOTE:", my.variable, "in", data.slot, "converted from", class(my.data[[my.variable]]), "to Date assuming YYYY-MM-DD format."))
 					my.data[,my.variable:=as.Date(my.data[[my.variable]]), with=FALSE]
 				}
 			}

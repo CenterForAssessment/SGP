@@ -1477,7 +1477,7 @@
 
 			invisible(unzip(paste("Data/RLI_PART_1/SGProjections/READING", tmp.last.window, "BASELINE.TARGET_SCALE_SCORES.txt.zip", sep=".")))
 			tmp.data <- fread(paste("READING", tmp.last.window, "BASELINE.TARGET_SCALE_SCORES.txt", sep="."))
-			unlink(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
+			unlink(paste("READING", tmp.last.window, "BASELINE.TARGET_SCALE_SCORES.txt", sep="."))
 
 			if (identical(dim(tmp.data), c(867L, 25L))) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGProjections output, part 1: OK\n")
@@ -1507,7 +1507,7 @@
 				Rprof("testSGP(RLI)_Memory_Profile_Part_2.out", memory.profiling=TRUE)
 			}
 
-			started.at.overall <- proc.time()
+			started.at.intermediate <- proc.time()
 			eval(parse(text=expression.to.evaluate))
 			file.rename("Data/RLI", "Data/RLI_PART_2")
 
@@ -1515,15 +1515,16 @@
 
 			tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number RLI: Part 2 #####\n")
 
-			### TEST of equality between RLI_SGPt_PART_1 and RLI_SGPt_PART_2
+			### TEST of equality between RLI_SGPt_PART_1@SGP and RLI_SGPt_PART_2@SGP
 
 			if (identical(RLI_SGPt_PART_1@SGP, RLI_SGPt_PART_2@SGP)) {
-				tmp.messages <- c(tmp.messages, "\t\tTest of equatity of RLI_PART_1 and RLI_PART_2, part 2: OK\n")
+				tmp.messages <- c(tmp.messages, "\t\tTest of equatity of RLI_PART_1@SGP and RLI_PART_2@SGP, part 2: OK\n")
 			} else {
-				tmp.messages <- c(tmp.messages, "\t\tTest of equatity of RLI_PART_1 and RLI_PART_2, part 2: FAIL\n")
+				tmp.messages <- c(tmp.messages, "\t\tTest of equatity of RLI_PART_1@SGP and RLI_PART_2@SGP, part 2: FAIL\n")
 			}
 
-			tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number RLI: Part 2 #####\n")
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI: Part 2", convertTime(timetaken(started.at.intermediate)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number RLI: ", convertTime(timetaken(started.at.overall)), "#####\n"))
 			cat(tmp.messages)
 		} ### End TEST_NUMBER RLI
 	} ### END testSGP Function
