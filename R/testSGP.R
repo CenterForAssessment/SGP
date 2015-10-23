@@ -1507,7 +1507,7 @@
 				Rprof("testSGP(RLI)_Memory_Profile_Part_2.out", memory.profiling=TRUE)
 			}
 
-			started.at.overall <- proc.time()
+			started.at.intermediate <- proc.time()
 			eval(parse(text=expression.to.evaluate))
 			file.rename("Data/RLI", "Data/RLI_PART_2")
 
@@ -1523,7 +1523,9 @@
 				tmp.messages <- c(tmp.messages, "\t\tTest of equatity of RLI_PART_1@SGP and RLI_PART_2@SGP, part 2: FAIL\n")
 			}
 
-			tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number RLI: Part 2 #####\n")
+			tmp.messages <- c(tmp.messages, "\t##### Results of testSGP test number RLI: Part 2 #####\n")
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI: Part 2", convertTime(timetaken(started.at.intermediate)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number RLI: ", convertTime(timetaken(started.at.overall)), "#####\n"))
 			cat(tmp.messages)
 		} ### End TEST_NUMBER RLI
 	} ### END testSGP Function
