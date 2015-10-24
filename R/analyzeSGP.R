@@ -34,6 +34,7 @@ function(sgp_object,
          get.cohort.data.info=FALSE,
          sgp.sqlite=NULL,
          sgp.percentiles.equated=NULL,
+         sgp.percentiles.equating.method="equipercentile",
          SGPt=NULL,
          ...) {
 
@@ -366,6 +367,7 @@ function(sgp_object,
 	if (sgp.percentiles.equated) {
 		year.for.equate <- tail(sort(unique(sgp_object@Data$YEAR)), 1)
         if (is.null(sgp.use.my.coefficient.matrices)) {
+            Scale_Score_Linkages <- list()
 		    content_areas.for.equate <- unique(sgp_object@Data[YEAR==year.for.equate]$CONTENT_AREA)
             if (!identical(years, year.for.equate)) {
                 message(paste("\tNOTE: Analyses involving equating only occur in most recent year. 'years' argument changed to ", year.for.equate, ".", sep=""))
@@ -385,12 +387,21 @@ function(sgp_object,
                 message(paste("\tNOTE: Knots and Boundaries do not exist for ", year.for.equate, " in state provided.\n\tThey have been produced, embedded in SGPstateData, and are available using state=", state, " for subsequent analyses and saved to your working directory '", getwd(), "'.", sep=""))
             }
             data.for.equate <- copy(sgp_object@Data)
-            sgp_object@SGP$Linkages <- equateSGP(data.for.equate, state, year.for.equate)
+            sgp_object@SGP$Linkages <- equateSGP(data.for.equate, state, year.for.equate, sgp.percentiles.equating.method)
             setkey(data.for.equate, VALID_CASE, CONTENT_AREA, YEAR, GRADE, SCALE_SCORE)
-            data.for.equate <- convertScaleScore(data.for.equate, year.for.equate, sgp_object@SGP$Linkages, conversion.type="OLD_TO_NEW", state)
-            Scale_Score_Linkages <- unique(data.for.equate)[!is.na(SCALE_SCORE), c("CONTENT_AREA", "YEAR", "GRADE", "SCALE_SCORE", "SCALE_SCORE_EQUATED"), with=FALSE]
-            write.table(Scale_Score_Linkages, file="Scale_Score_Linkages.txt", row.names=FALSE, na="", quote=FALSE, sep="|")
-            save(Scale_Score_Linkages, file="Scale_Score_Linkages.Rdata")
+            for (conversion.type.iter in c("OLD_TO_NEW", "NEW_TO_OLD")) {
+                for (sgp.percentiles.equating.method.iter in sgp.percentiles.equating.method) {
+                    data.for.equate <- convertScaleScore(data.for.equate, year.for.equate, sgp_object@SGP$Linkages, conversion.type=conversion.type.iter, sgp.percentiles.equating.method.iter, state)
+                    Scale_Score_Linkages[[conversion.type.iter]][[toupper(sgp.percentiles.equating.method.iter)]] <- unique(data.for.equate)[
+                        !is.na(SCALE_SCORE), intersect(names(data.for.equate),
+                            c("CONTENT_AREA", "YEAR", "GRADE", "SCALE_SCORE", "SCALE_SCORE_ACTUAL", paste("SCALE_SCORE_EQUATED", sgp.percentiles.equating.method.iter, conversion.type.iter, sep="_"))), with=FALSE]
+                    write.table(Scale_Score_Linkages[[conversion.type.iter]][[toupper(sgp.percentiles.equating.method.iter)]],
+                        file=paste(paste(getStateAbbreviation(state, type="LONG"), "Scale_Score_Linkages", toupper(sgp.percentiles.equating.method.iter), conversion.type.iter, sep="_"), "txt", sep="."), row.names=FALSE, na="", quote=FALSE, sep="|")
+                }
+            }
+            assign(paste(getStateAbbreviation(state, type="LONG"), "Scale_Score_Linkages", sep="_"), Scale_Score_Linkages)
+            save(list=paste(getStateAbbreviation(state, type="LONG"), "Scale_Score_Linkages", sep="_"),
+                file=paste(paste(getStateAbbreviation(state, type="LONG"), "Scale_Score_Linkages", sep="_"), "Rdata", sep="."))
             setkey(data.for.equate, VALID_CASE, CONTENT_AREA, YEAR, ID)
             sgp_object@Data <- data.for.equate
         }

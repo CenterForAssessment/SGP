@@ -3,7 +3,8 @@ function(tmp.data,
 	state,
 	content_areas,
 	linkages,
-	slot.data) {
+	slot.data,
+	equating.method="equipercentile") {
 
 	TRANSFORMED_SCALE_SCORE <- SCALE_SCORE <- TEMP_SCALE_SCORE <- SCALE_SCORE_EQUATED <- CONTENT_AREA <- CONTENT_AREA_LABELS <- YEAR <- GRADE <- GRADE_NUMERIC <- ID <- NULL
 	CUTSCORES <- CUTSCORES_ORIGINAL <- GRADE_FOR_CUTSCORES <- NULL
@@ -48,15 +49,15 @@ function(tmp.data,
 		for (content_area.iter in content_areas) {
 			for (grade.iter in unique(Cutscores[[content_area.iter]][['GRADE']])) {
 				Cutscores[[content_area.iter]][CONTENT_AREA==content_area.iter & GRADE==grade.iter & (is.na(YEAR) | YEAR < year.for.equate),
-					CUTSCORES:=linkages[[paste(content_area.iter, year.for.equate, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['OLD_TO_NEW']][["interpolated_function"]](CUTSCORES)]
+					CUTSCORES:=linkages[[paste(content_area.iter, year.for.equate, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][[toupper(equating.method)]][['OLD_TO_NEW']][["interpolated_function"]](CUTSCORES)]
 				tmp.min.max <- get.min.max.grade(Cutscores[[content_area.iter]])
 				if (grade.iter=="GRADE_UPPER") {
 					Cutscores[[content_area.iter]][CONTENT_AREA=="PLACEHOLDER" & GRADE=="GRADE_UPPER" & (is.na(YEAR) | YEAR < year.for.equate),
-						CUTSCORES:=linkages[[paste(content_area.iter, year.for.equate, sep=".")]][[paste("GRADE", tmp.min.max[2], sep="_")]][['OLD_TO_NEW']][["interpolated_function"]](CUTSCORES)]
+						CUTSCORES:=linkages[[paste(content_area.iter, year.for.equate, sep=".")]][[paste("GRADE", tmp.min.max[2], sep="_")]][[toupper(equating.method)]][['OLD_TO_NEW']][["interpolated_function"]](CUTSCORES)]
 				}
 				if (grade.iter=="GRADE_LOWER") {
 					Cutscores[[content_area.iter]][CONTENT_AREA=="PLACEHOLDER" & GRADE=="GRADE_LOWER" & (is.na(YEAR) | YEAR < year.for.equate),
-						CUTSCORES:=linkages[[paste(content_area.iter, year.for.equate, sep=".")]][[paste("GRADE", tmp.min.max[1], sep="_")]][['OLD_TO_NEW']][["interpolated_function"]](CUTSCORES)]
+						CUTSCORES:=linkages[[paste(content_area.iter, year.for.equate, sep=".")]][[paste("GRADE", tmp.min.max[1], sep="_")]][[toupper(equating.method)]][['OLD_TO_NEW']][["interpolated_function"]](CUTSCORES)]
 				}
 			}
 		}

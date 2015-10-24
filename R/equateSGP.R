@@ -2,7 +2,7 @@
 function(tmp.data,
 	state,
 	current.year,
-	equating.method="equip") {
+	equating.method) {
 
 	VALID_CASE <- YEAR <- CONTENT_AREA <- GRADE <- NULL
 
@@ -45,18 +45,21 @@ function(tmp.data,
 	equateSGP_INTERNAL <- function(prior.year.data, current.year.data) {
 		current.year.data.range <- round(range(current.year.data[['SCALE_SCORE']], na.rm=TRUE), digits=equate.interval.digits)
 		prior.year.data.range <- round(range(prior.year.data[['SCALE_SCORE']], na.rm=TRUE), digits=equate.interval.digits)
-		return(list(
-			NEW_TO_OLD=equate(
-				freqtab(as.numeric(as.character(round(current.year.data[['SCALE_SCORE']], digits=equate.interval.digits))),
-					scales=as.numeric(as.character(round(seq(current.year.data.range[1], current.year.data.range[2], by=0.1^equate.interval.digits), digits=equate.interval.digits)))),
-				freqtab(as.numeric(as.character(round(prior.year.data[['SCALE_SCORE']], digits=equate.interval.digits))),
-					scales=as.numeric(as.character(round(seq(prior.year.data.range[1], prior.year.data.range[2], by=0.1^equate.interval.digits), digits=equate.interval.digits)))), type=equating.method),
-			OLD_TO_NEW=equate(
-				freqtab(as.numeric(as.character(round(prior.year.data[['SCALE_SCORE']], digits=equate.interval.digits))),
-					scales=as.numeric(as.character(round(seq(prior.year.data.range[1], prior.year.data.range[2], by=0.1^equate.interval.digits), digits=equate.interval.digits)))),
-				freqtab(as.numeric(as.character(round(current.year.data[['SCALE_SCORE']], digits=equate.interval.digits))),
-					scales=as.numeric(as.character(round(seq(current.year.data.range[1], current.year.data.range[2], by=0.1^equate.interval.digits), digits=equate.interval.digits)))), type=equating.method)
-		))
+		for (equate.type.iter in equating.method) {
+			equate.list[[toupper(equate.type.iter)]] <- list(
+				NEW_TO_OLD=equate(
+					freqtab(as.numeric(as.character(round(current.year.data[['SCALE_SCORE']], digits=equate.interval.digits))),
+						scales=as.numeric(as.character(round(seq(current.year.data.range[1], current.year.data.range[2], by=0.1^equate.interval.digits), digits=equate.interval.digits)))),
+					freqtab(as.numeric(as.character(round(prior.year.data[['SCALE_SCORE']], digits=equate.interval.digits))),
+						scales=as.numeric(as.character(round(seq(prior.year.data.range[1], prior.year.data.range[2], by=0.1^equate.interval.digits), digits=equate.interval.digits)))), type=equate.type.iter),
+				OLD_TO_NEW=equate(
+					freqtab(as.numeric(as.character(round(prior.year.data[['SCALE_SCORE']], digits=equate.interval.digits))),
+						scales=as.numeric(as.character(round(seq(prior.year.data.range[1], prior.year.data.range[2], by=0.1^equate.interval.digits), digits=equate.interval.digits)))),
+					freqtab(as.numeric(as.character(round(current.year.data[['SCALE_SCORE']], digits=equate.interval.digits))),
+						scales=as.numeric(as.character(round(seq(current.year.data.range[1], current.year.data.range[2], by=0.1^equate.interval.digits), digits=equate.interval.digits)))), type=equate.type.iter)
+			)
+		}
+		return(equate.list)
 	}
 
 	### Loop over GRADE and CONTENT_AREA

@@ -41,22 +41,23 @@ analyzeSGP(sgp_object,
          get.cohort.data.info=FALSE,
          sgp.sqlite=NULL,
          sgp.percentiles.equated=NULL,
+         sgp.percentiles.equating.method="equipercentile",
          SGPt=NULL,
          ...)
 }
 
 \arguments{
-  \item{sgp_object}{An object of class \code{SGP} containing long formatted data in the \code{@Data} slot (from \code{\link{prepareSGP}}). 
+  \item{sgp_object}{An object of class \code{SGP} containing long formatted data in the \code{@Data} slot (from \code{\link{prepareSGP}}).
   }
   \item{state}{Acronym indicating state associated with the data for access to embedded knot and boundaries, cutscores, CSEMs, and other state related assessment data.
   }
-  \item{years}{A vector indicating year(s) in which to produce student growth percentiles and/or student growth projections/trajectories. If missing the 
+  \item{years}{A vector indicating year(s) in which to produce student growth percentiles and/or student growth projections/trajectories. If missing the
 function will use the data to infer the year(s) based upon the assumption of having at least three years of panel data for analyses.
   }
-  \item{content_areas}{A vector indicating content area(s) in which to produce student growth percentiles and/or student growth projections/trajectories. 
+  \item{content_areas}{A vector indicating content area(s) in which to produce student growth percentiles and/or student growth projections/trajectories.
 If left missing the function will use the data to infer the content area(s) available for analyses.
   }
-  \item{grades}{A vector indicating grades for which to calculate student growth percentiles and/or student growth projections/trajectories. 
+  \item{grades}{A vector indicating grades for which to calculate student growth percentiles and/or student growth projections/trajectories.
 If left missing the function will use the data to infer all the grade progressions for student growth percentile and student growth projections/trajectories analyses.
   }
   \item{sgp.percentiles}{Boolean variable indicating whether to calculate student growth percentiles. Defaults to TRUE.
@@ -71,12 +72,12 @@ If left missing the function will use the data to infer all the grade progressio
   }
   \item{sgp.projections.lagged.baseline}{Boolean variable indicating whether to calculate lagged baseline student growth projections. Defaults to TRUE.
   }
-  \item{sgp.percentiles.baseline.max.order}{Integer indicating the maximum order to calculate baseline student growth percentiles (regardless of maximum coefficient matrix order).  Also the max order of baseline coefficient matrices to be calculated if requested. Default is 3. To utilize the maximum matrix order, set to NULL. 
+  \item{sgp.percentiles.baseline.max.order}{Integer indicating the maximum order to calculate baseline student growth percentiles (regardless of maximum coefficient matrix order).  Also the max order of baseline coefficient matrices to be calculated if requested. Default is 3. To utilize the maximum matrix order, set to NULL.
   }
   \item{sgp.projections.baseline.max.order}{Integer indicating the maximum order to calculate baseline student growth projections (regardless of maximum coefficient matrix order). Default is 3.
 To utilize the maximum matrix order, set to NULL.
   }
-  \item{sgp.projections.lagged.baseline.max.order}{Integer indicating the maximum order to calculate lagged baseline student growth projections (regardless of maximum coefficient matrix order). 
+  \item{sgp.projections.lagged.baseline.max.order}{Integer indicating the maximum order to calculate lagged baseline student growth projections (regardless of maximum coefficient matrix order).
 Default is 3.  To utilize the maximum matrix order, set to NULL.
   }
   \item{sgp.projections.max.forward.progression.years}{Integer indicating the maximum number of years forward that cohort based projections will be established for. Default is 3 years.
@@ -85,7 +86,7 @@ Default is 3.  To utilize the maximum matrix order, set to NULL.
   }
   \item{sgp.minimum.default.panel.years}{Integer indicating the minimum number of panels years to use for default sgp analyses. Default value is NULL (converted to 3) years of data.
   }
-  \item{sgp.use.my.coefficient.matrices}{Argument, defaults to NULL, indicating whether to use coefficient matrices embedded in argument supplied to 'sgp_object' to calculate student growth 
+  \item{sgp.use.my.coefficient.matrices}{Argument, defaults to NULL, indicating whether to use coefficient matrices embedded in argument supplied to 'sgp_object' to calculate student growth
   percentiles.
   }
   \item{sgp.use.my.sgp_object.baseline.coefficient.matrices}{Argument, defaults to NULL (FALSE), indicating whether to utilize baseline matrices embedded in supplied \code{sgp_object} and not
@@ -99,13 +100,13 @@ Default is 3.  To utilize the maximum matrix order, set to NULL.
   }
   \item{goodness.of.fit.print}{Boolean variable indicating whether to print out Goodness of Fit figures as PDF into a directory labeled Goodness of Fit. Defaults to TRUE.
   }
-  \item{sgp.config}{If \code{years}, \code{content_areas}, and \code{grades} are missing, user can directly specify a list containing three vectors: 
-  \code{baseline.content.areas}, \code{baseline.panel.years}, and \code{baseline.grade.sequences}. This advanced option is helpful for analysis of non-traditional grade progressions and 
+  \item{sgp.config}{If \code{years}, \code{content_areas}, and \code{grades} are missing, user can directly specify a list containing three vectors:
+  \code{baseline.content.areas}, \code{baseline.panel.years}, and \code{baseline.grade.sequences}. This advanced option is helpful for analysis of non-traditional grade progressions and
   other special cases. See examples for use cases.
   }
-  \item{sgp.config.drop.nonsequential.grade.progression.variables}{Boolean variable (defaults to TRUE) indicating whether non-sequential grade progression variables should be dropped when 
-  sgp.config is processed. For example, if a grade progression of c(3,4,6) is provided, the data configuration will assume (default is TRUE) that data for a missing year needs to be dropped prior 
-  to applying \code{\link{studentGrowthPercentiles}} or \code{\link{studentGrowthProjections}} to the data. 
+  \item{sgp.config.drop.nonsequential.grade.progression.variables}{Boolean variable (defaults to TRUE) indicating whether non-sequential grade progression variables should be dropped when
+  sgp.config is processed. For example, if a grade progression of c(3,4,6) is provided, the data configuration will assume (default is TRUE) that data for a missing year needs to be dropped prior
+  to applying \code{\link{studentGrowthPercentiles}} or \code{\link{studentGrowthProjections}} to the data.
   }
   \item{sgp.baseline.panel.years}{A vector of years to be used for baseline coefficient matrix calculation. Default is to use most recent five years of data.}
   \item{sgp.baseline.config}{A list containing three vectors: \code{sgp.content.areas}, \code{sgp.panel.years}, \code{sgp.grade.sequences} indicating how baseline student growth percentile analyses
@@ -115,11 +116,11 @@ Default is 3.  To utilize the maximum matrix order, set to NULL.
   }
 \item{parallel.config}{A named list with, at a minimum, two elements indicating 1) the BACKEND package to be used for parallel computation and 2) the WORKERS list to specify the number of processors to be used in each major analysis.  The BACKEND element can be set = to \code{FOREACH} or \code{PARALLEL}.  Please consult the manuals and vignettes for information of these packages!
 
-TYPE is a third element of the \code{parallel.config} list that provides necessary information when using FOREACH or PARALLEL packages as the backend. With BACKEND="FOREACH", the TYPE element specifies the flavor of 'foreach' backend.  As of version 1.0-1.0, only "doParallel" is supported.   If BACKEND = "PARALLEL", the \code{parallel} package will be used.  This package combines deprecated parallel packages \code{snow} and \code{multicore}.  Using the "snow" implementation of \code{parallel} the function will create a cluster object based on the TYPE element specified and the number of workers requested (see WORKERS list description below).  The TYPE element indicates the users preferred cluster type (either "PSOCK" for socket cluster of "MPI" for an OpenMPI cluster). If Windows is the operating system, this "snow" implementation must be used and the TYPE element must = "PSOCK".  Defaults are assigned based on operating system if TYPE is missing based on system OS.  Unix/Mac OS defaults to the "multicore" to avoid worker node pre-scheduling and appears to be more efficient in these operating systems.  
+TYPE is a third element of the \code{parallel.config} list that provides necessary information when using FOREACH or PARALLEL packages as the backend. With BACKEND="FOREACH", the TYPE element specifies the flavor of 'foreach' backend.  As of version 1.0-1.0, only "doParallel" is supported.   If BACKEND = "PARALLEL", the \code{parallel} package will be used.  This package combines deprecated parallel packages \code{snow} and \code{multicore}.  Using the "snow" implementation of \code{parallel} the function will create a cluster object based on the TYPE element specified and the number of workers requested (see WORKERS list description below).  The TYPE element indicates the users preferred cluster type (either "PSOCK" for socket cluster of "MPI" for an OpenMPI cluster). If Windows is the operating system, this "snow" implementation must be used and the TYPE element must = "PSOCK".  Defaults are assigned based on operating system if TYPE is missing based on system OS.  Unix/Mac OS defaults to the "multicore" to avoid worker node pre-scheduling and appears to be more efficient in these operating systems.
 
 The WORKERS list must contain, at a minimum, a single number of processors (nodes) desired or available.  If WORKERS is specified in this manner, then the same number of processors will be used for each analysis type (sgp.percentiles, sgp.projections, ...  sgp.projections.lagged.baseline).  Alternatively, the user may specify the numbers of processors used for each analysis.  This allows for better memory management in systems that do not have enough RAM available per core.  The choice of the number of cores is a balance between the number of processors available, the amount of RAM a system has and the size of the data (sgp_object).  Each system will be different and will require some tailoring.  One rule of thumb used by the authors is to allow for 4GB of memory per core used for running large state data.  The SGP Demonstration (and data that size) requires more like 1-2GB per core.  As an example, PERCENTILES=4 and  PROJECTIONS=2 might be used on a quad core machine with 4 GB of RAM.  This will use all 4 cores available for the sgp.percentiles analysis and 2 cores for the sgp.projections analysis (which requires more memory than available).  The WORKERS list accepts these elements:   PERCENTILES, PROJECTIONS (for both cohort and baseline referenced projections), LAGGED_PROJECTIONS (for both cohort and baseline referenced lagged projections), BASELINE_MATRICES (used to produce the baseline coefficient matrices when not available in SGPstateData - very computationally intensive), BASELINE_PERCENTILES (SGP calculation only when baseline coefficient matrices have already been produced and are available - NOT very computationally intensive).
 
-Alternatively, the name of an external CLUSTER.OBJECT (PSOCK or MPI) set up by the user outside of the function can be used.  
+Alternatively, the name of an external CLUSTER.OBJECT (PSOCK or MPI) set up by the user outside of the function can be used.
 
 Example use cases are provided below.
   }
@@ -130,14 +131,16 @@ Example use cases are provided below.
   \item{sgp.projections.projection.unit}{A character vector argument indicating whether the studentGrowthProjections function should produce projections relative to future grades or future years.
   Options are "YEAR" and "GRADE", with default being "YEAR".
   }
-  \item{get.cohort.data.info}{A Boolean argument (defaults to FALSE) indicating whether a summary of all cohorts to be submitted to the \code{\link{studentGrowthPercentiles}} and 
+  \item{get.cohort.data.info}{A Boolean argument (defaults to FALSE) indicating whether a summary of all cohorts to be submitted to the \code{\link{studentGrowthPercentiles}} and
   \code{\link{studentGrowthProjections}} functions should be performed prior to analysis.
   }
- \item{sgp.sqlite}{A Boolean argument (defaults to NULL) indicating whether a SQLite database file of the essential SGP data should be created from the \code{@Data} slot and subsequently used to extract data subsets for analysis with \code{\link{studentGrowthPercentiles}} and 
+ \item{sgp.sqlite}{A Boolean argument (defaults to NULL) indicating whether a SQLite database file of the essential SGP data should be created from the \code{@Data} slot and subsequently used to extract data subsets for analysis with \code{\link{studentGrowthPercentiles}} and
   \code{\link{studentGrowthProjections}} functions.  The default, NULL, allows for an test of the size of the \code{@Data} object.  If greater than 1 GB \code{sgp.sqlite} is set to TRUE internally.  When TRUE, this step can take some time but can also substantially reduce the amount of RAM memory required to conduct analyses.  If set to TRUE the \code{tmp_data} directory and file "TMP_SGP_Data.sqlite" will be created.  This tmp_data directory and file are deleted by default although one may keep them if the argument is specified as the character "KEEP".  However, if an existing database of that name exists, it will be deleted and a new version created.
  }
   \item{sgp.percentiles.equated}{A Boolean argument (defaults to NULL/FALSE) indicating whether equating should be used on the most recent year of test data provided. Equating allows for student growth
 projections to be calculated in across assessment transitions where the scale for the assessment changes.
+  }
+  \item{sgp.percentiles.equating.method}{A character vector (defaults to 'equipercentile') indicating the type of equating method to use. Options include any combination of 'identity', 'mean', 'linear', and 'equipercentile'.
   }
   \item{SGPt}{An argument supplied to implement time-dependent SGP analyses (SGPt). Default is NULL giving standard, non-time dependent argument. If set to TRUE, the function assumes the
   variables 'TIME' and 'TIME_LAG' are supplied as part of the panel.data. To specify other names, supply a list of the form: list(TIME='my_time_name', TIME_LAG='my_time_lag_name'), substituting
@@ -147,8 +150,8 @@ projections to be calculated in across assessment transitions where the scale fo
   }
 }
 
-\value{Function returns a list containing the long data set in the \code{@Data} slot as a \code{data.table} keyed using \code{VALID_CASE}, \code{CONTENT_AREA}, 
-\code{YEAR}, \code{ID} and the student growth percentile and/or student growth projection/trajectory results in the \code{SGP} slot. 
+\value{Function returns a list containing the long data set in the \code{@Data} slot as a \code{data.table} keyed using \code{VALID_CASE}, \code{CONTENT_AREA},
+\code{YEAR}, \code{ID} and the student growth percentile and/or student growth projection/trajectory results in the \code{SGP} slot.
 }
 
 \author{Damian W. Betebenner \email{dbetebenner@nciea.org} and Adam Van Iwaarden \email{vaniwaarden@colorado.edu}}
@@ -210,7 +213,7 @@ READING.2013_2014.MATH_PRIOR = list(
 ## An example showing multiple priors within a single year
 
 Demonstration_SGP <- prepareSGP(sgpData_LONG)
- 
+
 DEMO.config <- list(
 READING.2012_2013 = list(
 	sgp.content.areas=c("MATHEMATICS", "READING", "MATHEMATICS", "READING", "READING"),
@@ -245,19 +248,19 @@ Demonstration_SGP <- prepareSGP(sgpData_LONG)
 Demonstration_SGP <- analyzeSGP(Demonstration_SGP,
 	parallel.config=list(
 		BACKEND="PARALLEL", TYPE="PSOCK",
-		WORKERS=list(PERCENTILES=4, 
-                    PROJECTIONS=2, 
+		WORKERS=list(PERCENTILES=4,
+                    PROJECTIONS=2,
                     LAGGED_PROJECTIONS=2,
                     BASELINE_PERCENTILES=4))
 
 ##  New parallel package - only available with R 2.13 or newer
-#  Note there are up to 16 workers, and MPI is used, 
+#  Note there are up to 16 workers, and MPI is used,
 #  suggesting this example is for a HPC cluster, possibly Windows OS.
 	...
 	parallel.config=list(
 		BACKEND="PARALLEL", TYPE="MPI",
-		WORKERS=list(PERCENTILES=16, 
-                    PROJECTIONS=8, 
+		WORKERS=list(PERCENTILES=16,
+                    PROJECTIONS=8,
                     LAGGED_PROJECTIONS=6,
                     BASELINE_PERCENTILES=12))
 	...
@@ -270,7 +273,7 @@ Demonstration_SGP <- analyzeSGP(Demonstration_SGP,
 	...
 
 
-#  NOTE:  This list of parallel.config specifications is NOT exhaustive.  
+#  NOTE:  This list of parallel.config specifications is NOT exhaustive.
 #  See examples in analyzeSGP documentation for some others.0
 
 ###
@@ -293,7 +296,7 @@ SGPstateData$DEMO$Baseline_splineMatrix <- NULL
 
 #  to be completed
 
-}  
+}
 }
 
 \keyword{documentation}
