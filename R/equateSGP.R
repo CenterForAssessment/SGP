@@ -6,7 +6,7 @@ function(tmp.data,
 
 	VALID_CASE <- YEAR <- CONTENT_AREA <- GRADE <- NULL
 
-	tmp.list <- list()
+	tmp.list <- equate.list <- list()
 	current.year <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]
 	equate.interval.digits <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Equate_Interval_Digits"]]
 	if (is.null(equate.interval.digits)) equate.interval.digits <- 0
