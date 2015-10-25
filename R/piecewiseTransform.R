@@ -6,7 +6,8 @@ function(scale_score,
 	grade,
 	output.digits=1,
 	sgp.projections.equated=NULL,
-	new.cutscores=NULL) {
+	new.cutscores=NULL,
+	equating.method="equipercentile") {
 
 	if (all(is.na(scale_score))) return(scale_score)
 
@@ -57,7 +58,7 @@ function(scale_score,
 		}
 	} else {
 		if (!is.na(content_area) & !is.na(grade)) {
-			sgp.projections.equated[['Linkages']][[paste(content_area, sgp.projections.equated[['Year']], sep=".")]][[paste("GRADE", grade, sep="_")]][['OLD_TO_NEW']][['interpolated_function']](scale_score)
+			sgp.projections.equated[['Linkages']][[paste(content_area, sgp.projections.equated[['Year']], sep=".")]][[paste("GRADE", grade, sep="_")]][[toupper(equating.method)]][['OLD_TO_NEW']][['interpolated_function']](scale_score)
 		} else {
 			as.numeric(scale_score)
 		}
