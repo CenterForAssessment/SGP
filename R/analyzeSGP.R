@@ -368,6 +368,7 @@ function(sgp_object,
 		year.for.equate <- tail(sort(unique(sgp_object@Data$YEAR)), 1)
         if (is.null(sgp.use.my.coefficient.matrices)) {
             Scale_Score_Linkages <- list()
+            dir.create(file.path("Data/Linkages"), recursive=TRUE, showWarnings=FALSE)
 		    content_areas.for.equate <- unique(sgp_object@Data[YEAR==year.for.equate]$CONTENT_AREA)
             if (!identical(years, year.for.equate)) {
                 message(paste("\tNOTE: Analyses involving equating only occur in most recent year. 'years' argument changed to ", year.for.equate, ".", sep=""))
@@ -396,12 +397,12 @@ function(sgp_object,
                         !is.na(SCALE_SCORE), intersect(names(data.for.equate),
                             c("CONTENT_AREA", "YEAR", "GRADE", "SCALE_SCORE", "SCALE_SCORE_ACTUAL", paste("SCALE_SCORE)_EQUATED", sgp.percentiles.equating.method.iter, conversion.type.iter, sep="_"))), with=FALSE]
                     write.table(Scale_Score_Linkages[[conversion.type.iter]][[toupper(sgp.percentiles.equating.method.iter)]],
-                        file=paste(paste(getStateAbbreviation(state, type="LONG"), "Scale_Score_Linkages", toupper(sgp.percentiles.equating.method.iter), conversion.type.iter, sep="_"), "txt", sep="."), row.names=FALSE, na="", quote=FALSE, sep="|")
+                        file=paste(paste(gsub(" ", "_", getStateAbbreviation(state, type="LONG")), "Scale_Score_Linkages", toupper(sgp.percentiles.equating.method.iter), conversion.type.iter, sep="_"), "txt", sep="."), row.names=FALSE, na="", quote=FALSE, sep="|")
                 }
             }
-            assign(paste(getStateAbbreviation(state, type="LONG"), "Scale_Score_Linkages", sep="_"), Scale_Score_Linkages)
-            save(list=paste(getStateAbbreviation(state, type="LONG"), "Scale_Score_Linkages", sep="_"),
-                file=paste(paste(getStateAbbreviation(state, type="LONG"), "Scale_Score_Linkages", sep="_"), "Rdata", sep="."))
+            assign(paste(gsub(" ", "_", getStateAbbreviation(state, type="LONG")), "Scale_Score_Linkages", sep="_"), Scale_Score_Linkages)
+            save(list=paste(gsub(" ", "_", getStateAbbreviation(state, type="LONG")), "Scale_Score_Linkages", sep="_"),
+                file=paste(paste(gsub(" ", "_", getStateAbbreviation(state, type="LONG")), "Scale_Score_Linkages", sep="_"), "Rdata", sep="."))
             setkey(data.for.equate, VALID_CASE, CONTENT_AREA, YEAR, ID)
             sgp_object@Data <- data.for.equate
         }
