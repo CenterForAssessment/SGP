@@ -404,7 +404,9 @@ function(sgp_object,
             save(list=paste(gsub(" ", "_", getStateAbbreviation(state, type="LONG")), "Scale_Score_Linkages", sep="_"),
                 file=paste("Data/Linkages/", paste(gsub(" ", "_", getStateAbbreviation(state, type="LONG")), "Scale_Score_Linkages", sep="_"), ".Rdata", sep=""))
             setkey(data.for.equate, VALID_CASE, CONTENT_AREA, YEAR, ID)
-            sgp_object@Data <- data.for.equate[,c(names(sgp_object@Data, 'SCALE_SCORE_EQUATED_EQUIPERCENTILE_OLD_TO_NEW'))][,SCALE_SCORE_EQUATED:=SCALE_SCORE_EQUATED_EQUIPERCENTILE_OLD_TO_NEW]
+            data.for.equate[,c(names(sgp_object@Data), 'SCALE_SCORE_EQUATED_EQUIPERCENTILE_OLD_TO_NEW'), with=FALSE]
+            setnames(data.for.equate, 'SCALE_SCORE_EQUATED_EQUIPERCENTILE_OLD_TO_NEW', 'SCALE_SCORE_EQUATED')
+            sgp_object@Data <- data.for.equate
         }
 		equate.variable <- "SCALE_SCORE_EQUATED"
 		equate.label <- coefficient.matrix.type <- "EQUATED"
