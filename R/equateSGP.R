@@ -68,13 +68,14 @@ function(tmp.data,
 		for (grade.iter in grades.for.equate) {
 			tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]] <-
 				equateSGP_INTERNAL(prior.year.data[list(content_area.iter, grade.iter)], current.year.data[list(content_area.iter, grade.iter)])
-
-			approxfun.scale <- tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['NEW_TO_OLD']][['concordance']][['scale']]
-			approxfun.yx <- tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['NEW_TO_OLD']][['concordance']][['yx']]
-			tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['NEW_TO_OLD']]$interpolated_function <- approxfun(
-				approxfun.scale, approxfun.yx, rule=2)
-			tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][['OLD_TO_NEW']]$interpolated_function <- approxfun(
+			for (equate.type.iter in equating.method) {
+				approxfun.scale <- tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][[equate.type.iter]][['NEW_TO_OLD']][['concordance']][['scale']]
+				approxfun.yx <- tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][[equate.type.iter]][['NEW_TO_OLD']][['concordance']][['yx']]
+				tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][[equate.type.iter]][['NEW_TO_OLD']]$interpolated_function <- approxfun(
+					approxfun.scale, approxfun.yx, rule=2)
+					tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][[equate.type.iter]][['OLD_TO_NEW']]$interpolated_function <- approxfun(
 				approxfun.yx, approxfun.scale, rule=2)
+			}
 		}
 	}
 	return(tmp.list)
