@@ -101,7 +101,7 @@ function(sgp_object,
 		if (is.null(coefficient.matrices) && length(find.package("RLImatrices", quiet=TRUE))) {
 			eval(parse(text="require(RLImatrices)"))
 			SGPstateData[[state]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <-
-			eval(parse(text=paste(paste(state, "SGPt_Baseline_Matrices", sep="_"), "$", paste(state, "SGPt_Baseline_Matrices", max(tail(sort(unique(sgp_object@Data[['YEAR']])), 1), "2013_2014.1"), sep="_"), sep="")))
+			eval(parse(text=paste(paste(state, "SGPt_Baseline_Matrices", sep="_"), "$", paste(state, "SGPt_Baseline_Matrices", max(tail(sort(unique(additional.data[['YEAR']])), 1), "2013_2014.1"), sep="_"), sep="")))
 		}
 	}
 
