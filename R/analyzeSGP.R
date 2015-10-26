@@ -34,7 +34,7 @@ function(sgp_object,
          get.cohort.data.info=FALSE,
          sgp.sqlite=NULL,
          sgp.percentiles.equated=NULL,
-         sgp.percentiles.equating.method="equipercentile",
+         sgp.percentiles.equating.method=NULL,
          SGPt=NULL,
          ...) {
 
@@ -368,6 +368,10 @@ function(sgp_object,
 		year.for.equate <- tail(sort(unique(sgp_object@Data$YEAR)), 1)
         if (is.null(sgp.use.my.coefficient.matrices)) {
             Scale_Score_Linkages <- list()
+            if (is.null(sgp.percentiles.equating.method)) {
+                message("\tNOTE: Analyses involving equating will be performed with default 'equipercentile' method. For other methods, see documentation associated with the 'sgp.percentiles.equating.method' argument in 'analyzeSGP'.")
+                sgp.percentiles.equating.method <- 'equipercentile'
+            }
             dir.create(file.path("Data", paste("Linkages", year.for.equate, sep="_")), recursive=TRUE, showWarnings=FALSE)
 		    content_areas.for.equate <- unique(sgp_object@Data[YEAR==year.for.equate]$CONTENT_AREA)
             if (!identical(years, year.for.equate)) {
