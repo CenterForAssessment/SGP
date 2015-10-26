@@ -12,11 +12,11 @@ updateSGP(
 	with_sgp_data_LONG=NULL,
 	with_sgp_data_INSTRUCTOR_NUMBER=NULL,
 	state=NULL,
-	steps=c("prepareSGP", 
-		"analyzeSGP", 
-		"combineSGP", 
-		"summarizeSGP", 
-		"visualizeSGP", 
+	steps=c("prepareSGP",
+		"analyzeSGP",
+		"combineSGP",
+		"summarizeSGP",
+		"visualizeSGP",
 		"outputSGP"),
 	years=NULL,
 	content_areas=NULL,
@@ -39,9 +39,9 @@ updateSGP(
 	update.old.data.with.new=TRUE,
 	sgPlot.demo.report=TRUE,
 	plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot"),
-	outputSGP.output.type=c("LONG_Data", 
-				"LONG_FINAL_YEAR_Data", 
-				"WIDE_Data", 
+	outputSGP.output.type=c("LONG_Data",
+				"LONG_FINAL_YEAR_Data",
+				"WIDE_Data",
 				"INSTRUCTOR_Data"),
 	sgp.config=NULL,
 	goodness.of.fit.print=TRUE,
@@ -49,6 +49,7 @@ updateSGP(
 	sgp.sqlite=NULL,
 	SGPt=NULL,
 	sgp.percentiles.equated=NULL,
+	sgp.percentiles.equating.method=NULL,
 	fix.duplicates=NULL,
 	...)
 }
@@ -61,16 +62,16 @@ updateSGP(
   \item{with_sgp_data_INSTRUCTOR_NUMBER}{The addition INSTRUCTOR_NUMBER data in LONG format to be added to the supplied SGP object. The additional data must be in the same format as the data in the
   @Data_Supplementary[['INSTRUCTOR_NUMBER']] slot.  Default is NULL, no INSTRUCTOR_NUMBER data is supplied.
   }
-  \item{state}{The 'state' for the sgp_object. Derived from sgp_object name if not explicitly supplied. 
+  \item{state}{The 'state' for the sgp_object. Derived from sgp_object name if not explicitly supplied.
   }
-  \item{steps}{A vector indicting the steps abcSGP will perform as part of the update. Defaults to all steps: \code{\link{prepareSGP}}, \code{\link{analyzeSGP}}, \code{\link{combineSGP}}, 
+  \item{steps}{A vector indicting the steps abcSGP will perform as part of the update. Defaults to all steps: \code{\link{prepareSGP}}, \code{\link{analyzeSGP}}, \code{\link{combineSGP}},
   \code{\link{summarizeSGP}}, \code{\link{visualizeSGP}}, \code{\link{outputSGP}}.
   }
   \item{years}{If only 'what_sgp_object' is supplied, years specifies the years to be run among those in the provided sgp_object.
   }
   \item{content_areas}{If only 'what_sgp_object' is supplied, content_areas specifies the content areas to be run among those provided by the coefficient matrices in the sgp_object. Default is to run all analyses associated with the coefficient matrices.
   }
-  \item{grades}{A vector indicating grades for which to calculate student growth percentiles and/or student growth projections/trajectories. 
+  \item{grades}{A vector indicating grades for which to calculate student growth percentiles and/or student growth projections/trajectories.
 If missing the function will use the data to infer all the grade progressions for student growth percentile and student growth projections/trajectories analyses.   This argument is passed to either \code{\link{abcSGP}} or \code{\link{analyzeSGP}} depending on the update context.
   }
   \item{sgp.percentiles}{Boolean variable indicating whether to calculate student growth percentiles (if analyzeSGP is included in the 'steps' argument). Defaults to TRUE.
@@ -96,19 +97,19 @@ If missing the function will use the data to infer all the grade progressions fo
   }
   \item{calculate.simex.baseline}{A character state acronym or list including state/csem variable, simulation.iterations, lambda and extrapolation method. Defaults to NULL, no simex calculations performed.  Alternatively, setting the argument to TRUE sets the list up with state=state, lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear", save.matrices=TRUE and simex.use.my.coefficient.matrices = TRUE.  This argument is passed to \code{\link{analyzeSGP}}.
   }
-  \item{sgp.use.my.coefficient.matrices}{A Boolean argument (defaults to FALSE/NULL) passed to \code{\link{analyzeSGP}} indicating whether previous coefficient matrices should be used as 
+  \item{sgp.use.my.coefficient.matrices}{A Boolean argument (defaults to FALSE/NULL) passed to \code{\link{analyzeSGP}} indicating whether previous coefficient matrices should be used as
   part of the analyses.
   }
-  \item{sgp.target.scale.scores}{A Boolean argument (defaults to FALSE/NULL) passed to \code{\link{combineSGP}} indicating whether to calculate scale scores associated with SGP targets as 
+  \item{sgp.target.scale.scores}{A Boolean argument (defaults to FALSE/NULL) passed to \code{\link{combineSGP}} indicating whether to calculate scale scores associated with SGP targets as
   part of the analyses.
   }
-  \item{sgp.target.scale.scores.only}{A Boolean argument (defaults to FALSE/NULL) passed to \code{\link{combineSGP}} indicating whether ONLY to calculate scale scores associated with SGP targets as 
+  \item{sgp.target.scale.scores.only}{A Boolean argument (defaults to FALSE/NULL) passed to \code{\link{combineSGP}} indicating whether ONLY to calculate scale scores associated with SGP targets as
   part of the \code{\link{combineSGP}}.
   }
   \item{overwrite.existing.data}{A Boolean argument (defaults to FALSE) indicating whether updateSGP should overwrite existing data/results from an earlier run as part of updateSGP.
   }
   \item{update.old.data.with.new}{A Boolean argument (defaults to TRUE) indicating whether updateSGP should add new data supplied in argument with_SGP_Data_LONG to existing longitudinal data
-  or reduce data set to run analyses on only that which is provided. 
+  or reduce data set to run analyses on only that which is provided.
   }
   \item{sgPlot.demo.report}{A Boolean argument (defaults to TRUE) indicating whether updateSGP should produce just the demo student growth plots or those associated with all students in the last year.
   }
@@ -122,15 +123,18 @@ If missing the function will use the data to infer all the grade progressions fo
   }
   \item{goodness.of.fit.print}{A Boolean variable passed to \code{\link{analyzeSGP}} indicating whether to print goodness of fit plots.
   }
-  \item{parallel.config}{Parallel computation configuration passed to \code{\link{abcSGP}}, \code{\link{analyzeSGP}}, \code{\link{combineSGP}}, and \code{\link{summarizeSGP}}. See documentation 
+  \item{parallel.config}{Parallel computation configuration passed to \code{\link{abcSGP}}, \code{\link{analyzeSGP}}, \code{\link{combineSGP}}, and \code{\link{summarizeSGP}}. See documentation
   under those functions for details.
   }
   \item{sgp.sqlite}{A Boolean argument (defaults to NULL) indicating whether a SQLite database file of the essential SGP data should be created from the \code{@Data} slot and subsequently used to extract data subsets for analyses conducted in order to reduce the amount of RAM memory required.  See full argument description in \code{\link{analyzeSGP}}.
   }
   \item{SGPt}{Argument (defaults to NULL) indicating whether time dependent student growth percentile (SGPt) are calculate.
   }
-  \item{sgp.percentiles.equated}{Argument (defaults to NULL) passed to \code{\link{abcSGP}} and \code{\link{analyzeSGP}} indicating whether equated SGP are to be 
+  \item{sgp.percentiles.equated}{Argument (defaults to NULL) passed to \code{\link{abcSGP}} and \code{\link{analyzeSGP}} indicating whether equated SGP are to be
   calculated.
+  }
+  \item{sgp.percentiles.equating.method}{Character vector argument passed to \code{\link{analyzeSGP}} indicating type(s) of equating method to used if \code{sgp.percentiles.equated=TRUE}.
+  Default is NULL indicating 'equipercentile' equating. Options include 'identity', 'mean', 'linear', and 'equipercentile'.
   }
   \item{fix.duplicates}{Argument to control how \code{prepareSGP} deals with duplicate records based upon the key of VALID_CASE, CONTENT_AREA, YEAR, and ID.
   The function currently warns of duplicate records and doesn't modify data. If set to TRUE, \code{prepareSGP} tries to
@@ -165,7 +169,7 @@ Demonstration_SGP <- abcSGP(
 Demonstration_SGP <- updateSGP(
         what_sgp_object=Demonstration_SGP,
         with_sgp_data_LONG=Demonstration_Data_LONG_2013_2014)
-}  
+}
 }
 
 \keyword{documentation}

@@ -1,4 +1,4 @@
-`updateSGP` <- 
+`updateSGP` <-
 function(what_sgp_object=NULL,
 	with_sgp_data_LONG=NULL,
 	with_sgp_data_INSTRUCTOR_NUMBER=NULL,
@@ -7,7 +7,7 @@ function(what_sgp_object=NULL,
 	years=NULL,
 	content_areas=NULL,
 	grades=NULL,
-	sgp.percentiles=TRUE, 
+	sgp.percentiles=TRUE,
 	sgp.projections=TRUE,
 	sgp.projections.lagged=TRUE,
 	sgp.percentiles.baseline=TRUE,
@@ -32,6 +32,7 @@ function(what_sgp_object=NULL,
 	sgp.sqlite=NULL,
 	SGPt=NULL,
 	sgp.percentiles.equated=NULL,
+	sgp.percentiles.equating.method=NULL,
 	fix.duplicates=NULL,
 	...) {
 
@@ -61,7 +62,7 @@ function(what_sgp_object=NULL,
 	### Utility functions
 
 	"%w/o%" <- function(x,y) x[!x %in% y]
-	
+
 	### Argument checks
 
 	if (is.null(what_sgp_object)) {
@@ -83,7 +84,7 @@ function(what_sgp_object=NULL,
 	##############################################################################
 
 	if (is.null(with_sgp_data_LONG)) {
-		
+
 		tmp.years <- tmp.content_areas.years <- list()
 
 		if (is.null(content_areas)) {
@@ -116,10 +117,10 @@ function(what_sgp_object=NULL,
 		### Add in INSTRUCTOR_NUMBER data is supplied
 
 		if (!is.null(with_sgp_data_INSTRUCTOR_NUMBER)) {
-			what_sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']] <- 
+			what_sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']] <-
 				data.table(rbindlist(list(what_sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']], with_sgp_data_INSTRUCTOR_NUMBER), fill=TRUE),
 					key=c("ID", "CONTENT_AREA", "YEAR"))
-		}		
+		}
 
 		### Update results
 
@@ -189,20 +190,20 @@ function(what_sgp_object=NULL,
 			}
 
 			what_sgp_object <- abcSGP(
-						what_sgp_object, 
-						steps=steps, 
-						years=update.years, 
+						what_sgp_object,
+						steps=steps,
+						years=update.years,
 						content_areas=update.content_areas,
 						grades=update.grades,
-						state=state, 
+						state=state,
 						sgp.percentiles=sgp.percentiles,
 						sgp.projections=sgp.projections,
 						sgp.projections.lagged=sgp.projections.lagged,
 						sgp.percentiles.baseline=sgp.percentiles.baseline,
 						sgp.projections.baseline=sgp.projections.baseline,
 						sgp.projections.lagged.baseline=sgp.projections.lagged.baseline,
-						save.intermediate.results=save.intermediate.results, 
-						save.old.summaries=save.old.summaries, 
+						save.intermediate.results=save.intermediate.results,
+						save.old.summaries=save.old.summaries,
 						sgPlot.demo.report=sgPlot.demo.report,
 						sgp.use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
 						calculate.simex = calculate.simex,
@@ -235,17 +236,17 @@ function(what_sgp_object=NULL,
 				}
 				tmp.sgp_object.update <- prepareSGP(tmp.long.data, state=state, create.additional.variables=FALSE, fix.duplicates=fix.duplicates)
 				tmp.sgp_object.update@SGP$Coefficient_Matrices <- what_sgp_object@SGP$Coefficient_Matrices
-				
+
 				if (is.null(SGPstateData[[state]][["SGP_Configuration"]])) {
 					SGPstateData[[state]][["SGP_Configuration"]] <- list(return.prior.scale.score.standardized=FALSE)
 				} else SGPstateData[[state]][["SGP_Configuration"]][["return.prior.scale.score.standardized"]] <- FALSE
 
 				tmp.sgp_object.update <- analyzeSGP(
 							tmp.sgp_object.update,
-							years=update.years, 
+							years=update.years,
 							content_areas=update.content_areas,
 							grades=update.grades,
-							state=state, 
+							state=state,
 							sgp.percentiles=sgp.percentiles,
 							sgp.projections=sgp.projections,
 							sgp.projections.lagged=sgp.projections.lagged,
@@ -261,9 +262,10 @@ function(what_sgp_object=NULL,
 							sgp.sqlite=sgp.sqlite,
 							SGPt=SGPt,
 							sgp.percentiles.equated=sgp.percentiles.equated,
+							sgp.percentiles.equating.method=sgp.percentiles.equating.method,
 							parallel.config=parallel.config,
 							...)
-							
+
 				if ("combineSGP" %in% steps) {
 					tmp.sgp_object.update <- suppressMessages(combineSGP(tmp.sgp_object.update,
 												state=state,
@@ -284,7 +286,7 @@ function(what_sgp_object=NULL,
 				tmp.file.name <- paste(gsub(" ", "_", toupper(getStateAbbreviation(state, type="name"))), "SGP_Update", paste(update.years, collapse=","), sep="_")
 				assign(tmp.file.name, tmp.sgp_object.update)
 				save(list=tmp.file.name, file=file.path("Data", "Updated_Data", paste(tmp.file.name, "Rdata", sep=".")))
-				outputSGP(tmp.sgp_object.update, state=state, output.type=union(outputSGP.output.type, intersect(outputSGP.output.type, "LONG_FINAL_YEAR_Data")), 
+				outputSGP(tmp.sgp_object.update, state=state, output.type=union(outputSGP.output.type, intersect(outputSGP.output.type, "LONG_FINAL_YEAR_Data")),
 					outputSGP.directory=file.path("Data", "Updated_Data"))
 
 				### Merge update with original SGP object
@@ -315,10 +317,10 @@ function(what_sgp_object=NULL,
 
 				if ("combineSGP" %in% steps) {
 					what_sgp_object <- combineSGP(
-						what_sgp_object, 
-						years=update.years, 
+						what_sgp_object,
+						years=update.years,
 						state=state,
-						sgp.percentiles=sgp.percentiles, 
+						sgp.percentiles=sgp.percentiles,
 						sgp.projections=sgp.projections,
 						sgp.projections.lagged=sgp.projections.lagged,
 						sgp.percentiles.baseline=sgp.percentiles.baseline,
@@ -333,10 +335,10 @@ function(what_sgp_object=NULL,
 				### Add in INSTRUCTOR_NUMBER data for summarizeSGP if supplied
 
 				if (!is.null(with_sgp_data_INSTRUCTOR_NUMBER)) {
-					what_sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']] <- 
+					what_sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']] <-
 						data.table(rbindlist(list(what_sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']], with_sgp_data_INSTRUCTOR_NUMBER), fill=TRUE),
 							key=c("ID", "CONTENT_AREA", "YEAR"))
-				}		
+				}
 
 				if ("summarizeSGP" %in% steps) what_sgp_object <- summarizeSGP(what_sgp_object, state=state, parallel.config=parallel.config)
 				if ("visualizeSGP" %in% steps) visualizeSGP(what_sgp_object, state=state, plot.types=plot.types, sgPlot.demo.report=sgPlot.demo.report)
@@ -358,7 +360,7 @@ function(what_sgp_object=NULL,
 				if (update.old.data.with.new) {
 					what_sgp_object@Data <- data.table(rbindlist(list(what_sgp_object@Data, tmp_sgp_object@Data), fill=TRUE), key=getKey(what_sgp_object@Data))
 				} else {
-					what_sgp_object@Data <- data.table(rbindlist(list(what_sgp_object@Data[which(ID %in% tmp_sgp_object@Data$ID)], tmp_sgp_object@Data), fill=TRUE), 
+					what_sgp_object@Data <- data.table(rbindlist(list(what_sgp_object@Data[which(ID %in% tmp_sgp_object@Data$ID)], tmp_sgp_object@Data), fill=TRUE),
 						key=getKey(what_sgp_object@Data))
 				}
 
@@ -373,7 +375,7 @@ function(what_sgp_object=NULL,
 				### Add in INSTRUCTOR_NUMBER data for summarizeSGP if supplied
 
 				if (!is.null(with_sgp_data_INSTRUCTOR_NUMBER)) {
-					what_sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']] <- 
+					what_sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']] <-
 						data.table(rbindlist(list(what_sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']], with_sgp_data_INSTRUCTOR_NUMBER), fill=TRUE),
 							key=c("ID", "CONTENT_AREA", "YEAR"))
 				}
@@ -381,20 +383,20 @@ function(what_sgp_object=NULL,
 				### abcSGP
 
 				what_sgp_object <- abcSGP(
-							what_sgp_object, 
-							steps=steps, 
-							years=update.years, 
+							what_sgp_object,
+							steps=steps,
+							years=update.years,
 							content_areas=update.content_areas,
 							grades=update.grades,
-							state=state, 
+							state=state,
 							sgp.percentiles=sgp.percentiles,
 							sgp.projections=sgp.projections,
 							sgp.projections.lagged=sgp.projections.lagged,
 							sgp.percentiles.baseline=sgp.percentiles.baseline,
 							sgp.projections.baseline=sgp.projections.baseline,
 							sgp.projections.lagged.baseline=sgp.projections.lagged.baseline,
-							save.intermediate.results=save.intermediate.results, 
-							save.old.summaries=save.old.summaries, 
+							save.intermediate.results=save.intermediate.results,
+							save.old.summaries=save.old.summaries,
 							sgPlot.demo.report=sgPlot.demo.report,
 							sgp.use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
 							calculate.simex = calculate.simex,
