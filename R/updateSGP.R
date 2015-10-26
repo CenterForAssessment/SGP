@@ -150,6 +150,7 @@ function(what_sgp_object=NULL,
 					outputSGP.output.type=outputSGP.output.type,
 					SGPt=SGPt,
 					sgp.percentiles.equated=sgp.percentiles.equated,
+					sgp.percentiles.equating.method=sgp.percentiles.equating.method,
 					parallel.config=parallel.config,
 					...
 					)
@@ -217,6 +218,7 @@ function(what_sgp_object=NULL,
 						outputSGP.output.type=outputSGP.output.type,
 						SGPt=SGPt,
 						sgp.percentiles.equated=sgp.percentiles.equated,
+						sgp.percentiles.equating.method=sgp.percentiles.equating.method,
 						parallel.config=parallel.config,
 						...)
 
@@ -410,6 +412,7 @@ function(what_sgp_object=NULL,
 							outputSGP.output.type=outputSGP.output.type,
 							SGPt=SGPt,
 							sgp.percentiles.equated=sgp.percentiles.equated,
+							sgp.percentiles.equating.method=sgp.percentiles.equating.method,
 							parallel.config=parallel.config,
 							...)
 
