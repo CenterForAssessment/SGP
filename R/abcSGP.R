@@ -1,4 +1,4 @@
-`abcSGP` <- 
+`abcSGP` <-
 function(sgp_object,
 	state=NULL,
 	steps=c("prepareSGP", "analyzeSGP", "combineSGP", "summarizeSGP", "visualizeSGP", "outputSGP"),
@@ -35,6 +35,7 @@ function(sgp_object,
 	verbose.output=FALSE,
 	sgp.sqlite = NULL,
 	sgp.percentiles.equated=NULL,
+	sgp.percentiles.equating.method=NULL,
 	SGPt=NULL) {
 
         started.at <- proc.time()
@@ -54,10 +55,10 @@ function(sgp_object,
 
 	if ("prepareSGP" %in% steps) {
 		sgp_object <- prepareSGP(
-				sgp_object, 
-				data_supplementary=data_supplementary, 
-				state=state, 
-				var.names=prepareSGP.var.names, 
+				sgp_object,
+				data_supplementary=data_supplementary,
+				state=state,
+				var.names=prepareSGP.var.names,
 				create.additional.variables=prepareSGP.create.additional.variables)
 	        if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
 	}
@@ -110,6 +111,7 @@ function(sgp_object,
 			verbose.output=verbose.output,
 			sgp.sqlite=sgp.sqlite,
 			sgp.percentiles.equated=sgp.percentiles.equated,
+			sgp.percentiles.equating.method=sgp.percentiles.equating.method,
 			SGPt=SGPt)
 
                 if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
@@ -146,10 +148,10 @@ function(sgp_object,
 		sgp_object <- summarizeSGP(
 			sgp_object=sgp_object,
 			state=state,
-			years=years, 
-			content_areas=content_areas, 
-			sgp.summaries=sgp.summaries, 
-			summary.groups=summary.groups, 
+			years=years,
+			content_areas=content_areas,
+			sgp.summaries=sgp.summaries,
+			summary.groups=summary.groups,
 			confidence.interval.groups=confidence.interval.groups,
 			parallel.config=parallel.config,
 			save.old.summaries=save.old.summaries)

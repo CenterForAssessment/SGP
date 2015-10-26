@@ -41,7 +41,7 @@ analyzeSGP(sgp_object,
          get.cohort.data.info=FALSE,
          sgp.sqlite=NULL,
          sgp.percentiles.equated=NULL,
-         sgp.percentiles.equating.method="equipercentile",
+         sgp.percentiles.equating.method=NULL,
          SGPt=NULL,
          ...)
 }
@@ -140,7 +140,7 @@ Example use cases are provided below.
   \item{sgp.percentiles.equated}{A Boolean argument (defaults to NULL/FALSE) indicating whether equating should be used on the most recent year of test data provided. Equating allows for student growth
 projections to be calculated in across assessment transitions where the scale for the assessment changes.
   }
-  \item{sgp.percentiles.equating.method}{A character vector (defaults to 'equipercentile') indicating the type of equating method to use. Options include any combination of 'identity', 'mean', 'linear', and 'equipercentile'.
+  \item{sgp.percentiles.equating.method}{A character vector (defaults to NULL/'equipercentile') indicating the type of equating method to use. Options include any combination of 'identity', 'mean', 'linear', and 'equipercentile'.
   }
   \item{SGPt}{An argument supplied to implement time-dependent SGP analyses (SGPt). Default is NULL giving standard, non-time dependent argument. If set to TRUE, the function assumes the
   variables 'TIME' and 'TIME_LAG' are supplied as part of the panel.data. To specify other names, supply a list of the form: list(TIME='my_time_name', TIME_LAG='my_time_lag_name'), substituting

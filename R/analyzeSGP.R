@@ -34,7 +34,7 @@ function(sgp_object,
          get.cohort.data.info=FALSE,
          sgp.sqlite=NULL,
          sgp.percentiles.equated=NULL,
-         sgp.percentiles.equating.method="equipercentile",
+         sgp.percentiles.equating.method=NULL,
          SGPt=NULL,
          ...) {
 
@@ -368,6 +368,11 @@ function(sgp_object,
 		year.for.equate <- tail(sort(unique(sgp_object@Data$YEAR)), 1)
         if (is.null(sgp.use.my.coefficient.matrices)) {
             Scale_Score_Linkages <- list()
+            if (is.null(sgp.percentiles.equating.method)) {
+                message("\tNOTE: Analyses involving equating will be performed with default 'equipercentile' method. For other methods, see documentation associated with the 'sgp.percentiles.equating.method' argument in 'analyzeSGP'.")
+                sgp.percentiles.equating.method <- 'equipercentile'
+            }
+            dir.create(file.path("Data", paste("Linkages", year.for.equate, sep="_")), recursive=TRUE, showWarnings=FALSE)
 		    content_areas.for.equate <- unique(sgp_object@Data[YEAR==year.for.equate]$CONTENT_AREA)
             if (!identical(years, year.for.equate)) {
                 message(paste("\tNOTE: Analyses involving equating only occur in most recent year. 'years' argument changed to ", year.for.equate, ".", sep=""))
@@ -394,15 +399,17 @@ function(sgp_object,
                     data.for.equate <- convertScaleScore(data.for.equate, year.for.equate, sgp_object@SGP$Linkages, conversion.type=conversion.type.iter, sgp.percentiles.equating.method.iter, state)
                     Scale_Score_Linkages[[conversion.type.iter]][[toupper(sgp.percentiles.equating.method.iter)]] <- unique(data.for.equate)[
                         !is.na(SCALE_SCORE), intersect(names(data.for.equate),
-                            c("CONTENT_AREA", "YEAR", "GRADE", "SCALE_SCORE", "SCALE_SCORE_ACTUAL", paste("SCALE_SCORE)_EQUATED", sgp.percentiles.equating.method.iter, conversion.type.iter, sep="_"))), with=FALSE]
+                            c("CONTENT_AREA", "YEAR", "GRADE", "SCALE_SCORE", "SCALE_SCORE_ACTUAL", paste("SCALE_SCORE_EQUATED", toupper(sgp.percentiles.equating.method.iter), conversion.type.iter, sep="_"))), with=FALSE]
                     write.table(Scale_Score_Linkages[[conversion.type.iter]][[toupper(sgp.percentiles.equating.method.iter)]],
-                        file=paste(paste(getStateAbbreviation(state, type="LONG"), "Scale_Score_Linkages", toupper(sgp.percentiles.equating.method.iter), conversion.type.iter, sep="_"), "txt", sep="."), row.names=FALSE, na="", quote=FALSE, sep="|")
+                        file=paste(paste("Data/", paste("Linkages", year.for.equate, sep="_"), "/", sep=""), paste(gsub(" ", "_", getStateAbbreviation(state, type="LONG")), "Scale_Score_Linkages", toupper(sgp.percentiles.equating.method.iter), conversion.type.iter, sep="_"), ".txt", sep=""), row.names=FALSE, na="", quote=FALSE, sep="|")
                 }
             }
-            assign(paste(getStateAbbreviation(state, type="LONG"), "Scale_Score_Linkages", sep="_"), Scale_Score_Linkages)
-            save(list=paste(getStateAbbreviation(state, type="LONG"), "Scale_Score_Linkages", sep="_"),
-                file=paste(paste(getStateAbbreviation(state, type="LONG"), "Scale_Score_Linkages", sep="_"), "Rdata", sep="."))
+            assign(paste(gsub(" ", "_", getStateAbbreviation(state, type="LONG")), "Scale_Score_Linkages", sep="_"), Scale_Score_Linkages)
+            save(list=paste(gsub(" ", "_", getStateAbbreviation(state, type="LONG")), "Scale_Score_Linkages", sep="_"),
+                file=paste(paste("Data/", paste("Linkages", year.for.equate, sep="_"), "/", sep=""), paste(gsub(" ", "_", getStateAbbreviation(state, type="LONG")), "Scale_Score_Linkages", sep="_"), ".Rdata", sep=""))
             setkey(data.for.equate, VALID_CASE, CONTENT_AREA, YEAR, ID)
+            data.for.equate <- data.for.equate[,c(names(sgp_object@Data), 'SCALE_SCORE_EQUATED_EQUIPERCENTILE_OLD_TO_NEW'), with=FALSE]
+            setnames(data.for.equate, 'SCALE_SCORE_EQUATED_EQUIPERCENTILE_OLD_TO_NEW', 'SCALE_SCORE_EQUATED')
             sgp_object@Data <- data.for.equate
         }
 		equate.variable <- "SCALE_SCORE_EQUATED"

@@ -283,6 +283,7 @@
 		###
 		#########################################################################################################################################################################
 
+		if (toupper(TEST_NUMBER) %in% c("2", "2A", "2B", "2C", "2D")) {
 		if (identical(TEST_NUMBER, 2)) TEST_NUMBER <- c("2A", "2B", "2C")
 
 		################################
@@ -310,7 +311,7 @@
 				Rprof("testSGP(2a)_Memory_Profile_Part_1.out", memory.profiling=TRUE)
 			}
 
-			started.at.overall <- proc.time()
+			started.at.overall.2a <- proc.time()
 			eval(parse(text=expression.to.evaluate))
 
 			### TEST of SGP variable
@@ -363,7 +364,7 @@
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable MOVE_UP_STAY_UP_STATUS, part 1: FAIL\n")
 			}
 
-			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 2a: Part 1: ", convertTime(timetaken(started.at.overall)), " #####\n", sep=""))
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 2a: Part 1: ", convertTime(timetaken(started.at.overall.2a)), " #####\n", sep=""))
 
 
 			### Part 2
@@ -377,7 +378,7 @@
 				Rprof("testSGP(2a)_Memory_Profile_Part_2.out", memory.profiling=TRUE)
 			}
 
-			started.at.intermediate <- proc.time()
+			started.at.intermediate.2a <- proc.time()
 			eval(parse(text=expression.to.evaluate))
 
 			### TEST of variable values
@@ -432,9 +433,8 @@
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable MOVE_UP_STAY_UP_STATUS, part 2: FAIL\n")
 			}
 
-			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 2a, Part 2: ", convertTime(timetaken(started.at.intermediate)), "#####\n"))
-			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 2a: ", convertTime(timetaken(started.at.overall)), "#####\n"))
-			cat(tmp.messages)
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 2a, Part 2: ", convertTime(timetaken(started.at.intermediate.2a)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 2a: ", convertTime(timetaken(started.at.overall.2a)), "#####\n"))
 		} ### End TEST_NUMBER 2a
 
 
@@ -443,7 +443,7 @@
 		################################
 		if (any(toupper(TEST_NUMBER) %in% c('2B', '2C', '2D'))) {
 
-			for (i in toupper(TEST_NUMBER)) {
+			for (i in setdiff(toupper(TEST_NUMBER), '2A')) {
 				options(error=recover)
 				options(warn=2)
 				Demonstration_SGP <- ID <- CONTENT_AREA <- NULL
@@ -454,7 +454,7 @@
 				### Part 1: Required for all Tests 2b, 2c, and 2d
 				############################################################
 
-				tmp.messages <- paste("##### Begin testSGP test number", capwords(i), "#####\n\n")
+				tmp.messages <- c(tmp.messages, paste("\n##### Begin testSGP test number", capwords(i), "#####\n\n"))
 				tmp.messages <- c(tmp.messages, paste("\t##### Begin testSGP test number ", capwords(i), ": Part 1 #####\n\n", sep=""))
 
 				expression.to.evaluate <-
@@ -466,10 +466,10 @@
 					Rprof("testSGP(2)_Memory_Profile_Part_1.out", memory.profiling=TRUE)
 				}
 
-				started.at.overall <- proc.time()
+				started.at.overall.2b <- proc.time()
 				eval(parse(text=expression.to.evaluate))
 
-				tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number ", capwords(i), ": Part 1: ", convertTime(timetaken(started.at.overall)), " #####\n", sep=""))
+				tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number ", capwords(i), ": Part 1: ", convertTime(timetaken(started.at.overall.2b)), " #####\n", sep=""))
 
 				#############################################################
 				### Part 2
@@ -486,7 +486,7 @@
 
 					cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 
-					started.at.intermediate <- proc.time()
+					started.at.intermediate.2b <- proc.time()
 					eval(parse(text=expression.to.evaluate))
 				} ### End TEST 2b
 
@@ -499,7 +499,7 @@
 
 					cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 
-					started.at.intermediate <- proc.time()
+					started.at.intermediate.2b <- proc.time()
 					eval(parse(text=expression.to.evaluate))
 				} ### End TEST 2c
 
@@ -529,7 +529,7 @@
 
 					cat(paste("EVALUATING:\n", expression.to.evaluate, sep=""), fill=TRUE)
 
-					started.at.intermediate <- proc.time()
+					started.at.intermediate.2b <- proc.time()
 					eval(parse(text=expression.to.evaluate))
 				} ### End TEST 2d
 
@@ -583,11 +583,12 @@
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable MOVE_UP_STAY_UP_STATUS, part 2: FAIL\n")
 				}
 
-				tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number ", capwords(i), ", Part 2: ", convertTime(timetaken(started.at.intermediate)), " #####\n", sep=""))
-				tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number ", capwords(i), ": ", convertTime(timetaken(started.at.overall)), " #####\n", sep=""))
-				cat(tmp.messages)
+				tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number ", capwords(i), ", Part 2: ", convertTime(timetaken(started.at.intermediate.2b)), " #####\n", sep=""))
+				tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number ", capwords(i), ": ", convertTime(timetaken(started.at.overall.2b)), " #####\n", sep=""))
 			} ### End for (i in TEST_NUMBER)
-		} ### End TEST_NUMBER 2b, 2c, 2d
+			} ### End TEST_NUMBER 2b, 2c, 2d
+			cat(tmp.messages)
+		} ### End TEST_NUMBER 2
 
 		#######################################################################################################################################################
 		###
@@ -1211,7 +1212,7 @@
 			### updateSGP
 
 			expression.to.evaluate <-
-				paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=Demonstration_Data_LONG_STEP_2,\n\tsgp.percentiles=TRUE,\n\tsgp.projections=TRUE,\n\tsgp.projections.lagged=TRUE,\n\tsgp.percentiles.baseline=FALSE,\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.percentiles.equated=TRUE,\n\tsave.intermediate.results=FALSE,\n\toutputSGP.output.type='LONG_FINAL_YEAR_Data',\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
+				paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=Demonstration_Data_LONG_STEP_2,\n\tsgp.percentiles=TRUE,\n\tsgp.projections=TRUE,\n\tsgp.projections.lagged=TRUE,\n\tsgp.percentiles.baseline=FALSE,\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.percentiles.equated=TRUE,\n\tsgp.percentiles.equating.method=c('identity', 'mean', 'linear', 'equipercentile'),\n\tsave.intermediate.results=FALSE,\n\toutputSGP.output.type='LONG_FINAL_YEAR_Data',\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
 
 			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
 
