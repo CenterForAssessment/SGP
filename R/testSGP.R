@@ -364,7 +364,7 @@
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable MOVE_UP_STAY_UP_STATUS, part 1: FAIL\n")
 			}
 
-			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 2a: Part 1: ", convertTime(timetaken(started.at.overall.1a)), " #####\n", sep=""))
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 2a: Part 1: ", convertTime(timetaken(started.at.overall.2a)), " #####\n", sep=""))
 
 
 			### Part 2
