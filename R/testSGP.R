@@ -443,7 +443,7 @@
 		################################
 		if (any(toupper(TEST_NUMBER) %in% c('2B', '2C', '2D'))) {
 
-			for (i in toupper(TEST_NUMBER)) {
+			for (i in setdiff(toupper(TEST_NUMBER), '2A')) {
 				options(error=recover)
 				options(warn=2)
 				Demonstration_SGP <- ID <- CONTENT_AREA <- NULL
