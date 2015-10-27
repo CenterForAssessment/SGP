@@ -356,7 +356,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 			}
 		} else {
 			if (length(grep("_", year) > 0)) {
-       		         tmp <- as.numeric(unlist(strsplit(as.character(year), "_")))+add.sub
+		 		tmp <- as.numeric(unlist(strsplit(as.character(year), "_")))+add.sub
 				if (output.type=="numeric") {
 					return(seq(from=tmp[2], length=vec.length))
 				} else {
@@ -367,6 +367,36 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 			}
 		}
 	}
+
+	stextGrob <- function (label, r=0.1, x = x, y = y, 
+		just = "centre", hjust = NULL, vjust = NULL, rot = 0, check.overlap = FALSE, 
+		default.units = default.units, name = NULL, gp = gpar(), vp = NULL){
+		# http://stackoverflow.com/questions/7734535/control-font-thickness-without-changing-font-size
+
+		let <- textGrob("a", gp=gp, vp=vp)
+		wlet <- grobWidth(let)
+		hlet <- grobHeight(let)
+
+		tg <- textGrob(label=label, x=x, y=y, gp=gpar(col="white"), just = just, hjust = hjust, vjust = vjust, rot = rot,
+				check.overlap = check.overlap, default.units = default.units)
+
+		tgl <- c(lapply(seq(0, 2*pi, length=36), function(theta){
+		  textGrob(label=label,x=x+cos(theta)*r*wlet, y=y+sin(theta)*r*hlet, gp=gpar(col="black"),
+				just = just, hjust = hjust, vjust = vjust, rot = rot, check.overlap = check.overlap, default.units = default.units)
+		  }), list(tg))
+
+		g <- gTree(children=do.call(gList, tgl), vp=vp, name=name, gp=gp)
+	}
+
+	grid.stext <- function(...){
+		g <- stextGrob(...)
+		grid.draw(g)
+		invisible(g)
+	}
+
+	###
+	### END Utility functions
+	###
 
 	grade.values <- interpolate.grades(Grades, Content_Areas, studentGrowthPlot.year.span)
 
@@ -672,7 +702,8 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 	}
 
 	if (is.null(Report_Parameters$Assessment_Transition) && sgPlot.show.content_area.progression) {
-		grid.text(x=low.year:high.year, y=convertY(unit(0.05, "npc"), "native"), sapply(content_area.text, capwords), gp=gpar(col="white", cex=0.75), default.units="native")
+		grid.stext(sapply(content_area.text, capwords), x=unit(low.year:high.year, "native"), y=convertY(unit(0.05, "npc"), "native"), gp=gpar(cex=0.75), default.units="native")
+		# grid.text(x=low.year:high.year, y=convertY(unit(0.05, "npc"), "native"), sapply(content_area.text, capwords), gp=gpar(col="white", cex=0.75), default.units="native")
 	}
 
 	if (connect.points=="Arrows") {
