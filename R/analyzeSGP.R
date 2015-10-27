@@ -392,11 +392,11 @@ function(sgp_object,
                 message(paste("\tNOTE: Knots and Boundaries do not exist for ", year.for.equate, " in state provided.\n\tThey have been produced, embedded in SGPstateData, and are available using state=", state, " for subsequent analyses and saved to your working directory '", getwd(), "'.", sep=""))
             }
             data.for.equate <- copy(sgp_object@Data)
-            sgp_object@SGP[['Linkages']][[year.for.equate]] <- equateSGP(data.for.equate, state, year.for.equate, sgp.percentiles.equating.method)
+            sgp_object@SGP[['Linkages']] <- equateSGP(data.for.equate, state, year.for.equate, sgp.percentiles.equating.method)
             setkey(data.for.equate, VALID_CASE, CONTENT_AREA, YEAR, GRADE, SCALE_SCORE)
             for (conversion.type.iter in c("OLD_TO_NEW", "NEW_TO_OLD")) {
                 for (sgp.percentiles.equating.method.iter in sgp.percentiles.equating.method) {
-                    data.for.equate <- convertScaleScore(data.for.equate, year.for.equate, sgp_object@SGP[['Linkages']][[year.for.equate]],
+                    data.for.equate <- convertScaleScore(data.for.equate, year.for.equate, sgp_object@SGP[['Linkages']],
 			conversion.type=conversion.type.iter, sgp.percentiles.equating.method.iter, state)
                     Scale_Score_Linkages[[conversion.type.iter]][[toupper(sgp.percentiles.equating.method.iter)]] <-
                         unique(data.for.equate)[!is.na(SCALE_SCORE) & VALID_CASE=="VALID_CASE", intersect(names(data.for.equate),
@@ -416,7 +416,7 @@ function(sgp_object,
 		equate.variable <- "SCALE_SCORE_EQUATED"
 		equate.label <- coefficient.matrix.type <- "EQUATED"
 		sgp.percentiles.equated <- TRUE
-		sgp.projections.equated <- list(State=state, Year=year.for.equate, Linkages=sgp_object@SGP[['Linkages']][[year.for.equate]])
+		sgp.projections.equated <- list(State=state, Year=year.for.equate, Linkages=sgp_object@SGP[['Linkages']])
 		tmp_sgp_object <- list(Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]], Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]], Linkages=sgp_object@SGP[['Linkages']])
 	} else {
 		sgp.percentiles.equated <- FALSE

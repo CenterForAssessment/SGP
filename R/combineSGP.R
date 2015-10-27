@@ -80,7 +80,7 @@ function(
 			if (sgp.target.scale.scores) sgp.projections.equated <- NULL
 		} else {
 			sgp.percentiles.equated <- TRUE
-			if (sgp.target.scale.scores) sgp.projections.equated <- list(Year=year.for.equate, Linkages=sgp_object@SGP[['Linkages']][[year.for.equate]])
+			if (sgp.target.scale.scores) sgp.projections.equated <- list(Year=year.for.equate, Linkages=sgp_object@SGP[['Linkages']])
 		}
 	} else {
 		if (sgp.percentiles.equated) {
