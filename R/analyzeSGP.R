@@ -403,7 +403,7 @@ function(sgp_object,
                             c("CONTENT_AREA", "YEAR", "GRADE", "SCALE_SCORE", "SCALE_SCORE_ACTUAL", paste("SCALE_SCORE_EQUATED", toupper(sgp.percentiles.equating.method.iter), conversion.type.iter, sep="_"))), with=FALSE]
                     write.table(Scale_Score_Linkages[[conversion.type.iter]][[toupper(sgp.percentiles.equating.method.iter)]],
                         file=paste(paste("Data/", paste("Linkages", year.for.equate, sep="_"), "/", sep=""), paste(gsub(" ", "_", getStateAbbreviation(state, type="LONG")), "Scale_Score_Linkages", toupper(sgp.percentiles.equating.method.iter), conversion.type.iter, sep="_"), ".txt", sep=""), row.names=FALSE, na="", quote=FALSE, sep="|")
-                    linkagePlot(Scale_Score_Linkages[[conversion.type.iter]][[toupper(sgp.percentiles.equating.method.iter)]], conversion.type.iter, year.for.equate, state)
+                    linkagePlot(Scale_Score_Linkages[[conversion.type.iter]][[toupper(sgp.percentiles.equating.method.iter)]], conversion.type.iter, sgp.percentiles.equating.method.iter, year.for.equate, state)
                 }
             }
             assign(paste(gsub(" ", "_", getStateAbbreviation(state, type="LONG")), "Scale_Score_Linkages", sep="_"), Scale_Score_Linkages)
