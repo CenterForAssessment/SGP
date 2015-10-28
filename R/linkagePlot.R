@@ -44,14 +44,14 @@ function(linkage.data,
         x.abb <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[paste("Assessment_Abbreviation", year.for.equate, sep=".")]]
         y.abb <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Assessment_Abbreviation"]]
         x.axis.label <- paste(x.abb, "Scale Score")
-        y.axis.label <- paste(y.abb, "Scale Score")
+        y.axis.label <- paste(y.ab:b, "Scale Score")
     }
     linkage.data <- linkage.data[YEAR==x.axis.year & !is.na(get(linkage.var.name))]
     for (grade.iter in unique(linkage.data[['GRADE']])) {
         for (content_area.iter in unique(linkage.data[['CONTENT_AREA']])) {
             x.axis.cut <- SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[get.cutscore.label(state, x.axis.year, content_area.iter)]][[paste("GRADE", grade.iter, sep="_")]][x.axis.cut.level]
             y.axis.cut <- SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[get.cutscore.label(state, y.axis.year, content_area.iter)]][[paste("GRADE", grade.iter, sep="_")]][y.axis.cut.level]
-            pdf(file=paste("Data/Linkages/Figures/", toupper(equating.method), "_", content_area.iter, "_GRADE_", grade.iter, ".pdf", sep=""), width=8, height=8)
+            pdf(file=paste("Data/Linkages_", year.for.equate, "/Figures/", toupper(equating.method), "_", content_area.iter, "_GRADE_", grade.iter, ".pdf", sep=""), width=8, height=8)
             plot(linkage.data[['SCALE_SCORE']], linkage.data[[linkage.var.name]],
                 type="p", xlab=x.axis.label, ylab=y.axis.label,
                 main=paste(x.abb, "to", y.abb, equating.method, "concordance:", content_area.iter, "Grade", grade.iter))
