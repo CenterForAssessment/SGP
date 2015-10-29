@@ -1,11 +1,11 @@
 `bubblePlot` <- function(
-	bubble_plot_data.X, 
+	bubble_plot_data.X,
 	bubble_plot_data.Y,
 	bubble_plot_data.SUBSET=NULL,
 	bubble_plot_data.INDICATE=NULL,
-        bubble_plot_data.BUBBLE_CENTER_LABEL=NULL, 
-	bubble_plot_data.SIZE, 
-	bubble_plot_data.LEVELS=NULL, 
+    bubble_plot_data.BUBBLE_CENTER_LABEL=NULL,
+	bubble_plot_data.SIZE,
+	bubble_plot_data.LEVELS=NULL,
 	bubble_plot_data.BUBBLE_TIPS_LINES,
 	bubble_plot_labels.X=c("Growth", "Median Student Growth Percentile"),
 	bubble_plot_labels.Y=c("Achievement", "Percent at/above Proficient"),
@@ -32,7 +32,7 @@
 	bubble_plot_configs.BUBBLE_SUBSET_INCREASE=0,
 	bubble_plot_configs.BUBBLE_SUBSET_ALPHA=list(Transparent=0.3, Opaque=0.95),
 	bubble_plot_configs.BUBBLE_COLOR="deeppink2",
-        bubble_plot_configs.BUBBLE_COLOR_GRADIENT_REVERSE=FALSE,
+    bubble_plot_configs.BUBBLE_COLOR_GRADIENT_REVERSE=FALSE,
 	bubble_plot_configs.BUBBLE_TIPS=TRUE,
 	bubble_plot_configs.BUBBLE_PLOT_DEVICE="PDF",
 	bubble_plot_configs.BUBBLE_PLOT_FORMAT="print",
@@ -40,7 +40,7 @@
 	bubble_plot_configs.BUBBLE_PLOT_TITLE=TRUE,
 	bubble_plot_configs.BUBBLE_PLOT_BACKGROUND_LABELS=c("Growth", "Achievement"),
 	bubble_plot_configs.BUBBLE_PLOT_EXTRAS=NULL,
-        bubble_plot_configs.BUBBLE_PLOT_DIMENSION=NULL, ## List of WIDTH and HEIGHT
+    bubble_plot_configs.BUBBLE_PLOT_DIMENSION=NULL, ## List of WIDTH and HEIGHT
 	bubble_plot_configs.BUBBLE_PLOT_NAME="bubblePlot.pdf",
 	bubble_plot_configs.BUBBLE_PLOT_PATH=paste("Figures", sep=""),
 	bubble_plot_pdftk.CREATE_CATALOG=FALSE) {
@@ -53,7 +53,7 @@ if (length(bubble_plot_data.X)==0) {
 }
 
 
-# Test for installation of pdf2 package 
+# Test for installation of pdf2 package
 
 if (bubble_plot_configs.BUBBLE_TIPS) {
 	if (length(find.package("pdf2", quiet=TRUE)) > 0 & as.numeric(version$minor) < 14) {
@@ -74,8 +74,8 @@ if (!is.null(bubble_plot_configs.BUBBLE_PLOT_PATH)) {
 } else {
 	file.path.and.name <- bubble_plot_configs.BUBBLE_PLOT_NAME
 }
-          
-  
+
+
 # Calculate relevant quantities
 
 if (!is.null(bubble_plot_labels.SIZE)) {
@@ -104,7 +104,7 @@ if (!is.null(bubble_plot_configs.BUBBLE_COLOR)) {
 
 if (bubble_plot_configs.BUBBLE_PLOT_FORMAT=="print") {
      format.colors.background <- rgb(0.985, 0.985, 1.0)
-     format.colors.border <- "grey20" 
+     format.colors.border <- "grey20"
      format.colors.font <- c("grey20", rgb(0.985, 0.985, 1.0))
      format.colors.quadrant <- c(rgb(0.885, 0.885, 0.885), rgb(0.985, 0.985, 1.0))
 } else {
@@ -153,7 +153,7 @@ bubblealpha <- function(numbubbles, current.alpha) {
 indicate.tip <- function(x, y) {
           tmp.orientation <- character(2)
           if (y >= 0.8) {
-                  tmp.orientation[2] <- "top"; tmp.y <- y-0.1  
+                  tmp.orientation[2] <- "top"; tmp.y <- y-0.1
           } else {
                   tmp.orientation[2] <- "bottom"; tmp.y <- y+0.1
           }
@@ -170,12 +170,12 @@ indicate.tip <- function(x, y) {
 
 if (bubble_plot_configs.BUBBLE_PLOT_LEGEND) {
     if (!is.null(bubble_plot_configs.BUBBLE_PLOT_DIMENSION)) {
-        fig.width <- bubble_plot_configs.BUBBLE_PLOT_DIMENSION$WIDTH 
+        fig.width <- bubble_plot_configs.BUBBLE_PLOT_DIMENSION$WIDTH
         fig.height <- bubble_plot_configs.BUBBLE_PLOT_DIMENSION$HEIGHT
-        text.buffer <- 0.1*fig.width/13 
+        text.buffer <- 0.1*fig.width/13
         text.start <- 0.7*fig.width/13
         if (!is.null(bubble_plot_configs.BUBBLE_MIN_MAX)) {
-              min.cex <- bubble_plot_configs.BUBBLE_MIN_MAX[1]*fig.width/13 
+              min.cex <- bubble_plot_configs.BUBBLE_MIN_MAX[1]*fig.width/13
               max.cex <- bubble_plot_configs.BUBBLE_MIN_MAX[2]*fig.width/13
         } else {
               min.cex <- .01*fig.width/13
@@ -191,7 +191,7 @@ if (bubble_plot_configs.BUBBLE_PLOT_LEGEND) {
     }
 
     if (bubble_plot_configs.BUBBLE_PLOT_TITLE) {
-        figure.vp <- viewport(layout = grid.layout(3, 3, widths = unit(c(0.8, 9.5, 2.7)*fig.width/13, rep("inches", 3)), 
+        figure.vp <- viewport(layout = grid.layout(3, 3, widths = unit(c(0.8, 9.5, 2.7)*fig.width/13, rep("inches", 3)),
                               heights = unit(c(1.5, 6.2, 0.8)*fig.height/8.5, rep("inches", 3))),
                               gp=gpar(cex=fig.width/13))
 
@@ -201,10 +201,10 @@ if (bubble_plot_configs.BUBBLE_PLOT_LEGEND) {
                     yscale=c(0,1),
                     gp=gpar(fill="transparent"))
     } else {
-        figure.vp <- viewport(layout = grid.layout(3, 3, widths = unit(c(0.8, 9.5, 2.7)*fig.width/13, rep("inches", 3)), 
+        figure.vp <- viewport(layout = grid.layout(3, 3, widths = unit(c(0.8, 9.5, 2.7)*fig.width/13, rep("inches", 3)),
                               heights = unit(c(0.2, 7.6, 0.8)*fig.height/8.5, rep("inches", 3))),
                               gp=gpar(cex=fig.width/13))
-    } 
+    }
 
         right.legend.vp <- viewport(name="right.top.legend.vp",
                   layout.pos.row=2, layout.pos.col=3,
@@ -213,12 +213,12 @@ if (bubble_plot_configs.BUBBLE_PLOT_LEGEND) {
                   gp=gpar(fill="transparent"))
 } else {
      if (!is.null(bubble_plot_configs.BUBBLE_PLOT_DIMENSION)) {
-        fig.width <- bubble_plot_configs.BUBBLE_PLOT_DIMENSION$WIDTH 
+        fig.width <- bubble_plot_configs.BUBBLE_PLOT_DIMENSION$WIDTH
         fig.height <- bubble_plot_configs.BUBBLE_PLOT_DIMENSION$HEIGHT
-        text.buffer <- 0.1*fig.width/12 
+        text.buffer <- 0.1*fig.width/12
         text.start <- 0.7*fig.width/12
         if (!is.null(bubble_plot_configs.BUBBLE_MIN_MAX)) {
-              min.cex <- bubble_plot_configs.BUBBLE_MIN_MAX[1]*fig.width/12 
+              min.cex <- bubble_plot_configs.BUBBLE_MIN_MAX[1]*fig.width/12
               max.cex <- bubble_plot_configs.BUBBLE_MIN_MAX[2]*fig.width/12
         } else {
               min.cex <- .01*fig.width/12
@@ -234,7 +234,7 @@ if (bubble_plot_configs.BUBBLE_PLOT_LEGEND) {
      }
 
      if (bubble_plot_configs.BUBBLE_PLOT_TITLE) {
-         figure.vp <- viewport(layout = grid.layout(3, 3, widths = unit(c(0.8, 10.7, 0.5)*fig.width/12, rep("inches", 3)), 
+         figure.vp <- viewport(layout = grid.layout(3, 3, widths = unit(c(0.8, 10.7, 0.5)*fig.width/12, rep("inches", 3)),
                               heights = unit(c(1.5, 6.2, 0.8)*fig.height/8.5, rep("inches", 3))),
                               gp=gpar(cex=fig.width/12))
 
@@ -244,10 +244,10 @@ if (bubble_plot_configs.BUBBLE_PLOT_LEGEND) {
                     yscale=c(0,1),
                     gp=gpar(fill="transparent"))
      } else {
-         figure.vp <- viewport(layout = grid.layout(3, 3, widths = unit(c(0.8, 10.7, 0.5)*fig.width/12, rep("inches", 3)), 
+         figure.vp <- viewport(layout = grid.layout(3, 3, widths = unit(c(0.8, 10.7, 0.5)*fig.width/12, rep("inches", 3)),
                               heights = unit(c(0.2, 7.6, 0.8)*fig.height/8.5, rep("inches", 3))),
                               gp=gpar(cex=fig.width/12))
-    } 
+    }
 }
 
 vaxis.vp <- viewport(name="vaxis.vp",
@@ -299,8 +299,8 @@ pushViewport(chart.vp)
 if (!is.null(bubble_plot_configs.BUBBLE_X_BANDS) | !is.null(bubble_plot_configs.BUBBLE_Y_BANDS)) {
 	if (is.null(bubble_plot_configs.BUBBLE_X_BANDS) & !is.null(bubble_plot_configs.BUBBLE_Y_BANDS)) {
 		for (i in seq_along(head(bubble_plot_configs.BUBBLE_Y_BANDS, -1))) {
-			grid.roundrect(x=unit(0, "npc"), y=unit(bubble_plot_configs.BUBBLE_Y_BANDS[i], "native"), 
-				width=unit(1, "npc"), height=unit(diff(bubble_plot_configs.BUBBLE_Y_BANDS)[i], "native"), 
+			grid.roundrect(x=unit(0, "npc"), y=unit(bubble_plot_configs.BUBBLE_Y_BANDS[i], "native"),
+				width=unit(1, "npc"), height=unit(diff(bubble_plot_configs.BUBBLE_Y_BANDS)[i], "native"),
 				r=unit(0.1, "mm"), just=c("left", "bottom"), gp=gpar(fill=format.colors.quadrant[1], col=format.colors.background, lwd=0.4))
 			grid.text(x=unit(0.05, "npc"), y=unit((bubble_plot_configs.BUBBLE_Y_BANDS[i] + diff(bubble_plot_configs.BUBBLE_Y_BANDS)[i]/2), "native"),
 				bubble_plot_configs.BUBBLE_Y_BAND_LABELS[i], just="left",
@@ -312,7 +312,7 @@ if (!is.null(bubble_plot_configs.BUBBLE_X_BANDS) | !is.null(bubble_plot_configs.
 			grid.roundrect(x=unit(bubble_plot_configs.BUBBLE_Y_BANDS[i], "native"), y=unit(0, "npc"),
 				width=unit(diff(bubble_plot_configs.BUBBLE_Y_BANDS)[i], "native"), height=unit(1, "npc"),
 				r=unit(0.1, "mm"), just=c("left", "bottom"), gp=gpar(fill=format.colors.quadrant[1], col=format.colors.background, lwd=0.4))
-			grid.text(x=unit((bubble_plot_configs.BUBBLE_X_BANDS[i] + diff(bubble_plot_configs.BUBBLE_X_BANDS)[i]/2), "native"), y=unit(0.05, "npc"), 
+			grid.text(x=unit((bubble_plot_configs.BUBBLE_X_BANDS[i] + diff(bubble_plot_configs.BUBBLE_X_BANDS)[i]/2), "native"), y=unit(0.05, "npc"),
 				bubble_plot_configs.BUBBLE_X_BAND_LABELS[i], just="left",
 				gp=gpar(cex=2, fontface=2, col=format.colors.quadrant[2]))
 		}
@@ -349,27 +349,27 @@ if (!is.null(bubble_plot_configs.BUBBLE_PLOT_EXTRAS)) {
 if (bubble_plot_configs.BUBBLE_TIPS) {
    if (!is.null(bubble_plot_data.SUBSET)) {
       grid.circle(x=bubble_plot_data.X, y=bubble_plot_data.Y, r=unit(bubblesize(bubble_plot_data.SIZE, numstud.range), rep("inches", length(bubble_plot_data.SIZE))),
-               gp=gpar(col=rgb(0.4,0.4,0.4), lwd=0.05*bubble_plot_configs.BUBBLE_MIN_MAX[2]/0.12, 
-               fill=bubblecolor(unclass(tmp.LEVELS)), alpha=bubblealpha(length(bubble_plot_data.X), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Transparent)), default.units="native") 
-      grid.circle(x=bubble_plot_data.X[bubble_plot_data.SUBSET], y=bubble_plot_data.Y[bubble_plot_data.SUBSET], 
-                  r=unit(bubble_plot_configs.BUBBLE_SUBSET_INCREASE+bubblesize(bubble_plot_data.SIZE[bubble_plot_data.SUBSET], numstud.range), 
-                        rep("inches", length(bubble_plot_data.SIZE[bubble_plot_data.SUBSET]))), 
-                  gp=gpar(lwd=0.750*bubble_plot_configs.BUBBLE_MIN_MAX[2]/0.12, fill=bubblecolor(unclass(tmp.LEVELS[bubble_plot_data.SUBSET])), 
-                  alpha=bubblealpha(length(bubble_plot_data.X[bubble_plot_data.SUBSET]), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Opaque)), default.units="native") 
+               gp=gpar(col=rgb(0.4,0.4,0.4), lwd=0.05*bubble_plot_configs.BUBBLE_MIN_MAX[2]/0.12,
+               fill=bubblecolor(unclass(tmp.LEVELS)), alpha=bubblealpha(length(bubble_plot_data.X), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Transparent)), default.units="native")
+      grid.circle(x=bubble_plot_data.X[bubble_plot_data.SUBSET], y=bubble_plot_data.Y[bubble_plot_data.SUBSET],
+                  r=unit(bubble_plot_configs.BUBBLE_SUBSET_INCREASE+bubblesize(bubble_plot_data.SIZE[bubble_plot_data.SUBSET], numstud.range),
+                        rep("inches", length(bubble_plot_data.SIZE[bubble_plot_data.SUBSET]))),
+                  gp=gpar(lwd=0.750*bubble_plot_configs.BUBBLE_MIN_MAX[2]/0.12, fill=bubblecolor(unclass(tmp.LEVELS[bubble_plot_data.SUBSET])),
+                  alpha=bubblealpha(length(bubble_plot_data.X[bubble_plot_data.SUBSET]), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Opaque)), default.units="native")
 
      if (!is.null(bubble_plot_data.INDICATE)) {
           for (i in bubble_plot_data.INDICATE) {
-              indicate.coordinates <- indicate.tip(as.numeric(convertX(unit(bubble_plot_data.X[i], "native"), "npc")), 
+              indicate.coordinates <- indicate.tip(as.numeric(convertX(unit(bubble_plot_data.X[i], "native"), "npc")),
                                                as.numeric(convertY(unit(bubble_plot_data.Y[i], "native"), "npc")))
-              grid.segments(unit(indicate.coordinates$x, "npc"), unit(indicate.coordinates$y, "npc"), 
+              grid.segments(unit(indicate.coordinates$x, "npc"), unit(indicate.coordinates$y, "npc"),
                             unit(bubble_plot_data.X[i], "native"), unit(bubble_plot_data.Y[i], "native"),
                             gp=gpar(lwd=0.5))
-              grid.circle(x=bubble_plot_data.X[i], y=bubble_plot_data.Y[i], 
-                      r=unit(c(1.0, 0.4)*bubblesize(bubble_plot_data.SIZE[i], numstud.range), rep("inches", length(bubble_plot_data.SIZE[i]))), 
-                      gp=gpar(lwd=c(0.5, 3.0), fill=bubblecolor(unclass(tmp.LEVELS[bubble_plot_data.INDICATE]))), default.units="native") 
-              grid.rect(x=unit(indicate.coordinates$x, "npc"), y=unit(indicate.coordinates$y, "npc"), 
-                             width=unit(2*text.buffer, "inches")+unit(1.0, "strwidth", bubble_plot_labels.BUBBLE_TITLES[i]), 
-                             height=unit(1.5*text.buffer, "inches")+unit(1.0, "strheight", bubble_plot_labels.BUBBLE_TITLES[i]), 
+              grid.circle(x=bubble_plot_data.X[i], y=bubble_plot_data.Y[i],
+                      r=unit(c(1.0, 0.4)*bubblesize(bubble_plot_data.SIZE[i], numstud.range), rep("inches", length(bubble_plot_data.SIZE[i]))),
+                      gp=gpar(lwd=c(0.5, 3.0), fill=bubblecolor(unclass(tmp.LEVELS[bubble_plot_data.INDICATE]))), default.units="native")
+              grid.rect(x=unit(indicate.coordinates$x, "npc"), y=unit(indicate.coordinates$y, "npc"),
+                             width=unit(2*text.buffer, "inches")+unit(1.0, "strwidth", bubble_plot_labels.BUBBLE_TITLES[i]),
+                             height=unit(1.5*text.buffer, "inches")+unit(1.0, "strheight", bubble_plot_labels.BUBBLE_TITLES[i]),
                              gp=gpar(col="grey20", lwd=0.7, fill=rgb(1.0, 0.94, 0.83, 0.6)), just=indicate.coordinates$orientation)
               if (indicate.coordinates$orientation[1]=="left") {
                         tmp.x <- unit(indicate.coordinates$x, "npc") + unit(text.buffer, "inches")
@@ -386,28 +386,28 @@ if (bubble_plot_configs.BUBBLE_TIPS) {
      }
 
     if (!is.null(bubble_plot_data.BUBBLE_CENTER_LABEL)) {
-            grid.text(x=bubble_plot_data.X, y=bubble_plot_data.Y, bubble_plot_data.BUBBLE_CENTER_LABEL, 
-                   gp=gpar(col=rgb(0.4,0.4,0.4), cex=bubblesize(bubble_plot_data.SIZE, numstud.range)/as.numeric(convertUnit(stringWidth(bubble_plot_data.BUBBLE_CENTER_LABEL), "inches")), 
+            grid.text(x=bubble_plot_data.X, y=bubble_plot_data.Y, bubble_plot_data.BUBBLE_CENTER_LABEL,
+                   gp=gpar(col=rgb(0.4,0.4,0.4), cex=bubblesize(bubble_plot_data.SIZE, numstud.range)/as.numeric(convertUnit(stringWidth(bubble_plot_data.BUBBLE_CENTER_LABEL), "inches")),
                    alpha=bubblealpha(length(bubble_plot_data.X), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Transparent), font=2), default.units="native")
-            grid.text(x=bubble_plot_data.X[bubble_plot_data.SUBSET], y=bubble_plot_data.Y[bubble_plot_data.SUBSET], bubble_plot_data.BUBBLE_CENTER_LABEL[bubble_plot_data.SUBSET], 
-                   gp=gpar(col=rgb(0.4,0.4,0.4), cex=bubblesize(bubble_plot_data.SIZE, numstud.range)/as.numeric(convertUnit(stringWidth(bubble_plot_data.BUBBLE_CENTER_LABEL), "inches")), 
+            grid.text(x=bubble_plot_data.X[bubble_plot_data.SUBSET], y=bubble_plot_data.Y[bubble_plot_data.SUBSET], bubble_plot_data.BUBBLE_CENTER_LABEL[bubble_plot_data.SUBSET],
+                   gp=gpar(col=rgb(0.4,0.4,0.4), cex=bubblesize(bubble_plot_data.SIZE, numstud.range)/as.numeric(convertUnit(stringWidth(bubble_plot_data.BUBBLE_CENTER_LABEL), "inches")),
                    alpha=bubblealpha(length(bubble_plot_data.X[bubble_plot_data.SUBSET]), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Opaque), font=2), default.units="native")
     }
 
     for (i in seq_along(bubble_plot_data.X[bubble_plot_data.SUBSET])) {
-          pushViewport(viewport(x=unit(bubble_plot_data.X[bubble_plot_data.SUBSET][i], "native"), 
-                                y=unit(bubble_plot_data.Y[bubble_plot_data.SUBSET][i], "native"), 
+          pushViewport(viewport(x=unit(bubble_plot_data.X[bubble_plot_data.SUBSET][i], "native"),
+                                y=unit(bubble_plot_data.Y[bubble_plot_data.SUBSET][i], "native"),
                                 width=unit(1, "native"), height=unit(1, "native")))
           par(fig=gridFIG(), new = TRUE)
           tmp.bubble.txt <- character()
           for (j in seq(num.bubble.lines)) {
-               tmp.bubble.txt <- c(tmp.bubble.txt, paste(bubble_plot_labels.BUBBLE_TIPS_LINES[[j]], ": ", 
+               tmp.bubble.txt <- c(tmp.bubble.txt, paste(bubble_plot_labels.BUBBLE_TIPS_LINES[[j]], ": ",
                                                          bubble_plot_data.BUBBLE_TIPS_LINES[[j]][bubble_plot_data.SUBSET][i], sep=""))
           }
-          text(0.5, 0.5, "X", col=rgb(1,0,0,0.01), popup="PLACEHOLDER", 
+          text(0.5, 0.5, "X", col=rgb(1,0,0,0.01), popup="PLACEHOLDER",
                cex=10*bubblesize(bubble_plot_data.SIZE[bubble_plot_data.SUBSET][i], numstud.range),
-               annot.options=c(paste("/T (", bubble_plot_labels.BUBBLE_TITLES[bubble_plot_data.SUBSET][i], ")", sep=""), 
-                        paste("/Contents (", paste(tmp.bubble.txt, collapse="\n"), ")", sep=""))) 
+               annot.options=c(paste("/T (", bubble_plot_labels.BUBBLE_TITLES[bubble_plot_data.SUBSET][i], ")", sep=""),
+                        paste("/Contents (", paste(tmp.bubble.txt, collapse="\n"), ")", sep="")))
           popViewport()
      } ## End for statement
 
@@ -415,23 +415,23 @@ if (bubble_plot_configs.BUBBLE_TIPS) {
    } ## End SUBSET if statement
 
    else {
-     grid.circle(x=bubble_plot_data.X, y=bubble_plot_data.Y, r=unit(bubblesize(bubble_plot_data.SIZE, numstud.range), rep("inches", length(bubble_plot_data.SIZE))), 
-               gp=gpar(col=rgb(0.2,0.2,0.2), lwd=0.05*bubble_plot_configs.BUBBLE_MIN_MAX[2]/0.12, 
-               fill=bubblecolor(unclass(tmp.LEVELS)), alpha=bubblealpha(length(bubble_plot_data.X), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Opaque)), default.units="native") 
+     grid.circle(x=bubble_plot_data.X, y=bubble_plot_data.Y, r=unit(bubblesize(bubble_plot_data.SIZE, numstud.range), rep("inches", length(bubble_plot_data.SIZE))),
+               gp=gpar(col=rgb(0.2,0.2,0.2), lwd=0.05*bubble_plot_configs.BUBBLE_MIN_MAX[2]/0.12,
+               fill=bubblecolor(unclass(tmp.LEVELS)), alpha=bubblealpha(length(bubble_plot_data.X), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Opaque)), default.units="native")
 
      if (!is.null(bubble_plot_data.INDICATE)) {
           for (i in bubble_plot_data.INDICATE) {
-              indicate.coordinates <- indicate.tip(as.numeric(convertX(unit(bubble_plot_data.X[i], "native"), "npc")), 
+              indicate.coordinates <- indicate.tip(as.numeric(convertX(unit(bubble_plot_data.X[i], "native"), "npc")),
                                                as.numeric(convertY(unit(bubble_plot_data.Y[i], "native"), "npc")))
-              grid.segments(unit(indicate.coordinates$x, "npc"), unit(indicate.coordinates$y, "npc"), 
+              grid.segments(unit(indicate.coordinates$x, "npc"), unit(indicate.coordinates$y, "npc"),
                             unit(bubble_plot_data.X[i], "native"), unit(bubble_plot_data.Y[i], "native"),
                             gp=gpar(lwd=0.5))
-              grid.circle(x=bubble_plot_data.X[i], y=bubble_plot_data.Y[i], 
-                      r=unit(c(1.0, 0.4)*bubblesize(bubble_plot_data.SIZE[i], numstud.range), rep("inches", length(bubble_plot_data.SIZE[i]))), 
-                      gp=gpar(lwd=c(0.5, 3.0), fill=bubblecolor(unclass(tmp.LEVELS))), default.units="native") 
-              grid.rect(x=unit(indicate.coordinates$x, "npc"), y=unit(indicate.coordinates$y, "npc"), 
-                             width=unit(2*text.buffer, "inches")+unit(1.0, "strwidth", bubble_plot_labels.BUBBLE_TITLES[i]), 
-                             height=unit(1.5*text.buffer, "inches")+unit(1.0, "strheight", bubble_plot_labels.BUBBLE_TITLES[i]), 
+              grid.circle(x=bubble_plot_data.X[i], y=bubble_plot_data.Y[i],
+                      r=unit(c(1.0, 0.4)*bubblesize(bubble_plot_data.SIZE[i], numstud.range), rep("inches", length(bubble_plot_data.SIZE[i]))),
+                      gp=gpar(lwd=c(0.5, 3.0), fill=bubblecolor(unclass(tmp.LEVELS))), default.units="native")
+              grid.rect(x=unit(indicate.coordinates$x, "npc"), y=unit(indicate.coordinates$y, "npc"),
+                             width=unit(2*text.buffer, "inches")+unit(1.0, "strwidth", bubble_plot_labels.BUBBLE_TITLES[i]),
+                             height=unit(1.5*text.buffer, "inches")+unit(1.0, "strheight", bubble_plot_labels.BUBBLE_TITLES[i]),
                              gp=gpar(col="grey20", lwd=0.7, fill=rgb(1.0, 0.94, 0.83, 0.6)), just=indicate.coordinates$orientation)
               if (indicate.coordinates$orientation[1]=="left") {
                         tmp.x <- unit(indicate.coordinates$x, "npc") + unit(text.buffer, "inches")
@@ -448,25 +448,25 @@ if (bubble_plot_configs.BUBBLE_TIPS) {
      }
 
      if (!is.null(bubble_plot_data.BUBBLE_CENTER_LABEL)) {
-            grid.text(x=bubble_plot_data.X, y=bubble_plot_data.Y, bubble_plot_data.BUBBLE_CENTER_LABEL, 
-                   gp=gpar(col=rgb(0.4,0.4,0.4), cex=bubblesize(bubble_plot_data.SIZE, numstud.range)/as.numeric(convertUnit(stringWidth(bubble_plot_data.BUBBLE_CENTER_LABEL), "inches")), 
+            grid.text(x=bubble_plot_data.X, y=bubble_plot_data.Y, bubble_plot_data.BUBBLE_CENTER_LABEL,
+                   gp=gpar(col=rgb(0.4,0.4,0.4), cex=bubblesize(bubble_plot_data.SIZE, numstud.range)/as.numeric(convertUnit(stringWidth(bubble_plot_data.BUBBLE_CENTER_LABEL), "inches")),
                    alpha=bubblealpha(length(bubble_plot_data.X), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Opaque), font=2), default.units="native")
      }
 
      for (i in seq_along(bubble_plot_data.X)) {
-         pushViewport(viewport(x=unit(bubble_plot_data.X[i], "native"), 
-                               y=unit(bubble_plot_data.Y[i], "native"), 
+         pushViewport(viewport(x=unit(bubble_plot_data.X[i], "native"),
+                               y=unit(bubble_plot_data.Y[i], "native"),
                                width=unit(1, "native"), height=unit(1, "native")))
          par(fig=gridFIG(), new = TRUE)
          tmp.bubble.txt <- character()
          for (j in seq(num.bubble.lines)) {
-              tmp.bubble.txt <- c(tmp.bubble.txt, paste(bubble_plot_labels.BUBBLE_TIPS_LINES[[j]], ": ", 
+              tmp.bubble.txt <- c(tmp.bubble.txt, paste(bubble_plot_labels.BUBBLE_TIPS_LINES[[j]], ": ",
                                                         bubble_plot_data.BUBBLE_TIPS_LINES[[j]][i], sep=""))
          }
-         text(0.5, 0.5, "X", col=rgb(1,0,0,0.01), popup="PLACEHOLDER", 
+         text(0.5, 0.5, "X", col=rgb(1,0,0,0.01), popup="PLACEHOLDER",
               cex=10*bubblesize(bubble_plot_data.SIZE[i], numstud.range),
-              annot.options=c(paste("/T (", bubble_plot_labels.BUBBLE_TITLES[i], ")", sep=""), 
-                        paste("/Contents (", paste(tmp.bubble.txt, collapse="\n"), ")", sep=""))) 
+              annot.options=c(paste("/T (", bubble_plot_labels.BUBBLE_TITLES[i], ")", sep=""),
+                        paste("/Contents (", paste(tmp.bubble.txt, collapse="\n"), ")", sep="")))
          popViewport()
      } ## End for statement
 
@@ -477,27 +477,27 @@ if (bubble_plot_configs.BUBBLE_TIPS) {
 
 else {
    if (!is.null(bubble_plot_data.SUBSET)){
-      grid.circle(x=bubble_plot_data.X, y=bubble_plot_data.Y, r=unit(bubblesize(bubble_plot_data.SIZE, numstud.range), rep("inches", length(bubble_plot_data.SIZE))), 
-               gp=gpar(col=rgb(0.4,0.4,0.4), lwd=0.05*bubble_plot_configs.BUBBLE_MIN_MAX[2]/0.12, 
-               fill=bubblecolor(unclass(tmp.LEVELS)), alpha=bubblealpha(length(bubble_plot_data.X), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Transparent)), default.units="native") 
-      grid.circle(x=bubble_plot_data.X[bubble_plot_data.SUBSET], y=bubble_plot_data.Y[bubble_plot_data.SUBSET], 
-                  r=unit(bubble_plot_configs.BUBBLE_SUBSET_INCREASE+bubblesize(bubble_plot_data.SIZE[bubble_plot_data.SUBSET], numstud.range), 
-                         rep("inches", length(bubble_plot_data.SIZE[bubble_plot_data.SUBSET]))), 
-                  gp=gpar(lwd=0.75*bubble_plot_configs.BUBBLE_MIN_MAX[2]/0.12, fill=bubblecolor(unclass(tmp.LEVELS[bubble_plot_data.SUBSET])), 
-                  alpha=bubblealpha(length(bubble_plot_data.X), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Opaque)), default.units="native") 
+      grid.circle(x=bubble_plot_data.X, y=bubble_plot_data.Y, r=unit(bubblesize(bubble_plot_data.SIZE, numstud.range), rep("inches", length(bubble_plot_data.SIZE))),
+               gp=gpar(col=rgb(0.4,0.4,0.4), lwd=0.05*bubble_plot_configs.BUBBLE_MIN_MAX[2]/0.12,
+               fill=bubblecolor(unclass(tmp.LEVELS)), alpha=bubblealpha(length(bubble_plot_data.X), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Transparent)), default.units="native")
+      grid.circle(x=bubble_plot_data.X[bubble_plot_data.SUBSET], y=bubble_plot_data.Y[bubble_plot_data.SUBSET],
+                  r=unit(bubble_plot_configs.BUBBLE_SUBSET_INCREASE+bubblesize(bubble_plot_data.SIZE[bubble_plot_data.SUBSET], numstud.range),
+                         rep("inches", length(bubble_plot_data.SIZE[bubble_plot_data.SUBSET]))),
+                  gp=gpar(lwd=0.75*bubble_plot_configs.BUBBLE_MIN_MAX[2]/0.12, fill=bubblecolor(unclass(tmp.LEVELS[bubble_plot_data.SUBSET])),
+                  alpha=bubblealpha(length(bubble_plot_data.X), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Opaque)), default.units="native")
 
    if (!is.null(bubble_plot_data.INDICATE)) {
-          indicate.coordinates <- indicate.tip(as.numeric(convertX(unit(bubble_plot_data.X[bubble_plot_data.INDICATE], "native"), "npc")), 
+          indicate.coordinates <- indicate.tip(as.numeric(convertX(unit(bubble_plot_data.X[bubble_plot_data.INDICATE], "native"), "npc")),
                                            as.numeric(convertY(unit(bubble_plot_data.Y[bubble_plot_data.INDICATE], "native"), "npc")))
-          grid.segments(unit(indicate.coordinates$x, "npc"), unit(indicate.coordinates$y, "npc"), 
+          grid.segments(unit(indicate.coordinates$x, "npc"), unit(indicate.coordinates$y, "npc"),
                         unit(bubble_plot_data.X[bubble_plot_data.INDICATE], "native"), unit(bubble_plot_data.Y[bubble_plot_data.INDICATE], "native"),
                         gp=gpar(lwd=0.5))
-          grid.circle(x=bubble_plot_data.X[bubble_plot_data.INDICATE], y=bubble_plot_data.Y[bubble_plot_data.INDICATE], 
-                  r=unit(c(1.0, 0.4)*bubblesize(bubble_plot_data.SIZE[bubble_plot_data.INDICATE], numstud.range), rep("inches", length(bubble_plot_data.SIZE[bubble_plot_data.INDICATE]))), 
-                  gp=gpar(lwd=c(0.5, 3.0), fill=bubblecolor(unclass(tmp.LEVELS[bubble_plot_data.INDICATE]))), default.units="native") 
-          grid.rect(x=unit(indicate.coordinates$x, "npc"), y=unit(indicate.coordinates$y, "npc"), 
-                         width=unit(2*text.buffer, "inches")+unit(1.0, "strwidth", bubble_plot_labels.BUBBLE_TITLES[bubble_plot_data.INDICATE]), 
-                         height=unit(1.5*text.buffer, "inches")+unit(1.0, "strheight", bubble_plot_labels.BUBBLE_TITLES[bubble_plot_data.INDICATE]), 
+          grid.circle(x=bubble_plot_data.X[bubble_plot_data.INDICATE], y=bubble_plot_data.Y[bubble_plot_data.INDICATE],
+                  r=unit(c(1.0, 0.4)*bubblesize(bubble_plot_data.SIZE[bubble_plot_data.INDICATE], numstud.range), rep("inches", length(bubble_plot_data.SIZE[bubble_plot_data.INDICATE]))),
+                  gp=gpar(lwd=c(0.5, 3.0), fill=bubblecolor(unclass(tmp.LEVELS[bubble_plot_data.INDICATE]))), default.units="native")
+          grid.rect(x=unit(indicate.coordinates$x, "npc"), y=unit(indicate.coordinates$y, "npc"),
+                         width=unit(2*text.buffer, "inches")+unit(1.0, "strwidth", bubble_plot_labels.BUBBLE_TITLES[bubble_plot_data.INDICATE]),
+                         height=unit(1.5*text.buffer, "inches")+unit(1.0, "strheight", bubble_plot_labels.BUBBLE_TITLES[bubble_plot_data.INDICATE]),
                          gp=gpar(col="grey20", lwd=0.7, fill=rgb(1.0, 0.94, 0.83, 0.6)), just=indicate.coordinates$orientation)
           if (indicate.coordinates$orientation[1]=="left") {
                     tmp.x <- unit(indicate.coordinates$x, "npc") + unit(text.buffer, "inches")
@@ -513,36 +513,36 @@ else {
    }
 
    if (!is.null(bubble_plot_data.BUBBLE_CENTER_LABEL)) {
-            grid.text(x=bubble_plot_data.X, y=bubble_plot_data.Y, bubble_plot_data.BUBBLE_CENTER_LABEL, 
-                   gp=gpar(col=rgb(0.4,0.4,0.4), cex=bubblesize(bubble_plot_data.SIZE, numstud.range)/as.numeric(convertUnit(stringWidth(bubble_plot_data.BUBBLE_CENTER_LABEL), "inches")), 
+            grid.text(x=bubble_plot_data.X, y=bubble_plot_data.Y, bubble_plot_data.BUBBLE_CENTER_LABEL,
+                   gp=gpar(col=rgb(0.4,0.4,0.4), cex=bubblesize(bubble_plot_data.SIZE, numstud.range)/as.numeric(convertUnit(stringWidth(bubble_plot_data.BUBBLE_CENTER_LABEL), "inches")),
                    alpha=bubblealpha(length(bubble_plot_data.X), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Opaque), font=2), default.units="native")
    }
 
    if (!is.null(bubble_plot_data.BUBBLE_CENTER_LABEL)) {
-            grid.text(x=bubble_plot_data.X, y=bubble_plot_data.Y, bubble_plot_data.BUBBLE_CENTER_LABEL, 
-                   gp=gpar(col=rgb(0.4,0.4,0.4), cex=bubblesize(bubble_plot_data.SIZE, numstud.range)/as.numeric(convertUnit(stringWidth(bubble_plot_data.BUBBLE_CENTER_LABEL), "inches")), 
+            grid.text(x=bubble_plot_data.X, y=bubble_plot_data.Y, bubble_plot_data.BUBBLE_CENTER_LABEL,
+                   gp=gpar(col=rgb(0.4,0.4,0.4), cex=bubblesize(bubble_plot_data.SIZE, numstud.range)/as.numeric(convertUnit(stringWidth(bubble_plot_data.BUBBLE_CENTER_LABEL), "inches")),
                    alpha=bubblealpha(length(bubble_plot_data.X), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Transparent), font=2), default.units="native")
-            grid.text(x=bubble_plot_data.X[bubble_plot_data.SUBSET], y=bubble_plot_data.Y[bubble_plot_data.SUBSET], bubble_plot_data.BUBBLE_CENTER_LABEL[bubble_plot_data.SUBSET], 
-                   gp=gpar(col=rgb(0.4,0.4,0.4), cex=bubblesize(bubble_plot_data.SIZE, numstud.range)/as.numeric(convertUnit(stringWidth(bubble_plot_data.BUBBLE_CENTER_LABEL), "inches")), 
+            grid.text(x=bubble_plot_data.X[bubble_plot_data.SUBSET], y=bubble_plot_data.Y[bubble_plot_data.SUBSET], bubble_plot_data.BUBBLE_CENTER_LABEL[bubble_plot_data.SUBSET],
+                   gp=gpar(col=rgb(0.4,0.4,0.4), cex=bubblesize(bubble_plot_data.SIZE, numstud.range)/as.numeric(convertUnit(stringWidth(bubble_plot_data.BUBBLE_CENTER_LABEL), "inches")),
                    alpha=bubblealpha(length(bubble_plot_data.X[bubble_plot_data.SUBSET]), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Opaque), font=2), default.units="native")
    }
-} else {  
-   grid.circle(x=bubble_plot_data.X, y=bubble_plot_data.Y, r=unit(bubblesize(bubble_plot_data.SIZE, numstud.range), rep("inches", length(bubble_plot_data.SIZE))), 
-               gp=gpar(col=rgb(0.2,0.2,0.2), lwd=0.05*bubble_plot_configs.BUBBLE_MIN_MAX[2]/0.12, fill=bubblecolor(unclass(tmp.LEVELS)), 
-               alpha=bubblealpha(length(bubble_plot_data.X), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Opaque)), default.units="native") 
+} else {
+   grid.circle(x=bubble_plot_data.X, y=bubble_plot_data.Y, r=unit(bubblesize(bubble_plot_data.SIZE, numstud.range), rep("inches", length(bubble_plot_data.SIZE))),
+               gp=gpar(col=rgb(0.2,0.2,0.2), lwd=0.05*bubble_plot_configs.BUBBLE_MIN_MAX[2]/0.12, fill=bubblecolor(unclass(tmp.LEVELS)),
+               alpha=bubblealpha(length(bubble_plot_data.X), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Opaque)), default.units="native")
 
    if (!is.null(bubble_plot_data.INDICATE)) {
-          indicate.coordinates <- indicate.tip(as.numeric(convertX(unit(bubble_plot_data.X[bubble_plot_data.INDICATE], "native"), "npc")), 
+          indicate.coordinates <- indicate.tip(as.numeric(convertX(unit(bubble_plot_data.X[bubble_plot_data.INDICATE], "native"), "npc")),
                                            as.numeric(convertY(unit(bubble_plot_data.Y[bubble_plot_data.INDICATE], "native"), "npc")))
-          grid.segments(unit(indicate.coordinates$x, "npc"), unit(indicate.coordinates$y, "npc"), 
+          grid.segments(unit(indicate.coordinates$x, "npc"), unit(indicate.coordinates$y, "npc"),
                         unit(bubble_plot_data.X[bubble_plot_data.INDICATE], "native"), unit(bubble_plot_data.Y[bubble_plot_data.INDICATE], "native"),
                         gp=gpar(lwd=0.5))
-          grid.circle(x=bubble_plot_data.X[bubble_plot_data.INDICATE], y=bubble_plot_data.Y[bubble_plot_data.INDICATE], 
-                  r=unit(c(1.0, 0.4)*bubblesize(bubble_plot_data.SIZE[bubble_plot_data.INDICATE], numstud.range), rep("inches", length(bubble_plot_data.SIZE[bubble_plot_data.INDICATE]))), 
-                  gp=gpar(lwd=c(0.5, 3.0), fill=bubblecolor(unclass(tmp.LEVELS[bubble_plot_data.INDICATE]))), default.units="native") 
-          grid.rect(x=unit(indicate.coordinates$x, "npc"), y=unit(indicate.coordinates$y, "npc"), 
-                         width=unit(2*text.buffer, "inches")+unit(1.0, "strwidth", bubble_plot_labels.BUBBLE_TITLES[bubble_plot_data.INDICATE]), 
-                         height=unit(1.5*text.buffer, "inches")+unit(1.0, "strheight", bubble_plot_labels.BUBBLE_TITLES[bubble_plot_data.INDICATE]), 
+          grid.circle(x=bubble_plot_data.X[bubble_plot_data.INDICATE], y=bubble_plot_data.Y[bubble_plot_data.INDICATE],
+                  r=unit(c(1.0, 0.4)*bubblesize(bubble_plot_data.SIZE[bubble_plot_data.INDICATE], numstud.range), rep("inches", length(bubble_plot_data.SIZE[bubble_plot_data.INDICATE]))),
+                  gp=gpar(lwd=c(0.5, 3.0), fill=bubblecolor(unclass(tmp.LEVELS[bubble_plot_data.INDICATE]))), default.units="native")
+          grid.rect(x=unit(indicate.coordinates$x, "npc"), y=unit(indicate.coordinates$y, "npc"),
+                         width=unit(2*text.buffer, "inches")+unit(1.0, "strwidth", bubble_plot_labels.BUBBLE_TITLES[bubble_plot_data.INDICATE]),
+                         height=unit(1.5*text.buffer, "inches")+unit(1.0, "strheight", bubble_plot_labels.BUBBLE_TITLES[bubble_plot_data.INDICATE]),
                          gp=gpar(col="grey20", lwd=0.7, fill=rgb(1.0, 0.94, 0.83, 0.6)), just=indicate.coordinates$orientation)
           if (indicate.coordinates$orientation[1]=="left") {
                     tmp.x <- unit(indicate.coordinates$x, "npc") + unit(text.buffer, "inches")
@@ -558,14 +558,14 @@ else {
    }
 
    if (!is.null(bubble_plot_data.BUBBLE_CENTER_LABEL)) {
-            grid.text(x=bubble_plot_data.X, y=bubble_plot_data.Y, bubble_plot_data.BUBBLE_CENTER_LABEL, 
-                   gp=gpar(col=rgb(0.4,0.4,0.4), cex=bubblesize(bubble_plot_data.SIZE, numstud.range)/as.numeric(convertUnit(stringWidth(bubble_plot_data.BUBBLE_CENTER_LABEL), "inches")), 
+            grid.text(x=bubble_plot_data.X, y=bubble_plot_data.Y, bubble_plot_data.BUBBLE_CENTER_LABEL,
+                   gp=gpar(col=rgb(0.4,0.4,0.4), cex=bubblesize(bubble_plot_data.SIZE, numstud.range)/as.numeric(convertUnit(stringWidth(bubble_plot_data.BUBBLE_CENTER_LABEL), "inches")),
                    alpha=bubblealpha(length(bubble_plot_data.X), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Opaque), font=2), default.units="native")
    }
 
    if (!is.null(bubble_plot_data.BUBBLE_CENTER_LABEL)) {
-            grid.text(x=bubble_plot_data.X, y=bubble_plot_data.Y, bubble_plot_data.BUBBLE_CENTER_LABEL, 
-                   gp=gpar(col=rgb(0.4,0.4,0.4), cex=bubblesize(bubble_plot_data.SIZE, numstud.range)/as.numeric(convertUnit(stringWidth(bubble_plot_data.BUBBLE_CENTER_LABEL), "inches")), 
+            grid.text(x=bubble_plot_data.X, y=bubble_plot_data.Y, bubble_plot_data.BUBBLE_CENTER_LABEL,
+                   gp=gpar(col=rgb(0.4,0.4,0.4), cex=bubblesize(bubble_plot_data.SIZE, numstud.range)/as.numeric(convertUnit(stringWidth(bubble_plot_data.BUBBLE_CENTER_LABEL), "inches")),
                    alpha=bubblealpha(length(bubble_plot_data.X), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Opaque), font=2), default.units="native")
    }
 } ## End SUBSET else statement
@@ -578,24 +578,24 @@ popViewport() ## Pop chart.vp
 
 pushViewport(vaxis.vp)
 
-grid.rect(x=0.4, y=unit(text.start, "inches"), width=unit(2.0, "strheight", bubble_plot_labels.Y[1]), 
+grid.rect(x=0.4, y=unit(text.start, "inches"), width=unit(2.0, "strheight", bubble_plot_labels.Y[1]),
           height=unit(2*text.buffer, "inches")+unit(1.0, "strwidth", bubble_plot_labels.Y[1]), gp=gpar(fill=format.colors.border, lwd=0.5, col=format.colors.border),
           just=c("center", "bottom"))
-grid.rect(x=0.4, y=unit(text.start, "inches")+unit(2*text.buffer, "inches")+unit(1.0, "strwidth", bubble_plot_labels.Y[1]), 
-          width=unit(2.0, "strheight", bubble_plot_labels.Y[1]), 
+grid.rect(x=0.4, y=unit(text.start, "inches")+unit(2*text.buffer, "inches")+unit(1.0, "strwidth", bubble_plot_labels.Y[1]),
+          width=unit(2.0, "strheight", bubble_plot_labels.Y[1]),
           height=unit(2*text.buffer, "inches")+unit(1.0, "strwidth", bubble_plot_labels.Y[2]), gp=gpar(fill=format.colors.background, lwd=0.5, col=format.colors.border),
           just=c("center", "bottom"))
-grid.text(x=0.4, y=unit(text.start, "inches")+unit(text.buffer, "inches")+unit(0.5, "strwidth", bubble_plot_labels.Y[1]), bubble_plot_labels.Y[1], 
+grid.text(x=0.4, y=unit(text.start, "inches")+unit(text.buffer, "inches")+unit(0.5, "strwidth", bubble_plot_labels.Y[1]), bubble_plot_labels.Y[1],
           gp=gpar(col=format.colors.font[2]), rot=90, just="center")
-grid.text(x=0.4, y=unit(text.start+3*text.buffer, "inches")+unit(1.0, "strwidth", bubble_plot_labels.Y[1])+unit(0.5, "strwidth", bubble_plot_labels.Y[2]), 
-          bubble_plot_labels.Y[2], 
+grid.text(x=0.4, y=unit(text.start+3*text.buffer, "inches")+unit(1.0, "strwidth", bubble_plot_labels.Y[1])+unit(0.5, "strwidth", bubble_plot_labels.Y[2]),
+          bubble_plot_labels.Y[2],
           gp=gpar(col=format.colors.font[1]), rot=90, just="center")
 for (i in 2:(length(bubble_plot_configs.BUBBLE_Y_TICKS)-1)) {
      if (is.null(bubble_plot_configs.BUBBLE_Y_TICKS_SIZE)) {
-          grid.text(x=0.925, y=bubble_plot_configs.BUBBLE_Y_TICKS[i], bubble_plot_configs.BUBBLE_Y_TICKS[i], 
+          grid.text(x=0.925, y=bubble_plot_configs.BUBBLE_Y_TICKS[i], bubble_plot_configs.BUBBLE_Y_TICKS[i],
                     gp=gpar(col=format.colors.font[1], cex=0.65), just=c("right", "center"), default.units="native")
      } else {
-          grid.text(x=0.925, y=bubble_plot_configs.BUBBLE_Y_TICKS[i], bubble_plot_configs.BUBBLE_Y_TICKS[i], 
+          grid.text(x=0.925, y=bubble_plot_configs.BUBBLE_Y_TICKS[i], bubble_plot_configs.BUBBLE_Y_TICKS[i],
                     gp=gpar(col=format.colors.font[1], cex=bubble_plot_configs.BUBBLE_Y_TICKS_SIZE[i]), just=c("right", "center"), default.units="native")
 }
 }
@@ -607,24 +607,24 @@ popViewport() ## pop vaxis.vp
 
 pushViewport(haxis.vp)
 
-grid.rect(x=unit(text.start, "inches"), y=0.4, width=unit(2*text.buffer, "inches")+unit(1.0, "strwidth", bubble_plot_labels.X[1]), 
+grid.rect(x=unit(text.start, "inches"), y=0.4, width=unit(2*text.buffer, "inches")+unit(1.0, "strwidth", bubble_plot_labels.X[1]),
           height=unit(2.0, "strheight", bubble_plot_labels.X[1]), gp=gpar(fill=format.colors.border, lwd=0.5, col=format.colors.border),
           just=c("left", "center"))
-grid.rect(x=unit(text.start, "inches")+unit(2*text.buffer, "inches")+unit(1.0, "strwidth", bubble_plot_labels.X[1]), y=0.4, 
-          width=unit(2*text.buffer, "inches")+unit(1.0, "strwidth", bubble_plot_labels.X[2]), 
+grid.rect(x=unit(text.start, "inches")+unit(2*text.buffer, "inches")+unit(1.0, "strwidth", bubble_plot_labels.X[1]), y=0.4,
+          width=unit(2*text.buffer, "inches")+unit(1.0, "strwidth", bubble_plot_labels.X[2]),
           height=unit(2.0, "strheight", bubble_plot_labels.X[1]), gp=gpar(fill=format.colors.background, lwd=0.5, col=format.colors.border),
           just=c("left", "center"))
-grid.text(x=unit(text.start, "inches")+unit(text.buffer, "inches")+unit(0.5, "strwidth", bubble_plot_labels.X[1]), y=0.4, bubble_plot_labels.X[1], 
+grid.text(x=unit(text.start, "inches")+unit(text.buffer, "inches")+unit(0.5, "strwidth", bubble_plot_labels.X[1]), y=0.4, bubble_plot_labels.X[1],
           gp=gpar(col=format.colors.font[2]), just="center")
-grid.text(x=unit(text.start+3*text.buffer, "inches")+unit(1.0, "strwidth", bubble_plot_labels.X[1])+unit(0.5, "strwidth", bubble_plot_labels.X[2]), y=0.4, 
-          bubble_plot_labels.X[2], 
+grid.text(x=unit(text.start+3*text.buffer, "inches")+unit(1.0, "strwidth", bubble_plot_labels.X[1])+unit(0.5, "strwidth", bubble_plot_labels.X[2]), y=0.4,
+          bubble_plot_labels.X[2],
           gp=gpar(col=format.colors.font[1]), just="center")
 for (i in seq_along(bubble_plot_configs.BUBBLE_X_TICKS)) {
      if (is.null(bubble_plot_configs.BUBBLE_X_TICKS_SIZE)) {
-          grid.text(x=bubble_plot_configs.BUBBLE_X_TICKS[i], y=0.925, bubble_plot_configs.BUBBLE_X_TICKS[i], 
+          grid.text(x=bubble_plot_configs.BUBBLE_X_TICKS[i], y=0.925, bubble_plot_configs.BUBBLE_X_TICKS[i],
                     gp=gpar(col=format.colors.font[1], cex=0.65), just=c("center", "top"), default.units="native")
      } else {
-          grid.text(x=bubble_plot_configs.BUBBLE_X_TICKS[i], y=0.925, bubble_plot_configs.BUBBLE_X_TICKS[i], 
+          grid.text(x=bubble_plot_configs.BUBBLE_X_TICKS[i], y=0.925, bubble_plot_configs.BUBBLE_X_TICKS[i],
                     gp=gpar(col=format.colors.font[1], cex=bubble_plot_configs.BUBBLE_X_TICKS_SIZE[i]), just=c("center", "top"), default.units="native")
 }
 }
@@ -651,7 +651,7 @@ if (!is.null(bubble_plot_data.SUBSET)) {
   bubble.legend.color <- rep(sort(my.colors)[1], length=num.sizes)
 }
 for (i in 1:num.sizes){
-grid.circle(x=0.25, y=y.coors[i], r=unit(bubblesize(bubble_plot_labels.SIZE[i], numstud.range), "inches"), 
+grid.circle(x=0.25, y=y.coors[i], r=unit(bubblesize(bubble_plot_labels.SIZE[i], numstud.range), "inches"),
             gp=gpar(col="grey14", lwd=0.7, fill=bubble.legend.color[i], alpha=bubble.legend.alpha))
 grid.text(x=0.35, y=y.coors[i], paste(bubble_plot_labels.SIZE[i], "Students"), gp=gpar(col=format.colors.font[1], cex=0.9), just="left")
 }
@@ -708,7 +708,7 @@ if (bubble_plot_configs.BUBBLE_PLOT_DEVICE %in% c("PDF", "PNG")) {
 }
 
 
-# Modify aspects of PDF bubbles 
+# Modify aspects of PDF bubbles
 
 if (bubble_plot_configs.BUBBLE_TIPS) {
 	temp_pdf <- readLines(file.path.and.name, encoding="UTF-8")
@@ -721,12 +721,12 @@ if (bubble_plot_configs.BUBBLE_TIPS) {
 # Code for pdftk catalog creation
 
 if (bubble_plot_pdftk.CREATE_CATALOG) {
-       
+
 	if (is.na(file.info(".pdftk_tmp")$isdir)){
                 dir.create(".pdftk_tmp")
         }
 	tmp.page.number <- length(list.files(".pdftk_tmp"))+1
-	new.file.path.and.name <- file.path(".pdftk_tmp", 
+	new.file.path.and.name <- file.path(".pdftk_tmp",
 		paste(substr(paste("000000", as.character(tmp.page.number), sep=""), nchar(tmp.page.number), nchar(tmp.page.number)+7), ".pdf", sep=""))
 	file.rename(file.path.and.name, new.file.path.and.name)
 	if (tmp.page.number == 1) {
