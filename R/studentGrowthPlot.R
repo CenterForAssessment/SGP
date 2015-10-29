@@ -370,7 +370,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 
 	stextGrob <- function (label, r=0.1, x = x, y = y, 
 		just = "centre", hjust = NULL, vjust = NULL, rot = 0, check.overlap = FALSE, 
-		default.units = default.units, name = NULL, gp = gpar(), vp = NULL){
+		default.units = "native", name = NULL, gp = gpar(), vp = NULL){
 		# http://stackoverflow.com/questions/7734535/control-font-thickness-without-changing-font-size
 
 		let <- textGrob("a", gp=gp, vp=vp)
@@ -691,8 +691,8 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 					tmp.test.abbreviation[1]
 				tmp.test.abbreviation.text[which((low.year:high.year >= Report_Parameters$Assessment_Transition$Year)[which(year.text!=" ")])] <-
 					tmp.test.abbreviation[2]
-				grid.text(x=low.year:high.year, y=convertY(unit(0.07, "npc"), "native"), tmp.test.abbreviation.text, gp=gpar(col="white", cex=0.7), default.units="native")
-				grid.text(x=low.year:high.year, y=convertY(unit(0.035, "npc"), "native"), sapply(content_area.text, capwords), gp=gpar(col="white", cex=0.7), default.units="native")
+				grid.stext(tmp.test.abbreviation.text, x=unit(low.year:high.year, "native"), y=convertY(unit(0.07, "npc"), "native"), gp=gpar(cex=0.7))
+				grid.stext(sapply(content_area.text, capwords), x=unit(low.year:high.year, "native"), y=convertY(unit(0.03, "npc"), "native"), gp=gpar(cex=0.7))
 			}
 		}
 	}
@@ -702,7 +702,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 	}
 
 	if (is.null(Report_Parameters$Assessment_Transition) && sgPlot.show.content_area.progression) {
-		grid.stext(sapply(content_area.text, capwords), x=unit(low.year:high.year, "native"), y=convertY(unit(0.05, "npc"), "native"), gp=gpar(cex=0.75), default.units="native")
+		grid.stext(sapply(content_area.text, capwords), x=unit(low.year:high.year, "native"), y=convertY(unit(0.05, "npc"), "native"), gp=gpar(cex=0.75))
 		# grid.text(x=low.year:high.year, y=convertY(unit(0.05, "npc"), "native"), sapply(content_area.text, capwords), gp=gpar(col="white", cex=0.75), default.units="native")
 	}
 
