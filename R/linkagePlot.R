@@ -51,7 +51,7 @@ function(linkage.data,
         for (content_area.iter in unique(linkage.data[['CONTENT_AREA']])) {
             x.axis.cut <- SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[get.cutscore.label(state, x.axis.year, content_area.iter)]][[paste("GRADE", grade.iter, sep="_")]][x.axis.cut.level]
             y.axis.cut <- SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[get.cutscore.label(state, y.axis.year, content_area.iter)]][[paste("GRADE", grade.iter, sep="_")]][y.axis.cut.level]
-            pdf(file=paste("Data/Linkages_", year.for.equate, "/Figures/", toupper(equating.method), "_", content_area.iter, "_GRADE_", grade.iter, ".pdf", sep=""), width=8, height=8)
+            pdf(file=paste("Data/Linkages_", year.for.equate, "/Figures/", toupper(equating.method), "_", conversion.type, "_", content_area.iter, "_GRADE_", grade.iter, ".pdf", sep=""), width=8, height=8)
                 plot(linkage.data[GRADE==grade.iter & CONTENT_AREA==content_area.iter][['SCALE_SCORE']],
                     linkage.data[GRADE==grade.iter & CONTENT_AREA==content_area.iter][[linkage.var.name]],
                     type="p", xlab=x.axis.label, ylab=y.axis.label,
