@@ -895,6 +895,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 				setkey(tmp.lookup, CONTENT_AREA, GRADE, SCALE_SCORE, SCALE_SCORE_ACTUAL)
 				for (i in unique(tmp.lookup$CONTENT_AREA)) {
 					for (j in unique(tmp.lookup$GRADE)) {
+						if (dim(tmp.lookup[list(i, j)])[1]==1) next # One row entries are produced for grade by content area combo that does not exist in data.
 						assign(paste("stepfun", i, j, sep="."), 
 							stepfun(sort(tmp.lookup[list(i, j)]$SCALE_SCORE), tmp.lookup[list(i,j)]$SCALE_SCORE_ACTUAL))
 					}
