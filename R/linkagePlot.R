@@ -5,7 +5,7 @@ function(linkage.data,
         year.for.equate,
         state) {
 
-    YEAR <- NULL
+    GRADE <- CONTENT_AREA <- YEAR <- NULL
 
     get.cutscore.label <- function(state, year, content_area) {
 		tmp.cutscore.names <- names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]])
