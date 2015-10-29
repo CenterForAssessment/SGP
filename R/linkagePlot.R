@@ -44,7 +44,7 @@ function(linkage.data,
         x.abb <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[paste("Assessment_Abbreviation", year.for.equate, sep=".")]]
         y.abb <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Assessment_Abbreviation"]]
         x.axis.label <- paste(x.abb, "Scale Score")
-        y.axis.label <- paste(y.ab:b, "Scale Score")
+        y.axis.label <- paste(y.abb, "Scale Score")
     }
     linkage.data <- linkage.data[YEAR==x.axis.year & !is.na(get(linkage.var.name))]
     for (grade.iter in unique(linkage.data[['GRADE']])) {
