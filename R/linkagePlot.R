@@ -8,22 +8,22 @@ function(linkage.data,
     GRADE <- CONTENT_AREA <- YEAR <- NULL
 
     get.cutscore.label <- function(state, year, content_area) {
-		tmp.cutscore.names <- names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]])
-		tmp.cutscore.years <- sapply(strsplit(tmp.cutscore.names[grep(content_area, tmp.cutscore.names)], "[.]"), function(x) x[2])
-		if (any(!is.na(tmp.cutscore.years))) {
-			if (year %in% tmp.cutscore.years) {
-				return(paste(content_area, year, sep="."))
-			} else {
+        tmp.cutscore.names <- names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]])
+        tmp.cutscore.years <- sapply(strsplit(tmp.cutscore.names[grep(content_area, tmp.cutscore.names)], "[.]"), function(x) x[2])
+        if (any(!is.na(tmp.cutscore.years))) {
+            if (year %in% tmp.cutscore.years) {
+                return(paste(content_area, year, sep="."))
+            } else {
 				if (year==sort(c(year, tmp.cutscore.years))[1]) {
 					return(content_area)
 				} else {
 					return(paste(content_area, sort(tmp.cutscore.years)[which(year==sort(c(year, tmp.cutscore.years)))-1], sep="."))
 				}
 			}
-		} else {
-			return(content_area)
-		}
-	}
+        } else {
+            return(content_area)
+        }
+    }
 
     myTicks <- function(my.range) {
         tmp.floor <- floor(log10(diff(c(my.range)))-0.3)
