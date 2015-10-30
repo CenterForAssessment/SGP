@@ -27,9 +27,10 @@ function(linkage.data,
 
     myTicks <- function(my.range) {
         tmp.floor <- floor(log10(diff(c(my.range)))-0.3)
+        if (tmp.floor==0) tmp.round <- 1 else tmp.round <- 0
         tmp.seq <- my.range/10^tmp.floor
         tmp.seq[1] <- floor(tmp.seq[1])*10^tmp.floor; tmp.seq[2] <- ceiling(tmp.seq[2])*10^tmp.floor
-        tmp.seq <- c(my.range[1], head(tail(seq(tmp.seq[1], tmp.seq[2], by=10^tmp.floor), -1), -1), my.range[2])
+        tmp.seq <- round(c(my.range[1], head(tail(seq(tmp.seq[1], tmp.seq[2], by=10^tmp.floor), -1), -1), my.range[2]), tmp.round)
         return(tmp.seq)
     }
 
@@ -58,21 +59,21 @@ function(linkage.data,
     linkage.data <- linkage.data[YEAR==x.axis.year & !is.na(get(linkage.var.name))]
     for (grade.iter in unique(linkage.data[['GRADE']])) {
         for (content_area.iter in unique(linkage.data[['CONTENT_AREA']])) {
-            linkage.data <- linkage.data[GRADE==grade.iter & CONTENT_AREA==content_area.iter]
+            tmp.linkage.data <- linkage.data[GRADE==grade.iter & CONTENT_AREA==content_area.iter]
             x.axis.cut <- SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[get.cutscore.label(state, x.axis.year, content_area.iter)]][[paste("GRADE", grade.iter, sep="_")]][x.axis.cut.level]
-            x.axis.ticks <- myTicks(range(linkage.data[['SCALE_SCORE']]))
+            x.axis.ticks <- myTicks(range(tmp.linkage.data[['SCALE_SCORE']]))
             x.axis.cut.text <- paste("grid.lines(x=unit(", x.axis.cut, ", 'native'), y=c(", x.axis.ticks[1], ",", rev(x.axis.ticks)[1], "), gp=gpar(col='grey40', lwd=1.25, lty=2, alpha=0.5))")
             y.axis.cut <- SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[get.cutscore.label(state, y.axis.year, content_area.iter)]][[paste("GRADE", grade.iter, sep="_")]][y.axis.cut.level]
-            y.axis.ticks <- myTicks(range(linkage.data[[linkage.var.name]]))
+            y.axis.ticks <- myTicks(range(tmp.linkage.data[[linkage.var.name]]))
             y.axis.cut.text <- paste("grid.lines(x=unit(", y.axis.cut, ", 'native'), y=c(", y.axis.ticks[1], ",", rev(y.axis.ticks)[1], "), gp=gpar(col='grey40', lwd=1.25, lty=2, alpha=0.5))")
 
             bubblePlot(
-    			bubble_plot_data.X=linkage.data[GRADE==grade.iter & CONTENT_AREA==content_area.iter][['SCALE_SCORE']],
-    			bubble_plot_data.Y=linkage.data[GRADE==grade.iter & CONTENT_AREA==content_area.iter][[linkage.var.name]],
+    			bubble_plot_data.X=tmp.linkage.data[['SCALE_SCORE']],
+    			bubble_plot_data.Y=tmp.linkage.data[[linkage.var.name]],
     			bubble_plot_data.SUBSET=NULL,
     			bubble_plot_data.INDICATE=NULL,
     			bubble_plot_data.BUBBLE_CENTER_LABEL=NULL,
-    			bubble_plot_data.SIZE=rep(50, length(linkage.data[GRADE==grade.iter & CONTENT_AREA==content_area.iter][['SCALE_SCORE']])),
+    			bubble_plot_data.SIZE=rep(50, length(tmp.linkage.data[['SCALE_SCORE']])),
     			bubble_plot_data.LEVELS=NULL,
     			bubble_plot_data.BUBBLE_TIPS_LINES=NULL,
     			bubble_plot_labels.X=c(x.abb, x.axis.label),
@@ -105,15 +106,6 @@ function(linkage.data,
     			bubble_plot_configs.BUBBLE_PLOT_NAME=paste(toupper(equating.method), "_", conversion.type, "_", content_area.iter, "_GRADE_", grade.iter, ".pdf", sep=""),
     			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path("Data", paste("Linkages", year.for.equate, sep="_"), "Figures"),
     			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
-
-#            pdf(file=paste("Data/Linkages_", year.for.equate, "/Figures/", toupper(equating.method), "_", conversion.type, "_", content_area.iter, "_GRADE_", grade.iter, ".pdf", sep=""), width=8, height=8)
-#                plot(linkage.data[GRADE==grade.iter & CONTENT_AREA==content_area.iter][['SCALE_SCORE']],
-#                    linkage.data[GRADE==grade.iter & CONTENT_AREA==content_area.iter][[linkage.var.name]],
-#                    type="p", xlab=x.axis.label, ylab=y.axis.label,
-#                    main=paste(x.abb, "to", y.abb, equating.method, "concordance:", content_area.iter, "Grade", grade.iter))
-#                    abline(h=y.axis.cut, lty=2, col="grey50")
-#                    abline(v=x.axis.cut, lty=2, col="grey50")
-#            dev.off()
         }
     }
 } ### END linkagePlot function
