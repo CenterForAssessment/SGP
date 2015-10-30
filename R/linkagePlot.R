@@ -25,6 +25,14 @@ function(linkage.data,
 		}
 	}
 
+    myTicks <- function(my.range) {
+        tmp.floor <- floor(log10(diff(c(my.range)))-0.3)
+        tmp.seq <- my.range/10^tmp.floor
+        tmp.seq[1] <- floor(tmp.seq[1])*10^tmp.floor; tmp.seq[2] <- ceiling(tmp.seq[2])*10^tmp.floor
+        tmp.seq <- c(my.range[1], head(tail(seq(tmp.seq[1], tmp.seq[2], by=10^tmp.floor), -1), -1), my.range[2])
+        return(tmp.seq)
+    }
+
     tmp.years <- sort(unique(linkage.data[['YEAR']]))
     linkage.var.name <- grep('SCALE_SCORE_EQUATED', names(linkage.data), value=TRUE)
     if (conversion.type=="OLD_TO_NEW") {
@@ -46,14 +54,18 @@ function(linkage.data,
         x.axis.label <- paste(x.axis.year, "Scale Score")
         y.axis.label <- paste(y.axis.year, "Scale Score")
     }
-    linkage.data <- linkage.data[YEAR==x.axis.year & !is.na(get(linkage.var.name))]
+
     for (grade.iter in unique(linkage.data[['GRADE']])) {
         for (content_area.iter in unique(linkage.data[['CONTENT_AREA']])) {
+            linkage.data <- linkage.data[YEAR==x.axis.year & !is.na(get(linkage.var.name)) & GRADE==grade.iter & CONTENT_AREA==content_area.iter]
+
             plot(linkage.data[GRADE==grade.iter & CONTENT_AREA==content_area.iter][['SCALE_SCORE']], linkage.data[GRADE==grade.iter & CONTENT_AREA==content_area.iter][[linkage.var.name]], type="n")
             x.axis.cut <- SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[get.cutscore.label(state, x.axis.year, content_area.iter)]][[paste("GRADE", grade.iter, sep="_")]][x.axis.cut.level]
-            x.axis.cut.text <- paste("grid.lines(x=unit(", x.axis.cut, ", 'native'), y=c(", axTicks(2)[1], ",", rev(axTicks(2))[1], "), gp=gpar(col='grey40', lwd=1.25, lty=2, alpha=0.5))")
+            x.axis.ticks <- myTicks(range(linkage.data[['SCALE_SCORE']]))
+            x.axis.cut.text <- paste("grid.lines(x=unit(", x.axis.cut, ", 'native'), y=c(", x.axis.ticks[1], ",", rev(x.axis.ticks)[1], "), gp=gpar(col='grey40', lwd=1.25, lty=2, alpha=0.5))")
             y.axis.cut <- SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[get.cutscore.label(state, y.axis.year, content_area.iter)]][[paste("GRADE", grade.iter, sep="_")]][y.axis.cut.level]
-            y.axis.cut.text <- paste("grid.lines(x=unit(", y.axis.cut, ", 'native'), y=c(", axTicks(1)[1], ",", rev(axTicks(1))[1], "), gp=gpar(col='grey40', lwd=1.25, lty=2, alpha=0.5))")
+            y.axis.ticks <- myTicks(range(linkage.data[[linkage.var.name]]))
+            y.axis.cut.text <- paste("grid.lines(x=unit(", y.axis.cut, ", 'native'), y=c(", y.axis.ticks[1], ",", rev(y.axis.ticks)[1], "), gp=gpar(col='grey40', lwd=1.25, lty=2, alpha=0.5))")
 
             bubblePlot(
     			bubble_plot_data.X=linkage.data[GRADE==grade.iter & CONTENT_AREA==content_area.iter][['SCALE_SCORE']],
@@ -77,10 +89,10 @@ function(linkage.data,
     			bubble_plot_titles.LEGEND2_P1=NULL,
     			bubble_plot_titles.LEGEND2_P2=NULL,
     			bubble_plot_configs.BUBBLE_MIN_MAX=c(0.07, 0.07),
-    			bubble_plot_configs.BUBBLE_X_TICKS=axTicks(1),
-    			bubble_plot_configs.BUBBLE_X_TICKS_SIZE=rep(0.7, length(axTicks(1))),
-    			bubble_plot_configs.BUBBLE_Y_TICKS=axTicks(2),
-    			bubble_plot_configs.BUBBLE_Y_TICKS_SIZE=rep(0.7, length(axTicks(2))),
+    			bubble_plot_configs.BUBBLE_X_TICKS=x.axis.ticks,
+    			bubble_plot_configs.BUBBLE_X_TICKS_SIZE=rep(0.7, length(x.axis.ticks)),
+    			bubble_plot_configs.BUBBLE_Y_TICKS=y.axis.ticks,
+    			bubble_plot_configs.BUBBLE_Y_TICKS_SIZE=rep(0.7, length(y.axis.ticks)),
     			bubble_plot_configs.BUBBLE_SUBSET_INCREASE=0.00,
     			bubble_plot_configs.BUBBLE_COLOR="blue",
     			bubble_plot_configs.BUBBLE_SUBSET_ALPHA=list(Transparent=0.3, Opaque=0.9),
