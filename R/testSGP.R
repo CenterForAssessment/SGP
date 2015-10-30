@@ -16,7 +16,7 @@
 		#######################################################################################################################################################
 		###
 		### TEST NUMBER 0: Test of studentGrowthPercentiles, studentGrowthProjections, and sgpData
-		###
+		##
 		#######################################################################################################################################################
 
 		if ("0" %in% toupper(TEST_NUMBER)) {
@@ -1271,7 +1271,7 @@
 			##### Modify SGPstateData
 
 			SGPstateData[["DEMO"]][["Student_Report_Information"]][["Earliest_Year_Reported"]] <- test.option[['Earliest_Year_Reported']]
-			SGPstateData[["DEMO"]][['SGP_Configuration']][['sgPlot.plot.test.transition']] <- FALSE
+			SGPstateData[["DEMO"]][['SGP_Configuration']][['sgPlot.plot.test.transition']] <- test.option[['sgPlot.plot.test.transition']]
 
 			### updateSGP
 
