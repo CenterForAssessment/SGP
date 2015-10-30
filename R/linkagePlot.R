@@ -64,8 +64,8 @@ function(linkage.data,
             x.axis.ticks <- myTicks(range(tmp.linkage.data[['SCALE_SCORE']]))
             y.axis.cut <- SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[get.cutscore.label(state, y.axis.year, content_area.iter)]][[paste("GRADE", grade.iter, sep="_")]][y.axis.cut.level]
             y.axis.ticks <- myTicks(range(tmp.linkage.data[[linkage.var.name]]))
-            x.axis.cut.text <- paste("grid.lines(x=unit(", x.axis.cut, ", 'native'), y=c(", y.axis.ticks[1], ",", rev(y.axis.ticks)[1], "), gp=gpar(col='grey40', lwd=1.25, lty=2, alpha=0.5))")
-            y.axis.cut.text <- paste("grid.lines(x=c(", x.axis.ticks[1], ",", rev(x.axis.ticks)[1], "), y=unit(", y.axis.cut, ", 'native'), gp=gpar(col='grey40', lwd=1.25, lty=2, alpha=0.5))")
+            x.axis.cut.text <- paste("grid.lines(x=unit(", x.axis.cut, ", 'native'), y=c(", y.axis.ticks[1], ",", rev(y.axis.ticks)[1], "), default.units='native', gp=gpar(col='grey40', lwd=1.25, lty=2, alpha=0.5))")
+            y.axis.cut.text <- paste("grid.lines(x=unit(c(", x.axis.ticks[1], ",", rev(x.axis.ticks)[1], "), y=unit(", y.axis.cut, ", 'native'), default.units='native', gp=gpar(col='grey40', lwd=1.25, lty=2, alpha=0.5))")
 
             bubblePlot(
     			bubble_plot_data.X=tmp.linkage.data[['SCALE_SCORE']],
