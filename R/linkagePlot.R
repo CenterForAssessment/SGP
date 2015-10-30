@@ -55,9 +55,10 @@ function(linkage.data,
         y.axis.label <- paste(y.axis.year, "Scale Score")
     }
 
+    linkage.data <- linkage.data[YEAR==x.axis.year & !is.na(get(linkage.var.name))]
     for (grade.iter in unique(linkage.data[['GRADE']])) {
         for (content_area.iter in unique(linkage.data[['CONTENT_AREA']])) {
-            linkage.data <- linkage.data[YEAR==x.axis.year & !is.na(get(linkage.var.name)) & GRADE==grade.iter & CONTENT_AREA==content_area.iter]
+            linkage.data <- linkage.data[GRADE==grade.iter & CONTENT_AREA==content_area.iter]
             x.axis.cut <- SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[get.cutscore.label(state, x.axis.year, content_area.iter)]][[paste("GRADE", grade.iter, sep="_")]][x.axis.cut.level]
             x.axis.ticks <- myTicks(range(linkage.data[['SCALE_SCORE']]))
             x.axis.cut.text <- paste("grid.lines(x=unit(", x.axis.cut, ", 'native'), y=c(", x.axis.ticks[1], ",", rev(x.axis.ticks)[1], "), gp=gpar(col='grey40', lwd=1.25, lty=2, alpha=0.5))")
