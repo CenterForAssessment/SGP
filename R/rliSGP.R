@@ -163,7 +163,7 @@ function(sgp_object,
 		}
 
 		if (update.save.shell.only) {
-			assign(update.shell.name, prepareSGP(subset(sgp_object@Data, YEAR %in% tail(sort(unique(sgp_object@Data$YEAR)), num.windows.to.keep)),
+			assign(update.shell.name, prepareSGP(subset(sgp_object@Data, YEAR %in% tail(head(sort(unique(sgp_object@Data$YEAR)), -1), num.windows.to.keep)),
 				state=state, create.additional.variables=FALSE))
 			save(list=update.shell.name, file=paste(update.shell.name, "Rdata", sep="."))
 		}
