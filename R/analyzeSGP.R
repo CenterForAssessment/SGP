@@ -386,8 +386,8 @@ function(sgp_object,
 		    content_areas.for.equate <- unique(sgp_object@Data[YEAR==year.for.equate]$CONTENT_AREA)
 
             if (is.null(sgp.percentiles.equating.method)) {
-                message("\tNOTE: Analyses involving equating will be performed with default 'equipercentile' method. For other methods, see documentation associated with the 'sgp.percentiles.equating.method' argument in 'analyzeSGP'.")
-                sgp.percentiles.equating.method <- 'equipercentile'
+                message("\tNOTE: Analyses involving equating will be performed using each of: 'identity', 'mean', 'linear', and 'equipercentile' methods. See documentation associated with the 'sgp.percentiles.equating.method' argument in 'analyzeSGP'.")
+                sgp.percentiles.equating.method <- c("identity", "mean", "linear", "equipercentile")
             }
 
             if (!identical(years, year.for.equate)) {
@@ -405,7 +405,7 @@ function(sgp_object,
             }
 
             data.for.equate <- copy(sgp_object@Data)
-            sgp_object@SGP[['Linkages']] <- equateSGP(data.for.equate, state, year.for.equate, sgp.percentiles.equating.method)
+            sgp_object@SGP[['Linkages']] <- Linkages <- equateSGP(data.for.equate, state, year.for.equate, sgp.percentiles.equating.method)
             setkey(data.for.equate, VALID_CASE, CONTENT_AREA, YEAR, GRADE, SCALE_SCORE)
             for (conversion.type.iter in c("OLD_TO_NEW", "NEW_TO_OLD")) {
                 for (sgp.percentiles.equating.method.iter in sgp.percentiles.equating.method) {
@@ -419,7 +419,7 @@ function(sgp_object,
                     linkagePlot(Scale_Score_Linkages[[conversion.type.iter]][[toupper(sgp.percentiles.equating.method.iter)]], conversion.type.iter, sgp.percentiles.equating.method.iter, year.for.equate, state)
                 }
             }
-            save(sgp_object@SGP[['Linkages']], file=paste(paste("Data/", paste("Linkages", year.for.equate, sep="_"), "/", sep=""), "Linkages.Rdata", sep=""))
+            save(Linkages, file=paste(paste("Data/", paste("Linkages", year.for.equate, sep="_"), "/", sep=""), "Linkages.Rdata", sep=""))
             assign(paste(gsub(" ", "_", getStateAbbreviation(state, type="LONG")), "Scale_Score_Linkages", sep="_"), Scale_Score_Linkages)
             save(list=paste(gsub(" ", "_", getStateAbbreviation(state, type="LONG")), "Scale_Score_Linkages", sep="_"),
                 file=paste(paste("Data/", paste("Linkages", year.for.equate, sep="_"), "/", sep=""), paste(gsub(" ", "_", getStateAbbreviation(state, type="LONG")), "Scale_Score_Linkages", sep="_"), ".Rdata", sep=""))
