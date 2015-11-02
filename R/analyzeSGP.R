@@ -419,7 +419,7 @@ function(sgp_object,
                     linkagePlot(Scale_Score_Linkages[[conversion.type.iter]][[toupper(sgp.percentiles.equating.method.iter)]], conversion.type.iter, sgp.percentiles.equating.method.iter, year.for.equate, state)
                 }
             }
-            save(sgp_object@SGP[['Linkages']], paste(paste("Data/", paste("Linkages", year.for.equate, sep="_"), "/", sep=""), "Linkages.Rdata", sep=""))
+            save(sgp_object@SGP[['Linkages']], file=paste(paste("Data/", paste("Linkages", year.for.equate, sep="_"), "/", sep=""), "Linkages.Rdata", sep=""))
             assign(paste(gsub(" ", "_", getStateAbbreviation(state, type="LONG")), "Scale_Score_Linkages", sep="_"), Scale_Score_Linkages)
             save(list=paste(gsub(" ", "_", getStateAbbreviation(state, type="LONG")), "Scale_Score_Linkages", sep="_"),
                 file=paste(paste("Data/", paste("Linkages", year.for.equate, sep="_"), "/", sep=""), paste(gsub(" ", "_", getStateAbbreviation(state, type="LONG")), "Scale_Score_Linkages", sep="_"), ".Rdata", sep=""))
