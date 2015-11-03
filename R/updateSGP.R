@@ -178,6 +178,7 @@ function(what_sgp_object=NULL,
 		if (overwrite.existing.data) {
 				what_sgp_object@Data <- rbindlist(list(what_sgp_object@Data[which(YEAR!=update.years)], tmp_sgp_object@Data), fill=TRUE)
 				what_sgp_object@SGP[['Goodness_of_Fit']][grep(update.years, names(what_sgp_object@SGP[['Goodness_of_Fit']]))] <- NULL
+				what_sgp_object@SGP[['Linkages']][grep(update.years, names(what_sgp_object@SGP[['Linkages']]))] <- NULL
 				what_sgp_object@SGP[['SGPercentiles']][grep(update.years, names(what_sgp_object@SGP[['SGPercentiles']]))] <- NULL
 				what_sgp_object@SGP[['SGProjections']][grep(update.years, names(what_sgp_object@SGP[['SGProjections']]))] <- NULL
 				what_sgp_object@SGP[['Simulated_SGPs']][grep(update.years, names(what_sgp_object@SGP[['Simulated_SGPs']]))] <- NULL
