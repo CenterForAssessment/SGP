@@ -263,6 +263,14 @@
 				tmp.messages <- c(tmp.messages, "\tTest of variable PERCENT_AT_ABOVE_PROFICIENT_PRIOR: FAIL\n")
 			}
 
+			### TEST of LAGGED PROJECTION CUTs variable P35_PROJ_YEAR_1 variable for MATHEMATICS.2014_2015.LAGGED
+
+			if (identical(sum(Demonstration_SGP@SGP$SGProjections[["MATHEMATICS.2014_2015.LAGGED"]]$P35_PROJ_YEAR_1), 15968767)) {
+				tmp.messages <- c(tmp.messages, "\tTest of LAGGED PROJECTION variable P35_PROJ_YEAR_1: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of LAGGED PROJECTION variable P35_PROJ_YEAR_1: FAIL\n")
+			}
+
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number ", TEST_NUMBER, ":  ", convertTime(timetaken(started.at.overall)), " #####\n", sep=""))
 			cat(tmp.messages)
 		} ### End TEST_NUMBER 1 & 1B

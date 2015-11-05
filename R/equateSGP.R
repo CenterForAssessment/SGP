@@ -7,18 +7,20 @@ function(tmp.data,
 	VALID_CASE <- YEAR <- CONTENT_AREA <- GRADE <- NULL
 
 	tmp.list <- equate.list <- list()
-	current.year <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]
 	equate.interval.digits <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Equate_Interval_Digits"]]
 	if (is.null(equate.interval.digits)) equate.interval.digits <- 0
+
+	current.year <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]
 	prior.year <- tail(head(sort(unique(tmp.data$YEAR)), -1), 1)
-	grades.for.equate <- as.character(intersect(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][['Grades_Tested']],
-                        SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[paste('Grades_Tested', current.year, sep=".")]]))
 	current.year.data <- tmp.data[VALID_CASE=="VALID_CASE" & YEAR==current.year]
-	content_areas.for.equate <- intersect(unique(current.year.data$CONTENT_AREA),
-		names(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Content_Areas_Labels"]]))
 	prior.year.data <- tmp.data[VALID_CASE=="VALID_CASE" & YEAR==prior.year]
 	setkey(current.year.data, CONTENT_AREA, GRADE)
 	setkey(prior.year.data, CONTENT_AREA, GRADE)
+	
+	content_areas.for.equate <- intersect(unique(current.year.data$CONTENT_AREA),
+		names(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Content_Areas_Labels"]]))
+	grades.for.equate <- as.character(intersect(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][['Grades_Tested']],
+                        SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[paste('Grades_Tested', current.year, sep=".")]]))
 
 
 	### Utility functions
