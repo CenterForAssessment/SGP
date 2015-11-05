@@ -16,8 +16,8 @@ function(tmp.data,
 	prior.year.data <- tmp.data[VALID_CASE=="VALID_CASE" & YEAR==prior.year]
 	setkey(current.year.data, CONTENT_AREA, GRADE)
 	setkey(prior.year.data, CONTENT_AREA, GRADE)
-	current.year.uniques <- unique(current.year.data)[,c("CONTENT_AREA", "GRADE"), with=FALSE]
-	prior.year.uniques <- unique(prior.year.data)[,c("CONTENT_AREA", "GRADE"), with=FALSE]
+	current.year.uniques <- unique(current.year.data[VALID_CASE=="VALID_CASE"])[,c("CONTENT_AREA", "GRADE"), with=FALSE]
+	prior.year.uniques <- unique(prior.year.data[VALID_CASE=="VALID_CASE"])[,c("CONTENT_AREA", "GRADE"), with=FALSE]
 	content_areas.for.equate <- intersect(unique(current.year.uniques$CONTENT_AREA), unique(prior.year.uniques$CONTENT_AREA))
 	unique.content.by.grade <- lapply(content_areas.for.equate, function(x) intersect(current.year.uniques[x]$GRADE, prior.year.uniques[x]$GRADE))
 	names(unique.content.by.grade) <- content_areas.for.equate
