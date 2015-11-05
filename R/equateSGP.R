@@ -16,11 +16,11 @@ function(tmp.data,
 	prior.year.data <- tmp.data[VALID_CASE=="VALID_CASE" & YEAR==prior.year]
 	setkey(current.year.data, CONTENT_AREA, GRADE)
 	setkey(prior.year.data, CONTENT_AREA, GRADE)
-	
-	content_areas.for.equate <- intersect(unique(current.year.data$CONTENT_AREA),
-		names(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Content_Areas_Labels"]]))
-	grades.for.equate <- as.character(intersect(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][['Grades_Tested']],
-                        SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[paste('Grades_Tested', current.year, sep=".")]]))
+	current.year.uniques <- unique(current.year.data)[,c("CONTENT_AREA", "GRADE"), with=FALSE]
+	prior.year.uniques <- unique(prior.year.data)[,c("CONTENT_AREA", "GRADE"), with=FALSE]
+	content_areas.for.equate <- intersect(unique(current.year.uniques$CONTENT_AREA), unique(prior.year.uniques$CONTENT_AREA))
+	unique.content.by.grade <- lapply(content_areas.for.equate, function(x) intersect(current.year.uniques[x]$GRADE, prior.year.uniques[x]$GRADE))
+	names(unique.content.by.grade) <- content_areas.for.equate
 
 
 	### Utility functions
@@ -66,8 +66,8 @@ function(tmp.data,
 
 	### Loop over GRADE and CONTENT_AREA
 
-	for (content_area.iter in content_areas.for.equate) {
-		for (grade.iter in grades.for.equate) {
+	for (content_area.iter in names(unique.content.by.grade)) {
+		for (grade.iter in unique.content.by.grade[[content_area.iter]]) {
 			tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]] <-
 				equateSGP_INTERNAL(prior.year.data[list(content_area.iter, grade.iter)], current.year.data[list(content_area.iter, grade.iter)])
 			for (equate.type.iter in equating.method) {
