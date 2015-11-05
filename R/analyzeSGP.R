@@ -376,7 +376,7 @@ function(sgp_object,
 
         if (is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][['Baseline_Projections_in_Transition_Year']]) &
             (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline)) {
-                message("\tNOTE: Analyses involving equating are not possible with baseline analyses. Arguments related to baseline analyses are set to FALSE.")
+                message("\tNOTE: Baseline SGP related analyses are not possible across an assessment transition with equating. Arguments related to baseline analyses are set to FALSE.")
                 sgp.percentiles.baseline <- sgp.projections.baseline <- sgp.projections.lagged.baseline <- FALSE
         }
 
