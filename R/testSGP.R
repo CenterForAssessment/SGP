@@ -16,7 +16,7 @@
 		#######################################################################################################################################################
 		###
 		### TEST NUMBER 0: Test of studentGrowthPercentiles, studentGrowthProjections, and sgpData
-		###
+		##
 		#######################################################################################################################################################
 
 		if ("0" %in% toupper(TEST_NUMBER)) {
@@ -261,6 +261,14 @@
 				tmp.messages <- c(tmp.messages, "\tTest of variable PERCENT_AT_ABOVE_PROFICIENT_PRIOR: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable PERCENT_AT_ABOVE_PROFICIENT_PRIOR: FAIL\n")
+			}
+
+			### TEST of LAGGED PROJECTION CUTs variable P35_PROJ_YEAR_1 variable for MATHEMATICS.2014_2015.LAGGED
+
+			if (identical(sum(Demonstration_SGP@SGP$SGProjections[["MATHEMATICS.2014_2015.LAGGED"]]$P35_PROJ_YEAR_1), 15968767)) {
+				tmp.messages <- c(tmp.messages, "\tTest of LAGGED PROJECTION variable P35_PROJ_YEAR_1: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of LAGGED PROJECTION variable P35_PROJ_YEAR_1: FAIL\n")
 			}
 
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number ", TEST_NUMBER, ":  ", convertTime(timetaken(started.at.overall)), " #####\n", sep=""))
@@ -1271,7 +1279,7 @@
 			##### Modify SGPstateData
 
 			SGPstateData[["DEMO"]][["Student_Report_Information"]][["Earliest_Year_Reported"]] <- test.option[['Earliest_Year_Reported']]
-			SGPstateData[["DEMO"]][['SGP_Configuration']][['sgPlot.plot.test.transition']] <- FALSE
+			SGPstateData[["DEMO"]][['SGP_Configuration']][['sgPlot.plot.test.transition']] <- test.option[['sgPlot.plot.test.transition']]
 
 			### updateSGP
 

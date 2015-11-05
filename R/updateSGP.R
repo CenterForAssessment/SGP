@@ -137,13 +137,15 @@ function(what_sgp_object=NULL,
 					sgp.percentiles.baseline=sgp.percentiles.baseline,
 					sgp.projections.baseline=sgp.projections.baseline,
 					sgp.projections.lagged.baseline=sgp.projections.lagged.baseline,
-					sgp.use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
-					sgp.target.scale.scores=sgp.target.scale.scores,
-					sgp.target.scale.scores.only=sgp.target.scale.scores.only,
 					save.intermediate.results=save.intermediate.results,
+					save.old.summaries=save.old.summaries,
+					sgPlot.demo.report=sgPlot.demo.report,
+					sgp.use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
 					calculate.simex = calculate.simex,
 					calculate.simex.baseline=calculate.simex.baseline,
 					simulate.sgps = simulate.sgps,
+					sgp.target.scale.scores=sgp.target.scale.scores,
+					sgp.target.scale.scores.only=sgp.target.scale.scores.only,
 					sgp.config=sgp.config,
 					plot.types=plot.types,
 					goodness.of.fit.print=goodness.of.fit.print,
@@ -178,6 +180,7 @@ function(what_sgp_object=NULL,
 		if (overwrite.existing.data) {
 				what_sgp_object@Data <- rbindlist(list(what_sgp_object@Data[which(YEAR!=update.years)], tmp_sgp_object@Data), fill=TRUE)
 				what_sgp_object@SGP[['Goodness_of_Fit']][grep(update.years, names(what_sgp_object@SGP[['Goodness_of_Fit']]))] <- NULL
+				what_sgp_object@SGP[['Linkages']][grep(update.years, names(what_sgp_object@SGP[['Linkages']]))] <- NULL
 				what_sgp_object@SGP[['SGPercentiles']][grep(update.years, names(what_sgp_object@SGP[['SGPercentiles']]))] <- NULL
 				what_sgp_object@SGP[['SGProjections']][grep(update.years, names(what_sgp_object@SGP[['SGProjections']]))] <- NULL
 				what_sgp_object@SGP[['Simulated_SGPs']][grep(update.years, names(what_sgp_object@SGP[['Simulated_SGPs']]))] <- NULL
