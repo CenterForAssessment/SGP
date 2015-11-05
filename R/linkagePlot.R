@@ -57,8 +57,12 @@ function(linkage.data,
     }
 
     linkage.data <- linkage.data[YEAR==x.axis.year & !is.na(get(linkage.var.name))]
-    for (grade.iter in unique(linkage.data[['GRADE']])) {
-        for (content_area.iter in unique(linkage.data[['CONTENT_AREA']])) {
+    content_areas.for.linkage <- unique(linkage.data[['CONTENT_AREA']])
+    unique.content.by.grade <- lapply(content_areas.for.linkage, function(x) sort(unique(linkage.data[CONTENT_AREA==x]$GRADE)))
+    names(unique.content.by.grade) <- content_areas.for.linkage
+
+    for (content_area.iter in names(unique.content.by.grade)) {
+        for (grade.iter in unique.content.by.grade[[content_area.iter]]) {
             tmp.linkage.data <- linkage.data[GRADE==grade.iter & CONTENT_AREA==content_area.iter]
             x.axis.cut <- SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[get.cutscore.label(state, x.axis.year, content_area.iter)]][[paste("GRADE", grade.iter, sep="_")]][x.axis.cut.level]
             x.axis.ticks <- myTicks(range(tmp.linkage.data[['SCALE_SCORE']]))
