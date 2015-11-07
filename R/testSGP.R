@@ -1458,7 +1458,7 @@
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_BASELINE_10_TIME_CURRENT, part 1: FAIL\n")
 			}
 
-			### TEST of READING SGPercentiles output
+			### TEST of READING SGPercentiles output: Dimension
 
 			invisible(unzip(paste("Data/RLI_PART_1/SGPercentiles/READING", tmp.last.window, "BASELINE.txt.zip", sep=".")))
 			tmp.data <- fread(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
@@ -1470,6 +1470,18 @@
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGPercentiles output, part 1: FAIL\n")
 			}
 
+			### TEST of READING SGPercentiles output: Length of SGP_NORM_GROUP_BASELINE,
+
+			my.tmp.1 <- sapply(gregexpr("(?=; )",tmp.data$SGP_NORM_GROUP_BASELINE,perl=TRUE), function(x) length(x))
+			my.tmp.2 <- sapply(gregexpr("(?=; )",tmp.data$SGP_NORM_GROUP_BASELINE_SCALE_SCORES,perl=TRUE), function(x) length(x))
+			my.tmp.3 <- sapply(gregexpr("(?=; )",tmp.data$SGP_NORM_GROUP_BASELINE_DATES,perl=TRUE), function(x) length(x))
+
+			if (identical(my.tmp.1, my.tmp.2) & identical(my.tmp.2, my.tmp.3)) {
+				tmp.messages <- c(tmp.messages, "\t\tTest of length of SGP_NORM_GROUP variables, part 1: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\t\tTest of length of SGP_NORM_GROUP variables, part 1: FAIL\n")
+			}
+			
 			### TEST of READING SGProjections output
 
 			invisible(unzip(paste("Data/RLI_PART_1/SGProjections/READING", tmp.last.window, "BASELINE.txt.zip", sep=".")))
