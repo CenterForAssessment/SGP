@@ -316,7 +316,6 @@ function(sgp_object,
 
 				if (sgp.use.my.coefficient.matrices) {
 					tmp.matrix.label <- paste(tail(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], 1), tail(par.sgp.config[[b.iter[b]]][['sgp.panel.years']], 1), sep=".")
-					if (!is.null(sgp.percentiles.equated)) tmp.matrix.label <- paste(tmp.matrix.label, "EQUATED", sep=".")
 					tmp.orders <- getsplineMatrices(
 						my.matrices=tmp_sgp_object[['Coefficient_Matrices']][[tmp.matrix.label]],
 						my.matrix.content_area.progression=par.sgp.config[[b.iter[b]]][['sgp.content.areas']],
@@ -327,22 +326,54 @@ function(sgp_object,
 						my.matrix.time.dependency=if (is.null(SGPt)) NULL else list(TIME="TIME", TIME_LAG="TIME_LAG"),
 						what.to.return="ORDERS")
 
-					if (length(tmp.orders)==0) {
-						message("\tNOTE: Cohort Referenced Coefficient matrices are not available for ",
+						if (length(tmp.orders)==0) {
+							message("\tNOTE: Cohort Referenced Coefficient matrices are not available for ",
 							paste(tmp.matrix.label, paste(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], collapse=", "), sep=": "), ".", sep="")
-					} else {
-						tmp.max.order <- max(tmp.orders)
-						if (par.sgp.config[[b.iter[b]]][['sgp.exact.grade.progression']]) ord.iter <- tmp.max.order else ord.iter <- seq_along(tmp.orders)
-						for (k in ord.iter) {
-							par.sgp.config[[b.iter[b]]][['sgp.matrices']][[tmp.matrix.label]][[
+						} else {
+							tmp.max.order <- max(tmp.orders)
+							if (par.sgp.config[[b.iter[b]]][['sgp.exact.grade.progression']]) ord.iter <- tmp.max.order else ord.iter <- seq_along(tmp.orders)
+							for (k in ord.iter) {
+								par.sgp.config[[b.iter[b]]][['sgp.matrices']][[tmp.matrix.label]][[
 								paste("qrmatrices", tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 1), k, sep="_")]] <- getsplineMatrices(
-								my.matrices=tmp_sgp_object[['Coefficient_Matrices']][[tmp.matrix.label]],
-								my.matrix.content_area.progression=tail(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], k+1),
-								my.matrix.grade.progression=tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], k+1),
-								my.matrix.time.progression=tail(par.sgp.config[[b.iter[b]]][['sgp.panel.years']], k+1),
-								my.matrix.time.progression.lags=tail(par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']], k+1),
-								my.matrix.time.dependency=if (is.null(SGPt)) NULL else list(TIME="TIME", TIME_LAG="TIME_LAG"),
-								my.exact.grade.progression.sequence=TRUE, my.matrix.order=k)[[1]]
+									my.matrices=tmp_sgp_object[['Coefficient_Matrices']][[tmp.matrix.label]],
+									my.matrix.content_area.progression=tail(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], k+1),
+									my.matrix.grade.progression=tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], k+1),
+									my.matrix.time.progression=tail(par.sgp.config[[b.iter[b]]][['sgp.panel.years']], k+1),
+									my.matrix.time.progression.lags=tail(par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']], k+1),
+									my.matrix.time.dependency=if (is.null(SGPt)) NULL else list(TIME="TIME", TIME_LAG="TIME_LAG"),
+									my.exact.grade.progression.sequence=TRUE, my.matrix.order=k)[[1]]
+						}
+					}
+
+					if (!is.null(sgp.percentiles.equated)) {
+						tmp.matrix.label <- paste(tail(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], 1), tail(par.sgp.config[[b.iter[b]]][['sgp.panel.years']], 1), "EQUATED", sep=".")
+						tmp.orders <- getsplineMatrices(
+							my.matrices=tmp_sgp_object[['Coefficient_Matrices']][[tmp.matrix.label]],
+							my.matrix.content_area.progression=par.sgp.config[[b.iter[b]]][['sgp.content.areas']],
+							my.matrix.grade.progression=par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']],
+							my.matrix.time.progression=par.sgp.config[[b.iter[b]]][['sgp.panel.years']],
+							my.matrix.time.progression.lags=par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']],
+							my.exact.grade.progression.sequence=par.sgp.config[[b.iter[b]]][['sgp.exact.grade.progression']],
+							my.matrix.time.dependency=if (is.null(SGPt)) NULL else list(TIME="TIME", TIME_LAG="TIME_LAG"),
+							what.to.return="ORDERS")
+
+						if (length(tmp.orders)==0) {
+							message("\tNOTE: Equated Coefficient matrices are not available for ",
+							paste(tmp.matrix.label, paste(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], collapse=", "), sep=": "), ".", sep="")
+						} else {
+							tmp.max.order <- max(tmp.orders)
+							if (par.sgp.config[[b.iter[b]]][['sgp.exact.grade.progression']]) ord.iter <- tmp.max.order else ord.iter <- seq_along(tmp.orders)
+							for (k in ord.iter) {
+								par.sgp.config[[b.iter[b]]][['sgp.equated.matrices']][[tmp.matrix.label]][[
+								paste("qrmatrices", tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 1), k, sep="_")]] <- getsplineMatrices(
+									my.matrices=tmp_sgp_object[['Coefficient_Matrices']][[tmp.matrix.label]],
+									my.matrix.content_area.progression=tail(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], k+1),
+									my.matrix.grade.progression=tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], k+1),
+									my.matrix.time.progression=tail(par.sgp.config[[b.iter[b]]][['sgp.panel.years']], k+1),
+									my.matrix.time.progression.lags=tail(par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']], k+1),
+									my.matrix.time.dependency=if (is.null(SGPt)) NULL else list(TIME="TIME", TIME_LAG="TIME_LAG"),
+									my.exact.grade.progression.sequence=TRUE, my.matrix.order=k)[[1]]
+							}
 						}
 					}
 				}
