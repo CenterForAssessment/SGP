@@ -1,9 +1,9 @@
-`getSGPConfig` <- 
+`getSGPConfig` <-
 function(sgp_object,
 	state,
 	tmp_sgp_object,
-	content_areas, 
-	years, 
+	content_areas,
+	years,
 	grades,
 	sgp.config,
 	trim.sgp.config,
@@ -35,11 +35,11 @@ function(sgp_object,
 		grades <- type.convert(as.character(grades), as.is=TRUE)
 		if (!is.numeric(grades)) {
 			stop("\tNOTE: Automatic configuration of analyses is currently only available for integer grade levels. Manual specification of 'sgp.config' is required for non-traditional End of Course grade and course progressions.")
-		} 
+		}
 	}
 
 	if (is.null(sgp.use.my.coefficient.matrices)) sgp.use.my.coefficient.matrices <- FALSE
-	
+
 	###  If calculate.simex's are FALSE, set to NULL for consistent treatment
 	if (is.null(calculate.simex)) calculate.simex <- FALSE
 	if (is.null(calculate.simex.baseline)) calculate.simex.baseline <- FALSE
@@ -58,7 +58,7 @@ function(sgp_object,
 	### get.config function
 
 	get.config <- function(content_area, year, grades) {
-		
+
 		### Data for Years & Grades
 		tmp.unique.data <- lapply(sgp_object@Data[SJ("VALID_CASE", content_area), nomatch=0][, c("YEAR", "GRADE"), with=FALSE], function(x) sort(type.convert(unique(x), as.is=TRUE)))
 
@@ -96,9 +96,9 @@ function(sgp_object,
 				sgp.grade.sequences=sgp.grade.sequences
 				))
 		}
-	} ### END get.config 
+	} ### END get.config
 
-	
+
 	### get.par.sgp.config function
 
 	get.par.sgp.config <- function(sgp.config) {
@@ -131,9 +131,9 @@ function(sgp_object,
 				} else {
 					par.sgp.config[[b.iter[b]]][['sgp.exact.grade.progression']] <- FALSE
 				}
-				
+
 				###  Set sgp.exact.grade.progression=TRUE if using multiple content areas in a single year as priors.
-				if (any(duplicated(paste(par.sgp.config[[b]][['sgp.panel.years']], par.sgp.config[[b]][['sgp.grade.sequences']], sep=".")))) {  
+				if (any(duplicated(paste(par.sgp.config[[b]][['sgp.panel.years']], par.sgp.config[[b]][['sgp.grade.sequences']], sep=".")))) {
 					par.sgp.config[[b.iter[b]]][['sgp.exact.grade.progression']] <- TRUE
 				} else {
 					if (is.null(par.sgp.config[[b]][['sgp.exact.grade.progression']])) {
@@ -146,17 +146,17 @@ function(sgp_object,
 					tmp.numeric.grades <- sort(type.convert(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']]))
 					grade.span <- seq(min(tmp.numeric.grades), max(tmp.numeric.grades))
 					index <- match(tmp.numeric.grades, grade.span)
-					if (!sgp.config.drop.nonsequential.grade.progression.variables)  index <- seq_along(index) 
+					if (!sgp.config.drop.nonsequential.grade.progression.variables)  index <- seq_along(index)
 					par.sgp.config[[b.iter[b]]][['sgp.panel.years']] <- tail(par.sgp.config[[b.iter[b]]][['sgp.panel.years']], max(index))[index]
 					par.sgp.config[[b.iter[b]]][['sgp.content.areas']] <- tail(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], max(index))[index]
 					if ('sgp.panel.years.within' %in% names(sgp.config[[a]])) {
 						par.sgp.config[[b.iter[b]]][['sgp.panel.years.within']] <- tail(par.sgp.config[[b.iter[b]]][['sgp.panel.years.within']], max(index))[index]
-					} 
+					}
 				}
 
 				### Create sgp.panel.years.lags (if NULL)
 				if (is.null(sgp.config[[a]][['sgp.panel.years.lags']])) {
-					par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']] <- 
+					par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']] <-
 						diff(as.numeric(sapply(strsplit(par.sgp.config[[b.iter[b]]][['sgp.panel.years']], '_'), '[', split.location(par.sgp.config[[b.iter[b]]][['sgp.panel.years']]))))
 				}
 
@@ -186,7 +186,7 @@ function(sgp_object,
 						if (identical(par.sgp.config[[b.iter[b]]][['sgp.projection.grade.sequences']], "NO_PROJECTIONS")) {
 							par.sgp.config[[b.iter[b]]][['sgp.projection.content.areas']] <- as.character(sgp.config[[a]][['sgp.projection.content.areas']])
 						} else {
-							par.sgp.config[[b.iter[b]]][['sgp.projection.content.areas']] <- 
+							par.sgp.config[[b.iter[b]]][['sgp.projection.content.areas']] <-
 								tail(sgp.config[[a]][['sgp.projection.content.areas']], length(par.sgp.config[[b.iter[b]]][['sgp.projection.grade.sequences']]))
 						}
 					}
@@ -200,7 +200,7 @@ function(sgp_object,
 						if (identical(par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.grade.sequences']], "NO_PROJECTIONS")) {
 							par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.content.areas']] <- as.character(sgp.config[[a]][['sgp.projection.content.areas']])
 						} else {
-							par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.content.areas']] <- 
+							par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.content.areas']] <-
 								tail(sgp.config[[a]][['sgp.projection.baseline.content.areas']], length(par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.grade.sequences']]))
 						}
 					}
@@ -210,14 +210,14 @@ function(sgp_object,
 				if (sgp.projections | sgp.projections.lagged) {
 					if (is.null(sgp.config[[a]][['sgp.projection.panel.years']])) {
 						tmp.panel.years <- head(par.sgp.config[[b.iter[b]]][['sgp.panel.years']], -1)
-						par.sgp.config[[b.iter[b]]][['sgp.projection.panel.years']] <- 
+						par.sgp.config[[b.iter[b]]][['sgp.projection.panel.years']] <-
 							tail(as.character(sapply(tmp.panel.years, yearIncrement, tail(par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']], 1))),
 								length(par.sgp.config[[b.iter[b]]][['sgp.projection.grade.sequences']]))
 						par.sgp.config[[b.iter[b]]][['sgp.projection.panel.years.lags']] <- tail(head(par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']], -1),
 							length(par.sgp.config[[b.iter[b]]][['sgp.projection.grade.sequences']])-1)
 					} else {
 						if (!identical(par.sgp.config[[b.iter[b]]][['sgp.projection.grade.sequences']], "NO_PROJECTIONS")) {
-							par.sgp.config[[b.iter[b]]][['sgp.projection.panel.years.lags']] <- 
+							par.sgp.config[[b.iter[b]]][['sgp.projection.panel.years.lags']] <-
 								diff(as.numeric(sapply(strsplit(par.sgp.config[[b.iter[b]]][['sgp.projection.panel.years']], '_'), '[', split.location(par.sgp.config[[b.iter[b]]][['sgp.projection.panel.years']]))))
 						}
 					}
@@ -227,14 +227,14 @@ function(sgp_object,
 				if (sgp.projections.baseline | sgp.projections.lagged.baseline) {
 					if (is.null(sgp.config[[a]][['sgp.projection.baseline.panel.years']])) {
 						tmp.panel.years <- head(par.sgp.config[[b.iter[b]]][['sgp.panel.years']], -1)
-						par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.panel.years']] <- 
+						par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.panel.years']] <-
 							tail(as.character(sapply(tmp.panel.years, yearIncrement, tail(par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']], 1))),
 								length(par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.grade.sequences']]))
 						par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.panel.years.lags']] <- tail(head(par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']], -1),
 							length(par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.grade.sequences']])-1)
 					} else {
 						if (!identical(par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.grade.sequences']], "NO_PROJECTIONS")) {
-							par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.panel.years.lags']] <- 
+							par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.panel.years.lags']] <-
 								diff(as.numeric(sapply(strsplit(par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.panel.years']], '_'), '[', split.location(par.sgp.config[[b.iter[b]]][['sgp.projection.baseline.panel.years']]))))
 						}
 					}
@@ -272,27 +272,27 @@ function(sgp_object,
 					# NOTE: if SIMEX configs are supplied to analyzeSGP in both a calculate.simex argument (as list) AND in a sgp.config element, the sgp.config is chosen here:
 						par.sgp.config[[b.iter[b]]][['sgp.calculate.simex']] <- sgp.config[[a]][['sgp.calculate.simex']]
 					}
-					
+
 					if (is.logical(par.sgp.config[[b.iter[b]]][['sgp.calculate.simex']][['simex.use.my.coefficient.matrices']])) {
 						if (!par.sgp.config[[b.iter[b]]][['sgp.calculate.simex']][['simex.use.my.coefficient.matrices']]) {
 							par.sgp.config[[b.iter[b]]][['sgp.calculate.simex']][['simex.use.my.coefficient.matrices']] <- NULL
 						} else {
 							sgp.use.my.coefficient.matrices <- TRUE # Looks for existing "naive" matrices if using pre-calc'd SIMEX matrices
 						}
-					}					
+					}
 					if (!is.null(par.sgp.config[[b.iter[b]]][['sgp.calculate.simex']][['simex.use.my.coefficient.matrices']])) {
-						tmp.matrix.label <- paste(tail(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], 1), 
+						tmp.matrix.label <- paste(tail(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], 1),
 							tail(par.sgp.config[[b.iter[b]]][['sgp.panel.years']], 1), "SIMEX", sep=".")
 						tmp.orders <- getsplineMatrices(
-							my.matrices=tmp_sgp_object[['Coefficient_Matrices']][[tmp.matrix.label]], 
-							my.matrix.content_area.progression=par.sgp.config[[b.iter[b]]][['sgp.content.areas']], 
-							my.matrix.grade.progression=par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 
+							my.matrices=tmp_sgp_object[['Coefficient_Matrices']][[tmp.matrix.label]],
+							my.matrix.content_area.progression=par.sgp.config[[b.iter[b]]][['sgp.content.areas']],
+							my.matrix.grade.progression=par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']],
 							my.matrix.time.progression=par.sgp.config[[b.iter[b]]][['sgp.panel.years']],
 							my.matrix.time.progression.lags=par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']],
 							my.matrix.time.dependency=if (is.null(SGPt)) NULL else list(TIME="TIME", TIME_LAG="TIME_LAG"),
 							what.to.return="ORDERS")
 						tmp.max.order <- max(tmp.orders)
-	
+
 						for (L in par.sgp.config[[b.iter[b]]][['sgp.calculate.simex']][['lambda']][-1]) {
 							if (par.sgp.config[[b.iter[b]]][['sgp.exact.grade.progression']]) ord.iter <- tmp.max.order else ord.iter <- seq_along(tmp.orders)
 							for (k in ord.iter) {
@@ -300,8 +300,8 @@ function(sgp_object,
 								paste("qrmatrices", tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
 							unlist(getsplineMatrices(
 								my.matrices=tmp_sgp_object[['Coefficient_Matrices']][[paste(tmp.matrix.label, ".SIMEX", sep="")]][[
-									paste("qrmatrices", tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 1), k, sep="_")]][[paste("lambda_", L, sep="")]], 
-								my.matrix.content_area.progression=par.sgp.config[[b.iter[b]]][['sgp.content.areas']], 
+									paste("qrmatrices", tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 1), k, sep="_")]][[paste("lambda_", L, sep="")]],
+								my.matrix.content_area.progression=par.sgp.config[[b.iter[b]]][['sgp.content.areas']],
 								my.matrix.grade.progression=par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']],
 								my.matrix.time.progression=par.sgp.config[[b.iter[b]]][['sgp.panel.years']],
 								my.matrix.time.progression.lags=par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']],
@@ -316,10 +316,11 @@ function(sgp_object,
 
 				if (sgp.use.my.coefficient.matrices) {
 					tmp.matrix.label <- paste(tail(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], 1), tail(par.sgp.config[[b.iter[b]]][['sgp.panel.years']], 1), sep=".")
+					if (!is.null(sgp.percentiles.equated)) tmp.matrix.label <- paste(tmp.matrix.label, "EQUATED", sep=".")
 					tmp.orders <- getsplineMatrices(
-						my.matrices=tmp_sgp_object[['Coefficient_Matrices']][[tmp.matrix.label]], 
-						my.matrix.content_area.progression=par.sgp.config[[b.iter[b]]][['sgp.content.areas']], 
-						my.matrix.grade.progression=par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 
+						my.matrices=tmp_sgp_object[['Coefficient_Matrices']][[tmp.matrix.label]],
+						my.matrix.content_area.progression=par.sgp.config[[b.iter[b]]][['sgp.content.areas']],
+						my.matrix.grade.progression=par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']],
 						my.matrix.time.progression=par.sgp.config[[b.iter[b]]][['sgp.panel.years']],
 						my.matrix.time.progression.lags=par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']],
 						my.exact.grade.progression.sequence=par.sgp.config[[b.iter[b]]][['sgp.exact.grade.progression']],
@@ -327,7 +328,7 @@ function(sgp_object,
 						what.to.return="ORDERS")
 
 					if (length(tmp.orders)==0) {
-						message("\tNOTE: Cohort Referenced Coefficient matrices are not available for ", 
+						message("\tNOTE: Cohort Referenced Coefficient matrices are not available for ",
 							paste(tmp.matrix.label, paste(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], collapse=", "), sep=": "), ".", sep="")
 					} else {
 						tmp.max.order <- max(tmp.orders)
@@ -336,8 +337,8 @@ function(sgp_object,
 							par.sgp.config[[b.iter[b]]][['sgp.matrices']][[tmp.matrix.label]][[
 								paste("qrmatrices", tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 1), k, sep="_")]] <- getsplineMatrices(
 								my.matrices=tmp_sgp_object[['Coefficient_Matrices']][[tmp.matrix.label]],
-								my.matrix.content_area.progression=tail(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], k+1), 
-								my.matrix.grade.progression=tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], k+1), 
+								my.matrix.content_area.progression=tail(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], k+1),
+								my.matrix.grade.progression=tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], k+1),
 								my.matrix.time.progression=tail(par.sgp.config[[b.iter[b]]][['sgp.panel.years']], k+1),
 								my.matrix.time.progression.lags=tail(par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']], k+1),
 								my.matrix.time.dependency=if (is.null(SGPt)) NULL else list(TIME="TIME", TIME_LAG="TIME_LAG"),
@@ -362,15 +363,15 @@ function(sgp_object,
 						par.sgp.config[[b.iter[b]]][['sgp.calculate.simex.baseline']] <- sgp.config[[a]][['sgp.calculate.simex.baseline']]
 					}
 				}
-				
+
 				### Create baseline specific arguments
 				if (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline) {
 					tmp.matrix.label <- paste(strsplit(names(sgp.config)[a], "\\.")[[1]][1], ".BASELINE", sep="")
  					if (tmp.matrix.label %in% names(tmp_sgp_object[["Coefficient_Matrices"]])) {
 						tmp.orders <- getsplineMatrices(
-							my.matrices=tmp_sgp_object[['Coefficient_Matrices']][[tmp.matrix.label]], 
-							my.matrix.content_area.progression=par.sgp.config[[b.iter[b]]][['sgp.content.areas']], 
-							my.matrix.grade.progression=par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 
+							my.matrices=tmp_sgp_object[['Coefficient_Matrices']][[tmp.matrix.label]],
+							my.matrix.content_area.progression=par.sgp.config[[b.iter[b]]][['sgp.content.areas']],
+							my.matrix.grade.progression=par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']],
 							my.matrix.time.progression=rep("BASELINE", length(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']])),
 							my.matrix.time.progression.lags=par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']],
 							my.matrix.time.dependency=if (is.null(SGPt)) NULL else list(TIME="TIME", TIME_LAG="TIME_LAG"),
@@ -378,7 +379,7 @@ function(sgp_object,
 
 						if (length(tmp.orders) > 0) {
 							tmp.matrices.tf <- TRUE
-							if (!is.null(year.for.scale.change[[tail(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], 1)]]) && 
+							if (!is.null(year.for.scale.change[[tail(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], 1)]]) &&
 								year.for.scale.change[[tail(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], 1)]] < tail(par.sgp.config[[b.iter[b]]][['sgp.panel.years']], 1)) {
 								tmp.max.order <-
 									min(max(tmp.orders),
@@ -387,20 +388,20 @@ function(sgp_object,
 							} else {
 								tmp.max.order <- max(tmp.orders)
 							}
-							
+
 							if (par.sgp.config[[b.iter[b]]][['sgp.exact.grade.progression']]) ord.iter <- tmp.max.order else ord.iter <- seq_along(tmp.orders)
 							for (k in ord.iter) {
 								par.sgp.config[[b.iter[b]]][['sgp.baseline.matrices']][[tmp.matrix.label]][[
 									paste("qrmatrices", tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 1), k, sep="_")]] <- getsplineMatrices(
 									my.matrices=tmp_sgp_object[['Coefficient_Matrices']][[tmp.matrix.label]],
-									my.matrix.content_area.progression=tail(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], k+1), 
-									my.matrix.grade.progression=tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], k+1), 
+									my.matrix.content_area.progression=tail(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], k+1),
+									my.matrix.grade.progression=tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], k+1),
 									my.matrix.time.progression=tail(rep("BASELINE", length(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']])), k+1),
 									my.matrix.time.progression.lags=tail(par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']], k+1),
 									my.matrix.time.dependency=if (is.null(SGPt)) NULL else list(TIME="TIME", TIME_LAG="TIME_LAG"),
 									my.exact.grade.progression.sequence=TRUE, my.matrix.order=k)[[1]]
 							}
-							
+
 							if (!is.null(par.sgp.config[[b.iter[b]]][['sgp.calculate.simex.baseline']])) {
 								for (L in par.sgp.config[[b.iter[b]]][['sgp.calculate.simex.baseline']][['lambda']][-1]) {
 									for (k in ord.iter) {
@@ -408,8 +409,8 @@ function(sgp_object,
 										paste("qrmatrices", tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
 									unlist(getsplineMatrices(
 										my.matrices=tmp_sgp_object[['Coefficient_Matrices']][[paste(tmp.matrix.label, ".SIMEX", sep="")]][[
-											paste("qrmatrices", tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 1), k, sep="_")]][[paste("lambda_", L, sep="")]], 
-										my.matrix.content_area.progression=par.sgp.config[[b.iter[b]]][['sgp.content.areas']], 
+											paste("qrmatrices", tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 1), k, sep="_")]][[paste("lambda_", L, sep="")]],
+										my.matrix.content_area.progression=par.sgp.config[[b.iter[b]]][['sgp.content.areas']],
 										my.matrix.grade.progression=par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']],
 										my.matrix.time.progression=rep("BASELINE", length(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']])),
 										my.matrix.time.progression.lags=par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']],
@@ -432,7 +433,7 @@ function(sgp_object,
 						par.sgp.config[[b.iter[b]]][['sgp.baseline.grade.sequences']] <- as.character(tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], tmp.max.order+1))
 						par.sgp.config[[b.iter[b]]][['sgp.baseline.content.areas']] <- as.character(tail(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], tmp.max.order+1))
 						par.sgp.config[[b.iter[b]]][['sgp.baseline.max.order']] <- tmp.max.order
-						par.sgp.config[[b.iter[b]]][['sgp.baseline.panel.years.lags']] <- tail(par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']], tmp.max.order) 
+						par.sgp.config[[b.iter[b]]][['sgp.baseline.panel.years.lags']] <- tail(par.sgp.config[[b.iter[b]]][['sgp.panel.years.lags']], tmp.max.order)
 					}
 				} ### END if (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline
 
@@ -443,13 +444,13 @@ function(sgp_object,
 
 
 	## test.projection.iter function
-	
+
 	test.projection.iter <- function(sgp.iter) {
 		if (identical(sgp.iter[['sgp.projection.grade.sequences']], "NO_PROJECTIONS")) return(FALSE)
 		if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]]) & !is.null(sgp.iter[["sgp.projection.sequence"]])) {
 			if (tail(sgp.iter[["sgp.grade.sequences"]], 1) == "EOCT") { # Only check EOCT configs/iters
 				if (is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]])) return(FALSE)
-				tmp.index <- match(tail(sgp.iter[["sgp.content.areas"]], 1), 
+				tmp.index <- match(tail(sgp.iter[["sgp.content.areas"]], 1),
 					SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]])
 				tmp.content_area.projection.sequence <-
 					SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]][1:tmp.index]
@@ -457,8 +458,8 @@ function(sgp_object,
 					SGP::SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]][1:tmp.index]
 				tmp.year_lags.projection.sequence <-
 					SGP::SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]][1:(tmp.index-1)]
-				if (all(identical(sgp.iter[["sgp.content.areas"]], tail(tmp.content_area.projection.sequence, length(sgp.iter[["sgp.content.areas"]]))) & 
-					identical(sgp.iter[["sgp.grade.sequences"]], tail(tmp.grade.projection.sequence, length(sgp.iter[["sgp.grade.sequences"]]))) & 
+				if (all(identical(sgp.iter[["sgp.content.areas"]], tail(tmp.content_area.projection.sequence, length(sgp.iter[["sgp.content.areas"]]))) &
+					identical(sgp.iter[["sgp.grade.sequences"]], tail(tmp.grade.projection.sequence, length(sgp.iter[["sgp.grade.sequences"]]))) &
 					identical(as.numeric(sgp.iter[["sgp.panel.years.lags"]]), as.numeric(tail(tmp.year_lags.projection.sequence, length(sgp.iter[["sgp.panel.years.lags"]])))))) {
 					 iter.test <- TRUE
 				} else {
@@ -467,7 +468,7 @@ function(sgp_object,
 			}	else iter.test <- TRUE
 		}	else iter.test <- TRUE
 		return(iter.test)
-	} 
+	}
 
 
 	###
@@ -499,7 +500,7 @@ function(sgp_object,
 	}
 
 
-	### 
+	###
 	### Extend sgp.config.list
 	###
 
@@ -513,13 +514,16 @@ function(sgp_object,
 	}
 
 	if (sgp.percentiles.equated) {
-			sgp.config.list[['sgp.percentiles.equated']] <- 
-				sgp.config.list[["sgp.percentiles"]][sapply(sgp.config.list[['sgp.percentiles']], function(x) tail(x[['sgp.panel.years']], 1))==year.for.equate]
-			if (!is.null(grades.for.equate)) {
-				sgp.config.list[['sgp.percentiles.equated']] <- 
-					sgp.config.list[['sgp.percentiles.equated']][which(sapply(sgp.config.list[['sgp.percentiles.equated']], 
-												function(x) tail(x[['sgp.grade.sequences']], 1) %in% grades.for.equate))]
-			}
+		sgp.config.list[['sgp.percentiles.equated']] <-
+			sgp.config.list[["sgp.percentiles"]][sapply(sgp.config.list[['sgp.percentiles']], function(x) tail(x[['sgp.panel.years']], 1))==year.for.equate]
+		if (!is.null(grades.for.equate)) {
+			sgp.config.list[['sgp.percentiles.equated']] <-
+				sgp.config.list[['sgp.percentiles.equated']][which(sapply(sgp.config.list[['sgp.percentiles.equated']],
+											function(x) tail(x[['sgp.grade.sequences']], 1) %in% grades.for.equate))]
+		}
+		if (sgp.use.my.coefficient.matrices) {
+			sgp.config.list[['sgp.percentiles.equated']] <- sgp.config.list[['sgp.percentiles.equated']][which(sapply(sgp.config.list[['sgp.percentiles.equated']], function(x) !is.null(x[['sgp.matrices']])))]
+		}
 	}
 
 
@@ -555,16 +559,16 @@ function(sgp_object,
 	if (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline) {
 
 		sgp.config.list[['sgp.percentiles.baseline']] <- par.sgp.config
-		
+
 		if (any(sapply(par.sgp.config, function(x) identical(x[['sgp.baseline.grade.sequences']], "NO_BASELINE_COEFFICIENT_MATRICES")))) {
 			baseline.missings <- setdiff(which(sapply(par.sgp.config, function(x) identical(x[['sgp.baseline.grade.sequences']], "NO_BASELINE_COEFFICIENT_MATRICES"))),
 						which(sapply(par.sgp.config, function(x) identical(x[['sgp.grade.sequences']], "NO_PERCENTILES"))))
 			if (length(baseline.missings)>0) {
-				baseline.missings <- paste(unlist(sapply(baseline.missings, function(x) 
+				baseline.missings <- paste(unlist(sapply(baseline.missings, function(x)
 					paste(tail(par.sgp.config[[x]]$sgp.content.areas, 1), paste(par.sgp.config[[x]]$sgp.grade.sequences, collapse=", "), sep=": "))), collapse=";\n\t\t")
 				message("\tNOTE: Baseline coefficient matrices are not available for:\n\t\t", baseline.missings, ".", sep="")
 
-				sgp.config.list[['sgp.percentiles.baseline']] <- 
+				sgp.config.list[['sgp.percentiles.baseline']] <-
 					par.sgp.config[which(sapply(par.sgp.config, function(x) !identical(x[['sgp.baseline.grade.sequences']], "NO_BASELINE_COEFFICIENT_MATRICES")))]
 			}
 		}
@@ -588,7 +592,7 @@ function(sgp_object,
 				tmp.config <- c(tmp.config, tmp.expand.config)
 			}
 		}
-		
+
 		if (!sgp.percentiles.baseline | length(sgp.config.list[['sgp.percentiles.baseline']]) == 0) sgp.config.list[['sgp.percentiles.baseline']] <- NULL
 		if (sgp.projections.baseline) {
 			sgp.config.list[['sgp.projections.baseline']] <- tmp.config
@@ -610,7 +614,7 @@ function(sgp_object,
 				tmp.content.areas.label <- 'sgp.projection.content.areas'
 				tmp.panel.years.label <- 'sgp.projection.panel.years'
 				tmp.grade.sequences.label <- 'sgp.projection.grade.sequences'
-			} 
+			}
 			if (i=='sgp.projections.baseline') {
 				tmp.content.areas.label <- 'sgp.projection.baseline.content.areas'
 				tmp.panel.years.label <- 'sgp.projection.baseline.panel.years'
