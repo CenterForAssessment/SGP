@@ -869,7 +869,7 @@ function(sgp_object,
 					return(studentGrowthPercentiles(
 						panel.data=list(
 							Panel_Data=getPanelData(tmp_sgp_data_for_analysis, "sgp.percentiles", sgp.iter, csem.variable, equate.variable, SGPt=SGPt),
-							Coefficient_Matrices=sgp.iter[["sgp.matrices"]],
+							Coefficient_Matrices=sgp.iter[["sgp.equated.matrices"]],
 							Knots_Boundaries=getKnotsBoundaries(sgp.iter, state, "sgp.percentiles")),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1),
 								my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), my.extra.label=equate.label),
@@ -913,7 +913,7 @@ function(sgp_object,
 					tmp <- clusterApplyLB(par.start$internal.cl, rev(par.sgp.config[['sgp.percentiles.equated']]), function(sgp.iter) studentGrowthPercentiles(
 						panel.data=list(
 							Panel_Data=getPanelData(tmp_sgp_data_for_analysis, "sgp.percentiles", sgp.iter, csem.variable, equate.variable, SGPt=SGPt),
-							Coefficient_Matrices=sgp.iter[["sgp.matrices"]],
+							Coefficient_Matrices=sgp.iter[["sgp.equated.matrices"]],
 							Knots_Boundaries=getKnotsBoundaries(sgp.iter, state, "sgp.percentiles")),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1),
 								my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), my.extra.label=equate.label),
@@ -958,7 +958,7 @@ function(sgp_object,
 					tmp <- mclapply(rev(par.sgp.config[['sgp.percentiles.equated']]), function(sgp.iter) studentGrowthPercentiles(
 						panel.data=list(
 							Panel_Data=getPanelData(tmp_sgp_data_for_analysis, "sgp.percentiles", sgp.iter, csem.variable, equate.variable, SGPt=SGPt),
-							Coefficient_Matrices=sgp.iter[["sgp.matrices"]],
+							Coefficient_Matrices=sgp.iter[["sgp.equated.matrices"]],
 							Knots_Boundaries=getKnotsBoundaries(sgp.iter, state, "sgp.percentiles")),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1),
 								my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), my.extra.label=equate.label),
