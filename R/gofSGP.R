@@ -15,8 +15,8 @@ function(
         ### Create state (if NULL) from sgp_object (if possible)
 
         if (is.null(state) & is.SGP(sgp_object)) {
-                tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
-                state <- getStateAbbreviation(tmp.name, "gofSGP")
+            tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
+            state <- getStateAbbreviation(tmp.name, "gofSGP")
         }
 
 	### Create common object for data
@@ -30,7 +30,7 @@ function(
 	if ("ACHIEVEMENT_LEVEL_PRIOR" %in% names(tmp.data)) {
 		with.prior.achievement.level <- TRUE
 		my.width <- 8.5; my.height <- 11
-		variables.to.get <- c("SCALE_SCORE_PRIOR", "ACHIEVEMENT_LEVEL_PRIOR", "CONTENT_AREA_PRIOR", use.sgp, "GRADE", norm.group.var)
+		variables.to.get <- c("SCALE_SCORE_PRIOR", "ACHIEVEMENT_LEVEL_PRIOR", "CONTENT_AREA_PRIOR", "YEAR_PRIOR", use.sgp, "GRADE", norm.group.var)
 	} else {
 		with.prior.achievement.level <- FALSE
 		my.width <- 8.5; my.height <- 5.5
@@ -42,7 +42,7 @@ function(
 
 	pretty_year <- function(x) sub("_", "-", x)
 
-	gof.draw <- function(content_area.year.grade.data, content_area, year, grade, content_areas_prior, file.extra.label, plot.name) {
+	gof.draw <- function(content_area.year.grade.data, content_area, year, years_prior, grade, content_areas_prior, file.extra.label, plot.name) {
 
 		if (!"GROB" %in% output.format) {
 			if (is.null(file.extra.label)) {
@@ -56,30 +56,30 @@ function(
 			if ("PDF" %in% output.format) {
 				pdf(file=paste(file.path, "/", tmp.plot.name, ".pdf", sep=""), width=my.width, height=my.height)
 				grid.draw(.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale,
-					with.prior.achievement.level=with.prior.achievement.level, content_areas_prior=content_areas_prior))
+					with.prior.achievement.level=with.prior.achievement.level, content_areas_prior=content_areas_prior, years_prior))
 				dev.off()
 			}
 			if ("PNG" %in% output.format) {
 				Cairo(file=paste(file.path, "/", tmp.plot.name, ".png", sep=""), width=my.width, height=my.height, units="in", dpi=144, pointsize=10.5, bg="transparent")
 				grid.draw(.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale,
-					with.prior.achievement.level=with.prior.achievement.level, content_areas_prior=content_areas_prior))
+					with.prior.achievement.level=with.prior.achievement.level, content_areas_prior=content_areas_prior, years_prior))
 				dev.off()
 			}
 			if ("SVG" %in% output.format) {
 				CairoSVG(file=paste(file.path, "/", tmp.plot.name, ".svg", sep=""), width=my.width, height=my.height, dpi=72, pointsize=10.5, bg="transparent")
 				grid.draw(.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale,
-					with.prior.achievement.level=with.prior.achievement.level, content_areas_prior=content_areas_prior))
+					with.prior.achievement.level=with.prior.achievement.level, content_areas_prior=content_areas_prior, years_prior))
 				dev.off()
 			}
 			return(NULL)
 		} else {
 			.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale, with.prior.achievement.level=with.prior.achievement.level,
-				content_areas_prior=content_areas_prior)
+				content_areas_prior=content_areas_prior, years_prior)
 		}
 	}
 
 	.goodness.of.fit <-
-		function(data1, content_area, year, grade, color.scale="reds", with.prior.achievement.level=FALSE, content_areas_prior=NULL) {
+		function(data1, content_area, year, grade, color.scale="reds", with.prior.achievement.level=FALSE, content_areas_prior=NULL, years_prior=NULL) {
 
 		.cell.color <- function(x){
 		my.blues.and.reds <- diverge_hcl(21, c = 100, l = c(50, 100))
@@ -147,7 +147,7 @@ function(
 			tmp.achievement_level.years <- sapply(strsplit(tmp.achievement_level.names, "[.]"), function(x) x[2])
 			if (any(!is.na(tmp.achievement_level.years))) {
 				if (year %in% tmp.achievement_level.years) {
-					return(paste("Achievement_Level_Labels)", year, sep="."))
+					return(paste("Achievement_Level_Labels", year, sep="."))
 				} else {
 					if (year==sort(c(year, tmp.achievement_level.years))[1]) {
 						return("Achievement_Level_Labels")
@@ -181,7 +181,7 @@ function(
 				if (is.null(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]])) {
 					tmp.prior.achievement.level.labels <- names(SGP::SGPstateData[[state]][['Student_Report_Information']][['Achievement_Level_Labels']])
 				} else {
-					tmp.prior.achievement.level.labels <- names(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[get.achievement_level.label(state, year)]])
+					tmp.prior.achievement.level.labels <- names(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[get.achievement_level.label(state, years_prior)]])
 				}
 			}
 			tmp.prior.achievement.level.base.points <- cumsum(tmp.prior.achievement.level.percentages)+(seq_along(tmp.prior.achievement.level.percentages)-1)/100
@@ -391,6 +391,7 @@ function(
 					}
 					if (tmp.prior.ach) {
 						if ("CONTENT_AREA_PRIOR" %in% names(tmp.data.final)) content_areas_prior <- tmp.data.final[["CONTENT_AREA_PRIOR"]][1]
+						if ("YEAR_PRIOR" %in% names(tmp.data.final)) years_prior <- tmp.data.final[["YEAR_PRIOR"]][1]
 						gof.object <- gof.draw(
 							data.frame(
 								SCALE_SCORE_PRIOR=tmp.data.final[['SCALE_SCORE_PRIOR']],
@@ -399,6 +400,7 @@ function(
 								content_area=content_areas.iter,
 								content_areas_prior=content_areas_prior,
 								year=years.iter,
+								years_prior=years_prior,
 								grade=grades.iter,
 								file.extra.label=file.extra.label,
 								plot.name=norm.group.iter)
