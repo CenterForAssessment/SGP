@@ -142,6 +142,24 @@ function(
 			return(gfittable)
 		}
 
+		get.achievement_level.label <- function(state, year) {
+			tmp.achievement_level.names <- grep("Achievement_Level_Labels", names(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]]), value=TRUE)
+			tmp.achievement_level.years <- sapply(strsplit(tmp.achievement_level.names, "[.]"), function(x) x[2])
+			if (any(!is.na(tmp.achievement_level.years))) {
+				if (year %in% tmp.achievement_level.years) {
+					return(paste("Achievement_Level_Labels)", year, sep="."))
+				} else {
+					if (year==sort(c(year, tmp.achievement_level.years))[1]) {
+						return("Achievement_Level_Labels")
+					} else {
+						return(paste("Achievement_Level_Labels", sort(tmp.achievement_level.years)[which(year==sort(c(year, tmp.achievement_level.years)))-1], sep="."))
+					}
+				}
+			} else {
+				return("Achievement_Level_Labels")
+			}
+		}
+
 		SCALE_SCORE_PRIOR <- SGP <- NULL
 		tmp.table <- .sgp.fit(data1[['SCALE_SCORE_PRIOR']], data1[['SGP']])
 		tmp.cuts <- .quantcut(data1[['SCALE_SCORE_PRIOR']], 0:10/10, right=FALSE)
@@ -160,7 +178,11 @@ function(
 			if (is.null(state)) {
 				tmp.prior.achievement.level.labels <- row.names(tmp.prior.achievement.level.percentages)
 			} else {
-				tmp.prior.achievement.level.labels <- names(SGP::SGPstateData[[state]][['Student_Report_Information']][['Achievement_Level_Labels']])
+				if (is.null(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]])) {
+					tmp.prior.achievement.level.labels <- names(SGP::SGPstateData[[state]][['Student_Report_Information']][['Achievement_Level_Labels']])
+				} else {
+					tmp.prior.achievement.level.labels <- names(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[get.achievement_level.label(state, year)]])
+				}
 			}
 			tmp.prior.achievement.level.base.points <- cumsum(tmp.prior.achievement.level.percentages)+(seq_along(tmp.prior.achievement.level.percentages)-1)/100
 			tmp.prior.achievement.level.centers <- tmp.prior.achievement.level.base.points-tmp.prior.achievement.level.percentages/2
