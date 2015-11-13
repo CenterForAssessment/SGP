@@ -16,7 +16,7 @@ function(
 
 	if (is.null(state) & is.SGP(sgp_object)) {
 			tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
-			state <- SGP:::getStateAbbreviation(tmp.name, "gofSGP")
+			state <- getStateAbbreviation(tmp.name, "gofSGP")
 	}
 
 	### Create common object for data
@@ -164,7 +164,7 @@ function(
 			return(gfittable)
 		}
 
-		SCALE_SCORE <- SCALE_SCORE_PRIOR <- SGP <- NULL
+		LH <- SCALE_SCORE <- SCALE_SCORE_PRIOR <- SGP <- NULL
 		tmp.table <- .sgp.fit(data1[['SCALE_SCORE_PRIOR']], data1[['SGP']])
 		tmp.cuts <- .quantcut(data1[['SCALE_SCORE_PRIOR']], 0:10/10, right=FALSE)
 		tmp.cuts.percentages <- round(100*table(tmp.cuts)/sum(table(tmp.cuts)), digits=1)
