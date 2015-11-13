@@ -292,7 +292,8 @@ sgp_g8_DEMO <- studentGrowthPercentiles(
 		grade.progression=c(5,6,8))
 
 
-## NOTE: Goodness of Fit results are stored as graphical objects in the
+## NOTE: Unless specified with 'goodness.of.fit.output.format'
+## Goodness of Fit results are stored as graphical objects in the
 ## Goodness_of_Fit slot. To view or save (using any R output device) try:
 ## Load 'grid' package to access grid.draw function
 
@@ -352,7 +353,7 @@ write.csv(sgp_all, file="sgp_all.csv", row.names=FALSE, quote=FALSE, na="")
 ## This allows one to "recycle" the object for multiple grades and subjects as desired.
 
 # Loop to calculate all SGPs for all grades without percentile cuts
-# but with growth levels
+# but with growth levels and goodness of fit plots exported automatically as PDFs, PNGs, and SVGs
 
 my.grade.sequences <- list(3:4, 3:5, 3:6, 3:7, 4:8)
 my.sgpData <- list(Panel_Data=sgpData)   ### Put sgpData into Panel_Data slot
@@ -362,6 +363,7 @@ for (i in seq_along(my.grade.sequences)) {
 		sgp.labels=list(my.year=2015, my.subject="Reading"),
 		growth.levels="DEMO",
 		goodness.of.fit="DEMO",
+        goodness.of.fit.output.format=c("PDF", "PNG", "SVG"),
 		grade.progression=my.grade.sequences[[i]])
 }
 
@@ -369,16 +371,6 @@ for (i in seq_along(my.grade.sequences)) {
 
 write.csv(my.sgpData$SGPercentiles$READING.2015,
 file="2015_Reading_SGPercentiles.csv", row.names=FALSE, quote=FALSE, na="")
-
-# Create PDFs of all Goodness of Fit results:
-
-require(grid)
-for (i in names(my.sgpData$Goodness_of_Fit$READING.2015)) {
-	pdf(file=paste(i, "_Reading_2015_GOF.pdf", sep=""), width=8.5, height=11)
-	grid.draw(my.sgpData[["Goodness_of_Fit"]][["READING.2015"]][[i]])
-	dev.off()
-}
-
 
 ## Loop to calculate all SGPs for all grades using 2010 to 2013 data
 
