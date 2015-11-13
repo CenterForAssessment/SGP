@@ -283,7 +283,7 @@ function(
 
 			### prior_achievement_level
 
-				textGrob(x=unit(0.5, "npc"), y=unit(1.15, "native"), "SGP Deciles by Prior Achievement Level", gp=gpar(cex=1.7), vp="prior_achievement_level"),
+				textGrob(x=unit(0.5, "npc"), y=unit(1.15, "native"), "SGP Deciles by Prior Achievement Level", gp=gpar(cex=1.4), vp="prior_achievement_level"),
 				roundrectGrob(width=0.98, r=unit(2, "mm"), vp="prior_achievement_level"),
 				rectGrob(x=rep(50, length(tmp.prior.achievement.level.base.points)), y=tmp.prior.achievement.level.base.points,
 					width=rep(100, length(tmp.prior.achievement.level.base.points)), height=tmp.prior.achievement.level.percentages,
@@ -291,7 +291,7 @@ function(
 					gp=gpar(col="black", fill=tmp.prior.achievement.level.colors)),
 				textGrob(x=-2, y=tmp.prior.achievement.level.centers, tmp.prior.achievement.level.labels, default.units="native",
 					just="right", vp="prior_achievement_level", gp=gpar(cex=0.8)),
-				textGrob(x=-25, y=0.5, tmp.prior.content.area.label, gp=gpar(cex=1), default.units="native", rot=90, vp="prior_achievement_level"),
+				textGrob(x=-25, y=0.5, tmp.prior.content.area.label, gp=gpar(cex=0.8), default.units="native", rot=90, vp="prior_achievement_level"),
 				textGrob(x=101, y=tmp.prior.achievement.level.centers, tmp.prior.achievement.level.percentages.labels, default.units="native",
 					just="left", vp="prior_achievement_level", gp=gpar(cex=0.7)),
 				linesGrob(c(1,99), -0.05, gp=gpar(lwd=1.0), default.units="native", vp="prior_achievement_level"),
