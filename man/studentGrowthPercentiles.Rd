@@ -44,6 +44,7 @@ studentGrowthPercentiles(panel.data,
                          convert.using.loss.hoss=TRUE,
                          goodness.of.fit=TRUE,
                          goodness.of.fit.minimum.n=NULL,
+                         goodness.of.fit.output.format="GROB",
                          return.prior.scale.score=TRUE,
                          return.prior.scale.score.standardized=TRUE,
                          return.norm.group.identifier=TRUE,
@@ -173,6 +174,9 @@ to calculate the lags/differences based upon the supplied years.
    \code{$my.subject.my.year} where \code{my.subject} and \code{my.year} are provided by \code{sgp.labels}.
   }
   \item{goodness.of.fit.minimum.n}{Integer argument (defaults to 250) indicating the minimum number of observations necessary before goodness of fit plots are constructed."
+  }
+  \item{goodness.of.fit.output.format}{Character argument (defaults to graphical object 'GROB') indicating output format for goodness of fit plots. Options include:
+  'GROB', 'PDF', 'PNG', 'SVG'.
   }
   \item{return.prior.scale.score}{Boolean argument (defaults to TRUE) indicating whether to include the prior scale score in the SGP data output. Useful for examining relationship between prior
    achievement and student growth.

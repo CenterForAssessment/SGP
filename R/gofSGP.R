@@ -15,8 +15,8 @@ function(
 	### Create state (if NULL) from sgp_object (if possible)
 
 	if (is.null(state) & is.SGP(sgp_object)) {
-			tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
-			state <- getStateAbbreviation(tmp.name, "gofSGP")
+		tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
+		state <- getStateAbbreviation(tmp.name, "gofSGP")
 	}
 
 	### Create common object for data
@@ -30,7 +30,7 @@ function(
 	if ("ACHIEVEMENT_LEVEL_PRIOR" %in% names(tmp.data)) {
 		with.prior.achievement.level <- TRUE
 		my.width <- 8.5; my.height <- 11
-		variables.to.get <- c("SCALE_SCORE", "SCALE_SCORE_PRIOR", "ACHIEVEMENT_LEVEL_PRIOR", "CONTENT_AREA_PRIOR", use.sgp, "GRADE", norm.group.var)
+		variables.to.get <- c("SCALE_SCORE", "SCALE_SCORE_PRIOR", "ACHIEVEMENT_LEVEL_PRIOR", "CONTENT_AREA_PRIOR", "YEAR_PRIOR", use.sgp, "GRADE", norm.group.var)
 	} else {
 		with.prior.achievement.level <- FALSE
 		my.width <- 8.5; my.height <- 8
@@ -42,7 +42,7 @@ function(
 
 	pretty_year <- function(x) sub("_", "-", x)
 
-	gof.draw <- function(content_area.year.grade.data, content_area, year, grade, content_areas_prior, file.extra.label, plot.name) {
+	gof.draw <- function(content_area.year.grade.data, content_area, year, years_prior, grade, content_areas_prior, file.extra.label, plot.name) {
 
 		if (!"GROB" %in% output.format) {
 			if (is.null(file.extra.label)) {
@@ -56,30 +56,30 @@ function(
 			if ("PDF" %in% output.format) {
 				pdf(file=paste(file.path, "/", tmp.plot.name, ".pdf", sep=""), width=my.width, height=my.height)
 				grid.draw(.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale,
-					with.prior.achievement.level=with.prior.achievement.level, content_areas_prior=content_areas_prior))
+					with.prior.achievement.level=with.prior.achievement.level, content_areas_prior=content_areas_prior, years_prior))
 				dev.off()
 			}
 			if ("PNG" %in% output.format) {
 				Cairo(file=paste(file.path, "/", tmp.plot.name, ".png", sep=""), width=my.width, height=my.height, units="in", dpi=144, pointsize=10.5, bg="transparent")
 				grid.draw(.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale,
-					with.prior.achievement.level=with.prior.achievement.level, content_areas_prior=content_areas_prior))
+					with.prior.achievement.level=with.prior.achievement.level, content_areas_prior=content_areas_prior, years_prior))
 				dev.off()
 			}
 			if ("SVG" %in% output.format) {
 				CairoSVG(file=paste(file.path, "/", tmp.plot.name, ".svg", sep=""), width=my.width, height=my.height, dpi=72, pointsize=10.5, bg="transparent")
 				grid.draw(.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale,
-					with.prior.achievement.level=with.prior.achievement.level, content_areas_prior=content_areas_prior))
+					with.prior.achievement.level=with.prior.achievement.level, content_areas_prior=content_areas_prior, years_prior))
 				dev.off()
 			}
 			return(NULL)
 		} else {
 			.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale, with.prior.achievement.level=with.prior.achievement.level,
-				content_areas_prior=content_areas_prior)
+				content_areas_prior=content_areas_prior, years_prior)
 		}
 	}
 
 	.goodness.of.fit <-
-		function(data1, content_area, year, grade, color.scale="reds", with.prior.achievement.level=FALSE, content_areas_prior=NULL) {
+		function(data1, content_area, year, grade, color.scale="reds", with.prior.achievement.level=FALSE, content_areas_prior=NULL, years_prior=NULL) {
 
 		.cell.color <- function(x, loss_hoss=FALSE){
 			my.blues.and.reds <- diverge_hcl(21, c = 100, l = c(50, 100))
@@ -103,7 +103,7 @@ function(
 				tmp.tbl[1, 3] <- ifelse(x[1, 3] > 4.9, "#FFFFB3", "#B4EEB4") #  Warning flag for anything greater than 5% in top row, 3rd column
 				if (loss.rows > 1) tmp.tbl[2, 3] <- ifelse(x[2, 3] > 9.9, "#FFFFB3", "#B4EEB4")  #  Warning flag for anything greater than 10% in 2nd row, 3rd column
 				tmp.tbl[1:loss.rows, 4:12] <- ifelse(x[1:loss.rows, 4:12] > 0, "#EBCDDE", "#FFFFFF")
-				
+
 				# HOSS
 				tmp.tbl[(loss.rows+1):loss_hoss.rows, 12] <- lh_palette[findInterval(round(hoss.remainder/6,0), 0:5)] # Anything below 85 flagged with pink
 				tmp.tbl[(loss.rows+1):loss_hoss.rows, 11] <- rev(lh_palette)[findInterval(x[(loss.rows+1):loss_hoss.rows, 11]/hoss.remainder, seq(0, 0.8, 0.2))]
@@ -164,19 +164,37 @@ function(
 			return(gfittable)
 		}
 
+		get.achievement_level.label <- function(state, year) {
+			tmp.achievement_level.names <- grep("Achievement_Level_Labels", names(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]]), value=TRUE)
+			tmp.achievement_level.years <- sapply(strsplit(tmp.achievement_level.names, "[.]"), function(x) x[2])
+			if (any(!is.na(tmp.achievement_level.years))) {
+				if (year %in% tmp.achievement_level.years) {
+					return(paste("Achievement_Level_Labels", year, sep="."))
+				} else {
+					if (year==sort(c(year, tmp.achievement_level.years))[1]) {
+						return("Achievement_Level_Labels")
+					} else {
+						return(paste("Achievement_Level_Labels", sort(tmp.achievement_level.years)[which(year==sort(c(year, tmp.achievement_level.years)))-1], sep="."))
+					}
+				}
+			} else {
+				return("Achievement_Level_Labels")
+			}
+		}
+
 		LH <- SCALE_SCORE <- SCALE_SCORE_PRIOR <- SGP <- NULL
 		tmp.table <- .sgp.fit(data1[['SCALE_SCORE_PRIOR']], data1[['SGP']])
 		tmp.cuts <- .quantcut(data1[['SCALE_SCORE_PRIOR']], 0:10/10, right=FALSE)
 		tmp.cuts.percentages <- round(100*table(tmp.cuts)/sum(table(tmp.cuts)), digits=1)
 		tmp.colors <- .cell.color(as.vector(tmp.table))
 		tmp.list <- list()
-		
+
 		for (i in levels(tmp.cuts)) {
 			tmp.list[[i]] <- quantile(data1$SGP[tmp.cuts==i], probs=ppoints(1:500))
 		}
-		
+
 		pct <- 50/dim(tmp.data.final)[1] # Take Top/Bottom 50 kids to find LOSS/HOSS
-		
+
 		loss_hoss.data <- rbindlist(list(
 			data.table(data1)[, list(SCALE_SCORE, SGP)][which(SCALE_SCORE <= quantile(SCALE_SCORE, probs = pct, na.rm = T)),][, LH := "LOSS"],
 			data.table(data1)[, list(SCALE_SCORE, SGP)][which(SCALE_SCORE >= quantile(SCALE_SCORE, probs=1-pct, na.rm = T)),][, LH := "HOSS"]))
@@ -197,7 +215,7 @@ function(
 		if (hoss.rows!=1) {
 			hoss.ss <- .quantcut(loss_hoss.data[LH=="HOSS"][['SCALE_SCORE']], q=0:2/2, right=FALSE, dig.lab=max(nchar(loss_hoss.data[LH=="HOSS"][['SCALE_SCORE']])))
 		} else hoss.ss <- factor(paste("[", loss_hoss.data[LH=="HOSS"][['SCALE_SCORE']], "]"))
-		
+
 		loss_hoss.table <- rbind(
 			prop.table(table(loss.ss, cut(loss_hoss.data[LH=="LOSS"][['SGP']], c(-1, 5.5, 9.5, 19.5, 29.5, 39.5, 49.5, 59.5, 69.5, 79.5, 89.5, 94.5, 100.5),
 				labels=loss_hoss.percentile.labels)), 1)*100,
@@ -207,7 +225,7 @@ function(
 		loss.counts <- table(loss.ss)
 		hoss.counts <- table(hoss.ss)
 		loss_hoss.colors <- .cell.color(loss_hoss.table, loss_hoss=TRUE)
-		
+
 		if (with.prior.achievement.level) {
 			tmp.prior.achievement.level.percentages <- table(factor(data1[['ACHIEVEMENT_LEVEL_PRIOR']]))/(dim(data1)[1])
 			tmp.prior.achievement.level.colors <- rev(diverge_hcl(length(tmp.prior.achievement.level.percentages)))
@@ -215,7 +233,11 @@ function(
 			if (is.null(state)) {
 				tmp.prior.achievement.level.labels <- row.names(tmp.prior.achievement.level.percentages)
 			} else {
-				tmp.prior.achievement.level.labels <- names(SGP::SGPstateData[[state]][['Student_Report_Information']][['Achievement_Level_Labels']])
+				if (is.null(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]])) {
+					tmp.prior.achievement.level.labels <- names(SGP::SGPstateData[[state]][['Student_Report_Information']][['Achievement_Level_Labels']])
+				} else {
+					tmp.prior.achievement.level.labels <- names(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[get.achievement_level.label(state, years_prior)]])
+				}
 			}
 			tmp.prior.achievement.level.base.points <- cumsum(tmp.prior.achievement.level.percentages)+(seq_along(tmp.prior.achievement.level.percentages)-1)/100
 			tmp.prior.achievement.level.centers <- tmp.prior.achievement.level.base.points-tmp.prior.achievement.level.percentages/2
@@ -244,7 +266,7 @@ function(
 		### grob with prior achievement
 
 		if (with.prior.achievement.level) {
-			
+
 			gof.grob <- gTree(childrenvp=layout.vp,
 				name=paste(content_area, ".", year, ".GRADE.", grade, sep=""),
 				children=gList(gTree(vp="layout",
@@ -261,7 +283,7 @@ function(
 
 			### prior_achievement_level
 
-				textGrob(x=unit(0.5, "npc"), y=unit(1.15, "native"), "SGP Deciles by Prior Achievement Level", gp=gpar(cex=1.7), vp="prior_achievement_level"),
+				textGrob(x=unit(0.5, "npc"), y=unit(1.15, "native"), "SGP Deciles by Prior Achievement Level", gp=gpar(cex=1.4), vp="prior_achievement_level"),
 				roundrectGrob(width=0.98, r=unit(2, "mm"), vp="prior_achievement_level"),
 				rectGrob(x=rep(50, length(tmp.prior.achievement.level.base.points)), y=tmp.prior.achievement.level.base.points,
 					width=rep(100, length(tmp.prior.achievement.level.base.points)), height=tmp.prior.achievement.level.percentages,
@@ -269,7 +291,7 @@ function(
 					gp=gpar(col="black", fill=tmp.prior.achievement.level.colors)),
 				textGrob(x=-2, y=tmp.prior.achievement.level.centers, tmp.prior.achievement.level.labels, default.units="native",
 					just="right", vp="prior_achievement_level", gp=gpar(cex=0.8)),
-				textGrob(x=-25, y=0.5, tmp.prior.content.area.label, gp=gpar(cex=1), default.units="native", rot=90, vp="prior_achievement_level"),
+				textGrob(x=-25, y=0.5, tmp.prior.content.area.label, gp=gpar(cex=0.8), default.units="native", rot=90, vp="prior_achievement_level"),
 				textGrob(x=101, y=tmp.prior.achievement.level.centers, tmp.prior.achievement.level.percentages.labels, default.units="native",
 					just="left", vp="prior_achievement_level", gp=gpar(cex=0.7)),
 				linesGrob(c(1,99), -0.05, gp=gpar(lwd=1.0), default.units="native", vp="prior_achievement_level"),
@@ -283,7 +305,7 @@ function(
 				vp="prior_achievement_level", default.units="native"),
 
 			### LOSS/HOSS table
-			
+
 			roundrectGrob(width=0.98, r=unit(2, "mm"), vp="loss_hoss"),
 			rectGrob(x=rep(1:12, each=loss_hoss.rows), y=rep(loss_hoss.rows:1,loss_hoss.rows), width=1, height=1, default.units="native",
 							 gp=gpar(col="black", fill=loss_hoss.colors), vp="loss_hoss"),
@@ -300,7 +322,7 @@ function(
 			textGrob(x=-4.0, y=loss_hoss.rows+3.25, "Ceiling / Floor Effects Test", just="left", default.units="native", vp="loss_hoss"),
 			textGrob(x=rep(1:12,each=loss_hoss.rows), y=rep(loss_hoss.rows:1,loss_hoss.rows),
 							 formatC(as.vector(loss_hoss.table), format="f", digits=1), default.units="native", gp=gpar(cex=0.7), vp="loss_hoss"),
-			
+
 			### table
 
 				roundrectGrob(width=0.98, r=unit(2, "mm"), vp="table"),
@@ -351,7 +373,7 @@ function(
 					", Grade ", grade, " (N = ", format(dim(data1)[1], big.mark=","), ")", sep=""), vp="title", gp=gpar(cex=1.2)),
 
 				### LOSS/HOSS table
-				
+
 				roundrectGrob(width=0.98, r=unit(2, "mm"), vp="loss_hoss"),
 				rectGrob(x=rep(1:12, each=loss_hoss.rows), y=rep(loss_hoss.rows:1,loss_hoss.rows), width=1, height=1, default.units="native",
 								 gp=gpar(col="black", fill=loss_hoss.colors), vp="loss_hoss"),
@@ -465,6 +487,7 @@ function(
 					}
 					if (tmp.prior.ach) {
 						if ("CONTENT_AREA_PRIOR" %in% names(tmp.data.final)) content_areas_prior <- tmp.data.final[["CONTENT_AREA_PRIOR"]][1]
+						if ("YEAR_PRIOR" %in% names(tmp.data.final)) years_prior <- tmp.data.final[["YEAR_PRIOR"]][1]
 						gof.object <- gof.draw(
 							data.frame(
 								SCALE_SCORE=tmp.data.final[['SCALE_SCORE']],
@@ -474,6 +497,7 @@ function(
 								content_area=content_areas.iter,
 								content_areas_prior=content_areas_prior,
 								year=years.iter,
+								years_prior=years_prior,
 								grade=grades.iter,
 								file.extra.label=file.extra.label,
 								plot.name=norm.group.iter)
