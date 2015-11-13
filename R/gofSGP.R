@@ -12,12 +12,12 @@ function(
 
 	VALID_CASE <- CONTENT_AREA <- YEAR <- SCALE_SCORE_PRIOR <- ACHIEVEMENT_LEVEL_PRIOR <- NULL
 
-        ### Create state (if NULL) from sgp_object (if possible)
+	### Create state (if NULL) from sgp_object (if possible)
 
-        if (is.null(state) & is.SGP(sgp_object)) {
-            tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
-            state <- getStateAbbreviation(tmp.name, "gofSGP")
-        }
+	if (is.null(state) & is.SGP(sgp_object)) {
+		tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
+		state <- getStateAbbreviation(tmp.name, "gofSGP")
+	}
 
 	### Create common object for data
 
@@ -30,11 +30,11 @@ function(
 	if ("ACHIEVEMENT_LEVEL_PRIOR" %in% names(tmp.data)) {
 		with.prior.achievement.level <- TRUE
 		my.width <- 8.5; my.height <- 11
-		variables.to.get <- c("SCALE_SCORE_PRIOR", "ACHIEVEMENT_LEVEL_PRIOR", "CONTENT_AREA_PRIOR", "YEAR_PRIOR", use.sgp, "GRADE", norm.group.var)
+		variables.to.get <- c("SCALE_SCORE", "SCALE_SCORE_PRIOR", "ACHIEVEMENT_LEVEL_PRIOR", "CONTENT_AREA_PRIOR", "YEAR_PRIOR", use.sgp, "GRADE", norm.group.var)
 	} else {
 		with.prior.achievement.level <- FALSE
-		my.width <- 8.5; my.height <- 5.5
-		variables.to.get <- c("SCALE_SCORE_PRIOR", use.sgp, "GRADE", norm.group.var)
+		my.width <- 8.5; my.height <- 8
+		variables.to.get <- c("SCALE_SCORE", "SCALE_SCORE_PRIOR", use.sgp, "GRADE", norm.group.var)
 	}
 
 
@@ -81,17 +81,39 @@ function(
 	.goodness.of.fit <-
 		function(data1, content_area, year, grade, color.scale="reds", with.prior.achievement.level=FALSE, content_areas_prior=NULL, years_prior=NULL) {
 
-		.cell.color <- function(x){
-		my.blues.and.reds <- diverge_hcl(21, c = 100, l = c(50, 100))
-		my.reds <- c("#FFFFFF", "#FEF1E1", "#FBD9CA", "#F9C1B4", "#F7A99E", "#F59188", "#F27972", "#F0615C", "#EE4946", "#EC3130", "#EA1A1A")
-		if (color.scale=="reds") {
-			tmp.cell.color <- my.reds[findInterval(abs(x - 10), 1:10)+1]
-			tmp.cell.color[is.na(tmp.cell.color)] <- "#000000"
-		} else {
-			tmp.cell.color <- my.blues.and.reds[findInterval(x-10, -10:11, all.inside=TRUE)]
-			tmp.cell.color[is.na(tmp.cell.color)] <- "#000000"
-		}
-		return(tmp.cell.color)
+		.cell.color <- function(x, loss_hoss=FALSE){
+			my.blues.and.reds <- diverge_hcl(21, c = 100, l = c(50, 100))
+			my.reds <- c("#FFFFFF", "#FEF1E1", "#FBD9CA", "#F9C1B4", "#F7A99E", "#F59188", "#F27972", "#F0615C", "#EE4946", "#EC3130", "#EA1A1A")
+			if (!loss_hoss) {
+			if (color.scale=="reds") {
+				tmp.cell.color <- my.reds[findInterval(abs(x - 10), 1:10)+1]
+				tmp.cell.color[is.na(tmp.cell.color)] <- "#000000"
+			} else {
+				tmp.cell.color <- my.blues.and.reds[findInterval(x-10, -10:11, all.inside=TRUE)]
+				tmp.cell.color[is.na(tmp.cell.color)] <- "#000000"
+			}} else {
+				tmp.tbl <- x
+				lh_palette <- diverge_hcl(7, h = c(128,330), c=98, l = c(65, 90))[-4] # 3 Greens, 3 Pinks
+
+				# LOSS
+				loss.remainder <- 100-x[1:loss.rows,1]
+				hoss.remainder <- 100-x[(loss.rows+1):loss_hoss.rows, 12]
+				tmp.tbl[1:loss.rows, 1] <- lh_palette[findInterval(round(loss.remainder/6,0), 0:5)] # Anything below 85 flagged with pink
+				tmp.tbl[1:loss.rows, 2] <- rev(lh_palette)[findInterval(x[1:loss.rows,2]/loss.remainder, seq(0, 0.8, 0.2))]
+				tmp.tbl[1, 3] <- ifelse(x[1, 3] > 4.9, "#FFFFB3", "#B4EEB4") #  Warning flag for anything greater than 5% in top row, 3rd column
+				if (loss.rows > 1) tmp.tbl[2, 3] <- ifelse(x[2, 3] > 9.9, "#FFFFB3", "#B4EEB4")  #  Warning flag for anything greater than 10% in 2nd row, 3rd column
+				tmp.tbl[1:loss.rows, 4:12] <- ifelse(x[1:loss.rows, 4:12] > 0, "#EBCDDE", "#FFFFFF")
+
+				# HOSS
+				tmp.tbl[(loss.rows+1):loss_hoss.rows, 12] <- lh_palette[findInterval(round(hoss.remainder/6,0), 0:5)] # Anything below 85 flagged with pink
+				tmp.tbl[(loss.rows+1):loss_hoss.rows, 11] <- rev(lh_palette)[findInterval(x[(loss.rows+1):loss_hoss.rows, 11]/hoss.remainder, seq(0, 0.8, 0.2))]
+				tmp.tbl[loss_hoss.rows, 10] <- ifelse(x[loss_hoss.rows, 10] > 4.9, "#FFFFB3", "#B4EEB4") # Warning flag for anything greater than 5% in top row, 3rd column
+				if (hoss.rows > 1) tmp.tbl[(loss.rows+1), 10] <- ifelse(x[(loss.rows+1), 10] > 9.9, "#FFFFB3", "#B4EEB4") # Warning flag for anything greater than 5% in top row, 3rd column
+				tmp.tbl[(loss.rows+1):loss_hoss.rows, 1:9] <- ifelse(x[(loss.rows+1):loss_hoss.rows, 1:9] > 0, "#EBCDDE", "#FFFFFF")
+				tmp.tbl[is.na(tmp.tbl)] <- lh_palette[2]
+				tmp.cell.color <- as.vector(tmp.tbl)
+			}
+			return(tmp.cell.color)
 		}
 
 		.quantcut <- function (x, q = seq(0, 1, by = 0.25), na.rm = TRUE, ...) { ### From the quantcut package (thanks!!)
@@ -160,7 +182,7 @@ function(
 			}
 		}
 
-		SCALE_SCORE_PRIOR <- SGP <- NULL
+		LH <- SCALE_SCORE <- SCALE_SCORE_PRIOR <- SGP <- NULL
 		tmp.table <- .sgp.fit(data1[['SCALE_SCORE_PRIOR']], data1[['SGP']])
 		tmp.cuts <- .quantcut(data1[['SCALE_SCORE_PRIOR']], 0:10/10, right=FALSE)
 		tmp.cuts.percentages <- round(100*table(tmp.cuts)/sum(table(tmp.cuts)), digits=1)
@@ -170,6 +192,39 @@ function(
 		for (i in levels(tmp.cuts)) {
 			tmp.list[[i]] <- quantile(data1$SGP[tmp.cuts==i], probs=ppoints(1:500))
 		}
+
+		pct <- 50/dim(tmp.data.final)[1] # Take Top/Bottom 50 kids to find LOSS/HOSS
+
+		loss_hoss.data <- rbindlist(list(
+			data.table(data1)[, list(SCALE_SCORE, SGP)][which(SCALE_SCORE <= quantile(SCALE_SCORE, probs = pct, na.rm = T)),][, LH := "LOSS"],
+			data.table(data1)[, list(SCALE_SCORE, SGP)][which(SCALE_SCORE >= quantile(SCALE_SCORE, probs=1-pct, na.rm = T)),][, LH := "HOSS"]))
+		setkey(loss_hoss.data, SCALE_SCORE, LH)
+		if (length(unique(loss_hoss.data[LH=="HOSS"][["SCALE_SCORE"]])) > 1) hoss.rows <- 2 else hoss.rows <- 1
+		if (length(unique(loss_hoss.data[LH=="LOSS"][["SCALE_SCORE"]])) > 1) loss.rows <- 2 else loss.rows <- 1
+		loss_hoss.rows <- loss.rows + hoss.rows
+
+		if (max(loss_hoss.data[['SGP']]==100) | min(loss_hoss.data[['SGP']]==0)) {
+			loss_hoss.percentile.labels <- c('0 to 5', '5 to 9', '10 to 19', '20 to 29', '30 to 39', '40 to 49', '50 to 59', '60 to 69', '70 to 79', '80 to 89', '90 to 94', '95 to 100')
+		} else {
+			loss_hoss.percentile.labels <- c('1 to 5', '5 to 9', '10 to 19', '20 to 29', '30 to 39', '40 to 49', '50 to 59', '60 to 69', '70 to 79', '80 to 89', '90 to 94', '95 to 99')
+		}
+
+		if (loss.rows!=1) {
+			loss.ss <- .quantcut(loss_hoss.data[LH=="LOSS"][['SCALE_SCORE']], q=0:2/2, right=FALSE, dig.lab=max(nchar(loss_hoss.data[LH=="LOSS"][['SCALE_SCORE']])))
+		} else loss.ss <- factor(paste("[", loss_hoss.data[LH=="LOSS"][['SCALE_SCORE']], "]"))
+		if (hoss.rows!=1) {
+			hoss.ss <- .quantcut(loss_hoss.data[LH=="HOSS"][['SCALE_SCORE']], q=0:2/2, right=FALSE, dig.lab=max(nchar(loss_hoss.data[LH=="HOSS"][['SCALE_SCORE']])))
+		} else hoss.ss <- factor(paste("[", loss_hoss.data[LH=="HOSS"][['SCALE_SCORE']], "]"))
+
+		loss_hoss.table <- rbind(
+			prop.table(table(loss.ss, cut(loss_hoss.data[LH=="LOSS"][['SGP']], c(-1, 5.5, 9.5, 19.5, 29.5, 39.5, 49.5, 59.5, 69.5, 79.5, 89.5, 94.5, 100.5),
+				labels=loss_hoss.percentile.labels)), 1)*100,
+			prop.table(table(hoss.ss, cut(loss_hoss.data[LH=="HOSS"][['SGP']], c(-1, 5.5, 9.5, 19.5, 29.5, 39.5, 49.5, 59.5, 69.5, 79.5, 89.5, 94.5, 100.5),
+				labels=loss_hoss.percentile.labels)), 1)*100)
+
+		loss.counts <- table(loss.ss)
+		hoss.counts <- table(hoss.ss)
+		loss_hoss.colors <- .cell.color(loss_hoss.table, loss_hoss=TRUE)
 
 		if (with.prior.achievement.level) {
 			tmp.prior.achievement.level.percentages <- table(factor(data1[['ACHIEVEMENT_LEVEL_PRIOR']]))/(dim(data1)[1])
@@ -189,18 +244,22 @@ function(
 			tmp.prior.achievement.level.quantiles <- tapply(data1[['SGP']], factor(data1[['ACHIEVEMENT_LEVEL_PRIOR']]), quantile, probs=1:9/10, simplify=FALSE)
 			tmp.prior.content.area.label <- paste("Prior Achievement Level (", capwords(content_areas_prior), ")", sep="")
 
-			layout.vp <- viewport(layout = grid.layout(7, 4, widths = unit(c(0.1, 4.9, 3.4, 0.1), rep("inches", 4)),
-			heights = unit(c(0.2, 1.0, 0.1, 5.4, 0.1, 4.0, 0.2), rep("inches", 2))), name="layout")
-			components <- vpList(viewport(layout.pos.row=2, layout.pos.col=2:3, name="title"),
+			layout.vp <- viewport(layout = grid.layout(9, 4, widths = unit(c(0.1, 4.9, 3.4, 0.1), rep("inches", 4)),
+			heights = unit(c(0.2, 1.0, 0.1, 3.0, 0.1, 2.3, 0.1, 4.0, 0.2), rep("inches", 9))), name="layout")
+			components <- vpList(
+				viewport(layout.pos.row=2, layout.pos.col=2:3, name="title"),
 				viewport(layout.pos.row=4, layout.pos.col=2:3, xscale=c(-30,110), yscale=c(-0.25, 1.25), name="prior_achievement_level"),
+				viewport(layout.pos.row=6, layout.pos.col=2:3, xscale=c(-5,15), yscale=c(0,loss_hoss.rows+4), name="loss_hoss"),
+				viewport(layout.pos.row=8, layout.pos.col=2, xscale=c(-3,12), yscale=c(0,13), name="table"),
+				viewport(layout.pos.row=8, layout.pos.col=3, xscale=c(-25,110), yscale=c(-8,130), name="qq"))
+		} else {
+			layout.vp <- viewport(layout = grid.layout(7, 4, widths = unit(c(0.1, 4.9, 3.4, 0.1), rep("inches", 4)),
+			heights = unit(c(0.2, 1.0, 0.1, 2.0, 0.1, 4.0, 0.2), rep("inches", 7))), name="layout")
+			components <- vpList(
+				viewport(layout.pos.row=2, layout.pos.col=2:3, name="title"),
+				viewport(layout.pos.row=4, layout.pos.col=2:3, xscale=c(-5,15), yscale=c(0,loss_hoss.rows+4), name="loss_hoss"),
 				viewport(layout.pos.row=6, layout.pos.col=2, xscale=c(-3,12), yscale=c(0,13), name="table"),
 				viewport(layout.pos.row=6, layout.pos.col=3, xscale=c(-25,110), yscale=c(-8,130), name="qq"))
-		} else {
-			layout.vp <- viewport(layout = grid.layout(5, 4, widths = unit(c(0.1, 4.9, 3.4, 0.1), rep("inches", 4)),
-			heights = unit(c(0.2, 1.0, 0.1, 4.0, 0.2), rep("inches", 2))), name="layout")
-			components <- vpList(viewport(layout.pos.row=2, layout.pos.col=2:3, name="title"),
-			viewport(layout.pos.row=4, layout.pos.col=2, xscale=c(-3,12), yscale=c(0,13), name="table"),
-			viewport(layout.pos.row=4, layout.pos.col=3, xscale=c(-25,110), yscale=c(-8,130), name="qq"))
 		}
 
 
@@ -245,6 +304,25 @@ function(
 				gp=gpar(lwd=c(rep(0.4,4),1.4,rep(0.4,4)), col=c(rep("grey75",4),"white",rep("grey75",4)), lty=c(rep(2,4),1,rep(2,4))),
 				vp="prior_achievement_level", default.units="native"),
 
+			### LOSS/HOSS table
+
+			roundrectGrob(width=0.98, r=unit(2, "mm"), vp="loss_hoss"),
+			rectGrob(x=rep(1:12, each=loss_hoss.rows), y=rep(loss_hoss.rows:1,loss_hoss.rows), width=1, height=1, default.units="native",
+							 gp=gpar(col="black", fill=loss_hoss.colors), vp="loss_hoss"),
+			linesGrob(x=c(0.5,12.5), y=hoss.rows+0.5, gp=gpar(lwd=1.25, col="red"), default.units="native", vp="loss_hoss"),
+			textGrob(x= -1.0, y=loss_hoss.rows:1, dimnames(loss_hoss.table)[[1]], just="left", gp=gpar(cex=0.7), default.units="native", vp="loss_hoss"),
+			textGrob(x=-1.15, y=loss_hoss.rows, "Lowest OSS: ", just="right", gp=gpar(cex=0.7), default.units="native", vp="loss_hoss"),
+			textGrob(x=-1.15, y=loss_hoss.rows-loss.rows, "Highest OSS: ", just="right", gp=gpar(cex=0.7), default.units="native", vp="loss_hoss"),
+			textGrob(x=12.65, y=loss_hoss.rows:1, paste("N =", c(loss.counts, hoss.counts)), just="left", gp=gpar(cex=0.7),
+							 default.units="native", vp="loss_hoss"),
+			textGrob(x=-4.0, y=((loss_hoss.rows+3)/2), "Current Observed Score", gp=gpar(cex=0.8), default.units="native", rot=90, vp="loss_hoss"),
+			textGrob(x=-3.5, y=((loss_hoss.rows+3)/2), "Extremes (Range)", gp=gpar(cex=0.8), default.units="native", rot=90, vp="loss_hoss"),
+			textGrob(x=1:12, y=loss_hoss.rows+0.8, dimnames(loss_hoss.table)[[2]], gp=gpar(cex=0.7), default.units="native", rot=45, just="left", vp="loss_hoss"),
+			textGrob(x=6.75, y=loss_hoss.rows+2.65, "Student Growth Percentile Range", gp=gpar(cex=0.8), default.units="native", vp="loss_hoss"),
+			textGrob(x=-4.0, y=loss_hoss.rows+3.25, "Ceiling / Floor Effects Test", just="left", default.units="native", vp="loss_hoss"),
+			textGrob(x=rep(1:12,each=loss_hoss.rows), y=rep(loss_hoss.rows:1,loss_hoss.rows),
+							 formatC(as.vector(loss_hoss.table), format="f", digits=1), default.units="native", gp=gpar(cex=0.7), vp="loss_hoss"),
+
 			### table
 
 				roundrectGrob(width=0.98, r=unit(2, "mm"), vp="table"),
@@ -280,7 +358,6 @@ function(
 				textGrob(x=-17, y=50, "Empirical SGP Distribution", default.units="native", gp=gpar(cex=0.7), rot=90, vp="qq")))))
 
 		} else {
-
 			gof.grob <- gTree(childrenvp=layout.vp,
 				name=paste(content_area, ".", year, ".GRADE.", grade, sep=""),
 				children=gList(gTree(vp="layout",
@@ -295,7 +372,26 @@ function(
 				textGrob(x=0.5, y=0.35, paste(pretty_year(year), " ", sub(' +$', '', capwords(paste(content_area, my.extra.label))),
 					", Grade ", grade, " (N = ", format(dim(data1)[1], big.mark=","), ")", sep=""), vp="title", gp=gpar(cex=1.2)),
 
-			### table
+				### LOSS/HOSS table
+
+				roundrectGrob(width=0.98, r=unit(2, "mm"), vp="loss_hoss"),
+				rectGrob(x=rep(1:12, each=loss_hoss.rows), y=rep(loss_hoss.rows:1,loss_hoss.rows), width=1, height=1, default.units="native",
+								 gp=gpar(col="black", fill=loss_hoss.colors), vp="loss_hoss"),
+				linesGrob(x=c(0.5,12.5), y=hoss.rows+0.5, gp=gpar(lwd=1.25, col="red"), default.units="native", vp="loss_hoss"),
+				textGrob(x= -1.0, y=loss_hoss.rows:1, dimnames(loss_hoss.table)[[1]], just="left", gp=gpar(cex=0.7), default.units="native", vp="loss_hoss"),
+				textGrob(x=-1.15, y=loss_hoss.rows, "Lowest OSS: ", just="right", gp=gpar(cex=0.7), default.units="native", vp="loss_hoss"),
+				textGrob(x=-1.15, y=loss_hoss.rows-loss.rows, "Highest OSS: ", just="right", gp=gpar(cex=0.7), default.units="native", vp="loss_hoss"),
+				textGrob(x=12.65, y=loss_hoss.rows:1, paste("N =", c(loss.counts, hoss.counts)), just="left", gp=gpar(cex=0.7),
+								 default.units="native", vp="loss_hoss"),
+				textGrob(x=-4.0, y=((loss_hoss.rows+3)/2), "Current Observed Score", gp=gpar(cex=0.8), default.units="native", rot=90, vp="loss_hoss"),
+				textGrob(x=-3.5, y=((loss_hoss.rows+3)/2), "Extremes (Range)", gp=gpar(cex=0.8), default.units="native", rot=90, vp="loss_hoss"),
+				textGrob(x=1:12, y=loss_hoss.rows+0.8, dimnames(loss_hoss.table)[[2]], gp=gpar(cex=0.7), default.units="native", rot=45, just="left", vp="loss_hoss"),
+				textGrob(x=6.75, y=loss_hoss.rows+2.65, "Student Growth Percentile Range", gp=gpar(cex=0.8), default.units="native", vp="loss_hoss"),
+				textGrob(x=-4.0, y=loss_hoss.rows+3.25, "Ceiling / Floor Effects Test", just="left", default.units="native", vp="loss_hoss"),
+				textGrob(x=rep(1:12,each=loss_hoss.rows), y=rep(loss_hoss.rows:1,loss_hoss.rows),
+								 formatC(as.vector(loss_hoss.table), format="f", digits=1), default.units="native", gp=gpar(cex=0.7), vp="loss_hoss"),
+
+				### table
 
 				roundrectGrob(width=0.98, r=unit(2, "mm"), vp="table"),
 				rectGrob(x=rep(1:10, each=dim(tmp.table)[1]), y=rep(10:(10-dim(tmp.table)[1]+1),10), width=1, height=1, default.units="native",
@@ -386,7 +482,7 @@ function(
 						tmp.prior.ach <- FALSE
 						with.prior.achievement.level <- FALSE
 						if ("ACHIEVEMENT_LEVEL_PRIOR" %in% names(tmp.data.final)) tmp.data.final[, ACHIEVEMENT_LEVEL_PRIOR:=NULL]
-						my.width <- 8.5; my.height <- 5.5
+						my.width <- 8.5; my.height <- 8
 						message(paste("\tNOTE:", content_areas.iter, "data does not include ACHIEVEMENT_LEVEL_PRIOR variable. Prior Achievement Level plot panel will not be included in goodness of fit plot."))
 					}
 					if (tmp.prior.ach) {
@@ -394,6 +490,7 @@ function(
 						if ("YEAR_PRIOR" %in% names(tmp.data.final)) years_prior <- tmp.data.final[["YEAR_PRIOR"]][1]
 						gof.object <- gof.draw(
 							data.frame(
+								SCALE_SCORE=tmp.data.final[['SCALE_SCORE']],
 								SCALE_SCORE_PRIOR=tmp.data.final[['SCALE_SCORE_PRIOR']],
 								SGP=tmp.data.final[[use.sgp]],
 								ACHIEVEMENT_LEVEL_PRIOR=tmp.data.final[['ACHIEVEMENT_LEVEL_PRIOR']]),
@@ -407,6 +504,7 @@ function(
 					} else {
 						gof.object <- gof.draw(
 							data.frame(
+								SCALE_SCORE=tmp.data.final[['SCALE_SCORE']],
 								SCALE_SCORE_PRIOR=tmp.data.final[['SCALE_SCORE_PRIOR']],
 								SGP=tmp.data.final[[use.sgp]]),
 								content_area=content_areas.iter,

@@ -1545,6 +1545,7 @@ function(panel.data,         ## REQUIRED
 				GRADE <- YEAR <- CONTENT_AREA <- NULL
 				tmp.gof.data <- getAchievementLevel(
 							sgp_data=data.table(
+								ID=quantile.data[['ID']],
 								SCALE_SCORE=quantile.data[['SCALE_SCORE_PRIOR']],
 								quantile.data[, c(sgps.for.gof, "SGP_NORM_GROUP"), with=FALSE],
 								VALID_CASE="VALID_CASE",
@@ -1561,6 +1562,9 @@ function(panel.data,         ## REQUIRED
 
 				setnames(tmp.gof.data, c("SCALE_SCORE", "ACHIEVEMENT_LEVEL", "CONTENT_AREA", "CONTENT_AREA_CURRENT", "YEAR", "YEAR_CURRENT", "GRADE_CURRENT"),
 					c("SCALE_SCORE_PRIOR", "ACHIEVEMENT_LEVEL_PRIOR", "CONTENT_AREA_PRIOR", "CONTENT_AREA", "YEAR_PRIOR", "YEAR", "GRADE"))
+				setnames(ss.data, dim(ss.data)[2], "SCALE_SCORE")
+				setkeyv(tmp.gof.data, "ID")
+				tmp.gof.data <- ss.data[, c("ID", "SCALE_SCORE"), with=FALSE][tmp.gof.data]
 
 				### Rename SGP_NORM_GROUP_BASELINE for gofSGP - expecting consistent name to establish norm.group.var in that function
 				if ("SGP_NORM_GROUP_BASELINE" %in% names(tmp.gof.data)) setnames(tmp.gof.data, "SGP_NORM_GROUP_BASELINE", "SGP_NORM_GROUP")
@@ -1584,12 +1588,16 @@ function(panel.data,         ## REQUIRED
 				}
 			} else {
 				tmp.gof.data <- data.table(
+					ID=quantile.data[['ID']],
 					SCALE_SCORE_PRIOR=quantile.data[['SCALE_SCORE_PRIOR']],
 					quantile.data[, sgps.for.gof, with=FALSE],
 					VALID_CASE="VALID_CASE",
 					CONTENT_AREA=sgp.labels[['my.subject']],
 					YEAR=sgp.labels[['my.year']],
-					GRADE=tmp.last)
+					GRADE=tmp.last, key="ID")
+
+				setnames(ss.data, dim(ss.data)[2], "SCALE_SCORE")
+				tmp.gof.data <- ss.data[, c("ID", "SCALE_SCORE"), with=FALSE][tmp.gof.data]
 
 				for (gof.iter in seq_along(sgps.for.gof)) {
 					Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]][['TMP_NAME']] <- gofSGP(
