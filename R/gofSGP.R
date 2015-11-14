@@ -93,24 +93,31 @@ function(
 				tmp.cell.color[is.na(tmp.cell.color)] <- "#000000"
 			}} else {
 				tmp.tbl <- x
-				lh_palette <- diverge_hcl(7, h = c(128,330), c=98, l = c(65, 90))[-4] # 3 Greens, 3 Pinks
+				lh_palette <- rev(diverge_hcl(12, h = c(128,330), c=98, l = c(65, 90))[-(6:7)]) # 5 Greens, 5 Pinks
 
 				# LOSS
 				loss.remainder <- 100-x[1:loss.rows,1]
 				hoss.remainder <- 100-x[(loss.rows+1):loss_hoss.rows, 12]
-				tmp.tbl[1:loss.rows, 1] <- lh_palette[findInterval(round(loss.remainder/6,0), 0:5)] # Anything below 85 flagged with pink
-				tmp.tbl[1:loss.rows, 2] <- rev(lh_palette)[findInterval(x[1:loss.rows,2]/loss.remainder, seq(0, 0.8, 0.2))]
-				tmp.tbl[1, 3] <- ifelse(x[1, 3] > 4.9, "#FFFFB3", "#B4EEB4") #  Warning flag for anything greater than 5% in top row, 3rd column
-				if (loss.rows > 1) tmp.tbl[2, 3] <- ifelse(x[2, 3] > 9.9, "#FFFFB3", "#B4EEB4")  #  Warning flag for anything greater than 10% in 2nd row, 3rd column
-				tmp.tbl[1:loss.rows, 4:12] <- ifelse(x[1:loss.rows, 4:12] > 0, "#EBCDDE", "#FFFFFF")
-
+				# tmp.tbl[1:loss.rows, 1] <- lh_palette[findInterval(round(loss.remainder/6,0), 0:5)] # Anything below 85 flagged with pink
+				# tmp.tbl[1:loss.rows, 2] <- rev(lh_palette)[findInterval(x[1:loss.rows,2]/loss.remainder, seq(0, 0.8, 0.2))]
+				tmp.tbl[1:loss.rows, 1] <- lh_palette[findInterval(x[1:loss.rows, 1], seq(0, 100, 10), all.inside = TRUE)]
+				tmp.tbl[1:loss.rows, 2] <- lh_palette[findInterval(x[1:loss.rows, 2]/loss.remainder, seq(-1, 1, 0.2), all.inside = TRUE)]
+				tmp.tbl[1, 3] <- ifelse(x[1, 3] > 9.9, "#FFFFB3", "#B4EEB4") #  Warning flag for anything greater than 10% in top row, 3rd column
+				if (loss.rows > 1) tmp.tbl[2, 3] <- ifelse(x[2, 3] > 14.9, "#FFFFB3", "#B4EEB4")  #  Warning flag for anything greater than 15% in 2nd row, 3rd column
+				tmp.tbl[1, 4:12] <- ifelse(x[1, 4:12] > 0, "#EBCDDE", "#FFFFFF")
+				if (loss.rows > 1) tmp.tbl[loss.rows, 4:12] <- ifelse(x[loss.rows, 4:12] > 0, "#FFFFB3", "#FFFFFF")
+				
 				# HOSS
-				tmp.tbl[(loss.rows+1):loss_hoss.rows, 12] <- lh_palette[findInterval(round(hoss.remainder/6,0), 0:5)] # Anything below 85 flagged with pink
-				tmp.tbl[(loss.rows+1):loss_hoss.rows, 11] <- rev(lh_palette)[findInterval(x[(loss.rows+1):loss_hoss.rows, 11]/hoss.remainder, seq(0, 0.8, 0.2))]
-				tmp.tbl[loss_hoss.rows, 10] <- ifelse(x[loss_hoss.rows, 10] > 4.9, "#FFFFB3", "#B4EEB4") # Warning flag for anything greater than 5% in top row, 3rd column
-				if (hoss.rows > 1) tmp.tbl[(loss.rows+1), 10] <- ifelse(x[(loss.rows+1), 10] > 9.9, "#FFFFB3", "#B4EEB4") # Warning flag for anything greater than 5% in top row, 3rd column
-				tmp.tbl[(loss.rows+1):loss_hoss.rows, 1:9] <- ifelse(x[(loss.rows+1):loss_hoss.rows, 1:9] > 0, "#EBCDDE", "#FFFFFF")
-				tmp.tbl[is.na(tmp.tbl)] <- lh_palette[2]
+# 				tmp.tbl[(loss.rows+1):loss_hoss.rows, 12] <- lh_palette[findInterval(round(hoss.remainder/6,0), 0:5)] # Anything below 85 flagged with pink
+# 				tmp.tbl[(loss.rows+1):loss_hoss.rows, 11] <- rev(lh_palette)[findInterval(x[(loss.rows+1):loss_hoss.rows, 11]/hoss.remainder, seq(0, 0.8, 0.2))]
+				tmp.tbl[(loss.rows+1):loss_hoss.rows, 12] <- lh_palette[findInterval(x[(loss.rows+1):loss_hoss.rows, 12], seq(0, 100, 10), all.inside = TRUE)]
+				tmp.tbl[(loss.rows+1):loss_hoss.rows, 11] <- lh_palette[findInterval(x[(loss.rows+1):loss_hoss.rows, 11]/hoss.remainder, seq(-1, 1, 0.2), all.inside = TRUE)]
+				tmp.tbl[loss_hoss.rows, 10] <- ifelse(x[loss_hoss.rows, 10] > 9.9, "#FFFFB3", "#B4EEB4") # Warning flag for anything greater than 5% in top row, 3rd column
+				if (hoss.rows > 1) tmp.tbl[(loss.rows+1), 10] <- ifelse(x[(loss.rows+1), 10] > 14.9, "#FFFFB3", "#B4EEB4") # Warning flag for anything greater than 5% in top row, 3rd column
+				tmp.tbl[loss_hoss.rows, 1:9] <- ifelse(x[loss_hoss.rows, 1:9] > 0, "#EBCDDE", "#FFFFFF")
+				if (hoss.rows > 1) tmp.tbl[(loss.rows+1), 1:9] <- ifelse(x[(loss.rows+1), 1:9] > 0, "#FFFFB3", "#FFFFFF")
+				
+				tmp.tbl[is.na(tmp.tbl)] <- lh_palette[9]
 				tmp.cell.color <- as.vector(tmp.tbl)
 			}
 			return(tmp.cell.color)
@@ -319,7 +326,7 @@ function(
 			textGrob(x=-3.5, y=((loss_hoss.rows+3)/2), "Extremes (Range)", gp=gpar(cex=0.8), default.units="native", rot=90, vp="loss_hoss"),
 			textGrob(x=1:12, y=loss_hoss.rows+0.8, dimnames(loss_hoss.table)[[2]], gp=gpar(cex=0.7), default.units="native", rot=45, just="left", vp="loss_hoss"),
 			textGrob(x=6.75, y=loss_hoss.rows+2.65, "Student Growth Percentile Range", gp=gpar(cex=0.8), default.units="native", vp="loss_hoss"),
-			textGrob(x=-4.0, y=loss_hoss.rows+3.25, "Ceiling / Floor Effects Test", just="left", default.units="native", vp="loss_hoss"),
+			textGrob(x=-4.0, y=loss_hoss.rows+3.25, "Ceiling / Floor Effects Test", just="left", default.units="native", gp=gpar(cex=1.25), vp="loss_hoss"),
 			textGrob(x=rep(1:12,each=loss_hoss.rows), y=rep(loss_hoss.rows:1,loss_hoss.rows),
 							 formatC(as.vector(loss_hoss.table), format="f", digits=1), default.units="native", gp=gpar(cex=0.7), vp="loss_hoss"),
 
@@ -334,7 +341,7 @@ function(
 					default.units="native", vp="table"),
 				textGrob(x=-2.5, y=5.5, "Prior Scale Score Decile/Range", gp=gpar(cex=0.8), default.units="native", rot=90, vp="table"),
 				textGrob(x=1:10, y=10.8, dimnames(tmp.table)[[2]], gp=gpar(cex=0.7), default.units="native", rot=45, just="left", vp="table"),
-				textGrob(x=5.75, y=12.5, "Student Growth Percentile Range", gp=gpar(cex=0.8), default.units="native", vp="table"),
+				textGrob(x=5.75, y=12.5, "Student Growth Percentile Range", gp=gpar(cex=0.85), default.units="native", vp="table"),
 				textGrob(x=rep(1:10,each=dim(tmp.table)[1]), y=rep(10:(10-dim(tmp.table)[1]+1),10),
 					formatC(as.vector(tmp.table), format="f", digits=2), default.units="native", gp=gpar(cex=0.7), vp="table"),
 				textGrob(x=-2.55, y=9.0, "*", default.units="native", rot=90, gp=gpar(cex=0.7), vp="table"),
@@ -387,7 +394,7 @@ function(
 				textGrob(x=-3.5, y=((loss_hoss.rows+3)/2), "Extremes (Range)", gp=gpar(cex=0.8), default.units="native", rot=90, vp="loss_hoss"),
 				textGrob(x=1:12, y=loss_hoss.rows+0.8, dimnames(loss_hoss.table)[[2]], gp=gpar(cex=0.7), default.units="native", rot=45, just="left", vp="loss_hoss"),
 				textGrob(x=6.75, y=loss_hoss.rows+2.65, "Student Growth Percentile Range", gp=gpar(cex=0.8), default.units="native", vp="loss_hoss"),
-				textGrob(x=-4.0, y=loss_hoss.rows+3.25, "Ceiling / Floor Effects Test", just="left", default.units="native", vp="loss_hoss"),
+				textGrob(x=-4.0, y=loss_hoss.rows+3.25, "Ceiling / Floor Effects Test", just="left", default.units="native", gp=gpar(cex=1.1), vp="loss_hoss"),
 				textGrob(x=rep(1:12,each=loss_hoss.rows), y=rep(loss_hoss.rows:1,loss_hoss.rows),
 								 formatC(as.vector(loss_hoss.table), format="f", digits=1), default.units="native", gp=gpar(cex=0.7), vp="loss_hoss"),
 
@@ -402,7 +409,7 @@ function(
 					default.units="native", vp="table"),
 				textGrob(x=-2.5, y=5.5, "Prior Scale Score Decile/Range", gp=gpar(cex=0.8), default.units="native", rot=90, vp="table"),
 				textGrob(x=1:10, y=10.8, dimnames(tmp.table)[[2]], gp=gpar(cex=0.7), default.units="native", rot=45, just="left", vp="table"),
-				textGrob(x=5.75, y=12.5, "Student Growth Percentile Range", gp=gpar(cex=0.8), default.units="native", vp="table"),
+				textGrob(x=5.75, y=12.5, "Student Growth Percentile Range", gp=gpar(cex=0.9), default.units="native", vp="table"),
 				textGrob(x=rep(1:10,each=dim(tmp.table)[1]), y=rep(10:(10-dim(tmp.table)[1]+1),10),
 					formatC(as.vector(tmp.table), format="f", digits=2), default.units="native", gp=gpar(cex=0.7), vp="table"),
 				textGrob(x=-2.55, y=9.2, "*", default.units="native", rot=90, gp=gpar(cex=0.7), vp="table"),
@@ -437,6 +444,7 @@ function(
 		if (grepl("SIMEX", use.sgp)) file.extra.label <- "SIMEX"
 		if (grepl("BASELINE", use.sgp)) file.extra.label <- "BASELINE"
 		if (grepl("SIMEX_BASELINE", use.sgp)) file.extra.label <- "BASELINE.SIMEX"
+		if (grepl("EQUATED", use.sgp)) file.extra.label <- "EQUATED"
 	} else {
 		my.extra.label <- "SGP"
 		file.extra.label <- NULL
@@ -487,7 +495,7 @@ function(
 					}
 					if (tmp.prior.ach) {
 						if ("CONTENT_AREA_PRIOR" %in% names(tmp.data.final)) content_areas_prior <- tmp.data.final[["CONTENT_AREA_PRIOR"]][1]
-						if ("YEAR_PRIOR" %in% names(tmp.data.final)) years_prior <- tmp.data.final[["YEAR_PRIOR"]][1]
+						if ("YEAR_PRIOR" %in% names(tmp.data.final)) years_prior <- tmp.data.final[["YEAR_PRIOR"]][1] else years_prior <- NA
 						gof.object <- gof.draw(
 							data.frame(
 								SCALE_SCORE=tmp.data.final[['SCALE_SCORE']],

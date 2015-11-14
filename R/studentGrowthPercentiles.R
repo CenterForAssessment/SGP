@@ -1628,6 +1628,9 @@ function(panel.data,         ## REQUIRED
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, gsub("SGP_ORDER", "SGP_BASELINE_ORDER", names(quantile.data)))
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, gsub("SGP_NORM_GROUP", "SGP_NORM_GROUP_BASELINE", names(quantile.data)))
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & simex.tf) setnames(quantile.data, "SGP_SIMEX", "SGP_SIMEX_BASELINE")
+		if (identical(sgp.labels[['my.extra.label']], "EQUATED")) setnames(quantile.data, "SGP", "EQUATED")
+		if (identical(sgp.labels[['my.extra.label']], "EQUATED") & tf.growth.levels) setnames(quantile.data, "SGP_LEVEL", "SGP_LEVEL_EQUATED")
+		if (identical(sgp.labels[['my.extra.label']], "EQUATED")) setnames(quantile.data, gsub("SGP_NORM_GROUP", "SGP_NORM_GROUP_EQUATED", names(quantile.data)))
 
 		if (!is.null(additional.vnames.to.return)) {
 			quantile.data <- data.table(panel.data[["Panel_Data"]][,c("ID", names(additional.vnames.to.return)), with=FALSE], key="ID")[quantile.data]

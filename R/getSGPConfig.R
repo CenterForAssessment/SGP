@@ -20,7 +20,7 @@ function(sgp_object,
 	calculate.simex=NULL,
 	calculate.simex.baseline=NULL,
 	year.for.equate=NULL,
-	sgp.percentiles.equated=NULL,
+	sgp.percentiles.equated=FALSE,
 	SGPt=NULL) {
 
 	YEAR <- CONTENT_AREA <- VALID_CASE <- NULL
@@ -345,7 +345,7 @@ function(sgp_object,
 						}
 					}
 
-					if (!is.null(sgp.percentiles.equated)) {
+					if (sgp.percentiles.equated) {
 						tmp.matrix.label <- paste(tail(par.sgp.config[[b.iter[b]]][['sgp.content.areas']], 1), tail(par.sgp.config[[b.iter[b]]][['sgp.panel.years']], 1), "EQUATED", sep=".")
 						tmp.orders <- getsplineMatrices(
 							my.matrices=tmp_sgp_object[['Coefficient_Matrices']][[tmp.matrix.label]],
