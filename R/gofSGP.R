@@ -165,7 +165,7 @@ function(
 		}
 
 		.sgp.fit <- function (score, sgp) {
-			gfittable <- prop.table(table(.quantcut(score, q=0:10/10, right=FALSE, dig.lab=3),
+			gfittable <- prop.table(table(.quantcut(score, q=0:10/10, right=FALSE, dig.lab=min(4, max(nchar(score)))),
 			cut(sgp, c(-1, 9.5, 19.5, 29.5, 39.5, 49.5, 59.5, 69.5, 79.5, 89.5, 100.5),
 			labels=my.percentile.labels)), 1)*100
 			return(gfittable)
