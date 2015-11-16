@@ -1260,7 +1260,7 @@
 
 			### TEST of SGP variable from equated analyses
 
-			if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][['READING.2013_2014.EQUATED']][['SGP']], na.rm=TRUE), 1418003L)) {
+			if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][['READING.2013_2014.EQUATED']][['SGP_EQUATED']], na.rm=TRUE), 1418003L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP from equated analysis, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP from equated analysis, part 2: FAIL\n")
