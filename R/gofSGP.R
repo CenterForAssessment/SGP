@@ -42,7 +42,7 @@ function(
 
 	pretty_year <- function(x) sub("_", "-", x)
 
-	gof.draw <- function(content_area.year.grade.data, content_area, year, years_prior, grade, content_areas_prior, file.extra.label, plot.name) {
+	gof.draw <- function(content_area.year.grade.data, content_area, year, years_prior, grade, content_areas_prior, file.extra.label, plot.name, my.width, my.height, with.prior.achievement.level) {
 
 		if (!"GROB" %in% output.format) {
 			if (is.null(file.extra.label)) {
@@ -488,38 +488,49 @@ function(
 						tmp.prior.ach <- TRUE
 					} else {
 						tmp.prior.ach <- FALSE
-						with.prior.achievement.level <- FALSE
 						if ("ACHIEVEMENT_LEVEL_PRIOR" %in% names(tmp.data.final)) tmp.data.final[, ACHIEVEMENT_LEVEL_PRIOR:=NULL]
-						my.width <- 8.5; my.height <- 8
-						message(paste("\tNOTE:", content_areas.iter, "data does not include ACHIEVEMENT_LEVEL_PRIOR variable. Prior Achievement Level plot panel will not be included in goodness of fit plot."))
+						message(paste("\tNOTE:", content_areas.iter, "Grade", grades.iter, "data does not include ACHIEVEMENT_LEVEL_PRIOR variable. Prior Achievement Level plot panel will not be included in goodness of fit plot."))
 					}
 					if (tmp.prior.ach) {
 						if ("CONTENT_AREA_PRIOR" %in% names(tmp.data.final)) content_areas_prior <- tmp.data.final[["CONTENT_AREA_PRIOR"]][1]
+						if (is.null(content_areas_prior)|is.na(content_areas_prior)) {
+							if (!is.na(norm.group.iter)) {
+								tmp.content_areas_prior <- gsub("_EOCT", "", strsplit(tail(strsplit(norm.group.iter, ";")[[1]], 2)[1], "/")[[1]][2])
+							} else tmp.content_areas_prior <- content_areas.iter 
+						} else tmp.content_areas_prior <- content_areas_prior
 						if ("YEAR_PRIOR" %in% names(tmp.data.final)) years_prior <- tmp.data.final[["YEAR_PRIOR"]][1] else years_prior <- NA
+						if (!is.na(norm.group.iter)) norm.group.iter <- gsub("MATHEMATICS", "MATH", norm.group.iter)
 						gof.object <- gof.draw(
 							data.frame(
 								SCALE_SCORE=tmp.data.final[['SCALE_SCORE']],
 								SCALE_SCORE_PRIOR=tmp.data.final[['SCALE_SCORE_PRIOR']],
 								SGP=tmp.data.final[[use.sgp]],
 								ACHIEVEMENT_LEVEL_PRIOR=tmp.data.final[['ACHIEVEMENT_LEVEL_PRIOR']]),
-								content_area=content_areas.iter,
-								content_areas_prior=content_areas_prior,
-								year=years.iter,
-								years_prior=years_prior,
-								grade=grades.iter,
-								file.extra.label=file.extra.label,
-								plot.name=norm.group.iter)
+							content_area=content_areas.iter,
+							content_areas_prior=tmp.content_areas_prior,
+							year=years.iter,
+							years_prior=years_prior,
+							grade=grades.iter,
+							file.extra.label=file.extra.label,
+							plot.name=,
+							my.width=my.width,
+							my.height=my.height,
+							with.prior.achievement.level=TRUE)
 					} else {
+						if (!is.na(norm.group.iter)) norm.group.iter <- gsub("MATHEMATICS", "MATH", norm.group.iter)
 						gof.object <- gof.draw(
 							data.frame(
 								SCALE_SCORE=tmp.data.final[['SCALE_SCORE']],
 								SCALE_SCORE_PRIOR=tmp.data.final[['SCALE_SCORE_PRIOR']],
 								SGP=tmp.data.final[[use.sgp]]),
-								content_area=content_areas.iter,
-								year=years.iter,
-								grade=grades.iter,
-								file.extra.label=file.extra.label,
-								plot.name=norm.group.iter)
+							content_area=content_areas.iter,
+							year=years.iter,
+							grade=grades.iter,
+							file.extra.label=file.extra.label,
+							plot.name=norm.group.iter,
+							my.width=8.5,
+							my.height=8,
+							with.prior.achievement.level=FALSE)
 					}
 					if (!is.null(gof.object)) return(gof.object)
 				}
