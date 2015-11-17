@@ -42,7 +42,7 @@ function(
 
 	pretty_year <- function(x) sub("_", "-", x)
 
-	gof.draw <- function(content_area.year.grade.data, content_area, year, years_prior, grade, content_areas_prior, file.extra.label, plot.name) {
+	gof.draw <- function(content_area.year.grade.data, content_area, year, years_prior, grade, content_areas_prior, file.extra.label, plot.name, my.width, my.height, with.prior.achievement.level) {
 
 		if (!"GROB" %in% output.format) {
 			if (is.null(file.extra.label)) {
@@ -98,8 +98,6 @@ function(
 				# LOSS
 				loss.remainder <- 100-x[1:loss.rows,1]
 				hoss.remainder <- 100-x[(loss.rows+1):loss_hoss.rows, 12]
-				# tmp.tbl[1:loss.rows, 1] <- lh_palette[findInterval(round(loss.remainder/6,0), 0:5)] # Anything below 85 flagged with pink
-				# tmp.tbl[1:loss.rows, 2] <- rev(lh_palette)[findInterval(x[1:loss.rows,2]/loss.remainder, seq(0, 0.8, 0.2))]
 				tmp.tbl[1:loss.rows, 1] <- lh_palette[findInterval(x[1:loss.rows, 1], seq(0, 100, 10), all.inside = TRUE)]
 				tmp.tbl[1:loss.rows, 2] <- lh_palette[findInterval(x[1:loss.rows, 2]/loss.remainder, seq(-1, 1, 0.2), all.inside = TRUE)]
 				tmp.tbl[1, 3] <- ifelse(x[1, 3] > 9.9, "#FFFFB3", "#B4EEB4") #  Warning flag for anything greater than 10% in top row, 3rd column
@@ -108,8 +106,6 @@ function(
 				if (loss.rows > 1) tmp.tbl[loss.rows, 4:12] <- ifelse(x[loss.rows, 4:12] > 0, "#FFFFB3", "#FFFFFF")
 				
 				# HOSS
-# 				tmp.tbl[(loss.rows+1):loss_hoss.rows, 12] <- lh_palette[findInterval(round(hoss.remainder/6,0), 0:5)] # Anything below 85 flagged with pink
-# 				tmp.tbl[(loss.rows+1):loss_hoss.rows, 11] <- rev(lh_palette)[findInterval(x[(loss.rows+1):loss_hoss.rows, 11]/hoss.remainder, seq(0, 0.8, 0.2))]
 				tmp.tbl[(loss.rows+1):loss_hoss.rows, 12] <- lh_palette[findInterval(x[(loss.rows+1):loss_hoss.rows, 12], seq(0, 100, 10), all.inside = TRUE)]
 				tmp.tbl[(loss.rows+1):loss_hoss.rows, 11] <- lh_palette[findInterval(x[(loss.rows+1):loss_hoss.rows, 11]/hoss.remainder, seq(-1, 1, 0.2), all.inside = TRUE)]
 				tmp.tbl[loss_hoss.rows, 10] <- ifelse(x[loss_hoss.rows, 10] > 9.9, "#FFFFB3", "#B4EEB4") # Warning flag for anything greater than 5% in top row, 3rd column
@@ -165,7 +161,8 @@ function(
 		}
 
 		.sgp.fit <- function (score, sgp) {
-			gfittable <- prop.table(table(.quantcut(score, q=0:10/10, right=FALSE, dig.lab=min(4, max(nchar(score)))),
+			if (all(grepl("[.]", score[!is.na(score)]))) tmp.digits <- 3 else tmp.digits <- 4
+			gfittable <- prop.table(table(.quantcut(score, q=0:10/10, right=FALSE, dig.lab=min(tmp.digits, max(nchar(score)))),
 			cut(sgp, c(-1, 9.5, 19.5, 29.5, 39.5, 49.5, 59.5, 69.5, 79.5, 89.5, 100.5),
 			labels=my.percentile.labels)), 1)*100
 			return(gfittable)
@@ -216,12 +213,13 @@ function(
 			loss_hoss.percentile.labels <- c('1 to 5', '5 to 9', '10 to 19', '20 to 29', '30 to 39', '40 to 49', '50 to 59', '60 to 69', '70 to 79', '80 to 89', '90 to 94', '95 to 99')
 		}
 
+		if (all(grep("[.]", loss_hoss.data[['SCALE_SCORE']]))) tmp.digits <- 4 else tmp.digits <- 5
 		if (loss.rows!=1) {
-			loss.ss <- .quantcut(loss_hoss.data[LH=="LOSS"][['SCALE_SCORE']], q=0:2/2, right=FALSE, dig.lab=max(nchar(loss_hoss.data[LH=="LOSS"][['SCALE_SCORE']])))
-		} else loss.ss <- factor(paste("[", loss_hoss.data[LH=="LOSS"][['SCALE_SCORE']], "]"))
+			loss.ss <- .quantcut(loss_hoss.data[LH=="LOSS"][['SCALE_SCORE']], q=0:2/2, right=FALSE, dig.lab=min(tmp.digits, max(nchar(loss_hoss.data[LH=="LOSS"][['SCALE_SCORE']]))))
+		} else loss.ss <- loss_hoss.data[LH=="LOSS"][['SCALE_SCORE']]
 		if (hoss.rows!=1) {
-			hoss.ss <- .quantcut(loss_hoss.data[LH=="HOSS"][['SCALE_SCORE']], q=0:2/2, right=FALSE, dig.lab=max(nchar(loss_hoss.data[LH=="HOSS"][['SCALE_SCORE']])))
-		} else hoss.ss <- factor(paste("[", loss_hoss.data[LH=="HOSS"][['SCALE_SCORE']], "]"))
+			hoss.ss <- .quantcut(loss_hoss.data[LH=="HOSS"][['SCALE_SCORE']], q=0:2/2, right=FALSE, dig.lab=min(tmp.digits, max(nchar(loss_hoss.data[LH=="HOSS"][['SCALE_SCORE']]))))
+		} else hoss.ss <- loss_hoss.data[LH=="HOSS"][['SCALE_SCORE']]
 
 		loss_hoss.table <- rbind(
 			prop.table(table(loss.ss, cut(loss_hoss.data[LH=="LOSS"][['SGP']], c(-1, 5.5, 9.5, 19.5, 29.5, 39.5, 49.5, 59.5, 69.5, 79.5, 89.5, 94.5, 100.5),
@@ -229,6 +227,7 @@ function(
 			prop.table(table(hoss.ss, cut(loss_hoss.data[LH=="HOSS"][['SGP']], c(-1, 5.5, 9.5, 19.5, 29.5, 39.5, 49.5, 59.5, 69.5, 79.5, 89.5, 94.5, 100.5),
 				labels=loss_hoss.percentile.labels)), 1)*100)
 
+		if (any(lh_index<-!grepl("[,]", dimnames(loss_hoss.table)[[1]]))) dimnames(loss_hoss.table)[[1]][lh_index] <- paste("[", dimnames(loss_hoss.table)[[1]][lh_index], "]")
 		loss.counts <- table(loss.ss)
 		hoss.counts <- table(hoss.ss)
 		loss_hoss.colors <- .cell.color(loss_hoss.table, loss_hoss=TRUE)
@@ -317,13 +316,13 @@ function(
 			rectGrob(x=rep(1:12, each=loss_hoss.rows), y=rep(loss_hoss.rows:1,loss_hoss.rows), width=1, height=1, default.units="native",
 							 gp=gpar(col="black", fill=loss_hoss.colors), vp="loss_hoss"),
 			linesGrob(x=c(0.5,12.5), y=hoss.rows+0.5, gp=gpar(lwd=1.25, col="red"), default.units="native", vp="loss_hoss"),
-			textGrob(x= -1.0, y=loss_hoss.rows:1, dimnames(loss_hoss.table)[[1]], just="left", gp=gpar(cex=0.7), default.units="native", vp="loss_hoss"),
-			textGrob(x=-1.15, y=loss_hoss.rows, "Lowest OSS: ", just="right", gp=gpar(cex=0.7), default.units="native", vp="loss_hoss"),
-			textGrob(x=-1.15, y=loss_hoss.rows-loss.rows, "Highest OSS: ", just="right", gp=gpar(cex=0.7), default.units="native", vp="loss_hoss"),
+			textGrob(x= 0.45, y=loss_hoss.rows:1, dimnames(loss_hoss.table)[[1]], just="right", gp=gpar(cex=0.7), default.units="native", vp="loss_hoss"),
+			textGrob(x=-1.5, y=loss_hoss.rows, "Lowest OSS: ", just="right", gp=gpar(cex=0.7), default.units="native", vp="loss_hoss"),
+			textGrob(x=-1.5, y=loss_hoss.rows-loss.rows, "Highest OSS: ", just="right", gp=gpar(cex=0.7), default.units="native", vp="loss_hoss"),
 			textGrob(x=12.65, y=loss_hoss.rows:1, paste("N =", c(loss.counts, hoss.counts)), just="left", gp=gpar(cex=0.7),
 							 default.units="native", vp="loss_hoss"),
-			textGrob(x=-4.0, y=((loss_hoss.rows+3)/2), "Current Observed Score", gp=gpar(cex=0.8), default.units="native", rot=90, vp="loss_hoss"),
-			textGrob(x=-3.5, y=((loss_hoss.rows+3)/2), "Extremes (Range)", gp=gpar(cex=0.8), default.units="native", rot=90, vp="loss_hoss"),
+			textGrob(x=-4.25, y=((loss_hoss.rows+3)/2), "Current Observed Score", gp=gpar(cex=0.8), default.units="native", rot=90, vp="loss_hoss"),
+			textGrob(x=-3.75, y=((loss_hoss.rows+3)/2), "Extremes (Range)", gp=gpar(cex=0.8), default.units="native", rot=90, vp="loss_hoss"),
 			textGrob(x=1:12, y=loss_hoss.rows+0.8, dimnames(loss_hoss.table)[[2]], gp=gpar(cex=0.7), default.units="native", rot=45, just="left", vp="loss_hoss"),
 			textGrob(x=6.75, y=loss_hoss.rows+2.65, "Student Growth Percentile Range", gp=gpar(cex=0.8), default.units="native", vp="loss_hoss"),
 			textGrob(x=-4.0, y=loss_hoss.rows+3.25, "Ceiling / Floor Effects Test", just="left", default.units="native", gp=gpar(cex=1.25), vp="loss_hoss"),
@@ -385,13 +384,13 @@ function(
 				rectGrob(x=rep(1:12, each=loss_hoss.rows), y=rep(loss_hoss.rows:1,loss_hoss.rows), width=1, height=1, default.units="native",
 								 gp=gpar(col="black", fill=loss_hoss.colors), vp="loss_hoss"),
 				linesGrob(x=c(0.5,12.5), y=hoss.rows+0.5, gp=gpar(lwd=1.25, col="red"), default.units="native", vp="loss_hoss"),
-				textGrob(x= -1.0, y=loss_hoss.rows:1, dimnames(loss_hoss.table)[[1]], just="left", gp=gpar(cex=0.7), default.units="native", vp="loss_hoss"),
-				textGrob(x=-1.15, y=loss_hoss.rows, "Lowest OSS: ", just="right", gp=gpar(cex=0.7), default.units="native", vp="loss_hoss"),
-				textGrob(x=-1.15, y=loss_hoss.rows-loss.rows, "Highest OSS: ", just="right", gp=gpar(cex=0.7), default.units="native", vp="loss_hoss"),
+				textGrob(x= 0.45, y=loss_hoss.rows:1, dimnames(loss_hoss.table)[[1]], just="right", gp=gpar(cex=0.7), default.units="native", vp="loss_hoss"),
+				textGrob(x=-1.5, y=loss_hoss.rows, "Lowest OSS: ", just="right", gp=gpar(cex=0.7), default.units="native", vp="loss_hoss"),
+				textGrob(x=-1.5, y=loss_hoss.rows-loss.rows, "Highest OSS: ", just="right", gp=gpar(cex=0.7), default.units="native", vp="loss_hoss"),
 				textGrob(x=12.65, y=loss_hoss.rows:1, paste("N =", c(loss.counts, hoss.counts)), just="left", gp=gpar(cex=0.7),
 								 default.units="native", vp="loss_hoss"),
-				textGrob(x=-4.0, y=((loss_hoss.rows+3)/2), "Current Observed Score", gp=gpar(cex=0.8), default.units="native", rot=90, vp="loss_hoss"),
-				textGrob(x=-3.5, y=((loss_hoss.rows+3)/2), "Extremes (Range)", gp=gpar(cex=0.8), default.units="native", rot=90, vp="loss_hoss"),
+				textGrob(x=-4.25, y=((loss_hoss.rows+3)/2), "Current Observed Score", gp=gpar(cex=0.8), default.units="native", rot=90, vp="loss_hoss"),
+				textGrob(x=-3.75, y=((loss_hoss.rows+3)/2), "Extremes (Range)", gp=gpar(cex=0.8), default.units="native", rot=90, vp="loss_hoss"),
 				textGrob(x=1:12, y=loss_hoss.rows+0.8, dimnames(loss_hoss.table)[[2]], gp=gpar(cex=0.7), default.units="native", rot=45, just="left", vp="loss_hoss"),
 				textGrob(x=6.75, y=loss_hoss.rows+2.65, "Student Growth Percentile Range", gp=gpar(cex=0.8), default.units="native", vp="loss_hoss"),
 				textGrob(x=-4.0, y=loss_hoss.rows+3.25, "Ceiling / Floor Effects Test", just="left", default.units="native", gp=gpar(cex=1.1), vp="loss_hoss"),
@@ -488,38 +487,49 @@ function(
 						tmp.prior.ach <- TRUE
 					} else {
 						tmp.prior.ach <- FALSE
-						with.prior.achievement.level <- FALSE
 						if ("ACHIEVEMENT_LEVEL_PRIOR" %in% names(tmp.data.final)) tmp.data.final[, ACHIEVEMENT_LEVEL_PRIOR:=NULL]
-						my.width <- 8.5; my.height <- 8
-						message(paste("\tNOTE:", content_areas.iter, "data does not include ACHIEVEMENT_LEVEL_PRIOR variable. Prior Achievement Level plot panel will not be included in goodness of fit plot."))
+						message(paste("\tNOTE:", content_areas.iter, "Grade", grades.iter, "data does not include ACHIEVEMENT_LEVEL_PRIOR variable. Prior Achievement Level plot panel will not be included in goodness of fit plot."))
 					}
 					if (tmp.prior.ach) {
 						if ("CONTENT_AREA_PRIOR" %in% names(tmp.data.final)) content_areas_prior <- tmp.data.final[["CONTENT_AREA_PRIOR"]][1]
+						if (is.null(content_areas_prior) | anyNA(content_areas_prior)) {
+							if (!is.na(norm.group.iter)) {
+								tmp.content_areas_prior <- gsub("_EOCT", "", strsplit(tail(strsplit(norm.group.iter, ";")[[1]], 2)[1], "/")[[1]][2])
+							} else tmp.content_areas_prior <- content_areas.iter 
+						} else tmp.content_areas_prior <- content_areas_prior
 						if ("YEAR_PRIOR" %in% names(tmp.data.final)) years_prior <- tmp.data.final[["YEAR_PRIOR"]][1] else years_prior <- NA
+						if (!is.na(norm.group.iter)) norm.group.iter <- gsub("MATHEMATICS", "MATH", norm.group.iter)
 						gof.object <- gof.draw(
 							data.frame(
 								SCALE_SCORE=tmp.data.final[['SCALE_SCORE']],
 								SCALE_SCORE_PRIOR=tmp.data.final[['SCALE_SCORE_PRIOR']],
 								SGP=tmp.data.final[[use.sgp]],
 								ACHIEVEMENT_LEVEL_PRIOR=tmp.data.final[['ACHIEVEMENT_LEVEL_PRIOR']]),
-								content_area=content_areas.iter,
-								content_areas_prior=content_areas_prior,
-								year=years.iter,
-								years_prior=years_prior,
-								grade=grades.iter,
-								file.extra.label=file.extra.label,
-								plot.name=norm.group.iter)
+							content_area=content_areas.iter,
+							content_areas_prior=tmp.content_areas_prior,
+							year=years.iter,
+							years_prior=years_prior,
+							grade=grades.iter,
+							file.extra.label=file.extra.label,
+							plot.name=norm.group.iter,
+							my.width=my.width,
+							my.height=my.height,
+							with.prior.achievement.level=TRUE)
 					} else {
+						if (!is.na(norm.group.iter)) norm.group.iter <- gsub("MATHEMATICS", "MATH", norm.group.iter)
 						gof.object <- gof.draw(
 							data.frame(
 								SCALE_SCORE=tmp.data.final[['SCALE_SCORE']],
 								SCALE_SCORE_PRIOR=tmp.data.final[['SCALE_SCORE_PRIOR']],
 								SGP=tmp.data.final[[use.sgp]]),
-								content_area=content_areas.iter,
-								year=years.iter,
-								grade=grades.iter,
-								file.extra.label=file.extra.label,
-								plot.name=norm.group.iter)
+							content_area=content_areas.iter,
+							year=years.iter,
+							grade=grades.iter,
+							file.extra.label=file.extra.label,
+							plot.name=norm.group.iter,
+							my.width=8.5,
+							my.height=8,
+							with.prior.achievement.level=FALSE)
 					}
 					if (!is.null(gof.object)) return(gof.object)
 				}
