@@ -538,9 +538,9 @@ function(sgp_object,
 	if (sgp.percentiles | sgp.percentiles.equated) {
 		tmp.config <- par.sgp.config
 		for (i in 1:length(tmp.config)) tmp.config[[i]][['sgp.baseline.matrices']] <- NULL
-		tmp.config <- tmp.config[which(sapply(sgp.config.list[['sgp.percentiles']], function(x) !identical(x[['sgp.grade.sequences']], "NO_PERCENTILES")))]
+		tmp.config <- tmp.config[which(sapply(tmp.config, function(x) !identical(x[['sgp.grade.sequences']], "NO_PERCENTILES")))]
 		if (sgp.use.my.coefficient.matrices) {
-			tmp.config <- tmp.config[which(sapply(sgp.config.list[['sgp.percentiles']], function(x) !is.null(x[['sgp.matrices']])))]
+			tmp.config <- tmp.config[which(sapply(tmp.config, function(x) !is.null(x[['sgp.matrices']])))]
 		}
 		if (sgp.percentiles) sgp.config.list[['sgp.percentiles']] <- tmp.config
 		if (sgp.percentiles.equated) {
