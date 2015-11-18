@@ -535,28 +535,22 @@ function(sgp_object,
 	### Extend sgp.config.list
 	###
 
-	if (sgp.percentiles) {
-		sgp.config.list[['sgp.percentiles']] <- par.sgp.config
-		for (i in 1:length(sgp.config.list[['sgp.percentiles']])) sgp.config.list[['sgp.percentiles']][[i]][['sgp.baseline.matrices']] <- NULL
-		sgp.config.list[['sgp.percentiles']] <- sgp.config.list[['sgp.percentiles']][which(sapply(sgp.config.list[['sgp.percentiles']], function(x) !identical(x[['sgp.grade.sequences']], "NO_PERCENTILES")))]
+	if (sgp.percentiles | sgp.percentiles.equated) {
+		tmp.config <- par.sgp.config
+		for (i in 1:length(tmp.config)) tmp.config[[i]][['sgp.baseline.matrices']] <- NULL
+		tmp.config <- tmp.config[which(sapply(sgp.config.list[['sgp.percentiles']], function(x) !identical(x[['sgp.grade.sequences']], "NO_PERCENTILES")))]
 		if (sgp.use.my.coefficient.matrices) {
-			sgp.config.list[['sgp.percentiles']] <- sgp.config.list[['sgp.percentiles']][which(sapply(sgp.config.list[['sgp.percentiles']], function(x) !is.null(x[['sgp.matrices']])))]
+			tmp.config <- tmp.config[which(sapply(sgp.config.list[['sgp.percentiles']], function(x) !is.null(x[['sgp.matrices']])))]
+		}
+		if (sgp.percentiles) sgp.config.list[['sgp.percentiles']] <- tmp.config
+		if (sgp.percentiles.equated) {
+			tmp.config <- tmp.config[sapply(tmp.config, function(x) tail(x[['sgp.panel.years']], 1))==year.for.equate]
+			if (!is.null(grades.for.equate)) {
+				tmp.config <- tmp.config[which(sapply(tmp.config, function(x) tail(x[['sgp.grade.sequences']], 1) %in% grades.for.equate))]
+			}
+			sgp.config.list[['sgp.percentiles.equated']] <- tmp.config
 		}
 	}
-
-	if (sgp.percentiles.equated) {
-		sgp.config.list[['sgp.percentiles.equated']] <-
-			sgp.config.list[["sgp.percentiles"]][sapply(sgp.config.list[['sgp.percentiles']], function(x) tail(x[['sgp.panel.years']], 1))==year.for.equate]
-		if (!is.null(grades.for.equate)) {
-			sgp.config.list[['sgp.percentiles.equated']] <-
-				sgp.config.list[['sgp.percentiles.equated']][which(sapply(sgp.config.list[['sgp.percentiles.equated']],
-											function(x) tail(x[['sgp.grade.sequences']], 1) %in% grades.for.equate))]
-		}
-		if (sgp.use.my.coefficient.matrices) {
-			sgp.config.list[['sgp.percentiles.equated']] <- sgp.config.list[['sgp.percentiles.equated']][which(sapply(sgp.config.list[['sgp.percentiles.equated']], function(x) !is.null(x[['sgp.matrices']])))]
-		}
-	}
-
 
 	if (sgp.projections | sgp.projections.lagged) {
 		tmp.config <- par.sgp.config[sapply(par.sgp.config, test.projection.iter)]
