@@ -185,7 +185,7 @@ function(sgp_object,
 		}
 	}
 
-	## Change table in SGPercentiles and SGProjections from data.frame to data.table
+	## Change table in SGPercentiles, SGProjections, Simulated_SGPs from data.frame to data.table
 
 	for (i in names(sgp_object@SGP[['SGPercentiles']])) {
 		if (!is.data.table(sgp_object@SGP[['SGPercentiles']][[i]])) sgp_object@SGP[['SGPercentiles']][[i]] <- as.data.table(sgp_object@SGP[['SGPercentiles']][[i]])
@@ -194,6 +194,12 @@ function(sgp_object,
 	for (i in names(sgp_object@SGP[['SGProjections']])) {
 		if (!is.data.table(sgp_object@SGP[['SGProjections']][[i]])) sgp_object@SGP[['SGProjections']][[i]] <- as.data.table(sgp_object@SGP[['SGProjections']][[i]])
 	}
+
+	for (i in names(sgp_object@SGP[['Simulated_SGPs']])) {
+		if (!is.data.table(sgp_object@SGP[['Simulated_SGPs']][[i]])) sgp_object@SGP[['Simulated_SGPs']][[i]] <- as.data.table(sgp_object@SGP[['Simulated_SGPs']][[i]])
+	}
+
+
 
 	## Return sgp_object
 
