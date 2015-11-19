@@ -27,7 +27,7 @@ updateSGP(
 	sgp.percentiles.baseline=TRUE,
 	sgp.projections.baseline=TRUE,
 	sgp.projections.lagged.baseline=TRUE,
-	simulate.sgps=FALSE,
+	simulate.sgps=TRUE,
 	save.old.summaries=TRUE,
 	save.intermediate.results=TRUE,
 	calculate.simex=NULL,
@@ -86,7 +86,7 @@ If missing the function will use the data to infer all the grade progressions fo
   }
   \item{sgp.projections.lagged.baseline}{Boolean variable indicating whether to calculate lagged baseline student growth projections (if analyzeSGP is included in the 'steps' argument). Defaults to TRUE.
   }
-  \item{simulate.sgps}{Boolean variable indicating whether to simulate SGP values for students based on test-specific Conditional Standard Errors of Measurement (CSEM).  Test CSEM data must be available for simulation and included in \code{SGPstateData}.  This argument must be set to TRUE for confidence interval construction. Defaults to FALSE.  This argument is passed to \code{\link{analyzeSGP}}.
+  \item{simulate.sgps}{Boolean variable indicating whether to simulate SGP values for students based on test-specific Conditional Standard Errors of Measurement (CSEM).  Test CSEM data must be available for simulation and included in \code{SGPstateData}.  This argument must be set to TRUE for confidence interval construction. Defaults to TRUE.  This argument is passed to \code{\link{analyzeSGP}}.
   }
   \item{save.old.summaries}{A Boolean argument (defaults to FALSE which will delete the \code{@Summary} slot before creating new summaries)
   indicating whether the call to \code{\link{summarizeSGP}} should save existing summaries in the \code{@Summary} slot.
