@@ -1425,6 +1425,7 @@
 			RLI_SGPt_UPDATE_SHELL <- suppressMessages(prepareSGP(SGPdata::sgptData_LONG[!YEAR %in% tmp.last.window], state="RLI"))
 			SGPstateData[["RLI"]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <-
 				eval(parse(text=paste("RLI_SGPt_Baseline_Matrices[['RLI_SGPt_Baseline_Matrices_2014_2015.3']]")))
+			SGPstateData[["RLI"]][["Assessment_Program_Information"]][['CSEM']] <- "SEM"
 
 			### Calculate SGPs
 
