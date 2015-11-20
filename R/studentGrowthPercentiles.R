@@ -1407,7 +1407,7 @@ function(panel.data,         ## REQUIRED
 
 					tmp.csem.quantiles[[j]] <- data.table(
 									tmp.id.etc,
-									as.data.table(replicate(calculate.confidence.intervals[['simulation.iterations']],
+									matrix(replicate(calculate.confidence.intervals[['simulation.iterations']],
 												.get.quantiles(
 													tmp.predictions,
 													csemScoreSimulator(
@@ -1418,7 +1418,7 @@ function(panel.data,         ## REQUIRED
 													state=calculate.confidence.intervals[['state']],
 													variable=tmp.csem.variable,
 													distribution=calculate.confidence.intervals[['distribution']],
-													round.digits=calculate.confidence.intervals[['round']])))))
+													round.digits=calculate.confidence.intervals[['round']]))), ncol=calculate.confidence.intervals[['simulation.iterations']]))
 					setnames(tmp.csem.quantiles[[j]], paste("V", seq(calculate.confidence.intervals[['simulation.iterations']]), sep=""),
 										paste("SGP_SIM", seq(calculate.confidence.intervals[['simulation.iterations']]), sep="_"))
 				} ## END CSEM analysis

@@ -60,7 +60,7 @@ if (bubble_plot_configs.BUBBLE_TIPS) {
 		eval(parse(text="require(pdf2)"))
 	} else {
 		bubble_plot_configs.BUBBLE_TIPS <- FALSE
-		message("\tImplentation of BUBBLE_TIPS requires the installation of the package pdf2 from R-Forge: install.packages('pdf2',repos='http://R-Forge.R-project.org')")
+#		message("\tImplentation of BUBBLE_TIPS requires the installation of the package pdf2 from R-Forge: install.packages('pdf2',repos='http://R-Forge.R-project.org')")
 	}
 }
 
