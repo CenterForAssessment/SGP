@@ -162,10 +162,9 @@ function(sgp_object,
 			 names(tmp.dt)[dim(tmp.dt)[2]] <- "ID"
 		}
 
+		tmp.dt[,EQUATED:=FALSE]
 		if (!is.null(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]])) {
-			equate.year <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]
-			tmp.dt[,EQUATED:=FALSE]
-			tmp.dt[YEAR==equate.year, EQUATED:=TRUE]
+			tmp.dt[YEAR==SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]], EQUATED:=TRUE]
 		}
 
 		for (i in seq(dim(tmp.dt)[1])) {
