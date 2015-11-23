@@ -30,8 +30,8 @@
 	number.achievement.level.regions <- length(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Achievement_Level_Labels"]])
 
 	cohort <- TRUE
-	if (!baseline) cohort <- equated <- FALSE
-	if (!equated) cohort <- baseline <- FALSE
+	if (baseline) cohort <- equated <- FALSE
+	if (equated) cohort <- baseline <- FALSE
 
 
 	## State stuff
