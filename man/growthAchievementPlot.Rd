@@ -22,7 +22,7 @@ growthAchievementPlot(
     year,
     format="print",
     baseline=FALSE,
-    equated=FALSE,
+    equated=NULL,
 	output.format="PDF",
     output.folder,
     assessment.name)

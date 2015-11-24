@@ -14,7 +14,7 @@
 	year,
 	format="print",
 	baseline=FALSE,
-	equated=FALSE,
+	equated=NULL,
 	output.format="PDF",
 	output.folder,
 	assessment.name) {
@@ -30,8 +30,8 @@
 	number.achievement.level.regions <- length(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Achievement_Level_Labels"]])
 
 	cohort <- TRUE
-	if (baseline) cohort <- equated <- FALSE
-	if (equated) cohort <- baseline <- FALSE
+	if (baseline) {cohort <- FALSE; equated <- NULL}
+	if (!is.null(equated)) cohort <- baseline <- FALSE
 
 
 	## State stuff
@@ -45,7 +45,7 @@
 
 	### Test if scale change has occured in the requested year
 
-	if (!equated && year %in% SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[content_area]]) {
+	if (!is.null(equated) && year %in% SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[content_area]]) {
 		message(paste("\tNOTE: Based upon state scale changes in ", capwords(year), ". student growth projections are not possible. No ",
 			capwords(year), " ", content_area, " growth and achievement plot will be generated.\n", sep=""))
 		return("DONE")
@@ -119,7 +119,7 @@
 		gaPlot.sgp_object@SGP$SGProjections <- NULL
 		tmp.grades <- as.numeric(tmp.df[1,2:((dim(tmp.df)[2]+1)/2)])
 		if (baseline) my.extra.label <- "BASELINE"
-		if (equated) my.extra.label <- "EQUATED"
+		if (!is.null(equated)) my.extra.label <- "EQUATED"
 		if (cohort) my.extra.label <- NULL
 
 
@@ -133,7 +133,8 @@
 			grade.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[content_area]],
 			content_area.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]],
 			year_lags.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[content_area]],
-			max.order.for.progression=gaPlot.max.order.for.progression,
+			max.order.for.progression=min(gaPlot.max.order.for.progression, getMaxOrderForProgression(year, content_area, state, equated)),
+			sgp.projections.equated=equated,
 			print.time.taken=FALSE)[["SGProjections"]][[.create.path(list(my.subject=content_area, my.year=year, my.extra.label=my.extra.label))]][,-1, with=FALSE]
 	}
 
@@ -301,7 +302,7 @@
 		for (k in output.format) {
 
 		if (baseline) my.label <- "_State_Baseline_Growth_and_Achievement_Plot_"
-		if (equated) my.label <- "_State_Equated_Growth_and_Achievement_Plot_"
+		if (!is.null(equated)) my.label <- "_State_Equated_Growth_and_Achievement_Plot_"
 		if (cohort)	my.label <- "_State_Growth_and_Achievement_Plot_"
 
 		if (k=="PDF") tmp.suffix <- ".pdf" else tmp.suffix <- ".png"
@@ -481,7 +482,7 @@
 			grid.text(x=0.5, y=(gp.axis.range[1]+gp.axis.range[2])/2, "Baseline Referenced Percentile Growth Trajectory",
 				gp=gpar(col=format.colors.growth.trajectories, cex=1.0), rot=90, default.units="native")
 		}
-		if (equated) {
+		if (!is.null(equated)) {
 			grid.text(x=0.5, y=(gp.axis.range[1]+gp.axis.range[2])/2, "Equated Percentile Growth Trajectory",
 				gp=gpar(col=format.colors.growth.trajectories, cex=1.0), rot=90, default.units="native")
 		}
@@ -557,7 +558,7 @@
 		} ### END Loop over output.format
 
 	if (baseline) tmp.baseline.message <- "Baseline Referenced"
-	if (equated) tmp.baseline.message <- "Equated Cohort Referenced"
+	if (!is.null(equated)) tmp.baseline.message <- "Equated Cohort Referenced"
 	if (cohort) tmp.baseline.message <- "Cohort Referenced"
 	message(paste("\tStarted", year, state.name.label, content_area, tmp.baseline.message, "growthAchievementPlot:",  started.date))
 	message(paste("\tFinished", year, state.name.label, content_area, tmp.baseline.message, "growthAchievementPlot:",  date(), "in", convertTime(timetaken(started.at)), "\n"))
