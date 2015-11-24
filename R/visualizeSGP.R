@@ -262,11 +262,10 @@ function(sgp_object,
 			} ## END dopar
 		} else { ## END FOREACH
 
-		if (par.start$par.type=="SNOW") {
-
-			gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students, gaPlot.baseline)
-			clusterApplyLB(par.start$internal.cl, gaPlot.list, function(gaPlot.iter)
-				growthAchievementPlot(
+			if (par.start$par.type=="SNOW") {
+				gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students, gaPlot.baseline)
+				clusterApplyLB(par.start$internal.cl, gaPlot.list, function(gaPlot.iter)
+					growthAchievementPlot(
 						gaPlot.sgp_object=gaPlot.sgp_object,
 						gaPlot.students=gaPlot.iter[["ID"]],
 						gaPlot.max.order.for.progression=get.max.order.for.progression(gaPlot.iter[["YEAR"]], gaPlot.iter[["CONTENT_AREA"]]),
@@ -279,12 +278,12 @@ function(sgp_object,
 						equated=gaPlot.iter[["EQUATED"]],
 						output.format=c("PDF", "PNG"),
 						output.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]])))
-		}
+			}
 
-		if (par.start$par.type=="MULTICORE") {
-			gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students, gaPlot.baseline)
-			mclapply(gaPlot.list, function(gaPlot.iter) {
-				growthAchievementPlot(
+			if (par.start$par.type=="MULTICORE") {
+				gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students, gaPlot.baseline)
+				mclapply(gaPlot.list, function(gaPlot.iter) {
+					growthAchievementPlot(
 						gaPlot.sgp_object=gaPlot.sgp_object,
 						gaPlot.students=gaPlot.iter[["ID"]],
 						gaPlot.max.order.for.progression=get.max.order.for.progression(gaPlot.iter[["YEAR"]], gaPlot.iter[["CONTENT_AREA"]]),
@@ -298,7 +297,7 @@ function(sgp_object,
 						output.format=c("PDF", "PNG"),
 						output.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))},
 				mc.cores=par.start$workers, mc.preschedule=FALSE)
-		}
+			}
 		}
 		stopParallel(parallel.config, par.start)
 		message(paste("Finished growthAchievementPlot in visualizeSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))

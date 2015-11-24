@@ -109,6 +109,10 @@
 		return(c(base*ceiling(low.and.high[1]/base), base*floor(low.and.high[2]/base)))
 	}
 
+	my_min <- function(x) {
+		if (is.null(x)) return(NULL) else return(min(x))
+	}
+
 	gaPlot.percentile_trajectories_Internal <- function(tmp.df, percentile, content_area, year, state) {
 
 		.create.path <- function(labels, pieces=c("my.subject", "my.year", "my.extra.label")) {
@@ -133,7 +137,7 @@
 			grade.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[content_area]],
 			content_area.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]],
 			year_lags.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[content_area]],
-			max.order.for.progression=min(gaPlot.max.order.for.progression, getMaxOrderForProgression(year, content_area, state, equated)),
+			max.order.for.progression=my_min(c(gaPlot.max.order.for.progression, getMaxOrderForProgression(year, content_area, state, equated))),
 			sgp.projections.equated=equated,
 			print.time.taken=FALSE)[["SGProjections"]][[.create.path(list(my.subject=content_area, my.year=year, my.extra.label=my.extra.label))]][,-1, with=FALSE]
 	}
