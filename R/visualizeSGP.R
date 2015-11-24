@@ -166,6 +166,8 @@ function(sgp_object,
 			tmp.gaPlot.list[[i]] <- list(YEAR=tmp.dt[["YEAR"]][i], CONTENT_AREA=tmp.dt[["CONTENT_AREA"]][i], ID=tmp.dt[["ID"]][i], BASELINE=tmp.dt[["BASELINE"]][i])
 			if (identical(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]], tmp.dt[["YEAR"]][i])) {
 				tmp.gaPlot.list[[i]][['EQUATED']] <- sgp_object@SGP[['Linkages']]
+			} else {
+				tmp.gaPlot.list[[i]][['EQUATED']] <- NULL
 			}
 		}
 		return(tmp.gaPlot.list)
