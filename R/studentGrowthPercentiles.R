@@ -664,7 +664,7 @@ function(panel.data,         ## REQUIRED
 					stopParallel(parallel.config, par.start)
 				}
 			} ### END for (L in lambda[-1])
-			unlink(tmp.dbname)
+            unlink("tmp_data", recursive=TRUE, force=TRUE)
 			if (verbose) message("\t\t", rev(content_area.progression)[1], " Grade ", rev(tmp.gp)[1], " Order ", k, " Simulation process complete ", date())
 
 			if (calculate.simex.sgps) {
