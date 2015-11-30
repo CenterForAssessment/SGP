@@ -248,8 +248,6 @@ function(
 			tmp.prior.achievement.level.base.points <- cumsum(tmp.prior.achievement.level.percentages)+(seq_along(tmp.prior.achievement.level.percentages)-1)/100
 			tmp.prior.achievement.level.centers <- tmp.prior.achievement.level.base.points-tmp.prior.achievement.level.percentages/2
 			tmp.prior.achievement.level.quantiles <- tapply(data1[['SGP']], factor(data1[['ACHIEVEMENT_LEVEL_PRIOR']]), quantile, probs=1:9/10, simplify=FALSE)
-			tmp.prior.content.area.label <- paste("Prior Achievement Level (", capwords(content_areas_prior), ")", sep="")
-
 			layout.vp <- viewport(layout = grid.layout(9, 4, widths = unit(c(0.1, 4.9, 3.4, 0.1), rep("inches", 4)),
 			heights = unit(c(0.2, 1.0, 0.1, 3.0, 0.1, 2.3, 0.1, 4.0, 0.2), rep("inches", 9))), name="layout")
 			components <- vpList(
@@ -289,15 +287,15 @@ function(
 
 			### prior_achievement_level
 
-				textGrob(x=unit(0.5, "npc"), y=unit(1.15, "native"), "SGP Deciles by Prior Achievement Level", gp=gpar(cex=1.4), vp="prior_achievement_level"),
 				roundrectGrob(width=0.98, r=unit(2, "mm"), vp="prior_achievement_level"),
+				textGrob(x=unit(-22, "native"), y=unit(1.15, "native"), paste("SGP Deciles by Prior Achievement Level (", capwords(content_areas_prior), ")", sep=""), just="left", gp=gpar(cex=1.2), vp="prior_achievement_level"),
 				rectGrob(x=rep(50, length(tmp.prior.achievement.level.base.points)), y=tmp.prior.achievement.level.base.points,
 					width=rep(100, length(tmp.prior.achievement.level.base.points)), height=tmp.prior.achievement.level.percentages,
 					just=c("center", "top"), vp="prior_achievement_level", default.units="native",
 					gp=gpar(col="black", fill=tmp.prior.achievement.level.colors)),
 				textGrob(x=-2, y=tmp.prior.achievement.level.centers, tmp.prior.achievement.level.labels, default.units="native",
 					just="right", vp="prior_achievement_level", gp=gpar(cex=0.8)),
-				textGrob(x=-25, y=0.5, tmp.prior.content.area.label, gp=gpar(cex=0.8), default.units="native", rot=90, vp="prior_achievement_level"),
+				textGrob(x=-25, y=0.5, "Prior Achievement Level", gp=gpar(cex=0.8), default.units="native", rot=90, vp="prior_achievement_level"),
 				textGrob(x=101, y=tmp.prior.achievement.level.centers, tmp.prior.achievement.level.percentages.labels, default.units="native",
 					just="left", vp="prior_achievement_level", gp=gpar(cex=0.7)),
 				linesGrob(c(1,99), -0.05, gp=gpar(lwd=1.0), default.units="native", vp="prior_achievement_level"),
@@ -325,7 +323,7 @@ function(
 			textGrob(x=-3.75, y=((loss_hoss.rows+3)/2), "Extremes (Range)", gp=gpar(cex=0.8), default.units="native", rot=90, vp="loss_hoss"),
 			textGrob(x=1:12, y=loss_hoss.rows+0.8, dimnames(loss_hoss.table)[[2]], gp=gpar(cex=0.7), default.units="native", rot=45, just="left", vp="loss_hoss"),
 			textGrob(x=6.75, y=loss_hoss.rows+2.65, "Student Growth Percentile Range", gp=gpar(cex=0.8), default.units="native", vp="loss_hoss"),
-			textGrob(x=-4.0, y=loss_hoss.rows+3.25, "Ceiling / Floor Effects Test", just="left", default.units="native", gp=gpar(cex=1.25), vp="loss_hoss"),
+			textGrob(x=-4.0, y=loss_hoss.rows+3.25, "Ceiling / Floor Effects Test", just="left", default.units="native", gp=gpar(cex=1.2), vp="loss_hoss"),
 			textGrob(x=rep(1:12,each=loss_hoss.rows), y=rep(loss_hoss.rows:1,loss_hoss.rows),
 							 formatC(as.vector(loss_hoss.table), format="f", digits=1), default.units="native", gp=gpar(cex=0.7), vp="loss_hoss"),
 
@@ -343,7 +341,7 @@ function(
 				textGrob(x=5.75, y=12.5, "Student Growth Percentile Range", gp=gpar(cex=0.85), default.units="native", vp="table"),
 				textGrob(x=rep(1:10,each=dim(tmp.table)[1]), y=rep(10:(10-dim(tmp.table)[1]+1),10),
 					formatC(as.vector(tmp.table), format="f", digits=2), default.units="native", gp=gpar(cex=0.7), vp="table"),
-				textGrob(x=-2.55, y=9.0, "*", default.units="native", rot=90, gp=gpar(cex=0.7), vp="table"),
+				textGrob(x=-2.55, y=8.8, "*", default.units="native", rot=90, gp=gpar(cex=0.7), vp="table"),
 				textGrob(x=-2.05, y=0.3, "*", default.units="native", gp=gpar(cex=0.7), vp="table"),
 				textGrob(x=-2.0, y=0.25, "Prior score deciles can be uneven depending upon the prior score distribution", just="left", default.units="native",
 					gp=gpar(cex=0.5), vp="table"),
