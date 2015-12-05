@@ -36,7 +36,6 @@ function(what_sgp_object=NULL,
 	fix.duplicates=NULL,
 	...) {
 
-	HIGH_NEED_STATUS <- NULL
 	SGPstateData <- SGP::SGPstateData ### Needed due to possible assignment of values to SGPstateData
 
 	started.at <- proc.time()
@@ -274,16 +273,16 @@ function(what_sgp_object=NULL,
 
 				if ("combineSGP" %in% steps) {
 					tmp.sgp_object.update <- suppressMessages(combineSGP(tmp.sgp_object.update,
-												state=state,
-												sgp.percentiles=sgp.percentiles,
-												sgp.projections=sgp.projections,
-												sgp.projections.lagged=sgp.projections.lagged,
-												sgp.percentiles.baseline=sgp.percentiles.baseline,
-												sgp.projections.baseline=sgp.projections.baseline,
-												sgp.projections.lagged.baseline=sgp.projections.lagged.baseline,
-												sgp.target.scale.scores=sgp.target.scale.scores,
-												sgp.target.scale.scores.only=sgp.target.scale.scores.only,
-												SGPt=SGPt))
+						state=state,
+						sgp.percentiles=sgp.percentiles,
+						sgp.projections=sgp.projections,
+						sgp.projections.lagged=sgp.projections.lagged,
+						sgp.percentiles.baseline=sgp.percentiles.baseline,
+						sgp.projections.baseline=sgp.projections.baseline,
+						sgp.projections.lagged.baseline=sgp.projections.lagged.baseline,
+						sgp.target.scale.scores=sgp.target.scale.scores,
+						sgp.target.scale.scores.only=sgp.target.scale.scores.only,
+						SGPt=SGPt))
 				}
 
 				### Output of INTERMEDIATE results including full student history
@@ -390,7 +389,7 @@ function(what_sgp_object=NULL,
 
 				what_sgp_object <- abcSGP(
 							what_sgp_object,
-							steps=steps,
+							steps=(steps %w/o% "prepareSGP"),
 							years=update.years,
 							content_areas=update.content_areas,
 							grades=update.grades,
