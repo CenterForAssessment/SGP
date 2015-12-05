@@ -36,6 +36,7 @@ function(what_sgp_object=NULL,
 	fix.duplicates=NULL,
 	...) {
 
+	HIGH_NEED_STATUS <- NULL
 	SGPstateData <- SGP::SGPstateData ### Needed due to possible assignment of values to SGPstateData
 
 	started.at <- proc.time()
@@ -189,7 +190,7 @@ function(what_sgp_object=NULL,
 				}
 
 			if ("HIGH_NEED_STATUS" %in% names(what_sgp_object@Data)) {
-				what_sgp_object@Data[['HIGH_NEED_STATUS']] <- NULL
+				what_sgp_object@Data[, HIGH_NEED_STATUS := NULL]
 				what_sgp_object <- suppressMessages(prepareSGP(what_sgp_object, state=state, fix.duplicates=fix.duplicates))
 			}
 
@@ -354,7 +355,7 @@ function(what_sgp_object=NULL,
 				if ("YEAR_WITHIN" %in% names(what_sgp_object@Data)) {
 					what_sgp_object@Data[, LAST_OBSERVATION := NULL]
 					what_sgp_object@Data[, FIRST_OBSERVATION := NULL]
-					what_sgp_object <- suppressMessages(prepareSGP(what_sgp_object, state=state, fix.duplicates=fix.duplicates))
+					what_sgp_object <- suppressMessages(prepareSGP(what_sgp_object, state=state, create.additional.variables=FALSE, fix.duplicates=fix.duplicates))
 				}
 
 				### Print finish and return SGP object
@@ -369,13 +370,13 @@ function(what_sgp_object=NULL,
 						key=getKey(what_sgp_object@Data))
 				}
 
-				if ("HIGH_NEED_STATUS" %in% names(what_sgp_object@Data)) {
-					what_sgp_object@Data[['HIGH_NEED_STATUS']] <- NULL
-				}
-
 				### prepareSGP
-
-				what_sgp_object <- prepareSGP(what_sgp_object, state=state, fix.duplicates=fix.duplicates)
+				if ("HIGH_NEED_STATUS" %in% names(what_sgp_object@Data)) {
+					what_sgp_object@Data[, HIGH_NEED_STATUS := NULL]
+					what_sgp_object <- prepareSGP(what_sgp_object, state=state, fix.duplicates=fix.duplicates)
+				} else {
+					what_sgp_object <- prepareSGP(what_sgp_object, state=state, create.additional.variables=FALSE, fix.duplicates=fix.duplicates)
+				}
 
 				### Add in INSTRUCTOR_NUMBER data for summarizeSGP if supplied
 
