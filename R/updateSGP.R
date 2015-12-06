@@ -50,8 +50,8 @@ function(what_sgp_object=NULL,
 	}
 
 	if (identical(calculate.simex, TRUE)) {
-		##  Enforce that simex.use.my.coefficient.matrices must be TRUE for updating COHORT SIMEX SGPs
-		calculate.simex <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE, simex.use.my.coefficient.matrices = TRUE)
+		##  Enforce that simex.use.my.coefficient.matrices must be TRUE for updating COHORT SIMEX SGPs (ONLY WHEN USING PRE-EXISTING COEFFICIENT MATRICES)
+		calculate.simex <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE, simex.use.my.coefficient.matrices = sgp.use.my.coefficient.matrices)
 	}
 
 	if (identical(calculate.simex.baseline, TRUE)) {
@@ -189,7 +189,7 @@ function(what_sgp_object=NULL,
 				}
 
 			if ("HIGH_NEED_STATUS" %in% names(what_sgp_object@Data)) {
-				what_sgp_object@Data[['HIGH_NEED_STATUS']] <- NULL
+				what_sgp_object@Data[, HIGH_NEED_STATUS := NULL]
 				what_sgp_object <- suppressMessages(prepareSGP(what_sgp_object, state=state, fix.duplicates=fix.duplicates))
 			}
 
@@ -273,16 +273,16 @@ function(what_sgp_object=NULL,
 
 				if ("combineSGP" %in% steps) {
 					tmp.sgp_object.update <- suppressMessages(combineSGP(tmp.sgp_object.update,
-												state=state,
-												sgp.percentiles=sgp.percentiles,
-												sgp.projections=sgp.projections,
-												sgp.projections.lagged=sgp.projections.lagged,
-												sgp.percentiles.baseline=sgp.percentiles.baseline,
-												sgp.projections.baseline=sgp.projections.baseline,
-												sgp.projections.lagged.baseline=sgp.projections.lagged.baseline,
-												sgp.target.scale.scores=sgp.target.scale.scores,
-												sgp.target.scale.scores.only=sgp.target.scale.scores.only,
-												SGPt=SGPt))
+						state=state,
+						sgp.percentiles=sgp.percentiles,
+						sgp.projections=sgp.projections,
+						sgp.projections.lagged=sgp.projections.lagged,
+						sgp.percentiles.baseline=sgp.percentiles.baseline,
+						sgp.projections.baseline=sgp.projections.baseline,
+						sgp.projections.lagged.baseline=sgp.projections.lagged.baseline,
+						sgp.target.scale.scores=sgp.target.scale.scores,
+						sgp.target.scale.scores.only=sgp.target.scale.scores.only,
+						SGPt=SGPt))
 				}
 
 				### Output of INTERMEDIATE results including full student history
@@ -354,7 +354,7 @@ function(what_sgp_object=NULL,
 				if ("YEAR_WITHIN" %in% names(what_sgp_object@Data)) {
 					what_sgp_object@Data[, LAST_OBSERVATION := NULL]
 					what_sgp_object@Data[, FIRST_OBSERVATION := NULL]
-					what_sgp_object <- suppressMessages(prepareSGP(what_sgp_object, state=state, fix.duplicates=fix.duplicates))
+					what_sgp_object <- suppressMessages(prepareSGP(what_sgp_object, state=state, create.additional.variables=FALSE, fix.duplicates=fix.duplicates))
 				}
 
 				### Print finish and return SGP object
@@ -369,13 +369,13 @@ function(what_sgp_object=NULL,
 						key=getKey(what_sgp_object@Data))
 				}
 
-				if ("HIGH_NEED_STATUS" %in% names(what_sgp_object@Data)) {
-					what_sgp_object@Data[['HIGH_NEED_STATUS']] <- NULL
-				}
-
 				### prepareSGP
-
-				what_sgp_object <- prepareSGP(what_sgp_object, state=state, fix.duplicates=fix.duplicates)
+				if ("HIGH_NEED_STATUS" %in% names(what_sgp_object@Data)) {
+					what_sgp_object@Data[, HIGH_NEED_STATUS := NULL]
+					what_sgp_object <- prepareSGP(what_sgp_object, state=state, fix.duplicates=fix.duplicates)
+				} else {
+					what_sgp_object <- prepareSGP(what_sgp_object, state=state, create.additional.variables=FALSE, fix.duplicates=fix.duplicates)
+				}
 
 				### Add in INSTRUCTOR_NUMBER data for summarizeSGP if supplied
 
@@ -389,7 +389,7 @@ function(what_sgp_object=NULL,
 
 				what_sgp_object <- abcSGP(
 							what_sgp_object,
-							steps=steps,
+							steps=(steps %w/o% "prepareSGP"),
 							years=update.years,
 							content_areas=update.content_areas,
 							grades=update.grades,
