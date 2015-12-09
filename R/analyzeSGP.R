@@ -66,7 +66,7 @@ function(sgp_object,
 
 	if (simulate.sgps) {
 		if (is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
-			message("\tNOTE: CSEMs are required in 'SGPstateData' to simulate SGPs for confidence interval calculations. SGP standard errors will not be calculated.")
+			message("\tNOTE: CSEMs are required in 'SGPstateData' (either as a data.frame of CSEMs or as a variable name of CSEMsin @Data) to simulate SGPs for confidence interval calculations. SGP standard errors will not be calculated.")
 			calculate.confidence.intervals <- csem.variable <- NULL
 		} else {
             if (is.data.frame(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
@@ -185,12 +185,30 @@ function(sgp_object,
 		if (length(names(parallel.config[['WORKERS']])) <= 2) parallel.config <- NULL # Only NULL out parallel.config if ONLY SIMEX and TAUS are requested
 	} else lower.level.parallel.config <- NULL
 
+
+	if (!is.null(calculate.simex) | !is.null(calculate.simex.baseline)) {
+		if (is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
+			message("\tNOTE: CSEMs are required in 'SGPstateData' (either as a data.frame of CSEMs or as a variable name of CSEMsin @Data) to produce SIMEX corrected SGPs. SIMEX corrected SGPs will NOT be calculated.")
+			calculate.simex <- calculate.simex.baseline <- NULL
+		}
+	}
+
 	if (identical(calculate.simex, TRUE)) {
-		calculate.simex <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE)
+		if (is.character(csem.variable <- SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
+			calculate.simex <- list(csem.data.vnames=csem.variable, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE)
+		} else 	{
+			calculate.simex <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE)
+			csem.variable <- NULL
+		}
 	}
 
 	if (identical(calculate.simex.baseline, TRUE)) {
-		calculate.simex.baseline <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE)
+		if (is.character(csem.variable <- SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
+			calculate.simex.baseline <- list(csem.data.vnames=csem.variable, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE)
+		} else 	{
+			calculate.simex.baseline <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE)
+			csem.variable <- NULL
+		}
 	}
 
 	if (is.null(sgp.minimum.default.panel.years) & !is.null(SGPstateData[[state]][["SGP_Configuration"]][['sgp.minimum.default.panel.years']])) {
