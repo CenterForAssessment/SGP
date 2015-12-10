@@ -356,6 +356,9 @@ function(panel.data,         ## REQUIRED
 			loss.hoss <- matrix(nrow=2, ncol=length(tmp.gp)-1)
 			lh.ca <- rev(content_area.progression)[-1]
 			lh.gp <- rev(tmp.gp)[-1]
+			if (!is.null(csem.data.vnames)) {
+				if (length(content_area.progression) == length(csem.data.vnames)) csem.data.vnames <- head(csem.data.vnames, -1)
+			}
 		}
 		if (!is.null(csem.loss.hoss)) {
 			if (!is.list(csem.loss.hoss)) stop("SIMEX config element 'csem.loss.hoss' must be a 2 level nested list with LOSS/HOSS data for each subject (level 1) by grade (level 2).")
@@ -398,8 +401,7 @@ function(panel.data,         ## REQUIRED
 				csem.int <- matrix(nrow=dim(tmp.data)[1], ncol=length(perturb.var)) # build matrix to store interpolated csem
 				colnames(csem.int) <- paste("icsem", perturb.var, tmp.ca.iter, tmp.yr.iter, sep="")
 			} else {
-				stop("@$$#0l3")
-				csem.int <- data.table(Panel_Data[,c("ID", intersect(csem.data.vnames, names(Panel_Data))),with=FALSE], key="ID")
+				csem.int <- data.table(Panel_Data[,c("ID", intersect(csem.data.vnames, names(Panel_Data))),with=FALSE], key="ID")[ID %in% tmp.data$ID]
 				setnames(csem.int, csem.data.vnames, paste("icsem", head(tmp.gp, -1), head(content_area.progression, -1), head(year.progression, -1), sep=""))
 			}
 
@@ -1349,6 +1351,7 @@ function(panel.data,         ## REQUIRED
 			save.matrices=calculate.simex$save.matrices,
 			simex.use.my.coefficient.matrices=calculate.simex$simex.use.my.coefficient.matrices,
 			calculate.simex.sgps=calculate.sgps,
+			dependent.var.error=calculate.simex$dependent.var.error,
 			verbose=calculate.simex$verbose)
 
 		if (!is.null(quantile.data.simex[['MATRICES']])) {
