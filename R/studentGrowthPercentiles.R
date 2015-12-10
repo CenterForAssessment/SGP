@@ -398,6 +398,7 @@ function(panel.data,         ## REQUIRED
 				csem.int <- matrix(nrow=dim(tmp.data)[1], ncol=length(perturb.var)) # build matrix to store interpolated csem
 				colnames(csem.int) <- paste("icsem", perturb.var, tmp.ca.iter, tmp.yr.iter, sep="")
 			} else {
+				stop("@$$#0l3")
 				csem.int <- data.table(Panel_Data[,c("ID", intersect(csem.data.vnames, names(Panel_Data))),with=FALSE], key="ID")
 				setnames(csem.int, csem.data.vnames, paste("icsem", head(tmp.gp, -1), head(content_area.progression, -1), head(year.progression, -1), sep=""))
 			}
