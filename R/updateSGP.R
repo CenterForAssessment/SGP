@@ -380,6 +380,12 @@ function(what_sgp_object=NULL,
 						key=getKey(what_sgp_object@Data))
 				}
 
+				### Re-establish FIRST_ & LAST_OBSERVATION variables
+				if ("YEAR_WITHIN" %in% names(what_sgp_object@Data)) {
+					what_sgp_object@Data[, LAST_OBSERVATION := NULL]
+					what_sgp_object@Data[, FIRST_OBSERVATION := NULL]
+				}
+
 				### prepareSGP
 				if ("HIGH_NEED_STATUS" %in% names(what_sgp_object@Data)) {
 					what_sgp_object@Data[, HIGH_NEED_STATUS := NULL]
