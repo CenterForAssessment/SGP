@@ -554,30 +554,37 @@ function(sgp_object,
 
 	if (sgp.projections | sgp.projections.lagged) {
 		tmp.config <- par.sgp.config[sapply(par.sgp.config, test.projection.iter)]
-		if (length(tmp.config) > 0) for (f in 1:length(tmp.config)) tmp.config[[f]][['sgp.exact.grade.progression']] <- FALSE
-		while (any(sapply(tmp.config, function(x) length(x[['sgp.projection.sequence']])>1))) {
-			tmp.index <- which(any(sapply(tmp.config, function(x) length(x[['sgp.projection.sequence']])>1)))[1]
-			tmp.iter <- tmp.config[[tmp.index]]
-			tmp.config <- tmp.config[-tmp.index]
-			tmp.expand.config <- list()
-			for (j in 1:length(tmp.iter[['sgp.projection.sequence']])) {
-				tmp.expand.config[[j]] <- tmp.iter
-				tmp.expand.config[[j]][['sgp.projection.sequence']] <- tmp.expand.config[[j]][['sgp.projection.sequence']][j]
+		if (length(tmp.config) > 0) {
+			for (f in 1:length(tmp.config)) tmp.config[[f]][['sgp.exact.grade.progression']] <- FALSE
+			while (any(sapply(tmp.config, function(x) length(x[['sgp.projection.sequence']])>1))) {
+				tmp.index <- which(any(sapply(tmp.config, function(x) length(x[['sgp.projection.sequence']])>1)))[1]
+				tmp.iter <- tmp.config[[tmp.index]]
+				tmp.config <- tmp.config[-tmp.index]
+				tmp.expand.config <- list()
+				for (j in 1:length(tmp.iter[['sgp.projection.sequence']])) {
+					tmp.expand.config[[j]] <- tmp.iter
+					tmp.expand.config[[j]][['sgp.projection.sequence']] <- tmp.expand.config[[j]][['sgp.projection.sequence']][j]
+				}
+				tmp.config <- c(tmp.config, tmp.expand.config)
 			}
-			tmp.config <- c(tmp.config, tmp.expand.config)
-		}
-		if (!is.null(year.for.equate)) tmp.config <- tmp.config[which(sapply(tmp.config, function(x) tail(x[['sgp.grade.sequences']], 1) %in% grades.for.equate))]
-		if (sgp.projections) {
-			sgp.config.list[['sgp.projections']] <- tmp.config
-			for (i in 1:length(sgp.config.list[['sgp.projections']])) {
-				sgp.config.list[['sgp.projections']][[i]][['sgp.matrices']] <- sgp.config.list[['sgp.projections']][[i]][['sgp.baseline.matrices']] <- NULL
+			if (!is.null(year.for.equate)) tmp.config <- tmp.config[which(sapply(tmp.config, function(x) tail(x[['sgp.grade.sequences']], 1) %in% grades.for.equate))]
+			if (sgp.projections) {
+				sgp.config.list[['sgp.projections']] <- tmp.config
+				for (i in 1:length(sgp.config.list[['sgp.projections']])) {
+					sgp.config.list[['sgp.projections']][[i]][['sgp.matrices']] <- sgp.config.list[['sgp.projections']][[i]][['sgp.baseline.matrices']] <- NULL
+				}
 			}
-		}
-		if (sgp.projections.lagged) {
-			sgp.config.list[['sgp.projections.lagged']] <- tmp.config
-			for (i in 1:length(sgp.config.list[['sgp.projections.lagged']])) {
-				sgp.config.list[['sgp.projections.lagged']][[i]][['sgp.matrices']] <- sgp.config.list[['sgp.projections.lagged']][[i]][['sgp.baseline.matrices']] <- NULL
+			if (sgp.projections.lagged) {
+				sgp.config.list[['sgp.projections.lagged']] <- tmp.config
+				for (i in 1:length(sgp.config.list[['sgp.projections.lagged']])) {
+					sgp.config.list[['sgp.projections.lagged']][[i]][['sgp.matrices']] <- sgp.config.list[['sgp.projections.lagged']][[i]][['sgp.baseline.matrices']] <- NULL
+				}
 			}
+		} else {
+			sgp.config.list[['sgp.projections']] <- sgp.config.list[['sgp.projections.lagged']] <- NULL
+			message("\n NOTE:  No valid projections have been identified in the sgp.config lists provided -- ", 
+				"'sgp.projections'"[sgp.projections], " and "[sgp.projections & sgp.projections.lagged], "'sgp.projections.lagged'"[sgp.projections.lagged], " will NOT be calculated.",
+				"  \n\tPlease check SGPstateData[['", state, "']][['SGP_Configuration']] for proper 'content_area.projection.sequence', 'grade.projection.sequence' and 'year_lags.projection.sequence' elements.\n")
 		}
 	}
 
