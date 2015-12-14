@@ -66,7 +66,7 @@ function(sgp_object,
 
 	if (simulate.sgps) {
 		if (is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
-			message("\tNOTE: CSEMs are required in 'SGPstateData' to simulate SGPs for confidence interval calculations. SGP standard errors will not be calculated.")
+			message("\tNOTE: CSEMs are required in 'SGPstateData' (either as a data.frame of CSEMs or as a variable name of CSEMsin @Data) to simulate SGPs for confidence interval calculations. SGP standard errors will not be calculated.")
 			calculate.confidence.intervals <- csem.variable <- NULL
 		} else {
             if (is.data.frame(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
@@ -185,12 +185,30 @@ function(sgp_object,
 		if (length(names(parallel.config[['WORKERS']])) <= 2) parallel.config <- NULL # Only NULL out parallel.config if ONLY SIMEX and TAUS are requested
 	} else lower.level.parallel.config <- NULL
 
+
+	if (!is.null(calculate.simex) | !is.null(calculate.simex.baseline)) {
+		if (is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
+			message("\tNOTE: CSEMs are required in 'SGPstateData' (either as a data.frame of CSEMs or as a variable name of CSEMsin @Data) to produce SIMEX corrected SGPs. SIMEX corrected SGPs will NOT be calculated.")
+			calculate.simex <- calculate.simex.baseline <- NULL
+		}
+	}
+
 	if (identical(calculate.simex, TRUE)) {
-		calculate.simex <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE)
+		if (is.character(csem.variable <- SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
+			calculate.simex <- list(csem.data.vnames=csem.variable, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE)
+		} else 	{
+			calculate.simex <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE)
+			csem.variable <- NULL
+		}
 	}
 
 	if (identical(calculate.simex.baseline, TRUE)) {
-		calculate.simex.baseline <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE)
+		if (is.character(csem.variable <- SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
+			calculate.simex.baseline <- list(csem.data.vnames=csem.variable, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE)
+		} else 	{
+			calculate.simex.baseline <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE)
+			csem.variable <- NULL
+		}
 	}
 
 	if (is.null(sgp.minimum.default.panel.years) & !is.null(SGPstateData[[state]][["SGP_Configuration"]][['sgp.minimum.default.panel.years']])) {
@@ -351,8 +369,15 @@ function(sgp_object,
 		if (is.null(calculate.confidence.intervals) || calculate.confidence.intervals==state) {
 			return(calculate.confidence.intervals)
 		} else {
-			return(paste(calculate.confidence.intervals, tail(sgp.iter[['sgp.panel.years']], 1), tail(sgp.iter[['sgp.content.areas']], 1), sep="."))
+			return(gsub("[.]+$", "", paste(calculate.confidence.intervals, tail(sgp.iter[['sgp.panel.years']], 1), tail(sgp.iter[['sgp.content.areas']], 1),  tail(sgp.iter[['sgp.panel.years.within']], 1), sep=".")))
 		}
+	}
+
+	get.calculate.simex.arg <- function(calculate.simex, sgp.iter) {
+		if (is.null(calculate.simex)) return(NULL) # If not NULL, must be a list
+		if (is.null(calculate.simex$csem.data.vnames)) return(calculate.simex)
+		calculate.simex$csem.data.vnames <- gsub("[.]+$", "", paste(calculate.simex$csem.data.vnames, sgp.iter[['sgp.panel.years']], sgp.iter[['sgp.content.areas']],  sgp.iter[['sgp.panel.years.within']], sep="."))
+		return(calculate.simex)
 	}
 
 	selectCoefficientMatrices <- function(tmp_sgp_object, coefficient.matrix.type=NULL) {
@@ -755,7 +780,7 @@ function(sgp_object,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
-						calculate.simex=sgp.iter[["sgp.calculate.simex"]],
+						calculate.simex=get.calculate.simex.arg(sgp.iter[["sgp.calculate.simex"]], sgp.iter),
 						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.percentiles"),
                         SGPt.max.time=SGPt.max.time,
@@ -798,7 +823,7 @@ function(sgp_object,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
-						calculate.simex=sgp.iter[["sgp.calculate.simex"]],
+						calculate.simex=get.calculate.simex.arg(sgp.iter[["sgp.calculate.simex"]], sgp.iter),
 						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.percentiles"),
                         SGPt.max.time=SGPt.max.time,
@@ -842,7 +867,7 @@ function(sgp_object,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
-						calculate.simex=sgp.iter[["sgp.calculate.simex"]],
+						calculate.simex=get.calculate.simex.arg(sgp.iter[["sgp.calculate.simex"]], sgp.iter),
 						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.percentiles"),
                         SGPt.max.time=SGPt.max.time,
@@ -900,7 +925,6 @@ function(sgp_object,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
-						calculate.simex=sgp.iter[["sgp.calculate.simex"]],
 						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 						sgp.percentiles.equated=sgp.projections.equated,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.percentiles.equated"),
@@ -944,7 +968,6 @@ function(sgp_object,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
-						calculate.simex=sgp.iter[["sgp.calculate.simex"]],
 						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 						sgp.percentiles.equated=sgp.projections.equated,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.percentiles.equated"),
@@ -989,7 +1012,6 @@ function(sgp_object,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
-						calculate.simex=sgp.iter[["sgp.calculate.simex"]],
 						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 						sgp.percentiles.equated=sgp.projections.equated,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.percentiles.equated"),
@@ -1048,7 +1070,7 @@ function(sgp_object,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
-						calculate.simex=sgp.iter[["sgp.calculate.simex.baseline"]],
+						calculate.simex=get.calculate.simex.arg(sgp.iter[["sgp.calculate.simex.baseline"]], sgp.iter),
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.percentiles.baseline"),
                         SGPt.max.time=SGPt.max.time,
 						...))
@@ -1089,7 +1111,7 @@ function(sgp_object,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
-						calculate.simex=sgp.iter[["sgp.calculate.simex.baseline"]],
+						calculate.simex=get.calculate.simex.arg(sgp.iter[["sgp.calculate.simex.baseline"]], sgp.iter),
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.percentiles.baseline"),
                         SGPt.max.time=SGPt.max.time,
 						...))
@@ -1131,7 +1153,7 @@ function(sgp_object,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
 						verbose.output=verbose.output,
 						print.other.gp=print.other.gp,
-						calculate.simex=sgp.iter[["sgp.calculate.simex.baseline"]],
+						calculate.simex=get.calculate.simex.arg(sgp.iter[["sgp.calculate.simex.baseline"]], sgp.iter),
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.percentiles.baseline"),
                         SGPt.max.time=SGPt.max.time,
 						parallel.config=par.start$Lower_Level_Parallel,
@@ -1782,7 +1804,7 @@ function(sgp_object,
 					verbose.output=verbose.output,
 					print.other.gp=print.other.gp,
 					parallel.config=lower.level.parallel.config,
-					calculate.simex=sgp.iter[["sgp.calculate.simex"]],
+					calculate.simex=get.calculate.simex.arg(sgp.iter[["sgp.calculate.simex"]], sgp.iter),
 					max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 					SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.percentiles"),
                     SGPt.max.time=SGPt.max.time,
@@ -1827,7 +1849,6 @@ function(sgp_object,
 					verbose.output=verbose.output,
 					print.other.gp=print.other.gp,
 					parallel.config=lower.level.parallel.config,
-					calculate.simex=sgp.iter[["sgp.calculate.simex"]],
 					max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 					sgp.percentiles.equated=sgp.projections.equated,
 					SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.percentiles.equated"),
@@ -1872,7 +1893,7 @@ function(sgp_object,
 					verbose.output=verbose.output,
 					print.other.gp=print.other.gp,
 					parallel.config=lower.level.parallel.config,
-					calculate.simex=sgp.iter[["sgp.calculate.simex.baseline"]],
+					calculate.simex=get.calculate.simex.arg(sgp.iter[["sgp.calculate.simex.baseline"]], sgp.iter),
 					SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.percentiles.baseline"),
                     SGPt.max.time=SGPt.max.time,
 					...)

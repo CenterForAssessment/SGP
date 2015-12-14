@@ -49,14 +49,25 @@ function(what_sgp_object=NULL,
 		state <- getStateAbbreviation(tmp.name, "updateSGP")
 	}
 
+	if (!is.null(calculate.simex) | !is.null(calculate.simex.baseline)) {
+		if (is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
+			message("\tNOTE: CSEMs are required in 'SGPstateData' (either as a data.frame of CSEMs or as a variable name of CSEMsin @Data) to produce SIMEX corrected SGPs. SIMEX corrected SGPs will NOT be calculated.")
+			calculate.simex <- calculate.simex.baseline <- NULL
+		}
+	}
+
 	if (identical(calculate.simex, TRUE)) {
 		##  Enforce that simex.use.my.coefficient.matrices must be TRUE for updating COHORT SIMEX SGPs (ONLY WHEN USING PRE-EXISTING COEFFICIENT MATRICES)
-		calculate.simex <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE, simex.use.my.coefficient.matrices = sgp.use.my.coefficient.matrices)
+		if (is.character(csem.variable <- SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
+			calculate.simex <- list(csem.data.vnames=csem.variable, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE, simex.use.my.coefficient.matrices = sgp.use.my.coefficient.matrices)
+		} else 	calculate.simex <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE, simex.use.my.coefficient.matrices = sgp.use.my.coefficient.matrices)
 	}
 
 	if (identical(calculate.simex.baseline, TRUE)) {
 		##  Enforce that simex.use.my.coefficient.matrices must be TRUE for updating BASELINE SIMEX SGPs
-		calculate.simex.baseline <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE, simex.use.my.coefficient.matrices = TRUE)
+		if (is.character(csem.variable <- SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
+			calculate.simex.baseline <- list(csem.data.vnames=csem.variable, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE, simex.use.my.coefficient.matrices = TRUE)
+		} else 	calculate.simex.baseline <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE, simex.use.my.coefficient.matrices = TRUE)
 	}
 
 	### Utility functions
@@ -367,6 +378,12 @@ function(what_sgp_object=NULL,
 				} else {
 					what_sgp_object@Data <- data.table(rbindlist(list(what_sgp_object@Data[which(ID %in% tmp_sgp_object@Data$ID)], tmp_sgp_object@Data), fill=TRUE),
 						key=getKey(what_sgp_object@Data))
+				}
+
+				### Re-establish FIRST_ & LAST_OBSERVATION variables
+				if ("YEAR_WITHIN" %in% names(what_sgp_object@Data)) {
+					what_sgp_object@Data[, LAST_OBSERVATION := NULL]
+					what_sgp_object@Data[, FIRST_OBSERVATION := NULL]
 				}
 
 				### prepareSGP
