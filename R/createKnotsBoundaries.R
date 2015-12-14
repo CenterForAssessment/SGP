@@ -1,4 +1,4 @@
-`createKnotsBoundaries` <- 
+`createKnotsBoundaries` <-
 function(tmp.data,
 	knot.cut.percentiles=c(0.2,0.4,0.6,0.8)) {
 
@@ -10,15 +10,15 @@ function(tmp.data,
 		tmp.grade.list[[my.list.label]] <- sort(unique(tmp.data[SJ("VALID_CASE", my.list.label)][["GRADE"]]))
 		for (j in seq_along(tmp.grade.list[[my.list.label]])) {
 			tmp.list[[my.list.label]][[3*j-2]] <-
-				round(as.vector(quantile(tmp.data[VALID_CASE=="VALID_CASE" & CONTENT_AREA==my.list.label & GRADE==tmp.grade.list[[my.list.label]][j]][["SCALE_SCORE"]], 
+				round(as.vector(quantile(tmp.data[list("VALID_CASE", my.list.label, tmp.grade.list[[my.list.label]][j])][["SCALE_SCORE"]],
 					probs=knot.cut.percentiles, na.rm=TRUE)), digits=3)
 			tmp.list[[my.list.label]][[3*j-1]] <-
-				round(as.vector(extendrange(tmp.data[VALID_CASE=="VALID_CASE" & CONTENT_AREA==my.list.label & GRADE==tmp.grade.list[[my.list.label]][j]][["SCALE_SCORE"]], f=0.1)), digits=3)
+				round(as.vector(extendrange(tmp.data[list("VALID_CASE", my.list.label, tmp.grade.list[[my.list.label]][j])][["SCALE_SCORE"]], f=0.1)), digits=3)
 			tmp.list[[my.list.label]][[3*j]] <-
-				round(as.vector(extendrange(tmp.data[VALID_CASE=="VALID_CASE" & CONTENT_AREA==my.list.label & GRADE==tmp.grade.list[[my.list.label]][j]][["SCALE_SCORE"]], f=0.0)), digits=3)
+				round(as.vector(extendrange(tmp.data[list("VALID_CASE", my.list.label, tmp.grade.list[[my.list.label]][j])][["SCALE_SCORE"]], f=0.0)), digits=3)
 		}
-		names(tmp.list[[my.list.label]]) <- paste(rep(c("knots_", "boundaries_", "loss.hoss_"), length(tmp.grade.list[[my.list.label]])), 
-			rep(tmp.grade.list[[my.list.label]], each=3), sep="")
+		setattr(tmp.list[[my.list.label]], "names", paste(rep(c("knots_", "boundaries_", "loss.hoss_"), length(tmp.grade.list[[my.list.label]])),
+			rep(tmp.grade.list[[my.list.label]], each=3), sep=""))
 	}
 	return(tmp.list)
 } ## END createKnotsBoundaries

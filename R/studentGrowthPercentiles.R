@@ -717,7 +717,7 @@ function(panel.data,         ## REQUIRED
 	###
 	############################################################################
 
-	ID <- tmp.messages <- ORDER <- SCALE_SCORE_PRIOR <- TEMP_SGP_SIM <- NULL
+	ID <- tmp.messages <- ORDER <- SCALE_SCORE_PRIOR <- NULL
 
 	if (missing(panel.data)) {
 		stop("User must supply student achievement data for student growth percentile calculations. NOTE: data is now supplied to function using panel.data argument. See help page for details.")
