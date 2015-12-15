@@ -550,7 +550,7 @@
 
 	del.dir <- dir.create("Data/tmp_data", recursive=TRUE, showWarnings=FALSE)
 	sgp_data_for_summary <- dbConnect(SQLite(), dbname = "Data/tmp_data/TMP_Summary_Data.sqlite")
-	if ("VALID_CASE_STATUS_ONLY" in names(sgp_object@Data)) sgp_object@Data$VALID_CASE[sgp_object@Data$VALID_CASE_STATUS_ONLY=="VALID_CASE"] <- "VALID_CASE"
+	if ("VALID_CASE_STATUS_ONLY" %in% names(sgp_object@Data)) sgp_object@Data$VALID_CASE[sgp_object@Data$VALID_CASE_STATUS_ONLY=="VALID_CASE"] <- "VALID_CASE"
 
 	if (any(!sapply(summary.groups[["growth_only_summary"]], is.null))) {
 		tmp.dt <- sgp_object@Data[data.table("VALID_CASE", content_areas.by.years), nomatch=0][,
@@ -630,7 +630,7 @@
 	if (!is.null(parallel.config))	stopParallel(parallel.config, par.start)
 
 	if (del.dir) unlink("Data/tmp_data", recursive=TRUE, force=TRUE) else unlink("Data/tmp_data/TMP_Summary_Data.sqlite", recursive=TRUE)
-	if ("VALID_CASE_STATUS_ONLY" in names(sgp_object@Data)) sgp_object@Data$VALID_CASE[sgp_object@Data$VALID_CASE_STATUS_ONLY=="VALID_CASE"] <- "INVALID_CASE"
+	if ("VALID_CASE_STATUS_ONLY" %in% names(sgp_object@Data)) sgp_object@Data$VALID_CASE[sgp_object@Data$VALID_CASE_STATUS_ONLY=="VALID_CASE"] <- "INVALID_CASE"
 
 	message(paste("Finished summarizeSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
 	return(sgp_object)
