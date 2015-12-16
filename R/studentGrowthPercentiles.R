@@ -167,12 +167,15 @@ function(panel.data,         ## REQUIRED
 			tmp.data <- data.table(Panel_Data[,c("ID", "TIME", "TIME_LAG"), with=FALSE], key="ID")[tmp.data][,c(names(tmp.data), "TIME", "TIME_LAG"), with=FALSE]
 			mod <- paste(mod, " + I(tmp.data[['TIME']]) + I(tmp.data[['TIME_LAG']])", sep="")
 		}
-		if (is.null(parallel.config)) {
+
+		if (!is.null(parallel.config)) if (is.null(parallel.config[["WORKERS"]][["TAUS"]])) tmp.par.config <- NULL else tmp.par.config <- parallel.config
+
+		if (is.null(tmp.par.config)) {
 			tmp.mtx <- eval(parse(text=paste("rq(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=taus, data=tmp.data, method=rq.method)[['coefficients']]", sep="")))
 		} else {
-			par.start <- startParallel(parallel.config, 'TAUS', qr.taus=taus) #  Need new argument here - default to missing
+			par.start <- startParallel(tmp.par.config, 'TAUS', qr.taus=taus)
 
-			if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
+			if (toupper(tmp.par.config[["BACKEND"]]) == "FOREACH") {
 				# tmp.data <<- tmp.data
 				tmp.mtx <- foreach(j = iter(par.start$TAUS.LIST), .export=c("tmp.data", "Knots_Boundaries", "rq.method"), .combine = "cbind", .packages="quantreg",
 				.inorder=TRUE, .options.mpi = par.start$foreach.options, .options.multicore = par.start$foreach.options, .options.snow = par.start$foreach.options) %dopar% {
@@ -191,7 +194,7 @@ function(panel.data,         ## REQUIRED
 					tmp.mtx <- do.call(cbind, tmp.mtx)
 				}
 			}
-			stopParallel(parallel.config, par.start)
+			stopParallel(tmp.par.config, par.start)
 		}
 
 		tmp.version <- list(
@@ -317,6 +320,7 @@ function(panel.data,         ## REQUIRED
 		if (!is.null(state) & !is.null(variable)) stop("SIMEX config can not use both 'state' and 'variable' elements.")
 		if (!is.null(state) & !is.null(csem.data.vnames)) stop("SIMEX config can not use both 'state' and 'csem.data.vnames' elements.")
 		if (!is.null(csem.data.vnames) & !is.null(variable)) stop("SIMEX config can not use both 'csem.data.vnames' and 'variable' elements.")
+		if (!is.null(parallel.config)) if (is.null(parallel.config[["WORKERS"]][["SIMEX"]])) tmp.par.config <- NULL else tmp.par.config <- parallel.config
 
 		rq.mtx <- function(tmp.gp.iter, lam, rqdata) {
 			mod <- character()
@@ -531,7 +535,7 @@ function(panel.data,         ## REQUIRED
 					if (length(available.matrices) < B) sim.iters <- sample(1:length(available.matrices), B, replace=TRUE)
 				}
 
-				if (is.null(parallel.config)) { # Sequential
+				if (is.null(tmp.par.config)) { # Sequential
 					if (verbose) message("\t\t\tStarted coefficient matrix calculation, Lambda ", L, ": ", date())
 					if (is.null(simex.use.my.coefficient.matrices)) {
 						for (z in seq_along(sim.iters)) {
@@ -558,7 +562,7 @@ function(panel.data,         ## REQUIRED
 					}
 				} else {	# Parallel over sim.iters
 
-					par.start <- startParallel(parallel.config, 'SIMEX')
+					par.start <- startParallel(tmp.par.config, 'SIMEX')
 
 					## Note, that if you use the parallel.config for SIMEX here, you can also use it for TAUS in the naive analysis
 					## Example parallel.config argument: '... parallel.config=list(BACKEND="PARALLEL", TYPE="PSOCK", WORKERS=list(SIMEX = 4, TAUS = 4))'
@@ -566,7 +570,7 @@ function(panel.data,         ## REQUIRED
 					## Calculate coefficient matricies (if needed/requested)
 					if (is.null(simex.use.my.coefficient.matrices)) {
 						if (verbose) message("\t\t\tStarted coefficient matrix calculation, Lambda ", L, ": ", date())
-						if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
+						if (toupper(tmp.par.config[["BACKEND"]]) == "FOREACH") {
 							if (is.null(simex.sample.size) || dim(tmp.data)[1] <= simex.sample.size) {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
 									foreach(z=iter(sim.iters), .packages=c("quantreg", "data.table"),
@@ -631,7 +635,7 @@ function(panel.data,         ## REQUIRED
 					## get percentile predictions from coefficient matricies
 					if (calculate.simex.sgps) {
 						if (verbose) message("\t\t\tStarted percentile prediction calculation, Lambda ", L, ": ", date())
-						if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
+						if (toupper(tmp.par.config[["BACKEND"]]) == "FOREACH") {
 							mtx.subset <- simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] # Save on memory copying to R SNOW workers
 							environment(.get.percentile.predictions) <- environment()
 							environment(.smooth.bound.iso.row) <- environment()
@@ -664,7 +668,7 @@ function(panel.data,         ## REQUIRED
 							}
 						}
 					}
-					stopParallel(parallel.config, par.start)
+					stopParallel(tmp.par.config, par.start)
 				}
 			} ### END for (L in lambda[-1])
             unlink("tmp_data", recursive=TRUE, force=TRUE)
