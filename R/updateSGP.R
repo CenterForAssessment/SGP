@@ -326,7 +326,7 @@ function(what_sgp_object=NULL,
 				if (sgp.percentiles | sgp.percentiles.baseline) {
 					for (ca in grep(update.years, names(what_sgp_object@SGP[["SGPercentiles"]]), value=TRUE)) {
 						tmp_sgp <- data.table(what_sgp_object@SGP[["SGPercentiles"]][[ca]])
-						setkeyv(tmp_sgp, c("ID", "SGP",  "SGP_NORM_GROUP"))
+						setkeyv(tmp_sgp, names(tmp_sgp)[grep("ID|SGP|SGP_NORM_GROUP", names(tmp_sgp))])
 						what_sgp_object@SGP[["SGPercentiles"]][[ca]]<- tmp_sgp[!duplicated(tmp_sgp)]
 					}
 				}
