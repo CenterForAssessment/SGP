@@ -633,7 +633,10 @@
 	if (!is.null(parallel.config))	stopParallel(parallel.config, par.start)
 
 	if (del.dir) unlink("Data/tmp_data", recursive=TRUE, force=TRUE) else unlink("Data/tmp_data/TMP_Summary_Data.sqlite", recursive=TRUE)
-	if ("VALID_CASE_STATUS_ONLY" %in% names(sgp_object@Data)) sgp_object@Data$VALID_CASE[sgp_object@Data$VALID_CASE_STATUS_ONLY=="VALID_CASE"] <- "INVALID_CASE"
+	if ("VALID_CASE_STATUS_ONLY" %in% names(sgp_object@Data)) {
+		sgp_object@Data$VALID_CASE[sgp_object@Data$VALID_CASE_STATUS_ONLY=="VALID_CASE"] <- "INVALID_CASE"
+		setkeyv(sgp_object@Data, getKey(sgp_object))
+	}
 
 	message(paste("Finished summarizeSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
 	return(sgp_object)
