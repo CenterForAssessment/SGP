@@ -550,7 +550,10 @@
 
 	del.dir <- dir.create("Data/tmp_data", recursive=TRUE, showWarnings=FALSE)
 	sgp_data_for_summary <- dbConnect(SQLite(), dbname = "Data/tmp_data/TMP_Summary_Data.sqlite")
-	if ("VALID_CASE_STATUS_ONLY" %in% names(sgp_object@Data)) sgp_object@Data$VALID_CASE[sgp_object@Data$VALID_CASE_STATUS_ONLY=="VALID_CASE"] <- "VALID_CASE"
+	if ("VALID_CASE_STATUS_ONLY" %in% names(sgp_object@Data)) {
+		sgp_object@Data$VALID_CASE[sgp_object@Data$VALID_CASE_STATUS_ONLY=="VALID_CASE"] <- "VALID_CASE"
+		setkey(sgp_object@Data, getKey(sgp_object))
+	}
 
 	if (any(!sapply(summary.groups[["growth_only_summary"]], is.null))) {
 		tmp.dt <- sgp_object@Data[data.table("VALID_CASE", content_areas.by.years), nomatch=0][,
