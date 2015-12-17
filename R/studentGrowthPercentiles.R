@@ -168,7 +168,7 @@ function(panel.data,         ## REQUIRED
 			mod <- paste(mod, " + I(tmp.data[['TIME']]) + I(tmp.data[['TIME_LAG']])", sep="")
 		}
 
-		if (!is.null(parallel.config)) if (is.null(parallel.config[["WORKERS"]][["TAUS"]])) tmp.par.config <- NULL else tmp.par.config <- parallel.config
+		if (!is.null(tmp.par.config <- parallel.config)) if (is.null(parallel.config[["WORKERS"]][["TAUS"]])) tmp.par.config <- NULL
 
 		if (is.null(tmp.par.config)) {
 			tmp.mtx <- eval(parse(text=paste("rq(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=taus, data=tmp.data, method=rq.method)[['coefficients']]", sep="")))
