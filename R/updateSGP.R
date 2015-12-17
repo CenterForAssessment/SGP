@@ -293,7 +293,8 @@ function(what_sgp_object=NULL,
 						sgp.projections.lagged.baseline=sgp.projections.lagged.baseline,
 						sgp.target.scale.scores=sgp.target.scale.scores,
 						sgp.target.scale.scores.only=sgp.target.scale.scores.only,
-						SGPt=SGPt))
+						SGPt=SGPt,
+						parallel.config=parallel.config))
 				}
 
 				### Output of INTERMEDIATE results including full student history
@@ -344,7 +345,8 @@ function(what_sgp_object=NULL,
 						sgp.projections.lagged.baseline=sgp.projections.lagged.baseline,
 						sgp.target.scale.scores=sgp.target.scale.scores,
 						sgp.target.scale.scores.only=sgp.target.scale.scores.only,
-						SGPt=SGPt)
+						SGPt=SGPt,
+						parallel.config=parallel.config)
 				}
 
 
