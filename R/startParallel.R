@@ -46,7 +46,11 @@ function(parallel.config,
 				 	"WORKERS will be used  (", parallel.config[['WORKERS']][tmp.indx], "worker processors)."))
 			 }
 		} # See if still NULL and stop:
-		if (is.null(parallel.config[['WORKERS']][[process]])) stop(paste(process, "workers must be specified."))
+		if (is.null(parallel.config[['WORKERS']][[process]])) {
+			# stop(paste(process, "workers must be specified."))
+			parallel.config[['WORKERS']][[process]] <- 1
+			message("\n\t\tNOTE: ", process, " workers not specified!  WORKERS will be set to a single (1) process.\n", sep="")
+		}
 	}
 	
 	Lower_Level_Parallel <- NULL

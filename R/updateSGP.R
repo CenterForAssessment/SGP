@@ -293,7 +293,8 @@ function(what_sgp_object=NULL,
 						sgp.projections.lagged.baseline=sgp.projections.lagged.baseline,
 						sgp.target.scale.scores=sgp.target.scale.scores,
 						sgp.target.scale.scores.only=sgp.target.scale.scores.only,
-						SGPt=SGPt))
+						SGPt=SGPt,
+						parallel.config=parallel.config))
 				}
 
 				### Output of INTERMEDIATE results including full student history
@@ -307,7 +308,7 @@ function(what_sgp_object=NULL,
 
 				### Merge update with original SGP object
 
-				what_sgp_object@Data <- data.table(rbindlist(list(what_sgp_object@Data, tmp_sgp_object@Data), fill=TRUE), key=getKey(what_sgp_object@Data))
+				what_sgp_object@Data <- data.table(rbindlist(list(what_sgp_object@Data, tmp_sgp_object@Data), fill=TRUE), key=getKey(what_sgp_object))
 				if ("HIGH_NEED_STATUS" %in% names(what_sgp_object@Data)) {
 					what_sgp_object@Data[, HIGH_NEED_STATUS := NULL]
 					what_sgp_object <- suppressMessages(prepareSGP(what_sgp_object, state=state, fix.duplicates=fix.duplicates))
@@ -326,7 +327,7 @@ function(what_sgp_object=NULL,
 				if (sgp.percentiles | sgp.percentiles.baseline) {
 					for (ca in grep(update.years, names(what_sgp_object@SGP[["SGPercentiles"]]), value=TRUE)) {
 						tmp_sgp <- data.table(what_sgp_object@SGP[["SGPercentiles"]][[ca]])
-						setkeyv(tmp_sgp, c("ID", "SGP",  "SGP_NORM_GROUP"))
+						setkeyv(tmp_sgp, names(tmp_sgp)[grep("ID|SGP|SGP_NORM_GROUP", names(tmp_sgp))])
 						what_sgp_object@SGP[["SGPercentiles"]][[ca]]<- tmp_sgp[!duplicated(tmp_sgp)]
 					}
 				}
@@ -344,7 +345,8 @@ function(what_sgp_object=NULL,
 						sgp.projections.lagged.baseline=sgp.projections.lagged.baseline,
 						sgp.target.scale.scores=sgp.target.scale.scores,
 						sgp.target.scale.scores.only=sgp.target.scale.scores.only,
-						SGPt=SGPt)
+						SGPt=SGPt,
+						parallel.config=parallel.config)
 				}
 
 
@@ -374,10 +376,10 @@ function(what_sgp_object=NULL,
 				return(what_sgp_object)
 			} else {
 				if (update.old.data.with.new) {
-					what_sgp_object@Data <- data.table(rbindlist(list(what_sgp_object@Data, tmp_sgp_object@Data), fill=TRUE), key=getKey(what_sgp_object@Data))
+					what_sgp_object@Data <- data.table(rbindlist(list(what_sgp_object@Data, tmp_sgp_object@Data), fill=TRUE), key=getKey(what_sgp_object))
 				} else {
 					what_sgp_object@Data <- data.table(rbindlist(list(what_sgp_object@Data[which(ID %in% tmp_sgp_object@Data$ID)], tmp_sgp_object@Data), fill=TRUE),
-						key=getKey(what_sgp_object@Data))
+						key=getKey(what_sgp_object))
 				}
 
 				### Re-establish FIRST_ & LAST_OBSERVATION variables

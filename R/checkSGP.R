@@ -17,7 +17,7 @@ function(sgp_object,
         }
 
 	my.character.variables <- c("ID", "VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", "ACHIEVEMENT_LEVEL", "ACHIEVEMENT_LEVEL_PRIOR")
-	my.numeric.variables <- c("SCALE_SCORE", "SCALE_SCORE_PRIOR")
+	my.numeric.variables <- c("SCALE_SCORE", "SCALE_SCORE_PRIOR", "SCALE_SCORE_CSEM")
 	my.Date.variables <- c("DATE")
 
 

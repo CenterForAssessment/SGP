@@ -57,8 +57,8 @@
 	if (is.null(summarizeSGP.baseline)) {
 		summarizeSGP.baseline <- FALSE ## Default to cohort referenced is not set by user
 		if (SGP::SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort Referenced") summarizeSGP.baseline <- FALSE
-		if (SGP::SGPstateData[[state]][["Growth"]][["System_Type"]] == "Baseline Referenced") summarizeSGP.baseline <- TRUE
-		if (SGP::SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort and Baseline Referenced") summarizeSGP.baseline <- TRUE
+		if (SGP::SGPstateData[[state]][["Growth"]][["System_Type"]] == "Baseline Referenced" & "SGP_BASELINE" %in% sgp.data.names) summarizeSGP.baseline <- TRUE
+		if (SGP::SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort and Baseline Referenced" & "SGP_BASELINE" %in% sgp.data.names) summarizeSGP.baseline <- TRUE
 	}
 
 	if (summarizeSGP.baseline) {
