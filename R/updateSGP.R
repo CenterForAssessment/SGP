@@ -308,7 +308,7 @@ function(what_sgp_object=NULL,
 
 				### Merge update with original SGP object
 
-				what_sgp_object@Data <- data.table(rbindlist(list(what_sgp_object@Data, tmp_sgp_object@Data), fill=TRUE), key=getKey(what_sgp_object@Data))
+				what_sgp_object@Data <- data.table(rbindlist(list(what_sgp_object@Data, tmp_sgp_object@Data), fill=TRUE), key=getKey(what_sgp_object))
 				if ("HIGH_NEED_STATUS" %in% names(what_sgp_object@Data)) {
 					what_sgp_object@Data[, HIGH_NEED_STATUS := NULL]
 					what_sgp_object <- suppressMessages(prepareSGP(what_sgp_object, state=state, fix.duplicates=fix.duplicates))
@@ -376,10 +376,10 @@ function(what_sgp_object=NULL,
 				return(what_sgp_object)
 			} else {
 				if (update.old.data.with.new) {
-					what_sgp_object@Data <- data.table(rbindlist(list(what_sgp_object@Data, tmp_sgp_object@Data), fill=TRUE), key=getKey(what_sgp_object@Data))
+					what_sgp_object@Data <- data.table(rbindlist(list(what_sgp_object@Data, tmp_sgp_object@Data), fill=TRUE), key=getKey(what_sgp_object))
 				} else {
 					what_sgp_object@Data <- data.table(rbindlist(list(what_sgp_object@Data[which(ID %in% tmp_sgp_object@Data$ID)], tmp_sgp_object@Data), fill=TRUE),
-						key=getKey(what_sgp_object@Data))
+						key=getKey(what_sgp_object))
 				}
 
 				### Re-establish FIRST_ & LAST_OBSERVATION variables
