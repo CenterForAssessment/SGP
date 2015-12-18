@@ -50,6 +50,7 @@ function(parallel.config,
 			# stop(paste(process, "workers must be specified."))
 			parallel.config[['WORKERS']][[process]] <- 1
 			message("\n\t\tNOTE: ", process, " workers not specified!  WORKERS will be set to a single (1) process.\n", sep="")
+		}
 	}
 	
 	Lower_Level_Parallel <- NULL
