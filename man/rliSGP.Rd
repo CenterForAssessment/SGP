@@ -25,6 +25,7 @@ rliSGP(
 	coefficient.matrices=NULL,
 	goodness.of.fit.print=FALSE,
 	return.updated.shell=FALSE,
+	fix.duplicates="KEEP.ALL",
     parallel.config=NULL)
 }
 
@@ -68,6 +69,9 @@ analysis. Default is NULL, no ID replacement is performed.
   \item{goodness.of.fit.print}{Boolean argument passed to \code{\link{updateSGP}} indicating whether to print goodness of fit plots associated with outcome. Default is FALSE.
   }
   \item{return.updated.shell}{Boolean argument (defaults to FALSE) indicating whether to return \code{sgp_object} as part of call to \code{rliSGP}.
+  }
+  \item{fix.duplicates}{Character argument (defaults to 'KEEP.ALL') indicating how to deal with duplicates submitted as part of data for analysis. Setting 'fix.duplicates' to null
+  sets no modification of duplicates.
   }
   \item{parallel.config}{Argument passed to \code{\link{abcSGP}} or \code{\link{updateSGP}} to activate parallel processing with an appropriate backend.
   }
