@@ -2,10 +2,10 @@
 \alias{combineSGP}
 \title{Combine student data and SGP results}
 \description{
-  Utility function/exemplar used to merge student long data with results from student growth percentiles and/or student growth projections calculations. Default values of this
-  function are designed to be used following use of other utility functions: \code{\link{prepareSGP}} and \code{\link{analyzeSGP}}. Function is integrated with cutscores embedded in
-  \code{\link{SGPstateData}} to calculate growth-to-standard targets associated with catch-up/keep-up to proficient status and/or move-up/stay-up to advanced status as well as the scale scores
-  associated with these targets.
+  Utility function that merges student long data in the @Data slot with results from student growth percentiles and/or student growth projections calculations. 
+Default values of this function are designed to be used following use of other utility functions: \code{\link{prepareSGP}} and \code{\link{analyzeSGP}}.
+Function is integrated with cutscores embedded in \code{\link{SGPstateData}} to calculate growth-to-standard SGP targets and their associated scale scores
+with catch-up/keep-up to proficient status and/or move-up/stay-up to advanced status as well as the scale scores associated with these targets.
 }
 
 \usage{
@@ -31,7 +31,7 @@ combineSGP(sgp_object,
 }
 
 \arguments{
-  \item{sgp_object}{A list containing both \code{@Data} (from \code{prepareSGP}) and \code{@SGP} (from \code{analyzeSGP}) slots. 
+  \item{sgp_object}{An object of class SGP containing slots \code{@Data} (from \code{prepareSGP}) and \code{@SGP} (from \code{analyzeSGP}). 
   }
   \item{state}{Acronym for which state is to be used for the lagged projections and growth to standard analyses. Function will try to guess state name from passed \code{sgp_object} is missing.
   }

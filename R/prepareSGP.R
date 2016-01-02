@@ -130,7 +130,7 @@ function(data,
 		## Key data.table and check for duplicate cases
 
 		setkeyv(data@Data, getKey(data))
-		if (any(duplicated(data@Data["VALID_CASE"]))) {
+		if (is.null(fix.duplicates) && any(duplicated(data@Data["VALID_CASE"]))) {
 			message(paste("\tWARNING: @Data keyed by", paste(getKey(data), collapse=", "), "has duplicate cases. Subsequent joins/merges will likely be corrupt."))
 			message("\tNOTE: Duplicate cases are available in current workspace as 'DUPLICATED_CASES' and saved as 'DUPLICATED_CASES.Rdata'.")
 			assign("DUPLICATED_CASES",
@@ -174,7 +174,7 @@ function(data,
 		data <- as.data.table(data)
 		setnames(data, which(!is.na(variable.names$names.sgp)), variable.names$names.sgp[!is.na(variable.names$names.sgp)])
 		setkeyv(data, getKey(data))
-		if (any(duplicated(data["VALID_CASE"]))) {
+		if (is.null(fix.duplicates) && any(duplicated(data["VALID_CASE"]))) {
 			message(paste("\tWARNING: Data keyed by", paste(getKey(data), collapse=", "), "has duplicate cases. Subsequent joins/merges will be corrupted."))
 			message("\tNOTE: Duplicate cases are available in current workspace as 'DUPLICATED_CASES' and saved as 'DUPLICATED_CASES.Rdata'.")
 			assign("DUPLICATED_CASES", data["VALID_CASE"][unique(data["VALID_CASE"][duplicated(data["VALID_CASE"]), c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE])])
@@ -255,7 +255,7 @@ function(data,
 		if (identical(toupper(fix.duplicates), "KEEP.ALL")) {
 			if (all(unique(DUPLICATED_CASES$YEAR) %in% (tmp.last.year <- tail(sort(unique(sgp_object@Data$YEAR)), 1)))) {
 				sgp_object@Data <- createUniqueLongData(sgp_object@Data)
-				message("\tNOTE: Additional cases created from duplicate cases in current year. Modified IDs include suffix '_DUPS_***' in @Data.")
+				message("\tNOTE: Duplicate cases in current year made UNIQUE. Modified IDs include suffix '_DUPS_***' in @Data.")
 			} else {
 				message("\tNOTE: Duplicate case modification is only available when duplicates reside in last year of data. Duplicate cases are NOT fixed.")
 			}

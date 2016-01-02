@@ -2,7 +2,7 @@
 \alias{capwords}
 \title{Function for converting all caps to mixed case. Useful in data cleaning.}
 \description{
-The function capwords converts characters to mixed case character as intelligently as possible.
+The function capwords converts characters to mixed case character as intelligently as possible and leading/trailing spaces.
 }
 
 \usage{

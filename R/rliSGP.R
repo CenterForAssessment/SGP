@@ -17,6 +17,7 @@ function(sgp_object,
 	coefficient.matrices=NULL,
 	goodness.of.fit.print=FALSE,
 	return.updated.shell=FALSE,
+	fix.duplicates="KEEP.ALL",
 	parallel.config=NULL) {
 
 	YEAR <- GRADE <- ID <- NEW_ID <- .EACHI <- DATE <- NULL
@@ -153,7 +154,7 @@ function(sgp_object,
 			goodness.of.fit.print=goodness.of.fit.print,
 			update.old.data.with.new=FALSE,
 			SGPt=SGPt,
-			fix.duplicates="KEEP.ALL",
+			fix.duplicates=fix.duplicates,
 			parallel.config=parallel.config,
 			sgp.config=getRLIConfig(content_areas, configuration.year, testing.window, SGPt))
 
