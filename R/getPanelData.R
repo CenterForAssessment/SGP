@@ -265,16 +265,25 @@ function(sgp.data,
 		}
 
 		if ("YEAR_WITHIN" %in% var.names) {
-			setkeyv(sgp.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", tail(sgp.iter[["sgp.panel.years.within"]], 1)))
-			tmp.ids <- sgp.data[SJ("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], 1), tail(sgp.iter[["sgp.panel.years"]], 1), 
-				tail(sgp.iter[["sgp.grade.sequences"]], 1), 1)][,"ID", with=FALSE]
-			tmp.data <- data.table(sgp.data, key="ID")[tmp.ids]
+			if (sqlite.tf) {
+				tmp.ids <- data.table(dbGetQuery(con, paste("select ID from sgp_data where CONTENT_AREA in ('", tail(sgp.iter[["sgp.content.areas"]], 1), "')", 
+					" AND GRADE in ('", tail(sgp.iter[["sgp.grade.sequences"]], 1), "')",
+					" AND YEAR in ('", tail(sgp.iter[["sgp.panel.years"]], 1), "')", sep="")))
+				tmp.data <- data.table(data.table(dbGetQuery(con, 
+					paste("select * from sgp_data where GRADE in ('", paste(sgp.iter[["sgp.grade.sequences"]], collapse="', '"), "')",
+						" AND YEAR in ('", paste(sgp.iter[["sgp.panel.years"]], collapse="', '"), "')", sep="")), 
+					key="ID")[tmp.ids], key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))
+			} else {
+				setkeyv(sgp.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", tail(sgp.iter[["sgp.panel.years.within"]], 1)))
+				tmp.ids <- sgp.data[SJ("VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], 1), tail(sgp.iter[["sgp.panel.years"]], 1), 
+					tail(sgp.iter[["sgp.grade.sequences"]], 1), 1)][,"ID", with=FALSE]
+				tmp.data <- data.table(sgp.data, key="ID")[tmp.ids]
+			}
 			tmp.lookup <- data.table(V1="VALID_CASE", tail(sgp.iter[[sgp.projection.content.areas.label]], length(sgp.iter[[sgp.projection.grade.sequences.label]])),
 				head(sgp.iter[["sgp.panel.years"]], length(sgp.iter[[sgp.projection.grade.sequences.label]])), sgp.iter[[sgp.projection.grade.sequences.label]],
 				head(sgp.iter[["sgp.panel.years.within"]], length(sgp.iter[[sgp.projection.grade.sequences.label]])), FIRST_OBSERVATION=as.integer(NA), LAST_OBSERVATION=as.integer(NA))
 			tmp.lookup[grep("FIRST", V5, ignore.case=TRUE), FIRST_OBSERVATION:=1L]; tmp.lookup[grep("LAST", V5, ignore.case=TRUE), LAST_OBSERVATION:=1L]; tmp.lookup[,V5:=NULL]
 			setnames(tmp.lookup, paste("V", 1:4, sep=""), c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))
-			
 			tmp.lookup.list <- list()
 			for (i in unique(sgp.iter[["sgp.panel.years.within"]])) {
 				if (sqlite.tf) {
@@ -284,13 +293,13 @@ function(sgp.data,
 							" AND GRADE in ('", paste(tmp.lookup[get(i)==1]$GRADE, collapse="', '"), "')", " AND ", i, " in (1)",
 							" AND YEAR in ('", paste(tmp.lookup[get(i)==1]$YEAR, collapse="', '"), "')", sep="")), 
 						key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", i))[tmp.lookup[get(i)==1], nomatch=0][,
-						'tmp.timevar':=paste(YEAR, CONTENT_AREA, i, sep="."), with=FALSE][, 
-							c("ID", "GRADE", "SCALE_SCORE", "YEAR_WITHIN", "tmp.timevar", sgp.scale.score.equated), with=FALSE])
+							'tmp.timevar':=paste(YEAR, CONTENT_AREA, i, sep="."), with=FALSE][, 
+								c("ID", "GRADE", "SCALE_SCORE", "ACHIEVEMENT_LEVEL", "YEAR_WITHIN", "tmp.timevar", sgp.scale.score.equated), with=FALSE])
 				} else {
 					setkeyv(sgp.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", i))
 					setkeyv(tmp.lookup, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", i))
 					suppressWarnings(tmp.lookup.list[[i]] <- data.table(sgp.data[tmp.lookup[get(i)==1], nomatch=0][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, i, sep="."), with=FALSE][,
-						c("ID", "GRADE", "SCALE_SCORE", "YEAR_WITHIN", "tmp.timevar", sgp.scale.score.equated), with=FALSE], key="ID")) ### Could be NULL and result in a warning
+						c("ID", "GRADE", "SCALE_SCORE", "ACHIEVEMENT_LEVEL", "YEAR_WITHIN", "tmp.timevar", sgp.scale.score.equated), with=FALSE], key="ID")) ### Could be NULL and result in a warning
 				}
 			}
 			if (sqlite.tf) dbDisconnect(con)
