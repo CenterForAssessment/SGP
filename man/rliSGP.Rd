@@ -25,11 +25,13 @@ rliSGP(
 	coefficient.matrices=NULL,
 	goodness.of.fit.print=FALSE,
 	return.updated.shell=FALSE,
+	fix.duplicates="KEEP.ALL",
     parallel.config=NULL)
 }
 
 \arguments{
-  \item{sgp_object}{The SGP object from which the goodness-of-fit data will be used.
+  \item{sgp_object}{An object of class SGP or a \code{data.frame} from which an SGP object can be produced. If data.frame is supplied, the current
+  window's data will be created from the last window present in the data.frame.
   }
   \item{additional.data}{Current window's data for UPDATE or EOW (end of window) processing. Can be NULL if new data all fed into argument
   'sgp_object' as data.frame.
@@ -38,7 +40,7 @@ rliSGP(
   }
   \item{content_areas}{Character vector indicating which content areas \code{rliSGP} should be run for ('MATHEMATICS', 'READING', and/or 'EARLY_LITERACY'). Default is all.
   }
-  \item{testing.window}{Argument indicating testing window being analyzed. Either 'FALL', 'WINTER', 'SPRING', 'EARLY_SPRING', 'LATE_SPRING' indicating what testing window's data is being analyzed.
+  \item{testing.window}{Argument indicating testing window being analyzed. Either 'FALL', 'WINTER', 'SPRING' indicating what testing window's data is being analyzed.
   }
   \item{eow.or.update}{Argument indicating whether end-of-window or within-window updates are being done. Either 'EOW' (end of window) or 'UPDATE' (within window).
   }
@@ -69,6 +71,9 @@ analysis. Default is NULL, no ID replacement is performed.
   }
   \item{return.updated.shell}{Boolean argument (defaults to FALSE) indicating whether to return \code{sgp_object} as part of call to \code{rliSGP}.
   }
+  \item{fix.duplicates}{Character argument (defaults to 'KEEP.ALL') indicating how to deal with duplicates submitted as part of data for analysis. Setting 'fix.duplicates' to null
+  sets no modification of duplicates.
+  }
   \item{parallel.config}{Argument passed to \code{\link{abcSGP}} or \code{\link{updateSGP}} to activate parallel processing with an appropriate backend.
   }
 }
@@ -82,7 +87,7 @@ analysis. Default is NULL, no ID replacement is performed.
 \dontrun{
 ####### For Within Window processing
 
-
+testSGP('RLI')
 
 ####### For End-of-Window processing
 

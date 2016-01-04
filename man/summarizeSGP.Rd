@@ -22,14 +22,14 @@ summarizeSGP(sgp_object,
 }
 
 \arguments{
-  \item{sgp_object}{A list containing long formatted data in the \code{@Data} slot. If summaries of student growth percentiles are requested, those quantities must first be produced (possibly by first using \code{\link{analyzeSGP}}) and subsequently combined with the \code{@Data} data (possibly with \code{\link{combineSGP}}).
+  \item{sgp_object}{An object of class SGP containing long formatted data in the \code{@Data} slot. If summaries of student growth percentiles are requested, those quantities must first be produced (possibly by first using \code{\link{analyzeSGP}}) and subsequently combined with the \code{@Data} data (possibly with \code{\link{combineSGP}}).
   }
   \item{state}{Acronym indicating state associated with the summaries for access to assessment program information embedded in \code{SGPstateData}.
   }
-  \item{years}{A vector indicating year(s) in which to produce summary tables associated with student growth percentile and percentile growth trajectory/projection analyses. If missing the
+  \item{years}{A character vector indicating year(s) in which to produce summary tables associated with student growth percentile and percentile growth trajectory/projection analyses. If missing the
 function will use the data to calculate years and produce summaries for the most recent three years.
   }
-  \item{content_areas}{A vector indicating content area(s) in which to produce student growth percentiles and/or student growth projections/trajectories. 
+  \item{content_areas}{A character vector indicating content area(s) in which to produce student growth percentiles and/or student growth projections/trajectories. 
 If missing the function will use the data to infer the content area(s) available for analyses.
   }
   \item{sgp.summaries}{A list giving the summaries requested for each group analyzed based upon the \code{summary.group} argument. The default (produced internal to summarizeSGP) summaries include:

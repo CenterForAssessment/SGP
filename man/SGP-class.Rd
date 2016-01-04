@@ -22,7 +22,7 @@ Objects can be created by calls of the form \code{new("SGP", ...)}, but this is 
     state specific variable names to SGP variable names as well as provide information for summarizeSGP on the types of summary tables to produce.}
     \item{\code{SGP}:}{A list including the output from \code{\link{analyzeSGP}}}
     \item{\code{Summary}:}{A list including the output from \code{\link{summarizeSGP}}}
-    \item{\code{Version}:}{A list including the version of the SGP package used to construct the SGP object and the date the object was created.}
+    \item{\code{Version}:}{A list of meta-data including the version of the SGP package used to construct the SGP object and the date the object was created.}
   }
 }
 

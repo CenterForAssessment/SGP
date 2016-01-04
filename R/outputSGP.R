@@ -26,7 +26,7 @@ function(sgp_object,
 	SCALE_SCORE <- CONTENT_AREA <- YEAR <- GRADE <- ID <- ETHNICITY <- GENDER <- LAST_NAME <- FIRST_NAME <- VALID_CASE <- DISTRICT_NUMBER <- SCHOOL_NUMBER <- YEAR_BY_CONTENT_AREA <- NULL
 	names.type <- names.provided <- names.output <- names.sgp <- STATE_ENROLLMENT_STATUS <- EMH_LEVEL <- STATE_ASSIGNED_ID <- .N <- TRANSFORMED_SCALE_SCORE <- GROUP <- STATE <- YEAR_WITHIN <- NULL
 	DISADVANTAGED_STATUS <- SPECIAL_EDUCATION_STATUS <- ELL_STATUS <- HLS_CODE <- IEP_CODE <- LANGUAGE_PROFICIENCY <- GIFTED_CODE <- FRL_CODE <- STUDENT_GROWTH_ID <- MIDDLE_NAME <- NULL
-	OCTOBER_ENROLLMENT_STATUS <- NULL
+	OCTOBER_ENROLLMENT_STATUS <- SCALE_SCORE_EQUATED <- NULL
 
 	### Create state (if missing) and tmp.state from sgp_object (if possible)
 
@@ -279,13 +279,14 @@ function(sgp_object,
 
 			started.at <- proc.time()
 			message(paste("\tStarted SchoolView STUDENT_GROWTH data production in outputSGP", date()))
+			slot.data <- copy(sgp_object@Data)
 
 		### Check arguments
 
-		if (!all(c("LAST_NAME", "FIRST_NAME") %in% names(sgp_object@Data))) {
+		if (!all(c("LAST_NAME", "FIRST_NAME") %in% names(slot.data))) {
 			message("\tNOTE: 'LAST_NAME' and 'FIRST_NAME' are not included in supplied data. Anonymized last names and first names will be supplied.")
 			outputSGP.anonymize <- TRUE
-			sgp_object@Data[['FIRST_NAME']] <- sgp_object@Data[['LAST_NAME']] <- as.character(NA)
+			slot.data[['FIRST_NAME']] <- slot.data[['LAST_NAME']] <- as.character(NA)
 		}
 
 		## Create group variable names
@@ -294,13 +295,13 @@ function(sgp_object,
 			output.groups.num <- which(!SGP::SGPstateData[[state]][["SGP_Configuration"]][["output.groups"]]==c("DISTRICT", "SCHOOL"))
 			output.groups.old <- c("DISTRICT", "SCHOOL")[output.groups.num]
 			output.groups.new <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["output.groups"]][output.groups.num]
-			setnames(sgp_object@Data, c(paste(output.groups.old, "NUMBER", sep="_"), paste(output.groups.old, "ENROLLMENT_STATUS", sep="_")),
+			setnames(slot.data, c(paste(output.groups.old, "NUMBER", sep="_"), paste(output.groups.old, "ENROLLMENT_STATUS", sep="_")),
 				c(paste(output.groups.old, "NUMBER_OLD", sep="_"), paste(output.groups.old, "ENROLLMENT_STATUS_OLD", sep="_")))
-			setnames(sgp_object@Data, paste(output.groups.new, "NUMBER", sep="_"), paste(output.groups.old, "NUMBER", sep="_"))
-			setnames(sgp_object@Data, paste(output.groups.new, "ENROLLMENT_STATUS", sep="_"), paste(output.groups.old, "ENROLLMENT_STATUS", sep="_"))
+			setnames(slot.data, paste(output.groups.new, "NUMBER", sep="_"), paste(output.groups.old, "NUMBER", sep="_"))
+			setnames(slot.data, paste(output.groups.new, "ENROLLMENT_STATUS", sep="_"), paste(output.groups.old, "ENROLLMENT_STATUS", sep="_"))
 			for (i in seq_along(output.groups.old)) {
-				levels(sgp_object@Data[[paste(output.groups.old[i], "ENROLLMENT_STATUS", sep="_")]]) <-
-					gsub(capwords(output.groups.new[i]), capwords(output.groups.old[i]), levels(sgp_object@Data[[paste(output.groups.old[i], "ENROLLMENT_STATUS", sep="_")]]))
+				levels(slot.data[[paste(output.groups.old[i], "ENROLLMENT_STATUS", sep="_")]]) <-
+					gsub(capwords(output.groups.new[i]), capwords(output.groups.old[i]), levels(slot.data[[paste(output.groups.old[i], "ENROLLMENT_STATUS", sep="_")]]))
 			}
 		}
 
@@ -326,7 +327,7 @@ function(sgp_object,
 				tmp.df[,EMH_LEVEL:=substr(as.character(tmp.df$EMH_LEVEL), 1, 1)]
 			}
 			if ("GENDER" %in% names(tmp.df) && is.factor(tmp.df$GENDER)) {
-				tmp.female <- grep("FEMALE", levels(sgp_object@Data$GENDER), ignore.case=TRUE)
+				tmp.female <- grep("FEMALE", levels(slot.data$GENDER), ignore.case=TRUE)
 				if (tmp.female==1) {
 					levels(tmp.df$GENDER) <- c("F", "M")
 				} else {
@@ -367,13 +368,13 @@ function(sgp_object,
 		#### Set key
 
 		long.key <- c("VALID_CASE", "YEAR", "CONTENT_AREA", "DISTRICT_NUMBER", "SCHOOL_NUMBER")
-		setkeyv(sgp_object@Data, long.key)
+		setkeyv(slot.data, long.key)
 
 
 		#### Year stuff
 
 		if (is.null(outputSGP_INDIVIDUAL.years)) {
-			tmp.years <- sort(unique(sgp_object@Data["VALID_CASE"][["YEAR"]]))
+			tmp.years <- sort(unique(slot.data["VALID_CASE"][["YEAR"]]))
 			tmp.last.year <- tail(tmp.years, 1)
 			if (length(grep("_", tmp.years)) > 0) {
 				tmp.years.short <- sapply(strsplit(tmp.years, "_"), '[', 2)
@@ -383,7 +384,7 @@ function(sgp_object,
 				tmp.last.year.short <- tmp.last.year
 			}
 		} else {
-			tmp.all.years <- sort(unique(sgp_object@Data["VALID_CASE"][["YEAR"]]))
+			tmp.all.years <- sort(unique(slot.data["VALID_CASE"][["YEAR"]]))
 			tmp.years <- tmp.all.years[1:which(tmp.all.years==tail(sort(outputSGP_INDIVIDUAL.years), 1))]
 			tmp.last.year <- tail(tmp.years, 1)
 			if (length(grep("_", tmp.years)) > 0) {
@@ -399,30 +400,34 @@ function(sgp_object,
 		#### Content area stuff
 
 		if (is.null(outputSGP_INDIVIDUAL.content_areas)) {
-			tmp.content_areas <- sort(unique(sgp_object@Data[SJ("VALID_CASE", tmp.last.year)][["CONTENT_AREA"]]))
+			tmp.content_areas <- sort(unique(slot.data[SJ("VALID_CASE", tmp.last.year)][["CONTENT_AREA"]]))
 		} else {
 			tmp.content_areas <- sort(outputSGP_INDIVIDUAL.content_areas)
 		}
 
 		### subset data
 
-		tmp.districts.and.schools <- unique(data.table(sgp_object@Data[CJ("VALID_CASE", tmp.last.year, tmp.content_areas)][,
+		tmp.districts.and.schools <- unique(data.table(slot.data[CJ("VALID_CASE", tmp.last.year, tmp.content_areas)][,
 								list(VALID_CASE, YEAR, CONTENT_AREA, DISTRICT_NUMBER, SCHOOL_NUMBER, EMH_LEVEL)], key=key(sgp_object)))
-		report.ids <- data.table(sgp_object@Data[tmp.districts.and.schools][VALID_CASE=="VALID_CASE" & STATE_ENROLLMENT_STATUS=="Enrolled State: Yes" & !is.na(EMH_LEVEL)][,
+		report.ids <- data.table(slot.data[tmp.districts.and.schools][VALID_CASE=="VALID_CASE" & STATE_ENROLLMENT_STATUS=="Enrolled State: Yes" & !is.na(EMH_LEVEL)][,
 			list(ID, FIRST_NAME, LAST_NAME, DISTRICT_NUMBER, SCHOOL_NUMBER, EMH_LEVEL)], key=c("ID", "FIRST_NAME", "LAST_NAME", "DISTRICT_NUMBER", "SCHOOL_NUMBER"))
 		setkey(report.ids, ID)
 		report.ids <- unique(report.ids)
-		setkeyv(sgp_object@Data, c("ID", "CONTENT_AREA", "YEAR", "VALID_CASE"))
-		tmp.table <- sgp_object@Data[data.table(data.table(CJ(report.ids[["ID"]], tmp.content_areas, tmp.years, "VALID_CASE"), key="V1")[report.ids], key=c("V1", "V2", "V3", "V4"))]
+		setkeyv(slot.data, c("ID", "CONTENT_AREA", "YEAR", "VALID_CASE"))
+		tmp.table <- slot.data[data.table(data.table(CJ(report.ids[["ID"]], tmp.content_areas, tmp.years, "VALID_CASE"), key="V1")[report.ids], key=c("V1", "V2", "V3", "V4"))]
 		tmp.table[,FIRST_NAME:=NULL]; tmp.table[,LAST_NAME:=NULL]; tmp.table[,DISTRICT_NUMBER:=NULL]; tmp.table[,SCHOOL_NUMBER:=NULL]; tmp.table[,EMH_LEVEL:=NULL]
 		setnames(tmp.table, "i.FIRST_NAME", "FIRST_NAME"); setnames(tmp.table, "i.LAST_NAME", "LAST_NAME");
 		setnames(tmp.table, "i.DISTRICT_NUMBER", "DISTRICT_NUMBER"); setnames(tmp.table, "i.SCHOOL_NUMBER", "SCHOOL_NUMBER"); setnames(tmp.table, "i.EMH_LEVEL", "EMH_LEVEL")
-		setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))
+		setkeyv(slot.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))
 
 		### Create transformed scale scores
 
 		setkeyv(tmp.table, c("CONTENT_AREA", "YEAR", "GRADE"))
-		tmp.table[, TRANSFORMED_SCALE_SCORE:=piecewiseTransform(SCALE_SCORE, state, CONTENT_AREA, YEAR, GRADE), by=list(CONTENT_AREA, YEAR, GRADE)]
+		if ("SCALE_SCORE_EQUATED" %in% names(tmp.table)) {
+			tmp.table[, TRANSFORMED_SCALE_SCORE:=piecewiseTransform(SCALE_SCORE_EQUATED, state, CONTENT_AREA, YEAR, GRADE), by=list(CONTENT_AREA, YEAR, GRADE)]
+		} else {
+			tmp.table[, TRANSFORMED_SCALE_SCORE:=piecewiseTransform(SCALE_SCORE, state, CONTENT_AREA, YEAR, GRADE), by=list(CONTENT_AREA, YEAR, GRADE)]
+		}
 
 		#### Anonymize (if requested) (NOT necessary if wide data is provided)
 
