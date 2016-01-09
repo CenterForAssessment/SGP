@@ -32,6 +32,7 @@ function(sgp_object,
 
 	if (!state %in% c("RLI", "RLI_UK")) stop("\tNOTE: 'rliSGP' only works with states RLI or RLI_UK currently")
 
+
 	### Utility functions
 
 	convertToBaseline <- function(baseline_matrices) {
@@ -92,18 +93,20 @@ function(sgp_object,
 
 	if (state=="RLI_UK") content_areas <- "READING"
 
-	if (!is.null(coefficient.matrices)) SGPstateData[[state]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <- coefficient.matrices
-
 	if (is.data.frame(sgp_object)) {
 		sgp_object <- data.table(sgp_object, key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 		tmp.last.year <- tail(sort(unique(sgp_object[['YEAR']])), 1)
 		additional.data <- sgp_object[YEAR==tmp.last.year]
 		sgp_object <- new("SGP", Data=suppressMessages(prepareSGP(sgp_object[YEAR!=tmp.last.year], state=state)@Data), Version=getVersion(sgp_object))
-		if (is.null(coefficient.matrices) && length(find.package("RLImatrices", quiet=TRUE))) {
-			eval(parse(text="require(RLImatrices)"))
-			SGPstateData[[state]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <-
-			eval(parse(text=paste(paste(state, "SGPt_Baseline_Matrices", sep="_"), "$", paste(state, "SGPt_Baseline_Matrices", max(tail(sort(unique(additional.data[['YEAR']])), 1), "2013_2014.1"), sep="_"), sep="")))
-		}
+	}
+
+	if (length(find.package("RLImatrices", quiet=TRUE))==0) stop("Package RLImatrices required from GitHub.")
+	if (is.null(coefficient.matrices)) {
+		eval(parse(text="require(RLImatrices)"))
+		SGPstateData[[state]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <-
+		eval(parse(text=paste(paste(state, "SGPt_Baseline_Matrices", sep="_"), "$", paste(state, "SGPt_Baseline_Matrices", max(tail(sort(unique(additional.data[['YEAR']])), 1), "2013_2014.1"), sep="_"), sep="")))
+	} else {
+		SGPstateData[[state]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <- coefficient.matrices
 	}
 
 	if (!is.null(testing.window) && (length(testing.window) != 1 || !testing.window %in% c("FALL", "WINTER", "SPRING"))) {
