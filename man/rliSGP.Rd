@@ -26,6 +26,7 @@ rliSGP(
 	goodness.of.fit.print=FALSE,
 	return.updated.shell=FALSE,
 	fix.duplicates="KEEP.ALL",
+	eow.calculate.sgps=FALSE,
     parallel.config=NULL)
 }
 
@@ -73,6 +74,9 @@ analysis. Default is NULL, no ID replacement is performed.
   }
   \item{fix.duplicates}{Character argument (defaults to 'KEEP.ALL') indicating how to deal with duplicates submitted as part of data for analysis. Setting 'fix.duplicates' to null
   sets no modification of duplicates.
+  }
+  \item{eow.calculate.sgps}{Boolean argument passed to \code{\link{updateSGP}} further passed to \code{\link{analyzeSGP}} indicating whether student
+growth percentiles are calculated as part of EOW analyses. Default is FALSE which results in just coefficient matrices being calculated.
   }
   \item{parallel.config}{Argument passed to \code{\link{abcSGP}} or \code{\link{updateSGP}} to activate parallel processing with an appropriate backend.
   }

@@ -18,6 +18,7 @@ function(sgp_object,
 	goodness.of.fit.print=FALSE,
 	return.updated.shell=FALSE,
 	fix.duplicates="KEEP.ALL",
+	eow.calculate.sgps=FALSE,
 	parallel.config=NULL) {
 
 	YEAR <- GRADE <- ID <- NEW_ID <- .EACHI <- DATE <- NULL
@@ -191,7 +192,7 @@ function(sgp_object,
 				what_sgp_object=sgp_object,
 				with_sgp_data_LONG=additional.data,
 				state=state,
-				steps=c("prepareSGP", "analyzeSGP", "combineSGP", "outputSGP"),
+				steps=c("prepareSGP", "analyzeSGP"),
 				save.intermediate.results=save.intermediate.results,
 				sgp.percentiles=TRUE,
 				sgp.projections=FALSE,
@@ -205,6 +206,7 @@ function(sgp_object,
 				update.old.data.with.new=TRUE,
 				goodness.of.fit.print=goodness.of.fit.print,
 				SGPt=SGPt,
+				sgp.percentiles.calculate.sgps=eow.calculate.sgps,
 				parallel.config=parallel.config,
 				sgp.config=getRLIConfig(content_areas, configuration.year, testing.window, SGPt))
 
