@@ -188,19 +188,20 @@ function(sgp_object,
 			assign(update.shell.name, prepareSGP(subset(tmp.data, YEAR %in% tail(sort(unique(tmp.data$YEAR)), num.windows.to.keep)), state=state, create.additional.variables=FALSE))
 			save(list=update.shell.name, file=paste(update.shell.name, "Rdata", sep="."))
 		} else {
+			if (eow.calculate.sgps) my.steps <- c("prepareSGP", "analyzeSGP", "combineSGP", "outputSGP") else steps <- c("prepareSGP", "analyzeSGP")
 			sgp_object <- updateSGP(
 				what_sgp_object=sgp_object,
 				with_sgp_data_LONG=additional.data,
 				state=state,
-				steps=c("prepareSGP", "analyzeSGP"),
+				steps=steps,
 				save.intermediate.results=save.intermediate.results,
 				sgp.percentiles=TRUE,
 				sgp.projections=FALSE,
 				sgp.projections.lagged=FALSE,
-				sgp.percentiles.baseline=sgp.percentiles.baseline,
-				sgp.projections.baseline=sgp.projections.baseline,
-				sgp.projections.lagged.baseline=sgp.projections.lagged.baseline,
-				sgp.target.scale.scores=sgp.target.scale.scores,
+				sgp.percentiles.baseline=sgp.percentiles.baseline & eow.calculate.sgps,
+				sgp.projections.baseline=sgp.projections.baseline & eow.calculate.sgps,
+				sgp.projections.lagged.baseline=sgp.projections.lagged.baseline & eow.calculate.sgps,
+				sgp.target.scale.scores=sgp.target.scale.scores & eow.calculate.sgps,
 				sgp.target.scale.scores.only=TRUE,
 				outputSGP.output.type="RLI",
 				update.old.data.with.new=TRUE,
