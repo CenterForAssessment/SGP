@@ -218,7 +218,7 @@ function(sgp_object,
 			save(list=update.shell.name, file=paste(update.shell.name, "Rdata", sep="."))
 
 
-			### Convert and save coefficient matrices
+			### Convert and save coefficient matrices for inclusion in RLImatrices package
 
 			window.index <- match(testing.window, c("FALL", "WINTER", "SPRING"))
 			current.window <- paste(configuration.year, window.index, sep=".")

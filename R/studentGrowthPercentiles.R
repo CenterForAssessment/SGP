@@ -1663,7 +1663,7 @@ function(panel.data,         ## REQUIRED
 				paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label, " (N=", format(dim(quantile.data)[1], big.mark=","), ")", sep=""))
 		} else {
 			message(paste("\t\tContent Area: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ",
-				paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
+				paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label, " (N=", format(max.cohort.size, big.mark=","), ")", sep=""))
 		}
 		if (verbose.output) message(Verbose_Messages)
 		message(c(tmp.messages, "\tFinished SGP Student Growth Percentile Analysis: ", date(), " in ", convertTime(timetaken(started.at)), "\n"))
