@@ -213,7 +213,7 @@ function(sgp_object,
 
 			### Create and save new UPDATE_SHELL
 
-			assign(update.shell.name, prepareSGP(subset(sgp_object@Data, YEAR %in% tail(sort(unique(sgp_object@Data$YEAR)), num.windows.to.keep)),
+			assign(update.shell.name, prepareSGP(sgp_object@Data[YEAR %in% tail(sort(unique(sgp_object@Data$YEAR)), num.windows.to.keep)],
 				state=state, create.additional.variables=FALSE))
 			save(list=update.shell.name, file=paste(update.shell.name, "Rdata", sep="."))
 
@@ -226,12 +226,12 @@ function(sgp_object,
 			if (window.index==3) next.window <- paste(yearIncrement(configuration.year, 1), 1, sep=".") else next.window <- paste(configuration.year, c(2, 3, 1)[window.index], sep=".")
 			new.matrices <-convertToBaseline(sgp_object@SGP$Coefficient_Matrices[grep(configuration.year, names(sgp_object@SGP$Coefficient_Matrices))])
 			old.matrices <- SGPstateData[[state]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]]
-			year.to.replace <- sort(unique(sapply(lapply(sapply(names(old.matrices[[1]]), strsplit, '[.]'), '[', 2:3), paste, collapse=".")))
-			for (content_area.iter in c("EARLY_LITERACY", "MATHEMATICS", "READING")) {
-					old.matrices[[content_area.iter]][grep(year.to.replace %in% names(old.matrices[[content_area.iter]]))] <- NULL
+			year.to.replace <- head(sort(unique(sapply(lapply(sapply(names(old.matrices[[1]]), strsplit, '[.]'), '[', 2:3), paste, collapse="."))), 1)
+			for (content_area.iter in c("EARLY_LITERACY.BASELINE", "READING.BASELINE", "MATHEMATICS.BASELINE")) {
+					old.matrices[[content_area.iter]][grep(year.to.replace, names(old.matrices[[content_area.iter]]))] <- NULL
 					old.matrices[[content_area.iter]] <- c(old.matrices[[content_area.iter]], new.matrices[[content_area.iter]])
 			}
-			assign(paste(state, "SGPt_Baseline_Matrices", sep="_"), old.matrices)
+			eval(parse(text=paste(paste(state, "SGPt_Baseline_Matrices$", sep="_"), paste(state, "SGPt_Baseline_Matrices", next.window, sep="_"), " <- old.matrices", sep="")))
 			save(list=paste(state, "SGPt_Baseline_Matrices", sep="_"), file=paste(paste(state, "SGPt_Baseline_Matrices", sep="_"), "Rdata", sep="."))
 
 #			if (testing.window=="FALL") tmp.separator <- "1"
