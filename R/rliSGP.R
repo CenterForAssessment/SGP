@@ -220,14 +220,28 @@ function(sgp_object,
 
 			### Convert and save coefficient matrices
 
-			if (testing.window=="FALL") tmp.separator <- "1"
-			if (testing.window=="WINTER") tmp.separator <- "2"
-			if (testing.window=="SPRING") tmp.separator <- "3"
-			tmp.index <- grep(configuration.year, names(sgp_object@SGP$Coefficient_Matrices))
-			assign(paste(state, "_Baseline_Matrices_", paste(yearIncrement(configuration.year, 1), tmp.separator, sep="."), sep=""),
-				convertToBaseline(sgp_object@SGP$Coefficient_Matrices[tmp.index]))
-			save(list=paste(state, "_Baseline_Matrices_", paste(yearIncrement(configuration.year, 1), tmp.separator, sep="."), sep=""),
-				file=paste(state, "_Baseline_Matrices_", paste(yearIncrement(configuration.year, 1), tmp.separator, "Rdata", sep="."), sep=""))
+			window.index <- match(testing.window, c("FALL", "WINTER", "SPRING"))
+			current.window <- paste(configuration.year, window.index, sep=".")
+			if (window.index==1) previous.window <- paste(yearIncrement(configuration.year, -1), 3, sep=".") else previous.window <- paste(configuration.year, c(3, 1, 2)[window.index], sep=".")
+			if (window.index==3) next.window <- paste(yearIncrement(configuration.year, 1), 1, sep=".") else next.window <- paste(configuration.year, c(2, 3, 1)[window.index], sep=".")
+			new.matrices <-convertToBaseline(sgp_object@SGP$Coefficient_Matrices[grep(configuration.year, names(sgp_object@SGP$Coefficient_Matrices))])
+			old.matrices <- SGPstateData[[state]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]]
+			year.to.replace <- sort(unique(sapply(lapply(sapply(names(old.matrices[[1]]), strsplit, '[.]'), '[', 2:3), paste, collapse=".")))
+			for (content_area.iter in c("EARLY_LITERACY", "MATHEMATICS", "READING")) {
+					old.matrices[[content_area.iter]][grep(year.to.replace %in% names(old.matrices[[content_area.iter]]))] <- NULL
+					old.matrices[[content_area.iter]] <- c(old.matrices[[content_area.iter]], new.matrices[[content_area.iter]])
+			}
+			assign(paste(state, "SGPt_Baseline_Matrices", sep="_"), old.matrices)
+			save(list=paste(state, "SGPt_Baseline_Matrices", sep="_"), file=paste(paste(state, "SGPt_Baseline_Matrices", sep="_"), "Rdata", sep="."))
+
+#			if (testing.window=="FALL") tmp.separator <- "1"
+#			if (testing.window=="WINTER") tmp.separator <- "2"
+#			if (testing.window=="SPRING") tmp.separator <- "3"
+#			tmp.index <- grep(configuration.year, names(sgp_object@SGP$Coefficient_Matrices))
+#			assign(paste(state, "_Baseline_Matrices_", paste(yearIncrement(configuration.year, 1), tmp.separator, sep="."), sep=""),
+#				convertToBaseline(sgp_object@SGP$Coefficient_Matrices[tmp.index]))
+#			save(list=paste(state, "_Baseline_Matrices_", paste(yearIncrement(configuration.year, 1), tmp.separator, sep="."), sep=""),
+#				file=paste(state, "_Baseline_Matrices_", paste(yearIncrement(configuration.year, 1), tmp.separator, "Rdata", sep="."), sep=""))
 		}
 	} ### END END_OF_WINDOW scripts
 
