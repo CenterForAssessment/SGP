@@ -236,8 +236,8 @@ function(sgp_object,
 			}
 			eval(parse(text=paste(paste(state, "SGPt_Baseline_Matrices$", sep="_"), paste(state, "SGPt_Baseline_Matrices", matrix.window, sep="_"), " <- old.matrices", sep="")))
 			save(list=paste(state, "SGPt_Baseline_Matrices", sep="_"), file=paste(paste(state, "SGPt_Baseline_Matrices", sep="_"), "rda", sep="."), compress="xz")
-			message(paste("\tNOTE: ", paste(state, "SGPt_Baseline_Matrices", sep="_"), " saved to working directory contains matrices for use in ", matrix.window, ".\n", sep=""))
-			message(paste("\t\tAdd", paste(paste(state, "SGPt_Baseline_Matrices", sep="_"), "rda", sep="."), "to the RLImatrices GitHub repo 'data' directory,\n"))
+			message(paste("\tNOTE: ", paste(state, "SGPt_Baseline_Matrices", sep="_"), " saved to working directory contains matrices for use in ", matrix.window, ".", sep=""))
+			message(paste("\t\tAdd", paste(paste(state, "SGPt_Baseline_Matrices", sep="_"), "rda", sep="."), "to the RLImatrices GitHub repo 'data' directory,"))
 			message("\t\tupdate version number/date, tag repo and commit tagged version to GitHub.\n")
 		}
 	} ### END END_OF_WINDOW scripts
