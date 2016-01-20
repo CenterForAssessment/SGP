@@ -50,6 +50,7 @@ updateSGP(
 	SGPt=NULL,
 	sgp.percentiles.equated=NULL,
 	sgp.percentiles.equating.method=NULL,
+	sgp.percentiles.calculate.sgps=TRUE,
 	fix.duplicates=NULL,
 	...)
 }
@@ -135,6 +136,10 @@ If missing the function will use the data to infer all the grade progressions fo
   }
   \item{sgp.percentiles.equating.method}{Character vector argument passed to \code{\link{analyzeSGP}} indicating type(s) of equating method to used if \code{sgp.percentiles.equated=TRUE}.
   Default is NULL indicating 'equipercentile' equating. Options include 'identity', 'mean', 'linear', and 'equipercentile'.
+  }
+  \item{sgp.percentiles.calculate.sgps}{Boolean argument passed to \code{\link{abcSGP}} and \code{\link{analyzeSGP}} indicating whether to produce
+student growth percentiles as part of call to \code{\link{studentGrowthPercentiles}}. Default is TRUE. Setting to FALSE produces only coefficient
+matrices.
   }
   \item{fix.duplicates}{Argument to control how \code{prepareSGP} deals with duplicate records based upon the key of VALID_CASE, CONTENT_AREA, YEAR, and ID.
   The function currently warns of duplicate records and doesn't modify data. If set to TRUE, \code{prepareSGP} tries to

@@ -35,6 +35,7 @@ function(sgp_object,
          sgp.sqlite=NULL,
          sgp.percentiles.equated=NULL,
          sgp.percentiles.equating.method=NULL,
+         sgp.percentiles.calculate.sgps=TRUE,
          SGPt=NULL,
          ...) {
 
@@ -784,6 +785,7 @@ function(sgp_object,
 						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.percentiles"),
                         SGPt.max.time=SGPt.max.time,
+                        calculate.sgps=sgp.percentiles.calculate.sgps,
 						parallel.config=par.start$Lower_Level_Parallel,
 						...))
 					}
@@ -827,6 +829,7 @@ function(sgp_object,
 						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.percentiles"),
                         SGPt.max.time=SGPt.max.time,
+                        calculate.sgps=sgp.percentiles.calculate.sgps,
 						parallel.config=par.start$Lower_Level_Parallel,
 						...))
 
@@ -871,6 +874,7 @@ function(sgp_object,
 						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.percentiles"),
                         SGPt.max.time=SGPt.max.time,
+                        calculate.sgps=sgp.percentiles.calculate.sgps,
 						parallel.config=par.start$Lower_Level_Parallel,
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 
@@ -1808,6 +1812,7 @@ function(sgp_object,
 					max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 					SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.percentiles"),
                     SGPt.max.time=SGPt.max.time,
+                    calculate.sgps=sgp.percentiles.calculate.sgps,
 					...)
 			}
 		} ## END if sgp.percentiles

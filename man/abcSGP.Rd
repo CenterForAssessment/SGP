@@ -49,6 +49,7 @@ abcSGP(sgp_object,
 	sgp.sqlite=NULL,
 	sgp.percentiles.equated=NULL,
     sgp.percentiles.equating.method=NULL,
+	sgp.percentiles.calculate.sgps=TRUE,
 	SGPt=NULL)
 }
 
@@ -152,6 +153,10 @@ If missing the function will use the data to infer all the grade progressions fo
   }
   \item{sgp.percentiles.equating.method}{Character vector argument passed to \code{\link{analyzeSGP}} indicating type(s) of equating method to used if \code{sgp.percentiles.equated=TRUE}.
   Default is NULL indicating 'equipercentile' equating. Options include 'identity', 'mean', 'linear', and 'equipercentile'.
+  }
+  \item{sgp.percentiles.calculate.sgps}{Boolean argument passed to \code{\link{analyzeSGP}} indicating whether student growth percentiles are
+produced as part of calls to the \code{\link{studentGrowthPercentiles}} function. Default is TRUE. Setting to FALSE produces only coefficient
+matrices.
   }
   \item{SGPt}{Argument (defaults to NULL) indicating whether to perform time dependent SGP analyses (SGPt).
   }
