@@ -18,6 +18,7 @@ function(sgp_object,
 	goodness.of.fit.print=FALSE,
 	return.updated.shell=FALSE,
 	fix.duplicates="KEEP.ALL",
+	eow.calculate.sgps=FALSE,
 	parallel.config=NULL) {
 
 	YEAR <- GRADE <- ID <- NEW_ID <- .EACHI <- DATE <- NULL
@@ -93,11 +94,11 @@ function(sgp_object,
 
 	if (state=="RLI_UK") content_areas <- "READING"
 
-	if (is.data.frame(sgp_object)) {
-		sgp_object <- data.table(sgp_object, key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
+	if (long.data.supplied <- is.data.frame(sgp_object)) {
 		tmp.last.year <- tail(sort(unique(sgp_object[['YEAR']])), 1)
 		additional.data <- sgp_object[YEAR==tmp.last.year]
 		sgp_object <- new("SGP", Data=suppressMessages(prepareSGP(sgp_object[YEAR!=tmp.last.year], state=state)@Data), Version=getVersion(sgp_object))
+		gc(FALSE)
 	}
 
 	if (length(find.package("RLImatrices", quiet=TRUE))==0) stop("Package RLImatrices required from GitHub.")
@@ -187,44 +188,57 @@ function(sgp_object,
 			assign(update.shell.name, prepareSGP(subset(tmp.data, YEAR %in% tail(sort(unique(tmp.data$YEAR)), num.windows.to.keep)), state=state, create.additional.variables=FALSE))
 			save(list=update.shell.name, file=paste(update.shell.name, "Rdata", sep="."))
 		} else {
+			if (eow.calculate.sgps) my.steps <- c("prepareSGP", "analyzeSGP", "combineSGP", "outputSGP") else steps <- c("prepareSGP", "analyzeSGP")
 			sgp_object <- updateSGP(
 				what_sgp_object=sgp_object,
 				with_sgp_data_LONG=additional.data,
 				state=state,
-				steps=c("prepareSGP", "analyzeSGP", "combineSGP", "outputSGP"),
+				steps=steps,
 				save.intermediate.results=save.intermediate.results,
 				sgp.percentiles=TRUE,
 				sgp.projections=FALSE,
 				sgp.projections.lagged=FALSE,
-				sgp.percentiles.baseline=sgp.percentiles.baseline,
-				sgp.projections.baseline=sgp.projections.baseline,
-				sgp.projections.lagged.baseline=sgp.projections.lagged.baseline,
-				sgp.target.scale.scores=sgp.target.scale.scores,
+				sgp.percentiles.baseline=sgp.percentiles.baseline & eow.calculate.sgps,
+				sgp.projections.baseline=sgp.projections.baseline & eow.calculate.sgps,
+				sgp.projections.lagged.baseline=sgp.projections.lagged.baseline & eow.calculate.sgps,
+				sgp.target.scale.scores=sgp.target.scale.scores & eow.calculate.sgps,
 				sgp.target.scale.scores.only=TRUE,
 				outputSGP.output.type="RLI",
 				update.old.data.with.new=TRUE,
 				goodness.of.fit.print=goodness.of.fit.print,
 				SGPt=SGPt,
+				sgp.percentiles.calculate.sgps=eow.calculate.sgps,
 				parallel.config=parallel.config,
 				sgp.config=getRLIConfig(content_areas, configuration.year, testing.window, SGPt))
 
 			### Create and save new UPDATE_SHELL
 
-			assign(update.shell.name, prepareSGP(subset(sgp_object@Data, YEAR %in% tail(sort(unique(sgp_object@Data$YEAR)), num.windows.to.keep)),
-				state=state, create.additional.variables=FALSE))
-			save(list=update.shell.name, file=paste(update.shell.name, "Rdata", sep="."))
+			if (!long.data.supplied) {
+				assign(update.shell.name, prepareSGP(sgp_object@Data[YEAR %in% tail(sort(unique(sgp_object@Data$YEAR)), num.windows.to.keep)],
+					state=state, create.additional.variables=FALSE))
+				save(list=update.shell.name, file=paste(update.shell.name, "Rdata", sep="."))
+			}
 
 
-			### Convert and save coefficient matrices
+			### Convert and save coefficient matrices for inclusion in RLImatrices package
 
-			if (testing.window=="FALL") tmp.separator <- "1"
-			if (testing.window=="WINTER") tmp.separator <- "2"
-			if (testing.window=="SPRING") tmp.separator <- "3"
-			tmp.index <- grep(configuration.year, names(sgp_object@SGP$Coefficient_Matrices))
-			assign(paste(state, "_Baseline_Matrices_", paste(yearIncrement(configuration.year, 1), tmp.separator, sep="."), sep=""),
-				convertToBaseline(sgp_object@SGP$Coefficient_Matrices[tmp.index]))
-			save(list=paste(state, "_Baseline_Matrices_", paste(yearIncrement(configuration.year, 1), tmp.separator, sep="."), sep=""),
-				file=paste(state, "_Baseline_Matrices_", paste(yearIncrement(configuration.year, 1), tmp.separator, "Rdata", sep="."), sep=""))
+			if (testing.window=="FALL") {
+				matrix.window <- paste(configuration.year, 3, sep=".")
+			} else {
+				matrix.window <- paste(yearIncrement(configuration.year, 1), c(3, 1, 2)[match(testing.window, c("FALL", "WINTER", "SPRING"))], sep=".")
+			}
+			new.matrices <-convertToBaseline(sgp_object@SGP$Coefficient_Matrices[grep(configuration.year, names(sgp_object@SGP$Coefficient_Matrices))])
+			old.matrices <- SGPstateData[[state]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]]
+			year.to.replace <- head(sort(unique(sapply(lapply(sapply(names(old.matrices[[1]]), strsplit, '[.]'), '[', 2:3), paste, collapse="."))), 1)
+			for (content_area.iter in c("EARLY_LITERACY.BASELINE", "READING.BASELINE", "MATHEMATICS.BASELINE")) {
+					old.matrices[[content_area.iter]][grep(year.to.replace, names(old.matrices[[content_area.iter]]))] <- NULL
+					old.matrices[[content_area.iter]] <- c(old.matrices[[content_area.iter]], new.matrices[[content_area.iter]])
+			}
+			eval(parse(text=paste(paste(state, "SGPt_Baseline_Matrices$", sep="_"), paste(state, "SGPt_Baseline_Matrices", matrix.window, sep="_"), " <- old.matrices", sep="")))
+			save(list=paste(state, "SGPt_Baseline_Matrices", sep="_"), file=paste(paste(state, "SGPt_Baseline_Matrices", sep="_"), "rda", sep="."), compress="xz")
+			message(paste("\tNOTE: ", paste(state, "SGPt_Baseline_Matrices", sep="_"), " saved to working directory contains matrices for use in ", matrix.window, ".", sep=""))
+			message(paste("\t\tAdd", paste(paste(state, "SGPt_Baseline_Matrices", sep="_"), "rda", sep="."), "to the RLImatrices GitHub repo 'data' directory,"))
+			message("\t\tupdate version number/date, tag repo and commit tagged version to GitHub.\n")
 		}
 	} ### END END_OF_WINDOW scripts
 

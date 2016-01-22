@@ -36,6 +36,7 @@ function(sgp_object,
 	sgp.sqlite = NULL,
 	sgp.percentiles.equated=NULL,
 	sgp.percentiles.equating.method=NULL,
+	sgp.percentiles.calculate.sgps=TRUE,
 	SGPt=NULL) {
 
         started.at <- proc.time()
@@ -112,6 +113,7 @@ function(sgp_object,
 			sgp.sqlite=sgp.sqlite,
 			sgp.percentiles.equated=sgp.percentiles.equated,
 			sgp.percentiles.equating.method=sgp.percentiles.equating.method,
+			sgp.percentiles.calculate.sgps=sgp.percentiles.calculate.sgps,
 			SGPt=SGPt)
 
                 if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")

@@ -33,6 +33,7 @@ function(what_sgp_object=NULL,
 	SGPt=NULL,
 	sgp.percentiles.equated=NULL,
 	sgp.percentiles.equating.method=NULL,
+	sgp.percentiles.calculate.sgps=TRUE,
 	fix.duplicates=NULL,
 	...) {
 
@@ -164,6 +165,7 @@ function(what_sgp_object=NULL,
 					SGPt=SGPt,
 					sgp.percentiles.equated=sgp.percentiles.equated,
 					sgp.percentiles.equating.method=sgp.percentiles.equating.method,
+					sgp.percentiles.calculate.sgps=sgp.percentiles.calculate.sgps,
 					parallel.config=parallel.config,
 					...
 					)
@@ -233,6 +235,7 @@ function(what_sgp_object=NULL,
 						SGPt=SGPt,
 						sgp.percentiles.equated=sgp.percentiles.equated,
 						sgp.percentiles.equating.method=sgp.percentiles.equating.method,
+						sgp.percentiles.calculate.sgps=sgp.percentiles.calculate.sgps,
 						parallel.config=parallel.config,
 						...)
 
@@ -279,6 +282,7 @@ function(what_sgp_object=NULL,
 							SGPt=SGPt,
 							sgp.percentiles.equated=sgp.percentiles.equated,
 							sgp.percentiles.equating.method=sgp.percentiles.equating.method,
+							sgp.percentiles.calculate.sgps=sgp.percentiles.calculate.sgps,
 							parallel.config=parallel.config,
 							...)
 
@@ -435,6 +439,7 @@ function(what_sgp_object=NULL,
 							SGPt=SGPt,
 							sgp.percentiles.equated=sgp.percentiles.equated,
 							sgp.percentiles.equating.method=sgp.percentiles.equating.method,
+							sgp.percentiles.calculate.sgps=sgp.percentiles.calculate.sgps,
 							parallel.config=parallel.config,
 							...)
 
