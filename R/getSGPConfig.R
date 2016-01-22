@@ -127,7 +127,7 @@ function(sgp_object,
 
 				### Create sgp.exact.grade.progression
 				if (!is.null(sgp.config[[a]][['sgp.exact.grade.progression']])) {
-					par.sgp.config[[b.iter[b]]][['sgp.exact.grade.progression']] <- sgp.config[[a]][['sgp.exact.grade.progression']][b]
+					par.sgp.config[[b.iter[b]]][['sgp.exact.grade.progression']] <- sgp.config[[a]][['sgp.exact.grade.progression']][[b]]
 				} else {
 					par.sgp.config[[b.iter[b]]][['sgp.exact.grade.progression']] <- FALSE
 				}
