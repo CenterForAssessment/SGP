@@ -31,7 +31,7 @@
 				if (.Platform$OS.type != "unix") {
 					parallel.config <- paste("list(BACKEND='FOREACH', TYPE='doParallel', WORKERS=list(TAUS=", number.cores, "))", sep="")
 				} else  parallel.config <- paste("list(BACKEND='PARALLEL', WORKERS=list(TAUS=", number.cores, "))", sep="")
-			}
+			} else parallel.config <- test.option[['parallel.config']]
 
 			tmp.messages <- "##### Begin testSGP test number 0 #####\n\n"
 
@@ -173,7 +173,7 @@
 				if (.Platform$OS.type != "unix") {
 					parallel.config <- paste("list(BACKEND='FOREACH', TYPE='doParallel', WORKERS=list(TAUS=", number.cores, "))", sep="")
 				} else  parallel.config <- paste("list(BACKEND='PARALLEL', WORKERS=list(TAUS=", number.cores, "))", sep="")
-			}
+			} else parallel.config <- test.option[['parallel.config']]
 
 			if (toupper(TEST_NUMBER) == "1B") sgp.sqlite <- TRUE else sgp.sqlite <- FALSE
 
@@ -845,7 +845,7 @@
 				if (.Platform$OS.type != "unix") {
 					parallel.config <- paste("list(BACKEND='FOREACH', TYPE='doParallel', WORKERS=list(SIMEX=", number.cores, ", TAUS=", number.cores, "))", sep="")
 				} else 	parallel.config <- paste("list(BACKEND='PARALLEL', WORKERS=list(SIMEX=", number.cores, ", TAUS=", number.cores, "))", sep="")
-			}
+			} else parallel.config <- test.option[['parallel.config']]
 
 			expression.to.evaluate <-
 				paste("\nDemonstration_SGP <- prepareSGP(sgpData_LONG, create.additional.variables=FALSE)\n\nDemonstration_SGP <- analyzeSGP(\n\tsgp_object=Demonstration_SGP,\n\tyears='2014_2015',\n\tcontent_areas='READING',\n\tsgp.percentiles.baseline.max.order=2,\n\tsgp.percentiles=TRUE,\n\tsgp.projections=FALSE,\n\tsgp.projections.lagged=FALSE,\n\tsgp.percentiles.baseline=", calculate.simex.baseline,",\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsimulate.sgps=FALSE,\n\tcalculate.simex=", simex.parameters, ",\n\tcalculate.simex.baseline=", simex.parameters,",\n\tparallel.config=", parallel.config,"\n)\n", sep="")
@@ -1412,7 +1412,7 @@
 				if (.Platform$OS.type != "unix") {
 					parallel.config <- paste("list(BACKEND='FOREACH', TYPE='doParallel', WORKERS=list(TAUS=", number.cores, "))", sep="")
 				} else  parallel.config <- paste("list(BACKEND='PARALLEL', WORKERS=list(TAUS=", number.cores, "))", sep="")
-			}
+			} else parallel.config <- test.option[['parallel.config']]
 
 			tmp.messages <- RLI_SGPt_PART_1 <- RLI_SGPt_PART_2 <- NULL
 			tmp.last.window <- tail(sort(unique(SGPdata::sgptData_LONG[['YEAR']])), 1)
