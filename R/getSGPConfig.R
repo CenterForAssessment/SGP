@@ -133,7 +133,7 @@ function(sgp_object,
 				}
 
 				###  Set sgp.exact.grade.progression=TRUE if using multiple content areas in a single year as priors.
-				if (any(duplicated(paste(par.sgp.config[[b]][['sgp.panel.years']], par.sgp.config[[b]][['sgp.grade.sequences']], sep=".")))) {
+				if (any(duplicated(paste(par.sgp.config[[b.iter[b]]][['sgp.panel.years']], par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], sep=".")))) {
 					par.sgp.config[[b.iter[b]]][['sgp.exact.grade.progression']] <- TRUE
 				} else {
 					if (is.null(par.sgp.config[[b]][['sgp.exact.grade.progression']])) {
@@ -582,7 +582,7 @@ function(sgp_object,
 			}
 		} else {
 			sgp.config.list[['sgp.projections']] <- sgp.config.list[['sgp.projections.lagged']] <- NULL
-			message("\n NOTE:  No valid projections have been identified in the sgp.config lists provided -- ", 
+			message("\n NOTE:  No valid projections have been identified in the sgp.config lists provided -- ",
 				"'sgp.projections'"[sgp.projections], " and "[sgp.projections & sgp.projections.lagged], "'sgp.projections.lagged'"[sgp.projections.lagged], " will NOT be calculated.",
 				"  \n\tPlease check SGPstateData[['", state, "']][['SGP_Configuration']] for proper 'content_area.projection.sequence', 'grade.projection.sequence' and 'year_lags.projection.sequence' elements.\n")
 		}
