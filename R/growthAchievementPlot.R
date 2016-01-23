@@ -19,7 +19,8 @@
 	output.folder,
 	assessment.name) {
 
-	CUTLEVEL <- GRADE <- YEAR <- ID <- SCALE_SCORE <- level_1_curve <- V1 <- TRANSFORMED_SCALE_SCORE <- PERCENTILE <- GRADE_NUMERIC <- CONTENT_AREA <- NULL ## To prevent R CMD check warnings
+	CUTLEVEL <- GRADE <- YEAR <- ID <- SCALE_SCORE <- level_1_curve <- V1 <- NULL
+	TRANSFORMED_SCALE_SCORE <- PERCENTILE <- GRADE_NUMERIC <- CONTENT_AREA <- LEVEL <- NULL ## To prevent R CMD check warnings
 
 	content_area <- toupper(content_area)
 	if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]])) {
@@ -77,7 +78,7 @@
 
 	tmp.smooth.grades <- seq(gaPlot.grade_range[1], gaPlot.grade_range[2], by=0.01)
 	tmp.unique.grades.numeric <- sort(unique(long_cutscores[['GRADE_NUMERIC']]))
-	tmp.unique.grades.character <- unique(long_cutscores[!is.na(GRADE_NUMERIC)])[['GRADE']]
+	tmp.unique.grades.character <- unique(long_cutscores[!is.na(GRADE_NUMERIC)][['GRADE']])
 	setkeyv(gaPlot.sgp_object@Data, c("VALID_CASE", "CONTENT_AREA"))
 	growthAchievementPlot.data <- gaPlot.sgp_object@Data[CJ("VALID_CASE", content_area.all)][, list(ID, CONTENT_AREA, YEAR, GRADE, SCALE_SCORE)][
 		GRADE %in% tmp.unique.grades.character & !is.na(SCALE_SCORE)]
@@ -113,15 +114,15 @@
 		if (is.null(x)) return(NULL) else return(min(x))
 	}
 
-	gaPlot.percentile_trajectories_Internal <- function(tmp.df, percentile, content_area, year, state) {
+	gaPlot.percentile_trajectories_Internal <- function(tmp.dt, percentile, content_area, year, state) {
 
 		.create.path <- function(labels, pieces=c("my.subject", "my.year", "my.extra.label")) {
 			sub(' ', '_', toupper(sub('\\.+$', '', paste(unlist(sapply(labels[pieces], as.character)), collapse="."))))
 		}
 
-		gaPlot.sgp_object@SGP$Panel_Data <- tmp.df
+		gaPlot.sgp_object@SGP$Panel_Data <- tmp.dt
 		gaPlot.sgp_object@SGP$SGProjections <- NULL
-		tmp.grades <- as.numeric(tmp.df[1,2:((dim(tmp.df)[2]+1)/2)])
+		tmp.grades <- as.numeric(tmp.dt[1,2:((dim(tmp.dt)[2]+1)/2), with=FALSE])
 		if (baseline) my.extra.label <- "BASELINE"
 		if (!is.null(equated)) my.extra.label <- "EQUATED"
 		if (cohort) my.extra.label <- NULL
@@ -142,10 +143,10 @@
 			print.time.taken=FALSE)[["SGProjections"]][[.create.path(list(my.subject=content_area, my.year=year, my.extra.label=my.extra.label))]][,-1, with=FALSE]
 	}
 
-	smoothPercentileTrajectory <- function(tmp.df, percentile, content_area, year, state) {
-		tmp.trajectories <- gaPlot.percentile_trajectories_Internal(tmp.df, percentile, content_area, year, state)
-		trajectories <- c(tail(as.numeric(tmp.df), (dim(tmp.df)[2]-1)/2), as.numeric(tmp.trajectories))
-		grade.sequence <- c(tmp.df[1,2:((dim(tmp.df)[2]+1)/2)], head(setdiff(tmp.unique.grades.numeric, tmp.df[1,2:((dim(tmp.df)[2]+1)/2)]), length(tmp.trajectories)))
+	smoothPercentileTrajectory <- function(tmp.dt, percentile, content_area, year, state) {
+		tmp.trajectories <- gaPlot.percentile_trajectories_Internal(tmp.dt, percentile, content_area, year, state)
+		trajectories <- c(tail(as.numeric(tmp.dt), (dim(tmp.dt)[2]-1)/2), as.numeric(tmp.trajectories))
+		grade.sequence <- as.numeric(c(unlist(tmp.dt[1,2:((dim(tmp.dt)[2]+1)/2), with=FALSE]), sapply(strsplit(names(tmp.trajectories), "_"), '[', 4)))
 
 		if (content_area %in% names(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]])) {
 			tmp.spline.fun <- splinefun(grade.sequence, trajectories)
@@ -212,36 +213,42 @@
 	if (is.null(gaPlot.students)) {
 		my.cutscore.label <- getMyLabel(state, content_area, as.character(year))
 		start.cuts <- SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.cutscore.label]]
+		start.grades <- head(sapply(strsplit(names(start.cuts), "_"), '[', 2), 4)
 		if (gaPlot.start.points=="Achievement Level Cuts") {
-			start.cuts.values <- start.cuts[[1]]
+			tmp1.dt <- data.table(
+					ID="1",
+					GRADE=rep(start.grades, head(sapply(start.cuts, length), length(start.grades))),
+					SCALE_SCORE=unlist(start.cuts[seq_along(start.grades)]),
+					key=c("GRADE", "SCALE_SCORE"))[,ID:=as.character(seq(.N))][,LEVEL:=seq(.N), by=GRADE]
 		}
 		if (gaPlot.start.points=="Achievement Percentiles") {
-			start.cuts.values <- as.numeric(sort(temp_uncond_frame[,1]))
+			tmp1.dt <- data.table(
+					ID="1",
+					GRADE=rep(start.grades, each=dim(temp_uncond_frame)[1]),
+					SCALE_SCORE=as.vector(temp_uncond_frame[,start.grades]),
+					key=c("GRADE", "SCALE_SCORE"))[,ID:=as.character(seq(.N))][,LEVEL:=seq(.N), by=GRADE]
 		}
-	 	tmp1.df <- data.frame(
-			ID=seq_along(start.cuts.values),
-			GRADE=as.numeric(as.character(tail(unlist(strsplit(names(start.cuts)[1], "_")), 1))),
-			SCALE_SCORE=start.cuts.values)
 	} else {
 		setkey(growthAchievementPlot.data, ID)
-		tmp1.df <- growthAchievementPlot.data[gaPlot.students]
+		tmp1.dt <- growthAchievementPlot.data[gaPlot.students]
 	}
 
 	## Start loop over students or starting scores
 
-	for (j in unique(tmp1.df$ID)) {
+	for (j in unique(tmp1.dt$ID)) {
 
 		started.at <- proc.time()
 		started.date <- date()
 
-		tmp2.df <- subset(tmp1.df, ID==j)
-		tmp.df <- data.frame(matrix(c(as.numeric(as.character(tmp2.df$ID[1])), tmp2.df$GRADE, tmp2.df$SCALE_SCORE), nrow=1))
+		tmp2.dt <- tmp1.dt[ID==j]
+		tmp.dt <- as.data.table(data.frame(lapply(tmp2.dt[,c("ID", "GRADE", "SCALE_SCORE"), with=FALSE], function(x) t(data.frame(x))), stringsAsFactors=FALSE))
+		tmp.smooth.grades.trajectories <- tmp.smooth.grades[tmp.smooth.grades >= as.numeric(tmp2.dt[['GRADE']])]
 
 	## Create Percentile Trajectory functions
 
 	smoothPercentileTrajectory_Functions <- list()
 	for (i in sort(gaPlot.percentile_trajectories)) {
-		smoothPercentileTrajectory_Functions[[as.character(i)]] <- smoothPercentileTrajectory(tmp.df, i, content_area, year, state)
+		smoothPercentileTrajectory_Functions[[as.character(i)]] <- smoothPercentileTrajectory(tmp.dt, i, content_area, year, state)
 	}
 
 	## Define axis ranges based (ranges contingent upon starting score)
@@ -311,10 +318,10 @@
 
 		if (k=="PDF") tmp.suffix <- ".pdf" else tmp.suffix <- ".png"
 		if (gaPlot.start.points=="Achievement Level Cuts") {
-			tmp.file.name <- paste(output.folder, "/", state.name.file.label, my.label, capwords(content_area), "_", year, "_Level_", j, tmp.suffix, sep="")
+			tmp.file.name <- paste(output.folder, "/", state.name.file.label, my.label, capwords(content_area), "_", year, "_Level_", tmp2.dt[['LEVEL']], "_Grade_", tmp2.dt[['GRADE']], tmp.suffix, sep="")
 		}
 		if (gaPlot.start.points=="Achievement Percentiles") {
-			tmp.file.name <- paste(output.folder, "/", state.name.file.label, my.label, capwords(content_area), "_", year, "_Percentile_", as.integer(100*gaPlot.achievement_percentiles[j]), tmp.suffix, sep="")
+			tmp.file.name <- paste(output.folder, "/", state.name.file.label, my.label, capwords(content_area), "_", year, "_Percentile_", as.integer(100*gaPlot.achievement_percentiles[tmp2.dt[['LEVEL']]]), "_Grade_", tmp2.dt[['GRADE']], tmp.suffix, sep="")
 		}
 
 		if (k=="PDF") pdf(file=tmp.file.name, width=8.5, height=11, bg=format.colors.background)
@@ -396,7 +403,7 @@
 	if (!is.null(gaPlot.percentile_trajectories)){
 
 		for (i in gaPlot.percentile_trajectories) {
-			grid.lines(tmp.smooth.grades, smoothPercentileTrajectory_Functions[[as.character(i)]](tmp.smooth.grades),
+			grid.lines(tmp.smooth.grades.trajectories, smoothPercentileTrajectory_Functions[[as.character(i)]](tmp.smooth.grades.trajectories),
 				gp=gpar(lwd=1.2, col=format.colors.growth.trajectories), default.units="native")
 		}
 	}
@@ -416,10 +423,10 @@
 
 	if (gaPlot.subtitle) {
 		if (gaPlot.start.points=="Achievement Level Cuts") {
-			tmp.text <- paste("Student starting Grade ", gaPlot.grade_range[1], " from Level ", j, "/Level ", j+1, " cut", sep="")
+			tmp.text <- paste("Student starting Grade ", tmp2.dt[['GRADE']], " from Level ", tmp2.dt[['LEVEL']], "/Level ", tmp2.dt[['LEVEL']]+1, " cut", sep="")
 		}
 		if (gaPlot.start.points=="Achievement Percentiles") {
-			tmp.text <- paste("Student starting Grade ", gaPlot.grade_range[1], " from ", toOrdinal(as.integer(100*gaPlot.achievement_percentiles[j])), " achievement percentile", sep="")
+			tmp.text <- paste("Student starting Grade ", tmp2.dt[['GRADE']], " from ", toOrdinal(as.integer(100*gaPlot.achievement_percentiles[tmp2.dt[['LEVEL']]])), " achievement percentile", sep="")
 		}
 		grid.text(x=0.5, y=0.05, tmp.text, gp=gpar(col="white", cex=1.2))
 
