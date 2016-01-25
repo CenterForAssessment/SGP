@@ -81,7 +81,7 @@
 
 	tmp.smooth.grades <- seq(gaPlot.grade_range[1], gaPlot.grade_range[2], by=0.01)
 	tmp.unique.grades.numeric <- sort(unique(long_cutscores[['GRADE_NUMERIC']]))
-	tmp.unique.grades.character <- unique(long_cutscores[!is.na(GRADE_NUMERIC)][['GRADE']])
+	tmp.unique.grades.character <- unique(long_cutscores[!is.na(GRADE_NUMERIC)])[['GRADE']]
 	setkeyv(gaPlot.sgp_object@Data, c("VALID_CASE", "CONTENT_AREA"))
 	growthAchievementPlot.data <- gaPlot.sgp_object@Data[CJ("VALID_CASE", content_area.all)][, list(ID, CONTENT_AREA, YEAR, GRADE, SCALE_SCORE)][
 		GRADE %in% tmp.unique.grades.character & !is.na(SCALE_SCORE)]
