@@ -91,28 +91,6 @@ function(sgp_object,
 
 	pretty_year <- function(x) sub("_", "-", x)
 
-	get.max.order.for.progression <- function(year, content_area) {
-		if (is.null(gaPlot.max.order.for.progression)) {
-			if (is.null(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[content_area]])) {
-				return(NULL)
-			} else {
-				tmp <- as.numeric(tail(unlist(strsplit(as.character(year), "_")), 1)) -
-					as.numeric(tail(unlist(strsplit(as.character(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[content_area]]), "_")), 1))
-				if (tmp < 0) return(NULL)
-				if (tmp > 0) return(as.numeric(tmp))
-				if (tmp==0 &&
-					!identical(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Baseline_Projections_in_Transition_Year"]], TRUE)) {
-						message(paste("\tNOTE: Based upon state scale changes in ", pretty_year(year),
-						" student growth projections are not possible. No student growth projections will be generated.\n", sep=""))
-				} else {
-					return(NULL)
-				}
-			}
-		} else {
-			return(gaPlot.max.order.for.progression)
-		}
-	} ### END get.max.order.for.progression
-
 	get.sgPlot.iter <- function(districts.and.schools) {
 		tmp.list <- list()
 		for (k in 1:dim(districts.and.schools)[1]) {
@@ -253,7 +231,7 @@ function(sgp_object,
 					growthAchievementPlot(
 						gaPlot.sgp_object=gaPlot.sgp_object,
 						gaPlot.students=gaPlot.iter[["ID"]],
-						gaPlot.max.order.for.progression=get.max.order.for.progression(gaPlot.iter[["YEAR"]], gaPlot.iter[["CONTENT_AREA"]]),
+						gaPlot.max.order.for.progression=gaPlot.max.order.for.progression,
 						gaPlot.start.points=gaPlot.start.points,
 						state=state,
 						content_area=gaPlot.iter[["CONTENT_AREA"]],
@@ -273,7 +251,7 @@ function(sgp_object,
 					growthAchievementPlot(
 						gaPlot.sgp_object=gaPlot.sgp_object,
 						gaPlot.students=gaPlot.iter[["ID"]],
-						gaPlot.max.order.for.progression=get.max.order.for.progression(gaPlot.iter[["YEAR"]], gaPlot.iter[["CONTENT_AREA"]]),
+						gaPlot.max.order.for.progression=gaPlot.max.order.for.progression,
 						gaPlot.start.points=gaPlot.start.points,
 						state=state,
 						content_area=gaPlot.iter[["CONTENT_AREA"]],
@@ -291,7 +269,7 @@ function(sgp_object,
 					growthAchievementPlot(
 						gaPlot.sgp_object=gaPlot.sgp_object,
 						gaPlot.students=gaPlot.iter[["ID"]],
-						gaPlot.max.order.for.progression=get.max.order.for.progression(gaPlot.iter[["YEAR"]], gaPlot.iter[["CONTENT_AREA"]]),
+						gaPlot.max.order.for.progression=gaPlot.max.order.for.progression,
 						gaPlot.start.points=gaPlot.start.points,
 						state=state,
 						content_area=gaPlot.iter[["CONTENT_AREA"]],

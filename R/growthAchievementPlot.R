@@ -49,7 +49,8 @@
 	if (is.null(equated) &&
 			!identical(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Baseline_Projections_in_Transition_Year"]], TRUE) &&
 			year %in% SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[content_area]]) {
-		message(paste("\tNOTE: Based upon state scale changes in ", capwords(year), ". student growth projections are not possible. No ",
+		stop("HERE I AM!")
+		message(paste("\tNOTE: Based upon state scale changes in ", capwords(year), " student growth projections are not possible. No ",
 			capwords(year), " ", content_area, " growth and achievement plot will be generated.\n", sep=""))
 		return("DONE")
     }
