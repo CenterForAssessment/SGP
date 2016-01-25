@@ -100,8 +100,13 @@ function(sgp_object,
 					as.numeric(tail(unlist(strsplit(as.character(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[content_area]]), "_")), 1))
 				if (tmp < 0) return(NULL)
 				if (tmp > 0) return(as.numeric(tmp))
-				if (tmp==0) message(paste("\tNOTE: Based upon state scale changes in ", pretty_year(year),
-					". student growth projections are not possible. No student growth projections will be generated.\n", sep=""))
+				if (tmp==0 &&
+					!identical(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Baseline_Projections_in_Transition_Year"]], TRUE)) {
+						message(paste("\tNOTE: Based upon state scale changes in ", pretty_year(year),
+						" student growth projections are not possible. No student growth projections will be generated.\n", sep=""))
+				} else {
+					return(NULL)
+				}
 			}
 		} else {
 			return(gaPlot.max.order.for.progression)

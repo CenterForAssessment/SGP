@@ -46,7 +46,9 @@
 
 	### Test if scale change has occured in the requested year
 
-	if (is.null(equated) && year %in% SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[content_area]]) {
+	if (is.null(equated) &&
+			!identical(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Baseline_Projections_in_Transition_Year"]], TRUE) &&
+			year %in% SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[content_area]]) {
 		message(paste("\tNOTE: Based upon state scale changes in ", capwords(year), ". student growth projections are not possible. No ",
 			capwords(year), " ", content_area, " growth and achievement plot will be generated.\n", sep=""))
 		return("DONE")
@@ -213,7 +215,7 @@
 	if (is.null(gaPlot.students)) {
 		my.cutscore.label <- getMyLabel(state, content_area, as.character(year))
 		start.cuts <- SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.cutscore.label]]
-		start.grades <- head(sapply(strsplit(names(start.cuts), "_"), '[', 2), 4)
+		start.grades <- head(sapply(strsplit(names(start.cuts), "_"), '[', 2), -1)
 		if (gaPlot.start.points=="Achievement Level Cuts") {
 			tmp1.dt <- data.table(
 					ID="1",
