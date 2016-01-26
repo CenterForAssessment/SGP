@@ -214,22 +214,22 @@
 	## Create data sets to be used for plot production
 
 	if (is.null(gaPlot.students)) {
-		my.cutscore.label <- getMyLabel(state, content_area, as.character(year))
-		start.cuts <- SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.cutscore.label]]
-		start.grades <- head(sapply(strsplit(names(start.cuts), "_"), '[', 2), -1)
+		tmp.cutscores <- data.table(long_cutscores[!CUTLEVEL %in% c("HOSS", "LOSS")][!GRADE %in% c("GRADE_LOWER", "GRADE_UPPER")][GRADE_NUMERIC!=max(GRADE_NUMERIC)], key=c("GRADE_NUMERIC", "CONTENT_AREA"))
 		if (gaPlot.start.points=="Achievement Level Cuts") {
 			tmp1.dt <- data.table(
-					ID="1",
-					GRADE=rep(start.grades, head(sapply(start.cuts, length), length(start.grades))),
-					SCALE_SCORE=unlist(start.cuts[seq_along(start.grades)]),
-					key=c("GRADE", "SCALE_SCORE"))[,ID:=as.character(seq(.N))][,LEVEL:=seq(.N), by=GRADE]
+					ID=seq(dim(tmp.cutscores)[1]),
+					GRADE=tmp.cutscores[['GRADE']],
+					SCALE_SCORE=tmp.cutscores[['CUTSCORES']],
+					LEVEL=tmp.cutscores[['CUTLEVEL']],
+					key=c("GRADE", "SCALE_SCORE"))
 		}
 		if (gaPlot.start.points=="Achievement Percentiles") {
 			tmp1.dt <- data.table(
 					ID="1",
-					GRADE=rep(start.grades, each=dim(temp_uncond_frame)[1]),
-					SCALE_SCORE=as.vector(temp_uncond_frame[,start.grades]),
-					key=c("GRADE", "SCALE_SCORE"))[,ID:=as.character(seq(.N))][,LEVEL:=seq(.N), by=GRADE]
+					GRADE=rep(unique(tmp.cutscores)[['GRADE']], each=dim(temp_uncond_frame)[1]),
+					SCALE_SCORE=as.vector(temp_uncond_frame[,as.character(unique(tmp.cutscores)[['GRADE_NUMERIC']])]),
+					LEVEL=rownames(temp_uncond_frame),
+					key=c("GRADE", "SCALE_SCORE"))[,ID:=as.character(seq(.N))]
 		}
 	} else {
 		setkey(growthAchievementPlot.data, ID)
