@@ -125,7 +125,7 @@
 
 		gaPlot.sgp_object@SGP$Panel_Data <- tmp.dt
 		gaPlot.sgp_object@SGP$SGProjections <- NULL
-		tmp.grades <- as.numeric(tmp.dt[1,2:((dim(tmp.dt)[2]+1)/2), with=FALSE])
+		tmp.grades <- as.character(tmp.dt[1,2:((dim(tmp.dt)[2]+1)/2), with=FALSE])
 		if (baseline) my.extra.label <- "BASELINE"
 		if (!is.null(equated)) my.extra.label <- "EQUATED"
 		if (cohort) my.extra.label <- NULL
@@ -222,6 +222,8 @@
 			tmp1.dt <- data.table(
 					ID=seq(dim(tmp.cutscores)[1]),
 					GRADE=tmp.cutscores[['GRADE']],
+					GRADE_NUMERIC=tmp.cutscores[['GRADE_NUMERIC']],
+					CONTENT_AREA=tmp.cutscores[['CONTENT_AREA']],
 					SCALE_SCORE=tmp.cutscores[['CUTSCORES']],
 					LEVEL=as.numeric(tmp.cutscores[['CUTLEVEL']]),
 					key=c("GRADE", "SCALE_SCORE"))
@@ -230,6 +232,8 @@
 			tmp1.dt <- data.table(
 					ID="1",
 					GRADE=rep(unique(tmp.cutscores)[['GRADE']], each=dim(temp_uncond_frame)[1]),
+					GRADE_NUMERIC=rep(unique(tmp.cutscores)[['GRADE_NUMERIC']], each=dim(temp_uncond_frame)[1]),
+					CONTENT_AREA=rep(unique(tmp.cutscores)[['CONTENT_AREA']], each=dim(temp_uncond_frame)[1]),
 					SCALE_SCORE=as.vector(temp_uncond_frame[,as.character(unique(tmp.cutscores)[['GRADE_NUMERIC']])]),
 					LEVEL=as.numeric(rownames(temp_uncond_frame)),
 					key=c("GRADE", "SCALE_SCORE"))[,ID:=as.character(seq(.N))]
@@ -248,13 +252,13 @@
 
 		tmp2.dt <- tmp1.dt[ID==j]
 		tmp.dt <- as.data.table(data.frame(lapply(tmp2.dt[,c("ID", "GRADE", "SCALE_SCORE"), with=FALSE], function(x) t(data.frame(x))), stringsAsFactors=FALSE))
-		tmp.smooth.grades.trajectories <- tmp.smooth.grades[tmp.smooth.grades >= as.numeric(tmp2.dt[['GRADE']])]
+		tmp.smooth.grades.trajectories <- tmp.smooth.grades[tmp.smooth.grades >= as.numeric(tmp2.dt[['GRADE_NUMERIC']])]
 
 	## Create Percentile Trajectory functions
 
 	smoothPercentileTrajectory_Functions <- list()
 	for (i in sort(gaPlot.percentile_trajectories)) {
-		smoothPercentileTrajectory_Functions[[as.character(i)]] <- smoothPercentileTrajectory(tmp.dt, i, content_area, year, state)
+		smoothPercentileTrajectory_Functions[[as.character(i)]] <- smoothPercentileTrajectory(tmp.dt, i, tail(tmp2.dt[['CONTENT_AREA']], 1), year, state)
 	}
 
 	## Define axis ranges based (ranges contingent upon starting score)
