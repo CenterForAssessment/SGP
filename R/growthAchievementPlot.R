@@ -146,19 +146,19 @@
 			print.time.taken=FALSE)[["SGProjections"]][[.create.path(list(my.subject=content_area, my.year=year, my.extra.label=my.extra.label))]][,-1, with=FALSE]
 	}
 
-	smoothPercentileTrajectory <- function(tmp.dt, percentile, content_area, year, state) {
+	smoothPercentileTrajectory <- function(tmp2.dt, grades.projection.sequence, percentile, content_area, year, state) {
+		tmp.dt <- as.data.table(data.frame(lapply(tmp2.dt[,c("ID", "GRADE", "SCALE_SCORE"), with=FALSE], function(x) t(data.frame(x))), stringsAsFactors=FALSE))
 		tmp.trajectories <- gaPlot.percentile_trajectories_Internal(tmp.dt, percentile, content_area, year, state)
 		trajectories <- c(tail(as.numeric(tmp.dt), (dim(tmp.dt)[2]-1)/2), as.numeric(tmp.trajectories))
-		grade.sequence <- as.numeric(c(unlist(tmp.dt[1,2:((dim(tmp.dt)[2]+1)/2), with=FALSE]), sapply(strsplit(names(tmp.trajectories), "_"), '[', 4)))
 
 		if (content_area %in% names(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]])) {
-			tmp.spline.fun <- splinefun(grade.sequence, trajectories)
+			tmp.spline.fun <- splinefun(grade.projection.sequence, trajectories)
 			tmp.function <- function(grades) {
 				sapply(grades, function(x) piecewiseTransform(tmp.spline.fun(x), state, as.character(content_area), as.character(year), as.character(x)))
 			}
-			return(splinefun(grade.sequence, tmp.function(grade.sequence)))
+			return(splinefun(grade.projection.sequence, tmp.function(grade.projection.sequence)))
 		} else {
-			return(splinefun(grade.sequence, trajectories))
+			return(splinefun(grade.projection.sequence, trajectories))
 		}
 	}
 
@@ -252,13 +252,15 @@
 
 		tmp2.dt <- tmp1.dt[ID==j]
 		tmp.dt <- as.data.table(data.frame(lapply(tmp2.dt[,c("ID", "GRADE", "SCALE_SCORE"), with=FALSE], function(x) t(data.frame(x))), stringsAsFactors=FALSE))
-		tmp.smooth.grades.trajectories <- tmp.smooth.grades[tmp.smooth.grades >= as.numeric(tmp2.dt[['GRADE_NUMERIC']])]
+		tmp.smooth.grades.trajectories <- tmp.smooth.grades[tmp.smooth.grades >= tmp2.dt[['GRADE_NUMERIC']]]
+		grade.projection.sequence <- intersect(tmp.smooth.grades.trajectories, tmp.unique.grades.numeric)
 
 	## Create Percentile Trajectory functions
 
 	smoothPercentileTrajectory_Functions <- list()
 	for (i in sort(gaPlot.percentile_trajectories)) {
-		smoothPercentileTrajectory_Functions[[as.character(i)]] <- smoothPercentileTrajectory(tmp.dt, i, tail(tmp2.dt[['CONTENT_AREA']], 1), year, state)
+		smoothPercentileTrajectory_Functions[[as.character(i)]] <-
+			smoothPercentileTrajectory(tmp.dt, grade.projection.sequence, i, tail(tmp2.dt[['CONTENT_AREA']], 1), year, state)
 	}
 
 	## Define axis ranges based (ranges contingent upon starting score)
