@@ -214,7 +214,10 @@
 	## Create data sets to be used for plot production
 
 	if (is.null(gaPlot.students)) {
-		tmp.cutscores <- data.table(long_cutscores[!CUTLEVEL %in% c("HOSS", "LOSS")][!GRADE %in% c("GRADE_LOWER", "GRADE_UPPER")][GRADE_NUMERIC!=max(GRADE_NUMERIC)], key=c("GRADE_NUMERIC", "CONTENT_AREA"))
+		tmp.cutscores <- data.table(long_cutscores[!CUTLEVEL %in% c("HOSS", "LOSS") &
+													!GRADE %in% c("GRADE_LOWER", "GRADE_UPPER") &
+													GRADE_NUMERIC!=max(GRADE_NUMERIC, na.rm=TRUE) &
+													YEAR %in% tail(sort(unique(YEAR), na.last=FALSE), 1)], key=c("GRADE_NUMERIC", "CONTENT_AREA"))
 		if (gaPlot.start.points=="Achievement Level Cuts") {
 			tmp1.dt <- data.table(
 					ID=seq(dim(tmp.cutscores)[1]),
