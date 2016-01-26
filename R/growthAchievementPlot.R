@@ -223,7 +223,7 @@
 					ID=seq(dim(tmp.cutscores)[1]),
 					GRADE=tmp.cutscores[['GRADE']],
 					SCALE_SCORE=tmp.cutscores[['CUTSCORES']],
-					LEVEL=tmp.cutscores[['CUTLEVEL']],
+					LEVEL=as.numeric(tmp.cutscores[['CUTLEVEL']]),
 					key=c("GRADE", "SCALE_SCORE"))
 		}
 		if (gaPlot.start.points=="Achievement Percentiles") {
@@ -231,7 +231,7 @@
 					ID="1",
 					GRADE=rep(unique(tmp.cutscores)[['GRADE']], each=dim(temp_uncond_frame)[1]),
 					SCALE_SCORE=as.vector(temp_uncond_frame[,as.character(unique(tmp.cutscores)[['GRADE_NUMERIC']])]),
-					LEVEL=rownames(temp_uncond_frame),
+					LEVEL=as.numeric(rownames(temp_uncond_frame)),
 					key=c("GRADE", "SCALE_SCORE"))[,ID:=as.character(seq(.N))]
 		}
 	} else {
@@ -327,7 +327,7 @@
 			tmp.file.name <- paste(output.folder, "/", state.name.file.label, my.label, capwords(content_area), "_", year, "_Level_", tmp2.dt[['LEVEL']], "_Grade_", tmp2.dt[['GRADE']], tmp.suffix, sep="")
 		}
 		if (gaPlot.start.points=="Achievement Percentiles") {
-			tmp.file.name <- paste(output.folder, "/", state.name.file.label, my.label, capwords(content_area), "_", year, "_Percentile_", as.integer(100*gaPlot.achievement_percentiles[tmp2.dt[['LEVEL']]]), "_Grade_", tmp2.dt[['GRADE']], tmp.suffix, sep="")
+			tmp.file.name <- paste(output.folder, "/", state.name.file.label, my.label, capwords(content_area), "_", year, "_Percentile_", as.integer(100*tmp2.dt[['LEVEL']]), "_Grade_", tmp2.dt[['GRADE']], tmp.suffix, sep="")
 		}
 
 		if (k=="PDF") pdf(file=tmp.file.name, width=8.5, height=11, bg=format.colors.background)
@@ -432,7 +432,7 @@
 			tmp.text <- paste("Student starting Grade ", tmp2.dt[['GRADE']], " from Level ", tmp2.dt[['LEVEL']], "/Level ", tmp2.dt[['LEVEL']]+1, " cut", sep="")
 		}
 		if (gaPlot.start.points=="Achievement Percentiles") {
-			tmp.text <- paste("Student starting Grade ", tmp2.dt[['GRADE']], " from ", toOrdinal(as.integer(100*gaPlot.achievement_percentiles[tmp2.dt[['LEVEL']]])), " achievement percentile", sep="")
+			tmp.text <- paste("Student starting Grade ", tmp2.dt[['GRADE']], " from ", toOrdinal(as.integer(100*tmp2.dt[['LEVEL']])), " achievement percentile", sep="")
 		}
 		grid.text(x=0.5, y=0.05, tmp.text, gp=gpar(col="white", cex=1.2))
 
