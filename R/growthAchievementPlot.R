@@ -146,8 +146,7 @@
 			print.time.taken=FALSE)[["SGProjections"]][[.create.path(list(my.subject=content_area, my.year=year, my.extra.label=my.extra.label))]][,-1, with=FALSE]
 	}
 
-	smoothPercentileTrajectory <- function(tmp2.dt, grades.projection.sequence, percentile, content_area, year, state) {
-		tmp.dt <- as.data.table(data.frame(lapply(tmp2.dt[,c("ID", "GRADE", "SCALE_SCORE"), with=FALSE], function(x) t(data.frame(x))), stringsAsFactors=FALSE))
+	smoothPercentileTrajectory <- function(tmp.dt, grades.projection.sequence, percentile, content_area, year, state) {
 		tmp.trajectories <- gaPlot.percentile_trajectories_Internal(tmp.dt, percentile, content_area, year, state)
 		trajectories <- c(tail(as.numeric(tmp.dt), (dim(tmp.dt)[2]-1)/2), as.numeric(tmp.trajectories))
 
@@ -257,11 +256,14 @@
 
 	## Create Percentile Trajectory functions
 
-	smoothPercentileTrajectory_Functions <- list()
-	for (i in sort(gaPlot.percentile_trajectories)) {
-		smoothPercentileTrajectory_Functions[[as.character(i)]] <-
-			smoothPercentileTrajectory(tmp.dt, grade.projection.sequence, i, tail(tmp2.dt[['CONTENT_AREA']], 1), year, state)
-	}
+#	smoothPercentileTrajectory_Functions <- list()
+#	for (i in sort(gaPlot.percentile_trajectories)) {
+#		smoothPercentileTrajectory_Functions[[as.character(i)]] <-
+#			smoothPercentileTrajectory(tmp.dt, grade.projection.sequence, i, tail(tmp2.dt[['CONTENT_AREA']], 1), year, state)
+#	}
+
+	smoothPercentileTrajectory_Functions <- lapply(sort(gaPlot.percentile_trajectories), function(i) smoothPercentileTrajectory(tmp.dt, grade.projection.sequence, i, tail(tmp2.dt[['CONTENT_AREA']], 1), year, state))
+	names(smoothPercentileTrajectory_Functions) <- as.character(sort(gaPlot.percentile_trajectories))
 
 	## Define axis ranges based (ranges contingent upon starting score)
 
@@ -330,10 +332,10 @@
 
 		if (k=="PDF") tmp.suffix <- ".pdf" else tmp.suffix <- ".png"
 		if (gaPlot.start.points=="Achievement Level Cuts") {
-			tmp.file.name <- paste(output.folder, "/", state.name.file.label, my.label, capwords(content_area), "_", year, "_Level_", tmp2.dt[['LEVEL']], "_Grade_", tmp2.dt[['GRADE']], tmp.suffix, sep="")
+			tmp.file.name <- paste(output.folder, "/", state.name.file.label, my.label, gsub(" ", "_", capwords(tail(tmp2.dt[['CONTENT_AREA']], 1))), "_", year, "_Level_", tmp2.dt[['LEVEL']], "_Grade_", tmp2.dt[['GRADE']], tmp.suffix, sep="")
 		}
 		if (gaPlot.start.points=="Achievement Percentiles") {
-			tmp.file.name <- paste(output.folder, "/", state.name.file.label, my.label, capwords(content_area), "_", year, "_Percentile_", as.integer(100*tmp2.dt[['LEVEL']]), "_Grade_", tmp2.dt[['GRADE']], tmp.suffix, sep="")
+			tmp.file.name <- paste(output.folder, "/", state.name.file.label, my.label, gsub(" ", "_", capwords(tail(tmp2.dt[['CONTENT_AREA']], 1))), "_", year, "_Percentile_", as.integer(100*tmp2.dt[['LEVEL']]), "_Grade_", tmp2.dt[['GRADE']], tmp.suffix, sep="")
 		}
 
 		if (k=="PDF") pdf(file=tmp.file.name, width=8.5, height=11, bg=format.colors.background)
