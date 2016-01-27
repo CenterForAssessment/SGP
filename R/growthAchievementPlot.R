@@ -585,8 +585,8 @@
 	if (baseline) tmp.baseline.message <- "Baseline Referenced"
 	if (!is.null(equated)) tmp.baseline.message <- "Equated Cohort Referenced"
 	if (cohort) tmp.baseline.message <- "Cohort Referenced"
-	message(paste("\tStarted", year, state.name.label, content_area, tmp.baseline.message, "growthAchievementPlot:",  started.date))
-	message(paste("\tFinished", year, state.name.label, content_area, tmp.baseline.message, "growthAchievementPlot:",  date(), "in", convertTime(timetaken(started.at)), "\n"))
+	message(paste("\tStarted", year, state.name.label, tail(tmp2.dt[['CONTENT_AREA']], 1), tmp.baseline.message, "growthAchievementPlot:",  started.date))
+	message(paste("\tFinished", year, state.name.label, tail(tmp2.dt[['CONTENT_AREA']], 1), tmp.baseline.message, "growthAchievementPlot:",  date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 
 	} ## End loop over starting scores or students (j)
