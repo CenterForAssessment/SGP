@@ -561,7 +561,7 @@ function(panel.data,         ## REQUIRED
 						}
 					}
 				} else {	# Parallel over sim.iters
-
+stop("#0+ $#!+")
 					par.start <- startParallel(tmp.par.config, 'SIMEX')
 
 					## Note, that if you use the parallel.config for SIMEX here, you can also use it for TAUS in the naive analysis
