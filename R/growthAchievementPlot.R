@@ -1,7 +1,7 @@
 `growthAchievementPlot` <-
 	function(
 	gaPlot.sgp_object,
-	gaPlot.students,
+	gaPlot.students=NULL,
 	gaPlot.percentile_trajectories,
 	gaPlot.achievement_percentiles=c(.01, seq(.05, .95, by=.05), .99),
 	gaPlot.show.scale.transformations=TRUE,
@@ -33,6 +33,7 @@
 	cohort <- TRUE
 	if (baseline) {cohort <- FALSE; equated <- NULL}
 	if (!is.null(equated)) cohort <- baseline <- FALSE
+	if (!is.null(gaPlot.students)) gaPlot.start.points <- "Individual Student"
 
 
 	## State stuff
@@ -148,7 +149,7 @@
 
 	smoothPercentileTrajectory <- function(tmp.dt, grades.projection.sequence, percentile, content_area, year, state) {
 		tmp.trajectories <- gaPlot.percentile_trajectories_Internal(tmp.dt, percentile, content_area, year, state)
-		trajectories <- c(as.numeric(tmp.dt[,tail(seq(dim(tmp.dt)[2]), (dim(tmp.dt)[2]-1)/2), with=FALSE]), as.numeric(tmp.trajectories))
+		trajectories <- c(as.numeric(tmp.dt[,dim(tmp.dt)[2], with=FALSE]), as.numeric(tmp.trajectories))
 
 		if (content_area %in% names(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]])) {
 			tmp.spline.fun <- splinefun(grade.projection.sequence, trajectories)
@@ -240,6 +241,7 @@
 	} else {
 		setkey(growthAchievementPlot.data, ID)
 		tmp1.dt <- growthAchievementPlot.data[gaPlot.students]
+		setnames(tmp1.dt, c("GRADE_CHARACTER", "GRADE"), c("GRADE", "GRADE_NUMERIC"))
 	}
 
 	## Start loop over students or starting scores
@@ -250,17 +252,11 @@
 		started.date <- date()
 
 		tmp2.dt <- tmp1.dt[ID==j]
-		tmp.dt <- as.data.table(data.frame(lapply(tmp2.dt[,c("ID", "GRADE", "SCALE_SCORE"), with=FALSE], function(x) t(data.frame(x))), stringsAsFactors=FALSE))
-		tmp.smooth.grades.trajectories <- tmp.smooth.grades[tmp.smooth.grades >= tmp2.dt[['GRADE_NUMERIC']]]
+		tmp.dt <- data.table(ID=j, data.frame(lapply(tmp2.dt[,c("GRADE", "SCALE_SCORE"), with=FALSE], function(x) t(data.frame(x))), stringsAsFactors=FALSE))
+		tmp.smooth.grades.trajectories <- tmp.smooth.grades[tmp.smooth.grades >= tail(tmp2.dt[['GRADE_NUMERIC']], 1)]
 		grade.projection.sequence <- intersect(tmp.smooth.grades.trajectories, tmp.unique.grades.numeric)
 
 	## Create Percentile Trajectory functions
-
-#	smoothPercentileTrajectory_Functions <- list()
-#	for (i in sort(gaPlot.percentile_trajectories)) {
-#		smoothPercentileTrajectory_Functions[[as.character(i)]] <-
-#			smoothPercentileTrajectory(tmp.dt, grade.projection.sequence, i, tail(tmp2.dt[['CONTENT_AREA']], 1), year, state)
-#	}
 
 	smoothPercentileTrajectory_Functions <- lapply(sort(gaPlot.percentile_trajectories), function(i) smoothPercentileTrajectory(tmp.dt, grade.projection.sequence, i, tail(tmp2.dt[['CONTENT_AREA']], 1), year, state))
 	names(smoothPercentileTrajectory_Functions) <- as.character(sort(gaPlot.percentile_trajectories))
@@ -270,8 +266,8 @@
 	setkey(growthAchievementPlot.data, YEAR)
 	gp.axis.range <- c(smoothPercentileTrajectory_Functions[[1]](gaPlot.grade_range[[2]]),
 		smoothPercentileTrajectory_Functions[[length(gaPlot.percentile_trajectories)]](gaPlot.grade_range[[2]]))
-	yscale.range <- c(min(gp.axis.range[1], quantile(growthAchievementPlot.data[list(year)]$TRANSFORMED_SCALE_SCORE, prob=.005, na.rm=TRUE)),
-		max(gp.axis.range[2], quantile(growthAchievementPlot.data[list(year)]$TRANSFORMED_SCALE_SCORE, prob=.995, na.rm=TRUE)))
+	yscale.range <- extendrange(c(min(gp.axis.range[1], quantile(growthAchievementPlot.data[list(year)]$TRANSFORMED_SCALE_SCORE, prob=.005, na.rm=TRUE), tmp2.dt[['TRANSFORMED_SCALE_SCORE']], na.rm=TRUE),
+		max(gp.axis.range[2], quantile(growthAchievementPlot.data[list(year)]$TRANSFORMED_SCALE_SCORE, prob=.995, na.rm=TRUE), tmp2.dt[['TRANSFORMED_SCALE_SCORE']], na.rm=TRUE)), f=0.02)
 	ach.per.axis.range <- (temp_uncond_frame[,1])[temp_uncond_frame[,1] >= yscale.range[1] & temp_uncond_frame[,1] <= yscale.range[2]]
 	ach.per.axis.labels <- formatC(100*as.numeric(rownames(temp_uncond_frame)[temp_uncond_frame[,1] >= yscale.range[1] & temp_uncond_frame[,1] <= yscale.range[2]]),
 		digits=0, format="f")
@@ -336,6 +332,9 @@
 		}
 		if (gaPlot.start.points=="Achievement Percentiles") {
 			tmp.file.name <- paste(output.folder, "/", state.name.file.label, my.label, gsub(" ", "_", capwords(tail(tmp2.dt[['CONTENT_AREA']], 1))), "_", year, "_Percentile_", as.integer(100*tmp2.dt[['LEVEL']]), "_Grade_", tmp2.dt[['GRADE']], tmp.suffix, sep="")
+		}
+		if (gaPlot.start.points=="Individual Student") {
+			tmp.file.name <- paste(output.folder, "/", state.name.file.label, my.label, gsub(" ", "_", capwords(tail(tmp2.dt[['CONTENT_AREA']], 1))), "_", year, "_Student_Number_", tmp2.dt[['ID']][1], tmp.suffix, sep="")
 		}
 
 		if (k=="PDF") pdf(file=tmp.file.name, width=8.5, height=11, bg=format.colors.background)
@@ -411,6 +410,12 @@
 		}
 	}
 
+	## Code for producing historical student scores
+
+	if (!is.null(gaPlot.students)) {
+		grid.circle(x=tmp2.dt[['GRADE']], y=tmp2.dt[['TRANSFORMED_SCALE_SCORE']], r=unit(0.05, "inches"), gp=gpar(col="black", lwd=0.6, fill="white"), default.units="native")
+		grid.lines(tmp2.dt[['GRADE']], tmp2.dt[['TRANSFORMED_SCALE_SCORE']], gp=gpar(lwd=1.5), default.units="native")
+	}
 
 	## Code for producing percentile growth trajectories
 
@@ -418,7 +423,7 @@
 
 		for (i in gaPlot.percentile_trajectories) {
 			grid.lines(tmp.smooth.grades.trajectories, smoothPercentileTrajectory_Functions[[as.character(i)]](tmp.smooth.grades.trajectories),
-				gp=gpar(lwd=1.2, col=format.colors.growth.trajectories), default.units="native")
+				gp=gpar(lwd=1.0, lty=3, col=format.colors.growth.trajectories), default.units="native")
 		}
 	}
 
@@ -441,6 +446,9 @@
 		}
 		if (gaPlot.start.points=="Achievement Percentiles") {
 			tmp.text <- paste("Student starting Grade ", tmp2.dt[['GRADE']], " from ", toOrdinal(as.integer(100*tmp2.dt[['LEVEL']])), " achievement percentile", sep="")
+		}
+		if (gaPlot.start.points=="Individual Student") {
+			tmp.text <- paste("Student ", tmp2.dt[['ID']][1], " starting from Grade ", tmp2.dt[['GRADE']], sep="")
 		}
 		grid.text(x=0.5, y=0.05, tmp.text, gp=gpar(col="white", cex=1.2))
 
@@ -585,8 +593,18 @@
 	if (baseline) tmp.baseline.message <- "Baseline Referenced"
 	if (!is.null(equated)) tmp.baseline.message <- "Equated Cohort Referenced"
 	if (cohort) tmp.baseline.message <- "Cohort Referenced"
-	message(paste("\tStarted", year, state.name.label, tail(tmp2.dt[['CONTENT_AREA']], 1), "Grade", tail(tmp2.dt[['GRADE']], 1), "Level", tail(tmp2.dt[['LEVEL']], 1), tmp.baseline.message, "growthAchievementPlot:",  started.date))
-	message(paste("\tFinished", year, state.name.label, tail(tmp2.dt[['CONTENT_AREA']], 1), "Grade", tail(tmp2.dt[['GRADE']], 1), "Level", tail(tmp2.dt[['LEVEL']], 1), tmp.baseline.message, "growthAchievementPlot:",  date(), "in", convertTime(timetaken(started.at)), "\n"))
+	if (gaPlot.start.points=="Achievement Level Cuts") {
+		message(paste("\tStarted", year, state.name.label, tail(tmp2.dt[['CONTENT_AREA']], 1), "Grade", tail(tmp2.dt[['GRADE']], 1), "Level", tail(tmp2.dt[['LEVEL']], 1), tmp.baseline.message, "growthAchievementPlot:",  started.date))
+		message(paste("\tFinished", year, state.name.label, tail(tmp2.dt[['CONTENT_AREA']], 1), "Grade", tail(tmp2.dt[['GRADE']], 1), "Level", tail(tmp2.dt[['LEVEL']], 1), tmp.baseline.message, "growthAchievementPlot:",  date(), "in", convertTime(timetaken(started.at)), "\n"))
+	}
+	if (gaPlot.start.points=="Achievement Percentiles") {
+		message(paste("\tStarted", year, state.name.label, tail(tmp2.dt[['CONTENT_AREA']], 1), "Grade", tail(tmp2.dt[['GRADE']], 1), "Percentile", as.integer(100*tmp2.dt[['LEVEL']]), tmp.baseline.message, "growthAchievementPlot:",  started.date))
+		message(paste("\tFinished", year, state.name.label, tail(tmp2.dt[['CONTENT_AREA']], 1), "Grade", tail(tmp2.dt[['GRADE']], 1), "Percentile", as.integer(100*tmp2.dt[['LEVEL']]), tmp.baseline.message, "growthAchievementPlot:",  date(), "in", convertTime(timetaken(started.at)), "\n"))
+	}
+	if (gaPlot.start.points=="Individual Student") {
+		message(paste("\tStarted", year, state.name.label, tail(tmp2.dt[['CONTENT_AREA']], 1), "Grade", tail(tmp2.dt[['GRADE']], 1), "Student Number", tmp2.dt[['ID']][1], tmp.baseline.message, "growthAchievementPlot:",  started.date))
+		message(paste("\tFinished", year, state.name.label, tail(tmp2.dt[['CONTENT_AREA']], 1), "Grade", tail(tmp2.dt[['GRADE']], 1), "Student Number", tmp2.dt[['ID']][1], tmp.baseline.message, "growthAchievementPlot:",  date(), "in", convertTime(timetaken(started.at)), "\n"))
+	}
 
 
 	} ## End loop over starting scores or students (j)
