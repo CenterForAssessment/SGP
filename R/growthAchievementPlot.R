@@ -410,21 +410,21 @@
 		}
 	}
 
-	## Code for producing historical student scores
-
-	if (!is.null(gaPlot.students)) {
-		grid.circle(x=tmp2.dt[['GRADE']], y=tmp2.dt[['TRANSFORMED_SCALE_SCORE']], r=unit(0.05, "inches"), gp=gpar(col="black", lwd=0.6, fill="white"), default.units="native")
-		grid.lines(tmp2.dt[['GRADE']], tmp2.dt[['TRANSFORMED_SCALE_SCORE']], gp=gpar(lwd=1.5), default.units="native")
-	}
-
 	## Code for producing percentile growth trajectories
 
 	if (!is.null(gaPlot.percentile_trajectories)){
 
 		for (i in gaPlot.percentile_trajectories) {
 			grid.lines(tmp.smooth.grades.trajectories, smoothPercentileTrajectory_Functions[[as.character(i)]](tmp.smooth.grades.trajectories),
-				gp=gpar(lwd=1.0, lty=3, col=format.colors.growth.trajectories), default.units="native")
+				gp=gpar(lwd=1.0, lty=4, col=format.colors.growth.trajectories), default.units="native")
 		}
+	}
+
+	## Code for producing historical student scores
+
+	if (!is.null(gaPlot.students)) {
+		grid.lines(tmp2.dt[['GRADE']], tmp2.dt[['TRANSFORMED_SCALE_SCORE']], gp=gpar(lwd=1.5), default.units="native")
+		grid.circle(x=tmp2.dt[['GRADE']], y=tmp2.dt[['TRANSFORMED_SCALE_SCORE']], r=unit(0.05, "inches"), gp=gpar(col="black", lwd=0.6, fill="white"), default.units="native")
 	}
 
 	## Code for producing skipped grade region
