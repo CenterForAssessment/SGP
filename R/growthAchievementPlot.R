@@ -413,17 +413,17 @@
 	## Code for producing percentile growth trajectories
 
 	if (!is.null(gaPlot.percentile_trajectories)){
-
 		for (i in gaPlot.percentile_trajectories) {
 			grid.lines(tmp.smooth.grades.trajectories, smoothPercentileTrajectory_Functions[[as.character(i)]](tmp.smooth.grades.trajectories),
-				gp=gpar(lwd=1.0, lty=4, col=format.colors.growth.trajectories), default.units="native")
+				gp=gpar(lwd=1.5, col=getSGPColor(i)), default.units="native")
 		}
+		grid.circle(x=tail(tmp2.dt[['GRADE_NUMERIC']], 1), y=tail(tmp2.dt[['SCALE_SCORE']], 1), r=unit(0.05, "inches"), gp=gpar(col="black", lwd=0.6, fill="white"), default.units="native")
 	}
 
 	## Code for producing historical student scores
 
 	if (!is.null(gaPlot.students)) {
-		grid.lines(tmp2.dt[['GRADE']], tmp2.dt[['TRANSFORMED_SCALE_SCORE']], gp=gpar(lwd=1.5), default.units="native")
+		grid.lines(tmp2.dt[['GRADE_NUMERIC']], tmp2.dt[['TRANSFORMED_SCALE_SCORE']], gp=gpar(lwd=1.5), default.units="native")
 		grid.circle(x=tmp2.dt[['GRADE']], y=tmp2.dt[['TRANSFORMED_SCALE_SCORE']], r=unit(0.05, "inches"), gp=gpar(col="black", lwd=0.6, fill="white"), default.units="native")
 	}
 
@@ -442,15 +442,15 @@
 
 	if (gaPlot.subtitle) {
 		if (gaPlot.start.points=="Achievement Level Cuts") {
-			tmp.text <- paste("Student starting Grade ", tmp2.dt[['GRADE']], " from Level ", tmp2.dt[['LEVEL']], "/Level ", tmp2.dt[['LEVEL']]+1, " cut", sep="")
+			tmp.text <- paste("SGP trajectories for an ", toOrdinal(tmp2.dt[['GRADE_NUMERIC']]), " grade student from the Level ", tmp2.dt[['LEVEL']], "/Level ", tmp2.dt[['LEVEL']]+1, " cut.", sep="")
 		}
 		if (gaPlot.start.points=="Achievement Percentiles") {
-			tmp.text <- paste("Student starting Grade ", tmp2.dt[['GRADE']], " from ", toOrdinal(as.integer(100*tmp2.dt[['LEVEL']])), " achievement percentile", sep="")
+			tmp.text <- paste("SGP trajectories for an ", toOrdinal(tmp2.dt[['GRADE_NUMERIC']]), " grade student from the ", toOrdinal(as.integer(100*tmp2.dt[['LEVEL']])), " achievement percentile.", sep="")
 		}
 		if (gaPlot.start.points=="Individual Student") {
-			tmp.text <- paste("Student ", tmp2.dt[['ID']][1], " starting from Grade ", tmp2.dt[['GRADE']], sep="")
+			tmp.text <- paste("SGP trajectories for student ", tmp2.dt[['ID']][1], " starting from their ", toOrdinal(tail(tmp2.dt[['GRADE_NUMERIC']], 1)), " grade result.", sep="")
 		}
-		grid.text(x=0.5, y=0.05, tmp.text, gp=gpar(col="white", cex=1.2))
+		grid.text(x=0.5, y=0.05, tmp.text, gp=gpar(col="white", cex=0.9))
 
 	}
 
@@ -508,7 +508,7 @@
 			grid.lines(c(-0.1, 0.1), smoothPercentileTrajectory_Functions[[as.character(i)]](gaPlot.grade_range[2]),
 				gp=gpar(lwd=1.5, col=format.colors.growth.trajectories), default.units="native")
 			grid.text(x=unit(-0.475, "native"), y=smoothPercentileTrajectory_Functions[[as.character(i)]](gaPlot.grade_range[2]), i,
-				gp=gpar(col=format.colors.growth.trajectories, cex=0.8), just="left", default.units="native")
+				gp=gpar(col=getSGPColor(i), cex=0.8), just="left", default.units="native")
 		}
 
 		if (baseline) {
