@@ -141,8 +141,7 @@ function(sgp_object,
 		tmp.dt <- rbindlist(tmp.dt.list, fill=TRUE)
 
 		if (!is.null(gaPlot.students)) {
-			 tmp.dt <- merge(tmp.dt, gaPlot.students)
-			 names(tmp.dt)[dim(tmp.dt)[2]] <- "ID"
+			tmp.dt <- data.table(ID=rep(gaPlot.students, each=dim(tmp.dt)[1]), tmp.dt)
 		}
 
 		for (i in seq(dim(tmp.dt)[1])) {
