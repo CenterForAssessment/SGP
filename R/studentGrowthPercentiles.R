@@ -597,7 +597,8 @@ function(panel.data,         ## REQUIRED
 								} else {
 									simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
 										mclapply(sim.iters, function(z) rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
-											paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq.int(dim(tmp.data)[1]), simex.sample.size),]), mc.set.seed = FALSE, mc.cores=par.start$workers)
+											paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq.int(dim(tmp.data)[1]), simex.sample.size),]), 
+											mc.preschedule = FALSE, mc.set.seed = FALSE, mc.cores=par.start$workers)
 								}
 							}
 							if (par.start$par.type == 'SNOW') {
