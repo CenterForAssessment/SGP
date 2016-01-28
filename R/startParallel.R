@@ -110,6 +110,7 @@ function(parallel.config,
 	# }
 
 	if (toupper(parallel.config[['BACKEND']]) == 'PARALLEL') {
+		if (is.null(parallel.config[['TYPE']]) & !is.null(parallel.config[['SNOW_TEST']])) parallel.config[['TYPE']] <- 'PSOCK'
 		if (!is.null(parallel.config[['TYPE']])) {
 			if (!parallel.config[['TYPE']] %in% c('SOCK', 'PSOCK', 'MPI')) {
 				stop("The 'snow' package will be used when 'parallel.config$TYPE' is specified and BACKEND=='PARALLEL'.  List element must be 'SOCK' ('PSOCK') or 'MPI'.")

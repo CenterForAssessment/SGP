@@ -561,16 +561,19 @@ function(panel.data,         ## REQUIRED
 						}
 					}
 				} else {	# Parallel over sim.iters
-stop("#0+ $#!+")
+					
+					###  Always use FOREACH for coefficient matrix production -- need %dorng% to guarantee reproducibility across plateforms (also MUCH more efficient with SNOW/Windows).
+					if (toupper(tmp.par.config[["BACKEND"]]) != "FOREACH") tmp.par.config[["BACKEND"]] <- "FOREACH"; tmp.par.config[["TYPE"]] <- "doParallel"
+
 					par.start <- startParallel(tmp.par.config, 'SIMEX')
 
 					## Note, that if you use the parallel.config for SIMEX here, you can also use it for TAUS in the naive analysis
-					## Example parallel.config argument: '... parallel.config=list(BACKEND="PARALLEL", TYPE="PSOCK", WORKERS=list(SIMEX = 4, TAUS = 4))'
+					## Example parallel.config argument: '... parallel.config=list(BACKEND="FOREACH", TYPE="doParallel", WORKERS=list(SIMEX = 4, TAUS = 4))'
 
 					## Calculate coefficient matricies (if needed/requested)
 					if (is.null(simex.use.my.coefficient.matrices)) {
 						if (verbose) message("\t\t\tStarted coefficient matrix calculation, Lambda ", L, ": ", date())
-						if (toupper(tmp.par.config[["BACKEND"]]) == "FOREACH") {
+						# if (toupper(tmp.par.config[["BACKEND"]]) == "FOREACH") {
 							if (is.null(simex.sample.size) || dim(tmp.data)[1] <= simex.sample.size) {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
 									foreach(z=iter(sim.iters), .packages=c("quantreg", "data.table"),
@@ -583,36 +586,36 @@ stop("#0+ $#!+")
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
 									foreach(z=iter(sim.iters), .packages=c("quantreg", "data.table"),
 										.export=c("Knots_Boundaries", "rq.method", "taus", "content_area.progression", "tmp.slot.gp", "year.progression", "year_lags.progression", "SGPt"),
-										.options.mpi=par.start$foreach.options, .options.multicore=par.start$foreach.options, .options.snow=par.start$foreach.options) %dopar% {
+										.options.mpi=par.start$foreach.options, .options.multicore=par.start$foreach.options, .options.snow=par.start$foreach.options) %dorng% {
 											rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
 												paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq.int(dim(tmp.data)[1]), simex.sample.size),])
 									}
 							}
-						} else {
-							if (par.start$par.type == 'MULTICORE') {
-								if (is.null(simex.sample.size) || dim(tmp.data)[1] <= simex.sample.size) {
-									simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
-										mclapply(sim.iters, function(z) rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
-											paste("select * from simex_data where b in ('", z, "')", sep=""))), mc.cores=par.start$workers)
-								} else {
-									simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
-										mclapply(sim.iters, function(z) rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
-											paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq.int(dim(tmp.data)[1]), simex.sample.size),]), 
-											mc.preschedule = FALSE, mc.set.seed = FALSE, mc.cores=par.start$workers)
-								}
-							}
-							if (par.start$par.type == 'SNOW') {
-								if (is.null(simex.sample.size) || dim(tmp.data)[1] <= simex.sample.size) {
-									simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
-										parLapply(par.start$internal.cl, sim.iters, function(z) rq.mtx(tmp.gp.iter[1:k], lam=L,
-											rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname), paste("select * from simex_data where b in ('", z, "')", sep=""))))
-								} else {
-									simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
-										parLapply(par.start$internal.cl, sim.iters, function(z) rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
-											paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq.int(dim(tmp.data)[1]), simex.sample.size),]))
-								}
-							}
-						}
+						# } else {
+						# 	if (par.start$par.type == 'MULTICORE') {
+						# 		if (is.null(simex.sample.size) || dim(tmp.data)[1] <= simex.sample.size) {
+						# 			simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
+						# 				mclapply(sim.iters, function(z) rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
+						# 					paste("select * from simex_data where b in ('", z, "')", sep=""))), mc.cores=par.start$workers)
+						# 		} else {
+						# 			simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
+						# 				mclapply(sim.iters, function(z) rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
+						# 					paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq.int(dim(tmp.data)[1]), simex.sample.size),]), 
+						# 					mc.cores=par.start$workers) # mc.preschedule = FALSE, mc.set.seed = FALSE, 
+						# 		}
+						# 	}
+						# 	if (par.start$par.type == 'SNOW') {
+						# 		if (is.null(simex.sample.size) || dim(tmp.data)[1] <= simex.sample.size) {
+						# 			simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
+						# 				parLapply(par.start$internal.cl, sim.iters, function(z) rq.mtx(tmp.gp.iter[1:k], lam=L,
+						# 					rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname), paste("select * from simex_data where b in ('", z, "')", sep=""))))
+						# 		} else {
+						# 			simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
+						# 				parLapply(par.start$internal.cl, sim.iters, function(z) rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
+						# 					paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq.int(dim(tmp.data)[1]), simex.sample.size),]))
+						# 		}
+						# 	}
+						# }
 					} else {
 						simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <- available.matrices[sim.iters]
 					}
@@ -636,7 +639,7 @@ stop("#0+ $#!+")
 					## get percentile predictions from coefficient matricies
 					if (calculate.simex.sgps) {
 						if (verbose) message("\t\t\tStarted percentile prediction calculation, Lambda ", L, ": ", date())
-						if (toupper(tmp.par.config[["BACKEND"]]) == "FOREACH") {
+						# if (toupper(tmp.par.config[["BACKEND"]]) == "FOREACH") {
 							mtx.subset <- simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] # Save on memory copying to R SNOW workers
 							environment(.get.percentile.predictions) <- environment()
 							environment(.smooth.bound.iso.row) <- environment()
@@ -646,28 +649,28 @@ stop("#0+ $#!+")
 										as.vector(.get.percentile.predictions(my.matrix=mtx.subset[[z]], my.data=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
 											paste("select ", paste(c("ID", paste('prior_', k:1, sep=""), "final_yr"), collapse=", "), " from simex_data where b in ('",z,"')", sep="")))/B)
 								}
-						} else {
-							if (par.start$par.type == 'MULTICORE') {
-								tmp.fitted <- mclapply(seq_along(sim.iters), function(z) {
-									as.vector(.get.percentile.predictions(dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
-										paste("select ", paste(c("ID", paste('prior_', k:1, sep=""), "final_yr"), collapse=", ")," from simex_data where b in ('",z,"')", sep="")),
-										simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]])/B)
-								}, mc.cores=par.start$workers)
+						# } else {
+						# 	if (par.start$par.type == 'MULTICORE') {
+						# 		tmp.fitted <- mclapply(seq_along(sim.iters), function(z) {
+						# 			as.vector(.get.percentile.predictions(dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
+						# 				paste("select ", paste(c("ID", paste('prior_', k:1, sep=""), "final_yr"), collapse=", ")," from simex_data where b in ('",z,"')", sep="")),
+						# 				simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]])/B)
+						# 		}, mc.cores=par.start$workers)
 
-								fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- Reduce('+', tmp.fitted)
+						# 		fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- Reduce('+', tmp.fitted)
 
-							}
-							if (par.start$par.type == 'SNOW') {
-								tmp.fitted <- parLapply(par.start$internal.cl, seq_along(sim.iters), function(z) {
-									as.vector(.get.percentile.predictions(dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
-										paste("select ", paste(c("ID", paste('prior_', k:1, sep=""), "final_yr"), collapse=", ")," from simex_data where b in ('",z,"')", sep="")),
-										simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]])/B)
-								})
+						# 	}
+						# 	if (par.start$par.type == 'SNOW') {
+						# 		tmp.fitted <- parLapply(par.start$internal.cl, seq_along(sim.iters), function(z) {
+						# 			as.vector(.get.percentile.predictions(dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
+						# 				paste("select ", paste(c("ID", paste('prior_', k:1, sep=""), "final_yr"), collapse=", ")," from simex_data where b in ('",z,"')", sep="")),
+						# 				simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]])/B)
+						# 		})
 
-								fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- Reduce('+', tmp.fitted)
+						# 		fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- Reduce('+', tmp.fitted)
 
-							}
-						}
+						# 	}
+						# }
 					}
 					stopParallel(tmp.par.config, par.start)
 				}
