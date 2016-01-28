@@ -203,7 +203,7 @@
 		format.colors.growth.trajectories <- "black"
 	} else {
 		format.colors.background <- rgb(0.48, 0.48, 0.52)
-		format.colors.region <- c("#4D98C1", "#6BAED6", "#9ECAE1", "#C6DBEF", "#DEEBF7", "#G1EBF7")[seq(number.achievement.level.regions)]
+		format.colors.region <- tail(c("#2868a4", "#3282cd", "#5b9bd7", "#84b4e1", "#adcdeb", "#d6e6f5"), number.achievement.level.regions)
 		format.colors.font <- rgb(0.985, 0.985, 1.0)
 		format.colors.growth.trajectories <- rgb(0.985, 0.985, 1.0)
 	}
