@@ -84,7 +84,7 @@
 	tmp.unique.grades.numeric <- sort(unique(long_cutscores[['GRADE_NUMERIC']]))
 	tmp.unique.grades.character <- data.table(long_cutscores, key="GRADE_NUMERIC")[list(tmp.unique.grades.numeric), mult="first"][["GRADE"]]
 	setkeyv(gaPlot.sgp_object@Data, c("VALID_CASE", "CONTENT_AREA"))
-	growthAchievementPlot.data <- gaPlot.sgp_object@Data[CJ("VALID_CASE", content_area.all)][, list(ID, CONTENT_AREA, YEAR, GRADE, SCALE_SCORE)][
+	growthAchievementPlot.data <- gaPlot.sgp_object@Data[CJ("VALID_CASE", content_area.all)][, list(ID, CONTENT_AREA, YEAR, GRADE, SCALE_SCORE, SGP)][
 		GRADE %in% tmp.unique.grades.character & !is.na(SCALE_SCORE)]
 
 	if (missing(assessment.name) & missing(state)) {
@@ -205,7 +205,7 @@
 		format.colors.background <- rgb(0.48, 0.48, 0.52)
 		format.colors.region <- c("#4D98C1", "#6BAED6", "#9ECAE1", "#C6DBEF", "#DEEBF7")[seq(number.achievement.level.regions)]
 		format.colors.font <- rgb(0.985, 0.985, 1.0)
-		format.colors.growth.trajectories <- "khaki1"
+		format.colors.growth.trajectories <- rgb(0.985, 0.985, 1.0)
 	}
 
 	xscale.range <- c(gaPlot.grade_range[1]-0.5, gaPlot.grade_range[2]+0.5)
@@ -415,7 +415,9 @@
 	if (!is.null(gaPlot.percentile_trajectories)){
 		for (i in gaPlot.percentile_trajectories) {
 			grid.lines(tmp.smooth.grades.trajectories, smoothPercentileTrajectory_Functions[[as.character(i)]](tmp.smooth.grades.trajectories),
-				gp=gpar(lwd=1.5, col=getSGPColor(i)), default.units="native")
+				gp=gpar(lwd=1.7, col="black"), default.units="native")
+			grid.lines(tmp.smooth.grades.trajectories, smoothPercentileTrajectory_Functions[[as.character(i)]](tmp.smooth.grades.trajectories),
+				gp=gpar(lwd=1.5, lty=5, col=getSGPColor(i, format)), default.units="native")
 		}
 		grid.circle(x=tail(tmp2.dt[['GRADE_NUMERIC']], 1), y=tail(tmp2.dt[['SCALE_SCORE']], 1), r=unit(0.05, "inches"), gp=gpar(col="black", lwd=0.6, fill="white"), default.units="native")
 	}
@@ -423,7 +425,10 @@
 	## Code for producing historical student scores
 
 	if (!is.null(gaPlot.students)) {
-		grid.lines(tmp2.dt[['GRADE_NUMERIC']], tmp2.dt[['TRANSFORMED_SCALE_SCORE']], gp=gpar(lwd=1.5), default.units="native")
+		grid.lines(tmp2.dt[['GRADE_NUMERIC']], tmp2.dt[['TRANSFORMED_SCALE_SCORE']], gp=gpar(lwd=1.7, col="black"), default.units="native")
+		for (i in seq(dim(tmp2.dt)[1]-1)) {
+			grid.lines(tmp2.dt[['GRADE_NUMERIC']][c(i,i+1)], tmp2.dt[['TRANSFORMED_SCALE_SCORE']][c(i,i+1)], gp=gpar(lwd=1.5, col=getSGPColor(tmp2.dt[['SGP']][i+1], format)), default.units="native")
+		}
 		grid.circle(x=tmp2.dt[['GRADE']], y=tmp2.dt[['TRANSFORMED_SCALE_SCORE']], r=unit(0.05, "inches"), gp=gpar(col="black", lwd=0.6, fill="white"), default.units="native")
 	}
 
@@ -442,10 +447,10 @@
 
 	if (gaPlot.subtitle) {
 		if (gaPlot.start.points=="Achievement Level Cuts") {
-			tmp.text <- paste("SGP trajectories for an ", toOrdinal(tmp2.dt[['GRADE_NUMERIC']]), " grade student from the Level ", tmp2.dt[['LEVEL']], "/Level ", tmp2.dt[['LEVEL']]+1, " cut.", sep="")
+			tmp.text <- paste("SGP trajectories for a ", toOrdinal(tmp2.dt[['GRADE_NUMERIC']]), " grade student from the Level ", tmp2.dt[['LEVEL']], "/Level ", tmp2.dt[['LEVEL']]+1, " cut.", sep="")
 		}
 		if (gaPlot.start.points=="Achievement Percentiles") {
-			tmp.text <- paste("SGP trajectories for an ", toOrdinal(tmp2.dt[['GRADE_NUMERIC']]), " grade student from the ", toOrdinal(as.integer(100*tmp2.dt[['LEVEL']])), " achievement percentile.", sep="")
+			tmp.text <- paste("SGP trajectories for a ", toOrdinal(tmp2.dt[['GRADE_NUMERIC']]), " grade student from the ", toOrdinal(as.integer(100*tmp2.dt[['LEVEL']])), " achievement percentile.", sep="")
 		}
 		if (gaPlot.start.points=="Individual Student") {
 			tmp.text <- paste("SGP trajectories for student ", tmp2.dt[['ID']][1], " starting from their ", toOrdinal(tail(tmp2.dt[['GRADE_NUMERIC']], 1)), " grade result.", sep="")
@@ -508,7 +513,7 @@
 			grid.lines(c(-0.1, 0.1), smoothPercentileTrajectory_Functions[[as.character(i)]](gaPlot.grade_range[2]),
 				gp=gpar(lwd=1.5, col=format.colors.growth.trajectories), default.units="native")
 			grid.text(x=unit(-0.475, "native"), y=smoothPercentileTrajectory_Functions[[as.character(i)]](gaPlot.grade_range[2]), i,
-				gp=gpar(col=getSGPColor(i), cex=0.8), just="left", default.units="native")
+				gp=gpar(col=getSGPColor(i, format), cex=0.8), just="left", default.units="native")
 		}
 
 		if (baseline) {
