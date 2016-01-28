@@ -9,7 +9,7 @@ cover of the December 2009 Issue of \emph{Educational Measurement: Issues and Pr
 \usage{
 growthAchievementPlot(
     gaPlot.sgp_object,
-    gaPlot.students,
+    gaPlot.students=NULL,
     gaPlot.percentile_trajectories,
     gaPlot.achievement_percentiles=c(.01, seq(.05, .95, by=.05), .99),
     gaPlot.show.scale.transformations=TRUE,
