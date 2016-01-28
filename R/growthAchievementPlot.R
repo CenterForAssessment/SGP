@@ -203,7 +203,7 @@
 		format.colors.growth.trajectories <- "black"
 	} else {
 		format.colors.background <- rgb(0.48, 0.48, 0.52)
-		format.colors.region <- c("#4D98C1", "#6BAED6", "#9ECAE1", "#C6DBEF", "#DEEBF7")[seq(number.achievement.level.regions)]
+		format.colors.region <- c("#4D98C1", "#6BAED6", "#9ECAE1", "#C6DBEF", "#DEEBF7", "G1EBF7")[seq(number.achievement.level.regions)]
 		format.colors.font <- rgb(0.985, 0.985, 1.0)
 		format.colors.growth.trajectories <- rgb(0.985, 0.985, 1.0)
 	}
@@ -419,7 +419,7 @@
 			grid.lines(tmp.smooth.grades.trajectories, smoothPercentileTrajectory_Functions[[as.character(i)]](tmp.smooth.grades.trajectories),
 				gp=gpar(lwd=1.5, lty=5, col=getSGPColor(i, format)), default.units="native")
 		}
-		grid.circle(x=tail(tmp2.dt[['GRADE_NUMERIC']], 1), y=tail(tmp2.dt[['SCALE_SCORE']], 1), r=unit(0.05, "inches"), gp=gpar(col="black", lwd=0.6, fill="white"), default.units="native")
+		grid.circle(x=tail(tmp2.dt[['GRADE_NUMERIC']], 1), y=tail(tmp2.dt[['SCALE_SCORE']], 1), r=unit(0.04, "inches"), gp=gpar(col="black", lwd=0.6, fill="white"), default.units="native")
 	}
 
 	## Code for producing historical student scores
@@ -429,7 +429,7 @@
 		for (i in seq(dim(tmp2.dt)[1]-1)) {
 			grid.lines(tmp2.dt[['GRADE_NUMERIC']][c(i,i+1)], tmp2.dt[['TRANSFORMED_SCALE_SCORE']][c(i,i+1)], gp=gpar(lwd=1.5, col=getSGPColor(tmp2.dt[['SGP']][i+1], format)), default.units="native")
 		}
-		grid.circle(x=tmp2.dt[['GRADE']], y=tmp2.dt[['TRANSFORMED_SCALE_SCORE']], r=unit(0.05, "inches"), gp=gpar(col="black", lwd=0.6, fill="white"), default.units="native")
+		grid.circle(x=tmp2.dt[['GRADE']], y=tmp2.dt[['TRANSFORMED_SCALE_SCORE']], r=unit(0.04, "inches"), gp=gpar(col="black", lwd=0.6, fill="white"), default.units="native")
 	}
 
 	## Code for producing skipped grade region
@@ -447,10 +447,10 @@
 
 	if (gaPlot.subtitle) {
 		if (gaPlot.start.points=="Achievement Level Cuts") {
-			tmp.text <- paste("SGP trajectories for a ", toOrdinal(tmp2.dt[['GRADE_NUMERIC']]), " grade student from the Level ", tmp2.dt[['LEVEL']], "/Level ", tmp2.dt[['LEVEL']]+1, " cut.", sep="")
+			tmp.text <- paste("SGP trajectories for a ", toOrdinal(tmp2.dt[['GRADE_NUMERIC']]), " grade student starting from the Level ", tmp2.dt[['LEVEL']], "/Level ", tmp2.dt[['LEVEL']]+1, " cut.", sep="")
 		}
 		if (gaPlot.start.points=="Achievement Percentiles") {
-			tmp.text <- paste("SGP trajectories for a ", toOrdinal(tmp2.dt[['GRADE_NUMERIC']]), " grade student from the ", toOrdinal(as.integer(100*tmp2.dt[['LEVEL']])), " achievement percentile.", sep="")
+			tmp.text <- paste("SGP trajectories for a ", toOrdinal(tmp2.dt[['GRADE_NUMERIC']]), " grade student starting from the ", toOrdinal(as.integer(100*tmp2.dt[['LEVEL']])), " achievement percentile.", sep="")
 		}
 		if (gaPlot.start.points=="Individual Student") {
 			tmp.text <- paste("SGP trajectories for student ", tmp2.dt[['ID']][1], " starting from their ", toOrdinal(tail(tmp2.dt[['GRADE_NUMERIC']], 1)), " grade result.", sep="")
