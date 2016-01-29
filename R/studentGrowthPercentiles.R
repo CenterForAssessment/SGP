@@ -320,7 +320,8 @@ function(panel.data,         ## REQUIRED
 		if (!is.null(state) & !is.null(variable)) stop("SIMEX config can not use both 'state' and 'variable' elements.")
 		if (!is.null(state) & !is.null(csem.data.vnames)) stop("SIMEX config can not use both 'state' and 'csem.data.vnames' elements.")
 		if (!is.null(csem.data.vnames) & !is.null(variable)) stop("SIMEX config can not use both 'csem.data.vnames' and 'variable' elements.")
-		if (!is.null(parallel.config)) if (is.null(parallel.config[["WORKERS"]][["SIMEX"]])) tmp.par.config <- NULL else tmp.par.config <- parallel.config
+#		if (!is.null(parallel.config)) if (is.null(parallel.config[["WORKERS"]][["SIMEX"]])) tmp.par.config <- NULL else tmp.par.config <- parallel.config
+        if (!is.null(parallel.config) && !is.null(parallel.config[["WORKERS"]][["SIMEX"]])) tmp.par.config <- parallel.config else tmp.par.config <- NULL
 
 		rq.mtx <- function(tmp.gp.iter, lam, rqdata) {
 			mod <- character()
@@ -561,7 +562,7 @@ function(panel.data,         ## REQUIRED
 						}
 					}
 				} else {	# Parallel over sim.iters
-					
+
 					###  Always use FOREACH for coefficient matrix production -- need %dorng% to guarantee reproducibility across plateforms (also MUCH more efficient with SNOW/Windows).
 					if (toupper(tmp.par.config[["BACKEND"]]) != "FOREACH") tmp.par.config[["BACKEND"]] <- "FOREACH"; tmp.par.config[["TYPE"]] <- "doParallel"
 
@@ -600,8 +601,8 @@ function(panel.data,         ## REQUIRED
 						# 		} else {
 						# 			simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
 						# 				mclapply(sim.iters, function(z) rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
-						# 					paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq.int(dim(tmp.data)[1]), simex.sample.size),]), 
-						# 					mc.cores=par.start$workers) # mc.preschedule = FALSE, mc.set.seed = FALSE, 
+						# 					paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq.int(dim(tmp.data)[1]), simex.sample.size),]),
+						# 					mc.cores=par.start$workers) # mc.preschedule = FALSE, mc.set.seed = FALSE,
 						# 		}
 						# 	}
 						# 	if (par.start$par.type == 'SNOW') {
