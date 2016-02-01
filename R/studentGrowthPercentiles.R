@@ -320,7 +320,9 @@ function(panel.data,         ## REQUIRED
 		if (!is.null(state) & !is.null(variable)) stop("SIMEX config can not use both 'state' and 'variable' elements.")
 		if (!is.null(state) & !is.null(csem.data.vnames)) stop("SIMEX config can not use both 'state' and 'csem.data.vnames' elements.")
 		if (!is.null(csem.data.vnames) & !is.null(variable)) stop("SIMEX config can not use both 'csem.data.vnames' and 'variable' elements.")
-		if (!is.null(parallel.config)) if (is.null(parallel.config[["WORKERS"]][["SIMEX"]])) tmp.par.config <- NULL else tmp.par.config <- parallel.config
+		if (!is.null(parallel.config)) {
+			if (is.null(parallel.config[["WORKERS"]][["SIMEX"]])) tmp.par.config <- NULL else tmp.par.config <- parallel.config
+		} else tmp.par.config <- NULL
 
 		rq.mtx <- function(tmp.gp.iter, lam, rqdata) {
 			mod <- character()
