@@ -54,7 +54,7 @@ function(sgp.groups.to.summarize,
 		tmp[,MEDIAN_SGP_with_SHRINKAGE := round(50 + ((tmp[['MEDIAN_SGP']]-50) * (constant/(constant+tmp[['MEDIAN_SGP_STANDARD_ERROR']]^2))))]
 	}
 
-	message(paste("\tFinished with", sgp.groups.to.summarize))
+	messageSGP(paste("\tFinished with", sgp.groups.to.summarize))
 	return(tmp)
 } ### END sgpSummary function
 

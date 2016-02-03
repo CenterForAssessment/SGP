@@ -57,7 +57,7 @@ function(sgp_object,
 		parallel.config=NULL) {
 
 	started.at.visualizeSGP <- proc.time()
-	message(paste("\nStarted visualizeSGP", date(), "\n"))
+	messageSGP(paste("\nStarted visualizeSGP", date(), "\n"))
 
 	### Setting variables to NULL to prevent R CMD check warnings
 
@@ -1112,10 +1112,10 @@ if (sgPlot.produce.plots) {
 	} # END else Parallel Processing
 } ## END if (sgPlot.produce.plots)
 
-	message(paste("Finished studentGrowthPlot in visualizeSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
+	messageSGP(paste("Finished studentGrowthPlot in visualizeSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
 
 } ## END if ("studentGrowthPlot" %in% plot.types)
 
-	message(paste("Finished visualizeSGP", date(), "in", convertTime(timetaken(started.at.visualizeSGP)), "\n"))
+	messageSGP(paste("Finished visualizeSGP", date(), "in", convertTime(timetaken(started.at.visualizeSGP)), "\n"))
 
 } ## END visualizeSGP Function
