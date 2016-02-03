@@ -424,7 +424,7 @@ function(sgp_object,
 
 		setkeyv(tmp.table, c("CONTENT_AREA", "YEAR", "GRADE"))
 		if ("SCALE_SCORE_EQUATED" %in% names(tmp.table)) {
-			tmp.table[, TRANSFORMED_SCALE_SCORE:=piecewiseTransform(SCALE_SCORE_EQUATED, state, CONTENT_AREA, YEAR, GRADE), by=list(CONTENT_AREA, YEAR, GRADE)]
+			tmp.table[, TRANSFORMED_SCALE_SCORE:=SCALE_SCORE_EQUATED]
 		} else {
 			tmp.table[, TRANSFORMED_SCALE_SCORE:=piecewiseTransform(SCALE_SCORE, state, CONTENT_AREA, YEAR, GRADE), by=list(CONTENT_AREA, YEAR, GRADE)]
 		}

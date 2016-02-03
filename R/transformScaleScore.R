@@ -4,7 +4,8 @@ function(tmp.data,
 	content_areas,
 	linkages,
 	slot.data,
-	equating.method="equipercentile") {
+	equating.method="equipercentile",
+	assessment.transition.type.cutscores=NULL) {
 
 	TRANSFORMED_SCALE_SCORE <- SCALE_SCORE <- TEMP_SCALE_SCORE <- SCALE_SCORE_EQUATED <- CONTENT_AREA <- CONTENT_AREA_LABELS <- YEAR <- GRADE <- GRADE_NUMERIC <- ID <- NULL
 	CUTSCORES <- CUTSCORES_ORIGINAL <- GRADE_FOR_CUTSCORES <- NULL
@@ -37,9 +38,12 @@ function(tmp.data,
 		year.for.equate <- tail(sort(sapply(strsplit(names(linkages), "[.]"), '[', 2)), 1)
 		assessment.transition.type <- c(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][['Vertical_Scale']],
 			SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[paste('Vertical_Scale', year.for.equate, sep=".")]])
+		if (is.null(assessment.transition.type.cutscores)) {
+			assessment.transition.type.cutscores <- assessment.transition.type
+		}
 
 		for (i in content_areas) {
-			Cutscores[[i]] <- createLongCutscores(state=state, content_area=i, assessment.transition.type=assessment.transition.type)
+			Cutscores[[i]] <- createLongCutscores(state=state, content_area=i, assessment.transition.type=assessment.transition.type.cutscores)
 			Cutscores[[i]][, CUTSCORES_ORIGINAL:=CUTSCORES]
 		}
 
