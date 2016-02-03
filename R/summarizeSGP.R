@@ -14,7 +14,8 @@
 	parallel.config=NULL) {
 
 	started.at <- proc.time()
-	message(paste("\nStarted summarizeSGP", date()))
+	messageSGP(paste("\nStarted summarizeSGP", date()), "\n")
+	messageSGP(match.call())
 
 	### Set variables to NULL to prevent R CMD check warnings
 	SIM_NUM <- tmp.simulation.dt <- variable <- WEIGHT <- ENROLLMENT_STATUS <- names.type <- names.sgp <- names.output <- BY_GROWTH_ONLY <- VALID_CASE <- YEAR_WITHIN <- NULL
@@ -638,6 +639,7 @@
 		setkeyv(sgp_object@Data, getKey(sgp_object))
 	}
 
-	message(paste("Finished summarizeSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
+	messageSGP(paste("Finished summarizeSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
+
 	return(sgp_object)
 } ## END summarizeSGP Function

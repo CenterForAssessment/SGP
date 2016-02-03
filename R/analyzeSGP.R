@@ -40,7 +40,8 @@ function(sgp_object,
          ...) {
 
 	started.at <- proc.time()
-	message(paste("\nStarted analyzeSGP", date()))
+	messageSGP(paste("\nStarted analyzeSGP", date()), "\n")
+	messageSGP(match.call())
 
 	VALID_CASE <- CONTENT_AREA <- YEAR <- GRADE <- ID <- YEAR_WITHIN <- SCALE_SCORE <- NULL
 	SGPstateData <- SGP::SGPstateData ### Needed due to possible assignment of values to SGPstateData
@@ -67,7 +68,7 @@ function(sgp_object,
 
 	if (simulate.sgps) {
 		if (is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
-			message("\tNOTE: CSEMs are required in 'SGPstateData' (either as a data.frame of CSEMs or as a variable name of CSEMsin @Data) to simulate SGPs for confidence interval calculations. SGP standard errors will not be calculated.")
+			messageSGP("\tNOTE: CSEMs are required in 'SGPstateData' (either as a data.frame of CSEMs or as a variable name of CSEMsin @Data) to simulate SGPs for confidence interval calculations. SGP standard errors will not be calculated.")
 			calculate.confidence.intervals <- csem.variable <- NULL
 		} else {
             if (is.data.frame(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
@@ -165,31 +166,31 @@ function(sgp_object,
 		# lower.level.parallel.config <- FALSE
 		# if (as.numeric(parallel.config[['WORKERS']][['PERCENTILES']])!=1) stop("Both TAUS and PERCENTILES can not be executed in Parallel at the same time.")
 		if (.Platform$OS.type != "unix" | "SNOW_TEST" %in% names(parallel.config)) stop("Both TAUS and PERCENTILES can not be executed in Parallel at the same time in Windows OS or using SNOW type backends.")
-		message("\n\tCAUTION:  Running higher- and lower-level processes in parallel at the same time.  Make sure you have enough CPU cores and memory to support this.\n")
+		messageSGP("\n\tCAUTION:  Running higher- and lower-level processes in parallel at the same time.  Make sure you have enough CPU cores and memory to support this.\n")
 	}
 	if (all(c("PERCENTILES", "SIMEX") %in% names(parallel.config[['WORKERS']]))) {
 		if (.Platform$OS.type != "unix" | "SNOW_TEST" %in% names(parallel.config)) stop("Both SIMEX and PERCENTILES can not be executed in Parallel at the same time in Windows OS or using SNOW type backends.")
-		message("\n\tCAUTION:  Running higher- and lower-level processes in parallel at the same time.  Make sure you have enough CPU cores and memory to support this.\n")
+		messageSGP("\n\tCAUTION:  Running higher- and lower-level processes in parallel at the same time.  Make sure you have enough CPU cores and memory to support this.\n")
 	}
 
 	if (all(c("BASELINE_PERCENTILES", "TAUS") %in% names(parallel.config[['WORKERS']]))) {
 		if (.Platform$OS.type != "unix" | "SNOW_TEST" %in% names(parallel.config)) stop("Both TAUS and BASELINE_PERCENTILES can not be executed in Parallel at the same time in Windows OS or using SNOW type backends.")
-		message("\n\tCAUTION:  Running higher- and lower-level processes in parallel at the same time.  Make sure you have enough CPU cores and memory to support this.\n")
+		messageSGP("\n\tCAUTION:  Running higher- and lower-level processes in parallel at the same time.  Make sure you have enough CPU cores and memory to support this.\n")
 	}
 	if (all(c("BASELINE_PERCENTILES", "SIMEX") %in% names(parallel.config[['WORKERS']]))) {
 		if (.Platform$OS.type != "unix" | "SNOW_TEST" %in% names(parallel.config)) stop("Both SIMEX and BASELINE_PERCENTILES can not be executed in Parallel at the same time in Windows OS or using SNOW type backends.")
-		message("\n\tCAUTION:  Running higher- and lower-level processes in parallel at the same time.  Make sure you have enough CPU cores and memory to support this.\n")
+		messageSGP("\n\tCAUTION:  Running higher- and lower-level processes in parallel at the same time.  Make sure you have enough CPU cores and memory to support this.\n")
 	}
 
 	if (any(c("SIMEX", "TAUS") %in% names(parallel.config[['WORKERS']]))) {
 		lower.level.parallel.config <- parallel.config
-		if (length(names(parallel.config[['WORKERS']])) <= 2) parallel.config <- NULL # Only NULL out parallel.config if ONLY SIMEX and TAUS are requested
+		if (length(grep("SUMMARY|GA_PLOTS|SG_PLOTS", names(parallel.config[['WORKERS']]), value=TRUE, invert=TRUE)) <= 2) parallel.config <- NULL # NULL out parallel.config when passed from abcSGP, etc
 	} else lower.level.parallel.config <- NULL
 
 
 	if (!is.null(calculate.simex) | !is.null(calculate.simex.baseline)) {
 		if (is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
-			message("\tNOTE: CSEMs are required in 'SGPstateData' (either as a data.frame of CSEMs or as a variable name of CSEMsin @Data) to produce SIMEX corrected SGPs. SIMEX corrected SGPs will NOT be calculated.")
+			messageSGP("\tNOTE: CSEMs are required in 'SGPstateData' (either as a data.frame of CSEMs or as a variable name of CSEMsin @Data) to produce SIMEX corrected SGPs. SIMEX corrected SGPs will NOT be calculated.")
 			calculate.simex <- calculate.simex.baseline <- NULL
 		}
 	}
@@ -219,7 +220,7 @@ function(sgp_object,
 	if (is.null(sgp.minimum.default.panel.years) & is.null(SGPstateData[[state]][["SGP_Configuration"]][['sgp.minimum.default.panel.years']])) {
 		if (length(unique(sgp_object@Data$YEAR))==2) {
 			sgp.minimum.default.panel.years <- 2
-			message("\tNOTE: Only two years of data present. Minimum default of 3 years of panel data for SGP analyses changed to 2. Please confirm this is consistent with analyses you wish to perform.")
+			messageSGP("\tNOTE: Only two years of data present. Minimum default of 3 years of panel data for SGP analyses changed to 2. Please confirm this is consistent with analyses you wish to perform.")
 		} else {
 			sgp.minimum.default.panel.years <- 3
 		}
@@ -278,7 +279,7 @@ function(sgp_object,
 		}
 	} else {
 		if (identical(sgp.percentiles.equated, TRUE)) {
-			message("\t\tNOTE: 'sgp.percentiles.equated' has been set to TRUE but no meta-data exists in 'SGPstateData' associated with that assessment transition. Equated/linked SGP analyses require meta-data embedded in 'SGPstateData' to correctly work. Contact package administrators on how such data can be added to the package.")
+			messageSGP("\t\tNOTE: 'sgp.percentiles.equated' has been set to TRUE but no meta-data exists in 'SGPstateData' associated with that assessment transition. Equated/linked SGP analyses require meta-data embedded in 'SGPstateData' to correctly work. Contact package administrators on how such data can be added to the package.")
 		}
 		sgp.percentiles.equated <- FALSE
 	}
@@ -341,7 +342,7 @@ function(sgp_object,
 					}
 				}
 		} else {
-			message("\tNOTE: No Goodness of Fit tables available to print. No tables will be produced.")
+			messageSGP("\tNOTE: No Goodness of Fit tables available to print. No tables will be produced.")
 		}
 	}
 
@@ -407,7 +408,7 @@ function(sgp_object,
 
         if (is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][['Baseline_Projections_in_Transition_Year']]) &
             (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline)) {
-                message("\tNOTE: Baseline SGP related analyses are not possible across an assessment transition with equating. Arguments related to baseline analyses are set to FALSE.")
+                messageSGP("\tNOTE: Baseline SGP related analyses are not possible across an assessment transition with equating. Arguments related to baseline analyses are set to FALSE.")
                 sgp.percentiles.baseline <- sgp.projections.baseline <- sgp.projections.lagged.baseline <- FALSE
         }
 
@@ -417,12 +418,12 @@ function(sgp_object,
 		    content_areas.for.equate <- unique(sgp_object@Data[YEAR==year.for.equate]$CONTENT_AREA)
 
             if (is.null(sgp.percentiles.equating.method)) {
-                message("\tNOTE: Analyses involving equating will be performed using each of: 'identity', 'mean', 'linear', and 'equipercentile' methods. See documentation associated with the 'sgp.percentiles.equating.method' argument in 'analyzeSGP'.")
+                messageSGP("\tNOTE: Analyses involving equating will be performed using each of: 'identity', 'mean', 'linear', and 'equipercentile' methods. See documentation associated with the 'sgp.percentiles.equating.method' argument in 'analyzeSGP'.")
                 sgp.percentiles.equating.method <- c("identity", "mean", "linear", "equipercentile")
             }
 
             if (!identical(years, year.for.equate)) {
-                message(paste("\tNOTE: Analyses involving equating only occur in most recent year. 'years' argument changed to ", year.for.equate, ".", sep=""))
+                messageSGP(paste("\tNOTE: Analyses involving equating only occur in most recent year. 'years' argument changed to ", year.for.equate, ".", sep=""))
                 years <- year.for.equate
             }
 
@@ -432,7 +433,7 @@ function(sgp_object,
                 SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]] <- c(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]], tmp.knots.boundaries)
                 assign(paste(state, "Knots_Boundaries", sep="_"), SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]])
                 save(list=paste(state, "Knots_Boundaries", sep="_"), file=paste(state, "Knots_Boundaries.Rdata", sep="_"))
-                message(paste("\tNOTE: Knots and Boundaries do not exist for ", year.for.equate, " in state provided.\n\tThey have been produced, embedded in SGPstateData, and are available using state=", state, " for subsequent analyses and saved to your working directory '", getwd(), "'.", sep=""))
+                messageSGP(paste("\tNOTE: Knots and Boundaries do not exist for ", year.for.equate, " in state provided.\n\tThey have been produced, embedded in SGPstateData, and are available using state=", state, " for subsequent analyses and saved to your working directory '", getwd(), "'.", sep=""))
             }
 
             data.for.equate <- copy(sgp_object@Data)
@@ -508,7 +509,7 @@ function(sgp_object,
 				sgp.baseline.config <- checkConfig(sgp.baseline.config, "Baseline")
 			}
 
-			message("\n\tStarted Baseline Coefficient Matrix Calculation:\n")
+			messageSGP("\n\tStarted Baseline Coefficient Matrix Calculation:\n")
 
 			if (!is.null(parallel.config)) { ### PARALLEL BASELINE COEFFICIENT MATRIX CONSTRUCTION
 				par.start <- startParallel(parallel.config, 'BASELINE_MATRICES')
@@ -576,7 +577,7 @@ function(sgp_object,
 				eval(parse(text=paste(state, "_Baseline_Matrices[['", tmp.matrix.label, "']] <- tmp_sgp_object[['Coefficient_Matrices']][['", tmp.matrix.label, "']]", sep="")))
 			}
 			save(list=paste(state, "_Baseline_Matrices", sep=""), file=paste(state, "_Baseline_Matrices.Rdata", sep=""))
-			message("\n\tFinished Calculating Baseline Coefficient Matrices\n")
+			messageSGP("\n\tFinished Calculating Baseline Coefficient Matrices\n")
 		} else {
 			if (is.null(sgp.use.my.sgp_object.baseline.coefficient.matrices)) tmp_sgp_object <- mergeSGP(tmp_sgp_object, SGPstateData[[state]][["Baseline_splineMatrix"]])
 		}
@@ -606,7 +607,7 @@ function(sgp_object,
 
 			sgp.baseline.config <- sgp.baseline.config[which(sapply(sgp.baseline.config, function(x) tail(x[["sgp.baseline.content.areas"]],1)) %in% tmp.subjects[!find.matrices])]
 
-			message("\n\tStarted SIMEX Baseline Coefficient Matrix Calculation:\n")
+			messageSGP("\n\tStarted SIMEX Baseline Coefficient Matrix Calculation:\n")
 
 			##  Enforce that simex.use.my.coefficient.matrices must be FALSE for BASELINE SIMEX matrix production
 			calculate.simex.baseline$simex.use.my.coefficient.matrices <- NULL
@@ -688,7 +689,7 @@ function(sgp_object,
 			}
 			save(list=paste(state, "_SIMEX_Baseline_Matrices", sep=""), file=paste(state, "_SIMEX_Baseline_Matrices.Rdata", sep=""), compress="xz")
 
-			message("\n\tFinished Calculating SIMEX Baseline Coefficient Matrices\n")
+			messageSGP("\n\tFinished Calculating SIMEX Baseline Coefficient Matrices\n")
 		} # END Compute SIMEX baseline coefficient matrices
 
 		##  Enforce that simex.use.my.coefficient.matrices must be TRUE and save.matrices is FALSE for BASELINE SIMEX calculations below
@@ -707,22 +708,22 @@ function(sgp_object,
         sgp.percentiles.equated, SGPt)
 
 	if (sgp.projections & length(par.sgp.config[['sgp.projections']])==0) {
-		message("\tNOTE: No configurations are present for cohort referenced projections. No cohort referenced projections will be calculated.")
+		messageSGP("\tNOTE: No configurations are present for cohort referenced projections. No cohort referenced projections will be calculated.")
 		sgp.projections <- FALSE
 	}
 
 	if (sgp.projections.lagged & length(par.sgp.config[['sgp.projections.lagged']])==0) {
-		message("\tNOTE: No configurations are present for cohort referenced lagged projections. No lagged cohort referenced projections will be calculated.")
+		messageSGP("\tNOTE: No configurations are present for cohort referenced lagged projections. No lagged cohort referenced projections will be calculated.")
 		sgp.projections.lagged <- FALSE
 	}
 
 	if (sgp.projections.baseline & length(par.sgp.config[['sgp.projections.baseline']])==0) {
-		message("\tNOTE: No configurations are present for baseline projections. No baseline projections will be calculated.")
+		messageSGP("\tNOTE: No configurations are present for baseline projections. No baseline projections will be calculated.")
 		sgp.projections.baseline <- sgp.projections.lagged.baseline <- FALSE
 	}
 
 	if (sgp.projections.lagged.baseline & length(par.sgp.config[['sgp.projections.lagged.baseline']])==0) {
-		message("\tNOTE: No configurations are present for lagged baseline projections. No lagged baseline projections will be calculated.")
+		messageSGP("\tNOTE: No configurations are present for lagged baseline projections. No lagged baseline projections will be calculated.")
 		sgp.projections.baseline <- sgp.projections.lagged.baseline <- FALSE
 	}
 
@@ -2097,6 +2098,6 @@ function(sgp_object,
 	if (goodness.of.fit.print) gof.print(sgp_object)
 	setkeyv(sgp_object@Data, getKey(sgp_object)) # re-key data for combineSGP, etc.
 	sgp_object@Version[["analyzeSGP"]][[as.character(gsub("-", "_", Sys.Date()))]] <- as.character(packageVersion("SGP"))
-	message(paste("Finished analyzeSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
+	messageSGP(paste("Finished analyzeSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
 	return(sgp_object)
 } ## END analyzeSGP Function

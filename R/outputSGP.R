@@ -14,8 +14,9 @@ function(sgp_object,
 	outputSGP.projection.years.for.target=3,
 	outputSGP.pass.through.variables=NULL) {
 
-        started.at.outputSGP <- proc.time()
-        message(paste("\nStarted outputSGP ", date(), ": Files produced from outputSGP saved in '", outputSGP.directory, "'\n", sep=""))
+	started.at.outputSGP <- proc.time()
+	messageSGP(paste("\nStarted outputSGP ", date(), ": Files produced from outputSGP saved in '", outputSGP.directory, "'\n", sep=""))
+	messageSGP(match.call())
 
 	### Create directory
 
@@ -811,6 +812,6 @@ function(sgp_object,
 
 
 	setkeyv(sgp_object@Data, getKey(sgp_object))
-	message(paste("Finished outputSGP", date(), "in", convertTime(timetaken(started.at.outputSGP)), "\n"))
+	messageSGP(paste("Finished outputSGP", date(), "in", convertTime(timetaken(started.at.outputSGP)), "\n"))
 
 } ## END outputSGP
