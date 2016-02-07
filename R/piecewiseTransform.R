@@ -1,4 +1,4 @@
-`piecewiseTransform` <- 
+`piecewiseTransform` <-
 function(scale_score,
 	state,
 	content_area,
@@ -16,7 +16,7 @@ function(scale_score,
 	if (!is.null(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]])) {
 		equate.year <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]
 		if (year < equate.year)  {
-			tmp.test <- "Transformed_Achievement_Level_Cutscores" 
+			tmp.test <- "Transformed_Achievement_Level_Cutscores"
 		} else {
 			if (!is.null(new.cutscores) && length(new.cutscores) > 0) {
 				tmp.test <- "NOT_NULL"
@@ -31,7 +31,6 @@ function(scale_score,
 
 	if (is.null(sgp.projections.equated) | !is.null(tmp.test)) {
 		if ((content_area %in% names(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]]) &&
-			#grade %in% matrix(unlist(strsplit(names(SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]]), "_")), ncol=2, byrow=TRUE)[,2]) || !is.null(tmp.test)) {
 			grade %in% matrix(unlist(strsplit(unlist(lapply(SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][names(SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]]) %in% content_area], names)), "_"))) || !is.null(tmp.test))) {
 
 			if (!is.null(new.cutscores)) {
@@ -48,7 +47,7 @@ function(scale_score,
 			tmp.loss.hoss <- SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[my.knots_boundaries.label]][[paste("loss.hoss_", grade, sep="")]]
 			scale_score[scale_score < tmp.loss.hoss[1]] <- tmp.loss.hoss[1]; scale_score[scale_score > tmp.loss.hoss[2]] <- tmp.loss.hoss[2]
 			my.content_area <- getMyLabel(state, content_area, year)
-			tmp.old.cuts <- c(tmp.loss.hoss[1], SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.content_area]][[paste("GRADE_", grade, sep="")]], 
+			tmp.old.cuts <- c(tmp.loss.hoss[1], SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.content_area]][[paste("GRADE_", grade, sep="")]],
 				tmp.loss.hoss[2])
 			tmp.index <- findInterval(scale_score, tmp.old.cuts, rightmost.closed=TRUE)
 			tmp.diff <- diff(tmp.new.cuts)/diff(tmp.old.cuts)

@@ -424,8 +424,17 @@ function(sgp_object,
 		### Create transformed scale scores
 
 		setkeyv(tmp.table, c("CONTENT_AREA", "YEAR", "GRADE"))
-		if ("SCALE_SCORE_EQUATED" %in% names(tmp.table)) {
-			tmp.table[, TRANSFORMED_SCALE_SCORE:=SCALE_SCORE_EQUATED]
+		if (!is.null(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]])) {
+			year.for.transition <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]
+			tmp.table[,TRANSFORMED_SCALE_SCORE:=piecewiseTransform(
+					SCALE_SCORE,
+					state,
+					CONTENT_AREA,
+					YEAR,
+					GRADE,
+					new.cutscores=sort(c(SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[paste(CONTENT_AREA[1], year.for.transition, sep=".")]][[paste("loss.hoss_", GRADE[1], sep="")]],
+											SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[paste(CONTENT_AREA[1], year.for.transition, sep=".")]][[paste("GRADE", GRADE[1], sep="_")]]))),
+				by=list(CONTENT_AREA, YEAR, GRADE)]
 		} else {
 			tmp.table[, TRANSFORMED_SCALE_SCORE:=piecewiseTransform(SCALE_SCORE, state, CONTENT_AREA, YEAR, GRADE), by=list(CONTENT_AREA, YEAR, GRADE)]
 		}
