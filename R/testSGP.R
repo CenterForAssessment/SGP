@@ -256,7 +256,7 @@
 				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_PRIOR: FAIL\n")
 			}
 
-			### TEST of SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1 variable for READING.2014_2015 scale score targets
+			### TEST of SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1 variable for READING.XXXX_XXXX scale score targets
 
 			if (identical(as.integer(sum(Demonstration_SGP@SGP[['SGProjections']][[paste('READING', tail(sgpData.years, 1), "LAGGED.TARGET_SCALE_SCORES", sep=".")]][['SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1']])), 18313900L)) {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1: OK\n")
@@ -504,7 +504,7 @@
 
 				### TEST 2b ###
 				if (i=='2B') {
-					Demonstration_Data_LONG_2014_2015 <- subset(SGPdata::sgpData_LONG, YEAR==tail(sgpData.years, 1))
+					Demonstration_Data_LONG_LAST_YEAR <- subset(SGPdata::sgpData_LONG, YEAR==tail(sgpData.years, 1))
 
 					expression.to.evaluate <-
 						paste("Demonstration_SGP <- updateSGP(\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=Demonstration_Data_LONG_LAST_YEAR,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\toverwrite.existing.data=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgPlot.demo.report=TRUE,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
@@ -887,14 +887,13 @@
 			tmp.messages <- c(tmp.messages, paste("\n\t##### End testSGP test number 4, Part 1: ", convertTime(timetaken(started.at.overall)), "#####\n"))
 
 			sgp.config <- list(
-				AMERICAN_LIT.2014_2015=list(
+				AMERICAN_LIT.config=list(
 					sgp.content.areas=c('READING', 'GRADE_9_LIT', 'AMERICAN_LIT'),
 					sgp.panel.years=tail(sgpData.years, 3),
 					sgp.grade.sequences=list(c(8, 'EOCT', 'EOCT')),
 					sgp.calculate.simex=eval(parse(text=simex.parameters)),
 					sgp.calculate.simex.baseline=simex.parameters),
-
-				ALGEBRA_II.2014_2015=list(
+				ALGEBRA_II.config=list(
 					sgp.content.areas=c('MATHEMATICS', 'ALGEBRA_I', 'ALGEBRA_II'),
 					sgp.panel.years=tail(sgpData.years, 3),
 					sgp.grade.sequences=list(c(8, 'EOCT', 'EOCT')),
@@ -975,18 +974,17 @@
 			Demonstration_SGP <- ACHIEVEMENT_LEVEL <- HIGH_NEED_STATUS <- tmp.messages <- NULL
 			if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
 			sgpData_LONG <- SGPdata::sgpData_LONG
+			years <- sgpData.years
+			years.step.1 <- years[1:3]; years.step.2 <- years[4]; years.step.3 <- years[5]
 			if (is.null(test.option[['Scale_Transition_Types']])) test.option[['Scale_Transition_Types']] <- c("Vertical", "Vertical")
 			if (is.null(test.option[['Scale_Transition_Adjustments']])) test.option[['Scale_Transition_Adjustments']] <- list(MATHEMATICS=2100, READING=2200)
-			if (identical(test.option[['Earliest_Year_Reported']], TRUE)) test.option[['Earliest_Year_Reported']] <- list(MATHEMATICS="2013_2014", READING="2013_2014")
+			if (identical(test.option[['Earliest_Year_Reported']], TRUE)) test.option[['Earliest_Year_Reported']] <- list(MATHEMATICS=years.step.2, READING=years.step.2)
 
 			##############################################################################
-			##### PART 1: Run analyses for year prior to assessment change in 2013-2014
+			##### PART 1: Run analyses for year prior to assessment change
 			##############################################################################
 
 			##### Create data sets for Step 1 (2 & 3 after new SGPstateData put in place)
-
-			years <- sgpData.years
-			years.step.1 <- years[1:3]; years.step.2 <- years[4]; years.step.3 <- years[5]
 
 			sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'MATHEMATICS' & sgpData_LONG$YEAR %in% c(years.step.2, years.step.3)] <-
 				sgpData_LONG$SCALE_SCORE[sgpData_LONG$CONTENT_AREA == 'MATHEMATICS' & sgpData_LONG$YEAR %in% c(years.step.2, years.step.3)] +
@@ -1337,7 +1335,7 @@
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable LEVEL_1_SGP_TARGET_YEAR_1_CURRENT, part 3: FAIL\n")
 			}
 
-			### TEST of ACHIEVEMENT_LEVEL_PRIOR Variable in MATHEMATICS.2014_2015.LAGGED projections
+			### TEST of ACHIEVEMENT_LEVEL_PRIOR Variable in MATHEMATICS.XXXX_XXXX.LAGGED projections
 
 			if (identical(as.vector(table(Demonstration_SGP@SGP[['SGProjections']][[paste('MATHEMATICS', tail(sgpData.years, 1), 'LAGGED', sep=".")]][['ACHIEVEMENT_LEVEL_PRIOR']])), c(8178L, 4316L, 5991L, 7552L, 3145L))) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable ACHIEVEMENT_LEVEL_PRIOR, part 3: OK\n")
@@ -1370,7 +1368,7 @@
 			SGPstateData[['DEMO']][['Baseline_splineMatrix']] <- NULL
 
 			expression.to.evaluate <-
-				paste("\nDemonstration_SGP <- abcSGP(\n\tsgp_object=SGPdata::sgpData_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\tyears='2014_2015',\n\tcontent_areas='MATHEMATICS',\n\tsgp.percentiles=FALSE,\n\tsgp.projections=FALSE,\n\tsgp.projections.lagged=FALSE,\n\tsgp.percentiles.baseline=TRUE,\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(BASELINE_PERCENTILES=", number.cores, ", BASELINE_MATRICES=", number.cores, "))\n)", sep="")
+				paste("\nDemonstration_SGP <- abcSGP(\n\tsgp_object=SGPdata::sgpData_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\tyears='", tail(sgpData.years, 1), "',\n\tcontent_areas='MATHEMATICS',\n\tsgp.percentiles=FALSE,\n\tsgp.projections=FALSE,\n\tsgp.projections.lagged=FALSE,\n\tsgp.percentiles.baseline=TRUE,\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(BASELINE_PERCENTILES=", number.cores, ", BASELINE_MATRICES=", number.cores, "))\n)", sep="")
 
 			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "dir.create('Data', showWarnings=FALSE)", "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
 
