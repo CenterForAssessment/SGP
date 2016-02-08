@@ -58,7 +58,7 @@ function(sgp_data,
 				!is.na(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[get.achievement_level.label(state, year)]][["Proficient"]])]
 		}
 		as.character(factor(findInterval(scale_score, SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[get.cutscore.label(state, year, content_area)]][[paste("GRADE_", grade, sep="")]])+1,
-			levels=tmp.levels, labels=tmp.labels, ordered=TRUE))
+			levels=tmp.levels, labels=tmp.labels))
 	}
 
 	if ("STATE" %in% names(sgp_data) & !is.null(SGP::SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]])) {

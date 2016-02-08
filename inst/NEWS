@@ -1,3 +1,10 @@
+Changes in version: SGP_1.5-0.0
+
+  USER VISIBLE CHANGES:
+
+	  o Analyses now export output to txt file contained in Log directory.
+	  o Growth and Achievement Plots now support individual student reports and arbitrary grade level starting points.
+
 Changes in version: SGP_1.4-0.0
 
   USER VISIBLE CHANGES:

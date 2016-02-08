@@ -229,10 +229,10 @@ function(sgp_object,
 			}
 			new.matrices <-convertToBaseline(sgp_object@SGP$Coefficient_Matrices[grep(configuration.year, names(sgp_object@SGP$Coefficient_Matrices))])
 			old.matrices <- SGPstateData[[state]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]]
-			year.to.replace <- head(sort(unique(sapply(lapply(sapply(names(old.matrices[[1]]), strsplit, '[.]'), '[', 2:3), paste, collapse="."))), 1)
+			year.to.replace <- head(sort(unique(sapply(lapply(sapply(names(old.matrices[['READING.BASELINE']]), strsplit, '[.]'), '[', 2:3), paste, collapse="."))), 1)
 			for (content_area.iter in c("EARLY_LITERACY.BASELINE", "READING.BASELINE", "MATHEMATICS.BASELINE")) {
-					old.matrices[[content_area.iter]][grep(year.to.replace, names(old.matrices[[content_area.iter]]))] <- NULL
-					old.matrices[[content_area.iter]] <- c(old.matrices[[content_area.iter]], new.matrices[[content_area.iter]])
+				old.matrices[[content_area.iter]][grep(year.to.replace, names(old.matrices[[content_area.iter]]))] <- NULL
+				old.matrices[[content_area.iter]] <- c(old.matrices[[content_area.iter]], new.matrices[[content_area.iter]])
 			}
 			eval(parse(text=paste(paste(state, "SGPt_Baseline_Matrices$", sep="_"), paste(state, "SGPt_Baseline_Matrices", matrix.window, sep="_"), " <- old.matrices", sep="")))
 			save(list=paste(state, "SGPt_Baseline_Matrices", sep="_"), file=paste(paste(state, "SGPt_Baseline_Matrices", sep="_"), "rda", sep="."), compress="xz")
