@@ -251,6 +251,7 @@ function(
 			tmp.prior.achievement.level.base.points <- cumsum(tmp.prior.achievement.level.percentages)+(seq_along(tmp.prior.achievement.level.percentages)-1)/100
 			tmp.prior.achievement.level.centers <- tmp.prior.achievement.level.base.points-tmp.prior.achievement.level.percentages/2
 			tmp.prior.achievement.level.quantiles <- tapply(data1[['SGP']], data1[['ACHIEVEMENT_LEVEL_PRIOR']], quantile, probs=1:9/10, simplify=FALSE)
+			tmp.prior.achievement.level.quantiles[sapply(tmp.prior.achievement.level.quantiles, is.null)] <- list(quantile(0:100, probs=1:9/10, simplify=FALSE))
 			layout.vp <- viewport(layout = grid.layout(9, 4, widths = unit(c(0.1, 4.9, 3.4, 0.1), rep("inches", 4)),
 			heights = unit(c(0.2, 1.0, 0.1, 3.0, 0.1, 2.3, 0.1, 4.0, 0.2), rep("inches", 9))), name="layout")
 			components <- vpList(
