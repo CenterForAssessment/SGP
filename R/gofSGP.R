@@ -233,21 +233,25 @@ function(
 		loss_hoss.colors <- .cell.color(loss_hoss.table, loss_hoss=TRUE)
 
 		if (with.prior.achievement.level) {
-			tmp.prior.achievement.level.percentages <- table(factor(data1[['ACHIEVEMENT_LEVEL_PRIOR']]))/(dim(data1)[1])
-			tmp.prior.achievement.level.colors <- rev(diverge_hcl(length(tmp.prior.achievement.level.percentages)))
-			tmp.prior.achievement.level.percentages.labels <- paste("(", round(100*table(factor(data1[['ACHIEVEMENT_LEVEL_PRIOR']]))/(dim(data1)[1]), digits=1), "%)", sep="")
 			if (is.null(state)) {
-				tmp.prior.achievement.level.labels <- row.names(tmp.prior.achievement.level.percentages)
+				tmp.prior.achievement.level.labels <- tmp.prior.achievement.levels <- levels(data1[['ACHIEVEMENT_LEVEL_PRIOR']])
 			} else {
 				if (is.null(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]])) {
 					tmp.prior.achievement.level.labels <- names(SGP::SGPstateData[[state]][['Student_Report_Information']][['Achievement_Level_Labels']])
+					tmp.prior.achievement.levels <- unlist(SGP::SGPstateData[[state]][['Student_Report_Information']][['Achievement_Level_Labels']], use.names = FALSE)
 				} else {
 					tmp.prior.achievement.level.labels <- names(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[get.achievement_level.label(state, years_prior)]])
+					tmp.prior.achievement.levels <- unlist(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[get.achievement_level.label(state, years_prior)]], use.names = FALSE)
 				}
 			}
+			data1[['ACHIEVEMENT_LEVEL_PRIOR']] <- ordered(data1[['ACHIEVEMENT_LEVEL_PRIOR']], levels=tmp.prior.achievement.levels)
+			tmp.prior.achievement.level.percentages <- table(data1[['ACHIEVEMENT_LEVEL_PRIOR']])/(dim(data1)[1])
+			tmp.prior.achievement.level.colors <- rev(diverge_hcl(length(tmp.prior.achievement.level.percentages)))
+			tmp.prior.achievement.level.percentages.labels <- paste("(", round(100*table(data1[['ACHIEVEMENT_LEVEL_PRIOR']])/(dim(data1)[1]), digits=1), "%)", sep="")
 			tmp.prior.achievement.level.base.points <- cumsum(tmp.prior.achievement.level.percentages)+(seq_along(tmp.prior.achievement.level.percentages)-1)/100
 			tmp.prior.achievement.level.centers <- tmp.prior.achievement.level.base.points-tmp.prior.achievement.level.percentages/2
-			tmp.prior.achievement.level.quantiles <- tapply(data1[['SGP']], factor(data1[['ACHIEVEMENT_LEVEL_PRIOR']]), quantile, probs=1:9/10, simplify=FALSE)
+			tmp.prior.achievement.level.quantiles <- tapply(data1[['SGP']], data1[['ACHIEVEMENT_LEVEL_PRIOR']], quantile, probs=1:9/10, simplify=FALSE)
+			tmp.prior.achievement.level.quantiles[sapply(tmp.prior.achievement.level.quantiles, is.null)] <- list(quantile(0:100, probs=1:9/10, simplify=FALSE))
 			layout.vp <- viewport(layout = grid.layout(9, 4, widths = unit(c(0.1, 4.9, 3.4, 0.1), rep("inches", 4)),
 			heights = unit(c(0.2, 1.0, 0.1, 3.0, 0.1, 2.3, 0.1, 4.0, 0.2), rep("inches", 9))), name="layout")
 			components <- vpList(
