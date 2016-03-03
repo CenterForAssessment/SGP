@@ -283,9 +283,9 @@
 			### TEST of LAGGED PROJECTION CUTs variable P35_PROJ_YEAR_1 variable for MATHEMATICS.XXXX_XXXX.LAGGED
 
 			if (identical(sum(Demonstration_SGP@SGP[['SGProjections']][[paste('MATHEMATICS', tail(sgpData.years, 1), 'LAGGED', sep=".")]][['P35_PROJ_YEAR_1']]), 15968767)) {
-				tmp.messages <- c(tmp.messages, "\tTest of LAGGED PROJECTION variable P35_PROJ_YEAR_1: OK\n")
+				tmp.messages <- c(tmp.messages, "\tTest of variable P35_PROJ_YEAR_1 (LAGGED PROJECTION): OK\n")
 			} else {
-				tmp.messages <- c(tmp.messages, "\tTest of LAGGED PROJECTION variable P35_PROJ_YEAR_1: FAIL\n")
+				tmp.messages <- c(tmp.messages, "\tTest of variable P35_PROJ_YEAR_1 (LAGGED PROJECTION): FAIL\n")
 			}
 
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number ", TEST_NUMBER, ":  ", convertTime(timetaken(started.at.overall)), " #####\n", sep=""))
