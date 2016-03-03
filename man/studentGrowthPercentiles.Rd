@@ -29,6 +29,7 @@ studentGrowthPercentiles(panel.data,
                          print.sgp.order=FALSE,
                          calculate.sgps=TRUE,
                          rq.method="br",
+                         rq.method.for.large.n="fn",
                          max.n.for.coefficient.matrices=NULL,
                          knot.cut.percentiles=c(0.2,0.4,0.6,0.8),
                          knots.boundaries.by.panel=FALSE,
@@ -137,7 +138,9 @@ to calculate the lags/differences based upon the supplied years.
   }
   \item{calculate.sgps}{Boolean argument (defaults to TRUE) indicating whether student growth percentiles should be calculated following coefficient matrix calculation.
   }
-  \item{rq.method}{Argument to define the estimation method used in the quantile regression calculations. The default is the the \code{"br"} method referring to the Barrodale and Robert's L1 estimation detailed in Koenker (2005) and in the help for the quantile regression package.
+  \item{rq.method}{Argument defining the estimation method used in the quantile regression calculations. The default is the \code{"br"} method referring to the Barrodale and Robert's L1 estimation detailed in Koenker (2005) and in the help for the quantile regression (\code{quantreg}) package.
+  }
+  \item{rq.method.for.large.n}{Argument defining the estimation method used in the quantile regression calculations when norm group cohort size exceeds 300,000 students. The default is the \code{"fn"} method referring to the Frisch-Newton estimation detailed in Koenker (2005) and in the help for the quantile regression (\code{quantreg}) package.
   }
   \item{max.n.for.coefficient.matrices}{Argument the defines a size threshold above which a subset of data is taken with a number of cases equal to the sgp.subset.size.threshold argument. Default is NULL,
   no subset is taken.

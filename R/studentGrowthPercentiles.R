@@ -19,6 +19,7 @@ function(panel.data,         ## REQUIRED
          print.sgp.order=FALSE,
          calculate.sgps=TRUE,
          rq.method="br",
+         rq.method.for.large.n="fn",
          max.n.for.coefficient.matrices=NULL,
          knot.cut.percentiles=c(0.2,0.4,0.6,0.8),
          knots.boundaries.by.panel=FALSE,
@@ -149,6 +150,7 @@ function(panel.data,         ## REQUIRED
 		if (dim(tmp.data)[1]==0) return(NULL)
 		if (dim(tmp.data)[1] < sgp.cohort.size) return("Insufficient N")
 		if (!is.null(max.n.for.coefficient.matrices) && dim(tmp.data)[1] > max.n.for.coefficient.matrices) tmp.data <- tmp.data[sample(seq.int(dim(tmp.data)[1]), max.n.for.coefficient.matrices)]
+        if (is.null(max.n.for.coefficient.matrices) && dim(tmp.data)[1] >= 300000) rq.method <- rq.method.for.large.n
 		tmp.num.variables <- dim(tmp.data)[2]
 		mod <- character()
 		s4Ks <- "Knots=list("
