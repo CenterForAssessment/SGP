@@ -1,11 +1,11 @@
-`.onLoad` <- 
+`.onLoad` <-
 function(libname, pkgname) {
 }
 
 
-`.onAttach` <- 
+`.onAttach` <-
 function(libname, pkgname) {
 	if (interactive()) {
-		packageStartupMessage('SGP ',paste(paste(unlist(strsplit(as.character(packageVersion("SGP")), "[.]")), c(".", "-", ".", ""), sep=""), collapse=""),' (3-22-2016).  For help: >help("SGP") or visit https://github.com/CenterForAssessment/SGP/wiki')
+		packageStartupMessage(magenta$bold('SGP',paste(paste(unlist(strsplit(as.character(packageVersion("SGP")), "[.]")), c(".", "-", ".", ""), sep=""), collapse=""),' (4-1-2016).  For help: >help("SGP") or visit https://github.com/CenterForAssessment/SGP/wiki'))
 	}
 }
