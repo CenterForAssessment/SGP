@@ -24,7 +24,7 @@ function(sgp_object,
 	YEAR <- GRADE <- ID <- NEW_ID <- .EACHI <- DATE <- NULL
 
 	started.at <- proc.time()
-	message(paste("\nStarted rliSGP", date()), "\n")
+	messageSGP(paste("\nStarted rliSGP", date()), "\n")
 
         if (is.null(state)) {
                 tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
@@ -104,8 +104,9 @@ function(sgp_object,
 	if (length(find.package("RLImatrices", quiet=TRUE))==0) stop("Package RLImatrices required from GitHub.")
 	if (is.null(coefficient.matrices)) {
 		eval(parse(text="require(RLImatrices)"))
-		SGPstateData[[state]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <-
-		eval(parse(text=paste(paste(state, "SGPt_Baseline_Matrices", sep="_"), "$", paste(state, "SGPt_Baseline_Matrices", max(tail(sort(unique(additional.data[['YEAR']])), 1), "2013_2014.1"), sep="_"), sep="")))
+		matrix.label <- paste(paste(state, "SGPt_Baseline_Matrices", sep="_"), "$", paste(state, "SGPt_Baseline_Matrices", max(tail(sort(unique(additional.data[['YEAR']])), 1), "2013_2014.1"), sep="_"), sep="")
+		messageSGP(paste("\tNOTE: rliSGP using matrices ", paste(state, "SGPt_Baseline_Matrices", max(tail(sort(unique(additional.data[['YEAR']])), 1), "2013_2014.1"), sep="_"), sep=""))
+		SGPstateData[[state]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <- eval(parse(text=matrix.label))
 	} else {
 		SGPstateData[[state]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <- coefficient.matrices
 	}
@@ -236,9 +237,9 @@ function(sgp_object,
 			}
 			eval(parse(text=paste(paste(state, "SGPt_Baseline_Matrices$", sep="_"), paste(state, "SGPt_Baseline_Matrices", matrix.window, sep="_"), " <- old.matrices", sep="")))
 			save(list=paste(state, "SGPt_Baseline_Matrices", sep="_"), file=paste(paste(state, "SGPt_Baseline_Matrices", sep="_"), "rda", sep="."), compress="xz")
-			message(paste("\tNOTE: ", paste(state, "SGPt_Baseline_Matrices", sep="_"), " saved to working directory contains matrices for use in ", matrix.window, ".", sep=""))
-			message(paste("\t\tAdd", paste(paste(state, "SGPt_Baseline_Matrices", sep="_"), "rda", sep="."), "to the RLImatrices GitHub repo 'data' directory,"))
-			message("\t\tupdate version number/date, tag repo and commit tagged version to GitHub.\n")
+			messageSGP(paste("\tNOTE: ", paste(state, "SGPt_Baseline_Matrices", sep="_"), " saved to working directory contains matrices for use in ", matrix.window, ".", sep=""))
+			messageSGP(paste("\t\tAdd", paste(paste(state, "SGPt_Baseline_Matrices", sep="_"), "rda", sep="."), "to the RLImatrices GitHub repo 'data' directory,"))
+			messageSGP("\t\tupdate version number/date, tag repo and commit tagged version to GitHub.\n")
 		}
 	} ### END END_OF_WINDOW scripts
 
@@ -247,5 +248,5 @@ function(sgp_object,
 
 	if (return.updated.shell) return(sgp_object)
 
-	message(paste("Finished rliSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
+	messageSGP(paste("Finished rliSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
 } ### END rliSGP
