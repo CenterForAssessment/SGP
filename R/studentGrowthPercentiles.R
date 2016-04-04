@@ -1674,7 +1674,7 @@ function(panel.data,         ## REQUIRED
 				paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label, " (N=", format(max.cohort.size, big.mark=","), ")", sep=""))
 		}
 		if (verbose.output) messageSGP(Verbose_Messages)
-		messageSGP(c(tmp.messages, "\tFinished SGP Student Growth Percentile Analysis: ", date(), " in ", convertTime(timetaken(started.at)), "\n"))
+		messageSGP(c(tmp.messages, "\tFinished studentGrowthPercentiles: ", date(), " in ", convertTime(timetaken(started.at)), "\n"))
 	}
 
 	list(Coefficient_Matrices=Coefficient_Matrices,

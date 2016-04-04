@@ -67,20 +67,25 @@ function(sgp_object,
 	}
 
 	if (simulate.sgps) {
+        csem.variable <- NULL
 		if (is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
 			messageSGP("\tNOTE: CSEMs are required in 'SGPstateData' (either as a data.frame of CSEMs or as a variable name of CSEMsin @Data) to simulate SGPs for confidence interval calculations. SGP standard errors will not be calculated.")
-			calculate.confidence.intervals <- csem.variable <- NULL
+			calculate.confidence.intervals.list <- NULL
 		} else {
+            calculate.confidence.intervals.list <- list()
             if (is.data.frame(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
-                calculate.confidence.intervals <- state
-                csem.variable <- NULL
+                calculate.confidence.intervals.list[['state']] <- state
             }
             if (is.character(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
-                calculate.confidence.intervals <- csem.variable <- SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]]
+                csem.variable <- SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]]
+            }
+            if (is.numeric(SGPstateData[[state]][["SGP_Configuration"]][["calculate.confidence.intervals"]])) {
+                calculate.confidence.intervals.list[['confidence.quantiles']] <-
+                    SGPstateData[[state]][["SGP_Configuration"]][["calculate.confidence.intervals"]]
             }
 		}
 	} else {
-		calculate.confidence.intervals <- csem.variable <- NULL
+		calculate.confidence.intervals.list <- csem.variable <- NULL
 	}
 
 	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["sgp.config.drop.nonsequential.grade.progression.variables"]])) {
@@ -367,12 +372,12 @@ function(sgp_object,
 	tmp.list
 	}
 
-	get.simulate.sgps.arg <- function(calculate.confidence.intervals, state, sgp.iter) {
-		if (is.null(calculate.confidence.intervals) || calculate.confidence.intervals==state) {
-			return(calculate.confidence.intervals)
-		} else {
-			return(gsub("[.]+$", "", paste(calculate.confidence.intervals, tail(sgp.iter[['sgp.panel.years']], 1), tail(sgp.iter[['sgp.content.areas']], 1),  tail(sgp.iter[['sgp.panel.years.within']], 1), sep=".")))
+    get.simulate.sgps.arg <- function(calculate.confidence.intervals.list, sgp.iter) {
+		if (!is.null(calculate.confidence.intervals.list) && is.character(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
+            calculate.confidence.intervals.list[['variable']] <-
+                gsub("[.]+$", "", paste(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], tail(sgp.iter[['sgp.panel.years']], 1), tail(sgp.iter[['sgp.content.areas']], 1),  tail(sgp.iter[['sgp.panel.years.within']], 1), sep="."))
 		}
+        return(calculate.confidence.intervals.list)
 	}
 
 	get.calculate.simex.arg <- function(calculate.simex, sgp.iter) {
@@ -763,7 +768,7 @@ function(sgp_object,
 						use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
 						growth.levels=state,
-						calculate.confidence.intervals=get.simulate.sgps.arg(calculate.confidence.intervals, state, sgp.iter),
+						calculate.confidence.intervals=get.simulate.sgps.arg(calculate.confidence.intervals.list, sgp.iter),
 						panel.data.vnames=getPanelDataVnames("sgp.percentiles", sgp.iter, sgp.data.names),
 						additional.vnames.to.return=getPanelDataVnames("sgp.percentiles.to.return", sgp.iter, sgp.data.names),
 						grade.progression=sgp.iter[["sgp.grade.sequences"]],
@@ -807,7 +812,7 @@ function(sgp_object,
 						use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
 						growth.levels=state,
-						calculate.confidence.intervals=get.simulate.sgps.arg(calculate.confidence.intervals, state, sgp.iter),
+                        calculate.confidence.intervals=get.simulate.sgps.arg(calculate.confidence.intervals.list, sgp.iter),
 						panel.data.vnames=getPanelDataVnames("sgp.percentiles", sgp.iter, sgp.data.names),
 						additional.vnames.to.return=getPanelDataVnames("sgp.percentiles.to.return", sgp.iter, sgp.data.names),
 						grade.progression=sgp.iter[["sgp.grade.sequences"]],
@@ -852,7 +857,7 @@ function(sgp_object,
 						use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
 						growth.levels=state,
-						calculate.confidence.intervals=get.simulate.sgps.arg(calculate.confidence.intervals, state, sgp.iter),
+                        calculate.confidence.intervals=get.simulate.sgps.arg(calculate.confidence.intervals.list, sgp.iter),
 						panel.data.vnames=getPanelDataVnames("sgp.percentiles", sgp.iter, sgp.data.names),
 						additional.vnames.to.return=getPanelDataVnames("sgp.percentiles.to.return", sgp.iter, sgp.data.names),
 						grade.progression=sgp.iter[["sgp.grade.sequences"]],
@@ -911,7 +916,7 @@ function(sgp_object,
 						use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
 						growth.levels=state,
-						calculate.confidence.intervals=get.simulate.sgps.arg(calculate.confidence.intervals, state, sgp.iter),
+                        calculate.confidence.intervals=get.simulate.sgps.arg(calculate.confidence.intervals.list, sgp.iter),
 						panel.data.vnames=getPanelDataVnames("sgp.percentiles", sgp.iter, sgp.data.names, equate.variable),
 						additional.vnames.to.return=getPanelDataVnames("sgp.percentiles.to.return", sgp.iter, sgp.data.names),
 						grade.progression=sgp.iter[["sgp.grade.sequences"]],
@@ -954,7 +959,7 @@ function(sgp_object,
 						use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
 						growth.levels=state,
-						calculate.confidence.intervals=get.simulate.sgps.arg(calculate.confidence.intervals, state, sgp.iter),
+                        calculate.confidence.intervals=get.simulate.sgps.arg(calculate.confidence.intervals.list, sgp.iter),
 						panel.data.vnames=getPanelDataVnames("sgp.percentiles", sgp.iter, sgp.data.names, equate.variable),
 						additional.vnames.to.return=getPanelDataVnames("sgp.percentiles.to.return", sgp.iter, sgp.data.names),
 						grade.progression=sgp.iter[["sgp.grade.sequences"]],
@@ -998,7 +1003,7 @@ function(sgp_object,
 						use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
 						growth.levels=state,
-						calculate.confidence.intervals=get.simulate.sgps.arg(calculate.confidence.intervals, state, sgp.iter),
+                        calculate.confidence.intervals=get.simulate.sgps.arg(calculate.confidence.intervals.list, sgp.iter),
 						panel.data.vnames=getPanelDataVnames("sgp.percentiles", sgp.iter, sgp.data.names, equate.variable),
 						additional.vnames.to.return=getPanelDataVnames("sgp.percentiles.to.return", sgp.iter, sgp.data.names),
 						grade.progression=sgp.iter[["sgp.grade.sequences"]],
@@ -1057,7 +1062,7 @@ function(sgp_object,
 						use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						growth.levels=state,
-						calculate.confidence.intervals=get.simulate.sgps.arg(calculate.confidence.intervals, state, sgp.iter),
+                        calculate.confidence.intervals=get.simulate.sgps.arg(calculate.confidence.intervals.list, sgp.iter),
 						panel.data.vnames=getPanelDataVnames("sgp.percentiles.baseline", sgp.iter, sgp.data.names),
 						additional.vnames.to.return=getPanelDataVnames("sgp.percentiles.to.return", sgp.iter, sgp.data.names),
 						grade.progression=sgp.iter[["sgp.baseline.grade.sequences"]],
@@ -1098,7 +1103,7 @@ function(sgp_object,
 						use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						growth.levels=state,
-						calculate.confidence.intervals=get.simulate.sgps.arg(calculate.confidence.intervals, state, sgp.iter),
+                        calculate.confidence.intervals=get.simulate.sgps.arg(calculate.confidence.intervals.list, sgp.iter),
 						panel.data.vnames=getPanelDataVnames("sgp.percentiles.baseline", sgp.iter, sgp.data.names),
 						additional.vnames.to.return=getPanelDataVnames("sgp.percentiles.to.return", sgp.iter, sgp.data.names),
 						grade.progression=sgp.iter[["sgp.baseline.grade.sequences"]],
@@ -1140,7 +1145,7 @@ function(sgp_object,
 						use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						growth.levels=state,
-						calculate.confidence.intervals=get.simulate.sgps.arg(calculate.confidence.intervals, state, sgp.iter),
+                        calculate.confidence.intervals=get.simulate.sgps.arg(calculate.confidence.intervals.list, sgp.iter),
 						panel.data.vnames=getPanelDataVnames("sgp.percentiles.baseline", sgp.iter, sgp.data.names),
 						additional.vnames.to.return=getPanelDataVnames("sgp.percentiles.to.return", sgp.iter, sgp.data.names),
 						grade.progression=sgp.iter[["sgp.baseline.grade.sequences"]],
@@ -1796,7 +1801,7 @@ function(sgp_object,
 					year.progression=sgp.iter[["sgp.panel.years"]],
 					max.order.for.percentile=SGPstateData[[state]][["SGP_Configuration"]][["max.order.for.percentile"]],
 					percentile.cuts=SGPstateData[[state]][["SGP_Configuration"]][["percentile.cuts"]],
-					calculate.confidence.intervals=get.simulate.sgps.arg(calculate.confidence.intervals, state, sgp.iter),
+                    calculate.confidence.intervals=get.simulate.sgps.arg(calculate.confidence.intervals.list, sgp.iter),
 					drop.nonsequential.grade.progression.variables=FALSE,
 					exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 					sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
@@ -1842,7 +1847,7 @@ function(sgp_object,
 					year.progression=sgp.iter[["sgp.panel.years"]],
 					max.order.for.percentile=SGPstateData[[state]][["SGP_Configuration"]][["max.order.for.percentile"]],
 					percentile.cuts=SGPstateData[[state]][["SGP_Configuration"]][["percentile.cuts"]],
-					calculate.confidence.intervals=get.simulate.sgps.arg(calculate.confidence.intervals, state, sgp.iter),
+                    calculate.confidence.intervals=get.simulate.sgps.arg(calculate.confidence.intervals.list, sgp.iter),
 					drop.nonsequential.grade.progression.variables=FALSE,
 					exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 					sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
@@ -1887,7 +1892,7 @@ function(sgp_object,
 					year_lags.progression=sgp.iter[["sgp.baseline.panel.years.lags"]],
 					num.prior=min(sgp.iter[["sgp.baseline.max.order"]], sgp.percentiles.baseline.max.order),
 					percentile.cuts=SGPstateData[[state]][["SGP_Configuration"]][["percentile.cuts"]],
-					calculate.confidence.intervals=get.simulate.sgps.arg(calculate.confidence.intervals, state, sgp.iter),
+                    calculate.confidence.intervals=get.simulate.sgps.arg(calculate.confidence.intervals.list, sgp.iter),
 					drop.nonsequential.grade.progression.variables=FALSE,
 					exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 					sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
