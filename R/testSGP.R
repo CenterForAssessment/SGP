@@ -154,7 +154,7 @@
 
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 0, Part 2: ", convertTime(timetaken(started.at.intermediate)), "#####\n"))
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 0: ", convertTime(timetaken(started.at.overall)), "#####\n"))
-			cat(tmp.messages)
+			messageSGP(tmp.messages)
 		} ### End TEST_NUMBER 0
 
 
