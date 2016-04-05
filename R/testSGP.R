@@ -970,6 +970,7 @@
 		if (5 %in% TEST_NUMBER) {
 
 			options(error=recover)
+			options(warn=2)
 			number.cores <- detectCores(logical=FALSE)
 			Demonstration_SGP <- ACHIEVEMENT_LEVEL <- HIGH_NEED_STATUS <- tmp.messages <- NULL
 			if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
