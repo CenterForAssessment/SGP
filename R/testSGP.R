@@ -181,9 +181,8 @@
 
 			### Some minor modifications to SGPstateData for testing purposes
 
-			SGPstateData[["DEMO"]][["SGP_Configuration"]] <- list(
-				print.other.gp=TRUE,
-				calculate.confidence.intervals=list(confidence.quantiles=c(0.025, 0.975)))
+			SGPstateData[["DEMO"]][["SGP_Configuration"]][["print.other.gp"]] <- TRUE
+			SGPstateData[["DEMO"]][["SGP_Configuration"]][["calculate.confidence.intervals"]] <- list(confidence.quantiles=c(0.025, 0.975))
 
 			if (toupper(TEST_NUMBER) == "1B") sgp.sqlite <- TRUE else sgp.sqlite <- FALSE
 
