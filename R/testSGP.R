@@ -95,6 +95,14 @@
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_LEVEL, part 1: FAIL\n")
 			}
 
+			### TEST of SGP_STANDARD_ERROR Variable
+
+			if (identical(sum(Demonstration_SGP$SGPercentiles[[paste('READING', tail(sgpData.years.single, 1), sep=".")]][['SGP_STANDARD_ERROR']], na.rm=TRUE), 543735.67)) {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_STANDARD_ERROR, part 1: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_STANDARD_ERROR, part 1: FAIL\n")
+			}
+
 			### TEST of Goodness of Fit Output Files
 
 			gof.files <-  c("gofSGP_Grade_4.pdf", "gofSGP_Grade_4.png", "gofSGP_Grade_4.svg",
@@ -154,7 +162,7 @@
 
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 0, Part 2: ", convertTime(timetaken(started.at.intermediate)), "#####\n"))
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 0: ", convertTime(timetaken(started.at.overall)), "#####\n"))
-			cat(tmp.messages)
+			messageSGP(tmp.messages)
 		} ### End TEST_NUMBER 0
 
 
@@ -178,6 +186,11 @@
 					parallel.config <- paste("list(BACKEND='FOREACH', TYPE='doParallel', WORKERS=list(TAUS=", number.cores, "))", sep="")
 				} else  parallel.config <- paste("list(BACKEND='PARALLEL', WORKERS=list(TAUS=", number.cores, "))", sep="")
 			} else parallel.config <- test.option[['parallel.config']]
+
+			### Some minor modifications to SGPstateData for testing purposes
+
+			SGPstateData[["DEMO"]][["SGP_Configuration"]][["print.other.gp"]] <- TRUE
+			SGPstateData[["DEMO"]][["SGP_Configuration"]][["calculate.confidence.intervals"]] <- list(confidence.quantiles=c(0.025, 0.975))
 
 			if (toupper(TEST_NUMBER) == "1B") sgp.sqlite <- TRUE else sgp.sqlite <- FALSE
 
@@ -288,8 +301,16 @@
 				tmp.messages <- c(tmp.messages, "\tTest of variable P35_PROJ_YEAR_1 (LAGGED PROJECTION): FAIL\n")
 			}
 
+			### TEST of SGP_0.025_CONFIDENCE_BOUND variable in @Data
+
+			if (identical(sum(Demonstration_SGP@Data[['SGP_0.025_CONFIDENCE_BOUND']], na.rm=TRUE), 3952340)) {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_0.025_CONFIDENCE_BOUND: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_0.025_CONFIDENCE_BOUND: FAIL\n")
+			}
+
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number ", TEST_NUMBER, ":  ", convertTime(timetaken(started.at.overall)), " #####\n", sep=""))
-			cat(tmp.messages)
+			messageSGP(tmp.messages)
 		} ### End TEST_NUMBER 1 & 1B
 
 
@@ -612,7 +633,7 @@
 				tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number ", capwords(i), ": ", convertTime(timetaken(started.at.overall.2b)), " #####\n", sep=""))
 			} ### End for (i in TEST_NUMBER)
 			} ### End TEST_NUMBER 2b, 2c, 2d
-			cat(tmp.messages)
+			messageSGP(tmp.messages)
 		} ### End TEST_NUMBER 2
 
 		#######################################################################################################################################################
@@ -795,7 +816,7 @@
 			}
 
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 3: ", convertTime(timetaken(started.at.overall)), "#####\n"))
-			cat(tmp.messages)
+			messageSGP(tmp.messages)
 		} ### End TEST_NUMBER 3
 
 
@@ -957,7 +978,7 @@
 			}
 			tmp.messages <- c(tmp.messages, paste("\n\t##### End testSGP test number 4, Part 2: ", convertTime(timetaken(started.at.intermediate)), "#####\n"))
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 4: ", convertTime(timetaken(started.at.overall)), "#####\n"))
-			cat(tmp.messages)
+			messageSGP(tmp.messages)
 		} ### End TEST_NUMBER 4
 
 
@@ -970,6 +991,7 @@
 		if (5 %in% TEST_NUMBER) {
 
 			options(error=recover)
+			options(warn=2)
 			number.cores <- detectCores(logical=FALSE)
 			Demonstration_SGP <- ACHIEVEMENT_LEVEL <- HIGH_NEED_STATUS <- tmp.messages <- NULL
 			if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
@@ -1345,7 +1367,7 @@
 
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 5, Part 3: ", convertTime(timetaken(started.at.intermediate)), "#####\n"))
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 5: ", convertTime(timetaken(started.at.overall)), "#####\n"))
-			cat(tmp.messages)
+			messageSGP(tmp.messages)
 		} ### End TEST_NUMBER 5
 
 
@@ -1395,7 +1417,7 @@
 			}
 
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 6: ", convertTime(timetaken(started.at.overall)), "#####\n"))
-			cat(tmp.messages)
+			messageSGP(tmp.messages)
 		} ### End TEST_NUMBER 6
 
 
@@ -1566,6 +1588,6 @@
 
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI: Part 2", convertTime(timetaken(started.at.intermediate)), "#####\n"))
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number RLI: ", convertTime(timetaken(started.at.overall)), "#####\n"))
-			cat(tmp.messages)
+			messageSGP(tmp.messages)
 		} ### End TEST_NUMBER RLI
 	} ### END testSGP Function

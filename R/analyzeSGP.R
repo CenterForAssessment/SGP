@@ -79,9 +79,9 @@ function(sgp_object,
             if (is.character(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
                 csem.variable <- SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]]
             }
-            if (is.numeric(SGPstateData[[state]][["SGP_Configuration"]][["calculate.confidence.intervals"]])) {
+            if (is.numeric(SGPstateData[[state]][["SGP_Configuration"]][["calculate.confidence.intervals"]][["confidence.quantiles"]])) {
                 calculate.confidence.intervals.list[['confidence.quantiles']] <-
-                    SGPstateData[[state]][["SGP_Configuration"]][["calculate.confidence.intervals"]]
+                    SGPstateData[[state]][["SGP_Configuration"]][["calculate.confidence.intervals"]][["confidence.quantiles"]]
             }
 		}
 	} else {
