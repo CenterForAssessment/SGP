@@ -152,6 +152,14 @@
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable P84_PROJ_YEAR_4, part 2: FAIL\n")
 			}
 
+			### TEST of SGP_STANDARD_ERROR Variable
+
+			if (identical(sum(Demonstration_SGP$SGPercentiles[[paste('READING', tail(sgpData.years.single, 1), sep=".")]][['SGP_STANDARD_ERROR']], na.rm=TRUE), 543735.67)) {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable P84_PROJ_YEAR_4, part 2: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable P84_PROJ_YEAR_4, part 2: FAIL\n")
+			}
+
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 0, Part 2: ", convertTime(timetaken(started.at.intermediate)), "#####\n"))
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 0: ", convertTime(timetaken(started.at.overall)), "#####\n"))
 			messageSGP(tmp.messages)
@@ -291,6 +299,14 @@
 				tmp.messages <- c(tmp.messages, "\tTest of variable P35_PROJ_YEAR_1 (LAGGED PROJECTION): OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable P35_PROJ_YEAR_1 (LAGGED PROJECTION): FAIL\n")
+			}
+
+			### TEST of SGP_0.025_CONFIDENCE_BOUND variable in @Data
+
+			if (identical(sum(Demonstration_SGP@Data[['SGP_0.025_CONFIDENCE_BOUND']], na.rm=TRUE), 3952340)) {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_0.025_CONFIDENCE_BOUND: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_0.025_CONFIDENCE_BOUND: FAIL\n")
 			}
 
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number ", TEST_NUMBER, ":  ", convertTime(timetaken(started.at.overall)), " #####\n", sep=""))
