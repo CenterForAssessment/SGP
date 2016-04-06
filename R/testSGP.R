@@ -294,7 +294,7 @@
 			}
 
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number ", TEST_NUMBER, ":  ", convertTime(timetaken(started.at.overall)), " #####\n", sep=""))
-			cat(tmp.messages)
+			messageSGP(tmp.messages)
 		} ### End TEST_NUMBER 1 & 1B
 
 
@@ -617,7 +617,7 @@
 				tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number ", capwords(i), ": ", convertTime(timetaken(started.at.overall.2b)), " #####\n", sep=""))
 			} ### End for (i in TEST_NUMBER)
 			} ### End TEST_NUMBER 2b, 2c, 2d
-			cat(tmp.messages)
+			messageSGP(tmp.messages)
 		} ### End TEST_NUMBER 2
 
 		#######################################################################################################################################################
@@ -800,7 +800,7 @@
 			}
 
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 3: ", convertTime(timetaken(started.at.overall)), "#####\n"))
-			cat(tmp.messages)
+			messageSGP(tmp.messages)
 		} ### End TEST_NUMBER 3
 
 
@@ -962,7 +962,7 @@
 			}
 			tmp.messages <- c(tmp.messages, paste("\n\t##### End testSGP test number 4, Part 2: ", convertTime(timetaken(started.at.intermediate)), "#####\n"))
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 4: ", convertTime(timetaken(started.at.overall)), "#####\n"))
-			cat(tmp.messages)
+			messageSGP(tmp.messages)
 		} ### End TEST_NUMBER 4
 
 
@@ -1351,7 +1351,7 @@
 
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 5, Part 3: ", convertTime(timetaken(started.at.intermediate)), "#####\n"))
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 5: ", convertTime(timetaken(started.at.overall)), "#####\n"))
-			cat(tmp.messages)
+			messageSGP(tmp.messages)
 		} ### End TEST_NUMBER 5
 
 
@@ -1401,7 +1401,7 @@
 			}
 
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 6: ", convertTime(timetaken(started.at.overall)), "#####\n"))
-			cat(tmp.messages)
+			messageSGP(tmp.messages)
 		} ### End TEST_NUMBER 6
 
 
@@ -1572,6 +1572,6 @@
 
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI: Part 2", convertTime(timetaken(started.at.intermediate)), "#####\n"))
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number RLI: ", convertTime(timetaken(started.at.overall)), "#####\n"))
-			cat(tmp.messages)
+			messageSGP(tmp.messages)
 		} ### End TEST_NUMBER RLI
 	} ### END testSGP Function
