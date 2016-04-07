@@ -1,19 +1,19 @@
 `testSGP` <-
-	function(
-		TEST_NUMBER,
-		save.results=TRUE,
-		test.option=list(),
-		memory.profile=FALSE) {
+function(
+	TEST_NUMBER,
+	save.results=TRUE,
+	test.option=list(),
+	memory.profile=FALSE) {
 
-		YEAR <- GRADE <- NULL
+	YEAR <- GRADE <- NULL
 
-		if (missing(TEST_NUMBER)) {
-			message("\ttestSGP carries out testing of SGP package. Tests currently included in testSGP:\n")
-			message("\t\t1. abcSGP test using all available years.")
-			message("\t\t2. abcSGP test using all available years except most recent followed by an updated analysis using the most recent year's data.")
-		}
+	if (missing(TEST_NUMBER)) {
+		message("\ttestSGP carries out testing of SGP package. Tests currently included in testSGP:\n")
+		message("\t\t1. abcSGP test using all available years.")
+		message("\t\t2. abcSGP test using all available years except most recent followed by an updated analysis using the most recent year's data.")
+	}
 
-		sgpData.years <- sort(unique(SGPdata::sgpData_LONG$YEAR))
+	sgpData.years <- sort(unique(SGPdata::sgpData_LONG$YEAR))
 
 
 		#######################################################################################################################################################
@@ -1408,7 +1408,7 @@
 
 			### TEST of SGP_BASELINE variable
 
-			tmp.messages <- ("\t##### Results of testSGP test number 6 #####\n\n")
+			tmp.messages <- ("##### Results of testSGP test number 6 #####\n\n")
 
 			if (identical(sum(Demonstration_SGP@Data$SGP_BASELINE, na.rm=TRUE), 1469353L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of SGP_BASELINE: OK\n")

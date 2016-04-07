@@ -12,7 +12,7 @@ function(data,
 	## Print start time
 
 	started.at <- proc.time()
-	messageSGP(paste("\nStarted prepareSGP", date()), "\n")
+	messageSGP(paste("\nStarted prepareSGP", prettyDate()), "\n")
 	messageSGP(match.call())
 
 	## Get state (if possible)
@@ -264,7 +264,7 @@ function(data,
 	}
 
 	##  Print finish time
-	message(paste("Finished prepareSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
+	message(paste("Finished prepareSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 
 	return(sgp_object)
 } ## END prepareSGP function

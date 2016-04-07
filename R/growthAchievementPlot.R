@@ -249,7 +249,7 @@
 	for (j in unique(tmp1.dt$ID)) {
 
 		started.at <- proc.time()
-		started.date <- date()
+		started.date <- prettyDate()
 
 		tmp2.dt <- tmp1.dt[ID==j]
 		tmp.dt <- data.table(ID=j, data.frame(lapply(tmp2.dt[,c("GRADE", "SCALE_SCORE"), with=FALSE], function(x) t(data.frame(x))), stringsAsFactors=FALSE))
@@ -600,15 +600,15 @@
 	if (cohort) tmp.baseline.message <- "Cohort Referenced"
 	if (gaPlot.start.points=="Achievement Level Cuts") {
 		message(paste("\tStarted", year, state.name.label, tail(tmp2.dt[['CONTENT_AREA']], 1), "Grade", tail(tmp2.dt[['GRADE']], 1), "Level", tail(tmp2.dt[['LEVEL']], 1), tmp.baseline.message, "growthAchievementPlot:",  started.date))
-		message(paste("\tFinished", year, state.name.label, tail(tmp2.dt[['CONTENT_AREA']], 1), "Grade", tail(tmp2.dt[['GRADE']], 1), "Level", tail(tmp2.dt[['LEVEL']], 1), tmp.baseline.message, "growthAchievementPlot:",  date(), "in", convertTime(timetaken(started.at)), "\n"))
+		message(paste("\tFinished", year, state.name.label, tail(tmp2.dt[['CONTENT_AREA']], 1), "Grade", tail(tmp2.dt[['GRADE']], 1), "Level", tail(tmp2.dt[['LEVEL']], 1), tmp.baseline.message, "growthAchievementPlot:",  prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 	}
 	if (gaPlot.start.points=="Achievement Percentiles") {
 		message(paste("\tStarted", year, state.name.label, tail(tmp2.dt[['CONTENT_AREA']], 1), "Grade", tail(tmp2.dt[['GRADE']], 1), "Percentile", as.integer(100*tmp2.dt[['LEVEL']]), tmp.baseline.message, "growthAchievementPlot:",  started.date))
-		message(paste("\tFinished", year, state.name.label, tail(tmp2.dt[['CONTENT_AREA']], 1), "Grade", tail(tmp2.dt[['GRADE']], 1), "Percentile", as.integer(100*tmp2.dt[['LEVEL']]), tmp.baseline.message, "growthAchievementPlot:",  date(), "in", convertTime(timetaken(started.at)), "\n"))
+		message(paste("\tFinished", year, state.name.label, tail(tmp2.dt[['CONTENT_AREA']], 1), "Grade", tail(tmp2.dt[['GRADE']], 1), "Percentile", as.integer(100*tmp2.dt[['LEVEL']]), tmp.baseline.message, "growthAchievementPlot:",  prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 	}
 	if (gaPlot.start.points=="Individual Student") {
 		message(paste("\tStarted", year, state.name.label, tail(tmp2.dt[['CONTENT_AREA']], 1), "Grade", tail(tmp2.dt[['GRADE']], 1), "Student Number", tmp2.dt[['ID']][1], tmp.baseline.message, "growthAchievementPlot:",  started.date))
-		message(paste("\tFinished", year, state.name.label, tail(tmp2.dt[['CONTENT_AREA']], 1), "Grade", tail(tmp2.dt[['GRADE']], 1), "Student Number", tmp2.dt[['ID']][1], tmp.baseline.message, "growthAchievementPlot:",  date(), "in", convertTime(timetaken(started.at)), "\n"))
+		message(paste("\tFinished", year, state.name.label, tail(tmp2.dt[['CONTENT_AREA']], 1), "Grade", tail(tmp2.dt[['GRADE']], 1), "Student Number", tmp2.dt[['ID']][1], tmp.baseline.message, "growthAchievementPlot:",  prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 	}
 
 

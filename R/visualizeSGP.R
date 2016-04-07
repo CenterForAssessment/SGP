@@ -57,7 +57,7 @@ function(sgp_object,
 		parallel.config=NULL) {
 
 	started.at.visualizeSGP <- proc.time()
-	messageSGP(paste("\nStarted visualizeSGP", date(), "\n"))
+	messageSGP(paste("\nStarted visualizeSGP", prettyDate(), "\n"))
 
 	### Setting variables to NULL to prevent R CMD check warnings
 
@@ -175,7 +175,7 @@ function(sgp_object,
 	if ("bubblePlot" %in% plot.types) {
 
 		started.at <- proc.time()
-		message(paste("Started bubblePlot in visualizeSGP", date(), "\n"))
+		message(paste("Started bubblePlot in visualizeSGP", prettyDate(), "\n"))
 
 		bubblePlot_Styles(sgp_object=sgp_object,
 			state=state,
@@ -197,7 +197,7 @@ function(sgp_object,
 			bPlot.format=bPlot.format,
 			bPlot.folder=bPlot.folder)
 
-		message(paste("Finished bubblePlot in visualizeSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
+		message(paste("Finished bubblePlot in visualizeSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 	} ## END bubblePlot %in% plot.types
 
 
@@ -208,7 +208,7 @@ function(sgp_object,
 	if ("growthAchievementPlot" %in% plot.types) {
 
 		started.at <- proc.time()
-		message(paste("Started growthAchievementPlot in visualizeSGP", date(), "\n"))
+		message(paste("Started growthAchievementPlot in visualizeSGP", prettyDate(), "\n"))
 
 		# gaPlot.baseline stuff
 
@@ -282,7 +282,7 @@ function(sgp_object,
 			}
 		}
 		stopParallel(parallel.config, par.start)
-		message(paste("Finished growthAchievementPlot in visualizeSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
+		message(paste("Finished growthAchievementPlot in visualizeSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 	} ## END if (growthAchievementPlot %in% plot.types)
 
 
@@ -293,7 +293,7 @@ function(sgp_object,
 if ("studentGrowthPlot" %in% plot.types) {
 
 	started.at <- proc.time()
-	message(paste("Started studentGrowthPlot in visualizeSGP", date(), "\n"))
+	message(paste("Started studentGrowthPlot in visualizeSGP", prettyDate(), "\n"))
 
 	#### Utility functions
 
@@ -1112,10 +1112,10 @@ if (sgPlot.produce.plots) {
 	} # END else Parallel Processing
 } ## END if (sgPlot.produce.plots)
 
-	messageSGP(paste("Finished studentGrowthPlot in visualizeSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
+	messageSGP(paste("Finished studentGrowthPlot in visualizeSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 
 } ## END if ("studentGrowthPlot" %in% plot.types)
 
-	messageSGP(paste("Finished visualizeSGP", date(), "in", convertTime(timetaken(started.at.visualizeSGP)), "\n"))
+	messageSGP(paste("Finished visualizeSGP", prettyDate(), "in", convertTime(timetaken(started.at.visualizeSGP)), "\n"))
 
 } ## END visualizeSGP Function

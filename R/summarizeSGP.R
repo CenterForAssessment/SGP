@@ -14,7 +14,7 @@
 	parallel.config=NULL) {
 
 	started.at <- proc.time()
-	messageSGP(paste("\nStarted summarizeSGP", date()), "\n")
+	messageSGP(paste("\nStarted summarizeSGP", prettyDate()), "\n")
 	messageSGP(match.call())
 
 	### Set variables to NULL to prevent R CMD check warnings
@@ -639,7 +639,7 @@
 		setkeyv(sgp_object@Data, getKey(sgp_object))
 	}
 
-	messageSGP(paste("Finished summarizeSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
+	messageSGP(paste("Finished summarizeSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 
 	return(sgp_object)
 } ## END summarizeSGP Function
