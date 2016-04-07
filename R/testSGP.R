@@ -1441,7 +1441,8 @@ function(
 				} else  parallel.config <- paste("list(BACKEND='PARALLEL', WORKERS=list(TAUS=", number.cores, "))", sep="")
 			} else parallel.config <- test.option[['parallel.config']]
 
-			tmp.messages <- RLI_SGPt_PART_1 <- RLI_SGPt_PART_2 <- NULL
+			RLI_SGPt_PART_1 <- RLI_SGPt_PART_2 <- NULL
+			tmp.messages <- "##### Begin testSGP test number RLI #####\n\n"
 			tmp.last.window <- tail(sort(unique(SGPdata::sgptData_LONG[['YEAR']])), 1)
 
 			###############################################################################
