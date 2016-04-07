@@ -40,7 +40,7 @@ function(sgp_object,
          ...) {
 
 	started.at <- proc.time()
-	messageSGP(paste("\nStarted analyzeSGP", date()), "\n")
+	messageSGP(paste("\nStarted analyzeSGP", prettyDate()), "\n")
 	messageSGP(match.call())
 
 	VALID_CASE <- CONTENT_AREA <- YEAR <- GRADE <- ID <- YEAR_WITHIN <- SCALE_SCORE <- NULL
@@ -2103,6 +2103,6 @@ function(sgp_object,
 	if (goodness.of.fit.print) gof.print(sgp_object)
 	setkeyv(sgp_object@Data, getKey(sgp_object)) # re-key data for combineSGP, etc.
 	sgp_object@Version[["analyzeSGP"]][[as.character(gsub("-", "_", Sys.Date()))]] <- as.character(packageVersion("SGP"))
-	messageSGP(paste("Finished analyzeSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
+	messageSGP(paste("Finished analyzeSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 	return(sgp_object)
 } ## END analyzeSGP Function

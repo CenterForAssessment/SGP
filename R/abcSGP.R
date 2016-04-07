@@ -39,8 +39,8 @@ function(sgp_object,
 	sgp.percentiles.calculate.sgps=TRUE,
 	SGPt=NULL) {
 
-        started.at <- proc.time()
-	messageSGP(paste("\nStarted abcSGP", date()), "\n")
+    started.at <- proc.time()
+	messageSGP(paste("\nStarted abcSGP", prettyDate()), "\n")
 	messageSGP(match.call())
 
 	names.type <- names.provided <- names.output <- NULL
@@ -198,6 +198,6 @@ function(sgp_object,
 
 	### Print finish and return SGP object
 
-        messageSGP(paste("Finished abcSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
+        messageSGP(paste("Finished abcSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 	return(sgp_object)
 } ## END abcSGP Function

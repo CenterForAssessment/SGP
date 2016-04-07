@@ -11,7 +11,7 @@ function(sgp_object,
 	output.directory=file.path("Data", "SchoolView")) {
 
 	started.at <- proc.time()
-	message(paste("\tStarted sqliteSGP in outputSGP", date()))
+	message(paste("\tStarted sqliteSGP in outputSGP", prettyDate()))
 
 	YEAR <- DISTRICT_NUMBER <- SCHOOL_NUMBER <- CONTENT_AREA <- DISTRICT_ENROLLMENT_STATUS <- GRADE <- ETHNICITY <- STUDENTGROUP <- SCHOOL_ENROLLMENT_STATUS <- EMH_LEVEL <- MEDIAN_SGP <- NULL
 	INSTRUCTOR_NUMBER <- INSTRUCTOR_ENROLLMENT_STATUS <- TMP_ID <- NULL
@@ -599,6 +599,6 @@ function(sgp_object,
 
 	dbDisconnect(db)
 
-	message(paste("\tFinished sqliteSGP in outputSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
+	message(paste("\tFinished sqliteSGP in outputSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 
 } ### END sqliteSGP

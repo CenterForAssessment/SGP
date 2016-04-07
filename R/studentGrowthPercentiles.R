@@ -52,7 +52,7 @@ function(panel.data,         ## REQUIRED
          verbose.output=FALSE) {
 
 	started.at <- proc.time()
-	started.date <- date()
+	started.date <- prettyDate()
 
 	##########################################################
 	###
@@ -201,7 +201,7 @@ function(panel.data,         ## REQUIRED
 
 		tmp.version <- list(
 			SGP_Package_Version=as.character(packageVersion("SGP")),
-			Date_Prepared=date(),
+			Date_Prepared=prettyDate(),
 			Matrix_Information=list(
 				N=dim(tmp.data)[1],
 				Model=paste("rq(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=taus, data=tmp.data, method=rq.method)[['coefficients']]", sep=""),
@@ -313,7 +313,7 @@ function(panel.data,         ## REQUIRED
 
 		if (is.null(dependent.var.error)) dependent.var.error <- FALSE
 		if (is.null(verbose)) verbose <- FALSE
-		if (verbose) messageSGP(c("\n\tStarted SIMEX SGP calculation ", rev(content_area.progression)[1], " Grade ", rev(tmp.gp)[1], " ", date()))
+		if (verbose) messageSGP(c("\n\tStarted SIMEX SGP calculation ", rev(content_area.progression)[1], " Grade ", rev(tmp.gp)[1], " ", prettyDate()))
 
 		GRADE <- CONTENT_AREA <- YEAR <- V1 <- Lambda <- tau <- b <- .SD <- TEMP <- NULL ## To avoid R CMD check warnings
 		my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
@@ -340,7 +340,7 @@ function(panel.data,         ## REQUIRED
 
 			tmp.version <- list(
 					SGP_Package_Version=as.character(packageVersion("SGP")),
-					Date_Prepared=date(),
+					Date_Prepared=prettyDate(),
 					Matrix_Information=list(
 						N=dim(rqdata)[1],
 						Model=paste("rq(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=taus, data=tmp.data, method=rq.method)[['coefficients']]", sep=""),
@@ -456,7 +456,7 @@ function(panel.data,         ## REQUIRED
 				fitted[[paste("order_", k, sep="")]][1,] <- as.vector(.get.percentile.predictions(tmp.data, tmp.matrix))
 			}
 
-			if (verbose) messageSGP(c("\t\t", rev(content_area.progression)[1], " Grade ", rev(tmp.gp)[1], " Order ", k, " Started simulation process ", date()))
+			if (verbose) messageSGP(c("\t\t", rev(content_area.progression)[1], " Grade ", rev(tmp.gp)[1], " Order ", k, " Started simulation process ", prettyDate()))
 
 			## perturb data
 			if (!is.null(csem.data.vnames)) {
@@ -542,7 +542,7 @@ function(panel.data,         ## REQUIRED
 				}
 
 				if (is.null(tmp.par.config)) { # Sequential
-					if (verbose) messageSGP(c("\t\t\tStarted coefficient matrix calculation, Lambda ", L, ": ", date()))
+					if (verbose) messageSGP(c("\t\t\tStarted coefficient matrix calculation, Lambda ", L, ": ", prettyDate()))
 					if (is.null(simex.use.my.coefficient.matrices)) {
 						for (z in seq_along(sim.iters)) {
 							if (is.null(simex.sample.size) || dim(tmp.data)[1] <= simex.sample.size) {
@@ -556,7 +556,7 @@ function(panel.data,         ## REQUIRED
 					} else simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <- available.matrices[sim.iters]
 
 					if (calculate.simex.sgps) {
-						if (verbose) messageSGP(c("\t\t\tStarted percentile prediction calculation, Lambda ", L, ": ", date()))
+						if (verbose) messageSGP(c("\t\t\tStarted percentile prediction calculation, Lambda ", L, ": ", prettyDate()))
 						for (z in seq_along(sim.iters)) {
 							fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] +
 								as.vector(.get.percentile.predictions(big.data[b==z][, b:=NULL],
@@ -575,7 +575,7 @@ function(panel.data,         ## REQUIRED
 
 					## Calculate coefficient matricies (if needed/requested)
 					if (is.null(simex.use.my.coefficient.matrices)) {
-						if (verbose) messageSGP(c("\t\t\tStarted coefficient matrix calculation, Lambda ", L, ": ", date()))
+						if (verbose) messageSGP(c("\t\t\tStarted coefficient matrix calculation, Lambda ", L, ": ", prettyDate()))
 							if (is.null(simex.sample.size) || dim(tmp.data)[1] <= simex.sample.size) {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
 									foreach(z=iter(sim.iters), .packages=c("quantreg", "data.table"),
@@ -615,7 +615,7 @@ function(panel.data,         ## REQUIRED
 
 					## get percentile predictions from coefficient matricies
 					if (calculate.simex.sgps) {
-						if (verbose) messageSGP(c("\t\t\tStarted percentile prediction calculation, Lambda ", L, ": ", date()))
+						if (verbose) messageSGP(c("\t\t\tStarted percentile prediction calculation, Lambda ", L, ": ", prettyDate()))
 							mtx.subset <- simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] # Save on memory copying to R SNOW workers
 							environment(.get.percentile.predictions) <- environment(.smooth.bound.iso.row) <- environment()
 							fitted[[paste("order_", k, sep="")]][which(lambda==L),] <-
@@ -629,7 +629,7 @@ function(panel.data,         ## REQUIRED
 				}
 			} ### END for (L in lambda[-1])
             unlink("tmp_data", recursive=TRUE, force=TRUE)
-			if (verbose) messageSGP(c("\t\t", rev(content_area.progression)[1], " Grade ", rev(tmp.gp)[1], " Order ", k, " Simulation process complete ", date()))
+			if (verbose) messageSGP(c("\t\t", rev(content_area.progression)[1], " Grade ", rev(tmp.gp)[1], " Order ", k, " Simulation process complete ", prettyDate()))
 
 			if (calculate.simex.sgps) {
 				switch(extrapolation,
@@ -643,7 +643,7 @@ function(panel.data,         ## REQUIRED
 			}
 		} ### END for (k in simex.matrix.priors)
 
-		if (verbose) messageSGP(c("\tFinished SIMEX SGP calculation ", rev(content_area.progression)[1], " Grade ", rev(tmp.gp)[1], " ", date()))
+		if (verbose) messageSGP(c("\tFinished SIMEX SGP calculation ", rev(content_area.progression)[1], " Grade ", rev(tmp.gp)[1], " ", prettyDate()))
 
 		if (is.null(save.matrices)) simex.coef.matrices <- NULL
 		if (calculate.simex.sgps) {
@@ -669,7 +669,7 @@ function(panel.data,         ## REQUIRED
 					MATRICES=simex.coef.matrices))
 			}
 		}
-		if (verbose) messageSGP(c("\tFinished SIMEX SGP calculation ", rev(content_area.progression)[1], " Grade ", rev(tmp.gp)[1], " ", date(), "\n"))
+		if (verbose) messageSGP(c("\tFinished SIMEX SGP calculation ", rev(content_area.progression)[1], " Grade ", rev(tmp.gp)[1], " ", prettyDate(), "\n"))
 	} ### END simex.sgp function
 
 	############################################################################
@@ -1032,7 +1032,7 @@ function(panel.data,         ## REQUIRED
 		messageSGP(paste("\tStarted studentGrowthPercentiles", started.date))
 		messageSGP(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ",
 			paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
-		messageSGP(paste(tmp.messages, "\tFinished SGP Student Growth Percentile Analysis", date(), "in", convertTime(timetaken(started.at)), "\n"))
+		messageSGP(paste(tmp.messages, "\tFinished SGP Student Growth Percentile Analysis", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 
 		return(
 			list(Coefficient_Matrices=Coefficient_Matrices,
@@ -1129,7 +1129,7 @@ function(panel.data,         ## REQUIRED
 		messageSGP(paste("\tStarted studentGrowthPercentiles", started.date))
 		messageSGP(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ",
 			paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
-		messageSGP(paste(tmp.messages, "\tStudent Growth Percentile Analysis NOT RUN", date(), "\n"))
+		messageSGP(paste(tmp.messages, "\tStudent Growth Percentile Analysis NOT RUN", prettyDate(), "\n"))
 
 		return(
 			list(Coefficient_Matrices=Coefficient_Matrices,
@@ -1156,7 +1156,7 @@ function(panel.data,         ## REQUIRED
 		messageSGP(paste("\tStarted studentGrowthPercentiles", started.date))
 		messageSGP(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ",
 			paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
-		messageSGP(paste(tmp.messages, "\tFinished SGP Student Growth Percentile Analysis", date(), "in", convertTime(timetaken(started.at)), "\n"))
+		messageSGP(paste(tmp.messages, "\tFinished SGP Student Growth Percentile Analysis", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 
 		return(
 			list(Coefficient_Matrices=Coefficient_Matrices,
@@ -1175,7 +1175,7 @@ function(panel.data,         ## REQUIRED
 		messageSGP(paste("\tStarted studentGrowthPercentiles", started.date))
 		messageSGP(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ",
 			paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
-		messageSGP(paste(tmp.messages, "\tStudent Growth Percentile Analysis NOT RUN", date(), "\n"))
+		messageSGP(paste(tmp.messages, "\tStudent Growth Percentile Analysis NOT RUN", prettyDate(), "\n"))
 
 		return(
 			list(Coefficient_Matrices=Coefficient_Matrices,
@@ -1623,7 +1623,7 @@ function(panel.data,         ## REQUIRED
 				paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label, " (N=", format(max.cohort.size, big.mark=","), ")", sep=""))
 		}
 		if (verbose.output) messageSGP(Verbose_Messages)
-		messageSGP(c(tmp.messages, "\tFinished studentGrowthPercentiles: ", date(), " in ", convertTime(timetaken(started.at)), "\n"))
+		messageSGP(c(tmp.messages, "\tFinished studentGrowthPercentiles: ", prettyDate(), " in ", convertTime(timetaken(started.at)), "\n"))
 	}
 
 	list(Coefficient_Matrices=Coefficient_Matrices,

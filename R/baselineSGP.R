@@ -19,7 +19,7 @@ function(sgp_object,
 
 
 	started.at <- proc.time()
-	message(paste("\tStarted baselineSGP", date(), "\n"))
+	message(paste("\tStarted baselineSGP", prettyDate(), "\n"))
 
 	VALID_CASE <- YEAR <- GRADE <- CONTENT_AREA <- YEAR_WITHIN <- COHORT_YEAR <- NULL ### To prevent R CMD check warnings
 
@@ -46,7 +46,7 @@ function(sgp_object,
 	} else {
 		sgp.loss.hoss.adjustment <- NULL
 	}
-	
+
 	if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["sgp.minimum.default.panel.years"]])) {
 		sgp.minimum.default.panel.years <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["sgp.minimum.default.panel.years"]]
 	} else sgp.minimum.default.panel.years <- 3
@@ -67,11 +67,11 @@ function(sgp_object,
 	############################################
 
 
-	baselineSGP_Internal <- function(sgp_object, state, years, content_areas, grade.sequences, baseline.grade.sequences.lags, 
+	baselineSGP_Internal <- function(sgp_object, state, years, content_areas, grade.sequences, baseline.grade.sequences.lags,
 		knots.boundaries.iter, parallel.config, use.my.coefficient.matrices, calculate.simex) {
 
 		started.at <- proc.time()
-		started.date <- date()
+		started.date <- prettyDate()
 
 		### Utility functions
 
@@ -114,7 +114,7 @@ function(sgp_object,
 		tmp.dt <- rbindlist(tmp.list, fill=TRUE)
 
 		### Calculate Coefficient Matrices and return list containing coefficient matrices
-		
+
 		if (!is.null(calculate.simex)) TMP_Coefficient_Matrices = sgp_object@SGP[["Coefficient_Matrices"]] else TMP_Coefficient_Matrices <- list()
 
 		tmp_sgp_list <- list(Coefficient_Matrices =
@@ -140,7 +140,7 @@ function(sgp_object,
 
 		message(paste("\tStarted baselineSGP Coefficient Matrix Calculation:", started.date))
 		message(paste("\tContent Area: ", tail(content_areas, 1), ", Grade Progression: ", paste(grade.sequences, collapse=", "), ". ", sep=""))
-		message(paste("\tFinished baselineSGP Coefficient Matrix Calculation ", date(), " in ", convertTime(timetaken(started.at)), ".\n", sep=""))
+		message(paste("\tFinished baselineSGP Coefficient Matrix Calculation ", prettyDate(), " in ", convertTime(timetaken(started.at)), ".\n", sep=""))
 
 		return(tmp_sgp_list)
 
@@ -170,9 +170,9 @@ function(sgp_object,
 	#################################################################################
 
 	if (is.null(SGP::SGPstateData[[state]][["Baseline_splineMatrix"]])) {
-		
+
 		if (is.null(sgp.baseline.config)) {
-			sgp.baseline.config <- getSGPBaselineConfig(sgp_object, content_areas, grades, sgp.baseline.panel.years, 
+			sgp.baseline.config <- getSGPBaselineConfig(sgp_object, content_areas, grades, sgp.baseline.panel.years,
 				sgp.percentiles.baseline.max.order = sgp.percentiles.baseline.max.order, calculate.simex.baseline = calculate.simex.baseline)
 		} else {
 			sgp.baseline.config <- checkConfig(sgp.baseline.config, "Baseline")
@@ -231,7 +231,7 @@ function(sgp_object,
 		}
 
 		sgp_object@SGP <- mergeSGP(Reduce(mergeSGP, tmp.list), sgp_object@SGP)
-		
+
 	}
 
 
@@ -257,7 +257,7 @@ function(sgp_object,
 			sgp.percentiles=FALSE, sgp.projections=FALSE, sgp.projections.lagged=FALSE,
 			sgp.percentiles.baseline=TRUE, sgp.projections.baseline=FALSE, sgp.projections.lagged.baseline=FALSE,
 			sgp.config.drop.nonsequential.grade.progression.variables=TRUE, sgp.minimum.default.panel.years=sgp.minimum.default.panel.years,
-			sgp.projections.max.forward.progression.years=NULL, sgp.use.my.coefficient.matrices=NULL, calculate.simex.baseline=calculate.simex.baseline, 
+			sgp.projections.max.forward.progression.years=NULL, sgp.use.my.coefficient.matrices=NULL, calculate.simex.baseline=calculate.simex.baseline,
 			SGPt=SGPt)
 
 		for (sgp.iter in par.sgp.config[['sgp.percentiles.baseline']]) {
@@ -293,14 +293,14 @@ function(sgp_object,
 
 	} ### END if (calculate.baseline.sgps)
 
-    
+
 	############################################################
 	###
 	### Return results
 	###
 	############################################################
 
-	message(paste("\tFinished baselineSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
+	message(paste("\tFinished baselineSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 
 	if (return.matrices.only) {
 		tmp.list <- list()
@@ -312,7 +312,7 @@ function(sgp_object,
 		if (!is.null(calculate.simex.baseline)) {
 			for (ca in unique(sapply(sgp.baseline.config, function(x) tail(x[["sgp.baseline.content.areas"]],1)))) {
 				tmp.list[[paste(ca, ".BASELINE.SIMEX", sep="")]] <- sgp_object@SGP[["Coefficient_Matrices"]][[paste(ca, ".BASELINE.SIMEX", sep="")]]
-			}			
+			}
 		}
 		return(tmp.list)
 	} else {

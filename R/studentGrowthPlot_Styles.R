@@ -1,4 +1,4 @@
-`studentGrowthPlot_Styles` <- 
+`studentGrowthPlot_Styles` <-
 	function(
 		sgPlot.data,
 		sgPlot.sgp_object,
@@ -64,9 +64,9 @@
 		} else custom.isr.tf <- FALSE
 	} else {
 		stop("Construction of student growth plots requires state meta-data to be included in the embedded SGPstateData set.\nPlease augment the SGPstateData set with your data or contact the SGP package maintainer to have your data added to the SGP package.")
-	}	
+	}
 
-	year_folder <- as.character(last.year) 
+	year_folder <- as.character(last.year)
 
 	## To Baseline or not to Baseline
 
@@ -128,7 +128,7 @@ if (reports.by.school) {
 		tmp_district_data <- subset(sgPlot.data, ID %in% tmp_district_ids)
 		if (is.factor(tmp_district_data[[paste("LAST_NAME", last.year, sep=".")]]) | is.factor(tmp_district_data[[paste("FIRST_NAME", last.year, sep=".")]])) {
 			tmp_district_data[, paste("LAST_NAME", last.year, sep=".") := as.character(tmp_district_data[[paste("LAST_NAME", last.year, sep=".")]])]
-			tmp_district_data[, paste("FIRST_NAME", last.year, sep=".") := as.character(tmp_district_data[[paste("FIRST_NAME", last.year, sep=".")]])]			
+			tmp_district_data[, paste("FIRST_NAME", last.year, sep=".") := as.character(tmp_district_data[[paste("FIRST_NAME", last.year, sep=".")]])]
 		}
 
 	## Schools
@@ -136,15 +136,15 @@ if (reports.by.school) {
 	setkeyv(tmp_district_data, tmp.keys[2])
 
 	for (j in intersect(tmp_district_data[[paste("SCHOOL_NUMBER", last.year, sep=".")]], schools)) {
-	
+
 		started.at <- proc.time()
-		started.date <- date()
-	
+		started.date <- prettyDate()
+
 		if (!is.null(sgPlot.front.page)) {
 			sgPlot.front.page.ij <- paste(paste(unlist(strsplit(sgPlot.front.page, "[.]"))[1], i, j, sep="_"), ".pdf", sep="")
 			file.copy(sgPlot.front.page, sgPlot.front.page.ij)
 		}
-	
+
 		if (reports.by.student) {
 			tmp_school_name <- as.character(tmp_district_data[list(j)][[paste("SCHOOL_NAME", last.year, sep=".")]][1])
 			school_folder <- NULL
@@ -161,17 +161,17 @@ if (reports.by.school) {
 					school_folder <- as.character(j)
 				}
 			}
-	
+
 			if ("PDF" %in% sgPlot.output.format) {
 				######################## SCHOOL Report Catalog LaTeX Header #################################################################################
 				if (.Platform$OS.type == "windows" & length(unique(tmp_district_data[list(j)]$ID)) > 500) {
 					cat("\\let\\mypdfximage\\pdfximage\n\\def\\pdfximage{\\immediate\\mypdfximage}\n\\documentclass[pdftex]{book}\n\\usepackage{hyperref,pdfpages}\n\\hypersetup{%\n",
-						file=paste("school_catalog_", i, "_", j, ".tex", sep=""))	
+						file=paste("school_catalog_", i, "_", j, ".tex", sep=""))
 				} else cat("\\documentclass[pdftex]{book}\n\\usepackage{hyperref,pdfpages}\n\\hypersetup{%\n", file=paste("school_catalog_", i, "_", j, ".tex", sep=""))
-				cat(paste("pdftitle={", tmp_school_name, ": ", pretty_year(last.year), " ", tmp.state, " Growth and Achievement Reports},\n", sep=""), 
+				cat(paste("pdftitle={", tmp_school_name, ": ", pretty_year(last.year), " ", tmp.state, " Growth and Achievement Reports},\n", sep=""),
 					file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE)
-				cat(paste("pdfauthor={", tmp.organization$Name, "/Center for Assessment Inc.},\n", sep=""), "pdfcreator={pdfLaTeX},\n", 
-				paste("pdfproducer={", tmp.organization$Name, "/Center for Assessment Inc.}}\n", sep=""), 
+				cat(paste("pdfauthor={", tmp.organization$Name, "/Center for Assessment Inc.},\n", sep=""), "pdfcreator={pdfLaTeX},\n",
+				paste("pdfproducer={", tmp.organization$Name, "/Center for Assessment Inc.}}\n", sep=""),
 					"\\begin{document}\n", sep="", file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE)
 				cat(paste("\\pdfbookmark[-1]{", tmp_district_name, "}{", i, "}\n", sep=""), file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE)
 				cat(paste("\\pdfbookmark[0]{", tmp_school_name, "}{", j, "}\n", sep=""), file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE)
@@ -180,13 +180,13 @@ if (reports.by.school) {
 		}
 		tmp_school_ids <- unique(tmp_district_data[list(j)]$ID)
 		tmp_school_data <- subset(tmp_district_data, ID %in% tmp_school_ids)
-	
+
 		## Grades
-	
+
 		setkeyv(tmp_school_data, tmp.keys[2])
 		grades <- as.character(sort(type.convert(unique(unlist(tmp_school_data[list(j), tmp.keys[3], with=FALSE])), as.is=TRUE)) %w/o% NA)
 		setkeyv(tmp_school_data, tmp.keys[3])
-	
+
 		for (k in grades) {
 		if (reports.by.student) {
 			grade_folder <- NULL
@@ -200,26 +200,26 @@ if (reports.by.school) {
 					grade_folder <- substr(paste("0", as.character(k), sep=""), nchar(k), nchar(k)+1)
 				}
 			}
-	
+
 			if ("PDF" %in% sgPlot.output.format) {
 				################################ SCHOOL Report Catalog LaTeX Code #########################################################
-				cat(paste("\\pdfbookmark[1]{Grade ", k, "}{", j, k, "}\n", sep=""), 
+				cat(paste("\\pdfbookmark[1]{Grade ", k, "}{", j, k, "}\n", sep=""),
 					file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE) ## NOTE: j, k included in anchor for uniqueness
 				###########################################################################################################################
 			}
 		}
 		tmp_grade_ids <- unique(tmp_school_data[list(k)]$ID)
 		tmp_grade_data <- subset(tmp_school_data, ID %in% tmp_grade_ids)
-	
+
 		### Create path to pdf files
-	
+
 		path.to.pdfs <- paste(c(sgPlot.folder, year_folder, district_folder, school_folder, grade_folder), collapse=.Platform$file.sep)
 		dir.create(path.to.pdfs, recursive=TRUE, showWarnings=FALSE)
-	
+
 		## Students
-	
+
 		setkeyv(tmp_grade_data, tmp.keys[4:5])
-	
+
 		for (n in unique(tmp_grade_data[["ID"]])) {
 			FIRST_NAME <- sort(tmp_grade_data[ID==n][[tmp.keys[5]]])[1]
 			LAST_NAME <- sort(tmp_grade_data[ID==n][[tmp.keys[4]]])[1]
@@ -235,7 +235,7 @@ if (reports.by.school) {
 				file_name <- paste(n, "_REPORT.pdf", sep="")
 				file_name_json <- n
 			}
-	
+
 		tmp_all_student_data <- tmp_grade_data[ID==n]
 		if (length(content_areas) < dim(tmp_all_student_data)[1] | any(duplicated(tmp_all_student_data[["CONTENT_AREA"]]))) {
 			tmp_content_areas <- tmp_all_student_data[["CONTENT_AREA"]]
@@ -245,7 +245,7 @@ if (reports.by.school) {
 		num.charts <- length(tmp_content_areas)
 
 		if ("JSON" %in% sgPlot.output.format) {
-	
+
 			for (vp in seq_along(tmp_content_areas)) {
 				tmp_student_data <- as.data.frame(tmp_all_student_data[CONTENT_AREA==tmp_content_areas[vp]])
 				if (dim(tmp_student_data)[1]==0) tmp_student_data <- as.data.frame(data.table(tmp_student_data)[NA][,CONTENT_AREA := tmp_content_areas[vp]])
@@ -258,21 +258,21 @@ if (reports.by.school) {
 					Grades=as.character(subset(tmp_student_data, select=paste("GRADE", rev(sgPlot.years), sep="."))),
 					Content_Areas=as.character(subset(tmp_student_data, select=paste("CONTENT_AREA_LABELS", rev(sgPlot.years), sep="."))),
 					Cuts_TEXT=list(
-						NY1=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)), 
+						NY1=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
 							grep("YEAR_1", names(tmp_student_data))), grep("YEAR_1_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-						NY2=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)), 
+						NY2=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
 							grep("YEAR_2", names(tmp_student_data))), grep("YEAR_2_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-						NY3=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)), 
+						NY3=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
 							grep("YEAR_3", names(tmp_student_data))), grep("YEAR_3_CURRENT_TRANSFORMED", names(tmp_student_data)))))),
-				Cuts=list(NY1=as.numeric(subset(tmp_student_data, 
+				Cuts=list(NY1=as.numeric(subset(tmp_student_data,
 						select=intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_1_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-					NY2=as.numeric(subset(tmp_student_data, 
+					NY2=as.numeric(subset(tmp_student_data,
 						select=intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_2_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-					NY3=as.numeric(subset(tmp_student_data, 
+					NY3=as.numeric(subset(tmp_student_data,
 						select=intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_3_CURRENT_TRANSFORMED", names(tmp_student_data)))))),
-				SGP_Targets=list(CUKU=tmp_student_data[[paste(paste(my.sgp.target.label[1], my.sgp.target.label[2], sep="_"), last.year, sep=".")]], 
-					CUKU_Current=tmp_student_data[[paste(paste(my.sgp.target.label[1], my.sgp.target.label[2], "CURRENT", sep="_"), last.year, sep=".")]], 
-					MUSU=tmp_student_data[[paste(paste(my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], sep="_"), last.year, sep=".")]], 
+				SGP_Targets=list(CUKU=tmp_student_data[[paste(paste(my.sgp.target.label[1], my.sgp.target.label[2], sep="_"), last.year, sep=".")]],
+					CUKU_Current=tmp_student_data[[paste(paste(my.sgp.target.label[1], my.sgp.target.label[2], "CURRENT", sep="_"), last.year, sep=".")]],
+					MUSU=tmp_student_data[[paste(paste(my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], sep="_"), last.year, sep=".")]],
 					MUSU_Current=tmp_student_data[[paste(paste(my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "CURRENT", sep="_"), last.year, sep=".")]]),
 				SGP_Scale_Score_Targets_TEXT=list(CUKU=list(
 					NY1=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], my.sgp.target.label[2], "PROJ_YEAR_1", sep="_")]]),
@@ -308,17 +308,17 @@ if (reports.by.school) {
 					NY3=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_3_CURRENT_TRANSFORMED", sep="_")]]))),
 				Cutscores=sgPlot.cutscores[[strsplit(tmp_content_areas[vp], "[.]")[[1]][1]]],
 				Years=rev(sgPlot.years),
-				Report_Parameters=list(Current_Year=last.year, Content_Area=strsplit(tmp_content_areas[vp], "[.]")[[1]][1], Content_Area_Title=tmp_student_data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]], 
+				Report_Parameters=list(Current_Year=last.year, Content_Area=strsplit(tmp_content_areas[vp], "[.]")[[1]][1], Content_Area_Title=tmp_student_data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]],
 					State=state, SGP_Targets=sgPlot.sgp.targets, Assessment_Transition=sgPlot.linkages, Fan=SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']]))
 
 			tmp_student_data_JSON <- getJSON(
 							tmp.data=tmp.list,
 							sgPlot.sgp_object=sgPlot.sgp_object,
-							state=state, 
+							state=state,
 							content_area=strsplit(tmp_content_areas[vp], "[.]")[[1]][1],
 							year=last.year,
 							years.for.percentile.trajectories=yearIncrement(last.year, c(0,-1)),
-							baseline=sgPlot.baseline, 
+							baseline=sgPlot.baseline,
 							data.type="studentGrowthPlot")
 			cat(toJSON(tmp_student_data_JSON, pretty=TRUE, na="null", auto_unbox=TRUE), file=file.path(path.to.pdfs, paste(file_name_json, "_", vp, ".json", sep="")))
 		}
@@ -329,11 +329,11 @@ if (reports.by.school) {
 		if (!reports.by.student) {
 			################################ SCHOOL Report Catalog LaTeX Code ###################################################################################
 			if (is.null(sgPlot.front.page) | !is.null(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Include_Front_Page_in_School_Catalog"]])) {
-			cat(paste("\\pdfbookmark[2]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", student_number, ")", sep=""), "}{", n , "}\n\\includepdf[pages={1-}, fitpaper=true]{", 
+			cat(paste("\\pdfbookmark[2]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", student_number, ")", sep=""), "}{", n , "}\n\\includepdf[pages={1-}, fitpaper=true]{",
 				path.to.pdfs, "/", file_name, "}\n", sep=""), file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE)
 			} else {
-				cat(paste("\\includepdf[pages={1-},fitpaper=true]{", sgPlot.front.page.ij, "}\n\\pdfbookmark[2]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", 
-				student_number, ")", sep=""), "}{", n , "}\n\\includepdf[pages={1-},fitpaper=true]{", path.to.pdfs, "/", file_name, "}\n", sep=""), 
+				cat(paste("\\includepdf[pages={1-},fitpaper=true]{", sgPlot.front.page.ij, "}\n\\pdfbookmark[2]{", paste(LAST_NAME, ", ", FIRST_NAME, " (",
+				student_number, ")", sep=""), "}{", n , "}\n\\includepdf[pages={1-},fitpaper=true]{", path.to.pdfs, "/", file_name, "}\n", sep=""),
 					file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE)
 			}
 			#####################################################################################################################################################
@@ -341,16 +341,16 @@ if (reports.by.school) {
 
 		################################ STUDENT Report Front Page Attach LaTeX Code ########################################################################
 		cat("\\documentclass[pdftex]{article}\n\\usepackage{hyperref,pdfpages}\n\\hypersetup{%\n", file=paste("student_report_", i, "_", j, ".tex", sep=""))
-		cat(paste("pdftitle={", FIRST_NAME, " ", LAST_NAME, " (", student_number, ")", ": ", pretty_year(last.year), " ", 
+		cat(paste("pdftitle={", FIRST_NAME, " ", LAST_NAME, " (", student_number, ")", ": ", pretty_year(last.year), " ",
 			tmp.state, " Growth and Achievement Report},\n", sep=""), file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
 		cat(paste("pdfauthor={", tmp.organization$Name, "/Center for Assessment Inc.},\n", sep=""), file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
 		cat("pdfcreator={pdfLaTeX},\n", file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
-		cat(paste("pdfproducer={", tmp.organization$Name, "/Center for Assessment Inc.}}\n", sep=""), file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE) 
+		cat(paste("pdfproducer={", tmp.organization$Name, "/Center for Assessment Inc.}}\n", sep=""), file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
 		cat("\\begin{document}\n", file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
 		if (!is.null(sgPlot.front.page)) {
 			cat(paste("\\includepdf[pages={1-}, fitpaper=true]{", sgPlot.front.page.ij, "}\n", sep=""), file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
 		}
-		cat(paste("\\includepdf[pages={1-}, fitpaper=true]{", path.to.pdfs, "/", file_name, "}\n", sep=""), 
+		cat(paste("\\includepdf[pages={1-}, fitpaper=true]{", path.to.pdfs, "/", file_name, "}\n", sep=""),
 			file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
 
 		cat("\\end{document}", file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
@@ -359,7 +359,7 @@ if (reports.by.school) {
 		if (!custom.isr.tf) { # boiler plate student reports:
 
 		## Start pdf device
-		
+
 		if (num.charts %in% c(1,2)) {
 			report.width=11
 			report.height=8.5
@@ -386,7 +386,7 @@ if (reports.by.school) {
 			stop("Individual Student Report Templates currently only available for situations with 1, 2, 3, 4 or 5 content areas.")
 		}
 
-		pdf(file.path(path.to.pdfs, file_name), 
+		pdf(file.path(path.to.pdfs, file_name),
 			width=report.width, height=report.height, version="1.4", onefile=TRUE)
 
 		########################################################################################################
@@ -398,7 +398,7 @@ if (reports.by.school) {
 		page.count <- 1; page.content_areas <- list(1:num.charts); legend.tf <- FALSE # redefined below if necessary
 
 		if (num.charts==1) {
-			report.vp <- viewport(layout = grid.layout(5, 4, widths = unit(c(2.5, 0.1, 8.3, 0.1), rep("inches", 4)), 
+			report.vp <- viewport(layout = grid.layout(5, 4, widths = unit(c(2.5, 0.1, 8.3, 0.1), rep("inches", 4)),
 				heights = unit(c(0.55, 0.2, 7, 0.25, 0.5), rep("inches", 5))))
 
 			content_area_1.vp <- viewport(layout.pos.row=3, layout.pos.col=3)
@@ -408,7 +408,7 @@ if (reports.by.school) {
 		}
 
 		if (num.charts==2) {
-			report.vp <- viewport(layout = grid.layout(7, 4, widths = unit(c(2.5, 0.1, 8.3, 0.1), rep("inches", 4)), 
+			report.vp <- viewport(layout = grid.layout(7, 4, widths = unit(c(2.5, 0.1, 8.3, 0.1), rep("inches", 4)),
 				heights = unit(c(0.35, 0.2, 3.55, 0.25, 3.55, 0.2, 0.4), rep("inches", 7))))
 
 			content_area_1.vp <- viewport(layout.pos.row=3, layout.pos.col=3)
@@ -419,7 +419,7 @@ if (reports.by.school) {
 		}
 
 		if (num.charts==3) {
-			report.vp <- viewport(layout = grid.layout(9, 3, widths = unit(c(0.125, 8.3, 0.075), rep("inches", 3)), 
+			report.vp <- viewport(layout = grid.layout(9, 3, widths = unit(c(0.125, 8.3, 0.075), rep("inches", 3)),
 				heights = unit(c(0.35, 0.1, 3.256, 0.14, 3.256, 0.14, 3.256, 0.1, 0.4), rep("inches", 9))))
 
 			content_area_1.vp <- viewport(layout.pos.row=3, layout.pos.col=2)
@@ -430,7 +430,7 @@ if (reports.by.school) {
 		}
 
 		if (num.charts==4) {
-			# report.vp <- viewport(layout = grid.layout(7, 3, widths = unit(c(0.125, 8.3, 0.075), rep("inches", 3)), 
+			# report.vp <- viewport(layout = grid.layout(7, 3, widths = unit(c(0.125, 8.3, 0.075), rep("inches", 3)),
 			# 	heights = unit(c(0.4, 0.75, 4, 0.5, 4, 0.85, 0.5), rep("inches", 7))))
 
 			# page.content_areas <- list(1:2, 3:4)
@@ -454,7 +454,7 @@ if (reports.by.school) {
 				bottom.border.vp <- Four_Charts[["bottom.border.vp"]]
 				if (!is.null(Four_Charts[["left.legend.vp"]])) {left.legend.vp <- Four_Charts[["left.legend.vp"]]; legend.tf <- TRUE}
 			} else { ###  17 x 11 Default
-				report.vp <- viewport(layout = grid.layout(7, 6, widths = unit(c(2.5, 0.15, 7, 0.2, 7, 0.15), rep("inches", 6)), 
+				report.vp <- viewport(layout = grid.layout(7, 6, widths = unit(c(2.5, 0.15, 7, 0.2, 7, 0.15), rep("inches", 6)),
 					heights = unit((11/8.5)*c(0.35, 0.2, 3.55, 0.25, 3.55, 0.2, 0.4), rep("inches", 7))))
 
 				content_area_1.vp <- viewport(layout.pos.row=3, layout.pos.col=3)
@@ -467,7 +467,7 @@ if (reports.by.school) {
 				legend.tf <- TRUE
 			}
 			###  11 x 8.5 - Panels generally are too small
-			# report.vp <- viewport(layout = grid.layout(7, 5, widths = unit(c(0.15, 5.3, 0.1, 5.3, 0.15), rep("inches", 5)), 
+			# report.vp <- viewport(layout = grid.layout(7, 5, widths = unit(c(0.15, 5.3, 0.1, 5.3, 0.15), rep("inches", 5)),
 			# 	heights = unit(c(0.35, 0.2, 3.55, 0.25, 3.55, 0.2, 0.4), rep("inches", 7))))
 
 			# content_area_1.vp <- viewport(layout.pos.row=3, layout.pos.col=2)
@@ -480,7 +480,7 @@ if (reports.by.school) {
 		}
 
 		if (num.charts==5) {
-			# report.vp <- viewport(layout = grid.layout(9, 3, widths = unit(c(0.125, 8.3, 0.075), rep("inches", 3)), 
+			# report.vp <- viewport(layout = grid.layout(9, 3, widths = unit(c(0.125, 8.3, 0.075), rep("inches", 3)),
 			# 	heights = unit(c(0.35, 0.1, 3.256, 0.14, 3.256, 0.14, 3.256, 0.1, 0.4), rep("inches", 9))))
 
 			# page.content_areas <- list(1:3, 4:5)
@@ -506,7 +506,7 @@ if (reports.by.school) {
 				bottom.border.vp <- Five_Charts[["bottom.border.vp"]]
 				if (!is.null(Five_Charts[["left.legend.vp"]])) {left.legend.vp <- Five_Charts[["left.legend.vp"]]; legend.tf <- TRUE}
 			} else { ###  17 x 11 Default
-				report.vp <- viewport(layout = grid.layout(13, 3, widths = unit((11/8.5)*c(0.125, 8.3, 0.075), rep("inches", 3)), 
+				report.vp <- viewport(layout = grid.layout(13, 3, widths = unit((11/8.5)*c(0.125, 8.3, 0.075), rep("inches", 3)),
 					heights = unit(c(0.3, 0.10, 3.25, 0.15, 3.25, 0.15, 3.35, 0.15, 3.25, 0.15, 3.25, 0.10, 0.3), rep("inches", 9))))
 
 				content_area_1.vp <- viewport(layout.pos.row=3, layout.pos.col=2)
@@ -535,20 +535,20 @@ if (reports.by.school) {
 				Grades=as.character(subset(tmp_student_data, select=paste("GRADE", rev(sgPlot.years), sep="."))),
 				Content_Areas=as.character(subset(tmp_student_data, select=paste("CONTENT_AREA_LABELS", rev(sgPlot.years), sep="."))),
 				Cuts=list(
-					NY1=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)), 
+					NY1=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
 						grep("YEAR_1", names(tmp_student_data))), grep("YEAR_1_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-					NY2=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)), 
+					NY2=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
 						grep("YEAR_2", names(tmp_student_data))), grep("YEAR_2_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-					NY3=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)), 
+					NY3=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
 						grep("YEAR_3", names(tmp_student_data))), grep("YEAR_3_CURRENT_TRANSFORMED", names(tmp_student_data)))))),
 				Plotting_Cuts=list(
 					NY1=as.numeric(subset(tmp_student_data, select=intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_1_CURRENT_TRANSFORMED", names(tmp_student_data))))),
 					NY2=as.numeric(subset(tmp_student_data, select=intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_2_CURRENT_TRANSFORMED", names(tmp_student_data))))),
 					NY3=as.numeric(subset(tmp_student_data, select=intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_3_CURRENT_TRANSFORMED", names(tmp_student_data)))))),
 				SGP_Targets=list(
-					CUKU=tmp_student_data[[paste(paste(my.sgp.target.label[1], my.sgp.target.label[2], sep="_"), last.year, sep=".")]], 
-					CUKU_Current=tmp_student_data[[paste(paste(my.sgp.target.label[1], my.sgp.target.label[2], "CURRENT", sep="_"), last.year, sep=".")]], 
-					MUSU=tmp_student_data[[paste(paste(my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], sep="_"), last.year, sep=".")]], 
+					CUKU=tmp_student_data[[paste(paste(my.sgp.target.label[1], my.sgp.target.label[2], sep="_"), last.year, sep=".")]],
+					CUKU_Current=tmp_student_data[[paste(paste(my.sgp.target.label[1], my.sgp.target.label[2], "CURRENT", sep="_"), last.year, sep=".")]],
+					MUSU=tmp_student_data[[paste(paste(my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], sep="_"), last.year, sep=".")]],
 					MUSU_Current=tmp_student_data[[paste(paste(my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "CURRENT", sep="_"), last.year, sep=".")]]),
 				SGP_Scale_Score_Targets=list(
 					CUKU=list(
@@ -586,9 +586,9 @@ if (reports.by.school) {
 						NY3=as.numeric(tmp_student_data[[paste('SCALE_SCORE', my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "PROJ_YEAR_3_CURRENT_TRANSFORMED", sep="_")]]))),
 				Cutscores=sgPlot.cutscores[[strsplit(tmp_content_areas[vp], "[.]")[[1]][1]]],
 				Years=rev(sgPlot.years),
-				Report_Parameters=list(Current_Year=last.year, Content_Area=strsplit(tmp_content_areas[vp], "[.]")[[1]][1], Content_Area_Title=tmp_student_data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]], 
+				Report_Parameters=list(Current_Year=last.year, Content_Area=strsplit(tmp_content_areas[vp], "[.]")[[1]][1], Content_Area_Title=tmp_student_data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]],
 					State=state, SGP_Targets=sgPlot.sgp.targets, Assessment_Transition=sgPlot.linkages, Fan=SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']]))
-	
+
 			popViewport()
 		} ## END loop over tmp_content_areas
 
@@ -612,11 +612,11 @@ if (reports.by.school) {
 		grid.text(x=0.02, y=0.70, paste("For more information please visit the", tmp.organization$Name, paste("(", tmp.organization$Abbreviation, ")", sep=""),
 			"at", tmp.organization$URL, "or contact", tmp.organization$Contact), gp=gpar(cex=0.8, col="white"), default.units="native", just="left")
 		copyright.text <- paste("Cooperatively developed by the ", tmp.organization$Abbreviation, " & the Center for Assessment, Inc.", sep="")
-		grid.text(x=0.02, y=0.30, paste(copyright.text, " Distributed by the ", tmp.organization$Abbreviation, ".", sep=""), 
+		grid.text(x=0.02, y=0.30, paste(copyright.text, " Distributed by the ", tmp.organization$Abbreviation, ".", sep=""),
 			gp=gpar(cex=0.8, col="white"), default.units="native", just="left")
 
 		# grid.text(x=0.995, y=0.18, copyright.text, gp=gpar(col="white", cex=0.45), default.units="native", just="right")
-		# grid.text(x=unit(0.992, "native")-convertWidth(grobWidth(textGrob(copyright.text, gp=gpar(cex=0.45))), "native"), y=0.19, "\\co", 
+		# grid.text(x=unit(0.992, "native")-convertWidth(grobWidth(textGrob(copyright.text, gp=gpar(cex=0.45))), "native"), y=0.19, "\\co",
 		#	 gp=gpar(col="white", cex=0.55, fontfamily="HersheySymbol"), default.units="native", just="right")
 		popViewport()
 
@@ -625,39 +625,39 @@ if (reports.by.school) {
 		if (num.charts %in% c(1,2) | legend.tf) { #,4
 
 			pushViewport(left.legend.vp)
-	
+
 			# Interpretation
 			interpretation.y <- 0.93
 			achievement.level.region.colors <- paste("grey", round(seq(62, 91, length=number.achievement.level.regions)), sep="")
-	
-			grid.roundrect(x=unit(0.5, "native"), y=unit(interpretation.y, "native"), width=unit(0.9, "native"), height=unit(0.06, "native"), 
+
+			grid.roundrect(x=unit(0.5, "native"), y=unit(interpretation.y, "native"), width=unit(0.9, "native"), height=unit(0.06, "native"),
 				gp=gpar(fill=sgPlot.header.footer.color, col="black"))
 			grid.text(x=0.5, y=interpretation.y+0.012, "How to interpret this student", gp=gpar(fontface="bold", fontfamily="Helvetica-Narrow", cex=1.05, col="white"))
 			grid.text(x=0.5, y=interpretation.y-0.012, "growth & achievement report", gp=gpar(fontface="bold", fontfamily="Helvetica-Narrow", cex=1.05, col="white"))
-	
-			grid.roundrect(x=unit(0.2, "native"), y=unit(interpretation.y-0.08, "native"), width=unit(0.1, "native"), height=unit(0.05, "native"), r=unit(0.02, "inches"), 
+
+			grid.roundrect(x=unit(0.2, "native"), y=unit(interpretation.y-0.08, "native"), width=unit(0.1, "native"), height=unit(0.05, "native"), r=unit(0.02, "inches"),
 				gp=gpar(fill=achievement.level.region.colors[1], lwd=1))
 			grid.circle(x=0.2, y=interpretation.y-0.08, r=0.02, default.units="native", gp=gpar(fill="white"))
 			grid.text(x=0.325, y=interpretation.y-0.0675, tmp.abbreviation, gp=gpar(cex=0.9), default.units="native", just="left")
 			grid.text(x=0.325, y=interpretation.y-0.0925, "Scale Score", gp=gpar(cex=0.9), default.units="native", just="left")
-	
+
 			tmp.rect.height <- 0.125/number.achievement.level.regions
 			for (l in seq(number.achievement.level.regions)) {
 				grid.rect(x=unit(0.2, "native"), y=unit(interpretation.y-0.125-(l-1)*tmp.rect.height, "native"), width=unit(0.1, "native"),
 					height=unit(tmp.rect.height, "native"), gp=gpar(fill=rev(achievement.level.region.colors)[l], col="white", lwd=1), just=c("center", "top"))
-			} 
+			}
 			grid.roundrect(x=unit(0.2, "native"), y=interpretation.y-0.125, width=unit(0.1, "native"), height=unit(0.125, "native"),
 				 r=unit(0.02, "inches"),gp=gpar(col="black", lwd=1.5), just=c("center", "top"))
 			grid.text(x=0.325, y=interpretation.y-0.1625, tmp.abbreviation, default.units="native", just="left")
 			grid.text(x=0.325, y=interpretation.y-0.1875, "Achievement", default.units="native", just="left")
 			grid.text(x=0.325, y=interpretation.y-0.2125, "Levels", default.units="native", just="left")
-	
-			grid.polygon(x=c(0.1875, 0.1875, 0.17, 0.2, 0.23, 0.2125, 0.2125), y=interpretation.y-c(0.35, 0.30, 0.31, 0.27, 0.31, 0.30, 0.35), 
+
+			grid.polygon(x=c(0.1875, 0.1875, 0.17, 0.2, 0.23, 0.2125, 0.2125), y=interpretation.y-c(0.35, 0.30, 0.31, 0.27, 0.31, 0.30, 0.35),
 				default.units="native",gp=gpar(fill="grey50"))
 			grid.text(x=0.325, y=interpretation.y-0.285, "Student", gp=gpar(cex=0.9), default.units="native", just="left")
 			grid.text(x=0.325, y=interpretation.y-0.31, "Growth", gp=gpar(cex=0.9), default.units="native", just="left")
 			grid.text(x=0.325, y=interpretation.y-0.335, "Percentile", gp=gpar(cex=0.9), default.units="native", just="left")
-	
+
 			if (!is.null(sgPlot.sgp.targets)) {
 				grid.circle(x=0.2, y=interpretation.y-0.41, r=unit(c(0.08, 0.065, 0.045, 0.0225), "inches"),
 					gp=gpar(col=c("black", "white", "black", "white"), lwd=0.01, fill=c("black", "white", "black", "white")), default.units="native")
@@ -665,25 +665,25 @@ if (reports.by.school) {
 				grid.text(x=0.325, y=interpretation.y-0.41, "Move Up/Stay Up", gp=gpar(cex=0.9), default.units="native", just="left")
 				grid.text(x=0.325, y=interpretation.y-0.435, "Targets", gp=gpar(cex=0.9), default.units="native", just="left")
 			}
-	
+
 			# Suggested uses
 			if (is.null(sgPlot.sgp.targets)) suggested.y <- 0.52 else suggested.y <- 0.42
-	
-			grid.roundrect(x=unit(0.5, "native"), y=unit(suggested.y, "native"), width=unit(0.9, "native"), height=unit(0.06, "native"), 
+
+			grid.roundrect(x=unit(0.5, "native"), y=unit(suggested.y, "native"), width=unit(0.9, "native"), height=unit(0.06, "native"),
 				gp=gpar(fill=sgPlot.header.footer.color, col="black"))
 			grid.text(x=0.5, y=suggested.y, "Suggested Uses", gp=gpar(fontface="bold", fontfamily="Helvetica-Narrow", cex=1.05, col="white"))
-	
+
 			grid.circle(x=0.075, y=suggested.y-0.07, r=0.01, gp=gpar(fill="black"), default.units="native")
 			grid.text(x=0.12, y=suggested.y-0.07, "Review past growth to assess", gp=gpar(cex=0.8), default.units="native", just="left")
 			grid.text(x=0.12, y=suggested.y-0.09, "student academic progress toward", gp=gpar(cex=0.8), default.units="native", just="left")
 			grid.text(x=0.12, y=suggested.y-0.11, paste(tmp.abbreviation, "achievement goals."), gp=gpar(cex=0.8), default.units="native", just="left")
-	
+
 			grid.circle(x=0.075, y=suggested.y-0.14, r=0.01, gp=gpar(fill="black"), default.units="native")
 			grid.text(x=0.12, y=suggested.y-0.14, "Develop remediation or enrich-", gp=gpar(cex=0.8), default.units="native", just="left")
 			grid.text(x=0.12, y=suggested.y-0.16, "ment plans based on rate of", gp=gpar(cex=0.8), default.units="native", just="left")
 			grid.text(x=0.12, y=suggested.y-0.18, "growth needed to reach higher", gp=gpar(cex=0.8), default.units="native", just="left")
 			grid.text(x=0.12, y=suggested.y-0.20, paste(tmp.abbreviation, "achievement levels."), gp=gpar(cex=0.8), default.units="native", just="left")
-	
+
 			if (sgPlot.fan) {
 				grid.circle(x=0.075, y=suggested.y-0.23, r=0.01, gp=gpar(fill="black"), default.units="native")
 				grid.text(x=0.12, y=suggested.y-0.23, "Identify the rate of progress", gp=gpar(cex=0.8), default.units="native", just="left")
@@ -691,11 +691,11 @@ if (reports.by.school) {
 				grid.text(x=0.12, y=suggested.y-0.27, "maintain proficient status", gp=gpar(cex=0.8), default.units="native", just="left")
 				grid.text(x=0.12, y=suggested.y-0.29, paste("on the", tmp.abbreviation, "next year."), gp=gpar(cex=0.8), default.units="native", just="left")
 			}
-	
-			# Extra stuff	
-			grid.lines(x=1.0, y=c(0.025,0.975), gp=gpar(lwd=1.8), default.units="native")	
+
+			# Extra stuff
+			grid.lines(x=1.0, y=c(0.025,0.975), gp=gpar(lwd=1.8), default.units="native")
 			popViewport()
-			
+
 		} ## END Left legend
 
 		if (page.count > 1 & pages < max(page.count))	grid.newpage()
@@ -703,17 +703,17 @@ if (reports.by.school) {
 
 		## Turn pdf device off
 		dev.off()
-		} else { 
+		} else {
 		#############################
 		### Custom Student reports
 		#############################
-		
+
 			make.custom.isr <- as.function(custom.isr$Custom_ISR_Function$value)
 			environment(make.custom.isr) <- environment()
-	
+
 			## Turn pdf device ON and OFF within make.custom.isr
 			make.custom.isr()
-		
+
 		} # End Custom Student reports
 
 		## Code to LaTeX document attaching first page/adding meta-data
@@ -721,7 +721,7 @@ if (reports.by.school) {
 		system(paste("pdflatex -interaction=batchmode student_report_", i, "_", j, ".tex", sep=""), ignore.stdout = TRUE)
 		file.rename(paste("student_report_", i, "_", j, ".pdf", sep=""), paste(path.to.pdfs, "/", paste(head(unlist(strsplit(file_name, "_")), -1), collapse="_"), ".pdf", sep=""))
 	} ### END "PDF" %in% sgPlot.output.format
-	
+
 	if (any(c("PNG", "PDF_PIECES") %in% sgPlot.output.format)) {
 		report.png.vp <- viewport(width = unit(8.1, "inches"), height = unit(3.64, "inches"))
 
@@ -729,7 +729,7 @@ if (reports.by.school) {
 			if ("PNG" %in% sgPlot.output.format) {
 				Cairo(file.path(path.to.pdfs, paste(paste(n, vp, sep="_"), "png", sep=".")), width=8.2, height=3.74, units="in", dpi=144, pointsize=10.5, bg="transparent")
 			} else {
-				pdf(file.path(path.to.pdfs, paste(paste(n, vp, sep="_"), "pdf", sep=".")), width=8.2, height=3.74, version="1.4") 
+				pdf(file.path(path.to.pdfs, paste(paste(n, vp, sep="_"), "pdf", sep=".")), width=8.2, height=3.74, version="1.4")
 			}
 
 			tmp_student_data <- as.data.frame(tmp_all_student_data[CONTENT_AREA==tmp_content_areas[vp]])
@@ -744,20 +744,20 @@ if (reports.by.school) {
 				Grades=as.character(subset(tmp_student_data, select=paste("GRADE", rev(sgPlot.years), sep="."))),
 				Content_Areas=as.character(subset(tmp_student_data, select=paste("CONTENT_AREA_LABELS", rev(sgPlot.years), sep="."))),
 				Cuts=list(
-					NY1=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)), 
+					NY1=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
 						grep("YEAR_1", names(tmp_student_data))), grep("YEAR_1_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-					NY2=as.numeric(subset(tmp_student_data,  select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)), 
+					NY2=as.numeric(subset(tmp_student_data,  select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
 						grep("YEAR_2", names(tmp_student_data))), grep("YEAR_2_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-					NY3=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)), 
+					NY3=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
 						grep("YEAR_3", names(tmp_student_data))), grep("YEAR_3_CURRENT_TRANSFORMED", names(tmp_student_data)))))),
 				Plotting_Cuts=list(
 					NY1=as.numeric(subset(tmp_student_data, select=intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_1_CURRENT_TRANSFORMED", names(tmp_student_data))))),
 					NY2=as.numeric(subset(tmp_student_data, select=intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_2_CURRENT_TRANSFORMED", names(tmp_student_data))))),
 					NY3=as.numeric(subset(tmp_student_data, select=intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_3_CURRENT_TRANSFORMED", names(tmp_student_data)))))),
 				SGP_Targets=list(
-					CUKU=tmp_student_data[[paste(paste(my.sgp.target.label[1], my.sgp.target.label[2], sep="_"), last.year, sep=".")]], 
-					CUKU_Current=tmp_student_data[[paste(paste(my.sgp.target.label[1], my.sgp.target.label[2], "CURRENT", sep="_"), last.year, sep=".")]], 
-					MUSU=tmp_student_data[[paste(paste(my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], sep="_"), last.year, sep=".")]], 
+					CUKU=tmp_student_data[[paste(paste(my.sgp.target.label[1], my.sgp.target.label[2], sep="_"), last.year, sep=".")]],
+					CUKU_Current=tmp_student_data[[paste(paste(my.sgp.target.label[1], my.sgp.target.label[2], "CURRENT", sep="_"), last.year, sep=".")]],
+					MUSU=tmp_student_data[[paste(paste(my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], sep="_"), last.year, sep=".")]],
 					MUSU_Current=tmp_student_data[[paste(paste(my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "CURRENT", sep="_"), last.year, sep=".")]]),
 				SGP_Scale_Score_Targets=list(
 					CUKU=list(
@@ -801,7 +801,7 @@ if (reports.by.school) {
 			dev.off()
 		} ## END loop over tmp_content_areas
 	} ### END if ("PNG" %in% sgPlot.output.format)
-	
+
 	} ## END for loop for STUDENTS (n)
 	} ## END for loop for GRADES (k)
 	if (!reports.by.student & "PDF" %in% sgPlot.output.format) {
@@ -814,7 +814,7 @@ if (reports.by.school) {
 	if (sgPlot.cleanup & "PDF" %in% sgPlot.output.format) {
 		files.to.remove <- list.files(pattern=paste(i, j, sep="_"), all.files=TRUE)
 		lapply(files.to.remove, file.remove)
-		files.to.remove <- list.files(path=paste(c(sgPlot.folder, year_folder, district_folder, school_folder), collapse=.Platform$file.sep), 
+		files.to.remove <- list.files(path=paste(c(sgPlot.folder, year_folder, district_folder, school_folder), collapse=.Platform$file.sep),
 			pattern="REPORT", all.files=TRUE, full.names=TRUE, recursive=TRUE)
 		lapply(files.to.remove, file.remove)
 	}
@@ -839,13 +839,13 @@ if (reports.by.school) {
 	}
 
 	message(paste("\tStarted", last.year, tmp_school_name, "student growth plots:", started.date))
-	message(paste("\tFinished", last.year, tmp_school_name, "student growth plots:", date(), "in", convertTime(timetaken(started.at)), "\n"))
+	message(paste("\tFinished", last.year, tmp_school_name, "student growth plots:", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 
 	} ## END for loop for SCHOOLS (j)
 	} ## END for loop for DISTRICTS (i)
 
 	return("DONE")
-} ### END if (!reports.by.instructor) 
+} ### END if (!reports.by.instructor)
 
 
 #############################################################################################################################
@@ -910,7 +910,7 @@ if (reports.by.instructor) {
 	for (k in instructors) {
 
 	started.at <- proc.time()
-	started.date <- date()
+	started.date <- prettyDate()
 
 	if (!is.null(sgPlot.front.page)) {
 		sgPlot.front.page.ijk <- paste(paste(unlist(strsplit(sgPlot.front.page, "[.]"))[1], i, j, k, sep="_"), ".pdf", sep="")
@@ -936,10 +936,10 @@ if (reports.by.instructor) {
 	if ("PDF" %in% sgPlot.output.format) {
 		######################## INSTRUCTOR Report Catalog LaTeX Header #################################################################################
 		cat("\\documentclass[pdftex]{book}\n\\usepackage{hyperref,pdfpages}\n\\hypersetup{%\n", file=paste("instructor_catalog_", i, "_", j, "_", k, ".tex", sep=""))
-		cat(paste("pdftitle={", tmp_instructor_name, ": ", pretty_year(last.year), " ", tmp.state, " Growth and Achievement Reports},\n", sep=""), 
+		cat(paste("pdftitle={", tmp_instructor_name, ": ", pretty_year(last.year), " ", tmp.state, " Growth and Achievement Reports},\n", sep=""),
 			file=paste("instructor_catalog_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
-		cat(paste("pdfauthor={", tmp.organization$Name, "/Center for Assessment Inc.},\n", sep=""), "pdfcreator={pdfLaTeX},\n", 
-		paste("pdfproducer={", tmp.organization$Name, "/Center for Assessment Inc.}}\n", sep=""), 
+		cat(paste("pdfauthor={", tmp.organization$Name, "/Center for Assessment Inc.},\n", sep=""), "pdfcreator={pdfLaTeX},\n",
+		paste("pdfproducer={", tmp.organization$Name, "/Center for Assessment Inc.}}\n", sep=""),
 		"\\begin{document}\n", sep="", file=paste("instructor_catalog_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
 		cat(paste("\\pdfbookmark[-1]{", tmp_district_name, "}{", i, "}\n", sep=""), file=paste("instructor_catalog_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
 		cat(paste("\\pdfbookmark[0]{", tmp_school_name, "}{", j, "}\n", sep=""), file=paste("instructor_catalog_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
@@ -960,28 +960,28 @@ if (reports.by.instructor) {
 		} else {
 			grade_folder <- substr(paste("0", as.character(l), sep=""), nchar(l), nchar(l)+1)
 		}
-	
+
 		if ("PDF" %in% sgPlot.output.format) {
 			################################ INSTRUCTOR Report Catalog LaTeX Code #########################################################
-			cat(paste("\\pdfbookmark[2]{Grade ", l, "}{", j, k, l, "}\n", sep=""), 
+			cat(paste("\\pdfbookmark[2]{Grade ", l, "}{", j, k, l, "}\n", sep=""),
 				file=paste("instructor_catalog_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE) ## NOTE: j, k, l included in anchor for uniqueness
 			###########################################################################################################################
 		}
-	
+
 		tmp_grade_ids <- unique(tmp_instructor_data[list(l)]$ID)
 		tmp_grade_data <- subset(tmp_instructor_data, ID %in% tmp_grade_ids)
-	
+
 		### Create path to pdf files
-	
+
 		path.to.pdfs <- file.path(sgPlot.folder, year_folder, district_folder, school_folder, instructor_folder, grade_folder)
 		dir.create(path.to.pdfs, recursive=TRUE, showWarnings=FALSE)
-	
+
 		## Students
-	
+
 		setkeyv(tmp_grade_data, tmp.keys[5:6])
-	
+
 		for (n in unique(tmp_grade_data[["ID"]])) {
-			FIRST_NAME <- gsub(" |/", "-", sort(tmp_grade_data[ID==n][[tmp.keys[6]]])[1]) 
+			FIRST_NAME <- gsub(" |/", "-", sort(tmp_grade_data[ID==n][[tmp.keys[6]]])[1])
 			LAST_NAME <- gsub(" |/", "-", sort(tmp_grade_data[ID==n][[tmp.keys[5]]])[1])
 			if (sgPlot.anonymize) {
 				student_number <- 1234567890
@@ -993,37 +993,37 @@ if (reports.by.instructor) {
 			} else {
 				file_name <- paste(n, "_REPORT.pdf", sep="")
 			}
-	
+
 		if ("PDF" %in% sgPlot.output.format) {
 			################################ INSTRUCTOR Report Catalog LaTeX Code ###################################################################################
 			if (is.null(sgPlot.front.page)) {
-				cat(paste("\\pdfbookmark[3]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", student_number, ")", sep=""), "}{", n , "}\n\\includepdf[pages={1-}, fitpaper=true]{", 
+				cat(paste("\\pdfbookmark[3]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", student_number, ")", sep=""), "}{", n , "}\n\\includepdf[pages={1-}, fitpaper=true]{",
 					path.to.pdfs, "/", file_name, "}\n", sep=""), file=paste("instructor_catalog_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
 			} else {
-				cat(paste("\\includepdf[pages={1-}, fitpaper=true]{", sgPlot.front.page.ijk, "}\n\\pdfbookmark[3]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", 
-				student_number, ")", sep=""), "}{", n , "}\n\\includepdf[pages={1-}, fitpaper=true]{", path.to.pdfs, "/", file_name, "}\n", sep=""), 
+				cat(paste("\\includepdf[pages={1-}, fitpaper=true]{", sgPlot.front.page.ijk, "}\n\\pdfbookmark[3]{", paste(LAST_NAME, ", ", FIRST_NAME, " (",
+				student_number, ")", sep=""), "}{", n , "}\n\\includepdf[pages={1-}, fitpaper=true]{", path.to.pdfs, "/", file_name, "}\n", sep=""),
 					file=paste("instructor_catalog_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
 			}
 			#####################################################################################################################################################
-	
+
 			################################ STUDENT Report Front Page Attach LaTeX Code ########################################################################
 			cat("\\documentclass[pdftex]{article}\n\\usepackage{hyperref,pdfpages}\n\\hypersetup{%\n", file=paste("student_report_", i, "_", j, "_", k, ".tex", sep=""))
-			cat(paste("pdftitle={", FIRST_NAME, " ", LAST_NAME, " (", student_number, ")", ": ", pretty_year(last.year), " ", 
+			cat(paste("pdftitle={", FIRST_NAME, " ", LAST_NAME, " (", student_number, ")", ": ", pretty_year(last.year), " ",
 				tmp.state, " Growth and Achievement Report},\n", sep=""), file=paste("student_report_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
 			cat(paste("pdfauthor={", tmp.organization$Name, "/Center for Assessment Inc.},\n", sep=""), file=paste("student_report_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
 			cat("pdfcreator={pdfLaTeX},\n", file=paste("student_report_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
-			cat(paste("pdfproducer={", tmp.organization$Name, "/Center for Assessment Inc.}}\n", sep=""), file=paste("student_report_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE) 
+			cat(paste("pdfproducer={", tmp.organization$Name, "/Center for Assessment Inc.}}\n", sep=""), file=paste("student_report_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
 			cat("\\begin{document}\n", file=paste("student_report_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
 			if (!is.null(sgPlot.front.page)) {
 				cat(paste("\\includepdf[pages={1-}, fitpaper=true]{", sgPlot.front.page.ijk, "}\n", sep=""), file=paste("student_report_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
 			}
-			cat(paste("\\includepdf[pages={1-}, fitpaper=true]{", path.to.pdfs, "/", file_name, "}\n", sep=""), 
+			cat(paste("\\includepdf[pages={1-}, fitpaper=true]{", path.to.pdfs, "/", file_name, "}\n", sep=""),
 				file=paste("student_report_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
-	
+
 			cat("\\end{document}", file=paste("student_report_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
 			####################################################################################################################################################
-	
-			## Start pdf device		
+
+			## Start pdf device
 			if (num.charts %in% c(1,2)) {
 				report.width=11
 				report.height=8.5
@@ -1043,52 +1043,52 @@ if (reports.by.instructor) {
 			if (!num.charts %in% 1:5) {
 				stop("Individual Student Report Templates currently only available for situations with 1, 2, 3, 4 or 5 content areas.")
 			}
-	
-			pdf(file.path(path.to.pdfs, file_name), 
+
+			pdf(file.path(path.to.pdfs, file_name),
 				  width=report.width, height=report.height, version="1.4")
-	
+
 			########################################################################################################
 			###
 			### Overall Report viewport creation
 			###
 			########################################################################################################
-	
+
 			if (num.charts==1) {
-				report.vp <- viewport(layout = grid.layout(5, 4, widths = unit(c(2.5, 0.1, 8.3, 0.1), rep("inches", 4)), 
+				report.vp <- viewport(layout = grid.layout(5, 4, widths = unit(c(2.5, 0.1, 8.3, 0.1), rep("inches", 4)),
 					heights = unit(c(0.55, 0.2, 7, 0.25, 0.5), rep("inches", 5))))
-	
+
 				content_area_1.vp <- viewport(layout.pos.row=3, layout.pos.col=3)
 				top.border.vp <- viewport(layout.pos.row=1, layout.pos.col=1:4)
 				bottom.border.vp <- viewport(layout.pos.row=5, layout.pos.col=1:4)
 				left.legend.vp <- viewport(layout.pos.row=2:4, layout.pos.col=1)
 			}
-	
+
 			if (num.charts==2) {
-				report.vp <- viewport(layout = grid.layout(7, 4, widths = unit(c(2.5, 0.1, 8.3, 0.1), rep("inches", 4)), 
+				report.vp <- viewport(layout = grid.layout(7, 4, widths = unit(c(2.5, 0.1, 8.3, 0.1), rep("inches", 4)),
 					heights = unit(c(0.35, 0.2, 3.55, 0.25, 3.55, 0.2, 0.4), rep("inches", 7))))
-	
+
 				content_area_1.vp <- viewport(layout.pos.row=3, layout.pos.col=3)
 				content_area_2.vp <- viewport(layout.pos.row=5, layout.pos.col=3)
 				top.border.vp <- viewport(layout.pos.row=1, layout.pos.col=1:4)
 				bottom.border.vp <- viewport(layout.pos.row=7, layout.pos.col=1:4)
 				left.legend.vp <- viewport(layout.pos.row=2:6, layout.pos.col=1)
 			}
-	
+
 			if (num.charts==3) {
-				report.vp <- viewport(layout = grid.layout(9, 3, widths = unit(c(0.125, 8.3, 0.075), rep("inches", 3)), 
+				report.vp <- viewport(layout = grid.layout(9, 3, widths = unit(c(0.125, 8.3, 0.075), rep("inches", 3)),
 					heights = unit(c(0.35, 0.1, 3.256, 0.14, 3.256, 0.14, 3.256, 0.1, 0.4), rep("inches", 9))))
-	
+
 				content_area_1.vp <- viewport(layout.pos.row=3, layout.pos.col=2)
 				content_area_2.vp <- viewport(layout.pos.row=5, layout.pos.col=2)
 				content_area_3.vp <- viewport(layout.pos.row=7, layout.pos.col=2)
 				top.border.vp <- viewport(layout.pos.row=1, layout.pos.col=1:3)
 				bottom.border.vp <- viewport(layout.pos.row=9, layout.pos.col=1:3)
 			}
-	
+
 			if (num.charts==4) {
-				report.vp <- viewport(layout = grid.layout(7, 6, widths = unit(c(2.5, 0.15, 7, 0.2, 7, 0.15), rep("inches", 6)), 
+				report.vp <- viewport(layout = grid.layout(7, 6, widths = unit(c(2.5, 0.15, 7, 0.2, 7, 0.15), rep("inches", 6)),
 					heights = unit((11/8.5)*c(0.35, 0.2, 3.55, 0.25, 3.55, 0.2, 0.4), rep("inches", 7))))
-	
+
 				content_area_1.vp <- viewport(layout.pos.row=3, layout.pos.col=3)
 				content_area_2.vp <- viewport(layout.pos.row=3, layout.pos.col=5)
 				content_area_3.vp <- viewport(layout.pos.row=5, layout.pos.col=3)
@@ -1097,11 +1097,11 @@ if (reports.by.instructor) {
 				bottom.border.vp <- viewport(layout.pos.row=7, layout.pos.col=1:6)
 				left.legend.vp <- viewport(layout.pos.row=2:6, layout.pos.col=1)
 			}
-	
+
 			if (num.charts==5) {
-				report.vp <- viewport(layout = grid.layout(13, 3, widths = unit((11/8.5)*c(0.125, 8.3, 0.075), rep("inches", 3)), 
+				report.vp <- viewport(layout = grid.layout(13, 3, widths = unit((11/8.5)*c(0.125, 8.3, 0.075), rep("inches", 3)),
 					heights = unit(c(0.3, 0.10, 3.25, 0.15, 3.25, 0.15, 3.35, 0.15, 3.25, 0.15, 3.25, 0.10, 0.3), rep("inches", 9))))
-	
+
 				content_area_1.vp <- viewport(layout.pos.row=3, layout.pos.col=2)
 				content_area_2.vp <- viewport(layout.pos.row=5, layout.pos.col=2)
 				content_area_3.vp <- viewport(layout.pos.row=7, layout.pos.col=2)
@@ -1110,9 +1110,9 @@ if (reports.by.instructor) {
 				top.border.vp <- viewport(layout.pos.row=1, layout.pos.col=1:3)
 				bottom.border.vp <- viewport(layout.pos.row=13, layout.pos.col=1:3)
 			}
-	
+
 			pushViewport(report.vp)
-	
+
 			for (vp in seq_along(tmp_content_areas)) {
 				tmp_student_data <- as.data.frame(tmp_all_student_data[CONTENT_AREA==tmp_content_areas[vp]])
 				if (dim(tmp_student_data)[1]==0) tmp_student_data <- as.data.frame(data.table(tmp_student_data)[NA][,CONTENT_AREA := tmp_content_areas[vp]])
@@ -1126,20 +1126,20 @@ if (reports.by.instructor) {
 					Grades=as.character(subset(tmp_student_data, select=paste("GRADE", rev(sgPlot.years), sep="."))),
 					Content_Areas=as.character(subset(tmp_student_data, select=paste("CONTENT_AREA_LABELS", rev(sgPlot.years), sep="."))),
 					Cuts=list(
-						NY1=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)), 
+						NY1=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
 							grep("YEAR_1", names(tmp_student_data))), grep("YEAR_1_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-						NY2=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)), 
+						NY2=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
 							grep("YEAR_2", names(tmp_student_data))), grep("YEAR_2_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-						NY3=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)), 
+						NY3=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
 							grep("YEAR_3", names(tmp_student_data))), grep("YEAR_3_CURRENT_TRANSFORMED", names(tmp_student_data)))))),
 					Plotting_Cuts=list(
 						NY1=as.numeric(subset(tmp_student_data, select=intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_1_CURRENT_TRANSFORMED", names(tmp_student_data))))),
 						NY2=as.numeric(subset(tmp_student_data, select=intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_2_CURRENT_TRANSFORMED", names(tmp_student_data))))),
 						NY3=as.numeric(subset(tmp_student_data, select=intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_3_CURRENT_TRANSFORMED", names(tmp_student_data)))))),
 					SGP_Targets=list(
-						CUKU=tmp_student_data[[paste(paste(my.sgp.target.label[1], my.sgp.target.label[2], sep="_"), last.year, sep=".")]], 
-						CUKU_Current=tmp_student_data[[paste(paste(my.sgp.target.label[1], my.sgp.target.label[2], "CURRENT", sep="_"), last.year, sep=".")]], 
-						MUSU=tmp_student_data[[paste(paste(my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], sep="_"), last.year, sep=".")]], 
+						CUKU=tmp_student_data[[paste(paste(my.sgp.target.label[1], my.sgp.target.label[2], sep="_"), last.year, sep=".")]],
+						CUKU_Current=tmp_student_data[[paste(paste(my.sgp.target.label[1], my.sgp.target.label[2], "CURRENT", sep="_"), last.year, sep=".")]],
+						MUSU=tmp_student_data[[paste(paste(my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], sep="_"), last.year, sep=".")]],
 						MUSU_Current=tmp_student_data[[paste(paste(my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "CURRENT", sep="_"), last.year, sep=".")]]),
 					SGP_Scale_Score_Targets=list(
 						CUKU=list(
@@ -1182,9 +1182,9 @@ if (reports.by.instructor) {
 						State=state, Denote_Content_Area=tmp_student_data[['CONTENT_AREA_RESPONSIBILITY']]=="Content Area Responsibility: Yes", SGP_Targets=sgPlot.sgp.targets,
 						Assessment_Transition=sgPlot.linkages, Fan=SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']]))
 			popViewport()
-	
+
 			} ## END loop over tmp_content_areas
-	
+
 			## Top Legend
 			if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["sgPlot.use.student.school.name"]])) {
 				student_school_name <- sort(unique(tmp_student_data[[paste("SCHOOL_NAME", last.year, sep=".")]]))[1] # sort to get rid of potential NA values
@@ -1192,79 +1192,79 @@ if (reports.by.instructor) {
 
 			pushViewport(top.border.vp)
 			grid.rect(gp=gpar(fill=sgPlot.header.footer.color, col=sgPlot.header.footer.color))
-			grid.text(x=0.025, y=0.5, paste(FIRST_NAME, " ", LAST_NAME, sep=""), 
+			grid.text(x=0.025, y=0.5, paste(FIRST_NAME, " ", LAST_NAME, sep=""),
 				gp=gpar(fontface="bold", fontfamily="Helvetica-Narrow", col="white", cex=1.65), just="left", default.units="native")
-			grid.text(x=0.975, y=0.5, paste(student_school_name, ": ", FIRST_NAME_TEACHER, " ", LAST_NAME_TEACHER, sep=""), 
+			grid.text(x=0.975, y=0.5, paste(student_school_name, ": ", FIRST_NAME_TEACHER, " ", LAST_NAME_TEACHER, sep=""),
 				gp=gpar(fontface="bold", fontfamily="Helvetica-Narrow", col="white", cex=1.65), just="right", default.units="native")
 			popViewport()
-	
-	
+
+
 			## Bottom Legend
 			pushViewport(bottom.border.vp)
 			grid.rect(gp=gpar(fill=sgPlot.header.footer.color, col=sgPlot.header.footer.color))
-			grid.text(x=0.02, y=0.70, paste("For more information please visit the", tmp.organization$Name, paste("(", tmp.organization$Abbreviation, ")", sep=""), 
+			grid.text(x=0.02, y=0.70, paste("For more information please visit the", tmp.organization$Name, paste("(", tmp.organization$Abbreviation, ")", sep=""),
 				"at", tmp.organization$URL, "or contact", tmp.organization$Contact), gp=gpar(cex=0.8, col="white"), default.units="native", just="left")
 			copyright.text <- paste("Cooperatively developed by the ", tmp.organization$Abbreviation, " & the Center for Assessment, Inc.", sep="")
-			grid.text(x=0.02, y=0.30, paste(copyright.text, " Distributed by the ", tmp.organization$Abbreviation, ".", sep=""), 
+			grid.text(x=0.02, y=0.30, paste(copyright.text, " Distributed by the ", tmp.organization$Abbreviation, ".", sep=""),
 				gp=gpar(cex=0.8, col="white"), default.units="native", just="left")
-	
+
 			popViewport()
-	
+
 			## Left Legend (Only with one or two content areas depicted)
-	
+
 			if (num.charts %in% c(1,2,4)) {
 				pushViewport(left.legend.vp)
-		
+
 				# Interpretation
 				interpretation.y <- 0.93
 				achievement.level.region.colors <- paste("grey", round(seq(62, 91, length=number.achievement.level.regions)), sep="")
-	
-				grid.roundrect(x=unit(0.5, "native"), y=unit(interpretation.y, "native"), width=unit(0.9, "native"), height=unit(0.06, "native"), 
+
+				grid.roundrect(x=unit(0.5, "native"), y=unit(interpretation.y, "native"), width=unit(0.9, "native"), height=unit(0.06, "native"),
 					gp=gpar(fill=sgPlot.header.footer.color, col="black"))
 				grid.text(x=0.5, y=interpretation.y+0.012, "How to interpret this student", gp=gpar(fontface="bold", fontfamily="Helvetica-Narrow", cex=1.05, col="white"))
 				grid.text(x=0.5, y=interpretation.y-0.012, "growth & achievement report", gp=gpar(fontface="bold", fontfamily="Helvetica-Narrow", cex=1.05, col="white"))
-	
-				grid.roundrect(x=unit(0.2, "native"), y=unit(interpretation.y-0.08, "native"), width=unit(0.1, "native"), height=unit(0.05, "native"), r=unit(0.02, "inches"), 
+
+				grid.roundrect(x=unit(0.2, "native"), y=unit(interpretation.y-0.08, "native"), width=unit(0.1, "native"), height=unit(0.05, "native"), r=unit(0.02, "inches"),
 					gp=gpar(fill=achievement.level.region.colors[1], lwd=1))
 				grid.circle(x=0.2, y=interpretation.y-0.08, r=0.02, default.units="native", gp=gpar(fill="white"))
 				grid.text(x=0.325, y=interpretation.y-0.0675, tmp.abbreviation, gp=gpar(cex=0.9), default.units="native", just="left")
 				grid.text(x=0.325, y=interpretation.y-0.0925, "Scale Score", gp=gpar(cex=0.9), default.units="native", just="left")
-	
+
 				tmp.rect.height <- 0.125/number.achievement.level.regions
 				for (p in seq(number.achievement.level.regions)) {
 					grid.rect(x=unit(0.2, "native"), y=unit(interpretation.y-0.125-(p-1)*tmp.rect.height, "native"), width=unit(0.1, "native"), height=unit(tmp.rect.height, "native"),
 					gp=gpar(fill=rev(achievement.level.region.colors)[p], col="white", lwd=1), just=c("center", "top"))
-				} 
+				}
 				grid.roundrect(x=unit(0.2, "native"), y=interpretation.y-0.125, width=unit(0.1, "native"), height=unit(0.125, "native"), r=unit(0.02, "inches"),
 					gp=gpar(col="black", lwd=1.5), just=c("center", "top"))
 				grid.text(x=0.325, y=interpretation.y-0.1625, tmp.abbreviation, default.units="native", just="left")
 				grid.text(x=0.325, y=interpretation.y-0.1875, "Achievement", default.units="native", just="left")
 				grid.text(x=0.325, y=interpretation.y-0.2125, "Levels", default.units="native", just="left")
-	
+
 				grid.polygon(x=c(0.1875, 0.1875, 0.17, 0.2, 0.23, 0.2125, 0.2125), y=interpretation.y-c(0.35, 0.30, 0.31, 0.27, 0.31, 0.30, 0.35), default.units="native",
 					gp=gpar(fill="grey50"))
 				grid.text(x=0.325, y=interpretation.y-0.285, "Student", gp=gpar(cex=0.9), default.units="native", just="left")
 				grid.text(x=0.325, y=interpretation.y-0.31, "Growth", gp=gpar(cex=0.9), default.units="native", just="left")
 				grid.text(x=0.325, y=interpretation.y-0.335, "Percentile", gp=gpar(cex=0.9), default.units="native", just="left")
-	
+
 				# Suggested uses
 				suggested.y <- 0.52
-	
-				grid.roundrect(x=unit(0.5, "native"), y=unit(suggested.y, "native"), width=unit(0.9, "native"), height=unit(0.06, "native"), 
+
+				grid.roundrect(x=unit(0.5, "native"), y=unit(suggested.y, "native"), width=unit(0.9, "native"), height=unit(0.06, "native"),
 					gp=gpar(fill=sgPlot.header.footer.color, col="black"))
 				grid.text(x=0.5, y=suggested.y, "Suggested Uses", gp=gpar(fontface="bold", fontfamily="Helvetica-Narrow", cex=1.05, col="white"))
-	
+
 				grid.circle(x=0.075, y=suggested.y-0.07, r=0.01, gp=gpar(fill="black"), default.units="native")
 				grid.text(x=0.12, y=suggested.y-0.07, "Review past growth to assess", gp=gpar(cex=0.8), default.units="native", just="left")
 				grid.text(x=0.12, y=suggested.y-0.09, "student academic progress toward", gp=gpar(cex=0.8), default.units="native", just="left")
 				grid.text(x=0.12, y=suggested.y-0.11, paste(tmp.abbreviation, "achievement goals."), gp=gpar(cex=0.8), default.units="native", just="left")
-	
+
 				grid.circle(x=0.075, y=suggested.y-0.14, r=0.01, gp=gpar(fill="black"), default.units="native")
 				grid.text(x=0.12, y=suggested.y-0.14, "Develop remediation or enrich-", gp=gpar(cex=0.8), default.units="native", just="left")
 				grid.text(x=0.12, y=suggested.y-0.16, "ment plans based on rate of", gp=gpar(cex=0.8), default.units="native", just="left")
 				grid.text(x=0.12, y=suggested.y-0.18, "growth needed to reach higher", gp=gpar(cex=0.8), default.units="native", just="left")
 				grid.text(x=0.12, y=suggested.y-0.20, paste(tmp.abbreviation, "achievement levels."), gp=gpar(cex=0.8), default.units="native", just="left")
-	
+
 				if (sgPlot.fan) {
 					grid.circle(x=0.075, y=suggested.y-0.23, r=0.01, gp=gpar(fill="black"), default.units="native")
 					grid.text(x=0.12, y=suggested.y-0.23, "Identify the rate of progress", gp=gpar(cex=0.8), default.units="native", just="left")
@@ -1272,30 +1272,30 @@ if (reports.by.instructor) {
 					grid.text(x=0.12, y=suggested.y-0.27, "maintain proficient status", gp=gpar(cex=0.8), default.units="native", just="left")
 					grid.text(x=0.12, y=suggested.y-0.29, paste("on the", tmp.abbreviation, "next year."), gp=gpar(cex=0.8), default.units="native", just="left")
 				}
-	
+
 				# Extra stuff
 				grid.lines(x=1.0, y=c(0.025,0.975), gp=gpar(lwd=1.8), default.units="native")
-				popViewport()				
+				popViewport()
 			} ## END Left legend
-	
+
 			## Turn pdf device off
 			dev.off()
-	
+
 			## Code to LaTeX document attaching first page/adding meta-data
 			system(paste("pdflatex -interaction=batchmode student_report_", i, "_", j, "_", k, ".tex", sep=""), ignore.stdout = TRUE)
 			file.rename(paste("student_report_", i, "_", j, "_", k, ".pdf", sep=""), paste(path.to.pdfs, "/", paste(head(unlist(strsplit(file_name, "_")), -1), collapse="_"), ".pdf", sep=""))
 		} ### END "PDF" %in% sgPlot.output.format
-	
+
 		if (any(c("PNG", "PDF_PIECES") %in% sgPlot.output.format)) {
 			report.png.vp <- viewport(width = unit(8.1, "inches"), height = unit(3.64, "inches"))
-	
+
 			for (vp in seq_along(tmp_content_areas)) {
 				if ("PNG" %in% sgPlot.output.format) {
 					Cairo(file.path(path.to.pdfs, paste(paste(n, vp, sep="_"), "png", sep=".")), width=8.2, height=3.74, units="in", dpi=144, pointsize=10.5, bg="transparent")
 				} else {
-					pdf(file.path(path.to.pdfs, paste(paste(n, vp, sep="_"), "pdf", sep=".")), width=8.2, height=3.74, version="1.4") 
+					pdf(file.path(path.to.pdfs, paste(paste(n, vp, sep="_"), "pdf", sep=".")), width=8.2, height=3.74, version="1.4")
 				}
-	
+
 				tmp_student_data <- as.data.frame(tmp_all_student_data[CONTENT_AREA==tmp_content_areas[vp]])
 				if (dim(tmp_student_data)[1]==0) tmp_student_data <- as.data.frame(data.table(tmp_student_data)[NA][,CONTENT_AREA := tmp_content_areas[vp]])
 				pushViewport(report.png.vp)
@@ -1308,20 +1308,20 @@ if (reports.by.instructor) {
 					Grades=as.character(subset(tmp_student_data, select=paste("GRADE", rev(sgPlot.years), sep="."))),
 					Content_Areas=as.character(subset(tmp_student_data, select=paste("CONTENT_AREA_LABELS", rev(sgPlot.years), sep="."))),
 					Cuts=list(
-						NY1=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)), 
+						NY1=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
 							grep("YEAR_1", names(tmp_student_data))), grep("YEAR_1_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-						NY2=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)), 
+						NY2=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
 							grep("YEAR_2", names(tmp_student_data))), grep("YEAR_2_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-						NY3=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)), 
+						NY3=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
 							grep("YEAR_3", names(tmp_student_data))), grep("YEAR_3_CURRENT_TRANSFORMED", names(tmp_student_data)))))),
 					Plotting_Cuts=list(
 						NY1=as.numeric(subset(tmp_student_data, select=intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_1_CURRENT_TRANSFORMED", names(tmp_student_data))))),
 						NY2=as.numeric(subset(tmp_student_data, select=intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_2_CURRENT_TRANSFORMED", names(tmp_student_data))))),
 						NY3=as.numeric(subset(tmp_student_data, select=intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_3_CURRENT_TRANSFORMED", names(tmp_student_data)))))),
 					SGP_Targets=list(
-						CUKU=tmp_student_data[[paste(paste(my.sgp.target.label[1], my.sgp.target.label[2], sep="_"), last.year, sep=".")]], 
-						CUKU_Current=tmp_student_data[[paste(paste(my.sgp.target.label[1], my.sgp.target.label[2], "CURRENT", sep="_"), last.year, sep=".")]], 
-						MUSU=tmp_student_data[[paste(paste(my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], sep="_"), last.year, sep=".")]], 
+						CUKU=tmp_student_data[[paste(paste(my.sgp.target.label[1], my.sgp.target.label[2], sep="_"), last.year, sep=".")]],
+						CUKU_Current=tmp_student_data[[paste(paste(my.sgp.target.label[1], my.sgp.target.label[2], "CURRENT", sep="_"), last.year, sep=".")]],
+						MUSU=tmp_student_data[[paste(paste(my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], sep="_"), last.year, sep=".")]],
 						MUSU_Current=tmp_student_data[[paste(paste(my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], "CURRENT", sep="_"), last.year, sep=".")]]),
 					SGP_Scale_Score_Targets=list(
 						CUKU=list(
@@ -1381,7 +1381,7 @@ if (reports.by.instructor) {
 			files.to.remove <- list.files(path=file.path(sgPlot.folder, year_folder, district_folder, school_folder, instructor_folder), pattern="REPORT", all.files=TRUE, full.names=TRUE, recursive=TRUE)
 			lapply(files.to.remove, file.remove)
 		}
-	
+
 		if (identical(.Platform$OS.type, "unix") & sgPlot.zip) {
 			if (1000*as.numeric(unlist(strsplit(system(paste("du -s", file.path(sgPlot.folder, year_folder, district_folder, school_folder, instructor_folder)), intern=TRUE), "\t"))[1]) > 4000000000) {
 				tmp.working.directory <- getwd()
@@ -1402,7 +1402,7 @@ if (reports.by.instructor) {
 		}
 
 		message(paste("\tStarted", last.year, tmp_school_name, "Instructor:", tmp_instructor_name, "student growth plots:", started.date))
-		message(paste("\tFinished", last.year, tmp_school_name, "Instructor:", tmp_instructor_name, "student growth plots:", date(), "in", convertTime(timetaken(started.at)), "\n"))
+		message(paste("\tFinished", last.year, tmp_school_name, "Instructor:", tmp_instructor_name, "student growth plots:", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 
 	} ## END for loop for INSTRUCTORS (k)
 	} ## END for loop for SCHOOLS (j)

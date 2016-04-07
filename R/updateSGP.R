@@ -40,7 +40,7 @@ function(what_sgp_object=NULL,
 	SGPstateData <- SGP::SGPstateData ### Needed due to possible assignment of values to SGPstateData
 
 	started.at <- proc.time()
-	messageSGP(paste("\nStarted updateSGP", date()), "\n")
+	messageSGP(paste("\nStarted updateSGP", prettyDate()), "\n")
 	messageSGP(match.call())
 
 
@@ -173,7 +173,7 @@ function(what_sgp_object=NULL,
 
 		### Print finish and return SGP object
 
-		message(paste("Finished updateSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
+		message(paste("Finished updateSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 		return(sgp_object)
 	} ### END is.null(with_sgp_data_LONG)
 
@@ -242,7 +242,7 @@ function(what_sgp_object=NULL,
 
 			### Print finish and return SGP object
 
-			message(paste("Finished updateSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
+			message(paste("Finished updateSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 			return(what_sgp_object)
 
 		} else {
@@ -377,7 +377,7 @@ function(what_sgp_object=NULL,
 
 				### Print finish and return SGP object
 
-				message(paste("Finished updateSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
+				message(paste("Finished updateSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 				return(what_sgp_object)
 			} else {
 				if (update.old.data.with.new) {
@@ -446,7 +446,7 @@ function(what_sgp_object=NULL,
 
 				### Print finish and return SGP object
 
-				messageSGP(paste("Finished updateSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
+				messageSGP(paste("Finished updateSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 				return(what_sgp_object)
 			} ### END if else (!is.null(sgp.use.my.coefficient.matrices))
 		} ### END if (overwrite.existing.data)

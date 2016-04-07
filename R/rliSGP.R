@@ -24,7 +24,7 @@ function(sgp_object,
 	YEAR <- GRADE <- ID <- NEW_ID <- .EACHI <- DATE <- NULL
 
 	started.at <- proc.time()
-	messageSGP(paste("\nStarted rliSGP", date()), "\n")
+	messageSGP(paste("\nStarted rliSGP", prettyDate()), "\n")
 
         if (is.null(state)) {
                 tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
@@ -248,5 +248,5 @@ function(sgp_object,
 
 	if (return.updated.shell) return(sgp_object)
 
-	messageSGP(paste("Finished rliSGP", date(), "in", convertTime(timetaken(started.at)), "\n"))
+	messageSGP(paste("Finished rliSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 } ### END rliSGP

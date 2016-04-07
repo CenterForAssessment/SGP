@@ -21,7 +21,7 @@ function(
 	parallel.config=NULL) {
 
 	started.at <- proc.time()
-	message(paste("Started combineSGP", date()))
+	message(paste("Started combineSGP", prettyDate()))
 
 	ID <- CONTENT_AREA <- YEAR <- GRADE <- YEAR_INTEGER_TMP <- ACHIEVEMENT_LEVEL <- CATCH_UP_KEEP_UP_STATUS_INITIAL <- MOVE_UP_STAY_UP_STATUS_INITIAL <- VALID_CASE <- NULL
 	MOVE_UP_STAY_UP_STATUS <- CATCH_UP_KEEP_UP_STATUS <- ACHIEVEMENT_LEVEL_PRIOR <- target.type <- SGP_PROJECTION_GROUP <- NULL
@@ -464,7 +464,7 @@ function(
 	setkeyv(slot.data, getKey(slot.data))
 	sgp_object@Data <- slot.data
 
-	message(c(tmp.messages, paste("Finished combineSGP", date(), "in", convertTime(timetaken(started.at)), "\n"), sep=""))
+	message(c(tmp.messages, paste("Finished combineSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"), sep=""))
 
 	return(sgp_object)
 } ## END combineSGP Function
