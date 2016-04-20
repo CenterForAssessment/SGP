@@ -8,6 +8,7 @@
 	gaPlot.grade_range,
 	gaPlot.max.order.for.progression=NULL,
 	gaPlot.start.points="Achievement Level Cuts",
+	gaPlot.back.extrapolated.typical.cuts=NULL,
 	gaPlot.subtitle=TRUE,
 	state,
 	content_area,
@@ -20,7 +21,7 @@
 	assessment.name) {
 
 	CUTLEVEL <- GRADE <- YEAR <- ID <- SCALE_SCORE <- level_1_curve <- V1 <- NULL
-	TRANSFORMED_SCALE_SCORE <- PERCENTILE <- GRADE_NUMERIC <- CONTENT_AREA <- LEVEL <- SGP <- NULL ## To prevent R CMD check warnings
+	TRANSFORMED_SCALE_SCORE <- PERCENTILE <- GRADE_NUMERIC <- CONTENT_AREA <- LEVEL <- SGP <- EXTRAPOLATED_P50_CUT <- NULL ## To prevent R CMD check warnings
 
 	content_area <- toupper(content_area)
 	if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]])) {
@@ -102,6 +103,16 @@
 	temp_cutscores <- long_cutscores[GRADE %in% tmp.unique.grades.character & !CUTLEVEL %in% c("LOSS", "HOSS") & YEAR %in% tail(sort(unique(long_cutscores$YEAR), na.last=FALSE), 1)][,CUTLEVEL:=as.numeric(CUTLEVEL)]
 	setkeyv(temp_cutscores, c("GRADE_NUMERIC", "CONTENT_AREA"))
 
+	if (!is.null(gaPlot.back.extrapolated.typical.cuts)) {
+		if (identical(gaPlot.back.extrapolated.typical.cuts, TRUE)) {
+			gaPlot.back.extrapolated.typical.cuts <-
+				temp_cutscores[CONTENT_AREA==content_area & GRADE==gaPlot.grade_range[2] & CUTLEVEL==which.max(SGP::SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")-1]$CUTSCORES
+		}
+	}
+	if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["gaPlot.back.extrapolated.typical.cuts"]])) {
+		gaPlot.back.extrapolated.typical.cuts <-
+			SGP::SGPstateData[[state]][["SGP_Configuration"]][["gaPlot.back.extrapolated.typical.cuts"]][[content_area]]
+	}
 
 	## Utility functions
 
@@ -187,6 +198,30 @@
 		temp_uncond_frame <- matrix(my.tmp[,splinefun(GRADE, V1)(tmp.smooth.grades), by=PERCENTILE][['V1']], nrow=length(gaPlot.achievement_percentiles), byrow=TRUE)
 		rownames(temp_uncond_frame) <- gaPlot.achievement_percentiles
 		colnames(temp_uncond_frame) <- tmp.smooth.grades
+	}
+
+	### Calculate Extrapolated Cuts based upon typical (50) growth (if requested)
+
+	if (!is.null(gaPlot.back.extrapolated.typical.cuts)) {
+		setkey(growthAchievementPlot.data, CONTENT_AREA, YEAR, ID)
+		tmp.projections <- gaPlot.sgp_object@SGP$SGProjections[[paste(content_area, year, sep=".")]][,
+			c("ID", grep("P50", names(gaPlot.sgp_object@SGP$SGProjections[[paste(content_area, year, sep=".")]]), value=TRUE)), with=FALSE]
+		tmp.projections[,c("YEAR", "CONTENT_AREA"):=list(year, content_area)]
+		setkey(tmp.projections, CONTENT_AREA, YEAR, ID)
+		tmp.projections <- growthAchievementPlot.data[tmp.projections]
+		extrapolated.cuts.dt <- data.table(GRADE_NUMERIC=head(seq(gaPlot.grade_range[1], gaPlot.grade_range[2]), -1))
+		for (i in seq(dim(extrapolated.cuts.dt)[1])) {
+			if (gaPlot.back.extrapolated.typical.cuts %in% unique(tmp.projections[[grep(paste("YEAR", i, sep="_"), names(tmp.projections), value=TRUE)]])) {
+				tmp.tf <- tmp.projections[[grep(paste("YEAR", i, sep="_"), names(tmp.projections), value=TRUE)]]==gaPlot.back.extrapolated.typical.cuts
+			} else {
+				tmp.index <- which.max(gaPlot.back.extrapolated.typical.cuts < sort(unique(tmp.projections[[grep(paste("YEAR", i, sep="_"), names(tmp.projections), value=TRUE)]])))
+				tmp.values <- sort(unique(tmp.projections[[grep(paste("YEAR", i, sep="_"), names(tmp.projections), value=TRUE)]]))[c(tmp.index-1, tmp.index)]
+				tmp.tf <- tmp.projections[[grep(paste("YEAR", i, sep="_"), names(tmp.projections), value=TRUE)]] %in% tmp.values
+			}
+			extrapolated.cuts.dt[GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i],
+				EXTRAPOLATED_P50_CUT:=mean(tmp.projections[tmp.tf][GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i]][['SCALE_SCORE']], na.rm=TRUE)]
+		}
+		extrapolated.cuts.dt <- rbindlist(list(extrapolated.cuts.dt, data.table(GRADE_NUMERIC=gaPlot.grade_range[2], EXTRAPOLATED_P50_CUT=gaPlot.back.extrapolated.typical.cuts)))
 	}
 
 
@@ -459,6 +494,12 @@
 
 	}
 
+	## Code for producing extrapolated cuts
+
+	if (!is.null(gaPlot.back.extrapolated.typical.cuts)) {
+		grid.lines(extrapolated.cuts.dt[['GRADE_NUMERIC']], extrapolated.cuts.dt[['EXTRAPOLATED_P50_CUT']], gp=gpar(lwd=0.7, lty=2, col="magenta"), default.units="native")
+	}
+
 	popViewport() ## pop chart.vp
 
 
@@ -530,12 +571,14 @@
 		}
 	} else {
 		tmp.cut <- as.numeric(SGP::SGPstateData[[state]][["Achievement"]][["College_Readiness_Cutscores"]][[content_area]])
-		grid.polygon(x=c(0.05, 0.05, 0.35, 0.35), y=c(gp.axis.range[1], tmp.cut, tmp.cut, gp.axis.range[1]), default.units="native",
+		low.cut <- min(gp.axis.range[1], temp_uncond_frame[,ncol(temp_uncond_frame)][1], na.rm=TRUE)
+		high.cut <- max(gp.axis.range[1], rev(temp_uncond_frame[,ncol(temp_uncond_frame)])[1], na.rm=TRUE)
+		grid.polygon(x=c(0.05, 0.05, 0.35, 0.35), y=c(low.cut, tmp.cut, tmp.cut, low.cut), default.units="native",
 			gp=gpar(col=format.colors.font, fill="red", lwd=1.5))
-		grid.text(x=0.2, y=(gp.axis.range[1]+tmp.cut)/2, "Not College Ready", gp=gpar(col=format.colors.font, cex=0.5), rot=90, default.units="native")
-		grid.polygon(x=c(0.05, 0.05, 0.35, 0.35), y=c(gp.axis.range[2], tmp.cut, tmp.cut, gp.axis.range[2]), default.units="native",
+		grid.text(x=0.2, y=(low.cut+tmp.cut)/2, "Not College Ready", gp=gpar(col=format.colors.font, cex=0.5), rot=90, default.units="native")
+		grid.polygon(x=c(0.05, 0.05, 0.35, 0.35), y=c(high.cut, tmp.cut, tmp.cut, high.cut), default.units="native",
 			gp=gpar(col=format.colors.font, fill="green3", lwd=1.5))
-		grid.text(x=0.2, y=(gp.axis.range[2]+tmp.cut)/2, "College Ready", gp=gpar(col=format.colors.font, cex=0.5), rot=90, default.units="native")
+		grid.text(x=0.2, y=(high.cut+tmp.cut)/2, "College Ready", gp=gpar(col=format.colors.font, cex=0.5), rot=90, default.units="native")
 
 		for (i in gaPlot.percentile_trajectories){
 			grid.lines(c(-0.15, 0.05), smoothPercentileTrajectory_Functions[[as.character(i)]](gaPlot.grade_range[2]),
@@ -544,7 +587,7 @@
 				gp=gpar(col=format.colors.growth.trajectories, cex=0.8), just="left", default.units="native")
 		}
 
-		grid.text(x=0.65, y=(gp.axis.range[1]+gp.axis.range[2])/2, "Percentile Growth Trajectory to College Readiness",
+		grid.text(x=0.65, y=(low.cut+high.cut)/2, "Percentile Growth Trajectory to College Readiness",
 			gp=gpar(col=format.colors.growth.trajectories, cex=1.0), rot=90, default.units="native")
 	}
 	popViewport() ## pop right.axis.vp

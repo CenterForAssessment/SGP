@@ -53,6 +53,7 @@ function(sgp_object,
 		gaPlot.baseline=NULL,
 		gaPlot.max.order.for.progression=NULL,
 		gaPlot.start.points="Achievement Level Cuts",
+		gaPlot.back.extrapolated.typical.cuts=NULL,
 		gaPlot.folder="Visualizations/growthAchievementPlots",
 		parallel.config=NULL) {
 
@@ -158,7 +159,7 @@ function(sgp_object,
 	get.object.shell <- function(sgp_object, with_data=TRUE) {
 		tmp.sgp_object <- new("SGP")
 		if (with_data) tmp.sgp_object@Data <- sgp_object@Data
-		tmp.sgp_object@SGP <- sgp_object@SGP[c("Coefficient_Matrices", "Knots_Boundaries")]
+		tmp.sgp_object@SGP <- sgp_object@SGP[c("Coefficient_Matrices", "Knots_Boundaries", "SGProjections")]
 		return(tmp.sgp_object)
 	} ### END get.object.shell
 
