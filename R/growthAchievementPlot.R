@@ -103,15 +103,13 @@
 	temp_cutscores <- long_cutscores[GRADE %in% tmp.unique.grades.character & !CUTLEVEL %in% c("LOSS", "HOSS") & YEAR %in% tail(sort(unique(long_cutscores$YEAR), na.last=FALSE), 1)][,CUTLEVEL:=as.numeric(CUTLEVEL)]
 	setkeyv(temp_cutscores, c("GRADE_NUMERIC", "CONTENT_AREA"))
 
-	if (!is.null(gaPlot.back.extrapolated.typical.cuts)) {
-		if (identical(gaPlot.back.extrapolated.typical.cuts, TRUE)) {
-			gaPlot.back.extrapolated.typical.cuts <-
-				temp_cutscores[CONTENT_AREA==content_area & GRADE==gaPlot.grade_range[2] & CUTLEVEL==which.max(SGP::SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")-1]$CUTSCORES
-		}
-	}
 	if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["gaPlot.back.extrapolated.typical.cuts"]])) {
 		gaPlot.back.extrapolated.typical.cuts <-
 			SGP::SGPstateData[[state]][["SGP_Configuration"]][["gaPlot.back.extrapolated.typical.cuts"]][[content_area]]
+	}
+	if (identical(gaPlot.back.extrapolated.typical.cuts, TRUE)) {
+		gaPlot.back.extrapolated.typical.cuts <-
+			temp_cutscores[CONTENT_AREA==content_area & GRADE==gaPlot.grade_range[2] & CUTLEVEL==which.max(SGP::SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")-1]$CUTSCORES
 	}
 
 	## Utility functions
