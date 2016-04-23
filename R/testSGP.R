@@ -697,13 +697,13 @@ function(
 				AMERICAN_LIT=rep(1L, 7),
 				ALGEBRA_I=rep(1L, 7),
 				ALGEBRA_II=rep(1L, 7))
-			SGPstateData[["DEMO"]][["SGP_Configuration"]][["max.forward.projection.sequence"]] <- list(
-				READING=3,
-				MATHEMATICS=3,
-				GRADE_9_LIT=3,
-				AMERICAN_LIT=3,
-				ALGEBRA_I=3,
-				ALGEBRA_II=3)
+#			SGPstateData[["DEMO"]][["SGP_Configuration"]][["max.forward.projection.sequence"]] <- list(
+#				READING=3,
+#				MATHEMATICS=3,
+#				GRADE_9_LIT=3,
+#				AMERICAN_LIT=3,
+#				ALGEBRA_I=3,
+#				ALGEBRA_II=3)
 
 			SGPstateData[["DEMO"]][['SGP_Configuration']][['sgPlot.show.content_area.progression']] <- TRUE
 
