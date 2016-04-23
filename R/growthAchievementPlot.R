@@ -388,22 +388,18 @@
 	pushViewport(chart.vp)
 
 
-##
-## Code for coloring performance level areas
-##
+	##
+	## Code for coloring performance level areas
+	##
 
-##
-## Create spline functions to calculate boundary values for each cutlevel
-##
+	## Create spline functions to calculate boundary values for each cutlevel
 
 	for (i in 1:max(temp_cutscores$CUTLEVEL)){
 		assign(paste("level_", i, "_curve", sep=""), splinefun(tmp.unique.grades.numeric, subset(temp_cutscores, CUTLEVEL==i)$CUTSCORES))
 	}
 
 
-##
-## Create variables for boundaries and plotting
-##
+	## Create variables for boundaries and plotting
 
 	x.boundary.values.1 <- c(gaPlot.grade_range[1], seq(gaPlot.grade_range[1], gaPlot.grade_range[2], length=40), gaPlot.grade_range[2])
 	if (max(temp_cutscores$CUTLEVEL) > 1) {
@@ -423,15 +419,21 @@
 			eval(parse(text=paste("level_", max(temp_cutscores$CUTLEVEL) , "_curve(seq(gaPlot.grade_range[1], gaPlot.grade_range[2], length=40))", sep=""))), yscale.range[2]))
 
 
-##
-## Create colored (grey-scale) regions
-##
+	## Create colored (grey-scale) regions
 
 	for (i in 1:(1+max(temp_cutscores$CUTLEVEL))){
 		grid.polygon(x=get(paste("x.boundary.values.", i, sep="")),
 			y=get(paste("y.boundary.values.", i, sep="")),
 			default.units="native",
 			gp=gpar(fill=format.colors.region[i], lwd=0.1, col="grey85"))
+	}
+
+	## Code for producing extrapolated typical growth region (if requested)
+
+	if (!is.null(gaPlot.back.extrapolated.typical.cuts)) {
+		grid.polygon(x=c(extrapolated.cuts.dt[['GRADE_NUMERIC']][1], extrapolated.cuts.dt[['GRADE_NUMERIC']], rev(extrapolated.cuts.dt[['GRADE_NUMERIC']])[1]),
+			y=c(get(paste("y.boundary.values.", i, sep=""))[1], extrapolated.cuts.dt[['EXTRAPOLATED_P50_CUT']], rev(get(paste("y.boundary.values.", i, sep="")))[1]),
+			gp=gpar(fill="magenta", lwd=0.1, lty=2, col="grey85", alpha=0.1), default.units="native")
 	}
 
 	## Code for producing the achievement percentile curves
@@ -490,12 +492,6 @@
 		}
 		grid.text(x=0.5, y=0.05, tmp.text, gp=gpar(col="white", cex=0.9))
 
-	}
-
-	## Code for producing extrapolated cuts
-
-	if (!is.null(gaPlot.back.extrapolated.typical.cuts)) {
-		grid.lines(extrapolated.cuts.dt[['GRADE_NUMERIC']], extrapolated.cuts.dt[['EXTRAPOLATED_P50_CUT']], gp=gpar(lwd=0.7, lty=2, col="magenta"), default.units="native")
 	}
 
 	popViewport() ## pop chart.vp
