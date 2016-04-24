@@ -109,7 +109,7 @@
 	}
 	if (identical(gaPlot.back.extrapolated.typical.cuts, TRUE)) {
 		gaPlot.back.extrapolated.typical.cuts <-
-			temp_cutscores[CONTENT_AREA==content_area & GRADE==gaPlot.grade_range[2] & CUTLEVEL==which.max(SGP::SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")-1]$CUTSCORES
+			temp_cutscores[CONTENT_AREA==tail(content_area.all, 1) & GRADE_NUMERIC==gaPlot.grade_range[2] & CUTLEVEL==which.max(SGP::SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")-1]$CUTSCORES
 	}
 
 	## Utility functions
