@@ -16,6 +16,7 @@ growthAchievementPlot(
     gaPlot.grade_range,
     gaPlot.max.order.for.progression=NULL,
 	gaPlot.start.points="Achievement Level Cuts",
+    gaPlot.back.extrapolated.typical.cuts=NULL,
 	gaPlot.subtitle = TRUE,
     state,
     content_area,
@@ -55,6 +56,9 @@ growthAchievementPlot(
 	\item{gaPlot.start.points}{
 	Either 'Achievement Level Cuts' or 'Achievement Percentiles' defining where the growth percentiles trajectories will start in the growth achievement plots.
 	}
+    \item{gaPlot.back.extrapolated.typical.cuts}{
+    Scale score in final year for which 50th percentile growth culminates from back-extrapolated scale scores. 
+    }
 	\item{gaPlot.subtitle}{Boolean variable (defaults to TRUE) indicating whether subtitle is printed on the growth achievement chart indicating student starting point.
 	}
         \item{state}{

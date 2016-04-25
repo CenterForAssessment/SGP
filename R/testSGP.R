@@ -28,7 +28,8 @@ function(
 			options(warn=2)
 			number.cores <- detectCores(logical=FALSE)
 			sgpData.years.single <- sapply(strsplit(sgpData.years, "_"), '[', 2)
-			Demonstration_SGP <- tmp.messages <- NULL
+			Demonstration_SGP <- NULL
+			tmp.messages <- "##### Begin testSGP test number 0 #####\n\n"
 
 			if (is.null(test.option[['parallel.config']])) {
 				if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
@@ -37,7 +38,6 @@ function(
 				} else  parallel.config <- paste("list(BACKEND='PARALLEL', WORKERS=list(TAUS=", number.cores, "))", sep="")
 			} else parallel.config <- test.option[['parallel.config']]
 
-			tmp.messages <- "##### Begin testSGP test number 0 #####\n\n"
 
 			### Part 1
 
@@ -177,7 +177,8 @@ function(
 
 			options(error=recover)
 			options(warn=2)
-			Demonstration_SGP <- tmp.messages <- NULL
+			Demonstration_SGP <- NULL
+			tmp.messages <- ("##### Results of testSGP test number 1 #####\n\n")
 			number.cores <- detectCores(logical=FALSE) # adding logical=FALSE seems get physical cores only in Windows (which is good for SNOW/SOCK)
 
 			if (is.null(test.option[['parallel.config']])) {
@@ -212,8 +213,6 @@ function(
 			}
 
 			### TEST of SGP variable
-
-			tmp.messages <- ("##### Results of testSGP test number 1 #####\n\n")
 
 			if (identical(sum(Demonstration_SGP@Data[['SGP']], na.rm=TRUE), 8565260L)) {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP: OK\n")
@@ -647,7 +646,8 @@ function(
 			options(error=recover)
 			options(warn=2)
 			number.cores <- detectCores(logical=FALSE)
-			Demonstration_SGP <- tmp.messages <- NULL
+			Demonstration_SGP <- NULL
+			tmp.messages <- ("\t##### Results of testSGP test number 3 #####\n\n")
 			sgpData_LONG <- SGPdata::sgpData_LONG
 
 			### Add EOCT courses to sgpData_LONG
@@ -775,8 +775,6 @@ function(
 
 			### TEST of SGP variable
 
-			tmp.messages <- ("\t##### Results of testSGP test number 3 #####\n\n")
-
 			if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 2896606L)) {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP: OK\n")
 			} else {
@@ -863,7 +861,8 @@ function(
 
 			options(error=recover) # Don't use options(warn=2) - get warnings about knots and bounds from BASELINE SIMEX
 			number.cores <- detectCores(logical=FALSE)
-			Demonstration_SGP <- tmp.messages <- NULL
+			Demonstration_SGP <- NULL
+			tmp.messages <- ("##### Results of testSGP test number 4 #####\n\n")
 
 			if (is.null(test.option[['parallel.config']])) {
 				if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
@@ -889,7 +888,7 @@ function(
 
 			### TEST of SGP_SIMEX variable
 
-			tmp.messages <- ("\t##### Results of testSGP test number 4, Part 1 #####\n\n")
+			tmp.messages <- c(tmp.messages, "\t##### Results of testSGP test number 4, Part 1 #####\n")
 
 			if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX']]), 1029023L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX: OK\n")
@@ -941,7 +940,7 @@ function(
 
 			### TEST of SGP_SIMEX and SGP_SIMEX_BASELINE variable
 
-			tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number 4, Part 2 #####\n\n")
+			tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number 4, Part 2 #####\n")
 
 			if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX']]), 211555L)) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX: OK\n")
@@ -993,7 +992,8 @@ function(
 			options(error=recover)
 			options(warn=2)
 			number.cores <- detectCores(logical=FALSE)
-			Demonstration_SGP <- ACHIEVEMENT_LEVEL <- HIGH_NEED_STATUS <- tmp.messages <- NULL
+			Demonstration_SGP <- ACHIEVEMENT_LEVEL <- HIGH_NEED_STATUS <- NULL
+			tmp.messages <- ("##### Results of testSGP test number 5 #####\n\n")
 			if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
 			sgpData_LONG <- SGPdata::sgpData_LONG
 			years <- sgpData.years
@@ -1033,7 +1033,7 @@ function(
 
 			### TEST of variable values
 
-			tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number 5: Part 1 #####\n")
+			tmp.messages <- c(tmp.messages, "\t##### Results of testSGP test number 5: Part 1 #####\n")
 
 			### TEST of SGP variable
 
@@ -1441,7 +1441,8 @@ function(
 				} else  parallel.config <- paste("list(BACKEND='PARALLEL', WORKERS=list(TAUS=", number.cores, "))", sep="")
 			} else parallel.config <- test.option[['parallel.config']]
 
-			tmp.messages <- RLI_SGPt_PART_1 <- RLI_SGPt_PART_2 <- NULL
+			RLI_SGPt_PART_1 <- RLI_SGPt_PART_2 <- NULL
+			tmp.messages <- "##### Begin testSGP test number RLI #####\n\n"
 			tmp.last.window <- tail(sort(unique(SGPdata::sgptData_LONG[['YEAR']])), 1)
 
 			###############################################################################
@@ -1474,7 +1475,7 @@ function(
 
 			### TEST of variable values
 
-			tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number RLI: Part 1 #####\n")
+			tmp.messages <- c(tmp.messages, "\t##### Results of testSGP test number RLI: Part 1 #####\n")
 
 			### TEST of SGP variable from READING
 
