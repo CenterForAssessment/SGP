@@ -229,7 +229,7 @@ function(sgp_object,
 				matrix.window <- paste(yearIncrement(configuration.year, 1), c(3, 1, 2)[match(testing.window, c("FALL", "WINTER", "SPRING"))], sep=".")
 			}
 			new.matrices <-convertToBaseline(sgp_object@SGP$Coefficient_Matrices[grep(configuration.year, names(sgp_object@SGP$Coefficient_Matrices))])
-			old.matrix.label <- paste(paste(state, "SGPt_Baseline_Matrices", sep="_"), "$", tail(sort(names(get("RLI_SGPt_Baseline_Matrices"))), 1), sep="")
+			old.matrix.label <- paste(paste(state, "SGPt_Baseline_Matrices", sep="_"), "$", tail(sort(names(get(paste(state, "SGPt_Baseline_Matrices", sep="_")))), 1), sep="")
 			old.matrices <- eval(parse(text=old.matrix.label))
 			year.to.replace <- head(sort(unique(sapply(lapply(sapply(names(old.matrices[['READING.BASELINE']]), strsplit, '[.]'), '[', 2:3), paste, collapse="."))), 1)
 			for (content_area.iter in c("EARLY_LITERACY.BASELINE", "READING.BASELINE", "MATHEMATICS.BASELINE")) {
