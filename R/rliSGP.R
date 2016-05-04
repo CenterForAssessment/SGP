@@ -190,6 +190,8 @@ function(sgp_object,
 			save(list=update.shell.name, file=paste(update.shell.name, "Rdata", sep="."))
 		} else {
 			if (eow.calculate.sgps) my.steps <- c("prepareSGP", "analyzeSGP", "combineSGP", "outputSGP") else steps <- c("prepareSGP", "analyzeSGP")
+			latest.RLImatrices.version <- sub("-", ".", unlist(strsplit(read.table("https://raw.githubusercontent.com/CenterForAssessment/RLImatrices/master/DESCRIPTION", sep="!", colClasses="character")$V1[4], ": "))[2])
+			if (as.character(packageVersion("RLImatrices"))!=latest.RLImatrices.version) stop(paste("Installed 'RLImatrices' package is not most current version. Install latest version (", latest.RLImatrices.version, ") using install_github('centerforassessment/RLImatrices').", sep=""))
 			sgp_object <- updateSGP(
 				what_sgp_object=sgp_object,
 				with_sgp_data_LONG=additional.data,
@@ -229,7 +231,8 @@ function(sgp_object,
 				matrix.window <- paste(yearIncrement(configuration.year, 1), c(3, 1, 2)[match(testing.window, c("FALL", "WINTER", "SPRING"))], sep=".")
 			}
 			new.matrices <-convertToBaseline(sgp_object@SGP$Coefficient_Matrices[grep(configuration.year, names(sgp_object@SGP$Coefficient_Matrices))])
-			old.matrices <- SGPstateData[[state]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]]
+			old.matrix.label <- paste(paste(state, "SGPt_Baseline_Matrices", sep="_"), "$", tail(sort(names(get(paste(state, "SGPt_Baseline_Matrices", sep="_")))), 1), sep="")
+			old.matrices <- eval(parse(text=old.matrix.label))
 			year.to.replace <- head(sort(unique(sapply(lapply(sapply(names(old.matrices[['READING.BASELINE']]), strsplit, '[.]'), '[', 2:3), paste, collapse="."))), 1)
 			for (content_area.iter in c("EARLY_LITERACY.BASELINE", "READING.BASELINE", "MATHEMATICS.BASELINE")) {
 				old.matrices[[content_area.iter]][grep(year.to.replace, names(old.matrices[[content_area.iter]]))] <- NULL
