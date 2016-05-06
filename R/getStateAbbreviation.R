@@ -4,8 +4,8 @@ function(
 	SGPfunction=NULL,
 	type="Abbreviation") {
 
-	my.state.abbreviations <- c(setdiff(datasets::state.abb, "MA"), "ABQ", "AOB", "ATI", rep("DEMO", 2), "GUA", "MA_MCAS", "MA_PARCC", "MA", "NCSC_SD", "PARCC", "RLI_UK", "RLI", "WIDA_CO", "WIDA_MA", "WIDA_MI", "WIDA_NV", "WIDA", "DC") ### NOTE: Add abbreviations ALPHABETICALLY
-	my.state.names <- c(setdiff(datasets::state.name, "Massachusetts"), "Albuquerque", "AOB", "ATI", "DEMONSTRATION", "SGPDATA LONG", "Guatemala", "Massachusetts MCAS", "Massachusetts PARCC", "Massachusetts", "NCSC_SD", "PARCC", "RLI UK", "RLI", "WIDA CO", "WIDA MA", "WIDA MI", "WIDA NV", "WIDA", "WASHINGTON DC") ### NOTE: Add state names ALPHABETICALLY - need compound abbreviations/names first (e.g. WIDA_CO before WIDA)
+	my.state.abbreviations <- c(setdiff(datasets::state.abb, c("MA", "WA")), "ABQ", "AOB", "ATI", rep("DEMO", 2), "GUA", "MA_MCAS", "MA_PARCC", "MA", "NCSC_SD", "PARCC", "RLI_UK", "RLI", "WIDA_CO", "WIDA_MA", "WIDA_MI", "WIDA_NV", "WIDA", "DC", "WA") ### NOTE: Add abbreviations ALPHABETICALLY
+	my.state.names <- c(setdiff(datasets::state.name, c("Massachusetts", "Washington")), "Albuquerque", "AOB", "ATI", "DEMONSTRATION", "SGPDATA LONG", "Guatemala", "Massachusetts MCAS", "Massachusetts PARCC", "Massachusetts", "NCSC_SD", "PARCC", "RLI UK", "RLI", "WIDA CO", "WIDA MA", "WIDA MI", "WIDA NV", "WIDA", "WASHINGTON DC", "WASHINGTON") ### NOTE: Add state names ALPHABETICALLY - need compound abbreviations/names first (e.g. WIDA_CO before WIDA)
 	if (type=="Abbreviation") {
 		tmp.name.position <- sapply(my.state.names, function(x) regexpr(toupper(x), supplied.name))
 	} else {
