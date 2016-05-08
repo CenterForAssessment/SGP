@@ -1443,10 +1443,6 @@ function(panel.data,         ## REQUIRED
 					quantile.data[,SGP_STANDARD_ERROR:=round(apply(simulation.data[, -1, with=FALSE], 1, sd, na.rm=TRUE), digits=2)]
 				}
 			}
-	#		if (!is.null(calculate.confidence.intervals$confidence.quantiles)) {
-	#			tmp.cq <- data.table(round(t(apply(simulation.data[, -1, with=FALSE], 1, quantile, probs = calculate.confidence.intervals$confidence.quantiles))))
-	#			quantile.data[,paste("SGP_", calculate.confidence.intervals$confidence.quantiles, "_CONFIDENCE_BOUND", sep=""):=tmp.cq]
-	#		}
 			Simulated_SGPs[[tmp.path]] <- rbindlist(list(simulation.data, Simulated_SGPs[[tmp.path]]), fill=TRUE)
 		}
 

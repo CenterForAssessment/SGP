@@ -50,6 +50,7 @@ abcSGP(sgp_object,
 	sgp.percentiles.equated=NULL,
     sgp.percentiles.equating.method=NULL,
 	sgp.percentiles.calculate.sgps=TRUE,
+    get.cohort.data.info=FALSE,
 	SGPt=NULL)
 }
 
@@ -157,6 +158,9 @@ If missing the function will use the data to infer all the grade progressions fo
   \item{sgp.percentiles.calculate.sgps}{Boolean argument passed to \code{\link{analyzeSGP}} indicating whether student growth percentiles are
 produced as part of calls to the \code{\link{studentGrowthPercentiles}} function. Default is TRUE. Setting to FALSE produces only coefficient
 matrices.
+  }
+  \item{get.cohort.data.info}{Boolean argument passd to \code{\link{analyzeSGP}} indicating whether to create norm group cohort
+  information based upon sgp configurations provided or calculated in \code{\link{analyzeSGP}}.
   }
   \item{SGPt}{Argument (defaults to NULL) indicating whether to perform time dependent SGP analyses (SGPt).
   }

@@ -37,6 +37,7 @@ function(sgp_object,
 	sgp.percentiles.equated=NULL,
 	sgp.percentiles.equating.method=NULL,
 	sgp.percentiles.calculate.sgps=TRUE,
+	get.cohort.data.info=FALSE,
 	SGPt=NULL) {
 
     started.at <- proc.time()
@@ -115,6 +116,7 @@ function(sgp_object,
 			sgp.percentiles.equated=sgp.percentiles.equated,
 			sgp.percentiles.equating.method=sgp.percentiles.equating.method,
 			sgp.percentiles.calculate.sgps=sgp.percentiles.calculate.sgps,
+			get.cohort.data.info=get.cohort.data.info,
 			SGPt=SGPt)
 
                 if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
