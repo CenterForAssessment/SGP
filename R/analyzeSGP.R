@@ -162,14 +162,15 @@ function(sgp_object,
 		tmp.cohort.size <- SGPstateData[[state]][["SGP_Configuration"]][["sgp.cohort.size"]]
 	} else tmp.cohort.size <- NULL
 
+	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["rq.method"]])) {
+		tmp.rq.method <- SGPstateData[[state]][["SGP_Configuration"]][["rq.method"]]
+	} else tmp.rq.method <- "br"
+
 	if (!is.null(sgp.config) && sgp.config.drop.nonsequential.grade.progression.variables) {
 		sgp.config.drop.nonsequential.grade.progression.variables <- FALSE
 	}
 
-	# lower.level.parallel.config <- TRUE
 	if (all(c("PERCENTILES", "TAUS") %in% names(parallel.config[['WORKERS']]))) {
-		# lower.level.parallel.config <- FALSE
-		# if (as.numeric(parallel.config[['WORKERS']][['PERCENTILES']])!=1) stop("Both TAUS and PERCENTILES can not be executed in Parallel at the same time.")
 		if (.Platform$OS.type != "unix" | "SNOW_TEST" %in% names(parallel.config)) stop("Both TAUS and PERCENTILES can not be executed in Parallel at the same time in Windows OS or using SNOW type backends.")
 		messageSGP("\n\tCAUTION:  Running higher- and lower-level processes in parallel at the same time.  Make sure you have enough CPU cores and memory to support this.\n")
 	}
@@ -767,6 +768,8 @@ function(sgp_object,
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
+                        calculate.sgps=sgp.percentiles.calculate.sgps,
+                        rq.method = tmp.rq.method,
 						growth.levels=state,
 						calculate.confidence.intervals=get.simulate.sgps.arg(calculate.confidence.intervals.list, sgp.iter),
 						panel.data.vnames=getPanelDataVnames("sgp.percentiles", sgp.iter, sgp.data.names),
@@ -791,7 +794,6 @@ function(sgp_object,
 						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.percentiles"),
                         SGPt.max.time=SGPt.max.time,
-                        calculate.sgps=sgp.percentiles.calculate.sgps,
 						parallel.config=par.start$Lower_Level_Parallel,
 						...))
 					}
@@ -811,6 +813,8 @@ function(sgp_object,
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
+                        calculate.sgps=sgp.percentiles.calculate.sgps,
+                        rq.method = tmp.rq.method,
 						growth.levels=state,
                         calculate.confidence.intervals=get.simulate.sgps.arg(calculate.confidence.intervals.list, sgp.iter),
 						panel.data.vnames=getPanelDataVnames("sgp.percentiles", sgp.iter, sgp.data.names),
@@ -835,7 +839,6 @@ function(sgp_object,
 						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.percentiles"),
                         SGPt.max.time=SGPt.max.time,
-                        calculate.sgps=sgp.percentiles.calculate.sgps,
 						parallel.config=par.start$Lower_Level_Parallel,
 						...))
 
@@ -856,6 +859,8 @@ function(sgp_object,
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
+                        calculate.sgps=sgp.percentiles.calculate.sgps,
+                        rq.method = tmp.rq.method,
 						growth.levels=state,
                         calculate.confidence.intervals=get.simulate.sgps.arg(calculate.confidence.intervals.list, sgp.iter),
 						panel.data.vnames=getPanelDataVnames("sgp.percentiles", sgp.iter, sgp.data.names),
@@ -880,7 +885,6 @@ function(sgp_object,
 						max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.percentiles"),
                         SGPt.max.time=SGPt.max.time,
-                        calculate.sgps=sgp.percentiles.calculate.sgps,
 						parallel.config=par.start$Lower_Level_Parallel,
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 
@@ -912,9 +916,10 @@ function(sgp_object,
 							Coefficient_Matrices=sgp.iter[["sgp.equated.matrices"]],
 							Knots_Boundaries=getKnotsBoundaries(sgp.iter, state, "sgp.percentiles")),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1),
-								my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), my.extra.label=equate.label),
+							my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), my.extra.label=equate.label),
 						use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
+                        rq.method = tmp.rq.method,
 						growth.levels=state,
                         calculate.confidence.intervals=get.simulate.sgps.arg(calculate.confidence.intervals.list, sgp.iter),
 						panel.data.vnames=getPanelDataVnames("sgp.percentiles", sgp.iter, sgp.data.names, equate.variable),
@@ -955,9 +960,10 @@ function(sgp_object,
 							Coefficient_Matrices=sgp.iter[["sgp.equated.matrices"]],
 							Knots_Boundaries=getKnotsBoundaries(sgp.iter, state, "sgp.percentiles")),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1),
-								my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), my.extra.label=equate.label),
+							my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), my.extra.label=equate.label),
 						use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
+                        rq.method = tmp.rq.method,
 						growth.levels=state,
                         calculate.confidence.intervals=get.simulate.sgps.arg(calculate.confidence.intervals.list, sgp.iter),
 						panel.data.vnames=getPanelDataVnames("sgp.percentiles", sgp.iter, sgp.data.names, equate.variable),
@@ -999,9 +1005,10 @@ function(sgp_object,
 							Coefficient_Matrices=sgp.iter[["sgp.equated.matrices"]],
 							Knots_Boundaries=getKnotsBoundaries(sgp.iter, state, "sgp.percentiles")),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1),
-								my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), my.extra.label=equate.label),
+							my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), my.extra.label=equate.label),
 						use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
+                        rq.method = tmp.rq.method,
 						growth.levels=state,
                         calculate.confidence.intervals=get.simulate.sgps.arg(calculate.confidence.intervals.list, sgp.iter),
 						panel.data.vnames=getPanelDataVnames("sgp.percentiles", sgp.iter, sgp.data.names, equate.variable),
@@ -1793,6 +1800,8 @@ function(sgp_object,
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 					use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 					use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
+                    calculate.sgps=sgp.percentiles.calculate.sgps,
+					rq.method = tmp.rq.method,
 					growth.levels=state,
 					panel.data.vnames=getPanelDataVnames("sgp.percentiles", sgp.iter, sgp.data.names),
 					additional.vnames.to.return=getPanelDataVnames("sgp.percentiles.to.return", sgp.iter, sgp.data.names),
@@ -1818,7 +1827,6 @@ function(sgp_object,
 					max.n.for.coefficient.matrices=max.n.for.coefficient.matrices,
 					SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.percentiles"),
                     SGPt.max.time=SGPt.max.time,
-                    calculate.sgps=sgp.percentiles.calculate.sgps,
 					...)
 			}
 		} ## END if sgp.percentiles
@@ -1839,6 +1847,8 @@ function(sgp_object,
 						my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), my.extra.label=equate.label),
 					use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 					use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
+					calculate.sgps=sgp.percentiles.calculate.sgps,
+					rq.method = tmp.rq.method,
 					growth.levels=state,
 					panel.data.vnames=getPanelDataVnames("sgp.percentiles", sgp.iter, sgp.data.names, equate.variable),
 					additional.vnames.to.return=getPanelDataVnames("sgp.percentiles.to.return", sgp.iter, sgp.data.names),
