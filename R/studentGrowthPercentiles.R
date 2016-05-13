@@ -146,7 +146,7 @@ function(panel.data,         ## REQUIRED
 	}
 
 	.create.coefficient.matrices <- function(data, k, by.grade, max.n.for.coefficient.matrices) {
-		rq.sgp <- function(...) {
+		rq.sgp <- function(...) { # Function needs to be nested within the .create.coefficient.matrices function to avoid data copying with SNOW
 			if (rq.method == "br") {
 				tmp.res <- rq(method="br", ...)[['coefficients']]
 			} else {
@@ -339,6 +339,18 @@ function(panel.data,         ## REQUIRED
 			if (is.null(parallel.config[["WORKERS"]][["SIMEX"]])) tmp.par.config <- NULL else tmp.par.config <- parallel.config
 		} else tmp.par.config <- NULL
 
+		rq.sgp <- function(...) { # Function needs to be nested within the simex.sgp function to avoid data copying with SNOW
+			if (rq.method == "br") {
+				tmp.res <- rq(method="br", ...)[['coefficients']]
+			} else {
+				tmp.res <- try(rq(method=rq.method, ...)[['coefficients']], silent=TRUE)
+				if(class(tmp.res) == "try-error") {
+					tmp.res <- rq(method="br", ...)[['coefficients']]
+				}
+			}
+			return(tmp.res)
+		}
+
 		rq.mtx <- function(tmp.gp.iter, lam, rqdata) {
 			mod <- character()
 			s4Ks <- "Knots=list("
@@ -350,14 +362,14 @@ function(panel.data,         ## REQUIRED
 				s4Ks <- paste(s4Ks, "knots_", tmp.gp.iter[i], "=", knt, ",", sep="")
 				s4Bs <- paste(s4Bs, "boundaries_", tmp.gp.iter[i], "=", bnd, ",", sep="")
 			}
-			tmp.mtx <-eval(parse(text=paste("rq(final_yr ~", substring(mod,4), ", tau=taus, data = rqdata, method=rq.method)[['coefficients']]", sep="")))
+			tmp.mtx <-eval(parse(text=paste("rq.sgp(final_yr ~", substring(mod,4), ", tau=taus, data = rqdata)", sep="")))
 
 			tmp.version <- list(
 					SGP_Package_Version=as.character(packageVersion("SGP")),
 					Date_Prepared=prettyDate(),
 					Matrix_Information=list(
 						N=dim(rqdata)[1],
-						Model=paste("rq(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=taus, data=tmp.data, method=rq.method)[['coefficients']]", sep=""),
+						Model=paste("rq.sgp(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=taus, data=tmp.data, method=", rq.method, ")", sep=""),
 						SGPt=if (is.null(SGPt)) NULL else list(VARIABLES=unlist(SGPt), MAX_TIME=max(tmp.data$TIME, na.rm=TRUE), MAX_TIME_PRIOR=max(tmp.data$TIME-tmp.data$TIME_LAG, na.rm=TRUE), RANGE_TIME_LAG=range(tmp.data$TIME_LAG))))
 
 			eval(parse(text=paste("new('splineMatrix', tmp.mtx, ", substring(s4Ks, 1, nchar(s4Ks)-1), "), ", substring(s4Bs, 1, nchar(s4Bs)-1), "), ",
