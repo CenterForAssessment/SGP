@@ -565,7 +565,7 @@ function(panel.data,	## REQUIRED
 			if (length(grep("BASELINE", sgp.labels[['my.extra.label']])) > 0 & !is.null(SGP::SGPstateData[[performance.level.cutscores]][["Baseline_splineMatrix"]])) {
 				panel.data[["Coefficient_Matrices"]][[tmp.path.coefficient.matrices]] <- SGP::SGPstateData[[performance.level.cutscores]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]]
 			} else {
-				message("\tNOTE: Coefficient matrices indicated by argument use.my.coefficient.matrices are not included.")
+				messageSGP("\tNOTE: Coefficient matrices indicated by argument use.my.coefficient.matrices are not included.")
 				return(NULL)
 			}
 		}
@@ -580,7 +580,7 @@ function(panel.data,	## REQUIRED
 		} else {
 			tmp.path.coefficient.matrices <- tmp.path
 			if (is.null(panel.data[["Coefficient_Matrices"]]) | is.null(panel.data[["Coefficient_Matrices"]][[tmp.path.coefficient.matrices]])) {
-				message(paste("\tNOTE: Coefficient matrices indicated by argument sgp.labels, '", tmp.path.coefficient.matrices, "', are not included. Bypassing plot production.", sep=""))
+				messageSGP(paste("\tNOTE: Coefficient matrices indicated by argument sgp.labels, '", tmp.path.coefficient.matrices, "', are not included. Bypassing plot production.", sep=""))
 				return(NULL)
 			}
 		}
@@ -630,12 +630,12 @@ function(panel.data,	## REQUIRED
 	}
 
 	if (!is.null(percentile.trajectory.values) && is.numeric(percentile.trajectory.values) && !all(percentile.trajectory.values %in% 1:100)) {
-		message("\tNOTE: Integer supplied 'percentile.trajectory.values' must be between 1 and 100. Only supplied values in that range will be used.")
+		messageSGP("\tNOTE: Integer supplied 'percentile.trajectory.values' must be between 1 and 100. Only supplied values in that range will be used.")
 		percentile.trajectory.values <- intersect(percentile.trajectory.values, 1:100)
 	}
 
 	if (!is.null(percentile.trajectory.values) && is.character(percentile.trajectory.values) && !all(percentile.trajectory.values %in% names(panel.data[["Panel_Data"]]))) {
-		message("\tNOTE: Character 'percentile.trajectory.values' must correspond to individual specific variable in panel.data[['Panel_Data']]. Please check for appropriate variables.")
+		messageSGP("\tNOTE: Character 'percentile.trajectory.values' must correspond to individual specific variable in panel.data[['Panel_Data']]. Please check for appropriate variables.")
 	}
 
 	if (!is.null(achievement.level.prior.vname)) {
@@ -696,9 +696,9 @@ function(panel.data,	## REQUIRED
 
 	if (dim(panel.data[['Panel_Data']])[1] == 0) { ### Check needed for getTargetScaleScore when running straight projections for final subject in progression
 		tmp.messages <- c(tmp.messages, "\t\tNOTE: Supplied data together with grade progression contains no data for analysis. Check data, function arguments and see help page for details.\n")
-		message(paste("\tStarted studentGrowthProjections", started.date))
-		message(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
-		message(c(tmp.messages, "\tFinished studentGrowthProjections: ", prettyDate(), " in ", convertTime(timetaken(started.at)), "\n"))
+		messageSGP(paste("\tStarted studentGrowthProjections", started.date))
+		messageSGP(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
+		messageSGP(c(tmp.messages, "\tFinished studentGrowthProjections: ", prettyDate(), " in ", convertTime(timetaken(started.at)), "\n"))
 
 		return(
 			list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],
@@ -761,12 +761,12 @@ function(panel.data,	## REQUIRED
 			stop("Not all CONTENT_AREA values in content_area.progression have associated BASELINE or current COHORT referenced coefficient matrices.")
 		} else {
 			if (length(grep("BASELINE", sgp.labels[['my.extra.label']])) > 0) {
-				message(paste("\tNOTE:  Not all CONTENT_AREA values in content_area.progression have associated BASELINE referenced coefficient matrices.\n\tCOHORT referenced matrices for missing content areas (",
+				messageSGP(paste("\tNOTE:  Not all CONTENT_AREA values in content_area.progression have associated BASELINE referenced coefficient matrices.\n\tCOHORT referenced matrices for missing content areas (",
 					paste(gsub(paste(".", sgp.labels$my.year, sep=""), "", tmp.path.coefficient.matrices2), collapse=", "),
 					") have been found and will be used.\n\tPlease note the inconsistency and ensure this is correct!", sep=""))
 
 			} else {
-				message(paste("NOTE:  Not all CONTENT_AREA values in content_area.progression have associated COHORT referenced coefficient matrices.\n\tBASELINE referenced matrices for missing content areas (",
+				messageSGP(paste("NOTE:  Not all CONTENT_AREA values in content_area.progression have associated COHORT referenced coefficient matrices.\n\tBASELINE referenced matrices for missing content areas (",
 					paste(gsub(".BASELINE", "", tmp.path.coefficient.matrices2), collapse=", "),
 					") have been found and will be used.\n\tPlease note the inconsistency and ensure this is correct!", sep=""))
 			}
@@ -836,9 +836,9 @@ function(panel.data,	## REQUIRED
 
 	if (dim(.get.panel.data(ss.data, grade.progression, content_area.progression, 1, bound.data=FALSE))[1] == 0 | length(tmp.index)==0) {
 		tmp.messages <- c(tmp.messages, "\t\tNOTE: Supplied data together with grade progression contains no data for analysis. Check data, function arguments and see help page for details.\n")
-		message(paste("\tStarted studentGrowthProjections", started.date))
-		message(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
-		message(c(tmp.messages, "\tFinished studentGrowthProjections: ", prettyDate(), " in ", convertTime(timetaken(started.at)), "\n"))
+		messageSGP(paste("\tStarted studentGrowthProjections", started.date))
+		messageSGP(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
+		messageSGP(c(tmp.messages, "\tFinished studentGrowthProjections: ", prettyDate(), " in ", convertTime(timetaken(started.at)), "\n"))
 
 		return(
 			list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],
@@ -931,9 +931,9 @@ function(panel.data,	## REQUIRED
 	### Announce Completion & Return SGP Object
 
 	if (print.time.taken) {
-		message(paste("\tStarted studentGrowthProjections:", started.date))
-		message(paste("\t\tContent Area: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, " (N=", format(dim(trajectories.and.cuts)[1], big.mark=","), ")", sep=""))
-		message(c(tmp.messages, "\tFinished studentGrowthProjections: ", prettyDate(), " in ", convertTime(timetaken(started.at)), "\n"))
+		messageSGP(paste("\tStarted studentGrowthProjections:", started.date))
+		messageSGP(paste("\t\tContent Area: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, " (N=", format(dim(trajectories.and.cuts)[1], big.mark=","), ")", sep=""))
+		messageSGP(c(tmp.messages, "\tFinished studentGrowthProjections: ", prettyDate(), " in ", convertTime(timetaken(started.at)), "\n"))
 	}
 
 	list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],
