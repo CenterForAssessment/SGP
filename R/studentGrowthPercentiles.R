@@ -146,6 +146,17 @@ function(panel.data,         ## REQUIRED
 	}
 
 	.create.coefficient.matrices <- function(data, k, by.grade, max.n.for.coefficient.matrices) {
+		rq.sgp <- function(...) { # Function needs to be nested within the .create.coefficient.matrices function to avoid data copying with SNOW
+			if (rq.method == "br") {
+				tmp.res <- rq(method="br", ...)[['coefficients']]
+			} else {
+				tmp.res <- try(rq(method=rq.method, ...)[['coefficients']], silent=TRUE)
+				if(class(tmp.res) == "try-error") {
+					tmp.res <- rq(method="br", ...)[['coefficients']]
+				}
+			}
+			return(tmp.res)
+		}
 		tmp.data <- .get.panel.data(data, k, by.grade)
 		if (dim(tmp.data)[1]==0) return(NULL)
 		if (dim(tmp.data)[1] < sgp.cohort.size) return("Insufficient N")
@@ -173,26 +184,29 @@ function(panel.data,         ## REQUIRED
 		if (!is.null(tmp.par.config <- parallel.config)) if (is.null(parallel.config[["WORKERS"]][["TAUS"]])) tmp.par.config <- NULL
 
 		if (is.null(tmp.par.config)) {
-			tmp.mtx <- eval(parse(text=paste("rq(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=taus, data=tmp.data, method=rq.method)[['coefficients']]", sep="")))
+			tmp.mtx <- eval(parse(text=paste("rq.sgp(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=taus, data=tmp.data)", sep="")))
 		} else {
 			par.start <- startParallel(tmp.par.config, 'TAUS', qr.taus=taus)
 
 			if (toupper(tmp.par.config[["BACKEND"]]) == "FOREACH") {
 				# tmp.data <<- tmp.data
-				tmp.mtx <- foreach(j = iter(par.start$TAUS.LIST), .export=c("tmp.data", "Knots_Boundaries", "rq.method"), .combine = "cbind", .packages="quantreg",
+				tmp.mtx <- foreach(j = iter(par.start$TAUS.LIST), .export=c("tmp.data", "Knots_Boundaries", "rq.method", "rq.sgp"), .combine = "cbind", .errorhandling = "pass",
 				.inorder=TRUE, .options.mpi = par.start$foreach.options, .options.multicore = par.start$foreach.options, .options.snow = par.start$foreach.options) %dopar% {
-					eval(parse(text=paste("rq(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=j, data=tmp.data, method=rq.method)[['coefficients']]", sep="")))
+					eval(parse(text=paste("rq.sgp(formula=tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=j, data=tmp.data)", sep="")))
 				}
+				if (any(!grepl("tau=", colnames(tmp.mtx)))) return(list(RQ_ERROR=unlist(tmp.mtx[,grep("tau=", colnames(tmp.mtx), invert=TRUE)][1], use.names=FALSE)))
 			} else {
 				if (par.start$par.type == 'MULTICORE') {
-					tmp.mtx <- mclapply(par.start$TAUS.LIST, function(x) eval(parse(text=paste("rq(tmp.data[[", tmp.num.variables, "]] ~ ",
-						substring(mod,4), ", tau=x, data=tmp.data, method=rq.method)[['coefficients']]", sep=""))), mc.cores=par.start$workers, mc.preschedule = FALSE)
+					tmp.mtx <- mclapply(par.start$TAUS.LIST, function(x) eval(parse(text=paste("rq.sgp(tmp.data[[", tmp.num.variables, "]] ~ ",
+						substring(mod,4), ", tau=x, data=tmp.data)", sep=""))), mc.cores=par.start$workers, mc.preschedule = FALSE)
+					if (any(tmp.tf <- sapply(tmp.mtx, function(x) identical(class(x), "try-error")))) return(list(RQ_ERROR=unlist(tmp.mtx[[which(tmp.tf)]][1], use.names=FALSE)))
 					tmp.mtx <- do.call(cbind, tmp.mtx)
 				}
 
 				if (par.start$par.type == 'SNOW') {
-					tmp.mtx <- parLapplyLB(par.start$internal.cl, par.start$TAUS.LIST, function(x) eval(parse(text=paste("rq(tmp.data[[",
-						tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=x, data=tmp.data, method=rq.method)[['coefficients']]", sep=""))))
+					tmp.mtx <- parLapplyLB(par.start$internal.cl, par.start$TAUS.LIST, function(x) eval(parse(text=paste("rq.sgp(tmp.data[[",
+						tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=x, data=tmp.data)", sep=""))))
+					if (any(tmp.tf <- sapply(tmp.mtx, function(x) identical(class(x), "try-error")))) return(list(RQ_ERROR=unlist(tmp.mtx[[which(tmp.tf)]][1], use.names=FALSE)))
 					tmp.mtx <- do.call(cbind, tmp.mtx)
 				}
 			}
@@ -204,7 +218,7 @@ function(panel.data,         ## REQUIRED
 			Date_Prepared=prettyDate(),
 			Matrix_Information=list(
 				N=dim(tmp.data)[1],
-				Model=paste("rq(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=taus, data=tmp.data, method=rq.method)[['coefficients']]", sep=""),
+				Model=paste("rq.sgp(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=taus, data=tmp.data, method=", rq.method, ")", sep=""),
 				SGPt=if (is.null(SGPt)) NULL else list(VARIABLES=unlist(SGPt), MAX_TIME=max(tmp.data$TIME, na.rm=TRUE), MAX_TIME_PRIOR=max(tmp.data$TIME-tmp.data$TIME_LAG, na.rm=TRUE), RANGE_TIME_LAG=range(tmp.data$TIME_LAG))))
 
 		eval(parse(text=paste("new('splineMatrix', tmp.mtx, ", substring(s4Ks, 1, nchar(s4Ks)-1), "), ", substring(s4Bs, 1, nchar(s4Bs)-1), "), ",
@@ -325,6 +339,18 @@ function(panel.data,         ## REQUIRED
 			if (is.null(parallel.config[["WORKERS"]][["SIMEX"]])) tmp.par.config <- NULL else tmp.par.config <- parallel.config
 		} else tmp.par.config <- NULL
 
+		rq.sgp <- function(...) { # Function needs to be nested within the simex.sgp function to avoid data copying with SNOW
+			if (rq.method == "br") {
+				tmp.res <- rq(method="br", ...)[['coefficients']]
+			} else {
+				tmp.res <- try(rq(method=rq.method, ...)[['coefficients']], silent=TRUE)
+				if(class(tmp.res) == "try-error") {
+					tmp.res <- rq(method="br", ...)[['coefficients']]
+				}
+			}
+			return(tmp.res)
+		}
+
 		rq.mtx <- function(tmp.gp.iter, lam, rqdata) {
 			mod <- character()
 			s4Ks <- "Knots=list("
@@ -336,14 +362,14 @@ function(panel.data,         ## REQUIRED
 				s4Ks <- paste(s4Ks, "knots_", tmp.gp.iter[i], "=", knt, ",", sep="")
 				s4Bs <- paste(s4Bs, "boundaries_", tmp.gp.iter[i], "=", bnd, ",", sep="")
 			}
-			tmp.mtx <-eval(parse(text=paste("rq(final_yr ~", substring(mod,4), ", tau=taus, data = rqdata, method=rq.method)[['coefficients']]", sep="")))
+			tmp.mtx <-eval(parse(text=paste("rq.sgp(final_yr ~", substring(mod,4), ", tau=taus, data = rqdata)", sep="")))
 
 			tmp.version <- list(
 					SGP_Package_Version=as.character(packageVersion("SGP")),
 					Date_Prepared=prettyDate(),
 					Matrix_Information=list(
 						N=dim(rqdata)[1],
-						Model=paste("rq(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=taus, data=tmp.data, method=rq.method)[['coefficients']]", sep=""),
+						Model=paste("rq.sgp(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=taus, data=tmp.data, method=", rq.method, ")", sep=""),
 						SGPt=if (is.null(SGPt)) NULL else list(VARIABLES=unlist(SGPt), MAX_TIME=max(tmp.data$TIME, na.rm=TRUE), MAX_TIME_PRIOR=max(tmp.data$TIME-tmp.data$TIME_LAG, na.rm=TRUE), RANGE_TIME_LAG=range(tmp.data$TIME_LAG))))
 
 			eval(parse(text=paste("new('splineMatrix', tmp.mtx, ", substring(s4Ks, 1, nchar(s4Ks)-1), "), ", substring(s4Bs, 1, nchar(s4Bs)-1), "), ",
@@ -579,7 +605,7 @@ function(panel.data,         ## REQUIRED
 							if (is.null(simex.sample.size) || dim(tmp.data)[1] <= simex.sample.size) {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
 									foreach(z=iter(sim.iters), .packages=c("quantreg", "data.table"),
-										.export=c("Knots_Boundaries", "rq.method", "taus", "content_area.progression", "tmp.slot.gp", "year.progression", "year_lags.progression", "SGPt"),
+										.export=c("Knots_Boundaries", "rq.method", "taus", "content_area.progression", "tmp.slot.gp", "year.progression", "year_lags.progression", "SGPt", "rq.sgp"),
 										.options.mpi=par.start$foreach.options, .options.multicore=par.start$foreach.options, .options.snow=par.start$foreach.options) %dopar% {
 											rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(shared.cache = TRUE), dbname = tmp.dbname),
 												paste("select * from simex_data where b in ('", z, "')", sep="")))
@@ -587,7 +613,7 @@ function(panel.data,         ## REQUIRED
 							} else {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
 									foreach(z=iter(sim.iters), .packages=c("quantreg", "data.table"),
-										.export=c("Knots_Boundaries", "rq.method", "taus", "content_area.progression", "tmp.slot.gp", "year.progression", "year_lags.progression", "SGPt"),
+										.export=c("Knots_Boundaries", "rq.method", "taus", "content_area.progression", "tmp.slot.gp", "year.progression", "year_lags.progression", "SGPt", "rq.sgp"),
 										.options.mpi=par.start$foreach.options, .options.multicore=par.start$foreach.options, .options.snow=par.start$foreach.options) %dorng% {
 											rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(shared.cache = TRUE), dbname = tmp.dbname),
 												paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq.int(dim(tmp.data)[1]), simex.sample.size),])
@@ -1271,6 +1297,7 @@ function(panel.data,         ## REQUIRED
 			coefficient.matrix.priors <- seq(num.prior)
 		}
 		for (k in coefficient.matrix.priors) {
+			if (is.null(Coefficient_Matrices[[tmp.path.coefficient.matrices]])) Coefficient_Matrices <- list(list()); names(Coefficient_Matrices) <- tmp.path.coefficient.matrices
 			Coefficient_Matrices[[tmp.path.coefficient.matrices]][['TMP_NAME']] <- .create.coefficient.matrices(ss.data, k, by.grade, max.n.for.coefficient.matrices)
 			if (identical(Coefficient_Matrices[[tmp.path.coefficient.matrices]][['TMP_NAME']], "Insufficient N")) {
 				tmp.messages <- c(tmp.messages, paste("\t\tNOTE: Some grade progressions contain fewer than the minimum cohort size.",
@@ -1281,6 +1308,26 @@ function(panel.data,         ## REQUIRED
 				# num.prior <- length(tmp.gp[2:k]) # Force lots of warnings (?)
 				break
 			}
+			if (identical(names(Coefficient_Matrices[[tmp.path.coefficient.matrices]][['TMP_NAME']]), "RQ_ERROR")) {
+				tmp.err.message <- Coefficient_Matrices[[tmp.path.coefficient.matrices]][['TMP_NAME']][['RQ_ERROR']]
+				tmp.messages <- c(tmp.messages, paste("\t\tNOTE: An Error in the quantile regression (coefficient matrix creation) has occurred",
+					"\n\t\tin grade progression ", paste(rev(rev(tmp.gp)), collapse = ', '), " and produced the following error message: \n\t\t\t\"", tmp.err.message, "\"", sep=""))
+				messageSGP(paste("\tStarted studentGrowthPercentiles", started.date))
+				messageSGP(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ",
+					paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
+				messageSGP(paste(tmp.messages, "\n\t\tStudent Growth Percentile Analysis NOT RUN", prettyDate(), "\n"))
+
+				return(
+					list(Coefficient_Matrices=Coefficient_Matrices,
+						Cutscores=Cutscores,
+						Goodness_of_Fit=Goodness_of_Fit,
+						Knots_Boundaries=Knots_Boundaries,
+						Panel_Data=Panel_Data,
+						SGPercentiles=SGPercentiles,
+						SGProjections=SGProjections,
+						Simulated_SGPs=Simulated_SGPs))
+			}
+
 			names(Coefficient_Matrices[[tmp.path.coefficient.matrices]])[length(Coefficient_Matrices[[tmp.path.coefficient.matrices]])] <- get.coefficient.matrix.name(tmp.last, k)
 
 			if (verbose.output) {
