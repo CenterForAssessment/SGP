@@ -1,6 +1,6 @@
 `capwords` <-
 function(x, 
-	special.words = c("ELA","I", "II", "III", "IV", "EMH", "HS", "MS", "ES", "SES", "IEP", "ELL", "MAD", "SD", "SWD", "US", "SGP", "SIMEX")) {
+	special.words = c("ELA","I", "II", "III", "IV", "EMH", "HS", "MS", "ES", "SES", "IEP", "ELL", "MAD", "SD", "SWD", "US", "SGP", "SIMEX", "SS")) {
 
 	if (is.null(x)) return(NULL)
 	if (is.na(x)) return(NA)
