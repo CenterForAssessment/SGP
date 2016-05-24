@@ -17,7 +17,7 @@ function(tmp.data,
 
 	### Utility functions
 
-	get.min.max.grade <- function(Cutscores) {
+	get.min.max.grade <- function(Cutscores, linkage.grades) {
 
 		if ("GRADE_NUMERIC" %in% names(Cutscores)) {
 			tmp.grades.numeric <- range(sort(type.convert(subset(Cutscores, !GRADE %in% c("GRADE_LOWER", "GRADE_UPPER"))[['GRADE_NUMERIC']])))
@@ -25,7 +25,11 @@ function(tmp.data,
 		} else {
 			tmp.grades <- sort(type.convert(subset(Cutscores, !GRADE %in% c("GRADE_LOWER", "GRADE_UPPER"))[['GRADE']]))
 		}
-		return(c(tmp.grades[1], rev(tmp.grades)[1]))
+		linkage.grades <- sort(sapply(strsplit(linkage.grades, "_"), '[', 2))
+		tmp.min.max <- c(tmp.grades[1], rev(tmp.grades)[1])
+		if (!tmp.min.max[1] %in% linkage.grades) tmp.min.max[1] <- linkage.grades[1]
+		if (!tmp.min.max[2] %in% linkage.grades) tmp.min.max[2] <- rev(linkage.grades)[1]
+		return(tmp.min.max)
 	}
 
 
@@ -54,7 +58,7 @@ function(tmp.data,
 			for (grade.iter in unique(Cutscores[[content_area.iter]][['GRADE']])) {
 				Cutscores[[content_area.iter]][CONTENT_AREA==content_area.iter & GRADE==grade.iter & (is.na(YEAR) | YEAR < year.for.equate),
 					CUTSCORES:=linkages[[paste(content_area.iter, year.for.equate, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][[toupper(equating.method)]][['OLD_TO_NEW']][["interpolated_function"]](CUTSCORES)]
-				tmp.min.max <- get.min.max.grade(Cutscores[[content_area.iter]])
+				tmp.min.max <- get.min.max.grade(Cutscores[[content_area.iter]], names(linkages[[paste(content_area.iter, year.for.equate, sep=".")]]))
 				if (grade.iter=="GRADE_UPPER") {
 					Cutscores[[content_area.iter]][CONTENT_AREA=="PLACEHOLDER" & GRADE=="GRADE_UPPER" & (is.na(YEAR) | YEAR < year.for.equate),
 						CUTSCORES:=linkages[[paste(content_area.iter, year.for.equate, sep=".")]][[paste("GRADE", tmp.min.max[2], sep="_")]][[toupper(equating.method)]][['OLD_TO_NEW']][["interpolated_function"]](CUTSCORES)]
