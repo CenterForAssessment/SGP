@@ -26,7 +26,7 @@ function(
 
 			options(error=recover)
 			options(warn=2)
-			number.cores <- detectCores(logical=FALSE)
+			if (.Platform$OS.type == "unix") number.cores <- detectCores(logical=TRUE) else number.cores <- detectCores(logical=FALSE)
 			sgpData.years.single <- sapply(strsplit(sgpData.years, "_"), '[', 2)
 			Demonstration_SGP <- NULL
 			tmp.messages <- "##### Begin testSGP test number 0 #####\n\n"
@@ -179,13 +179,13 @@ function(
 			options(warn=2)
 			Demonstration_SGP <- NULL
 			tmp.messages <- ("##### Results of testSGP test number 1 #####\n\n")
-			number.cores <- detectCores(logical=FALSE) # adding logical=FALSE seems get physical cores only in Windows (which is good for SNOW/SOCK)
+			if (.Platform$OS.type == "unix") number.cores <- detectCores(logical=TRUE) else number.cores <- detectCores(logical=FALSE)
 
 			if (is.null(test.option[['parallel.config']])) {
 				if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
 				if (.Platform$OS.type != "unix") {
-					parallel.config <- paste("list(BACKEND='FOREACH', TYPE='doParallel', WORKERS=list(TAUS=", number.cores, "))", sep="")
-				} else  parallel.config <- paste("list(BACKEND='PARALLEL', WORKERS=list(TAUS=", number.cores, "))", sep="")
+					parallel.config <- paste("list(BACKEND=", tmp.backend, "WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))", sep="")
+				} else  parallel.config <- paste("list(BACKEND=", tmp.backend, "WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))", sep="")
 			} else parallel.config <- test.option[['parallel.config']]
 
 			### Some minor modifications to SGPstateData for testing purposes
@@ -196,7 +196,7 @@ function(
 			if (toupper(TEST_NUMBER) == "1B") sgp.sqlite <- TRUE else sgp.sqlite <- FALSE
 
 			expression.to.evaluate <-
-				paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=SGPdata::sgpData_LONG,\n\tdata_supplementary=list(INSTRUCTOR_NUMBER=SGPdata::sgpData_INSTRUCTOR_NUMBER),\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.sqlite=", sgp.sqlite, ",\n\tget.cohort.data.info=TRUE,\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n", sep="")
+				paste("Demonstration_SGP <- abcSGP(\n\tsgp_object=SGPdata::sgpData_LONG,\n\tdata_supplementary=list(INSTRUCTOR_NUMBER=SGPdata::sgpData_INSTRUCTOR_NUMBER),\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.sqlite=", sgp.sqlite, ",\n\tget.cohort.data.info=TRUE,\n\tparallel.config=", "\n)\n", sep="")
 
 			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
 
@@ -342,7 +342,7 @@ function(
 			Demonstration_SGP <- NULL
 			Demonstration_Data_LONG <- subset(SGPdata::sgpData_LONG, YEAR %in% head(sgpData.years, -1))
 			Demonstration_Data_LONG_LAST_YEAR <- subset(SGPdata::sgpData_LONG, YEAR==tail(sgpData.years, 1))
-			number.cores <- detectCores(logical=FALSE)
+			if (.Platform$OS.type == "unix") number.cores <- detectCores(logical=TRUE) else number.cores <- detectCores(logical=FALSE)
 			tmp.messages <- "##### Begin testSGP test number 2a #####\n\n"
 
 			### Part 1
@@ -493,7 +493,7 @@ function(
 				options(warn=2)
 				Demonstration_SGP <- ID <- CONTENT_AREA <- NULL
 				Demonstration_Data_LONG_LAST_YEAR <- subset(SGPdata::sgpData_LONG, YEAR==tail(sgpData.years, 1))
-				number.cores <- detectCores(logical=FALSE)
+				if (.Platform$OS.type == "unix") number.cores <- detectCores(logical=TRUE) else number.cores <- detectCores(logical=FALSE)
 
 				############################################################
 				### Part 1: Required for all Tests 2b, 2c, and 2d
@@ -645,7 +645,7 @@ function(
 
 			options(error=recover)
 			options(warn=2)
-			number.cores <- detectCores(logical=FALSE)
+			if (.Platform$OS.type == "unix") number.cores <- detectCores(logical=TRUE) else number.cores <- detectCores(logical=FALSE)
 			Demonstration_SGP <- NULL
 			tmp.messages <- ("\t##### Results of testSGP test number 3 #####\n\n")
 			sgpData_LONG <- SGPdata::sgpData_LONG
@@ -860,7 +860,7 @@ function(
 
 
 			options(error=recover) # Don't use options(warn=2) - get warnings about knots and bounds from BASELINE SIMEX
-			number.cores <- detectCores(logical=FALSE)
+			if (.Platform$OS.type == "unix") number.cores <- detectCores(logical=TRUE) else number.cores <- detectCores(logical=FALSE)
 			Demonstration_SGP <- NULL
 			tmp.messages <- ("##### Results of testSGP test number 4 #####\n\n")
 
@@ -991,7 +991,7 @@ function(
 
 			options(error=recover)
 			options(warn=2)
-			number.cores <- detectCores(logical=FALSE)
+			if (.Platform$OS.type == "unix") number.cores <- detectCores(logical=TRUE) else number.cores <- detectCores(logical=FALSE)
 			Demonstration_SGP <- ACHIEVEMENT_LEVEL <- HIGH_NEED_STATUS <- NULL
 			tmp.messages <- ("##### Results of testSGP test number 5 #####\n\n")
 			if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
@@ -1381,7 +1381,7 @@ function(
 
 			options(error=recover)
 			options(warn=2)
-			number.cores <- detectCores(logical=FALSE)
+			if (.Platform$OS.type == "unix") number.cores <- detectCores(logical=TRUE) else number.cores <- detectCores(logical=FALSE)
 			if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
 			Demonstration_SGP <- tmp.messages <- NULL
 
@@ -1432,7 +1432,7 @@ function(
 			eval(parse(text="require(RLImatrices)"))
 			options(error=recover)
 			options(warn=2)
-			number.cores <- detectCores(logical=FALSE)
+			if (.Platform$OS.type == "unix") number.cores <- detectCores(logical=TRUE) else number.cores <- detectCores(logical=FALSE)
 
 			if (is.null(test.option[['parallel.config']])) {
 				if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
