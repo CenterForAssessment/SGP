@@ -4,6 +4,7 @@ sudo: required
 
 r_github_packages:
 - centerforassessment/SGPdata
+- Rdatatable/data.table
 
 notifications:
   webhooks:
