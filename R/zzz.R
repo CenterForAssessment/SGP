@@ -1,12 +1,12 @@
 `.onLoad` <-
 function(libname, pkgname) {
-	invisible(setthreads(1))
+	if (packageVersion('data.table') >= '1.9.7') eval(parse(text="invisible(setthreads(1))"))
 }
 
 
 `.onAttach` <-
 function(libname, pkgname) {
 	if (interactive()) {
-		packageStartupMessage(magenta$bold('SGP',paste(paste(unlist(strsplit(as.character(packageVersion("SGP")), "[.]")), c(".", "-", ".", ""), sep=""), collapse=""),' (5-26-2016).  For help: >help("SGP") or visit https://github.com/CenterForAssessment/SGP/wiki'))
+		packageStartupMessage(magenta$bold('SGP',paste(paste(unlist(strsplit(as.character(packageVersion("SGP")), "[.]")), c(".", "-", ".", ""), sep=""), collapse=""),' (5-27-2016).  For help: >help("SGP") or visit https://github.com/CenterForAssessment/SGP/wiki'))
 	}
 }
