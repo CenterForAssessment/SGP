@@ -179,8 +179,7 @@ function(
 			options(warn=2)
 			Demonstration_SGP <- NULL
 			tmp.messages <- ("##### Results of testSGP test number 1 #####\n\n")
-			number.cores <- 18
-#			if (.Platform$OS.type == "unix") number.cores <- detectCores(logical=TRUE) else number.cores <- detectCores(logical=FALSE)
+			if (.Platform$OS.type == "unix") number.cores <- detectCores(logical=TRUE) else number.cores <- detectCores(logical=FALSE)
 
 			if (is.null(test.option[['parallel.config']])) {
 				if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
