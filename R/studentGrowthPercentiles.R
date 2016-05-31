@@ -1297,7 +1297,6 @@ function(panel.data,         ## REQUIRED
 			coefficient.matrix.priors <- seq(num.prior)
 		}
 		for (k in coefficient.matrix.priors) {
-			if (is.null(Coefficient_Matrices[[tmp.path.coefficient.matrices]])) {Coefficient_Matrices <- list(list()); names(Coefficient_Matrices) <- tmp.path.coefficient.matrices}
 			Coefficient_Matrices[[tmp.path.coefficient.matrices]][['TMP_NAME']] <- .create.coefficient.matrices(ss.data, k, by.grade, max.n.for.coefficient.matrices)
 			if (identical(Coefficient_Matrices[[tmp.path.coefficient.matrices]][['TMP_NAME']], "Insufficient N")) {
 				tmp.messages <- c(tmp.messages, paste("\t\tNOTE: Some grade progressions contain fewer than the minimum cohort size.",
