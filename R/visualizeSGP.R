@@ -878,8 +878,8 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			setkeyv(sgPlot.data, c("CONTENT_AREA", tmp.grade.name))
 			if ("SCALE_SCORE_ACTUAL" %in% names(sgp_object@Data)) {
 				tmp.lookup <- rbindlist(list(
-					sgp_object@Data[YEAR==tmp.last.year, max(SCALE_SCORE_ACTUAL, na.rm=TRUE), by=list(CONTENT_AREA, GRADE, SCALE_SCORE)],
-					sgp_object@Data[YEAR==tmp.last.year, min(SCALE_SCORE_ACTUAL, na.rm=TRUE), by=list(CONTENT_AREA, GRADE)]), fill=TRUE)
+					sgp_object@Data[!is.na(SCALE_SCORE_ACTUAL)][YEAR==tmp.last.year, max(SCALE_SCORE_ACTUAL, na.rm=TRUE), by=list(CONTENT_AREA, GRADE, SCALE_SCORE)],
+					sgp_object@Data[!is.na(SCALE_SCORE_ACTUAL)][YEAR==tmp.last.year, min(SCALE_SCORE_ACTUAL, na.rm=TRUE), by=list(CONTENT_AREA, GRADE)]), fill=TRUE)
 				setnames(tmp.lookup, "V1", "SCALE_SCORE_ACTUAL")
 				setkey(tmp.lookup, CONTENT_AREA, GRADE, SCALE_SCORE, SCALE_SCORE_ACTUAL)
 				for (i in unique(tmp.lookup$CONTENT_AREA)) {
@@ -912,7 +912,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 							by=list(CONTENT_AREA, TEMP_GRADE)]
 
 						if ("SCALE_SCORE_ACTUAL" %in% names(sgp_object@Data)) {
-							sgPlot.data[, TEMP_SCORE := get.actual.scores(TEMP_SCORE,
+							sgPlot.data[!is.na(TEMP_SCORE)][, TEMP_SCORE := get.actual.scores(TEMP_SCORE,
 								get.next.content_area(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment),
 								get.next.grade(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment)), by=list(CONTENT_AREA, TEMP_GRADE)]
 						}
@@ -926,8 +926,8 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 
 			if ("SCALE_SCORE_ACTUAL" %in% names(sgp_object@Data)) {
 				tmp.lookup <- rbindlist(list(
-						sgp_object@Data[YEAR==tmp.last.year, max(SCALE_SCORE_ACTUAL, na.rm=TRUE), by=list(CONTENT_AREA, GRADE, SCALE_SCORE)],
-						sgp_object@Data[YEAR==tmp.last.year, min(SCALE_SCORE_ACTUAL, na.rm=TRUE), by=list(CONTENT_AREA, GRADE)]), fill=TRUE)
+						sgp_object@Data[!is.na(SCALE_SCORE_ACTUAL)][YEAR==tmp.last.year, max(SCALE_SCORE_ACTUAL, na.rm=TRUE), by=list(CONTENT_AREA, GRADE, SCALE_SCORE)],
+						sgp_object@Data[!is.na(SCALE_SCORE_ACTUAL)][YEAR==tmp.last.year, min(SCALE_SCORE_ACTUAL, na.rm=TRUE), by=list(CONTENT_AREA, GRADE)]), fill=TRUE)
 				setnames(tmp.lookup, "V1", "SCALE_SCORE_ACTUAL")
 				setkey(tmp.lookup, CONTENT_AREA, GRADE, SCALE_SCORE, SCALE_SCORE_ACTUAL)
 
