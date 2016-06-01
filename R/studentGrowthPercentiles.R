@@ -542,9 +542,8 @@ function(panel.data,         ## REQUIRED
 				    tmp.dbname <- tempfile(fileext = ".sqlite")
 				    con <- dbConnect(SQLite(), dbname = tmp.dbname)
 				    dbWriteTable(con, name = "simex_data", value=big.data, overwrite=TRUE, row.names=0)
-				    # if (.Platform$OS.type != "unix") dbSendQuery(dbConnect(SQLite(), dbname = tmp.dbname), "PRAGMA journal_mode=WAL;")
-				    dbClearResult(dbSendQuery(con, "PRAGMA journal_mode=WAL;"))
 				    dbDisconnect(con)
+				    dbClearResult(dbSendQuery(dbConnect(SQLite(), dbname = tmp.dbname), "PRAGMA journal_mode=WAL;"))
 				    rm(big.data)
 				}
 
@@ -654,8 +653,8 @@ function(panel.data,         ## REQUIRED
                     }
 					stopParallel(tmp.par.config, par.start)
 				}
+	            unlink(tmp.dbname)
 			} ### END for (L in lambda[-1])
-            unlink(tmp.dbname)
 			if (verbose) messageSGP(c("\t\t", rev(content_area.progression)[1], " Grade ", rev(tmp.gp)[1], " Order ", k, " Simulation process complete ", prettyDate()))
 
 			if (calculate.simex.sgps) {
