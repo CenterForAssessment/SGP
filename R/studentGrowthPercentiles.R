@@ -543,7 +543,7 @@ function(panel.data,         ## REQUIRED
 				    con <- dbConnect(SQLite(), dbname = tmp.dbname)
 				    dbWriteTable(con, name = "simex_data", value=big.data, overwrite=TRUE, row.names=0)
 				    dbDisconnect(con)
-				    dbClearResult(dbSendQuery(dbConnect(SQLite(), dbname = tmp.dbname), "PRAGMA journal_mode=WAL;"))
+				    if (.Platform$OS.type != "unix") dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname), "PRAGMA journal_mode=WAL;")
 				    rm(big.data)
 				}
 
