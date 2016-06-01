@@ -339,6 +339,17 @@ function(panel.data,         ## REQUIRED
 			if (is.null(parallel.config[["WORKERS"]][["SIMEX"]])) tmp.par.config <- NULL else tmp.par.config <- parallel.config
 		} else tmp.par.config <- NULL
 
+		getSQLData <- function(dbase, z) {
+			con <- dbConnect(SQLite(), dbname = dbase, synchronous="normal")
+			wait <- z*1000
+		    dbGetQuery(con, paste("PRAGMA busy_timeout=", wait, ";", sep=""))
+		    dbGetQuery(con, "PRAGMA main.locking_mode=EXCLUSIVE;")
+		    if (.Platform$OS.type != "unix") dbGetQuery(con, "PRAGMA journal_mode=WAL;")
+			tmp.data <- dbGetQuery(con, paste("select * from simex_data where b in ('", z, "')", sep=""))
+			dbDisconnect(con)
+			return(tmp.data)
+		}
+
 		rq.sgp <- function(...) { # Function needs to be nested within the simex.sgp function to avoid data copying with SNOW
 			if (rq.method == "br") {
 				tmp.res <- rq(method="br", ...)[['coefficients']]
@@ -541,9 +552,10 @@ function(panel.data,         ## REQUIRED
 				    if (!exists('year.progression.for.norm.group')) year.progression.for.norm.group <- year.progression # Needed during Baseline Matrix construction
 				    tmp.dbname <- tempfile(fileext = ".sqlite")
 				    con <- dbConnect(SQLite(), dbname = tmp.dbname)
-				    dbWriteTable(con, name = "simex_data", value=big.data, overwrite=TRUE, row.names=0)
+				    dbWriteTable(con, name = "simex_data", value=big.data, overwrite=TRUE)
+				    dbGetQuery(con, "PRAGMA main.locking_mode=EXCLUSIVE;")
+				    if (.Platform$OS.type != "unix") dbGetQuery(con, "PRAGMA journal_mode=WAL;")
 				    dbDisconnect(con)
-				    if (.Platform$OS.type != "unix") dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname), "PRAGMA journal_mode=WAL;")
 				    rm(big.data)
 				}
 
@@ -590,7 +602,6 @@ function(panel.data,         ## REQUIRED
 						}
 					}
 				} else {	# Parallel over sim.iters
-
 					###  Always use FOREACH for coefficient matrix production -- need %dorng% to guarantee reproducibility across plateforms (also MUCH more efficient with SNOW/Windows).
 					if (toupper(tmp.par.config[["BACKEND"]]) != "FOREACH") tmp.par.config[["BACKEND"]] <- "FOREACH"; tmp.par.config[["TYPE"]] <- "doParallel"
 
@@ -607,16 +618,16 @@ function(panel.data,         ## REQUIRED
 									foreach(z=iter(sim.iters), .packages=c("quantreg", "data.table"),
 										.export=c("Knots_Boundaries", "rq.method", "taus", "content_area.progression", "tmp.slot.gp", "year.progression", "year_lags.progression", "SGPt", "rq.sgp"),
 										.options.mpi=par.start$foreach.options, .options.multicore=par.start$foreach.options, .options.snow=par.start$foreach.options) %dopar% {
-											rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(shared.cache = TRUE), dbname = tmp.dbname),
-												paste("select * from simex_data where b in ('", z, "')", sep="")))
+											rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=getSQLData(tmp.dbname, z))
+											# rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(shared.cache = TRUE), dbname = tmp.dbname),
+											# 	paste("select * from simex_data where b in ('", z, "')", sep="")))
 									}
 							} else {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
 									foreach(z=iter(sim.iters), .packages=c("quantreg", "data.table"),
 										.export=c("Knots_Boundaries", "rq.method", "taus", "content_area.progression", "tmp.slot.gp", "year.progression", "year_lags.progression", "SGPt", "rq.sgp"),
 										.options.mpi=par.start$foreach.options, .options.multicore=par.start$foreach.options, .options.snow=par.start$foreach.options) %dorng% {
-											rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(shared.cache = TRUE), dbname = tmp.dbname),
-												paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq.int(dim(tmp.data)[1]), simex.sample.size),])
+											rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=getSQLData(tmp.dbname, z)[sample(seq.int(dim(tmp.data)[1]), simex.sample.size),])
 									}
 							}
 					} else {
@@ -629,12 +640,10 @@ function(panel.data,         ## REQUIRED
 						for (z in recalc.index) {
 							if (is.null(simex.sample.size) || dim(tmp.data)[1] <= simex.sample.size) {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]] <-
-									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(shared.cache = TRUE), dbname = tmp.dbname),
-										paste("select * from simex_data where b in ('", z, "')", sep="")))
+									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=getSQLData(tmp.dbname, z))
 							} else {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]] <-
-									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(shared.cache = TRUE), dbname = tmp.dbname),
-										paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq.int(dim(tmp.data)[1]), simex.sample.size),])
+									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=getSQLData(tmp.dbname, z)[sample(seq.int(dim(tmp.data)[1]), simex.sample.size),])
 							}
 						}
 					}
