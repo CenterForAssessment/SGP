@@ -535,14 +535,15 @@ function(panel.data,         ## REQUIRED
 				}
 				if (dependent.var.error) setnames(big.data, tmp.num.variables, "final_yr")
 
-				if (!is.null(tmp.par.config)) { # Sequential
+				if (!is.null(tmp.par.config)) { # Not Sequential
 				    ## Write big.data to disk and remove from memory
 				    dir.create("tmp_data", recursive=TRUE, showWarnings=FALSE)
 				    if (!exists('year.progression.for.norm.group')) year.progression.for.norm.group <- year.progression # Needed during Baseline Matrix construction
-				    tmp.dbname <- paste("tmp_data/", paste(tail(paste(year.progression.for.norm.group,
-					paste(content_area.progression, grade.progression, sep="_"), sep="_"), num.prior+1), collapse="-"), ".sqlite", sep="")
+				    tmp.dbname <- tempfile(fileext = ".sqlite")
 				    con <- dbConnect(SQLite(), dbname = tmp.dbname)
 				    dbWriteTable(con, name = "simex_data", value=big.data, overwrite=TRUE, row.names=0)
+				    # if (.Platform$OS.type != "unix") dbSendQuery(dbConnect(SQLite(), dbname = tmp.dbname), "PRAGMA journal_mode=WAL;")
+				    dbSendQuery(con, dbname = tmp.dbname), "PRAGMA journal_mode=WAL;")
 				    dbDisconnect(con)
 				    rm(big.data)
 				}
@@ -654,7 +655,7 @@ function(panel.data,         ## REQUIRED
 					stopParallel(tmp.par.config, par.start)
 				}
 			} ### END for (L in lambda[-1])
-            unlink("tmp_data", recursive=TRUE, force=TRUE)
+            unlink(tmp.dbname)
 			if (verbose) messageSGP(c("\t\t", rev(content_area.progression)[1], " Grade ", rev(tmp.gp)[1], " Order ", k, " Simulation process complete ", prettyDate()))
 
 			if (calculate.simex.sgps) {
