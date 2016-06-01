@@ -344,7 +344,7 @@ function(panel.data,         ## REQUIRED
 			wait <- z*1000
 		    dbGetQuery(con, paste("PRAGMA busy_timeout=", wait, ";", sep=""))
 		    dbGetQuery(con, "PRAGMA main.locking_mode=EXCLUSIVE;")
-		    if (.Platform$OS.type != "unix") dbGetQuery(con, "PRAGMA journal_mode=WAL;")
+		    # if (.Platform$OS.type != "unix") dbGetQuery(con, "PRAGMA journal_mode=WAL;")
 			tmp.data <- dbGetQuery(con, paste("select * from simex_data where b in ('", z, "')", sep=""))
 			dbDisconnect(con)
 			return(tmp.data)
@@ -554,7 +554,7 @@ function(panel.data,         ## REQUIRED
 				    con <- dbConnect(SQLite(), dbname = tmp.dbname)
 				    dbWriteTable(con, name = "simex_data", value=big.data, overwrite=TRUE)
 				    dbGetQuery(con, "PRAGMA main.locking_mode=EXCLUSIVE;")
-				    if (.Platform$OS.type != "unix") dbGetQuery(con, "PRAGMA journal_mode=WAL;")
+				    # if (.Platform$OS.type != "unix") dbGetQuery(con, "PRAGMA journal_mode=WAL;")
 				    dbDisconnect(con)
 				    rm(big.data)
 				}
