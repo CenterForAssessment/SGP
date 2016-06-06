@@ -339,13 +339,17 @@ function(panel.data,         ## REQUIRED
 			if (is.null(parallel.config[["WORKERS"]][["SIMEX"]])) tmp.par.config <- NULL else tmp.par.config <- parallel.config
 		} else tmp.par.config <- NULL
 
-		getSQLData <- function(dbase, z) {
+		getSQLData <- function(dbase, z, k=NULL, predictions=FALSE) {
 			con <- dbConnect(SQLite(), dbname = dbase, synchronous="normal")
 			wait <- z*1000
 		    dbGetQuery(con, paste("PRAGMA busy_timeout=", wait, ";", sep=""))
 		    dbGetQuery(con, "PRAGMA main.locking_mode=EXCLUSIVE;")
 		    # if (.Platform$OS.type != "unix") dbGetQuery(con, "PRAGMA journal_mode=WAL;")
-			tmp.data <- dbGetQuery(con, paste("select * from simex_data where b in ('", z, "')", sep=""))
+			if (predictions) {
+				tmp.data <- dbGetQuery(con, paste("select ", paste(c("ID", paste('prior_', k:1, sep=""), "final_yr"), collapse=", "), " from simex_data where b in ('",z,"')", sep=""))
+			} else {
+				tmp.data <- dbGetQuery(con, paste("select * from simex_data where b in ('", z, "')", sep=""))
+			}
 			dbDisconnect(con)
 			return(tmp.data)
 		}
@@ -656,7 +660,7 @@ function(panel.data,         ## REQUIRED
 							fitted[[paste("order_", k, sep="")]][which(lambda==L),] <-
 								foreach(z=iter(sim.iters), .combine="+", .export=c('tmp.gp', 'taus', 'sgp.loss.hoss.adjustment', 'isotonize', 'SGPt'),
 									.options.multicore=par.start$foreach.options) %dopar% { # .options.snow=par.start$foreach.options
-										as.vector(.get.percentile.predictions(my.matrix=mtx.subset[[z]], my.data=getSQLData(tmp.dbname, z))/B)
+										as.vector(.get.percentile.predictions(my.matrix=mtx.subset[[z]], my.data=getSQLData(tmp.dbname, z, k, predictions=TRUE))/B)
 								}
                     }
 					stopParallel(tmp.par.config, par.start)
