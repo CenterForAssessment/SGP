@@ -18,6 +18,8 @@ function(sgp_object,
          sgp.minimum.default.panel.years=NULL,
          sgp.use.my.coefficient.matrices=NULL,
          sgp.use.my.sgp_object.baseline.coefficient.matrices=NULL,
+         sgp.test.cohort.size=NULL,
+         return.sgp.test.results=FALSE,
          simulate.sgps=TRUE,
          calculate.simex=NULL,
          calculate.simex.baseline=NULL,
@@ -783,6 +785,7 @@ function(sgp_object,
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 						sgp.cohort.size=tmp.cohort.size,
+						sgp.test.cohort.size=sgp.test.cohort.size,
 						return.norm.group.scale.scores=return.norm.group.scale.scores,
 						return.norm.group.dates=return.norm.group.dates,
 						return.prior.scale.score.standardized=return.prior.scale.score.standardized,
@@ -828,6 +831,7 @@ function(sgp_object,
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 						sgp.cohort.size=tmp.cohort.size,
+						sgp.test.cohort.size=sgp.test.cohort.size,
 						return.norm.group.scale.scores=return.norm.group.scale.scores,
 						return.norm.group.dates=return.norm.group.dates,
 						return.prior.scale.score.standardized=return.prior.scale.score.standardized,
@@ -874,6 +878,7 @@ function(sgp_object,
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 						sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 						sgp.cohort.size=tmp.cohort.size,
+						sgp.test.cohort.size=sgp.test.cohort.size,
 						return.norm.group.scale.scores=return.norm.group.scale.scores,
 						return.norm.group.dates=return.norm.group.dates,
 						return.prior.scale.score.standardized=return.prior.scale.score.standardized,
@@ -897,6 +902,22 @@ function(sgp_object,
 			} # #END not FOREACH
 			stopParallel(parallel.config, par.start)
 		} #END if (sgp.percentiles)
+
+		if (!is.null(sgp.test.cohort.size) & (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline | 
+			sgp.projections | sgp.projections.lagged | sgp.percentiles.equated)) {
+			test.ids <- unique(rbindlist(tmp_sgp_object[["SGPercentiles"]])[["ID"]])
+			if (is(tmp_sgp_data_for_analysis, "DBIObject")) {
+				tmp_sgp_data_for_analysis <- data.table(dbGetQuery(dbConnect(SQLite(), dbname = "Data/tmp_data/TMP_SGP_Data.sqlite"),
+						paste("select * from sgp_data where ID in ('", paste(test.ids, collapse="', '"), "')", sep="")))
+				if ("YEAR_WITHIN" %in% sgp.data.names) {
+					setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE, YEAR_WITHIN)
+				} else {
+					setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE)
+				}
+			} else {
+				tmp_sgp_data_for_analysis <- tmp_sgp_data_for_analysis[ID %in% test.ids]
+			}
+		}
 
 
 	##################################
@@ -1815,6 +1836,7 @@ function(sgp_object,
 					exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
 					sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
 					sgp.cohort.size=tmp.cohort.size,
+					sgp.test.cohort.size=sgp.test.cohort.size,
 					return.norm.group.scale.scores=return.norm.group.scale.scores,
 					return.norm.group.dates=return.norm.group.dates,
 					return.prior.scale.score.standardized=return.prior.scale.score.standardized,
@@ -1831,6 +1853,21 @@ function(sgp_object,
 			}
 		} ## END if sgp.percentiles
 
+		if (!is.null(sgp.test.cohort.size) & (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline | 
+			sgp.projections | sgp.projections.lagged | sgp.percentiles.equated)) {
+			test.ids <- unique(rbindlist(tmp_sgp_object[["SGPercentiles"]])[["ID"]])
+			if (is(tmp_sgp_data_for_analysis, "DBIObject")) {
+				tmp_sgp_data_for_analysis <- data.table(dbGetQuery(dbConnect(SQLite(), dbname = "Data/tmp_data/TMP_SGP_Data.sqlite"),
+						paste("select * from sgp_data where ID in ('", paste(test.ids, collapse="', '"), "')", sep="")))
+				if ("YEAR_WITHIN" %in% sgp.data.names) {
+					setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE, YEAR_WITHIN)
+				} else {
+					setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE)
+				}
+			} else {
+				tmp_sgp_data_for_analysis <- tmp_sgp_data_for_analysis[ID %in% test.ids]
+			}
+		}
 
 		### sgp.percentiles.equated
 
@@ -2108,6 +2145,11 @@ function(sgp_object,
 
 
 	if (!keep.sqlite & sgp.sqlite) {if (del.dir) unlink("Data/tmp_data", recursive=TRUE, force=TRUE) else unlink("Data/tmp_data/TMP_SGP_Data.sqlite", recursive=TRUE)}
+	if (!return.sgp.test.results) {
+		messageSGP(paste("Finished analyzeSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
+		return(sgp_object)
+	}
+
 	sgp_object@SGP <- mergeSGP(tmp_sgp_object, sgp_object@SGP)
 
 	if (goodness.of.fit.print) gof.print(sgp_object)

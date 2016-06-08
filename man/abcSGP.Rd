@@ -27,6 +27,8 @@ abcSGP(sgp_object,
 	sgp.minimum.default.panel.years=NULL,
 	sgp.target.scale.scores=FALSE,
 	sgp.target.scale.scores.only=FALSE,
+	sgp.test.cohort.size=NULL,
+	return.sgp.test.results=FALSE,
 	simulate.sgps=TRUE,
 	calculate.simex=NULL,
 	calculate.simex.baseline=NULL,
@@ -98,6 +100,11 @@ If missing the function will use the data to infer all the grade progressions fo
   }
   \item{sgp.target.scale.scores.only}{Boolean variable passed to \code{\link{combineSGP}} indicating whether ONLY target scale scores associated with SGP_TARGETs should be calculated as
   part of the \code{\link{combineSGP}} run. Defaults to FALSE.
+  }
+  \item{sgp.test.cohort.size}{Integer indicating the maximum number of students sampled from the full cohort to use in the calculation of student growth percentiles.  Intended to be used 
+  as a test of the desired analyses to be run. The default, NULL, uses no restrictions (no tests are performed, and analyses use the entire cohort of students).
+  }	
+  \item{return.sgp.test.results}{Boolean variable passed to \code{\link{analyzeSGP}} and \code{\link{studentGrowthPercentiles}} indicating whether the results from the cohort sample subset (if specified using the above argument) should be returned for inspection. Defaults to FALSE.
   }
   \item{simulate.sgps}{Boolean variable indicating whether to simulate SGP values for students based on test-specific Conditional Standard Errors of Measurement (CSEM).
   Test CSEM data must be available for simulation.  Must be set to TRUE for confidence interval construction. Defaults to TRUE in \code{abcSGP} only.

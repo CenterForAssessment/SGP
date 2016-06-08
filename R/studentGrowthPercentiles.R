@@ -30,6 +30,7 @@ function(panel.data,         ## REQUIRED
          sgp.quantiles.labels=NULL,
          sgp.loss.hoss.adjustment=NULL,
          sgp.cohort.size=NULL,
+         sgp.test.cohort.size=NULL,
          percuts.digits=0,
          isotonize=TRUE,
          convert.using.loss.hoss=TRUE,
@@ -1188,7 +1189,12 @@ function(panel.data,         ## REQUIRED
 	if (is.factor(ss.data[[1]])) ss.data[[1]] <- as.character(ss.data[[1]])
 	if (exact.grade.progression.sequence) tmp.num.prior <- num.prior else tmp.num.prior <- 1
 
-	max.cohort.size <- dim(.get.panel.data(ss.data, tmp.num.prior, by.grade))[1]
+	if (!is.null(sgp.test.cohort.size)) {
+		cohort.ids <- .get.panel.data(ss.data, num.prior, by.grade)[[1]]
+		max.cohort.size <- min(length(cohort.ids), as.numeric(sgp.test.cohort.size))
+		ss.data <- ss.data[ss.data[[1]] %in% sample(cohort.ids, max.cohort.size)]
+	} else max.cohort.size <- dim(.get.panel.data(ss.data, tmp.num.prior, by.grade))[1]
+
 	if (max.cohort.size == 0) {
 		tmp.messages <- "\t\tNOTE: Supplied data together with grade progression contains no data. Check data, function arguments and see help page for details.\n"
 		messageSGP(paste("\tStarted studentGrowthPercentiles", started.date))
@@ -1470,12 +1476,14 @@ function(panel.data,         ## REQUIRED
 			}
 		}
 
-		quantile.data[,SCALE_SCORE_PRIOR:=prior.ss]
+		if (is.null(sgp.test.cohort.size)) {
+			quantile.data[,SCALE_SCORE_PRIOR:=prior.ss]
 
-		if (return.prior.scale.score.standardized) {
-			SCALE_SCORE_PRIOR_STANDARDIZED <- NULL
-			quantile.data[,SCALE_SCORE_PRIOR_STANDARDIZED:=round(as.numeric(scale(prior.ss)), digits=3)]
-		}
+			if (return.prior.scale.score.standardized) {
+				SCALE_SCORE_PRIOR_STANDARDIZED <- NULL
+				quantile.data[,SCALE_SCORE_PRIOR_STANDARDIZED:=round(as.numeric(scale(prior.ss)), digits=3)]
+			}
+		} else if ((is.character(goodness.of.fit) | goodness.of.fit==TRUE)) goodness.of.fit <- FALSE
 
 		if (tf.growth.levels) {
 			SGP_LEVEL <- NULL
@@ -1669,14 +1677,10 @@ function(panel.data,         ## REQUIRED
 	### Start/Finish Message & Return SGP Object
 
 	if (print.time.taken) {
+		if (calculate.sgps) cohort.n <- format(dim(quantile.data)[1], big.mark=",") else cohort.n <- format(max.cohort.size, big.mark=",")
 		messageSGP(paste("\tStarted studentGrowthPercentiles:", started.date))
-		if (calculate.sgps) {
 			messageSGP(paste("\t\tContent Area: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ",
-				paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label, " (N=", format(dim(quantile.data)[1], big.mark=","), ")", sep=""))
-		} else {
-			messageSGP(paste("\t\tContent Area: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ",
-				paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label, " (N=", format(max.cohort.size, big.mark=","), ")", sep=""))
-		}
+				paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label, " (N=", cohort.n, ")", sep=""))
 		if (verbose.output) messageSGP(Verbose_Messages)
 		messageSGP(c(tmp.messages, "\tFinished studentGrowthPercentiles: ", prettyDate(), " in ", convertTime(timetaken(started.at)), "\n"))
 	}
