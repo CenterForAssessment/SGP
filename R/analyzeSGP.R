@@ -901,23 +901,21 @@ function(sgp_object,
 				} # End MULTICORE
 			} # #END not FOREACH
 			stopParallel(parallel.config, par.start)
-		} #END if (sgp.percentiles)
-
-		if (!is.null(sgp.test.cohort.size) & (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline | 
-			sgp.projections | sgp.projections.lagged | sgp.percentiles.equated)) {
-			test.ids <- unique(rbindlist(tmp_sgp_object[["SGPercentiles"]])[["ID"]])
-			if (is(tmp_sgp_data_for_analysis, "DBIObject")) {
-				tmp_sgp_data_for_analysis <- data.table(dbGetQuery(dbConnect(SQLite(), dbname = "Data/tmp_data/TMP_SGP_Data.sqlite"),
-						paste("select * from sgp_data where ID in ('", paste(test.ids, collapse="', '"), "')", sep="")))
-				if ("YEAR_WITHIN" %in% sgp.data.names) {
-					setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE, YEAR_WITHIN)
+			if (!is.null(sgp.test.cohort.size)) {
+				test.ids <- unique(rbindlist(tmp_sgp_object[["SGPercentiles"]])[["ID"]])
+				if (is(tmp_sgp_data_for_analysis, "DBIObject")) {
+					tmp_sgp_data_for_analysis <- data.table(dbGetQuery(dbConnect(SQLite(), dbname = "Data/tmp_data/TMP_SGP_Data.sqlite"),
+							paste("select * from sgp_data where ID in ('", paste(test.ids, collapse="', '"), "')", sep="")))
+					if ("YEAR_WITHIN" %in% sgp.data.names) {
+						setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE, YEAR_WITHIN)
+					} else {
+						setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE)
+					}
 				} else {
-					setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE)
+					tmp_sgp_data_for_analysis <- tmp_sgp_data_for_analysis[ID %in% test.ids]
 				}
-			} else {
-				tmp_sgp_data_for_analysis <- tmp_sgp_data_for_analysis[ID %in% test.ids]
 			}
-		}
+		} #END if (sgp.percentiles)
 
 
 	##################################
@@ -1851,24 +1849,23 @@ function(sgp_object,
                     SGPt.max.time=SGPt.max.time,
 					...)
 			}
+			if (!is.null(sgp.test.cohort.size)) {
+				test.ids <- unique(rbindlist(tmp_sgp_object[["SGPercentiles"]])[["ID"]])
+				if (is(tmp_sgp_data_for_analysis, "DBIObject")) {
+					tmp_sgp_data_for_analysis <- data.table(dbGetQuery(dbConnect(SQLite(), dbname = "Data/tmp_data/TMP_SGP_Data.sqlite"),
+							paste("select * from sgp_data where ID in ('", paste(test.ids, collapse="', '"), "')", sep="")))
+					if ("YEAR_WITHIN" %in% sgp.data.names) {
+						setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE, YEAR_WITHIN)
+					} else {
+						setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE)
+					}
+				} else {
+					tmp_sgp_data_for_analysis <- tmp_sgp_data_for_analysis[ID %in% test.ids]
+				}
+			}
 		} ## END if sgp.percentiles
 
-		if (!is.null(sgp.test.cohort.size) & (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline | 
-			sgp.projections | sgp.projections.lagged | sgp.percentiles.equated)) {
-			test.ids <- unique(rbindlist(tmp_sgp_object[["SGPercentiles"]])[["ID"]])
-			if (is(tmp_sgp_data_for_analysis, "DBIObject")) {
-				tmp_sgp_data_for_analysis <- data.table(dbGetQuery(dbConnect(SQLite(), dbname = "Data/tmp_data/TMP_SGP_Data.sqlite"),
-						paste("select * from sgp_data where ID in ('", paste(test.ids, collapse="', '"), "')", sep="")))
-				if ("YEAR_WITHIN" %in% sgp.data.names) {
-					setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE, YEAR_WITHIN)
-				} else {
-					setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE)
-				}
-			} else {
-				tmp_sgp_data_for_analysis <- tmp_sgp_data_for_analysis[ID %in% test.ids]
-			}
-		}
-
+	
 		### sgp.percentiles.equated
 
 		if (sgp.percentiles.equated) {
@@ -2148,6 +2145,9 @@ function(sgp_object,
 	if (!return.sgp.test.results) {
 		messageSGP(paste("Finished analyzeSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 		return(sgp_object)
+	} else {
+		setkeyv(tmp_sgp_data_for_analysis, getKey(sgp_object@Data))
+		sgp_object@Data <- tmp_sgp_data_for_analysis
 	}
 
 	sgp_object@SGP <- mergeSGP(tmp_sgp_object, sgp_object@SGP)
