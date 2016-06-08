@@ -343,7 +343,7 @@ function(panel.data,         ## REQUIRED
 		getSQLData <- function(dbase, z, k=NULL, predictions=FALSE) {
 			if (predictions) {
 				if (.Platform$OS.type != "unix") {
-					tmp.data <- dbGetQuery(dbConnect(SQLite(), dbname = file.path(tempdir(), paste("simex_data_", z, ".sqlite", sep=""))),
+					tmp.data <- dbGetQuery(dbConnect(SQLite(), dbname = file.path(dbase, paste("simex_data_", z, ".sqlite", sep=""))),
 											paste("select ", paste(c("ID", paste('prior_', k:1, sep=""), "final_yr"), collapse=", "), " from tmp", sep=""))
 				} else {
 					tmp.data <- dbGetQuery(dbConnect(SQLite(), dbname = dbase), 
@@ -351,7 +351,7 @@ function(panel.data,         ## REQUIRED
 				}
 			} else {
 				if (.Platform$OS.type != "unix") {
-					tmp.data <- dbGetQuery(dbConnect(SQLite(), dbname = file.path(tempdir(), paste("simex_data_", z, ".sqlite", sep=""))), "select * from tmp")
+					tmp.data <- dbGetQuery(dbConnect(SQLite(), dbname = file.path(dbase, paste("simex_data_", z, ".sqlite", sep=""))), "select * from tmp")
 				} else {
 					tmp.data <- dbGetQuery(dbConnect(SQLite(), dbname = dbase), paste("select * from simex_data where b in ('", z, "')", sep=""))
 				}
@@ -561,11 +561,14 @@ function(panel.data,         ## REQUIRED
 				if (!is.null(tmp.par.config)) { # Not Sequential
 				    ## Write big.data to disk and remove from memory
 				    if (!exists('year.progression.for.norm.group')) year.progression.for.norm.group <- year.progression # Needed during Baseline Matrix construction
-				    tmp.dbname <- tempfile(fileext = ".sqlite")
 				    if (.Platform$OS.type != "unix") {
-				    	sapply(sim.iters, function(z) dbWriteTable(dbConnect(SQLite(), dbname = file.path(tempdir(), paste("simex_data_", z, ".sqlite", sep=""))), 
+				    	tmp.dbname <- tempdir()
+				    	sapply(sim.iters, function(z) dbWriteTable(dbConnect(SQLite(), dbname = file.path(tmp.dbname, paste("simex_data_", z, ".sqlite", sep=""))), 
 				    		name="tmp", value=big.data[b==z,], row.names=FALSE, overwrite=TRUE))
-				    } else dbWriteTable(dbConnect(SQLite(), dbname = tmp.dbname), name = "simex_data", value=big.data, overwrite=TRUE)
+				    } else {
+				    	tmp.dbname <- tempfile(fileext = ".sqlite")
+				    	dbWriteTable(dbConnect(SQLite(), dbname = tmp.dbname), name = "simex_data", value=big.data, overwrite=TRUE)
+				    }
 				    rm(big.data)
 				}
 
