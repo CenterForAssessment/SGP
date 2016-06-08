@@ -8,9 +8,9 @@ function(
 	YEAR <- GRADE <- NULL
 
 	if (missing(TEST_NUMBER)) {
-		message("\ttestSGP carries out testing of SGP package. Tests currently included in testSGP:\n")
-		message("\t\t1. abcSGP test using all available years.")
-		message("\t\t2. abcSGP test using all available years except most recent followed by an updated analysis using the most recent year's data.")
+		messageSGP("\ttestSGP carries out testing of SGP package. Tests currently included in testSGP:\n")
+		messageSGP("\t\t1. abcSGP test using all available years.")
+		messageSGP("\t\t2. abcSGP test using all available years except most recent followed by an updated analysis using the most recent year's data.")
 	}
 
 	sgpData.years <- sort(unique(SGPdata::sgpData_LONG$YEAR))

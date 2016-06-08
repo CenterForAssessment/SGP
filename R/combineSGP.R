@@ -21,7 +21,7 @@ function(
 	parallel.config=NULL) {
 
 	started.at <- proc.time()
-	message(paste("Started combineSGP", prettyDate()))
+	messageSGP(paste("Started combineSGP", prettyDate()))
 
 	ID <- CONTENT_AREA <- YEAR <- GRADE <- YEAR_INTEGER_TMP <- ACHIEVEMENT_LEVEL <- CATCH_UP_KEEP_UP_STATUS_INITIAL <- MOVE_UP_STAY_UP_STATUS_INITIAL <- VALID_CASE <- NULL
 	MOVE_UP_STAY_UP_STATUS <- CATCH_UP_KEEP_UP_STATUS <- ACHIEVEMENT_LEVEL_PRIOR <- target.type <- SGP_PROJECTION_GROUP <- NULL
@@ -84,7 +84,7 @@ function(
 		}
 	} else {
 		if (sgp.percentiles.equated) {
-			message("\tNOTE: 'sgp.percentiles.equated' has been set to TRUE but no meta-data exists in SGPstateData associated with the assessment transition. Equated/linked SGP analyses require meta-data embedded in 'SGPstateData' to correctly work. Contact package administrators on how such data can be added to the package.")
+			messageSGP("\tNOTE: 'sgp.percentiles.equated' has been set to TRUE but no meta-data exists in SGPstateData associated with the assessment transition. Equated/linked SGP analyses require meta-data embedded in 'SGPstateData' to correctly work. Contact package administrators on how such data can be added to the package.")
 			sgp.percentiles.equated <- FALSE
 			sgp.target.scale.scores <- FALSE
 		}
@@ -464,7 +464,7 @@ function(
 	setkeyv(slot.data, getKey(slot.data))
 	sgp_object@Data <- slot.data
 
-	message(c(tmp.messages, paste("Finished combineSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"), sep=""))
+	messageSGP(c(tmp.messages, paste("Finished combineSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"), sep=""))
 
 	return(sgp_object)
 } ## END combineSGP Function

@@ -132,8 +132,8 @@ function(data,
 
 		setkeyv(data@Data, getKey(data))
 		if (is.null(fix.duplicates) && any(duplicated(data@Data["VALID_CASE"]))) {
-			message(paste("\tWARNING: @Data keyed by", paste(getKey(data), collapse=", "), "has duplicate cases. Subsequent joins/merges will likely be corrupt."))
-			message("\tNOTE: Duplicate cases are available in current workspace as 'DUPLICATED_CASES' and saved as 'DUPLICATED_CASES.Rdata'.")
+			messageSGP(paste("\tWARNING: @Data keyed by", paste(getKey(data), collapse=", "), "has duplicate cases. Subsequent joins/merges will likely be corrupt."))
+			messageSGP("\tNOTE: Duplicate cases are available in current workspace as 'DUPLICATED_CASES' and saved as 'DUPLICATED_CASES.Rdata'.")
 			assign("DUPLICATED_CASES",
 				data@Data["VALID_CASE"][unique(data@Data["VALID_CASE"][duplicated(data@Data["VALID_CASE"]), c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE])])
 			save(DUPLICATED_CASES, file="DUPLICATED_CASES.Rdata")
@@ -145,7 +145,7 @@ function(data,
 			SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]] <- createKnotsBoundaries(data@Data)
 			assign(paste(state, "Knots_Boundaries", sep="_"), SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]])
 			save(list=paste(state, "Knots_Boundaries", sep="_"), file=paste(state, "Knots_Boundaries.Rdata", sep="_"))
-			message(paste("\tNOTE: Knots and Boundaries do not exist for state provided.\n\tThey have been produced and are available using state=", state, " for subsequent analyses and saved to your working directory '", getwd(), "'.", sep=""))
+			messageSGP(paste("\tNOTE: Knots and Boundaries do not exist for state provided.\n\tThey have been produced and are available using state=", state, " for subsequent analyses and saved to your working directory '", getwd(), "'.", sep=""))
 		}
 
 		## Create FIRST_OBESRVATION, LAST_OBSERVATION if YEAR_WITHIN exists
@@ -176,8 +176,8 @@ function(data,
 		setnames(data, which(!is.na(variable.names$names.sgp)), variable.names$names.sgp[!is.na(variable.names$names.sgp)])
 		setkeyv(data, getKey(data))
 		if (is.null(fix.duplicates) && any(duplicated(data["VALID_CASE"]))) {
-			message(paste("\tWARNING: Data keyed by", paste(getKey(data), collapse=", "), "has duplicate cases. Subsequent joins/merges will be corrupted."))
-			message("\tNOTE: Duplicate cases are available in current workspace as 'DUPLICATED_CASES' and saved as 'DUPLICATED_CASES.Rdata'.")
+			messageSGP(paste("\tWARNING: Data keyed by", paste(getKey(data), collapse=", "), "has duplicate cases. Subsequent joins/merges will be corrupted."))
+			messageSGP("\tNOTE: Duplicate cases are available in current workspace as 'DUPLICATED_CASES' and saved as 'DUPLICATED_CASES.Rdata'.")
 			assign("DUPLICATED_CASES", data["VALID_CASE"][unique(data["VALID_CASE"][duplicated(data["VALID_CASE"]), c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE])])
 			save(DUPLICATED_CASES, file="DUPLICATED_CASES.Rdata")
 		}
@@ -189,7 +189,7 @@ function(data,
 			assign(paste(state, "Knots_Boundaries", sep="_"), SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]])
 			save(list=paste(state, "Knots_Boundaries", sep="_"), file=paste(state, "Knots_Boundaries.Rdata", sep="_"))
 			save(SGPstateData, file="SGPstateData.Rdata")
-			message(paste("\tNOTE: Knots and Boundaries do not exist for state provided.\n\tThey have been produced and are available using state=", state, " for subsequent analyses and saved to your working directory '", getwd(), "'.", sep=""))
+			messageSGP(paste("\tNOTE: Knots and Boundaries do not exist for state provided.\n\tThey have been produced and are available using state=", state, " for subsequent analyses and saved to your working directory '", getwd(), "'.", sep=""))
 		}
 
 		## Create FIRST_OBESRVATION, LAST_OBSERVATION if YEAR_WITHIN exists
@@ -225,7 +225,7 @@ function(data,
 			(!is.null(SGPstateData[[state]][["Achievement"]][["Cutscores"]]) | !is.null(SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]]))) {
 		sgp_object@Data <- getAchievementLevel(sgp_object@Data, state=state)
 		setkeyv(sgp_object@Data, getKey(sgp_object))
-		message(paste("\tNOTE: Added variable ACHIEVEMENT_LEVEL to @Data using", state, "cutscores embedded in SGPstateData."))
+		messageSGP(paste("\tNOTE: Added variable ACHIEVEMENT_LEVEL to @Data using", state, "cutscores embedded in SGPstateData."))
 	}
 
 	if (create.additional.variables) {
@@ -246,7 +246,7 @@ function(data,
 				sgp_object@Data[[tmp.enrollment_status.variables[i]]] <-
 					factor(1, levels=0:1, labels=paste("Enrolled", capwords(tmp.enrollment_status.levels[i]), c(": No", ": Yes"), sep=""))
 				sgp_object@Data[[tmp.enrollment_status.variables[i]]][sgp_object@Data[['VALID_CASE']]!="VALID_CASE"] <- NA
-				message(paste("\tNOTE: Added variable", tmp.enrollment_status.variables[i], "to @Data."))
+				messageSGP(paste("\tNOTE: Added variable", tmp.enrollment_status.variables[i], "to @Data."))
 			}
 		}
 
@@ -256,15 +256,15 @@ function(data,
 		if (identical(toupper(fix.duplicates), "KEEP.ALL")) {
 			if (all(unique(DUPLICATED_CASES$YEAR) %in% (tmp.last.year <- tail(sort(unique(sgp_object@Data$YEAR)), 1)))) {
 				sgp_object@Data <- createUniqueLongData(sgp_object@Data)
-				message("\tNOTE: Duplicate cases in current year made UNIQUE. Modified IDs include suffix '_DUPS_***' in @Data.")
+				messageSGP("\tNOTE: Duplicate cases in current year made UNIQUE. Modified IDs include suffix '_DUPS_***' in @Data.")
 			} else {
-				message("\tNOTE: Duplicate case modification is only available when duplicates reside in last year of data. Duplicate cases are NOT fixed.")
+				messageSGP("\tNOTE: Duplicate case modification is only available when duplicates reside in last year of data. Duplicate cases are NOT fixed.")
 			}
 		} ### End KEEP.ALL
 	}
 
 	##  Print finish time
-	message(paste("Finished prepareSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
+	messageSGP(paste("Finished prepareSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 
 	return(sgp_object)
 } ## END prepareSGP function

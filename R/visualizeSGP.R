@@ -176,7 +176,7 @@ function(sgp_object,
 	if ("bubblePlot" %in% plot.types) {
 
 		started.at <- proc.time()
-		message(paste("Started bubblePlot in visualizeSGP", prettyDate(), "\n"))
+		messageSGP(paste("Started bubblePlot in visualizeSGP", prettyDate(), "\n"))
 
 		bubblePlot_Styles(sgp_object=sgp_object,
 			state=state,
@@ -198,7 +198,7 @@ function(sgp_object,
 			bPlot.format=bPlot.format,
 			bPlot.folder=bPlot.folder)
 
-		message(paste("Finished bubblePlot in visualizeSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
+		messageSGP(paste("Finished bubblePlot in visualizeSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 	} ## END bubblePlot %in% plot.types
 
 
@@ -209,7 +209,7 @@ function(sgp_object,
 	if ("growthAchievementPlot" %in% plot.types) {
 
 		started.at <- proc.time()
-		message(paste("Started growthAchievementPlot in visualizeSGP", prettyDate(), "\n"))
+		messageSGP(paste("Started growthAchievementPlot in visualizeSGP", prettyDate(), "\n"))
 
 		# gaPlot.baseline stuff
 
@@ -283,7 +283,7 @@ function(sgp_object,
 			}
 		}
 		stopParallel(parallel.config, par.start)
-		message(paste("Finished growthAchievementPlot in visualizeSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
+		messageSGP(paste("Finished growthAchievementPlot in visualizeSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 	} ## END if (growthAchievementPlot %in% plot.types)
 
 
@@ -294,7 +294,7 @@ function(sgp_object,
 if ("studentGrowthPlot" %in% plot.types) {
 
 	started.at <- proc.time()
-	message(paste("Started studentGrowthPlot in visualizeSGP", prettyDate(), "\n"))
+	messageSGP(paste("Started studentGrowthPlot in visualizeSGP", prettyDate(), "\n"))
 
 	#### Utility functions
 
@@ -384,11 +384,11 @@ if ("studentGrowthPlot" %in% plot.types) {
 			}
 		}
 		if (!is.null(sgPlot.sgp.targets) & !sgPlot.baseline && !all(sgPlot.sgp.targets %in% c("sgp.projections", "sgp.projections.lagged"))) {
-			message("\tNOTE: 'sgPlot.sgp.targets' must consist of 'sgp.projections' and/or 'sgp.projections.lagged'.")
+			messageSGP("\tNOTE: 'sgPlot.sgp.targets' must consist of 'sgp.projections' and/or 'sgp.projections.lagged'.")
 			sgPlot.sgp.targets <- NULL
 		}
 		if (!is.null(sgPlot.sgp.targets) & sgPlot.baseline && !all(sgPlot.sgp.targets %in% c("sgp.projections.baseline", "sgp.projections.lagged.baseline"))) {
-			message("\tNOTE: 'sgPlot.sgp.targets' must consist of 'sgp.projections.baseline' and/or 'sgp.projections.lagged.baseline'.")
+			messageSGP("\tNOTE: 'sgPlot.sgp.targets' must consist of 'sgp.projections.baseline' and/or 'sgp.projections.lagged.baseline'.")
 			sgPlot.sgp.targets <- NULL
 		}
 
@@ -411,7 +411,7 @@ if ("studentGrowthPlot" %in% plot.types) {
 		if (!is.null(my.sgp.targets)) sgPlot.sgp.targets.timeframe <- as.numeric(rev(unlist(strsplit(unlist(strsplit(my.sgp.targets[1], "_YEAR"))[1], "_")))[1])
 
 		if (sgPlot.demo.report & sgPlot.wide.data) {
-			message("\tNOTE: Demonstration report is not supported using wide data. Process will proceed with demonstration report production using long data.\n")
+			messageSGP("\tNOTE: Demonstration report is not supported using wide data. Process will proceed with demonstration report production using long data.\n")
 			sgPlot.demo.report <- FALSE
 		}
 
