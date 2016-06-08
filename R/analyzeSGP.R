@@ -2142,12 +2142,15 @@ function(sgp_object,
 
 
 	if (!keep.sqlite & sgp.sqlite) {if (del.dir) unlink("Data/tmp_data", recursive=TRUE, force=TRUE) else unlink("Data/tmp_data/TMP_SGP_Data.sqlite", recursive=TRUE)}
-	if (!return.sgp.test.results) {
-		messageSGP(paste("Finished analyzeSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
-		return(sgp_object)
-	} else {
-		setkeyv(tmp_sgp_data_for_analysis, getKey(sgp_object@Data))
-		sgp_object@Data <- tmp_sgp_data_for_analysis
+	
+	if (!is.null(sgp.test.cohort.size)) {
+		if (!return.sgp.test.results) {
+			messageSGP(paste("Finished analyzeSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
+			return(sgp_object)
+		} else {
+			setkeyv(tmp_sgp_data_for_analysis, getKey(sgp_object@Data))
+			sgp_object@Data <- tmp_sgp_data_for_analysis
+		}
 	}
 
 	sgp_object@SGP <- mergeSGP(tmp_sgp_object, sgp_object@SGP)
