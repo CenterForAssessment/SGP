@@ -341,17 +341,21 @@ function(panel.data,         ## REQUIRED
 		} else tmp.par.config <- NULL
 
 		getSQLData <- function(dbase, z, k=NULL, predictions=FALSE) {
-			con <- dbConnect(SQLite(), dbname = dbase, synchronous="normal")
-			wait <- z*1000
-		    dbGetQuery(con, paste("PRAGMA busy_timeout=", wait, ";", sep=""))
-		    dbGetQuery(con, "PRAGMA main.locking_mode=EXCLUSIVE;")
-		    # if (.Platform$OS.type != "unix") dbGetQuery(con, "PRAGMA journal_mode=WAL;")
 			if (predictions) {
-				tmp.data <- dbGetQuery(con, paste("select ", paste(c("ID", paste('prior_', k:1, sep=""), "final_yr"), collapse=", "), " from simex_data where b in ('",z,"')", sep=""))
+				if (.Platform$OS.type != "unix") {
+					tmp.data <- dbGetQuery(dbConnect(SQLite(), dbname = file.path(tempdir(), paste("simex_data_", z, ".sqlite", sep=""))),
+											paste("select ", paste(c("ID", paste('prior_', k:1, sep=""), "final_yr"), collapse=", "), " from tmp", sep=""))
+				} else {
+					tmp.data <- dbGetQuery(dbConnect(SQLite(), dbname = dbase), 
+						paste("select ", paste(c("ID", paste('prior_', k:1, sep=""), "final_yr"), collapse=", "), " from simex_data where b in ('",z,"')", sep=""))
+				}
 			} else {
-				tmp.data <- dbGetQuery(con, paste("select * from simex_data where b in ('", z, "')", sep=""))
+				if (.Platform$OS.type != "unix") {
+					tmp.data <- dbGetQuery(dbConnect(SQLite(), dbname = file.path(tempdir(), paste("simex_data_", z, ".sqlite", sep=""))), "select * from tmp")
+				} else {
+					tmp.data <- dbGetQuery(dbConnect(SQLite(), dbname = dbase), paste("select * from simex_data where b in ('", z, "')", sep=""))
+				}
 			}
-			dbDisconnect(con)
 			return(tmp.data)
 		}
 
@@ -551,21 +555,19 @@ function(panel.data,         ## REQUIRED
 				}
 				if (dependent.var.error) setnames(big.data, tmp.num.variables, "final_yr")
 
-				if (!is.null(tmp.par.config)) { # Not Sequential
-				    ## Write big.data to disk and remove from memory
-				    dir.create("tmp_data", recursive=TRUE, showWarnings=FALSE)
-				    if (!exists('year.progression.for.norm.group')) year.progression.for.norm.group <- year.progression # Needed during Baseline Matrix construction
-				    tmp.dbname <- tempfile(fileext = ".sqlite")
-				    con <- dbConnect(SQLite(), dbname = tmp.dbname)
-				    dbWriteTable(con, name = "simex_data", value=big.data, overwrite=TRUE)
-				    dbGetQuery(con, "PRAGMA main.locking_mode=EXCLUSIVE;")
-				    # if (.Platform$OS.type != "unix") dbGetQuery(con, "PRAGMA journal_mode=WAL;")
-				    dbDisconnect(con)
-				    rm(big.data)
-				}
-
 				## Establish the simulation iterations - either 1) 1:B, or 2) a sample of either B or the number of previously computed matrices
 				sim.iters <- 1:B
+
+				if (!is.null(tmp.par.config)) { # Not Sequential
+				    ## Write big.data to disk and remove from memory
+				    if (!exists('year.progression.for.norm.group')) year.progression.for.norm.group <- year.progression # Needed during Baseline Matrix construction
+				    tmp.dbname <- tempfile(fileext = ".sqlite")
+				    if (.Platform$OS.type != "unix") {
+				    	sapply(sim.iters, function(z) dbWriteTable(dbConnect(SQLite(), dbname = file.path(tempdir(), paste("simex_data_", z, ".sqlite", sep=""))), 
+				    		name="tmp", value=big.data[b==z,], row.names=FALSE, overwrite=TRUE))
+				    } else dbWriteTable(dbConnect(SQLite(), dbname = tmp.dbname), name = "simex_data", value=big.data, overwrite=TRUE)
+				    rm(big.data)
+				}
 
 				if (!is.null(simex.use.my.coefficient.matrices)) { # Element from the 'calculate.simex' argument list.
 					available.matrices <- unlist(getsplineMatrices(
@@ -1476,14 +1478,12 @@ function(panel.data,         ## REQUIRED
 			}
 		}
 
-		if (is.null(sgp.test.cohort.size)) {
-			quantile.data[,SCALE_SCORE_PRIOR:=prior.ss]
+		quantile.data[,SCALE_SCORE_PRIOR:=prior.ss]
 
-			if (return.prior.scale.score.standardized) {
-				SCALE_SCORE_PRIOR_STANDARDIZED <- NULL
-				quantile.data[,SCALE_SCORE_PRIOR_STANDARDIZED:=round(as.numeric(scale(prior.ss)), digits=3)]
-			}
-		} else if ((is.character(goodness.of.fit) | goodness.of.fit==TRUE)) goodness.of.fit <- FALSE
+		if (return.prior.scale.score.standardized) {
+			SCALE_SCORE_PRIOR_STANDARDIZED <- NULL
+			quantile.data[,SCALE_SCORE_PRIOR_STANDARDIZED:=round(as.numeric(scale(prior.ss)), digits=3)]
+		}
 
 		if (tf.growth.levels) {
 			SGP_LEVEL <- NULL
