@@ -30,6 +30,7 @@ function(panel.data,         ## REQUIRED
          sgp.quantiles.labels=NULL,
          sgp.loss.hoss.adjustment=NULL,
          sgp.cohort.size=NULL,
+         sgp.test.cohort.size=NULL,
          percuts.digits=0,
          isotonize=TRUE,
          convert.using.loss.hoss=TRUE,
@@ -339,6 +340,25 @@ function(panel.data,         ## REQUIRED
 			if (is.null(parallel.config[["WORKERS"]][["SIMEX"]])) tmp.par.config <- NULL else tmp.par.config <- parallel.config
 		} else tmp.par.config <- NULL
 
+		getSQLData <- function(dbase, z, k=NULL, predictions=FALSE) {
+			if (predictions) {
+				if (.Platform$OS.type != "unix") {
+					tmp.data <- dbGetQuery(dbConnect(SQLite(), dbname = file.path(dbase, paste("simex_data_", z, ".sqlite", sep=""))),
+											paste("select ", paste(c("ID", paste('prior_', k:1, sep=""), "final_yr"), collapse=", "), " from tmp", sep=""))
+				} else {
+					tmp.data <- dbGetQuery(dbConnect(SQLite(), dbname = dbase), 
+						paste("select ", paste(c("ID", paste('prior_', k:1, sep=""), "final_yr"), collapse=", "), " from simex_data where b in ('",z,"')", sep=""))
+				}
+			} else {
+				if (.Platform$OS.type != "unix") {
+					tmp.data <- dbGetQuery(dbConnect(SQLite(), dbname = file.path(dbase, paste("simex_data_", z, ".sqlite", sep=""))), "select * from tmp")
+				} else {
+					tmp.data <- dbGetQuery(dbConnect(SQLite(), dbname = dbase), paste("select * from simex_data where b in ('", z, "')", sep=""))
+				}
+			}
+			return(tmp.data)
+		}
+
 		rq.sgp <- function(...) { # Function needs to be nested within the simex.sgp function to avoid data copying with SNOW
 			if (rq.method == "br") {
 				tmp.res <- rq(method="br", ...)[['coefficients']]
@@ -535,20 +555,22 @@ function(panel.data,         ## REQUIRED
 				}
 				if (dependent.var.error) setnames(big.data, tmp.num.variables, "final_yr")
 
-				if (!is.null(tmp.par.config)) { # Sequential
-				    ## Write big.data to disk and remove from memory
-				    dir.create("tmp_data", recursive=TRUE, showWarnings=FALSE)
-				    if (!exists('year.progression.for.norm.group')) year.progression.for.norm.group <- year.progression # Needed during Baseline Matrix construction
-				    tmp.dbname <- paste("tmp_data/", paste(tail(paste(year.progression.for.norm.group,
-					paste(content_area.progression, grade.progression, sep="_"), sep="_"), num.prior+1), collapse="-"), ".sqlite", sep="")
-				    con <- dbConnect(SQLite(), dbname = tmp.dbname)
-				    dbWriteTable(con, name = "simex_data", value=big.data, overwrite=TRUE, row.names=0)
-				    dbDisconnect(con)
-				    rm(big.data)
-				}
-
 				## Establish the simulation iterations - either 1) 1:B, or 2) a sample of either B or the number of previously computed matrices
 				sim.iters <- 1:B
+
+				if (!is.null(tmp.par.config)) { # Not Sequential
+				    ## Write big.data to disk and remove from memory
+				    if (!exists('year.progression.for.norm.group')) year.progression.for.norm.group <- year.progression # Needed during Baseline Matrix construction
+				    if (.Platform$OS.type != "unix") {
+				    	tmp.dbname <- tempdir()
+				    	sapply(sim.iters, function(z) dbWriteTable(dbConnect(SQLite(), dbname = file.path(tmp.dbname, paste("simex_data_", z, ".sqlite", sep=""))), 
+				    		name="tmp", value=big.data[b==z,], row.names=FALSE, overwrite=TRUE))
+				    } else {
+				    	tmp.dbname <- tempfile(fileext = ".sqlite")
+				    	dbWriteTable(dbConnect(SQLite(), dbname = tmp.dbname), name = "simex_data", value=big.data, overwrite=TRUE)
+				    }
+				    rm(big.data)
+				}
 
 				if (!is.null(simex.use.my.coefficient.matrices)) { # Element from the 'calculate.simex' argument list.
 					available.matrices <- unlist(getsplineMatrices(
@@ -590,7 +612,6 @@ function(panel.data,         ## REQUIRED
 						}
 					}
 				} else {	# Parallel over sim.iters
-
 					###  Always use FOREACH for coefficient matrix production -- need %dorng% to guarantee reproducibility across plateforms (also MUCH more efficient with SNOW/Windows).
 					if (toupper(tmp.par.config[["BACKEND"]]) != "FOREACH") tmp.par.config[["BACKEND"]] <- "FOREACH"; tmp.par.config[["TYPE"]] <- "doParallel"
 
@@ -607,16 +628,16 @@ function(panel.data,         ## REQUIRED
 									foreach(z=iter(sim.iters), .packages=c("quantreg", "data.table"),
 										.export=c("Knots_Boundaries", "rq.method", "taus", "content_area.progression", "tmp.slot.gp", "year.progression", "year_lags.progression", "SGPt", "rq.sgp"),
 										.options.mpi=par.start$foreach.options, .options.multicore=par.start$foreach.options, .options.snow=par.start$foreach.options) %dopar% {
-											rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(shared.cache = TRUE), dbname = tmp.dbname),
-												paste("select * from simex_data where b in ('", z, "')", sep="")))
+											rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=getSQLData(tmp.dbname, z))
+											# rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(shared.cache = TRUE), dbname = tmp.dbname),
+											# 	paste("select * from simex_data where b in ('", z, "')", sep="")))
 									}
 							} else {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
 									foreach(z=iter(sim.iters), .packages=c("quantreg", "data.table"),
 										.export=c("Knots_Boundaries", "rq.method", "taus", "content_area.progression", "tmp.slot.gp", "year.progression", "year_lags.progression", "SGPt", "rq.sgp"),
 										.options.mpi=par.start$foreach.options, .options.multicore=par.start$foreach.options, .options.snow=par.start$foreach.options) %dorng% {
-											rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(shared.cache = TRUE), dbname = tmp.dbname),
-												paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq.int(dim(tmp.data)[1]), simex.sample.size),])
+											rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=getSQLData(tmp.dbname, z)[sample(seq.int(dim(tmp.data)[1]), simex.sample.size),])
 									}
 							}
 					} else {
@@ -629,12 +650,10 @@ function(panel.data,         ## REQUIRED
 						for (z in recalc.index) {
 							if (is.null(simex.sample.size) || dim(tmp.data)[1] <= simex.sample.size) {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]] <-
-									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(shared.cache = TRUE), dbname = tmp.dbname),
-										paste("select * from simex_data where b in ('", z, "')", sep="")))
+									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=getSQLData(tmp.dbname, z))
 							} else {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]] <-
-									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(shared.cache = TRUE), dbname = tmp.dbname),
-										paste("select * from simex_data where b in ('", z, "')", sep=""))[sample(seq.int(dim(tmp.data)[1]), simex.sample.size),])
+									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=getSQLData(tmp.dbname, z)[sample(seq.int(dim(tmp.data)[1]), simex.sample.size),])
 							}
 						}
 					}
@@ -647,14 +666,13 @@ function(panel.data,         ## REQUIRED
 							fitted[[paste("order_", k, sep="")]][which(lambda==L),] <-
 								foreach(z=iter(sim.iters), .combine="+", .export=c('tmp.gp', 'taus', 'sgp.loss.hoss.adjustment', 'isotonize', 'SGPt'),
 									.options.multicore=par.start$foreach.options) %dopar% { # .options.snow=par.start$foreach.options
-										as.vector(.get.percentile.predictions(my.matrix=mtx.subset[[z]], my.data=dbGetQuery(dbConnect(SQLite(), dbname = tmp.dbname),
-											paste("select ", paste(c("ID", paste('prior_', k:1, sep=""), "final_yr"), collapse=", "), " from simex_data where b in ('",z,"')", sep="")))/B)
+										as.vector(.get.percentile.predictions(my.matrix=mtx.subset[[z]], my.data=getSQLData(tmp.dbname, z, k, predictions=TRUE))/B)
 								}
                     }
 					stopParallel(tmp.par.config, par.start)
 				}
+	            unlink(tmp.dbname)
 			} ### END for (L in lambda[-1])
-            unlink("tmp_data", recursive=TRUE, force=TRUE)
 			if (verbose) messageSGP(c("\t\t", rev(content_area.progression)[1], " Grade ", rev(tmp.gp)[1], " Order ", k, " Simulation process complete ", prettyDate()))
 
 			if (calculate.simex.sgps) {
@@ -1176,7 +1194,12 @@ function(panel.data,         ## REQUIRED
 	if (is.factor(ss.data[[1]])) ss.data[[1]] <- as.character(ss.data[[1]])
 	if (exact.grade.progression.sequence) tmp.num.prior <- num.prior else tmp.num.prior <- 1
 
-	max.cohort.size <- dim(.get.panel.data(ss.data, tmp.num.prior, by.grade))[1]
+	if (!is.null(sgp.test.cohort.size)) {
+		cohort.ids <- .get.panel.data(ss.data, num.prior, by.grade)[[1]]
+		max.cohort.size <- min(length(cohort.ids), as.numeric(sgp.test.cohort.size))
+		ss.data <- ss.data[ss.data[[1]] %in% sample(cohort.ids, max.cohort.size)]
+	} else max.cohort.size <- dim(.get.panel.data(ss.data, tmp.num.prior, by.grade))[1]
+
 	if (max.cohort.size == 0) {
 		tmp.messages <- "\t\tNOTE: Supplied data together with grade progression contains no data. Check data, function arguments and see help page for details.\n"
 		messageSGP(paste("\tStarted studentGrowthPercentiles", started.date))
@@ -1657,14 +1680,10 @@ function(panel.data,         ## REQUIRED
 	### Start/Finish Message & Return SGP Object
 
 	if (print.time.taken) {
+		if (calculate.sgps) cohort.n <- format(dim(quantile.data)[1], big.mark=",") else cohort.n <- format(max.cohort.size, big.mark=",")
 		messageSGP(paste("\tStarted studentGrowthPercentiles:", started.date))
-		if (calculate.sgps) {
 			messageSGP(paste("\t\tContent Area: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ",
-				paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label, " (N=", format(dim(quantile.data)[1], big.mark=","), ")", sep=""))
-		} else {
-			messageSGP(paste("\t\tContent Area: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ",
-				paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label, " (N=", format(max.cohort.size, big.mark=","), ")", sep=""))
-		}
+				paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label, " (N=", cohort.n, ")", sep=""))
 		if (verbose.output) messageSGP(Verbose_Messages)
 		messageSGP(c(tmp.messages, "\tFinished studentGrowthPercentiles: ", prettyDate(), " in ", convertTime(timetaken(started.at)), "\n"))
 	}

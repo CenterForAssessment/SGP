@@ -197,7 +197,7 @@ function(
 			tmp.list[[i]] <- quantile(data1$SGP[tmp.cuts==i], probs=ppoints(1:500))
 		}
 
-		pct <- 50/dim(tmp.data.final)[1] # Take Top/Bottom 50 kids to find LOSS/HOSS
+		if ((tmp.n <- dim(tmp.data.final)[1]) > 50) pct <- 50/tmp.n else pct <- 0.9999 # Take Top/Bottom 50 kids to find LOSS/HOSS
 
 		loss_hoss.data <- rbindlist(list(
 			data.table(data1)[, list(SCALE_SCORE, SGP)][which(SCALE_SCORE <= quantile(SCALE_SCORE, probs = pct, na.rm = T)),][, LH := "LOSS"],

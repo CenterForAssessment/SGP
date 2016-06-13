@@ -13,6 +13,8 @@ function(what_sgp_object=NULL,
 	sgp.percentiles.baseline=TRUE,
 	sgp.projections.baseline=TRUE,
 	sgp.projections.lagged.baseline=TRUE,
+	sgp.test.cohort.size=NULL,
+	return.sgp.test.results=FALSE,
 	simulate.sgps=TRUE,
 	save.old.summaries=TRUE,
 	save.intermediate.results=TRUE,
@@ -53,7 +55,7 @@ function(what_sgp_object=NULL,
 
 	if (!is.null(calculate.simex) | !is.null(calculate.simex.baseline)) {
 		if (is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
-			message("\tNOTE: CSEMs are required in 'SGPstateData' (either as a data.frame of CSEMs or as a variable name of CSEMsin @Data) to produce SIMEX corrected SGPs. SIMEX corrected SGPs will NOT be calculated.")
+			messageSGP("\tNOTE: CSEMs are required in 'SGPstateData' (either as a data.frame of CSEMs or as a variable name of CSEMsin @Data) to produce SIMEX corrected SGPs. SIMEX corrected SGPs will NOT be calculated.")
 			calculate.simex <- calculate.simex.baseline <- NULL
 		}
 	}
@@ -156,6 +158,8 @@ function(what_sgp_object=NULL,
 					sgp.use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
 					calculate.simex = calculate.simex,
 					calculate.simex.baseline=calculate.simex.baseline,
+					sgp.test.cohort.size=sgp.test.cohort.size,
+					return.sgp.test.results=return.sgp.test.results,
 					simulate.sgps = simulate.sgps,
 					sgp.target.scale.scores=sgp.target.scale.scores,
 					sgp.target.scale.scores.only=sgp.target.scale.scores.only,
@@ -173,7 +177,7 @@ function(what_sgp_object=NULL,
 
 		### Print finish and return SGP object
 
-		message(paste("Finished updateSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
+		messageSGP(paste("Finished updateSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 		return(sgp_object)
 	} ### END is.null(with_sgp_data_LONG)
 
@@ -226,6 +230,8 @@ function(what_sgp_object=NULL,
 						sgp.use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
 						calculate.simex = calculate.simex,
 						calculate.simex.baseline=calculate.simex.baseline,
+						sgp.test.cohort.size=sgp.test.cohort.size,
+						return.sgp.test.results=return.sgp.test.results,
 						simulate.sgps = simulate.sgps,
 						sgp.target.scale.scores=sgp.target.scale.scores,
 						sgp.target.scale.scores.only=sgp.target.scale.scores.only,
@@ -242,7 +248,7 @@ function(what_sgp_object=NULL,
 
 			### Print finish and return SGP object
 
-			message(paste("Finished updateSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
+			messageSGP(paste("Finished updateSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 			return(what_sgp_object)
 
 		} else {
@@ -276,6 +282,8 @@ function(what_sgp_object=NULL,
 							sgp.use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
 							calculate.simex=calculate.simex,
 							calculate.simex.baseline=calculate.simex.baseline,
+							sgp.test.cohort.size=sgp.test.cohort.size,
+							return.sgp.test.results=return.sgp.test.results,
 							simulate.sgps=simulate.sgps,
 							sgp.config=sgp.config,
 							goodness.of.fit.print=FALSE,
@@ -377,7 +385,7 @@ function(what_sgp_object=NULL,
 
 				### Print finish and return SGP object
 
-				message(paste("Finished updateSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
+				messageSGP(paste("Finished updateSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 				return(what_sgp_object)
 			} else {
 				if (update.old.data.with.new) {
@@ -430,6 +438,8 @@ function(what_sgp_object=NULL,
 							sgp.use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
 							calculate.simex = calculate.simex,
 							calculate.simex.baseline=calculate.simex.baseline,
+							sgp.test.cohort.size=sgp.test.cohort.size,
+							return.sgp.test.results=return.sgp.test.results,
 							simulate.sgps = simulate.sgps,
 							sgp.target.scale.scores=sgp.target.scale.scores,
 							sgp.target.scale.scores.only=sgp.target.scale.scores.only,
