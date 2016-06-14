@@ -1338,6 +1338,7 @@ function(panel.data,         ## REQUIRED
 				messageSGP(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ",
 					paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label, sep=""))
 				messageSGP(paste(tmp.messages, "\n\t\tStudent Growth Percentile Analysis NOT RUN", prettyDate(), "\n"))
+				Coefficient_Matrices[[tmp.path.coefficient.matrices]][['TMP_NAME']] <- NULL
 
 				return(
 					list(Coefficient_Matrices=Coefficient_Matrices,
