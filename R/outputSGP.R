@@ -76,7 +76,7 @@ function(sgp_object,
 		### Write LONG table
 
 		started.at <- proc.time()
-		message(paste("\tStarted LONG data production in outputSGP", prettyDate()))
+		messageSGP(paste("\tStarted LONG data production in outputSGP", prettyDate()))
 
 		names.in.data <- which(sgp_object@Names[['names.sgp']] %in% names(sgp_object@Data))
 		output.data <- copy(sgp_object@Data)
@@ -107,7 +107,7 @@ function(sgp_object,
 			}
 		}
 
-		message(paste("\tFinished LONG data production in outputSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
+		messageSGP(paste("\tFinished LONG data production in outputSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 
 	} ### END if LONG_Data %in% output.type
 
@@ -123,7 +123,7 @@ function(sgp_object,
 		### Write LONG table
 
 		started.at <- proc.time()
-		message(paste("\tStarted LONG FINAL YEAR data production in outputSGP", prettyDate()))
+		messageSGP(paste("\tStarted LONG FINAL YEAR data production in outputSGP", prettyDate()))
 
 		final.year <- tail(sort(unique(sgp_object@Data$YEAR)), 1)
 		names.in.data <- which(sgp_object@Names[['names.sgp']] %in% names(sgp_object@Data))
@@ -156,7 +156,7 @@ function(sgp_object,
 			}
 		}
 
-		message(paste("\tFinished LONG FINAL YEAR data production in outputSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
+		messageSGP(paste("\tFinished LONG FINAL YEAR data production in outputSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 
 	} ### END if LONG_FINAL_YEAR_Data %in% output.type
 
@@ -172,7 +172,7 @@ function(sgp_object,
 		### Write WIDE table
 
 		started.at <- proc.time()
-		message(paste("\tStarted WIDE data production in outputSGP", prettyDate()))
+		messageSGP(paste("\tStarted WIDE data production in outputSGP", prettyDate()))
 
 		long_data_tmp <- copy(sgp_object@Data)
 		setkeyv(long_data_tmp, getKey(long_data_tmp))
@@ -205,7 +205,7 @@ function(sgp_object,
 			}
 		}
 
-		message(paste("\tFinished WIDE data production in outputSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
+		messageSGP(paste("\tFinished WIDE data production in outputSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 
 	} ### END if WIDE_Data %in% output.type
 
@@ -221,7 +221,7 @@ function(sgp_object,
 		### Write WIDE table
 
 		started.at <- proc.time()
-		message(paste("\tStarted INSTRUCTOR data production in outputSGP", prettyDate()))
+		messageSGP(paste("\tStarted INSTRUCTOR data production in outputSGP", prettyDate()))
 
 		assign(paste(tmp.state, "SGP_INSTRUCTOR_Data", sep="_"), sgp_object@Data[data.table(sgp_object@Data_Supplementary[["INSTRUCTOR_NUMBER"]][,VALID_CASE:="VALID_CASE"],
 			key=getKey(sgp_object@Data)), nomatch=0])
@@ -248,7 +248,7 @@ function(sgp_object,
 			}
 		}
 
-		message(paste("\tFinished INSTRUCTOR data production in outputSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
+		messageSGP(paste("\tFinished INSTRUCTOR data production in outputSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 
 	} ### END if INSTRUCTOR_Data %in% output.type
 
@@ -279,13 +279,13 @@ function(sgp_object,
 		###
 
 			started.at <- proc.time()
-			message(paste("\tStarted SchoolView STUDENT_GROWTH data production in outputSGP", prettyDate()))
+			messageSGP(paste("\tStarted SchoolView STUDENT_GROWTH data production in outputSGP", prettyDate()))
 			slot.data <- copy(sgp_object@Data)
 
 		### Check arguments
 
 		if (!all(c("LAST_NAME", "FIRST_NAME") %in% names(slot.data))) {
-			message("\tNOTE: 'LAST_NAME' and 'FIRST_NAME' are not included in supplied data. Anonymized last names and first names will be supplied.")
+			messageSGP("\tNOTE: 'LAST_NAME' and 'FIRST_NAME' are not included in supplied data. Anonymized last names and first names will be supplied.")
 			outputSGP.anonymize <- TRUE
 			slot.data[['FIRST_NAME']] <- slot.data[['LAST_NAME']] <- as.character(NA)
 		}
@@ -666,7 +666,7 @@ function(sgp_object,
 
 		for (i in variables.to.check) {
 			if (any(is.na(STUDENT_GROWTH[[i]]))) {
-				message(paste("\tNAs are present in variable:", i, "of the 'STUDENT_GROWTH' table. NAs being changed to 'Unknown' to avoid data loading problems."))
+				messageSGP(paste("\tNAs are present in variable:", i, "of the 'STUDENT_GROWTH' table. NAs being changed to 'Unknown' to avoid data loading problems."))
 				STUDENT_GROWTH[,i:=as.character(get(i)), with=FALSE]
 				STUDENT_GROWTH[is.na(get(i)), i:="Unknown", with=FALSE]
 			}
@@ -687,7 +687,7 @@ function(sgp_object,
 		dir.create(file.path(outputSGP.directory, "SchoolView", "RDATA"), recursive=TRUE, showWarnings=FALSE)
 		save(STUDENT_GROWTH, file=file.path(outputSGP.directory, "SchoolView", "RDATA", "STUDENT_GROWTH.Rdata"))
 
-		message(paste("\tFinished SchoolView STUDENT_GROWTH data production in outputSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
+		messageSGP(paste("\tFinished SchoolView STUDENT_GROWTH data production in outputSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 
 	} ## End if SchoolView %in% output.type
 
@@ -700,7 +700,7 @@ function(sgp_object,
 	if (any(c("RLI", "RLI_UK") %in% output.type)) {
 
 		started.at <- proc.time()
-		message(paste("\tStarted RLI in outputSGP", prettyDate()))
+		messageSGP(paste("\tStarted RLI in outputSGP", prettyDate()))
 
 		### SGPercentiles
 
@@ -815,7 +815,7 @@ function(sgp_object,
 			}
 		}
 
-		message(paste("\tFinished RLI in outputSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
+		messageSGP(paste("\tFinished RLI in outputSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 
 	} ## End if RLI %in% output.type
 

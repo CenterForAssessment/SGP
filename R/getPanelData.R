@@ -41,7 +41,7 @@ function(sgp.data,
 				}
 				tmp.exclude.ids <- unique(tmp.exclude.ids)
 			} else tmp.exclude.ids <- unique(sgp.data[tmp.exclude.lookup][['ID']])
-		} else tmp.exclude.ids <- as.character(NA)
+		} else tmp.exclude.ids <- as.character(NULL)
 	
 		if ("YEAR_WITHIN" %in% var.names) {
 			tmp.lookup <- data.table(V1="VALID_CASE", tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]])),
@@ -102,10 +102,10 @@ function(sgp.data,
 				}
 			} else {
 				if (is.null(SGPt)) {
-					return(ddcast(sgp.data[tmp.lookup, nomatch=0][!ID %in% tmp.exclude.ids][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE], 
+					return(ddcast(sgp.data[tmp.lookup][!ID %in% tmp.exclude.ids][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE], 
 							ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", sgp.csem, sgp.scale.score.equated), sep="."))
 				} else {
-					return(ddcast(sgp.data[tmp.lookup, nomatch=0][!ID %in% tmp.exclude.ids][,
+					return(ddcast(sgp.data[tmp.lookup][!ID %in% tmp.exclude.ids][,
 							'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep="."), with=FALSE][,
 							c("TIME", "TIME_LAG"):=list(as.numeric(DATE), as.numeric(DATE-c(NA, DATE[-.N]))), by=ID],
 							ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", sgp.csem, sgp.scale.score.equated, "TIME", "TIME_LAG"), sep="."))

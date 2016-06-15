@@ -45,11 +45,11 @@
 			tmp.file.name <- paste(tmp.state.name, "SGP_Summary", tmp.year, sep="_")
 			assign(tmp.file.name, sgp_object@Summary)
 			if (!"Data" %in% list.files()) dir.create("Data", showWarnings=FALSE)
-			message(paste("\tNOTE: Saving @Summary slot to", paste("Data/", tmp.file.name, ".Rdata and then deleting @Summary slot.", sep="")))
+			messageSGP(paste("\tNOTE: Saving @Summary slot to", paste("Data/", tmp.file.name, ".Rdata and then deleting @Summary slot.", sep="")))
 			save(list=tmp.file.name, file=file.path("Data", paste(tmp.file.name, "Rdata", sep=".")))
 			sgp_object@Summary <- NULL
 		} else {
-			message("\tNOTE: Deleting @Summary slot")
+			messageSGP("\tNOTE: Deleting @Summary slot")
 			sgp_object@Summary <- NULL
 		}
 	}

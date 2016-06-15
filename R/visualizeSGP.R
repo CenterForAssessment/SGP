@@ -176,7 +176,7 @@ function(sgp_object,
 	if ("bubblePlot" %in% plot.types) {
 
 		started.at <- proc.time()
-		message(paste("Started bubblePlot in visualizeSGP", prettyDate(), "\n"))
+		messageSGP(paste("Started bubblePlot in visualizeSGP", prettyDate(), "\n"))
 
 		bubblePlot_Styles(sgp_object=sgp_object,
 			state=state,
@@ -198,7 +198,7 @@ function(sgp_object,
 			bPlot.format=bPlot.format,
 			bPlot.folder=bPlot.folder)
 
-		message(paste("Finished bubblePlot in visualizeSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
+		messageSGP(paste("Finished bubblePlot in visualizeSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 	} ## END bubblePlot %in% plot.types
 
 
@@ -209,7 +209,7 @@ function(sgp_object,
 	if ("growthAchievementPlot" %in% plot.types) {
 
 		started.at <- proc.time()
-		message(paste("Started growthAchievementPlot in visualizeSGP", prettyDate(), "\n"))
+		messageSGP(paste("Started growthAchievementPlot in visualizeSGP", prettyDate(), "\n"))
 
 		# gaPlot.baseline stuff
 
@@ -283,7 +283,7 @@ function(sgp_object,
 			}
 		}
 		stopParallel(parallel.config, par.start)
-		message(paste("Finished growthAchievementPlot in visualizeSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
+		messageSGP(paste("Finished growthAchievementPlot in visualizeSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 	} ## END if (growthAchievementPlot %in% plot.types)
 
 
@@ -294,7 +294,7 @@ function(sgp_object,
 if ("studentGrowthPlot" %in% plot.types) {
 
 	started.at <- proc.time()
-	message(paste("Started studentGrowthPlot in visualizeSGP", prettyDate(), "\n"))
+	messageSGP(paste("Started studentGrowthPlot in visualizeSGP", prettyDate(), "\n"))
 
 	#### Utility functions
 
@@ -384,11 +384,11 @@ if ("studentGrowthPlot" %in% plot.types) {
 			}
 		}
 		if (!is.null(sgPlot.sgp.targets) & !sgPlot.baseline && !all(sgPlot.sgp.targets %in% c("sgp.projections", "sgp.projections.lagged"))) {
-			message("\tNOTE: 'sgPlot.sgp.targets' must consist of 'sgp.projections' and/or 'sgp.projections.lagged'.")
+			messageSGP("\tNOTE: 'sgPlot.sgp.targets' must consist of 'sgp.projections' and/or 'sgp.projections.lagged'.")
 			sgPlot.sgp.targets <- NULL
 		}
 		if (!is.null(sgPlot.sgp.targets) & sgPlot.baseline && !all(sgPlot.sgp.targets %in% c("sgp.projections.baseline", "sgp.projections.lagged.baseline"))) {
-			message("\tNOTE: 'sgPlot.sgp.targets' must consist of 'sgp.projections.baseline' and/or 'sgp.projections.lagged.baseline'.")
+			messageSGP("\tNOTE: 'sgPlot.sgp.targets' must consist of 'sgp.projections.baseline' and/or 'sgp.projections.lagged.baseline'.")
 			sgPlot.sgp.targets <- NULL
 		}
 
@@ -411,7 +411,7 @@ if ("studentGrowthPlot" %in% plot.types) {
 		if (!is.null(my.sgp.targets)) sgPlot.sgp.targets.timeframe <- as.numeric(rev(unlist(strsplit(unlist(strsplit(my.sgp.targets[1], "_YEAR"))[1], "_")))[1])
 
 		if (sgPlot.demo.report & sgPlot.wide.data) {
-			message("\tNOTE: Demonstration report is not supported using wide data. Process will proceed with demonstration report production using long data.\n")
+			messageSGP("\tNOTE: Demonstration report is not supported using wide data. Process will proceed with demonstration report production using long data.\n")
 			sgPlot.demo.report <- FALSE
 		}
 
@@ -878,8 +878,8 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			setkeyv(sgPlot.data, c("CONTENT_AREA", tmp.grade.name))
 			if ("SCALE_SCORE_ACTUAL" %in% names(sgp_object@Data)) {
 				tmp.lookup <- rbindlist(list(
-					sgp_object@Data[YEAR==tmp.last.year, max(SCALE_SCORE_ACTUAL, na.rm=TRUE), by=list(CONTENT_AREA, GRADE, SCALE_SCORE)],
-					sgp_object@Data[YEAR==tmp.last.year, min(SCALE_SCORE_ACTUAL, na.rm=TRUE), by=list(CONTENT_AREA, GRADE)]), fill=TRUE)
+					sgp_object@Data[!is.na(SCALE_SCORE_ACTUAL)][YEAR==tmp.last.year, max(SCALE_SCORE_ACTUAL, na.rm=TRUE), by=list(CONTENT_AREA, GRADE, SCALE_SCORE)],
+					sgp_object@Data[!is.na(SCALE_SCORE_ACTUAL)][YEAR==tmp.last.year, min(SCALE_SCORE_ACTUAL, na.rm=TRUE), by=list(CONTENT_AREA, GRADE)]), fill=TRUE)
 				setnames(tmp.lookup, "V1", "SCALE_SCORE_ACTUAL")
 				setkey(tmp.lookup, CONTENT_AREA, GRADE, SCALE_SCORE, SCALE_SCORE_ACTUAL)
 				for (i in unique(tmp.lookup$CONTENT_AREA)) {
@@ -912,7 +912,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 							by=list(CONTENT_AREA, TEMP_GRADE)]
 
 						if ("SCALE_SCORE_ACTUAL" %in% names(sgp_object@Data)) {
-							sgPlot.data[, TEMP_SCORE := get.actual.scores(TEMP_SCORE,
+							sgPlot.data[!is.na(TEMP_SCORE)][, TEMP_SCORE := get.actual.scores(TEMP_SCORE,
 								get.next.content_area(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment),
 								get.next.grade(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment)), by=list(CONTENT_AREA, TEMP_GRADE)]
 						}
@@ -926,8 +926,8 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 
 			if ("SCALE_SCORE_ACTUAL" %in% names(sgp_object@Data)) {
 				tmp.lookup <- rbindlist(list(
-						sgp_object@Data[YEAR==tmp.last.year, max(SCALE_SCORE_ACTUAL, na.rm=TRUE), by=list(CONTENT_AREA, GRADE, SCALE_SCORE)],
-						sgp_object@Data[YEAR==tmp.last.year, min(SCALE_SCORE_ACTUAL, na.rm=TRUE), by=list(CONTENT_AREA, GRADE)]), fill=TRUE)
+						sgp_object@Data[!is.na(SCALE_SCORE_ACTUAL)][YEAR==tmp.last.year, max(SCALE_SCORE_ACTUAL, na.rm=TRUE), by=list(CONTENT_AREA, GRADE, SCALE_SCORE)],
+						sgp_object@Data[!is.na(SCALE_SCORE_ACTUAL)][YEAR==tmp.last.year, min(SCALE_SCORE_ACTUAL, na.rm=TRUE), by=list(CONTENT_AREA, GRADE)]), fill=TRUE)
 				setnames(tmp.lookup, "V1", "SCALE_SCORE_ACTUAL")
 				setkey(tmp.lookup, CONTENT_AREA, GRADE, SCALE_SCORE, SCALE_SCORE_ACTUAL)
 
