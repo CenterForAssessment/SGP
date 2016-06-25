@@ -758,7 +758,21 @@ function(panel.data,	## REQUIRED
 			tmp.path.coefficient.matrices2 <- paste(unique(content_area.projection.sequence), "BASELINE", sep=".")[tmp.fix.index]
 		}
 		if (any(is.na(match(tmp.path.coefficient.matrices2, names(panel.data[["Coefficient_Matrices"]]))))) {
-			stop("Not all CONTENT_AREA values in content_area.progression have associated BASELINE or current COHORT referenced coefficient matrices.")
+			# stop("Not all CONTENT_AREA values in content_area.progression have associated BASELINE or current COHORT referenced coefficient matrices.")
+			tmp.messages <- c(tmp.messages, "\t\tNOTE: Requested grade & content area progression are missing one or more coefficient matrices.\n")
+			messageSGP(paste("\tStarted studentGrowthProjections", started.date))
+			messageSGP(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, " ", return.projection.group.identifier, sep=""))
+			messageSGP(paste(tmp.messages, "\tStudent Growth Projections NOT RUN", prettyDate(), "\n"))
+
+			return(
+				list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],
+					Cutscores=panel.data[["Cutscores"]],
+					Goodness_of_Fit=panel.data[["Goodness_of_Fit"]],
+					Knots_Boundaries=panel.data[["Knots_Boundaries"]],
+					Panel_Data=NULL,
+					SGPercentiles=panel.data[["SGPercentiles"]],
+					SGProjections=panel.data[["SGProjections"]],
+					Simulated_SGPs=panel.data[["Simulated_SGPs"]]))		
 		} else {
 			if (length(grep("BASELINE", sgp.labels[['my.extra.label']])) > 0) {
 				messageSGP(paste("\tNOTE:  Not all CONTENT_AREA values in content_area.progression have associated BASELINE referenced coefficient matrices.\n\tCOHORT referenced matrices for missing content areas (",
@@ -863,6 +877,23 @@ function(panel.data,	## REQUIRED
 							sgp.exact.grade.progression,
 							SGPt)
 
+	if (length(grade.projection.sequence.matrices[[1]]) < 1) {
+	# if any(!sapply(grade.projection.sequence.matrices[[1]], is.splineMatrix)) {
+		tmp.messages <- c(tmp.messages, "\t\tNOTE: Requested grade & content area progression are missing one or more coefficient matrices.\n")
+		messageSGP(paste("\tStarted studentGrowthProjections", started.date))
+		messageSGP(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, " ", return.projection.group.identifier, sep=""))
+		messageSGP(paste(tmp.messages, "\tStudent Growth Projections NOT RUN", prettyDate(), "\n"))
+
+		return(
+			list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],
+				Cutscores=panel.data[["Cutscores"]],
+				Goodness_of_Fit=panel.data[["Goodness_of_Fit"]],
+				Knots_Boundaries=panel.data[["Knots_Boundaries"]],
+				Panel_Data=NULL,
+				SGPercentiles=panel.data[["SGPercentiles"]],
+				SGProjections=panel.data[["SGProjections"]],
+				Simulated_SGPs=panel.data[["Simulated_SGPs"]]))
+	}
 
 	### Calculate percentile trajectories
 
