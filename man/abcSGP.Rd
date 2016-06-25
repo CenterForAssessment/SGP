@@ -48,7 +48,7 @@ abcSGP(sgp_object,
 				"WIDE_Data",
 				"INSTRUCTOR_Data"),
 	verbose.output=FALSE,
-	sgp.sqlite=NULL,
+	sgp.sqlite=FALSE,
 	sgp.percentiles.equated=NULL,
     sgp.percentiles.equating.method=NULL,
 	sgp.percentiles.calculate.sgps=TRUE,
@@ -104,7 +104,7 @@ If missing the function will use the data to infer all the grade progressions fo
   \item{sgp.test.cohort.size}{Integer indicating the maximum number of students sampled from the full cohort to use in the calculation of student growth percentiles.  Intended to be used 
   as a test of the desired analyses to be run. The default, NULL, uses no restrictions (no tests are performed, and analyses use the entire cohort of students).
   }	
-  \item{return.sgp.test.results}{Boolean variable passed to \code{\link{analyzeSGP}} and \code{\link{studentGrowthPercentiles}} indicating whether the results from the cohort sample subset (if specified using the above argument) should be returned for inspection. Defaults to FALSE.
+  \item{return.sgp.test.results}{Boolean variable passed to \code{\link{analyzeSGP}} and \code{\link{studentGrowthPercentiles}} indicating whether the results from the cohort sample subset (if specified using the above argument) should be returned for inspection. Defaults to FALSE. If TRUE, only the sample subset of the data used will be returned in the SGP object's @Data slot. Alternatively, user can supply the character "ALL_DATA" to the argument to return the entire original data.
   }
   \item{simulate.sgps}{Boolean variable indicating whether to simulate SGP values for students based on test-specific Conditional Standard Errors of Measurement (CSEM).
   Test CSEM data must be available for simulation.  Must be set to TRUE for confidence interval construction. Defaults to TRUE in \code{abcSGP} only.
@@ -152,7 +152,7 @@ If missing the function will use the data to infer all the grade progressions fo
   and \code{INSTRUCTOR_Data}.}
   \item{verbose.output}{A Boolean argument indicating whether the function should output verbose diagnostic messages.
   }
-  \item{sgp.sqlite}{A Boolean argument (defaults to NULL) indicating whether a SQLite database file of the essential SGP data should be created from the \code{@Data} slot and subsequently
+  \item{sgp.sqlite}{A Boolean argument (defaults to FALSE) indicating whether a SQLite database file of the essential SGP data should be created from the \code{@Data} slot and subsequently
   used to extract data subsets for analyses conducted in order to reduce the amount of RAM memory required.  See full argument description in \code{\link{analyzeSGP}}.
   }
   \item{sgp.percentiles.equated}{A Boolean argument (defaults to NULL, which calculates equated results if in the equating year) passed to \code{\link{analyzeSGP}}
