@@ -257,8 +257,8 @@ function(what_sgp_object=NULL,
 				tmp.long.data <- rbindlist(list(data.table(what_sgp_object@Data, key=c("VALID_CASE", "ID"))[
 					unique(data.table(tmp_sgp_object@Data, key=c("VALID_CASE", "ID"))[,list(VALID_CASE, ID)]), nomatch=0], tmp_sgp_object@Data), fill=TRUE)
 				if ("YEAR_WITHIN" %in% names(tmp.long.data)) {
-					tmp.long.data$FIRST_OBSERVATION <- NULL
-					tmp.long.data$LAST_OBSERVATION <- NULL
+					tmp.long.data[, FIRST_OBSERVATION := NULL]
+					tmp.long.data[, LAST_OBSERVATION := NULL]
 				}
 				tmp.sgp_object.update <- prepareSGP(tmp.long.data, state=state, create.additional.variables=FALSE, fix.duplicates=fix.duplicates)
 				tmp.sgp_object.update@SGP$Coefficient_Matrices <- what_sgp_object@SGP$Coefficient_Matrices
