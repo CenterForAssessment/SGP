@@ -10,6 +10,7 @@
 	gaPlot.start.points="Achievement Level Cuts",
 	gaPlot.back.extrapolated.typical.cuts=NULL,
 	gaPlot.subtitle=TRUE,
+	gaPlot.SGPt=NULL,
 	state,
 	content_area,
 	year,
@@ -21,10 +22,10 @@
 	assessment.name) {
 
 	CUTLEVEL <- GRADE <- YEAR <- ID <- SCALE_SCORE <- level_1_curve <- V1 <- NULL
-	TRANSFORMED_SCALE_SCORE <- PERCENTILE <- GRADE_NUMERIC <- CONTENT_AREA <- LEVEL <- SGP <- EXTRAPOLATED_P50_CUT <- NULL ## To prevent R CMD check warnings
+	TRANSFORMED_SCALE_SCORE <- PERCENTILE <- GRADE_NUMERIC <- CONTENT_AREA <- LEVEL <- SGP <- EXTRAPOLATED_P50_CUT <- DATE <- NULL ## To prevent R CMD check warnings
 
 	content_area <- toupper(content_area)
-	if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]])) {
+	if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]])) {
 		content_area.all <- unique(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]])
 	} else {
 		content_area.all <- content_area
@@ -35,6 +36,11 @@
 	if (baseline) {cohort <- FALSE; equated <- NULL}
 	if (!is.null(equated)) cohort <- baseline <- FALSE
 	if (!is.null(gaPlot.students)) gaPlot.start.points <- "Individual Student"
+	if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["sgp.projections.projection.unit.label"]])) {
+		tmp.unit.label <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["sgp.projections.projection.unit.label"]]
+	} else {
+		tmp.unit.label <- "YEAR"
+	}
 
 
 	## State stuff
@@ -112,6 +118,15 @@
 			temp_cutscores[CONTENT_AREA==tail(content_area.all, 1) & GRADE_NUMERIC==gaPlot.grade_range[2] & CUTLEVEL==which.max(SGP::SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")-1]$CUTSCORES
 	}
 
+	if (!is.null(gaPlot.SGPt)) {
+		if (identical(gaPlot.SGPt, TRUE)) gaPlot.SGPt <- "DATE"
+		if (!all(gaPlot.SGPt %in% names(gaPlot.sgp_object@Data))) {
+			tmp.messages <- c(tmp.messages, "\t\tNOTE: Variables", paste(gaPlot.SGPt, collapse=", "), "are not all contained in the supplied 'gaPlot.sgp_object@Data'. 'SGPt' is set to NULL.\n")
+			gaPlot.SGPt <- NULL
+		}
+	}
+
+
 	## Utility functions
 
 	# Functions to create good endpoints for scale score axis
@@ -135,11 +150,15 @@
 
 		gaPlot.sgp_object@SGP$Panel_Data <- tmp.dt
 		gaPlot.sgp_object@SGP$SGProjections <- NULL
-		tmp.grades <- as.character(tmp.dt[1,2:((dim(tmp.dt)[2]+1)/2), with=FALSE])
+		if (is.null(gaPlot.SGPt)) {
+			tmp.grades <- as.character(tmp.dt[1,2:((dim(tmp.dt)[2]+1)/2), with=FALSE])
+		} else {
+			tmp.grades <- as.character(tmp.dt[1,2:((dim(tmp.dt)[2]-2+1)/2), with=FALSE])
+		}
 		if (baseline) my.extra.label <- "BASELINE"
 		if (!is.null(equated)) my.extra.label <- "EQUATED"
 		if (cohort) my.extra.label <- NULL
-
+		if (length(tmp.content_area <- grep(content_area, names(SGP::SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]]), value=TRUE))==0) tmp.content_area <- content_area
 
 		studentGrowthProjections(
 			panel.data=gaPlot.sgp_object@SGP,
@@ -148,11 +167,12 @@
 			projection.unit="GRADE",
 			percentile.trajectory.values=percentile,
 			grade.progression=tmp.grades,
-			grade.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[content_area]],
-			content_area.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]],
-			year_lags.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[content_area]],
+			grade.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[tmp.content_area]],
+			content_area.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tmp.content_area]],
+			year_lags.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[tmp.content_area]],
 			max.order.for.progression=my_min(c(gaPlot.max.order.for.progression, getMaxOrderForProgression(year, content_area, state, equated))),
 			sgp.projections.equated=equated,
+			SGPt=gaPlot.SGPt,
 			print.time.taken=FALSE)[["SGProjections"]][[.create.path(list(my.subject=content_area, my.year=year, my.extra.label=my.extra.label))]][,-1, with=FALSE]
 	}
 
@@ -190,7 +210,7 @@
 		setkey(long_cutscores, GRADE, CONTENT_AREA)
 		growthAchievementPlot.data <- unique(long_cutscores[!is.na(GRADE_NUMERIC),c("GRADE", "CONTENT_AREA", "GRADE_NUMERIC"), with=FALSE])[growthAchievementPlot.data]
 		setnames(growthAchievementPlot.data, c("GRADE", "GRADE_NUMERIC"), c("GRADE_CHARACTER", "GRADE"))
-		setkeyv(growthAchievementPlot.data, "YEAR")
+		setkey(growthAchievementPlot.data, YEAR)
 		my.tmp <- growthAchievementPlot.data[list(year)][,quantile(TRANSFORMED_SCALE_SCORE, probs=gaPlot.achievement_percentiles, na.rm=TRUE), keyby=list(GRADE, CONTENT_AREA)][
 			list(tmp.unique.grades.numeric)][,PERCENTILE:=rep(gaPlot.achievement_percentiles, length(tmp.unique.grades.numeric))]
 		temp_uncond_frame <- matrix(my.tmp[,splinefun(GRADE, V1)(tmp.smooth.grades), by=PERCENTILE][['V1']], nrow=length(gaPlot.achievement_percentiles), byrow=TRUE)
@@ -202,24 +222,35 @@
 
 	if (!is.null(gaPlot.back.extrapolated.typical.cuts)) {
 		setkey(growthAchievementPlot.data, CONTENT_AREA, YEAR, ID)
-		tmp.projections <- gaPlot.sgp_object@SGP$SGProjections[[paste(content_area, year, sep=".")]][,
-			c("ID", grep("P50", names(gaPlot.sgp_object@SGP$SGProjections[[paste(content_area, year, sep=".")]]), value=TRUE)), with=FALSE]
+		tmp.projections <- gaPlot.sgp_object@SGP$SGProjections[[paste(content_area, year, "BASELINE"[baseline], sep=".")]][,
+			c("ID", grep("P50", names(gaPlot.sgp_object@SGP$SGProjections[[paste(content_area, year, "BASELINE"[baseline], sep=".")]]), value=TRUE)), with=FALSE]
 		tmp.projections[,c("YEAR", "CONTENT_AREA"):=list(year, content_area)]
 		setkey(tmp.projections, CONTENT_AREA, YEAR, ID)
 		tmp.projections <- growthAchievementPlot.data[tmp.projections]
 		extrapolated.cuts.dt <- data.table(GRADE_NUMERIC=head(seq(gaPlot.grade_range[1], gaPlot.grade_range[2]), -1))
 		for (i in seq(dim(extrapolated.cuts.dt)[1])) {
-			if (gaPlot.back.extrapolated.typical.cuts %in% unique(tmp.projections[[grep(paste("YEAR", i, sep="_"), names(tmp.projections), value=TRUE)]])) {
-				tmp.tf <- tmp.projections[[grep(paste("YEAR", i, sep="_"), names(tmp.projections), value=TRUE)]]==gaPlot.back.extrapolated.typical.cuts
+			if (gaPlot.back.extrapolated.typical.cuts %in% unique(tmp.projections[[grep(paste(tmp.unit.label, i, "", sep="_"), names(tmp.projections), value=TRUE)]])) {
+				tmp.tf <- tmp.projections[[grep(paste(tmp.unit.label, i, "", sep="_"), names(tmp.projections), value=TRUE)]]==gaPlot.back.extrapolated.typical.cuts
 			} else {
-				tmp.index <- which.max(gaPlot.back.extrapolated.typical.cuts < sort(unique(tmp.projections[[grep(paste("YEAR", i, sep="_"), names(tmp.projections), value=TRUE)]])))
-				tmp.values <- sort(unique(tmp.projections[[grep(paste("YEAR", i, sep="_"), names(tmp.projections), value=TRUE)]]))[c(tmp.index-1, tmp.index)]
-				tmp.tf <- tmp.projections[[grep(paste("YEAR", i, sep="_"), names(tmp.projections), value=TRUE)]] %in% tmp.values
+				tmp.index <- which.max(gaPlot.back.extrapolated.typical.cuts < sort(unique(tmp.projections[[grep(paste(tmp.unit.label, i, "", sep="_"), names(tmp.projections), value=TRUE)]])))
+				tmp.values <- sort(unique(tmp.projections[[grep(paste(tmp.unit.label, i, "", sep="_"), names(tmp.projections), value=TRUE)]]))[c(tmp.index-1, tmp.index)]
+				tmp.tf <- tmp.projections[[grep(paste(tmp.unit.label, i, "", sep="_"), names(tmp.projections), value=TRUE)]] %in% tmp.values
 			}
 			extrapolated.cuts.dt[GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i],
 				EXTRAPOLATED_P50_CUT:=mean(tmp.projections[tmp.tf][GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i]][['SCALE_SCORE']], na.rm=TRUE)]
 		}
 		extrapolated.cuts.dt <- rbindlist(list(extrapolated.cuts.dt, data.table(GRADE_NUMERIC=gaPlot.grade_range[2], EXTRAPOLATED_P50_CUT=gaPlot.back.extrapolated.typical.cuts)))
+	}
+
+	getSGPtDate <- function(year) {
+		tmp.split <- unlist(strsplit(year, "[.]"))
+		tmp.year <- unlist(strsplit(tmp.split[1], "_"))
+		if (length(tmp.split)==2) tmp.period <- tmp.split[2] else tmp.period <- NULL
+		if (is.null(tmp.period)) tmp.date <- "05-01"
+		if (tmp.period==1) {tmp.year <- head(tmp.year, 1); tmp.date <- "08-01"}
+		if (tmp.period==2) {tmp.year <- tail(tmp.year, 1); tmp.date <- "01-15"}
+		if (tmp.period==3) {tmp.year <- tail(tmp.year, 1); tmp.date <- "07-31"}
+		return(as.Date(paste(tmp.year, tmp.date, sep="-")))
 	}
 
 
@@ -286,6 +317,7 @@
 
 		tmp2.dt <- tmp1.dt[ID==j]
 		tmp.dt <- data.table(ID=j, data.frame(lapply(tmp2.dt[,c("GRADE", "SCALE_SCORE"), with=FALSE], function(x) t(data.frame(x))), stringsAsFactors=FALSE))
+		if (!is.null(gaPlot.SGPt)) tmp.dt[,DATE:=getSGPtDate(year)][,c("TIME", "TIME_LAG"):=list(as.numeric(DATE), as.numeric(NA))][,DATE:=NULL]
 		tmp.smooth.grades.trajectories <- tmp.smooth.grades[tmp.smooth.grades >= tail(tmp2.dt[['GRADE_NUMERIC']], 1)]
 		grade.projection.sequence <- intersect(tmp.smooth.grades.trajectories, tmp.unique.grades.numeric)
 

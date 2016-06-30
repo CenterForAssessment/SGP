@@ -1865,7 +1865,7 @@ function(sgp_object,
 			}
 		} ## END if sgp.percentiles
 
-	
+
 		### sgp.percentiles.equated
 
 		if (sgp.percentiles.equated) {
@@ -2142,7 +2142,7 @@ function(sgp_object,
 
 
 	if (!keep.sqlite & sgp.sqlite) {if (del.dir) unlink("Data/tmp_data", recursive=TRUE, force=TRUE) else unlink("Data/tmp_data/TMP_SGP_Data.sqlite", recursive=TRUE)}
-	
+
 	if (!is.null(sgp.test.cohort.size)) {
 		if (!return.sgp.test.results) {
 			messageSGP(paste("Finished analyzeSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
