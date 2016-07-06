@@ -200,14 +200,14 @@ function(panel.data,         ## REQUIRED
 				if (par.start$par.type == 'MULTICORE') {
 					tmp.mtx <- mclapply(par.start$TAUS.LIST, function(x) eval(parse(text=paste("rq.sgp(tmp.data[[", tmp.num.variables, "]] ~ ",
 						substring(mod,4), ", tau=x, data=tmp.data)", sep=""))), mc.cores=par.start$workers, mc.preschedule = FALSE)
-					if (any(tmp.tf <- sapply(tmp.mtx, function(x) identical(class(x), "try-error")))) return(list(RQ_ERROR=unlist(tmp.mtx[[which(tmp.tf)]][1], use.names=FALSE)))
+					if (any(tmp.tf <- sapply(tmp.mtx, function(x) identical(class(x), "try-error")))) return(list(RQ_ERROR=sapply(which(tmp.tf), function(f) tmp.mtx[[f]][1])))
 					tmp.mtx <- do.call(cbind, tmp.mtx)
 				}
 
 				if (par.start$par.type == 'SNOW') {
 					tmp.mtx <- parLapplyLB(par.start$internal.cl, par.start$TAUS.LIST, function(x) eval(parse(text=paste("rq.sgp(tmp.data[[",
 						tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=x, data=tmp.data)", sep=""))))
-					if (any(tmp.tf <- sapply(tmp.mtx, function(x) identical(class(x), "try-error")))) return(list(RQ_ERROR=unlist(tmp.mtx[[which(tmp.tf)]][1], use.names=FALSE)))
+					if (any(tmp.tf <- sapply(tmp.mtx, function(x) identical(class(x), "try-error")))) return(list(RQ_ERROR=sapply(which(tmp.tf), function(f) tmp.mtx[[f]][1])))
 					tmp.mtx <- do.call(cbind, tmp.mtx)
 				}
 			}
