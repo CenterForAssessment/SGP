@@ -21,7 +21,7 @@ function(
 
 	### Loop over FORWARD and/or BACKWARD
 
-	for (lag.direction in lag.direction.argument) {
+	for (lag.direction in lag.direction) {
 
 		### Create relevant data and variables
 
@@ -83,7 +83,7 @@ function(
 						by=key(tmp.data)][order(PERCENTAGE_IN_GROUP, decreasing=TRUE)]
 			}
 		}
-	} ### END for (lag.direction in lag.direction.argument)
+	} ### END for (lag.direction in lag.direction)
 
 	return(course.progression.list)
 
