@@ -222,8 +222,9 @@
 
 	if (!is.null(gaPlot.back.extrapolated.typical.cuts)) {
 		setkey(growthAchievementPlot.data, CONTENT_AREA, YEAR, ID)
-		tmp.projections <- gaPlot.sgp_object@SGP$SGProjections[[paste(content_area, year, "BASELINE"[baseline], sep=".")]][,
-			c("ID", grep("P50", names(gaPlot.sgp_object@SGP$SGProjections[[paste(content_area, year, "BASELINE"[baseline], sep=".")]]), value=TRUE)), with=FALSE]
+		if (baseline) tmp.proj.name <- paste(content_area, year, "BASELINE", sep=".") else tmp.proj.name <- paste(content_area, year, sep=".")
+		tmp.projections <- gaPlot.sgp_object@SGP$SGProjections[[tmp.proj.name]][,
+			c("ID", grep("P50", names(gaPlot.sgp_object@SGP$SGProjections[[tmp.proj.name]]), value=TRUE)), with=FALSE]
 		tmp.projections[,c("YEAR", "CONTENT_AREA"):=list(year, content_area)]
 		setkey(tmp.projections, CONTENT_AREA, YEAR, ID)
 		tmp.projections <- growthAchievementPlot.data[tmp.projections]
