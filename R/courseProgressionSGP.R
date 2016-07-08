@@ -5,7 +5,7 @@ function(
 	year) {
 
 	### Define list to hold results
-
+	CONTENT_AREA <- CONTENT_AREA_by_GRADE <- GRADE <- GRADE_CHAR <- ID <- PERCENTAGE_IN_GROUP <- VALID_CASE <- YEAR <- YEAR_INTEGER <- NULL
 	course.progression.list <- list()
 
 
