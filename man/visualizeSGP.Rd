@@ -66,6 +66,7 @@ visualizeSGP(
         gaPlot.max.order.for.progression=NULL,
         gaPlot.start.points="Achievement Level Cuts",
         gaPlot.back.extrapolated.typical.cuts=NULL,
+        gaPlot.SGPt=NULL,
         gaPlot.folder="Visualizations/growthAchievementPlots",
         parallel.config=NULL)
 }
@@ -216,15 +217,18 @@ provided the function produces \code{\link{studentGrowthPlot}}s for ALL students
   baseline referenced system.
   }
   \item{gaPlot.max.order.for.progression}{The maximum coefficient matrix order to use for each progression. Default is NULL which utilizes the maximum order available
-  with the coefficient matrices.}
-  \item{gaPlot.folder}{Character vector indicating where \code{\link{growthAchievementPlot}}s should be placed. The default folder is 'Visualizations/growthAchievementPlots'.
+    with the coefficient matrices.
   }
   \item{gaPlot.start.points}{Either 'Achievement Level Cuts' or 'Achievement Percentiles' defining where the percentile trajectories of the growth achievement plot will start from.
+  }
+  \item{gaPlot.folder}{Character vector indicating where \code{\link{growthAchievementPlot}}s should be placed. The default folder is 'Visualizations/growthAchievementPlots'.
   }
   \item{gaPlot.back.extrapolated.typical.cuts}{A numeric value or Boolean vector indicating whether to create back extrapolated
   cutscores based upon typical growth.
   }
- \item{parallel.config}{A named list with, at a minimum, two elements indicating 1) the BACKEND package to be used for parallel computation and 2) the WORKERS list to specify the number of processors to be used in each major analysis.  The BACKEND element can be set = to \code{FOREACH} or \code{PARALLEL}.  Please consult the manuals and vignettes for information of these packages!  The \code{\link{analyzeSGP}} help page contains more thorough explanation and examples of the \code{parallel.config} setup.
+  \item{gaPlot.SGPt}{Boolean indicator for growth achievement plot indicating whether time dependent SGPs are to be used for student growth projections \code{SGPt}
+  }
+  \item{parallel.config}{A named list with, at a minimum, two elements indicating 1) the BACKEND package to be used for parallel computation and 2) the WORKERS list to specify the number of processors to be used in each major analysis.  The BACKEND element can be set = to \code{FOREACH} or \code{PARALLEL}.  Please consult the manuals and vignettes for information of these packages!  The \code{\link{analyzeSGP}} help page contains more thorough explanation and examples of the \code{parallel.config} setup.
 
 TYPE is a third element of the \code{parallel.config} list that provides necessary information when using FOREACH or PARALLEL packages as the backend. With BACKEND="FOREACH",  the TYPE element specifies the flavor of 'foreach' backend.  As of version 1.0-1.0, only "doParallel" is supported.  TYPE=NA (default) produces summaries sequentially.  If BACKEND = "PARALLEL", the \code{parallel} package will be used.  This package combines deprecated parallel packages \code{snow} and \code{multicore}.  Using the "snow" implementation of \code{parallel} the function will create a cluster object based on the TYPE element specified and the number of workers requested (see WORKERS list description below).  The TYPE element indicates the users preferred cluster type (either "PSOCK" for socket cluster of "MPI" for an OpenMPI cluster). If Windows is the operating system, this "snow" implementation must be used and the TYPE element must = "PSOCK".  Defaults are assigned based on operating system if TYPE is missing based on system OS.  Unix/Mac OS defaults to the "multicore" to avoid worker node pre-scheduling and appears to be more efficient in these operating systems.
 

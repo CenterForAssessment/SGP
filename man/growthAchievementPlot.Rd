@@ -18,6 +18,7 @@ growthAchievementPlot(
 	gaPlot.start.points="Achievement Level Cuts",
     gaPlot.back.extrapolated.typical.cuts=NULL,
 	gaPlot.subtitle = TRUE,
+    gaPlot.SGPt=NULL,
     state,
     content_area,
     year,
@@ -57,16 +58,19 @@ growthAchievementPlot(
 	Either 'Achievement Level Cuts' or 'Achievement Percentiles' defining where the growth percentiles trajectories will start in the growth achievement plots.
 	}
     \item{gaPlot.back.extrapolated.typical.cuts}{
-    Scale score in final year for which 50th percentile growth culminates from back-extrapolated scale scores. 
+    Scale score in final year for which 50th percentile growth culminates from back-extrapolated scale scores.
     }
 	\item{gaPlot.subtitle}{Boolean variable (defaults to TRUE) indicating whether subtitle is printed on the growth achievement chart indicating student starting point.
 	}
-        \item{state}{
+    \item{gaPlot.SGPt}{
+        A boolean variable indicating whether time dependent coefficient matrices (SGPt) are to be used in student growth projection calculation.
+    }
+    \item{state}{
         A two letter acronym for the state associated with the supplied data.
-        }
-        \item{content_area}{
+    }
+    \item{content_area}{
         A character vector indicating the content area to produce the growth and achievement chart. Note that the supplied content area must match that used in the internal labeling of content
-	area for the sgp_object.
+        area for the sgp_object.
 	}
 	\item{year}{
 	The year for which to produce the growth and achievement plots.

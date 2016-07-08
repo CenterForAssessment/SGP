@@ -54,6 +54,7 @@ function(sgp_object,
 		gaPlot.max.order.for.progression=NULL,
 		gaPlot.start.points="Achievement Level Cuts",
 		gaPlot.back.extrapolated.typical.cuts=NULL,
+		gaPlot.SGPt=NULL,
 		gaPlot.folder="Visualizations/growthAchievementPlots",
 		parallel.config=NULL) {
 
@@ -240,6 +241,7 @@ function(sgp_object,
 						baseline=gaPlot.iter[["BASELINE"]],
 						equated=gaPlot.iter[["EQUATED"]],
 						output.format=c("PDF", "PNG"),
+						gaPlot.SGPt=gaPlot.SGPt,
 						output.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))
 
 			} ## END dopar
@@ -260,6 +262,7 @@ function(sgp_object,
 						baseline=gaPlot.iter[["BASELINE"]],
 						equated=gaPlot.iter[["EQUATED"]],
 						output.format=c("PDF", "PNG"),
+						gaPlot.SGPt=gaPlot.SGPt,
 						output.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]])))
 			}
 
@@ -278,6 +281,7 @@ function(sgp_object,
 						baseline=gaPlot.iter[["BASELINE"]],
 						equated=gaPlot.iter[["EQUATED"]],
 						output.format=c("PDF", "PNG"),
+						gaPlot.SGPt=gaPlot.SGPt,
 						output.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))},
 				mc.cores=par.start$workers, mc.preschedule=FALSE)
 			}
