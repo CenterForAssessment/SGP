@@ -55,7 +55,7 @@ function(
 
 	if (is.null(sgp.target.content_areas) & any(sapply(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]], function(x) length(unique(x))) > 1)) {
 		sgp.target.content_areas <- TRUE
-		tmp.messages <- c(tmp.messages, "\tNOTE: Multple content areas detected for student growth targets. 'sgp.target.content_areas set to TRUE.\n")
+		tmp.messages <- c(tmp.messages, "\tNOTE: Multiple content areas detected for student growth targets. 'sgp.target.content_areas set to TRUE.\n")
 	}
 
 	### Check to see if max.sgp.target.years.forward if configured in SGPstateData
