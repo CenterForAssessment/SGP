@@ -151,7 +151,7 @@ function(state,
 					CONTENT_AREA=content_area.argument)
 		}
 		grades.content_areas.reported.in.state[,GRADE_NUMERIC:=
-			(as.numeric(grades.content_areas.reported.in.state$GRADE[2])-1)+c(0, cumsum(tail(grades.content_areas.reported.in.state$YEAR_LAG, -1)))]
+			as.numeric(as.character((as.numeric(grades.content_areas.reported.in.state$GRADE[2])-1)+c(0, cumsum(tail(grades.content_areas.reported.in.state$YEAR_LAG, -1)))))]
 		grades.content_areas.reported.in.state[,GRADE:=as.character(grades.content_areas.reported.in.state$GRADE)]
 		setkeyv(grades.content_areas.reported.in.state, c("GRADE", "CONTENT_AREA"))
 		long.cutscores <- grades.content_areas.reported.in.state[long.cutscores]
