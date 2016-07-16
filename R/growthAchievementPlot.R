@@ -172,13 +172,18 @@
 			year_lags.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[tmp.content_area]],
 			max.order.for.progression=my_min(c(gaPlot.max.order.for.progression, getMaxOrderForProgression(year, content_area, state, equated))),
 			sgp.projections.equated=equated,
+			panel.data.vnames=c("ID", grep("GRADE|SCALE_SCORE", names(tmp.dt), value=TRUE)),
 			SGPt=gaPlot.SGPt,
 			print.time.taken=FALSE)[["SGProjections"]][[.create.path(list(my.subject=content_area, my.year=year, my.extra.label=my.extra.label))]][,-1, with=FALSE]
 	}
 
 	smoothPercentileTrajectory <- function(tmp.dt, grades.projection.sequence, percentile, content_area, year, state) {
-		tmp.trajectories <- gaPlot.percentile_trajectories_Internal(tmp.dt, percentile, content_area, year, state)
-		trajectories <- c(as.numeric(tmp.dt[,dim(tmp.dt)[2], with=FALSE]), as.numeric(tmp.trajectories))
+		if (is.null(gaPlot.SGPt)) {
+			tmp.trajectories <- gaPlot.percentile_trajectories_Internal(tmp.dt, percentile, content_area, year, state)
+		} else {
+			tmp.trajectories <- gaPlot.percentile_trajectories_Internal(tmp.dt, percentile, content_area, year, state)[,-1,with=FALSE]
+		}
+		trajectories <- c(as.numeric(tail(tmp.dt[,grep("SCALE_SCORE", names(tmp.dt), value=TRUE), with=FALSE], 1)), as.numeric(tmp.trajectories))
 
 		if (content_area %in% names(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]])) {
 			tmp.spline.fun <- splinefun(grade.projection.sequence, trajectories)
@@ -318,7 +323,7 @@
 
 		tmp2.dt <- tmp1.dt[ID==j]
 		tmp.dt <- data.table(ID=j, data.frame(lapply(tmp2.dt[,c("GRADE", "SCALE_SCORE"), with=FALSE], function(x) t(data.frame(x))), stringsAsFactors=FALSE))
-		if (!is.null(gaPlot.SGPt)) tmp.dt[,DATE:=getSGPtDate(year)][,c("TIME", "TIME_LAG"):=list(as.numeric(DATE), as.numeric(NA))][,DATE:=NULL]
+		if (!is.null(gaPlot.SGPt)) tmp.dt[,DATE:=getSGPtDate(year)]
 		tmp.smooth.grades.trajectories <- tmp.smooth.grades[tmp.smooth.grades >= tail(tmp2.dt[['GRADE_NUMERIC']], 1)]
 		grade.projection.sequence <- intersect(tmp.smooth.grades.trajectories, tmp.unique.grades.numeric)
 
@@ -515,13 +520,13 @@
 
 	if (gaPlot.subtitle) {
 		if (gaPlot.start.points=="Achievement Level Cuts") {
-			tmp.text <- paste("SGP trajectories for a ", toOrdinal(tmp2.dt[['GRADE_NUMERIC']]), " grade student starting from the Level ", tmp2.dt[['LEVEL']], "/Level ", tmp2.dt[['LEVEL']]+1, " cut.", sep="")
+			tmp.text <- paste("SGP trajectories for a ", toOrdinal(trunc(tmp2.dt[['GRADE_NUMERIC']])), " grade student starting from the Level ", tmp2.dt[['LEVEL']], "/Level ", tmp2.dt[['LEVEL']]+1, " cut.", sep="")
 		}
 		if (gaPlot.start.points=="Achievement Percentiles") {
-			tmp.text <- paste("SGP trajectories for a ", toOrdinal(tmp2.dt[['GRADE_NUMERIC']]), " grade student starting from the ", toOrdinal(as.integer(100*tmp2.dt[['LEVEL']])), " achievement percentile.", sep="")
+			tmp.text <- paste("SGP trajectories for a ", toOrdinal(trunc(tmp2.dt[['GRADE_NUMERIC']])), " grade student starting from the ", toOrdinal(as.integer(100*tmp2.dt[['LEVEL']])), " achievement percentile.", sep="")
 		}
 		if (gaPlot.start.points=="Individual Student") {
-			tmp.text <- paste("SGP trajectories for student ", tmp2.dt[['ID']][1], " starting from their ", toOrdinal(tail(tmp2.dt[['GRADE_NUMERIC']], 1)), " grade result.", sep="")
+			tmp.text <- paste("SGP trajectories for student ", tmp2.dt[['ID']][1], " starting from their ", toOrdinal(trunc(tail(tmp2.dt[['GRADE_NUMERIC']], 1))), " grade result.", sep="")
 		}
 		grid.text(x=0.5, y=0.05, tmp.text, gp=gpar(col="white", cex=0.9))
 
