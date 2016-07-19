@@ -111,11 +111,13 @@ function(panel.data,	## REQUIRED
 			tmp.cutscore.state <- sapply(strsplit(names(Cutscores)[grep(content_area, names(Cutscores))], "[.]"), function(x) x[2])
 			if (my.state %in% tmp.cutscore.state) {
 				content_area <- paste(content_area, my.state, sep=".")
-				year.split.index <- 3
-			} else year.split.index <- 2
-		} else year.split.index <- 2
+				year.split.index <- -2
+			} else year.split.index <- -1
+		} else year.split.index <- -1
 
-		tmp.cutscore.years <- sapply(strsplit(names(Cutscores)[grep(content_area, names(Cutscores))], "[.]"), function(x) x[year.split.index])
+#		tmp.cutscore.years <- sapply(strsplit(names(Cutscores)[grep(content_area, names(Cutscores))], "[.]"), function(x) x[year.split.index])
+		tmp.cutscore.years <- sapply(sapply(strsplit(names(Cutscores)[grep(content_area, names(Cutscores))], "[.]"), function(x) tail(x, year.split.index)), paste, collapse=".")
+		tmp.cutscore.years[tmp.cutscore.years==""] <- NA
 		if (any(!is.na(tmp.cutscore.years))) {
 			if (year %in% tmp.cutscore.years) {
 				return(paste(content_area, year, sep="."))
@@ -772,7 +774,7 @@ function(panel.data,	## REQUIRED
 					Panel_Data=NULL,
 					SGPercentiles=panel.data[["SGPercentiles"]],
 					SGProjections=panel.data[["SGProjections"]],
-					Simulated_SGPs=panel.data[["Simulated_SGPs"]]))		
+					Simulated_SGPs=panel.data[["Simulated_SGPs"]]))
 		} else {
 			if (length(grep("BASELINE", sgp.labels[['my.extra.label']])) > 0) {
 				messageSGP(paste("\tNOTE:  Not all CONTENT_AREA values in content_area.progression have associated BASELINE referenced coefficient matrices.\n\tCOHORT referenced matrices for missing content areas (",
