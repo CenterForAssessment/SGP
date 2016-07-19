@@ -261,7 +261,7 @@ function(data,
 
 	} ### end if (create.additional.variables)
 
-	if (!is.null(fix.duplicates) && !is.null(DUPLICATED_CASES)) {
+	if (!is.null(fix.duplicates)) {
 		if (identical(toupper(fix.duplicates), "KEEP.ALL")) {
 			assign("DUPLICATED_CASES",
 				data@Data["VALID_CASE"][unique(data@Data["VALID_CASE"][duplicated(data@Data["VALID_CASE"]), c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE])])
