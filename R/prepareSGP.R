@@ -30,7 +30,7 @@ function(data,
 	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["fix.duplicates"]])) {
 		fix.duplicates <- SGPstateData[[state]][["SGP_Configuration"]][["fix.duplicates"]]
 	}
-	
+
 
 	### Utility functions
 
@@ -263,6 +263,8 @@ function(data,
 
 	if (!is.null(fix.duplicates) && !is.null(DUPLICATED_CASES)) {
 		if (identical(toupper(fix.duplicates), "KEEP.ALL")) {
+			assign("DUPLICATED_CASES",
+				data@Data["VALID_CASE"][unique(data@Data["VALID_CASE"][duplicated(data@Data["VALID_CASE"]), c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE])])
 			if (all(unique(DUPLICATED_CASES$YEAR) %in% (tmp.last.year <- tail(sort(unique(sgp_object@Data$YEAR)), 1)))) {
 				sgp_object@Data <- createUniqueLongData(sgp_object@Data)
 				messageSGP("\tNOTE: Duplicate cases in current year made UNIQUE. Modified IDs include suffix '_DUPS_***' in @Data.")
