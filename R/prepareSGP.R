@@ -9,19 +9,28 @@ function(data,
 	VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- ID <- GRADE <- SCALE_SCORE <- DUPLICATED_CASES <- tmp.dups.index.to.remove <- NULL
 	SGPstateData <- SGP::SGPstateData ### Needed due to possible assignment of values to SGPstateData
 
-	## Print start time
+
+	### Print start time
 
 	started.at <- proc.time()
 	messageSGP(paste("\nStarted prepareSGP", prettyDate()), "\n")
 	messageSGP(match.call())
 
-	## Get state (if possible)
 
-		if (is.null(state)) {
-			tmp.name <- toupper(gsub("_", " ", deparse(substitute(data))))
-			state <- getStateAbbreviation(tmp.name, "prepareSGP")
-		}
+	### Get state (if possible)
 
+	if (is.null(state)) {
+		tmp.name <- toupper(gsub("_", " ", deparse(substitute(data))))
+		state <- getStateAbbreviation(tmp.name, "prepareSGP")
+	}
+
+
+	### Configure arguments
+
+	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["fix.duplicates"]])) {
+		fix.duplicates <- SGPstateData[[state]][["SGP_Configuration"]][["fix.duplicates"]]
+	}
+	
 
 	### Utility functions
 
