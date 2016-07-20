@@ -269,11 +269,16 @@ function(data,
 			} else {
 				assign("DUPLICATED_CASES", data["VALID_CASE"][unique(data["VALID_CASE"][duplicated(data["VALID_CASE"]), c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE])])
 			}
-			if (all(unique(DUPLICATED_CASES$YEAR) %in% (tmp.last.year <- tail(sort(unique(sgp_object@Data$YEAR)), 1)))) {
+			if (dim(DUPLICATED_CASES)[1]!=0) {
 				sgp_object@Data <- createUniqueLongData(sgp_object@Data)
 				messageSGP("\tNOTE: Duplicate cases in current year made UNIQUE. Modified IDs include suffix '_DUPS_***' in @Data.")
-			} else {
-				messageSGP("\tNOTE: Duplicate case modification is only available when duplicates reside in last year of data. Duplicate cases are NOT fixed.")
+
+				if (!all(unique(DUPLICATED_CASES$YEAR) %in% (tmp.last.year <- tail(sort(unique(sgp_object@Data$YEAR)), 1)))) {
+					setkey(DUPLICATED_CASES, VALID_CASE, CONTENT_AREA, YEAR, ID, GRADE)
+					if (any(duplicated(DUPLICATED_CASES[YEAR!=tmp.last.year]))) {
+						messageSGP("\tNOTE: Duplicate case modification is only available when duplicates reside in last year of data. Duplicate cases are NOT fixed.")
+					}
+				}
 			}
 		} ### End KEEP.ALL
 	}
