@@ -752,7 +752,7 @@ function(panel.data,	## REQUIRED
 	### Get relevant matrices for projections
 
 	# Check to see if ALL relevant matrices exist
-	if (!is.null(sgp.projections.use.only.complete.matrices)) {
+	if (is.null(sgp.projections.use.only.complete.matrices)) {
 		if (any(is.na(match(tmp.path.coefficient.matrices, names(panel.data[["Coefficient_Matrices"]]))))) {
 			tmp.fix.index <- which(is.na(match(tmp.path.coefficient.matrices, names(panel.data[["Coefficient_Matrices"]]))))
 			# Reverse tmp.path.coefficient.matrices use of my.year/BASELINE and try that
