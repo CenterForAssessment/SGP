@@ -15,6 +15,7 @@ function(sgp_object,
          sgp.projections.lagged.baseline.max.order=3,
          sgp.projections.max.forward.progression.years=3,
          sgp.projections.max.forward.progression.grade=NULL,
+         sgp.projections.use.only.complete.matrices=NULL,
          sgp.minimum.default.panel.years=NULL,
          sgp.use.my.coefficient.matrices=NULL,
          sgp.use.my.sgp_object.baseline.coefficient.matrices=NULL,
@@ -319,6 +320,9 @@ function(sgp_object,
         lagged.percentile.trajectory.values <- NULL
     }
 
+	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][['sgp.projections.use.only.complete.matrices']])) {
+        sgp.projections.use.only.complete.matrices <- SGPstateData[[state]][["SGP_Configuration"]][['sgp.projections.use.only.complete.matrices']]
+    }
 
 	###
 	### Utility functions
@@ -1251,6 +1255,7 @@ function(sgp_object,
 						return.projection.group.scale.scores=return.projection.group.scale.scores,
 						return.projection.group.dates=return.projection.group.dates,
 						sgp.projections.equated=sgp.projections.equated,
+                        sgp.projections.use.only.complete.matrices=sgp.projections.use.only.complete.matrices,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections"),
 						...))
 				}
@@ -1295,6 +1300,7 @@ function(sgp_object,
 						return.projection.group.scale.scores=return.projection.group.scale.scores,
 						return.projection.group.dates=return.projection.group.dates,
 						sgp.projections.equated=sgp.projections.equated,
+                        sgp.projections.use.only.complete.matrices=sgp.projections.use.only.complete.matrices,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections"),
 						...))
 
@@ -1340,6 +1346,7 @@ function(sgp_object,
 						return.projection.group.scale.scores=return.projection.group.scale.scores,
 						return.projection.group.dates=return.projection.group.dates,
 						sgp.projections.equated=sgp.projections.equated,
+                        sgp.projections.use.only.complete.matrices=sgp.projections.use.only.complete.matrices,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections"),
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 
@@ -1397,6 +1404,7 @@ function(sgp_object,
 						return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 						return.projection.group.scale.scores=return.projection.group.scale.scores,
 						return.projection.group.dates=return.projection.group.dates,
+                        sgp.projections.use.only.complete.matrices=sgp.projections.use.only.complete.matrices,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.baseline"),
 						...))
 				}
@@ -1440,6 +1448,7 @@ function(sgp_object,
 						return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 						return.projection.group.scale.scores=return.projection.group.scale.scores,
 						return.projection.group.dates=return.projection.group.dates,
+                        sgp.projections.use.only.complete.matrices=sgp.projections.use.only.complete.matrices,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.baseline"),
 						...))
 
@@ -1484,6 +1493,7 @@ function(sgp_object,
 						return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 						return.projection.group.scale.scores=return.projection.group.scale.scores,
 						return.projection.group.dates=return.projection.group.dates,
+                        sgp.projections.use.only.complete.matrices=sgp.projections.use.only.complete.matrices,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.baseline"),
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 
@@ -1544,6 +1554,7 @@ function(sgp_object,
 						return.projection.group.scale.scores=return.projection.group.scale.scores,
 						return.projection.group.dates=return.projection.group.dates,
 						sgp.projections.equated=sgp.projections.equated,
+                        sgp.projections.use.only.complete.matrices=sgp.projections.use.only.complete.matrices,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.lagged"),
 						...))
 				}
@@ -1590,6 +1601,7 @@ function(sgp_object,
 						return.projection.group.scale.scores=return.projection.group.scale.scores,
 						return.projection.group.dates=return.projection.group.dates,
 						sgp.projections.equated=sgp.projections.equated,
+                        sgp.projections.use.only.complete.matrices=sgp.projections.use.only.complete.matrices,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.lagged"),
 						...))
 
@@ -1637,6 +1649,7 @@ function(sgp_object,
 						return.projection.group.scale.scores=return.projection.group.scale.scores,
 						return.projection.group.dates=return.projection.group.dates,
 						sgp.projections.equated=sgp.projections.equated,
+                        sgp.projections.use.only.complete.matrices=sgp.projections.use.only.complete.matrices,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.lagged"),
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 
@@ -1694,6 +1707,7 @@ function(sgp_object,
 						return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 						return.projection.group.scale.scores=return.projection.group.scale.scores,
 						return.projection.group.dates=return.projection.group.dates,
+                        sgp.projections.use.only.complete.matrices=sgp.projections.use.only.complete.matrices,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.lagged.baseline"),
 						...))
 				}
@@ -1738,6 +1752,7 @@ function(sgp_object,
 					return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 					return.projection.group.scale.scores=return.projection.group.scale.scores,
 					return.projection.group.dates=return.projection.group.dates,
+                    sgp.projections.use.only.complete.matrices=sgp.projections.use.only.complete.matrices,
 					SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.lagged.baseline"),
 					...))
 
@@ -1782,6 +1797,7 @@ function(sgp_object,
 					return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 					return.projection.group.scale.scores=return.projection.group.scale.scores,
 					return.projection.group.dates=return.projection.group.dates,
+                    sgp.projections.use.only.complete.matrices=sgp.projections.use.only.complete.matrices,
 					SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.lagged.baseline"),
 					...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 
@@ -1996,6 +2012,7 @@ function(sgp_object,
 					return.projection.group.scale.scores=return.projection.group.scale.scores,
 					return.projection.group.dates=return.projection.group.dates,
 					sgp.projections.equated=sgp.projections.equated,
+                    sgp.projections.use.only.complete.matrices=sgp.projections.use.only.complete.matrices,
 					SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections"),
 					...)
 			}
@@ -2040,6 +2057,7 @@ function(sgp_object,
 					return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 					return.projection.group.scale.scores=return.projection.group.scale.scores,
 					return.projection.group.dates=return.projection.group.dates,
+                    sgp.projections.use.only.complete.matrices=sgp.projections.use.only.complete.matrices,
 					SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.baseline"),
 					...)
 			}
@@ -2087,6 +2105,7 @@ function(sgp_object,
 					return.projection.group.scale.scores=return.projection.group.scale.scores,
 					return.projection.group.dates=return.projection.group.dates,
 					sgp.projections.equated=sgp.projections.equated,
+                    sgp.projections.use.only.complete.matrices=sgp.projections.use.only.complete.matrices,
 					SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.lagged"),
 					...)
 			}
@@ -2131,6 +2150,7 @@ function(sgp_object,
 					return.projection.group.identifier=sgp.iter[["sgp.projection.sequence"]],
 					return.projection.group.scale.scores=return.projection.group.scale.scores,
 					return.projection.group.dates=return.projection.group.dates,
+                    sgp.projections.use.only.complete.matrices=sgp.projections.use.only.complete.matrices,
 					SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.lagged.baseline"),
 					...)
 			}
