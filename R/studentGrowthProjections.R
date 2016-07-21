@@ -778,11 +778,11 @@ function(panel.data,	## REQUIRED
 					Simulated_SGPs=panel.data[["Simulated_SGPs"]]))
 			} else {
 				if (length(grep("BASELINE", sgp.labels[['my.extra.label']])) > 0) {
-					messageSGP(paste("\tNOTE:  Not all CONTENT_AREA values in content_area.progression have associated BASELINE referenced coefficient matrices.\n\tCOHORT referenced matrices for missing content areas (",
+					tmp.messages <- c(tmp.messages, paste("\tNOTE:  Not all CONTENT_AREA values in content_area.progression have associated BASELINE referenced coefficient matrices.\n\tCOHORT referenced matrices for missing content areas (",
 						paste(gsub(paste(".", sgp.labels$my.year, sep=""), "", tmp.path.coefficient.matrices2), collapse=", "),
 						") have been found and will be used.\n\tPlease note the inconsistency and ensure this is correct!", sep=""))
 				} else {
-					messageSGP(paste("NOTE:  Not all CONTENT_AREA values in content_area.progression have associated COHORT referenced coefficient matrices.\n\tBASELINE referenced matrices for missing content areas (",
+					tmp.messages <- c(tmp.messages, paste("NOTE:  Not all CONTENT_AREA values in content_area.progression have associated COHORT referenced coefficient matrices.\n\tBASELINE referenced matrices for missing content areas (",
 						paste(gsub(".BASELINE", "", tmp.path.coefficient.matrices2), collapse=", "),
 						") have been found and will be used.\n\tPlease note the inconsistency and ensure this is correct!", sep=""))
 				}
@@ -795,7 +795,7 @@ function(panel.data,	## REQUIRED
 	} else {
 		if (any(is.na(match(tmp.path.coefficient.matrices, names(panel.data[["Coefficient_Matrices"]]))))) {
 			tmp.fix.index <- which(is.na(match(tmp.path.coefficient.matrices, names(panel.data[["Coefficient_Matrices"]]))))
-			messageSGP(paste("NOTE: Not all CONTENT_AREA values in content_area.progression have associated COHORT referenced coefficient matrices: ", paste(tmp.path.coefficient.matrices[tmp.fix.index], collapse=", ")))
+			tmp.messages <- c(tmp.messages, paste("NOTE: Not all CONTENT_AREA values in content_area.progression have associated COHORT referenced coefficient matrices:\n\t", paste(tmp.path.coefficient.matrices[tmp.fix.index], collapse=", ")))
 		}
 		tmp.match <- setdiff(match(tmp.path.coefficient.matrices, names(panel.data[["Coefficient_Matrices"]])), NA)
 		tmp.matrices <- unlist(panel.data[["Coefficient_Matrices"]][tmp.match], recursive=FALSE)
