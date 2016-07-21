@@ -37,7 +37,7 @@ studentGrowthProjections(panel.data,
                          lag.increment=0,
                          sgp.exact.grade.progression=FALSE,
                          projcuts.digits=NULL,
-                         sgp.projections.use.only.complete.matrices=TRUE,
+                         sgp.projections.use.only.complete.matrices=NULL,
                          SGPt=NULL,
                          print.time.taken=TRUE)
 }

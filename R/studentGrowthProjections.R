@@ -30,7 +30,7 @@ function(panel.data,	## REQUIRED
 	lag.increment=0,
 	sgp.exact.grade.progression=FALSE,
 	projcuts.digits=NULL,
-	sgp.projections.use.only.complete.matrices=TRUE,
+	sgp.projections.use.only.complete.matrices=NULL,
 	SGPt=NULL,
 	print.time.taken=TRUE) {
 
@@ -752,30 +752,30 @@ function(panel.data,	## REQUIRED
 	### Get relevant matrices for projections
 
 	# Check to see if ALL relevant matrices exist
-	if (any(is.na(match(tmp.path.coefficient.matrices, names(panel.data[["Coefficient_Matrices"]]))))) {
-		tmp.fix.index <- which(is.na(match(tmp.path.coefficient.matrices, names(panel.data[["Coefficient_Matrices"]]))))
-		if (sgp.projections.use.only.complete.matrices) {
+	if (!is.null(sgp.projections.use.only.complete.matrices)) {
+		if (any(is.na(match(tmp.path.coefficient.matrices, names(panel.data[["Coefficient_Matrices"]]))))) {
+			tmp.fix.index <- which(is.na(match(tmp.path.coefficient.matrices, names(panel.data[["Coefficient_Matrices"]]))))
 			# Reverse tmp.path.coefficient.matrices use of my.year/BASELINE and try that
 			if (length(grep("BASELINE", sgp.labels[['my.extra.label']])) > 0) {
 				tmp.path.coefficient.matrices2 <- paste(unique(content_area.projection.sequence), sgp.labels$my.year, sep=".")[tmp.fix.index]
-				} else {
-					tmp.path.coefficient.matrices2 <- paste(unique(content_area.projection.sequence), "BASELINE", sep=".")[tmp.fix.index]
-				}
-				if (any(is.na(match(tmp.path.coefficient.matrices2, names(panel.data[["Coefficient_Matrices"]]))))) {
-					tmp.messages <- c(tmp.messages, "\t\tNOTE: Requested grade & content area progression are missing one or more coefficient matrices.\n")
-					messageSGP(paste("\tStarted studentGrowthProjections", started.date))
-					messageSGP(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, " ", return.projection.group.identifier, sep=""))
-					messageSGP(paste(tmp.messages, "\tStudent Growth Projections NOT RUN", prettyDate(), "\n"))
+			} else {
+				tmp.path.coefficient.matrices2 <- paste(unique(content_area.projection.sequence), "BASELINE", sep=".")[tmp.fix.index]
+			}
+			if (any(is.na(match(tmp.path.coefficient.matrices2, names(panel.data[["Coefficient_Matrices"]]))))) {
+				tmp.messages <- c(tmp.messages, "\t\tNOTE: Requested grade & content area progression are missing one or more coefficient matrices.\n")
+				messageSGP(paste("\tStarted studentGrowthProjections", started.date))
+				messageSGP(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, " ", return.projection.group.identifier, sep=""))
+				messageSGP(paste(tmp.messages, "\tStudent Growth Projections NOT RUN", prettyDate(), "\n"))
 
-					return(
-						list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],
-						Cutscores=panel.data[["Cutscores"]],
-						Goodness_of_Fit=panel.data[["Goodness_of_Fit"]],
-						Knots_Boundaries=panel.data[["Knots_Boundaries"]],
-						Panel_Data=NULL,
-						SGPercentiles=panel.data[["SGPercentiles"]],
-						SGProjections=panel.data[["SGProjections"]],
-						Simulated_SGPs=panel.data[["Simulated_SGPs"]]))
+				return(
+					list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],
+					Cutscores=panel.data[["Cutscores"]],
+					Goodness_of_Fit=panel.data[["Goodness_of_Fit"]],
+					Knots_Boundaries=panel.data[["Knots_Boundaries"]],
+					Panel_Data=NULL,
+					SGPercentiles=panel.data[["SGPercentiles"]],
+					SGProjections=panel.data[["SGProjections"]],
+					Simulated_SGPs=panel.data[["Simulated_SGPs"]]))
 			} else {
 				if (length(grep("BASELINE", sgp.labels[['my.extra.label']])) > 0) {
 					messageSGP(paste("\tNOTE:  Not all CONTENT_AREA values in content_area.progression have associated BASELINE referenced coefficient matrices.\n\tCOHORT referenced matrices for missing content areas (",
@@ -787,12 +787,20 @@ function(panel.data,	## REQUIRED
 						") have been found and will be used.\n\tPlease note the inconsistency and ensure this is correct!", sep=""))
 				}
 			}
+			tmp.matrices <- unlist(panel.data[["Coefficient_Matrices"]][c(match(tmp.path.coefficient.matrices, names(panel.data[["Coefficient_Matrices"]])),
+				match(tmp.path.coefficient.matrices2, names(panel.data[["Coefficient_Matrices"]])))], recursive=FALSE)
 		} else {
-			messageSGP(paste("NOTE: Not all CONTENT_AREA values in content_area.progression have associated COHORT referenced coefficient matrices: ", paste(names(panel.data[["Coefficient_Matrices"]])[tmp.fix.index], collapse=", ")))
+			tmp.matrices <- unlist(panel.data[["Coefficient_Matrices"]][match(tmp.path.coefficient.matrices, names(panel.data[["Coefficient_Matrices"]]))], recursive=FALSE)
 		}
-		tmp.matrices <- unlist(panel.data[["Coefficient_Matrices"]][c(match(tmp.path.coefficient.matrices, names(panel.data[["Coefficient_Matrices"]])),
-			match(tmp.path.coefficient.matrices2, names(panel.data[["Coefficient_Matrices"]])))], recursive=FALSE)
-	} else tmp.matrices <- unlist(panel.data[["Coefficient_Matrices"]][match(tmp.path.coefficient.matrices, names(panel.data[["Coefficient_Matrices"]]))], recursive=FALSE)
+	} else {
+		if (any(is.na(match(tmp.path.coefficient.matrices, names(panel.data[["Coefficient_Matrices"]]))))) {
+			tmp.fix.index <- which(is.na(match(tmp.path.coefficient.matrices, names(panel.data[["Coefficient_Matrices"]]))))
+			messageSGP(paste("NOTE: Not all CONTENT_AREA values in content_area.progression have associated COHORT referenced coefficient matrices: ", paste(tmp.path.coefficient.matrices[tmp.fix.index], collapse=", ")))
+		}
+		tmp.match <- setdiff(match(tmp.path.coefficient.matrices, names(panel.data[["Coefficient_Matrices"]])), NA)
+		tmp.matrices <- unlist(panel.data[["Coefficient_Matrices"]][tmp.match], recursive=FALSE)
+		grade.projection.sequence <- content_area.projection.sequence <- NULL
+	}
 
 	### PROGRESSION SEQUENCES: content_area.progression, & year_lags.progression if not supplied
 
