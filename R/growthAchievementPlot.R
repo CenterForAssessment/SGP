@@ -57,7 +57,6 @@
 	if (is.null(equated) &&
 			!identical(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Baseline_Projections_in_Transition_Year"]], TRUE) &&
 			year %in% SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[content_area]]) {
-		stop("HERE I AM!")
 		message(paste("\tNOTE: Based upon state scale changes in ", capwords(year), " student growth projections are not possible. No ",
 			capwords(year), " ", content_area, " growth and achievement plot will be generated.\n", sep=""))
 		return("DONE")
@@ -177,6 +176,7 @@
 			max.order.for.progression=my_min(c(gaPlot.max.order.for.progression, getMaxOrderForProgression(year, content_area, state, equated))),
 			sgp.projections.equated=equated,
 			panel.data.vnames=c("ID", grep("GRADE|SCALE_SCORE", names(tmp.dt), value=TRUE)),
+			sgp.projections.use.only.complete.matrices=SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgp.projections.use.only.complete.matrices']],
 			SGPt=gaPlot.SGPt,
 			print.time.taken=FALSE)[["SGProjections"]][[.create.path(list(my.subject=content_area, my.year=year, my.extra.label=my.extra.label))]][,-1, with=FALSE]
 	}
@@ -284,6 +284,8 @@
 
 	xscale.range <- c(gaPlot.grade_range[1]-0.5, gaPlot.grade_range[2]+0.5)
 
+	tmp.content_area.starting.points <- unique(unlist(lapply(strsplit(names(gaPlot.sgp_object@SGP[['Coefficient_Matrices']]), "[.]"), '[', 1)))
+
 
 	## Create data sets to be used for plot production
 
@@ -312,11 +314,14 @@
 					LEVEL=as.numeric(rownames(temp_uncond_frame)),
 					key=c("GRADE", "SCALE_SCORE"))[,ID:=as.character(seq(.N))]
 		}
+		tmp1.dt <- tmp1.dt[CONTENT_AREA %in% tmp.content_area.starting.points]
 	} else {
 		setkey(growthAchievementPlot.data, ID)
 		tmp1.dt <- growthAchievementPlot.data[gaPlot.students]
 		setnames(tmp1.dt, c("GRADE_CHARACTER", "GRADE"), c("GRADE", "GRADE_NUMERIC"))
+		tmp1.dt <- tmp1.dt[ID %in% unique(tmp1.dt[YEAR==year & CONTENT_AREA %in% tmp.content_area.starting.points][['ID']])]
 	}
+
 
 	## Start loop over students or starting scores
 
