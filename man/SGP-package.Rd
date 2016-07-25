@@ -19,8 +19,8 @@ growth projections to be calculated across assessment transitions by equating th
 \tabular{ll}{
 Package: \tab SGP\cr
 Type: \tab Package\cr
-Version: \tab 1.5-6.6\cr
-Date: \tab 2016-7-22\cr
+Version: \tab 1.5-7.0\cr
+Date: \tab 2016-7-25\cr
 License: \tab GPL-3\cr
 LazyLoad: \tab yes\cr
 }
