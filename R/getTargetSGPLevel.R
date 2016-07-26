@@ -11,7 +11,7 @@ function(state,
 		if (target.level=="MOVE_UP_STAY_UP") {
 			if (length(which(SGP::SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]][['State_Levels']][[tmp.state.level]][['Levels']]=="Proficient")) <= 1) {
 				message(paste("\tNOTE: MOVE_UP_STAY_UP Targets cannot be calculated because no achievement levels above PROFICIENT exist in ", state, "/", state.iter, ".", sep=""))
-+				level.to.get <- NULL
+				level.to.get <- NULL
 			} else {
 				level.to.get <- which.max(SGP::SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]][['State_Levels']][[tmp.state.level]][['Levels']]=="Proficient")
 			}
