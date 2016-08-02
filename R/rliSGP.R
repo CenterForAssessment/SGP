@@ -22,6 +22,7 @@ function(sgp_object,
 	parallel.config=NULL) {
 
 	YEAR <- GRADE <- ID <- NEW_ID <- .EACHI <- DATE <- NULL
+	SGPstateData <- SGP::SGPstateData ### Needed due to possible assignment of values to SGPstateData
 
 	started.at <- proc.time()
 	messageSGP(paste("\nStarted rliSGP", prettyDate()), "\n")
@@ -78,7 +79,7 @@ function(sgp_object,
 	getRLIConfig <- function(content_areas, configuration.year, testing.window, SGPt) {
 		tmp.list <- list()
 		for (i in content_areas) {
-			tmp.list[[i]] <- SGP::SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, i, testing.window)
+			tmp.list[[i]] <- SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, i, testing.window)
 		}
 		return(unlist(tmp.list, recursive=FALSE))
 	}
