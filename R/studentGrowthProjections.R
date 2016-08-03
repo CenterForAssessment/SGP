@@ -797,9 +797,10 @@ function(panel.data,	## REQUIRED
 			tmp.fix.index <- which(is.na(match(tmp.path.coefficient.matrices, names(panel.data[["Coefficient_Matrices"]]))))
 			tmp.messages <- c(tmp.messages, paste("NOTE: Not all CONTENT_AREA values in content_area.progression have associated COHORT referenced coefficient matrices:\n\t", paste(tmp.path.coefficient.matrices[tmp.fix.index], collapse=", ")))
 		}
-		tmp.match <- setdiff(match(tmp.path.coefficient.matrices, names(panel.data[["Coefficient_Matrices"]])), NA)
+		tmp.match <- sort(match(tmp.path.coefficient.matrices, names(panel.data[["Coefficient_Matrices"]])))
 		tmp.matrices <- unlist(panel.data[["Coefficient_Matrices"]][tmp.match], recursive=FALSE)
-		grade.projection.sequence <- content_area.projection.sequence <- NULL
+		grade.projection.sequence <- grade.projection.sequence[content_area.projection.sequence %in% unique(unlist(lapply(tmp.matrices, function(x) x@Content_Areas)))]
+		content_area.projection.sequence <- content_area.projection.sequence[content_area.projection.sequence %in% unique(unlist(lapply(tmp.matrices, function(x) x@Content_Areas)))]
 	}
 
 	### PROGRESSION SEQUENCES: content_area.progression, & year_lags.progression if not supplied
