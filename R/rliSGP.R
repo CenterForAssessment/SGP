@@ -115,14 +115,14 @@ function(sgp_object,
 		tmp.configuration.year <- paste(configuration.year, match(testing.window, c("FALL", "WINTER", "SPRING")), sep=".")
 		tmp.data.last.year <- tail(sort(unique(additional.data[['YEAR']])), 1)
 		if (!tmp.configuration.year %in% matrix.years) {
-			messageSGP(paste("\tNOTE: ", tmp.configuration.year, " indicated in the configuration has no matrices in ", paste(state, "SGPt_Baseline_Matrices", sep="_"), sep=""))
+			message(paste("\tNOTE: ", tmp.configuration.year, " indicated in the configuration has no matrices in ", paste(state, "SGPt_Baseline_Matrices", sep="_"), sep=""))
 			if (tmp.data.last.year > tail(matrix.years, 1)) tmp.matrix.year <- tail(matrix.years, 1)
 			if (tmp.data.last.year < head(matrix.years, 1)) tmp.matrix.year <- head(matrix.years, 1)
 		} else {
 			tmp.matrix.year <- tmp.configuration.year
 		}
 		matrix.label <- paste(paste(state, "SGPt_Baseline_Matrices", sep="_"), "$", paste(state, "SGPt_Baseline_Matrices", tmp.matrix.year, sep="_"), sep="")
-		messageSGP(paste("\tNOTE: rliSGP using matrices ", paste(state, "SGPt_Baseline_Matrices", tmp.matrix.year, sep="_"), sep=""))
+		message(paste("\tNOTE: rliSGP using matrices ", paste(state, "SGPt_Baseline_Matrices", tmp.matrix.year, sep="_"), sep=""))
 		SGPstateData[[state]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <- eval(parse(text=matrix.label))
 	} else {
 		SGPstateData[[state]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <- coefficient.matrices
