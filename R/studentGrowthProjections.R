@@ -568,7 +568,7 @@ function(panel.data,	## REQUIRED
 			if (length(grep("BASELINE", sgp.labels[['my.extra.label']])) > 0 & !is.null(SGP::SGPstateData[[performance.level.cutscores]][["Baseline_splineMatrix"]])) {
 				panel.data[["Coefficient_Matrices"]][[tmp.path.coefficient.matrices]] <- SGP::SGPstateData[[performance.level.cutscores]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]]
 			} else {
-				messageSGP("\tNOTE: Coefficient matrices indicated by argument use.my.coefficient.matrices are not included.")
+				messageSGP("\t\tNOTE: Coefficient matrices indicated by argument use.my.coefficient.matrices are not included.")
 				return(NULL)
 			}
 		}
@@ -577,13 +577,13 @@ function(panel.data,	## REQUIRED
 		if (length(grep("BASELINE", sgp.labels[['my.extra.label']])) > 0) {
 			tmp.path.coefficient.matrices <- paste(sgp.labels$my.subject, "BASELINE", sep=".")
 			if (is.null(panel.data[["Coefficient_Matrices"]]) | is.null(panel.data[["Coefficient_Matrices"]][[tmp.path.coefficient.matrices]])) {
-				stop(paste("\tNOTE: Coefficient matrices indicated by argument sgp.labels, '", tmp.path.coefficient.matrices, "', are not included. Please check supplied list to make sure appropriate coefficient matrices are included.", sep=""))
+				stop(paste("\t\tNOTE: Coefficient matrices indicated by argument sgp.labels, '", tmp.path.coefficient.matrices, "', are not included. Please check supplied list to make sure appropriate coefficient matrices are included.\n", sep=""))
 				return(NULL)
 			}
 		} else {
 			tmp.path.coefficient.matrices <- tmp.path
 			if (is.null(panel.data[["Coefficient_Matrices"]]) | is.null(panel.data[["Coefficient_Matrices"]][[tmp.path.coefficient.matrices]])) {
-				messageSGP(paste("\tNOTE: Coefficient matrices indicated by argument sgp.labels, '", tmp.path.coefficient.matrices, "', are not included. Bypassing plot production.", sep=""))
+				messageSGP(paste("\t\tNOTE: Coefficient matrices indicated by argument sgp.labels, '", tmp.path.coefficient.matrices, "', are not included. Bypassing plot production.\n", sep=""))
 				return(NULL)
 			}
 		}
@@ -629,16 +629,16 @@ function(panel.data,	## REQUIRED
 	}
 
 	if (is.null(percentile.trajectory.values) & !tf.cutscores) {
-		stop("\tNOTE: Either percentile trajectories and/or performance level cutscores must be supplied for the analyses.")
+		stop("\t\tNOTE: Either percentile trajectories and/or performance level cutscores must be supplied for the analyses.\n")
 	}
 
 	if (!is.null(percentile.trajectory.values) && is.numeric(percentile.trajectory.values) && !all(percentile.trajectory.values %in% 1:100)) {
-		messageSGP("\tNOTE: Integer supplied 'percentile.trajectory.values' must be between 1 and 100. Only supplied values in that range will be used.")
+		messageSGP("\t\tNOTE: Integer supplied 'percentile.trajectory.values' must be between 1 and 100. Only supplied values in that range will be used.\n")
 		percentile.trajectory.values <- intersect(percentile.trajectory.values, 1:100)
 	}
 
 	if (!is.null(percentile.trajectory.values) && is.character(percentile.trajectory.values) && !all(percentile.trajectory.values %in% names(panel.data[["Panel_Data"]]))) {
-		messageSGP("\tNOTE: Character 'percentile.trajectory.values' must correspond to individual specific variable in panel.data[['Panel_Data']]. Please check for appropriate variables.")
+		messageSGP("\t\tNOTE: Character 'percentile.trajectory.values' must correspond to individual specific variable in panel.data[['Panel_Data']]. Please check for appropriate variables.\n")
 	}
 
 	if (!is.null(achievement.level.prior.vname)) {
@@ -651,11 +651,11 @@ function(panel.data,	## REQUIRED
 	if (lag.increment==0) lag.increment.label <- "_CURRENT" else lag.increment.label <- ""
 
 	if (!is.null(grade.projection.sequence) & !is.null(content_area.projection.sequence) && length(grade.projection.sequence) != length(content_area.projection.sequence)) {
-		stop("\tNOTE: Supplied 'grade.projection.sequence' and 'content_area.projection.sequence' must be of the same length")
+		stop("\t\tNOTE: Supplied 'grade.projection.sequence' and 'content_area.projection.sequence' must be of the same length.\n")
 	}
 
 	if (!is.null(grade.projection.sequence) & !is.null(year_lags.projection.sequence) && length(grade.projection.sequence)-1 != length(year_lags.projection.sequence)) {
-		stop("\tNOTE: Supplied 'year_lags.projection.sequence' must have length 1 less than 'grade.projection.sequence'.")
+		stop("\t\tNOTE: Supplied 'year_lags.projection.sequence' must have length 1 less than 'grade.projection.sequence'.\n")
 	}
 
 	if (is.null(projcuts.digits)) {
@@ -778,13 +778,13 @@ function(panel.data,	## REQUIRED
 					Simulated_SGPs=panel.data[["Simulated_SGPs"]]))
 			} else {
 				if (length(grep("BASELINE", sgp.labels[['my.extra.label']])) > 0) {
-					tmp.messages <- c(tmp.messages, paste("\tNOTE:  Not all CONTENT_AREA values in content_area.progression have associated BASELINE referenced coefficient matrices.\n\tCOHORT referenced matrices for missing content areas (",
+					tmp.messages <- c(tmp.messages, paste("\t\tNOTE: Not all CONTENT_AREA values in content_area.progression have associated BASELINE referenced coefficient matrices.\n\tCOHORT referenced matrices for missing content areas (",
 						paste(gsub(paste(".", sgp.labels$my.year, sep=""), "", tmp.path.coefficient.matrices2), collapse=", "),
-						") have been found and will be used.\n\tPlease note the inconsistency and ensure this is correct!", sep=""))
+						") have been found and will be used.\n\t\tPlease note the inconsistency and ensure this is correct!\n", sep=""))
 				} else {
-					tmp.messages <- c(tmp.messages, paste("NOTE:  Not all CONTENT_AREA values in content_area.progression have associated COHORT referenced coefficient matrices.\n\tBASELINE referenced matrices for missing content areas (",
+					tmp.messages <- c(tmp.messages, paste("\t\tNOTE: Not all CONTENT_AREA values in content_area.progression have associated COHORT referenced coefficient matrices.\n\tBASELINE referenced matrices for missing content areas (",
 						paste(gsub(".BASELINE", "", tmp.path.coefficient.matrices2), collapse=", "),
-						") have been found and will be used.\n\tPlease note the inconsistency and ensure this is correct!", sep=""))
+						") have been found and will be used.\n\t\tPlease note the inconsistency and ensure this is correct!\n", sep=""))
 				}
 			}
 			tmp.matrices <- unlist(panel.data[["Coefficient_Matrices"]][c(match(tmp.path.coefficient.matrices, names(panel.data[["Coefficient_Matrices"]])),
@@ -795,12 +795,13 @@ function(panel.data,	## REQUIRED
 	} else {
 		if (any(is.na(match(tmp.path.coefficient.matrices, names(panel.data[["Coefficient_Matrices"]]))))) {
 			tmp.fix.index <- which(is.na(match(tmp.path.coefficient.matrices, names(panel.data[["Coefficient_Matrices"]]))))
-			tmp.messages <- c(tmp.messages, paste("NOTE: Not all CONTENT_AREA values in content_area.progression have associated COHORT referenced coefficient matrices:\n\t", paste(tmp.path.coefficient.matrices[tmp.fix.index], collapse=", ")))
+			tmp.messages <- c(tmp.messages, paste("\t\tNOTE: Not all CONTENT_AREA values in content_area.progression have associated COHORT referenced coefficient matrices:\n\t\t", paste(tmp.path.coefficient.matrices[tmp.fix.index], collapse=", "), ".\n", sep=""))
 		}
 		tmp.match <- sort(match(tmp.path.coefficient.matrices, names(panel.data[["Coefficient_Matrices"]])))
 		tmp.matrices <- unlist(panel.data[["Coefficient_Matrices"]][tmp.match], recursive=FALSE)
-		grade.projection.sequence <- grade.projection.sequence[content_area.projection.sequence %in% unique(unlist(lapply(tmp.matrices, function(x) x@Content_Areas)))]
-		content_area.projection.sequence <- content_area.projection.sequence[content_area.projection.sequence %in% unique(unlist(lapply(tmp.matrices, function(x) x@Content_Areas)))]
+		tmp.tf <- content_area.projection.sequence %in% unique(unlist(lapply(tmp.matrices, function(x) x@Content_Areas))) & grade.projection.sequence %in% unique(unlist(lapply(tmp.matrices, function(x) x@Grade_Progression)))
+		grade.projection.sequence <- grade.projection.sequence[tmp.tf]
+		content_area.projection.sequence <- content_area.projection.sequence[tmp.tf]
 	}
 
 	### PROGRESSION SEQUENCES: content_area.progression, & year_lags.progression if not supplied
@@ -812,7 +813,7 @@ function(panel.data,	## REQUIRED
 			stop("content_area.progression should be a character vector. See help page for details.")
 		}
 		if (length(content_area.progression) != length(grade.progression)) {
-			tmp.messages <- c(tmp.messages, "\tNOTE: The content_area.progression vector does not have the same number of elements as the grade.progression vector.\n")
+			tmp.messages <- c(tmp.messages, "\t\tNOTE: The content_area.progression vector does not have the same number of elements as the grade.progression vector.\n")
 		}
 	}
 
