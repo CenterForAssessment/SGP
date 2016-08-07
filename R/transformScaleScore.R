@@ -37,6 +37,8 @@ function(tmp.data,
 
 	if (!is.null(linkages)) {
 
+		if (is.factor(tmp.data$SCALE_SCORE_EQUATED)) tmp.data[, SCALE_SCORE_EQUATED := as.numeric(as.character(SCALE_SCORE_EQUATED))]
+
 		### Define variables
 
 		year.for.equate <- tail(sort(sapply(strsplit(names(linkages), "[.]"), '[', 2)), 1)
@@ -56,9 +58,10 @@ function(tmp.data,
 
 		for (content_area.iter in content_areas) {
 			for (grade.iter in unique(Cutscores[[content_area.iter]][['GRADE']])) {
-				Cutscores[[content_area.iter]][CONTENT_AREA==content_area.iter & GRADE==grade.iter & (is.na(YEAR) | YEAR < year.for.equate),
-					CUTSCORES:=linkages[[paste(content_area.iter, year.for.equate, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][[toupper(equating.method)]][['OLD_TO_NEW']][["interpolated_function"]](CUTSCORES)]
-				tmp.min.max <- get.min.max.grade(Cutscores[[content_area.iter]], names(linkages[[paste(content_area.iter, year.for.equate, sep=".")]]))
+				if (!grade.iter %in% c("GRADE_LOWER", "GRADE_UPPER")) {
+					Cutscores[[content_area.iter]][CONTENT_AREA==content_area.iter & GRADE==grade.iter & (is.na(YEAR) | YEAR < year.for.equate),
+						CUTSCORES:=linkages[[paste(content_area.iter, year.for.equate, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][[toupper(equating.method)]][['OLD_TO_NEW']][["interpolated_function"]](CUTSCORES)]
+				} else tmp.min.max <- get.min.max.grade(Cutscores[[content_area.iter]], names(linkages[[paste(content_area.iter, year.for.equate, sep=".")]]))
 				if (grade.iter=="GRADE_UPPER") {
 					Cutscores[[content_area.iter]][CONTENT_AREA=="PLACEHOLDER" & GRADE=="GRADE_UPPER" & (is.na(YEAR) | YEAR < year.for.equate),
 						CUTSCORES:=linkages[[paste(content_area.iter, year.for.equate, sep=".")]][[paste("GRADE", tmp.min.max[2], sep="_")]][[toupper(equating.method)]][['OLD_TO_NEW']][["interpolated_function"]](CUTSCORES)]
