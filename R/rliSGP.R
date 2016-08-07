@@ -22,6 +22,7 @@ function(sgp_object,
 	parallel.config=NULL) {
 
 	YEAR <- GRADE <- ID <- NEW_ID <- .EACHI <- DATE <- NULL
+	SGPstateData <- SGP::SGPstateData ### Needed due to possible assignment of values to SGPstateData
 
 	started.at <- proc.time()
 	messageSGP(paste("\nStarted rliSGP", prettyDate()), "\n")
@@ -78,7 +79,7 @@ function(sgp_object,
 	getRLIConfig <- function(content_areas, configuration.year, testing.window, SGPt) {
 		tmp.list <- list()
 		for (i in content_areas) {
-			tmp.list[[i]] <- SGP::SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, i, testing.window)
+			tmp.list[[i]] <- SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, i, testing.window)
 		}
 		return(unlist(tmp.list, recursive=FALSE))
 	}
@@ -95,20 +96,11 @@ function(sgp_object,
 	if (state=="RLI_UK") content_areas <- "READING"
 
 	if (long.data.supplied <- is.data.frame(sgp_object)) {
+		sgp_object <- as.data.table(sgp_object)
 		tmp.last.year <- tail(sort(unique(sgp_object[['YEAR']])), 1)
 		additional.data <- sgp_object[YEAR==tmp.last.year]
 		sgp_object <- new("SGP", Data=suppressMessages(prepareSGP(sgp_object[YEAR!=tmp.last.year], state=state)@Data), Version=getVersion(sgp_object))
 		gc(FALSE)
-	}
-
-	if (length(find.package("RLImatrices", quiet=TRUE))==0) stop("Package RLImatrices required from GitHub.")
-	if (is.null(coefficient.matrices)) {
-		eval(parse(text="require(RLImatrices)"))
-		matrix.label <- paste(paste(state, "SGPt_Baseline_Matrices", sep="_"), "$", paste(state, "SGPt_Baseline_Matrices", max(tail(sort(unique(additional.data[['YEAR']])), 1), "2013_2014.1"), sep="_"), sep="")
-		messageSGP(paste("\tNOTE: rliSGP using matrices ", paste(state, "SGPt_Baseline_Matrices", max(tail(sort(unique(additional.data[['YEAR']])), 1), "2013_2014.1"), sep="_"), sep=""))
-		SGPstateData[[state]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <- eval(parse(text=matrix.label))
-	} else {
-		SGPstateData[[state]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <- coefficient.matrices
 	}
 
 	if (!is.null(testing.window) && (length(testing.window) != 1 || !testing.window %in% c("FALL", "WINTER", "SPRING"))) {
@@ -118,6 +110,26 @@ function(sgp_object,
 	}
 
 	if (is.null(configuration.year)) configuration.year <- head(unlist(strsplit(tail(sort(unique(additional.data[['YEAR']])), 1), '[.]')), 1)
+
+	if (length(find.package("RLImatrices", quiet=TRUE))==0) stop("Package RLImatrices required from GitHub.")
+	if (is.null(coefficient.matrices)) {
+		eval(parse(text="require(RLImatrices)"))
+		matrix.years <- sort(unlist(lapply(lapply(strsplit(names(get("RLI_SGPt_Baseline_Matrices")), "_"), tail, 2), paste, collapse="_")))
+		tmp.configuration.year <- paste(configuration.year, match(testing.window, c("FALL", "WINTER", "SPRING")), sep=".")
+		tmp.data.last.year <- tail(sort(unique(additional.data[['YEAR']])), 1)
+		if (!tmp.configuration.year %in% matrix.years) {
+			messageSGP(paste("\tNOTE: ", tmp.configuration.year, " indicated in the configuration has no matrices in ", paste(state, "SGPt_Baseline_Matrices", sep="_"), sep=""))
+			if (tmp.data.last.year > tail(matrix.years, 1)) tmp.matrix.year <- tail(matrix.years, 1)
+			if (tmp.data.last.year < head(matrix.years, 1)) tmp.matrix.year <- head(matrix.years, 1)
+		} else {
+			tmp.matrix.year <- tmp.configuration.year
+		}
+		matrix.label <- paste(paste(state, "SGPt_Baseline_Matrices", sep="_"), "$", paste(state, "SGPt_Baseline_Matrices", tmp.matrix.year, sep="_"), sep="")
+		messageSGP(paste("\tNOTE: rliSGP using matrices ", paste(state, "SGPt_Baseline_Matrices", tmp.matrix.year, sep="_"), sep=""))
+		SGPstateData[[state]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <- eval(parse(text=matrix.label))
+	} else {
+		SGPstateData[[state]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <- coefficient.matrices
+	}
 
 	### Create variables
 
