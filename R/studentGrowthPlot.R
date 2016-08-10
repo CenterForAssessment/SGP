@@ -720,7 +720,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 				arrow.angle <- atan2(as.numeric(arrow.rise),as.numeric(arrow.run))*180/pi
 
 				## Arrows connecting achievement scores
-
+				if (!is.na(arrow.angle)) {
 				pushViewport(viewport(x=unit(low.year+i-lag.to.prior.score, "native"), y=unit(scale.scores.values[i+1-lag.to.prior.score], "native"),
 					width=unit((lag.to.prior.score-0.08)/cos(arrow.angle*pi/180), "native"), height=unit(0.05, "npc"), angle=arrow.angle, just=c("left", "center"),
 					xscale=c(0, 1), yscale=c(-0.5, 0.5)))
@@ -728,6 +728,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 					gp=gpar(lwd=0.3, lty=my.lty, col=border.color, fill=arrow.color(as.numeric(gp.values[i]))))
 				grid.curve(0.05, -0.2, 0.05, 0.2, curvature=0.3, ncp=11, square=FALSE, default.units="native", gp=gpar(lwd=0.3, col=border.color))
 				popViewport()
+				}
 			}
 		}
 	} ## END Report_Parameters[['Configuration']][['Connect_Points']]=="Arrows"
@@ -737,7 +738,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		for (i in seq(number.growth.levels)) {
 			grid.polygon(x=c(current.year, rep(current.year+grade.values$increment_for_projection_current, 2), current.year),
 				y=c(scale.scores.values[which(current.year==low.year:high.year)], max(yscale.range[1], cuts.ny1[i]),
-				min(yscale.range[2], cuts.ny1[i+1]), scale.scores.values[which(current.year==low.year:high.year)]),
+					min(yscale.range[2], cuts.ny1[i+1]), scale.scores.values[which(current.year==low.year:high.year)]),
 				default.units="native", gp=gpar(col=NA, lwd=0, fill=arrow.legend.color[i], alpha=0.45))
 			grid.roundrect(x=unit(current.year+grade.values$increment_for_projection_current, "native"),
 				y=unit((max(yscale.range[1], cuts.ny1[i])+min(yscale.range[2], cuts.ny1[i+1]))/2, "native"),

@@ -1011,7 +1011,7 @@ if (sgPlot.produce.plots) {
 
 		par.start <- startParallel(parallel.config, 'SG_PLOTS')
 
-		if (par.start$par.type=="FOREACH") {
+		if (parallel.config[["BACKEND"]]=="FOREACH") {
 
 			foreach.options <- parallel.config[["OPTIONS"]] # works fine if NULL
 			foreach(sgPlot.iter=iter(get.sgPlot.iter(tmp.districts.and.schools)), .packages="SGP", .inorder=FALSE,
@@ -1044,7 +1044,7 @@ if (sgPlot.produce.plots) {
 							sgPlot.output.format=sgPlot.output.format,
 							sgPlot.linkages=sgp.projections.equated)
 			} ### END dopar
-		} ### END if FOREACH
+		} else {### END if FOREACH
 
 		if (par.start$par.type=="SNOW") {
 
@@ -1110,7 +1110,7 @@ if (sgPlot.produce.plots) {
 					sgPlot.zip=sgPlot.zip,
 					sgPlot.output.format=sgPlot.output.format,
 					sgPlot.linkages=sgp.projections.equated), mc.cores=par.start$workers, mc.preschedule=FALSE)
-		}  ### END if MULTICORE
+		}}  ### END if MULTICORE
 
 		stopParallel(parallel.config, par.start)
 
