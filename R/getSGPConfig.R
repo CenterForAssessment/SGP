@@ -580,7 +580,7 @@ function(sgp_object,
 					sgp.config.list[['sgp.projections.lagged']][[i]][['sgp.matrices']] <- sgp.config.list[['sgp.projections.lagged']][[i]][['sgp.baseline.matrices']] <- NULL
 				}
 			}
-		} else {
+		} else { stop("@$$")
 			sgp.config.list[['sgp.projections']] <- sgp.config.list[['sgp.projections.lagged']] <- NULL
 			message("\n NOTE:  No valid projections have been identified in the sgp.config lists provided -- ",
 				"'sgp.projections'"[sgp.projections], " and "[sgp.projections & sgp.projections.lagged], "'sgp.projections.lagged'"[sgp.projections.lagged], " will NOT be calculated.",
