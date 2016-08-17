@@ -368,7 +368,7 @@ function(panel.data,	## REQUIRED
 							function(x) strsplit(x, "[.]")[[1]][2], USE.NAMES=FALSE)[content_area.index])
 						unavailable.states <- included.states[!included.states %in% available.states]
 						percentile.trajectories <- data.table(panel.data[["Panel_Data"]][,c("ID", "STATE"), with=FALSE], key="ID")[STATE %in% available.states][percentile.trajectories][!is.na(STATE)]
-						tmp.traj <- percentile.trajectories[which(!duplicated(percentile.trajectories$ID))]
+						tmp.traj <- percentile.trajectories[which(!duplicated(percentile.trajectories$ID, by=key(percentile.trajectories)))]
 						if (length(percentile.trajectory.values)==2) tmp.traj <- data.table(rbind(tmp.traj, tmp.traj), key="ID")
 
 						for (state.iter in unique(tmp.traj$STATE)) {
