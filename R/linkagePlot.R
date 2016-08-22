@@ -58,7 +58,7 @@ function(linkage.data,
 
     linkage.data <- linkage.data[YEAR==x.axis.year & !is.na(get(linkage.var.name))]
     content_areas.for.linkage <- unique(linkage.data[['CONTENT_AREA']])
-    unique.content.by.grade <- lapply(content_areas.for.linkage, function(x) sort(unique(linkage.data[CONTENT_AREA==x]$GRADE)))
+    unique.content.by.grade <- lapply(content_areas.for.linkage, function(x) sort(unique(linkage.data[CONTENT_AREA==x][['GRADE']])))
     names(unique.content.by.grade) <- content_areas.for.linkage
 
     for (content_area.iter in names(unique.content.by.grade)) {

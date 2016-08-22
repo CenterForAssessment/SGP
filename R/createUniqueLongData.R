@@ -4,7 +4,7 @@ function(long.data) {
 	YEAR <- ID <- NULL
 
 	tmp.key <- key(long.data)
-	tmp.last.year <- tail(sort(unique(long.data$YEAR)), 1)
+	tmp.last.year <- tail(sort(unique(long.data[['YEAR']])), 1)
 	tmp.dups.index <- data.table(unique(long.data[duplicated(long.data, by=tmp.key)][, tmp.key, with=FALSE], by=tmp.key)[long.data, nomatch=0][,setdiff(tmp.key, "YEAR"), with=FALSE], key=setdiff(tmp.key, "YEAR"))
 	setkeyv(long.data, setdiff(tmp.key, "YEAR"))
 	tmp.unique.data <- long.data[!tmp.dups.index]

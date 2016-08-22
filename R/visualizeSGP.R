@@ -643,7 +643,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			}
 			tmp.grades.content_areas.reported <- unique(slot.data, by=key(slot.data))[,key(slot.data), with=FALSE][tmp.grades.content_areas.reported, nomatch=0]
 			for (i in seq(dim(tmp.grades.content_areas.reported)[1])) {
-				tmp.ids[[i]] <- as.character(sample(unique(slot.data[tmp.grades.content_areas.reported[i]]$ID), 10))
+				tmp.ids[[i]] <- as.character(sample(unique(slot.data[tmp.grades.content_areas.reported[i]][['ID']]), 10))
 			}
 			slot.data[,c("SCHOOL_NUMBER", "DISTRICT_NUMBER") := NULL]
 			slot.data[slot.data$ID %in% unique(unlist(tmp.ids)), c("SCHOOL_NUMBER", "DISTRICT_NUMBER") := list(-99L, -999L)]

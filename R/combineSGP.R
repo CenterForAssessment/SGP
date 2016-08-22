@@ -74,7 +74,7 @@ function(
 	### Setup for equated SGPs and scale score targets
 
 	if (!is.null(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]])) {
-		year.for.equate <- tail(sort(unique(sgp_object@Data$YEAR)), 1)
+		year.for.equate <- tail(sort(unique(sgp_object@Data[['YEAR']])), 1)
 		if (SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]!=year.for.equate) {
 			sgp.percentiles.equated <- FALSE
 			if (sgp.target.scale.scores) sgp.projections.equated <- NULL
