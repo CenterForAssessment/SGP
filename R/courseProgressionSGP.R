@@ -1,7 +1,7 @@
-`courseProgressionSGP` <- 
+`courseProgressionSGP` <-
 function(
 	sgp_object,
-	lag.direction=c("FORWARD", "BACKWARD"), 
+	lag.direction=c("FORWARD", "BACKWARD"),
 	year) {
 
 	### Define list to hold results
@@ -15,9 +15,9 @@ function(
 		tmp <- sgp_object[SJ(ID, YEAR_INTEGER-as.integer(lag.value)), allow.cartesian=TRUE][,list(ID, YEAR_INTEGER, CONTENT_AREA_by_GRADE)]
 		invisible(tmp[,YEAR_INTEGER:=YEAR_INTEGER+as.integer(lag.value)])
 		setkey(tmp, ID, YEAR_INTEGER, CONTENT_AREA_by_GRADE)
-		tmp <- unique(tmp)
+		tmp <- unique(tmp, by=key(tmp))
 	}
- 
+
 
 	### Loop over FORWARD and/or BACKWARD
 
@@ -31,8 +31,8 @@ function(
 			sgp_object_subset <- as.data.table(subset(sgp_object, VALID_CASE=="VALID_CASE", select=c("ID", "YEAR", "CONTENT_AREA", "GRADE")))
 		}
 
-		if (identical(lag.direction, "FORWARD")) tmp.years <- sort(unique(sgp_object_subset$YEAR), decreasing=TRUE)
-		if (identical(lag.direction, "BACKWARD")) tmp.years <- sort(unique(sgp_object_subset$YEAR))
+		if (identical(lag.direction, "FORWARD")) tmp.years <- sort(unique(sgp_object_subset[['YEAR']]), decreasing=TRUE)
+		if (identical(lag.direction, "BACKWARD")) tmp.years <- sort(unique(sgp_object_subset[['YEAR']]))
 
 		invisible(sgp_object_subset[, GRADE_CHAR := as.factor(GRADE)])
 		levels(sgp_object_subset[["GRADE_CHAR"]]) <- sapply(lapply(strsplit(paste("0", levels(sgp_object_subset[["GRADE_CHAR"]]), sep=""), ""), tail, 2), paste, collapse="")
@@ -43,18 +43,18 @@ function(
 
 
 		### Merge in previous years' content areas
-	
+
 		setkeyv(sgp_object_subset, c("ID", "YEAR_INTEGER"))
 		for (i in 1:(length(tmp.years)-1)) {
 			if (identical(lag.direction, "FORWARD")) i <- -i
 			sgp_object_subset <- sgp_object_subset[lagged_content_area(sgp_object_subset, i), allow.cartesian=TRUE]
-		} 
+		}
 
 		if (identical(lag.direction, "FORWARD")) tmp.label <- "NEXT"
 		if (identical(lag.direction, "BACKWARD")) tmp.label <- "PRIOR"
 
 		if (length(tmp.years) > 2) {
-			setnames(sgp_object_subset, 
+			setnames(sgp_object_subset,
 				# c("CONTENT_AREA_by_GRADE", paste("CONTENT_AREA_by_GRADE", 1:(length(tmp.years)-1), sep=".")),
 				c("CONTENT_AREA_by_GRADE", "i.CONTENT_AREA_by_GRADE", paste("i.CONTENT_AREA_by_GRADE", 1:(length(tmp.years)-2), sep=".")), # changes for data.table 1.9.4
 				paste(paste("CONTENT_AREA_by_GRADE_", tmp.label, "_YEAR", sep=""), 0:(length(tmp.years)-1), sep="."))
@@ -78,7 +78,7 @@ function(
 			for (grades_by_content_areas in sorted.levels.iter) {
 				tmp.data <- tmp.course.progression.data[data.table(grades_by_content_areas)]
 				num.rows <- length(unique(tmp.data[["ID"]]))
-				course.progression.list[[lag.direction]][[as.character(course.progression.years[years])]][[grades_by_content_areas]] <- 
+				course.progression.list[[lag.direction]][[as.character(course.progression.years[years])]][[grades_by_content_areas]] <-
 					tmp.data[,list(COUNT=.N, PERCENTAGE_IN_GROUP=round(100*.N/num.rows, digits=2)),
 						by=key(tmp.data)][order(PERCENTAGE_IN_GROUP, decreasing=TRUE)]
 			}

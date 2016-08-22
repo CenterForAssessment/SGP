@@ -217,7 +217,7 @@
 
 		setkey(growthAchievementPlot.data, GRADE, CONTENT_AREA)
 		setkey(long_cutscores, GRADE, CONTENT_AREA)
-		growthAchievementPlot.data <- unique(long_cutscores[!is.na(GRADE_NUMERIC),c("GRADE", "CONTENT_AREA", "GRADE_NUMERIC"), with=FALSE])[growthAchievementPlot.data]
+		growthAchievementPlot.data <- unique(long_cutscores[!is.na(GRADE_NUMERIC), c("GRADE", "CONTENT_AREA", "GRADE_NUMERIC"), with=FALSE], by=c("GRADE", "CONTENT_AREA"))[growthAchievementPlot.data]
 		setnames(growthAchievementPlot.data, c("GRADE", "GRADE_NUMERIC"), c("GRADE_CHARACTER", "GRADE"))
 		setkey(growthAchievementPlot.data, YEAR)
 		my.tmp <- growthAchievementPlot.data[list(year)][,quantile(TRANSFORMED_SCALE_SCORE, probs=gaPlot.achievement_percentiles, na.rm=TRUE), keyby=list(GRADE, CONTENT_AREA)][
@@ -307,10 +307,10 @@
 		if (gaPlot.start.points=="Achievement Percentiles") {
 			tmp1.dt <- data.table(
 					ID="1",
-					GRADE=rep(unique(tmp.cutscores)[['GRADE']], each=dim(temp_uncond_frame)[1]),
-					GRADE_NUMERIC=rep(unique(tmp.cutscores)[['GRADE_NUMERIC']], each=dim(temp_uncond_frame)[1]),
-					CONTENT_AREA=rep(unique(tmp.cutscores)[['CONTENT_AREA']], each=dim(temp_uncond_frame)[1]),
-					SCALE_SCORE=as.vector(temp_uncond_frame[,as.character(unique(tmp.cutscores)[['GRADE_NUMERIC']])]),
+					GRADE=rep(unique(tmp.cutscores, by=key(tmp.cutscores))[['GRADE']], each=dim(temp_uncond_frame)[1]),
+					GRADE_NUMERIC=rep(unique(tmp.cutscores, by=key(tmp.cutscores))[['GRADE_NUMERIC']], each=dim(temp_uncond_frame)[1]),
+					CONTENT_AREA=rep(unique(tmp.cutscores, by=key(tmp.cutscores))[['CONTENT_AREA']], each=dim(temp_uncond_frame)[1]),
+					SCALE_SCORE=as.vector(temp_uncond_frame[,as.character(unique(tmp.cutscores, by=key(tmp.cutscores))[['GRADE_NUMERIC']])]),
 					LEVEL=as.numeric(rownames(temp_uncond_frame)),
 					key=c("GRADE", "SCALE_SCORE"))[,ID:=as.character(seq(.N))]
 		}
@@ -325,7 +325,7 @@
 
 	## Start loop over students or starting scores
 
-	for (j in unique(tmp1.dt$ID)) {
+	for (j in unique(tmp1.dt[['ID']])) {
 
 		started.at <- proc.time()
 		started.date <- prettyDate()

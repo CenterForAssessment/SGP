@@ -101,7 +101,7 @@ function(tmp.data,
 					CONTENT_AREA_LABELS,
 					YEAR,
 					GRADE,
-					new.cutscores=sort(Cutscores[[CONTENT_AREA_LABELS[1]]][list(CONTENT_AREA_LABELS[1], rev(sort(unique(Cutscores[[CONTENT_AREA_LABELS[1]]]$YEAR), na.last=FALSE))[2], GRADE_FOR_CUTSCORES[1])][['CUTSCORES']])),
+					new.cutscores=sort(Cutscores[[CONTENT_AREA_LABELS[1]]][list(CONTENT_AREA_LABELS[1], rev(sort(unique(Cutscores[[CONTENT_AREA_LABELS[1]]][['YEAR']]), na.last=FALSE))[2], GRADE_FOR_CUTSCORES[1])][['CUTSCORES']])),
 						by=list(CONTENT_AREA_LABELS, YEAR, GRADE, GRADE_FOR_CUTSCORES)]
 			tmp.data[!is.na(CONTENT_AREA_LABELS) & YEAR >= year.for.equate, TRANSFORMED_SCALE_SCORE:=SCALE_SCORE_EQUATED]
 		}
@@ -145,7 +145,7 @@ function(tmp.data,
 					CONTENT_AREA_LABELS,
 					YEAR,
 					GRADE,
-					new.cutscores=sort(Cutscores[[CONTENT_AREA_LABELS[1]]][list(CONTENT_AREA_LABELS[1], rev(sort(unique(Cutscores[[CONTENT_AREA_LABELS[1]]]$YEAR), na.last=FALSE))[2], GRADE_FOR_CUTSCORES[1])][['CUTSCORES']])),
+					new.cutscores=sort(Cutscores[[CONTENT_AREA_LABELS[1]]][list(CONTENT_AREA_LABELS[1], rev(sort(unique(Cutscores[[CONTENT_AREA_LABELS[1]]][['YEAR']]), na.last=FALSE))[2], GRADE_FOR_CUTSCORES[1])][['CUTSCORES']])),
 						by=list(CONTENT_AREA_LABELS, YEAR, GRADE)]
 
 			tmp.data[!is.na(CONTENT_AREA_LABELS) & YEAR >= year.for.equate, GRADE_FOR_CUTSCORES:=head(mixedsort(sort(GRADE)), 1), by=list(CONTENT_AREA_LABELS, ID)]

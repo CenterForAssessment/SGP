@@ -255,7 +255,7 @@ function(what_sgp_object=NULL,
 			if (!is.null(sgp.use.my.coefficient.matrices)) {
 				# Extract score histories.  Don't use CONTENT_AREA due to potential use of EOCT course progressions.
 				tmp.long.data <- rbindlist(list(data.table(what_sgp_object@Data, key=c("VALID_CASE", "ID"))[
-					unique(data.table(tmp_sgp_object@Data, key=c("VALID_CASE", "ID"))[,list(VALID_CASE, ID)]), nomatch=0], tmp_sgp_object@Data), fill=TRUE)
+					unique(data.table(tmp_sgp_object@Data, key=c("VALID_CASE", "ID"))[,list(VALID_CASE, ID)], by=c("VALID_CASE", "ID")), nomatch=0], tmp_sgp_object@Data), fill=TRUE)
 				if ("YEAR_WITHIN" %in% names(tmp.long.data)) {
 					tmp.long.data[, FIRST_OBSERVATION := NULL]
 					tmp.long.data[, LAST_OBSERVATION := NULL]
@@ -333,7 +333,7 @@ function(what_sgp_object=NULL,
 					for (ca in grep(update.years, names(what_sgp_object@SGP[["SGProjections"]]), value=TRUE)) {
 						tmp_proj <- data.table(what_sgp_object@SGP[["SGProjections"]][[ca]])
 						setkey(tmp_proj)
-						what_sgp_object@SGP[["SGProjections"]][[ca]]<- tmp_proj[!duplicated(tmp_proj)]
+						what_sgp_object@SGP[["SGProjections"]][[ca]]<- tmp_proj[!duplicated(tmp_proj, by=key(tmp_proj))]
 					}
 				}
 
@@ -341,7 +341,7 @@ function(what_sgp_object=NULL,
 					for (ca in grep(update.years, names(what_sgp_object@SGP[["SGPercentiles"]]), value=TRUE)) {
 						tmp_sgp <- data.table(what_sgp_object@SGP[["SGPercentiles"]][[ca]])
 						setkeyv(tmp_sgp, names(tmp_sgp)[grep("ID|SGP|SGP_NORM_GROUP", names(tmp_sgp))])
-						what_sgp_object@SGP[["SGPercentiles"]][[ca]]<- tmp_sgp[!duplicated(tmp_sgp)]
+						what_sgp_object@SGP[["SGPercentiles"]][[ca]] <- tmp_sgp[!duplicated(tmp_sgp, by=key(tmp_sgp))]
 					}
 				}
 

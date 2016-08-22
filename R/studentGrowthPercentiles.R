@@ -312,7 +312,7 @@ function(panel.data,         ## REQUIRED
 
     .get.best.cuts <- function(list.of.cuts, label.suffix=NULL) {
         cuts.best <- data.table(rbindlist(list.of.cuts), key="ID")
-        cuts.best <- cuts.best[c(which(!duplicated(cuts.best))[-1]-1, nrow(cuts.best))][,-1, with=FALSE]
+        cuts.best <- cuts.best[c(which(!duplicated(cuts.best, by=key(cuts.best)))[-1]-1, nrow(cuts.best))][,-1, with=FALSE]
         if (!is.null(label.suffix)) setnames(cuts.best, names(cuts.best), paste(names(cuts.best), label.suffix, sep="_"))
         return(cuts.best)
     }
@@ -346,7 +346,7 @@ function(panel.data,         ## REQUIRED
 					tmp.data <- dbGetQuery(dbConnect(SQLite(), dbname = file.path(dbase, paste("simex_data_", z, ".sqlite", sep=""))),
 											paste("select ", paste(c("ID", paste('prior_', k:1, sep=""), "final_yr"), collapse=", "), " from tmp", sep=""))
 				} else {
-					tmp.data <- dbGetQuery(dbConnect(SQLite(), dbname = dbase), 
+					tmp.data <- dbGetQuery(dbConnect(SQLite(), dbname = dbase),
 						paste("select ", paste(c("ID", paste('prior_', k:1, sep=""), "final_yr"), collapse=", "), " from simex_data where b in ('",z,"')", sep=""))
 				}
 			} else {
@@ -522,13 +522,13 @@ function(panel.data,         ## REQUIRED
 					col.index <- num.perturb.vars-g
 					if (is.null(csem.data.vnames)) {
 						setkeyv(big.data, c(names(big.data)[col.index], tmp.names))
-						big.data.uniques <- unique(big.data)
-						big.data.uniques.indices <- which(!duplicated(big.data))
+						big.data.uniques <- unique(big.data, by=key(big.data))
+						big.data.uniques.indices <- which(!duplicated(big.data, by=key(big.data)))
 						big.data.uniques[, paste("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="") :=
 							rep(csem.int[, paste("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")], B)[big.data.uniques.indices]]
 					} else {
 						setkeyv(big.data, c(names(big.data)[col.index], tmp.names, paste("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")))
-						big.data.uniques <- unique(big.data)
+						big.data.uniques <- unique(big.data, by=key(big.data))
 					}
 					big.data.uniques[, TEMP := eval(parse(text=paste("big.data.uniques[[", num.perturb.vars-g, "]]+sqrt(L)*big.data.uniques[['icsem",
 						perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], "']] * rnorm(dim(big.data.uniques)[1])", sep="")))]
@@ -563,7 +563,7 @@ function(panel.data,         ## REQUIRED
 				    if (!exists('year.progression.for.norm.group')) year.progression.for.norm.group <- year.progression # Needed during Baseline Matrix construction
 				    if (.Platform$OS.type != "unix") {
 				    	tmp.dbname <- tempdir()
-				    	sapply(sim.iters, function(z) dbWriteTable(dbConnect(SQLite(), dbname = file.path(tmp.dbname, paste("simex_data_", z, ".sqlite", sep=""))), 
+				    	sapply(sim.iters, function(z) dbWriteTable(dbConnect(SQLite(), dbname = file.path(tmp.dbname, paste("simex_data_", z, ".sqlite", sep=""))),
 				    		name="tmp", value=big.data[b==z,], row.names=FALSE, overwrite=TRUE))
 				    } else {
 				    	tmp.dbname <- tempfile(fileext = ".sqlite")
@@ -700,16 +700,16 @@ function(panel.data,         ## REQUIRED
 				setdiff(names(quantile.data.simex), c("ID", "SGP_SIMEX", "SIMEX_ORDER")), sep="_"))
 			return(list(
 				DT=data.table(quantile.data.simex,
-				SGP_SIMEX=quantile.data.simex[c(which(!duplicated(quantile.data.simex))[-1]-1L, nrow(quantile.data.simex))][["SGP_SIMEX"]]),
+				SGP_SIMEX=quantile.data.simex[c(which(!duplicated(quantile.data.simex, by=key(quantile.data.simex)))[-1]-1L, nrow(quantile.data.simex))][["SGP_SIMEX"]]),
 				MATRICES = simex.coef.matrices))
 		} else {
 			if (print.sgp.order | return.norm.group.identifier) {
 				return(list(
-					DT=quantile.data.simex[c(which(!duplicated(quantile.data.simex))[-1]-1L, nrow(quantile.data.simex))],
+					DT=quantile.data.simex[c(which(!duplicated(quantile.data.simex, by=key(quantile.data.simex)))[-1]-1L, nrow(quantile.data.simex))],
 					MATRICES=simex.coef.matrices))
 			} else {
 				return(list(
-					DT=quantile.data.simex[c(which(!duplicated(quantile.data.simex))[-1]-1L, nrow(quantile.data.simex)), c("ID", "SGP_SIMEX"), with=FALSE],
+					DT=quantile.data.simex[c(which(!duplicated(quantile.data.simex, by=key(quantile.data.simex)))[-1]-1L, nrow(quantile.data.simex)), c("ID", "SGP_SIMEX"), with=FALSE],
 					MATRICES=simex.coef.matrices))
 			}
 		}
@@ -1471,14 +1471,14 @@ function(panel.data,         ## REQUIRED
 
 		if (print.other.gp) {
 			quantile.data <- data.table(ddcast(quantile.data, ID ~ ORDER, value.var=setdiff(names(quantile.data), c("ID", "ORDER"))),
-				SGP=quantile.data[c(which(!duplicated(quantile.data))[-1]-1L, nrow(quantile.data))][["SGP"]],
-				ORDER=as.integer(quantile.data[c(which(!duplicated(quantile.data))[-1]-1L, nrow(quantile.data))][["ORDER"]]))
+				SGP=quantile.data[c(which(!duplicated(quantile.data, by=key(quantile.data)))[-1]-1L, nrow(quantile.data))][["SGP"]],
+				ORDER=as.integer(quantile.data[c(which(!duplicated(quantile.data, by=key(quantile.data)))[-1]-1L, nrow(quantile.data))][["ORDER"]]))
 			setnames(quantile.data, setdiff(names(quantile.data), c("ID", "SGP", "ORDER")), paste("SGP_ORDER", setdiff(names(quantile.data), c("ID", "SGP", "ORDER")), sep="_"))
 		} else {
 			if (print.sgp.order | return.norm.group.identifier) {
-				quantile.data <- quantile.data[c(which(!duplicated(quantile.data))[-1]-1L, nrow(quantile.data))]
+				quantile.data <- quantile.data[c(which(!duplicated(quantile.data, by=key(quantile.data)))[-1]-1L, nrow(quantile.data))]
 			} else {
-				quantile.data <- quantile.data[c(which(!duplicated(quantile.data))[-1]-1L, nrow(quantile.data)), c("ID", "SGP"), with=FALSE]
+				quantile.data <- quantile.data[c(which(!duplicated(quantile.data, by=key(quantile.data)))[-1]-1L, nrow(quantile.data)), c("ID", "SGP"), with=FALSE]
 			}
 		}
 
@@ -1498,7 +1498,7 @@ function(panel.data,         ## REQUIRED
 
 		if (csem.tf) {
 			simulation.data <- data.table(rbindlist(tmp.csem.quantiles), key="ID")
-			simulation.data <- simulation.data[c(which(!duplicated(simulation.data))[-1]-1, nrow(simulation.data))]
+			simulation.data <- simulation.data[c(which(!duplicated(simulation.data, by=key(simulation.data)))[-1]-1, nrow(simulation.data))]
 
 			if (is.character(calculate.confidence.intervals) | is.list(calculate.confidence.intervals)) {
 				if (is.null(calculate.confidence.intervals$confidence.quantiles) | identical(toupper(calculate.confidence.intervals$confidence.quantiles), "STANDARD_ERROR")) {

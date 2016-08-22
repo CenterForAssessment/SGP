@@ -126,8 +126,8 @@ function(sgp_object,
 
 	## Create relevant variables
 
-		if (is.null(years)) years <- unique(sgp_object@Data$YEAR) %w/o% NA
-		if (is.null(content_areas)) content_areas <- unique(sgp_object@Data$CONTENT_AREA) %w/o% NA
+		if (is.null(years)) years <- unique(sgp_object@Data[['YEAR']]) %w/o% NA
+		if (is.null(content_areas)) content_areas <- unique(sgp_object@Data[['CONTENT_AREA']]) %w/o% NA
 		if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["null.output.string"]])) {
 			my.null.string <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["null.output.string"]]
 		} else {
@@ -137,7 +137,7 @@ function(sgp_object,
 	## Create tmp.school.and.district.by.year table
 
 		setkeyv(sgp_object@Data, c("YEAR", group.number[1], group.number[2]))
-		tmp.school.and.district.by.year  <- as.data.frame(convert.variables(unique(sgp_object@Data)[, c("YEAR", group.number[1], group.number[2]), with=FALSE]))
+		tmp.school.and.district.by.year  <- as.data.frame(convert.variables(unique(sgp_object@Data, by=key(sgp_object@Data))[, c("YEAR", group.number[1], group.number[2]), with=FALSE]))
 
 
 	###
@@ -283,7 +283,7 @@ function(sgp_object,
 		tmp <- convert.names(tmp)
 		tmp$ENROLLMENT_PERCENTAGE <- NA
 		tmp <- data.table(tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))], key=c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "STUDENTGROUP"))
-		tmp <- as.data.frame(data.table(tmp[!duplicated(tmp)]))
+		tmp <- as.data.frame(data.table(tmp[!duplicated(tmp, by=key(tmp))]))
 
 		dbGetQuery(db, sqlite.create.table("DISTRICT_STUDENTGROUP", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "STUDENTGROUP")))
 		dbWriteTable(db, "DISTRICT_STUDENTGROUP", tmp, row.names=FALSE, append=TRUE)
@@ -321,7 +321,7 @@ function(sgp_object,
 			!is.na(MEDIAN_SGP)), factor.variables="STUDENTGROUP"))
 		tmp <- convert.names(tmp)
                 tmp <- data.table(tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))], key=c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "GRADE", "STUDENTGROUP"))
-                tmp <- as.data.frame(tmp[!duplicated(tmp)])
+                tmp <- as.data.frame(tmp[!duplicated(tmp, by=key(tmp))])
 
 		dbGetQuery(db, sqlite.create.table("DISTRICT_GRADE_STUDENTGROUP", field.types, c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "GRADE", "STUDENTGROUP")))
 		dbWriteTable(db, "DISTRICT_GRADE_STUDENTGROUP", tmp, row.names=FALSE, append=TRUE)
@@ -454,7 +454,7 @@ function(sgp_object,
 		tmp <- convert.names(tmp)
 		tmp$ENROLLMENT_PERCENTAGE <- NA
                 tmp <- data.table(tmp[, sapply(strsplit(field.types, " "), function(x) head(x,1))], key=c("YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER", "EMH_LEVEL", "CONTENT_AREA", "STUDENTGROUP"))
-                tmp <- as.data.frame(tmp[!duplicated(tmp)])
+                tmp <- as.data.frame(tmp[!duplicated(tmp, by=key(tmp))])
 
 		dbGetQuery(db, sqlite.create.table("SCHOOL_STUDENTGROUP", field.types,
 			c("YEAR", "DISTRICT_NUMBER", "SCHOOL_NUMBER", "EMH_LEVEL", "CONTENT_AREA", "STUDENTGROUP")))
@@ -522,8 +522,8 @@ function(sgp_object,
 			!is.na(get(group.number[1])) & CONTENT_AREA %in% content_areas & YEAR %in% years & get(group.enroll.status[1])==group.enroll.status.label[1])
 		tmp.CONTENT_AREA <- data.frame(
 			KEY_VALUE_KEY="CONTENT_AREA",
-			KEY_VALUE_CODE=seq_along(unique(tmp$CONTENT_AREA)),
-			KEY_VALUE_TEXT=sapply(sort(unique(tmp$CONTENT_AREA)), capwords))
+			KEY_VALUE_CODE=seq_along(unique(tmp[['CONTENT_AREA']])),
+			KEY_VALUE_TEXT=sapply(sort(unique(tmp[['CONTENT_AREA']])), capwords))
 
 		# YEAR
 
@@ -531,8 +531,8 @@ function(sgp_object,
 			!is.na(get(group.number[1])) & CONTENT_AREA %in% content_areas & YEAR %in% years & get(group.enroll.status[1])==group.enroll.status.label[1]))
 		tmp.YEAR <- data.frame(
 			KEY_VALUE_KEY="YEAR",
-			KEY_VALUE_CODE=sort(unique(tmp$YEAR)),
-			KEY_VALUE_TEXT=paste(as.numeric(sapply(sort(unique(tmp$YEAR)), get.year))-1, "-", sapply(sort(unique(tmp$YEAR)), get.year), sep=""))
+			KEY_VALUE_CODE=sort(unique(tmp[['YEAR']])),
+			KEY_VALUE_TEXT=paste(as.numeric(sapply(sort(unique(tmp[['YEAR']])), get.year))-1, "-", sapply(sort(unique(tmp[['YEAR']])), get.year), sep=""))
 
 		# GRADE
 
@@ -540,8 +540,8 @@ function(sgp_object,
 			!is.na(get(group.number[1])) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(GRADE) & get(group.enroll.status[1])==group.enroll.status.label[1])
 		tmp.GRADE <- data.frame(
 			KEY_VALUE_KEY="GRADE",
-			KEY_VALUE_CODE=sort(unique(as.integer(tmp$GRADE))),
-			KEY_VALUE_TEXT=paste("Grade", get.grade(sort(unique(as.integer(tmp$GRADE))))))
+			KEY_VALUE_CODE=sort(unique(as.integer(tmp[['GRADE']]))),
+			KEY_VALUE_TEXT=paste("Grade", get.grade(sort(unique(as.integer(tmp[['GRADE']]))))))
 
 		# EMH_LEVEL
 
@@ -550,8 +550,8 @@ function(sgp_object,
 		if (!is.factor(tmp$EMH_LEVEL)) tmp[['EMH_LEVEL']] <- as.factor(tmp[['EMH_LEVEL']])
 		tmp.EMH <- data.frame(
 			KEY_VALUE_KEY="EMH_LEVEL",
-			KEY_VALUE_CODE=strhead(levels(as.factor(tmp$EMH_LEVEL))[sort(unique(as.integer(as.factor(tmp$EMH_LEVEL))))], 1), ## TEMP fix until EMH_LEVEL is fixed up
-			KEY_VALUE_TEXT= levels(as.factor(tmp$EMH_LEVEL))[sort(unique(as.integer(as.factor(tmp$EMH_LEVEL))))])
+			KEY_VALUE_CODE=strhead(levels(as.factor(tmp$EMH_LEVEL))[sort(unique(as.integer(as.factor(tmp[['EMH_LEVEL']]))))], 1), ## TEMP fix until EMH_LEVEL is fixed up
+			KEY_VALUE_TEXT= levels(as.factor(tmp$EMH_LEVEL))[sort(unique(as.integer(as.factor(tmp[['EMH_LEVEL']]))))])
 
 		# ETHNICITY
 
@@ -559,8 +559,8 @@ function(sgp_object,
 			!is.na(get(group.number[1])) & CONTENT_AREA %in% content_areas & YEAR %in% years & !is.na(ETHNICITY) & get(group.enroll.status[1])==group.enroll.status.label[1])
 		tmp.ETHNICITY <- data.frame(
 			KEY_VALUE_KEY="ETHNICITY",
-			KEY_VALUE_CODE=sort(unique(as.integer(as.factor(tmp$ETHNICITY)))),
-			KEY_VALUE_TEXT=levels(as.factor(tmp$ETHNICITY))[sort(unique(as.integer(as.factor(tmp$ETHNICITY))))])
+			KEY_VALUE_CODE=sort(unique(as.integer(as.factor(tmp[['ETHNICITY']])))),
+			KEY_VALUE_TEXT=levels(as.factor(tmp$ETHNICITY))[sort(unique(as.integer(as.factor(tmp[['ETHNICITY']]))))])
 
 		# STUDENTGROUP
 
@@ -576,12 +576,12 @@ function(sgp_object,
 		tmp <- data.table(convert.names(convert.variables(subset(rbindlist(tmp.list, fill=TRUE),
 			!is.na(get(group.number[1])) & !is.na(STUDENTGROUP) & get(group.enroll.status[1])==group.enroll.status.label[1]))),
 			key=c("YEAR", "DISTRICT_NUMBER", "CONTENT_AREA", "STUDENTGROUP"))
-                tmp <- as.data.frame(data.table(tmp[!duplicated(tmp)]))
+                tmp <- as.data.frame(data.table(tmp[!duplicated(tmp, by=key(tmp))]))
 
 		tmp.STUDENTGROUP <- data.frame(
 			KEY_VALUE_KEY="STUDENT_GROUP", ### NOTE: Must have underscore. It's an older version of the table
-			KEY_VALUE_CODE=sort(unique(as.integer(as.factor(tmp$STUDENTGROUP)))),
-			KEY_VALUE_TEXT=levels(as.factor(tmp$STUDENTGROUP))[sort(unique(as.integer(as.factor(tmp$STUDENTGROUP))))])
+			KEY_VALUE_CODE=sort(unique(as.integer(as.factor(tmp[['STUDENTGROUP']])))),
+			KEY_VALUE_TEXT=levels(as.factor(tmp$STUDENTGROUP))[sort(unique(as.integer(as.factor(tmp[['STUDENTGROUP']]))))])
 
 
 		tmp <- rbind(tmp.CONTENT_AREA, tmp.YEAR, tmp.GRADE, tmp.EMH, tmp.ETHNICITY, tmp.STUDENTGROUP)

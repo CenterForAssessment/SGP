@@ -10,7 +10,7 @@ function(tmp.data.for.equate,
 
 	### Define variables
 
-	tmp.unique.years <- unique(tmp.data.for.equate$YEAR)
+	tmp.unique.years <- unique(tmp.data.for.equate[['YEAR']])
 
 	if (conversion.type=="NEW_TO_OLD") {
 		tmp.years.for.equate <- tmp.unique.years[tmp.unique.years >= tmp.year.for.equate]

@@ -181,7 +181,7 @@ function(sgp_object,
 		}
 
 		if (update.save.shell.only) {
-			assign(update.shell.name, prepareSGP(subset(sgp_object@Data, YEAR %in% tail(head(sort(unique(sgp_object@Data$YEAR)), -1), num.windows.to.keep)),
+			assign(update.shell.name, prepareSGP(subset(sgp_object@Data, YEAR %in% tail(head(sort(unique(sgp_object@Data[['YEAR']])), -1), num.windows.to.keep)),
 				state=state, create.additional.variables=FALSE))
 			save(list=update.shell.name, file=paste(update.shell.name, "Rdata", sep="."))
 		}
@@ -198,7 +198,7 @@ function(sgp_object,
 
 		if (update.save.shell.only) {
 			tmp.data <- rbindlist(list(sgp_object@Data, additional.data), fill=TRUE)
-			assign(update.shell.name, prepareSGP(subset(tmp.data, YEAR %in% tail(sort(unique(tmp.data$YEAR)), num.windows.to.keep)), state=state, create.additional.variables=FALSE))
+			assign(update.shell.name, prepareSGP(subset(tmp.data, YEAR %in% tail(sort(unique(tmp.data[['YEAR']])), num.windows.to.keep)), state=state, create.additional.variables=FALSE))
 			save(list=update.shell.name, file=paste(update.shell.name, "Rdata", sep="."))
 		} else {
 			if (eow.calculate.sgps) my.steps <- c("prepareSGP", "analyzeSGP", "combineSGP", "outputSGP") else steps <- c("prepareSGP", "analyzeSGP")
@@ -229,7 +229,7 @@ function(sgp_object,
 			### Create and save new UPDATE_SHELL
 
 			if (!long.data.supplied) {
-				assign(update.shell.name, prepareSGP(sgp_object@Data[YEAR %in% tail(sort(unique(sgp_object@Data$YEAR)), num.windows.to.keep)],
+				assign(update.shell.name, prepareSGP(sgp_object@Data[YEAR %in% tail(sort(unique(sgp_object@Data[['YEAR']])), num.windows.to.keep)],
 					state=state, create.additional.variables=FALSE))
 				save(list=update.shell.name, file=paste(update.shell.name, "Rdata", sep="."))
 			}

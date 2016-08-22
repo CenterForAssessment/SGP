@@ -125,7 +125,7 @@ function(sgp_object,
 		started.at <- proc.time()
 		messageSGP(paste("\tStarted LONG FINAL YEAR data production in outputSGP", prettyDate()))
 
-		final.year <- tail(sort(unique(sgp_object@Data$YEAR)), 1)
+		final.year <- tail(sort(unique(sgp_object@Data[['YEAR']])), 1)
 		names.in.data <- which(sgp_object@Names[['names.sgp']] %in% names(sgp_object@Data))
 		output.data.final.year <- subset(sgp_object@Data, YEAR==final.year)
 		if (outputSGP.translate.names) setnames(output.data.final.year, sgp_object@Names[['names.sgp']][names.in.data], sgp_object@Names[['names.provided']][names.in.data])
@@ -409,11 +409,11 @@ function(sgp_object,
 		### subset data
 
 		tmp.districts.and.schools <- unique(data.table(slot.data[CJ("VALID_CASE", tmp.last.year, tmp.content_areas)][,
-								list(VALID_CASE, YEAR, CONTENT_AREA, DISTRICT_NUMBER, SCHOOL_NUMBER, EMH_LEVEL)], key=key(sgp_object)))
+								list(VALID_CASE, YEAR, CONTENT_AREA, DISTRICT_NUMBER, SCHOOL_NUMBER, EMH_LEVEL)], key=key(sgp_object)), by=key(sgp_object))
 		report.ids <- data.table(slot.data[tmp.districts.and.schools][VALID_CASE=="VALID_CASE" & STATE_ENROLLMENT_STATUS=="Enrolled State: Yes" & !is.na(EMH_LEVEL)][,
 			list(ID, FIRST_NAME, LAST_NAME, DISTRICT_NUMBER, SCHOOL_NUMBER, EMH_LEVEL)], key=c("ID", "FIRST_NAME", "LAST_NAME", "DISTRICT_NUMBER", "SCHOOL_NUMBER"))
 		setkey(report.ids, ID)
-		report.ids <- unique(report.ids)
+		report.ids <- unique(report.ids, by=key(report.ids))
 		setkeyv(slot.data, c("ID", "CONTENT_AREA", "YEAR", "VALID_CASE"))
 		tmp.table <- slot.data[data.table(data.table(CJ(report.ids[["ID"]], tmp.content_areas, tmp.years, "VALID_CASE"), key="V1")[report.ids], key=c("V1", "V2", "V3", "V4"))]
 		tmp.table[,FIRST_NAME:=NULL]; tmp.table[,LAST_NAME:=NULL]; tmp.table[,DISTRICT_NUMBER:=NULL]; tmp.table[,SCHOOL_NUMBER:=NULL]; tmp.table[,EMH_LEVEL:=NULL]
@@ -743,7 +743,7 @@ function(sgp_object,
 
 		slot.data <- copy(sgp_object@Data)
 		setkey(slot.data, STATE)
-		tmp.unique.states <- sort(unique(slot.data$STATE))
+		tmp.unique.states <- sort(unique(slot.data[['STATE']]))
 		tmp.unique.states <- intersect(tmp.unique.states, SGP::SGPstateData[["RLI"]][["Achievement"]][["Cutscore_Information"]][['Cutscore_States']])
 
 		for (target.level in c("CATCH_UP_KEEP_UP", "MOVE_UP_STAY_UP")) {
