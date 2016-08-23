@@ -147,7 +147,7 @@ function(panel.data,         ## REQUIRED
 	}
 
 	.create.coefficient.matrices <- function(data, k, by.grade, max.n.for.coefficient.matrices) {
-		rq.sgp <- function(...) { # Function needs to be nested within the .create.coefficient.matrices function to avoid data copying with SNOW
+		rq.sgp <- function(my.taus, ...) { # Function needs to be nested within the .create.coefficient.matrices function to avoid data copying with SNOW
 			if (rq.method == "br") {
 				tmp.res <- rq(method="br", ...)[['coefficients']]
 			} else {
@@ -156,6 +156,7 @@ function(panel.data,         ## REQUIRED
 					tmp.res <- rq(method="br", ...)[['coefficients']]
 				}
 			}
+			if (!is.matrix(tmp.res)) return(matrix(tmp.res, dimnames=list(names(tmp.res), paste("tau=", my.taus))))
 			return(tmp.res)
 		}
 		tmp.data <- .get.panel.data(data, k, by.grade)
@@ -191,22 +192,22 @@ function(panel.data,         ## REQUIRED
 
 			if (toupper(tmp.par.config[["BACKEND"]]) == "FOREACH") {
 				# tmp.data <<- tmp.data
-				tmp.mtx <- foreach(j = iter(par.start$TAUS.LIST), .export=c("tmp.data", "Knots_Boundaries", "rq.method", "rq.sgp"), .combine = "cbind", .errorhandling = "pass",
+				tmp.mtx <- foreach(x = iter(par.start$TAUS.LIST), .export=c("tmp.data", "Knots_Boundaries", "rq.method", "rq.sgp"), .combine = "cbind", .errorhandling = "pass",
 				.inorder=TRUE, .options.mpi = par.start$foreach.options, .options.multicore = par.start$foreach.options, .options.snow = par.start$foreach.options) %dopar% {
-					eval(parse(text=paste("rq.sgp(formula=tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=j, data=tmp.data)", sep="")))
+					eval(parse(text=paste("rq.sgp(formula=tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=x, data=tmp.data, my.taus=x)", sep="")))
 				}
 				if (any(!grepl("tau=", colnames(tmp.mtx)))) return(list(RQ_ERROR=unlist(tmp.mtx[,grep("tau=", colnames(tmp.mtx), invert=TRUE)][1], use.names=FALSE)))
 			} else {
 				if (par.start$par.type == 'MULTICORE') {
 					tmp.mtx <- mclapply(par.start$TAUS.LIST, function(x) eval(parse(text=paste("rq.sgp(tmp.data[[", tmp.num.variables, "]] ~ ",
-						substring(mod,4), ", tau=x, data=tmp.data)", sep=""))), mc.cores=par.start$workers, mc.preschedule = FALSE)
+						substring(mod,4), ", tau=x, data=tmp.data, my.taus=x)", sep=""))), mc.cores=par.start$workers, mc.preschedule = FALSE)
 					if (any(tmp.tf <- sapply(tmp.mtx, function(x) identical(class(x), "try-error")))) return(list(RQ_ERROR=sapply(which(tmp.tf), function(f) tmp.mtx[[f]][1])))
 					tmp.mtx <- do.call(cbind, tmp.mtx)
 				}
 
 				if (par.start$par.type == 'SNOW') {
 					tmp.mtx <- parLapplyLB(par.start$internal.cl, par.start$TAUS.LIST, function(x) eval(parse(text=paste("rq.sgp(tmp.data[[",
-						tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=x, data=tmp.data)", sep=""))))
+						tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=x, data=tmp.data, my.taus=x)", sep=""))))
 					if (any(tmp.tf <- sapply(tmp.mtx, function(x) identical(class(x), "try-error")))) return(list(RQ_ERROR=sapply(which(tmp.tf), function(f) tmp.mtx[[f]][1])))
 					tmp.mtx <- do.call(cbind, tmp.mtx)
 				}

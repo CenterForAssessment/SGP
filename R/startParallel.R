@@ -174,6 +174,7 @@ function(parallel.config,
 					}
 				}
 			}
+			if (workers > length(qr.taus)) chunk.size <- rep(1, length(qr.taus))
 		}	else chunk.size <- rep(ceiling(length(qr.taus) / workers), workers)
 
 		TAUS.LIST <- vector("list", workers)
