@@ -278,7 +278,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		if (first.scale.score == 0) {
 			year_span <- 0
 			return (list(
-				interp.df = data.frame(GRADE=head(unique(Cutscores$GRADE), 7), CONTENT_AREA=Report_Parameters$Content_Area, stringsAsFactors=FALSE),
+				interp.df = data.frame(GRADE=head(unique(Cutscores[['GRADE']]), 7), CONTENT_AREA=Report_Parameters$Content_Area, stringsAsFactors=FALSE),
 				year_span=year_span,
 				years=yearIncrement(Report_Parameters$Current_Year, -5:1)))
 		} else {
@@ -368,8 +368,8 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		}
 	}
 
-	stextGrob <- function (label, r=0.1, x = x, y = y, 
-		just = "centre", hjust = NULL, vjust = NULL, rot = 0, check.overlap = FALSE, 
+	stextGrob <- function (label, r=0.1, x = x, y = y,
+		just = "centre", hjust = NULL, vjust = NULL, rot = 0, check.overlap = FALSE,
 		default.units = "native", name = NULL, gp = gpar(), vp = NULL){
 		# http://stackoverflow.com/questions/7734535/control-font-thickness-without-changing-font-size
 
@@ -402,7 +402,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 
 	if (!is.null(Report_Parameters[['Assessment_Transition']][['Assessment_Transition_Type']])) {
 		if (identical(toupper(Report_Parameters[['Assessment_Transition']][['Assessment_Transition_Type']][1]), "NO")) {
-			tmp.cutscore.year <- tail(head(sort(unique(Cutscores$YEAR), na.last=FALSE), -1), 1)
+			tmp.cutscore.year <- tail(head(sort(unique(Cutscores[['YEAR']]), na.last=FALSE), -1), 1)
 			tmp.cutscore.grade <- Grades[which(Years==Report_Parameters[['Assessment_Transition']][['Year']])]
 			if (is.na(tmp.cutscore.grade)) {
 				tmp.cutscore.grade <- grade.values[['interp.df']][['GRADE']][which(grade.values[['years']]==Report_Parameters[['Assessment_Transition']][['Year']])]

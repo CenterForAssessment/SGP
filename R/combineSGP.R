@@ -74,7 +74,7 @@ function(
 	### Setup for equated SGPs and scale score targets
 
 	if (!is.null(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]])) {
-		year.for.equate <- tail(sort(unique(sgp_object@Data$YEAR)), 1)
+		year.for.equate <- tail(sort(unique(sgp_object@Data[['YEAR']])), 1)
 		if (SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]!=year.for.equate) {
 			sgp.percentiles.equated <- FALSE
 			if (sgp.target.scale.scores) sgp.projections.equated <- NULL
@@ -213,7 +213,7 @@ function(
 
 		tmp.data <- data.table(rbindlist(tmp.list, fill=TRUE), VALID_CASE="VALID_CASE", key=key(slot.data))
 
-		if (any(duplicated(tmp.data))) {
+		if (any(duplicated(tmp.data, by=key(tmp.data)))) {
 			tmp.data <- getPreferredSGP(tmp.data, state)
 		}
 
@@ -256,7 +256,7 @@ function(
 
 		tmp.data <- data.table(rbindlist(tmp.list, fill=TRUE), VALID_CASE="VALID_CASE", key=key(slot.data))
 
-		if (any(duplicated(tmp.data))) {
+		if (any(duplicated(tmp.data, by=key(tmp.data)))) {
 			tmp.data <- getPreferredSGP(tmp.data, state, type="BASELINE")
 		}
 
@@ -301,7 +301,7 @@ function(
 		for (target.type.iter in target.args[['target.type']]) {
 			for (target.level.iter in target.args[['target.level']]) {
 				tmp.data <- getTargetSGP(sgp_object, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward)
-				if (any(duplicated(tmp.data))) {
+				if (any(duplicated(tmp.data, by=key(tmp.data)))) {
 					duplicated.projections.tf <- TRUE
 					tmp.data <- getPreferredSGP(tmp.data, state, type="TARGET")
 				} else duplicated.projections.tf <- FALSE

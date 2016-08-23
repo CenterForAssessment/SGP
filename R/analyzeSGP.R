@@ -227,7 +227,7 @@ function(sgp_object,
 	}
 
 	if (is.null(sgp.minimum.default.panel.years) & is.null(SGPstateData[[state]][["SGP_Configuration"]][['sgp.minimum.default.panel.years']])) {
-		if (length(unique(sgp_object@Data$YEAR))==2) {
+		if (length(unique(sgp_object@Data[['YEAR']]))==2) {
 			sgp.minimum.default.panel.years <- 2
 			messageSGP("\tNOTE: Only two years of data present. Minimum default of 3 years of panel data for SGP analyses changed to 2. Please confirm this is consistent with analyses you wish to perform.")
 		} else {
@@ -280,7 +280,7 @@ function(sgp_object,
 	}
 
 	if (!is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]])) {
-		if (SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]!={tmp.last.year <- tail(sort(unique(sgp_object@Data$YEAR)), 1)}) {
+		if (SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]!={tmp.last.year <- tail(sort(unique(sgp_object@Data[['YEAR']])), 1)}) {
 			sgp.percentiles.equated <- FALSE
             if ("SCALE_SCORE_EQUATED" %in% names(sgp_object@Data)) sgp_object@Data[["SCALE_SCORE_EQUATED"]][sgp_object@Data[["YEAR"]] >= tmp.last.year] <- sgp_object@Data[["SCALE_SCORE"]][sgp_object@Data[["YEAR"]] >= tmp.last.year]
 		} else {
@@ -416,7 +416,7 @@ function(sgp_object,
 	#######################################################################################################################
 
 	if (sgp.percentiles.equated) {
-		year.for.equate <- tail(sort(unique(sgp_object@Data$YEAR)), 1)
+		year.for.equate <- tail(sort(unique(sgp_object@Data[['YEAR']])), 1)
 
         if (is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][['Baseline_Projections_in_Transition_Year']]) &
             (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline)) {
@@ -427,7 +427,7 @@ function(sgp_object,
         if (is.null(sgp.use.my.coefficient.matrices)) {
             Scale_Score_Linkages <- list()
             dir.create(file.path("Data", paste("Linkages", year.for.equate, sep="_"), "Figures"), recursive=TRUE, showWarnings=FALSE)
-		    content_areas.for.equate <- unique(sgp_object@Data[YEAR==year.for.equate]$CONTENT_AREA)
+		    content_areas.for.equate <- unique(sgp_object@Data[YEAR==year.for.equate][['CONTENT_AREA']])
 
             if (is.null(sgp.percentiles.equating.method)) {
                 messageSGP("\tNOTE: Analyses involving equating will be performed using each of: 'identity', 'mean', 'linear', and 'equipercentile' methods. See documentation associated with the 'sgp.percentiles.equating.method' argument in 'analyzeSGP'.")
@@ -456,7 +456,7 @@ function(sgp_object,
                     data.for.equate <- convertScaleScore(data.for.equate, year.for.equate, sgp_object@SGP[['Linkages']],
 			            conversion.type=conversion.type.iter, sgp.percentiles.equating.method.iter, state)
                     Scale_Score_Linkages[[conversion.type.iter]][[toupper(sgp.percentiles.equating.method.iter)]] <-
-                        unique(data.for.equate)[!is.na(SCALE_SCORE) & VALID_CASE=="VALID_CASE", intersect(names(data.for.equate),
+                        unique(data.for.equate, by=key(data.for.equate))[!is.na(SCALE_SCORE) & VALID_CASE=="VALID_CASE", intersect(names(data.for.equate),
                             c("CONTENT_AREA", "YEAR", "GRADE", "SCALE_SCORE", "SCALE_SCORE_ACTUAL", paste("SCALE_SCORE_EQUATED", toupper(sgp.percentiles.equating.method.iter), conversion.type.iter, sep="_"))), with=FALSE]
                     write.table(Scale_Score_Linkages[[conversion.type.iter]][[toupper(sgp.percentiles.equating.method.iter)]],
                         file=paste(paste("Data/", paste("Linkages", year.for.equate, sep="_"), "/", sep=""), paste(gsub(" ", "_", getStateAbbreviation(state, type="LONG")), "Scale_Score_Linkages", toupper(sgp.percentiles.equating.method.iter), conversion.type.iter, sep="_"), ".txt", sep=""), row.names=FALSE, na="", quote=FALSE, sep="|")

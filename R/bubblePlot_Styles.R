@@ -87,7 +87,7 @@
 	names.merge <- function(tmp.data, bPlot.anonymize) {
 		if (!"INSTRUCTOR_NUMBER" %in% names(tmp.data) & !"SCHOOL_NUMBER" %in% names(tmp.data) & "DISTRICT_NUMBER" %in% names(tmp.data)) {
 			tmp.names <- unique(data.table(sgp_object@Data[!is.na(DISTRICT_NUMBER),
-				list(DISTRICT_NUMBER, DISTRICT_NAME, SCHOOL_NUMBER, SCHOOL_NAME, YEAR)], key=c("DISTRICT_NUMBER", "YEAR"))) # Keep other institution NUMBER to iterate over in some plots
+				list(DISTRICT_NUMBER, DISTRICT_NAME, SCHOOL_NUMBER, SCHOOL_NAME, YEAR)], key=c("DISTRICT_NUMBER", "YEAR"), by=c("DISTRICT_NUMBER", "YEAR"))) # Keep other institution NUMBER to iterate over in some plots
 			if (bPlot.anonymize) {
 				tmp.names$DISTRICT_NAME <- paste("District", as.numeric(as.factor(tmp.names$DISTRICT_NUMBER)))
 			}
@@ -96,7 +96,7 @@
 
 		if (!"INSTRUCTOR_NUMBER" %in% names(tmp.data) & "SCHOOL_NUMBER" %in% names(tmp.data) & !"DISTRICT_NUMBER" %in% names(tmp.data)) {
 			tmp.names <- unique(data.table(sgp_object@Data[!is.na(SCHOOL_NUMBER),
-				list(DISTRICT_NUMBER, DISTRICT_NAME, SCHOOL_NUMBER, SCHOOL_NAME, YEAR)], key=c("SCHOOL_NUMBER", "YEAR"))) # Keep other institution NUMBER to iterate over in some plots
+				list(DISTRICT_NUMBER, DISTRICT_NAME, SCHOOL_NUMBER, SCHOOL_NAME, YEAR)], key=c("SCHOOL_NUMBER", "YEAR")), by=c("SCHOOL_NUMBER", "YEAR")) # Keep other institution NUMBER to iterate over in some plots
 			if (bPlot.anonymize) {
 				tmp.names$SCHOOL_NAME <- paste("School", as.numeric(as.factor(tmp.names$SCHOOL_NUMBER)))
 			}
@@ -146,7 +146,7 @@
 
 		if (is.null(bPlot.years)) {
 			if ("YEAR" %in% names(tmp.data)) {
-				my.iters$tmp.years <- tail(sort(unique(tmp.data$YEAR)), 1)
+				my.iters$tmp.years <- tail(sort(unique(tmp.data[['YEAR']])), 1)
 			} else {
 				my.iters$tmp.years <- "All Years"
 			}
@@ -158,7 +158,7 @@
 
 		if (is.null(bPlot.content_areas)) {
 			if ("CONTENT_AREA" %in% names(tmp.data)) {
-				my.iters$tmp.content_areas <- unique(tmp.data$CONTENT_AREA) %w/o% NA
+				my.iters$tmp.content_areas <- unique(tmp.data[['CONTENT_AREA']]) %w/o% NA
 			} else {
 				my.iters$tmp.content_areas <- "All Content Areas"
 			}
@@ -171,23 +171,23 @@
 		if (is.null(bPlot.instructors) & is.null(bPlot.schools) & is.null(bPlot.districts)) {
 			if ("DISTRICT_NUMBER" %in% names(tmp.data)) {
 				if (identical(my.iters$tmp.years, "All Years")) {
-					my.iters$tmp.districts <- sort(unique(tmp.data$DISTRICT_NUMBER)) %w/o% NA
+					my.iters$tmp.districts <- sort(unique(tmp.data[['DISTRICT_NUMBER']])) %w/o% NA
 				} else {
-					my.iters$tmp.districts <- sort(unique(tmp.data[YEAR %in% my.iters$tmp.years]$DISTRICT_NUMBER)) %w/o% NA
+					my.iters$tmp.districts <- sort(unique(tmp.data[YEAR %in% my.iters$tmp.years][['DISTRICT_NUMBER']])) %w/o% NA
 				}
 			}
 			if ("SCHOOL_NUMBER" %in% names(tmp.data)) {
 				if (identical(my.iters$tmp.years, "All Years")) {
-					my.iters$tmp.schools <- sort(unique(tmp.data$SCHOOL_NUMBER)) %w/o% NA
+					my.iters$tmp.schools <- sort(unique(tmp.data[['SCHOOL_NUMBER']])) %w/o% NA
 				} else {
-					my.iters$tmp.schools <- sort(unique(tmp.data[YEAR %in% my.iters$tmp.years]$SCHOOL_NUMBER)) %w/o% NA
+					my.iters$tmp.schools <- sort(unique(tmp.data[YEAR %in% my.iters$tmp.years][['SCHOOL_NUMBER']])) %w/o% NA
 				}
 			}
 			if ("INSTRUCTOR_NUMBER" %in% names(tmp.data)) {
 				if (identical(my.iters$tmp.years, "All Years")) {
-					my.iters$tmp.instructors <- sort(unique(tmp.data$INSTRUCTOR_NUMBER)) %w/o% NA
+					my.iters$tmp.instructors <- sort(unique(tmp.data[['INSTRUCTOR_NUMBER']])) %w/o% NA
 				} else {
-					my.iters$tmp.instructors <- sort(unique(tmp.data[YEAR %in% my.iters$tmp.years]$INSTRUCTOR_NUMBER)) %w/o% NA
+					my.iters$tmp.instructors <- sort(unique(tmp.data[YEAR %in% my.iters$tmp.years][['INSTRUCTOR_NUMBER']])) %w/o% NA
 				}
 			}
 		}
@@ -1910,7 +1910,7 @@ if (22 %in% bPlot.styles) {
 		tmp.bPlot.data <- tmp.bPlot.data.1[SCHOOL_NUMBER==tmp.unique.schools[school.iter] & !is.na(SGP) & !is.na(SCALE_SCORE)]
 
 		for (grade.iter in intersect(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area.iter]],
-			sort(unique(tmp.bPlot.data$GRADE)))) {
+			sort(unique(tmp.bPlot.data[['GRADE']])))) {
 
 		bPlot.data <- subset(tmp.bPlot.data, GRADE==grade.iter)
 
@@ -2054,7 +2054,7 @@ if (22 %in% bPlot.styles) {
 			if (bPlot.demo) {
 				tmp.ids <- list()
 				tmp.grades.reported <- SGP::SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area.iter]][-1]
-				tmp.grades.reported <- as.character(tmp.grades.reported[tmp.grades.reported %in% unique(slot.data)["VALID_CASE"][["GRADE"]]])
+				tmp.grades.reported <- as.character(tmp.grades.reported[tmp.grades.reported %in% unique(slot.data["VALID_CASE"][["GRADE"]])])
 				for (i in seq_along(tmp.grades.reported)) {
 					tmp.ids[[i]] <- as.character(sample(unique(slot.data[SJ("VALID_CASE", year.iter, content_area.iter, tmp.grades.reported[i])][['ID']]), 30))
 				}
@@ -2077,20 +2077,20 @@ if (22 %in% bPlot.styles) {
 			}
 
 			setkeyv(tmp.bPlot.data.1.long, "INSTRUCTOR_NUMBER")
-			tmp.unique.schools <- my.iters$tmp.schools[my.iters$tmp.schools %in% unique(tmp.bPlot.data.1.long$SCHOOL_NUMBER)]
+			tmp.unique.schools <- my.iters$tmp.schools[my.iters$tmp.schools %in% unique(tmp.bPlot.data.1.long[['SCHOOL_NUMBER']])]
 			for (school.iter in seq_along(tmp.unique.schools)) { ### Loop over schools (seq_along to get integer for anonymize)
 
 			# Subset data
 
 			tmp.bPlot.data <- tmp.bPlot.data.1.long[SCHOOL_NUMBER==tmp.unique.schools[school.iter] & !is.na(SGP)]
 
-			for (instructor.iter in sort(unique(tmp.bPlot.data$INSTRUCTOR_NUMBER))) { ### Loop over unique teachers in school
+			for (instructor.iter in sort(unique(tmp.bPlot.data[['INSTRUCTOR_NUMBER']]))) { ### Loop over unique teachers in school
 				bPlot.data <- tmp.bPlot.data[SJ(instructor.iter)]
 
 				if (dim(bPlot.data)[1] > 0) {
 
 				for (grade.iter in intersect(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area.iter]],
-					sort(unique(bPlot.data$GRADE)))) { ### Loop over unique grades levels for instructor (usually only one)
+					sort(unique(bPlot.data[['GRADE']])))) { ### Loop over unique grades levels for instructor (usually only one)
 
 			# Anonymize district, school and student names (if requested)
 
@@ -2221,7 +2221,7 @@ if (22 %in% bPlot.styles) {
 			if (bPlot.demo) {
 				tmp.ids <- list()
 				tmp.grades.reported <- SGP::SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area.iter]][-1]
-				tmp.grades.reported <- as.character(tmp.grades.reported[tmp.grades.reported %in% unique(slot.data)["VALID_CASE"][["GRADE"]]])
+				tmp.grades.reported <- as.character(tmp.grades.reported[tmp.grades.reported %in% unique(slot.data["VALID_CASE"][["GRADE"]])])
 				for (i in seq_along(tmp.grades.reported)) {
 					tmp.ids[[i]] <- as.character(sample(unique(slot.data[SJ("VALID_CASE", year.iter, content_area.iter, tmp.grades.reported[i])][['ID']]), 30))
 				}
@@ -2242,14 +2242,14 @@ if (22 %in% bPlot.styles) {
 								key=c("ID", "CONTENT_AREA", "YEAR"))[sgp_object@Data_Supplementary$INSTRUCTOR_NUMBER, nomatch=0]
 			}
 
-			tmp.unique.schools <- my.iters$tmp.schools[my.iters$tmp.schools %in% unique(tmp.bPlot.data.1.long$SCHOOL_NUMBER)]
+			tmp.unique.schools <- my.iters$tmp.schools[my.iters$tmp.schools %in% unique(tmp.bPlot.data.1.long[['SCHOOL_NUMBER']])]
 			for (school.iter in seq_along(tmp.unique.schools)) { ### Loop over schools (seq_along to get integer for anonymize)
 
 			# Subset data
 
 			tmp.bPlot.data <- tmp.bPlot.data.1.long[SCHOOL_NUMBER==tmp.unique.schools[school.iter] & !is.na(SGP)]
 
-			for (instructor.iter in sort(unique(tmp.bPlot.data$INSTRUCTOR_NUMBER))) { ### Loop over unique teachers in school
+			for (instructor.iter in sort(unique(tmp.bPlot.data[['INSTRUCTOR_NUMBER']]))) { ### Loop over unique teachers in school
 			bPlot.data <- subset(tmp.bPlot.data, INSTRUCTOR_NUMBER==instructor.iter)
 			if ("INSTRUCTOR_LAST_NAME" %in% names(bPlot.data)) {
 				tmp.instructor.reference <- paste(bPlot.data$INSTRUCTOR_FIRST_NAME[1], bPlot.data$INSTRUCTOR_LAST_NAME[1])
@@ -2260,7 +2260,7 @@ if (22 %in% bPlot.styles) {
 
 			if (dim(bPlot.data)[1] > 1) { # had error when only 1 kid per teacher
 
-			for (grade.iter in sort(unique(bPlot.data$GRADE))) { ### Loop over grades levels. Only one in course sequences
+			for (grade.iter in sort(unique(bPlot.data[['GRADE']]))) { ### Loop over grades levels. Only one in course sequences
 
 		# Anonymize district, school and student names (if requested)
 

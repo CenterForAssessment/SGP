@@ -146,9 +146,9 @@ function(sgp_object,
 		} else {
 			achievement.levels <- SGP::SGPstateData[[state]][['Achievement']][['Levels']][['Labels']]
 		}
-		if (!all(sort(unique(sgp_object@Data$ACHIEVEMENT_LEVEL)) %in% achievement.levels)) {
+		if (!all(sort(unique(sgp_object@Data[['ACHIEVEMENT_LEVEL']])) %in% achievement.levels)) {
 			missing.achievement.levels <-
-				sort(unique(sgp_object@Data$ACHIEVEMENT_LEVEL))[!sort(unique(sgp_object@Data$ACHIEVEMENT_LEVEL)) %in% achievement.levels]
+				sort(unique(sgp_object@Data[['ACHIEVEMENT_LEVEL']]))[!sort(unique(sgp_object@Data[['ACHIEVEMENT_LEVEL']])) %in% achievement.levels]
 			message(paste("\tNOTE: Achievement level(s):", paste(missing.achievement.levels, collapse=", "), "in supplied data are not contained in 'SGPstateData'.", collapse=" "))
 		}
 	}
