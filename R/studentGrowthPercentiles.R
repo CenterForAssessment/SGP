@@ -186,7 +186,7 @@ function(panel.data,         ## REQUIRED
 		if (!is.null(tmp.par.config <- parallel.config)) if (is.null(parallel.config[["WORKERS"]][["TAUS"]])) tmp.par.config <- NULL
 
 		if (is.null(tmp.par.config)) {
-			tmp.mtx <- eval(parse(text=paste("rq.sgp(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=taus, data=tmp.data)", sep="")))
+			tmp.mtx <- eval(parse(text=paste("rq.sgp(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=taus, data=tmp.data, my.taus=taus)", sep="")))
 		} else {
 			par.start <- startParallel(tmp.par.config, 'TAUS', qr.taus=taus)
 
@@ -220,7 +220,7 @@ function(panel.data,         ## REQUIRED
 			Date_Prepared=prettyDate(),
 			Matrix_Information=list(
 				N=dim(tmp.data)[1],
-				Model=paste("rq.sgp(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=taus, data=tmp.data, my.taus=taus)", sep=""),
+				Model=paste("rq.sgp(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=taus, data=tmp.data, method=", rq.method, ")", sep=""),
 				SGPt=if (is.null(SGPt)) NULL else list(VARIABLES=unlist(SGPt), MAX_TIME=max(tmp.data$TIME, na.rm=TRUE), MAX_TIME_PRIOR=max(tmp.data$TIME-tmp.data$TIME_LAG, na.rm=TRUE), RANGE_TIME_LAG=range(tmp.data$TIME_LAG))))
 
 		eval(parse(text=paste("new('splineMatrix', tmp.mtx, ", substring(s4Ks, 1, nchar(s4Ks)-1), "), ", substring(s4Bs, 1, nchar(s4Bs)-1), "), ",
