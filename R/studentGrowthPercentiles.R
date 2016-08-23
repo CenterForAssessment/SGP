@@ -147,7 +147,7 @@ function(panel.data,         ## REQUIRED
 	}
 
 	.create.coefficient.matrices <- function(data, k, by.grade, max.n.for.coefficient.matrices) {
-		rq.sgp <- function(my.taus, ...) { # Function needs to be nested within the .create.coefficient.matrices function to avoid data copying with SNOW
+		rq.sgp <- function(..., my.taus) { # Function needs to be nested within the .create.coefficient.matrices function to avoid data copying with SNOW
 			if (rq.method == "br") {
 				tmp.res <- rq(method="br", ...)[['coefficients']]
 			} else {
