@@ -21,7 +21,7 @@
 	output.folder,
 	assessment.name) {
 
-	CUTLEVEL <- GRADE <- YEAR <- ID <- SCALE_SCORE <- level_1_curve <- V1 <- NULL
+	CUTLEVEL <- GRADE <- YEAR <- ID <- SCALE_SCORE <- level_1_curve <- V1 <- VALID_CASE <- NULL
 	TRANSFORMED_SCALE_SCORE <- PERCENTILE <- GRADE_NUMERIC <- CONTENT_AREA <- LEVEL <- SGP <- EXTRAPOLATED_P50_CUT <- DATE <- NULL ## To prevent R CMD check warnings
 
 	content_area <- toupper(content_area)
@@ -89,6 +89,7 @@
 	tmp.smooth.grades <- seq(gaPlot.grade_range[1], gaPlot.grade_range[2], by=0.01)
 	tmp.unique.grades.numeric <- sort(unique(long_cutscores[['GRADE_NUMERIC']]))
 	tmp.unique.grades.character <- data.table(long_cutscores, key="GRADE_NUMERIC")[list(tmp.unique.grades.numeric), mult="first"][["GRADE"]]
+	tmp.unique.grades.current.year <- sort(unique(gaPlot.sgp_object@Data[VALID_CASE=="VALID_CASE" & YEAR==year][['GRADE']]))
 	setkeyv(gaPlot.sgp_object@Data, c("VALID_CASE", "CONTENT_AREA"))
 	growthAchievementPlot.data <- gaPlot.sgp_object@Data[CJ("VALID_CASE", content_area.all)][, list(ID, CONTENT_AREA, YEAR, GRADE, SCALE_SCORE, SGP)][
 		GRADE %in% tmp.unique.grades.character & !is.na(SCALE_SCORE)]
@@ -292,6 +293,7 @@
 	if (is.null(gaPlot.students)) {
 		tmp.cutscores <- data.table(long_cutscores[!CUTLEVEL %in% c("HOSS", "LOSS") &
 													!GRADE %in% c("GRADE_LOWER", "GRADE_UPPER") &
+													GRADE %in% tmp.unique.grades.current.year &
 													GRADE_NUMERIC!=max(GRADE_NUMERIC, na.rm=TRUE) &
 													YEAR %in% tail(sort(unique(YEAR), na.last=FALSE), 1)], key=c("GRADE_NUMERIC", "CONTENT_AREA"))
 		if (gaPlot.start.points=="Achievement Level Cuts") {
@@ -314,12 +316,12 @@
 					LEVEL=as.numeric(rownames(temp_uncond_frame)),
 					key=c("GRADE", "SCALE_SCORE"))[,ID:=as.character(seq(.N))]
 		}
-		tmp1.dt <- tmp1.dt[CONTENT_AREA %in% tmp.content_area.starting.points]
+		tmp1.dt <- tmp1.dt[CONTENT_AREA %in% tmp.content_area.starting.points & GRADE %in% tmp.unique.grades.current.year]
 	} else {
 		setkey(growthAchievementPlot.data, ID)
 		tmp1.dt <- growthAchievementPlot.data[gaPlot.students]
 		setnames(tmp1.dt, c("GRADE_CHARACTER", "GRADE"), c("GRADE", "GRADE_NUMERIC"))
-		tmp1.dt <- tmp1.dt[ID %in% unique(tmp1.dt[YEAR==year & CONTENT_AREA %in% tmp.content_area.starting.points][['ID']])]
+		tmp1.dt <- tmp1.dt[ID %in% unique(tmp1.dt[YEAR==year & CONTENT_AREA][['ID']])]
 	}
 
 
