@@ -147,7 +147,7 @@ function(panel.data,         ## REQUIRED
 	}
 
 	.create.coefficient.matrices <- function(data, k, by.grade, max.n.for.coefficient.matrices) {
-		rq.sgp <- function(my.taus, ...) { # Function needs to be nested within the .create.coefficient.matrices function to avoid data copying with SNOW
+		rq.sgp <- function(..., my.taus) { # Function needs to be nested within the .create.coefficient.matrices function to avoid data copying with SNOW
 			if (rq.method == "br") {
 				tmp.res <- rq(method="br", ...)[['coefficients']]
 			} else {
@@ -186,7 +186,7 @@ function(panel.data,         ## REQUIRED
 		if (!is.null(tmp.par.config <- parallel.config)) if (is.null(parallel.config[["WORKERS"]][["TAUS"]])) tmp.par.config <- NULL
 
 		if (is.null(tmp.par.config)) {
-			tmp.mtx <- eval(parse(text=paste("rq.sgp(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=taus, data=tmp.data)", sep="")))
+			tmp.mtx <- eval(parse(text=paste("rq.sgp(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=taus, data=tmp.data, my.taus=taus)", sep="")))
 		} else {
 			par.start <- startParallel(tmp.par.config, 'TAUS', qr.taus=taus)
 
