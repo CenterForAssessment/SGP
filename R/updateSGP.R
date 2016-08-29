@@ -205,6 +205,9 @@ function(what_sgp_object=NULL,
 				if (is.null(sgp.use.my.coefficient.matrices)) {
 					what_sgp_object@SGP[['Coefficient_Matrices']][grep(update.years, names(what_sgp_object@SGP[['Coefficient_Matrices']]))] <- NULL
 				}
+				if (!is.null(with_sgp_data_INSTRUCTOR_NUMBER)) {
+						what_sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']] <- rbindlist(list(what_sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']][which(YEAR!=update.years)], with_sgp_data_INSTRUCTOR_NUMBER), fill=TRUE)
+				}
 
 			if ("HIGH_NEED_STATUS" %in% names(what_sgp_object@Data)) {
 				what_sgp_object@Data[, HIGH_NEED_STATUS := NULL]

@@ -470,25 +470,27 @@ function(sgp_object,
 
 		#### Merge in 1, 2, and 3 year projections
 
+		tmp.proj.names <- paste(tmp.content_areas, tmp.last.year, sep=".")
+		if (!all(tmp.proj.names %in% names(sgp_object@SGP[["SGProjections"]]))) {
+			messageSGP(paste("\tNOTE: Projections for cuts not available for content areas: ", paste(setdiff(tmp.proj.names, names(sgp_object@SGP[["SGProjections"]])), collapse=", "), ".", sep=""))
+			tmp.proj.names <- intersect(tmp.proj.names, names(sgp_object@SGP[["SGProjections"]]))
+		}
 		for (j in 1:3) {
-			tmp.proj.names <- paste(tmp.content_areas, tmp.last.year, sep=".")
-			if (all(tmp.proj.names %in% names(sgp_object@SGP[["SGProjections"]]))) {
-				setkeyv(outputSGP.data, c("ID", "CONTENT_AREA"))
-				tmp.list <- list()
-				for (i in tmp.proj.names) {
-					tmp.list[[i]] <- data.table(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
-						sgp_object@SGP[["SGProjections"]][[i]][,c(1, grep(paste("PROJ_YEAR", j, sep="_"), names(sgp_object@SGP[["SGProjections"]][[i]]))), with=FALSE])
-				}
-				outputSGP.data <- data.table(convert.variables(rbindlist(tmp.list, fill=TRUE)), key=paste(key(outputSGP.data), collapse=","))[outputSGP.data]
-				tmp.grade.name <- paste("GRADE", tmp.last.year.short, sep=".")
-				tmp.year.name <- yearIncrement(tmp.last.year.short, j)
-				setkeyv(outputSGP.data, c("CONTENT_AREA", tmp.grade.name))
-				for (proj.iter in grep(paste("PROJ_YEAR", j, sep="_"), names(outputSGP.data))) {
-					tmp.scale_score.name <- names(outputSGP.data)[proj.iter]
-					outputSGP.data[,proj.iter:=outputSGP.data[,
-						piecewiseTransform(get(tmp.scale_score.name), state, tmp.content_areas[CONTENT_AREA[1]], tmp.year.name, as.character(type.convert(get(tmp.grade.name)[1])+1)),
-						by=list(CONTENT_AREA, outputSGP.data[[tmp.grade.name]])]$V1, with=FALSE]
-				}
+			setkeyv(outputSGP.data, c("ID", "CONTENT_AREA"))
+			tmp.list <- list()
+			for (i in tmp.proj.names) {
+				tmp.list[[i]] <- data.table(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
+					sgp_object@SGP[["SGProjections"]][[i]][,c(1, grep(paste("PROJ_YEAR", j, sep="_"), names(sgp_object@SGP[["SGProjections"]][[i]]))), with=FALSE])
+			}
+			outputSGP.data <- data.table(convert.variables(rbindlist(tmp.list, fill=TRUE)), key=paste(key(outputSGP.data), collapse=","))[outputSGP.data]
+			tmp.grade.name <- paste("GRADE", tmp.last.year.short, sep=".")
+			tmp.year.name <- yearIncrement(tmp.last.year.short, j)
+			setkeyv(outputSGP.data, c("CONTENT_AREA", tmp.grade.name))
+			for (proj.iter in grep(paste("PROJ_YEAR", j, sep="_"), names(outputSGP.data))) {
+				tmp.scale_score.name <- names(outputSGP.data)[proj.iter]
+				outputSGP.data[,proj.iter:=outputSGP.data[,
+					piecewiseTransform(get(tmp.scale_score.name), state, tmp.content_areas[CONTENT_AREA[1]], tmp.year.name, as.character(type.convert(get(tmp.grade.name)[1])+1)),
+					by=list(CONTENT_AREA, outputSGP.data[[tmp.grade.name]])]$V1, with=FALSE]
 			}
 		}
 
