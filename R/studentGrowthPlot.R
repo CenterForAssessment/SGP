@@ -24,20 +24,6 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 
 	YEAR <- CONTENT_AREA <- GRADE <- CUTSCORES <- CUTLEVEL <- level_1_1_curve <- level_2_1_curve <- NULL ## To prevent R CMD check warnings
 
-	if (is.null(Report_Parameters$Assessment_Transition)) {
-		achievement.level.labels <- list(SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Achievement_Level_Labels"]])
-		number.achievement.level.regions <- sapply(achievement.level.labels, length)
-		level.to.get.cuku <- list(which.max(SGP::SGPstateData[[Report_Parameters$State]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")-1)
-		level.to.get.musu <- list(which.max(SGP::SGPstateData[[Report_Parameters$State]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient"))
-	} else {
-		achievement.level.labels <- SGP::SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Transition"]][
-			grep("Achievement_Level_Labels", names(SGP::SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Transition"]]))]
-		number.achievement.level.regions <- sapply(achievement.level.labels, length)
-		achievement.levels.proficiency <- SGP::SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Transition"]][
-			grep("Achievement_Levels", names(SGP::SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Transition"]]))]
-		level.to.get.cuku <- sapply(achievement.levels.proficiency, function(x) which.max(x[['Proficient']]=="Proficient")-1)
-		level.to.get.musu <- sapply(achievement.levels.proficiency, function(x) which.max(x[['Proficient']]=="Proficient"))
-	}
 	number.growth.levels <- length(SGP::SGPstateData[[Report_Parameters$State]][["Growth"]][["Levels"]])
 	growth.level.labels <- SGP::SGPstateData[[Report_Parameters$State]][["Growth"]][["Levels"]]
 	growth.level.cutscores <- SGP::SGPstateData[[Report_Parameters$State]][["Growth"]][["Cutscores"]][["Cuts"]]
@@ -69,8 +55,6 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 	} else {
 		test.season <- NULL
 	}
-
-	achievement.level.region.colors <- lapply(number.achievement.level.regions, function(x) paste("grey", round(seq(62, 91, length=x)), sep=""))
 
 	border.color <- "grey25"
 	if (is.null(SGP::SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["arrow.legend.color"]])) {
@@ -402,6 +386,25 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 	###
 
 	grade.values <- interpolate.grades(Grades, Content_Areas, studentGrowthPlot.year.span)
+
+	if (!is.null(Report_Parameters[['Assessment_Transition']]) && grade.values$years[2] >= Report_Parameters[['Assessment_Transition']][['Year']]) Report_Parameters[['Assessment_Transition']] <- NULL
+
+	if (is.null(Report_Parameters[['Assessment_Transition']])) {
+		achievement.level.labels <- list(SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Achievement_Level_Labels"]])
+		number.achievement.level.regions <- sapply(achievement.level.labels, length)
+		level.to.get.cuku <- list(which.max(SGP::SGPstateData[[Report_Parameters$State]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")-1)
+		level.to.get.musu <- list(which.max(SGP::SGPstateData[[Report_Parameters$State]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient"))
+	} else {
+		achievement.level.labels <- SGP::SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Transition"]][
+			grep("Achievement_Level_Labels", names(SGP::SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Transition"]]))]
+		number.achievement.level.regions <- sapply(achievement.level.labels, length)
+		achievement.levels.proficiency <- SGP::SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Transition"]][
+			grep("Achievement_Levels", names(SGP::SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Transition"]]))]
+		level.to.get.cuku <- sapply(achievement.levels.proficiency, function(x) which.max(x[['Proficient']]=="Proficient")-1)
+		level.to.get.musu <- sapply(achievement.levels.proficiency, function(x) which.max(x[['Proficient']]=="Proficient"))
+	}
+
+	achievement.level.region.colors <- lapply(number.achievement.level.regions, function(x) paste("grey", round(seq(62, 91, length=x)), sep=""))
 
 	if (!is.null(Report_Parameters[['Assessment_Transition']][['Assessment_Transition_Type']])) {
 		if (identical(toupper(Report_Parameters[['Assessment_Transition']][['Assessment_Transition_Type']][1]), "NO")) {
