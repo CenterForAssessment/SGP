@@ -208,13 +208,16 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		arrow.legend.color[findInterval(sgp, growth.level.cutscores)+1]
 	}
 
-	get.my.cutscore.year <- function(state, content_area, year) {
+	get.my.cutscore.year <- function(state, content_area, year, cutlevel) {
 		if (!is.null(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area]])) {
 			return(NA)
 		} else {
 			year <- tail(sort(c(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[content_area]], year)), 1)
+			tmp.index <- grep(content_area, names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]]))
+			tmp.cutlevels <- sapply(tmp.index, function(x) length(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[x]][[1]]))
 			tmp.cutscore.years <-
-				sapply(strsplit(names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]])[grep(content_area, names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]]))], "[.]"), '[', 2)
+				sapply(strsplit(names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]])[tmp.index], "[.]"), '[', 2)
+			tmp.cutscore.years <- tmp.cutscore.years[cutlevel <= tmp.cutlevels]
 			if (year %in% tmp.cutscore.years) {
 				return(year)
 			} else {
@@ -637,7 +640,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 				tmp.year.sequence <- list(match((low.year-1):tmp.year.cut, (low.year-1):(high.year+1)), match(rev((high.year+1):tmp.year.cut), (low.year-1):(high.year+1)))
 			}
 			temp <- cbind(temp_id=seq_len(nrow(grade.values$interp.df)), grade.values$interp.df, YEAR=grade.values$years)
-			temp$YEAR <- sapply(temp$YEAR, function(x) get.my.cutscore.year(Report_Parameters$State, Report_Parameters$Content_Area, as.character(x)))
+			temp$YEAR <- sapply(temp$YEAR, function(x) get.my.cutscore.year(Report_Parameters$State, Report_Parameters$Content_Area, as.character(x), i))
 			temp <- merge(temp, subset(Cutscores, CUTLEVEL==i), all.x=TRUE)
 			temp <- temp[order(temp$temp_id),]$CUTSCORES
 			if (length(temp[which(!is.na(temp))])==1) {
