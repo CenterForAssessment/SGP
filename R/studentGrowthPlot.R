@@ -642,7 +642,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 			} else {
 				tmp.year.sequence <- list(match((low.year-1):tmp.year.cut, (low.year-1):(high.year+1)), match(rev((high.year+1):tmp.year.cut), (low.year-1):(high.year+1)))
 			}
-			temp <- cbind(temp_id=seq_len(nrow(grade.values$interp.df)), grade.values$interp.df, YEAR=grade.values$years)
+			temp <- cbind(temp_id=seq_len(nrow(grade.values$interp.df)), grade.values$interp.df, YEAR=grade.values$years)[tmp.year.sequence[[j]],]
 			temp$YEAR <- sapply(temp$YEAR, function(x) get.my.cutscore.year(Report_Parameters$State, Report_Parameters$Content_Area, as.character(x), i))
 			temp <- merge(temp, subset(Cutscores, CUTLEVEL==i), all.x=TRUE)
 			temp <- temp[order(temp$temp_id),]$CUTSCORES
@@ -651,7 +651,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 			} else {
 				temp[which(is.na(temp))] <- approx(temp, xout=which(is.na(temp)), rule=2)$y
 			}
-			assign(paste("level_", j, "_", i, "_curve", sep=""), splinefun(((low.year-1):(high.year+1))[tmp.year.sequence[[j]]], temp[tmp.year.sequence[[j]]], method="natural"))
+			assign(paste("level_", j, "_", i, "_curve", sep=""), splinefun(((low.year-1):(high.year+1))[tmp.year.sequence[[j]]], temp, method="monoH.FC"))
 		}
 
 		tmp.x.points <- seq(xscale.range.list[[j]][1], xscale.range.list[[j]][2], length=round(diff(xscale.range.list[[j]])/diff(xscale.range)*40))
