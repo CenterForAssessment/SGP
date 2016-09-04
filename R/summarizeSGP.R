@@ -425,7 +425,7 @@
 	}
 
 	if (is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["state.multiple.year.summary"]])) {
-		state.multiple.year.summary <- 3
+		state.multiple.year.summary <- 5
 	} else {
 		state.multiple.year.summary <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["state.multiple.year.summary"]]
 	}
