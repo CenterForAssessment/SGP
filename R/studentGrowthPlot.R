@@ -265,7 +265,8 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		if (first.scale.score == 0) {
 			year_span <- 0
 			return (list(
-				interp.df = data.frame(GRADE=head(unique(Cutscores[['GRADE']]), 7), CONTENT_AREA=Report_Parameters$Content_Area, stringsAsFactors=FALSE),
+				interp.df = data.frame(GRADE=c("GRADE_LOWER", head(sort(as.numeric(setdiff(unique(Cutscores[['GRADE']]), c("GRADE_LOWER", "GRADE_UPPER", "EOCT")))), 6)),
+										CONTENT_AREA=Report_Parameters$Content_Area, stringsAsFactors=FALSE),
 				year_span=year_span,
 				years=yearIncrement(Report_Parameters$Current_Year, -5:1)))
 		} else {
