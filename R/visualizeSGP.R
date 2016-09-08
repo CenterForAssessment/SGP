@@ -327,6 +327,7 @@ if ("studentGrowthPlot" %in% plot.types) {
 	}
 
 	completeGrade <- function(tmp.table) {
+		setkey(tmp.table, CONTENT_AREA, ID)
 	    tmp.table.tf <- data.table(tmp.table[,all(is.na(GRADE)), keyby=list(CONTENT_AREA, ID)], key="ID")
 	    tmp.to.fix <- data.table(tmp.table.tf[V1==TRUE, c("CONTENT_AREA", "ID"), with=FALSE], key=c("CONTENT_AREA", "ID"))
 	    tmp.to.fix.with <- data.table(tmp.table.tf[V1==FALSE][tmp.to.fix$ID, mult="first"][,c("CONTENT_AREA", "ID"), with=FALSE], key=c("CONTENT_AREA", "ID"))
@@ -728,8 +729,8 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			tmp.table <- data.table(slot.data[getYearsContentAreasGrades(state, years=tmp.years.subset, content_areas_domains=tmp.content_areas_domains,
 								earliest_year_reported=SGP::SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]]), nomatch=0],
 				key=c("VALID_CASE", "ID", "CONTENT_AREA", "YEAR"))[CJ("VALID_CASE", report.ids, tmp.content_areas_domains, tmp.years)]
-			setkeyv(tmp.table, c("VALID_CASE", "YEAR", "CONTENT_AREA", "DISTRICT_NUMBER", "SCHOOL_NUMBER"))
 			tmp.table <- completeGrade(tmp.table)
+			setkeyv(tmp.table, c("VALID_CASE", "YEAR", "CONTENT_AREA", "DISTRICT_NUMBER", "SCHOOL_NUMBER"))
 			tmp.districts.and.schools <- tmp.table[CJ("VALID_CASE", tmp.last.year, tmp.content_areas_domains)][, list(DISTRICT_NUMBER, SCHOOL_NUMBER)]
 		}
 

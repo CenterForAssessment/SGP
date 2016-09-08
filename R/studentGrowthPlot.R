@@ -214,7 +214,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		}
 	}
 
-	interpolate.grades <- function(grades, content_areas, data.year.span) {
+	interpolate.grades <- function(grades, content_areas, data.year.span, scale_scores) {
 		last.number <- function (x) {
 			if (sum(!is.na(x)) > 0) return(max(which(!is.na(x)))) else return (0)
 		}
@@ -260,6 +260,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 
 		first.scale.score <- first.number(head(grades, data.year.span-1))
 		last.scale.score <- last.number(grades)
+		any.scale.scores <- any(!is.na(Scale_Scores))
 		grades <- convert.grades(grades, content_areas)
 
 		if (first.scale.score == 0) {
@@ -386,7 +387,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 	### END Utility functions
 	###
 
-	grade.values <- interpolate.grades(Grades, Content_Areas, studentGrowthPlot.year.span)
+	grade.values <- interpolate.grades(Grades, Content_Areas, studentGrowthPlot.year.span, Scale_Scores)
 
 	if (!is.null(Report_Parameters[['Assessment_Transition']]) && grade.values$years[2] >= Report_Parameters[['Assessment_Transition']][['Year']]) Report_Parameters[['Assessment_Transition']] <- NULL
 
