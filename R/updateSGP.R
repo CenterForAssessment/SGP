@@ -16,14 +16,14 @@ function(what_sgp_object=NULL,
 	sgp.test.cohort.size=NULL,
 	return.sgp.test.results=FALSE,
 	simulate.sgps=TRUE,
-	save.old.summaries=TRUE,
+	save.old.summaries=NULL,
 	save.intermediate.results=TRUE,
 	calculate.simex=NULL,
 	calculate.simex.baseline=NULL,
 	sgp.use.my.coefficient.matrices=NULL,
 	sgp.target.scale.scores=FALSE,
 	sgp.target.scale.scores.only=FALSE,
-	overwrite.existing.data=FALSE,
+	overwrite.existing.data=TRUE,
 	update.old.data.with.new=TRUE,
 	sgPlot.demo.report=TRUE,
 	plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot"),
@@ -73,6 +73,9 @@ function(what_sgp_object=NULL,
 			calculate.simex.baseline <- list(csem.data.vnames=csem.variable, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE, simex.use.my.coefficient.matrices = TRUE)
 		} else 	calculate.simex.baseline <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE, simex.use.my.coefficient.matrices = TRUE)
 	}
+
+	if (is.null(save.old.summaries) && overwrite.existing.data) save.old.summaries <- FALSE else save.old.summaries <- TRUE
+	
 
 	### Utility functions
 
@@ -228,7 +231,7 @@ function(what_sgp_object=NULL,
 						sgp.projections.baseline=sgp.projections.baseline,
 						sgp.projections.lagged.baseline=sgp.projections.lagged.baseline,
 						save.intermediate.results=save.intermediate.results,
-						save.old.summaries=save.old.summaries,
+						save.old.summaries=FALSE,
 						sgPlot.demo.report=sgPlot.demo.report,
 						sgp.use.my.coefficient.matrices=sgp.use.my.coefficient.matrices,
 						calculate.simex = calculate.simex,
@@ -254,7 +257,7 @@ function(what_sgp_object=NULL,
 			messageSGP(paste("Finished updateSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 			return(what_sgp_object)
 
-		} else {
+		} else { ### END if (overwrite.existing.data)
 			if (!is.null(sgp.use.my.coefficient.matrices)) {
 				# Extract score histories.  Don't use CONTENT_AREA due to potential use of EOCT course progressions.
 				tmp.long.data <- rbindlist(list(data.table(what_sgp_object@Data, key=c("VALID_CASE", "ID"))[

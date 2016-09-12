@@ -326,6 +326,15 @@ if ("studentGrowthPlot" %in% plot.types) {
 		} else return(content_area)
 	}
 
+	completeGrade <- function(tmp.table) {
+		setkey(tmp.table, CONTENT_AREA, ID)
+	    tmp.table.tf <- data.table(tmp.table[,all(is.na(GRADE)), keyby=list(CONTENT_AREA, ID)], key="ID")
+	    tmp.to.fix <- data.table(tmp.table.tf[V1==TRUE, c("CONTENT_AREA", "ID"), with=FALSE], key=c("CONTENT_AREA", "ID"))
+	    tmp.to.fix.with <- data.table(tmp.table.tf[V1==FALSE][tmp.to.fix$ID, mult="first"][,c("CONTENT_AREA", "ID"), with=FALSE], key=c("CONTENT_AREA", "ID"))
+	    tmp.table[tmp.to.fix, GRADE:=tmp.table[tmp.to.fix.with][['GRADE']]]
+		setkeyv(tmp.table, c("ID", "CONTENT_AREA", "YEAR", "VALID_CASE"))
+	    return(tmp.table)
+	}
 
 ######################################################################
 ##### DISTINGUISH CASES WHEN WIDE data is or is not provided
@@ -380,7 +389,7 @@ if ("studentGrowthPlot" %in% plot.types) {
 				sgPlot.sgp.targets <- c("sgp.projections", "sgp.projections.lagged")
 			}
 		}
-		if (identical(sgPlot.sgp.targets, FALSE)) {
+		if (identical(sgPlot.sgp.targets, FALSE) && !sgPlot.wide.data) {
 			if (length(grep("TARGET_SCALE_SCORES", names(sgp_object@SGP$SGProjections))) > 0 && !is.null(SGP::SGPstateData[[state]][['SGP_Configuration']][['sgPlot.sgp.targets']])) {
 				sgPlot.sgp.targets <- SGP::SGPstateData[[state]][['SGP_Configuration']][['sgPlot.sgp.targets']]
 			} else {
@@ -703,6 +712,9 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 		setkeyv(tmp.districts.and.schools.size, c("DISTRICT_NUMBER", "SCHOOL_NUMBER"))
 		setkeyv(slot.data, long.key)
 
+
+
+
 		if (is.null(sgPlot.students)) {
 			report.ids <- unique(slot.data[tmp.districts.and.schools][["ID"]])
 			if (sgPlot.reports.by.instructor) report.ids <- intersect(student.teacher.lookup[['ID']], report.ids)
@@ -710,12 +722,14 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			tmp.table <- data.table(slot.data[getYearsContentAreasGrades(state, years=tmp.years.subset, content_areas_domains=tmp.content_areas_domains,
 								earliest_year_reported=SGP::SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]]), nomatch=0],
 				key=c("ID", "CONTENT_AREA", "YEAR", "VALID_CASE"))[CJ(report.ids, tmp.content_areas_domains, tmp.years.subset, "VALID_CASE")]
+			tmp.table <- completeGrade(tmp.table)
 		} else {
 			report.ids <- sgPlot.students
 			setkeyv(slot.data, c("CONTENT_AREA", "GRADE", "YEAR"))
 			tmp.table <- data.table(slot.data[getYearsContentAreasGrades(state, years=tmp.years.subset, content_areas_domains=tmp.content_areas_domains,
 								earliest_year_reported=SGP::SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]]), nomatch=0],
 				key=c("VALID_CASE", "ID", "CONTENT_AREA", "YEAR"))[CJ("VALID_CASE", report.ids, tmp.content_areas_domains, tmp.years)]
+			tmp.table <- completeGrade(tmp.table)
 			setkeyv(tmp.table, c("VALID_CASE", "YEAR", "CONTENT_AREA", "DISTRICT_NUMBER", "SCHOOL_NUMBER"))
 			tmp.districts.and.schools <- tmp.table[CJ("VALID_CASE", tmp.last.year, tmp.content_areas_domains)][, list(DISTRICT_NUMBER, SCHOOL_NUMBER)]
 		}
