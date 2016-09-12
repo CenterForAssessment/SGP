@@ -23,7 +23,7 @@ function(what_sgp_object=NULL,
 	sgp.use.my.coefficient.matrices=NULL,
 	sgp.target.scale.scores=FALSE,
 	sgp.target.scale.scores.only=FALSE,
-	overwrite.existing.data=FALSE,
+	overwrite.existing.data=TRUE,
 	update.old.data.with.new=TRUE,
 	sgPlot.demo.report=TRUE,
 	plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot"),
@@ -254,7 +254,7 @@ function(what_sgp_object=NULL,
 			messageSGP(paste("Finished updateSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 			return(what_sgp_object)
 
-		} else {
+		} else { ### END if (overwrite.existing.data)
 			if (!is.null(sgp.use.my.coefficient.matrices)) {
 				# Extract score histories.  Don't use CONTENT_AREA due to potential use of EOCT course progressions.
 				tmp.long.data <- rbindlist(list(data.table(what_sgp_object@Data, key=c("VALID_CASE", "ID"))[

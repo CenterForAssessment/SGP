@@ -263,14 +263,14 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		any.scale.scores <- any(!is.na(Scale_Scores))
 		grades <- convert.grades(grades, content_areas)
 
-		if (first.scale.score == 0) {
-			year_span <- 0
-			return (list(
-				interp.df = data.frame(GRADE=c("GRADE_LOWER", head(sort(as.numeric(setdiff(unique(Cutscores[['GRADE']]), c("GRADE_LOWER", "GRADE_UPPER", "EOCT")))), 6)),
-										CONTENT_AREA=Report_Parameters$Content_Area, stringsAsFactors=FALSE),
-				year_span=year_span,
-				years=yearIncrement(Report_Parameters$Current_Year, -5:1)))
-		} else {
+#		if (first.scale.score == 0) {
+#			year_span <- 0
+#			return (list(
+#				interp.df = data.frame(GRADE=c("GRADE_LOWER", head(sort(as.numeric(setdiff(unique(Cutscores[['GRADE']]), c("GRADE_LOWER", "GRADE_UPPER", "EOCT")))), 6)),
+#										CONTENT_AREA=Report_Parameters$Content_Area, stringsAsFactors=FALSE),
+#				year_span=year_span,
+#				years=yearIncrement(Report_Parameters$Current_Year, -5:1)))
+#		} else {
 			if (last.scale.score < data.year.span) {
 				grades[(last.scale.score+1):data.year.span] <- (grades[last.scale.score]-1):(grades[last.scale.score] - (data.year.span - last.scale.score))
 				grades[grades < min(grades.content_areas.reported.in.state$GRADE_NUMERIC)] <- min(grades.content_areas.reported.in.state$GRADE_NUMERIC)
@@ -307,7 +307,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 			}
 
 			if (grades[1] == max(grades.content_areas.reported.in.state$GRADE_NUMERIC)) {
-				year_span <- data.year.span
+				if (!any.scale.scores) year_span <- 0 else year_span <- data.year.span
 				temp.grades.content_areas <- extend.grades(rev(grades))
 				return (list(
 					interp.df = temp.grades.content_areas,
@@ -316,8 +316,12 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 					years=yearIncrement(Report_Parameters$Current_Year, seq(1-max(which(grades[1]==temp.grades.content_areas$GRADE_NUMERIC)), length=dim(temp.grades.content_areas)[1]))))
 			} else {
 				year.increment.for.projection.current <- grades.content_areas.reported.in.state$YEAR_LAG[which(grades[1]==grades.content_areas.reported.in.state$GRADE_NUMERIC)+1]
-				year_span <- max(min(last.scale.score, data.year.span-1), min(grades[1]-min(grades.content_areas.reported.in.state$GRADE_NUMERIC)+1, data.year.span-1))-
-					(year.increment.for.projection.current-1)
+				if (!any.scale.scores) {
+					year_span <- 0
+				} else {
+					year_span <- max(min(last.scale.score, data.year.span-1), min(grades[1]-min(grades.content_areas.reported.in.state$GRADE_NUMERIC)+1, data.year.span-1))
+									- (year.increment.for.projection.current-1)
+				}
 				temp.grades <- c(rev(head(grades, year_span)),
 					head(seq(grades.content_areas.reported.in.state$GRADE_NUMERIC[match(grades[1], grades.content_areas.reported.in.state$GRADE_NUMERIC)]+1, length=data.year.span),
 						data.year.span-year_span))
@@ -328,7 +332,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 					increment_for_projection_current=year.increment.for.projection.current,
 					years=yearIncrement(Report_Parameters$Current_Year, seq(1-max(which(grades[1]==temp.grades.content_areas$GRADE_NUMERIC)), length=dim(temp.grades.content_areas)[1]))))
 			}
-				}
+#		}
 	} ### END interpolate.grades function
 
 	year.function <- function(year, add.sub, vec.length, output.type="numeric", season=NULL) {
@@ -540,25 +544,13 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		is.null(Report_Parameters$Assessment_Transition)) {
 			tmp.range <-
 				range(head(tail(SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[Report_Parameters$Content_Area]],-1),-1), na.rm=TRUE)
-		low.score <- min(cuts.ny1,
-			Plotting_Scale_Scores,
-			tmp.range,
-			na.rm=TRUE)
-		high.score <- max(cuts.ny1,
-			Plotting_Scale_Scores,
-			tmp.range,
-			na.rm=TRUE)
-		yscale.range <- extendrange(c(low.score, high.score), f=0.15)
+			low.score <- min(cuts.ny1, Plotting_Scale_Scores, tmp.range, na.rm=TRUE)
+			high.score <- max(cuts.ny1, Plotting_Scale_Scores, tmp.range, na.rm=TRUE)
+			yscale.range <- extendrange(c(low.score, high.score), f=0.15)
 	} else {
-		low.score <- min(cuts.ny1,
-			Plotting_Scale_Scores,
-			Cutscores$CUTSCORES[Cutscores$GRADE==grade.values$interp.df$GRADE[1] & Cutscores$CUTLEVEL==1],
-			na.rm=TRUE)
-		high.score <- max(cuts.ny1,
-			Plotting_Scale_Scores,
-			Cutscores$CUTSCORES[Cutscores$GRADE==tail(grade.values$interp.df$GRADE, 1) & Cutscores$CUTLEVEL %in% (number.achievement.level.regions-1)],
-			na.rm=TRUE)
-		yscale.range <- extendrange(c(low.score,high.score), f=0.15)
+			low.score <- min(cuts.ny1, Plotting_Scale_Scores, Cutscores[GRADE==data.table(grade.values[['interp.df']])[!is.na(CONTENT_AREA)][['GRADE']][1] & CUTLEVEL==1][['CUTSCORES']], na.rm=TRUE)
+			high.score <- max(cuts.ny1, Plotting_Scale_Scores, Cutscores[GRADE==tail(data.table(grade.values[['interp.df']])[!is.na(CONTENT_AREA)][['GRADE']], 1) & CUTLEVEL %in% (number.achievement.level.regions-1)][['CUTSCORES']], na.rm=TRUE)
+			yscale.range <- extendrange(c(low.score,high.score), f=0.15)
 	}
 
 	if (is.null(Report_Parameters$Assessment_Transition)) {
