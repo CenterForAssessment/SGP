@@ -16,7 +16,7 @@ function(what_sgp_object=NULL,
 	sgp.test.cohort.size=NULL,
 	return.sgp.test.results=FALSE,
 	simulate.sgps=TRUE,
-	save.old.summaries=TRUE,
+	save.old.summaries=NULL,
 	save.intermediate.results=TRUE,
 	calculate.simex=NULL,
 	calculate.simex.baseline=NULL,
@@ -73,6 +73,9 @@ function(what_sgp_object=NULL,
 			calculate.simex.baseline <- list(csem.data.vnames=csem.variable, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE, simex.use.my.coefficient.matrices = TRUE)
 		} else 	calculate.simex.baseline <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE, simex.use.my.coefficient.matrices = TRUE)
 	}
+
+	if (is.null(save.old.summaries) && overwrite.existing.data) save.old.summaries <- FALSE else save.old.summaries <- TRUE
+	
 
 	### Utility functions
 
