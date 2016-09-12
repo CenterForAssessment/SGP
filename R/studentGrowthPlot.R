@@ -664,7 +664,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		grid.lines(x=tmp.year.cut+0.028, y=yscale.range, default.units="native", gp=gpar(lwd=0.4, col=border.color))
 		grid.lines(x=tmp.year.cut-0.028, y=yscale.range, default.units="native", gp=gpar(lwd=0.4, col=border.color))
 
-		if (any_scale_scores) {
+		if (grade.values[['any_scale_scores']]) {
 			for (j in seq(length(Report_Parameters$Assessment_Transition[['Year']])+1)) {
 				tmp.transition.names <- names(SGP::SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Transition"]])
 				tmp.test.abbreviation <-
@@ -680,7 +680,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		}
 	}
 
-	if (!grade.values$any_scale_scores) {
+	if (!grade.values[['any_scale_scores']]) {
 		grid.text(x=0.5, y=0.5, paste("No", test.abbreviation, content.area.label, "Data"), gp=gpar(col=border.color, cex=2.5))
 	}
 
