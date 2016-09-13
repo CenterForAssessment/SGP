@@ -260,79 +260,68 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 
 		first.scale.score <- first.number(head(grades, data.year.span-1))
 		last.scale.score <- last.number(grades)
-		any.scale.scores <- any(!is.na(Scale_Scores))
+		any.scale.scores <- any(!is.na(scale_scores))
 		grades <- convert.grades(grades, content_areas)
 
-#		if (first.scale.score == 0) {
-#			year_span <- 0
-#			return (list(
-#				interp.df = data.frame(GRADE=c("GRADE_LOWER", head(sort(as.numeric(setdiff(unique(Cutscores[['GRADE']]), c("GRADE_LOWER", "GRADE_UPPER", "EOCT")))), 6)),
-#										CONTENT_AREA=Report_Parameters$Content_Area, stringsAsFactors=FALSE),
-#				year_span=year_span,
-#				years=yearIncrement(Report_Parameters$Current_Year, -5:1)))
-#		} else {
-			if (last.scale.score < data.year.span) {
-				grades[(last.scale.score+1):data.year.span] <- (grades[last.scale.score]-1):(grades[last.scale.score] - (data.year.span - last.scale.score))
-				grades[grades < min(grades.content_areas.reported.in.state$GRADE_NUMERIC)] <- min(grades.content_areas.reported.in.state$GRADE_NUMERIC)
-			}
+		if (last.scale.score < data.year.span) {
+			grades[(last.scale.score+1):data.year.span] <- (grades[last.scale.score]-1):(grades[last.scale.score] - (data.year.span - last.scale.score))
+			grades[grades < min(grades.content_areas.reported.in.state$GRADE_NUMERIC)] <- min(grades.content_areas.reported.in.state$GRADE_NUMERIC)
+		}
 
-			if (first.scale.score > 1) {
-				grades[1:(first.scale.score-1)] <- (grades[first.scale.score] + (first.scale.score - 1)):(grades[first.scale.score]+1)
-				grades[grades > max(grades.content_areas.reported.in.state$GRADE_NUMERIC)] <- max(grades.content_areas.reported.in.state$GRADE_NUMERIC)
-				if (any(is.na(grades))) {
-					grades[which(is.na(grades))] <- approx(grades, xout=which(is.na(grades)))$y
-					grades <- as.integer(grades)
-				}
-				if (!grades[1] %in% grades.content_areas.reported.in.state$GRADE_NUMERIC) {
-					grades[1] <- grades.content_areas.reported.in.state$GRADE_NUMERIC[which.min(grades[1] > grades.content_areas.reported.in.state$GRADE_NUMERIC)-1]
-				}
-				if (any(!grades %in% grades.content_areas.reported.in.state$GRADE_NUMERIC)) {
-					for (tmp.missing.grades in which(!grades %in% grades.content_areas.reported.in.state$GRADE_NUMERIC)) {
-						grades[tmp.missing.grades] <-
-							grades.content_areas.reported.in.state$GRADE_NUMERIC[which.min(grades[tmp.missing.grades] > grades.content_areas.reported.in.state$GRADE_NUMERIC)-1]
-					}
-				}
-			}
-
+		if (first.scale.score > 1) {
+			grades[1:(first.scale.score-1)] <- (grades[first.scale.score] + (first.scale.score - 1)):(grades[first.scale.score]+1)
+			grades[grades > max(grades.content_areas.reported.in.state$GRADE_NUMERIC)] <- max(grades.content_areas.reported.in.state$GRADE_NUMERIC)
 			if (any(is.na(grades))) {
-				tmp.na <- which(is.na(grades))
-				for (i in tmp.na) {
-					grades[i] <- grades.content_areas.reported.in.state$GRADE_NUMERIC[match(grades[i-1], grades.content_areas.reported.in.state$GRADE_NUMERIC)]
-				}
-				if (length(intersect(tmp.na, which(!is.na(suppressWarnings(as.numeric(grades)))))) > 0) {
-					tmp.indices <- intersect(tmp.na, which(!is.na(suppressWarnings(as.numeric(grades)))))
-					grades[tmp.indices] <- NA
-					grades[tmp.indices] <- round(approx(suppressWarnings(as.numeric(grades)), xout=tmp.indices)$y)
+				grades[which(is.na(grades))] <- approx(grades, xout=which(is.na(grades)))$y
+				grades <- as.integer(grades)
+			}
+			if (!grades[1] %in% grades.content_areas.reported.in.state$GRADE_NUMERIC) {
+				grades[1] <- grades.content_areas.reported.in.state$GRADE_NUMERIC[which.min(grades[1] > grades.content_areas.reported.in.state$GRADE_NUMERIC)-1]
+			}
+			if (any(!grades %in% grades.content_areas.reported.in.state$GRADE_NUMERIC)) {
+				for (tmp.missing.grades in which(!grades %in% grades.content_areas.reported.in.state$GRADE_NUMERIC)) {
+					grades[tmp.missing.grades] <-
+						grades.content_areas.reported.in.state$GRADE_NUMERIC[which.min(grades[tmp.missing.grades] > grades.content_areas.reported.in.state$GRADE_NUMERIC)-1]
 				}
 			}
+		}
 
-			if (grades[1] == max(grades.content_areas.reported.in.state$GRADE_NUMERIC)) {
-				if (!any.scale.scores) year_span <- 0 else year_span <- data.year.span
-				temp.grades.content_areas <- extend.grades(rev(grades))
-				return (list(
-					interp.df = temp.grades.content_areas,
-					year_span=year_span,
-					increment_for_projection_current=0,
-					years=yearIncrement(Report_Parameters$Current_Year, seq(1-max(which(grades[1]==temp.grades.content_areas$GRADE_NUMERIC)), length=dim(temp.grades.content_areas)[1]))))
-			} else {
-				year.increment.for.projection.current <- grades.content_areas.reported.in.state$YEAR_LAG[which(grades[1]==grades.content_areas.reported.in.state$GRADE_NUMERIC)+1]
-				if (!any.scale.scores) {
-					year_span <- 0
-				} else {
-					year_span <- max(min(last.scale.score, data.year.span-1), min(grades[1]-min(grades.content_areas.reported.in.state$GRADE_NUMERIC)+1, data.year.span-1))
-									- (year.increment.for.projection.current-1)
-				}
-				temp.grades <- c(rev(head(grades, year_span)),
-					head(seq(grades.content_areas.reported.in.state$GRADE_NUMERIC[match(grades[1], grades.content_areas.reported.in.state$GRADE_NUMERIC)]+1, length=data.year.span),
-						data.year.span-year_span))
-				temp.grades.content_areas <- extend.grades(temp.grades)
-				return (list(
-					interp.df = temp.grades.content_areas,
-					year_span=year_span,
-					increment_for_projection_current=year.increment.for.projection.current,
-					years=yearIncrement(Report_Parameters$Current_Year, seq(1-max(which(grades[1]==temp.grades.content_areas$GRADE_NUMERIC)), length=dim(temp.grades.content_areas)[1]))))
+		if (any(is.na(grades))) {
+			tmp.na <- which(is.na(grades))
+			for (i in tmp.na) {
+				grades[i] <- grades.content_areas.reported.in.state$GRADE_NUMERIC[match(grades[i-1], grades.content_areas.reported.in.state$GRADE_NUMERIC)]
 			}
-#		}
+			if (length(intersect(tmp.na, which(!is.na(suppressWarnings(as.numeric(grades)))))) > 0) {
+				tmp.indices <- intersect(tmp.na, which(!is.na(suppressWarnings(as.numeric(grades)))))
+				grades[tmp.indices] <- NA
+				grades[tmp.indices] <- round(approx(suppressWarnings(as.numeric(grades)), xout=tmp.indices)$y)
+			}
+		}
+
+		if (grades[1] == max(grades.content_areas.reported.in.state$GRADE_NUMERIC)) {
+			year_span <- data.year.span
+			temp.grades.content_areas <- extend.grades(rev(grades))
+			return (list(
+				interp.df = temp.grades.content_areas,
+				year_span=year_span,
+				any_scale_scores=any.scale.scores,
+				increment_for_projection_current=0,
+				years=yearIncrement(Report_Parameters$Current_Year, seq(1-max(which(grades[1]==temp.grades.content_areas$GRADE_NUMERIC)), length=dim(temp.grades.content_areas)[1]))))
+		} else {
+			year.increment.for.projection.current <- grades.content_areas.reported.in.state$YEAR_LAG[which(grades[1]==grades.content_areas.reported.in.state$GRADE_NUMERIC)+1]
+			year_span <- max(min(last.scale.score, data.year.span-1), min(grades[1]-min(grades.content_areas.reported.in.state$GRADE_NUMERIC)+1, data.year.span-1))
+							- (year.increment.for.projection.current-1)
+			temp.grades <- c(rev(head(grades, year_span)),
+				head(seq(grades.content_areas.reported.in.state$GRADE_NUMERIC[match(grades[1], grades.content_areas.reported.in.state$GRADE_NUMERIC)]+1, length=data.year.span),
+					data.year.span-year_span))
+			temp.grades.content_areas <- extend.grades(temp.grades)
+			return (list(
+				interp.df = temp.grades.content_areas,
+				year_span=year_span,
+				any_scale_scores=any.scale.scores,
+				increment_for_projection_current=year.increment.for.projection.current,
+				years=yearIncrement(Report_Parameters$Current_Year, seq(1-max(which(grades[1]==temp.grades.content_areas$GRADE_NUMERIC)), length=dim(temp.grades.content_areas)[1]))))
+		}
 	} ### END interpolate.grades function
 
 	year.function <- function(year, add.sub, vec.length, output.type="numeric", season=NULL) {
@@ -438,7 +427,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		}
 	}
 
-	if (grade.values$year_span > 0) {
+	if (grade.values[['any_scale_scores']]) {
 		low.year <- year.function(Report_Parameters$Current_Year, (1-grade.values$year_span), 1)
 		high.year <- year.function(Report_Parameters$Current_Year, studentGrowthPlot.year.span-grade.values$year_span, 1)
 		year.text <- c(year.function(Report_Parameters$Current_Year, (1-grade.values$year_span), grade.values$year_span+grade.values$increment_for_projection_current, "character", test.season),
@@ -481,7 +470,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		ach.levels.text <- c(ach.level.labels(Achievement_Levels[grade.values$year_span:1]), rep(" ", studentGrowthPlot.year.span))
 		ach.levels.text <- head(ach.levels.text, studentGrowthPlot.year.span)
 
-		if (grade.values$year_span > 1) {
+		if (grade.values[['year_span']] > 1) {
 			gp.values <- c(SGP[(grade.values$year_span-1):1], rep(NA, studentGrowthPlot.year.span))
 			gp.values <- head(gp.values, studentGrowthPlot.year.span-1)
 
@@ -498,33 +487,25 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 			gp.levels.text <- rep(" ", studentGrowthPlot.year.span-1)
 		}
 
-		if (grade.values$increment_for_projection_current==0) {
+		if (grade.values[['increment_for_projection_current']]==0) {
 			cuts.ny1 <- rep(NA, number.growth.levels+1)
 			cuts.ny1.text <- rep(NA, number.growth.levels+1)
 		} else {
 			cuts.ny1 <- Plotting_Cuts[["NY1"]]
 			cuts.ny1.text <- Cuts[["NY1"]]
 		}
-	}
-
-	if (grade.values$year_span==0) {
-		low.year <- year.function(Report_Parameters$Current_Year, 0, 1)
-		high.year <- year.function(Report_Parameters$Current_Year, studentGrowthPlot.year.span-1, 1)
+	} else {
+		low.year <- year.function(Report_Parameters$Current_Year, (1-grade.values$year_span), 1)
+		high.year <- year.function(Report_Parameters$Current_Year, studentGrowthPlot.year.span-grade.values$year_span, 1)
 		year.text <- rep(" ", studentGrowthPlot.year.span)
 		content_area.text <- rep(" ", studentGrowthPlot.year.span)
-
 		grades.text <- rep(" ", studentGrowthPlot.year.span)
-
 		scale.scores.values <- rep(NA, studentGrowthPlot.year.span)
 		scale.scores.text <- rep(" ", studentGrowthPlot.year.span)
-
 		ach.levels.text <- rep(" ", studentGrowthPlot.year.span)
-
 		gp.values <- rep(NA, studentGrowthPlot.year.span-1)
 		gp.text <- rep(" ", studentGrowthPlot.year.span-1)
-
 		gp.levels.text <- rep(" ", studentGrowthPlot.year.span-1)
-
 		cuts.ny1 <- rep(NA, number.growth.levels+1)
 		cuts.ny1.text <- rep(NA, number.growth.levels+1)
 	}
@@ -683,7 +664,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		grid.lines(x=tmp.year.cut+0.028, y=yscale.range, default.units="native", gp=gpar(lwd=0.4, col=border.color))
 		grid.lines(x=tmp.year.cut-0.028, y=yscale.range, default.units="native", gp=gpar(lwd=0.4, col=border.color))
 
-		if (grade.values$year_span != 0) {
+		if (grade.values[['any_scale_scores']]) {
 			for (j in seq(length(Report_Parameters$Assessment_Transition[['Year']])+1)) {
 				tmp.transition.names <- names(SGP::SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Transition"]])
 				tmp.test.abbreviation <-
@@ -699,8 +680,8 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		}
 	}
 
-	if (grade.values$year_span == 0) {
-		grid.text(x=0.5, y=0.5, paste("No", test.abbreviation, "Data"), gp=gpar(col=border.color, cex=2))
+	if (!grade.values[['any_scale_scores']]) {
+		grid.text(x=0.5, y=0.5, paste("No", test.abbreviation, content.area.label, "Data"), gp=gpar(col=border.color, cex=2.5))
 	}
 
 	if (is.null(Report_Parameters$Assessment_Transition) && sgPlot.show.content_area.progression) {
