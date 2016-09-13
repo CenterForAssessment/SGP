@@ -281,7 +281,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 			if (any(!grades %in% grades.content_areas.reported.in.state$GRADE_NUMERIC)) {
 				for (tmp.missing.grades in which(!grades %in% grades.content_areas.reported.in.state$GRADE_NUMERIC)) {
 					grades[tmp.missing.grades] <-
-						grades.content_areas.reported.in.state$GRADE_NUMERIC[which.min(grades[tmp.missing.grades] > grades.content_areas.reported.in.state$GRADE_NUMERIC)-1]
+						grades.content_areas.reported.in.state$GRADE_NUMERIC[which.max(grades[tmp.missing.grades] < grades.content_areas.reported.in.state$GRADE_NUMERIC)]
 				}
 			}
 		}
@@ -610,13 +610,13 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 
 	pushViewport(growth.chart.vp)
 
+	if (is.null(tmp.year.cut)) {
+		tmp.year.sequence <- list(seq(length((low.year-1):(high.year+1))))
+	} else {
+		tmp.year.sequence <- list(match((low.year-1):tmp.year.cut, (low.year-1):(high.year+1)), match(rev((high.year+1):tmp.year.cut), (low.year-1):(high.year+1)))
+	}
 	for (j in seq(length(Report_Parameters$Assessment_Transition[['Year']])+1)) {
 		for (i in seq(number.achievement.level.regions[[j]]-1)) {
-			if (is.null(tmp.year.cut)) {
-				tmp.year.sequence <- list(seq(length((low.year-1):(high.year+1))))
-			} else {
-				tmp.year.sequence <- list(match((low.year-1):tmp.year.cut, (low.year-1):(high.year+1)), match(rev((high.year+1):tmp.year.cut), (low.year-1):(high.year+1)))
-			}
 			temp <- cbind(temp_id=seq_len(nrow(grade.values$interp.df)), grade.values$interp.df, YEAR=grade.values$years)[tmp.year.sequence[[j]],]
 			temp$YEAR <- sapply(temp$YEAR, function(x) get.my.cutscore.year(Report_Parameters$State, Report_Parameters$Content_Area, as.character(x), i))
 			temp <- merge(temp, subset(Cutscores, CUTLEVEL==i), all.x=TRUE)
