@@ -327,10 +327,11 @@ if ("studentGrowthPlot" %in% plot.types) {
 	}
 
 	completeGrade <- function(tmp.table) {
-		setkey(tmp.table, CONTENT_AREA, ID)
-	    tmp.table.tf <- data.table(tmp.table[,all(is.na(GRADE)), keyby=list(CONTENT_AREA, ID)], key="ID")
-	    tmp.to.fix <- data.table(tmp.table.tf[V1==TRUE, c("CONTENT_AREA", "ID"), with=FALSE], key=c("CONTENT_AREA", "ID"))
-	    tmp.to.fix.with <- data.table(tmp.table.tf[V1==FALSE][tmp.to.fix$ID, mult="first"][,c("CONTENT_AREA", "ID"), with=FALSE], key=c("CONTENT_AREA", "ID"))
+#		setkey(tmp.table, CONTENT_AREA, ID)
+		setkey(tmp.table, ID, CONTENT_AREA)
+	    tmp.table.tf <- data.table(tmp.table[,all(is.na(GRADE)), keyby=list(ID, CONTENT_AREA)], key=c("ID", "CONTENT_AREA"))
+	    tmp.to.fix <- data.table(tmp.table.tf[V1==TRUE, c("CONTENT_AREA", "ID"), with=FALSE], key=c("ID", "CONTENT_AREA"))
+	    tmp.to.fix.with <- data.table(tmp.table.tf[V1==FALSE][tmp.to.fix$ID, mult="first"][,c("CONTENT_AREA", "ID"), with=FALSE], key=c("ID", "CONTENT_AREA"))
 	    tmp.table[tmp.to.fix, GRADE:=tmp.table[tmp.to.fix.with][['GRADE']]]
 		setkeyv(tmp.table, c("ID", "CONTENT_AREA", "YEAR", "VALID_CASE"))
 	    return(tmp.table)
