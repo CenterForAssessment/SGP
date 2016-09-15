@@ -696,12 +696,12 @@ function(panel.data,         ## REQUIRED
 			setkey(quantile.data.simex, ID) # first key on ID and SIMEX_ORDER, then re-key on ID only to insure sorted order. Don't rely on rbindlist/k ordering...
 		} else quantile.data.simex <- data.table("ID"=NA, "SIMEX_ORDER"=NA, "SGP_SIMEX"=NA) # set up empty data.table for ddcast and subsets below.
 		if (print.other.gp) {
-			quantile.data.simex <- ddcast(quantile.data.simex, ID~SIMEX_ORDER, value.var=setdiff(names(quantile.data.simex), c("ID", "SIMEX_ORDER")), sep="_SIMEX_ORDER_")
-			setnames(quantile.data.simex, setdiff(names(quantile.data.simex), c("ID", "SGP_SIMEX", "SIMEX_ORDER")), paste("SGP_SIMEX_ORDER",
-				setdiff(names(quantile.data.simex), c("ID", "SGP_SIMEX", "SIMEX_ORDER")), sep="_"))
+			tmp.quantile.data.simex <- ddcast(quantile.data.simex, ID~SIMEX_ORDER, value.var=setdiff(names(quantile.data.simex), c("ID", "SIMEX_ORDER")), sep="_SIMEX_ORDER_")
+			setnames(tmp.quantile.data.simex, setdiff(names(tmp.quantile.data.simex), c("ID", "SGP_SIMEX", "SIMEX_ORDER")), paste("SGP_SIMEX_ORDER",
+				setdiff(names(tmp.quantile.data.simex), c("ID", "SGP_SIMEX", "SIMEX_ORDER")), sep="_"))
+			quantile.data.simex <- data.table(tmp.quantile.data.simex, SGP_SIMEX=quantile.data.simex[c(which(!duplicated(quantile.data.simex, by=key(quantile.data.simex)))[-1]-1L, nrow(quantile.data.simex))][["SGP_SIMEX"]])
 			return(list(
-				DT=data.table(quantile.data.simex,
-				SGP_SIMEX=quantile.data.simex[c(which(!duplicated(quantile.data.simex, by=key(quantile.data.simex)))[-1]-1L, nrow(quantile.data.simex))][["SGP_SIMEX"]]),
+				DT=quantile.data.simex,
 				MATRICES = simex.coef.matrices))
 		} else {
 			if (print.sgp.order | return.norm.group.identifier) {
