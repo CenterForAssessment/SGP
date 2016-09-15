@@ -327,13 +327,25 @@ if ("studentGrowthPlot" %in% plot.types) {
 	}
 
 	completeGrade <- function(tmp.table) {
-#		setkey(tmp.table, CONTENT_AREA, ID)
-		setkey(tmp.table, ID, CONTENT_AREA)
+
+		checkGrades <- function(tmp.data) {
+			tmp.grade.list <- c(SGP::SGPstateData[[state]][['Student_Report_Information']][['Grades_Reported']], SGP::SGPstateData[[state]][['Student_Report_Information']][['Grades_Reported_Domains']])
+			for (content_area.iter in unique(names(tmp.grade.list))) {
+				tmp.content_area.grades <- unique(unlist(tmp.grade.list[which(content_area.iter==names(tmp.grade.list))]))
+				tmp.data[CONTENT_AREA==content_area.iter & !GRADE %in% tmp.content_area.grades, GRADE:=NA]
+			}
+			return(tmp.data)
+		}
+
 	    tmp.table.tf <- data.table(tmp.table[,all(is.na(GRADE)), keyby=list(ID, CONTENT_AREA)], key=c("ID", "CONTENT_AREA"))
-	    tmp.to.fix <- data.table(tmp.table.tf[V1==TRUE, c("CONTENT_AREA", "ID"), with=FALSE], key=c("ID", "CONTENT_AREA"))
-	    tmp.to.fix.with <- data.table(tmp.table.tf[V1==FALSE][tmp.to.fix$ID, mult="first"][,c("CONTENT_AREA", "ID"), with=FALSE], key=c("ID", "CONTENT_AREA"))
-	    tmp.table[tmp.to.fix, GRADE:=tmp.table[tmp.to.fix.with][['GRADE']]]
-		setkeyv(tmp.table, c("ID", "CONTENT_AREA", "YEAR", "VALID_CASE"))
+		if (any(tmp.table.tf[['V1']])) {
+	    	tmp.to.fix <- data.table(tmp.table.tf[V1==TRUE, c("CONTENT_AREA", "ID"), with=FALSE], key=c("ID", "CONTENT_AREA"))
+	    	tmp.to.fix.with <- data.table(tmp.table.tf[V1==FALSE][tmp.to.fix$ID, mult="first"][,c("CONTENT_AREA", "ID"), with=FALSE], key=c("ID", "CONTENT_AREA"))
+			tmp.grades.to.check <- tmp.table[tmp.to.fix.with,c("CONTENT_AREA", "ID", "GRADE"), with=FALSE][,CONTENT_AREA:=tmp.table[tmp.to.fix][['CONTENT_AREA']]]
+			tmp.grades.to.check <- checkGrades(tmp.grades.to.check)
+	    	tmp.table[tmp.to.fix, GRADE:=tmp.grades.to.check[['GRADE']]]
+			setkeyv(tmp.table, c("ID", "CONTENT_AREA", "YEAR", "VALID_CASE"))
+		}
 	    return(tmp.table)
 	}
 

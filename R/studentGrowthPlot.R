@@ -601,6 +601,12 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		yscale=c(0,3),
 		gp=gpar(fill="transparent"))
 
+	no.data.vp <- viewport(name="no.data.vp",
+		layout.pos.row=1, layout.pos.col=1:3,
+		xscale=c(0,1),
+		yscale=c(0,1),
+		gp=gpar(fill="transparent"))
+
 	pushViewport(subject.report.vp)
 
 
@@ -678,10 +684,6 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 				grid.stext(sapply(content_area.text, capwords), x=unit(low.year:high.year, "native"), y=convertY(unit(0.03, "npc"), "native"), gp=gpar(cex=0.7))
 			}
 		}
-	}
-
-	if (!grade.values[['any_scale_scores']]) {
-		grid.text(x=0.5, y=0.5, paste("No", test.abbreviation, content.area.label, "Data"), gp=gpar(col=border.color, cex=2.5))
 	}
 
 	if (is.null(Report_Parameters$Assessment_Transition) && sgPlot.show.content_area.progression) {
@@ -1052,7 +1054,6 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 				xscale=c(0, 1), yscale=c(0, 2)))
 			grid.polygon(x=arrow.legend.coors.x, y=arrow.legend.coors.y, default.units="native",
 				gp=gpar(lwd=0.3, col=border.color, fill=arrow.legend.color[i]))
-
 			popViewport()
 
 			pushViewport(viewport(x=unit(0.2, "native"), y=unit(y.center[i], "native"),
@@ -1107,6 +1108,19 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 
 		grid.lines(0, c(yscale.range[1], yscale.range[2]), gp=gpar(lwd=.8, col=border.color), default.units="native")
 	}
-	popViewport(2)
+	popViewport()
 
+
+	####################################
+	### No Data Viewport
+	####################################
+
+	if (!grade.values[['any_scale_scores']]) {
+		pushViewport(no.data.vp)
+		grid.text(x=0.5, y=0.5, paste("No", test.abbreviation, content.area.label, "Data"), gp=gpar(col="grey40", cex=3.5))
+		grid.roundrect(r=unit(0.02, "snpc"), gp=gpar(fill="white", lwd=0, col="white", alpha=0.5))
+		popViewport()
+	}
+
+	popViewport()
 } ## END studentGrowthPlot Function
