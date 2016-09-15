@@ -237,11 +237,13 @@ if (reports.by.school) {
 			}
 
 		tmp_all_student_data <- tmp_grade_data[ID==n]
+		tmp_content_areas <- content_areas
+		if (length(tmp_content_areas) > dim(tmp_all_student_data)[1] & !any(duplicated(tmp_all_student_data[["CONTENT_AREA"]]))) tmp_content_areas <- tmp_all_student_data[['CONTENT_AREA']]
 		if (length(content_areas) < dim(tmp_all_student_data)[1] | any(duplicated(tmp_all_student_data[["CONTENT_AREA"]]))) {
 			tmp_content_areas <- tmp_all_student_data[["CONTENT_AREA"]]
 			tmp_index <- unlist(sapply(unique(tmp_content_areas), function(x) which(tmp_content_areas==x), USE.NAMES=FALSE))
 			tmp_all_student_data[["CONTENT_AREA"]] <- tmp_content_areas <- unlist(sapply(unique(tmp_content_areas), function(x) paste(x, which(tmp_content_areas==x), sep="."), USE.NAMES=FALSE))[tmp_index]
-		} else tmp_content_areas <- content_areas
+		}
 		num.charts <- length(tmp_content_areas)
 
 		if ("JSON" %in% sgPlot.output.format) {
