@@ -337,14 +337,14 @@ if ("studentGrowthPlot" %in% plot.types) {
 			return(tmp.data)
 		}
 
-	    tmp.table.tf <- data.table(tmp.table[,all(is.na(GRADE)), keyby=list(ID, CONTENT_AREA)], key=c("ID", "CONTENT_AREA"))
+	    tmp.table.tf <- tmp.table[,all(is.na(GRADE)), keyby=list(ID, CONTENT_AREA)]
 		if (any(tmp.table.tf[['V1']])) {
 	    	tmp.to.fix <- data.table(tmp.table.tf[V1==TRUE, c("CONTENT_AREA", "ID"), with=FALSE], key=c("ID", "CONTENT_AREA"))
 	    	tmp.to.fix.with <- data.table(tmp.table.tf[V1==FALSE][tmp.to.fix$ID, mult="first"][,c("CONTENT_AREA", "ID"), with=FALSE], key=c("ID", "CONTENT_AREA"))
 			tmp.grades.to.check <- tmp.table[tmp.to.fix.with,c("CONTENT_AREA", "ID", "GRADE"), with=FALSE][,CONTENT_AREA:=tmp.table[tmp.to.fix][['CONTENT_AREA']]]
 			tmp.grades.to.check <- checkGrades(tmp.grades.to.check)
 	    	tmp.table[tmp.to.fix, GRADE:=tmp.grades.to.check[['GRADE']]]
-			setkeyv(tmp.table, c("ID", "CONTENT_AREA", "YEAR", "VALID_CASE"))
+			tmp.table <- tmp.table[tmp.table[,all(is.na(GRADE)), keyby=list(ID, CONTENT_AREA)][V1==FALSE]]
 		}
 	    return(tmp.table)
 	}
