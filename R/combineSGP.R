@@ -157,7 +157,8 @@ function(
 	"%w/o%" <- function(x,y) x[!x %in% y]
 
 	getTargetData <- function(tmp.target.data, projection_group.iter, tmp.target.level.names) {
-		tmp.data <- tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter, c("ID", "CONTENT_AREA", "YEAR", tmp.target.level.names), with=FALSE]
+		if ("YEAR_WITHIN" %in% names(tmp.target.data)) tmp.var.names <- c("ID", "CONTENT_AREA", "YEAR", "YEAR_WITHIN") else tmp.var.names <- c("ID", "CONTENT_AREA", "YEAR")
+		tmp.data <- tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter, c(tmp.var.names, tmp.target.level.names), with=FALSE]
 		return(tmp.data[apply(tmp.data[,tmp.target.level.names, with=FALSE],1,function(x)any(!is.na(x)))])
 	}
 
