@@ -31,10 +31,10 @@ function(sgp_object,
 
 	### Create state (if missing) and tmp.state from sgp_object (if possible)
 
-        if (is.null(state)) {
-                tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
-                state <- getStateAbbreviation(tmp.name, "outputSGP")
-        }
+    if (is.null(state)) {
+        tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
+        state <- getStateAbbreviation(tmp.name, "outputSGP")
+    }
 
 	tmp.state <- gsub(" ", "_", getStateAbbreviation(state, type="LONG"))
 
