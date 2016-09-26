@@ -36,7 +36,7 @@ function(scale_score,
 			if (!is.null(new.cutscores)) {
 				tmp.new.cuts <- new.cutscores
 			} else {
-				if (!is.null(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]]) & year < equate.year) {
+				if (!is.null(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]]) && year < equate.year) {
 					tmp.new.cuts <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[tmp.test]][[content_area]]
 				} else {
 					tmp.new.cuts <- SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area]]
