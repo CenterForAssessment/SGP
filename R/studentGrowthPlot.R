@@ -258,7 +258,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 			return(data.frame(GRADE=tmp.grades, GRADE_NUMERIC=tmp.grades.numeric, CONTENT_AREA=tmp.content_areas, stringsAsFactors=FALSE))
 		}
 
-		first.scale.score <- first.number(head(grades, data.year.span-1))
+		first.scale.score <- first.number(head(grades, data.year.span))
 		last.scale.score <- last.number(grades)
 		any.scale.scores <- any(!is.na(scale_scores))
 		grades <- convert.grades(grades, content_areas)

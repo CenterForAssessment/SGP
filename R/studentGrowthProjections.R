@@ -659,7 +659,7 @@ function(panel.data,	## REQUIRED
 	}
 
 	if (is.null(projcuts.digits)) {
-		projcuts.digits <- 0
+		projcuts.digits <- 3
 	}
 
 	if (is.null(projection.unit.label)) {

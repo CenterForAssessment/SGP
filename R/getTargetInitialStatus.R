@@ -1,4 +1,4 @@
-`getTargetInitialStatus` <- 
+`getTargetInitialStatus` <-
 function(achievement_level,
 	state,
 	state.iter=NULL,
@@ -46,15 +46,15 @@ function(achievement_level,
 		}
 
 		if (status.type=="CATCH_UP_KEEP_UP") {
-			achievement_level[achievement_level %in% levels.that.are.proficient] <- 2
-			achievement_level[achievement_level %in% levels.that.are.not.proficient] <- 1
-			return(factor(achievement_level, levels=1:2, labels=c("Catching Up", "Keeping Up")))
+			achievement_level[achievement_level %in% levels.that.are.proficient] <- "proficient"
+			achievement_level[achievement_level %in% levels.that.are.not.proficient] <- "not_proficient"
+			return(factor(achievement_level, levels=c("not_proficient", "proficient"), labels=c("Catching Up", "Keeping Up")))
 		}
 
 		if (status.type=="MOVE_UP_STAY_UP") {
-			achievement_level[achievement_level %in% levels.that.are.not.proficient] <- NA
-			achievement_level[achievement_level %in% levels.that.are.advanced] <- 2
-			achievement_level[achievement_level %in% levels.that.are.not.advanced] <- 1
-			return(factor(factor(achievement_level, levels=1:2, labels=c("Moving Up", "Staying Up"))))
+			achievement_level[achievement_level %in% levels.that.are.not.proficient] <- as.character(NA)
+			achievement_level[achievement_level %in% levels.that.are.advanced] <- "advanced"
+			achievement_level[achievement_level %in% levels.that.are.not.advanced] <- "not_advanced"
+			return(factor(achievement_level, levels=c("not_advanced", "advanced"), labels=c("Moving Up", "Staying Up")))
 		}
 } ### END getTargetInitialStatus

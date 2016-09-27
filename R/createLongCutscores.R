@@ -41,7 +41,10 @@ function(state,
 				if (names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]])[i] %in% names(SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]])) {
 					loss.hoss.label <- names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]])[i]
 				} else {
-					loss.hoss.label <- cutscores.content_area
+					tmp.names <- sort(c(names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]])[i],
+										names(SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]])))
+					tmp.idx <- match(names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]])[i], tmp.names)-1
+					loss.hoss.label <- tmp.names[tmp.idx]
 				}
 				loss <- sapply(SGP::SGPstateData[[state]][['Achievement']][['Knots_Boundaries']][[loss.hoss.label]][
 						grep("loss.hoss", names(SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[loss.hoss.label]]))], '[', 1)
