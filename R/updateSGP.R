@@ -25,6 +25,7 @@ function(what_sgp_object=NULL,
 	sgp.target.scale.scores.only=FALSE,
 	overwrite.existing.data=TRUE,
 	update.old.data.with.new=TRUE,
+	output.updated.data=TRUE,
 	sgPlot.demo.report=TRUE,
 	plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot"),
 	outputSGP.output.type=c("LONG_Data", "LONG_FINAL_YEAR_Data", "WIDE_Data", "INSTRUCTOR_Data"),
@@ -199,18 +200,24 @@ function(what_sgp_object=NULL,
 		if (is.null(grades)) update.grades <- sort(unique(tmp_sgp_object@Data["VALID_CASE"]$GRADE)) else update.grades <- grades
 
 		if (overwrite.existing.data) {
-				what_sgp_object@Data <- rbindlist(list(what_sgp_object@Data[which(YEAR!=update.years)], tmp_sgp_object@Data), fill=TRUE)
-				what_sgp_object@SGP[['Goodness_of_Fit']][grep(update.years, names(what_sgp_object@SGP[['Goodness_of_Fit']]))] <- NULL
-				what_sgp_object@SGP[['Linkages']][grep(update.years, names(what_sgp_object@SGP[['Linkages']]))] <- NULL
-				what_sgp_object@SGP[['SGPercentiles']][grep(update.years, names(what_sgp_object@SGP[['SGPercentiles']]))] <- NULL
-				what_sgp_object@SGP[['SGProjections']][grep(update.years, names(what_sgp_object@SGP[['SGProjections']]))] <- NULL
-				what_sgp_object@SGP[['Simulated_SGPs']][grep(update.years, names(what_sgp_object@SGP[['Simulated_SGPs']]))] <- NULL
-				if (is.null(sgp.use.my.coefficient.matrices)) {
-					what_sgp_object@SGP[['Coefficient_Matrices']][grep(update.years, names(what_sgp_object@SGP[['Coefficient_Matrices']]))] <- NULL
-				}
-				if (!is.null(with_sgp_data_INSTRUCTOR_NUMBER)) {
-						what_sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']] <- rbindlist(list(what_sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']][which(YEAR!=update.years)], with_sgp_data_INSTRUCTOR_NUMBER), fill=TRUE)
-				}
+			what_sgp_object@Data <- rbindlist(list(what_sgp_object@Data[which(YEAR!=update.years)], tmp_sgp_object@Data), fill=TRUE)
+			what_sgp_object@SGP[['Goodness_of_Fit']][grep(update.years, names(what_sgp_object@SGP[['Goodness_of_Fit']]))] <- NULL
+			what_sgp_object@SGP[['Linkages']][grep(update.years, names(what_sgp_object@SGP[['Linkages']]))] <- NULL
+			what_sgp_object@SGP[['SGPercentiles']][grep(update.years, names(what_sgp_object@SGP[['SGPercentiles']]))] <- NULL
+			what_sgp_object@SGP[['SGProjections']][grep(update.years, names(what_sgp_object@SGP[['SGProjections']]))] <- NULL
+			what_sgp_object@SGP[['Simulated_SGPs']][grep(update.years, names(what_sgp_object@SGP[['Simulated_SGPs']]))] <- NULL
+			if (is.null(sgp.use.my.coefficient.matrices)) {
+				what_sgp_object@SGP[['Coefficient_Matrices']][grep(update.years, names(what_sgp_object@SGP[['Coefficient_Matrices']]))] <- NULL
+			}
+			if (!is.null(with_sgp_data_INSTRUCTOR_NUMBER)) {
+				what_sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']] <- rbindlist(list(what_sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']][which(YEAR!=update.years)], with_sgp_data_INSTRUCTOR_NUMBER), fill=TRUE)
+			}
+
+			if ("YEAR_WITHIN" %in% names(tmp.long.data)) {
+				what_sgp_object@Data[, FIRST_OBSERVATION := NULL]
+				what_sgp_object@Data[, LAST_OBSERVATION := NULL]
+				what_sgp_object <- suppressMessages(prepareSGP(what_sgp_object, state=state, create.additional.variables=FALSE, fix.duplicates=fix.duplicates))
+			}
 
 			if ("HIGH_NEED_STATUS" %in% names(what_sgp_object@Data)) {
 				what_sgp_object@Data[, HIGH_NEED_STATUS := NULL]
@@ -318,12 +325,14 @@ function(what_sgp_object=NULL,
 
 				### Output of INTERMEDIATE results including full student history
 
-				dir.create(file.path("Data", "Updated_Data"), recursive=TRUE, showWarnings=FALSE)
-				tmp.file.name <- paste(gsub(" ", "_", toupper(getStateAbbreviation(state, type="name"))), "SGP_Update", paste(update.years, collapse=","), sep="_")
-				assign(tmp.file.name, tmp.sgp_object.update)
-				save(list=tmp.file.name, file=file.path("Data", "Updated_Data", paste(tmp.file.name, "Rdata", sep=".")))
-				outputSGP(tmp.sgp_object.update, state=state, output.type=union(outputSGP.output.type, intersect(outputSGP.output.type, "LONG_FINAL_YEAR_Data")),
-					outputSGP.directory=file.path("Data", "Updated_Data"))
+				if (output.updated.data) {
+					dir.create(file.path("Data", "Updated_Data"), recursive=TRUE, showWarnings=FALSE)
+					tmp.file.name <- paste(gsub(" ", "_", toupper(getStateAbbreviation(state, type="name"))), "SGP_Update", paste(update.years, collapse=","), sep="_")
+					assign(tmp.file.name, tmp.sgp_object.update)
+					save(list=tmp.file.name, file=file.path("Data", "Updated_Data", paste(tmp.file.name, "Rdata", sep=".")))
+					outputSGP(tmp.sgp_object.update, state=state, output.type=union(outputSGP.output.type, intersect(outputSGP.output.type, "LONG_FINAL_YEAR_Data")),
+						outputSGP.directory=file.path("Data", "Updated_Data"))
+				}
 
 				### Merge update with original SGP object
 

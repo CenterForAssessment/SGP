@@ -39,6 +39,7 @@ updateSGP(
 	sgp.target.scale.scores.only=FALSE,
 	overwrite.existing.data=TRUE,
 	update.old.data.with.new=TRUE,
+	output.updated.data=TRUE,
 	sgPlot.demo.report=TRUE,
 	plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot"),
 	outputSGP.output.type=c("LONG_Data",
@@ -120,6 +121,11 @@ If missing the function will use the data to infer all the grade progressions fo
   \item{update.old.data.with.new}{A Boolean argument (defaults to TRUE) indicating whether updateSGP should add new data supplied in argument with_SGP_Data_LONG to existing longitudinal data
   or reduce data set to run analyses on only that which is provided.
   }
+  \item{output.updated.data}{A Boolean argument (defaults to TRUE) indicating whether updateSGP should use \code{\link{outputSGP}} to save the new data added in 
+   \code{with_sgp_data_LONG} separately in a new directory called "Updated_Data".  Only relevant when `overwrite.existing.data is FALSE and 
+   sgp.use.my.coefficient.matrices is TRUE.  Output type controlled by the \code{outputSGP.output.type} argument.
+  }
+
   \item{sgPlot.demo.report}{A Boolean argument (defaults to TRUE) indicating whether updateSGP should produce just the demo student growth plots or those associated with all students in the last year.
   }
   \item{plot.types}{A character vector (defaults to 'c(\code{\link{bubblePlot}}, \code{\link{studentGrowthPlot}}, \code{\link{growthAchievementPlot}})') indicating what plot types to export from \code{\link{visualizeSGP}}.
