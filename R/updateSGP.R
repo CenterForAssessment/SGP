@@ -213,7 +213,7 @@ function(what_sgp_object=NULL,
 				what_sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']] <- rbindlist(list(what_sgp_object@Data_Supplementary[['INSTRUCTOR_NUMBER']][which(YEAR!=update.years)], with_sgp_data_INSTRUCTOR_NUMBER), fill=TRUE)
 			}
 
-			if ("YEAR_WITHIN" %in% names(tmp.long.data)) {
+			if ("YEAR_WITHIN" %in% names(what_sgp_object@Data)) {
 				what_sgp_object@Data[, FIRST_OBSERVATION := NULL]
 				what_sgp_object@Data[, LAST_OBSERVATION := NULL]
 				what_sgp_object <- suppressMessages(prepareSGP(what_sgp_object, state=state, create.additional.variables=FALSE, fix.duplicates=fix.duplicates))
