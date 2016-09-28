@@ -45,11 +45,7 @@
 
 	## State stuff
 
-	if (state %in% c(datasets::state.abb, "DEMO")) {
-		state.name.label <- c(datasets::state.name, "Demonstration")[state==c(datasets::state.abb, "DEMO")]
-	} else {
-		state.name.label <- test.abbreviation.label <- state
-	}
+	if (is.null(state.name.label <- suppressMessages(getStateAbbreviation(state, type="long")))) state.name.label <- test.abbreviation.label <- state
 	state.name.file.label <- gsub(" ", "_", state.name.label)
 
 	### Test if scale change has occured in the requested year
