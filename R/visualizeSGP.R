@@ -80,12 +80,6 @@ function(sgp_object,
         }
 
 
-	### Set up parallel.config if NULL
-
-	if (is.null(parallel.config)) {
-		parallel.config = list(BACKEND="PARALLEL", WORKERS=list(GA_PLOTS=1, SG_PLOTS=1))
-	}
-
 	### Utility functions
 
 	"%w/o%" <- function(x,y) x[!x %in% y]
@@ -221,9 +215,29 @@ function(sgp_object,
 			if (SGP::SGPstateData[[state]][["Growth"]][["System_Type"]] == "Cohort and Baseline Referenced") gaPlot.baseline <- c(TRUE, FALSE)
 		}
 
-		par.start <- startParallel(parallel.config, 'GA_PLOTS')
-
 		gaPlot.sgp_object <- get.object.shell(sgp_object)
+
+		if (is.null(parallel.config)) {
+			gaPlot.list <- get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students, gaPlot.baseline)
+			for (g in 1:length(gaPlot.list)) {
+				gaPlot.iter <- gaPlot.list[[g]]
+				growthAchievementPlot(
+					gaPlot.sgp_object=gaPlot.sgp_object,
+					gaPlot.students=gaPlot.iter[["ID"]],
+					gaPlot.max.order.for.progression=gaPlot.max.order.for.progression,
+					gaPlot.start.points=gaPlot.start.points,
+					state=state,
+					content_area=gaPlot.iter[["CONTENT_AREA"]],
+					year=gaPlot.iter[["YEAR"]],
+					format=gaPlot.format,
+					baseline=gaPlot.iter[["BASELINE"]],
+					equated=gaPlot.iter[["EQUATED"]],
+					output.format=c("PDF", "PNG"),
+					gaPlot.SGPt=gaPlot.SGPt,
+					output.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))
+			}
+		} else {
+		par.start <- startParallel(parallel.config, 'GA_PLOTS')
 
 		if (parallel.config[["BACKEND"]] == "FOREACH") {
 
@@ -243,7 +257,6 @@ function(sgp_object,
 						output.format=c("PDF", "PNG"),
 						gaPlot.SGPt=gaPlot.SGPt,
 						output.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))
-
 			} ## END dopar
 		} else { ## END FOREACH
 
@@ -286,7 +299,8 @@ function(sgp_object,
 				mc.cores=par.start$workers, mc.preschedule=FALSE)
 			}
 		}
-		stopParallel(parallel.config, par.start)
+			stopParallel(parallel.config, par.start)
+		}
 		messageSGP(paste("Finished growthAchievementPlot in visualizeSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 	} ## END if (growthAchievementPlot %in% plot.types)
 
@@ -299,6 +313,12 @@ if ("studentGrowthPlot" %in% plot.types) {
 
 	started.at <- proc.time()
 	messageSGP(paste("Started studentGrowthPlot in visualizeSGP", prettyDate(), "\n"))
+
+	### Set up parallel.config if NULL
+
+	if (is.null(parallel.config)) {
+		parallel.config = list(BACKEND="PARALLEL", WORKERS=list(SG_PLOTS=1))
+	}
 
 	#### Utility functions
 
