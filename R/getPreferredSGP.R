@@ -29,7 +29,7 @@ function(tmp.data,
 	} else {
 		if (!is.null(SGP::SGPstateData[[state]][['SGP_Norm_Group_Preference']])) {
 			message(paste(tmp.message, state, ".", sep=""))
-			data.norm.groups <- unique(as.character(tmp.data[["SGP_NORM_GROUP"]]))
+			data.norm.groups <- unique(as.character(tmp.data[which(duplicated(tmp.data, by=key(tmp.data))), SGP_NORM_GROUP]))
 			metadata.norm.groups <- unique(as.character(SGP::SGPstateData[[state]][['SGP_Norm_Group_Preference']][[tmp.sgp.norm.group.variables[2]]]))
 			if(!all(data.norm.groups %in% metadata.norm.groups)) {
 				missing.norm.groups <- data.norm.groups[which(!(data.norm.groups %in% metadata.norm.groups))]
