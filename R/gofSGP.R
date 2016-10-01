@@ -104,7 +104,7 @@ function(
 				if (loss.rows > 1) tmp.tbl[2, 3] <- ifelse(x[2, 3] > 14.9, "#FFFFB3", "#B4EEB4")  #  Warning flag for anything greater than 15% in 2nd row, 3rd column
 				tmp.tbl[1, 4:12] <- ifelse(x[1, 4:12] > 0, "#EBCDDE", "#FFFFFF")
 				if (loss.rows > 1) tmp.tbl[loss.rows, 4:12] <- ifelse(x[loss.rows, 4:12] > 0, "#FFFFB3", "#FFFFFF")
-				
+
 				# HOSS
 				tmp.tbl[(loss.rows+1):loss_hoss.rows, 12] <- lh_palette[findInterval(x[(loss.rows+1):loss_hoss.rows, 12], seq(0, 100, 10), all.inside = TRUE)]
 				tmp.tbl[(loss.rows+1):loss_hoss.rows, 11] <- lh_palette[findInterval(x[(loss.rows+1):loss_hoss.rows, 11]/hoss.remainder, seq(-1, 1, 0.2), all.inside = TRUE)]
@@ -112,7 +112,7 @@ function(
 				if (hoss.rows > 1) tmp.tbl[(loss.rows+1), 10] <- ifelse(x[(loss.rows+1), 10] > 14.9, "#FFFFB3", "#B4EEB4") # Warning flag for anything greater than 5% in top row, 3rd column
 				tmp.tbl[loss_hoss.rows, 1:9] <- ifelse(x[loss_hoss.rows, 1:9] > 0, "#EBCDDE", "#FFFFFF")
 				if (hoss.rows > 1) tmp.tbl[(loss.rows+1), 1:9] <- ifelse(x[(loss.rows+1), 1:9] > 0, "#FFFFB3", "#FFFFFF")
-				
+
 				tmp.tbl[is.na(tmp.tbl)] <- lh_palette[9]
 				tmp.cell.color <- as.vector(tmp.tbl)
 			}
@@ -200,8 +200,8 @@ function(
 		if ((tmp.n <- dim(tmp.data.final)[1]) > 50) pct <- 50/tmp.n else pct <- 0.9999 # Take Top/Bottom 50 kids to find LOSS/HOSS
 
 		loss_hoss.data <- rbindlist(list(
-			data.table(data1)[, list(SCALE_SCORE, SGP)][which(SCALE_SCORE <= quantile(SCALE_SCORE, probs = pct, na.rm = T)),][, LH := "LOSS"],
-			data.table(data1)[, list(SCALE_SCORE, SGP)][which(SCALE_SCORE >= quantile(SCALE_SCORE, probs=1-pct, na.rm = T)),][, LH := "HOSS"]))
+			data.table(data1)[, list(SCALE_SCORE, SGP)][which(SCALE_SCORE <= quantile(SCALE_SCORE, probs = pct, na.rm = T)),][, LH:="LOSS"],
+			data.table(data1)[, list(SCALE_SCORE, SGP)][which(SCALE_SCORE >= quantile(SCALE_SCORE, probs=1-pct, na.rm = T)),][, LH:="HOSS"]))
 		setkey(loss_hoss.data, SCALE_SCORE, LH)
 		if (length(unique(loss_hoss.data[LH=="HOSS"][["SCALE_SCORE"]])) > 1) hoss.rows <- 2 else hoss.rows <- 1
 		if (length(unique(loss_hoss.data[LH=="LOSS"][["SCALE_SCORE"]])) > 1) loss.rows <- 2 else loss.rows <- 1
@@ -497,7 +497,7 @@ function(
 						if (is.null(content_areas_prior) | anyNA(content_areas_prior)) {
 							if (!is.na(norm.group.iter)) {
 								tmp.content_areas_prior <- gsub("_EOCT", "", strsplit(tail(strsplit(norm.group.iter, ";")[[1]], 2)[1], "/")[[1]][2])
-							} else tmp.content_areas_prior <- content_areas.iter 
+							} else tmp.content_areas_prior <- content_areas.iter
 						} else tmp.content_areas_prior <- content_areas_prior
 						if ("YEAR_PRIOR" %in% names(tmp.data.final)) years_prior <- tmp.data.final[["YEAR_PRIOR"]][1] else years_prior <- NA
 						if (!is.na(norm.group.iter)) norm.group.iter <- gsub("MATHEMATICS", "MATH", norm.group.iter)

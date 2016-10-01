@@ -34,12 +34,12 @@ function(
 		if (identical(lag.direction, "FORWARD")) tmp.years <- sort(unique(sgp_object_subset[['YEAR']]), decreasing=TRUE)
 		if (identical(lag.direction, "BACKWARD")) tmp.years <- sort(unique(sgp_object_subset[['YEAR']]))
 
-		invisible(sgp_object_subset[, GRADE_CHAR := as.factor(GRADE)])
+		invisible(sgp_object_subset[,GRADE_CHAR:=as.factor(GRADE)])
 		levels(sgp_object_subset[["GRADE_CHAR"]]) <- sapply(lapply(strsplit(paste("0", levels(sgp_object_subset[["GRADE_CHAR"]]), sep=""), ""), tail, 2), paste, collapse="")
-		suppressWarnings(invisible(sgp_object_subset[, CONTENT_AREA_by_GRADE := paste(CONTENT_AREA, GRADE_CHAR, sep=".")]))
-		invisible(sgp_object_subset[, YEAR_INTEGER := as.integer(as.factor(YEAR))])
-		invisible(sgp_object_subset[, CONTENT_AREA := NULL])
-		invisible(sgp_object_subset[, GRADE_CHAR := NULL])
+		suppressWarnings(invisible(sgp_object_subset[, CONTENT_AREA_by_GRADE:=paste(CONTENT_AREA, GRADE_CHAR, sep=".")]))
+		invisible(sgp_object_subset[,YEAR_INTEGER:=as.integer(as.factor(YEAR))])
+		invisible(sgp_object_subset[,CONTENT_AREA:=NULL])
+		invisible(sgp_object_subset[,GRADE_CHAR:=NULL])
 
 
 		### Merge in previous years' content areas
