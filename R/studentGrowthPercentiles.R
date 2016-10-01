@@ -535,7 +535,7 @@ function(panel.data,         ## REQUIRED
 					big.data.uniques[big.data.uniques[[col.index]] < loss.hoss[1,g], (col.index) := loss.hoss[1,g]]
 					big.data.uniques[big.data.uniques[[col.index]] > loss.hoss[2,g], (col.index) := loss.hoss[2,g]]
 					if (is.null(key(big.data.uniques))) setkeyv(big.data.uniques, key(big.data))
-					big.data[, (num.perturb.vars-g) := big.data.uniques[,c(key(big.data), "TEMP")][big.data][['TEMP']]]
+					big.data[, (num.perturb.vars-g) := big.data.uniques[,c(key(big.data), "TEMP"), with=FALSE][big.data][['TEMP']]]
 
 					if (is.null(simex.use.my.coefficient.matrices)) {
 						ks <- big.data[, as.list(as.vector(unlist(round(quantile(big.data[[col.index]], probs=knot.cut.percentiles, na.rm=TRUE), digits=3))))] # Knots
