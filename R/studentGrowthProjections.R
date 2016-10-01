@@ -100,8 +100,8 @@ function(panel.data,	## REQUIRED
 			for (i in seq(dim(tmp.data)[2]-1)) {
 				bnd <- eval(parse(text=paste("panel.data[['Knots_Boundaries']]", get.my.knots.boundaries.path(content_area.progression[i], tmp.year),
 					"[['loss.hoss_", grade.progression[i], "']]", sep="")))
-				tmp.data[tmp.data[[i+1]]<bnd[1], names(tmp.data)[i+1] := bnd[1], with=FALSE]
-				tmp.data[tmp.data[[i+1]]>bnd[2], names(tmp.data)[i+1] := bnd[2], with=FALSE]
+				tmp.data[tmp.data[[i+1]]<bnd[1], names(tmp.data)[i+1] := bnd[1]]
+				tmp.data[tmp.data[[i+1]]>bnd[2], names(tmp.data)[i+1] := bnd[2]]
 			}
 		}
 		return(tmp.data)
@@ -262,7 +262,7 @@ function(panel.data,	## REQUIRED
 									tmp.dt[,TEMP_1:=NULL]
 									label.iter <- label.iter + 1
 								}
-								tmp.scores[,SGPt:=NULL, with=FALSE]
+								tmp.scores[,SGPt:=NULL]
 								tmp.max.time <- k
 							} else {
 								tmp.scores[,TIME:=tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]]
@@ -379,7 +379,7 @@ function(panel.data,	## REQUIRED
 									 '[[', 1), function(x) state.iter %in% x))
 								cuku.level.to.get <- which.max(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscore_Information"]][[
 									'State_Levels']][[tmp.state.level]][["Levels"]]=="Proficient")-1
-								tmp.traj[which(STATE==state.iter), tmp.target.name:=tmp.cutscores.by.grade[cuku.level.to.get], with=FALSE]
+								tmp.traj[which(STATE==state.iter), (tmp.target.name):=tmp.cutscores.by.grade[cuku.level.to.get]]
 							}
 							if (length(percentile.trajectory.values)==2) {
 								tmp.state.level <- which(sapply(lapply(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscore_Information"]][['State_Levels']],
@@ -389,7 +389,7 @@ function(panel.data,	## REQUIRED
 								musu.level.to.get <- which.max(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscore_Information"]][[
 									'State_Levels']][[tmp.state.level]][["Levels"]]=="Proficient")
 								tmp.traj[which(STATE==state.iter),
-									tmp.target.name:=c(tmp.cutscores.by.grade[cuku.level.to.get], tmp.cutscores.by.grade[musu.level.to.get]),with=FALSE]
+									(tmp.target.name):=c(tmp.cutscores.by.grade[cuku.level.to.get], tmp.cutscores.by.grade[musu.level.to.get])]
 							}
 						}
 						tmp.traj[,STATE:=NULL]
@@ -406,11 +406,11 @@ function(panel.data,	## REQUIRED
 							tmp.target.scores <- rep(c(tmp.cutscores.by.grade[cuku.level.to.get], tmp.cutscores.by.grade[musu.level.to.get]), length(unique(tmp.traj[['ID']])))
 						}
 						tmp.target.scores[is.na(tmp.traj[[tmp.target.name]])] <- NA
-						tmp.traj[,tmp.target.name:=tmp.target.scores, with=FALSE]
+						tmp.traj[,(tmp.target.name):=tmp.target.scores]
 					}
 				}
 			}
-			tmp.traj[,2:dim(tmp.traj)[2] := round(tmp.traj[,2:dim(tmp.traj)[2], with=FALSE], digits=projcuts.digits), with=FALSE]
+			tmp.traj[,(2:dim(tmp.traj)[2]):=round(tmp.traj[,2:dim(tmp.traj)[2], with=FALSE], digits=projcuts.digits)]
 			trajectories <- ddcast(tmp.traj[, CUT:=rep(percentile.trajectory.values, dim(tmp.traj)[1]/length(percentile.trajectory.values))],
 						ID ~ CUT, value.var=setdiff(names(tmp.traj), c("ID", "CUT")), sep=".")
 			if (length(grep("CURRENT", percentile.trajectory.values))!=0) percentile.trajectory.values <- unlist(strsplit(percentile.trajectory.values, "_CURRENT"))
@@ -438,7 +438,7 @@ function(panel.data,	## REQUIRED
 				states <- included.states[included.states %in% available.states]
 			} else {
 				states <- NA; state.arg <- "is.na(STATE)"
-				percentile.trajectories[, STATE := NA]
+				percentile.trajectories[, STATE:=NA]
 			}
 
 			for (n.state in seq(states)) {

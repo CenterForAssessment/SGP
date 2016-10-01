@@ -54,19 +54,19 @@ function(sgp_object,
 			if (convert.to.class=="character") {
 				for (my.variable in my.variables.to.change) {
 					message(paste("\tNOTE:", my.variable, "in", data.slot, "converted from", paste(class(my.data[[my.variable]]), collapse=" "), "to character."))
-					my.data[,my.variable:=as.character(my.data[[my.variable]]), with=FALSE]
+					my.data[,(my.variable):=as.character(my.data[[my.variable]])]
 				}
 			}
 			if (convert.to.class=="numeric") {
 				for (my.variable in my.variables.to.change) {
 					message(paste("\tNOTE:", my.variable, "in", data.slot, "converted from", class(my.data[[my.variable]]), "to numeric."))
-					my.data[,my.variable:=as.numeric(my.data[[my.variable]]), with=FALSE]
+					my.data[,(my.variable):=as.numeric(my.data[[my.variable]])]
 				}
 			}
 			if (convert.to.class=="Date") {
 				for (my.variable in my.variables.to.change) {
 					message(paste("\tNOTE:", my.variable, "in", data.slot, "converted from", class(my.data[[my.variable]]), "to Date assuming YYYY-MM-DD format."))
-					my.data[,my.variable:=as.Date(my.data[[my.variable]]), with=FALSE]
+					my.data[,(my.variable):=as.Date(my.data[[my.variable]])]
 				}
 			}
 		}

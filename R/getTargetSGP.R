@@ -18,11 +18,11 @@ function(sgp_object,
 		if (year_within) {
 			###  Assumes that any "canonical progression" will use the LAST_OBSERVATION for all (or at least the most recent) prior(s) in straight progressions
 			if (target.type %in% c("sgp.projections", "sgp.projections.baseline")) {
-				tmp_object_1[, LAST_OBSERVATION := 1L]; year.within.key <- "LAST_OBSERVATION"
+				tmp_object_1[,LAST_OBSERVATION:=1L]; year.within.key <- "LAST_OBSERVATION"
 			}
 			###  lagged progressions would still be based on the FIRST_OBSERVATION score (used to produce SGP)
 			if (target.type %in% c("sgp.projections.lagged", "sgp.projections.lagged.baseline")) {
-				tmp_object_1[, FIRST_OBSERVATION := 1L]; year.within.key <- "FIRST_OBSERVATION"
+				tmp_object_1[,FIRST_OBSERVATION:=1L]; year.within.key <- "FIRST_OBSERVATION"
 			}
 			setkeyv(tmp_object_1, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", year.within.key))
 			setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", year.within.key))
@@ -40,8 +40,8 @@ function(sgp_object,
 			} else 	tmp_object_1 <- data.table(sgp_object@Data[,c(key(tmp_object_1), "ACHIEVEMENT_LEVEL"), with=FALSE], key=key(tmp_object_1))[tmp_object_1]
 		}
 
-		tmp_object_1[, paste(target.level, "STATUS_INITIAL", sep="_") :=
-			getTargetInitialStatus(tmp_object_1[[grep("ACHIEVEMENT", names(tmp_object_1), value=TRUE)]], state, state.iter, target.level), with=FALSE]
+		tmp_object_1[, paste(target.level, "STATUS_INITIAL", sep="_"):=
+			getTargetInitialStatus(tmp_object_1[[grep("ACHIEVEMENT", names(tmp_object_1), value=TRUE)]], state, state.iter, target.level)]
 		tmp_object_1 <- tmp_object_1[!is.na(get(paste(target.level, "STATUS_INITIAL", sep="_")))]
 
 		## Find min/max of targets based upon CATCH_UP_KEEP_UP_STATUS_INITIAL status
@@ -75,8 +75,8 @@ function(sgp_object,
 				paste("SGP_TARGET", baseline.label, target.level.label, "_",  num.years.to.get.label, "_", sgp.projections.projection.unit.label, projection.label, sep=""))
 
 			if (target.type %in% c("sgp.projections.lagged", "sgp.projections.lagged.baseline") && return.lagged.status) {
-				tmp_object_2[,c("ACHIEVEMENT_LEVEL_PRIOR", grep("STATUS_INITIAL", names(tmp_object_1), value=TRUE)) :=
-					list(tmp_object_1[["ACHIEVEMENT_LEVEL_PRIOR"]], tmp_object_1[[grep("STATUS_INITIAL", names(tmp_object_1), value=TRUE)]]), with=FALSE]
+				tmp_object_2[,c("ACHIEVEMENT_LEVEL_PRIOR", grep("STATUS_INITIAL", names(tmp_object_1), value=TRUE)):=
+					list(tmp_object_1[["ACHIEVEMENT_LEVEL_PRIOR"]], tmp_object_1[[grep("STATUS_INITIAL", names(tmp_object_1), value=TRUE)]])]
 			}
 			return(tmp_object_2[,SGP_PROJECTION_GROUP:=projection_group.iter])
 		} else {

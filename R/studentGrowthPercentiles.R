@@ -511,7 +511,6 @@ function(panel.data,         ## REQUIRED
 			}
 			for (L in lambda[-1]) {
 				big.data <- rbindlist(replicate(B, tmp.data, simplify = FALSE))
-				# big.data[, Lambda := rep(L, each=dim(tmp.data)[1]*B)]
 				big.data[, b := rep(1:B, each=dim(tmp.data)[1])]
 				if (dependent.var.error) {
 					tmp.names <- "b"
@@ -533,10 +532,10 @@ function(panel.data,         ## REQUIRED
 					}
 					big.data.uniques[, TEMP := eval(parse(text=paste("big.data.uniques[[", num.perturb.vars-g, "]]+sqrt(L)*big.data.uniques[['icsem",
 						perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], "']] * rnorm(dim(big.data.uniques)[1])", sep="")))]
-					big.data.uniques[big.data.uniques[[col.index]] < loss.hoss[1,g], col.index := loss.hoss[1,g], with=FALSE]
-					big.data.uniques[big.data.uniques[[col.index]] > loss.hoss[2,g], col.index := loss.hoss[2,g], with=FALSE]
+					big.data.uniques[big.data.uniques[[col.index]] < loss.hoss[1,g], (col.index) := loss.hoss[1,g]]
+					big.data.uniques[big.data.uniques[[col.index]] > loss.hoss[2,g], (col.index) := loss.hoss[2,g]]
 					if (is.null(key(big.data.uniques))) setkeyv(big.data.uniques, key(big.data))
-					big.data[, num.perturb.vars-g := big.data.uniques[,c(key(big.data), "TEMP"), with=FALSE][big.data][['TEMP']]]
+					big.data[, (num.perturb.vars-g) := big.data.uniques[,c(key(big.data), "TEMP")][big.data][['TEMP']]]
 
 					if (is.null(simex.use.my.coefficient.matrices)) {
 						ks <- big.data[, as.list(as.vector(unlist(round(quantile(big.data[[col.index]], probs=knot.cut.percentiles, na.rm=TRUE), digits=3))))] # Knots
