@@ -262,7 +262,7 @@ function(panel.data,	## REQUIRED
 									tmp.dt[,TEMP_1:=NULL]
 									label.iter <- label.iter + 1
 								}
-								tmp.scores[,SGPt:=NULL]
+								tmp.scores[,(SGPt):=NULL]
 								tmp.max.time <- k
 							} else {
 								tmp.scores[,TIME:=tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]]
