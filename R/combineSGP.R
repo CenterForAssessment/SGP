@@ -220,7 +220,7 @@ function(
 
 		variables.to.merge <- names(tmp.data) %w/o% key(slot.data)
 		tmp.index <- slot.data[tmp.data[,key(slot.data), with=FALSE], which=TRUE]
-		slot.data[tmp.index, (variables.to.merge):=tmp.data[, variables.to.merge, with=FALSE], nomatch=0]
+		slot.data[tmp.index, (variables.to.merge):=tmp.data[, variables.to.merge, with=FALSE]]
 
 		setkeyv(slot.data, getKey(slot.data))
 	}
@@ -263,7 +263,7 @@ function(
 
 		variables.to.merge <- names(tmp.data) %w/o% key(slot.data)
 		tmp.index <- slot.data[tmp.data[,key(slot.data), with=FALSE], which=TRUE]
-		slot.data[tmp.index, (variables.to.merge):=tmp.data[, variables.to.merge, with=FALSE], nomatch=0]
+		slot.data[tmp.index, (variables.to.merge):=tmp.data[, variables.to.merge, with=FALSE]]
 
 		setkeyv(slot.data, getKey(slot.data))
 	}
@@ -308,7 +308,7 @@ function(
 				} else duplicated.projections.tf <- FALSE
 				variables.to.merge <- names(tmp.data) %w/o% key(slot.data)
 				tmp.index <- slot.data[tmp.data[,intersect(key(slot.data), names(tmp.data)), with=FALSE], which=TRUE]
-				slot.data[tmp.index, (variables.to.merge):=tmp.data[, variables.to.merge, with=FALSE], nomatch=0]
+				slot.data[tmp.index, (variables.to.merge):=tmp.data[, variables.to.merge, with=FALSE]]
 			}
 		}
 		if (duplicated.projections.tf) {
