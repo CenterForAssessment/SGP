@@ -57,7 +57,7 @@ function(tmp.data,
 		### Transform Cutscores
 
 		for (content_area.iter in content_areas) {
-			for (grade.iter in unique(Cutscores[[content_area.iter]][CONTENT_AREA==content_area.iter & (is.na(YEAR) | YEAR < year.for.equate)][['GRADE']])) {
+			for (grade.iter in c(unique(Cutscores[[content_area.iter]][CONTENT_AREA==content_area.iter & (is.na(YEAR) | YEAR < year.for.equate)][['GRADE']]), "GRADE_LOWER", "GRADE_UPPER")) {
 				if (!grade.iter %in% c("GRADE_LOWER", "GRADE_UPPER")) {
 					Cutscores[[content_area.iter]][CONTENT_AREA==content_area.iter & GRADE==grade.iter & (is.na(YEAR) | YEAR < year.for.equate),
 						CUTSCORES:=linkages[[paste(content_area.iter, year.for.equate, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][[toupper(equating.method)]][['OLD_TO_NEW']][["interpolated_function"]](CUTSCORES)]
