@@ -49,7 +49,7 @@ function(tmp.data,
 		}
 
 		for (i in content_areas) {
-			Cutscores[[i]] <- createLongCutscores(state=state, content_area=i, assessment.transition.type=assessment.transition.type.cutscores)
+			Cutscores[[i]] <- createLongCutscores(state=state, content_area=i)
 			Cutscores[[i]][, CUTSCORES_ORIGINAL:=CUTSCORES]
 		}
 
