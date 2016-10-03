@@ -439,7 +439,7 @@
 
 			## Create spline functions to calculate boundary values for each cutlevel
 
-			if (content_area %in% names(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]]) tmp.label <- "CUTSCORES_TRANSFORMED" else tmp.label <- "CUTSCORES"
+			if (content_area %in% names(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]])) tmp.label <- "CUTSCORES_TRANSFORMED" else tmp.label <- "CUTSCORES"
 			for (i in 1:max(temp_cutscores$CUTLEVEL)){
 				assign(paste("level_", i, "_curve", sep=""), splinefun(tmp.unique.grades.numeric, subset(temp_cutscores, CUTLEVEL==i)[[tmp.label]]))
 			}
