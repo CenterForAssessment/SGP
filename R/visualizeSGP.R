@@ -687,8 +687,8 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			for (i in seq(dim(tmp.grades.content_areas.reported)[1])) {
 				tmp.ids[[i]] <- as.character(sample(unique(slot.data[tmp.grades.content_areas.reported[i]][['ID']]), 10))
 			}
-			slot.data[,c("SCHOOL_NUMBER", "DISTRICT_NUMBER") := NULL]
-			slot.data[slot.data$ID %in% unique(unlist(tmp.ids)), c("SCHOOL_NUMBER", "DISTRICT_NUMBER") := list(-99L, -999L)]
+			slot.data[,c("SCHOOL_NUMBER", "DISTRICT_NUMBER"):=NULL]
+			slot.data[slot.data$ID %in% unique(unlist(tmp.ids)), c("SCHOOL_NUMBER", "DISTRICT_NUMBER"):=list(-99L, -999L)]
 			tmp.districts.and.schools <- CJ("VALID_CASE", tmp.last.year, tmp.content_areas_domains, -999L, -99L)
 			setnames(tmp.districts.and.schools, c("VALID_CASE", "YEAR", "CONTENT_AREA", "DISTRICT_NUMBER", "SCHOOL_NUMBER"))
 			setkeyv(tmp.districts.and.schools, long.key)
@@ -786,7 +786,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 
 	#### Create transformed scale scores and Cutscores (NOT necessary if wide data is provided)
 
-		tmp.table[which(is.na(CONTENT_AREA_LABELS)), CONTENT_AREA_LABELS := CONTENT_AREA]
+		tmp.table[which(is.na(CONTENT_AREA_LABELS)), CONTENT_AREA_LABELS:=CONTENT_AREA]
 		setkeyv(tmp.table, c("CONTENT_AREA_LABELS", "YEAR", "GRADE"))
 		if (sgPlot.plot.test.transition) {
 			tmp.list <- transformScaleScore(tmp.table, state, tmp.content_areas_domains, sgp_object@SGP[['Linkages']], slot.data)
@@ -813,8 +813,8 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			tmp.dt <- tmp.table[,list(ID, ETHNICITY, GENDER)]
 			setkey(tmp.dt, ID)
 			tmp.dt <- tmp.dt[!duplicated(tmp.dt, by=key(tmp.dt)),]
-			tmp.dt[,LAST_NAME := randomNames(gender=tmp.dt$GENDER, ethnicity=tmp.dt$ETHNICITY, which.names="last")]
-			tmp.dt[,FIRST_NAME := randomNames(gender=tmp.dt$GENDER, ethnicity=tmp.dt$ETHNICITY, which.names="first")]
+			tmp.dt[,LAST_NAME:=randomNames(gender=tmp.dt$GENDER, ethnicity=tmp.dt$ETHNICITY, which.names="last")]
+			tmp.dt[,FIRST_NAME:=randomNames(gender=tmp.dt$GENDER, ethnicity=tmp.dt$ETHNICITY, which.names="first")]
 
 			names.dt <- tmp.dt[,list(ID, LAST_NAME, FIRST_NAME)]
 			setkey(names.dt, ID)
@@ -822,22 +822,22 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			setkey(tmp.table, ID)
 			tmp.table <- names.dt[tmp.table]
 			if (sgPlot.demo.report) {
-				tmp.table[,DISTRICT_NAME := as.factor("Sample District")]
-				tmp.table[,SCHOOL_NAME := as.factor("Sample School")]
+				tmp.table[,DISTRICT_NAME:=as.factor("Sample District")]
+				tmp.table[,SCHOOL_NAME:=as.factor("Sample School")]
 			} else {
 				setkey(tmp.table, DISTRICT_NUMBER)
 				tmp.district.number <- data.table(DISTRICT_NUMBER=unique(tmp.table$DISTRICT_NUMBER) %w/o% NA, seq_along(unique(tmp.table$DISTRICT_NUMBER) %w/o% NA),
 					key="DISTRICT_NUMBER")[tmp.table][['V2']]
-				tmp.table[, DISTRICT_NAME := as.character(tmp.table$DISTRICT_NAME)]
-				tmp.table[!is.na(tmp.table$DISTRICT_NUMBER), DISTRICT_NAME := paste("Sample District", tmp.district.number[!is.na(tmp.table$DISTRICT_NUMBER)])]
-				tmp.table[, DISTRICT_NAME := as.factor(tmp.table$DISTRICT_NAME)]
+				tmp.table[, DISTRICT_NAME:=as.character(tmp.table$DISTRICT_NAME)]
+				tmp.table[!is.na(tmp.table$DISTRICT_NUMBER), DISTRICT_NAME:=paste("Sample District", tmp.district.number[!is.na(tmp.table$DISTRICT_NUMBER)])]
+				tmp.table[, DISTRICT_NAME:=as.factor(tmp.table$DISTRICT_NAME)]
 
 				setkey(tmp.table, SCHOOL_NUMBER)
 				tmp.school.number <- data.table(SCHOOL_NUMBER=unique(tmp.table$SCHOOL_NUMBER) %w/o% NA, seq_along(unique(tmp.table$SCHOOL_NUMBER) %w/o% NA),
 					key="SCHOOL_NUMBER")[tmp.table]$V2
-				tmp.table[, SCHOOL_NAME := as.character(tmp.table$SCHOOL_NAME)]
-				tmp.table[!is.na(tmp.table$SCHOOL_NUMBER), SCHOOL_NAME := paste("Sample School", tmp.school.number[!is.na(tmp.table$SCHOOL_NUMBER)])]
-				tmp.table[, SCHOOL_NAME := as.factor(tmp.table$SCHOOL_NAME)]
+				tmp.table[, SCHOOL_NAME:=as.character(tmp.table$SCHOOL_NAME)]
+				tmp.table[!is.na(tmp.table$SCHOOL_NUMBER), SCHOOL_NAME:=paste("Sample School", tmp.school.number[!is.na(tmp.table$SCHOOL_NUMBER)])]
+				tmp.table[, SCHOOL_NAME:=as.factor(tmp.table$SCHOOL_NAME)]
 			}
 		} ## END if (sgPlot.anonymize)
 
@@ -963,7 +963,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 							by=list(CONTENT_AREA, TEMP_GRADE)]
 
 						if ("SCALE_SCORE_ACTUAL" %in% names(sgp_object@Data)) {
-							sgPlot.data[!is.na(TEMP_SCORE)][, TEMP_SCORE := get.actual.scores(TEMP_SCORE,
+							sgPlot.data[!is.na(TEMP_SCORE)][, TEMP_SCORE:=get.actual.scores(TEMP_SCORE,
 								get.next.content_area(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment),
 								get.next.grade(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment)), by=list(CONTENT_AREA, TEMP_GRADE)]
 						}

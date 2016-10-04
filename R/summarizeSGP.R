@@ -20,6 +20,7 @@
 	### Set variables to NULL to prevent R CMD check warnings
 	SIM_NUM <- tmp.simulation.dt <- variable <- WEIGHT <- ENROLLMENT_STATUS <- names.type <- names.sgp <- names.output <- BY_GROWTH_ONLY <- VALID_CASE <- YEAR_WITHIN <- NULL
 	tmp.simulation.dt <- variable <- WEIGHT <- ENROLLMENT_STATUS <- names.type <- names.sgp <- names.output <- BY_GROWTH_ONLY <- VALID_CASE <- YEAR_WITHIN <- NULL
+	CONTENT_AREA <- YEAR <- BASELINE <- NULL
 
 
 	### Create state (if NULL) from sgp_object (if possible)
@@ -116,9 +117,9 @@
 			tmp.list[[i]] <- data.table(
 				ID=rep(sgp_object@SGP[["Simulated_SGPs"]][[i]][["ID"]], each=length(grep("SGP_SIM", names(sgp_object@SGP[["Simulated_SGPs"]][[i]])))),
 				SGP_SIM=as.integer(as.matrix(t(sgp_object@SGP[["Simulated_SGPs"]][[i]][,columns.to.omit, with=FALSE]))))[,
-				"CONTENT_AREA":=unlist(strsplit(i, "[.]"))[1]][,
-				"YEAR":=unlist(strsplit(i, "[.]"))[2]][,
-				"BASELINE":=tmp.baseline]
+				CONTENT_AREA:=unlist(strsplit(i, "[.]"))[1]][,
+				YEAR:=unlist(strsplit(i, "[.]"))[2]][,
+				BASELINE:=tmp.baseline]
 			if ("YEAR_WITHIN" %in% names(sgp_object@SGP[["Simulated_SGPs"]][[i]])) {
 				tmp.list[[i]][,YEAR_WITHIN:=rep(sgp_object@SGP[["Simulated_SGPs"]][[i]][["YEAR_WITHIN"]], each=length(grep("SGP_SIM", names(sgp_object@SGP[["Simulated_SGPs"]][[i]]))))]
 			}
@@ -558,13 +559,13 @@
 
 	if (any(!sapply(summary.groups[["growth_only_summary"]], is.null))) {
 		tmp.dt <- sgp_object@Data[data.table("VALID_CASE", content_areas.by.years), nomatch=0][,
-			variables.for.summaries, with=FALSE][, highest.level.summary.grouping:=state, with=FALSE]
+			variables.for.summaries, with=FALSE][, (highest.level.summary.grouping):=state]
 		dbWriteTable(sgp_data_for_summary, name = "summary_data", overwrite = TRUE, row.names=0, value = tmp.dt[,
 			BY_GROWTH_ONLY := factor(is.na(tmp.dt[[my.sgp[1]]]), levels=c(FALSE, TRUE), labels=c("Students without SGP", "Students with SGP"))])
 	} else {
 		dbWriteTable(sgp_data_for_summary, name = "summary_data", overwrite = TRUE, row.names=0,
 			value = sgp_object@Data[data.table("VALID_CASE", content_areas.by.years), nomatch=0][,
-				variables.for.summaries, with=FALSE][, highest.level.summary.grouping:=state, with=FALSE])
+				variables.for.summaries, with=FALSE][, (highest.level.summary.grouping):=state])
 	}
 
 	if (!is.null(confidence.interval.groups) & "CSEM" %in% confidence.interval.groups[['TYPE']]) {
@@ -615,7 +616,7 @@
 
 				### Create LONGer data and run summarizeSGP_INTERNAL
 				tmp.dt.long <- sgp_object@Data[data.table("VALID_CASE", content_areas.by.years), nomatch=0][,
-					variables.for.summaries, with=FALSE][, highest.level.summary.grouping:=state, with=FALSE]
+					variables.for.summaries, with=FALSE][, (highest.level.summary.grouping):=state]
 				tmp.dt.long[, BY_GROWTH_ONLY := factor(is.na(tmp.dt.long[[my.sgp[1]]]), levels=c(FALSE, TRUE), labels=c("Students without SGP", "Students with SGP"))]
 				tmp.dt.long <- tmp.dt.long[data.table(sgp_object@Data_Supplementary[[j-1]][,VALID_CASE:="VALID_CASE"], key=sgp_key), nomatch=0]
 
