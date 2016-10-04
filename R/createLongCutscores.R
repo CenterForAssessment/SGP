@@ -87,7 +87,7 @@ function(state,
 			if (content_area == last.content_area) tmp.index <- 2 else tmp.index <- 1
 			extension.cutscores <- data.table(
 						CONTENT_AREA="PLACEHOLDER",
-						GRADE="GRADE_UPPER",
+						GRADE=c("GRADE_LOWER", "GRADE_UPPER")[tmp.index],
 						long.cutscores[,list(CUTSCORES=extendrange(rnorm(rep(CUTSCORES, 1000), CUTSCORES, CUTSCORES/500), f=0.075)[tmp.index],
 											CUTSCORES_TRANSFORMED=extendrange(rnorm(rep(CUTSCORES_TRANSFORMED, 1000), CUTSCORES_TRANSFORMED, CUTSCORES_TRANSFORMED/500), f=0.075)[tmp.index]), by=list(YEAR, CUTLEVEL)])
 		} else {
