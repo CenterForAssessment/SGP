@@ -6,7 +6,7 @@ function(scale_score,
 	grade,
 	output.digits=1,
 	sgp.projections.equated=NULL,
-	new.cutscores=NULL,
+	tmp.new.cutscores=NULL,
 	equating.method="equipercentile") {
 
 	if (all(is.na(scale_score))) return(scale_score)
@@ -18,7 +18,7 @@ function(scale_score,
 		if (year < equate.year)  {
 			tmp.test <- "Transformed_Achievement_Level_Cutscores"
 		} else {
-			if (!is.null(new.cutscores) && length(new.cutscores) > 0) {
+			if (!is.null(tmp.new.cutscores) && length(tmp.new.cutscores) > 0) {
 				tmp.test <- "NOT_NULL"
 			} else {
 				tmp.test <- NULL
@@ -27,8 +27,6 @@ function(scale_score,
 	} else {
 		tmp.test <- NULL
 	}
-
-	tmp.new.cuts <- new.cutscores
 
 
 	if (is.null(sgp.projections.equated) | !is.null(tmp.test)) {
@@ -49,12 +47,12 @@ function(scale_score,
 			tmp.loss.hoss <- SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[my.knots_boundaries.label]][[paste("loss.hoss_", grade, sep="")]]
 			scale_score[scale_score < tmp.loss.hoss[1]] <- tmp.loss.hoss[1]; scale_score[scale_score > tmp.loss.hoss[2]] <- tmp.loss.hoss[2]
 			my.content_area <- getMyLabel(state, content_area, year)
-			tmp.old.cuts <- c(tmp.loss.hoss[1], SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.content_area]][[paste("GRADE_", grade, sep="")]],
+			tmp.old.cutscores <- c(tmp.loss.hoss[1], SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.content_area]][[paste("GRADE_", grade, sep="")]],
 				tmp.loss.hoss[2])
-			if (is.null(tmp.new.cuts)) tmp.new.cuts <- seq(0, by=100, length.out=length(tmp.old.cuts))
-			tmp.index <- findInterval(scale_score, tmp.old.cuts, rightmost.closed=TRUE)
-			tmp.diff <- diff(tmp.new.cuts)/diff(tmp.old.cuts)
-			round(tmp.new.cuts[tmp.index] + (scale_score - tmp.old.cuts[tmp.index]) * (diff(tmp.new.cuts)/diff(tmp.old.cuts))[tmp.index], digits=output.digits)
+			if (is.null(tmp.new.cutscores)) tmp.new.cutscores <- seq(0, by=100, length.out=length(tmp.old.cutscores))
+			tmp.index <- findInterval(scale_score, tmp.old.cutscores, rightmost.closed=TRUE)
+			tmp.diff <- diff(tmp.new.cutscores)/diff(tmp.old.cutscores)
+			round(tmp.new.cutscores[tmp.index] + (scale_score - tmp.old.cutscores[tmp.index]) * (diff(tmp.new.cutscores)/diff(tmp.old.cutscores))[tmp.index], digits=output.digits)
 		} else {
 			as.numeric(scale_score)
 		}
