@@ -65,6 +65,7 @@
 	### Create LONG cutscores
 
 	long_cutscores <- createLongCutscores(state, content_area, add.GRADE_NUMERIC=TRUE)
+	long_cutscores <- long_cutscores[YEAR %in% sort(c(year, unique(long_cutscores$YEAR)), na.last=FALSE)[max(which(sort(c(year, unique(long_cutscores$YEAR)), na.last=FALSE)==year))-1]]
 
 	### Create default values
 
@@ -102,7 +103,8 @@
 		content_area.label <- capwords(content_area)
 	}
 
-	temp_cutscores <- long_cutscores[GRADE %in% tmp.unique.grades.character & !CUTLEVEL %in% c("LOSS", "HOSS") & YEAR %in% tail(sort(unique(long_cutscores$YEAR), na.last=FALSE), 1)][,CUTLEVEL:=as.numeric(CUTLEVEL)]
+	cutscore.year <- sort(c(year, unique(long_cutscores$YEAR)), na.last=FALSE)[max(which(sort(c(year, unique(long_cutscores$YEAR)), na.last=FALSE)==year))-1]
+	temp_cutscores <- long_cutscores[GRADE %in% tmp.unique.grades.character & !CUTLEVEL %in% c("LOSS", "HOSS") & YEAR %in% cutscore.year][,CUTLEVEL:=as.numeric(CUTLEVEL)]
 	setkeyv(temp_cutscores, c("GRADE_NUMERIC", "CONTENT_AREA"))
 
 	if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["gaPlot.back.extrapolated.typical.cuts"]])) {
