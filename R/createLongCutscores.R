@@ -4,18 +4,15 @@ function(state,
 	add.GRADE_NUMERIC=FALSE,
 	assessment.transition.type=NULL) {
 
-	GRADE <- GRADE_NUMERIC <- CUTSCORES <- CUTSCORES_TRANSFORMED <- YEAR <- CUTLEVEL <- YEAR_LAG <- CONTENT_AREA <- SCALE_SCORE <- first.content_area <- last.content_area <- NULL
+	GRADE <- GRADE_NUMERIC <- CUTSCORES <- CUTSCORES_TRANSFORMED <- YEAR <- CUTLEVEL <- YEAR_LAG <- CONTENT_AREA <- SCALE_SCORE <- NULL
 
 	### Create relevant variables
 
 	content_area.argument <- content_area
 	if (!is.null(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]])) {
-		first.content_area <- head(names(which(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]]==content_area)),1)
-		last.content_area <- tail(names(which(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]]==content_area)),1)
 		content_area <- unique(names(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]])[
 			SGP::SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]]==content_area])
 	}
-	if (length(content_area) > 1) multiple.content_areas <- TRUE else multiple.content_areas <- FALSE
 
 
 	### Utility functions
@@ -23,8 +20,7 @@ function(state,
 	get.long.cutscores <- function(content_area) {
 
 		cutscore.list <- list()
-		for (i in pmatch(content_area, sapply(strsplit(names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]]), '[.]'), '[', 1))) {
-#		for (i in grep(paste("^", content_area, "$", sep=""), sapply(strsplit(names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]]), '[.]'), '[', 1))) {
+		for (i in sort(unlist(lapply(content_area, function(x) which(x==sapply(strsplit(names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]]), '[.]'), '[', 1)))))) {
 			cutscores.content_area <- unlist(strsplit(names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]])[i], '[.]'))[1]
 			grades <- as.character(matrix(unlist(strsplit(names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[i]]), "_")), ncol=2, byrow=TRUE)[,2])
 			cutscores.year <- as.character(unlist(strsplit(names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]])[i], "[.]"))[2])
@@ -88,37 +84,19 @@ function(state,
 		### Add GRADE_LOWER/GRADE_UPPER
 
 		long.cutscores <- rbindlist(cutscore.list)
-#		if (all(long.cutscores$GRADE == "EOCT")) {
-#			if (content_area == last.content_area) tmp.index <- 2 else tmp.index <- 1
-#			extension.cutscores <- data.table(
-#						CONTENT_AREA="PLACEHOLDER",
-#						GRADE=c("GRADE_LOWER", "GRADE_UPPER")[tmp.index],
-#						long.cutscores[,list(CUTSCORES=extendrange(rnorm(rep(CUTSCORES, 1000), CUTSCORES, CUTSCORES/500), f=0.075)[tmp.index],
-#											CUTSCORES_TRANSFORMED=extendrange(rnorm(rep(CUTSCORES_TRANSFORMED, 1000), CUTSCORES_TRANSFORMED, CUTSCORES_TRANSFORMED/500), f=0.075)[tmp.index]), by=list(YEAR, CUTLEVEL)])
-#		} else {
-			extension.cutscores <-
-				data.table(
-					CONTENT_AREA="PLACEHOLDER",
-					GRADE=c("GRADE_LOWER", "GRADE_UPPER"),
-					long.cutscores[,list(CUTSCORES=extendrange(CUTSCORES, f=0.15),
-										CUTSCORES_TRANSFORMED=extendrange(CUTSCORES_TRANSFORMED, f=0.15)), by=list(YEAR, CUTLEVEL)])
-#		}
+		extension.cutscores <-
+			data.table(
+				CONTENT_AREA="PLACEHOLDER",
+				GRADE=c("GRADE_LOWER", "GRADE_UPPER"),
+				long.cutscores[,list(CUTSCORES=extendrange(CUTSCORES, f=0.15),
+									CUTSCORES_TRANSFORMED=extendrange(CUTSCORES_TRANSFORMED, f=0.15)), by=list(YEAR, CUTLEVEL)])
 
 		long.cutscores <- rbindlist(list(long.cutscores, extension.cutscores), fill=TRUE)
 		setkey(long.cutscores, GRADE, CONTENT_AREA)
 
 		if (length(sort(long.cutscores[['YEAR']])) > 0 & !is.null(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[cutscores.content_area]])) {
 			long.cutscores <- long.cutscores[YEAR >= SGP::SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[cutscores.content_area]]]
-#			long.cutscores <- subset(long.cutscores, as.numeric(unlist(sapply(strsplit(as.character(long.cutscores$YEAR), "_"), function(x) x[1]))) >=
-#				as.numeric(sapply(strsplit(as.character(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[content_area]]), "_"), function(x) x[1])))
 		}
-
-#		if (multiple.content_areas) {
-#			if (content_area %in% c(first.content_area, last.content_area)) {
-#				if (content_area == first.content_area) long.cutscores <- long.cutscores[GRADE!="GRADE_UPPER"]
-#				if (content_area == last.content_area) long.cutscores <- long.cutscores[GRADE!="GRADE_LOWER"]
-#			} else long.cutscores <- long.cutscores[!GRADE %in% c("GRADE_LOWER", "GRADE_UPPER")]
-#		}
 
 		return(data.table(long.cutscores, key=c("GRADE", "CONTENT_AREA")))
 	} ### END get.long.cutscores
@@ -127,9 +105,7 @@ function(state,
 	### Create LONG cutscores
 
 	long.cutscores <- get.long.cutscores(content_area)
-#	if (multiple.content_areas) {
-#		long.cutscores <- data.table(rbindlist(lapply(content_area, function(x) get.long.cutscores(x))), key=c("GRADE", "CONTENT_AREA"))
-#	} else long.cutscores <- get.long.cutscores(content_area)
+
 
 	### Add GRADE_NUMERIC
 

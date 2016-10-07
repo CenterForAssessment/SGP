@@ -523,8 +523,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 
 	if (Report_Parameters$Content_Area_Title %in% names(SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]]) &&
 		is.null(Report_Parameters$Assessment_Transition)) {
-			tmp.range <-
-				range(head(tail(SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[Report_Parameters$Content_Area]],-1),-1), na.rm=TRUE)
+			tmp.range <- (number.achievement.level.regions-1)*100
 			low.score <- min(cuts.ny1, Plotting_Scale_Scores, tmp.range, na.rm=TRUE)
 			high.score <- max(cuts.ny1, Plotting_Scale_Scores, tmp.range, na.rm=TRUE)
 			yscale.range <- extendrange(c(low.score, high.score), f=0.15)
