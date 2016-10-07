@@ -23,6 +23,7 @@
 
 	CUTLEVEL <- GRADE <- YEAR <- ID <- SCALE_SCORE <- level_1_curve <- V1 <- VALID_CASE <- NULL
 	TRANSFORMED_SCALE_SCORE <- PERCENTILE <- GRADE_NUMERIC <- CONTENT_AREA <- LEVEL <- SGP <- EXTRAPOLATED_P50_CUT <- DATE <- NULL ## To prevent R CMD check warnings
+	SCALE_SCORE_PERCENTILES <- SCALE_SCORE_PERCENTILES_TRANSFORMED <- NULL
 
 	content_area <- toupper(content_area)
 	if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]])) {
@@ -218,11 +219,14 @@
 		growthAchievementPlot.data <- unique(long_cutscores[!is.na(GRADE_NUMERIC), c("GRADE", "CONTENT_AREA", "GRADE_NUMERIC"), with=FALSE], by=c("GRADE", "CONTENT_AREA"))[growthAchievementPlot.data]
 		setnames(growthAchievementPlot.data, c("GRADE", "GRADE_NUMERIC"), c("GRADE_CHARACTER", "GRADE"))
 		setkey(growthAchievementPlot.data, YEAR)
-		my.tmp <- growthAchievementPlot.data[list(year)][,quantile(TRANSFORMED_SCALE_SCORE, probs=gaPlot.achievement_percentiles, na.rm=TRUE), keyby=list(GRADE, CONTENT_AREA)][
-			list(tmp.unique.grades.numeric)][,PERCENTILE:=rep(gaPlot.achievement_percentiles, length(tmp.unique.grades.numeric))]
-		temp_uncond_frame <- matrix(my.tmp[,splinefun(GRADE, V1)(tmp.smooth.grades), by=PERCENTILE][['V1']], nrow=length(gaPlot.achievement_percentiles), byrow=TRUE)
-		rownames(temp_uncond_frame) <- gaPlot.achievement_percentiles
-		colnames(temp_uncond_frame) <- tmp.smooth.grades
+		tmp.percentiles <- growthAchievementPlot.data[list(year)][,
+				list(SCALE_SCORE_PERCENTILES=quantile(SCALE_SCORE, probs=gaPlot.achievement_percentiles, na.rm=TRUE),
+				SCALE_SCORE_PERCENTILES_TRANSFORMED=quantile(TRANSFORMED_SCALE_SCORE, probs=gaPlot.achievement_percentiles, na.rm=TRUE)), keyby=list(GRADE, CONTENT_AREA)][
+				list(tmp.unique.grades.numeric)][,PERCENTILE:=rep(gaPlot.achievement_percentiles, length(tmp.unique.grades.numeric))]
+		temp_uncond_frame <- matrix(tmp.percentiles[,splinefun(GRADE, SCALE_SCORE_PERCENTILES_TRANSFORMED)(tmp.smooth.grades), by=PERCENTILE][['V1']], nrow=length(gaPlot.achievement_percentiles), byrow=TRUE)
+		temp_uncond_frame_UNTRANSFORMED <- matrix(tmp.percentiles[,splinefun(GRADE, SCALE_SCORE_PERCENTILES)(tmp.smooth.grades), by=PERCENTILE][['V1']], nrow=length(gaPlot.achievement_percentiles), byrow=TRUE)
+		rownames(temp_uncond_frame) <- rownames(temp_uncond_frame_UNTRANSFORMED) <- gaPlot.achievement_percentiles
+		colnames(temp_uncond_frame) <- colnames(temp_uncond_frame_UNTRANSFORMED) <- tmp.smooth.grades
 	}
 
 	### Calculate Extrapolated Cuts based upon typical (50) growth (if requested)
@@ -300,6 +304,7 @@
 					GRADE_NUMERIC=tmp.cutscores[['GRADE_NUMERIC']],
 					CONTENT_AREA=tmp.cutscores[['CONTENT_AREA']],
 					SCALE_SCORE=tmp.cutscores[['CUTSCORES']],
+					TRANSFORMED_SCALE_SCORE=tmp.cutscores[['CUTSCORES_TRANSFORMED']],
 					LEVEL=as.numeric(tmp.cutscores[['CUTLEVEL']]),
 					key=c("GRADE", "SCALE_SCORE"))
 		}
@@ -309,7 +314,8 @@
 					GRADE=rep(unique(tmp.cutscores, by=key(tmp.cutscores))[['GRADE']], each=dim(temp_uncond_frame)[1]),
 					GRADE_NUMERIC=rep(unique(tmp.cutscores, by=key(tmp.cutscores))[['GRADE_NUMERIC']], each=dim(temp_uncond_frame)[1]),
 					CONTENT_AREA=rep(unique(tmp.cutscores, by=key(tmp.cutscores))[['CONTENT_AREA']], each=dim(temp_uncond_frame)[1]),
-					SCALE_SCORE=as.vector(temp_uncond_frame[,as.character(unique(tmp.cutscores, by=key(tmp.cutscores))[['GRADE_NUMERIC']])]),
+					SCALE_SCORE=as.vector(temp_uncond_frame_UNTRANSFORMED[,as.character(unique(tmp.cutscores, by=key(tmp.cutscores))[['GRADE_NUMERIC']])]),
+					TRANSFORMED_SCALE_SCORE=as.vector(temp_uncond_frame[,as.character(unique(tmp.cutscores, by=key(tmp.cutscores))[['GRADE_NUMERIC']])]),
 					LEVEL=as.numeric(rownames(temp_uncond_frame)),
 					key=c("GRADE", "SCALE_SCORE"))[,ID:=as.character(seq(.N))]
 		}
@@ -442,9 +448,9 @@
 
 			## Create spline functions to calculate boundary values for each cutlevel
 
-			if (content_area %in% names(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]])) tmp.label <- "CUTSCORES_TRANSFORMED" else tmp.label <- "CUTSCORES"
+			if (content_area %in% names(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]])) cutscores.label <- "CUTSCORES_TRANSFORMED" else cutscores.label <- "CUTSCORES"
 			for (i in 1:max(temp_cutscores$CUTLEVEL)){
-				assign(paste("level_", i, "_curve", sep=""), splinefun(tmp.unique.grades.numeric, subset(temp_cutscores, CUTLEVEL==i)[[tmp.label]]))
+				assign(paste("level_", i, "_curve", sep=""), splinefun(tmp.unique.grades.numeric, subset(temp_cutscores, CUTLEVEL==i)[[cutscores.label]]))
 			}
 
 
@@ -503,7 +509,8 @@
 					grid.lines(tmp.smooth.grades.trajectories, smoothPercentileTrajectory_Functions[[as.character(i)]](tmp.smooth.grades.trajectories),
 						gp=gpar(lwd=1.5, lty=5, col=getSGPColor(i, format)), default.units="native")
 				}
-				grid.circle(x=tail(tmp2.dt[['GRADE_NUMERIC']], 1), y=tail(tmp2.dt[['SCALE_SCORE']], 1), r=unit(0.04, "inches"), gp=gpar(col="black", lwd=0.6, fill="white"), default.units="native")
+				grid.circle(x=tmp.smooth.grades.trajectories[1], y=smoothPercentileTrajectory_Functions[[as.character(i)]](tmp.smooth.grades.trajectories[1]),
+					r=unit(0.04, "inches"), gp=gpar(col="black", lwd=0.6, fill="white"), default.units="native")
 			}
 
 			## Code for producing historical student scores
@@ -645,8 +652,8 @@
 			grade.label.size <- c(rep(1, 8), rep(0.9, 2), rep(0.8, 2), rep(0.7, 2))[length(tmp.unique.grades.numeric)]
 			for (i in seq_along(tmp.unique.grades.numeric)){
 				grid.lines(tmp.unique.grades.numeric[i], c(0.5, 0.8), gp=gpar(lwd=1.5, col=format.colors.font), default.units="native")
-				if (tmp.unique.grades.character[i]=="EOCT") tmp.label <- "EOCT" else tmp.label <- paste("Grade", tmp.unique.grades.numeric[i])
-				grid.text(x=tmp.unique.grades.numeric[i], y=0.25, tmp.label, gp=gpar(col=format.colors.font, cex=grade.label.size), default.units="native")
+				if (tmp.unique.grades.character[i]=="EOCT") grade.label <- "EOCT" else grade.label <- paste("Grade", tmp.unique.grades.numeric[i])
+				grid.text(x=tmp.unique.grades.numeric[i], y=0.25, grade.label, gp=gpar(col=format.colors.font, cex=grade.label.size), default.units="native")
 			}
 
 			popViewport() ## pop bottom.axis.vp
