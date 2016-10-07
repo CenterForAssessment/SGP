@@ -1241,14 +1241,10 @@ function(
 			if (identical(toupper(test.option[['Scale_Transition_Types']]), c("NON-VERTICAL", "VERTICAL"))) {
 				SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale"]] <- "No"
 				SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][[paste("Vertical_Scale", rev(sgpData.years)[2], sep=".")]] <- "Yes"
-				SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Transformed_Achievement_Level_Cutscores"]] <-
-					list(MATHEMATICS=c(100,200,300,400,500), READING=c(100,200,300,400,500))
 			}
 			if (identical(toupper(test.option[['Scale_Transition_Types']]), c("NON-VERTICAL", "NON-VERTICAL"))) {
 				SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Vertical_Scale"]] <- "No"
 				SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][[paste("Vertical_Scale", rev(sgpData.years)[2], sep=".")]] <- "No"
-				SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Transformed_Achievement_Level_Cutscores"]] <-
-					list(MATHEMATICS=c(100,200,300,400,500), READING=c(100,200,300,400,500))
 			}
 
 			### Create Data for Steps 2 & 3 with ACHIEVEMENT_LEVEL based upon new SGPstateData
