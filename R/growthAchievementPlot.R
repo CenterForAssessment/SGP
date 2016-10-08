@@ -95,6 +95,8 @@
 	if ("EOCT" %in% tmp.unique.grades.character) {
 		display.content_areas <- TRUE
 		tmp.unique.content_areas <- data.table(long_cutscores, key="GRADE_NUMERIC")[list(tmp.unique.grades.numeric), mult="first"][["CONTENT_AREA"]]
+	} else {
+		display.content_areas <- FALSE
 	}
 
 	if (missing(assessment.name) & missing(state)) {
@@ -692,7 +694,7 @@
 
 			if (display.content_areas) {
 				for (i in seq_along(tmp.unique.grades.numeric)){
-					grid.stext(tmp.unique.content_areas[i], x=tmp.unique.grades.numeric[i], y=0.05, gp=gpar(cex=0.7), default.units="native")
+					grid.stext(tmp.unique.content_areas[i], x=unit(tmp.unique.grades.numeric[i], "native"), y=unit(0.05, "native"), gp=gpar(cex=0.7))
 				}
 			}
 
