@@ -87,17 +87,13 @@
 	tmp.smooth.grades <- seq(gaPlot.grade_range[1], gaPlot.grade_range[2], by=0.01)
 	tmp.unique.grades.numeric <- sort(unique(long_cutscores[['GRADE_NUMERIC']]))
 	tmp.unique.grades.character <- data.table(long_cutscores, key="GRADE_NUMERIC")[list(tmp.unique.grades.numeric), mult="first"][["GRADE"]]
+	tmp.unique.content_areas <- data.table(long_cutscores, key="GRADE_NUMERIC")[list(tmp.unique.grades.numeric), mult="first"][["CONTENT_AREA"]]
 	tmp.unique.grades.current.year <- sort(unique(gaPlot.sgp_object@Data[VALID_CASE=="VALID_CASE" & YEAR==year][['GRADE']]))
 	setkeyv(gaPlot.sgp_object@Data, c("VALID_CASE", "CONTENT_AREA"))
 	growthAchievementPlot.data <- gaPlot.sgp_object@Data[CJ("VALID_CASE", content_area.all)][, list(ID, CONTENT_AREA, YEAR, GRADE, SCALE_SCORE, SGP)][
 		GRADE %in% tmp.unique.grades.character & !is.na(SCALE_SCORE)]
 
-	if ("EOCT" %in% tmp.unique.grades.character) {
-		display.content_areas <- TRUE
-		tmp.unique.content_areas <- data.table(long_cutscores, key="GRADE_NUMERIC")[list(tmp.unique.grades.numeric), mult="first"][["CONTENT_AREA"]]
-	} else {
-		display.content_areas <- FALSE
-	}
+	if (length(unique(tmp.unique.content_areas)) > 1) display.content_areas <- TRUE else display.content_areas <- FALSE
 
 	if (missing(assessment.name) & missing(state)) {
 		assessment.name <- NULL
@@ -581,7 +577,8 @@
 				if (gaPlot.start.points=="Individual Student") {
 					tmp.text <- paste("SGP trajectories for student ", tmp2.dt[['ID']][1], " starting from their ", toOrdinal(trunc(tail(tmp2.dt[['GRADE_NUMERIC']], 1))), " grade result.", sep="")
 				}
-				grid.text(x=0.5, y=0.035, tmp.text, gp=gpar(col="white", cex=0.9))
+#				grid.text(x=0.5, y=0.035, tmp.text, gp=gpar(col="white", cex=0.9))
+				grid.stext(tmp.text, x=unit(0.5, "npc"), y=unit(0.035, "npc"), gp=gpar(cex=0.9))
 			}
 
 
@@ -690,11 +687,13 @@
 				grid.lines(tmp.unique.grades.numeric[i], c(0.5, 0.8), gp=gpar(lwd=1.5, col=format.colors.font), default.units="native")
 				if (tmp.unique.grades.character[i]=="EOCT") grade.label <- "EOCT" else grade.label <- paste("Grade", tmp.unique.grades.numeric[i])
 				grid.text(x=tmp.unique.grades.numeric[i], y=0.25, grade.label, gp=gpar(col=format.colors.font, cex=grade.label.size), default.units="native")
+#				grid.stext(grade.label, x=unit(tmp.unique.grades.numeric[i], "native"), y=unit(0.25, "native"), gp=gpar(cex=grade.label.size))
 			}
 
 			if (display.content_areas) {
 				for (i in seq_along(tmp.unique.grades.numeric)){
-					grid.stext(tmp.unique.content_areas[i], x=unit(tmp.unique.grades.numeric[i], "native"), y=unit(0.05, "native"), gp=gpar(cex=0.7))
+#					grid.stext(tmp.unique.content_areas[i], x=unit(tmp.unique.grades.numeric[i], "native"), y=unit(0.0, "native"), gp=gpar(cex=0.5))
+					grid.text(x=tmp.unique.grades.numeric[i], y=0.0, tmp.unique.content_areas[i], gp=gpar(col=format.colors.font, cex=0.5), default.units="native")
 				}
 			}
 
