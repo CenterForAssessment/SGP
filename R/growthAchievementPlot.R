@@ -693,7 +693,7 @@
 			if (display.content_areas) {
 				for (i in seq_along(tmp.unique.grades.numeric)){
 #					grid.stext(tmp.unique.content_areas[i], x=unit(tmp.unique.grades.numeric[i], "native"), y=unit(0.0, "native"), gp=gpar(cex=0.5))
-					grid.text(x=tmp.unique.grades.numeric[i], y=0.0, tmp.unique.content_areas[i], gp=gpar(col=format.colors.font, cex=0.5), default.units="native")
+					grid.text(x=capwords(tmp.unique.grades.numeric[i]), y=0.0, tmp.unique.content_areas[i], gp=gpar(col=format.colors.font, cex=0.5), default.units="native")
 				}
 			}
 
