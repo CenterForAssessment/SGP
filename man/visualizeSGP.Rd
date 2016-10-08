@@ -65,7 +65,7 @@ visualizeSGP(
         gaPlot.baseline=NULL,
         gaPlot.max.order.for.progression=NULL,
         gaPlot.start.points="Achievement Level Cuts",
-        gaPlot.back.extrapolated.typical.cuts=NULL,
+        gaPlot.back.extrapolated.cuts=NULL,
         gaPlot.SGPt=NULL,
         gaPlot.folder="Visualizations/growthAchievementPlots",
         parallel.config=NULL)
@@ -223,8 +223,7 @@ provided the function produces \code{\link{studentGrowthPlot}}s for ALL students
   }
   \item{gaPlot.folder}{Character vector indicating where \code{\link{growthAchievementPlot}}s should be placed. The default folder is 'Visualizations/growthAchievementPlots'.
   }
-  \item{gaPlot.back.extrapolated.typical.cuts}{A numeric value or Boolean vector indicating whether to create back extrapolated
-  cutscores based upon typical growth.
+  \item{gaPlot.back.extrapolated.cuts}{A numeric value or Boolean vector indicating whether to create back extrapolated cutscores based upon nth percentile growth.
   }
   \item{gaPlot.SGPt}{Boolean indicator for growth achievement plot indicating whether time dependent SGPs are to be used for student growth projections \code{SGPt}
   }

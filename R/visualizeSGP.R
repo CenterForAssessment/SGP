@@ -53,7 +53,7 @@ function(sgp_object,
 		gaPlot.baseline=NULL,
 		gaPlot.max.order.for.progression=NULL,
 		gaPlot.start.points="Achievement Level Cuts",
-		gaPlot.back.extrapolated.typical.cuts=NULL,
+		gaPlot.back.extrapolated.cuts=NULL,
 		gaPlot.SGPt=NULL,
 		gaPlot.folder="Visualizations/growthAchievementPlots",
 		parallel.config=NULL) {
