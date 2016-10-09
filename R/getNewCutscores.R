@@ -1,9 +1,11 @@
-`getNewCutscores` <- 
+`getNewCutscores` <-
 function(content_area,
-	content_area_labels,
+	content_area_label,
 	year,
 	grade,
+	state,
 	Cutscores) {
+
 
 	### Utility function
 
@@ -13,13 +15,29 @@ function(content_area,
 		return(sort(cutscore.years)[which(year==sort(c(year, cutscore.years)))-1])
 	}
 
+
 	### Define variables
 
+	if (!is.na(tmp.index <- match(content_area, names(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]])))) {
+		content_area_domain <- SGP::SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]][[tmp.index]]
+	} else {
+		content_area_domain <- content_area
+	}
+
 	cutscore.year <- get.cutscore.year(year, unique(Cutscores[[content_area]][['YEAR']]))
+
+	if (content_area %in% names(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]])) {
+		tmp.cutscore.label <- "CUTSCORES_TRANSFORMED"
+	} else {
+		tmp.cutscore.label <- "CUTSCORES"
+	}
+
+
+	### Return result
 
 	if (is.na(content_area) | is.na(grade)) {
 		return(NULL)
 	} else {
-		return(sort(Cutscores[[content_area]][list(content_area_labels, cutscore.year, grade)][["CUTSCORES"]]))
+		return(sort(Cutscores[[content_area_domain]][list(content_area_label, cutscore.year, grade)][[tmp.cutscore.label]]))
 	}
 } ### END getNewCutscores function

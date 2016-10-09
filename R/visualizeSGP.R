@@ -959,6 +959,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 											get.next.content_area(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment),
 											yearIncrement(tmp.last.year, tmp.increment),
 											get.next.grade(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment),
+											state,
 											Cutscores)),
 							by=list(CONTENT_AREA, TEMP_GRADE)]
 
