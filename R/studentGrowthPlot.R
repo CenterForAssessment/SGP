@@ -23,6 +23,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 	############################################
 
 	YEAR <- CONTENT_AREA <- GRADE <- CUTSCORES <- CUTLEVEL <- level_1_1_curve <- level_2_1_curve <- NULL ## To prevent R CMD check warnings
+	CUTSCORES_EQUATED <- CUTSCORES_TRANSFORMED <- NULL
 
 	number.growth.levels <- length(SGP::SGPstateData[[Report_Parameters$State]][["Growth"]][["Levels"]])
 	growth.level.labels <- SGP::SGPstateData[[Report_Parameters$State]][["Growth"]][["Levels"]]
@@ -171,11 +172,12 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 
 	Cutscores <- copy(Cutscores)
 
-	if (Report_Parameters$Content_Area_Title %in% names(SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]])) {
-		tmp.cutscores.label <- "CUTSCORES_TRANSFORMED"
-	} else {
-		tmp.cutscores.label <- "CUTSCORES"
+	if (!is.null(Report_Parameters[['Assessment_Transition']])) Cutscores[,CUTSCORES:=CUTSCORES_EQUATED]
+	if (is.null(Report_Parameters[['Assessment_Transition']]) &&
+		Report_Parameters$Content_Area_Title %in% names(SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]])) {
+		Cutscores[,CUTSCORES:=CUTSCORES_TRANSFORMED]
 	}
+
 
 	##############################
 	### Utility functions
@@ -198,23 +200,18 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 	}
 
 	get.my.cutscore.year <- function(state, content_area, year, cutlevel) {
-		if (!is.null(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area]])) {
-			return(NA)
+		year <- tail(sort(c(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[content_area]], year)), 1)
+		tmp.index <- grep(content_area, names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]]))
+		tmp.cutlevels <- sapply(tmp.index, function(x) length(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[x]][[1]]))
+		tmp.cutscore.years <- unique(sapply(strsplit(names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]])[tmp.index], "[.]"), '[', 2))
+		tmp.cutscore.years <- tmp.cutscore.years[cutlevel <= tmp.cutlevels]
+		if (year %in% tmp.cutscore.years) {
+			return(year)
 		} else {
-			year <- tail(sort(c(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[content_area]], year)), 1)
-			tmp.index <- grep(content_area, names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]]))
-			tmp.cutlevels <- sapply(tmp.index, function(x) length(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[x]][[1]]))
-			tmp.cutscore.years <-
-				sapply(strsplit(names(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]])[tmp.index], "[.]"), '[', 2)
-			tmp.cutscore.years <- tmp.cutscore.years[cutlevel <= tmp.cutlevels]
-			if (year %in% tmp.cutscore.years) {
-				return(year)
+			if (year==sort(c(year, tmp.cutscore.years))[1]) {
+				return(NA)
 			} else {
-				if (year==sort(c(year, tmp.cutscore.years))[1]) {
-					return(NA)
-				} else {
-					return(sort(tmp.cutscore.years)[which(year==sort(c(year, tmp.cutscore.years)))-1])
-				}
+				return(sort(tmp.cutscore.years)[which(year==sort(c(year, tmp.cutscore.years)))-1])
 			}
 		}
 	}
@@ -303,7 +300,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 			}
 		}
 
-		if (grades[1] == max(grades.content_areas.reported.in.state$GRADE_NUMERIC)) {
+		if (grades[1]==max(grades.content_areas.reported.in.state$GRADE_NUMERIC)) {
 			year_span <- data.year.span
 			temp.grades.content_areas <- extend.grades(rev(grades))
 			return (list(
@@ -416,10 +413,10 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 					tmp.grades.reported[which.max(as.numeric(grade.values[['interp.df']][['GRADE']][which(grade.values[['years']]==Report_Parameters[['Assessment_Transition']][['Year']])]) < tmp.grades.reported)-1]
 			}
 			if (is.na(tmp.cutscore.year)) {
-				Cutscores[is.na(YEAR), CUTSCORES:=Cutscores[GRADE==tmp.cutscore.grade & is.na(YEAR)][[tmp.cutscores.label]]]
+				Cutscores[is.na(YEAR), CUTSCORES:=Cutscores[GRADE==tmp.cutscore.grade & is.na(YEAR)][['CUTSCORES']]]
 			} else {
 				Cutscores[is.na(YEAR) | YEAR < Report_Parameters$Assessment_Transition$Year,
-					CUTSCORES:=Cutscores[GRADE==tmp.cutscore.grade & YEAR==tmp.cutscore.year][[tmp.cutscores.label]]]
+					CUTSCORES:=Cutscores[GRADE==tmp.cutscore.grade & YEAR==tmp.cutscore.year][['CUTSCORES']]]
 			}
 		}
 		if (identical(toupper(Report_Parameters[['Assessment_Transition']][['Assessment_Transition_Type']][2]), "NO")) {
@@ -428,7 +425,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 				tmp.cutscore.grade <- grade.values[['interp.df']][['GRADE']][which(grade.values[['years']]==Report_Parameters[['Assessment_Transition']][['Year']])]
 			}
 			Cutscores[!is.na(YEAR) & YEAR >= Report_Parameters$Assessment_Transition$Year,
-				CUTSCORES:=Cutscores[GRADE==tmp.cutscore.grade & YEAR >= Report_Parameters$Assessment_Transition$Year][[tmp.cutscores.label]]]
+				CUTSCORES:=Cutscores[GRADE==tmp.cutscore.grade & YEAR >= Report_Parameters$Assessment_Transition$Year][['CUTSCORES']]]
 		}
 	}
 
@@ -526,17 +523,9 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		xscale.range.list <- list(c(xscale.range[1], tmp.year.cut-0.025), c(tmp.year.cut+0.025, xscale.range[2]))
 	}
 
-	#if (Report_Parameters$Content_Area_Title %in% names(SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]]) &&
-	#	is.null(Report_Parameters$Assessment_Transition)) {
-	#		tmp.range <- (number.achievement.level.regions-1)*100
-	#		low.score <- min(cuts.ny1, Plotting_Scale_Scores, tmp.range, na.rm=TRUE)
-	#		high.score <- max(cuts.ny1, Plotting_Scale_Scores, tmp.range, na.rm=TRUE)
-	#		yscale.range <- extendrange(c(low.score, high.score), f=0.15)
-	#} else {
-			low.score <- min(cuts.ny1, Plotting_Scale_Scores, Cutscores[GRADE==data.table(grade.values[['interp.df']])[!is.na(CONTENT_AREA)][['GRADE']][1] & CUTLEVEL==1][[tmp.cutscores.label]], na.rm=TRUE)
-			high.score <- max(cuts.ny1, Plotting_Scale_Scores, Cutscores[GRADE==tail(data.table(grade.values[['interp.df']])[!is.na(CONTENT_AREA)][['GRADE']], 1) & CUTLEVEL %in% (number.achievement.level.regions-1)][[tmp.cutscores.label]], na.rm=TRUE)
-			yscale.range <- extendrange(c(low.score,high.score), f=0.15)
-	#}
+	low.score <- min(cuts.ny1, Plotting_Scale_Scores, Cutscores[GRADE==data.table(grade.values[['interp.df']])[!is.na(CONTENT_AREA)][['GRADE']][1] & CUTLEVEL==1][['CUTSCORES']], na.rm=TRUE)
+	high.score <- max(cuts.ny1, Plotting_Scale_Scores, Cutscores[GRADE==tail(data.table(grade.values[['interp.df']])[!is.na(CONTENT_AREA)][['GRADE']], 1) & CUTLEVEL %in% (number.achievement.level.regions-1)][['CUTSCORES']], na.rm=TRUE)
+	yscale.range <- extendrange(c(low.score,high.score), f=0.15)
 
 	if (is.null(Report_Parameters$Assessment_Transition)) {
 		subject.report.vp <- viewport(layout = grid.layout(2, 3, widths = unit(c(1.15, 5.4, 1.5)/8.05, rep("npc", 3)),
@@ -621,22 +610,27 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 	pushViewport(growth.chart.vp)
 
 	if (is.null(tmp.year.cut)) {
-		tmp.year.sequence <- list(seq(length((low.year-1):(high.year+1))))
+#		tmp.year.sequence <- list(seq(length((low.year-1):(high.year+1))))
+		tmp.year.sequence <- list(as.character((low.year-1):(high.year+1)))
 	} else {
-		tmp.year.sequence <- list(match((low.year-1):tmp.year.cut, (low.year-1):(high.year+1)), match(rev((high.year+1):tmp.year.cut), (low.year-1):(high.year+1)))
+#		tmp.year.sequence <- list(match((low.year-1):tmp.year.cut, (low.year-1):(high.year+1)), match(rev((high.year+1):tmp.year.cut), (low.year-1):(high.year+1)))
+		tmp.year.sequence <- list(as.character((low.year-1):tmp.year.cut), as.character(rev((high.year+1):tmp.year.cut)))
 	}
 	for (j in seq(length(Report_Parameters$Assessment_Transition[['Year']])+1)) {
 		for (i in seq(number.achievement.level.regions[[j]]-1)) {
-			temp <- cbind(temp_id=seq_len(nrow(grade.values$interp.df)), grade.values$interp.df, YEAR=grade.values$years)[tmp.year.sequence[[j]],]
-			temp$YEAR <- sapply(temp$YEAR, function(x) get.my.cutscore.year(Report_Parameters$State, Report_Parameters$Content_Area, as.character(x), i))
-			temp <- merge(temp, subset(Cutscores, CUTLEVEL==i), all.x=TRUE)
-			temp <- temp[order(temp$temp_id),][[tmp.cutscores.label]]
+#			temp <- cbind(temp_id=seq_len(nrow(grade.values$interp.df)), grade.values$interp.df, YEAR=grade.values$years)[tmp.year.sequence[[j]],]
+			temp <- data.table(temp_id=seq_len(nrow(grade.values$interp.df)), grade.values$interp.df, YEAR=grade.values$years, key="YEAR")[tmp.year.sequence[[j]]]
+#			temp$YEAR <- sapply(temp$YEAR, function(x) get.my.cutscore.year(Report_Parameters$State, Report_Parameters$Content_Area, as.character(x), i))
+			temp[,YEAR:=get.my.cutscore.year(Report_Parameters$State, Report_Parameters$Content_Area, YEAR, i)]
+#			temp <- merge(temp, Cutscores[CUTLEVEL==i], all.x=TRUE)
+			temp <- merge(temp, Cutscores[CUTLEVEL==i], all.x=TRUE, by=c("YEAR", "CONTENT_AREA", "GRADE"))
+			temp <- temp[order(temp$temp_id),][['CUTSCORES']]
 			if (length(temp[which(!is.na(temp))])==1) {
 				temp[which(is.na(temp))] <- temp[which(!is.na(temp))]
 			} else {
 				temp[which(is.na(temp))] <- approx(temp, xout=which(is.na(temp)), rule=2)$y
 			}
-			assign(paste("level_", j, "_", i, "_curve", sep=""), splinefun(((low.year-1):(high.year+1))[tmp.year.sequence[[j]]], temp, method="monoH.FC"))
+			assign(paste("level_", j, "_", i, "_curve", sep=""), splinefun(as.numeric(tmp.year.sequence[[j]]), temp, method="monoH.FC"))
 		}
 
 		tmp.x.points <- seq(xscale.range.list[[j]][1], xscale.range.list[[j]][2], length=round(diff(xscale.range.list[[j]])/diff(xscale.range)*40))
@@ -675,18 +669,17 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		grid.lines(x=tmp.year.cut-0.028, y=yscale.range, default.units="native", gp=gpar(lwd=0.4, col=border.color))
 
 		if (grade.values[['any_scale_scores']]) {
-			for (j in seq(length(Report_Parameters$Assessment_Transition[['Year']])+1)) {
-				tmp.transition.names <- names(SGP::SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Transition"]])
-				tmp.test.abbreviation <-
-					unlist(SGP::SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Transition"]][grep('Assessment_Abbreviation', tmp.transition.names)])
-				tmp.test.abbreviation.text <- rep(" ", length(year.text))
-				tmp.test.abbreviation.text[which((low.year:high.year < Report_Parameters$Assessment_Transition$Year)[which(year.text!=" ")])] <-
-					tmp.test.abbreviation[1]
-				tmp.test.abbreviation.text[which((low.year:high.year >= Report_Parameters$Assessment_Transition$Year)[which(year.text!=" ")])] <-
-					tmp.test.abbreviation[2]
-				grid.stext(tmp.test.abbreviation.text, x=unit(low.year:high.year, "native"), y=convertY(unit(0.07, "npc"), "native"), gp=gpar(cex=0.7))
-				grid.stext(sapply(content_area.text, capwords), x=unit(low.year:high.year, "native"), y=convertY(unit(0.03, "npc"), "native"), gp=gpar(cex=0.7))
-			}
+			tmp.transition.names <- names(SGP::SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Transition"]])
+			tmp.test.abbreviation <-
+				unlist(SGP::SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Transition"]][grep('Assessment_Abbreviation', tmp.transition.names)])
+			tmp.test.abbreviation.text <- rep(" ", length(year.text))
+			tmp.test.abbreviation.text[which((low.year:high.year < Report_Parameters$Assessment_Transition$Year)[which(year.text!=" ")])] <-
+				tmp.test.abbreviation[1]
+			tmp.test.abbreviation.text[which((low.year:high.year >= Report_Parameters$Assessment_Transition$Year)[which(year.text!=" ")])] <-
+				tmp.test.abbreviation[2]
+			tmp.test.abbreviation.text[which(content_area.text==" ")] <- " "
+			grid.stext(tmp.test.abbreviation.text, x=unit(low.year:high.year, "native"), y=convertY(unit(0.07, "npc"), "native"), gp=gpar(cex=0.7))
+			grid.stext(sapply(content_area.text, capwords), x=unit(low.year:high.year, "native"), y=convertY(unit(0.03, "npc"), "native"), gp=gpar(cex=0.7))
 		}
 	}
 
