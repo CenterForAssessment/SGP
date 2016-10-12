@@ -613,20 +613,15 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 	pushViewport(growth.chart.vp)
 
 	if (is.null(tmp.year.cut)) {
-#		tmp.year.sequence <- list(seq(length((low.year-1):(high.year+1))))
 		tmp.year.sequence <- list(as.character((low.year-1):(high.year+1)))
 	} else {
-#		tmp.year.sequence <- list(match((low.year-1):tmp.year.cut, (low.year-1):(high.year+1)), match(rev((high.year+1):tmp.year.cut), (low.year-1):(high.year+1)))
 		tmp.year.sequence <- list(as.character((low.year-1):tmp.year.cut), as.character(rev((high.year+1):tmp.year.cut)))
 	}
 
 	for (j in seq(length(Report_Parameters$Assessment_Transition[['Year']])+1)) {
 		for (i in seq(number.achievement.level.regions[[j]]-1)) {
-#			temp <- cbind(temp_id=seq_len(nrow(grade.values$interp.df)), grade.values$interp.df, YEAR=grade.values$years)[tmp.year.sequence[[j]],]
 			temp <- data.table(temp_id=seq_len(nrow(grade.values$interp.df)), grade.values$interp.df, YEAR=grade.values$years, key="YEAR")[tmp.year.sequence[[j]]]
-#			temp$YEAR <- sapply(temp$YEAR, function(x) get.my.cutscore.year(Report_Parameters$State, Report_Parameters$Content_Area, as.character(x), i))
 			temp[,YEAR:=get.my.cutscore.year(Report_Parameters$State, Report_Parameters$Content_Area, YEAR, i)]
-#			temp <- merge(temp, Cutscores[CUTLEVEL==i], all.x=TRUE)
 			temp <- merge(temp, Cutscores[CUTLEVEL==i], all.x=TRUE, by=c("YEAR", "CONTENT_AREA", "GRADE"))
 			temp <- temp[order(temp$temp_id),][['CUTSCORES']]
 			if (length(temp[which(!is.na(temp))])==1) {
