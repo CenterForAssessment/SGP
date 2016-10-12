@@ -94,12 +94,6 @@ function(state,
 		long.cutscores <- rbindlist(list(long.cutscores, extension.cutscores), fill=TRUE)
 		setkey(long.cutscores, GRADE, CONTENT_AREA)
 
-		### Trim cutscores if SGPstateData indicates `Earliest_Year_Reported`
-
-		if (length(sort(long.cutscores[['YEAR']])) > 0 & !is.null(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[cutscores.content_area]])) {
-			long.cutscores <- long.cutscores[YEAR >= SGP::SGPstateData[[state]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[cutscores.content_area]]]
-		}
-
 		return(data.table(long.cutscores, key=c("GRADE", "CONTENT_AREA")))
 	} ### END get.long.cutscores
 

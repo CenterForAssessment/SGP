@@ -523,9 +523,61 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		xscale.range.list <- list(c(xscale.range[1], tmp.year.cut-0.025), c(tmp.year.cut+0.025, xscale.range[2]))
 	}
 
+	if (is.null(tmp.year.cut)) {
+#		tmp.year.sequence <- list(seq(length((low.year-1):(high.year+1))))
+		tmp.year.sequence <- list(as.character((low.year-1):(high.year+1)))
+	} else {
+#		tmp.year.sequence <- list(match((low.year-1):tmp.year.cut, (low.year-1):(high.year+1)), match(rev((high.year+1):tmp.year.cut), (low.year-1):(high.year+1)))
+		tmp.year.sequence <- list(as.character((low.year-1):tmp.year.cut), as.character(rev((high.year+1):tmp.year.cut)))
+	}
+
+	for (j in seq(length(Report_Parameters$Assessment_Transition[['Year']])+1)) {
+		for (i in seq(number.achievement.level.regions[[j]]-1)) {
+#			temp <- cbind(temp_id=seq_len(nrow(grade.values$interp.df)), grade.values$interp.df, YEAR=grade.values$years)[tmp.year.sequence[[j]],]
+			temp <- data.table(temp_id=seq_len(nrow(grade.values$interp.df)), grade.values$interp.df, YEAR=grade.values$years, key="YEAR")[tmp.year.sequence[[j]]]
+#			temp$YEAR <- sapply(temp$YEAR, function(x) get.my.cutscore.year(Report_Parameters$State, Report_Parameters$Content_Area, as.character(x), i))
+			temp[,YEAR:=get.my.cutscore.year(Report_Parameters$State, Report_Parameters$Content_Area, YEAR, i)]
+#			temp <- merge(temp, Cutscores[CUTLEVEL==i], all.x=TRUE)
+			temp <- merge(temp, Cutscores[CUTLEVEL==i], all.x=TRUE, by=c("YEAR", "CONTENT_AREA", "GRADE"))
+			temp <- temp[order(temp$temp_id),][['CUTSCORES']]
+			if (length(temp[which(!is.na(temp))])==1) {
+				temp[which(is.na(temp))] <- temp[which(!is.na(temp))]
+			} else {
+				temp[which(is.na(temp))] <- approx(temp, xout=which(is.na(temp)), rule=2)$y
+			}
+			assign(paste("level_", j, "_", i, "_curve", sep=""), splinefun(as.numeric(tmp.year.sequence[[j]]), temp, method="monoH.FC"))
+		}
+
+		tmp.x.points <- seq(xscale.range.list[[j]][1], xscale.range.list[[j]][2], length=round(diff(xscale.range.list[[j]])/diff(xscale.range)*40))
+		x.boundary.values.1 <- c(xscale.range.list[[j]][1], tmp.x.points, xscale.range.list[[j]][2])
+		y.boundary.values.1 <- c(yscale.range[1], eval(parse(text=paste("level_", j, "_1_curve(tmp.x.points)", sep=""))), yscale.range[1])
+		assign(paste("x.boundary.values.", number.achievement.level.regions[[j]], sep=""),
+			c(xscale.range.list[[j]][1], tmp.x.points, xscale.range.list[[j]][2]))
+		assign(paste("y.boundary.values.", number.achievement.level.regions[[j]], sep=""),
+			c(yscale.range[2], eval(parse(text=paste("level_", j, "_", number.achievement.level.regions[[j]]-1, "_curve(tmp.x.points)", sep=""))), yscale.range[2]))
+
+		if (number.achievement.level.regions[[j]] > 2) {
+			for (i in 2:(number.achievement.level.regions[[j]]-1)) {
+				assign(paste("x.boundary.values.", i, sep=""),
+					c(tmp.x.points, rev(tmp.x.points)))
+
+				assign(paste("y.boundary.values.", i, sep=""),
+					eval(parse(text=paste("c(level_", j, "_", i, "_curve(tmp.x.points), level_", j, "_", i-1, "_curve(rev(tmp.x.points)))", sep=""))))
+			}
+		}
+
+		## Keep achievement level bands from extending outside of chart box
+
+		eval(parse(text=paste("y.boundary.values.", seq(number.achievement.level.regions[[j]]), "[y.boundary.values.", seq(number.achievement.level.regions[[j]]), " > max(yscale.range)] <- max(yscale.range)", sep="")))
+		eval(parse(text=paste("y.boundary.values.", seq(number.achievement.level.regions[[j]]), "[y.boundary.values.", seq(number.achievement.level.regions[[j]]), " < min(yscale.range)] <- min(yscale.range)", sep="")))
+	}
+
 	low.score <- min(cuts.ny1, Plotting_Scale_Scores, Cutscores[GRADE==data.table(grade.values[['interp.df']])[!is.na(CONTENT_AREA)][['GRADE']][1] & CUTLEVEL==1][['CUTSCORES']], na.rm=TRUE)
 	high.score <- max(cuts.ny1, Plotting_Scale_Scores, Cutscores[GRADE==tail(data.table(grade.values[['interp.df']])[!is.na(CONTENT_AREA)][['GRADE']], 1) & CUTLEVEL %in% (number.achievement.level.regions-1)][['CUTSCORES']], na.rm=TRUE)
 	yscale.range <- extendrange(c(low.score,high.score), f=0.15)
+
+
+	### Create viewports
 
 	if (is.null(Report_Parameters$Assessment_Transition)) {
 		subject.report.vp <- viewport(layout = grid.layout(2, 3, widths = unit(c(1.15, 5.4, 1.5)/8.05, rep("npc", 3)),
@@ -609,52 +661,54 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 
 	pushViewport(growth.chart.vp)
 
-	if (is.null(tmp.year.cut)) {
-#		tmp.year.sequence <- list(seq(length((low.year-1):(high.year+1))))
-		tmp.year.sequence <- list(as.character((low.year-1):(high.year+1)))
-	} else {
-#		tmp.year.sequence <- list(match((low.year-1):tmp.year.cut, (low.year-1):(high.year+1)), match(rev((high.year+1):tmp.year.cut), (low.year-1):(high.year+1)))
-		tmp.year.sequence <- list(as.character((low.year-1):tmp.year.cut), as.character(rev((high.year+1):tmp.year.cut)))
-	}
-	for (j in seq(length(Report_Parameters$Assessment_Transition[['Year']])+1)) {
-		for (i in seq(number.achievement.level.regions[[j]]-1)) {
-#			temp <- cbind(temp_id=seq_len(nrow(grade.values$interp.df)), grade.values$interp.df, YEAR=grade.values$years)[tmp.year.sequence[[j]],]
-			temp <- data.table(temp_id=seq_len(nrow(grade.values$interp.df)), grade.values$interp.df, YEAR=grade.values$years, key="YEAR")[tmp.year.sequence[[j]]]
-#			temp$YEAR <- sapply(temp$YEAR, function(x) get.my.cutscore.year(Report_Parameters$State, Report_Parameters$Content_Area, as.character(x), i))
-			temp[,YEAR:=get.my.cutscore.year(Report_Parameters$State, Report_Parameters$Content_Area, YEAR, i)]
+#	if (is.null(tmp.year.cut)) {
+##		tmp.year.sequence <- list(seq(length((low.year-1):(high.year+1))))
+#		tmp.year.sequence <- list(as.character((low.year-1):(high.year+1)))
+#	} else {
+##		tmp.year.sequence <- list(match((low.year-1):tmp.year.cut, (low.year-1):(high.year+1)), match(rev((high.year+1):tmp.year.cut), (low.year-1):(high.year+1)))
+#		tmp.year.sequence <- list(as.character((low.year-1):tmp.year.cut), as.character(rev((high.year+1):tmp.year.cut)))
+#	}
+#
+#	for (j in seq(length(Report_Parameters$Assessment_Transition[['Year']])+1)) {
+#		for (i in seq(number.achievement.level.regions[[j]]-1)) {
+##			temp <- cbind(temp_id=seq_len(nrow(grade.values$interp.df)), grade.values$interp.df, YEAR=grade.values$years)[tmp.year.sequence[[j]],]
+#			temp <- data.table(temp_id=seq_len(nrow(grade.values$interp.df)), grade.values$interp.df, YEAR=grade.values$years, key="YEAR")[tmp.yea#r.sequence[[j]]]
+##			temp$YEAR <- sapply(temp$YEAR, function(x) get.my.cutscore.year(Report_Parameters$State, Report_Parameters$Content_Area, as.character(x), i))
+#			temp[,YEAR:=get.my.cutscore.year(Report_Parameters$State, Report_Parameters$Content_Area, YEAR, i)]
 #			temp <- merge(temp, Cutscores[CUTLEVEL==i], all.x=TRUE)
-			temp <- merge(temp, Cutscores[CUTLEVEL==i], all.x=TRUE, by=c("YEAR", "CONTENT_AREA", "GRADE"))
-			temp <- temp[order(temp$temp_id),][['CUTSCORES']]
-			if (length(temp[which(!is.na(temp))])==1) {
-				temp[which(is.na(temp))] <- temp[which(!is.na(temp))]
-			} else {
-				temp[which(is.na(temp))] <- approx(temp, xout=which(is.na(temp)), rule=2)$y
-			}
-			assign(paste("level_", j, "_", i, "_curve", sep=""), splinefun(as.numeric(tmp.year.sequence[[j]]), temp, method="monoH.FC"))
-		}
+#			temp <- merge(temp, Cutscores[CUTLEVEL==i], all.x=TRUE, by=c("YEAR", "CONTENT_AREA", "GRADE"))
+#			temp <- temp[order(temp$temp_id),][['CUTSCORES']]
+#			if (length(temp[which(!is.na(temp))])==1) {
+#				temp[which(is.na(temp))] <- temp[which(!is.na(temp))]
+#			} else {
+#				temp[which(is.na(temp))] <- approx(temp, xout=which(is.na(temp)), rule=2)$y
+#			}
+#			assign(paste("level_", j, "_", i, "_curve", sep=""), splinefun(as.numeric(tmp.year.sequence[[j]]), temp, method="monoH.FC"))
+#		}
+#
+#		tmp.x.points <- seq(xscale.range.list[[j]][1], xscale.range.list[[j]][2], length=round(diff(xscale.range.list[[j]])/diff(xscale.range)*40))
+#		x.boundary.values.1 <- c(xscale.range.list[[j]][1], tmp.x.points, xscale.range.list[[j]][2])
+#		y.boundary.values.1 <- c(yscale.range[1], eval(parse(text=paste("level_", j, "_1_curve(tmp.x.points)", sep=""))), yscale.range[1])
+#		assign(paste("x.boundary.values.", number.achievement.level.regions[[j]], sep=""),
+#			c(xscale.range.list[[j]][1], tmp.x.points, xscale.range.list[[j]][2]))
+#		assign(paste("y.boundary.values.", number.achievement.level.regions[[j]], sep=""),
+#			c(yscale.range[2], eval(parse(text=paste("level_", j, "_", number.achievement.level.regions[[j]]-1, "_curve(tmp.x.points)", sep=""))), yscale.range[2]))
+#
+#		if (number.achievement.level.regions[[j]] > 2) {
+#			for (i in 2:(number.achievement.level.regions[[j]]-1)) {
+#				assign(paste("x.boundary.values.", i, sep=""),
+#					c(tmp.x.points, rev(tmp.x.points)))
+#
+#				assign(paste("y.boundary.values.", i, sep=""),
+#					eval(parse(text=paste("c(level_", j, "_", i, "_curve(tmp.x.points), level_", j, "_", i-1, "_curve(rev(tmp.x.points)))", sep=""))))
+#			}
+#		}
+#
+#		## Keep achievement level bands from extending outside of chart box
+#		eval(parse(text=paste("y.boundary.values.", seq(number.achievement.level.regions[[j]]), "[y.boundary.values.", seq(number.achievement.level.regions[[j]]), " > max(yscale.range)] <- max(yscale.range)", sep="")))
+#		eval(parse(text=paste("y.boundary.values.", seq(number.achievement.level.regions[[j]]), "[y.boundary.values.", seq(number.achievement.level.regions[[j]]), " < min(yscale.range)] <- min(yscale.range)", sep="")))
 
-		tmp.x.points <- seq(xscale.range.list[[j]][1], xscale.range.list[[j]][2], length=round(diff(xscale.range.list[[j]])/diff(xscale.range)*40))
-		x.boundary.values.1 <- c(xscale.range.list[[j]][1], tmp.x.points, xscale.range.list[[j]][2])
-		y.boundary.values.1 <- c(yscale.range[1], eval(parse(text=paste("level_", j, "_1_curve(tmp.x.points)", sep=""))), yscale.range[1])
-		assign(paste("x.boundary.values.", number.achievement.level.regions[[j]], sep=""),
-			c(xscale.range.list[[j]][1], tmp.x.points, xscale.range.list[[j]][2]))
-		assign(paste("y.boundary.values.", number.achievement.level.regions[[j]], sep=""),
-			c(yscale.range[2], eval(parse(text=paste("level_", j, "_", number.achievement.level.regions[[j]]-1, "_curve(tmp.x.points)", sep=""))), yscale.range[2]))
-
-		if (number.achievement.level.regions[[j]] > 2) {
-			for (i in 2:(number.achievement.level.regions[[j]]-1)) {
-				assign(paste("x.boundary.values.", i, sep=""),
-					c(tmp.x.points, rev(tmp.x.points)))
-
-				assign(paste("y.boundary.values.", i, sep=""),
-					eval(parse(text=paste("c(level_", j, "_", i, "_curve(tmp.x.points), level_", j, "_", i-1, "_curve(rev(tmp.x.points)))", sep=""))))
-			}
-		}
-
-		## Keep achievement level bands from extending outside of chart box
-		eval(parse(text=paste("y.boundary.values.", seq(number.achievement.level.regions[[j]]), "[y.boundary.values.", seq(number.achievement.level.regions[[j]]), " > max(yscale.range)] <- max(yscale.range)", sep="")))
-		eval(parse(text=paste("y.boundary.values.", seq(number.achievement.level.regions[[j]]), "[y.boundary.values.", seq(number.achievement.level.regions[[j]]), " < min(yscale.range)] <- min(yscale.range)", sep="")))
-
+	for (j in seq(length(Report_Parameters$Assessment_Transition[['Year']])+1)) {
 		for (i in seq(number.achievement.level.regions[[j]])) {
 			grid.polygon(x=get(paste("x.boundary.values.", i, sep="")),
 				y=get(paste("y.boundary.values.", i, sep="")),
