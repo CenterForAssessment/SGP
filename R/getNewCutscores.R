@@ -24,7 +24,7 @@ function(content_area,
 		content_area_domain <- content_area
 	}
 
-	cutscore.year <- get.cutscore.year(year, unique(Cutscores[[content_area]][['YEAR']]))
+	cutscore.year <- get.cutscore.year(year, unique(Cutscores[[content_area_domain]][content_area][['YEAR']]))
 
 	if (content_area %in% names(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]])) {
 		tmp.cutscore.label <- "CUTSCORES_TRANSFORMED"

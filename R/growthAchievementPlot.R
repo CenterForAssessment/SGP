@@ -687,12 +687,10 @@
 				grid.lines(tmp.unique.grades.numeric[i], c(0.5, 0.8), gp=gpar(lwd=1.5, col=format.colors.font), default.units="native")
 				if (tmp.unique.grades.character[i]=="EOCT") grade.label <- "EOCT" else grade.label <- paste("Grade", tmp.unique.grades.numeric[i])
 				grid.text(x=tmp.unique.grades.numeric[i], y=0.25, grade.label, gp=gpar(col=format.colors.font, cex=grade.label.size), default.units="native")
-#				grid.stext(grade.label, x=unit(tmp.unique.grades.numeric[i], "native"), y=unit(0.25, "native"), gp=gpar(cex=grade.label.size))
 			}
 
 			if (display.content_areas) {
 				for (i in seq_along(tmp.unique.grades.numeric)){
-#					grid.stext(tmp.unique.content_areas[i], x=unit(tmp.unique.grades.numeric[i], "native"), y=unit(0.0, "native"), gp=gpar(cex=0.5))
 					grid.text(x=tmp.unique.grades.numeric[i], y=0.0, capwords(tmp.unique.content_areas[i]), gp=gpar(col=format.colors.font, cex=0.5), default.units="native")
 				}
 			}

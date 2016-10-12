@@ -948,11 +948,11 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 						if (length(grep("CURRENT", proj.iter)) > 0) tmp.increment <- i else tmp.increment <- i-1
 						setnames(sgPlot.data, c(proj.iter, tmp.grade.name), c("TEMP_SCORE", "TEMP_GRADE"))
 						sgPlot.data[, TEMP:=piecewiseTransform(
-										TEMP_SCORE,
-										state,
-										get.next.content_area(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment),
-										yearIncrement(tmp.last.year, tmp.increment),
-										get.next.grade(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment),
+										scale_score=TEMP_SCORE,
+										state=state,
+										content_area=get.next.content_area(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment),
+										year=yearIncrement(tmp.last.year, tmp.increment),
+										grade=get.next.grade(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment),
 										sgp.projections.equated=sgp.projections.equated,
 										new.cutscores=getNewCutscores(
 											get.next.content_area(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment),
