@@ -116,7 +116,6 @@ function(panel.data,	## REQUIRED
 			} else year.split.index <- -1
 		} else year.split.index <- -1
 
-#		tmp.cutscore.years <- sapply(strsplit(names(Cutscores)[grep(content_area, names(Cutscores))], "[.]"), function(x) x[year.split.index])
 		tmp.cutscore.years <- sapply(sapply(strsplit(names(Cutscores)[grep(content_area, names(Cutscores))], "[.]"), function(x) tail(x, year.split.index)), paste, collapse=".")
 		tmp.cutscore.years[tmp.cutscore.years==""] <- NA
 		if (any(!is.na(tmp.cutscore.years))) {
