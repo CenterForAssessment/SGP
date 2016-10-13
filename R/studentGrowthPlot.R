@@ -303,13 +303,12 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		if (grades[1]==max(grades.content_areas.reported.in.state$GRADE_NUMERIC)) {
 			year_span <- data.year.span
 			temp.grades.content_areas <- extend.grades(rev(grades))
-			return (list(
+			return(list(
 				interp.df = temp.grades.content_areas,
 				year_span=year_span,
 				any_scale_scores=any.scale.scores,
 				increment_for_projection_current=0,
-				years=yearIncrement(Report_Parameters$Current_Year, seq(1-max(which(grades[1]==temp.grades.content_areas$GRADE_NUMERIC)), length=dim(temp.grades.content_areas)[1])),
-				years_single=yearIncrement(tail(unlist(strsplit(Report_Parameters$Current_Year, "_")), 1), seq(1-max(which(grades[1]==temp.grades.content_areas$GRADE_NUMERIC)), length=dim(temp.grades.content_areas)[1]))))
+				years=yearIncrement(Report_Parameters$Current_Year, seq(1-max(which(grades[1]==temp.grades.content_areas$GRADE_NUMERIC)), length=dim(temp.grades.content_areas)[1]))))
 		} else {
 			year.increment.for.projection.current <- grades.content_areas.reported.in.state$YEAR_LAG[which(grades[1]==grades.content_areas.reported.in.state$GRADE_NUMERIC)+1]
 			year_span <- max(min(last.scale.score, data.year.span-1), min(grades[1]-min(grades.content_areas.reported.in.state$GRADE_NUMERIC)+1, data.year.span-1))
@@ -318,13 +317,12 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 				head(seq(grades.content_areas.reported.in.state$GRADE_NUMERIC[match(grades[1], grades.content_areas.reported.in.state$GRADE_NUMERIC)]+1, length=data.year.span),
 					data.year.span-year_span))
 			temp.grades.content_areas <- extend.grades(temp.grades)
-			return (list(
+			return(list(
 				interp.df = temp.grades.content_areas,
 				year_span=year_span,
 				any_scale_scores=any.scale.scores,
 				increment_for_projection_current=year.increment.for.projection.current,
-				years=yearIncrement(Report_Parameters$Current_Year, seq(1-max(which(grades[1]==temp.grades.content_areas$GRADE_NUMERIC)), length=dim(temp.grades.content_areas)[1])),
-				years_single=yearIncrement(tail(unlist(strsplit(Report_Parameters$Current_Year, "_")), 1), seq(1-max(which(grades[1]==temp.grades.content_areas$GRADE_NUMERIC)), length=dim(temp.grades.content_areas)[1]))))
+				years=yearIncrement(Report_Parameters$Current_Year, seq(1-max(which(grades[1]==temp.grades.content_areas$GRADE_NUMERIC)), length=dim(temp.grades.content_areas)[1]))))
 		}
 	} ### END interpolate.grades function
 
@@ -622,7 +620,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 
 	for (j in seq(length(Report_Parameters$Assessment_Transition[['Year']])+1)) {
 		for (i in seq(number.achievement.level.regions[[j]]-1)) {
-			temp <- data.table(temp_id=seq_len(nrow(grade.values$interp.df)), grade.values$interp.df, YEAR=grade.values$years_single, key="YEAR")[tmp.year.sequence[[j]]]
+			temp <- data.table(temp_id=seq_len(nrow(grade.values$interp.df)), grade.values$interp.df, YEAR=sapply(strsplit(grade.values$years, "_"), tail, 1), key="YEAR")[tmp.year.sequence[[j]]]
 			temp[,YEAR:=get.my.cutscore.year(Report_Parameters$State, Report_Parameters$Content_Area, YEAR, i)]
 			temp <- merge(temp, Cutscores[CUTLEVEL==i], all.x=TRUE, by=c("YEAR", "CONTENT_AREA", "GRADE"))
 			temp <- temp[order(temp$temp_id),][['CUTSCORES']]
