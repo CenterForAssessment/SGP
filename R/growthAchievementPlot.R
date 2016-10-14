@@ -23,7 +23,7 @@
 
 	CUTLEVEL <- GRADE <- YEAR <- ID <- SCALE_SCORE <- level_1_curve <- V1 <- VALID_CASE <- NULL
 	TRANSFORMED_SCALE_SCORE <- PERCENTILE <- GRADE_NUMERIC <- CONTENT_AREA <- LEVEL <- SGP <- EXTRAPOLATED_P50_CUT <- DATE <- NULL ## To prevent R CMD check warnings
-	SCALE_SCORE_PERCENTILES <- SCALE_SCORE_PERCENTILES_TRANSFORMED <- NULL
+	SCALE_SCORE_PERCENTILES <- SCALE_SCORE_PERCENTILES_TRANSFORMED <- CUTSCORES <- CUTSCORES_TRANSFORMED <- NULL
 
 	content_area <- toupper(content_area)
 	if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]])) {
@@ -68,8 +68,8 @@
 	long_cutscores <- createLongCutscores(state, content_area, add.GRADE_NUMERIC=TRUE)
 	long_cutscores <- long_cutscores[YEAR %in% sort(c(year, unique(long_cutscores$YEAR)), na.last=FALSE)[max(which(sort(c(year, unique(long_cutscores$YEAR)), na.last=FALSE)==year))-1]]
 	if (!year %in% SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]][[content_area]]) {
-		long_cutscores[,TRANSFORMED_SCALE_SCORE:=SCALE_SCORE]
-	} 	
+		long_cutscores[,CUTSCORES_TRANSFORMED:=CUTSCORES]
+	}
 
 	### Create default values
 
@@ -120,7 +120,7 @@
 	}
 	if (identical(gaPlot.back.extrapolated.cuts, TRUE)) {
 		gaPlot.back.extrapolated.cuts <-
-			temp_cutscores[CONTENT_AREA==tail(content_area.all, 1) & GRADE_NUMERIC==gaPlot.grade_range[2] & CUTLEVEL==which.max(SGP::SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")-1]$CUTSCORES
+			temp_cutscores[CONTENT_AREA==tail(content_area.all, 1) & GRADE_NUMERIC==gaPlot.grade_range[2] & CUTLEVEL==which.max(SGP::SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")-1][['CUTSCORES']]
 	}
 
 	if (!is.null(gaPlot.SGPt)) {
@@ -482,9 +482,8 @@
 
 			## Create spline functions to calculate boundary values for each cutlevel
 
-			if (content_area %in% names(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]])) cutscores.label <- "CUTSCORES_TRANSFORMED" else cutscores.label <- "CUTSCORES"
 			for (i in 1:max(temp_cutscores$CUTLEVEL)){
-				assign(paste("level_", i, "_curve", sep=""), splinefun(tmp.unique.grades.numeric, subset(temp_cutscores, CUTLEVEL==i)[[cutscores.label]]))
+				assign(paste("level_", i, "_curve", sep=""), splinefun(tmp.unique.grades.numeric, subset(temp_cutscores, CUTLEVEL==i)[['CUTSCORES_TRANSFORMED']]))
 			}
 
 
