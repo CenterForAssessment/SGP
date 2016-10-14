@@ -67,6 +67,9 @@
 
 	long_cutscores <- createLongCutscores(state, content_area, add.GRADE_NUMERIC=TRUE)
 	long_cutscores <- long_cutscores[YEAR %in% sort(c(year, unique(long_cutscores$YEAR)), na.last=FALSE)[max(which(sort(c(year, unique(long_cutscores$YEAR)), na.last=FALSE)==year))-1]]
+	if (!year %in% SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]][[content_area]]) {
+		long_cutscores[,TRANSFORMED_SCALE_SCORE:=SCALE_SCORE]
+	} 	
 
 	### Create default values
 
@@ -384,7 +387,7 @@
 		setkey(growthAchievementPlot.data, YEAR)
 		gp.axis.range <- c(smoothPercentileTrajectory_Functions[[1]](gaPlot.grade_range[[2]]),
 			smoothPercentileTrajectory_Functions[[length(gaPlot.percentile_trajectories)]](gaPlot.grade_range[[2]]))
-		yscale.range <- extendrange(c(min(gp.axis.range[1], quantile(growthAchievementPlot.data[list(year)]$TRANSFORMED_SCALE_SCORE, prob=.005, na.rm=TRUE), tmp2.dt[['TRANSFORMED_SCALE_SCORE']], na.rm=TRUE),
+		yscale.range <- extendrange(c(min(gp.axis.range[1], quantile(growthAchievementPlot.data[year][['TRANSFORMED_SCALE_SCORE']], prob=.005, na.rm=TRUE), tmp2.dt[['TRANSFORMED_SCALE_SCORE']], na.rm=TRUE),
 			max(gp.axis.range[2], quantile(growthAchievementPlot.data[list(year)]$TRANSFORMED_SCALE_SCORE, prob=.995, na.rm=TRUE), tmp2.dt[['TRANSFORMED_SCALE_SCORE']], na.rm=TRUE)), f=0.075)
 		ach.per.axis.range <- (temp_uncond_frame[,1])[temp_uncond_frame[,1] >= yscale.range[1] & temp_uncond_frame[,1] <= yscale.range[2]]
 		ach.per.axis.labels <- formatC(100*as.numeric(rownames(temp_uncond_frame)[temp_uncond_frame[,1] >= yscale.range[1] & temp_uncond_frame[,1] <= yscale.range[2]]),

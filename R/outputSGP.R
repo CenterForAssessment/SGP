@@ -497,8 +497,10 @@ function(sgp_object,
 
 		#### Rename variables (needs to be improved)
 
-		tmp.order <- c("CY", "PY1", "PY2", "PY3", "PY4", "PY5", "PY6", "PY7")
+		tmp.order <- c("CY", paste("PY", 1:20, sep=""))
 		tmp.cuts.for.output <- c(1, 20, 35, 40, 60, 65, 80, 99)
+		tmp.years.short <-  tail(tmp.years.short, length(tmp.order))
+
 
 
 		## Rename variables to keep
