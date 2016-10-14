@@ -53,7 +53,7 @@ function(sgp_object,
 		gaPlot.baseline=NULL,
 		gaPlot.max.order.for.progression=NULL,
 		gaPlot.start.points="Achievement Level Cuts",
-		gaPlot.back.extrapolated.typical.cuts=NULL,
+		gaPlot.back.extrapolated.cuts=NULL,
 		gaPlot.SGPt=NULL,
 		gaPlot.folder="Visualizations/growthAchievementPlots",
 		parallel.config=NULL) {
@@ -327,7 +327,7 @@ if ("studentGrowthPlot" %in% plot.types) {
 			return(NA)
 		}
 		if (!is.null(tmp.domain <- SGP::SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]][[content_area]])) {
-			if (is.na(as.numeric(grade))) {
+			if (is.character(type.convert(grade, as.is=TRUE))) {
 				tmp.index <- which(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[tmp.domain]] == content_area)
 			} else tmp.index <- which(SGP::SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[tmp.domain]] == grade)
 			as.character(SGP::SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[tmp.domain]][tmp.index + increment])
@@ -948,17 +948,18 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 						if (length(grep("CURRENT", proj.iter)) > 0) tmp.increment <- i else tmp.increment <- i-1
 						setnames(sgPlot.data, c(proj.iter, tmp.grade.name), c("TEMP_SCORE", "TEMP_GRADE"))
 						sgPlot.data[, TEMP:=piecewiseTransform(
-										TEMP_SCORE,
-										state,
-										get.next.content_area(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment),
-										yearIncrement(tmp.last.year, tmp.increment),
-										get.next.grade(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment),
+										scale_score=TEMP_SCORE,
+										state=state,
+										content_area=get.next.content_area(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment),
+										year=yearIncrement(tmp.last.year, tmp.increment),
+										grade=get.next.grade(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment),
 										sgp.projections.equated=sgp.projections.equated,
 										new.cutscores=getNewCutscores(
 											get.next.content_area(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment),
 											get.next.content_area(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment),
 											yearIncrement(tmp.last.year, tmp.increment),
 											get.next.grade(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment),
+											state,
 											Cutscores)),
 							by=list(CONTENT_AREA, TEMP_GRADE)]
 

@@ -132,7 +132,7 @@ function(sgp_object,
 	}
 
 	if (!is.null(SGPstateData[[state]][["Growth"]][["Cutscores"]][["Cuts"]])) {
-		percentile.trajectory.values <- unique(c(SGPstateData[[state]][["Growth"]][["Cutscores"]][["Cuts"]], 50))
+		percentile.trajectory.values <- sort(unique(c(SGPstateData[[state]][["Growth"]][["Cutscores"]][["Cuts"]], 50)))
 	} else {
 		percentile.trajectory.values <- c(35, 50, 65)
 	}
@@ -315,7 +315,7 @@ function(sgp_object,
 	}
 
 	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][['lagged.percentile.trajectory.values']])) {
-		lagged.percentile.trajectory.values <- SGPstateData[[state]][["SGP_Configuration"]][['lagged.percentile.trajectory.values']]
+		lagged.percentile.trajectory.values <- sort(SGPstateData[[state]][["SGP_Configuration"]][['lagged.percentile.trajectory.values']])
 	} else {
         lagged.percentile.trajectory.values <- NULL
     }
