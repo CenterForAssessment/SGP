@@ -480,25 +480,23 @@ function(sgp_object,
 		if (identical(sgp.iter[['sgp.projection.grade.sequences']], "NO_PROJECTIONS")) return(FALSE)
 		if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]]) & !is.null(sgp.iter[["sgp.projection.sequence"]])) {
 			if (tail(sgp.iter[["sgp.grade.sequences"]], 1) == "EOCT") { # Only check EOCT configs/iters
-				if (is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]])) return(FALSE)
-				tmp.index <- match(tail(sgp.iter[["sgp.content.areas"]], 1),
-					SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]])
-				tmp.content_area.projection.sequence <-
-					SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]][1:tmp.index]
-				tmp.grade.projection.sequence <-
-					SGP::SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]][1:tmp.index]
-				tmp.year_lags.projection.sequence <-
-					SGP::SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]][1:(tmp.index-1)]
-				if (all(identical(sgp.iter[["sgp.content.areas"]], tail(tmp.content_area.projection.sequence, length(sgp.iter[["sgp.content.areas"]]))) &
-					identical(sgp.iter[["sgp.grade.sequences"]], tail(tmp.grade.projection.sequence, length(sgp.iter[["sgp.grade.sequences"]]))) &
-					identical(as.numeric(sgp.iter[["sgp.panel.years.lags"]]), as.numeric(tail(tmp.year_lags.projection.sequence, length(sgp.iter[["sgp.panel.years.lags"]])))))) {
-					 iter.test <- TRUE
-				} else {
-					iter.test <- FALSE
+				for (sps in sgp.iter[["sgp.projection.sequence"]]) {
+					if (is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[sps]])) return(FALSE)
+					tmp.index <- match(tail(sgp.iter[["sgp.content.areas"]], 1),
+						SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[sps]])
+					tmp.content_area.projection.sequence <-
+						SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[sps]][1:tmp.index]
+					tmp.grade.projection.sequence <-
+						SGP::SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[sps]][1:tmp.index]
+					tmp.year_lags.projection.sequence <-
+						SGP::SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[sps]][1:(tmp.index-1)]
+					if (!all(identical(sgp.iter[["sgp.content.areas"]], tail(tmp.content_area.projection.sequence, length(sgp.iter[["sgp.content.areas"]]))) &
+						identical(sgp.iter[["sgp.grade.sequences"]], tail(tmp.grade.projection.sequence, length(sgp.iter[["sgp.grade.sequences"]]))) &
+						identical(as.numeric(sgp.iter[["sgp.panel.years.lags"]]), as.numeric(tail(tmp.year_lags.projection.sequence, length(sgp.iter[["sgp.panel.years.lags"]])))))) return(FALSE)
 				}
-			}	else iter.test <- TRUE
-		}	else iter.test <- TRUE
-		return(iter.test)
+			}	else return(TRUE)
+		}	else return(TRUE)
+		return(TRUE)
 	}
 
 
