@@ -111,6 +111,12 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		show.fan.cutscores <- TRUE
 	}
 
+	if (is.null(SGP::SGPstateData[[Report_Parameters$State]][['SGP_Configuration']][['Show_Fan_Growth_Labels']])) {
+		show.fan.growth.labels <- TRUE
+	} else {
+		show.fan.growth.labels <- FALSE
+	}
+
 	if (is.null(Report_Parameters[['Configuration']][['Font_Size']])) {
 		title.ca.size <- 1.8
 		legend.size <- 0.5
@@ -726,7 +732,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 				height=unit(min(yscale.range[2], as.numeric(cuts.ny1[i+1])) - max(yscale.range[1], as.numeric(cuts.ny1[i])), "native"),
 				width=unit(0.04, "native"), r=unit(0.45, "snpc"), gp=gpar(lwd=0.3, col=border.color, fill=arrow.legend.color[i]))
 
-			if (is.null(Report_Parameters[['SGP_Targets']])) {
+			if (show.fan.growth.labels && is.null(Report_Parameters[['SGP_Targets']])) {
 				grid.text(x=current.year+grade.values$increment_for_projection_current+0.05,
 					y=(max(yscale.range[1], cuts.ny1[i])+min(yscale.range[2], cuts.ny1[i+1]))/2, growth.level.labels[i],
 					default.units="native", just="left", gp=gpar(cex=0.4, col=border.color))
