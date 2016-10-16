@@ -371,7 +371,7 @@ function(panel.data,	## REQUIRED
 						if (length(percentile.trajectory.values)==2) tmp.traj <- data.table(rbind(tmp.traj, tmp.traj), key="ID")
 
 						for (state.iter in unique(tmp.traj$STATE)) {
-							my.cutscore.year <- get.my.cutscore.state.year.sgprojection(Cutscores, sgp.labels$my.subject, yearIncrement(sgp.labels$my.year, 1, lag.increment), my.state=state.iter)
+							my.cutscore.year <- get.my.cutscore.state.year.sgprojection(Cutscores, content_area.projection.sequence[1], yearIncrement(sgp.labels$my.year, 1, lag.increment), my.state=state.iter)
 							tmp.cutscores.by.grade <- tmp.cutscores[[my.cutscore.year]][[paste("GRADE_", grade.projection.sequence[1], sep="")]]
 							if (length(percentile.trajectory.values)==1) {
 								tmp.state.level <- which(sapply(lapply(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscore_Information"]][['State_Levels']],
@@ -393,7 +393,7 @@ function(panel.data,	## REQUIRED
 						}
 						tmp.traj[,STATE:=NULL]
 					} else {
-						my.cutscore.year <- get.my.cutscore.state.year.sgprojection(Cutscores, sgp.labels$my.subject, yearIncrement(sgp.labels$my.year, 1, lag.increment), my.state=NA)
+						my.cutscore.year <- get.my.cutscore.state.year.sgprojection(Cutscores, content_area.projection.sequence[1], yearIncrement(sgp.labels$my.year, 1, lag.increment), my.state=NA)
 						tmp.cutscores.by.grade <- tmp.cutscores[[my.cutscore.year]][[paste("GRADE_", grade.projection.sequence[1], sep="")]]
 						if (length(percentile.trajectory.values)==1) {
 							cuku.level.to.get <- which.max(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")-1
