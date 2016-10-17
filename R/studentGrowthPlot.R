@@ -168,8 +168,6 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		SGP_Levels <- SGP::SGPstateData[[Report_Parameters$State]][["Growth"]][["Levels"]][match(SGP_Levels, SGP::SGPstateData[[paste(head(unlist(strsplit(Report_Parameters$State, "_")), -1), collapse="_")]][["Growth"]][["Levels"]])]
 	}
 
-	if (length(content_area.label.pieces <- strsplit(content.area.label, " ")[[1]])==1) split.content_area.tf <- FALSE else split.content_area.tf <- TRUE
-
 	if (is.null(Report_Parameters[['Fan']])) {
 		show.fan <- TRUE
 	} else {
@@ -384,6 +382,21 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		invisible(g)
 	}
 
+	labelSplit <- function(label) {
+			label.split <- unlist(strsplit(label, " "))
+			label.word.nchar <- cumsum(nchar(label.split))
+			if (length(label.word.nchar) > 1 & tail(label.word.nchar, 1) > 10) {
+				label.split.position <- max(which(label.word.nchar <= 10))
+				tmp.label <- paste(label.split[1:label.split.position], collapse=" ")
+				tmp.label[2] <- paste(label.split[(label.split.position+1):length(label.split)], collapse=" ")
+				tmp.cex <- c(title.ca.size - 0.25 - max(0, nchar(tmp.label[1])-10)*0.1, title.ca.size - 0.25 - max(0, nchar(tmp.label[2])-10)*0.1)
+				return(list(content_area.label.pieces=tmp.label, cex=tmp.cex))
+			} else {
+				return(list(content_area.label.pieces=label, cex=title.ca.size - max(0, nchar(label)-10)*0.1))
+			}
+	}
+
+
 	###
 	### END Utility functions
 	###
@@ -532,6 +545,9 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 	low.score <- min(cuts.ny1, Plotting_Scale_Scores, Cutscores[GRADE==data.table(grade.values[['interp.df']])[!is.na(CONTENT_AREA)][['GRADE']][1] & CUTLEVEL==1][['CUTSCORES']], na.rm=TRUE)
 	high.score <- max(cuts.ny1, Plotting_Scale_Scores, Cutscores[GRADE==tail(data.table(grade.values[['interp.df']])[!is.na(CONTENT_AREA)][['GRADE']], 1) & CUTLEVEL %in% (number.achievement.level.regions-1)][['CUTSCORES']], na.rm=TRUE)
 	yscale.range <- extendrange(c(low.score,high.score), f=0.15)
+
+	content_area.label.pieces <- labelSplit(content.area.label)
+	if (length(content_area.label.pieces[[1]])==1) split.content_area.tf <- FALSE else split.content_area.tf <- TRUE
 
 
 	### Create viewports
@@ -1023,10 +1039,10 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		grid.roundrect(width=unit(0.95, "native"), r=unit(.02, "snpc"), gp=gpar(lwd=1.8, col=border.color, fill=legend.fill.color), just="center")
 
 		if (!split.content_area.tf) {
-			grid.text(x=.5, y=0.875, content.area.label, gp=gpar(col=border.color, cex=title.ca.size, fontface=2, fontfamily="Helvetica-Narrow"), default.units="native")
+			grid.text(x=.5, y=0.875, content_area.label.pieces[[1]][1], gp=gpar(col=border.color, cex=content_area.label.pieces[[2]][1], fontface=2, fontfamily="Helvetica-Narrow"), default.units="native")
 		} else {
-			grid.text(x=.5, y=0.92, content_area.label.pieces[1], gp=gpar(col=border.color, cex=title.ca.size-0.25, fontface=2, fontfamily="Helvetica-Narrow"), default.units="native")
-			grid.text(x=.5, y=0.83, content_area.label.pieces[2], gp=gpar(col=border.color, cex= title.ca.size-0.25, fontface=2, fontfamily="Helvetica-Narrow"), default.units="native")
+			grid.text(x=.5, y=0.92, content_area.label.pieces[[1]][1], gp=gpar(col=border.color, cex=content_area.label.pieces[[2]][1], fontface=2, fontfamily="Helvetica-Narrow"), default.units="native")
+			grid.text(x=.5, y=0.83, content_area.label.pieces[[1]][2], gp=gpar(col=border.color, cex=content_area.label.pieces[[2]][2], fontface=2, fontfamily="Helvetica-Narrow"), default.units="native")
 		}
 		grid.text(x=0.08, y=0.75, achievement.label, gp=gpar(col=border.color, cex=.85, fontface=2, fontfamily="Helvetica-Narrow"), default.units="native", just="left")
 		grid.text(x=0.08, y=0.525, growth.label, gp=gpar(col=border.color, cex=.75, fontface=2, fontfamily="Helvetica-Narrow"), default.units="native", just="left")
@@ -1041,8 +1057,8 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 			grid.text(x=0.7, y=0.622, scale_score.label, gp=gpar(col=border.color, cex= legend.size), default.units="native")
 		} else {
 			grid.text(x=0.7, y=0.7, test.abbreviation, gp=gpar(col=border.color, cex=legend.size), default.units="native")
-			grid.text(x=0.7, y=0.665, content_area.label.pieces[1], gp=gpar(col=border.color, cex=legend.size), default.units="native")
-			grid.text(x=0.7, y=0.63, content_area.label.pieces[2], gp=gpar(col=border.color, cex=legend.size), default.units="native")
+			grid.text(x=0.7, y=0.665, content_area.label.pieces[[1]][1], gp=gpar(col=border.color, cex=legend.size), default.units="native")
+			grid.text(x=0.7, y=0.63, content_area.label.pieces[[1]][2], gp=gpar(col=border.color, cex=legend.size), default.units="native")
 			grid.text(x=0.7, y=0.595, scale_score.label, gp=gpar(col=border.color, cex= legend.size), default.units="native")
 		}
 
