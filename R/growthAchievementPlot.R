@@ -532,7 +532,7 @@
 					}
 
 					grid.polygon(x=c(extrapolated.cuts.dt[['GRADE_NUMERIC']], rev(extrapolated.cuts.dt[['GRADE_NUMERIC']])),
-					y=c(extrapolated.cuts.dt[[paste("EXTRAPOLATED_P", tmp.cuts[cuts.iter], "_CUT", sep="")]], rev(extrapolated.cuts.dt[[paste("EXTRAPOLATED_P", tmp.cuts[cuts.iter+1], "_CUT", sep="")]])),
+					y=c(extrapolated.cuts.dt[[paste("EXTRAPOLATED_P", tmp.cuts[cut.iter], "_CUT", sep="")]], rev(extrapolated.cuts.dt[[paste("EXTRAPOLATED_P", tmp.cuts[cut.iter+1], "_CUT", sep="")]])),
 					gp=gpar(fill="magenta", lwd=0.1, lty=2, col="grey85", alpha=0.1), default.units="native")
 
 					if (cut.iter==length(tmp.cuts-1)) {
