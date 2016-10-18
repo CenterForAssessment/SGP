@@ -275,8 +275,8 @@
 		tmp.projections <- growthAchievementPlot.data[tmp.projections]
 		extrapolated.cuts.dt <- data.table(GRADE_NUMERIC=head(seq(gaPlot.grade_range[1], gaPlot.grade_range[2]), -1))
 		for (percentile.iter in c(50, 60, 70, 80, 90)) {
-			tmp.projection.label <- grep(paste(paste("P", percentile.iter, sep=""), "PROJ", tmp.unit.label, i, "", sep="_"), names(tmp.projections), value=TRUE)
 			for (i in seq(dim(extrapolated.cuts.dt)[1])) {
+				tmp.projection.label <- grep(paste(paste("P", percentile.iter, sep=""), "PROJ", tmp.unit.label, i, "", sep="_"), names(tmp.projections), value=TRUE)
 				if (gaPlot.back.extrapolated.cuts %in% unique(tmp.projections[[tmp.projection.label]])) {
 					tmp.tf <- tmp.projections[[tmp.projection.label]]==gaPlot.back.extrapolated.cuts
 				} else {
