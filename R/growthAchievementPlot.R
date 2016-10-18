@@ -288,7 +288,7 @@
 					paste("EXTRAPOLATED_P", percentile.iter, "_CUT", sep=""):=mean(tmp.projections[tmp.tf][GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i]][['SCALE_SCORE']], na.rm=TRUE)]
 			}
 		}
-		tmp.dt <- data.table(gaPlot.grade_range[2], rep(gaPlot.back.extrapolated.cuts, 5))
+		tmp.dt <- data.table(matrix(c(gaPlot.grade_range[2], rep(gaPlot.back.extrapolated.cuts, 5)), nrow=1))
 		extrapolated.cuts.dt <- rbindlist(list(extrapolated.cuts.dt, tmp.dt))
 	}
 
@@ -523,9 +523,24 @@
 			## Code for producing extrapolated typical growth region (if requested)
 
 			if (!is.null(gaPlot.back.extrapolated.cuts)) {
-				grid.polygon(x=c(extrapolated.cuts.dt[['GRADE_NUMERIC']][1], extrapolated.cuts.dt[['GRADE_NUMERIC']], rev(extrapolated.cuts.dt[['GRADE_NUMERIC']])[1]),
-					y=c(get(paste("y.boundary.values.", i, sep=""))[1], extrapolated.cuts.dt[['EXTRAPOLATED_P50_CUT']], rev(get(paste("y.boundary.values.", i, sep="")))[1]),
+				tmp.cuts <- c(50,60,70,80,90)
+				for (cut.iter in seq(length(tmp.cuts)-1)) {
+					if (cut.iter==1) {
+						grid.polygon(x=c(extrapolated.cuts.dt[['GRADE_NUMERIC']][1], extrapolated.cuts.dt[['GRADE_NUMERIC']], rev(extrapolated.cuts.dt[['GRADE_NUMERIC']])[1]),
+						y=c(get(paste("y.boundary.values.", 1+max(temp_cutscores$CUTLEVEL), sep=""))[1], extrapolated.cuts.dt[[paste("EXTRAPOLATED_P", tmp.cuts[1], "_CUT", sep="")]], rev(get(paste("y.boundary.values.",  1+max(temp_cutscores$CUTLEVEL), sep="")))[1]),
+						gp=gpar(fill="magenta", lwd=0.1, lty=2, col="grey85", alpha=0.1), default.units="native")
+					}
+
+					grid.polygon(x=c(extrapolated.cuts.dt[['GRADE_NUMERIC']], rev(extrapolated.cuts.dt[['GRADE_NUMERIC']])),
+					y=c(extrapolated.cuts.dt[[paste("EXTRAPOLATED_P", tmp.cuts[cuts.iter], "_CUT", sep="")]], rev(extrapolated.cuts.dt[[paste("EXTRAPOLATED_P", tmp.cuts[cuts.iter+1], "_CUT", sep="")]])),
 					gp=gpar(fill="magenta", lwd=0.1, lty=2, col="grey85", alpha=0.1), default.units="native")
+
+					if (cut.iter==length(tmp.cuts-1)) {
+						grid.polygon(x=c(extrapolated.cuts.dt[['GRADE_NUMERIC']][1], extrapolated.cuts.dt[['GRADE_NUMERIC']], rev(extrapolated.cuts.dt[['GRADE_NUMERIC']])[1]),
+						y=c(y.boundary.values.1[1], extrapolated.cuts.dt[[paste("EXTRAPOLATED_P", rev(tmp.cuts)[1], "_CUT", sep="")]], rev(y.boundary.values.1[1])),
+						gp=gpar(fill="magenta", lwd=0.1, lty=2, col="grey85", alpha=0.1), default.units="native")
+					}
+				}
 			}
 
 			## Code for producing the achievement percentile curves
