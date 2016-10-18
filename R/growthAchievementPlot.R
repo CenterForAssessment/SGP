@@ -524,21 +524,22 @@
 
 			if (!is.null(gaPlot.back.extrapolated.cuts)) {
 				tmp.cuts <- c(50,60,70,80,90)
-				for (cut.iter in seq(length(tmp.cuts)-1)) {
+				tmp.region.colors <- c("#d73027", "#f46d43", "#fdae61", "#fee090", "#ffffbf", "#e0f3f8")
+				for (cut.iter in seq(length(tmp.cuts)+1)) {
 					if (cut.iter==1) {
 						grid.polygon(x=c(extrapolated.cuts.dt[['GRADE_NUMERIC']][1], extrapolated.cuts.dt[['GRADE_NUMERIC']], rev(extrapolated.cuts.dt[['GRADE_NUMERIC']])[1]),
 						y=c(get(paste("y.boundary.values.", 1+max(temp_cutscores$CUTLEVEL), sep=""))[1], extrapolated.cuts.dt[[paste("EXTRAPOLATED_P", tmp.cuts[1], "_CUT", sep="")]], rev(get(paste("y.boundary.values.",  1+max(temp_cutscores$CUTLEVEL), sep="")))[1]),
-						gp=gpar(fill="magenta", lwd=0.1, lty=2, col="grey85", alpha=0.1), default.units="native")
+						gp=gpar(fill=tmp.region.colors[cut.iter], lwd=0.1, lty=2, col="grey85", alpha=0.1), default.units="native")
 					}
 
 					grid.polygon(x=c(extrapolated.cuts.dt[['GRADE_NUMERIC']], rev(extrapolated.cuts.dt[['GRADE_NUMERIC']])),
 					y=c(extrapolated.cuts.dt[[paste("EXTRAPOLATED_P", tmp.cuts[cut.iter], "_CUT", sep="")]], rev(extrapolated.cuts.dt[[paste("EXTRAPOLATED_P", tmp.cuts[cut.iter+1], "_CUT", sep="")]])),
-					gp=gpar(fill="magenta", lwd=0.1, lty=2, col="grey85", alpha=0.1), default.units="native")
+					gp=gpar(fill=tmp.region.colors[cut.iter], lwd=0.1, lty=2, col="grey85", alpha=0.1), default.units="native")
 
-					if (cut.iter==length(tmp.cuts-1)) {
+					if (cut.iter==length(tmp.cuts)+1) {
 						grid.polygon(x=c(extrapolated.cuts.dt[['GRADE_NUMERIC']][1], extrapolated.cuts.dt[['GRADE_NUMERIC']], rev(extrapolated.cuts.dt[['GRADE_NUMERIC']])[1]),
 						y=c(y.boundary.values.1[1], extrapolated.cuts.dt[[paste("EXTRAPOLATED_P", rev(tmp.cuts)[1], "_CUT", sep="")]], rev(y.boundary.values.1[1])),
-						gp=gpar(fill="magenta", lwd=0.1, lty=2, col="grey85", alpha=0.1), default.units="native")
+						gp=gpar(fill=tmp.region.colors[cut.iter], lwd=0.1, lty=2, col="grey85", alpha=0.1), default.units="native")
 					}
 				}
 			}
