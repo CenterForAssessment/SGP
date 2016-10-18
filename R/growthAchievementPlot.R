@@ -269,23 +269,27 @@
 		setkey(growthAchievementPlot.data, CONTENT_AREA, YEAR, ID)
 		if (baseline) tmp.proj.name <- paste(content_area, year, "BASELINE", sep=".") else tmp.proj.name <- paste(content_area, year, sep=".")
 		tmp.projections <- gaPlot.sgp_object@SGP$SGProjections[[tmp.proj.name]][,
-			c("ID", grep("P50", names(gaPlot.sgp_object@SGP$SGProjections[[tmp.proj.name]]), value=TRUE)), with=FALSE]
+			c("ID", grep("P50|P60|P70|P80|P90", names(gaPlot.sgp_object@SGP$SGProjections[[tmp.proj.name]]), value=TRUE)), with=FALSE]
 		tmp.projections[,c("YEAR", "CONTENT_AREA"):=list(year, content_area)]
 		setkey(tmp.projections, CONTENT_AREA, YEAR, ID)
 		tmp.projections <- growthAchievementPlot.data[tmp.projections]
 		extrapolated.cuts.dt <- data.table(GRADE_NUMERIC=head(seq(gaPlot.grade_range[1], gaPlot.grade_range[2]), -1))
-		for (i in seq(dim(extrapolated.cuts.dt)[1])) {
-			if (gaPlot.back.extrapolated.cuts %in% unique(tmp.projections[[grep(paste(tmp.unit.label, i, "", sep="_"), names(tmp.projections), value=TRUE)]])) {
-				tmp.tf <- tmp.projections[[grep(paste(tmp.unit.label, i, "", sep="_"), names(tmp.projections), value=TRUE)]]==gaPlot.back.extrapolated.cuts
-			} else {
-				tmp.index <- which.max(gaPlot.back.extrapolated.cuts < sort(unique(tmp.projections[[grep(paste(tmp.unit.label, i, "", sep="_"), names(tmp.projections), value=TRUE)]])))
-				tmp.values <- sort(unique(tmp.projections[[grep(paste(tmp.unit.label, i, "", sep="_"), names(tmp.projections), value=TRUE)]]))[c(tmp.index-1, tmp.index)]
-				tmp.tf <- tmp.projections[[grep(paste(tmp.unit.label, i, "", sep="_"), names(tmp.projections), value=TRUE)]] %in% tmp.values
+		for (percentile.iter in c(50, 60, 70, 80, 90)) {
+			tmp.projection.label <- grep(paste(paste("P", percentile.iter, sep=""), "PROJ", tmp.unit.label, i, "", sep="_"), names(tmp.projections), value=TRUE)
+			for (i in seq(dim(extrapolated.cuts.dt)[1])) {
+				if (gaPlot.back.extrapolated.cuts %in% unique(tmp.projections[[tmp.projection.label]])) {
+					tmp.tf <- tmp.projections[[tmp.projection.label]]==gaPlot.back.extrapolated.cuts
+				} else {
+					tmp.index <- which.max(gaPlot.back.extrapolated.cuts < sort(unique(tmp.projections[[tmp.projection.label]])))
+					tmp.values <- sort(unique(tmp.projections[[tmp.projection.label]]))[c(tmp.index-1, tmp.index)]
+					tmp.tf <- tmp.projections[[tmp.projection.label]] %in% tmp.values
+				}
+				extrapolated.cuts.dt[GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i],
+					paste("EXTRAPOLATED_P", percentile.iter, "_CUT", sep=""):=mean(tmp.projections[tmp.tf][GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i]][['SCALE_SCORE']], na.rm=TRUE)]
 			}
-			extrapolated.cuts.dt[GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i],
-				EXTRAPOLATED_P50_CUT:=mean(tmp.projections[tmp.tf][GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i]][['SCALE_SCORE']], na.rm=TRUE)]
 		}
-		extrapolated.cuts.dt <- rbindlist(list(extrapolated.cuts.dt, data.table(GRADE_NUMERIC=gaPlot.grade_range[2], EXTRAPOLATED_P50_CUT=gaPlot.back.extrapolated.cuts)))
+		tmp.dt <- data.table(gaPlot.grade_range[2], rep(gaPlot.back.extrapolated.cuts, 5))
+		extrapolated.cuts.dt <- rbindlist(list(extrapolated.cuts.dt, tmp.dt))
 	}
 
 	getSGPtDate <- function(year) {
