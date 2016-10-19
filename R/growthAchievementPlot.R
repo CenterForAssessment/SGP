@@ -524,7 +524,7 @@
 
 			if (!is.null(gaPlot.back.extrapolated.cuts)) {
 				tmp.cuts <- c(50,60,70,80,90)
-				tmp.region.colors <- c("#d73027", "#f46d43", "#fdae61", "#fee090", "#ffffbf", "#e0f3f8")
+				tmp.region.colors <- c("#e0f3f8", "#ffffbf", "#fee090", "#fdae61", "#f46d43", "#d73027")
 				for (cut.iter in seq(length(tmp.cuts)+1)) {
 					if (cut.iter==1) {
 						grid.polygon(x=c(extrapolated.cuts.dt[['GRADE_NUMERIC']][1], extrapolated.cuts.dt[['GRADE_NUMERIC']], rev(extrapolated.cuts.dt[['GRADE_NUMERIC']])[1]),
