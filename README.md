@@ -3,8 +3,8 @@
 The **SGP** Package is open source software built for the [**R** software environment](https://CRAN.R-project.org/). The classes, functions and data within the **SGP** package are used to calculate student growth percentiles and percentile growth projections/trajectories using large scale, longitudinal assessment data. Quantile regression is used to estimate the conditional density associated with each student's achievement history. Percentile growth projections/trajectories are calculated using the derived coefficient matrices and show the percentile growth needed to reach future achievement targets. 
 
 [![Build Status](https://travis-ci.org/dbetebenner/SGP.svg?branch=master)](https://travis-ci.org/dbetebenner/SGP)
-[![CRAN Version](https://www.r-pkg.org/badges/version/SGP)](https://cran.rstudio.com/web/packages/SGP)
-[![Development Version](https://img.shields.io/badge/devel-1.5--6.6-brightgreen.svg)](https://github.com/CenterForAssessment/SGP)
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/SGP)](http://cran.r-project.org/package=SGP)
+[![Development Version](https://img.shields.io/badge/devel-1.5--9.54-brightgreen.svg)](https://github.com/CenterForAssessment/SGP)
 [![Rstudio mirror downloads](http://cranlogs.r-pkg.org/badges/grand-total/SGP)](https://github.com/metacran/cranlogs.app)
 [![License](http://img.shields.io/badge/license-GPL%203-brightgreen.svg?style=flat)](https://github.com/CenterForAssessment/SGP/blob/master/LICENSE.md)
 [![Join the chat at https://gitter.im/CenterForAssessment/SGP](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/CenterForAssessment/SGP?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)

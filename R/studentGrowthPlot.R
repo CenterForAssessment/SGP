@@ -26,7 +26,12 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 	CUTSCORES_EQUATED <- CUTSCORES_TRANSFORMED <- NULL
 
 	number.growth.levels <- length(SGP::SGPstateData[[Report_Parameters$State]][["Growth"]][["Levels"]])
-	growth.level.labels <- SGP::SGPstateData[[Report_Parameters$State]][["Growth"]][["Levels"]]
+	if (!is.null(SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Growth_Level_Labels"]])) {
+		growth.level.labels <- as.character(unlist(SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Growth_Level_Labels"]]))
+		growth.level.labels.shortened <- names(SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Growth_Level_Labels"]])
+	} else {
+		growth.level.labels <- growth.level.labels.shortened <- SGP::SGPstateData[[Report_Parameters$State]][["Growth"]][["Levels"]]
+	}
 	growth.level.cutscores <- SGP::SGPstateData[[Report_Parameters$State]][["Growth"]][["Cutscores"]][["Cuts"]]
 	growth.level.cutscores.text <- SGP::SGPstateData[[Report_Parameters$State]][["Growth"]][["Cutscores"]][["Labels"]]
 	content.area.label <- SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Content_Areas_Labels"]][[Report_Parameters$Content_Area_Title]]
@@ -1084,7 +1089,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 				y=c((head(y.center,1)+tail(y.center,1))/2, y.center[i], y.center[i]+y.center[2]-y.center[1]), default.units="native",
 				gp=gpar(col=NA, lwd=0, fill=arrow.legend.color[i], alpha=0.45))
 
-			grid.text(x=0.375, y=((y.center[1]+y.center[2])/2)+(i-1)*(y.center[2]-y.center[1]), growth.level.labels[i], default.units="native",
+			grid.text(x=0.375, y=((y.center[1]+y.center[2])/2)+(i-1)*(y.center[2]-y.center[1]), growth.level.labels.shortened[i], default.units="native",
 				gp=gpar(col=border.color, cex=.5), just="left")
 			grid.text(x=0.925, y=((y.center[1]+y.center[2])/2)+(i-1)*(y.center[2]-y.center[1]), growth.level.cutscores.text[i], default.units="native",
 				gp=gpar(col=border.color, cex=.5), just="right")

@@ -269,23 +269,27 @@
 		setkey(growthAchievementPlot.data, CONTENT_AREA, YEAR, ID)
 		if (baseline) tmp.proj.name <- paste(content_area, year, "BASELINE", sep=".") else tmp.proj.name <- paste(content_area, year, sep=".")
 		tmp.projections <- gaPlot.sgp_object@SGP$SGProjections[[tmp.proj.name]][,
-			c("ID", grep("P50", names(gaPlot.sgp_object@SGP$SGProjections[[tmp.proj.name]]), value=TRUE)), with=FALSE]
+			c("ID", grep("P50|P60|P70|P80|P90", names(gaPlot.sgp_object@SGP$SGProjections[[tmp.proj.name]]), value=TRUE)), with=FALSE]
 		tmp.projections[,c("YEAR", "CONTENT_AREA"):=list(year, content_area)]
 		setkey(tmp.projections, CONTENT_AREA, YEAR, ID)
 		tmp.projections <- growthAchievementPlot.data[tmp.projections]
 		extrapolated.cuts.dt <- data.table(GRADE_NUMERIC=head(seq(gaPlot.grade_range[1], gaPlot.grade_range[2]), -1))
-		for (i in seq(dim(extrapolated.cuts.dt)[1])) {
-			if (gaPlot.back.extrapolated.cuts %in% unique(tmp.projections[[grep(paste(tmp.unit.label, i, "", sep="_"), names(tmp.projections), value=TRUE)]])) {
-				tmp.tf <- tmp.projections[[grep(paste(tmp.unit.label, i, "", sep="_"), names(tmp.projections), value=TRUE)]]==gaPlot.back.extrapolated.cuts
-			} else {
-				tmp.index <- which.max(gaPlot.back.extrapolated.cuts < sort(unique(tmp.projections[[grep(paste(tmp.unit.label, i, "", sep="_"), names(tmp.projections), value=TRUE)]])))
-				tmp.values <- sort(unique(tmp.projections[[grep(paste(tmp.unit.label, i, "", sep="_"), names(tmp.projections), value=TRUE)]]))[c(tmp.index-1, tmp.index)]
-				tmp.tf <- tmp.projections[[grep(paste(tmp.unit.label, i, "", sep="_"), names(tmp.projections), value=TRUE)]] %in% tmp.values
+		for (percentile.iter in c(50, 60, 70, 80, 90)) {
+			for (i in seq(dim(extrapolated.cuts.dt)[1])) {
+				tmp.projection.label <- grep(paste(paste("P", percentile.iter, sep=""), "PROJ", tmp.unit.label, i, "", sep="_"), names(tmp.projections), value=TRUE)
+				if (gaPlot.back.extrapolated.cuts %in% unique(tmp.projections[[tmp.projection.label]])) {
+					tmp.tf <- tmp.projections[[tmp.projection.label]]==gaPlot.back.extrapolated.cuts
+				} else {
+					tmp.index <- which.max(gaPlot.back.extrapolated.cuts < sort(unique(tmp.projections[[tmp.projection.label]])))
+					tmp.values <- sort(unique(tmp.projections[[tmp.projection.label]]))[c(tmp.index-1, tmp.index)]
+					tmp.tf <- tmp.projections[[tmp.projection.label]] %in% tmp.values
+				}
+				extrapolated.cuts.dt[GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i],
+					paste("EXTRAPOLATED_P", percentile.iter, "_CUT", sep=""):=mean(tmp.projections[tmp.tf][GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i]][['SCALE_SCORE']], na.rm=TRUE)]
 			}
-			extrapolated.cuts.dt[GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i],
-				EXTRAPOLATED_P50_CUT:=mean(tmp.projections[tmp.tf][GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i]][['SCALE_SCORE']], na.rm=TRUE)]
 		}
-		extrapolated.cuts.dt <- rbindlist(list(extrapolated.cuts.dt, data.table(GRADE_NUMERIC=gaPlot.grade_range[2], EXTRAPOLATED_P50_CUT=gaPlot.back.extrapolated.cuts)))
+		tmp.dt <- data.table(matrix(c(gaPlot.grade_range[2], rep(gaPlot.back.extrapolated.cuts, 5)), nrow=1))
+		extrapolated.cuts.dt <- rbindlist(list(extrapolated.cuts.dt, tmp.dt))
 	}
 
 	getSGPtDate <- function(year) {
@@ -519,9 +523,27 @@
 			## Code for producing extrapolated typical growth region (if requested)
 
 			if (!is.null(gaPlot.back.extrapolated.cuts)) {
-				grid.polygon(x=c(extrapolated.cuts.dt[['GRADE_NUMERIC']][1], extrapolated.cuts.dt[['GRADE_NUMERIC']], rev(extrapolated.cuts.dt[['GRADE_NUMERIC']])[1]),
-					y=c(get(paste("y.boundary.values.", i, sep=""))[1], extrapolated.cuts.dt[['EXTRAPOLATED_P50_CUT']], rev(get(paste("y.boundary.values.", i, sep="")))[1]),
-					gp=gpar(fill="magenta", lwd=0.1, lty=2, col="grey85", alpha=0.1), default.units="native")
+				tmp.cuts <- c(50,60,70,80,90)
+				tmp.region.colors <- c("#abd9e9", "#ffffbf", "#fee090", "#fdae61", "#f46d43", "#d73027")
+				for (cut.iter in seq(length(tmp.cuts)+1)) {
+					if (cut.iter==1) {
+						grid.polygon(x=c(extrapolated.cuts.dt[['GRADE_NUMERIC']][1], extrapolated.cuts.dt[['GRADE_NUMERIC']], rev(extrapolated.cuts.dt[['GRADE_NUMERIC']])[1]),
+						y=c(get(paste("y.boundary.values.", 1+max(temp_cutscores$CUTLEVEL), sep=""))[1], extrapolated.cuts.dt[[paste("EXTRAPOLATED_P", tmp.cuts[1], "_CUT", sep="")]], rev(get(paste("y.boundary.values.",  1+max(temp_cutscores$CUTLEVEL), sep="")))[1]),
+						gp=gpar(fill=tmp.region.colors[cut.iter], lwd=0.1, lty=2, col="grey85", alpha=0.5), default.units="native")
+					}
+
+					if (cut.iter > 1 & cut.iter < length(tmp.cuts)+1) {
+						grid.polygon(x=c(extrapolated.cuts.dt[['GRADE_NUMERIC']], rev(extrapolated.cuts.dt[['GRADE_NUMERIC']])),
+						y=c(extrapolated.cuts.dt[[paste("EXTRAPOLATED_P", tmp.cuts[cut.iter-1], "_CUT", sep="")]], rev(extrapolated.cuts.dt[[paste("EXTRAPOLATED_P", tmp.cuts[cut.iter], "_CUT", sep="")]])),
+						gp=gpar(fill=tmp.region.colors[cut.iter], lwd=0.1, lty=2, col="grey85", alpha=0.5), default.units="native")
+					}
+
+					if (cut.iter==length(tmp.cuts)+1) {
+						grid.polygon(x=c(extrapolated.cuts.dt[['GRADE_NUMERIC']][1], extrapolated.cuts.dt[['GRADE_NUMERIC']], rev(extrapolated.cuts.dt[['GRADE_NUMERIC']])[1]),
+						y=c(y.boundary.values.1[1], extrapolated.cuts.dt[[paste("EXTRAPOLATED_P", rev(tmp.cuts)[1], "_CUT", sep="")]], rev(y.boundary.values.1[1])),
+						gp=gpar(fill=tmp.region.colors[cut.iter], lwd=0.1, lty=2, col="grey85", alpha=0.5), default.units="native")
+					}
+				}
 			}
 
 			## Code for producing the achievement percentile curves
