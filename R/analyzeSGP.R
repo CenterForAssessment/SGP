@@ -142,7 +142,7 @@ function(sgp_object,
 	}
 
     if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["gaPlot.back.extrapolated.cuts"]])) {
-        percentile.trajectory.values <- c(percentile.trajectory.values, sort(unique(1:9*10, percentile.trajectory.values)))
+        percentile.trajectory.values <- sort(unique(c(percentile.trajectory.values, 1:9*10)))
     }
 
 	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["sgp.projections.baseline.max.order"]])) {
