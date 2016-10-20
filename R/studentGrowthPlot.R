@@ -1090,7 +1090,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 				y=c((head(y.center,1)+tail(y.center,1))/2, y.center[i], y.center[i]+y.center[2]-y.center[1]), default.units="native",
 				gp=gpar(col=NA, lwd=0, fill=arrow.legend.color[i], alpha=0.45))
 
-			grid.text(x=0.375, y=((y.center[1]+y.center[2])/2)+(i-1)*(y.center[2]-y.center[1]), growth.level.labels.shortened[i], default.units="native",
+			grid.text(x=0.36, y=((y.center[1]+y.center[2])/2)+(i-1)*(y.center[2]-y.center[1]), growth.level.labels.shortened[i], default.units="native",
 				gp=gpar(col=border.color, cex=growth.label.cex), just="left")
 			grid.text(x=0.925, y=((y.center[1]+y.center[2])/2)+(i-1)*(y.center[2]-y.center[1]), growth.level.cutscores.text[i], default.units="native",
 				gp=gpar(col=border.color, cex=growth.label.cex), just="right")
