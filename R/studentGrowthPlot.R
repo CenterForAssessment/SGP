@@ -1059,17 +1059,18 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		grid.circle(x=0.3, y=0.64, r=unit(0.04, "inches"), gp=gpar(col=border.color, lwd=0.7, fill="white"), default.units="native")
 		if (!split.content_area.tf) {
 			grid.text(x=0.7, y=0.658, paste(test.abbreviation, content.area.label), gp=gpar(col=border.color, cex=legend.size), default.units="native")
-			grid.text(x=0.7, y=0.622, scale_score.label, gp=gpar(col=border.color, cex= legend.size), default.units="native")
+			grid.text(x=0.7, y=0.622, scale_score.label, gp=gpar(col=border.color, cex=legend.size), default.units="native")
 		} else {
 			grid.text(x=0.7, y=0.7, test.abbreviation, gp=gpar(col=border.color, cex=legend.size), default.units="native")
 			grid.text(x=0.7, y=0.665, content_area.label.pieces[[1]][1], gp=gpar(col=border.color, cex=legend.size), default.units="native")
 			grid.text(x=0.7, y=0.63, content_area.label.pieces[[1]][2], gp=gpar(col=border.color, cex=legend.size), default.units="native")
-			grid.text(x=0.7, y=0.595, scale_score.label, gp=gpar(col=border.color, cex= legend.size), default.units="native")
+			grid.text(x=0.7, y=0.595, scale_score.label, gp=gpar(col=border.color, cex=legend.size), default.units="native")
 		}
 
 		y.center <- seq(0.05, 0.4, length=number.growth.levels+1)
 		arrow.legend.coors.x <- c(.25, .75, .75, 1, .5, 0, .25)
 		arrow.legend.coors.y <- c(0, 0, 1.3, 1.1, 2, 1.1, 1.3)
+		growth.label.cex <- (0.5 - max(0, max(nchar(growth.level.labels.shortened))-9)*0.035)
 
 		for (i in seq(number.growth.levels)) {
 			pushViewport(viewport(x=unit(0.3, "native"), y=unit(y.center[i], "native"),
@@ -1090,9 +1091,9 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 				gp=gpar(col=NA, lwd=0, fill=arrow.legend.color[i], alpha=0.45))
 
 			grid.text(x=0.375, y=((y.center[1]+y.center[2])/2)+(i-1)*(y.center[2]-y.center[1]), growth.level.labels.shortened[i], default.units="native",
-				gp=gpar(col=border.color, cex=.5), just="left")
+				gp=gpar(col=border.color, cex=growth.label.cex), just="left")
 			grid.text(x=0.925, y=((y.center[1]+y.center[2])/2)+(i-1)*(y.center[2]-y.center[1]), growth.level.cutscores.text[i], default.units="native",
-				gp=gpar(col=border.color, cex=.5), just="right")
+				gp=gpar(col=border.color, cex=growth.label.cex), just="right")
 		}
 	} else { ### right.vp with ASSESSMENT_TRANSITION
 		pushViewport(right.vp)
