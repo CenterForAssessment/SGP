@@ -692,10 +692,10 @@ function(sgp_object,
 			}
 		}
 
-		tmp.cut.names <- substr(sapply(strsplit(names(outputSGP.data)[grep("YEAR_1", names(outputSGP.data))], "_"), '[', 1), 2, 5)
+		tmp.cut.names <- substr(sapply(strsplit(names(outputSGP.data)[grep("YEAR_1_CURRENT_TRANSFORMED", names(outputSGP.data))], "_"), '[', 1), 2, 5)
 		tmp.cut.names.missing <- setdiff(tmp.cuts.for.output, tmp.cut.names)
 		for (i in 1:3) {
-			setnames(outputSGP.data, grep(paste("YEAR", i, sep="_"), names(outputSGP.data)), paste("CUT", tmp.cut.names, "YEAR", i, sep="_"))
+			setnames(outputSGP.data, grep(paste("YEAR", i, "CURRENT_TRANSFORMED", sep="_"), names(outputSGP.data)), paste("CUT", tmp.cut.names, "YEAR", i, sep="_"))
 			if (length(tmp.cut.names.missing) > 0) outputSGP.data[,paste("CUT", tmp.cut.names.missing, "YEAR", i, sep="_"):=NA]
 		}
 
