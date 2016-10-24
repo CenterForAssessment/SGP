@@ -53,10 +53,10 @@
 		number.achievement.level.regions <- length(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Achievement_Level_Labels"]])
 		if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["sgp.projections.max.forward.progression.grade"]])) {
 			trajectory.cuts <- sort(c(SGP::SGPstateData[[state]][["Growth"]][["Cutscores"]][['Cuts']], SGP::SGPstateData[[state]][["Student_Report_Information"]][["Projection_Fan_Limits"]]))
-			trajectory.cuts <- paste(paste("P", trajectory.cuts, sep=""), collapse="|")
+			trajectory.cuts <- paste(paste("P", trajectory.cuts, "_", sep=""), collapse="|")
 		} else {
 			trajectory.cuts <- c(1, SGP::SGPstateData[[state]][["Growth"]][["Cutscores"]][['Cuts']], 99)
-			trajectory.cuts <- paste(paste("P", trajectory.cuts, sep=""), collapse="|")
+			trajectory.cuts <- paste(paste("P", trajectory.cuts, "_", sep=""), collapse="|")
 		}
 		if (!is.null(SGP::SGPstateData[[state]][["Custom_Student_Report"]])) {
 			custom.isr.tf <- TRUE
