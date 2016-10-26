@@ -743,8 +743,10 @@ function(sgp_object,
 		sgp.projections.baseline <- sgp.projections.lagged.baseline <- FALSE
 	}
 
-    if (par.sgp.config[['sgp.percentiles']]) {
-        print.other.gp <- TRUE
+    if (!is.null(tmp.transition.year <- SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]) &&
+        sort(unique(unlist(sapply(par.sgp.config[['sgp.percentiles']], function(x) x[['sgp.panel.years']]))))[1] < tmp.transition.year) {
+            messageSGP(paste("\tNOTE: Configurations include years prior to assessment transition in ", tmp.transition.year, ". Student growth percentiles will return SGPs of all orders to accomodate investigations."))
+            print.other.gp <- TRUE
     }
 
 	### Produce cohort data information
