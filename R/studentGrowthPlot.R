@@ -183,7 +183,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 
 	if (!is.null(Report_Parameters[['Assessment_Transition']])) Cutscores[,CUTSCORES:=CUTSCORES_EQUATED]
 	if (is.null(Report_Parameters[['Assessment_Transition']]) &&
-		Report_Parameters$Content_Area_Title %in% names(SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]])) {
+		Report_Parameters$Current_Year %in% SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[Report_Parameters$Content_Area_Title]]) {
 		Cutscores[,CUTSCORES:=CUTSCORES_TRANSFORMED]
 	}
 
