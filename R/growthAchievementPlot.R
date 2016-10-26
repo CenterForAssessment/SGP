@@ -195,7 +195,7 @@
 		}
 		trajectories <- c(as.numeric(tail(tmp.dt[,grep("SCALE_SCORE", names(tmp.dt), value=TRUE), with=FALSE], 1)), as.numeric(tmp.trajectories))
 
-		if (content_area %in% names(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]])) {
+		if (year %in% SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]][[content_area]]) {
 			tmp.function <- function(tmp.iter) {
 				sapply(tmp.iter, function(x) piecewiseTransform(trajectories[x], state, content_area.projection.sequence[x], as.character(year), grade.projection.sequence[x]))
 			}
@@ -236,7 +236,7 @@
 
 	setkey(growthAchievementPlot.data, GRADE)
 		growthAchievementPlot.data[, TRANSFORMED_SCALE_SCORE:=piecewiseTransform(SCALE_SCORE, state, CONTENT_AREA, YEAR, GRADE), by=list(CONTENT_AREA, YEAR, GRADE)]
-	if (content_area %in% names(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]])) {
+	if (year %in% SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]][[content_area]]) {
 		gaPlot.show.scale.transformations <- FALSE
 	}
 

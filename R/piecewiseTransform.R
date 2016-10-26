@@ -30,7 +30,7 @@ function(scale_score,
 
 
 	if (is.null(sgp.projections.equated) | !is.null(tmp.test)) {
-		if ((content_area %in% names(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]]) &&
+		if ((year %in% SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area]] &&
 			grade %in% unlist(lapply(strsplit(names(SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[getMyLabel(state, content_area, year, "Knots_Boundaries")]]), "_"), '[', 2))) || !is.null(tmp.test)) {
 
 			my.knots_boundaries.label <- getMyLabel(state, content_area, year, "Knots_Boundaries")
