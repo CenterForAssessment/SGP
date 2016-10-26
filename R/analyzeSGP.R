@@ -743,6 +743,10 @@ function(sgp_object,
 		sgp.projections.baseline <- sgp.projections.lagged.baseline <- FALSE
 	}
 
+    if (par.sgp.config[['sgp.percentiles']]) {
+        print.other.gp <- TRUE
+    }
+
 	### Produce cohort data information
 
 	if (get.cohort.data.info) {
