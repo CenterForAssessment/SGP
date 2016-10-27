@@ -728,9 +728,9 @@
 
 			pushViewport(title.vp)
 
+			tmp.title <- paste(state.name.label, ": ", pretty_year(year), " ", content_area.label, sep="")
 			grid.roundrect(width=unit(0.95, "npc"), r=unit(0.025, "snpc"), gp=gpar(col=format.colors.font, lwd=1.6))
-			grid.text(x=0.5, y=0.675, paste(state.name.label, ": ", pretty_year(year), " ", content_area.label, sep=""),
-				gp=gpar(col=format.colors.font, cex=2.65), default.units="native")
+			grid.text(x=0.5, y=0.675, tmp.title, gp=gpar(col=format.colors.font, cex=2.65-max(0, -30+nchar(tmp.title))*0.06), default.units="native")
 			if (is.null(SGP::SGPstateData[[state]][["Achievement"]][["College_Readiness_Cutscores"]])) {
 				grid.text(x=0.5, y=0.275, "Norm & Criterion Referenced Growth & Achievement",
 					gp=gpar(col=format.colors.font, cex=2.0), default.units="native")
