@@ -594,12 +594,12 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 		tmp.years <- sort(unique(slot.data["VALID_CASE"][["YEAR"]]))
 		tmp.years.filled <- yearIncrement(tmp.years[1], seq(diff(range(as.numeric(sapply(strsplit(tmp.years, "_"), tail, 1))))+1)-1)
 		tmp.years.subset <- tail(tmp.years.filled, sgPlot.year.span)
-		tmp.last.year <- tail(tmp.years.filled, 1)
+		tmp.last.year <- tail(tmp.years.subset, 1)
 	} else {
 		tmp.years <- sort(unique(slot.data["VALID_CASE"][["YEAR"]]))
 		tmp.years.filled <- yearIncrement(tmp.years[1], seq(diff(range(as.numeric(sapply(strsplit(tmp.years, "_"), tail, 1))))+1)-1)
 		tmp.years.subset <- tail(tmp.years.filled[1:which(tmp.years.filled==tail(sort(sgPlot.years), 1))], sgPlot.year.span)
-		tmp.last.year <- tail(tmp.years.filled, 1)
+		tmp.last.year <- tail(tmp.years.subset, 1)
 	}
 
 	#### Content area stuff (NECESSARY regardless of whether sgPlot.students is provided)
