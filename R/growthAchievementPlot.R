@@ -273,7 +273,7 @@
 		tmp.projections[,c("YEAR", "CONTENT_AREA"):=list(year, content_area)]
 		setkey(tmp.projections, CONTENT_AREA, YEAR, ID)
 		tmp.projections <- growthAchievementPlot.data[tmp.projections]
-		extrapolated.cuts.dt <- data.table(long_cutscores, key="GRADE_NUMERIC")[list(head(seq(gaPlot.grade_range[1], gaPlot.grade_range[2]), -1)), mult="first"][,c("GRADE", "GRADE_NUMERIC"), with=FALSE]
+		extrapolated.cuts.dt <- data.table(long_cutscores, key="GRADE_NUMERIC")[list(head(seq(gaPlot.grade_range[1], gaPlot.grade_range[2]), -1)), mult="first"][,c("GRADE", "GRADE_NUMERIC", "CONTENT_AREA"), with=FALSE]
 		for (percentile.iter in c(50, 60, 70, 80, 90)) {
 			for (i in seq(dim(extrapolated.cuts.dt)[1])) {
 				tmp.projection.label <- grep(paste(paste("P", percentile.iter, sep=""), "PROJ", tmp.unit.label, i, "", sep="_"), names(tmp.projections), value=TRUE)
@@ -289,7 +289,7 @@
 						paste("EXTRAPOLATED_P", percentile.iter, "_CUT", sep=""):=
 							piecewiseTransform(mean(tmp.projections[tmp.tf][GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i]][['SCALE_SCORE']], na.rm=TRUE),
 												state,
-												content_area,
+												CONTENT_AREA,
 												year,
 												GRADE)]
 				} else {
