@@ -273,7 +273,7 @@
 		tmp.projections[,c("YEAR", "CONTENT_AREA"):=list(year, content_area)]
 		setkey(tmp.projections, CONTENT_AREA, YEAR, ID)
 		tmp.projections <- growthAchievementPlot.data[tmp.projections]
-		extrapolated.cuts.dt <- data.table(GRADE_NUMERIC=head(seq(gaPlot.grade_range[1], gaPlot.grade_range[2]), -1))
+		extrapolated.cuts.dt <- data.table(long_cutscores, key="GRADE_NUMERIC")[list(head(seq(gaPlot.grade_range[1], gaPlot.grade_range[2]), -1)), mult="first"][,c("GRADE", "GRADE_NUMERIC"), with=FALSE]
 		for (percentile.iter in c(50, 60, 70, 80, 90)) {
 			for (i in seq(dim(extrapolated.cuts.dt)[1])) {
 				tmp.projection.label <- grep(paste(paste("P", percentile.iter, sep=""), "PROJ", tmp.unit.label, i, "", sep="_"), names(tmp.projections), value=TRUE)
@@ -284,8 +284,18 @@
 					tmp.values <- sort(unique(tmp.projections[[tmp.projection.label]]))[c(tmp.index-1, tmp.index)]
 					tmp.tf <- tmp.projections[[tmp.projection.label]] %in% tmp.values
 				}
-				extrapolated.cuts.dt[GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i],
-					paste("EXTRAPOLATED_P", percentile.iter, "_CUT", sep=""):=mean(tmp.projections[tmp.tf][GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i]][['SCALE_SCORE']], na.rm=TRUE)]
+				if (year %in% SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]][[content_area]]) {
+					extrapolated.cuts.dt[GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i],
+						paste("EXTRAPOLATED_P", percentile.iter, "_CUT", sep=""):=
+							piecewiseTransform(mean(tmp.projections[tmp.tf][GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i]][['SCALE_SCORE']], na.rm=TRUE),
+												state,
+												content_area,
+												year,
+												GRADE)]
+				} else {
+					extrapolated.cuts.dt[GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i],
+						paste("EXTRAPOLATED_P", percentile.iter, "_CUT", sep=""):=mean(tmp.projections[tmp.tf][GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i]][['SCALE_SCORE']], na.rm=TRUE)]
+				}
 			}
 		}
 		tmp.dt <- data.table(matrix(c(gaPlot.grade_range[2], rep(gaPlot.back.extrapolated.cuts, 5)), nrow=1))
