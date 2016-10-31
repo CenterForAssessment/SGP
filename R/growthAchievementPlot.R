@@ -319,8 +319,11 @@
 			tmp.dt <- data.table(matrix(c(gaPlot.grade_range[2], rep(gaPlot.back.extrapolated.cuts, 5)), nrow=1))
 		}
 		extrapolated.cuts.dt <- rbindlist(list(extrapolated.cuts.dt[,!c("GRADE", "CONTENT_AREA"), with=FALSE], tmp.dt))
-		for (col.iter in 2:6) extrapolated.cuts.dt[,(col.iter):=spline(extrapolated.cuts.dt[[1]], extrapolated.cuts.dt[[col.iter]])[['y']]]
-		extrapolated.cuts.dt[,(1):=spline(extrapolated.cuts.dt[[1]])]
+
+		extrapolated.cuts.list <- list()
+		extrapolated.cuts.list[[1]] <- spline(extrapolated.cuts.dt[[1]])[['y']]
+		for (col.iter in 2:6) extrapolated.cuts.list[[col.iter]] <- spline(extrapolated.cuts.dt[[1]], extrapolated.cuts.dt[[col.iter]])[['y']]
+		extrapolated.cuts.dt <- as.data.table(extrapolated.cuts.list)
 	}
 
 	getSGPtDate <- function(year) {
