@@ -320,8 +320,8 @@
 		}
 
 		extrapolated.cuts.list <- as.list(rbindlist(list(extrapolated.cuts.dt[,!c("GRADE", "CONTENT_AREA"), with=FALSE], tmp.dt)))
-		for (col.iter in 2:6) extrapolated.cuts.list[[col.iter]] <- spline(extrapolated.cuts.list[[1]], extrapolated.cuts.list[[col.iter]])[['y']]
-		extrapolated.cuts.list[[1]] <- spline(extrapolated.cuts.list[[1]])[['y']]
+		for (col.iter in 2:6) extrapolated.cuts.list[[col.iter]] <- spline(extrapolated.cuts.list[[1]], extrapolated.cuts.list[[col.iter]], n=40)[['y']]
+		extrapolated.cuts.list[[1]] <- spline(extrapolated.cuts.list[[1]], n=40)[['y']]
 		extrapolated.cuts.dt <- as.data.table(extrapolated.cuts.list)
 	}
 
