@@ -702,8 +702,8 @@
 				}
 			} else {
 				tmp.cut <- College_Readiness_Cutscores
-				low.cut <- min(gp.axis.range[1], temp_uncond_frame[,ncol(temp_uncond_frame)][1], na.rm=TRUE)
-				high.cut <- max(gp.axis.range[1], rev(temp_uncond_frame[,ncol(temp_uncond_frame)])[1], na.rm=TRUE)
+				low.cut <- min(gp.axis.range[1], temp_uncond_frame[,ncol(temp_uncond_frame)][1], smoothPercentileTrajectory_Functions[[as.character(head(gaPlot.percentile_trajectories, 1))]](gaPlot.grade_range[2]), na.rm=TRUE)
+				high.cut <- max(gp.axis.range[1], rev(temp_uncond_frame[,ncol(temp_uncond_frame)])[1], smoothPercentileTrajectory_Functions[[as.character(tail(gaPlot.percentile_trajectories, 1))]](gaPlot.grade_range[2]), na.rm=TRUE)
 				grid.polygon(x=c(0.05, 0.05, 0.35, 0.35), y=c(low.cut, tmp.cut, tmp.cut, low.cut), default.units="native",
 					gp=gpar(col=format.colors.font, fill="red", lwd=1.5))
 				grid.text(x=0.2, y=(low.cut+tmp.cut)/2, "Not College Ready", gp=gpar(col=format.colors.font, cex=0.5), rot=90, default.units="native")
