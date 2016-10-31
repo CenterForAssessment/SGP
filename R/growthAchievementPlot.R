@@ -241,8 +241,7 @@
 
 	### Calculate Scale Transformations (if required)
 
-	setkey(growthAchievementPlot.data, GRADE)
-		growthAchievementPlot.data[, TRANSFORMED_SCALE_SCORE:=piecewiseTransform(SCALE_SCORE, state, CONTENT_AREA, YEAR, GRADE), by=list(CONTENT_AREA, YEAR, GRADE)]
+	growthAchievementPlot.data[, TRANSFORMED_SCALE_SCORE:=piecewiseTransform(SCALE_SCORE, state, CONTENT_AREA, YEAR, GRADE), by=list(CONTENT_AREA, YEAR, GRADE)]
 	if (year %in% SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]][[content_area]]) {
 		gaPlot.show.scale.transformations <- FALSE
 	}
@@ -284,24 +283,17 @@
 		for (percentile.iter in c(50, 60, 70, 80, 90)) {
 			for (i in seq(dim(extrapolated.cuts.dt)[1])) {
 				tmp.projection.label <- grep(paste(paste("P", percentile.iter, sep=""), "PROJ", tmp.unit.label, i, "", sep="_"), names(tmp.projections), value=TRUE)
-				if (gaPlot.back.extrapolated.cuts %in% unique(tmp.projections[[tmp.projection.label]])) {
-					tmp.tf <- tmp.projections[[tmp.projection.label]]==gaPlot.back.extrapolated.cuts
-				} else {
-					tmp.index <- which.max(gaPlot.back.extrapolated.cuts < sort(unique(tmp.projections[[tmp.projection.label]])))
-					tmp.values <- sort(unique(tmp.projections[[tmp.projection.label]]))[c(tmp.index-1, tmp.index)]
-					tmp.tf <- tmp.projections[[tmp.projection.label]] %in% tmp.values
-				}
 				if (year %in% SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]][[content_area]]) {
 					extrapolated.cuts.dt[GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i],
 						paste("EXTRAPOLATED_P", percentile.iter, "_CUT", sep=""):=
-							piecewiseTransform(mean(tmp.projections[tmp.tf][GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i]][['SCALE_SCORE']], na.rm=TRUE),
+							piecewiseTransform(min(tmp.projections[GRADE==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i] & get(tmp.projection.label) >= gaPlot.back.extrapolated.cuts][['SCALE_SCORE']], na.rm=TRUE),
 												state,
 												CONTENT_AREA,
 												year,
 												GRADE)]
 				} else {
 					extrapolated.cuts.dt[GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i],
-						paste("EXTRAPOLATED_P", percentile.iter, "_CUT", sep=""):=mean(tmp.projections[tmp.tf][GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i]][['SCALE_SCORE']], na.rm=TRUE)]
+						paste("EXTRAPOLATED_P", percentile.iter, "_CUT", sep=""):=min(tmp.projections[GRADE==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i] & get(tmp.projection.label) >= gaPlot.back.extrapolated.cuts][['SCALE_SCORE']], na.rm=TRUE)]
 				}
 			}
 		}
