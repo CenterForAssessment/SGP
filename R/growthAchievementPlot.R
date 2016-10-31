@@ -286,14 +286,14 @@
 				if (year %in% SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]][[content_area]]) {
 					extrapolated.cuts.dt[GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i],
 						paste("EXTRAPOLATED_P", percentile.iter, "_CUT", sep=""):=
-							piecewiseTransform(min(tmp.projections[GRADE==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i] & get(tmp.projection.label) >= gaPlot.back.extrapolated.cuts][['SCALE_SCORE']], na.rm=TRUE),
+							piecewiseTransform(max(tmp.projections[GRADE==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i] & get(tmp.projection.label) < gaPlot.back.extrapolated.cuts][['SCALE_SCORE']], na.rm=TRUE),
 												state,
 												CONTENT_AREA,
 												year,
 												GRADE)]
 				} else {
 					extrapolated.cuts.dt[GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i],
-						paste("EXTRAPOLATED_P", percentile.iter, "_CUT", sep=""):=min(tmp.projections[GRADE==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i] & get(tmp.projection.label) >= gaPlot.back.extrapolated.cuts][['SCALE_SCORE']], na.rm=TRUE)]
+						paste("EXTRAPOLATED_P", percentile.iter, "_CUT", sep=""):=max(tmp.projections[GRADE==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i] & get(tmp.projection.label) < gaPlot.back.extrapolated.cuts][['SCALE_SCORE']], na.rm=TRUE)]
 				}
 			}
 		}
