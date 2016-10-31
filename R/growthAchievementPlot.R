@@ -307,7 +307,8 @@
 		}
 
 		if (year %in% SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]][[content_area]]) {
-			tmp.dt <- data.table(matrix(c(gaPlot.grade_range[2],
+			tmp.dt <- data.table(long_cutscores, key="GRADE_NUMERIC")[list(tail(seq(gaPlot.grade_range[1], gaPlot.grade_range[2]), 1)), mult="first"][,c("GRADE", "GRADE_NUMERIC", "CONTENT_AREA"), with=FALSE]
+			tmp.dt <- data.table(matrix(c(tmp.dt[['GRADE_NUMERIC']],
 								rep(piecewiseTransform(gaPlot.back.extrapolated.cuts,
 														state,
 														tmp.dt[['CONTENT_AREA']],
