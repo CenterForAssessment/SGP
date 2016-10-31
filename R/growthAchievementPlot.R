@@ -318,9 +318,8 @@
 		} else {
 			tmp.dt <- data.table(matrix(c(gaPlot.grade_range[2], rep(gaPlot.back.extrapolated.cuts, 5)), nrow=1))
 		}
-		extrapolated.cuts.dt <- rbindlist(list(extrapolated.cuts.dt[,!c("GRADE", "CONTENT_AREA"), with=FALSE], tmp.dt))
-
-		extrapolated.cuts.list <- list()
+		
+		extrapolated.cuts.list <- as.list(rbindlist(list(extrapolated.cuts.dt[,!c("GRADE", "CONTENT_AREA"), with=FALSE], tmp.dt)))
 		extrapolated.cuts.list[[1]] <- spline(extrapolated.cuts.dt[[1]])[['y']]
 		for (col.iter in 2:6) extrapolated.cuts.list[[col.iter]] <- spline(extrapolated.cuts.dt[[1]], extrapolated.cuts.dt[[col.iter]])[['y']]
 		extrapolated.cuts.dt <- as.data.table(extrapolated.cuts.list)
@@ -562,7 +561,7 @@
 				for (cut.iter in seq(length(tmp.cuts)+1)) {
 					if (cut.iter==1) {
 						grid.polygon(x=c(extrapolated.cuts.dt[['GRADE_NUMERIC']][1], extrapolated.cuts.dt[['GRADE_NUMERIC']], rev(extrapolated.cuts.dt[['GRADE_NUMERIC']])[1]),
-						y=c(get(paste("y.boundary.values.", 1+max(temp_cutscores$CUTLEVEL), sep=""))[1], extrapolated.cuts.dt[[paste("EXTRAPOLATED_P", tmp.cuts[1], "_CUT", sep="")]], rev(get(paste("y.boundary.values.",  1+max(temp_cutscores$CUTLEVEL), sep="")))[1]),
+						y=c(get(paste("y.boundary.values.", 1+max(temp_cutscores[['CUTLEVEL']]), sep=""))[1], extrapolated.cuts.dt[[paste("EXTRAPOLATED_P", tmp.cuts[1], "_CUT", sep="")]], rev(get(paste("y.boundary.values.",  1+max(temp_cutscores[['CUTLEVEL']]), sep="")))[1]),
 						gp=gpar(fill=tmp.region.colors[cut.iter], lwd=0.1, lty=2, col="grey85", alpha=0.5), default.units="native")
 					}
 
