@@ -23,7 +23,7 @@
 
 	CUTLEVEL <- GRADE <- YEAR <- ID <- SCALE_SCORE <- level_1_curve <- V1 <- VALID_CASE <- NULL
 	TRANSFORMED_SCALE_SCORE <- PERCENTILE <- GRADE_NUMERIC <- CONTENT_AREA <- LEVEL <- SGP <- EXTRAPOLATED_P50_CUT <- DATE <- NULL ## To prevent R CMD check warnings
-	SCALE_SCORE_PERCENTILES <- SCALE_SCORE_PERCENTILES_TRANSFORMED <- CUTSCORES <- CUTSCORES_TRANSFORMED <- NULL
+	SCALE_SCORE_PERCENTILES <- SCALE_SCORE_PERCENTILES_TRANSFORMED <- CUTSCORES <- CUTSCORES_TRANSFORMED <- College_Readiness_Cutscores <- NULL
 
 	content_area <- toupper(content_area)
 	if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]])) {
@@ -212,6 +212,17 @@
 		}
 	}
 
+	getSGPtDate <- function(year) {
+		tmp.split <- unlist(strsplit(year, "[.]"))
+		tmp.year <- unlist(strsplit(tmp.split[1], "_"))
+		if (length(tmp.split)==2) tmp.period <- tmp.split[2] else tmp.period <- NULL
+		if (is.null(tmp.period)) tmp.date <- "05-01"
+		if (tmp.period==1) {tmp.year <- head(tmp.year, 1); tmp.date <- "08-01"}
+		if (tmp.period==2) {tmp.year <- tail(tmp.year, 1); tmp.date <- "01-15"}
+		if (tmp.period==3) {tmp.year <- tail(tmp.year, 1); tmp.date <- "07-31"}
+		return(as.Date(paste(tmp.year, tmp.date, sep="-")))
+	}
+
 	stextGrob <- function (label, r=0.1, x = x, y = y,
 		just = "centre", hjust = NULL, vjust = NULL, rot = 0, check.overlap = FALSE,
 		default.units = "native", name = NULL, gp = gpar(), vp = NULL){
@@ -284,16 +295,17 @@
 			for (i in seq(dim(extrapolated.cuts.dt)[1])) {
 				tmp.projection.label <- grep(paste(paste("P", percentile.iter, sep=""), "PROJ", tmp.unit.label, i, "", sep="_"), names(tmp.projections), value=TRUE)
 				if (year %in% SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]][[content_area]]) {
+					tmp.inf.sup <- c(max(tmp.projections[GRADE==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i] & get(tmp.projection.label) < gaPlot.back.extrapolated.cuts][['SCALE_SCORE']], na.rm=TRUE),
+									min(tmp.projections[GRADE==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i] & get(tmp.projection.label) >= gaPlot.back.extrapolated.cuts][['SCALE_SCORE']], na.rm=TRUE))
 					extrapolated.cuts.dt[GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i],
 						paste("EXTRAPOLATED_P", percentile.iter, "_CUT", sep=""):=
-							piecewiseTransform(max(tmp.projections[GRADE==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i] & get(tmp.projection.label) < gaPlot.back.extrapolated.cuts][['SCALE_SCORE']], na.rm=TRUE),
+							piecewiseTransform(mean(tmp.inf.sup[is.finite(tmp.inf.sup)]),
 												state,
 												CONTENT_AREA,
 												year,
 												GRADE)]
 				} else {
-					extrapolated.cuts.dt[GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i],
-						paste("EXTRAPOLATED_P", percentile.iter, "_CUT", sep=""):=max(tmp.projections[GRADE==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i] & get(tmp.projection.label) < gaPlot.back.extrapolated.cuts][['SCALE_SCORE']], na.rm=TRUE)]
+					extrapolated.cuts.dt[GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i], paste("EXTRAPOLATED_P", percentile.iter, "_CUT", sep=""):=mean(tmp.inf.sup[is.finite(tmp.inf.sup)])]
 				}
 			}
 		}
@@ -315,17 +327,6 @@
 		for (col.iter in 2:6) extrapolated.cuts.list[[col.iter]] <- spline(extrapolated.cuts.list[[1]], extrapolated.cuts.list[[col.iter]], n=40)[['y']]
 		extrapolated.cuts.list[[1]] <- spline(extrapolated.cuts.list[[1]], n=40)[['y']]
 		extrapolated.cuts.dt <- as.data.table(extrapolated.cuts.list)
-	}
-
-	getSGPtDate <- function(year) {
-		tmp.split <- unlist(strsplit(year, "[.]"))
-		tmp.year <- unlist(strsplit(tmp.split[1], "_"))
-		if (length(tmp.split)==2) tmp.period <- tmp.split[2] else tmp.period <- NULL
-		if (is.null(tmp.period)) tmp.date <- "05-01"
-		if (tmp.period==1) {tmp.year <- head(tmp.year, 1); tmp.date <- "08-01"}
-		if (tmp.period==2) {tmp.year <- tail(tmp.year, 1); tmp.date <- "01-15"}
-		if (tmp.period==3) {tmp.year <- tail(tmp.year, 1); tmp.date <- "07-31"}
-		return(as.Date(paste(tmp.year, tmp.date, sep="-")))
 	}
 
 
@@ -553,7 +554,7 @@
 				for (cut.iter in seq(length(tmp.cuts)+1)) {
 					if (cut.iter==1) {
 						grid.polygon(x=c(extrapolated.cuts.dt[['GRADE_NUMERIC']][1], extrapolated.cuts.dt[['GRADE_NUMERIC']], rev(extrapolated.cuts.dt[['GRADE_NUMERIC']])[1]),
-						y=c(get(paste("y.boundary.values.", 1+max(temp_cutscores[['CUTLEVEL']]), sep=""))[1], extrapolated.cuts.dt[[paste("EXTRAPOLATED_P", tmp.cuts[1], "_CUT", sep="")]], rev(get(paste("y.boundary.values.",  1+max(temp_cutscores[['CUTLEVEL']]), sep="")))[1]),
+						y=c(get(paste("y.boundary.values.", 1+max(temp_cutscores[['CUTLEVEL']]), sep=""))[1], extrapolated.cuts.dt[[paste("EXTRAPOLATED_P", tmp.cuts[1], "_CUT", sep="")]], rev(get(paste("y.boundary.values.", 1+max(temp_cutscores[['CUTLEVEL']]), sep="")))[1]),
 						gp=gpar(fill=tmp.region.colors[cut.iter], lwd=0.1, lty=2, col="grey85", alpha=0.5), default.units="native")
 					}
 
