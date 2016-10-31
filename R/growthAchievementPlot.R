@@ -307,7 +307,7 @@
 		}
 
 		if (year %in% SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]][[content_area]]) {
-			tmp.dt <- data.table(matrix(c(tmp.dt[['GRADE_NUMERIC']],
+			tmp.dt <- data.table(matrix(c(gaPlot.grade_range[2],
 								rep(piecewiseTransform(gaPlot.back.extrapolated.cuts,
 														state,
 														tmp.dt[['CONTENT_AREA']],
@@ -318,6 +318,8 @@
 			tmp.dt <- data.table(matrix(c(gaPlot.grade_range[2], rep(gaPlot.back.extrapolated.cuts, 5)), nrow=1))
 		}
 		extrapolated.cuts.dt <- rbindlist(list(extrapolated.cuts.dt[,!c("GRADE", "CONTENT_AREA"), with=FALSE], tmp.dt))
+		for (col.iter in 2:6) extrapolated.cuts.dt[,(col.iter):=spline(extrapolated.cuts.dt[[1]], extrapolated.cuts.dt[[col.iter]])[['y']]]
+		extrapolated.cuts.dt[,(1):=spline(extrapolated.cuts.dt[[1]])]
 	}
 
 	getSGPtDate <- function(year) {
