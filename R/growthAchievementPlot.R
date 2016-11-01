@@ -301,13 +301,13 @@
 					tmp.inf.sup <- unlist(tmp.inf.sup)
 					extrapolated.cuts.dt[GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i],
 						paste("EXTRAPOLATED_P", percentile.iter, "_CUT", sep=""):=
-							piecewiseTransform(mean(tmp.inf.sup[is.finite(tmp.inf.sup)]),
+							piecewiseTransform(head(tmp.inf.sup[is.finite(tmp.inf.sup)], 1),
 												state,
 												CONTENT_AREA,
 												year,
 												GRADE)]
 				} else {
-					extrapolated.cuts.dt[GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i], paste("EXTRAPOLATED_P", percentile.iter, "_CUT", sep=""):=mean(tmp.inf.sup[is.finite(tmp.inf.sup)])]
+					extrapolated.cuts.dt[GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i], paste("EXTRAPOLATED_P", percentile.iter, "_CUT", sep=""):=head(tmp.inf.sup[is.finite(tmp.inf.sup)], 1)]
 				}
 			}
 		}
