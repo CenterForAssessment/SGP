@@ -295,17 +295,18 @@
 			for (i in seq(dim(extrapolated.cuts.dt)[1])) {
 				tmp.projection.label <- grep(paste(paste("P", percentile.iter, sep=""), "PROJ", tmp.unit.label, i, "", sep="_"), names(tmp.projections), value=TRUE)
 				if (year %in% SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]][[content_area]]) {
-					tmp.inf.sup <- c(max(tmp.projections[GRADE==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i] & get(tmp.projection.label) < gaPlot.back.extrapolated.cuts][['SCALE_SCORE']], na.rm=TRUE),
-									min(tmp.projections[GRADE==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i] & get(tmp.projection.label) >= gaPlot.back.extrapolated.cuts][['SCALE_SCORE']], na.rm=TRUE))
+					tmp.inf.sup <- list(tmp.projections[GRADE==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i] & get(tmp.projection.label) < gaPlot.back.extrapolated.cuts][['SCALE_SCORE']],
+									tmp.projections[GRADE==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i] & get(tmp.projection.label) >= gaPlot.back.extrapolated.cuts][['SCALE_SCORE']])
+					for (i in 1:2) if (length(tmp.inf.sup[[i]]) > 0) tmp.inf.sup[[i]] <- c(max, min)[[i]](tmp.inf.sup[[i]]) else tmp.inf.sup[[i]] <- NaN
 					extrapolated.cuts.dt[GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i],
 						paste("EXTRAPOLATED_P", percentile.iter, "_CUT", sep=""):=
-							piecewiseTransform(mean(tmp.inf.sup[is.finite(tmp.inf.sup)]),
+							piecewiseTransform(mean(unlist(tmp.inf.sup)[is.finite(tmp.inf.sup)]),
 												state,
 												CONTENT_AREA,
 												year,
 												GRADE)]
 				} else {
-					extrapolated.cuts.dt[GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i], paste("EXTRAPOLATED_P", percentile.iter, "_CUT", sep=""):=mean(tmp.inf.sup[is.finite(tmp.inf.sup)])]
+					extrapolated.cuts.dt[GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i], paste("EXTRAPOLATED_P", percentile.iter, "_CUT", sep=""):=mean(unlist(tmp.inf.sup)[is.finite(tmp.inf.sup)])]
 				}
 			}
 		}
