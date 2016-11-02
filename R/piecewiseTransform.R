@@ -11,7 +11,7 @@ function(scale_score,
 	vertical_scale_for_projections=NULL) {
 
 	if (all(is.na(scale_score))) return(scale_score)
-	if (is.null(vertical_scale_for_projections)) vertical_scale_for_projections <- FALSE
+	if (is.null(vertical_scale_for_projections)) vertical_scale_for_projections <- TRUE
 
 	### Test to deal with assessment transition scenario
 
