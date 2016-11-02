@@ -7,9 +7,11 @@ function(scale_score,
 	output.digits=1,
 	sgp.projections.equated=NULL,
 	new.cutscores=NULL,
-	equating.method="equipercentile") {
+	equating.method="equipercentile",
+	vertical_scale_for_projections=NULL) {
 
 	if (all(is.na(scale_score))) return(scale_score)
+	if (is.null(vertical_scale_for_projections)) vertical_scale_for_projections <- FALSE
 
 	### Test to deal with assessment transition scenario
 
@@ -30,7 +32,7 @@ function(scale_score,
 
 
 	if (is.null(sgp.projections.equated) | !is.null(tmp.test)) {
-		if ((year %in% SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area]] &&
+		if (((year %in% SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area]] | !vertical_scale_for_projections) &&
 			grade %in% unlist(lapply(strsplit(names(SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[getMyLabel(state, content_area, year, "Knots_Boundaries")]]), "_"), '[', 2))) || !is.null(tmp.test)) {
 
 			my.knots_boundaries.label <- getMyLabel(state, content_area, year, "Knots_Boundaries")
