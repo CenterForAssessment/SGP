@@ -662,9 +662,9 @@ function(
 			### Modify SGPstateData
 
 			SGPstateData[["DEMO"]][["Student_Report_Information"]] <- list(
-				# Transformed_Achievement_Level_Cutscores=list(MATHEMATICS=c(0,100,200,300,400), READING=c(0,100,200,300,400), GRADE_9_LIT=c(0,100,200,300,400), AMERICAN_LIT=c(0,100,200,300,400), ALGEBRA_I=c(0,100,200,300,400), ALGEBRA_II=c(0,100,200,300,400)), ### FOR TESTING
-				# Transformed_Achievement_Level_Cutscores_gaPlot=list(MATHEMATICS=c(0,100,200,300,400), READING=c(0,100,200,300,400), GRADE_9_LIT=c(0,100,200,300,400), AMERICAN_LIT=c(0,100,200,300,400), ALGEBRA_I=c(0,100,200,300,400), ALGEBRA_II=c(0,100,200,300,400)), ### FOR TESTING
-				Vertical_Scale="Yes",
+				# Transformed_Achievement_Level_Cutscores=list(MATHEMATICS=sgpData.years, READING=sgpData.years, GRADE_9_LIT=sgpData.years, AMERICAN_LIT=sgpData.years, ALGEBRA_I=sgpData.years, ALGEBRA_II=sgpData.years), ### FOR TESTING
+				# Transformed_Achievement_Level_Cutscores_gaPlot=list(MATHEMATICS=sgpData.years, READING=sgpData.years, GRADE_9_LIT=sgpData.years, AMERICAN_LIT=sgpData.years, ALGEBRA_I=sgpData.years, ALGEBRA_II=sgpData.years), ### FOR TESTING
+				Vertical_Scale=list(MATHEMATICS=TRUE, READING=TRUE, GRADE_9_LIT=TRUE, AMERICAN_LIT=TRUE, ALGEBRA_I=TRUE, ALGEBRA_II=TRUE),
 				Content_Areas_Labels=list(MATHEMATICS="Mathematics", READING="Reading", GRADE_9_LIT="Grade 9 Literature", AMERICAN_LIT="American Literature", ALGEBRA_I="Algebra I", ALGEBRA_II="Algebra II"),
 				Content_Areas_Domains=list(MATHEMATICS="MATHEMATICS", READING="READING", GRADE_9_LIT="READING", AMERICAN_LIT="READING", ALGEBRA_I="MATHEMATICS", ALGEBRA_II="MATHEMATICS"),
 				Grades_Reported=list(MATHEMATICS=c("3","4","5","6","7","8"), READING=c("3","4","5","6","7","8"), GRADE_9_LIT="EOCT", AMERICAN_LIT="EOCT", ALGEBRA_I="EOCT", ALGEBRA_II="EOCT"),
@@ -1222,7 +1222,7 @@ function(
 
 			SGPstateData[["DEMO"]][["Student_Report_Information"]] <-
 				list(
-					Vertical_Scale="Yes",
+					Vertical_Scale=list(MATHEMATICS=TRUE, READING=TRUE),
 					Projection_Fan_Limits=c(5, 95),
 					Content_Areas_Labels=list(MATHEMATICS="Math", READING="Reading"),
 					Grades_Reported=list(MATHEMATICS=c(3,4,5,6,7,8,9,10), READING=c(3,4,5,6,7,8,9,10)),

@@ -960,7 +960,8 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 											yearIncrement(tmp.last.year, tmp.increment),
 											get.next.grade(TEMP_GRADE[1], CONTENT_AREA[1], tmp.increment),
 											state,
-											Cutscores)),
+											Cutscores),
+										vertical_scale_for_projections=SGP::SGPstateData[[state]][["Student_Report_Information"]][["Vertical_Scale"]][[CONTENT_AREA[1]]]),
 							by=list(CONTENT_AREA, TEMP_GRADE)]
 
 						if ("SCALE_SCORE_ACTUAL" %in% names(sgp_object@Data)) {
