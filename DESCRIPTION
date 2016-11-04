@@ -1,7 +1,7 @@
 Package: SGP
 Type: Package
 Title: Student Growth Percentiles & Percentile Growth Trajectories
-Version: 1.5-9.88
+Version: 1.5-9.89
 Date: 2016-11-4
 Authors@R: c(person(given=c("Damian", "W."), family="Betebenner", email="dbetebenner@nciea.org", role=c("aut", "cre")),
 		person(given=c("Adam", "R."), family="Van Iwaarden", email="avaniwaarden@gmail.com", role="aut"),
