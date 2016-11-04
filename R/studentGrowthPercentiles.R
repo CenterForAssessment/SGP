@@ -1319,7 +1319,7 @@ function(panel.data,         ## REQUIRED
             if (calculate.sgps) cohort.n <- format(dim(quantile.data)[1], big.mark=",") else cohort.n <- format(max.cohort.size, big.mark=",")
             messageSGP(paste("\tStarted studentGrowthPercentiles:", started.date))
                 messageSGP(paste("\t\tContent Area: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ",
-                    paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label, " (N=", max.cohort.size, ")", sep=""))
+                    paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label, " (N=", cohort.n, ")", sep=""))
             if (verbose.output) messageSGP(Verbose_Messages)
             messageSGP(c(tmp.messages, "\tFinished studentGrowthPercentiles: ", prettyDate(), " in ", convertTime(timetaken(started.at)), "\n"))
         }
