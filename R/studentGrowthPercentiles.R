@@ -30,6 +30,7 @@ function(panel.data,         ## REQUIRED
          sgp.quantiles.labels=NULL,
          sgp.loss.hoss.adjustment=NULL,
          sgp.cohort.size=NULL,
+         sgp.less.than.sgp.cohort.size.return=NULL,
          sgp.test.cohort.size=NULL,
          percuts.digits=0,
          isotonize=TRUE,
@@ -1020,6 +1021,15 @@ function(panel.data,         ## REQUIRED
 		return.norm.group.scale.scores <- NULL
 	}
 
+    if (!is.null(sgp.less.than.sgp.cohort.size.return) && is.null(sgp.cohort.size)) {
+        stop("NOTE: When 'sgp.less.than.sgp.cohort.size.return' is not NULL, 'sgp.cohort.size' must also be provided.")
+    }
+
+    if (!is.null(sgp.less.than.sgp.cohort.size.return)) {
+        if (identical(sgp.less.than.sgp.cohort.size.return, TRUE)) sgp.less.than.sgp.cohort.size.return <- paste("Less than", sgp.cohort.size, "Students in Cohort. No SGP Calculated")
+        sgp.less.than.sgp.cohort.size.return <- as.character(sgp.less.than.sgp.cohort.size.return)
+    }
+
 
 	### Create object to store the studentGrowthPercentiles objects
 
@@ -1218,7 +1228,7 @@ function(panel.data,         ## REQUIRED
 				Simulated_SGPs=Simulated_SGPs))
 	}
 
-	if (max.cohort.size < sgp.cohort.size) {
+	if (is.null(sgp.less.than.sgp.cohort.size.return) && max.cohort.size < sgp.cohort.size) {
 		tmp.messages <- paste("\t\tNOTE: Supplied data together with grade progression contains fewer than the minimum cohort size.\n\t\tOnly", max.cohort.size,
 			"valid cases provided with", sgp.cohort.size, "indicated as minimum cohort N size. Check data, function arguments and see help page for details.\n")
 		messageSGP(paste("\tStarted studentGrowthPercentiles", started.date))
@@ -1236,6 +1246,7 @@ function(panel.data,         ## REQUIRED
 				SGProjections=SGProjections,
 				Simulated_SGPs=Simulated_SGPs))
 	}
+
 
 	### PROGRESSION variable creation:
 
@@ -1294,6 +1305,37 @@ function(panel.data,         ## REQUIRED
 		}
 	}
 
+    if (!is.null(sgp.less.than.sgp.cohort.size.return) && max.cohort.size < sgp.cohort.size) {
+        quantile.data <- data.table(ID=.get.panel.data(ss.data, tmp.num.prior, by.grade)[[1]], SGP=as.integer(NA), SGP_NOTE=sgp.less.than.sgp.cohort.size.return)
+        if (return.norm.group.identifier) quantile.data[,SGP_NORM_GROUP:=as.factor(paste(tail(paste(year.progression, paste(content_area.progression, grade.progression, sep="_"), sep="/"), tmp.num.prior+1), collapse="; "))]
+        if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, "SGP", "SGP_BASELINE")
+		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & "SGP_NORM_GROUP" %in% names(quantile.data)) setnames(quantile.data, gsub("SGP_NORM_GROUP", "SGP_NORM_GROUP_BASELINE", names(quantile.data)))
+		if (identical(sgp.labels[['my.extra.label']], "EQUATED")) setnames(quantile.data, "SGP", "SGP_EQUATED")
+		if (identical(sgp.labels[['my.extra.label']], "EQUATED") & "SGP_NORM_GROUP" %in% names(quantile.data)) setnames(quantile.data, gsub("SGP_NORM_GROUP", "SGP_NORM_GROUP_EQUATED", names(quantile.data)))
+
+        SGPercentiles[[tmp.path]] <- rbindlist(list(quantile.data, SGPercentiles[[tmp.path]]), fill=TRUE)
+
+        if (print.time.taken) {
+            if (calculate.sgps) cohort.n <- format(dim(quantile.data)[1], big.mark=",") else cohort.n <- format(max.cohort.size, big.mark=",")
+            messageSGP(paste("\tStarted studentGrowthPercentiles:", started.date))
+                messageSGP(paste("\t\tContent Area: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ",
+                    paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label, " (N=", cohort.n, ")", sep=""))
+            if (verbose.output) messageSGP(Verbose_Messages)
+            messageSGP(c(tmp.messages, "\tFinished studentGrowthPercentiles: ", prettyDate(), " in ", convertTime(timetaken(started.at)), "\n"))
+        }
+
+        return(
+            list(Coefficient_Matrices=Coefficient_Matrices,
+                Cutscores=Cutscores,
+                Goodness_of_Fit=Goodness_of_Fit,
+                Knots_Boundaries=Knots_Boundaries,
+                Panel_Data = if (return.panel.data) Panel_Data else NULL,
+                SGPercentiles=SGPercentiles,
+                SGProjections=SGProjections,
+                Simulated_SGPs=Simulated_SGPs))
+    }
+
+
 	### Create Knots and Boundaries if requested (uses only grades in tmp.gp)
 
 	if (missing(use.my.knots.boundaries)) {
@@ -1310,6 +1352,7 @@ function(panel.data,         ## REQUIRED
 			}
 		}
 	}
+
 
 	### QR Calculations: coefficient matrices are saved/read into/from panel.data[["Coefficient_Matrices"]]
 
@@ -1367,6 +1410,7 @@ function(panel.data,         ## REQUIRED
 		}
 	}
 
+
 	### Calculate SIMEX corrected coefficient matrices and percentiles (if requested)
 
 	if (simex.tf) {
@@ -1392,6 +1436,7 @@ function(panel.data,         ## REQUIRED
 			Coefficient_Matrices[[paste(tmp.path.coefficient.matrices, '.SIMEX', sep="")]] <- tmp_sgp_combined[["Coefficient_Matrices"]][["TMP_SIMEX"]]
 		}
 	}
+
 
 	### Calculate growth percentiles (if requested), percentile cuts (if requested), and simulated confidence intervals (if requested)
 
@@ -1660,13 +1705,13 @@ function(panel.data,         ## REQUIRED
 
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, "SGP", "SGP_BASELINE")
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & tf.growth.levels) setnames(quantile.data, "SGP_LEVEL", "SGP_LEVEL_BASELINE")
-		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, gsub("SGP_STANDARD_ERROR", "SGP_BASELINE_STANDARD_ERROR", names(quantile.data)))
-		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, gsub("SGP_ORDER", "SGP_BASELINE_ORDER", names(quantile.data)))
-		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, gsub("SGP_NORM_GROUP", "SGP_NORM_GROUP_BASELINE", names(quantile.data)))
+		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & "SGP_STANDARD_ERROR" %in% names(quantile.data)) setnames(quantile.data, gsub("SGP_STANDARD_ERROR", "SGP_BASELINE_STANDARD_ERROR", names(quantile.data)))
+		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & "SGP_ORDER" %in% names(quantile.data)) setnames(quantile.data, gsub("SGP_ORDER", "SGP_BASELINE_ORDER", names(quantile.data)))
+		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & "SGP_NORM_GROUP" %in% names(quantile.data)) setnames(quantile.data, gsub("SGP_NORM_GROUP", "SGP_NORM_GROUP_BASELINE", names(quantile.data)))
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & simex.tf) setnames(quantile.data, "SGP_SIMEX", "SGP_SIMEX_BASELINE")
 		if (identical(sgp.labels[['my.extra.label']], "EQUATED")) setnames(quantile.data, "SGP", "SGP_EQUATED")
 		if (identical(sgp.labels[['my.extra.label']], "EQUATED") & tf.growth.levels) setnames(quantile.data, "SGP_LEVEL", "SGP_LEVEL_EQUATED")
-		if (identical(sgp.labels[['my.extra.label']], "EQUATED")) setnames(quantile.data, gsub("SGP_NORM_GROUP", "SGP_NORM_GROUP_EQUATED", names(quantile.data)))
+		if (identical(sgp.labels[['my.extra.label']], "EQUATED") & "SGP_NORM_GROUP" %in% names(quantile.data)) setnames(quantile.data, gsub("SGP_NORM_GROUP", "SGP_NORM_GROUP_EQUATED", names(quantile.data)))
 
 		if (!is.null(additional.vnames.to.return)) {
 			quantile.data <- data.table(panel.data[["Panel_Data"]][,c("ID", names(additional.vnames.to.return)), with=FALSE], key="ID")[quantile.data]

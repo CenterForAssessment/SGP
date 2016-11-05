@@ -40,6 +40,7 @@ studentGrowthPercentiles(panel.data,
                          sgp.quantiles.labels=NULL,
                          sgp.loss.hoss.adjustment=NULL,
                          sgp.cohort.size=NULL,
+			 sgp.less.than.sgp.cohort.size.return=NULL,
                          sgp.test.cohort.size=NULL,
                          percuts.digits=0,
                          isotonize=TRUE,
@@ -163,6 +164,9 @@ to calculate the lags/differences based upon the supplied years.
   \item{sgp.loss.hoss.adjustment}{Argument to control whether SGP is calculated using which.max for values associated with the hoss embedded in SGPstateData. Providing two letter state acronym utilizes this adjustment whereas supply NULL (the default) uses no adjustment.
   }
   \item{sgp.cohort.size}{Argument to control the minimum cohort size used to calculate SGPs and associated coefficient matrices. NULL (the default) uses no restriction.  If not NULL, argument should be an integer value.
+  }
+  \item{sgp.less.than.sgp.cohort.size.return}{If non-NULL, indicates whether a data set should be returned with the indicated character string in place of the SGP
+	  that would be calculated. If set to TRUE, then character string: \code{< sgp.cohort.size students in cohort. No SGP Calculated}.
   }
   \item{sgp.test.cohort.size}{Integer indicating the maximum number of students sampled from the full cohort to use in the calculation of student growth percentiles.  Intended to be used 
   as a test of the desired analyses to be run. The default, NULL, uses no restrictions (no tests are performed, and analyses use the entire cohort of students).
