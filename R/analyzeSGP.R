@@ -926,7 +926,7 @@ function(sgp_object,
 			} # #END not FOREACH
 			stopParallel(parallel.config, par.start)
 			if (!is.null(sgp.test.cohort.size)) {
-				test.ids <- unique(rbindlist(tmp_sgp_object[["SGPercentiles"]])[["ID"]])
+				test.ids <- unique(rbindlist(tmp_sgp_object[["SGPercentiles"]], fill=TRUE)[['ID']])
 				if (is(tmp_sgp_data_for_analysis, "DBIObject")) {
 					tmp_sgp_data_for_analysis <- data.table(dbGetQuery(dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_SGP_Data.sqlite")),
 							paste("select * from sgp_data where ID in ('", paste(test.ids, collapse="', '"), "')", sep="")))
@@ -1897,7 +1897,7 @@ function(sgp_object,
 					...)
 			}
 			if (!is.null(sgp.test.cohort.size)) {
-				test.ids <- unique(rbindlist(tmp_sgp_object[["SGPercentiles"]])[["ID"]])
+				test.ids <- unique(rbindlist(tmp_sgp_object[["SGPercentiles"]], fill=TRUE)[["ID"]])
 				if (is(tmp_sgp_data_for_analysis, "DBIObject")) {
 					tmp_sgp_data_for_analysis <- data.table(dbGetQuery(dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_SGP_Data.sqlite")),
 							paste("select * from sgp_data where ID in ('", paste(test.ids, collapse="', '"), "')", sep="")))
