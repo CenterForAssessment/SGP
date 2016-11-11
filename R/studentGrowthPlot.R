@@ -337,26 +337,26 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 
 	year.function <- function(year, add.sub, vec.length, output.type="numeric", season=NULL) {
 		if (is.null(season)) {
-			if (length(grep("_", year) > 0)) {
-				tmp <- as.numeric(unlist(strsplit(as.character(year), "_")))+add.sub
+			if (grepl("_", year)) {
+				tmp <- as.numeric(unlist(strsplit(strsplit(as.character(year), "[.]")[[1]][1], "_")))+add.sub
 				if (output.type=="numeric") {
 					return(seq(from=tmp[2], length=vec.length))
 				} else {
 					return(paste(seq(from=tmp[1], length=vec.length), "-", seq(from=tmp[2], length=vec.length), sep=""))
 				}
 			} else {
-				return(seq(from=as.numeric(year)+add.sub, length=vec.length))
+				return(seq(from=as.numeric(strsplit(as.character(year), "[.]")[[1]][1])+add.sub, length=vec.length))
 			}
 		} else {
 			if (length(grep("_", year) > 0)) {
-		 		tmp <- as.numeric(unlist(strsplit(as.character(year), "_")))+add.sub
+		 		tmp <- as.numeric(unlist(strsplit(strsplit(as.character(year), "[.]")[[1]][1], "_")))+add.sub
 				if (output.type=="numeric") {
 					return(seq(from=tmp[2], length=vec.length))
 				} else {
 					return(paste(season, seq(from=tmp[1], length=vec.length)))
 				}
 			} else {
-				return(paste(season, seq(from=as.numeric(year)+add.sub, length=vec.length)))
+				return(paste(season, seq(from=as.numeric(strsplit(as.character(year), "[.]")[[1]][1])+add.sub, length=vec.length)))
 			}
 		}
 	}
@@ -647,7 +647,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 
 	for (j in seq(length(Report_Parameters$Assessment_Transition[['Year']])+1)) {
 		for (i in seq(number.achievement.level.regions[[j]]-1)) {
-			temp <- data.table(temp_id=seq_len(nrow(grade.values$interp.df)), grade.values$interp.df, YEAR=sapply(strsplit(grade.values$years, "_"), tail, 1), key="YEAR")[tmp.year.sequence[[j]]]
+			temp <- data.table(temp_id=seq_len(nrow(grade.values$interp.df)), grade.values$interp.df, YEAR=sapply(strsplit(sapply(strsplit(grade.values$years, "_"), tail, 1), "[.]"), head, 1), key="YEAR")[tmp.year.sequence[[j]]]
 			temp[,YEAR:=get.my.cutscore.year(Report_Parameters$State, Report_Parameters$Content_Area, YEAR, i)]
 			temp <- merge(temp, Cutscores[CUTLEVEL==i], all.x=TRUE, by=c("YEAR", "CONTENT_AREA", "GRADE"))
 			temp <- temp[order(temp$temp_id),][['CUTSCORES']]
