@@ -229,8 +229,8 @@ if (reports.by.school) {
 				student_number <- n
 			}
 			if (sgPlot.folder.names=="name" | sgPlot.anonymize) {
-				file_name <- paste(paste(gsub(" |/", "-", FIRST_NAME), gsub(" |/", "-", LAST_NAME), student_number, year_folder, "REPORT", sep="_"), ".pdf", sep="")
-				file_name_json <- paste(paste(gsub(" |/", "-", FIRST_NAME), gsub(" |/", "-", LAST_NAME), student_number, year_folder, sep="_"), sep="")
+				file_name <- paste(paste(gsub(" |/", "-", FIRST_NAME), gsub(" |/", "-", LAST_NAME), student_number, gsub("[.]", "-", year_folder), "REPORT", sep="_"), ".pdf", sep="")
+				file_name_json <- paste(paste(gsub(" |/", "-", FIRST_NAME), gsub(" |/", "-", LAST_NAME), student_number, gsub("[.]", "-", year_folder), sep="_"), sep="")
 			} else {
 				file_name <- paste(n, "_REPORT.pdf", sep="")
 				file_name_json <- n
@@ -991,7 +991,7 @@ if (reports.by.instructor) {
 				student_number <- n
 			}
 			if (sgPlot.folder.names=="name" | sgPlot.anonymize) {
-				file_name <- paste(paste(FIRST_NAME, LAST_NAME, student_number, year_folder, "REPORT", sep="_"), ".pdf", sep="")
+				file_name <- paste(paste(FIRST_NAME, LAST_NAME, student_number, gsub("[.]", "-", year_folder), "REPORT", sep="_"), ".pdf", sep="")
 			} else {
 				file_name <- paste(n, "_REPORT.pdf", sep="")
 			}
