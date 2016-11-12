@@ -283,11 +283,16 @@
 	### Calculate Extrapolated Cuts based upon SGP growth of 50, 60, 70, 80, and 90 (if requested)
 
 	if (!is.null(gaPlot.back.extrapolated.cuts)) {
+		tmp.extrapolated.cuts.list <- list()
+		tmp.inf.sup.functions <- c(function(x) quantile(x, prob=0.95), function(x) quantile(x, prob=0.05))
 		setkey(growthAchievementPlot.data, CONTENT_AREA, YEAR, ID)
-		if (baseline) tmp.proj.name <- paste(content_area, year, "BASELINE", sep=".") else tmp.proj.name <- paste(content_area, year, sep=".")
-		tmp.projections <- gaPlot.sgp_object@SGP$SGProjections[[tmp.proj.name]][,
-			c("ID", grep("P50|P60|P70|P80|P90", names(gaPlot.sgp_object@SGP$SGProjections[[tmp.proj.name]]), value=TRUE)), with=FALSE]
-		tmp.projections[,c("YEAR", "CONTENT_AREA"):=list(year, content_area)]
+		if (is.null(tmp.proj.name <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]])) tmp.proj.name <- content_area
+		if (baseline) tmp.proj.name <- unique(paste(tmp.proj.name, year, "BASELINE", sep=".")) else tmp.proj.name <- unique(paste(tmp.proj.name, year, sep="."))
+		for (tmp.proj.name.iter in intersect(tmp.proj.name, names(gaPlot.sgp_object@SGP$SGProjections))) {
+			tmp.extrapolated.cuts.list[[tmp.proj.name.iter]] <- gaPlot.sgp_object@SGP$SGProjections[[tmp.proj.name.iter]][,c("ID", grep("P50|P60|P70|P80|P90", names(gaPlot.sgp_object@SGP$SGProjections[[tmp.proj.name.iter]]), value=TRUE)), with=FALSE]
+			tmp.extrapolated.cuts.list[[tmp.proj.name.iter]][,c("CONTENT_AREA", "YEAR"):=list(unlist(strsplit(tmp.proj.name.iter, "[.]"))[1], unlist(strsplit(tmp.proj.name.iter, "[.]"))[2])]
+		}
+		tmp.projections <- rbindlist(tmp.extrapolated.cuts.list, fill=TRUE)
 		setkey(tmp.projections, CONTENT_AREA, YEAR, ID)
 		tmp.projections <- growthAchievementPlot.data[tmp.projections]
 		extrapolated.cuts.dt <- data.table(long_cutscores, key="GRADE_NUMERIC")[list(head(seq(gaPlot.grade_range[1], gaPlot.grade_range[2]), -1)), mult="first"][,c("GRADE", "GRADE_NUMERIC", "CONTENT_AREA"), with=FALSE]
@@ -296,7 +301,7 @@
 				tmp.projection.label <- grep(paste(paste("P", percentile.iter, sep=""), "PROJ", tmp.unit.label, i, "", sep="_"), names(tmp.projections), value=TRUE)
 				tmp.inf.sup <- list(tmp.projections[GRADE==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i] & get(tmp.projection.label) < gaPlot.back.extrapolated.cuts][['SCALE_SCORE']],
 									tmp.projections[GRADE==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i] & get(tmp.projection.label) >= gaPlot.back.extrapolated.cuts][['SCALE_SCORE']])
-				for (j in 1:2) if (length(tmp.inf.sup[[j]]) > 0) tmp.inf.sup[[j]] <- c(max, min)[[j]](tmp.inf.sup[[j]]) else tmp.inf.sup[[j]] <- NaN
+				for (j in 1:2) if (length(tmp.inf.sup[[j]]) > 0) tmp.inf.sup[[j]] <- tmp.inf.sup.functions[[j]](tmp.inf.sup[[j]]) else tmp.inf.sup[[j]] <- NaN
 				tmp.inf.sup <- unlist(tmp.inf.sup)
 				if (year %in% SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]][[content_area]]) {
 					extrapolated.cuts.dt[GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i],
@@ -311,6 +316,7 @@
 				}
 			}
 		}
+		extrapolated.cuts.dt[,(4:8):=as.data.table(t(apply(as.matrix(extrapolated.cuts.dt[,(4:8), with=FALSE]), 1, sort, decreasing=TRUE)))]
 
 		if (year %in% SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]][[content_area]]) {
 			tmp.dt <- data.table(long_cutscores, key="GRADE_NUMERIC")[list(tail(seq(gaPlot.grade_range[1], gaPlot.grade_range[2]), 1)), mult="first"][,c("GRADE", "GRADE_NUMERIC", "CONTENT_AREA"), with=FALSE]
@@ -326,8 +332,8 @@
 		}
 
 		extrapolated.cuts.list <- as.list(rbindlist(list(extrapolated.cuts.dt[,!c("GRADE", "CONTENT_AREA"), with=FALSE], tmp.dt)))
-		for (col.iter in 2:6) extrapolated.cuts.list[[col.iter]] <- spline(extrapolated.cuts.list[[1]], extrapolated.cuts.list[[col.iter]], n=40)[['y']]
-		extrapolated.cuts.list[[1]] <- spline(extrapolated.cuts.list[[1]], n=40)[['y']]
+		for (col.iter in 2:6) extrapolated.cuts.list[[col.iter]] <- spline(extrapolated.cuts.list[[1]], extrapolated.cuts.list[[col.iter]], n=40, method="natural")[['y']]
+		extrapolated.cuts.list[[1]] <- spline(extrapolated.cuts.list[[1]], n=40, method="natural")[['y']]
 		extrapolated.cuts.dt <- as.data.table(extrapolated.cuts.list)
 	}
 
