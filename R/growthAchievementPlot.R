@@ -284,6 +284,7 @@
 
 	if (!is.null(gaPlot.back.extrapolated.cuts)) {
 		tmp.extrapolated.cuts.list <- list()
+		tmp.inf.sup.functions <- c(function(x) quantile(x, prob=0.95), function(x) quantile(x, prob=0.05))
 		setkey(growthAchievementPlot.data, CONTENT_AREA, YEAR, ID)
 		if (is.null(tmp.proj.name <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]])) tmp.proj.name <- content_area
 		if (baseline) tmp.proj.name <- unique(paste(tmp.proj.name, year, "BASELINE", sep=".")) else tmp.proj.name <- unique(paste(tmp.proj.name, year, sep="."))
@@ -300,7 +301,7 @@
 				tmp.projection.label <- grep(paste(paste("P", percentile.iter, sep=""), "PROJ", tmp.unit.label, i, "", sep="_"), names(tmp.projections), value=TRUE)
 				tmp.inf.sup <- list(tmp.projections[GRADE==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i] & get(tmp.projection.label) < gaPlot.back.extrapolated.cuts][['SCALE_SCORE']],
 									tmp.projections[GRADE==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i] & get(tmp.projection.label) >= gaPlot.back.extrapolated.cuts][['SCALE_SCORE']])
-				for (j in 1:2) if (length(tmp.inf.sup[[j]]) > 0) tmp.inf.sup[[j]] <- c(max, min)[[j]](tmp.inf.sup[[j]]) else tmp.inf.sup[[j]] <- NaN
+				for (j in 1:2) if (length(tmp.inf.sup[[j]]) > 0) tmp.inf.sup[[j]] <- tmp.inf.sup.functions[[j]](tmp.inf.sup[[j]]) else tmp.inf.sup[[j]] <- NaN
 				tmp.inf.sup <- unlist(tmp.inf.sup)
 				if (year %in% SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]][[content_area]]) {
 					extrapolated.cuts.dt[GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i],
