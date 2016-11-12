@@ -283,11 +283,15 @@
 	### Calculate Extrapolated Cuts based upon SGP growth of 50, 60, 70, 80, and 90 (if requested)
 
 	if (!is.null(gaPlot.back.extrapolated.cuts)) {
+		tmp.extrapolated.cuts.list <- list()
 		setkey(growthAchievementPlot.data, CONTENT_AREA, YEAR, ID)
-		if (baseline) tmp.proj.name <- paste(content_area, year, "BASELINE", sep=".") else tmp.proj.name <- paste(content_area, year, sep=".")
-		tmp.projections <- gaPlot.sgp_object@SGP$SGProjections[[tmp.proj.name]][,
-			c("ID", grep("P50|P60|P70|P80|P90", names(gaPlot.sgp_object@SGP$SGProjections[[tmp.proj.name]]), value=TRUE)), with=FALSE]
-		tmp.projections[,c("YEAR", "CONTENT_AREA"):=list(year, content_area)]
+		if (is.null(tmp.proj.name <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]])) tmp.proj.name <- content_area
+		if (baseline) tmp.proj.name <- unique(paste(tmp.proj.name, year, "BASELINE", sep=".")) else tmp.proj.name <- unique(paste(tmp.proj.name, year, sep="."))
+		for (tmp.proj.name.iter in intersect(tmp.proj.name, names(gaPlot.sgp_object@SGP$SGProjections))) {
+			tmp.extrapolated.cuts.list[[tmp.proj.name.iter]] <- gaPlot.sgp_object@SGP$SGProjections[[tmp.proj.name.iter]][,c("ID", grep("P50|P60|P70|P80|P90", names(gaPlot.sgp_object@SGP$SGProjections[[tmp.proj.name.iter]]), value=TRUE)), with=FALSE]
+			tmp.extrapolated.cuts.list[[tmp.proj.name.iter]][,c("CONTENT_AREA", "YEAR"):=list(unlist(strsplit(tmp.proj.name.iter, "[.]"))[1], unlist(strsplit(tmp.proj.name.iter, "[.]"))[2])]
+		}
+		tmp.projections <- rbindlist(tmp.extrapolated.cuts.list, fill=TRUE)
 		setkey(tmp.projections, CONTENT_AREA, YEAR, ID)
 		tmp.projections <- growthAchievementPlot.data[tmp.projections]
 		extrapolated.cuts.dt <- data.table(long_cutscores, key="GRADE_NUMERIC")[list(head(seq(gaPlot.grade_range[1], gaPlot.grade_range[2]), -1)), mult="first"][,c("GRADE", "GRADE_NUMERIC", "CONTENT_AREA"), with=FALSE]
