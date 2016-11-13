@@ -284,7 +284,7 @@
 
 	if (!is.null(gaPlot.back.extrapolated.cuts)) {
 		tmp.extrapolated.cuts.list <- list()
-		tmp.inf.sup.functions <- c(function(x) quantile(x, prob=0.95), function(x) quantile(x, prob=0.05))
+		tmp.inf.sup.functions <- c(function(x) quantile(x, prob=0.975), function(x) quantile(x, prob=0.025))
 		setkey(growthAchievementPlot.data, CONTENT_AREA, YEAR, ID)
 		if (is.null(tmp.proj.name <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]])) tmp.proj.name <- content_area
 		if (baseline) tmp.proj.name <- unique(paste(tmp.proj.name, year, "BASELINE", sep=".")) else tmp.proj.name <- unique(paste(tmp.proj.name, year, sep="."))
