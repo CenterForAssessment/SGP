@@ -284,7 +284,7 @@
 
 	if (!is.null(gaPlot.back.extrapolated.cuts)) {
 		tmp.extrapolated.cuts.list <- list()
-		tmp.inf.sup.functions <- c(function(x) quantile(x, prob=0.975), function(x) quantile(x, prob=0.025))
+		tmp.inf.sup.functions <- c(function(x) quantile(x, prob=0.975), function(x) quantile(x, prob=0.5))
 		setkey(growthAchievementPlot.data, CONTENT_AREA, YEAR, ID)
 		if (is.null(tmp.proj.name <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]])) tmp.proj.name <- content_area
 		if (baseline) tmp.proj.name <- unique(paste(tmp.proj.name, year, "BASELINE", sep=".")) else tmp.proj.name <- unique(paste(tmp.proj.name, year, sep="."))
@@ -306,13 +306,13 @@
 				if (year %in% SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]][[content_area]]) {
 					extrapolated.cuts.dt[GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i],
 						paste("EXTRAPOLATED_P", percentile.iter, "_CUT", sep=""):=
-							piecewiseTransform(head(tmp.inf.sup[is.finite(tmp.inf.sup)], 1),
+							piecewiseTransform(tail(tmp.inf.sup[is.finite(tmp.inf.sup)], 1),
 												state,
 												CONTENT_AREA,
 												year,
 												GRADE)]
 				} else {
-					extrapolated.cuts.dt[GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i], paste("EXTRAPOLATED_P", percentile.iter, "_CUT", sep=""):=head(tmp.inf.sup[is.finite(tmp.inf.sup)], 1)]
+					extrapolated.cuts.dt[GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i], paste("EXTRAPOLATED_P", percentile.iter, "_CUT", sep=""):=tail(tmp.inf.sup[is.finite(tmp.inf.sup)], 1)]
 				}
 			}
 		}
