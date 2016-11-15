@@ -290,7 +290,7 @@
 		if (baseline) tmp.proj.name <- unique(paste(tmp.proj.name, year, "BASELINE", sep=".")) else tmp.proj.name <- unique(paste(tmp.proj.name, year, sep="."))
 		for (tmp.proj.name.iter in intersect(tmp.proj.name, names(gaPlot.sgp_object@SGP$SGProjections))) {
 			tmp.extrapolated.cuts.list[[tmp.proj.name.iter]] <- gaPlot.sgp_object@SGP$SGProjections[[tmp.proj.name.iter]][,c("ID", grep("P50|P60|P70|P80|P90", names(gaPlot.sgp_object@SGP$SGProjections[[tmp.proj.name.iter]]), value=TRUE)), with=FALSE]
-			tmp.extrapolated.cuts.list[[tmp.proj.name.iter]][,c("CONTENT_AREA", "YEAR"):=list(unlist(strsplit(tmp.proj.name.iter, "[.]"))[1], paste(tail(unlist(strsplit(tmp.proj.name.iter, "[.]")), -1), collapse="."))]
+			tmp.extrapolated.cuts.list[[tmp.proj.name.iter]][,c("CONTENT_AREA", "YEAR"):=list(unlist(strsplit(tmp.proj.name.iter, "[.]"))[1], sub(".BASELINE", "", paste(tail(unlist(strsplit(tmp.proj.name.iter, "[.]")), -1), collapse=".")))]
 		}
 		tmp.projections <- rbindlist(tmp.extrapolated.cuts.list, fill=TRUE)
 		setkey(tmp.projections, CONTENT_AREA, YEAR, ID)
