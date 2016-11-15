@@ -111,7 +111,7 @@
 	}
 
 	cutscore.year <- sort(c(year, unique(long_cutscores$YEAR)), na.last=FALSE)[max(which(sort(c(year, unique(long_cutscores$YEAR)), na.last=FALSE)==year))-1]
-	temp_cutscores <- long_cutscores[GRADE %in% tmp.unique.grades.character & !CUTLEVEL %in% c("LOSS", "HOSS") & YEAR %in% cutscore.year][,CUTLEVEL:=as.numeric(CUTLEVEL)]
+	temp_cutscores <- long_cutscores[GRADE %in% tmp.unique.grades.character & !CUTLEVEL %in% c("LOSS", "HOSS") & YEAR %in% cutscore.year & CONTENT_AREA %in% tmp.unique.content_areas][,CUTLEVEL:=as.numeric(CUTLEVEL)]
 	setkeyv(temp_cutscores, c("GRADE_NUMERIC", "CONTENT_AREA"))
 
 	if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["gaPlot.back.extrapolated.cuts"]])) {
