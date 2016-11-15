@@ -33,8 +33,9 @@ function(scale_score,
 
 	if (is.null(sgp.projections.equated) | !is.null(tmp.test)) {
 		if (((year %in% SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores"]][[content_area]] | !vertical_scale_for_projections) &&
-			grade %in% unlist(lapply(strsplit(names(SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[my.knots_boundaries.label <- getMyLabel(state, content_area, year, "Knots_Boundaries")]]), "_"), '[', 2))) || !is.null(tmp.test)) {
+			grade %in% unlist(lapply(strsplit(names(SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[getMyLabel(state, content_area, year, "Knots_Boundaries")]]), "_"), '[', 2))) || !is.null(tmp.test)) {
 
+			my.knots_boundaries.label <- getMyLabel(state, content_area, year, "Knots_Boundaries")
 			tmp.loss.hoss <- SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[my.knots_boundaries.label]][[paste("loss.hoss_", grade, sep="")]]
 			scale_score[scale_score < tmp.loss.hoss[1]] <- tmp.loss.hoss[1]; scale_score[scale_score > tmp.loss.hoss[2]] <- tmp.loss.hoss[2]
 			my.content_area <- getMyLabel(state, content_area, year)
