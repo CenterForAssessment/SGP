@@ -674,8 +674,8 @@
 				grid.text(x=1.15, y=ach.per.axis.range[i], ach.per.axis.labels[i], gp=gpar(col=format.colors.font, cex=0.65), just="right", default.units="native")
 			}
 
-			setkey(growthAchievementPlot.data, GRADE)
-			grid.text(x=unit(0.8, "native"), y=unit(median(growthAchievementPlot.data[list(tmp.unique.grades.numeric[1])]$TRANSFORMED_SCALE_SCORE), "native"),
+			setkey(growthAchievementPlot.data, YEAR, GRADE)
+			grid.text(x=unit(0.8, "native"), y=unit(median(growthAchievementPlot.data[list(year, tmp.unique.grades.numeric[1])]$TRANSFORMED_SCALE_SCORE), "native"),
 				paste(pretty_year(year), "Achievement Percentile"), gp=gpar(col=format.colors.font, cex=0.9), rot=90)
 
 			popViewport() ## pop left.axis.vp
