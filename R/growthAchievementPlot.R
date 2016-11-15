@@ -111,7 +111,7 @@
 	}
 
 	cutscore.year <- sort(c(year, unique(long_cutscores$YEAR)), na.last=FALSE)[max(which(sort(c(year, unique(long_cutscores$YEAR)), na.last=FALSE)==year))-1]
-	temp_cutscores <- long_cutscores[GRADE %in% tmp.unique.grades.character & !CUTLEVEL %in% c("LOSS", "HOSS") & YEAR %in% cutscore.year][,CUTLEVEL:=as.numeric(CUTLEVEL)]
+	temp_cutscores <- long_cutscores[GRADE %in% tmp.unique.grades.character & !CUTLEVEL %in% c("LOSS", "HOSS") & YEAR %in% cutscore.year & CONTENT_AREA %in% tmp.unique.content_areas][,CUTLEVEL:=as.numeric(CUTLEVEL)]
 	setkeyv(temp_cutscores, c("GRADE_NUMERIC", "CONTENT_AREA"))
 
 	if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["gaPlot.back.extrapolated.cuts"]])) {
@@ -284,13 +284,13 @@
 
 	if (!is.null(gaPlot.back.extrapolated.cuts)) {
 		tmp.extrapolated.cuts.list <- list()
-		tmp.inf.sup.functions <- c(function(x) quantile(x, prob=0.95), function(x) quantile(x, prob=0.05))
+		tmp.inf.sup.functions <- c(function(x) quantile(x, prob=0.975), function(x) quantile(x, prob=0.5))
 		setkey(growthAchievementPlot.data, CONTENT_AREA, YEAR, ID)
 		if (is.null(tmp.proj.name <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]])) tmp.proj.name <- content_area
 		if (baseline) tmp.proj.name <- unique(paste(tmp.proj.name, year, "BASELINE", sep=".")) else tmp.proj.name <- unique(paste(tmp.proj.name, year, sep="."))
 		for (tmp.proj.name.iter in intersect(tmp.proj.name, names(gaPlot.sgp_object@SGP$SGProjections))) {
 			tmp.extrapolated.cuts.list[[tmp.proj.name.iter]] <- gaPlot.sgp_object@SGP$SGProjections[[tmp.proj.name.iter]][,c("ID", grep("P50|P60|P70|P80|P90", names(gaPlot.sgp_object@SGP$SGProjections[[tmp.proj.name.iter]]), value=TRUE)), with=FALSE]
-			tmp.extrapolated.cuts.list[[tmp.proj.name.iter]][,c("CONTENT_AREA", "YEAR"):=list(unlist(strsplit(tmp.proj.name.iter, "[.]"))[1], unlist(strsplit(tmp.proj.name.iter, "[.]"))[2])]
+			tmp.extrapolated.cuts.list[[tmp.proj.name.iter]][,c("CONTENT_AREA", "YEAR"):=list(unlist(strsplit(tmp.proj.name.iter, "[.]"))[1], sub(".BASELINE", "", paste(tail(unlist(strsplit(tmp.proj.name.iter, "[.]")), -1), collapse=".")))]
 		}
 		tmp.projections <- rbindlist(tmp.extrapolated.cuts.list, fill=TRUE)
 		setkey(tmp.projections, CONTENT_AREA, YEAR, ID)
@@ -306,13 +306,13 @@
 				if (year %in% SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]][[content_area]]) {
 					extrapolated.cuts.dt[GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i],
 						paste("EXTRAPOLATED_P", percentile.iter, "_CUT", sep=""):=
-							piecewiseTransform(head(tmp.inf.sup[is.finite(tmp.inf.sup)], 1),
+							piecewiseTransform(tail(tmp.inf.sup[is.finite(tmp.inf.sup)], 1),
 												state,
 												CONTENT_AREA,
 												year,
 												GRADE)]
 				} else {
-					extrapolated.cuts.dt[GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i], paste("EXTRAPOLATED_P", percentile.iter, "_CUT", sep=""):=head(tmp.inf.sup[is.finite(tmp.inf.sup)], 1)]
+					extrapolated.cuts.dt[GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i], paste("EXTRAPOLATED_P", percentile.iter, "_CUT", sep=""):=tail(tmp.inf.sup[is.finite(tmp.inf.sup)], 1)]
 				}
 			}
 		}
@@ -674,8 +674,8 @@
 				grid.text(x=1.15, y=ach.per.axis.range[i], ach.per.axis.labels[i], gp=gpar(col=format.colors.font, cex=0.65), just="right", default.units="native")
 			}
 
-			setkey(growthAchievementPlot.data, GRADE)
-			grid.text(x=unit(0.8, "native"), y=unit(median(growthAchievementPlot.data[list(tmp.unique.grades.numeric[1])]$TRANSFORMED_SCALE_SCORE), "native"),
+			setkey(growthAchievementPlot.data, YEAR, GRADE)
+			grid.text(x=unit(0.8, "native"), y=unit(median(growthAchievementPlot.data[list(year, tmp.unique.grades.numeric[1])]$TRANSFORMED_SCALE_SCORE), "native"),
 				paste(pretty_year(year), "Achievement Percentile"), gp=gpar(col=format.colors.font, cex=0.9), rot=90)
 
 			popViewport() ## pop left.axis.vp

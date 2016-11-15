@@ -4,8 +4,8 @@ function(state,
 	year,
 	label="Cutscores") {
 
-	tmp.cutscore.years <- sapply(strsplit(names(SGP::SGPstateData[[state]][["Achievement"]][[label]])[grep(content_area, names(SGP::SGPstateData[[state]][["Achievement"]][[label]]))], "[.]"),
-		function(x) x[2])
+	tmp.cutscore.years <- unlist(lapply(sapply(strsplit(grep(content_area, names(SGP::SGPstateData[[state]][["Achievement"]][[label]]), value=TRUE), "[.]"), tail, -1), paste, collapse="."))
+	tmp.cutscore.years[tmp.cutscore.years==""] <- NA
 	if (any(!is.na(tmp.cutscore.years))) {
 		if (year %in% tmp.cutscore.years) {
 			return(paste(content_area, year, sep="."))
