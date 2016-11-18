@@ -455,7 +455,8 @@ function(sgp_object,
 		setkeyv(tmp.table, c("CONTENT_AREA", "YEAR", "GRADE"))
 		if (!is.null(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]])) {
 			year.for.transition <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]
-			tmp.table[,TRANSFORMED_SCALE_SCORE:=piecewiseTransform(
+			tmp.table[, TRANSFORMED_SCALE_SCORE:=SCALE_SCORE]
+			tmp.table[YEAR < year.for.transition, TRANSFORMED_SCALE_SCORE:=piecewiseTransform(
 					SCALE_SCORE,
 					state,
 					CONTENT_AREA,
