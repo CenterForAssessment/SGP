@@ -9,6 +9,7 @@ function(panel.data,         ## REQUIRED
          year_lags.progression=NULL,
          num.prior,
          max.order.for.percentile=NULL,
+         return.additional.max.order.sgp=NULL,
          subset.grade,
          percentile.cuts=NULL,
          growth.levels,
