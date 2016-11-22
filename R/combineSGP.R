@@ -73,14 +73,14 @@ function(
 
 	### Setup for equated SGPs and scale score targets
 
-	if (!is.null(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]])) {
-		year.for.equate <- tail(sort(unique(sgp_object@Data[['YEAR']])), 1)
-		if (SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]!=year.for.equate) {
+	if (!is.null(year.for.equate <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]])) {
+		tmp.last.year <- tail(sort(unique(sgp_object@Data[['YEAR']])), 1)
+		if (year.for.equate!=tmp.last.year) {
 			sgp.percentiles.equated <- FALSE
 			if (sgp.target.scale.scores) sgp.projections.equated <- NULL
 		} else {
 			sgp.percentiles.equated <- TRUE
-			if (sgp.target.scale.scores) sgp.projections.equated <- list(Year=year.for.equate, Linkages=sgp_object@SGP[['Linkages']])
+			if (sgp.target.scale.scores) sgp.projections.equated <- list(Year=tmp.last.year, Linkages=sgp_object@SGP[['Linkages']])
 		}
 	} else {
 		if (sgp.percentiles.equated) {
@@ -94,7 +94,7 @@ function(
 
 	### Utility functions
 
-	get.target.arguments <- function(system.type, target.type=NULL, projection.unit.label) {
+	get.target.arguments <- function(system.type, target.type=NULL, projection.unit.label, year.for.equate) {
 		tmp.list <- list()
 		if (is.null(system.type)) {
 			if (identical(target.type, c("sgp.projections", "sgp.projections.lagged"))) system.type <- "Cohort Referenced"
@@ -297,7 +297,7 @@ function(
 
 	if ((sgp.projections | sgp.projections.baseline | sgp.projections.lagged | sgp.projections.lagged.baseline) & !sgp.target.scale.scores.only) {
 
-		target.args <- get.target.arguments(SGP::SGPstateData[[state]][["Growth"]][["System_Type"]], target.type, projection.unit.label)
+		target.args <- get.target.arguments(SGP::SGPstateData[[state]][["Growth"]][["System_Type"]], target.type, projection.unit.label, year.for.equate)
 
 		for (target.type.iter in target.args[['target.type']]) {
 			for (target.level.iter in target.args[['target.level']]) {
@@ -423,7 +423,7 @@ function(
 
 	if (sgp.target.scale.scores) {
 
-		if (!exists("target.args")) target.args <- get.target.arguments(SGP::SGPstateData[[state]][["Growth"]][["System_Type"]], target.type, projection.unit.label)
+		if (!exists("target.args")) target.args <- get.target.arguments(SGP::SGPstateData[[state]][["Growth"]][["System_Type"]], target.type, projection.unit.label, year.for.equate)
 		tmp.target.list <- list()
 		for (target.type.iter in target.args[['sgp.target.scale.scores.types']]) {
 			for (target.level.iter in target.args[['target.level']]) {

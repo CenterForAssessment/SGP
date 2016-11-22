@@ -103,6 +103,14 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_STANDARD_ERROR, part 1: FAIL\n")
 			}
 
+			### TEST of SGP_MAX_ORDER_2 variable
+
+			if (identical(digest(Demonstration_SGP$SGPercentiles[[paste('READING', tail(sgpData.years.single, 1), sep=".")]][['SGP_MAX_ORDER_2']]), "454ff2c53966e1cfd4c9280aab4b40b5")) {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_MAX_ORDER_2, part 2: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_MAX_ORDER_2, part 2: FAIL\n")
+			}
+
 			### TEST of Goodness of Fit Output Files
 
 			gof.files <-  c("gofSGP_Grade_4.pdf", "gofSGP_Grade_4.png", "gofSGP_Grade_4.svg",
