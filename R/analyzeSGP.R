@@ -33,7 +33,6 @@ function(sgp_object,
          parallel.config=NULL,
          verbose.output=FALSE,
          print.other.gp=NULL,
-         return.additional.max.order.sgp=NULL,
          sgp.projections.projection.unit="YEAR",
          get.cohort.data.info=FALSE,
          sgp.sqlite=FALSE,
@@ -752,9 +751,6 @@ function(sgp_object,
         sort(unique(unlist(sapply(par.sgp.config[['sgp.percentiles']], function(x) x[['sgp.panel.years']]))))[1] < tmp.transition.year) {
             messageSGP(paste("\tNOTE: Configurations include years prior to assessment transition in ", tmp.transition.year, ". Student growth percentiles will return SGPs of all orders to accomodate investigations.", sep=""))
             print.other.gp <- TRUE
-
-            return.additional.max.order.sgp <- as.numeric(unlist(strsplit(tmp.last.year, "_")))[1] - as.numeric(unlist(strsplit(tmp.transition.year, "_")))[1]
-            messageSGP(paste("\tNOTE: Configurations include years prior to assessment transition in ", tmp.transition.year, ". Student growth percentiles will return SGPs of max.order ", return.additional.max.order.sgp, " in addition to higher order.", sep=""))
     }
 
 	### Produce cohort data information
@@ -802,7 +798,7 @@ function(sgp_object,
 						content_area.progression=sgp.iter[["sgp.content.areas"]],
 						year.progression=sgp.iter[["sgp.panel.years"]],
 						max.order.for.percentile=SGPstateData[[state]][["SGP_Configuration"]][["max.order.for.percentile"]],
-                        return.additional.max.order.sgp=return.additional.max.order.sgp,
+                        return.additional.max.order.sgp=par.sgp.config[['sgp.percentiles']][['return.additional.max.order.sgp']],
 						percentile.cuts=SGPstateData[[state]][["SGP_Configuration"]][["percentile.cuts"]],
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
@@ -851,7 +847,7 @@ function(sgp_object,
 						content_area.progression=sgp.iter[["sgp.content.areas"]],
 						year.progression=sgp.iter[["sgp.panel.years"]],
 						max.order.for.percentile=SGPstateData[[state]][["SGP_Configuration"]][["max.order.for.percentile"]],
-                        return.additional.max.order.sgp=return.additional.max.order.sgp,
+                        return.additional.max.order.sgp=par.sgp.config[['sgp.percentiles']][['return.additional.max.order.sgp']],
 						percentile.cuts=SGPstateData[[state]][["SGP_Configuration"]][["percentile.cuts"]],
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
@@ -901,7 +897,7 @@ function(sgp_object,
 						content_area.progression=sgp.iter[["sgp.content.areas"]],
 						year.progression=sgp.iter[["sgp.panel.years"]],
 						max.order.for.percentile=SGPstateData[[state]][["SGP_Configuration"]][["max.order.for.percentile"]],
-                        return.additional.max.order.sgp=return.additional.max.order.sgp,
+                        return.additional.max.order.sgp=par.sgp.config[['sgp.percentiles']][['return.additional.max.order.sgp']],
 						percentile.cuts=SGPstateData[[state]][["SGP_Configuration"]][["percentile.cuts"]],
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
@@ -1880,7 +1876,7 @@ function(sgp_object,
 					content_area.progression=sgp.iter[["sgp.content.areas"]],
 					year.progression=sgp.iter[["sgp.panel.years"]],
 					max.order.for.percentile=SGPstateData[[state]][["SGP_Configuration"]][["max.order.for.percentile"]],
-                    return.additional.max.order.sgp=return.additional.max.order.sgp,
+                    return.additional.max.order.sgp=par.sgp.config[['sgp.percentiles']][['return.additional.max.order.sgp']],
 					percentile.cuts=SGPstateData[[state]][["SGP_Configuration"]][["percentile.cuts"]],
                     calculate.confidence.intervals=get.simulate.sgps.arg(calculate.confidence.intervals.list, sgp.iter),
 					drop.nonsequential.grade.progression.variables=FALSE,

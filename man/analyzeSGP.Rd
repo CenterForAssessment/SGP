@@ -40,7 +40,6 @@ analyzeSGP(sgp_object,
          parallel.config=NULL,
          verbose.output=FALSE,
          print.other.gp=NULL,
-         return.additional.max.order.sgp=NULL,
          sgp.projections.projection.unit="YEAR",
          get.cohort.data.info=FALSE,
          sgp.sqlite=FALSE,
@@ -140,10 +139,6 @@ Example use cases are provided below.
   \item{verbose.output}{A Boolean argument (defaults to FALSE) indicating whether the function should output verbose diagnostic messages.
   }
   \item{print.other.gp}{A Boolean argument (defaults to FALSE) indicating whether the function should output SGP of all orders.
-  }
-  \item{return.additional.max.order.sgp}{Integer argument passed to \code{\link{studentGrowthPercentiles}} indicating whether an SGP based upon
-  the integer \code{return.additional.max.order.sgp} should be calculated. Useful when assessment transition analyses are being performed and
-  lower order SGPs are necessary for target comparisons.
   }
   \item{sgp.projections.projection.unit}{A character vector argument indicating whether the studentGrowthProjections function should produce projections relative to future grades or future years.
   Options are "YEAR" and "GRADE", with default being "YEAR".
