@@ -54,6 +54,8 @@ function(sgp_object,
 
 	year.for.scale.change <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]]
 
+	tmp.transition.year <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]
+
 
 	### get.config function
 
@@ -327,8 +329,8 @@ function(sgp_object,
 						what.to.return="ORDERS")
 
 						if (length(tmp.orders)==0) {
-							message("\tNOTE: Cohort Referenced Coefficient matrices are not available for ",
-							paste(tmp.matrix.label, paste(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], collapse=", "), sep=": "), ".", sep="")
+							messageSGP(paste("\tNOTE: Cohort Referenced Coefficient matrices are not available for ",
+							paste(tmp.matrix.label, paste(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], collapse=", "), sep=": "), ".", sep=""))
 						} else {
 							tmp.max.order <- max(tmp.orders)
 							if (par.sgp.config[[b.iter[b]]][['sgp.exact.grade.progression']]) ord.iter <- tmp.max.order else ord.iter <- seq_along(tmp.orders)
@@ -358,8 +360,8 @@ function(sgp_object,
 							what.to.return="ORDERS")
 
 						if (length(tmp.orders)==0) {
-							message("\tNOTE: Equated Coefficient matrices are not available for ",
-							paste(tmp.matrix.label, paste(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], collapse=", "), sep=": "), ".", sep="")
+							messageSGP(paste("\tNOTE: Equated Coefficient matrices are not available for ",
+							paste(tmp.matrix.label, paste(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], collapse=", "), sep=": "), ".", sep=""))
 						} else {
 							tmp.max.order <- max(tmp.orders)
 							if (par.sgp.config[[b.iter[b]]][['sgp.exact.grade.progression']]) ord.iter <- tmp.max.order else ord.iter <- seq_along(tmp.orders)
@@ -541,6 +543,10 @@ function(sgp_object,
 			tmp.config <- tmp.config[which(sapply(tmp.config, function(x) !is.null(x[['sgp.matrices']])))]
 		}
 		if (sgp.percentiles) sgp.config.list[['sgp.percentiles']] <- tmp.config
+		if (!is.null(tmp.transition.year) && any(tmp.tf <- sapply(sgp.config.list[['sgp.percentiles']], function(x) tail(x[['sgp.panel.years']], 1) > tmp.transition.year))) {
+			messageSGP(paste("\tNOTE: Configurations include years prior to assessment transition in ", tmp.transition.year, ". Student growth percentiles will return SGPs of maximum order up to transition year in addition to higher order.", sep=""))
+			for (tmp.iter in which(tmp.tf)) sgp.config.list[['sgp.percentiles']][[tmp.iter]][['return.additional.max.order.sgp']] <- as.numeric(unlist(strsplit(tail(sgp.config.list[['sgp.percentiles']][[tmp.iter]][['sgp.panel.years']], 1), "_")))[1] - as.numeric(unlist(strsplit(tmp.transition.year, "_")))[1]
+		}
 		if (sgp.percentiles.equated) {
 			tmp.config <- tmp.config[sapply(tmp.config, function(x) tail(x[['sgp.panel.years']], 1))==year.for.equate]
 			if (!is.null(grades.for.equate)) {
@@ -596,7 +602,7 @@ function(sgp_object,
 			if (length(baseline.missings)>0) {
 				baseline.missings <- paste(unlist(sapply(baseline.missings, function(x)
 					paste(tail(par.sgp.config[[x]]$sgp.content.areas, 1), paste(par.sgp.config[[x]]$sgp.grade.sequences, collapse=", "), sep=": "))), collapse=";\n\t\t")
-				message("\tNOTE: Baseline coefficient matrices are not available for:\n\t\t", baseline.missings, ".", sep="")
+				messageSGP(paste("\tNOTE: Baseline coefficient matrices are not available for:\n\t\t", baseline.missings, ".", sep=""))
 
 				sgp.config.list[['sgp.percentiles.baseline']] <-
 					par.sgp.config[which(sapply(par.sgp.config, function(x) !identical(x[['sgp.baseline.grade.sequences']], "NO_BASELINE_COEFFICIENT_MATRICES")))]

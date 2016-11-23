@@ -19,6 +19,7 @@ studentGrowthPercentiles(panel.data,
                          year_lags.progression,
                          num.prior,
                          max.order.for.percentile=NULL,
+                         return.additional.max.order.sgp=NULL,
                          subset.grade,
                          percentile.cuts,
                          growth.levels,
@@ -40,7 +41,7 @@ studentGrowthPercentiles(panel.data,
                          sgp.quantiles.labels=NULL,
                          sgp.loss.hoss.adjustment=NULL,
                          sgp.cohort.size=NULL,
-			 sgp.less.than.sgp.cohort.size.return=NULL,
+                         sgp.less.than.sgp.cohort.size.return=NULL,
                          sgp.test.cohort.size=NULL,
                          percuts.digits=0,
                          isotonize=TRUE,
@@ -56,12 +57,12 @@ studentGrowthPercentiles(panel.data,
                          return.panel.data=identical(parent.frame(), .GlobalEnv),
                          print.time.taken=TRUE,
                          parallel.config=NULL,
-			calculate.simex=NULL,
-			sgp.percentiles.set.seed=314159,
-			sgp.percentiles.equated=NULL,
-			SGPt=NULL,
-            SGPt.max.time=NULL,
-			verbose.output=FALSE)
+                         calculate.simex=NULL,
+                         sgp.percentiles.set.seed=314159,
+                         sgp.percentiles.equated=NULL,
+                         SGPt=NULL,
+                         SGPt.max.time=NULL,
+                         verbose.output=FALSE)
 }
 
 \arguments{
@@ -100,6 +101,8 @@ to calculate the lags/differences based upon the supplied years.
   where the number of prior data points is small compared to the number of panels of data.
   }
   \item{max.order.for.percentile}{A positive integer indicating the maximum order for percentiles desired. Similar limiting of number of priors used can be accomplished using the \code{grade.progression} argument.
+  }
+  \item{return.additional.max.order.sgp}{A positive integer (defaults to NULL) indicating the order of an additional SGP to be returned: \code{SGP_MAX_ORDER_N}.
   }
   \item{subset.grade}{Student grade level for sub-setting. If the data fed into the function contains multiple
   grades, setting \code{subset.grade=5} selects out those students in grade five in the most recent year of the data. If no sub-setting is desired,
@@ -168,7 +171,7 @@ to calculate the lags/differences based upon the supplied years.
   \item{sgp.less.than.sgp.cohort.size.return}{If non-NULL, indicates whether a data set should be returned with the indicated character string in place of the SGP
 	  that would be calculated. If set to TRUE, then character string: \code{< sgp.cohort.size students in cohort. No SGP Calculated}.
   }
-  \item{sgp.test.cohort.size}{Integer indicating the maximum number of students sampled from the full cohort to use in the calculation of student growth percentiles.  Intended to be used 
+  \item{sgp.test.cohort.size}{Integer indicating the maximum number of students sampled from the full cohort to use in the calculation of student growth percentiles.  Intended to be used
   as a test of the desired analyses to be run. The default, NULL, uses no restrictions (no tests are performed, and analyses use the entire cohort of students).
   }
   \item{percuts.digits}{Argument specifying how many digits (defaults to 2) to print percentile cuts (if asked for) with.

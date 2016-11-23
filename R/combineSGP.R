@@ -73,14 +73,14 @@ function(
 
 	### Setup for equated SGPs and scale score targets
 
-	if (!is.null(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]])) {
-		year.for.equate <- tail(sort(unique(sgp_object@Data[['YEAR']])), 1)
-		if (SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]!=year.for.equate) {
+	if (!is.null(year.for.equate <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]])) {
+		tmp.last.year <- tail(sort(unique(sgp_object@Data[['YEAR']])), 1)
+		if (year.for.equate!=tmp.last.year) {
 			sgp.percentiles.equated <- FALSE
 			if (sgp.target.scale.scores) sgp.projections.equated <- NULL
 		} else {
 			sgp.percentiles.equated <- TRUE
-			if (sgp.target.scale.scores) sgp.projections.equated <- list(Year=year.for.equate, Linkages=sgp_object@SGP[['Linkages']])
+			if (sgp.target.scale.scores) sgp.projections.equated <- list(Year=tmp.last.year, Linkages=sgp_object@SGP[['Linkages']])
 		}
 	} else {
 		if (sgp.percentiles.equated) {
@@ -94,7 +94,7 @@ function(
 
 	### Utility functions
 
-	get.target.arguments <- function(system.type, target.type=NULL, projection.unit.label) {
+	get.target.arguments <- function(system.type, target.type=NULL, projection.unit.label, year.for.equate) {
 		tmp.list <- list()
 		if (is.null(system.type)) {
 			if (identical(target.type, c("sgp.projections", "sgp.projections.lagged"))) system.type <- "Cohort Referenced"
@@ -112,7 +112,13 @@ function(
 
 		if (identical(system.type, "Cohort Referenced")) {
 			tmp.list[['target.type']] <- intersect(target.type, c("sgp.projections", "sgp.projections.lagged"))
-			tmp.list[['my.sgp']] <- "SGP"
+			if (!is.null(year.for.equate) && !sgp.percentiles.equated) {
+				tmp.variable.name <- paste("SGP_FROM", year.for.equate, sep="_")
+				tmp.messages <- c(tmp.messages, paste("\tNOTE: Due to test transition in ", year.for.equate, " SGP_TARGET will be compared to ", tmp.variable.name, ".\n", sep=""))
+				tmp.list[['my.sgp']] <- tmp.variable.name
+			} else {
+				tmp.list[['my.sgp']] <- "SGP"
+			}
 			tmp.list[['my.sgp.target']] <- paste("SGP_TARGET", max.sgp.target.years.forward, projection.unit.label, sep="_")
 			tmp.list[['my.sgp.target.content_area']] <- paste("SGP_TARGET", max.sgp.target.years.forward, projection.unit.label, "CONTENT_AREA", sep="_")
 			tmp.list[['my.sgp.target.move.up.stay.up']] <- paste("SGP_TARGET_MOVE_UP_STAY_UP", max.sgp.target.years.forward, projection.unit.label, sep="_")
@@ -128,7 +134,13 @@ function(
 		}
 		if (identical(system.type, "Cohort and Baseline Referenced")) {
 			tmp.list[['target.type']] <- intersect(target.type, c("sgp.projections", "sgp.projections.baseline", "sgp.projections.lagged", "sgp.projections.lagged.baseline"))
-			tmp.list[['my.sgp']] <- c("SGP", "SGP_BASELINE")[c(sgp.percentiles, sgp.percentiles.baseline)]
+			if (!is.null(year.for.equate) && !sgp.percentiles.equated) {
+				tmp.year.diff <- as.numeric(unlist(strsplit(tail(sort(unique(sgp_object@Data[['YEAR']])), 1), "_"))[1]) - as.numeric(unlist(strsplit(year.for.equate, "_"))[1])
+				tmp.messages <- c(tmp.messages, paste("\tNOTE: Due to test transition in ", year.for.equate, " SGP_TARGET will utilize ", paste("SGP_MAX_ORDER", tmp.year.diff, sep="_"), ".\n", sep=""))
+				tmp.list[['my.sgp']] <- c(paste("SGP_MAX_ORDER", tmp.year.diff, sep="_"), "SGP_BASELINE")[c(sgp.percentiles, sgp.percentiles.baseline)]
+			} else {
+				tmp.list[['my.sgp']] <- c("SGP", "SGP_BASELINE")[c(sgp.percentiles, sgp.percentiles.baseline)]
+			}
 			tmp.list[['my.sgp.target']] <- c(paste("SGP_TARGET", max.sgp.target.years.forward, projection.unit.label, sep="_"),
 				paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, projection.unit.label, sep="_"))
 			tmp.list[['my.sgp.target.content_area']] <- c(paste("SGP_TARGET", max.sgp.target.years.forward, projection.unit.label, "CONTENT_AREA", sep="_"),
@@ -297,7 +309,7 @@ function(
 
 	if ((sgp.projections | sgp.projections.baseline | sgp.projections.lagged | sgp.projections.lagged.baseline) & !sgp.target.scale.scores.only) {
 
-		target.args <- get.target.arguments(SGP::SGPstateData[[state]][["Growth"]][["System_Type"]], target.type, projection.unit.label)
+		target.args <- get.target.arguments(SGP::SGPstateData[[state]][["Growth"]][["System_Type"]], target.type, projection.unit.label, year.for.equate)
 
 		for (target.type.iter in target.args[['target.type']]) {
 			for (target.level.iter in target.args[['target.level']]) {
@@ -423,7 +435,7 @@ function(
 
 	if (sgp.target.scale.scores) {
 
-		if (!exists("target.args")) target.args <- get.target.arguments(SGP::SGPstateData[[state]][["Growth"]][["System_Type"]], target.type, projection.unit.label)
+		if (!exists("target.args")) target.args <- get.target.arguments(SGP::SGPstateData[[state]][["Growth"]][["System_Type"]], target.type, projection.unit.label, year.for.equate)
 		tmp.target.list <- list()
 		for (target.type.iter in target.args[['sgp.target.scale.scores.types']]) {
 			for (target.level.iter in target.args[['target.level']]) {

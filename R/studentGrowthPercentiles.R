@@ -9,6 +9,7 @@ function(panel.data,         ## REQUIRED
          year_lags.progression=NULL,
          num.prior,
          max.order.for.percentile=NULL,
+         return.additional.max.order.sgp=NULL,
          subset.grade,
          percentile.cuts=NULL,
          growth.levels,
@@ -723,7 +724,7 @@ function(panel.data,         ## REQUIRED
 	###
 	############################################################################
 
-	ID <- tmp.messages <- ORDER <- SCALE_SCORE_PRIOR <- NULL
+	ID <- tmp.messages <- ORDER <- SCALE_SCORE_PRIOR <- SGP <- NULL
 
 	if (missing(panel.data)) {
 		stop("User must supply student achievement data for student growth percentile calculations. NOTE: data is now supplied to function using panel.data argument. See help page for details.")
@@ -1526,6 +1527,15 @@ function(panel.data,         ## REQUIRED
 				quantile.data <- quantile.data[c(which(!duplicated(quantile.data, by=key(quantile.data)))[-1]-1L, nrow(quantile.data)), c("ID", "SGP"), with=FALSE]
 			}
 		}
+
+        if (!is.null(return.additional.max.order.sgp)) {
+            if (return.additional.max.order.sgp >=  max(tmp.orders)) {
+                quantile.data[,paste("SGP_FROM", paste(as.numeric(unlist(strsplit(sgp.labels[['my.year']], "_")))-return.additional.max.order.sgp, collapse="_"), sep="_"):=SGP]
+            } else {
+                tmp.quantile.data <- data.table(rbindlist(tmp.quantiles[seq(return.additional.max.order.sgp)]), key="ID")
+                quantile.data[,paste("SGP_FROM", paste(as.numeric(unlist(strsplit(sgp.labels[['my.year']], "_")))-return.additional.max.order.sgp, collapse="_"), sep="_"):=tmp.quantile.data[c(which(!duplicated(tmp.quantile.data, by=key(tmp.quantile.data)))[-1]-1L, nrow(tmp.quantile.data))][["SGP"]]]
+            }
+        }
 
 		quantile.data[,SCALE_SCORE_PRIOR:=prior.ss]
 

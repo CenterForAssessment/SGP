@@ -749,7 +749,7 @@ function(sgp_object,
 
     if (!is.null(tmp.transition.year <- SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]) &&
         sort(unique(unlist(sapply(par.sgp.config[['sgp.percentiles']], function(x) x[['sgp.panel.years']]))))[1] < tmp.transition.year) {
-            messageSGP(paste("\tNOTE: Configurations include years prior to assessment transition in ", tmp.transition.year, ". Student growth percentiles will return SGPs of all orders to accomodate investigations."))
+            messageSGP(paste("\tNOTE: Configurations include years prior to assessment transition in ", tmp.transition.year, ". Student growth percentiles will return SGPs of all orders to accomodate investigations.", sep=""))
             print.other.gp <- TRUE
     }
 
@@ -798,6 +798,7 @@ function(sgp_object,
 						content_area.progression=sgp.iter[["sgp.content.areas"]],
 						year.progression=sgp.iter[["sgp.panel.years"]],
 						max.order.for.percentile=SGPstateData[[state]][["SGP_Configuration"]][["max.order.for.percentile"]],
+                        return.additional.max.order.sgp=sgp.iter[['return.additional.max.order.sgp']],
 						percentile.cuts=SGPstateData[[state]][["SGP_Configuration"]][["percentile.cuts"]],
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
@@ -846,6 +847,7 @@ function(sgp_object,
 						content_area.progression=sgp.iter[["sgp.content.areas"]],
 						year.progression=sgp.iter[["sgp.panel.years"]],
 						max.order.for.percentile=SGPstateData[[state]][["SGP_Configuration"]][["max.order.for.percentile"]],
+                        return.additional.max.order.sgp=sgp.iter[['return.additional.max.order.sgp']],
 						percentile.cuts=SGPstateData[[state]][["SGP_Configuration"]][["percentile.cuts"]],
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
@@ -895,6 +897,7 @@ function(sgp_object,
 						content_area.progression=sgp.iter[["sgp.content.areas"]],
 						year.progression=sgp.iter[["sgp.panel.years"]],
 						max.order.for.percentile=SGPstateData[[state]][["SGP_Configuration"]][["max.order.for.percentile"]],
+                        return.additional.max.order.sgp=sgp.iter[['return.additional.max.order.sgp']],
 						percentile.cuts=SGPstateData[[state]][["SGP_Configuration"]][["percentile.cuts"]],
 						drop.nonsequential.grade.progression.variables=FALSE, # taken care of with config
 						exact.grade.progression.sequence=sgp.iter[["sgp.exact.grade.progression"]],
@@ -1873,6 +1876,7 @@ function(sgp_object,
 					content_area.progression=sgp.iter[["sgp.content.areas"]],
 					year.progression=sgp.iter[["sgp.panel.years"]],
 					max.order.for.percentile=SGPstateData[[state]][["SGP_Configuration"]][["max.order.for.percentile"]],
+                    return.additional.max.order.sgp=sgp.iter[['return.additional.max.order.sgp']],
 					percentile.cuts=SGPstateData[[state]][["SGP_Configuration"]][["percentile.cuts"]],
                     calculate.confidence.intervals=get.simulate.sgps.arg(calculate.confidence.intervals.list, sgp.iter),
 					drop.nonsequential.grade.progression.variables=FALSE,
