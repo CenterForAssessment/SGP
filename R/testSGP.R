@@ -105,10 +105,10 @@ function(
 
 			### TEST of SGP_MAX_ORDER_2 variable
 
-			if (identical(digest(Demonstration_SGP$SGPercentiles[[paste('READING', tail(sgpData.years.single, 1), sep=".")]][['SGP_MAX_ORDER_2']]), "454ff2c53966e1cfd4c9280aab4b40b5")) {
-				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_MAX_ORDER_2, part 2: OK\n")
+			if (identical(digest(Demonstration_SGP$SGPercentiles[[paste('READING', tail(sgpData.years.single, 1), sep=".")]][[paste('SGP_FROM', as.numeric(tail(sgpData.years.single, 1))-2, sep="_")]]), "454ff2c53966e1cfd4c9280aab4b40b5")) {
+				tmp.messages <- c(tmp.messages, paste("\t\tTest of variable ",  paste('SGP_FROM', as.numeric(tail(sgpData.years.single, 1))-2, sep="_"), ", part 2: OK\n", sep=""))
 			} else {
-				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_MAX_ORDER_2, part 2: FAIL\n")
+				tmp.messages <- c(tmp.messages, paste("\t\tTest of variable ", paste('SGP_FROM', as.numeric(tail(sgpData.years.single, 1))-2, sep="_"), ", part 2: FAIL\n", sep=""))
 			}
 
 			### TEST of Goodness of Fit Output Files

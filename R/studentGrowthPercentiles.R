@@ -1530,10 +1530,10 @@ function(panel.data,         ## REQUIRED
 
         if (!is.null(return.additional.max.order.sgp)) {
             if (return.additional.max.order.sgp >=  max(tmp.orders)) {
-                quantile.data[,paste("SGP_MAX_ORDER", return.additional.max.order.sgp, sep="_"):=SGP]
+                quantile.data[,paste("SGP_FROM", paste(as.numeric(unlist(strsplit(sgp.labels[['my.year']], "_")))-return.additional.max.order.sgp, collapse="_"), sep="_"):=SGP]
             } else {
                 tmp.quantile.data <- data.table(rbindlist(tmp.quantiles[seq(return.additional.max.order.sgp)]), key="ID")
-                quantile.data[,paste("SGP_MAX_ORDER", return.additional.max.order.sgp, sep="_"):=tmp.quantile.data[c(which(!duplicated(tmp.quantile.data, by=key(tmp.quantile.data)))[-1]-1L, nrow(tmp.quantile.data))][["SGP"]]]
+                quantile.data[,paste("SGP_FROM", paste(as.numeric(unlist(strsplit(sgp.labels[['my.year']], "_")))-return.additional.max.order.sgp, collapse="_"), sep="_"):=tmp.quantile.data[c(which(!duplicated(tmp.quantile.data, by=key(tmp.quantile.data)))[-1]-1L, nrow(tmp.quantile.data))][["SGP"]]]
             }
         }
 

@@ -113,9 +113,9 @@ function(
 		if (identical(system.type, "Cohort Referenced")) {
 			tmp.list[['target.type']] <- intersect(target.type, c("sgp.projections", "sgp.projections.lagged"))
 			if (!is.null(year.for.equate) && !sgp.percentiles.equated) {
-				tmp.year.diff <- as.numeric(unlist(strsplit(tail(sort(unique(sgp_object@Data[['YEAR']])), 1), "_"))[1]) - as.numeric(unlist(strsplit(year.for.equate, "_"))[1])
-				tmp.messages <- c(tmp.messages, paste("\tNOTE: Due to test transition in ", year.for.equate, " SGP_TARGET will utilize ", paste("SGP_MAX_ORDER", tmp.year.diff, sep="_"), ".\n", sep=""))
-				tmp.list[['my.sgp']] <- paste("SGP_MAX_ORDER", tmp.year.diff, sep="_")
+				tmp.variable.name <- paste("SGP_FROM", year.for.equate, sep="_")
+				tmp.messages <- c(tmp.messages, paste("\tNOTE: Due to test transition in ", year.for.equate, " SGP_TARGET will be compared to ", tmp.variable.name, ".\n", sep=""))
+				tmp.list[['my.sgp']] <- tmp.variable.name
 			} else {
 				tmp.list[['my.sgp']] <- "SGP"
 			}
