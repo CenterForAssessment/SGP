@@ -1373,6 +1373,14 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable ACHIEVEMENT_LEVEL_PRIOR, part 3: FAIL\n")
 			}
 
+			### TEST of SGP_FROM_2014_2015 Variable in @Data
+
+			if (identical(Demonstration_SGP@Data[[paste('SGP_FROM', tail(sgpData.years, 2)[1], sep="_")]], 2900310L)) {
+				tmp.messages <- c(tmp.messages, paste("\t\tTest of variable", paste('SGP_FROM', tail(sgpData.years, 2)[1], sep="_"), ", part 3: OK\n", sep=""))
+			} else {
+				tmp.messages <- c(tmp.messages, paste("\t\tTest of variable", paste('SGP_FROM', tail(sgpData.years, 2)[1], sep="_"), ", part 3: FAIL\n", sep=""))
+			}
+
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 5, Part 3: ", convertTime(timetaken(started.at.intermediate)), "#####\n"))
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 5: ", convertTime(timetaken(started.at.overall)), "#####\n"))
 			messageSGP(tmp.messages)
