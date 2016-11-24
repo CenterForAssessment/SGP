@@ -103,7 +103,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_STANDARD_ERROR, part 1: FAIL\n")
 			}
 
-			### TEST of SGP_MAX_ORDER_2 variable
+			### TEST of SGP_FROM_**** variable
 
 			if (identical(digest(Demonstration_SGP$SGPercentiles[[paste('READING', tail(sgpData.years.single, 1), sep=".")]][[paste('SGP_FROM', as.numeric(tail(sgpData.years.single, 1))-2, sep="_")]]), "454ff2c53966e1cfd4c9280aab4b40b5")) {
 				tmp.messages <- c(tmp.messages, paste("\t\tTest of variable ",  paste('SGP_FROM', as.numeric(tail(sgpData.years.single, 1))-2, sep="_"), ", part 2: OK\n", sep=""))
@@ -1375,10 +1375,10 @@ function(
 
 			### TEST of SGP_FROM_2014_2015 Variable in @Data
 
-			if (identical(Demonstration_SGP@Data[[paste('SGP_FROM', tail(sgpData.years, 2)[1], sep="_")]], 2900310L)) {
-				tmp.messages <- c(tmp.messages, paste("\t\tTest of variable", paste('SGP_FROM', tail(sgpData.years, 2)[1], sep="_"), ", part 3: OK\n", sep=""))
+			if (identical(sum(Demonstration_SGP@Data[[paste('SGP_FROM', tail(sgpData.years, 2)[1], sep="_")]], na.rm=TRUE), 2900310L)) {
+				tmp.messages <- c(tmp.messages, paste("\t\tTest of variable ", paste('SGP_FROM', tail(sgpData.years, 2)[1], sep="_"), ", part 3: OK\n", sep=""))
 			} else {
-				tmp.messages <- c(tmp.messages, paste("\t\tTest of variable", paste('SGP_FROM', tail(sgpData.years, 2)[1], sep="_"), ", part 3: FAIL\n", sep=""))
+				tmp.messages <- c(tmp.messages, paste("\t\tTest of variable ", paste('SGP_FROM', tail(sgpData.years, 2)[1], sep="_"), ", part 3: FAIL\n", sep=""))
 			}
 
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 5, Part 3: ", convertTime(timetaken(started.at.intermediate)), "#####\n"))
