@@ -1426,7 +1426,8 @@ function(
 
 			tmp.messages <- ("##### Results of testSGP test number 6 #####\n\n")
 
-			if (identical(sum(Demonstration_SGP@Data$SGP_BASELINE, na.rm=TRUE), 1469353L)) {
+#			if (identical(sum(Demonstration_SGP@Data$SGP_BASELINE, na.rm=TRUE), 1469353L)) {
+			if (identical(digest(Demonstration_SGP@Data$SGP_BASELINE), "49a36274c536fe13ac2bcdc1c49cadc9")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of SGP_BASELINE: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of SGP_BASELINE: FAIL\n")
