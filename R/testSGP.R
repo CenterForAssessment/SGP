@@ -842,8 +842,7 @@ function(
 			# SGPstateData[["DEMO"]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <- c(SGPstateData[["DEMO"]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]], DEMO_SIMEX_Baseline_Matrices)
 			if (calculate.simex.baseline) {
 				if (!any(grepl(".BASELINE.SIMEX", names(SGPstateData[["DEMO"]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]])))) {
-					stop("\n\tThis test requires the DEMO SIMEX matrices to be loaded manually.\n\t\t
-							 SGPstateData[['DEMO']][['Baseline_splineMatrix']][['Coefficient_Matrices']] <- c(SGPstateData[['DEMO']][['Baseline_splineMatrix']][['Coefficient_Matrices']], DEMO_SIMEX_Baseline_Matrices)\n\n")
+					stop("\n\tThis test requires the DEMO SIMEX matrices to be loaded manually:\n\t\tSGPstateData[['DEMO']][['Baseline_splineMatrix']][['Coefficient_Matrices']] <- c(SGPstateData[['DEMO']][['Baseline_splineMatrix']][['Coefficient_Matrices']], DEMO_SIMEX_Baseline_Matrices)\n\n")
 				}
 			}
 
@@ -897,7 +896,8 @@ function(
 
 			tmp.messages <- c(tmp.messages, "\t##### Results of testSGP test number 4, Part 1 #####\n")
 
-			if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX']]), 1029023L)) {
+#			if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX']]), 1029023L)) {
+			if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX']]), "55fb02e2b05c308c3eb288474a9b3d00")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX: FAIL\n")
@@ -949,21 +949,27 @@ function(
 
 			tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number 4, Part 2 #####\n")
 
-			if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX']]), 211555L)) {
+#			if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX']]), 211555L)) {
+			if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX']]), "a351d68d993a6ae42714142afd1ea6d3")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX: FAIL\n")
 			}
-			if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX']]), 212383L)) {
+
+#			if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX']]), 212383L)) {
+			if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX']]), "ab2862894723e1d9533a1499195dca98")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II SGP_SIMEX: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II SGP_SIMEX: FAIL\n")
 			}
-			if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX, na.rm=TRUE), 1452961L)) {
+
+#			if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX, na.rm=TRUE), 1452961L)) {
+			if (identical(digest(Demonstration_SGP@Data$SGP_SIMEX), "676e5bab01b85e849c1dab718fb58e78")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX: FAIL\n")
 			}
+
 			if (identical(names(Demonstration_SGP@SGP$Coefficient_Matrices), c("READING.2015_2016", "READING.2015_2016.SIMEX", "ALGEBRA_II.2015_2016", "ALGEBRA_II.2015_2016.SIMEX", "AMERICAN_LIT.2015_2016", "AMERICAN_LIT.2015_2016.SIMEX"))) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of @SGP Coefficient Matrix Names: OK\n")
 			} else {
