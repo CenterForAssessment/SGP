@@ -88,7 +88,7 @@ function(sgp_object,
 		}
 		assign(paste(tmp.state, "SGP_LONG_Data", sep="_"), output.data)
 		save(list=paste(tmp.state, "SGP_LONG_Data", sep="_"), file=file.path(outputSGP.directory, paste(tmp.state, "SGP_LONG_Data.Rdata", sep="_")))
-		write.table(output.data, file=file.path(outputSGP.directory, paste(tmp.state, "SGP_LONG_Data.txt", sep="_")), sep="|", quote=FALSE, row.names=FALSE, na="")
+		fwrite(output.data, file=file.path(outputSGP.directory, paste(tmp.state, "SGP_LONG_Data.txt", sep="_")), sep="|", quote=FALSE)
 		if (identical(.Platform$OS.type, "unix")) {
 			if (file.info(file.path(outputSGP.directory, paste(tmp.state, "SGP_LONG_Data.txt", sep="_")))$size > 4000000000) {
 				tmp.working.directory <- getwd()
@@ -136,8 +136,7 @@ function(sgp_object,
 		}
 		assign(paste(tmp.state, "SGP_LONG_Data", final.year, sep="_"), output.data.final.year)
 		save(list=paste(tmp.state, "SGP_LONG_Data", final.year, sep="_"), file=file.path(outputSGP.directory, paste(tmp.state, "_SGP_LONG_Data_", final.year, ".Rdata", sep="")))
-		write.table(output.data.final.year, file=file.path(outputSGP.directory, paste(tmp.state, "_SGP_LONG_Data_", final.year, ".txt", sep="")),
-			sep="|", quote=FALSE, row.names=FALSE, na="")
+		fwrite(output.data.final.year, file=file.path(outputSGP.directory, paste(tmp.state, "_SGP_LONG_Data_", final.year, ".txt", sep="")), sep="|", quote=FALSE)
 		if (identical(.Platform$OS.type, "unix")) {
 			if (file.info(file.path(outputSGP.directory, paste(tmp.state, "_SGP_LONG_Data_", final.year, ".txt", sep="")))$size > 4000000000) {
 				tmp.working.directory <- getwd()
@@ -184,8 +183,7 @@ function(sgp_object,
 		assign(paste(tmp.state, "SGP_WIDE_Data", sep="_"), ddcast(long_data_tmp, ID ~ YEAR_BY_CONTENT_AREA,
 			value.var=setdiff(names(long_data_tmp), c("ID", "YEAR_BY_CONTENT_AREA", "VALID_CASE", "CONTENT_AREA", "YEAR")), sep="."))
 		save(list=paste(tmp.state, "SGP_WIDE_Data", sep="_"), file=file.path(outputSGP.directory, paste(tmp.state, "SGP_WIDE_Data.Rdata", sep="_")))
-		write.table(get(paste(tmp.state, "SGP_WIDE_Data", sep="_")),
-			file=file.path(outputSGP.directory, paste(tmp.state, "SGP_WIDE_Data.txt", sep="_")), sep="|", quote=FALSE, row.names=FALSE, na="")
+		fwrite(get(paste(tmp.state, "SGP_WIDE_Data", sep="_")), file=file.path(outputSGP.directory, paste(tmp.state, "SGP_WIDE_Data.txt", sep="_")), sep="|", quote=FALSE)
 
 		if (identical(.Platform$OS.type, "unix")) {
 			if (file.info(file.path(outputSGP.directory, paste(tmp.state, "SGP_WIDE_Data.txt", sep="_")))$size > 4000000000) {
@@ -227,8 +225,7 @@ function(sgp_object,
 			key=getKey(sgp_object@Data)), nomatch=0])
 
 		save(list=paste(tmp.state, "SGP_INSTRUCTOR_Data", sep="_"), file=file.path(outputSGP.directory, paste(tmp.state, "SGP_INSTRUCTOR_Data.Rdata", sep="_")))
-		write.table(get(paste(tmp.state, "SGP_INSTRUCTOR_Data", sep="_")),
-			file=file.path(outputSGP.directory, paste(tmp.state, "SGP_INSTRUCTOR_Data.txt", sep="_")), sep="|", quote=FALSE, row.names=FALSE, na="")
+		fwrite(get(paste(tmp.state, "SGP_INSTRUCTOR_Data", sep="_")), file=file.path(outputSGP.directory, paste(tmp.state, "SGP_INSTRUCTOR_Data.txt", sep="_")), sep="|", quote=FALSE)
 
 		if (identical(.Platform$OS.type, "unix")) {
 			if (file.info(file.path(outputSGP.directory, paste(tmp.state, "SGP_INSTRUCTOR_Data.txt", sep="_")))$size > 4000000000) {
@@ -741,7 +738,7 @@ function(sgp_object,
 
 		## Output results
 
-		write.table(STUDENT_GROWTH, file=file.path(outputSGP.directory, "SchoolView", "TEXT", "STUDENT_GROWTH.dat"), row.names=FALSE, na="", quote=FALSE, sep="|")
+		fwrite(STUDENT_GROWTH, file=file.path(outputSGP.directory, "SchoolView", "TEXT", "STUDENT_GROWTH.dat"), quote=FALSE, sep="|")
 			tmp.working.directory <- getwd()
 			setwd(file.path(outputSGP.directory, "SchoolView", "TEXT"))
 			if ("STUDENT_GROWTH.dat.zip" %in% list.files()) file.remove("STUDENT_GROWTH.dat.zip")
@@ -782,7 +779,7 @@ function(sgp_object,
 					sgp_object@SGP[["SGPercentiles"]][[names.iter]])]
 			if (any(!output.column.order %in% names(tmp.dt))) tmp.dt[,(output.column.order[!output.column.order %in% names(tmp.dt)]):=as.numeric(NA)]
 			tmp.dt <- tmp.dt[,ID:=gsub("_DUPS_[0-9]*", "", ID)][,output.column.order, with=FALSE]
-			write.table(tmp.dt, file=file.path(outputSGP.directory, "RLI", "SGPercentiles", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
+			fwrite(tmp.dt, file=file.path(outputSGP.directory, "RLI", "SGPercentiles", paste(names.iter, "txt", sep=".")), sep=",", quote=FALSE)
 
 			if (identical(.Platform$OS.type, "unix")) {
 				if (file.info(file.path(outputSGP.directory, "RLI", "SGPercentiles", paste(names.iter, "txt", sep=".")))$size > 4000000000) {
@@ -860,7 +857,7 @@ function(sgp_object,
 					sgp_object@SGP[["SGProjections"]][[names.iter]])][,GROUP:=names.iter]
 			if (any(!output.column.order %in% names(tmp.dt))) tmp.dt[,output.column.order[!output.column.order %in% names(tmp.dt)]:=as.numeric(NA)]
 			tmp.dt <- tmp.dt[,ID:=gsub("_DUPS_[0-9]*", "", ID)][,output.column.order, with=FALSE]
-			write.table(tmp.dt, file=file.path(outputSGP.directory, "RLI", "SGProjections", paste(names.iter, "txt", sep=".")), sep=",", row.names=FALSE, quote=FALSE, na="")
+			fwrite(tmp.dt, file=file.path(outputSGP.directory, "RLI", "SGProjections", paste(names.iter, "txt", sep=".")), sep=",", quote=FALSE)
 
 			if (identical(.Platform$OS.type, "unix")) {
 				if (file.info(file.path(outputSGP.directory, "RLI", "SGProjections", paste(names.iter, "txt", sep=".")))$size > 4000000000) {
