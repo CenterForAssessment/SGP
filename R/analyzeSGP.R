@@ -466,8 +466,8 @@ function(sgp_object,
                     Scale_Score_Linkages[[conversion.type.iter]][[toupper(sgp.percentiles.equating.method.iter)]] <-
                         unique(data.for.equate, by=key(data.for.equate))[!is.na(SCALE_SCORE) & VALID_CASE=="VALID_CASE", intersect(names(data.for.equate),
                             c("CONTENT_AREA", "YEAR", "GRADE", "SCALE_SCORE", "SCALE_SCORE_ACTUAL", paste("SCALE_SCORE_EQUATED", toupper(sgp.percentiles.equating.method.iter), conversion.type.iter, sep="_"))), with=FALSE]
-                    write.table(Scale_Score_Linkages[[conversion.type.iter]][[toupper(sgp.percentiles.equating.method.iter)]],
-                        file=paste(paste("Data/", paste("Linkages", year.for.equate, sep="_"), "/", sep=""), paste(gsub(" ", "_", getStateAbbreviation(state, type="LONG")), "Scale_Score_Linkages", toupper(sgp.percentiles.equating.method.iter), conversion.type.iter, sep="_"), ".txt", sep=""), row.names=FALSE, na="", quote=FALSE, sep="|")
+                    fwrite(Scale_Score_Linkages[[conversion.type.iter]][[toupper(sgp.percentiles.equating.method.iter)]],
+                        file=paste(paste("Data/", paste("Linkages", year.for.equate, sep="_"), "/", sep=""), paste(gsub(" ", "_", getStateAbbreviation(state, type="LONG")), "Scale_Score_Linkages", toupper(sgp.percentiles.equating.method.iter), conversion.type.iter, sep="_"), ".txt", sep=""), quote=FALSE, sep="|")
                     linkagePlot(Scale_Score_Linkages[[conversion.type.iter]][[toupper(sgp.percentiles.equating.method.iter)]], conversion.type.iter, sgp.percentiles.equating.method.iter, year.for.equate, state)
                 }
             }
