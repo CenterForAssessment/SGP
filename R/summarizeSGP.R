@@ -560,10 +560,10 @@
 	if (any(!sapply(summary.groups[["growth_only_summary"]], is.null))) {
 		tmp.dt <- sgp_object@Data[data.table("VALID_CASE", content_areas.by.years), nomatch=0][,
 			variables.for.summaries, with=FALSE][, (highest.level.summary.grouping):=state]
-		dbWriteTable(sgp_data_for_summary, name = "summary_data", overwrite = TRUE, row.names=0, value = tmp.dt[,
+		dbWriteTable(sgp_data_for_summary, name = "summary_data", overwrite = TRUE, row.names=FALSE, value = tmp.dt[,
 			BY_GROWTH_ONLY := factor(is.na(tmp.dt[[my.sgp[1]]]), levels=c(FALSE, TRUE), labels=c("Students without SGP", "Students with SGP"))])
 	} else {
-		dbWriteTable(sgp_data_for_summary, name = "summary_data", overwrite = TRUE, row.names=0,
+		dbWriteTable(sgp_data_for_summary, name = "summary_data", overwrite = TRUE, row.names=FALSE,
 			value = sgp_object@Data[data.table("VALID_CASE", content_areas.by.years), nomatch=0][,
 				variables.for.summaries, with=FALSE][, (highest.level.summary.grouping):=state])
 	}
@@ -575,7 +575,7 @@
 		if ((!identical(.Platform$OS.type, "unix") & !is.null(parallel.config)) | !is.null(parallel.config[["SNOW_TEST"]])) {
 			# Write tmp.simulation.dt to disk for SNOW backends in Windows (& SNOT_TEST) Only
 			tmp.simulation.dt <- "sqlite"
-			dbWriteTable(sgp_data_for_summary, name = "sim_data", overwrite = TRUE, row.names=0,
+			dbWriteTable(sgp_data_for_summary, name = "sim_data", overwrite = TRUE, row.names=FALSE,
 				value = combineSims(sgp_object)[, SIM_NUM := 1:sim.info[['n.simulated.sgps']]])
 		} else {
 			tmp.simulation.dt <- combineSims(sgp_object)
@@ -625,7 +625,7 @@
 				}
 
 				dbWriteTable(dbConnect(SQLite(), dbname = "Data/tmp_data/TMP_Summary_Data.sqlite"),
-					name = "summary_data", overwrite = TRUE, row.names=0, value = tmp.dt.long)
+					name = "summary_data", overwrite = TRUE, row.names=FALSE, value = tmp.dt.long)
 
 				sgp_object@Summary[[i]] <- c(sgp_object@Summary[[i]], summarizeSGP_INTERNAL(tmp.inst))
 			}
