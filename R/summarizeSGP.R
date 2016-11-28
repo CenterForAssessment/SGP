@@ -625,7 +625,7 @@
 				}
 
 				dbWriteTable(dbConnect(SQLite(), dbname = "Data/tmp_data/TMP_Summary_Data.sqlite"),
-					name = "summary_data", overwrite = TRUE, row.names=0, value = tmp.dt.long)
+					name = "summary_data", overwrite = TRUE, row.names=FALSE, value = tmp.dt.long)
 
 				sgp_object@Summary[[i]] <- c(sgp_object@Summary[[i]], summarizeSGP_INTERNAL(tmp.inst))
 			}
