@@ -836,6 +836,7 @@ function(
 			sgpData_LONG <- SGPdata::sgpData_LONG
 
 			if (is.null(test.option[['calculate.simex.baseline']])) calculate.simex.baseline <- FALSE else calculate.simex.baseline <- TRUE
+			if (is.null(test.option[['rq.method']])) SGPstateData[["DEMO"]][["SGP_Configuration"]][["rq.method"]] <- test.option[['rq.method']]
 			simex.parameters <- "list(state='DEMO', lambda=seq(0,2,0.5), simulation.iterations=50, extrapolation='linear', save.matrices=TRUE)"
 
 			###  The test of SIMEX baseline functionality requires the DEMO SIMEX matrices to be loaded manually.
