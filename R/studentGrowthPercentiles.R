@@ -1251,7 +1251,7 @@ function(panel.data,         ## REQUIRED
 
 	### PROGRESSION variable creation:
 
-	grade.progression <- tmp.gp
+	grade.progression <- grade.progression.for.norm.group <- tmp.gp
 	if (is.null(content_area.progression)) {
 		content_area.progression <- rep(sgp.labels$my.subject, length(tmp.gp))
 	} else {
@@ -1584,10 +1584,10 @@ function(panel.data,         ## REQUIRED
 
 		if (print.sgp.order | return.norm.group.identifier) {
 			if (exact.grade.progression.sequence) {
-				norm.groups <- paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression, sep="_"), sep="/"), num.prior+1), collapse="; ")
+				norm.groups <- paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression.for.norm.group, sep="_"), sep="/"), num.prior+1), collapse="; ")
 			} else {
 				norm.groups <- sapply(seq_along(year.progression.for.norm.group)[-1][1:(num.panels-1)],
-				function(x) paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression, sep="_"), sep="/"), x), collapse="; "))
+				function(x) paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression.for.norm.group, sep="_"), sep="/"), x), collapse="; "))
 			}
 			if (!print.sgp.order) { # Return only SGP_NORM_GROUP
 				if (exact.grade.progression.sequence) {
