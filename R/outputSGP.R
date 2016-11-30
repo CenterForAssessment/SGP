@@ -312,9 +312,9 @@ function(sgp_object,
 			if ("YEAR" %in% names(tmp.df) && is.character(tmp.df$YEAR)) {
 				if (length(grep("_", tmp.df$YEAR)) > 0) tmp.df[,YEAR:=as.integer(sapply(strsplit(YEAR, "_"), '[', 2))] else tmp.df[,YEAR:=as.integer(YEAR)]
 			}
-			if ("CONTENT_AREA" %in% names(tmp.df) && is.character(tmp.df$CONTENT_AREA)) {
-				tmp.df[,CONTENT_AREA:=as.integer(as.factor(CONTENT_AREA))]
-			}
+#			if ("CONTENT_AREA" %in% names(tmp.df) && is.character(tmp.df$CONTENT_AREA)) {
+#				tmp.df[,CONTENT_AREA:=as.integer(as.factor(CONTENT_AREA))]
+#			}
 			if ("LAST_NAME" %in% names(tmp.df) && is.factor(tmp.df$LAST_NAME)) {
 				tmp.df[,LAST_NAME:=as.character(LAST_NAME)]
 			}
@@ -346,6 +346,7 @@ function(sgp_object,
 						tmp.df[[names.iter]][grep("No", tmp.df[[names.iter]])] <- "N"
 					}
 					tmp.df[[names.iter]][tmp.df[[names.iter]]=="Students with Disabilities (IEP)"] <- "Y"
+					tmp.df[[names.iter]][tmp.df[[names.iter]]=="Students with 504 Plan"] <- "Y"
 					tmp.df[[names.iter]][tmp.df[[names.iter]]=="High Need Status: ELL, Special Education, or Disadvantaged Student"] <- "Y"
 					tmp.df[[names.iter]][tmp.df[[names.iter]]=="Economically Disadvantaged"] <- "Y"
 					tmp.df[[names.iter]][tmp.df[[names.iter]]=="English Language Learners (ELL)"] <- "Y"
@@ -496,6 +497,7 @@ function(sgp_object,
 
 		outputSGP.data <- ddcast(unclass.data.table(tmp.table)[,setdiff(variables.to.keep, "VALID_CASE"), with=FALSE], ID + CONTENT_AREA ~ YEAR,
 			value.var=setdiff(variables.to.keep, c("VALID_CASE", "ID", "CONTENT_AREA", "YEAR")), sep=".")
+		outputSGP.data[,TEMP_CONTENT_AREA:=CONTENT_AREA]
 
 
 		#### Merge in 1, 2, and 3 year projections
@@ -534,6 +536,7 @@ function(sgp_object,
 				setnames(outputSGP.data, c("TEMP", "TEMP_SCORE", "TEMP_GRADE"), c(paste(proj.iter, "TRANSFORMED", sep="_"), proj.iter, paste("GRADE", tmp.last.year.short, sep=".")))
 			}
 		}
+		outputSGP.data[,CONTENT_AREA:=as.integer(as.factor(CONTENT_AREA))]
 
 	#	for (j in 1:3) {
 	#		setkeyv(outputSGP.data, c("ID", "CONTENT_AREA"))
