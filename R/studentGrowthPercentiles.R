@@ -1251,7 +1251,7 @@ function(panel.data,         ## REQUIRED
 
 	### PROGRESSION variable creation:
 
-	grade.progression <- tmp.gp
+	grade.progression <- grade.progression.for.norm.group <- tmp.gp
 	if (is.null(content_area.progression)) {
 		content_area.progression <- rep(sgp.labels$my.subject, length(tmp.gp))
 	} else {
@@ -1367,8 +1367,8 @@ function(panel.data,         ## REQUIRED
 			Coefficient_Matrices[[tmp.path.coefficient.matrices]][['TMP_NAME']] <- .create.coefficient.matrices(ss.data, k, by.grade, max.n.for.coefficient.matrices)
 			if (identical(Coefficient_Matrices[[tmp.path.coefficient.matrices]][['TMP_NAME']], "Insufficient N")) {
 				tmp.messages <- c(tmp.messages, paste("\t\tNOTE: Some grade progressions contain fewer than the minimum cohort size.",
-					"\n\t\tOnly analyses with MAX grade progression", paste(rev(rev(tmp.gp)[1:k]), collapse = ', '), "will be produced given", sgp.cohort.size,
-					"indicated as minimum cohort N size. \n\t\tCheck data, function arguments and see help page for details.\n"))
+					"\n\t\tOnly analyses with MAX grade progression ", paste(rev(rev(tmp.gp)[1:k]), collapse = ', '), " will be produced given N=", prettyNum(sgp.cohort.size, big.mark=",", scientific=FALSE),
+					" indicated as minimum cohort size. \n\t\tCheck data, function arguments and see help page for details.\n", sep=""))
 				Coefficient_Matrices[[tmp.path.coefficient.matrices]][['TMP_NAME']] <- NULL
 				grade.progression <- tmp.gp <- rev(rev(tmp.gp)[1:k])
 				# num.prior <- length(tmp.gp[2:k]) # Force lots of warnings (?)
@@ -1584,10 +1584,10 @@ function(panel.data,         ## REQUIRED
 
 		if (print.sgp.order | return.norm.group.identifier) {
 			if (exact.grade.progression.sequence) {
-				norm.groups <- paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression, sep="_"), sep="/"), num.prior+1), collapse="; ")
+				norm.groups <- paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression.for.norm.group, sep="_"), sep="/"), num.prior+1), collapse="; ")
 			} else {
 				norm.groups <- sapply(seq_along(year.progression.for.norm.group)[-1][1:(num.panels-1)],
-				function(x) paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression, sep="_"), sep="/"), x), collapse="; "))
+				function(x) paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression.for.norm.group, sep="_"), sep="/"), x), collapse="; "))
 			}
 			if (!print.sgp.order) { # Return only SGP_NORM_GROUP
 				if (exact.grade.progression.sequence) {
