@@ -459,7 +459,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		year.text <- c(year.function(Report_Parameters$Current_Year, (1-grade.values$year_span), grade.values$year_span+grade.values$increment_for_projection_current, "character", test.season),
 			rep(" ", studentGrowthPlot.year.span))
 		year.text <- head(year.text, studentGrowthPlot.year.span)
-		content_area.text <- grade.values$interp.df$CONTENT_AREA[match(gsub("-", "_", year.text), grade.values$years)]
+		content_area.text <- grade.values$interp.df$CONTENT_AREA[match(gsub("-", "_", year.text), sapply(grade.values$years, function(f) strsplit(f, "[.]")[[1]][1]))]
 		content_area.text[is.na(content_area.text)] <- " "
 		for (i in which(content_area.text %in% names(SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Content_Areas_Labels"]]))) {
 			content_area.text[i] <- SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Content_Areas_Labels"]][[content_area.text[i]]]
@@ -482,7 +482,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		grades.text <- c(paste(grade.label, grades.text.numbers), rep(" ", studentGrowthPlot.year.span))
 		grades.text[grades.text.numbers.missing] <- missing.data.symbol
 		grades.text[grades.text.numbers.non.tested] <- "Non-tested Grade"
-		grades.text[grades.text.eoct] <- "EOCT"
+		grades.text[grades.text.eoct] <- content_area.text[grades.text.eoct]# "EOCT"
 		grades.text <- head(grades.text, studentGrowthPlot.year.span)
 
 		if (missing(Plotting_Scale_Scores)) Plotting_Scale_Scores <- Scale_Scores
