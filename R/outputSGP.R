@@ -312,9 +312,6 @@ function(sgp_object,
 			if ("YEAR" %in% names(tmp.df) && is.character(tmp.df$YEAR)) {
 				if (length(grep("_", tmp.df$YEAR)) > 0) tmp.df[,YEAR:=as.integer(sapply(strsplit(YEAR, "_"), '[', 2))] else tmp.df[,YEAR:=as.integer(YEAR)]
 			}
-#			if ("CONTENT_AREA" %in% names(tmp.df) && is.character(tmp.df$CONTENT_AREA)) {
-#				tmp.df[,CONTENT_AREA:=as.integer(as.factor(CONTENT_AREA))]
-#			}
 			if ("LAST_NAME" %in% names(tmp.df) && is.factor(tmp.df$LAST_NAME)) {
 				tmp.df[,LAST_NAME:=as.character(LAST_NAME)]
 			}
@@ -335,6 +332,9 @@ function(sgp_object,
 			}
 			if ("ETHNICITY" %in% names(tmp.df) && is.factor(tmp.df$ETHNICITY)) {
 				tmp.df[,ETHNICITY:=unclass(ETHNICITY)]
+			}
+			if ("ACHIEVEMENT_LEVEL" %in% names(tmp.df)) {
+				tmp.df[,ACHIEVEMENT_LEVEL:=unclass(as.factor(ACHIEVEMENT_LEVEL))]
 			}
 			for (names.iter in c(outputSGP.student.groups, "SCHOOL_ENROLLMENT_STATUS", "DISTRICT_ENROLLMENT_STATUS", "STATE_ENROLLMENT_STATUS") %w/o% grep("ETHNICITY", outputSGP.student.groups, value=TRUE)) {
 				if (names.iter %in% names(tmp.df) && is.factor(tmp.df[[names.iter]])) {
