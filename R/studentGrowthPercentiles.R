@@ -1367,8 +1367,8 @@ function(panel.data,         ## REQUIRED
 			Coefficient_Matrices[[tmp.path.coefficient.matrices]][['TMP_NAME']] <- .create.coefficient.matrices(ss.data, k, by.grade, max.n.for.coefficient.matrices)
 			if (identical(Coefficient_Matrices[[tmp.path.coefficient.matrices]][['TMP_NAME']], "Insufficient N")) {
 				tmp.messages <- c(tmp.messages, paste("\t\tNOTE: Some grade progressions contain fewer than the minimum cohort size.",
-					"\n\t\tOnly analyses with MAX grade progression", paste(rev(rev(tmp.gp)[1:k]), collapse = ', '), "will be produced given", sgp.cohort.size,
-					"indicated as minimum cohort N size. \n\t\tCheck data, function arguments and see help page for details.\n"))
+					"\n\t\tOnly analyses with MAX grade progression ", paste(rev(rev(tmp.gp)[1:k]), collapse = ', '), " will be produced given N=", prettyNum(sgp.cohort.size, big.mark=",", scientific=FALSE),
+					" indicated as minimum cohort size. \n\t\tCheck data, function arguments and see help page for details.\n", sep=""))
 				Coefficient_Matrices[[tmp.path.coefficient.matrices]][['TMP_NAME']] <- NULL
 				grade.progression <- tmp.gp <- rev(rev(tmp.gp)[1:k])
 				# num.prior <- length(tmp.gp[2:k]) # Force lots of warnings (?)
