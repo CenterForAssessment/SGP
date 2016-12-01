@@ -44,15 +44,6 @@ function(tmp.data,
 			key=c(getKey(tmp.data), "PREFERENCE"))
 	}
 
-	if (length(sgp_order_variables <- sort(grep("SGP_ORDER_[123456789]", names(tmp.data), value=TRUE))) > 1) {
-		setkeyv(tmp.data, getKey(tmp.data))
-		my.fill.table <- tmp.data[tmp.data[duplicated(tmp.data, by=key(tmp.data))][,key(tmp.data), with=FALSE]][,lapply(.SD, mean, na.rm=TRUE), keyby=key(tmp.data), .SDcols=sgp_order_variables]
-		for (order.iter in seq(length(sgp_order_variables)-1)) {
-			which.to.fill <- tmp.data[is.na(get(sgp_order_variables[order.iter])) & !is.na(SGP)][,key(tmp.data), with=FALSE]
-			tmp.data[which.to.fill, sgp_order_variables[order.iter]:=tmp.data[my.fill.table[which.to.fill], c(key(tmp.data), sgp_order_variables), with=FALSE][[sgp_order_variables[order.iter]]]]
-		}
-	}
-
 	setkeyv(tmp.data, getKey(tmp.data))
 	tmp.data <- tmp.data[!duplicated(tmp.data, by=key(tmp.data))][,PREFERENCE:=NULL]
 	return(tmp.data)
