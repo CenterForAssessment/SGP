@@ -377,7 +377,7 @@ if ("studentGrowthPlot" %in% plot.types) {
 
 		if (is.SGP(sgp_object)) {
 			sgPlot.wide.data <- FALSE
-			slot.data <- copy(sgp_object@Data)
+			slot.data <- copy(sgp_object@Data["VALID_CASE"])
 		} else {
 			if ("JSON" %in% sgPlot.output.format) {
 				stop("\tNOTE: JSON output requires object of class SGP to be passed to visualizeSGP for argument sgp_object")
@@ -744,9 +744,6 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 		tmp.districts.and.schools.size <- slot.data[SJ("VALID_CASE", tmp.last.year)][,num_non_missing(ID), by=list(DISTRICT_NUMBER, SCHOOL_NUMBER)]
 		setkeyv(tmp.districts.and.schools.size, c("DISTRICT_NUMBER", "SCHOOL_NUMBER"))
 		setkeyv(slot.data, long.key)
-
-
-
 
 		if (is.null(sgPlot.students)) {
 			report.ids <- unique(slot.data[tmp.districts.and.schools][["ID"]])
