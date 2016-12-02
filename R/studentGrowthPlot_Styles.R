@@ -51,6 +51,8 @@
 		tmp.state <- paste(datasets::state.name[state==datasets::state.abb], tmp.abbreviation)
 		tmp.organization <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Organization"]]
 		number.achievement.level.regions <- length(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Achievement_Level_Labels"]])
+		tmp.proficiency <- SGP::SGPstateData[[state]][["Student_Report_Information"]][["Proficiency_Label"]]
+		if (is.null(tmp.proficiency)) tmp.proficiency <- "proficient"
 		if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["sgp.projections.max.forward.progression.grade"]])) {
 			trajectory.cuts <- sort(c(SGP::SGPstateData[[state]][["Growth"]][["Cutscores"]][['Cuts']], SGP::SGPstateData[[state]][["Student_Report_Information"]][["Projection_Fan_Limits"]]))
 			trajectory.cuts <- paste(paste("P", trajectory.cuts, "_", sep=""), collapse="|")
@@ -600,9 +602,13 @@ if (reports.by.school) {
 			if (is.na(student_school_name)) student_school_name <- tmp_school_name
 		} else student_school_name <- tmp_school_name
 
+		if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["sgPlot.use.student.id"]])) {
+			tmp.student.name <- paste0(FIRST_NAME, " ", LAST_NAME, " - ", student_number)
+		} else tmp.student.name <- paste0(FIRST_NAME, " ", LAST_NAME)
+
 		pushViewport(top.border.vp)
 		grid.rect(gp=gpar(fill=sgPlot.header.footer.color, col=sgPlot.header.footer.color))
-		grid.text(x=0.025, y=0.5, paste(FIRST_NAME, " ", LAST_NAME, sep=""),
+		grid.text(x=0.025, y=0.5, tmp.student.name,
 			gp=gpar(fontface="bold", fontfamily="Helvetica-Narrow", col="white", cex=1.65), just="left", default.units="native")
 		if (page.count > 1) grid.text(x=0.475, y=0.5, paste("Page", pages), gp=gpar(fontface="bold", fontfamily="Helvetica-Narrow", col="white", cex=1.65), just="center", default.units="native")
 		grid.text(x=0.975, y=0.5, student_school_name, gp=gpar(fontface="bold", fontfamily="Helvetica-Narrow", col="white", cex=1.65), just="right", default.units="native")
@@ -613,8 +619,8 @@ if (reports.by.school) {
 		grid.rect(gp=gpar(fill=sgPlot.header.footer.color, col=sgPlot.header.footer.color))
 		grid.text(x=0.02, y=0.70, paste("For more information please visit the", tmp.organization$Name, paste("(", tmp.organization$Abbreviation, ")", sep=""),
 			"at", tmp.organization$URL, "or contact", tmp.organization$Contact), gp=gpar(cex=0.8, col="white"), default.units="native", just="left")
-		copyright.text <- paste("Cooperatively developed by the ", tmp.organization$Abbreviation, " & the Center for Assessment, Inc.", sep="")
-		grid.text(x=0.02, y=0.30, paste(copyright.text, " Distributed by the ", tmp.organization$Abbreviation, ".", sep=""),
+		copyright.text <- paste("Cooperatively developed by ", tmp.organization$Abbreviation, " & the Center for Assessment, Inc.", sep="")
+		grid.text(x=0.02, y=0.30, paste(copyright.text, " Distributed by ", tmp.organization$Abbreviation, ".", sep=""),
 			gp=gpar(cex=0.8, col="white"), default.units="native", just="left")
 
 		# grid.text(x=0.995, y=0.18, copyright.text, gp=gpar(col="white", cex=0.45), default.units="native", just="right")
@@ -690,7 +696,7 @@ if (reports.by.school) {
 				grid.circle(x=0.075, y=suggested.y-0.23, r=0.01, gp=gpar(fill="black"), default.units="native")
 				grid.text(x=0.12, y=suggested.y-0.23, "Identify the rate of progress", gp=gpar(cex=0.8), default.units="native", just="left")
 				grid.text(x=0.12, y=suggested.y-0.25, "needed in order to reach or", gp=gpar(cex=0.8), default.units="native", just="left")
-				grid.text(x=0.12, y=suggested.y-0.27, "maintain proficient status", gp=gpar(cex=0.8), default.units="native", just="left")
+				grid.text(x=0.12, y=suggested.y-0.27, paste("maintain",tmp.proficiency, "status"), gp=gpar(cex=0.8), default.units="native", just="left")
 				grid.text(x=0.12, y=suggested.y-0.29, paste("on the", tmp.abbreviation, "next year."), gp=gpar(cex=0.8), default.units="native", just="left")
 			}
 
@@ -1192,9 +1198,13 @@ if (reports.by.instructor) {
 				student_school_name <- sort(unique(tmp_student_data[[paste("SCHOOL_NAME", last.year, sep=".")]]))[1] # sort to get rid of potential NA values
 			} else student_school_name <- tmp_school_name
 
+			if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["sgPlot.use.student.id"]])) {
+				tmp.student.name <- paste0(FIRST_NAME, " ", LAST_NAME, " - ", student_number)
+			} else tmp.student.name <- paste0(FIRST_NAME, " ", LAST_NAME)
+
 			pushViewport(top.border.vp)
 			grid.rect(gp=gpar(fill=sgPlot.header.footer.color, col=sgPlot.header.footer.color))
-			grid.text(x=0.025, y=0.5, paste(FIRST_NAME, " ", LAST_NAME, sep=""),
+			grid.text(x=0.025, y=0.5, tmp.student.name,
 				gp=gpar(fontface="bold", fontfamily="Helvetica-Narrow", col="white", cex=1.65), just="left", default.units="native")
 			grid.text(x=0.975, y=0.5, paste(student_school_name, ": ", FIRST_NAME_TEACHER, " ", LAST_NAME_TEACHER, sep=""),
 				gp=gpar(fontface="bold", fontfamily="Helvetica-Narrow", col="white", cex=1.65), just="right", default.units="native")
@@ -1204,7 +1214,7 @@ if (reports.by.instructor) {
 			## Bottom Legend
 			pushViewport(bottom.border.vp)
 			grid.rect(gp=gpar(fill=sgPlot.header.footer.color, col=sgPlot.header.footer.color))
-			grid.text(x=0.02, y=0.70, paste("For more information please visit the", tmp.organization$Name, paste("(", tmp.organization$Abbreviation, ")", sep=""),
+			grid.text(x=0.02, y=0.70, paste("For more information please visit the", tmp.organization$Name, paste("(", gsub("the ", "", tmp.organization$Abbreviation), ")", sep=""),
 				"at", tmp.organization$URL, "or contact", tmp.organization$Contact), gp=gpar(cex=0.8, col="white"), default.units="native", just="left")
 			copyright.text <- paste("Cooperatively developed by the ", tmp.organization$Abbreviation, " & the Center for Assessment, Inc.", sep="")
 			grid.text(x=0.02, y=0.30, paste(copyright.text, " Distributed by the ", tmp.organization$Abbreviation, ".", sep=""),
@@ -1271,7 +1281,7 @@ if (reports.by.instructor) {
 					grid.circle(x=0.075, y=suggested.y-0.23, r=0.01, gp=gpar(fill="black"), default.units="native")
 					grid.text(x=0.12, y=suggested.y-0.23, "Identify the rate of progress", gp=gpar(cex=0.8), default.units="native", just="left")
 					grid.text(x=0.12, y=suggested.y-0.25, "needed in order to reach or", gp=gpar(cex=0.8), default.units="native", just="left")
-					grid.text(x=0.12, y=suggested.y-0.27, "maintain proficient status", gp=gpar(cex=0.8), default.units="native", just="left")
+					grid.text(x=0.12, y=suggested.y-0.27, paste("maintain",tmp.proficiency, "status"), gp=gpar(cex=0.8), default.units="native", just="left")
 					grid.text(x=0.12, y=suggested.y-0.29, paste("on the", tmp.abbreviation, "next year."), gp=gpar(cex=0.8), default.units="native", just="left")
 				}
 
