@@ -673,7 +673,7 @@ function(panel.data,         ## REQUIRED
                     }
 					stopParallel(tmp.par.config, par.start)
 				}
-	            unlink(tmp.dbname)
+	      if (!is.null(tmp.par.config)) unlink(tmp.dbname)
 			} ### END for (L in lambda[-1])
 			if (verbose) messageSGP(c("\t\t", rev(content_area.progression)[1], " Grade ", rev(tmp.gp)[1], " Order ", k, " Simulation process complete ", prettyDate()))
 

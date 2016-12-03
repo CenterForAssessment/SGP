@@ -1,6 +1,6 @@
 `.onLoad` <-
 function(libname, pkgname) {
-	setDTthreads(1)
+	if (packageVersion('data.table') >= '1.9.7') eval(parse(text="invisible(setDTthreads(1))"))
 }
 
 
