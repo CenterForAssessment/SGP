@@ -224,7 +224,7 @@ function(sgp_object,
 	if (identical(calculate.simex.baseline, TRUE)) {
 		if (is.character(csem.variable <- SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
 			calculate.simex.baseline <- list(csem.data.vnames=csem.variable, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE)
-		} else 	{
+		} else {
 			calculate.simex.baseline <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE)
 			csem.variable <- NULL
 		}
@@ -620,7 +620,7 @@ function(sgp_object,
 		if (!all(find.matrices <- paste(tmp.subjects, ".BASELINE.SIMEX", sep="") %in% names(tmp_sgp_object[["Coefficient_Matrices"]]))) {
 
 			if (is.null(sgp.baseline.config)) {
-				sgp.baseline.config <- getSGPBaselineConfig(sgp_object, content_areas = tmp.subjects, grades, sgp.baseline.panel.years, sgp.percentiles.baseline.max.order, calculate.simex.baseline)
+				sgp.baseline.config <- getSGPBaselineConfig(sgp_object, content_areas = tmp.subjects, grades, sgp.baseline.panel.years, gpgp.percentiles.baseline.max.order, calculate.simex.baseline)
 			} else {
 				sgp.baseline.config <- checkConfig(sgp.baseline.config, "Baseline")
 			}
@@ -630,7 +630,7 @@ function(sgp_object,
 			messageSGP("\n\tStarted SIMEX Baseline Coefficient Matrix Calculation:\n")
 
 			##  Enforce that simex.use.my.coefficient.matrices must be FALSE for BASELINE SIMEX matrix production
-			calculate.simex.baseline$simex.use.my.coefficient.matrices <- NULL
+			calculate.simex.baseline[['simex.use.my.coefficient.matrices']] <- NULL
 
 			if (!is.null(parallel.config)) { ### PARALLEL BASELINE COEFFICIENT MATRIX CONSTRUCTION
 
@@ -713,8 +713,8 @@ function(sgp_object,
 		} # END Compute SIMEX baseline coefficient matrices
 
 		##  Enforce that simex.use.my.coefficient.matrices must be TRUE and save.matrices is FALSE for BASELINE SIMEX calculations below
-		calculate.simex.baseline$simex.use.my.coefficient.matrices <- TRUE
-		calculate.simex.baseline$save.matrices <- FALSE
+		calculate.simex.baseline[['simex.use.my.coefficient.matrices']] <- TRUE
+		calculate.simex.baseline[['save.matrices']] <- FALSE
 
 	} # END check for SIMEX baseline matrices presence
 
@@ -763,7 +763,7 @@ function(sgp_object,
 
 	#######################################################################################################################
 	#######################################################################################################################
-	##   Percentiles, Baseline Percentiles, Projections, Lagged Projections -  PARALLEL FLAVORS FIRST
+	##   Percentiles, Equated Percentiles, Baseline Percentiles, Projections, Lagged Projections -  PARALLEL FLAVORS FIRST
 	#######################################################################################################################
 	#######################################################################################################################
 
