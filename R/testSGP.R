@@ -931,13 +931,13 @@ function(
 					sgp.panel.years=tail(sgpData.years, 3),
 					sgp.grade.sequences=list(c(8, 'EOCT', 'EOCT')),
 					sgp.calculate.simex=eval(parse(text=simex.parameters)),
-					sgp.calculate.simex.baseline=simex.parameters),
+					sgp.calculate.simex.baseline=eval(parse(text=simex.parameters))),
 				ALGEBRA_II.config=list(
 					sgp.content.areas=c('MATHEMATICS', 'ALGEBRA_I', 'ALGEBRA_II'),
 					sgp.panel.years=tail(sgpData.years, 3),
 					sgp.grade.sequences=list(c(8, 'EOCT', 'EOCT')),
 					sgp.calculate.simex=eval(parse(text=simex.parameters)),
-					sgp.calculate.simex.baseline=simex.parameters)
+					sgp.calculate.simex.baseline=eval(parse(text=simex.parameters)))
 			)
 
 			expression.to.evaluate <-
