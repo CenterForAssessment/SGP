@@ -524,16 +524,17 @@ function(panel.data,         ## REQUIRED
 					col.index <- num.perturb.vars-g
 					if (is.null(csem.data.vnames)) {
 						setkeyv(big.data, c(names(big.data)[col.index], tmp.names))
-						big.data.uniques <- unique(big.data, by=key(big.data))
-						big.data.uniques.indices <- which(!duplicated(big.data, by=key(big.data)))
-						big.data.uniques[, paste("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="") :=
-							rep(csem.int[, paste("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")], B)[big.data.uniques.indices]]
+                        big.data.uniques <- unique(big.data[, paste("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="") :=
+							csem.int[, paste("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], sep=""), with=FALSE]], by=key(big.data))
+#						big.data.uniques <- unique(big.data, by=key(big.data))
+#						big.data.uniques.indices <- which(!duplicated(big.data, by=key(big.data)))
+#						big.data.uniques[, paste("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="") :=
+#							rep(csem.int[, paste("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], sep=""), with=FALSE], B)[big.data.uniques.indices]]
 					} else {
 						setkeyv(big.data, c(names(big.data)[col.index], tmp.names, paste("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")))
 						big.data.uniques <- unique(big.data, by=key(big.data))
 					}
-					big.data.uniques[, TEMP := eval(parse(text=paste("big.data.uniques[[", num.perturb.vars-g, "]]+sqrt(L)*big.data.uniques[['icsem",
-						perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], "']] * rnorm(dim(big.data.uniques)[1])", sep="")))]
+					big.data.uniques[, TEMP := eval(parse(text=paste("big.data.uniques[[", num.perturb.vars-g, "]]+sqrt(L)*big.data.uniques[['icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], "']] * rnorm(dim(big.data.uniques)[1])", sep="")))]
 					big.data.uniques[big.data.uniques[[col.index]] < loss.hoss[1,g], (col.index) := loss.hoss[1,g]]
 					big.data.uniques[big.data.uniques[[col.index]] > loss.hoss[2,g], (col.index) := loss.hoss[2,g]]
 					if (is.null(key(big.data.uniques))) setkeyv(big.data.uniques, key(big.data))
