@@ -1009,7 +1009,7 @@ function(
 					tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II SGP_SIMEX_BASELINE: FAIL\n")
 				}
 #				if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX_BASELINE, na.rm=TRUE), 1465187L)) {
-				if (identical(digest(Demonstration_SGP@Data$SGP_SIMEX_BASELINE, na.rm=TRUE), "3e653f546bd93da33cc915b5d37100a4")) {
+				if (identical(digest(Demonstration_SGP@Data$SGP_SIMEX_BASELINE), "3e653f546bd93da33cc915b5d37100a4")) {
 					tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX_BASELINE: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX_BASELINE: FAIL\n")
