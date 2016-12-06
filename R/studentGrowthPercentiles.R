@@ -454,8 +454,8 @@ function(panel.data,         ## REQUIRED
 			tmp.ca.iter <- rev(content_area.progression)[start.index:(k+1)]
 			tmp.yr.iter <- rev(year.progression)[start.index:(k+1)]
 			if (is.null(csem.data.vnames)) {
-				csem.int <- matrix(nrow=dim(tmp.data)[1], ncol=length(perturb.var)) # build matrix to store interpolated csem
-				colnames(csem.int) <- paste("icsem", perturb.var, tmp.ca.iter, tmp.yr.iter, sep="")
+				csem.int <- data.table(matrix(nrow=dim(tmp.data)[1], ncol=length(perturb.var))) # build matrix to store interpolated csem
+				setnames(csem.int, paste("icsem", perturb.var, tmp.ca.iter, tmp.yr.iter, sep=""))
 			} else {
 				csem.int <- data.table(Panel_Data[,c("ID", intersect(csem.data.vnames, names(Panel_Data))),with=FALSE], key="ID")[ID %in% tmp.data$ID]
 				setnames(csem.int, csem.data.vnames, paste("icsem", head(tmp.gp, -1), head(content_area.progression, -1), head(year.progression, -1), sep=""))
@@ -473,7 +473,7 @@ function(panel.data,         ## REQUIRED
 					}
 					if (dim(CSEM_Data)[1] == 0) stop(paste('CSEM data for', tmp.ca.iter[g], 'Grade', perturb.var[g], 'is required to use SIMEX functionality, but is not available in SGPstateData.  Please contact package administrators to add CSEM data.'))
 					CSEM_Function <- splinefun(CSEM_Data[["SCALE_SCORE"]], CSEM_Data[["SCALE_SCORE_CSEM"]], method="natural")
-					csem.int[, paste("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")] <- CSEM_Function(tmp.data[[num.perturb.vars-g]])
+					csem.int[, paste("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="") := CSEM_Function(tmp.data[[num.perturb.vars-g]])]
 				}
 			}
 
@@ -486,7 +486,7 @@ function(panel.data,         ## REQUIRED
 				csem.tmp <- na.omit(csem.tmp)
 
 				for (g in seq_along(perturb.var)) {
-					csem.int[, paste("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")] <- csem.tmp[,g]
+					csem.int[, paste("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="") := csem.tmp[,g]]
 				}
 			}
 
@@ -524,16 +524,13 @@ function(panel.data,         ## REQUIRED
 					col.index <- num.perturb.vars-g
 					if (is.null(csem.data.vnames)) {
 						setkeyv(big.data, c(names(big.data)[col.index], tmp.names))
-						big.data.uniques <- unique(big.data, by=key(big.data))
-						big.data.uniques.indices <- which(!duplicated(big.data, by=key(big.data)))
-						big.data.uniques[, paste("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="") :=
-							rep(csem.int[, paste("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")], B)[big.data.uniques.indices]]
+                        big.data.uniques <- unique(big.data[, paste("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="") :=
+							csem.int[, paste("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], sep=""), with=FALSE]], by=key(big.data))
 					} else {
 						setkeyv(big.data, c(names(big.data)[col.index], tmp.names, paste("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")))
 						big.data.uniques <- unique(big.data, by=key(big.data))
 					}
-					big.data.uniques[, TEMP := eval(parse(text=paste("big.data.uniques[[", num.perturb.vars-g, "]]+sqrt(L)*big.data.uniques[['icsem",
-						perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], "']] * rnorm(dim(big.data.uniques)[1])", sep="")))]
+					big.data.uniques[, TEMP := eval(parse(text=paste("big.data.uniques[[", num.perturb.vars-g, "]]+sqrt(L)*big.data.uniques[['icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], "']] * rnorm(dim(big.data.uniques)[1])", sep="")))]
 					big.data.uniques[big.data.uniques[[col.index]] < loss.hoss[1,g], (col.index) := loss.hoss[1,g]]
 					big.data.uniques[big.data.uniques[[col.index]] > loss.hoss[2,g], (col.index) := loss.hoss[2,g]]
 					if (is.null(key(big.data.uniques))) setkeyv(big.data.uniques, key(big.data))
@@ -571,7 +568,6 @@ function(panel.data,         ## REQUIRED
 				    	tmp.dbname <- tempfile(fileext = ".sqlite")
 				    	dbWriteTable(dbConnect(SQLite(), dbname = tmp.dbname), name = "simex_data", value=big.data, overwrite=TRUE)
 				    }
-				    rm(big.data)
 				}
 
 				if (!is.null(simex.use.my.coefficient.matrices)) { # Element from the 'calculate.simex' argument list.
@@ -587,8 +583,8 @@ function(panel.data,         ## REQUIRED
 						my.matrix.order=k,
 						my.matrix.time.dependency=SGPt), recursive=FALSE)
 
-					if (length(available.matrices) > B) sim.iters <- sample(1:length(available.matrices), B) # Stays as 1:B when length(available.matrices) == B
-					if (length(available.matrices) < B) sim.iters <- sample(1:length(available.matrices), B, replace=TRUE)
+					if (length(available.matrices) > B) sim.iters <- sample.int(length(available.matrices), B) # Stays as 1:B when length(available.matrices) == B
+					if (length(available.matrices) < B) sim.iters <- sample.int(length(available.matrices), B, replace=TRUE)
 				}
 
 				if (is.null(tmp.par.config)) { # Sequential
@@ -597,7 +593,7 @@ function(panel.data,         ## REQUIRED
 						for (z in seq_along(sim.iters)) {
 							if (is.null(simex.sample.size) || dim(tmp.data)[1] <= simex.sample.size) {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]] <-
-									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=  big.data[b==z][, b:=NULL])
+									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=big.data[b==z][, b:=NULL])
 							} else {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]] <-
 									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=big.data[b==z][, b:=NULL])
@@ -673,7 +669,7 @@ function(panel.data,         ## REQUIRED
                     }
 					stopParallel(tmp.par.config, par.start)
 				}
-	      if (!is.null(tmp.par.config)) unlink(tmp.dbname)
+                if (!is.null(tmp.par.config)) unlink(tmp.dbname)
 			} ### END for (L in lambda[-1])
 			if (verbose) messageSGP(c("\t\t", rev(content_area.progression)[1], " Grade ", rev(tmp.gp)[1], " Order ", k, " Simulation process complete ", prettyDate()))
 
