@@ -526,10 +526,6 @@ function(panel.data,         ## REQUIRED
 						setkeyv(big.data, c(names(big.data)[col.index], tmp.names))
                         big.data.uniques <- unique(big.data[, paste("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="") :=
 							csem.int[, paste("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], sep=""), with=FALSE]], by=key(big.data))
-#						big.data.uniques <- unique(big.data, by=key(big.data))
-#						big.data.uniques.indices <- which(!duplicated(big.data, by=key(big.data)))
-#						big.data.uniques[, paste("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="") :=
-#							rep(csem.int[, paste("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], sep=""), with=FALSE], B)[big.data.uniques.indices]]
 					} else {
 						setkeyv(big.data, c(names(big.data)[col.index], tmp.names, paste("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], sep="")))
 						big.data.uniques <- unique(big.data, by=key(big.data))
@@ -572,7 +568,6 @@ function(panel.data,         ## REQUIRED
 				    	tmp.dbname <- tempfile(fileext = ".sqlite")
 				    	dbWriteTable(dbConnect(SQLite(), dbname = tmp.dbname), name = "simex_data", value=big.data, overwrite=TRUE)
 				    }
-	#			    rm(big.data)
 				}
 
 				if (!is.null(simex.use.my.coefficient.matrices)) { # Element from the 'calculate.simex' argument list.
@@ -674,7 +669,7 @@ function(panel.data,         ## REQUIRED
                     }
 					stopParallel(tmp.par.config, par.start)
 				}
-	      if (!is.null(tmp.par.config)) unlink(tmp.dbname)
+                if (!is.null(tmp.par.config)) unlink(tmp.dbname)
 			} ### END for (L in lambda[-1])
 			if (verbose) messageSGP(c("\t\t", rev(content_area.progression)[1], " Grade ", rev(tmp.gp)[1], " Order ", k, " Simulation process complete ", prettyDate()))
 
