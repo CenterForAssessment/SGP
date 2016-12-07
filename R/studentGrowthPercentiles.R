@@ -281,7 +281,7 @@ function(panel.data,         ## REQUIRED
 
 	.get.quantiles <- function(data1, data2) {
 		V1 <- NULL
-		tmp <- as.data.table(max.col(cbind(data1 < data2, FALSE), "last"))[V1==101,V1:=0]
+		tmp <- as.data.table(max.col(cbind(data1 < data2, FALSE), "last"))[V1==101,V1:=0L]
 		if (!is.null(sgp.quantiles.labels)) {
 			setattr(tmp[['V1']] <- as.factor(tmp[['V1']]), "levels", sgp.quantiles.labels)
 			return(as.integer(levels(tmp[['V1']]))[tmp[['V1']]])
@@ -1484,7 +1484,7 @@ function(panel.data,         ## REQUIRED
 
 					tmp.csem.quantiles[[j]] <- data.table(
 									tmp.id.etc,
-									matrix(replicate(calculate.confidence.intervals[['simulation.iterations']],
+									replicate(calculate.confidence.intervals[['simulation.iterations']],
 												.get.quantiles(
 													tmp.predictions,
 													csemScoreSimulator(
@@ -1495,7 +1495,7 @@ function(panel.data,         ## REQUIRED
 													state=calculate.confidence.intervals[['state']],
 													variable=tmp.csem.variable,
 													distribution=calculate.confidence.intervals[['distribution']],
-													round.digits=calculate.confidence.intervals[['round']]))), ncol=calculate.confidence.intervals[['simulation.iterations']]))
+													round.digits=calculate.confidence.intervals[['round']]))))
 					setnames(tmp.csem.quantiles[[j]], paste("V", seq(calculate.confidence.intervals[['simulation.iterations']]), sep=""),
 										paste("SGP_SIM", seq(calculate.confidence.intervals[['simulation.iterations']]), sep="_"))
 				} ## END CSEM analysis
