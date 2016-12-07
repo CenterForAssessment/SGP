@@ -89,7 +89,7 @@ function(panel.data,         ## REQUIRED
 		}
 
 		if (by.grade) {
-			tmp.grades <- unlist(lapply(data[,2:(2+num.panels-2), with=FALSE], as.character), use.names=FALSE)
+			tmp.grades <- unlist(data[,2:(2+num.panels-2), with=FALSE], use.names=FALSE)
 		} else {
 			tmp.grades <- rep(head(tmp.gp, -1), each=dim(data)[1])
 		}
@@ -98,7 +98,7 @@ function(panel.data,         ## REQUIRED
 			VALID_CASE="VALID_CASE",
 			CONTENT_AREA=rep(head(content_area.progression, -1), each=dim(data)[1]),
 			GRADE=tmp.grades,
-			SCALE_SCORE=unlist(lapply(data[,(2+num.panels):(2+2*num.panels-2), with=FALSE], as.numeric), use.names=FALSE),
+			SCALE_SCORE=unlist(data[,(2+num.panels):(2+2*num.panels-2), with=FALSE], use.names=FALSE),
 			YEAR=tmp.years, key=c("VALID_CASE", "CONTENT_AREA", "GRADE"))
 
 		createKnotsBoundaries(tmp.stack, knot.cut.percentiles)
