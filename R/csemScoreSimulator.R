@@ -1,12 +1,12 @@
-csemScoreSimulator <- 
+csemScoreSimulator <-
 function(
-	scale_scores, 
-	grade, 
-	content_area, 
-	year, 
-	state, 
-	variable=NULL, 
-	distribution=NULL, 
+	scale_scores,
+	grade,
+	content_area,
+	year,
+	state,
+	variable=NULL,
+	distribution=NULL,
 	round.digits=NULL) {
 
 	GRADE <- CONTENT_AREA <- YEAR <- SIM <- NULL
@@ -26,9 +26,9 @@ function(
 
 	if (!is.null(state)) {
 		if ("YEAR" %in% names(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
-			Interpolation_Data <- subset(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], GRADE==grade & CONTENT_AREA==content_area & YEAR==year)
+			Interpolation_Data <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]][GRADE==grade & CONTENT_AREA==content_area & YEAR==year]
 		} else {
-			Interpolation_Data <- subset(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]], GRADE==grade & CONTENT_AREA==content_area)
+			Interpolation_Data <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]][GRADE==grade & CONTENT_AREA==content_area]
 		}
 		tmp.omega <- Interpolation_Function(Interpolation_Data[['SCALE_SCORE']], Interpolation_Data[['SCALE_SCORE_CSEM']])(scale_scores)
 	}

@@ -127,7 +127,7 @@ function(sgp_object,
 
 		final.year <- tail(sort(unique(sgp_object@Data[['YEAR']])), 1)
 		names.in.data <- which(sgp_object@Names[['names.sgp']] %in% names(sgp_object@Data))
-		output.data.final.year <- subset(sgp_object@Data, YEAR==final.year)
+		output.data.final.year <- sgp_object@Data[YEAR==final.year]
 		if (outputSGP.translate.names) setnames(output.data.final.year, sgp_object@Names[['names.sgp']][names.in.data], sgp_object@Names[['names.provided']][names.in.data])
 		if (!is.null(SGP::SGPstateData[[state]][['SGP_Configuration']][['output.column.order']][['SGP_Data_LONG']])) {
 			output.column.order <- c(intersect(SGP::SGPstateData[[state]][['SGP_Configuration']][['output.column.order']][['SGP_Data_LONG']], names(output.data.final.year)),
@@ -364,7 +364,7 @@ function(sgp_object,
 		}
 
 		unclass.data.table <- function(my.data.table) {
-			as.data.table(lapply(convert.variables(subset(my.data.table, VALID_CASE=="VALID_CASE")), unclass))
+			as.data.table(lapply(convert.variables(my.data.table[VALID_CASE=="VALID_CASE"]), unclass))
 		}
 
 		get.next.content_area <- function(grade, content_area, increment) {

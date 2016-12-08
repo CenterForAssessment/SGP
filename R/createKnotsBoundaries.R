@@ -23,6 +23,6 @@ function(tmp.data,
 		setattr(tmp.list[[my.list.label]], "names", paste(rep(c("knots_", "boundaries_", "loss.hoss_"), length(tmp.grade.list[[my.list.label]])),
 			rep(tmp.grade.list[[my.list.label]], each=3), sep=""))
 	}
-	setkeyv(tmp.data, my.key) # 
+	setkeyv(tmp.data, my.key)
 	return(tmp.list)
 } ## END createKnotsBoundaries

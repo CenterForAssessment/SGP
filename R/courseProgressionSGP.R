@@ -26,9 +26,9 @@ function(
 		### Create relevant data and variables
 
 		if (is.SGP(sgp_object)) {
-			sgp_object_subset <- as.data.table(subset(sgp_object@Data, VALID_CASE=="VALID_CASE", select=c("ID", "YEAR", "CONTENT_AREA", "GRADE")))
+			sgp_object_subset <- sgp_object@Data[VALID_CASE=="VALID_CASE"][, c("ID", "YEAR", "CONTENT_AREA", "GRADE"), with=FALSE]
 		} else {
-			sgp_object_subset <- as.data.table(subset(sgp_object, VALID_CASE=="VALID_CASE", select=c("ID", "YEAR", "CONTENT_AREA", "GRADE")))
+			sgp_object_subset <- sgp_object[VALID_CASE=="VALID_CASE"][, c("ID", "YEAR", "CONTENT_AREA", "GRADE"), with=FALSE]
 		}
 
 		if (identical(lag.direction, "FORWARD")) tmp.years <- sort(unique(sgp_object_subset[['YEAR']]), decreasing=TRUE)
