@@ -1,4 +1,4 @@
-`sgpSummary` <- 
+`sgpSummary` <-
 function(sgp.groups.to.summarize,
 	produce.confidence.interval,
 	tmp.simulation.dt,
@@ -23,23 +23,23 @@ function(sgp.groups.to.summarize,
 			}
 			tmp.sgp.summaries <- c(tmp.sgp.summaries, tmp.list)
 			sgp.summaries.names <- c(sgp.summaries.names, do.call(paste, c(data.table(expand.grid("MEDIAN", my.sgp, confidence.interval.groups$QUANTILES, "CONFIDENCE_BOUND_BOOTSTRAP"), key="Var2"), sep="_")))
-		} 
+		}
 		if ("Bootstrap_SE" %in% confidence.interval.groups$TYPE) {
 			tmp.list <- list()
 			for (i in confidence.interval.groups$VARIABLES) {
 				tmp.list[[paste("MEDIAN_", i, "_SE", sep="")]] <- paste("boot.sgp(", i, ")", sep="")
 			}
 			tmp.sgp.summaries <- c(tmp.sgp.summaries, tmp.list)
-			sgp.summaries.names <- c(sgp.summaries.names, do.call(paste, c(data.table(expand.grid("MEDIAN", my.sgp, "STANDARD_ERROR_BOOTSTRAP"), key="Var2"), sep="_"))) 
+			sgp.summaries.names <- c(sgp.summaries.names, do.call(paste, c(data.table(expand.grid("MEDIAN", my.sgp, "STANDARD_ERROR_BOOTSTRAP"), key="Var2"), sep="_")))
 		}
 	}
- 
-	ListExpr <- parse(text=paste("as.list(c(", paste(unlist(tmp.sgp.summaries), collapse=", "),"))",sep="")) 
+
+	ListExpr <- parse(text=paste("as.list(c(", paste(unlist(tmp.sgp.summaries), collapse=", "),"))",sep=""))
 	ByExpr <- parse(text=paste("list(", paste(sgp.groups.to.summarize, collapse=", "), ")", sep=""))
-	
-	pull.vars <- c(unlist(sapply(dbListFields(dbConnect(SQLite(), dbname = "Data/tmp_data/TMP_Summary_Data.sqlite"), "summary_data"), 
+
+	pull.vars <- c(unlist(sapply(dbListFields(dbConnect(SQLite(), dbname = "Data/tmp_data/TMP_Summary_Data.sqlite"), "summary_data"),
 		function(p) if (any(grepl(p, tmp.sgp.summaries))) return(p)), use.names=FALSE), strsplit(sgp.groups.to.summarize, ", ")[[1]])
-	
+
 	tmp <- pullData(tmp.simulation.dt, state, pull.vars, variables.for.summaries, sgp.groups.to.summarize, sgp_key)[, eval(ListExpr), keyby=eval(ByExpr)]
 	setnames(tmp, (dim(tmp)[2]-length(sgp.summaries.names)+1):dim(tmp)[2], sgp.summaries.names)
 
@@ -59,7 +59,7 @@ function(sgp.groups.to.summarize,
 } ### END sgpSummary function
 
 
-`pullData` <- 
+`pullData` <-
 function(tmp.simulation.dt,
 	state,
 	pull.vars,
@@ -81,11 +81,13 @@ function(tmp.simulation.dt,
 			tmp.list.1 <- lapply(seq.int(sim.info[['n.simulated.sgps']]), function(i) {
 					tmp_data[,c(key(tmp_data), unlist(strsplit(sgp.groups.to.summarize, ", "))), with=FALSE][
 					tmp.simulation.dt[seq.int(i, length.out=sim.info[['n.unique.cases']], by=sim.info[['n.simulated.sgps']])], allow.cartesian=TRUE][,
-					list(median_na(SGP_SIM, NULL), mean_na(SGP_SIM, NULL)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")]})
+#					list(median_na(SGP_SIM, NULL), mean_na(SGP_SIM, NULL)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")]})
+					list(median_na(SGP_SIM, NULL), mean(SGP_SIM, na.rm=TRUE)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")]})
 		} else {
 			tmp.list.1 <- lapply(seq.int(sim.info[['n.simulated.sgps']]), function(i) {
 					tmp_data[data.table(dbGetQuery(con, paste("select * from sim_data where SIM_NUM =", i)), key = sgp_key), allow.cartesian=TRUE][,
-					list(median_na(SGP_SIM, NULL), mean_na(SGP_SIM, NULL)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")]})
+#					list(median_na(SGP_SIM, NULL), mean_na(SGP_SIM, NULL)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")]})
+					list(median_na(SGP_SIM, NULL), mean(SGP_SIM, na.rm=TRUE)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")]})
 			dbDisconnect(con)
 		}
 
@@ -94,13 +96,13 @@ function(tmp.simulation.dt,
 		if (length(grep("BASELINE", names(tmp.csem)))==0) {
 			setnames(tmp.csem, c("V1.COHORT", "V2.COHORT"), c("MEDIAN_SGP_STANDARD_ERROR_CSEM", "MEAN_SGP_STANDARD_ERROR_CSEM"))
 		} else {
-			setnames(tmp.csem, c("V1.COHORT", "V2.COHORT", "V1.BASELINE", "V2.BASELINE"), 
-				c("MEDIAN_SGP_STANDARD_ERROR_CSEM", "MEAN_SGP_STANDARD_ERROR_CSEM", "MEDIAN_SGP_BASELINE_STANDARD_ERROR_CSEM", "MEAN_SGP_BASELINE_STANDARD_ERROR_CSEM")) 
+			setnames(tmp.csem, c("V1.COHORT", "V2.COHORT", "V1.BASELINE", "V2.BASELINE"),
+				c("MEDIAN_SGP_STANDARD_ERROR_CSEM", "MEAN_SGP_STANDARD_ERROR_CSEM", "MEDIAN_SGP_BASELINE_STANDARD_ERROR_CSEM", "MEAN_SGP_BASELINE_STANDARD_ERROR_CSEM"))
 		}
 		return(tmp.csem)
 	}
-	
-	tmp_data <- data.table(dbGetQuery(con, paste("select", paste(pull.vars, collapse = ","), "from summary_data"))) 
+
+	tmp_data <- data.table(dbGetQuery(con, paste("select", paste(pull.vars, collapse = ","), "from summary_data")))
 	if (all((my.key <- intersect(sgp_key, variables.for.summaries)) %in% names(tmp_data))) setkeyv(tmp_data, my.key)
 	if ("CATCH_UP_KEEP_UP_STATUS" %in% names(tmp_data)) {
 		tmp_data[, CATCH_UP_KEEP_UP_STATUS := factor(CATCH_UP_KEEP_UP_STATUS)]
@@ -117,9 +119,9 @@ function(tmp.simulation.dt,
 	dbDisconnect(con)
 	return(tmp_data)
 } ### END pullData function
- 
 
-`median_na` <- 
+
+`median_na` <-
 function(x,
 	weight) {
 	if (is.null(weight)) {
@@ -130,14 +132,15 @@ function(x,
 }
 
 
-`mean_na` <- 
+`mean_na` <-
 function(x,
 	weight,
 	result.digits=2) {
 
 	if (is.null(weight)) {
-		tmp.x <- x[!is.na(x)]
-		round(sum(tmp.x)/length(tmp.x), digits=result.digits)
+#		tmp.x <- x[!is.na(x)]
+#		round(sum(tmp.x)/length(tmp.x), digits=result.digits)
+		round(mean(x, na.rm=TRUE))
 	} else {
 		round(weighted.mean(as.numeric(x), w=weight, na.rm=TRUE), digits=result.digits)
 	}
@@ -153,7 +156,7 @@ function(x,
 `sgp_standard_error` <- function(x,y=1) round(y*sd(x, na.rm=TRUE)/sqrt(sum(!is.na(as.numeric(x)))), digits=2)
 
 
-`percent_in_category` <- 
+`percent_in_category` <-
 function(x,
 	in.categories,
 	of.categories,
@@ -166,7 +169,7 @@ function(x,
 } ### END percent_in_category function
 
 
-`percent_at_above_target` <- 
+`percent_at_above_target` <-
 function(sgp,
 	target,
 	result.digits=1) {
@@ -177,7 +180,7 @@ function(sgp,
 } ### END percent_at_above_target function
 
 
-`boot.sgp` <- 
+`boot.sgp` <-
 function(dat,
 	conf.quantiles=NULL,
 	nboot=100) {

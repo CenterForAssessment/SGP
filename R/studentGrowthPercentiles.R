@@ -139,7 +139,7 @@ function(panel.data,         ## REQUIRED
 			tmp.cutscores <- grep(content_area, names(SGP::SGPstateData[[goodness.of.fit]][['Achievement']][['Cutscores']]), value=TRUE)
 			if (length(tmp.cutscores) > 0) {
 				tmp.cutscores.names <- tmp.cutscores[content_area==sapply(strsplit(tmp.cutscores, "[.]"), '[', 1)]
-				tmp.cutscores.years <- sapply(strsplit(tmp.cutscores.names, "[.]"), function(x) x[2])
+				tmp.cutscores.years <- sapply(strsplit(tmp.cutscores.names, "[.]"), '[', 2)
 				tmp.sum <- sum(year >= sort(tmp.cutscores.years), na.rm=TRUE)
 				return(paste(c(content_area, sort(tmp.cutscores.years)[tmp.sum]), collapse="."))
 			} else return(content_area)
@@ -304,7 +304,7 @@ function(panel.data,         ## REQUIRED
 	.get.percentile.cuts <- function(data1) {
 		tmp <- round(data1[ , percentile.cuts+1, drop=FALSE], digits=percuts.digits)
 		if (convert.using.loss.hoss) {
-			my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
+			my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels[['my.subject']], as.character(sgp.labels[['my.year']]))
 			bnd <- eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['loss.hoss_", tmp.last, "']]", sep="")))
 			tmp[tmp < bnd[1]] <- bnd[1]
 			tmp[tmp > bnd[2]] <- bnd[2]
@@ -319,6 +319,7 @@ function(panel.data,         ## REQUIRED
         if (!is.null(label.suffix)) setnames(cuts.best, names(cuts.best), paste(names(cuts.best), label.suffix, sep="_"))
         return(cuts.best)
     }
+
 	split.location <- function(years) sapply(strsplit(years, '_'), length)[1]
 
 	###
