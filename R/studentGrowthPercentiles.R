@@ -66,7 +66,7 @@ function(panel.data,         ## REQUIRED
 	.smooth.bound.iso.row <- function(tmp.dt, iso=isotonize, sgp.loss.hoss.adjustment) {
 		X <- NULL
 		if (!is.null(sgp.loss.hoss.adjustment)) {
-			my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
+			my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels[['my.subject']], as.character(sgp.labels[['my.year']]))
 			bnd <- eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['loss.hoss_", tmp.last, "']]", sep="")))
 			tmp.dt[X < bnd[1], X:=bnd[1]]
 			tmp.dt[X > bnd[2], X:=bnd[2]]
@@ -125,9 +125,9 @@ function(panel.data,         ## REQUIRED
 			if (length(tmp.knots.boundaries.names)==0) {
 				return(paste("[['", tmp.path.knots.boundaries, "']]", sep=""))
 			} else {
-				tmp.knots.boundaries.years <- sapply(strsplit(tmp.knots.boundaries.names, "[.]"), function(x) x[2])
-				tmp.sum <- sum(year >= sort(tmp.knots.boundaries.years), na.rm=TRUE)
-				return(paste("[['", tmp.path.knots.boundaries, "']][['", paste(c(content_area, sort(tmp.knots.boundaries.years)[tmp.sum]), collapse="."), "']]", sep=""))
+				tmp.knots.boundaries.years <- sort(sapply(strsplit(tmp.knots.boundaries.names, "[.]"), '[', 2))
+				tmp.index <- sum(year >= tmp.knots.boundaries.years, na.rm=TRUE)
+				return(paste("[['", tmp.path.knots.boundaries, "']][['", paste(c(content_area, tmp.knots.boundaries.years)[tmp.index], collapse="."), "']]", sep=""))
 			}
 		} else {
 			return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, ".", sgp.percentiles.equated[['Year']], "']]", sep=""))
