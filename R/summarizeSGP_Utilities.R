@@ -81,12 +81,10 @@ function(tmp.simulation.dt,
 			tmp.list.1 <- lapply(seq.int(sim.info[['n.simulated.sgps']]), function(i) {
 					tmp_data[,c(key(tmp_data), unlist(strsplit(sgp.groups.to.summarize, ", "))), with=FALSE][
 					tmp.simulation.dt[seq.int(i, length.out=sim.info[['n.unique.cases']], by=sim.info[['n.simulated.sgps']])], allow.cartesian=TRUE][,
-#					list(median_na(SGP_SIM, NULL), mean_na(SGP_SIM, NULL)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")]})
 					list(median_na(SGP_SIM, NULL), mean(SGP_SIM, na.rm=TRUE)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")]})
 		} else {
 			tmp.list.1 <- lapply(seq.int(sim.info[['n.simulated.sgps']]), function(i) {
 					tmp_data[data.table(dbGetQuery(con, paste("select * from sim_data where SIM_NUM =", i)), key = sgp_key), allow.cartesian=TRUE][,
-#					list(median_na(SGP_SIM, NULL), mean_na(SGP_SIM, NULL)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")]})
 					list(median_na(SGP_SIM, NULL), mean(SGP_SIM, na.rm=TRUE)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")]})
 			dbDisconnect(con)
 		}
@@ -138,8 +136,6 @@ function(x,
 	result.digits=2) {
 
 	if (is.null(weight)) {
-#		tmp.x <- x[!is.na(x)]
-#		round(sum(tmp.x)/length(tmp.x), digits=result.digits)
 		round(mean(x, na.rm=TRUE))
 	} else {
 		round(weighted.mean(as.numeric(x), w=weight, na.rm=TRUE), digits=result.digits)
