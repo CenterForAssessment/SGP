@@ -71,7 +71,7 @@ function(sgp_object,
 		sgp.content.areas <- rep(content_area, length(sgp.panel.years))
 
 		### Grades (sgp.grade.sequences)
-		tmp.last.year.grades <- sort(type.convert(unique(subset(sgp_object@Data, YEAR==tail(sgp.panel.years, 1) & CONTENT_AREA==content_area & VALID_CASE=="VALID_CASE")[['GRADE']]), as.is=TRUE))
+		tmp.last.year.grades <- sort(type.convert(unique(sgp_object@Data[YEAR==tail(sgp.panel.years, 1) & CONTENT_AREA==content_area & VALID_CASE=="VALID_CASE"][['GRADE']]), as.is=TRUE))
 		if (!is.numeric(tmp.last.year.grades) | !is.numeric(tmp.unique.data[['GRADE']])) {
 			stop("\tNOTE: Automatic 'sgp.config' calculation is only available for integer grade levels. Manual specification of 'sgp.config' is required for non-traditional grade and course progressions.")
 		}
