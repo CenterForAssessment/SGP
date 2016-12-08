@@ -125,7 +125,7 @@ function(panel.data,         ## REQUIRED
 			if (length(tmp.knots.boundaries.names)==0) {
 				return(paste("[['", tmp.path.knots.boundaries, "']]", sep=""))
 			} else {
-				tmp.knots.boundaries.years <- sort(sapply(strsplit(tmp.knots.boundaries.names, "[.]"), '[', 2))
+				tmp.knots.boundaries.years <- sort(sapply(strsplit(tmp.knots.boundaries.names, "[.]"), '[', 2), na.last=TRUE)
 				tmp.index <- sum(year >= tmp.knots.boundaries.years, na.rm=TRUE)
 				return(paste("[['", tmp.path.knots.boundaries, "']][['", paste(c(content_area, tmp.knots.boundaries.years)[tmp.index], collapse="."), "']]", sep=""))
 			}
