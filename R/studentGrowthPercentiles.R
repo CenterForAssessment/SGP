@@ -593,10 +593,10 @@ function(panel.data,         ## REQUIRED
 						for (z in seq_along(sim.iters)) {
 							if (is.null(simex.sample.size) || dim(tmp.data)[1] <= simex.sample.size) {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]] <-
-									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=big.data[b==z][, b:=NULL])
+									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=big.data[list(z)][, b:=NULL])
 							} else {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]] <-
-									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=big.data[b==z][, b:=NULL])
+									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=big.data[list(z)][, b:=NULL])
 							}
 						}
 					} else simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <- available.matrices[sim.iters]
@@ -605,7 +605,7 @@ function(panel.data,         ## REQUIRED
 						if (verbose) messageSGP(c("\t\t\tStarted percentile prediction calculation, Lambda ", L, ": ", prettyDate()))
 						for (z in seq_along(sim.iters)) {
 							fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] +
-								as.vector(.get.percentile.predictions(big.data[b==z][, b:=NULL],
+								as.vector(.get.percentile.predictions(big.data[list(z)][, b:=NULL],
 									simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]])/B)
 						}
 					}
@@ -626,16 +626,14 @@ function(panel.data,         ## REQUIRED
 									foreach(z=iter(sim.iters), .packages=c("quantreg", "data.table"),
 										.export=c("Knots_Boundaries", "rq.method", "taus", "content_area.progression", "tmp.slot.gp", "year.progression", "year_lags.progression", "SGPt", "rq.sgp"),
 										.options.mpi=par.start$foreach.options, .options.multicore=par.start$foreach.options, .options.snow=par.start$foreach.options) %dopar% {
-											rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=getSQLData(tmp.dbname, z))
-											# rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=dbGetQuery(dbConnect(SQLite(shared.cache = TRUE), dbname = tmp.dbname),
-											# 	paste("select * from simex_data where b in ('", z, "')", sep="")))
+											rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=as.data.table(getSQLData(tmp.dbname, z)))
 									}
 							} else {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
 									foreach(z=iter(sim.iters), .packages=c("quantreg", "data.table"),
 										.export=c("Knots_Boundaries", "rq.method", "taus", "content_area.progression", "tmp.slot.gp", "year.progression", "year_lags.progression", "SGPt", "rq.sgp"),
 										.options.mpi=par.start$foreach.options, .options.multicore=par.start$foreach.options, .options.snow=par.start$foreach.options) %dorng% {
-											rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=getSQLData(tmp.dbname, z)[sample(seq.int(dim(tmp.data)[1]), simex.sample.size),])
+											rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=as.data.table(getSQLData(tmp.dbname, z))[sample(seq.int(dim(tmp.data)[1]), simex.sample.size)])
 									}
 							}
 					} else {
@@ -648,10 +646,10 @@ function(panel.data,         ## REQUIRED
 						for (z in recalc.index) {
 							if (is.null(simex.sample.size) || dim(tmp.data)[1] <= simex.sample.size) {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]] <-
-									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=getSQLData(tmp.dbname, z))
+									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=as.data.table(getSQLData(tmp.dbname, z)))
 							} else {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]] <-
-									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=getSQLData(tmp.dbname, z)[sample(seq.int(dim(tmp.data)[1]), simex.sample.size),])
+									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=as.data.table(getSQLData(tmp.dbname, z))[sample(seq.int(dim(tmp.data)[1]), simex.sample.size),])
 							}
 						}
 					}
