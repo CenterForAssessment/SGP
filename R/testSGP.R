@@ -1665,6 +1665,43 @@ function(
 			}
 
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI: Part 2", convertTime(timetaken(started.at.intermediate)), "#####\n"))
+
+
+			###############################################################################
+			### PART 3: Using Matrices from Next Window
+			###############################################################################
+
+			### Calculate SGPs
+
+			expression.to.evaluate <-
+				paste("RLI_SGPt_PART_3 <- rliSGP(\n\tsgp_object=RLI_SGPt_Data_LONG,\n\tcoefficient.matrices=RLI_SGPt_Baseline_Matrices$RLI_SGPt_Baseline_Matrices_2014_2015.2,\n\treturn.updated.shell=TRUE,\n\tgoodness.of.fit.print=TRUE,\n\tparallel.config=list(BACKEND=", tmp.backend, "WORKERS=list(BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, "))\n)\n", sep="")
+
+			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(RLI_SGPt_PART_3, file='Data/RLI_SGPt_PART_3.Rdata')", sep="\n")
+
+			cat(paste("EVALUATING Test Number RLI, Part 3:\n", expression.to.evaluate, sep=""), fill=TRUE)
+
+			if (memory.profile) {
+				Rprof("testSGP(RLI)_Memory_Profile_Part_3.out", memory.profiling=TRUE)
+			}
+
+			started.at.intermediate <- proc.time()
+			eval(parse(text=expression.to.evaluate))
+			file.rename("Data/RLI", "Data/RLI_PART_3")
+
+			### TEST of variable values
+
+			tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number RLI: Part 3 #####\n")
+
+			### TEST of SGP variable from READING (equality with PART 1)
+
+#			if (identical(sum(RLI_SGPt_PART_3@SGP[['SGPercentiles']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['SGP_BASELINE']], na.rm=TRUE), 107188L)) {
+			if (identical(digest(RLI_SGPt_PART_3@SGP[['SGPercentiles']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['SGP_BASELINE']]), "208ac70d7e8349eddcaaf2f62c1e174e")) {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 3: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 3: FAIL\n")
+			}
+
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI: Part 3", convertTime(timetaken(started.at.intermediate)), "#####\n"))
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number RLI: ", convertTime(timetaken(started.at.overall)), "#####\n"))
 			messageSGP(tmp.messages)
 		} ### End TEST_NUMBER RLI
