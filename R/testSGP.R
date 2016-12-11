@@ -1696,7 +1696,7 @@ function(
 
 #			if (identical(sum(RLI_SGPt_PART_3@SGP[['SGPercentiles']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['SGP_BASELINE']], na.rm=TRUE), 107188L)) {
 			if (identical(digest(RLI_SGPt_PART_3@SGP[['SGPercentiles']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['SGP_BASELINE']]), "208ac70d7e8349eddcaaf2f62c1e174e")) {
-				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 3: OK\n")
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE (2014_2015.2 matrices = 2014_2015.3 matrices), part 3: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 3: FAIL\n")
 			}
