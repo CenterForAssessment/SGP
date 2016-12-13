@@ -218,7 +218,7 @@ function(panel.data,	## REQUIRED
 							equated.year=yearIncrement(sgp.projections.equated[['Year']], -1))
 
 				if (dim(tmp.dt)[1] > 0) {
-					completed.ids <- c(unique(tmp.dt[[1]]), completed.ids)
+					completed.ids <- c(unique(tmp.dt, by=(1))[[1]], completed.ids)
 					tmp.dt <- tmp.dt[list(rep(tmp.dt[[1]], 100))]
 					missing.taus <- FALSE; na.replace <- NULL # put these outside of j loop so that stays true/non-null if only SOME of coef matrices have missing column/taus.
 					label.iter <- 1
@@ -353,10 +353,10 @@ function(panel.data,	## REQUIRED
 					lapply(strsplit(percentile.trajectory.values, "_")[[1]], type.convert)[sapply(lapply(strsplit(percentile.trajectory.values, "_")[[1]], type.convert), is.numeric)][[1]])
 				if (length(grep("CURRENT", percentile.trajectory.values))==0) tmp.num.years.forward <- min(length(grade.projection.sequence), tmp.num.years.forward+1)
 
-				tmp.indices <- as.integer(rep(dim(percentile.trajectories)[1]/length(unique(percentile.trajectories$ID))*(seq(length(unique(percentile.trajectories$ID)))-1),
+				tmp.indices <- as.integer(rep(dim(percentile.trajectories)[1]/length(unique(percentile.trajectories, by='ID')[['ID']])*(seq(length(unique(percentile.trajectories, by='ID')[['ID']]))-1),
 					each=length(percentile.trajectory.values)) + as.numeric(t(as.matrix(data.table(panel.data[["Panel_Data"]],
-					key="ID")[list(unique(percentile.trajectories[['ID']]))][,percentile.trajectory.values, with=FALSE]))))
-				tmp.traj <- percentile.trajectories[tmp.indices, 1:(2+tmp.num.years.forward-1), with=FALSE][,ID:=rep(unique(percentile.trajectories$ID), each=length(percentile.trajectory.values))]
+					key="ID")[list(unique(percentile.trajectories, by='ID')[['ID']])][,percentile.trajectory.values, with=FALSE]))))
+				tmp.traj <- percentile.trajectories[tmp.indices, 1:(2+tmp.num.years.forward-1), with=FALSE][,ID:=rep(unique(percentile.trajectories, by='ID')[['ID']], each=length(percentile.trajectory.values))]
 				if (tmp.num.years.forward==1) {
 					tmp.target.name <- tail(names(tmp.traj), 1)
 					if ("STATE" %in% names(panel.data[["Panel_Data"]])) {
