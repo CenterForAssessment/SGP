@@ -105,16 +105,18 @@ function(panel.data,         ## REQUIRED
 	}
 
 	.get.panel.data <- function(tmp.data, k, by.grade) {
-		str1 <- str2 <- str3 <- NULL
-		for (i in 0:k) {
-			str1 <- paste(str1, " & !is.na(tmp.data[[", 1+2*num.panels-i, "]])", sep="")
-			str2 <- paste(str2, " & tmp.data[[", 1+num.panels-i, "]]=='", rev(as.character(tmp.gp))[i+1], "'", sep="")
-			str3 <- c(1+2*num.panels-i, str3)
-		}
+#		str1 <- str2 <- str3 <- NULL
+#		for (i in 0:k) {
+#			str1 <- paste(str1, " & !is.na((", 1+2*num.panels-i, "))", sep="")
+#			str2 <- paste(str2, " & (", 1+num.panels-i, ")=='", rev(as.character(tmp.gp))[i+1], "'", sep="")
+#			str3 <- c(1+2*num.panels-i, str3)
+#		}
 		if (by.grade) {
-			tmp.data[eval(parse(text=paste(substring(str1, 4), str2, sep="")))][, c(1, str3), with=FALSE]
+            eval(parse(text=paste("na.omit(tmp.data[.(", paste(rev(tmp.gp)[(0:k)+1], collapse=", "), "), on=names(tmp.data)[c(", paste(1+num.panels-(0:k), collapse=", ") , ")]], cols=names(tmp.data)[c(",paste(1+2*num.panels-0:k, collapse=", "), ")])[,c(1, ", paste(rev(1+2*num.panels-0:k), collapse=", "),  ")]", sep="")))
+#			tmp.data[eval(parse(text=paste(substring(str1, 4), str2, sep="")))][, c(1, str3), with=FALSE]
 		} else {
-			tmp.data[eval(parse(text=substring(str1, 4)))][, c(1, str3), with=FALSE]
+            eval(parse(text=paste("na.omit(tmp.data, cols=names(tmp.data)[c(",paste(1+2*num.panels-0:k, collapse=", "), ")])[,c(1, ", paste(rev(1+2*num.panels-0:k), collapse=", "),  ")]", sep="")))
+#			tmp.data[eval(parse(text=substring(str1, 4)))][, c(1, str3), with=FALSE]
 		}
 	}
 

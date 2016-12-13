@@ -580,13 +580,13 @@ function(sgp_object,
 		} else {
 			outputSGP.data[,HLS_CODE:=as.character(NA)]
 		}
-		if (any(c("IEP_STATUS", "SPECIAL_EDUCATION_STATUS") %in% names(outputSGP.data)) && state != "RI") {
-			setnames(outputSGP.data, which(names(outputSGP.data) %in% c("IEP_STATUS", "SPECIAL_EDUCATION_STATUS")), "IEP_CODE")
+		if (any(c("IEP_STATUS", "SPECIAL_EDUCATION_STATUS") %in% names(outputSGP.data))) {
+			if (state != "RI") setnames(outputSGP.data, which(names(outputSGP.data) %in% c("IEP_STATUS", "SPECIAL_EDUCATION_STATUS")), "IEP_CODE")
 		} else {
 			outputSGP.data[,IEP_CODE:=as.character(NA)]
 		}
-		if (any(c("FREE_REDUCED_LUNCH_STATUS", "DISADVANTAGED_STATUS") %in% names(outputSGP.data)) && state != "RI") {
-			setnames(outputSGP.data, which(names(outputSGP.data) %in% c("FREE_REDUCED_LUNCH_STATUS", "DISADVANTAGED_STATUS")), "FRL_CODE")
+		if (any(c("FREE_REDUCED_LUNCH_STATUS", "DISADVANTAGED_STATUS") %in% names(outputSGP.data))) {
+			if (state != "RI") setnames(outputSGP.data, which(names(outputSGP.data) %in% c("FREE_REDUCED_LUNCH_STATUS", "DISADVANTAGED_STATUS")), "FRL_CODE")
 		} else {
 			outputSGP.data[,FRL_CODE:=as.character(NA)]
 		}
@@ -639,13 +639,13 @@ function(sgp_object,
 		}
 
 		if (any(c("FREE_REDUCED_LUNCH_STATUS", "DISADVANTAGED_STATUS") %in% outputSGP.student.groups)) {
-			outputSGP.student.groups[outputSGP.student.groups %in% c("FREE_REDUCED_LUNCH_STATUS", "DISADVANTAGED_STATUS")] <- "FRL_CODE"
+			if (state != "RI") outputSGP.student.groups[outputSGP.student.groups %in% c("FREE_REDUCED_LUNCH_STATUS", "DISADVANTAGED_STATUS")] <- "FRL_CODE"
 		} else {
 			outputSGP.student.groups <- c(outputSGP.student.groups, "FRL_CODE")
 		}
 
 		if (any(c("IEP_STATUS", "SPECIAL_EDUCATION_STATUS") %in% outputSGP.student.groups)) {
-			outputSGP.student.groups[outputSGP.student.groups %in% c("IEP_STATUS", "SPECIAL_EDUCATION_STATUS")] <- "IEP_CODE"
+			if (state != "RI") outputSGP.student.groups[outputSGP.student.groups %in% c("IEP_STATUS", "SPECIAL_EDUCATION_STATUS")] <- "IEP_CODE"
 		} else {
 			outputSGP.student.groups <- c(outputSGP.student.groups, "IEP_CODE")
 		}
