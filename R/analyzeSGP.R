@@ -235,7 +235,7 @@ function(sgp_object,
 	}
 
 	if (is.null(sgp.minimum.default.panel.years) & is.null(SGPstateData[[state]][["SGP_Configuration"]][['sgp.minimum.default.panel.years']])) {
-		if (length(unique(sgp_object@Data[['YEAR']]))==2) {
+		if (uniqueN(sgp_object@Data[['YEAR']])==2) {
 			sgp.minimum.default.panel.years <- 2
 			messageSGP("\tNOTE: Only two years of data present. Minimum default of 3 years of panel data for SGP analyses changed to 2. Please confirm this is consistent with analyses you wish to perform.")
 		} else {
@@ -288,7 +288,7 @@ function(sgp_object,
 	}
 
 	if (!is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]])) {
-		if (SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]!={tmp.last.year <- tail(sort(unique(sgp_object@Data[['YEAR']])), 1)}) {
+		if (SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]!={tmp.last.year <- tail(sort(unique(sgp_object@Data, by='YEAR')[['YEAR']]), 1)}) {
 			sgp.percentiles.equated <- FALSE
             if ("SCALE_SCORE_EQUATED" %in% names(sgp_object@Data)) sgp_object@Data[["SCALE_SCORE_EQUATED"]][sgp_object@Data[["YEAR"]] >= tmp.last.year] <- sgp_object@Data[["SCALE_SCORE"]][sgp_object@Data[["YEAR"]] >= tmp.last.year]
 		} else {
@@ -424,7 +424,7 @@ function(sgp_object,
 	#######################################################################################################################
 
 	if (sgp.percentiles.equated) {
-		year.for.equate <- tail(sort(unique(sgp_object@Data[['YEAR']])), 1)
+		year.for.equate <- tail(sort(unique(sgp_object@Data, by='YEAR')[['YEAR']]), 1)
 
         if (is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][['Baseline_Projections_in_Transition_Year']]) &
             (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline)) {
@@ -435,7 +435,7 @@ function(sgp_object,
         if (is.null(sgp.use.my.coefficient.matrices)) {
             Scale_Score_Linkages <- list()
             dir.create(file.path("Data", paste("Linkages", year.for.equate, sep="_"), "Figures"), recursive=TRUE, showWarnings=FALSE)
-		    content_areas.for.equate <- unique(sgp_object@Data[YEAR==year.for.equate][['CONTENT_AREA']])
+		    content_areas.for.equate <- unique(sgp_object@Data[YEAR==year.for.equate], by="CONTENT_AREA")[['CONTENT_AREA']]
 
             if (is.null(sgp.percentiles.equating.method)) {
                 messageSGP("\tNOTE: Analyses involving equating will be performed using each of: 'identity', 'mean', 'linear', and 'equipercentile' methods. See documentation associated with the 'sgp.percentiles.equating.method' argument in 'analyzeSGP'.")
@@ -613,7 +613,7 @@ function(sgp_object,
 		if (!is.null(sgp.config)) {
 			tmp.subjects <- unique(sapply(sgp.config, function(x) tail(x[["sgp.content.areas"]],1)))
 		} else {
-			if (!is.null(content_areas)) tmp.subjects <- content_areas else tmp.subjects <- unique(sgp_object@Data["VALID_CASE"][["CONTENT_AREA"]])
+			if (!is.null(content_areas)) tmp.subjects <- content_areas else tmp.subjects <- unique(sgp_object@Data["VALID_CASE"], by="CONTENT_AREA")[["CONTENT_AREA"]]
 		}
 
 		###  Calculate BASELINE SIMEX matrices if they are not present
@@ -929,7 +929,7 @@ function(sgp_object,
 			} # #END not FOREACH
 			stopParallel(parallel.config, par.start)
 			if (!is.null(sgp.test.cohort.size)) {
-				test.ids <- unique(rbindlist(tmp_sgp_object[["SGPercentiles"]], fill=TRUE)[['ID']])
+				test.ids <- unique(rbindlist(tmp_sgp_object[["SGPercentiles"]], fill=TRUE), by='ID')[['ID']]
 				if (is(tmp_sgp_data_for_analysis, "DBIObject")) {
 					tmp_sgp_data_for_analysis <- data.table(dbGetQuery(dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_SGP_Data.sqlite")),
 							paste("select * from sgp_data where ID in ('", paste(test.ids, collapse="', '"), "')", sep="")))
@@ -1901,7 +1901,7 @@ function(sgp_object,
 					...)
 			}
 			if (!is.null(sgp.test.cohort.size)) {
-				test.ids <- unique(rbindlist(tmp_sgp_object[["SGPercentiles"]], fill=TRUE)[["ID"]])
+				test.ids <- unique(rbindlist(tmp_sgp_object[["SGPercentiles"]], fill=TRUE), by='ID')[["ID"]]
 				if (is(tmp_sgp_data_for_analysis, "DBIObject")) {
 					tmp_sgp_data_for_analysis <- data.table(dbGetQuery(dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_SGP_Data.sqlite")),
 							paste("select * from sgp_data where ID in ('", paste(test.ids, collapse="', '"), "')", sep="")))

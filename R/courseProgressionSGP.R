@@ -31,8 +31,8 @@ function(
 			sgp_object_subset <- sgp_object[VALID_CASE=="VALID_CASE"][, c("ID", "YEAR", "CONTENT_AREA", "GRADE"), with=FALSE]
 		}
 
-		if (identical(lag.direction, "FORWARD")) tmp.years <- sort(unique(sgp_object_subset[['YEAR']]), decreasing=TRUE)
-		if (identical(lag.direction, "BACKWARD")) tmp.years <- sort(unique(sgp_object_subset[['YEAR']]))
+		if (identical(lag.direction, "FORWARD")) tmp.years <- sort(unique(sgp_object_subset, by='YEAR')[['YEAR']], decreasing=TRUE)
+		if (identical(lag.direction, "BACKWARD")) tmp.years <- sort(unique(sgp_object_subset, by='YEAR')[['YEAR']])
 
 		invisible(sgp_object_subset[,GRADE_CHAR:=as.factor(GRADE)])
 		levels(sgp_object_subset[["GRADE_CHAR"]]) <- sapply(lapply(strsplit(paste("0", levels(sgp_object_subset[["GRADE_CHAR"]]), sep=""), ""), tail, 2), paste, collapse="")
@@ -77,7 +77,7 @@ function(
 			sorted.levels.iter <- sort(unique(tmp.course.progression.data[[paste(paste("CONTENT_AREA_by_GRADE_", tmp.label, "_YEAR", sep=""), 0, sep=".")]]))
 			for (grades_by_content_areas in sorted.levels.iter) {
 				tmp.data <- tmp.course.progression.data[data.table(grades_by_content_areas)]
-				num.rows <- length(unique(tmp.data[["ID"]]))
+				num.rows <- uniqueN(tmp.data[["ID"]])
 				course.progression.list[[lag.direction]][[as.character(course.progression.years[years])]][[grades_by_content_areas]] <-
 					tmp.data[,list(COUNT=.N, PERCENTAGE_IN_GROUP=round(100*.N/num.rows, digits=2)),
 						by=key(tmp.data)][order(PERCENTAGE_IN_GROUP, decreasing=TRUE)]

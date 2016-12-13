@@ -353,7 +353,7 @@ function(panel.data,	## REQUIRED
 					lapply(strsplit(percentile.trajectory.values, "_")[[1]], type.convert)[sapply(lapply(strsplit(percentile.trajectory.values, "_")[[1]], type.convert), is.numeric)][[1]])
 				if (length(grep("CURRENT", percentile.trajectory.values))==0) tmp.num.years.forward <- min(length(grade.projection.sequence), tmp.num.years.forward+1)
 
-				tmp.indices <- as.integer(rep(dim(percentile.trajectories)[1]/length(unique(percentile.trajectories, by='ID')[['ID']])*(seq(length(unique(percentile.trajectories, by='ID')[['ID']]))-1),
+				tmp.indices <- as.integer(rep(dim(percentile.trajectories)[1]/uniqueN(percentile.trajectories[['ID']])*(seq(uniqueN(percentile.trajectories[['ID']]))-1),
 					each=length(percentile.trajectory.values)) + as.numeric(t(as.matrix(data.table(panel.data[["Panel_Data"]],
 					key="ID")[list(unique(percentile.trajectories, by='ID')[['ID']])][,percentile.trajectory.values, with=FALSE]))))
 				tmp.traj <- percentile.trajectories[tmp.indices, 1:(2+tmp.num.years.forward-1), with=FALSE][,ID:=rep(unique(percentile.trajectories, by='ID')[['ID']], each=length(percentile.trajectory.values))]
@@ -397,12 +397,12 @@ function(panel.data,	## REQUIRED
 						tmp.cutscores.by.grade <- tmp.cutscores[[my.cutscore.year]][[paste("GRADE_", grade.projection.sequence[1], sep="")]]
 						if (length(percentile.trajectory.values)==1) {
 							cuku.level.to.get <- which.max(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")-1
-							tmp.target.scores <- rep(tmp.cutscores.by.grade[cuku.level.to.get], length(unique(tmp.traj[['ID']])))
+							tmp.target.scores <- rep(tmp.cutscores.by.grade[cuku.level.to.get], uniqueN(tmp.traj[['ID']]))
 						}
 						if (length(percentile.trajectory.values)==2) {
 							cuku.level.to.get <- which.max(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")-1
 							musu.level.to.get <- which.max(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")
-							tmp.target.scores <- rep(c(tmp.cutscores.by.grade[cuku.level.to.get], tmp.cutscores.by.grade[musu.level.to.get]), length(unique(tmp.traj[['ID']])))
+							tmp.target.scores <- rep(c(tmp.cutscores.by.grade[cuku.level.to.get], tmp.cutscores.by.grade[musu.level.to.get]), uniqueN(tmp.traj[['ID']]))
 						}
 						tmp.target.scores[is.na(tmp.traj[[tmp.target.name]])] <- NA
 						tmp.traj[,(tmp.target.name):=tmp.target.scores]

@@ -53,7 +53,7 @@ function(
 
 	### Create SGP_TARGET_CONTENT_AREA in certain cases
 
-	if (is.null(sgp.target.content_areas) & any(sapply(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]], function(x) length(unique(x))) > 1)) {
+	if (is.null(sgp.target.content_areas) & any(sapply(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]], function(x) uniqueN(x)) > 1)) {
 		sgp.target.content_areas <- TRUE
 		tmp.messages <- c(tmp.messages, "\tNOTE: Multiple content areas detected for student growth targets. 'sgp.target.content_areas set to TRUE.\n")
 	}
@@ -74,7 +74,7 @@ function(
 	### Setup for equated SGPs and scale score targets
 
 	if (!is.null(year.for.equate <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]])) {
-		tmp.last.year <- tail(sort(unique(sgp_object@Data[['YEAR']])), 1)
+		tmp.last.year <- tail(sort(unique(sgp_object@Data, by='YEAR')[['YEAR']]), 1)
 		if (year.for.equate!=tmp.last.year) {
 			sgp.percentiles.equated <- FALSE
 			if (sgp.target.scale.scores) sgp.projections.equated <- NULL
@@ -135,7 +135,7 @@ function(
 		if (identical(system.type, "Cohort and Baseline Referenced")) {
 			tmp.list[['target.type']] <- intersect(target.type, c("sgp.projections", "sgp.projections.baseline", "sgp.projections.lagged", "sgp.projections.lagged.baseline"))
 			if (!is.null(year.for.equate) && !sgp.percentiles.equated) {
-				tmp.year.diff <- as.numeric(unlist(strsplit(tail(sort(unique(sgp_object@Data[['YEAR']])), 1), "_"))[1]) - as.numeric(unlist(strsplit(year.for.equate, "_"))[1])
+				tmp.year.diff <- as.numeric(unlist(strsplit(tail(sort(unique(sgp_object@Data, by='YEAR')[['YEAR']]), 1), "_"))[1]) - as.numeric(unlist(strsplit(year.for.equate, "_"))[1])
 				tmp.messages <- c(tmp.messages, paste("\tNOTE: Due to test transition in ", year.for.equate, " SGP_TARGET will utilize ", paste("SGP_MAX_ORDER", tmp.year.diff, sep="_"), ".\n", sep=""))
 				tmp.list[['my.sgp']] <- c(paste("SGP_MAX_ORDER", tmp.year.diff, sep="_"), "SGP_BASELINE")[c(sgp.percentiles, sgp.percentiles.baseline)]
 			} else {
@@ -330,7 +330,7 @@ function(
 
 		### SGP_TARGET_CONTENT_AREA calculation
 
-		terminal.content_areas <- unique(slot.data[!is.na(target.args[['my.sgp.target']][1])][['CONTENT_AREA']])
+		terminal.content_areas <- unique(slot.data[!is.na(target.args[['my.sgp.target']][1])], by='CONTENT_AREA')[['CONTENT_AREA']]
 		if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]])) {
 			terminal.content_areas <- intersect(terminal.content_areas, sapply(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]], tail, 1))
 		}
@@ -447,7 +447,7 @@ function(
 		tmp.target.data <- data.table(Reduce(function(x, y) merge(x, y, all=TRUE), tmp.target.list[!sapply(tmp.target.list, function(x) dim(x)[1]==0)],
 			accumulate=FALSE), key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 
-		for (projection_group.iter in unique(tmp.target.data[['SGP_PROJECTION_GROUP']])) {
+		for (projection_group.iter in unique(tmp.target.data, by='SGP_PROJECTION_GROUP')[['SGP_PROJECTION_GROUP']]) {
 			for (target.type.iter in target.args[['sgp.target.scale.scores.types']]) {
 				tmp.target.level.names <-
 					as.character(sapply(target.args[['target.level']], function(x) getTargetName(state, target.type.iter, x, max.sgp.target.years.forward, "SGP_TARGET", projection.unit.label, projection_group.iter)))
@@ -461,7 +461,7 @@ function(
 					getTargetData(tmp.target.data, projection_group.iter, tmp.target.level.names),
 					target.type.iter,
 					tmp.target.level.names,
-					getYearsContentAreasGrades(state, years=unique(tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter][['YEAR']]), content_areas=unique(tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter][['CONTENT_AREA']])),
+					getYearsContentAreasGrades(state, years=unique(tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter], by='YEAR')[['YEAR']], content_areas=unique(tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter], by='CONTENT_AREA')[['CONTENT_AREA']]),
 					sgp.config=sgp.config,
 					projection_group.identifier=projection_group.iter,
 					sgp.projections.equated=if (length(grep("baseline", target.type.iter) > 0)) NULL else sgp.projections.equated,
