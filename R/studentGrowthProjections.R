@@ -85,7 +85,7 @@ function(panel.data,	## REQUIRED
 		}
 	}
 
-	.get.panel.data <- function(tmp.data, grade.progression, content_area.progression, num.prior=NULL, subset.tf=NULL, bound.data=TRUE, equated.year=NULL) {
+	.get.panel.data <- function(tmp.data, grade.progression, content_area.progression, num.prior=NULL, completed.ids=NULL, bound.data=TRUE, equated.year=NULL) {
 #		str1 <- str2 <- str3 <- NULL
 #		for (i in 1:num.prior-1) {
 #			str1 <- paste(str1, " & !is.na(tmp.data[[", 1+2*num.panels-i, "]])", sep="")
@@ -97,7 +97,7 @@ function(panel.data,	## REQUIRED
 
 		if (is.null(num.prior)) num.prior <- length(grade.progression)
 		tmp.data <- eval(parse(text=paste("na.omit(tmp.data[.(", paste(rev(grade.progression)[seq(num.prior)], collapse=", "), "), on=names(tmp.data)[c(", paste(1+num.panels-(1:num.prior-1), collapse=", ") , ")]], cols=names(tmp.data)[c(",paste(1+2*num.panels-(1:num.prior-1), collapse=", "), ")])[,c(1, ", paste(rev(1+2*num.panels-(1:num.prior-1)), collapse=", "),  ")]", sep="")))
-		if (!is.null(subset.tf)) tmp.data <- tmp.data[subset.tf]
+		if (!is.null(completed.ids)) tmp.data <- tmp.data[!ID %in% completed.ids]
 
 		if (bound.data) {
 			if (!is.null(equated.year)) tmp.year <- equated.year else tmp.year <- as.character(sgp.labels$my.year)
@@ -218,7 +218,7 @@ function(panel.data,	## REQUIRED
 							ss.data,
 							head(projection.matrices[[i]][[1]]@Grade_Progression[[1]], -1),
 							head(projection.matrices[[i]][[1]]@Content_Areas[[1]], -1),
-							subset.tf=!(ss.data[[1]] %in% completed.ids),
+							completed.ids=completed.ids,
 							equated.year=yearIncrement(sgp.projections.equated[['Year']], -1))
 
 				if (dim(tmp.dt)[1] > 0) {
