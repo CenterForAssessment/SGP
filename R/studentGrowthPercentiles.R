@@ -106,7 +106,7 @@ function(panel.data,         ## REQUIRED
 
 	.get.panel.data <- function(tmp.data, k, by.grade, tmp.gp.gpd) {
 		if (by.grade) {
-            eval(parse(text=paste("na.omit(tmp.data[.(", paste(rev(tmp.gp)[(0:k)+1], collapse=", "), "), on=names(tmp.data)[c(", paste(1+num.panels-(0:k), collapse=", ") , ")]], cols=names(tmp.data)[c(",paste(1+2*num.panels-0:k, collapse=", "), ")])[,c(1, ", paste(rev(1+2*num.panels-0:k), collapse=", "),  ")]", sep="")))
+            eval(parse(text=paste("na.omit(tmp.data[.(", paste(rev(tmp.gp.gpd)[(0:k)+1], collapse=", "), "), on=names(tmp.data)[c(", paste(1+num.panels-(0:k), collapse=", ") , ")]], cols=names(tmp.data)[c(",paste(1+2*num.panels-0:k, collapse=", "), ")])[,c(1, ", paste(rev(1+2*num.panels-0:k), collapse=", "),  ")]", sep="")))
 		} else {
             eval(parse(text=paste("na.omit(tmp.data, cols=names(tmp.data)[c(",paste(1+2*num.panels-0:k, collapse=", "), ")])[,c(1, ", paste(rev(1+2*num.panels-0:k), collapse=", "),  ")]", sep="")))
 		}
