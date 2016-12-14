@@ -85,7 +85,7 @@ function(sgp_object,
 		}
 
 		if (is.null(sgp.minimum.default.panel.years) & is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgp.minimum.default.panel.years']])) {
-			if (length(unique(sgp_object@Data$YEAR))==2) {
+			if (uniqueN(sgp_object@Data$YEAR)==2) {
 				sgp.minimum.default.panel.years <- 2
 				messageSGP("\tNOTE: Only two years of data present. Minimum default of 3 years of panel data for SGP analyses changed to 2. Please confirm this is consistent with analyses you wish to perform.")
 			} else {

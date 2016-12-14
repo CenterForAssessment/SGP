@@ -422,7 +422,7 @@
 	###################################################################################
 
 	if (is.null(content_areas)) {
-		content_areas <- unique(sgp_object@Data["VALID_CASE"][['CONTENT_AREA']])
+		content_areas <- unique(sgp_object@Data["VALID_CASE"], by='CONTENT_AREA')[['CONTENT_AREA']]
 	}
 
 	if (is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["state.multiple.year.summary"]])) {
@@ -433,13 +433,13 @@
 	tmp.years <- list()
 	if (is.null(years)) {
 		for (i in content_areas) {
-			tmp.years[[i]] <- tail(sort(unique(sgp_object@Data[SJ("VALID_CASE", i)][['YEAR']])), state.multiple.year.summary)
+			tmp.years[[i]] <- tail(sort(unique(sgp_object@Data[SJ("VALID_CASE", i)], by='YEAR')[['YEAR']]), state.multiple.year.summary)
 		}
 	} else {
 		if (!is.list(years)) {
 			for (i in content_areas) {
-				tmp.years[[i]] <- tail(sort(unique(sgp_object@Data[SJ("VALID_CASE", i)][['YEAR']]))[
-					seq(which(sort(unique(sgp_object@Data[SJ("VALID_CASE", i)][['YEAR']]))==tail(sort(years), 1)))], state.multiple.year.summary)
+				tmp.years[[i]] <- tail(sort(unique(sgp_object@Data[SJ("VALID_CASE", i)], by='YEAR')[['YEAR']])[
+					seq(which(sort(unique(sgp_object@Data[SJ("VALID_CASE", i)], by='YEAR')[['YEAR']])==tail(sort(years), 1)))], state.multiple.year.summary)
 			}
 		} else {
 			if (!all(content_areas %in% names(years))) {
