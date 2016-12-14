@@ -86,15 +86,6 @@ function(panel.data,	## REQUIRED
 	}
 
 	.get.panel.data <- function(tmp.data, grade.progression, content_area.progression, num.prior=NULL, completed.ids=NULL, bound.data=TRUE, equated.year=NULL) {
-#		str1 <- str2 <- str3 <- NULL
-#		for (i in 1:num.prior-1) {
-#			str1 <- paste(str1, " & !is.na(tmp.data[[", 1+2*num.panels-i, "]])", sep="")
-#			str2 <- paste(str2, " & tmp.data[[", 1+num.panels-i, "]]=='", rev(as.character(grade.progression))[i+1], "'", sep="")
-#			str3 <- c(1+2*num.panels-i, str3)
-#		}
-#		if (!is.null(subset.tf)) str1 <- paste(str1, " & subset.tf", sep="")
-#		tmp.data <- tmp.data[eval(parse(text=paste(substring(str1, 4), str2, sep="")))][, c(1, str3), with=FALSE]
-
 		if (is.null(num.prior)) num.prior <- length(grade.progression)
 		if (is.character(tmp.data[[1+num.panels]])) {
 			tmp.data <- eval(parse(text=paste("na.omit(tmp.data[.(", paste(rev(paste0("'", grade.progression, "'"))[seq(num.prior)], collapse=", "), "), on=names(tmp.data)[c(", paste(1+num.panels-(1:num.prior-1), collapse=", ") , ")]], cols=names(tmp.data)[c(",paste(1+2*num.panels-(1:num.prior-1), collapse=", "), ")])[,c(1, ", paste(rev(1+2*num.panels-(1:num.prior-1)), collapse=", "),  ")]", sep="")))
