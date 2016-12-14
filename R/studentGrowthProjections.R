@@ -86,22 +86,26 @@ function(panel.data,	## REQUIRED
 	}
 
 	.get.panel.data <- function(tmp.data, grade.progression, content_area.progression, num.prior=NULL, subset.tf=NULL, bound.data=TRUE, equated.year=NULL) {
-		str1 <- str2 <- str3 <- NULL
+#		str1 <- str2 <- str3 <- NULL
+#		for (i in 1:num.prior-1) {
+#			str1 <- paste(str1, " & !is.na(tmp.data[[", 1+2*num.panels-i, "]])", sep="")
+#			str2 <- paste(str2, " & tmp.data[[", 1+num.panels-i, "]]=='", rev(as.character(grade.progression))[i+1], "'", sep="")
+#			str3 <- c(1+2*num.panels-i, str3)
+#		}
+#		if (!is.null(subset.tf)) str1 <- paste(str1, " & subset.tf", sep="")
+#		tmp.data <- tmp.data[eval(parse(text=paste(substring(str1, 4), str2, sep="")))][, c(1, str3), with=FALSE]
+
 		if (is.null(num.prior)) num.prior <- length(grade.progression)
-		for (i in 1:num.prior-1) {
-			str1 <- paste(str1, " & !is.na(tmp.data[[", 1+2*num.panels-i, "]])", sep="")
-			str2 <- paste(str2, " & tmp.data[[", 1+num.panels-i, "]]=='", rev(as.character(grade.progression))[i+1], "'", sep="")
-			str3 <- c(1+2*num.panels-i, str3)
-		}
-		if (!is.null(subset.tf)) str1 <- paste(str1, " & subset.tf", sep="")
-		tmp.data <- tmp.data[eval(parse(text=paste(substring(str1, 4), str2, sep="")))][, c(1, str3), with=FALSE]
+		tmp.data <- eval(parse(text=paste("na.omit(tmp.data[.(", paste(rev(grade.progression)[seq(num.prior)], collapse=", "), "), on=names(tmp.data)[c(", paste(1+num.panels-(1:num.prior-1), collapse=", ") , ")]], cols=names(tmp.data)[c(",paste(1+2*num.panels-(1:num.prior-1), collapse=", "), ")])[,c(1, ", paste(rev(1+2*num.panels-(1:num.prior-1)), collapse=", "),  ")]", sep="")))
+		if (!is.null(subset.tf)) tmp.data <- tmp.data[subset.tf]
+
 		if (bound.data) {
 			if (!is.null(equated.year)) tmp.year <- equated.year else tmp.year <- as.character(sgp.labels$my.year)
 			for (i in seq(dim(tmp.data)[2]-1)) {
 				bnd <- eval(parse(text=paste("panel.data[['Knots_Boundaries']]", get.my.knots.boundaries.path(content_area.progression[i], tmp.year),
 					"[['loss.hoss_", grade.progression[i], "']]", sep="")))
-				tmp.data[tmp.data[[i+1]]<bnd[1], names(tmp.data)[i+1] := bnd[1]]
-				tmp.data[tmp.data[[i+1]]>bnd[2], names(tmp.data)[i+1] := bnd[2]]
+				eval(parse(text=paste0("tmp.data[", names(tmp.data)[i+1], "<bnd[1], names(tmp.data)[i+1] := bnd[1]]")))
+				eval(parse(text=paste0("tmp.data[", names(tmp.data)[i+1], ">bnd[2], names(tmp.data)[i+1] := bnd[2]]")))
 			}
 		}
 		return(tmp.data)
