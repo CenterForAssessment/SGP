@@ -106,7 +106,7 @@ function(panel.data,         ## REQUIRED
 
 	.get.panel.data <- function(tmp.data, k, by.grade, tmp.gp.gpd) {
 		if (by.grade) {
-            eval(parse(text=paste("na.omit(tmp.data[.(", paste(rev(tmp.gp.gpd)[(0:k)+1], collapse=", "), "), on=names(tmp.data)[c(", paste(1+num.panels-(0:k), collapse=", ") , ")]], cols=names(tmp.data)[c(",paste(1+2*num.panels-0:k, collapse=", "), ")])[,c(1, ", paste(rev(1+2*num.panels-0:k), collapse=", "),  ")]", sep="")))
+            eval(parse(text=paste("na.omit(tmp.data[.(", paste(rev(tmp.gp.gpd)[seq(k+1)], collapse=", "), "), on=names(tmp.data)[c(", paste(1+num.panels-(0:k), collapse=", ") , ")]], cols=names(tmp.data)[c(",paste(1+2*num.panels-0:k, collapse=", "), ")])[,c(1, ", paste(rev(1+2*num.panels-0:k), collapse=", "),  ")]", sep="")))
 		} else {
             eval(parse(text=paste("na.omit(tmp.data, cols=names(tmp.data)[c(",paste(1+2*num.panels-0:k, collapse=", "), ")])[,c(1, ", paste(rev(1+2*num.panels-0:k), collapse=", "),  ")]", sep="")))
 		}
@@ -1193,7 +1193,7 @@ function(panel.data,         ## REQUIRED
 	num.panels <- (dim(ss.data)[2]-1)/2
 	if (is.factor(ss.data[[1]])) ss.data[[1]] <- as.character(ss.data[[1]])
 	if (exact.grade.progression.sequence) tmp.num.prior <- num.prior else tmp.num.prior <- 1
-    if (is.character(tmp.gp)) tmp.gp.gpd <- paste0("'", tmp.gp, "'")
+    if (is.character(tmp.gp)) tmp.gp.gpd <- paste0("'", tmp.gp, "'") else tmp.gp.gpd <- tmp.gp
 
 	if (!is.null(sgp.test.cohort.size)) {
 		cohort.ids <- .get.panel.data(ss.data, num.prior, by.grade, tmp.gp.gpd)[[1]]
