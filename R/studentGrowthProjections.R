@@ -96,7 +96,11 @@ function(panel.data,	## REQUIRED
 #		tmp.data <- tmp.data[eval(parse(text=paste(substring(str1, 4), str2, sep="")))][, c(1, str3), with=FALSE]
 
 		if (is.null(num.prior)) num.prior <- length(grade.progression)
-		tmp.data <- eval(parse(text=paste("na.omit(tmp.data[.(", paste(rev(grade.progression)[seq(num.prior)], collapse=", "), "), on=names(tmp.data)[c(", paste(1+num.panels-(1:num.prior-1), collapse=", ") , ")]], cols=names(tmp.data)[c(",paste(1+2*num.panels-(1:num.prior-1), collapse=", "), ")])[,c(1, ", paste(rev(1+2*num.panels-(1:num.prior-1)), collapse=", "),  ")]", sep="")))
+		if (is.character(grade.progression)) {
+			tmp.data <- eval(parse(text=paste("na.omit(tmp.data[.(", paste(rev(paste0("'", grade.progression, "'"))[seq(num.prior)], collapse=", "), "), on=names(tmp.data)[c(", paste(1+num.panels-(1:num.prior-1), collapse=", ") , ")]], cols=names(tmp.data)[c(",paste(1+2*num.panels-(1:num.prior-1), collapse=", "), ")])[,c(1, ", paste(rev(1+2*num.panels-(1:num.prior-1)), collapse=", "),  ")]", sep="")))
+		} else {
+			tmp.data <- eval(parse(text=paste("na.omit(tmp.data[.(", paste(rev(grade.progression)[seq(num.prior)], collapse=", "), "), on=names(tmp.data)[c(", paste(1+num.panels-(1:num.prior-1), collapse=", ") , ")]], cols=names(tmp.data)[c(",paste(1+2*num.panels-(1:num.prior-1), collapse=", "), ")])[,c(1, ", paste(rev(1+2*num.panels-(1:num.prior-1)), collapse=", "),  ")]", sep="")))
+		}
 		if (!is.null(completed.ids)) tmp.data <- tmp.data[!ID %in% completed.ids]
 
 		if (bound.data) {
