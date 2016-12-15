@@ -268,8 +268,11 @@ function(panel.data,         ## REQUIRED
             }
 			mod <- paste(mod, ", my.data[['TIME']], my.data[['TIME_LAG']]", sep="")
 		}
-		tmp <- eval(parse(text=paste("cbind(1L, ", substring(mod, 2), ") %*% my.matrix", sep="")))
-		return(round(matrix(.smooth.bound.iso.row(data.table(ID=rep(seq.int(dim(tmp)[1]), each=length(taus)), X=as.vector(t(tmp))), isotonize, sgp.loss.hoss.adjustment),
+#		tmp <- eval(parse(text=paste0("cbind(1L, ", substring(mod, 2), ") %*% my.matrix")))
+		tmp <- eval(parse(text=paste0("t(my.matrix) %*% t(cbind(1L, ", substring(mod, 2), "))")))
+#		return(round(matrix(.smooth.bound.iso.row(data.table(ID=rep(seq.int(dim(tmp)[1]), each=length(taus)), X=as.vector(t(tmp))), isotonize, sgp.loss.hoss.adjustment),
+#			ncol=length(taus), byrow=TRUE), digits=5))
+		return(round(matrix(.smooth.bound.iso.row(data.table(ID=rep(seq.int(dim(tmp)[1]), each=length(taus)), X=c(tmp)), isotonize, sgp.loss.hoss.adjustment),
 			ncol=length(taus), byrow=TRUE), digits=5))
 	}
 
