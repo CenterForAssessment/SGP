@@ -353,7 +353,7 @@ function(panel.data,	## REQUIRED
 				if (length(grep("CURRENT", percentile.trajectory.values))==0) tmp.num.years.forward <- min(length(grade.projection.sequence), tmp.num.years.forward+1)
 
 				tmp.indices <- as.integer(rep(dim(percentile.trajectories)[1]/uniqueN(percentile.trajectories[['ID']])*(seq(uniqueN(percentile.trajectories[['ID']]))-1),
-					each=length(percentile.trajectory.values)) + as.numeric(t(as.matrix(data.table(panel.data[["Panel_Data"]],
+					each=length(percentile.trajectory.values)) + c(t(as.matrix(data.table(panel.data[["Panel_Data"]],
 					key="ID")[list(unique(percentile.trajectories, by='ID')[['ID']])][,percentile.trajectory.values, with=FALSE]))))
 				tmp.traj <- percentile.trajectories[tmp.indices, 1:(2+tmp.num.years.forward-1), with=FALSE][,ID:=rep(unique(percentile.trajectories, by='ID')[['ID']], each=length(percentile.trajectory.values))]
 				if (tmp.num.years.forward==1) {
@@ -367,7 +367,7 @@ function(panel.data,	## REQUIRED
 						unavailable.states <- included.states[!included.states %in% available.states]
 						percentile.trajectories <- data.table(panel.data[["Panel_Data"]][,c("ID", "STATE"), with=FALSE], key="ID")[STATE %in% available.states][percentile.trajectories][!is.na(STATE)]
 						tmp.traj <- percentile.trajectories[which(!duplicated(percentile.trajectories[['ID']]))]
-						if (length(percentile.trajectory.values)==2) tmp.traj <- data.table(rbind(tmp.traj, tmp.traj), key="ID")
+						if (length(percentile.trajectory.values)==2) tmp.traj <- data.table(rbindlist(list(tmp.traj, tmp.traj)), key="ID")
 
 						for (state.iter in unique(tmp.traj$STATE)) {
 							my.cutscore.year <- get.my.cutscore.state.year.sgprojection(Cutscores, content_area.projection.sequence[1], yearIncrement(sgp.labels$my.year, 1, lag.increment), my.state=state.iter)
