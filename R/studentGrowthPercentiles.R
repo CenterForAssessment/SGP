@@ -268,11 +268,8 @@ function(panel.data,         ## REQUIRED
             }
 			mod <- paste(mod, ", my.data[['TIME']], my.data[['TIME_LAG']]", sep="")
 		}
-#		tmp <- eval(parse(text=paste0("cbind(1L, ", substring(mod, 2), ") %*% my.matrix")))
-		tmp <- eval(parse(text=paste0("t(my.matrix) %*% t(cbind(1L, ", substring(mod, 2), "))")))
-#		return(round(matrix(.smooth.bound.iso.row(data.table(ID=rep(seq.int(dim(tmp)[1]), each=length(taus)), X=as.vector(t(tmp))), isotonize, sgp.loss.hoss.adjustment),
-#			ncol=length(taus), byrow=TRUE), digits=5))
-		return(round(matrix(.smooth.bound.iso.row(data.table(ID=rep(seq.int(dim(tmp)[2]), each=length(taus)), X=c(tmp)), isotonize, sgp.loss.hoss.adjustment),
+        tmp <- eval(parse(text=paste0("cbind(1L, ", substring(mod, 2), ") %*% my.matrix")))
+		return(round(matrix(.smooth.bound.iso.row(data.table(ID=rep(seq.int(dim(tmp)[2]), each=length(taus)), X=c(t(tmp))), isotonize, sgp.loss.hoss.adjustment),
 			ncol=length(taus), byrow=TRUE), digits=5))
 	}
 
@@ -500,7 +497,6 @@ function(panel.data,         ## REQUIRED
 					my.matrix.order=k,
 					my.matrix.time.dependency=SGPt)[[1]]
 
-#				fitted[[paste("order_", k, sep="")]][1,] <- as.vector(.get.percentile.predictions(tmp.data, tmp.matrix))
 				fitted[[paste("order_", k, sep="")]][1,] <- c(.get.percentile.predictions(tmp.data, tmp.matrix))
 			}
 
@@ -604,7 +600,6 @@ function(panel.data,         ## REQUIRED
 						if (verbose) messageSGP(c("\t\t\tStarted percentile prediction calculation, Lambda ", L, ": ", prettyDate()))
 						for (z in seq_along(sim.iters)) {
 							fitted[[paste("order_", k, sep="")]][which(lambda==L),] <- fitted[[paste("order_", k, sep="")]][which(lambda==L),] +
-#								as.vector(.get.percentile.predictions(big.data[list(z)][, b:=NULL],
 								c(.get.percentile.predictions(big.data[list(z)][, b:=NULL],
 									simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]][[z]])/B)
 						}
@@ -662,7 +657,6 @@ function(panel.data,         ## REQUIRED
 							fitted[[paste("order_", k, sep="")]][which(lambda==L),] <-
 								foreach(z=iter(seq_along(sim.iters)), .combine="+", .export=c('tmp.gp', 'taus', 'sgp.loss.hoss.adjustment', 'isotonize', 'SGPt'),
 									.options.multicore=par.start$foreach.options) %dopar% { # .options.snow=par.start$foreach.options
-#										as.vector(.get.percentile.predictions(my.matrix=mtx.subset[[z]], my.data=getSQLData(tmp.dbname, z, k, predictions=TRUE))/B)
 										c(.get.percentile.predictions(my.matrix=mtx.subset[[z]], my.data=getSQLData(tmp.dbname, z, k, predictions=TRUE))/B)
 								}
                     }
