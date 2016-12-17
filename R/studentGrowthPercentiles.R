@@ -449,7 +449,7 @@ function(panel.data,         ## REQUIRED
 			tmp.ca.iter <- rev(content_area.progression)[start.index:(k+1)]
 			tmp.yr.iter <- rev(year.progression)[start.index:(k+1)]
 			if (is.null(csem.data.vnames)) {
-				csem.int <- data.table(matrix(nrow=dim(tmp.data)[1], ncol=length(perturb.var))) # build matrix to store interpolated csem
+				csem.int <- data.table(matrix(nrow=dim(tmp.data)[1], ncol=length(perturb.var))) # build data.table to store interpolated csem
 				setnames(csem.int, paste("icsem", perturb.var, tmp.ca.iter, tmp.yr.iter, sep=""))
 			} else {
 				csem.int <- data.table(Panel_Data[,c("ID", intersect(csem.data.vnames, names(Panel_Data))),with=FALSE], key="ID")[ID %in% tmp.data$ID]
@@ -461,7 +461,7 @@ function(panel.data,         ## REQUIRED
 				for (g in seq_along(perturb.var)) {
 					if ("YEAR" %in% names(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
 						CSEM_Data <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]][
-							GRADE==perturb.var[g] & CONTENT_AREA== tmp.ca.iter[g] & YEAR==tmp.yr.iter[g]]
+							GRADE==perturb.var[g] & CONTENT_AREA==tmp.ca.iter[g] & YEAR==tmp.yr.iter[g]]
 					} else {
 						CSEM_Data <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]][
 							GRADE==perturb.var[g] & CONTENT_AREA==tmp.ca.iter[g]]
