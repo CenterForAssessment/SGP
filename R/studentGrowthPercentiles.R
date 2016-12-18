@@ -76,7 +76,7 @@ function(panel.data,         ## REQUIRED
 	}
 
 	.create.path <- function(labels, pieces=c("my.subject", "my.year", "my.extra.label")) {
-		sub(' ', '_', toupper(sub('\\.+$', '', paste(unlist(sapply(labels[pieces], as.character)), collapse="."))))
+		sub(' ', '_', toupper(sub('\\.+$', '', paste(unlist(lapply(labels[pieces], as.character)), collapse="."))))
 	}
 
 	.get.knots.boundaries <- function(data, by.grade) {
@@ -1549,7 +1549,7 @@ function(panel.data,         ## REQUIRED
 			if (is.character(calculate.confidence.intervals) | is.list(calculate.confidence.intervals)) {
 				if (is.null(calculate.confidence.intervals$confidence.quantiles) | identical(toupper(calculate.confidence.intervals$confidence.quantiles), "STANDARD_ERROR")) {
 #					quantile.data[,SGP_STANDARD_ERROR:=round(apply(simulation.data[, -1, with=FALSE], 1, sd, na.rm=TRUE), digits=2)]
-					quantile.data[,SGP_STANDARD_ERROR:=round(data.table(ID=rep(simulation.data[[1]], dim(simulation.data)[2]-1), SGP=c(as.matrix(simulation.data)[,-1]))[,sd(SGP), keyby=ID][['V1']], digits=2)]
+					quantile.data[,SGP_STANDARD_ERROR:=round(data.table(ID=rep(simulation.data[[1]], dim(simulation.data)[2]-1), SGP=as.numeric(c(as.matrix(simulation.data)[,-1])))[,sd(SGP), keyby=ID][['V1']], digits=2)]
 				} else {
 					if (!(is.numeric(calculate.confidence.intervals$confidence.quantiles) & all(calculate.confidence.intervals$confidence.quantiles < 1) &
 						all(calculate.confidence.intervals$confidence.quantiles > 0))) {
