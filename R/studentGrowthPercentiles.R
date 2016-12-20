@@ -143,6 +143,7 @@ function(panel.data,         ## REQUIRED
 	}
 
 	.create.coefficient.matrices <- function(data, k, by.grade, max.n.for.coefficient.matrices) {
+
 		rq.sgp <- function(..., my.taus) { # Function needs to be nested within the .create.coefficient.matrices function to avoid data copying with SNOW
 			if (rq.method == "br") {
 				tmp.res <- rq(method="br", ...)[['coefficients']]
@@ -155,6 +156,7 @@ function(panel.data,         ## REQUIRED
 			if (!is.matrix(tmp.res)) return(matrix(tmp.res, dimnames=list(names(tmp.res), paste("tau=", my.taus))))
 			return(tmp.res)
 		}
+
 		tmp.data <- .get.panel.data(data, k, by.grade, tmp.gp.gpd)
 		if (dim(tmp.data)[1]==0) return(NULL)
 		if (dim(tmp.data)[1] < sgp.cohort.size) return("Insufficient N")
@@ -187,7 +189,6 @@ function(panel.data,         ## REQUIRED
 			par.start <- startParallel(tmp.par.config, 'TAUS', qr.taus=taus)
 
 			if (toupper(tmp.par.config[["BACKEND"]]) == "FOREACH") {
-				# tmp.data <<- tmp.data
 				tmp.mtx <- foreach(x = iter(par.start$TAUS.LIST), .export=c("tmp.data", "Knots_Boundaries", "rq.method", "rq.sgp"), .combine = "cbind", .errorhandling = "pass",
 				.inorder=TRUE, .options.mpi = par.start$foreach.options, .options.multicore = par.start$foreach.options, .options.snow = par.start$foreach.options) %dopar% {
 					eval(parse(text=paste("rq.sgp(formula=tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=x, data=tmp.data, my.taus=x)", sep="")))
