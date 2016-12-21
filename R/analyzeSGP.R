@@ -758,6 +758,7 @@ function(sgp_object,
 	if (get.cohort.data.info) {
 		cohort_data_info <- getCohortDataInfo(tmp_sgp_data_for_analysis, par.sgp.config[['sgp.percentiles']])
 		save(cohort_data_info, file=file.path("Logs", "cohort_data_info.Rdata"))
+        messageSGP("\tNOTE: Cohort data information saved to 'Logs/cohort_data_info.Rdata'.")
 	}
 
 
