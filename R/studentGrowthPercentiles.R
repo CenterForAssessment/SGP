@@ -76,7 +76,7 @@ function(panel.data,         ## REQUIRED
 	}
 
 	.create.path <- function(labels, pieces=c("my.subject", "my.year", "my.extra.label")) {
-		sub(' ', '_', toupper(sub('\\.+$', '', paste(unlist(sapply(labels[pieces], as.character)), collapse="."))))
+		sub(' ', '_', toupper(sub('\\.+$', '', paste(unlist(lapply(labels[pieces], as.character)), collapse="."))))
 	}
 
 	.get.knots.boundaries <- function(data, by.grade) {
@@ -143,6 +143,7 @@ function(panel.data,         ## REQUIRED
 	}
 
 	.create.coefficient.matrices <- function(data, k, by.grade, max.n.for.coefficient.matrices) {
+
 		rq.sgp <- function(..., my.taus) { # Function needs to be nested within the .create.coefficient.matrices function to avoid data copying with SNOW
 			if (rq.method == "br") {
 				tmp.res <- rq(method="br", ...)[['coefficients']]
@@ -155,6 +156,7 @@ function(panel.data,         ## REQUIRED
 			if (!is.matrix(tmp.res)) return(matrix(tmp.res, dimnames=list(names(tmp.res), paste("tau=", my.taus))))
 			return(tmp.res)
 		}
+
 		tmp.data <- .get.panel.data(data, k, by.grade, tmp.gp.gpd)
 		if (dim(tmp.data)[1]==0) return(NULL)
 		if (dim(tmp.data)[1] < sgp.cohort.size) return("Insufficient N")
@@ -187,7 +189,6 @@ function(panel.data,         ## REQUIRED
 			par.start <- startParallel(tmp.par.config, 'TAUS', qr.taus=taus)
 
 			if (toupper(tmp.par.config[["BACKEND"]]) == "FOREACH") {
-				# tmp.data <<- tmp.data
 				tmp.mtx <- foreach(x = iter(par.start$TAUS.LIST), .export=c("tmp.data", "Knots_Boundaries", "rq.method", "rq.sgp"), .combine = "cbind", .errorhandling = "pass",
 				.inorder=TRUE, .options.mpi = par.start$foreach.options, .options.multicore = par.start$foreach.options, .options.snow = par.start$foreach.options) %dopar% {
 					eval(parse(text=paste("rq.sgp(formula=tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=x, data=tmp.data, my.taus=x)", sep="")))
@@ -449,7 +450,7 @@ function(panel.data,         ## REQUIRED
 			tmp.ca.iter <- rev(content_area.progression)[start.index:(k+1)]
 			tmp.yr.iter <- rev(year.progression)[start.index:(k+1)]
 			if (is.null(csem.data.vnames)) {
-				csem.int <- data.table(matrix(nrow=dim(tmp.data)[1], ncol=length(perturb.var))) # build matrix to store interpolated csem
+				csem.int <- data.table(matrix(nrow=dim(tmp.data)[1], ncol=length(perturb.var))) # build data.table to store interpolated csem
 				setnames(csem.int, paste("icsem", perturb.var, tmp.ca.iter, tmp.yr.iter, sep=""))
 			} else {
 				csem.int <- data.table(Panel_Data[,c("ID", intersect(csem.data.vnames, names(Panel_Data))),with=FALSE], key="ID")[ID %in% tmp.data$ID]
@@ -461,7 +462,7 @@ function(panel.data,         ## REQUIRED
 				for (g in seq_along(perturb.var)) {
 					if ("YEAR" %in% names(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
 						CSEM_Data <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]][
-							GRADE==perturb.var[g] & CONTENT_AREA== tmp.ca.iter[g] & YEAR==tmp.yr.iter[g]]
+							GRADE==perturb.var[g] & CONTENT_AREA==tmp.ca.iter[g] & YEAR==tmp.yr.iter[g]]
 					} else {
 						CSEM_Data <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]][
 							GRADE==perturb.var[g] & CONTENT_AREA==tmp.ca.iter[g]]
@@ -1548,15 +1549,15 @@ function(panel.data,         ## REQUIRED
 
 			if (is.character(calculate.confidence.intervals) | is.list(calculate.confidence.intervals)) {
 				if (is.null(calculate.confidence.intervals$confidence.quantiles) | identical(toupper(calculate.confidence.intervals$confidence.quantiles), "STANDARD_ERROR")) {
-					quantile.data[,SGP_STANDARD_ERROR:=round(apply(simulation.data[, -1, with=FALSE], 1, sd, na.rm=TRUE), digits=2)]
+					quantile.data[,SGP_STANDARD_ERROR:=round(data.table(ID=rep(simulation.data[[1]], dim(simulation.data)[2]-1), SGP=as.numeric(c(as.matrix(simulation.data)[,-1])))[,sd(SGP), keyby=ID][['V1']], digits=2)]
 				} else {
 					if (!(is.numeric(calculate.confidence.intervals$confidence.quantiles) & all(calculate.confidence.intervals$confidence.quantiles < 1) &
 						all(calculate.confidence.intervals$confidence.quantiles > 0))) {
 						stop("Argument to 'calculate.confidence.intervals$confidence.quantiles' must be numeric and consist of quantiles.")
 					}
-					tmp.cq <- data.table(round(t(apply(simulation.data[, -1, with=FALSE], 1, quantile, probs = calculate.confidence.intervals$confidence.quantiles))))
+					tmp.cq <- data.table(round(t(apply(simulation.data[, -1, with=FALSE], 1, quantile, probs=calculate.confidence.intervals$confidence.quantiles))))
 					quantile.data[,paste("SGP_", calculate.confidence.intervals$confidence.quantiles, "_CONFIDENCE_BOUND", sep=""):=tmp.cq]
-					quantile.data[,SGP_STANDARD_ERROR:=round(apply(simulation.data[, -1, with=FALSE], 1, sd, na.rm=TRUE), digits=2)]
+					quantile.data[,SGP_STANDARD_ERROR:=round(data.table(ID=rep(simulation.data[[1]], dim(simulation.data)[2]-1), SGP=as.numeric(c(as.matrix(simulation.data)[,-1])))[,sd(SGP), keyby=ID][['V1']], digits=2)]
 				}
 			}
 			Simulated_SGPs[[tmp.path]] <- rbindlist(list(simulation.data, Simulated_SGPs[[tmp.path]]), fill=TRUE)
