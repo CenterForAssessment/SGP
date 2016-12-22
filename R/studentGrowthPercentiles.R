@@ -106,10 +106,10 @@ function(panel.data,         ## REQUIRED
 
 	.get.panel.data <- function(tmp.data, k, by.grade, tmp.gp) {
 		if (by.grade) {
-      if (is.character(tmp.gp)) tmp.gp.gpd <- shQuote(rev(tmp.gp)[seq(k+1)]) else tmp.gp.gpd <- rev(tmp.gp)[seq(k+1)]
-      eval(parse(text=paste("na.omit(tmp.data[.(", paste(tmp.gp.gpd, collapse=", "), "), on=names(tmp.data)[c(", paste(1+num.panels-(0:k), collapse=", ") , ")]], cols=names(tmp.data)[c(",paste(1+2*num.panels-0:k, collapse=", "), ")])[,c(1, ", paste(rev(1+2*num.panels-0:k), collapse=", "),  ")]", sep="")))
+            if (is.character(tmp.gp)) tmp.gp.gpd <- shQuote(rev(tmp.gp)[seq(k+1)]) else tmp.gp.gpd <- rev(tmp.gp)[seq(k+1)]
+            eval(parse(text=paste("na.omit(tmp.data[.(", paste(tmp.gp.gpd, collapse=", "), "), on=names(tmp.data)[c(", paste(1+num.panels-(0:k), collapse=", ") , ")]], cols=names(tmp.data)[c(",paste(1+2*num.panels-0:k, collapse=", "), ")])[,c(1, ", paste(rev(1+2*num.panels-0:k), collapse=", "),  ")]", sep="")))
 		} else {
-        eval(parse(text=paste("na.omit(tmp.data, cols=names(tmp.data)[c(",paste(1+2*num.panels-0:k, collapse=", "), ")])[,c(1, ", paste(rev(1+2*num.panels-0:k), collapse=", "),  ")]", sep="")))
+            eval(parse(text=paste("na.omit(tmp.data, cols=names(tmp.data)[c(",paste(1+2*num.panels-0:k, collapse=", "), ")])[,c(1, ", paste(rev(1+2*num.panels-0:k), collapse=", "),  ")]", sep="")))
 		}
 	}
 

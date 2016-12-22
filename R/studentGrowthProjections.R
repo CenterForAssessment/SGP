@@ -56,7 +56,7 @@ function(panel.data,	## REQUIRED
 			return(na.row)
 		} else {
 			setkey(tmp.dt, ID, X)
-			return(round(tmp.dt[unlist(lapply(1:100, function(x) seq.int(x, dim(tmp.dt)[1], by=100)))][['X']], digits=5))
+			return(round(tmp.dt[c(matrix(seq.int(dim(tmp.dt)[1]), ncol=100, byrow=TRUE))][['X']], digits=5))
 		}
 	}
 
