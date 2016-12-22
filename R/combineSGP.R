@@ -229,7 +229,7 @@ function(
 			tmp.data <- getPreferredSGP(tmp.data, state)
 		}
 
-		variables.to.merge <- setsdiff(names(tmp.data),  key(slot.data))
+		variables.to.merge <- setdiff(names(tmp.data),  key(slot.data))
 		tmp.index <- slot.data[tmp.data[,key(slot.data), with=FALSE], which=TRUE]
 		slot.data[tmp.index, (variables.to.merge):=tmp.data[, variables.to.merge, with=FALSE]]
 
