@@ -13,8 +13,7 @@ function(
 		messageSGP("\t\t2. abcSGP test using all available years except most recent followed by an updated analysis using the most recent year's data.")
 	}
 
-	sgpData.years <- sort(unique(SGPdata::sgpData_LONG[['YEAR']]))
-
+	sgpData.years <- sort(unique(data.table(SGPdata::sgpData_LONG[['YEAR']]), by=YEAR)[['V1']])
 
 		#######################################################################################################################################################
 		###
