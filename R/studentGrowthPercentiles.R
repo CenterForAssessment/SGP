@@ -270,13 +270,12 @@ function(panel.data,         ## REQUIRED
 			mod <- paste(mod, ", my.data[['TIME']], my.data[['TIME_LAG']]", sep="")
 		}
         tmp <- eval(parse(text=paste0("cbind(1L, ", substring(mod, 2), ") %*% my.matrix")))
-		return(round(matrix(.smooth.bound.iso.row(data.table(ID=rep(seq.int(dim(tmp)[1]), each=length(taus)), X=c(t(tmp))), isotonize, sgp.loss.hoss.adjustment),
-			ncol=length(taus), byrow=TRUE), digits=5))
+        return(round(matrix(.smooth.bound.iso.row(data.table(ID=rep(seq.int(dim(tmp)[1]), each=length(taus)), X=c(t(tmp))), isotonize, sgp.loss.hoss.adjustment), ncol=length(taus), byrow=TRUE), digits=5))
 	}
 
 	.get.quantiles <- function(data1, data2) {
 		V1 <- NULL
-		tmp <- as.data.table(max.col(cbind(data1 < data2, FALSE), "last"))[V1==101,V1:=0L]
+		tmp <- as.data.table(max.col(cbind(data1 < data2, FALSE), "last"))[V1==101L,V1:=0L]
 		if (!is.null(sgp.quantiles.labels)) {
 			setattr(tmp[['V1']] <- as.factor(tmp[['V1']]), "levels", sgp.quantiles.labels)
 			return(as.integer(levels(tmp[['V1']]))[tmp[['V1']]])
@@ -289,8 +288,8 @@ function(panel.data,         ## REQUIRED
 				}
 			}
 			if (convert.0and100) {
-				tmp[V1==0, V1:=1L]
-				tmp[V1==100, V1:=99L]
+				tmp[V1==0L, V1:=1L]
+				tmp[V1==100L, V1:=99L]
 			}
 			return(tmp[['V1']])
 		}
@@ -1557,7 +1556,7 @@ function(panel.data,         ## REQUIRED
 					}
 					tmp.cq <- data.table(round(t(apply(simulation.data[, -1, with=FALSE], 1, quantile, probs=calculate.confidence.intervals$confidence.quantiles))))
 					quantile.data[,paste("SGP_", calculate.confidence.intervals$confidence.quantiles, "_CONFIDENCE_BOUND", sep=""):=tmp.cq]
-					quantile.data[,SGP_STANDARD_ERROR:=round(data.table(ID=rep(simulation.data[[1]], dim(simulation.data)[2]-1), SGP=as.numeric(c(as.matrix(simulation.data)[,-1])))[,sd(SGP), keyby=ID][['V1']], digits=2)]
+					quantile.data[,SGP_STANDARD_ERROR:=round(data.table(ID=simulation.data[[1]], SGP=as.numeric(c(as.matrix(simulation.data)[,-1])))[,sd(SGP), keyby=ID][['V1']], digits=2)]
 				}
 			}
 			Simulated_SGPs[[tmp.path]] <- rbindlist(list(simulation.data, Simulated_SGPs[[tmp.path]]), fill=TRUE)
