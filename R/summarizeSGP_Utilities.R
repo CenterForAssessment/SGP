@@ -193,8 +193,8 @@ function(dat,
 
 	ID <- SCORE <- NULL
 	CI <- c(NA,NA); SE <- NA
-	if (length(dat.no.na <- dat[!is.na(dat)]) > 0) {
-		out <- data.table(ID=rep(seq.int(nboot)), SCORE=dat.no.na[sample.int(length(dat.no.na), length(dat.no.na)*nboot, replace=TRUE)])[,median(SCORE), by=ID][['V1']]
+	if (length(dat.no.na <- dat[!is.na(dat)]) > 1) {
+		out <- data.table(ID=seq.int(nboot), SCORE=dat.no.na[sample.int(length(dat.no.na), length(dat.no.na)*nboot, replace=TRUE)])[,median(SCORE), by=ID][['V1']]
 		if (!is.null(conf.quantiles)) CI <- round(quantile(out, conf.quantiles), digits=1) else SE <- round(sd(out), digits=1)
 	}
 	if (!is.null(conf.quantiles)) return(CI) else return(SE)
