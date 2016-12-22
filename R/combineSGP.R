@@ -166,12 +166,11 @@ function(
 
 	catch_keep_move_functions <- c(min, max)
 
-	"%w/o%" <- function(x,y) x[!x %in% y]
-
 	getTargetData <- function(tmp.target.data, projection_group.iter, tmp.target.level.names) {
 		if ("YEAR_WITHIN" %in% names(tmp.target.data)) tmp.var.names <- c("ID", "CONTENT_AREA", "YEAR", "YEAR_WITHIN") else tmp.var.names <- c("ID", "CONTENT_AREA", "YEAR")
 		tmp.data <- tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter, c(tmp.var.names, tmp.target.level.names), with=FALSE]
-		return(tmp.data[apply(tmp.data[,tmp.target.level.names, with=FALSE],1,function(x)any(!is.na(x)))])
+		na.omit(tmp.data, cols=tmp.target.level.names)
+#		return(tmp.data[apply(tmp.data[,tmp.target.level.names, with=FALSE],1,function(x)any(!is.na(x)))])
 	}
 
 
@@ -230,7 +229,7 @@ function(
 			tmp.data <- getPreferredSGP(tmp.data, state)
 		}
 
-		variables.to.merge <- names(tmp.data) %w/o% key(slot.data)
+		variables.to.merge <- setsdiff(names(tmp.data),  key(slot.data))
 		tmp.index <- slot.data[tmp.data[,key(slot.data), with=FALSE], which=TRUE]
 		slot.data[tmp.index, (variables.to.merge):=tmp.data[, variables.to.merge, with=FALSE]]
 
@@ -273,7 +272,7 @@ function(
 			tmp.data <- getPreferredSGP(tmp.data, state, type="BASELINE")
 		}
 
-		variables.to.merge <- names(tmp.data) %w/o% key(slot.data)
+		variables.to.merge <- setdiff(names(tmp.data),  key(slot.data))
 		tmp.index <- slot.data[tmp.data[,key(slot.data), with=FALSE], which=TRUE]
 		slot.data[tmp.index, (variables.to.merge):=tmp.data[, variables.to.merge, with=FALSE]]
 
@@ -318,7 +317,7 @@ function(
 					duplicated.projections.tf <- TRUE
 					tmp.data <- getPreferredSGP(tmp.data, state, type="TARGET")
 				} else duplicated.projections.tf <- FALSE
-				variables.to.merge <- names(tmp.data) %w/o% key(slot.data)
+				variables.to.merge <- setdiff(names(tmp.data),  key(slot.data))
 				tmp.index <- slot.data[tmp.data[,intersect(key(slot.data), names(tmp.data)), with=FALSE], which=TRUE]
 				slot.data[tmp.index, (variables.to.merge):=tmp.data[, variables.to.merge, with=FALSE]]
 			}
