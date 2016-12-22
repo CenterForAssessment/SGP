@@ -123,9 +123,9 @@ function(tmp.simulation.dt,
 function(x,
 	weight) {
 	if (is.null(weight)) {
-		median(as.numeric(x), na.rm=TRUE)
+		as.numeric(median(x, na.rm=TRUE))
 	} else {
-		weightedMedian(as.numeric(x), w=weight, na.rm=TRUE)
+		as.numeric(weightedMedian(x, w=weight, na.rm=TRUE))
 	}
 }
 
@@ -146,7 +146,7 @@ function(x,
 `sd_na` <- function(x, result.digits=2) round(sd(as.numeric(x), na.rm=TRUE), digits=result.digits)
 
 
-`num_non_missing` <- function(x) length(x[!is.na(x)])
+`num_non_missing` <- function(x) sum(!is.na(x))
 
 
 `sgp_standard_error` <- function(x,y=1) round(y*sd(x, na.rm=TRUE)/sqrt(sum(!is.na(as.numeric(x)))), digits=2)

@@ -61,7 +61,7 @@ function(panel.data,	## REQUIRED
 	}
 
 	.create.path <- function(labels, pieces=c("my.subject", "my.year", "my.extra.label")) {
-		sub(' ', '_', toupper(sub('\\.+$', '', paste(unlist(sapply(labels[pieces], as.character)), collapse="."))))
+		sub(' ', '_', toupper(sub('\\.+$', '', paste(unlist(lapply(labels[pieces], as.character)), collapse="."))))
 	}
 
 	.get.trajectory.chunks <- function(seq.for.data) {
@@ -891,7 +891,6 @@ function(panel.data,	## REQUIRED
 							SGPt)
 
 	if (length(grade.projection.sequence.matrices[[1]]) < 1) {
-	# if any(!sapply(grade.projection.sequence.matrices[[1]], is.splineMatrix)) {
 		tmp.messages <- c(tmp.messages, "\t\tNOTE: Requested grade & content area progression are missing one or more coefficient matrices.\n")
 		messageSGP(paste("\tStarted studentGrowthProjections", started.date))
 		messageSGP(paste("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, " ", return.projection.group.identifier, sep=""))
@@ -920,7 +919,7 @@ function(panel.data,	## REQUIRED
 	### Select specific percentile trajectories and calculate cutscores
 
 	if (tf.cutscores) {
-		tmp.cutscore.grade.content_area <- unlist(sapply(seq_along(tmp.cutscores), function(x) paste(unlist(strsplit(names(tmp.cutscores)[x], '[.]'))[1], names(tmp.cutscores[[x]]), sep=".")))
+		tmp.cutscore.grade.content_area <- unlist(lapply(seq_along(tmp.cutscores), function(x) paste(unlist(strsplit(names(tmp.cutscores)[x], '[.]'))[1], names(tmp.cutscores[[x]]), sep=".")))
 		if ("STATE" %in% names(panel.data[["Panel_Data"]])) {
 			included.states <- unique(panel.data[["Panel_Data"]][['STATE']]); state.arg <- "STATE == states[n.state]"
 			content_area.index <- grep(sgp.labels$my.subject, sapply(names(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]), function(x) strsplit(x, "[.]")[[1]][1], USE.NAMES=FALSE))

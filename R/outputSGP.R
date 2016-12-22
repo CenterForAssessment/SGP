@@ -330,8 +330,8 @@ function(sgp_object,
 
 				}
 			}
-			if ("ETHNICITY" %in% names(tmp.df) && is.factor(tmp.df$ETHNICITY)) {
-				tmp.df[,ETHNICITY:=unclass(ETHNICITY)]
+			if ("ETHNICITY" %in% names(tmp.df)) {
+				tmp.df[,ETHNICITY:=unclass(as.factor(ETHNICITY))]
 			}
 			if ("ACHIEVEMENT_LEVEL" %in% names(tmp.df)) {
 				tmp.df[,ACHIEVEMENT_LEVEL:=unclass(as.factor(ACHIEVEMENT_LEVEL))]

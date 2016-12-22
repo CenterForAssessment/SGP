@@ -38,8 +38,8 @@ function(scale_score,
 			my.knots_boundaries.label <- getMyLabel(state, content_area, year, "Knots_Boundaries")
 			tmp.loss.hoss <- SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[my.knots_boundaries.label]][[paste("loss.hoss_", grade, sep="")]]
 			scale_score[scale_score < tmp.loss.hoss[1]] <- tmp.loss.hoss[1]; scale_score[scale_score > tmp.loss.hoss[2]] <- tmp.loss.hoss[2]
-			my.content_area <- getMyLabel(state, content_area, year)
-			old.cutscores <- c(tmp.loss.hoss[1], SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.content_area]][[paste("GRADE_", grade, sep="")]],
+			my.cutscores.label <- getMyLabel(state, content_area, year)
+			old.cutscores <- c(tmp.loss.hoss[1], SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[my.cutscores.label]][[paste("GRADE_", grade, sep="")]],
 				tmp.loss.hoss[2])
 			if (is.null(new.cutscores)) new.cutscores <- seq(0, by=100, length.out=length(old.cutscores))
 			tmp.index <- findInterval(scale_score, old.cutscores, rightmost.closed=TRUE)
