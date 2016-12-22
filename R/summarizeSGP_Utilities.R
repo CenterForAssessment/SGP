@@ -170,7 +170,7 @@ function(x,
 	of.categories,
 	result.digits=1) {
 
-	tmp.dt <- na.omit(data.table(x))[,.N,by=V1]
+	tmp.dt <- na.omit(data.table(x))[,.N,by=x]
 	round(100*sum(tmp.dt[X %in% in.categories][['N']])/sum(tmp.dt[X %in% of.categories][['N']]), digits=result.digits)
 }
 
