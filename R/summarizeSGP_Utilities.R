@@ -171,7 +171,7 @@ function(x,
 	result.digits=1) {
 
 	tmp.dt <- na.omit(data.table(x))[,.N,by=x]
-	round(100*sum(tmp.dt[X %in% in.categories][['N']])/sum(tmp.dt[X %in% of.categories][['N']]), digits=result.digits)
+	round(100*sum(tmp.dt[x %in% in.categories][['N']])/sum(tmp.dt[x %in% of.categories][['N']]), digits=result.digits)
 }
 
 
@@ -181,7 +181,7 @@ function(sgp,
 	result.digits=1) {
 
 	tmp.logical <- sgp >= target
-	tmp.pct <- round(sum(tmp.logical, na.rm=TRUE)/sum(!is.na(tmp.logical))*100, digits=result.digits)
+	tmp.pct <- round(100*sum(tmp.logical, na.rm=TRUE)/sum(!is.na(tmp.logical)), digits=result.digits)
 	return(tmp.pct)
 } ### END percent_at_above_target function
 
