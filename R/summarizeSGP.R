@@ -116,10 +116,10 @@
 			if ("YEAR_WITHIN" %in% names(sgp_object@SGP[["Simulated_SGPs"]][[i]])) columns.to.omit <- -c(1,2) else columns.to.omit <- -1
 			tmp.list[[i]] <- data.table(
 				ID=rep(sgp_object@SGP[["Simulated_SGPs"]][[i]][["ID"]], each=length(grep("SGP_SIM", names(sgp_object@SGP[["Simulated_SGPs"]][[i]])))),
-				SGP_SIM=as.integer(as.matrix(t(sgp_object@SGP[["Simulated_SGPs"]][[i]][,columns.to.omit, with=FALSE]))))[,
-				CONTENT_AREA:=unlist(strsplit(i, "[.]"))[1]][,
-				YEAR:=unlist(strsplit(i, "[.]"))[2]][,
-				BASELINE:=tmp.baseline]
+				SGP_SIM=c(as.matrix(t(sgp_object@SGP[["Simulated_SGPs"]][[i]][,columns.to.omit, with=FALSE]))))[,
+					CONTENT_AREA:=unlist(strsplit(i, "[.]"))[1]][,
+					YEAR:=unlist(strsplit(i, "[.]"))[2]][,
+					BASELINE:=tmp.baseline]
 			if ("YEAR_WITHIN" %in% names(sgp_object@SGP[["Simulated_SGPs"]][[i]])) {
 				tmp.list[[i]][,YEAR_WITHIN:=rep(sgp_object@SGP[["Simulated_SGPs"]][[i]][["YEAR_WITHIN"]], each=length(grep("SGP_SIM", names(sgp_object@SGP[["Simulated_SGPs"]][[i]]))))]
 			}
@@ -145,7 +145,7 @@
 				if (length(character.vector)==0) {
 					return(NULL)
 				} else {
-					paste("list(c(", paste("'", paste(character.vector, collapse="', '"), "'", sep=""), "))", sep="")
+					paste("c(", paste("'", paste(character.vector, collapse="', '"), "'", sep=""), ")", sep="")
 				}
 			}
 

@@ -149,10 +149,10 @@ function(x,
 `num_non_missing` <- function(x) sum(!is.na(x))
 
 
-`sgp_standard_error` <- function(x,y=1) round(y*sd(x, na.rm=TRUE)/sqrt(sum(!is.na(as.numeric(x)))), digits=2)
+`sgp_standard_error` <- function(x,y=1) round(y*sd(x, na.rm=TRUE)/sqrt(sum(!is.na(x))), digits=2)
 
 
-`percent_in_category` <-
+`percent_in_category_old` <-
 function(x,
 	in.categories,
 	of.categories,
@@ -163,6 +163,16 @@ function(x,
 	tmp <- table(x[!is.na(x)])
 	return(unlist(lapply(seq_along(in.categories), function(i) round(100*sum(tmp[in.categories[[i]]], na.rm=TRUE)/sum(tmp[of.categories[[i]]], na.rm=TRUE), digits=result.digits))))
 } ### END percent_in_category function
+
+`percent_in_category` <-
+function(x,
+	in.categories,
+	of.categories,
+	result.digits=1) {
+
+	tmp.dt <- na.omit(data.table(x))[,.N,by=V1]
+	round(100*sum(tmp.dt[X %in% in.categories][['N']])/sum(tmp.dt[X %in% of.categories][['N']]), digits=result.digits)
+}
 
 
 `percent_at_above_target` <-
