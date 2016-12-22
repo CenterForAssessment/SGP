@@ -104,11 +104,12 @@ function(panel.data,         ## REQUIRED
 		createKnotsBoundaries(tmp.stack, knot.cut.percentiles)
 	}
 
-	.get.panel.data <- function(tmp.data, k, by.grade, tmp.gp.gpd) {
+	.get.panel.data <- function(tmp.data, k, by.grade, tmp.gp) {
 		if (by.grade) {
-            eval(parse(text=paste("na.omit(tmp.data[.(", paste(rev(tmp.gp.gpd)[seq(k+1)], collapse=", "), "), on=names(tmp.data)[c(", paste(1+num.panels-(0:k), collapse=", ") , ")]], cols=names(tmp.data)[c(",paste(1+2*num.panels-0:k, collapse=", "), ")])[,c(1, ", paste(rev(1+2*num.panels-0:k), collapse=", "),  ")]", sep="")))
+      if (is.character(tmp.gp)) tmp.gp.gpd <- shQuote(rev(tmp.gp)[seq(k+1)]) else tmp.gp.gpd <- rev(tmp.gp)[seq(k+1)]
+      eval(parse(text=paste("na.omit(tmp.data[.(", paste(tmp.gp.gpd, collapse=", "), "), on=names(tmp.data)[c(", paste(1+num.panels-(0:k), collapse=", ") , ")]], cols=names(tmp.data)[c(",paste(1+2*num.panels-0:k, collapse=", "), ")])[,c(1, ", paste(rev(1+2*num.panels-0:k), collapse=", "),  ")]", sep="")))
 		} else {
-            eval(parse(text=paste("na.omit(tmp.data, cols=names(tmp.data)[c(",paste(1+2*num.panels-0:k, collapse=", "), ")])[,c(1, ", paste(rev(1+2*num.panels-0:k), collapse=", "),  ")]", sep="")))
+        eval(parse(text=paste("na.omit(tmp.data, cols=names(tmp.data)[c(",paste(1+2*num.panels-0:k, collapse=", "), ")])[,c(1, ", paste(rev(1+2*num.panels-0:k), collapse=", "),  ")]", sep="")))
 		}
 	}
 
@@ -156,8 +157,7 @@ function(panel.data,         ## REQUIRED
 			if (!is.matrix(tmp.res)) return(matrix(tmp.res, dimnames=list(names(tmp.res), paste("tau=", my.taus))))
 			return(tmp.res)
 		}
-
-		tmp.data <- .get.panel.data(data, k, by.grade, tmp.gp.gpd)
+		tmp.data <- .get.panel.data(data, k, by.grade, tmp.gp)
 		if (dim(tmp.data)[1]==0) return(NULL)
 		if (dim(tmp.data)[1] < sgp.cohort.size) return("Insufficient N")
 		if (!is.null(max.n.for.coefficient.matrices) && dim(tmp.data)[1] > max.n.for.coefficient.matrices) tmp.data <- tmp.data[sample(seq.int(dim(tmp.data)[1]), max.n.for.coefficient.matrices)]
@@ -434,7 +434,7 @@ function(panel.data,         ## REQUIRED
 		} else simex.matrix.priors <- coefficient.matrix.priors
 
 		for (k in simex.matrix.priors) {
-			tmp.data <- .get.panel.data(ss.data, k, by.grade, tmp.gp.gpd)
+			tmp.data <- .get.panel.data(ss.data, k, by.grade, tmp.gp)
 			tmp.num.variables <- dim(tmp.data)[2]
 			tmp.gp.iter <- rev(tmp.gp)[2:(k+1)]
 			if (dependent.var.error) {
@@ -1193,13 +1193,12 @@ function(panel.data,         ## REQUIRED
 	num.panels <- (dim(ss.data)[2]-1)/2
 	if (is.factor(ss.data[[1]])) ss.data[[1]] <- as.character(ss.data[[1]])
 	if (exact.grade.progression.sequence) tmp.num.prior <- num.prior else tmp.num.prior <- 1
-    if (is.character(tmp.gp)) tmp.gp.gpd <- paste0("'", tmp.gp, "'") else tmp.gp.gpd <- tmp.gp
 
 	if (!is.null(sgp.test.cohort.size)) {
-		cohort.ids <- .get.panel.data(ss.data, num.prior, by.grade, tmp.gp.gpd)[[1]]
+		cohort.ids <- .get.panel.data(ss.data, num.prior, by.grade, tmp.gp)[[1]]
 		max.cohort.size <- min(length(cohort.ids), as.numeric(sgp.test.cohort.size))
 		ss.data <- ss.data[ss.data[[1]] %in% sample(cohort.ids, max.cohort.size)]
-	} else max.cohort.size <- dim(.get.panel.data(ss.data, tmp.num.prior, by.grade, tmp.gp.gpd))[1]
+	} else max.cohort.size <- dim(.get.panel.data(ss.data, tmp.num.prior, by.grade, tmp.gp))[1]
 
 	if (max.cohort.size == 0) {
 		tmp.messages <- "\t\tNOTE: Supplied data together with grade progression contains no data. Check data, function arguments and see help page for details.\n"
@@ -1297,14 +1296,17 @@ function(panel.data,         ## REQUIRED
 	}
 
     if (!is.null(sgp.less.than.sgp.cohort.size.return) && max.cohort.size < sgp.cohort.size) {
-        quantile.data <- data.table(ID=.get.panel.data(ss.data, tmp.num.prior, by.grade, tmp.gp.gpd)[[1]], SGP=as.integer(NA), SGP_NOTE=sgp.less.than.sgp.cohort.size.return)
+        quantile.data <- data.table(ID=.get.panel.data(ss.data, tmp.num.prior, by.grade, tmp.gp)[[1]], SGP=as.integer(NA), SGP_NOTE=sgp.less.than.sgp.cohort.size.return)
         if (return.norm.group.identifier) quantile.data[,SGP_NORM_GROUP:=as.factor(paste(tail(paste(year.progression, paste(content_area.progression, grade.progression, sep="_"), sep="/"), tmp.num.prior+1), collapse="; "))]
         if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, "SGP", "SGP_BASELINE")
-		if (identical(sgp.labels[['my.extra.label']], "BASELINE") & "SGP_NORM_GROUP" %in% names(quantile.data)) setnames(quantile.data, gsub("SGP_NORM_GROUP", "SGP_NORM_GROUP_BASELINE", names(quantile.data)))
-		if (identical(sgp.labels[['my.extra.label']], "EQUATED")) setnames(quantile.data, "SGP", "SGP_EQUATED")
-		if (identical(sgp.labels[['my.extra.label']], "EQUATED") & "SGP_NORM_GROUP" %in% names(quantile.data)) setnames(quantile.data, gsub("SGP_NORM_GROUP", "SGP_NORM_GROUP_EQUATED", names(quantile.data)))
+        if (identical(sgp.labels[['my.extra.label']], "BASELINE") & "SGP_NORM_GROUP" %in% names(quantile.data)) setnames(quantile.data, gsub("SGP_NORM_GROUP", "SGP_NORM_GROUP_BASELINE", names(quantile.data)))
+        if (identical(sgp.labels[['my.extra.label']], "EQUATED")) setnames(quantile.data, "SGP", "SGP_EQUATED")
+        if (identical(sgp.labels[['my.extra.label']], "EQUATED") & "SGP_NORM_GROUP" %in% names(quantile.data)) setnames(quantile.data, gsub("SGP_NORM_GROUP", "SGP_NORM_GROUP_EQUATED", names(quantile.data)))
 
         SGPercentiles[[tmp.path]] <- rbindlist(list(quantile.data, SGPercentiles[[tmp.path]]), fill=TRUE)
+
+        tmp.messages <- paste("\t\tNOTE: Supplied data together with grade progression contains fewer than the minimum cohort size.\n\t\tOnly", max.cohort.size,
+          "valid cases provided with", sgp.cohort.size, "indicated as minimum cohort N size. Check data, function arguments and see help page for details.\n")
 
         if (print.time.taken) {
             if (calculate.sgps) cohort.n <- format(dim(quantile.data)[1], big.mark=",") else cohort.n <- format(max.cohort.size, big.mark=",")
@@ -1459,7 +1461,7 @@ function(panel.data,         ## REQUIRED
 		tmp.quantiles <- tmp.percentile.cuts <- tmp.csem.quantiles <- list()
 
 		for (j in seq_along(tmp.orders)) {
-			tmp.data <- .get.panel.data(ss.data, tmp.orders[j], by.grade, tmp.gp.gpd)
+			tmp.data <- .get.panel.data(ss.data, tmp.orders[j], by.grade, tmp.gp)
 			if (dim(tmp.data)[1] > 0) {
 				tmp.matrix <- tmp.matrices[[j]]
 				tmp.predictions <- .get.percentile.predictions(tmp.data, tmp.matrix)
