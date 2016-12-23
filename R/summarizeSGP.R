@@ -382,12 +382,12 @@
 				tmp.summary[[s]] <- sgpSummary(summary.iter[[s]][1], eval(parse(text=summary.iter[[s]][2])),
 					tmp.simulation.dt, state, sgp.summaries, confidence.interval.groups, my.sgp, sgp_key, variables.for.summaries, sim.info)
 			}
-			parallel.config <- list(BACKEND="NONE"); par.start <- list(par.type="NONE")
+			par.start <- list(par.type="NONE")
 		}
 
 		j <- k <- NULL ## To prevent R CMD check warnings
 
-		if (parallel.config[["BACKEND"]] == "FOREACH") {
+		if (identical(parallel.config[["BACKEND"]], "FOREACH")) {
 			if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
 				k.iter <- iter(sgp.groups %in% ci.groups)
 			} else	k.iter <- iter(rep(FALSE, length(sgp.groups)))
@@ -400,17 +400,17 @@
 		} else { # END FOREACH flavor
 
 		### SNOW and MULTICORE
-		if (par.start$par.type=="SNOW") {
+		if (identical(par.start[['par.type']], "SNOW")) {
 			tmp.summary <- parLapply(par.start$internal.cl, summary.iter,
 				function(iter) sgpSummary(iter[1], eval(parse(text=iter[2])), tmp.simulation.dt, state, sgp.summaries, confidence.interval.groups, my.sgp, sgp_key, variables.for.summaries, sim.info))
 		} # END 'SNOW' Flavor
-		if (par.start$par.type=="MULTICORE") {
+		if (identical(par.start[['par.type']], "MULTICORE")) {
 			tmp.summary <- mclapply(summary.iter,
 				function(iter) sgpSummary(iter[1], eval(parse(text=iter[2])), tmp.simulation.dt, state, sgp.summaries, confidence.interval.groups, my.sgp, sgp_key, variables.for.summaries, sim.info), mc.cores=par.start$workers, mc.preschedule=FALSE)
 		} # END 'MULTICORE' Flavor
 		} # END else not FOREACH
 
-		names(tmp.summary) <- gsub(", ", "__", sgp.groups)
+		setattr(tmp.summary, 'names', gsub(', ', '__', sgp.groups))
 		return(tmp.summary)
 	} ### END summarizeSGP_INTERNAL
 
