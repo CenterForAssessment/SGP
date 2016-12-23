@@ -152,7 +152,7 @@ function(x,
 `sgp_standard_error` <- function(x,y=1) round(y*sd(x, na.rm=TRUE)/sqrt(sum(!is.na(x))), digits=2)
 
 
-`percent_in_category_old` <-
+`percent_in_category` <-
 function(x,
 	in.categories,
 	of.categories,
@@ -164,7 +164,7 @@ function(x,
 	return(unlist(lapply(seq_along(in.categories), function(i) round(100*sum(tmp[in.categories[[i]]], na.rm=TRUE)/sum(tmp[of.categories[[i]]], na.rm=TRUE), digits=result.digits))))
 } ### END percent_in_category function
 
-`percent_in_category` <-
+`percent_in_category_new` <-
 function(x,
 	in.categories,
 	of.categories,
