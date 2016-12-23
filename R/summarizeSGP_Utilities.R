@@ -11,7 +11,6 @@ function(sgp.groups.to.summarize,
 	sim.info) {
 
 	WEIGHT <- MEDIAN_SGP_with_SHRINKAGE <- NULL
-	setDTthreads(1)
 
 	tmp.sgp.summaries <- sgp.summaries
 	sgp.summaries.names <- unlist(strsplit(names(sgp.summaries), "[.]"))
@@ -153,7 +152,7 @@ function(x,
 `sgp_standard_error` <- function(x,y=1) round(y*sd(x, na.rm=TRUE)/sqrt(sum(!is.na(x))), digits=2)
 
 
-`percent_in_category_OLD` <-
+`percent_in_category` <-
 function(x,
 	in.categories,
 	of.categories,
@@ -165,7 +164,7 @@ function(x,
 	return(unlist(lapply(seq_along(in.categories), function(i) round(100*sum(tmp[in.categories[[i]]], na.rm=TRUE)/sum(tmp[of.categories[[i]]], na.rm=TRUE), digits=result.digits))))
 } ### END percent_in_category function
 
-`percent_in_category` <-
+`percent_in_category_DT` <-
 function(vec,
 	in.categories,
 	of.categories,
