@@ -170,8 +170,8 @@ function(vec,
 	of.categories,
 	result.digits=1) {
 
-	tmp.dt <- na.omit(as.data.table(vec))[,.N,by=vec]
-	round(100*sum(tmp.dt[vec %in% in.categories][['N']])/sum(tmp.dt[vec %in% of.categories][['N']]), digits=result.digits)
+	tmp.dt <- na.omit(as.data.table(vec))[,list(COUNT=.N),by=vec]
+	round(100*sum(tmp.dt[vec %in% in.categories][['COUNT']])/sum(tmp.dt[vec %in% of.categories][['COUNT']]), digits=result.digits)
 }
 
 

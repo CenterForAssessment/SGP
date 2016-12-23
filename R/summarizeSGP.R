@@ -153,7 +153,7 @@
 				MEAN_SGP="mean_na(SGP, WEIGHT)",
 				MEDIAN_SGP="median_na(SGP, WEIGHT)",
 				MEDIAN_SGP_COUNT="num_non_missing(SGP)",
-				PERCENT_AT_ABOVE_PROFICIENT=paste("percent_in_category(ACHIEVEMENT_LEVEL, ",
+				PERCENT_AT_ABOVE_PROFICIENT=paste("percent_in_category_DT(ACHIEVEMENT_LEVEL, ",
 					get.expression(proficient.achievement.levels), ", ", get.expression(all.achievement.levels), ")",sep=""),
 				PERCENT_AT_ABOVE_PROFICIENT_COUNT="num_non_missing(ACHIEVEMENT_LEVEL)",
 				MEAN_SGP_STANDARD_ERROR="sgp_standard_error(SGP)",
@@ -172,7 +172,7 @@
 				if ("ACHIEVEMENT_LEVEL_PRIOR" %in% sgp.data.names) {
 					tmp.sgp.summaries <- c(
 						tmp.sgp.summaries,
-						PERCENT_AT_ABOVE_PROFICIENT_PRIOR=paste("percent_in_category(ACHIEVEMENT_LEVEL_PRIOR, ",
+						PERCENT_AT_ABOVE_PROFICIENT_PRIOR=paste("percent_in_category_DT(ACHIEVEMENT_LEVEL_PRIOR, ",
 							get.expression(proficient.achievement.levels), ", ", get.expression(all.achievement.levels), ")",sep=""),
 						PERCENT_AT_ABOVE_PROFICIENT_PRIOR_COUNT="num_non_missing(ACHIEVEMENT_LEVEL_PRIOR)"
 					)
