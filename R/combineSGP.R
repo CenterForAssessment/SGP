@@ -166,10 +166,10 @@ function(
 
 	catch_keep_move_functions <- c(min, max)
 
-	getTargetData <- function(tmp.target.data, projection_group.iter, tmp.target.level.names) {
+	getTargetData_OLD <- function(tmp.target.data, projection_group.iter, tmp.target.level.names) {
 		if ("YEAR_WITHIN" %in% names(tmp.target.data)) tmp.var.names <- c("ID", "CONTENT_AREA", "YEAR", "YEAR_WITHIN") else tmp.var.names <- c("ID", "CONTENT_AREA", "YEAR")
 		tmp.data <- tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter, c(tmp.var.names, tmp.target.level.names), with=FALSE]
-		na.omit(tmp.data, cols=tmp.target.level.names)
+		na.omit(tmp.data, cols=grep("MOVE_UP_STAY_UP", tmp.target.level.names, invert=TRUE, value=TRUE))
 #		return(tmp.data[apply(tmp.data[,tmp.target.level.names, with=FALSE],1,function(x)any(!is.na(x)))])
 	}
 
