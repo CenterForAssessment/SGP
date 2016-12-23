@@ -164,7 +164,57 @@ function(x,
 	return(unlist(lapply(seq_along(in.categories), function(i) round(100*sum(tmp[in.categories[[i]]], na.rm=TRUE)/sum(tmp[of.categories[[i]]], na.rm=TRUE), digits=result.digits))))
 } ### END percent_in_category function
 
-`percent_in_category_DT` <-
+`percent_in_category_1` <-
+function(vec,
+	in.categories,
+	of.categories,
+	result.digits=1) {
+
+	tmp.dt <- na.omit(as.data.table(vec))[,list(COUNT=.N),by=vec]
+	round(100*sum(tmp.dt[vec %in% in.categories][['COUNT']])/sum(tmp.dt[vec %in% of.categories][['COUNT']]), digits=result.digits)
+}
+
+`percent_in_category_2` <-
+function(vec,
+	in.categories,
+	of.categories,
+	result.digits=1) {
+
+	tmp.dt <- na.omit(as.data.table(vec))[,list(COUNT=.N),by=vec]
+	round(100*sum(tmp.dt[vec %in% in.categories][['COUNT']])/sum(tmp.dt[vec %in% of.categories][['COUNT']]), digits=result.digits)
+}
+
+`percent_in_category_3` <-
+function(vec,
+	in.categories,
+	of.categories,
+	result.digits=1) {
+
+	tmp.dt <- na.omit(as.data.table(vec))[,list(COUNT=.N),by=vec]
+	round(100*sum(tmp.dt[vec %in% in.categories][['COUNT']])/sum(tmp.dt[vec %in% of.categories][['COUNT']]), digits=result.digits)
+}
+
+`percent_in_category_4` <-
+function(vec,
+	in.categories,
+	of.categories,
+	result.digits=1) {
+
+	tmp.dt <- na.omit(as.data.table(vec))[,list(COUNT=.N),by=vec]
+	round(100*sum(tmp.dt[vec %in% in.categories][['COUNT']])/sum(tmp.dt[vec %in% of.categories][['COUNT']]), digits=result.digits)
+}
+
+`percent_in_category_5` <-
+function(vec,
+	in.categories,
+	of.categories,
+	result.digits=1) {
+
+	tmp.dt <- na.omit(as.data.table(vec))[,list(COUNT=.N),by=vec]
+	round(100*sum(tmp.dt[vec %in% in.categories][['COUNT']])/sum(tmp.dt[vec %in% of.categories][['COUNT']]), digits=result.digits)
+}
+
+`percent_in_category_6` <-
 function(vec,
 	in.categories,
 	of.categories,
