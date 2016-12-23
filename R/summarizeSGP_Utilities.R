@@ -11,6 +11,7 @@ function(sgp.groups.to.summarize,
 	sim.info) {
 
 	WEIGHT <- MEDIAN_SGP_with_SHRINKAGE <- NULL
+	setDTthreads(1)
 
 	tmp.sgp.summaries <- sgp.summaries
 	sgp.summaries.names <- unlist(strsplit(names(sgp.summaries), "[.]"))
