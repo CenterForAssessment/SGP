@@ -34,7 +34,7 @@ function(sgp.groups.to.summarize,
 		}
 	}
 
-	ListExpr <- parse(text=paste("as.list(c(", paste(unlist(tmp.sgp.summaries), collapse=", "),"))",sep=""))
+	ListExpr <- parse(text=paste("list(", paste(unlist(tmp.sgp.summaries), collapse=", "),")",sep=""))
 	ByExpr <- parse(text=paste("list(", paste(sgp.groups.to.summarize, collapse=", "), ")", sep=""))
 
 	pull.vars <- c(unlist(sapply(dbListFields(dbConnect(SQLite(), dbname = "Data/tmp_data/TMP_Summary_Data.sqlite"), "summary_data"),
@@ -204,7 +204,7 @@ function(dat,
 	nboot=100) {
 
 	ID <- SCORE <- NULL
-	CI <- c(NA,NA); SE <- NA
+	CI <- c(NA_real_,NA_real_); SE <- NA_real_
 	if (length(dat.no.na <- dat[!is.na(dat)]) > 1) {
 		out <- data.table(ID=seq.int(nboot), SCORE=dat.no.na[sample.int(length(dat.no.na), length(dat.no.na)*nboot, replace=TRUE)])[,median(SCORE), by=ID][['V1']]
 		if (!is.null(conf.quantiles)) CI <- round(quantile(out, conf.quantiles), digits=1) else SE <- round(sd(out), digits=1)
