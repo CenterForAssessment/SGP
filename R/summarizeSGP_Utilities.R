@@ -164,15 +164,27 @@ function(x,
 	return(unlist(lapply(seq_along(in.categories), function(i) round(100*sum(tmp[in.categories[[i]]], na.rm=TRUE)/sum(tmp[of.categories[[i]]], na.rm=TRUE), digits=result.digits))))
 } ### END percent_in_category function
 
-`percent_in_category_NEW` <-
+`percent_in_category_NEW_1` <-
 function(vec,
 	in.categories,
 	of.categories,
 	result.digits=1) {
 
-	tmp.dt <- na.omit(as.data.table(vec))[,list(COUNT=.N),by=vec]
+	tmp.dt <- as.data.table(vec)[,list(COUNT=.N),by=vec]
 	round(100*sum(tmp.dt[vec %in% in.categories][['COUNT']])/sum(tmp.dt[vec %in% of.categories][['COUNT']]), digits=result.digits)
 }
+
+`percent_in_category_NEW_2` <-
+function(dt,
+	in.categories,
+	of.categories,
+	result.digits=1) {
+
+	X <- NULL
+	tmp.dt <- dt[,.N,by=X]
+	round(100*sum(tmp.dt[X %in% in.categories][['N']])/sum(tmp.dt[X %in% of.categories][['N']]), digits=result.digits)
+}
+
 
 
 `percent_at_above_target` <-
