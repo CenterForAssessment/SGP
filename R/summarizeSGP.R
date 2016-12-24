@@ -153,7 +153,7 @@
 				MEAN_SGP="mean_na(SGP, WEIGHT)",
 				MEDIAN_SGP="median_na(SGP, WEIGHT)",
 				MEDIAN_SGP_COUNT="num_non_missing(SGP)",
-				PERCENT_AT_ABOVE_PROFICIENT=paste("percent_in_category_NEW(ACHIEVEMENT_LEVEL, ",
+				PERCENT_AT_ABOVE_PROFICIENT=paste("percent_in_category(ACHIEVEMENT_LEVEL, ",
 					get.expression(proficient.achievement.levels), ", ", get.expression(all.achievement.levels), ")",sep=""),
 				PERCENT_AT_ABOVE_PROFICIENT_COUNT="num_non_missing(ACHIEVEMENT_LEVEL)",
 				MEAN_SGP_STANDARD_ERROR="sgp_standard_error(SGP)",
@@ -172,7 +172,7 @@
 				if ("ACHIEVEMENT_LEVEL_PRIOR" %in% sgp.data.names) {
 					tmp.sgp.summaries <- c(
 						tmp.sgp.summaries,
-						PERCENT_AT_ABOVE_PROFICIENT_PRIOR=paste("percent_in_category_NEW(ACHIEVEMENT_LEVEL_PRIOR, ",
+						PERCENT_AT_ABOVE_PROFICIENT_PRIOR=paste("percent_in_category(ACHIEVEMENT_LEVEL_PRIOR, ",
 							get.expression(proficient.achievement.levels), ", ", get.expression(all.achievement.levels), ")",sep=""),
 						PERCENT_AT_ABOVE_PROFICIENT_PRIOR_COUNT="num_non_missing(ACHIEVEMENT_LEVEL_PRIOR)"
 					)
@@ -211,7 +211,7 @@
 						tmp.sgp.summaries,
 						M1=paste("median_na(", my.sgp.target, ", WEIGHT)", sep=""),
 						M2=paste("num_non_missing(", my.sgp.target, ")", sep=""),
-						PERCENT_CATCHING_UP_KEEPING_UP="percent_in_category_NEW(CATCH_UP_KEEP_UP_STATUS, c('Catch Up: Yes', 'Keep Up: Yes'), c('Catch Up: Yes', 'Catch Up: No', 'Keep Up: Yes', 'Keep Up: No'))"
+						PERCENT_CATCHING_UP_KEEPING_UP="percent_in_category(CATCH_UP_KEEP_UP_STATUS, c('Catch Up: Yes', 'Keep Up: Yes'), c('Catch Up: Yes', 'Catch Up: No', 'Keep Up: Yes', 'Keep Up: No'))"
 					)
 					names(tmp.sgp.summaries)[sapply(c("M1", "M2"), function(x) which(names(tmp.sgp.summaries)==x))] <-
 						c(paste("MEDIAN", my.sgp.target, sep="_"), paste("MEDIAN", my.sgp.target, "COUNT", sep="_"))
@@ -222,7 +222,7 @@
 						tmp.sgp.summaries,
 						M1=paste("median_na(", my.sgp.target.baseline, ", WEIGHT)", sep=""),
 						M2=paste("num_non_missing(", my.sgp.target.baseline, ")", sep=""),
-						PERCENT_CATCHING_UP_KEEPING_UP_BASELINE="percent_in_category_NEW(CATCH_UP_KEEP_UP_STATUS_BASELINE, c('Catch Up: Yes', 'Keep Up: Yes'), c('Catch Up: Yes', 'Catch Up: No', 'Keep Up: Yes', 'Keep Up: No'))"
+						PERCENT_CATCHING_UP_KEEPING_UP_BASELINE="percent_in_category(CATCH_UP_KEEP_UP_STATUS_BASELINE, c('Catch Up: Yes', 'Keep Up: Yes'), c('Catch Up: Yes', 'Catch Up: No', 'Keep Up: Yes', 'Keep Up: No'))"
 					)
 					names(tmp.sgp.summaries)[sapply(c("M1", "M2"), function(x) which(names(tmp.sgp.summaries)==x))] <-
 						c(paste("MEDIAN", my.sgp.target.baseline, sep="_"), paste("MEDIAN", my.sgp.target.baseline, "COUNT", sep="_"))
@@ -234,7 +234,7 @@
 						tmp.sgp.summaries,
 						M1=paste("median_na(", my.sgp.target.musu, ", WEIGHT)", sep=""),
 						M2=paste("num_non_missing(", my.sgp.target.musu, ")", sep=""),
-						PERCENT_MOVING_UP_STAYING_UP="percent_in_category_NEW(MOVE_UP_STAY_UP_STATUS, c('Move Up: Yes', 'Stay Up: Yes'), c('Move Up: Yes', 'Move Up: No', 'Stay Up: Yes', 'Stay Up: No'))"
+						PERCENT_MOVING_UP_STAYING_UP="percent_in_category(MOVE_UP_STAY_UP_STATUS, c('Move Up: Yes', 'Stay Up: Yes'), c('Move Up: Yes', 'Move Up: No', 'Stay Up: Yes', 'Stay Up: No'))"
 					)
 					names(tmp.sgp.summaries)[sapply(c("M1", "M2"), function(x) which(names(tmp.sgp.summaries)==x))] <-
 						c(paste("MEDIAN", my.sgp.target.musu, sep="_"), paste("MEDIAN", my.sgp.target.musu, "COUNT", sep="_"))
@@ -245,7 +245,7 @@
 						tmp.sgp.summaries,
 						M1=paste("median_na(", my.sgp.target.musu.baseline, ", WEIGHT)", sep=""),
 						M2=paste("num_non_missing(", my.sgp.target.musu.baseline, ")", sep=""),
-						PERCENT_MOVING_UP_STAYING_UP_BASELINE="percent_in_category_NEW(MOVE_UP_STAY_UP_STATUS_BASELINE, c('Move Up: Yes', 'Stay Up: Yes'), c('Move Up: Yes', 'Move Up: No', 'Stay Up: Yes', 'Stay Up: No'))"
+						PERCENT_MOVING_UP_STAYING_UP_BASELINE="percent_in_category(MOVE_UP_STAY_UP_STATUS_BASELINE, c('Move Up: Yes', 'Stay Up: Yes'), c('Move Up: Yes', 'Move Up: No', 'Stay Up: Yes', 'Stay Up: No'))"
 					)
 					names(tmp.sgp.summaries)[sapply(c("M1", "M2"), function(x) which(names(tmp.sgp.summaries)==x))] <-
 						c(paste("MEDIAN", my.sgp.target.musu.baseline, sep="_"), paste("MEDIAN", my.sgp.target.musu.baseline, "COUNT", sep="_"))
