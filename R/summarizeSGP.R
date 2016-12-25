@@ -132,7 +132,7 @@
 		if (config.type=="sgp.summaries") {
 			if (!is.null(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]])) {
 				tmp.achievement.levels <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][
-+                         grep("Achievement_Levels", names(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]]))]
+                         grep("Achievement_Levels", names(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]]))]
 				all.achievement.levels <- unlist(lapply(tmp.achievement.levels, function(x) x[['Labels']]), use.names=FALSE)
 				proficient.achievement.levels <- all.achievement.levels[unlist(lapply(tmp.achievement.levels, function(x) x[['Proficient']]=="Proficient"))]
 			} else {
