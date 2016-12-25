@@ -37,6 +37,7 @@ function(sgp.groups.to.summarize,
 	}
 
 	ListExpr <- parse(text=paste("list(", paste(unlist(tmp.sgp.summaries), collapse=", "),")",sep=""))
+	ListExpr_OLD <- parse(text=gsub("percent_in_category", "percent_in_category_OLD", paste("list(", paste(unlist(tmp.sgp.summaries), collapse=", "),")",sep="")))
 	ByExpr <- parse(text=paste("list(", paste(sgp.groups.to.summarize, collapse=", "), ")", sep=""))
 
 	pull.vars <- c(unlist(sapply(dbListFields(dbConnect(SQLite(), dbname = "Data/tmp_data/TMP_Summary_Data.sqlite"), "summary_data"),
@@ -155,20 +156,22 @@ function(x,
 `sgp_standard_error` <- function(x,y=1) round(y*sd(x, na.rm=TRUE)/sqrt(sum(!is.na(x))), digits=2)
 
 
-`percent_in_category_OLD` <-
+`percent_in_category` <-
 function(x,
 	in.categories,
 	of.categories,
 	result.digits=1) {
 
-	if (!is.list(in.categories)) in.categories <- list(in.categories)
-	if (!is.list(of.categories)) of.categories <- list(of.categories)
-	tmp <- table(x[!is.na(x)])
-	return(unlist(lapply(seq_along(in.categories), function(i) round(100*sum(tmp[in.categories[[i]]], na.rm=TRUE)/sum(tmp[of.categories[[i]]], na.rm=TRUE), digits=result.digits))))
+#	if (!is.list(in.categories)) in.categories <- list(in.categories)
+#	if (!is.list(of.categories)) of.categories <- list(of.categories)
+#	tmp <- table(x[!is.na(x)])
+#	return(unlist(lapply(seq_along(in.categories), function(i) round(100*sum(tmp[in.categories[[i]]], na.rm=TRUE)/sum(tmp[of.categories[[i]]], na.rm=TRUE), digits=result.digits))))
+	tmp <- table(x)
+	round(100*sum(tmp[names(tmp) %in% in.categories])/sum(tmp[names(tmp) %in% of.categories]), digits=1)
 } ### END percent_in_category function
 
 
-`percent_in_category` <-
+`percent_in_category_NEW` <-
 function(X,
 	in.categories,
 	of.categories,
@@ -185,8 +188,7 @@ function(sgp,
 	result.digits=1) {
 
 	tmp.logical <- sgp >= target
-	tmp.pct <- round(100*sum(tmp.logical, na.rm=TRUE)/sum(!is.na(tmp.logical)), digits=result.digits)
-	return(tmp.pct)
+	round(100*sum(tmp.logical, na.rm=TRUE)/sum(!is.na(tmp.logical)), digits=result.digits)
 } ### END percent_at_above_target function
 
 
