@@ -22,7 +22,8 @@ function(sgp.groups.to.summarize,
 				tmp.list[[paste("MEDIAN_", i, "_QUANTILES", sep="")]] <- paste("boot.sgp(", i, ", ", tmp.quantiles, ")", sep="")
 			}
 			tmp.sgp.summaries <- c(tmp.sgp.summaries, tmp.list)
-			sgp.summaries.names <- c(sgp.summaries.names, do.call(paste, c(data.table(expand.grid("MEDIAN", my.sgp, confidence.interval.groups$QUANTILES, "CONFIDENCE_BOUND_BOOTSTRAP"), key="Var2"), sep="_")))
+#			sgp.summaries.names <- c(sgp.summaries.names, do.call(paste, c(data.table(expand.grid("MEDIAN", my.sgp, paste(confidence.interval.groups$QUANTILES, collapse="_"), "CONFIDENCE_BOUND_BOOTSTRAP"), key="Var2"), sep="_")))
+			sgp.summaries.names <- c(sgp.summaries.names, paste("MEDIAN", my.sgp, paste(confidence.interval.groups$QUANTILES, collapse="_"), "CONFIDENCE_BOUND_BOOTSTRAP", sep="_"))
 		}
 		if ("Bootstrap_SE" %in% confidence.interval.groups$TYPE) {
 			tmp.list <- list()
@@ -30,7 +31,8 @@ function(sgp.groups.to.summarize,
 				tmp.list[[paste("MEDIAN_", i, "_SE", sep="")]] <- paste("boot.sgp(", i, ")", sep="")
 			}
 			tmp.sgp.summaries <- c(tmp.sgp.summaries, tmp.list)
-			sgp.summaries.names <- c(sgp.summaries.names, do.call(paste, c(data.table(expand.grid("MEDIAN", my.sgp, "STANDARD_ERROR_BOOTSTRAP"), key="Var2"), sep="_")))
+#			sgp.summaries.names <- c(sgp.summaries.names, do.call(paste, c(data.table(expand.grid("MEDIAN", my.sgp, "STANDARD_ERROR_BOOTSTRAP"), key="Var2"), sep="_")))
+			sgp.summaries.names <- c(sgp.summaries.names, paste("MEDIAN", my.sgp, "STANDARD_ERROR_BOOTSTRAP", sep="_"))
 		}
 	}
 
@@ -41,7 +43,8 @@ function(sgp.groups.to.summarize,
 		function(p) if (any(grepl(p, tmp.sgp.summaries))) return(p)), use.names=FALSE), strsplit(sgp.groups.to.summarize, ", ")[[1]])
 
 	tmp <- pullData(tmp.simulation.dt, state, pull.vars, variables.for.summaries, sgp.groups.to.summarize, sgp_key)[, eval(ListExpr), keyby=eval(ByExpr)]
-	setnames(tmp, (dim(tmp)[2]-length(sgp.summaries.names)+1):dim(tmp)[2], sgp.summaries.names)
+#	setnames(tmp, (dim(tmp)[2]-length(sgp.summaries.names)+1):dim(tmp)[2], sgp.summaries.names)
+	setnames(tmp, paste0("V", seq_along(sgp.summaries.names)), sgp.summaries.names)
 
 	if (produce.confidence.interval & "CSEM" %in% confidence.interval.groups[['TYPE']]) {
 		pull.vars <- c(sgp_key, unlist(strsplit(sgp.groups.to.summarize, ", ")))
@@ -193,10 +196,10 @@ function(dat,
 	nboot=100) {
 
 	ID <- SCORE <- NULL
-	CI <- c(NA_real_,NA_real_); SE <- NA_real_
+	CI <- paste(rep(NA, 2), collapse=", "); SE <- NA_real_
 	if (length(dat.no.na <- dat[!is.na(dat)]) > 1) {
 		out <- data.table(ID=seq.int(nboot), SCORE=dat.no.na[sample.int(length(dat.no.na), length(dat.no.na)*nboot, replace=TRUE)])[,median(SCORE), by=ID][['V1']]
-		if (!is.null(conf.quantiles)) CI <- round(quantile(out, conf.quantiles), digits=1) else SE <- round(sd(out), digits=1)
+		if (!is.null(conf.quantiles)) CI <- paste(round(quantile(out, conf.quantiles), digits=1), collapse=", ") else SE <- round(sd(out), digits=1)
 	}
 	if (!is.null(conf.quantiles)) return(CI) else return(SE)
 } ### END boot.sgp function
