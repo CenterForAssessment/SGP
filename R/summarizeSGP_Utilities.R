@@ -81,16 +81,18 @@ function(tmp.simulation.dt,
 			tmp.list.1 <- lapply(seq.int(sim.info[['n.simulated.sgps']]), function(i) {
 					tmp_data[,c(key(tmp_data), unlist(strsplit(sgp.groups.to.summarize, ", "))), with=FALSE][
 					tmp.simulation.dt[seq.int(i, length.out=sim.info[['n.unique.cases']], by=sim.info[['n.simulated.sgps']])], allow.cartesian=TRUE][,
-					list(median_na(SGP_SIM, NULL), mean(SGP_SIM, na.rm=TRUE)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")]})
+					list(median(SGP_SIM, na.rm=TRUE), mean(SGP_SIM, na.rm=TRUE)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")]})
 		} else {
 			tmp.list.1 <- lapply(seq.int(sim.info[['n.simulated.sgps']]), function(i) {
 					tmp_data[data.table(dbGetQuery(con, paste("select * from sim_data where SIM_NUM =", i)), key = sgp_key), allow.cartesian=TRUE][,
-					list(median_na(SGP_SIM, NULL), mean(SGP_SIM, na.rm=TRUE)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")]})
+					list(median(SGP_SIM, na.rm=TRUE), mean(SGP_SIM, na.rm=TRUE)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")]})
 			dbDisconnect(con)
 		}
 
-		tmp.csem <- data.table(reshape(rbindlist(tmp.list.1)[,list(sd_na(V1), sd_na(V2)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")],
-			idvar=c(unlist(strsplit(sgp.groups.to.summarize, ", "))), timevar="BASELINE", direction="wide"), key = tmp_key)
+#		tmp.csem <- data.table(reshape(rbindlist(tmp.list.1)[,list(sd_na(V1), sd_na(V2)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")],
+#			idvar=c(unlist(strsplit(sgp.groups.to.summarize, ", "))), timevar="BASELINE", direction="wide"), key = tmp_key)
+		tmp.csem <- ddcast(rbindlist(tmp.list.1)[,list(sd_na(V1), sd_na(V2)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")],
+							... ~ BASELINE, value.var=c("V1", "V2"), sep=".")
 		if (length(grep("BASELINE", names(tmp.csem)))==0) {
 			setnames(tmp.csem, c("V1.COHORT", "V2.COHORT"), c("MEDIAN_SGP_STANDARD_ERROR_CSEM", "MEAN_SGP_STANDARD_ERROR_CSEM"))
 		} else {
@@ -127,7 +129,7 @@ function(x,
 	} else {
 		as.numeric(weightedMedian(x, w=weight, na.rm=TRUE))
 	}
-}
+} ### END median_na function
 
 
 `mean_na` <-
@@ -140,7 +142,7 @@ function(x,
 	} else {
 		round(weighted.mean(as.numeric(x), w=weight, na.rm=TRUE), digits=result.digits)
 	}
-}
+} ### END mean_na function
 
 
 `sd_na` <- function(x, result.digits=2) round(sd(as.numeric(x), na.rm=TRUE), digits=result.digits)
@@ -168,8 +170,6 @@ function(sgp,
 	target,
 	result.digits=1) {
 
-#	tmp.logical <- sgp >= target
-#	round(100*sum(tmp.logical, na.rm=TRUE)/sum(!is.na(tmp.logical)), digits=result.digits)
 	tmp.logical <- sgp[!is.na(SGP)] >= target
 	round(100*sum(tmp.logical)/sum(tmp.logical), digits=result.digits)
 } ### END percent_at_above_target function
