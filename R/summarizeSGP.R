@@ -114,12 +114,6 @@
 		for (i in names(sgp_object@SGP[["Simulated_SGPs"]])) {
 			if (length(grep("BASELINE", i) > 0)) tmp.baseline <- "BASELINE" else tmp.baseline <- "COHORT"
 			if ("YEAR_WITHIN" %in% names(sgp_object@SGP[["Simulated_SGPs"]][[i]])) columns.to.omit <- -c(1,2) else columns.to.omit <- -1
-#			tmp.list[[i]] <- data.table(
-#				ID=rep(sgp_object@SGP[["Simulated_SGPs"]][[i]][["ID"]], each=length(grep("SGP_SIM", names(sgp_object@SGP[["Simulated_SGPs"]][[i]])))),
-#				SGP_SIM=c(as.matrix(t(sgp_object@SGP[["Simulated_SGPs"]][[i]][,columns.to.omit, with=FALSE]))))[,
-#					CONTENT_AREA:=unlist(strsplit(i, "[.]"))[1]][,
-#					YEAR:=unlist(strsplit(i, "[.]"))[2]][,
-#					BASELINE:=tmp.baseline]
 			tmp.list[[i]] <- data.table(
 				ID=sgp_object@SGP[["Simulated_SGPs"]][[i]][["ID"]],
 				SGP_SIM=c(as.matrix(sgp_object@SGP[["Simulated_SGPs"]][[i]][,columns.to.omit, with=FALSE])))[,
