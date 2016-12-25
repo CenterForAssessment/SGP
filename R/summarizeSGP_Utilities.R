@@ -17,9 +17,9 @@ function(sgp.groups.to.summarize,
 	if (produce.confidence.interval) {
 		if ("Bootstrap_CI" %in% confidence.interval.groups$TYPE) {
 			tmp.list <- list()
-			tmp.quantiles <- paste("c(", paste(confidence.interval.groups$QUANTILES, collapse=", "), ")", sep="")
+			tmp.quantiles <- paste0("c(", paste(confidence.interval.groups$QUANTILES, collapse=", "), ")")
 			for (i in confidence.interval.groups$VARIABLES) {
-				tmp.list[[paste("MEDIAN_", i, "_QUANTILES", sep="")]] <- paste("boot.sgp(", i, ", ", tmp.quantiles, ")", sep="")
+				tmp.list[[paste0("MEDIAN_", i, "_QUANTILES")]] <- paste0("boot.sgp(", i, ", ", tmp.quantiles, ")")
 			}
 			tmp.sgp.summaries <- c(tmp.sgp.summaries, tmp.list)
 			sgp.summaries.names <- c(sgp.summaries.names, paste("MEDIAN", my.sgp, paste(confidence.interval.groups$QUANTILES, collapse="_"), "CONFIDENCE_BOUND_BOOTSTRAP", sep="_"))
@@ -27,16 +27,15 @@ function(sgp.groups.to.summarize,
 		if ("Bootstrap_SE" %in% confidence.interval.groups$TYPE) {
 			tmp.list <- list()
 			for (i in confidence.interval.groups$VARIABLES) {
-				tmp.list[[paste("MEDIAN_", i, "_SE", sep="")]] <- paste("boot.sgp(", i, ")", sep="")
+				tmp.list[[paste0("MEDIAN_", i, "_SE")]] <- paste0("boot.sgp(", i, ")")
 			}
 			tmp.sgp.summaries <- c(tmp.sgp.summaries, tmp.list)
 			sgp.summaries.names <- c(sgp.summaries.names, paste("MEDIAN", my.sgp, "STANDARD_ERROR_BOOTSTRAP", sep="_"))
 		}
 	}
 
-	ListExpr <- parse(text=paste("list(", paste(unlist(tmp.sgp.summaries), collapse=", "),")",sep=""))
-	ListExpr_OLD <- parse(text=gsub("percent_in_category", "percent_in_category_OLD", paste("list(", paste(unlist(tmp.sgp.summaries), collapse=", "),")",sep="")))
-	ByExpr <- parse(text=paste("list(", paste(sgp.groups.to.summarize, collapse=", "), ")", sep=""))
+	ListExpr <- parse(text=paste0("list(", paste(unlist(tmp.sgp.summaries), collapse=", "),")"))
+	ByExpr <- parse(text=paste0("list(", paste(sgp.groups.to.summarize, collapse=", "), ")"))
 
 	pull.vars <- c(unlist(sapply(dbListFields(dbConnect(SQLite(), dbname = "Data/tmp_data/TMP_Summary_Data.sqlite"), "summary_data"),
 		function(p) if (any(grepl(p, tmp.sgp.summaries))) return(p)), use.names=FALSE), strsplit(sgp.groups.to.summarize, ", ")[[1]])
