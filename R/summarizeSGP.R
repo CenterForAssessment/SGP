@@ -116,10 +116,10 @@
 			if ("YEAR_WITHIN" %in% names(sgp_object@SGP[["Simulated_SGPs"]][[i]])) columns.to.omit <- -c(1,2) else columns.to.omit <- -1
 			tmp.list[[i]] <- data.table(
 				ID=rep(sgp_object@SGP[["Simulated_SGPs"]][[i]][["ID"]], each=length(grep("SGP_SIM", names(sgp_object@SGP[["Simulated_SGPs"]][[i]])))),
-				SGP_SIM=as.integer(as.matrix(t(sgp_object@SGP[["Simulated_SGPs"]][[i]][,columns.to.omit, with=FALSE]))))[,
-				CONTENT_AREA:=unlist(strsplit(i, "[.]"))[1]][,
-				YEAR:=unlist(strsplit(i, "[.]"))[2]][,
-				BASELINE:=tmp.baseline]
+				SGP_SIM=c(as.matrix(t(sgp_object@SGP[["Simulated_SGPs"]][[i]][,columns.to.omit, with=FALSE]))))[,
+					CONTENT_AREA:=unlist(strsplit(i, "[.]"))[1]][,
+					YEAR:=unlist(strsplit(i, "[.]"))[2]][,
+					BASELINE:=tmp.baseline]
 			if ("YEAR_WITHIN" %in% names(sgp_object@SGP[["Simulated_SGPs"]][[i]])) {
 				tmp.list[[i]][,YEAR_WITHIN:=rep(sgp_object@SGP[["Simulated_SGPs"]][[i]][["YEAR_WITHIN"]], each=length(grep("SGP_SIM", names(sgp_object@SGP[["Simulated_SGPs"]][[i]]))))]
 			}
@@ -132,7 +132,7 @@
 		if (config.type=="sgp.summaries") {
 			if (!is.null(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]])) {
 				tmp.achievement.levels <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][
-+                         grep("Achievement_Levels", names(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]]))]
+                         grep("Achievement_Levels", names(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]]))]
 				all.achievement.levels <- unlist(lapply(tmp.achievement.levels, function(x) x[['Labels']]), use.names=FALSE)
 				proficient.achievement.levels <- all.achievement.levels[unlist(lapply(tmp.achievement.levels, function(x) x[['Proficient']]=="Proficient"))]
 			} else {
@@ -145,7 +145,7 @@
 				if (length(character.vector)==0) {
 					return(NULL)
 				} else {
-					paste("list(c(", paste("'", paste(character.vector, collapse="', '"), "'", sep=""), "))", sep="")
+					paste("c(", paste("'", paste(character.vector, collapse="', '"), "'", sep=""), ")", sep="")
 				}
 			}
 
@@ -211,7 +211,7 @@
 						tmp.sgp.summaries,
 						M1=paste("median_na(", my.sgp.target, ", WEIGHT)", sep=""),
 						M2=paste("num_non_missing(", my.sgp.target, ")", sep=""),
-						PERCENT_CATCHING_UP_KEEPING_UP="percent_in_category(CATCH_UP_KEEP_UP_STATUS, list(c('Catch Up: Yes', 'Keep Up: Yes')), list(c('Catch Up: Yes', 'Catch Up: No', 'Keep Up: Yes', 'Keep Up: No')))"
+						PERCENT_CATCHING_UP_KEEPING_UP="percent_in_category(CATCH_UP_KEEP_UP_STATUS, c('Catch Up: Yes', 'Keep Up: Yes'), c('Catch Up: Yes', 'Catch Up: No', 'Keep Up: Yes', 'Keep Up: No'))"
 					)
 					names(tmp.sgp.summaries)[sapply(c("M1", "M2"), function(x) which(names(tmp.sgp.summaries)==x))] <-
 						c(paste("MEDIAN", my.sgp.target, sep="_"), paste("MEDIAN", my.sgp.target, "COUNT", sep="_"))
@@ -222,7 +222,7 @@
 						tmp.sgp.summaries,
 						M1=paste("median_na(", my.sgp.target.baseline, ", WEIGHT)", sep=""),
 						M2=paste("num_non_missing(", my.sgp.target.baseline, ")", sep=""),
-						PERCENT_CATCHING_UP_KEEPING_UP_BASELINE="percent_in_category(CATCH_UP_KEEP_UP_STATUS_BASELINE, list(c('Catch Up: Yes', 'Keep Up: Yes')), list(c('Catch Up: Yes', 'Catch Up: No', 'Keep Up: Yes', 'Keep Up: No')))"
+						PERCENT_CATCHING_UP_KEEPING_UP_BASELINE="percent_in_category(CATCH_UP_KEEP_UP_STATUS_BASELINE, c('Catch Up: Yes', 'Keep Up: Yes'), c('Catch Up: Yes', 'Catch Up: No', 'Keep Up: Yes', 'Keep Up: No'))"
 					)
 					names(tmp.sgp.summaries)[sapply(c("M1", "M2"), function(x) which(names(tmp.sgp.summaries)==x))] <-
 						c(paste("MEDIAN", my.sgp.target.baseline, sep="_"), paste("MEDIAN", my.sgp.target.baseline, "COUNT", sep="_"))
@@ -234,7 +234,7 @@
 						tmp.sgp.summaries,
 						M1=paste("median_na(", my.sgp.target.musu, ", WEIGHT)", sep=""),
 						M2=paste("num_non_missing(", my.sgp.target.musu, ")", sep=""),
-						PERCENT_MOVING_UP_STAYING_UP="percent_in_category(MOVE_UP_STAY_UP_STATUS, list(c('Move Up: Yes', 'Stay Up: Yes')), list(c('Move Up: Yes', 'Move Up: No', 'Stay Up: Yes', 'Stay Up: No')))"
+						PERCENT_MOVING_UP_STAYING_UP="percent_in_category(MOVE_UP_STAY_UP_STATUS, c('Move Up: Yes', 'Stay Up: Yes'), c('Move Up: Yes', 'Move Up: No', 'Stay Up: Yes', 'Stay Up: No'))"
 					)
 					names(tmp.sgp.summaries)[sapply(c("M1", "M2"), function(x) which(names(tmp.sgp.summaries)==x))] <-
 						c(paste("MEDIAN", my.sgp.target.musu, sep="_"), paste("MEDIAN", my.sgp.target.musu, "COUNT", sep="_"))
@@ -245,7 +245,7 @@
 						tmp.sgp.summaries,
 						M1=paste("median_na(", my.sgp.target.musu.baseline, ", WEIGHT)", sep=""),
 						M2=paste("num_non_missing(", my.sgp.target.musu.baseline, ")", sep=""),
-						PERCENT_MOVING_UP_STAYING_UP_BASELINE="percent_in_category(MOVE_UP_STAY_UP_STATUS_BASELINE, list(c('Move Up: Yes', 'Stay Up: Yes')), list(c('Move Up: Yes', 'Move Up: No', 'Stay Up: Yes', 'Stay Up: No')))"
+						PERCENT_MOVING_UP_STAYING_UP_BASELINE="percent_in_category(MOVE_UP_STAY_UP_STATUS_BASELINE, c('Move Up: Yes', 'Stay Up: Yes'), c('Move Up: Yes', 'Move Up: No', 'Stay Up: Yes', 'Stay Up: No'))"
 					)
 					names(tmp.sgp.summaries)[sapply(c("M1", "M2"), function(x) which(names(tmp.sgp.summaries)==x))] <-
 						c(paste("MEDIAN", my.sgp.target.musu.baseline, sep="_"), paste("MEDIAN", my.sgp.target.musu.baseline, "COUNT", sep="_"))
@@ -382,12 +382,12 @@
 				tmp.summary[[s]] <- sgpSummary(summary.iter[[s]][1], eval(parse(text=summary.iter[[s]][2])),
 					tmp.simulation.dt, state, sgp.summaries, confidence.interval.groups, my.sgp, sgp_key, variables.for.summaries, sim.info)
 			}
-			parallel.config <- list(BACKEND="NONE"); par.start <- list(par.type="NONE")
+			par.start <- list(par.type="NONE")
 		}
 
 		j <- k <- NULL ## To prevent R CMD check warnings
 
-		if (parallel.config[["BACKEND"]] == "FOREACH") {
+		if (identical(parallel.config[["BACKEND"]], "FOREACH")) {
 			if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
 				k.iter <- iter(sgp.groups %in% ci.groups)
 			} else	k.iter <- iter(rep(FALSE, length(sgp.groups)))
@@ -400,17 +400,17 @@
 		} else { # END FOREACH flavor
 
 		### SNOW and MULTICORE
-		if (par.start$par.type=="SNOW") {
+		if (identical(par.start[['par.type']], "SNOW")) {
 			tmp.summary <- parLapply(par.start$internal.cl, summary.iter,
 				function(iter) sgpSummary(iter[1], eval(parse(text=iter[2])), tmp.simulation.dt, state, sgp.summaries, confidence.interval.groups, my.sgp, sgp_key, variables.for.summaries, sim.info))
 		} # END 'SNOW' Flavor
-		if (par.start$par.type=="MULTICORE") {
+		if (identical(par.start[['par.type']], "MULTICORE")) {
 			tmp.summary <- mclapply(summary.iter,
 				function(iter) sgpSummary(iter[1], eval(parse(text=iter[2])), tmp.simulation.dt, state, sgp.summaries, confidence.interval.groups, my.sgp, sgp_key, variables.for.summaries, sim.info), mc.cores=par.start$workers, mc.preschedule=FALSE)
 		} # END 'MULTICORE' Flavor
 		} # END else not FOREACH
 
-		names(tmp.summary) <- gsub(", ", "__", sgp.groups)
+		setattr(tmp.summary, 'names', gsub(', ', '__', sgp.groups))
 		return(tmp.summary)
 	} ### END summarizeSGP_INTERNAL
 
