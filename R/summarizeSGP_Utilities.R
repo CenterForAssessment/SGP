@@ -199,7 +199,7 @@ function(dat,
 	CI <- paste(rep(NA, 2), collapse=", "); SE <- NA_real_
 	if (length(dat.no.na <- dat[!is.na(dat)]) > 1) {
 		out <- data.table(ID=seq.int(nboot), SCORE=dat.no.na[sample.int(length(dat.no.na), length(dat.no.na)*nboot, replace=TRUE)])[,median(SCORE), by=ID][['V1']]
-		if (!is.null(conf.quantiles)) CI <- paste(round(quantile(out, conf.quantiles), digits=1), collapse=", ") else SE <- round(sd(out), digits=1)
+		if (!is.null(conf.quantiles)) CI <- paste0("[", paste(round(quantile(out, conf.quantiles), digits=1), collapse=", "), "]") else SE <- round(sd(out), digits=1)
 	}
 	if (!is.null(conf.quantiles)) return(CI) else return(SE)
 } ### END boot.sgp function
