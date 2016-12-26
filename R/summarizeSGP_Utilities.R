@@ -163,16 +163,6 @@ function(x,
 } ### END percent_in_category function
 
 
-`percent_at_above_target` <-
-function(sgp,
-	target,
-	result.digits=1) {
-
-	tmp.logical <- sgp[!is.na(sgp)] >= target
-	round(100*sum(tmp.logical)/sum(tmp.logical), digits=result.digits)
-} ### END percent_at_above_target function
-
-
 `boot.sgp` <-
 function(dat,
 	conf.quantiles=NULL,
