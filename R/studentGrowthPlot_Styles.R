@@ -55,10 +55,10 @@
 		if (is.null(tmp.proficiency)) tmp.proficiency <- "proficient"
 		if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["sgp.projections.max.forward.progression.grade"]])) {
 			trajectory.cuts <- sort(c(SGP::SGPstateData[[state]][["Growth"]][["Cutscores"]][['Cuts']], SGP::SGPstateData[[state]][["Student_Report_Information"]][["Projection_Fan_Limits"]]))
-			trajectory.cuts <- paste(paste("P", trajectory.cuts, "_", sep=""), collapse="|")
+			trajectory.cuts <- paste(paste0("P", trajectory.cuts, "_"), collapse="|")
 		} else {
 			trajectory.cuts <- c(1, SGP::SGPstateData[[state]][["Growth"]][["Cutscores"]][['Cuts']], 99)
-			trajectory.cuts <- paste(paste("P", trajectory.cuts, "_", sep=""), collapse="|")
+			trajectory.cuts <- paste(paste0("P", trajectory.cuts, "_"), collapse="|")
 		}
 		if (!is.null(SGP::SGPstateData[[state]][["Custom_Student_Report"]])) {
 			custom.isr.tf <- TRUE
@@ -143,7 +143,7 @@ if (reports.by.school) {
 		started.date <- prettyDate()
 
 		if (!is.null(sgPlot.front.page)) {
-			sgPlot.front.page.ij <- paste(paste(unlist(strsplit(sgPlot.front.page, "[.]"))[1], i, j, sep="_"), ".pdf", sep="")
+			sgPlot.front.page.ij <- paste0(paste(unlist(strsplit(sgPlot.front.page, "[.]"))[1], i, j, sep="_"), ".pdf")
 			file.copy(sgPlot.front.page, sgPlot.front.page.ij)
 		}
 
@@ -168,15 +168,15 @@ if (reports.by.school) {
 				######################## SCHOOL Report Catalog LaTeX Header #################################################################################
 				if (.Platform$OS.type == "windows" & length(unique(tmp_district_data[list(j)]$ID)) > 500) {
 					cat("\\let\\mypdfximage\\pdfximage\n\\def\\pdfximage{\\immediate\\mypdfximage}\n\\documentclass[pdftex]{book}\n\\usepackage{hyperref,pdfpages}\n\\hypersetup{%\n",
-						file=paste("school_catalog_", i, "_", j, ".tex", sep=""))
-				} else cat("\\documentclass[pdftex]{book}\n\\usepackage{hyperref,pdfpages}\n\\hypersetup{%\n", file=paste("school_catalog_", i, "_", j, ".tex", sep=""))
-				cat(paste("pdftitle={", tmp_school_name, ": ", pretty_year(last.year), " ", tmp.state, " Growth and Achievement Reports},\n", sep=""),
-					file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE)
-				cat(paste("pdfauthor={", tmp.organization$Name, "/Center for Assessment Inc.},\n", sep=""), "pdfcreator={pdfLaTeX},\n",
-				paste("pdfproducer={", tmp.organization$Name, "/Center for Assessment Inc.}}\n", sep=""),
-					"\\begin{document}\n", sep="", file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE)
-				cat(paste("\\pdfbookmark[-1]{", tmp_district_name, "}{", i, "}\n", sep=""), file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE)
-				cat(paste("\\pdfbookmark[0]{", tmp_school_name, "}{", j, "}\n", sep=""), file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE)
+						file=paste0("school_catalog_", i, "_", j, ".tex"))
+				} else cat("\\documentclass[pdftex]{book}\n\\usepackage{hyperref,pdfpages}\n\\hypersetup{%\n", file=paste0("school_catalog_", i, "_", j, ".tex"))
+				cat(paste0("pdftitle={", tmp_school_name, ": ", pretty_year(last.year), " ", tmp.state, " Growth and Achievement Reports},\n"),
+					file=paste0("school_catalog_", i, "_", j, ".tex"), append=TRUE)
+				cat(paste0("pdfauthor={", tmp.organization$Name, "/Center for Assessment Inc.},\n"), "pdfcreator={pdfLaTeX},\n",
+				paste0("pdfproducer={", tmp.organization$Name, "/Center for Assessment Inc.}}\n"),
+					"\\begin{document}\n", file=paste0("school_catalog_", i, "_", j, ".tex"), sep="", append=TRUE)
+				cat(paste0("\\pdfbookmark[-1]{", tmp_district_name, "}{", i, "}\n"), file=paste0("school_catalog_", i, "_", j, ".tex"), append=TRUE)
+				cat(paste0("\\pdfbookmark[0]{", tmp_school_name, "}{", j, "}\n"), file=paste0("school_catalog_", i, "_", j, ".tex"), append=TRUE)
 				##############################################################################################################################################
 			}
 		}
@@ -199,14 +199,14 @@ if (reports.by.school) {
 				if (k=="EOCT") {
 					grade_folder <- "EOCT"
 				} else {
-					grade_folder <- substr(paste("0", as.character(k), sep=""), nchar(k), nchar(k)+1)
+					grade_folder <- substr(paste0("0", as.character(k)), nchar(k), nchar(k)+1)
 				}
 			}
 
 			if ("PDF" %in% sgPlot.output.format) {
 				################################ SCHOOL Report Catalog LaTeX Code #########################################################
-				cat(paste("\\pdfbookmark[1]{Grade ", k, "}{", j, k, "}\n", sep=""),
-					file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE) ## NOTE: j, k included in anchor for uniqueness
+				cat(paste0("\\pdfbookmark[1]{Grade ", k, "}{", j, k, "}\n"),
+					file=paste0("school_catalog_", i, "_", j, ".tex"), append=TRUE) ## NOTE: j, k included in anchor for uniqueness
 				###########################################################################################################################
 			}
 		}
@@ -231,10 +231,10 @@ if (reports.by.school) {
 				student_number <- n
 			}
 			if (sgPlot.folder.names=="name" | sgPlot.anonymize) {
-				file_name <- paste(paste(gsub(" |/", "-", FIRST_NAME), gsub(" |/", "-", LAST_NAME), student_number, gsub("[.]", "-", year_folder), "REPORT", sep="_"), ".pdf", sep="")
-				file_name_json <- paste(paste(gsub(" |/", "-", FIRST_NAME), gsub(" |/", "-", LAST_NAME), student_number, gsub("[.]", "-", year_folder), sep="_"), sep="")
+				file_name <- paste0(paste(gsub(" |/", "-", FIRST_NAME), gsub(" |/", "-", LAST_NAME), student_number, gsub("[.]", "-", year_folder), "REPORT", sep="_"), ".pdf")
+				file_name_json <- paste0(paste(gsub(" |/", "-", FIRST_NAME), gsub(" |/", "-", LAST_NAME), student_number, gsub("[.]", "-", year_folder), sep="_"))
 			} else {
-				file_name <- paste(n, "_REPORT.pdf", sep="")
+				file_name <- paste0(n, "_REPORT.pdf")
 				file_name_json <- n
 			}
 
@@ -258,7 +258,7 @@ if (reports.by.school) {
 					Scale_Scores=as.numeric(tmp_student_data[,paste("TRANSFORMED_SCALE_SCORE", rev(sgPlot.years), sep=".")]),
 					Achievement_Levels=as.character(tmp_student_data[,paste("ACHIEVEMENT_LEVEL", rev(sgPlot.years), sep=".")]),
 					SGP=as.numeric(tmp_student_data[,paste(my.sgp, rev(sgPlot.years), sep=".")]),
-					SGP_Levels=as.character(tmp_student_data[,paste(my.sgp.level, rev(sgPlot.years), sep=".")]),
+					SGP_Levels=as.character(unlist(tmp_student_data[,paste(my.sgp.level, rev(sgPlot.years), sep=".")])),
 					Grades=as.character(tmp_student_data[,paste("GRADE", rev(sgPlot.years), sep=".")]),
 					Content_Areas=as.character(tmp_student_data[,paste("CONTENT_AREA_LABELS", rev(sgPlot.years), sep=".")]),
 					Cuts_TEXT=list(
@@ -324,7 +324,7 @@ if (reports.by.school) {
 							years.for.percentile.trajectories=yearIncrement(last.year, c(0,-1)),
 							baseline=sgPlot.baseline,
 							data.type="studentGrowthPlot")
-			cat(toJSON(tmp_student_data_JSON, pretty=TRUE, na="null", auto_unbox=TRUE), file=file.path(path.to.pdfs, paste(file_name_json, "_", vp, ".json", sep="")))
+			cat(toJSON(tmp_student_data_JSON, pretty=TRUE, na="null", auto_unbox=TRUE), file=file.path(path.to.pdfs, paste0(file_name_json, "_", vp, ".json")))
 		}
 	} ### END if ("JSON" %in% sgPlot.output.format)
 
@@ -333,31 +333,31 @@ if (reports.by.school) {
 		if (!reports.by.student) {
 			################################ SCHOOL Report Catalog LaTeX Code ###################################################################################
 			if (is.null(sgPlot.front.page) | !is.null(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Include_Front_Page_in_School_Catalog"]])) {
-			cat(paste("\\pdfbookmark[2]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", student_number, ")", sep=""), "}{", n , "}\n\\includepdf[pages={1-}, fitpaper=true]{",
-				path.to.pdfs, "/", file_name, "}\n", sep=""), file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE)
+			cat(paste0("\\pdfbookmark[2]{", paste0(LAST_NAME, ", ", FIRST_NAME, " (", student_number, ")"), "}{", n , "}\n\\includepdf[pages={1-}, fitpaper=true]{",
+				path.to.pdfs, "/", file_name, "}\n"), file=paste0("school_catalog_", i, "_", j, ".tex"), append=TRUE)
 			} else {
-				cat(paste("\\includepdf[pages={1-},fitpaper=true]{", sgPlot.front.page.ij, "}\n\\pdfbookmark[2]{", paste(LAST_NAME, ", ", FIRST_NAME, " (",
-				student_number, ")", sep=""), "}{", n , "}\n\\includepdf[pages={1-},fitpaper=true]{", path.to.pdfs, "/", file_name, "}\n", sep=""),
-					file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE)
+				cat(paste0("\\includepdf[pages={1-},fitpaper=true]{", sgPlot.front.page.ij, "}\n\\pdfbookmark[2]{", paste0(LAST_NAME, ", ", FIRST_NAME, " (",
+				student_number, ")"), "}{", n , "}\n\\includepdf[pages={1-},fitpaper=true]{", path.to.pdfs, "/", file_name, "}\n"),
+					file=paste0("school_catalog_", i, "_", j, ".tex"), append=TRUE)
 			}
 			#####################################################################################################################################################
 		}
 
 		################################ STUDENT Report Front Page Attach LaTeX Code ########################################################################
-		cat("\\documentclass[pdftex]{article}\n\\usepackage{hyperref,pdfpages}\n\\hypersetup{%\n", file=paste("student_report_", i, "_", j, ".tex", sep=""))
-		cat(paste("pdftitle={", FIRST_NAME, " ", LAST_NAME, " (", student_number, ")", ": ", pretty_year(last.year), " ",
-			tmp.state, " Growth and Achievement Report},\n", sep=""), file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
-		cat(paste("pdfauthor={", tmp.organization$Name, "/Center for Assessment Inc.},\n", sep=""), file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
-		cat("pdfcreator={pdfLaTeX},\n", file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
-		cat(paste("pdfproducer={", tmp.organization$Name, "/Center for Assessment Inc.}}\n", sep=""), file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
-		cat("\\begin{document}\n", file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
+		cat("\\documentclass[pdftex]{article}\n\\usepackage{hyperref,pdfpages}\n\\hypersetup{%\n", file=paste0("student_report_", i, "_", j, ".tex"))
+		cat(paste0("pdftitle={", FIRST_NAME, " ", LAST_NAME, " (", student_number, ")", ": ", pretty_year(last.year), " ",
+			tmp.state, " Growth and Achievement Report},\n"), file=paste0("student_report_", i, "_", j, ".tex"), append=TRUE)
+		cat(paste0("pdfauthor={", tmp.organization$Name, "/Center for Assessment Inc.},\n"), file=paste0("student_report_", i, "_", j, ".tex"), append=TRUE)
+		cat("pdfcreator={pdfLaTeX},\n", file=paste0("student_report_", i, "_", j, ".tex"), append=TRUE)
+		cat(paste0("pdfproducer={", tmp.organization$Name, "/Center for Assessment Inc.}}\n"), file=paste0("student_report_", i, "_", j, ".tex"), append=TRUE)
+		cat("\\begin{document}\n", file=paste0("student_report_", i, "_", j, ".tex"), append=TRUE)
 		if (!is.null(sgPlot.front.page)) {
-			cat(paste("\\includepdf[pages={1-}, fitpaper=true]{", sgPlot.front.page.ij, "}\n", sep=""), file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
+			cat(paste0("\\includepdf[pages={1-}, fitpaper=true]{", sgPlot.front.page.ij, "}\n"), file=paste0("student_report_", i, "_", j, ".tex"), append=TRUE)
 		}
-		cat(paste("\\includepdf[pages={1-}, fitpaper=true]{", path.to.pdfs, "/", file_name, "}\n", sep=""),
-			file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
+		cat(paste0("\\includepdf[pages={1-}, fitpaper=true]{", path.to.pdfs, "/", file_name, "}\n"),
+			file=paste0("student_report_", i, "_", j, ".tex"), append=TRUE)
 
-		cat("\\end{document}", file=paste("student_report_", i, "_", j, ".tex", sep=""), append=TRUE)
+		cat("\\end{document}", file=paste0("student_report_", i, "_", j, ".tex"), append=TRUE)
 		####################################################################################################################################################
 
 		if (!custom.isr.tf) { # boiler plate student reports:
@@ -529,13 +529,13 @@ if (reports.by.school) {
 		for (vp in page.content_areas[[pages]]) {
 			tmp_student_data <- as.data.frame(tmp_all_student_data[CONTENT_AREA==tmp_content_areas[vp]])
 			if (dim(tmp_student_data)[1]==0) tmp_student_data <- as.data.frame(data.table(tmp_student_data)[NA][,c("CONTENT_AREA", paste("CONTENT_AREA_LABELS", last.year, sep=".")) := tmp_content_areas[vp]])
-			pushViewport(get(paste("content_area_", vp, ".vp", sep="")))
+			pushViewport(get(paste0("content_area_", vp, ".vp")))
 			studentGrowthPlot(
 				Scale_Scores=as.numeric(tmp_student_data[,paste("SCALE_SCORE", rev(sgPlot.years), sep=".")]),
 				Plotting_Scale_Scores=as.numeric(tmp_student_data[,paste("TRANSFORMED_SCALE_SCORE", rev(sgPlot.years), sep=".")]),
 				Achievement_Levels=as.character(tmp_student_data[,paste("ACHIEVEMENT_LEVEL", rev(sgPlot.years), sep=".")]),
 				SGP=as.numeric(tmp_student_data[,paste(my.sgp, rev(sgPlot.years), sep=".")]),
-				SGP_Levels=as.character(tmp_student_data[,paste(my.sgp.level, rev(sgPlot.years), sep=".")]),
+				SGP_Levels=as.character(unlist(tmp_student_data[,paste(my.sgp.level, rev(sgPlot.years), sep=".")])),
 				Grades=as.character(tmp_student_data[,paste("GRADE", rev(sgPlot.years), sep=".")]),
 				Content_Areas=as.character(tmp_student_data[,paste("CONTENT_AREA_LABELS", rev(sgPlot.years), sep=".")]),
 				Cuts=list(
@@ -617,10 +617,10 @@ if (reports.by.school) {
 		## Bottom Legend
 		pushViewport(bottom.border.vp)
 		grid.rect(gp=gpar(fill=sgPlot.header.footer.color, col=sgPlot.header.footer.color))
-		grid.text(x=0.02, y=0.70, paste("For more information please visit the", tmp.organization$Name, paste("(", tmp.organization$Abbreviation, ")", sep=""),
+		grid.text(x=0.02, y=0.70, paste("For more information please visit the", tmp.organization$Name, paste0("(", tmp.organization$Abbreviation, ")"),
 			"at", tmp.organization$URL, "or contact", tmp.organization$Contact), gp=gpar(cex=0.8, col="white"), default.units="native", just="left")
-		copyright.text <- paste("Cooperatively developed by ", tmp.organization$Abbreviation, " & the Center for Assessment, Inc.", sep="")
-		grid.text(x=0.02, y=0.30, paste(copyright.text, " Distributed by ", tmp.organization$Abbreviation, ".", sep=""),
+		copyright.text <- paste0("Cooperatively developed by ", tmp.organization$Abbreviation, " & the Center for Assessment, Inc.")
+		grid.text(x=0.02, y=0.30, paste0(copyright.text, " Distributed by ", tmp.organization$Abbreviation, "."),
 			gp=gpar(cex=0.8, col="white"), default.units="native", just="left")
 
 		# grid.text(x=0.995, y=0.18, copyright.text, gp=gpar(col="white", cex=0.45), default.units="native", just="right")
@@ -636,7 +636,7 @@ if (reports.by.school) {
 
 			# Interpretation
 			interpretation.y <- 0.93
-			achievement.level.region.colors <- paste("grey", round(seq(62, 91, length=number.achievement.level.regions)), sep="")
+			achievement.level.region.colors <- paste0("grey", round(seq(62, 91, length=number.achievement.level.regions)))
 
 			grid.roundrect(x=unit(0.5, "native"), y=unit(interpretation.y, "native"), width=unit(0.9, "native"), height=unit(0.06, "native"),
 				gp=gpar(fill=sgPlot.header.footer.color, col="black"))
@@ -726,8 +726,8 @@ if (reports.by.school) {
 
 		## Code to LaTeX document attaching first page/adding meta-data
 
-		system(paste("pdflatex -interaction=batchmode student_report_", i, "_", j, ".tex", sep=""), ignore.stdout = TRUE)
-		file.rename(paste("student_report_", i, "_", j, ".pdf", sep=""), paste(path.to.pdfs, "/", paste(head(unlist(strsplit(file_name, "_")), -1), collapse="_"), ".pdf", sep=""))
+		system(paste0("pdflatex -interaction=batchmode student_report_", i, "_", j, ".tex"), ignore.stdout = TRUE)
+		file.rename(paste0("student_report_", i, "_", j, ".pdf"), paste0(path.to.pdfs, "/", paste(head(unlist(strsplit(file_name, "_")), -1), collapse="_"), ".pdf"))
 	} ### END "PDF" %in% sgPlot.output.format
 
 	if (any(c("PNG", "PDF_PIECES") %in% sgPlot.output.format)) {
@@ -748,7 +748,7 @@ if (reports.by.school) {
 				Plotting_Scale_Scores=as.numeric(tmp_student_data[,paste("TRANSFORMED_SCALE_SCORE", rev(sgPlot.years), sep=".")]),
 				Achievement_Levels=as.character(tmp_student_data[,paste("ACHIEVEMENT_LEVEL", rev(sgPlot.years), sep=".")]),
 				SGP=as.numeric(tmp_student_data[,paste(my.sgp, rev(sgPlot.years), sep=".")]),
-				SGP_Levels=as.character(tmp_student_data[,paste(my.sgp.level, rev(sgPlot.years), sep=".")]),
+				SGP_Levels=as.character(unlist(tmp_student_data[,paste(my.sgp.level, rev(sgPlot.years), sep=".")])),
 				Grades=as.character(tmp_student_data[,paste("GRADE", rev(sgPlot.years), sep=".")]),
 				Content_Areas=as.character(tmp_student_data[,paste("CONTENT_AREA_LABELS", rev(sgPlot.years), sep=".")]),
 				Cuts=list(
@@ -813,11 +813,11 @@ if (reports.by.school) {
 	} ## END for loop for STUDENTS (n)
 	} ## END for loop for GRADES (k)
 	if (!reports.by.student & "PDF" %in% sgPlot.output.format) {
-		cat("\\end{document}", file=paste("school_catalog_", i, "_", j, ".tex", sep=""), append=TRUE)
-		system(paste("pdflatex -interaction=batchmode school_catalog_", i, "_", j, ".tex", sep=""), ignore.stdout = TRUE)
-		system(paste("pdflatex -interaction=batchmode school_catalog_", i, "_", j, ".tex", sep=""), ignore.stdout = TRUE)
-		file.rename(paste("school_catalog_", i, "_", j, ".pdf", sep=""), file.path(sgPlot.folder, year_folder, district_folder, school_folder,
-			paste(year_folder, "_", district_folder, "_", school_folder, "_Individual_SGP_Report_Catalog.pdf", sep="")))
+		cat("\\end{document}", file=paste0("school_catalog_", i, "_", j, ".tex"), append=TRUE)
+		system(paste0("pdflatex -interaction=batchmode school_catalog_", i, "_", j, ".tex"), ignore.stdout = TRUE)
+		system(paste0("pdflatex -interaction=batchmode school_catalog_", i, "_", j, ".tex"), ignore.stdout = TRUE)
+		file.rename(paste0("school_catalog_", i, "_", j, ".pdf"), file.path(sgPlot.folder, year_folder, district_folder, school_folder,
+			paste0(year_folder, "_", district_folder, "_", school_folder, "_Individual_SGP_Report_Catalog.pdf")))
 	}
 	if (sgPlot.cleanup & "PDF" %in% sgPlot.output.format) {
 		files.to.remove <- list.files(pattern=paste(i, j, sep="_"), all.files=TRUE)
@@ -831,15 +831,15 @@ if (reports.by.school) {
 		if (1000*as.numeric(unlist(strsplit(system(paste("du -s", file.path(sgPlot.folder, year_folder, district_folder, school_folder)), intern=TRUE), "\t"))[1]) > 4000000000) {
 			tmp.working.directory <- getwd()
 			setwd(file.path(sgPlot.folder, year_folder, district_folder))
-			if (paste(school_folder, ".tar.gz", sep="") %in% list.files()) file.remove(paste(school_folder, ".tar.gz", sep=""))
-			system(paste("tar cfz", paste(school_folder, ".tar.gz", sep=""), school_folder, sep=" "))
+			if (paste0(school_folder, ".tar.gz") %in% list.files()) file.remove(paste0(school_folder, ".tar.gz"))
+			system(paste("tar cfz", paste0(school_folder, ".tar.gz"), school_folder, sep=" "))
 			setwd(tmp.working.directory)
 		} else {
 			tmp.working.directory <- getwd()
 			setwd(file.path(sgPlot.folder, year_folder, district_folder))
-			if (paste(school_folder, ".zip", sep="") %in% list.files()) file.remove(paste(school_folder, ".zip", sep=""))
+			if (paste0(school_folder, ".zip") %in% list.files()) file.remove(paste0(school_folder, ".zip"))
 			suppressMessages(
-				zip(paste(school_folder, ".zip", sep=""), school_folder, flags="-rmq1")
+				zip(paste0(school_folder, ".zip"), school_folder, flags="-rmq1")
 			)
 			setwd(tmp.working.directory)
 		}
@@ -921,7 +921,7 @@ if (reports.by.instructor) {
 	started.date <- prettyDate()
 
 	if (!is.null(sgPlot.front.page)) {
-		sgPlot.front.page.ijk <- paste(paste(unlist(strsplit(sgPlot.front.page, "[.]"))[1], i, j, k, sep="_"), ".pdf", sep="")
+		sgPlot.front.page.ijk <- paste0(paste(unlist(strsplit(sgPlot.front.page, "[.]"))[1], i, j, k, sep="_"), ".pdf")
 		file.copy(sgPlot.front.page, sgPlot.front.page.ijk)
 	}
 
@@ -943,15 +943,15 @@ if (reports.by.instructor) {
 	}
 	if ("PDF" %in% sgPlot.output.format) {
 		######################## INSTRUCTOR Report Catalog LaTeX Header #################################################################################
-		cat("\\documentclass[pdftex]{book}\n\\usepackage{hyperref,pdfpages}\n\\hypersetup{%\n", file=paste("instructor_catalog_", i, "_", j, "_", k, ".tex", sep=""))
-		cat(paste("pdftitle={", tmp_instructor_name, ": ", pretty_year(last.year), " ", tmp.state, " Growth and Achievement Reports},\n", sep=""),
-			file=paste("instructor_catalog_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
-		cat(paste("pdfauthor={", tmp.organization$Name, "/Center for Assessment Inc.},\n", sep=""), "pdfcreator={pdfLaTeX},\n",
-		paste("pdfproducer={", tmp.organization$Name, "/Center for Assessment Inc.}}\n", sep=""),
-		"\\begin{document}\n", sep="", file=paste("instructor_catalog_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
-		cat(paste("\\pdfbookmark[-1]{", tmp_district_name, "}{", i, "}\n", sep=""), file=paste("instructor_catalog_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
-		cat(paste("\\pdfbookmark[0]{", tmp_school_name, "}{", j, "}\n", sep=""), file=paste("instructor_catalog_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
-		cat(paste("\\pdfbookmark[1]{", tmp_instructor_name, "}{", k, "}\n", sep=""), file=paste("instructor_catalog_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
+		cat("\\documentclass[pdftex]{book}\n\\usepackage{hyperref,pdfpages}\n\\hypersetup{%\n", file=paste0("instructor_catalog_", i, "_", j, "_", k, ".tex"))
+		cat(paste0("pdftitle={", tmp_instructor_name, ": ", pretty_year(last.year), " ", tmp.state, " Growth and Achievement Reports},\n"),
+			file=paste0("instructor_catalog_", i, "_", j, "_", k, ".tex"), append=TRUE)
+		cat(paste0("pdfauthor={", tmp.organization$Name, "/Center for Assessment Inc.},\n"), "pdfcreator={pdfLaTeX},\n",
+		paste0("pdfproducer={", tmp.organization$Name, "/Center for Assessment Inc.}}\n"),
+		"\\begin{document}\n", file=paste0("instructor_catalog_", i, "_", j, "_", k, ".tex"), sep="", append=TRUE)
+		cat(paste0("\\pdfbookmark[-1]{", tmp_district_name, "}{", i, "}\n"), file=paste0("instructor_catalog_", i, "_", j, "_", k, ".tex"), append=TRUE)
+		cat(paste0("\\pdfbookmark[0]{", tmp_school_name, "}{", j, "}\n"), file=paste0("instructor_catalog_", i, "_", j, "_", k, ".tex"), append=TRUE)
+		cat(paste0("\\pdfbookmark[1]{", tmp_instructor_name, "}{", k, "}\n"), file=paste0("instructor_catalog_", i, "_", j, "_", k, ".tex"), append=TRUE)
 		##############################################################################################################################################
 	}
 	tmp_instructor_ids <- unique(tmp_school_data[list(k)]$ID)
@@ -966,13 +966,13 @@ if (reports.by.instructor) {
 		if (sgPlot.folder.names=="name") {
 			grade_folder <- paste("Grade", l, sep="_")
 		} else {
-			grade_folder <- substr(paste("0", as.character(l), sep=""), nchar(l), nchar(l)+1)
+			grade_folder <- substr(paste0("0", l), nchar(l), nchar(l)+1)
 		}
 
 		if ("PDF" %in% sgPlot.output.format) {
 			################################ INSTRUCTOR Report Catalog LaTeX Code #########################################################
-			cat(paste("\\pdfbookmark[2]{Grade ", l, "}{", j, k, l, "}\n", sep=""),
-				file=paste("instructor_catalog_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE) ## NOTE: j, k, l included in anchor for uniqueness
+			cat(paste0("\\pdfbookmark[2]{Grade ", l, "}{", j, k, l, "}\n"),
+				file=paste0("instructor_catalog_", i, "_", j, "_", k, ".tex"), append=TRUE) ## NOTE: j, k, l included in anchor for uniqueness
 			###########################################################################################################################
 		}
 
@@ -997,38 +997,38 @@ if (reports.by.instructor) {
 				student_number <- n
 			}
 			if (sgPlot.folder.names=="name" | sgPlot.anonymize) {
-				file_name <- paste(paste(FIRST_NAME, LAST_NAME, student_number, gsub("[.]", "-", year_folder), "REPORT", sep="_"), ".pdf", sep="")
+				file_name <- paste0(paste(FIRST_NAME, LAST_NAME, student_number, gsub("[.]", "-", year_folder), "REPORT", sep="_"), ".pdf")
 			} else {
-				file_name <- paste(n, "_REPORT.pdf", sep="")
+				file_name <- paste0(n, "_REPORT.pdf")
 			}
 
 		if ("PDF" %in% sgPlot.output.format) {
 			################################ INSTRUCTOR Report Catalog LaTeX Code ###################################################################################
 			if (is.null(sgPlot.front.page)) {
-				cat(paste("\\pdfbookmark[3]{", paste(LAST_NAME, ", ", FIRST_NAME, " (", student_number, ")", sep=""), "}{", n , "}\n\\includepdf[pages={1-}, fitpaper=true]{",
-					path.to.pdfs, "/", file_name, "}\n", sep=""), file=paste("instructor_catalog_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
+				cat(paste0("\\pdfbookmark[3]{", paste0(LAST_NAME, ", ", FIRST_NAME, " (", student_number, ")"), "}{", n , "}\n\\includepdf[pages={1-}, fitpaper=true]{",
+					path.to.pdfs, "/", file_name, "}\n"), file=paste0("instructor_catalog_", i, "_", j, "_", k, ".tex"), append=TRUE)
 			} else {
-				cat(paste("\\includepdf[pages={1-}, fitpaper=true]{", sgPlot.front.page.ijk, "}\n\\pdfbookmark[3]{", paste(LAST_NAME, ", ", FIRST_NAME, " (",
-				student_number, ")", sep=""), "}{", n , "}\n\\includepdf[pages={1-}, fitpaper=true]{", path.to.pdfs, "/", file_name, "}\n", sep=""),
-					file=paste("instructor_catalog_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
+				cat(paste0("\\includepdf[pages={1-}, fitpaper=true]{", sgPlot.front.page.ijk, "}\n\\pdfbookmark[3]{", paste0(LAST_NAME, ", ", FIRST_NAME, " (",
+				student_number, ")"), "}{", n , "}\n\\includepdf[pages={1-}, fitpaper=true]{", path.to.pdfs, "/", file_name, "}\n"),
+					file=paste0("instructor_catalog_", i, "_", j, "_", k, ".tex"), append=TRUE)
 			}
 			#####################################################################################################################################################
 
 			################################ STUDENT Report Front Page Attach LaTeX Code ########################################################################
-			cat("\\documentclass[pdftex]{article}\n\\usepackage{hyperref,pdfpages}\n\\hypersetup{%\n", file=paste("student_report_", i, "_", j, "_", k, ".tex", sep=""))
-			cat(paste("pdftitle={", FIRST_NAME, " ", LAST_NAME, " (", student_number, ")", ": ", pretty_year(last.year), " ",
-				tmp.state, " Growth and Achievement Report},\n", sep=""), file=paste("student_report_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
-			cat(paste("pdfauthor={", tmp.organization$Name, "/Center for Assessment Inc.},\n", sep=""), file=paste("student_report_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
-			cat("pdfcreator={pdfLaTeX},\n", file=paste("student_report_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
-			cat(paste("pdfproducer={", tmp.organization$Name, "/Center for Assessment Inc.}}\n", sep=""), file=paste("student_report_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
-			cat("\\begin{document}\n", file=paste("student_report_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
+			cat("\\documentclass[pdftex]{article}\n\\usepackage{hyperref,pdfpages}\n\\hypersetup{%\n", file=paste0("student_report_", i, "_", j, "_", k, ".tex"))
+			cat(paste0("pdftitle={", FIRST_NAME, " ", LAST_NAME, " (", student_number, ")", ": ", pretty_year(last.year), " ",
+				tmp.state, " Growth and Achievement Report},\n"), file=paste0("student_report_", i, "_", j, "_", k, ".tex"), append=TRUE)
+			cat(paste0("pdfauthor={", tmp.organization$Name, "/Center for Assessment Inc.},\n"), file=paste0("student_report_", i, "_", j, "_", k, ".tex"), append=TRUE)
+			cat("pdfcreator={pdfLaTeX},\n", file=paste0("student_report_", i, "_", j, "_", k, ".tex"), append=TRUE)
+			cat(paste0("pdfproducer={", tmp.organization$Name, "/Center for Assessment Inc.}}\n"), file=paste0("student_report_", i, "_", j, "_", k, ".tex"), append=TRUE)
+			cat("\\begin{document}\n", file=paste0("student_report_", i, "_", j, "_", k, ".tex"), append=TRUE)
 			if (!is.null(sgPlot.front.page)) {
-				cat(paste("\\includepdf[pages={1-}, fitpaper=true]{", sgPlot.front.page.ijk, "}\n", sep=""), file=paste("student_report_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
+				cat(paste0("\\includepdf[pages={1-}, fitpaper=true]{", sgPlot.front.page.ijk, "}\n"), file=paste0("student_report_", i, "_", j, "_", k, ".tex"), append=TRUE)
 			}
-			cat(paste("\\includepdf[pages={1-}, fitpaper=true]{", path.to.pdfs, "/", file_name, "}\n", sep=""),
-				file=paste("student_report_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
+			cat(paste0("\\includepdf[pages={1-}, fitpaper=true]{", path.to.pdfs, "/", file_name, "}\n"),
+				file=paste0("student_report_", i, "_", j, "_", k, ".tex"), append=TRUE)
 
-			cat("\\end{document}", file=paste("student_report_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
+			cat("\\end{document}", file=paste0("student_report_", i, "_", j, "_", k, ".tex"), append=TRUE)
 			####################################################################################################################################################
 
 			## Start pdf device
@@ -1124,13 +1124,13 @@ if (reports.by.instructor) {
 			for (vp in seq_along(tmp_content_areas)) {
 				tmp_student_data <- as.data.frame(tmp_all_student_data[CONTENT_AREA==tmp_content_areas[vp]])
 				if (dim(tmp_student_data)[1]==0) tmp_student_data <- as.data.frame(data.table(tmp_student_data)[NA][,CONTENT_AREA := tmp_content_areas[vp]])
-				pushViewport(get(paste("content_area_", vp, ".vp", sep="")))
+				pushViewport(get(paste0("content_area_", vp, ".vp")))
 				studentGrowthPlot(
 					Scale_Scores=as.numeric(tmp_student_data[,paste("SCALE_SCORE", rev(sgPlot.years), sep=".")]),
 					Plotting_Scale_Scores=as.numeric(tmp_student_data[,paste("TRANSFORMED_SCALE_SCORE", rev(sgPlot.years), sep=".")]),
 					Achievement_Levels=as.character(tmp_student_data[,paste("ACHIEVEMENT_LEVEL", rev(sgPlot.years), sep=".")]),
 					SGP=as.numeric(tmp_student_data[,paste(my.sgp, rev(sgPlot.years), sep=".")]),
-					SGP_Levels=as.character(tmp_student_data[,paste(my.sgp.level, rev(sgPlot.years), sep=".")]),
+					SGP_Levels=as.character(unlist(tmp_student_data[,paste(my.sgp.level, rev(sgPlot.years), sep=".")])),
 					Grades=as.character(tmp_student_data[,paste("GRADE", rev(sgPlot.years), sep=".")]),
 					Content_Areas=as.character(tmp_student_data[,paste("CONTENT_AREA_LABELS", rev(sgPlot.years), sep=".")]),
 					Cuts=list(
@@ -1206,7 +1206,7 @@ if (reports.by.instructor) {
 			grid.rect(gp=gpar(fill=sgPlot.header.footer.color, col=sgPlot.header.footer.color))
 			grid.text(x=0.025, y=0.5, tmp.student.name,
 				gp=gpar(fontface="bold", fontfamily="Helvetica-Narrow", col="white", cex=1.65), just="left", default.units="native")
-			grid.text(x=0.975, y=0.5, paste(student_school_name, ": ", FIRST_NAME_TEACHER, " ", LAST_NAME_TEACHER, sep=""),
+			grid.text(x=0.975, y=0.5, paste0(student_school_name, ": ", FIRST_NAME_TEACHER, " ", LAST_NAME_TEACHER),
 				gp=gpar(fontface="bold", fontfamily="Helvetica-Narrow", col="white", cex=1.65), just="right", default.units="native")
 			popViewport()
 
@@ -1214,10 +1214,10 @@ if (reports.by.instructor) {
 			## Bottom Legend
 			pushViewport(bottom.border.vp)
 			grid.rect(gp=gpar(fill=sgPlot.header.footer.color, col=sgPlot.header.footer.color))
-			grid.text(x=0.02, y=0.70, paste("For more information please visit the", tmp.organization$Name, paste("(", gsub("the ", "", tmp.organization$Abbreviation), ")", sep=""),
+			grid.text(x=0.02, y=0.70, paste("For more information please visit the", tmp.organization$Name, paste0("(", gsub("the ", "", tmp.organization$Abbreviation), ")"),
 				"at", tmp.organization$URL, "or contact", tmp.organization$Contact), gp=gpar(cex=0.8, col="white"), default.units="native", just="left")
-			copyright.text <- paste("Cooperatively developed by the ", tmp.organization$Abbreviation, " & the Center for Assessment, Inc.", sep="")
-			grid.text(x=0.02, y=0.30, paste(copyright.text, " Distributed by the ", tmp.organization$Abbreviation, ".", sep=""),
+			copyright.text <- paste0("Cooperatively developed by the ", tmp.organization$Abbreviation, " & the Center for Assessment, Inc.")
+			grid.text(x=0.02, y=0.30, paste0(copyright.text, " Distributed by the ", tmp.organization$Abbreviation, "."),
 				gp=gpar(cex=0.8, col="white"), default.units="native", just="left")
 
 			popViewport()
@@ -1229,7 +1229,7 @@ if (reports.by.instructor) {
 
 				# Interpretation
 				interpretation.y <- 0.93
-				achievement.level.region.colors <- paste("grey", round(seq(62, 91, length=number.achievement.level.regions)), sep="")
+				achievement.level.region.colors <- paste0("grey", round(seq(62, 91, length=number.achievement.level.regions)))
 
 				grid.roundrect(x=unit(0.5, "native"), y=unit(interpretation.y, "native"), width=unit(0.9, "native"), height=unit(0.06, "native"),
 					gp=gpar(fill=sgPlot.header.footer.color, col="black"))
@@ -1294,8 +1294,8 @@ if (reports.by.instructor) {
 			dev.off()
 
 			## Code to LaTeX document attaching first page/adding meta-data
-			system(paste("pdflatex -interaction=batchmode student_report_", i, "_", j, "_", k, ".tex", sep=""), ignore.stdout = TRUE)
-			file.rename(paste("student_report_", i, "_", j, "_", k, ".pdf", sep=""), paste(path.to.pdfs, "/", paste(head(unlist(strsplit(file_name, "_")), -1), collapse="_"), ".pdf", sep=""))
+			system(paste0("pdflatex -interaction=batchmode student_report_", i, "_", j, "_", k, ".tex"), ignore.stdout = TRUE)
+			file.rename(paste0("student_report_", i, "_", j, "_", k, ".pdf"), paste0(path.to.pdfs, "/", paste(head(unlist(strsplit(file_name, "_")), -1), collapse="_"), ".pdf"))
 		} ### END "PDF" %in% sgPlot.output.format
 
 		if (any(c("PNG", "PDF_PIECES") %in% sgPlot.output.format)) {
@@ -1316,7 +1316,7 @@ if (reports.by.instructor) {
 					Plotting_Scale_Scores=as.numeric(tmp_student_data[,paste("TRANSFORMED_SCALE_SCORE", rev(sgPlot.years), sep=".")]),
 					Achievement_Levels=as.character(tmp_student_data[,paste("ACHIEVEMENT_LEVEL", rev(sgPlot.years), sep=".")]),
 					SGP=as.numeric(tmp_student_data[,paste(my.sgp, rev(sgPlot.years), sep=".")]),
-					SGP_Levels=as.character(tmp_student_data[,paste(my.sgp.level, rev(sgPlot.years), sep=".")]),
+					SGP_Levels=as.character(unlist(tmp_student_data[,paste(my.sgp.level, rev(sgPlot.years), sep=".")])),
 					Grades=as.character(tmp_student_data[,paste("GRADE", rev(sgPlot.years), sep=".")]),
 					Content_Areas=as.character(tmp_student_data[,paste("CONTENT_AREA_LABELS", rev(sgPlot.years), sep=".")]),
 					Cuts=list(
@@ -1382,11 +1382,11 @@ if (reports.by.instructor) {
 			} ## END for loop for STUDENTS (n)
 		} ## END for loop for GRADES (l)
 
-		cat("\\end{document}", file=paste("instructor_catalog_", i, "_", j, "_", k, ".tex", sep=""), append=TRUE)
-		system(paste("pdflatex -interaction=batchmode instructor_catalog_", i, "_", j, "_", k, ".tex", sep=""), ignore.stdout = TRUE)
-		system(paste("pdflatex -interaction=batchmode instructor_catalog_", i, "_", j, "_", k, ".tex", sep=""), ignore.stdout = TRUE)
-		file.rename(paste("instructor_catalog_", i, "_", j, "_", k, ".pdf", sep=""), file.path(sgPlot.folder, year_folder, district_folder, school_folder, instructor_folder,
-			paste(year_folder, "_", district_folder, "_", school_folder, "_Individual_SGP_Report_Catalog.pdf", sep="")))
+		cat("\\end{document}", file=paste0("instructor_catalog_", i, "_", j, "_", k, ".tex"), append=TRUE)
+		system(paste0("pdflatex -interaction=batchmode instructor_catalog_", i, "_", j, "_", k, ".tex"), ignore.stdout = TRUE)
+		system(paste0("pdflatex -interaction=batchmode instructor_catalog_", i, "_", j, "_", k, ".tex"), ignore.stdout = TRUE)
+		file.rename(paste0("instructor_catalog_", i, "_", j, "_", k, ".pdf"), file.path(sgPlot.folder, year_folder, district_folder, school_folder, instructor_folder,
+			paste0(year_folder, "_", district_folder, "_", school_folder, "_Individual_SGP_Report_Catalog.pdf")))
 		if (sgPlot.cleanup & "PDF" %in% sgPlot.output.format) {
 			files.to.remove <- list.files(pattern=paste(i, j, k, sep="_"), all.files=TRUE)
 			lapply(files.to.remove, file.remove)
@@ -1398,15 +1398,15 @@ if (reports.by.instructor) {
 			if (1000*as.numeric(unlist(strsplit(system(paste("du -s", file.path(sgPlot.folder, year_folder, district_folder, school_folder, instructor_folder)), intern=TRUE), "\t"))[1]) > 4000000000) {
 				tmp.working.directory <- getwd()
 				setwd(file.path(sgPlot.folder, year_folder, district_folder, school_folder))
-				if (paste(instructor_folder, ".tar.gz", sep="") %in% list.files()) file.remove(paste(instructor_folder, ".tar.gz", sep=""))
-				system(paste("tar cfz", paste(instructor_folder, ".tar.gz", sep=""), instructor_folder, sep=" "))
+				if (paste0(instructor_folder, ".tar.gz") %in% list.files()) file.remove(paste0(instructor_folder, ".tar.gz"))
+				system(paste("tar cfz", paste0(instructor_folder, ".tar.gz"), instructor_folder, sep=" "))
 				setwd(tmp.working.directory)
 			} else {
 				tmp.working.directory <- getwd()
 				setwd(file.path(sgPlot.folder, year_folder, district_folder, school_folder))
-				if (paste(instructor_folder, ".zip", sep="") %in% list.files()) file.remove(paste(instructor_folder, ".zip", sep=""))
+				if (paste0(instructor_folder, ".zip") %in% list.files()) file.remove(paste0(instructor_folder, ".zip"))
 				suppressMessages(
-					zip(paste(instructor_folder, ".zip", sep=""), instructor_folder, flags="-rmq1")
+					zip(paste0(instructor_folder, ".zip"), instructor_folder, flags="-rmq1")
 				)
 				setwd(tmp.working.directory)
 			}
