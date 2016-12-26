@@ -127,7 +127,7 @@ if (reports.by.school) {
 			}
 		}
 		tmp_district_ids <- unique(sgPlot.data[list(i)]$ID)
-		tmp_district_data <- subset(sgPlot.data, ID %in% tmp_district_ids)
+		tmp_district_data <- sgPlot.data[ID %in% tmp_district_ids]
 		if (is.factor(tmp_district_data[[paste("LAST_NAME", last.year, sep=".")]]) | is.factor(tmp_district_data[[paste("FIRST_NAME", last.year, sep=".")]])) {
 			tmp_district_data[, paste("LAST_NAME", last.year, sep=".") := as.character(tmp_district_data[[paste("LAST_NAME", last.year, sep=".")]])]
 			tmp_district_data[, paste("FIRST_NAME", last.year, sep=".") := as.character(tmp_district_data[[paste("FIRST_NAME", last.year, sep=".")]])]
@@ -181,7 +181,7 @@ if (reports.by.school) {
 			}
 		}
 		tmp_school_ids <- unique(tmp_district_data[list(j)]$ID)
-		tmp_school_data <- subset(tmp_district_data, ID %in% tmp_school_ids)
+		tmp_school_data <- tmp_district_data[ID %in% tmp_school_ids]
 
 		## Grades
 
@@ -211,7 +211,7 @@ if (reports.by.school) {
 			}
 		}
 		tmp_grade_ids <- unique(tmp_school_data[list(k)]$ID)
-		tmp_grade_data <- subset(tmp_school_data, ID %in% tmp_grade_ids)
+		tmp_grade_data <- tmp_school_data[ID %in% tmp_grade_ids]
 
 		### Create path to pdf files
 
@@ -254,26 +254,26 @@ if (reports.by.school) {
 				tmp_student_data <- as.data.frame(tmp_all_student_data[CONTENT_AREA==tmp_content_areas[vp]])
 				if (dim(tmp_student_data)[1]==0) tmp_student_data <- as.data.frame(data.table(tmp_student_data)[NA][,CONTENT_AREA := tmp_content_areas[vp]])
 				tmp.list <- list(
-					Scale_Scores_TEXT=as.numeric(subset(tmp_student_data, select=paste("SCALE_SCORE", rev(sgPlot.years), sep="."))),
-					Scale_Scores=as.numeric(subset(tmp_student_data, select=paste("TRANSFORMED_SCALE_SCORE", rev(sgPlot.years), sep="."))),
-					Achievement_Levels=as.character(unlist(subset(tmp_student_data, select=paste("ACHIEVEMENT_LEVEL", rev(sgPlot.years), sep=".")))),
-					SGP=as.numeric(subset(tmp_student_data, select=paste(my.sgp, rev(sgPlot.years), sep="."))),
-					SGP_Levels=as.character(unlist(subset(tmp_student_data, select=paste(my.sgp.level, rev(sgPlot.years), sep=".")))),
-					Grades=as.character(subset(tmp_student_data, select=paste("GRADE", rev(sgPlot.years), sep="."))),
-					Content_Areas=as.character(subset(tmp_student_data, select=paste("CONTENT_AREA_LABELS", rev(sgPlot.years), sep="."))),
+					Scale_Scores_TEXT=as.numeric(tmp_student_data[,paste("SCALE_SCORE", rev(sgPlot.years), sep=".")]),
+					Scale_Scores=as.numeric(tmp_student_data[,paste("TRANSFORMED_SCALE_SCORE", rev(sgPlot.years), sep=".")]),
+					Achievement_Levels=as.character(tmp_student_data[,paste("ACHIEVEMENT_LEVEL", rev(sgPlot.years), sep=".")]),
+					SGP=as.numeric(tmp_student_data[,paste(my.sgp, rev(sgPlot.years), sep=".")]),
+					SGP_Levels=as.character(tmp_student_data[,paste(my.sgp.level, rev(sgPlot.years), sep=".")]),
+					Grades=as.character(tmp_student_data[,paste("GRADE", rev(sgPlot.years), sep=".")]),
+					Content_Areas=as.character(tmp_student_data[,paste("CONTENT_AREA_LABELS", rev(sgPlot.years), sep=".")]),
 					Cuts_TEXT=list(
-						NY1=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
-							grep("YEAR_1", names(tmp_student_data))), grep("YEAR_1_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-						NY2=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
-							grep("YEAR_2", names(tmp_student_data))), grep("YEAR_2_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-						NY3=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
-							grep("YEAR_3", names(tmp_student_data))), grep("YEAR_3_CURRENT_TRANSFORMED", names(tmp_student_data)))))),
-				Cuts=list(NY1=as.numeric(subset(tmp_student_data,
-						select=intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_1_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-					NY2=as.numeric(subset(tmp_student_data,
-						select=intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_2_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-					NY3=as.numeric(subset(tmp_student_data,
-						select=intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_3_CURRENT_TRANSFORMED", names(tmp_student_data)))))),
+						NY1=as.numeric(tmp_student_data[,setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
+							grep("YEAR_1", names(tmp_student_data))), grep("YEAR_1_CURRENT_TRANSFORMED", names(tmp_student_data)))]),
+						NY2=as.numeric(tmp_student_data[,setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
+							grep("YEAR_2", names(tmp_student_data))), grep("YEAR_2_CURRENT_TRANSFORMED", names(tmp_student_data)))]),
+						NY3=as.numeric(tmp_student_data[,setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
+							grep("YEAR_3", names(tmp_student_data))), grep("YEAR_3_CURRENT_TRANSFORMED", names(tmp_student_data)))])),
+				Cuts=list(NY1=as.numeric(tmp_student_data[,
+						intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_1_CURRENT_TRANSFORMED", names(tmp_student_data)))]),
+					NY2=as.numeric(tmp_student_data[,
+						intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_2_CURRENT_TRANSFORMED", names(tmp_student_data)))]),
+					NY3=as.numeric(tmp_student_data[,
+						intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_3_CURRENT_TRANSFORMED", names(tmp_student_data)))])),
 				SGP_Targets=list(CUKU=tmp_student_data[[paste(paste(my.sgp.target.label[1], my.sgp.target.label[2], sep="_"), last.year, sep=".")]],
 					CUKU_Current=tmp_student_data[[paste(paste(my.sgp.target.label[1], my.sgp.target.label[2], "CURRENT", sep="_"), last.year, sep=".")]],
 					MUSU=tmp_student_data[[paste(paste(my.sgp.target.label[1], "MOVE_UP_STAY_UP", my.sgp.target.label[2], sep="_"), last.year, sep=".")]],
@@ -531,24 +531,24 @@ if (reports.by.school) {
 			if (dim(tmp_student_data)[1]==0) tmp_student_data <- as.data.frame(data.table(tmp_student_data)[NA][,c("CONTENT_AREA", paste("CONTENT_AREA_LABELS", last.year, sep=".")) := tmp_content_areas[vp]])
 			pushViewport(get(paste("content_area_", vp, ".vp", sep="")))
 			studentGrowthPlot(
-				Scale_Scores=as.numeric(subset(tmp_student_data, select=paste("SCALE_SCORE", rev(sgPlot.years), sep="."))),
-				Plotting_Scale_Scores=as.numeric(subset(tmp_student_data, select=paste("TRANSFORMED_SCALE_SCORE", rev(sgPlot.years), sep="."))),
-				Achievement_Levels=as.character(unlist(subset(tmp_student_data, select=paste("ACHIEVEMENT_LEVEL", rev(sgPlot.years), sep=".")))),
-				SGP=as.numeric(subset(tmp_student_data, select=paste(my.sgp, rev(sgPlot.years), sep="."))),
-				SGP_Levels=as.character(unlist(subset(tmp_student_data, select=paste(my.sgp.level, rev(sgPlot.years), sep=".")))),
-				Grades=as.character(subset(tmp_student_data, select=paste("GRADE", rev(sgPlot.years), sep="."))),
-				Content_Areas=as.character(subset(tmp_student_data, select=paste("CONTENT_AREA_LABELS", rev(sgPlot.years), sep="."))),
+				Scale_Scores=as.numeric(tmp_student_data[,paste("SCALE_SCORE", rev(sgPlot.years), sep=".")]),
+				Plotting_Scale_Scores=as.numeric(tmp_student_data[,paste("TRANSFORMED_SCALE_SCORE", rev(sgPlot.years), sep=".")]),
+				Achievement_Levels=as.character(tmp_student_data[,paste("ACHIEVEMENT_LEVEL", rev(sgPlot.years), sep=".")]),
+				SGP=as.numeric(tmp_student_data[,paste(my.sgp, rev(sgPlot.years), sep=".")]),
+				SGP_Levels=as.character(tmp_student_data[,paste(my.sgp.level, rev(sgPlot.years), sep=".")]),
+				Grades=as.character(tmp_student_data[,paste("GRADE", rev(sgPlot.years), sep=".")]),
+				Content_Areas=as.character(tmp_student_data[,paste("CONTENT_AREA_LABELS", rev(sgPlot.years), sep=".")]),
 				Cuts=list(
-					NY1=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
-						grep("YEAR_1", names(tmp_student_data))), grep("YEAR_1_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-					NY2=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
-						grep("YEAR_2", names(tmp_student_data))), grep("YEAR_2_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-					NY3=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
-						grep("YEAR_3", names(tmp_student_data))), grep("YEAR_3_CURRENT_TRANSFORMED", names(tmp_student_data)))))),
+					NY1=as.numeric(tmp_student_data[,setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
+						grep("YEAR_1", names(tmp_student_data))), grep("YEAR_1_CURRENT_TRANSFORMED", names(tmp_student_data)))]),
+					NY2=as.numeric(tmp_student_data[,setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
+						grep("YEAR_2", names(tmp_student_data))), grep("YEAR_2_CURRENT_TRANSFORMED", names(tmp_student_data)))]),
+					NY3=as.numeric(tmp_student_data[,setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
+						grep("YEAR_3", names(tmp_student_data))), grep("YEAR_3_CURRENT_TRANSFORMED", names(tmp_student_data)))])),
 				Plotting_Cuts=list(
-					NY1=as.numeric(subset(tmp_student_data, select=intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_1_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-					NY2=as.numeric(subset(tmp_student_data, select=intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_2_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-					NY3=as.numeric(subset(tmp_student_data, select=intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_3_CURRENT_TRANSFORMED", names(tmp_student_data)))))),
+					NY1=as.numeric(tmp_student_data[,intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_1_CURRENT_TRANSFORMED", names(tmp_student_data)))]),
+					NY2=as.numeric(tmp_student_data[,intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_2_CURRENT_TRANSFORMED", names(tmp_student_data)))]),
+					NY3=as.numeric(tmp_student_data[,intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_3_CURRENT_TRANSFORMED", names(tmp_student_data)))])),
 				SGP_Targets=list(
 					CUKU=tmp_student_data[[paste(paste(my.sgp.target.label[1], my.sgp.target.label[2], sep="_"), last.year, sep=".")]],
 					CUKU_Current=tmp_student_data[[paste(paste(my.sgp.target.label[1], my.sgp.target.label[2], "CURRENT", sep="_"), last.year, sep=".")]],
@@ -744,24 +744,24 @@ if (reports.by.school) {
 			if (dim(tmp_student_data)[1]==0) tmp_student_data <- as.data.frame(data.table(tmp_student_data)[NA][,CONTENT_AREA := tmp_content_areas[vp]])
 			pushViewport(report.png.vp)
 			studentGrowthPlot(
-				Scale_Scores=as.numeric(subset(tmp_student_data, select=paste("SCALE_SCORE", rev(sgPlot.years), sep="."))),
-				Plotting_Scale_Scores=as.numeric(subset(tmp_student_data, select=paste("TRANSFORMED_SCALE_SCORE", rev(sgPlot.years), sep="."))),
-				Achievement_Levels=as.character(unlist(subset(tmp_student_data, select=paste("ACHIEVEMENT_LEVEL", rev(sgPlot.years), sep=".")))),
-				SGP=as.numeric(subset(tmp_student_data, select=paste(my.sgp, rev(sgPlot.years), sep="."))),
-				SGP_Levels=as.character(unlist(subset(tmp_student_data, select=paste(my.sgp.level, rev(sgPlot.years), sep=".")))),
-				Grades=as.character(subset(tmp_student_data, select=paste("GRADE", rev(sgPlot.years), sep="."))),
-				Content_Areas=as.character(subset(tmp_student_data, select=paste("CONTENT_AREA_LABELS", rev(sgPlot.years), sep="."))),
+				Scale_Scores=as.numeric(tmp_student_data[,paste("SCALE_SCORE", rev(sgPlot.years), sep=".")]),
+				Plotting_Scale_Scores=as.numeric(tmp_student_data[,paste("TRANSFORMED_SCALE_SCORE", rev(sgPlot.years), sep=".")]),
+				Achievement_Levels=as.character(tmp_student_data[,paste("ACHIEVEMENT_LEVEL", rev(sgPlot.years), sep=".")]),
+				SGP=as.numeric(tmp_student_data[,paste(my.sgp, rev(sgPlot.years), sep=".")]),
+				SGP_Levels=as.character(tmp_student_data[,paste(my.sgp.level, rev(sgPlot.years), sep=".")]),
+				Grades=as.character(tmp_student_data[,paste("GRADE", rev(sgPlot.years), sep=".")]),
+				Content_Areas=as.character(tmp_student_data[,paste("CONTENT_AREA_LABELS", rev(sgPlot.years), sep=".")]),
 				Cuts=list(
-					NY1=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
-						grep("YEAR_1", names(tmp_student_data))), grep("YEAR_1_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-					NY2=as.numeric(subset(tmp_student_data,  select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
-						grep("YEAR_2", names(tmp_student_data))), grep("YEAR_2_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-					NY3=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
-						grep("YEAR_3", names(tmp_student_data))), grep("YEAR_3_CURRENT_TRANSFORMED", names(tmp_student_data)))))),
+					NY1=as.numeric(tmp_student_data[,setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
+						grep("YEAR_1", names(tmp_student_data))), grep("YEAR_1_CURRENT_TRANSFORMED", names(tmp_student_data)))]),
+					NY2=as.numeric(tmp_student_data[,setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
+						grep("YEAR_2", names(tmp_student_data))), grep("YEAR_2_CURRENT_TRANSFORMED", names(tmp_student_data)))]),
+					NY3=as.numeric(tmp_student_data[,setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
+						grep("YEAR_3", names(tmp_student_data))), grep("YEAR_3_CURRENT_TRANSFORMED", names(tmp_student_data)))])),
 				Plotting_Cuts=list(
-					NY1=as.numeric(subset(tmp_student_data, select=intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_1_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-					NY2=as.numeric(subset(tmp_student_data, select=intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_2_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-					NY3=as.numeric(subset(tmp_student_data, select=intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_3_CURRENT_TRANSFORMED", names(tmp_student_data)))))),
+					NY1=as.numeric(tmp_student_data[,intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_1_CURRENT_TRANSFORMED", names(tmp_student_data)))]),
+					NY2=as.numeric(tmp_student_data[,intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_2_CURRENT_TRANSFORMED", names(tmp_student_data)))]),
+					NY3=as.numeric(tmp_student_data[,intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_3_CURRENT_TRANSFORMED", names(tmp_student_data)))])),
 				SGP_Targets=list(
 					CUKU=tmp_student_data[[paste(paste(my.sgp.target.label[1], my.sgp.target.label[2], sep="_"), last.year, sep=".")]],
 					CUKU_Current=tmp_student_data[[paste(paste(my.sgp.target.label[1], my.sgp.target.label[2], "CURRENT", sep="_"), last.year, sep=".")]],
@@ -888,7 +888,7 @@ if (reports.by.instructor) {
 			}
 		}
 		tmp_district_ids <- unique(sgPlot.data[list(i)]$ID)
-		tmp_district_data <- subset(sgPlot.data, ID %in% tmp_district_ids)
+		tmp_district_data <- sgPlot.data[ID %in% tmp_district_ids]
 
 	## Schools
 	setkeyv(tmp_district_data, tmp.keys[2])
@@ -908,7 +908,7 @@ if (reports.by.instructor) {
 			}
 		}
 		tmp_school_ids <- unique(tmp_district_data[list(j)]$ID)
-		tmp_school_data <- subset(tmp_district_data, ID %in% tmp_school_ids)
+		tmp_school_data <- tmp_district_data[ID %in% tmp_school_ids]
 
 	## Instructor
 	setkeyv(tmp_school_data, tmp.keys[2])
@@ -955,7 +955,7 @@ if (reports.by.instructor) {
 		##############################################################################################################################################
 	}
 	tmp_instructor_ids <- unique(tmp_school_data[list(k)]$ID)
-	tmp_instructor_data <- subset(tmp_school_data[list(k)], ID %in% tmp_instructor_ids) ### NOTE: possible that students have multiple instructors so need list(k)
+	tmp_instructor_data <- tmp_school_data[list(k)][ID %in% tmp_instructor_ids] ### NOTE: possible that students have multiple instructors so need list(k)
 
 	## Grades
 	setkeyv(tmp_instructor_data, tmp.keys[3])
@@ -977,7 +977,7 @@ if (reports.by.instructor) {
 		}
 
 		tmp_grade_ids <- unique(tmp_instructor_data[list(l)]$ID)
-		tmp_grade_data <- subset(tmp_instructor_data, ID %in% tmp_grade_ids)
+		tmp_grade_data <- tmp_instructor_data[ID %in% tmp_grade_ids]
 
 		### Create path to pdf files
 
@@ -1126,24 +1126,24 @@ if (reports.by.instructor) {
 				if (dim(tmp_student_data)[1]==0) tmp_student_data <- as.data.frame(data.table(tmp_student_data)[NA][,CONTENT_AREA := tmp_content_areas[vp]])
 				pushViewport(get(paste("content_area_", vp, ".vp", sep="")))
 				studentGrowthPlot(
-					Scale_Scores=as.numeric(subset(tmp_student_data, select=paste("SCALE_SCORE", rev(sgPlot.years), sep="."))),
-					Plotting_Scale_Scores=as.numeric(subset(tmp_student_data, select=paste("TRANSFORMED_SCALE_SCORE", rev(sgPlot.years), sep="."))),
-					Achievement_Levels=as.character(unlist(subset(tmp_student_data, select=paste("ACHIEVEMENT_LEVEL", rev(sgPlot.years), sep=".")))),
-					SGP=as.numeric(subset(tmp_student_data, select=paste(my.sgp, rev(sgPlot.years), sep="."))),
-					SGP_Levels=as.character(unlist(subset(tmp_student_data, select=paste(my.sgp.level, rev(sgPlot.years), sep=".")))),
-					Grades=as.character(subset(tmp_student_data, select=paste("GRADE", rev(sgPlot.years), sep="."))),
-					Content_Areas=as.character(subset(tmp_student_data, select=paste("CONTENT_AREA_LABELS", rev(sgPlot.years), sep="."))),
+					Scale_Scores=as.numeric(tmp_student_data[,paste("SCALE_SCORE", rev(sgPlot.years), sep=".")]),
+					Plotting_Scale_Scores=as.numeric(tmp_student_data[,paste("TRANSFORMED_SCALE_SCORE", rev(sgPlot.years), sep=".")]),
+					Achievement_Levels=as.character(tmp_student_data[,paste("ACHIEVEMENT_LEVEL", rev(sgPlot.years), sep=".")]),
+					SGP=as.numeric(tmp_student_data[,paste(my.sgp, rev(sgPlot.years), sep=".")]),
+					SGP_Levels=as.character(tmp_student_data[,paste(my.sgp.level, rev(sgPlot.years), sep=".")]),
+					Grades=as.character(tmp_student_data[,paste("GRADE", rev(sgPlot.years), sep=".")]),
+					Content_Areas=as.character(tmp_student_data[,paste("CONTENT_AREA_LABELS", rev(sgPlot.years), sep=".")]),
 					Cuts=list(
-						NY1=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
-							grep("YEAR_1", names(tmp_student_data))), grep("YEAR_1_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-						NY2=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
-							grep("YEAR_2", names(tmp_student_data))), grep("YEAR_2_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-						NY3=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
-							grep("YEAR_3", names(tmp_student_data))), grep("YEAR_3_CURRENT_TRANSFORMED", names(tmp_student_data)))))),
+						NY1=as.numeric(tmp_student_data[,setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
+							grep("YEAR_1", names(tmp_student_data))), grep("YEAR_1_CURRENT_TRANSFORMED", names(tmp_student_data)))]),
+						NY2=as.numeric(tmp_student_data[,setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
+							grep("YEAR_2", names(tmp_student_data))), grep("YEAR_2_CURRENT_TRANSFORMED", names(tmp_student_data)))]),
+						NY3=as.numeric(tmp_student_data[,setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
+							grep("YEAR_3", names(tmp_student_data))), grep("YEAR_3_CURRENT_TRANSFORMED", names(tmp_student_data)))])),
 					Plotting_Cuts=list(
-						NY1=as.numeric(subset(tmp_student_data, select=intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_1_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-						NY2=as.numeric(subset(tmp_student_data, select=intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_2_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-						NY3=as.numeric(subset(tmp_student_data, select=intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_3_CURRENT_TRANSFORMED", names(tmp_student_data)))))),
+						NY1=as.numeric(tmp_student_data[,intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_1_CURRENT_TRANSFORMED", names(tmp_student_data)))]),
+						NY2=as.numeric(tmp_student_data[,intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_2_CURRENT_TRANSFORMED", names(tmp_student_data)))]),
+						NY3=as.numeric(tmp_student_data[,intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_3_CURRENT_TRANSFORMED", names(tmp_student_data)))])),
 					SGP_Targets=list(
 						CUKU=tmp_student_data[[paste(paste(my.sgp.target.label[1], my.sgp.target.label[2], sep="_"), last.year, sep=".")]],
 						CUKU_Current=tmp_student_data[[paste(paste(my.sgp.target.label[1], my.sgp.target.label[2], "CURRENT", sep="_"), last.year, sep=".")]],
@@ -1312,24 +1312,24 @@ if (reports.by.instructor) {
 				if (dim(tmp_student_data)[1]==0) tmp_student_data <- as.data.frame(data.table(tmp_student_data)[NA][,CONTENT_AREA := tmp_content_areas[vp]])
 				pushViewport(report.png.vp)
 				studentGrowthPlot(
-					Scale_Scores=as.numeric(subset(tmp_student_data, select=paste("SCALE_SCORE", rev(sgPlot.years), sep="."))),
-					Plotting_Scale_Scores=as.numeric(subset(tmp_student_data, select=paste("TRANSFORMED_SCALE_SCORE", rev(sgPlot.years), sep="."))),
-					Achievement_Levels=as.character(unlist(subset(tmp_student_data, select=paste("ACHIEVEMENT_LEVEL", rev(sgPlot.years), sep=".")))),
-					SGP=as.numeric(subset(tmp_student_data, select=paste(my.sgp, rev(sgPlot.years), sep="."))),
-					SGP_Levels=as.character(unlist(subset(tmp_student_data, select=paste(my.sgp.level, rev(sgPlot.years), sep=".")))),
-					Grades=as.character(subset(tmp_student_data, select=paste("GRADE", rev(sgPlot.years), sep="."))),
-					Content_Areas=as.character(subset(tmp_student_data, select=paste("CONTENT_AREA_LABELS", rev(sgPlot.years), sep="."))),
+					Scale_Scores=as.numeric(tmp_student_data[,paste("SCALE_SCORE", rev(sgPlot.years), sep=".")]),
+					Plotting_Scale_Scores=as.numeric(tmp_student_data[,paste("TRANSFORMED_SCALE_SCORE", rev(sgPlot.years), sep=".")]),
+					Achievement_Levels=as.character(tmp_student_data[,paste("ACHIEVEMENT_LEVEL", rev(sgPlot.years), sep=".")]),
+					SGP=as.numeric(tmp_student_data[,paste(my.sgp, rev(sgPlot.years), sep=".")]),
+					SGP_Levels=as.character(tmp_student_data[,paste(my.sgp.level, rev(sgPlot.years), sep=".")]),
+					Grades=as.character(tmp_student_data[,paste("GRADE", rev(sgPlot.years), sep=".")]),
+					Content_Areas=as.character(tmp_student_data[,paste("CONTENT_AREA_LABELS", rev(sgPlot.years), sep=".")]),
 					Cuts=list(
-						NY1=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
-							grep("YEAR_1", names(tmp_student_data))), grep("YEAR_1_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-						NY2=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
-							grep("YEAR_2", names(tmp_student_data))), grep("YEAR_2_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-						NY3=as.numeric(subset(tmp_student_data, select=setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
-							grep("YEAR_3", names(tmp_student_data))), grep("YEAR_3_CURRENT_TRANSFORMED", names(tmp_student_data)))))),
+						NY1=as.numeric(tmp_student_data[,setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
+							grep("YEAR_1", names(tmp_student_data))), grep("YEAR_1_CURRENT_TRANSFORMED", names(tmp_student_data)))]),
+						NY2=as.numeric(tmp_student_data[,setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
+							grep("YEAR_2", names(tmp_student_data))), grep("YEAR_2_CURRENT_TRANSFORMED", names(tmp_student_data)))]),
+						NY3=as.numeric(tmp_student_data[,setdiff(intersect(grep(trajectory.cuts, names(tmp_student_data)),
+							grep("YEAR_3", names(tmp_student_data))), grep("YEAR_3_CURRENT_TRANSFORMED", names(tmp_student_data)))])),
 					Plotting_Cuts=list(
-						NY1=as.numeric(subset(tmp_student_data, select=intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_1_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-						NY2=as.numeric(subset(tmp_student_data, select=intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_2_CURRENT_TRANSFORMED", names(tmp_student_data))))),
-						NY3=as.numeric(subset(tmp_student_data, select=intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_3_CURRENT_TRANSFORMED", names(tmp_student_data)))))),
+						NY1=as.numeric(tmp_student_data[,intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_1_CURRENT_TRANSFORMED", names(tmp_student_data)))]),
+						NY2=as.numeric(tmp_student_data[,intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_2_CURRENT_TRANSFORMED", names(tmp_student_data)))]),
+						NY3=as.numeric(tmp_student_data[,intersect(grep(trajectory.cuts, names(tmp_student_data)), grep("YEAR_3_CURRENT_TRANSFORMED", names(tmp_student_data)))])),
 					SGP_Targets=list(
 						CUKU=tmp_student_data[[paste(paste(my.sgp.target.label[1], my.sgp.target.label[2], sep="_"), last.year, sep=".")]],
 						CUKU_Current=tmp_student_data[[paste(paste(my.sgp.target.label[1], my.sgp.target.label[2], "CURRENT", sep="_"), last.year, sep=".")]],

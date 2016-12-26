@@ -63,7 +63,7 @@ function(sgp_object,
 
 	### Setting variables to NULL to prevent R CMD check warnings
 
-	DISTRICT_NUMBER <- DISTRICT_NAME <- SCHOOL_NUMBER <- SCHOOL_NAME <- YEAR <- CONTENT_AREA <- NULL ## To prevent R CMD check warnings
+	DISTRICT_NUMBER <- DISTRICT_NAME <- SCHOOL_NUMBER <- SCHOOL_NAME <- YEAR <- CONTENT_AREA <- VALID_SGP <- SGP <- SGP_LEVEL <- NULL ## To prevent R CMD check warnings
 	ETHNICITY <- GENDER <- ID <- NULL ## To prevent R CMD check warnings
 	TEST_LEVEL <- SUBJECT_CODE <- SCALE_SCORE <- GRADE <- NULL ## To prevent R CMD check warnings
 	SCHOOL_ENROLLMENT_STATUS <- LAST_NAME <- FIRST_NAME <- NULL ## To prevent R CMD check warnings
@@ -633,9 +633,9 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 						key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))[sgp_object@Data[,district.and.school.variable.names,with=FALSE], nomatch=0]
 
 		if (!is.null(sgPlot.instructors)) {
-			student.teacher.lookup <- subset(student.teacher.lookup, INSTRUCTOR_NUMBER %in% sgPlot.instructors)
+			student.teacher.lookup <- student.teacher.lookup[INSTRUCTOR_NUMBER %in% sgPlot.instructors]
 		} else {
-			student.teacher.lookup <- subset(student.teacher.lookup, !is.na(INSTRUCTOR_NUMBER))
+			student.teacher.lookup <- student.teacher.lookup[!is.na(INSTRUCTOR_NUMBER)]
 		}
 
 		if ("INSTRUCTOR_LAST_NAME" %in% names(student.teacher.lookup)) {
@@ -767,19 +767,20 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 	#### Trim tmp.districts.and.schools
 
 		tmp.districts.and.schools <- unique(data.table(tmp.districts.and.schools[,list(DISTRICT_NUMBER, SCHOOL_NUMBER)], key=c("DISTRICT_NUMBER", "SCHOOL_NUMBER")), by=c("DISTRICT_NUMBER", "SCHOOL_NUMBER"))
-		tmp.districts.and.schools <- subset(tmp.districts.and.schools, !is.na(DISTRICT_NUMBER) & !is.na(SCHOOL_NUMBER))
+		tmp.districts.and.schools <- tmp.districts.and.schools[!is.na(DISTRICT_NUMBER) & !is.na(SCHOOL_NUMBER)]
 		if (!sgPlot.demo.report) tmp.districts.and.schools <- tmp.districts.and.schools.size[tmp.districts.and.schools][order(V1, decreasing=TRUE)][,list(DISTRICT_NUMBER, SCHOOL_NUMBER)]
 
 
 	#### Invalidate bad SGPs (if necessary)
 
 		if ("VALID_SGP" %in% names(tmp.table)) {
-			tmp.table$SGP[tmp.table$VALID_SGP=="INVALID_SGP"] <- NA
-			if ("No SGP Provided" %in% levels(tmp.table$SGP_LEVEL)) {
-				levels(tmp.table$SGP_LEVEL) <- c(levels(tmp.table$SGP_LEVEL), "No SGP Provided")
-				tmp.table$SGP_LEVEL[tmp.table$VALID_SGP=="INVALID_SGP"] <- "No SGP Provided"
+			tmp.table[VALID_SGP=="INVALID_SGP", SGP:=NA]
+			if ("SGP_LEVEL" %in% names(tmp.table)) {
+				setattr(tmp.table$SGP_LEVEL, "levels", unique(c(levels(tmp.table$SGP_LEVEL), "No SGP Provided")))
+				tmp.table[VALID_SGP=="INVALID_SGP", SGP_LEVEL:="No SGP Provided"]
 			}
 		}
+
 
 	#### Create transformed scale scores and Cutscores (NOT necessary if wide data is provided)
 
@@ -851,7 +852,6 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 		sgPlot.data <- sgPlot.data[,ID:=gsub("_DUPS_[0-9]*", "", ID)]
 
 		variables.to.keep <- c("ID", "CONTENT_AREA", paste("CONTENT_AREA_LABELS", tmp.years.subset, sep="."),
-		# variables.to.keep <- c("ID", "CONTENT_AREA", "CONTENT_AREA_LABELS",
 			paste("LAST_NAME", tmp.last.year, sep="."), paste("FIRST_NAME", tmp.last.year, sep="."), paste("GRADE", tmp.years.subset, sep="."),
 			paste(my.sgp, tmp.years.subset, sep="."), paste("SCALE_SCORE", tmp.years.subset, sep="."), paste("TRANSFORMED_SCALE_SCORE", tmp.years.subset, sep="."),
 			paste("ACHIEVEMENT_LEVEL", tmp.years.subset, sep="."), paste(my.sgp.level, tmp.years.subset, sep="."),
