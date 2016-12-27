@@ -941,12 +941,12 @@ function(panel.data,	## REQUIRED
 	trajectories.and.cuts <- .get.trajectories.and.cuts(percentile.trajectories, !is.null(percentile.trajectory.values), tf.cutscores, toupper(projection.unit))
 
 	if (!is.null(achievement.level.prior.vname)) {
-		trajectories.and.cuts <- data.table(panel.data[["Panel_Data"]][,c("ID", achievement.level.prior.vname), with=FALSE], key="ID")[trajectories.and.cuts]
+		trajectories.and.cuts <- panel.data[["Panel_Data"]][,c("ID", achievement.level.prior.vname), with=FALSE][trajectories.and.cuts, on="ID"]
 		setnames(trajectories.and.cuts, achievement.level.prior.vname, "ACHIEVEMENT_LEVEL_PRIOR")
 	}
 
 	if (!is.null(return.percentile.trajectory.values) && percentile.trajectory.values %in% names(panel.data$Panel_Data)) {
-		trajectories.and.cuts <- data.table(panel.data[["Panel_Data"]][,c("ID", percentile.trajectory.values), with=FALSE], key="ID")[trajectories.and.cuts]
+		trajectories.and.cuts <- panel.data[["Panel_Data"]][,c("ID", percentile.trajectory.values), with=FALSE][trajectories.and.cuts, on="ID"]
 	}
 
 	if (!is.null(return.projection.group.identifier)) {
@@ -954,18 +954,17 @@ function(panel.data,	## REQUIRED
 	}
 
 	if (!is.null(return.projection.group.scale.scores)) {
-		my.tmp <- data.table(ss.data[,c("ID", grep("SS[.]", names(ss.data), value=TRUE)), with=FALSE], key="ID")[list(trajectories.and.cuts$ID),-1,with=FALSE]
+		my.tmp <- ss.data[,c("ID", grep("SS[.]", names(ss.data), value=TRUE)), with=FALSE][list(trajectories.and.cuts$ID),-1,with=FALSE,on="ID"]
 		trajectories.and.cuts[,SGP_PROJECTION_GROUP_SCALE_SCORES:=gsub("NA; ", "", do.call(paste, c(my.tmp, list(sep="; "))))]
 	}
 
 	if (!is.null(return.projection.group.dates)) {
-		my.tmp <- data.table(panel.data$Panel_Data[,c("ID", grep(return.projection.group.dates, names(panel.data$Panel_Data), value=TRUE)), with=FALSE], key="ID")[
-			list(trajectories.and.cuts$ID),-1,with=FALSE]
+		my.tmp <- panel.data$Panel_Data[,c("ID", grep(return.projection.group.dates, names(panel.data$Panel_Data), value=TRUE)), with=FALSE][list(trajectories.and.cuts$ID),-1,with=FALSE,on="ID"]
 		trajectories.and.cuts[,SGP_PROJECTION_GROUP_DATES:=gsub("NA; ", "", do.call(paste, c(my.tmp, list(sep="; "))))]
 	}
 
 	if ("YEAR_WITHIN" %in% names(panel.data[["Panel_Data"]])) {
-		trajectories.and.cuts <- data.table(panel.data[["Panel_Data"]][,c("ID", "YEAR_WITHIN"), with=FALSE], key="ID")[trajectories.and.cuts]
+		trajectories.and.cuts <- panel.data[["Panel_Data"]][,c("ID", "YEAR_WITHIN"), with=FALSE][trajectories.and.cuts, on="ID"]
 	}
 
 	SGProjections[[tmp.path]] <- rbindlist(list(SGProjections[[tmp.path]], trajectories.and.cuts), fill=TRUE)
