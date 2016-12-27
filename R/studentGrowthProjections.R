@@ -238,7 +238,7 @@ function(panel.data,	## REQUIRED
 							grade.projection.sequence.labels <- c(paste(tail(grade.progression, 1), "EOW", sep="."), grade.projection.sequence)
 							content_area.projection.sequence.labels <- c(tail(content_area.progression, 1), content_area.projection.sequence)
 							if (j==1) {
-								tmp.scores <- data.table(panel.data$Panel_Data[,c("ID", SGPt), with=FALSE], key="ID")[tmp.scores]
+								tmp.scores <- panel.data$Panel_Data[,c("ID", SGPt), with=FALSE][tmp.scores, on="ID"]
 								for (k in unlist(tmp.matrix@Version[['Matrix_Information']][['SGPt']][c("MAX_TIME_PRIOR", "MAX_TIME")])) {
 									tmp.scores[,TIME:=k]
 									tmp.time.shift.index <- getTimeShiftIndex(as.numeric(max(tmp.scores[[SGPt]])), tmp.matrix)
@@ -352,9 +352,11 @@ function(panel.data,	## REQUIRED
 					lapply(strsplit(percentile.trajectory.values, "_")[[1]], type.convert)[sapply(lapply(strsplit(percentile.trajectory.values, "_")[[1]], type.convert), is.numeric)][[1]])
 				if (length(grep("CURRENT", percentile.trajectory.values))==0) tmp.num.years.forward <- min(length(grade.projection.sequence), tmp.num.years.forward+1)
 
+#				tmp.indices <- as.integer(rep(dim(percentile.trajectories)[1]/uniqueN(percentile.trajectories[['ID']])*(seq(uniqueN(percentile.trajectories[['ID']]))-1),
+#					each=length(percentile.trajectory.values)) + c(t(as.matrix(data.table(panel.data[["Panel_Data"]],
+#					key="ID")[list(unique(percentile.trajectories, by='ID')[['ID']])][,percentile.trajectory.values, with=FALSE]))))
 				tmp.indices <- as.integer(rep(dim(percentile.trajectories)[1]/uniqueN(percentile.trajectories[['ID']])*(seq(uniqueN(percentile.trajectories[['ID']]))-1),
-					each=length(percentile.trajectory.values)) + c(t(as.matrix(data.table(panel.data[["Panel_Data"]],
-					key="ID")[list(unique(percentile.trajectories, by='ID')[['ID']])][,percentile.trajectory.values, with=FALSE]))))
+					each=length(percentile.trajectory.values)) + c(t(as.matrix(panel.data[["Panel_Data"]][list(unique(percentile.trajectories, by='ID')[['ID']]), on="ID"][,percentile.trajectory.values, with=FALSE]))))
 				tmp.traj <- percentile.trajectories[tmp.indices, 1:(2+tmp.num.years.forward-1), with=FALSE][,ID:=rep(unique(percentile.trajectories, by='ID')[['ID']], each=length(percentile.trajectory.values))]
 				if (tmp.num.years.forward==1) {
 					tmp.target.name <- tail(names(tmp.traj), 1)
