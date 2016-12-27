@@ -480,10 +480,8 @@ function(
 			for (grades.iter in grades) {
 				for (norm.group.iter in tmp.norm.group) {
 					if (all(is.na(tmp.norm.group))) {
-#						tmp.data.final <- tmp.data_1[tmp.data_1[['GRADE']]==grades.iter & !is.na(tmp.data_1[[use.sgp]]) & !is.na(SCALE_SCORE_PRIOR),]
 						tmp.data.final <- na.omit(tmp.data_1[GRADE==grades.iter], cols=c(use.sgp, "SCALE_SCORE_PRIOR"))
 					} else {
-#						tmp.data.final <- tmp.data_1[!is.na(tmp.data_1[[use.sgp]]) & !is.na(SCALE_SCORE_PRIOR) & grepl(norm.group.iter, tmp.data_1[[norm.group.var]]),]
 						tmp.data.final <- na.omit(tmp.data_1[grepl(norm.group.iter, get(norm.group.var))], cols=c(use.sgp, "SCALE_SCORE_PRIOR"))
 					}
 					## Set up more rigorous search for prior achievement.
