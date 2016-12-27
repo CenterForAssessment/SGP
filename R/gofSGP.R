@@ -465,7 +465,7 @@ function(
 
 	for (years.iter in years) {
 		for (content_areas.iter in content_areas) {
-			tmp.data_1 <- tmp.data[data.table("VALID_CASE", years.iter, content_areas.iter)][, intersect(variables.to.get, names(tmp.data)), with=FALSE]
+			tmp.data_1 <- tmp.data[list("VALID_CASE", years.iter, content_areas.iter)][, intersect(variables.to.get, names(tmp.data)), with=FALSE]
 			if (is.null(grades)) {
 				grades <- sort(unique(na.omit(tmp.data_1, cols=use.sgp), by="GRADE")[['GRADE']])
 			}

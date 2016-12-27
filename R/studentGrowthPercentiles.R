@@ -177,7 +177,7 @@ function(panel.data,         ## REQUIRED
 			s4Bs <- paste(s4Bs, "boundaries_", tmp.gp.iter[i], "=", bnd, ",", sep="")
 		}
 		if (!is.null(SGPt)) {
-			tmp.data <- data.table(Panel_Data[,c("ID", "TIME", "TIME_LAG"), with=FALSE], key="ID")[tmp.data][,c(names(tmp.data), "TIME", "TIME_LAG"), with=FALSE]
+			tmp.data <- Panel_Data[,c("ID", "TIME", "TIME_LAG"), with=FALSE][tmp.data, on="ID"][,c(names(tmp.data), "TIME", "TIME_LAG"), with=FALSE]
 			mod <- paste(mod, " + I(tmp.data[['TIME']]) + I(tmp.data[['TIME_LAG']])", sep="")
 		}
 
@@ -1550,7 +1550,7 @@ function(panel.data,         ## REQUIRED
 
 			if (is.character(calculate.confidence.intervals) | is.list(calculate.confidence.intervals)) {
 				if (is.null(calculate.confidence.intervals$confidence.quantiles) | identical(toupper(calculate.confidence.intervals$confidence.quantiles), "STANDARD_ERROR")) {
-					quantile.data[,SGP_STANDARD_ERROR:=round(data.table(ID=rep(simulation.data[[1]], dim(simulation.data)[2]-1), SGP=as.numeric(c(as.matrix(simulation.data)[,-1])))[,sd(SGP), keyby=ID][['V1']], digits=2)]
+					quantile.data[,SGP_STANDARD_ERROR:=round(data.table(ID=simulation.data[[1]], SGP=c(as.matrix(simulation.data)[,-1]))[,sd(SGP), keyby=ID][['V1']], digits=2)]
 				} else {
 					if (!(is.numeric(calculate.confidence.intervals$confidence.quantiles) & all(calculate.confidence.intervals$confidence.quantiles < 1) &
 						all(calculate.confidence.intervals$confidence.quantiles > 0))) {
@@ -1558,7 +1558,7 @@ function(panel.data,         ## REQUIRED
 					}
 					tmp.cq <- data.table(round(t(apply(simulation.data[, -1, with=FALSE], 1, quantile, probs=calculate.confidence.intervals$confidence.quantiles))))
 					quantile.data[,paste("SGP_", calculate.confidence.intervals$confidence.quantiles, "_CONFIDENCE_BOUND", sep=""):=tmp.cq]
-					quantile.data[,SGP_STANDARD_ERROR:=round(data.table(ID=simulation.data[[1]], SGP=as.numeric(c(as.matrix(simulation.data)[,-1])))[,sd(SGP), keyby=ID][['V1']], digits=2)]
+					quantile.data[,SGP_STANDARD_ERROR:=round(data.table(ID=simulation.data[[1]], SGP=c(as.matrix(simulation.data)[,-1]))[,sd(SGP), keyby=ID][['V1']], digits=2)]
 				}
 			}
 			Simulated_SGPs[[tmp.path]] <- rbindlist(list(simulation.data, Simulated_SGPs[[tmp.path]]), fill=TRUE)
@@ -1600,15 +1600,14 @@ function(panel.data,         ## REQUIRED
 		}
 
 		if (!is.null(return.norm.group.dates)) {
-			my.tmp <- data.table(Panel_Data[,c("ID", setdiff(grep("TIME", names(Panel_Data), value=TRUE), grep("TIME_LAG", names(Panel_Data), value=TRUE))), with=FALSE],
-				key="ID")[list(quantile.data$ID),-1,with=FALSE]
+			my.tmp <- Panel_Data[,c("ID", setdiff(grep("TIME", names(Panel_Data), value=TRUE), grep("TIME_LAG", names(Panel_Data), value=TRUE))), with=FALSE][list(quantile.data$ID),-1,with=FALSE,on="ID"]
             my.tmp <- my.tmp[,tail(seq(dim(my.tmp)[2]), length(tmp.gp)),with=FALSE]
 			quantile.data[,SGP_NORM_GROUP_DATES:=gsub("NA; ", "", do.call(paste, c(as.data.table(lapply(my.tmp, function(x) as.Date(x, origin="1970-01-01"))), list(sep="; "))))]
 		}
 
 		if (!is.null(return.norm.group.scale.scores)) {
-			my.tmp <- data.table(ss.data[,c("ID", names(tmp.data)[-1]), with=FALSE], key="ID")[list(quantile.data$ID),-1,with=FALSE]
-			quantile.data[,SGP_NORM_GROUP_SCALE_SCORES:=gsub("NA; ", "", do.call(paste, c(my.tmp, list(sep="; "))))]
+			tmp.scale_scores <- ss.data[,c("ID", names(tmp.data)[-1]), with=FALSE][list(quantile.data$ID),-1,with=FALSE,on="ID"]
+			quantile.data[,SGP_NORM_GROUP_SCALE_SCORES:=gsub("NA; ", "", do.call(paste, c(tmp.scale_scores, list(sep="; "))))]
 		}
 
 		if ((is.character(goodness.of.fit) | goodness.of.fit==TRUE) & dim(quantile.data)[1] <= goodness.of.fit.minimum.n) {
@@ -1717,7 +1716,7 @@ function(panel.data,         ## REQUIRED
 		if (identical(sgp.labels[['my.extra.label']], "EQUATED") & "SGP_NORM_GROUP" %in% names(quantile.data)) setnames(quantile.data, gsub("SGP_NORM_GROUP", "SGP_NORM_GROUP_EQUATED", names(quantile.data)))
 
 		if (!is.null(additional.vnames.to.return)) {
-			quantile.data <- data.table(panel.data[["Panel_Data"]][,c("ID", names(additional.vnames.to.return)), with=FALSE], key="ID")[quantile.data]
+			quantile.data <- panel.data[["Panel_Data"]][,c("ID", names(additional.vnames.to.return)), with=FALSE][quantile.data, on="ID"]
 			setnames(quantile.data, names(additional.vnames.to.return), unlist(additional.vnames.to.return))
 		}
 
