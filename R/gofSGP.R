@@ -10,7 +10,7 @@ function(
 	output.format="PDF",
 	color.scale="reds.and.blues") {
 
-	VALID_CASE <- CONTENT_AREA <- YEAR <- SCALE_SCORE_PRIOR <- ACHIEVEMENT_LEVEL_PRIOR <- NULL
+	VALID_CASE <- CONTENT_AREA <- YEAR <- SCALE_SCORE_PRIOR <- ACHIEVEMENT_LEVEL_PRIOR <- GRADE <- NULL
 
 	### Create state (if NULL) from sgp_object (if possible)
 
@@ -454,11 +454,11 @@ function(
 	### Get arguments
 
 	if (is.null(years)) {
-		years <- unique(tmp.data[!is.na(tmp.data[[use.sgp]]),][['YEAR']])
+		years <- unique(na.omit(tmp.data, cols=use.sgp), by="YEAR")[['YEAR']]
 	}
 
 	if (is.null(content_areas)) {
-		content_areas <- unique(tmp.data[!is.na(tmp.data[[use.sgp]]),][['CONTENT_AREA']])
+		content_areas <- unique(na.omit(tmp.data, cols=use.sgp), by="CONTENT_AREA")[['CONTENT_AREA']]
 	}
 
 	setkey(tmp.data, VALID_CASE, YEAR, CONTENT_AREA)
@@ -467,7 +467,7 @@ function(
 		for (content_areas.iter in content_areas) {
 			tmp.data_1 <- tmp.data[data.table("VALID_CASE", years.iter, content_areas.iter)][, intersect(variables.to.get, names(tmp.data)), with=FALSE]
 			if (is.null(grades)) {
-				grades <- sort(unique(tmp.data_1[!is.na(tmp.data_1[[use.sgp]]),][['GRADE']]))
+				grades <- sort(unique(na.omit(tmp.data_1, cols=use.sgp), by="GRADE")[['GRADE']])
 			}
 
 			if (all(grades=="EOCT")) { # use grade progression norm groups for EOCT subjects
@@ -480,12 +480,14 @@ function(
 			for (grades.iter in grades) {
 				for (norm.group.iter in tmp.norm.group) {
 					if (all(is.na(tmp.norm.group))) {
-						tmp.data.final <- tmp.data_1[tmp.data_1[['GRADE']]==grades.iter & !is.na(tmp.data_1[[use.sgp]]) & !is.na(SCALE_SCORE_PRIOR),]
+#						tmp.data.final <- tmp.data_1[tmp.data_1[['GRADE']]==grades.iter & !is.na(tmp.data_1[[use.sgp]]) & !is.na(SCALE_SCORE_PRIOR),]
+						tmp.data.final <- na.omit(tmp.data_1[GRADE==grades.iter], cols=c(use.sgp, "SCALE_SCORE_PRIOR"))
 					} else {
-						tmp.data.final <- tmp.data_1[!is.na(tmp.data_1[[use.sgp]]) & !is.na(SCALE_SCORE_PRIOR) & grepl(norm.group.iter, tmp.data_1[[norm.group.var]]),]
+#						tmp.data.final <- tmp.data_1[!is.na(tmp.data_1[[use.sgp]]) & !is.na(SCALE_SCORE_PRIOR) & grepl(norm.group.iter, tmp.data_1[[norm.group.var]]),]
+						tmp.data.final <- na.omit(tmp.data_1[grepl(norm.group.iter, get(norm.group.var))], cols=c(use.sgp, "SCALE_SCORE_PRIOR"))
 					}
 					## Set up more rigorous search for prior achievement.
-					if ("ACHIEVEMENT_LEVEL_PRIOR" %in% names(tmp.data.final) && !all(is.na(tmp.data.final[['ACHIEVEMENT_LEVEL_PRIOR']]))) {
+					if ("ACHIEVEMENT_LEVEL_PRIOR" %in% names(tmp.data.final) && any(!is.na(tmp.data.final[['ACHIEVEMENT_LEVEL_PRIOR']]))) {
 						tmp.prior.ach <- TRUE
 					} else {
 						tmp.prior.ach <- FALSE

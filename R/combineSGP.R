@@ -328,7 +328,7 @@ function(
 
 		### SGP_TARGET_CONTENT_AREA calculation
 
-		terminal.content_areas <- unique(slot.data[!is.na(target.args[['my.sgp.target']][1])], by='CONTENT_AREA')[['CONTENT_AREA']]
+		terminal.content_areas <- unique(na.omit(slot.data, cols=target.args[['my.sgp.target']][1]), by='CONTENT_AREA')[['CONTENT_AREA']]
 		if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]])) {
 			terminal.content_areas <- intersect(terminal.content_areas, sapply(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]], tail, 1))
 		}
