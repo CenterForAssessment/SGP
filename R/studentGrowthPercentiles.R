@@ -1550,7 +1550,7 @@ function(panel.data,         ## REQUIRED
 
 			if (is.character(calculate.confidence.intervals) | is.list(calculate.confidence.intervals)) {
 				if (is.null(calculate.confidence.intervals$confidence.quantiles) | identical(toupper(calculate.confidence.intervals$confidence.quantiles), "STANDARD_ERROR")) {
-					quantile.data[,SGP_STANDARD_ERROR:=round(data.table(ID=simulation.data[[1]], SGP=c(as.matrix(simulation.data)[,-1]))[,sd(SGP), keyby=ID][['V1']], digits=2)]
+					quantile.data[,SGP_STANDARD_ERROR:=round(data.table(ID=simulation.data[[1]], SGP=c(as.matrix(simulation.data[,-1,with=FALSE])))[,sd(SGP), keyby=ID][['V1']], digits=2)]
 				} else {
 					if (!(is.numeric(calculate.confidence.intervals$confidence.quantiles) & all(calculate.confidence.intervals$confidence.quantiles < 1) &
 						all(calculate.confidence.intervals$confidence.quantiles > 0))) {
@@ -1558,7 +1558,7 @@ function(panel.data,         ## REQUIRED
 					}
 					tmp.cq <- data.table(round(t(apply(simulation.data[, -1, with=FALSE], 1, quantile, probs=calculate.confidence.intervals$confidence.quantiles))))
 					quantile.data[,paste("SGP_", calculate.confidence.intervals$confidence.quantiles, "_CONFIDENCE_BOUND", sep=""):=tmp.cq]
-					quantile.data[,SGP_STANDARD_ERROR:=round(data.table(ID=simulation.data[[1]], SGP=c(as.matrix(simulation.data)[,-1]))[,sd(SGP), keyby=ID][['V1']], digits=2)]
+					quantile.data[,SGP_STANDARD_ERROR:=round(data.table(ID=simulation.data[[1]], SGP=c(as.matrix(simulation.data[,-1,with=FALSE])))[,sd(SGP), keyby=ID][['V1']], digits=2)]
 				}
 			}
 			Simulated_SGPs[[tmp.path]] <- rbindlist(list(simulation.data, Simulated_SGPs[[tmp.path]]), fill=TRUE)
