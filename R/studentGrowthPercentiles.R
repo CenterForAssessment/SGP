@@ -1467,7 +1467,7 @@ function(panel.data,         ## REQUIRED
 				tmp.predictions <- .get.percentile.predictions(tmp.data, tmp.matrix)
 				tmp.quantiles[[j]] <- data.table(ID=tmp.data[[1L]], ORDER=tmp.orders[j], SGP=.get.quantiles(tmp.predictions, tmp.data[[dim(tmp.data)[2L]]]))
 				if (csem.tf) {
-					if (is.null(calculate.confidence.intervals[['simulation.iterations']])) calculate.confidence.intervals[['simulation.iterations']] <- 100
+					if (is.null(calculate.confidence.intervals[['simulation.iterations']])) calculate.confidence.intervals[['simulation.iterations']] <- 100L
 					if (!is.null(calculate.confidence.intervals[['variable']])) {
 						tmp.csem.variable <- Panel_Data[Panel_Data[[1L]] %in% ss.data[list(tmp.data[[1L]])][[1L]]][[calculate.confidence.intervals[['variable']]]]
 					} else {
