@@ -111,7 +111,7 @@ function(panel.data,	## REQUIRED
 			tmp.cutscore.state <- sapply(strsplit(names(Cutscores)[grep(content_area, names(Cutscores))], "[.]"), function(x) x[2L])
 			if (my.state %in% tmp.cutscore.state) {
 				content_area <- paste(content_area, my.state, sep=".")
-				year.split.index <- -2
+				year.split.index <- -2L
 			} else year.split.index <- -1L
 		} else year.split.index <- -1L
 
@@ -143,7 +143,7 @@ function(panel.data,	## REQUIRED
 							SGPt) {
 
 		add.missing.taus.to.matrix <- function(my.matrix) {
-			augmented.mtx <- matrix(NA, nrow=nrow(my.matrix), ncol=100L)
+			augmented.mtx <- matrix(NA, nrow=dim(my.matrix)[1L], ncol=100L)
 			tau.num <- ceiling(as.numeric(substr(colnames(my.matrix), 6, nchar(colnames(my.matrix))))*100L)
 			na.replace <- 1:100 %in% tau.num
 			augmented.mtx[,na.replace] <- my.matrix
@@ -220,7 +220,7 @@ function(panel.data,	## REQUIRED
 					completed.ids <- c(unique(tmp.dt, by=(1L))[[1L]], completed.ids)
 					tmp.dt <- tmp.dt[list(rep(tmp.dt[[1L]], 100L))]
 					missing.taus <- FALSE; na.replace <- NULL # put these outside of j loop so that stays true/non-null if only SOME of coef matrices have missing column/taus.
-					label.iter <- 1
+					label.iter <- 1L
 
 					for (j in seq_along(projection.matrices[[i]])) {
 						tmp.matrix <- projection.matrices[[i]][[j]]
@@ -235,7 +235,7 @@ function(panel.data,	## REQUIRED
 						tmp.scores <- eval(parse(text=paste(int, substring(mod, 2L), ", key='ID')", sep="")))
 
 						if (!is.null(SGPt)) {
-							grade.projection.sequence.labels <- c(paste(tail(grade.progression, 1), "EOW", sep="."), grade.projection.sequence)
+							grade.projection.sequence.labels <- c(paste(tail(grade.progression, 1L), "EOW", sep="."), grade.projection.sequence)
 							content_area.projection.sequence.labels <- c(tail(content_area.progression, 1), content_area.projection.sequence)
 							if (j==1) {
 								tmp.scores <- panel.data$Panel_Data[,c("ID", SGPt), with=FALSE][tmp.scores, on="ID"]
@@ -265,7 +265,7 @@ function(panel.data,	## REQUIRED
 							} else {
 								tmp.scores[,TIME:=tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]]
 								tmp.time.shift.index <- getTimeShiftIndex(as.numeric(tmp.max.time), tmp.matrix)
-								tmp.scores[,TIME_LAG:=(tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]+365*tmp.time.shift.index)-tmp.max.time]
+								tmp.scores[,TIME_LAG:=(tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]+365L*tmp.time.shift.index)-tmp.max.time]
 								tmp.scores[,TMP_KEY:=1:100]
 								tmp.max.time <- tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]
 								tmp.dt[,TEMP_1:=tmp.scores[, as.matrix(.SD) %*% tmp.matrix@.Data[,TMP_KEY], by=TMP_KEY, .SDcols=2:(dim(tmp.scores)[2L]-1L)][['V1']]]
@@ -279,10 +279,9 @@ function(panel.data,	## REQUIRED
 											na.replace=na.replace,
 											equated.year=yearIncrement(sgp.projections.equated[['Year']], -1L))]
 
-								setnames(tmp.dt, "TEMP_2",
-									paste("SS", grade.projection.sequence.labels[label.iter], content_area.projection.sequence.labels[label.iter], sep="."))
+								setnames(tmp.dt, "TEMP_2", paste("SS", grade.projection.sequence.labels[label.iter], content_area.projection.sequence.labels[label.iter], sep="."))
 								tmp.dt[,TEMP_1:=NULL]
-								label.iter <- label.iter + 1
+								label.iter <- label.iter + 1L
 							}
 						} else {
 							grade.projection.sequence.labels <- grade.projection.sequence
@@ -299,10 +298,9 @@ function(panel.data,	## REQUIRED
 											na.replace=na.replace,
 											equated.year=yearIncrement(sgp.projections.equated[['Year']], -1L))]
 
-							setnames(tmp.dt, "TEMP_2",
-								paste("SS", grade.projection.sequence.labels[label.iter], content_area.projection.sequence.labels[label.iter], sep="."))
+							setnames(tmp.dt, "TEMP_2", paste("SS", grade.projection.sequence.labels[label.iter], content_area.projection.sequence.labels[label.iter], sep="."))
 							tmp.dt[,TEMP_1:=NULL]
-							label.iter <- label.iter + 1
+							label.iter <- label.iter + 1L
 						}
 					} ## END j loop
 					setkeyv(tmp.dt, names(tmp.dt)[1L])
@@ -688,7 +686,7 @@ function(panel.data,	## REQUIRED
 		}
 	}
 
-	if ((tf.cutscores | is.character(percentile.trajectory.values)) & exists("tmp.cutscores")) {
+	if ((tf.cutscores || is.character(percentile.trajectory.values)) && exists("tmp.cutscores")) {
 		Cutscores <- tmp.cutscores
 	}
 
@@ -739,11 +737,11 @@ function(panel.data,	## REQUIRED
 		if (!is.null(year_lags.progression)) year_lags.progression <- tail(year_lags.progression, length(grade.progression)-1L)
 	}
 
-	tmp.last <- tail(grade.progression, 1)
-	ss.data <- data.table(ss.data[,c(1, (1+num.panels-(length(grade.progression)-1L)):(1+num.panels), (1L+2*num.panels-(length(grade.progression)-1L)):(1L+2*num.panels)), with=FALSE],
+	tmp.last <- tail(grade.progression, 1L)
+	ss.data <- data.table(ss.data[,c(1L, (1L+num.panels-(length(grade.progression)-1L)):(1L+num.panels), (1L+2L*num.panels-(length(grade.progression)-1L)):(1L+2L*num.panels)), with=FALSE],
 			key=names(ss.data)[1L])
 	num.panels <- (dim(ss.data)[2L]-1L)/2L
-	setnames(ss.data, c(1, (1+num.panels-length(grade.progression)+1L):(1L+num.panels), (1L+2*num.panels-length(grade.progression)+1L):(1L+2*num.panels)),
+	setnames(ss.data, c(1L, (1L+num.panels-length(grade.progression)+1L):(1L+num.panels), (1L+2L*num.panels-length(grade.progression)+1L):(1L+2L*num.panels)),
 		c("ID", paste("GD", grade.progression, content_area.progression, sep="."), paste("SS", grade.progression, content_area.progression, sep=".")))
 
 
