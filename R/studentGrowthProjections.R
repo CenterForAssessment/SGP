@@ -439,7 +439,7 @@ function(panel.data,	## REQUIRED
 			}
 
 			for (n.state in seq(states)) {
-				k <- 1
+				k <- 1L
 				cuts.arg <- names.arg <- character()
 				for (i in seq_along(grade.projection.sequence)) {
  					my.cutscore.state.year <- get.my.cutscore.state.year.sgprojection(Cutscores, content_area.projection.sequence[i], yearIncrement(sgp.labels[['my.year']], i, lag.increment), my.state=states[n.state])
