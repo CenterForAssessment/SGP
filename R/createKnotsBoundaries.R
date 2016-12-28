@@ -6,7 +6,6 @@ function(tmp.data,
 
 	tmp.grade.list <- tmp.list <- list()
 
-	my.key <- key(tmp.data)
 	setkeyv(tmp.data, c("VALID_CASE", "CONTENT_AREA", "GRADE"))
 
 	for (my.list.label in unique(tmp.data["VALID_CASE"], by="CONTENT_AREA")[["CONTENT_AREA"]]) {
@@ -23,6 +22,6 @@ function(tmp.data,
 		setattr(tmp.list[[my.list.label]], "names", paste(rep(c("knots_", "boundaries_", "loss.hoss_"), length(tmp.grade.list[[my.list.label]])),
 			rep(tmp.grade.list[[my.list.label]], each=3), sep=""))
 	}
-	setkeyv(tmp.data, my.key)
+
 	return(tmp.list)
 } ## END createKnotsBoundaries
