@@ -1501,7 +1501,7 @@ function(panel.data,         ## REQUIRED
                     tmp.percentile.cuts[[paste("ORDER", j, sep="_")]] <- data.table(ID=tmp.data[[1L]], .get.percentile.cuts(tmp.predictions))
                     if (!is.null(SGPt.max.time)) tmp.percentile.cuts[[paste("ORDER", j, "MAX_TIME", sep="_")]] <- data.table(ID=tmp.data[[1L]], .get.percentile.cuts(.get.percentile.predictions(tmp.data, tmp.matrix, SGPt.max.time)))
 				}
-				if ((is.character(goodness.of.fit) || goodness.of.fit==TRUE } || return.prior.scale.score) & j==1) prior.ss <- tmp.data[[dim(tmp.data)[2L]-1L]]
+				if ((is.character(goodness.of.fit) || goodness.of.fit==TRUE || return.prior.scale.score) & j==1) prior.ss <- tmp.data[[dim(tmp.data)[2L]-1L]]
 				if (exact.grade.progression.sequence && return.prior.scale.score) prior.ss <- tmp.data[[dim(tmp.data)[2L]-1L]]
 			} ### END if (dim(tmp.data)[1L] > 0)
 		} ## END j loop
