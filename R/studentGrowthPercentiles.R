@@ -83,7 +83,7 @@ function(panel.data,         ## REQUIRED
 		num.panels <- (dim(data)[2L]-1L)/2L
 
 		if (knots.boundaries.by.panel) {
-			tmp.years <- rep(yearIncrement(sgp.labels$my.year, (-num.panels+1):-1L), each=dim(data)[1L])
+			tmp.years <- rep(yearIncrement(sgp.labels$my.year, (-num.panels+1L):-1L), each=dim(data)[1L])
 		} else {
 			tmp.years <- rep(sgp.labels$my.year, dim(data)[1L]*(num.panels-1L))
 		}
@@ -106,7 +106,7 @@ function(panel.data,         ## REQUIRED
 
 	.get.panel.data <- function(tmp.data, k, by.grade, tmp.gp) {
 		if (by.grade) {
-            if (is.character(tmp.gp)) tmp.gp.gpd <- shQuote(rev(tmp.gp)[seq(k+1)]) else tmp.gp.gpd <- rev(tmp.gp)[seq(k+1)]
+            if (is.character(tmp.gp)) tmp.gp.gpd <- shQuote(rev(tmp.gp)[seq(k+1L)]) else tmp.gp.gpd <- rev(tmp.gp)[seq(k+1L)]
             eval(parse(text=paste("na.omit(tmp.data[.(", paste(tmp.gp.gpd, collapse=", "), "), on=names(tmp.data)[c(", paste(1+num.panels-(0:k), collapse=", ") , ")]], cols=names(tmp.data)[c(",paste(1+2*num.panels-0:k, collapse=", "), ")])[,c(1, ", paste(rev(1+2*num.panels-0:k), collapse=", "),  ")]", sep="")))
 		} else {
             eval(parse(text=paste("na.omit(tmp.data, cols=names(tmp.data)[c(",paste(1+2*num.panels-0:k, collapse=", "), ")])[,c(1, ", paste(rev(1+2*num.panels-0:k), collapse=", "),  ")]", sep="")))
@@ -166,9 +166,9 @@ function(panel.data,         ## REQUIRED
 		mod <- character()
 		s4Ks <- "Knots=list("
 		s4Bs <- "Boundaries=list("
-		tmp.gp.iter <- rev(tmp.gp)[2:(k+1)]
+		tmp.gp.iter <- rev(tmp.gp)[2:(k+1L)]
 		for (i in seq_along(tmp.gp.iter)) {
-			my.path.knots.boundaries <- get.my.knots.boundaries.path(rev(content_area.progression)[i+1], yearIncrement(rev(year.progression)[i+1], 0))
+			my.path.knots.boundaries <- get.my.knots.boundaries.path(rev(content_area.progression)[i+1L], yearIncrement(rev(year.progression)[i+1L], 0))
 			.check.knots.boundaries(names(eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, sep="")))), tmp.gp.iter[i])
 			knt <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['knots_", tmp.gp.iter[i], "']]", sep="")
 			bnd <- paste("Knots_Boundaries", my.path.knots.boundaries, "[['boundaries_", tmp.gp.iter[i], "']]", sep="")
@@ -220,10 +220,10 @@ function(panel.data,         ## REQUIRED
 				Model=paste("rq.sgp(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=taus, data=tmp.data, method=", rq.method, ")", sep=""),
 				SGPt=if (is.null(SGPt)) NULL else list(VARIABLES=unlist(SGPt), MAX_TIME=max(tmp.data$TIME, na.rm=TRUE), MAX_TIME_PRIOR=max(tmp.data$TIME-tmp.data$TIME_LAG, na.rm=TRUE), RANGE_TIME_LAG=range(tmp.data$TIME_LAG))))
 
-		eval(parse(text=paste("new('splineMatrix', tmp.mtx, ", substring(s4Ks, 1, nchar(s4Ks)-1), "), ", substring(s4Bs, 1, nchar(s4Bs)-1), "), ",
-			"Content_Areas=list(as.character(tail(content_area.progression, k+1))), ",
-			"Grade_Progression=list(as.character(tail(tmp.slot.gp, k+1))), ",
-			"Time=list(as.character(tail(year.progression, k+1))), ",
+		eval(parse(text=paste("new('splineMatrix', tmp.mtx, ", substring(s4Ks, 1, nchar(s4Ks)-1L), "), ", substring(s4Bs, 1L, nchar(s4Bs)-1L), "), ",
+			"Content_Areas=list(as.character(tail(content_area.progression, k+1L))), ",
+			"Grade_Progression=list(as.character(tail(tmp.slot.gp, k+1L))), ",
+			"Time=list(as.character(tail(year.progression, k+1L))), ",
 			"Time_Lags=list(as.numeric(tail(year_lags.progression, k))), ",
 			"Version=tmp.version)", sep="")))
 
@@ -296,7 +296,7 @@ function(panel.data,         ## REQUIRED
 	}
 
 	.get.percentile.cuts <- function(data1) {
-		tmp <- round(data1[ , percentile.cuts+1, drop=FALSE], digits=percuts.digits)
+		tmp <- round(data1[ , percentile.cuts+1L, drop=FALSE], digits=percuts.digits)
 		if (convert.using.loss.hoss) {
 			my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels[['my.subject']], as.character(sgp.labels[['my.year']]))
 			bnd <- eval(parse(text=paste("Knots_Boundaries", my.path.knots.boundaries, "[['loss.hoss_", tmp.last, "']]", sep="")))
@@ -309,7 +309,7 @@ function(panel.data,         ## REQUIRED
 
     .get.best.cuts <- function(list.of.cuts, label.suffix=NULL) {
         cuts.best <- data.table(rbindlist(list.of.cuts), key="ID")
-        cuts.best <- cuts.best[c(which(!duplicated(cuts.best, by=key(cuts.best)))[-1]-1, nrow(cuts.best))][,-1, with=FALSE]
+        cuts.best <- cuts.best[c(which(!duplicated(cuts.best, by=key(cuts.best)))[-1L]-1L, nrow(cuts.best))][,-1L, with=FALSE]
         if (!is.null(label.suffix)) setnames(cuts.best, names(cuts.best), paste(names(cuts.best), label.suffix, sep="_"))
         return(cuts.best)
     }
@@ -390,10 +390,10 @@ function(panel.data,         ## REQUIRED
 						Model=paste("rq.sgp(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=taus, data=tmp.data, method=", rq.method, ")", sep=""),
 						SGPt=if (is.null(SGPt)) NULL else list(VARIABLES=unlist(SGPt), MAX_TIME=max(tmp.data$TIME, na.rm=TRUE), MAX_TIME_PRIOR=max(tmp.data$TIME-tmp.data$TIME_LAG, na.rm=TRUE), RANGE_TIME_LAG=range(tmp.data$TIME_LAG))))
 
-			eval(parse(text=paste("new('splineMatrix', tmp.mtx, ", substring(s4Ks, 1, nchar(s4Ks)-1), "), ", substring(s4Bs, 1, nchar(s4Bs)-1), "), ",
-				"Content_Areas=list(as.character(tail(content_area.progression, k+1))), ",
-				"Grade_Progression=list(as.character(tail(tmp.slot.gp, k+1))), ",
-				"Time=list(as.character(tail(year.progression, k+1))), ",
+			eval(parse(text=paste("new('splineMatrix', tmp.mtx, ", substring(s4Ks, 1, nchar(s4Ks)-1L), "), ", substring(s4Bs, 1L, nchar(s4Bs)-1L), "), ",
+				"Content_Areas=list(as.character(tail(content_area.progression, k+1L))), ",
+				"Grade_Progression=list(as.character(tail(tmp.slot.gp, k+1L))), ",
+				"Time=list(as.character(tail(year.progression, k+1L))), ",
 				"Time_Lags=list(as.numeric(tail(year_lags.progression, k))), ",
 				"Version=tmp.version)", sep="")))
 		}
@@ -404,11 +404,11 @@ function(panel.data,         ## REQUIRED
 			lh.ca <- rev(content_area.progression)
 			lh.gp <- rev(tmp.gp)
 		} else {
-			loss.hoss <- matrix(nrow=2, ncol=length(tmp.gp)-1)
-			lh.ca <- rev(content_area.progression)[-1]
-			lh.gp <- rev(tmp.gp)[-1]
+			loss.hoss <- matrix(nrow=2, ncol=length(tmp.gp)-1L)
+			lh.ca <- rev(content_area.progression)[-1L]
+			lh.gp <- rev(tmp.gp)[-1L]
 			if (!is.null(csem.data.vnames)) {
-				if (length(content_area.progression) == length(csem.data.vnames)) csem.data.vnames <- head(csem.data.vnames, -1)
+				if (length(content_area.progression) == length(csem.data.vnames)) csem.data.vnames <- head(csem.data.vnames, -1L)
 			}
 		}
 		if (!is.null(csem.loss.hoss)) {
@@ -436,24 +436,24 @@ function(panel.data,         ## REQUIRED
 		for (k in simex.matrix.priors) {
 			tmp.data <- .get.panel.data(ss.data, k, by.grade, tmp.gp)
 			tmp.num.variables <- dim(tmp.data)[2L]
-			tmp.gp.iter <- rev(tmp.gp)[2:(k+1)]
+			tmp.gp.iter <- rev(tmp.gp)[2:(k+1L)]
 			if (dependent.var.error) {
-				perturb.var <- rev(tmp.gp)[1:(k+1)]
+				perturb.var <- rev(tmp.gp)[1:(k+1L)]
 				start.index <- 1
-				num.perturb.vars <- tmp.num.variables+1
+				num.perturb.vars <- tmp.num.variables+1L
 			} else {
 				perturb.var <- tmp.gp.iter
 				start.index <- 2
 				num.perturb.vars <- tmp.num.variables
 			}
-			tmp.ca.iter <- rev(content_area.progression)[start.index:(k+1)]
-			tmp.yr.iter <- rev(year.progression)[start.index:(k+1)]
+			tmp.ca.iter <- rev(content_area.progression)[start.index:(k+1L)]
+			tmp.yr.iter <- rev(year.progression)[start.index:(k+1L)]
 			if (is.null(csem.data.vnames)) {
 				csem.int <- data.table(matrix(nrow=dim(tmp.data)[1L], ncol=length(perturb.var))) # build data.table to store interpolated csem
 				setnames(csem.int, paste("icsem", perturb.var, tmp.ca.iter, tmp.yr.iter, sep=""))
 			} else {
 				csem.int <- data.table(Panel_Data[,c("ID", intersect(csem.data.vnames, names(Panel_Data))),with=FALSE], key="ID")[list(tmp.data$ID)]
-				setnames(csem.int, csem.data.vnames, paste("icsem", head(tmp.gp, -1), head(content_area.progression, -1), head(year.progression, -1), sep=""))
+				setnames(csem.int, csem.data.vnames, paste("icsem", head(tmp.gp, -1L), head(content_area.progression, -1L), head(year.progression, -1L), sep=""))
 			}
 
 			# interpolate csem for all scale scores except that of the last grade
@@ -490,9 +490,9 @@ function(panel.data,         ## REQUIRED
 				fitted[[paste("order_", k, sep="")]] <- matrix(0, nrow=length(lambda), ncol=dim(tmp.data)[1L]*length(taus))
 				tmp.matrix <- getsplineMatrices(
 					Coefficient_Matrices[[tmp.path.coefficient.matrices]],
-					tail(content_area.progression, k+1),
-					tail(grade.progression, k+1),
-					tail(year.progression, k+1),
+					tail(content_area.progression, k+1L),
+					tail(grade.progression, k+1L),
+					tail(year.progression, k+1L),
 					tail(year_lags.progression, k),
 					my.matrix.order=k,
 					my.matrix.time.dependency=SGPt)[[1L]]
@@ -506,7 +506,7 @@ function(panel.data,         ## REQUIRED
 			if (!is.null(csem.data.vnames)) {
 				tmp.data <- merge(tmp.data, csem.int, by="ID")
 			}
-			for (L in lambda[-1]) {
+			for (L in lambda[-1L]) {
 				big.data <- rbindlist(replicate(B, tmp.data, simplify = FALSE))
 				big.data[, b := rep(1:B, each=dim(tmp.data)[1L])]
 				if (dependent.var.error) {
@@ -544,7 +544,7 @@ function(panel.data,         ## REQUIRED
 																	"']] <- c(lh[,V1], lh[,V2])", sep="")))
 					}
 
-					if (dependent.var.error) setnames(big.data, num.perturb.vars-g, paste("prior_", g-1, sep="")) else setnames(big.data, num.perturb.vars-g, paste("prior_", g, sep=""))
+					if (dependent.var.error) setnames(big.data, num.perturb.vars-g, paste("prior_", g-1L, sep="")) else setnames(big.data, num.perturb.vars-g, paste("prior_", g, sep=""))
 					setkey(big.data, b, ID)
 				}
 				if (dependent.var.error) setnames(big.data, tmp.num.variables, "final_yr")
@@ -568,10 +568,10 @@ function(panel.data,         ## REQUIRED
 				if (!is.null(simex.use.my.coefficient.matrices)) { # Element from the 'calculate.simex' argument list.
 					available.matrices <- unlist(getsplineMatrices(
 						Coefficient_Matrices[[paste(tmp.path.coefficient.matrices, '.SIMEX', sep="")]][[
-							paste("qrmatrices", tail(tmp.gp,1), k, sep="_")]][[paste("lambda_", L, sep="")]],
-						tail(content_area.progression, k+1),
-						tail(grade.progression, k+1),
-						tail(year.progression, k+1),
+							paste("qrmatrices", tail(tmp.gp,1L), k, sep="_")]][[paste("lambda_", L, sep="")]],
+						tail(content_area.progression, k+1L),
+						tail(grade.progression, k+1L),
+						tail(year.progression, k+1L),
 						tail(year_lags.progression, k),
 						my.exact.grade.progression.sequence=TRUE,
 						return.multiple.matrices=TRUE,
@@ -663,7 +663,7 @@ function(panel.data,         ## REQUIRED
 					stopParallel(tmp.par.config, par.start)
 				}
                 if (!is.null(tmp.par.config)) unlink(tmp.dbname)
-			} ### END for (L in lambda[-1])
+			} ### END for (L in lambda[-1L])
 			if (verbose) messageSGP(c("\t\t", rev(content_area.progression)[1L], " Grade ", rev(tmp.gp)[1L], " Order ", k, " Simulation process complete ", prettyDate()))
 
 			if (calculate.simex.sgps) {
@@ -671,7 +671,7 @@ function(panel.data,         ## REQUIRED
 					LINEAR = fit <- lm(fitted[[paste("order_", k, sep="")]] ~ lambda),
 					QUADRATIC = fit <- lm(fitted[[paste("order_", k, sep="")]] ~ lambda + I(lambda^2)))
 				extrap[[paste("order_", k, sep="")]] <-
-					matrix(.smooth.bound.iso.row(data.table(ID=seq.int(dim(tmp.data)[1L]), X=predict(fit, newdata=data.frame(lambda=-1))[1L,]), isotonize, sgp.loss.hoss.adjustment),
+					matrix(.smooth.bound.iso.row(data.table(ID=seq.int(dim(tmp.data)[1L]), X=predict(fit, newdata=data.frame(lambda=-1L))[1L,]), isotonize, sgp.loss.hoss.adjustment),
 						ncol=length(taus), byrow=TRUE)
 				tmp.quantiles.simex[[k]] <- data.table(ID=tmp.data[["ID"]], SIMEX_ORDER=k,
 					SGP_SIMEX=.get.quantiles(extrap[[paste("order_", k, sep="")]], tmp.data[[tmp.num.variables]]))
@@ -689,18 +689,18 @@ function(panel.data,         ## REQUIRED
 			tmp.quantile.data.simex <- ddcast(quantile.data.simex, ID~SIMEX_ORDER, value.var=setdiff(names(quantile.data.simex), c("ID", "SIMEX_ORDER")), sep="_SIMEX_ORDER_")
 			setnames(tmp.quantile.data.simex, setdiff(names(tmp.quantile.data.simex), c("ID", "SGP_SIMEX", "SIMEX_ORDER")), paste("SGP_SIMEX_ORDER",
 				setdiff(names(tmp.quantile.data.simex), c("ID", "SGP_SIMEX", "SIMEX_ORDER")), sep="_"))
-			quantile.data.simex <- data.table(tmp.quantile.data.simex, SGP_SIMEX=quantile.data.simex[c(which(!duplicated(quantile.data.simex, by=key(quantile.data.simex)))[-1]-1L, nrow(quantile.data.simex))][["SGP_SIMEX"]])
+			quantile.data.simex <- data.table(tmp.quantile.data.simex, SGP_SIMEX=quantile.data.simex[c(which(!duplicated(quantile.data.simex, by=key(quantile.data.simex)))[-1L]-1L, nrow(quantile.data.simex))][["SGP_SIMEX"]])
 			return(list(
 				DT=quantile.data.simex,
 				MATRICES = simex.coef.matrices))
 		} else {
 			if (print.sgp.order | return.norm.group.identifier) {
 				return(list(
-					DT=quantile.data.simex[c(which(!duplicated(quantile.data.simex, by=key(quantile.data.simex)))[-1]-1L, nrow(quantile.data.simex))],
+					DT=quantile.data.simex[c(which(!duplicated(quantile.data.simex, by=key(quantile.data.simex)))[-1L]-1L, nrow(quantile.data.simex))],
 					MATRICES=simex.coef.matrices))
 			} else {
 				return(list(
-					DT=quantile.data.simex[c(which(!duplicated(quantile.data.simex, by=key(quantile.data.simex)))[-1]-1L, nrow(quantile.data.simex)), c("ID", "SGP_SIMEX"), with=FALSE],
+					DT=quantile.data.simex[c(which(!duplicated(quantile.data.simex, by=key(quantile.data.simex)))[-1L]-1L, nrow(quantile.data.simex)), c("ID", "SGP_SIMEX"), with=FALSE],
 					MATRICES=simex.coef.matrices))
 			}
 		}
@@ -837,7 +837,7 @@ function(panel.data,         ## REQUIRED
 		}
 		taus <- .create_taus(sgp.quantiles)
 		if (!is.null(sgp.quantiles.labels)) {
-			if (length(sgp.quantiles.labels)!=length(sgp.quantiles)+1) stop("Supplied 'sgp.quantiles.labels' must be 1 longer than supplied 'sgp.quantiles'.")
+			if (length(sgp.quantiles.labels)!=length(sgp.quantiles)+1L) stop("Supplied 'sgp.quantiles.labels' must be 1 longer than supplied 'sgp.quantiles'.")
 			if (any(is.na(as.integer(sgp.quantiles.labels)))) stop("Supplied 'sgp.quantiles.labels' must be integer values.")
 			sgp.quantiles.labels <- as.integer(sgp.quantiles.labels)
 		} else {
@@ -1119,7 +1119,7 @@ function(panel.data,         ## REQUIRED
 		tmp.gp <- tail(grade.progression, num.panels)
 	}}
 	if (!missing(subset.grade) & missing(grade.progression)) {
-		tmp.gp <- (subset.grade-num.panels+1):subset.grade
+		tmp.gp <- (subset.grade-num.panels+1L):subset.grade
 		by.grade <- TRUE
 	}
 	if (missing(subset.grade) & missing(grade.progression)) {
@@ -1130,25 +1130,25 @@ function(panel.data,         ## REQUIRED
 		if (length(num.prior) > 1 | !((num.prior-round(num.prior)) < .Machine$double.eps^0.5) | num.prior <= 0) {
 			stop("Specified num.prior not positive integer(s)")
 		}
-		if (num.prior > length(tmp.gp[!is.na(tmp.gp)])-1) {
+		if (num.prior > length(tmp.gp[!is.na(tmp.gp)])-1L) {
 			tmp.messages <- c(tmp.messages, paste("\t\tNOTE: Specified argument num.prior (", num.prior, ") exceeds number of panels of data supplied.\n\t\t\tAnalyses will utilize maximum number of priors possible.\n", sep=""))
-			num.prior <- length(tmp.gp[!is.na(tmp.gp)])-1
+			num.prior <- length(tmp.gp[!is.na(tmp.gp)])-1L
 		} else {
-			tmp.gp <- grade.progression <- tail(tmp.gp[!is.na(tmp.gp)], num.prior+1)
-			if (!is.null(content_area.progression) && length(content_area.progression > num.prior+1)) content_area.progression <- tail(content_area.progression, num.prior+1)
+			tmp.gp <- grade.progression <- tail(tmp.gp[!is.na(tmp.gp)], num.prior+1L)
+			if (!is.null(content_area.progression) && length(content_area.progression > num.prior+1L)) content_area.progression <- tail(content_area.progression, num.prior+1L)
 
 	}} else {
-		num.prior <- length(tmp.gp[!is.na(tmp.gp)])-1
+		num.prior <- length(tmp.gp[!is.na(tmp.gp)])-1L
 	}
 
 	if (exact.grade.progression.sequence){
 		tmp.gp <- grade.progression
 		by.grade <- TRUE
-		num.prior <- length(tmp.gp[!is.na(tmp.gp)])-1
+		num.prior <- length(tmp.gp[!is.na(tmp.gp)])-1L
 	}
 
 	if (!is.null(max.order.for.percentile)) {
-		tmp.gp <- tail(tmp.gp, max.order.for.percentile+1)
+		tmp.gp <- tail(tmp.gp, max.order.for.percentile+1L)
 		num.prior <- min(num.prior, max.order.for.percentile)
 		if (!is.null(content_area.progression)) content_area.progression <- tail(content_area.progression, length(tmp.gp))
 		if (!is.null(year.progression)) year.progression <- year.progression.for.norm.group <- tail(year.progression, length(tmp.gp))
@@ -1162,7 +1162,7 @@ function(panel.data,         ## REQUIRED
 	}
 
 	if (is.numeric(tmp.gp) & drop.nonsequential.grade.progression.variables && any(diff(tmp.gp) > 1)) {
-		ss.data <- ss.data[,c(1, (num.panels+1)-rev(c(1, cumsum(rev(diff(tmp.gp)))+1)-1), (2*num.panels+1)-rev(c(1, cumsum(rev(diff(tmp.gp)))+1)-1)), with=FALSE]
+		ss.data <- ss.data[,c(1, (num.panels+1L)-rev(c(1L, cumsum(rev(diff(tmp.gp)))+1L)-1L), (2*num.panels+1L)-rev(c(1L, cumsum(rev(diff(tmp.gp)))+1L)-1L)), with=FALSE]
 		num.panels <- (dim(ss.data)[2L]-1L)/2L
 	}
 
@@ -1287,7 +1287,7 @@ function(panel.data,         ## REQUIRED
 	if (!is.null(year.progression) & is.null(year_lags.progression)) {
 		year.progression <- tail(year.progression, length(tmp.gp))
 		if (year.progression[1L] == "BASELINE") {
-			year_lags.progression <- rep(1, length(year.progression)-1)
+			year_lags.progression <- rep(1, length(year.progression)-1L)
 			year.progression.for.norm.group <- year.progression
 		} else {
 			year_lags.progression <- diff(as.numeric(sapply(strsplit(year.progression, '_'), '[', split.location(year.progression))))
@@ -1297,7 +1297,7 @@ function(panel.data,         ## REQUIRED
 
     if (!is.null(sgp.less.than.sgp.cohort.size.return) && max.cohort.size < sgp.cohort.size) {
         quantile.data <- data.table(ID=.get.panel.data(ss.data, tmp.num.prior, by.grade, tmp.gp)[[1L]], SGP=as.integer(NA), SGP_NOTE=sgp.less.than.sgp.cohort.size.return)
-        if (return.norm.group.identifier) quantile.data[,SGP_NORM_GROUP:=as.factor(paste(tail(paste(year.progression, paste(content_area.progression, grade.progression, sep="_"), sep="/"), tmp.num.prior+1), collapse="; "))]
+        if (return.norm.group.identifier) quantile.data[,SGP_NORM_GROUP:=as.factor(paste(tail(paste(year.progression, paste(content_area.progression, grade.progression, sep="_"), sep="/"), tmp.num.prior+1L), collapse="; "))]
         if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, "SGP", "SGP_BASELINE")
         if (identical(sgp.labels[['my.extra.label']], "BASELINE") & "SGP_NORM_GROUP" %in% names(quantile.data)) setnames(quantile.data, gsub("SGP_NORM_GROUP", "SGP_NORM_GROUP_BASELINE", names(quantile.data)))
         if (identical(sgp.labels[['my.extra.label']], "EQUATED")) setnames(quantile.data, "SGP", "SGP_EQUATED")
@@ -1392,7 +1392,7 @@ function(panel.data,         ## REQUIRED
 			if (verbose.output) {
 				tmp.coefficient.matrix.name <- get.coefficient.matrix.name(tmp.last, k)
 				tmp.grade.names <- paste("Grade",
-					rev(head(unlist(Coefficient_Matrices[[tmp.path.coefficient.matrices]][[tmp.coefficient.matrix.name]]@Grade_Progression), -1)))
+					rev(head(unlist(Coefficient_Matrices[[tmp.path.coefficient.matrices]][[tmp.coefficient.matrix.name]]@Grade_Progression), -1L)))
 				Verbose_Messages <- paste("\t\tNOTE: Coefficient Matrix ", tmp.coefficient.matrix.name, " created using:", sep="")
 				for (l in seq_along(tmp.grade.names)) {
 					tmp.knots <- paste(tmp.grade.names[l], Coefficient_Matrices[[tmp.path.coefficient.matrices]][[tmp.coefficient.matrix.name]]@Knots[l])
@@ -1510,14 +1510,14 @@ function(panel.data,         ## REQUIRED
 
 		if (print.other.gp) {
 			quantile.data <- data.table(ddcast(quantile.data, ID ~ ORDER, value.var=setdiff(names(quantile.data), c("ID", "ORDER"))),
-				SGP=quantile.data[c(which(!duplicated(quantile.data, by=key(quantile.data)))[-1]-1L, nrow(quantile.data))][["SGP"]],
-				ORDER=as.integer(quantile.data[c(which(!duplicated(quantile.data, by=key(quantile.data)))[-1]-1L, nrow(quantile.data))][["ORDER"]]))
+				SGP=quantile.data[c(which(!duplicated(quantile.data, by=key(quantile.data)))[-1L]-1L, nrow(quantile.data))][["SGP"]],
+				ORDER=as.integer(quantile.data[c(which(!duplicated(quantile.data, by=key(quantile.data)))[-1L]-1L, nrow(quantile.data))][["ORDER"]]))
 			setnames(quantile.data, setdiff(names(quantile.data), c("ID", "SGP", "ORDER")), paste("SGP_ORDER", setdiff(names(quantile.data), c("ID", "SGP", "ORDER")), sep="_"))
 		} else {
 			if (print.sgp.order | return.norm.group.identifier) {
-				quantile.data <- quantile.data[c(which(!duplicated(quantile.data, by=key(quantile.data)))[-1]-1L, nrow(quantile.data))]
+				quantile.data <- quantile.data[c(which(!duplicated(quantile.data, by=key(quantile.data)))[-1L]-1L, nrow(quantile.data))]
 			} else {
-				quantile.data <- quantile.data[c(which(!duplicated(quantile.data, by=key(quantile.data)))[-1]-1L, nrow(quantile.data)), c("ID", "SGP"), with=FALSE]
+				quantile.data <- quantile.data[c(which(!duplicated(quantile.data, by=key(quantile.data)))[-1L]-1L, nrow(quantile.data)), c("ID", "SGP"), with=FALSE]
 			}
 		}
 
@@ -1526,7 +1526,7 @@ function(panel.data,         ## REQUIRED
                 quantile.data[,paste("SGP_FROM", paste(as.numeric(unlist(strsplit(sgp.labels[['my.year']], "_")))-return.additional.max.order.sgp, collapse="_"), sep="_"):=SGP]
             } else {
                 tmp.quantile.data <- data.table(rbindlist(tmp.quantiles[seq(return.additional.max.order.sgp)]), key="ID")
-                quantile.data[,paste("SGP_FROM", paste(as.numeric(unlist(strsplit(sgp.labels[['my.year']], "_")))-return.additional.max.order.sgp, collapse="_"), sep="_"):=tmp.quantile.data[c(which(!duplicated(tmp.quantile.data, by=key(tmp.quantile.data)))[-1]-1L, nrow(tmp.quantile.data))][["SGP"]]]
+                quantile.data[,paste("SGP_FROM", paste(as.numeric(unlist(strsplit(sgp.labels[['my.year']], "_")))-return.additional.max.order.sgp, collapse="_"), sep="_"):=tmp.quantile.data[c(which(!duplicated(tmp.quantile.data, by=key(tmp.quantile.data)))[-1L]-1L, nrow(tmp.quantile.data))][["SGP"]]]
             }
         }
 
@@ -1540,25 +1540,25 @@ function(panel.data,         ## REQUIRED
 		if (tf.growth.levels) {
 			SGP_LEVEL <- NULL
 			quantile.data[, SGP_LEVEL:=factor(findInterval(quantile.data[["SGP"]], tmp.growth.levels[["my.cuts"]]),
-				levels=seq(length(tmp.growth.levels[["my.levels"]]))-1, ## Necessary in case the full range of SGPs isn't present
+				levels=seq(length(tmp.growth.levels[["my.levels"]]))-1L, ## Necessary in case the full range of SGPs isn't present
 				labels=tmp.growth.levels[["my.levels"]], ordered=TRUE)]
 		}
 
 		if (csem.tf) {
 			simulation.data <- data.table(rbindlist(tmp.csem.quantiles), key="ID")
-			simulation.data <- simulation.data[c(which(!duplicated(simulation.data, by=key(simulation.data)))[-1]-1, nrow(simulation.data))]
+			simulation.data <- simulation.data[c(which(!duplicated(simulation.data, by=key(simulation.data)))[-1L]-1L, nrow(simulation.data))]
 
 			if (is.character(calculate.confidence.intervals) | is.list(calculate.confidence.intervals)) {
 				if (is.null(calculate.confidence.intervals$confidence.quantiles) | identical(toupper(calculate.confidence.intervals$confidence.quantiles), "STANDARD_ERROR")) {
-					quantile.data[,SGP_STANDARD_ERROR:=round(data.table(ID=simulation.data[[1L]], SGP=c(as.matrix(simulation.data[,-1,with=FALSE])))[,sd(SGP), keyby=ID][['V1']], digits=2)]
+					quantile.data[,SGP_STANDARD_ERROR:=round(data.table(ID=simulation.data[[1L]], SGP=c(as.matrix(simulation.data[,-1L,with=FALSE])))[,sd(SGP), keyby=ID][['V1']], digits=2)]
 				} else {
 					if (!(is.numeric(calculate.confidence.intervals$confidence.quantiles) & all(calculate.confidence.intervals$confidence.quantiles < 1) &
 						all(calculate.confidence.intervals$confidence.quantiles > 0))) {
 						stop("Argument to 'calculate.confidence.intervals$confidence.quantiles' must be numeric and consist of quantiles.")
 					}
-					tmp.cq <- data.table(round(t(apply(simulation.data[, -1, with=FALSE], 1, quantile, probs=calculate.confidence.intervals$confidence.quantiles))))
+					tmp.cq <- data.table(round(t(apply(simulation.data[, -1L, with=FALSE], 1, quantile, probs=calculate.confidence.intervals$confidence.quantiles))))
 					quantile.data[,paste("SGP_", calculate.confidence.intervals$confidence.quantiles, "_CONFIDENCE_BOUND", sep=""):=tmp.cq]
-					quantile.data[,SGP_STANDARD_ERROR:=round(data.table(ID=simulation.data[[1L]], SGP=c(as.matrix(simulation.data[,-1,with=FALSE])))[,sd(SGP), keyby=ID][['V1']], digits=2)]
+					quantile.data[,SGP_STANDARD_ERROR:=round(data.table(ID=simulation.data[[1L]], SGP=c(as.matrix(simulation.data[,-1L,with=FALSE])))[,sd(SGP), keyby=ID][['V1']], digits=2)]
 				}
 			}
 			Simulated_SGPs[[tmp.path]] <- rbindlist(list(simulation.data, Simulated_SGPs[[tmp.path]]), fill=TRUE)
@@ -1577,7 +1577,7 @@ function(panel.data,         ## REQUIRED
 
 		if (print.sgp.order | return.norm.group.identifier) {
 			if (exact.grade.progression.sequence) {
-				norm.groups <- paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression.for.norm.group, sep="_"), sep="/"), num.prior+1), collapse="; ")
+				norm.groups <- paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression.for.norm.group, sep="_"), sep="/"), num.prior+1L), collapse="; ")
 			} else {
 				norm.groups <- sapply(seq_along(year.progression.for.norm.group)[-1L][1:(num.panels-1L)],
 				function(x) paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression.for.norm.group, sep="_"), sep="/"), x), collapse="; "))
@@ -1600,13 +1600,13 @@ function(panel.data,         ## REQUIRED
 		}
 
 		if (!is.null(return.norm.group.dates)) {
-			my.tmp <- Panel_Data[,c("ID", setdiff(grep("TIME", names(Panel_Data), value=TRUE), grep("TIME_LAG", names(Panel_Data), value=TRUE))), with=FALSE][list(quantile.data$ID),-1,with=FALSE,on="ID"]
+			my.tmp <- Panel_Data[,c("ID", setdiff(grep("TIME", names(Panel_Data), value=TRUE), grep("TIME_LAG", names(Panel_Data), value=TRUE))), with=FALSE][list(quantile.data$ID),-1L,with=FALSE,on="ID"]
             my.tmp <- my.tmp[,tail(seq(dim(my.tmp)[2L]), length(tmp.gp)),with=FALSE]
 			quantile.data[,SGP_NORM_GROUP_DATES:=gsub("NA; ", "", do.call(paste, c(as.data.table(lapply(my.tmp, function(x) as.Date(x, origin="1970-01-01"))), list(sep="; "))))]
 		}
 
 		if (!is.null(return.norm.group.scale.scores)) {
-			tmp.scale_scores <- ss.data[,c("ID", names(tmp.data)[-1]), with=FALSE][list(quantile.data$ID),-1,with=FALSE,on="ID"]
+			tmp.scale_scores <- ss.data[,c("ID", names(tmp.data)[-1L]), with=FALSE][list(quantile.data$ID),-1L,with=FALSE,on="ID"]
 			quantile.data[,SGP_NORM_GROUP_SCALE_SCORES:=gsub("NA; ", "", do.call(paste, c(tmp.scale_scores, list(sep="; "))))]
 		}
 
@@ -1666,7 +1666,7 @@ function(panel.data,         ## REQUIRED
 
                     if (!is.null(Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]][['TMP_NAME']])) {
                         tmp.gof.plot.name <-
-                            paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression, sep="_"), sep="/"), num.prior+1), collapse="; ")
+                            paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression, sep="_"), sep="/"), num.prior+1L), collapse="; ")
                         tmp.gof.plot.name <- gsub("MATHEMATICS", "MATH", tmp.gof.plot.name)
                         names(Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]])[length(Goodness_of_Fit[[tmp.path]])] <-
                             gsub("/", "_", paste(gsub(";", "", rev(unlist(strsplit(tail(tmp.gof.plot.name, 1), " ")))), collapse=";"))
@@ -1696,7 +1696,7 @@ function(panel.data,         ## REQUIRED
 
                     if (!is.null(Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]][['TMP_NAME']])) {
                         tmp.gof.plot.name <-
-                            paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression, sep="_"), sep="/"), num.prior+1), collapse="; ")
+                            paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression, sep="_"), sep="/"), num.prior+1L), collapse="; ")
                         tmp.gof.plot.name <- gsub("MATHEMATICS", "MATH", tmp.gof.plot.name)
                         names(Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]])[length(Goodness_of_Fit[[tmp.path]])] <-
                             gsub("/", "_", paste(gsub(";", "", rev(unlist(strsplit(tail(tmp.gof.plot.name, 1), " ")))), collapse=";"))
