@@ -168,7 +168,7 @@ function(panel.data,         ## REQUIRED
 		s4Bs <- "Boundaries=list("
 		tmp.gp.iter <- rev(tmp.gp)[2:(k+1L)]
 		for (i in seq_along(tmp.gp.iter)) {
-			my.path.knots.boundaries <- get.my.knots.boundaries.path(rev(content_area.progression)[i+1L], yearIncrement(rev(year.progression)[i+1L], 0))
+			my.path.knots.boundaries <- get.my.knots.boundaries.path(rev(content_area.progression)[i+1L], yearIncrement(rev(year.progression)[i+1L], 0L))
 			.check.knots.boundaries(names(eval(parse(text=paste0("Knots_Boundaries", my.path.knots.boundaries)))), tmp.gp.iter[i])
 			knt <- paste0("Knots_Boundaries", my.path.knots.boundaries, "[['knots_", tmp.gp.iter[i], "']]")
 			bnd <- paste0("Knots_Boundaries", my.path.knots.boundaries, "[['boundaries_", tmp.gp.iter[i], "']]")
@@ -283,7 +283,7 @@ function(panel.data,         ## REQUIRED
 			if (!is.null(sgp.loss.hoss.adjustment)) {
 				my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
 				tmp.hoss <- eval(parse(text=paste0("Knots_Boundaries", my.path.knots.boundaries, "[['loss.hoss_", tmp.last, "']][2L]")))
-				if (length(tmp.index <- which(data2>=tmp.hoss)) > 0) {
+				if (length(tmp.index <- which(data2>=tmp.hoss)) > 0L) {
 					tmp[tmp.index, V1:=apply(data.table(data1 > data2, TRUE)[tmp.index], 1, function(x) which.max(x)-1L)]
 				}
 			}
@@ -466,7 +466,7 @@ function(panel.data,         ## REQUIRED
 						CSEM_Data <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]][
 							GRADE==perturb.var[g] & CONTENT_AREA==tmp.ca.iter[g]]
 					}
-					if (dim(CSEM_Data)[1L] == 0) stop(paste('CSEM data for', tmp.ca.iter[g], 'Grade', perturb.var[g], 'is required to use SIMEX functionality, but is not available in SGPstateData.  Please contact package administrators to add CSEM data.'))
+					if (dim(CSEM_Data)[1L] == 0L) stop(paste('CSEM data for', tmp.ca.iter[g], 'Grade', perturb.var[g], 'is required to use SIMEX functionality, but is not available in SGPstateData.  Please contact package administrators to add CSEM data.'))
 					CSEM_Function <- splinefun(CSEM_Data[["SCALE_SCORE"]], CSEM_Data[["SCALE_SCORE_CSEM"]], method="natural")
 					csem.int[, paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g]) := CSEM_Function(tmp.data[[num.perturb.vars-g]])]
 				}
@@ -924,7 +924,7 @@ function(panel.data,         ## REQUIRED
 				}
 				if (any(calculate.simex$lambda < 0)) {
 					messageSGP("lambda should not contain negative values. Negative values will be ignored.")
-					lambda <- calculate.simex$lambda[calculate.simex$lambda >= 0L]
+					lambda <- calculate.simex$lambda[calculate.simex$lambda >= 0]
 				} else lambda=calculate.simex$lambda
 				if (is.null(panel.data.vnames) && !is.null(calculate.simex$csem.data.vnames)) stop("Use of csem.data.vnames in SIMEX requires panel.data.vnames be provided.")
 			}
@@ -1071,7 +1071,7 @@ function(panel.data,         ## REQUIRED
 
 	### Create ss.data from Panel_Data
 
-	if (dim(Panel_Data)[1L]==0 || dim(Panel_Data)[2L]<3) {
+	if (dim(Panel_Data)[1L]==0L || dim(Panel_Data)[2L]<3L) {
 		tmp.messages <- paste0("\t\tNOTE: Supplied data together with grade progression contains no data (dim = ", paste(dim(Panel_Data), collapse=", "), "). Check data, function arguments and see help page for details.\n")
 		messageSGP(paste("\tStarted studentGrowthPercentiles", started.date))
 		messageSGP(paste0("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ",
@@ -1127,7 +1127,7 @@ function(panel.data,         ## REQUIRED
 		by.grade <- FALSE
 	}
 	if (!missing(num.prior) && !exact.grade.progression.sequence) {
-		if (length(num.prior) > 1 || !((num.prior-round(num.prior)) < .Machine$double.eps^0.5) || num.prior <= 0) {
+		if (length(num.prior) > 1 || !((num.prior-round(num.prior)) < .Machine$double.eps^0.5) || num.prior <= 0L) {
 			stop("Specified num.prior not positive integer(s)")
 		}
 		if (num.prior > length(tmp.gp[!is.na(tmp.gp)])-1L) {
