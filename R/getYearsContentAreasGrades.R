@@ -1,4 +1,4 @@
-`getYearsContentAreasGrades` <- 
+`getYearsContentAreasGrades` <-
 function(state,
 	years,
 	content_areas=NULL,
@@ -24,10 +24,10 @@ function(state,
 			tmp.dt <- CJ(tmp.dt$GRADE, years)
 		}
 
-		setnames(tmp.dt, c("GRADE", "YEAR")) 
+		setnames(tmp.dt, c("GRADE", "YEAR"))
 		tmp.list[[i]] <- data.table(CONTENT_AREA=i, tmp.dt)
 	}
 	tmp.dt <- rbindlist(tmp.list, fill=TRUE)
 	setkeyv(tmp.dt, c("CONTENT_AREA", "GRADE", "YEAR"))
-	return(tmp.dt[!is.na(CONTENT_AREA)])
+	return(na.omit(tmp.dt, cols="CONTENT_AREA"))
 } ## END getYearsContentAreasGrades

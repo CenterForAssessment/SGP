@@ -15,7 +15,7 @@ function(sgp_object,
 	outputSGP.pass.through.variables=NULL) {
 
 	started.at.outputSGP <- proc.time()
-	messageSGP(paste("\nStarted outputSGP ", prettyDate(), ": Files produced from outputSGP saved in '", outputSGP.directory, "'\n", sep=""))
+	messageSGP(paste0("\nStarted outputSGP ", prettyDate(), ": Files produced from outputSGP saved in '", outputSGP.directory, "'\n"))
 	messageSGP(match.call())
 
 	### Create directory
@@ -135,21 +135,21 @@ function(sgp_object,
 			setcolorder(output.data.final.year, output.column.order)
 		}
 		assign(paste(tmp.state, "SGP_LONG_Data", final.year, sep="_"), output.data.final.year)
-		save(list=paste(tmp.state, "SGP_LONG_Data", final.year, sep="_"), file=file.path(outputSGP.directory, paste(tmp.state, "_SGP_LONG_Data_", final.year, ".Rdata", sep="")))
-		fwrite(output.data.final.year, file=file.path(outputSGP.directory, paste(tmp.state, "_SGP_LONG_Data_", final.year, ".txt", sep="")), sep="|", quote=FALSE)
+		save(list=paste(tmp.state, "SGP_LONG_Data", final.year, sep="_"), file=file.path(outputSGP.directory, paste0(tmp.state, "_SGP_LONG_Data_", final.year, ".Rdata")))
+		fwrite(output.data.final.year, file=file.path(outputSGP.directory, paste0(tmp.state, "_SGP_LONG_Data_", final.year, ".txt")), sep="|", quote=FALSE)
 		if (identical(.Platform$OS.type, "unix")) {
-			if (file.info(file.path(outputSGP.directory, paste(tmp.state, "_SGP_LONG_Data_", final.year, ".txt", sep="")))$size > 4000000000) {
+			if (file.info(file.path(outputSGP.directory, paste0(tmp.state, "_SGP_LONG_Data_", final.year, ".txt")))$size > 4000000000) {
 				tmp.working.directory <- getwd()
 				setwd(file.path(outputSGP.directory))
-				if (paste(tmp.state, "_SGP_LONG_Data_", final.year, ".txt.gz", sep="") %in% list.files()) file.remove(paste(tmp.state, "_SGP_LONG_Data_", final.year, ".txt.gz", sep=""))
-				system(paste("gzip", paste(tmp.state, "_SGP_LONG_Data_", final.year, ".txt", sep="")))
+				if (paste0(tmp.state, "_SGP_LONG_Data_", final.year, ".txt.gz") %in% list.files()) file.remove(paste0(tmp.state, "_SGP_LONG_Data_", final.year, ".txt.gz"))
+				system(paste("gzip", paste0(tmp.state, "_SGP_LONG_Data_", final.year, ".txt")))
 				setwd(tmp.working.directory)
 			} else {
 				tmp.working.directory <- getwd()
 				setwd(file.path(outputSGP.directory))
-				if (paste(tmp.state, "_SGP_LONG_Data_", final.year, ".txt.zip", sep="") %in% list.files()) file.remove(paste(tmp.state, "_SGP_LONG_Data_", final.year, ".txt.zip", sep=""))
+				if (paste0(tmp.state, "_SGP_LONG_Data_", final.year, ".txt.zip") %in% list.files()) file.remove(paste0(tmp.state, "_SGP_LONG_Data_", final.year, ".txt.zip"))
 				suppressMessages(
-					zip(paste(tmp.state, "_SGP_LONG_Data_", final.year, ".txt.zip", sep=""), paste(tmp.state, "_SGP_LONG_Data_", final.year, ".txt", sep=""), flags="-rmq1")
+					zip(paste0(tmp.state, "_SGP_LONG_Data_", final.year, ".txt.zip"), paste0(tmp.state, "_SGP_LONG_Data_", final.year, ".txt"), flags="-rmq1")
 				)
 				setwd(tmp.working.directory)
 			}
@@ -463,7 +463,7 @@ function(sgp_object,
 					CONTENT_AREA,
 					YEAR,
 					GRADE,
-					new.cutscores=sort(c(SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[paste(CONTENT_AREA[1], year.for.transition, sep=".")]][[paste("loss.hoss_", GRADE[1], sep="")]],
+					new.cutscores=sort(c(SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[paste(CONTENT_AREA[1], year.for.transition, sep=".")]][[paste0("loss.hoss_", GRADE[1])]],
 											SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[paste(CONTENT_AREA[1], year.for.transition, sep=".")]][[paste("GRADE", GRADE[1], sep="_")]]))),
 				by=list(CONTENT_AREA, YEAR, GRADE)]
 		} else {
@@ -506,7 +506,7 @@ function(sgp_object,
 
 		tmp.proj.names <- paste(tmp.content_areas, tmp.last.year, sep=".")
 		if (!all(tmp.proj.names %in% names(sgp_object@SGP[["SGProjections"]]))) {
-			messageSGP(paste("\tNOTE: Projections for cuts not available for content areas: ", paste(setdiff(tmp.proj.names, names(sgp_object@SGP[["SGProjections"]])), collapse=", "), ".", sep=""))
+			messageSGP(paste0("\tNOTE: Projections for cuts not available for content areas: ", paste(setdiff(tmp.proj.names, names(sgp_object@SGP[["SGProjections"]])), collapse=", "), "."))
 			tmp.proj.names <- intersect(tmp.proj.names, names(sgp_object@SGP[["SGProjections"]]))
 		}
 		for (j in seq(3)) {
@@ -541,7 +541,7 @@ function(sgp_object,
 
 		#### Rename variables (needs to be improved)
 
-		tmp.order <- c("CY", paste("PY", 1:20, sep=""))
+		tmp.order <- c("CY", paste0("PY", 1:20))
 		tmp.cuts.for.output <- c(1, 20, 35, 40, 60, 65, 80, 99)
 		tmp.years.short <-  tail(tmp.years.short, length(tmp.order))
 

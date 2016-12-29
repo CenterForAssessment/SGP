@@ -25,7 +25,7 @@ function(sgp_object) {
 
 
 	slot.data <- copy(sgp_object@Data)
-	slot.data[,YEAR_INT:=as.integer(factor(slot.data[["YEAR"]]))]
+	slot.data[,YEAR_INT:=as.integer(factor(YEAR))]
 	setkeyv(slot.data, c("ID", "CONTENT_AREA", "YEAR_INT", "VALID_CASE"))
 	slot.data[,c("PRIOR_SCALE_SCORE", "PRIOR_GRADE"):=slot.data[SJ(ID, CONTENT_AREA, YEAR_INT-1L), mult="last"][,list(SCALE_SCORE, GRADE)]]
 	setkeyv(slot.data, c("VALID_CASE", "CONTENT_AREA", "YEAR_INT", "SCHOOL_NUMBER", "PRIOR_GRADE", "ID"))
@@ -37,6 +37,6 @@ function(sgp_object) {
 	if (!is.null(sgp_object@Names) && !"HIGH_NEED_STATUS" %in% sgp_object@Names[['names.sgp']]) {
 		sgp_object@Names <- rbind(sgp_object@Names, c("HIGH_NEED_STATUS", "HIGH_NEED_STATUS", "demographic", "High need status flag", TRUE))
 	}
-	message("\tNOTE: Added variable HIGH_NEED_STATUS to @Data.")
+	messageSGP("\tNOTE: Added variable HIGH_NEED_STATUS to @Data.")
 	return(sgp_object)
 } ### END getHighNeedStatus

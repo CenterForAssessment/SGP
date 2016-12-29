@@ -133,7 +133,7 @@ function(x,
 `mean_na` <-
 function(x,
 	weight,
-	result.digits=2) {
+	result.digits=2L) {
 
 	if (is.null(weight)) {
 		round(mean(x, na.rm=TRUE), digits=result.digits)
@@ -143,34 +143,24 @@ function(x,
 } ### END mean_na function
 
 
-`sd_na` <- function(x, result.digits=2) round(sd(as.numeric(x), na.rm=TRUE), digits=result.digits)
+`sd_na` <- function(x, result.digits=2L) round(sd(as.numeric(x), na.rm=TRUE), digits=result.digits)
 
 
 `num_non_missing` <- function(x) sum(!is.na(x))
 
 
-`sgp_standard_error` <- function(x,y=1) round(y*sd(x, na.rm=TRUE)/sqrt(sum(!is.na(x))), digits=2)
+`sgp_standard_error` <- function(x,y=1) round(y*sd(x, na.rm=TRUE)/sqrt(sum(!is.na(x))), digits=2L)
 
 
 `percent_in_category` <-
 function(x,
 	in.categories,
 	of.categories,
-	result.digits=1) {
+	result.digits=1L) {
 
 	tmp <- table(x)
-	round(100*sum(tmp[names(tmp) %in% in.categories])/sum(tmp[names(tmp) %in% of.categories]), digits=1)
+	round(100*sum(tmp[names(tmp) %in% in.categories])/sum(tmp[names(tmp) %in% of.categories]), digits=1L)
 } ### END percent_in_category function
-
-
-`percent_at_above_target` <-
-function(sgp,
-	target,
-	result.digits=1) {
-
-	tmp.logical <- sgp[!is.na(SGP)] >= target
-	round(100*sum(tmp.logical)/sum(tmp.logical), digits=result.digits)
-} ### END percent_at_above_target function
 
 
 `boot.sgp` <-
@@ -179,10 +169,10 @@ function(dat,
 	nboot=100) {
 
 	ID <- SCORE <- NULL
-	CI <- paste0("[", paste(rep(NA, 2), collapse=", "), "]"); SE <- NA_real_
-	if (length(dat.no.na <- dat[!is.na(dat)]) > 1) {
+	CI <- paste0("[", paste(rep(NA, 2L), collapse=", "), "]"); SE <- NA_real_
+	if (length(dat.no.na <- dat[!is.na(dat)]) > 1L) {
 		out <- data.table(ID=seq.int(nboot), SCORE=dat.no.na[sample.int(length(dat.no.na), length(dat.no.na)*nboot, replace=TRUE)])[,median(SCORE), by=ID][['V1']]
-		if (!is.null(conf.quantiles)) CI <- paste0("[", paste(round(quantile(out, conf.quantiles), digits=1), collapse=", "), "]") else SE <- round(sd(out), digits=1)
+		if (!is.null(conf.quantiles)) CI <- paste0("[", paste(round(quantile(out, conf.quantiles), digits=1L), collapse=", "), "]") else SE <- round(sd(out), digits=1L)
 	}
 	if (!is.null(conf.quantiles)) return(CI) else return(SE)
 } ### END boot.sgp function
