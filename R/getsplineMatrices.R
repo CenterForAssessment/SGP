@@ -19,7 +19,7 @@ function(
 	### Utility functions
 
 	splineMatrix_equality <- function(my.matrix, my.order=NULL, my.exact.grade.progression.sequence=FALSE) {
-		tmp.matrix <- matrix(nrow=length(my.order), ncol=3)
+		tmp.matrix <- matrix(NA, nrow=length(my.order), ncol=3)
 		if (is.null(my.order)) my.order <- (2:length(my.matrix.time.progression))-1
 		if (my.exact.grade.progression.sequence) my.order <- length(my.matrix.time.progression)-1
 		for (i in seq_along(my.order)) {
