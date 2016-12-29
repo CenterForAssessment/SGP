@@ -19,19 +19,19 @@ function(
 	### Utility functions
 
 	splineMatrix_equality <- function(my.matrix, my.order=NULL, my.exact.grade.progression.sequence=FALSE) {
-		tmp.matrix <- matrix(NA, nrow=length(my.order), ncol=3)
+		tmp.dt <- as.data.table(matrix(NA, nrow=length(my.order), ncol=3))
 		if (is.null(my.order)) my.order <- (2:length(my.matrix.time.progression))-1
 		if (my.exact.grade.progression.sequence) my.order <- length(my.matrix.time.progression)-1
 		for (i in seq_along(my.order)) {
-			tmp.matrix[i,1] <- identical(my.matrix@Content_Areas[[1L]], tail(my.matrix.content_area.progression, my.order[i]+1L)) &&
+			tmp.dt[i, V1 := identical(my.matrix@Content_Areas[[1L]], tail(my.matrix.content_area.progression, my.order[i]+1L)) &&
 					identical(my.matrix@Grade_Progression[[1L]], as.character(tail(my.matrix.grade.progression, my.order[i]+1L))) &&
 					identical(my.matrix@Time[[1L]], as.character(tail(my.matrix.time.progression, my.order[i]+1L))) &&
 					identical(all.equal(as.numeric(my.matrix@Time_Lags[[1L]]), as.numeric(tail(my.matrix.time.progression.lags, my.order[i]))), TRUE) &&
-					identical(names(my.matrix@Version[['Matrix_Information']][['SGPt']][['VARIABLES']]), names(my.matrix.time.dependency))
-			tmp.matrix[i,2] <- my.order[i]
-			tmp.matrix[i,3] <- tail(my.matrix@Grade_Progression[[1L]], 1L)
+					identical(names(my.matrix@Version[['Matrix_Information']][['SGPt']][['VARIABLES']]), names(my.matrix.time.dependency))]
+			tmp.dt[i, V2 := my.order[i]]
+			tmp.dt[i, V3 := tail(my.matrix@Grade_Progression[[1L]], 1L)]
 		}
-		return(as.data.table(tmp.matrix))
+		return(tmp.dt)
 	} ### END splineMatrix_equality
 
 	getsplineMatrix <- function(
