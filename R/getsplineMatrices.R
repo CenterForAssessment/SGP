@@ -31,6 +31,7 @@ function(
 			tmp.dt[i, V2 := my.order[i]]
 			tmp.dt[i, V3 := tail(my.matrix@Grade_Progression[[1L]], 1L)]
 		}
+		setnames(tmp.dt, c("Matrix_TF", "Order", "Grade"))
 		return(tmp.dt)
 	} ### END splineMatrix_equality
 
