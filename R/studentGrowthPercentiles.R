@@ -89,7 +89,7 @@ function(panel.data,         ## REQUIRED
 		}
 
 		if (by.grade) {
-			tmp.grades <- unlist(data[,2:(2+num.panels-2), with=FALSE], use.names=FALSE)
+			tmp.grades <- unlist(data[,2:(2L+num.panels-2L), with=FALSE], use.names=FALSE)
 		} else {
 			tmp.grades <- rep(head(tmp.gp, -1L), each=dim(data)[1L])
 		}
@@ -98,7 +98,7 @@ function(panel.data,         ## REQUIRED
 			VALID_CASE="VALID_CASE",
 			CONTENT_AREA=rep(head(content_area.progression, -1L), each=dim(data)[1L]),
 			GRADE=tmp.grades,
-			SCALE_SCORE=unlist(data[,(2+num.panels):(2+2*num.panels-2), with=FALSE], use.names=FALSE),
+			SCALE_SCORE=unlist(data[,(2+num.panels):(2L+2*num.panels-2L), with=FALSE], use.names=FALSE),
 			YEAR=tmp.years, key=c("VALID_CASE", "CONTENT_AREA", "GRADE"))
 
 		createKnotsBoundaries(tmp.stack, knot.cut.percentiles)
@@ -117,10 +117,10 @@ function(panel.data,         ## REQUIRED
 		if (is.null(sgp.percentiles.equated)) {
 			tmp.knots.boundaries.names <-
 				names(Knots_Boundaries[[tmp.path.knots.boundaries]])[content_area==sapply(strsplit(names(Knots_Boundaries[[tmp.path.knots.boundaries]]), "[.]"), '[', 1L)]
-			if (length(tmp.knots.boundaries.names)==0) {
+			if (length(tmp.knots.boundaries.names)==0L) {
 				return(paste0("[['", tmp.path.knots.boundaries, "']]"))
 			} else {
-				tmp.knots.boundaries.years <- sapply(strsplit(tmp.knots.boundaries.names, "[.]"), '[', 2)
+				tmp.knots.boundaries.years <- sapply(strsplit(tmp.knots.boundaries.names, "[.]"), '[', 2L)
 				tmp.index <- sum(year >= tmp.knots.boundaries.years, na.rm=TRUE)
 				return(paste0("[['", tmp.path.knots.boundaries, "']][['", paste(c(content_area, sort(tmp.knots.boundaries.years)[tmp.index]), collapse="."), "']]"))
 			}
@@ -134,7 +134,7 @@ function(panel.data,         ## REQUIRED
 			tmp.cutscores <- grep(content_area, names(SGP::SGPstateData[[goodness.of.fit]][['Achievement']][['Cutscores']]), value=TRUE)
 			if (length(tmp.cutscores) > 0L) {
 				tmp.cutscores.names <- tmp.cutscores[content_area==sapply(strsplit(tmp.cutscores, "[.]"), '[', 1L)]
-				tmp.cutscores.years <- sapply(strsplit(tmp.cutscores.names, "[.]"), '[', 2)
+				tmp.cutscores.years <- sapply(strsplit(tmp.cutscores.names, "[.]"), '[', 2L)
 				tmp.sum <- sum(year >= sort(tmp.cutscores.years), na.rm=TRUE)
 				return(paste(c(content_area, sort(tmp.cutscores.years)[tmp.sum]), collapse="."))
 			} else return(content_area)
@@ -161,7 +161,7 @@ function(panel.data,         ## REQUIRED
 		if (dim(tmp.data)[1L]==0L) return(NULL)
 		if (dim(tmp.data)[1L] < sgp.cohort.size) return("Insufficient N")
 		if (!is.null(max.n.for.coefficient.matrices) && dim(tmp.data)[1L] > max.n.for.coefficient.matrices) tmp.data <- tmp.data[sample(seq.int(dim(tmp.data)[1L]), max.n.for.coefficient.matrices)]
-        if (is.null(max.n.for.coefficient.matrices) && dim(tmp.data)[1L] >= 300000) rq.method <- rq.method.for.large.n
+        if (is.null(max.n.for.coefficient.matrices) && dim(tmp.data)[1L] >= 300000L) rq.method <- rq.method.for.large.n
 		tmp.num.variables <- dim(tmp.data)[2L]
 		mod <- character()
 		s4Ks <- "Knots=list("
@@ -269,7 +269,7 @@ function(panel.data,         ## REQUIRED
             }
 			mod <- paste0(mod, ", my.data[['TIME']], my.data[['TIME_LAG']]")
 		}
-        tmp <- eval(parse(text=paste0("cbind(1L, ", substring(mod, 2), ") %*% my.matrix")))
+        tmp <- eval(parse(text=paste0("cbind(1L, ", substring(mod, 2L), ") %*% my.matrix")))
         return(round(matrix(.smooth.bound.iso.row(data.table(ID=rep(seq.int(dim(tmp)[1L]), each=length(taus)), X=c(t(tmp))), isotonize, sgp.loss.hoss.adjustment), ncol=length(taus), byrow=TRUE), digits=5))
 	}
 
@@ -1550,7 +1550,7 @@ function(panel.data,         ## REQUIRED
 
 			if (is.character(calculate.confidence.intervals) || is.list(calculate.confidence.intervals)) {
 				if (is.null(calculate.confidence.intervals$confidence.quantiles) || identical(toupper(calculate.confidence.intervals$confidence.quantiles), "STANDARD_ERROR")) {
-					quantile.data[,SGP_STANDARD_ERROR:=round(data.table(ID=simulation.data[[1L]], SGP=c(as.matrix(simulation.data[,-1L,with=FALSE])))[,sd(SGP), keyby=ID][['V1']], digits=2)]
+					quantile.data[,SGP_STANDARD_ERROR:=round(data.table(ID=simulation.data[[1L]], SGP=c(as.matrix(simulation.data[,-1L,with=FALSE])))[,sd(SGP), keyby=ID][['V1']], digits=2L)]
 				} else {
 					if (!(is.numeric(calculate.confidence.intervals$confidence.quantiles) && all(calculate.confidence.intervals$confidence.quantiles < 1) &
 						all(calculate.confidence.intervals$confidence.quantiles > 0))) {
@@ -1558,7 +1558,7 @@ function(panel.data,         ## REQUIRED
 					}
 					tmp.cq <- data.table(round(t(apply(simulation.data[, -1L, with=FALSE], 1, quantile, probs=calculate.confidence.intervals$confidence.quantiles))))
 					quantile.data[,paste0("SGP_", calculate.confidence.intervals$confidence.quantiles, "_CONFIDENCE_BOUND"):=tmp.cq]
-					quantile.data[,SGP_STANDARD_ERROR:=round(data.table(ID=simulation.data[[1L]], SGP=c(as.matrix(simulation.data[,-1L,with=FALSE])))[,sd(SGP), keyby=ID][['V1']], digits=2)]
+					quantile.data[,SGP_STANDARD_ERROR:=round(data.table(ID=simulation.data[[1L]], SGP=c(as.matrix(simulation.data[,-1L,with=FALSE])))[,sd(SGP), keyby=ID][['V1']], digits=2L)]
 				}
 			}
 			Simulated_SGPs[[tmp.path]] <- rbindlist(list(simulation.data, Simulated_SGPs[[tmp.path]]), fill=TRUE)
@@ -1642,7 +1642,7 @@ function(panel.data,         ## REQUIRED
 							state=goodness.of.fit,
 							year=rev(year.progression.for.norm.group)[2L],
 							content_area=rev(content_area.progression)[2L],
-							grade=tail(tmp.gp, 2)[1L])[,!"GRADE", with=FALSE]
+							grade=tail(tmp.gp, 2L)[1L])[,!"GRADE", with=FALSE]
 
 				setnames(tmp.gof.data, c("SCALE_SCORE", "ACHIEVEMENT_LEVEL", "CONTENT_AREA", "CONTENT_AREA_CURRENT", "YEAR", "YEAR_CURRENT", "GRADE_CURRENT"),
 					c("SCALE_SCORE_PRIOR", "ACHIEVEMENT_LEVEL_PRIOR", "CONTENT_AREA_PRIOR", "CONTENT_AREA", "YEAR_PRIOR", "YEAR", "GRADE"))
