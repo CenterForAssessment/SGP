@@ -157,7 +157,7 @@ function(
 			tmp.list[['target.level']] <- "CATCH_UP_KEEP_UP"
 		}
 		if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgp.target.types']]) &&
-			length(grep("MUSU", SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgp.target.types']]))==0) {
+			!grepl("MUSU", SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgp.target.types']])) {
 				tmp.list[['target.level']] <- "CATCH_UP_KEEP_UP"
 		}
 
@@ -349,7 +349,7 @@ function(
 			slot.data[,CATCH_UP_KEEP_UP_STATUS_INITIAL:=getTargetInitialStatus(ACHIEVEMENT_LEVEL_PRIOR, state, status.type="CATCH_UP_KEEP_UP")]
 
 			for (i in seq_along(target.args[['my.sgp']])) {
-				if (length(grep("BASELINE", target.args[['my.sgp']][i]))==0) my.label <- "CATCH_UP_KEEP_UP_STATUS" else my.label <- "CATCH_UP_KEEP_UP_STATUS_BASELINE"
+				if (!grepl("BASELINE", target.args[['my.sgp']][i])) my.label <- "CATCH_UP_KEEP_UP_STATUS" else my.label <- "CATCH_UP_KEEP_UP_STATUS_BASELINE"
 				if (my.label %in% names(slot.data)) slot.data[,(my.label):=NULL]
 				slot.data[,(my.label):=rep(as.character(NA), dim(slot.data)[1])]
 
@@ -389,7 +389,7 @@ function(
 			slot.data[,MOVE_UP_STAY_UP_STATUS_INITIAL:=getTargetInitialStatus(ACHIEVEMENT_LEVEL_PRIOR, state, status.type="MOVE_UP_STAY_UP")]
 
 			for (i in seq_along(target.args[['my.sgp']])) {
-				if (length(grep("BASELINE", target.args[['my.sgp']][i]))==0) my.label <- "MOVE_UP_STAY_UP_STATUS" else my.label <- "MOVE_UP_STAY_UP_STATUS_BASELINE"
+				if (!grepl("BASELINE", target.args[['my.sgp']][i])) my.label <- "MOVE_UP_STAY_UP_STATUS" else my.label <- "MOVE_UP_STAY_UP_STATUS_BASELINE"
 				if (my.label %in% names(slot.data)) slot.data[,(my.label):=NULL]
 				slot.data[,(my.label):=rep(as.character(NA), dim(slot.data)[1])]
 
@@ -462,7 +462,7 @@ function(
 					getYearsContentAreasGrades(state, years=unique(tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter], by='YEAR')[['YEAR']], content_areas=unique(tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter], by='CONTENT_AREA')[['CONTENT_AREA']]),
 					sgp.config=sgp.config,
 					projection_group.identifier=projection_group.iter,
-					sgp.projections.equated=if (length(grep("baseline", target.type.iter) > 0)) NULL else sgp.projections.equated,
+					sgp.projections.equated=if (grepl("baseline", target.type.iter)) NULL else sgp.projections.equated,
 					SGPt=SGPt,
 					parallel.config=parallel.config)
 			}

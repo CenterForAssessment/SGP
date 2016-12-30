@@ -89,7 +89,7 @@ function(panel.data,         ## REQUIRED
 		}
 
 		if (by.grade) {
-			tmp.grades <- unlist(data[,2:(2L+num.panels-2L), with=FALSE], use.names=FALSE)
+			tmp.grades <- unlist(data[,2L:(2L+num.panels-2L), with=FALSE], use.names=FALSE)
 		} else {
 			tmp.grades <- rep(head(tmp.gp, -1L), each=dim(data)[1L])
 		}
@@ -721,24 +721,19 @@ function(panel.data,         ## REQUIRED
 	if (!(is.matrix(panel.data) || is.list(panel.data))) {
 		stop("Supplied panel.data not of a supported class. See help for details of supported classes")
 	}
-	if (identical(class(panel.data), "list")) {
-		if (!("Panel_Data" %in% names(panel.data))) {
+	if (identical(class(panel.data), "list") && !"Panel_Data" %in% names(panel.data)) {
 			stop("Supplied panel.data missing Panel_Data")
 	}
-	}
-	if (identical(class(panel.data), "list")) {
-		if (!is.data.frame(panel.data[["Panel_Data"]]) && !is.data.table(panel.data[["Panel_Data"]])) {
+	if (identical(class(panel.data), "list") && !is.data.frame(panel.data[["Panel_Data"]])) {
 			stop("Supplied panel.data$Panel_Data is not a data.frame or a data.table")
-		}
 	}
 	if (identical(class(panel.data), "list") && !is.null(panel.data[['Coefficient_Matrices']])) {
 		panel.data[['Coefficient_Matrices']] <- checksplineMatrix(panel.data[['Coefficient_Matrices']])
 	}
 
-	if (!missing(sgp.labels)) {
-		if (!is.list(sgp.labels)) {
+	if (!missing(sgp.labels) && !is.list(sgp.labels)) {
 			stop("Please specify an appropriate list of SGP function labels (sgp.labels). See help page for details.")
-	}}
+	}
 	if (!identical(names(sgp.labels), c("my.year", "my.subject")) &&
 		!identical(names(sgp.labels), c("my.year", "my.subject", "my.extra.label"))) {
 		stop("Please specify an appropriate list for sgp.labels. See help page for details.")
@@ -1363,7 +1358,6 @@ function(panel.data,         ## REQUIRED
 					" indicated as minimum cohort size. \n\t\tCheck data, function arguments and see help page for details.\n"))
 				Coefficient_Matrices[[tmp.path.coefficient.matrices]][['TMP_NAME']] <- NULL
 				grade.progression <- tmp.gp <- rev(rev(tmp.gp)[1:k])
-				# num.prior <- length(tmp.gp[2:k]) # Force lots of warnings (?)
 				break
 			}
 			if (identical(names(Coefficient_Matrices[[tmp.path.coefficient.matrices]][['TMP_NAME']]), "RQ_ERROR")) {

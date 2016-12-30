@@ -10,13 +10,13 @@ function(list.of.splineMatrix,
 	}
 	for (i in names(list.of.splineMatrix)) {
 		if (!grepl("SIMEX", i)) {
-			if (length(grep("BASELINE", i))==0 | is.null(state) || is.null(SGP::SGPstateData[[state]][['Baseline_splineMatrix']])) {
+			if (!grepl("BASELINE", i) || is.null(state) || is.null(SGP::SGPstateData[[state]][['Baseline_splineMatrix']])) {
 				splineMatrix.tf <- sapply(list.of.splineMatrix[[i]], validObject, test=TRUE)==TRUE
 				if (!all(splineMatrix.tf)) {
 					content_area <- unlist(strsplit(i, "[.]"))[1]; year <- unlist(strsplit(i, "[.]"))[2]
 					for (j in names(list.of.splineMatrix[[i]])[!splineMatrix.tf]) {
 						message(paste("\tNOTE: Updating Coefficient Matrix", i, j, "to new splineMatrix class."))
-						list.of.splineMatrix[[i]][[j]] <- 
+						list.of.splineMatrix[[i]][[j]] <-
 							as.splineMatrix(matrix_argument=list.of.splineMatrix[[i]][[j]], matrix_argument_name=j, content_area=content_area, year=year, sgp_object=sgp_object)
 					}
 				}
@@ -32,7 +32,7 @@ function(list.of.splineMatrix,
 						content_area <- unlist(strsplit(i, "[.]"))[1]; year <- unlist(strsplit(i, "[.]"))[2]
 						for (j in names(list.of.splineMatrix[[i]][[grd_ord]][[lambda]])[!splineMatrix.tf]) {
 							message(paste("\tNOTE: Updating Coefficient Matrix", i, grd_ord, lambda, j, "to new splineMatrix class."))
-							list.of.splineMatrix[[i]][[grd_ord]][[lambda]][[j]] <- 
+							list.of.splineMatrix[[i]][[grd_ord]][[lambda]][[j]] <-
 								as.splineMatrix(matrix_argument=list.of.splineMatrix[[i]][[grd_ord]][[lambda]][[j]], matrix_argument_name=j, content_area=content_area, year=year, sgp_object=sgp_object)
 						}
 					}
