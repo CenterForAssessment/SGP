@@ -57,7 +57,7 @@ Linux: apt-get install r-base-dev (or similar).
 
 ### References
 
-Betebenner, D. W., VanIwaarden, A., Domingue, B., and Shang, Y. (2016). SGP: Student Growth Percentiles & Percentile Growth Trajectories. 
+Betebenner, D. W., VanIwaarden, A., Domingue, B., and Shang, Y. (2017). SGP: Student Growth Percentiles & Percentile Growth Trajectories. 
 
-R Development Core Team (2016). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria.
+R Development Core Team (2017). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria.
 3-900051-07-0.
