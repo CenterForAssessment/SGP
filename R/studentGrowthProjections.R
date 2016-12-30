@@ -415,7 +415,6 @@ function(panel.data,	## REQUIRED
 			} else {
 				tmp.vec <- expand.grid(tmp.name.prefix, percentile.trajectory.values, paste0("_PROJ_", projection.unit.label, "_"), seq_along(grade.projection.sequence.labels), lag.increment.label)[1:(length(percentile.trajectory.values)*tmp.num.years.forward),]
 			}
-#			setnames(trajectories, c("ID", do.call(paste, c(tmp.vec, sep=""))))
 			setnames(trajectories, c("ID", do.call(paste0, tmp.vec)))
 			if (!cuts.tf) return(trajectories)
 		}
