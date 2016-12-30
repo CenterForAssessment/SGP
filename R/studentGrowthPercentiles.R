@@ -220,7 +220,7 @@ function(panel.data,         ## REQUIRED
 				Model=paste0("rq.sgp(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=taus, data=tmp.data, method=", rq.method, ")"),
 				SGPt=if (is.null(SGPt)) NULL else list(VARIABLES=unlist(SGPt), MAX_TIME=max(tmp.data$TIME, na.rm=TRUE), MAX_TIME_PRIOR=max(tmp.data$TIME-tmp.data$TIME_LAG, na.rm=TRUE), RANGE_TIME_LAG=range(tmp.data$TIME_LAG))))
 
-		eval(parse(text=paste0("new('splineMatrix', tmp.mtx, ", substring(s4Ks, 1, nchar(s4Ks)-1L), "), ", substring(s4Bs, 1L, nchar(s4Bs)-1L), "), ",
+		eval(parse(text=paste0("new('splineMatrix', tmp.mtx, ", substring(s4Ks, 1L, nchar(s4Ks)-1L), "), ", substring(s4Bs, 1L, nchar(s4Bs)-1L), "), ",
 			"Content_Areas=list(as.character(tail(content_area.progression, k+1L))), ",
 			"Grade_Progression=list(as.character(tail(tmp.slot.gp, k+1L))), ",
 			"Time=list(as.character(tail(year.progression, k+1L))), ",
@@ -390,7 +390,7 @@ function(panel.data,         ## REQUIRED
 						Model=paste0("rq.sgp(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=taus, data=tmp.data, method=", rq.method, ")"),
 						SGPt=if (is.null(SGPt)) NULL else list(VARIABLES=unlist(SGPt), MAX_TIME=max(tmp.data$TIME, na.rm=TRUE), MAX_TIME_PRIOR=max(tmp.data$TIME-tmp.data$TIME_LAG, na.rm=TRUE), RANGE_TIME_LAG=range(tmp.data$TIME_LAG))))
 
-			eval(parse(text=paste0("new('splineMatrix', tmp.mtx, ", substring(s4Ks, 1, nchar(s4Ks)-1L), "), ", substring(s4Bs, 1L, nchar(s4Bs)-1L), "), ",
+			eval(parse(text=paste0("new('splineMatrix', tmp.mtx, ", substring(s4Ks, 1L, nchar(s4Ks)-1L), "), ", substring(s4Bs, 1L, nchar(s4Bs)-1L), "), ",
 				"Content_Areas=list(as.character(tail(content_area.progression, k+1L))), ",
 				"Grade_Progression=list(as.character(tail(tmp.slot.gp, k+1L))), ",
 				"Time=list(as.character(tail(year.progression, k+1L))), ",
@@ -400,11 +400,11 @@ function(panel.data,         ## REQUIRED
 
 		fitted <- extrap <- tmp.quantiles.simex <- simex.coef.matrices <- list()
 		if (dependent.var.error) {
-			loss.hoss <- matrix(nrow=2, ncol=length(tmp.gp))
+			loss.hoss <- matrix(nrow=2L, ncol=length(tmp.gp))
 			lh.ca <- rev(content_area.progression)
 			lh.gp <- rev(tmp.gp)
 		} else {
-			loss.hoss <- matrix(nrow=2, ncol=length(tmp.gp)-1L)
+			loss.hoss <- matrix(nrow=2L, ncol=length(tmp.gp)-1L)
 			lh.ca <- rev(content_area.progression)[-1L]
 			lh.gp <- rev(tmp.gp)[-1L]
 			if (!is.null(csem.data.vnames)) {
@@ -1162,7 +1162,7 @@ function(panel.data,         ## REQUIRED
 	}
 
 	if (is.numeric(tmp.gp) & drop.nonsequential.grade.progression.variables && any(diff(tmp.gp) > 1)) {
-		ss.data <- ss.data[,c(1, (num.panels+1L)-rev(c(1L, cumsum(rev(diff(tmp.gp)))+1L)-1L), (2*num.panels+1L)-rev(c(1L, cumsum(rev(diff(tmp.gp)))+1L)-1L)), with=FALSE]
+		ss.data <- ss.data[,c(1L, (num.panels+1L)-rev(c(1L, cumsum(rev(diff(tmp.gp)))+1L)-1L), (2*num.panels+1L)-rev(c(1L, cumsum(rev(diff(tmp.gp)))+1L)-1L)), with=FALSE]
 		num.panels <- (dim(ss.data)[2L]-1L)/2L
 	}
 
@@ -1287,7 +1287,7 @@ function(panel.data,         ## REQUIRED
 	if (!is.null(year.progression) && is.null(year_lags.progression)) {
 		year.progression <- tail(year.progression, length(tmp.gp))
 		if (year.progression[1L] == "BASELINE") {
-			year_lags.progression <- rep(1, length(year.progression)-1L)
+			year_lags.progression <- rep(1L, length(year.progression)-1L)
 			year.progression.for.norm.group <- year.progression
 		} else {
 			year_lags.progression <- diff(as.numeric(sapply(strsplit(year.progression, '_'), '[', split.location(year.progression))))
