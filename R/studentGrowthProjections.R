@@ -157,7 +157,7 @@ function(panel.data,	## REQUIRED
 			tmp.list[[i]] <- list()
 			for (j in seq_along(grade.projection.sequence)) {
 				tmp.years_lags <- c(tail(year_lags.progression, grade.progression.index[i]-1L), head(year_lags.projection.sequence, j))
-				if (grepl("BASELINE", sgp.labels[['my.extra.label']])) {
+				if (length(grep("BASELINE", sgp.labels[['my.extra.label']])) > 0) {
 					tmp.years <- rep("BASELINE", length(tmp.years_lags)+1L)
 				} else {
 					tmp.years <- yearIncrement(sgp.labels$my.year, rev(c(0L, -cumsum(rev(tmp.years_lags)))))
@@ -173,7 +173,7 @@ function(panel.data,	## REQUIRED
 						my.matrix.time.dependency=if (is.null(SGPt)) NULL else list(TIME="TIME", TIME_LAG="TIME_LAG"))
 				if (length(tmp.matrix)==0L) {
 					# Reverse tmp.years to find COHORT or BASELINE analog
-					if (grepl("BASELINE", sgp.labels[['my.extra.label']])) {
+					if (length(grep("BASELINE", sgp.labels[['my.extra.label']])) == 0) {
 						tmp.years2 <- yearIncrement(sgp.labels$my.year, rev(c(0L, -cumsum(rev(tmp.years_lags)))))
 					} else {
 						tmp.years2 <- rep("BASELINE", length(tmp.years_lags)+1L)
@@ -561,7 +561,7 @@ function(panel.data,	## REQUIRED
 		}
 		tmp.path.coefficient.matrices <- .create.path(use.my.coefficient.matrices)
 		if (is.null(panel.data[["Coefficient_Matrices"]]) | is.null(panel.data[["Coefficient_Matrices"]][[tmp.path.coefficient.matrices]])) {
-			if (grepl("BASELINE", sgp.labels[['my.extra.label']]) & !is.null(SGP::SGPstateData[[performance.level.cutscores]][["Baseline_splineMatrix"]])) {
+			if (length(grep("BASELINE", sgp.labels[['my.extra.label']])) > 0 & !is.null(SGP::SGPstateData[[performance.level.cutscores]][["Baseline_splineMatrix"]])) {
 				panel.data[["Coefficient_Matrices"]][[tmp.path.coefficient.matrices]] <- SGP::SGPstateData[[performance.level.cutscores]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]]
 			} else {
 				messageSGP("\t\tNOTE: Coefficient matrices indicated by argument use.my.coefficient.matrices are not included.")
@@ -570,7 +570,7 @@ function(panel.data,	## REQUIRED
 		}
 	}
 	if (missing(use.my.coefficient.matrices) & is.null(content_area.projection.sequence)) {
-		if (grepl("BASELINE", sgp.labels[['my.extra.label']])) {
+		if (length(grep("BASELINE", sgp.labels[['my.extra.label']])) > 0) {
 			tmp.path.coefficient.matrices <- paste(sgp.labels$my.subject, "BASELINE", sep=".")
 			if (is.null(panel.data[["Coefficient_Matrices"]]) | is.null(panel.data[["Coefficient_Matrices"]][[tmp.path.coefficient.matrices]])) {
 				stop(paste0("\t\tNOTE: Coefficient matrices indicated by argument sgp.labels, '", tmp.path.coefficient.matrices, "', are not included. Please check supplied list to make sure appropriate coefficient matrices are included.\n"))
@@ -585,7 +585,7 @@ function(panel.data,	## REQUIRED
 		}
 	}
 	if (!is.null(content_area.projection.sequence)) {
-		if (grepl("BASELINE", sgp.labels[['my.extra.label']])) {
+		if (length(grep("BASELINE", sgp.labels[['my.extra.label']])) > 0) {
 			tmp.path.coefficient.matrices <- paste(unique(content_area.projection.sequence), "BASELINE", sep=".")
 		} else {
 			tmp.path.coefficient.matrices <- paste(unique(content_area.projection.sequence), sgp.labels$my.year, sep=".")
@@ -752,7 +752,7 @@ function(panel.data,	## REQUIRED
 		if (any(is.na(match(tmp.path.coefficient.matrices, names(panel.data[["Coefficient_Matrices"]]))))) {
 			tmp.fix.index <- which(is.na(match(tmp.path.coefficient.matrices, names(panel.data[["Coefficient_Matrices"]]))))
 			# Reverse tmp.path.coefficient.matrices use of my.year/BASELINE and try that
-			if (grepl("BASELINE", sgp.labels[['my.extra.label']])) {
+			if (length(grep("BASELINE", sgp.labels[['my.extra.label']])) > 0) {
 				tmp.path.coefficient.matrices2 <- paste(unique(content_area.projection.sequence), sgp.labels$my.year, sep=".")[tmp.fix.index]
 			} else {
 				tmp.path.coefficient.matrices2 <- paste(unique(content_area.projection.sequence), "BASELINE", sep=".")[tmp.fix.index]
@@ -773,7 +773,7 @@ function(panel.data,	## REQUIRED
 					SGProjections=panel.data[["SGProjections"]],
 					Simulated_SGPs=panel.data[["Simulated_SGPs"]]))
 			} else {
-				if (grepl("BASELINE", sgp.labels[['my.extra.label']])) {
+				if (length(grep("BASELINE", sgp.labels[['my.extra.label']])) > 0) {
 					tmp.messages <- c(tmp.messages, paste0("\t\tNOTE: Not all CONTENT_AREA values in content_area.progression have associated BASELINE referenced coefficient matrices.\n\tCOHORT referenced matrices for missing content areas (",
 						paste(gsub(paste0(".", sgp.labels$my.year), "", tmp.path.coefficient.matrices2), collapse=", "),
 						") have been found and will be used.\n\t\tPlease note the inconsistency and ensure this is correct!\n"))
