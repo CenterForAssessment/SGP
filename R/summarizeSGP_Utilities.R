@@ -91,7 +91,7 @@ function(tmp.simulation.dt,
 
 		tmp.csem <- ddcast(rbindlist(tmp.list.1)[,list(sd(V1, na.rm=TRUE), sd(V2, na.rm=TRUE)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")],
 							... ~ BASELINE, value.var=c("V1", "V2"), sep=".")
-		if (!grepl("BASELINE", names(tmp.csem))) {
+		if (!any(grepl("BASELINE", names(tmp.csem)))) {
 			setnames(tmp.csem, c("V1.COHORT", "V2.COHORT"), c("MEDIAN_SGP_STANDARD_ERROR_CSEM", "MEAN_SGP_STANDARD_ERROR_CSEM"))
 		} else {
 			setnames(tmp.csem, c("V1.COHORT", "V2.COHORT", "V1.BASELINE", "V2.BASELINE"),
