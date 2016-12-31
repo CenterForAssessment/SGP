@@ -4,7 +4,7 @@ The **SGP** Package is open source software built for the [**R** software enviro
 
 [![Build Status](https://travis-ci.org/dbetebenner/SGP.svg?branch=master)](https://travis-ci.org/dbetebenner/SGP)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/SGP)](http://cran.r-project.org/package=SGP)
-[![Development Version](https://img.shields.io/badge/devel-1.5--9.166-brightgreen.svg)](https://github.com/CenterForAssessment/SGP)
+[![Development Version](https://img.shields.io/badge/devel-1.5--9.167-brightgreen.svg)](https://github.com/CenterForAssessment/SGP)
 [![Rstudio mirror downloads](http://cranlogs.r-pkg.org/badges/grand-total/SGP)](https://github.com/metacran/cranlogs.app)
 [![License](http://img.shields.io/badge/license-GPL%203-brightgreen.svg?style=flat)](https://github.com/CenterForAssessment/SGP/blob/master/LICENSE.md)
 [![Join the chat at https://gitter.im/CenterForAssessment/SGP](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/CenterForAssessment/SGP?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
@@ -57,7 +57,7 @@ Linux: apt-get install r-base-dev (or similar).
 
 ### References
 
-Betebenner, D. W., VanIwaarden, A., Domingue, B., and Shang, Y. (2016). SGP: Student Growth Percentiles & Percentile Growth Trajectories. 
+Betebenner, D. W., VanIwaarden, A., Domingue, B., and Shang, Y. (2017). SGP: Student Growth Percentiles & Percentile Growth Trajectories. 
 
-R Development Core Team (2016). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria.
+R Development Core Team (2017). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria.
 3-900051-07-0.

@@ -310,7 +310,7 @@ function(sgp_object,
 
 		convert.variables <- function(tmp.df) {
 			if ("YEAR" %in% names(tmp.df) && is.character(tmp.df$YEAR)) {
-				if (length(grep("_", tmp.df$YEAR)) > 0) tmp.df[,YEAR:=as.integer(sapply(strsplit(YEAR, "_"), '[', 2))] else tmp.df[,YEAR:=as.integer(YEAR)]
+				if (any(grepl("_", tmp.df$YEAR))) tmp.df[,YEAR:=as.integer(sapply(strsplit(YEAR, "_"), '[', 2))] else tmp.df[,YEAR:=as.integer(YEAR)]
 			}
 			if ("LAST_NAME" %in% names(tmp.df) && is.factor(tmp.df$LAST_NAME)) {
 				tmp.df[,LAST_NAME:=as.character(LAST_NAME)]
@@ -407,7 +407,7 @@ function(sgp_object,
 		if (is.null(outputSGP_INDIVIDUAL.years)) {
 			tmp.years <- sort(unique(slot.data["VALID_CASE"], by='YEAR')[['YEAR']])
 			tmp.last.year <- tail(tmp.years, 1)
-			if (length(grep("_", tmp.years)) > 0) {
+			if (any(grepl("_", tmp.years))) {
 				tmp.years.short <- sapply(strsplit(tmp.years, "_"), '[', 2)
 				tmp.last.year.short <- tail(unlist(strsplit(tail(tmp.years, 1), "_")), 1)
 			} else {
@@ -418,7 +418,7 @@ function(sgp_object,
 			tmp.all.years <- sort(unique(slot.data["VALID_CASE"], by='YEAR')[["YEAR"]])
 			tmp.years <- tmp.all.years[1:which(tmp.all.years==tail(sort(outputSGP_INDIVIDUAL.years), 1))]
 			tmp.last.year <- tail(tmp.years, 1)
-			if (length(grep("_", tmp.years)) > 0) {
+			if (any(grepl("_", tmp.years))) {
 				tmp.years.short <- sapply(strsplit(tmp.years, "_"), '[', 2)
 				tmp.last.year.short <- tail(unlist(strsplit(tail(tmp.years, 1), "_")), 1)
 			} else {
@@ -518,7 +518,7 @@ function(sgp_object,
 			}
 			outputSGP.data <- data.table(convert.variables(rbindlist(tmp.list, fill=TRUE)), key=paste(key(outputSGP.data), collapse=","))[outputSGP.data]
 			for (proj.iter in grep(paste("PROJ_YEAR", j, sep="_"), names(outputSGP.data), value=TRUE)) {
-				if (length(grep("CURRENT", proj.iter)) > 0) tmp.increment <- j else tmp.increment <- j-1
+				if (grepl("CURRENT", proj.iter)) tmp.increment <- j else tmp.increment <- j-1
 				setnames(outputSGP.data, c(proj.iter, paste("GRADE", tmp.last.year.short, sep=".")), c("TEMP_SCORE", "TEMP_GRADE"))
 				outputSGP.data[, TEMP:=piecewiseTransform(
 								scale_score=TEMP_SCORE,
@@ -810,7 +810,7 @@ function(sgp_object,
 		for (names.iter in grep("BASELINE", names(sgp_object@SGP[['SGProjections']]), value=TRUE)) {
 			dir.create(file.path(outputSGP.directory, "RLI", "SGProjections"), recursive=TRUE, showWarnings=FALSE)
 
-			if (length(grep("TARGET_SCALE_SCORES", names.iter))==0) {
+			if (!grepl("TARGET_SCALE_SCORES", names.iter)) {
 				tmp.table <- data.table(
 					VALID_CASE="VALID_CASE",
 					CONTENT_AREA=unlist(strsplit(names.iter, "[.]"))[1],
@@ -825,10 +825,10 @@ function(sgp_object,
 				}
 				output.column.order <- SGP::SGPstateData[['RLI']][['SGP_Configuration']][['output.column.order']][['SGProjection']]
 			} else {
-				if (length(grep("6_TIME", names(sgp_object@SGP[['SGProjections']][[names.iter]]))) > 0) {
+				if (any(grepl("6_TIME", names(sgp_object@SGP[['SGProjections']][[names.iter]])))) {
 					output.column.order <- SGP::SGPstateData[['RLI']][['SGP_Configuration']][['output.column.order']][['SGProjection_Target_6_TIME']]
 				}
-				if (length(grep("10_TIME", names(sgp_object@SGP[['SGProjections']][[names.iter]]))) > 0) {
+				if (any(grepl("10_TIME", names(sgp_object@SGP[['SGProjections']][[names.iter]])))) {
 					output.column.order <- SGP::SGPstateData[['RLI']][['SGP_Configuration']][['output.column.order']][['SGProjection_Target_10_TIME']]
 				}
 			}
