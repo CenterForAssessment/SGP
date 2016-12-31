@@ -531,7 +531,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			## Remove NAs (these arise from students without scores in ALL content areas)
 
 			tmp.tf <- with(tmp.districts.and.schools,
-				eval(parse(text=paste("!is.na(DISTRICT_NUMBER.", tmp.last.year, ") & !is.na(SCHOOL_NUMBER.", tmp.last.year, ")", sep=""))))
+				eval(parse(text=paste0("!is.na(DISTRICT_NUMBER.", tmp.last.year, ") & !is.na(SCHOOL_NUMBER.", tmp.last.year, ")"))))
 			tmp.districts.and.schools <- tmp.districts.and.schools[tmp.tf]
 			setnames(tmp.districts.and.schools, c("DISTRICT_NUMBER", "SCHOOL_NUMBER"))
 			tmp.districts.and.schools <- tmp.districts.and.schools.size[tmp.districts.and.schools][order(V1, decreasing=TRUE)][,list(DISTRICT_NUMBER, SCHOOL_NUMBER)]
@@ -549,7 +549,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 				key=paste(c("DISTRICT_NUMBER", "SCHOOL_NUMBER"), tmp.last.year, sep=".")), by=paste(c("DISTRICT_NUMBER", "SCHOOL_NUMBER"), tmp.last.year, sep="."))[,
 				c(paste(c("DISTRICT_NUMBER", "SCHOOL_NUMBER"), tmp.last.year, sep=".")), with=FALSE]
 			tmp.tf <- with(tmp.districts.and.schools,
-				eval(parse(text=paste("!is.na(DISTRICT_NUMBER.", tmp.last.year, ") & !is.na(SCHOOL_NUMBER.", tmp.last.year, ")", sep=""))))
+				eval(parse(text=paste0("!is.na(DISTRICT_NUMBER.", tmp.last.year, ") & !is.na(SCHOOL_NUMBER.", tmp.last.year, ")"))))
 			tmp.districts.and.schools <- tmp.districts.and.schools[tmp.tf]
 			setnames(tmp.districts.and.schools, c("DISTRICT_NUMBER", "SCHOOL_NUMBER"))
 		}
@@ -1013,7 +1013,7 @@ if (sgPlot.save.sgPlot.data) {
 	setkey(sgPlot.data, ID)
 	tmp.file.name <- paste(gsub(" ", "_", capwords(getStateAbbreviation(state, type="name"))), "studentGrowthPlot_Data", sep="_")
 	assign(tmp.file.name, sgPlot.data)
-	save(list=tmp.file.name, file=paste(tmp.file.name, ".Rdata", sep=""))
+	save(list=tmp.file.name, file=paste0(tmp.file.name, ".Rdata"))
 }
 
 

@@ -16,7 +16,7 @@ function(
 	if (is.null(round.digits)) round.digits <- 2
 	if (is.null(distribution)) distribution <- "Normal"
 	if (!is.null(state)) {
-		min.max <- SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]][[paste("loss.hoss_", grade, sep="")]]
+		min.max <- SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]][[paste0("loss.hoss_", grade)]]
 	} else {
 		min.max <- range(scale_scores, na.rm=TRUE)
 	}

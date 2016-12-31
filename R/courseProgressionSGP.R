@@ -35,7 +35,7 @@ function(
 		if (identical(lag.direction, "BACKWARD")) tmp.years <- sort(unique(sgp_object_subset, by='YEAR')[['YEAR']])
 
 		invisible(sgp_object_subset[,GRADE_CHAR:=as.factor(GRADE)])
-		levels(sgp_object_subset[["GRADE_CHAR"]]) <- sapply(lapply(strsplit(paste("0", levels(sgp_object_subset[["GRADE_CHAR"]]), sep=""), ""), tail, 2), paste, collapse="")
+		levels(sgp_object_subset[["GRADE_CHAR"]]) <- sapply(lapply(strsplit(paste0("0", levels(sgp_object_subset[["GRADE_CHAR"]])), ""), tail, 2), paste, collapse="")
 		suppressWarnings(invisible(sgp_object_subset[, CONTENT_AREA_by_GRADE:=paste(CONTENT_AREA, GRADE_CHAR, sep=".")]))
 		invisible(sgp_object_subset[,YEAR_INTEGER:=as.integer(as.factor(YEAR))])
 		invisible(sgp_object_subset[,CONTENT_AREA:=NULL])
@@ -57,7 +57,7 @@ function(
 			setnames(sgp_object_subset,
 				# c("CONTENT_AREA_by_GRADE", paste("CONTENT_AREA_by_GRADE", 1:(length(tmp.years)-1), sep=".")),
 				c("CONTENT_AREA_by_GRADE", "i.CONTENT_AREA_by_GRADE", paste("i.CONTENT_AREA_by_GRADE", 1:(length(tmp.years)-2), sep=".")), # changes for data.table 1.9.4
-				paste(paste("CONTENT_AREA_by_GRADE_", tmp.label, "_YEAR", sep=""), 0:(length(tmp.years)-1), sep="."))
+				paste(paste0("CONTENT_AREA_by_GRADE_", tmp.label, "_YEAR"), 0:(length(tmp.years)-1), sep="."))
 		} else {
 			setnames(sgp_object_subset, c("CONTENT_AREA_by_GRADE", "i.CONTENT_AREA_by_GRADE"), c("CONTENT_AREA_by_GRADE_PRIOR_YEAR.0", "CONTENT_AREA_by_GRADE_PRIOR_YEAR.1"))
 		}
@@ -71,10 +71,10 @@ function(
 		for (years in seq_along(course.progression.years)) {
 
 			tmp.course.progression.data <- sgp_object_subset[data.table(course.progression.years[years])][
-				, c("ID", paste(paste("CONTENT_AREA_by_GRADE_", tmp.label, "_YEAR", sep=""), 0:years, sep=".")), with=FALSE]
-			setkeyv(tmp.course.progression.data, paste(paste("CONTENT_AREA_by_GRADE_", tmp.label, "_YEAR", sep=""), 0:years, sep="."))
+				, c("ID", paste(paste0("CONTENT_AREA_by_GRADE_", tmp.label, "_YEAR"), 0:years, sep=".")), with=FALSE]
+			setkeyv(tmp.course.progression.data, paste(paste0("CONTENT_AREA_by_GRADE_", tmp.label, "_YEAR"), 0:years, sep="."))
 
-			sorted.levels.iter <- sort(unique(tmp.course.progression.data[[paste(paste("CONTENT_AREA_by_GRADE_", tmp.label, "_YEAR", sep=""), 0, sep=".")]]))
+			sorted.levels.iter <- sort(unique(tmp.course.progression.data[[paste(paste0("CONTENT_AREA_by_GRADE_", tmp.label, "_YEAR"), 0, sep=".")]]))
 			for (grades_by_content_areas in sorted.levels.iter) {
 				tmp.data <- tmp.course.progression.data[data.table(grades_by_content_areas)]
 				num.rows <- uniqueN(tmp.data[["ID"]])

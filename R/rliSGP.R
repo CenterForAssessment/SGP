@@ -118,14 +118,14 @@ function(sgp_object,
 		tmp.configuration.year <- paste(configuration.year, match(testing.window, c("FALL", "WINTER", "SPRING")), sep=".")
 		tmp.data.last.year <- tail(sort(unique(additional.data[['YEAR']])), 1)
 		if (!tmp.configuration.year %in% matrix.years) {
-			messageSGP(paste("\tNOTE: ", tmp.configuration.year, " indicated in the configuration has no matrices in ", paste(state, "SGPt_Baseline_Matrices", sep="_"), sep=""))
+			messageSGP(paste0("\tNOTE: ", tmp.configuration.year, " indicated in the configuration has no matrices in ", paste(state, "SGPt_Baseline_Matrices", sep="_")))
 			if (tmp.data.last.year > tail(matrix.years, 1)) tmp.matrix.year <- tail(matrix.years, 1)
 			if (tmp.data.last.year < head(matrix.years, 1)) tmp.matrix.year <- head(matrix.years, 1)
 		} else {
 			tmp.matrix.year <- tmp.configuration.year
 		}
-		matrix.label <- paste(paste(state, "SGPt_Baseline_Matrices", sep="_"), "$", paste(state, "SGPt_Baseline_Matrices", tmp.matrix.year, sep="_"), sep="")
-		messageSGP(paste("\tNOTE: rliSGP using matrices ", paste(state, "SGPt_Baseline_Matrices", tmp.matrix.year, sep="_"), sep=""))
+		matrix.label <- paste0(paste(state, "SGPt_Baseline_Matrices", sep="_"), "$", paste(state, "SGPt_Baseline_Matrices", tmp.matrix.year, sep="_"))
+		messageSGP(paste0("\tNOTE: rliSGP using matrices ", paste(state, "SGPt_Baseline_Matrices", tmp.matrix.year, sep="_")))
 		SGPstateData[[state]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <- eval(parse(text=matrix.label))
 	} else {
 		SGPstateData[[state]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <- coefficient.matrices
@@ -203,7 +203,7 @@ function(sgp_object,
 		} else {
 			if (eow.calculate.sgps) my.steps <- c("prepareSGP", "analyzeSGP", "combineSGP", "outputSGP") else steps <- c("prepareSGP", "analyzeSGP")
 			latest.RLImatrices.version <- sub("-", ".", unlist(strsplit(read.table("https://raw.githubusercontent.com/CenterForAssessment/RLImatrices/master/DESCRIPTION", sep="!", colClasses="character")$V1[4], ": "))[2])
-			if (as.character(packageVersion("RLImatrices"))!=latest.RLImatrices.version) stop(paste("Installed 'RLImatrices' package is not most current version. Install latest version (", latest.RLImatrices.version, ") using install_github('centerforassessment/RLImatrices').", sep=""))
+			if (as.character(packageVersion("RLImatrices"))!=latest.RLImatrices.version) stop(paste0("Installed 'RLImatrices' package is not most current version. Install latest version (", latest.RLImatrices.version, ") using install_github('centerforassessment/RLImatrices')."))
 			sgp_object <- updateSGP(
 				what_sgp_object=sgp_object,
 				with_sgp_data_LONG=additional.data,
@@ -243,16 +243,16 @@ function(sgp_object,
 				matrix.window <- paste(yearIncrement(configuration.year, 1), c(3, 1, 2)[match(testing.window, c("FALL", "WINTER", "SPRING"))], sep=".")
 			}
 			new.matrices <-convertToBaseline(sgp_object@SGP$Coefficient_Matrices[grep(configuration.year, names(sgp_object@SGP$Coefficient_Matrices))])
-			old.matrix.label <- paste(paste(state, "SGPt_Baseline_Matrices", sep="_"), "$", tail(sort(names(get(paste(state, "SGPt_Baseline_Matrices", sep="_")))), 1), sep="")
+			old.matrix.label <- paste0(paste(state, "SGPt_Baseline_Matrices", sep="_"), "$", tail(sort(names(get(paste(state, "SGPt_Baseline_Matrices", sep="_")))), 1))
 			old.matrices <- eval(parse(text=old.matrix.label))
 			year.to.replace <- head(sort(unique(sapply(lapply(sapply(names(old.matrices[['READING.BASELINE']]), strsplit, '[.]'), '[', 2:3), paste, collapse="."))), 1)
 			for (content_area.iter in c("EARLY_LITERACY.BASELINE", "READING.BASELINE", "MATHEMATICS.BASELINE")) {
 				old.matrices[[content_area.iter]][grep(year.to.replace, names(old.matrices[[content_area.iter]]))] <- NULL
 				old.matrices[[content_area.iter]] <- c(old.matrices[[content_area.iter]], new.matrices[[content_area.iter]])
 			}
-			eval(parse(text=paste(paste(state, "SGPt_Baseline_Matrices$", sep="_"), paste(state, "SGPt_Baseline_Matrices", matrix.window, sep="_"), " <- old.matrices", sep="")))
+			eval(parse(text=paste0(paste(state, "SGPt_Baseline_Matrices$", sep="_"), paste(state, "SGPt_Baseline_Matrices", matrix.window, sep="_"), " <- old.matrices")))
 			save(list=paste(state, "SGPt_Baseline_Matrices", sep="_"), file=paste(paste(state, "SGPt_Baseline_Matrices", sep="_"), "rda", sep="."), compress="xz")
-			messageSGP(paste("\tNOTE: ", paste(state, "SGPt_Baseline_Matrices", sep="_"), " saved to working directory contains matrices for use in ", matrix.window, ".", sep=""))
+			messageSGP(paste0("\tNOTE: ", paste(state, "SGPt_Baseline_Matrices", sep="_"), " saved to working directory contains matrices for use in ", matrix.window, "."))
 			messageSGP(paste("\t\tAdd", paste(paste(state, "SGPt_Baseline_Matrices", sep="_"), "rda", sep="."), "to the RLImatrices GitHub repo 'data' directory,"))
 			messageSGP("\t\tupdate version number/date, tag repo and commit tagged version to GitHub.\n")
 		}

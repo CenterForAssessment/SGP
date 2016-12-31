@@ -341,7 +341,7 @@ function(sgp_object,
 	gof.print <- function(sgp_object) {
 		if (length(sgp_object@SGP[["Goodness_of_Fit"]]) > 0) {
 			for (i in names(sgp_object@SGP[["Goodness_of_Fit"]])) {
-				dir.create(paste("Goodness_of_Fit/", i, sep=""), recursive=TRUE, showWarnings=FALSE)
+				dir.create(paste0("Goodness_of_Fit/", i), recursive=TRUE, showWarnings=FALSE)
 					for (output.format in c("PDF", "PNG")) {
 						for (j in names(sgp_object@SGP[["Goodness_of_Fit"]][[i]])) {
 							tmp.path <- file.path("Goodness_of_Fit", i, j)
@@ -350,10 +350,10 @@ function(sgp_object,
 								tmp.path <- gsub(tmp.content_area, substr(tmp.content_area, 1, 1), tmp.path)
 							}
 							if (output.format=="PDF") {
-								pdf(file=paste(tmp.path, ".pdf", sep=""), width=8.5, height=11)
+								pdf(file=paste0(tmp.path, ".pdf"), width=8.5, height=11)
 							}
 							if (output.format=="PNG") {
-								Cairo(file=paste(tmp.path, ".png", sep=""),
+								Cairo(file=paste0(tmp.path, ".png"),
 								      width=8.5, height=11, units="in", dpi=144, pointsize=10.5, bg="transparent")
 							}
 							grid.draw(sgp_object@SGP[["Goodness_of_Fit"]][[i]][[j]])
@@ -443,7 +443,7 @@ function(sgp_object,
             }
 
             if (!identical(years, year.for.equate)) {
-                messageSGP(paste("\tNOTE: Analyses involving equating only occur in most recent year. 'years' argument changed to ", year.for.equate, ".", sep=""))
+                messageSGP(paste0("\tNOTE: Analyses involving equating only occur in most recent year. 'years' argument changed to ", year.for.equate, "."))
                 years <- year.for.equate
             }
 
@@ -453,7 +453,7 @@ function(sgp_object,
                 SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]] <- c(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]], tmp.knots.boundaries)
                 assign(paste(state, "Knots_Boundaries", sep="_"), SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]])
                 save(list=paste(state, "Knots_Boundaries", sep="_"), file=paste(state, "Knots_Boundaries.Rdata", sep="_"))
-                messageSGP(paste("\tNOTE: Knots and Boundaries do not exist for ", year.for.equate, " in state provided.\n\tThey have been produced, embedded in SGPstateData, and are available using state=", state, " for subsequent analyses and saved to your working directory '", getwd(), "'.", sep=""))
+                messageSGP(paste0("\tNOTE: Knots and Boundaries do not exist for ", year.for.equate, " in state provided.\n\tThey have been produced, embedded in SGPstateData, and are available using state=", state, " for subsequent analyses and saved to your working directory '", getwd(), "'."))
             }
 
             data.for.equate <- copy(sgp_object@Data)
@@ -467,14 +467,14 @@ function(sgp_object,
                         unique(data.for.equate, by=key(data.for.equate))[!is.na(SCALE_SCORE) & VALID_CASE=="VALID_CASE", intersect(names(data.for.equate),
                             c("CONTENT_AREA", "YEAR", "GRADE", "SCALE_SCORE", "SCALE_SCORE_ACTUAL", paste("SCALE_SCORE_EQUATED", toupper(sgp.percentiles.equating.method.iter), conversion.type.iter, sep="_"))), with=FALSE]
                     fwrite(Scale_Score_Linkages[[conversion.type.iter]][[toupper(sgp.percentiles.equating.method.iter)]],
-                        file=paste(paste("Data/", paste("Linkages", year.for.equate, sep="_"), "/", sep=""), paste(gsub(" ", "_", getStateAbbreviation(state, type="LONG")), "Scale_Score_Linkages", toupper(sgp.percentiles.equating.method.iter), conversion.type.iter, sep="_"), ".txt", sep=""), quote=FALSE, sep="|")
+                        file=paste0(paste0("Data/", paste("Linkages", year.for.equate, sep="_"), "/"), paste(gsub(" ", "_", getStateAbbreviation(state, type="LONG")), "Scale_Score_Linkages", toupper(sgp.percentiles.equating.method.iter), conversion.type.iter, sep="_"), ".txt"), quote=FALSE, sep="|")
                     linkagePlot(Scale_Score_Linkages[[conversion.type.iter]][[toupper(sgp.percentiles.equating.method.iter)]], conversion.type.iter, sgp.percentiles.equating.method.iter, year.for.equate, state)
                 }
             }
-            save(Linkages, file=paste(paste("Data/", paste("Linkages", year.for.equate, sep="_"), "/", sep=""), "Linkages.Rdata", sep=""))
+            save(Linkages, file=paste0(paste0("Data/", paste("Linkages", year.for.equate, sep="_"), "/"), "Linkages.Rdata"))
             assign(paste(gsub(" ", "_", getStateAbbreviation(state, type="LONG")), "Scale_Score_Linkages", sep="_"), Scale_Score_Linkages)
             save(list=paste(gsub(" ", "_", getStateAbbreviation(state, type="LONG")), "Scale_Score_Linkages", sep="_"),
-                file=paste(paste("Data/", paste("Linkages", year.for.equate, sep="_"), "/", sep=""), paste(gsub(" ", "_", getStateAbbreviation(state, type="LONG")), "Scale_Score_Linkages", sep="_"), ".Rdata", sep=""))
+                file=paste0(paste0("Data/", paste("Linkages", year.for.equate, sep="_"), "/"), paste(gsub(" ", "_", getStateAbbreviation(state, type="LONG")), "Scale_Score_Linkages", sep="_"), ".Rdata"))
                 setkey(data.for.equate, VALID_CASE, CONTENT_AREA, YEAR, ID)
             data.for.equate <- data.for.equate[,c(names(sgp_object@Data), 'SCALE_SCORE_EQUATED_EQUIPERCENTILE_OLD_TO_NEW'), with=FALSE]
             setnames(data.for.equate, 'SCALE_SCORE_EQUATED_EQUIPERCENTILE_OLD_TO_NEW', 'SCALE_SCORE_EQUATED')
@@ -592,11 +592,11 @@ function(sgp_object,
 			}
 			rm(tmp)
 
-			assign(paste(state, "_Baseline_Matrices", sep=""), list())
+			assign(paste0(state, "_Baseline_Matrices"), list())
 			for (tmp.matrix.label in grep("BASELINE", names(tmp_sgp_object$Coefficient_Matrices), value=TRUE)) {
-				eval(parse(text=paste(state, "_Baseline_Matrices[['", tmp.matrix.label, "']] <- tmp_sgp_object[['Coefficient_Matrices']][['", tmp.matrix.label, "']]", sep="")))
+				eval(parse(text=paste0(state, "_Baseline_Matrices[['", tmp.matrix.label, "']] <- tmp_sgp_object[['Coefficient_Matrices']][['", tmp.matrix.label, "']]")))
 			}
-			save(list=paste(state, "_Baseline_Matrices", sep=""), file=paste(state, "_Baseline_Matrices.Rdata", sep=""))
+			save(list=paste0(state, "_Baseline_Matrices"), file=paste0(state, "_Baseline_Matrices.Rdata"))
 			messageSGP("\n\tFinished Calculating Baseline Coefficient Matrices\n")
 		} else {
 			if (is.null(sgp.use.my.sgp_object.baseline.coefficient.matrices)) tmp_sgp_object <- mergeSGP(tmp_sgp_object, SGPstateData[[state]][["Baseline_splineMatrix"]])
@@ -617,7 +617,7 @@ function(sgp_object,
 		}
 
 		###  Calculate BASELINE SIMEX matrices if they are not present
-		if (!all(find.matrices <- paste(tmp.subjects, ".BASELINE.SIMEX", sep="") %in% names(tmp_sgp_object[["Coefficient_Matrices"]]))) {
+		if (!all(find.matrices <- paste0(tmp.subjects, ".BASELINE.SIMEX") %in% names(tmp_sgp_object[["Coefficient_Matrices"]]))) {
 
 			if (is.null(sgp.baseline.config)) {
 				sgp.baseline.config <- getSGPBaselineConfig(sgp_object, content_areas = tmp.subjects, grades, sgp.baseline.panel.years, sgp.percentiles.baseline.max.order, calculate.simex.baseline)
@@ -703,11 +703,11 @@ function(sgp_object,
 			}
 
 			###  Save SIMEX BASELINE matrices
-			assign(paste(state, "_SIMEX_Baseline_Matrices", sep=""), list())
+			assign(paste0(state, "_SIMEX_Baseline_Matrices"), list())
 			for (tmp.matrix.label in grep("BASELINE.SIMEX", names(tmp_sgp_object$Coefficient_Matrices), value=TRUE)) {
-				eval(parse(text=paste(state, "_SIMEX_Baseline_Matrices[['", tmp.matrix.label, "']] <- tmp_sgp_object[['Coefficient_Matrices']][['", tmp.matrix.label, "']]", sep="")))
+				eval(parse(text=paste0(state, "_SIMEX_Baseline_Matrices[['", tmp.matrix.label, "']] <- tmp_sgp_object[['Coefficient_Matrices']][['", tmp.matrix.label, "']]")))
 			}
-			save(list=paste(state, "_SIMEX_Baseline_Matrices", sep=""), file=paste(state, "_SIMEX_Baseline_Matrices.Rdata", sep=""), compress="xz")
+			save(list=paste0(state, "_SIMEX_Baseline_Matrices"), file=paste0(state, "_SIMEX_Baseline_Matrices.Rdata"), compress="xz")
 
 			messageSGP("\n\tFinished Calculating SIMEX Baseline Coefficient Matrices\n")
 		} # END Compute SIMEX baseline coefficient matrices
@@ -749,7 +749,7 @@ function(sgp_object,
 
     if (!is.null(tmp.transition.year <- SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]) &&
         sort(unique(unlist(sapply(par.sgp.config[['sgp.percentiles']], function(x) x[['sgp.panel.years']]))))[1] < tmp.transition.year) {
-            messageSGP(paste("\tNOTE: Configurations include years prior to assessment transition (", tmp.transition.year, ").\n\t\tOutput will include SGPs of all orders to accomodate investigations.", sep=""))
+            messageSGP(paste0("\tNOTE: Configurations include years prior to assessment transition (", tmp.transition.year, ").\n\t\tOutput will include SGPs of all orders to accomodate investigations."))
             print.other.gp <- TRUE
     }
 
@@ -933,7 +933,7 @@ function(sgp_object,
 				test.ids <- unique(rbindlist(tmp_sgp_object[["SGPercentiles"]], fill=TRUE), by='ID')[['ID']]
 				if (is(tmp_sgp_data_for_analysis, "DBIObject")) {
 					tmp_sgp_data_for_analysis <- data.table(dbGetQuery(dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_SGP_Data.sqlite")),
-							paste("select * from sgp_data where ID in ('", paste(test.ids, collapse="', '"), "')", sep="")))
+							paste0("select * from sgp_data where ID in ('", paste(test.ids, collapse="', '"), "')")))
 					if ("YEAR_WITHIN" %in% sgp.data.names) {
 						setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE, YEAR_WITHIN)
 					} else {
@@ -1905,7 +1905,7 @@ function(sgp_object,
 				test.ids <- unique(rbindlist(tmp_sgp_object[["SGPercentiles"]], fill=TRUE), by='ID')[["ID"]]
 				if (is(tmp_sgp_data_for_analysis, "DBIObject")) {
 					tmp_sgp_data_for_analysis <- data.table(dbGetQuery(dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_SGP_Data.sqlite")),
-							paste("select * from sgp_data where ID in ('", paste(test.ids, collapse="', '"), "')", sep="")))
+							paste0("select * from sgp_data where ID in ('", paste(test.ids, collapse="', '"), "')")))
 					if ("YEAR_WITHIN" %in% sgp.data.names) {
 						setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE, YEAR_WITHIN)
 					} else {

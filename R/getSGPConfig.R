@@ -298,11 +298,11 @@ function(sgp_object,
 						for (L in par.sgp.config[[b.iter[b]]][['sgp.calculate.simex']][['lambda']][-1]) {
 							if (par.sgp.config[[b.iter[b]]][['sgp.exact.grade.progression']]) ord.iter <- tmp.max.order else ord.iter <- seq_along(tmp.orders)
 							for (k in ord.iter) {
-							par.sgp.config[[b.iter[b]]][['sgp.matrices']][[paste(tmp.matrix.label, ".SIMEX", sep="")]][[
-								paste("qrmatrices", tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
+							par.sgp.config[[b.iter[b]]][['sgp.matrices']][[paste0(tmp.matrix.label, ".SIMEX")]][[
+								paste("qrmatrices", tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 1), k, sep="_")]][[paste0("lambda_", L)]] <-
 							unlist(getsplineMatrices(
-								my.matrices=tmp_sgp_object[['Coefficient_Matrices']][[paste(tmp.matrix.label, ".SIMEX", sep="")]][[
-									paste("qrmatrices", tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 1), k, sep="_")]][[paste("lambda_", L, sep="")]],
+								my.matrices=tmp_sgp_object[['Coefficient_Matrices']][[paste0(tmp.matrix.label, ".SIMEX")]][[
+									paste("qrmatrices", tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 1), k, sep="_")]][[paste0("lambda_", L)]],
 								my.matrix.content_area.progression=par.sgp.config[[b.iter[b]]][['sgp.content.areas']],
 								my.matrix.grade.progression=par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']],
 								my.matrix.time.progression=par.sgp.config[[b.iter[b]]][['sgp.panel.years']],
@@ -329,8 +329,8 @@ function(sgp_object,
 						what.to.return="ORDERS")
 
 						if (length(tmp.orders)==0) {
-							messageSGP(paste("\tNOTE: Cohort Referenced Coefficient matrices are not available for ",
-							paste(tmp.matrix.label, paste(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], collapse=", "), sep=": "), ".", sep=""))
+							messageSGP(paste0("\tNOTE: Cohort Referenced Coefficient matrices are not available for ",
+							paste(tmp.matrix.label, paste(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], collapse=", "), sep=": "), "."))
 						} else {
 							tmp.max.order <- max(tmp.orders)
 							if (par.sgp.config[[b.iter[b]]][['sgp.exact.grade.progression']]) ord.iter <- tmp.max.order else ord.iter <- seq_along(tmp.orders)
@@ -360,8 +360,8 @@ function(sgp_object,
 							what.to.return="ORDERS")
 
 						if (length(tmp.orders)==0) {
-							messageSGP(paste("\tNOTE: Equated Coefficient matrices are not available for ",
-							paste(tmp.matrix.label, paste(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], collapse=", "), sep=": "), ".", sep=""))
+							messageSGP(paste0("\tNOTE: Equated Coefficient matrices are not available for ",
+							paste(tmp.matrix.label, paste(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], collapse=", "), sep=": "), "."))
 						} else {
 							tmp.max.order <- max(tmp.orders)
 							if (par.sgp.config[[b.iter[b]]][['sgp.exact.grade.progression']]) ord.iter <- tmp.max.order else ord.iter <- seq_along(tmp.orders)
@@ -399,7 +399,7 @@ function(sgp_object,
 
 				### Create baseline specific arguments
 				if (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline) {
-					tmp.matrix.label <- paste(strsplit(names(sgp.config)[a], "\\.")[[1]][1], ".BASELINE", sep="")
+					tmp.matrix.label <- paste0(strsplit(names(sgp.config)[a], "\\.")[[1]][1], ".BASELINE")
  					if (tmp.matrix.label %in% names(tmp_sgp_object[["Coefficient_Matrices"]])) {
 						tmp.orders <- getsplineMatrices(
 							my.matrices=tmp_sgp_object[['Coefficient_Matrices']][[tmp.matrix.label]],
@@ -438,11 +438,11 @@ function(sgp_object,
 							if (!is.null(par.sgp.config[[b.iter[b]]][['sgp.calculate.simex.baseline']])) {
 								for (L in par.sgp.config[[b.iter[b]]][['sgp.calculate.simex.baseline']][['lambda']][-1]) {
 									for (k in ord.iter) {
-									par.sgp.config[[b.iter[b]]][['sgp.baseline.matrices']][[paste(tmp.matrix.label, ".SIMEX", sep="")]][[
-										paste("qrmatrices", tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 1), k, sep="_")]][[paste("lambda_", L, sep="")]] <-
+									par.sgp.config[[b.iter[b]]][['sgp.baseline.matrices']][[paste0(tmp.matrix.label, ".SIMEX")]][[
+										paste("qrmatrices", tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 1), k, sep="_")]][[paste0("lambda_", L)]] <-
 									unlist(getsplineMatrices(
-										my.matrices=tmp_sgp_object[['Coefficient_Matrices']][[paste(tmp.matrix.label, ".SIMEX", sep="")]][[
-											paste("qrmatrices", tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 1), k, sep="_")]][[paste("lambda_", L, sep="")]],
+										my.matrices=tmp_sgp_object[['Coefficient_Matrices']][[paste0(tmp.matrix.label, ".SIMEX")]][[
+											paste("qrmatrices", tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 1), k, sep="_")]][[paste0("lambda_", L)]],
 										my.matrix.content_area.progression=par.sgp.config[[b.iter[b]]][['sgp.content.areas']],
 										my.matrix.grade.progression=par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']],
 										my.matrix.time.progression=rep("BASELINE", length(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']])),
@@ -544,7 +544,7 @@ function(sgp_object,
 		}
 		if (sgp.percentiles) sgp.config.list[['sgp.percentiles']] <- tmp.config
 		if (!is.null(tmp.transition.year) && any(tmp.tf <- sapply(sgp.config.list[['sgp.percentiles']], function(x) tail(x[['sgp.panel.years']], 1) > tmp.transition.year))) {
-			messageSGP(paste("\tNOTE: Configurations include years prior to assessment transition (", tmp.transition.year, ").\n\t\tSGPs of maximum order up to the transition year (", tmp.transition.year, ") in addition to standard SGPs will be produced.", sep=""))
+			messageSGP(paste0("\tNOTE: Configurations include years prior to assessment transition (", tmp.transition.year, ").\n\t\tSGPs of maximum order up to the transition year (", tmp.transition.year, ") in addition to standard SGPs will be produced."))
 			for (tmp.iter in which(tmp.tf)) sgp.config.list[['sgp.percentiles']][[tmp.iter]][['return.additional.max.order.sgp']] <- as.numeric(unlist(strsplit(tail(sgp.config.list[['sgp.percentiles']][[tmp.iter]][['sgp.panel.years']], 1), "_")))[1] - as.numeric(unlist(strsplit(tmp.transition.year, "_")))[1]
 		}
 		if (sgp.percentiles.equated) {
@@ -602,7 +602,7 @@ function(sgp_object,
 			if (length(baseline.missings)>0) {
 				baseline.missings <- paste(unlist(sapply(baseline.missings, function(x)
 					paste(tail(par.sgp.config[[x]]$sgp.content.areas, 1), paste(par.sgp.config[[x]]$sgp.grade.sequences, collapse=", "), sep=": "))), collapse=";\n\t\t")
-				messageSGP(paste("\tNOTE: Baseline coefficient matrices are not available for:\n\t\t", baseline.missings, ".", sep=""))
+				messageSGP(paste0("\tNOTE: Baseline coefficient matrices are not available for:\n\t\t", baseline.missings, "."))
 
 				sgp.config.list[['sgp.percentiles.baseline']] <-
 					par.sgp.config[which(sapply(par.sgp.config, function(x) !identical(x[['sgp.baseline.grade.sequences']], "NO_BASELINE_COEFFICIENT_MATRICES")))]

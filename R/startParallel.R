@@ -1,16 +1,16 @@
-`startParallel` <- 
-function(parallel.config, 
+`startParallel` <-
+function(parallel.config,
 	process,
 	qr.taus) {
-	
+
 	if (any(toupper(parallel.config[['BACKEND']]) == 'MULTICORE' | toupper(parallel.config[['BACKEND']]) == 'SNOW')) {
 		stop(paste('\n\t', parallel.config[['BACKEND']], "no longer supported.  Please use the 'PARALLEL' package backend and R > 2.12 for parallel computation.\n"))
 	}
-	
+
 	if (toupper(parallel.config[['BACKEND']]) == 'FOREACH' && (parallel.config[['TYPE']] != "doParallel" & !is.na(parallel.config[['TYPE']]))) {
 			stop(paste('\n\t', parallel.config[['TYPE']], "no longer supported.  Please use doParallel and R > 2.12 for parallel computation.\n"))
 	}
-	
+
 	workers <- NULL; par.type <- 'OTHER'; TAUS.LIST <- NULL
 
 	if (!is.null(parallel.config[['CLUSTER.OBJECT']])) {
@@ -27,14 +27,14 @@ function(parallel.config,
 		clusterEvalQ(eval(parse(text=parallel.config[['CLUSTER.OBJECT']])), library(SGP))
 		par.start <- list(internal.cl=eval(parse(text=parallel.config[['CLUSTER.OBJECT']])), par.type='SNOW')
 		clusterExport(eval(parse(text=parallel.config[['CLUSTER.OBJECT']])), "par.start", envir=2)
-		return(list(internal.cl=eval(parse(text=parallel.config[['CLUSTER.OBJECT']])), 
+		return(list(internal.cl=eval(parse(text=parallel.config[['CLUSTER.OBJECT']])),
 			par.type='SNOW', TAUS.LIST=TAUS.LIST))
 	}
-	
+
 	###  Basic checks - default to ANY percentiles or projections WORKERS.
-	
+
 	if (is.numeric(parallel.config[['WORKERS']])) {
-		message(paste("\t\tNOTE: ", process, " workers not specified.  Numeric value from WORKERS (", parallel.config[['WORKERS']], ") will be used for all processes.\n", sep=""))
+		message(paste0("\t\tNOTE: ", process, " workers not specified.  Numeric value from WORKERS (", parallel.config[['WORKERS']], ") will be used for all processes.\n"))
 		parallel.config[['WORKERS']][[process]] <- parallel.config[['WORKERS']]
 	}
 	if (is.null(parallel.config[['WORKERS']][[process]])) {
@@ -42,17 +42,17 @@ function(parallel.config,
 			 tmp.indx <- grep(strsplit(process, "_")[[1]][2], names(parallel.config[['WORKERS']]))
 			 if (any(!is.na(tmp.indx))) {
 				 parallel.config[['WORKERS']][[process]] <- parallel.config[['WORKERS']][[tmp.indx]]
-				 message(paste("\t\tNOTE: ", process, "workers not defined specifically.", names(parallel.config[['WORKERS']][tmp.indx]), 
+				 message(paste("\t\tNOTE: ", process, "workers not defined specifically.", names(parallel.config[['WORKERS']][tmp.indx]),
 				 	"WORKERS will be used  (", parallel.config[['WORKERS']][tmp.indx], "worker processors)."))
 			 }
 		} # See if still NULL and stop:
 		if (is.null(parallel.config[['WORKERS']][[process]])) {
 			# stop(paste(process, "workers must be specified."))
 			parallel.config[['WORKERS']][[process]] <- 1
-			message("\n\t\tNOTE: ", process, " workers not specified!  WORKERS will be set to a single (1) process.\n", sep="")
+			message(paste0("\n\t\tNOTE: ", process, " workers not specified!  WORKERS will be set to a single (1) process.\n"))
 		}
 	}
-	
+
 	Lower_Level_Parallel <- NULL
 	if (all(c("PERCENTILES", "TAUS") %in% names(parallel.config[['WORKERS']]))) {
 		# if (as.numeric(parallel.config[['WORKERS']][['PERCENTILES']])==1) {
@@ -65,7 +65,7 @@ function(parallel.config,
 		if (.Platform$OS.type != "unix" | "SNOW_TEST" %in% names(parallel.config)) stop("Both SIMEX and PERCENTILES can not be executed in Parallel at the same time in Windows OS or using SNOW type backends.")
 		Lower_Level_Parallel <- parallel.config
 	}
-	
+
 	if (all(c("BASELINE_PERCENTILES", "TAUS") %in% names(parallel.config[['WORKERS']]))) {
 		if (.Platform$OS.type != "unix" | "SNOW_TEST" %in% names(parallel.config)) stop("Both TAUS and BASELINE_PERCENTILES can not be executed in Parallel at the same time in Windows OS or using SNOW type backends.")
 		Lower_Level_Parallel <- parallel.config
@@ -76,7 +76,7 @@ function(parallel.config,
 	}
 
 	###  Basic configuration
-	
+
 	if (toupper(parallel.config[['BACKEND']]) == 'FOREACH') {
 		if (!is.na(parallel.config[['TYPE']]) & !identical(parallel.config[['TYPE']], "NA")) {
 			eval(parse(text=paste("suppressPackageStartupMessages(require(", parallel.config[['TYPE']], "))")))
@@ -88,8 +88,8 @@ function(parallel.config,
 			# }	else parallel.config[['OPTIONS']]=list(preschedule=FALSE)
 		# }
 
-		if (parallel.config[['TYPE']]=="doParallel") { 
-			if (.Platform$OS.type == "unix" & par.type == "OTHER") par.type <- 'MULTICORE' 
+		if (parallel.config[['TYPE']]=="doParallel") {
+			if (.Platform$OS.type == "unix" & par.type == "OTHER") par.type <- 'MULTICORE'
 			if (.Platform$OS.type != "unix" & par.type == "OTHER") par.type <- 'SNOW'
 			if (par.type == 'MULTICORE' & is.null(parallel.config[['OPTIONS']][["preschedule"]])) {
 				if (is.list(parallel.config[['OPTIONS']])) {
@@ -97,7 +97,7 @@ function(parallel.config,
 				}	else parallel.config[['OPTIONS']]=list(preschedule=FALSE)
 			}
 		} # END doParallel
-		
+
 		foreach.options <- parallel.config[['OPTIONS']] # works fine if NULL
 	} #  END FOREACH
 
@@ -117,11 +117,11 @@ function(parallel.config,
 			}
 			par.type <- 'SNOW'
 		} else {
-			if (.Platform$OS.type == "unix") par.type <- 'MULTICORE' 
+			if (.Platform$OS.type == "unix") par.type <- 'MULTICORE'
 			if (.Platform$OS.type != "unix") par.type <- 'SNOW'; parallel.config[['TYPE']] <- 'PSOCK'
 		}
 	}
-	
+
 	if (par.type == 'SNOW') {
 		if (is.null(parallel.config[['TYPE']])) stop("The 'parallel.config$TYPE' must be specified ('PSOCK' or 'MPI')")
 		if (!parallel.config[['TYPE']] %in% c('PSOCK','MPI', 'doParallel')) stop("The 'parallel.config$TYPE' must be 'PSOCK', 'MPI' or 'doParallel'.")
@@ -129,12 +129,12 @@ function(parallel.config,
 
 
 	###  Set up workers and spin up clusters / register workers
-	
+
 	if (!is.null(parallel.config[['WORKERS']][[process]])) {
 		workers <- parallel.config[['WORKERS']][[process]]
 	} else workers <- parallel.config[['WORKERS']]
 	if (is.null(workers)) workers <- getOption("cores")
-	if (is.null(workers)) stop("parallel.config$WORKERS must, at a minimum, contain the number of parallel workers for all processes, 
+	if (is.null(workers)) stop("parallel.config$WORKERS must, at a minimum, contain the number of parallel workers for all processes,
 		or getOption('cores') must be specified to use MULTICORE parallel processing.")
 
 	###
@@ -185,11 +185,11 @@ function(parallel.config,
 		}
 		if (sum(chunk.size) > length(qr.taus)) for(l in 1:length(TAUS.LIST))  TAUS.LIST[[l]] <- TAUS.LIST[[l]][!is.na(TAUS.LIST[[l]])]
 	}
-	
+
 	###
 	### END to startParallel
 	###
-	
+
 	if (toupper(parallel.config[['BACKEND']]) == 'FOREACH') {
 		if (parallel.config[['TYPE']]=="NA") {
 			registerDoSEQ() # prevents warning message
