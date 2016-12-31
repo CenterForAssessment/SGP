@@ -2,24 +2,24 @@
 \alias{bubblePlot}
 \title{Core bubblePlot function for SGP}
 \description{
-Function to create bubble plots associated with student growth percentile and percentile growth trajectory results. The function is adaptable to many representations but 
-is used in conjunction with results derived from \code{\link{summarizeSGP}} to represent summary level results of growth against achievement 
-(usually, median student growth percentile against percentage at/above proficient). The function has MANY options and users are advised to 
-read this documentation thoroughly as well as investigate the source code for the function itself to see what the many different representations 
+Function to create bubble plots associated with student growth percentile and percentile growth trajectory results. The function is adaptable to many representations but
+is used in conjunction with results derived from \code{\link{summarizeSGP}} to represent summary level results of growth against achievement
+(usually, median student growth percentile against percentage at/above proficient). The function has MANY options and users are advised to
+read this documentation thoroughly as well as investigate the source code for the function itself to see what the many different representations
 that are possible. The function has the ability to produce interactive data tips using the \code{pdf2} package available on R-Forge. This package is NOT
 installed as part of the SGP package and must be installed separately from the package to take advantage of this functionality of the \code{bubblePlot} function.
-To install \code{pdf2} from the \code{R} prompt type: \code{install.packages("pdf2",repos="http://R-Forge.R-project.org")}. The use of the pdf2 package is 
+To install \code{pdf2} from the \code{R} prompt type: \code{install.packages("pdf2",repos="http://R-Forge.R-project.org")}. The use of the pdf2 package is
 scheduled to be deprecated as it is no longer maintained by the creator and requires use of a pre 2.14 version of R.
 }
 \usage{
 bubblePlot(
-	bubble_plot_data.X, 
+	bubble_plot_data.X,
 	bubble_plot_data.Y,
 	bubble_plot_data.SUBSET=NULL,
 	bubble_plot_data.INDICATE=NULL,
-        bubble_plot_data.BUBBLE_CENTER_LABEL=NULL, 
-	bubble_plot_data.SIZE, 
-	bubble_plot_data.LEVELS=NULL, 
+        bubble_plot_data.BUBBLE_CENTER_LABEL=NULL,
+	bubble_plot_data.SIZE,
+	bubble_plot_data.LEVELS=NULL,
 	bubble_plot_data.BUBBLE_TIPS_LINES,
 	bubble_plot_labels.X=c("Growth", "Median Student Growth Percentile"),
 	bubble_plot_labels.Y=c("Achievement", "Percent at/above Proficient"),
@@ -57,8 +57,8 @@ bubblePlot(
 	bubble_plot_configs.BUBBLE_PLOT_EXTRAS=NULL,
         bubble_plot_configs.BUBBLE_PLOT_DIMENSION=NULL, ## List of WIDTH and HEIGHT
 	bubble_plot_configs.BUBBLE_PLOT_NAME="bubblePlot.pdf",
-	bubble_plot_configs.BUBBLE_PLOT_PATH=paste("Figures", sep=""),
-	bubble_plot_pdftk.CREATE_CATALOG=FALSE) 
+	bubble_plot_configs.BUBBLE_PLOT_PATH="Figures",
+	bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 }
 
 \arguments{
@@ -70,7 +70,7 @@ bubblePlot(
 	}
 	\item{bubble_plot_data.SUBSET}{
 	A Boolean vector indicating a subset of the bubbles to be highlighted and plotted. When BUBBLE_TIPS are indicated, only subsetted bubbles will show bubble tips.
-	To further accentuate highlight bubbles, their radius can be altered using the bubble_plot_configs.BUBBLE_SUBSET_INCREASE argument. 
+	To further accentuate highlight bubbles, their radius can be altered using the bubble_plot_configs.BUBBLE_SUBSET_INCREASE argument.
 	Default value is \code{bubble_plot_data.SUBSET=NULL}.
 	}
 	\item{bubble_plot_data.INDICATE}{
@@ -78,7 +78,7 @@ bubblePlot(
 	Default value is \code{bubble_plot_data.INDICATE=NULL}.
 	}
 	\item{bubble_plot_data.BUBBLE_CENTER_LABEL}{
-        A character vector to label the interior of the bubbles with. Usually a vector of singleton characters. 
+        A character vector to label the interior of the bubbles with. Usually a vector of singleton characters.
 	Default value is \code{bubble_plot_data.BUBBLE_CENTER_LABEL=NULL}.
 	}
 	\item{bubble_plot_data.SIZE}{
@@ -88,7 +88,7 @@ bubblePlot(
 	A vector (usually a factor) indicating categories to which the bubbles belong. Default value is \code{bubble_plot_data.LEVELS=NULL}.
 	}
 	\item{bubble_plot_data.BUBBLE_TIPS_LINES}{
-	A list of arbitrary length indicating the different values supplied when bubble tips are requested. 
+	A list of arbitrary length indicating the different values supplied when bubble tips are requested.
 	Default value is \code{bubble_plot_data.BUBBLE_TIPS_LINES=list(paste(MEDIAN_SGP, ' (', MEDIAN_SGP_COUNT, ')', sep=''), round(PERCENT_AT_ABOVE_PROFICIENT))}.
 	}
 	\item{bubble_plot_labels.X}{
@@ -100,19 +100,19 @@ bubblePlot(
 	axis (e.g., Percent at/above Proficient).  Default value is \code{bubble_plot_labels.Y=c('Achievement', 'Percent at/above Proficient')}.
 	}
 	\item{bubble_plot_labels.SIZE}{
-	A vector of quantities giving breaking points for the size bubbles indicated in the legend of the plot. 
+	A vector of quantities giving breaking points for the size bubbles indicated in the legend of the plot.
 	Default value is \code{bubble_plot_labels.SIZE=c(50, 100, 500, 1000)}.
 	}
 	\item{bubble_plot_labels.LEVELS}{
-	A vector of quantities giving level labels associated with \code{bubble_plot_data.LEVELS}. These labels will appear in the right legend of the plot. 
+	A vector of quantities giving level labels associated with \code{bubble_plot_data.LEVELS}. These labels will appear in the right legend of the plot.
 	Default value is \code{bubble_plot_labels.LEVELS=NULL}.
 	}
 	\item{bubble_plot_labels.BUBBLE_TIPS_LINES}{
-	A list of labels that appear in the mouse over data tips. Should be of same length as the list from \code{bubble_plot_data.BUBBLE_TIPS_LINES}. 
+	A list of labels that appear in the mouse over data tips. Should be of same length as the list from \code{bubble_plot_data.BUBBLE_TIPS_LINES}.
 	Default value is \code{bubble_plot_labels.BUBBLE_TIPS_LINES=list('Median SGP (Count)', 'Percent at/above Proficient')}.
 	}
 	\item{bubble_plot_labels.BUBBLE_TITLES}{
-	A character vector with of the same length as number of points plotted indicated what name should appear on each mouse over bubble tip (e.g., the school name associated 
+	A character vector with of the same length as number of points plotted indicated what name should appear on each mouse over bubble tip (e.g., the school name associated
 	with the bubble.  Default value is \code{bubble_plot_labels.BUBBLE_TITLES=SCHOOL_NAME},
 	}
 	\item{bubble_plot_titles.MAIN}{
@@ -134,7 +134,7 @@ bubblePlot(
 	The 2nd line of the title of the lower legend of the bubble plot. Default value is \code{bubble_plot_titles.LEGEND2_P2=NULL}.
 	}
 	\item{bubble_plot_titles.NOTE}{
-	A note, message, description, etc to be placed in lower half of the legend. Default value is \code{bubble_plot_titles.NOTE=NULL}.  
+	A note, message, description, etc to be placed in lower half of the legend. Default value is \code{bubble_plot_titles.NOTE=NULL}.
 	Note that this can only be used if there are not LEVELS (and therefore no second legend).
 	}
 	\item{bubble_plot_configs.BUBBLE_MIN_MAX}{
@@ -209,14 +209,14 @@ bubblePlot(
 	Default value is \code{bubble_plot_configs.BUBBLE_PLOT_PATH=paste('Figures', sep='')}.
 	}
 	\item{bubble_plot_pdftk.CREATE_CATALOG}{
-	Default value is \code{bubble_plot_pdftk.CREATE_CATALOG=FALSE}. 
+	Default value is \code{bubble_plot_pdftk.CREATE_CATALOG=FALSE}.
 	}
 }
 
-\details{Typical use of the function is as part of \code{visualizeSGP} function. However, function can be used more generically for diverse plots showing many dimensions of data simultaneously. 
+\details{Typical use of the function is as part of \code{visualizeSGP} function. However, function can be used more generically for diverse plots showing many dimensions of data simultaneously.
 }
 
-\value{Function creates a bubble chart and writes the result as a PDF to \code{bubble_plot_configs.BUBBLE_PATH}.} 
+\value{Function creates a bubble chart and writes the result as a PDF to \code{bubble_plot_configs.BUBBLE_PATH}.}
 
 \author{Damian W. Betebenner \email{dbetebenner@nciea.org}}
 
