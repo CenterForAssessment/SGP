@@ -19,8 +19,8 @@ function(tmp.data,
 			tmp.list[[my.list.label]][[3*j]] <-
 				round(extendrange(tmp.data[list("VALID_CASE", my.list.label, tmp.grade.list[[my.list.label]][j])][["SCALE_SCORE"]], f=0.0), digits=3)
 		}
-		setattr(tmp.list[[my.list.label]], "names", paste(rep(c("knots_", "boundaries_", "loss.hoss_"), length(tmp.grade.list[[my.list.label]])),
-			rep(tmp.grade.list[[my.list.label]], each=3), sep=""))
+		setattr(tmp.list[[my.list.label]], "names", paste0(rep(c("knots_", "boundaries_", "loss.hoss_"), length(tmp.grade.list[[my.list.label]])),
+			rep(tmp.grade.list[[my.list.label]], each=3)))
 	}
 
 	return(tmp.list)

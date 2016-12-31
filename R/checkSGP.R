@@ -171,7 +171,7 @@ function(sgp_object,
 
 	names.to.change <- c("SGP_TARGET", "SGP_TARGET_BASELINE", "SGP_TARGET_MOVE_UP_STAY_UP", "SGP_TARGET_BASELINE_MOVE_UP_STAY_UP")
 	for (i in intersect(names(sgp_object@Data), names.to.change)) {
-		message(paste("\tNOTE: Changing name '", i, "' to '", paste(i, "3_YEAR", sep="_"), "' in @Data", sep=""))
+		message(paste0("\tNOTE: Changing name '", i, "' to '", paste(i, "3_YEAR", sep="_"), "' in @Data"))
 		setnames(sgp_object@Data, i, paste(i, "3_YEAR", sep="_"))
 	}
 
@@ -181,7 +181,7 @@ function(sgp_object,
 		tmp.names <- grep("YEAR", names(sgp_object@SGP[['SGProjections']][[i]]), value=TRUE)
 		if (length(grep("CURRENT", tmp.names))!=length(tmp.names)) {
 			setnames(sgp_object@SGP[['SGProjections']][[i]], tmp.names, paste(tmp.names, "CURRENT", sep="_"))
-			message(paste("\tNOTE: Adding '_CURRENT' to non-lagged variable names in @SGP[['SGProjections']][['", i, "']]", sep=""))
+			message(paste0("\tNOTE: Adding '_CURRENT' to non-lagged variable names in @SGP[['SGProjections']][['", i, "']]"))
 		}
 	}
 
