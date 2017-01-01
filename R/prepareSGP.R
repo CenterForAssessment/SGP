@@ -105,8 +105,8 @@ function(data,
 		## Check see if any of the required variables are missing
 
 		if (!all(required.names %in% variable.names$names.sgp)) {
-			stop(paste("\tNOTE: The {data} object is missing the following column name(s): ", paste(required.names[(required.names %in% variable.names$names.sgp)==FALSE], collapse=", "),
-			". Please identify the variable using the {var.names} argument.", sep=""))
+			stop(paste0("\tNOTE: The {data} object is missing the following column name(s): ", paste(required.names[(required.names %in% variable.names$names.sgp)==FALSE], collapse=", "),
+			". Please identify the variable using the {var.names} argument."))
 		}
 		return(data.frame(variable.names[order(variable.names$column.provided),][,c("names.provided", "names.sgp", "names.type", "names.info", "names.output")], row.names=NULL, stringsAsFactors=FALSE))
 	} ## END getNames
@@ -154,7 +154,7 @@ function(data,
 			SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]] <- createKnotsBoundaries(data@Data)
 			assign(paste(state, "Knots_Boundaries", sep="_"), SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]])
 			save(list=paste(state, "Knots_Boundaries", sep="_"), file=paste(state, "Knots_Boundaries.Rdata", sep="_"))
-			messageSGP(paste("\tNOTE: Knots and Boundaries do not exist for state provided.\n\tThey have been produced and are available using state=", state, " for subsequent analyses and saved to your working directory '", getwd(), "'.", sep=""))
+			messageSGP(paste0("\tNOTE: Knots and Boundaries do not exist for state provided.\n\tThey have been produced and are available using state=", state, " for subsequent analyses and saved to your working directory '", getwd(), "'."))
 		}
 
 		## Create FIRST_OBESRVATION, LAST_OBSERVATION if YEAR_WITHIN exists
@@ -198,7 +198,7 @@ function(data,
 			assign(paste(state, "Knots_Boundaries", sep="_"), SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]])
 			save(list=paste(state, "Knots_Boundaries", sep="_"), file=paste(state, "Knots_Boundaries.Rdata", sep="_"))
 			save(SGPstateData, file="SGPstateData.Rdata")
-			messageSGP(paste("\tNOTE: Knots and Boundaries do not exist for state provided.\n\tThey have been produced and are available using state=", state, " for subsequent analyses and saved to your working directory '", getwd(), "'.", sep=""))
+			messageSGP(paste0("\tNOTE: Knots and Boundaries do not exist for state provided.\n\tThey have been produced and are available using state=", state, " for subsequent analyses and saved to your working directory '", getwd(), "'."))
 		}
 
 		## Create FIRST_OBESRVATION, LAST_OBSERVATION if YEAR_WITHIN exists
@@ -253,7 +253,7 @@ function(data,
 		for (i in seq_along(tmp.enrollment_status.variables)) {
 			if (!tmp.enrollment_status.variables[i] %in% names(sgp_object@Data) & paste(tmp.enrollment_status.levels[i], "NUMBER", sep="_") %in% names(sgp_object@Data)) {
 				sgp_object@Data[[tmp.enrollment_status.variables[i]]] <-
-					factor(1, levels=0:1, labels=paste("Enrolled", capwords(tmp.enrollment_status.levels[i]), c(": No", ": Yes"), sep=""))
+					factor(1, levels=0:1, labels=paste0("Enrolled", capwords(tmp.enrollment_status.levels[i]), c(": No", ": Yes")))
 				sgp_object@Data[[tmp.enrollment_status.variables[i]]][sgp_object@Data[['VALID_CASE']]!="VALID_CASE"] <- NA
 				messageSGP(paste("\tNOTE: Added variable", tmp.enrollment_status.variables[i], "to @Data."))
 			}

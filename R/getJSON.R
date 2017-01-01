@@ -22,7 +22,7 @@ function(tmp.data,
 			last.number <- function (x) {
 				if (sum(!is.na(x)) > 0) return(max(which(!is.na(x)))) else return (0)
 			}
-	
+
 			first.number <- function (x) {
 				if (sum(!is.na(x)) > 0 ) return(min(which(!is.na(x)))) else return (0)
 			}
@@ -74,7 +74,7 @@ function(tmp.data,
 				tmp.sgp.extended <- c(tmp.sgp.extended, rep(NA, length(tmp.additional.low)))
 				tmp.sgp_levels.extended <- c(tmp.sgp_levels.extended, rep(NA, length(tmp.additional.low)))
 			} else {
-				tmp.additional.low.length <- 0 
+				tmp.additional.low.length <- 0
 			}
 
 			if (any(is.na(tmp.grades.extended))) {
@@ -135,8 +135,8 @@ function(tmp.data,
 				percentile.trajectory.values=percentile.trajectory.values,
 				print.time.taken=FALSE)[["SGProjections"]][[.create.path(list(my.subject=content_area, my.year=year, my.extra.label=my.extra.label))]][,-1]
 
-			tmp.list <- lapply(percentile.trajectory.values, function(x) as.numeric(tmp.studentGrowthProjections[grep(paste("P", x, "_", sep=""), names(tmp.studentGrowthProjections))]))
-			names(tmp.list) <- paste("P", percentile.trajectory.values, sep="")
+			tmp.list <- lapply(percentile.trajectory.values, function(x) as.numeric(tmp.studentGrowthProjections[grep(paste0("P", x, "_"), names(tmp.studentGrowthProjections))]))
+			names(tmp.list) <- paste0("P", percentile.trajectory.values)
 			return(tmp.list)
 		} ### END getJSON.percentile_trajectories_Internal
 
@@ -168,19 +168,19 @@ function(tmp.data,
 		}
 
 		### Create grades.content_areas.reported.in.state
-	
+
 		if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]])) {
 			grades.content_areas.reported.in.state <- data.frame(
 						GRADE=SGP::SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[content_area]],
 						YEAR_LAG=c(1, SGP::SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[content_area]]),
-						CONTENT_AREA=SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]], 
+						CONTENT_AREA=SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]],
 						stringsAsFactors=FALSE
 						)
 		} else {
 			grades.content_areas.reported.in.state <- data.frame(
 					GRADE=SGP::SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]],
 					YEAR_LAG=c(1, diff(as.numeric(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]]))),
-					CONTENT_AREA=content_area, 
+					CONTENT_AREA=content_area,
 					stringsAsFactors=FALSE
 					)
 		}
@@ -195,16 +195,16 @@ function(tmp.data,
 		for (i in which(names(tmp.data.extended)!="Report_Parameters")) {
 			tmp.data.extended[[i]][['Cutscores']] <- get.my.cutscores(tmp.data$Cutscores, tmp.data.extended[[i]]$Content_Area, tmp.data.extended[[i]]$Year, tmp.data.extended[[i]]$Grade)
 		}
-		
-		### Add in Percentile_Trajectories, SGP_Targets, SGP_Targets_Scale_Scores 
+
+		### Add in Percentile_Trajectories, SGP_Targets, SGP_Targets_Scale_Scores
 
 		for (i in years.for.percentile.trajectories) {
 			tmp.index <- which(i==unlist(sapply(tmp.data.extended, '[[', 'Year')))
 			tmp.data.extended[[tmp.index]][['Percentile_Trajectories']] <- getJSON.percentile_trajectories_Internal(
 												sgPlot.data=tmp.data,
 												sgPlot.sgp_object=sgPlot.sgp_object,
-												percentile.trajectory.values=1:99, 
-												year=i, 
+												percentile.trajectory.values=1:99,
+												year=i,
 												state=state)
 		}
 
@@ -216,7 +216,7 @@ function(tmp.data,
 
 		### Return list
 
-		return(tmp.data.extended)	
+		return(tmp.data.extended)
 
 	} ### END if (data.type=="studentGrowthPlot")
 } ### END getJSON

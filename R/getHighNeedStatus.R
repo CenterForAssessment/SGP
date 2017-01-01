@@ -6,8 +6,8 @@ function(sgp_object) {
 	# my.quantile.function producing HIGH_NEED_STATUS variable
 
 	my.quantile.function <- function(x, invalid_cases, quantiles=c(0.25, 0.75)) {
-		high.needs.status.labels <- c(paste("High Needs Status: Prior Achievement Below ", 100*quantiles[1], "th Percentile", sep=""),
-			NA, paste("High Needs Status: Prior Achievement Above ", 100*quantiles[2], "th Percentiles", sep=""))
+		high.needs.status.labels <- c(paste0("High Needs Status: Prior Achievement Below ", 100*quantiles[1], "th Percentile"),
+			NA, paste0("High Needs Status: Prior Achievement Above ", 100*quantiles[2], "th Percentiles"))
 		if (invalid_cases) {
 			return(factor(rep(NA, length(x)), levels=1:2, labels=high.needs.status.labels[c(1,3)]))
 		}

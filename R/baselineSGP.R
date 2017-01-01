@@ -139,8 +139,8 @@ function(sgp_object,
 				...)[["Coefficient_Matrices"]])
 
 		message(paste("\tStarted baselineSGP Coefficient Matrix Calculation:", started.date))
-		message(paste("\tContent Area: ", tail(content_areas, 1), ", Grade Progression: ", paste(grade.sequences, collapse=", "), ". ", sep=""))
-		message(paste("\tFinished baselineSGP Coefficient Matrix Calculation ", prettyDate(), " in ", convertTime(timetaken(started.at)), ".\n", sep=""))
+		message(paste0("\tContent Area: ", tail(content_areas, 1), ", Grade Progression: ", paste(grade.sequences, collapse=", "), ". "))
+		message(paste0("\tFinished baselineSGP Coefficient Matrix Calculation ", prettyDate(), " in ", convertTime(timetaken(started.at)), ".\n"))
 
 		return(tmp_sgp_list)
 
@@ -150,9 +150,9 @@ function(sgp_object,
 	gof.print <- function(sgp_object) {
 		if (length(sgp_object@SGP[["Goodness_of_Fit"]]) > 0) {
 			for (i in names(sgp_object@SGP[["Goodness_of_Fit"]])) {
-				dir.create(paste("Goodness_of_Fit/", i, sep=""), recursive=TRUE, showWarnings=FALSE)
+				dir.create(paste0("Goodness_of_Fit/", i), recursive=TRUE, showWarnings=FALSE)
 				for (j in names(sgp_object@SGP[["Goodness_of_Fit"]][[i]])) {
-					pdf(file=paste("Goodness_of_Fit/", i, "/", j, ".pdf", sep=""), width=8.5, height=4.5)
+					pdf(file=paste0("Goodness_of_Fit/", i, "/", j, ".pdf"), width=8.5, height=4.5)
 					grid.draw(sgp_object@SGP[["Goodness_of_Fit"]][[i]][[j]])
 					dev.off()
 				}
@@ -306,12 +306,12 @@ function(sgp_object,
 		tmp.list <- list()
 		if (is.null(SGP::SGPstateData[[state]][["Baseline_splineMatrix"]])) {
 			for (ca in unique(sapply(sgp.baseline.config, function(x) tail(x[["sgp.baseline.content.areas"]],1)))) {
-				tmp.list[[paste(ca, ".BASELINE", sep="")]] <- sgp_object@SGP[["Coefficient_Matrices"]][[paste(ca, ".BASELINE", sep="")]]
+				tmp.list[[paste0(ca, ".BASELINE")]] <- sgp_object@SGP[["Coefficient_Matrices"]][[paste0(ca, ".BASELINE")]]
 			}
 		}
 		if (!is.null(calculate.simex.baseline)) {
 			for (ca in unique(sapply(sgp.baseline.config, function(x) tail(x[["sgp.baseline.content.areas"]],1)))) {
-				tmp.list[[paste(ca, ".BASELINE.SIMEX", sep="")]] <- sgp_object@SGP[["Coefficient_Matrices"]][[paste(ca, ".BASELINE.SIMEX", sep="")]]
+				tmp.list[[paste0(ca, ".BASELINE.SIMEX")]] <- sgp_object@SGP[["Coefficient_Matrices"]][[paste0(ca, ".BASELINE.SIMEX")]]
 			}
 		}
 		return(tmp.list)

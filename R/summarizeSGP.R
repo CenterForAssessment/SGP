@@ -46,7 +46,7 @@
 			tmp.file.name <- paste(tmp.state.name, "SGP_Summary", tmp.year, sep="_")
 			assign(tmp.file.name, sgp_object@Summary)
 			if (!"Data" %in% list.files()) dir.create("Data", showWarnings=FALSE)
-			messageSGP(paste("\tNOTE: Saving @Summary slot to", paste("Data/", tmp.file.name, ".Rdata and then deleting @Summary slot.", sep="")))
+			messageSGP(paste("\tNOTE: Saving @Summary slot to", paste0("Data/", tmp.file.name, ".Rdata and then deleting @Summary slot.")))
 			save(list=tmp.file.name, file=file.path("Data", paste(tmp.file.name, "Rdata", sep=".")))
 			sgp_object@Summary <- NULL
 		} else {
@@ -102,10 +102,10 @@
 			return(NULL)
 		}
 		if (!is.null(my.group) & add.missing) {
-			return(c("", unlist(lapply(my.group, function(x) paste(", ", x, sep="")))))
+			return(c("", unlist(lapply(my.group, function(x) paste0(", ", x)))))
 		}
 		if (!is.null(my.group) & !add.missing) {
-			return(unlist(lapply(my.group, function(x) paste(", ", x, sep=""))))
+			return(unlist(lapply(my.group, function(x) paste0(", ", x))))
 		}
 	}
 
@@ -145,7 +145,7 @@
 				if (length(character.vector)==0) {
 					return(NULL)
 				} else {
-					paste("c(", paste("'", paste(character.vector, collapse="', '"), "'", sep=""), ")", sep="")
+					paste0("c(", paste0("'", paste(character.vector, collapse="', '"), "'"), ")")
 				}
 			}
 
@@ -153,8 +153,8 @@
 				MEAN_SGP="mean_na(SGP, WEIGHT)",
 				MEDIAN_SGP="median_na(SGP, WEIGHT)",
 				MEDIAN_SGP_COUNT="num_non_missing(SGP)",
-				PERCENT_AT_ABOVE_PROFICIENT=paste("percent_in_category(ACHIEVEMENT_LEVEL, ",
-					get.expression(proficient.achievement.levels), ", ", get.expression(all.achievement.levels), ")",sep=""),
+				PERCENT_AT_ABOVE_PROFICIENT=paste0("percent_in_category(ACHIEVEMENT_LEVEL, ",
+					get.expression(proficient.achievement.levels), ", ", get.expression(all.achievement.levels), ")"),
 				PERCENT_AT_ABOVE_PROFICIENT_COUNT="num_non_missing(ACHIEVEMENT_LEVEL)",
 				MEAN_SGP_STANDARD_ERROR="sgp_standard_error(SGP)",
 				MEDIAN_SGP_STANDARD_ERROR="sgp_standard_error(SGP, 1.253)")
@@ -172,8 +172,8 @@
 				if ("ACHIEVEMENT_LEVEL_PRIOR" %in% sgp.data.names) {
 					tmp.sgp.summaries <- c(
 						tmp.sgp.summaries,
-						PERCENT_AT_ABOVE_PROFICIENT_PRIOR=paste("percent_in_category(ACHIEVEMENT_LEVEL_PRIOR, ",
-							get.expression(proficient.achievement.levels), ", ", get.expression(all.achievement.levels), ")",sep=""),
+						PERCENT_AT_ABOVE_PROFICIENT_PRIOR=paste0("percent_in_category(ACHIEVEMENT_LEVEL_PRIOR, ",
+							get.expression(proficient.achievement.levels), ", ", get.expression(all.achievement.levels), ")"),
 						PERCENT_AT_ABOVE_PROFICIENT_PRIOR_COUNT="num_non_missing(ACHIEVEMENT_LEVEL_PRIOR)"
 					)
 				}
@@ -209,8 +209,8 @@
 				if (!is.null(my.sgp.target)) {
 					tmp.sgp.summaries <- c(
 						tmp.sgp.summaries,
-						M1=paste("median_na(", my.sgp.target, ", WEIGHT)", sep=""),
-						M2=paste("num_non_missing(", my.sgp.target, ")", sep=""),
+						M1=paste0("median_na(", my.sgp.target, ", WEIGHT)"),
+						M2=paste0("num_non_missing(", my.sgp.target, ")"),
 						PERCENT_CATCHING_UP_KEEPING_UP="percent_in_category(CATCH_UP_KEEP_UP_STATUS, c('Catch Up: Yes', 'Keep Up: Yes'), c('Catch Up: Yes', 'Catch Up: No', 'Keep Up: Yes', 'Keep Up: No'))"
 					)
 					names(tmp.sgp.summaries)[sapply(c("M1", "M2"), function(x) which(names(tmp.sgp.summaries)==x))] <-
@@ -220,8 +220,8 @@
 				if (!is.null(my.sgp.target.baseline)) {
 					tmp.sgp.summaries <- c(
 						tmp.sgp.summaries,
-						M1=paste("median_na(", my.sgp.target.baseline, ", WEIGHT)", sep=""),
-						M2=paste("num_non_missing(", my.sgp.target.baseline, ")", sep=""),
+						M1=paste0("median_na(", my.sgp.target.baseline, ", WEIGHT)"),
+						M2=paste0("num_non_missing(", my.sgp.target.baseline, ")"),
 						PERCENT_CATCHING_UP_KEEPING_UP_BASELINE="percent_in_category(CATCH_UP_KEEP_UP_STATUS_BASELINE, c('Catch Up: Yes', 'Keep Up: Yes'), c('Catch Up: Yes', 'Catch Up: No', 'Keep Up: Yes', 'Keep Up: No'))"
 					)
 					names(tmp.sgp.summaries)[sapply(c("M1", "M2"), function(x) which(names(tmp.sgp.summaries)==x))] <-
@@ -232,8 +232,8 @@
 				if (!is.null(my.sgp.target.musu)) {
 					tmp.sgp.summaries <- c(
 						tmp.sgp.summaries,
-						M1=paste("median_na(", my.sgp.target.musu, ", WEIGHT)", sep=""),
-						M2=paste("num_non_missing(", my.sgp.target.musu, ")", sep=""),
+						M1=paste0("median_na(", my.sgp.target.musu, ", WEIGHT)"),
+						M2=paste0("num_non_missing(", my.sgp.target.musu, ")"),
 						PERCENT_MOVING_UP_STAYING_UP="percent_in_category(MOVE_UP_STAY_UP_STATUS, c('Move Up: Yes', 'Stay Up: Yes'), c('Move Up: Yes', 'Move Up: No', 'Stay Up: Yes', 'Stay Up: No'))"
 					)
 					names(tmp.sgp.summaries)[sapply(c("M1", "M2"), function(x) which(names(tmp.sgp.summaries)==x))] <-
@@ -243,8 +243,8 @@
 				if (!is.null(my.sgp.target.musu.baseline)) {
 					tmp.sgp.summaries <- c(
 						tmp.sgp.summaries,
-						M1=paste("median_na(", my.sgp.target.musu.baseline, ", WEIGHT)", sep=""),
-						M2=paste("num_non_missing(", my.sgp.target.musu.baseline, ")", sep=""),
+						M1=paste0("median_na(", my.sgp.target.musu.baseline, ", WEIGHT)"),
+						M2=paste0("num_non_missing(", my.sgp.target.musu.baseline, ")"),
 						PERCENT_MOVING_UP_STAYING_UP_BASELINE="percent_in_category(MOVE_UP_STAY_UP_STATUS_BASELINE, c('Move Up: Yes', 'Stay Up: Yes'), c('Move Up: Yes', 'Move Up: No', 'Stay Up: Yes', 'Stay Up: No'))"
 					)
 					names(tmp.sgp.summaries)[sapply(c("M1", "M2"), function(x) which(names(tmp.sgp.summaries)==x))] <-
@@ -345,14 +345,14 @@
 		tmp.summary <- list()
 
 		### Create summary tables
-		sgp.groups <- do.call(paste, c(expand.grid(i,
+		sgp.groups <- do.call(paste0, expand.grid(i,
 			group.format(summary.groups[["institution_type"]]),
 			group.format(summary.groups[["content"]]),
 			group.format(summary.groups[["time"]]),
 			group.format(summary.groups[["institution_level"]]),
 			group.format(summary.groups[["demographic"]]),
 			group.format(summary.groups[["institution_inclusion"]][[i]]),
-			group.format(summary.groups[["growth_only_summary"]][[i]])), sep=""))
+			group.format(summary.groups[["growth_only_summary"]][[i]])))
 
 		if (!produce.all.summary.tables) {
 			sgp.groups <- intersect(sgp.groups, selected.summary.tables)
@@ -360,14 +360,14 @@
 		}
 
 		if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
-			ci.groups <- do.call(paste, c(expand.grid(i,
+			ci.groups <- do.call(paste0, expand.grid(i,
 				group.format(confidence.interval.groups[["GROUPS"]][["institution_type"]]),
 				group.format(confidence.interval.groups[["GROUPS"]][["content"]]),
 				group.format(confidence.interval.groups[["GROUPS"]][["time"]]),
 				group.format(confidence.interval.groups[["GROUPS"]][["institution_level"]]),
 				group.format(confidence.interval.groups[["GROUPS"]][["demographic"]]),
 				group.format(confidence.interval.groups[["GROUPS"]][["institution_inclusion"]][[i]]),
-				group.format(confidence.interval.groups[["GROUPS"]][["growth_only_summary"]][[i]])), sep=""))
+				group.format(confidence.interval.groups[["GROUPS"]][["growth_only_summary"]][[i]])))
 
 			if (!produce.all.summary.tables) ci.groups <- intersect(ci.groups, selected.summary.tables)
 		}
@@ -496,20 +496,20 @@
 			}
 
 			if (length(grep("SCHOOL", k)) > 0) {
-				selected.summary.tables[[k]] <- do.call(paste,
-					c(expand.grid(k,
+				selected.summary.tables[[k]] <- do.call(paste0,
+					expand.grid(k,
 						group.format("EMH_LEVEL"),
 						group.format("CONTENT_AREA"),
 						group.format("YEAR"),
 						group.format("GRADE"),
-						group.format(ENROLLMENT_STATUS_ARGUMENT, ADD_MISSING_ARGUMENT)), sep=""))
+						group.format(ENROLLMENT_STATUS_ARGUMENT, ADD_MISSING_ARGUMENT)))
 			} else {
-				selected.summary.tables[[k]] <- do.call(paste,
-					c(expand.grid(k,
+				selected.summary.tables[[k]] <- do.call(paste0,
+					expand.grid(k,
 						group.format("CONTENT_AREA"),
 						group.format("YEAR"),
 						group.format("GRADE"),
-						group.format(ENROLLMENT_STATUS_ARGUMENT, ADD_MISSING_ARGUMENT)), sep=""))
+						group.format(ENROLLMENT_STATUS_ARGUMENT, ADD_MISSING_ARGUMENT)))
 			}
 		} else {
 			if (is.null(summary.groups[["institution_inclusion"]][[k]])) {
@@ -521,22 +521,22 @@
 			}
 
 			if (length(grep("SCHOOL", k)) > 0 & !is.null(summary.groups[["institution_inclusion"]][[k]])) {
-				selected.summary.tables[[k]] <- do.call(paste,
-					c(expand.grid(k,
+				selected.summary.tables[[k]] <- do.call(paste0,
+					expand.grid(k,
 						group.format("EMH_LEVEL"),
 						group.format("CONTENT_AREA"),
 						group.format("YEAR"),
 						group.format("GRADE"),
 						group.format(selected.demographic.subgroups),
-						group.format(ENROLLMENT_STATUS_ARGUMENT, ADD_MISSING_ARGUMENT)), sep=""))
+						group.format(ENROLLMENT_STATUS_ARGUMENT, ADD_MISSING_ARGUMENT)))
 			} else {
-				selected.summary.tables[[k]] <- do.call(paste,
-					c(expand.grid(k,
+				selected.summary.tables[[k]] <- do.call(paste0,
+					expand.grid(k,
 						group.format("CONTENT_AREA"),
 						group.format("YEAR"),
 						group.format("GRADE"),
 						group.format(selected.demographic.subgroups),
-						group.format(ENROLLMENT_STATUS_ARGUMENT, ADD_MISSING_ARGUMENT)), sep=""))
+						group.format(ENROLLMENT_STATUS_ARGUMENT, ADD_MISSING_ARGUMENT)))
 			}
 		}
 	} ### End for k

@@ -54,8 +54,8 @@
 	if (is.null(equated) &&
 			!identical(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Baseline_Projections_in_Transition_Year"]], TRUE) &&
 			year %in% SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[content_area]]) {
-		message(paste("\tNOTE: Based upon state scale changes in ", capwords(year), " student growth projections are not possible. No ",
-			capwords(year), " ", content_area, " growth and achievement plot will be generated.\n", sep=""))
+		message(paste0("\tNOTE: Based upon state scale changes in ", capwords(year), " student growth projections are not possible. No ",
+			capwords(year), " ", content_area, " growth and achievement plot will be generated.\n"))
 		return("DONE")
     }
 
@@ -298,21 +298,21 @@
 		extrapolated.cuts.dt <- data.table(long_cutscores, key="GRADE_NUMERIC")[list(head(seq(gaPlot.grade_range[1], gaPlot.grade_range[2]), -1)), mult="first"][,c("GRADE", "GRADE_NUMERIC", "CONTENT_AREA"), with=FALSE]
 		for (percentile.iter in c(50, 60, 70, 80, 90)) {
 			for (i in seq(dim(extrapolated.cuts.dt)[1])) {
-				tmp.projection.label <- grep(paste(paste("P", percentile.iter, sep=""), "PROJ", tmp.unit.label, i, "", sep="_"), names(tmp.projections), value=TRUE)
+				tmp.projection.label <- grep(paste(paste0("P", percentile.iter), "PROJ", tmp.unit.label, i, "", sep="_"), names(tmp.projections), value=TRUE)
 				tmp.inf.sup <- list(tmp.projections[GRADE==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i] & get(tmp.projection.label) < gaPlot.back.extrapolated.cuts][['SCALE_SCORE']],
 									tmp.projections[GRADE==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i] & get(tmp.projection.label) >= gaPlot.back.extrapolated.cuts][['SCALE_SCORE']])
 				for (j in 1:2) if (length(tmp.inf.sup[[j]]) > 0) tmp.inf.sup[[j]] <- tmp.inf.sup.functions[[j]](tmp.inf.sup[[j]]) else tmp.inf.sup[[j]] <- NaN
 				tmp.inf.sup <- unlist(tmp.inf.sup)
 				if (year %in% SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]][[content_area]]) {
 					extrapolated.cuts.dt[GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i],
-						paste("EXTRAPOLATED_P", percentile.iter, "_CUT", sep=""):=
+						paste0("EXTRAPOLATED_P", percentile.iter, "_CUT"):=
 							piecewiseTransform(tail(tmp.inf.sup[is.finite(tmp.inf.sup)], 1),
 												state,
 												CONTENT_AREA,
 												year,
 												GRADE)]
 				} else {
-					extrapolated.cuts.dt[GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i], paste("EXTRAPOLATED_P", percentile.iter, "_CUT", sep=""):=tail(tmp.inf.sup[is.finite(tmp.inf.sup)], 1)]
+					extrapolated.cuts.dt[GRADE_NUMERIC==rev(extrapolated.cuts.dt$GRADE_NUMERIC)[i], paste0("EXTRAPOLATED_P", percentile.iter, "_CUT"):=tail(tmp.inf.sup[is.finite(tmp.inf.sup)], 1)]
 				}
 			}
 		}
@@ -346,7 +346,7 @@
 
 	if (format=="print") {
 		format.colors.background <- rgb(0.985, 0.985, 1.0)
-		format.colors.region <- paste("grey", round(seq(62, 91, length=number.achievement.level.regions)), sep="")
+		format.colors.region <- paste0("grey", round(seq(62, 91, length=number.achievement.level.regions)))
 		format.colors.font <- "grey20"
 		format.colors.growth.trajectories <- "black"
 	} else {
@@ -487,13 +487,13 @@
 
 			if (k=="PDF") tmp.suffix <- ".pdf" else tmp.suffix <- ".png"
 			if (gaPlot.start.points=="Achievement Level Cuts") {
-				tmp.file.name <- paste(output.folder, "/", state.name.file.label, my.label, gsub(" ", "_", capwords(tail(tmp2.dt[['CONTENT_AREA']], 1))), "_", year, "_Level_", tmp2.dt[['LEVEL']], "_Grade_", tmp2.dt[['GRADE']], tmp.suffix, sep="")
+				tmp.file.name <- paste0(output.folder, "/", state.name.file.label, my.label, gsub(" ", "_", capwords(tail(tmp2.dt[['CONTENT_AREA']], 1))), "_", year, "_Level_", tmp2.dt[['LEVEL']], "_Grade_", tmp2.dt[['GRADE']], tmp.suffix)
 			}
 			if (gaPlot.start.points=="Achievement Percentiles") {
-				tmp.file.name <- paste(output.folder, "/", state.name.file.label, my.label, gsub(" ", "_", capwords(tail(tmp2.dt[['CONTENT_AREA']], 1))), "_", year, "_Percentile_", as.integer(100*tmp2.dt[['LEVEL']]), "_Grade_", tmp2.dt[['GRADE']], tmp.suffix, sep="")
+				tmp.file.name <- paste0(output.folder, "/", state.name.file.label, my.label, gsub(" ", "_", capwords(tail(tmp2.dt[['CONTENT_AREA']], 1))), "_", year, "_Percentile_", as.integer(100*tmp2.dt[['LEVEL']]), "_Grade_", tmp2.dt[['GRADE']], tmp.suffix)
 			}
 			if (gaPlot.start.points=="Individual Student") {
-				tmp.file.name <- paste(output.folder, "/", state.name.file.label, my.label, gsub(" ", "_", capwords(tail(tmp2.dt[['CONTENT_AREA']], 1))), "_", year, "_Student_Number_", tmp2.dt[['ID']][1], tmp.suffix, sep="")
+				tmp.file.name <- paste0(output.folder, "/", state.name.file.label, my.label, gsub(" ", "_", capwords(tail(tmp2.dt[['CONTENT_AREA']], 1))), "_", year, "_Student_Number_", tmp2.dt[['ID']][1], tmp.suffix)
 			}
 
 			if (k=="PDF") pdf(file=tmp.file.name, width=8.5, height=11, bg=format.colors.background)
@@ -521,7 +521,7 @@
 			## Create spline functions to calculate boundary values for each cutlevel
 
 			for (i in 1:max(temp_cutscores$CUTLEVEL)){
-				assign(paste("level_", i, "_curve", sep=""), splinefun(tmp.unique.grades.numeric, subset(temp_cutscores, CUTLEVEL==i)[['CUTSCORES_TRANSFORMED']]))
+				assign(paste0("level_", i, "_curve"), splinefun(tmp.unique.grades.numeric, subset(temp_cutscores, CUTLEVEL==i)[['CUTSCORES_TRANSFORMED']]))
 			}
 
 
@@ -530,26 +530,26 @@
 			x.boundary.values.1 <- c(gaPlot.grade_range[1], seq(gaPlot.grade_range[1], gaPlot.grade_range[2], length=40), gaPlot.grade_range[2])
 			if (max(temp_cutscores$CUTLEVEL) > 1) {
 				for (i in 2:max(temp_cutscores$CUTLEVEL)){
-					assign(paste("x.boundary.values.", i, sep=""), c(seq(gaPlot.grade_range[1], gaPlot.grade_range[2], length=40), seq(gaPlot.grade_range[2], gaPlot.grade_range[1], length=40)))
+					assign(paste0("x.boundary.values.", i), c(seq(gaPlot.grade_range[1], gaPlot.grade_range[2], length=40), seq(gaPlot.grade_range[2], gaPlot.grade_range[1], length=40)))
 				}
-				assign(paste("x.boundary.values.", max(temp_cutscores$CUTLEVEL)+1, sep=""), c(gaPlot.grade_range[1], seq(gaPlot.grade_range[1], gaPlot.grade_range[2], length=40), gaPlot.grade_range[2]))
+				assign(paste0("x.boundary.values.", max(temp_cutscores$CUTLEVEL)+1), c(gaPlot.grade_range[1], seq(gaPlot.grade_range[1], gaPlot.grade_range[2], length=40), gaPlot.grade_range[2]))
 			}
 
 
 			y.boundary.values.1 <- c(yscale.range[1], level_1_curve(seq(gaPlot.grade_range[1], gaPlot.grade_range[2], length=40)), yscale.range[1])
 			for (i in 2:max(temp_cutscores$CUTLEVEL)) {
-				assign(paste("y.boundary.values.", i, sep=""), c(eval(parse(text=paste("level_", i-1, "_curve(seq(gaPlot.grade_range[1], gaPlot.grade_range[2], length=40))", sep=""))),
-					eval(parse(text=paste("level_", i, "_curve(seq(gaPlot.grade_range[2], gaPlot.grade_range[1], length=40))", sep="")))))
+				assign(paste0("y.boundary.values.", i), c(eval(parse(text=paste0("level_", i-1, "_curve(seq(gaPlot.grade_range[1], gaPlot.grade_range[2], length=40))"))),
+					eval(parse(text=paste0("level_", i, "_curve(seq(gaPlot.grade_range[2], gaPlot.grade_range[1], length=40))")))))
 			}
-			assign(paste("y.boundary.values.", max(temp_cutscores$CUTLEVEL)+1, sep=""), c(yscale.range[2],
-				eval(parse(text=paste("level_", max(temp_cutscores$CUTLEVEL) , "_curve(seq(gaPlot.grade_range[1], gaPlot.grade_range[2], length=40))", sep=""))), yscale.range[2]))
+			assign(paste0("y.boundary.values.", max(temp_cutscores$CUTLEVEL)+1), c(yscale.range[2],
+				eval(parse(text=paste0("level_", max(temp_cutscores$CUTLEVEL) , "_curve(seq(gaPlot.grade_range[1], gaPlot.grade_range[2], length=40))"))), yscale.range[2]))
 
 
 			## Create colored (grey-scale) regions
 
 			for (i in 1:(1+max(temp_cutscores$CUTLEVEL))){
-				grid.polygon(x=get(paste("x.boundary.values.", i, sep="")),
-					y=get(paste("y.boundary.values.", i, sep="")),
+				grid.polygon(x=get(paste0("x.boundary.values.", i)),
+					y=get(paste0("y.boundary.values.", i)),
 					default.units="native",
 					gp=gpar(fill=format.colors.region[i], lwd=0.1, col="grey85"))
 			}
@@ -562,19 +562,19 @@
 				for (cut.iter in seq(length(tmp.cuts)+1)) {
 					if (cut.iter==1) {
 						grid.polygon(x=c(extrapolated.cuts.dt[['GRADE_NUMERIC']][1], extrapolated.cuts.dt[['GRADE_NUMERIC']], rev(extrapolated.cuts.dt[['GRADE_NUMERIC']])[1]),
-						y=c(get(paste("y.boundary.values.", 1+max(temp_cutscores[['CUTLEVEL']]), sep=""))[1], extrapolated.cuts.dt[[paste("EXTRAPOLATED_P", tmp.cuts[1], "_CUT", sep="")]], rev(get(paste("y.boundary.values.", 1+max(temp_cutscores[['CUTLEVEL']]), sep="")))[1]),
+						y=c(get(paste0("y.boundary.values.", 1+max(temp_cutscores[['CUTLEVEL']])))[1], extrapolated.cuts.dt[[paste0("EXTRAPOLATED_P", tmp.cuts[1], "_CUT")]], rev(get(paste0("y.boundary.values.", 1+max(temp_cutscores[['CUTLEVEL']]))))[1]),
 						gp=gpar(fill=tmp.region.colors[cut.iter], lwd=0.1, lty=2, col="grey85", alpha=0.5), default.units="native")
 					}
 
 					if (cut.iter > 1 & cut.iter < length(tmp.cuts)+1) {
 						grid.polygon(x=c(extrapolated.cuts.dt[['GRADE_NUMERIC']], rev(extrapolated.cuts.dt[['GRADE_NUMERIC']])),
-						y=c(extrapolated.cuts.dt[[paste("EXTRAPOLATED_P", tmp.cuts[cut.iter-1], "_CUT", sep="")]], rev(extrapolated.cuts.dt[[paste("EXTRAPOLATED_P", tmp.cuts[cut.iter], "_CUT", sep="")]])),
+						y=c(extrapolated.cuts.dt[[paste0("EXTRAPOLATED_P", tmp.cuts[cut.iter-1], "_CUT")]], rev(extrapolated.cuts.dt[[paste0("EXTRAPOLATED_P", tmp.cuts[cut.iter], "_CUT")]])),
 						gp=gpar(fill=tmp.region.colors[cut.iter], lwd=0.1, lty=2, col="grey85", alpha=0.5), default.units="native")
 					}
 
 					if (cut.iter==length(tmp.cuts)+1) {
 						grid.polygon(x=c(extrapolated.cuts.dt[['GRADE_NUMERIC']][1], extrapolated.cuts.dt[['GRADE_NUMERIC']], rev(extrapolated.cuts.dt[['GRADE_NUMERIC']])[1]),
-						y=c(y.boundary.values.1[1], extrapolated.cuts.dt[[paste("EXTRAPOLATED_P", rev(tmp.cuts)[1], "_CUT", sep="")]], rev(y.boundary.values.1[1])),
+						y=c(y.boundary.values.1[1], extrapolated.cuts.dt[[paste0("EXTRAPOLATED_P", rev(tmp.cuts)[1], "_CUT")]], rev(y.boundary.values.1[1])),
 						gp=gpar(fill=tmp.region.colors[cut.iter], lwd=0.1, lty=2, col="grey85", alpha=0.5), default.units="native")
 					}
 				}
@@ -627,13 +627,13 @@
 
 			if (gaPlot.subtitle) {
 				if (gaPlot.start.points=="Achievement Level Cuts") {
-					tmp.text <- paste("SGP trajectories for a ", toOrdinal(trunc(tmp2.dt[['GRADE_NUMERIC']])), " grade student starting from the Level ", tmp2.dt[['LEVEL']], "/Level ", tmp2.dt[['LEVEL']]+1, " cut.", sep="")
+					tmp.text <- paste0("SGP trajectories for a ", toOrdinal(trunc(tmp2.dt[['GRADE_NUMERIC']])), " grade student starting from the Level ", tmp2.dt[['LEVEL']], "/Level ", tmp2.dt[['LEVEL']]+1, " cut.")
 				}
 				if (gaPlot.start.points=="Achievement Percentiles") {
-					tmp.text <- paste("SGP trajectories for a ", toOrdinal(trunc(tmp2.dt[['GRADE_NUMERIC']])), " grade student starting from the ", toOrdinal(as.integer(100*tmp2.dt[['LEVEL']])), " achievement percentile.", sep="")
+					tmp.text <- paste0("SGP trajectories for a ", toOrdinal(trunc(tmp2.dt[['GRADE_NUMERIC']])), " grade student starting from the ", toOrdinal(as.integer(100*tmp2.dt[['LEVEL']])), " achievement percentile.")
 				}
 				if (gaPlot.start.points=="Individual Student") {
-					tmp.text <- paste("SGP trajectories for student ", tmp2.dt[['ID']][1], " starting from their ", toOrdinal(trunc(tail(tmp2.dt[['GRADE_NUMERIC']], 1))), " grade result.", sep="")
+					tmp.text <- paste0("SGP trajectories for student ", tmp2.dt[['ID']][1], " starting from their ", toOrdinal(trunc(tail(tmp2.dt[['GRADE_NUMERIC']], 1))), " grade result.")
 				}
 #				grid.text(x=0.5, y=0.035, tmp.text, gp=gpar(col="white", cex=0.9))
 				grid.stext(tmp.text, x=unit(0.5, "npc"), y=unit(0.035, "npc"), gp=gpar(cex=0.9))
@@ -762,7 +762,7 @@
 
 			pushViewport(title.vp)
 
-			tmp.title <- paste(state.name.label, ": ", pretty_year(year), " ", content_area.label, sep="")
+			tmp.title <- paste0(state.name.label, ": ", pretty_year(year), " ", content_area.label)
 			grid.roundrect(width=unit(0.95, "npc"), r=unit(0.025, "snpc"), gp=gpar(col=format.colors.font, lwd=1.6))
 			grid.text(x=0.5, y=0.675, tmp.title, gp=gpar(col=format.colors.font, cex=2.65-max(0, -30+nchar(tmp.title))*0.06), default.units="native")
 			if (is.null(SGP::SGPstateData[[state]][["Achievement"]][["College_Readiness_Cutscores"]])) {

@@ -44,7 +44,7 @@ function(matrix_argument,
 
 			knots <- list()
 			for (i in seq_along(rn.knots)) {
-				knots[[i]] <- eval(parse(text=paste(tmp.label, rn.knots[[i]], sep="")))
+				knots[[i]] <- eval(parse(text=paste0(tmp.label, rn.knots[[i]])))
 			}
 			names(knots) <- paste("knots", sapply(rn.knots2, function(x) x[1]), sep="_")
 
@@ -53,7 +53,7 @@ function(matrix_argument,
 
 			boundaries <- list()
 			for (i in seq_along(rn.bounds)) {
-				boundaries[[i]] <- eval(parse(text=paste(tmp.label, rn.bounds[i], sep="")))
+				boundaries[[i]] <- eval(parse(text=paste0(tmp.label, rn.bounds[i])))
 			}
 			names(boundaries) <- paste("boundaries", sapply(rn.bounds2, function(x) x[1]), sep="_")
 

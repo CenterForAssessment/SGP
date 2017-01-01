@@ -198,7 +198,7 @@ function(panel.data,	## REQUIRED
 				}
 			}
 		}
-		for (f in 1:length(tmp.list)) tmp.list[[f]] <- tmp.list[[f]][which(!sapply(tmp.list[[f]], is.null))]
+		for (f in seq_along(tmp.list)) tmp.list[[f]] <- tmp.list[[f]][which(!sapply(tmp.list[[f]], is.null))]
 		return(rev(tmp.list)) ### rev gives highest orders first
 	}
 
@@ -655,7 +655,7 @@ function(panel.data,	## REQUIRED
 	}
 
 	if (is.null(projcuts.digits)) {
-		projcuts.digits <- 3
+		projcuts.digits <- 3L
 	}
 
 	if (is.null(projection.unit.label)) {

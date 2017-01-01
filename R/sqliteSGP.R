@@ -33,7 +33,7 @@ function(sgp_object,
 
 		group.number <- paste(output.groups, "NUMBER", sep="_")
 		group.enroll.status <- paste(output.groups, "ENROLLMENT_STATUS", sep="_")
-		group.enroll.status.label <- paste("Enrolled ", sapply(output.groups, capwords), ": Yes", sep="")
+		group.enroll.status.label <- paste0("Enrolled ", sapply(output.groups, capwords), ": Yes")
 
 
 	## Create/Set database
@@ -46,8 +46,8 @@ function(sgp_object,
 
 		sqlite.output.directory <- file.path(output.directory, "SQLITE")
 		dir.create(sqlite.output.directory, recursive=TRUE, showWarnings=FALSE)
-		if (file.exists(file.path(sqlite.output.directory, paste(tmp.state, "_Data_SQLITE.sqlite", sep="")))) file.remove(file.path(sqlite.output.directory, paste(tmp.state, "_Data_SQLITE.sqlite", sep="")))
-		db <- dbConnect(SQLite(), dbname=file.path(sqlite.output.directory, paste(tmp.state, "_Data_SQLITE.sqlite", sep="")))
+		if (file.exists(file.path(sqlite.output.directory, paste0(tmp.state, "_Data_SQLITE.sqlite")))) file.remove(file.path(sqlite.output.directory, paste0(tmp.state, "_Data_SQLITE.sqlite")))
+		db <- dbConnect(SQLite(), dbname=file.path(sqlite.output.directory, paste0(tmp.state, "_Data_SQLITE.sqlite")))
 		if (text.output) {
 			text.output.directory <- file.path(output.directory, "TEXT")
 			dir.create(text.output.directory, recursive=TRUE, showWarnings=FALSE)
@@ -71,8 +71,8 @@ function(sgp_object,
 		}
 
 		sqlite.create.table <- function(table.name, field.types, primary.key) {
-			tmp.sql <- paste("CREATE TABLE ", table.name, " (", paste(field.types, collapse=", "),
-				", PRIMARY KEY (", paste(primary.key, collapse=", "), "))", sep="")
+			tmp.sql <- paste0("CREATE TABLE ", table.name, " (", paste(field.types, collapse=", "),
+				", PRIMARY KEY (", paste(primary.key, collapse=", "), "))")
 			return(tmp.sql)
 		}
 
@@ -532,7 +532,7 @@ function(sgp_object,
 		tmp.YEAR <- data.frame(
 			KEY_VALUE_KEY="YEAR",
 			KEY_VALUE_CODE=sort(unique(tmp[['YEAR']])),
-			KEY_VALUE_TEXT=paste(as.numeric(sapply(sort(unique(tmp[['YEAR']])), get.year))-1, "-", sapply(sort(unique(tmp[['YEAR']])), get.year), sep=""))
+			KEY_VALUE_TEXT=paste0(as.numeric(sapply(sort(unique(tmp[['YEAR']])), get.year))-1, "-", sapply(sort(unique(tmp[['YEAR']])), get.year)))
 
 		# GRADE
 

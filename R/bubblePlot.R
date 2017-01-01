@@ -42,7 +42,7 @@
 	bubble_plot_configs.BUBBLE_PLOT_EXTRAS=NULL,
     bubble_plot_configs.BUBBLE_PLOT_DIMENSION=NULL, ## List of WIDTH and HEIGHT
 	bubble_plot_configs.BUBBLE_PLOT_NAME="bubblePlot.pdf",
-	bubble_plot_configs.BUBBLE_PLOT_PATH=paste("Figures", sep=""),
+	bubble_plot_configs.BUBBLE_PLOT_PATH="Figures",
 	bubble_plot_pdftk.CREATE_CATALOG=FALSE) {
 
 
@@ -401,13 +401,13 @@ if (bubble_plot_configs.BUBBLE_TIPS) {
           par(fig=gridFIG(), new = TRUE)
           tmp.bubble.txt <- character()
           for (j in seq(num.bubble.lines)) {
-               tmp.bubble.txt <- c(tmp.bubble.txt, paste(bubble_plot_labels.BUBBLE_TIPS_LINES[[j]], ": ",
-                                                         bubble_plot_data.BUBBLE_TIPS_LINES[[j]][bubble_plot_data.SUBSET][i], sep=""))
+               tmp.bubble.txt <- c(tmp.bubble.txt, paste0(bubble_plot_labels.BUBBLE_TIPS_LINES[[j]], ": ",
+                                                         bubble_plot_data.BUBBLE_TIPS_LINES[[j]][bubble_plot_data.SUBSET][i]))
           }
           text(0.5, 0.5, "X", col=rgb(1,0,0,0.01), popup="PLACEHOLDER",
                cex=10*bubblesize(bubble_plot_data.SIZE[bubble_plot_data.SUBSET][i], numstud.range),
-               annot.options=c(paste("/T (", bubble_plot_labels.BUBBLE_TITLES[bubble_plot_data.SUBSET][i], ")", sep=""),
-                        paste("/Contents (", paste(tmp.bubble.txt, collapse="\n"), ")", sep="")))
+               annot.options=c(paste0("/T (", bubble_plot_labels.BUBBLE_TITLES[bubble_plot_data.SUBSET][i], ")"),
+                        paste0("/Contents (", paste(tmp.bubble.txt, collapse="\n"), ")")))
           popViewport()
      } ## End for statement
 
@@ -460,13 +460,13 @@ if (bubble_plot_configs.BUBBLE_TIPS) {
          par(fig=gridFIG(), new = TRUE)
          tmp.bubble.txt <- character()
          for (j in seq(num.bubble.lines)) {
-              tmp.bubble.txt <- c(tmp.bubble.txt, paste(bubble_plot_labels.BUBBLE_TIPS_LINES[[j]], ": ",
-                                                        bubble_plot_data.BUBBLE_TIPS_LINES[[j]][i], sep=""))
+              tmp.bubble.txt <- c(tmp.bubble.txt, paste0(bubble_plot_labels.BUBBLE_TIPS_LINES[[j]], ": ",
+                                                        bubble_plot_data.BUBBLE_TIPS_LINES[[j]][i]))
          }
          text(0.5, 0.5, "X", col=rgb(1,0,0,0.01), popup="PLACEHOLDER",
               cex=10*bubblesize(bubble_plot_data.SIZE[i], numstud.range),
-              annot.options=c(paste("/T (", bubble_plot_labels.BUBBLE_TITLES[i], ")", sep=""),
-                        paste("/Contents (", paste(tmp.bubble.txt, collapse="\n"), ")", sep="")))
+              annot.options=c(paste0("/T (", bubble_plot_labels.BUBBLE_TITLES[i], ")"),
+                        paste0("/Contents (", paste(tmp.bubble.txt, collapse="\n"), ")")))
          popViewport()
      } ## End for statement
 
@@ -727,7 +727,7 @@ if (bubble_plot_pdftk.CREATE_CATALOG) {
         }
 	tmp.page.number <- length(list.files(".pdftk_tmp"))+1
 	new.file.path.and.name <- file.path(".pdftk_tmp",
-		paste(substr(paste("000000", as.character(tmp.page.number), sep=""), nchar(tmp.page.number), nchar(tmp.page.number)+7), ".pdf", sep=""))
+		paste0(substr(paste0("000000", as.character(tmp.page.number)), nchar(tmp.page.number), nchar(tmp.page.number)+7), ".pdf"))
 	file.rename(file.path.and.name, new.file.path.and.name)
 	if (tmp.page.number == 1) {
 cat("InfoKey: Creator
@@ -737,12 +737,12 @@ InfoValue: Rhode Island Department of Education/The National Center for the Impr
 InfoKey: Producer
 InfoKey: Rhode Island Department of Education/The National Center for the Improvement of Educational Assessment
 InfoKey: Title\n", file=file.path(".pdftk_tmp", ".meta_data.txt"))
-cat(paste("InfoValue: ", bubble_plot_titles.SUB1, ": ", bubble_plot_titles.SUB2, "\n", sep=""), file=file.path(".pdftk_tmp", ".meta_data.txt"), append=TRUE)
-cat(paste("BookmarkTitle: ", bubble_plot_configs.BUBBLE_PLOT_NAME, "\n", sep=""), file=file.path(".pdftk_tmp", ".meta_data.txt"), append=TRUE)
+cat(paste0("InfoValue: ", bubble_plot_titles.SUB1, ": ", bubble_plot_titles.SUB2, "\n"), file=file.path(".pdftk_tmp", ".meta_data.txt"), append=TRUE)
+cat(paste0("BookmarkTitle: ", bubble_plot_configs.BUBBLE_PLOT_NAME, "\n"), file=file.path(".pdftk_tmp", ".meta_data.txt"), append=TRUE)
 cat("BookmarkLevel: 1\n", file=file.path(".pdftk_tmp", ".meta_data.txt"), append=TRUE)
 cat(paste("BookmarkPageNumber:", tmp.page.number, "\n"), file=file.path(".pdftk_tmp", ".meta_data.txt"), append=TRUE)
 } else {
-cat(paste("BookmarkTitle: ", bubble_plot_configs.BUBBLE_PLOT_NAME, "\n", sep=""), file=file.path(".pdftk_tmp", ".meta_data.txt"), append=TRUE)
+cat(paste0("BookmarkTitle: ", bubble_plot_configs.BUBBLE_PLOT_NAME, "\n"), file=file.path(".pdftk_tmp", ".meta_data.txt"), append=TRUE)
 cat("BookmarkLevel: 1\n", file=file.path(".pdftk_tmp", ".meta_data.txt"), append=TRUE)
 cat(paste("BookmarkPageNumber:", tmp.page.number, "\n"), file=file.path(".pdftk_tmp", ".meta_data.txt"), append=TRUE)
 	}

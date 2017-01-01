@@ -31,16 +31,16 @@ function(tmp.data,
 		tmp.knots.boundaries.years <- sapply(strsplit(tmp.knots.boundaries.names, "[.]"), function(x) x[2])
 		if (any(!is.na(tmp.knots.boundaries.years))) {
 			if (year %in% tmp.knots.boundaries.years) {
-				return(paste("[['", content_area, ".", year, "']]", sep=""))
+				return(paste0("[['", content_area, ".", year, "']]"))
 			} else {
 				if (year==sort(c(year, tmp.knots.boundaries.years))[1]) {
-					return(paste("[['", content_area, "']]", sep=""))
+					return(paste0("[['", content_area, "']]"))
 				} else {
-					return(paste("[['", content_area, ".", rev(sort(tmp.knots.boundaries.years))[1], "']]", sep=""))
+					return(paste0("[['", content_area, ".", rev(sort(tmp.knots.boundaries.years))[1], "']]"))
 				}
 			}
 		} else {
-			return(paste("[['", tmp.path.knots.boundaries, "']][['", content_area, "']]", sep=""))
+			return(paste0("[['", tmp.path.knots.boundaries, "']][['", content_area, "']]"))
 		}
 	}
 

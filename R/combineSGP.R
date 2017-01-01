@@ -114,7 +114,7 @@ function(
 			tmp.list[['target.type']] <- intersect(target.type, c("sgp.projections", "sgp.projections.lagged"))
 			if (!is.null(year.for.equate) && !sgp.percentiles.equated) {
 				tmp.variable.name <- paste("SGP_FROM", year.for.equate, sep="_")
-				tmp.messages <- c(tmp.messages, paste("\tNOTE: Due to test transition in ", year.for.equate, " SGP_TARGET will be compared to ", tmp.variable.name, ".\n", sep=""))
+				tmp.messages <- c(tmp.messages, paste0("\tNOTE: Due to test transition in ", year.for.equate, " SGP_TARGET will be compared to ", tmp.variable.name, ".\n"))
 				tmp.list[['my.sgp']] <- tmp.variable.name
 			} else {
 				tmp.list[['my.sgp']] <- "SGP"
@@ -136,7 +136,7 @@ function(
 			tmp.list[['target.type']] <- intersect(target.type, c("sgp.projections", "sgp.projections.baseline", "sgp.projections.lagged", "sgp.projections.lagged.baseline"))
 			if (!is.null(year.for.equate) && !sgp.percentiles.equated) {
 				tmp.year.diff <- as.numeric(unlist(strsplit(tail(sort(unique(sgp_object@Data, by='YEAR')[['YEAR']]), 1), "_"))[1]) - as.numeric(unlist(strsplit(year.for.equate, "_"))[1])
-				tmp.messages <- c(tmp.messages, paste("\tNOTE: Due to test transition in ", year.for.equate, " SGP_TARGET will utilize ", paste("SGP_MAX_ORDER", tmp.year.diff, sep="_"), ".\n", sep=""))
+				tmp.messages <- c(tmp.messages, paste0("\tNOTE: Due to test transition in ", year.for.equate, " SGP_TARGET will utilize ", paste("SGP_MAX_ORDER", tmp.year.diff, sep="_"), ".\n"))
 				tmp.list[['my.sgp']] <- c(paste("SGP_MAX_ORDER", tmp.year.diff, sep="_"), "SGP_BASELINE")[c(sgp.percentiles, sgp.percentiles.baseline)]
 			} else {
 				tmp.list[['my.sgp']] <- c("SGP", "SGP_BASELINE")[c(sgp.percentiles, sgp.percentiles.baseline)]
@@ -322,8 +322,8 @@ function(
 			}
 		}
 		if (duplicated.projections.tf) {
-			tmp.messages <- c(tmp.messages, paste(
-				"\tNOTE: Multiple Projections exist for individual students. Unique SGP Targets will be created using SGP Progression Preference Table for ", state, ".\n", sep=""))
+			tmp.messages <- c(tmp.messages, paste0(
+				"\tNOTE: Multiple Projections exist for individual students. Unique SGP Targets will be created using SGP Progression Preference Table for ", state, ".\n"))
 		}
 
 		### SGP_TARGET_CONTENT_AREA calculation
@@ -475,7 +475,7 @@ function(
 	setkeyv(slot.data, getKey(slot.data))
 	sgp_object@Data <- slot.data
 
-	messageSGP(c(tmp.messages, paste("Finished combineSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"), sep=""))
+	messageSGP(c(tmp.messages, paste("Finished combineSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n")))
 
 	return(sgp_object)
 } ## END combineSGP Function

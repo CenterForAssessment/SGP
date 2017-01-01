@@ -14,7 +14,7 @@ function(year,
 			if (tmp > 0) return(min(c(as.numeric(tmp), SGP::SGPstateData[[state]][["SGP_Configuration"]][["max.order.for.projection"]])))
 			if (tmp==0 &&
 				!identical(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Baseline_Projections_in_Transition_Year"]], TRUE)) {
-					message(paste("\tNOTE: Based upon state scale changes in ", year, ". student growth projections are not possible. No student growth projections will be generated", sep="")) 
+					message(paste0("\tNOTE: Based upon state scale changes in ", year, ". student growth projections are not possible. No student growth projections will be generated")) 
 			}
 		} else {
 			return(SGP::SGPstateData[[state]][["SGP_Configuration"]][["max.order.for.projection"]]) ## Returns NULL if it doesn't exist
