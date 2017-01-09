@@ -3,7 +3,7 @@ function(tmp.data,
 	state,
 	type="COHORT_REFERENCED") {
 
-	YEAR <- SGP_NORM_GROUP <- VALID_CASE <- CONTENT_AREA <- ID <- PREFERENCE <- NULL
+	YEAR <- SGP_NORM_GROUP <- VALID_CASE <- CONTENT_AREA <- ID <- PREFERENCE <- SGP_NOTE_TF <- NULL
 
 	if (type=="TARGET") {
 		tmp.sgp.norm.group.variables <- c("SGP_PROJECTION_GROUP", "PREFERENCE")
@@ -40,11 +40,16 @@ function(tmp.data,
 		} else {
 			stop("\tNOTE: Multiple SGPs exist for individual students. Please examine results in @SGP[['SGPercentiles']].  A SGP_Norm_Group_Preference entry in SGPstateData may be required.")
 		}
+		if ("SGP_NOTE" %in% names(tmp.data)) { # Key data on SGP_NOTE to put existing SGPs at the top, regardless of preference of SGP_NOTE's norm group.
+			tmp.key.vars <- c("SGP_NOTE_TF", "PREFERENCE")
+			tmp.data[, SGP_NOTE_TF := !is.na(SGP_NOTE)]
+		} else tmp.key.vars <- "PREFERENCE"
 		tmp.data <- data.table(SGP::SGPstateData[[state]][['SGP_Norm_Group_Preference']][,tmp.sgp.norm.group.variables,with=FALSE][tmp.data],
-			key=c(getKey(tmp.data), "PREFERENCE"))
+			key=c(getKey(tmp.data), tmp.key.vars))
 	}
 
 	setkeyv(tmp.data, getKey(tmp.data))
 	tmp.data <- tmp.data[!duplicated(tmp.data, by=key(tmp.data))][,PREFERENCE:=NULL]
+	if ("SGP_NOTE" %in% names(tmp.data)) tmp.data[, SGP_NOTE_TF := NULL]
 	return(tmp.data)
 } ### END getPreferredSGP
