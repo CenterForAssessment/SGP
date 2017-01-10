@@ -3,7 +3,7 @@ function(tmp.data,
 	state,
 	type="COHORT_REFERENCED") {
 
-	YEAR <- SGP_NORM_GROUP <- VALID_CASE <- CONTENT_AREA <- ID <- PREFERENCE <- SGP_NOTE_TF <- NULL
+	YEAR <- SGP_NORM_GROUP <- VALID_CASE <- CONTENT_AREA <- ID <- PREFERENCE <- SGP_NOTE <- SGP_NOTE_TF <- NULL
 
 	if (type=="TARGET") {
 		tmp.sgp.norm.group.variables <- c("SGP_PROJECTION_GROUP", "PREFERENCE")
