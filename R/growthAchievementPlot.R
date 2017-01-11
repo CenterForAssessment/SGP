@@ -203,12 +203,12 @@
 		trajectories <- c(as.numeric(tail(tmp.dt[,grep("SCALE_SCORE", names(tmp.dt), value=TRUE), with=FALSE], 1)), as.numeric(tmp.trajectories))
 
 		if (year %in% SGP::SGPstateData[[state]][["Student_Report_Information"]][["Transformed_Achievement_Level_Cutscores_gaPlot"]][[content_area]]) {
-			tmp.function <- function(tmp.iter) {
-				sapply(tmp.iter, function(x) piecewiseTransform(trajectories[x], state, content_area.projection.sequence[x], as.character(year), grade.projection.sequence[x]))
+			tmp.function <- function(tmp.iter, tmp.trajectories) {
+				sapply(tmp.iter, function(x) piecewiseTransform(tmp.trajectories[x], state, content_area.projection.sequence[x], as.character(year), grade.projection.sequence[x]))
 			}
-			return(splinefun(grade.projection.sequence.numeric, tmp.function(seq_along(grade.projection.sequence))))
+			return(splinefun(grade.projection.sequence.numeric, tmp.function(seq_along(grade.projection.sequence), tail(trajectories, length(grade.projection.sequence.numeric)))))
 		} else {
-			return(splinefun(grade.projection.sequence.numeric, trajectories))
+			return(splinefun(grade.projection.sequence.numeric, tail(trajectories, length(grade.projection.sequence.numeric))))
 		}
 	}
 
@@ -396,7 +396,7 @@
 		setkey(growthAchievementPlot.data, ID)
 		tmp1.dt <- growthAchievementPlot.data[gaPlot.students]
 		setnames(tmp1.dt, c("GRADE_CHARACTER", "GRADE"), c("GRADE", "GRADE_NUMERIC"))
-		tmp1.dt <- tmp1.dt[ID %in% unique(tmp1.dt[YEAR==year & CONTENT_AREA][['ID']])]
+		tmp1.dt <- tmp1.dt[ID %in% unique(tmp1.dt[YEAR==year & CONTENT_AREA==content_area][['ID']])]
 	}
 
 
