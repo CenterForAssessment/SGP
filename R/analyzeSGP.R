@@ -502,7 +502,7 @@ function(sgp_object,
 	if (sgp.sqlite) {
 		tmp_sgp_data_for_analysis <- dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_SGP_Data.sqlite"))
 		dbWriteTable(tmp_sgp_data_for_analysis, name = "sgp_data", overwrite = TRUE,
-			value=sgp_object@Data[,intersect(names(sgp_object@Data), variables.to.get), with=FALSE]["VALID_CASE"], row.names=0)
+			value=sgp_object@Data[,intersect(names(sgp_object@Data), variables.to.get), with=FALSE]["VALID_CASE"], row.names=FALSE)
 		sgp.data.names <- dbListFields(tmp_sgp_data_for_analysis, "sgp_data")
 		dbDisconnect(tmp_sgp_data_for_analysis)
 	} else {
