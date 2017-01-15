@@ -71,14 +71,14 @@ function(sgp.iter,
 		if (!is.null(sgp.year.baseline)) tmp.year <- sgp.year.baseline else tmp.year <- tail(sgp.iter[["sgp.projection.panel.years"]], 1)
 	}
 
-	if (sgp.iter.type=="sgp.projections.lagged") {
-		content_area.label <- tail(sgp.iter[["sgp.content.areas"]], 1)
-		if (!is.null(sgp.year.baseline)) tmp.year <- sgp.year.baseline else tmp.year <- tail(sgp.iter[["sgp.panel.years"]], 1)
-	}
-
 	if (sgp.iter.type=="sgp.projections.baseline") {
 		content_area.label <- tail(sgp.iter[["sgp.projection.baseline.content.areas"]], 1)
 		if (!is.null(sgp.year.baseline)) tmp.year <- sgp.year.baseline else tmp.year <- tail(sgp.iter[["sgp.projection.baseline.panel.years"]], 1)
+	}
+
+	if (sgp.iter.type=="sgp.projections.lagged") {
+		content_area.label <- tail(sgp.iter[["sgp.content.areas"]], 1)
+		if (!is.null(sgp.year.baseline)) tmp.year <- sgp.year.baseline else tmp.year <- tail(sgp.iter[["sgp.panel.years"]], 1)
 	}
 
 	if (sgp.iter.type=="sgp.projections.lagged.baseline") {
