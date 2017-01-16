@@ -756,7 +756,8 @@ function(sgp_object,
 	### Produce cohort data information
 
 	if (get.cohort.data.info) {
-		cohort_data_info <- getCohortDataInfo(tmp_sgp_data_for_analysis, par.sgp.config[['sgp.percentiles']])
+    if (!sgp.percentiles & sgp.percentiles.baseline) tmp.label <- 'sgp.percentiles.baseline' else tmp.label <- 'sgp.percentiles'
+		cohort_data_info <- getCohortDataInfo(tmp_sgp_data_for_analysis, par.sgp.config[[tmp.label]])
 		save(cohort_data_info, file=file.path("Logs", "cohort_data_info.Rdata"))
         messageSGP("\tNOTE: Cohort data information saved to 'Logs/cohort_data_info.Rdata'.")
 	}
@@ -1712,7 +1713,7 @@ function(sgp_object,
 						panel.data=list(
 							Panel_Data=getPanelData(tmp_sgp_data_for_analysis, "sgp.projections.lagged.baseline", sgp.iter, SGPt=SGPt),
 							Coefficient_Matrices=selectCoefficientMatrices(tmp_sgp_object, "BASELINE"),
-							Knots_Boundaries=getKnotsBoundaries(sgp.iter, state, "sgp.projections.lagged")),
+							Knots_Boundaries=getKnotsBoundaries(sgp.iter, state, "sgp.projections.lagged.baseline")),
 						sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1),
 							my.extra.label="LAGGED.BASELINE"),
 						use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
@@ -1721,7 +1722,7 @@ function(sgp_object,
 						max.order.for.progression=sgp.projections.lagged.baseline.max.order,
                         percentile.trajectory.values=lagged.percentile.trajectory.values,
 						max.forward.progression.grade=sgp.projections.max.forward.progression.grade,
-						panel.data.vnames=getPanelDataVnames("sgp.projections.lagged", sgp.iter, sgp.data.names),
+						panel.data.vnames=getPanelDataVnames("sgp.projections.lagged.baseline", sgp.iter, sgp.data.names),
 						achievement.level.prior.vname=paste("ACHIEVEMENT_LEVEL", tail(head(sgp.iter[["sgp.panel.years"]], -1), 1), tail(head(sgp.iter[["sgp.content.areas"]], -1), 1), sep="."),
 						grade.progression=sgp.iter[["sgp.projection.baseline.grade.sequences"]],
 						content_area.progression=sgp.iter[["sgp.projection.baseline.content.areas"]],
@@ -1757,7 +1758,7 @@ function(sgp_object,
 					panel.data=list(
 						Panel_Data=getPanelData(tmp_sgp_data_for_analysis, "sgp.projections.lagged.baseline", sgp.iter, SGPt=SGPt),
 						Coefficient_Matrices=selectCoefficientMatrices(tmp_sgp_object, "BASELINE"),
-						Knots_Boundaries=getKnotsBoundaries(sgp.iter, state, "sgp.projections.lagged")),
+						Knots_Boundaries=getKnotsBoundaries(sgp.iter, state, "sgp.projections.lagged.baseline")),
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1),
 						my.extra.label="LAGGED.BASELINE"),
 					use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
@@ -1766,7 +1767,7 @@ function(sgp_object,
 					max.order.for.progression=sgp.projections.lagged.baseline.max.order,
                     percentile.trajectory.values=lagged.percentile.trajectory.values,
 					max.forward.progression.grade=sgp.projections.max.forward.progression.grade,
-					panel.data.vnames=getPanelDataVnames("sgp.projections.lagged", sgp.iter, sgp.data.names),
+					panel.data.vnames=getPanelDataVnames("sgp.projections.lagged.baseline", sgp.iter, sgp.data.names),
 					achievement.level.prior.vname=paste("ACHIEVEMENT_LEVEL", tail(head(sgp.iter[["sgp.panel.years"]], -1), 1), tail(head(sgp.iter[["sgp.content.areas"]], -1), 1), sep="."),
 					grade.progression=sgp.iter[["sgp.projection.baseline.grade.sequences"]],
 					content_area.progression=sgp.iter[["sgp.projection.baseline.content.areas"]],
@@ -1802,7 +1803,7 @@ function(sgp_object,
 					panel.data=list(
 						Panel_Data=getPanelData(tmp_sgp_data_for_analysis, "sgp.projections.lagged.baseline", sgp.iter, SGPt=SGPt),
 						Coefficient_Matrices=selectCoefficientMatrices(tmp_sgp_object, "BASELINE"),
-						Knots_Boundaries=getKnotsBoundaries(sgp.iter, state, "sgp.projections.lagged")),
+						Knots_Boundaries=getKnotsBoundaries(sgp.iter, state, "sgp.projections.lagged.baseline")),
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1),
 						my.extra.label="LAGGED.BASELINE"),
 					use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
@@ -1811,7 +1812,7 @@ function(sgp_object,
 					max.order.for.progression=sgp.projections.lagged.baseline.max.order,
                     percentile.trajectory.values=lagged.percentile.trajectory.values,
 					max.forward.progression.grade=sgp.projections.max.forward.progression.grade,
-					panel.data.vnames=getPanelDataVnames("sgp.projections.lagged", sgp.iter, sgp.data.names),
+					panel.data.vnames=getPanelDataVnames("sgp.projections.lagged.baseline", sgp.iter, sgp.data.names),
 					achievement.level.prior.vname=paste("ACHIEVEMENT_LEVEL", tail(head(sgp.iter[["sgp.panel.years"]], -1), 1), tail(head(sgp.iter[["sgp.content.areas"]], -1), 1), sep="."),
 					grade.progression=sgp.iter[["sgp.projection.baseline.grade.sequences"]],
 					content_area.progression=sgp.iter[["sgp.projection.baseline.content.areas"]],
@@ -2157,7 +2158,7 @@ function(sgp_object,
 			for (sgp.iter in par.sgp.config[['sgp.projections.lagged.baseline']]) {
 
 				panel.data=within(tmp_sgp_object, assign("Panel_Data", getPanelData(tmp_sgp_data_for_analysis, "sgp.projections.lagged.baseline", sgp.iter, SGPt=SGPt)))
-				tmp.knots.boundaries <- getKnotsBoundaries(sgp.iter, state, "sgp.projections.lagged")
+				tmp.knots.boundaries <- getKnotsBoundaries(sgp.iter, state, "sgp.projections.lagged.baseline")
 				panel.data[["Knots_Boundaries"]][[names(tmp.knots.boundaries)]] <- tmp.knots.boundaries[[names(tmp.knots.boundaries)]]
 
 				tmp_sgp_object <- studentGrowthProjections(
@@ -2170,7 +2171,7 @@ function(sgp_object,
 					max.order.for.progression=sgp.projections.lagged.baseline.max.order,
                     percentile.trajectory.values=lagged.percentile.trajectory.values,
 					max.forward.progression.grade=sgp.projections.max.forward.progression.grade,
-					panel.data.vnames=getPanelDataVnames("sgp.projections.lagged", sgp.iter, sgp.data.names),
+					panel.data.vnames=getPanelDataVnames("sgp.projections.lagged.baseline", sgp.iter, sgp.data.names),
 					achievement.level.prior.vname=paste("ACHIEVEMENT_LEVEL", tail(head(sgp.iter[["sgp.panel.years"]], -1), 1), tail(head(sgp.iter[["sgp.content.areas"]], -1), 1), sep="."),
 					grade.progression=sgp.iter[["sgp.projection.baseline.grade.sequences"]],
 					content_area.progression=sgp.iter[["sgp.projection.baseline.content.areas"]],
