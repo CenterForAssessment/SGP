@@ -545,11 +545,11 @@ function(sgp_object,
 							return.matrices.only=TRUE,
 							calculate.baseline.sgps=FALSE))
 					}
-					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
-					if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
-						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
-							sgp.percentiles.baseline.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config[['sgp.percentiles.baseline']])))
-					}
+          if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
+            tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
+              sgp.percentiles.baseline.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.percentiles.baseline']]))
+          }
+          tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 				} else {
 					if (par.start$par.type=="SNOW") {
 						tmp <- clusterApplyLB(par.start$internal.cl, sgp.baseline.config, function(sgp.iter) baselineSGP(
@@ -649,11 +649,11 @@ function(sgp_object,
 							calculate.simex.baseline=calculate.simex.baseline,
 							parallel.config=parallel.config))
 					}
-					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
-					if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
-						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
-							sgp.percentiles.baseline.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config[['sgp.percentiles.baseline']])))
-					}
+          if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
+            tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
+              sgp.percentiles.baseline.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.percentiles.baseline']]))
+          }
+          tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 				} else {  ## SNOW and MULTICORE flavors
 					if (par.start$par.type=="SNOW") {
 						tmp <- clusterApplyLB(par.start$internal.cl, sgp.baseline.config, function(sgp.iter) baselineSGP(
@@ -822,11 +822,11 @@ function(sgp_object,
 						parallel.config=par.start$Lower_Level_Parallel,
 						...))
 					}
-				tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
-				if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
-					tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
-						sgp.percentiles.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config[['sgp.percentiles']])))
-				}
+        if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
+          tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
+            sgp.percentiles.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config[['sgp.percentiles']])))
+        }
+        tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 			} else { # END FOREACH
 				###    SNOW flavor
 				if (par.start$par.type == 'SNOW') {
@@ -871,11 +871,11 @@ function(sgp_object,
 						parallel.config=par.start$Lower_Level_Parallel,
 						...))
 
-					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
-					if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
-						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
-							sgp.percentiles.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config[['sgp.percentiles']])))
-					}
+          if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
+            tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
+              sgp.percentiles.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config[['sgp.percentiles']])))
+          }
+          tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 				} # END SNOW
 
 				###  MULTICORE flavor
@@ -921,11 +921,11 @@ function(sgp_object,
 						parallel.config=par.start$Lower_Level_Parallel,
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 
-					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
-					if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
-						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
-							sgp.percentiles.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config[['sgp.percentiles']])))
-					}
+          if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
+            tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
+              sgp.percentiles.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config[['sgp.percentiles']])))
+          }
+          tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 				} # End MULTICORE
 			} # #END not FOREACH
 			stopParallel(parallel.config, par.start)
@@ -995,11 +995,11 @@ function(sgp_object,
                         SGPt.max.time=SGPt.max.time,
 						...))
 					}
-				tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
-				if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
-					tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
-						sgp.percentiles.equated.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config[['sgp.percentiles.equated']])))
-				}
+        if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
+          tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
+            sgp.percentiles.equated.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config[['sgp.percentiles.equated']])))
+        }
+        tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 			} else { # END FOREACH
 				###    SNOW flavor
 				if (par.start$par.type == 'SNOW') {
@@ -1041,11 +1041,11 @@ function(sgp_object,
                         SGPt.max.time=SGPt.max.time,
 						...))
 
-					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
-					if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
-						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
-							sgp.percentiles.equated.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config[['sgp.percentiles.equated']])))
-					}
+          if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
+            tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
+              sgp.percentiles.equated.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config[['sgp.percentiles.equated']])))
+          }
+          tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 				} # END SNOW
 
 				###  MULTICORE flavor
@@ -1089,11 +1089,11 @@ function(sgp_object,
 						parallel.config=par.start$Lower_Level_Parallel,
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 
-					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
-					if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
-						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
-							sgp.percentiles.equated.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config[['sgp.percentiles.equated']])))
-					}
+          if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
+            tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
+              sgp.percentiles.equated.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config[['sgp.percentiles.equated']])))
+          }
+          tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 				} # End MULTICORE
 			} # #END not FOREACH
 			stopParallel(parallel.config, par.start)
@@ -1146,11 +1146,11 @@ function(sgp_object,
                         SGPt.max.time=SGPt.max.time,
 						...))
 				}
-				tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
-				if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
-					tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
-						sgp.percentiles.baseline.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config[['sgp.percentiles.baseline']])))
-				}
+        if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
+          tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
+            sgp.percentiles.baseline.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config[['sgp.percentiles.baseline']])))
+        }
+        tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 			} else { # END FOREACH
 				###    SNOW flavor
 				if (par.start$par.type == 'SNOW') {
@@ -1188,11 +1188,11 @@ function(sgp_object,
                         SGPt.max.time=SGPt.max.time,
 						...))
 
-					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
-					if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
-						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
-							sgp.percentiles.baseline.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config[['sgp.percentiles.baseline']])))
-					}
+          if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
+            tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
+              sgp.percentiles.baseline.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config[['sgp.percentiles.baseline']])))
+          }
+          tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 				} # END SNOW
 
 				###  MULTICORE flavor
@@ -1232,11 +1232,11 @@ function(sgp_object,
 						parallel.config=par.start$Lower_Level_Parallel,
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 
-					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
-					if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
-						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
-							sgp.percentiles.baseline.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config[['sgp.percentiles.baseline']])))
-					}
+          if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
+            tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
+              sgp.percentiles.baseline.=getErrorReports(tmp, tmp.tf, rev(par.sgp.config[['sgp.percentiles.baseline']])))
+          }
+          tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 				} # End MULTICORE
 			} # END parallel flavors
 			stopParallel(parallel.config, par.start)
@@ -1292,11 +1292,11 @@ function(sgp_object,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections"),
 						...))
 				}
-				tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
-				if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
+				if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
 					tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
 						sgp.projections.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections']]))
 				}
+        tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 			} else {# END FOREACH
 				###   SNOW flavor
 				if (par.start$par.type == 'SNOW') {
@@ -1337,11 +1337,11 @@ function(sgp_object,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections"),
 						...))
 
-					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
-					if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
-						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
-							sgp.projections.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections']]))
-					}
+            if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
+    					tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
+    						sgp.projections.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections']]))
+    				}
+            tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 				} # END SNOW
 
 				###  MULTICORE flavor
@@ -1383,11 +1383,11 @@ function(sgp_object,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections"),
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 
-					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
-					if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
-						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
-							sgp.projections.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections']]))
-					}
+            if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
+    					tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
+    						sgp.projections.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections']]))
+    				}
+            tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 				} # End MULTICORE
 			} # END parallel flavors
 			stopParallel(parallel.config, par.start)
@@ -1441,11 +1441,11 @@ function(sgp_object,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.baseline"),
 						...))
 				}
-				tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
-				if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
+        if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
 					tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
 						sgp.projections.baseline.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections.baseline']]))
 				}
+        tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 			} else {# END FOREACH
 				###   SNOW flavor
 				if (par.start$par.type == 'SNOW') {
@@ -1485,11 +1485,11 @@ function(sgp_object,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.baseline"),
 						...))
 
-					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
-					if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
-						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
-							sgp.projections.baseline.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections.baseline']]))
-					}
+          if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
+  					tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
+  						sgp.projections.baseline.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections.baseline']]))
+  				}
+          tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 				} # END SNOW
 
 				###  MULTICORE flavor
@@ -1530,11 +1530,11 @@ function(sgp_object,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.baseline"),
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 
-					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
-					if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
-						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
-							sgp.projections.baseline.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections.baseline']]))
-					}
+          if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
+  					tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
+  						sgp.projections.baseline.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections.baseline']]))
+  				}
+          tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 				} # End MULTICORE
 			} # END parallel flavors
 			stopParallel(parallel.config, par.start)
@@ -1591,11 +1591,11 @@ function(sgp_object,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.lagged"),
 						...))
 				}
-				tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
-				if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
-					tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
-						sgp.projections.lagged.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections.lagged']]))
-				}
+        if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
+          tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
+            sgp.projections.lagged.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections.lagged']]))
+        }
+        tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 			} else {# END FOREACH
 				###   SNOW flavor
 				if (par.start$par.type == 'SNOW') {
@@ -1638,11 +1638,11 @@ function(sgp_object,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.lagged"),
 						...))
 
-					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
-					if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
-						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
-							sgp.projections.lagged.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections.lagged']]))
-					}
+          if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
+            tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
+              sgp.projections.lagged.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections.lagged']]))
+          }
+          tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 				} # END SNOW
 
 				###  MULTICORE flavor
@@ -1686,11 +1686,11 @@ function(sgp_object,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.lagged"),
 						...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 
-					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
-					if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
-						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
-							sgp.projections.lagged.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections.lagged']]))
-					}
+          if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
+            tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
+              sgp.projections.lagged.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections.lagged']]))
+          }
+          tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 				} # End MULTICORE
 			} # END parallel flavors
 			stopParallel(parallel.config, par.start)
@@ -1744,11 +1744,11 @@ function(sgp_object,
 						SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.lagged.baseline"),
 						...))
 				}
-				tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
-				if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
-					tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
-						sgp.projections.lagged.baseline.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections.lagged.baseline']]))
-				}
+        if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
+          tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
+            sgp.projections.lagged.baseline.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections.lagged.baseline']]))
+        }
+        tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 			} else {# END FOREACH
 
 			###  SNOW flavor
@@ -1789,11 +1789,11 @@ function(sgp_object,
 					SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.lagged.baseline"),
 					...))
 
-				tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
-				if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
-					tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
-						sgp.projections.lagged.baseline.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections.lagged.baseline']]))
-				}
+          if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
+            tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
+              sgp.projections.lagged.baseline.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections.lagged.baseline']]))
+          }
+          tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 			} # END SNOW
 
 			###  MULTICORE flavor
@@ -1834,11 +1834,11 @@ function(sgp_object,
 					SGPt=getSGPtNames(sgp.iter, SGPt, "sgp.projections.lagged.baseline"),
 					...), mc.cores=par.start$workers, mc.preschedule=FALSE)
 
-				tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
-				if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
-					tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
-						sgp.projections.lagged.baseline.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections.lagged.baseline']]))
-				}
+          if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
+            tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
+              sgp.projections.lagged.baseline.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections.lagged.baseline']]))
+          }
+          tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 				} # End MULTICORE
 			} # END parallel flavors
 			stopParallel(parallel.config, par.start)
