@@ -561,7 +561,7 @@ function(sgp_object,
 		if (length(tmp.config) > 0) {
 			for (f in 1:length(tmp.config)) tmp.config[[f]][['sgp.exact.grade.progression']] <- FALSE
 			while (any(sapply(tmp.config, function(x) length(x[['sgp.projection.sequence']])>1))) {
-				tmp.index <- which(any(sapply(tmp.config, function(x) length(x[['sgp.projection.sequence']])>1)))[1]
+				tmp.index <- which(sapply(tmp.config, function(x) length(x[['sgp.projection.sequence']])>1))[1]
 				tmp.iter <- tmp.config[[tmp.index]]
 				tmp.config <- tmp.config[-tmp.index]
 				tmp.expand.config <- list()
