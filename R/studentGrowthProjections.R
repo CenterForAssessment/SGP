@@ -192,6 +192,7 @@ function(panel.data,	## REQUIRED
 					tmp.matrix[[1L]]@Time[[1L]] <- tmp.years  # Overwrite @Time slot to make function think the type is consistent
 				}
 				tmp.list[[i]][[j]] <- tmp.matrix[[1L]]
+				names(tmp.list[[i]])[j] <- content_area.projection.sequence[j] # use named list to verify all matrices later
 				if (dim(tmp.list[[i]][[j]]@.Data)[2L] != 100L) {
 					tmp.list[[i]][[j]]@.Data <- add.missing.taus.to.matrix(tmp.list[[i]][[j]]@.Data)
 					missing.taus <- TRUE
@@ -748,6 +749,9 @@ function(panel.data,	## REQUIRED
 	### Get relevant matrices for projections
 
 	# Check to see if ALL relevant matrices exist
+	if (is.logical(sgp.projections.use.only.complete.matrices)) { # if sgp.projections.use.only.complete.matrices is TRUE, change to NULL
+		if (sgp.projections.use.only.complete.matrices) sgp.projections.use.only.complete.matrices <- NULL
+	}
 	if (is.null(sgp.projections.use.only.complete.matrices)) {
 		if (any(is.na(match(tmp.path.coefficient.matrices, names(panel.data[["Coefficient_Matrices"]]))))) {
 			tmp.fix.index <- which(is.na(match(tmp.path.coefficient.matrices, names(panel.data[["Coefficient_Matrices"]]))))
@@ -903,6 +907,33 @@ function(panel.data,	## REQUIRED
 				SGPercentiles=panel.data[["SGPercentiles"]],
 				SGProjections=panel.data[["SGProjections"]],
 				Simulated_SGPs=panel.data[["Simulated_SGPs"]]))
+	}
+
+	##  Secondary check of available matrices using those selected in grade.projection.sequence.matrices
+	num.matrices <- max(sapply(grade.projection.sequence.matrices, length))
+	if (num.matrices < length(grade.projection.sequence)) {
+		if (is.null(sgp.projections.use.only.complete.matrices)) {
+			tmp.messages <- c(tmp.messages, "\t\tNOTE: Requested grade & content area progression are missing one or more coefficient matrices.\n")
+			messageSGP(paste("\tStarted studentGrowthProjections", started.date))
+			messageSGP(paste0("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, " ", return.projection.group.identifier))
+			messageSGP(paste(tmp.messages, "\tStudent Growth Projections NOT RUN", prettyDate(), "\n"))
+
+			return(
+				list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],
+				Cutscores=panel.data[["Cutscores"]],
+				Goodness_of_Fit=panel.data[["Goodness_of_Fit"]],
+				Knots_Boundaries=panel.data[["Knots_Boundaries"]],
+				Panel_Data=NULL,
+				SGPercentiles=panel.data[["SGPercentiles"]],
+				SGProjections=panel.data[["SGProjections"]],
+				Simulated_SGPs=panel.data[["Simulated_SGPs"]]))
+		}
+		tmp.matrices.tf <- content_area.projection.sequence %in% names(grade.projection.sequence.matrices[[1L]])
+		tmp.messages <- c(tmp.messages, paste0("\t\tNOTE: Not all CONTENT_AREA values in content_area.progression have the appropriate coefficient matrices - MISSING:\n\t\t\t", paste(content_area.projection.sequence[!tmp.matrices.tf], collapse=", "), ".\n"))
+
+		grade.projection.sequence <- grade.projection.sequence[tmp.matrices.tf]
+		content_area.projection.sequence <- content_area.projection.sequence[tmp.matrices.tf]
+		grade.content_area.projection.sequence <- grade.content_area.projection.sequence[tmp.matrices.tf]
 	}
 
 	### Calculate percentile trajectories
