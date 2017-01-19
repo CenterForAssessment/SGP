@@ -34,9 +34,12 @@ function(sgp_object,
 		}
 
 		if (target.type %in% c("sgp.projections", "sgp.projections.baseline")) {
+			tmp.suffix <- "_"
 			if (year_within) {
 				tmp_object_1 <- sgp_object@Data[,c(key(tmp_object_1), "ACHIEVEMENT_LEVEL"), with=FALSE][tmp_object_1, on=key(tmp_object_1)]
 			} else 	tmp_object_1 <- sgp_object@Data[,c(key(tmp_object_1), "ACHIEVEMENT_LEVEL"), with=FALSE][tmp_object_1, on=key(tmp_object_1)]
+		} else {
+			tmp.suffix <- NULL
 		}
 
 		tmp_object_1[, paste(target.level, "STATUS_INITIAL", sep="_"):=
@@ -61,7 +64,7 @@ function(sgp_object,
 			if (target.type %in% c("sgp.projections.lagged", "sgp.projections.lagged.baseline")) num.years.to.get <- num.years.to.get+1
 
 			tmp.level.variables <-
-				paste(grep(paste0(sgp.projections.projection.unit.label, "_[", paste(seq(num.years.to.get), collapse=""), "$]"), names(tmp_object_1), value=TRUE), collapse=", ")
+				paste(grep(paste0(sgp.projections.projection.unit.label, "_[", paste(seq(num.years.to.get), collapse=""), "]", tmp.suffix), names(tmp_object_1), value=TRUE), collapse=", ")
 
 			jExpression <- parse(text=paste0("{catch_keep_move_functions[[unclass(", target.level, "_STATUS_INITIAL)]](", tmp.level.variables, ", na.rm=TRUE)}"))
 			tmp_object_2 <- tmp_object_1[, eval(jExpression), keyby = jExp_Key]
