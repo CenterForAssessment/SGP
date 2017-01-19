@@ -61,7 +61,7 @@ function(sgp_object,
 			if (target.type %in% c("sgp.projections.lagged", "sgp.projections.lagged.baseline")) num.years.to.get <- num.years.to.get+1
 
 			tmp.level.variables <-
-				paste(grep(paste0(sgp.projections.projection.unit.label, "_[", paste(seq(num.years.to.get), collapse=""), "$]"), names(tmp_object_1), value=TRUE), collapse=", ")
+				paste(grep(paste0(sgp.projections.projection.unit.label, "_[", paste(seq(num.years.to.get), collapse="$"), "]$"), names(tmp_object_1), value=TRUE), collapse=", ")
 
 			jExpression <- parse(text=paste0("{catch_keep_move_functions[[unclass(", target.level, "_STATUS_INITIAL)]](", tmp.level.variables, ", na.rm=TRUE)}"))
 			tmp_object_2 <- tmp_object_1[, eval(jExpression), keyby = jExp_Key]
