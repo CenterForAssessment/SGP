@@ -39,7 +39,7 @@ function(sgp_object,
 				tmp_object_1 <- sgp_object@Data[,c(key(tmp_object_1), "ACHIEVEMENT_LEVEL"), with=FALSE][tmp_object_1, on=key(tmp_object_1)]
 			} else 	tmp_object_1 <- sgp_object@Data[,c(key(tmp_object_1), "ACHIEVEMENT_LEVEL"), with=FALSE][tmp_object_1, on=key(tmp_object_1)]
 		} else {
-			tmp.suffix <- NULL
+			tmp.suffix <- "$"
 		}
 
 		tmp_object_1[, paste(target.level, "STATUS_INITIAL", sep="_"):=
