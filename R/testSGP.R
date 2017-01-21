@@ -1561,8 +1561,8 @@ function(
 
 			### TEST of SGP_TARGET_BASELINE_10_TIME_CURRENT variable from READING
 
-#			if (identical(sum(RLI_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", "TARGET_SCALE_SCORES", sep=".")]][['SGP_TARGET_BASELINE_10_TIME_CURRENT']], na.rm=TRUE), 49402L)) { ## 2015 was 45054L, 2016 was 48668L
-			if (identical(digest(RLI_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", "TARGET_SCALE_SCORES", sep=".")]][['SGP_TARGET_BASELINE_10_TIME_CURRENT']]), "f0a5e3227b56a42cfcdedbf2fe72d61b")) {
+#			if (identical(sum(RLI_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", "TARGET_SCALE_SCORES", sep=".")]][['SGP_TARGET_BASELINE_10_TIME_CURRENT']], na.rm=TRUE), 50186L)) { ## 2015 was 45054L, 2016 was 50186L
+			if (identical(digest(RLI_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", "TARGET_SCALE_SCORES", sep=".")]][['SGP_TARGET_BASELINE_10_TIME_CURRENT']]), "23f8a11cec43a8198e293c6eb3b946b8")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_BASELINE_10_TIME_CURRENT, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_BASELINE_10_TIME_CURRENT, part 1: FAIL\n")
