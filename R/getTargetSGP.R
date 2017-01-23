@@ -34,7 +34,7 @@ function(sgp_object,
 		}
 
 		if (target.type %in% c("sgp.projections", "sgp.projections.baseline")) {
-			tmp.suffix <- "_"
+			tmp.suffix <- "_CURRENT"
 			if (year_within) {
 				tmp_object_1 <- sgp_object@Data[,c(key(tmp_object_1), "ACHIEVEMENT_LEVEL"), with=FALSE][tmp_object_1, on=key(tmp_object_1)]
 			} else 	tmp_object_1 <- sgp_object@Data[,c(key(tmp_object_1), "ACHIEVEMENT_LEVEL"), with=FALSE][tmp_object_1, on=key(tmp_object_1)]
