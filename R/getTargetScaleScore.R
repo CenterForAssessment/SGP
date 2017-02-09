@@ -116,7 +116,7 @@ function(sgp_object,
 
 
 	### Calculate targets
-	
+
 	if (!is.null(parallel.config[["WORKERS"]]) & is.null(parallel.config[["WORKERS"]][["SGP_SCALE_SCORE_TARGETS"]])) parallel.config[["WORKERS"]][["SGP_SCALE_SCORE_TARGETS"]] <- parallel.config[["WORKERS"]]
 
 	if (!is.null(parallel.config) && parallel.config[["WORKERS"]][["SGP_SCALE_SCORE_TARGETS"]] > 1) {
@@ -160,7 +160,12 @@ function(sgp_object,
 					SGPt=getSGPtNames(sgp.iter, SGPt, my.target.type),
 					projcuts.digits=SGP::SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]]))
 			}
-			tmp_sgp_object <- mergeSGP(tmp_sgp_object, tmp)
+
+			if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
+				tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
+					sgp.projections.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections']]))
+			}
+			tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 			rm(tmp)
 		} else {# END FOREACH
 			###   SNOW flavor
@@ -198,7 +203,11 @@ function(sgp_object,
 					SGPt=getSGPtNames(sgp.iter, SGPt, my.target.type),
 					projcuts.digits=SGP::SGPstateData[[state]][['SGP_Configuration']][['projcuts.digits']]))
 
-					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
+					if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
+						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
+							sgp.projections.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections']]))
+					}
+					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 					rm(tmp)
 				} # END SNOW
 
@@ -239,7 +248,7 @@ function(sgp_object,
 						mc.cores=par.start$workers, mc.preschedule=FALSE)
 
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
-					if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
+					if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
 						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
 							sgp.projections.lagged.=getErrorReports(tmp, tmp.tf, par.sgp.config[[target.type]]))
 					}
