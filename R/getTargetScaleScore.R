@@ -34,7 +34,7 @@ function(sgp_object,
 
 	tmp_sgp_object <- list(Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]], Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]])
 	setkey(sgp_object@Data, VALID_CASE, ID)
-	variables.to.get <- c("VALID_CASE", "YEAR", "CONTENT_AREA", "GRADE", "ID", "SCALE_SCORE", "YEAR_WITHIN", "FIRST_OBSERVATION", "LAST_OBSERVATION", "STATE", equate.variable, SGPt)
+	variables.to.get <- c("VALID_CASE", "YEAR", "CONTENT_AREA", "GRADE", "ID", "SCALE_SCORE", "ACHIEVEMENT_LEVEL", "YEAR_WITHIN", "FIRST_OBSERVATION", "LAST_OBSERVATION", "STATE", equate.variable, SGPt)
 	tmp_sgp_data_for_analysis <- sgp_object@Data[SJ("VALID_CASE", unique(sgp.targets[['ID']]))][, intersect(names(sgp_object@Data), variables.to.get), with=FALSE]
 	if ("YEAR_WITHIN" %in% names(tmp_sgp_data_for_analysis)) {
 		setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE, YEAR_WITHIN)
@@ -116,7 +116,7 @@ function(sgp_object,
 
 
 	### Calculate targets
-	
+
 	if (!is.null(parallel.config[["WORKERS"]]) & is.null(parallel.config[["WORKERS"]][["SGP_SCALE_SCORE_TARGETS"]])) parallel.config[["WORKERS"]][["SGP_SCALE_SCORE_TARGETS"]] <- parallel.config[["WORKERS"]]
 
 	if (!is.null(parallel.config) && parallel.config[["WORKERS"]][["SGP_SCALE_SCORE_TARGETS"]] > 1) {
@@ -160,7 +160,12 @@ function(sgp_object,
 					SGPt=getSGPtNames(sgp.iter, SGPt, my.target.type),
 					projcuts.digits=SGP::SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]]))
 			}
-			tmp_sgp_object <- mergeSGP(tmp_sgp_object, tmp)
+
+			if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
+				tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
+					sgp.projections.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections']]))
+			}
+			tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 			rm(tmp)
 		} else {# END FOREACH
 			###   SNOW flavor
@@ -198,7 +203,11 @@ function(sgp_object,
 					SGPt=getSGPtNames(sgp.iter, SGPt, my.target.type),
 					projcuts.digits=SGP::SGPstateData[[state]][['SGP_Configuration']][['projcuts.digits']]))
 
-					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
+					if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
+						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
+							sgp.projections.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections']]))
+					}
+					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 					rm(tmp)
 				} # END SNOW
 
@@ -239,7 +248,7 @@ function(sgp_object,
 						mc.cores=par.start$workers, mc.preschedule=FALSE)
 
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
-					if (any(tmp.tf <- sapply(tmp, function(x) identical(class(x), "try-error")))) {
+					if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
 						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
 							sgp.projections.lagged.=getErrorReports(tmp, tmp.tf, par.sgp.config[[target.type]]))
 					}
@@ -285,7 +294,7 @@ function(sgp_object,
 					SGPt=getSGPtNames(sgp.iter, SGPt, my.target.type),
 					projcuts.digits=SGP::SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]])
 			} else {
-				message(paste("\n\t\tNOTE: No student records &/or no prior data for scale score target student growth projections:", tail(sgp.iter[["sgp.panel.years"]], 1),
+				messageSGP(paste("\n\t\tNOTE: No student records &/or no prior data for scale score target student growth projections:", tail(sgp.iter[["sgp.panel.years"]], 1),
 					tail(sgp.iter[[my.content.areas]], 1), "with", paste(head(sgp.iter[[my.content.areas]], -1), collapse=", "), "priors.\n"))
 			}
 		}
