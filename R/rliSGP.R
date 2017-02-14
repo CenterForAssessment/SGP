@@ -19,6 +19,7 @@ function(sgp_object,
 	return.updated.shell=FALSE,
 	fix.duplicates="KEEP.ALL",
 	eow.calculate.sgps=FALSE,
+	score.type="RASCH",
 	parallel.config=NULL) {
 
 	YEAR <- GRADE <- ID <- NEW_ID <- .EACHI <- DATE <- NULL
