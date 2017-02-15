@@ -83,7 +83,7 @@ function(sgp_object,
 	getRLIConfig <- function(content_areas, configuration.year, testing.window, SGPt) {
 		tmp.list <- list()
 		for (i in content_areas) {
-			tmp.list[[i]] <- SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, i, testing.window)
+			tmp.list[[i]] <- SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, i, testing.window, score.type)
 		}
 		return(unlist(tmp.list, recursive=FALSE))
 	}
