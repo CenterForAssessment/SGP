@@ -20,7 +20,7 @@ function(sgp_object,
 	fix.duplicates="KEEP.ALL",
 	eow.calculate.sgps=FALSE,
 	score.type="RASCH",
-	cutscore.file.name="Cutscores.txt",
+	cutscore.file.name="Cutscores.csv",
 	parallel.config=NULL) {
 
 	YEAR <- GRADE <- ID <- NEW_ID <- .EACHI <- DATE <- CONTENT_AREA <- NULL
