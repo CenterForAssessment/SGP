@@ -47,7 +47,8 @@ abcSGP(sgp_object,
 				"LONG_FINAL_YEAR_Data",
 				"WIDE_Data",
 				"INSTRUCTOR_Data"),
-	verbose.output=FALSE,
+	outputSGP.directory="Data",
+  verbose.output=FALSE,
 	sgp.sqlite=FALSE,
 	sgp.percentiles.equated=NULL,
     sgp.percentiles.equating.method=NULL,
@@ -101,9 +102,9 @@ If missing the function will use the data to infer all the grade progressions fo
   \item{sgp.target.scale.scores.only}{Boolean variable passed to \code{\link{combineSGP}} indicating whether ONLY target scale scores associated with SGP_TARGETs should be calculated as
   part of the \code{\link{combineSGP}} run. Defaults to FALSE.
   }
-  \item{sgp.test.cohort.size}{Integer indicating the maximum number of students sampled from the full cohort to use in the calculation of student growth percentiles.  Intended to be used 
+  \item{sgp.test.cohort.size}{Integer indicating the maximum number of students sampled from the full cohort to use in the calculation of student growth percentiles.  Intended to be used
   as a test of the desired analyses to be run. The default, NULL, uses no restrictions (no tests are performed, and analyses use the entire cohort of students).
-  }	
+  }
   \item{return.sgp.test.results}{Boolean variable passed to \code{\link{analyzeSGP}} and \code{\link{studentGrowthPercentiles}} indicating whether the results from the cohort sample subset (if specified using the above argument) should be returned for inspection. Defaults to FALSE. If TRUE, only the sample subset of the data used will be returned in the SGP object's @Data slot. Alternatively, user can supply the character "ALL_DATA" to the argument to return the entire original data.
   }
   \item{simulate.sgps}{Boolean variable indicating whether to simulate SGP values for students based on test-specific Conditional Standard Errors of Measurement (CSEM).
@@ -149,7 +150,10 @@ If missing the function will use the data to infer all the grade progressions fo
   \code{\link{studentGrowthPlot}}s, and \code{\link{growthAchievementPlot}}s.
   }
   \item{outputSGP.output.type}{An argument passed to outputSGP indicating the output types to be produced. Defaults to \code{LONG_Data}, \code{LONG_FINAL_YEAR_Data}, \code{WIDE_Data},
-  and \code{INSTRUCTOR_Data}.}
+  and \code{INSTRUCTOR_Data}.
+  }
+  \item{outputSGP.directory}{A a file path indicating where to save output files. Defaults to \code{Data}.
+  }
   \item{verbose.output}{A Boolean argument indicating whether the function should output verbose diagnostic messages.
   }
   \item{sgp.sqlite}{A Boolean argument (defaults to FALSE) indicating whether a SQLite database file of the essential SGP data should be created from the \code{@Data} slot and subsequently
