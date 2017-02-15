@@ -44,6 +44,15 @@ function(cutscore.file.name,
 	cutscore.information.list[['State_Levels']][['Five_Level_States_B']] <- list(States=tmp.info.data[NUM_LEVELS==5 & NUM_ABOVE_PROF==1][['TestCode']],
 																				Levels=c("Not Proficient", "Not Proficient", "Not Proficient", "Proficient", "Proficient"))
 
+	# Make sure we have all state cutscore information updated in levels:
+
+	if (length(tmp <- setdiff(cutscore.information.list$Cutscore_States, unlist(sapply(cutscore.information.list[['State_Levels']], '[[', 1), use.names=FALSE)) > 0)) {
+		message(paste("NOTE: Not all RLI Cutscore states (", paste(tmp, collapse=", "), ") included in 2 - 5 Level list!", sep=""))
+	}
+	if (length(tmp <- setdiff(unlist(sapply(cutscore.information.list[['State_Levels']], '[[', 1), use.names=FALSE), cutscore.information.list$Cutscore_States))) {
+		message(paste("NOTE: Some states included in 2 - 5 Level list (", paste(tmp, collapse=", "), ") that do not have Cutscores!", sep=""))
+	}
+
 
 	###  cutscore.list creation.
 

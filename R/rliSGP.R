@@ -159,7 +159,9 @@ function(sgp_object,
 
 	if (state=="RLI") {
 		if (!file.exists(cutscore.file.name)) stop("\tNOTE: rliSGP requires Cutscores to be supplied at run time provided with path and file name in cutscore.file.name")
-		SGPstateData[["RLI"]][["Achievement"]][["Cutscores"]] <- rliCutscoreCreation(cutscore.file.name, score.type)
+		tmp.list <- rliCutscoreCreation(cutscore.file.name, score.type)[['Cutscores']]
+		SGPstateData[["RLI"]][["Achievement"]][["Cutscores"]] <- tmp.list[['Cutscores']]
+		SGPstateData[["RLI"]][["Achievement"]][["Cutscore_Information"]] <- tmp.list[['Cutscore_Information']]
 	}
 
 
