@@ -5,14 +5,20 @@ function(cutscore.file.name,
 
 	STATE <- GRADE <- CONTENT_AREA <- NULL
 
+	### Lists to populate
+
+	cutscore.list <- list()
 	cutscore.information.list <- list()
 
+
 	###  Read in the cutscore long data file
+
 	rli.cs.long <- fread(cutscore.file.name)
 	if (!all(rli.cs.long$Subject %in% content_areas)) stop("\tNOTE: 'Subject' variable in supplied cutscores must be 'READING' or 'MATHEMATICS'.")
 
 
 	###  Reshape the long file into a wide file
+
 	rli.cs <- reshape(rli.cs.long, timevar= 'ProficiencyLevel', idvar=c('TestCode', 'Subject', 'Grade'), direction='wide', drop=c("CountryCode", "RegionCode", "ProficiencyName", "MaxRasch", "Linked", "ProficiencyFlag"))
 	setnames(rli.cs, c('TestCode', "Subject", "Grade"), c('STATE', "CONTENT_AREA", "GRADE"))
 	if (score.type=="RASCH") {
@@ -21,10 +27,12 @@ function(cutscore.file.name,
 	}
 
 
-	###  Run nested loop to create a text object that can be output as text to the console.
-	###  This is then copied and pasted (and cleaned slightly) into the RLI_Cutscores.R file
+	### cutscore.information.list creation.
 
-	cutscore.list <- list()
+
+
+	###  cutscore.list creation.
+
 	for (state in unique(rli.cs$STATE)) {
 
 		for (ca in content_areas) {
