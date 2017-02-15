@@ -3,6 +3,7 @@ function(cutscore.file.name,
 		 score.type){
 
 
+
 	###  Read in the cutscore long data file
 	rli.cs.long <- fread(cutscore.file.name)
 	setnames(rli.cs.long, c("MinRasch", "MaxRasch"), c("MinSS", "MaxSS"))
@@ -26,7 +27,7 @@ function(cutscore.file.name,
 	cutscore.list <- list()
 	for (state in unique(rli.cs$STATE)) {
 
-		for (ca in c("MATHEMATICS", "READING")) {
+		for (ca in content_areas) {
 			x <- rli.cs[STATE==state & CONTENT_AREA==ca]
 			if (dim(x)[1] == 0) next
 			fall.tf <- spring.tf <- TRUE

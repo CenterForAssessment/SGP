@@ -23,7 +23,7 @@ function(sgp_object,
 	cutscore.file.name="Cutscores.txt",
 	parallel.config=NULL) {
 
-	YEAR <- GRADE <- ID <- NEW_ID <- .EACHI <- DATE <- NULL
+	YEAR <- GRADE <- ID <- NEW_ID <- .EACHI <- DATE <- CONTENT_AREA <- NULL
 	SGPstateData <- SGP::SGPstateData ### Needed due to possible assignment of values to SGPstateData
 
 	started.at <- proc.time()
@@ -101,10 +101,16 @@ function(sgp_object,
 
 	if (long.data.supplied <- is.data.frame(sgp_object)) {
 		sgp_object <- as.data.table(sgp_object)
+		if (score.type=="RASCH") sgp_object[,CONTENT_AREA:=paste(CONTENT_AREA, "RASCH", sep="_")]
 		tmp.last.year <- tail(sort(unique(sgp_object[['YEAR']])), 1)
 		additional.data <- sgp_object[YEAR==tmp.last.year]
 		sgp_object <- new("SGP", Data=suppressMessages(prepareSGP(sgp_object[YEAR!=tmp.last.year], state=state)@Data), Version=getVersion(sgp_object))
 		gc(FALSE)
+	} else {
+		if (score.type=="RASCH") {
+			if (!is.null(additional.data)) additional.data[,CONTENT_AREA:=paste(CONTENT_AREA, "RASCH", sep="_")]
+			sgp_object@Data$CONTENT_AREA <- paste(sgp_object@Data$CONTENT_AREA, "RASCH", sep="_")
+		}
 	}
 
 	if (!is.null(testing.window) && (length(testing.window) != 1 || !testing.window %in% c("FALL", "WINTER", "SPRING"))) {
