@@ -29,6 +29,7 @@ function(what_sgp_object=NULL,
 	sgPlot.demo.report=TRUE,
 	plot.types=c("bubblePlot", "studentGrowthPlot", "growthAchievementPlot"),
 	outputSGP.output.type=c("LONG_Data", "LONG_FINAL_YEAR_Data", "WIDE_Data", "INSTRUCTOR_Data"),
+	outputSGP.directory="Data",
 	sgp.config=NULL,
 	goodness.of.fit.print=TRUE,
 	parallel.config=NULL,
@@ -76,7 +77,7 @@ function(what_sgp_object=NULL,
 	}
 
 	if (is.null(save.old.summaries) && overwrite.existing.data) save.old.summaries <- FALSE else save.old.summaries <- TRUE
-	
+
 
 	### Utility functions
 
@@ -171,6 +172,7 @@ function(what_sgp_object=NULL,
 					plot.types=plot.types,
 					goodness.of.fit.print=goodness.of.fit.print,
 					outputSGP.output.type=outputSGP.output.type,
+					outputSGP.directory=outputSGP.directory,
 					SGPt=SGPt,
 					sgp.percentiles.equated=sgp.percentiles.equated,
 					sgp.percentiles.equating.method=sgp.percentiles.equating.method,
@@ -252,6 +254,7 @@ function(what_sgp_object=NULL,
 						plot.types=plot.types,
 						goodness.of.fit.print=goodness.of.fit.print,
 						outputSGP.output.type=outputSGP.output.type,
+						outputSGP.directory=outputSGP.directory,
 						SGPt=SGPt,
 						sgp.percentiles.equated=sgp.percentiles.equated,
 						sgp.percentiles.equating.method=sgp.percentiles.equating.method,
@@ -331,7 +334,7 @@ function(what_sgp_object=NULL,
 					assign(tmp.file.name, tmp.sgp_object.update)
 					save(list=tmp.file.name, file=file.path("Data", "Updated_Data", paste(tmp.file.name, "Rdata", sep=".")))
 					outputSGP(tmp.sgp_object.update, state=state, output.type=union(outputSGP.output.type, intersect(outputSGP.output.type, "LONG_FINAL_YEAR_Data")),
-						outputSGP.directory=file.path("Data", "Updated_Data"))
+						outputSGP.directory=file.path(outputSGP.directory, "Updated_Data"))
 				}
 
 				### Merge update with original SGP object
@@ -462,6 +465,7 @@ function(what_sgp_object=NULL,
 							plot.types=plot.types,
 							goodness.of.fit.print=goodness.of.fit.print,
 							outputSGP.output.type=outputSGP.output.type,
+							outputSGP.directory=outputSGP.directory,
 							SGPt=SGPt,
 							sgp.percentiles.equated=sgp.percentiles.equated,
 							sgp.percentiles.equating.method=sgp.percentiles.equating.method,

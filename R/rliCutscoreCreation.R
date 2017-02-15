@@ -1,9 +1,9 @@
 `rliCutscoreCreation` <-
 function(cutscore.file.name,
-		 score.type,
+		 score.type="RASCH",
 		 content_areas=c("MATHEMATICS", "READING")){
 
-	STATE <- GRADE <- CONTENT_AREA <- NULL
+	STATE <- GRADE <- CONTENT_AREA <- ProficiencyFlag <- ProficiencyLevel <- TestCode <- Subject <- Grade <- NUM_LEVELS <- NUM_ABOVE_PROF <- NULL
 
 	### Lists to populate
 
@@ -29,6 +29,20 @@ function(cutscore.file.name,
 
 	### cutscore.information.list creation.
 
+	cutscore.information.list[['Cutscore_States']] <- sort(unique(rli.cs[['STATE']]))
+
+	tmp.info.data <- rli.cs.long[ProficiencyFlag >= 0, list(NUM_LEVELS=max(ProficiencyLevel), NUM_ABOVE_PROF=sum(ProficiencyFlag)), keyby=list(TestCode, Subject, Grade)][,head(.SD, 1), by=TestCode]
+	cutscore.information.list[['State_Levels']] <- list()
+	cutscore.information.list[['State_Levels']][['Two_Level_States']] <- list(States=tmp.info.data[NUM_LEVELS==2][['TestCode']],
+																				Levels=c("Not Proficient", "Proficient"))
+	cutscore.information.list[['State_Levels']][['Three_Level_States']] <- list(States=tmp.info.data[NUM_LEVELS==3][['TestCode']],
+																				Levels=c("Not Proficient", "Not Proficient", "Proficient"))
+	cutscore.information.list[['State_Levels']][['Four_Level_States']] <- list(States=tmp.info.data[NUM_LEVELS==4][['TestCode']],
+																				Levels=c("Not Proficient", "Not Proficient", "Proficient", "Proficient"))
+	cutscore.information.list[['State_Levels']][['Five_Level_States_A']] <- list(States=tmp.info.data[NUM_LEVELS==5 & NUM_ABOVE_PROF==2][['TestCode']],
+																				Levels=c("Not Proficient", "Not Proficient", "Proficient", "Proficient", "Proficient"))
+	cutscore.information.list[['State_Levels']][['Five_Level_States_B']] <- list(States=tmp.info.data[NUM_LEVELS==5 & NUM_ABOVE_PROF==1][['TestCode']],
+																				Levels=c("Not Proficient", "Not Proficient", "Not Proficient", "Proficient", "Proficient"))
 
 
 	###  cutscore.list creation.
@@ -57,5 +71,5 @@ function(cutscore.file.name,
 		}
 	}
 
-	return(cutscore.list)
+	return(list(Cutscores=cutscore.list, Cutscore_Information=cutscore.information.list))
 } ### END rliCutscoreCreation
