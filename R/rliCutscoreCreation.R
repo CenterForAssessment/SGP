@@ -1,24 +1,24 @@
 `rliCutscoreCreation` <-
 function(cutscore.file.name,
-		 score.type){
+		 score.type,
+		 content_areas=c("MATHEMATICS", "READING")){
 
+	STATE <- GRADE <- CONTENT_AREA <- NULL
 
+	cutscore.information.list <- list()
 
 	###  Read in the cutscore long data file
 	rli.cs.long <- fread(cutscore.file.name)
-	setnames(rli.cs.long, c("MinRasch", "MaxRasch"), c("MinSS", "MaxSS"))
-	if (!all(rli.cs.long$Subject %in% content_areas <- c("READING", "MATHEMATICS"))) stop("\tNOTE: 'Subject' variable in supplied cutscores must be 'READING' or 'MATHEMATICS'.")
+	if (!all(rli.cs.long$Subject %in% content_areas)) stop("\tNOTE: 'Subject' variable in supplied cutscores must be 'READING' or 'MATHEMATICS'.")
 
 
 	###  Reshape the long file into a wide file
-	rli.cs <- reshape(rli.cs.long, timevar= 'ProficiencyLevel', idvar=c('TestCode', 'Subject', 'Grade'), direction='wide', drop=c("CountryCode", "RegionCode", "ProficiencyName", "MaxSS", "Linked", "ProficiencyFlag"))
+	rli.cs <- reshape(rli.cs.long, timevar= 'ProficiencyLevel', idvar=c('TestCode', 'Subject', 'Grade'), direction='wide', drop=c("CountryCode", "RegionCode", "ProficiencyName", "MaxRasch", "Linked", "ProficiencyFlag"))
 	setnames(rli.cs, c('TestCode', "Subject", "Grade"), c('STATE', "CONTENT_AREA", "GRADE"))
 	if (score.type=="RASCH") {
 		rli.cs[,CONTENT_AREA:=paste(CONTENT_AREA, "RASCH", sep="_")]
 		content_areas <- paste(content_areas, "RASCH", sep="_")
 	}
-
-	cutscore.information.list <- list()
 
 
 	###  Run nested loop to create a text object that can be output as text to the console.
@@ -42,9 +42,9 @@ function(cutscore.file.name,
 			cutscore.list[[cutscore.list.name]] <- list()
 
 			for (g in x$GRADE) {
-				if (fall.tf) cutscore.list[[cutscore.list.name]][[paste("GRADE_", g, ".1", sep="")]] <- sort(as.numeric(x[GRADE==g,c("MinSS.2", "MinSS.3", "MinSS.4", "MinSS.5"), with=FALSE]))
-				if (fall.tf) cutscore.list[[cutscore.list.name]][[paste("GRADE_", g, ".2", sep="")]] <- sort(as.numeric(x[GRADE==g,c("MinSS.2", "MinSS.3", "MinSS.4", "MinSS.5"), with=FALSE]))
-				if (spring.tf) cutscore.list[[cutscore.list.name]][[paste("GRADE_", g, ".3", sep="")]] <- sort(as.numeric(x[GRADE==g,c("MinSS.2", "MinSS.3", "MinSS.4", "MinSS.5"), with=FALSE]))
+				if (fall.tf) cutscore.list[[cutscore.list.name]][[paste("GRADE_", g, ".1", sep="")]] <- sort(as.numeric(x[GRADE==g,c("MinRasch.2", "MinRasch.3", "MinRasch.4", "MinRasch.5"), with=FALSE]))
+				if (fall.tf) cutscore.list[[cutscore.list.name]][[paste("GRADE_", g, ".2", sep="")]] <- sort(as.numeric(x[GRADE==g,c("MinRasch.2", "MinRasch.3", "MinRasch.4", "MinRasch.5"), with=FALSE]))
+				if (spring.tf) cutscore.list[[cutscore.list.name]][[paste("GRADE_", g, ".3", sep="")]] <- sort(as.numeric(x[GRADE==g,c("MinRasch.2", "MinRasch.3", "MinRasch.4", "MinRasch.5"), with=FALSE]))
 			}
 		}
 	}
