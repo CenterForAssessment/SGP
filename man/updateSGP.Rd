@@ -46,6 +46,7 @@ updateSGP(
 				"LONG_FINAL_YEAR_Data",
 				"WIDE_Data",
 				"INSTRUCTOR_Data"),
+	outputSGP.directory="Data",
 	sgp.config=NULL,
 	goodness.of.fit.print=TRUE,
 	parallel.config=NULL,
@@ -121,8 +122,8 @@ If missing the function will use the data to infer all the grade progressions fo
   \item{update.old.data.with.new}{A Boolean argument (defaults to TRUE) indicating whether updateSGP should add new data supplied in argument with_SGP_Data_LONG to existing longitudinal data
   or reduce data set to run analyses on only that which is provided.
   }
-  \item{output.updated.data}{A Boolean argument (defaults to TRUE) indicating whether updateSGP should use \code{\link{outputSGP}} to save the new data added in 
-   \code{with_sgp_data_LONG} separately in a new directory called "Updated_Data".  Only relevant when `overwrite.existing.data is FALSE and 
+  \item{output.updated.data}{A Boolean argument (defaults to TRUE) indicating whether updateSGP should use \code{\link{outputSGP}} to save the new data added in
+   \code{with_sgp_data_LONG} separately in a new directory called "Updated_Data".  Only relevant when `overwrite.existing.data is FALSE and
    sgp.use.my.coefficient.matrices is TRUE.  Output type controlled by the \code{outputSGP.output.type} argument.
   }
 
@@ -132,8 +133,9 @@ If missing the function will use the data to infer all the grade progressions fo
   }
   \item{outputSGP.output.type}{Specifies the type of output generated as part of intermediate step when adding addition data and using old coefficient matrices. Defaults are the defaults of outputSGP,
   \code{LONG_Data}, \code{LONG_FINAL_YEAR_Data}, \code{WIDE_Data}, and \code{INSTRUCTOR_Data}.
-
-  }
+	}
+	\item{outputSGP.directory}{A a file path indicating where to save output files. Defaults to \code{Data}.
+	}
   \item{sgp.config}{List of analysis control parameters passed to \code{\link{analyzeSGP}}. For details on this argument see document for that function.
   }
   \item{goodness.of.fit.print}{A Boolean variable passed to \code{\link{analyzeSGP}} indicating whether to print goodness of fit plots.
