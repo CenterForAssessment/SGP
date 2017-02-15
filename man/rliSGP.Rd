@@ -28,6 +28,7 @@ rliSGP(
 	fix.duplicates="KEEP.ALL",
 	eow.calculate.sgps=FALSE,
 	score.type="RASCH",
+	cutscore.file.name="Cutscores.txt",
     parallel.config=NULL)
 }
 
@@ -81,6 +82,8 @@ growth percentiles are calculated as part of EOW analyses. Default is FALSE whic
   }
   \item{score.type}{Either \code{RASCH} (default) or \code{STAR} indicating what type of score is being supplied for analysis. The selection ensures the correct cutscores,
   	matrices, and knots/boundaries are used for analyses.
+  }
+  \item{cutscore.file.name}{Cutscore file name and path for input and creation of RLI Cutscores. Default is \code{Cutscores.txt}.
   }
   \item{parallel.config}{Argument passed to \code{\link{abcSGP}} or \code{\link{updateSGP}} to activate parallel processing with an appropriate backend.
   }

@@ -20,6 +20,7 @@ function(sgp_object,
 	fix.duplicates="KEEP.ALL",
 	eow.calculate.sgps=FALSE,
 	score.type="RASCH",
+	cutscore.file.name="Cutscores.txt",
 	parallel.config=NULL) {
 
 	YEAR <- GRADE <- ID <- NEW_ID <- .EACHI <- DATE <- NULL
@@ -34,6 +35,8 @@ function(sgp_object,
         }
 
 	if (!state %in% c("RLI", "RLI_UK")) stop("\tNOTE: 'rliSGP' only works with states RLI or RLI_UK currently")
+
+	if (!score.type %in% c("RASCH", "STAR")) stop("\tNOTE: 'score.type argument must be set to either RASCH or STAR.'")
 
 
 	### Utility functions
@@ -143,6 +146,14 @@ function(sgp_object,
 	if (!is.null(update.ids)) {
 		sgp_object <- updateIDS(sgp_object, update.ids)
 		additional.data <- updateIDS(additional.data, update.ids)
+	}
+
+
+	### Create Cutscores and embed in SGPstateData
+
+	if (state=="RLI") {
+		if (!file.exists(cutscore.file.name)) stop("\tNOTE: rliSGP requires Cutscores to be supplied at run time provided with path and file name in cutscore.file.name")
+		SGPstateData[["RLI"]][["Achievement"]][["Cutscores"]] <- rliCutscoreCreation(cutscore.file.name, score.type)
 	}
 
 
