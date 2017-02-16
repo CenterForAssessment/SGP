@@ -80,7 +80,7 @@ function(sgp_object,
 		}
 	}
 
-	getRLIConfig <- function(content_areas, configuration.year, testing.window, SGPt) {
+	getRLIConfig <- function(content_areas, configuration.year, testing.window, score.type) {
 		tmp.list <- list()
 		for (i in content_areas) {
 			tmp.list[[i]] <- SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, i, testing.window, score.type)
@@ -193,7 +193,7 @@ function(sgp_object,
 			SGPt=SGPt,
 			fix.duplicates=fix.duplicates,
 			parallel.config=parallel.config,
-			sgp.config=getRLIConfig(content_areas, configuration.year, testing.window, SGPt))
+			sgp.config=getRLIConfig(content_areas, configuration.year, testing.window, score.type))
 
 		if (!is.null(update.ids)) {
 			assign(update.shell.name, sgp_object)
@@ -244,7 +244,7 @@ function(sgp_object,
 				SGPt=SGPt,
 				sgp.percentiles.calculate.sgps=eow.calculate.sgps,
 				parallel.config=parallel.config,
-				sgp.config=getRLIConfig(content_areas, configuration.year, testing.window, SGPt))
+				sgp.config=getRLIConfig(content_areas, configuration.year, testing.window, score.type))
 
 			### Create and save new UPDATE_SHELL
 
@@ -265,8 +265,9 @@ function(sgp_object,
 			new.matrices <-convertToBaseline(sgp_object@SGP$Coefficient_Matrices[grep(configuration.year, names(sgp_object@SGP$Coefficient_Matrices))])
 			old.matrix.label <- paste0(paste(state, "SGPt_Baseline_Matrices", sep="_"), "$", tail(sort(names(get(paste(state, "SGPt_Baseline_Matrices", sep="_")))), 1))
 			old.matrices <- eval(parse(text=old.matrix.label))
-			year.to.replace <- head(sort(unique(sapply(lapply(sapply(names(old.matrices[['READING.BASELINE']]), strsplit, '[.]'), '[', 2:3), paste, collapse="."))), 1)
-			for (content_area.iter in c("EARLY_LITERACY.BASELINE", "READING.BASELINE", "MATHEMATICS.BASELINE")) {
+			if (score.type=="RASCH") tmp.content_areas <- paste0(c("EARLY_LITERACY", "MATHEMATICS", "READING"), "_RASCH.BASELINE") else tmp.content_areas <- paste0(c("EARLY_LITERACY", "MATHEMATICS", "READING"), ".BASELINE")
+			year.to.replace <- head(sort(unique(sapply(lapply(sapply(names(old.matrices[[tmp.content_areas[3]]]), strsplit, '[.]'), '[', 2:3), paste, collapse="."))), 1)
+			for (content_area.iter in tmp.content_areas) {
 				old.matrices[[content_area.iter]][grep(year.to.replace, names(old.matrices[[content_area.iter]]))] <- NULL
 				old.matrices[[content_area.iter]] <- c(old.matrices[[content_area.iter]], new.matrices[[content_area.iter]])
 			}
