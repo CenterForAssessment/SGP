@@ -9,6 +9,7 @@ function(cutscore.file.name,
 
 	cutscore.list <- list()
 	cutscore.information.list <- list()
+	if (score.type=="RASCH") tmp.scores <- c("MinRasch", "MaxRasch") else tmp.scores <- c("MinSS", "MaxSS")
 
 
 	###  Read in the cutscore long data file
@@ -19,7 +20,7 @@ function(cutscore.file.name,
 
 	###  Reshape the long file into a wide file
 
-	rli.cs <- reshape(rli.cs.long, timevar= 'ProficiencyLevel', idvar=c('TestCode', 'Subject', 'Grade'), direction='wide', drop=c("CountryCode", "RegionCode", "ProficiencyName", "MaxRasch", "Linked", "ProficiencyFlag"))
+	rli.cs <- reshape(rli.cs.long, timevar= 'ProficiencyLevel', idvar=c('TestCode', 'Subject', 'Grade'), direction='wide', drop=c("CountryCode", "RegionCode", "ProficiencyName", tmp.scores[2], "Linked", "ProficiencyFlag"))
 	setnames(rli.cs, c('TestCode', "Subject", "Grade"), c('STATE', "CONTENT_AREA", "GRADE"))
 	if (score.type=="RASCH") {
 		rli.cs[,CONTENT_AREA:=paste(CONTENT_AREA, "RASCH", sep="_")]
@@ -46,10 +47,10 @@ function(cutscore.file.name,
 
 	# Make sure we have all state cutscore information updated in levels:
 
-	if (length(tmp <- setdiff(cutscore.information.list$Cutscore_States, unlist(sapply(cutscore.information.list[['State_Levels']], '[[', 1), use.names=FALSE)) > 0)) {
+	if (length(tmp <- setdiff(cutscore.information.list$Cutscore_States, unlist(sapply(cutscore.information.list[['State_Levels']], '[[', 1), use.names=FALSE))) > 0) {
 		message(paste("NOTE: Not all RLI Cutscore states (", paste(tmp, collapse=", "), ") included in 2 - 5 Level list!", sep=""))
 	}
-	if (length(tmp <- setdiff(unlist(sapply(cutscore.information.list[['State_Levels']], '[[', 1), use.names=FALSE), cutscore.information.list$Cutscore_States))) {
+	if (length(tmp <- setdiff(unlist(sapply(cutscore.information.list[['State_Levels']], '[[', 1), use.names=FALSE), cutscore.information.list$Cutscore_States)) > 0) {
 		message(paste("NOTE: Some states included in 2 - 5 Level list (", paste(tmp, collapse=", "), ") that do not have Cutscores!", sep=""))
 	}
 
@@ -73,9 +74,9 @@ function(cutscore.file.name,
 			cutscore.list[[cutscore.list.name]] <- list()
 
 			for (g in x$GRADE) {
-				if (fall.tf) cutscore.list[[cutscore.list.name]][[paste("GRADE_", g, ".1", sep="")]] <- sort(as.numeric(x[GRADE==g,c("MinRasch.2", "MinRasch.3", "MinRasch.4", "MinRasch.5"), with=FALSE]))
-				if (fall.tf) cutscore.list[[cutscore.list.name]][[paste("GRADE_", g, ".2", sep="")]] <- sort(as.numeric(x[GRADE==g,c("MinRasch.2", "MinRasch.3", "MinRasch.4", "MinRasch.5"), with=FALSE]))
-				if (spring.tf) cutscore.list[[cutscore.list.name]][[paste("GRADE_", g, ".3", sep="")]] <- sort(as.numeric(x[GRADE==g,c("MinRasch.2", "MinRasch.3", "MinRasch.4", "MinRasch.5"), with=FALSE]))
+				if (fall.tf) cutscore.list[[cutscore.list.name]][[paste("GRADE_", g, ".1", sep="")]] <- sort(as.numeric(x[GRADE==g, paste(tmp.scores[1], 2:5, sep="."), with=FALSE]))
+				if (fall.tf) cutscore.list[[cutscore.list.name]][[paste("GRADE_", g, ".2", sep="")]] <- sort(as.numeric(x[GRADE==g, paste(tmp.scores[1], 2:5, sep="."), with=FALSE]))
+				if (spring.tf) cutscore.list[[cutscore.list.name]][[paste("GRADE_", g, ".3", sep="")]] <- sort(as.numeric(x[GRADE==g, paste(tmp.scores[1], 2:5, sep="."), with=FALSE]))
 			}
 		}
 	}
