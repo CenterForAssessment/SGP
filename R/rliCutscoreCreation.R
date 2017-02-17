@@ -1,5 +1,5 @@
 `rliCutscoreCreation` <-
-function(cutscore.file.name,
+function(rli.cs.long,
 		 score.type="RASCH",
 		 content_areas=c("MATHEMATICS", "READING")){
 
@@ -14,7 +14,6 @@ function(cutscore.file.name,
 
 	###  Read in the cutscore long data file
 
-	rli.cs.long <- fread(cutscore.file.name)
 	if (!all(rli.cs.long$Subject %in% content_areas)) stop("\tNOTE: 'Subject' variable in supplied cutscores must be 'READING' or 'MATHEMATICS'.")
 
 
