@@ -1726,7 +1726,7 @@ function(
 				} else  parallel.config <- paste0("list(BACKEND='PARALLEL', WORKERS=list(TAUS=", number.cores, "))")
 			} else parallel.config <- test.option[['parallel.config']]
 
-			RLI_SGPt_PART_1 <- RLI_SGPt_PART_2 <- RLI_SGPt_PART_3 <- SCALE_SCORE_RASCH <- NULL
+			RLI_SGPt_PART_1 <- RLI_SGPt_PART_2 <- RLI_SGPt_PART_3 <- SCALE_SCORE <- NULL
 			tmp.messages <- "##### Begin testSGP test number RLI #####\n\n"
 			tmp.last.window <- tail(sort(unique(SGPdata::sgptData_LONG[['YEAR']])), 1)
 
@@ -1734,7 +1734,8 @@ function(
 			### PART 1: Using RLI_SGPt_UPDATE_SHELL
 			###############################################################################
 
-			RLI_Data_LONG_UPDATE <- SGPdata::sgptData_LONG[YEAR %in% tmp.last.window][,SCALE_SCORE_RASCH:=NULL]
+			RLI_Data_LONG_UPDATE <- SGPdata::sgptData_LONG[YEAR %in% tmp.last.window][,SCALE_SCORE:=NULL]
+			setnames(RLI_Data_LONG_UPDATE, "SCALE_SCORE_RASCH", "SCALE_SCORE")
 			RLI_SGPt_UPDATE_SHELL <- suppressMessages(prepareSGP(SGPdata::sgptData_LONG[!YEAR %in% tmp.last.window][,SCALE_SCORE_RASCH:=NULL], state="RLI"))
 			SGPstateData[["RLI"]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <-
 				eval(parse(text=paste("RLI_SGPt_Baseline_Matrices[['RLI_SGPt_Baseline_Matrices_2016_2017.3']]")))
@@ -1844,7 +1845,8 @@ function(
 			### PART 2: Using LONG Data
 			###############################################################################
 
-			RLI_SGPt_Data_LONG <- SGPdata::sgptData_LONG[,SCALE_SCORE_RASCH:=NULL]
+			RLI_Data_LONG_UPDATE <- SGPdata::sgptData_LONG[YEAR %in% tmp.last.window][,SCALE_SCORE:=NULL]
+			setnames(RLI_Data_LONG_UPDATE, "SCALE_SCORE_RASCH", "SCALE_SCORE")
 
 			### Calculate SGPs
 
