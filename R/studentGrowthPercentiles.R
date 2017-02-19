@@ -134,7 +134,8 @@ function(panel.data,         ## REQUIRED
 			tmp.cutscores <- grep(content_area, names(SGP::SGPstateData[[goodness.of.fit]][['Achievement']][['Cutscores']]), value=TRUE)
 			if (length(tmp.cutscores) > 0L) {
 				tmp.cutscores.names <- tmp.cutscores[content_area==sapply(strsplit(tmp.cutscores, "[.]"), '[', 1L)]
-				tmp.cutscores.years <- sapply(strsplit(tmp.cutscores.names, "[.]"), '[', 2L)
+				tmp.cutscores.years <- sapply(strsplit(tmp.cutscores.names[grep(content_area, tmp.cutscores.names)], "[.]"), function(x) paste(x[-1], collapse="."))
+				tmp.cutscores.years[tmp.cutscores.years==""]<-NA
 				tmp.sum <- sum(year >= sort(tmp.cutscores.years), na.rm=TRUE)
 				return(paste(c(content_area, sort(tmp.cutscores.years)[tmp.sum]), collapse="."))
 			} else return(content_area)
