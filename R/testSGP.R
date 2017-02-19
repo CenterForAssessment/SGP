@@ -1735,9 +1735,10 @@ function(
 			### PART 1: Using RLI_SGPt_UPDATE_SHELL
 			###############################################################################
 
-			RLI_Data_LONG_UPDATE <- SGPdata::sgptData_LONG[YEAR %in% tmp.last.window][,SCALE_SCORE:=NULL]
-			setnames(RLI_Data_LONG_UPDATE, "SCALE_SCORE_RASCH", "SCALE_SCORE")
-			RLI_SGPt_UPDATE_SHELL <- suppressMessages(prepareSGP(SGPdata::sgptData_LONG[!YEAR %in% tmp.last.window][,SCALE_SCORE_RASCH:=NULL], state="RLI"))
+			RLI_Data_LONG <- SGPdata::sgptData_LONG[,SCALE_SCORE:=NULL]
+			setnames(RLI_Data_LONG, "SCALE_SCORE_RASCH", "SCALE_SCORE")
+			RLI_SGPt_UPDATE_SHELL <- suppressMessages(prepareSGP(RLI_Data_LONG[!YEAR %in% tmp.last.window], state="RLI"))
+			RLI_Data_LONG_UPDATE <- RLI_Data_LONG[YEAR %in% tmp.last.window]
 			SGPstateData[["RLI"]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <-
 				eval(parse(text=paste("RLI_SGPt_Baseline_Matrices[['RLI_SGPt_Baseline_Matrices_2016_2017.3']]")))
 			SGPstateData[["RLI"]][["Assessment_Program_Information"]][['CSEM']] <- "SEM"
@@ -1847,8 +1848,8 @@ function(
 			### PART 2: Using LONG Data
 			###############################################################################
 
-			RLI_Data_LONG_UPDATE <- SGPdata::sgptData_LONG[YEAR %in% tmp.last.window][,SCALE_SCORE:=NULL]
-			setnames(RLI_Data_LONG_UPDATE, "SCALE_SCORE_RASCH", "SCALE_SCORE")
+			RLI_SGPt_Data_LONG <- SGPdata::sgptData_LONG[YEAR %in% tmp.last.window][,SCALE_SCORE:=NULL]
+			setnames(RLI_SGPt_Data_LONG, "SCALE_SCORE_RASCH", "SCALE_SCORE")
 
 			### Calculate SGPs
 
