@@ -82,7 +82,8 @@ function(sgp_object,
 
 	getRLIConfig <- function(content_areas, configuration.year, testing.window, score.type) {
 		tmp.list <- list()
-		for (i in content_areas) {
+		if (score.type=="RASCH") content_areas.iter <- paste(content_areas, "RASCH", sep="_") else content_areas.iter <- content_areas
+		for (i in content_areas.iter) {
 			tmp.list[[i]] <- SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, i, testing.window, score.type)
 		}
 		return(unlist(tmp.list, recursive=FALSE))
