@@ -1735,7 +1735,8 @@ function(
 			### PART 1: Using RLI_SGPt_UPDATE_SHELL
 			###############################################################################
 
-			RLI_Data_LONG <- SGPdata::sgptData_LONG[,SCALE_SCORE:=NULL]
+			RLI_Data_LONG <- copy(SGPdata::sgptData_LONG)
+			RLI_Data_LONG[,SCALE_SCORE:=NULL]
 			setnames(RLI_Data_LONG, "SCALE_SCORE_RASCH", "SCALE_SCORE")
 			RLI_SGPt_UPDATE_SHELL <- suppressMessages(prepareSGP(RLI_Data_LONG[!YEAR %in% tmp.last.window], state="RLI"))
 			RLI_Data_LONG_UPDATE <- RLI_Data_LONG[YEAR %in% tmp.last.window]
@@ -1848,7 +1849,8 @@ function(
 			### PART 2: Using LONG Data
 			###############################################################################
 
-			RLI_SGPt_Data_LONG <- SGPdata::sgptData_LONG[YEAR %in% tmp.last.window][,SCALE_SCORE:=NULL]
+			RLI_SGPt_Data_LONG <- copy(SGPdata::sgptData_LONG)
+			RLI_SGPt_Data_LONG[,SCALE_SCORE:=NULL]
 			setnames(RLI_SGPt_Data_LONG, "SCALE_SCORE_RASCH", "SCALE_SCORE")
 
 			### Calculate SGPs
