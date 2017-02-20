@@ -1515,7 +1515,7 @@ function(
 			} else parallel.config <- test.option[['parallel.config']]
 
 			RLI1_SGPt_PART_1 <- RLI1_SGPt_PART_2 <- RLI1_SGPt_PART_3 <- SCALE_SCORE_RASCH <- NULL
-			tmp.messages <- "##### Begin testSGP test number RLI1 #####\n\n"
+			tmp.messages <- "##### Begin testSGP test number RLI1 (STAR Scores) #####\n\n"
 			tmp.last.window <- tail(sort(unique(SGPdata::sgptData_LONG[['YEAR']])), 1)
 
 			###############################################################################
