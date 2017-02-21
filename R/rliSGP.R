@@ -19,9 +19,11 @@ function(sgp_object,
 	return.updated.shell=FALSE,
 	fix.duplicates="KEEP.ALL",
 	eow.calculate.sgps=FALSE,
+	score.type="RASCH",
+	cutscore.file.name="Cutscores.csv",
 	parallel.config=NULL) {
 
-	YEAR <- GRADE <- ID <- NEW_ID <- .EACHI <- DATE <- NULL
+	YEAR <- GRADE <- ID <- NEW_ID <- .EACHI <- DATE <- CONTENT_AREA <- NULL
 	SGPstateData <- SGP::SGPstateData ### Needed due to possible assignment of values to SGPstateData
 
 	started.at <- proc.time()
@@ -33,6 +35,8 @@ function(sgp_object,
         }
 
 	if (!state %in% c("RLI", "RLI_UK")) stop("\tNOTE: 'rliSGP' only works with states RLI or RLI_UK currently")
+
+	if (!score.type %in% c("RASCH", "STAR")) stop("\tNOTE: 'score.type argument must be set to either RASCH or STAR.'")
 
 
 	### Utility functions
@@ -76,11 +80,12 @@ function(sgp_object,
 		}
 	}
 
-	getRLIConfig <- function(content_areas, configuration.year, testing.window, SGPt) {
+	getRLIConfig <- function(content_areas, configuration.year, testing.window, score.type) {
 		tmp.list <- list()
 		for (i in content_areas) {
-			tmp.list[[i]] <- SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, i, testing.window)
+			tmp.list[[i]] <- SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, i, testing.window, score.type)
 		}
+		if (score.type=="RASCH") setattr(tmp.list, "names", paste(names(tmp.list), "RASCH", sep="_"))
 		return(unlist(tmp.list, recursive=FALSE))
 	}
 
@@ -97,10 +102,16 @@ function(sgp_object,
 
 	if (long.data.supplied <- is.data.frame(sgp_object)) {
 		sgp_object <- as.data.table(sgp_object)
+		if (score.type=="RASCH") sgp_object[,CONTENT_AREA:=paste(CONTENT_AREA, "RASCH", sep="_")]
 		tmp.last.year <- tail(sort(unique(sgp_object[['YEAR']])), 1)
 		additional.data <- sgp_object[YEAR==tmp.last.year]
 		sgp_object <- new("SGP", Data=suppressMessages(prepareSGP(sgp_object[YEAR!=tmp.last.year], state=state)@Data), Version=getVersion(sgp_object))
 		gc(FALSE)
+	} else {
+		if (score.type=="RASCH") {
+			if (!is.null(additional.data)) additional.data[,CONTENT_AREA:=paste(CONTENT_AREA, "RASCH", sep="_")]
+			sgp_object@Data$CONTENT_AREA <- paste(sgp_object@Data$CONTENT_AREA, "RASCH", sep="_")
+		}
 	}
 
 	if (!is.null(testing.window) && (length(testing.window) != 1 || !testing.window %in% c("FALL", "WINTER", "SPRING"))) {
@@ -145,6 +156,18 @@ function(sgp_object,
 	}
 
 
+	### Create Cutscores and embed in SGPstateData
+
+	if (state=="RLI") {
+		if (!is.character(cutscore.file.name) && !is.data.frame(cutscore.file.name)) stop("\tNOTE: rliSGP requires Cutscores to be supplied at run time.")
+		if (is.character(cutscore.file.name) && !file.exists(cutscore.file.name)) stop("\tNOTE: Cutscores file name does not exist in working directory or supplied path.")
+		if (is.character(cutscore.file.name)) cutscore.file.name <- fread(cutscore.file.name)
+		tmp.list <- rliCutscoreCreation(cutscore.file.name, score.type)
+		SGPstateData[["RLI"]][["Achievement"]][["Cutscores"]] <- tmp.list[['Cutscores']]
+		SGPstateData[["RLI"]][["Achievement"]][["Cutscore_Information"]] <- tmp.list[['Cutscore_Information']]
+	}
+
+
 	########################################################################
 	###
 	### WITHIN_WINDOW UPDATE scripts
@@ -173,7 +196,7 @@ function(sgp_object,
 			SGPt=SGPt,
 			fix.duplicates=fix.duplicates,
 			parallel.config=parallel.config,
-			sgp.config=getRLIConfig(content_areas, configuration.year, testing.window, SGPt))
+			sgp.config=getRLIConfig(content_areas, configuration.year, testing.window, score.type))
 
 		if (!is.null(update.ids)) {
 			assign(update.shell.name, sgp_object)
@@ -224,7 +247,7 @@ function(sgp_object,
 				SGPt=SGPt,
 				sgp.percentiles.calculate.sgps=eow.calculate.sgps,
 				parallel.config=parallel.config,
-				sgp.config=getRLIConfig(content_areas, configuration.year, testing.window, SGPt))
+				sgp.config=getRLIConfig(content_areas, configuration.year, testing.window, score.type))
 
 			### Create and save new UPDATE_SHELL
 
@@ -245,8 +268,9 @@ function(sgp_object,
 			new.matrices <-convertToBaseline(sgp_object@SGP$Coefficient_Matrices[grep(configuration.year, names(sgp_object@SGP$Coefficient_Matrices))])
 			old.matrix.label <- paste0(paste(state, "SGPt_Baseline_Matrices", sep="_"), "$", tail(sort(names(get(paste(state, "SGPt_Baseline_Matrices", sep="_")))), 1))
 			old.matrices <- eval(parse(text=old.matrix.label))
-			year.to.replace <- head(sort(unique(sapply(lapply(sapply(names(old.matrices[['READING.BASELINE']]), strsplit, '[.]'), '[', 2:3), paste, collapse="."))), 1)
-			for (content_area.iter in c("EARLY_LITERACY.BASELINE", "READING.BASELINE", "MATHEMATICS.BASELINE")) {
+			if (score.type=="RASCH") tmp.content_areas <- paste0(c("EARLY_LITERACY", "MATHEMATICS", "READING"), "_RASCH.BASELINE") else tmp.content_areas <- paste0(c("EARLY_LITERACY", "MATHEMATICS", "READING"), ".BASELINE")
+			year.to.replace <- head(sort(unique(sapply(lapply(sapply(names(old.matrices[[tmp.content_areas[3]]]), strsplit, '[.]'), '[', 2:3), paste, collapse="."))), 1)
+			for (content_area.iter in tmp.content_areas) {
 				old.matrices[[content_area.iter]][grep(year.to.replace, names(old.matrices[[content_area.iter]]))] <- NULL
 				old.matrices[[content_area.iter]] <- c(old.matrices[[content_area.iter]], new.matrices[[content_area.iter]])
 			}

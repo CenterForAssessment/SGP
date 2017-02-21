@@ -27,6 +27,8 @@ rliSGP(
 	return.updated.shell=FALSE,
 	fix.duplicates="KEEP.ALL",
 	eow.calculate.sgps=FALSE,
+	score.type="RASCH",
+	cutscore.file.name="Cutscores.csv",
     parallel.config=NULL)
 }
 
@@ -77,6 +79,11 @@ analysis. Default is NULL, no ID replacement is performed.
   }
   \item{eow.calculate.sgps}{Boolean argument passed to \code{\link{updateSGP}} further passed to \code{\link{analyzeSGP}} indicating whether student
 growth percentiles are calculated as part of EOW analyses. Default is FALSE which results in just coefficient matrices being calculated.
+  }
+  \item{score.type}{Either \code{RASCH} (default) or \code{STAR} indicating what type of score is being supplied for analysis. The selection ensures the correct cutscores,
+  	matrices, and knots/boundaries are used for analyses.
+  }
+  \item{cutscore.file.name}{Cutscore file name and path for input and creation of RLI Cutscores. Default is \code{Cutscores.csv}.
   }
   \item{parallel.config}{Argument passed to \code{\link{abcSGP}} or \code{\link{updateSGP}} to activate parallel processing with an appropriate backend.
   }
