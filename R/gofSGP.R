@@ -194,14 +194,14 @@ function(
 		tmp.list <- list()
 
 		for (i in levels(tmp.cuts)) {
-			tmp.list[[i]] <- quantile(data1$SGP[tmp.cuts==i], probs=ppoints(1:500))
+			tmp.list[[i]] <- quantile(data1$SGP[tmp.cuts==i], probs=ppoints(1:500), na.rm=TRUE)
 		}
 
 		if ((tmp.n <- dim(tmp.data.final)[1]) > 50) pct <- 50/tmp.n else pct <- 0.9999 # Take Top/Bottom 50 kids to find LOSS/HOSS
 
 		loss_hoss.data <- rbindlist(list(
-			data.table(data1)[, list(SCALE_SCORE, SGP)][which(SCALE_SCORE <= quantile(SCALE_SCORE, probs = pct, na.rm = T)),][, LH:="LOSS"],
-			data.table(data1)[, list(SCALE_SCORE, SGP)][which(SCALE_SCORE >= quantile(SCALE_SCORE, probs=1-pct, na.rm = T)),][, LH:="HOSS"]))
+			data.table(data1)[, list(SCALE_SCORE, SGP)][which(SCALE_SCORE <= quantile(SCALE_SCORE, probs = pct, na.rm=TRUE)),][, LH:="LOSS"],
+			data.table(data1)[, list(SCALE_SCORE, SGP)][which(SCALE_SCORE >= quantile(SCALE_SCORE, probs=1-pct, na.rm=TRUE)),][, LH:="HOSS"]))
 		setkey(loss_hoss.data, SCALE_SCORE, LH)
 		if (length(unique(loss_hoss.data[LH=="HOSS"][["SCALE_SCORE"]])) > 1) hoss.rows <- 2 else hoss.rows <- 1
 		if (length(unique(loss_hoss.data[LH=="LOSS"][["SCALE_SCORE"]])) > 1) loss.rows <- 2 else loss.rows <- 1
@@ -238,7 +238,7 @@ function(
 			} else {
 				if (is.null(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]])) {
 					tmp.prior.achievement.level.labels <- names(SGP::SGPstateData[[state]][['Student_Report_Information']][['Achievement_Level_Labels']])
-					tmp.prior.achievement.levels <- unlist(SGP::SGPstateData[[state]][['Student_Report_Information']][['Achievement_Level_Labels']], use.names = FALSE)
+					tmp.prior.achievement.levels <- unlist(SGP::SGPstateData[[state]][['Student_Report_Information']][['Achievement_Level_Labels']], use.names=FALSE)
 				} else {
 					tmp.prior.achievement.level.labels <- names(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[get.achievement_level.label(state, years_prior)]])
 					tmp.prior.achievement.levels <- unlist(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[get.achievement_level.label(state, years_prior)]], use.names = FALSE)
