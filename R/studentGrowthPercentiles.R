@@ -1545,7 +1545,7 @@ function(panel.data,         ## REQUIRED
 
 			if (is.character(calculate.confidence.intervals) || is.list(calculate.confidence.intervals)) {
 				if (is.null(calculate.confidence.intervals$confidence.quantiles) || identical(toupper(calculate.confidence.intervals$confidence.quantiles), "STANDARD_ERROR")) {
-          if (print.sgp.order) {
+          if (print.other.gp) {
             tmp.se <- list()
             for(f in seq_along(tmp.csem.quantiles)) {
               tmp.se[[f]] <- data.table("ID" = tmp.csem.quantiles[[f]][["ID"]], "ORDER" = f, "STANDARD_ERROR" = round(data.table(ID=tmp.csem.quantiles[[f]][[1L]], SGP=c(as.matrix(tmp.csem.quantiles[[f]][,-1L,with=FALSE])))[,sd(SGP), keyby=ID][['V1']], digits=2L))
@@ -1561,7 +1561,7 @@ function(panel.data,         ## REQUIRED
 						all(calculate.confidence.intervals$confidence.quantiles > 0))) {
 						stop("Argument to 'calculate.confidence.intervals$confidence.quantiles' must be numeric and consist of quantiles.")
 					}
-          if (print.sgp.order) {
+          if (print.other.gp) {
             tmp.se <- list()
             for(f in seq_along(tmp.csem.quantiles)) {
               tmp.se[[f]] <- data.table("ID" = tmp.csem.quantiles[[f]][["ID"]], "ORDER" = f,
