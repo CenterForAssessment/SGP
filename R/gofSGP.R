@@ -119,8 +119,8 @@ function(
 			return(tmp.cell.color)
 		}
 
-		.quantcut <- function (x, q = seq(0, 1, by = 0.25), na.rm = TRUE, ...) { ### From the quantcut package (thanks!!)
-			quant <- quantile(x, q, na.rm = na.rm)
+		.quantcut <- function (x, q = seq(0, 1, by = 0.25), na.rm = TRUE, dig.lab, ...) { ### From the quantcut package (thanks!!)
+			quant <- round(quantile(x, q, na.rm = na.rm), dig.lab)
 			dups <- duplicated(quant)
 			if (any(dups)) {
 				flag <- x %in% unique(quant[dups])
@@ -161,7 +161,7 @@ function(
 		}
 
 		.sgp.fit <- function (score, sgp) {
-			if (all(grepl("[.]", score[!is.na(score)]))) tmp.digits <- 3 else tmp.digits <- 4
+			if (all(grepl("[.]", score[!is.na(score)]))) tmp.digits <- 2 else tmp.digits <- 4
 			gfittable <- prop.table(table(.quantcut(score, q=0:10/10, right=FALSE, dig.lab=min(tmp.digits, max(nchar(score)))),
 			cut(sgp, c(-1, 9.5, 19.5, 29.5, 39.5, 49.5, 59.5, 69.5, 79.5, 89.5, 100.5),
 			labels=my.percentile.labels)), 1)*100
@@ -188,7 +188,7 @@ function(
 
 		LH <- SCALE_SCORE <- SCALE_SCORE_PRIOR <- SGP <- NULL
 		tmp.table <- .sgp.fit(data1[['SCALE_SCORE_PRIOR']], data1[['SGP']])
-		tmp.cuts <- .quantcut(data1[['SCALE_SCORE_PRIOR']], 0:10/10, right=FALSE)
+		tmp.cuts <- .quantcut(data1[['SCALE_SCORE_PRIOR']], 0:10/10, right=FALSE, dig.lab=3)
 		tmp.cuts.percentages <- round(100*table(tmp.cuts)/sum(table(tmp.cuts)), digits=1)
 		tmp.colors <- .cell.color(as.vector(tmp.table))
 		tmp.list <- list()
@@ -474,7 +474,7 @@ function(
 				tmp.norm.group <- unlist(unique(tmp.data_1[[norm.group.var]]), use.names=FALSE)
 				##  Remove norm groups that are subsets of larger ones:
 				# tmp.norm.group <- tmp.norm.group[sapply(1:length(tmp.norm.group), function(f) !any(grepl(tmp.norm.group[f], tmp.norm.group[-f])))]
-				tmp.norm.group <- tmp.norm.group[!is.na(tmp.norm.group)]
+				tmp.norm.group <- sort(tmp.norm.group[!is.na(tmp.norm.group)])
 			} else tmp.norm.group <- NA
 
 			for (grades.iter in grades) {
