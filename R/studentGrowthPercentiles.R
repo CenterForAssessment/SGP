@@ -1545,12 +1545,37 @@ function(panel.data,         ## REQUIRED
 
 			if (is.character(calculate.confidence.intervals) || is.list(calculate.confidence.intervals)) {
 				if (is.null(calculate.confidence.intervals$confidence.quantiles) || identical(toupper(calculate.confidence.intervals$confidence.quantiles), "STANDARD_ERROR")) {
+          if (print.sgp.order) {
+            tmp.se <- list()
+            for(f in seq_along(tmp.csem.quantiles)) {
+              tmp.se[[f]] <- data.table("ID" = tmp.csem.quantiles[[f]][["ID"]], "ORDER" = f, "STANDARD_ERROR" = round(data.table(ID=tmp.csem.quantiles[[f]][[1L]], SGP=c(as.matrix(tmp.csem.quantiles[[f]][,-1L,with=FALSE])))[,sd(SGP), keyby=ID][['V1']], digits=2L))
+            }
+            tmp.se <- data.table(rbindlist(tmp.se), key="ID")
+            tmp.se <- dcast(tmp.se, ID~ORDER, value.var="STANDARD_ERROR")
+            setnames(tmp.se, grep("ID", names(tmp.se), invert=TRUE, value=TRUE), paste0("SGP_ORDER_", grep("ID", names(tmp.se), invert=TRUE, value=TRUE), "_STANDARD_ERROR"))
+            quantile.data <- merge(quantile.data, tmp.se, by="ID")
+          } # No 'else' - also return the plain SGP version
 					quantile.data[,SGP_STANDARD_ERROR:=round(data.table(ID=simulation.data[[1L]], SGP=c(as.matrix(simulation.data[,-1L,with=FALSE])))[,sd(SGP), keyby=ID][['V1']], digits=2L)]
 				} else {
 					if (!(is.numeric(calculate.confidence.intervals$confidence.quantiles) && all(calculate.confidence.intervals$confidence.quantiles < 1) &
 						all(calculate.confidence.intervals$confidence.quantiles > 0))) {
 						stop("Argument to 'calculate.confidence.intervals$confidence.quantiles' must be numeric and consist of quantiles.")
 					}
+          if (print.sgp.order) {
+            tmp.se <- list()
+            for(f in seq_along(tmp.csem.quantiles)) {
+              tmp.se[[f]] <- data.table("ID" = tmp.csem.quantiles[[f]][["ID"]], "ORDER" = f,
+              round(t(apply(tmp.csem.quantiles[[f]][, -1L, with=FALSE], 1, quantile, probs=calculate.confidence.intervals$confidence.quantiles))),
+              "STANDARD_ERROR" = round(data.table(ID=tmp.csem.quantiles[[f]][[1L]], SGP=c(as.matrix(tmp.csem.quantiles[[f]][,-1L,with=FALSE])))[,sd(SGP), keyby=ID][['V1']], digits=2L))
+              # tmp.se[[f]][,paste0("SGP_", calculate.confidence.intervals$confidence.quantiles, "_CONFIDENCE_BOUND"):=tmp.cq]
+            }
+            tmp.se <- data.table(rbindlist(tmp.se), key="ID")
+            tmp.se <- dcast(tmp.se, ID~ORDER, value.var=c("STANDARD_ERROR", paste0(calculate.confidence.intervals$confidence.quantiles*100, "%")))
+            setnames(tmp.se,
+              c(grep("STANDARD_ERROR", names(tmp.se), value=TRUE), grep(paste0(calculate.confidence.intervals$confidence.quantiles*100, "%", collapse="|"), names(tmp.se), value=TRUE)),
+              c(paste0("SGP_ORDER_", seq_along(tmp.csem.quantiles), "_STANDARD_ERROR"), paste0("SGP_ORDER_", as.vector(outer(seq_along(tmp.csem.quantiles), calculate.confidence.intervals$confidence.quantiles, paste, sep="_")), "_CONFIDENCE_BOUND")))
+            quantile.data <- merge(quantile.data, tmp.se, by="ID")
+          } # No 'else' - also return the plain SGP version
 					tmp.cq <- data.table(round(t(apply(simulation.data[, -1L, with=FALSE], 1, quantile, probs=calculate.confidence.intervals$confidence.quantiles))))
 					quantile.data[,paste0("SGP_", calculate.confidence.intervals$confidence.quantiles, "_CONFIDENCE_BOUND"):=tmp.cq]
 					quantile.data[,SGP_STANDARD_ERROR:=round(data.table(ID=simulation.data[[1L]], SGP=c(as.matrix(simulation.data[,-1L,with=FALSE])))[,sd(SGP), keyby=ID][['V1']], digits=2L)]
