@@ -5,7 +5,9 @@ function(long.data) {
 
 	tmp.key <- key(long.data)
 	tmp.last.year <- tail(sort(unique(long.data[['YEAR']])), 1)
-	tmp.dups.index <- data.table(unique(long.data[duplicated(long.data, by=tmp.key)][, tmp.key, with=FALSE], by=tmp.key)[long.data, nomatch=0][,setdiff(tmp.key, "YEAR"), with=FALSE], key=setdiff(tmp.key, "YEAR"))
+	tmp.last.year.data <- long.data[YEAR==tmp.last.year]
+	tmp.dups.index <- data.table(unique(tmp.last.year.data[duplicated(tmp.last.year.data, by=tmp.key)][, tmp.key, with=FALSE], by=tmp.key)[tmp.last.year.data, nomatch=0][,setdiff(tmp.key, "YEAR"), with=FALSE], key=setdiff(tmp.key, "YEAR"))
+#	tmp.dups.index <- data.table(unique(long.data[duplicated(long.data, by=tmp.key)][, tmp.key, with=FALSE], by=tmp.key)[long.data, nomatch=0][,setdiff(tmp.key, "YEAR"), with=FALSE], key=setdiff(tmp.key, "YEAR"))
 	setkeyv(long.data, setdiff(tmp.key, "YEAR"))
 	tmp.unique.data <- long.data[!tmp.dups.index]
 	tmp.past.dups.extended <- long.data[YEAR!=tmp.last.year][tmp.dups.index, allow.cartesian=TRUE, nomatch=0]
