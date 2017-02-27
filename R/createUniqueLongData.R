@@ -1,5 +1,6 @@
 `createUniqueLongData` <-
-function(long.data) {
+function(long.data,
+	  dups.years=NULL) {
 
 	### Set variable to NULL to prevent R CMD Check warnings
 
@@ -9,24 +10,24 @@ function(long.data) {
 	### Initialize some settings/variables
 
 	dups.list <- dups.extended <- list()
-	tmp.key <- c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID")
-	all.years <- sort(unique(long.data[['YEAR']]))
+	tmp.key <- getKey(long.data)
+	all.years <- sort(unique(long.data, by="YEAR")[['YEAR']])
+	if (is.null(dups.years)) dups.years <- sort(unique(long.data[['YEAR']][duplicated(long.data, by=tmp.key)]))
 
 
 	### Create a list of duplicates for each year of the data
 
-	for (year.iter in all.years) {
-		this.year.data <- long.data[YEAR==year.iter]
+	for (year.iter in dups.years) {
+		this.year.data <- long.data[VALID_CASE=="VALID_CASE" & YEAR==year.iter]
 		dups.list[[year.iter]] <- data.table(unique(this.year.data[duplicated(this.year.data, by=tmp.key)][, tmp.key, with=FALSE], by=tmp.key)[this.year.data, nomatch=0][,setdiff(tmp.key, "YEAR"), with=FALSE], key=setdiff(tmp.key, "YEAR"))
-		if (dim(dups.list[[year.iter]])[1]==0) dups.list[[year.iter]] <- NULL
 	}
 
 
 	### For each year of data, extend that data based upon duplicates in other years created in previous step
 
 	setkey(long.data, VALID_CASE, CONTENT_AREA, ID)
-	for (year.iter in names(dups.list)) {
-		dups.extended[[year.iter]] <- data.table(long.data[YEAR==year.iter][Reduce(function(...) merge(..., all = TRUE), dups.list[setdiff(all.years, year.iter)])], key=c(tmp.key, "SCALE_SCORE"))
+	for (year.iter in sort(unique(unlist(lapply(dups.years, function(x) setdiff(all.years, x)))))) {
+		dups.extended[[year.iter]] <- data.table(long.data[VALID_CASE=="VALID_CASE" & YEAR==year.iter][Reduce(function(...) merge(..., all = TRUE), dups.list[intersect(setdiff(all.years, year.iter), names(dups.list))]), nomatch=0], key=c(tmp.key, "SCALE_SCORE"))
 	}
 	dups.all <- rbindlist(dups.extended)
 
