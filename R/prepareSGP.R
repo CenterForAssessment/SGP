@@ -140,7 +140,7 @@ function(data,
 		## Key data.table and check for duplicate cases
 
 		setkeyv(data@Data, getKey(data))
-		if (is.null(fix.duplicates) && any(duplicated(data@Data["VALID_CASE"], by=key(data@Data)))) {
+		if (is.null(fix.duplicates) && (grade.tf <- any(duplicated(data@Data["VALID_CASE"], by=c(key(data@Data), "GRADE"))) || base.tf <- any(duplicated(data@Data["VALID_CASE"], by=key(data@Data))))) {
 			messageSGP(paste("\tWARNING: @Data keyed by", paste(getKey(data), collapse=", "), "has duplicate cases. Subsequent joins/merges will likely be corrupt."))
 			messageSGP("\tNOTE: Duplicate cases are available in current workspace as 'DUPLICATED_CASES' and saved as 'DUPLICATED_CASES.Rdata'.")
 			assign("DUPLICATED_CASES",
