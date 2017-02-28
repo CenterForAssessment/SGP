@@ -4,7 +4,7 @@ function(long.data,
 
 	### Set variable to NULL to prevent R CMD Check warnings
 
-	YEAR <- ID <- VALID_CASE <- CONTENT_AREA <- GRADE <- NULL
+	YEAR <- ID <- VALID_CASE <- CONTENT_AREA <- GRADE <- TEMP_ID <- NULL
 
 
 	### Initialize some settings/variables
@@ -42,7 +42,6 @@ function(long.data,
 
 	all.data <- rbindlist(list(long.data[!dups.all, on=tmp.key], dups.all))
 	tmp.unique.index <- all.data[!all.data[duplicated(all.data, by=tmp.key)], on=tmp.key, which=TRUE]
-	# all.data[, ID:=paste(ID, "DUPS", seq.int(.N), sep="_"), by=list(VALID_CASE, CONTENT_AREA, YEAR, ID)]
 	all.data[YEAR==tmp.last.year, TEMP_ID := paste(ID, "DUPS", seq.int(.N), sep="_"), by=list(VALID_CASE, CONTENT_AREA, YEAR, ID)]
 	all.data[YEAR!=tmp.last.year, TEMP_ID := paste(ID, "DUPS", seq.int(.N), sep="_"), by=list(VALID_CASE, CONTENT_AREA, GRADE, YEAR, ID)]
 	all.data[tmp.unique.index, TEMP_ID := gsub("_DUPS_[0-9]*", "", ID)]
