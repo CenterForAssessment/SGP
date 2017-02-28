@@ -1957,7 +1957,7 @@ function(
 							head(sgpData_LONG[CONTENT_AREA=="ALGEBRA_II" & YEAR==rev(sgpData.years)[1]], 5),
 							head(sgpData_LONG[CONTENT_AREA=="ALGEBRA_II" & YEAR==rev(sgpData.years)[2]], 5)
 						))
-			dups[,SCALE_SCORE:=SCORE_SCORE+10]
+			dups[,SCALE_SCORE:=SCALE_SCORE+10]
 
 			sgpData_LONG <- rbindlist(list(sgpData_LONG, dups))
 			setkey(sgpData_LONG, VALID_CASE, CONTENT_AREA, YEAR, ID)
