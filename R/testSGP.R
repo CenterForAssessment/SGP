@@ -1923,4 +1923,204 @@ function(
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number RLI2 (RASCH Scores): ", convertTime(timetaken(started.at.overall)), "#####\n"))
 			messageSGP(tmp.messages)
 		} ### End TEST_NUMBER RLI2
+
+
+		#######################################################################################################################################################
+		###
+		### TEST NUMBER 7: Test of ability to deal with duplicates in test data
+		###
+		#######################################################################################################################################################
+
+		if (7 %in% TEST_NUMBER) {
+
+			options(error=recover)
+			options(warn=2)
+			if (.Platform$OS.type == "unix") number.cores <- detectSGPCores(logical=TRUE) else number.cores <- detectSGPCores(logical=FALSE)
+			Demonstration_SGP <- GRADE_REPORTED <- SCALE_SCORE <- VALID_CASE <- NULL
+			tmp.messages <- ("\t##### Results of testSGP test number 7 #####\n\n")
+			sgpData_LONG <- copy(as.data.table(SGPdata::sgpData_LONG))
+
+			### Add EOCT courses to sgpData_LONG and add duplicates
+
+			sgpData_LONG[CONTENT_AREA=='MATHEMATICS' & GRADE=='9', CONTENT_AREA:='ALGEBRA_I']
+			sgpData_LONG[CONTENT_AREA=='MATHEMATICS' & GRADE=='10', CONTENT_AREA:='ALGEBRA_II']
+			sgpData_LONG[CONTENT_AREA=='READING' & GRADE=='9', CONTENT_AREA:='GRADE_9_LIT']
+			sgpData_LONG[CONTENT_AREA=='READING' & GRADE=='10', CONTENT_AREA:='AMERICAN_LIT']
+			sgpData_LONG[,GRADE_REPORTED:=GRADE]
+			sgpData_LONG[CONTENT_AREA %in% c('ALGEBRA_I', 'ALGEBRA_II', 'GRADE_9_LIT', 'AMERICAN_LIT'), GRADE:='EOCT']
+
+			dups <- rbindlist(list(
+							head(sgpData_LONG[CONTENT_AREA=="MATHEMATICS" & YEAR==rev(sgpData.years)[1]], 5),
+							head(sgpData_LONG[CONTENT_AREA=="MATHEMATICS" & YEAR==rev(sgpData.years)[2]], 5),
+							head(sgpData_LONG[CONTENT_AREA=="ALGEBRA_I" & YEAR==rev(sgpData.years)[1]], 5),
+							head(sgpData_LONG[CONTENT_AREA=="ALGEBRA_I" & YEAR==rev(sgpData.years)[2]], 5),
+							head(sgpData_LONG[CONTENT_AREA=="ALGEBRA_II" & YEAR==rev(sgpData.years)[1]], 5),
+							head(sgpData_LONG[CONTENT_AREA=="ALGEBRA_II" & YEAR==rev(sgpData.years)[2]], 5)
+						))
+			dups[,SCALE_SCORE:=SCORE_SCORE+10]
+
+			sgpData_LONG <- rbindlist(list(sgpData_LONG, dups))
+			setkey(sgpData_LONG, VALID_CASE, CONTENT_AREA, YEAR, ID)
+
+			### Modify SGPstateData
+
+			SGPstateData[["DEMO"]][["Student_Report_Information"]] <- list(
+				# Transformed_Achievement_Level_Cutscores=list(MATHEMATICS=sgpData.years, READING=sgpData.years, GRADE_9_LIT=sgpData.years, AMERICAN_LIT=sgpData.years, ALGEBRA_I=sgpData.years, ALGEBRA_II=sgpData.years), ### FOR TESTING
+				# Transformed_Achievement_Level_Cutscores_gaPlot=list(MATHEMATICS=sgpData.years, READING=sgpData.years, GRADE_9_LIT=sgpData.years, AMERICAN_LIT=sgpData.years, ALGEBRA_I=sgpData.years, ALGEBRA_II=sgpData.years), ### FOR TESTING
+				Vertical_Scale=list(MATHEMATICS=TRUE, READING=TRUE, GRADE_9_LIT=TRUE, AMERICAN_LIT=TRUE, ALGEBRA_I=TRUE, ALGEBRA_II=TRUE),
+				Content_Areas_Labels=list(MATHEMATICS="Mathematics", READING="Reading", GRADE_9_LIT="Grade 9 Literature", AMERICAN_LIT="American Literature", ALGEBRA_I="Algebra I", ALGEBRA_II="Algebra II"),
+				Content_Areas_Domains=list(MATHEMATICS="MATHEMATICS", READING="READING", GRADE_9_LIT="READING", AMERICAN_LIT="READING", ALGEBRA_I="MATHEMATICS", ALGEBRA_II="MATHEMATICS"),
+				Grades_Reported=list(MATHEMATICS=c("3","4","5","6","7","8"), READING=c("3","4","5","6","7","8"), GRADE_9_LIT="EOCT", AMERICAN_LIT="EOCT", ALGEBRA_I="EOCT", ALGEBRA_II="EOCT"),
+				Grades_Reported_Domains=list(MATHEMATICS=c("3","4","5","6","7","8","EOCT"), READING=c("3","4","5","6","7","8","EOCT")),
+				Achievement_Level_Labels=list(
+					"Unsatisfactory"="Unsatisfactory",
+					"Part Proficient"="Partially Proficient",
+					"Proficient"="Proficient",
+					"Advanced"="Advanced"))
+
+			SGPstateData[["DEMO"]][["SGP_Configuration"]][["grade.projection.sequence"]] <- list(
+				READING=c("3", "4", "5", "6", "7", "8", "EOCT", "EOCT"),
+				MATHEMATICS=c("3", "4", "5", "6", "7", "8", "EOCT", "EOCT"),
+				GRADE_9_LIT=c("3", "4", "5", "6", "7", "8", "EOCT", "EOCT"),
+				AMERICAN_LIT=c("3", "4", "5", "6", "7", "8", "EOCT", "EOCT"),
+				ALGEBRA_I=c("3", "4", "5", "6", "7", "8", "EOCT", "EOCT"),
+				ALGEBRA_II=c("3", "4", "5", "6", "7", "8", "EOCT", "EOCT"))
+			SGPstateData[["DEMO"]][["SGP_Configuration"]][["content_area.projection.sequence"]] <- list(
+				READING=c("READING", "READING", "READING", "READING", "READING", "READING", "GRADE_9_LIT", "AMERICAN_LIT"),
+				GRADE_9_LIT=c("READING", "READING", "READING", "READING", "READING", "READING", "GRADE_9_LIT", "AMERICAN_LIT"),
+				AMERICAN_LIT=c("READING", "READING", "READING", "READING", "READING", "READING", "GRADE_9_LIT", "AMERICAN_LIT"),
+				MATHEMATICS=c("MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "ALGEBRA_I", "ALGEBRA_II"),
+				ALGEBRA_I=c("MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "ALGEBRA_I", "ALGEBRA_II"),
+				ALGEBRA_II=c("MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "ALGEBRA_I", "ALGEBRA_II"))
+			SGPstateData[["DEMO"]][["SGP_Configuration"]][["year_lags.projection.sequence"]] <- list(
+				READING=rep(1L, 7),
+				MATHEMATICS=rep(1L, 7),
+				GRADE_9_LIT=rep(1L, 7),
+				AMERICAN_LIT=rep(1L, 7),
+				ALGEBRA_I=rep(1L, 7),
+				ALGEBRA_II=rep(1L, 7))
+			SGPstateData[["DEMO"]][["SGP_Configuration"]][["max.forward.projection.sequence"]] <- list(
+				READING=3,
+				MATHEMATICS=3,
+				GRADE_9_LIT=3,
+				AMERICAN_LIT=3,
+				ALGEBRA_I=3,
+				ALGEBRA_II=3)
+
+			SGPstateData[["DEMO"]][['SGP_Configuration']][['sgPlot.show.content_area.progression']] <- TRUE
+
+			### Create configurations
+
+			READING_LAST_YEAR.config <- list(
+				READING.LAST_YEAR=list(
+					sgp.content.areas=c('READING', 'READING', 'READING', 'READING', 'READING'),
+					sgp.panel.years=sgpData.years,
+					sgp.grade.sequences=list(3:4, 3:5, 3:6, 3:7, 4:8))
+			)
+
+			GRADE_9_LIT_LAST_YEAR.config <- list(
+				GRADE_9_LIT.LAST_YEAR=list(
+					sgp.content.areas=c('READING', 'READING', 'READING', 'READING', 'GRADE_9_LIT'),
+					sgp.panel.years=sgpData.years,
+					sgp.grade.sequences=list(c(5:8, 'EOCT')))
+			)
+
+			AMERICAN_LIT_LAST_YEAR.config <- list(
+				AMERICAN_LIT.LAST_YEAR=list(
+					sgp.content.areas=c('READING', 'READING', 'READING', 'GRADE_9_LIT', 'AMERICAN_LIT'),
+					sgp.panel.years=sgpData.years,
+					sgp.grade.sequences=list(c(6:8, 'EOCT', 'EOCT')))
+			)
+
+			MATHEMATICS_LAST_YEAR.config <- list(
+				MATHEMATICS.LAST_YEAR=list(
+					sgp.content.areas=c('MATHEMATICS', 'MATHEMATICS', 'MATHEMATICS', 'MATHEMATICS', 'MATHEMATICS'),
+					sgp.panel.years=sgpData.years,
+					sgp.grade.sequences=list(3:4, 3:5, 3:6, 3:7, 4:8))
+			)
+
+			ALGEBRA_I_LAST_YEAR.config <- list(
+				ALGEBRA_I.LAST_YEAR=list(
+					sgp.content.areas=c('MATHEMATICS', 'MATHEMATICS', 'MATHEMATICS', 'MATHEMATICS', 'ALGEBRA_I'),
+					sgp.panel.years=sgpData.years,
+					sgp.grade.sequences=list(c(5:8, 'EOCT')))
+			)
+
+			ALGEBRA_II_LAST_YEAR.config <- list(
+				ALGEBRA_II.LAST_YEAR=list(
+					sgp.content.areas=c('MATHEMATICS', 'MATHEMATICS', 'MATHEMATICS', 'ALGEBRA_I', 'ALGEBRA_II'),
+					sgp.panel.years=sgpData.years,
+					sgp.grade.sequences=list(c(6:8, 'EOCT', 'EOCT')))
+			)
+
+			sgp.config <- c(READING_LAST_YEAR.config, MATHEMATICS_LAST_YEAR.config, GRADE_9_LIT_LAST_YEAR.config, AMERICAN_LIT_LAST_YEAR.config, ALGEBRA_I_LAST_YEAR.config, ALGEBRA_II_LAST_YEAR.config)
+
+			expression.to.evaluate <-
+				paste0("Demonstration_SGP <- abcSGP(\n\tsgp_object=sgpData_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP', 'summarizeSGP', 'visualizeSGP'),\n\tsimulate.sgps=FALSE,\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.config=sgp.config,\n\tparallel.config=list(BACKEND='PARALLEL', WORKERS=list(PERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))\n)\n")
+
+			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
+
+			cat("##### Begin testSGP test number 7 #####\n", fill=TRUE)
+
+			cat(paste0("EVALUATING:\n", expression.to.evaluate), fill=TRUE)
+
+			if (memory.profile) {
+				Rprof("testSGP(7)_Memory_Profile.out", memory.profiling=TRUE)
+			}
+
+			started.at.overall <- proc.time()
+			eval(parse(text=expression.to.evaluate))
+
+			if (memory.profile) {
+				Rprof(NULL)
+			}
+
+			### TEST of SGP variable
+
+#			if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 2896606L)) {
+			if (identical(digest(Demonstration_SGP@Data$SGP), "7c848c0bec09ae0c833ce778034ab85e")) {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SGP: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SGP: FAIL\n")
+			}
+
+			### TEST of SGP_TARGET_3_YEAR variable
+
+#			if (identical(sum(Demonstration_SGP@Data$SGP_TARGET_3_YEAR, na.rm=TRUE), 2551187L)) {
+			if (identical(digest(Demonstration_SGP@Data$SGP_TARGET_3_YEAR), "4c73b3d3237d181b51954529edaa3c4e")) {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_3_YEAR: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_3_YEAR: FAIL\n")
+			}
+
+			### TEST of SGP_TARGET_MOVE_UP_STAY_UP variable
+
+#			if (identical(sum(Demonstration_SGP@Data$SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, na.rm=TRUE), 3113673L)) {
+			if (identical(digest(Demonstration_SGP@Data$SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR), "2eaaa1d6e0884ea2b28fa4245f8c63d1")) {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR: FAIL\n")
+			}
+
+			### TEST of CATCH_UP_KEEP_UP_STATUS variable
+
+#			if (identical(as.numeric(table(Demonstration_SGP@Data$CATCH_UP_KEEP_UP_STATUS)), c(13977, 3847, 11202, 29107))) {
+			if (identical(digest(Demonstration_SGP@Data$CATCH_UP_KEEP_UP_STATUS), "fd61668ae95e5978906bf804b5765b10")) {
+				tmp.messages <- c(tmp.messages, "\tTest of variable CATCH_UP_KEEP_UP_STATUS: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of variable CATCH_UP_KEEP_UP_STATUS: FAIL\n")
+			}
+
+			### TEST of MOVE_UP_STAY_UP_STATUS variable
+
+#			if (identical(as.numeric(table(Demonstration_SGP@Data$MOVE_UP_STAY_UP_STATUS)), c(24801, 4647, 6186, 4675))) {
+			if (identical(digest(Demonstration_SGP@Data$MOVE_UP_STAY_UP_STATUS), "ee8ef7f0b8370d7eeee1677cb101af8d")) {
+				tmp.messages <- c(tmp.messages, "\tTest of variable MOVE_UP_STAY_UP_STATUS: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of variable MOVE_UP_STAY_UP_STATUS: FAIL\n")
+			}
+
+			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 7: ", convertTime(timetaken(started.at.overall)), "#####\n"))
+			messageSGP(tmp.messages)
+		} ### End TEST_NUMBER 7
 	} ### END testSGP Function
