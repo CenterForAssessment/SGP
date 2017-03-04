@@ -54,7 +54,8 @@ abcSGP(sgp_object,
     sgp.percentiles.equating.method=NULL,
 	sgp.percentiles.calculate.sgps=TRUE,
     get.cohort.data.info=FALSE,
-	SGPt=NULL)
+	SGPt=NULL,
+  fix.duplicates=NULL)
 }
 
 \arguments{
@@ -174,6 +175,10 @@ matrices.
   information based upon sgp configurations provided or calculated in \code{\link{analyzeSGP}}.
   }
   \item{SGPt}{Argument (defaults to NULL) indicating whether to perform time dependent SGP analyses (SGPt).
+  }
+  \item{fix.duplicates}{Argument to control how \code{prepareSGP} and \code{analyzeSGP} deal with duplicate records based upon the key of VALID_CASE, CONTENT_AREA, YEAR, and ID.
+  The function currently warns of duplicate records and doesn't modify data.   If set to 'KEEP.ALL', \code{prepareSGP} tries to fix the duplicate individual records by
+  adding a '_DUP_***' suffix to the duplicate ID before running \code{\link{studentGrowthPercentiles}} in order to create unique records based upon the key.
   }
 }
 

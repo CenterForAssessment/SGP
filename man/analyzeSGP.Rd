@@ -47,6 +47,7 @@ analyzeSGP(sgp_object,
          sgp.percentiles.equating.method=NULL,
          sgp.percentiles.calculate.sgps=TRUE,
          SGPt=NULL,
+         fix.duplicates=NULL,
          ...)
 }
 
@@ -159,6 +160,10 @@ projections to be calculated in across assessment transitions where the scale fo
   \item{SGPt}{An argument supplied to implement time-dependent SGP analyses (SGPt). Default is NULL giving standard, non-time dependent argument. If set to TRUE, the function assumes the
   variables 'TIME' and 'TIME_LAG' are supplied as part of the panel.data. To specify other names, supply a list of the form: list(TIME='my_time_name', TIME_LAG='my_time_lag_name'), substituting
   your variable names.
+  }
+  \item{fix.duplicates}{Argument to control how duplicate records based upon the key of VALID_CASE, CONTENT_AREA, YEAR, and ID are dealt with.
+  If set to 'KEEP.ALL', \code{prepareSGP} tries to fix the duplicate individual records by adding a '_DUP_***' suffix to the duplicate ID
+  before running \code{\link{studentGrowthPercentiles}} in order to create unique records based upon the key.
   }
   \item{...}{Arguments to be passed to \code{\link{studentGrowthPercentiles}} or \code{\link{studentGrowthProjections}} for finer control over SGP calculations. NOTE: arguments can only be passed to one lower level function at a time, and only student growth percentiles OR projections can be created but not both at the same time.
   }

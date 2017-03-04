@@ -41,7 +41,8 @@ function(sgp_object,
 	sgp.percentiles.equating.method=NULL,
 	sgp.percentiles.calculate.sgps=TRUE,
 	get.cohort.data.info=FALSE,
-	SGPt=NULL) {
+	SGPt=NULL,
+	fix.duplicates=NULL) {
 
     started.at <- proc.time()
 	messageSGP(paste("\nStarted abcSGP", prettyDate()), "\n")
@@ -56,6 +57,12 @@ function(sgp_object,
 		state <- getStateAbbreviation(tmp.name, "abcSGP")
 	}
 
+	### Configure arguments
+
+	if (is.null(fix.duplicates) & !is.null(SGPstateData[[state]][["SGP_Configuration"]][["fix.duplicates"]])) {
+		fix.duplicates <- SGPstateData[[state]][["SGP_Configuration"]][["fix.duplicates"]]
+	}
+
 
 	### prepareSGP ###
 
@@ -65,8 +72,9 @@ function(sgp_object,
 				data_supplementary=data_supplementary,
 				state=state,
 				var.names=prepareSGP.var.names,
-				create.additional.variables=prepareSGP.create.additional.variables)
-	        if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
+				create.additional.variables=prepareSGP.create.additional.variables,
+				fix.duplicates=fix.duplicates)
+		if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
 	}
 
 
@@ -77,7 +85,7 @@ function(sgp_object,
         ### Check for consistency between simulate.sgps and existence of CSEMs ###
 
 		if (simulate.sgps & is.null(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
-        	        messageSGP("\tCSEMs are required in SGPstateData to simulate SGPs for confidence interval calculations. Confidence intervals will not be calculated.")
+			messageSGP("\tCSEMs are required in SGPstateData to simulate SGPs for confidence interval calculations. Confidence intervals will not be calculated.")
 			simulate.sgps <- FALSE
 		}
 
@@ -122,9 +130,10 @@ function(sgp_object,
 			sgp.percentiles.equating.method=sgp.percentiles.equating.method,
 			sgp.percentiles.calculate.sgps=sgp.percentiles.calculate.sgps,
 			get.cohort.data.info=get.cohort.data.info,
-			SGPt=SGPt)
+			SGPt=SGPt,
+			fix.duplicates=fix.duplicates)
 
-                if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
+		if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
 	}
 
 
@@ -148,7 +157,7 @@ function(sgp_object,
 			SGPt=SGPt,
 			parallel.config=parallel.config)
 
-                if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
+		if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
 	}
 
 
@@ -166,7 +175,7 @@ function(sgp_object,
 			parallel.config=parallel.config,
 			save.old.summaries=save.old.summaries)
 
-                if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
+		if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
 	}
 
 
@@ -206,6 +215,6 @@ function(sgp_object,
 
 	### Print finish and return SGP object
 
-        messageSGP(paste("Finished abcSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
+	messageSGP(paste("Finished abcSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 	return(sgp_object)
 } ## END abcSGP Function
