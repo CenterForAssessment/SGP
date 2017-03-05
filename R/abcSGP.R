@@ -59,8 +59,8 @@ function(sgp_object,
 
 	### Configure arguments
 
-	if (is.null(fix.duplicates) & !is.null(SGPstateData[[state]][["SGP_Configuration"]][["fix.duplicates"]])) {
-		fix.duplicates <- SGPstateData[[state]][["SGP_Configuration"]][["fix.duplicates"]]
+	if (is.null(fix.duplicates) & !is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["fix.duplicates"]])) {
+		fix.duplicates <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["fix.duplicates"]]
 	}
 
 

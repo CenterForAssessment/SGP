@@ -163,7 +163,8 @@ projections to be calculated in across assessment transitions where the scale fo
   }
   \item{fix.duplicates}{Argument to control how duplicate records based upon the key of VALID_CASE, CONTENT_AREA, YEAR, and ID are dealt with.
   If set to 'KEEP.ALL', the function tries to fix the duplicate individual records by adding a '_DUP_***' suffix to the duplicate ID
-  before running \code{\link{studentGrowthPercentiles}} in order to create unique records based upon the key.
+  before running \code{\link{studentGrowthPercentiles}} in order to create unique records based upon the key. See \code{\link{combineSGP}} for
+  additional info on \code{fix.duplicates} functionality. 
   }
   \item{...}{Arguments to be passed to \code{\link{studentGrowthPercentiles}} or \code{\link{studentGrowthProjections}} for finer control over SGP calculations. NOTE: arguments can only be passed to one lower level function at a time, and only student growth percentiles OR projections can be created but not both at the same time.
   }

@@ -25,7 +25,7 @@ function(
 	messageSGP(paste("Started combineSGP", prettyDate()))
 
 	ID <- CONTENT_AREA <- YEAR <- GRADE <- YEAR_INTEGER_TMP <- ACHIEVEMENT_LEVEL <- CATCH_UP_KEEP_UP_STATUS_INITIAL <- MOVE_UP_STAY_UP_STATUS_INITIAL <- VALID_CASE <- NULL
-	MOVE_UP_STAY_UP_STATUS <- CATCH_UP_KEEP_UP_STATUS <- ACHIEVEMENT_LEVEL_PRIOR <- target.type <- SGP_PROJECTION_GROUP <- DUPS_FLAG <- NULL
+	MOVE_UP_STAY_UP_STATUS <- CATCH_UP_KEEP_UP_STATUS <- ACHIEVEMENT_LEVEL_PRIOR <- target.type <- SGP_PROJECTION_GROUP <- DUPS_FLAG <- i.DUPS_FLAG <- SCALE_SCORE <- SGP_NORM_GROUP_SCALE_SCORES <- NULL
 
 	tmp.messages <- NULL
 
@@ -97,8 +97,8 @@ function(
 
 	### fix.duplicates
 
-	if (is.null(fix.duplicates) & !is.null(SGPstateData[[state]][["SGP_Configuration"]][["fix.duplicates"]])) {
-		fix.duplicates <- SGPstateData[[state]][["SGP_Configuration"]][["fix.duplicates"]]
+	if (is.null(fix.duplicates) & !is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["fix.duplicates"]])) {
+		fix.duplicates <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["fix.duplicates"]]
 	}
 
 
