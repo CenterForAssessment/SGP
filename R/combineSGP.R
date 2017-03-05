@@ -18,13 +18,14 @@ function(
 	sgp.config=NULL,
 	sgp.percentiles.equated=FALSE,
 	SGPt=NULL,
+	fix.duplicates=NULL,
 	parallel.config=NULL) {
 
 	started.at <- proc.time()
 	messageSGP(paste("Started combineSGP", prettyDate()))
 
 	ID <- CONTENT_AREA <- YEAR <- GRADE <- YEAR_INTEGER_TMP <- ACHIEVEMENT_LEVEL <- CATCH_UP_KEEP_UP_STATUS_INITIAL <- MOVE_UP_STAY_UP_STATUS_INITIAL <- VALID_CASE <- NULL
-	MOVE_UP_STAY_UP_STATUS <- CATCH_UP_KEEP_UP_STATUS <- ACHIEVEMENT_LEVEL_PRIOR <- target.type <- SGP_PROJECTION_GROUP <- NULL
+	MOVE_UP_STAY_UP_STATUS <- CATCH_UP_KEEP_UP_STATUS <- ACHIEVEMENT_LEVEL_PRIOR <- target.type <- SGP_PROJECTION_GROUP <- DUPS_FLAG <- NULL
 
 	tmp.messages <- NULL
 
@@ -50,6 +51,9 @@ function(
 			sgp.projections.lagged <- sgp.projections.lagged.baseline <- FALSE
 		}
 	}
+
+
+	### SGP_Configuration arguments
 
 	### Create SGP_TARGET_CONTENT_AREA in certain cases
 
@@ -89,6 +93,12 @@ function(
 			sgp.target.scale.scores <- FALSE
 		}
 		if (sgp.target.scale.scores) sgp.projections.equated <- NULL
+	}
+
+	### fix.duplicates
+
+	if (is.null(fix.duplicates) & !is.null(SGPstateData[[state]][["SGP_Configuration"]][["fix.duplicates"]])) {
+		fix.duplicates <- SGPstateData[[state]][["SGP_Configuration"]][["fix.duplicates"]]
 	}
 
 
@@ -224,13 +234,42 @@ function(
 
 		tmp.data <- data.table(rbindlist(tmp.list, fill=TRUE), VALID_CASE="VALID_CASE", key=key(slot.data))
 
-		if (any(duplicated(tmp.data, by=key(tmp.data)))) {
+		if (!is.null(fix.duplicates)) {
+			tmp.split <- strsplit(as.character(tmp.data[["SGP_NORM_GROUP"]]), "; ")
+			invisible(tmp.data[, GRADE := sapply(strsplit(sapply(strsplit(sapply(tmp.split, function(x) rev(x)[1]), "/"), '[', 2), "_"), tail, 1)])
+			dup.by <- c(key(tmp.data), "GRADE")
+		} else dup.by <- key(tmp.data)
+
+		if (any(duplicated(tmp.data, by=dup.by))) {
 			tmp.data <- getPreferredSGP(tmp.data, state)
 		}
 
+		if (!is.null(fix.duplicates) & any(grepl("_DUPS_[0-9]*", tmp.data[["ID"]]))) {
+			##  Strip ID of the _DUPS_ Flag, but keep in a seperate variable (used to merge subsequently)
+			invisible(tmp.data[, DUPS_FLAG := gsub(".*_DUPS_", "", ID)])
+			invisible(tmp.data[!grepl("_DUPS_[0-9]*", ID), DUPS_FLAG := NA])
+			invisible(tmp.data[, ID := gsub("_DUPS_[0-9]*", "", ID)])
+
+			##  Extend the slot.data if any new rows are required (e.g. dups in prior years) - if not still merge in DUPS_FLAG.
+			slot.data.extension <- tmp.data[!is.na(DUPS_FLAG), c(key(slot.data), "SGP_NORM_GROUP_SCALE_SCORES", "DUPS_FLAG"), with=FALSE]
+			tmp.split <- strsplit(as.character(slot.data.extension[["SGP_NORM_GROUP_SCALE_SCORES"]]), "; ")
+			invisible(slot.data.extension[, SCALE_SCORE := as.numeric(sapply(tmp.split, function(x) rev(x)[1]))])
+			invisible(slot.data.extension[, SGP_NORM_GROUP_SCALE_SCORES := NULL])
+			if ("DUPS_FLAG" %in% names(slot.data)) flag.fix <- TRUE else flag.fix <- FALSE
+			slot.data <- slot.data.extension[slot.data, on=c(key(slot.data),"SCALE_SCORE"), allow.cartesian=TRUE]
+			if (flag.fix) { # Merge together DUPS_FLAG from previous years
+				invisible(slot.data[!is.na(i.DUPS_FLAG), DUPS_FLAG := i.DUPS_FLAG])
+				invisible(slot.data[, i.DUPS_FLAG := NULL])
+			}
+
+			##  Get the row index for variable merge.
+			tmp.index <- slot.data[tmp.data[, c(getKey(slot.data), "GRADE", "DUPS_FLAG"), with=FALSE], which=TRUE, on=c(getKey(slot.data), "GRADE", "DUPS_FLAG")] #
+		} else {
+			tmp.index <- slot.data[tmp.data[, key(slot.data), with=FALSE], which=TRUE]
+		}
+
 		variables.to.merge <- setdiff(names(tmp.data),  key(slot.data))
-		tmp.index <- slot.data[tmp.data[,key(slot.data), with=FALSE], which=TRUE]
-		slot.data[tmp.index, (variables.to.merge):=tmp.data[, variables.to.merge, with=FALSE]]
+		invisible(slot.data[tmp.index, (variables.to.merge):=tmp.data[, variables.to.merge, with=FALSE]])
 
 		setkeyv(slot.data, getKey(slot.data))
 	}

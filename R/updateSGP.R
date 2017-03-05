@@ -332,6 +332,7 @@ function(what_sgp_object=NULL,
 						sgp.target.scale.scores=sgp.target.scale.scores,
 						sgp.target.scale.scores.only=sgp.target.scale.scores.only,
 						SGPt=SGPt,
+						fix.duplicates=fix.duplicates,
 						parallel.config=parallel.config))
 				}
 
@@ -386,6 +387,7 @@ function(what_sgp_object=NULL,
 						sgp.target.scale.scores=sgp.target.scale.scores,
 						sgp.target.scale.scores.only=sgp.target.scale.scores.only,
 						SGPt=SGPt,
+						fix.duplicates=fix.duplicates,
 						parallel.config=parallel.config)
 				}
 

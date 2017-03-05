@@ -155,6 +155,7 @@ function(sgp_object,
 			sgp.target.scale.scores.only=sgp.target.scale.scores.only,
 			sgp.config=sgp.config,
 			SGPt=SGPt,
+			fix.duplicates=fix.duplicates,
 			parallel.config=parallel.config)
 
 		if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
