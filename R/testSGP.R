@@ -1983,22 +1983,22 @@ function(
 
 			### Modify SGPstateData
 
-			# SGPstateData[["DEMO"]][["SGP_Configuration"]][["grade.projection.sequence"]] <- list(
-			# 	MATHEMATICS=c("3", "4", "5", "6", "7", "8", "EOCT", "EOCT"),
-			# 	ALGEBRA_I=c("3", "4", "5", "6", "7", "8", "EOCT", "EOCT"),
-			# 	ALGEBRA_II=c("3", "4", "5", "6", "7", "8", "EOCT", "EOCT"))
-			# SGPstateData[["DEMO"]][["SGP_Configuration"]][["content_area.projection.sequence"]] <- list(
-			# 	MATHEMATICS=c("MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "ALGEBRA_I", "ALGEBRA_II"),
-			# 	ALGEBRA_I=c("MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "ALGEBRA_I", "ALGEBRA_II"),
-			# 	ALGEBRA_II=c("MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "ALGEBRA_I", "ALGEBRA_II"))
-			# SGPstateData[["DEMO"]][["SGP_Configuration"]][["year_lags.projection.sequence"]] <- list(
-			# 	MATHEMATICS=rep(1L, 7),
-			# 	ALGEBRA_I=rep(1L, 7),
-			# 	ALGEBRA_II=rep(1L, 7))
-			# SGPstateData[["DEMO"]][["SGP_Configuration"]][["max.forward.projection.sequence"]] <- list(
-			# 	MATHEMATICS=3,
-			# 	ALGEBRA_I=3,
-			# 	ALGEBRA_II=3)
+			SGPstateData[["DEMO"]][["SGP_Configuration"]][["grade.projection.sequence"]] <- list(
+				MATHEMATICS=c("3", "4", "5", "6", "7", "8", "EOCT", "EOCT"),
+				ALGEBRA_I=c("3", "4", "5", "6", "7", "8", "EOCT", "EOCT"),
+				ALGEBRA_II=c("3", "4", "5", "6", "7", "8", "EOCT", "EOCT"))
+			SGPstateData[["DEMO"]][["SGP_Configuration"]][["content_area.projection.sequence"]] <- list(
+				MATHEMATICS=c("MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "ALGEBRA_I", "ALGEBRA_II"),
+				ALGEBRA_I=c("MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "ALGEBRA_I", "ALGEBRA_II"),
+				ALGEBRA_II=c("MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "MATHEMATICS", "ALGEBRA_I", "ALGEBRA_II"))
+			SGPstateData[["DEMO"]][["SGP_Configuration"]][["year_lags.projection.sequence"]] <- list(
+				MATHEMATICS=rep(1L, 7),
+				ALGEBRA_I=rep(1L, 7),
+				ALGEBRA_II=rep(1L, 7))
+			SGPstateData[["DEMO"]][["SGP_Configuration"]][["max.forward.projection.sequence"]] <- list(
+				MATHEMATICS=3,
+				ALGEBRA_I=3,
+				ALGEBRA_II=3)
 
 			SGPstateData[["DEMO"]][["SGP_Configuration"]][["fix.duplicates"]] <- "KEEP.ALL"
 			SGPstateData[["DEMO"]][["SGP_Norm_Group_Preference"]] <- NULL

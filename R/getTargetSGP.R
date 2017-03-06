@@ -7,13 +7,28 @@ function(sgp_object,
 	target.level,
 	max.sgp.target.years.forward=3,
 	subset.ids=NULL,
-	return.lagged.status=TRUE) {
+	return.lagged.status=TRUE,
+	fix.duplicates=fix.duplicates) {
 
-	VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- FIRST_OBSERVATION <- LAST_OBSERVATION <- STATE <- SGP_PROJECTION_GROUP <- NULL
+	VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- FIRST_OBSERVATION <- LAST_OBSERVATION <- STATE <- SGP_PROJECTION_GROUP <- DUPS_FLAG <- SCALE_SCORE <- NULL
 
 	### Utility functions
 
 	getTargetSGP_INTERNAL <- function(tmp_object_1, state, state.iter, projection_group.iter, target.type, target.level, year_within) {
+
+		if (any(duplicated(tmp_object_1, by=getKey(tmp_object_1))) & !is.null(fix.duplicates)) { #  Needed for GRADE excluded dups
+			tmp_object_1 <- createUniqueLongData(tmp_object_1)
+		}
+
+		if (!is.null(fix.duplicates) & any(grepl("_DUPS_[0-9]*", tmp_object_1[["ID"]]))) {
+			dups.tf <- TRUE
+			##  Strip ID of the _DUPS_ Flag, but keep in a seperate variable (used to merge subsequently)
+			invisible(tmp_object_1[, DUPS_FLAG := gsub(".*_DUPS_", "", ID)])
+			invisible(tmp_object_1[!grepl("_DUPS_[0-9]*", ID), DUPS_FLAG := NA])
+			invisible(tmp_object_1[, ID := gsub("_DUPS_[0-9]*", "", ID)])
+			tmp.split <- strsplit(as.character(tmp_object_1[["SGP_PROJECTION_GROUP_SCALE_SCORES"]]), "; ")
+			invisible(tmp_object_1[, SCALE_SCORE := as.numeric(sapply(tmp.split, function(x) rev(x)[1]))])
+		} else dups.tf <- FALSE
 
 		if (year_within) {
 			###  Assumes that any "canonical progression" will use the LAST_OBSERVATION for all (or at least the most recent) prior(s) in straight progressions
@@ -35,15 +50,16 @@ function(sgp_object,
 
 		if (target.type %in% c("sgp.projections", "sgp.projections.baseline")) {
 			tmp.suffix <- "_CURRENT"
+			if (dups.tf) tmp.merge.vars <- c(key(tmp_object_1), "SCALE_SCORE") else tmp.merge.vars <- key(tmp_object_1)
 			if (year_within) {
-				tmp_object_1 <- sgp_object@Data[,c(key(tmp_object_1), "ACHIEVEMENT_LEVEL"), with=FALSE][tmp_object_1, on=key(tmp_object_1)]
-			} else 	tmp_object_1 <- sgp_object@Data[,c(key(tmp_object_1), "ACHIEVEMENT_LEVEL"), with=FALSE][tmp_object_1, on=key(tmp_object_1)]
+				tmp_object_1 <- sgp_object@Data[,c(tmp.merge.vars, "ACHIEVEMENT_LEVEL"), with=FALSE][tmp_object_1, on=tmp.merge.vars]
+			} else 	tmp_object_1 <- sgp_object@Data[,c(tmp.merge.vars, "ACHIEVEMENT_LEVEL"), with=FALSE][tmp_object_1, on=tmp.merge.vars]
 		} else {
 			tmp.suffix <- "$"
 		}
 
-		tmp_object_1[, paste(target.level, "STATUS_INITIAL", sep="_"):=
-			getTargetInitialStatus(tmp_object_1[[grep("ACHIEVEMENT", names(tmp_object_1), value=TRUE)]], state, state.iter, target.level)]
+		invisible(tmp_object_1[, paste(target.level, "STATUS_INITIAL", sep="_"):=
+			getTargetInitialStatus(tmp_object_1[[grep("ACHIEVEMENT", names(tmp_object_1), value=TRUE)]], state, state.iter, target.level)])
 		tmp_object_1 <- na.omit(tmp_object_1, cols=paste(target.level, "STATUS_INITIAL", sep="_"))
 
 		## Find min/max of targets based upon CATCH_UP_KEEP_UP_STATUS_INITIAL status
@@ -67,6 +83,10 @@ function(sgp_object,
 				paste(grep(paste0(sgp.projections.projection.unit.label, "_[", paste(seq(num.years.to.get), collapse=""), "]", tmp.suffix), names(tmp_object_1), value=TRUE), collapse=", ")
 
 			jExpression <- parse(text=paste0("{catch_keep_move_functions[[unclass(", target.level, "_STATUS_INITIAL)]](", tmp.level.variables, ", na.rm=TRUE)}"))
+			if (dups.tf) { #  Re-create _DUPS_ labels since ID is in jExp_Key
+				invisible(tmp_object_1[!is.na(DUPS_FLAG), ID := paste0(ID, "_DUPS_", DUPS_FLAG)])
+				setkeyv(tmp_object_1, getKey(tmp_object_1))
+			}
 			tmp_object_2 <- tmp_object_1[, eval(jExpression), keyby = jExp_Key]
 
 			if (target.type %in% c("sgp.projections.baseline", "sgp.projections.lagged.baseline")) baseline.label <- "_BASELINE" else baseline.label <- NULL

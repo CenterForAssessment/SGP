@@ -310,8 +310,31 @@ function(
 			tmp.data <- getPreferredSGP(tmp.data, state, type="BASELINE")
 		}
 
+		if (!is.null(fix.duplicates) & any(grepl("_DUPS_[0-9]*", tmp.data[["ID"]]))) {
+			##  Strip ID of the _DUPS_ Flag, but keep in a seperate variable (used to merge subsequently)
+			invisible(tmp.data[, DUPS_FLAG := gsub(".*_DUPS_", "", ID)])
+			invisible(tmp.data[!grepl("_DUPS_[0-9]*", ID), DUPS_FLAG := NA])
+			invisible(tmp.data[, ID := gsub("_DUPS_[0-9]*", "", ID)])
+
+			##  Extend the slot.data if any new rows are required (e.g. dups in prior years) - if not still merge in DUPS_FLAG.
+			slot.data.extension <- tmp.data[!is.na(DUPS_FLAG), c(key(slot.data), "SGP_NORM_GROUP_SCALE_SCORES", "DUPS_FLAG"), with=FALSE]
+			tmp.split <- strsplit(as.character(slot.data.extension[["SGP_NORM_GROUP_SCALE_SCORES"]]), "; ")
+			invisible(slot.data.extension[, SCALE_SCORE := as.numeric(sapply(tmp.split, function(x) rev(x)[1]))])
+			invisible(slot.data.extension[, SGP_NORM_GROUP_SCALE_SCORES := NULL])
+			if ("DUPS_FLAG" %in% names(slot.data)) flag.fix <- TRUE else flag.fix <- FALSE
+			slot.data <- slot.data.extension[slot.data, on=c(key(slot.data),"SCALE_SCORE"), allow.cartesian=TRUE]
+			if (flag.fix) { # Merge together DUPS_FLAG from previous years
+				invisible(slot.data[!is.na(i.DUPS_FLAG), DUPS_FLAG := i.DUPS_FLAG])
+				invisible(slot.data[, i.DUPS_FLAG := NULL])
+			}
+
+			##  Get the row index for variable merge.
+			tmp.index <- slot.data[tmp.data[, c(getKey(slot.data), "GRADE", "DUPS_FLAG"), with=FALSE], which=TRUE, on=c(getKey(slot.data), "GRADE", "DUPS_FLAG")] #
+		} else {
+			tmp.index <- slot.data[tmp.data[, key(slot.data), with=FALSE], which=TRUE]
+		}
+
 		variables.to.merge <- setdiff(names(tmp.data),  key(slot.data))
-		tmp.index <- slot.data[tmp.data[,key(slot.data), with=FALSE], which=TRUE]
 		slot.data[tmp.index, (variables.to.merge):=tmp.data[, variables.to.merge, with=FALSE]]
 
 		setkeyv(slot.data, getKey(slot.data))
