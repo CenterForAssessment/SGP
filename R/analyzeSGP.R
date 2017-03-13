@@ -120,12 +120,6 @@ function(sgp_object,
 		return.projection.group.scale.scores <- NULL
 	}
 
-	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["return.projection.group.scale.scores"]])) {
-		return.projection.group.scale.scores <- SGPstateData[[state]][["SGP_Configuration"]][["return.projection.group.scale.scores"]]
-	} else {
-		return.projection.group.scale.scores <- NULL
-	}
-
 	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["return.projection.group.dates"]])) {
 		return.projection.group.dates <- SGPstateData[[state]][["SGP_Configuration"]][["return.projection.group.dates"]]
 	} else {
@@ -340,6 +334,7 @@ function(sgp_object,
 	if (is.null(fix.duplicates) & !is.null(SGPstateData[[state]][["SGP_Configuration"]][["fix.duplicates"]])) {
 		fix.duplicates <- SGPstateData[[state]][["SGP_Configuration"]][["fix.duplicates"]]
     return.norm.group.scale.scores <- TRUE
+    return.projection.group.scale.scores <- TRUE
 	}
 
 	###

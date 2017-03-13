@@ -49,14 +49,15 @@ function(long.data) {
 	  } ### END permutations function
 
 		my.tmp.data <- unique(my.tmp.data) # Remove EXACT duplicates & data extended in previous years/analyses
-	  setkeyv(my.tmp.data, "YEAR")
+		key.vars <- intersect(names(my.tmp.data), c("YEAR", "SCALE_SCORE"))
+	  setkeyv(my.tmp.data, key.vars)
 	  invisible(my.tmp.data[, DUP_COUNT := seq.int(.N), by="YEAR"])
 	  dups.by.yr <- my.tmp.data[, list(N = .N), by="YEAR"]
 	  max.dups <- max(dups.by.yr[["N"]])
 	  all.years <- sort(unique(my.tmp.data, by="YEAR")[['YEAR']])
 
 	  tmp.perms <- data.table(permutations(n = max.dups, r = length(all.years), repeats.allowed=T))
-		setkeyv(tmp.perms, names(tmp.perms)[ncol(tmp.perms)]) # Make last year pretty'r
+		setkeyv(tmp.perms, rev(names(tmp.perms))) # setkeyv(tmp.perms, names(tmp.perms)[ncol(tmp.perms)]) # Make last year pretty'r
 	  tmp.perms <- tmp.perms[eval(parse(text=paste0("V", seq_along(all.years), "<=", dups.by.yr[["N"]], collapse=" & ")))]
 	  tmp.perms.long <- data.table(YEAR = all.years, t(tmp.perms[eval(parse(text=paste0("V", seq_along(all.years), "<=", dups.by.yr[["N"]], collapse=" & ")))])) # ID = my.tmp.data[["ID"]][1],
 	  tmp.perms.long <- melt(tmp.perms.long, id.vars='YEAR', measure.vars=grep("V", names(tmp.perms.long), value=TRUE), variable.name = "EXTENDED", value.name="DUP_COUNT")

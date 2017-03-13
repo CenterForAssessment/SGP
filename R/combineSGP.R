@@ -258,12 +258,12 @@ function(
 			if ("DUPS_FLAG" %in% names(slot.data)) flag.fix <- TRUE else flag.fix <- FALSE
 			slot.data <- slot.data.extension[slot.data, on=c(key(slot.data),"SCALE_SCORE"), allow.cartesian=TRUE]
 			if (flag.fix) { # Merge together DUPS_FLAG from previous years
-				invisible(slot.data[!is.na(i.DUPS_FLAG), DUPS_FLAG := i.DUPS_FLAG])
+				invisible(slot.data[!is.na(i.DUPS_FLAG) & is.na(DUPS_FLAG), DUPS_FLAG := i.DUPS_FLAG])
 				invisible(slot.data[, i.DUPS_FLAG := NULL])
 			}
 
 			##  Get the row index for variable merge.
-			tmp.index <- slot.data[tmp.data[, c(getKey(slot.data), "GRADE", "DUPS_FLAG"), with=FALSE], which=TRUE, on=c(getKey(slot.data), "GRADE", "DUPS_FLAG")] #
+			tmp.index <- slot.data[tmp.data[, c(getKey(slot.data), "GRADE", "DUPS_FLAG"), with=FALSE], which=TRUE, on=c(getKey(slot.data), "GRADE", "DUPS_FLAG")]
 		} else {
 			tmp.index <- slot.data[tmp.data[, key(slot.data), with=FALSE], which=TRUE]
 		}
@@ -306,7 +306,13 @@ function(
 
 		tmp.data <- data.table(rbindlist(tmp.list, fill=TRUE), VALID_CASE="VALID_CASE", key=key(slot.data))
 
-		if (any(duplicated(tmp.data, by=key(tmp.data)))) {
+		if (!is.null(fix.duplicates)) {
+			tmp.split <- strsplit(as.character(tmp.data[["SGP_NORM_GROUP"]]), "; ")
+			invisible(tmp.data[, GRADE := sapply(strsplit(sapply(strsplit(sapply(tmp.split, function(x) rev(x)[1]), "/"), '[', 2), "_"), tail, 1)])
+			dup.by <- c(key(tmp.data), "GRADE")
+		} else dup.by <- key(tmp.data)
+
+		if (any(duplicated(tmp.data, by=dup.by))) {
 			tmp.data <- getPreferredSGP(tmp.data, state, type="BASELINE")
 		}
 
@@ -324,7 +330,7 @@ function(
 			if ("DUPS_FLAG" %in% names(slot.data)) flag.fix <- TRUE else flag.fix <- FALSE
 			slot.data <- slot.data.extension[slot.data, on=c(key(slot.data),"SCALE_SCORE"), allow.cartesian=TRUE]
 			if (flag.fix) { # Merge together DUPS_FLAG from previous years
-				invisible(slot.data[!is.na(i.DUPS_FLAG), DUPS_FLAG := i.DUPS_FLAG])
+				invisible(slot.data[!is.na(i.DUPS_FLAG) & is.na(DUPS_FLAG), DUPS_FLAG := i.DUPS_FLAG])
 				invisible(slot.data[, i.DUPS_FLAG := NULL])
 			}
 
@@ -335,7 +341,7 @@ function(
 		}
 
 		variables.to.merge <- setdiff(names(tmp.data),  key(slot.data))
-		slot.data[tmp.index, (variables.to.merge):=tmp.data[, variables.to.merge, with=FALSE]]
+		invisible(slot.data[tmp.index, (variables.to.merge):=tmp.data[, variables.to.merge, with=FALSE]])
 
 		setkeyv(slot.data, getKey(slot.data))
 	}
@@ -373,14 +379,59 @@ function(
 
 		for (target.type.iter in target.args[['target.type']]) {
 			for (target.level.iter in target.args[['target.level']]) {
-				tmp.data <- getTargetSGP(sgp_object, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward)
-				if (any(duplicated(tmp.data, by=key(tmp.data)))) {
+
+				if (!is.null(fix.duplicates)) {
+					if (!sgp.percentiles & !sgp.percentiles.baseline) messageSGP("The fix.duplicates='KEEP.ALL' functionality requires that sgp.percentiles = TRUE or percentiles results have already been merged into @Data.")
+					##  Seperate out prior score history of slot.data
+					tmp.split <- strsplit(as.character(slot.data[["SGP_NORM_GROUP_SCALE_SCORES"]]), "; ")
+					num.scores <- max(sapply(seq_along(tmp.split), function(f) length(tmp.split[[f]])))
+					if (num.scores > 2) {
+						for (tmp.prior in tail(seq(num.scores), -2)) {
+							invisible(slot.data[, paste0("SCALE_SCORE_PRIOR_", tmp.prior-1L) := as.numeric(sapply(tmp.split, function(x) rev(x)[tmp.prior]))])
+				}}}
+
+				tmp.data <- getTargetSGP(sgp_object, slot.data, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward, fix.duplicates=fix.duplicates)
+
+				if (!is.null(fix.duplicates)) dup.by <- c(key(tmp.data), "GRADE", grep("SCALE_SCORE$|SCALE_SCORE_PRIOR", names(tmp.data), value=TRUE)) else dup.by <- key(tmp.data)
+
+				if (any(duplicated(tmp.data, by=dup.by))) {
 					duplicated.projections.tf <- TRUE
 					tmp.data <- getPreferredSGP(tmp.data, state, type="TARGET")
 				} else duplicated.projections.tf <- FALSE
-				variables.to.merge <- setdiff(names(tmp.data),  key(slot.data))
-				tmp.index <- slot.data[tmp.data[,intersect(key(slot.data), names(tmp.data)), with=FALSE], which=TRUE]
-				slot.data[tmp.index, (variables.to.merge):=tmp.data[, variables.to.merge, with=FALSE]]
+
+				if (!is.null(fix.duplicates) & any(grepl("_DUPS_[0-9]*", tmp.data[["ID"]]))) {
+					##  Strip ID of the _DUPS_ Flag, Don't use this as DUPS_FLAG (merge in later from SGPercentiles)
+					invisible(tmp.data[, ID := gsub("_DUPS_[0-9]*", "", ID)])
+
+					##  Get the row index for variable merge.
+					if (grepl('lagged', target.type.iter)) {
+						tmp.index <- slot.data[
+							tmp.data[, c(intersect(getKey(slot.data), names(tmp.data)), "GRADE", "DUPS_FLAG", grep("SCALE_SCORE_PRIOR", names(tmp.data), value=TRUE)), with=FALSE, nomatch=NA],
+							which=TRUE, on=c(getKey(slot.data), "GRADE", "DUPS_FLAG", grep("SCALE_SCORE_PRIOR", names(tmp.data), value=TRUE))]
+
+						no_match <- tmp.data[which(is.na(tmp.index)),] # usually current year score is NA - still get a lagged projection, but no SGP (& therefore no prior score to merge on)
+						if (nrow(no_match) > 0) {
+							no_match.index <- slot.data[no_match[, intersect(getKey(slot.data), names(no_match)), with=FALSE, nomatch=NA], which=TRUE, on=getKey(slot.data)]
+							tmp.index[which(is.na(tmp.index))] <- no_match.index
+						}
+					} else {
+						setnames(tmp.data, "SGP_PROJECTION_GROUP_SCALE_SCORES", "SGP_PROJECTION_GROUP_SCALE_SCORES_CURRENT")
+
+						tmp.index <- slot.data[
+							tmp.data[, c(intersect(getKey(slot.data), names(tmp.data)), "GRADE", "DUPS_FLAG", grep("SCALE_SCORE$|SCALE_SCORE_PRIOR", names(tmp.data), value=TRUE)), with=FALSE, nomatch=NA],
+							which=TRUE, on=c(getKey(slot.data), "GRADE", "DUPS_FLAG", grep("SCALE_SCORE$|SCALE_SCORE_PRIOR", names(tmp.data), value=TRUE))]
+
+						no_match <- tmp.data[which(is.na(tmp.index)),] # usually current year score is NA - still get a lagged projection, but no SGP (& therefore no prior score to merge on)
+						if (nrow(no_match) > 0) {
+							no_match.index <- slot.data[no_match[, intersect(getKey(slot.data), names(no_match)), with=FALSE, nomatch=NA], which=TRUE, on=getKey(slot.data)]
+							tmp.index[which(is.na(tmp.index))] <- no_match.index
+						}
+					}
+				} else {
+					tmp.index <- slot.data[tmp.data[,intersect(getKey(slot.data), names(tmp.data)), with=FALSE], which=TRUE]
+				}
+				variables.to.merge <- setdiff(names(tmp.data),  getKey(slot.data))
+				invisible(slot.data[tmp.index, (variables.to.merge):=tmp.data[, variables.to.merge, with=FALSE]])
 			}
 		}
 		if (duplicated.projections.tf) {
@@ -500,7 +551,7 @@ function(
 		for (target.type.iter in target.args[['sgp.target.scale.scores.types']]) {
 			for (target.level.iter in target.args[['target.level']]) {
 				tmp.target.list[[paste(target.type.iter, target.level.iter)]] <-
-					data.table(getTargetSGP(sgp_object, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward, return.lagged.status=FALSE),
+					data.table(getTargetSGP(sgp_object, slot.data, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward, return.lagged.status=FALSE, fix.duplicates=fix.duplicates),
 						key=c(getKey(sgp_object), "SGP_PROJECTION_GROUP"))
 			}
 		}
