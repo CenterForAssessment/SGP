@@ -21,10 +21,8 @@ function(sgp_object,
 			tmp_object_1 <- createUniqueLongData(tmp_object_1)
 		}
 
-		if (dups.tf <- (!is.null(fix.duplicates))) {
-			if (any(grepl("_DUPS_[0-9]*", tmp_object_1[["ID"]]))) {
+		if (dups.tf <- (!is.null(fix.duplicates) & any(grepl("_DUPS_[0-9]*", tmp_object_1[["ID"]])))) {
 				invisible(tmp_object_1[, ID := gsub("_DUPS_[0-9]*", "", ID)])
-			}
 
 			##  Create SCALE_SCORE history vars to merge on
 			tmp.split <- strsplit(as.character(tmp_object_1[["SGP_PROJECTION_GROUP_SCALE_SCORES"]]), "; ")
@@ -67,13 +65,17 @@ function(sgp_object,
 
 		if (target.type %in% c("sgp.projections", "sgp.projections.baseline")) {
 			tmp.suffix <- "_CURRENT"
-			if (dups.tf) tmp.merge.vars <- c(key(tmp_object_1), grep("SCALE_SCORE$|SCALE_SCORE_PRIOR", names(tmp_object_1), value=TRUE), "DUPS_FLAG") else tmp.merge.vars <- key(tmp_object_1)
+			if (dups.tf) {
+				tmp.merge.vars <- intersect(names(slot.data), c(key(tmp_object_1), grep("SCALE_SCORE$|SCALE_SCORE_PRIOR", names(tmp_object_1), value=TRUE), "DUPS_FLAG"))
+			} else tmp.merge.vars <- key(tmp_object_1)
 			if (year_within) {
 				tmp_object_1 <- slot.data[,c(tmp.merge.vars, "ACHIEVEMENT_LEVEL", "GRADE"), with=FALSE][tmp_object_1, on = setdiff(tmp.merge.vars, "DUPS_FLAG")]
 			} else 	tmp_object_1 <- slot.data[,c(tmp.merge.vars, "ACHIEVEMENT_LEVEL", "GRADE"), with=FALSE][tmp_object_1, on = setdiff(tmp.merge.vars, "DUPS_FLAG")]
 		} else {  # else "sgp.projections.lagged", "sgp.projections.lagged.baseline"
 			tmp.suffix <- "$"
-			if (dups.tf) tmp.merge.vars <- c(key(tmp_object_1), grep("SCALE_SCORE_PRIOR", names(tmp_object_1), value=TRUE), "DUPS_FLAG") else tmp.merge.vars <- key(tmp_object_1)
+			if (dups.tf) {
+				tmp.merge.vars <- intersect(names(slot.data), c(key(tmp_object_1), grep("SCALE_SCORE_PRIOR", names(tmp_object_1), value=TRUE), "DUPS_FLAG"))
+			} else tmp.merge.vars <- key(tmp_object_1)
 			if (year_within) {
 				tmp_object_1 <- slot.data[,c(tmp.merge.vars, "GRADE"), with=FALSE][tmp_object_1, on = setdiff(tmp.merge.vars, "DUPS_FLAG")]
 			} else tmp_object_1 <- slot.data[,c(tmp.merge.vars, "GRADE"), with=FALSE][tmp_object_1, on = setdiff(tmp.merge.vars, "DUPS_FLAG")]
@@ -110,7 +112,7 @@ function(sgp_object,
 			if (dups.tf) { #  Re-create _DUPS_ labels since ID is in jExp_Key
 				invisible(tmp_object_1[!is.na(DUPS_FLAG), ID := paste0(ID, "_DUPS_", DUPS_FLAG)])
 				setkeyv(tmp_object_1, getKey(tmp_object_1))
-				jExp_Key <- c(jExp_Key, grep("SCALE_SCORE$|SCALE_SCORE_PRIOR", names(tmp_object_1), value=TRUE), "GRADE", "DUPS_FLAG", "SGP_PROJECTION_GROUP_SCALE_SCORES") #  Keep these vars - still unique by ID so doesn't change results
+				jExp_Key <- intersect(names(tmp_object_1), c(jExp_Key, grep("SCALE_SCORE$|SCALE_SCORE_PRIOR", names(tmp_object_1), value=TRUE), "GRADE", "DUPS_FLAG", "SGP_PROJECTION_GROUP_SCALE_SCORES")) #  Keep these vars - still unique by ID so doesn't change results
 			}
 			tmp_object_2 <- tmp_object_1[, eval(jExpression), keyby = jExp_Key]
 
@@ -192,7 +194,7 @@ function(sgp_object,
 			for (projection_group.iter in unique(tmp_object_1[['SGP_PROJECTION_GROUP']])) {
 				tmp.sgpTarget.list[[paste(state.iter, projection_group.iter, sep=".")]] <-
 				getTargetSGP_INTERNAL(tmp_object_1[SGP_PROJECTION_GROUP==projection_group.iter], state, state.iter, projection_group.iter, target.type, target.level,
-					year_within="YEAR_WITHIN" %in% names(slot.data), fix.duplicates)
+					year_within="YEAR_WITHIN" %in% names(slot.data), fix.duplicates=fix.duplicates)
 			}
 		} ### END !is.null(level.to.get)
 	} ### END for state.iter
