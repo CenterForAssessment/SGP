@@ -13,6 +13,7 @@ function(sgp_object,
 	sgp.target.scale.scores=TRUE,
 	update.ids=NULL,
 	SGPt=TRUE,
+	simulate.sgps=FALSE,
 	save.intermediate.results=FALSE,
 	coefficient.matrices=NULL,
 	goodness.of.fit.print=FALSE,
@@ -89,6 +90,15 @@ function(sgp_object,
 		return(unlist(tmp.list, recursive=FALSE))
 	}
 
+	getRLIMatrixYears <- function(score.type) {
+		if (score.type=="STAR") {
+			return(sort(unlist(lapply(lapply(strsplit(names(get(paste0(state, "_SGPt_Baseline_Matrices"))), "_"), tail, 2), paste, collapse="_"))))
+		}
+		if (score.type=="RASCH") {
+			return(sort(unlist(lapply(lapply(strsplit(names(get(paste0(state, "_SGPt_Baseline_Matrices"))), "_"), tail, 2), paste, collapse="_"))[grep("RASCH", sapply(get(paste0(state, "_SGPt_Baseline_Matrices")), names))]))
+		}
+	}
+
 
 	### Tests for arguments
 
@@ -125,7 +135,7 @@ function(sgp_object,
 	if (length(find.package("RLImatrices", quiet=TRUE))==0) stop("Package RLImatrices required from GitHub.")
 	if (is.null(coefficient.matrices)) {
 		eval(parse(text="require(RLImatrices)"))
-		matrix.years <- sort(unlist(lapply(lapply(strsplit(names(get("RLI_SGPt_Baseline_Matrices")), "_"), tail, 2), paste, collapse="_")))
+		matrix.years <- getRLIMatrixYears(score.type)
 		tmp.configuration.year <- paste(configuration.year, match(testing.window, c("FALL", "WINTER", "SPRING")), sep=".")
 		tmp.data.last.year <- tail(sort(unique(additional.data[['YEAR']])), 1)
 		if (!tmp.configuration.year %in% matrix.years) {
@@ -190,6 +200,7 @@ function(sgp_object,
 			sgp.projections.lagged.baseline=sgp.projections.lagged.baseline,
 			sgp.target.scale.scores=sgp.target.scale.scores,
 			sgp.target.scale.scores.only=TRUE,
+			simulate.sgps=simulate.sgps,
 			outputSGP.output.type="RLI",
 			goodness.of.fit.print=goodness.of.fit.print,
 			update.old.data.with.new=FALSE,
@@ -241,6 +252,7 @@ function(sgp_object,
 				sgp.projections.lagged.baseline=sgp.projections.lagged.baseline & eow.calculate.sgps,
 				sgp.target.scale.scores=sgp.target.scale.scores & eow.calculate.sgps,
 				sgp.target.scale.scores.only=TRUE,
+				simulate.sgps=simulate.sgps,
 				outputSGP.output.type="RLI",
 				update.old.data.with.new=TRUE,
 				goodness.of.fit.print=goodness.of.fit.print,
