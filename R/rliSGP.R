@@ -257,6 +257,7 @@ function(sgp_object,
 				update.old.data.with.new=TRUE,
 				goodness.of.fit.print=goodness.of.fit.print,
 				SGPt=SGPt,
+				fix.duplicates=fix.duplicates,
 				sgp.percentiles.calculate.sgps=eow.calculate.sgps,
 				parallel.config=parallel.config,
 				sgp.config=getRLIConfig(content_areas, configuration.year, testing.window, score.type))

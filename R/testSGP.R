@@ -1509,9 +1509,9 @@ function(
 
 			if (is.null(test.option[['parallel.config']])) {
 				if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
-				if (.Platform$OS.type != "unix") {
-					parallel.config <- paste0("list(BACKEND='FOREACH', TYPE='doParallel', WORKERS=list(TAUS=", number.cores, "))")
-				} else  parallel.config <- paste0("list(BACKEND='PARALLEL', WORKERS=list(TAUS=", number.cores, "))")
+				# if (.Platform$OS.type != "unix") {
+				# 	parallel.config <- paste0("list(BACKEND='FOREACH', TYPE='doParallel', WORKERS=list(TAUS=", number.cores, "))")
+				# } else  parallel.config <- paste0("list(BACKEND='PARALLEL', WORKERS=list(TAUS=", number.cores, "))")
 			} else parallel.config <- test.option[['parallel.config']]
 
 			RLI1_SGPt_PART_1 <- RLI1_SGPt_PART_2 <- RLI1_SGPt_PART_3 <- SCALE_SCORE_RASCH <- NULL
@@ -1523,6 +1523,7 @@ function(
 			###############################################################################
 
 			RLI_Data_LONG_UPDATE <- SGPdata::sgptData_LONG[YEAR %in% tmp.last.window][,SCALE_SCORE_RASCH:=NULL]
+			SGPstateData[["RLI"]][["SGP_Configuration"]][["fix.duplicates"]] <- "KEEP.ALL"
 			RLI_SGPt_UPDATE_SHELL <- suppressMessages(prepareSGP(SGPdata::sgptData_LONG[!YEAR %in% tmp.last.window][,SCALE_SCORE_RASCH:=NULL], state="RLI"))
 			SGPstateData[["RLI"]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <-
 				eval(parse(text=paste("RLI_SGPt_Baseline_Matrices[['RLI_SGPt_Baseline_Matrices_2016_2017.3']]")))
@@ -1545,6 +1546,7 @@ function(
 
 			started.at.overall <- proc.time()
 			eval(parse(text=expression.to.evaluate))
+			if (dir.exists("Data/RLI1_PART_1")) unlink("Data/RLI1_PART_1", recursive = TRUE)
 			file.rename("Data/RLI", "Data/RLI1_PART_1")
 
 			### TEST of variable values
@@ -1562,8 +1564,11 @@ function(
 
 			### TEST of SGP_TARGET_BASELINE_10_TIME_CURRENT variable from READING
 
-#			if (identical(sum(RLI1_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", "TARGET_SCALE_SCORES", sep=".")]][['SGP_TARGET_BASELINE_10_TIME_CURRENT']], na.rm=TRUE), 50160L)) { ## 2015 was 45054L, 2016 was 50186L, RLI1 was 52105
-			if (identical(digest(RLI1_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", "TARGET_SCALE_SCORES", sep=".")]][['SGP_TARGET_BASELINE_10_TIME_CURRENT']]), "414bb392792ddb2d84544d1b253e0ca9")) {
+#			if (identical(sum(RLI1_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", "TARGET_SCALE_SCORES", sep=".")]][['SGP_TARGET_BASELINE_10_TIME_CURRENT']], na.rm=TRUE), 50160L)) { ## 2015 was 45054L, 2016 was 50186L, RLI1 was 52105,  SGP 1.6-4.16 :: 52105,
+			# setkey(RLI1_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", "TARGET_SCALE_SCORES", sep=".")]])
+			# digest(RLI1_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", "TARGET_SCALE_SCORES", sep=".")]][['SGP_TARGET_BASELINE_10_TIME_CURRENT']]) # 5ee9337b7d53530250e348ceda7c67e2
+			# sum(RLI1_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", "TARGET_SCALE_SCORES", sep=".")]][['SGP_TARGET_BASELINE_10_TIME_CURRENT']])# :: 52915
+			if (identical(digest(RLI1_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", "TARGET_SCALE_SCORES", sep=".")]][['SGP_TARGET_BASELINE_10_TIME_CURRENT']]), "414bb392792ddb2d84544d1b253e0ca9")) { # SGP 1.6-4.16 :: 89737a25f7b7a1d152f385f428009f5f
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_BASELINE_10_TIME_CURRENT, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_BASELINE_10_TIME_CURRENT, part 1: FAIL\n")
@@ -1572,7 +1577,11 @@ function(
 			### TEST of P50_PROJ_TIME_1_CURRENT variable from READING
 
 #			if (identical(sum(RLI1_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['P50_PROJ_TIME_1_CURRENT']], na.rm=TRUE), 533302)) { ### RLI1 543598.8
-			if (identical(digest(RLI1_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['P50_PROJ_TIME_1_CURRENT']]), "814a5e1726c77d81c39edcf14e0d464b")) {
+			# setkey(RLI1_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]]) # 3-16-2017 SGP 1.6-4.16
+			# digest(RLI1_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]]) # c6f901a64d7215252058107b3059cae9
+			# sum(RLI1_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['P50_PROJ_TIME_1_CURRENT']]) # 551654.4
+			# digest(RLI1_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['P50_PROJ_TIME_1_CURRENT']]) # fb3c11af1d51587edc9864d1ce3ef1f1
+			if (identical(digest(RLI1_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['P50_PROJ_TIME_1_CURRENT']]), "814a5e1726c77d81c39edcf14e0d464b")) { # NOT keyed first :: 534a67240d0cc27682cbfe933c6f5161
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable P50_PROJ_TIME_1_CURRENT, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable P50_PROJ_TIME_1_CURRENT, part 1: FAIL\n")
@@ -1584,7 +1593,7 @@ function(
 			tmp.data <- fread(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
 			unlink(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
 
-			if (identical(dim(tmp.data), c(2179L, 10L))) {
+			if (identical(dim(tmp.data), c(2179L, 10L))) {  # SGP 1.6-4.16 +Dups :: 2212   10
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGPercentiles output, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGPercentiles output, part 1: FAIL\n")
@@ -1596,7 +1605,7 @@ function(
 			my.tmp.2 <- sapply(gregexpr("(?=; )",tmp.data$SGP_NORM_GROUP_BASELINE_SCALE_SCORES,perl=TRUE), function(x) length(x))
 			my.tmp.3 <- sapply(gregexpr("(?=; )",tmp.data$SGP_NORM_GROUP_BASELINE_DATES,perl=TRUE), function(x) length(x))
 
-			if (identical(my.tmp.1, my.tmp.2) & identical(my.tmp.2, my.tmp.3)) {
+			if (identical(my.tmp.1, my.tmp.2) & identical(my.tmp.2, my.tmp.3)) { # SGP 1.6-4.16 +Dups :: TRUE
 				tmp.messages <- c(tmp.messages, "\t\tTest of number of semi-colons of SGP_NORM_GROUP variables, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of number of semi-colons of SGP_NORM_GROUP variables, part 1: FAIL\n")
@@ -1608,7 +1617,7 @@ function(
 			tmp.data <- fread(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
 			unlink(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
 
-			if (identical(dim(tmp.data), c(981L, 1038L))) { ### pre-RLI1 c(981L, 118L)
+			if (identical(dim(tmp.data), c(981L, 1038L))) { ### pre-RLI1 c(981L, 118L)  ### SGP 1.6-4.16 +Dups :: 996 1038
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGProjections output, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGProjections output, part 1: FAIL\n")
@@ -1620,7 +1629,7 @@ function(
 			tmp.data <- fread(paste("READING", tmp.last.window, "BASELINE.TARGET_SCALE_SCORES.txt", sep="."))
 			unlink(paste("READING", tmp.last.window, "BASELINE.TARGET_SCALE_SCORES.txt", sep="."))
 
-			if (identical(dim(tmp.data), c(900L, 25L))) { ### 2014-2015 was 867L, pre RLI1 was c(819L, 25L)
+			if (identical(dim(tmp.data), c(900L, 25L))) { ### 2014-2015 was 867L, pre RLI1 was c(819L, 25L) ### SGP 1.6-4.16 +Dups :: 914  25
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGProjections output, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGProjections output, part 1: FAIL\n")
@@ -1633,7 +1642,7 @@ function(
 			### PART 2: Using LONG Data
 			###############################################################################
 
-			RLI_SGPt_Data_LONG <- SGPdata::sgptData_LONG[,SCALE_SCORE_RASCH:=NULL]
+			RLI_SGPt_Data_LONG <- copy(SGPdata::sgptData_LONG)[,SCALE_SCORE_RASCH:=NULL]
 
 			### Calculate SGPs
 
@@ -1650,6 +1659,7 @@ function(
 
 			started.at.intermediate <- proc.time()
 			eval(parse(text=expression.to.evaluate))
+			if (dir.exists("Data/RLI1_PART_2")) unlink("Data/RLI1_PART_2", recursive = TRUE)
 			file.rename("Data/RLI", "Data/RLI1_PART_2")
 
 			### TEST of variable values
@@ -1658,7 +1668,7 @@ function(
 
 			### TEST of equality between RLI_SGPt_PART_1@SGP and RLI_SGPt_PART_2@SGP
 
-			if (identical(RLI1_SGPt_PART_1@SGP, RLI1_SGPt_PART_2@SGP)) {
+			if (identical(RLI1_SGPt_PART_1@SGP, RLI1_SGPt_PART_2@SGP)) { #
 				tmp.messages <- c(tmp.messages, "\t\tTest of equatity of RLI1_PART_1@SGP and RLI1_PART_2@SGP, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of equatity of RLI1_PART_1@SGP and RLI1_PART_2@SGP, part 2: FAIL\n")
@@ -1686,6 +1696,7 @@ function(
 
 			started.at.intermediate <- proc.time()
 			eval(parse(text=expression.to.evaluate))
+			if (dir.exists("Data/RLI1_PART_3")) unlink("Data/RLI1_PART_3", recursive = TRUE)
 			file.rename("Data/RLI", "Data/RLI1_PART_3")
 
 			### TEST of variable values
@@ -1695,7 +1706,7 @@ function(
 			### TEST of SGP variable from READING (equality with PART 1)
 
 #			if (identical(sum(RLI1_SGPt_PART_3@SGP[['SGPercentiles']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['SGP_BASELINE']], na.rm=TRUE), 108675L)) { ## Pre-RLI1 107188L
-			if (identical(digest(RLI1_SGPt_PART_3@SGP[['SGPercentiles']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['SGP_BASELINE']]), "76884b8d5d384a78d4c7a780d548ba42")) {
+			if (identical(digest(RLI1_SGPt_PART_3@SGP[['SGPercentiles']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['SGP_BASELINE']]), "76884b8d5d384a78d4c7a780d548ba42")) { ## SGP 1.6-4.16 +Dups :: d11fe88a76e9ef09500aa94f24d08aaf / sum 110397
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE (2016_2017.3 matrices = 2016_2017.2 matrices), part 3: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE (2016_2017.3 matrices = 2016_2017.2 matrices), part 3: FAIL\n")
@@ -1722,9 +1733,9 @@ function(
 
 			if (is.null(test.option[['parallel.config']])) {
 				if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
-				if (.Platform$OS.type != "unix") {
-					parallel.config <- paste0("list(BACKEND='FOREACH', TYPE='doParallel', WORKERS=list(TAUS=", number.cores, "))")
-				} else  parallel.config <- paste0("list(BACKEND='PARALLEL', WORKERS=list(TAUS=", number.cores, "))")
+				# if (.Platform$OS.type != "unix") {
+				# 	parallel.config <- paste0("list(BACKEND='FOREACH', TYPE='doParallel', WORKERS=list(TAUS=", number.cores, "))")
+				# } else  parallel.config <- paste0("list(BACKEND='PARALLEL', WORKERS=list(TAUS=", number.cores, "))")
 			} else parallel.config <- test.option[['parallel.config']]
 
 			RLI2_SGPt_PART_1 <- RLI2_SGPt_PART_2 <- RLI2_SGPt_PART_3 <- SCALE_SCORE <- NULL
@@ -1738,6 +1749,7 @@ function(
 			RLI_Data_LONG <- copy(SGPdata::sgptData_LONG)
 			RLI_Data_LONG[,SCALE_SCORE:=NULL]
 			setnames(RLI_Data_LONG, "SCALE_SCORE_RASCH", "SCALE_SCORE")
+			SGPstateData[["RLI"]][["SGP_Configuration"]][["fix.duplicates"]] <- "KEEP.ALL"
 			RLI_SGPt_UPDATE_SHELL <- suppressMessages(prepareSGP(RLI_Data_LONG[!YEAR %in% tmp.last.window], state="RLI"))
 			RLI_Data_LONG_UPDATE <- RLI_Data_LONG[YEAR %in% tmp.last.window]
 			SGPstateData[["RLI"]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <-
@@ -1761,6 +1773,7 @@ function(
 
 			started.at.overall <- proc.time()
 			eval(parse(text=expression.to.evaluate))
+			if (dir.exists("Data/RLI2_PART_1")) unlink("Data/RLI2_PART_1", recursive = TRUE)
 			file.rename("Data/RLI", "Data/RLI2_PART_1")
 
 			### TEST of variable values
@@ -1770,7 +1783,7 @@ function(
 			### TEST of SGP variable from READING
 
 #			if (identical(sum(RLI2_SGPt_PART_1@SGP[['SGPercentiles']][[paste("READING_RASCH", tmp.last.window, "BASELINE", sep=".")]][['SGP_BASELINE']], na.rm=TRUE), 107696L)) { #107694L SGPdata 15.0
-			if (identical(digest(RLI2_SGPt_PART_1@SGP[['SGPercentiles']][[paste("READING_RASCH", tmp.last.window, "BASELINE", sep=".")]][['SGP_BASELINE']]), "ce605129f0a99cac9c7704e65dc50445")) {
+			if (identical(digest(RLI2_SGPt_PART_1@SGP[['SGPercentiles']][[paste("READING_RASCH", tmp.last.window, "BASELINE", sep=".")]][['SGP_BASELINE']]), "ce605129f0a99cac9c7704e65dc50445")) { ## SGP 1.6-4.16 +Dups :: aeae0ae46bf6da7ed022778f1e1acd4d / sum 109568
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 1: FAIL\n")
@@ -1779,7 +1792,7 @@ function(
 			### TEST of SGP_TARGET_BASELINE_10_TIME_CURRENT variable from READING
 
 #			if (identical(sum(RLI2_SGPt_PART_1@SGP[['SGProjections']][[paste("READING_RASCH", tmp.last.window, "BASELINE", "TARGET_SCALE_SCORES", sep=".")]][['SGP_TARGET_BASELINE_10_TIME_CURRENT']], na.rm=TRUE), 50160L)) { ## 2015 was 45054L, 2016 was 50186L, preRLI was 51714L
-			if (identical(digest(RLI2_SGPt_PART_1@SGP[['SGProjections']][[paste("READING_RASCH", tmp.last.window, "BASELINE", "TARGET_SCALE_SCORES", sep=".")]][['SGP_TARGET_BASELINE_10_TIME_CURRENT']]), "6d17f5f1a172f22b73076c2ee7570bca")) {
+			if (identical(digest(RLI2_SGPt_PART_1@SGP[['SGProjections']][[paste("READING_RASCH", tmp.last.window, "BASELINE", "TARGET_SCALE_SCORES", sep=".")]][['SGP_TARGET_BASELINE_10_TIME_CURRENT']]), "6d17f5f1a172f22b73076c2ee7570bca")) { ## SGP 1.6-4.16 +Dups :: 4b4343cdcc2ec387295de04accf82986 / 52462
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_BASELINE_10_TIME_CURRENT, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_BASELINE_10_TIME_CURRENT, part 1: FAIL\n")
@@ -1788,7 +1801,7 @@ function(
 			### TEST of P50_PROJ_TIME_1_CURRENT variable from READING
 
 #			if (identical(sum(RLI2_SGPt_PART_1@SGP[['SGProjections']][[paste("READING_RASCH", tmp.last.window, "BASELINE", sep=".")]][['P50_PROJ_TIME_1_CURRENT']], na.rm=TRUE), 1085.253)) { ## 1085.258 SGP 15.0
-			if (identical(digest(RLI2_SGPt_PART_1@SGP[['SGProjections']][[paste("READING_RASCH", tmp.last.window, "BASELINE", sep=".")]][['P50_PROJ_TIME_1_CURRENT']]), "529276fe9ff56a11b3ed97a4b7d01f93")) {
+			if (identical(digest(RLI2_SGPt_PART_1@SGP[['SGProjections']][[paste("READING_RASCH", tmp.last.window, "BASELINE", sep=".")]][['P50_PROJ_TIME_1_CURRENT']]), "529276fe9ff56a11b3ed97a4b7d01f93")) { ## SGP 1.6-4.16 +Dups :: 856cf4c1dd2f2aca521d0d6b4e61ce2b / 1098.585 sum
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable P50_PROJ_TIME_1_CURRENT, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable P50_PROJ_TIME_1_CURRENT, part 1: FAIL\n")
@@ -1800,7 +1813,7 @@ function(
 			tmp.data <- fread(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
 			unlink(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
 
-			if (identical(dim(tmp.data), c(2179L, 10L))) {
+			if (identical(dim(tmp.data), c(2179L, 10L))) {  ## SGP 1.6-4.16 +Dups ::
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGPercentiles output, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGPercentiles output, part 1: FAIL\n")
@@ -1868,6 +1881,7 @@ function(
 
 			started.at.intermediate <- proc.time()
 			eval(parse(text=expression.to.evaluate))
+			if (dir.exists("Data/RLI2_PART_2")) unlink("Data/RLI2_PART_2", recursive = TRUE)
 			file.rename("Data/RLI", "Data/RLI2_PART_2")
 
 			### TEST of variable values
@@ -1904,6 +1918,7 @@ function(
 
 			started.at.intermediate <- proc.time()
 			eval(parse(text=expression.to.evaluate))
+			if (dir.exists("Data/RLI2_PART_3")) unlink("Data/RLI2_PART_3", recursive = TRUE)
 			file.rename("Data/RLI", "Data/RLI2_PART_3")
 
 			### TEST of variable values
@@ -1977,6 +1992,7 @@ function(
 
 			started.at.overall <- proc.time()
 			eval(parse(text=expression.to.evaluate))
+			if (dir.exists("Data/RLI3_PART_1")) unlink("Data/RLI3_PART_1", recursive = TRUE)
 			file.rename("Data/RLI", "Data/RLI3_PART_1")
 
 			### TEST of variable values
@@ -2085,6 +2101,7 @@ function(
 
 			started.at.intermediate <- proc.time()
 			eval(parse(text=expression.to.evaluate))
+			if (dir.exists("Data/RLI3_PART_2")) unlink("Data/RLI3_PART_2", recursive = TRUE)
 			file.rename("Data/RLI", "Data/RLI3_PART_2")
 
 			### TEST of variable values
@@ -2121,6 +2138,7 @@ function(
 
 			started.at.intermediate <- proc.time()
 			eval(parse(text=expression.to.evaluate))
+			if (dir.exists("Data/RLI3_PART_3")) unlink("Data/RLI3_PART_3", recursive = TRUE)
 			file.rename("Data/RLI", "Data/RLI3_PART_3")
 
 			### TEST of variable values
@@ -2157,7 +2175,7 @@ function(
 
 			if (is.null(test.option[['parallel.config']])) {
 				if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
-				parallel.config <- paste0("list(BACKEND=", tmp.backend, "WORKERS=list(PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, "))")
+				parallel.config <- paste0("list(BACKEND=", tmp.backend, "WORKERS=list(PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", SGP_SCALE_SCORE_TARGETS=", number.cores, "))")
 			} else parallel.config <- test.option[['parallel.config']]
 
 			Demonstration_SGP <- GRADE_REPORTED <- SCALE_SCORE <- VALID_CASE <- NULL

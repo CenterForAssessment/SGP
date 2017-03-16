@@ -564,13 +564,14 @@ function(
 		tmp.target.data <- data.table(Reduce(function(x, y) merge(x, y, all=TRUE, by=intersect(names(y), names(x))), tmp.target.list[!sapply(tmp.target.list, function(x) dim(x)[1]==0)],
 			accumulate=FALSE), key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
 
-		if (dups.tf <- (!is.null(fix.duplicates) & any(grepl("_DUPS_[0-9]*", tmp.target.data[["ID"]])))) {
+		if (!is.null(fix.duplicates)) {
+			if (any(grepl("_DUPS_[0-9]*", tmp.target.data[["ID"]]))) {
 				invisible(tmp.target.data[, ID := gsub("_DUPS_[0-9]*", "", ID)])
 				invisible(tmp.target.data[!is.na(DUPS_FLAG), N := seq.int(.N), by=c(getKey(tmp.target.data), "GRADE")])
-				# invisible(tmp.target.data[!is.na(N), ID := paste0(ID, "_DUPS_", N)])
+			}
 		}
 
-		for (projection_group.iter in unique(tmp.target.data, by='SGP_PROJECTION_GROUP')[['SGP_PROJECTION_GROUP']]) {
+		for (projection_group.iter in unique(tmp.target.data[['SGP_PROJECTION_GROUP']])) {
 			for (target.type.iter in target.args[['sgp.target.scale.scores.types']]) {
 				tmp.target.level.names <-
 					as.character(sapply(target.args[['target.level']], function(x) getTargetName(state, target.type.iter, x, max.sgp.target.years.forward, "SGP_TARGET", projection.unit.label, projection_group.iter)))
