@@ -27,7 +27,7 @@ function(data,
 
 	### Configure arguments
 
-	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["fix.duplicates"]])) {
+	if (is.null(fix.duplicates) & !is.null(SGPstateData[[state]][["SGP_Configuration"]][["fix.duplicates"]])) {
 		fix.duplicates <- SGPstateData[[state]][["SGP_Configuration"]][["fix.duplicates"]]
 	}
 
@@ -262,7 +262,7 @@ function(data,
 	} ### end if (create.additional.variables)
 
 	if (!is.null(fix.duplicates)) {
-		if (identical(toupper(fix.duplicates), "KEEP.ALL")) {
+		# if (identical(toupper(fix.duplicates), "KEEP.ALL")) {
 			if (is.SGP(data)) {
 				assign("DUPLICATED_CASES",
 					data@Data["VALID_CASE"][unique(data@Data["VALID_CASE"][duplicated(data@Data["VALID_CASE"], by=getKey(data@Data)), c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE], by=getKey(data@Data))])
@@ -270,10 +270,11 @@ function(data,
 				assign("DUPLICATED_CASES", data["VALID_CASE"][unique(data["VALID_CASE"][duplicated(data["VALID_CASE"], by=getKey(data)), c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE], by=getKey(data))])
 			}
 			if (dim(DUPLICATED_CASES)[1]!=0) {
-				sgp_object@Data <- createUniqueLongData(sgp_object@Data, dups.years=unique(DUPLICATED_CASES[['YEAR']]))
-				messageSGP("\tNOTE: Duplicate cases in data made UNIQUE. Modified IDs include suffix '_DUPS_***' in @Data.")
+				messageSGP("\tNOTE: Duplicate cases in the data have NOT been modified.  Required ID modifications will be performed as needed in analyzeSGP.")
+			} else {
+				messageSGP("\tNOTE: The 'fix.duplicates' argument has been requested, but NO duplicate cases are found in the data...")
 			}
-		} ### End KEEP.ALL
+		# } ### End KEEP.ALL  (or TRUE or anything else...)
 	}
 
 	##  Print finish time

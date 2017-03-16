@@ -5,9 +5,10 @@ function(sgp.data,
 	sgp.csem=NULL,
 	sgp.scale.score.equated=NULL,
 	sgp.targets=NULL,
-	SGPt=NULL) {
+	SGPt=NULL,
+	fix.duplicates=NULL) {
 
-	YEAR <- CONTENT_AREA <- VALID_CASE <- V3 <- V5 <- ID <- GRADE <- SCALE_SCORE <- YEAR_WITHIN <- tmp.timevar <- FIRST_OBSERVATION <- LAST_OBSERVATION <- ACHIEVEMENT_LEVEL <- DATE <- NULL
+	YEAR <- CONTENT_AREA <- VALID_CASE <- V3 <- V5 <- ID <- GRADE <- SCALE_SCORE <- YEAR_WITHIN <- tmp.timevar <- FIRST_OBSERVATION <- LAST_OBSERVATION <- ACHIEVEMENT_LEVEL <- DATE <- SGP_PROJECTION_GROUP_SCALE_SCORES <- DUPS_FLAG <- NULL
 
 	if (is(sgp.data, "DBIObject")) {
 		con <- dbConnect(SQLite(), dbname = attributes(sgp.data)$dbname)
@@ -26,7 +27,6 @@ function(sgp.data,
 	###
 
 	if (sgp.type=="sgp.percentiles") {
-
 		if (!is.null(tmp.exclude.lookup <- sgp.iter$sgp.exclude.sequences)) {
 			if (is.data.table(tmp.exclude.lookup)) {
 				tmp.exclude.lookup <- setkey(data.table(tmp.exclude.lookup[, list(VALID_CASE, CONTENT_AREA, YEAR, GRADE)]))
@@ -92,15 +92,53 @@ function(sgp.data,
 					" AND GRADE in ('", paste(tmp.lookup$V4, collapse="', '"), "')",
 					" AND YEAR in ('", paste(tmp.lookup$V3, collapse="', '"), "')")), key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))
 				dbDisconnect(con)
+
+				tmp.data <- tmp.data[tmp.lookup, nomatch=0][!ID %in% tmp.exclude.ids][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep=".")]
+
+				if (is.character(fix.duplicates)) {
+					if (fix.duplicates!="KEEP.ALL") stop("Invalid character for 'fix.duplicates' argument/SGPstateData > SGP_Configuration value.  Should be 'KEEP.ALL'.")
+
+					if (any(duplicated(tmp.data, by=getKey(tmp.data)))) {
+						invisible(tmp.data[, CONTENT_AREA := "TEMP_CONTENT_AREA"])
+						tmp.data <- createUniqueLongData(tmp.data)
+					}
+
+					if (is.null(SGPt)) {
+						return(ddcast(tmp.data,
+								ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", sgp.csem, sgp.scale.score.equated), sep="."))
+					} else {
+						return(ddcast(tmp.data[, c("TIME", "TIME_LAG"):=list(as.numeric(DATE), as.numeric(DATE-c(NA, DATE[-.N]))), by=ID],
+								ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", sgp.csem, sgp.scale.score.equated, "TIME", "TIME_LAG"), sep="."))
+					}
+				} ### END if (is.character(fix.duplicates)
+
 				if (is.null(SGPt)) {
-					return(ddcast(tmp.data[tmp.lookup, nomatch=0][!ID %in% tmp.exclude.ids][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep=".")],
+					return(ddcast(tmp.data,
 							ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", sgp.csem, sgp.scale.score.equated), sep="."))
 				} else {
-					return(ddcast(tmp.data[tmp.lookup, nomatch=0][!ID %in% tmp.exclude.ids][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep=".")][,
+					return(ddcast(tmp.data[,
 							c("TIME", "TIME_LAG"):=list(as.numeric(DATE), as.numeric(DATE-c(NA, DATE[-.N]))), by=ID],
 							ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", sgp.csem, sgp.scale.score.equated, "TIME", "TIME_LAG"), sep="."))
 				}
 			} else {
+				if (is.character(fix.duplicates)) {
+					if (fix.duplicates!="KEEP.ALL") stop("Invalid character for 'fix.duplicates' argument/SGPstateData > SGP_Configuration value.  Should be 'KEEP.ALL'.")
+					tmp.data <- sgp.data[tmp.lookup, nomatch=0][!ID %in% tmp.exclude.ids][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep=".")]
+
+					if (any(duplicated(tmp.data, by=getKey(tmp.data)))) {
+						invisible(tmp.data[, CONTENT_AREA := "TEMP_CONTENT_AREA"])
+						tmp.data <- createUniqueLongData(tmp.data)
+					}
+
+					if (is.null(SGPt)) {
+						return(ddcast(tmp.data,
+								ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", sgp.csem, sgp.scale.score.equated), sep="."))
+					} else {
+						return(ddcast(tmp.data[, c("TIME", "TIME_LAG"):=list(as.numeric(DATE), as.numeric(DATE-c(NA, DATE[-.N]))), by=ID],
+								ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", sgp.csem, sgp.scale.score.equated, "TIME", "TIME_LAG"), sep="."))
+					}
+				} ### END if (is.character(fix.duplicates)
+
 				if (is.null(SGPt)) {
 					return(ddcast(sgp.data[tmp.lookup][!ID %in% tmp.exclude.ids][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep=".")],
 							ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", sgp.csem, sgp.scale.score.equated), sep="."))
@@ -205,6 +243,21 @@ function(sgp.data,
 
 		if (is.null(sgp.targets)) {
 			if (sqlite.tf) {
+				if (is.character(fix.duplicates)) {
+					if (fix.duplicates!="KEEP.ALL") stop("Invalid character for 'fix.duplicates' argument/SGPstateData > SGP_Configuration value.  Should be 'KEEP.ALL'.")
+					tmp.data <- data.table(dbGetQuery(con,
+						paste0("select * from sgp_data where CONTENT_AREA in ('", paste(tmp.lookup$V2, collapse="', '"), "')",
+						" AND GRADE in ('", paste(tmp.lookup$V4, collapse="', '"), "')", " AND YEAR in ('", paste(tmp.lookup$V3, collapse="', '"), "')")),
+						key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))[tmp.lookup, nomatch=0][,
+						'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep=".")]
+
+					if (any(duplicated(tmp.data, by=getKey(tmp.data)))) {
+						invisible(tmp.data[, CONTENT_AREA := "TEMP_CONTENT_AREA"])
+						tmp.data <- createUniqueLongData(tmp.data)
+					}
+					tmp.data <- ddcast(tmp.data,
+						ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", state, sgp.scale.score.equated, SGPt), sep=".")
+				} else {### END if (is.character(fix.duplicates)
 				tmp.data <- ddcast(
 					data.table(dbGetQuery(con,
 						paste0("select * from sgp_data where CONTENT_AREA in ('", paste(tmp.lookup$V2, collapse="', '"), "')",
@@ -212,10 +265,23 @@ function(sgp.data,
 						key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))[tmp.lookup, nomatch=0][,
 						'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep=".")],
 					ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", state, sgp.scale.score.equated, SGPt), sep=".")
+				}
 				dbDisconnect(con)
 			} else {
-				tmp.data <- ddcast(sgp.data[tmp.lookup, nomatch=0][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep=".")],
-					ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", state, sgp.scale.score.equated, SGPt), sep=".")
+				if (is.character(fix.duplicates)) {
+					if (fix.duplicates!="KEEP.ALL") stop("Invalid character for 'fix.duplicates' argument/SGPstateData > SGP_Configuration value.  Should be 'KEEP.ALL'.")
+					tmp.data <- sgp.data[tmp.lookup, nomatch=0][, 'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep=".")]
+
+					if (any(duplicated(tmp.data, by=getKey(tmp.data)))) {
+						invisible(tmp.data[, CONTENT_AREA := "TEMP_CONTENT_AREA"])
+						tmp.data <- createUniqueLongData(tmp.data)
+					}
+					tmp.data <- ddcast(tmp.data,
+						ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", state, sgp.scale.score.equated, SGPt), sep=".")
+				} else {### END if (is.character(fix.duplicates)
+					tmp.data <- ddcast(sgp.data[tmp.lookup, nomatch=0][, 'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep=".")],
+						ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", state, sgp.scale.score.equated, SGPt), sep=".")
+				}
 			}
 
 			if ("STATE" %in% var.names && dim(tmp.data)[1]!=0) {
@@ -223,8 +289,23 @@ function(sgp.data,
 				if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0) tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL]
 			}
 			return(tmp.data)
-		} else {
+		} else {  ###  END is.null(sgp.targets)
 			if (sqlite.tf) {
+				if (is.character(fix.duplicates)) {
+					if (fix.duplicates!="KEEP.ALL") stop("Invalid character for 'fix.duplicates' argument/SGPstateData > SGP_Configuration value.  Should be 'KEEP.ALL'.")
+					tmp.data <- data.table(dbGetQuery(con, paste0("select * from sgp_data where CONTENT_AREA in ('", paste(tmp.lookup$V2, collapse="', '"), "')",
+						" AND GRADE in ('", paste(tmp.lookup$V4, collapse="', '"), "')", " AND YEAR in ('", paste(tmp.lookup$V3, collapse="', '"), "')"))
+						, key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))[tmp.lookup, nomatch=0][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep=".")]
+
+					if (any(duplicated(tmp.data, by=getKey(tmp.data)))) {
+						invisible(tmp.data[, CONTENT_AREA := "TEMP_CONTENT_AREA"])
+						tmp.data <- createUniqueLongData(tmp.data)
+					}
+					tmp.data <- ddcast(tmp.data,
+						ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", state, sgp.scale.score.equated, SGPt), sep=".")[
+							sgp.targets[CONTENT_AREA==tail(sgp.iter[[sgp.projection.content.areas.label]], 1) &
+							YEAR==tail(sgp.iter[[sgp.projection.panel.years.label]], 1)], nomatch=0][,!c("CONTENT_AREA", "YEAR"), with=FALSE]
+				} else {  ###  END if (is.character(fix.duplicates)
 				tmp.data <- ddcast(
 					data.table(dbGetQuery(con, paste0("select * from sgp_data where CONTENT_AREA in ('", paste(tmp.lookup$V2, collapse="', '"), "')",
 						" AND GRADE in ('", paste(tmp.lookup$V4, collapse="', '"), "')", " AND YEAR in ('", paste(tmp.lookup$V3, collapse="', '"), "')"))
@@ -232,12 +313,51 @@ function(sgp.data,
 					ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", state, sgp.scale.score.equated, SGPt), sep=".")[
 						sgp.targets[CONTENT_AREA==tail(sgp.iter[[sgp.projection.content.areas.label]], 1) &
 						YEAR==tail(sgp.iter[[sgp.projection.panel.years.label]], 1)], nomatch=0][,!c("CONTENT_AREA", "YEAR"), with=FALSE]
+				}
 				dbDisconnect(con)
 			} else {
-				tmp.data <- ddcast(sgp.data[tmp.lookup, nomatch=0][, 'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep=".")],
-					ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", state, sgp.scale.score.equated, SGPt), sep=".")[
-						sgp.targets[CONTENT_AREA==tail(sgp.iter[[sgp.projection.content.areas.label]], 1) &
-						YEAR==tail(sgp.iter[[sgp.projection.panel.years.label]], 1)], nomatch=0][,!c("CONTENT_AREA", "YEAR"), with=FALSE]
+				if (is.character(fix.duplicates)) {
+					if (fix.duplicates!="KEEP.ALL") stop("Invalid character for 'fix.duplicates' argument/SGPstateData > SGP_Configuration value.  Should be 'KEEP.ALL'.")
+					setnames(tmp.lookup, paste0("V", 1:4), c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))
+					setkeyv(sgp.data, names(tmp.lookup))
+					tmp.data <- sgp.data[tmp.lookup, nomatch=0][, 'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep=".")]
+
+					if (any(duplicated(tmp.data, by=getKey(tmp.data)))) {
+						tmp.data <- createUniqueLongData(tmp.data)
+
+						##  Create SCALE_SCORE history vars to merge on
+						tmp.data <- ddcast(tmp.data, ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", state, sgp.scale.score.equated, SGPt), sep=".")[,
+							GRADE := tail(sgp.iter[[sgp.projection.grade.sequences.label]], 1)]
+						jExpression <- paste0("paste(", paste(grep("SCALE_SCORE[.]", names(tmp.data), value=TRUE) , collapse = ", "), ", sep = '; ')")
+						invisible(tmp.data[, SGP_PROJECTION_GROUP_SCALE_SCORES := eval(parse(text=jExpression))])
+						invisible(tmp.data[, SGP_PROJECTION_GROUP_SCALE_SCORES := gsub("NA; ", "", SGP_PROJECTION_GROUP_SCALE_SCORES)])
+						invisible(tmp.data[grepl("_DUPS_[0-9]*", ID), DUPS_FLAG := gsub(".*_DUPS_", "", ID)])
+						invisible(tmp.data[, ID := gsub("_DUPS_[0-9]*", "", ID)])
+
+						tmp.data <- tmp.data[sgp.targets[CONTENT_AREA==tail(sgp.iter[[sgp.projection.content.areas.label]], 1) & YEAR==tail(sgp.iter[[sgp.projection.panel.years.label]], 1)],
+							on=c("ID", "GRADE", "SGP_PROJECTION_GROUP_SCALE_SCORES"), nomatch=0][,
+							!c("CONTENT_AREA", "YEAR", "GRADE", "SGP_PROJECTION_GROUP_SCALE_SCORES"), with=FALSE]
+
+						invisible(tmp.data[!is.na(DUPS_FLAG), ID := paste0(ID, "_DUPS_", DUPS_FLAG)])
+						invisible(tmp.data[, DUPS_FLAG := NULL])
+					} else {  ###  END if (any(duplicated(tmp.data, ...)))
+						if (all(is.na(sgp.targets[["GRADE"]]))) {
+							sgp.targets[, GRADE := NULL]
+							tmp.merge.vars <- "ID"
+						} else tmp.merge.vars <- c("ID", "GRADE")
+						tmp.data <- ddcast(tmp.data, ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", state, sgp.scale.score.equated, SGPt), sep=".")[, GRADE := tail(sgp.iter[[sgp.projection.grade.sequences.label]], 1)][
+							sgp.targets[CONTENT_AREA==tail(sgp.iter[[sgp.projection.content.areas.label]], 1) & YEAR==tail(sgp.iter[[sgp.projection.panel.years.label]], 1)],
+								on=tmp.merge.vars, nomatch=0][,!c("CONTENT_AREA", "YEAR", "GRADE", "SGP_PROJECTION_GROUP_SCALE_SCORES"), with=FALSE]
+					}
+				} else { ### END if (is.character(fix.duplicates)
+					setnames(tmp.lookup, paste0("V", 1:4), c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))
+					setkeyv(sgp.data, names(tmp.lookup))
+					setkeyv(sgp.targets, intersect(names(sgp.targets), getKey(sgp.data)))
+					tmp.data <- ddcast(sgp.data[tmp.lookup, nomatch=0][, 'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep=".")],
+						ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", state, sgp.scale.score.equated, SGPt), sep=".")[
+							sgp.targets[CONTENT_AREA==tail(sgp.iter[[sgp.projection.content.areas.label]], 1) &
+							YEAR==tail(sgp.iter[[sgp.projection.panel.years.label]], 1)], on="ID", nomatch=0][,!c("CONTENT_AREA", "YEAR"), with=FALSE]
+				}
 			}
 
 			if ("STATE" %in% var.names && dim(tmp.data)[1]!=0) {
@@ -345,7 +465,7 @@ function(sgp.data,
 				}
 				return(tmp.data)
 			}
-		} else {
+		} else {  ###  END "YEAR_WITHIN" %in% var.names
 			if (is.null(sgp.targets)) {
 				if (sqlite.tf) {
 					tmp.ids <- data.table(dbGetQuery(con, paste0("select ID from sgp_data where CONTENT_AREA in ('", tail(sgp.iter[["sgp.content.areas"]], 1), "')",
@@ -357,10 +477,38 @@ function(sgp.data,
 						key="ID")[tmp.ids], key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))[SJ("VALID_CASE", sgp.iter[[sgp.projection.content.areas.label]],
 						tail(head(sgp.iter[["sgp.panel.years"]], -1), length(sgp.iter[[sgp.projection.grade.sequences.label]])),
 						sgp.iter[[sgp.projection.grade.sequences.label]]), nomatch=0][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep=".")]
+
+					if (is.character(fix.duplicates)) {
+						if (fix.duplicates!="KEEP.ALL") stop("Invalid character for 'fix.duplicates' argument/SGPstateData > SGP_Configuration value.  Should be 'KEEP.ALL'.")
+						if (any(duplicated(tmp.data, by=getKey(tmp.data)))) {
+							invisible(tmp.data[, CONTENT_AREA := "TEMP_CONTENT_AREA"])
+							tmp.data <- createUniqueLongData(tmp.data)
+					}}
+
 					tmp.data <- ddcast(tmp.data,
 							ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", "ACHIEVEMENT_LEVEL", state, sgp.scale.score.equated, SGPt), sep=".")
 					dbDisconnect(con)
 				} else {
+					if (is.character(fix.duplicates)) {
+						if (fix.duplicates!="KEEP.ALL") stop("Invalid character for 'fix.duplicates' argument/SGPstateData > SGP_Configuration value.  Should be 'KEEP.ALL'.")
+
+						tmp.data <- data.table(
+								data.table(sgp.data, key="ID")[
+									sgp.data[SJ("VALID_CASE",
+									tail(sgp.iter[["sgp.content.areas"]], 1),
+									tail(sgp.iter[["sgp.panel.years"]], 1),
+									tail(sgp.iter[["sgp.grade.sequences"]], 1))][,"ID", with=FALSE]], key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))[
+								SJ("VALID_CASE", sgp.iter[[sgp.projection.content.areas.label]],
+									tail(head(sgp.iter[["sgp.panel.years"]], -1), length(sgp.iter[[sgp.projection.grade.sequences.label]])),
+									sgp.iter[[sgp.projection.grade.sequences.label]]), nomatch=0][,
+									'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep=".")]
+
+						if (any(duplicated(tmp.data, by=getKey(tmp.data)))) {
+							invisible(tmp.data[, CONTENT_AREA := "TEMP_CONTENT_AREA"])
+							tmp.data <- createUniqueLongData(tmp.data)
+						}
+						tmp.data <- ddcast(tmp.data, ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", "ACHIEVEMENT_LEVEL", state, sgp.scale.score.equated, SGPt), sep=".")
+					} else {
 					tmp.data <- ddcast(
 						data.table(
 							data.table(sgp.data, key="ID")[
@@ -373,6 +521,7 @@ function(sgp.data,
 								sgp.iter[[sgp.projection.grade.sequences.label]]), nomatch=0][,
 								'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep=".")],
 							ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", "ACHIEVEMENT_LEVEL", state, sgp.scale.score.equated, SGPt), sep=".")
+					}
 				}
 
 				if ("STATE" %in% var.names && dim(tmp.data)[1]!=0) {
@@ -382,7 +531,7 @@ function(sgp.data,
 					}
 				}
 				return(tmp.data)
-			} else {
+			} else {  ###  END is.null(sgp.targets)
 				if (sqlite.tf) {
 					tmp.ids <- data.table(dbGetQuery(con, paste0("select ID from sgp_data where CONTENT_AREA in ('", tail(sgp.iter[["sgp.content.areas"]], 1), "')",
 						" AND GRADE in ('", tail(sgp.iter[["sgp.grade.sequences"]], 1), "')",
@@ -394,27 +543,74 @@ function(sgp.data,
 						tail(head(sgp.iter[["sgp.panel.years"]], -1), length(sgp.iter[[sgp.projection.grade.sequences.label]])),
 						sgp.iter[[sgp.projection.grade.sequences.label]]), nomatch=0][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep=".")]
 
-						tmp.data <- ddcast(tmp.data,
-							ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", state, sgp.scale.score.equated, SGPt), sep=".")[
-								sgp.targets[CONTENT_AREA==tail(sgp.iter[["sgp.content.areas"]], 1) &
-								YEAR==tail(sgp.iter[["sgp.panel.years"]], 1)], nomatch=0][, !c("CONTENT_AREA", "YEAR"), with=FALSE]
-					dbDisconnect(con)
-				} else {
-					tmp.data <- ddcast(
-						data.table(
-							data.table(sgp.data, key="ID")[
-								sgp.data[SJ("VALID_CASE",
-								tail(sgp.iter[["sgp.content.areas"]], 1),
-								tail(sgp.iter[["sgp.panel.years"]], 1),
-								tail(sgp.iter[["sgp.grade.sequences"]], 1))][,"ID", with=FALSE]],
-						key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))[
-						SJ("VALID_CASE", sgp.iter[[sgp.projection.content.areas.label]],
-							tail(head(sgp.iter[["sgp.panel.years"]], -1), length(sgp.iter[[sgp.projection.grade.sequences.label]])),
-							sgp.iter[[sgp.projection.grade.sequences.label]]), nomatch=0][,
-							'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep=".")],
+					if (is.character(fix.duplicates)) {
+						if (fix.duplicates!="KEEP.ALL") stop("Invalid character for 'fix.duplicates' argument/SGPstateData > SGP_Configuration value.  Should be 'KEEP.ALL'.")
+						if (any(duplicated(tmp.data, by=getKey(tmp.data)))) {
+							invisible(tmp.data[, CONTENT_AREA := "TEMP_CONTENT_AREA"])
+							tmp.data <- createUniqueLongData(tmp.data)
+						}}
+
+					tmp.data <- ddcast(tmp.data,
 						ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", state, sgp.scale.score.equated, SGPt), sep=".")[
 							sgp.targets[CONTENT_AREA==tail(sgp.iter[["sgp.content.areas"]], 1) &
 							YEAR==tail(sgp.iter[["sgp.panel.years"]], 1)], nomatch=0][, !c("CONTENT_AREA", "YEAR"), with=FALSE]
+					dbDisconnect(con)
+				} else {
+					tmp.lookup1 <- SJ("VALID_CASE",
+						 	tail(sgp.iter[["sgp.content.areas"]], 1),
+						 	tail(sgp.iter[["sgp.panel.years"]], 1),
+							tail(sgp.iter[["sgp.grade.sequences"]], 1))
+
+					tmp.lookup2 <- SJ("VALID_CASE",
+							sgp.iter[[sgp.projection.content.areas.label]],
+							tail(head(sgp.iter[["sgp.panel.years"]], -1), length(sgp.iter[[sgp.projection.grade.sequences.label]])),
+							sgp.iter[[sgp.projection.grade.sequences.label]])
+
+					setkey(tmp.lookup2, V3)
+					setkey(tmp.lookup2, NULL)
+					setnames(tmp.lookup1, paste0("V", 1:4), c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))
+					setnames(tmp.lookup2, paste0("V", 1:4), c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))
+					setkeyv(sgp.data, names(tmp.lookup1))
+
+					if (is.character(fix.duplicates)) {
+						if (fix.duplicates!="KEEP.ALL") stop("Invalid character for 'fix.duplicates' argument/SGPstateData > SGP_Configuration value.  Should be 'KEEP.ALL'.")
+
+						tmp.data <- data.table(data.table(sgp.data, key="ID")[sgp.data[tmp.lookup1][,"ID", with=FALSE]],
+							key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))[tmp.lookup2, nomatch=0][,'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep=".")]
+
+						if (any(duplicated(tmp.data, by=getKey(tmp.data)))) {
+							invisible(tmp.data[, CONTENT_AREA := "TEMP_CONTENT_AREA"])
+							tmp.data <- createUniqueLongData(tmp.data)
+
+							##  Create SCALE_SCORE history vars to merge on
+							tmp.data <- ddcast(tmp.data, ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", state, sgp.scale.score.equated, SGPt), sep=".")[,
+								GRADE := tmp.lookup1[["GRADE"]]]
+							jExpression <- paste0("paste(", paste(grep("SCALE_SCORE[.]", names(tmp.data), value=TRUE) , collapse = ", "), ", sep = '; ')")
+							invisible(tmp.data[, SGP_PROJECTION_GROUP_SCALE_SCORES := eval(parse(text=jExpression))])
+							invisible(tmp.data[, SGP_PROJECTION_GROUP_SCALE_SCORES := gsub("NA; ", "", SGP_PROJECTION_GROUP_SCALE_SCORES)])
+							invisible(tmp.data[grepl("_DUPS_[0-9]*", ID), DUPS_FLAG := gsub(".*_DUPS_", "", ID)])
+							invisible(tmp.data[, ID := gsub("_DUPS_[0-9]*", "", ID)])
+
+							tmp.data <- tmp.data[sgp.targets[CONTENT_AREA == tmp.lookup1[["CONTENT_AREA"]] & YEAR == tmp.lookup1[["YEAR"]]],
+								on=c("ID", "GRADE", "SGP_PROJECTION_GROUP_SCALE_SCORES"), nomatch=0][,
+								!c("CONTENT_AREA", "YEAR", "GRADE", "SGP_PROJECTION_GROUP_SCALE_SCORES"), with=FALSE]
+
+							invisible(tmp.data[!is.na(DUPS_FLAG), ID := paste0(ID, "_DUPS_", seq.int(.N)), by="ID"])
+							invisible(tmp.data[, DUPS_FLAG := NULL])
+						} else {  ###  END if (any(duplicated(tmp.data, ...)))
+							tmp.data <- ddcast(tmp.data, ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", state, sgp.scale.score.equated, SGPt), sep=".")[, GRADE := tmp.lookup1[["GRADE"]]][
+								sgp.targets[CONTENT_AREA == tmp.lookup1[["CONTENT_AREA"]] & YEAR == tmp.lookup1[["YEAR"]]], on=intersect(names(tmp.data), c("ID", "GRADE")), nomatch=0][,
+								!c("CONTENT_AREA", "YEAR", "GRADE"), with=FALSE]
+						}
+					} else {  ###  END if (is.character(fix.duplicates)
+						tmp.data <- ddcast(data.table(data.table(sgp.data, key="ID")[
+									sgp.data[tmp.lookup1][,"ID", with=FALSE]], key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))[
+									tmp.lookup2, nomatch=0][,
+									'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep=".")],
+								ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", state, sgp.scale.score.equated, SGPt), sep=".")[
+									sgp.targets[CONTENT_AREA == tmp.lookup1[["CONTENT_AREA"]] & YEAR == tmp.lookup1[["YEAR"]]], nomatch=0][,
+									!c("CONTENT_AREA", "YEAR"), with=FALSE]
+					}
 				}
 
 				if ("STATE" %in% var.names && dim(tmp.data)[1]!=0) {

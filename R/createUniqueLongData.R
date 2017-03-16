@@ -1,52 +1,140 @@
 `createUniqueLongData` <-
-function(long.data,
-	  dups.years=NULL) {
+function(long.data) {
 
 	### Set variable to NULL to prevent R CMD Check warnings
 
-	YEAR <- ID <- VALID_CASE <- CONTENT_AREA <- GRADE <- TEMP_ID <- NULL
+	YEAR <- ID <- VALID_CASE <- CONTENT_AREA <- GRADE <- TEMP_ID <- DUP_COUNT <- EXTENDED <- NULL
+
+	###  Utility function
+
+	extendLongData <- function(my.tmp.data) {
+	  ###   permutations function from gtools package
+	  permutations <- function (n, r, v = 1:n, set = TRUE, repeats.allowed = FALSE) {
+	    if (mode(n) != "numeric" || length(n) != 1 || n < 1 || (n%%1) != 0) stop("bad value of n")
+	    if (mode(r) != "numeric" || length(r) != 1 || r < 1 || (r%%1) != 0) stop("bad value of r")
+	    if (!is.atomic(v) || length(v) < n)
+	      stop("v is either non-atomic or too short")
+	    if ((r > n) & repeats.allowed == FALSE)
+	      stop("r > n and repeats.allowed=FALSE")
+	    if (set) {
+	      v <- unique(sort(v))
+	      if (length(v) < n) stop("too few different elements")
+	    }
+	    v0 <- vector(mode(v), 0)
+	    if (repeats.allowed)
+	    sub <- function(n, r, v) {
+	      if (r == 1)
+	        matrix(v, n, 1)
+	      else if (n == 1)
+	        matrix(v, 1, r)
+	      else {
+	        inner <- Recall(n, r - 1, v)
+	        cbind(rep(v, rep(nrow(inner), n)), matrix(t(inner),
+	          ncol = ncol(inner), nrow = nrow(inner) * n,
+	          byrow = TRUE))
+	      }
+	    }
+	    else sub <- function(n, r, v) {
+	      if (r == 1)
+	          matrix(v, n, 1)
+	      else if (n == 1)
+	          matrix(v, 1, r)
+	      else {
+	          X <- NULL
+	          for (i in 1:n) X <- rbind(X, cbind(v[i], Recall(n - 1, r - 1, v[-i])))
+	          X
+	      }
+	    }
+	    sub(n, r, v[1:n])
+	  } ### END permutations function
+
+		my.tmp.data <- unique(my.tmp.data) # Remove EXACT duplicates & data extended in previous years/analyses
+		key.vars <- intersect(names(my.tmp.data), c("YEAR", "SCALE_SCORE"))
+	  setkeyv(my.tmp.data, key.vars)
+	  invisible(my.tmp.data[, DUP_COUNT := seq.int(.N), by="YEAR"])
+	  dups.by.yr <- my.tmp.data[, list(N = .N), by="YEAR"]
+	  max.dups <- max(dups.by.yr[["N"]])
+	  all.years <- sort(unique(my.tmp.data, by="YEAR")[['YEAR']])
+
+	  tmp.perms <- data.table(permutations(n = max.dups, r = length(all.years), repeats.allowed=T))
+		setkeyv(tmp.perms, rev(names(tmp.perms))) # setkeyv(tmp.perms, names(tmp.perms)[ncol(tmp.perms)]) # Make last year pretty'r
+	  tmp.perms <- tmp.perms[eval(parse(text=paste0("V", seq_along(all.years), "<=", dups.by.yr[["N"]], collapse=" & ")))]
+	  tmp.perms.long <- data.table(YEAR = all.years, t(tmp.perms[eval(parse(text=paste0("V", seq_along(all.years), "<=", dups.by.yr[["N"]], collapse=" & ")))])) # ID = my.tmp.data[["ID"]][1],
+	  tmp.perms.long <- melt(tmp.perms.long, id.vars='YEAR', measure.vars=grep("V", names(tmp.perms.long), value=TRUE), variable.name = "EXTENDED", value.name="DUP_COUNT")
+	  setkeyv(tmp.perms.long, c("YEAR", "DUP_COUNT"))
+	  setkeyv(my.tmp.data, c("YEAR", "DUP_COUNT"))
+	  my.tmp.data <- my.tmp.data[tmp.perms.long, allow.cartesian=TRUE]
+	  invisible(my.tmp.data[, ID := paste0(ID, "_DUPS_", gsub("V", "", EXTENDED))])
+	  invisible(my.tmp.data[, c('EXTENDED', 'DUP_COUNT') := NULL])
+	  return(my.tmp.data)
+	} # END extendLongData function
 
 
-	### Initialize some settings/variables
-
-	dups.list <- dups.extended <- list()
+	###  Identify duplicated cases and extend long data accordingly
 	tmp.key <- getKey(long.data)
-	all.years <- sort(unique(long.data, by="YEAR")[['YEAR']])
-	if (is.null(dups.years)) dups.years <- sort(unique(long.data[['YEAR']][duplicated(long.data, by=tmp.key)]))
-	tmp.last.year <- tail(all.years, 1)
+	dup.ids <- unique(long.data[duplicated(long.data, by=tmp.key), ID])
+	dups.extended <- rbindlist(lapply(dup.ids, function(f) extendLongData(long.data[ID==f])))
 
+	###  Combine extended and non-duplicated data into single long data object ->> return it
+	all.data <- rbindlist(list(long.data[!grepl(paste(dup.ids, collapse="|"), ID),], dups.extended))
 
-	### Create a list of duplicates for each year of the data
+	setkeyv(all.data, tmp.key)
+	return(all.data)
 
-	for (year.iter in dups.years) {
-		this.year.data <- long.data[VALID_CASE=="VALID_CASE" & YEAR==year.iter]
-		if (year.iter == tmp.last.year) tmp.year.key <- tmp.key else tmp.year.key <- c(tmp.key, "GRADE") # tmp.year.key <- c("VALID_CASE", "CONTENT_AREA", "GRADE", "YEAR", "ID")
-		setkeyv(this.year.data, tmp.year.key)
-		dups.list[[year.iter]] <- data.table(unique(this.year.data[duplicated(this.year.data, by=tmp.year.key)][, tmp.year.key, with=FALSE], by=tmp.year.key)[this.year.data, nomatch=0][,setdiff(tmp.year.key, "YEAR"), with=FALSE], key=setdiff(tmp.year.key, "YEAR"))
-		if("GRADE" %in% names(dups.list[[year.iter]])) {
-			invisible(dups.list[[year.iter]][, GRADE := NULL])
-			setkeyv(dups.list[[year.iter]], setdiff(tmp.key, "YEAR"))
-		}
-	}
-
-	### For each year of data, extend that data based upon duplicates in other years created in previous step
-
-	setkeyv(long.data, setdiff(tmp.key, "YEAR"))
-	for (year.iter in sort(unique(unlist(lapply(dups.years, function(x) setdiff(all.years, x)))))) {
-		dups.extended[[year.iter]] <- data.table(long.data[VALID_CASE=="VALID_CASE" & YEAR==year.iter][Reduce(function(...) merge(..., all = TRUE), dups.list[intersect(setdiff(all.years, year.iter), names(dups.list))]), nomatch=0], key=c(tmp.key, "SCALE_SCORE"))
-	}
-	dups.all <- rbindlist(dups.extended)
+	### ### ###  OLD R
+	#
+	###  Unused Args:
+  # dups.years=NULL,
+	# current.year.only=FALSE
+	#
+	# dups.list <- dups.extended <- list()
+	# if (is.null(dups.years)) dups.years <- sort(unique(long.data[['YEAR']][duplicated(long.data, by=tmp.key)]))
+	#
+	# ###  If current.year.only is TRUE
+	#
+	# if (current.year.only) {
+	# 	tmp.last.year <- tail(sort(dups.years), 1)
+	# 	tmp.unique.index <- long.data[!long.data[duplicated(long.data, by=tmp.key)], on=tmp.key, which=TRUE]
+	# 	long.data[YEAR==tmp.last.year, ID := paste(ID, "DUPS", seq.int(.N), sep="_"), by=list(VALID_CASE, CONTENT_AREA, YEAR, ID)]
+	# 	long.data[tmp.unique.index, ID := gsub("_DUPS_[0-9]*", "", ID)]
+	# 	setkeyv(long.data, tmp.key)
+	# 	return(long.data)
+	# }
+	#
+	# all.years <- sort(unique(long.data, by="YEAR")[['YEAR']])
+	# tmp.last.year <- tail(all.years, 1)
+	#
+	# ### Create a list of duplicates for each year of the data
+	#
+	# for (year.iter in dups.years) {
+	# 	this.year.data <- long.data[VALID_CASE=="VALID_CASE" & YEAR==year.iter]
+	# 	if (year.iter == tmp.last.year) tmp.year.key <- tmp.key else tmp.year.key <- c(tmp.key, "GRADE") # tmp.year.key <- c("VALID_CASE", "CONTENT_AREA", "GRADE", "YEAR", "ID")
+	# 	setkeyv(this.year.data, tmp.year.key)
+	# 	dups.list[[year.iter]] <- data.table(unique(this.year.data[duplicated(this.year.data, by=tmp.year.key)][, tmp.year.key, with=FALSE], by=tmp.year.key)[this.year.data, nomatch=0][,setdiff(tmp.year.key, "YEAR"), with=FALSE], key=setdiff(tmp.year.key, "YEAR"))
+	# 	if("GRADE" %in% names(dups.list[[year.iter]])) {
+	# 		invisible(dups.list[[year.iter]][, GRADE := NULL])
+	# 		setkeyv(dups.list[[year.iter]], setdiff(tmp.key, "YEAR"))
+	# 	}
+	# }
+	#
+	# ### For each year of data, extend that data based upon duplicates in other years created in previous step
+	#
+	# setkeyv(long.data, setdiff(tmp.key, "YEAR"))
+	# for (year.iter in sort(unique(unlist(lapply(dups.years, function(x) setdiff(all.years, x)))))) {
+	# 	dups.extended[[year.iter]] <- data.table(long.data[VALID_CASE=="VALID_CASE" & YEAR==year.iter][Reduce(function(...) merge(..., all = TRUE), dups.list[intersect(setdiff(all.years, year.iter), names(dups.list))]), nomatch=0], key=c(tmp.key, "SCALE_SCORE"))
+	# }
+	# dups.all <- rbindlist(dups.extended)
 
 
 	### Merge extended duplicates with modified ID together with unique cases
-
-	all.data <- rbindlist(list(long.data[!dups.all, on=tmp.key], dups.all))
-	tmp.unique.index <- all.data[!all.data[duplicated(all.data, by=tmp.key)], on=tmp.key, which=TRUE]
-	all.data[YEAR==tmp.last.year, TEMP_ID := paste(ID, "DUPS", seq.int(.N), sep="_"), by=list(VALID_CASE, CONTENT_AREA, YEAR, ID)]
-	all.data[YEAR!=tmp.last.year, TEMP_ID := paste(ID, "DUPS", seq.int(.N), sep="_"), by=list(VALID_CASE, CONTENT_AREA, GRADE, YEAR, ID)]
-	all.data[tmp.unique.index, TEMP_ID := gsub("_DUPS_[0-9]*", "", ID)]
-	all.data[, ID := TEMP_ID]
-	all.data[, TEMP_ID := NULL]
-	setkeyv(all.data, tmp.key)
-	return(all.data)
+	#
+	# all.data <- rbindlist(list(long.data[!dups.all, on=tmp.key], dups.all))
+	# tmp.unique.index <- all.data[!all.data[duplicated(all.data, by=tmp.key)], on=tmp.key, which=TRUE]
+	# all.data[YEAR==tmp.last.year, TEMP_ID := paste(ID, "DUPS", seq.int(.N), sep="_"), by=list(VALID_CASE, CONTENT_AREA, YEAR, ID)]
+	# all.data[YEAR!=tmp.last.year, TEMP_ID := paste(ID, "DUPS", seq.int(.N), sep="_"), by=list(VALID_CASE, CONTENT_AREA, GRADE, YEAR, ID)]
+	# all.data[tmp.unique.index, TEMP_ID := gsub("_DUPS_[0-9]*", "", ID)]
+	# all.data[, ID := TEMP_ID]
+	# all.data[, TEMP_ID := NULL]
+	# setkeyv(all.data, tmp.key)
+	# return(all.data)
 } ### END createUniqueLongData

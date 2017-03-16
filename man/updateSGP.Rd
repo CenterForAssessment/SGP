@@ -157,9 +157,10 @@ If missing the function will use the data to infer all the grade progressions fo
 student growth percentiles as part of call to \code{\link{studentGrowthPercentiles}}. Default is TRUE. Setting to FALSE produces only coefficient
 matrices.
   }
-  \item{fix.duplicates}{Argument to control how \code{prepareSGP} deals with duplicate records based upon the key of VALID_CASE, CONTENT_AREA, YEAR, and ID.
-  The function currently warns of duplicate records and doesn't modify data. If set to TRUE, \code{prepareSGP} tries to
-  fix the duplicate individual records by adding a '_DUP_***' suffix to the duplicate ID in order to create unique records based upon the key.
+	\item{fix.duplicates}{Argument to control how \code{analyzeSGP} and \code{combineSGP} deal with duplicate records based upon the key of VALID_CASE, CONTENT_AREA, YEAR, and ID.
+  The function currently warns of duplicate records and doesn't modify data.  If set to 'KEEP.ALL', \code{analyzeSGP} tries to fix the duplicate individual records by
+  adding a '_DUP_***' suffix to the duplicate ID before running \code{\link{studentGrowthPercentiles}} in order to create unique records based upon the key.  If needed, the
+	\code{@Data} slot will be extended as necessary to accomodate additional student records and SGP results in \code{combineSGP}.
   }
   \item{...}{Arguments to be passed to \code{\link{abcSGP}} for finer control over SGP calculations. For example, 'parallel.config' can be supplied to abcSGP for parallel computation.
   }

@@ -55,6 +55,12 @@ function(what_sgp_object=NULL,
 		state <- getStateAbbreviation(tmp.name, "updateSGP")
 	}
 
+	### Configure arguments
+
+	if (is.null(fix.duplicates) & !is.null(SGPstateData[[state]][["SGP_Configuration"]][["fix.duplicates"]])) {
+		fix.duplicates <- SGPstateData[[state]][["SGP_Configuration"]][["fix.duplicates"]]
+	}
+
 	if (!is.null(calculate.simex) | !is.null(calculate.simex.baseline)) {
 		if (is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
 			messageSGP("\tNOTE: CSEMs are required in 'SGPstateData' (either as a data.frame of CSEMs or as a variable name of CSEMsin @Data) to produce SIMEX corrected SGPs. SIMEX corrected SGPs will NOT be calculated.")
@@ -178,6 +184,7 @@ function(what_sgp_object=NULL,
 					sgp.percentiles.equating.method=sgp.percentiles.equating.method,
 					sgp.percentiles.calculate.sgps=sgp.percentiles.calculate.sgps,
 					parallel.config=parallel.config,
+					fix.duplicates=fix.duplicates,
 					...
 					)
 
@@ -260,6 +267,7 @@ function(what_sgp_object=NULL,
 						sgp.percentiles.equating.method=sgp.percentiles.equating.method,
 						sgp.percentiles.calculate.sgps=sgp.percentiles.calculate.sgps,
 						parallel.config=parallel.config,
+						fix.duplicates=fix.duplicates,
 						...)
 
 			### Print finish and return SGP object
@@ -309,6 +317,7 @@ function(what_sgp_object=NULL,
 							sgp.percentiles.equating.method=sgp.percentiles.equating.method,
 							sgp.percentiles.calculate.sgps=sgp.percentiles.calculate.sgps,
 							parallel.config=parallel.config,
+							fix.duplicates=fix.duplicates,
 							...)
 
 				if ("combineSGP" %in% steps) {
@@ -323,6 +332,7 @@ function(what_sgp_object=NULL,
 						sgp.target.scale.scores=sgp.target.scale.scores,
 						sgp.target.scale.scores.only=sgp.target.scale.scores.only,
 						SGPt=SGPt,
+						fix.duplicates=fix.duplicates,
 						parallel.config=parallel.config))
 				}
 
@@ -377,6 +387,7 @@ function(what_sgp_object=NULL,
 						sgp.target.scale.scores=sgp.target.scale.scores,
 						sgp.target.scale.scores.only=sgp.target.scale.scores.only,
 						SGPt=SGPt,
+						fix.duplicates=fix.duplicates,
 						parallel.config=parallel.config)
 				}
 
@@ -471,6 +482,7 @@ function(what_sgp_object=NULL,
 							sgp.percentiles.equating.method=sgp.percentiles.equating.method,
 							sgp.percentiles.calculate.sgps=sgp.percentiles.calculate.sgps,
 							parallel.config=parallel.config,
+							fix.duplicates=fix.duplicates,
 							...)
 
 				### Print finish and return SGP object

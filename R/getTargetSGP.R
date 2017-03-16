@@ -1,5 +1,6 @@
 `getTargetSGP` <-
 function(sgp_object,
+	slot.data,
 	content_areas,
 	state,
 	years,
@@ -7,13 +8,42 @@ function(sgp_object,
 	target.level,
 	max.sgp.target.years.forward=3,
 	subset.ids=NULL,
-	return.lagged.status=TRUE) {
+	return.lagged.status=TRUE,
+	fix.duplicates=fix.duplicates) {
 
-	VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- FIRST_OBSERVATION <- LAST_OBSERVATION <- STATE <- SGP_PROJECTION_GROUP <- NULL
+	VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- GRADE <- FIRST_OBSERVATION <- LAST_OBSERVATION <- STATE <- SGP_PROJECTION_GROUP <- DUPS_FLAG <- SCALE_SCORE <- SCALE_SCORE_PRIOR <- NULL
 
 	### Utility functions
 
-	getTargetSGP_INTERNAL <- function(tmp_object_1, state, state.iter, projection_group.iter, target.type, target.level, year_within) {
+	getTargetSGP_INTERNAL <- function(tmp_object_1, state, state.iter, projection_group.iter, target.type, target.level, year_within, fix.duplicates) {
+
+		if (any(duplicated(tmp_object_1, by=getKey(tmp_object_1))) & !is.null(fix.duplicates)) { #  Needed for GRADE excluded dups
+			tmp_object_1 <- createUniqueLongData(tmp_object_1)
+		}
+
+		if (dups.tf <- (!is.null(fix.duplicates) & any(grepl("_DUPS_[0-9]*", tmp_object_1[["ID"]])))) {
+				invisible(tmp_object_1[, ID := gsub("_DUPS_[0-9]*", "", ID)])
+
+			##  Create SCALE_SCORE history vars to merge on
+			tmp.split <- strsplit(as.character(tmp_object_1[["SGP_PROJECTION_GROUP_SCALE_SCORES"]]), "; ")
+			num.scores <- max(sapply(seq_along(tmp.split), function(f) length(tmp.split[[f]])))
+			if (grepl('lagged', target.type)) {
+				invisible(tmp_object_1[, SCALE_SCORE_PRIOR := as.numeric(sapply(tmp.split, function(x) rev(x)[1]))])
+				if (num.scores > 1) {
+					for (tmp.prior in tail(seq(num.scores), -1)) {
+						invisible(tmp_object_1[, paste0("SCALE_SCORE_PRIOR_", tmp.prior) := as.numeric(sapply(tmp.split, function(x) rev(x)[tmp.prior]))])
+					}
+				}
+			} else {
+				invisible(tmp_object_1[, SCALE_SCORE := as.numeric(sapply(tmp.split, function(x) rev(x)[1]))])
+				invisible(tmp_object_1[, SCALE_SCORE_PRIOR := as.numeric(sapply(tmp.split, function(x) rev(x)[2]))])
+				if (num.scores > 2) {
+					for (tmp.prior in tail(seq(num.scores), -2)) {
+						invisible(tmp_object_1[, paste0("SCALE_SCORE_PRIOR_", tmp.prior-1L) := as.numeric(sapply(tmp.split, function(x) rev(x)[tmp.prior]))])
+					}
+				}
+			}
+		}
 
 		if (year_within) {
 			###  Assumes that any "canonical progression" will use the LAST_OBSERVATION for all (or at least the most recent) prior(s) in straight progressions
@@ -25,8 +55,8 @@ function(sgp_object,
 				tmp_object_1[,FIRST_OBSERVATION:=1L]; year.within.key <- "FIRST_OBSERVATION"
 			}
 			setkeyv(tmp_object_1, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", year.within.key))
-			setkeyv(sgp_object@Data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", year.within.key))
-			tmp_object_1 <- data.table(sgp_object@Data[,c(key(tmp_object_1), "YEAR_WITHIN"), with=FALSE], key=key(tmp_object_1))[tmp_object_1]
+			setkeyv(slot.data, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", year.within.key))
+			tmp_object_1 <- data.table(slot.data[,c(key(tmp_object_1), "YEAR_WITHIN"), with=FALSE], key=key(tmp_object_1))[tmp_object_1]
 			jExp_Key <- c('VALID_CASE', 'CONTENT_AREA', 'YEAR', 'ID', 'YEAR_WITHIN')
 		} else {
 			setkeyv(tmp_object_1, c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
@@ -35,15 +65,27 @@ function(sgp_object,
 
 		if (target.type %in% c("sgp.projections", "sgp.projections.baseline")) {
 			tmp.suffix <- "_CURRENT"
+			if (dups.tf) {
+				tmp.merge.vars <- intersect(names(slot.data), c(key(tmp_object_1), grep("SCALE_SCORE$|SCALE_SCORE_PRIOR", names(tmp_object_1), value=TRUE), "DUPS_FLAG"))
+			} else tmp.merge.vars <- key(tmp_object_1)
 			if (year_within) {
-				tmp_object_1 <- sgp_object@Data[,c(key(tmp_object_1), "ACHIEVEMENT_LEVEL"), with=FALSE][tmp_object_1, on=key(tmp_object_1)]
-			} else 	tmp_object_1 <- sgp_object@Data[,c(key(tmp_object_1), "ACHIEVEMENT_LEVEL"), with=FALSE][tmp_object_1, on=key(tmp_object_1)]
-		} else {
+				tmp_object_1 <- slot.data[,c(tmp.merge.vars, "ACHIEVEMENT_LEVEL", "GRADE"), with=FALSE][tmp_object_1, on = setdiff(tmp.merge.vars, "DUPS_FLAG")]
+			} else 	tmp_object_1 <- slot.data[,c(tmp.merge.vars, "ACHIEVEMENT_LEVEL", "GRADE"), with=FALSE][tmp_object_1, on = setdiff(tmp.merge.vars, "DUPS_FLAG")]
+		} else {  # else "sgp.projections.lagged", "sgp.projections.lagged.baseline"
 			tmp.suffix <- "$"
+			if (dups.tf) {
+				tmp.merge.vars <- intersect(names(slot.data), c(key(tmp_object_1), grep("SCALE_SCORE_PRIOR", names(tmp_object_1), value=TRUE), "DUPS_FLAG"))
+			} else tmp.merge.vars <- key(tmp_object_1)
+			if (year_within) {
+				tmp_object_1 <- slot.data[,c(tmp.merge.vars, "GRADE"), with=FALSE][tmp_object_1, on = setdiff(tmp.merge.vars, "DUPS_FLAG")]
+			} else tmp_object_1 <- slot.data[,c(tmp.merge.vars, "GRADE"), with=FALSE][tmp_object_1, on = setdiff(tmp.merge.vars, "DUPS_FLAG")]
+			if (dups.tf & any(is.na(tmp_object_1[["GRADE"]]))) {
+				invisible(tmp_object_1[is.na(GRADE), GRADE := unique(slot.data[, c(getKey(tmp_object_1), "GRADE"), with=FALSE][tmp_object_1[is.na(GRADE),], on = getKey(tmp_object_1)])[,GRADE]])
+			}
 		}
 
-		tmp_object_1[, paste(target.level, "STATUS_INITIAL", sep="_"):=
-			getTargetInitialStatus(tmp_object_1[[grep("ACHIEVEMENT", names(tmp_object_1), value=TRUE)]], state, state.iter, target.level)]
+		invisible(tmp_object_1[, paste(target.level, "STATUS_INITIAL", sep="_"):=
+			getTargetInitialStatus(tmp_object_1[[grep("ACHIEVEMENT", names(tmp_object_1), value=TRUE)]], state, state.iter, target.level)])
 		tmp_object_1 <- na.omit(tmp_object_1, cols=paste(target.level, "STATUS_INITIAL", sep="_"))
 
 		## Find min/max of targets based upon CATCH_UP_KEEP_UP_STATUS_INITIAL status
@@ -67,6 +109,13 @@ function(sgp_object,
 				paste(grep(paste0(sgp.projections.projection.unit.label, "_[", paste(seq(num.years.to.get), collapse=""), "]", tmp.suffix), names(tmp_object_1), value=TRUE), collapse=", ")
 
 			jExpression <- parse(text=paste0("{catch_keep_move_functions[[unclass(", target.level, "_STATUS_INITIAL)]](", tmp.level.variables, ", na.rm=TRUE)}"))
+			if (dups.tf) { #  Re-create _DUPS_ labels since ID is in jExp_Key
+				if ("DUPS_FLAG" %in% names(tmp_object_1)) invisible(tmp_object_1[!is.na(DUPS_FLAG), ID := paste0(ID, "_DUPS_", DUPS_FLAG)])
+				setkeyv(tmp_object_1, getKey(tmp_object_1))
+				jExp_Key <- intersect(names(tmp_object_1), c(jExp_Key, grep("SCALE_SCORE$|SCALE_SCORE_PRIOR", names(tmp_object_1), value=TRUE), "GRADE", "DUPS_FLAG", "SGP_PROJECTION_GROUP_SCALE_SCORES")) #  Keep these vars - still unique by ID so doesn't change results
+			} else {
+				if (!is.null(fix.duplicates)) jExp_Key <- intersect(names(tmp_object_1), c(jExp_Key, "GRADE")) # For ignored grade dups
+			}
 			tmp_object_2 <- tmp_object_1[, eval(jExpression), keyby = jExp_Key]
 
 			if (target.type %in% c("sgp.projections.baseline", "sgp.projections.lagged.baseline")) baseline.label <- "_BASELINE" else baseline.label <- NULL
@@ -105,7 +154,7 @@ function(sgp_object,
 	if (length(tmp.names)==0) return(NULL)
 	tmp.list <- list()
 
-	if ("STATE" %in% names(sgp_object@Data)) {
+	if ("STATE" %in% names(slot.data)) {
 		tmp.unique.states <- sort(unique(unlist(sapply(tmp.names, function(x) unique(sgp_object@SGP[['SGProjections']][[x]][['STATE']])))))
 	} else {
 		tmp.unique.states <- state
@@ -120,10 +169,10 @@ function(sgp_object,
 				cols.to.get.names <- names(sgp_object@SGP[["SGProjections"]][[i]])[
 					c(grep(paste0("LEVEL_", level.to.get), names(sgp_object@SGP[["SGProjections"]][[i]])), grep("SGP_PROJECTION_GROUP", names(sgp_object@SGP[["SGProjections"]][[i]])))]
 				if (target.type %in% c("sgp.projections.lagged", "sgp.projections.lagged.baseline")) cols.to.get.names <- c("ACHIEVEMENT_LEVEL_PRIOR", cols.to.get.names)
-				if ("STATE" %in% names(sgp_object@Data)) cols.to.get.names <- c("STATE", cols.to.get.names)
+				if ("STATE" %in% names(slot.data)) cols.to.get.names <- c("STATE", cols.to.get.names)
 				cols.to.get <- match(cols.to.get.names, names(sgp_object@SGP[["SGProjections"]][[i]]))
 
-				if ("STATE" %in% names(sgp_object@Data)) {
+				if ("STATE" %in% names(slot.data)) {
 					tmp.list[[i]] <- data.table(
 						CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
 						YEAR=getTableNameYear(i),
@@ -147,7 +196,7 @@ function(sgp_object,
 			for (projection_group.iter in unique(tmp_object_1[['SGP_PROJECTION_GROUP']])) {
 				tmp.sgpTarget.list[[paste(state.iter, projection_group.iter, sep=".")]] <-
 				getTargetSGP_INTERNAL(tmp_object_1[SGP_PROJECTION_GROUP==projection_group.iter], state, state.iter, projection_group.iter, target.type, target.level,
-					year_within="YEAR_WITHIN" %in% names(sgp_object@Data))
+					year_within="YEAR_WITHIN" %in% names(slot.data), fix.duplicates=fix.duplicates)
 			}
 		} ### END !is.null(level.to.get)
 	} ### END for state.iter
