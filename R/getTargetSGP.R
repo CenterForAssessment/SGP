@@ -110,9 +110,11 @@ function(sgp_object,
 
 			jExpression <- parse(text=paste0("{catch_keep_move_functions[[unclass(", target.level, "_STATUS_INITIAL)]](", tmp.level.variables, ", na.rm=TRUE)}"))
 			if (dups.tf) { #  Re-create _DUPS_ labels since ID is in jExp_Key
-				invisible(tmp_object_1[!is.na(DUPS_FLAG), ID := paste0(ID, "_DUPS_", DUPS_FLAG)])
+				if ("DUPS_FLAG" %in% names(tmp_object_1)) invisible(tmp_object_1[!is.na(DUPS_FLAG), ID := paste0(ID, "_DUPS_", DUPS_FLAG)])
 				setkeyv(tmp_object_1, getKey(tmp_object_1))
 				jExp_Key <- intersect(names(tmp_object_1), c(jExp_Key, grep("SCALE_SCORE$|SCALE_SCORE_PRIOR", names(tmp_object_1), value=TRUE), "GRADE", "DUPS_FLAG", "SGP_PROJECTION_GROUP_SCALE_SCORES")) #  Keep these vars - still unique by ID so doesn't change results
+			} else {
+				if (!is.null(fix.duplicates)) jExp_Key <- intersect(names(tmp_object_1), c(jExp_Key, "GRADE")) # For ignored grade dups
 			}
 			tmp_object_2 <- tmp_object_1[, eval(jExpression), keyby = jExp_Key]
 

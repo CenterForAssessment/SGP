@@ -5,7 +5,7 @@ function(
 	test.option=list(),
 	memory.profile=FALSE) {
 
-	YEAR <- GRADE <- DUPS_FLAG <- NULL
+	YEAR <- GRADE <- DUPS_FLAG <- SGP_NORM_GROUP <- NULL
 
 	if (missing(TEST_NUMBER)) {
 		messageSGP("\ttestSGP carries out testing of SGP package. Tests currently included in testSGP:\n")
@@ -1951,10 +1951,8 @@ function(
 
 			sgpData_LONG[CONTENT_AREA=='MATHEMATICS' & GRADE=='9', CONTENT_AREA:='ALGEBRA_I']
 			sgpData_LONG[CONTENT_AREA=='MATHEMATICS' & GRADE=='10', CONTENT_AREA:='ALGEBRA_II']
-			sgpData_LONG[CONTENT_AREA=='READING' & GRADE=='9', CONTENT_AREA:='GRADE_9_LIT']
-			sgpData_LONG[CONTENT_AREA=='READING' & GRADE=='10', CONTENT_AREA:='AMERICAN_LIT']
 			sgpData_LONG[,GRADE_REPORTED:=GRADE]
-			sgpData_LONG[CONTENT_AREA %in% c('ALGEBRA_I', 'ALGEBRA_II', 'GRADE_9_LIT', 'AMERICAN_LIT'), GRADE:='EOCT']
+			sgpData_LONG[CONTENT_AREA %in% c('ALGEBRA_I', 'ALGEBRA_II'), GRADE:='EOCT']
 
 			dups <- rbindlist(list(
 								##  Current and prior year dups in PENULTIMATE_YEAR & ULTIMATE_YEAR
@@ -2004,6 +2002,20 @@ function(
 
 			SGPstateData[["DEMO"]][["SGP_Configuration"]][["fix.duplicates"]] <- "KEEP.ALL"
 			SGPstateData[["DEMO"]][["SGP_Norm_Group_Preference"]] <- NULL
+			SGPstateData[["DEMO"]][["Growth"]][["System_Type"]] <- "Cohort Referenced"
+
+			SGPstateData[["DEMO"]][["Student_Report_Information"]] <- list(
+				Vertical_Scale=list(MATHEMATICS=TRUE, READING=TRUE, GRADE_9_LIT=TRUE, AMERICAN_LIT=TRUE, ALGEBRA_I=TRUE, ALGEBRA_II=TRUE),
+				Content_Areas_Labels=list(MATHEMATICS="Mathematics", READING="Reading", GRADE_9_LIT="Grade 9 Literature", AMERICAN_LIT="American Literature", ALGEBRA_I="Algebra I", ALGEBRA_II="Algebra II"),
+				Content_Areas_Domains=list(MATHEMATICS="MATHEMATICS", READING="READING", GRADE_9_LIT="READING", AMERICAN_LIT="READING", ALGEBRA_I="MATHEMATICS", ALGEBRA_II="MATHEMATICS"),
+				Grades_Reported=list(MATHEMATICS=c("3","4","5","6","7","8"), READING=c("3","4","5","6","7","8"), GRADE_9_LIT="EOCT", AMERICAN_LIT="EOCT", ALGEBRA_I="EOCT", ALGEBRA_II="EOCT"),
+				Grades_Reported_Domains=list(MATHEMATICS=c("3","4","5","6","7","8","EOCT"), READING=c("3","4","5","6","7","8","EOCT")),
+				Achievement_Level_Labels=list(
+					"Unsatisfactory"="Unsatisfactory",
+					"Part Proficient"="Partially Proficient",
+					"Proficient"="Proficient",
+					"Advanced"="Advanced"))
+
 			### Create configurations
 
 			MATHEMATICS_PENULTIMATE_YEAR.config <- list(
@@ -2054,7 +2066,7 @@ function(
 			### Part 1
 
 			expression.to.evaluate <-
-				paste0("Demonstration_SGP <- abcSGP(\n\tsgp_object=sgpData_LONG[YEAR %in% head(sgpData.years, -1)],\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\tsgp.percentiles=TRUE,\n\tsgp.projections=TRUE,\n\tsgp.projections.lagged=TRUE,\n\tsgp.percentiles.baseline=FALSE,\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsimulate.sgps=FALSE,\n\tsgp.config=sgp.config.PENULTIMATE,\n\tparallel.config=", parallel.config, "\n)\n")
+				paste0("Demonstration_SGP <- abcSGP(\n\tsgp_object=sgpData_LONG[YEAR %in% head(sgpData.years, -1)],\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\tsgp.percentiles=TRUE,\n\tsgp.projections=TRUE,\n\tsgp.projections.lagged=TRUE,\n\tsgp.percentiles.baseline=FALSE,\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsimulate.sgps=FALSE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.config=sgp.config.PENULTIMATE,\n\tparallel.config=", parallel.config, "\n)\n")
 
 			cat("##### Begin testSGP test number 7 #####\n", fill=TRUE)
 			cat(paste0("EVALUATING Test Number 7, Part 1:\n", expression.to.evaluate), fill=TRUE)
@@ -2079,6 +2091,13 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP: FAIL\n")
 			}
 
+			### TEST of DUPS_FLAG variable
+			if (identical(digest::digest(Demonstration_SGP@Data$DUPS_FLAG), "e15cf4832c92a5aed90ad352f34ecd22")) {
+				tmp.messages <- c(tmp.messages, "\tTest of variable DUPS_FLAG: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of variable DUPS_FLAG: FAIL\n")
+			}
+
 			### TEST of SGP_TARGET_3_YEAR variable
 			if (identical(digest::digest(Demonstration_SGP@Data$SGP_TARGET_3_YEAR), "974677ba325e1f2bcd97c1e07e960472")) {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_3_YEAR: OK\n")
@@ -2087,17 +2106,26 @@ function(
 			}
 
 			### TEST of SGP_TARGET_3_YEAR_CURRENT variable
-			if (identical(digest::digest(Demonstration_SGP@Data$SGP_TARGET_3_YEAR_CURRENT), "62c4c2540729f01f2b357df2d98f1b88")) {
+			if (identical(digest::digest(Demonstration_SGP@Data$SGP_TARGET_3_YEAR_CURRENT), "6a6ce6c4b060fbbfa9557e45e1a87b25")) { # 62c4c2540729f01f2b357df2d98f1b88
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_3_YEAR_CURRENT: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_3_YEAR_CURRENT: FAIL\n")
 			}
 
-			### TEST of DUPS_FLAG variable
-			if (identical(digest::digest(Demonstration_SGP@Data$DUPS_FLAG), "e15cf4832c92a5aed90ad352f34ecd22")) {
-				tmp.messages <- c(tmp.messages, "\tTest of variable DUPS_FLAG: OK\n")
+			### TEST of SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT variable for MATHEMATICS.XXXX_XXXX scale score targets
+			setkey(Demonstration_SGP@SGP[['SGProjections']][[paste('MATHEMATICS', tail(head(sgpData.years, -1), 1), "TARGET_SCALE_SCORES", sep=".")]])
+			if (identical(digest::digest(Demonstration_SGP@SGP[['SGProjections']][[paste('MATHEMATICS', tail(head(sgpData.years, -1), 1), "TARGET_SCALE_SCORES", sep=".")]][['SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT']]), "cfdbc67cc171bb0f254f9768759078cb")) { # bf576ec83a3f22420d87db5bea983baf
+				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT: OK\n")
 			} else {
-				tmp.messages <- c(tmp.messages, "\tTest of variable DUPS_FLAG: FAIL\n")
+				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT: FAIL\n")
+			}
+
+			### TEST of SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1 variable for MATHEMATICS.XXXX_XXXX scale score targets
+			setkey(Demonstration_SGP@SGP[['SGProjections']][[paste('MATHEMATICS', tail(head(sgpData.years, -1), 1), "LAGGED.TARGET_SCALE_SCORES", sep=".")]])
+			if (identical(digest::digest(Demonstration_SGP@SGP[['SGProjections']][[paste('MATHEMATICS', tail(head(sgpData.years, -1), 1), "LAGGED.TARGET_SCALE_SCORES", sep=".")]][['SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1']]), "68538a5a21ccb1b6d544ecaf342081ad")) { # 0a0d9b6b1e85257964806039436a5101 seq
+				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1: FAIL\n")
 			}
 
 			### TEST of DUPS @Data variable
@@ -2157,7 +2185,7 @@ function(
 			### Part 2
 
 			expression.to.evaluate <-
-				paste0("Demonstration_SGP <- updateSGP(state='DEMO',\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=sgpData_LONG[YEAR == tail(sgpData.years, 1)],\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\tsgp.percentiles=TRUE,\n\tsgp.projections=TRUE,\n\tsgp.projections.lagged=TRUE,\n\tsgp.percentiles.baseline=FALSE,\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsimulate.sgps=FALSE,\n\tsgp.config=sgp.config.ULTIMATE,\n\tparallel.config=", parallel.config, "\n)\n")
+				paste0("Demonstration_SGP <- updateSGP(state='DEMO',\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=sgpData_LONG[YEAR == tail(sgpData.years, 1)],\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\tsgp.percentiles=TRUE,\n\tsgp.projections=TRUE,\n\tsgp.projections.lagged=TRUE,\n\tsgp.percentiles.baseline=FALSE,\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsimulate.sgps=FALSE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.config=sgp.config.ULTIMATE,\n\tparallel.config=", parallel.config, "\n)\n")
 
 			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
 
@@ -2184,6 +2212,14 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP: FAIL\n")
 			}
 
+			### TEST of DUPS_FLAG variable
+
+			if (identical(digest::digest(Demonstration_SGP@Data$DUPS_FLAG), "5409d1b3a84ea2a8bd0c291daeff4cc1")) {
+				tmp.messages <- c(tmp.messages, "\tTest of variable DUPS_FLAG: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of variable DUPS_FLAG: FAIL\n")
+			}
+
 			### TEST of SGP_TARGET_3_YEAR variable
 			if (identical(digest::digest(Demonstration_SGP@Data$SGP_TARGET_3_YEAR), "f18d29d1595406c153c7068872d5c720")) { # SNOW e481f6165ba14e18622b1d1c5b2d464c
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_3_YEAR: OK\n")
@@ -2192,18 +2228,26 @@ function(
 			}
 
 			### TEST of SGP_TARGET_3_YEAR_CURRENT variable
-			if (identical(digest::digest(Demonstration_SGP@Data$SGP_TARGET_3_YEAR_CURRENT), "f7ee20abc5e2d56cf70ef1cafdf46a93")) { # SNOW f799de0440ae5e3c7ef506574990fc62
+			if (identical(digest::digest(Demonstration_SGP@Data$SGP_TARGET_3_YEAR_CURRENT), "b6875f7c88169a5d5106092a6aaaead2")) { # SNOW
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_3_YEAR_CURRENT: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_3_YEAR_CURRENT: FAIL\n")
 			}
 
-			### TEST of DUPS_FLAG variable
-
-			if (identical(digest::digest(Demonstration_SGP@Data$DUPS_FLAG), "5409d1b3a84ea2a8bd0c291daeff4cc1")) {
-				tmp.messages <- c(tmp.messages, "\tTest of variable DUPS_FLAG: OK\n")
+			### TEST of SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT variable for MATHEMATICS.XXXX_XXXX scale score targets
+			setkey(Demonstration_SGP@SGP[['SGProjections']][[paste('MATHEMATICS', tail(head(sgpData.years, -1), 1), "TARGET_SCALE_SCORES", sep=".")]])
+			if (identical(digest::digest(Demonstration_SGP@SGP[['SGProjections']][[paste('MATHEMATICS', tail(head(sgpData.years, -1), 1), "TARGET_SCALE_SCORES", sep=".")]][['SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT']]), "cfdbc67cc171bb0f254f9768759078cb")) { #
+				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT: OK\n")
 			} else {
-				tmp.messages <- c(tmp.messages, "\tTest of variable DUPS_FLAG: FAIL\n")
+				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT: FAIL\n")
+			}
+
+			### TEST of SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1 variable for MATHEMATICS.XXXX_XXXX scale score targets
+			setkey(Demonstration_SGP@SGP[['SGProjections']][[paste('MATHEMATICS', tail(head(sgpData.years, -1), 1), "LAGGED.TARGET_SCALE_SCORES", sep=".")]])
+			if (identical(digest::digest(Demonstration_SGP@SGP[['SGProjections']][[paste('MATHEMATICS', tail(head(sgpData.years, -1), 1), "LAGGED.TARGET_SCALE_SCORES", sep=".")]][['SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1']]), "68538a5a21ccb1b6d544ecaf342081ad")) { #  seq
+				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1: FAIL\n")
 			}
 
 			### TEST of DUPS @Data variable

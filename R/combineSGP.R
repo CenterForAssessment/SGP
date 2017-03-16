@@ -24,7 +24,7 @@ function(
 	started.at <- proc.time()
 	messageSGP(paste("Started combineSGP", prettyDate()))
 
-	ID <- CONTENT_AREA <- YEAR <- GRADE <- YEAR_INTEGER_TMP <- ACHIEVEMENT_LEVEL <- CATCH_UP_KEEP_UP_STATUS_INITIAL <- MOVE_UP_STAY_UP_STATUS_INITIAL <- VALID_CASE <- NULL
+	ID <- CONTENT_AREA <- YEAR <- GRADE <- YEAR_INTEGER_TMP <- ACHIEVEMENT_LEVEL <- CATCH_UP_KEEP_UP_STATUS_INITIAL <- MOVE_UP_STAY_UP_STATUS_INITIAL <- VALID_CASE <- N <- NULL
 	MOVE_UP_STAY_UP_STATUS <- CATCH_UP_KEEP_UP_STATUS <- ACHIEVEMENT_LEVEL_PRIOR <- target.type <- SGP_PROJECTION_GROUP <- DUPS_FLAG <- i.DUPS_FLAG <- SCALE_SCORE <- SGP_NORM_GROUP_SCALE_SCORES <- NULL
 
 	tmp.messages <- NULL
@@ -177,7 +177,9 @@ function(
 	catch_keep_move_functions <- c(min, max)
 
 	getTargetData <- function(tmp.target.data, projection_group.iter, tmp.target.level.names) {
-		if ("YEAR_WITHIN" %in% names(tmp.target.data)) tmp.var.names <- c("ID", "CONTENT_AREA", "YEAR", "YEAR_WITHIN") else tmp.var.names <- c("ID", "CONTENT_AREA", "YEAR")
+		if ("YEAR_WITHIN" %in% names(tmp.target.data)) {
+			tmp.var.names <- c("ID", "CONTENT_AREA", "YEAR", "YEAR_WITHIN", intersect(names(tmp.target.data), c("GRADE", "SGP_PROJECTION_GROUP_SCALE_SCORES")))
+		} else tmp.var.names <- c("ID", "CONTENT_AREA", "YEAR", intersect(names(tmp.target.data), c("GRADE", "SGP_PROJECTION_GROUP_SCALE_SCORES")))
 		tmp.data <- tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter, c(tmp.var.names, tmp.target.level.names), with=FALSE]
 		na.omit(tmp.data, cols=grep("MOVE_UP_STAY_UP", tmp.target.level.names, invert=TRUE, value=TRUE))
 	}
@@ -268,7 +270,7 @@ function(
 			tmp.index <- slot.data[tmp.data[, key(slot.data), with=FALSE], which=TRUE]
 		}
 
-		variables.to.merge <- setdiff(names(tmp.data),  key(slot.data))
+		variables.to.merge <- setdiff(names(tmp.data), c(getKey(slot.data), "GRADE"))
 		invisible(slot.data[tmp.index, (variables.to.merge):=tmp.data[, variables.to.merge, with=FALSE]])
 
 		setkeyv(slot.data, getKey(slot.data))
@@ -340,7 +342,7 @@ function(
 			tmp.index <- slot.data[tmp.data[, key(slot.data), with=FALSE], which=TRUE]
 		}
 
-		variables.to.merge <- setdiff(names(tmp.data),  key(slot.data))
+		variables.to.merge <- setdiff(names(tmp.data), c(getKey(slot.data), "GRADE"))
 		invisible(slot.data[tmp.index, (variables.to.merge):=tmp.data[, variables.to.merge, with=FALSE]])
 
 		setkeyv(slot.data, getKey(slot.data))
@@ -412,7 +414,9 @@ function(
 						no_match <- tmp.data[which(is.na(tmp.index)),] # usually current year score is NA - still get a lagged projection, but no SGP (& therefore no prior score to merge on)
 						if (nrow(no_match) > 0) {
 							no_match.index <- slot.data[no_match[, intersect(getKey(slot.data), names(no_match)), with=FALSE, nomatch=NA], which=TRUE, on=getKey(slot.data)]
-							tmp.index[which(is.na(tmp.index))] <- no_match.index
+							if (length(no_match.index) == length(tmp.index[which(is.na(tmp.index))])) {
+								tmp.index[which(is.na(tmp.index))] <- no_match.index
+							} else stop("Error in matching LAGGED projections with duplicates in data (most likely student records with a current year SCALE_SCORE == NA).")
 						}
 					} else {
 						setnames(tmp.data, "SGP_PROJECTION_GROUP_SCALE_SCORES", "SGP_PROJECTION_GROUP_SCALE_SCORES_CURRENT")
@@ -423,14 +427,16 @@ function(
 
 						no_match <- tmp.data[which(is.na(tmp.index)),] # usually current year score is NA - still get a lagged projection, but no SGP (& therefore no prior score to merge on)
 						if (nrow(no_match) > 0) {
-							no_match.index <- slot.data[no_match[, intersect(getKey(slot.data), names(no_match)), with=FALSE, nomatch=NA], which=TRUE, on=getKey(slot.data)]
-							tmp.index[which(is.na(tmp.index))] <- no_match.index
+							no_match.index <- slot.data[no_match[, intersect(c(getKey(slot.data), "GRADE"), names(no_match)), with=FALSE, nomatch=NA], which=TRUE, on=intersect(c(getKey(slot.data), "GRADE"), names(no_match))]
+							if (length(no_match.index) == length(tmp.index[which(is.na(tmp.index))])) {
+								tmp.index[which(is.na(tmp.index))] <- no_match.index
+							} else stop("Error in matching STRAIGHT (CURRENT) projections with duplicates in data (most likely student records with a current year SCALE_SCORE == NA).")
 						}
 					}
 				} else {
 					tmp.index <- slot.data[tmp.data[,intersect(getKey(slot.data), names(tmp.data)), with=FALSE], which=TRUE]
 				}
-				variables.to.merge <- setdiff(names(tmp.data),  getKey(slot.data))
+				variables.to.merge <- setdiff(names(tmp.data), c(getKey(slot.data), "GRADE", "DUPS_FLAG", grep("SCALE_SCORE$|SCALE_SCORE_PRIOR", names(tmp.data), value=TRUE)))
 				invisible(slot.data[tmp.index, (variables.to.merge):=tmp.data[, variables.to.merge, with=FALSE]])
 			}
 		}
@@ -448,8 +454,8 @@ function(
 
 		if (!is.null(sgp.target.content_areas) && sgp.target.content_areas) {
 			for (my.sgp.target.content_area.iter in target.args[['my.sgp.target.content_area']]) {
-				slot.data[!is.na(get(target.args[['my.sgp.target']][1])), target.args[['my.sgp.target.content_area']]:=
-					getTargetSGPContentArea(GRADE[1], CONTENT_AREA[1], state, max.sgp.target.years.forward, target.args[['my.sgp.target.content_area.iter']]),
+				slot.data[!is.na(get(target.args[['my.sgp.target']][1])), target.args[['my.sgp.target.content_area']] :=
+					getTargetSGPContentArea(GRADE[1], CONTENT_AREA[1], state, max.sgp.target.years.forward, my.sgp.target.content_area.iter),
 					by=list(GRADE, CONTENT_AREA)]
 			}
 		}
@@ -555,8 +561,14 @@ function(
 						key=c(getKey(sgp_object), "SGP_PROJECTION_GROUP"))
 			}
 		}
-		tmp.target.data <- data.table(Reduce(function(x, y) merge(x, y, all=TRUE), tmp.target.list[!sapply(tmp.target.list, function(x) dim(x)[1]==0)],
+		tmp.target.data <- data.table(Reduce(function(x, y) merge(x, y, all=TRUE, by=intersect(names(y), names(x))), tmp.target.list[!sapply(tmp.target.list, function(x) dim(x)[1]==0)],
 			accumulate=FALSE), key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
+
+		if (dups.tf <- (!is.null(fix.duplicates) & any(grepl("_DUPS_[0-9]*", tmp.target.data[["ID"]])))) {
+				invisible(tmp.target.data[, ID := gsub("_DUPS_[0-9]*", "", ID)])
+				invisible(tmp.target.data[!is.na(DUPS_FLAG), N := seq.int(.N), by=c(getKey(tmp.target.data), "GRADE")])
+				# invisible(tmp.target.data[!is.na(N), ID := paste0(ID, "_DUPS_", N)])
+		}
 
 		for (projection_group.iter in unique(tmp.target.data, by='SGP_PROJECTION_GROUP')[['SGP_PROJECTION_GROUP']]) {
 			for (target.type.iter in target.args[['sgp.target.scale.scores.types']]) {
@@ -577,6 +589,7 @@ function(
 					projection_group.identifier=projection_group.iter,
 					sgp.projections.equated=if (grepl("baseline", target.type.iter)) NULL else sgp.projections.equated,
 					SGPt=SGPt,
+					fix.duplicates=fix.duplicates,
 					parallel.config=parallel.config)
 			}
 		}

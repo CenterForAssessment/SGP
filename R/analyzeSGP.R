@@ -333,8 +333,8 @@ function(sgp_object,
 
 	if (is.null(fix.duplicates) & !is.null(SGPstateData[[state]][["SGP_Configuration"]][["fix.duplicates"]])) {
 		fix.duplicates <- SGPstateData[[state]][["SGP_Configuration"]][["fix.duplicates"]]
-    return.norm.group.scale.scores <- TRUE
-    return.projection.group.scale.scores <- TRUE
+		return.norm.group.scale.scores <- TRUE
+		return.projection.group.scale.scores <- TRUE
 	}
 
 	###
