@@ -347,7 +347,7 @@ function(sgp.data,
 						} else tmp.merge.vars <- c("ID", "GRADE")
 						tmp.data <- ddcast(tmp.data, ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", state, sgp.scale.score.equated, SGPt), sep=".")[, GRADE := tail(sgp.iter[[sgp.projection.grade.sequences.label]], 1)][
 							sgp.targets[CONTENT_AREA==tail(sgp.iter[[sgp.projection.content.areas.label]], 1) & YEAR==tail(sgp.iter[[sgp.projection.panel.years.label]], 1)],
-								on=tmp.merge.vars, nomatch=0][,!c("CONTENT_AREA", "YEAR", "GRADE", "SGP_PROJECTION_GROUP_SCALE_SCORES"), with=FALSE]
+								on=tmp.merge.vars, nomatch=0][,!c("CONTENT_AREA", "YEAR", "GRADE"), with=FALSE]
 					}
 				} else { ### END if (is.character(fix.duplicates)
 					setnames(tmp.lookup, paste0("V", 1:4), c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))
