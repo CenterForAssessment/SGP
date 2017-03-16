@@ -21,8 +21,10 @@ function(sgp_object,
 			tmp_object_1 <- createUniqueLongData(tmp_object_1)
 		}
 
-		if (dups.tf <- (!is.null(fix.duplicates) & any(grepl("_DUPS_[0-9]*", tmp_object_1[["ID"]])))) {
+		if (dups.tf <- !is.null(fix.duplicates)) {
+			if (any(grepl("_DUPS_[0-9]*", tmp_object_1[["ID"]]))) {
 				invisible(tmp_object_1[, ID := gsub("_DUPS_[0-9]*", "", ID)])
+			}
 
 			##  Create SCALE_SCORE history vars to merge on
 			tmp.split <- strsplit(as.character(tmp_object_1[["SGP_PROJECTION_GROUP_SCALE_SCORES"]]), "; ")

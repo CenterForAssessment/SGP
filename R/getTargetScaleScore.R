@@ -116,7 +116,7 @@ function(sgp_object,
 
 	### Calculate targets
 
-	if (!is.null(parallel.config[["WORKERS"]]) & is.null(parallel.config[["WORKERS"]][["SGP_SCALE_SCORE_TARGETS"]])) parallel.config[["WORKERS"]][["SGP_SCALE_SCORE_TARGETS"]] <- parallel.config[["WORKERS"]]
+	if (!is.null(parallel.config[["WORKERS"]]) & is.null(parallel.config[["WORKERS"]][["SGP_SCALE_SCORE_TARGETS"]])) parallel.config[["WORKERS"]][["SGP_SCALE_SCORE_TARGETS"]] <- parallel.config[["WORKERS"]][[1]]
 
 	if (!is.null(parallel.config) && parallel.config[["WORKERS"]][["SGP_SCALE_SCORE_TARGETS"]] > 1) {
 		par.start <- startParallel(parallel.config, 'SGP_SCALE_SCORE_TARGETS')
