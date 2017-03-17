@@ -1564,11 +1564,8 @@ function(
 
 			### TEST of SGP_TARGET_BASELINE_10_TIME_CURRENT variable from READING
 
-#			if (identical(sum(RLI1_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", "TARGET_SCALE_SCORES", sep=".")]][['SGP_TARGET_BASELINE_10_TIME_CURRENT']], na.rm=TRUE), 50160L)) { ## 2015 was 45054L, 2016 was 50186L, RLI1 was 52105,  SGP 1.6-4.16 :: 52105,
-			# setkey(RLI1_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", "TARGET_SCALE_SCORES", sep=".")]])
-			# digest(RLI1_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", "TARGET_SCALE_SCORES", sep=".")]][['SGP_TARGET_BASELINE_10_TIME_CURRENT']]) # 5ee9337b7d53530250e348ceda7c67e2
-			# sum(RLI1_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", "TARGET_SCALE_SCORES", sep=".")]][['SGP_TARGET_BASELINE_10_TIME_CURRENT']])# :: 52915
-			if (identical(digest(RLI1_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", "TARGET_SCALE_SCORES", sep=".")]][['SGP_TARGET_BASELINE_10_TIME_CURRENT']]), "414bb392792ddb2d84544d1b253e0ca9")) { # SGP 1.6-4.16 :: 89737a25f7b7a1d152f385f428009f5f
+#			if (identical(sum(RLI1_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", "TARGET_SCALE_SCORES", sep=".")]][['SGP_TARGET_BASELINE_10_TIME_CURRENT']], na.rm=TRUE), 52915L)) { ## 2015 was 45054L, 2016 was 50186L, RLI1 was 52105,  SGP 1.6-4.16 :: 52105,
+			if (identical(digest(RLI1_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", "TARGET_SCALE_SCORES", sep=".")]][['SGP_TARGET_BASELINE_10_TIME_CURRENT']]), "89737a25f7b7a1d152f385f428009f5f")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_BASELINE_10_TIME_CURRENT, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_BASELINE_10_TIME_CURRENT, part 1: FAIL\n")
@@ -1576,12 +1573,8 @@ function(
 
 			### TEST of P50_PROJ_TIME_1_CURRENT variable from READING
 
-#			if (identical(sum(RLI1_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['P50_PROJ_TIME_1_CURRENT']], na.rm=TRUE), 533302)) { ### RLI1 543598.8
-			# setkey(RLI1_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]]) # 3-16-2017 SGP 1.6-4.16
-			# digest(RLI1_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]]) # c6f901a64d7215252058107b3059cae9
-			# sum(RLI1_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['P50_PROJ_TIME_1_CURRENT']]) # 551654.4
-			# digest(RLI1_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['P50_PROJ_TIME_1_CURRENT']]) # fb3c11af1d51587edc9864d1ce3ef1f1
-			if (identical(digest(RLI1_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['P50_PROJ_TIME_1_CURRENT']]), "814a5e1726c77d81c39edcf14e0d464b")) { # NOT keyed first :: 534a67240d0cc27682cbfe933c6f5161
+#			if (identical(sum(RLI1_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['P50_PROJ_TIME_1_CURRENT']], na.rm=TRUE), 551654.4)) { ### RLI1 543598.8, 533302
+			if (identical(digest(RLI1_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['P50_PROJ_TIME_1_CURRENT']]), "534a67240d0cc27682cbfe933c6f5161")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable P50_PROJ_TIME_1_CURRENT, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable P50_PROJ_TIME_1_CURRENT, part 1: FAIL\n")
@@ -1593,7 +1586,7 @@ function(
 			tmp.data <- fread(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
 			unlink(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
 
-			if (identical(dim(tmp.data), c(2179L, 10L))) {  # SGP 1.6-4.16 +Dups :: 2212   10
+			if (identical(dim(tmp.data), c(2212L, 10L))) {  # preSGP 1.6-4.16 +Dups: 2179L, 10L
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGPercentiles output, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGPercentiles output, part 1: FAIL\n")
@@ -1617,7 +1610,7 @@ function(
 			tmp.data <- fread(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
 			unlink(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
 
-			if (identical(dim(tmp.data), c(981L, 1038L))) { ### pre-RLI1 c(981L, 118L)  ### SGP 1.6-4.16 +Dups :: 996 1038
+			if (identical(dim(tmp.data), c(996L, 1038L))) { ### pre-RLI1 c(981L, 118L)  ### preSGP 1.6-4.16 +Dups :: 981L, 1038L
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGProjections output, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGProjections output, part 1: FAIL\n")
@@ -1629,7 +1622,7 @@ function(
 			tmp.data <- fread(paste("READING", tmp.last.window, "BASELINE.TARGET_SCALE_SCORES.txt", sep="."))
 			unlink(paste("READING", tmp.last.window, "BASELINE.TARGET_SCALE_SCORES.txt", sep="."))
 
-			if (identical(dim(tmp.data), c(900L, 25L))) { ### 2014-2015 was 867L, pre RLI1 was c(819L, 25L) ### SGP 1.6-4.16 +Dups :: 914  25
+			if (identical(dim(tmp.data), c(914L, 25L))) { ### 2014-2015 was 867L, pre RLI1 was c(819L, 25L) ### preSGP 1.6-4.16 +Dups :: 900L 25L
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGProjections output, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGProjections output, part 1: FAIL\n")
@@ -1705,8 +1698,8 @@ function(
 
 			### TEST of SGP variable from READING (equality with PART 1)
 
-#			if (identical(sum(RLI1_SGPt_PART_3@SGP[['SGPercentiles']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['SGP_BASELINE']], na.rm=TRUE), 108675L)) { ## Pre-RLI1 107188L
-			if (identical(digest(RLI1_SGPt_PART_3@SGP[['SGPercentiles']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['SGP_BASELINE']]), "76884b8d5d384a78d4c7a780d548ba42")) { ## SGP 1.6-4.16 +Dups :: d11fe88a76e9ef09500aa94f24d08aaf / sum 110397
+#			if (identical(sum(RLI1_SGPt_PART_3@SGP[['SGPercentiles']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['SGP_BASELINE']], na.rm=TRUE), 110397L)) { ## Pre-RLI1 107188L preSGP 1.6-4.16 +Dups : 108675L
+			if (identical(digest(RLI1_SGPt_PART_3@SGP[['SGPercentiles']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['SGP_BASELINE']]), "d11fe88a76e9ef09500aa94f24d08aaf")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE (2016_2017.3 matrices = 2016_2017.2 matrices), part 3: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE (2016_2017.3 matrices = 2016_2017.2 matrices), part 3: FAIL\n")
