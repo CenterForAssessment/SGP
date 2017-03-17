@@ -2288,7 +2288,7 @@ function(
 			### Part 1
 
 			expression.to.evaluate <-
-				paste0("Demonstration_SGP <- abcSGP(\n\tsgp_object=sgpData_LONG[YEAR %in% head(sgpData.years, -1)],\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\tsgp.percentiles=TRUE,\n\tsgp.projections=TRUE,\n\tsgp.projections.lagged=TRUE,\n\tsgp.percentiles.baseline=FALSE,\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsimulate.sgps=FALSE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.config=sgp.config.PENULTIMATE,\n\tparallel.config=", parallel.config, "\n)\n")
+				paste0("Demonstration_SGP <- abcSGP(\n\tsgp_object=sgpData_LONG[YEAR %in% head(sgpData.years, -1)],\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP', 'outputSGP'),\n\tsgp.percentiles=TRUE,\n\tsgp.projections=TRUE,\n\tsgp.projections.lagged=TRUE,\n\tsgp.percentiles.baseline=FALSE,\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsimulate.sgps=FALSE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.config=sgp.config.PENULTIMATE,\n\tparallel.config=", parallel.config, "\n)\n")
 
 			cat("##### Begin testSGP test number 7 #####\n", fill=TRUE)
 			cat(paste0("EVALUATING Test Number 7, Part 1:\n", expression.to.evaluate), fill=TRUE)
