@@ -162,8 +162,13 @@ function(sgp_object,
 			}
 
 			if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
-				tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
-					sgp.projections.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections']]))
+				if (grepl(".lagged", target.type)) {
+					tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
+						sgp.target.scale.scores.lagged=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections']]))
+				}  else {
+					tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
+						sgp.target.scale.scores=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections']]))
+				}
 			}
 			tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 			rm(tmp)
@@ -198,15 +203,20 @@ function(sgp_object,
 					return.projection.group.identifier=projection_group.identifier,
 					return.projection.group.scale.scores = !is.null(fix.duplicates),
 					calculate.sgps=!(tail(sgp.iter[['sgp.panel.years']], 1) %in%
-						SGP::SGPstateData[[state]][['Assessment_Program_Information']][['Scale_Change']][[tail(sgp.iter[['sgp.content.areas']], 1)]] &
+						SGP::SGPstateData[[state]][['Assessment_Program_Information']][['Scale_Change']][[tail(sgp.iter[[my.content.areas]], 1)]] &
 						is.null(sgp.projections.equated)),
 					sgp.projections.use.only.complete.matrices=SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgp.projections.use.only.complete.matrices']],
 					SGPt=getSGPtNames(sgp.iter, SGPt, my.target.type),
 					projcuts.digits=SGP::SGPstateData[[state]][['SGP_Configuration']][['projcuts.digits']]))
 
 					if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
-						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
-							sgp.projections.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections']]))
+						if (grepl(".lagged", target.type)) {
+							tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
+								sgp.target.scale.scores.lagged=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections']]))
+						}  else {
+							tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
+								sgp.target.scale.scores=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections']]))
+						}
 					}
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 					rm(tmp)
@@ -249,11 +259,16 @@ function(sgp_object,
 						projcuts.digits=SGP::SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]]),
 						mc.cores=par.start$workers, mc.preschedule=FALSE)
 
-					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp), tmp_sgp_object)
 					if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
-						tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
-							sgp.projections.lagged.=getErrorReports(tmp, tmp.tf, par.sgp.config[[target.type]]))
+						if (grepl(".lagged", target.type)) {
+							tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
+								sgp.target.scale.scores.lagged=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections']]))
+						}  else {
+							tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
+								sgp.target.scale.scores=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.projections']]))
+						}
 					}
+					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 					rm(tmp)
 				} # End MULTICORE
 			} # END parallel flavors
@@ -268,10 +283,10 @@ function(sgp_object,
 			if (dim(panel.data$Panel_Data)[1] > 0) {
 				tmp_sgp_object <- studentGrowthProjections(
 					panel.data=panel.data,
-					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[[my.content.areas]], 1),
+					sgp.labels=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[[my.content.areas.label]], 1),
 						my.extra.label=my.extra.label),
 					use.my.coefficient.matrices=list(my.year=if (baseline.tf) "BASELINE" else tail(sgp.iter[["sgp.panel.years"]], 1),
-						my.subject=tail(sgp.iter[[my.content.areas.label]], 1), my.extra.label=equate.label),
+						my.subject=tail(sgp.iter[[my.content.areas]], 1), my.extra.label=equate.label),
 					use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[[my.content.areas.label]], 1)),
 					performance.level.cutscores=state,
 					max.forward.progression.years=sgp.iter[['sgp.projections.max.forward.progression.years']]+lag.increment,
@@ -298,7 +313,7 @@ function(sgp_object,
 					projcuts.digits=SGP::SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]])
 			} else {
 				messageSGP(paste("\n\t\tNOTE: No student records &/or no prior data for scale score target student growth projections:", tail(sgp.iter[["sgp.panel.years"]], 1),
-					tail(sgp.iter[[my.content.areas]], 1), "with", paste(head(sgp.iter[[my.content.areas]], -1), collapse=", "), "priors.\n"))
+					tail(sgp.iter[[my.content.areas]], 1), "Grade", tail(sgp.iter[[my.grade.sequences]], 1), "to Projection Group", projection_group.identifier, "with", paste(paste(head(sgp.iter[[my.content.areas]], -1), "Grade", head(sgp.iter[[my.grade.sequences]], -1)), collapse=", "), "priors.\n"))
 			}
 		}
 	} ### END if (is.null(parallel.config))
