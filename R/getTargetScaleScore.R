@@ -124,7 +124,7 @@ function(sgp_object,
 		###  FOREACH flavor
 
 		if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
-			tmp <- foreach(sgp.iter=iter(par.sgp.config[[target.type]]), .packages="SGP", .combine="mergeSGP", .inorder=FALSE,
+			tmp <- foreach(sgp.iter=iter(par.sgp.config[[target.type]]), .packages="SGP", .inorder=FALSE, .errorhandling = "pass",
 				.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
 				return(studentGrowthProjections(
 					panel.data=list(
