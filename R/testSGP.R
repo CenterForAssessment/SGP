@@ -2296,12 +2296,12 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP: FAIL\n")
 			}
 
-			### TEST of DUPS_FLAG variable
-			if (identical(digest::digest(Demonstration_SGP@Data$DUPS_FLAG), "e15cf4832c92a5aed90ad352f34ecd22")) {
-				tmp.messages <- c(tmp.messages, "\t\tTest of variable DUPS_FLAG: OK\n")
-			} else {
-				tmp.messages <- c(tmp.messages, "\t\tTest of variable DUPS_FLAG: FAIL\n")
-			}
+			# ### TEST of DUPS_FLAG variable
+			# if (identical(digest::digest(Demonstration_SGP@Data$DUPS_FLAG), "e15cf4832c92a5aed90ad352f34ecd22")) {
+			# 	tmp.messages <- c(tmp.messages, "\t\tTest of variable DUPS_FLAG: OK\n")
+			# } else {
+			# 	tmp.messages <- c(tmp.messages, "\t\tTest of variable DUPS_FLAG: FAIL\n")
+			# }
 
 			### TEST of SGP_TARGET_3_YEAR variable
 			#  sum(Demonstration_SGP@Data$SGP_TARGET_3_YEAR, na.rm=T) # 1761988
@@ -2335,14 +2335,16 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1: FAIL\n")
 			}
 
-			### TEST of DUPS @Data variable
-			vars.to.check <- c("CONTENT_AREA", "ID", "DUPS_FLAG", "SCALE_SCORE", "SCALE_SCORE_PRIOR", "GRADE", "SGP", "SGP_NORM_GROUP", "SGP_NORM_GROUP_SCALE_SCORES", "SGP_PROJECTION_GROUP_SCALE_SCORES", "CATCH_UP_KEEP_UP_STATUS")
-			dup.data <- Demonstration_SGP@Data[!is.na(DUPS_FLAG), vars.to.check, with=FALSE]
+			### TEST of DUPS @Data
+			vars.to.check <- c("CONTENT_AREA", "ID", "SCALE_SCORE", "SCALE_SCORE_PRIOR", "GRADE", "SGP", "SGP_NORM_GROUP", "SGP_NORM_GROUP_SCALE_SCORES", "SGP_PROJECTION_GROUP_SCALE_SCORES", "CATCH_UP_KEEP_UP_STATUS")
+			# dup.data <- Demonstration_SGP@Data[!is.na(DUPS_FLAG), vars.to.check, with=FALSE]
+			dup.ids <- Demonstration_SGP@Data[duplicated(Demonstration_SGP@Data, by=getKey(Demonstration_SGP@Data)), ID]
+			dup.data <- Demonstration_SGP@Data[ID %in% dup.ids, vars.to.check, with=FALSE]
 			setkey(dup.data)
-			if (identical(digest::digest(dup.data[, SGP_NORM_GROUP := as.character(SGP_NORM_GROUP)]), "2b85afc2857336aaa165dd04feb47ef4")) {
-				tmp.messages <- c(tmp.messages, "\t\tTest of variable DUPS @Data: OK\n")
+			if (identical(digest::digest(dup.data[, SGP_NORM_GROUP := as.character(SGP_NORM_GROUP)]), "762d647d072ff7f11b3562745854435f")) { # with DUPS_FLAG: 2b85afc2857336aaa165dd04feb47ef4
+				tmp.messages <- c(tmp.messages, "\t\tTest of duplicated cases in @Data: OK\n")
 			} else {
-				tmp.messages <- c(tmp.messages, "\t\tTest of variable DUPS @Data: FAIL\n")
+				tmp.messages <- c(tmp.messages, "\t\tTest of duplicated cases in @Data: FAIL\n")
 			}
 
 			### TEST of Coefficient_Matrices
@@ -2419,13 +2421,13 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP: FAIL\n")
 			}
 
-			### TEST of DUPS_FLAG variable
-
-			if (identical(digest::digest(Demonstration_SGP@Data$DUPS_FLAG), "5409d1b3a84ea2a8bd0c291daeff4cc1")) {
-				tmp.messages <- c(tmp.messages, "\t\tTest of variable DUPS_FLAG: OK\n")
-			} else {
-				tmp.messages <- c(tmp.messages, "\t\tTest of variable DUPS_FLAG: FAIL\n")
-			}
+			# ### TEST of DUPS_FLAG variable
+			#
+			# if (identical(digest::digest(Demonstration_SGP@Data$DUPS_FLAG), "5409d1b3a84ea2a8bd0c291daeff4cc1")) {
+			# 	tmp.messages <- c(tmp.messages, "\t\tTest of variable DUPS_FLAG: OK\n")
+			# } else {
+			# 	tmp.messages <- c(tmp.messages, "\t\tTest of variable DUPS_FLAG: FAIL\n")
+			# }
 
 			### TEST of SGP_TARGET_3_YEAR variable
 			if (identical(digest::digest(Demonstration_SGP@Data$SGP_TARGET_3_YEAR), "f18d29d1595406c153c7068872d5c720")) {
@@ -2457,14 +2459,15 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1: FAIL\n")
 			}
 
-			### TEST of DUPS @Data variable
-			vars.to.check <- c("CONTENT_AREA", "ID", "DUPS_FLAG", "SCALE_SCORE", "SCALE_SCORE_PRIOR", "GRADE", "SGP", "SGP_NORM_GROUP", "SGP_NORM_GROUP_SCALE_SCORES", "SGP_PROJECTION_GROUP_SCALE_SCORES", "CATCH_UP_KEEP_UP_STATUS")
-			dup.data <- Demonstration_SGP@Data[!is.na(DUPS_FLAG), vars.to.check, with=FALSE]
+			### TEST of DUPS @Data
+			vars.to.check <- c("CONTENT_AREA", "ID", "SCALE_SCORE", "SCALE_SCORE_PRIOR", "GRADE", "SGP", "SGP_NORM_GROUP", "SGP_NORM_GROUP_SCALE_SCORES", "SGP_PROJECTION_GROUP_SCALE_SCORES", "CATCH_UP_KEEP_UP_STATUS")
+			dup.ids <- Demonstration_SGP@Data[duplicated(Demonstration_SGP@Data, by=getKey(Demonstration_SGP@Data)), ID]
+			dup.data <- Demonstration_SGP@Data[ID %in% dup.ids, vars.to.check, with=FALSE]
 			setkey(dup.data)
-			if (identical(digest::digest(dup.data[, SGP_NORM_GROUP := as.character(SGP_NORM_GROUP)]), "12e253be3ce98f8f519b6a452f13cc93")) {
-				tmp.messages <- c(tmp.messages, "\t\tTest of variable DUPS @Data: OK\n")
+			if (identical(digest::digest(dup.data[, SGP_NORM_GROUP := as.character(SGP_NORM_GROUP)]), "1096ae04d748ba69d7dd63ef398ac434")) { # With DUPS_FLAG: 12e253be3ce98f8f519b6a452f13cc93
+				tmp.messages <- c(tmp.messages, "\t\tTest of duplicated cases in @Data: OK\n")
 			} else {
-				tmp.messages <- c(tmp.messages, "\t\tTest of variable DUPS @Data: FAIL\n")
+				tmp.messages <- c(tmp.messages, "\t\tTest of duplicated cases in @Data: FAIL\n")
 			}
 
 			### TEST of Coefficient Matrix
