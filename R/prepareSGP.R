@@ -270,7 +270,7 @@ function(data,
 				assign("DUPLICATED_CASES", data["VALID_CASE"][unique(data["VALID_CASE"][duplicated(data["VALID_CASE"], by=getKey(data)), c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE], by=getKey(data))])
 			}
 			if (dim(DUPLICATED_CASES)[1]!=0) {
-				messageSGP("\tNOTE: Duplicate cases in the data have NOT been modified.  Required ID modifications will be performed as needed in analyzeSGP.")
+				messageSGP("\tNOTE: Duplicate cases are present in the data and `fix.duplicates` has been requested.  Required ID modifications will be performed as needed in analyzeSGP.")
 			} else {
 				messageSGP("\tNOTE: The 'fix.duplicates' argument has been requested, but NO duplicate cases are found in the data...")
 			}
