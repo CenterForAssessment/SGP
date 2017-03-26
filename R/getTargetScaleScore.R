@@ -116,15 +116,15 @@ function(sgp_object,
 
 	### Calculate targets
 
-	if (!is.null(parallel.config[["WORKERS"]]) & is.null(parallel.config[["WORKERS"]][["SGP_SCALE_SCORE_TARGETS"]])) parallel.config[["WORKERS"]][["SGP_SCALE_SCORE_TARGETS"]] <- parallel.config[["WORKERS"]][[1]]
+	if (!is.null(parallel.config[["WORKERS"]]) & !is.null(names(parallel.config[["WORKERS"]]))) parallel.config[["WORKERS"]][["SGP_SCALE_SCORE_TARGETS"]] <- parallel.config[["WORKERS"]][[1]]
 
-	if (!is.null(parallel.config) && parallel.config[["WORKERS"]][["SGP_SCALE_SCORE_TARGETS"]] > 1) {
+	if (!is.null(parallel.config)) {
 		par.start <- startParallel(parallel.config, 'SGP_SCALE_SCORE_TARGETS')
 
 		###  FOREACH flavor
 
 		if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
-			tmp <- foreach(sgp.iter=iter(par.sgp.config[[target.type]]), .packages="SGP", .inorder=FALSE, .errorhandling = "pass",
+			tmp <- foreach(sgp.iter=iter(par.sgp.config[[target.type]]), .packages="SGP", .inorder=FALSE, .errorhandling = "pass", .export = "SGPstateData",
 				.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
 				return(studentGrowthProjections(
 					panel.data=list(
