@@ -596,8 +596,10 @@ function(
 		}
 	} ### END if (sgp.target.scale.scores)
 
+	### Final clean and put slot.data into @Data slot
 
-	### Put slot.data into @Data slot
+	if ("DUPS_FLAG" %in% names(slot.data)) invisible(slot.data[, DUPS_FLAG := NULL])
+	if (any(grepl("SCALE_SCORE_PRIOR_[0-9]", names(slot.data)))) invisible(slot.data[, grep("SCALE_SCORE_PRIOR_[0-9]", names(slot.data), value=TRUE) := NULL])
 
 	setkeyv(slot.data, getKey(slot.data))
 	sgp_object@Data <- slot.data
