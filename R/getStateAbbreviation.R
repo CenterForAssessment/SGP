@@ -4,8 +4,8 @@ function(
 	SGPfunction=NULL,
 	type="Abbreviation") {
 
-	my.state.abbreviations <- c(setdiff(datasets::state.abb, c("MA", "WA")), "ABQ", "AOB", "ATI", "CO_ORIGINAL", "DC", rep("DEMO", 2), "DEMO_EOCT", "GUA", "MA_MCAS", "MA_PARCC", "MA", "MA_ORIGINAL", "NCSC_SD", "NJ_ORIGINAL", "PARCC", "RI_ORIGINAL", "RLI_UK", "RLI", "WIDA_CO", "WIDA_GA", "WIDA_MA", "WIDA_MI", "WIDA_NV", "WIDA_RI", "WIDA", "WA") ### NOTE: Add abbreviations ALPHABETICALLY
-	my.state.names <- c(setdiff(datasets::state.name, c("Massachusetts", "Washington")), "Albuquerque", "AOB", "ATI", "Colorado", "Washington DC", "DEMONSTRATION", "SGPDATA LONG", "DEMONSTRATION", "Guatemala", "Massachusetts MCAS", "Massachusetts PARCC", "Massachusetts", "Massachusetts", "NCSC SD", "New Jersey", "PARCC", "Rhode Island", "RLI UK", "RLI", "WIDA CO", "WIDA GA", "WIDA MA", "WIDA MI", "WIDA NV", "WIDA RI", "WIDA", "Washington") ### NOTE: Add state names ALPHABETICALLY - need compound abbreviations/names first (e.g. WIDA_CO before WIDA)
+	my.state.abbreviations <- c(setdiff(datasets::state.abb, c("MA", "WA")), "ABQ", "AOB", "ATI", "CO_ORIGINAL", "DC", rep("DEMO", 2), "DEMO_EOCT", "GUA", "MA_MCAS", "MA_PARCC", "MA", "MA_ORIGINAL", "NCSC_SD", "NJ_ORIGINAL", "PARCC", "RI_ORIGINAL", "RLI_UK", "RLI", "VI", "WIDA_CO", "WIDA_GA", "WIDA_MA", "WIDA_MI", "WIDA_NV", "WIDA_RI", "WIDA", "WA") ### NOTE: Add abbreviations ALPHABETICALLY
+	my.state.names <- c(setdiff(datasets::state.name, c("Massachusetts", "Washington")), "Albuquerque", "AOB", "ATI", "Colorado", "Washington DC", "DEMONSTRATION", "SGPDATA LONG", "DEMONSTRATION", "Guatemala", "Massachusetts MCAS", "Massachusetts PARCC", "Massachusetts", "Massachusetts", "NCSC SD", "New Jersey", "PARCC", "Rhode Island", "RLI UK", "RLI", "US Virgin Islands", "WIDA CO", "WIDA GA", "WIDA MA", "WIDA MI", "WIDA NV", "WIDA RI", "WIDA", "Washington") ### NOTE: Add state names ALPHABETICALLY - need compound abbreviations/names first (e.g. WIDA_CO before WIDA)
 
 	if (type=="Abbreviation") {
 		tmp.name.position <- sapply(my.state.names, function(x) regexpr(toupper(x), supplied.name))
