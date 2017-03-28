@@ -853,7 +853,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 		if (any(duplicated(sgPlot.data, by=key(sgPlot.data)))) sgPlot.data <- createUniqueLongData(sgPlot.data)
 		sgPlot.data <- ddcast(sgPlot.data, ID + CONTENT_AREA ~ YEAR,
 			value.var=setdiff(variables.to.keep, c("VALID_CASE", "ID", "CONTENT_AREA", "YEAR")), sep=".")
-		sgPlot.data <- sgPlot.data[,ID:=gsub("_DUPS_[0-9]*", "", ID)]
+		# sgPlot.data <- sgPlot.data[,ID:=gsub("_DUPS_[0-9]*", "", ID)]
 
 		variables.to.keep <- c("ID", "CONTENT_AREA", paste("CONTENT_AREA_LABELS", tmp.years.subset, sep="."),
 			paste("LAST_NAME", tmp.last.year, sep="."), paste("FIRST_NAME", tmp.last.year, sep="."), paste("GRADE", tmp.years.subset, sep="."),

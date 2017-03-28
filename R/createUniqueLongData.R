@@ -73,6 +73,10 @@
 
 	###  Identify duplicated cases and extend long data accordingly
 	tmp.key <- getKey(long.data)
+	if (!"VALID_CASE" %in% names(long.data)) { # sgPlot
+		invisible(long.data[, VALID_CASE := "VALID_CASE"])
+		wide.output <- TRUE
+	}
 	dup.ids <- unique(long.data[duplicated(long.data, by=tmp.key), ID])
 	dups.extended <- rbindlist(lapply(dup.ids, function(f) extendLongData(long.data[ID==f])))
 
