@@ -1,5 +1,4 @@
-`createUniqueLongData` <-
-function(long.data) {
+`createUniqueLongData` <- function(long.data, wide.output=FALSE) {
 
 	### Set variable to NULL to prevent R CMD Check warnings
 
@@ -48,7 +47,9 @@ function(long.data) {
 	    sub(n, r, v[1:n])
 	  } ### END permutations function
 
-		my.tmp.data <- unique(my.tmp.data) # Remove EXACT duplicates & data extended in previous years/analyses
+		if (wide.output) {
+			my.tmp.data <- unique(my.tmp.data, by=c(getKey(my.tmp.data), "SCALE_SCORE"))
+		}  else  my.tmp.data <- unique(my.tmp.data) # Remove EXACT duplicates & data extended in previous years/analyses
 		key.vars <- intersect(names(my.tmp.data), c("YEAR", "SCALE_SCORE"))
 	  setkeyv(my.tmp.data, key.vars)
 	  invisible(my.tmp.data[, DUP_COUNT := seq.int(.N), by="YEAR"])
@@ -72,6 +73,10 @@ function(long.data) {
 
 	###  Identify duplicated cases and extend long data accordingly
 	tmp.key <- getKey(long.data)
+	if (!"VALID_CASE" %in% names(long.data)) { # sgPlot
+		invisible(long.data[, VALID_CASE := "VALID_CASE"])
+		wide.output <- TRUE
+	}
 	dup.ids <- unique(long.data[duplicated(long.data, by=tmp.key), ID])
 	dups.extended <- rbindlist(lapply(dup.ids, function(f) extendLongData(long.data[ID==f])))
 

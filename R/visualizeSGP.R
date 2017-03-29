@@ -112,6 +112,10 @@ function(sgp_object,
 		for (year.iter in seq_along(tmp.years)) {
 
 			if (!is.null(gaPlot.content_areas)) {
+				if (!is.null(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]])) {
+					tmp.domains <- unique(unlist(SGP::SGPstateData[[state]][["Student_Report_Information"]][['Content_Areas_Domains']]))
+					gaPlot.content_areas <- gaPlot.content_areas[gaPlot.content_areas %in% tmp.domains]
+				}
 				tmp.list[[year.iter]] <- data.table(YEAR=tmp.years[year.iter], CONTENT_AREA=gaPlot.content_areas)
 			} else {
 				if (!is.null(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Domains"]])) {
@@ -123,7 +127,7 @@ function(sgp_object,
 				tmp.list[[year.iter]] <- data.table(
 					YEAR=tmp.years[year.iter],
 					CONTENT_AREA=sort(intersect(unique(sgp_object@Data[SJ("VALID_CASE", tmp.years[year.iter]), nomatch=0][["CONTENT_AREA"]]), tmp.content_areas)))
-					setkeyv(sgp_object@Data, getKey(sgp_object))
+				setkeyv(sgp_object@Data, getKey(sgp_object))
 			}
 		}
 
@@ -849,7 +853,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 		if (any(duplicated(sgPlot.data, by=key(sgPlot.data)))) sgPlot.data <- createUniqueLongData(sgPlot.data)
 		sgPlot.data <- ddcast(sgPlot.data, ID + CONTENT_AREA ~ YEAR,
 			value.var=setdiff(variables.to.keep, c("VALID_CASE", "ID", "CONTENT_AREA", "YEAR")), sep=".")
-		sgPlot.data <- sgPlot.data[,ID:=gsub("_DUPS_[0-9]*", "", ID)]
+		# sgPlot.data <- sgPlot.data[,ID:=gsub("_DUPS_[0-9]*", "", ID)]
 
 		variables.to.keep <- c("ID", "CONTENT_AREA", paste("CONTENT_AREA_LABELS", tmp.years.subset, sep="."),
 			paste("LAST_NAME", tmp.last.year, sep="."), paste("FIRST_NAME", tmp.last.year, sep="."), paste("GRADE", tmp.years.subset, sep="."),
