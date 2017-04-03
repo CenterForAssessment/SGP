@@ -2463,7 +2463,7 @@ function(
 			Demonstration_SGP@Data_Supplementary[['INSTRUCTOR_NUMBER']] <- SGPdata::sgpData_INSTRUCTOR_NUMBER
 		  Demonstration_SGP@Data[, GRADE := GRADE_REPORTED]
 		  Demonstration_SGP@Data[CONTENT_AREA %in% c('ALGEBRA_I', 'ALGEBRA_II'), CONTENT_AREA := 'MATHEMATICS']
-		  setkeyv(Demonstration_SGP@Data, SGP:::getKey(Demonstration_SGP@Data))
+		  setkeyv(Demonstration_SGP@Data, getKey(Demonstration_SGP@Data))
 
 			expression.to.evaluate <-
 				paste0("Demonstration_SGP <- summarizeSGP(\n\tDemonstration_SGP,\n\tstate='DEMO_EOCT',\n\tparallel.config = ", parallel.config, "\n)\n")
