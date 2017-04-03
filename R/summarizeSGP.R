@@ -550,23 +550,27 @@
 
 	### Loop and send to summarizeSGP_INTERNAL
 
-	del.dir <- dir.create("Data/tmp_data", recursive=TRUE, showWarnings=FALSE)
-	sgp_data_for_summary <- dbConnect(SQLite(), dbname = "Data/tmp_data/TMP_Summary_Data.sqlite")
+	sgp_data_for_summary <- dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_Summary_Data.sqlite"))
+
 	if ("VALID_CASE_STATUS_ONLY" %in% names(sgp_object@Data)) {
 		sgp_object@Data$VALID_CASE[sgp_object@Data$VALID_CASE_STATUS_ONLY=="VALID_CASE"] <- "VALID_CASE"
 		setkeyv(sgp_object@Data, getKey(sgp_object))
 	}
 
-	if (any(!sapply(summary.groups[["growth_only_summary"]], is.null))) {
-		tmp.dt <- sgp_object@Data[data.table("VALID_CASE", content_areas.by.years), nomatch=0][,
-			variables.for.summaries, with=FALSE][, (highest.level.summary.grouping):=state]
-		dbWriteTable(sgp_data_for_summary, name = "summary_data", overwrite = TRUE, row.names=FALSE, value = tmp.dt[,
-			BY_GROWTH_ONLY := factor(is.na(tmp.dt[[my.sgp[1]]]), levels=c(FALSE, TRUE), labels=c("Students without SGP", "Students with SGP"))])
-	} else {
-		dbWriteTable(sgp_data_for_summary, name = "summary_data", overwrite = TRUE, row.names=FALSE,
-			value = sgp_object@Data[data.table("VALID_CASE", content_areas.by.years), nomatch=0][,
-				variables.for.summaries, with=FALSE][, (highest.level.summary.grouping):=state])
+	tmp.dt <- sgp_object@Data[data.table("VALID_CASE", content_areas.by.years), nomatch=0][,
+		variables.for.summaries, with=FALSE][, (highest.level.summary.grouping):=state]
+
+	if (any(duplicated(tmp.dt, by=sgp_key))) {
+		invisible(tmp.dt[, DUP_COUNT := .N, by=sgp_key])
+		if (!"WEIGHT" %in% names(tmp.dt)) invisible(tmp.dt[, WEIGHT := 1L])
+		invisible(tmp.dt[, WEIGHT := round((WEIGHT / DUP_COUNT), 3)])
 	}
+
+	if (any(!sapply(summary.groups[["growth_only_summary"]], is.null))) {
+		invisible(tmp.dt[, BY_GROWTH_ONLY := factor(is.na(tmp.dt[[my.sgp[1]]]), levels=c(FALSE, TRUE), labels=c("Students without SGP", "Students with SGP"))])
+	}
+	dbWriteTable(sgp_data_for_summary, name = "summary_data", overwrite = TRUE, row.names=FALSE, value = tmp.dt)
+	rm(tmp.dt)
 
 	if (!is.null(confidence.interval.groups) & "CSEM" %in% confidence.interval.groups[['TYPE']]) {
 		sim.info <- list(
@@ -617,15 +621,19 @@
 				### Create LONGer data and run summarizeSGP_INTERNAL
 				tmp.dt.long <- sgp_object@Data[data.table("VALID_CASE", content_areas.by.years), nomatch=0][,
 					variables.for.summaries, with=FALSE][, (highest.level.summary.grouping):=state]
-				tmp.dt.long[, BY_GROWTH_ONLY := factor(is.na(tmp.dt.long[[my.sgp[1]]]), levels=c(FALSE, TRUE), labels=c("Students without SGP", "Students with SGP"))]
+				invisible(tmp.dt.long[, BY_GROWTH_ONLY := factor(is.na(tmp.dt.long[[my.sgp[1]]]), levels=c(FALSE, TRUE), labels=c("Students without SGP", "Students with SGP"))])
+				if (adj.weights.tf <- any(duplicated(tmp.dt.long, by=sgp_key))) invisible(tmp.dt.long[, DUP_COUNT := .N, by=sgp_key])
 				tmp.dt.long <- tmp.dt.long[data.table(sgp_object@Data_Supplementary[[j-1]][,VALID_CASE:="VALID_CASE"], key=sgp_key), nomatch=0]
 
 				if (!is.null(summary.groups[["institution_multiple_membership"]][[j-1]][["WEIGHTS"]])) {
 					setnames(tmp.dt.long, summary.groups[["institution_multiple_membership"]][[j-1]][["WEIGHTS"]], "WEIGHT")
 				}
 
-				dbWriteTable(dbConnect(SQLite(), dbname = "Data/tmp_data/TMP_Summary_Data.sqlite"),
+				if (adj.weights.tf & "WEIGHT" %in% names(tmp.dt.long)) invisible(tmp.dt.long[, WEIGHT := round((WEIGHT / DUP_COUNT), 3)])
+
+				dbWriteTable(dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_Summary_Data.sqlite")),
 					name = "summary_data", overwrite = TRUE, row.names=FALSE, value = tmp.dt.long)
+				rm(tmp.dt.long)
 
 				sgp_object@Summary[[i]] <- c(sgp_object@Summary[[i]], summarizeSGP_INTERNAL(tmp.inst))
 			}
@@ -634,7 +642,7 @@
 
 	if (!is.null(parallel.config))	stopParallel(parallel.config, par.start)
 
-	if (del.dir) unlink("Data/tmp_data", recursive=TRUE, force=TRUE) else unlink("Data/tmp_data/TMP_Summary_Data.sqlite", recursive=TRUE)
+	unlink(file.path(tempdir(), "TMP_Summary_Data.sqlite"), recursive=TRUE)
 	if ("VALID_CASE_STATUS_ONLY" %in% names(sgp_object@Data)) {
 		sgp_object@Data$VALID_CASE[sgp_object@Data$VALID_CASE_STATUS_ONLY=="VALID_CASE"] <- "INVALID_CASE"
 		setkeyv(sgp_object@Data, getKey(sgp_object))

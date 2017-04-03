@@ -37,7 +37,7 @@ function(sgp.groups.to.summarize,
 	ListExpr <- parse(text=paste0("list(", paste(unlist(tmp.sgp.summaries), collapse=", "),")"))
 	ByExpr <- parse(text=paste0("list(", paste(sgp.groups.to.summarize, collapse=", "), ")"))
 
-	pull.vars <- c(unlist(sapply(dbListFields(dbConnect(SQLite(), dbname = "Data/tmp_data/TMP_Summary_Data.sqlite"), "summary_data"),
+	pull.vars <- c(unlist(sapply(dbListFields(dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_Summary_Data.sqlite")), "summary_data"),
 		function(p) if (any(grepl(p, tmp.sgp.summaries))) return(p)), use.names=FALSE), strsplit(sgp.groups.to.summarize, ", ")[[1]])
 
 	tmp <- pullData(tmp.simulation.dt, state, pull.vars, variables.for.summaries, sgp.groups.to.summarize, sgp_key)[, eval(ListExpr), keyby=eval(ByExpr)]
@@ -72,7 +72,7 @@ function(tmp.simulation.dt,
 	SGP_SIM <- V1 <- V2 <- SIM_NUM <- WEIGHT <- ACHIEVEMENT_LEVEL <- ACHIEVEMENT_LEVEL_PRIOR <- CATCH_UP_KEEP_UP_STATUS <- MOVE_UP_STAY_UP_STATUS <- NULL
 	CATCH_UP_KEEP_UP_STATUS_BASELINE <- MOVE_UP_STAY_UP_STATUS_BASELINE <- NULL
 
-	con <- dbConnect(SQLite(), dbname = "Data/tmp_data/TMP_Summary_Data.sqlite")
+	con <- dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_Summary_Data.sqlite"))
 
 	if (!is.null(sim.info)) {
 		tmp.list.1 <- list()
