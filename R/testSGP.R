@@ -2229,7 +2229,7 @@ function(
 			### Part 1
 
 			expression.to.evaluate <-
-				paste0("Demonstration_SGP <- abcSGP(state='DEMO_EOCT',\n\tsgp_object=sgpData_LONG[YEAR %in% head(sgpData.years, -1)],\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP', 'outputSGP'),\n\tsgp.percentiles=TRUE,\n\tsgp.projections=TRUE,\n\tsgp.projections.lagged=TRUE,\n\tsgp.percentiles.baseline=FALSE,\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsimulate.sgps=FALSE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.config=sgp.config.PENULTIMATE,\n\tparallel.config=", parallel.config, "\n)\n")
+				paste0("Demonstration_SGP <- abcSGP(state='DEMO_EOCT',\n\tsgp_object=sgpData_LONG[YEAR %in% head(sgpData.years, -1)],\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP'),\n\tsgp.percentiles=TRUE,\n\tsgp.projections=TRUE,\n\tsgp.projections.lagged=TRUE,\n\tsgp.percentiles.baseline=FALSE,\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsimulate.sgps=FALSE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.config=sgp.config.PENULTIMATE,\n\tparallel.config=", parallel.config, "\n)\n")
 
 			cat("##### Begin testSGP test number 7 #####\n", fill=TRUE)
 			cat(paste0("EVALUATING Test Number 7, Part 1:\n", expression.to.evaluate), fill=TRUE)
@@ -2253,13 +2253,6 @@ function(
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP: FAIL\n")
 			}
-
-			# ### TEST of DUPS_FLAG variable
-			# if (identical(digest::digest(Demonstration_SGP@Data$DUPS_FLAG), "e15cf4832c92a5aed90ad352f34ecd22")) {
-			# 	tmp.messages <- c(tmp.messages, "\t\tTest of variable DUPS_FLAG: OK\n")
-			# } else {
-			# 	tmp.messages <- c(tmp.messages, "\t\tTest of variable DUPS_FLAG: FAIL\n")
-			# }
 
 			### TEST of SGP_TARGET_3_YEAR variable
 			#  sum(Demonstration_SGP@Data$SGP_TARGET_3_YEAR, na.rm=T) # 1761988
@@ -2352,7 +2345,7 @@ function(
 			### Part 2
 
 			expression.to.evaluate <-
-				paste0("Demonstration_SGP <- updateSGP(state='DEMO_EOCT',\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=sgpData_LONG[YEAR == tail(sgpData.years, 1)],\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP', 'outputSGP', 'summarizeSGP'), \n\tsgp.percentiles=TRUE,\n\tsgp.projections=TRUE,\n\tsgp.projections.lagged=TRUE,\n\tsgp.percentiles.baseline=FALSE,\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsimulate.sgps=FALSE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.config=sgp.config.ULTIMATE,\n\tparallel.config=", parallel.config, "\n)\n")
+				paste0("Demonstration_SGP <- updateSGP(state='DEMO_EOCT',\n\twhat_sgp_object=Demonstration_SGP,\n\twith_sgp_data_LONG=sgpData_LONG[YEAR == tail(sgpData.years, 1)],\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP', 'outputSGP'), \n\tsgp.percentiles=TRUE,\n\tsgp.projections=TRUE,\n\tsgp.projections.lagged=TRUE,\n\tsgp.percentiles.baseline=FALSE,\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsimulate.sgps=FALSE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.config=sgp.config.ULTIMATE,\n\tparallel.config=", parallel.config, "\n)\n")
 
 			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
 
@@ -2369,7 +2362,7 @@ function(
 				Rprof(NULL)
 			}
 
-			tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number 7: Part 2 #####\n")
+			tmp.messages <- c(tmp.messages, "\t##### Results of testSGP test number 7: Part 2 #####\n")
 
 			### TEST of SGP variable
 
@@ -2378,14 +2371,6 @@ function(
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP: FAIL\n")
 			}
-
-			# ### TEST of DUPS_FLAG variable
-			#
-			# if (identical(digest::digest(Demonstration_SGP@Data$DUPS_FLAG), "5409d1b3a84ea2a8bd0c291daeff4cc1")) {
-			# 	tmp.messages <- c(tmp.messages, "\t\tTest of variable DUPS_FLAG: OK\n")
-			# } else {
-			# 	tmp.messages <- c(tmp.messages, "\t\tTest of variable DUPS_FLAG: FAIL\n")
-			# }
 
 			### TEST of SGP_TARGET_3_YEAR variable
 			if (identical(digest::digest(Demonstration_SGP@Data$SGP_TARGET_3_YEAR), "f18d29d1595406c153c7068872d5c720")) {
@@ -2470,14 +2455,20 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (6): FAIL\n")
 			}
 
-			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 7, Part 2: ", convertTime(timetaken(started.at.intermediate2)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 7, Part 2: ", convertTime(timetaken(started.at.intermediate2)), "#####\n\n"))
 
-			### Part 3 - visualizeSGP
+			### Part 3a - summarizeSGP
+
+			#  Change the EOCT info back to Grade Level Mathematics for the (INSTRUCTOR_NUMBER) summaries
+			Demonstration_SGP@Data_Supplementary[['INSTRUCTOR_NUMBER']] <- SGPdata::sgpData_INSTRUCTOR_NUMBER
+		  Demonstration_SGP@Data[, GRADE := GRADE_REPORTED]
+		  Demonstration_SGP@Data[CONTENT_AREA %in% c('ALGEBRA_I', 'ALGEBRA_II'), CONTENT_AREA := 'MATHEMATICS']
+		  setkeyv(Demonstration_SGP@Data, getKey(Demonstration_SGP@Data))
 
 			expression.to.evaluate <-
-				paste0("visualizeSGP(state='DEMO_EOCT',\n\tDemonstration_SGP, \n\tsgPlot.students = dup.ids, \n\tparallel.config = ", parallel.config, "\n)\n")
+				paste0("Demonstration_SGP <- summarizeSGP(\n\tDemonstration_SGP,\n\tstate='DEMO_EOCT',\n\tparallel.config = ", parallel.config, "\n)\n")
 
-			cat(paste0("EVALUATING test number 7, Part 3:\n", expression.to.evaluate), fill=TRUE)
+			cat(paste0("EVALUATING test number 7, Part 3a:\n", expression.to.evaluate), fill=TRUE)
 
 			if (memory.profile) {
 				Rprof("testSGP(7)_Memory_Profile.out", memory.profiling=TRUE)
@@ -2486,8 +2477,41 @@ function(
 			started.at.intermediate3 <- proc.time()
 			eval(parse(text=expression.to.evaluate))
 
+			### Part 3b - visualizeSGP
+
+			#  Change EOCT back to EOCT for Visualizations.x
+			Demonstration_SGP@Data[CONTENT_AREA=='MATHEMATICS' & GRADE=='9', CONTENT_AREA:='ALGEBRA_I']
+			Demonstration_SGP@Data[CONTENT_AREA=='MATHEMATICS' & GRADE=='10', CONTENT_AREA:='ALGEBRA_II']
+			Demonstration_SGP@Data[CONTENT_AREA %in% c('ALGEBRA_I', 'ALGEBRA_II'), GRADE:='EOCT']
+
+			expression.to.evaluate <-
+				paste0("visualizeSGP(state='DEMO_EOCT',\n\tDemonstration_SGP, \n\tsgPlot.students = dup.ids, \n\tparallel.config = ", parallel.config, "\n)\n")
+
+			cat(paste0("EVALUATING test number 7, Part 3b:\n", expression.to.evaluate), fill=TRUE)
+
+			eval(parse(text=expression.to.evaluate))
+
 			if (memory.profile) {
 				Rprof(NULL)
+			}
+
+			tmp.messages <- c(tmp.messages, "\t##### Results of testSGP test number 7: Part 3 #####\n")
+
+			### TEST of School Summary Table  :: dim = 2154 x 23
+			setkey(Demonstration_SGP@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__CONTENT_AREA__YEAR__GRADE__SCHOOL_ENROLLMENT_STATUS"]])
+			if (identical(digest::digest(Demonstration_SGP@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__CONTENT_AREA__YEAR__GRADE__SCHOOL_ENROLLMENT_STATUS"]]), "3472a7f8a5ee67e248de158feb3da808")) { # 59157e11ed8289643e3b6f3c653200fc
+				# sum(Demonstration_SGP@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__CONTENT_AREA__YEAR__GRADE__SCHOOL_ENROLLMENT_STATUS"]]$MEDIAN_SGP_COUNT)  # 58069
+				tmp.messages <- c(tmp.messages, "\t\tTest of School Summary Table: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\t\tTest of School Summary Table: FAIL\n")
+			}
+
+			### TEST of Instructor Summary Table  :: dim = 12297 x 24
+			setkey(Demonstration_SGP@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__GRADE__INSTRUCTOR_ENROLLMENT_STATUS"]])
+			if (identical(digest::digest(Demonstration_SGP@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__GRADE__INSTRUCTOR_ENROLLMENT_STATUS"]]), "059d0a7f18c704589cb38e0da0b3aeec")) {
+				tmp.messages <- c(tmp.messages, "\t\tTest of Instructor Summary Table: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\t\tTest of Instructor Summary Table: FAIL\n")
 			}
 
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 7, Part 3: ", convertTime(timetaken(started.at.intermediate3)), "#####\n"))
