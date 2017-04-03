@@ -460,14 +460,15 @@
 	if (is.null(confidence.interval.groups)) confidence.interval.groups <- summarizeSGP.config(sgp_object, "confidence.interval.groups")
 
 	variables.for.summaries <- intersect(
-		c(my.sgp, my.sgp.target, my.sgp.target.baseline, my.sgp.target.musu, my.sgp.target.musu.baseline,
+		c("VALID_CASE", "ID", my.sgp, my.sgp.target, my.sgp.target.baseline, my.sgp.target.musu, my.sgp.target.musu.baseline,
 		"ACHIEVEMENT_LEVEL", "ACHIEVEMENT_LEVEL_PRIOR",
 		"CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STAY_UP_STATUS", "CATCH_UP_KEEP_UP_STATUS_BASELINE","MOVE_UP_STAY_UP_STATUS_BASELINE",
 		"SCALE_SCORE_PRIOR_STANDARDIZED", "SGP_SIMEX", "SGP_SIMEX_BASELINE",
 		unique(as.character(unlist(summary.groups))),
 		"YEAR_WITHIN"), sgp.data.names)
 
-	if (!is.null(sgp_object@Data_Supplementary) | "CSEM" %in% confidence.interval.groups[['TYPE']]) variables.for.summaries <- c("VALID_CASE", "ID", variables.for.summaries)
+	# if (!is.null(sgp_object@Data_Supplementary) | "CSEM" %in% confidence.interval.groups[['TYPE']]) variables.for.summaries <- c("VALID_CASE", "ID", variables.for.summaries)
+
 
 	### Define demographic subgroups and tables that will be calculated from all possible created by expand.grid
 
