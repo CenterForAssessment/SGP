@@ -100,7 +100,7 @@ function(sgp.data,
 
 					if (any(duplicated(tmp.data, by=getKey(tmp.data)))) {
 						invisible(tmp.data[, CONTENT_AREA := "TEMP_CONTENT_AREA"])
-						tmp.data <- createUniqueLongData(tmp.data)
+						tmp.data <- createUniqueLongData(tmp.data)[!is.na(CONTENT_AREA)]
 					}
 
 					if (is.null(SGPt)) {
@@ -127,7 +127,7 @@ function(sgp.data,
 
 					if (any(duplicated(tmp.data, by=getKey(tmp.data)))) {
 						invisible(tmp.data[, CONTENT_AREA := "TEMP_CONTENT_AREA"])
-						tmp.data <- createUniqueLongData(tmp.data)
+						tmp.data <- createUniqueLongData(tmp.data)[!is.na(CONTENT_AREA)]
 					}
 
 					if (is.null(SGPt)) {
@@ -253,7 +253,7 @@ function(sgp.data,
 
 					if (any(duplicated(tmp.data, by=getKey(tmp.data)))) {
 						invisible(tmp.data[, CONTENT_AREA := "TEMP_CONTENT_AREA"])
-						tmp.data <- createUniqueLongData(tmp.data)
+						tmp.data <- createUniqueLongData(tmp.data)[!is.na(CONTENT_AREA)]
 					}
 					tmp.data <- ddcast(tmp.data,
 						ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", state, sgp.scale.score.equated, SGPt), sep=".")
@@ -274,7 +274,7 @@ function(sgp.data,
 
 					if (any(duplicated(tmp.data, by=getKey(tmp.data)))) {
 						invisible(tmp.data[, CONTENT_AREA := "TEMP_CONTENT_AREA"])
-						tmp.data <- createUniqueLongData(tmp.data)
+						tmp.data <- createUniqueLongData(tmp.data)[!is.na(CONTENT_AREA)]
 					}
 					tmp.data <- ddcast(tmp.data,
 						ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", state, sgp.scale.score.equated, SGPt), sep=".")
@@ -299,7 +299,7 @@ function(sgp.data,
 
 					if (any(duplicated(tmp.data, by=getKey(tmp.data)))) {
 						invisible(tmp.data[, CONTENT_AREA := "TEMP_CONTENT_AREA"])
-						tmp.data <- createUniqueLongData(tmp.data)
+						tmp.data <- createUniqueLongData(tmp.data)[!is.na(CONTENT_AREA)]
 					}
 					tmp.data <- ddcast(tmp.data,
 						ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", state, sgp.scale.score.equated, SGPt), sep=".")[
@@ -323,7 +323,7 @@ function(sgp.data,
 					tmp.data <- sgp.data[tmp.lookup, nomatch=0][, 'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep=".")]
 
 					if (any(duplicated(tmp.data, by=getKey(tmp.data)))) {
-						tmp.data <- createUniqueLongData(tmp.data)
+						tmp.data <- createUniqueLongData(tmp.data)[!is.na(CONTENT_AREA)]
 
 						##  Create SCALE_SCORE history vars to merge on
 						tmp.data <- ddcast(tmp.data, ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", state, sgp.scale.score.equated, SGPt), sep=".")[,
@@ -482,7 +482,7 @@ function(sgp.data,
 						if (fix.duplicates!="KEEP.ALL") stop("Invalid character for 'fix.duplicates' argument/SGPstateData > SGP_Configuration value.  Should be 'KEEP.ALL'.")
 						if (any(duplicated(tmp.data, by=getKey(tmp.data)))) {
 							invisible(tmp.data[, CONTENT_AREA := "TEMP_CONTENT_AREA"])
-							tmp.data <- createUniqueLongData(tmp.data)
+							tmp.data <- createUniqueLongData(tmp.data)[!is.na(CONTENT_AREA)]
 					}}
 
 					tmp.data <- ddcast(tmp.data,
@@ -505,7 +505,7 @@ function(sgp.data,
 
 						if (any(duplicated(tmp.data, by=getKey(tmp.data)))) {
 							invisible(tmp.data[, CONTENT_AREA := "TEMP_CONTENT_AREA"])
-							tmp.data <- createUniqueLongData(tmp.data)
+							tmp.data <- createUniqueLongData(tmp.data)[!is.na(CONTENT_AREA)]
 						}
 						tmp.data <- ddcast(tmp.data, ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", "ACHIEVEMENT_LEVEL", state, sgp.scale.score.equated, SGPt), sep=".")
 					} else {
@@ -547,7 +547,7 @@ function(sgp.data,
 						if (fix.duplicates!="KEEP.ALL") stop("Invalid character for 'fix.duplicates' argument/SGPstateData > SGP_Configuration value.  Should be 'KEEP.ALL'.")
 						if (any(duplicated(tmp.data, by=getKey(tmp.data)))) {
 							invisible(tmp.data[, CONTENT_AREA := "TEMP_CONTENT_AREA"])
-							tmp.data <- createUniqueLongData(tmp.data)
+							tmp.data <- createUniqueLongData(tmp.data)[!is.na(CONTENT_AREA)]
 						}}
 
 					tmp.data <- ddcast(tmp.data,
@@ -580,7 +580,7 @@ function(sgp.data,
 
 						if (any(duplicated(tmp.data, by=getKey(tmp.data)))) {
 							invisible(tmp.data[, CONTENT_AREA := "TEMP_CONTENT_AREA"])
-							tmp.data <- createUniqueLongData(tmp.data)
+							tmp.data <- createUniqueLongData(tmp.data)[!is.na(CONTENT_AREA)]
 
 							##  Create SCALE_SCORE history vars to merge on
 							tmp.data <- ddcast(tmp.data, ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", state, sgp.scale.score.equated, SGPt), sep=".")[,
