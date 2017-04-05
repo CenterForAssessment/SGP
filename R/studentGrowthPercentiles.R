@@ -684,13 +684,20 @@ function(panel.data,         ## REQUIRED
 		if (is.null(save.matrices)) simex.coef.matrices <- NULL
 		if (calculate.simex.sgps) {
 			quantile.data.simex <- data.table(rbindlist(tmp.quantiles.simex), key=c("ID", "SIMEX_ORDER"))
+      invisible(quantile.data.simex[, RANK_SIMEX := as.integer(round(100*(rank(SGP_SIMEX, ties.method = "average")/length(SGP_SIMEX)), 0)), by = "SIMEX_ORDER"])
+      if (convert.0and100) {
+        invisible(quantile.data.simex[RANK_SIMEX==0L, RANK_SIMEX := 1L])
+        invisible(quantile.data.simex[RANK_SIMEX==100L, RANK_SIMEX := 99L])
+      }
 			setkey(quantile.data.simex, ID) # first key on ID and SIMEX_ORDER, then re-key on ID only to insure sorted order. Don't rely on rbindlist/k ordering...
-		} else quantile.data.simex <- data.table("ID"=NA, "SIMEX_ORDER"=NA, "SGP_SIMEX"=NA) # set up empty data.table for ddcast and subsets below.
+		} else quantile.data.simex <- data.table("ID"=NA, "SIMEX_ORDER"=NA, "SGP_SIMEX"=NA, "RANK_SIMEX"=NA) # set up empty data.table for ddcast and subsets below.
 		if (print.other.gp) {
-			tmp.quantile.data.simex <- ddcast(quantile.data.simex, ID~SIMEX_ORDER, value.var=setdiff(names(quantile.data.simex), c("ID", "SIMEX_ORDER")), sep="_SIMEX_ORDER_")
-			setnames(tmp.quantile.data.simex, setdiff(names(tmp.quantile.data.simex), c("ID", "SGP_SIMEX", "SIMEX_ORDER")), paste("SGP_SIMEX_ORDER",
-				setdiff(names(tmp.quantile.data.simex), c("ID", "SGP_SIMEX", "SIMEX_ORDER")), sep="_"))
-			quantile.data.simex <- data.table(tmp.quantile.data.simex, SGP_SIMEX=quantile.data.simex[c(which(!duplicated(quantile.data.simex, by=key(quantile.data.simex)))[-1L]-1L, dim(quantile.data.simex)[1L])][["SGP_SIMEX"]])
+			tmp.quantile.data.simex <- ddcast(quantile.data.simex, ID ~ SIMEX_ORDER, value.var=setdiff(names(quantile.data.simex), c("ID", "SIMEX_ORDER")), sep="_ORDER_")
+			# setnames(tmp.quantile.data.simex, setdiff(names(tmp.quantile.data.simex), c("ID", "SGP_SIMEX", "SIMEX_ORDER")), paste("SGP_SIMEX_ORDER",
+				# setdiff(names(tmp.quantile.data.simex), c("ID", "SGP_SIMEX", "SIMEX_ORDER")), sep="_")) # Not needed once RANK_SIMEX included.
+			quantile.data.simex <- data.table(tmp.quantile.data.simex,
+        SGP_SIMEX=quantile.data.simex[c(which(!duplicated(quantile.data.simex, by=key(quantile.data.simex)))[-1L]-1L, dim(quantile.data.simex)[1L])][["SGP_SIMEX"]],
+        RANK_SIMEX=quantile.data.simex[c(which(!duplicated(quantile.data.simex, by=key(quantile.data.simex)))[-1L]-1L, dim(quantile.data.simex)[1L])][["RANK_SIMEX"]])
 			return(list(
 				DT=quantile.data.simex,
 				MATRICES = simex.coef.matrices))
@@ -701,7 +708,7 @@ function(panel.data,         ## REQUIRED
 					MATRICES=simex.coef.matrices))
 			} else {
 				return(list(
-					DT=quantile.data.simex[c(which(!duplicated(quantile.data.simex, by=key(quantile.data.simex)))[-1L]-1L, dim(quantile.data.simex)[1L]), c("ID", "SGP_SIMEX"), with=FALSE],
+					DT=quantile.data.simex[c(which(!duplicated(quantile.data.simex, by=key(quantile.data.simex)))[-1L]-1L, dim(quantile.data.simex)[1L]), c("ID", "SGP_SIMEX", "RANK_SIMEX"), with=FALSE],
 					MATRICES=simex.coef.matrices))
 			}
 		}
@@ -1021,7 +1028,7 @@ function(panel.data,         ## REQUIRED
 
 	tmp.objects <- c("Coefficient_Matrices", "Cutscores", "Goodness_of_Fit", "Knots_Boundaries", "Panel_Data", "SGPercentiles", "SGProjections", "Simulated_SGPs")
 	Coefficient_Matrices <- Cutscores <- Goodness_of_Fit <- Knots_Boundaries <- Panel_Data <- SGPercentiles <- SGProjections <- Simulated_SGPs <- SGP_STANDARD_ERROR <- Verbose_Messages <- NULL
-	SGP_SIMEX <- SGP_NORM_GROUP_SCALE_SCORES <- SGP_NORM_GROUP_DATES <- SGP_NORM_GROUP <- NULL
+	SGP_SIMEX <- RANK_SIMEX <- SGP_NORM_GROUP_SCALE_SCORES <- SGP_NORM_GROUP_DATES <- SGP_NORM_GROUP <- NULL
 
 	if (identical(class(panel.data), "list")) {
 		for (i in tmp.objects) {
@@ -1587,7 +1594,10 @@ function(panel.data,         ## REQUIRED
 		if (simex.tf) {
 			if (print.other.gp) {
 				quantile.data <- quantile.data[quantile.data.simex[["DT"]]]
-			} else quantile.data[, SGP_SIMEX:=quantile.data.simex[['DT']][["SGP_SIMEX"]]]
+			} else {
+        quantile.data[, SGP_SIMEX:=quantile.data.simex[['DT']][["SGP_SIMEX"]]]
+        quantile.data[, RANK_SIMEX:=quantile.data.simex[['DT']][["RANK_SIMEX"]]]
+      }
 		}
 
 		if (!is.null(percentile.cuts)){
@@ -1637,8 +1647,8 @@ function(panel.data,         ## REQUIRED
 
 		if (is.character(goodness.of.fit) || goodness.of.fit==TRUE) {
 			if (simex.tf) {
-				sgps.for.gof <- c("SGP", "SGP_SIMEX")
-				sgps.for.gof.path <- c(tmp.path, paste(tmp.path, "SIMEX", sep="."))
+				sgps.for.gof <- c("SGP", "SGP_SIMEX", "RANK_SIMEX")
+				sgps.for.gof.path <- c(tmp.path, paste(tmp.path, "SIMEX", sep="."), paste(tmp.path, "RANK_SIMEX", sep="."))
 			} else {
 				sgps.for.gof <- "SGP"
 				sgps.for.gof.path <- tmp.path
@@ -1674,6 +1684,7 @@ function(panel.data,         ## REQUIRED
 				if ("SGP_NORM_GROUP_BASELINE" %in% names(tmp.gof.data)) setnames(tmp.gof.data, "SGP_NORM_GROUP_BASELINE", "SGP_NORM_GROUP")
 
 				for (gof.iter in seq_along(sgps.for.gof)) {
+# stop("@$$iMeX")
 					Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]][['TMP_NAME']] <- gofSGP(
 						sgp_object=tmp.gof.data,
 						state=goodness.of.fit,
@@ -1684,13 +1695,13 @@ function(panel.data,         ## REQUIRED
 						use.sgp=sgps.for.gof[gof.iter],
 						output.format=goodness.of.fit.output.format)
 
-                    if (!is.null(Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]][['TMP_NAME']])) {
-                        tmp.gof.plot.name <-
-                            paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression, sep="_"), sep="/"), num.prior+1L), collapse="; ")
-                        tmp.gof.plot.name <- gsub("MATHEMATICS", "MATH", tmp.gof.plot.name)
-                        names(Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]])[length(Goodness_of_Fit[[tmp.path]])] <-
-                            gsub("/", "_", paste(gsub(";", "", rev(unlist(strsplit(tail(tmp.gof.plot.name, 1L), " ")))), collapse=";"))
-                    }
+          if (!is.null(Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]][['TMP_NAME']])) {
+						tmp.gof.plot.name <-
+              paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression, sep="_"), sep="/"), num.prior+1L), collapse="; ")
+            tmp.gof.plot.name <- gsub("MATHEMATICS", "MATH", tmp.gof.plot.name)
+            names(Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]])[length(Goodness_of_Fit[[tmp.path]])] <-
+            gsub("/", "_", paste(gsub(";", "", rev(unlist(strsplit(tail(tmp.gof.plot.name, 1L), " ")))), collapse=";"))
+					}
 				}
 			} else {
 				tmp.gof.data <- data.table(
@@ -1730,7 +1741,7 @@ function(panel.data,         ## REQUIRED
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") && "SGP_STANDARD_ERROR" %in% names(quantile.data)) setnames(quantile.data, gsub("SGP_STANDARD_ERROR", "SGP_BASELINE_STANDARD_ERROR", names(quantile.data)))
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") && "SGP_ORDER" %in% names(quantile.data)) setnames(quantile.data, gsub("SGP_ORDER", "SGP_BASELINE_ORDER", names(quantile.data)))
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") && "SGP_NORM_GROUP" %in% names(quantile.data)) setnames(quantile.data, gsub("SGP_NORM_GROUP", "SGP_NORM_GROUP_BASELINE", names(quantile.data)))
-		if (identical(sgp.labels[['my.extra.label']], "BASELINE") && simex.tf) setnames(quantile.data, "SGP_SIMEX", "SGP_SIMEX_BASELINE")
+		if (identical(sgp.labels[['my.extra.label']], "BASELINE") && simex.tf) setnames(quantile.data, gsub("_SIMEX", "_SIMEX_BASELINE", names(quantile.data))) # SGP_SIMEX and RANK_SIMEX
 		if (identical(sgp.labels[['my.extra.label']], "EQUATED")) setnames(quantile.data, "SGP", "SGP_EQUATED")
 		if (identical(sgp.labels[['my.extra.label']], "EQUATED") && tf.growth.levels) setnames(quantile.data, "SGP_LEVEL", "SGP_LEVEL_EQUATED")
 		if (identical(sgp.labels[['my.extra.label']], "EQUATED") && "SGP_NORM_GROUP" %in% names(quantile.data)) setnames(quantile.data, gsub("SGP_NORM_GROUP", "SGP_NORM_GROUP_EQUATED", names(quantile.data)))
