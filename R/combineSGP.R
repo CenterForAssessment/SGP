@@ -267,7 +267,7 @@ function(
 			##  Get the row index for variable merge.
 			tmp.index <- slot.data[tmp.data[, c(getKey(slot.data), "GRADE", "DUPS_FLAG"), with=FALSE], which=TRUE, on=c(getKey(slot.data), "GRADE", "DUPS_FLAG")]
 		} else {
-			tmp.index <- slot.data[tmp.data[, key(slot.data), with=FALSE], which=TRUE]
+			tmp.index <- slot.data[tmp.data[, dup.by, with=FALSE], which=TRUE, on=dup.by]
 		}
 
 		variables.to.merge <- setdiff(names(tmp.data), c(getKey(slot.data), "GRADE"))
@@ -339,7 +339,7 @@ function(
 			##  Get the row index for variable merge.
 			tmp.index <- slot.data[tmp.data[, c(getKey(slot.data), "GRADE", "DUPS_FLAG"), with=FALSE], which=TRUE, on=c(getKey(slot.data), "GRADE", "DUPS_FLAG")] #
 		} else {
-			tmp.index <- slot.data[tmp.data[, key(slot.data), with=FALSE], which=TRUE]
+			tmp.index <- slot.data[tmp.data[, dup.by, with=FALSE], which=TRUE, on=dup.by]
 		}
 
 		variables.to.merge <- setdiff(names(tmp.data), c(getKey(slot.data), "GRADE"))
@@ -434,7 +434,7 @@ function(
 						}
 					}
 				} else {
-					tmp.index <- slot.data[tmp.data[,intersect(getKey(slot.data), names(tmp.data)), with=FALSE], which=TRUE]
+					tmp.index <- slot.data[tmp.data[,intersect(getKey(slot.data), names(tmp.data)), with=FALSE], which=TRUE, on=dup.by]
 				}
 				variables.to.merge <- setdiff(names(tmp.data), c(getKey(slot.data), "GRADE", "DUPS_FLAG", grep("SCALE_SCORE$|SCALE_SCORE_PRIOR", names(tmp.data), value=TRUE)))
 				invisible(slot.data[tmp.index, (variables.to.merge):=tmp.data[, variables.to.merge, with=FALSE]])
