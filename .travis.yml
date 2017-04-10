@@ -2,9 +2,9 @@ language: r
 warnings_are_errors: true
 sudo: required
 
-r_github_packages:
-- centerforassessment/SGPdata
-- Rdatatable/data.table
+#r_github_packages:
+#- centerforassessment/SGPdata
+#- Rdatatable/data.table
 
 notifications:
   webhooks:

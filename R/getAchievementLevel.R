@@ -49,17 +49,21 @@ function(sgp_data,
 	}
 
 	getAchievementLevel_INTERNAL <- function(state, content_area, year, grade, scale_score) {
-		if (is.null(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]])) {
-			tmp.levels <- seq_along(SGP::SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]][!is.na(SGP::SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]])])
-			tmp.labels <- SGP::SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]][!is.na(SGP::SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]])]
+		if (!is.null(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[get.cutscore.label(state, year, content_area)]][[paste0("GRADE_", grade)]])) {
+			if (is.null(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]])) {
+				tmp.levels <- seq_along(SGP::SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]][!is.na(SGP::SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]])])
+				tmp.labels <- SGP::SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]][!is.na(SGP::SGPstateData[[state]][["Achievement"]][["Levels"]][["Proficient"]])]
+			} else {
+				tmp.levels <- seq_along(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[get.achievement_level.label(state, year)]][["Labels"]][
+					!is.na(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[get.achievement_level.label(state, year)]][["Proficient"]])])
+				tmp.labels <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[get.achievement_level.label(state, year)]][["Labels"]][
+					!is.na(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[get.achievement_level.label(state, year)]][["Proficient"]])]
+			}
+			as.character(factor(findInterval(scale_score, SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[get.cutscore.label(state, year, content_area)]][[paste0("GRADE_", grade)]])+1,
+				levels=tmp.levels, labels=tmp.labels))
 		} else {
-			tmp.levels <- seq_along(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[get.achievement_level.label(state, year)]][["Labels"]][
-				!is.na(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[get.achievement_level.label(state, year)]][["Proficient"]])])
-			tmp.labels <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[get.achievement_level.label(state, year)]][["Labels"]][
-				!is.na(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[get.achievement_level.label(state, year)]][["Proficient"]])]
+			rep(as.character(NA), length(scale_score))
 		}
-		as.character(factor(findInterval(scale_score, SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[get.cutscore.label(state, year, content_area)]][[paste0("GRADE_", grade)]])+1,
-			levels=tmp.levels, labels=tmp.labels))
 	}
 
 	if ("STATE" %in% names(sgp_data) & !is.null(SGP::SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]])) {
