@@ -144,7 +144,7 @@ function(data,
 			messageSGP(paste("\tWARNING: @Data keyed by", paste(getKey(data), collapse=", "), "has duplicate cases. Subsequent joins/merges will likely be corrupt."))
 			messageSGP("\tNOTE: Duplicate cases are available in current workspace as 'DUPLICATED_CASES' and saved as 'DUPLICATED_CASES.Rdata'.")
 			assign("DUPLICATED_CASES",
-				data@Data["VALID_CASE"][unique(data@Data["VALID_CASE"][duplicated(data@Data["VALID_CASE"], by=key(data@Data)), c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE], by=key(data@Data))])
+				data@Data["VALID_CASE"][unique(data@Data["VALID_CASE"][duplicated(data@Data["VALID_CASE"], by=key(data@Data)), c("VALID_CASE", "CONTENT_AREA", "GRADE", "YEAR", "ID"), with=FALSE], by=key(data@Data))])
 			save(DUPLICATED_CASES, file="DUPLICATED_CASES.Rdata")
 		}
 
@@ -187,7 +187,7 @@ function(data,
 		if (is.null(fix.duplicates) && any(duplicated(data["VALID_CASE"], by=key(data)))) {
 			messageSGP(paste("\tWARNING: Data keyed by", paste(getKey(data), collapse=", "), "has duplicate cases. Subsequent joins/merges will be corrupted."))
 			messageSGP("\tNOTE: Duplicate cases are available in current workspace as 'DUPLICATED_CASES' and saved as 'DUPLICATED_CASES.Rdata'.")
-			assign("DUPLICATED_CASES", data["VALID_CASE"][unique(data["VALID_CASE"][duplicated(data["VALID_CASE"], by=key(data)), c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE], by=key(data))])
+			assign("DUPLICATED_CASES", data["VALID_CASE"][unique(data["VALID_CASE"][duplicated(data["VALID_CASE"], by=key(data)), c("VALID_CASE", "CONTENT_AREA", "GRADE", "YEAR", "ID"), with=FALSE], by=key(data))])
 			save(DUPLICATED_CASES, file="DUPLICATED_CASES.Rdata")
 		}
 
@@ -265,9 +265,9 @@ function(data,
 		# if (identical(toupper(fix.duplicates), "KEEP.ALL")) {
 			if (is.SGP(data)) {
 				assign("DUPLICATED_CASES",
-					data@Data["VALID_CASE"][unique(data@Data["VALID_CASE"][duplicated(data@Data["VALID_CASE"], by=getKey(data@Data)), c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE], by=getKey(data@Data))])
+					data@Data["VALID_CASE"][unique(data@Data["VALID_CASE"][duplicated(data@Data["VALID_CASE"], by=getKey(data@Data)), c("VALID_CASE", "CONTENT_AREA", "GRADE", "YEAR", "ID"), with=FALSE], by=getKey(data@Data))])
 			} else {
-				assign("DUPLICATED_CASES", data["VALID_CASE"][unique(data["VALID_CASE"][duplicated(data["VALID_CASE"], by=getKey(data)), c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE], by=getKey(data))])
+				assign("DUPLICATED_CASES", data["VALID_CASE"][unique(data["VALID_CASE"][duplicated(data["VALID_CASE"], by=getKey(data)), c("VALID_CASE", "CONTENT_AREA", "GRADE", "YEAR", "ID"), with=FALSE], by=getKey(data))])
 			}
 			if (dim(DUPLICATED_CASES)[1]!=0) {
 				messageSGP("\tNOTE: Duplicate cases are present in the data and `fix.duplicates` has been requested.  Required ID modifications will be performed as needed in analyzeSGP.")

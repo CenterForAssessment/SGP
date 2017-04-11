@@ -113,9 +113,10 @@
 		tmp.list <- list()
 		for (i in names(sgp_object@SGP[["Simulated_SGPs"]])) {
 			if (length(grep("BASELINE", i) > 0)) tmp.baseline <- "BASELINE" else tmp.baseline <- "COHORT"
-			if ("YEAR_WITHIN" %in% names(sgp_object@SGP[["Simulated_SGPs"]][[i]])) columns.to.omit <- -c(1,2) else columns.to.omit <- -1
+			columns.to.omit <- -(grep("ID|GRADE|YEAR_WITHIN", names(sgp_object@SGP[["Simulated_SGPs"]][[i]])))
 			tmp.list[[i]] <- data.table(
 				ID=sgp_object@SGP[["Simulated_SGPs"]][[i]][["ID"]],
+				GRADE=sgp_object@SGP[["Simulated_SGPs"]][[i]][["GRADE"]],
 				SGP_SIM=c(as.matrix(sgp_object@SGP[["Simulated_SGPs"]][[i]][,columns.to.omit, with=FALSE])))[,
 					CONTENT_AREA:=unlist(strsplit(i, "[.]"))[1]][,
 					YEAR:=unlist(strsplit(i, "[.]"))[2]][,
@@ -555,8 +556,9 @@
 
 	if ("VALID_CASE_STATUS_ONLY" %in% names(sgp_object@Data)) {
 		sgp_object@Data$VALID_CASE[sgp_object@Data$VALID_CASE_STATUS_ONLY=="VALID_CASE"] <- "VALID_CASE"
-		setkeyv(sgp_object@Data, getKey(sgp_object))
 	}
+
+	setkeyv(sgp_object@Data, sgp_key %w/o% "GRADE") #  Set to old SGP key so that it still subsets data correctly with content_areas.by.years lookup table
 
 	tmp.dt <- sgp_object@Data[data.table("VALID_CASE", content_areas.by.years), nomatch=0][,
 		variables.for.summaries, with=FALSE][, (highest.level.summary.grouping):=state]
@@ -624,7 +626,8 @@
 					variables.for.summaries, with=FALSE][, (highest.level.summary.grouping):=state]
 				invisible(tmp.dt.long[, BY_GROWTH_ONLY := factor(is.na(tmp.dt.long[[my.sgp[1]]]), levels=c(FALSE, TRUE), labels=c("Students without SGP", "Students with SGP"))])
 				if (adj.weights.tf <- any(duplicated(tmp.dt.long, by=sgp_key))) invisible(tmp.dt.long[, DUP_COUNT := .N, by=sgp_key])
-				tmp.dt.long <- tmp.dt.long[data.table(sgp_object@Data_Supplementary[[j-1]][,VALID_CASE:="VALID_CASE"], key=sgp_key), nomatch=0]
+				if ("GRADE" %in% names(sgp_object@Data_Supplementary[[j-1]])) tmp_key <- sgp_key else tmp_key <- sgp_key %w/o% "GRADE"
+				tmp.dt.long <- tmp.dt.long[data.table(sgp_object@Data_Supplementary[[j-1]][,VALID_CASE:="VALID_CASE"], key=tmp_key), nomatch=0, on=tmp_key]
 
 				if (!is.null(summary.groups[["institution_multiple_membership"]][[j-1]][["WEIGHTS"]])) {
 					setnames(tmp.dt.long, summary.groups[["institution_multiple_membership"]][[j-1]][["WEIGHTS"]], "WEIGHT")
@@ -651,5 +654,6 @@
 
 	messageSGP(paste("Finished summarizeSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 
+	setkeyv(sgp_object@Data, getKey(sgp_object))
 	return(sgp_object)
 } ## END summarizeSGP Function

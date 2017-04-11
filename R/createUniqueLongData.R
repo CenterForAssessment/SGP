@@ -2,7 +2,7 @@
 
 	### Set variable to NULL to prevent R CMD Check warnings
 
-	YEAR <- ID <- VALID_CASE <- CONTENT_AREA <- GRADE <- TEMP_ID <- DUP_COUNT <- EXTENDED <- NULL
+	YEAR <- ID <- VALID_CASE <- CONTENT_AREA <- TEMP_ID <- DUP_COUNT <- EXTENDED <- NULL
 
 	###  Utility function
 
