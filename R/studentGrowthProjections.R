@@ -518,10 +518,12 @@ function(panel.data,	## REQUIRED
 		if (!is.list(sgp.labels)) {
 			stop("Please specify an appropriate list of SGP function labels (sgp.labels). See help page for details.")
 		}
-		if (!identical(names(sgp.labels), c("my.year", "my.subject")) &
-			!identical(names(sgp.labels), c("my.year", "my.subject", "my.extra.label"))) {
+		if (!all(names(sgp.labels) %in% c("my.year", "my.subject")) &
+				!all(names(sgp.labels) %in% c("my.year", "my.subject", "my.grade")) &
+				!all(names(sgp.labels) %in% c("my.year", "my.subject", "my.extra.label")) &
+				!all(names(sgp.labels) %in% c("my.year", "my.subject", "my.grade", "my.extra.label"))) {
 			stop("Please specify an appropriate list for sgp.labels. See help page for details.")
-			}
+		}
 		sgp.labels <- lapply(sgp.labels, toupper)
 		tmp.path <- .create.path(sgp.labels)
 	}
@@ -994,6 +996,11 @@ function(panel.data,	## REQUIRED
 
 	if ("YEAR_WITHIN" %in% names(panel.data[["Panel_Data"]])) {
 		trajectories.and.cuts <- panel.data[["Panel_Data"]][,c("ID", "YEAR_WITHIN"), with=FALSE][trajectories.and.cuts, on="ID"]
+	}
+
+	##  Return GRADE value for SGP Key
+	if (!is.null(sgp.labels$my.grade)) {
+		trajectories.and.cuts[, GRADE := sgp.labels$my.grade]
 	}
 
 	SGProjections[[tmp.path]] <- rbindlist(list(SGProjections[[tmp.path]], trajectories.and.cuts), fill=TRUE)
