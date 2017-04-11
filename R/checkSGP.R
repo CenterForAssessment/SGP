@@ -11,10 +11,10 @@ function(sgp_object,
 
 	### Create state (if NULL) from sgp_object (if possible)
 
-        if (is.null(state)) {
-                tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
-                state <- getStateAbbreviation(tmp.name, "checkSGP")
-        }
+	if (is.null(state)) {
+		tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
+		state <- getStateAbbreviation(tmp.name, "checkSGP")
+	}
 
 	my.character.variables <- c("ID", "VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", "ACHIEVEMENT_LEVEL", "ACHIEVEMENT_LEVEL_PRIOR")
 	my.numeric.variables <- c("SCALE_SCORE", "SCALE_SCORE_PRIOR", "SCALE_SCORE_CSEM")
@@ -136,6 +136,61 @@ function(sgp_object,
 			sgp_object@SGP[['SGProjections']][[i]] <- changeVariableClass(sgp_object@SGP[['SGProjections']][[i]], 'ACHIEVEMENT_LEVEL_PRIOR', data.slot=paste('SGProjections', names(sgp_object@SGP[['SGProjections']])[i]), convert.to.class="character")
 		}
 	}
+
+	## Check for GRADE in @SGP$SGPercentiles, @SGP$Simulated_SGPs and @SGP$SGProjections
+
+	if (any(add.grade.pctl.tf <- sapply(seq_along(sgp_object@SGP[['SGPercentiles']]), function(f) !"GRADE" %in% names(sgp_object@SGP[['SGPercentiles']][[f]])))) {
+		messageSGP("\tNOTE: Adding 'GRADE' variable to @SGP$SGPercentiles tables based on 'VALID_CASE', 'CONTENT_AREA', 'YEAR' and 'ID' variables.")
+		for (i in names(sgp_object@SGP[['SGPercentiles']])[which(add.grade.pctl.tf)]) {
+			setkeyv(sgp_object@Data, setdiff(getKey(sgp_object@Data), "GRADE"))
+			tmp.dt <- data.table(
+				sgp_object@SGP[['SGPercentiles']][[i]],
+				CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
+				YEAR=getTableNameYear(i),
+				VALID_CASE="VALID_CASE", key=setdiff(getKey(sgp_object@Data), "GRADE"))
+
+			tmp.dt <- sgp_object@Data[, getKey(sgp_object@Data), with=FALSE][tmp.dt, on = key(sgp_object@Data)]
+			invisible(tmp.dt[, c("VALID_CASE", "CONTENT_AREA", "YEAR") := NULL])
+
+			sgp_object@SGP[['SGPercentiles']][[i]] <- tmp.dt
+		}
+	}
+
+	if (any(add.grade.proj.tf <- sapply(seq_along(sgp_object@SGP[['SGProjections']]), function(f) !"GRADE" %in% names(sgp_object@SGP[['SGProjections']][[f]])))) {
+		messageSGP("\tNOTE: Adding 'GRADE' variable to @SGP$SGProjections tables based on 'VALID_CASE', 'CONTENT_AREA', 'YEAR' and 'ID' variables.")
+		for (i in names(sgp_object@SGP[['SGProjections']])[which(add.grade.proj.tf)]) {
+			setkeyv(sgp_object@Data, setdiff(getKey(sgp_object@Data), "GRADE"))
+			tmp.dt <- data.table(
+				sgp_object@SGP[['SGProjections']][[i]],
+				CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
+				YEAR=getTableNameYear(i),
+				VALID_CASE="VALID_CASE", key=setdiff(getKey(sgp_object@Data), "GRADE"))
+
+			tmp.dt <- sgp_object@Data[, getKey(sgp_object@Data), with=FALSE][tmp.dt, on = key(sgp_object@Data)]
+			invisible(tmp.dt[, c("VALID_CASE", "CONTENT_AREA", "YEAR") := NULL])
+
+			sgp_object@SGP[['SGProjections']][[i]] <- tmp.dt
+		}
+	}
+
+	if (any(add.grade.sims.tf <- sapply(seq_along(sgp_object@SGP[['Simulated_SGPs']]), function(f) !"GRADE" %in% names(sgp_object@SGP[['Simulated_SGPs']][[f]])))) {
+		messageSGP("\tNOTE: Adding 'GRADE' variable to @SGP$Simulated_SGPs tables based on 'VALID_CASE', 'CONTENT_AREA', 'YEAR' and 'ID' variables.")
+		for (i in names(sgp_object@SGP[['Simulated_SGPs']])[which(add.grade.sims.tf)]) {
+			setkeyv(sgp_object@Data, setdiff(getKey(sgp_object@Data), "GRADE"))
+			tmp.dt <- data.table(
+				sgp_object@SGP[['Simulated_SGPs']][[i]],
+				CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
+				YEAR=getTableNameYear(i),
+				VALID_CASE="VALID_CASE", key=setdiff(getKey(sgp_object@Data), "GRADE"))
+
+			tmp.dt <- sgp_object@Data[, getKey(sgp_object@Data), with=FALSE][tmp.dt, on = key(sgp_object@Data)]
+			invisible(tmp.dt[, c("VALID_CASE", "CONTENT_AREA", "YEAR") := NULL])
+
+			sgp_object@SGP[['Simulated_SGPs']][[i]] <- tmp.dt
+		}
+	}
+
+	if (any(c(add.grade.proj.tf, add.grade.pctl.tf, add.grade.sims.tf))) setkeyv(sgp_object@Data, getKey(sgp_object@Data))
 
 	## Check if ACHIEVEMENT_LEVEL levels are in SGPstateData
 
