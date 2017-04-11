@@ -52,10 +52,10 @@ function(
 			started.at.overall <- proc.time()
 			eval(parse(text=expression.to.evaluate))
 
-			### TEST of SGP Variable
-
 			tmp.messages <- c(tmp.messages, "\t##### Results of testSGP test number 0: Part 1 #####\n")
 
+			### TEST of SGP Variable
+			# if (identical(sum(Demonstration_SGP[['SGPercentiles']][[paste("READING", tail(sgpData.years.single, 1), sep=".")]][['SGP']]), 1707319L)) {
 			if (identical(digest(Demonstration_SGP[['SGPercentiles']][[paste("READING", tail(sgpData.years.single, 1), sep=".")]][['SGP']]), "218a961b96d1f6588c408f5698ac04ce")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 1: OK\n")
 			} else {
@@ -63,7 +63,7 @@ function(
 			}
 
 			### TEST of SGP_ORDER_1 Variable
-
+			# if (identical(sum(Demonstration_SGP[['SGPercentiles']][[paste("READING", tail(sgpData.years.single, 1), sep=".")]][['SGP_ORDER_1']]), 1708589L)) {
 			if (identical(digest(Demonstration_SGP[['SGPercentiles']][[paste("READING", tail(sgpData.years.single, 1), sep=".")]][['SGP_ORDER_1']]), "543b9397789643ae0619256c05812a17")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_ORDER_1, part 1: OK\n")
 			} else {
@@ -71,7 +71,7 @@ function(
 			}
 
 			### TEST of SCALE_SCORE_PRIOR Variable
-
+			# if (identical(sum(Demonstration_SGP[['SGPercentiles']][[paste("READING", tail(sgpData.years.single, 1), sep=".")]][['SCALE_SCORE_PRIOR']]), 20707938)) {
 			if (identical(digest(Demonstration_SGP[['SGPercentiles']][[paste("READING", tail(sgpData.years.single, 1), sep=".")]][['SCALE_SCORE_PRIOR']]), "87b318d12cad2d571cbb59297b6b0a3d")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_PRIOR, part 1: OK\n")
 			} else {
@@ -79,7 +79,7 @@ function(
 			}
 
 			### TEST of SGP_ORDER Variable
-
+			# if (identical(as.vector(table(Demonstration_SGP$SGPercentiles[[paste("READING", tail(sgpData.years.single, 1), sep=".")]][['SGP_ORDER']])), c(8666L, 7639L, 17920L))) {
 			if (identical(digest(table(Demonstration_SGP[['SGPercentiles']][[paste("READING", tail(sgpData.years.single, 1), sep=".")]][['SGP_ORDER']])), "b2779fb3a7408ade8eea0c69cb9f265b")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_ORDER, part 1: OK\n")
 			} else {
@@ -87,7 +87,7 @@ function(
 			}
 
 			### TEST of SGP_LEVEL Variable
-
+			# if (identical(as.vector(table(Demonstration_SGP$SGPercentiles[[paste("READING", tail(sgpData.years.single, 1), sep=".")]][['SGP_LEVEL']])), c(6740L, 6824L, 7176L, 6835L, 6650L))) {
 			if (identical(digest(table(Demonstration_SGP[['SGPercentiles']][[paste("READING", tail(sgpData.years.single, 1), sep=".")]][['SGP_LEVEL']])), "22d6dafb62d5d6b2927c7a08ba1d8461")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_LEVEL, part 1: OK\n")
 			} else {
@@ -95,7 +95,7 @@ function(
 			}
 
 			### TEST of SGP_STANDARD_ERROR Variable
-
+			# if (identical(sum(Demonstration_SGP$SGPercentiles[[paste('READING', tail(sgpData.years.single, 1), sep=".")]][['SGP_STANDARD_ERROR']], na.rm=TRUE), 543735.67)) {
 			if (identical(digest(Demonstration_SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years.single, 1), sep=".")]][['SGP_STANDARD_ERROR']]), "157ff9ac26da921092d7c115768537ac")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_STANDARD_ERROR, part 1: OK\n")
 			} else {
@@ -103,7 +103,7 @@ function(
 			}
 
 			### TEST of SGP_FROM_**** variable
-
+			#  sum(Demonstration_SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years.single, 1), sep=".")]][[paste('SGP_FROM', as.numeric(tail(sgpData.years.single, 1))-2, sep="_")]]) # 1708877
 			if (identical(digest(Demonstration_SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years.single, 1), sep=".")]][[paste('SGP_FROM', as.numeric(tail(sgpData.years.single, 1))-2, sep="_")]]), "454ff2c53966e1cfd4c9280aab4b40b5")) {
 				tmp.messages <- c(tmp.messages, paste0("\t\tTest of variable ",  paste('SGP_FROM', as.numeric(tail(sgpData.years.single, 1))-2, sep="_"), ", part 2: OK\n"))
 			} else {
@@ -141,10 +141,10 @@ function(
 			started.at.intermediate <- proc.time()
 			eval(parse(text=expression.to.evaluate))
 
-			### TEST of dimension of table READING.####.LAGGED dimensions
-
 			tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number 0: Part 2 #####\n")
 
+			### TEST of dimension of table READING.####.LAGGED dimensions
+			# if (identical(dim(Demonstration_SGP$SGProjections[[paste('READING', tail(sgpData.years.single, 1), 'LAGGED', sep=".")]]), c(36478L, 513L))) {
 			if (identical(digest(Demonstration_SGP[['SGProjections']][[paste('READING', tail(sgpData.years.single, 1), 'LAGGED', sep=".")]]), "8ed0dbdfe95ea48e426a1e1faf9e8da1")) {
 				tmp.messages <- c(tmp.messages, paste("\t\tTest of",  paste('READING', tail(sgpData.years.single, 1), 'LAGGED', sep="."), "table dimensions, part 2: OK\n"))
 			} else {
@@ -152,7 +152,7 @@ function(
 			}
 
 			### TEST of LEVEL_1_SGP_TARGET_YEAR_1 Variable
-
+			# if (identical(sum(Demonstration_SGP$SGProjections[[paste('READING', tail(sgpData.years.single, 1), "LAGGED", sep=".")]][['LEVEL_1_SGP_TARGET_YEAR_1']]), 402866L)) {
 			if (identical(digest(Demonstration_SGP[['SGProjections']][[paste('READING', tail(sgpData.years.single, 1), "LAGGED", sep=".")]][['LEVEL_1_SGP_TARGET_YEAR_1']]), "60193d09485ede52ddcf58a51dedf04f")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable LEVEL_1_SGP_TARGET_YEAR_1, part 2: OK\n")
 			} else {
@@ -160,7 +160,7 @@ function(
 			}
 
 			### TEST of P84_PROJ_YEAR_4 Variable
-
+			# if (identical(sum(Demonstration_SGP$SGProjections[[paste('READING', tail(sgpData.years.single, 1), "LAGGED", sep=".")]][['P84_PROJ_YEAR_4']], na.rm=TRUE), 10545791)) {
 			if (identical(digest(Demonstration_SGP[['SGProjections']][[paste('READING', tail(sgpData.years.single, 1), "LAGGED", sep=".")]][['P84_PROJ_YEAR_4']]), "e691fdcb7f80f9d716685300a9e16b48")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable P84_PROJ_YEAR_4, part 2: OK\n")
 			} else {
