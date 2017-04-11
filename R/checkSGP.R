@@ -48,24 +48,24 @@ function(sgp_object,
 	changeVariableClass <- function(my.data, my.variables.to.change, data.slot, convert.to.class) {
 		if (!is.data.table(my.data)) my.data <- as.data.table(my.data)
 		if (!is.character(my.data[['ID']]) & !data.slot=="@Data" & !data.slot=="@Data_Supplementary") {
-			message(paste("\tNOTE: ID in", data.slot, "converted from factor to character."))
+			messageSGP(paste("\tNOTE: ID in", data.slot, "converted from factor to character."))
 			my.data[,ID:=as.character(my.data[["ID"]])]
 		} else {
 			if (convert.to.class=="character") {
 				for (my.variable in my.variables.to.change) {
-					message(paste("\tNOTE:", my.variable, "in", data.slot, "converted from", paste(class(my.data[[my.variable]]), collapse=" "), "to character."))
+					messageSGP(paste("\tNOTE:", my.variable, "in", data.slot, "converted from", paste(class(my.data[[my.variable]]), collapse=" "), "to character."))
 					my.data[,(my.variable):=as.character(my.data[[my.variable]])]
 				}
 			}
 			if (convert.to.class=="numeric") {
 				for (my.variable in my.variables.to.change) {
-					message(paste("\tNOTE:", my.variable, "in", data.slot, "converted from", class(my.data[[my.variable]]), "to numeric."))
+					messageSGP(paste("\tNOTE:", my.variable, "in", data.slot, "converted from", class(my.data[[my.variable]]), "to numeric."))
 					my.data[,(my.variable):=as.numeric(my.data[[my.variable]])]
 				}
 			}
 			if (convert.to.class=="Date") {
 				for (my.variable in my.variables.to.change) {
-					message(paste("\tNOTE:", my.variable, "in", data.slot, "converted from", class(my.data[[my.variable]]), "to Date assuming YYYY-MM-DD format."))
+					messageSGP(paste("\tNOTE:", my.variable, "in", data.slot, "converted from", class(my.data[[my.variable]]), "to Date assuming YYYY-MM-DD format."))
 					my.data[,(my.variable):=as.Date(my.data[[my.variable]])]
 				}
 			}
@@ -190,7 +190,7 @@ function(sgp_object,
 		}
 	}
 
-	if (any(c(add.grade.proj.tf, add.grade.pctl.tf, add.grade.sims.tf))) setkeyv(sgp_object@Data, getKey(sgp_object@Data))
+	if (any(unlist(c(add.grade.proj.tf, add.grade.pctl.tf, add.grade.sims.tf)))) setkeyv(sgp_object@Data, getKey(sgp_object@Data))
 
 	## Check if ACHIEVEMENT_LEVEL levels are in SGPstateData
 
@@ -204,20 +204,20 @@ function(sgp_object,
 		if (!all(sort(unique(sgp_object@Data[['ACHIEVEMENT_LEVEL']])) %in% achievement.levels)) {
 			missing.achievement.levels <-
 				sort(unique(sgp_object@Data[['ACHIEVEMENT_LEVEL']]))[!sort(unique(sgp_object@Data[['ACHIEVEMENT_LEVEL']])) %in% achievement.levels]
-			message(paste("\tNOTE: Achievement level(s):", paste(missing.achievement.levels, collapse=", "), "in supplied data are not contained in 'SGPstateData'.", collapse=" "))
+			messageSGP(paste("\tNOTE: Achievement level(s):", paste(missing.achievement.levels, collapse=", "), "in supplied data are not contained in 'SGPstateData'.", collapse=" "))
 		}
 	}
 
 	## Correct SCALE_SCORE_PRIOR/PRIOR_SCALE_SCORE mixup
 
 	if ("PRIOR_SCALE_SCORE" %in% names(sgp_object@Data)) {
-		message("\tNOTE: Changing name 'PRIOR_SCALE_SCORE' to 'SCALE_SCORE_PRIOR' in @Data")
+		messageSGP("\tNOTE: Changing name 'PRIOR_SCALE_SCORE' to 'SCALE_SCORE_PRIOR' in @Data")
 		setnames(sgp_object@Data, "PRIOR_SCALE_SCORE", "SCALE_SCORE_PRIOR")
 	}
 
 	for (i in names(sgp_object@SGP[['SGPercentiles']])) {
 		if ("PRIOR_SCALE_SCORE" %in% names(sgp_object@SGP[['SGPercentiles']][[i]])) {
-			message(paste("\tNOTE: Changing name 'PRIOR_SCALE_SCORE' to 'SCALE_SCORE_PRIOR' in", i, "table of '@SGP$SGPercentiles'"))
+			messageSGP(paste("\tNOTE: Changing name 'PRIOR_SCALE_SCORE' to 'SCALE_SCORE_PRIOR' in", i, "table of '@SGP$SGPercentiles'"))
 			names(sgp_object@SGP[['SGPercentiles']][[i]])[which(names(sgp_object@SGP[['SGPercentiles']][[i]])=="PRIOR_SCALE_SCORE")] <- "SCALE_SCORE_PRIOR"
 		}
 	}
@@ -226,7 +226,7 @@ function(sgp_object,
 
 	names.to.change <- c("SGP_TARGET", "SGP_TARGET_BASELINE", "SGP_TARGET_MOVE_UP_STAY_UP", "SGP_TARGET_BASELINE_MOVE_UP_STAY_UP")
 	for (i in intersect(names(sgp_object@Data), names.to.change)) {
-		message(paste0("\tNOTE: Changing name '", i, "' to '", paste(i, "3_YEAR", sep="_"), "' in @Data"))
+		messageSGP(paste0("\tNOTE: Changing name '", i, "' to '", paste(i, "3_YEAR", sep="_"), "' in @Data"))
 		setnames(sgp_object@Data, i, paste(i, "3_YEAR", sep="_"))
 	}
 
@@ -236,7 +236,7 @@ function(sgp_object,
 		tmp.names <- grep("YEAR", names(sgp_object@SGP[['SGProjections']][[i]]), value=TRUE)
 		if (length(grep("CURRENT", tmp.names))!=length(tmp.names)) {
 			setnames(sgp_object@SGP[['SGProjections']][[i]], tmp.names, paste(tmp.names, "CURRENT", sep="_"))
-			message(paste0("\tNOTE: Adding '_CURRENT' to non-lagged variable names in @SGP[['SGProjections']][['", i, "']]"))
+			messageSGP(paste0("\tNOTE: Adding '_CURRENT' to non-lagged variable names in @SGP[['SGProjections']][['", i, "']]"))
 		}
 	}
 
