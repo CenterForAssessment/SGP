@@ -1,15 +1,14 @@
 language: r
-warnings_are_errors: true
+warnings_are_errors: yes
 sudo: required
-
-r_github_packages:
-- centerforassessment/SGPdata
-- Rdatatable/data.table
-
 notifications:
   webhooks:
-    urls:
-      - https://webhooks.gitter.im/e/3cf3fc8bed1edd374df6
+    urls: https://webhooks.gitter.im/e/3cf3fc8bed1edd374df6
     on_success: always
     on_failure: always
-    on_start: false
+    on_start: no
+env:
+  global:
+    secure: f3BnVfjR8GzA80kw5DGO4kIcmlioHCWMpi7Y+Iy4WVjJwR3PRo7toQlVen2SJfTNQRRdSWlfPiI4L+8ptitWcrXtQxFcsYV45Un8HDo/Xb5Fe3QSUeaLUXFdcdyZEVd5frXcdW7IlfV/fMnhLMavkKkrbbxeZdHILCooDm7n6Rk=
+after_success:
+- Rscript -e "packagedocs::deploy_travis()"
