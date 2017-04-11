@@ -226,8 +226,10 @@ function(sgp_object,
 		started.at <- proc.time()
 		messageSGP(paste("\tStarted INSTRUCTOR data production in outputSGP", prettyDate()))
 
+		if ("GRADE" %in% names(sgp_object@Data_Supplementary[["INSTRUCTOR_NUMBER"]])) tmp_key <- getKey(sgp_object@Data) else tmp_key <- setdiff(getKey(sgp_object@Data), "GRADE")
+
 		assign(paste(tmp.state, "SGP_INSTRUCTOR_Data", sep="_"), sgp_object@Data[data.table(sgp_object@Data_Supplementary[["INSTRUCTOR_NUMBER"]][,VALID_CASE:="VALID_CASE"],
-			key=getKey(sgp_object@Data)), nomatch=0])
+			key=tmp_key), nomatch=0, on=tmp_key])
 
 		save(list=paste(tmp.state, "SGP_INSTRUCTOR_Data", sep="_"), file=file.path(outputSGP.directory, paste(tmp.state, "SGP_INSTRUCTOR_Data.Rdata", sep="_")))
 		fwrite(get(paste(tmp.state, "SGP_INSTRUCTOR_Data", sep="_")), file=file.path(outputSGP.directory, paste(tmp.state, "SGP_INSTRUCTOR_Data.txt", sep="_")), sep="|", quote=FALSE)
@@ -767,7 +769,7 @@ function(sgp_object,
 					VALID_CASE="VALID_CASE",
 					CONTENT_AREA=unlist(strsplit(names.iter, "[.]"))[1],
 					YEAR=getTableNameYear(names.iter),
-					sgp_object@SGP[["SGPercentiles"]][[names.iter]])]
+					sgp_object@SGP[["SGPercentiles"]][[names.iter]]), on=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID")]
 			if (any(!output.column.order %in% names(tmp.dt))) tmp.dt[,(output.column.order[!output.column.order %in% names(tmp.dt)]):=as.numeric(NA)]
 			tmp.dt <- tmp.dt[,ID:=gsub("_DUPS_[0-9]*", "", ID)][,SGP_NORM_GROUP_BASELINE:=gsub("_RASCH", "", SGP_NORM_GROUP_BASELINE)][,output.column.order, with=FALSE]
 			fwrite(tmp.dt, file=file.path(outputSGP.directory, "RLI", "SGPercentiles", paste(file.label, "txt", sep=".")), sep=",", quote=FALSE)
@@ -846,7 +848,7 @@ function(sgp_object,
 					VALID_CASE="VALID_CASE",
 					CONTENT_AREA=unlist(strsplit(names.iter, "[.]"))[1],
 					YEAR=getTableNameYear(names.iter),
-					sgp_object@SGP[["SGProjections"]][[names.iter]])][,GROUP:=names.iter]
+					sgp_object@SGP[["SGProjections"]][[names.iter]]), on=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID")][,GROUP:=names.iter]
 			if (any(!output.column.order %in% names(tmp.dt))) tmp.dt[,output.column.order[!output.column.order %in% names(tmp.dt)]:=as.numeric(NA)]
 			tmp.dt <- tmp.dt[,ID:=gsub("_DUPS_[0-9]*", "", ID)][,CONTENT_AREA:=gsub("_RASCH", "", CONTENT_AREA)][,SGP_PROJECTION_GROUP:=gsub("_RASCH", "", SGP_PROJECTION_GROUP)][,GROUP:=gsub("_RASCH", "", GROUP)][,output.column.order, with=FALSE]
 			fwrite(tmp.dt, file=file.path(outputSGP.directory, "RLI", "SGProjections", paste(file.label, "txt", sep=".")), sep=",", quote=FALSE)
