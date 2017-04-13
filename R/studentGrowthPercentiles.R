@@ -1684,7 +1684,6 @@ function(panel.data,         ## REQUIRED
 				if ("SGP_NORM_GROUP_BASELINE" %in% names(tmp.gof.data)) setnames(tmp.gof.data, "SGP_NORM_GROUP_BASELINE", "SGP_NORM_GROUP")
 
 				for (gof.iter in seq_along(sgps.for.gof)) {
-# stop("@$$iMeX")
 					Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]][['TMP_NAME']] <- gofSGP(
 						sgp_object=tmp.gof.data,
 						state=goodness.of.fit,
