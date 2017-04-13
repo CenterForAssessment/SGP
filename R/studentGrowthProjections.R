@@ -37,6 +37,8 @@ function(panel.data,	## REQUIRED
 	started.at=proc.time()
 	started.date <- prettyDate()
 
+	GRADE <- NULL ## To avoid R CMD check warnings
+
 	##########################################################
 	###
 	### Utility functions
