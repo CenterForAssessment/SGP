@@ -222,7 +222,7 @@ function(
 			### TEST of SGP variable
 
 #			if (identical(sum(Demonstration_SGP@Data[['SGP']], na.rm=TRUE), 8565260L)) {
-			if (identical(digest(Demonstration_SGP@Data[['SGP']]), "bf0ab4e2969a94a35e436b760fa5c191")) { # pre-GRADE key: d7843eab4ddf02bed640ec401dd35c65
+			if (identical(digest(Demonstration_SGP@Data[['SGP']]), "89f1cb732587f3d6ffeb1afe587941e0")) { # pre-GRADE key: d7843eab4ddf02bed640ec401dd35c65
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP: FAIL\n")
@@ -231,7 +231,7 @@ function(
 			### TEST of SGP_BASELINE variable
 
 #			if (identical(sum(Demonstration_SGP@Data[['SGP_BASELINE']], na.rm=TRUE), 8573825L)) {
-			if (identical(digest(Demonstration_SGP@Data[['SGP_BASELINE']]), "58bb5ad77928278f882c27f5f330a4ff")) { # pre-GRADE key: f6ffda530e470321159c39a56151e0c2
+			if (identical(digest(Demonstration_SGP@Data[['SGP_BASELINE']]), "5056dc27abde7c6d8ff896947f4b0070")) { # pre-GRADE key: f6ffda530e470321159c39a56151e0c2
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_BASELINE: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_BASELINE: FAIL\n")
@@ -240,7 +240,7 @@ function(
 			### TEST of SGP_TARGET_3_YEAR variable
 
 #			if (identical(sum(Demonstration_SGP@Data[['SGP_TARGET_3_YEAR']], na.rm=TRUE), 7796624L)) {
-			if (identical(digest(Demonstration_SGP@Data[['SGP_TARGET_3_YEAR']]), "5cdfa3d5ca98cb303c9045523a2af5ab")) { # pre-GRADE key: 7cfb4055b5ebf739417d2220898ce99c
+			if (identical(digest(Demonstration_SGP@Data[['SGP_TARGET_3_YEAR']]), "4955e2f61a1cd34347ffceba51a5670b")) { # pre-GRADE key: 7cfb4055b5ebf739417d2220898ce99c
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_3_YEAR: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_3_YEAR: FAIL\n")
@@ -249,7 +249,7 @@ function(
 			### TEST of SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR variable
 
 #			if (identical(sum(Demonstration_SGP@Data[['SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR']], na.rm=TRUE), 9201802L)) {
-			if (identical(digest(Demonstration_SGP@Data[['SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR']]), "fd1374f5a979440f4fd04dfbdd2adcfd")) { # pre-GRADE key: 9bfb90fbaed288104dfe1959294497ce
+			if (identical(digest(Demonstration_SGP@Data[['SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR']]), "5e6fcc4c3eedce14cc6639163677fdc7")) { # pre-GRADE key: 9bfb90fbaed288104dfe1959294497ce
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR: FAIL\n")
@@ -258,7 +258,7 @@ function(
 			### TEST of CATCH_UP_KEEP_UP_STATUS variable
 
 #			if (identical(as.numeric(table(Demonstration_SGP@Data[['CATCH_UP_KEEP_UP_STATUS']])), c(41099, 10837, 35560, 84390))) {
-			if (identical(digest(Demonstration_SGP@Data[['CATCH_UP_KEEP_UP_STATUS']]), "f3df18d8f4ac9e3b9ece50254a136f23")) { # pre-GRADE key: 11e5e53c8cf330fcdb51a2e4894f5c2f
+			if (identical(digest(Demonstration_SGP@Data[['CATCH_UP_KEEP_UP_STATUS']]), "eb710e8b3256be3f9009ecc686c0ff37")) { # pre-GRADE key: 11e5e53c8cf330fcdb51a2e4894f5c2f
 				tmp.messages <- c(tmp.messages, "\tTest of variable CATCH_UP_KEEP_UP_STATUS: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable CATCH_UP_KEEP_UP_STATUS: FAIL\n")
@@ -267,7 +267,7 @@ function(
 			### TEST of MOVE_UP_STAY_UP_STATUS variable
 
 #			if (identical(as.numeric(table(Demonstration_SGP@Data[['MOVE_UP_STAY_UP_STATUS']])), c(72953, 15043, 18336, 13618))) {
-			if (identical(digest(Demonstration_SGP@Data[['MOVE_UP_STAY_UP_STATUS']]), "2a513b7e83ba6dc4a43f9cb1ae515d7d")) { # pre-GRADE key: 663ff40f494a37d01dc3c593b887d24b
+			if (identical(digest(Demonstration_SGP@Data[['MOVE_UP_STAY_UP_STATUS']]), "f67a9a4d2bf8c8af201e2533c31c0ce8")) { # pre-GRADE key: 663ff40f494a37d01dc3c593b887d24b
 				tmp.messages <- c(tmp.messages, "\tTest of variable MOVE_UP_STAY_UP_STATUS: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable MOVE_UP_STAY_UP_STATUS: FAIL\n")
@@ -276,7 +276,7 @@ function(
 			### TEST of SCALE_SCORE_PRIOR variable
 
 #			if (identical(sum(Demonstration_SGP@Data[['SCALE_SCORE_PRIOR']], na.rm=TRUE), 100865095)) {
-			if (identical(digest(Demonstration_SGP@Data[['SCALE_SCORE_PRIOR']]), "871322d18a5ccb157e9cf4b1d4bddd6c")) { # pre-GRADE key: 23e0433ed1574c73f923b23cddbfc0cb
+			if (identical(digest(Demonstration_SGP@Data[['SCALE_SCORE_PRIOR']]), "6c352608f27873a09487ec2859de7574")) { # pre-GRADE key: 23e0433ed1574c73f923b23cddbfc0cb
 				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_PRIOR: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_PRIOR: FAIL\n")
@@ -321,7 +321,7 @@ function(
 			### TEST of SGP_0.025_CONFIDENCE_BOUND variable in @Data
 
 #			if (identical(sum(Demonstration_SGP@Data[['SGP_0.025_CONFIDENCE_BOUND']], na.rm=TRUE), 3952340)) {
-			if (identical(digest(Demonstration_SGP@Data[['SGP_0.025_CONFIDENCE_BOUND']]), "10fcdc50fd18255bfeb5eecc2a49175e")) { # pre-GRADE key: dc13c362312f379fbbfa83c49f1e53eb
+			if (identical(digest(Demonstration_SGP@Data[['SGP_0.025_CONFIDENCE_BOUND']]), "d519a7cbee25d01f6fafd3ab171e98f7")) { # pre-GRADE key: dc13c362312f379fbbfa83c49f1e53eb
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_0.025_CONFIDENCE_BOUND: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_0.025_CONFIDENCE_BOUND: FAIL\n")
@@ -397,7 +397,7 @@ function(
 			### TEST of SGP_BASELINE variable
 
 #			if (identical(sum(Demonstration_SGP@Data$SGP_BASELINE, na.rm=TRUE), 5667488L)) {
-			if (identical(digest(Demonstration_SGP@Data$SGP_BASELINE), "a0ceee446694ff92aeb2b92ab72b963b")) { # pre-GRADE key: a2d8cfffa3565c2a2103eba276a3effe
+			if (identical(digest(Demonstration_SGP@Data$SGP_BASELINE), "428f3be2573bdf43c37692dc6035d064")) { # pre-GRADE key: a2d8cfffa3565c2a2103eba276a3effe
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 1: FAIL\n")
@@ -406,7 +406,7 @@ function(
 			### TEST of SGP_TARGET_3_YEAR variable
 
 #			if (identical(sum(Demonstration_SGP@Data$SGP_TARGET_3_YEAR, na.rm=TRUE), 5245437L)) {
-			if (identical(digest(Demonstration_SGP@Data$SGP_TARGET_3_YEAR), "b8ee0847b7b1013dd58a3d59692035d4")) { # pre-GRADE key: d14088916dc65391d44cab3995a4f7b6
+			if (identical(digest(Demonstration_SGP@Data$SGP_TARGET_3_YEAR), "de3928618b7dc062f246f9f6dc580a93")) { # pre-GRADE key: d14088916dc65391d44cab3995a4f7b6
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR, part 1: FAIL\n")
@@ -415,7 +415,7 @@ function(
 			### TEST of SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR variable
 
 #			if (identical(sum(Demonstration_SGP@Data$SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, na.rm=TRUE), 6088129L)) {
-			if (identical(digest(Demonstration_SGP@Data$SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR), "3d139171fdac2d2bc290501826a4a183")) { # pre-GRADE key: bfd8ae0c9497c8a4d13f09999eac7d33
+			if (identical(digest(Demonstration_SGP@Data$SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR), "2f3c426ddac754668662706ba4ac543a")) { # pre-GRADE key: bfd8ae0c9497c8a4d13f09999eac7d33
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, part 1: FAIL\n")
@@ -424,7 +424,7 @@ function(
 			### TEST of CATCH_UP_KEEP_UP_STATUS variable
 
 #			if (identical(as.numeric(table(Demonstration_SGP@Data$CATCH_UP_KEEP_UP_STATUS)), c(27122, 6990, 24358, 55283))) {
-			if (identical(digest(Demonstration_SGP@Data$CATCH_UP_KEEP_UP_STATUS), "e0fd115d381c957d99d3c713c2b71491")) { # pre-GRADE key: 46373a48b1a926c107b66fc0222337b3
+			if (identical(digest(Demonstration_SGP@Data$CATCH_UP_KEEP_UP_STATUS), "5ce288b5ce7861c8cbb6e8ecdf024d11")) { # pre-GRADE key: 46373a48b1a926c107b66fc0222337b3
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable CATCH_UP_KEEP_UP_STATUS, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable CATCH_UP_KEEP_UP_STATUS, part 1: FAIL\n")
@@ -433,7 +433,7 @@ function(
 			### TEST of MOVE_UP_STAY_UP_STATUS variable
 
 #			if (identical(as.numeric(table(Demonstration_SGP@Data$MOVE_UP_STAY_UP_STATUS)), c(48152, 10396, 12150, 8943))) {
-			if (identical(digest(Demonstration_SGP@Data$MOVE_UP_STAY_UP_STATUS), "6c392f088a60964eef98e938b50b3835")) { # pre-GRADE key: 8a33c63b43e4b35e0f86f61c55583264
+			if (identical(digest(Demonstration_SGP@Data$MOVE_UP_STAY_UP_STATUS), "6eda205f912ded935746dbe29d188fdc")) { # pre-GRADE key: 8a33c63b43e4b35e0f86f61c55583264
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable MOVE_UP_STAY_UP_STATUS, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable MOVE_UP_STAY_UP_STATUS, part 1: FAIL\n")
@@ -463,7 +463,7 @@ function(
 			### TEST of SGP variable
 
 #			if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 8565260L)) {
-			if (identical(digest(Demonstration_SGP@Data$SGP), "bf0ab4e2969a94a35e436b760fa5c191")) { # pre-GRADE key: d7843eab4ddf02bed640ec401dd35c65
+			if (identical(digest(Demonstration_SGP@Data$SGP), "89f1cb732587f3d6ffeb1afe587941e0")) { # pre-GRADE key: d7843eab4ddf02bed640ec401dd35c65
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 2: FAIL\n")
@@ -472,7 +472,7 @@ function(
 			### TEST of SGP_BASELINE variable
 
 #			if (identical(sum(Demonstration_SGP@Data$SGP_BASELINE, na.rm=TRUE), 8573825L)) {
-			if (identical(digest(Demonstration_SGP@Data$SGP_BASELINE), "58bb5ad77928278f882c27f5f330a4ff")) { # pre-GRADE key: f6ffda530e470321159c39a56151e0c2
+			if (identical(digest(Demonstration_SGP@Data$SGP_BASELINE), "5056dc27abde7c6d8ff896947f4b0070")) { # pre-GRADE key: f6ffda530e470321159c39a56151e0c2
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 2: FAIL\n")
@@ -481,7 +481,7 @@ function(
 			### TEST of SGP_TARGET variable
 
 #			if (identical(sum(Demonstration_SGP@Data$SGP_TARGET_3_YEAR, na.rm=TRUE), 7796624L)) {
-			if (identical(digest(Demonstration_SGP@Data$SGP_TARGET_3_YEAR), "5cdfa3d5ca98cb303c9045523a2af5ab")) { # pre-GRADE key: 7cfb4055b5ebf739417d2220898ce99c
+			if (identical(digest(Demonstration_SGP@Data$SGP_TARGET_3_YEAR), "4955e2f61a1cd34347ffceba51a5670b")) { # pre-GRADE key: 7cfb4055b5ebf739417d2220898ce99c
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR, part 2: FAIL\n")
@@ -490,7 +490,7 @@ function(
 			### TEST of SGP_TARGET_MOVE_UP_STAY_UP variable
 
 #			if (identical(sum(Demonstration_SGP@Data$SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, na.rm=TRUE), 9201802L)) {
-			if (identical(digest(Demonstration_SGP@Data$SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR), "fd1374f5a979440f4fd04dfbdd2adcfd")) { # pre-GRADE key: 9bfb90fbaed288104dfe1959294497ce
+			if (identical(digest(Demonstration_SGP@Data$SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR), "5e6fcc4c3eedce14cc6639163677fdc7")) { # pre-GRADE key: 9bfb90fbaed288104dfe1959294497ce
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, part 2: FAIL\n")
@@ -499,7 +499,7 @@ function(
 			### TEST of CATCH_UP_KEEP_UP_STATUS variable
 
 #			if (identical(as.numeric(table(Demonstration_SGP@Data$CATCH_UP_KEEP_UP_STATUS)), c(41099, 10837, 35560, 84390))) {
-			if (identical(digest(Demonstration_SGP@Data$CATCH_UP_KEEP_UP_STATUS), "f3df18d8f4ac9e3b9ece50254a136f23")) { # pre-GRADE key: 11e5e53c8cf330fcdb51a2e4894f5c2f
+			if (identical(digest(Demonstration_SGP@Data$CATCH_UP_KEEP_UP_STATUS), "eb710e8b3256be3f9009ecc686c0ff37")) { # pre-GRADE key: 11e5e53c8cf330fcdb51a2e4894f5c2f
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable CATCH_UP_KEEP_UP_STATUS, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable CATCH_UP_KEEP_UP_STATUS, part 2: FAIL\n")
@@ -508,7 +508,7 @@ function(
 			### TEST of MOVE_UP_STAY_UP_STATUS variable
 
 #			if (identical(as.numeric(table(Demonstration_SGP@Data$MOVE_UP_STAY_UP_STATUS)), c(72953, 15043, 18336, 13618))) {
-			if (identical(digest(Demonstration_SGP@Data$MOVE_UP_STAY_UP_STATUS), "2a513b7e83ba6dc4a43f9cb1ae515d7d")) { # pre-GRADE key: 663ff40f494a37d01dc3c593b887d24b
+			if (identical(digest(Demonstration_SGP@Data$MOVE_UP_STAY_UP_STATUS), "f67a9a4d2bf8c8af201e2533c31c0ce8")) { # pre-GRADE key: 663ff40f494a37d01dc3c593b887d24b
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable MOVE_UP_STAY_UP_STATUS, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable MOVE_UP_STAY_UP_STATUS, part 2: FAIL\n")
@@ -777,7 +777,7 @@ function(
 			### TEST of SGP variable
 
 #			if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 2896606L)) {
-			if (identical(digest(Demonstration_SGP@Data$SGP), "e01dea06d4009bc2ecbd03b6f0cdce76")) { # pre-GRADE key: 7c848c0bec09ae0c833ce778034ab85e
+			if (identical(digest(Demonstration_SGP@Data$SGP), "85c4aff4ded8b8a3fbc6ce94eb7b28a1")) { # pre-GRADE key: 7c848c0bec09ae0c833ce778034ab85e
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP: FAIL\n")
@@ -786,7 +786,7 @@ function(
 			### TEST of SGP_TARGET_3_YEAR variable
 
 #			if (identical(sum(Demonstration_SGP@Data$SGP_TARGET_3_YEAR, na.rm=TRUE), 2551187L)) {
-			if (identical(digest(Demonstration_SGP@Data$SGP_TARGET_3_YEAR), "7a12aa47ecce2cc99894250e2b35e776")) { # pre-GRADE key: 4c73b3d3237d181b51954529edaa3c4e
+			if (identical(digest(Demonstration_SGP@Data$SGP_TARGET_3_YEAR), "0e896b557023d560fdab2a8f3b525cb1")) { # pre-GRADE key: 4c73b3d3237d181b51954529edaa3c4e
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_3_YEAR: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_3_YEAR: FAIL\n")
@@ -795,7 +795,7 @@ function(
 			### TEST of SGP_TARGET_MOVE_UP_STAY_UP variable
 
 #			if (identical(sum(Demonstration_SGP@Data$SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, na.rm=TRUE), 3113673L)) {
-			if (identical(digest(Demonstration_SGP@Data$SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR), "1fac88a0b3d2981c73dcda30db7cbcb6")) { # pre-GRADE key: 2eaaa1d6e0884ea2b28fa4245f8c63d1
+			if (identical(digest(Demonstration_SGP@Data$SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR), "0e6253ab172cbecd01a7c131b4e63ccd")) { # pre-GRADE key: 2eaaa1d6e0884ea2b28fa4245f8c63d1
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR: FAIL\n")
@@ -804,7 +804,7 @@ function(
 			### TEST of CATCH_UP_KEEP_UP_STATUS variable
 
 #			if (identical(as.numeric(table(Demonstration_SGP@Data$CATCH_UP_KEEP_UP_STATUS)), c(13977, 3847, 11202, 29107))) {
-			if (identical(digest(Demonstration_SGP@Data$CATCH_UP_KEEP_UP_STATUS), "a4eac94315320a870d6f852d9dfd3780")) { # pre-GRADE key: fd61668ae95e5978906bf804b5765b10
+			if (identical(digest(Demonstration_SGP@Data$CATCH_UP_KEEP_UP_STATUS), "379338f44b485e2f18a4b52c16865db8")) { # pre-GRADE key: fd61668ae95e5978906bf804b5765b10
 				tmp.messages <- c(tmp.messages, "\tTest of variable CATCH_UP_KEEP_UP_STATUS: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable CATCH_UP_KEEP_UP_STATUS: FAIL\n")
@@ -813,7 +813,7 @@ function(
 			### TEST of MOVE_UP_STAY_UP_STATUS variable
 
 #			if (identical(as.numeric(table(Demonstration_SGP@Data$MOVE_UP_STAY_UP_STATUS)), c(24801, 4647, 6186, 4675))) {
-			if (identical(digest(Demonstration_SGP@Data$MOVE_UP_STAY_UP_STATUS), "50b92ed0f1ada564a1c402faa1d3ac1c")) { # pre-GRADE key: ee8ef7f0b8370d7eeee1677cb101af8d
+			if (identical(digest(Demonstration_SGP@Data$MOVE_UP_STAY_UP_STATUS), "e964fdf83418aedbeacb116abf6d484b")) { # pre-GRADE key: ee8ef7f0b8370d7eeee1677cb101af8d
 				tmp.messages <- c(tmp.messages, "\tTest of variable MOVE_UP_STAY_UP_STATUS: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable MOVE_UP_STAY_UP_STATUS: FAIL\n")
@@ -964,7 +964,7 @@ function(
 			}
 
 #			if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX, na.rm=TRUE), 1452961L)) {
-			if (identical(digest(Demonstration_SGP@Data$SGP_SIMEX), "6bc57ce700faf157e7b8e6a2dbc037ed")) { # pre-GRADE key: 676e5bab01b85e849c1dab718fb58e78
+			if (identical(digest(Demonstration_SGP@Data$SGP_SIMEX), "928e4428e146a3486a5c8eede3c92ab9")) { # pre-GRADE key: 676e5bab01b85e849c1dab718fb58e78
 				tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX: FAIL\n")
@@ -981,7 +981,7 @@ function(
 				}
 			} else {
 				tmp.matrix.names <- c("READING.2015_2016", "READING.2015_2016.SIMEX", "ALGEBRA_II.2015_2016", "ALGEBRA_II.2015_2016.SIMEX", "AMERICAN_LIT.2015_2016", "AMERICAN_LIT.2015_2016.SIMEX")
-				if (identical(names(Demonstration_SGP@SGP$Coefficient_Matrices), tmp.matrix.names)) {
+				if (identical(names(Demonstration_SGP@SGP$Coefficient_Matrices), gsub("2015_2016", tail(sgpData.years, 1), tmp.matrix.names))) {
 					tmp.messages <- c(tmp.messages, "\t\tTest of @SGP Coefficient Matrix Names: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of @SGP Coefficient Matrix Names: FAIL\n")
@@ -1002,7 +1002,7 @@ function(
 					tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II SGP_SIMEX_BASELINE: FAIL\n")
 				}
 #				if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX_BASELINE, na.rm=TRUE), 1465187L)) {
-				if (identical(digest(Demonstration_SGP@Data$SGP_SIMEX_BASELINE), "5da26471fccb4aac20263fba642b4bce")) { # pre-GRADE key: 3e653f546bd93da33cc915b5d37100a4
+				if (identical(digest(Demonstration_SGP@Data$SGP_SIMEX_BASELINE), "61ff473b2777c2b7ea14a2c0bcb662ec")) { # pre-GRADE key: 3e653f546bd93da33cc915b5d37100a4
 					tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX_BASELINE: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX_BASELINE: FAIL\n")
@@ -1074,7 +1074,7 @@ function(
 			### TEST of SGP variable
 
 			# if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 2810958L)) {
-			if (identical(digest(Demonstration_SGP@Data$SGP), "6cfbe57b08807993c402f633146ba58d")) {
+			if (identical(digest(Demonstration_SGP@Data$SGP), "456b3be4f8af5b830989c8a54a5437ee")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 1: FAIL\n")
@@ -1083,7 +1083,7 @@ function(
 			### TEST of SGP_BASELINE variable
 
 			# if (identical(sum(Demonstration_SGP@Data$SGP_BASELINE, na.rm=TRUE), 2844420L)) {
-			if (identical(digest(Demonstration_SGP@Data$SGP_BASELINE), "9f4dc511d3429770b670852aa9faf38c")) {
+			if (identical(digest(Demonstration_SGP@Data$SGP_BASELINE), "5374d1bd032bb60a7e1ea2bcccfbf830")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 1: FAIL\n")
@@ -1092,7 +1092,7 @@ function(
 			### TEST of SGP_TARGET_3_YEAR variable
 
 			# if (identical(sum(Demonstration_SGP@Data$SGP_TARGET_3_YEAR, na.rm=TRUE), 2548595L)) {
-			if (identical(digest(Demonstration_SGP@Data$SGP_TARGET_3_YEAR), "39ed5390f73b3aede57a6043102844f2")) {
+			if (identical(digest(Demonstration_SGP@Data$SGP_TARGET_3_YEAR), "e8ae9f4534037744b753ae88229e1c21")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR, part 1: FAIL\n")
@@ -1101,7 +1101,7 @@ function(
 			### TEST of SCALE_SCORE_PRIOR_STANDARDIZED variable
 
 			# if (identical(median(Demonstration_SGP@Data$SCALE_SCORE_PRIOR_STANDARDIZED, na.rm=TRUE), 0.059)) {
-			if (identical(digest(Demonstration_SGP@Data$SCALE_SCORE_PRIOR_STANDARDIZED), "89471ed5e0db1e47c90e26b6da216007")) {
+			if (identical(digest(Demonstration_SGP@Data$SCALE_SCORE_PRIOR_STANDARDIZED), "bfeaa95c8c19a61d6b69228929e09810")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_PRIOR_STANDARDIZED, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_PRIOR_STANDARDIZED, part 1: FAIL\n")
@@ -1316,7 +1316,7 @@ function(
 			### TEST of SGP variable
 
 			# if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 5668654L)) {
-			if (identical(digest(Demonstration_SGP@Data$SGP), "93092a02ed23590cdfe45fd25fac7792")) {
+			if (identical(digest(Demonstration_SGP@Data$SGP), "3ba0ed9a36804c4e05b214c4001a28f6")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 2: FAIL\n")
@@ -1334,7 +1334,7 @@ function(
 			### TEST of SCALE_SCORE_EQUATED variable
 
 			# if (identical(as.integer(sum(Demonstration_SGP@Data$SCALE_SCORE_EQUATED, na.rm=TRUE)), 796049037L)) {
-			if (identical(digest(Demonstration_SGP@Data$SCALE_SCORE_EQUATED), "b1f2279a51573899d652e44de549bb6b")) {
+			if (identical(digest(Demonstration_SGP@Data$SCALE_SCORE_EQUATED), "510ee4c1b2aade513eec0f13b73e39eb")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_EQUATED, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_EQUATED, part 2: FAIL\n")
@@ -1384,7 +1384,7 @@ function(
 			### TEST of SGP variable
 
 			# if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 8565260L)) {
-			if (identical(digest(Demonstration_SGP@Data$SGP), "bf0ab4e2969a94a35e436b760fa5c191")) {
+			if (identical(digest(Demonstration_SGP@Data$SGP), "89f1cb732587f3d6ffeb1afe587941e0")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 3: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 3: FAIL\n")
@@ -1411,7 +1411,7 @@ function(
 			### TEST of SGP_FROM_2014_2015 Variable in @Data
 
 			# if (identical(sum(Demonstration_SGP@Data[[paste('SGP_FROM', tail(sgpData.years, 2)[1], sep="_")]], na.rm=TRUE), 2900310L)) {
-			if (identical(digest(Demonstration_SGP@Data[[paste('SGP_FROM', tail(sgpData.years, 2)[1], sep="_")]]), "7c3b256a0a7261d0b49e103ab9351c09")) {
+			if (identical(digest(Demonstration_SGP@Data[[paste('SGP_FROM', tail(sgpData.years, 2)[1], sep="_")]]), "0f6b5e959c6601981cd28f6348295596")) {
 				tmp.messages <- c(tmp.messages, paste0("\t\tTest of variable ", paste('SGP_FROM', tail(sgpData.years, 2)[1], sep="_"), ", part 3: OK\n"))
 			} else {
 				tmp.messages <- c(tmp.messages, paste0("\t\tTest of variable ", paste('SGP_FROM', tail(sgpData.years, 2)[1], sep="_"), ", part 3: FAIL\n"))
@@ -1466,7 +1466,7 @@ function(
 			tmp.messages <- ("##### Results of testSGP test number 6 #####\n\n")
 
 #			if (identical(sum(Demonstration_SGP@Data$SGP_BASELINE, na.rm=TRUE), 1469353L)) {
-			if (identical(digest(Demonstration_SGP@Data$SGP_BASELINE), "9f140144b2a34b009165b1a3904ded8a")) { # pre-GRADE key: 49a36274c536fe13ac2bcdc1c49cadc9
+			if (identical(digest(Demonstration_SGP@Data$SGP_BASELINE), "a1c203d8d16671a1047188761afc25e2")) { # pre-GRADE key: 49a36274c536fe13ac2bcdc1c49cadc9
 				tmp.messages <- c(tmp.messages, "\t\tTest of SGP_BASELINE: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of SGP_BASELINE: FAIL\n")
@@ -2260,24 +2260,24 @@ function(
 			tmp.messages <- c(tmp.messages, "\t##### Results of testSGP test number 7: Part 1 #####\n")
 
 			### TEST of SGP variable
-			#  sum(Demonstration_SGP@Data$SGP, na.rm=T) # 1441034
-			if (identical(digest::digest(Demonstration_SGP@Data$SGP), "58b9b806240950eda57c5b692b7aced9")) { # pre-GRADE key: 463af59acba4825cfb9114528fbc96a4
+			#   identical(sum(Demonstration_SGP@Data$SGP, na.rm=T), 1441034L)
+			if (identical(digest::digest(Demonstration_SGP@Data$SGP), "83851035b2dd968c4f92fcf66edd5de0")) { # pre-GRADE key: 463af59acba4825cfb9114528fbc96a4
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP: FAIL\n")
 			}
 
 			### TEST of SGP_TARGET_3_YEAR variable
-			#  sum(Demonstration_SGP@Data$SGP_TARGET_3_YEAR, na.rm=T) # 1761988
-			if (identical(digest::digest(Demonstration_SGP@Data$SGP_TARGET_3_YEAR), "974677ba325e1f2bcd97c1e07e960472")) { # pre-GRADE key:
+			#   identical(sum(Demonstration_SGP@Data$SGP_TARGET_3_YEAR, na.rm=T), 1761988L)
+			if (identical(digest::digest(Demonstration_SGP@Data$SGP_TARGET_3_YEAR), "07673a71188a1e01acbd21b2caff5655")) { # pre-GRADE key:
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR: FAIL\n")
 			}
 
 			### TEST of SGP_TARGET_3_YEAR_CURRENT variable
-			#  sum(Demonstration_SGP@Data$SGP_TARGET_3_YEAR_CURRENT, na.rm=T) # 1888559
-			if (identical(digest::digest(Demonstration_SGP@Data$SGP_TARGET_3_YEAR_CURRENT), "62c4c2540729f01f2b357df2d98f1b88")) { # pre-GRADE key:
+			#   identical(sum(Demonstration_SGP@Data$SGP_TARGET_3_YEAR_CURRENT, na.rm=T), 1888559L)
+			if (identical(digest::digest(Demonstration_SGP@Data$SGP_TARGET_3_YEAR_CURRENT), "a937271073e02625264de7a779d0225a")) { # pre-GRADE key:
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR_CURRENT: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR_CURRENT: FAIL\n")
@@ -2302,7 +2302,7 @@ function(
 			### TEST of DUPS @Data
 			vars.to.check <- c("CONTENT_AREA", "ID", "SCALE_SCORE", "SCALE_SCORE_PRIOR", "GRADE", "SGP", "SGP_NORM_GROUP", "SGP_NORM_GROUP_SCALE_SCORES", "SGP_PROJECTION_GROUP_SCALE_SCORES", "CATCH_UP_KEEP_UP_STATUS")
 			# dup.data <- Demonstration_SGP@Data[!is.na(DUPS_FLAG), vars.to.check, with=FALSE]
-			dup.ids <- unique(Demonstration_SGP@Data[duplicated(Demonstration_SGP@Data, by=setdiff(SGP:::getKey(Demonstration_SGP@Data), "GRADE")), ID]) # Still check "GRADE excluded" dups
+			dup.ids <- unique(Demonstration_SGP@Data[duplicated(Demonstration_SGP@Data, by=setdiff(getKey(Demonstration_SGP@Data), "GRADE")), ID]) # Still check "GRADE excluded" dups
 			dup.data <- Demonstration_SGP@Data[ID %in% dup.ids, vars.to.check, with=FALSE]
 			setkey(dup.data)
 			if (identical(digest::digest(dup.data[, SGP_NORM_GROUP := as.character(SGP_NORM_GROUP)]), "762d647d072ff7f11b3562745854435f")) { # with DUPS_FLAG: 2b85afc2857336aaa165dd04feb47ef4
@@ -2378,24 +2378,24 @@ function(
 			tmp.messages <- c(tmp.messages, "\t##### Results of testSGP test number 7: Part 2 #####\n")
 
 			### TEST of SGP variable
-			#  sum(Demonstration_SGP@Data$SGP, na.rm=TRUE) # 2901002
-			if (identical(digest::digest(Demonstration_SGP@Data$SGP), "5a56f320f2dd33cf3d9758c7acbb1a10")) { # pre-GRADE key: 02231cb28da81d38302d8550c5f3c576
+			#   identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 2901002L)
+			if (identical(digest::digest(Demonstration_SGP@Data$SGP), "e3cb2835d8e9210583aa81577b938f50")) { # pre-GRADE key: 02231cb28da81d38302d8550c5f3c576
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP: FAIL\n")
 			}
 
 			### TEST of SGP_TARGET_3_YEAR variable
-			#  sum(Demonstration_SGP@Data$SGP_TARGET_3_YEAR, na.rm=TRUE) # 3442573
-			if (identical(digest::digest(Demonstration_SGP@Data$SGP_TARGET_3_YEAR), "7dee795f9d54d0b9e6eb91a2dc32c7ff")) { # pre-GRADE key: f18d29d1595406c153c7068872d5c720
+			#   identical(sum(Demonstration_SGP@Data$SGP_TARGET_3_YEAR, na.rm=TRUE), 3442573L)
+			if (identical(digest::digest(Demonstration_SGP@Data$SGP_TARGET_3_YEAR), "27e97f7bed234f25cb8070b27c9b9f05")) { # pre-GRADE key: f18d29d1595406c153c7068872d5c720
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR: FAIL\n")
 			}
 
 			### TEST of SGP_TARGET_3_YEAR_CURRENT variable
-			#  sum(Demonstration_SGP@Data$SGP_TARGET_3_YEAR_CURRENT, na.rm=TRUE) # 3691422
-			if (identical(digest::digest(Demonstration_SGP@Data$SGP_TARGET_3_YEAR_CURRENT), "8a1317938265228168f47b636496017d")) { # pre-GRADE key: f7ee20abc5e2d56cf70ef1cafdf46a93
+			#   identical(sum(Demonstration_SGP@Data$SGP_TARGET_3_YEAR_CURRENT, na.rm=TRUE), 3691422L)
+			if (identical(digest::digest(Demonstration_SGP@Data$SGP_TARGET_3_YEAR_CURRENT), "46e9dff1f07043cdf29ef61a08f83722")) { # pre-GRADE key: f7ee20abc5e2d56cf70ef1cafdf46a93
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR_CURRENT: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR_CURRENT: FAIL\n")
@@ -2419,7 +2419,7 @@ function(
 
 			### TEST of DUPS @Data
 			vars.to.check <- c("CONTENT_AREA", "ID", "SCALE_SCORE", "SCALE_SCORE_PRIOR", "GRADE", "SGP", "SGP_NORM_GROUP", "SGP_NORM_GROUP_SCALE_SCORES", "SGP_PROJECTION_GROUP_SCALE_SCORES", "CATCH_UP_KEEP_UP_STATUS")
-			dup.ids <- unique(Demonstration_SGP@Data[duplicated(Demonstration_SGP@Data, by=setdiff(SGP:::getKey(Demonstration_SGP@Data), "GRADE")), ID]) # Still check "GRADE excluded" dups
+			dup.ids <- unique(Demonstration_SGP@Data[duplicated(Demonstration_SGP@Data, by=setdiff(getKey(Demonstration_SGP@Data), "GRADE")), ID]) # Still check "GRADE excluded" dups
 			dup.data <- Demonstration_SGP@Data[ID %in% dup.ids, vars.to.check, with=FALSE]
 			setkey(dup.data)
 			if (identical(digest::digest(dup.data[, SGP_NORM_GROUP := as.character(SGP_NORM_GROUP)]), "1096ae04d748ba69d7dd63ef398ac434")) { # With DUPS_FLAG: 12e253be3ce98f8f519b6a452f13cc93
@@ -2515,7 +2515,7 @@ function(
 			### TEST of School Summary Table  :: dim = 2154 x 23
 			setkey(Demonstration_SGP@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__CONTENT_AREA__YEAR__GRADE__SCHOOL_ENROLLMENT_STATUS"]])
 			if (identical(digest::digest(Demonstration_SGP@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__CONTENT_AREA__YEAR__GRADE__SCHOOL_ENROLLMENT_STATUS"]]), "3472a7f8a5ee67e248de158feb3da808")) { # 59157e11ed8289643e3b6f3c653200fc
-				# sum(Demonstration_SGP@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__CONTENT_AREA__YEAR__GRADE__SCHOOL_ENROLLMENT_STATUS"]]$MEDIAN_SGP_COUNT)  # 58069
+				# identical(sum(Demonstration_SGP@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__CONTENT_AREA__YEAR__GRADE__SCHOOL_ENROLLMENT_STATUS"]]$MEDIAN_SGP_COUNT), 58069L)
 				tmp.messages <- c(tmp.messages, "\t\tTest of School Summary Table: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of School Summary Table: FAIL\n")
