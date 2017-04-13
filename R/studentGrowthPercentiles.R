@@ -1098,7 +1098,7 @@ function(panel.data,         ## REQUIRED
 
 	if (!is.null(panel.data.vnames)) {
 		if (!all(panel.data.vnames %in% names(Panel_Data))) {
-			tmp.messages <- c(tmp.messages, "\t\tNOTE: Supplied 'panel.data.vnames' are not all in the supplied Panel_Data.\n\t\t\tAnalyses will continue with the intersection names contain in Panel_Data.\n")
+			tmp.messages <- c(tmp.messages, "\t\tNOTE: Supplied 'panel.data.vnames' are not all in the supplied Panel_Data.\n\t\t\tAnalyses will continue with the variables contained in both Panel_Data and the 'panel.data.vnames' argument.\n")
 		}
 		ss.data <- Panel_Data[,intersect(panel.data.vnames, names(Panel_Data)), with=FALSE]
 	} else {
