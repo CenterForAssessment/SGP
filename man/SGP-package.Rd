@@ -19,8 +19,8 @@ growth projections to be calculated across assessment transitions by equating th
 \tabular{ll}{
 Package: \tab SGP\cr
 Type: \tab Package\cr
-Version: \tab 1.6-6.1\cr
-Date: \tab 2017-4-13\cr
+Version: \tab 1.6-6.4\cr
+Date: \tab 2017-4-14\cr
 License: \tab GPL-3\cr
 LazyLoad: \tab yes\cr
 }
@@ -29,7 +29,7 @@ calculation must be specifically formatted.  See \code{\link[SGPdata]{sgpData}} 
 provided in the examples of the \code{\link{studentGrowthPercentiles}} and \code{\link{studentGrowthProjections}} using the higher level functions
 \code{\link{prepareSGP}}, \code{\link{analyzeSGP}}, \code{\link{combineSGP}}, \code{\link{summarizeSGP}}, and \code{\link{visualizeSGP}}.}
 
-\author{Damian W. Betebenner \email{dbetebenner@nciea.org}, Adam Van Iwaarden \email{Vaniwaarden@colorado.edu}, Ben Domingue \email{ben.domingue@gmail.com} and Yi Shang \email{shangyi@gmail.com}}
+\author{Damian W. Betebenner \email{dbetebenner@nciea.org}, Adam Van Iwaarden \email{avaniwaarden@gmail.com}, Ben Domingue \email{ben.domingue@gmail.com} and Yi Shang \email{shangyi@gmail.com}}
 
 \references{
 Shang, Y., VanIwaarden, A., & Betebenner, D. W. (2015). Covariate measurement error correction for Student Growth
