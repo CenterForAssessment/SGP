@@ -9,6 +9,5 @@ notifications:
     on_start: no
 env:
   global:
-    secure: f3BnVfjR8GzA80kw5DGO4kIcmlioHCWMpi7Y+Iy4WVjJwR3PRo7toQlVen2SJfTNQRRdSWlfPiI4L+8ptitWcrXtQxFcsYV45Un8HDo/Xb5Fe3QSUeaLUXFdcdyZEVd5frXcdW7IlfV/fMnhLMavkKkrbbxeZdHILCooDm7n6Rk=
-after_success:
-- Rscript -e "packagedocs::deploy_travis()"
+  - secure: VOoezPhGgvQKco5Ock8tyhlSJQv/EOrSN9NY38/saZt71DqorJyLQaOMOfQNi6m66q5rIZQn+Sp8gR6Q96P1qXrr3eSdCa9GVe2shG1xxvJwNK0tELlcQ58KzuK+HBbMV7NkL0CYIEJyYGK0Q1I5j/tDFpyV7ZlOSqcoHAv74TI=
+after_success: Rscript -e "packagedocs::deploy_travis()"
