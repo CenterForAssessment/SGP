@@ -7,7 +7,3 @@ notifications:
     on_success: always
     on_failure: always
     on_start: no
-env:
-  global:
-  - secure: VOoezPhGgvQKco5Ock8tyhlSJQv/EOrSN9NY38/saZt71DqorJyLQaOMOfQNi6m66q5rIZQn+Sp8gR6Q96P1qXrr3eSdCa9GVe2shG1xxvJwNK0tELlcQ58KzuK+HBbMV7NkL0CYIEJyYGK0Q1I5j/tDFpyV7ZlOSqcoHAv74TI=
-after_success: Rscript -e "packagedocs::deploy_travis()"
