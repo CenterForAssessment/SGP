@@ -1,6 +1,22 @@
 language: r
 warnings_are_errors: yes
-sudo: required
+sudo: true
+cache: packages
+
+r:
+    - oldrel
+    - release
+    - devel
+
+r_github_packages:
+#     - Rdatatable/data.table
+
+before_deploy:
+       - R -e "staticdocs::build_site(examples = TRUE)"
+
+before_install:
+       - Rscript -e 'update.packages(ask = FALSE)'
+
 notifications:
   webhooks:
     urls: https://webhooks.gitter.im/e/3cf3fc8bed1edd374df6
