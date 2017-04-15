@@ -1990,7 +1990,7 @@ function(
 			### TEST of P50_PROJ_TIME_1_CURRENT variable from READING
 
 #			if (identical(sum(RLI3_SGPt_PART_1@SGP[['SGProjections']][[paste("READING_RASCH", tmp.last.window, "BASELINE", sep=".")]][['P50_PROJ_TIME_1_CURRENT']], na.rm=TRUE), 1086.214)) { ## 1085.258 SGP 15.0, RLImatrices 6.1 1085.253
-			if (identical(digest(RLI3_SGPt_PART_1@SGP[['SGProjections']][[paste("READING_RASCH", tmp.last.window, "BASELINE", sep=".")]][['P50_PROJ_TIME_1_CURRENT']]), "529276fe9ff56a11b3ed97a4b7d01f93")) {
+			if (identical(digest(RLI3_SGPt_PART_1@SGP[['SGProjections']][[paste("READING_RASCH", tmp.last.window, "BASELINE", sep=".")]][['P50_PROJ_TIME_1_CURRENT']]), "e22076c79cc007efeefe4151ab7b36c0")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable P50_PROJ_TIME_1_CURRENT, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable P50_PROJ_TIME_1_CURRENT, part 1: FAIL\n")
