@@ -1,14 +1,25 @@
 language: r
 warnings_are_errors: yes
-sudo: required
+sudo: true
+cache: packages
+
+r:
+#   - oldrel
+    - release
+    - devel
+
+r_github_packages:
+#     - Rdatatable/data.table
+
+before_deploy:
+       - R -e "staticdocs::build_site(examples = TRUE)"
+
+before_install:
+       - Rscript -e 'update.packages(ask = FALSE)'
+
 notifications:
   webhooks:
     urls: https://webhooks.gitter.im/e/3cf3fc8bed1edd374df6
     on_success: always
     on_failure: always
     on_start: no
-env:
-  global:
-    secure: f3BnVfjR8GzA80kw5DGO4kIcmlioHCWMpi7Y+Iy4WVjJwR3PRo7toQlVen2SJfTNQRRdSWlfPiI4L+8ptitWcrXtQxFcsYV45Un8HDo/Xb5Fe3QSUeaLUXFdcdyZEVd5frXcdW7IlfV/fMnhLMavkKkrbbxeZdHILCooDm7n6Rk=
-after_success:
-- Rscript -e "packagedocs::deploy_travis()"

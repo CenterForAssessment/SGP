@@ -91,11 +91,12 @@ function(sgp_object,
 	}
 
 	getRLIMatrixYears <- function(score.type) {
+		tmp.years <- unlist(lapply(lapply(strsplit(names(get(paste0(state, "_SGPt_Baseline_Matrices"))), "_"), tail, 2), paste, collapse="_"))
 		if (score.type=="STAR") {
-			return(sort(unlist(lapply(lapply(strsplit(names(get(paste0(state, "_SGPt_Baseline_Matrices"))), "_"), tail, 2), paste, collapse="_"))))
+			return(sort(tmp.years[grep("READING[.]", lapply(get(paste0(state, "_SGPt_Baseline_Matrices")), names))]))
 		}
 		if (score.type=="RASCH") {
-			return(sort(unlist(lapply(lapply(strsplit(names(get(paste0(state, "_SGPt_Baseline_Matrices"))), "_"), tail, 2), paste, collapse="_"))[grep("RASCH", sapply(get(paste0(state, "_SGPt_Baseline_Matrices")), names))]))
+			return(sort(tmp.years[grep("READING_RASCH[.]", lapply(get(paste0(state, "_SGPt_Baseline_Matrices")), names))]))
 		}
 	}
 
