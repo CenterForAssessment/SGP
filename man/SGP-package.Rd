@@ -19,8 +19,8 @@ growth projections to be calculated across assessment transitions by equating th
 \tabular{ll}{
 Package: \tab SGP\cr
 Type: \tab Package\cr
-Version: \tab 1.6-6.6\cr
-Date: \tab 2017-4-15\cr
+Version: \tab 1.6-9.0\cr
+Date: \tab 2017-4-17\cr
 License: \tab GPL-3\cr
 LazyLoad: \tab yes\cr
 }
@@ -32,20 +32,23 @@ provided in the examples of the \code{\link{studentGrowthPercentiles}} and \code
 \author{Damian W. Betebenner \email{dbetebenner@nciea.org}, Adam Van Iwaarden \email{avaniwaarden@gmail.com}, Ben Domingue \email{ben.domingue@gmail.com} and Yi Shang \email{shangyi@gmail.com}}
 
 \references{
-Shang, Y., VanIwaarden, A., & Betebenner, D. W. (2015). Covariate measurement error correction for Student Growth
-Percentiles using the SIMEX method. Educational Measurement: Issues and Practice, 34(1):4-14.
+Betebenner, D. W. (2008). Toward a normative understanding of student growth. In K. E. Ryan &
+L. A. Shepard (Eds.), \emph{The Future of Test Based Accountability} (pp. 155-170). New York: Routledge.
+
+Betebenner, D. W. (2009). Norm- and criterion-referenced student growth.
+Educational Measurement: Issues and Practice, 28(4):42-51.
 
 Betebenner, D. W. (2012). Growth, standards, and accountability. In G. J. Cizek,
 \emph{Setting Performance Standards: Foundations, Methods & Innovations. 2nd Edition} (pp. 439-450).
 New York: Routledge.
 
-Betebenner, D. W. (2009). Norm- and criterion-referenced student growth.
-Educational Measurement: Issues and Practice, 28(4):42-51.
-
-Betebenner, D. W. (2008). Toward a normative understanding of student growth. In K. E. Ryan &
-L. A. Shepard (Eds.), \emph{The Future of Test Based Accountability} (pp. 155-170). New York: Routledge.
+Castellano, K. E. & McCaffrey, D. F. (2017). The Accuracy of Aggregate Student Growth Percentiles as
+Indicators of Educator Performance. Educational Measurement: Issues and Practice, 36(1):14-27.
 
 Koenker, R. (2005). \emph{Quantile regression}. Cambridge: Cambridge University Press.
+
+Shang, Y., VanIwaarden, A., & Betebenner, D. W. (2015). Covariate measurement error correction for Student Growth
+Percentiles using the SIMEX method. Educational Measurement: Issues and Practice, 34(1):4-14.
 }
 
 \keyword{package}
