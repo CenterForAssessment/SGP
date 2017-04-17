@@ -111,9 +111,12 @@ If missing the function will use the data to infer all the grade progressions fo
   \item{simulate.sgps}{Boolean variable indicating whether to simulate SGP values for students based on test-specific Conditional Standard Errors of Measurement (CSEM).
   Test CSEM data must be available for simulation.  Must be set to TRUE for confidence interval construction. Defaults to TRUE in \code{abcSGP} only.
   }
-  \item{calculate.simex}{A character state acronym or list including state/csem variable, csem.data.vnames, csem.loss.hoss, simulation.iterations, lambda and extrapolation method. Default to NULL, no simex calculations done.  Alternatively, setting the argument to TRUE sets the list up with state=state, lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear" and save.matrices=TRUE.
+  \item{calculate.simex}{A character state acronym or list including state/csem variable, csem.data.vnames, csem.loss.hoss, simulation.iterations, lambda and extrapolation method.
+   Returns both SIMEX adjusted SGP (\code{SGP_SIMEX}) as well as the percentile ranked SIMEX SGP (\code{RANK_SIMEX}) values as suggested by Castellano and McCaffrey (2017).
+   Defaults to NULL, no simex calculations performed.  Alternatively, setting the argument to TRUE sets the list up with state=state, lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear" and save.matrices=TRUE.
   }
-  \item{calculate.simex.baseline}{A character state acronym or list including state/csem variable, csem.data.vnames, csem.loss.hoss, simulation.iterations, lambda and extrapolation method. Defaults to NULL, no simex calculations performed.  Alternatively, setting the argument to TRUE sets the list up with state=state, lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear", save.matrices=TRUE and simex.use.my.coefficient.matrices = TRUE.  This argument is passed to \code{\link{analyzeSGP}}.
+  \item{calculate.simex.baseline}{A character state acronym or list including state/csem variable, csem.data.vnames, csem.loss.hoss, simulation.iterations, lambda and extrapolation method. Defaults to NULL, no simex calculations performed.
+  Alternatively, setting the argument to TRUE uses the same defaults as above along with \code{simex.use.my.coefficient.matrices = TRUE}. This argument is passed to \code{\link{analyzeSGP}}.
   }
   \item{goodness.of.fit.print}{Boolean variable passed to \code{\link{analyzeSGP}} indicating whether to print goodness of fit results.
   }
