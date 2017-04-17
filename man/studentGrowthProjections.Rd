@@ -163,18 +163,15 @@ The data frame contains projections/trajectories for each performance level cut-
 }
 
 \references{
-Shang, Y., VanIwaarden, A., & Betebenner, D. W. (2015). Covariate measurement error correction for Student Growth
-Percentiles using the SIMEX method. Educational Measurement: Issues and Practice, 34(1):4-14.
-
-Betebenner, D. W. (2012). Growth, standards, and accountability. In G. J. Cizek,
-\emph{Setting Performance Standards: Foundations, Methods & Innovations. 2nd Edition} (pp. 439-450).
-New York: Routledge.
+Betebenner, D. W. (2008). Toward a normative understanding of student growth. In K. E. Ryan &
+L. A. Shepard (Eds.), \emph{The Future of Test Based Accountability} (pp. 155-170). New York: Routledge.
 
 Betebenner, D. W. (2009). Norm- and criterion-referenced student growth.
 Educational Measurement: Issues and Practice, 28(4):42-51.
 
-Betebenner, D. W. (2008). Toward a normative understanding of student growth. In K. E. Ryan &
-L. A. Shepard (Eds.), \emph{The Future of Test Based Accountability} (pp. 155-170). New York: Routledge.
+Betebenner, D. W. (2012). Growth, standards, and accountability. In G. J. Cizek,
+\emph{Setting Performance Standards: Foundations, Methods & Innovations. 2nd Edition} (pp. 439-450).
+New York: Routledge.
 
 Chernozhukov, V., Fernandez-Val, I. and Galichon, A. (2010),
 Quantile and Probability Curves Without Crossing. Econometrica, 78: 1093-1125.
