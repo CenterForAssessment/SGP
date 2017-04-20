@@ -2269,7 +2269,7 @@ function(
 
 			### TEST of SGP_TARGET_3_YEAR variable
 			#   identical(sum(Demonstration_SGP@Data$SGP_TARGET_3_YEAR, na.rm=T), 1761988L)
-			if (identical(digest::digest(Demonstration_SGP@Data$SGP_TARGET_3_YEAR), "07673a71188a1e01acbd21b2caff5655")) { # pre-GRADE key:
+			if (identical(digest::digest(Demonstration_SGP@Data$SGP_TARGET_3_YEAR), "07673a71188a1e01acbd21b2caff5655")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR: FAIL\n")
@@ -2277,7 +2277,7 @@ function(
 
 			### TEST of SGP_TARGET_3_YEAR_CURRENT variable
 			#   identical(sum(Demonstration_SGP@Data$SGP_TARGET_3_YEAR_CURRENT, na.rm=T), 1888559L)
-			if (identical(digest::digest(Demonstration_SGP@Data$SGP_TARGET_3_YEAR_CURRENT), "a937271073e02625264de7a779d0225a")) { # pre-GRADE key:
+			if (identical(digest::digest(Demonstration_SGP@Data$SGP_TARGET_3_YEAR_CURRENT), "a937271073e02625264de7a779d0225a")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR_CURRENT: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR_CURRENT: FAIL\n")
@@ -2300,12 +2300,12 @@ function(
 			}
 
 			### TEST of DUPS @Data
-			vars.to.check <- c("CONTENT_AREA", "ID", "SCALE_SCORE", "SCALE_SCORE_PRIOR", "GRADE", "SGP", "SGP_NORM_GROUP", "SGP_NORM_GROUP_SCALE_SCORES", "SGP_PROJECTION_GROUP_SCALE_SCORES", "CATCH_UP_KEEP_UP_STATUS")
+			vars.to.check <- c("CONTENT_AREA", "ID", "SCALE_SCORE", "SCALE_SCORE_PRIOR", "GRADE", "SGP", "SGP_NORM_GROUP_SCALE_SCORES", "SGP_PROJECTION_GROUP_SCALE_SCORES", "CATCH_UP_KEEP_UP_STATUS")
 			# dup.data <- Demonstration_SGP@Data[!is.na(DUPS_FLAG), vars.to.check, with=FALSE]
 			dup.ids <- unique(Demonstration_SGP@Data[duplicated(Demonstration_SGP@Data, by=setdiff(getKey(Demonstration_SGP@Data), "GRADE")), ID]) # Still check "GRADE excluded" dups
 			dup.data <- Demonstration_SGP@Data[ID %in% dup.ids, vars.to.check, with=FALSE]
 			setkey(dup.data)
-			if (identical(digest::digest(dup.data[, SGP_NORM_GROUP := as.character(SGP_NORM_GROUP)]), "762d647d072ff7f11b3562745854435f")) { # with DUPS_FLAG: 2b85afc2857336aaa165dd04feb47ef4
+			if (identical(digest::digest(dup.data), "1f948cfd6f1c8940795cb339c5efb917")) { # with DUPS_FLAG: 2b85afc2857336aaa165dd04feb47ef4
 				tmp.messages <- c(tmp.messages, "\t\tTest of duplicated cases in @Data: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of duplicated cases in @Data: FAIL\n")
@@ -2313,40 +2313,40 @@ function(
 
 			### TEST of Coefficient_Matrices
 			coef.mtx.index <- grep("ALGEBRA_I[.]", names(Demonstration_SGP@SGP[["Coefficient_Matrices"]]))
-			coef.mtx.to.check <- Demonstration_SGP@SGP[["Coefficient_Matrices"]][[coef.mtx.index]][["qrmatrix_EOCT_3"]]@.Data
-			if (identical(digest::digest(coef.mtx.to.check), "e82305e666e5f154eb385f0679229e16")) {
+			coef.mtx.to.check <- as.numeric(Demonstration_SGP@SGP[["Coefficient_Matrices"]][[coef.mtx.index]][["qrmatrix_EOCT_3"]]@.Data)
+			if (identical(digest::digest(coef.mtx.to.check), "a350a6f8cadff1562dacb40af2aff655")) { # 2014_2015 as PENULTIMATE_YEAR :: e82305e666e5f154eb385f0679229e16 - use 'as.numeric' to remove rownames, etc.
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (1): OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (1): FAIL\n")
 			}
 
 			coef.mtx.index <- grep("MATHEMATICS", names(Demonstration_SGP@SGP[["Coefficient_Matrices"]]))
-			coef.mtx.to.check1 <- Demonstration_SGP@SGP[["Coefficient_Matrices"]][[coef.mtx.index]][["qrmatrix_4_1"]]@.Data
-			coef.mtx.to.check2 <- Demonstration_SGP@SGP[["Coefficient_Matrices"]][[coef.mtx.index]][["qrmatrix_5_1"]]@.Data
-			coef.mtx.to.check3 <- Demonstration_SGP@SGP[["Coefficient_Matrices"]][[coef.mtx.index]][["qrmatrix_6_1"]]@.Data
-			coef.mtx.to.check4 <- Demonstration_SGP@SGP[["Coefficient_Matrices"]][[coef.mtx.index]][["qrmatrix_7_1"]]@.Data
-			coef.mtx.to.check5 <- Demonstration_SGP@SGP[["Coefficient_Matrices"]][[coef.mtx.index]][["qrmatrix_8_1"]]@.Data
-			if (identical(digest::digest(coef.mtx.to.check1), "142501756fb3548dd768669a25a6e29c")) {
+			coef.mtx.to.check1 <- as.numeric(Demonstration_SGP@SGP[["Coefficient_Matrices"]][[coef.mtx.index]][["qrmatrix_4_1"]]@.Data)
+			coef.mtx.to.check2 <- as.numeric(Demonstration_SGP@SGP[["Coefficient_Matrices"]][[coef.mtx.index]][["qrmatrix_5_1"]]@.Data)
+			coef.mtx.to.check3 <- as.numeric(Demonstration_SGP@SGP[["Coefficient_Matrices"]][[coef.mtx.index]][["qrmatrix_6_1"]]@.Data)
+			coef.mtx.to.check4 <- as.numeric(Demonstration_SGP@SGP[["Coefficient_Matrices"]][[coef.mtx.index]][["qrmatrix_7_1"]]@.Data)
+			coef.mtx.to.check5 <- as.numeric(Demonstration_SGP@SGP[["Coefficient_Matrices"]][[coef.mtx.index]][["qrmatrix_8_1"]]@.Data)
+			if (identical(digest::digest(coef.mtx.to.check1), "f332e90d30252e9736b19f77815bd5c5")) { # 142501756fb3548dd768669a25a6e29c
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (2): OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (2): FAIL\n")
 			}
-			if (identical(digest::digest(coef.mtx.to.check2), "d2756efffbe106f8a189f9aaed7f59f4")) {
+			if (identical(digest::digest(coef.mtx.to.check2), "ec280c6a44de8825bd42ff2a6d184522")) { # d2756efffbe106f8a189f9aaed7f59f4
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (3): OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (3): FAIL\n")
 			}
-			if (identical(digest::digest(coef.mtx.to.check3), "71367c2559ef1038bea60919246a6bc5")) {
+			if (identical(digest::digest(coef.mtx.to.check3), "56f8903607317231286a7a7a0b605d93")) { # 71367c2559ef1038bea60919246a6bc5
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (4): OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (4): FAIL\n")
 			}
-			if (identical(digest::digest(coef.mtx.to.check4), "cf27eded199f369d7275e598f614e297")) {
+			if (identical(digest::digest(coef.mtx.to.check4), "a2ccf47e36fc5f8f90944dbbc8eb0aa7")) { # cf27eded199f369d7275e598f614e297
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (5): OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (5): FAIL\n")
 			}
-			if (identical(digest::digest(coef.mtx.to.check5), "0a3e11fbc4a7a7e766d423ab998465ad")) {
+			if (identical(digest::digest(coef.mtx.to.check5), "8446a0ede4a5e1b0946fd772aa95304e")) { # 0a3e11fbc4a7a7e766d423ab998465ad
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (6): OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (6): FAIL\n")
@@ -2418,11 +2418,11 @@ function(
 			}
 
 			### TEST of DUPS @Data
-			vars.to.check <- c("CONTENT_AREA", "ID", "SCALE_SCORE", "SCALE_SCORE_PRIOR", "GRADE", "SGP", "SGP_NORM_GROUP", "SGP_NORM_GROUP_SCALE_SCORES", "SGP_PROJECTION_GROUP_SCALE_SCORES", "CATCH_UP_KEEP_UP_STATUS")
+			vars.to.check <- c("CONTENT_AREA", "ID", "SCALE_SCORE", "SCALE_SCORE_PRIOR", "GRADE", "SGP", "SGP_NORM_GROUP_SCALE_SCORES", "SGP_PROJECTION_GROUP_SCALE_SCORES", "CATCH_UP_KEEP_UP_STATUS")
 			dup.ids <- unique(Demonstration_SGP@Data[duplicated(Demonstration_SGP@Data, by=setdiff(getKey(Demonstration_SGP@Data), "GRADE")), ID]) # Still check "GRADE excluded" dups
 			dup.data <- Demonstration_SGP@Data[ID %in% dup.ids, vars.to.check, with=FALSE]
 			setkey(dup.data)
-			if (identical(digest::digest(dup.data[, SGP_NORM_GROUP := as.character(SGP_NORM_GROUP)]), "1096ae04d748ba69d7dd63ef398ac434")) { # With DUPS_FLAG: 12e253be3ce98f8f519b6a452f13cc93
+			if (identical(digest::digest(dup.data), "8b0d3fbf4e0149cab72383d17132b3be")) { # 1096ae04d748ba69d7dd63ef398ac434  #  With DUPS_FLAG: 12e253be3ce98f8f519b6a452f13cc93
 				tmp.messages <- c(tmp.messages, "\t\tTest of duplicated cases in @Data: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of duplicated cases in @Data: FAIL\n")
@@ -2430,41 +2430,41 @@ function(
 
 			### TEST of Coefficient Matrix
 			coef.mtx.index <- grep("ALGEBRA_II", sort(names(Demonstration_SGP@SGP[["Coefficient_Matrices"]])), value=TRUE)[2]
-			coef.mtx.to.check <- Demonstration_SGP@SGP[["Coefficient_Matrices"]][[coef.mtx.index]][["qrmatrix_EOCT_2"]]@.Data
+			coef.mtx.to.check <- as.numeric(Demonstration_SGP@SGP[["Coefficient_Matrices"]][[coef.mtx.index]][["qrmatrix_EOCT_2"]]@.Data)
 			coef.mtx.to.check.n <- Demonstration_SGP@SGP[["Coefficient_Matrices"]][[coef.mtx.index]][["qrmatrix_EOCT_2"]]@Version[["Matrix_Information"]][["N"]]
-			if (identical(digest::digest(coef.mtx.to.check), "75b4e472b89b0f6c7c966a381a93ee99") & coef.mtx.to.check.n == 3752L) { # adc97448509ae297e1d005f1f79a5c6d qrmatrix_EOCT_1
+			if (identical(digest::digest(coef.mtx.to.check), "bce86db75d2215f78e28cfef20d60c0f") & coef.mtx.to.check.n == 3752L) { # 75b4e472b89b0f6c7c966a381a93ee99
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (1): OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (1): FAIL\n")
 			}
 
 			coef.mtx.index <- grep("MATHEMATICS", sort(names(Demonstration_SGP@SGP[["Coefficient_Matrices"]])), value=TRUE)[2]
-			coef.mtx.to.check1 <- Demonstration_SGP@SGP[["Coefficient_Matrices"]][[coef.mtx.index]][["qrmatrix_4_1"]]@.Data
-			coef.mtx.to.check2 <- Demonstration_SGP@SGP[["Coefficient_Matrices"]][[coef.mtx.index]][["qrmatrix_5_1"]]@.Data
-			coef.mtx.to.check3 <- Demonstration_SGP@SGP[["Coefficient_Matrices"]][[coef.mtx.index]][["qrmatrix_6_1"]]@.Data
-			coef.mtx.to.check4 <- Demonstration_SGP@SGP[["Coefficient_Matrices"]][[coef.mtx.index]][["qrmatrix_7_1"]]@.Data
-			coef.mtx.to.check5 <- Demonstration_SGP@SGP[["Coefficient_Matrices"]][[coef.mtx.index]][["qrmatrix_8_1"]]@.Data
-			if (identical(digest::digest(coef.mtx.to.check1), "b8bbfcaeed65684469678b1bdf9eb3f2")) {
+			coef.mtx.to.check1 <- as.numeric(Demonstration_SGP@SGP[["Coefficient_Matrices"]][[coef.mtx.index]][["qrmatrix_4_1"]]@.Data)
+			coef.mtx.to.check2 <- as.numeric(Demonstration_SGP@SGP[["Coefficient_Matrices"]][[coef.mtx.index]][["qrmatrix_5_1"]]@.Data)
+			coef.mtx.to.check3 <- as.numeric(Demonstration_SGP@SGP[["Coefficient_Matrices"]][[coef.mtx.index]][["qrmatrix_6_1"]]@.Data)
+			coef.mtx.to.check4 <- as.numeric(Demonstration_SGP@SGP[["Coefficient_Matrices"]][[coef.mtx.index]][["qrmatrix_7_1"]]@.Data)
+			coef.mtx.to.check5 <- as.numeric(Demonstration_SGP@SGP[["Coefficient_Matrices"]][[coef.mtx.index]][["qrmatrix_8_1"]]@.Data)
+			if (identical(digest::digest(coef.mtx.to.check1), "3e00c3825eafed6b508ba6a679afb24b")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (2): OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (2): FAIL\n")
 			}
-			if (identical(digest::digest(coef.mtx.to.check2), "69347089ec9bfac4eee18f033ab19e0b")) {
+			if (identical(digest::digest(coef.mtx.to.check2), "433ab99726913bf12fb8922ab285fdc9")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (3): OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (3): FAIL\n")
 			}
-			if (identical(digest::digest(coef.mtx.to.check3), "86491055155f86be81fc1c3f112a4a07")) {
+			if (identical(digest::digest(coef.mtx.to.check3), "eb73b35a533e62f43829b9d64006c134")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (4): OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (4): FAIL\n")
 			}
-			if (identical(digest::digest(coef.mtx.to.check4), "2849d34637a876514f6c522f655c3507")) {
+			if (identical(digest::digest(coef.mtx.to.check4), "9e2bd1979b14b34759cafffdbe943d80")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (5): OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (5): FAIL\n")
 			}
-			if (identical(digest::digest(coef.mtx.to.check5), "f1e6df3d2d5587631898c114a888f296")) {
+			if (identical(digest::digest(coef.mtx.to.check5), "3962206bc6333e1dabbb3057d1281899")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (6): OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (6): FAIL\n")
@@ -2494,7 +2494,7 @@ function(
 
 			### Part 3b - visualizeSGP
 
-			#  Change EOCT back to EOCT for Visualizations.x
+			#  Change EOCT back to EOCT for Visualizations.
 			Demonstration_SGP@Data[CONTENT_AREA=='MATHEMATICS' & GRADE=='9', CONTENT_AREA:='ALGEBRA_I']
 			Demonstration_SGP@Data[CONTENT_AREA=='MATHEMATICS' & GRADE=='10', CONTENT_AREA:='ALGEBRA_II']
 			Demonstration_SGP@Data[CONTENT_AREA %in% c('ALGEBRA_I', 'ALGEBRA_II'), GRADE:='EOCT']
@@ -2512,18 +2512,18 @@ function(
 
 			tmp.messages <- c(tmp.messages, "\t##### Results of testSGP test number 7: Part 3 #####\n")
 
-			### TEST of School Summary Table  :: dim = 2154 x 23
-			setkey(Demonstration_SGP@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__CONTENT_AREA__YEAR__GRADE__SCHOOL_ENROLLMENT_STATUS"]])
-			if (identical(digest::digest(Demonstration_SGP@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__CONTENT_AREA__YEAR__GRADE__SCHOOL_ENROLLMENT_STATUS"]]), "3472a7f8a5ee67e248de158feb3da808")) { # 59157e11ed8289643e3b6f3c653200fc
-				# identical(sum(Demonstration_SGP@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__CONTENT_AREA__YEAR__GRADE__SCHOOL_ENROLLMENT_STATUS"]]$MEDIAN_SGP_COUNT), 58069L)
+			### TEST of School Summary Table  :: dim = 637 x 22
+			setkey(Demonstration_SGP@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__CONTENT_AREA__GRADE__SCHOOL_ENROLLMENT_STATUS"]])
+			if (identical(digest::digest(Demonstration_SGP@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__CONTENT_AREA__GRADE__SCHOOL_ENROLLMENT_STATUS"]]), "e13379b7384154f36d26eb0de40d79c2")) { # 3472a7f8a5ee67e248de158feb3da808
+				# identical(sum(Demonstration_SGP@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__CONTENT_AREA__GRADE__SCHOOL_ENROLLMENT_STATUS"]]$MEDIAN_SGP_COUNT), 58069L) # Same as with YEAR!
 				tmp.messages <- c(tmp.messages, "\t\tTest of School Summary Table: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of School Summary Table: FAIL\n")
 			}
 
-			### TEST of Instructor Summary Table  :: dim = 12297 x 24
-			setkey(Demonstration_SGP@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__GRADE__INSTRUCTOR_ENROLLMENT_STATUS"]])
-			if (identical(digest::digest(Demonstration_SGP@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__YEAR__GRADE__INSTRUCTOR_ENROLLMENT_STATUS"]]), "059d0a7f18c704589cb38e0da0b3aeec")) {
+			### TEST of Instructor Summary Table  :: dim = 3516 x 23
+			setkey(Demonstration_SGP@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__GRADE__INSTRUCTOR_ENROLLMENT_STATUS"]])
+			if (identical(digest::digest(Demonstration_SGP@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__GRADE__INSTRUCTOR_ENROLLMENT_STATUS"]]), "3f0d7039e96e44c9ccd445cc0d1bb098")) { # 059d0a7f18c704589cb38e0da0b3aeec
 				tmp.messages <- c(tmp.messages, "\t\tTest of Instructor Summary Table: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Instructor Summary Table: FAIL\n")
