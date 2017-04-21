@@ -2,6 +2,7 @@ Changes in version: SGP_1.7-0.0
 
   USER VISIBLE CHANGES:
 	  o Adding in dual mode for RLI analyses to be performed using RASCH scores (default) or STAR scores
+	  o Better accomodation of duplicates in data. Nonetheless, MUCH better to get rid of duplicates
 
 Changes in version: SGP_1.6-0.0
 
