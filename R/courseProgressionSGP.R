@@ -39,7 +39,7 @@ function(
 		if (any(levels(sgp_object_subset[["GRADE_CHAR"]])=="CT")) {
 			levels(sgp_object_subset[["GRADE_CHAR"]])[which(levels(sgp_object_subset[["GRADE_CHAR"]])=="CT")] <- "EOCT"
 		}
-		suppressWarnings(invisible(sgp_object_subset[, CONTENT_AREA_by_GRADE:=paste(CONTENT_AREA, GRADE_CHAR, sep=".")]))
+		invisible(sgp_object_subset[, CONTENT_AREA_by_GRADE:=paste(CONTENT_AREA, GRADE_CHAR, sep=".")])
 		invisible(sgp_object_subset[,YEAR_INTEGER:=as.integer(as.factor(YEAR))])
 		invisible(sgp_object_subset[,CONTENT_AREA:=NULL])
 		invisible(sgp_object_subset[,GRADE_CHAR:=NULL])
