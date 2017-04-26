@@ -274,9 +274,17 @@ function(panel.data,         ## REQUIRED
         return(round(matrix(.smooth.bound.iso.row(data.table(ID=rep(seq.int(dim(tmp)[1L]), each=length(taus)), X=c(t(tmp))), isotonize, sgp.loss.hoss.adjustment), ncol=length(taus), byrow=TRUE), digits=5L))
 	}
 
-	.get.quantiles <- function(data1, data2) {
+	.get.quantiles <- function(data1, data2, ranked.simex=FALSE) {
+    if (ranked.simex) {
+      data1_midpoints <- data1[,(1:ncol(data1)-1)] + t(apply(data1, 1, diff))/2
+      data1 <- cbind(data1, data1_midpoints)[, order(c(seq(ncol(data1)), seq(ncol(data1_midpoints))))]
+      data1_qrtrpoints <- data1[,(1:ncol(data1)-1)] + t(apply(data1, 1, diff))/2
+      data1 <- cbind(data1, data1_qrtrpoints)[, order(c(seq(ncol(data1)), seq(ncol(data1_qrtrpoints))))]
+      tmp.zero <- 398L
+    } else tmp.zero <- 101L
 		V1 <- NULL
-		tmp <- as.data.table(max.col(cbind(data1 < data2, FALSE), "last"))[V1==101L,V1:=0L]
+		tmp <- as.data.table(max.col(cbind(data1 < data2, FALSE), "last"))[V1==tmp.zero,V1:=0L]
+    if (ranked.simex) tmp[, V1 := V1/4]
 		if (!is.null(sgp.quantiles.labels)) {
 			setattr(tmp[['V1']] <- as.factor(tmp[['V1']]), "levels", sgp.quantiles.labels)
 			return(as.integer(levels(tmp[['V1']]))[tmp[['V1']]])
@@ -450,7 +458,7 @@ function(panel.data,         ## REQUIRED
 			tmp.ca.iter <- rev(content_area.progression)[start.index:(k+1L)]
 			tmp.yr.iter <- rev(year.progression)[start.index:(k+1L)]
 			if (is.null(csem.data.vnames)) {
-				csem.int <- data.table(matrix(nrow=dim(tmp.data)[1L], ncol=length(perturb.var))) # build data.table to store interpolated csem
+				csem.int <- data.table(matrix(nrow=nrow(tmp.data), ncol=length(perturb.var))) # build data.table to store interpolated csem
 				setnames(csem.int, paste0("icsem", perturb.var, tmp.ca.iter, tmp.yr.iter))
 			} else {
 				csem.int <- data.table(Panel_Data[,c("ID", intersect(csem.data.vnames, names(Panel_Data))),with=FALSE], key="ID")[list(tmp.data$ID)]
@@ -488,7 +496,7 @@ function(panel.data,         ## REQUIRED
 
 			## naive model
 			if (calculate.simex.sgps) {
-				fitted[[paste0("order_", k)]] <- matrix(0, nrow=length(lambda), ncol=dim(tmp.data)[1L]*length(taus))
+				fitted[[paste0("order_", k)]] <- matrix(0, nrow=length(lambda), ncol=nrow(tmp.data)*length(taus))
 				tmp.matrix <- getsplineMatrices(
 					Coefficient_Matrices[[tmp.path.coefficient.matrices]],
 					tail(content_area.progression, k+1L),
@@ -509,7 +517,7 @@ function(panel.data,         ## REQUIRED
 			}
 			for (L in lambda[-1L]) {
 				big.data <- rbindlist(replicate(B, tmp.data, simplify = FALSE))
-				big.data[, b:=rep(1:B, each=dim(tmp.data)[1L])]
+				big.data[, b:=rep(1:B, each=nrow(tmp.data))]
 				if (dependent.var.error) {
 					tmp.names <- "b"
 				} else {
@@ -587,7 +595,7 @@ function(panel.data,         ## REQUIRED
 					if (verbose) messageSGP(c("\t\t\tStarted coefficient matrix calculation, Lambda ", L, ": ", prettyDate()))
 					if (is.null(simex.use.my.coefficient.matrices)) {
 						for (z in seq_along(sim.iters)) {
-							if (is.null(simex.sample.size) || dim(tmp.data)[1L] <= simex.sample.size) {
+							if (is.null(simex.sample.size) || nrow(tmp.data) <= simex.sample.size) {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste0("lambda_", L)]][[z]] <-
 									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=big.data[list(z)][, b:=NULL])
 							} else {
@@ -617,7 +625,7 @@ function(panel.data,         ## REQUIRED
 					## Calculate coefficient matricies (if needed/requested)
 					if (is.null(simex.use.my.coefficient.matrices)) {
 						if (verbose) messageSGP(c("\t\t\tStarted coefficient matrix calculation, Lambda ", L, ": ", prettyDate()))
-							if (is.null(simex.sample.size) || dim(tmp.data)[1L] <= simex.sample.size) {
+							if (is.null(simex.sample.size) || nrow(tmp.data) <= simex.sample.size) {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste0("lambda_", L)]] <-
 									foreach(z=iter(sim.iters), .packages=c("quantreg", "data.table"),
 										.export=c("Knots_Boundaries", "rq.method", "taus", "content_area.progression", "tmp.slot.gp", "year.progression", "year_lags.progression", "SGPt", "rq.sgp"),
@@ -629,7 +637,7 @@ function(panel.data,         ## REQUIRED
 									foreach(z=iter(sim.iters), .packages=c("quantreg", "data.table"),
 										.export=c("Knots_Boundaries", "rq.method", "taus", "content_area.progression", "tmp.slot.gp", "year.progression", "year_lags.progression", "SGPt", "rq.sgp"),
 										.options.mpi=par.start$foreach.options, .options.multicore=par.start$foreach.options, .options.snow=par.start$foreach.options) %dorng% {
-											rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=as.data.table(getSQLData(tmp.dbname, z))[sample(seq.int(dim(tmp.data)[1L]), simex.sample.size)])
+											rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=as.data.table(getSQLData(tmp.dbname, z))[sample(seq.int(nrow(tmp.data)), simex.sample.size)])
 									}
 							}
 					} else {
@@ -640,12 +648,12 @@ function(panel.data,         ## REQUIRED
 						recalc.index <- which(!sapply(simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste0("lambda_", L)]], is.splineMatrix))
 						messageSGP(c("\n\t\t", rev(content_area.progression)[1L], " Grade ", rev(tmp.gp)[1L], " Order ", k, " Coefficient Matrix process(es) ", recalc.index, "FAILED!  Attempting to recalculate sequentially..."))
 						for (z in recalc.index) {
-							if (is.null(simex.sample.size) || dim(tmp.data)[1L] <= simex.sample.size) {
+							if (is.null(simex.sample.size) || nrow(tmp.data) <= simex.sample.size) {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste0("lambda_", L)]][[z]] <-
 									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=as.data.table(getSQLData(tmp.dbname, z)))
 							} else {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste0("lambda_", L)]][[z]] <-
-									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=as.data.table(getSQLData(tmp.dbname, z))[sample(seq.int(dim(tmp.data)[1L]), simex.sample.size),])
+									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=as.data.table(getSQLData(tmp.dbname, z))[sample(seq.int(nrow(tmp.data)), simex.sample.size),])
 							}
 						}
 					}
@@ -672,10 +680,12 @@ function(panel.data,         ## REQUIRED
 					LINEAR = fit <- lm(fitted[[paste0("order_", k)]] ~ lambda),
 					QUADRATIC = fit <- lm(fitted[[paste0("order_", k)]] ~ lambda + I(lambda^2)))
 				extrap[[paste0("order_", k)]] <-
-					matrix(.smooth.bound.iso.row(data.table(ID=seq.int(dim(tmp.data)[1L]), X=predict(fit, newdata=data.frame(lambda=-1L))[1L,]), isotonize, sgp.loss.hoss.adjustment),
+					matrix(.smooth.bound.iso.row(data.table(ID=seq.int(nrow(tmp.data)), X=predict(fit, newdata=data.frame(lambda=-1L))[1L,]), isotonize, sgp.loss.hoss.adjustment),
 						ncol=length(taus), byrow=TRUE)
 				tmp.quantiles.simex[[k]] <- data.table(ID=tmp.data[["ID"]], SIMEX_ORDER=k,
-					SGP_SIMEX=.get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]]))
+					SGP_SIMEX=.get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]]),
+          SGP_SIMEX_RANKED=as.integer(round(100*(data.table::frank(ties.method = "average", x =
+                    .get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]], ranked.simex=TRUE))/nrow(tmp.data)), 0)))
 			}
 		} ### END for (k in simex.matrix.priors)
 
@@ -684,7 +694,7 @@ function(panel.data,         ## REQUIRED
 		if (is.null(save.matrices)) simex.coef.matrices <- NULL
 		if (calculate.simex.sgps) {
 			quantile.data.simex <- data.table(rbindlist(tmp.quantiles.simex), key=c("ID", "SIMEX_ORDER"))
-      invisible(quantile.data.simex[, SGP_SIMEX_RANKED := as.integer(round(100*(rank(SGP_SIMEX, ties.method = "average")/length(SGP_SIMEX)), 0)), by = "SIMEX_ORDER"])
+      # invisible(quantile.data.simex[, SGP_SIMEX_RANKED := as.integer(round(100*(rank(SGP_SIMEX, ties.method = "average")/length(SGP_SIMEX)), 0)), by = "SIMEX_ORDER"])
       if (convert.0and100) {
         invisible(quantile.data.simex[SGP_SIMEX_RANKED==0L, SGP_SIMEX_RANKED := 1L])
         invisible(quantile.data.simex[SGP_SIMEX_RANKED==100L, SGP_SIMEX_RANKED := 99L])
@@ -1647,7 +1657,7 @@ function(panel.data,         ## REQUIRED
 		if (is.character(goodness.of.fit) || goodness.of.fit==TRUE) {
 			if (simex.tf) {
 				sgps.for.gof <- c("SGP", "SGP_SIMEX", "SGP_SIMEX_RANKED")
-				sgps.for.gof.path <- c(tmp.path, paste(tmp.path, "SIMEX", sep="."), paste(tmp.path, "SGP_SIMEX_RANKED", sep="."))
+				sgps.for.gof.path <- c(tmp.path, paste(tmp.path, "SIMEX", sep="."), paste(tmp.path, "RANKED_SIMEX", sep="."))
 			} else {
 				sgps.for.gof <- "SGP"
 				sgps.for.gof.path <- tmp.path
@@ -1723,13 +1733,13 @@ function(panel.data,         ## REQUIRED
 						use.sgp=sgps.for.gof[gof.iter],
 						output.format=goodness.of.fit.output.format)
 
-                    if (!is.null(Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]][['TMP_NAME']])) {
-                        tmp.gof.plot.name <-
-                            paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression, sep="_"), sep="/"), num.prior+1L), collapse="; ")
-                        tmp.gof.plot.name <- gsub("MATHEMATICS", "MATH", tmp.gof.plot.name)
-                        names(Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]])[length(Goodness_of_Fit[[tmp.path]])] <-
-                            gsub("/", "_", paste(gsub(";", "", rev(unlist(strsplit(tail(tmp.gof.plot.name, 1L), " ")))), collapse=";"))
-                    }
+					if (!is.null(Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]][['TMP_NAME']])) {
+            tmp.gof.plot.name <-
+              paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression, sep="_"), sep="/"), num.prior+1L), collapse="; ")
+            tmp.gof.plot.name <- gsub("MATHEMATICS", "MATH", tmp.gof.plot.name)
+            names(Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]])[length(Goodness_of_Fit[[tmp.path]])] <-
+            gsub("/", "_", paste(gsub(";", "", rev(unlist(strsplit(tail(tmp.gof.plot.name, 1L), " ")))), collapse=";"))
+          }
 				}
 			}
 		}
