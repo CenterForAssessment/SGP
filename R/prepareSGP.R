@@ -187,7 +187,7 @@ function(data,
 		if (is.null(fix.duplicates) && any(duplicated(data["VALID_CASE"], by=key(data)))) {
 			messageSGP(paste("\tWARNING: Data keyed by", paste(getKey(data), collapse=", "), "has duplicate cases. Subsequent joins/merges will be corrupted."))
 			messageSGP("\tNOTE: Duplicate cases are available in current workspace as 'DUPLICATED_CASES' and saved as 'DUPLICATED_CASES.Rdata'.")
-			assign("DUPLICATED_CASES", data["VALID_CASE"][unique(data["VALID_CASE"][duplicated(data["VALID_CASE"], by=key(data)), c("VALID_CASE", "CONTENT_AREA", "GRADE", "YEAR", "ID"), with=FALSE], by=key(data))])
+			assign("DUPLICATED_CASES", data["VALID_CASE"][unique(data["VALID_CASE"][duplicated(data["VALID_CASE"], by=key(data)), key(data), with=FALSE], by=key(data))])
 			save(DUPLICATED_CASES, file="DUPLICATED_CASES.Rdata")
 		}
 

@@ -276,15 +276,15 @@ function(panel.data,         ## REQUIRED
 
 	.get.quantiles <- function(data1, data2, ranked.simex=FALSE) {
     if (ranked.simex) {
-      data1_midpoints <- data1[,(1:ncol(data1)-1)] + t(apply(data1, 1, diff))/2
-      data1 <- cbind(data1, data1_midpoints)[, order(c(seq(ncol(data1)), seq(ncol(data1_midpoints))))]
-      data1_qrtrpoints <- data1[,(1:ncol(data1)-1)] + t(apply(data1, 1, diff))/2
-      data1 <- cbind(data1, data1_qrtrpoints)[, order(c(seq(ncol(data1)), seq(ncol(data1_qrtrpoints))))]
-      tmp.zero <- 398L
+      for (p in 1:3) { # Additional values between the tau predicted values - 1/8th percentiles for ranking
+        dataX <- data1[,(1:ncol(data1)-1)] + t(apply(data1, 1, diff))/2
+        data1 <- cbind(data1, dataX)[, order(c(seq(ncol(data1)), seq(ncol(dataX))))]
+      }
+      tmp.zero <- 794L
     } else tmp.zero <- 101L
 		V1 <- NULL
-		tmp <- as.data.table(max.col(cbind(data1 < data2, FALSE), "last"))[V1==tmp.zero,V1:=0L]
-    if (ranked.simex) tmp[, V1 := V1/4]
+		tmp <- as.data.table(max.col(cbind(data1 < data2, FALSE), "last"))[V1==tmp.zero, V1 := 0L]
+    if (ranked.simex) tmp[, V1 := V1/8]
 		if (!is.null(sgp.quantiles.labels)) {
 			setattr(tmp[['V1']] <- as.factor(tmp[['V1']]), "levels", sgp.quantiles.labels)
 			return(as.integer(levels(tmp[['V1']]))[tmp[['V1']]])
@@ -1563,14 +1563,14 @@ function(panel.data,         ## REQUIRED
           if (print.other.gp) {
             tmp.se <- list()
             for(f in seq_along(tmp.csem.quantiles)) {
-              tmp.se[[f]] <- data.table("ID" = tmp.csem.quantiles[[f]][["ID"]], "ORDER" = f, "STANDARD_ERROR" = round(data.table(ID=tmp.csem.quantiles[[f]][[1L]], SGP=c(as.matrix(tmp.csem.quantiles[[f]][,-1L,with=FALSE])))[,sd(SGP), keyby=ID][['V1']], digits=2L))
+              tmp.se[[f]] <- data.table("ID" = tmp.csem.quantiles[[f]][["ID"]], "ORDER" = f, "STANDARD_ERROR" = round(data.table(ID=tmp.csem.quantiles[[f]][[1L]], SGP=c(as.matrix(tmp.csem.quantiles[[f]][, grep("SGP", names(tmp.csem.quantiles[[f]])), with=FALSE])))[,sd(SGP), keyby=ID][['V1']], digits=2L))
             }
             tmp.se <- data.table(rbindlist(tmp.se), key="ID")
             tmp.se <- dcast(tmp.se, ID~ORDER, value.var="STANDARD_ERROR")
             setnames(tmp.se, grep("ID", names(tmp.se), invert=TRUE, value=TRUE), paste0("SGP_ORDER_", grep("ID", names(tmp.se), invert=TRUE, value=TRUE), "_STANDARD_ERROR"))
             quantile.data <- merge(quantile.data, tmp.se, by="ID")
           } # No 'else' - also return the plain SGP version
-					quantile.data[,SGP_STANDARD_ERROR:=round(data.table(ID=simulation.data[[1L]], SGP=c(as.matrix(simulation.data[,-1L,with=FALSE])))[,sd(SGP), keyby=ID][['V1']], digits=2L)]
+					quantile.data[,SGP_STANDARD_ERROR:=round(data.table(ID=simulation.data[[1L]], SGP=c(as.matrix(simulation.data[, grep("SGP", names(tmp.csem.quantiles[[f]])), with=FALSE])))[,sd(SGP), keyby=ID][['V1']], digits=2L)]
 				} else {
 					if (!(is.numeric(calculate.confidence.intervals$confidence.quantiles) && all(calculate.confidence.intervals$confidence.quantiles < 1) &
 						all(calculate.confidence.intervals$confidence.quantiles > 0))) {
