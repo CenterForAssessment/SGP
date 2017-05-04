@@ -252,7 +252,6 @@ function(panel.data,	## REQUIRED
 									tmp.dt[,TEMP_2:=.smooth.bound.iso.row(
 											data.table(ID=tmp.dt[[1L]], X=TEMP_1),
 											tail(grade.progression, 1L),
-#											grade.projection.sequence[j],
 											yearIncrement(sgp.labels[['my.year']], j, lag.increment),
 											content_area.projection.sequence[j],
 											missing.taus=missing.taus,
