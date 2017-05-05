@@ -1663,10 +1663,10 @@ function(panel.data,         ## REQUIRED
 				sgps.for.gof.path <- tmp.path
 			}
 			if (is.character(goodness.of.fit) && goodness.of.fit %in% objects(SGP::SGPstateData) &&
-          !identical(sgp.labels$my.extra.label, "EQUATED") &&
-          !is.null(SGP::SGPstateData[[goodness.of.fit]][['Achievement']][['Cutscores']][[get.prior.cutscore.path(rev(content_area.progression)[2L], yearIncrement(rev(year.progression)[2L], 1L, year_lags.progression[1L]))]][[paste0("GRADE_", rev(tmp.gp)[2L])]])) {
-				GRADE <- YEAR <- CONTENT_AREA <- NULL
-				tmp.gof.data <- getAchievementLevel(
+                !identical(sgp.labels$my.extra.label, "EQUATED") &&
+                !is.null(SGP::SGPstateData[[goodness.of.fit]][['Achievement']][['Cutscores']][[get.prior.cutscore.path(rev(content_area.progression)[2L], yearIncrement(rev(year.progression)[2L], 1L, year_lags.progression[1L]))]][[paste0("GRADE_", rev(tmp.gp)[2L])]])) {
+                    GRADE <- YEAR <- CONTENT_AREA <- NULL
+                    tmp.gof.data <- getAchievementLevel(
 							sgp_data=data.table(
 								ID=quantile.data[['ID']],
 								SCALE_SCORE=quantile.data[['SCALE_SCORE_PRIOR']],
@@ -1703,12 +1703,11 @@ function(panel.data,         ## REQUIRED
 						use.sgp=sgps.for.gof[gof.iter],
 						output.format=goodness.of.fit.output.format)
 
-          if (!is.null(Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]][['TMP_NAME']])) {
-						tmp.gof.plot.name <-
-              paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression, sep="_"), sep="/"), num.prior+1L), collapse="; ")
-            tmp.gof.plot.name <- gsub("MATHEMATICS", "MATH", tmp.gof.plot.name)
-            names(Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]])[length(Goodness_of_Fit[[tmp.path]])] <-
-            gsub("/", "_", paste(gsub(";", "", rev(unlist(strsplit(tail(tmp.gof.plot.name, 1L), " ")))), collapse=";"))
+                    if (!is.null(Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]][['TMP_NAME']])) {
+						tmp.gof.plot.name <- paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression, sep="_"), sep="/"), num.prior+1L), collapse="; ")
+                        tmp.gof.plot.name <- gsub("MATHEMATICS", "MATH", tmp.gof.plot.name)
+                        names(Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]])[length(Goodness_of_Fit[[tmp.path]])] <-
+                        gsub("/", "_", paste(gsub(";", "", rev(unlist(strsplit(tail(tmp.gof.plot.name, 1L), " ")))), collapse=";"))
 					}
 				}
 			} else {
@@ -1734,12 +1733,11 @@ function(panel.data,         ## REQUIRED
 						output.format=goodness.of.fit.output.format)
 
 					if (!is.null(Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]][['TMP_NAME']])) {
-            tmp.gof.plot.name <-
-              paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression, sep="_"), sep="/"), num.prior+1L), collapse="; ")
-            tmp.gof.plot.name <- gsub("MATHEMATICS", "MATH", tmp.gof.plot.name)
-            names(Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]])[length(Goodness_of_Fit[[tmp.path]])] <-
-            gsub("/", "_", paste(gsub(";", "", rev(unlist(strsplit(tail(tmp.gof.plot.name, 1L), " ")))), collapse=";"))
-          }
+                        tmp.gof.plot.name <- paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression, sep="_"), sep="/"), num.prior+1L), collapse="; ")
+                        tmp.gof.plot.name <- gsub("MATHEMATICS", "MATH", tmp.gof.plot.name)
+                        names(Goodness_of_Fit[[sgps.for.gof.path[gof.iter]]])[length(Goodness_of_Fit[[tmp.path]])] <-
+                        gsub("/", "_", paste(gsub(";", "", rev(unlist(strsplit(tail(tmp.gof.plot.name, 1L), " ")))), collapse=";"))
+                    }
 				}
 			}
 		}
