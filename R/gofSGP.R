@@ -490,6 +490,7 @@ function(
 					if ("ACHIEVEMENT_LEVEL_PRIOR" %in% names(tmp.data.final) && any(!is.na(tmp.data.final[['ACHIEVEMENT_LEVEL_PRIOR']]))) {
 						tmp.prior.ach <- TRUE
 					} else {
+browser()
 						tmp.prior.ach <- FALSE
 						if ("ACHIEVEMENT_LEVEL_PRIOR" %in% names(tmp.data.final)) tmp.data.final[, ACHIEVEMENT_LEVEL_PRIOR:=NULL]
 						messageSGP(paste("\tNOTE:", content_areas.iter, "Grade", grades.iter, "data does not include ACHIEVEMENT_LEVEL_PRIOR variable. Prior Achievement Level plot panel will not be included in goodness of fit plot."))

@@ -699,7 +699,6 @@ function(panel.data,	## REQUIRED
 	### Create ss.data from Panel_Data and rename variables based upon grade.progression
 
 	if (dim(panel.data[['Panel_Data']])[1L] == 0L) { ### Check needed for getTargetScaleScore when running straight projections for final subject in progression
-browser()
 		tmp.messages <- c(tmp.messages, "\t\tNOTE: Supplied data together with grade progression contains no data for analysis. Check data, function arguments and see help page for details.\n")
 		messageSGP(paste("\tStarted studentGrowthProjections", started.date))
 		messageSGP(paste0("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label))
