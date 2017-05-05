@@ -717,7 +717,6 @@ function(panel.data,	## REQUIRED
 
 	if (!missing(panel.data.vnames)) {
 		if (!all(panel.data.vnames %in% names(panel.data[["Panel_Data"]]))) {
-browser()
 			tmp.messages <- c(tmp.messages, "\t\tNOTE: Supplied 'panel.data.vnames' are not all in the supplied 'Panel_Data'.\n\t\t\tAnalyses will utilize the variables contained in both Panel_Data and those provided in the supplied argument 'panel.data.vnames'.\n")
 		}
 		ss.data <- panel.data[["Panel_Data"]][,intersect(panel.data.vnames, names(panel.data[["Panel_Data"]])), with=FALSE]
