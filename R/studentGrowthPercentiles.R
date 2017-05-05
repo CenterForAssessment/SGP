@@ -1083,7 +1083,6 @@ function(panel.data,         ## REQUIRED
 	### Create ss.data from Panel_Data
 
 	if (dim(Panel_Data)[1L]==0L || dim(Panel_Data)[2L]<3L) {
-browser()
 		tmp.messages <- paste0("\t\tNOTE: Supplied data together with grade progression contains no data (dim = ", paste(dim(Panel_Data), collapse=", "), "). Check data, function arguments and see help page for details.\n")
 		messageSGP(paste("\tStarted studentGrowthPercentiles", started.date))
 		messageSGP(paste0("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ",
@@ -1107,7 +1106,6 @@ browser()
 
 	if (!is.null(panel.data.vnames)) {
 		if (!all(panel.data.vnames %in% names(Panel_Data))) {
-browser()
 			tmp.messages <- c(tmp.messages, "\t\tNOTE: Supplied 'panel.data.vnames' are not all in the supplied Panel_Data.\n\t\t\tAnalyses will continue with the variables contained in both Panel_Data and the 'panel.data.vnames' argument.\n")
 		}
 		ss.data <- Panel_Data[,intersect(panel.data.vnames, names(Panel_Data)), with=FALSE]
