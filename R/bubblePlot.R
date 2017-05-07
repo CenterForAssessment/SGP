@@ -678,6 +678,12 @@ if (is.null(bubble_plot_data.LEVELS) & !is.null(bubble_plot_titles.NOTE)){
 	grid.text(x=0.5, y=y.pos, bubble_plot_titles.NOTE, gp=gpar(col=format.colors.font[1], fontface=3, cex=1.0))
 }
 
+# Summary statistics
+
+y.coors <- 0.2
+grid.text(x=0.5, y=y.coors[1]+0.1, "Summary Statistics", gp=gpar(col=format.colors.font[1], fontface=2, cex=1.2))
+grid.text(x=0.5, y=y.coors, paste("Correlation:", round(cor(bubble_plot_data.X, bubble_plot_data.Y, use="complete.obs"), digits=2)))
+
 popViewport() ## pop right.legend.vp
 }
 

@@ -733,29 +733,29 @@ function(sgp_object,
         sgp.percentiles.equated, SGPt)
 
 	if (sgp.projections & length(par.sgp.config[['sgp.projections']])==0) {
-		messageSGP("\tNOTE: No configurations are present for cohort referenced projections. No cohort referenced projections will be calculated.")
+		messageSGP("\tNOTE: No configurations are present for cohort referenced projections. No cohort referenced projections will be calculated.\n")
 		sgp.projections <- FALSE
 	}
 
 	if (sgp.projections.lagged & length(par.sgp.config[['sgp.projections.lagged']])==0) {
-		messageSGP("\tNOTE: No configurations are present for cohort referenced lagged projections. No lagged cohort referenced projections will be calculated.")
+		messageSGP("\tNOTE: No configurations are present for cohort referenced lagged projections. No lagged cohort referenced projections will be calculated.\n")
 		sgp.projections.lagged <- FALSE
 	}
 
 	if (sgp.projections.baseline & length(par.sgp.config[['sgp.projections.baseline']])==0) {
-		messageSGP("\tNOTE: No configurations are present for baseline projections. No baseline projections will be calculated.")
+		messageSGP("\tNOTE: No configurations are present for baseline projections. No baseline projections will be calculated.\n")
 		sgp.projections.baseline <- sgp.projections.lagged.baseline <- FALSE
 	}
 
 	if (sgp.projections.lagged.baseline & length(par.sgp.config[['sgp.projections.lagged.baseline']])==0) {
-		messageSGP("\tNOTE: No configurations are present for lagged baseline projections. No lagged baseline projections will be calculated.")
+		messageSGP("\tNOTE: No configurations are present for lagged baseline projections. No lagged baseline projections will be calculated.\n")
 		sgp.projections.baseline <- sgp.projections.lagged.baseline <- FALSE
 	}
 
   if (sgp.percentiles) {
     if (!is.null(tmp.transition.year <- SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]) &&
         sort(unique(unlist(sapply(par.sgp.config[['sgp.percentiles']], function(x) x[['sgp.panel.years']]))))[1] < tmp.transition.year) {
-            messageSGP(paste0("\tNOTE: Configurations include years prior to assessment transition (", tmp.transition.year, ").\n\t\tOutput will include SGPs of all orders to accomodate investigations."))
+            messageSGP(paste0("\tNOTE: Configurations include years prior to assessment transition (", tmp.transition.year, ").\n\t\tOutput will include SGPs of all orders to accomodate investigations.\n"))
             print.other.gp <- TRUE
     }
   }
