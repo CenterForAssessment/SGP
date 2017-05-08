@@ -359,7 +359,7 @@ if (1 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_LEGEND="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
-			bubble_plot_configs.BUBBLE_PLOT_NAME=paste0(paste(state.name.file.label, year.iter, capwords(content_area.iter),
+			bubble_plot_configs.BUBBLE_PLOT_NAME=paste0(paste(state.name.file.label, year.iter, gsub(" ", "_", capwords(content_area.iter)),
 				"State", bPlot.labels$pdf.title, sep="_"), ".pdf"),
 			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "State", "Style_1"),
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
@@ -488,7 +488,7 @@ if (2 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_LEGEND="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
-			bubble_plot_configs.BUBBLE_PLOT_NAME=paste0(paste(state.name.file.label, year.iter, capwords(content_area.iter), capwords(levels.iter), "State", bPlot.labels$pdf.title, sep="_"), ".pdf"),
+			bubble_plot_configs.BUBBLE_PLOT_NAME=paste0(paste(state.name.file.label, year.iter, gsub(" ", "_", capwords(content_area.iter)), capwords(levels.iter), "State", bPlot.labels$pdf.title, sep="_"), ".pdf"),
 			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "State", "Style_2", bPlot.levels.iter),
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 
@@ -607,7 +607,7 @@ if (3 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_LEGEND="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
-			bubble_plot_configs.BUBBLE_PLOT_NAME=paste0(paste(state.name.file.label, year.iter, capwords(content_area.iter), capwords(levels.iter), "State", bPlot.labels$pdf.title, sep="_"), ".pdf"),
+			bubble_plot_configs.BUBBLE_PLOT_NAME=paste0(paste(state.name.file.label, year.iter, gsub(" ", "_", capwords(content_area.iter)), capwords(levels.iter), "State", bPlot.labels$pdf.title, sep="_"), ".pdf"),
 			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "State", "Style_3", bPlot.levels),
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 
@@ -705,7 +705,7 @@ if (10 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_LEGEND="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
-			bubble_plot_configs.BUBBLE_PLOT_NAME=paste0(paste(district.name.label, year.iter, capwords(content_area.iter), bPlot.labels$pdf.title, sep="_"), ".pdf"),
+			bubble_plot_configs.BUBBLE_PLOT_NAME=paste0(paste(district.name.label, year.iter, gsub(" ", "_", capwords(content_area.iter)), bPlot.labels$pdf.title, sep="_"), ".pdf"),
 			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "District", "Style_10", paste("District", district_number.iter, sep="_")),
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 
@@ -838,7 +838,7 @@ if (10 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_LEGEND="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
-			bubble_plot_configs.BUBBLE_PLOT_NAME=paste0(paste(district.name.label, year.iter, capwords(content_area.iter),
+			bubble_plot_configs.BUBBLE_PLOT_NAME=paste0(paste(district.name.label, year.iter, gsub(" ", "_", capwords(content_area.iter)),
 				capwords(bPlot.levels.iter), "Schools", bPlot.labels$pdf.title, sep="_"), ".pdf"),
 			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "District", "Style_11", paste("District", district_number.iter, sep="_"), bPlot.levels.iter),
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
@@ -939,7 +939,7 @@ if (20 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_LEGEND="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
-			bubble_plot_configs.BUBBLE_PLOT_NAME=paste0(paste(district.name.label, year.iter, capwords(content_area.iter), "District", bPlot.labels$pdf.title, sep="_"), ".pdf"),
+			bubble_plot_configs.BUBBLE_PLOT_NAME=paste0(paste(district.name.label, year.iter, gsub(" ", "_", capwords(content_area.iter)), "District", bPlot.labels$pdf.title, sep="_"), ".pdf"),
 			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "District", "Style_20"),
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 
@@ -1059,7 +1059,7 @@ if (21 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_LEGEND="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
-			bubble_plot_configs.BUBBLE_PLOT_NAME=paste0(paste(district.name.label, year.iter, capwords(content_area.iter), "District", bPlot.labels$pdf.title, sep="_"), ".pdf"),
+			bubble_plot_configs.BUBBLE_PLOT_NAME=paste0(paste(district.name.label, year.iter, gsub(" ", "_", capwords(content_area.iter)), "District", bPlot.labels$pdf.title, sep="_"), ".pdf"),
 			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "District", "Style_21", bPlot.levels),
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 
@@ -1184,7 +1184,7 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_LEGEND="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
-			bubble_plot_configs.BUBBLE_PLOT_NAME=paste0(paste(district.name.label, year.iter, capwords(content_area.iter), capwords(levels.iter), "District", bPlot.labels$pdf.title, sep="_"), ".pdf"),
+			bubble_plot_configs.BUBBLE_PLOT_NAME=paste0(paste(district.name.label, year.iter, gsub(" ", "_", capwords(content_area.iter)), capwords(levels.iter), "District", bPlot.labels$pdf.title, sep="_"), ".pdf"),
 			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "District", "Style_22", bPlot.levels),
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 
@@ -1281,7 +1281,7 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_LEGEND="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
-			bubble_plot_configs.BUBBLE_PLOT_NAME=paste0(paste(school.name.label, year.iter, capwords(content_area.iter),
+			bubble_plot_configs.BUBBLE_PLOT_NAME=paste0(paste(school.name.label, year.iter, gsub(" ", "_", capwords(content_area.iter)),
 				"Instructors", bPlot.labels$pdf.title, sep="_"), ".pdf"),
 			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "Instructor", "Style_50", paste("District", district_number.iter, sep="_")),
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
@@ -1380,7 +1380,7 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
 			bubble_plot_configs.BUBBLE_PLOT_NAME=paste0(paste(district.name.label, year.iter,
-				capwords(content_area.iter), "Instructors", bPlot.labels$pdf.title, sep="_"), ".pdf"),
+				gsub(" ", "_", capwords(content_area.iter)), "Instructors", bPlot.labels$pdf.title, sep="_"), ".pdf"),
 			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "Instructor", "Style_53", paste("District", district_number.iter, sep="_")),
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 
@@ -1532,7 +1532,7 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_LEGEND="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
-			bubble_plot_configs.BUBBLE_PLOT_NAME=paste0(paste(district.name.label, year.iter, capwords(content_area.iter),
+			bubble_plot_configs.BUBBLE_PLOT_NAME=paste0(paste(district.name.label, year.iter, gsub(" ", "_", capwords(content_area.iter)),
 				capwords(levels.iter), "Classrooms", bPlot.labels$pdf.title, sep="_"), ".pdf"),
 			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "Instructor", "Style_55",
 				paste("District", district_number.iter, sep="_"), bPlot.levels.iter),
@@ -1634,7 +1634,7 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_LEGEND="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
-			bubble_plot_configs.BUBBLE_PLOT_NAME=paste0(paste(school.name.label, year.iter, capwords(content_area.iter),
+			bubble_plot_configs.BUBBLE_PLOT_NAME=paste0(paste(school.name.label, year.iter, gsub(" ", "_", capwords(content_area.iter)),
 				"Instructor", bPlot.labels$pdf.title, sep="_"), ".pdf"),
 			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "Instructor", "Style_57", paste("District", district_number.iter, sep="_")),
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
@@ -1786,7 +1786,7 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_LEGEND="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_TITLE="TRUE",
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message,
-			bubble_plot_configs.BUBBLE_PLOT_NAME=paste0(paste(school.name.label, year.iter, capwords(content_area.iter),
+			bubble_plot_configs.BUBBLE_PLOT_NAME=paste0(paste(school.name.label, year.iter, gsub(" ", "_", capwords(content_area.iter)),
 				capwords(levels.iter), capwords(bPlot.levels.iter), "Classrooms", bPlot.labels$pdf.title, sep="_"), ".pdf"),
 			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "Instructor", "Style_59",
 				paste("District", district_number.iter, sep="_"), bPlot.levels.iter),
@@ -2011,7 +2011,7 @@ if (22 %in% bPlot.styles) {
 			bubble_plot_configs.BUBBLE_PLOT_BACKGROUND_LABELS=NULL,
 			bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message.style.100,
 			bubble_plot_configs.BUBBLE_PLOT_NAME=paste0(paste(gsub(" ", "_", bPlot.data$SCHOOL_NAME[1]), "Grade", grade.iter,
-				year.iter, capwords(content_area.iter), bPlot.labels$pdf.title, sep="_"), ".pdf"),
+				year.iter, gsub(" ", "_", capwords(content_area.iter)), bPlot.labels$pdf.title, sep="_"), ".pdf"),
 			bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "Individual", "Style_100", gsub(" ", "_", bPlot.data$DISTRICT_NAME[1])),
 			bubble_plot_pdftk.CREATE_CATALOG=FALSE)
 
@@ -2174,7 +2174,7 @@ if (22 %in% bPlot.styles) {
 					bubble_plot_configs.BUBBLE_PLOT_BACKGROUND_LABELS=NULL,
 					bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message.style.150,
 					bubble_plot_configs.BUBBLE_PLOT_NAME=paste0(paste("Instructor", instructor.iter, year.iter, "Grade", grade.iter,
-						capwords(content_area.iter), "Student_Plot", sep="_"), ".pdf"),
+						gsub(" ", "_", capwords(content_area.iter)), "Student_Plot", sep="_"), ".pdf"),
 					bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "Instructor", "Style_150",
 						gsub(" ", "_", bPlot.data$DISTRICT_NAME[1]), gsub(" ", "_", bPlot.data$SCHOOL_NAME[1])),
 					bubble_plot_pdftk.CREATE_CATALOG=FALSE)
@@ -2353,7 +2353,7 @@ if (22 %in% bPlot.styles) {
 				bubble_plot_configs.BUBBLE_PLOT_BACKGROUND_LABELS=NULL,
 				bubble_plot_configs.BUBBLE_PLOT_EXTRAS=bPlot.message.style.153,
 				bubble_plot_configs.BUBBLE_PLOT_NAME=paste0(paste(gsub(" ", "_", bPlot.data$SCHOOL_NAME[1]), "Instructor",
-					instructor.iter, year.iter, capwords(content_area.iter), "Student_Plot", sep="_"), ".pdf"),
+					instructor.iter, year.iter, gsub(" ", "_", capwords(content_area.iter)), "Student_Plot", sep="_"), ".pdf"),
 				bubble_plot_configs.BUBBLE_PLOT_PATH=file.path(bPlot.folder, year.iter, "Instructor", "Style_153",
 					gsub(" ", "_", bPlot.data$DISTRICT_NAME[1]), gsub(" ", "_", bPlot.data$SCHOOL_NAME[1])),
 				bubble_plot_pdftk.CREATE_CATALOG=FALSE)
