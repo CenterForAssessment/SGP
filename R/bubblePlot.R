@@ -683,7 +683,7 @@ if (is.null(bubble_plot_data.LEVELS) & !is.null(bubble_plot_titles.NOTE)){
 y.coors <- 0.2
 grid.text(x=0.5, y=y.coors+0.05, "Summary Statistics", gp=gpar(col=format.colors.font[1], fontface=2, cex=1.2))
 grid.text(x=0.5, y=y.coors, paste("Correlation:", round(cor(bubble_plot_data.X, bubble_plot_data.Y, use="complete.obs"), digits=2)))
-grid.text(x=0.5, y=y.coors-0.03, substitute(paste("Correlation (", N >= 10, "):", correlation), list(correlation=round(cor(bubble_plot_data.X[bubble_plot_data.SIZE>=10], bubble_plot_data.Y[bubble_plot_data.SIZE>=10], use="complete.obs"), digits=2))))
+grid.text(x=0.5, y=y.coors-0.03, substitute(paste("Correlation (", N >= 10, "): ", correlation), list(correlation=round(cor(bubble_plot_data.X[bubble_plot_data.SIZE>=10], bubble_plot_data.Y[bubble_plot_data.SIZE>=10], use="complete.obs"), digits=2))))
 
 popViewport() ## pop right.legend.vp
 }
