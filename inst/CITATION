@@ -1,13 +1,13 @@
-citHeader("To cite package 'SGP' in publications use:")
+citHeader("To cite package 'SGP' in publications, please use:")
 
 citEntry(entry = "Manual",
          title        = "{SGP}: Student Growth Percentiles \\& Percentile Growth Trajectories.",
          author       = "Damian W. Betebenner and Adam {VanIwaarden}, Ben Domingue and Yi Shang",
          year         = "2017",
-         note         = "R package version 1.7-0.6",
+         note         = "R package version 1.7-0.7",
          url          = "sgp.io",
 
          textVersion  = paste("Damian W. Betebenner, Adam VanIwaarden, Ben Domingue and Yi Shang (2017).",
                         "SGP: Student Growth Percentiles & Percentile Growth Trajectories.",
-                        "(R package version 1.7-0.6)",
+                        "(R package version 1.7-0.7)",
                         "URL: sgp.io"))
