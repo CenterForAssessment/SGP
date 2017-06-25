@@ -422,7 +422,7 @@ function(
 						}
 					}
 				} else {
-					tmp.index <- slot.data[tmp.data[,intersect(getKey(slot.data), names(tmp.data)), with=FALSE], which=TRUE, on=dup.by]
+					tmp.index <- slot.data[tmp.data[, intersect(dup.by, names(tmp.data)), with=FALSE], which=TRUE, on=dup.by]
 				}
 				variables.to.merge <- setdiff(names(tmp.data), c(getKey(slot.data), "DUPS_FLAG", grep("SCALE_SCORE$|SCALE_SCORE_PRIOR", names(tmp.data), value=TRUE)))
 				invisible(slot.data[tmp.index, (variables.to.merge):=tmp.data[, variables.to.merge, with=FALSE]])
