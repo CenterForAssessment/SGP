@@ -37,11 +37,7 @@ function(sgp.groups.to.summarize,
 	ListExpr <- parse(text=paste0("list(", paste(unlist(tmp.sgp.summaries), collapse=", "),")"))
 	ByExpr <- parse(text=paste0("list(", paste(sgp.groups.to.summarize, collapse=", "), ")"))
 
-	tmp.db <- dbConnect(RSQLite::SQLite(), dbname = file.path(tempdir(), "TMP_Summary_Data.sqlite"))
-	available.vars <- dbListFields(tmp.db, "summary_data")
-	dbDisconnect(tmp.db)
-
-	pull.vars <- c(unlist(sapply(available.vars,
+	pull.vars <- c(unlist(sapply(dbListFields(dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_Summary_Data.sqlite")), "summary_data"),
 		function(p) if (any(grepl(p, tmp.sgp.summaries))) return(p)), use.names=FALSE), strsplit(sgp.groups.to.summarize, ", ")[[1]])
 
 	tmp <- pullData(tmp.simulation.dt, state, pull.vars, variables.for.summaries, sgp.groups.to.summarize, sgp_key)[, eval(ListExpr), keyby=eval(ByExpr)]
@@ -90,7 +86,6 @@ function(tmp.simulation.dt,
 			tmp.list.1 <- lapply(seq.int(sim.info[['n.simulated.sgps']]), function(i) {
 					tmp_data[data.table(dbGetQuery(con, paste("select * from sim_data where SIM_NUM =", i)), key = sgp_key), allow.cartesian=TRUE][,
 					list(median(SGP_SIM, na.rm=TRUE), mean(SGP_SIM, na.rm=TRUE)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")]})
-			dbDisconnect(con)
 		}
 
 		tmp.csem <- ddcast(rbindlist(tmp.list.1)[,list(sd(V1, na.rm=TRUE), sd(V2, na.rm=TRUE)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")],
@@ -101,6 +96,7 @@ function(tmp.simulation.dt,
 			setnames(tmp.csem, c("V1.COHORT", "V2.COHORT", "V1.BASELINE", "V2.BASELINE"),
 				c("MEDIAN_SGP_STANDARD_ERROR_CSEM", "MEAN_SGP_STANDARD_ERROR_CSEM", "MEDIAN_SGP_BASELINE_STANDARD_ERROR_CSEM", "MEAN_SGP_BASELINE_STANDARD_ERROR_CSEM"))
 		}
+		dbDisconnect(con)
 		return(tmp.csem)
 	}
 
