@@ -72,11 +72,11 @@ function(tmp.simulation.dt,
 	SGP_SIM <- V1 <- V2 <- SIM_NUM <- WEIGHT <- ACHIEVEMENT_LEVEL <- ACHIEVEMENT_LEVEL_PRIOR <- CATCH_UP_KEEP_UP_STATUS <- MOVE_UP_STAY_UP_STATUS <- NULL
 	CATCH_UP_KEEP_UP_STATUS_BASELINE <- MOVE_UP_STAY_UP_STATUS_BASELINE <- NULL
 
-	con <- dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_Summary_Data.sqlite"))
+	db.path <- file.path(tempdir(), "TMP_Summary_Data.sqlite")
 
 	if (!is.null(sim.info)) {
 		tmp.list.1 <- list()
-		tmp_data <- data.table(dbGetQuery(con, paste("select", paste(pull.vars, collapse = ","), "from summary_data")), key = sgp_key)
+		tmp_data <- data.table(dbGetQuery(dbConnect(SQLite(), dbname = db.path), paste("select", paste(pull.vars, collapse = ","), "from summary_data")), key = sgp_key)
 		if (is.data.frame(tmp.simulation.dt)) {
 			tmp.list.1 <- lapply(seq.int(sim.info[['n.simulated.sgps']]), function(i) {
 					tmp_data[,c(key(tmp_data), unlist(strsplit(sgp.groups.to.summarize, ", "))), with=FALSE][
@@ -84,7 +84,7 @@ function(tmp.simulation.dt,
 					list(median(SGP_SIM, na.rm=TRUE), mean(SGP_SIM, na.rm=TRUE)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")]})
 		} else {
 			tmp.list.1 <- lapply(seq.int(sim.info[['n.simulated.sgps']]), function(i) {
-					tmp_data[data.table(dbGetQuery(con, paste("select * from sim_data where SIM_NUM =", i)), key = sgp_key), allow.cartesian=TRUE][,
+					tmp_data[data.table(dbGetQuery(dbConnect(SQLite(), dbname = db.path), paste("select * from sim_data where SIM_NUM =", i)), key = sgp_key), allow.cartesian=TRUE][,
 					list(median(SGP_SIM, na.rm=TRUE), mean(SGP_SIM, na.rm=TRUE)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")]})
 		}
 
@@ -96,11 +96,10 @@ function(tmp.simulation.dt,
 			setnames(tmp.csem, c("V1.COHORT", "V2.COHORT", "V1.BASELINE", "V2.BASELINE"),
 				c("MEDIAN_SGP_STANDARD_ERROR_CSEM", "MEAN_SGP_STANDARD_ERROR_CSEM", "MEDIAN_SGP_BASELINE_STANDARD_ERROR_CSEM", "MEAN_SGP_BASELINE_STANDARD_ERROR_CSEM"))
 		}
-		dbDisconnect(con)
 		return(tmp.csem)
 	}
 
-	tmp_data <- data.table(dbGetQuery(con, paste("select", paste(pull.vars, collapse = ","), "from summary_data")))
+	tmp_data <- data.table(dbGetQuery(dbConnect(SQLite(), dbname = db.path), paste("select", paste(pull.vars, collapse = ","), "from summary_data")))
 	if (all((my.key <- intersect(sgp_key, variables.for.summaries)) %in% names(tmp_data))) setkeyv(tmp_data, my.key)
 	if ("CATCH_UP_KEEP_UP_STATUS" %in% names(tmp_data)) {
 		tmp_data[, CATCH_UP_KEEP_UP_STATUS := factor(CATCH_UP_KEEP_UP_STATUS)]
@@ -114,7 +113,6 @@ function(tmp.simulation.dt,
 	if ("MOVE_UP_STAY_UP_STATUS_BASELINE" %in% names(tmp_data)) {
 		tmp_data[, MOVE_UP_STAY_UP_STATUS_BASELINE := factor(MOVE_UP_STAY_UP_STATUS_BASELINE)]
 	}
-	dbDisconnect(con)
 	return(tmp_data)
 } ### END pullData function
 
