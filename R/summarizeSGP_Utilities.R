@@ -37,7 +37,11 @@ function(sgp.groups.to.summarize,
 	ListExpr <- parse(text=paste0("list(", paste(unlist(tmp.sgp.summaries), collapse=", "),")"))
 	ByExpr <- parse(text=paste0("list(", paste(sgp.groups.to.summarize, collapse=", "), ")"))
 
-	pull.vars <- c(unlist(sapply(dbListFields(dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_Summary_Data.sqlite")), "summary_data"),
+	tmp.db <- dbConnect(RSQLite::SQLite(), dbname = file.path(tempdir(), "TMP_Summary_Data.sqlite"))
+	available.vars <- dbListFields(tmp.db, "summary_data")
+	dbDisconnect(tmp.db)
+
+	pull.vars <- c(unlist(sapply(available.vars,
 		function(p) if (any(grepl(p, tmp.sgp.summaries))) return(p)), use.names=FALSE), strsplit(sgp.groups.to.summarize, ", ")[[1]])
 
 	tmp <- pullData(tmp.simulation.dt, state, pull.vars, variables.for.summaries, sgp.groups.to.summarize, sgp_key)[, eval(ListExpr), keyby=eval(ByExpr)]
