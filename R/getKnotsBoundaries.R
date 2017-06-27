@@ -7,14 +7,25 @@ function(sgp.iter,
 	kb <- list()
 
 
+	### Utility functions
+
+	getContent_Areas <- function(sgp.iter, type) {
+		if (!is.null(my.tmp <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]])) {
+			tmp.content_areas <- unique(sgp.iter[[type]])
+			return(unique(unlist(my.tmp[unlist(lapply(my.tmp, function(x) any(tmp.content_areas %in% x)))])))
+		} else {
+			return(unique(sgp.iter[[type]]))
+		}
+	}
+
 	### Identify content areas needs for knots/boundaries
 
 	if (sgp.iter.type=="sgp.percentiles") {
-		tmp.content_areas <- unique(sgp.iter[['sgp.content.areas']])
+		tmp.content_areas <- getContent_Areas(sgp.iter, 'sgp.content.areas')
 	}
 
 	if (sgp.iter.type=="sgp.percentiles.baseline") {
-		tmp.content_areas <- unique(sgp.iter[['sgp.baseline.content.areas']])
+		tmp.content_areas <- getContent_Areas(sgp.iter, 'sgp.baseline.content.areas')
 	}
 
 	if (sgp.iter.type=="sgp.projections") {
