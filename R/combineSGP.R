@@ -78,7 +78,8 @@ function(
 	### Setup for equated SGPs and scale score targets
 
 	if (!is.null(year.for.equate <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]])) {
-		tmp.last.year <- tail(sort(unique(sgp_object@Data, by='YEAR')[['YEAR']]), 1)
+		tmp.assessment.years <- sort(unique(sgp_object@Data, by='YEAR')[['YEAR']])
+		tmp.last.year <- tail(tmp.assessment.years, 1); tmp.first.year <- head(tmp.assessment.years, 1)
 		if (year.for.equate!=tmp.last.year) {
 			sgp.percentiles.equated <- FALSE
 			if (sgp.target.scale.scores) sgp.projections.equated <- NULL
@@ -122,7 +123,7 @@ function(
 
 		if (identical(system.type, "Cohort Referenced")) {
 			tmp.list[['target.type']] <- intersect(target.type, c("sgp.projections", "sgp.projections.lagged"))
-			if (!is.null(year.for.equate) && !sgp.percentiles.equated) {
+			if (!is.null(year.for.equate) && tmp.first.year < year.for.equate && !sgp.percentiles.equated) {
 				tmp.variable.name <- paste("SGP_FROM", year.for.equate, sep="_")
 				tmp.messages <- c(tmp.messages, paste0("\tNOTE: Due to test transition in ", year.for.equate, " SGP_TARGET will be compared to ", tmp.variable.name, ".\n"))
 				tmp.list[['my.sgp']] <- tmp.variable.name
