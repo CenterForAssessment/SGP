@@ -12,7 +12,12 @@ function(sgp.iter,
 	getContent_Areas <- function(sgp.iter, type) {
 		if (!is.null(my.tmp <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]])) {
 			tmp.content_areas <- unique(sgp.iter[[type]])
-			return(unique(unlist(my.tmp[unlist(lapply(my.tmp, function(x) any(tmp.content_areas %in% x)))])))
+			tmp.content_areas <- unique(unlist(my.tmp[unlist(lapply(my.tmp, function(x) any(tmp.content_areas %in% x)))]))
+			if (is.null(tmp.content_areas)) {
+				messageSGP(paste0("\n\tNOTE:  Content Areas ", paste(unique(sgp.iter[[type]]), collapse=", "), " not in SGPstateData[['",state,"']][['SGP_Configuration']][['content_area.projection.sequence']].\n\t\t Knots and bounds for only those Content Areas will be used."))
+				tmp.content_areas <- unique(sgp.iter[[type]])
+			}
+			return(tmp.content_areas)
 		} else {
 			return(unique(sgp.iter[[type]]))
 		}
@@ -29,39 +34,19 @@ function(sgp.iter,
 	}
 
 	if (sgp.iter.type=="sgp.projections") {
-		if (identical(sgp.iter[['sgp.projection.sequence']] %in% names(SGP::SGPstateData[[state]][['SGP_Configuration']][['content_area.projection.sequence']]), TRUE)) {
-			tmp.content_areas <- unique(unlist(sapply(sgp.iter[['sgp.projection.sequence']],
-				function(x) unique(SGP::SGPstateData[[state]][['SGP_Configuration']][['content_area.projection.sequence']][[x]]))))
-		} else {
-			tmp.content_areas <- unique(sgp.iter[['sgp.projection.content.areas']])
-		}
+		tmp.content_areas <- getContent_Areas(sgp.iter, 'sgp.projection.content.areas')
 	}
 
 	if (sgp.iter.type=="sgp.projections.lagged") {
-		if (identical(sgp.iter[['sgp.projection.sequence']] %in% names(SGP::SGPstateData[[state]][['SGP_Configuration']][['content_area.projection.sequence']]), TRUE)) {
-			tmp.content_areas <- unique(unlist(sapply(unique(sgp.iter[['sgp.projection.sequence']]),
-				function(x) unique(SGP::SGPstateData[[state]][['SGP_Configuration']][['content_area.projection.sequence']][[x]]))))
-		} else {
-			tmp.content_areas <- unique(sgp.iter[['sgp.projection.content.areas']])
-		}
+		tmp.content_areas <- getContent_Areas(sgp.iter, 'sgp.projection.content.areas')
 	}
 
 	if (sgp.iter.type=="sgp.projections.baseline") {
-		if (identical(sgp.iter[['sgp.projection.sequence']] %in% names(SGP::SGPstateData[[state]][['SGP_Configuration']][['content_area.projection.sequence']]), TRUE)) {
-			tmp.content_areas <- unique(unlist(sapply(unique(sgp.iter[['sgp.projection.sequence']]),
-				function(x) unique(SGP::SGPstateData[[state]][['SGP_Configuration']][['content_area.projection.sequence']][[x]]))))
-		} else {
-			tmp.content_areas <- unique(sgp.iter[['sgp.projection.baseline.content.areas']])
-		}
+		tmp.content_areas <- getContent_Areas(sgp.iter, 'sgp.projection.baseline.content.areas')
 	}
 
 	if (sgp.iter.type=="sgp.projections.lagged.baseline") {
-		if (identical(sgp.iter[['sgp.projection.sequence']] %in% names(SGP::SGPstateData[[state]][['SGP_Configuration']][['content_area.projection.sequence']]), TRUE)) {
-			tmp.content_areas <- unique(unlist(sapply(unique(sgp.iter[['sgp.projection.sequence']]),
-				function(x) unique(SGP::SGPstateData[[state]][['SGP_Configuration']][['content_area.projection.sequence']][[x]]))))
-		} else {
-			tmp.content_areas <- unique(sgp.iter[['sgp.projection.baseline.content.areas']])
-		}
+		tmp.content_areas <- getContent_Areas(sgp.iter, 'sgp.projection.baseline.content.areas')
 	}
 
 
