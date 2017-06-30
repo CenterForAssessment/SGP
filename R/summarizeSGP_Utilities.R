@@ -37,7 +37,7 @@ function(sgp.groups.to.summarize,
 	ListExpr <- parse(text=paste0("list(", paste(unlist(tmp.sgp.summaries), collapse=", "),")"))
 	ByExpr <- parse(text=paste0("list(", paste(sgp.groups.to.summarize, collapse=", "), ")"))
 
-	tmp.db <- dbConnect(RSQLite::SQLite(), dbname = file.path(tempdir(), "TMP_Summary_Data.sqlite"))
+	tmp.db <- dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_Summary_Data.sqlite"))
 	available.vars <- dbListFields(tmp.db, "summary_data")
 	dbDisconnect(tmp.db)
 

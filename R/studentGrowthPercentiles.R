@@ -350,17 +350,23 @@ function(panel.data,         ## REQUIRED
 		getSQLData <- function(dbase, z, k=NULL, predictions=FALSE) {
 			if (predictions) {
 				if (.Platform$OS.type != "unix") {
-					tmp.data <- dbGetQuery(dbConnect(SQLite(), dbname = file.path(dbase, paste0("simex_data_", z, ".sqlite"))),
-											paste0("select ", paste(c("ID", paste0('prior_', k:1), "final_yr"), collapse=", "), " from tmp"))
+          con <- dbConnect(SQLite(), dbname = file.path(dbase, paste0("simex_data_", z, ".sqlite")))
+          tmp.data <- dbGetQuery(con, paste0("select ", paste(c("ID", paste0('prior_', k:1), "final_yr"), collapse=", "), " from tmp"))
+          dbDisconnect(con)
 				} else {
-					tmp.data <- dbGetQuery(dbConnect(SQLite(), dbname = dbase),
-						paste0("select ", paste(c("ID", paste0('prior_', k:1), "final_yr"), collapse=", "), " from simex_data where b in ('",z,"')"))
+          con <- dbConnect(SQLite(), dbname = dbase)
+					tmp.data <- dbGetQuery(con, paste0("select ", paste(c("ID", paste0('prior_', k:1), "final_yr"), collapse=", "), " from simex_data where b in ('",z,"')"))
+          dbDisconnect(con)
 				}
 			} else {
 				if (.Platform$OS.type != "unix") {
-					tmp.data <- dbGetQuery(dbConnect(SQLite(), dbname = file.path(dbase, paste0("simex_data_", z, ".sqlite"))), "select * from tmp")
-				} else {
-					tmp.data <- dbGetQuery(dbConnect(SQLite(), dbname = dbase), paste0("select * from simex_data where b in ('", z, "')"))
+          con <- dbConnect(SQLite(), dbname = file.path(dbase, paste0("simex_data_", z, ".sqlite")))
+					tmp.data <- dbGetQuery(con, "select * from tmp")
+          dbDisconnect(con)
+			} else {
+          con <- dbConnect(SQLite(), dbname = dbase)
+					tmp.data <- dbGetQuery(con, paste0("select * from simex_data where b in ('", z, "')"))
+          dbDisconnect(con)
 				}
 			}
 			return(tmp.data)
@@ -566,11 +572,14 @@ function(panel.data,         ## REQUIRED
 				    if (!exists('year.progression.for.norm.group')) year.progression.for.norm.group <- year.progression # Needed during Baseline Matrix construction
 				    if (.Platform$OS.type != "unix") {
 				    	tmp.dbname <- tempdir()
-				    	sapply(sim.iters, function(z) dbWriteTable(dbConnect(SQLite(), dbname = file.path(tmp.dbname, paste0("simex_data_", z, ".sqlite"))),
-				    		name="tmp", value=big.data[list(z)], row.names=FALSE, overwrite=TRUE))
+              con <- dbConnect(SQLite(), dbname = file.path(tmp.dbname, paste0("simex_data_", z, ".sqlite")))
+				    	sapply(sim.iters, function(z) dbWriteTable(con, name="tmp", value=big.data[list(z)], row.names=FALSE, overwrite=TRUE))
+              dbDisconnect(con)
 				    } else {
 				    	tmp.dbname <- tempfile(fileext = ".sqlite")
-				    	dbWriteTable(dbConnect(SQLite(), dbname = tmp.dbname), name = "simex_data", value=big.data, overwrite=TRUE)
+              con <- dbConnect(SQLite(), dbname = tmp.dbname)
+				    	dbWriteTable(con, name = "simex_data", value=big.data, overwrite=TRUE)
+              dbDisconnect(con)
 				    }
 				}
 
