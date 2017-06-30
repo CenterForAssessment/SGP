@@ -635,8 +635,10 @@
 
 				if (adj.weights.tf & "WEIGHT" %in% names(tmp.dt.long)) invisible(tmp.dt.long[, WEIGHT := round((WEIGHT / DUP_COUNT), 3)])
 
-				dbWriteTable(dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_Summary_Data.sqlite")),
-					name = "summary_data", overwrite = TRUE, row.names=FALSE, value = tmp.dt.long)
+				sgp_data_for_summary <- dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_Summary_Data.sqlite"))
+				dbWriteTable(sgp_data_for_summary, name = "summary_data", overwrite = TRUE, row.names=FALSE, value = tmp.dt.long)
+				dbDisconnect(sgp_data_for_summary)
+
 				rm(tmp.dt.long)
 
 				sgp_object@Summary[[i]] <- c(sgp_object@Summary[[i]], summarizeSGP_INTERNAL(tmp.inst))

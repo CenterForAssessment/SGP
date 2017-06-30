@@ -940,8 +940,9 @@ function(sgp_object,
 			if (!is.null(sgp.test.cohort.size)) {
 				test.ids <- unique(rbindlist(tmp_sgp_object[["SGPercentiles"]], fill=TRUE), by='ID')[['ID']]
 				if (is(tmp_sgp_data_for_analysis, "DBIObject")) {
-					tmp_sgp_data_for_analysis <- data.table(dbGetQuery(dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_SGP_Data.sqlite")),
-							paste0("select * from sgp_data where ID in ('", paste(test.ids, collapse="', '"), "')")))
+          con <- dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_SGP_Data.sqlite"))
+					tmp_sgp_data_for_analysis <- data.table(dbGetQuery(con, paste0("select * from sgp_data where ID in ('", paste(test.ids, collapse="', '"), "')")))
+          dbDisconnect(con)
 					if ("YEAR_WITHIN" %in% sgp.data.names) {
 						setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE, YEAR_WITHIN)
 					} else {
@@ -1915,8 +1916,10 @@ function(sgp_object,
 			if (!is.null(sgp.test.cohort.size)) {
 				test.ids <- unique(rbindlist(tmp_sgp_object[["SGPercentiles"]], fill=TRUE), by='ID')[["ID"]]
 				if (is(tmp_sgp_data_for_analysis, "DBIObject")) {
-					tmp_sgp_data_for_analysis <- data.table(dbGetQuery(dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_SGP_Data.sqlite")),
+          con <- dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_SGP_Data.sqlite"))
+					tmp_sgp_data_for_analysis <- data.table(dbGetQuery(con,
 							paste0("select * from sgp_data where ID in ('", paste(test.ids, collapse="', '"), "')")))
+          dbDisconnect(con)
 					if ("YEAR_WITHIN" %in% sgp.data.names) {
 						setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE, YEAR_WITHIN)
 					} else {
