@@ -423,7 +423,7 @@ function(panel.data,         ## REQUIRED
 			lh.ca <- rev(content_area.progression)[-1L]
 			lh.gp <- rev(tmp.gp)[-1L]
 			if (!is.null(csem.data.vnames)) {
-				if (length(content_area.progression) == length(csem.data.vnames)) csem.data.vnames <- head(csem.data.vnames, -1L)
+				if (length(content_area.progression) <= length(csem.data.vnames)) csem.data.vnames <- grep(paste(head(content_area.progression, -1L), collapse="|"), csem.data.vnames, value=TRUE)
 			}
 		}
 		if (!is.null(csem.loss.hoss)) {
