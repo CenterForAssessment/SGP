@@ -695,18 +695,16 @@ function(
 
 			Demonstration_SGP <- NULL
 			tmp.messages <- ("\t##### Results of testSGP test number 3 #####\n\n")
-			sgpData_LONG <- SGPdata::sgpData_LONG
+			sgpData_LONG <- as.data.table(SGPdata::sgpData_LONG)
 
 			### Add EOCT courses to sgpData_LONG
 
-			sgpData_LONG$CONTENT_AREA[sgpData_LONG$CONTENT_AREA == 'MATHEMATICS' & sgpData_LONG$GRADE == '9'] <- 'ALGEBRA_I'
-			sgpData_LONG$CONTENT_AREA[sgpData_LONG$CONTENT_AREA == 'MATHEMATICS' & sgpData_LONG$GRADE == '10'] <- 'ALGEBRA_II'
-			sgpData_LONG$CONTENT_AREA[sgpData_LONG$CONTENT_AREA == 'READING' & sgpData_LONG$GRADE == '9'] <- 'GRADE_9_LIT'
-			sgpData_LONG$CONTENT_AREA[sgpData_LONG$CONTENT_AREA == 'READING' & sgpData_LONG$GRADE == '10'] <- 'AMERICAN_LIT'
-			sgpData_LONG$GRADE_REPORTED <- sgpData_LONG$GRADE
-			sgpData_LONG$GRADE[sgpData_LONG$CONTENT_AREA %in% c('ALGEBRA_I', 'ALGEBRA_II', 'GRADE_9_LIT', 'AMERICAN_LIT')] <-  'EOCT'
-
-			### Modify SGPstateData
+			sgpData_LONG[CONTENT_AREA=='MATHEMATICS' & GRADE=='9', CONTENT_AREA:='ALGEBRA_I']
+			sgpData_LONG[CONTENT_AREA=='MATHEMATICS' & GRADE=='10', CONTENT_AREA:='ALGEBRA_II']
+			sgpData_LONG[CONTENT_AREA=='READING' & GRADE=='9', CONTENT_AREA:='GRADE_9_LIT']
+			sgpData_LONG[CONTENT_AREA=='READING' & GRADE=='10', CONTENT_AREA:='AMERICAN_LIT']
+			sgpData_LONG[, GRADE_REPORTED:=GRADE]
+			sgpData_LONG[CONTENT_AREA %in% c('ALGEBRA_I', 'ALGEBRA_II', 'GRADE_9_LIT', 'AMERICAN_LIT'), GRADE:='EOCT']
 
 			### Create configurations
 
@@ -757,7 +755,7 @@ function(
 			expression.to.evaluate <-
 				paste0("Demonstration_SGP <- abcSGP(state='DEMO_EOCT',\n\tsgp_object=sgpData_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP', 'summarizeSGP', 'visualizeSGP'),\n\tsimulate.sgps=FALSE,\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.config=sgp.config,\n\tparallel.config=", parallel.config, "\n)\n")
 
-			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
+			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "dir.create('Data', showWarnings=FALSE)", "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
 
 			cat("##### Begin testSGP test number 3 #####\n", fill=TRUE)
 
