@@ -1563,7 +1563,7 @@ function(panel.data,         ## REQUIRED
 				labels=tmp.growth.levels[["my.levels"]], ordered=TRUE)]
 		}
 
-		if (csem.tf) {
+        if (csem.tf) {
 			simulation.data <- data.table(rbindlist(tmp.csem.quantiles), key="ID")
 			simulation.data <- simulation.data[c(which(!duplicated(simulation.data, by=key(simulation.data)))[-1L]-1L, dim(simulation.data)[1L])]
 
