@@ -423,7 +423,8 @@ function(panel.data,         ## REQUIRED
 			lh.ca <- rev(content_area.progression)[-1L]
 			lh.gp <- rev(tmp.gp)[-1L]
 			if (!is.null(csem.data.vnames)) {
-				if (length(content_area.progression) == length(csem.data.vnames)) csem.data.vnames <- head(csem.data.vnames, -1L)
+        if (length(content_area.progression) == length(csem.data.vnames)) csem.data.vnames <- head(csem.data.vnames, -1L)
+				if (length(content_area.progression) < length(csem.data.vnames)) csem.data.vnames <- grep(paste(head(content_area.progression, -1L), collapse="|"), csem.data.vnames, value=TRUE)
 			}
 		}
 		if (!is.null(csem.loss.hoss)) {
@@ -1383,6 +1384,10 @@ function(panel.data,         ## REQUIRED
 					" indicated as minimum cohort size. \n\t\tCheck data, function arguments and see help page for details.\n"))
 				Coefficient_Matrices[[tmp.path.coefficient.matrices]][['TMP_NAME']] <- NULL
 				grade.progression <- tmp.gp <- rev(rev(tmp.gp)[1:k])
+        if (!is.null(year.progression) && length(year.progression) > length(grade.progression)) year.progression <- tail(year.progression, length(grade.progression))
+        if (!is.null(year_lags.progression) && length(year_lags.progression) > length(grade.progression)-1L) year_lags.progression <- tail(year_lags.progression, length(grade.progression)-1L)
+        if (!is.null(content_area.progression) && length(content_area.progression) > length(grade.progression)) content_area.progression <- tail(content_area.progression, length(grade.progression))
+        coefficient.matrix.priors <- setdiff(coefficient.matrix.priors, k)
 				break
 			}
 			if (identical(names(Coefficient_Matrices[[tmp.path.coefficient.matrices]][['TMP_NAME']]), "RQ_ERROR")) {
