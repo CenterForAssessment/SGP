@@ -46,13 +46,13 @@
 	    }
 	    sub(n, r, v[1:n])
 	  } ### END permutations function
-
 		if (wide.output) {
 			my.tmp.data <- unique(my.tmp.data, by=c(getKey(my.tmp.data), "SCALE_SCORE"))
 		}  else  my.tmp.data <- unique(my.tmp.data) # Remove EXACT duplicates & data extended in previous years/analyses
-		key.vars <- intersect(names(my.tmp.data), c("YEAR", "SCALE_SCORE"))
+		key.vars <- intersect(names(my.tmp.data), c("SCALE_SCORE", "YEAR"))
 	  setkeyv(my.tmp.data, key.vars)
 	  invisible(my.tmp.data[, DUP_COUNT := seq.int(.N), by="YEAR"])
+		setkeyv(my.tmp.data, "YEAR")
 	  dups.by.yr <- my.tmp.data[, list(N = .N), by="YEAR"]
 	  max.dups <- max(dups.by.yr[["N"]])
 	  all.years <- sort(unique(my.tmp.data, by="YEAR")[['YEAR']])
