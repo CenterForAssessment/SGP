@@ -387,7 +387,7 @@ function(
 
 				if (any(duplicated(tmp.data, by=dup.by))) {
 					duplicated.projections.tf <- TRUE
-					tmp.data <- getPreferredSGP(tmp.data, state, type="TARGET")
+					tmp.data <- getPreferredSGP(tmp.data, state, type="TARGET", dup.by)
 				} else duplicated.projections.tf <- FALSE
 
 				if (!is.null(fix.duplicates) & any(grepl("_DUPS_[0-9]*", tmp.data[["ID"]]))) {

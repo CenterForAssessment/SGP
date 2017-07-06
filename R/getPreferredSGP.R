@@ -1,7 +1,8 @@
 `getPreferredSGP` <-
 function(tmp.data,
 	state,
-	type="COHORT_REFERENCED") {
+	type="COHORT_REFERENCED",
+	dup.key=NULL) {
 
 	YEAR <- SGP_NORM_GROUP <- VALID_CASE <- CONTENT_AREA <- ID <- PREFERENCE <- SGP_NOTE <- SGP_NOTE_TF <- NULL
 
@@ -48,7 +49,9 @@ function(tmp.data,
 			key=c(getKey(tmp.data), tmp.key.vars))
 	}
 
-	setkeyv(tmp.data, getKey(tmp.data))
+	if (is.null(dup.key)) dup.key <- getKey(tmp.data)
+
+	setkeyv(tmp.data, dup.key)
 	tmp.data <- tmp.data[!duplicated(tmp.data, by=key(tmp.data))][,PREFERENCE:=NULL]
 	if ("SGP_NOTE" %in% names(tmp.data)) tmp.data[, SGP_NOTE_TF := NULL]
 	return(tmp.data)
