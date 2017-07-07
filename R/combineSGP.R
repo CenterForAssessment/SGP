@@ -236,9 +236,10 @@ function(
 		}
 
 		tmp.data <- data.table(rbindlist(tmp.list, fill=TRUE), VALID_CASE="VALID_CASE", key=key(slot.data))
+		if (!is.null(fix.duplicates)) dup.by <- c(key(tmp.data), grep("SCALE_SCORE$|SCALE_SCORE_PRIOR", names(tmp.data), value=TRUE)) else dup.by <- key(tmp.data)
 
-		if (any(duplicated(tmp.data, by=key(tmp.data)))) {
-			tmp.data <- getPreferredSGP(tmp.data, state)
+		if (any(duplicated(tmp.data, by=getKey(tmp.data)))) {
+			tmp.data <- getPreferredSGP(tmp.data, state, dup.key=dup.by)
 		}
 
 		if (!is.null(fix.duplicates) & any(grepl("_DUPS_[0-9]*", tmp.data[["ID"]]))) {
@@ -302,9 +303,10 @@ function(
 		}
 
 		tmp.data <- data.table(rbindlist(tmp.list, fill=TRUE), VALID_CASE="VALID_CASE", key=key(slot.data))
+		if (!is.null(fix.duplicates)) dup.by <- c(key(tmp.data), grep("SCALE_SCORE$|SCALE_SCORE_PRIOR", names(tmp.data), value=TRUE)) else dup.by <- key(tmp.data)
 
 		if (any(duplicated(tmp.data, by=key(tmp.data)))) {
-			tmp.data <- getPreferredSGP(tmp.data, state, type="BASELINE")
+			tmp.data <- getPreferredSGP(tmp.data, state, type="BASELINE", dup.key=dup.by)
 		}
 
 		if (!is.null(fix.duplicates) & any(grepl("_DUPS_[0-9]*", tmp.data[["ID"]]))) {

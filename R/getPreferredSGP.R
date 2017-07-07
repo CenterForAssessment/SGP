@@ -29,7 +29,7 @@ function(tmp.data,
 			key=c(getKey(tmp.data), "PREFERENCE"))
 	} else {
 		if (!is.null(SGP::SGPstateData[[state]][['SGP_Norm_Group_Preference']])) {
-			message(paste0(tmp.message, state, "."))
+			messageSGP(paste0(tmp.message, state, "."))
 			data.norm.groups <- unique(as.character(tmp.data[which(duplicated(tmp.data, by=key(tmp.data))), SGP_NORM_GROUP]))
 			metadata.norm.groups <- unique(as.character(SGP::SGPstateData[[state]][['SGP_Norm_Group_Preference']][[tmp.sgp.norm.group.variables[2]]]))
 			if(!all(data.norm.groups %in% metadata.norm.groups)) {
@@ -43,7 +43,7 @@ function(tmp.data,
 		}
 		if ("SGP_NOTE" %in% names(tmp.data)) { # Key data on SGP_NOTE to put existing SGPs at the top, regardless of preference of SGP_NOTE's norm group.
 			tmp.key.vars <- c("SGP_NOTE_TF", "PREFERENCE")
-			tmp.data[, SGP_NOTE_TF := !is.na(SGP_NOTE)]
+			invisible(tmp.data[, SGP_NOTE_TF := !is.na(SGP_NOTE)])
 		} else tmp.key.vars <- "PREFERENCE"
 		tmp.data <- data.table(SGP::SGPstateData[[state]][['SGP_Norm_Group_Preference']][,tmp.sgp.norm.group.variables,with=FALSE][tmp.data],
 			key=c(getKey(tmp.data), tmp.key.vars))
@@ -53,6 +53,6 @@ function(tmp.data,
 
 	setkeyv(tmp.data, dup.key)
 	tmp.data <- tmp.data[!duplicated(tmp.data, by=key(tmp.data))][,PREFERENCE:=NULL]
-	if ("SGP_NOTE" %in% names(tmp.data)) tmp.data[, SGP_NOTE_TF := NULL]
+	if ("SGP_NOTE" %in% names(tmp.data)) invisible(tmp.data[, SGP_NOTE_TF := NULL])
 	return(tmp.data)
 } ### END getPreferredSGP
