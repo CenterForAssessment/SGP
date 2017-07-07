@@ -1218,7 +1218,10 @@ function(panel.data,         ## REQUIRED
 	if (!is.null(sgp.test.cohort.size)) {
 		cohort.ids <- .get.panel.data(ss.data, num.prior, by.grade, tmp.gp)[[1L]]
 		max.cohort.size <- min(length(cohort.ids), as.numeric(sgp.test.cohort.size))
-		ss.data <- ss.data[ss.data[[1L]] %in% sample(cohort.ids, max.cohort.size)]
+    if (any(grepl("_DUPS_[0-9]*", ss.data$ID))) {
+      dup.ids <- grep("_DUPS_[0-9]*", ss.data$ID, value=TRUE)
+    } else dup.ids <- NULL
+		ss.data <- ss.data[ss.data[[1L]] %in% unique(c(sample(cohort.ids, max.cohort.size), dup.ids))]
 	} else max.cohort.size <- dim(.get.panel.data(ss.data, tmp.num.prior, by.grade, tmp.gp))[1L]
 
 	if (max.cohort.size == 0L) {
