@@ -71,8 +71,8 @@ function(sgp_object,
 				tmp.merge.vars <- intersect(names(slot.data), c(key(tmp_object_1), grep("SCALE_SCORE$|SCALE_SCORE_PRIOR", names(tmp_object_1), value=TRUE), "DUPS_FLAG"))
 			} else tmp.merge.vars <- getKey(tmp_object_1)
 			if (year_within) {
-				tmp_object_1 <- slot.data[,c(tmp.merge.vars, "GRADE", "ACHIEVEMENT_LEVEL"), with=FALSE][tmp_object_1, on = setdiff(tmp.merge.vars, "DUPS_FLAG")]
-			} else 	tmp_object_1 <- slot.data[,c(tmp.merge.vars, "GRADE", "ACHIEVEMENT_LEVEL"), with=FALSE][tmp_object_1, on = setdiff(tmp.merge.vars, "DUPS_FLAG")]
+				tmp_object_1 <- slot.data[,c(tmp.merge.vars, "ACHIEVEMENT_LEVEL"), with=FALSE][tmp_object_1, on = setdiff(tmp.merge.vars, "DUPS_FLAG")]
+			} else 	tmp_object_1 <- slot.data[,c(tmp.merge.vars, "ACHIEVEMENT_LEVEL"), with=FALSE][tmp_object_1, on = setdiff(tmp.merge.vars, "DUPS_FLAG")]
 		} else {  # else "sgp.projections.lagged", "sgp.projections.lagged.baseline"
 			tmp.suffix <- "$"
 			if (dups.tf) {
