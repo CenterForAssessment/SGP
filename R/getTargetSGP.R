@@ -17,10 +17,6 @@ function(sgp_object,
 
 	getTargetSGP_INTERNAL <- function(tmp_object_1, state, state.iter, projection_group.iter, target.type, target.level, year_within, fix.duplicates) {
 
-		# if (any(duplicated(tmp_object_1, by=getKey(tmp_object_1))) & !is.null(fix.duplicates)) { #  Needed for GRADE excluded dups # Unnecesary now that GRADE is included in all projections/SGP key ???
-		# 	tmp_object_1 <- createUniqueLongData(tmp_object_1)
-		# }
-
 		if (dups.tf <- !is.null(fix.duplicates)) {
 			if (any(grepl("_DUPS_[0-9]*", tmp_object_1[["ID"]]))) {
 				invisible(tmp_object_1[, ID := gsub("_DUPS_[0-9]*", "", ID)])
