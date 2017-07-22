@@ -1,12 +1,11 @@
 `getHighNeedStatus` <-
-function(sgp_object,
-		quantiles=c(0.25, 0.75)) {
+function(sgp_object) {
 
 	ID <- CONTENT_AREA <- YEAR_INT <- PRIOR_GRADE <- GRADE <- SCALE_SCORE <- PRIOR_SCALE_SCORE  <- HIGH_NEED_STATUS <- VALID_CASE <- SCHOOL_NUMBER <- YEAR <- NULL
 
 	# my.quantile.function producing HIGH_NEED_STATUS variable
 
-	my.quantile.function <- function(x, invalid_cases, quantiles=quantiles) {
+	my.quantile.function <- function(x, invalid_cases, quantiles=c(0.25, 0.75)) {
 		high.needs.status.labels <- c(paste0("High Needs Status: Prior Achievement Below ", 100*quantiles[1], "th Percentile"),
 			NA, paste0("High Needs Status: Prior Achievement Above ", 100*quantiles[2], "th Percentiles"))
 		if (invalid_cases) {
