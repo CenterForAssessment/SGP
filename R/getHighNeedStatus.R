@@ -30,6 +30,7 @@ function(sgp_object) {
 	setkeyv(slot.data, c("VALID_CASE", "CONTENT_AREA", "YEAR_INT", "SCHOOL_NUMBER", "PRIOR_GRADE", "ID"))
 	slot.data[,HIGH_NEED_STATUS:=slot.data[,my.quantile.function(PRIOR_SCALE_SCORE, !VALID_CASE[1]=="VALID_CASE"),
 		keyby=list(VALID_CASE, CONTENT_AREA, YEAR_INT, SCHOOL_NUMBER, PRIOR_GRADE)][['V1']]]
+	slot.data[,HIGH_NEED_STATUS:=as.factor(HIGH_NEED_STATUS)]
 	slot.data[,c("PRIOR_SCALE_SCORE", "PRIOR_GRADE", "YEAR_INT"):=NULL]
 	setkey(slot.data, VALID_CASE, CONTENT_AREA, YEAR, ID)
 	sgp_object@Data <- slot.data
