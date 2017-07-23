@@ -9,13 +9,13 @@ function(sgp_object) {
 		high.needs.status.labels <- c(paste0("High Needs Status: Prior Achievement Below ", 100*quantiles[1], "th Percentile"),
 			NA, paste0("High Needs Status: Prior Achievement Above ", 100*quantiles[2], "th Percentiles"))
 		if (invalid_cases) {
-			return(factor(rep(NA, length(x)), levels=1:2, labels=high.needs.status.labels[c(1,3)]))
+			return(rep(NA_character_, length(x)))
 		}
 		if (all(is.na(x))) {
-			return(factor(rep(NA, length(x)), levels=1:2, labels=high.needs.status.labels[c(1,3)]))
+			return(rep(NA_character_, length(x)))
 		} else {
 			if (any(diff(quantile(x, probs=c(0, quantiles, 1), na.rm=TRUE))==0)) {
-				return(factor(rep(NA, length(x)), levels=1:2, labels=high.needs.status.labels[c(1,3)]))
+				return(rep(NA_character_, length(x)))
 			} else {
 				return(as.character(droplevels(cut(x, quantile(x, probs=c(0, quantiles, 1), na.rm=TRUE), include.lowest=TRUE, labels=high.needs.status.labels))))
 			}
