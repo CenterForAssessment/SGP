@@ -327,6 +327,15 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_0.025_CONFIDENCE_BOUND: FAIL\n")
 			}
 
+			### TEST of HIGH_NEED_STATUS variable in @Data
+
+#			if (identical(as.numeric(table(Demonstration_SGP@Data[['HIGH_NEED_STATUS']])), c(57059, 58942))) {
+			if (identical(digest(Demonstration_SGP@Data[['HIGH_NEED_STATUS']]), "ab4d97f1d56ea8cf936008708cf4ed84")) {
+				tmp.messages <- c(tmp.messages, "\tTest of variable HIGH_NEED_STATUS: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of variable HIGH_NEED_STATUS: FAIL\n")
+			}
+
 			tmp.messages <- c(tmp.messages, paste0("\n##### End testSGP test number ", TEST_NUMBER, ":  ", convertTime(timetaken(started.at.overall)), " #####\n"))
 			messageSGP(tmp.messages)
 		} ### End TEST_NUMBER 1 & 1B
