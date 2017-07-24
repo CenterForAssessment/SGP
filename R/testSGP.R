@@ -203,7 +203,7 @@ function(
 			if (toupper(TEST_NUMBER) == "1B") sgp.sqlite <- TRUE else sgp.sqlite <- FALSE
 
 			expression.to.evaluate <-
-				paste0("Demonstration_SGP <- abcSGP(\n\tsgp_object=SGPdata::sgpData_LONG,\n\tdata_supplementary=list(INSTRUCTOR_NUMBER=SGPdata::sgpData_INSTRUCTOR_NUMBER),\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.sqlite=", sgp.sqlite, ",\n\tget.cohort.data.info=TRUE,\n\tparallel.config=", parallel.config, "\n)\n")
+				paste0("Demonstration_SGP <- abcSGP(\n\tsgp_object=SGPdata::sgpData_LONG,\n\tdata_supplementary=list(INSTRUCTOR_NUMBER=SGPdata::sgpData_INSTRUCTOR_NUMBER),\n\tprepareSGP.create.additional.variables=TRUE,\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.sqlite=", sgp.sqlite, ",\n\tget.cohort.data.info=TRUE,\n\tparallel.config=", parallel.config, "\n)\n")
 
 			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
 
@@ -325,6 +325,15 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_0.025_CONFIDENCE_BOUND: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_0.025_CONFIDENCE_BOUND: FAIL\n")
+			}
+
+			### TEST of HIGH_NEED_STATUS variable in @Data
+
+#			if (identical(as.numeric(table(Demonstration_SGP@Data[['HIGH_NEED_STATUS']])), c(57059, 58942))) {
+			if (identical(digest(Demonstration_SGP@Data[['HIGH_NEED_STATUS']]), "ab4d97f1d56ea8cf936008708cf4ed84")) {
+				tmp.messages <- c(tmp.messages, "\tTest of variable HIGH_NEED_STATUS: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of variable HIGH_NEED_STATUS: FAIL\n")
 			}
 
 			tmp.messages <- c(tmp.messages, paste0("\n##### End testSGP test number ", TEST_NUMBER, ":  ", convertTime(timetaken(started.at.overall)), " #####\n"))

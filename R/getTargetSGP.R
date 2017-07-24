@@ -17,10 +17,6 @@ function(sgp_object,
 
 	getTargetSGP_INTERNAL <- function(tmp_object_1, state, state.iter, projection_group.iter, target.type, target.level, year_within, fix.duplicates) {
 
-		# if (any(duplicated(tmp_object_1, by=getKey(tmp_object_1))) & !is.null(fix.duplicates)) { #  Needed for GRADE excluded dups # Unnecesary now that GRADE is included in all projections/SGP key ???
-		# 	tmp_object_1 <- createUniqueLongData(tmp_object_1)
-		# }
-
 		if (dups.tf <- !is.null(fix.duplicates)) {
 			if (any(grepl("_DUPS_[0-9]*", tmp_object_1[["ID"]]))) {
 				invisible(tmp_object_1[, ID := gsub("_DUPS_[0-9]*", "", ID)])
@@ -71,8 +67,8 @@ function(sgp_object,
 				tmp.merge.vars <- intersect(names(slot.data), c(key(tmp_object_1), grep("SCALE_SCORE$|SCALE_SCORE_PRIOR", names(tmp_object_1), value=TRUE), "DUPS_FLAG"))
 			} else tmp.merge.vars <- getKey(tmp_object_1)
 			if (year_within) {
-				tmp_object_1 <- slot.data[,c(tmp.merge.vars, "GRADE", "ACHIEVEMENT_LEVEL"), with=FALSE][tmp_object_1, on = setdiff(tmp.merge.vars, "DUPS_FLAG")]
-			} else 	tmp_object_1 <- slot.data[,c(tmp.merge.vars, "GRADE", "ACHIEVEMENT_LEVEL"), with=FALSE][tmp_object_1, on = setdiff(tmp.merge.vars, "DUPS_FLAG")]
+				tmp_object_1 <- slot.data[,c(tmp.merge.vars, "ACHIEVEMENT_LEVEL"), with=FALSE][tmp_object_1, on = setdiff(tmp.merge.vars, "DUPS_FLAG")]
+			} else 	tmp_object_1 <- slot.data[,c(tmp.merge.vars, "ACHIEVEMENT_LEVEL"), with=FALSE][tmp_object_1, on = setdiff(tmp.merge.vars, "DUPS_FLAG")]
 		} else {  # else "sgp.projections.lagged", "sgp.projections.lagged.baseline"
 			tmp.suffix <- "$"
 			if (dups.tf) {

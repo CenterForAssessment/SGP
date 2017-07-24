@@ -9,16 +9,15 @@ function(sgp_object) {
 		high.needs.status.labels <- c(paste0("High Needs Status: Prior Achievement Below ", 100*quantiles[1], "th Percentile"),
 			NA, paste0("High Needs Status: Prior Achievement Above ", 100*quantiles[2], "th Percentiles"))
 		if (invalid_cases) {
-			return(factor(rep(NA, length(x)), levels=1:2, labels=high.needs.status.labels[c(1,3)]))
+			return(rep(NA_character_, length(x)))
 		}
 		if (all(is.na(x))) {
-			return(factor(rep(NA, length(x)), levels=1:2, labels=high.needs.status.labels[c(1,3)]))
+			return(rep(NA_character_, length(x)))
 		} else {
-			my.quantiles <- quantile(x, probs=c(0, quantiles, 1), na.rm=TRUE)
 			if (any(diff(quantile(x, probs=c(0, quantiles, 1), na.rm=TRUE))==0)) {
-				return(factor(rep(NA, length(x)), levels=1:2, labels=high.needs.status.labels[c(1,3)]))
+				return(rep(NA_character_, length(x)))
 			} else {
-				return(droplevels(cut(x, quantile(x, probs=c(0, quantiles, 1), na.rm=TRUE), include.lowest=TRUE, labels=high.needs.status.labels)))
+				return(high.needs.status.labels[cut(x, quantile(x, probs=c(0, quantiles, 1), na.rm=TRUE), include.lowest=TRUE, labels=FALSE)])
 			}
 		}
 	} ### END my.quantile.function
@@ -31,6 +30,7 @@ function(sgp_object) {
 	setkeyv(slot.data, c("VALID_CASE", "CONTENT_AREA", "YEAR_INT", "SCHOOL_NUMBER", "PRIOR_GRADE", "ID"))
 	slot.data[,HIGH_NEED_STATUS:=slot.data[,my.quantile.function(PRIOR_SCALE_SCORE, !VALID_CASE[1]=="VALID_CASE"),
 		keyby=list(VALID_CASE, CONTENT_AREA, YEAR_INT, SCHOOL_NUMBER, PRIOR_GRADE)][['V1']]]
+	slot.data[,HIGH_NEED_STATUS:=as.factor(HIGH_NEED_STATUS)]
 	slot.data[,c("PRIOR_SCALE_SCORE", "PRIOR_GRADE", "YEAR_INT"):=NULL]
 	setkey(slot.data, VALID_CASE, CONTENT_AREA, YEAR, ID)
 	sgp_object@Data <- slot.data
