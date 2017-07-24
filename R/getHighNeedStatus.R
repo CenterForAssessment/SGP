@@ -17,7 +17,7 @@ function(sgp_object) {
 			if (any(diff(quantile(x, probs=c(0, quantiles, 1), na.rm=TRUE))==0)) {
 				return(rep(NA_character_, length(x)))
 			} else {
-				return(as.character(droplevels(cut(x, quantile(x, probs=c(0, quantiles, 1), na.rm=TRUE), include.lowest=TRUE, labels=high.needs.status.labels))))
+				return(high.needs.status.labels[cut(x, quantile(x, probs=c(0, quantiles, 1), na.rm=TRUE), include.lowest=TRUE, labels=FALSE)])
 			}
 		}
 	} ### END my.quantile.function
