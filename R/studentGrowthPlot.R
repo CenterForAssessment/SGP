@@ -1145,7 +1145,15 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 
 	if (!grade.values[['any_scale_scores']]) {
 		pushViewport(no.data.vp)
-		grid.text(x=0.5, y=0.5, paste("No", test.abbreviation, content.area.label, "Data"), gp=gpar(col="grey40", cex=3.5))
+		no.data.text <- paste("No", test.abbreviation, content.area.label, "Data")
+		no.data.text.pieces <- labelSplit(no.data.text)
+		if (length(no.data.text.pieces[[1]])==1) {
+			grid.text(x=0.5, y=0.5, no.data.text.pieces[[1]][1], gp=gpar(col="grey40", cex=3.5))
+		} else {
+			messageSGP("Yep dats de ONE")
+			grid.text(x=0.475, y=0.575, no.data.text.pieces[[1]][1], gp=gpar(col="grey40", cex=2.25))
+			grid.text(x=0.475, y=0.425, no.data.text.pieces[[1]][2], gp=gpar(col="grey40", cex=2.25))
+		}
 		grid.roundrect(r=unit(0.02, "snpc"), gp=gpar(fill="white", lwd=0, col="white", alpha=0.5))
 		popViewport()
 	}
