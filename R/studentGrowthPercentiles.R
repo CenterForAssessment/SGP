@@ -573,9 +573,11 @@ function(panel.data,         ## REQUIRED
 				    if (!exists('year.progression.for.norm.group')) year.progression.for.norm.group <- year.progression # Needed during Baseline Matrix construction
 				    if (.Platform$OS.type != "unix") {
 				    	tmp.dbname <- tempdir()
-              con <- dbConnect(SQLite(), dbname = file.path(tmp.dbname, paste0("simex_data_", z, ".sqlite")))
-				    	sapply(sim.iters, function(z) dbWriteTable(con, name="tmp", value=big.data[list(z)], row.names=FALSE, overwrite=TRUE))
-              dbDisconnect(con)
+
+				    	sapply(sim.iters, function(z) {
+                con <- dbConnect(SQLite(), dbname = file.path(tmp.dbname, paste0("simex_data_", z, ".sqlite")))
+                dbWriteTable(con, name="tmp", value=big.data[list(z)], row.names=FALSE, overwrite=TRUE)
+                dbDisconnect(con)})
 				    } else {
 				    	tmp.dbname <- tempfile(fileext = ".sqlite")
               con <- dbConnect(SQLite(), dbname = tmp.dbname)
