@@ -1150,7 +1150,6 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 		if (length(no.data.text.pieces[[1]])==1) {
 			grid.text(x=0.5, y=0.5, no.data.text.pieces[[1]][1], gp=gpar(col="grey40", cex=3.5))
 		} else {
-			messageSGP("Yep dats de ONE")
 			grid.text(x=0.475, y=0.575, no.data.text.pieces[[1]][1], gp=gpar(col="grey40", cex=2.25))
 			grid.text(x=0.475, y=0.425, no.data.text.pieces[[1]][2], gp=gpar(col="grey40", cex=2.25))
 		}
