@@ -123,8 +123,8 @@ function(
 			quant <- round(quantile(x, q, na.rm = na.rm), dig.lab)
 			dups <- duplicated(quant)
 			if (any(dups)) {
-				flag <- x %in% unique(quant[dups])
-				retval <- ifelse(flag, paste("[", as.character(x), "]", sep = ""), NA)
+				flag <- round(x, dig.lab) %in% unique(quant[dups])
+				retval <- ifelse(flag, paste("[", as.character(round(x, dig.lab)), "]", sep = ""), NA)
 				uniqs <- unique(quant)
 				reposition <- function(cut) {
 					flag <- x >= cut
@@ -132,8 +132,7 @@ function(
 				}
 
 				newquant <- sapply(uniqs, reposition)
-				retval[!flag] <- as.character(cut(x[!flag], breaks = newquant,
-				include.lowest = TRUE, ...))
+				retval[!flag] <- as.character(cut(x[!flag], breaks = newquant, include.lowest = TRUE, ...))
 				levs <- unique(retval[order(x)])
 				retval <- factor(retval, levels = levs)
 				mkpairs <- function(x) sapply(x, function(y) if (length(y) == 2) y[c(2, 2)] else y[2:3])
