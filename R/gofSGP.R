@@ -120,7 +120,8 @@ function(
 		}
 
 		.quantcut <- function (x, q = seq(0, 1, by = 0.25), na.rm = TRUE, dig.lab, ...) { ### From the quantcut package (thanks!!)
-			quant <- round(quantile(x, q, na.rm = na.rm), dig.lab)
+			x <- round(x, digits=dig.lab)
+			quant <- quantile(x, q, na.rm = na.rm)
 			dups <- duplicated(quant)
 			if (any(dups)) {
 				flag <- x %in% unique(quant[dups])
@@ -132,8 +133,7 @@ function(
 				}
 
 				newquant <- sapply(uniqs, reposition)
-				retval[!flag] <- as.character(cut(x[!flag], breaks = newquant,
-				include.lowest = TRUE, ...))
+				retval[!flag] <- as.character(cut(x[!flag], breaks = newquant, include.lowest = TRUE, ...))
 				levs <- unique(retval[order(x)])
 				retval <- factor(retval, levels = levs)
 				mkpairs <- function(x) sapply(x, function(y) if (length(y) == 2) y[c(2, 2)] else y[2:3])
