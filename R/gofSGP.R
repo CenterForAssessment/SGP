@@ -120,11 +120,12 @@ function(
 		}
 
 		.quantcut <- function (x, q = seq(0, 1, by = 0.25), na.rm = TRUE, dig.lab, ...) { ### From the quantcut package (thanks!!)
-			quant <- round(quantile(x, q, na.rm = na.rm), dig.lab)
+			x <- round(x, digits=dig.lab)
+			quant <- quantile(x, q, na.rm = na.rm)
 			dups <- duplicated(quant)
 			if (any(dups)) {
-				flag <- round(x, dig.lab) %in% unique(quant[dups])
-				retval <- ifelse(flag, paste("[", as.character(round(x, dig.lab)), "]", sep = ""), NA)
+				flag <- x %in% unique(quant[dups])
+				retval <- ifelse(flag, paste("[", as.character(x), "]", sep = ""), NA)
 				uniqs <- unique(quant)
 				reposition <- function(cut) {
 					flag <- x >= cut
