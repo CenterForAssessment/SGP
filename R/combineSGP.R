@@ -80,7 +80,7 @@ function(
 	if (!is.null(year.for.equate <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]])) {
 		tmp.assessment.years <- sort(unique(sgp_object@Data, by='YEAR')[['YEAR']])
 		tmp.last.year <- tail(tmp.assessment.years, 1); tmp.first.year <- head(tmp.assessment.years, 1)
-		if (!sgp.target.scale.scores) sgp.projections.equated <- NULL
+		sgp.projections.equated <- NULL
 		if (year.for.equate!=tmp.last.year) { ### Equated percentiles/projections not necessary
 			sgp.percentiles.equated <- FALSE
 		} else { ### Equated percentiles/projections necessary
