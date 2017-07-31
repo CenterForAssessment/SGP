@@ -77,11 +77,11 @@ function(
 
 	### Setup for equated SGPs and scale score targets
 
+	preequated <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Preequated_by_Contractor"]]
 	if (!is.null(year.for.equate <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]])) {
 		sgp.projections.equated <- NULL
 		tmp.assessment.years <- sort(unique(sgp_object@Data, by='YEAR')[['YEAR']])
 		tmp.last.year <- tail(tmp.assessment.years, 1); tmp.first.year <- head(tmp.assessment.years, 1)
-		preequated <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Preequated_by_Contractor"]]
 		if (year.for.equate!=tmp.last.year) { ### Equated percentiles/projections not necessary
 			sgp.percentiles.equated <- FALSE
 		} else { ### Equated percentiles/projections necessary
