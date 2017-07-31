@@ -77,6 +77,7 @@ function(
 
 	### Setup for equated SGPs and scale score targets
 
+	preequated <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Preequated_by_Contractor"]]
 	if (!is.null(year.for.equate <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]])) {
 		sgp.projections.equated <- NULL
 		tmp.assessment.years <- sort(unique(sgp_object@Data, by='YEAR')[['YEAR']])
@@ -90,8 +91,8 @@ function(
 					if (sgp.target.scale.scores) sgp.projections.equated <- list(Year=tmp.last.year, Linkages=sgp_object@SGP[['Linkages']])
 				}
 			} else {
-				if (!identical(sgp.percentiles.equated, FALSE)) {
-					messageSGP(paste0("\tNOTE: ", state, "SGPstate meta-data indicates assessment transition in current year but no linkages found in current data. sgp.percentiles.equated set to FALSE."))
+				if (!identical(sgp.percentiles.equated, FALSE) && is.null(preequated)) {
+					messageSGP(paste0("\tNOTE: ", state, " SGPstate meta-data indicates assessment transition in current year but no linkages found in current data. sgp.percentiles.equated set to FALSE."))
 					sgp.percentiles.equated <- FALSE
 				}
 			}
@@ -103,6 +104,7 @@ function(
 		sgp.percentiles.equated <- FALSE
 		sgp.projections.equated <- NULL
 	}
+	if (identical(preequated, TRUE)) sgp.percentiles.equated <- TRUE
 
 	### fix.duplicates
 
