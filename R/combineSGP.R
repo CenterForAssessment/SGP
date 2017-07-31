@@ -91,7 +91,7 @@ function(
 				}
 			} else {
 				if (!identical(sgp.percentiles.equated, FALSE)) {
-					messageSGP(paste0("\tNOTE: ", state, "SGPstate meta-data indicates assessment transition in current year but no linkages found in current data. sgp.percentiles.equated set to FALSE."))
+					messageSGP(paste0("\tNOTE: ", state, " SGPstate meta-data indicates assessment transition in current year but no linkages found in current data. sgp.percentiles.equated set to FALSE."))
 					sgp.percentiles.equated <- FALSE
 				}
 			}
@@ -103,6 +103,7 @@ function(
 		sgp.percentiles.equated <- FALSE
 		sgp.projections.equated <- NULL
 	}
+	if (identical(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Preequated_by_Contractor"]], TRUE)) sgp.percentiles.equated <- TRUE
 
 	### fix.duplicates
 
