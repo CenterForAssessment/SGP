@@ -543,8 +543,9 @@ function(sgp_object,
 			tmp.config <- tmp.config[which(sapply(tmp.config, function(x) !is.null(x[['sgp.matrices']])))]
 		}
 		if (sgp.percentiles) sgp.config.list[['sgp.percentiles']] <- tmp.config
-		if (!is.null(tmp.transition.year) && any(tmp.tf <- sapply(sgp.config.list[['sgp.percentiles']], function(x) tail(x[['sgp.panel.years']], 1) > tmp.transition.year))) {
+		if (!is.null(tmp.transition.year) && any(sapply(sgp.config.list[['sgp.percentiles']], function(x) {head(x[['sgp.panel.years']], 1) < tmp.transition.year & tail(x[['sgp.panel.years']], 1) > tmp.transition.year}))) {
 			messageSGP(paste0("\tNOTE: Configurations include years prior to assessment transition (", tmp.transition.year, ").\n\t\tSGPs of maximum order up to the transition year (", tmp.transition.year, ") in addition to standard SGPs will be produced."))
+			tmp.tf <- sapply(sgp.config.list[['sgp.percentiles']], function(x) tail(x[['sgp.panel.years']], 1) > tmp.transition.year))
 			for (tmp.iter in which(tmp.tf)) sgp.config.list[['sgp.percentiles']][[tmp.iter]][['return.additional.max.order.sgp']] <- as.numeric(unlist(strsplit(tail(sgp.config.list[['sgp.percentiles']][[tmp.iter]][['sgp.panel.years']], 1), "_")))[1] - as.numeric(unlist(strsplit(tmp.transition.year, "_")))[1]
 		}
 		if (sgp.percentiles.equated) {
