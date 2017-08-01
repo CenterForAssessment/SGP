@@ -54,6 +54,7 @@ studentGrowthPercentiles(panel.data,
                          return.norm.group.identifier=TRUE,
                          return.norm.group.scale.scores=NULL,
                          return.norm.group.dates=NULL,
+                         return.norm.group.preference=NULL,
                          return.panel.data=identical(parent.frame(), .GlobalEnv),
                          print.time.taken=TRUE,
                          parallel.config=NULL,
@@ -203,8 +204,12 @@ Useful for examining relationship between prior achievement and student growth.
   \item{return.norm.group.scale.scores}{Boolean argument (defaults to NULL) indicating whether to return a semi-colon separated character vector of the scores associated with the SGP_NORM_GROUP to
   which the student belongs.
   }
-  \item{return.norm.group.dates}{Boolean argument or character string (defaults. to NULL) indicating whether to return a semi-colon separated character vector of the dates associated
+  \item{return.norm.group.dates}{Boolean argument or character string (defaults to NULL) indicating whether to return a semi-colon separated character vector of the dates associated
   with time dependent SGPt calculations. If TRUE is supplied, 'DATE' is the assumed name for the date variable.
+  }
+  \item{return.norm.group.preference}{A single numeric value (defaults to NULL). When multiple SGPs will be produced for some students and a system is required to identify the preferred SGP
+  that will be matched with the student in the \code{\link{combineSGP}} function. This argument provides a ranking that specifies how preferable SGPs produced from the analysis in question is
+  relative to other possible analyses.  LOWER NUMBERS CORRESPOND WITH HIGHER PREFERENCE.
   }
   \item{return.panel.data}{Boolean argument indicating whether to return the original data provided in \code{panel.data$Panel_Data} in the SGP list of results.
   Defaults to 'identical(parent.frame(), .GlobalEnv)': If the parent environment from which the function is called is .GlobalEnv, then FALSE, otherwise TRUE.
