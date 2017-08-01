@@ -44,6 +44,7 @@ function(panel.data,         ## REQUIRED
          return.norm.group.identifier=TRUE,
          return.norm.group.scale.scores=NULL,
          return.norm.group.dates=NULL,
+         return.norm.group.preference=NULL,
          return.panel.data=identical(parent.frame(), .GlobalEnv),
          print.time.taken=TRUE,
          parallel.config=NULL,
@@ -741,7 +742,7 @@ function(panel.data,         ## REQUIRED
 	###
 	############################################################################
 
-	ID <- tmp.messages <- ORDER <- SCALE_SCORE_PRIOR <- SGP <- NULL
+	ID <- tmp.messages <- ORDER <- SCALE_SCORE_PRIOR <- SGP <- PREFERENCE <- NULL
 
 	if (missing(panel.data)) {
 		stop("User must supply student achievement data for student growth percentile calculations. NOTE: data is now supplied to function using panel.data argument. See help page for details.")
@@ -1324,6 +1325,7 @@ function(panel.data,         ## REQUIRED
     if (!is.null(sgp.less.than.sgp.cohort.size.return) && max.cohort.size < sgp.cohort.size) {
         quantile.data <- data.table(ID=.get.panel.data(ss.data, tmp.num.prior, by.grade, tmp.gp)[[1L]], SGP=as.integer(NA), SGP_NOTE=sgp.less.than.sgp.cohort.size.return, GRADE = as.character(tail(grade.progression, 1)))
         if (return.norm.group.identifier) quantile.data[,SGP_NORM_GROUP:=as.factor(paste(tail(paste(year.progression, paste(content_area.progression, grade.progression, sep="_"), sep="/"), tmp.num.prior+1L), collapse="; "))]
+        if (!is.null(return.norm.group.preference)) quantile.data[, PREFERENCE := return.norm.group.preference]
         if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, "SGP", "SGP_BASELINE")
         if (identical(sgp.labels[['my.extra.label']], "BASELINE") & "SGP_NORM_GROUP" %in% names(quantile.data)) setnames(quantile.data, gsub("SGP_NORM_GROUP", "SGP_NORM_GROUP_BASELINE", names(quantile.data)))
         if (identical(sgp.labels[['my.extra.label']], "EQUATED")) setnames(quantile.data, "SGP", "SGP_EQUATED")
@@ -1669,6 +1671,8 @@ function(panel.data,         ## REQUIRED
 			tmp.scale_scores <- ss.data[,c("ID", names(tmp.data)[-1L]), with=FALSE][list(quantile.data$ID),-1L,with=FALSE,on="ID"]
 			quantile.data[,SGP_NORM_GROUP_SCALE_SCORES:=gsub("NA; ", "", do.call(paste, c(tmp.scale_scores, list(sep="; "))))]
 		}
+
+    if (!is.null(return.norm.group.preference)) quantile.data[, PREFERENCE := return.norm.group.preference]
 
 		if ((is.character(goodness.of.fit) || goodness.of.fit==TRUE) && dim(quantile.data)[1L] <= goodness.of.fit.minimum.n) {
 			messageSGP(c("\tNOTE: Due to small number of cases (", dim(quantile.data)[1L], ") no goodness of fit plots produced."))
