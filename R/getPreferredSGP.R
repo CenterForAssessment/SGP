@@ -44,8 +44,10 @@ function(tmp.data,
 					new.dups <- new.dups[!duplicated(new.dups, by=key(tmp.data))]
 					tmp.data <- rbindlist(list(tmp.data[is.na(PREFERENCE),], new.dups))[, PREFERENCE:=NULL]
 					setkeyv(tmp.data, dup.key)
-				}
-			} else {
+					ng.pref.obj.tf <- TRUE
+				} else ng.pref.obj.tf <- FALSE
+			} else ng.pref.obj.tf <- FALSE
+			if (!ng.pref.obj.tf) {
 			  tmp.data <- tmp.data[!duplicated(tmp.data, by=key(tmp.data))][, PREFERENCE:=NULL]
 		  	if ("SGP_NOTE" %in% names(tmp.data)) invisible(tmp.data[, SGP_NOTE_TF := NULL])
 		  	return(tmp.data)
