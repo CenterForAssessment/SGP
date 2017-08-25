@@ -401,10 +401,11 @@
 		} else { # END FOREACH flavor
 
 		### SNOW and MULTICORE
-		if (identical(par.start[['par.type']], "SNOW")) {
-			tmp.summary <- parLapply(par.start$internal.cl, summary.iter,
-				function(iter) sgpSummary(iter[1], eval(parse(text=iter[2])), tmp.simulation.dt, state, sgp.summaries, confidence.interval.groups, my.sgp, sgp_key, variables.for.summaries, sim.info))
-		} # END 'SNOW' Flavor
+		# Don't use SNOW - run as doParallel instead.  Too much memory & time overhead, errors, etc....
+		# if (identical(par.start[['par.type']], "SNOW")) {
+		# 	tmp.summary <- parLapply(par.start$internal.cl, summary.iter,
+		# 		function(iter) sgpSummary(iter[1], eval(parse(text=iter[2])), tmp.simulation.dt, state, sgp.summaries, confidence.interval.groups, my.sgp, sgp_key, variables.for.summaries, sim.info))
+		# } # END 'SNOW' Flavor
 		if (identical(par.start[['par.type']], "MULTICORE")) {
 			tmp.summary <- mclapply(summary.iter,
 				function(iter) sgpSummary(iter[1], eval(parse(text=iter[2])), tmp.simulation.dt, state, sgp.summaries, confidence.interval.groups, my.sgp, sgp_key, variables.for.summaries, sim.info), mc.cores=par.start$workers, mc.preschedule=FALSE)
@@ -590,6 +591,9 @@
 	} else tmp.simulation.dt <- sim.info <- NULL
 
 	dbDisconnect(sgp_data_for_summary)
+
+	# Don't use SNOW - run as FOREACH + doParallel instead.
+	if (identical(par.start[['par.type']], "SNOW")) {parallel.config[["BACKEND"]] <- "FOREACH"; parallel.config[["TYPE"]] <- "doParallel"}
 
 	if (!is.null(parallel.config))	par.start <- startParallel(parallel.config, 'SUMMARY')
 
