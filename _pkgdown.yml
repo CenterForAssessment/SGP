@@ -1,0 +1,60 @@
+template:
+  package: centerPackageTemplate
+  default_assets: false
+
+
+home:
+  strip_header: true
+  links:
+    - text: Other Center stuff
+      href: https://centerforassessment.github.io/
+
+
+navbar:
+    title: ~
+    type: default
+    left:
+    - text: Getting Started
+      href: articles/SGP.html
+    - text: Reference
+      href: reference/index.html
+    - text: News
+      menu:
+      - text: "Release notes"
+      - text: "Version 1.7-0.0"
+        href: articles/releases/SGP-1.7-0.0.html
+      - text: "Version 1.6-0.0"
+        href: articles/releases/SGP-1.6-0.0.html
+      - text: "Version 1.5-0.0"
+        href: articles/releases/SGP-1.5-0.0.html
+      - text: "Version 1.4-0.0"
+        href: articles/releases/SGP-1.4-0.0.html
+      - text: "Version 1.3-0.0"
+        href: articles/releases/SGP-1.3-0.0.html
+      - text: "Version 1.2-0.0"
+        href: articles/releases/SGP-1.2-0.0.html
+      - text: "Version 1.1-0.0"
+        href: articles/releases/SGP-1.1-0.0.html
+      - text: "Version 1.0-0.0"
+        href: articles/releases/SGP-1.0-0.0.html
+      - text: "------------------"
+      - text: "Change log"
+        href: news/index.html
+    right:
+      - icon: fa-github
+        href: https://github.com/centerforassessment/SGP
+      - icon: fa-twitter
+        href: https://twitter.com/intent/tweet?url=https%3A%2F%2Fcenterforassessment.github.io%2FSGP%2F&via=NCIEA1&text=SGP%3A%20Student%20Growth%20Percentiles%20&%20Percentile%20Growth%20Trajectories&hashtags=rstats%2C%20SGP
+
+
+reference:
+      - title: Data sets for lower level SGP functions
+        desc:  Wide exemplar data sets for use with lower level functions `studentGrowthPercentiles` and `studentGrowthProjections`.
+        contents:
+            - sgpData
+      - title: Data sets for higher level SGP functions
+        desc: Long exemplar data sets for use with higher level functions (e.g., `abcSGP` or `analyzeSGp`).
+        contents:
+            - sgpData_LONG
+            - sgptData_LONG
+            - sgpData_INSTRUCTOR_NUMBER
