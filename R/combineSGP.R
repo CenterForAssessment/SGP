@@ -24,7 +24,7 @@ function(
 	started.at <- proc.time()
 	messageSGP(paste("Started combineSGP", prettyDate()))
 
-	ID <- CONTENT_AREA <- YEAR <- GRADE <- YEAR_INTEGER_TMP <- ACHIEVEMENT_LEVEL <- CATCH_UP_KEEP_UP_STATUS_INITIAL <- MOVE_UP_STAY_UP_STATUS_INITIAL <- VALID_CASE <- N <- NULL
+	ID <- CONTENT_AREA <- YEAR <- GRADE <- YEAR_INTEGER_TMP <- ACHIEVEMENT_LEVEL <- CATCH_UP_KEEP_UP_STATUS_INITIAL <- MOVE_UP_STAY_UP_STATUS_INITIAL <- VALID_CASE <- N <- SGP <- NULL
 	MOVE_UP_STAY_UP_STATUS <- CATCH_UP_KEEP_UP_STATUS <- ACHIEVEMENT_LEVEL_PRIOR <- target.type <- SGP_PROJECTION_GROUP <- DUPS_FLAG <- i.DUPS_FLAG <- SCALE_SCORE <- SGP_NORM_GROUP_SCALE_SCORES <- NULL
 
 	tmp.messages <- NULL
@@ -468,6 +468,7 @@ function(
 
 			for (i in seq_along(target.args[['my.sgp']])) {
 				if (!grepl("BASELINE", target.args[['my.sgp']][i])) my.label <- "CATCH_UP_KEEP_UP_STATUS" else my.label <- "CATCH_UP_KEEP_UP_STATUS_BASELINE"
+				if (grepl("FROM", target.args[['my.sgp']][i])) slot.data[YEAR <= year.for.equate, target.args[['my.sgp']][i]:=SGP] ### Get comparison values from before transition
 				if (my.label %in% names(slot.data)) slot.data[,(my.label):=NULL]
 				slot.data[,(my.label):=rep(as.character(NA), dim(slot.data)[1])]
 
@@ -495,6 +496,7 @@ function(
 					GRADE == max(type.convert(GRADE[!is.na(get(target.args[['my.sgp.target']]))], as.is=TRUE)) &
 					CONTENT_AREA %in% terminal.content_areas, (my.label):="Keep Up: Yes"]
 				slot.data[,(my.label):=as.factor(get(my.label))]
+				if (grepl("FROM", target.args[['my.sgp']][i])) slot.data[YEAR <= year.for.equate, target.args[['my.sgp']][i]:=NA]
 			}
 		}
 
@@ -508,6 +510,7 @@ function(
 
 			for (i in seq_along(target.args[['my.sgp']])) {
 				if (!grepl("BASELINE", target.args[['my.sgp']][i])) my.label <- "MOVE_UP_STAY_UP_STATUS" else my.label <- "MOVE_UP_STAY_UP_STATUS_BASELINE"
+				if (grepl("FROM", target.args[['my.sgp']][i])) slot.data[YEAR <= year.for.equate, target.args[['my.sgp']][i]:=SGP]
 				if (my.label %in% names(slot.data)) slot.data[,(my.label):=NULL]
 				slot.data[,(my.label):=rep(as.character(NA), dim(slot.data)[1])]
 
@@ -535,6 +538,7 @@ function(
 					GRADE == max(type.convert(GRADE[!is.na(get(target.args[['my.sgp.target.move.up.stay.up']]))], as.is=TRUE)) &
 					CONTENT_AREA %in% terminal.content_areas, (my.label):="Stay Up: Yes"]
 				slot.data[,(my.label):=as.factor(get(my.label))]
+				if (grepl("FROM", target.args[['my.sgp']][i])) slot.data[YEAR <= year.for.equate, target.args[['my.sgp']][i]:=NA]
 			}
 		}
 

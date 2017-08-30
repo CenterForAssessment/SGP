@@ -592,10 +592,10 @@
 
 	dbDisconnect(sgp_data_for_summary)
 
+	if (!is.null(parallel.config))	par.start <- startParallel(parallel.config, 'SUMMARY')
+
 	# Don't use SNOW - run as FOREACH + doParallel instead.
 	if (identical(par.start[['par.type']], "SNOW")) {parallel.config[["BACKEND"]] <- "FOREACH"; parallel.config[["TYPE"]] <- "doParallel"}
-
-	if (!is.null(parallel.config))	par.start <- startParallel(parallel.config, 'SUMMARY')
 
 	for (j in seq(length(summary.groups[["institution_multiple_membership"]])+1)) {
 		for (i in summary.groups[["institution"]]) {
