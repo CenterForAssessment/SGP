@@ -377,11 +377,13 @@
 			summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], sgp.groups[x] %in% ci.groups))
 		} else summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], FALSE))
 
+		db.path = file.path(tempdir(), "TMP_Summary_Data.sqlite")
+
 		## if NULL parallel.config
 		if (is.null(parallel.config)) {
 			for (s in seq_along(summary.iter)) {
 				tmp.summary[[s]] <- sgpSummary(summary.iter[[s]][1], eval(parse(text=summary.iter[[s]][2])),
-					tmp.simulation.dt, state, sgp.summaries, confidence.interval.groups, my.sgp, sgp_key, variables.for.summaries, sim.info)
+					tmp.simulation.dt, state, sgp.summaries, confidence.interval.groups, my.sgp, sgp_key, variables.for.summaries, sim.info, db.path)
 			}
 			par.start <- list(par.type="NONE")
 		}
@@ -395,20 +397,22 @@
 
 			tmp.summary <- foreach(j = iter(sgp.groups), k = k.iter,
 				.export=c("tmp.simulation.dt", "state", "sgp.summaries", "confidence.interval.groups", "my.sgp", "sgp_key", "variables.for.summaries", "sim.info"),
+				# "sgpSummary", "pullData", "median_na", "mean_na", "sd_na", "num_non_missing", "sgp_standard_error", "percent_in_category", "boot.sgp"),
 				.options.multicore=list(preschedule = FALSE, set.seed = FALSE), .packages="SGP", .inorder=FALSE, .errorhandling = "pass") %dopar% {
-					return(sgpSummary(j, k, tmp.simulation.dt, state, sgp.summaries, confidence.interval.groups, my.sgp, sgp_key, variables.for.summaries, sim.info))
+					return(sgpSummary(j, k, tmp.simulation.dt, state, sgp.summaries, confidence.interval.groups, my.sgp, sgp_key, variables.for.summaries, sim.info, db.path))
 			}
 		} else { # END FOREACH flavor
+
 
 		### SNOW and MULTICORE
 		# Don't use SNOW - run as doParallel instead.  Too much memory & time overhead, errors, etc....
 		# if (identical(par.start[['par.type']], "SNOW")) {
 		# 	tmp.summary <- parLapply(par.start$internal.cl, summary.iter,
-		# 		function(iter) sgpSummary(iter[1], eval(parse(text=iter[2])), tmp.simulation.dt, state, sgp.summaries, confidence.interval.groups, my.sgp, sgp_key, variables.for.summaries, sim.info))
+		# 		function(iter) sgpSummary(iter[1], eval(parse(text=iter[2])), tmp.simulation.dt, state, sgp.summaries, confidence.interval.groups, my.sgp, sgp_key, variables.for.summaries, sim.info, db.path))
 		# } # END 'SNOW' Flavor
 		if (identical(par.start[['par.type']], "MULTICORE")) {
 			tmp.summary <- mclapply(summary.iter,
-				function(iter) sgpSummary(iter[1], eval(parse(text=iter[2])), tmp.simulation.dt, state, sgp.summaries, confidence.interval.groups, my.sgp, sgp_key, variables.for.summaries, sim.info), mc.cores=par.start$workers, mc.preschedule=FALSE)
+				function(iter) sgpSummary(iter[1], eval(parse(text=iter[2])), tmp.simulation.dt, state, sgp.summaries, confidence.interval.groups, my.sgp, sgp_key, variables.for.summaries, sim.info, db.path), mc.cores=par.start$workers, mc.preschedule=FALSE)
 		} # END 'MULTICORE' Flavor
 		} # END else not FOREACH
 

@@ -8,7 +8,8 @@ function(sgp.groups.to.summarize,
 	my.sgp,
 	sgp_key,
 	variables.for.summaries,
-	sim.info) {
+	sim.info,
+	db.path) {
 
 	WEIGHT <- MEDIAN_SGP_with_SHRINKAGE <- NULL
 
@@ -37,19 +38,20 @@ function(sgp.groups.to.summarize,
 	ListExpr <- parse(text=paste0("list(", paste(unlist(tmp.sgp.summaries), collapse=", "),")"))
 	ByExpr <- parse(text=paste0("list(", paste(sgp.groups.to.summarize, collapse=", "), ")"))
 
-	tmp.db <- dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_Summary_Data.sqlite"))
+	# tmp.db <- dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_Summary_Data.sqlite"))
+	tmp.db <- dbConnect(SQLite(), dbname = db.path)
 	available.vars <- dbListFields(tmp.db, "summary_data")
 	dbDisconnect(tmp.db)
 
 	pull.vars <- c(unlist(sapply(available.vars,
 		function(p) if (any(grepl(p, tmp.sgp.summaries))) return(p)), use.names=FALSE), strsplit(sgp.groups.to.summarize, ", ")[[1]])
 
-	tmp <- pullData(tmp.simulation.dt, state, pull.vars, variables.for.summaries, sgp.groups.to.summarize, sgp_key)[, eval(ListExpr), keyby=eval(ByExpr)]
+	tmp <- pullData(tmp.simulation.dt, state, pull.vars, variables.for.summaries, sgp.groups.to.summarize, sgp_key, db.path=db.path)[, eval(ListExpr), keyby=eval(ByExpr)]
 	setnames(tmp, paste0("V", seq_along(sgp.summaries.names)), sgp.summaries.names)
 
 	if (produce.confidence.interval & "CSEM" %in% confidence.interval.groups[['TYPE']]) {
 		pull.vars <- c(sgp_key, unlist(strsplit(sgp.groups.to.summarize, ", ")))
-		tmp <- pullData(tmp.simulation.dt, state, pull.vars, variables.for.summaries, sgp.groups.to.summarize, sgp_key, tmp_key = key(tmp), sim.info=sim.info)[tmp]
+		tmp <- pullData(tmp.simulation.dt, state, pull.vars, variables.for.summaries, sgp.groups.to.summarize, sgp_key, tmp_key = key(tmp), sim.info=sim.info, db.path)[tmp]
 		setcolorder(tmp, c(grep("CSEM", names(tmp), invert=TRUE), grep("CSEM", names(tmp))))
 	}
 
@@ -71,15 +73,15 @@ function(tmp.simulation.dt,
 	sgp.groups.to.summarize,
 	sgp_key,
 	tmp_key,
-	sim.info=NULL) {
+	sim.info=NULL,
+	db.path) {
 
 	SGP_SIM <- V1 <- V2 <- SIM_NUM <- WEIGHT <- ACHIEVEMENT_LEVEL <- ACHIEVEMENT_LEVEL_PRIOR <- CATCH_UP_KEEP_UP_STATUS <- MOVE_UP_STAY_UP_STATUS <- NULL
 	CATCH_UP_KEEP_UP_STATUS_BASELINE <- MOVE_UP_STAY_UP_STATUS_BASELINE <- NULL
 
-	db.path <- file.path(tempdir(), "TMP_Summary_Data.sqlite")
-
 	if (!is.null(sim.info)) {
 		tmp.list.1 <- list()
+
 		con <- dbConnect(SQLite(), dbname = db.path)
 		tmp_data <- data.table(dbGetQuery(con, paste("select", paste(pull.vars, collapse = ","), "from summary_data")), key = sgp_key)
 		dbDisconnect(con)
