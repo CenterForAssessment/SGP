@@ -81,3 +81,7 @@ reference:
             - is.SGP
             - studentGrowthPlot
             - studentGrowthPlot_Styles
+      - title: SGP meta-data for state/organization level analyses
+        desc: This internal data set contains meta-data and configurations used as part of state/organization level analyses.
+        contents:
+            - SGPstateData
