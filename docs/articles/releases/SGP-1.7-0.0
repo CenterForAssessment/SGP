@@ -1,0 +1,26 @@
+---
+title: "SGP 1.7-0.0"
+---
+
+```{r include = FALSE}
+    library(SGP)
+
+    is_html_output = function() {
+        knitr::opts_knit$get("rmarkdown.pandoc.to")=="html"
+    }
+
+    knitr::opts_chunk$set(
+        collapse=TRUE,
+        comment="",
+        prompt=TRUE,
+        fig.dpi=96)
+
+    if (is_html_output()) {
+        options(width=1000)
+    }
+```
+
+
+This is the 1.7 release of the **SGP** package. This release is the first to include vignettes and [web-documentation](https://sgp.io) for the package.
+
+Feel free to drop me a line with any comments, feature requests, or ideas. And give us a shout-out Tweet using the Twitter button in the upper right!

@@ -1,0 +1,87 @@
+template:
+  package: centerPackageTemplate
+  default_assets: false
+
+
+home:
+  strip_header: true
+  links:
+    - text: Other Center stuff
+      href: https://centerforassessment.github.io/
+
+
+navbar:
+    title: ~
+    type: default
+    left:
+    - text: Getting Started
+      href: articles/SGP.html
+    - text: Reference
+      href: reference/index.html
+    - text: News
+      menu:
+      - text: "Release notes"
+      - text: "Version 1.7-0.0"
+        href: articles/releases/SGP-1.7-0.0.html
+      - text: "Version 1.6-0.0"
+        href: articles/releases/SGP-1.6-0.0.html
+      - text: "Version 1.5-0.0"
+        href: articles/releases/SGP-1.5-0.0.html
+      - text: "Version 1.4-0.0"
+        href: articles/releases/SGP-1.4-0.0.html
+      - text: "Version 1.3-0.0"
+        href: articles/releases/SGP-1.3-0.0.html
+      - text: "Version 1.2-0.0"
+        href: articles/releases/SGP-1.2-0.0.html
+      - text: "Version 1.1-0.0"
+        href: articles/releases/SGP-1.1-0.0.html
+      - text: "Version 1.0-0.0"
+        href: articles/releases/SGP-1.0-0.0.html
+      - text: "------------------"
+      - text: "Change log"
+        href: news/index.html
+    right:
+      - icon: fa-github
+        href: https://github.com/centerforassessment/SGP
+      - icon: fa-twitter
+        href: https://twitter.com/intent/tweet?url=https%3A%2F%2Fcenterforassessment.github.io%2FSGP%2F&via=NCIEA1&text=SGP%3A%20Student%20Growth%20Percentiles%20&%20Percentile%20Growth%20Trajectories&hashtags=rstats%2C%20SGP
+
+
+reference:
+      - title: Low level SGP functions
+        desc:  These functions are responsible for all student growth percentile and student growth projection calculation.
+        contents:
+            - studentGrowthPercentiles
+            - studentGrowthProjections
+      - title: High level SGP functions
+        desc: These functions simplify operation SGP calculations as wrappers for low level functions.
+        contents:
+            - abcSGP
+            - analyzeSGP
+            - baselineSGP
+            - combineSGP
+            - outputSGP
+            - prepareSGP
+            - rliSGP
+            - summarizeSGP
+            - testSGP
+            - updateSGP
+            - visualizeSGP
+      - title: SGP utility functions
+        desc: These functions are used in various ways as part SGP analyses.
+        contents:
+            - bubblePlot
+            - bubblePlot_Styles
+            - courseProgressionSGP
+            - createKnotsBoundaries
+            - capwords
+            - gofSGP
+            - growthAchievementPlot
+            - is.splineMatrix
+            - is.SGP
+            - studentGrowthPlot
+            - studentGrowthPlot_Styles
+      - title: SGP meta-data for state/organization level analyses
+        desc: This internal data set contains meta-data and configurations used as part of state/organization level analyses.
+        contents:
+            - SGPstateData
