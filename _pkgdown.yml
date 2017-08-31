@@ -48,13 +48,36 @@ navbar:
 
 
 reference:
-      - title: Data sets for lower level SGP functions
-        desc:  Wide exemplar data sets for use with lower level functions `studentGrowthPercentiles` and `studentGrowthProjections`.
+      - title: Low level SGP functions
+        desc:  These functions are responsible for all student growth percentile and student growth projection calculation.
         contents:
-            - sgpData
-      - title: Data sets for higher level SGP functions
-        desc: Long exemplar data sets for use with higher level functions (e.g., `abcSGP` or `analyzeSGp`).
+            - studentGrowthPercentiles
+            - studentGrowthProjections
+      - title: High level SGP functions
+        desc: These functions simplify operation SGP calculations as wrappers for low level functions.
         contents:
-            - sgpData_LONG
-            - sgptData_LONG
-            - sgpData_INSTRUCTOR_NUMBER
+            - abcSGP
+            - analyzeSGP
+            - baselineSGP
+            - combineSGP
+            - outputSGP
+            - prepareSGP
+            - rliSGP
+            - summarizeSGP
+            - testSGP
+            - updateSGP
+            - visualizeSGP
+      - title: SGP utility functions
+        desc: These functions are used in various ways as part SGP analyses.
+        contents:
+            - bubblePlot
+            - bubblePlot_Styles
+            - courseProgressionSGP
+            - createKnotsBoundaries
+            - capwords
+            - gofSGP
+            - growthAchievementPlot
+            - is.splineMatrix
+            - is.SGP
+            - studentGrowthPlot
+            - studentGrowthPlot_Styles
