@@ -35,14 +35,6 @@ navbar:
         href: articles/releases/SGP-1.5-0.0.html
       - text: "Version 1.4-0.0"
         href: articles/releases/SGP-1.4-0.0.html
-      - text: "Version 1.3-0.0"
-        href: articles/releases/SGP-1.3-0.0.html
-      - text: "Version 1.2-0.0"
-        href: articles/releases/SGP-1.2-0.0.html
-      - text: "Version 1.1-0.0"
-        href: articles/releases/SGP-1.1-0.0.html
-      - text: "Version 1.0-0.0"
-        href: articles/releases/SGP-1.0-0.0.html
       - text: "------------------"
       - text: "Change log"
         href: news/index.html
