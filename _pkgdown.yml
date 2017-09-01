@@ -16,6 +16,12 @@ navbar:
     left:
     - text: Getting Started
       href: articles/SGP.html
+    - text: Vignettes
+      menu:
+      - text: "Data Preparation"
+        href: articles/Data_Preparation.html
+      - text: "SGP Analyses"
+        href: articles/SGP_Analyses.html
     - text: Reference
       href: reference/index.html
     - text: News
