@@ -27,13 +27,13 @@ navbar:
     - text: News
       menu:
       - text: "Release notes"
-      - text: "Version 1.7-0.0"
+      - text: "SGP 1.7-0.0"
         href: articles/releases/SGP-1.7-0.0.html
-      - text: "Version 1.6-0.0"
+      - text: "SGP 1.6-0.0"
         href: articles/releases/SGP-1.6-0.0.html
-      - text: "Version 1.5-0.0"
+      - text: "SGP 1.5-0.0"
         href: articles/releases/SGP-1.5-0.0.html
-      - text: "Version 1.4-0.0"
+      - text: "SGP 1.4-0.0"
         href: articles/releases/SGP-1.4-0.0.html
       - text: "------------------"
       - text: "Change log"
