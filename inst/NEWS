@@ -1,6 +1,6 @@
 # SGP 1.7-0.0
 
-## USER VISIBLE CHANGES:
+## User Visible Changes:
 
 * Adding in dual mode for RLI analyses to be performed using RASCH scores (default) or STAR scores
 * Better accomodation of duplicates in data. Nonetheless, MUCH better to get rid of duplicates
@@ -8,7 +8,7 @@
 
 # SGP 1.6-0.0
 
-## USER VISIBLE CHANGES:
+## User Visible Changes:
 
 * Added new function 'courseProgressionSGP' which analyzes a long data set to return a list of potential course progressions suitable for SGP analysis.
 * Color output added as part of diagnostic messages.
@@ -17,7 +17,7 @@
 
 # SGP 1.5-0.0
 
-## USER VISIBLE CHANGES:
+## User Visible Changes:
 
 * Analyses now export output to txt file contained in Log directory.
 * Growth and Achievement Plots now support individual student reports and arbitrary grade level starting points.
@@ -26,7 +26,7 @@
 
 # SGP 1.4-0.0
 
-## USER VISIBLE CHANGES:
+## User Visible Changes:
 
 * Package accomdates assessment transitions with equating from old to new test and provides robust diagnostics associated with equating.
 * Adding ability to generate student reports for examining showing two different tests.
@@ -37,7 +37,7 @@
 
 # SGP 1.3-0.0
 
-## USER VISIBLE CHANGES:
+## User Visible Changes:
 
 * Adding internal getJSON function to studentGrowthPlot_Styles to export student level JSON suitable to interactive student reports.
 * Added Illinois meta-data to SGPstateData.
@@ -51,7 +51,7 @@
 
 # SGP 1.2-0.0
 
-## USER VISIBLE CHANGES:
+## User Visible Changes:
 
 * Removed LICENSE and changed copyright to GPL-2.
 * Added capability to calculate student growth projections for End of Course testing sequences.
@@ -73,49 +73,49 @@
 
 # SGP 1.1-0.0
 
-## USER VISIBLE CHANGES:
+## User Visible Changes:
 
 * Updated Thanks in DESCRIPTION
 
 
 # SGP 1.0-9.9
 
-## BUG FIXES:
+## Bug Fixes:
 
 * growthAchievementPlot now renders baseline referenced SGP correctly.
 
 
 # SGP 1.0-9.8
 
-## USER VISIBLE CHANGES:
+## User Visible Changes:
 
 * Updated CSEM calculation algorithm and refined code in analyzeSGP to calculate CSEMs for both cohort and baseline referenced SGPs
 
 
 # SGP 1.0-9.7
 
-## USER VISIBLE CHANGES:
+## User Visible Changes:
 
 * Changed examples to work with 2012_2013 year of new SGPdata.
 
 
 # SGP 1.0-9.6
 
-## USER VISIBLE CHANGES:
+## User Visible Changes:
 
 * Update variable names for Hawaii state data
 
 
 # SGP 1.0-9.5
 
-## BUG FIXES:
+## Bug Fixes:
 
 * studentGrowthPercentiles now correctly adjusts length of content.area.progression (when supplied) when num.prior also used.
 
 
 # SGP 1.0-9.4
 
-## USER VISIBLE CHANGES:
+## User Visible Changes:
 
 * Updated package SGPdata separating INSTRUCTOR_NUMBER from sgpData_LONG and creating sgpData_INSTRUCTOR_NUMBER as a prototype multiple membership table.
 * Removed INSTRUCTOR_NUMBER variables names from the variable name lookup for DEMO.
@@ -124,7 +124,7 @@
 
 # SGP 1.0-9.3
 
-## USER VISIBLE CHANGES:
+## User Visible Changes:
 
 * Added use.my.coefficient.matrices argument to abcSGP to faciliate updateSGP.
 * updateSGP now allows for single argument of 'what_sgp_object' to be supplied allowing for re-calculation of SGPs using embedded coefficient matrices.
@@ -132,7 +132,7 @@
 
 # SGP 1.0-9.2
 
-## USER VISIBLE CHANGES:
+## User Visible Changes:
 
 * Added prior achievement content area to goodness of fit charts showing growth by prior achievement.
 * Added two more Economics repeat sequences to baseline matrices for Georgia.
@@ -143,57 +143,57 @@
 * Completed embedding of GA baseline matrices into SGPstateData.
 
 
-## USER VISIBLE CHANGES:
+## User Visible Changes:
 
 * Integrated YEAR_WITHIN into getPanelData.
 * Integrated SGP_Norm_Group_Preference into combineSGP for states with multiple end of course assessments.
 * Integrated ME baseline coefficient matrices into SGPstateData.
 
-## BUG FIXES:
+## Bug Fixes:
 
 * Various minor bug fixes and refinements.
 
 
 # SGP 1.0-8.0
 
-## USER VISIBLE CHANGES:
+## User Visible Changes:
 
 * Added YEAR_WITHIN capability to package to better accomodate interim assessment.
 
-## NEW FEATURES:
+## New Features:
 
 * Added YEAR_WITHIN capability to package to better accomodate interim assessment.
 
 
 # SGP 1.0-7.0
 
-## USER VISIBLE CHANGES:
+## User Visible Changes:
 
 * Added Professor Yi Shang as author of package.
 
-## NEW FEATURES:
+## New Features:
 
 * Final integration of SIMEX measurement error correction into studentGrowthPercentiles.
 
-## BUG FIXES:
+## Bug Fixes:
 
 * Fixed bug in as.splineMatrix that was applied to old object of class SGP.
 
 
 # SGP 1.0-6.0
 
-## NEW FEATURES:
+## New Features:
 
 * Initial integration of SIMEX measurement error correction into studentGrowthPercentiles.
 
 
 # SGP 1.0-5.0
 
-## NEW FEATURES:
+## New Features:
 
 * Integrate ability to specify preferred SGP using SGPstateData and internal function getPreferredSGP. See GA SGPstateData for an example.
 
-## USER VISIBLE CHANGES:
+## User Visible Changes:
 
 * Modified two physical science baseline coefficient matrices to EOCT from grade 8.
 * Output messages for studentGrowthPercentiles and studentGrowthProjections indicate number of students utilized for the analyses.
@@ -201,18 +201,18 @@
 
 # SGP 1.0-4.0
 
-## NEW FEATURES:
+## New Features:
 
 * summarizeSGP now provides the standard deviation of the SCALE_SCORE_PRIOR_STANDARDIZED for each group indicating a level of incoming student homogeneity/heterogeneity.
 
-## BUG FIXES:
+## Bug Fixes:
 
 * Fixed bug associated with creation of enhanced goodness of fit plots.
 
 
 # SGP 1.0-3.0
 
-## USER VISIBLE CHANGES:
+## User Visible Changes:
 
 * Deprecated use of MULTICORE, MPI, and REDIS in favor of PARALLEL.
 * Exported previously internal function createKnotsBoundaries allowing for users to generated Knots, Boundaries, Loss/Hoss values separately.
@@ -226,12 +226,12 @@
 
 # SGP 1.0-0.0
 
-## NEW FEATURES:
+## New Features:
 
 * Update goodness of fit plots to include an additional representation of growth percentiles by prior achievement level.
 * Incorporated updateSGP into SGP package including a new test in testSGP, testSGP(2), utilizing it.
 
-## USER VISIBLE CHANGES:
+## User Visible Changes:
 
 * Removed parallel functionality for deprecated SNOW and MULTICORE packages, as well as FOREACH implementations of doMC, doMPI, doSNOW and doRedis.
 * Removed chunk.size argument from 'studentGrowthProjections' function based upon refined implementation using data.table.
@@ -241,21 +241,21 @@
 
 # SGP 0.9-9.9
 
-## NEW FEATURES:
+## New Features:
 
 * Update of splineMatrix class to include a validity check and update of as.splineMatrix to convert older splineMatrices to current version.
 
 
 # SGP 0.9-9.8
 
-## NEW FEATURES:
+## New Features:
 
 * Major re-factoring of package involving externalization of previously internal functions for better unit testing.
 
 
 # SGP 0.9-9.7
 
-## NEW FEATURES:
+## New Features:
 
 * studentGrowthPlot allows arrow.legend.color to be specified in a state specific fashion and controlled from SGPstateData.
 * checkSGP converts ID to numeric to take advantage of data.table improvements.
@@ -281,7 +281,7 @@
 * Added gofSGP function to create more thorough goodness-of-fit plots including results distributed by prior achievement level.
 * Added Indiana baseline coefficient matrices to SGPstateData.
 
-## USER VISIBLE CHANGES:
+## User Visible Changes:
 
 * Updated Hawaii variable name lookup table.
 * Zipped files for studentGrowthPlots and outputSGP no longer include full file path.
@@ -289,7 +289,7 @@
 * Removed parentheses in naming of folders when sgPlot.folder.names='name' is supplied.
 * Instructor by School Number tables now include EMH_LEVEL aggregations as well.
 
-## BUG FIXES:
+## Bug Fixes:
 
 * Fixed spacing bug for attaching front page to studentGrowthPlots.
 * Corrected logic bug in combineSGP leading to the creation of SGP_TARGET when no projections exist.
@@ -300,7 +300,7 @@
 
 # SGP 0.9-9.0
 
-## USER VISIBLE CHANGES:
+## User Visible Changes:
 
 * Updated URLs in package to github site that hosts SGP code development.
 * Added timing to outputSGP and sqliteSGP and integrated outputSGP into abcSGP.
@@ -348,7 +348,7 @@
 * Changed default of outputSGP to export LONG and WIDE data.
 * Added CO baseline matrices based upon 5 years of panel data from 2005 to 2009.
 
-## BUG FIXES:
+## Bug Fixes:
 
 * Added PERCENT_CATCHING_UP_KEEPING_UP to summarizeSGP if SGP_TARGET is present.
 * Corrected issues with conversion of factors to characters in summarizeSGP.
@@ -371,7 +371,7 @@
 
 # SGP 0.9-0.0
 
-## NEW FEATURES:
+## New Features:
 
 * Added Hawaii data to SGPstateData and updated Nevada transitional cutscores in Mathematics.
 * analyzeSGP now passes projcut.digits to studentGrowthProjections to control digits based upon state level configurations.
@@ -399,7 +399,7 @@
 * Made some slight tweaks to capwords to better accomodate all caps situations.
 
 
-## USER VISIBLE CHANGES:
+## User Visible Changes:
 
 * Consolodated warning messages to provide better information, especially when working in parallel configurations.
 * Updated Massachusetts grade 10 cutscores between proficient and advanced achievement levels.
@@ -411,7 +411,7 @@
 * Added test to analyzeSGP to see if CSEMs exist in SGPstateData.
 * Added growthAchievementPlot_Styles to better accomodate utilization of growthAchievementPlot in parallel.
 
-## BUG FIXES:
+## Bug Fixes:
 
 * studentGrowthPlot in visualizeSGP now filters on GRADES that correspond to VALID_CASE.
 * Fixed issue when projections occur across skipped grades. Made major refinements to analyzeSGP in the process.
@@ -423,7 +423,7 @@
 
 # SGP 0.8-0.0
 
-## NEW FEATURES:
+## New Features:
 
 * Separated sgpData and sgpData_LONG into new package SGPdata.
 * Changed name of stateData to SGPstateData.
@@ -446,7 +446,7 @@
 * Added sgp.target.to.NA argument to combineSGP (defaults to TRUE) to change SGP_TARGET and SGP_TARGET_BASELINE to NA when SGP is NA (e.g., for retained students). Thanks for Ayaka Nukui for observation and suggestion.
 * Added sgPlot.baseline arguement to visualizeSGP to control whether cohort or baseline referenced SGPs are depicted in student growth plots.
 
-## USER VISIBLE CHANGES:
+## User Visible Changes:
 
 * bubblePlot doesn't load package pdf2 with R version 2.14 or greater until bugs are reconciled with data tips. Use of pdf2 requires R version 2.13.2 or earlier.
 * analyzeSGP calls to studentGrowthProjections for cohort and lagged projections checks for max.order.for.progression with Scale_Change slot in stateData. This will be required when states switch to either assessment consortium.
@@ -465,7 +465,7 @@
 * Updated Maine metadata to include knots and boundaries.
 * Changed internal naming implementation of SGP_BASELINE in combineSGP.
 
-## BUG FIXES:
+## Bug Fixes:
 
 * Refined combineSGP to better accomodate irregular content area and year specifications for both cohort and baseline referenced SGPs.
 * Corrected bug in bubble_plot_configs.BUBBLE_COLOR where specifying a single color didn't provide the correct color.
