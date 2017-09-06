@@ -2,7 +2,7 @@ SGP
 ===
 
 [![Build Status](https://travis-ci.org/CenterForAssessment/SGP.svg?branch=master)](https://travis-ci.org/CenterForAssessment/SGP)
-[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/centerforassessment/SGPdata?branch=master&svg=true)](https://ci.appveyor.com/project/centerforassessment/SGP)
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/centerforassessment/SGP?branch=master&svg=true)](https://ci.appveyor.com/project/centerforassessment/SGP)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/SGP)](https://cran.r-project.org/package=SGP)
 [![Development Version](https://img.shields.io/badge/devel-1.7--6.2-brightgreen.svg)](https://github.com/CenterForAssessment/SGP)
 [![Rstudio mirror downloads](https://cranlogs.r-pkg.org/badges/grand-total/SGP)](https://github.com/metacran/cranlogs.app)
@@ -19,7 +19,7 @@ The **SGP** Package is open source software built for the [**R** software enviro
 
 ## From [CRAN](https://CRAN.R-project.org/package=SGP)
 
-To install the latest stable release of **SGPdata** from [CRAN](https://CRAN.R-project.org/package=SGP)
+To install the latest stable release of **SGP** from [CRAN](https://CRAN.R-project.org/package=SGP)
 
 ```R
 > install.packages("SGP")

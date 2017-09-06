@@ -1,5 +1,5 @@
 ---
-title: "Data Preparation"
+title: "SGP Data Preparation"
 author: "Damian W Betebenner & Adam R Van Iwaarden"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -30,13 +30,26 @@ vignette: >
 
 # Introduction
 
-Wide or Long data preparation
+There a two common formats for representing longitudinal (time dependent) student assessment data: WIDE and LONG format. For WIDE format data, each case/row
+represents a unique student and columns represent variables associated with the student at different times. For LONG format data, time dependent
+data for the student is spread out across multiple rows in the data set. The [SGPdata package](https://centerforassessment.github.io/SGPdata/), installed
+when one installs the **SGP** package, includes exemplar WIDE and LONG data sets (sgpData and sgpData_LONG, respectively) to assist in setting up your data.
+
+Deciding whether to format in WIDE or LONG format is driven by many conditions. In terms of the analyses that can be performed using the **SGP** package,
+the WIDE data format is used by the lower level functions `studentGrowthPercentiles` and `studentGrowthProjections` whereas the higher level wrapper functions
+utilize the LONG data format. For all but the simplest, one-off, analyses, you're likely better off formatting your data in the LONG format and using
+the higher level functions. This is particularly true is you plan on running SGP analyses operationally year after year where LONG data has numerous preparation
+and storage benefits over WIDE data.
 
 # WIDE data format: sgpData
 
+Longitudinal data in WIDE format is usually the most "intuitive" longitudinal format for those new to longitudinal/time-dependent data. Each row of the data set
+provides all the data for the individual case with the variable names indicating what time period the data is from. Though intuitive, the data is often difficult
+to work with, particularly in situations where data is frequently added to the
+
 The data set `sgpData` is an anonymized, panel data set comprisong 5 years of annual, vertically scaled, assessment data in WIDE format. This exemplar data set
-models the format for data used with the lower level [`studentGrowthPercentiles`](https://sgp.io/reference/studentGrowthPercentiles.html) and
-[`studentGrowthProjections`](https://sgp.io/reference/studentGrowthProjections.html) functions.
+models the format for data used with the lower level [`studentGrowthPercentiles`](../reference/studentGrowthPercentiles.html) and
+[`studentGrowthProjections`](../reference/studentGrowthProjections.html) functions.
 
 ```{r}
 head(sgpData)
@@ -63,16 +76,17 @@ Using wide-format data like `sgpData` with the SGP package is, in general, strai
 		grade.progression=c(3,4))
 ```
 
-Please consult [SGP package documentation](https://sgp.io) for more comprehensive documentation on how to use `sgpData` for SGP calculations.
+Please consult the [SGP data analysis vignette](SGP_Data_Analysis.html) for more comprehensive documentation on how to use `sgpData` (and WIDE data formats in general)
+for SGP analyses.
 
 
 # LONG data format: sgpData_LONG
 
 The data set `sgpData_LONG` is an anonymized, panel data set comprising 5 years of annual, vertcially scaled, assessment data in LONG format for two content areas
 (ELA and Mathematics). This exemplar data set models the format for data used with the higher level functions
-[`abcSGP`](https://sgp.io/reference/abcSGP.html), [`prepareSGP`](https://sgp.io/reference/prepareSGP.html),
-[`analyzeSGP`](https://sgp.io/reference/analyzeSGP.html), [`combineSGP`](https://sgp.io/reference/combineSGP.html),
-[`summarizeSGP`](https://sgp.io/reference/summarizeSGP.html), [`visualizeSGP`](https://sgp.io/reference/visualizeSGP.html), and  [`outputSGP`](https://sgp.io/reference/outputSGP.html)
+[`abcSGP`](../reference/abcSGP.html), [`prepareSGP`](../reference/prepareSGP.html),
+[`analyzeSGP`](../reference/analyzeSGP.html), [`combineSGP`](../reference/combineSGP.html),
+[`summarizeSGP`](../reference/summarizeSGP.html), [`visualizeSGP`](../reference/visualizeSGP.html), and  [`outputSGP`](../reference/outputSGP.html)
 
 ```{r}
 head(sgpData_LONG)
@@ -81,14 +95,14 @@ head(sgpData_LONG)
 We recommend LONG formated data for use with operational analyses. Managing data in long format is more simple than data in the wide format. For example,
 when updating analyses with another year of data, the data is appended onto the bottom of the currently existing long data set. All higher level
 functions in the SGP package are designed for use with LONG format data. In addition, these functions often assume the existence of state specific meta-data
-in the embedded [SGPstateData](https://github.com/CenterForAssessment/SGPstateData) meta-data. See the SGP package documentation](https://sgp.io) for more
+in the embedded [SGPstateData](https://github.com/CenterForAssessment/SGPstateData) meta-data. See the SGP package documentation](../reference/index.html) for more
 comprehensive documentation on how to use `sgpData` for SGP calculations.
 
 
 There are 7 *required* variables when using LONG data with SGP analyses: `VALID_CASE`, `CONTENT_AREA`, `YEAR`, `ID`, `SCALE_SCORE`, `GRADE`
 and `ACHIEVEMENT_LEVEL` (on required if running student growth projections). `LAST_NAME` and `FIRST_NAME` are required if creating individual level student
 growth and achievement plots. All other variables are demographic/student categorization variables used for creating student aggregates by the
-[`summarizeSGP`](https://sgp.io/reference/summarizeSGP.html) function.
+[`summarizeSGP`](../reference/summarizeSGP.html) function.
 
 The `sgpData_LONG` data set contains data for 5 years across 2 content areas (ELA and Mathematics)
 
@@ -119,4 +133,5 @@ head(sgpData_INSTRUCTOR_NUMBER)
 
 # Contributions & Requests
 
-If you have a contribution or feature request for the **SGPdata** package, don't hesitate to write or set up an [issue on GitHub](https://github.com/CenterForAssessment/SGPdata/issues).
+If you have a contribution or topic request for this vignette, don't hesitate to write or set up
+an [issue on GitHub](https://github.com/CenterForAssessment/SGP/issues).
