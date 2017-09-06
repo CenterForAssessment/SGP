@@ -30,7 +30,7 @@ vignette: >
 
 # Introduction
 
-**SGP** analyses can be conducted in many ways with several variations. In general, one can always conduct the analyses using the *lower level functions*
+SGP analyses can be conducted in many ways with several variations. In general, one can always conduct the analyses using the *lower level functions*
 ```studentGrowthPercentiles``` and ```studentGrowthProjections```. However, it is often easier to use *higher level functions* (wrapper functions) for the
 lower level functions, particularly for operational analyses. Both approaches to running SGP analyses are covered below.
 

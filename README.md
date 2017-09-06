@@ -12,14 +12,14 @@ SGP
 
 # Overview
 
-The **SGP** Package is open source software built for the [**R** software environment](https://www.r-project.org/). The classes, functions and data within the **SGP** package are used to calculate student growth percentiles and percentile growth projections/trajectories using large scale, longitudinal assessment data. Quantile regression is used to estimate the conditional density associated with each student's achievement history. Percentile growth projections/trajectories are calculated using the derived coefficient matrices and show the percentile growth needed to reach future achievement targets.
+The SGP Package is open source software built for the [**R** software environment](https://www.r-project.org/). The classes, functions and data within the SGP package are used to calculate student growth percentiles and percentile growth projections/trajectories using large scale, longitudinal assessment data. Quantile regression is used to estimate the conditional density associated with each student's achievement history. Percentile growth projections/trajectories are calculated using the derived coefficient matrices and show the percentile growth needed to reach future achievement targets.
 
 
 # Installation
 
 ## From [CRAN](https://CRAN.R-project.org/package=SGP)
 
-To install the latest stable release of **SGP** from [CRAN](https://CRAN.R-project.org/package=SGP)
+To install the latest stable release of SGP from [CRAN](https://CRAN.R-project.org/package=SGP)
 
 ```R
 > install.packages("SGP")
@@ -27,7 +27,7 @@ To install the latest stable release of **SGP** from [CRAN](https://CRAN.R-proje
 
 ## From [Github](https://github.com/CenterForAssessment/SGP/)
 
-To install the development release of **SGP** from [GitHub](https://github.com/CenterForAssessment/SGP/):
+To install the development release of SGP from [GitHub](https://github.com/CenterForAssessment/SGP/):
 
 ```R
 > devtools::install_github("CenterForAssessment/SGP")
@@ -43,7 +43,7 @@ To install the development release of **SGP** from [GitHub](https://github.com/C
 
 # Contributors
 
-The **SGP** Package is crafted with :heart: by:
+The SGP Package is crafted with :heart: by:
 
 * [Damian Betebenner](https://github.com/dbetebenner)
 * [Adam R. Van Iwaarden](https://github.com/adamvi)
