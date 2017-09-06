@@ -1,10 +1,10 @@
 ---
-title: "Getting started with SGP"
+title: "Data Preparation"
 author: "Damian W Betebenner & Adam R Van Iwaarden"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Getting started with SGP}
+  %\VignetteIndexEntry{Data Preparation}
   %\VignetteEngine{knitr::rmarkdown}
   %\usepackage[utf8]{inputenc}
 ---
@@ -30,13 +30,7 @@ vignette: >
 
 # Introduction
 
-The **SGPdata** package contains 4 examplar data set for use with [student growth percentile (SGP)](https://sgp.io) analyses.
-One of the data sets, `sgpData`, specifies data in the WIDE format that's used with the lower level [SGP](https://sgp.io) functions
-`studentGrowthPercentiles` and `studentGrowthProjections`. Two of the data sets, `sgpData_LONG` and `sgptData_LONG`
-specify data in the LONG format used by higher level functions like `abcSGP`, `prepareSGP`, and `analyzeSGP`. The
-last data set, `sgpData_INSTRUCTOR_NUMBER` is a teacher-student lookup table utilized to produce teacher level aggregates.
-The sections that follow discuss each of the 4 data sets in greater depth.
-
+Wide or Long data preparation
 
 # WIDE data format: sgpData
 
