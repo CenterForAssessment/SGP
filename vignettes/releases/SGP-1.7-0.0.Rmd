@@ -21,7 +21,7 @@ title: "SGP 1.7-0.0"
 ```
 
 
-This is the 1.7 release of the **SGP** package posted to CRAN. This [GitHub tagged release](https://github.com/CenterForAssessment/SGP/releases/tag/ceec338)
+This is the 1.7 release of the SGP package posted to CRAN. This [GitHub tagged release](https://github.com/CenterForAssessment/SGP/releases/tag/ceec338)
 can be downloaded via:
 
 ```
