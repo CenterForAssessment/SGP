@@ -1324,6 +1324,11 @@ function(panel.data,         ## REQUIRED
 
     if (!is.null(sgp.less.than.sgp.cohort.size.return) && max.cohort.size < sgp.cohort.size) {
         quantile.data <- data.table(ID=.get.panel.data(ss.data, tmp.num.prior, by.grade, tmp.gp)[[1L]], SGP=as.integer(NA), SGP_NOTE=sgp.less.than.sgp.cohort.size.return, GRADE = as.character(tail(grade.progression, 1)))
+        if (!is.null(additional.vnames.to.return)) {
+          quantile.data <- panel.data[["Panel_Data"]][,c("ID", names(additional.vnames.to.return)), with=FALSE][quantile.data, on="ID"]
+          setnames(quantile.data, names(additional.vnames.to.return), unlist(additional.vnames.to.return))
+        }
+
         if (return.norm.group.identifier) quantile.data[,SGP_NORM_GROUP:=as.factor(paste(tail(paste(year.progression, paste(content_area.progression, grade.progression, sep="_"), sep="/"), tmp.num.prior+1L), collapse="; "))]
         if (!is.null(return.norm.group.preference)) quantile.data[, PREFERENCE := return.norm.group.preference]
         if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, "SGP", "SGP_BASELINE")

@@ -49,7 +49,7 @@ function(tmp.data,
 			} else ng.pref.obj.tf <- FALSE
 			if (!ng.pref.obj.tf) {
 			  tmp.data <- tmp.data[!duplicated(tmp.data, by=key(tmp.data))][, PREFERENCE:=NULL]
-		  	if ("SGP_NOTE" %in% names(tmp.data)) invisible(tmp.data[, SGP_NOTE_TF := NULL])
+		  	if ("SGP_NOTE_TF" %in% names(tmp.data)) invisible(tmp.data[, SGP_NOTE_TF := NULL])
 		  	return(tmp.data)
 			}
 		}
