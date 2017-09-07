@@ -129,7 +129,13 @@ record. That is, multiple teachers could be assigned to the student in a single 
 head(sgpData_INSTRUCTOR_NUMBER)
 ```
 
+# Plotly test
 
+```{r}
+library(plotly)
+p <- plot_ly(economics, x = ~date, y = ~unemploy / pop)
+p
+```
 
 # Contributions & Requests
 

@@ -30,50 +30,89 @@ vignette: >
 
 # Introduction
 
-The **SGP** Package is open source software built for the [**R** software environment](https://www.r-project.org/). The classes, functions and data within the
-**SGP** package are used to calculate student growth percentiles and percentile growth projections/trajectories using large scale, longitudinal assessment data. Quantile regression is used to estimate the conditional density associated with each student's achievement history. Percentile growth projections/trajectories are calculated using the derived coefficient matrices and show the percentile growth needed to reach future achievement targets.
+The SGP package is open source software built for the [**R** software environment](https://www.r-project.org/). Initially released on
+October 17th, 2008, the package is under [active development on GitHub](https://github.com/CenterForAssessment/SGP) by
+[Damian Betebenner](https://github.com/dbetebenner) and [Adam Van Iwaarden](https://github.com/adamvi). The classes, functions and data within the
+SGP package are used to calculate student growth percentiles and percentile growth projections/trajectories using large scale, longitudinal education
+assessment data. Quantile regression is used to estimate the conditional density associated with each student's achievement history. Percentile growth
+projections/trajectories are calculated using the derived coefficient matrices and show the percentile growth needed to reach future achievement targets.
 
-The **SGP** package was first released, October 17th, 2008. The package is under [active development on GitHub](https://github.com/CenterForAssessment/SGP) by
-[Damian Betebenner](https://github.com/dbetebenner) and [Adam Van Iwaarden](https://github.com/adamvi). Being a package built for the
-[**R** software environment](https://www.r-project.org/), to use the **SGP** one needs a computer with **R** installed. **R** is available
-for Window, OSX, and Linux and, being open source, can be compiled for just about any operating system.
-
-Analyses using the **SGP** are designed to be performed (broadly) in a simple two step process:
+Analyses using the SGP are designed to be performed (broadly) in a simple two step process:
 
 1. [Data preparation](SGP_Data_Preparation.html)
 2. [Data analyses](SGP_Data_Analysis.html)
 
-Like with all data analysis, the bulk (> 90%) of the time is spent on data preparation. Once data is prepared correctly, analyses conducted using the **SGP** are intended
-to be simple and straightforward. Analyses that we assist on all follow this two step process.
+Like with all data analysis, the bulk (> 90%) of the time is spent on data preparation. Once data is prepared correctly, analyses conducted using the SGP are intended
+to be simple and straightforward. Analyses that we assist on all follow this two step process. Running SGP calculations is designed to be as simple as possible.
+The following sections provide basic details to get you started with the required software/hardware, data preparation and data analysis.
+
 
 # Software and Hardware Requirements
 
+As a package built for the [**R** software environment](https://www.r-project.org/), to use the SGP one needs a computer with **R** installed. **R** is available
+for Window, OSX, and Linux and, being open source, can be compiled for just about any operating system. Running SGP analyses assumes some familiarity with using
+**R**. If you're new to **R**, you might want to spend some time familiarizing yourself with it before diving into running SGP analyses.
 
+After installing **R**, one needs to install the SGP package. Because the SGP package utilizes several other **R** packages, those will be installed
+concurrently. Installing **R** packages can be done in several different ways depending upon whether one is using a development environment for **R**
+(e.g., [RStudio](https://www.rstudio.com/)), the installed **R** client, or calling **R** from the command line. In all cases, packages can be installed
+from the **R** command prompt (```>```) as follows:
 
+To install the latest stable release of SGP from [CRAN](https://CRAN.R-project.org/package=SGP)
+
+```R
+> install.packages("SGP")
+```
+
+To install the development release of SGP from [GitHub](https://github.com/CenterForAssessment/SGP/):
+
+```R
+> install.packages("devtools") ### If the devtool package isn't installed
+> devtools::install_github("CenterForAssessment/SGP")
+```
 
 
 # Data Preparation: Wide or Long Data
 
 There a two formats for representing longitudinal (time dependent) student assessment data: WIDE and LONG format. For WIDE format data, each case/row
 represents a unique student and columns represent variables associated with the student at different times. For LONG format data, time dependent
-data for the student is spread out across multiple rows in the data set. The [SGPdata Package](https://github.com/CenterForAssessment/SGPdata), installed
-when one installs the [SGP Package](https://github.com/CenterForAssessment/SGP), includes exemplar WIDE and LONG data sets (sgpData and sgpData_LONG, respectively)
-to assist in setting up your data.
+data for the student is spread out across multiple rows in the data set.
 
 In general, the lower level functions in the SGP package that do the calculations, ```studentGrowthPercentiles``` and ```studentGrowthProjections``` require WIDE formatted
-data whereas the higher level functions that are built toward operational analyses require LONG data. If running anything but the basic analyses, we recommend setting
+data whereas the higher level functions (wrappers for the lower level functions) require LONG data. If running anything but the basic analyses, we recommend setting
 up your data in the LONG format as much of the capability of the package is built around the user supplying data in that way.
 
+To assist in setting up your data, the [SGPdata package](https://centerforassessment.github.io/SGPdata/), installed when one installs the SGP package,
+includes exemplar WIDE and LONG data sets (sgpData and sgpData_LONG, respectively). Examples in the vignettes as well as validation tests done within the SGP
+package use these exemplar data sets. Detailed vignettes on WIDE and LONG data preparation are available at:
 
+* [WIDE data preparation](SGP_Data_Preparation.html#wide-data-format-sgpdata)
+* [LONG data preparation](SGP_Data_Preparation.html#long-data-format-sgpdata_long)
+
+Following proper data preparation, SGP analyses are straightforward. In almost all cases, any errors that come up in data analysis usually revert back to data preparation
+issues so that there is usually some back and forth between data preparation and analysis.
 
 
 # Data Analysis
 
+## Student Growth Percentiles
+
+
+## Student Growth Projections/Percentile Growth Trajectories
+
 
 # Advanced SGP Analysis
+
+The SGP package
+
+## Standard errors for student growth percentiles
+
+## SIMEX measurement error correction
+
+## End-of-course test taking patterns
 
 
 # Contributions & Requests
 
-If you have a topic for an **SGP** vignette that you'd like to see, don't hesitate to write or set up an
+If you have a topic for an SGP vignette that you'd like to see, don't hesitate to write or set up an
 [issue on GitHub](https://github.com/CenterForAssessment/SGPdata/issues).
