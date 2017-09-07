@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="https://centerforassessment.github.io/public/favicon.png" sizes="16x16">
-<title>SGP • Data Preparation</title>
+<title>SGP • SGP Data Preparation</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="../packagePages.css" rel="stylesheet">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 <!-- Fonts --><link href="https://fonts.googleapis.com/css?family=Josefin+Sans:400" rel="stylesheet" type="text/css">
@@ -101,10 +101,10 @@
       </header><div class="row">
   <div class="col-md-9">
     <div class="page-header toc-ignore">
-      <h1>Data Preparation</h1>
+      <h1>SGP Data Preparation</h1>
                         <h4 class="author">Damian W Betebenner &amp; Adam R Van Iwaarden</h4>
             
-            <h4 class="date">2017-09-05</h4>
+            <h4 class="date">2017-09-06</h4>
           </div>
 
     
@@ -113,11 +113,13 @@
 <div id="introduction" class="section level1">
 <h1 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h1>
-<p>Wide or Long data preparation</p>
+<p>There a two common formats for representing longitudinal (time dependent) student assessment data: WIDE and LONG format. For WIDE format data, each case/row represents a unique student and columns represent variables associated with the student at different times. For LONG format data, time dependent data for the student is spread out across multiple rows in the data set. The <a href="https://centerforassessment.github.io/SGPdata/">SGPdata package</a>, installed when one installs the <strong>SGP</strong> package, includes exemplar WIDE and LONG data sets (sgpData and sgpData_LONG, respectively) to assist in setting up your data.</p>
+<p>Deciding whether to format in WIDE or LONG format is driven by many conditions. In terms of the analyses that can be performed using the <strong>SGP</strong> package, the WIDE data format is used by the lower level functions <code>studentGrowthPercentiles</code> and <code>studentGrowthProjections</code> whereas the higher level wrapper functions utilize the LONG data format. For all but the simplest, one-off, analyses, you’re likely better off formatting your data in the LONG format and using the higher level functions. This is particularly true is you plan on running SGP analyses operationally year after year where LONG data has numerous preparation and storage benefits over WIDE data.</p>
 </div>
 <div id="wide-data-format-sgpdata" class="section level1">
 <h1 class="hasAnchor">
 <a href="#wide-data-format-sgpdata" class="anchor"></a>WIDE data format: sgpData</h1>
+<p>Longitudinal data in WIDE format is usually the most “intuitive” longitudinal format for those new to longitudinal/time-dependent data. Each row of the data set provides all the data for the individual case with the variable names indicating what time period the data is from. Though intuitive, the data is often difficult to work with, particularly in situations where data is frequently added to the</p>
 <p>The data set <code>sgpData</code> is an anonymized, panel data set comprisong 5 years of annual, vertically scaled, assessment data in WIDE format. This exemplar data set models the format for data used with the lower level <a href="https://sgp.io/reference/studentGrowthPercentiles.html"><code>studentGrowthPercentiles</code></a> and <a href="https://sgp.io/reference/studentGrowthProjections.html"><code>studentGrowthProjections</code></a> functions.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">&gt;</span><span class="st"> </span><span class="kw">head</span>(sgpData)
        ID GRADE_<span class="dv">2013</span> GRADE_<span class="dv">2014</span> GRADE_<span class="dv">2015</span> GRADE_<span class="dv">2016</span> GRADE_<span class="dv">2017</span> SS_<span class="dv">2013</span> SS_<span class="dv">2014</span> SS_<span class="dv">2015</span> SS_<span class="dv">2016</span> SS_<span class="dv">2017</span>
@@ -140,7 +142,7 @@
         sgp.labels=list(my.year=2015, my.subject="Reading"),
         percentile.cuts=c(1,35,65,99),
         grade.progression=c(3,4))</code></pre>
-<p>Please consult <a href="https://sgp.io">SGP package documentation</a> for more comprehensive documentation on how to use <code>sgpData</code> for SGP calculations.</p>
+<p>Please consult the <a href="SGP_Data_Analysis.html">SGP data analysis vignette</a> for more comprehensive documentation on how to use <code>sgpData</code> (and WIDE data formats in general) for SGP analyses.</p>
 </div>
 <div id="long-data-format-sgpdata_long" class="section level1">
 <h1 class="hasAnchor">
