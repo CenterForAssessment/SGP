@@ -12,12 +12,50 @@
 
 <meta name="author" content="Damian W Betebenner &amp; Adam R Van Iwaarden" />
 
-<meta name="date" content="2017-09-05" />
+<meta name="date" content="2017-09-06" />
 
 <title>Getting started with SGP</title>
 
 
 
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
 
 
 
@@ -32,38 +70,66 @@
 
 <h1 class="title toc-ignore">Getting started with SGP</h1>
 <h4 class="author"><em>Damian W Betebenner &amp; Adam R Van Iwaarden</em></h4>
-<h4 class="date"><em>2017-09-05</em></h4>
+<h4 class="date"><em>2017-09-06</em></h4>
 
 
 
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>The <strong>SGP</strong> Package is open source software built for the <a href="https://www.r-project.org/"><strong>R</strong> software environment</a>. The classes, functions and data within the <strong>SGP</strong> package are used to calculate student growth percentiles and percentile growth projections/trajectories using large scale, longitudinal assessment data. Quantile regression is used to estimate the conditional density associated with each student’s achievement history. Percentile growth projections/trajectories are calculated using the derived coefficient matrices and show the percentile growth needed to reach future achievement targets.</p>
-<p>The <strong>SGP</strong> package was first released, October 17th, 2008. The package is under <a href="https://github.com/CenterForAssessment/SGP">active development on GitHub</a> by <a href="https://github.com/dbetebenner">Damian Betebenner</a> and <a href="https://github.com/adamvi">Adam Van Iwaarden</a>. Being a package built for the <a href="https://www.r-project.org/"><strong>R</strong> software environment</a>, to use the <strong>SGP</strong> one needs a computer with <strong>R</strong> installed. <strong>R</strong> is available for Window, OSX, and Linux and, being open source, can be compiled for just about any operating system.</p>
-<p>Analyses using the <strong>SGP</strong> are designed to be performed (broadly) in a simple two step process:</p>
+<p>The SGP package is open source software built for the <a href="https://www.r-project.org/"><strong>R</strong> software environment</a>. Initially released on October 17th, 2008, the package is under <a href="https://github.com/CenterForAssessment/SGP">active development on GitHub</a> by <a href="https://github.com/dbetebenner">Damian Betebenner</a> and <a href="https://github.com/adamvi">Adam Van Iwaarden</a>. The classes, functions and data within the SGP package are used to calculate student growth percentiles and percentile growth projections/trajectories using large scale, longitudinal education assessment data. Quantile regression is used to estimate the conditional density associated with each student’s achievement history. Percentile growth projections/trajectories are calculated using the derived coefficient matrices and show the percentile growth needed to reach future achievement targets.</p>
+<p>Analyses using the SGP are designed to be performed (broadly) in a simple two step process:</p>
 <ol style="list-style-type: decimal">
 <li><a href="SGP_Data_Preparation.html">Data preparation</a></li>
 <li><a href="SGP_Data_Analysis.html">Data analyses</a></li>
 </ol>
-<p>Like with all data analysis, the bulk (&gt; 90%) of the time is spent on data preparation. Once data is prepared correctly, analyses conducted using the <strong>SGP</strong> are intended to be simple and straightforward. Analyses that we assist on all follow this two step process.</p>
+<p>Like with all data analysis, the bulk (&gt; 90%) of the time is spent on data preparation. Once data is prepared correctly, analyses conducted using the SGP are intended to be simple and straightforward. Analyses that we assist on all follow this two step process. Running SGP calculations is designed to be as simple as possible. The following sections provide basic details to get you started with the required software/hardware, data preparation and data analysis.</p>
 </div>
 <div id="software-and-hardware-requirements" class="section level1">
 <h1>Software and Hardware Requirements</h1>
+<p>As a package built for the <a href="https://www.r-project.org/"><strong>R</strong> software environment</a>, to use the SGP one needs a computer with <strong>R</strong> installed. <strong>R</strong> is available for Window, OSX, and Linux and, being open source, can be compiled for just about any operating system. Running SGP analyses assumes some familiarity with using <strong>R</strong>. If you’re new to <strong>R</strong>, you might want to spend some time familiarizing yourself with it before diving into running SGP analyses.</p>
+<p>After installing <strong>R</strong>, one needs to install the SGP package. Because the SGP package utilizes several other <strong>R</strong> packages, those will be installed concurrently. Installing <strong>R</strong> packages can be done in several different ways depending upon whether one is using a development environment for <strong>R</strong> (e.g., <a href="https://www.rstudio.com/">RStudio</a>), the installed <strong>R</strong> client, or calling <strong>R</strong> from the command line. In all cases, packages can be installed from the <strong>R</strong> command prompt (<code>&gt;</code>) as follows:</p>
+<p>To install the latest stable release of SGP from <a href="https://CRAN.R-project.org/package=SGP">CRAN</a></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">&gt;</span><span class="st"> </span><span class="kw">install.packages</span>(<span class="st">&quot;SGP&quot;</span>)</code></pre></div>
+<p>To install the development release of SGP from <a href="https://github.com/CenterForAssessment/SGP/">GitHub</a>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">&gt;</span><span class="st"> </span><span class="kw">install.packages</span>(<span class="st">&quot;devtools&quot;</span>) ### If the devtool package isn't installed
+<span class="op">&gt;</span><span class="st"> </span>devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;CenterForAssessment/SGP&quot;</span>)</code></pre></div>
 </div>
 <div id="data-preparation-wide-or-long-data" class="section level1">
 <h1>Data Preparation: Wide or Long Data</h1>
-<p>There a two formats for representing longitudinal (time dependent) student assessment data: WIDE and LONG format. For WIDE format data, each case/row represents a unique student and columns represent variables associated with the student at different times. For LONG format data, time dependent data for the student is spread out across multiple rows in the data set. The <a href="https://github.com/CenterForAssessment/SGPdata">SGPdata Package</a>, installed when one installs the <a href="https://github.com/CenterForAssessment/SGP">SGP Package</a>, includes exemplar WIDE and LONG data sets (sgpData and sgpData_LONG, respectively) to assist in setting up your data.</p>
-<p>In general, the lower level functions in the SGP package that do the calculations, <code>studentGrowthPercentiles</code> and <code>studentGrowthProjections</code> require WIDE formatted data whereas the higher level functions that are built toward operational analyses require LONG data. If running anything but the basic analyses, we recommend setting up your data in the LONG format as much of the capability of the package is built around the user supplying data in that way.</p>
+<p>There a two formats for representing longitudinal (time dependent) student assessment data: WIDE and LONG format. For WIDE format data, each case/row represents a unique student and columns represent variables associated with the student at different times. For LONG format data, time dependent data for the student is spread out across multiple rows in the data set.</p>
+<p>In general, the lower level functions in the SGP package that do the calculations, <code>studentGrowthPercentiles</code> and <code>studentGrowthProjections</code> require WIDE formatted data whereas the higher level functions (wrappers for the lower level functions) require LONG data. If running anything but the basic analyses, we recommend setting up your data in the LONG format as much of the capability of the package is built around the user supplying data in that way.</p>
+<p>To assist in setting up your data, the <a href="https://centerforassessment.github.io/SGPdata/">SGPdata package</a>, installed when one installs the SGP package, includes exemplar WIDE and LONG data sets (sgpData and sgpData_LONG, respectively). Examples in the vignettes as well as validation tests done within the SGP package use these exemplar data sets. Detailed vignettes on WIDE and LONG data preparation are available at:</p>
+<ul>
+<li><a href="SGP_Data_Preparation.html#wide-data-format-sgpdata">WIDE data preparation</a></li>
+<li><a href="SGP_Data_Preparation.html#long-data-format-sgpdata_long">LONG data preparation</a></li>
+</ul>
+<p>Following proper data preparation, SGP analyses are straightforward. In almost all cases, any errors that come up in data analysis usually revert back to data preparation issues so that there is usually some back and forth between data preparation and analysis.</p>
 </div>
 <div id="data-analysis" class="section level1">
 <h1>Data Analysis</h1>
+<div id="student-growth-percentiles" class="section level2">
+<h2>Student Growth Percentiles</h2>
+</div>
+<div id="student-growth-projectionspercentile-growth-trajectories" class="section level2">
+<h2>Student Growth Projections/Percentile Growth Trajectories</h2>
+</div>
 </div>
 <div id="advanced-sgp-analysis" class="section level1">
 <h1>Advanced SGP Analysis</h1>
+<p>The SGP package</p>
+<div id="standard-errors-for-student-growth-percentiles" class="section level2">
+<h2>Standard errors for student growth percentiles</h2>
+</div>
+<div id="simex-measurement-error-correction" class="section level2">
+<h2>SIMEX measurement error correction</h2>
+</div>
+<div id="end-of-course-test-taking-patterns" class="section level2">
+<h2>End-of-course test taking patterns</h2>
+</div>
 </div>
 <div id="contributions-requests" class="section level1">
 <h1>Contributions &amp; Requests</h1>
-<p>If you have a topic for an <strong>SGP</strong> vignette that you’d like to see, don’t hesitate to write or set up an <a href="https://github.com/CenterForAssessment/SGPdata/issues">issue on GitHub</a>.</p>
+<p>If you have a topic for an SGP vignette that you’d like to see, don’t hesitate to write or set up an <a href="https://github.com/CenterForAssessment/SGPdata/issues">issue on GitHub</a>.</p>
 </div>
 
 

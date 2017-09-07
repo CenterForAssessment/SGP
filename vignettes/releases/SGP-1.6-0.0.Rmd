@@ -21,7 +21,7 @@ title: "SGP 1.6-0.0"
 ```
 
 
-This is the 1.6 release of the **SGP** package posted to CRAN. This is the third release to be officially [tagged on GitHub](https://github.com/CenterForAssessment/SGP/releases/tag/87fd67a). Download from GitHub via:
+This is the 1.6 release of the SGP package posted to CRAN. This is the third release to be officially [tagged on GitHub](https://github.com/CenterForAssessment/SGP/releases/tag/87fd67a). Download from GitHub via:
 
 ```
 > devtools::install_github("CenterForAssessment/SGP", ref="87fd67a")

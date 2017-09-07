@@ -33,9 +33,9 @@ vignette: >
 There a two common formats for representing longitudinal (time dependent) student assessment data: WIDE and LONG format. For WIDE format data, each case/row
 represents a unique student and columns represent variables associated with the student at different times. For LONG format data, time dependent
 data for the student is spread out across multiple rows in the data set. The [SGPdata package](https://centerforassessment.github.io/SGPdata/), installed
-when one installs the **SGP** package, includes exemplar WIDE and LONG data sets (sgpData and sgpData_LONG, respectively) to assist in setting up your data.
+when one installs the SGP package, includes exemplar WIDE and LONG data sets (sgpData and sgpData_LONG, respectively) to assist in setting up your data.
 
-Deciding whether to format in WIDE or LONG format is driven by many conditions. In terms of the analyses that can be performed using the **SGP** package,
+Deciding whether to format in WIDE or LONG format is driven by many conditions. In terms of the analyses that can be performed using the SGP package,
 the WIDE data format is used by the lower level functions `studentGrowthPercentiles` and `studentGrowthProjections` whereas the higher level wrapper functions
 utilize the LONG data format. For all but the simplest, one-off, analyses, you're likely better off formatting your data in the LONG format and using
 the higher level functions. This is particularly true is you plan on running SGP analyses operationally year after year where LONG data has numerous preparation
@@ -129,7 +129,13 @@ record. That is, multiple teachers could be assigned to the student in a single 
 head(sgpData_INSTRUCTOR_NUMBER)
 ```
 
+# Plotly test
 
+```{r}
+library(plotly)
+p <- plot_ly(economics, x = ~date, y = ~unemploy / pop)
+p
+```
 
 # Contributions & Requests
 
