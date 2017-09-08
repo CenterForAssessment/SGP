@@ -104,7 +104,7 @@
       <h1>SGP Data Analysis</h1>
                         <h4 class="author">Damian W Betebenner &amp; Adam R Van Iwaarden</h4>
             
-            <h4 class="date">2017-09-06</h4>
+            <h4 class="date">2017-09-07</h4>
           </div>
 
     
@@ -113,7 +113,7 @@
 <div id="introduction" class="section level1">
 <h1 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h1>
-<p>SGP analyses can be conducted in many ways with several variations. In general, one can always conduct the analyses using the <em>lower level functions</em> <code>studentGrowthPercentiles</code> and <code>studentGrowthProjections</code>. However, it is often easier to use <em>higher level functions</em> (wrapper functions) for the lower level functions, particularly for operational analyses. Both approaches to running SGP analyses are covered below.</p>
+<p>SGP analyses can be conducted in many ways with several variations. In general, one can always conduct the analyses using the <em>lower level functions</em> <a href="../reference/studentGrowthPercentiles.html"><code>studentGrowthPercentiles</code></a> and <a href="../reference/studentGrowthProjections.html"><code>studentGrowthProjections</code></a>. However, it is often easier to use <em>higher level functions</em> (wrapper functions) for the lower level functions, particularly for operational analyses. Both approaches to running SGP analyses are discussed below.</p>
 </div>
 <div id="sgp-analysis-using-lower-level-functions" class="section level1">
 <h1 class="hasAnchor">
@@ -138,7 +138,7 @@
 <h2 class="hasAnchor">
 <a href="#sgp-analysis-in-1-step" class="anchor"></a>SGP Analysis in 1 Step</h2>
 <p>Because these steps are almost always conducted simultaneously in operational SGP analyses, the SGP Package has wrapper functions <a href="reference/abcSGP.html"><code>abcSGP</code></a> and <a href="../reference/updateSGP.html"><code>updateSGP</code></a> that “wrap” the above 6 steps into a single function call, simplifying the source code associated with the analysis.</p>
-<pre><code>#####################################################################################
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">#####################################################################################
 ###
 ### R Script for Demonstration SGP analyses
 ###
@@ -146,21 +146,21 @@
 
 ### Load SGP &amp; SGPdata packages
 
-require(SGP)
-require(SGPdata)
+<span class="kw">require</span>(SGP)
+<span class="kw">require</span>(SGPdata)
 
 
 ### abcSGP
 
-Demonstration_SGP &lt;- abcSGP(
-    sgp_object=sgpData_LONG,
-    data_supplementary=list(INSTRUCTOR_NUMBER=sgpData_INSTRUCTOR_NUMBER),
-    parallel.config=list(BACKEND="PARALLEL", WORKERS=list(PERCENTILES=4, BASELINE_PERCENTILES=4, PROJECTIONS=4, LAGGED_PROJECTIONS=4, SGP_SCALE_SCORE_TARGETS=4, SUMMARY=4, GA_PLOTS=4, SG_PLOTS=1)))
+Demonstration_SGP &lt;-<span class="st"> </span><span class="kw"><a href="../reference/abcSGP.html">abcSGP</a></span>(
+    <span class="dt">sgp_object=</span>sgpData_LONG,
+    <span class="dt">data_supplementary=</span><span class="kw">list</span>(<span class="dt">INSTRUCTOR_NUMBER=</span>sgpData_INSTRUCTOR_NUMBER),
+    <span class="dt">parallel.config=</span><span class="kw">list</span>(<span class="dt">BACKEND=</span><span class="st">"PARALLEL"</span>, <span class="dt">WORKERS=</span><span class="kw">list</span>(<span class="dt">PERCENTILES=</span><span class="dv">4</span>, <span class="dt">BASELINE_PERCENTILES=</span><span class="dv">4</span>, <span class="dt">PROJECTIONS=</span><span class="dv">4</span>, <span class="dt">LAGGED_PROJECTIONS=</span><span class="dv">4</span>, <span class="dt">SGP_SCALE_SCORE_TARGETS=</span><span class="dv">4</span>, <span class="dt">SUMMARY=</span><span class="dv">4</span>, <span class="dt">GA_PLOTS=</span><span class="dv">4</span>, <span class="dt">SG_PLOTS=</span><span class="dv">1</span>)))
 
 
 ### Save results
 
-save(Demonstration_SGP, file="Data/Demonstration_SGP.Rdata")</code></pre>
+<span class="kw">save</span>(Demonstration_SGP, <span class="dt">file=</span><span class="st">"Data/Demonstration_SGP.Rdata"</span>)</code></pre></div>
 <p>Running this script will run the six steps mentioned earlier by performing the following:</p>
 <ol style="list-style-type: decimal">
 <li>

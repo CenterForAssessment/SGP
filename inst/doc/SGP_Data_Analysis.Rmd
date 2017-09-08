@@ -31,8 +31,9 @@ vignette: >
 # Introduction
 
 SGP analyses can be conducted in many ways with several variations. In general, one can always conduct the analyses using the *lower level functions*
-```studentGrowthPercentiles``` and ```studentGrowthProjections```. However, it is often easier to use *higher level functions* (wrapper functions) for the
-lower level functions, particularly for operational analyses. Both approaches to running SGP analyses are covered below.
+[```studentGrowthPercentiles```](../reference/studentGrowthPercentiles.html) and [```studentGrowthProjections```](../reference/studentGrowthProjections.html).
+However, it is often easier to use *higher level functions* (wrapper functions) for the lower level functions, particularly for operational analyses.
+Both approaches to running SGP analyses are discussed below.
 
 
 # SGP analysis using lower level functions
@@ -59,7 +60,7 @@ Because these steps are almost always conducted simultaneously in operational SG
 that "wrap" the above 6 steps into a single function call, simplifying the source code associated with the analysis.
 
 
-```
+```{r eval=FALSE}
 #####################################################################################
 ###
 ### R Script for Demonstration SGP analyses

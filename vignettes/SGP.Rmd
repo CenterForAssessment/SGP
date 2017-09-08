@@ -37,7 +37,7 @@ SGP package are used to calculate student growth percentiles and percentile grow
 assessment data. Quantile regression is used to estimate the conditional density associated with each student's achievement history. Percentile growth
 projections/trajectories are calculated using the derived coefficient matrices and show the percentile growth needed to reach future achievement targets.
 
-Analyses using the SGP are designed to be performed (broadly) in a simple two step process:
+SGP analyses are designed to be performed (broadly) in a simple two step process:
 
 1. [Data preparation](SGP_Data_Preparation.html)
 2. [Data analyses](SGP_Data_Analysis.html)
@@ -49,9 +49,10 @@ The following sections provide basic details to get you started with the require
 
 # Software and Hardware Requirements
 
-As a package built for the [**R** software environment](https://www.r-project.org/), to use the SGP one needs a computer with **R** installed. **R** is available
+As a package built for the [**R** software environment](https://www.r-project.org/), to use the SGP package one needs a computer with **R** installed. **R** is available
 for Window, OSX, and Linux and, being open source, can be compiled for just about any operating system. Running SGP analyses assumes some familiarity with using
-**R**. If you're new to **R**, you might want to spend some time familiarizing yourself with it before diving into running SGP analyses.
+**R**. If you're new to **R**, you might want to spend some time familiarizing yourself with it before diving into running SGP analyses. There are several
+resources available on [CRAN](https://cran.r-project.org/manuals.html) for getting started with **R**.
 
 After installing **R**, one needs to install the SGP package. Because the SGP package utilizes several other **R** packages, those will be installed
 concurrently. Installing **R** packages can be done in several different ways depending upon whether one is using a development environment for **R**
@@ -60,15 +61,15 @@ from the **R** command prompt (```>```) as follows:
 
 To install the latest stable release of SGP from [CRAN](https://CRAN.R-project.org/package=SGP)
 
-```R
-> install.packages("SGP")
+```{r eval=FALSE}
+install.packages("SGP")
 ```
 
 To install the development release of SGP from [GitHub](https://github.com/CenterForAssessment/SGP/):
 
-```R
-> install.packages("devtools") ### If the devtool package isn't installed
-> devtools::install_github("CenterForAssessment/SGP")
+```{r eval=FALSE}
+install.packages("devtools") ### If the devtool package isn't installed
+devtools::install_github("CenterForAssessment/SGP")
 ```
 
 
