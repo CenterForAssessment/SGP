@@ -12,7 +12,7 @@
 
 <meta name="author" content="Damian W Betebenner &amp; Adam R Van Iwaarden" />
 
-<meta name="date" content="2017-09-06" />
+<meta name="date" content="2017-09-07" />
 
 <title>Getting started with SGP</title>
 
@@ -70,14 +70,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Getting started with SGP</h1>
 <h4 class="author"><em>Damian W Betebenner &amp; Adam R Van Iwaarden</em></h4>
-<h4 class="date"><em>2017-09-06</em></h4>
+<h4 class="date"><em>2017-09-07</em></h4>
 
 
 
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
 <p>The SGP package is open source software built for the <a href="https://www.r-project.org/"><strong>R</strong> software environment</a>. Initially released on October 17th, 2008, the package is under <a href="https://github.com/CenterForAssessment/SGP">active development on GitHub</a> by <a href="https://github.com/dbetebenner">Damian Betebenner</a> and <a href="https://github.com/adamvi">Adam Van Iwaarden</a>. The classes, functions and data within the SGP package are used to calculate student growth percentiles and percentile growth projections/trajectories using large scale, longitudinal education assessment data. Quantile regression is used to estimate the conditional density associated with each student’s achievement history. Percentile growth projections/trajectories are calculated using the derived coefficient matrices and show the percentile growth needed to reach future achievement targets.</p>
-<p>Analyses using the SGP are designed to be performed (broadly) in a simple two step process:</p>
+<p>SGP analyses are designed to be performed (broadly) in a simple two step process:</p>
 <ol style="list-style-type: decimal">
 <li><a href="SGP_Data_Preparation.html">Data preparation</a></li>
 <li><a href="SGP_Data_Analysis.html">Data analyses</a></li>
@@ -86,7 +86,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </div>
 <div id="software-and-hardware-requirements" class="section level1">
 <h1>Software and Hardware Requirements</h1>
-<p>As a package built for the <a href="https://www.r-project.org/"><strong>R</strong> software environment</a>, to use the SGP one needs a computer with <strong>R</strong> installed. <strong>R</strong> is available for Window, OSX, and Linux and, being open source, can be compiled for just about any operating system. Running SGP analyses assumes some familiarity with using <strong>R</strong>. If you’re new to <strong>R</strong>, you might want to spend some time familiarizing yourself with it before diving into running SGP analyses.</p>
+<p>As a package built for the <a href="https://www.r-project.org/"><strong>R</strong> software environment</a>, to use the SGP package one needs a computer with <strong>R</strong> installed. <strong>R</strong> is available for Window, OSX, and Linux and, being open source, can be compiled for just about any operating system. Running SGP analyses assumes some familiarity with using <strong>R</strong>. If you’re new to <strong>R</strong>, you might want to spend some time familiarizing yourself with it before diving into running SGP analyses. There are several resources available on <a href="https://cran.r-project.org/manuals.html">CRAN</a> for getting started with <strong>R</strong>.</p>
 <p>After installing <strong>R</strong>, one needs to install the SGP package. Because the SGP package utilizes several other <strong>R</strong> packages, those will be installed concurrently. Installing <strong>R</strong> packages can be done in several different ways depending upon whether one is using a development environment for <strong>R</strong> (e.g., <a href="https://www.rstudio.com/">RStudio</a>), the installed <strong>R</strong> client, or calling <strong>R</strong> from the command line. In all cases, packages can be installed from the <strong>R</strong> command prompt (<code>&gt;</code>) as follows:</p>
 <p>To install the latest stable release of SGP from <a href="https://CRAN.R-project.org/package=SGP">CRAN</a></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">&gt;</span><span class="st"> </span><span class="kw">install.packages</span>(<span class="st">&quot;SGP&quot;</span>)</code></pre></div>
