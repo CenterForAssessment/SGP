@@ -289,7 +289,7 @@ function(sgp_object,
 	if (!is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]])) {
 		if (SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]!={tmp.last.year <- tail(sort(unique(sgp_object@Data, by='YEAR')[['YEAR']]), 1)}) {
 			sgp.percentiles.equated <- FALSE
-      if ("SCALE_SCORE_EQUATED" %in% names(sgp_object@Data)) sgp_object@Data[["SCALE_SCORE_EQUATED"]][sgp_object@Data[["YEAR"]] >= tmp.last.year] <- sgp_object@Data[["SCALE_SCORE"]][sgp_object@Data[["YEAR"]] >= tmp.last.year]
+            if ("SCALE_SCORE_EQUATED" %in% names(sgp_object@Data)) sgp_object@Data[["SCALE_SCORE_EQUATED"]][sgp_object@Data[["YEAR"]] >= tmp.last.year] <- sgp_object@Data[["SCALE_SCORE"]][sgp_object@Data[["YEAR"]] >= tmp.last.year]
 		} else {
 			if (!identical(sgp.percentiles.equated, FALSE)) sgp.percentiles.equated <- TRUE
 		}

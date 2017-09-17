@@ -12,12 +12,50 @@
 
 <meta name="author" content="Damian W Betebenner &amp; Adam R Van Iwaarden" />
 
-<meta name="date" content="2017-09-06" />
+<meta name="date" content="2017-09-08" />
 
 <title>SGP Data Analysis</title>
 
 
 
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
 
 
 
@@ -32,13 +70,13 @@
 
 <h1 class="title toc-ignore">SGP Data Analysis</h1>
 <h4 class="author"><em>Damian W Betebenner &amp; Adam R Van Iwaarden</em></h4>
-<h4 class="date"><em>2017-09-06</em></h4>
+<h4 class="date"><em>2017-09-08</em></h4>
 
 
 
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>SGP analyses can be conducted in many ways with several variations. In general, one can always conduct the analyses using the <em>lower level functions</em> <code>studentGrowthPercentiles</code> and <code>studentGrowthProjections</code>. However, it is often easier to use <em>higher level functions</em> (wrapper functions) for the lower level functions, particularly for operational analyses. Both approaches to running SGP analyses are covered below.</p>
+<p>SGP analyses can be conducted in many ways with several variations. In general, one can always conduct the analyses using the <em>lower level functions</em> <a href="https://sgp.io/reference/studentGrowthPercentiles.html"><code>studentGrowthPercentiles</code></a> and <a href="https://sgp.io/reference/studentGrowthProjections.html"><code>studentGrowthProjections</code></a>. However, it is often easier to use <em>higher level functions</em> (wrapper functions) for the lower level functions, particularly for operational analyses. Both approaches to running SGP analyses are discussed below.</p>
 </div>
 <div id="sgp-analysis-using-lower-level-functions" class="section level1">
 <h1>SGP analysis using lower level functions</h1>
@@ -48,18 +86,18 @@
 <div id="sgp-analysis-in-6-steps" class="section level2">
 <h2>SGP Analysis in 6 Steps</h2>
 <ol style="list-style-type: decimal">
-<li><a href="../reference/prepareSGP.html"><code>prepareSGP</code></a></li>
-<li><a href="../reference/analyzeSGP.html"><code>analyzeSGP</code></a></li>
-<li><a href="../reference/combineSGP.html"><code>combineSGP</code></a></li>
-<li><a href="../reference/summarizeSGP.html"><code>summarizeSGP</code></a></li>
-<li><a href="../reference/visualizeSGP.html"><code>visualizeSGP</code></a></li>
-<li><a href="../reference/outputSGP.html"><code>outputSGP</code></a></li>
+<li><a href="https://sgp.io/reference/prepareSGP.html"><code>prepareSGP</code></a></li>
+<li><a href="https://sgp.io/reference/analyzeSGP.html"><code>analyzeSGP</code></a></li>
+<li><a href="https://sgp.io/reference/combineSGP.html"><code>combineSGP</code></a></li>
+<li><a href="https://sgp.io/reference/summarizeSGP.html"><code>summarizeSGP</code></a></li>
+<li><a href="https://sgp.io/reference/visualizeSGP.html"><code>visualizeSGP</code></a></li>
+<li><a href="https://sgp.io/reference/outputSGP.html"><code>outputSGP</code></a></li>
 </ol>
 </div>
 <div id="sgp-analysis-in-1-step" class="section level2">
 <h2>SGP Analysis in 1 Step</h2>
-<p>Because these steps are almost always conducted simultaneously in operational SGP analyses, the SGP Package has wrapper functions <a href="reference/abcSGP.html"><code>abcSGP</code></a> and <a href="../reference/updateSGP.html"><code>updateSGP</code></a> that “wrap” the above 6 steps into a single function call, simplifying the source code associated with the analysis.</p>
-<pre><code>#####################################################################################
+<p>Because these steps are almost always conducted simultaneously in operational SGP analyses, the SGP Package has wrapper functions <a href="reference/abcSGP.html"><code>abcSGP</code></a> and <a href="https://sgp.io/reference/updateSGP.html"><code>updateSGP</code></a> that “wrap” the above 6 steps into a single function call, simplifying the source code associated with the analysis.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">#####################################################################################
 ###
 ### R Script for Demonstration SGP analyses
 ###
@@ -67,29 +105,29 @@
 
 ### Load SGP &amp; SGPdata packages
 
-require(SGP)
-require(SGPdata)
+<span class="kw">require</span>(SGP)
+<span class="kw">require</span>(SGPdata)
 
 
 ### abcSGP
 
-Demonstration_SGP &lt;- abcSGP(
-    sgp_object=sgpData_LONG,
-    data_supplementary=list(INSTRUCTOR_NUMBER=sgpData_INSTRUCTOR_NUMBER),
-    parallel.config=list(BACKEND=&quot;PARALLEL&quot;, WORKERS=list(PERCENTILES=4, BASELINE_PERCENTILES=4, PROJECTIONS=4, LAGGED_PROJECTIONS=4, SGP_SCALE_SCORE_TARGETS=4, SUMMARY=4, GA_PLOTS=4, SG_PLOTS=1)))
+Demonstration_SGP &lt;-<span class="st"> </span><span class="kw">abcSGP</span>(
+    <span class="dt">sgp_object=</span>sgpData_LONG,
+    <span class="dt">data_supplementary=</span><span class="kw">list</span>(<span class="dt">INSTRUCTOR_NUMBER=</span>sgpData_INSTRUCTOR_NUMBER),
+    <span class="dt">parallel.config=</span><span class="kw">list</span>(<span class="dt">BACKEND=</span><span class="st">&quot;PARALLEL&quot;</span>, <span class="dt">WORKERS=</span><span class="kw">list</span>(<span class="dt">PERCENTILES=</span><span class="dv">4</span>, <span class="dt">BASELINE_PERCENTILES=</span><span class="dv">4</span>, <span class="dt">PROJECTIONS=</span><span class="dv">4</span>, <span class="dt">LAGGED_PROJECTIONS=</span><span class="dv">4</span>, <span class="dt">SGP_SCALE_SCORE_TARGETS=</span><span class="dv">4</span>, <span class="dt">SUMMARY=</span><span class="dv">4</span>, <span class="dt">GA_PLOTS=</span><span class="dv">4</span>, <span class="dt">SG_PLOTS=</span><span class="dv">1</span>)))
 
 
 ### Save results
 
-save(Demonstration_SGP, file=&quot;Data/Demonstration_SGP.Rdata&quot;)</code></pre>
+<span class="kw">save</span>(Demonstration_SGP, <span class="dt">file=</span><span class="st">&quot;Data/Demonstration_SGP.Rdata&quot;</span>)</code></pre></div>
 <p>Running this script will run the six steps mentioned earlier by performing the following:</p>
 <ol style="list-style-type: decimal">
-<li><a href="../reference/prepareSGP.html"><code>prepareSGP</code></a> Take exemplar LONG data, <em>sgpData_LONG</em>, and INSTRUCTOR-STUDENT lookup files, <em>sgpData_INSTRUCTOR_NUMBER</em> and create the SGP object <em>Demonstration_SGP</em> that includes them.</li>
-<li><a href="../reference/analyzeSGP.html"><code>analyzeSGP</code></a> Performs SGP analyses for all years and content areas including: student growth percentiles, baseline student growth percentiles, student growth projections, baseline student growth projections, lagged student growth projections, lagged baseline student growth projections.</li>
-<li><a href="../reference/combineSGP.html"><code>combineSGP</code></a> Merges results derived from <em>analyzeSGP</em> back into the master longitudinal record, <em><a href="mailto:Demonstration_SGP@Data">Demonstration_SGP@Data</a></em>, and calculates/creates scale scores associated with SGP targets.</li>
-<li><a href="../reference/summarizeSGP.html"><code>summarizeSGP</code></a> Calculates summary tables and puts them results into the <em><a href="mailto:Demonstration_SGP@Summary">Demonstration_SGP@Summary</a></em> slot.</li>
-<li><a href="../reference/visualizeSGP.html"><code>visualizeSGP</code></a> Creates state level summary bubble plots, growth achievement plots (wave charts), and demonstration student growth plots.</li>
-<li><a href="../reference/outputSGP.html"><code>outputSGP</code></a> Exports data in multiple formats:</li>
+<li><a href="https://sgp.io/reference/prepareSGP.html"><code>prepareSGP</code></a> Take exemplar LONG data, <em>sgpData_LONG</em>, and INSTRUCTOR-STUDENT lookup files, <em>sgpData_INSTRUCTOR_NUMBER</em> and create the SGP object <em>Demonstration_SGP</em> that includes them.</li>
+<li><a href="https://sgp.io/reference/analyzeSGP.html"><code>analyzeSGP</code></a> Performs SGP analyses for all years and content areas including: student growth percentiles, baseline student growth percentiles, student growth projections, baseline student growth projections, lagged student growth projections, lagged baseline student growth projections.</li>
+<li><a href="https://sgp.io/reference/combineSGP.html"><code>combineSGP</code></a> Merges results derived from <em>analyzeSGP</em> back into the master longitudinal record, <em><a href="mailto:Demonstration_SGP@Data">Demonstration_SGP@Data</a></em>, and calculates/creates scale scores associated with SGP targets.</li>
+<li><a href="https://sgp.io/reference/summarizeSGP.html"><code>summarizeSGP</code></a> Calculates summary tables and puts them results into the <em><a href="mailto:Demonstration_SGP@Summary">Demonstration_SGP@Summary</a></em> slot.</li>
+<li><a href="https://sgp.io/reference/visualizeSGP.html"><code>visualizeSGP</code></a> Creates state level summary bubble plots, growth achievement plots (wave charts), and demonstration student growth plots.</li>
+<li><a href="https://sgp.io/reference/outputSGP.html"><code>outputSGP</code></a> Exports data in multiple formats:</li>
 </ol>
 <ul>
 <li><em>Demonstration_SGP_Data_LONG.txt.zip</em> a pipe delimited copy of <em><a href="mailto:Demonstration_SGP@Data">Demonstration_SGP@Data</a></em>, the complete master longitudinal record.</li>
