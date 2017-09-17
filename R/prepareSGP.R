@@ -144,7 +144,7 @@ function(data,
 			messageSGP(paste("\tWARNING: @Data keyed by", paste(getKey(data), collapse=", "), "has duplicate cases. Subsequent joins/merges will likely be corrupt."))
 			messageSGP("\tNOTE: Duplicate cases are available in current workspace as 'DUPLICATED_CASES' and saved as 'DUPLICATED_CASES.Rdata'.")
 			assign("DUPLICATED_CASES",
-				data@Data["VALID_CASE"][unique(data@Data["VALID_CASE"][duplicated(data@Data["VALID_CASE"], by=key(data@Data)), c("VALID_CASE", "CONTENT_AREA", "GRADE", "YEAR", "ID"), with=FALSE], by=key(data@Data))])
+				data@Data["VALID_CASE"][unique(data@Data["VALID_CASE"][duplicated(data@Data["VALID_CASE"], by=key(data@Data)), key(data@Data), with=FALSE], by=key(data@Data))])
 			save(DUPLICATED_CASES, file="DUPLICATED_CASES.Rdata")
 		}
 
