@@ -1044,6 +1044,10 @@ function(panel.data,         ## REQUIRED
         sgp.less.than.sgp.cohort.size.return <- as.character(sgp.less.than.sgp.cohort.size.return)
     }
 
+    sgp.message.label <- sgp.labels[['my.extra.label']]
+    if (!is.null(calculate.simex) && is.null(calculate.simex[['simex.use.my.coefficient.matrices']])) sgp.message.label <- "SIMEX"
+    if (!is.null(calculate.simex) && !is.null(calculate.simex[['simex.use.my.coefficient.matrices']])) sgp.message.label <- "SIMEX BASELINE"
+
 
 	### Create object to store the studentGrowthPercentiles objects
 
@@ -1099,7 +1103,7 @@ function(panel.data,         ## REQUIRED
 		tmp.messages <- paste0("\t\tNOTE: Supplied data together with grade progression contains no data (dim = ", paste(dim(Panel_Data), collapse=", "), "). Check data, function arguments and see help page for details.\n")
 		messageSGP(paste("\tStarted studentGrowthPercentiles", started.date))
 		messageSGP(paste0("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ",
-			paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label))
+			paste(grade.progression, collapse=", "), " ", sgp.message.label))
 		messageSGP(paste(tmp.messages, "\tFinished SGP Student Growth Percentile Analysis", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 
 		return(
@@ -1196,7 +1200,7 @@ function(panel.data,         ## REQUIRED
 			Check data, function arguments and see help page for details.\n")
 		messageSGP(paste("\tStarted studentGrowthPercentiles", started.date))
 		messageSGP(paste0("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ",
-			paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label))
+			paste(tmp.slot.gp, collapse=", "), " ", sgp.message.label))
 		messageSGP(paste(tmp.messages, "\tStudent Growth Percentile Analysis NOT RUN", prettyDate(), "\n"))
 
 		return(
@@ -1231,7 +1235,7 @@ function(panel.data,         ## REQUIRED
 		tmp.messages <- "\t\tNOTE: Supplied data together with grade progression contains no data. Check data, function arguments and see help page for details.\n"
 		messageSGP(paste("\tStarted studentGrowthPercentiles", started.date))
 		messageSGP(paste0("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ",
-			paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label))
+			paste(tmp.slot.gp, collapse=", "), " ", sgp.message.label))
 		messageSGP(paste(tmp.messages, "\tFinished SGP Student Growth Percentile Analysis", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
 
 		return(
@@ -1250,7 +1254,7 @@ function(panel.data,         ## REQUIRED
 			"valid cases provided with", sgp.cohort.size, "indicated as minimum cohort N size. Check data, function arguments and see help page for details.\n")
 		messageSGP(paste("\tStarted studentGrowthPercentiles", started.date))
 		messageSGP(paste0("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ",
-			paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label))
+			paste(tmp.slot.gp, collapse=", "), " ", sgp.message.label))
 		messageSGP(paste(tmp.messages, "\tStudent Growth Percentile Analysis NOT RUN", prettyDate(), "\n"))
 
 		return(
@@ -1345,7 +1349,7 @@ function(panel.data,         ## REQUIRED
             if (calculate.sgps) cohort.n <- format(dim(quantile.data)[1L], big.mark=",") else cohort.n <- format(max.cohort.size, big.mark=",")
             messageSGP(paste("\tStarted studentGrowthPercentiles:", started.date))
                 messageSGP(paste0("\t\tContent Area: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ",
-                    paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label, " (N=", cohort.n, ")"))
+                    paste(tmp.slot.gp, collapse=", "), " ", sgp.message.label, " (N=", cohort.n, ")"))
             if (verbose.output) messageSGP(Verbose_Messages)
             messageSGP(c(tmp.messages, "\tFinished studentGrowthPercentiles: ", prettyDate(), " in ", convertTime(timetaken(started.at)), "\n"))
         }
@@ -1410,7 +1414,7 @@ function(panel.data,         ## REQUIRED
 					"\n\t\tin grade progression ", paste(rev(rev(tmp.gp)), collapse = ', '), " and produced the following error message: \n\t\t\t\"", tmp.err.message, "\""))
 				messageSGP(paste("\tStarted studentGrowthPercentiles", started.date))
 				messageSGP(paste0("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ",
-					paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label))
+					paste(tmp.slot.gp, collapse=", "), " ", sgp.message.label))
 				messageSGP(paste(tmp.messages, "\n\t\tStudent Growth Percentile Analysis NOT RUN", prettyDate(), "\n"))
 				Coefficient_Matrices[[tmp.path.coefficient.matrices]][['TMP_NAME']] <- NULL
 
@@ -1805,7 +1809,7 @@ function(panel.data,         ## REQUIRED
 		if (calculate.sgps) cohort.n <- format(dim(quantile.data)[1L], big.mark=",") else cohort.n <- format(max.cohort.size, big.mark=",")
 		messageSGP(paste("\tStarted studentGrowthPercentiles:", started.date))
 			messageSGP(paste0("\t\tContent Area: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ",
-				paste(tmp.slot.gp, collapse=", "), " ", sgp.labels$my.extra.label, " (N=", cohort.n, ")"))
+				paste(tmp.slot.gp, collapse=", "), " ", sgp.message.label, " (N=", cohort.n, ")"))
 		if (verbose.output) messageSGP(Verbose_Messages)
 		messageSGP(c(tmp.messages, "\tFinished studentGrowthPercentiles: ", prettyDate(), " in ", convertTime(timetaken(started.at)), "\n"))
 	}
