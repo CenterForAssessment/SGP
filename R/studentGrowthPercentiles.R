@@ -640,14 +640,16 @@ function(panel.data,         ## REQUIRED
 						if (verbose) messageSGP(c("\t\t\tStarted coefficient matrix calculation, Lambda ", L, ": ", prettyDate()))
 							if (is.null(simex.sample.size) || nrow(tmp.data) <= simex.sample.size) {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste0("lambda_", L)]] <-
-									foreach(z=iter(sim.iters), .packages=c("quantreg", "data.table"),
+#									foreach(z=iter(sim.iters), .packages=c("quantreg", "data.table"),
+									foreach(z=iter(sim.iters),
 										.export=c("Knots_Boundaries", "rq.method", "taus", "content_area.progression", "tmp.slot.gp", "year.progression", "year_lags.progression", "SGPt", "rq.sgp"),
 										.options.mpi=par.start$foreach.options, .options.multicore=par.start$foreach.options, .options.snow=par.start$foreach.options) %dopar% {
 											rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=as.data.table(getSQLData(tmp.dbname, z)))
 									}
 							} else {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste0("lambda_", L)]] <-
-									foreach(z=iter(sim.iters), .packages=c("quantreg", "data.table"),
+#									foreach(z=iter(sim.iters), .packages=c("quantreg", "data.table"),
+									foreach(z=iter(sim.iters),
 										.export=c("Knots_Boundaries", "rq.method", "taus", "content_area.progression", "tmp.slot.gp", "year.progression", "year_lags.progression", "SGPt", "rq.sgp"),
 										.options.mpi=par.start$foreach.options, .options.multicore=par.start$foreach.options, .options.snow=par.start$foreach.options) %dorng% {
 											rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=as.data.table(getSQLData(tmp.dbname, z))[sample(seq.int(nrow(tmp.data)), simex.sample.size)])
