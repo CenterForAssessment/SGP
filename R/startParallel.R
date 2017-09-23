@@ -34,7 +34,7 @@ function(parallel.config,
 	###  Basic checks - default to ANY percentiles or projections WORKERS.
 
 	if (is.numeric(parallel.config[['WORKERS']])) {
-		message(paste0("\t\tNOTE: ", process, " workers not specified.  Numeric value from WORKERS (", parallel.config[['WORKERS']], ") will be used for all processes.\n"))
+		message(paste0("\n\tNOTE: ", process, " workers not specified.  Numeric value from WORKERS (", parallel.config[['WORKERS']], ") will be used for all processes.\n"))
 		parallel.config[['WORKERS']][[process]] <- parallel.config[['WORKERS']]
 	}
 	if (is.null(parallel.config[['WORKERS']][[process]])) {
@@ -42,14 +42,14 @@ function(parallel.config,
 			 tmp.indx <- grep(strsplit(process, "_")[[1]][2], names(parallel.config[['WORKERS']]))
 			 if (any(!is.na(tmp.indx))) {
 				 parallel.config[['WORKERS']][[process]] <- parallel.config[['WORKERS']][[tmp.indx]]
-				 message(paste("\t\tNOTE: ", process, "workers not defined specifically.", names(parallel.config[['WORKERS']][tmp.indx]),
+				 message(paste("\n\tNOTE: ", process, "workers not defined specifically.", names(parallel.config[['WORKERS']][tmp.indx]),
 				 	"WORKERS will be used  (", parallel.config[['WORKERS']][tmp.indx], "worker processors)."))
 			 }
 		} # See if still NULL and stop:
 		if (is.null(parallel.config[['WORKERS']][[process]])) {
 			# stop(paste(process, "workers must be specified."))
 			parallel.config[['WORKERS']][[process]] <- 1
-			message(paste0("\n\t\tNOTE: ", process, " workers not specified!  WORKERS will be set to a single (1) process.\n"))
+			message(paste0("\n\tNOTE: ", process, " workers not specified!  WORKERS will be set to a single (1) process.\n"))
 		}
 	}
 
