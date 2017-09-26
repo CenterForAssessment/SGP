@@ -201,7 +201,7 @@
 					tmp.sgp.summaries <- c(
 						tmp.sgp.summaries,
 						MEDIAN_SGP_SIMEX_RANKED="median_na(SGP_SIMEX_RANKED, WEIGHT)",
-						MEDIAN_SGP_SIMEX_RANKED="mean_na(SGP_SIMEX_RANKED, WEIGHT)",
+						MEAN_SGP_SIMEX_RANKED="mean_na(SGP_SIMEX_RANKED, WEIGHT)",
 						MEAN_SGP_SIMEX_RANKED_STANDARD_ERROR="sgp_standard_error(SGP_SIMEX_RANKED)",
 						MEDIAN_SGP_SIMEX_RANKED_STANDARD_ERROR="sgp_standard_error(SGP_SIMEX_RANKED, 1.253)"
 					)
