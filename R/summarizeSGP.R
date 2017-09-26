@@ -64,9 +64,9 @@
 	}
 
 	if (summarizeSGP.baseline) {
-		my.sgp <- intersect(sgp.data.names, c("SGP", "SGP_BASELINE", "SGP_SIMEX", "SGP_SIMEX_BASELINE", "SGP_EQUATED"))
+		my.sgp <- intersect(sgp.data.names, c("SGP", "SGP_BASELINE", "SGP_SIMEX", "SGP_SIMEX_RANKED", "SGP_SIMEX_BASELINE", "SGP_SIMEX_BASELINE_RANKED", "SGP_EQUATED"))
 	} else {
-		my.sgp <- intersect(sgp.data.names, c("SGP", "SGP_SIMEX", "SGP_EQUATED"))
+		my.sgp <- intersect(sgp.data.names, c("SGP", "SGP_SIMEX", "SGP_SIMEX_RANKED", "SGP_EQUATED"))
 	}
 
 	my.sgp.target <- paste("SGP_TARGET", projection.years.for.target, "YEAR", sep="_")
@@ -197,6 +197,16 @@
 					)
 				}
 
+				if ("SGP_SIMEX_RANKED" %in% sgp.data.names) {
+					tmp.sgp.summaries <- c(
+						tmp.sgp.summaries,
+						MEDIAN_SGP_SIMEX_RANKED="median_na(SGP_SIMEX_RANKED, WEIGHT)",
+						MEDIAN_SGP_SIMEX_RANKED="mean_na(SGP_SIMEX_RANKED, WEIGHT)",
+						MEAN_SGP_SIMEX_RANKED_STANDARD_ERROR="sgp_standard_error(SGP_SIMEX_RANKED)",
+						MEDIAN_SGP_SIMEX_RANKED_STANDARD_ERROR="sgp_standard_error(SGP_SIMEX_RANKED, 1.253)"
+					)
+				}
+
 				if ("SGP_SIMEX_BASELINE" %in% sgp.data.names) {
 					tmp.sgp.summaries <- c(
 						tmp.sgp.summaries,
@@ -204,6 +214,16 @@
 						MEAN_SGP_SIMEX_BASELINE="mean_na(SGP_SIMEX_BASELINE, WEIGHT)",
 						MEAN_SGP_SIMEX_BASELINE_STANDARD_ERROR="sgp_standard_error(SGP_SIMEX_BASELINE)",
 						MEDIAN_SGP_SIMEX_BASELINE_STANDARD_ERROR="sgp_standard_error(SGP_SIMEX_BASELINE, 1.253)"
+					)
+				}
+
+				if ("SGP_SIMEX_BASELINE_RANKED" %in% sgp.data.names) {
+					tmp.sgp.summaries <- c(
+						tmp.sgp.summaries,
+						MEDIAN_SGP_SIMEX_BASELINE_RANKED="median_na(SGP_SIMEX_BASELINE_RANKED, WEIGHT)",
+						MEAN_SGP_SIMEX_BASELINE_RANKED="mean_na(SGP_SIMEX_BASELINE_RANKED, WEIGHT)",
+						MEAN_SGP_SIMEX_BASELINE_RANKED_STANDARD_ERROR="sgp_standard_error(SGP_SIMEX_BASELINE_RANKED)",
+						MEDIAN_SGP_SIMEX_BASELINE_RANKED_STANDARD_ERROR="sgp_standard_error(SGP_SIMEX_BASELINE_RANKED, 1.253)"
 					)
 				}
 
@@ -469,7 +489,7 @@
 		c("VALID_CASE", "ID", my.sgp, my.sgp.target, my.sgp.target.baseline, my.sgp.target.musu, my.sgp.target.musu.baseline,
 		"ACHIEVEMENT_LEVEL", "ACHIEVEMENT_LEVEL_PRIOR",
 		"CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STAY_UP_STATUS", "CATCH_UP_KEEP_UP_STATUS_BASELINE","MOVE_UP_STAY_UP_STATUS_BASELINE",
-		"SCALE_SCORE_PRIOR_STANDARDIZED", "SGP_SIMEX", "SGP_SIMEX_BASELINE",
+		"SCALE_SCORE_PRIOR_STANDARDIZED", "SGP_SIMEX", "SGP_SIMEX_RANKED", "SGP_SIMEX_BASELINE", "SGP_SIMEX_BASELINE_RANKED",
 		unique(as.character(unlist(summary.groups))),
 		"YEAR_WITHIN"), sgp.data.names)
 
