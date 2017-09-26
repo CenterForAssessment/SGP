@@ -237,6 +237,7 @@ function(sgp_object,
 					baseline=gaPlot.iter[["BASELINE"]],
 					equated=gaPlot.iter[["EQUATED"]],
 					output.format=c("PDF", "PNG"),
+					gaPlot.back.extrapolated.cuts=gaPlot.back.extrapolated.cuts,
 					gaPlot.SGPt=gaPlot.SGPt,
 					output.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))
 			}
@@ -259,6 +260,7 @@ function(sgp_object,
 						baseline=gaPlot.iter[["BASELINE"]],
 						equated=gaPlot.iter[["EQUATED"]],
 						output.format=c("PDF", "PNG"),
+						gaPlot.back.extrapolated.cuts=gaPlot.back.extrapolated.cuts,
 						gaPlot.SGPt=gaPlot.SGPt,
 						output.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))
 			} ## END dopar
@@ -279,6 +281,7 @@ function(sgp_object,
 						baseline=gaPlot.iter[["BASELINE"]],
 						equated=gaPlot.iter[["EQUATED"]],
 						output.format=c("PDF", "PNG"),
+						gaPlot.back.extrapolated.cuts=gaPlot.back.extrapolated.cuts,
 						gaPlot.SGPt=gaPlot.SGPt,
 						output.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]])))
 			}
@@ -298,6 +301,7 @@ function(sgp_object,
 						baseline=gaPlot.iter[["BASELINE"]],
 						equated=gaPlot.iter[["EQUATED"]],
 						output.format=c("PDF", "PNG"),
+						gaPlot.back.extrapolated.cuts=gaPlot.back.extrapolated.cuts,
 						gaPlot.SGPt=gaPlot.SGPt,
 						output.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))},
 				mc.cores=par.start$workers, mc.preschedule=FALSE)
