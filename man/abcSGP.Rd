@@ -63,7 +63,7 @@ abcSGP(sgp_object,
   will detect what state is associated with the data and supply that to the 'state' argument of the function so that state meta-data located in the SGPstateData object can be utilized.
   NOTE: Data preparation must be meticulous to utilize this enhanced functionality.
   }
-  \item{state}{Acronym indicating state associated with the data for access to embedded knot and boundaries,  cutscores, CSEMs, and other relevant state level data. This can be supplied to the functional
+  \item{state}{Acronym indicating state associated with the data for access to embedded knot and boundaries,  cutscores, CSEMs, and other relevant state level data. This can be supplied to the function
   automatically by including the full state name (e.g, New_Hampshire_SGP) in the name of the object supplied to \code{sgp_object}.
   }
   \item{steps}{Vector containing all or some subset of \code{\link{prepareSGP}}, \code{\link{analyzeSGP}}, \code{\link{combineSGP}}, \code{\link{summarizeSGP}}, \code{\link{visualizeSGP}}
