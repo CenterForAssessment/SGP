@@ -446,8 +446,8 @@ function(
 		if (grepl("BASELINE", use.sgp)) file.extra.label <- "BASELINE"
 		if (grepl("SIMEX_BASELINE", use.sgp)) file.extra.label <- "BASELINE.SIMEX"
 		if (grepl("EQUATED", use.sgp)) file.extra.label <- "EQUATED"
-		if (grepl("RANK_SIMEX", use.sgp)) file.extra.label <- "RANK_SIMEX"
-		if (grepl("RANK_SIMEX_BASELINE", use.sgp)) file.extra.label <- "BASELINE.RANK_SIMEX"
+		if (grepl("SGP_SIMEX_RANKED", use.sgp)) file.extra.label <- "RANKED_SIMEX"
+		if (grepl("SGP_SIMEX_RANKED_BASELINE", use.sgp)) file.extra.label <- "BASELINE.RANKED_SIMEX"
 	} else {
 		my.extra.label <- "SGP"
 		file.extra.label <- NULL
