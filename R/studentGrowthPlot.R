@@ -393,10 +393,15 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 			label.split <- unlist(strsplit(label, " "))
 			label.word.nchar <- cumsum(nchar(label.split))
 			if (length(label.word.nchar) > 1 & tail(label.word.nchar, 1) > 10) {
-				label.split.position <- max(which(label.word.nchar <= 10))
-				tmp.label <- paste(label.split[1:label.split.position], collapse=" ")
-				tmp.label[2] <- paste(label.split[(label.split.position+1):length(label.split)], collapse=" ")
-				tmp.cex <- c(title.ca.size - 0.25 - max(0, nchar(tmp.label[1])-10)*0.1, title.ca.size - 0.25 - max(0, nchar(tmp.label[2])-10)*0.1)
+				if (any(label.word.nchar <= 10)) {
+					label.split.position <- max(which(label.word.nchar <= 10))
+					tmp.label <- paste(label.split[1:label.split.position], collapse=" ")
+					tmp.label[2] <- paste(label.split[(label.split.position+1):length(label.split)], collapse=" ")
+					tmp.cex <- c(title.ca.size - 0.25 - max(0, nchar(tmp.label[1])-10)*0.1, title.ca.size - 0.25 - max(0, nchar(tmp.label[2])-10)*0.1)
+				} else {
+					tmp.label <- label.split
+					tmp.cex <- rep(title.ca.size - 0.25 - (max(nchar(tmp.label))-10)*0.1, length(tmp.label))
+				}
 				return(list(content_area.label.pieces=tmp.label, cex=tmp.cex))
 			} else {
 				return(list(content_area.label.pieces=label, cex=title.ca.size - max(0, nchar(label)-10)*0.1))
