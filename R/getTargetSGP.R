@@ -43,7 +43,7 @@ function(sgp_object,
 			}
 		}
 
-		if (year_within) {
+		if (year_within) { # Merge 'YEAR_WITHIN' variable into tmp_object_1
 			###  Assumes that any "canonical progression" will use the LAST_OBSERVATION for all (or at least the most recent) prior(s) in straight progressions
 			if (target.type %in% c("sgp.projections", "sgp.projections.baseline")) {
 				tmp_object_1[,LAST_OBSERVATION:=1L]; year.within.key <- "LAST_OBSERVATION"
@@ -61,14 +61,12 @@ function(sgp_object,
 			setkeyv(tmp_object_1, jExp_Key)
 		}
 
-		if (target.type %in% c("sgp.projections", "sgp.projections.baseline")) {
+		if (target.type %in% c("sgp.projections", "sgp.projections.baseline")) { # !grepl("lagged", target.type)
 			tmp.suffix <- "_CURRENT"
 			if (dups.tf) {
 				tmp.merge.vars <- intersect(names(slot.data), c(key(tmp_object_1), grep("SCALE_SCORE$|SCALE_SCORE_PRIOR", names(tmp_object_1), value=TRUE), "DUPS_FLAG"))
 			} else tmp.merge.vars <- getKey(tmp_object_1)
-			if (year_within) {
-				tmp_object_1 <- slot.data[,c(tmp.merge.vars, "ACHIEVEMENT_LEVEL"), with=FALSE][tmp_object_1, on = setdiff(tmp.merge.vars, "DUPS_FLAG")]
-			} else 	tmp_object_1 <- slot.data[,c(tmp.merge.vars, "ACHIEVEMENT_LEVEL"), with=FALSE][tmp_object_1, on = setdiff(tmp.merge.vars, "DUPS_FLAG")]
+			tmp_object_1 <- slot.data[,c(tmp.merge.vars, "ACHIEVEMENT_LEVEL"), with=FALSE][tmp_object_1, on = setdiff(tmp.merge.vars, "DUPS_FLAG")]
 		} else {  # else "sgp.projections.lagged", "sgp.projections.lagged.baseline"
 			tmp.suffix <- "$"
 			if (dups.tf) {
@@ -82,13 +80,13 @@ function(sgp_object,
 			# }
 		}
 
-		invisible(tmp_object_1[, paste(target.level, "STATUS_INITIAL", sep="_"):=
+		invisible(tmp_object_1[, paste0(target.level, "_STATUS_INITIAL") :=
 			getTargetInitialStatus(tmp_object_1[[grep("ACHIEVEMENT", names(tmp_object_1), value=TRUE)]], state, state.iter, target.level)])
-		tmp_object_1 <- na.omit(tmp_object_1, cols=paste(target.level, "STATUS_INITIAL", sep="_"))
+		tmp_object_1 <- na.omit(tmp_object_1, cols=paste0(target.level, "_STATUS_INITIAL"))
 
 		## Find min/max of targets based upon CATCH_UP_KEEP_UP_STATUS_INITIAL status
 
-		if (dim(tmp_object_1)[1] > 0) {
+		if (nrow(tmp_object_1) > 0) {
 			num.years.available <- length(grep("LEVEL_[123456789]", names(tmp_object_1)))
 			if (projection_group.iter %in% names(SGP::SGPstateData[[state]][['SGP_Configuration']][['grade.projection.sequence']])) {
 				num.years.to.get <- min(SGP::SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]], num.years.available)
@@ -147,7 +145,6 @@ function(sgp_object,
 	}
 
 	### Loop over different states (usually just 1 state)
-
 	tmp.names <- getPercentileTableNames(sgp_object, content_areas, state, years, target.type)
 	if (length(tmp.names)==0) return(NULL)
 	tmp.list <- list()
