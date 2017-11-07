@@ -14,6 +14,7 @@ function(
 	sgp.target.scale.scores.only=FALSE,
 	sgp.target.content_areas=NULL,
 	max.sgp.target.years.forward=3,
+	max.sgp.target.years.forward.target=3,
 	update.all.years=FALSE,
 	sgp.config=NULL,
 	sgp.percentiles.equated=NULL,
@@ -62,10 +63,16 @@ function(
 		tmp.messages <- c(tmp.messages, "\tNOTE: Multiple content areas detected for student growth targets. 'sgp.target.content_areas set to TRUE.\n")
 	}
 
-	### Check to see if max.sgp.target.years.forward if configured in SGPstateData
+	### Check to see if max.sgp.target.years.forward is configured in SGPstateData
 
 	if (!is.null(SGP::SGPstateData[[state]][['SGP_Configuration']][['max.sgp.target.years.forward']])) {
 		max.sgp.target.years.forward <- SGP::SGPstateData[[state]][['SGP_Configuration']][['max.sgp.target.years.forward']]
+	}
+
+	### Check to see if max.sgp.target.years.forward.target is configured in SGPstateData
+
+	if (!is.null(SGP::SGPstateData[[state]][['SGP_Configuration']][['max.sgp.target.years.forward.target']])) {
+		max.sgp.target.years.forward.target <- SGP::SGPstateData[[state]][['SGP_Configuration']][['max.sgp.target.years.forward.target']]
 	}
 
 	if (!is.null(SGP::SGPstateData[[state]][['SGP_Configuration']][['sgp.projections.projection.unit.label']])) {
@@ -140,17 +147,17 @@ function(
 			} else {
 				tmp.list[['my.sgp']] <- "SGP"
 			}
-			tmp.list[['my.sgp.target']] <- paste("SGP_TARGET", max.sgp.target.years.forward, projection.unit.label, sep="_")
-			tmp.list[['my.sgp.target.content_area']] <- paste("SGP_TARGET", max.sgp.target.years.forward, projection.unit.label, "CONTENT_AREA", sep="_")
-			tmp.list[['my.sgp.target.move.up.stay.up']] <- paste("SGP_TARGET_MOVE_UP_STAY_UP", max.sgp.target.years.forward, projection.unit.label, sep="_")
+			tmp.list[['my.sgp.target']] <- paste("SGP_TARGET", max.sgp.target.years.forward.target, projection.unit.label, sep="_")
+			tmp.list[['my.sgp.target.content_area']] <- paste("SGP_TARGET", max.sgp.target.years.forward.target, projection.unit.label, "CONTENT_AREA", sep="_")
+			tmp.list[['my.sgp.target.move.up.stay.up']] <- paste("SGP_TARGET_MOVE_UP_STAY_UP", max.sgp.target.years.forward.target, projection.unit.label, sep="_")
 			if (sgp.target.scale.scores) tmp.list[['sgp.target.scale.scores.types']] <- intersect(target.type, c("sgp.projections", "sgp.projections.lagged"))
 		}
 		if (identical(system.type, "Baseline Referenced")) {
 			tmp.list[['target.type']] <- intersect(target.type, c("sgp.projections.baseline", "sgp.projections.lagged.baseline"))
 			tmp.list[['my.sgp']] <- "SGP_BASELINE"
-			tmp.list[['my.sgp.target']] <- paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, projection.unit.label, sep="_")
-			tmp.list[['my.sgp.target.content_area']] <- paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, projection.unit.label, "CONTENT_AREA", sep="_")
-			tmp.list[['my.sgp.target.move.up.stay.up']] <- paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", max.sgp.target.years.forward, projection.unit.label, sep="_")
+			tmp.list[['my.sgp.target']] <- paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward.target, projection.unit.label, sep="_")
+			tmp.list[['my.sgp.target.content_area']] <- paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward.target, projection.unit.label, "CONTENT_AREA", sep="_")
+			tmp.list[['my.sgp.target.move.up.stay.up']] <- paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", max.sgp.target.years.forward.target, projection.unit.label, sep="_")
 			if (sgp.target.scale.scores) tmp.list[['sgp.target.scale.scores.types']] <- intersect(target.type, c("sgp.projections.baseline", "sgp.projections.lagged.baseline"))
 		}
 		if (identical(system.type, "Cohort and Baseline Referenced")) {
@@ -162,12 +169,12 @@ function(
 			} else {
 				tmp.list[['my.sgp']] <- c("SGP", "SGP_BASELINE")[c(sgp.percentiles, sgp.percentiles.baseline)]
 			}
-			tmp.list[['my.sgp.target']] <- c(paste("SGP_TARGET", max.sgp.target.years.forward, projection.unit.label, sep="_"),
-				paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, projection.unit.label, sep="_"))
-			tmp.list[['my.sgp.target.content_area']] <- c(paste("SGP_TARGET", max.sgp.target.years.forward, projection.unit.label, "CONTENT_AREA", sep="_"),
-				paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, projection.unit.label, "CONTENT_AREA", sep="_"))
-			tmp.list[['my.sgp.target.move.up.stay.up']] <- c(paste("SGP_TARGET_MOVE_UP_STAY_UP", max.sgp.target.years.forward, projection.unit.label, sep="_"),
-				paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", max.sgp.target.years.forward, projection.unit.label, sep="_"))
+			tmp.list[['my.sgp.target']] <- c(paste("SGP_TARGET", max.sgp.target.years.forward.target, projection.unit.label, sep="_"),
+				paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward.target, projection.unit.label, sep="_"))
+			tmp.list[['my.sgp.target.content_area']] <- c(paste("SGP_TARGET", max.sgp.target.years.forward.target, projection.unit.label, "CONTENT_AREA", sep="_"),
+				paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward.target, projection.unit.label, "CONTENT_AREA", sep="_"))
+			tmp.list[['my.sgp.target.move.up.stay.up']] <- c(paste("SGP_TARGET_MOVE_UP_STAY_UP", max.sgp.target.years.forward.target, projection.unit.label, sep="_"),
+				paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", max.sgp.target.years.forward.target, projection.unit.label, sep="_"))
 			if (sgp.target.scale.scores) tmp.list[['sgp.target.scale.scores.types']] <-
 				intersect(target.type, c("sgp.projections", "sgp.projections.baseline", "sgp.projections.lagged", "sgp.projections.lagged.baseline"))
 		}
