@@ -405,7 +405,7 @@
 				tmp.summary[[s]] <- sgpSummary(summary.iter[[s]][1], eval(parse(text=summary.iter[[s]][2])),
 					tmp.simulation.dt, state, sgp.summaries, confidence.interval.groups, my.sgp, sgp_key, variables.for.summaries, sim.info, db.path)
 			}
-			par.start <- list(par.type="NONE")
+#			par.start <- list(par.type="NONE")
 		}
 
 		j <- k <- NULL ## To prevent R CMD check warnings
@@ -616,7 +616,7 @@
 
 	dbDisconnect(sgp_data_for_summary)
 
-	if (!is.null(parallel.config))	par.start <- startParallel(parallel.config, 'SUMMARY')
+	if (!is.null(parallel.config))	par.start <- startParallel(parallel.config, 'SUMMARY') else par.start <- list(par.type="NONE")
 
 	# Don't use SNOW - run as FOREACH + doParallel instead.
 	if (identical(par.start[['par.type']], "SNOW")) {parallel.config[["BACKEND"]] <- "FOREACH"; parallel.config[["TYPE"]] <- "doParallel"}
