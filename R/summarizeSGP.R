@@ -405,7 +405,6 @@
 				tmp.summary[[s]] <- sgpSummary(summary.iter[[s]][1], eval(parse(text=summary.iter[[s]][2])),
 					tmp.simulation.dt, state, sgp.summaries, confidence.interval.groups, my.sgp, sgp_key, variables.for.summaries, sim.info, db.path)
 			}
-#			par.start <- list(par.type="NONE")
 		}
 
 		j <- k <- NULL ## To prevent R CMD check warnings
