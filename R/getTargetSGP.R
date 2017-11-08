@@ -86,8 +86,8 @@ function(sgp_object,
 
 		## Find min/max of targets based upon CATCH_UP_KEEP_UP_STATUS_INITIAL status
 
-		for (max.sgp.target.years.forward.iter in max.sgp.target.years.forward) {
-			if (nrow(tmp_object_1) > 0) {
+		if (nrow(tmp_object_1) > 0) {
+			for (max.sgp.target.years.forward.iter in max.sgp.target.years.forward) {
 				num.years.available <- length(grep("LEVEL_[123456789]", names(tmp_object_1)))
 				if (projection_group.iter %in% names(SGP::SGPstateData[[state]][['SGP_Configuration']][['grade.projection.sequence']])) {
 					num.years.to.get <- min(SGP::SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]], num.years.available)
@@ -124,10 +124,10 @@ function(sgp_object,
 					tmp_object_2[,c("ACHIEVEMENT_LEVEL_PRIOR", grep("STATUS_INITIAL", names(tmp_object_1), value=TRUE)):=
 						list(tmp_object_1[["ACHIEVEMENT_LEVEL_PRIOR"]], tmp_object_1[[grep("STATUS_INITIAL", names(tmp_object_1), value=TRUE)]])]
 				}
-				return(tmp_object_2[,SGP_PROJECTION_GROUP:=projection_group.iter])
-			} else {
-				return(NULL)
 			}
+			return(tmp_object_2[,SGP_PROJECTION_GROUP:=projection_group.iter])
+		} else {
+			return(NULL)
 		}
 	} ### getTargetSGP_INTERNAL
 
