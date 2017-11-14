@@ -474,7 +474,7 @@ function(
 			slot.data[,CATCH_UP_KEEP_UP_STATUS_INITIAL:=getTargetInitialStatus(ACHIEVEMENT_LEVEL_PRIOR, state, status.type="CATCH_UP_KEEP_UP")]
 
 			for (i in seq_along(target.args[['my.sgp']])) {
-				for (target.years.iter in max.sgp.target.years.forward)
+				for (target.years.iter in max.sgp.target.years.forward) {
 					if (!grepl("BASELINE", target.args[['my.sgp']][i])) my.label <- paste("CATCH_UP_KEEP_UP_STATUS", target.years.iter, sep="_") else my.label <- paste("CATCH_UP_KEEP_UP_STATUS_BASELINE", target.years.iter, sep="_")
 					if (grepl("FROM", target.args[['my.sgp']][i])) slot.data[YEAR <= year.for.equate, target.args[['my.sgp']][i]:=SGP] ### Get comparison values from before transition
 					if (my.label %in% names(slot.data)) slot.data[,(my.label):=NULL]
@@ -518,7 +518,7 @@ function(
 			slot.data[,MOVE_UP_STAY_UP_STATUS_INITIAL:=getTargetInitialStatus(ACHIEVEMENT_LEVEL_PRIOR, state, status.type="MOVE_UP_STAY_UP")]
 
 			for (i in seq_along(target.args[['my.sgp']])) {
-				for (target.years.iter in max.sgp.target.years.forward)
+				for (target.years.iter in max.sgp.target.years.forward) {
 					if (!grepl("BASELINE", target.args[['my.sgp']][i])) my.label <- paste("MOVE_UP_STAY_UP_STATUS", target.years.iter, sep="_") else my.label <- paste("MOVE_UP_STAY_UP_STATUS_BASELINE", target.years.iter, sep="_")
 					if (grepl("FROM", target.args[['my.sgp']][i])) slot.data[YEAR <= year.for.equate, target.args[['my.sgp']][i]:=SGP]
 					if (my.label %in% names(slot.data)) slot.data[,(my.label):=NULL]
