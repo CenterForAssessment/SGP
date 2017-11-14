@@ -587,25 +587,27 @@ function(
 
 		for (projection_group.iter in unique(tmp.target.data[['SGP_PROJECTION_GROUP']])) {
 			for (target.type.iter in target.args[['sgp.target.scale.scores.types']]) {
-				tmp.target.level.names <-
-					as.character(sapply(target.args[['target.level']], function(x) getTargetName(state, target.type.iter, x, max.sgp.target.years.forward, "SGP_TARGET", projection.unit.label, projection_group.iter)))
-				if (any(!tmp.target.level.names %in% names(tmp.target.data))) {
-					tmp.target.data[,tmp.target.level.names[!tmp.target.level.names %in% names(tmp.target.data)]:=as.integer(NA)]
-				}
+				for (target.years.iter in max.sgp.target.years.forward) {
+					tmp.target.level.names <-
+						as.character(sapply(target.args[['target.level']], function(x) getTargetName(state, target.type.iter, x, target.years.iter, "SGP_TARGET", projection.unit.label, projection_group.iter)))
+					if (any(!tmp.target.level.names %in% names(tmp.target.data))) {
+						tmp.target.data[,tmp.target.level.names[!tmp.target.level.names %in% names(tmp.target.data)]:=as.integer(NA)]
+					}
 
-				sgp_object <- getTargetScaleScore(
-					sgp_object,
-					state,
-					getTargetData(tmp.target.data, projection_group.iter, tmp.target.level.names),
-					target.type.iter,
-					tmp.target.level.names,
-					getYearsContentAreasGrades(state, years=unique(tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter], by='YEAR')[['YEAR']], content_areas=unique(tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter], by='CONTENT_AREA')[['CONTENT_AREA']]),
-					sgp.config=sgp.config,
-					projection_group.identifier=projection_group.iter,
-					sgp.projections.equated=if (grepl("baseline", target.type.iter)) NULL else sgp.projections.equated,
-					SGPt=SGPt,
-					fix.duplicates=fix.duplicates,
-					parallel.config=parallel.config)
+					sgp_object <- getTargetScaleScore(
+						sgp_object,
+						state,
+						getTargetData(tmp.target.data, projection_group.iter, tmp.target.level.names),
+						target.type.iter,
+						tmp.target.level.names,
+						getYearsContentAreasGrades(state, years=unique(tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter], by='YEAR')[['YEAR']], content_areas=unique(tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter], by='CONTENT_AREA')[['CONTENT_AREA']]),
+						sgp.config=sgp.config,
+						projection_group.identifier=projection_group.iter,
+						sgp.projections.equated=if (grepl("baseline", target.type.iter)) NULL else sgp.projections.equated,
+						SGPt=SGPt,
+						fix.duplicates=fix.duplicates,
+						parallel.config=parallel.config)
+				}
 			}
 		}
 	} ### END if (sgp.target.scale.scores)
