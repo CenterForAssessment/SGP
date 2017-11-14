@@ -224,7 +224,7 @@ function(sgp_object,
 
 	## Change SGP_TARGET names to indicate number of years
 
-	names.to.change <- c("SGP_TARGET", "SGP_TARGET_BASELINE", "SGP_TARGET_MOVE_UP_STAY_UP", "SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", "CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STAY_UP_STATUS")
+	names.to.change <- c("SGP_TARGET", "SGP_TARGET_BASELINE", "SGP_TARGET_MOVE_UP_STAY_UP", "SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", "CATCH_UP_KEEP_UP_STATUS", "CATCH_UP_KEEP_UP_STATUS_BASELINE", "MOVE_UP_STAY_UP_STATUS", "MOVE_UP_STAY_UP_STATUS_BASELINE")
 	if (length(SGPstateData[[state]][["SGP_Configuration"]][["max.sgp.target.years.forward"]])==1) {
 		years.for.target <- SGPstateData[[state]][["SGP_Configuration"]][["max.sgp.target.years.forward"]]
 	} else {
