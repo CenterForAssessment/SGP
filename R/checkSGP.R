@@ -224,10 +224,15 @@ function(sgp_object,
 
 	## Change SGP_TARGET names to indicate number of years
 
-	names.to.change <- c("SGP_TARGET", "SGP_TARGET_BASELINE", "SGP_TARGET_MOVE_UP_STAY_UP", "SGP_TARGET_BASELINE_MOVE_UP_STAY_UP")
+	names.to.change <- c("SGP_TARGET", "SGP_TARGET_BASELINE", "SGP_TARGET_MOVE_UP_STAY_UP", "SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", "CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STAY_UP_STATUS")
+	if (!is.null(SGPstateData[["WIDA"]][["SGP_Configuration"]][["max.sgp.target.years.forward"]])) {
+		years.for.target <- SGPstateData[[state]][["SGP_Configuration"]][["max.sgp.target.years.forward"]]
+	} else {
+		years.for.target <- 3
+	}
 	for (i in intersect(names(sgp_object@Data), names.to.change)) {
-		messageSGP(paste0("\tNOTE: Changing name '", i, "' to '", paste(i, "3_YEAR", sep="_"), "' in @Data"))
-		setnames(sgp_object@Data, i, paste(i, "3_YEAR", sep="_"))
+		messageSGP(paste0("\tNOTE: Changing name '", i, "' to '", paste(i, years.for.target, "YEAR", sep="_"), "' in @Data"))
+		setnames(sgp_object@Data, i, paste(i, years.for.target, "YEAR", sep="_"))
 	}
 
 	## Add CURRENT to names of straight projection targets

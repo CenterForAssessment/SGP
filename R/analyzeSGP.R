@@ -252,7 +252,7 @@ function(sgp_object,
 	if (is.null(print.other.gp)) print.other.gp <- FALSE
 
 	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][['sgp.projections.max.forward.progression.years']])) {
-		if (SGPstateData[[state]][["SGP_Configuration"]][['sgp.projections.max.forward.progression.years']]==FALSE) {
+		if (identical(SGPstateData[[state]][["SGP_Configuration"]][['sgp.projections.max.forward.progression.years']], FALSE)) {
 			sgp.projections.max.forward.progression.years <- NULL
 		} else {
 			sgp.projections.max.forward.progression.years <- SGPstateData[[state]][["SGP_Configuration"]][['sgp.projections.max.forward.progression.years']]
