@@ -22,7 +22,7 @@ combineSGP(sgp_object,
 	sgp.target.scale.scores=FALSE,
 	sgp.target.scale.scores.only=FALSE,
 	sgp.target.content_areas=NULL,
-	max.sgp.target.years.forward=NULL,
+	max.sgp.target.years.forward=3,
 	update.all.years=FALSE,
 	sgp.config=NULL,
 	sgp.percentiles.equated=NULL,
@@ -59,8 +59,8 @@ student growth percentile results.
   }
   \item{sgp.target.content_areas}{A Boolean variable indicating whether content area associated with SGP targets should be calculated.
   }
-  \item{max.sgp.target.years.forward}{A integer (or NULL, default) indicating the number of years forward from the lagged (last year's) score to project forward for growth to standard calculations.
-  Default is the maximum number of years being projected forward (usually 3 years from the present, 4 years from the lagged year, which is the standard in most growth to standard calculations used by state departments of education.)
+  \item{max.sgp.target.years.forward}{A integer indicating the number of years forward from the lagged (last year's) score to project forward for growth to standard calculations.
+  Default is 3 years from the present, 4 years from the lagged year, which is the standard in most growth to standard calculations used by state departments of education.
   }
   \item{update.all.years}{A Boolean argument defaulting to FALSE indicating whether \code{\link{combineSGP}} should delete previously merged variables calculated in \code{\link{analyzeSGP}} and
 re-merge all available data.
