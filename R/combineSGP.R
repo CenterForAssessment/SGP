@@ -458,10 +458,10 @@ function(
 				for (target.years.iter in max.sgp.target.years.forward) {
 					if (!grepl("BASELINE", target.args[['my.sgp']][i])) {
 						my.label <- paste("CATCH_UP_KEEP_UP_STATUS", target.years.iter, "YEAR", sep="_")
-						my.target.label <- paste("SGP_TARGET_BASELINE", target.years.iter, "YEAR", sep="_")
+						my.target.label <- paste("SGP_TARGET", target.years.iter, "YEAR", sep="_")
 					} else {
 						my.label <- paste("CATCH_UP_KEEP_UP_STATUS_BASELINE", target.years.iter, "YEAR", sep="_")
-						my.target.label <- paste("SGP_TARGET", target.years.iter, "YEAR", sep="_")
+						my.target.label <- paste("SGP_TARGET_BASELINE", target.years.iter, "YEAR", sep="_")
 					}
 					if (grepl("FROM", target.args[['my.sgp']][i])) slot.data[YEAR <= year.for.equate, target.args[['my.sgp']][i]:=SGP] ### Get comparison values from before transition
 					if (my.label %in% names(slot.data)) slot.data[,(my.label):=NULL]
@@ -508,10 +508,10 @@ function(
 				for (target.years.iter in max.sgp.target.years.forward) {
 					if (!grepl("BASELINE", target.args[['my.sgp']][i])) {
 						my.label <- paste("MOVE_UP_STAY_UP_STATUS", target.years.iter, "YEAR", sep="_")
-						my.target.label <- paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", target.years.iter, "YEAR", sep="_")
+						my.target.label <- paste("SGP_TARGET_MOVE_UP_STAY_UP", target.years.iter, "YEAR", sep="_")
 					} else {
 						my.label <- paste("MOVE_UP_STAY_UP_STATUS_BASELINE", target.years.iter, "YEAR", sep="_")
-						my.target.label <- paste("SGP_TARGET_MOVE_UP_STAY_UP", target.years.iter, "YEAR", sep="_")
+						my.target.label <- paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", target.years.iter, "YEAR", sep="_")
 					}
 					if (!grepl("BASELINE", target.args[['my.sgp']][i])) my.label <- paste("MOVE_UP_STAY_UP_STATUS", target.years.iter, "YEAR", sep="_") else my.label <- paste("MOVE_UP_STAY_UP_STATUS_BASELINE", target.years.iter, "YEAR", sep="_")
 					if (grepl("FROM", target.args[['my.sgp']][i])) slot.data[YEAR <= year.for.equate, target.args[['my.sgp']][i]:=SGP]
