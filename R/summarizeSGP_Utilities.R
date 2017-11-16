@@ -38,7 +38,6 @@ function(sgp.groups.to.summarize,
 	ListExpr <- parse(text=paste0("list(", paste(unlist(tmp.sgp.summaries), collapse=", "),")"))
 	ByExpr <- parse(text=paste0("list(", paste(sgp.groups.to.summarize, collapse=", "), ")"))
 
-	# tmp.db <- dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_Summary_Data.sqlite"))
 	tmp.db <- dbConnect(SQLite(), dbname = db.path)
 	available.vars <- dbListFields(tmp.db, "summary_data")
 	dbDisconnect(tmp.db)
@@ -113,17 +112,8 @@ function(tmp.simulation.dt,
 	tmp_data <- data.table(dbGetQuery(con, paste("select", paste(pull.vars, collapse = ","), "from summary_data")))
 	dbDisconnect(con)
 	if (all((my.key <- intersect(sgp_key, variables.for.summaries)) %in% names(tmp_data))) setkeyv(tmp_data, my.key)
-	if ("CATCH_UP_KEEP_UP_STATUS" %in% names(tmp_data)) {
-		tmp_data[, CATCH_UP_KEEP_UP_STATUS := factor(CATCH_UP_KEEP_UP_STATUS)]
-	}
-	if ("CATCH_UP_KEEP_UP_STATUS_BASELINE" %in% names(tmp_data)) {
-		tmp_data[, CATCH_UP_KEEP_UP_STATUS_BASELINE := factor(CATCH_UP_KEEP_UP_STATUS_BASELINE)]
-	}
-	if ("MOVE_UP_STAY_UP_STATUS" %in% names(tmp_data)) {
-		tmp_data[, MOVE_UP_STAY_UP_STATUS := factor(MOVE_UP_STAY_UP_STATUS)]
-	}
-	if ("MOVE_UP_STAY_UP_STATUS_BASELINE" %in% names(tmp_data)) {
-		tmp_data[, MOVE_UP_STAY_UP_STATUS_BASELINE := factor(MOVE_UP_STAY_UP_STATUS_BASELINE)]
+	for (cuku_musu_names.iter in unique(grep("CATCH_UP_KEEP_UP_STATUS|MOVE_UP_STAY_UP_STATUS", names(tmp_data), value=TRUE))) {
+		tmp_data[, cuku_musu_names.iter := factor(cuku_musu_names.iter)]
 	}
 	return(tmp_data)
 } ### END pullData function
