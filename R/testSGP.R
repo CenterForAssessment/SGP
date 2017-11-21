@@ -706,6 +706,10 @@ function(
 			tmp.messages <- ("\t##### Results of testSGP test number 3 #####\n\n")
 			sgpData_LONG <- as.data.table(SGPdata::sgpData_LONG)
 
+			### Some minor modifications to SGPstateData for testing purposes
+
+			SGPstateData[['DEMO']][['SGP_Configuration']][['max.sgp.target.years.forward']] <- 1:7
+
 			### Add EOCT courses to sgpData_LONG
 
 			sgpData_LONG[CONTENT_AREA=='MATHEMATICS' & GRADE=='9', CONTENT_AREA:='ALGEBRA_I']
