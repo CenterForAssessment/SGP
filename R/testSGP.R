@@ -709,6 +709,7 @@ function(
 			### Some minor modifications to SGPstateData for testing purposes
 
 			SGPstateData[['DEMO_EOCT']][['SGP_Configuration']][['max.sgp.target.years.forward']] <- 1:7
+			SGPstateData[['DEMO_EOCT']][['SGP_Configuration']][['sgPlot.sgp.targets.timeframe']] <- 3
 
 			### Add EOCT courses to sgpData_LONG
 
