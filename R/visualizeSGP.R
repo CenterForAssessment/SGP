@@ -906,7 +906,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 					tmp.list[[i]] <- data.table(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
 						sgp_object@SGP[["SGProjections"]][[i]][,c(1, grep("PROJ_YEAR_1", names(sgp_object@SGP[["SGProjections"]][[i]]))), with=FALSE])
 				}
-				sgPlot.data <- data.table(rbindlist(tmp.list, fill=TRUE), key=c("ID", "CONTENT_AREA"))[sgPlot.data][,SGP_PROJECTION_GROUP:=NULL]
+				sgPlot.data <- data.table(rbindlist(tmp.list, fill=TRUE), key=c("ID", "CONTENT_AREA"))[sgPlot.data]
 			} ### END if (sgPlot.fan)
 
 			### Straight projection scale score targets
