@@ -69,7 +69,7 @@ function(sgp_object,
 	SCHOOL_ENROLLMENT_STATUS <- LAST_NAME <- FIRST_NAME <- NULL ## To prevent R CMD check warnings
 	MEDIAN_SGP <- MEDIAN_SGP_COUNT <- VALID_CASE <- gaPlot.iter <- sgPlot.iter <- V1 <- variable <- INSTRUCTOR_NAME <- INSTRUCTOR_NUMBER <- NULL ## To prevent R CMD check warnings
 	CONTENT_AREA_RESPONSIBILITY <- INSTRUCTOR_LAST_NAME <- INSTRUCTOR_FIRST_NAME <- TRANSFORMED_SCALE_SCORE <- SCALE_SCORE_ACTUAL <- CONTENT_AREA_LABELS <- NULL
-	TEMP <- TEMP_SCORE <- TEMP_GRADE <- SGP_PROJECTION_GROUP <- EQUATED <- NULL
+	TEMP <- TEMP_SCORE <- TEMP_GRADE <- SGP_PROJECTION_GROUP <- EQUATED <- ..variables.to.keep <- NULL
 
 
 	### Create state (if missing) from sgp_object (if possible)
@@ -877,7 +877,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			variables.to.keep <- c(tmp.sgPlot.id, variables.to.keep)
 		}
 
-		sgPlot.data <- sgPlot.data[, variables.to.keep, with=FALSE]
+		sgPlot.data <- sgPlot.data[, ..variables.to.keep]
 
 	#### Merge in 1 year projections (if requested & available) and transform using piecewiseTransform (if required) (NOT NECESSARY IF WIDE data is provided)
 	#### Merge in scale scores associated with SGP_TARGETs (if requested & available) and transform using piecewiseTransform (if required) (NOT NECESSARY IF WIDE data is provided)
@@ -900,27 +900,24 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			### Straight projections for fan
 
 			if (sgPlot.fan & any(tmp.proj.names %in% names(sgp_object@SGP[["SGProjections"]]))) {
-				setkeyv(sgPlot.data, c("ID", "CONTENT_AREA"))
 				tmp.list <- list()
 				for (i in tmp.proj.names) {
 					tmp.list[[i]] <- data.table(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
 						sgp_object@SGP[["SGProjections"]][[i]][,c(1, grep("PROJ_YEAR_1", names(sgp_object@SGP[["SGProjections"]][[i]]))), with=FALSE])
 				}
-				sgPlot.data <- data.table(rbindlist(tmp.list, fill=TRUE), key=c("ID", "CONTENT_AREA"))[sgPlot.data]
+				sgPlot.data <- rbindlist(tmp.list, fill=TRUE)[sgPlot.data, on=c("ID", "CONTENT_AREA")]
 			} ### END if (sgPlot.fan)
 
 			### Straight projection scale score targets
 
 			if (any(c("sgp.projections", "sgp.projections.baseline") %in% sgPlot.sgp.targets) & any(tmp.proj.cut_score.names %in% names(sgp_object@SGP[["SGProjections"]]))) {
 
-				setkeyv(sgPlot.data, c("ID", "CONTENT_AREA"))
 				tmp.list <- list()
 				for (i in tmp.proj.cut_score.names) {
 					tmp.list[[i]] <- data.table(CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
-						sgp_object@SGP[["SGProjections"]][[i]][,c(1, grep(paste(sgPlot.sgp.targets.timeframe, "YEAR_PROJ", sep="_"), names(sgp_object@SGP[["SGProjections"]][[i]]))), with=FALSE],
-						key=c("ID", "CONTENT_AREA"))
+						sgp_object@SGP[["SGProjections"]][[i]][,c(1, grep(paste(sgPlot.sgp.targets.timeframe, "YEAR_PROJ", sep="_"), names(sgp_object@SGP[["SGProjections"]][[i]]))), with=FALSE])
 				}
-				sgPlot.data <- data.table(rbindlist(tmp.list, fill=TRUE), key=c("ID", "CONTENT_AREA"))[sgPlot.data]
+				sgPlot.data <- rbindlist(tmp.list, fill=TRUE)[sgPlot.data, on=c("ID", "CONTENT_AREA")]
 			} ### END if ("sgp.projections" %in% sgPlot.sgp.targets)
 
 			### Lagged projection scale score targets
