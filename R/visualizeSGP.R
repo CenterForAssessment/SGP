@@ -69,7 +69,7 @@ function(sgp_object,
 	SCHOOL_ENROLLMENT_STATUS <- LAST_NAME <- FIRST_NAME <- NULL ## To prevent R CMD check warnings
 	MEDIAN_SGP <- MEDIAN_SGP_COUNT <- VALID_CASE <- gaPlot.iter <- sgPlot.iter <- V1 <- variable <- INSTRUCTOR_NAME <- INSTRUCTOR_NUMBER <- NULL ## To prevent R CMD check warnings
 	CONTENT_AREA_RESPONSIBILITY <- INSTRUCTOR_LAST_NAME <- INSTRUCTOR_FIRST_NAME <- TRANSFORMED_SCALE_SCORE <- SCALE_SCORE_ACTUAL <- CONTENT_AREA_LABELS <- NULL
-	TEMP <- TEMP_SCORE <- TEMP_GRADE <- SGP_PROJECTION_GROUP <- EQUATED <- ..variables.to.keep <- NULL
+	TEMP <- TEMP_SCORE <- TEMP_GRADE <- SGP_PROJECTION_GROUP <- EQUATED <- NULL
 
 
 	### Create state (if missing) from sgp_object (if possible)
@@ -863,7 +863,6 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 		if (any(duplicated(sgPlot.data, by=key(sgPlot.data)))) sgPlot.data <- createUniqueLongData(sgPlot.data)
 		sgPlot.data <- ddcast(sgPlot.data, ID + CONTENT_AREA ~ YEAR,
 			value.var=setdiff(variables.to.keep, c("VALID_CASE", "ID", "CONTENT_AREA", "YEAR")), sep=".")
-		# sgPlot.data <- sgPlot.data[,ID:=gsub("_DUPS_[0-9]*", "", ID)]
 
 		variables.to.keep <- c("ID", "CONTENT_AREA", paste("CONTENT_AREA_LABELS", tmp.years.subset, sep="."),
 			paste("LAST_NAME", tmp.last.year, sep="."), paste("FIRST_NAME", tmp.last.year, sep="."), paste("GRADE", tmp.years.subset, sep="."),
@@ -877,7 +876,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			variables.to.keep <- c(tmp.sgPlot.id, variables.to.keep)
 		}
 
-		sgPlot.data <- sgPlot.data[, ..variables.to.keep]
+		sgPlot.data <- sgPlot.data[, variables.to.keep, with=FALSE]
 
 	#### Merge in 1 year projections (if requested & available) and transform using piecewiseTransform (if required) (NOT NECESSARY IF WIDE data is provided)
 	#### Merge in scale scores associated with SGP_TARGETs (if requested & available) and transform using piecewiseTransform (if required) (NOT NECESSARY IF WIDE data is provided)
