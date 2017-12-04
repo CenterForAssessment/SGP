@@ -87,17 +87,17 @@ function(sgp_object,
 			for (max.sgp.target.years.forward.iter in seq_along(max.sgp.target.years.forward)) {
 				num.years.available <- length(grep("LEVEL_[123456789]", names(tmp_object_1)))
 				if (projection_group.iter %in% names(SGP::SGPstateData[[state]][['SGP_Configuration']][['grade.projection.sequence']])) {
-					if (length(max.sgp.target.years.forward)==1) {
-						num.years.to.get <- min(SGP::SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]], num.years.available)
-					} else {
+#					if (length(max.sgp.target.years.forward)==1) {
+#						num.years.to.get <- min(SGP::SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]], num.years.available)
+#					} else {
 						num.years.to.get <- min(max.sgp.target.years.forward[max.sgp.target.years.forward.iter], SGP::SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]], num.years.available)
-					}
+#					}
 					if (!is.null(SGP::SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]])) {
-						if (length(max.sgp.target.years.forward)==1) {
-							num.years.to.get.label <- SGP::SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]]
-						} else {
+#						if (length(max.sgp.target.years.forward)==1) {
+#							num.years.to.get.label <- SGP::SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]]
+#						} else {
 							num.years.to.get.label <- min(max.sgp.target.years.forward[max.sgp.target.years.forward.iter], SGP::SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]])
-						}
+#						}
 					} else {
 						num.years.to.get.label <- max.sgp.target.years.forward[max.sgp.target.years.forward.iter]
 					}
