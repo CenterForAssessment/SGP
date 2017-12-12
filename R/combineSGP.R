@@ -439,13 +439,6 @@ function(
 			terminal.content_areas <- intersect(terminal.content_areas, sapply(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]], tail, 1))
 		}
 
-#		if (identical(sgp.target.content_areas, TRUE)) {
-#			for (my.sgp.target.content_area.iter in seq_along(target.args[['my.sgp.target.content_area']])) {
-#				slot.data[!is.na(get(target.args[['my.sgp.target']][my.sgp.target.content_area.iter])), target.args[['my.sgp.target.content_area']][my.sgp.target.content_area.iter] :=
-#					getTargetSGPContentArea(GRADE[1], CONTENT_AREA[1], state, max.sgp.target.years.forward, target.args[['my.sgp.target.content_area']][my.sgp.target.content_area.iter]),
-#					by=list(GRADE, CONTENT_AREA)]
-#			}
-#		}
 
 		### CATCH_UP_KEEP_UP_STATUS Calculation
 
