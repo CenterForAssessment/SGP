@@ -11,11 +11,11 @@ function(sgp_object,
 	return.lagged.status=TRUE,
 	fix.duplicates=fix.duplicates) {
 
-	VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- GRADE <- FIRST_OBSERVATION <- LAST_OBSERVATION <- STATE <- SGP_PROJECTION_GROUP <- DUPS_FLAG <- SCALE_SCORE <- SCALE_SCORE_PRIOR <- NULL
+	VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- GRADE <- FIRST_OBSERVATION <- LAST_OBSERVATION <- STATE <- SGP_PROJECTION_GROUP <- DUPS_FLAG <- SCALE_SCORE <- SCALE_SCORE_PRIOR <- V1 <- NULL
 
 	### Utility functions
 
-	getTargetSGP_INTERNAL <- function(tmp_object_1, state, state.iter, projection_group.iter, target.type, target.level, year_within, fix.duplicates) {
+	getTargetSGP_INTERNAL <- function(tmp_object_1, state, state.iter, projection_group.iter, target.type, target.level, year_within, fix.duplicates, max.sgp.target.years.forward) {
 
 		if (dups.tf <- !is.null(fix.duplicates)) {
 			if (any(grepl("_DUPS_[0-9]*", tmp_object_1[["ID"]]))) {
@@ -75,9 +75,6 @@ function(sgp_object,
 			if (year_within) {
 				tmp_object_1 <- slot.data[, tmp.merge.vars, with=FALSE][tmp_object_1, on = setdiff(tmp.merge.vars, "DUPS_FLAG")]
 			} else tmp_object_1 <- slot.data[, tmp.merge.vars, with=FALSE][tmp_object_1, on = setdiff(tmp.merge.vars, "DUPS_FLAG")]
-			# if (dups.tf & any(is.na(tmp_object_1[["GRADE"]]))) { # Unnecesary now that GRADE is included in all projections/SGP key ???
-			# 	invisible(tmp_object_1[is.na(GRADE), GRADE := unique(slot.data[, c(getKey(tmp_object_1), "GRADE"), with=FALSE][tmp_object_1[is.na(GRADE),], on = getKey(tmp_object_1)])[,GRADE]])
-			# }
 		}
 
 		invisible(tmp_object_1[, paste0(target.level, "_STATUS_INITIAL") :=
@@ -87,43 +84,56 @@ function(sgp_object,
 		## Find min/max of targets based upon CATCH_UP_KEEP_UP_STATUS_INITIAL status
 
 		if (nrow(tmp_object_1) > 0) {
-			num.years.available <- length(grep("LEVEL_[123456789]", names(tmp_object_1)))
-			if (projection_group.iter %in% names(SGP::SGPstateData[[state]][['SGP_Configuration']][['grade.projection.sequence']])) {
-				num.years.to.get <- min(SGP::SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]], num.years.available)
-				if (!is.null(SGP::SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]])) {
-					num.years.to.get.label <- SGP::SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]]
+			for (max.sgp.target.years.forward.iter in seq_along(max.sgp.target.years.forward)) {
+				num.years.available <- length(grep("LEVEL_[123456789]", names(tmp_object_1)))
+				if (projection_group.iter %in% names(SGP::SGPstateData[[state]][['SGP_Configuration']][['grade.projection.sequence']])) {
+#					if (length(max.sgp.target.years.forward)==1) {
+#						num.years.to.get <- min(SGP::SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]], num.years.available)
+#					} else {
+						num.years.to.get <- min(max.sgp.target.years.forward[max.sgp.target.years.forward.iter], SGP::SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]], num.years.available)
+#					}
+					if (!is.null(SGP::SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]])) {
+#						if (length(max.sgp.target.years.forward)==1) {
+#							num.years.to.get.label <- SGP::SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]]
+#						} else {
+							num.years.to.get.label <- min(max.sgp.target.years.forward[max.sgp.target.years.forward.iter], SGP::SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]])
+#						}
+					} else {
+						num.years.to.get.label <- max.sgp.target.years.forward[max.sgp.target.years.forward.iter]
+					}
 				} else {
-					num.years.to.get.label <- max.sgp.target.years.forward
+					num.years.to.get <- min(max.sgp.target.years.forward[max.sgp.target.years.forward.iter], num.years.available)
+					num.years.to.get.label <- max.sgp.target.years.forward[max.sgp.target.years.forward.iter]
 				}
-			} else {
-				num.years.to.get <- min(max.sgp.target.years.forward, num.years.available)
-				num.years.to.get.label <- max.sgp.target.years.forward
-			}
-			if (target.type %in% c("sgp.projections.lagged", "sgp.projections.lagged.baseline")) num.years.to.get <- num.years.to.get+1
+				if (target.type %in% c("sgp.projections.lagged", "sgp.projections.lagged.baseline")) num.years.to.get <- num.years.to.get+1
 
-			tmp.level.variables <-
-				paste(grep(paste0(sgp.projections.projection.unit.label, "_[", paste(seq(num.years.to.get), collapse=""), "]", tmp.suffix), names(tmp_object_1), value=TRUE), collapse=", ")
+				tmp.level.variables <-
+					paste(grep(paste0(sgp.projections.projection.unit.label, "_[", paste(seq(num.years.to.get), collapse=""), "]", tmp.suffix), names(tmp_object_1), value=TRUE), collapse=", ")
 
-			jExpression <- parse(text=paste0("{catch_keep_move_functions[[unclass(", target.level, "_STATUS_INITIAL)]](", tmp.level.variables, ", na.rm=TRUE)}"))
-			if (dups.tf) { #  Re-create _DUPS_ labels since ID is in jExp_Key
-				if ("DUPS_FLAG" %in% names(tmp_object_1)) invisible(tmp_object_1[!is.na(DUPS_FLAG), ID := paste0(ID, "_DUPS_", DUPS_FLAG)])
-				setkeyv(tmp_object_1, getKey(tmp_object_1))
-				jExp_Key <- intersect(names(tmp_object_1), c(jExp_Key, grep("SCALE_SCORE$|SCALE_SCORE_PRIOR", names(tmp_object_1), value=TRUE), "DUPS_FLAG", "SGP_PROJECTION_GROUP_SCALE_SCORES")) #  Keep these vars - still unique by ID so doesn't change results
-			}# else {
-				# if (!is.null(fix.duplicates)) jExp_Key <- intersect(names(tmp_object_1), c(jExp_Key, "GRADE")) # For ignored grade dups # Unnecesary now that GRADE is included in all projections/SGP key ???
-			#}
-			tmp_object_2 <- tmp_object_1[, eval(jExpression), keyby = jExp_Key]
+				jExpression <- parse(text=paste0("{catch_keep_move_functions[[unclass(", target.level, "_STATUS_INITIAL)]](", tmp.level.variables, ", na.rm=TRUE)}"))
+				if (dups.tf) { #  Re-create _DUPS_ labels since ID is in jExp_Key
+					if ("DUPS_FLAG" %in% names(tmp_object_1)) invisible(tmp_object_1[!is.na(DUPS_FLAG), ID := paste0(ID, "_DUPS_", DUPS_FLAG)])
+					setkeyv(tmp_object_1, getKey(tmp_object_1))
+					jExp_Key <- intersect(names(tmp_object_1), c(jExp_Key, grep("SCALE_SCORE$|SCALE_SCORE_PRIOR", names(tmp_object_1), value=TRUE), "DUPS_FLAG", "SGP_PROJECTION_GROUP_SCALE_SCORES")) #  Keep these vars - still unique by ID so doesn't change results
+				}
 
-			if (target.type %in% c("sgp.projections.baseline", "sgp.projections.lagged.baseline")) baseline.label <- "_BASELINE" else baseline.label <- NULL
-			if (target.type %in% c("sgp.projections", "sgp.projections.baseline")) projection.label <- "_CURRENT" else projection.label <- NULL
-			if (target.level=="MOVE_UP_STAY_UP") target.level.label <- "_MOVE_UP_STAY_UP" else target.level.label <- NULL
+				if (max.sgp.target.years.forward.iter==1L) {
+					tmp_object_2 <- tmp_object_1[, eval(jExpression), keyby = jExp_Key]
+				} else {
+					tmp_object_2[,V1:=tmp_object_1[, eval(jExpression), keyby = jExp_Key][['V1']]]
+				}
 
-			setnames(tmp_object_2, "V1",
-				paste0("SGP_TARGET", baseline.label, target.level.label, "_",  num.years.to.get.label, "_", sgp.projections.projection.unit.label, projection.label))
+				if (target.type %in% c("sgp.projections.baseline", "sgp.projections.lagged.baseline")) baseline.label <- "_BASELINE" else baseline.label <- NULL
+				if (target.type %in% c("sgp.projections", "sgp.projections.baseline")) projection.label <- "_CURRENT" else projection.label <- NULL
+				if (target.level=="MOVE_UP_STAY_UP") target.level.label <- "_MOVE_UP_STAY_UP" else target.level.label <- NULL
 
-			if (target.type %in% c("sgp.projections.lagged", "sgp.projections.lagged.baseline") && return.lagged.status) {
-				tmp_object_2[,c("ACHIEVEMENT_LEVEL_PRIOR", grep("STATUS_INITIAL", names(tmp_object_1), value=TRUE)):=
-					list(tmp_object_1[["ACHIEVEMENT_LEVEL_PRIOR"]], tmp_object_1[[grep("STATUS_INITIAL", names(tmp_object_1), value=TRUE)]])]
+				setnames(tmp_object_2, "V1",
+					paste0("SGP_TARGET", baseline.label, target.level.label, "_",  num.years.to.get.label, "_", sgp.projections.projection.unit.label, projection.label))
+
+				if (target.type %in% c("sgp.projections.lagged", "sgp.projections.lagged.baseline") && return.lagged.status) {
+					tmp_object_2[,c("ACHIEVEMENT_LEVEL_PRIOR", grep("STATUS_INITIAL", names(tmp_object_1), value=TRUE)):=
+						list(tmp_object_1[["ACHIEVEMENT_LEVEL_PRIOR"]], tmp_object_1[[grep("STATUS_INITIAL", names(tmp_object_1), value=TRUE)]])]
+				}
 			}
 			return(tmp_object_2[,SGP_PROJECTION_GROUP:=projection_group.iter])
 		} else {
@@ -191,7 +201,7 @@ function(sgp_object,
 			for (projection_group.iter in unique(tmp_object_1[['SGP_PROJECTION_GROUP']])) {
 				tmp.sgpTarget.list[[paste(state.iter, projection_group.iter, sep=".")]] <-
 				getTargetSGP_INTERNAL(tmp_object_1[SGP_PROJECTION_GROUP==projection_group.iter], state, state.iter, projection_group.iter, target.type, target.level,
-					year_within="YEAR_WITHIN" %in% names(slot.data), fix.duplicates=fix.duplicates)
+					year_within="YEAR_WITHIN" %in% names(slot.data), fix.duplicates=fix.duplicates, max.sgp.target.years.forward=max.sgp.target.years.forward)
 			}
 		} ### END !is.null(level.to.get)
 	} ### END for state.iter

@@ -8,7 +8,7 @@
 	confidence.interval.groups=NULL,
 	produce.all.summary.tables=FALSE,
 	summarizeSGP.baseline=NULL,
-	projection.years.for.target=3,
+	projection.years.for.target=NULL,
 	save.old.summaries=FALSE,
 	highest.level.summary.grouping="STATE",
 	parallel.config=NULL) {
@@ -55,6 +55,19 @@
 		}
 	}
 
+
+	### Establish project.years.for.target
+	if (!is.null(SGP::SGPstateData[[state]][['SGP_Configuration']][['projection.years.for.target']])) {
+		projection.years.for.target <- max(SGP::SGPstateData[[state]][['SGP_Configuration']][['max.sgp.target.years.forward']])
+	}
+	if (is.null(projection.years.for.target)) {
+		if (length(tmp.targets <- grep("CATCH_UP_KEEP_UP_STATUS_[123456789]", names(sgp_object@Data), value=TRUE))==0) {
+			projection.years.for.target <- NA
+		} else {
+			projection.years.for.target <- max(sapply(strsplit(gsub("_YEAR", "", tmp.targets), "_"), tail, 1), na.rm=TRUE)
+		}
+	}
+
 	### define summarizeSGP.baseline
 	if (is.null(summarizeSGP.baseline)) {
 		summarizeSGP.baseline <- FALSE ## Default to cohort referenced is not set by user
@@ -70,18 +83,27 @@
 	}
 
 	my.sgp.target <- paste("SGP_TARGET", projection.years.for.target, "YEAR", sep="_")
+	my.cuku.target <- paste("CATCH_UP_KEEP_UP_STATUS", projection.years.for.target, "YEAR", sep="_")
 	my.sgp.target.musu <- paste("SGP_TARGET_MOVE_UP_STAY_UP", projection.years.for.target, "YEAR", sep="_")
+	my.musu.target <- paste("MOVE_UP_STAY_UP_STATUS", projection.years.for.target, "YEAR", sep="_")
 	my.sgp.target.baseline <- paste("SGP_TARGET_BASELINE", projection.years.for.target, "YEAR", sep="_")
+	my.cuku.target.baseline <- paste("CATCH_UP_KEEP_UP_STATUS_BASELINE", projection.years.for.target, "YEAR", sep="_")
 	my.sgp.target.musu.baseline <- paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", projection.years.for.target, "YEAR", sep="_")
+	my.musu.target.baseline <- paste("MOVE_UP_STAY_UP_STATUS_BASELINE", projection.years.for.target, "YEAR", sep="_")
 
 	if (!my.sgp.target %in% sgp.data.names) my.sgp.target <- NULL
+	if (!my.cuku.target %in% sgp.data.names) my.cuku.target <- NULL
 	if (!my.sgp.target.musu %in% sgp.data.names) my.sgp.target.musu <- NULL
+	if (!my.musu.target %in% sgp.data.names) my.musu.target <- NULL
 	if (!my.sgp.target.baseline %in% sgp.data.names) my.sgp.target.baseline <- NULL
+	if (!my.cuku.target.baseline %in% sgp.data.names) my.cuku.target.baseline <- NULL
 	if (!my.sgp.target.musu.baseline %in% sgp.data.names) my.sgp.target.musu.baseline <- NULL
+	if (!my.musu.target.baseline %in% sgp.data.names) my.musu.target.baseline <- NULL
 
 	if (missing(sgp_object)) {
 		stop("User must supply an SGP object containing a @Data slot with long data. See documentation for details.")
 	}
+
 
 	###
 	## Utility Functions
@@ -232,10 +254,11 @@
 						tmp.sgp.summaries,
 						M1=paste0("median_na(", my.sgp.target, ", WEIGHT)"),
 						M2=paste0("num_non_missing(", my.sgp.target, ")"),
-						PERCENT_CATCHING_UP_KEEPING_UP="percent_in_category(CATCH_UP_KEEP_UP_STATUS, c('Catch Up: Yes', 'Keep Up: Yes'), c('Catch Up: Yes', 'Catch Up: No', 'Keep Up: Yes', 'Keep Up: No'))"
+						PERCENT_CATCHING_UP_KEEPING_UP=paste0("percent_in_category(", my.cuku.target, ", c('Catch Up: Yes', 'Keep Up: Yes'), c('Catch Up: Yes', 'Catch Up: No', 'Keep Up: Yes', 'Keep Up: No'))")
 					)
 					names(tmp.sgp.summaries)[sapply(c("M1", "M2"), function(x) which(names(tmp.sgp.summaries)==x))] <-
 						c(paste("MEDIAN", my.sgp.target, sep="_"), paste("MEDIAN", my.sgp.target, "COUNT", sep="_"))
+					names(tmp.sgp.summaries)[which(names(tmp.sgp.summaries)=="PERCENT_CATCHING_UP_KEEPING_UP")] <- paste("PERCENT_CATCHING_UP_KEEPING_UP", projection.years.for.target, "YEAR", sep="_")
 				}
 
 				if (!is.null(my.sgp.target.baseline)) {
@@ -243,11 +266,11 @@
 						tmp.sgp.summaries,
 						M1=paste0("median_na(", my.sgp.target.baseline, ", WEIGHT)"),
 						M2=paste0("num_non_missing(", my.sgp.target.baseline, ")"),
-						PERCENT_CATCHING_UP_KEEPING_UP_BASELINE="percent_in_category(CATCH_UP_KEEP_UP_STATUS_BASELINE, c('Catch Up: Yes', 'Keep Up: Yes'), c('Catch Up: Yes', 'Catch Up: No', 'Keep Up: Yes', 'Keep Up: No'))"
+						PERCENT_CATCHING_UP_KEEPING_UP_BASELINE=paste0("percent_in_category(", my.cuku.target.baseline, ", c('Catch Up: Yes', 'Keep Up: Yes'), c('Catch Up: Yes', 'Catch Up: No', 'Keep Up: Yes', 'Keep Up: No'))")
 					)
 					names(tmp.sgp.summaries)[sapply(c("M1", "M2"), function(x) which(names(tmp.sgp.summaries)==x))] <-
 						c(paste("MEDIAN", my.sgp.target.baseline, sep="_"), paste("MEDIAN", my.sgp.target.baseline, "COUNT", sep="_"))
-
+					names(tmp.sgp.summaries)[which(names(tmp.sgp.summaries)=="PERCENT_CATCHING_UP_KEEPING_UP_BASELINE")] <- paste("PERCENT_CATCHING_UP_KEEPING_UP_BASELINE", projection.years.for.target, "YEAR", sep="_")
 				}
 
 				if (!is.null(my.sgp.target.musu)) {
@@ -255,10 +278,11 @@
 						tmp.sgp.summaries,
 						M1=paste0("median_na(", my.sgp.target.musu, ", WEIGHT)"),
 						M2=paste0("num_non_missing(", my.sgp.target.musu, ")"),
-						PERCENT_MOVING_UP_STAYING_UP="percent_in_category(MOVE_UP_STAY_UP_STATUS, c('Move Up: Yes', 'Stay Up: Yes'), c('Move Up: Yes', 'Move Up: No', 'Stay Up: Yes', 'Stay Up: No'))"
+						PERCENT_MOVING_UP_STAYING_UP=paste0("percent_in_category(", my.musu.target, ", c('Move Up: Yes', 'Stay Up: Yes'), c('Move Up: Yes', 'Move Up: No', 'Stay Up: Yes', 'Stay Up: No'))")
 					)
 					names(tmp.sgp.summaries)[sapply(c("M1", "M2"), function(x) which(names(tmp.sgp.summaries)==x))] <-
 						c(paste("MEDIAN", my.sgp.target.musu, sep="_"), paste("MEDIAN", my.sgp.target.musu, "COUNT", sep="_"))
+					names(tmp.sgp.summaries)[which(names(tmp.sgp.summaries)=="PERCENT_MOVING_UP_STAYING_UP")] <- paste("PERCENT_MOVING_UP_STAYING_UP", projection.years.for.target, "YEAR", sep="_")
 				}
 
 				if (!is.null(my.sgp.target.musu.baseline)) {
@@ -266,10 +290,11 @@
 						tmp.sgp.summaries,
 						M1=paste0("median_na(", my.sgp.target.musu.baseline, ", WEIGHT)"),
 						M2=paste0("num_non_missing(", my.sgp.target.musu.baseline, ")"),
-						PERCENT_MOVING_UP_STAYING_UP_BASELINE="percent_in_category(MOVE_UP_STAY_UP_STATUS_BASELINE, c('Move Up: Yes', 'Stay Up: Yes'), c('Move Up: Yes', 'Move Up: No', 'Stay Up: Yes', 'Stay Up: No'))"
+						PERCENT_MOVING_UP_STAYING_UP_BASELINE=paste0("percent_in_category(", my.musu.target.baseline, ", c('Move Up: Yes', 'Stay Up: Yes'), c('Move Up: Yes', 'Move Up: No', 'Stay Up: Yes', 'Stay Up: No'))")
 					)
 					names(tmp.sgp.summaries)[sapply(c("M1", "M2"), function(x) which(names(tmp.sgp.summaries)==x))] <-
 						c(paste("MEDIAN", my.sgp.target.musu.baseline, sep="_"), paste("MEDIAN", my.sgp.target.musu.baseline, "COUNT", sep="_"))
+					names(tmp.sgp.summaries)[which(names(tmp.sgp.summaries)=="PERCENT_MOVING_UP_STAYING_UP_BASELINE")] <- paste("PERCENT_MOVING_UP_STAYING_UP_BASELINE", projection.years.for.target, "YEAR", sep="_")
 				}
 
 			return(tmp.sgp.summaries)
@@ -405,7 +430,6 @@
 				tmp.summary[[s]] <- sgpSummary(summary.iter[[s]][1], eval(parse(text=summary.iter[[s]][2])),
 					tmp.simulation.dt, state, sgp.summaries, confidence.interval.groups, my.sgp, sgp_key, variables.for.summaries, sim.info, db.path)
 			}
-			par.start <- list(par.type="NONE")
 		}
 
 		j <- k <- NULL ## To prevent R CMD check warnings
@@ -488,12 +512,10 @@
 	variables.for.summaries <- intersect(
 		c("VALID_CASE", "ID", my.sgp, my.sgp.target, my.sgp.target.baseline, my.sgp.target.musu, my.sgp.target.musu.baseline,
 		"ACHIEVEMENT_LEVEL", "ACHIEVEMENT_LEVEL_PRIOR",
-		"CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STAY_UP_STATUS", "CATCH_UP_KEEP_UP_STATUS_BASELINE","MOVE_UP_STAY_UP_STATUS_BASELINE",
+		my.cuku.target, my.musu.target, my.cuku.target.baseline, my.musu.target.baseline,
 		"SCALE_SCORE_PRIOR_STANDARDIZED", "SGP_SIMEX", "SGP_SIMEX_RANKED", "SGP_SIMEX_BASELINE", "SGP_SIMEX_BASELINE_RANKED",
 		unique(as.character(unlist(summary.groups))),
 		"YEAR_WITHIN"), sgp.data.names)
-
-	# if (!is.null(sgp_object@Data_Supplementary) | "CSEM" %in% confidence.interval.groups[['TYPE']]) variables.for.summaries <- c("VALID_CASE", "ID", variables.for.summaries)
 
 
 	### Define demographic subgroups and tables that will be calculated from all possible created by expand.grid
@@ -616,7 +638,7 @@
 
 	dbDisconnect(sgp_data_for_summary)
 
-	if (!is.null(parallel.config))	par.start <- startParallel(parallel.config, 'SUMMARY')
+	if (!is.null(parallel.config))	par.start <- startParallel(parallel.config, 'SUMMARY') else par.start <- list(par.type="NONE")
 
 	# Don't use SNOW - run as FOREACH + doParallel instead.
 	if (identical(par.start[['par.type']], "SNOW")) {parallel.config[["BACKEND"]] <- "FOREACH"; parallel.config[["TYPE"]] <- "doParallel"}

@@ -15,7 +15,7 @@ summarizeSGP(sgp_object,
            confidence.interval.groups=NULL,
            produce.all.summary.tables=FALSE,
            summarizeSGP.baseline=NULL,
-           projection.years.for.target=3,
+           projection.years.for.target=NULL,
            save.old.summaries=FALSE,
            highest.level.summary.grouping="STATE",
            parallel.config=NULL)
@@ -78,7 +78,7 @@ For \code{CSEM} analysis this argument requires that simulated SGPs have been pr
 \item{produce.all.summary.tables}{A Boolean variable, defaults to FALSE, indicating whether the function should produce ALL possible summary table. By default, a set of approximately 70 tables are produced that are used in other parts of the packages (e.g., bubblePlots).}
 \item{summarizeSGP.baseline}{A Boolean variable, defaults to FALSE, indicating whether the function should utilize baseline sgp for summary table production. By default,
 a set of approximately 100 tables are produced that are used in other parts of the packages (e.g., bubblePlots).}
-\item{projection.years.for.target}{An integer argument indicating \code{SGP_TARGET} variables to summarize based upon years projected forward. Default is 3 years which is what is generally used by
+\item{projection.years.for.target}{An integer/NULL argument (defaults to NULL) indicating \code{SGP_TARGET} variables to summarize based upon years projected forward. Default is years for projections used by state (or 3 years) which is what is generally used by
 most states.
 }
 \item{save.old.summaries}{A Boolean argument, defaults to FALSE, indicating whether to save the \code{@Summary} slot (if not NULL) prior to calculating new summaries. By defaulting to FALSE, the function
