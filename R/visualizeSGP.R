@@ -168,6 +168,25 @@ function(sgp_object,
 		return(tmp.function(score))
 	}
 
+
+		###  Check SGPstateData for changes and modify parallel processing for SNOW (Windows) if so:
+		if (!is.null(parallel.config)) {
+			tmp.type <- names(parallel.config$WORKERS)[1]
+			if (is.null(tmp.type)) tmp.type <- parallel.config$WORKERS
+			par.start <- startParallel(parallel.config, tmp.type)
+
+			tmp.digest <- SGP::SGPstateData[["digest"]]
+			tmp.SGPstateData <- SGP::SGPstateData
+			tmp.SGPstateData[["digest"]] <- NULL #  Can't assign `<- NULL` to SGP::SGPstateData (need tmp.SGPstateData)
+			if (!identical(tmp.digest, digest::digest(tmp.SGPstateData)) & par.start$par.type=="SNOW") {
+				messageSGP(
+					"\n\tManual changes to SGPstateData have been detected, which is not compatible with SNOW parallel processing.\n\tParallel processing will be disabled for all visualization production.\n")
+				stopParallel(parallel.config, par.start)
+				parallel.config <- NULL
+			} else 	stopParallel(parallel.config, par.start)
+			tmp.digest -> tmp.SGPstateData[["digest"]]
+		}
+
 ##############################################################################################################
 #### bubblePlot
 ##############################################################################################################
