@@ -276,34 +276,34 @@ function(panel.data,         ## REQUIRED
 	}
 
 	.get.quantiles <- function(data1, data2, ranked.simex=FALSE) {
-    if (ranked.simex) {
-      for (p in 1:3) { # Additional values between the tau predicted values - 1/8th percentiles for ranking
-        dataX <- data1[,(1:ncol(data1)-1)] + t(apply(data1, 1, diff))/2
-        data1 <- cbind(data1, dataX)[, order(c(seq(ncol(data1)), seq(ncol(dataX))))]
-      }
-      tmp.zero <- 794L
-    } else tmp.zero <- 101L
+        if (ranked.simex) {
+            for (p in 1:3) { # Additional values between the tau predicted values - 1/8th percentiles for ranking
+                dataX <- data1[,(1:ncol(data1)-1)] + t(apply(data1, 1, diff))/2
+                data1 <- cbind(data1, dataX)[, order(c(seq(ncol(data1)), seq(ncol(dataX))))]
+            }
+            tmp.zero <- 794L
+        } else tmp.zero <- 101L
 		V1 <- NULL
 		tmp <- as.data.table(max.col(cbind(data1 < data2, FALSE), "last"))[V1==tmp.zero, V1 := 0L]
-    if (ranked.simex) tmp[, V1 := V1/8]
-		if (!is.null(sgp.quantiles.labels)) {
-			setattr(tmp[['V1']] <- as.factor(tmp[['V1']]), "levels", sgp.quantiles.labels)
-			return(as.integer(levels(tmp[['V1']]))[tmp[['V1']]])
-		} else {
-			if (!is.null(sgp.loss.hoss.adjustment)) {
-				my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
-				tmp.hoss <- eval(parse(text=paste0("Knots_Boundaries", my.path.knots.boundaries, "[['loss.hoss_", tmp.last, "']][2L]")))
-				if (length(tmp.index <- which(data2>=tmp.hoss)) > 0L) {
-					tmp[tmp.index, V1:=apply(data.table(data1 > data2, TRUE)[tmp.index], 1, function(x) which.max(x)-1L)]
-				}
-			}
-			if (convert.0and100) {
-				tmp[V1==0L, V1:=1L]
-				tmp[V1==100L, V1:=99L]
-			}
-			return(tmp[['V1']])
-		}
-	}
+        if (ranked.simex) tmp[, V1 := V1/8]
+        if (!is.null(sgp.quantiles.labels)) {
+            setattr(tmp[['V1']] <- as.factor(tmp[['V1']]), "levels", sgp.quantiles.labels)
+            return(as.integer(levels(tmp[['V1']]))[tmp[['V1']]])
+        } else {
+            if (!is.null(sgp.loss.hoss.adjustment)) {
+                my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
+                tmp.hoss <- eval(parse(text=paste0("Knots_Boundaries", my.path.knots.boundaries, "[['loss.hoss_", tmp.last, "']][2L]")))
+                if (length(tmp.index <- which(data2>=tmp.hoss)) > 0L) {
+                    tmp[tmp.index, V1:=apply(data.table(data1 > data2, TRUE)[tmp.index], 1, function(x) which.max(x)-1L)]
+                }
+            }
+            if (convert.0and100) {
+                tmp[V1==0L, V1:=1L]
+                tmp[V1==100L, V1:=99L]
+            }
+            return(tmp[['V1']])
+        }
+    }
 
 	.get.percentile.cuts <- function(data1) {
 		tmp <- round(data1[ , percentile.cuts+1L, drop=FALSE], digits=percuts.digits)
