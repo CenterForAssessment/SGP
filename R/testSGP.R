@@ -1603,7 +1603,7 @@ function(
 			### Calculate SGPs
 
 			expression.to.evaluate <-
-				paste0("RLI1_SGPt_PART_1 <- rliSGP(\n\tsgp_object=RLI_SGPt_UPDATE_SHELL,\n\tadditional.data=RLI_Data_LONG_UPDATE,\n\ttesting.window='SPRING',\n\teow.or.update='UPDATE',\n\tconfiguration.year='2017_2018',\n\treturn.updated.shell=TRUE,\n\tgoodness.of.fit.print=TRUE,\n\tscore.type='STAR',\n\tcutscore.file.name=RLI_Cutscores,\n\tparallel.config=", parallel.config, "\n)\n")
+				paste0("RLI1_SGPt_PART_1 <- rliSGP(\n\tsgp_object=RLI_SGPt_UPDATE_SHELL,\n\tadditional.data=RLI_Data_LONG_UPDATE,\n\ttesting.window='SPRING',\n\teow.or.update='UPDATE',\n\tconfiguration.year='2016_2017',\n\treturn.updated.shell=TRUE,\n\tgoodness.of.fit.print=TRUE,\n\tscore.type='STAR',\n\tcutscore.file.name=RLI_Cutscores,\n\tparallel.config=", parallel.config, "\n)\n")
 
 			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(RLI1_SGPt_PART_1, file='Data/RLI1_SGPt_PART_1.Rdata')", sep="\n")
 
@@ -2039,7 +2039,7 @@ function(
 			### Calculate SGPs
 
 			expression.to.evaluate <-
-				paste0("RLI3_SGPt_PART_1 <- rliSGP(\n\tsgp_object=RLI_SGPt_UPDATE_SHELL,\n\tadditional.data=RLI_Data_LONG_UPDATE,\n\ttesting.window='SPRING',\n\teow.or.update='UPDATE',\n\tconfiguration.year='2017_2018',\n\treturn.updated.shell=TRUE,\n\tgoodness.of.fit.print=TRUE,\n\tcutscore.file.name=RLI_Cutscores,\n\tparallel.config=", parallel.config, "\n)\n")
+				paste0("RLI3_SGPt_PART_1 <- rliSGP(\n\tsgp_object=RLI_SGPt_UPDATE_SHELL,\n\tadditional.data=RLI_Data_LONG_UPDATE,\n\ttesting.window='SPRING',\n\teow.or.update='UPDATE',\n\tconfiguration.year='2016_2017',\n\treturn.updated.shell=TRUE,\n\tgoodness.of.fit.print=TRUE,\n\tcutscore.file.name=RLI_Cutscores,\n\tparallel.config=", parallel.config, "\n)\n")
 
 			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(RLI3_SGPt_PART_1, file='Data/RLI3_SGPt_PART_1.Rdata')", sep="\n")
 
