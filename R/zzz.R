@@ -7,6 +7,6 @@ function(libname, pkgname) {
 `.onAttach` <-
 function(libname, pkgname) {
 	if (interactive()) {
-		packageStartupMessage(magenta$bold('SGP',paste(paste0(unlist(strsplit(as.character(packageVersion("SGP")), "[.]")), c(".", "-", ".", "")), collapse=""),' (4-5-2018). For help: >help("SGP") or visit https://sgp.io'))
+		packageStartupMessage(magenta$bold('SGP',paste(paste0(unlist(strsplit(as.character(packageVersion("SGP")), "[.]")), c(".", "-", ".", "")), collapse=""),' (5-9-2018). For help: >help("SGP") or visit https://sgp.io'))
 	}
 }

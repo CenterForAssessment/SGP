@@ -1,3 +1,10 @@
+# SGP 1.8-0.0
+
+## User Visible Changes:
+
+* Many general meta-data updates, performance improvements, and much better web-based documentation (https://sgp.io)
+
+
 # SGP 1.7-0.0
 
 ## User Visible Changes:
