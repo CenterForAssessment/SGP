@@ -1,0 +1,35 @@
+---
+title: "SGP 1.8-0.0"
+date: "April 6th, 2018"
+---
+
+```{r include = FALSE}
+    library(SGP)
+
+    is_html_output = function() {
+        knitr::opts_knit$get("rmarkdown.pandoc.to")=="html"
+    }
+
+    knitr::opts_chunk$set(
+        collapse=TRUE,
+        comment="",
+        prompt=TRUE,
+        fig.dpi=96)
+
+    if (is_html_output()) {
+        options(width=1000)
+    }
+```
+
+
+This is the 1.8 release of the SGP package posted to CRAN. This [GitHub tagged release](https://github.com/CenterForAssessment/SGP/releases/tag/ceec338)
+can be downloaded via:
+
+```
+> devtools::install_github("CenterForAssessment/SGP", ref="ceec338")
+```
+
+To see all the changes in this release check out the [change log](https://sgp.io/news/index.html#sgp-1-8-0-0).
+
+
+Feel free to drop me a line with any comments, feature requests, or ideas. And give us a shout-out Tweet using the Twitter button in the upper right!
