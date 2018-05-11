@@ -82,6 +82,9 @@
   <ul class="dropdown-menu" role="menu">
     <li class="dropdown-header">Release notes</li>
     <li>
+      <a href="../articles/releases/SGP-1.8-0.0.html">SGP 1.8-0.0</a>
+    </li>
+    <li>
       <a href="../articles/releases/SGP-1.7-0.0.html">SGP 1.7-0.0</a>
     </li>
     <li>
@@ -138,7 +141,7 @@
            <span class='kw'>confidence.interval.groups</span><span class='kw'>=</span><span class='kw'>NULL</span>,
            <span class='kw'>produce.all.summary.tables</span><span class='kw'>=</span><span class='fl'>FALSE</span>,
            <span class='kw'>summarizeSGP.baseline</span><span class='kw'>=</span><span class='kw'>NULL</span>,
-           <span class='kw'>projection.years.for.target</span><span class='kw'>=</span><span class='fl'>3</span>,
+           <span class='kw'>projection.years.for.target</span><span class='kw'>=</span><span class='kw'>NULL</span>,
            <span class='kw'>save.old.summaries</span><span class='kw'>=</span><span class='fl'>FALSE</span>,
            <span class='kw'>highest.level.summary.grouping</span><span class='kw'>=</span><span class='st'>"STATE"</span>,
            <span class='kw'>parallel.config</span><span class='kw'>=</span><span class='kw'>NULL</span>)</pre>
@@ -264,7 +267,7 @@ a set of approximately 100 tables are produced that are used in other parts of t
     </tr>
     <tr>
       <th>projection.years.for.target</th>
-      <td><p>An integer argument indicating <code>SGP_TARGET</code> variables to summarize based upon years projected forward. Default is 3 years which is what is generally used by
+      <td><p>An integer/NULL argument (defaults to NULL) indicating <code>SGP_TARGET</code> variables to summarize based upon years projected forward. Default is years for projections used by state (or 3 years) which is what is generally used by
 most states.</p></td>
     </tr>
     <tr>
