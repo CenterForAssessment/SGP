@@ -13,14 +13,14 @@ function(
 
 	### Define relevant variables
 
-	if (is.null(round.digits)) round.digits <- 3
+	if (is.null(round.digits)) round.digits <- 2
 	if (is.null(distribution)) distribution <- "Normal"
 	if (!is.null(state)) {
 		min.max <- SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]][[paste0("loss.hoss_", grade)]]
 	} else {
 		min.max <- range(scale_scores, na.rm=TRUE)
 	}
-	Interpolation_Function <- function(scale_score, variance) return(splinefun(scale_score, variance, method="natural"))
+	Interpolation_Function <- function(scale_score, variance, round.digits) return(splinefun(scale_score, variance/round.digits, method="natural"))
 
 	### Create scale score dependent CSEMs
 
@@ -30,7 +30,7 @@ function(
 		} else {
 			Interpolation_Data <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]][GRADE==grade & CONTENT_AREA==content_area]
 		}
-		tmp.omega <- Interpolation_Function(Interpolation_Data[['SCALE_SCORE']], Interpolation_Data[['SCALE_SCORE_CSEM']]/round.digits)(scale_scores)
+		tmp.omega <- Interpolation_Function(Interpolation_Data[['SCALE_SCORE']], Interpolation_Data[['SCALE_SCORE_CSEM']], round.digits)(scale_scores)
 	}
 	if (!is.null(variable)) tmp.omega <- variable
 
