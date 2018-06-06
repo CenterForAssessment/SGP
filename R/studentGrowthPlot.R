@@ -1,7 +1,7 @@
 `studentGrowthPlot` <-
-function(Scale_Scores,                        ## Vector of Scale Scores
+function(Scale_Scores,                  ## Vector of Scale Scores
 	Plotting_Scale_Scores,                ## Score used for plotting, if missing, then Scale_Scores are used for plotting,
-                                              ## if supplied Scale_Scores used for text
+                                        ##   if supplied Scale_Scores used for text
 	Achievement_Levels,                   ## NOTE: Achievement_Levels must/should be supplied as factors with appropriate level codings
 	SGP,                                  ## Vector of SGPs
 	SGP_Levels,                           ## Vector of SGP Levels
@@ -15,7 +15,7 @@ function(Scale_Scores,                        ## Vector of Scale Scores
 	Cutscores,                            ## data.frame of long formatted achievement level cutscores
 	Years,                                ## Vector of years corresponding to Scale_Scores, Content_Areas, ... arguments supplied
 	Report_Parameters) {                  ## list containing Current_Year, Content_Area, Content_Area_Title, State, Denote_Content_Area, SGP_Targets, Configuration, Language, Assessment_Transition,
-                                              ## Fan
+                                        ##   Fan
 
 
 	############################################
