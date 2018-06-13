@@ -689,7 +689,7 @@ function(sgp_object,
 
 	if (!is.null(projection_group.identifier)) {
 		for (p in grep('sgp.projections', names(sgp.config.list))) {
-			sgp.config.list[[p]] <- sapply(sgp.config.list[[p]], function(x) x[['sgp.projection.sequence']] %in% projection_group.identifier)
+			sgp.config.list[[p]] <- sgp.config.list[[p]][sapply(sgp.config.list[[p]], function(x) x[['sgp.projection.sequence']] %in% projection_group.identifier)]
 		}
 	}
 
