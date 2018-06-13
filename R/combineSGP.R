@@ -12,6 +12,7 @@ function(
 	sgp.projections.lagged.baseline=TRUE,
 	sgp.target.scale.scores=FALSE,
 	sgp.target.scale.scores.only=FALSE,
+	sgp.target.scale.scores.merge=FALSE,
 	sgp.target.content_areas=NULL,
 	max.sgp.target.years.forward=3,
 	update.all.years=FALSE,
@@ -110,6 +111,12 @@ function(
 
 	if (is.null(fix.duplicates) & !is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["fix.duplicates"]])) {
 		fix.duplicates <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["fix.duplicates"]]
+	}
+
+	### Check sgp.target.scale.scores.merge
+
+	if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["sgp.target.scale.scores.merge"]])) {
+		sgp.target.scale.scores.merge <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["sgp.target.scale.scores.merge"]]
 	}
 
 
@@ -601,6 +608,27 @@ function(
 			for (names.iter in grep("TARGET_SCALE_SCORES", names(sgp_object@SGP$SGProjections), value=TRUE)) {
 				sgp_object@SGP$SGProjections[[names.iter]] <- sgp_object@SGP$SGProjections[[names.iter]][,lapply(.SD, mean, na.rm=TRUE), by=c("ID", "GRADE", "SGP_PROJECTION_GROUP", "SGP_PROJECTION_GROUP_SCALE_SCORES")]
 			}
+		}
+		if (!identical(sgp.target.scale.scores.merge, FALSE)) {
+			if (identical(sgp.target.scale.scores.merge, "1_year_lagged")) {
+				tmp.indices <- grep(paste(years, "LAGGED.TARGET_SCALE_SCORES", sep=".", collapse="|"), names(Arizona_SGP@SGP$SGProjections))
+				tmp.dt <- rbindlist(Arizona_SGP@SGP$SGProjections[tmp.indices], fill=TRUE)
+				tmp.cols <- grep("YEAR_1", names(tmp.dt), value=TRUE)
+				slot.data[tmp.dt, (tmp.cols):=mget(tmp.cols), on=c("ID", "GRADE", "SGP_PROJECTION_GROUP")]
+			}
+			if (identical(sgp.target.scale.scores.merge, "1_year_lagged_current")) {
+				tmp.indices <- grep(paste(years, "TARGET_SCALE_SCORES", sep=".", collapse="|"), names(Arizona_SGP@SGP$SGProjections))
+				tmp.dt <- rbindlist(Arizona_SGP@SGP$SGProjections[tmp.indices], fill=TRUE)
+				tmp.cols <- grep("YEAR_1", names(tmp.dt), value=TRUE)
+				slot.data[tmp.dt, (tmp.cols):=mget(tmp.cols), on=c("ID", "GRADE", "SGP_PROJECTION_GROUP")]
+			}
+			if (identical(sgp.target.scale.scores.merge, "all_years_lagged_current")) {
+				tmp.indices <- grep(paste(years, "TARGET_SCALE_SCORES", sep=".", collapse="|"), names(Arizona_SGP@SGP$SGProjections))
+				tmp.dt <- rbindlist(Arizona_SGP@SGP$SGProjections[tmp.indices], fill=TRUE)
+				tmp.cols <- setdiff(names(tmp.dt), c("ID", "GRADE", "SGP_PROJECTION_GROUP", "SGP_PROJECTION_GROUP_SCALE_SCORES"))
+				slot.data[tmp.dt, (tmp.cols):=mget(tmp.cols), on=c("ID", "GRADE", "SGP_PROJECTION_GROUP")]
+			}
+
 		}
 	} ### END if (sgp.target.scale.scores)
 

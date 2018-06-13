@@ -21,6 +21,7 @@ combineSGP(sgp_object,
         sgp.projections.lagged.baseline=TRUE,
 	sgp.target.scale.scores=FALSE,
 	sgp.target.scale.scores.only=FALSE,
+    sgp.target.scale.scores.merge=FALSE,
 	sgp.target.content_areas=NULL,
 	max.sgp.target.years.forward=3,
 	update.all.years=FALSE,
@@ -56,6 +57,8 @@ student growth percentile results.
   \item{sgp.target.scale.scores}{A Boolean variable indicating whether scale scores from calculated SGP targets should be calculated.
   }
   \item{sgp.target.scale.scores.only}{A Boolean variable indicating whether combineSGP should skip merging and only calculate scale scores from calculated SGP targets. Default is FALSE.
+  }
+  \item{sgp.target.scale.scores.merge}{An argument (defaults to FALSE) indicating whether & how target scale scores should be merged with the LONG data in the @Data slot.
   }
   \item{sgp.target.content_areas}{A Boolean variable indicating whether content area associated with SGP targets should be calculated.
   }
