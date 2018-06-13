@@ -572,7 +572,7 @@ function(
 			}
 		}
 
-#		for (projection_group.iter in unique(tmp.target.data[['SGP_PROJECTION_GROUP']])) {
+		for (projection_group.iter in unique(tmp.target.data[['SGP_PROJECTION_GROUP']])) {
 			for (target.type.iter in target.args[['sgp.target.scale.scores.types']]) {
 				for (target.years.iter in max.sgp.target.years.forward) {
 					tmp.target.level.names <-
@@ -589,14 +589,14 @@ function(
 						tmp.target.level.names,
 						getYearsContentAreasGrades(state, years=unique(tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter], by='YEAR')[['YEAR']], content_areas=unique(tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter], by='CONTENT_AREA')[['CONTENT_AREA']]),
 						sgp.config=sgp.config,
-#						projection_group.identifier=projection_group.iter,
+						projection_group.identifier=projection_group.iter,
 						sgp.projections.equated=if (grepl("baseline", target.type.iter)) NULL else sgp.projections.equated,
 						SGPt=SGPt,
 						fix.duplicates=fix.duplicates,
 						parallel.config=parallel.config)
 				}
 			}
-#		}
+		}
 		if (length(max.sgp.target.years.forward) > 1) {
 			for (names.iter in grep("TARGET_SCALE_SCORES", names(sgp_object@SGP$SGProjections), value=TRUE)) {
 				sgp_object@SGP$SGProjections[[names.iter]] <- sgp_object@SGP$SGProjections[[names.iter]][,lapply(.SD, mean, na.rm=TRUE), by=c("ID", "GRADE", "SGP_PROJECTION_GROUP", "SGP_PROJECTION_GROUP_SCALE_SCORES")]

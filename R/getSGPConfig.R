@@ -21,6 +21,7 @@ function(sgp_object,
 	calculate.simex.baseline=NULL,
 	year.for.equate=NULL,
 	sgp.percentiles.equated=FALSE,
+	projection_group.identifier=NULL,
 	SGPt=NULL) {
 
 	YEAR <- CONTENT_AREA <- VALID_CASE <- NULL
@@ -680,6 +681,15 @@ function(sgp_object,
 	for (p in grep('sgp.percentiles', names(sgp.config.list))) {
 		for (l in seq_along(sgp.config.list[[p]])) {
 			sgp.config.list[[p]][[l]] <- sgp.config.list[[p]][[l]][-grep("projection", names(sgp.config.list[[p]][[l]]))]
+		}
+	}
+
+
+	### Filter based upon projection_group.identifier if not NULL
+
+	if (!is.null(projection_group.identifier)) {
+		for (p in grep('sgp.projections', names(sgp.config.list))) {
+			sgp.config.list[[p]] <- sapply(sgp.config.list[[p]], function(x) x[['sgp.projection.group']] %in% projection_group.identifier)
 		}
 	}
 

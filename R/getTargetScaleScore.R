@@ -110,7 +110,8 @@ function(sgp_object,
 				calculate.simex=NULL,
 				calculate.simex.baseline=NULL,
 				year.for.equate=year.for.equate,
-				sgp.percentiles.equated=FALSE, ### NOT calculating sgp.percentiles.equated. Just projections
+				sgp.percentiles.equated=FALSE,
+				projection_group.identifier=projection_group.identifier, ### NOT calculating sgp.percentiles.equated. Just projections
 				SGPt=SGPt)
 
 
@@ -151,7 +152,7 @@ function(sgp_object,
 					year_lags.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
 					percentile.trajectory.values=target.level,
 					return.percentile.trajectory.values=SGP::SGPstateData[[state]][["SGP_Configuration"]][["return.percentile.trajectory.values"]],
-					return.projection.group.identifier=sgp.iter[['sgp.projection.sequence']],
+					return.projection.group.identifier=projection_group.identifier,
 					return.projection.group.scale.scores = !is.null(fix.duplicates),
 					calculate.sgps=!(tail(sgp.iter[["sgp.panel.years"]], 1) %in%
 						SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[tail(sgp.iter[[my.content.areas]], 1)]] &
@@ -200,7 +201,7 @@ function(sgp_object,
 					year_lags.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
 					percentile.trajectory.values=target.level,
 					return.percentile.trajectory.values=SGP::SGPstateData[[state]][["SGP_Configuration"]][["return.percentile.trajectory.values"]],
-					return.projection.group.identifier=sgp.iter[['sgp.projection.sequence']],
+					return.projection.group.identifier=projection_group.identifier,
 					return.projection.group.scale.scores = !is.null(fix.duplicates),
 					calculate.sgps=!(tail(sgp.iter[['sgp.panel.years']], 1) %in%
 						SGP::SGPstateData[[state]][['Assessment_Program_Information']][['Scale_Change']][[tail(sgp.iter[[my.content.areas]], 1)]] &
@@ -249,7 +250,7 @@ function(sgp_object,
 						year_lags.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
 						percentile.trajectory.values=target.level,
 						return.percentile.trajectory.values=SGP::SGPstateData[[state]][["SGP_Configuration"]][["return.percentile.trajectory.values"]],
-						return.projection.group.identifier=sgp.iter[['sgp.projection.sequence']],
+						return.projection.group.identifier=projection_group.identifier,
 						return.projection.group.scale.scores = !is.null(fix.duplicates),
 						calculate.sgps=!(tail(sgp.iter[["sgp.panel.years"]], 1) %in%
 							SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[tail(sgp.iter[[my.content.areas]], 1)]] &
@@ -303,7 +304,7 @@ function(sgp_object,
 					year_lags.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
 					percentile.trajectory.values=target.level,
 					return.percentile.trajectory.values=SGP::SGPstateData[[state]][["SGP_Configuration"]][["return.percentile.trajectory.values"]],
-					return.projection.group.identifier=sgp.iter[['sgp.projection.sequence']],
+					return.projection.group.identifier=projection_group.identifier,
 					return.projection.group.scale.scores = !is.null(fix.duplicates),
 					calculate.sgps=!(tail(sgp.iter[["sgp.panel.years"]], 1) %in%
 						SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Scale_Change"]][[tail(sgp.iter[[my.content.areas]], 1)]] &
@@ -313,7 +314,7 @@ function(sgp_object,
 					projcuts.digits=SGP::SGPstateData[[state]][["SGP_Configuration"]][["projcuts.digits"]])
 			} else {
 				messageSGP(paste("\n\t\tNOTE: No student records &/or no prior data for scale score target student growth projections:", tail(sgp.iter[["sgp.panel.years"]], 1),
-					tail(sgp.iter[[my.content.areas]], 1), "Grade", tail(sgp.iter[[my.grade.sequences]], 1), "to Projection Group", sgp.iter[['sgp.projection.sequence']], "with", paste(paste(head(sgp.iter[[my.content.areas]], -1), "Grade", head(sgp.iter[[my.grade.sequences]], -1)), collapse=", "), "priors.\n"))
+					tail(sgp.iter[[my.content.areas]], 1), "Grade", tail(sgp.iter[[my.grade.sequences]], 1), "to Projection Group", projection_group.identifier, "with", paste(paste(head(sgp.iter[[my.content.areas]], -1), "Grade", head(sgp.iter[[my.grade.sequences]], -1)), collapse=", "), "priors.\n"))
 			}
 		}
 	} ### END if (is.null(parallel.config))
