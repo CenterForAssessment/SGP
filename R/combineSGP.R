@@ -211,7 +211,8 @@ function(
 			paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, projection.unit.label, sep="_"),
 			paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", max.sgp.target.years.forward, projection.unit.label, sep="_"),
 			paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, projection.unit.label, "CURRENT", sep="_"),
-			paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", max.sgp.target.years.forward, projection.unit.label, "CURRENT", sep="_"))
+			paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", max.sgp.target.years.forward, projection.unit.label, "CURRENT", sep="_"),
+			grep("SCALE_SCORE_SGP_TARGET", names(slot.data), value=TRUE))
 
 		for (tmp.variables.to.null.out in intersect(names(slot.data), variables.to.null.out)) {
 			slot.data[,(tmp.variables.to.null.out):=NULL]
@@ -610,23 +611,42 @@ function(
 			}
 		}
 		if (!identical(sgp.target.scale.scores.merge, FALSE)) {
+			tmp.list <- list()
 			if (identical(sgp.target.scale.scores.merge, "1_year_lagged")) {
-				tmp.indices <- grep(paste(years, "LAGGED.TARGET_SCALE_SCORES", sep=".", collapse="|"), names(Arizona_SGP@SGP$SGProjections))
-				tmp.dt <- rbindlist(Arizona_SGP@SGP$SGProjections[tmp.indices], fill=TRUE)
+				tmp.names <- grep(paste(years, "LAGGED.TARGET_SCALE_SCORES", sep=".", collapse="|"), names(sgp_object@SGP$SGProjections), value=TRUE)
+				for (i in tmp.names) {
+					tmp.list[[i]] <- data.table(
+						CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
+						YEAR=getTableNameYear(i),
+						sgp_object@SGP[["SGProjections"]][[i]])
+				}
+				tmp.dt <- rbindlist(tmp.list, fill=TRUE)
 				tmp.cols <- grep("YEAR_1", names(tmp.dt), value=TRUE)
-				slot.data[tmp.dt, (tmp.cols):=mget(tmp.cols), on=c("ID", "GRADE", "SGP_PROJECTION_GROUP")]
+				slot.data[tmp.dt, (tmp.cols):=mget(tmp.cols), on=c("CONTENT_AREA", "YEAR", "ID", "GRADE")]
 			}
 			if (identical(sgp.target.scale.scores.merge, "1_year_lagged_current")) {
-				tmp.indices <- grep(paste(years, "TARGET_SCALE_SCORES", sep=".", collapse="|"), names(Arizona_SGP@SGP$SGProjections))
-				tmp.dt <- rbindlist(Arizona_SGP@SGP$SGProjections[tmp.indices], fill=TRUE)
+				tmp.names <- grep(paste(years, "TARGET_SCALE_SCORES", sep=".", collapse="|"), names(sgp_object@SGP$SGProjections), value=TRUE)
+				for (i in tmp.names) {
+					tmp.list[[i]] <- data.table(
+						CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
+						YEAR=getTableNameYear(i),
+						sgp_object@SGP[["SGProjections"]][[i]])
+				}
+				tmp.dt <- rbindlist(tmp.list, fill=TRUE)
 				tmp.cols <- grep("YEAR_1", names(tmp.dt), value=TRUE)
-				slot.data[tmp.dt, (tmp.cols):=mget(tmp.cols), on=c("ID", "GRADE", "SGP_PROJECTION_GROUP")]
+				slot.data[tmp.dt, (tmp.cols):=mget(tmp.cols), on=c("CONTENT_AREA", "YEAR", "ID", "GRADE")]
 			}
 			if (identical(sgp.target.scale.scores.merge, "all_years_lagged_current")) {
-				tmp.indices <- grep(paste(years, "TARGET_SCALE_SCORES", sep=".", collapse="|"), names(Arizona_SGP@SGP$SGProjections))
-				tmp.dt <- rbindlist(Arizona_SGP@SGP$SGProjections[tmp.indices], fill=TRUE)
+				tmp.names <- grep(paste(years, "TARGET_SCALE_SCORES", sep=".", collapse="|"), names(sgp_object@SGP$SGProjections), value=TRUE)
+				for (i in tmp.names) {
+					tmp.list[[i]] <- data.table(
+						CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
+						YEAR=getTableNameYear(i),
+						sgp_object@SGP[["SGProjections"]][[i]])
+				}
+				tmp.dt <- rbindlist(tmp.list, fill=TRUE)
 				tmp.cols <- setdiff(names(tmp.dt), c("ID", "GRADE", "SGP_PROJECTION_GROUP", "SGP_PROJECTION_GROUP_SCALE_SCORES"))
-				slot.data[tmp.dt, (tmp.cols):=mget(tmp.cols), on=c("ID", "GRADE", "SGP_PROJECTION_GROUP")]
+				slot.data[tmp.dt, (tmp.cols):=mget(tmp.cols), on=c("CONTENT_AREA", "YEAR", "ID", "GRADE")]
 			}
 
 		}
