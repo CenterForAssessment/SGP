@@ -12,6 +12,7 @@ function(
 	sgp.projections.lagged.baseline=TRUE,
 	sgp.target.scale.scores=FALSE,
 	sgp.target.scale.scores.only=FALSE,
+	sgp.target.scale.scores.merge=FALSE,
 	sgp.target.content_areas=NULL,
 	max.sgp.target.years.forward=3,
 	update.all.years=FALSE,
@@ -112,6 +113,12 @@ function(
 		fix.duplicates <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["fix.duplicates"]]
 	}
 
+	### Check sgp.target.scale.scores.merge
+
+	if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["sgp.target.scale.scores.merge"]])) {
+		sgp.target.scale.scores.merge <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["sgp.target.scale.scores.merge"]]
+	}
+
 
 	### Utility functions
 
@@ -204,7 +211,8 @@ function(
 			paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, projection.unit.label, sep="_"),
 			paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", max.sgp.target.years.forward, projection.unit.label, sep="_"),
 			paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, projection.unit.label, "CURRENT", sep="_"),
-			paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", max.sgp.target.years.forward, projection.unit.label, "CURRENT", sep="_"))
+			paste("SGP_TARGET_BASELINE_MOVE_UP_STAY_UP", max.sgp.target.years.forward, projection.unit.label, "CURRENT", sep="_"),
+			grep("SCALE_SCORE_SGP_TARGET", names(slot.data), value=TRUE))
 
 		for (tmp.variables.to.null.out in intersect(names(slot.data), variables.to.null.out)) {
 			slot.data[,(tmp.variables.to.null.out):=NULL]
@@ -601,6 +609,9 @@ function(
 			for (names.iter in grep("TARGET_SCALE_SCORES", names(sgp_object@SGP$SGProjections), value=TRUE)) {
 				sgp_object@SGP$SGProjections[[names.iter]] <- sgp_object@SGP$SGProjections[[names.iter]][,lapply(.SD, mean, na.rm=TRUE), by=c("ID", "GRADE", "SGP_PROJECTION_GROUP", "SGP_PROJECTION_GROUP_SCALE_SCORES")]
 			}
+		}
+		if (!identical(sgp.target.scale.scores.merge, FALSE)) {
+			slot.data <- mergeScaleScoreTarget(sgp_object, slot.data, years, sgp.target.scale.scores.merge) 
 		}
 	} ### END if (sgp.target.scale.scores)
 

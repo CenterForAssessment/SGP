@@ -110,7 +110,8 @@ function(sgp_object,
 				calculate.simex=NULL,
 				calculate.simex.baseline=NULL,
 				year.for.equate=year.for.equate,
-				sgp.percentiles.equated=FALSE, ### NOT calculating sgp.percentiles.equated. Just projections
+				sgp.percentiles.equated=FALSE,
+				projection_group.identifier=projection_group.identifier, ### NOT calculating sgp.percentiles.equated. Just projections
 				SGPt=SGPt)
 
 
