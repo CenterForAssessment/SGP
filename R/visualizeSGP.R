@@ -171,9 +171,9 @@ function(sgp_object,
 
 		###  Check SGPstateData for changes and modify parallel processing for SNOW (Windows) if so:
 		if (!is.null(parallel.config)) {
-			tmp.type <- names(parallel.config$WORKERS)[1]
-			if (is.null(tmp.type)) tmp.type <- parallel.config$WORKERS
-			par.start <- startParallel(parallel.config, tmp.type)
+			# tmp.type <- names(parallel.config$WORKERS)[1]
+			# if (is.null(tmp.type)) tmp.type <- parallel.config$WORKERS
+			par.start <- startParallel(parallel.config, 2) # tmp.type) #  Just use 2 cores for this test - avoids issue when WORKERS[1] is 'TAUS'/missing qr.taus argument
 
 			tmp.digest <- SGP::SGPstateData[["digest"]]
 			tmp.SGPstateData <- SGP::SGPstateData
