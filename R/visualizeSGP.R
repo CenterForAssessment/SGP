@@ -173,7 +173,9 @@ function(sgp_object,
 		if (!is.null(parallel.config)) {
 			# tmp.type <- names(parallel.config$WORKERS)[1]
 			# if (is.null(tmp.type)) tmp.type <- parallel.config$WORKERS
-			par.start <- startParallel(parallel.config, 2) # tmp.type) #  Just use 2 cores for this test - avoids issue when WORKERS[1] is 'TAUS'/missing qr.taus argument
+			tmp.parallel.config <- parallel.config
+			tmp.parallel.config[["WORKERS"]][["GA_PLOTS"]] <- 2
+			par.start <- startParallel(tmp.parallel.config, "GA_PLOTS") # tmp.type) #  Just use 2 cores for this test - avoids issue when WORKERS[1] is 'TAUS'/missing qr.taus argument
 
 			tmp.digest <- SGP::SGPstateData[["digest"]]
 			tmp.SGPstateData <- SGP::SGPstateData
