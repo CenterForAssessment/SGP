@@ -35,9 +35,10 @@ function(
 		if (identical(lag.direction, "BACKWARD")) tmp.years <- sort(unique(sgp_object_subset, by='YEAR')[['YEAR']])
 
 		invisible(sgp_object_subset[,GRADE_CHAR:=as.factor(GRADE)])
-		levels(sgp_object_subset[["GRADE_CHAR"]]) <- sapply(lapply(strsplit(paste0("0", levels(sgp_object_subset[["GRADE_CHAR"]])), ""), tail, 2), paste, collapse="")
+#		levels(sgp_object_subset[["GRADE_CHAR"]]) <- sapply(lapply(strsplit(paste0("0", levels(sgp_object_subset[["GRADE_CHAR"]])), ""), tail, 2), paste, collapse="")
+		setattr(sgp_object_subset[["GRADE_CHAR"]], "levels", sapply(lapply(strsplit(paste0("0", levels(sgp_object_subset[["GRADE_CHAR"]])), ""), tail, 2), paste, collapse=""))
 		if (any(levels(sgp_object_subset[["GRADE_CHAR"]])=="CT")) {
-			levels(sgp_object_subset[["GRADE_CHAR"]])[which(levels(sgp_object_subset[["GRADE_CHAR"]])=="CT")] <- "EOCT"
+			setattr(sgp_object_subset[["GRADE_CHAR"]], "levels", gsub("\\<CT\\>", "EOCT", levels(sgp_object_subset[["GRADE_CHAR"]])))
 		}
 		invisible(sgp_object_subset[, CONTENT_AREA_by_GRADE:=paste(CONTENT_AREA, GRADE_CHAR, sep=".")])
 		invisible(sgp_object_subset[,YEAR_INTEGER:=as.integer(as.factor(YEAR))])

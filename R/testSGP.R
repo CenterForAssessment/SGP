@@ -710,6 +710,7 @@ function(
 
 			SGPstateData[['DEMO_EOCT']][['SGP_Configuration']][['max.sgp.target.years.forward']] <- 1:7
 			SGPstateData[['DEMO_EOCT']][['SGP_Configuration']][['sgPlot.sgp.targets.timeframe']] <- 3
+			SGPstateData[['DEMO_EOCT']][['SGP_Configuration']][['sgp.target.scale.scores.merge']] <- "all_years_lagged_current"
 
 			### Add EOCT courses to sgpData_LONG
 
@@ -847,6 +848,20 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable MOVE_UP_STAY_UP_STATUS_3_YEAR: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable MOVE_UP_STAY_UP_STATUS_3_YEAR: FAIL\n")
+			}
+
+#			if (identical(sum(Demonstration_SGP@Data$SCALE_SCORE_SGP_TARGET_7_YEAR_PROJ_YEAR_1, na.rm=TRUE), 29883595L)) {
+			if (identical(digest(Demonstration_SGP@Data$SCALE_SCORE_SGP_TARGET_7_YEAR_PROJ_YEAR_1), "fa5e9f206a14b8d5d8dba33eeea6d0f0")) {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_7_YEAR_PROJ_YEAR_1: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_7_YEAR_PROJ_YEAR_1: FAIL\n")
+			}
+
+#			if (identical(sum(Demonstration_SGP@Data$SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_7_YEAR_PROJ_YEAR_1_CURRENT, na.rm=TRUE), 4060492L)) {
+			if (identical(digest(Demonstration_SGP@Data$SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_7_YEAR_PROJ_YEAR_1_CURRENT), "d50d2d016ea1d9094959872c2e317de7")) {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_7_YEAR_PROJ_YEAR_1_CURRENT: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_7_YEAR_PROJ_YEAR_1_CURRENT: FAIL\n")
 			}
 
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 3: ", convertTime(timetaken(started.at.overall)), "#####\n"))
