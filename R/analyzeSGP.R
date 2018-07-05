@@ -200,7 +200,7 @@ function(sgp_object,
 
 	if (any(c("SIMEX", "TAUS") %in% names(parallel.config[['WORKERS']]))) {
 		lower.level.parallel.config <- parallel.config
-		if (length(grep("SUMMARY|GA_PLOTS|SG_PLOTS", names(parallel.config[['WORKERS']]), value=TRUE, invert=TRUE)) <= 2) parallel.config <- NULL # NULL out parallel.config when passed from abcSGP, etc
+		if (length(grep("SUMMARY|GA_PLOTS|SG_PLOTS|SGP_SCALE_SCORE_TARGETS", names(parallel.config[['WORKERS']]), value=TRUE, invert=TRUE)) <= 2) parallel.config <- NULL # NULL out parallel.config when passed from abcSGP, etc
 	} else lower.level.parallel.config <- NULL
 
 
