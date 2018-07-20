@@ -28,7 +28,10 @@ function(sgp_object,
 					YEAR=getTableNameYear(i),
 					sgp_object@SGP[["SGProjections"]][[i]])
 			}
-			tmp.dt <- rbindlist(tmp.list, fill=TRUE)
+			tmp.dt <- rbindlist(tmp.list[grep("LAGGED", tmp.names)], fill=TRUE)
+			tmp.cols <- grep("YEAR_1", names(tmp.dt), value=TRUE)
+			slot.data[tmp.dt, (tmp.cols):=mget(tmp.cols), on=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", "GRADE")]
+			tmp.dt <- rbindlist(tmp.list[grep("LAGGED", tmp.names, invert=TRUE)], fill=TRUE)
 			tmp.cols <- grep("YEAR_1", names(tmp.dt), value=TRUE)
 			slot.data[tmp.dt, (tmp.cols):=mget(tmp.cols), on=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", "GRADE")]
 		}
@@ -41,7 +44,10 @@ function(sgp_object,
 					YEAR=getTableNameYear(i),
 					sgp_object@SGP[["SGProjections"]][[i]])
 			}
-			tmp.dt <- rbindlist(tmp.list, fill=TRUE)
+			tmp.dt <- rbindlist(tmp.list[grep("LAGGED", tmp.names)], fill=TRUE)
+			tmp.cols <- setdiff(names(tmp.dt), c("ID", "GRADE", "SGP_PROJECTION_GROUP", "SGP_PROJECTION_GROUP_SCALE_SCORES"))
+			slot.data[tmp.dt, (tmp.cols):=mget(tmp.cols), on=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", "GRADE")]
+			tmp.dt <- rbindlist(tmp.list[grep("LAGGED", tmp.names, invert=TRUE)], fill=TRUE)
 			tmp.cols <- setdiff(names(tmp.dt), c("ID", "GRADE", "SGP_PROJECTION_GROUP", "SGP_PROJECTION_GROUP_SCALE_SCORES"))
 			slot.data[tmp.dt, (tmp.cols):=mget(tmp.cols), on=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", "GRADE")]
 		}
