@@ -857,8 +857,8 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_7_YEAR_PROJ_YEAR_1: FAIL\n")
 			}
 
-#			if (identical(sum(Demonstration_SGP@Data$SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_7_YEAR_PROJ_YEAR_1_CURRENT, na.rm=TRUE), 4060492L)) {
-			if (identical(digest(Demonstration_SGP@Data$SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_7_YEAR_PROJ_YEAR_1_CURRENT), "d50d2d016ea1d9094959872c2e317de7")) {
+#			if (identical(sum(Demonstration_SGP@Data$SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_7_YEAR_PROJ_YEAR_1_CURRENT, na.rm=TRUE), 29549398L)) {
+			if (identical(digest(Demonstration_SGP@Data$SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_7_YEAR_PROJ_YEAR_1_CURRENT), "22da22385b9657751568292777191796")) {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_7_YEAR_PROJ_YEAR_1_CURRENT: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_7_YEAR_PROJ_YEAR_1_CURRENT: FAIL\n")
