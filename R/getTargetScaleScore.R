@@ -72,7 +72,7 @@ function(sgp_object,
 		my.target.type <- "sgp.projections.lagged"
 		my.content.areas <- "sgp.projection.content.areas"
 		my.content.areas.label <- "sgp.content.areas"
-		my.grade.sequences <- "sgp.grade.sequences"
+		my.grade.sequences <- "sgp.projection.grade.sequences"
 		my.panel.years.lags <- "sgp.projection.panel.years.lags"
 	}
 	if (target.type=="sgp.projections.lagged.baseline") {
