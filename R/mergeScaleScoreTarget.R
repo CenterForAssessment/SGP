@@ -17,10 +17,11 @@ function(sgp_object,
 			}
 			tmp.dt <- rbindlist(tmp.list, fill=TRUE)
 			tmp.cols <- grep("YEAR_1", names(tmp.dt), value=TRUE)
-			slot.data[tmp.dt, (tmp.cols):=mget(tmp.cols), on=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", "GRADE")]
+			slot.data <- slot.data[tmp.dt, (tmp.cols):=mget(tmp.cols), on=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", "GRADE")]
 		}
 		if (identical(sgp.target.scale.scores.merge, "1_year_lagged_current")) {
-			tmp.names <- grep(paste(years, "TARGET_SCALE_SCORES", sep="."), names(sgp_object@SGP$SGProjections), value=TRUE)
+			tmp.names <- c(grep(paste(years, "TARGET_SCALE_SCORES", sep="."), names(sgp_object@SGP$SGProjections), value=TRUE),
+							grep(paste(years, "LAGGED.TARGET_SCALE_SCORES", sep="."), names(sgp_object@SGP$SGProjections), value=TRUE))
 			for (i in tmp.names) {
 				tmp.list[[i]] <- data.table(
 					VALID_CASE="VALID_CASE",
@@ -30,13 +31,14 @@ function(sgp_object,
 			}
 			tmp.dt <- rbindlist(tmp.list[grep("LAGGED", tmp.names)], fill=TRUE)
 			tmp.cols <- grep("YEAR_1", names(tmp.dt), value=TRUE)
-			slot.data[tmp.dt, (tmp.cols):=mget(tmp.cols), on=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", "GRADE")]
+			slot.data <- slot.data[tmp.dt, (tmp.cols):=mget(tmp.cols), on=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", "GRADE")]
 			tmp.dt <- rbindlist(tmp.list[grep("LAGGED", tmp.names, invert=TRUE)], fill=TRUE)
-			tmp.cols <- grep("YEAR_1", names(tmp.dt), value=TRUE)
-			slot.data[tmp.dt, (tmp.cols):=mget(tmp.cols), on=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", "GRADE")]
+			tmp.cols <- grep("YEAR_1_CURRENT", names(tmp.dt), value=TRUE)
+			slot.data <- slot.data[tmp.dt, (tmp.cols):=mget(tmp.cols), on=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", "GRADE")]
 		}
 		if (identical(sgp.target.scale.scores.merge, "all_years_lagged_current")) {
-			tmp.names <- grep(paste(years, "TARGET_SCALE_SCORES", sep="."), names(sgp_object@SGP$SGProjections), value=TRUE)
+			tmp.names <- c(grep(paste(years, "TARGET_SCALE_SCORES", sep="."), names(sgp_object@SGP$SGProjections), value=TRUE),
+							grep(paste(years, "LAGGED.TARGET_SCALE_SCORES", sep="."), names(sgp_object@SGP$SGProjections), value=TRUE))
 			for (i in tmp.names) {
 				tmp.list[[i]] <- data.table(
 					VALID_CASE="VALID_CASE",
@@ -46,10 +48,10 @@ function(sgp_object,
 			}
 			tmp.dt <- rbindlist(tmp.list[grep("LAGGED", tmp.names)], fill=TRUE)
 			tmp.cols <- setdiff(names(tmp.dt), c("ID", "GRADE", "SGP_PROJECTION_GROUP", "SGP_PROJECTION_GROUP_SCALE_SCORES"))
-			slot.data[tmp.dt, (tmp.cols):=mget(tmp.cols), on=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", "GRADE")]
+			slot.data <- slot.data[tmp.dt, (tmp.cols):=mget(tmp.cols), on=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", "GRADE")]
 			tmp.dt <- rbindlist(tmp.list[grep("LAGGED", tmp.names, invert=TRUE)], fill=TRUE)
 			tmp.cols <- setdiff(names(tmp.dt), c("ID", "GRADE", "SGP_PROJECTION_GROUP", "SGP_PROJECTION_GROUP_SCALE_SCORES"))
-			slot.data[tmp.dt, (tmp.cols):=mget(tmp.cols), on=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", "GRADE")]
+			slot.data <- slot.data[tmp.dt, (tmp.cols):=mget(tmp.cols), on=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", "GRADE")]
 		}
 		return(slot.data)
 } ### END mergeScaleScoreTarget
