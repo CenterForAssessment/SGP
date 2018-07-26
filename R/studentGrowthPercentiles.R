@@ -352,25 +352,25 @@ function(panel.data,         ## REQUIRED
 			if (predictions) {
 				if (.Platform$OS.type != "unix") {
           con <- dbConnect(SQLite(), dbname = file.path(dbase, paste0("simex_data_", z, ".sqlite")))
-          tmp.data <- dbGetQuery(con, paste0("select ", paste(c("ID", paste0('prior_', k:1), "final_yr"), collapse=", "), " from tmp"))
+          temp_data <- dbGetQuery(con, paste0("select ", paste(c("ID", paste0('prior_', k:1), "final_yr"), collapse=", "), " from tmp"))
           dbDisconnect(con)
 				} else {
           con <- dbConnect(SQLite(), dbname = dbase)
-					tmp.data <- dbGetQuery(con, paste0("select ", paste(c("ID", paste0('prior_', k:1), "final_yr"), collapse=", "), " from simex_data where b in ('",z,"')"))
+					temp_data <- dbGetQuery(con, paste0("select ", paste(c("ID", paste0('prior_', k:1), "final_yr"), collapse=", "), " from simex_data where b in ('",z,"')"))
           dbDisconnect(con)
 				}
 			} else {
 				if (.Platform$OS.type != "unix") {
           con <- dbConnect(SQLite(), dbname = file.path(dbase, paste0("simex_data_", z, ".sqlite")))
-					tmp.data <- dbGetQuery(con, "select * from tmp")
+					temp_data <- dbGetQuery(con, "select * from tmp")
           dbDisconnect(con)
 			} else {
           con <- dbConnect(SQLite(), dbname = dbase)
-					tmp.data <- dbGetQuery(con, paste0("select * from simex_data where b in ('", z, "')"))
+					temp_data <- dbGetQuery(con, paste0("select * from simex_data where b in ('", z, "')"))
           dbDisconnect(con)
 				}
 			}
-			return(as.data.table(tmp.data))
+			return(as.data.table(temp_data))
 		}
 
 		rq.sgp <- function(...) { # Function needs to be nested within the simex.sgp function to avoid data copying with SNOW
@@ -403,8 +403,8 @@ function(panel.data,         ## REQUIRED
 					Date_Prepared=prettyDate(),
 					Matrix_Information=list(
 						N=dim(rqdata)[1L],
-						Model=paste0("rq.sgp(tmp.data[[", tmp.num.variables, "]] ~ ", substring(mod,4), ", tau=taus, data=tmp.data, method=", rq.method, ")"),
-						SGPt=if (is.null(SGPt)) NULL else list(VARIABLES=unlist(SGPt), MAX_TIME=max(tmp.data$TIME, na.rm=TRUE), MAX_TIME_PRIOR=max(tmp.data$TIME-tmp.data$TIME_LAG, na.rm=TRUE), RANGE_TIME_LAG=range(tmp.data$TIME_LAG))))
+						Model=paste0("rq.sgp(final_yr ~", substring(mod,4), ", tau=taus, data = rqdata)"),
+						SGPt=if (is.null(SGPt)) NULL else list(VARIABLES=unlist(SGPt), MAX_TIME=max(rqdata$TIME, na.rm=TRUE), MAX_TIME_PRIOR=max(rqdata$TIME-rqdata$TIME_LAG, na.rm=TRUE), RANGE_TIME_LAG=range(rqdata$TIME_LAG))))
 
 			eval(parse(text=paste0("new('splineMatrix', tmp.mtx, ", substring(s4Ks, 1L, nchar(s4Ks)-1L), "), ", substring(s4Bs, 1L, nchar(s4Bs)-1L), "), ",
 				"Content_Areas=list(as.character(tail(content_area.progression, k+1L))), ",
