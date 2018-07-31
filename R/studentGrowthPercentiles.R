@@ -348,38 +348,22 @@ function(panel.data,         ## REQUIRED
 			if (is.null(parallel.config[["WORKERS"]][["SIMEX"]])) tmp.par.config <- NULL else tmp.par.config <- parallel.config
 		} else tmp.par.config <- NULL
 
-		getSQLData <- function(dbase, z, k=NULL, predictions=FALSE) {
-			if (predictions) {
-				if (.Platform$OS.type != "unix") {
-          con <- dbConnect(SQLite(), dbname = file.path(dbase, paste0("simex_data_", z, ".sqlite")))
-          temp_data <- dbGetQuery(con, paste0("select ", paste(c("ID", paste0('prior_', k:1), "final_yr"), collapse=", "), " from tmp"))
-          dbDisconnect(con)
-				} else {
-          con <- dbConnect(SQLite(), dbname = dbase)
-					temp_data <- dbGetQuery(con, paste0("select ", paste(c("ID", paste0('prior_', k:1), "final_yr"), collapse=", "), " from simex_data where b in ('",z,"')"))
-          dbDisconnect(con)
-				}
-			} else {
-				if (.Platform$OS.type != "unix") {
-          con <- dbConnect(SQLite(), dbname = file.path(dbase, paste0("simex_data_", z, ".sqlite")))
-					temp_data <- dbGetQuery(con, "select * from tmp")
-          dbDisconnect(con)
-			} else {
-          con <- dbConnect(SQLite(), dbname = dbase)
-					temp_data <- dbGetQuery(con, paste0("select * from simex_data where b in ('", z, "')"))
-          dbDisconnect(con)
-				}
-			}
-			return(as.data.table(temp_data))
-		}
+    getSIMEXdata <- function(dbase, z, k=NULL, predictions=FALSE) {
+      if (predictions) {
+        data.table::fread(file.path(dbase, paste0("simex_data_", z, ".csv")), header=TRUE, showProgress = FALSE,
+          select = paste(c("ID", paste0('prior_', k:1), "final_yr")), verbose = FALSE)
+      } else {
+        data.table::fread(file.path(dbase, paste0("simex_data_", z, ".csv")), header=TRUE, showProgress = FALSE, verbose = FALSE)
+      }
+    }
 
 		rq.sgp <- function(...) { # Function needs to be nested within the simex.sgp function to avoid data copying with SNOW
 			if (rq.method == "br") {
-				tmp.res <- rq(method="br", ...)[['coefficients']]
+				tmp.res <- quantreg::rq(method="br", ...)[['coefficients']]
 			} else {
-				tmp.res <- try(rq(method=rq.method, ...)[['coefficients']], silent=TRUE)
+				tmp.res <- try(quantreg::rq(method=rq.method, ...)[['coefficients']], silent=TRUE)
 				if(class(tmp.res) == "try-error") {
-					tmp.res <- rq(method="br", ...)[['coefficients']]
+					tmp.res <- quantreg::rq(method="br", ...)[['coefficients']]
 				}
 			}
 			return(tmp.res)
@@ -571,21 +555,10 @@ function(panel.data,         ## REQUIRED
 				sim.iters <- 1:B
 
 				if (!is.null(tmp.par.config)) { # Not Sequential
-				    ## Write big.data to disk and remove from memory
-				    if (!exists('year.progression.for.norm.group')) year.progression.for.norm.group <- year.progression # Needed during Baseline Matrix construction
-				    if (.Platform$OS.type != "unix") {
-				    	tmp.dbname <- tempdir()
-
-				    	sapply(sim.iters, function(z) {
-                con <- dbConnect(SQLite(), dbname = file.path(tmp.dbname, paste0("simex_data_", z, ".sqlite")))
-                dbWriteTable(con, name="tmp", value=big.data[list(z)], row.names=FALSE, overwrite=TRUE)
-                dbDisconnect(con)})
-				    } else {
-				    	tmp.dbname <- tempfile(fileext = ".sqlite")
-              con <- dbConnect(SQLite(), dbname = tmp.dbname)
-				    	dbWriteTable(con, name = "simex_data", value=big.data, overwrite=TRUE)
-              dbDisconnect(con)
-				    }
+				  ## Write big.data to disk and remove from memory
+				  if (!exists('year.progression.for.norm.group')) year.progression.for.norm.group <- year.progression # Needed during Baseline Matrix construction
+				  	tmp.dbname <- tempdir()
+          sapply(sim.iters, function(z) data.table::fwrite(big.data[list(z)], file=file.path(tmp.dbname, paste0("simex_data_", z, ".csv")), showProgress = FALSE, verbose = FALSE))
 				}
 
 				if (!is.null(simex.use.my.coefficient.matrices)) { # Element from the 'calculate.simex' argument list.
@@ -641,19 +614,19 @@ function(panel.data,         ## REQUIRED
 						if (verbose) messageSGP(c("\t\t\tStarted coefficient matrix calculation, Lambda ", L, ": ", prettyDate()))
 							if (is.null(simex.sample.size) || n.records <= simex.sample.size) {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste0("lambda_", L)]] <-
-									foreach(z=iter(sim.iters), .packages=c("quantreg", "data.table"),
-									# foreach(z=iter(sim.iters),
+									# foreach(z=iter(sim.iters), .packages=c("quantreg", "data.table"),
+									foreach(z=iter(sim.iters),
 										.export=c("Knots_Boundaries", "rq.method", "taus", "content_area.progression", "tmp.slot.gp", "year.progression", "year_lags.progression", "SGPt", "rq.sgp", "get.my.knots.boundaries.path"),
 										.options.mpi=par.start$foreach.options, .options.multicore=par.start$foreach.options, .options.snow=par.start$foreach.options) %dopar% {
-											rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=getSQLData(tmp.dbname, z))
-									}
+											rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=getSIMEXdata(tmp.dbname, z))
+                    }
 							} else {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste0("lambda_", L)]] <-
 									foreach(z=iter(sim.iters), .packages=c("quantreg", "data.table"),
 									# foreach(z=iter(sim.iters),
 										.export=c("Knots_Boundaries", "rq.method", "taus", "content_area.progression", "tmp.slot.gp", "year.progression", "year_lags.progression", "SGPt", "rq.sgp", "get.my.knots.boundaries.path"),
 										.options.mpi=par.start$foreach.options, .options.multicore=par.start$foreach.options, .options.snow=par.start$foreach.options) %dorng% {
-											rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=getSQLData(tmp.dbname, z)[sample(seq.int(n.records), simex.sample.size)])
+											rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=getSIMEXdata(tmp.dbname, z)[sample(seq.int(n.records), simex.sample.size)])
 									}
 							}
 					} else {
@@ -666,10 +639,10 @@ function(panel.data,         ## REQUIRED
 						for (z in recalc.index) {
 							if (is.null(simex.sample.size) || n.records <= simex.sample.size) {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste0("lambda_", L)]][[z]] <-
-									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=as.data.table(getSQLData(tmp.dbname, z)))
+									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=as.data.table(getSIMEXdata(tmp.dbname, z)))
 							} else {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste0("lambda_", L)]][[z]] <-
-									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=as.data.table(getSQLData(tmp.dbname, z))[sample(seq.int(n.records), simex.sample.size),])
+									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=as.data.table(getSIMEXdata(tmp.dbname, z))[sample(seq.int(n.records), simex.sample.size),])
 							}
 						}
 					}
@@ -682,7 +655,7 @@ function(panel.data,         ## REQUIRED
 							fitted[[paste0("order_", k)]][which(lambda==L),] <-
 								foreach(z=iter(seq_along(sim.iters)), .combine="+", .export=c('tmp.gp', 'taus', 'sgp.loss.hoss.adjustment', 'isotonize', 'SGPt', 'get.my.knots.boundaries.path'),
 									.options.multicore=par.start$foreach.options) %dopar% { # .options.snow=par.start$foreach.options
-										c(.get.percentile.predictions(my.matrix=mtx.subset[[z]], my.data=getSQLData(tmp.dbname, z, k, predictions=TRUE))/B)
+										c(.get.percentile.predictions(my.matrix=mtx.subset[[z]], my.data=getSIMEXdata(tmp.dbname, z, k, predictions=TRUE))/B)
 								}
                     }
 					stopParallel(tmp.par.config, par.start)
