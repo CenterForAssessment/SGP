@@ -21,8 +21,8 @@ function(sgp_object,
 	calculate.simex.baseline=NULL,
 	year.for.equate=NULL,
 	sgp.percentiles.equated=FALSE,
-	projection_group.identifier=NULL,
-	SGPt=NULL) {
+	SGPt=NULL,
+	projection_group.identifier=NULL) {
 
 	YEAR <- CONTENT_AREA <- VALID_CASE <- NULL
 
