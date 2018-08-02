@@ -171,7 +171,7 @@ function(sgp_object,
 
 	if (state=="RLI") {
 		if (is.character(cutscore.file.name) || is.data.frame(cutscore.file.name)) {
-			messageSGP(paste0("\tNOTE: Using cutscores file (", cutscore.file.name, ") supplied in the working directory for projection/growth-to-standard analyses."))
+			messageSGP(paste0("\tNOTE: Using cutscores file (", deparse(substitute(cutscore.file.name)), ") supplied in the working directory for projection/growth-to-standard analyses."))
 			if (is.character(cutscore.file.name) && !file.exists(cutscore.file.name)) stop("\tNOTE: Cutscores file (", cutscore.file.name, ") does not exist in working directory or supplied path.")
 			tmp.list <- rliCutscoreCreation(cutscore.file.name, score.type)
 			SGPstateData[["RLI"]][["Achievement"]][["Cutscores"]] <- tmp.list[['Cutscores']]
