@@ -25,7 +25,7 @@ function(
 
 			options(error=recover)
 			options(warn=2)
-			if (.Platform$OS.type == "unix") number.cores <- detectSGPCores(logical=TRUE) else number.cores <- detectSGPCores(logical=FALSE)
+			if (.Platform$OS.type == "unix") number.cores <- min(40, detectSGPCores(logical=TRUE) else number.cores <- detectSGPCores(logical=FALSE))
 			sgpData.years.single <- sapply(strsplit(sgpData.years, "_"), '[', 2)
 			Demonstration_SGP <- NULL
 			tmp.messages <- "##### Begin testSGP test number 0 #####\n\n"
