@@ -323,7 +323,7 @@ require(grid)
 grid.draw(sgp_g4$Goodness_of_Fit$READING.2054[[1]])
 
 require(grid)
-pdf(file="Grade_4_Reading_2015_GOF.pdf", width=8.5, height=4.5)
+pdf(file="Grade_4_Reading_2015_GOF.pdf", width=8.5, height=8)
 grid.draw(sgp_g4$Goodness_of_Fit$READING.2015[[1]])
 dev.off()
 
