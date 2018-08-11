@@ -32,7 +32,7 @@ function(
 		}
 		tmp.omega <- Interpolation_Function(Interpolation_Data[['SCALE_SCORE']], Interpolation_Data[['SCALE_SCORE_CSEM']], round.digits)(scale_scores)
 	}
-	if (!is.null(variable)) tmp.omega <- variable
+	if (!is.null(variable)) tmp.omega <- Interpolation_Function(scale_scores, variable, round.digits)(scale_scores)
 
 	if (distribution=="Skew-Normal") {
 		tmp.scores <- data.table(SIM=round(rsn(length(scale_scores), xi=scale_scores, omega=tmp.omega,
