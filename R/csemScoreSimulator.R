@@ -13,7 +13,7 @@ function(
 
 	### Define relevant variables
 
-	if (is.null(round.digits)) round.digits <- 4 
+	if (is.null(round.digits)) round.digits <- 2
 	if (is.null(distribution)) distribution <- "Normal"
 	if (!is.null(state)) {
 		min.max <- SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]][[paste0("loss.hoss_", grade)]]
@@ -32,7 +32,7 @@ function(
 		}
 		tmp.omega <- Interpolation_Function(Interpolation_Data[['SCALE_SCORE']], Interpolation_Data[['SCALE_SCORE_CSEM']], round.digits)(scale_scores)
 	}
-	if (!is.null(variable)) tmp.omega <- variable
+	if (!is.null(variable)) tmp.omega <- Interpolation_Function(scale_scores, variable, round.digits)(scale_scores)
 
 	if (distribution=="Skew-Normal") {
 		tmp.scores <- data.table(SIM=round(rsn(length(scale_scores), xi=scale_scores, omega=tmp.omega,
