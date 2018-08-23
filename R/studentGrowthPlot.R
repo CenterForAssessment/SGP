@@ -439,7 +439,7 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 			tmp.cutscore.year <- tail(head(sort(unique(Cutscores[['YEAR']]), na.last=FALSE), -1), 1)
 			tmp.cutscore.grade <- grade.values[['interp.df']][['GRADE']][which(grade.values[['years']]==Report_Parameters[['Assessment_Transition']][['Year']])]
 			if (!tmp.cutscore.grade %in% Cutscores[['GRADE']]) {
-				tmp.grades.reported <- SGP::SGPstateData[["HI"]][["Student_Report_Information"]][["Grades_Reported"]][[Report_Parameters$Content_Area]]
+				tmp.grades.reported <- SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Grades_Reported"]][[Report_Parameters$Content_Area]]
 				tmp.cutscore.grade <-
 					tmp.grades.reported[which.max(as.numeric(grade.values[['interp.df']][['GRADE']][which(grade.values[['years']]==Report_Parameters[['Assessment_Transition']][['Year']])]) < tmp.grades.reported)-1]
 			}

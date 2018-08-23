@@ -17,6 +17,7 @@ function(scale_score,
 
 	if (!is.null(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]])) {
 		equate.year <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]
+		if (is.null(equate.year)) equate.year <- 0
 		if (year < equate.year)  {
 			tmp.test <- "Transformed_Achievement_Level_Cutscores"
 		} else {
