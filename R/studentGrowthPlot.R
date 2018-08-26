@@ -416,7 +416,16 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 	grade.values <- interpolate.grades(Grades, Content_Areas, studentGrowthPlot.year.span, Scale_Scores)
 
 	if (!is.null(Report_Parameters[['Assessment_Transition']]) && grade.values$years[2] >= Report_Parameters[['Assessment_Transition']][['Year']]) Report_Parameters[['Assessment_Transition']] <- NULL
-
+	if (!is.null(transition.grade <- SGP::SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Grade"]])) {
+		if (!is.list(Report_Parameters[['Assessment_Transition']])) {
+			Report_Parameters[['Assessment_Transition']] <- list(Grade = transition.grade)
+		} else Report_Parameters[['Assessment_Transition']][['Grade']] <- transition.grade
+		Report_Parameters[['Assessment_Transition']][['Assessment_Transition_Type']] <- c(
+			SGP::SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Transition"]][['Vertical_Scale']],
+			SGP::SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Transition"]][[paste('Vertical_Scale', transition.grade, sep=".")]])
+		Report_Parameters[['Assessment_Transition']][['Year']] <- Report_Parameters[['Current_Year']]
+	}
+# if (!is.null(Report_Parameters[['Assessment_Transition']])) stop("@$$fv<|<XXX")
 	if (is.null(Report_Parameters[['Assessment_Transition']])) {
 		achievement.level.labels <- list(SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Achievement_Level_Labels"]])
 		number.achievement.level.regions <- sapply(achievement.level.labels, length)
@@ -434,9 +443,10 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 
 	achievement.level.region.colors <- lapply(number.achievement.level.regions, function(x) paste0("grey", round(seq(62, 91, length=x))))
 
-	if (!is.null(Report_Parameters[['Assessment_Transition']][['Assessment_Transition_Type']])) {
+	if (!is.null(Report_Parameters[['Assessment_Transition']][['Assessment_Transition_Type']])) { # & is.null(transition.grade)
 		if (identical(toupper(Report_Parameters[['Assessment_Transition']][['Assessment_Transition_Type']][1]), "NO")) {
 			tmp.cutscore.year <- tail(head(sort(unique(Cutscores[['YEAR']]), na.last=FALSE), -1), 1)
+			if (!is.null(transition.grade)) tmp.cutscore.year <- NA
 			tmp.cutscore.grade <- grade.values[['interp.df']][['GRADE']][which(grade.values[['years']]==Report_Parameters[['Assessment_Transition']][['Year']])]
 			if (!tmp.cutscore.grade %in% Cutscores[['GRADE']]) {
 				tmp.grades.reported <- SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Grades_Reported"]][[Report_Parameters$Content_Area]]
