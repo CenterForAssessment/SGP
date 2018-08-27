@@ -425,7 +425,7 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 			SGP::SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Transition"]][[paste('Vertical_Scale', transition.grade, sep=".")]])
 		Report_Parameters[['Assessment_Transition']][['Year']] <- Report_Parameters[['Current_Year']]
 	}
-# if (!is.null(Report_Parameters[['Assessment_Transition']])) stop("@$$fv<|<XXX")
+
 	if (is.null(Report_Parameters[['Assessment_Transition']])) {
 		achievement.level.labels <- list(SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Achievement_Level_Labels"]])
 		number.achievement.level.regions <- sapply(achievement.level.labels, length)
