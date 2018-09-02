@@ -107,7 +107,7 @@
       <h1>Getting started with SGP</h1>
                         <h4 class="author">Damian W Betebenner &amp; Adam R Van Iwaarden</h4>
             
-            <h4 class="date">May 11th, 2018</h4>
+            <h4 class="date">September 2nd, 2018</h4>
           </div>
 
     
@@ -130,10 +130,10 @@
 <p>As a package built for the <a href="https://www.r-project.org/"><strong>R</strong> software environment</a>, to use the SGP package one needs a computer with <strong>R</strong> installed. <strong>R</strong> is available for Window, OSX, and Linux and, being open source, can be compiled for just about any operating system. Running SGP analyses assumes some familiarity with using <strong>R</strong>. If you’re new to <strong>R</strong>, you might want to spend some time familiarizing yourself with it before diving into running SGP analyses. There are several resources available on <a href="https://cran.r-project.org/manuals.html">CRAN</a> for getting started with <strong>R</strong>.</p>
 <p>After installing <strong>R</strong>, one needs to install the SGP package. Because the SGP package utilizes several other <strong>R</strong> packages, those will be installed concurrently. Installing <strong>R</strong> packages can be done in several different ways depending upon whether one is using a development environment for <strong>R</strong> (e.g., <a href="https://www.rstudio.com/">RStudio</a>), the installed <strong>R</strong> client, or calling <strong>R</strong> from the command line. In all cases, packages can be installed from the <strong>R</strong> command prompt (<code>&gt;</code>) as follows:</p>
 <p>To install the latest stable release of SGP from <a href="https://CRAN.R-project.org/package=SGP">CRAN</a></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">&gt;</span><span class="st"> </span><span class="kw">install.packages</span>(<span class="st">"SGP"</span>)</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw">install.packages</span>(<span class="st">"SGP"</span>)</a></code></pre></div>
 <p>To install the development release of SGP from <a href="https://github.com/CenterForAssessment/SGP/">GitHub</a>:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">&gt;</span><span class="st"> </span><span class="kw">install.packages</span>(<span class="st">"devtools"</span>) ### If the devtool package isn't installed
-<span class="op">&gt;</span><span class="st"> </span>devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">"CenterForAssessment/SGP"</span>)</code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw">install.packages</span>(<span class="st">"devtools"</span>) ### If the devtool package isn't installed</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="op">&gt;</span><span class="st"> </span>devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">"CenterForAssessment/SGP"</span>)</a></code></pre></div>
 </div>
 <div id="data-preparation-wide-or-long-data" class="section level1">
 <h1 class="hasAnchor">

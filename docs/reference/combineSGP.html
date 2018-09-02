@@ -147,6 +147,7 @@ with catch-up/keep-up to proficient status and/or move-up/stay-up to advanced st
         <span class='kw'>sgp.projections.lagged.baseline</span><span class='kw'>=</span><span class='fl'>TRUE</span>,
         <span class='kw'>sgp.target.scale.scores</span><span class='kw'>=</span><span class='fl'>FALSE</span>,
         <span class='kw'>sgp.target.scale.scores.only</span><span class='kw'>=</span><span class='fl'>FALSE</span>,
+    <span class='kw'>sgp.target.scale.scores.merge</span><span class='kw'>=</span><span class='fl'>FALSE</span>,
         <span class='kw'>sgp.target.content_areas</span><span class='kw'>=</span><span class='kw'>NULL</span>,
         <span class='kw'>max.sgp.target.years.forward</span><span class='kw'>=</span><span class='fl'>3</span>,
         <span class='kw'>update.all.years</span><span class='kw'>=</span><span class='fl'>FALSE</span>,
@@ -207,6 +208,10 @@ student growth percentile results.</p></td>
     <tr>
       <th>sgp.target.scale.scores.only</th>
       <td><p>A Boolean variable indicating whether combineSGP should skip merging and only calculate scale scores from calculated SGP targets. Default is FALSE.</p></td>
+    </tr>
+    <tr>
+      <th>sgp.target.scale.scores.merge</th>
+      <td><p>An argument (defaults to FALSE) indicating whether &amp; how target scale scores should be merged with the LONG data in the @Data slot.</p></td>
     </tr>
     <tr>
       <th>sgp.target.content_areas</th>
