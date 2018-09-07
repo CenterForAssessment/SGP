@@ -66,9 +66,9 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 		}
 	}
 
-	if (!is.null(SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Earliest_Year_Reported"]])) {
+	if (!is.null(SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Earliest_Year_Reported"]])) {
 		grade.rpt.tf <- sapply(1:nrow(grades.content_areas.reported.in.state), function(y) grades.content_areas.reported.in.state$YEAR[y] >=
-			SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[grades.content_areas.reported.in.state$CONTENT_AREA[y]]])
+			SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[grades.content_areas.reported.in.state$CONTENT_AREA[y]]])
 		if (!all(grade.rpt.tf))	{
 			grades.content_areas.reported.in.state <- grades.content_areas.reported.in.state[-which(!grade.rpt.tf),]
 		}
