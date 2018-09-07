@@ -36,7 +36,7 @@ function(rli.cs.long,
 	cutscore.information.list[['State_Levels']][['Two_Level_States']] <- list(States=tmp.info.data[NUM_LEVELS==2][['TestCode']],
 																				Levels=c("Not Proficient", "Proficient"))
 	cutscore.information.list[['State_Levels']][['Three_Level_States']] <- list(States=tmp.info.data[NUM_LEVELS==3][['TestCode']],
-																				Levels=c("Not Proficient", "Not Proficient", "Proficient"))
+																				Levels=c("Not Proficient", "Proficient", "Proficient"))
 	cutscore.information.list[['State_Levels']][['Four_Level_States']] <- list(States=tmp.info.data[NUM_LEVELS==4][['TestCode']],
 																				Levels=c("Not Proficient", "Not Proficient", "Proficient", "Proficient"))
 	cutscore.information.list[['State_Levels']][['Five_Level_States_A']] <- list(States=tmp.info.data[NUM_LEVELS==5 & NUM_ABOVE_PROF==2][['TestCode']],

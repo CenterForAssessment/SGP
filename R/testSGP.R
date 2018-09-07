@@ -336,6 +336,24 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable HIGH_NEED_STATUS: FAIL\n")
 			}
 
+			### TEST of SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1 variable in @Data
+
+#			if (identical(sum(Demonstration_SGP@Data$SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1, na.rm=TRUE), 103740628)) {
+			if (identical(digest(Demonstration_SGP@Data$SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1), "60ada507fc67c9bfd9822e0ff48a33e0")) {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1: FAIL\n")
+			}
+
+			### TEST of SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT variable in @Data
+
+#			if (identical(sum(Demonstration_SGP@Data$SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT, na.rm=TRUE), 117211493)) {
+			if (identical(digest(Demonstration_SGP@Data$SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT), "314bc76b76b0047f641c1a8a149ae0a8")) {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT: FAIL\n")
+			}
+
 			tmp.messages <- c(tmp.messages, paste0("\n##### End testSGP test number ", TEST_NUMBER, ":  ", convertTime(timetaken(started.at.overall)), " #####\n"))
 			messageSGP(tmp.messages)
 		} ### End TEST_NUMBER 1 & 1B
