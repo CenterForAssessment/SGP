@@ -22,7 +22,7 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 	### Create relevant variables
 	############################################
 
-	YEAR <- CONTENT_AREA <- GRADE <- CUTSCORES <- CUTLEVEL <- level_1_1_curve <- level_2_1_curve <- NULL ## To prevent R CMD check warnings
+	YEAR <- CONTENT_AREA <- GRADE <- GRADE_NUMERIC <- CUTSCORES <- CUTLEVEL <- level_1_1_curve <- level_2_1_curve <- NULL ## To prevent R CMD check warnings
 	CUTSCORES_EQUATED <- CUTSCORES_TRANSFORMED <- NULL
 
 	number.growth.levels <- length(SGP::SGPstateData[[Report_Parameters$State]][["Growth"]][["Levels"]])
@@ -38,21 +38,64 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 
 	if (!is.null(SGP::SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["content_area.projection.sequence"]][[Report_Parameters$Content_Area]])) {
 		grades.content_areas.reported.in.state <- data.frame(
-				GRADE=SGP::SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["grade.projection.sequence"]][[Report_Parameters$Content_Area]],
-				YEAR_LAG=c(1, SGP::SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[Report_Parameters$Content_Area]]),
-				CONTENT_AREA=SGP::SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["content_area.projection.sequence"]][[Report_Parameters$Content_Area]],
-				stringsAsFactors=FALSE
-			)
+			GRADE=SGP::SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["grade.projection.sequence"]][[Report_Parameters$Content_Area]],
+			YEAR_LAG=c(1, SGP::SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[Report_Parameters$Content_Area]]),
+			CONTENT_AREA=SGP::SGPstateData[[Report_Parameters$State]][["SGP_Configuration"]][["content_area.projection.sequence"]][[Report_Parameters$Content_Area]],
+			stringsAsFactors=FALSE
+		)
 	} else {
 		grades.content_areas.reported.in.state <- data.frame(
-				GRADE=SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Grades_Reported"]][[Report_Parameters$Content_Area]],
-				YEAR_LAG=c(1, diff(as.numeric(SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Grades_Reported"]][[Report_Parameters$Content_Area]]))),
-				CONTENT_AREA=Report_Parameters$Content_Area,
-				stringsAsFactors=FALSE
-			)
+			GRADE=SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Grades_Reported"]][[Report_Parameters$Content_Area]],
+			YEAR_LAG=c(1, diff(as.numeric(SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Grades_Reported"]][[Report_Parameters$Content_Area]]))),
+			CONTENT_AREA=Report_Parameters$Content_Area,
+			stringsAsFactors=FALSE
+		)
 	}
 
+	grades.content_areas.reported.in.state <- subset(grades.content_areas.reported.in.state, !(is.na(GRADE) & is.na(CONTENT_AREA)))
 	grades.content_areas.reported.in.state$GRADE_NUMERIC <- (as.numeric(grades.content_areas.reported.in.state$GRADE[2])-1)+c(0, cumsum(tail(grades.content_areas.reported.in.state$YEAR_LAG, -1)))
+
+	grade.rpt.index <- intersect(grep(Grades[1], grades.content_areas.reported.in.state$GRADE), grep(Content_Areas[1], grades.content_areas.reported.in.state$CONTENT_AREA)) #  needed when transition grade is the same - e.g. Grade 9 ELA to Grade 9 PSAT (not 9 to EOCT)
+	if (length(grade.rpt.index)==0) grade.rpt.index <- (max(grep(max(Grades, na.rm = TRUE), grades.content_areas.reported.in.state$GRADE)) + min(which(!is.na(Grades))) - 1)
+	grades.content_areas.reported.in.state$YEAR <- Report_Parameters$Current_Year
+	for (y in (grade.rpt.index-1):1) grades.content_areas.reported.in.state$YEAR[y] <- yearIncrement(grades.content_areas.reported.in.state$YEAR[y+1], 0, grades.content_areas.reported.in.state$YEAR_LAG[y+1])
+	if (grade.rpt.index != nrow(grades.content_areas.reported.in.state)) {
+		for (y in (grade.rpt.index+1):max((grade.rpt.index+1),(nrow(grades.content_areas.reported.in.state)))) { # -1))) {
+			grades.content_areas.reported.in.state$YEAR[y] <-
+				yearIncrement(grades.content_areas.reported.in.state$YEAR[y-1], 0, -grades.content_areas.reported.in.state$YEAR_LAG[y]) # YEAR_LAG[y] not YEAR_LAG[y-1] because YEAR_LAG= above is offset by 1  w/ c(1, SGP::...)
+		}
+	}
+
+	if (!is.null(SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Earliest_Year_Reported"]])) {
+		grade.rpt.tf <- sapply(1:nrow(grades.content_areas.reported.in.state), function(y) grades.content_areas.reported.in.state$YEAR[y] >=
+			SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Earliest_Year_Reported"]][[grades.content_areas.reported.in.state$CONTENT_AREA[y]]])
+		if (!all(grade.rpt.tf))	{
+			grades.content_areas.reported.in.state <- grades.content_areas.reported.in.state[-which(!grade.rpt.tf),]
+		}
+	}
+
+	if (!is.null(transition.grade <- SGP::SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Grade"]])) {
+		post.trans.content_areas <- names(SGP::SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Transition"]][[paste0('Content_Areas_Labels.', transition.grade)]])
+		transition.grade.numeric <- suppressWarnings(min(as.data.table(grades.content_areas.reported.in.state)[as.numeric(GRADE) >= as.numeric(transition.grade) & CONTENT_AREA %in% post.trans.content_areas, GRADE_NUMERIC]))
+		grades.content_areas.reported.in.state <- grades.content_areas.reported.in.state[union(sort(c(
+			which(grades.content_areas.reported.in.state$CONTENT_AREA %in% c(Content_Areas, post.trans.content_areas)))),
+			max(grep(Grades[!is.na(Grades)][1], grades.content_areas.reported.in.state$GRADE)):nrow(grades.content_areas.reported.in.state)),]
+		max.year.index <- max(grep(Report_Parameters$Current_Year, grades.content_areas.reported.in.state$YEAR))
+		if (transition.grade.numeric %in% grades.content_areas.reported.in.state$GRADE_NUMERIC[1:max.year.index]) {
+			tmp.gcar <- subset(grades.content_areas.reported.in.state,
+				!(YEAR >= Report_Parameters$Current_Year & !CONTENT_AREA %in% post.trans.content_areas))
+			if (all(Content_Areas[!is.na(Grades)] %in% tmp.gcar$CONTENT_AREA))
+				grades.content_areas.reported.in.state <- tmp.gcar
+			else {
+				if (Grades[!is.na(Grades)][1] == transition.grade) {
+					grd.trans.index <- intersect(grep(Grades[!is.na(Grades)][1], grades.content_areas.reported.in.state$GRADE), grep(Content_Areas[1], grades.content_areas.reported.in.state$CONTENT_AREA)) #  needed when transition grade is the same - e.g. Grade 9 ELA to Grade 9 PSAT (not 9 to EOCT)
+					end <- nrow(grades.content_areas.reported.in.state)
+					grades.content_areas.reported.in.state$YEAR[grd.trans.index:1] <- as.numeric(grades.content_areas.reported.in.state$YEAR[grd.trans.index]) - c(0, cumsum(rep(1, length(grades.content_areas.reported.in.state$YEAR_LAG[grd.trans.index:1])-1)))
+					grades.content_areas.reported.in.state$GRADE_NUMERIC[grd.trans.index:end] <- grades.content_areas.reported.in.state$GRADE_NUMERIC[grd.trans.index] + cumsum(c(1, tail(grades.content_areas.reported.in.state$YEAR_LAG[grd.trans.index:end], -1)))
+				}
+			}
+		}
+	}
 
 	test.abbreviation <- SGP::SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Abbreviation"]]
 
@@ -245,12 +288,16 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 			}
 		}
 
-		extend.grades <- function (x) {
+		extend.grades <- function (x, content_areas) {
 			tmp.grades.numeric <- x
 			tmp.content_areas <- grades.content_areas.reported.in.state$CONTENT_AREA[match(x, grades.content_areas.reported.in.state$GRADE_NUMERIC)]
+			if ((length(tmp.content_areas) > length(x)) & any(duplicated(grades.content_areas.reported.in.state$GRADE_NUMERIC))) {
+				tmp.dups <- grades.content_areas.reported.in.state$CONTENT_AREA[duplicated(grades.content_areas.reported.in.state$GRADE_NUMERIC)]
+				tmp.content_areas <- tmp.content_areas[!tmp.content_areas %in% tmp.dups]
+			}
 			tmp.grades <- convert.grades(x, to="GRADE")
-			tmp.head <- min(which(x[1] <= grades.content_areas.reported.in.state$GRADE_NUMERIC), na.rm=TRUE)
-			tmp.tail <- min(which(tail(x, 1) <= grades.content_areas.reported.in.state$GRADE_NUMERIC), na.rm=TRUE)
+			tmp.head <- min(which(x[!is.na(x)][1] <= grades.content_areas.reported.in.state$GRADE_NUMERIC), na.rm=TRUE)
+			tmp.tail <- min(which(tail(x[!is.na(x)], 1) <= grades.content_areas.reported.in.state$GRADE_NUMERIC), na.rm=TRUE)
 			if (tmp.head==1) {
 				tmp.grades <- c("GRADE_LOWER", tmp.grades); tmp.content_areas <- c("PLACEHOLDER", tmp.content_areas); tmp.grades.numeric <- c(NA, tmp.grades.numeric)
 			} else {
@@ -313,7 +360,7 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 
 		if (grades[1]==max(grades.content_areas.reported.in.state$GRADE_NUMERIC)) {
 			year_span <- data.year.span
-			temp.grades.content_areas <- extend.grades(rev(grades))
+			temp.grades.content_areas <- extend.grades(rev(grades), content_areas)
 			return(list(
 				interp.df = temp.grades.content_areas,
 				year_span=year_span,
@@ -322,12 +369,11 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 				years=yearIncrement(Report_Parameters$Current_Year, seq(1-max(which(grades[1]==temp.grades.content_areas$GRADE_NUMERIC)), length=dim(temp.grades.content_areas)[1]))))
 		} else {
 			year.increment.for.projection.current <- grades.content_areas.reported.in.state$YEAR_LAG[which(grades[1]==grades.content_areas.reported.in.state$GRADE_NUMERIC)+1]
-			year_span <- max(min(last.scale.score, data.year.span-1), min(grades[1]-min(grades.content_areas.reported.in.state$GRADE_NUMERIC)+1, data.year.span-1))
-							- (year.increment.for.projection.current-1)
+			year_span <- max(min(last.scale.score, data.year.span-1), min(grades[1]-min(grades.content_areas.reported.in.state$GRADE_NUMERIC)+1, data.year.span-1)) - (year.increment.for.projection.current-1)
 			temp.grades <- c(rev(head(grades, year_span)),
 				head(seq(grades.content_areas.reported.in.state$GRADE_NUMERIC[match(grades[1], grades.content_areas.reported.in.state$GRADE_NUMERIC)]+1, length=data.year.span),
 					data.year.span-year_span))
-			temp.grades.content_areas <- extend.grades(temp.grades)
+			temp.grades.content_areas <- extend.grades(temp.grades, content_areas)
 			return(list(
 				interp.df = temp.grades.content_areas,
 				year_span=year_span,
@@ -408,22 +454,44 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 			}
 	}
 
-
 	###
 	### END Utility functions
 	###
 
 	grade.values <- interpolate.grades(Grades, Content_Areas, studentGrowthPlot.year.span, Scale_Scores)
 
+	if (any(duplicated(grade.values$interp.df))) {
+		grade.values$interp.df <- unique(grade.values$interp.df) #  needed when transition grade is the same - e.g. Grade 9 ELA to Grade 9 PSAT (not 9 to EOCT)
+	}
+
+	grade.values$interp.df <- subset(grade.values$interp.df, !(is.na(GRADE) & is.na(GRADE_NUMERIC) & is.na(CONTENT_AREA)))
+	grade.values$years <- tail(grade.values$years, nrow(grade.values$interp.df))
+
 	if (!is.null(Report_Parameters[['Assessment_Transition']]) && grade.values$years[2] >= Report_Parameters[['Assessment_Transition']][['Year']]) Report_Parameters[['Assessment_Transition']] <- NULL
-	if (!is.null(transition.grade <- SGP::SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Grade"]])) {
-		if (!is.list(Report_Parameters[['Assessment_Transition']])) {
-			Report_Parameters[['Assessment_Transition']] <- list(Grade = transition.grade)
-		} else Report_Parameters[['Assessment_Transition']][['Grade']] <- transition.grade
-		Report_Parameters[['Assessment_Transition']][['Assessment_Transition_Type']] <- c(
-			SGP::SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Transition"]][['Vertical_Scale']],
-			SGP::SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Transition"]][[paste('Vertical_Scale', transition.grade, sep=".")]])
-		Report_Parameters[['Assessment_Transition']][['Year']] <- Report_Parameters[['Current_Year']]
+
+	if (!is.null(transition.grade)) {
+		grade.rpt.index <- intersect(grep(Grades[1], grades.content_areas.reported.in.state$GRADE), grep(Content_Areas[1], grades.content_areas.reported.in.state$CONTENT_AREA)) #  needed when transition grade is the same - e.g. Grade 9 ELA to Grade 9 PSAT (not 9 to EOCT)
+		if (length(grade.rpt.index)==0) grade.rpt.index <- (max(grep(max(Grades, na.rm = TRUE), grades.content_areas.reported.in.state$GRADE)) + min(which(!is.na(Grades))) - 1)
+		if (any(grades.content_areas.reported.in.state$CONTENT_AREA[grade.rpt.index:nrow(grades.content_areas.reported.in.state)] %in% post.trans.content_areas)) {
+			if (!is.list(Report_Parameters[['Assessment_Transition']])) {
+				Report_Parameters[['Assessment_Transition']] <- list(Grade = transition.grade)
+			} else Report_Parameters[['Assessment_Transition']][['Grade']] <- transition.grade
+			Report_Parameters[['Assessment_Transition']][['Assessment_Transition_Type']] <- c(
+				SGP::SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Transition"]][['Vertical_Scale']],
+				SGP::SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Transition"]][[paste('Vertical_Scale', transition.grade, sep=".")]])
+
+			grd.index <- grep(paste(SGP::SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Transition"]][[paste0('Grades_Tested.', transition.grade)]], collapse="|"), grade.values$interp.df$GRADE)
+			sbj.index <- grep(paste(names(SGP::SGPstateData[[Report_Parameters$State]][["Assessment_Program_Information"]][["Assessment_Transition"]][[paste0('Content_Areas_Labels.', transition.grade)]]), collapse="|"), grade.values$interp.df$CONTENT_AREA)
+
+			if (length(sbj.index) > 0 & length(grd.index) > 0) {
+			Report_Parameters[['Assessment_Transition']][['Year']] <- as.data.table(grades.content_areas.reported.in.state)[
+				GRADE == grade.values$interp.df[min(intersect(grd.index, sbj.index)),]$GRADE &
+				CONTENT_AREA == grade.values$interp.df[min(intersect(grd.index, sbj.index)),]$CONTENT_AREA, YEAR]
+			} else Report_Parameters[['Assessment_Transition']][['Year']] <- grade.values$years[length(Grades)]
+
+			if (!is.na(grade.values$years[length(Grades)]) & grade.values$years[length(Grades)] < Report_Parameters[['Assessment_Transition']][['Year']]) Report_Parameters[['Assessment_Transition']][['Year']] <- grade.values$years[length(Grades)]
+		}
+		if (!transition.grade %in% grades.content_areas.reported.in.state$GRADE[1:(grade.rpt.index+1)] & !any(grade.values$interp.df$GRADE_NUMERIC > transition.grade.numeric, na.rm = TRUE)) Report_Parameters[['Assessment_Transition']] <- NULL
 	}
 
 	if (is.null(Report_Parameters[['Assessment_Transition']])) {
@@ -443,7 +511,7 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 
 	achievement.level.region.colors <- lapply(number.achievement.level.regions, function(x) paste0("grey", round(seq(62, 91, length=x))))
 
-	if (!is.null(Report_Parameters[['Assessment_Transition']][['Assessment_Transition_Type']])) { # & is.null(transition.grade)
+	if (!is.null(Report_Parameters[['Assessment_Transition']][['Assessment_Transition_Type']])) {
 		if (identical(toupper(Report_Parameters[['Assessment_Transition']][['Assessment_Transition_Type']][1]), "NO")) {
 			tmp.cutscore.year <- tail(head(sort(unique(Cutscores[['YEAR']]), na.last=FALSE), -1), 1)
 			if (!is.null(transition.grade)) tmp.cutscore.year <- NA
@@ -462,6 +530,7 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 		}
 		if (identical(toupper(Report_Parameters[['Assessment_Transition']][['Assessment_Transition_Type']][2]), "NO")) {
 			tmp.cutscore.grade <- Grades[which(Years==Report_Parameters[['Assessment_Transition']][['Year']])]
+			if (length(tmp.cutscore.grade)==0) tmp.cutscore.grade <- NA
 			if (is.na(tmp.cutscore.grade)) {
 				tmp.cutscore.grade <- grade.values[['interp.df']][['GRADE']][which(grade.values[['years']]==Report_Parameters[['Assessment_Transition']][['Year']])]
 			}
@@ -668,6 +737,7 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 		for (i in seq(number.achievement.level.regions[[j]]-1)) {
 			temp <- data.table(temp_id=seq_len(nrow(grade.values$interp.df)), grade.values$interp.df, YEAR=sapply(strsplit(sapply(strsplit(grade.values$years, "_"), tail, 1), "[.]"), head, 1), key="YEAR")[tmp.year.sequence[[j]]]
 			temp[,YEAR:=get.my.cutscore.year(Report_Parameters$State, Report_Parameters$Content_Area, YEAR, i)]
+			if (class(temp$YEAR) != class(Cutscores$YEAR)) class(temp$YEAR) <- class(Cutscores$YEAR)
 			temp <- merge(temp, Cutscores[CUTLEVEL==i], all.x=TRUE, by=c("YEAR", "CONTENT_AREA", "GRADE"))
 			temp <- temp[order(temp$temp_id),][['CUTSCORES']]
 			if (length(temp[which(!is.na(temp))])==1) {
