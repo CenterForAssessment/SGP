@@ -11,12 +11,24 @@ function(
 
 	GRADE <- CONTENT_AREA <- YEAR <- SIM <- NULL
 
+	get.my.knots.boundaries <- function(content_area, year) {
+		tmp.knots.boundaries.names <- grep(content_area, names(SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]]), value=TRUE)
+		tmp.knots.boundaries  <- tmp.knots.boundaries.names[grep(paste0("^", content_area, "$"), sapply(strsplit(tmp.knots.boundaries.names, "[.]"), '[', 1L))]
+		if (length(tmp.knots.boundaries)==1L) {
+			return(content_area)
+		} else {
+			tmp.knots.boundaries.years <- sapply(strsplit(tmp.knots.boundaries, "[.]"), '[', 2L)
+			tmp.index <- sum(year >= tmp.knots.boundaries.years, na.rm=TRUE)
+			return(paste(c(content_area, sort(tmp.knots.boundaries.years)[tmp.index]), collapse="."))
+		}
+	}
+
 	### Define relevant variables
 
 	if (is.null(round.digits)) round.digits <- 2
 	if (is.null(distribution)) distribution <- "Normal"
 	if (!is.null(state)) {
-		min.max <- SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[content_area]][[paste0("loss.hoss_", grade)]]
+		min.max <- SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[get.my.knots.boundaries(content_area, year)]][[paste0("loss.hoss_", grade)]]
 	} else {
 		min.max <- range(scale_scores, na.rm=TRUE)
 	}
