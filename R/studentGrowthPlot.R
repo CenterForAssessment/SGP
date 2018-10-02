@@ -332,6 +332,8 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 			grades[1:(first.scale.score-1)] <- (grades[first.scale.score] + (first.scale.score - 1)):(grades[first.scale.score]+1)
 			grades[grades > max(grades.content_areas.reported.in.state$GRADE_NUMERIC)] <- max(grades.content_areas.reported.in.state$GRADE_NUMERIC)
 			if (any(is.na(grades))) {
+				if (1 %in% which(is.na(grades))) grades[1] <- grades[min(which(!is.na(grades)))]+(min(which(!is.na(grades)))-1) # `approx` doesn't work when first value is NA
+				if (length(grades) %in% which(is.na(grades))) grades[length(grades)] <- grades[min(which(!is.na(grades)))]-(length(grades)-min(which(!is.na(grades)))) # `approx` doesn't work when last value is NA
 				grades[which(is.na(grades))] <- approx(grades, xout=which(is.na(grades)))$y
 				grades <- as.integer(grades)
 			}
