@@ -354,8 +354,11 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 
 		if (any(is.na(grades))) {
 			tmp.na <- which(is.na(grades))
-			for (i in tmp.na) {
-				grades[i] <- grades.content_areas.reported.in.state$GRADE_NUMERIC[match(grades[i-1], grades.content_areas.reported.in.state$GRADE_NUMERIC)]
+			tmp.not.na <- max(which(!is.na(grades)))
+			while (any(is.na(grades))) {
+				nearest.not.na <- tmp.na[which.min(abs(tmp.na-tmp.not.na))]; tmp.dif <- (tmp.not.na-nearest.not.na)
+				grades[tmp.not.na-tmp.dif] <- grades.content_areas.reported.in.state$GRADE_NUMERIC[match(grades[tmp.not.na], grades.content_areas.reported.in.state$GRADE_NUMERIC)+tmp.dif]
+				tmp.na <- which(is.na(grades)); tmp.not.na <- min(which(!is.na(grades)))
 			}
 			if (!length(grades) %in% tmp.na && length(intersect(tmp.na, which(!is.na(grades)))) > 0) {
 				tmp.indices <- intersect(tmp.na, which(!is.na(grades)))
