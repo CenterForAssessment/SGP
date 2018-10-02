@@ -56,7 +56,11 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 	grades.content_areas.reported.in.state$GRADE_NUMERIC <- (as.numeric(grades.content_areas.reported.in.state$GRADE[2])-1)+c(0, cumsum(tail(grades.content_areas.reported.in.state$YEAR_LAG, -1)))
 
 	grade.rpt.index <- intersect(grep(paste0("^", Grades[1], "$"), grades.content_areas.reported.in.state$GRADE), grep(paste0("^", Content_Areas[1], "$"), grades.content_areas.reported.in.state$CONTENT_AREA)) #  needed when transition grade is the same - e.g. Grade 9 ELA to Grade 9 PSAT (not 9 to EOCT)
-	if (length(grade.rpt.index)==0) grade.rpt.index <- (max(grep(max(Grades, na.rm = TRUE), grades.content_areas.reported.in.state$GRADE)) + min(which(!is.na(Grades))) - 1)
+	if (length(grade.rpt.index)==0) {
+		if (max(Grades, na.rm = TRUE) == "EOCT") {
+			grade.rpt.index <- min(grep(max(Grades, na.rm = TRUE), grades.content_areas.reported.in.state$GRADE))
+		} else	grade.rpt.index <- (max(grep(max(Grades, na.rm = TRUE), grades.content_areas.reported.in.state$GRADE)) + min(which(!is.na(Grades))) - 1)
+	}
 	grades.content_areas.reported.in.state$YEAR <- Report_Parameters$Current_Year
 	for (y in (grade.rpt.index-1):1) grades.content_areas.reported.in.state$YEAR[y] <- yearIncrement(grades.content_areas.reported.in.state$YEAR[y+1], 0, grades.content_areas.reported.in.state$YEAR_LAG[y+1])
 	if (grade.rpt.index != nrow(grades.content_areas.reported.in.state)) {
