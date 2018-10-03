@@ -56,7 +56,11 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 	grades.content_areas.reported.in.state$GRADE_NUMERIC <- (as.numeric(grades.content_areas.reported.in.state$GRADE[2])-1)+c(0, cumsum(tail(grades.content_areas.reported.in.state$YEAR_LAG, -1)))
 
 	grade.rpt.index <- intersect(grep(paste0("^", Grades[1], "$"), grades.content_areas.reported.in.state$GRADE), grep(paste0("^", Content_Areas[1], "$"), grades.content_areas.reported.in.state$CONTENT_AREA)) #  needed when transition grade is the same - e.g. Grade 9 ELA to Grade 9 PSAT (not 9 to EOCT)
-	if (length(grade.rpt.index)==0) grade.rpt.index <- (max(grep(max(Grades, na.rm = TRUE), grades.content_areas.reported.in.state$GRADE)) + min(which(!is.na(Grades))) - 1)
+	if (length(grade.rpt.index)==0) {
+		if (max(Grades, na.rm = TRUE) == "EOCT") {
+			grade.rpt.index <- min(grep(max(Grades, na.rm = TRUE), grades.content_areas.reported.in.state$GRADE))
+		} else	grade.rpt.index <- min(nrow(grades.content_areas.reported.in.state), (max(grep(max(Grades, na.rm = TRUE), grades.content_areas.reported.in.state$GRADE)) + min(which(!is.na(Grades))) - 1))
+	}
 	grades.content_areas.reported.in.state$YEAR <- Report_Parameters$Current_Year
 	for (y in (grade.rpt.index-1):1) grades.content_areas.reported.in.state$YEAR[y] <- yearIncrement(grades.content_areas.reported.in.state$YEAR[y+1], 0, grades.content_areas.reported.in.state$YEAR_LAG[y+1])
 	if (grade.rpt.index != nrow(grades.content_areas.reported.in.state)) {
@@ -332,6 +336,8 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 			grades[1:(first.scale.score-1)] <- (grades[first.scale.score] + (first.scale.score - 1)):(grades[first.scale.score]+1)
 			grades[grades > max(grades.content_areas.reported.in.state$GRADE_NUMERIC)] <- max(grades.content_areas.reported.in.state$GRADE_NUMERIC)
 			if (any(is.na(grades))) {
+				if (1 %in% which(is.na(grades))) grades[1] <- grades[min(which(!is.na(grades)))]+(min(which(!is.na(grades)))-1) # `approx` doesn't work when first value is NA
+				if (length(grades) %in% which(is.na(grades))) grades[length(grades)] <- grades[min(which(!is.na(grades)))]-(length(grades)-min(which(!is.na(grades)))) # `approx` doesn't work when last value is NA
 				grades[which(is.na(grades))] <- approx(grades, xout=which(is.na(grades)))$y
 				grades <- as.integer(grades)
 			}
@@ -348,8 +354,14 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 
 		if (any(is.na(grades))) {
 			tmp.na <- which(is.na(grades))
-			for (i in tmp.na) {
-				grades[i] <- grades.content_areas.reported.in.state$GRADE_NUMERIC[match(grades[i-1], grades.content_areas.reported.in.state$GRADE_NUMERIC)]
+			tmp.not.na <- max(which(!is.na(grades)))
+			while (any(is.na(grades))) {
+				nearest.not.na <- tmp.na[which.min(abs(tmp.na-tmp.not.na))]; tmp.dif <- (tmp.not.na-nearest.not.na)
+				tmp.index <- match(grades[tmp.not.na], grades.content_areas.reported.in.state$GRADE_NUMERIC)+tmp.dif
+				if (tmp.index <= 0L) tmp.index <- 1
+				if (tmp.index > nrow(grades.content_areas.reported.in.state)) tmp.index <- nrow(grades.content_areas.reported.in.state)
+				grades[tmp.not.na-tmp.dif] <- grades.content_areas.reported.in.state$GRADE_NUMERIC[tmp.index]
+				tmp.na <- which(is.na(grades)); tmp.not.na <- min(which(!is.na(grades)))
 			}
 			if (!length(grades) %in% tmp.na && length(intersect(tmp.na, which(!is.na(grades)))) > 0) {
 				tmp.indices <- intersect(tmp.na, which(!is.na(grades)))
