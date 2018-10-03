@@ -59,7 +59,7 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 	if (length(grade.rpt.index)==0) {
 		if (max(Grades, na.rm = TRUE) == "EOCT") {
 			grade.rpt.index <- min(grep(max(Grades, na.rm = TRUE), grades.content_areas.reported.in.state$GRADE))
-		} else	grade.rpt.index <- (max(grep(max(Grades, na.rm = TRUE), grades.content_areas.reported.in.state$GRADE)) + min(which(!is.na(Grades))) - 1)
+		} else	grade.rpt.index <- min(nrow(grades.content_areas.reported.in.state), (max(grep(max(Grades, na.rm = TRUE), grades.content_areas.reported.in.state$GRADE)) + min(which(!is.na(Grades))) - 1))
 	}
 	grades.content_areas.reported.in.state$YEAR <- Report_Parameters$Current_Year
 	for (y in (grade.rpt.index-1):1) grades.content_areas.reported.in.state$YEAR[y] <- yearIncrement(grades.content_areas.reported.in.state$YEAR[y+1], 0, grades.content_areas.reported.in.state$YEAR_LAG[y+1])
