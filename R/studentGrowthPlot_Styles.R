@@ -53,6 +53,10 @@
 		number.achievement.level.regions <- length(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Achievement_Level_Labels"]])
 		tmp.proficiency <- SGP::SGPstateData[[state]][["Student_Report_Information"]][["Proficiency_Label"]]
 		if (is.null(tmp.proficiency)) tmp.proficiency <- "proficient"
+		tmp.ach.lev.text.interp <- SGP::SGPstateData[[state]][["Student_Report_Information"]][["Achievement_Level_Text"]][["Interpretation"]]
+		if (is.null(tmp.ach.lev.text.interp)) tmp.ach.lev.text.interp <- c("Achievement", "Levels")
+		tmp.ach.lev.text.use <- SGP::SGPstateData[[state]][["Student_Report_Information"]][["Achievement_Level_Text"]][["Suggested_Uses"]]
+		if (is.null(tmp.ach.lev.text.use)) tmp.ach.lev.text.use <- "achievement levels."
 		if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["sgp.projections.max.forward.progression.grade"]])) {
 			trajectory.cuts <- sort(c(SGP::SGPstateData[[state]][["Growth"]][["Cutscores"]][['Cuts']], SGP::SGPstateData[[state]][["Student_Report_Information"]][["Projection_Fan_Limits"]]))
 			trajectory.cuts <- paste(paste0("P", trajectory.cuts, "_"), collapse="|")
@@ -657,8 +661,8 @@ if (reports.by.school) {
 			grid.roundrect(x=unit(0.2, "native"), y=interpretation.y-0.125, width=unit(0.1, "native"), height=unit(0.125, "native"),
 				 r=unit(0.02, "inches"),gp=gpar(col="black", lwd=1.5), just=c("center", "top"))
 			grid.text(x=0.325, y=interpretation.y-0.1625, tmp.abbreviation, default.units="native", just="left")
-			grid.text(x=0.325, y=interpretation.y-0.1875, "Achievement", default.units="native", just="left")
-			grid.text(x=0.325, y=interpretation.y-0.2125, "Levels", default.units="native", just="left")
+			grid.text(x=0.325, y=interpretation.y-0.1875, tmp.ach.lev.text.interp[1], default.units="native", just="left")
+			grid.text(x=0.325, y=interpretation.y-0.2125, tmp.ach.lev.text.interp[2], default.units="native", just="left")
 
 			grid.polygon(x=c(0.1875, 0.1875, 0.17, 0.2, 0.23, 0.2125, 0.2125), y=interpretation.y-c(0.35, 0.30, 0.31, 0.27, 0.31, 0.30, 0.35),
 				default.units="native",gp=gpar(fill="grey50"))
@@ -690,7 +694,7 @@ if (reports.by.school) {
 			grid.text(x=0.12, y=suggested.y-0.14, "Develop remediation or enrich-", gp=gpar(cex=0.8), default.units="native", just="left")
 			grid.text(x=0.12, y=suggested.y-0.16, "ment plans based on rate of", gp=gpar(cex=0.8), default.units="native", just="left")
 			grid.text(x=0.12, y=suggested.y-0.18, "growth needed to reach higher", gp=gpar(cex=0.8), default.units="native", just="left")
-			grid.text(x=0.12, y=suggested.y-0.20, paste(tmp.abbreviation, "achievement levels."), gp=gpar(cex=0.8), default.units="native", just="left")
+			grid.text(x=0.12, y=suggested.y-0.20, paste(tmp.abbreviation, tmp.ach.lev.text.use), gp=gpar(cex=0.8), default.units="native", just="left")
 
 			if (sgPlot.fan) {
 				grid.circle(x=0.075, y=suggested.y-0.23, r=0.01, gp=gpar(fill="black"), default.units="native")
@@ -1250,8 +1254,8 @@ if (reports.by.instructor) {
 				grid.roundrect(x=unit(0.2, "native"), y=interpretation.y-0.125, width=unit(0.1, "native"), height=unit(0.125, "native"), r=unit(0.02, "inches"),
 					gp=gpar(col="black", lwd=1.5), just=c("center", "top"))
 				grid.text(x=0.325, y=interpretation.y-0.1625, tmp.abbreviation, default.units="native", just="left")
-				grid.text(x=0.325, y=interpretation.y-0.1875, "Achievement", default.units="native", just="left")
-				grid.text(x=0.325, y=interpretation.y-0.2125, "Levels", default.units="native", just="left")
+				grid.text(x=0.325, y=interpretation.y-0.1875, tmp.ach.lev.text.interp[1], default.units="native", just="left")
+				grid.text(x=0.325, y=interpretation.y-0.2125, tmp.ach.lev.text.interp[2], default.units="native", just="left")
 
 				grid.polygon(x=c(0.1875, 0.1875, 0.17, 0.2, 0.23, 0.2125, 0.2125), y=interpretation.y-c(0.35, 0.30, 0.31, 0.27, 0.31, 0.30, 0.35), default.units="native",
 					gp=gpar(fill="grey50"))
@@ -1275,7 +1279,7 @@ if (reports.by.instructor) {
 				grid.text(x=0.12, y=suggested.y-0.14, "Develop remediation or enrich-", gp=gpar(cex=0.8), default.units="native", just="left")
 				grid.text(x=0.12, y=suggested.y-0.16, "ment plans based on rate of", gp=gpar(cex=0.8), default.units="native", just="left")
 				grid.text(x=0.12, y=suggested.y-0.18, "growth needed to reach higher", gp=gpar(cex=0.8), default.units="native", just="left")
-				grid.text(x=0.12, y=suggested.y-0.20, paste(tmp.abbreviation, "achievement levels."), gp=gpar(cex=0.8), default.units="native", just="left")
+				grid.text(x=0.12, y=suggested.y-0.20, paste(tmp.abbreviation, tmp.ach.lev.text.use), gp=gpar(cex=0.8), default.units="native", just="left")
 
 				if (sgPlot.fan) {
 					grid.circle(x=0.075, y=suggested.y-0.23, r=0.01, gp=gpar(fill="black"), default.units="native")

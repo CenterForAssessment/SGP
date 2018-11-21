@@ -88,11 +88,14 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 		if (transition.grade.numeric %in% grades.content_areas.reported.in.state$GRADE_NUMERIC[1:max.year.index]) {
 			tmp.gcar <- subset(grades.content_areas.reported.in.state,
 				!(YEAR >= Report_Parameters$Current_Year & !CONTENT_AREA %in% post.trans.content_areas))
-			if (all(Content_Areas[!is.na(Grades)] %in% tmp.gcar$CONTENT_AREA))
+			if (all(Content_Areas[!is.na(Grades)] %in% tmp.gcar$CONTENT_AREA)) {
 				grades.content_areas.reported.in.state <- tmp.gcar
-			else {
+				if (!all(diff(grades.content_areas.reported.in.state$GRADE_NUMERIC)==1)) {
+					grades.content_areas.reported.in.state$GRADE_NUMERIC <- (as.numeric(grades.content_areas.reported.in.state$GRADE_NUMERIC[2])-1)+c(0, cumsum(tail(grades.content_areas.reported.in.state$YEAR_LAG, -1)))
+				}
+			} else {
 				if (Grades[!is.na(Grades)][1] == transition.grade) {
-					grd.trans.index <- intersect(grep(paste0("^", Grades[!is.na(Grades)][1], "$"), grades.content_areas.reported.in.state$GRADE), grep(paste0("^", Content_Areas, "$"), grades.content_areas.reported.in.state$CONTENT_AREA)) #  needed when transition grade is the same - e.g. Grade 9 ELA to Grade 9 PSAT (not 9 to EOCT)
+					grd.trans.index <- intersect(grep(paste0("^", Grades[!is.na(Grades)][1], "$"), grades.content_areas.reported.in.state$GRADE), grep(paste0("^", Content_Areas[1], "$"), grades.content_areas.reported.in.state$CONTENT_AREA)) #  needed when transition grade is the same - e.g. Grade 9 ELA to Grade 9 PSAT (not 9 to EOCT)
 					end <- nrow(grades.content_areas.reported.in.state)
 					grades.content_areas.reported.in.state$YEAR[grd.trans.index:1] <- as.numeric(grades.content_areas.reported.in.state$YEAR[grd.trans.index]) - c(0, cumsum(rep(1, length(grades.content_areas.reported.in.state$YEAR_LAG[grd.trans.index:1])-1)))
 					grades.content_areas.reported.in.state$GRADE_NUMERIC[grd.trans.index:end] <- grades.content_areas.reported.in.state$GRADE_NUMERIC[grd.trans.index] + cumsum(c(1, tail(grades.content_areas.reported.in.state$YEAR_LAG[grd.trans.index:end], -1)))
@@ -482,7 +485,7 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 	if (!is.null(Report_Parameters[['Assessment_Transition']]) && grade.values$years[2] >= Report_Parameters[['Assessment_Transition']][['Year']]) Report_Parameters[['Assessment_Transition']] <- NULL
 
 	if (!is.null(transition.grade)) {
-		grade.rpt.index <- intersect(grep(paste0("^", Grades[!is.na(Grades)][1], "$"), grades.content_areas.reported.in.state$GRADE), grep(paste0("^", Content_Areas, "$"), grades.content_areas.reported.in.state$CONTENT_AREA)) #  needed when transition grade is the same - e.g. Grade 9 ELA to Grade 9 PSAT (not 9 to EOCT)
+		grade.rpt.index <- intersect(grep(paste0("^", Grades[!is.na(Grades)][1], "$"), grades.content_areas.reported.in.state$GRADE), grep(paste0("^", Content_Areas[1], "$"), grades.content_areas.reported.in.state$CONTENT_AREA)) #  needed when transition grade is the same - e.g. Grade 9 ELA to Grade 9 PSAT (not 9 to EOCT)
 		if (length(grade.rpt.index)==0) grade.rpt.index <- (max(grep(max(Grades, na.rm = TRUE), grades.content_areas.reported.in.state$GRADE)) + min(which(!is.na(Grades))) - 1)
 		if (any(grades.content_areas.reported.in.state$CONTENT_AREA[grade.rpt.index:nrow(grades.content_areas.reported.in.state)] %in% post.trans.content_areas)) {
 			if (!is.list(Report_Parameters[['Assessment_Transition']])) {
@@ -503,7 +506,7 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 
 			if (!is.na(grade.values$years[length(Grades)]) & grade.values$years[length(Grades)] < Report_Parameters[['Assessment_Transition']][['Year']]) Report_Parameters[['Assessment_Transition']][['Year']] <- grade.values$years[length(Grades)]
 		}
-		if (!transition.grade %in% grades.content_areas.reported.in.state$GRADE[1:(grade.rpt.index+1)] & !any(grade.values$interp.df$GRADE_NUMERIC > transition.grade.numeric, na.rm = TRUE)) Report_Parameters[['Assessment_Transition']] <- NULL
+		# if (!transition.grade %in% grades.content_areas.reported.in.state$GRADE[1:(grade.rpt.index+1)] & !any(grade.values$interp.df$GRADE_NUMERIC > transition.grade.numeric, na.rm = TRUE)) Report_Parameters[['Assessment_Transition']] <- NULL
 	}
 
 	if (is.null(Report_Parameters[['Assessment_Transition']])) {
