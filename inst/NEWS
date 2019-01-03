@@ -1,3 +1,11 @@
+# SGP 1.9-0.0
+
+## User Visible Changes:
+
+* Update of web-based documentation (https://sgp.io)
+* Various state meta-data updates
+
+
 # SGP 1.8-0.0
 
 ## User Visible Changes:
