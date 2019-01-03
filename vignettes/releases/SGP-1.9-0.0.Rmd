@@ -1,6 +1,6 @@
 ---
-title: "SGP 1.8-0.0"
-date: "April 6th, 2018"
+title: "SGP 1.9-0.0"
+date: "January 1st, 2019"
 ---
 
 ```{r include = FALSE}
@@ -22,14 +22,14 @@ date: "April 6th, 2018"
 ```
 
 
-This is the 1.8 release of the SGP package posted to CRAN. This [GitHub tagged release](https://github.com/CenterForAssessment/SGP/releases/tag/ea0d75e)
+This is the 1.9 release of the SGP package posted to CRAN. This [GitHub tagged release](https://github.com/CenterForAssessment/SGP/releases/tag/ceec338)
 can be downloaded via:
 
 ```
-> devtools::install_github("CenterForAssessment/SGP", ref="ea0d75e")
+> devtools::install_github("CenterForAssessment/SGP", ref="ceec338")
 ```
 
-To see all the changes in this release check out the [change log](https://sgp.io/news/index.html#sgp-1-8-0-0).
+To see all the changes in this release check out the [change log](https://sgp.io/news/index.html#sgp-1-9-0-0).
 
 
 Feel free to drop me a line with any comments, feature requests, or ideas. And give us a shout-out Tweet using the Twitter button in the upper right!

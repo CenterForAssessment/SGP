@@ -160,10 +160,12 @@ code a, pre a {
 .navbar-brand.shrink {
     padding: 0 0 0 54px;
     background-size: 32px auto;
+    transition-duration: 0.25s;
 }
 
 .navbar-label.shrink {
     font-size: 32px;
+    transition-duration: 0.25s;
 }
 
 /* Reference index & topics ----------------------------------------------- */
