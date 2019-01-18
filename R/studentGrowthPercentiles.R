@@ -293,9 +293,15 @@ function(panel.data,         ## REQUIRED
             if (!is.null(sgp.loss.hoss.adjustment)) {
                 my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
                 tmp.hoss <- eval(parse(text=paste0("Knots_Boundaries", my.path.knots.boundaries, "[['loss.hoss_", tmp.last, "']][2L]")))
+                ###   All commented out lines below resolve data.table warnings, but cause some differences due to rounding in replications.
+                ###   Consider adopting later in 2019 after any 2018 replications have been done.
+                # invisible(tmp[, V1 := as.double(V1)])
                 if (length(tmp.index <- which(data2>=tmp.hoss)) > 0L) {
-                    tmp[tmp.index, V1:=apply(data.table(data1 > data2, TRUE)[tmp.index], 1, function(x) which.max(x)-1L)]
+                  tmp[tmp.index, V1:=apply(data.table(data1 > data2, TRUE)[tmp.index], 1, function(x) which.max(x)-1L)]
+                  # tmp[tmp.index, V1:=as.double(apply(data.table(data1 > data2, TRUE)[tmp.index], 1, function(x) which.max(x)-1L))]
+                  # if (ranked.simex) tmp[tmp.index, V1 := V1/8]
                 }
+                # invisible(tmp[, V1 := as.integer(V1)])
             }
             if (convert.0and100) {
                 tmp[V1==0L, V1:=1L]
@@ -533,7 +539,7 @@ function(panel.data,         ## REQUIRED
 					if (is.null(key(big.data.uniques))) setkeyv(big.data.uniques, key(big.data))
 					big.data[, (num.perturb.vars-g) := big.data.uniques[,c(key(big.data), "TEMP"), with=FALSE][big.data][['TEMP']]]
 
-					if (is.null(simex.use.my.coefficient.matrices)) {
+					if (is.null(simex.use.my.coefficient.matrices) & !identical(sgp.labels[['my.extra.label']], "BASELINE")) {
 						ks <- big.data[, as.list(as.vector(unlist(round(quantile(big.data[[col.index]], probs=knot.cut.percentiles, na.rm=TRUE), digits=3L))))] # Knots
 						bs <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.1), digits=3L)))] # Boundaries
 						lh <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.0), digits=3L)))] # LOSS/HOSS
@@ -657,10 +663,10 @@ function(panel.data,         ## REQUIRED
 									.options.multicore=par.start$foreach.options) %dopar% { # .options.snow=par.start$foreach.options
 										c(.get.percentile.predictions(my.matrix=mtx.subset[[z]], my.data=getSIMEXdata(tmp.dbname, z, k, predictions=TRUE))/B)
 								}
-                    }
+					}
 					stopParallel(tmp.par.config, par.start)
 				}
-                if (!is.null(tmp.par.config)) unlink(tmp.dbname)
+					if (!is.null(tmp.par.config)) unlink(tmp.dbname)
 			} ### END for (L in lambda[-1L])
 			if (verbose) messageSGP(c("\t\t", rev(content_area.progression)[1L], " Grade ", rev(tmp.gp)[1L], " Order ", k, " Simulation process complete ", prettyDate()))
 
@@ -1021,8 +1027,7 @@ function(panel.data,         ## REQUIRED
     }
 
     sgp.message.label <- sgp.labels[['my.extra.label']]
-    if (!is.null(calculate.simex) && is.null(calculate.simex[['simex.use.my.coefficient.matrices']])) sgp.message.label <- "SIMEX"
-    if (!is.null(calculate.simex) && !is.null(calculate.simex[['simex.use.my.coefficient.matrices']])) sgp.message.label <- "SIMEX BASELINE"
+    if (!is.null(calculate.simex)) sgp.message.label <- paste("SIMEX", sgp.message.label)
 
 
 	### Create object to store the studentGrowthPercentiles objects
