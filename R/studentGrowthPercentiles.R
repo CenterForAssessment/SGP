@@ -593,7 +593,7 @@ function(panel.data,         ## REQUIRED
 									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=big.data[list(z)][, b:=NULL])
 							} else {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste0("lambda_", L)]][[z]] <-
-									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=big.data[list(z)][, b:=NULL])
+									rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=big.data[list(z)][, b:=NULL][sample(seq.int(n.records), simex.sample.size)])
 							}
 						}
 					} else simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste0("lambda_", L)]] <- available.matrices[sim.iters]
