@@ -602,7 +602,7 @@ function(panel.data,         ## REQUIRED
 						if (verbose) messageSGP(c("\t\t\tStarted percentile prediction calculation, Lambda ", L, ": ", prettyDate()))
 						for (z in seq_along(sim.iters)) {
 							fitted[[paste0("order_", k)]][which(lambda==L),] <- fitted[[paste0("order_", k)]][which(lambda==L),] +
-								c(.get.percentile.predictions(big.data[list(z)][, b:=NULL],
+								c(.get.percentile.predictions(big.data[list(z)][, paste(c("ID", paste0('prior_', k:1), "final_yr")), with=FALSE],
 									simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste0("lambda_", L)]][[z]])/B)
 						}
 					}
