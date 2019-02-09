@@ -629,7 +629,6 @@ function(panel.data,         ## REQUIRED
 							} else {
 								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste0("lambda_", L)]] <-
 									foreach(z=iter(sim.iters), .packages=c("quantreg", "data.table"),
-									# foreach(z=iter(sim.iters),
 										.export=c("Knots_Boundaries", "rq.method", "taus", "content_area.progression", "tmp.slot.gp", "year.progression", "year_lags.progression", "SGPt", "rq.sgp", "get.my.knots.boundaries.path"),
 										.options.mpi=par.start$foreach.options, .options.multicore=par.start$foreach.options, .options.snow=par.start$foreach.options) %dorng% {
 											rq.mtx(tmp.gp.iter[1:k], lam=L, rqdata=getSIMEXdata(tmp.dbname, z)[sample(seq.int(n.records), simex.sample.size)])
@@ -637,6 +636,13 @@ function(panel.data,         ## REQUIRED
 							}
 					} else {
 						simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste0("lambda_", L)]] <- available.matrices[sim.iters]
+
+            ###   Re-set the random seed to match when coef matrices are produced.  Otherwise seed is off when data is simulated in subsequent L loops.
+            if (is.null(simex.sample.size)) {
+              ###   Use the N from the matrices rather than `simex.sample.size` - since that element may not be specified in the `calculate.simex` argument/list.
+              simex.mtx.size <- unique(sapply(sim.iters, function(f) available.matrices[[f]]@Version[["Matrix_Information"]][["N"]]))
+              if (all(n.records > simex.mtx.size)) tmp.random.reset <- foreach(z=iter(sim.iters)) %dorng% sample(seq.int(n.records), simex.mtx.size)
+            }
 					}
 
 					if (!all(sapply(simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste0("lambda_", L)]], is.splineMatrix))) {
