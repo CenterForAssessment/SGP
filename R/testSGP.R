@@ -125,7 +125,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of Goodness of Fit Output Files, part 1: FAIL\n")
 			}
 
-			tmp.messages <- c(tmp.messages, "\t##### End testSGP test number 0, Part 1: ", convertTime(timetaken(started.at.overall)), "#####\n")
+			tmp.messages <- c(tmp.messages, "\t##### End testSGP test number 0, Part 1: ", convertTime(timetakenSGP(started.at.overall)), "#####\n")
 
 
 			### Part 2
@@ -169,8 +169,8 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable P84_PROJ_YEAR_4, part 2: FAIL\n")
 			}
 
-			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 0, Part 2: ", convertTime(timetaken(started.at.intermediate)), "#####\n"))
-			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 0: ", convertTime(timetaken(started.at.overall)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 0, Part 2: ", convertTime(timetakenSGP(started.at.intermediate)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 0: ", convertTime(timetakenSGP(started.at.overall)), "#####\n"))
 			messageSGP(tmp.messages)
 		} ### End TEST_NUMBER 0
 
@@ -358,7 +358,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT: FAIL\n")
 			}
 
-			tmp.messages <- c(tmp.messages, paste0("\n##### End testSGP test number ", TEST_NUMBER, ":  ", convertTime(timetaken(started.at.overall)), " #####\n"))
+			tmp.messages <- c(tmp.messages, paste0("\n##### End testSGP test number ", TEST_NUMBER, ":  ", convertTime(timetakenSGP(started.at.overall)), " #####\n"))
 			messageSGP(tmp.messages)
 		} ### End TEST_NUMBER 1 & 1B
 
@@ -470,7 +470,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable MOVE_UP_STAY_UP_STATUS_3_YEAR, part 1: FAIL\n")
 			}
 
-			tmp.messages <- c(tmp.messages, paste0("\t##### End testSGP test number 2a: Part 1: ", convertTime(timetaken(started.at.overall.2a)), " #####\n"))
+			tmp.messages <- c(tmp.messages, paste0("\t##### End testSGP test number 2a: Part 1: ", convertTime(timetakenSGP(started.at.overall.2a)), " #####\n"))
 
 
 			### Part 2
@@ -545,8 +545,8 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable MOVE_UP_STAY_UP_STATUS_3_YEAR, part 2: FAIL\n")
 			}
 
-			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 2a, Part 2: ", convertTime(timetaken(started.at.intermediate.2a)), "#####\n"))
-			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 2a: ", convertTime(timetaken(started.at.overall.2a)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 2a, Part 2: ", convertTime(timetakenSGP(started.at.intermediate.2a)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 2a: ", convertTime(timetakenSGP(started.at.overall.2a)), "#####\n"))
 		} ### End TEST_NUMBER 2a
 
 
@@ -580,7 +580,7 @@ function(
 				started.at.overall.2b <- proc.time()
 				eval(parse(text=expression.to.evaluate))
 
-				tmp.messages <- c(tmp.messages, paste0("\t##### End testSGP test number ", capwords(i), ": Part 1: ", convertTime(timetaken(started.at.overall.2b)), " #####\n"))
+				tmp.messages <- c(tmp.messages, paste0("\t##### End testSGP test number ", capwords(i), ": Part 1: ", convertTime(timetakenSGP(started.at.overall.2b)), " #####\n"))
 
 				#############################################################
 				### Part 2
@@ -700,8 +700,8 @@ function(
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable MOVE_UP_STAY_UP_STATUS_3_YEAR, part 2: FAIL\n")
 				}
 
-				tmp.messages <- c(tmp.messages, paste0("\t##### End testSGP test number ", capwords(i), ", Part 2: ", convertTime(timetaken(started.at.intermediate.2b)), " #####\n"))
-				tmp.messages <- c(tmp.messages, paste0("\n##### End testSGP test number ", capwords(i), ": ", convertTime(timetaken(started.at.overall.2b)), " #####\n"))
+				tmp.messages <- c(tmp.messages, paste0("\t##### End testSGP test number ", capwords(i), ", Part 2: ", convertTime(timetakenSGP(started.at.intermediate.2b)), " #####\n"))
+				tmp.messages <- c(tmp.messages, paste0("\n##### End testSGP test number ", capwords(i), ": ", convertTime(timetakenSGP(started.at.overall.2b)), " #####\n"))
 			} ### End for (i in TEST_NUMBER)
 			} ### End TEST_NUMBER 2b, 2c, 2d
 			messageSGP(tmp.messages)
@@ -886,7 +886,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_7_YEAR_PROJ_YEAR_1_CURRENT: FAIL\n")
 			}
 
-			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 3: ", convertTime(timetaken(started.at.overall)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 3: ", convertTime(timetakenSGP(started.at.overall)), "#####\n"))
 			messageSGP(tmp.messages)
 		} ### End TEST_NUMBER 3
 
@@ -996,7 +996,7 @@ function(
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX_BASELINE_RANKED: FAIL\n")
 				}
 			}
-			tmp.messages <- c(tmp.messages, paste("\n\t##### End testSGP test number 4, Part 1: ", convertTime(timetaken(started.at.overall)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\n\t##### End testSGP test number 4, Part 1: ", convertTime(timetakenSGP(started.at.overall)), "#####\n"))
 
 			sgp.config <- list(
 				AMERICAN_LIT.config=list(
@@ -1134,8 +1134,8 @@ function(
 					tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX_BASELINE_RANKED: FAIL\n")
 				}
 			}
-			tmp.messages <- c(tmp.messages, paste("\n\t##### End testSGP test number 4, Part 2: ", convertTime(timetaken(started.at.intermediate)), "#####\n"))
-			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 4: ", convertTime(timetaken(started.at.overall)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\n\t##### End testSGP test number 4, Part 2: ", convertTime(timetakenSGP(started.at.intermediate)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 4: ", convertTime(timetakenSGP(started.at.overall)), "#####\n"))
 			messageSGP(tmp.messages)
 		} ### End TEST_NUMBER 4
 
@@ -1233,7 +1233,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_PRIOR_STANDARDIZED, part 1: FAIL\n")
 			}
 
-			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 5, Part 1: ", convertTime(timetaken(started.at.overall)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 5, Part 1: ", convertTime(timetakenSGP(started.at.overall)), "#####\n"))
 
 
 			##############################################################################
@@ -1475,7 +1475,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1, part 2: FAIL\n")
 			}
 
-			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 5, Part 2: ", convertTime(timetaken(started.at.intermediate)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 5, Part 2: ", convertTime(timetakenSGP(started.at.intermediate)), "#####\n"))
 
 
 			##############################################################################
@@ -1543,8 +1543,8 @@ function(
 				tmp.messages <- c(tmp.messages, paste0("\t\tTest of variable ", paste('SGP_FROM', tail(sgpData.years, 2)[1], sep="_"), ", part 3: FAIL\n"))
 			}
 
-			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 5, Part 3: ", convertTime(timetaken(started.at.intermediate)), "#####\n"))
-			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 5: ", convertTime(timetaken(started.at.overall)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 5, Part 3: ", convertTime(timetakenSGP(started.at.intermediate)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 5: ", convertTime(timetakenSGP(started.at.overall)), "#####\n"))
 			messageSGP(tmp.messages)
 		} ### End TEST_NUMBER 5
 
@@ -1598,7 +1598,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of SGP_BASELINE: FAIL\n")
 			}
 
-			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 6: ", convertTime(timetaken(started.at.overall)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 6: ", convertTime(timetakenSGP(started.at.overall)), "#####\n"))
 			messageSGP(tmp.messages)
 		} ### End TEST_NUMBER 6
 
@@ -1734,7 +1734,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGProjections output, part 1: FAIL\n")
 			}
 
-			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI1 (STAR Scores), Part 1: ", convertTime(timetaken(started.at.overall)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI1 (STAR Scores), Part 1: ", convertTime(timetakenSGP(started.at.overall)), "#####\n"))
 
 
 			###############################################################################
@@ -1773,7 +1773,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of equatity of RLI1_PART_1@SGP and RLI1_PART_2@SGP, part 2: FAIL\n")
 			}
 
-			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI1 (STAR Scores): Part 2", convertTime(timetaken(started.at.intermediate)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI1 (STAR Scores): Part 2", convertTime(timetakenSGP(started.at.intermediate)), "#####\n"))
 
 
 			###############################################################################
@@ -1811,8 +1811,8 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE (2016_2017.3 matrices = 2016_2017.2 matrices), part 3: FAIL\n")
 			}
 
-			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI (STAR Scores): Part 3", convertTime(timetaken(started.at.intermediate)), "#####\n"))
-			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number RLI (STAR Scores): ", convertTime(timetaken(started.at.overall)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI (STAR Scores): Part 3", convertTime(timetakenSGP(started.at.intermediate)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number RLI (STAR Scores): ", convertTime(timetakenSGP(started.at.overall)), "#####\n"))
 			messageSGP(tmp.messages)
 		} ### End TEST_NUMBER RLI1
 
@@ -1951,7 +1951,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGProjections output, part 1: FAIL\n")
 			}
 
-			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI2 (RASCH Scores), Part 1: ", convertTime(timetaken(started.at.overall)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI2 (RASCH Scores), Part 1: ", convertTime(timetakenSGP(started.at.overall)), "#####\n"))
 
 
 			###############################################################################
@@ -1992,7 +1992,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of equatity of RLI2_PART_1@SGP and RLI2_PART_2@SGP, part 2: FAIL\n")
 			}
 
-			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI2 (RASCH Scores): Part 2", convertTime(timetaken(started.at.intermediate)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI2 (RASCH Scores): Part 2", convertTime(timetakenSGP(started.at.intermediate)), "#####\n"))
 
 
 			###############################################################################
@@ -2030,8 +2030,8 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE (2016_2017.3 matrices = 2017_2018.1 matrices), part 3: FAIL\n")
 			}
 
-			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI2 (RASCH Scores): Part 3", convertTime(timetaken(started.at.intermediate)), "#####\n"))
-			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number RLI2 (RASCH Scores): ", convertTime(timetaken(started.at.overall)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI2 (RASCH Scores): Part 3", convertTime(timetakenSGP(started.at.intermediate)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number RLI2 (RASCH Scores): ", convertTime(timetakenSGP(started.at.overall)), "#####\n"))
 			messageSGP(tmp.messages)
 		} ### End TEST_NUMBER RLI2
 
@@ -2170,7 +2170,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGProjections output, part 1: FAIL\n")
 			}
 
-			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI3 (RASCH Scores), Part 1: ", convertTime(timetaken(started.at.overall)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI3 (RASCH Scores), Part 1: ", convertTime(timetakenSGP(started.at.overall)), "#####\n"))
 
 
 			###############################################################################
@@ -2212,7 +2212,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of equatity of RLI3_PART_1@SGP and RLI3_PART_2@SGP, part 2: FAIL\n")
 			}
 
-			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI3 (RASCH Scores): Part 2", convertTime(timetaken(started.at.intermediate)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI3 (RASCH Scores): Part 2", convertTime(timetakenSGP(started.at.intermediate)), "#####\n"))
 
 
 			###############################################################################
@@ -2250,8 +2250,8 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE (2016_2017.3 matrices = 2017_2018.1 matrices), part 3: FAIL\n")
 			}
 
-			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI3 (RASCH Scores): Part 3", convertTime(timetaken(started.at.intermediate)), "#####\n"))
-			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number RLI3 (RASCH Scores): ", convertTime(timetaken(started.at.overall)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI3 (RASCH Scores): Part 3", convertTime(timetakenSGP(started.at.intermediate)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number RLI3 (RASCH Scores): ", convertTime(timetakenSGP(started.at.overall)), "#####\n"))
 			messageSGP(tmp.messages)
 		} ### End TEST_NUMBER RLI3
 
@@ -2478,7 +2478,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (6): FAIL\n")
 			}
 
-			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 7, Part 1: ", convertTime(timetaken(started.at.intermediate1)), "#####\n\n"))
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 7, Part 1: ", convertTime(timetakenSGP(started.at.intermediate1)), "#####\n\n"))
 
 
 			### Part 2
@@ -2596,7 +2596,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (6): FAIL\n")
 			}
 
-			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 7, Part 2: ", convertTime(timetaken(started.at.intermediate2)), "#####\n\n"))
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 7, Part 2: ", convertTime(timetakenSGP(started.at.intermediate2)), "#####\n\n"))
 
 			### Part 3a - summarizeSGP
 
@@ -2655,8 +2655,8 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of Instructor Summary Table: FAIL\n")
 			}
 
-			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 7, Part 3: ", convertTime(timetaken(started.at.intermediate3)), "#####\n"))
-			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 7: ", convertTime(timetaken(started.at.overall)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 7, Part 3: ", convertTime(timetakenSGP(started.at.intermediate3)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 7: ", convertTime(timetakenSGP(started.at.overall)), "#####\n"))
 			messageSGP(tmp.messages)
 		} ### End TEST_NUMBER 7
 	} ### END testSGP Function

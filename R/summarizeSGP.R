@@ -704,7 +704,7 @@
 		setkeyv(sgp_object@Data, getKey(sgp_object))
 	}
 
-	messageSGP(paste("Finished summarizeSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
+	messageSGP(paste("Finished summarizeSGP", prettyDate(), "in", convertTime(timetakenSGP(started.at)), "\n"))
 
 	setkeyv(sgp_object@Data, getKey(sgp_object))
 	return(sgp_object)

@@ -644,7 +644,7 @@ function(
 	setkeyv(slot.data, getKey(slot.data))
 	sgp_object@Data <- slot.data
 
-	messageSGP(c(tmp.messages, paste("Finished combineSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n")))
+	messageSGP(c(tmp.messages, paste("Finished combineSGP", prettyDate(), "in", convertTime(timetakenSGP(started.at)), "\n")))
 
 	return(sgp_object)
 } ## END combineSGP Function

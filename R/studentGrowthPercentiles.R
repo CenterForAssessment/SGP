@@ -1085,7 +1085,7 @@ function(panel.data,         ## REQUIRED
 		messageSGP(paste("\tStarted studentGrowthPercentiles", started.date))
 		messageSGP(paste0("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ",
 			paste(grade.progression, collapse=", "), " ", sgp.message.label))
-		messageSGP(paste(tmp.messages, "\tFinished SGP Student Growth Percentile Analysis", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
+		messageSGP(paste(tmp.messages, "\tFinished SGP Student Growth Percentile Analysis", prettyDate(), "in", convertTime(timetakenSGP(started.at)), "\n"))
 
 		return(
 			list(Coefficient_Matrices=Coefficient_Matrices,
@@ -1217,7 +1217,7 @@ function(panel.data,         ## REQUIRED
 		messageSGP(paste("\tStarted studentGrowthPercentiles", started.date))
 		messageSGP(paste0("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ",
 			paste(tmp.slot.gp, collapse=", "), " ", sgp.message.label))
-		messageSGP(paste(tmp.messages, "\tFinished SGP Student Growth Percentile Analysis", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
+		messageSGP(paste(tmp.messages, "\tFinished SGP Student Growth Percentile Analysis", prettyDate(), "in", convertTime(timetakenSGP(started.at)), "\n"))
 
 		return(
 			list(Coefficient_Matrices=Coefficient_Matrices,
@@ -1332,7 +1332,7 @@ function(panel.data,         ## REQUIRED
                 messageSGP(paste0("\t\tContent Area: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ",
                     paste(tmp.slot.gp, collapse=", "), " ", sgp.message.label, " (N=", cohort.n, ")"))
             if (verbose.output) messageSGP(Verbose_Messages)
-            messageSGP(c(tmp.messages, "\tFinished studentGrowthPercentiles: ", prettyDate(), " in ", convertTime(timetaken(started.at)), "\n"))
+            messageSGP(c(tmp.messages, "\tFinished studentGrowthPercentiles: ", prettyDate(), " in ", convertTime(timetakenSGP(started.at)), "\n"))
         }
 
         return(
@@ -1792,7 +1792,7 @@ function(panel.data,         ## REQUIRED
 			messageSGP(paste0("\t\tContent Area: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ",
 				paste(tmp.slot.gp, collapse=", "), " ", sgp.message.label, " (N=", cohort.n, ")"))
 		if (verbose.output) messageSGP(Verbose_Messages)
-		messageSGP(c(tmp.messages, "\tFinished studentGrowthPercentiles: ", prettyDate(), " in ", convertTime(timetaken(started.at)), "\n"))
+		messageSGP(c(tmp.messages, "\tFinished studentGrowthPercentiles: ", prettyDate(), " in ", convertTime(timetakenSGP(started.at)), "\n"))
 	}
 
 	list(Coefficient_Matrices=Coefficient_Matrices,

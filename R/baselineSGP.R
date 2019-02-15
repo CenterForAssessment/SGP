@@ -140,7 +140,7 @@ function(sgp_object,
 
 		message(paste("\tStarted baselineSGP Coefficient Matrix Calculation:", started.date))
 		message(paste0("\tContent Area: ", tail(content_areas, 1), ", Grade Progression: ", paste(grade.sequences, collapse=", "), ". "))
-		message(paste0("\tFinished baselineSGP Coefficient Matrix Calculation ", prettyDate(), " in ", convertTime(timetaken(started.at)), ".\n"))
+		message(paste0("\tFinished baselineSGP Coefficient Matrix Calculation ", prettyDate(), " in ", convertTime(timetakenSGP(started.at)), ".\n"))
 
 		return(tmp_sgp_list)
 
@@ -300,7 +300,7 @@ function(sgp_object,
 	###
 	############################################################
 
-	message(paste("\tFinished baselineSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
+	message(paste("\tFinished baselineSGP", prettyDate(), "in", convertTime(timetakenSGP(started.at)), "\n"))
 
 	if (return.matrices.only) {
 		tmp.list <- list()

@@ -851,7 +851,7 @@ if (reports.by.school) {
 	}
 
 	messageSGP(paste("\tStarted", last.year, tmp_school_name, "student growth plots:", started.date))
-	messageSGP(paste("\tFinished", last.year, tmp_school_name, "student growth plots:", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
+	messageSGP(paste("\tFinished", last.year, tmp_school_name, "student growth plots:", prettyDate(), "in", convertTime(timetakenSGP(started.at)), "\n"))
 
 	} ## END for loop for SCHOOLS (j)
 	} ## END for loop for DISTRICTS (i)
@@ -1418,7 +1418,7 @@ if (reports.by.instructor) {
 		}
 
 		messageSGP(paste("\tStarted", last.year, tmp_school_name, "Instructor:", tmp_instructor_name, "student growth plots:", started.date))
-		messageSGP(paste("\tFinished", last.year, tmp_school_name, "Instructor:", tmp_instructor_name, "student growth plots:", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
+		messageSGP(paste("\tFinished", last.year, tmp_school_name, "Instructor:", tmp_instructor_name, "student growth plots:", prettyDate(), "in", convertTime(timetakenSGP(started.at)), "\n"))
 
 	} ## END for loop for INSTRUCTORS (k)
 	} ## END for loop for SCHOOLS (j)

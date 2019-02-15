@@ -216,6 +216,6 @@ function(sgp_object,
 
 	### Print finish and return SGP object
 
-	messageSGP(paste("Finished abcSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
+	messageSGP(paste("Finished abcSGP", prettyDate(), "in", convertTime(timetakenSGP(started.at)), "\n"))
 	return(sgp_object)
 } ## END abcSGP Function
