@@ -276,6 +276,10 @@ function(panel.data,         ## REQUIRED
 	}
 
 	.get.quantiles <- function(data1, data2, ranked.simex=FALSE) {
+    if (is.character(ranked.simex)) {
+      reproduce.old.values <- TRUE; ranked.simex <- TRUE
+    } else reproduce.old.values <- FALSE
+
     if (ranked.simex) {
       for (p in 1:3) { # Additional values between the tau predicted values - 1/8th percentiles for ranking
         dataX <- data1[,(1:ncol(data1)-1)] + t(apply(data1, 1, diff))/2
@@ -295,15 +299,12 @@ function(panel.data,         ## REQUIRED
       if (!is.null(sgp.loss.hoss.adjustment)) {
         my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
         tmp.hoss <- eval(parse(text=paste0("Knots_Boundaries", my.path.knots.boundaries, "[['loss.hoss_", tmp.last, "']][2L]")))
-        ###   All commented out lines below resolve data.table warnings, but cause some differences due to rounding in replications.
-        ###   Consider adopting later in 2019 after any 2018 replications have been done.
-        # invisible(tmp[, V1 := as.double(V1)])
         if (length(tmp.index <- which(data2>=tmp.hoss)) > 0L) {
-          tmp[tmp.index, V1:=apply(data.table(data1 > data2, TRUE)[tmp.index], 1, function(x) which.max(x)-1L)]
-          # tmp[tmp.index, V1:=as.double(apply(data.table(data1 > data2, TRUE)[tmp.index], 1, function(x) which.max(x)-1L))]
-          # if (ranked.simex) tmp[tmp.index, V1 := V1/8]
+          if (ranked.simex) {
+            tmp[tmp.index, V1:=as.double(apply(data.table(data1 > data2, TRUE)[tmp.index], 1, function(x) which.max(x)-1L))]
+            if (!reproduce.old.values) tmp[tmp.index, V1 := V1/8]
+          } else tmp[tmp.index, V1:=apply(data.table(data1 > data2, TRUE)[tmp.index], 1, function(x) which.max(x)-1L)]
         }
-        # invisible(tmp[, V1 := as.integer(V1)])
       }
       if (convert.0and100) {
         tmp[V1==0L, V1:=1L]
@@ -339,10 +340,11 @@ function(panel.data,         ## REQUIRED
 	###
 	simex.sgp <- function(
 		state, variable=NULL, csem.data.vnames=NULL, csem.loss.hoss=NULL,
-		lambda, B, simex.sample.size, extrapolation, save.matrices, simex.use.my.coefficient.matrices=NULL, calculate.simex.sgps, dependent.var.error=FALSE, verbose=FALSE)
+		lambda, B, simex.sample.size, extrapolation, save.matrices, simex.use.my.coefficient.matrices=NULL, calculate.simex.sgps, dependent.var.error=FALSE, reproduce.old.values=FALSE, verbose=FALSE)
 	{
 
 		if (is.null(dependent.var.error)) dependent.var.error <- FALSE
+		if (is.null(reproduce.old.values)) reproduce.old.values <- FALSE
 		if (is.null(verbose)) verbose <- FALSE
 		if (verbose) messageSGP(c("\n\tStarted SIMEX SGP calculation ", rev(content_area.progression)[1L], " Grade ", rev(tmp.gp)[1L], " ", prettyDate()))
 
@@ -688,7 +690,7 @@ function(panel.data,         ## REQUIRED
 				tmp.quantiles.simex[[k]] <- data.table(ID=tmp.data[["ID"]], SIMEX_ORDER=k,
 					SGP_SIMEX=.get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]]),
           SGP_SIMEX_RANKED=as.integer(round(100*(data.table::frank(ties.method = "average", x =
-                    .get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]], ranked.simex=TRUE))/n.records), 0)))
+                    .get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]], ranked.simex=ifelse(reproduce.old.values, "reproduce.old.values", TRUE)))/n.records), 0)))
 			}
 		} ### END for (k in simex.matrix.priors)
 
@@ -1451,6 +1453,7 @@ function(panel.data,         ## REQUIRED
 			simex.use.my.coefficient.matrices=calculate.simex$simex.use.my.coefficient.matrices,
 			calculate.simex.sgps=calculate.sgps,
 			dependent.var.error=calculate.simex$dependent.var.error,
+			reproduce.old.values=calculate.simex$reproduce.old.values,
 			verbose=calculate.simex$verbose)
 
 		if (!is.null(quantile.data.simex[['MATRICES']])) {
