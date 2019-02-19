@@ -41,10 +41,10 @@ function(sgp_object,
 	tmp_sgp_data_for_analysis <- sgp_object@Data[SJ("VALID_CASE", unique(sgp.targets[['ID']])), intersect(names(sgp_object@Data), variables.to.get), with=FALSE]
 	setkeyv(tmp_sgp_data_for_analysis, intersect(names(sgp_object@Data), c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", "YEAR_WITHIN")))
 	setkeyv(sgp_object@Data, getKey(sgp_object))
-	
+
 	years.content_areas.grades <- data.table(unique(data.table(sgp_object@Data[data.table(VALID_CASE="VALID_CASE", sgp.targets, key=getKey(sgp_object))][,
-		c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"), with=FALSE], key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE")), by=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE")), key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))[
-		unique(data.table(VALID_CASE="VALID_CASE", tmp.years.content_areas.grades[,c("CONTENT_AREA", "YEAR", "GRADE"), with=FALSE], key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE")), by=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))]
+		c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"), with=FALSE], key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE")), by=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE")), key=c("VALID_CASE", "CONTENT_AREA", "YEAR"))[
+		unique(data.table(VALID_CASE="VALID_CASE", tmp.years.content_areas.grades[,c("CONTENT_AREA", "YEAR"), with=FALSE], key=c("VALID_CASE", "CONTENT_AREA", "YEAR")), by=c("VALID_CASE", "CONTENT_AREA", "YEAR")), nomatch=0]
 
 	if (target.type=="sgp.projections") {
 		my.extra.label <- "TARGET_SCALE_SCORES"
@@ -117,7 +117,8 @@ function(sgp_object,
 				year.for.equate=year.for.equate,
 				sgp.percentiles.equated=FALSE,
 				SGPt=SGPt,
-				projection_group.identifier=projection_group.identifier) ### NOT calculating sgp.percentiles.equated. Just projections
+				projection_group.identifier=projection_group.identifier,
+				from.getTargetScaleScore=TRUE) ### NOT calculating sgp.percentiles.equated. Just projections
 
 
 	### Calculate targets
