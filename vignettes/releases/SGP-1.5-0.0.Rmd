@@ -24,8 +24,8 @@ date: "March 5th, 2016"
 
 This is the 1.5 release of the SGP package posted to CRAN. This is the second release to be officially [tagged on GitHub](https://github.com/CenterForAssessment/SGP/releases/tag/9df303e). Download from GitHub via:
 
-```
-> devtools::install_github("CenterForAssessment/SGP", ref="9df303e")
+```{r eval=FALSE}
+devtools::install_github("CenterForAssessment/SGP", ref="9df303e")
 ```
 
 To see all the changes in this release check out the [change log](https://sgp.io/news/index.html#sgp-1-5-0-0).

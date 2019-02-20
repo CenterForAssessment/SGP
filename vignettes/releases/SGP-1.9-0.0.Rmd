@@ -22,11 +22,11 @@ date: "February 20th, 2019"
 ```
 
 
-This is the 1.9 release of the SGP package posted to CRAN. This [GitHub tagged release](https://github.com/CenterForAssessment/SGP/releases/tag/ceec338)
+This is the 1.9 release of the SGP package posted to CRAN. This [GitHub tagged release](https://github.com/CenterForAssessment/SGP/releases/tag/8906c2a)
 can be downloaded via:
 
-```
-> devtools::install_github("CenterForAssessment/SGP", ref="ceec338")
+```{r eval=FALSE}
+devtools::install_github("CenterForAssessment/SGP", ref="8906c2a")
 ```
 
 To see all the changes in this release check out the [change log](https://sgp.io/news/index.html#sgp-1-9-0-0).
