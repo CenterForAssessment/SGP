@@ -887,6 +887,22 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_7_YEAR_PROJ_YEAR_1_CURRENT: FAIL\n")
 			}
 
+			### TEST of SGP_TARGET_##_YEAR_NUM_YEARS_TO_TARGET variable
+
+#			if (identical(as.numeric(table(Demonstration_SGP@Data$SGP_TARGET_4_YEAR_CURRENT_NUM_YEARS_TO_TARGET)), c(17078, 9240, 11929, 28046))) {
+			if (identical(digest(Demonstration_SGP@Data$SGP_TARGET_4_YEAR_CURRENT_NUM_YEARS_TO_TARGET), "a4fed8e5f9f3708f5debacf0eb4d1d57")) {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_4_YEAR_CURRENT_NUM_YEARS_TO_TARGET: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_4_YEAR_CURRENT_NUM_YEARS_TO_TARGET: FAIL\n")
+			}
+
+#			if (identical(as.numeric(table(Demonstration_SGP@Data$SGP_TARGET_2_YEAR_NUM_YEARS_TO_TARGET)), c(15878, 10007, 32248))) {
+			if (identical(digest(Demonstration_SGP@Data$SGP_TARGET_2_YEAR_NUM_YEARS_TO_TARGET), "4992ff90a97032cae042b89e9cd15bb4")) {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_2_YEAR_NUM_YEARS_TO_TARGET: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_2_YEAR_NUM_YEARS_TO_TARGET: FAIL\n")
+			}
+
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 3: ", convertTime(timetakenSGP(started.at.overall)), "#####\n"))
 			messageSGP(tmp.messages)
 		} ### End TEST_NUMBER 3
