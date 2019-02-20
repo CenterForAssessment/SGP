@@ -216,7 +216,7 @@ function(sgp_object,
 			for (projection_group.iter in unique(tmp_object_1[['SGP_PROJECTION_GROUP']])) {
 				tmp.sgpTarget.list[[paste(state.iter, projection_group.iter, sep=".")]] <-
 				getTargetSGP_INTERNAL(tmp_object_1[SGP_PROJECTION_GROUP==projection_group.iter], state, state.iter, projection_group.iter, target.type, target.level,
-					year_within="YEAR_WITHIN" %in% names(slot.data), fix.duplicates=fix.duplicates, max.sgp.target.years.forward=max.sgp.target.years.forward)
+					year_within="YEAR_WITHIN" %in% names(slot.data), fix.duplicates=fix.duplicates, max.sgp.target.years.forward=max.sgp.target.years.forward, return.sgp.target.num.years=return.sgp.target.num.years)
 			}
 		} ### END !is.null(level.to.get)
 	} ### END for state.iter
