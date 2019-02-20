@@ -119,6 +119,14 @@ function(
 		sgp.target.scale.scores.merge <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["sgp.target.scale.scores.merge"]]
 	}
 
+	### Check return.target.num.years
+
+	if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["return.sgp.target.num.years"]])) {
+		return.sgp.target.num.years <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["return.sgp.target.num.years"]]
+	} else return.sgp.target.num.years <- FALSE
+
+
+
 
 	### Utility functions
 
@@ -400,7 +408,7 @@ function(
 							invisible(slot.data[, paste0("SCALE_SCORE_PRIOR_", tmp.prior-1L) := as.numeric(sapply(tmp.split, function(x) rev(x)[tmp.prior]))])
 				}}}
 
-				tmp.data <- getTargetSGP(sgp_object, slot.data, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward, fix.duplicates=fix.duplicates)
+				tmp.data <- getTargetSGP(sgp_object, slot.data, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward, fix.duplicates=fix.duplicates, return.sgp.target.num.years=return.sgp.target.num.years)
 
 				if (!is.null(fix.duplicates)) dup.by <- c(key(tmp.data), grep("SCALE_SCORE$|SCALE_SCORE_PRIOR", names(tmp.data), value=TRUE)) else dup.by <- key(tmp.data)
 
