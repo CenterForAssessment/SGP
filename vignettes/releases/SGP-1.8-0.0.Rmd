@@ -25,8 +25,8 @@ date: "April 6th, 2018"
 This is the 1.8 release of the SGP package posted to CRAN. This [GitHub tagged release](https://github.com/CenterForAssessment/SGP/releases/tag/ea0d75e)
 can be downloaded via:
 
-```
-> devtools::install_github("CenterForAssessment/SGP", ref="ea0d75e")
+```{r eval=FALSE}
+devtools::install_github("CenterForAssessment/SGP", ref="ea0d75e")
 ```
 
 To see all the changes in this release check out the [change log](https://sgp.io/news/index.html#sgp-1-8-0-0).
