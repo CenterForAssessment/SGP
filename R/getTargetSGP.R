@@ -121,7 +121,7 @@ function(sgp_object,
 
 				if (max.sgp.target.years.forward.iter==1L) {
 					if (return.sgp.target.num.years) {
-						tmp_object_1[, list(eval(jExpression), eval(jExpression_num_years)), keyby = jExp_Key]
+						tmp_object_2 <- tmp_object_1[, list(eval(jExpression), eval(jExpression_num_years)), keyby = jExp_Key]
 					} else {
 						tmp_object_2 <- tmp_object_1[, eval(jExpression), keyby = jExp_Key]
 					}
