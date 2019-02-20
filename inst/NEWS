@@ -4,6 +4,7 @@
 
 * Update of web-based documentation (https://sgp.io)
 * Various state meta-data updates
+* Adding functionality to return number of years to reach SGP_TARGET returned. Accessible through SGPstateData meta-data currently. See testSGP(3) source code for example.
 
 
 # SGP 1.8-0.0

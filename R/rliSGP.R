@@ -111,6 +111,25 @@ function(sgp_object,
 
 	if (state=="RLI_UK") content_areas <- "READING"
 
+	### Create Cutscores and embed in SGPstateData
+
+	if (state=="RLI") {
+		if (is.character(cutscore.file.name) || is.data.frame(cutscore.file.name)) {
+			messageSGP(paste0("\tNOTE: Using cutscores file (", deparse(substitute(cutscore.file.name)), ") supplied in the working directory for projection/growth-to-standard analyses."))
+			if (is.character(cutscore.file.name) && !file.exists(cutscore.file.name)) stop("\tNOTE: Cutscores file (", cutscore.file.name, ") does not exist in working directory or supplied path.")
+			tmp.list <- rliCutscoreCreation(cutscore.file.name, score.type)
+			SGPstateData[["RLI"]][["Achievement"]][["Cutscores"]] <- tmp.list[['Cutscores']]
+			SGPstateData[["RLI"]][["Achievement"]][["Cutscore_Information"]] <- tmp.list[['Cutscore_Information']]
+		} else {
+			messageSGP(paste0("\tNOTE: Using cutscores embedded in SGPstateData for RLI projection/growth-to-standard analyses."))
+			tmp.list <- SGPstateData[["RLI"]][["Achievement"]][["Cutscores"]][[score.type]]
+			SGPstateData[["RLI"]][["Achievement"]][["Cutscores"]] <- tmp.list[['Cutscores']]
+			SGPstateData[["RLI"]][["Achievement"]][["Cutscore_Information"]] <- tmp.list[['Cutscore_Information']]
+		}
+	}
+
+	### Take supplied data and break up if necessary
+
 	if (long.data.supplied <- is.data.frame(sgp_object)) {
 		sgp_object <- as.data.table(sgp_object)
 		if (score.type=="RASCH") sgp_object[,CONTENT_AREA:=paste(CONTENT_AREA, "RASCH", sep="_")]
@@ -166,24 +185,6 @@ function(sgp_object,
 		additional.data <- updateIDS(additional.data, update.ids)
 	}
 
-
-	### Create Cutscores and embed in SGPstateData
-
-	if (state=="RLI") {
-		if (is.character(cutscore.file.name) || is.data.frame(cutscore.file.name)) {
-			messageSGP(paste0("\tNOTE: Using cutscores file (", deparse(substitute(cutscore.file.name)), ") supplied in the working directory for projection/growth-to-standard analyses."))
-			if (is.character(cutscore.file.name) && !file.exists(cutscore.file.name)) stop("\tNOTE: Cutscores file (", cutscore.file.name, ") does not exist in working directory or supplied path.")
-			tmp.list <- rliCutscoreCreation(cutscore.file.name, score.type)
-			SGPstateData[["RLI"]][["Achievement"]][["Cutscores"]] <- tmp.list[['Cutscores']]
-			SGPstateData[["RLI"]][["Achievement"]][["Cutscore_Information"]] <- tmp.list[['Cutscore_Information']]
-
-		} else {
-			messageSGP(paste0("\tNOTE: Using cutscores embedded in SGPstateData for RLI projection/growth-to-standard analyses."))
-			tmp.list <- SGPstateData[["RLI"]][["Achievement"]][["Cutscores"]][[score.type]]
-			SGPstateData[["RLI"]][["Achievement"]][["Cutscores"]] <- tmp.list[['Cutscores']]
-			SGPstateData[["RLI"]][["Achievement"]][["Cutscore_Information"]] <- tmp.list[['Cutscore_Information']]
-		}
-	}
 
 
 	########################################################################
@@ -308,5 +309,5 @@ function(sgp_object,
 
 	if (return.updated.shell) return(sgp_object)
 
-	messageSGP(paste("Finished rliSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
+	messageSGP(paste("Finished rliSGP", prettyDate(), "in", convertTime(timetakenSGP(started.at)), "\n"))
 } ### END rliSGP

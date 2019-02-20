@@ -278,7 +278,7 @@ function(data,
 	}
 
 	##  Print finish time
-	messageSGP(paste("Finished prepareSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
+	messageSGP(paste("Finished prepareSGP", prettyDate(), "in", convertTime(timetakenSGP(started.at)), "\n"))
 
 	return(sgp_object)
 } ## END prepareSGP function

@@ -702,7 +702,7 @@ function(panel.data,	## REQUIRED
 		tmp.messages <- c(tmp.messages, "\t\tNOTE: Supplied data together with grade progression contains no data for analysis. Check data, function arguments and see help page for details.\n")
 		messageSGP(paste("\tStarted studentGrowthProjections", started.date))
 		messageSGP(paste0("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label))
-		messageSGP(c(tmp.messages, "\tFinished studentGrowthProjections: ", prettyDate(), " in ", convertTime(timetaken(started.at)), "\n"))
+		messageSGP(c(tmp.messages, "\tFinished studentGrowthProjections: ", prettyDate(), " in ", convertTime(timetakenSGP(started.at)), "\n"))
 
 		return(
 			list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],
@@ -871,7 +871,7 @@ function(panel.data,	## REQUIRED
 		tmp.messages <- c(tmp.messages, "\t\tNOTE: Supplied data together with grade progression contains no data for analysis. Check data, function arguments and see help page for details.\n")
 		messageSGP(paste("\tStarted studentGrowthProjections", started.date))
 		messageSGP(paste0("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label))
-		messageSGP(c(tmp.messages, "\tFinished studentGrowthProjections: ", prettyDate(), " in ", convertTime(timetaken(started.at)), "\n"))
+		messageSGP(c(tmp.messages, "\tFinished studentGrowthProjections: ", prettyDate(), " in ", convertTime(timetakenSGP(started.at)), "\n"))
 
 		return(
 			list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],
@@ -1013,7 +1013,7 @@ function(panel.data,	## REQUIRED
 	if (print.time.taken) {
 		messageSGP(paste("\tStarted studentGrowthProjections:", started.date))
 		messageSGP(paste0("\t\tContent Area: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, " (N=", format(dim(trajectories.and.cuts)[1L], big.mark=","), ")"))
-		messageSGP(c(tmp.messages, "\tFinished studentGrowthProjections: ", prettyDate(), " in ", convertTime(timetaken(started.at)), "\n"))
+		messageSGP(c(tmp.messages, "\tFinished studentGrowthProjections: ", prettyDate(), " in ", convertTime(timetakenSGP(started.at)), "\n"))
 	}
 
 	list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],

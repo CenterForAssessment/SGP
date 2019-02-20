@@ -14,6 +14,7 @@ function(rli.cs.long,
 
 	###  Read in the cutscore long data file
 
+	if (is.character(rli.cs.long)) rli.cs.long <- fread(rli.cs.long)	
 	if (!all(rli.cs.long$Subject %in% content_areas)) stop("\tNOTE: 'Subject' variable in supplied cutscores must be 'READING' or 'MATHEMATICS'.")
 
 

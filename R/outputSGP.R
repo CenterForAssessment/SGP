@@ -107,7 +107,7 @@ function(sgp_object,
 			}
 		}
 
-		messageSGP(paste("\tFinished LONG data production in outputSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
+		messageSGP(paste("\tFinished LONG data production in outputSGP", prettyDate(), "in", convertTime(timetakenSGP(started.at)), "\n"))
 
 	} ### END if LONG_Data %in% output.type
 
@@ -155,7 +155,7 @@ function(sgp_object,
 			}
 		}
 
-		messageSGP(paste("\tFinished LONG FINAL YEAR data production in outputSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
+		messageSGP(paste("\tFinished LONG FINAL YEAR data production in outputSGP", prettyDate(), "in", convertTime(timetakenSGP(started.at)), "\n"))
 
 	} ### END if LONG_FINAL_YEAR_Data %in% output.type
 
@@ -208,7 +208,7 @@ function(sgp_object,
 			}
 		}
 
-		messageSGP(paste("\tFinished WIDE data production in outputSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
+		messageSGP(paste("\tFinished WIDE data production in outputSGP", prettyDate(), "in", convertTime(timetakenSGP(started.at)), "\n"))
 
 	} ### END if WIDE_Data %in% output.type
 
@@ -252,7 +252,7 @@ function(sgp_object,
 			}
 		}
 
-		messageSGP(paste("\tFinished INSTRUCTOR data production in outputSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
+		messageSGP(paste("\tFinished INSTRUCTOR data production in outputSGP", prettyDate(), "in", convertTime(timetakenSGP(started.at)), "\n"))
 
 	} ### END if INSTRUCTOR_Data %in% output.type
 
@@ -742,7 +742,7 @@ function(sgp_object,
 		dir.create(file.path(outputSGP.directory, "SchoolView", "RDATA"), recursive=TRUE, showWarnings=FALSE)
 		save(STUDENT_GROWTH, file=file.path(outputSGP.directory, "SchoolView", "RDATA", "STUDENT_GROWTH.Rdata"))
 
-		messageSGP(paste("\tFinished SchoolView STUDENT_GROWTH data production in outputSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
+		messageSGP(paste("\tFinished SchoolView STUDENT_GROWTH data production in outputSGP", prettyDate(), "in", convertTime(timetakenSGP(started.at)), "\n"))
 
 	} ## End if SchoolView %in% output.type
 
@@ -872,12 +872,12 @@ function(sgp_object,
 			}
 		}
 
-		messageSGP(paste("\tFinished RLI in outputSGP", prettyDate(), "in", convertTime(timetaken(started.at)), "\n"))
+		messageSGP(paste("\tFinished RLI in outputSGP", prettyDate(), "in", convertTime(timetakenSGP(started.at)), "\n"))
 
 	} ## End if RLI %in% output.type
 
 
 	setkeyv(sgp_object@Data, getKey(sgp_object))
-	messageSGP(paste("Finished outputSGP", prettyDate(), "in", convertTime(timetaken(started.at.outputSGP)), "\n"))
+	messageSGP(paste("Finished outputSGP", prettyDate(), "in", convertTime(timetakenSGP(started.at.outputSGP)), "\n"))
 
 } ## END outputSGP
