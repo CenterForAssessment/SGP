@@ -71,7 +71,7 @@ function(sgp_object,
 	}
 
 	if (simulate.sgps) {
-        csem.variable <- NULL
+    csem.variable <- NULL
 		if (is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
 			messageSGP("\tNOTE: CSEMs are required in 'SGPstateData' (either as a data.frame of CSEMs or as a variable name of CSEMsin @Data) to simulate SGPs for confidence interval calculations. SGP standard errors will not be calculated.")
 			calculate.confidence.intervals.list <- NULL
@@ -210,6 +210,10 @@ function(sgp_object,
 			calculate.simex <- calculate.simex.baseline <- NULL
 		}
 	}
+
+  if (is.list(calculate.simex)) {
+    if ("csem.data.vnames" %in% names(calculate.simex)) csem.variable <- calculate.simex[["csem.data.vnames"]]
+  }
 
 	if (identical(calculate.simex, TRUE)) {
 		if (is.character(csem.variable <- SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {

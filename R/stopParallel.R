@@ -1,7 +1,7 @@
-`stopParallel` <- 
+`stopParallel` <-
 function(parallel.config,
 	par.start) {
-	
+
 	if (toupper(parallel.config[['BACKEND']]) == 'FOREACH') {
 		if (is.na(parallel.config[['TYPE']])) parallel.config[['TYPE']] <- "NA" # Stop checks on NA below.
 
@@ -19,7 +19,7 @@ function(parallel.config,
 			# stopCluster(par.start$doPar.cl)
 			# return()
 		# }
-		
+
 		# if (parallel.config[['TYPE']]=="doRedis") {
 			# removeQueue(par.start$jobs)
 			# return()
