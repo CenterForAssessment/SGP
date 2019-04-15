@@ -714,7 +714,7 @@ function(panel.data,         ## REQUIRED
 					if (calculate.simex.sgps) {
 						if (verbose) messageSGP(c("\t\t\tStarted percentile prediction calculation, Lambda ", L, ": ", prettyDate()))
             if (toupper(tmp.par.config[["BACKEND"]]) == "CALLR") {
-              if (nrow(tmp.data) < 21000) {###  Keep sequential - not worth overhead!
+              if (nrow(tmp.data) < 7500) {###  Keep sequential - not worth overhead!
                 for (z in seq_along(sim.iters)) {
     							fitted[[paste0("order_", k)]][which(lambda==L),] <- fitted[[paste0("order_", k)]][which(lambda==L),] +
     								c(.get.percentile.predictions(my.matrix=simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste0("lambda_", L)]][[z]], my.data=getSIMEXdata(tmp.dbname, z, k, predictions=TRUE))/B)
