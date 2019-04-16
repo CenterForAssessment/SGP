@@ -714,7 +714,7 @@ function(panel.data,         ## REQUIRED
 					if (calculate.simex.sgps) {
 						if (verbose) messageSGP(c("\t\t\tStarted percentile prediction calculation, Lambda ", L, ": ", prettyDate()))
             if (toupper(tmp.par.config[["BACKEND"]]) == "CALLR") {
-              if (nrow(tmp.data) < 7500) {###  Keep sequential - not worth overhead!
+              if (nrow(tmp.data) < 20000) {###  Keep sequential - not worth overhead!
                 for (z in seq_along(sim.iters)) {
     							fitted[[paste0("order_", k)]][which(lambda==L),] <- fitted[[paste0("order_", k)]][which(lambda==L),] +
     								c(.get.percentile.predictions(my.matrix=simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste0("lambda_", L)]][[z]], my.data=getSIMEXdata(tmp.dbname, z, k, predictions=TRUE))/B)
@@ -751,7 +751,7 @@ function(panel.data,         ## REQUIRED
 					if (toupper(tmp.par.config[["BACKEND"]]) != "CALLR") stopParallel(tmp.par.config, par.start)
 				} ### END else >>> Parallel over sim.iters
         ##    Cleanup
-        file.remove(list.files(tempdir(), full.names = T, pattern = "^file"))
+        file.remove(list.files(tempdir(), full.names = T, pattern = "^file"), showWarnings = FALSE)
         if (!is.null(tmp.par.config)) file.remove(list.files(tempdir(), full.names = T, pattern = "simex_"))
 			} ### END for (L in lambda[-1L])
 			if (verbose) messageSGP(c("\t\t", rev(content_area.progression)[1L], " Grade ", rev(tmp.gp)[1L], " Order ", k, " Simulation process complete ", prettyDate()))
