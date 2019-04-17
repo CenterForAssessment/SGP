@@ -240,6 +240,7 @@ function(parallel.config,
 	}
 
 	if (par.type=='MULTICORE') {
+		eval(parse(text=paste0("later:", "::ensureInitialized()")))
 		return(list(workers=workers, par.type=par.type, TAUS.LIST=TAUS.LIST, Lower_Level_Parallel=Lower_Level_Parallel))
 	}
 } ### END startParallel Funtion
