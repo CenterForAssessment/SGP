@@ -751,7 +751,8 @@ function(panel.data,         ## REQUIRED
 					if (toupper(tmp.par.config[["BACKEND"]]) != "CALLR") stopParallel(tmp.par.config, par.start)
 				} ### END else >>> Parallel over sim.iters
         ##    Cleanup
-        file.remove(list.files(tempdir(), full.names = T, pattern = "^file"), showWarnings = FALSE)
+        tmp.files <- list.files(tempdir(), full.names = T, pattern = "^file")
+        if (any(tmp.files[file.access(tmp.files, mode=2)]) == 0) file.remove(tmp.files[file.access(tmp.files, mode=2) == 0])
         if (!is.null(tmp.par.config)) file.remove(list.files(tempdir(), full.names = T, pattern = "simex_"))
 			} ### END for (L in lambda[-1L])
 			if (verbose) messageSGP(c("\t\t", rev(content_area.progression)[1L], " Grade ", rev(tmp.gp)[1L], " Order ", k, " Simulation process complete ", prettyDate()))
