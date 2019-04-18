@@ -225,6 +225,7 @@ function(parallel.config,
 				return(list(doPar.cl=doPar.cl, foreach.options=foreach.options, par.type=par.type, TAUS.LIST=TAUS.LIST))
 			} else {
 				registerDoParallel(workers)
+				eval(parse(text=paste0("later:", "::ensureInitialized()")))
 				return(list(foreach.options=foreach.options, par.type=par.type, TAUS.LIST=TAUS.LIST))
 			}
 		}

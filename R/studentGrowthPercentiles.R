@@ -626,13 +626,12 @@ function(panel.data,         ## REQUIRED
 					}
 				} else {	# Parallel over sim.iters
           if (toupper(tmp.par.config[["BACKEND"]]) == "CALLR") {
-            suppressPackageStartupMessages(require(callr))
 
             ## Calculate coefficient matricies (if needed/requested)
   					if (is.null(simex.use.my.coefficient.matrices)) {
   						if (verbose) messageSGP(c("\t\t\tStarted coefficient matrix calculation, Lambda ", L, ": ", prettyDate()))
               sim.iter.list <- chunk_list(tmp.par.config$WORKERS$SIMEX, sim.iters, FALSE)
-              chunk_1 <- "<- r_bg(SGP:::rq_mtx, args=list(tmp.gp.iter= tmp.gp.iter[1:k], k= k, lam= L, z= "
+              chunk_1 <- paste0("<- callr::r_bg(SGP:", "::rq_mtx, args=list(tmp.gp.iter= tmp.gp.iter[1:k], k= k, lam= L, z= ")
               chunk_2 <- ", tmp.dbname= tmp.dbname, knots.boundaries.path= my.path.knots.boundaries, SGPt= SGPt, rq.method= rq.method, taus= taus, Knots_Boundaries= Knots_Boundaries, matrix.info= list(cap= content_area.progression, gp= tmp.slot.gp, yp= year.progression, ypl= year_lags.progression)))"
               mtx.list.text <- paste0("simex.coef.matrices[['", paste('qrmatrices', tail(tmp.gp, 1L), k, sep='_'), "']][['", paste0('lambda_', L), "']]")
               if (is.null(simex.sample.size) || n.records <= simex.sample.size) {
@@ -727,7 +726,7 @@ function(panel.data,         ## REQUIRED
               sim.iter.list <- split(sim.iters, ceiling(seq_along(sim.iters)/tmp.par.config$WORKERS$SIMEX)) # split(sim.iters, sort(sim.iters %% tmp.par.config$WORKERS$SIMEX))
               for (p1 in seq(length(sim.iter.list))) {
                 for (p2 in sim.iter.list[[p1]]) {
-                  pred.list[[p2]] <- r_bg(SGP:::get_percentile_predictions, args=list(
+                  pred.list[[p2]] <- callr::r_bg(SGP:::get_percentile_predictions, args=list(
                     dbname=tmp.dbname, Bz=p2, k=k, taus=taus, isotonize=isotonize, sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
                     knots.boundaries.path= my.path.knots.boundaries, Knots_Boundaries= Knots_Boundaries, final.grade=tmp.last))
                 }

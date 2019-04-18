@@ -120,8 +120,8 @@ chunk_list <- function(workers, values.to.chunk, big.trim=TRUE)  {
 
 # my.list <- chunk_list(8, sim.iters, FALSE)
 
-smooth_bound_iso_row <- function(tmp.dt, iso=isotonize, sgp.loss.hoss.adjustment, knots.boundaries.path, Knots_Boundaries, final.grade) {
-	X <- NULL
+smooth_bound_iso_row <- function(tmp.dt, iso, sgp.loss.hoss.adjustment, knots.boundaries.path, Knots_Boundaries, final.grade) {
+	X <- ID <- NULL
 	if (!is.null(sgp.loss.hoss.adjustment)) {
 		# knots.boundaries.path <- get.my.knots.boundaries.path(sgp.labels[['my.subject']], as.character(sgp.labels[['my.year']]))
 		bnd <- eval(parse(text=paste0("Knots_Boundaries", knots.boundaries.path, "[['loss.hoss_", final.grade, "']]")))
