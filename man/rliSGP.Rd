@@ -10,7 +10,7 @@ rliSGP(
 	sgp_object,
     additional.data=NULL,
 	state=NULL,
-	content_areas=c("MATHEMATICS", "READING", "EARLY_LITERACY"),
+	content_areas=c("MATHEMATICS", "READING", "READING_UNIFIED", "EARLY_LITERACY"),
     testing.window,
     eow.or.update="UPDATE",
 	update.save.shell.only=FALSE,
@@ -42,7 +42,7 @@ rliSGP(
   }
   \item{state}{Abbreviation for STATE/ORGANIZATION being analyzed. Currently only available for 'RLI' or 'RLI_UK'.
   }
-  \item{content_areas}{Character vector indicating which content areas \code{rliSGP} should be run for ('MATHEMATICS', 'READING', and/or 'EARLY_LITERACY'). Default is all.
+  \item{content_areas}{Character vector indicating which content areas \code{rliSGP} should be run for ('MATHEMATICS', 'READING', 'READING_UNIFIED', and/or 'EARLY_LITERACY'). Default is all.
   }
   \item{testing.window}{Argument indicating testing window being analyzed. Either 'FALL', 'WINTER', 'SPRING' indicating what testing window's data is being analyzed.
   }
