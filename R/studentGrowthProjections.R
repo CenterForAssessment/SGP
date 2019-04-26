@@ -246,7 +246,7 @@ function(panel.data,	## REQUIRED
 									tmp.scores[,TIME:=k]
 									tmp.time.shift.index <- getTimeShiftIndex(as.numeric(max(tmp.scores[[SGPt]])), tmp.matrix)
 									tmp.scores[,TIME_LAG:=(k+365*tmp.time.shift.index)-as.numeric(get(SGPt))]
-									tmp.scores[,TMP_KEY:=1:100]
+									tmp.scores[,TMP_KEY:=rep(1:100, dim(tmp.scores)[1]/100)]
 									tmp.dt[,TEMP_1:=tmp.scores[, as.matrix(.SD) %*% tmp.matrix@.Data[,TMP_KEY], by=TMP_KEY, .SDcols=3:(dim(tmp.scores)[2L]-1L)][['V1']]]
 
 									tmp.dt[,TEMP_2:=.smooth.bound.iso.row(
@@ -269,7 +269,7 @@ function(panel.data,	## REQUIRED
 								tmp.scores[,TIME:=tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]]
 								tmp.time.shift.index <- getTimeShiftIndex(as.numeric(tmp.max.time), tmp.matrix)
 								tmp.scores[,TIME_LAG:=(tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]+365L*tmp.time.shift.index)-tmp.max.time]
-								tmp.scores[,TMP_KEY:=1:100]
+								tmp.scores[,TMP_KEY:=rep(1:100, dim(tmp.scores)[1]/100)]
 								tmp.max.time <- tmp.matrix@Version[['Matrix_Information']][['SGPt']][['MAX_TIME']]
 								tmp.dt[,TEMP_1:=tmp.scores[, as.matrix(.SD) %*% tmp.matrix@.Data[,TMP_KEY], by=TMP_KEY, .SDcols=2:(dim(tmp.scores)[2L]-1L)][['V1']]]
 
@@ -289,7 +289,7 @@ function(panel.data,	## REQUIRED
 						} else {
 							grade.projection.sequence.labels <- grade.projection.sequence
 							content_area.projection.sequence.labels <- content_area.projection.sequence
-							tmp.scores[,TMP_KEY:=1:100]
+							tmp.scores[,TMP_KEY:=rep(1:100, dim(tmp.scores)[1]/100)]
 							tmp.dt[,TEMP_1:=tmp.scores[, as.matrix(.SD) %*% tmp.matrix@.Data[,TMP_KEY], by=TMP_KEY, .SDcols=2:(dim(tmp.scores)[2L]-1L)][['V1']]]
 
 							tmp.dt[,TEMP_2:=.smooth.bound.iso.row(
