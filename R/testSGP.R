@@ -1923,9 +1923,18 @@ function(
 
 #			if (identical(sum(RLI2_SGPt_PART_1@SGP[['SGPercentiles']][[paste("READING_RASCH", tmp.last.window, "BASELINE", sep=".")]][['SGP_BASELINE']], na.rm=TRUE), 109949L)) { #107694L SGPdata 15.0, preSGP 1.6-4.16 +Dups 107696L, 109568L +Dups
 			if (identical(digest(RLI2_SGPt_PART_1@SGP[['SGPercentiles']][[paste("READING_RASCH", tmp.last.window, "BASELINE", sep=".")]][['SGP_BASELINE']]), "2d11719cc20456977939b677eb14f393")) {
-				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 1: OK\n")
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE for READING_RASCH, part 1: OK\n")
 			} else {
-				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 1: FAIL\n")
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE for READING_RASCH, part 1: FAIL\n")
+			}
+
+			### TEST of SGP variable from READING_UNIFIED
+
+#			if (identical(sum(RLI2_SGPt_PART_1@SGP[['SGPercentiles']][[paste("READING_UNIFIED_RASCH", tmp.last.window, "BASELINE", sep=".")]][['SGP_BASELINE']], na.rm=TRUE), 19726L))
+			if (identical(digest(RLI2_SGPt_PART_1@SGP[['SGPercentiles']][[paste("READING_RASCH", tmp.last.window, "BASELINE", sep=".")]][['SGP_BASELINE']]), "2d11719cc20456977939b677eb14f393")) {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE for READING_UNIFIED_RASCH, part 1: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE for READING_UNIFIED_RASCH, part 1: FAIL\n")
 			}
 
 			### TEST of SGP_TARGET_BASELINE_10_TIME_CURRENT variable from READING
