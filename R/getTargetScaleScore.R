@@ -83,7 +83,7 @@ function(sgp_object,
 		my.extra.label <- "LAGGED.BASELINE.TARGET_SCALE_SCORES"
 		baseline.tf <- TRUE
 		lag.increment <- 1
-		my.target.type <- "sgp.projections.lagged"
+		my.target.type <- "sgp.projections.lagged.baseline"
 		my.content.areas <- "sgp.projection.baseline.content.areas"
 		my.content.areas.label <- "sgp.content.areas"
 		my.grade.sequences <- "sgp.projection.baseline.grade.sequences"
@@ -104,11 +104,11 @@ function(sgp_object,
 				sgp.config=sgp.config,
 				trim.sgp.config=TRUE,
 				sgp.percentiles=FALSE, ### NOT calculating sgp.percentiles. Just projections
-				sgp.projections=!grepl(".lagged", target.type),
-				sgp.projections.lagged=grepl(".lagged", target.type),
+				sgp.projections=!grepl(".lagged", target.type) & !grepl("baseline", target.type),
+				sgp.projections.lagged=grepl(".lagged", target.type) & !grepl("baseline", target.type),
 				sgp.percentiles.baseline=FALSE, ### NOT calculating sgp.percentiles.baseline. Just projections
-				sgp.projections.baseline=grepl("baseline", target.type),
-				sgp.projections.lagged.baseline=grepl("baseline", target.type),
+				sgp.projections.baseline=grepl("baseline", target.type) & !grepl(".lagged", target.type),
+				sgp.projections.lagged.baseline=grepl("baseline", target.type) & grepl("lagged", target.type),
 				sgp.config.drop.nonsequential.grade.progression.variables=FALSE,
 				sgp.projections.max.forward.progression.years=sgp.projections.max.forward.progression.years,
 				sgp.use.my.coefficient.matrices=NULL,
