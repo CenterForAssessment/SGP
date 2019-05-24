@@ -2440,11 +2440,7 @@ function(
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI4 (STAR Scores for UK): Part 2", convertTime(timetakenSGP(started.at.intermediate)), "#####\n"))
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number RLI4 (STAR Scores for UK): ", convertTime(timetakenSGP(started.at.overall)), "#####\n"))
 			messageSGP(tmp.messages)
-
-	} ### End TEST_NUMBER RLI4
-
-
-
+		} ### End TEST_NUMBER RLI4
 
 
 		#######################################################################################################################################################
