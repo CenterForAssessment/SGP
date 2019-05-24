@@ -2310,6 +2310,145 @@ function(
 
 		#######################################################################################################################################################
 		###
+		### TEST NUMBER RLI4: Test of SGPt functionality with UK data
+		###
+		#######################################################################################################################################################
+
+		if ("RLI4" %in% TEST_NUMBER) {
+
+			eval(parse(text="require(RLImatrices)"))
+			options(error=recover)
+			options(warn=2)
+			if (.Platform$OS.type == "unix") number.cores <- detectSGPCores(logical=TRUE) else number.cores <- detectSGPCores(logical=FALSE)
+			if (is.null(test.option[['parallel.config']])) {
+				if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
+				parallel.config <- paste0("list(BACKEND=", tmp.backend, "WORKERS=list(\n\t\tBASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", \n\t\tSGP_SCALE_SCORE_TARGETS=", number.cores, "))")
+			} else parallel.config <- test.option[['parallel.config']]
+			SGPstateData[["RLI_UK"]][["SGP_Configuration"]][["fix.duplicates"]] <- "KEEP.ALL"
+			SGPstateData[["RLI_UK"]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]] <- 50
+			SGPstateData[["RLI_UK"]][["Assessment_Program_Information"]][["CSEM"]] <- "SEM"
+			RLI_Cutscores <- SGPstateData[['RLI']][['SGP_Configuration']][['testSGP.cutscores']][['STAR']]
+			tmp.messages <- "##### Begin testSGP test number RLI4 (STAR Scores for UK) #####\n"
+			tmp.last.window <- tail(sort(unique(SGPdata::sgptData_LONG[['YEAR']])), 1)
+
+			RLI_UK_SGPt_Data_LONG <- copy(SGPdata::sgptData_LONG)[CONTENT_AREA=="READING"][,c("ACHIEVEMENT_LEVEL", "SCALE_SCORE_RASCH"):=NULL][,COUNTRY:="GB"][,STATE:="HAMP"]
+
+			###############################################################################
+			### PART 1: Calculate using actual year in data set (currently 2016_2017.3)
+			###############################################################################
+
+			### Calculate SGPs
+
+			expression.to.evaluate <-
+				paste0("RLI4_UK_SGPt_PART_1 <- rliSGP(\n\tsgp_object=RLI_UK_SGPt_Data_LONG,\n\treturn.updated.shell=TRUE,\n\tgoodness.of.fit.print=,\n\tscore.type='STAR',\n\tcutscore.file.name=RLI_Cutscores,\n\tparallel.config=", parallel.config, "\n)\n")
+
+			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(RLI4_UK_SGPt_PART_1, file='Data/RLI4_SGPt_PART_1.Rdata')", sep="\n")
+
+			cat(paste0("EVALUATING Test Number RLI4, Part 1:\n", expression.to.evaluate), fill=TRUE)
+
+			if (memory.profile) {
+				Rprof("testSGP(RLI)_Memory_Profile_Part_1.out", memory.profiling=TRUE)
+			}
+
+			started.at.overall <- proc.time()
+			eval(parse(text=expression.to.evaluate))
+			if (dir.exists("Data/RLI_UK_PART_1")) unlink("Data/RLI_UK_PART_1", recursive = TRUE)
+			file.rename("Data/RLI", "Data/RLI_UK_PART_1")
+
+
+			### TEST of variable values
+
+			tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number RLI4 (STAR Scores for UK): Part 1 #####\n")
+
+			### TEST of SGP variable from READING
+
+#			if (identical(sum(RLI4_UK_SGPt_PART_1@SGP[['SGPercentiles']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['SGP_BASELINE']], na.rm=TRUE), 109845L)) {
+			if (identical(digest(RLI4_UK_SGPt_PART_1@SGP[['SGPercentiles']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['SGP_BASELINE']]), "e125a33a1ce622a083d2d857e6d25e09")) {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 1: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 1: FAIL\n")
+			}
+
+			### TEST of P50_PROJ_TIME_1_CURRENT variable from READING
+
+#			if (identical(sum(RLI4_UK_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['P50_PROJ_TIME_1_CURRENT']], na.rm=TRUE), 541497.7)) {
+			if (identical(digest(RLI4_UK_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['P50_PROJ_TIME_1_CURRENT']]), "23f4c5ce9669021213e742f16ffd767e")) {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable P50_PROJ_TIME_1_CURRENT, part 1: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable P50_PROJ_TIME_1_CURRENT, part 1: FAIL\n")
+			}
+
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI4 (STAR Scores for UK): Part 1", convertTime(timetakenSGP(started.at.overall)), "#####\n"))
+
+
+			###############################################################################
+			### PART 2: Calculate using year + 2 in data set (currently 2018_2019.3)
+			###############################################################################
+
+			### Bump dates forward by two years
+
+			tmp.date <- as.POSIXlt(RLI_UK_SGPt_Data_LONG[['DATE']])
+			tmp.date$year <- tmp.date$year+2
+			RLI_UK_SGPt_Data_LONG[,DATE:=as.Date(tmp.date)]
+			RLI_UK_SGPt_Data_LONG[,YEAR:=gsub("2016_2017", "2018_2019", YEAR)]
+			RLI_UK_SGPt_Data_LONG[,YEAR:=gsub("2015_2016", "2017_2018", YEAR)]
+			RLI_UK_SGPt_Data_LONG[,YEAR:=gsub("2014_2015", "2016_2017", YEAR)]
+			tmp.last.window <- tail(sort(unique(RLI_UK_SGPt_Data_LONG[['YEAR']])), 1)
+
+
+			### Calculate SGPs
+
+			expression.to.evaluate <-
+				paste0("RLI4_UK_SGPt_PART_2 <- rliSGP(\n\tsgp_object=RLI_UK_SGPt_Data_LONG,\n\treturn.updated.shell=TRUE,\n\tgoodness.of.fit.print=,\n\tscore.type='STAR',\n\tcutscore.file.name=RLI_Cutscores,\n\tparallel.config=", parallel.config, "\n)\n")
+
+			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(RLI4_UK_SGPt_PART_2, file='Data/RLI4_SGPt_PART_2.Rdata')", sep="\n")
+
+			cat(paste0("EVALUATING Test Number RLI4, Part 2:\n", expression.to.evaluate), fill=TRUE)
+
+			if (memory.profile) {
+				Rprof("testSGP(RLI)_Memory_Profile_Part_2.out", memory.profiling=TRUE)
+			}
+
+			started.at.intermediate <- proc.time()
+			eval(parse(text=expression.to.evaluate))
+			if (dir.exists("Data/RLI_UK_PART_2")) unlink("Data/RLI_UK_PART_2", recursive = TRUE)
+			file.rename("Data/RLI", "Data/RLI_UK_PART_2")
+
+
+			### TEST of variable values
+
+			tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number RLI4 (STAR Scores for UK): Part 2 #####\n")
+
+			### TEST of SGP variable from READING
+
+#			if (identical(sum(RLI4_UK_SGPt_PART_2@SGP[['SGPercentiles']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['SGP_BASELINE']], na.rm=TRUE), 109799L)) {
+			if (identical(digest(RLI4_UK_SGPt_PART_2@SGP[['SGPercentiles']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['SGP_BASELINE']]), "36b2431ba6eac8508e239acc6f3a1e87")) {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 2: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 2: FAIL\n")
+			}
+
+			### TEST of P50_PROJ_TIME_1_CURRENT variable from READING
+
+#			if (identical(sum(RLI4_UK_SGPt_PART_2@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['P50_PROJ_TIME_1_CURRENT']], na.rm=TRUE), 548304.5)) {
+			if (identical(digest(RLI4_UK_SGPt_PART_2@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['P50_PROJ_TIME_1_CURRENT']]), "a45755aad2cbd06bffce85fe2f79442f")) {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable P50_PROJ_TIME_1_CURRENT, part 2: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable P50_PROJ_TIME_1_CURRENT, part 2: FAIL\n")
+			}
+
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI4 (STAR Scores for UK): Part 2", convertTime(timetakenSGP(started.at.intermediate)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number RLI4 (STAR Scores for UK): ", convertTime(timetakenSGP(started.at.overall)), "#####\n"))
+			messageSGP(tmp.messages)
+
+	} ### End TEST_NUMBER RLI4
+
+
+
+
+
+		#######################################################################################################################################################
+		###
 		### TEST NUMBER 7: Test of ability to deal with duplicates in test data
 		###
 		#######################################################################################################################################################
