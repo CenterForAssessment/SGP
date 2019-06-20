@@ -2328,6 +2328,7 @@ function(
 			SGPstateData[["RLI_UK"]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]] <- 50
 			SGPstateData[["RLI_UK"]][["Assessment_Program_Information"]][["CSEM"]] <- "SEM"
 			RLI_Cutscores <- SGPstateData[['RLI']][['SGP_Configuration']][['testSGP.cutscores']][['STAR']]
+			RLI4_UK_SGPt_PART_1 <- RLI4_UK_SGPt_PART_2 <- COUNTRY <- STATE <- DATE <- NULL
 			tmp.messages <- "##### Begin testSGP test number RLI4 (STAR Scores for UK) #####\n"
 			tmp.last.window <- tail(sort(unique(SGPdata::sgptData_LONG[['YEAR']])), 1)
 
