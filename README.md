@@ -38,8 +38,7 @@ require(SGP)
 
 ```R
 install.packages("devtools")
-require(devtools)
-install_github("CenterForAssessment/SGP")
+devtools::install_github("CenterForAssessment/SGP")
 require(SGP)
 ```
 
@@ -56,7 +55,7 @@ Linux: apt-get install r-base-dev (or similar).
 
 ### References
 
-Betebenner, D. W., VanIwaarden, A., Domingue, B., and Shang, Y. (2018). SGP: Student Growth Percentiles & Percentile Growth Trajectories. 
+Betebenner, D. W., VanIwaarden, A., Domingue, B., and Shang, Y. (2019). SGP: Student Growth Percentiles & Percentile Growth Trajectories. 
 
-R Development Core Team (2018). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria.
+R Development Core Team (2019). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria.
 3-900051-07-0.
