@@ -244,7 +244,7 @@ function(
 					tmp.prior.achievement.levels <- unlist(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][[get.achievement_level.label(state, years_prior)]], use.names = FALSE)
 				}
 			}
-			data1[['ACHIEVEMENT_LEVEL_PRIOR']] <- ordered(data1[['ACHIEVEMENT_LEVEL_PRIOR']], labels=tmp.prior.achievement.levels, levels=tmp.prior.achievement.level.labels)
+			data1[['ACHIEVEMENT_LEVEL_PRIOR']] <- ordered(data1[['ACHIEVEMENT_LEVEL_PRIOR']], levels=tmp.prior.achievement.levels)
 			tmp.prior.achievement.level.percentages <- table(data1[['ACHIEVEMENT_LEVEL_PRIOR']])/(dim(data1)[1])
 			tmp.prior.achievement.level.colors <- rev(diverge_hcl(length(tmp.prior.achievement.level.percentages)))
 			tmp.prior.achievement.level.percentages.labels <- paste0("(", round(100*table(data1[['ACHIEVEMENT_LEVEL_PRIOR']])/(dim(data1)[1]), digits=1), "%)")
