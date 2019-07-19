@@ -2619,7 +2619,7 @@ function(
 			dup.ids <- unique(Demonstration_SGP@Data[duplicated(Demonstration_SGP@Data, by=setdiff(getKey(Demonstration_SGP@Data), "GRADE")), ID]) # Still check "GRADE excluded" dups
 			dup.data <- Demonstration_SGP@Data[ID %in% dup.ids, vars.to.check, with=FALSE]
 			setkey(dup.data)
-			if (identical(digest::digest(dup.data), "1f948cfd6f1c8940795cb339c5efb917")) { # with DUPS_FLAG: 2b85afc2857336aaa165dd04feb47ef4
+			if (identical(digest::digest(dup.data), "4f0ff253da62439b7bde584554e7ecee")) { # original "1f948cfd6f1c8940795cb339c5efb917" # with DUPS_FLAG: 2b85afc2857336aaa165dd04feb47ef4
 				tmp.messages <- c(tmp.messages, "\t\tTest of duplicated cases in @Data: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of duplicated cases in @Data: FAIL\n")
@@ -2736,7 +2736,7 @@ function(
 			dup.ids <- unique(Demonstration_SGP@Data[duplicated(Demonstration_SGP@Data, by=setdiff(getKey(Demonstration_SGP@Data), "GRADE")), ID]) # Still check "GRADE excluded" dups
 			dup.data <- Demonstration_SGP@Data[ID %in% dup.ids, vars.to.check, with=FALSE]
 			setkey(dup.data)
-			if (identical(digest::digest(dup.data), "8b0d3fbf4e0149cab72383d17132b3be")) { # 1096ae04d748ba69d7dd63ef398ac434  #  With DUPS_FLAG: 12e253be3ce98f8f519b6a452f13cc93
+			if (identical(digest::digest(dup.data), "b807be39ea50348ac5d26e245ce260bc")) { # 1096ae04d748ba69d7dd63ef398ac434  #  With DUPS_FLAG: 12e253be3ce98f8f519b6a452f13cc93
 				tmp.messages <- c(tmp.messages, "\t\tTest of duplicated cases in @Data: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of duplicated cases in @Data: FAIL\n")
@@ -2828,7 +2828,7 @@ function(
 
 			### TEST of School Summary Table  :: dim = 637 x 22
 			setkey(Demonstration_SGP@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__CONTENT_AREA__GRADE__SCHOOL_ENROLLMENT_STATUS"]])
-			if (identical(digest::digest(Demonstration_SGP@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__CONTENT_AREA__GRADE__SCHOOL_ENROLLMENT_STATUS"]]), "e13379b7384154f36d26eb0de40d79c2")) { # 3472a7f8a5ee67e248de158feb3da808
+			if (identical(digest::digest(Demonstration_SGP@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__CONTENT_AREA__GRADE__SCHOOL_ENROLLMENT_STATUS"]]), "a0e9fd5224e2ddcc0bc3e849f5663bdf")) { #e13379b7384154f36d26eb0de40d79c2 # 3472a7f8a5ee67e248de158feb3da808
 				# identical(sum(Demonstration_SGP@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__CONTENT_AREA__GRADE__SCHOOL_ENROLLMENT_STATUS"]]$MEDIAN_SGP_COUNT), 58069L) # Same as with YEAR!
 				tmp.messages <- c(tmp.messages, "\t\tTest of School Summary Table: OK\n")
 			} else {
@@ -2837,7 +2837,7 @@ function(
 
 			### TEST of Instructor Summary Table  :: dim = 3516 x 23
 			setkey(Demonstration_SGP@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__GRADE__INSTRUCTOR_ENROLLMENT_STATUS"]])
-			if (identical(digest::digest(Demonstration_SGP@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__GRADE__INSTRUCTOR_ENROLLMENT_STATUS"]]), "3f0d7039e96e44c9ccd445cc0d1bb098")) { # 059d0a7f18c704589cb38e0da0b3aeec
+			if (identical(digest::digest(Demonstration_SGP@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__GRADE__INSTRUCTOR_ENROLLMENT_STATUS"]]), "eee346ec649be4b422fca2f44443afc0")) { # 3f0d7039e96e44c9ccd445cc0d1bb098 # 059d0a7f18c704589cb38e0da0b3aeec
 				tmp.messages <- c(tmp.messages, "\t\tTest of Instructor Summary Table: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Instructor Summary Table: FAIL\n")
