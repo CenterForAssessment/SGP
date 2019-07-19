@@ -222,7 +222,7 @@ function(panel.data,	## REQUIRED
 				if (dim(tmp.dt)[1L] > 0L) {
 					completed.ids <- c(unique(tmp.dt, by=(1L))[[1L]], completed.ids)
 #					tmp.dt <- tmp.dt[list(rep(tmp.dt[[1L]], 100L))]
-					tmp.dt <- tmp.dt[rep(seq(dim(tmp.dt)[1]), each=100L)]
+					tmp.dt <- tmp.dt[rep(seq(dim(tmp.dt)[1]), 100L)]
 					missing.taus <- FALSE; na.replace <- NULL # put these outside of j loop so that stays true/non-null if only SOME of coef matrices have missing column/taus.
 					label.iter <- 1L
 
