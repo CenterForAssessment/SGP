@@ -356,7 +356,8 @@ function(sgp.data,
 					tmp.data <- ddcast(sgp.data[tmp.lookup, nomatch=0][, 'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep=".")],
 						ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", state, sgp.scale.score.equated, SGPt), sep=".")[
 							sgp.targets[CONTENT_AREA==tail(sgp.iter[[sgp.projection.content.areas.label]], 1) &
-							YEAR==tail(sgp.iter[[sgp.projection.panel.years.label]], 1)], on="ID", nomatch=0][,!c("CONTENT_AREA", "YEAR"), with=FALSE]
+							YEAR==tail(sgp.iter[[sgp.projection.panel.years.label]], 1) & GRADE==tail(sgp.iter[[sgp.projection.grade.sequences.label]], 1)], 
+							on="ID", nomatch=0][,!c("CONTENT_AREA", "YEAR"), with=FALSE]
 				}
 			}
 
