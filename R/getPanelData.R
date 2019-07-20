@@ -592,7 +592,7 @@ function(sgp.data,
 							invisible(tmp.data[grepl("_DUPS_[0-9]*", ID), DUPS_FLAG := gsub(".*_DUPS_", "", ID)])
 							invisible(tmp.data[, ID := gsub("_DUPS_[0-9]*", "", ID)])
 
-							tmp.data <- tmp.data[sgp.targets[CONTENT_AREA == tmp.lookup1[["CONTENT_AREA"]] & YEAR == tmp.lookup1[["YEAR"]]],
+							tmp.data <- tmp.data[sgp.targets[CONTENT_AREA == tmp.lookup1[["CONTENT_AREA"]] & YEAR == tmp.lookup1[["YEAR"]] & GRADE == tmp.lookup1[["GRADE"]]],
 								on=c("ID", "GRADE", "SGP_PROJECTION_GROUP_SCALE_SCORES"), nomatch=0][,
 								!c("CONTENT_AREA", "YEAR", "GRADE", "SGP_PROJECTION_GROUP_SCALE_SCORES"), with=FALSE]
 
@@ -600,7 +600,7 @@ function(sgp.data,
 							invisible(tmp.data[, DUPS_FLAG := NULL])
 						} else {  ###  END if (any(duplicated(tmp.data, ...)))
 							tmp.data <- ddcast(tmp.data, ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", state, sgp.scale.score.equated, SGPt), sep=".")[, GRADE := tmp.lookup1[["GRADE"]]][
-								sgp.targets[CONTENT_AREA == tmp.lookup1[["CONTENT_AREA"]] & YEAR == tmp.lookup1[["YEAR"]]], on=intersect(names(tmp.data), c("ID", "GRADE")), nomatch=0][,
+								sgp.targets[CONTENT_AREA == tmp.lookup1[["CONTENT_AREA"]] & YEAR == tmp.lookup1[["YEAR"]] & GRADE == tmp.lookup1[["GRADE"]]], on=intersect(names(tmp.data), c("ID", "GRADE")), nomatch=0][,
 								!c("CONTENT_AREA", "YEAR", "GRADE"), with=FALSE]
 						}
 					} else {  ###  END if (is.character(fix.duplicates)
@@ -609,7 +609,7 @@ function(sgp.data,
 									tmp.lookup2, nomatch=0][,
 									'tmp.timevar':=paste(YEAR, CONTENT_AREA, sep=".")],
 								ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", state, sgp.scale.score.equated, SGPt), sep=".")[
-									sgp.targets[CONTENT_AREA == tmp.lookup1[["CONTENT_AREA"]] & YEAR == tmp.lookup1[["YEAR"]]], nomatch=0][,
+									sgp.targets[CONTENT_AREA == tmp.lookup1[["CONTENT_AREA"]] & YEAR == tmp.lookup1[["YEAR"]] & GRADE == tmp.lookup1[["GRADE"]]], nomatch=0][,
 									!c("CONTENT_AREA", "YEAR"), with=FALSE]
 					}
 				}
