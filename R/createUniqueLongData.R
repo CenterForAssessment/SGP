@@ -1,4 +1,6 @@
-`createUniqueLongData` <- function(long.data, wide.output=FALSE) {
+`createUniqueLongData` <-
+function(long.data,
+		  wide.output=FALSE) {
 
 	### Set variable to NULL to prevent R CMD Check warnings
 
