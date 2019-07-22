@@ -1,4 +1,6 @@
-`createUniqueLongData` <- function(long.data, wide.output=FALSE) {
+`createUniqueLongData` <-
+function(long.data,
+		  wide.output=FALSE) {
 
 	### Set variable to NULL to prevent R CMD Check warnings
 
@@ -72,7 +74,7 @@
 
 
 	###  Identify duplicated cases and extend long data accordingly
-	tmp.key <- getKey(long.data)
+	if (wide.output) tmp.key <- c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID") else tmp.key <- getKey(long.data)
 	if (!"VALID_CASE" %in% names(long.data)) { # sgPlot
 		invisible(long.data[, VALID_CASE := "VALID_CASE"])
 		wide.output <- TRUE
