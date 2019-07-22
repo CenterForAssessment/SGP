@@ -180,7 +180,7 @@ function(sgp_object,
 		} else {
 			long_data_tmp <- long_data_tmp[,YEAR_BY_CONTENT_AREA:=paste(YEAR, CONTENT_AREA, sep=".")]["VALID_CASE"]
 		}
-		if (dups.tf <- any(duplicated(long_data_tmp, by=key(long_data_tmp)))){
+		if (dups.tf <- any(duplicated(long_data_tmp, by=key(long_data_tmp)))) {
 			long_data_tmp <- createUniqueLongData(long_data_tmp, wide.output=TRUE)
 			setkeyv(long_data_tmp, getKey(long_data_tmp))
 		}
