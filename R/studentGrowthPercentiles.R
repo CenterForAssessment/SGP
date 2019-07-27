@@ -358,14 +358,14 @@ function(panel.data,         ## REQUIRED
 			if (is.null(parallel.config[["WORKERS"]][["SIMEX"]])) tmp.par.config <- NULL else tmp.par.config <- parallel.config
 		} else tmp.par.config <- NULL
 
-    getSIMEXdata <- function(dbase, z, k=NULL, predictions=FALSE) {
-      if (predictions) {
-        data.table::fread(file.path(dbase, paste0("simex_data_", z, ".csv")), header=TRUE, showProgress = FALSE,
-          select = paste(c("ID", paste0('prior_', k:1), "final_yr")), verbose = FALSE)
-      } else {
-        data.table::fread(file.path(dbase, paste0("simex_data_", z, ".csv")), header=TRUE, showProgress = FALSE, verbose = FALSE)
-      }
-    }
+        getSIMEXdata <- function(dbase, z, k=NULL, predictions=FALSE) {
+            if (predictions) {
+                data.table::fread(file.path(dbase, paste0("simex_data_", z, ".csv")), header=TRUE, showProgress = FALSE,
+                select = paste(c("ID", paste0('prior_', k:1), "final_yr")), verbose = FALSE)
+            } else {
+                data.table::fread(file.path(dbase, paste0("simex_data_", z, ".csv")), header=TRUE, showProgress = FALSE, verbose = FALSE)
+            }
+        }
 
 		rq.sgp <- function(...) { # Function needs to be nested within the simex.sgp function to avoid data copying with SNOW
 			if (rq.method == "br") {
