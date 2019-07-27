@@ -959,7 +959,7 @@ function(
 				tmp.csems <- setkey(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]], CONTENT_AREA, GRADE, SCALE_SCORE)
 				sgpData_LONG[,SCALE_SCORE_CSEM:=splinefun(tmp.csems[list(CONTENT_AREA[1], GRADE[1])][[3]], tmp.csems[list(CONTENT_AREA[1], GRADE[1])][[4]], method="natural")(SCALE_SCORE), keyby=c("CONTENT_AREA", "GRADE")]
 				SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]] <- "SCALE_SCORE_CSEM"
-				simex.parameters[['csem.data.vnames']] <- "SCALE_SCORE_CSEM"
+				simex.parameters <- sub("save.matrices=TRUE", "save.matrices=TRUE, csem.data.vnames='SCALE_SCORE_CSEM'", simex.parameters)
 			}
 
 			options(error=recover) # Don't use options(warn=2) - get warnings about knots and bounds from BASELINE SIMEX
