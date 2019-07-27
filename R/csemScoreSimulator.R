@@ -9,7 +9,7 @@ function(
 	distribution=NULL,
 	round.digits=NULL) {
 
-	GRADE <- CONTENT_AREA <- YEAR <- SIM <- NULL
+	GRADE <- CONTENT_AREA <- YEAR <- SIM <- V1 <- NULL
 
 	get.my.knots.boundaries <- function(content_area, year) {
 		tmp.knots.boundaries.names <- grep(content_area, names(SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]]), value=TRUE)
@@ -44,8 +44,10 @@ function(
 		}
 		tmp.omega <- Interpolation_Function(Interpolation_Data[['SCALE_SCORE']], Interpolation_Data[['SCALE_SCORE_CSEM']], round.digits)(scale_scores)
 	}
-	if (!is.null(variable)) tmp.omega <- Interpolation_Function(scale_scores, variable, round.digits)(scale_scores)
-
+	if (!is.null(variable)) {
+		tmp.dt <- setkey(unique(data.table(V1=scale_scores, V2=variable), by="V1"), V1)
+		tmp.omega <- Interpolation_Function(tmp.dt[['V1']], tmp.dt[['V2']], round.digits)(scale_scores)
+	}
 	if (distribution=="Skew-Normal") {
 		tmp.scores <- data.table(SIM=round(rsn(length(scale_scores), xi=scale_scores, omega=tmp.omega,
 			alpha=tan((pi/2)*((min.max[1]+min.max[2]) - 2*scale_scores)/(min.max[2]-min.max[1]))), digits=round.digits))

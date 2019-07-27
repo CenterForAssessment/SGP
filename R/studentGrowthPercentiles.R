@@ -276,43 +276,43 @@ function(panel.data,         ## REQUIRED
 	}
 
 	.get.quantiles <- function(data1, data2, ranked.simex=FALSE) {
-    if (is.character(ranked.simex)) {
-      reproduce.old.values <- TRUE; ranked.simex <- TRUE
-    } else reproduce.old.values <- FALSE
+        if (is.character(ranked.simex)) {
+            reproduce.old.values <- TRUE; ranked.simex <- TRUE
+        } else reproduce.old.values <- FALSE
 
-    if (ranked.simex) {
-      for (p in 1:3) { # Additional values between the tau predicted values - 1/8th percentiles for ranking
-        dataX <- data1[,(1:ncol(data1)-1)] + t(apply(data1, 1, diff))/2
-        data1 <- cbind(data1, dataX)[, order(c(seq(ncol(data1)), seq(ncol(dataX))))]
-      }
-      tmp.zero <- 794L
-    } else tmp.zero <- 101L
+        if (ranked.simex) {
+            for (p in 1:3) { # Additional values between the tau predicted values - 1/8th percentiles for ranking
+                dataX <- data1[,(1:ncol(data1)-1)] + t(apply(data1, 1, diff))/2
+                data1 <- cbind(data1, dataX)[, order(c(seq(ncol(data1)), seq(ncol(dataX))))]
+            }
+            tmp.zero <- 794L
+        } else tmp.zero <- 101L
 
-    V1 <- NULL
-    tmp <- as.data.table(max.col(cbind(data1 < data2, FALSE), "last"))[V1==tmp.zero, V1 := 0L]
-    if (ranked.simex) tmp[, V1 := V1/8]
+        V1 <- NULL
+        tmp <- as.data.table(max.col(cbind(data1 < data2, FALSE), "last"))[V1==tmp.zero, V1 := 0L]
+        if (ranked.simex) tmp[, V1 := V1/8]
 
-    if (!is.null(sgp.quantiles.labels)) {
-      setattr(tmp[['V1']] <- as.factor(tmp[['V1']]), "levels", sgp.quantiles.labels)
-      return(as.integer(levels(tmp[['V1']]))[tmp[['V1']]])
-    } else {
-      if (!is.null(sgp.loss.hoss.adjustment)) {
-        my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
-        tmp.hoss <- eval(parse(text=paste0("Knots_Boundaries", my.path.knots.boundaries, "[['loss.hoss_", tmp.last, "']][2L]")))
-        if (length(tmp.index <- which(data2>=tmp.hoss)) > 0L) {
-          if (ranked.simex) {
-            tmp[tmp.index, V1:=as.double(apply(data.table(data1 > data2, TRUE)[tmp.index], 1, function(x) which.max(x)-1L))]
-            if (!reproduce.old.values) tmp[tmp.index, V1 := V1/8]
-          } else tmp[tmp.index, V1:=apply(data.table(data1 > data2, TRUE)[tmp.index], 1, function(x) which.max(x)-1L)]
+        if (!is.null(sgp.quantiles.labels)) {
+            setattr(tmp[['V1']] <- as.factor(tmp[['V1']]), "levels", sgp.quantiles.labels)
+            return(as.integer(levels(tmp[['V1']]))[tmp[['V1']]])
+        } else {
+            if (!is.null(sgp.loss.hoss.adjustment)) {
+                my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
+                tmp.hoss <- eval(parse(text=paste0("Knots_Boundaries", my.path.knots.boundaries, "[['loss.hoss_", tmp.last, "']][2L]")))
+                if (length(tmp.index <- which(data2>=tmp.hoss)) > 0L) {
+                    if (ranked.simex) {
+                        tmp[tmp.index, V1:=as.double(apply(data.table(data1 > data2, TRUE)[tmp.index], 1, function(x) which.max(x)-1L))]
+                        if (!reproduce.old.values) tmp[tmp.index, V1 := V1/8]
+                    } else tmp[tmp.index, V1:=apply(data.table(data1 > data2, TRUE)[tmp.index], 1, function(x) which.max(x)-1L)]
+                }
+            }
+            if (convert.0and100) {
+                tmp[V1==0L, V1:=1L]
+                tmp[V1==100L, V1:=99L]
+            }
+            return(tmp[['V1']])
         }
-      }
-      if (convert.0and100) {
-        tmp[V1==0L, V1:=1L]
-        tmp[V1==100L, V1:=99L]
-      }
-      return(tmp[['V1']])
     }
-  }
 
 	.get.percentile.cuts <- function(data1) {
 		tmp <- round(data1[ , percentile.cuts+1L, drop=FALSE], digits=percuts.digits)
@@ -358,14 +358,14 @@ function(panel.data,         ## REQUIRED
 			if (is.null(parallel.config[["WORKERS"]][["SIMEX"]])) tmp.par.config <- NULL else tmp.par.config <- parallel.config
 		} else tmp.par.config <- NULL
 
-    getSIMEXdata <- function(dbase, z, k=NULL, predictions=FALSE) {
-      if (predictions) {
-        data.table::fread(file.path(dbase, paste0("simex_data_", z, ".csv")), header=TRUE, showProgress = FALSE,
-          select = paste(c("ID", paste0('prior_', k:1), "final_yr")), verbose = FALSE)
-      } else {
-        data.table::fread(file.path(dbase, paste0("simex_data_", z, ".csv")), header=TRUE, showProgress = FALSE, verbose = FALSE)
-      }
-    }
+        getSIMEXdata <- function(dbase, z, k=NULL, predictions=FALSE) {
+            if (predictions) {
+                data.table::fread(file.path(dbase, paste0("simex_data_", z, ".csv")), header=TRUE, showProgress = FALSE,
+                select = paste(c("ID", paste0('prior_', k:1), "final_yr")), verbose = FALSE)
+            } else {
+                data.table::fread(file.path(dbase, paste0("simex_data_", z, ".csv")), header=TRUE, showProgress = FALSE, verbose = FALSE)
+            }
+        }
 
 		rq.sgp <- function(...) { # Function needs to be nested within the simex.sgp function to avoid data copying with SNOW
 			if (rq.method == "br") {
@@ -464,7 +464,7 @@ function(panel.data,         ## REQUIRED
 				csem.int <- data.table(matrix(nrow=n.records, ncol=length(perturb.var))) # build data.table to store interpolated csem
 				setnames(csem.int, paste0("icsem", perturb.var, tmp.ca.iter, tmp.yr.iter))
 			} else {
-				csem.int <- data.table(Panel_Data[,c("ID", intersect(csem.data.vnames, names(Panel_Data))),with=FALSE], key="ID")[list(tmp.data$ID)]
+				csem.int <- data.table(Panel_Data[,c("ID", intersect(csem.data.vnames, names(Panel_Data))), with=FALSE], key="ID")[list(tmp.data$ID)]
 				setnames(csem.int, csem.data.vnames, paste0("icsem", head(tmp.gp, -1L), head(content_area.progression, -1L), head(year.progression, -1L)))
 			}
 
@@ -479,6 +479,7 @@ function(panel.data,         ## REQUIRED
 							GRADE==perturb.var[g] & CONTENT_AREA==tmp.ca.iter[g]]
 					}
 					if (dim(CSEM_Data)[1L] == 0L) stop(paste('CSEM data for', tmp.ca.iter[g], 'Grade', perturb.var[g], 'is required to use SIMEX functionality, but is not available in SGPstateData.  Please contact package administrators to add CSEM data.'))
+
 					CSEM_Function <- splinefun(CSEM_Data[["SCALE_SCORE"]], CSEM_Data[["SCALE_SCORE_CSEM"]], method="natural")
 					csem.int[, paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g]) := CSEM_Function(tmp.data[[num.perturb.vars-g]])]
 				}
@@ -532,7 +533,7 @@ function(panel.data,         ## REQUIRED
 					if (is.null(csem.data.vnames)) {
 						setkeyv(big.data, c(names(big.data)[col.index], tmp.names))
                         big.data.uniques <- unique(big.data[, paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g]) :=
-							csem.int[, paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g]), with=FALSE]], by=key(big.data))
+							rep(csem.int[[paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g])]], dim(big.data)[1]/dim(csem.int)[1])], by=key(big.data))
 					} else {
 						setkeyv(big.data, c(names(big.data)[col.index], tmp.names, paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g])))
 						big.data.uniques <- unique(big.data, by=key(big.data))
