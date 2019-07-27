@@ -533,7 +533,7 @@ function(panel.data,         ## REQUIRED
 					if (is.null(csem.data.vnames)) {
 						setkeyv(big.data, c(names(big.data)[col.index], tmp.names))
                         big.data.uniques <- unique(big.data[, paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g]) :=
-							rep(csem.int[, paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g]), with=FALSE], dim(big.data)[1]/dim(csem.int)[1])], by=key(big.data))
+							rep(csem.int[[paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g])]], dim(big.data)[1]/dim(csem.int)[1])], by=key(big.data))
 					} else {
 						setkeyv(big.data, c(names(big.data)[col.index], tmp.names, paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g])))
 						big.data.uniques <- unique(big.data, by=key(big.data))
