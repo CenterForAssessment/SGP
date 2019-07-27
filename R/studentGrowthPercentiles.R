@@ -479,6 +479,7 @@ function(panel.data,         ## REQUIRED
 							GRADE==perturb.var[g] & CONTENT_AREA==tmp.ca.iter[g]]
 					}
 					if (dim(CSEM_Data)[1L] == 0L) stop(paste('CSEM data for', tmp.ca.iter[g], 'Grade', perturb.var[g], 'is required to use SIMEX functionality, but is not available in SGPstateData.  Please contact package administrators to add CSEM data.'))
+
 					CSEM_Function <- splinefun(CSEM_Data[["SCALE_SCORE"]], CSEM_Data[["SCALE_SCORE_CSEM"]], method="natural")
 					csem.int[, paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g]) := CSEM_Function(tmp.data[[num.perturb.vars-g]])]
 				}
@@ -532,7 +533,7 @@ function(panel.data,         ## REQUIRED
 					if (is.null(csem.data.vnames)) {
 						setkeyv(big.data, c(names(big.data)[col.index], tmp.names))
                         big.data.uniques <- unique(big.data[, paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g]) :=
-							csem.int[, paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g]), with=FALSE]], by=key(big.data))
+							rep(csem.int[, paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g]), with=FALSE], dim(big.data)[1]/dim(csem.int)[1])], by=key(big.data))
 					} else {
 						setkeyv(big.data, c(names(big.data)[col.index], tmp.names, paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g])))
 						big.data.uniques <- unique(big.data, by=key(big.data))
