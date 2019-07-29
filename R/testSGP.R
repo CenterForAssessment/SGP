@@ -723,15 +723,10 @@ function(
 				if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
 				parallel.config <- paste0("list(BACKEND=", tmp.backend, "WORKERS=list(\n\t\tPERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", \n\t\tSGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))")
 			} else parallel.config <- test.option[['parallel.config']]
+			if (is.null(test.option[['use.csems.embedded.in.data']])) use.csems.embedded.in.data <- FALSE else use.csems.embedded.in.data <- TRUE
 
 			Demonstration_SGP <- NULL
 			tmp.messages <- ("\t##### Results of testSGP test number 3 #####\n\n")
-
-			if (use.csems.embedded.in.data) {
-				tmp.csems <- setkey(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]], CONTENT_AREA, GRADE, SCALE_SCORE)
-				sgpData_LONG[,SCALE_SCORE_CSEM:=splinefun(tmp.csems[list(CONTENT_AREA[1], GRADE[1])][[3]], tmp.csems[list(CONTENT_AREA[1], GRADE[1])][[4]], method="natural")(SCALE_SCORE), keyby=c("CONTENT_AREA", "GRADE")]
-				SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]] <- "SCALE_SCORE_CSEM"
-			}
 
 			### Some minor modifications to SGPstateData for testing purposes
 
