@@ -5,7 +5,7 @@ function(
 	test.option=list(),
 	memory.profile=FALSE) {
 
-	YEAR <- GRADE <- DUPS_FLAG <- SGP_NORM_GROUP <- NULL
+	YEAR <- GRADE <- DUPS_FLAG <- SGP_NORM_GROUP <- SCALE_SCORE_CSEM <- NULL
 
 	if (missing(TEST_NUMBER)) {
 		messageSGP("\ttestSGP carries out testing of SGP package. Tests currently included in testSGP:\n")
