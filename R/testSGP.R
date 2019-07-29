@@ -726,6 +726,7 @@ function(
 			if (is.null(test.option[['use.csems.embedded.in.data']])) use.csems.embedded.in.data <- FALSE else use.csems.embedded.in.data <- TRUE
 
 			Demonstration_SGP <- NULL
+			sgpData_LONG <- SGPdata::sgpData_LONG
 			tmp.messages <- ("\t##### Results of testSGP test number 3 #####\n\n")
 
 			### Some minor modifications to SGPstateData for testing purposes
