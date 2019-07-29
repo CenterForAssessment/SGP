@@ -726,7 +726,12 @@ function(
 
 			Demonstration_SGP <- NULL
 			tmp.messages <- ("\t##### Results of testSGP test number 3 #####\n\n")
-			sgpData_LONG <- as.data.table(SGPdata::sgpData_LONG)
+
+			if (use.csems.embedded.in.data) {
+				tmp.csems <- setkey(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]], CONTENT_AREA, GRADE, SCALE_SCORE)
+				sgpData_LONG[,SCALE_SCORE_CSEM:=splinefun(tmp.csems[list(CONTENT_AREA[1], GRADE[1])][[3]], tmp.csems[list(CONTENT_AREA[1], GRADE[1])][[4]], method="natural")(SCALE_SCORE), keyby=c("CONTENT_AREA", "GRADE")]
+				SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]] <- "SCALE_SCORE_CSEM"
+			}
 
 			### Some minor modifications to SGPstateData for testing purposes
 
@@ -735,7 +740,14 @@ function(
 			SGPstateData[['DEMO_EOCT']][['SGP_Configuration']][['sgp.target.scale.scores.merge']] <- "all_years_lagged_current"
 			SGPstateData[['DEMO_EOCT']][['SGP_Configuration']][['return.sgp.target.num.years']] <- TRUE
 
-			### Add EOCT courses to sgpData_LONG
+			### Add EOCT courses to sgpData_LONG and CSEMs if using use.csems.embedded.in.data argument
+
+			if (use.csems.embedded.in.data) {
+				tmp.csems <- setkey(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]], CONTENT_AREA, GRADE, SCALE_SCORE)
+				sgpData_LONG[,SCALE_SCORE_CSEM:=splinefun(tmp.csems[list(CONTENT_AREA[1], GRADE[1])][[3]], tmp.csems[list(CONTENT_AREA[1], GRADE[1])][[4]], method="natural")(SCALE_SCORE), keyby=c("CONTENT_AREA", "GRADE")]
+				sgpData_LONG[CONTENT_AREA=="MATHEMATICS" & GRADE=="10", SCALE_SCORE_CSEM:=NA]
+				SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]] <- "SCALE_SCORE_CSEM"
+			}
 
 			sgpData_LONG[CONTENT_AREA=='MATHEMATICS' & GRADE=='9', CONTENT_AREA:='ALGEBRA_I']
 			sgpData_LONG[CONTENT_AREA=='MATHEMATICS' & GRADE=='10', CONTENT_AREA:='ALGEBRA_II']
@@ -791,7 +803,7 @@ function(
 			sgp.config <- c(READING_LAST_YEAR.config, MATHEMATICS_LAST_YEAR.config, GRADE_9_LIT_LAST_YEAR.config, AMERICAN_LIT_LAST_YEAR.config, ALGEBRA_I_LAST_YEAR.config, ALGEBRA_II_LAST_YEAR.config)
 
 			expression.to.evaluate <-
-				paste0("Demonstration_SGP <- abcSGP(state='DEMO_EOCT',\n\tsgp_object=sgpData_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP', 'summarizeSGP', 'visualizeSGP'),\n\tsimulate.sgps=FALSE,\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.config=sgp.config,\n\tparallel.config=", parallel.config, "\n)\n")
+				paste0("Demonstration_SGP <- abcSGP(state='DEMO_EOCT',\n\tsgp_object=sgpData_LONG,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP', 'summarizeSGP', 'visualizeSGP'),\n\tsimulate.sgps=TRUE,\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.config=sgp.config,\n\tparallel.config=", parallel.config, "\n)\n")
 
 			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "dir.create('Data', showWarnings=FALSE)", "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
 
