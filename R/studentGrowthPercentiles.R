@@ -907,14 +907,13 @@ function(panel.data,         ## REQUIRED
 				}
 				calculate.confidence.intervals <- list(state=calculate.confidence.intervals)
 			}
-			if (calculate.confidence.intervals %in% names(panel.data[['Panel_Data']])) {
-                if (!all(is.na(panel.data[['Panel_Data']][[calculate.confidence.intervals]]))) {
-                    calculate.confidence.intervals <- list(variable=calculate.confidence.intervals)
-                } else {
-					tmp.messages <- c(tmp.messages, paste0("\t\tNOTE: CSEM variable values in supplied panel data contain only missing values for requested content area '", sgp.labels$my.subject, "' and grade '", rev(grade.progression)[1], "'.\n\t\t\tSimulation based standard errors/confidences intervals for SGPs wil not be calculated.\n"))
-                    csem.tf <- FALSE
-                }
-			}
+            if (calculate.confidence.intervals %in% names(panel.data[['Panel_Data']])) {
+                calculate.confidence.intervals <- list(variable=calculate.confidence.intervals)
+            }
+        }
+		if (is.list(calculate.confidence.intervals) && "variable" %in% names(calculate.confidence.intervals) && calculate.confidence.intervals$variable %in% names(panel.data[['Panel_Data']]) && all(is.na(panel.data[['Panel_Data']][[calculate.confidence.intervals$variable]]))) {
+			tmp.messages <- c(tmp.messages, paste0("\t\tNOTE: CSEM variable values in supplied panel data contain only missing values for requested content area '", sgp.labels$my.subject, "' and grade '", rev(grade.progression)[1], "'.\n\t\t\tSimulation based standard errors/confidences intervals for SGPs wil not be calculated.\n"))
+            csem.tf <- FALSE
 		}
 		if (sgp.quantiles != "PERCENTILES") {
 			tmp.messages <- c(tmp.messages, "\t\tNOTE: When 'sgp.quantiles' is supplied and not equal to PERCENTILES, simulation based standard errors/confidences intervals for SGPs are not available.\n")
