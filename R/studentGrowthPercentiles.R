@@ -901,7 +901,7 @@ function(panel.data,         ## REQUIRED
 						csem.tf <- FALSE
 					}
 				}
-				if (!sgp.labels$my.subject %in% unique(SGP::SGPstateData[[calculate.confidence.intervals]][["Assessment_Program_Information"]][["CSEM"]][["CONTENT_AREA"]])) {
+                if (dim(SGP::SGPstateData[[calculate.confidence.intervals]][["Assessment_Program_Information"]][["CSEM"]][CONTENT_AREA==sgp.labels$my.subject & GRADE==rev(grade.progression)[1]])[1]==0) {
 					tmp.messages <- c(tmp.messages, paste0("\t\tNOTE: SGPstateData does not contain content area CSEMs for requested content area '", sgp.labels$my.subject, "'. Simulated SGPs and confidence intervals will not be calculated.\n"))
 					csem.tf <- FALSE
 				}
