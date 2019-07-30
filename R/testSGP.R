@@ -913,6 +913,13 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_2_YEAR_NUM_YEARS_TO_TARGET: FAIL\n")
 			}
 
+#			if (identical(mean(Demonstration_SGP@Data$SGP_STANDARD_ERROR, na.rm=TRUE), 15.50872)) {
+			if (identical(digest(Demonstration_SGP@Data$SGP_STANDARD_ERROR), "cb81264f5933f0e4e22d515b5437f97f")) {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_STANDARD_ERROR (Omitting ALGEBRA_II): OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_STANDARD_ERROR (Omitting ALGEBRA_II): FAIL\n")
+			}
+
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 3: ", convertTime(timetakenSGP(started.at.overall)), "#####\n"))
 			messageSGP(tmp.messages)
 		} ### End TEST_NUMBER 3
