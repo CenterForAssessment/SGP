@@ -276,43 +276,43 @@ function(panel.data,         ## REQUIRED
 	}
 
 	.get.quantiles <- function(data1, data2, ranked.simex=FALSE) {
-    if (is.character(ranked.simex)) {
-      reproduce.old.values <- TRUE; ranked.simex <- TRUE
-    } else reproduce.old.values <- FALSE
+        if (is.character(ranked.simex)) {
+            reproduce.old.values <- TRUE; ranked.simex <- TRUE
+        } else reproduce.old.values <- FALSE
 
-    if (ranked.simex) {
-      for (p in 1:3) { # Additional values between the tau predicted values - 1/8th percentiles for ranking
-        dataX <- data1[,(1:ncol(data1)-1)] + t(apply(data1, 1, diff))/2
-        data1 <- cbind(data1, dataX)[, order(c(seq(ncol(data1)), seq(ncol(dataX))))]
-      }
-      tmp.zero <- 794L
-    } else tmp.zero <- 101L
+        if (ranked.simex) {
+            for (p in 1:3) { # Additional values between the tau predicted values - 1/8th percentiles for ranking
+                dataX <- data1[,(1:ncol(data1)-1)] + t(apply(data1, 1, diff))/2
+                data1 <- cbind(data1, dataX)[, order(c(seq(ncol(data1)), seq(ncol(dataX))))]
+            }
+            tmp.zero <- 794L
+        } else tmp.zero <- 101L
 
-    V1 <- NULL
-    tmp <- as.data.table(max.col(cbind(data1 < data2, FALSE), "last"))[V1==tmp.zero, V1 := 0L]
-    if (ranked.simex) tmp[, V1 := V1/8]
+        V1 <- NULL
+        tmp <- as.data.table(max.col(cbind(data1 < data2, FALSE), "last"))[V1==tmp.zero, V1 := 0L]
+        if (ranked.simex) tmp[, V1 := V1/8]
 
-    if (!is.null(sgp.quantiles.labels)) {
-      setattr(tmp[['V1']] <- as.factor(tmp[['V1']]), "levels", sgp.quantiles.labels)
-      return(as.integer(levels(tmp[['V1']]))[tmp[['V1']]])
-    } else {
-      if (!is.null(sgp.loss.hoss.adjustment)) {
-        my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
-        tmp.hoss <- eval(parse(text=paste0("Knots_Boundaries", my.path.knots.boundaries, "[['loss.hoss_", tmp.last, "']][2L]")))
-        if (length(tmp.index <- which(data2>=tmp.hoss)) > 0L) {
-          if (ranked.simex) {
-            tmp[tmp.index, V1:=as.double(apply(data.table(data1 > data2, TRUE)[tmp.index], 1, function(x) which.max(x)-1L))]
-            if (!reproduce.old.values) tmp[tmp.index, V1 := V1/8]
-          } else tmp[tmp.index, V1:=apply(data.table(data1 > data2, TRUE)[tmp.index], 1, function(x) which.max(x)-1L)]
+        if (!is.null(sgp.quantiles.labels)) {
+            setattr(tmp[['V1']] <- as.factor(tmp[['V1']]), "levels", sgp.quantiles.labels)
+            return(as.integer(levels(tmp[['V1']]))[tmp[['V1']]])
+        } else {
+            if (!is.null(sgp.loss.hoss.adjustment)) {
+                my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
+                tmp.hoss <- eval(parse(text=paste0("Knots_Boundaries", my.path.knots.boundaries, "[['loss.hoss_", tmp.last, "']][2L]")))
+                if (length(tmp.index <- which(data2>=tmp.hoss)) > 0L) {
+                    if (ranked.simex) {
+                        tmp[tmp.index, V1:=as.double(apply(data.table(data1 > data2, TRUE)[tmp.index], 1, function(x) which.max(x)-1L))]
+                        if (!reproduce.old.values) tmp[tmp.index, V1 := V1/8]
+                    } else tmp[tmp.index, V1:=apply(data.table(data1 > data2, TRUE)[tmp.index], 1, function(x) which.max(x)-1L)]
+                }
+            }
+            if (convert.0and100) {
+                tmp[V1==0L, V1:=1L]
+                tmp[V1==100L, V1:=99L]
+            }
+            return(tmp[['V1']])
         }
-      }
-      if (convert.0and100) {
-        tmp[V1==0L, V1:=1L]
-        tmp[V1==100L, V1:=99L]
-      }
-      return(tmp[['V1']])
     }
-  }
 
 	.get.percentile.cuts <- function(data1) {
 		tmp <- round(data1[ , percentile.cuts+1L, drop=FALSE], digits=percuts.digits)
@@ -475,7 +475,7 @@ function(panel.data,         ## REQUIRED
 				csem.int <- data.table(matrix(nrow=n.records, ncol=length(perturb.var))) # build data.table to store interpolated csem
 				setnames(csem.int, paste0("icsem", perturb.var, tmp.ca.iter, tmp.yr.iter))
 			} else {
-				csem.int <- data.table(Panel_Data[,c("ID", intersect(csem.data.vnames, names(Panel_Data))),with=FALSE], key="ID")[list(tmp.data$ID)]
+				csem.int <- data.table(Panel_Data[,c("ID", intersect(csem.data.vnames, names(Panel_Data))), with=FALSE], key="ID")[list(tmp.data$ID)]
 				setnames(csem.int, csem.data.vnames, paste0("icsem", head(tmp.gp, -1L), head(content_area.progression, -1L), head(year.progression, -1L)))
 			}
 
@@ -490,6 +490,7 @@ function(panel.data,         ## REQUIRED
 							GRADE==perturb.var[g] & CONTENT_AREA==tmp.ca.iter[g]]
 					}
 					if (dim(CSEM_Data)[1L] == 0L) stop(paste('CSEM data for', tmp.ca.iter[g], 'Grade', perturb.var[g], 'is required to use SIMEX functionality, but is not available in SGPstateData.  Please contact package administrators to add CSEM data.'))
+
 					CSEM_Function <- splinefun(CSEM_Data[["SCALE_SCORE"]], CSEM_Data[["SCALE_SCORE_CSEM"]], method="natural")
 					csem.int[, paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g]) := CSEM_Function(tmp.data[[num.perturb.vars-g]])]
 				}
@@ -976,15 +977,28 @@ function(panel.data,         ## REQUIRED
 						csem.tf <- FALSE
 					}
 				}
-				if (!sgp.labels$my.subject %in% unique(SGP::SGPstateData[[calculate.confidence.intervals]][["Assessment_Program_Information"]][["CSEM"]][["CONTENT_AREA"]])) {
+                if (dim(SGP::SGPstateData[[calculate.confidence.intervals]][["Assessment_Program_Information"]][["CSEM"]][CONTENT_AREA==sgp.labels$my.subject & GRADE==rev(grade.progression)[1]])[1]==0) {
 					tmp.messages <- c(tmp.messages, paste0("\t\tNOTE: SGPstateData does not contain content area CSEMs for requested content area '", sgp.labels$my.subject, "'. Simulated SGPs and confidence intervals will not be calculated.\n"))
 					csem.tf <- FALSE
 				}
 				calculate.confidence.intervals <- list(state=calculate.confidence.intervals)
 			}
-			if (calculate.confidence.intervals %in% names(panel.data[['Panel_Data']])) {
-				calculate.confidence.intervals <- list(variable=calculate.confidence.intervals)
-			}
+            if (calculate.confidence.intervals %in% names(panel.data[['Panel_Data']])) {
+                calculate.confidence.intervals <- list(variable=calculate.confidence.intervals)
+            }
+        }
+		if (is.list(calculate.confidence.intervals) &&
+            "variable" %in% names(calculate.confidence.intervals) &&
+            calculate.confidence.intervals$variable %in% names(panel.data[['Panel_Data']]) &&
+            all(is.na(panel.data[['Panel_Data']][[calculate.confidence.intervals$variable]]))) {
+                tmp.messages <- c(tmp.messages, paste0("\t\tNOTE: CSEM variable values in supplied panel data contain only missing values for requested content area '", sgp.labels$my.subject, "' and grade '", rev(grade.progression)[1], "'.\n\t\t\tSimulation based standard errors/confidences intervals for SGPs wil not be calculated.\n"))
+                csem.tf <- FALSE
+		}
+		if (is.list(calculate.confidence.intervals) &&
+            "state" %in% names(calculate.confidence.intervals) &&
+            dim(SGP::SGPstateData[[calculate.confidence.intervals$state]][["Assessment_Program_Information"]][["CSEM"]][CONTENT_AREA==sgp.labels$my.subject & GRADE==rev(grade.progression)[1]])[1]==0) {
+                tmp.messages <- c(tmp.messages, paste0("\t\tNOTE: SGPstateData does not contain content area CSEMs for requested content area '", sgp.labels$my.subject, "'. Simulated SGPs and confidence intervals will not be calculated.\n"))
+                csem.tf <- FALSE
 		}
 		if (sgp.quantiles != "PERCENTILES") {
 			tmp.messages <- c(tmp.messages, "\t\tNOTE: When 'sgp.quantiles' is supplied and not equal to PERCENTILES, simulation based standard errors/confidences intervals for SGPs are not available.\n")
