@@ -740,11 +740,11 @@ function(
 
 			if (use.csems.embedded.in.data) {
 				tmp.csems <- setkey(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]], CONTENT_AREA, GRADE, SCALE_SCORE)
-				sgpData_LONG[,SCALE_SCORE_CSEM:=splinefun(tmp.csems[list(CONTENT_AREA[1], GRADE[1])][[3]], tmp.csems[list(CONTENT_AREA[1], GRADE[1])][[4]], method="natural")(SCALE_SCORE), keyby=c("CONTENT_AREA", "GRADE")]
+				sgpData_LONG[,SCALE_SCORE_CSEM:=splinefun(tmp.csems[eval(list(CONTENT_AREA[1], GRADE[1]))][[3]], tmp.csems[eval(list(CONTENT_AREA[1], GRADE[1]))][[4]], method="natural")(SCALE_SCORE), keyby=c("CONTENT_AREA", "GRADE")]
 				sgpData_LONG[CONTENT_AREA=="MATHEMATICS" & GRADE=="10", SCALE_SCORE_CSEM:=NA]
 				SGPstateData[["DEMO_EOCT"]][["Assessment_Program_Information"]][["CSEM"]] <- "SCALE_SCORE_CSEM"
 			} else {
-					SGPstateData[["DEMO_EOCT"]][["Assessment_Program_Information"]][["CSEM"]] <- setkey(SGPstateData[["DEMO_EOCT"]][["Assessment_Program_Information"]][["CSEM"]][CONTENT_AREA!="ALGEBRA_II"], GRADE, CONTENT_AREA)
+					SGPstateData[["DEMO_EOCT"]][["Assessment_Program_Information"]][["CSEM"]] <- setkey(SGPstateData[["DEMO_EOCT"]][["Assessment_Program_Information"]][["CSEM"]][CONTENT_AREA!="ALGEBRA_II"], CONTENT_AREA, GRADE)
 			}
 
 			sgpData_LONG[CONTENT_AREA=='MATHEMATICS' & GRADE=='9', CONTENT_AREA:='ALGEBRA_I']
@@ -974,7 +974,7 @@ function(
 
 			if (use.csems.embedded.in.data) {
 				tmp.csems <- setkey(SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]], CONTENT_AREA, GRADE, SCALE_SCORE)
-				sgpData_LONG[,SCALE_SCORE_CSEM:=splinefun(tmp.csems[list(CONTENT_AREA[1], GRADE[1])][[3]], tmp.csems[list(CONTENT_AREA[1], GRADE[1])][[4]], method="natural")(SCALE_SCORE), keyby=c("CONTENT_AREA", "GRADE")]
+				sgpData_LONG[,SCALE_SCORE_CSEM:=splinefun(tmp.csems[eval(list(CONTENT_AREA[1], GRADE[1]))][[3]], tmp.csems[eval(list(CONTENT_AREA[1], GRADE[1]))][[4]], method="natural")(SCALE_SCORE), keyby=c("CONTENT_AREA", "GRADE")]
 				SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]] <- "SCALE_SCORE_CSEM"
 				simex.parameters <- sub("save.matrices=TRUE", "save.matrices=TRUE, csem.data.vnames='SCALE_SCORE_CSEM'", simex.parameters)
 				simex.parameters <- sub("state='DEMO', ", "", simex.parameters)
