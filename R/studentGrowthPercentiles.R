@@ -885,9 +885,9 @@ function(panel.data,         ## REQUIRED
 			if ("variable" %in% names(calculate.confidence.intervals) && is.null(panel.data.vnames)) {
 				stop("To utilize a supplied CSEM variable for confidence interval calculation you must specify the variables to be used for student growth percentile calculations with the panel.data.vnames argument. See help page for details.")
 			}
-			if (all(c("state", "variable") %in% names(calculate.confidence.intervals))) {
-				stop("Please specify EITHER a state OR a CSEM variable for SGP confidence interval calculation. See help page for details.")
-			}
+#			if (all(c("state", "variable") %in% names(calculate.confidence.intervals))) {
+#				stop("Please specify EITHER a state OR a CSEM variable for SGP confidence interval calculation. See help page for details.")
+#			}
 		}
 		if (is.character(calculate.confidence.intervals)) {
 			if (!calculate.confidence.intervals %in% c(objects(SGP::SGPstateData), names(panel.data[['Panel_Data']]))) {
