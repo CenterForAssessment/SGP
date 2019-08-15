@@ -924,7 +924,10 @@ function(panel.data,         ## REQUIRED
         }
 		if (is.list(calculate.confidence.intervals) &&
             "state" %in% names(calculate.confidence.intervals) &&
-            !csem.variable.tf &&
+            !(is.list(calculate.confidence.intervals) &&
+              "variable" %in% names(calculate.confidence.intervals) &&
+              calculate.confidence.intervals$variable %in% names(panel.data[['Panel_Data']]) &&
+              !all(is.na(panel.data[['Panel_Data']][[calculate.confidence.intervals$variable]]))) &&
             is.data.frame(SGP::SGPstateData[[calculate.confidence.intervals$state]][["Assessment_Program_Information"]][["CSEM"]]) &&
             dim(SGP::SGPstateData[[calculate.confidence.intervals$state]][["Assessment_Program_Information"]][["CSEM"]][CONTENT_AREA==sgp.labels$my.subject & GRADE==rev(grade.progression)[1]])[1]==0) {
                 tmp.messages <- c(tmp.messages, paste0("\t\tNOTE: SGPstateData does not contain content area CSEMs for requested content area '", sgp.labels$my.subject, "'. Simulated SGPs and confidence intervals will not be calculated.\n"))
