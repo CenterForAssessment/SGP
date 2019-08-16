@@ -911,8 +911,8 @@ function(panel.data,         ## REQUIRED
         }
 		if (is.list(calculate.confidence.intervals) &&
             "variable" %in% names(calculate.confidence.intervals) &&
-            calculate.confidence.intervals$variable %in% names(panel.data[['Panel_Data']] &&
-            all(is.na(panel.data[['Panel_Data']][[calculate.confidence.intervals$variable]])))) {
+            calculate.confidence.intervals$variable %in% names(panel.data[['Panel_Data']]) &&
+            all(is.na(panel.data[['Panel_Data']][[calculate.confidence.intervals$variable]]))) {
                 tmp.messages <- c(tmp.messages, paste0("\t\tNOTE: CSEM variable values in supplied panel data contain only missing values for requested content area '", sgp.labels$my.subject, "' and grade '", rev(grade.progression)[1], "'.\n\t\t\tSimulation based standard errors/confidences intervals for SGPs wil not be calculated.\n"))
                 csem.tf <- FALSE
         }
