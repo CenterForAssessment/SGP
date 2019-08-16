@@ -71,15 +71,12 @@ function(sgp_object,
 	}
 
 	if (simulate.sgps) {
-    csem.variable <- NULL
+        csem.variable <- NULL
+		calculate.confidence.intervals.list <- list(state=state)
 		if (is.null(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
 			messageSGP("\tNOTE: CSEMs are required in 'SGPstateData' (either as a data.frame of CSEMs or as a variable name of CSEMsin @Data) to simulate SGPs for confidence interval calculations. SGP standard errors will not be calculated.")
 			calculate.confidence.intervals.list <- NULL
 		} else {
-            calculate.confidence.intervals.list <- list()
-            if (is.data.frame(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
-                calculate.confidence.intervals.list[['state']] <- state
-            }
             if (is.character(SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
                 csem.variable <- SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]]
             }
