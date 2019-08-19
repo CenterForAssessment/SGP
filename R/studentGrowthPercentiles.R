@@ -500,7 +500,7 @@ function(panel.data,         ## REQUIRED
 
             if (!is.null(csem.data.vnames)) {
                 for (g in seq_along(perturb.var)) {
-					tmp.data[, paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g]) := Panel_Data[list(tmp.data$ID)]][[rev(csem.data.vnames)[g]]]
+					tmp.data[, paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g]) := Panel_Data[list(tmp.data$ID)][[rev(csem.data.vnames)[g]]]
                 }
             }
 
