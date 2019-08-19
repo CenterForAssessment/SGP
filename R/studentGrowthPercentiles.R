@@ -504,18 +504,18 @@ function(panel.data,         ## REQUIRED
                 }
             }
 
-			if (!is.null(variable)) {
-				# the following is added by YS on 021915 to accommodate missing data when using "variable"
-				csem.tmp <- vector()
-				for (g in seq_along(perturb.var)) {
-					csem.tmp <- cbind(csem.tmp, variable[[paste0("CSEM.grade", perturb.var[g], ".", tmp.ca.iter[g])]])
-				}
-				csem.tmp <- na.omit(csem.tmp)
-
-				for (g in seq_along(perturb.var)) {
-					csem.int[, paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g]) := csem.tmp[,g]]
-				}
-			}
+#			if (!is.null(variable)) {
+#				# the following is added by YS on 021915 to accommodate missing data when using "variable"
+#				csem.tmp <- vector()
+#				for (g in seq_along(perturb.var)) {
+#					csem.tmp <- cbind(csem.tmp, variable[[paste0("CSEM.grade", perturb.var[g], ".", tmp.ca.iter[g])]])
+#				}
+#				csem.tmp <- na.omit(csem.tmp)
+#
+#				for (g in seq_along(perturb.var)) {
+#					csem.int[, paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g]) := csem.tmp[,g]]
+#				}
+#			}
 
 			## naive model
 			if (calculate.simex.sgps) {
@@ -535,9 +535,9 @@ function(panel.data,         ## REQUIRED
 			if (verbose) messageSGP(c("\t\t", rev(content_area.progression)[1L], " Grade ", rev(tmp.gp)[1L], " Order ", k, " Started simulation process ", prettyDate()))
 
 			## perturb data
-			if (!is.null(csem.data.vnames)) {
-				tmp.data <- merge(tmp.data, csem.int, by="ID")
-			}
+#			if (!is.null(csem.data.vnames)) {
+#				tmp.data <- merge(tmp.data, csem.int, by="ID")
+#			}
 			for (L in lambda[-1L]) {
 				big.data <- rbindlist(replicate(B, tmp.data, simplify = FALSE))
 				big.data[, b:=rep(1:B, each=n.records)]
