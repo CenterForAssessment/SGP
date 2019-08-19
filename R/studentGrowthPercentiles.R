@@ -472,13 +472,13 @@ function(panel.data,         ## REQUIRED
 			}
 			tmp.ca.iter <- rev(content_area.progression)[start.index:(k+1L)]
 			tmp.yr.iter <- rev(year.progression)[start.index:(k+1L)]
-			if (is.null(csem.data.vnames)) {
-				csem.int <- data.table(matrix(nrow=n.records, ncol=length(perturb.var))) # build data.table to store interpolated csem
-				setnames(csem.int, paste0("icsem", perturb.var, tmp.ca.iter, tmp.yr.iter))
-			} else {
-				csem.int <- data.table(Panel_Data[,c("ID", intersect(csem.data.vnames, names(Panel_Data))), with=FALSE], key="ID")[list(tmp.data$ID)]
-				setnames(csem.int, csem.data.vnames, paste0("icsem", head(tmp.gp, -1L), head(content_area.progression, -1L), head(year.progression, -1L)))
-			}
+#			if (is.null(csem.data.vnames)) {
+#				csem.int <- data.table(matrix(nrow=n.records, ncol=length(perturb.var))) # build data.table to store interpolated csem
+#				setnames(csem.int, paste0("icsem", perturb.var, tmp.ca.iter, tmp.yr.iter))
+#			} else {
+#				csem.int <- data.table(Panel_Data[,c("ID", intersect(csem.data.vnames, names(Panel_Data))), with=FALSE], key="ID")[list(tmp.data$ID)]
+#				setnames(csem.int, csem.data.vnames, paste0("icsem", head(tmp.gp, -1L), head(content_area.progression, -1L), head(year.progression, -1L)))
+#			}
 
 			# interpolate csem for all scale scores except that of the last grade
 			if (!is.null(state)) {
@@ -493,9 +493,16 @@ function(panel.data,         ## REQUIRED
 					if (dim(CSEM_Data)[1L] == 0L) stop(paste('CSEM data for', tmp.ca.iter[g], 'Grade', perturb.var[g], 'is required to use SIMEX functionality, but is not available in SGPstateData.  Please contact package administrators to add CSEM data.'))
 
 					CSEM_Function <- splinefun(CSEM_Data[["SCALE_SCORE"]], CSEM_Data[["SCALE_SCORE_CSEM"]], method="natural")
-					csem.int[, paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g]) := CSEM_Function(tmp.data[[num.perturb.vars-g]])]
+#					csem.int[, paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g]) := CSEM_Function(tmp.data[[num.perturb.vars-g]])]
+					tmp.data[, paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g]) := CSEM_Function(tmp.data[[num.perturb.vars-g]])]
 				}
 			}
+
+            if (!is.null(csem.data.vnames)) {
+                for (g in seq_along(perturb.var)) {
+					tmp.data[, paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g]) := Panel_Data[list(tmp.data$ID)]][[rev(csem.data.vnames)[g]]]
+                }
+            }
 
 			if (!is.null(variable)) {
 				# the following is added by YS on 021915 to accommodate missing data when using "variable"
@@ -542,14 +549,14 @@ function(panel.data,         ## REQUIRED
 				}
 				for (g in seq_along(perturb.var)) {
 					col.index <- num.perturb.vars-g
-					if (is.null(csem.data.vnames)) {
-						setkeyv(big.data, c(names(big.data)[col.index], tmp.names))
-                        big.data.uniques <- unique(big.data[, paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g]) :=
-							rep(csem.int[[paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g])]], dim(big.data)[1]/dim(csem.int)[1])], by=key(big.data))
-					} else {
+#					if (is.null(csem.data.vnames)) {
+#						setkeyv(big.data, c(names(big.data)[col.index], tmp.names))
+#                        big.data.uniques <- unique(big.data[, paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g]) :=
+#							rep(csem.int[[paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g])]], dim(big.data)[1]/dim(csem.int)[1])], by=key(big.data))
+#					} else {
 						setkeyv(big.data, c(names(big.data)[col.index], tmp.names, paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g])))
 						big.data.uniques <- unique(big.data, by=key(big.data))
-					}
+#					}
 					big.data.uniques[, TEMP := eval(parse(text=paste0("big.data.uniques[[", num.perturb.vars-g, "]]+sqrt(L)*big.data.uniques[['icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], "']] * rnorm(dim(big.data.uniques)[1L])")))]
 					big.data.uniques[big.data.uniques[[col.index]] < loss.hoss[1L,g], (col.index) := loss.hoss[1L,g]]
 					big.data.uniques[big.data.uniques[[col.index]] > loss.hoss[2L,g], (col.index) := loss.hoss[2L,g]]
