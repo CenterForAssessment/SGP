@@ -208,13 +208,13 @@ function(sgp_object,
 		}
 	}
 
-  if (is.list(calculate.simex)) {
-    if ("csem.data.vnames" %in% names(calculate.simex)) csem.variable <- calculate.simex[["csem.data.vnames"]]
-  }
+    if (is.list(calculate.simex) && "csem.data.vnames" %in% names(calculate.simex)) {
+        csem.variable <- calculate.simex[["csem.data.vnames"]]
+    }
 
 	if (identical(calculate.simex, TRUE)) {
 		if (is.character(csem.variable <- SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
-			calculate.simex <- list(csem.data.vnames=csem.variable, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE)
+			calculate.simex <- list(state=state, csem.data.vnames=csem.variable, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE)
 		} else 	{
 			calculate.simex <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE)
 			csem.variable <- NULL
@@ -404,7 +404,7 @@ function(sgp_object,
 	get.calculate.simex.arg <- function(calculate.simex, sgp.iter) {
 		if (is.null(calculate.simex)) return(NULL) # If not NULL, must be a list
 		if (is.null(calculate.simex$csem.data.vnames)) return(calculate.simex)
-		calculate.simex$csem.data.vnames <- gsub("[.]+$", "", paste(calculate.simex$csem.data.vnames, sgp.iter[['sgp.panel.years']], sgp.iter[['sgp.content.areas']],  sgp.iter[['sgp.panel.years.within']], sep="."))
+		calculate.simex[['csem.data.vnames']] <- gsub("[.]+$", "", paste(calculate.simex$csem.data.vnames, sgp.iter[['sgp.panel.years']], sgp.iter[['sgp.content.areas']],  sgp.iter[['sgp.panel.years.within']], sep="."))
 		return(calculate.simex)
 	}
 
