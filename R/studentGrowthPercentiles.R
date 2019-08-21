@@ -342,7 +342,7 @@ function(panel.data,         ## REQUIRED
 		state,
         variable=NULL,
         csem.data.vnames=NULL,
-        csem.loss.hoss=NULL,
+ #       csem.loss.hoss=NULL,
 		lambda,
         B,
         simex.sample.size,
@@ -356,17 +356,7 @@ function(panel.data,         ## REQUIRED
 
 		GRADE <- CONTENT_AREA <- YEAR <- V1 <- Lambda <- tau <- b <- .SD <- TEMP <- NULL ## To avoid R CMD check warnings
 
-		if (is.null(dependent.var.error)) dependent.var.error <- FALSE
-		if (is.null(reproduce.old.values)) reproduce.old.values <- FALSE
-		if (is.null(verbose)) verbose <- FALSE
-		if (verbose) messageSGP(c("\n\tStarted SIMEX SGP calculation ", rev(content_area.progression)[1L], " Grade ", rev(tmp.gp)[1L], " ", prettyDate()))
-		if (is.logical(simex.use.my.coefficient.matrices) && !simex.use.my.coefficient.matrices) simex.use.my.coefficient.matrices <- NULL
-#		if (!is.null(state) && !is.null(variable)) stop("SIMEX config can not use both 'state' and 'variable' elements.")
-#		if (!is.null(state) && !is.null(csem.data.vnames)) stop("SIMEX config can not use both 'state' and 'csem.data.vnames' elements.")
-#		if (!is.null(csem.data.vnames) && !is.null(variable)) stop("SIMEX config can not use both 'csem.data.vnames' and 'variable' elements.")
-		if (!is.null(parallel.config)) {
-			if (is.null(parallel.config[["WORKERS"]][["SIMEX"]])) tmp.par.config <- NULL else tmp.par.config <- parallel.config
-		} else tmp.par.config <- NULL
+        ### simex.sgp internal utility functions
 
         getSIMEXdata <- function(dbase, z, k=NULL, predictions=FALSE) {
             if (predictions) {
@@ -418,35 +408,54 @@ function(panel.data,         ## REQUIRED
 				"Version=tmp.version)")))
 		} ### END rq.mtx function
 
+
+        ### Check and set up Arguments
+
+        if (is.null(dependent.var.error)) dependent.var.error <- FALSE
+		if (is.null(reproduce.old.values)) reproduce.old.values <- FALSE
+		if (is.null(verbose)) verbose <- FALSE
+		if (verbose) messageSGP(c("\n\tStarted SIMEX SGP calculation ", rev(content_area.progression)[1L], " Grade ", rev(tmp.gp)[1L], " ", prettyDate()))
+		if (is.logical(simex.use.my.coefficient.matrices) && !simex.use.my.coefficient.matrices) simex.use.my.coefficient.matrices <- NULL
+#		if (!is.null(state) && !is.null(variable)) stop("SIMEX config can not use both 'state' and 'variable' elements.")
+#		if (!is.null(state) && !is.null(csem.data.vnames)) stop("SIMEX config can not use both 'state' and 'csem.data.vnames' elements.")
+#		if (!is.null(csem.data.vnames) && !is.null(variable)) stop("SIMEX config can not use both 'csem.data.vnames' and 'variable' elements.")
+		if (!is.null(parallel.config)) {
+			if (is.null(parallel.config[["WORKERS"]][["SIMEX"]])) tmp.par.config <- NULL else tmp.par.config <- parallel.config
+		} else tmp.par.config <- NULL
+
 		fitted <- extrap <- tmp.quantiles.simex <- simex.coef.matrices <- list()
 		my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
 
-		if (dependent.var.error) {
-			loss.hoss <- matrix(nrow=2L, ncol=length(tmp.gp))
-			lh.ca <- rev(content_area.progression)
-			lh.gp <- rev(tmp.gp)
-		} else {
-			loss.hoss <- matrix(nrow=2L, ncol=length(tmp.gp)-1L)
-			lh.ca <- rev(content_area.progression)[-1L]
-			lh.gp <- rev(tmp.gp)[-1L]
-			if (!is.null(csem.data.vnames)) {
-                if (length(content_area.progression)==length(csem.data.vnames)) csem.data.vnames <- head(csem.data.vnames, -1L)
-				if (length(content_area.progression) < length(csem.data.vnames)) csem.data.vnames <- tail(head(csem.data.vnames, -1L), (length(csem.data.vnames)-(length(csem.data.vnames)-length(content_area.progression)+1L))) # grep(paste(head(content_area.progression, -1L), collapse="|"), csem.data.vnames, value=TRUE)
-			}
+#		if (dependent.var.error) {
+#			loss.hoss <- matrix(nrow=2L, ncol=length(tmp.gp))
+#			lh.ca <- rev(content_area.progression)
+#			lh.gp <- rev(tmp.gp)
+#		} else {
+#			loss.hoss <- matrix(nrow=2L, ncol=length(tmp.gp)-1L)
+#			lh.ca <- rev(content_area.progression)[-1L]
+#			lh.gp <- rev(tmp.gp)[-1L]
+#			if (!is.null(csem.data.vnames)) {
+#               if (length(content_area.progression)==length(csem.data.vnames)) csem.data.vnames <- head(csem.data.vnames, -1L)
+#				if (length(content_area.progression) < length(csem.data.vnames)) csem.data.vnames <- tail(head(csem.data.vnames, -1L), (length(csem.data.vnames)-(length(csem.data.vnames)-length(content_area.progression)+1L))) # grep(paste(head(content_area.progression, -1L), collapse="|"), csem.data.vnames, value=TRUE)
+#			}
+#		}
+		if (!is.null(csem.data.vnames)) {
+            if (length(content_area.progression)==length(csem.data.vnames)) csem.data.vnames <- head(csem.data.vnames, -1L)
+			if (length(content_area.progression) < length(csem.data.vnames)) csem.data.vnames <- tail(head(csem.data.vnames, -1L), (length(csem.data.vnames)-(length(csem.data.vnames)-length(content_area.progression)+1L))) # grep(paste(head(content_area.progression, -1L), collapse="|"), csem.data.vnames, value=TRUE)
 		}
-		if (!is.null(csem.loss.hoss)) {
-			if (!is.list(csem.loss.hoss)) stop("SIMEX config element 'csem.loss.hoss' must be a 2 level nested list with LOSS/HOSS data for each subject (level 1) by grade (level 2).")
-			for (g in 1:ncol(loss.hoss)) {
-				loss.hoss[,g] <- csem.loss.hoss[[lh.ca[g]]][[paste0("loss.hoss_", lh.gp[g])]]
-		}}
-		if (!is.null(state)) {
-			for (g in 1:ncol(loss.hoss)) {
-				loss.hoss[,g] <- SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[lh.ca[g]]][[paste0("loss.hoss_", lh.gp[g])]]
-		}}
-		if (!is.null(variable)) {
-			for (g in 1:ncol(loss.hoss)) {
-				loss.hoss[,g] <- variable[[paste0("loss.hoss_", lh.gp[g])]]
-		}}
+#		if (!is.null(csem.loss.hoss)) {
+#			if (!is.list(csem.loss.hoss)) stop("SIMEX config element 'csem.loss.hoss' must be a 2 level nested list with LOSS/HOSS data for each subject (level 1) by grade (level 2).")
+#			for (g in 1:ncol(loss.hoss)) {
+#				loss.hoss[,g] <- csem.loss.hoss[[lh.ca[g]]][[paste0("loss.hoss_", lh.gp[g])]]
+#		}}
+#		if (!is.null(state)) {
+#			for (g in 1:ncol(loss.hoss)) {
+#				loss.hoss[,g] <- SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[lh.ca[g]]][[paste0("loss.hoss_", lh.gp[g])]]
+#		}}
+#		if (!is.null(variable)) {
+#			for (g in 1:ncol(loss.hoss)) {
+#				loss.hoss[,g] <- variable[[paste0("loss.hoss_", lh.gp[g])]]
+#		}}
 
 		if (!is.null(use.my.coefficient.matrices)) { # Passed implicitly from studentGrowthPercentiles arguments
 			if (exact.grade.progression.sequence) {
@@ -541,12 +550,12 @@ function(panel.data,         ## REQUIRED
 			for (L in lambda[-1L]) {
 				big.data <- rbindlist(replicate(B, tmp.data, simplify = FALSE))
 				big.data[, b:=rep(1:B, each=n.records)]
-				if (dependent.var.error) {
-					tmp.names <- "b"
-				} else {
-					setnames(big.data, tmp.num.variables, "final_yr")
-					tmp.names <- c("final_yr", "b")
-				}
+#				if (dependent.var.error) {
+#					tmp.names <- "b"
+#				} else {
+#					setnames(big.data, tmp.num.variables, "final_yr")
+#					tmp.names <- c("final_yr", "b")
+#				}
 				for (g in seq_along(perturb.var)) {
 					col.index <- num.perturb.vars-g
 #					if (is.null(csem.data.vnames)) {
@@ -554,12 +563,12 @@ function(panel.data,         ## REQUIRED
 #                        big.data.uniques <- unique(big.data[, paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g]) :=
 #							rep(csem.int[[paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g])]], dim(big.data)[1]/dim(csem.int)[1])], by=key(big.data))
 #					} else {
-						setkeyv(big.data, c(names(big.data)[col.index], tmp.names, paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g])))
+						setkeyv(big.data, c(names(big.data)[col.index], c("final_yr", "b"), paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g])))
 						big.data.uniques <- unique(big.data, by=key(big.data))
 #					}
 					big.data.uniques[, TEMP := eval(parse(text=paste0("big.data.uniques[[", num.perturb.vars-g, "]]+sqrt(L)*big.data.uniques[['icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], "']] * rnorm(dim(big.data.uniques)[1L])")))]
-					big.data.uniques[big.data.uniques[[col.index]] < loss.hoss[1L,g], (col.index) := loss.hoss[1L,g]]
-					big.data.uniques[big.data.uniques[[col.index]] > loss.hoss[2L,g], (col.index) := loss.hoss[2L,g]]
+#					big.data.uniques[big.data.uniques[[col.index]] < loss.hoss[1L,g], (col.index) := loss.hoss[1L,g]]
+#					big.data.uniques[big.data.uniques[[col.index]] > loss.hoss[2L,g], (col.index) := loss.hoss[2L,g]]
 					if (is.null(key(big.data.uniques))) setkeyv(big.data.uniques, key(big.data))
 					big.data[, (num.perturb.vars-g) := big.data.uniques[,c(key(big.data), "TEMP"), with=FALSE][big.data][['TEMP']]]
 
@@ -585,9 +594,9 @@ function(panel.data,         ## REQUIRED
 				sim.iters <- 1:B
 
 				if (!is.null(tmp.par.config)) { # Not Sequential
-				  ## Write big.data to disk and remove from memory
-				  if (!exists('year.progression.for.norm.group')) year.progression.for.norm.group <- year.progression # Needed during Baseline Matrix construction
-				  	tmp.dbname <- tempdir()
+                    ## Write big.data to disk and remove from memory
+                    if (!exists('year.progression.for.norm.group')) year.progression.for.norm.group <- year.progression # Needed during Baseline Matrix construction
+                    tmp.dbname <- tempdir()
                     sapply(sim.iters, function(z) data.table::fwrite(big.data[list(z)], file=file.path(tmp.dbname, paste0("simex_data_", z, ".csv")), showProgress = FALSE, verbose = FALSE))
 				}
 
