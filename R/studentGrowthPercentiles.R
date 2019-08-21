@@ -533,6 +533,7 @@ function(panel.data,         ## REQUIRED
 				tmp.data <- merge(tmp.data, csem.int, by="ID")
 			}
 			for (L in lambda[-1L]) {
+        if (k == 2) stop("@$$Fv<|<m3")
 				big.data <- rbindlist(replicate(B, tmp.data, simplify = FALSE))
 				big.data[, b:=rep(1:B, each=n.records)]
 				if (dependent.var.error) {
@@ -967,10 +968,8 @@ function(panel.data,         ## REQUIRED
 				csem.tf <- FALSE
 			}
 			if ("variable" %in% names(calculate.confidence.intervals) && is.null(panel.data.vnames)) {
-				stop("To utilize a supplied CSEM variable for confidence interval calculation you must specify the variables to be used for student growth percentile calculations with the panel.data.vnames argument. See help page for details.")
-			}
-			if (all(c("state", "variable") %in% names(calculate.confidence.intervals))) {
-				stop("Please specify EITHER a state OR a CSEM variable for SGP confidence interval calculation. See help page for details.")
+				tmp.messages <- c(tmp.messages, "\t\tNOTE: To utilize a supplied CSEM variable for confidence interval calculations you must specify the variables to be used for student growth percentile calculations with the panel.data.vnames argument. SGPs will be calculated without confidence intervals. See help page for details.\n")
+                csem.tf <- FALSE
 			}
 		}
 		if (is.character(calculate.confidence.intervals)) {
@@ -1001,9 +1000,11 @@ function(panel.data,         ## REQUIRED
             all(is.na(panel.data[['Panel_Data']][[calculate.confidence.intervals$variable]]))) {
                 tmp.messages <- c(tmp.messages, paste0("\t\tNOTE: CSEM variable values in supplied panel data contain only missing values for requested content area '", sgp.labels$my.subject, "' and grade '", rev(grade.progression)[1], "'.\n\t\t\tSimulation based standard errors/confidences intervals for SGPs wil not be calculated.\n"))
                 csem.tf <- FALSE
-		}
+        }
 		if (is.list(calculate.confidence.intervals) &&
             "state" %in% names(calculate.confidence.intervals) &&
+            !"variable" %in% names(calculate.confidence.intervals) &&
+            is.data.frame(SGP::SGPstateData[[calculate.confidence.intervals$state]][["Assessment_Program_Information"]][["CSEM"]]) &&
             dim(SGP::SGPstateData[[calculate.confidence.intervals$state]][["Assessment_Program_Information"]][["CSEM"]][CONTENT_AREA==sgp.labels$my.subject & GRADE==rev(grade.progression)[1]])[1]==0) {
                 tmp.messages <- c(tmp.messages, paste0("\t\tNOTE: SGPstateData does not contain content area CSEMs for requested content area '", sgp.labels$my.subject, "'. Simulated SGPs and confidence intervals will not be calculated.\n"))
                 csem.tf <- FALSE

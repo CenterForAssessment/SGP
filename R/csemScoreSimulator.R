@@ -36,7 +36,7 @@ function(
 
 	### Create scale score dependent CSEMs
 
-	if (!is.null(state)) {
+	if (is.null(variable) && !is.null(state)) {
 		if ("YEAR" %in% names(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
 			Interpolation_Data <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]][GRADE==grade & CONTENT_AREA==content_area & YEAR==year]
 		} else {
