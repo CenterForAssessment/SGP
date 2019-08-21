@@ -1486,7 +1486,7 @@ function(panel.data,         ## REQUIRED
 			state=calculate.simex$state,
 			variable=calculate.simex$variable,
 			csem.data.vnames=calculate.simex$csem.data.vnames,
-			csem.loss.hoss=calculate.simex$csem.loss.hoss,
+#			csem.loss.hoss=calculate.simex$csem.loss.hoss,
 			lambda=calculate.simex$lambda,
 			B=calculate.simex$simulation.iterations,
 			simex.sample.size=calculate.simex$simex.sample.size,
