@@ -345,7 +345,8 @@ function(panel.data,         ## REQUIRED
 	{
 
 		if (is.null(dependent.var.error)) dependent.var.error <- FALSE
-		if (is.null(reproduce.old.values)) reproduce.old.values <- FALSE
+		if (is.null(ranked.simex.sgps)) ranked.simex.sgps <- TRUE
+    if (is.null(reproduce.old.values)) reproduce.old.values <- FALSE
 		if (is.null(verbose)) verbose <- FALSE
 		if (verbose) messageSGP(c("\n\tStarted SIMEX SGP calculation ", rev(content_area.progression)[1L], " Grade ", rev(tmp.gp)[1L], " ", prettyDate()))
 
@@ -772,7 +773,8 @@ function(panel.data,         ## REQUIRED
                     .get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]], ranked.simex=ifelse(reproduce.old.values, "reproduce.old.values", TRUE)))/n.records), 0)))
         } else {
           tmp.quantiles.simex[[k]] <- data.table(ID=tmp.data[["ID"]], SIMEX_ORDER=k,
-  					SGP_SIMEX=.get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]]))
+  					SGP_SIMEX=.get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]]),
+            SGP_SIMEX_RANKED=as.integer(NA))
         }
 			}
 		} ### END for (k in simex.matrix.priors)
@@ -1549,6 +1551,7 @@ function(panel.data,         ## REQUIRED
 			simex.use.my.coefficient.matrices=calculate.simex$simex.use.my.coefficient.matrices,
 			calculate.simex.sgps=calculate.sgps,
 			dependent.var.error=calculate.simex$dependent.var.error,
+      ranked.simex.sgps=calculate.simex$ranked.simex.sgps,
 			reproduce.old.values=calculate.simex$reproduce.old.values,
 			verbose=calculate.simex$verbose)
 
