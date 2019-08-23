@@ -417,6 +417,7 @@ function(panel.data,         ## REQUIRED
                     setnames(big.data, c("VARIABLE", "CSEM"), paste0(c("DONE_VARIABLE", "DONE_CSEM"), perturb.var.iter))
             }
             big.data[,grep("DONE", names(big.data), value=TRUE):=NULL]
+            if (!dependent.var.error) setcolorder(1, 3:ncol(big.data), 2)
             setnames(big.data, c("ID", "b", paste0("prior_", (csem.col.offset-1L):1L), "final_yr"))
             setcolorder(big.data, c(1, 3:ncol(big.data), 2))
 			setkey(big.data, b, ID)
