@@ -509,7 +509,20 @@ function(panel.data,         ## REQUIRED
 #				setnames(csem.int, csem.data.vnames, paste0("icsem", head(tmp.gp, -1L), head(content_area.progression, -1L), head(year.progression, -1L)))
 #			}
 
+			## naive model
+            if (calculate.simex.sgps) {
+                fitted[[paste0("order_", k)]] <- matrix(0, nrow=length(lambda), ncol=n.records*length(taus))
+                tmp.matrix <- getsplineMatrices(
+                    Coefficient_Matrices[[tmp.path.coefficient.matrices]],
+                    tail(content_area.progression, k+1L),
+                    tail(grade.progression, k+1L),
+                    tail(year.progression, k+1L),
+                    tail(year_lags.progression, k),
+                    my.matrix.order=k,
+                    my.matrix.time.dependency=SGPt)[[1L]]
 
+                fitted[[paste0("order_", k)]][1L,] <- c(.get.percentile.predictions(tmp.data, tmp.matrix))
+            }
 
 			# add csems to tmp.data
 			if (!is.null(state)) {
@@ -549,19 +562,7 @@ function(panel.data,         ## REQUIRED
 #			}
 
 			## naive model
-			if (calculate.simex.sgps) {
-				fitted[[paste0("order_", k)]] <- matrix(0, nrow=length(lambda), ncol=n.records*length(taus))
-				tmp.matrix <- getsplineMatrices(
-					Coefficient_Matrices[[tmp.path.coefficient.matrices]],
-					tail(content_area.progression, k+1L),
-					tail(grade.progression, k+1L),
-					tail(year.progression, k+1L),
-					tail(year_lags.progression, k),
-					my.matrix.order=k,
-					my.matrix.time.dependency=SGPt)[[1L]]
 
-				fitted[[paste0("order_", k)]][1L,] <- c(.get.percentile.predictions(tmp.data, tmp.matrix))
-			}
 
 			if (verbose) messageSGP(c("\t\t", rev(content_area.progression)[1L], " Grade ", rev(tmp.gp)[1L], " Order ", k, " Started simulation process ", prettyDate()))
 
@@ -597,7 +598,6 @@ function(panel.data,         ## REQUIRED
 
 					if (is.null(simex.use.my.coefficient.matrices) & !identical(sgp.labels[['my.extra.label']], "BASELINE")) {
                         for (g in seq_along(perturb.var)) {
-                            col.index <- num.perturb.vars-g
                             ks <- big.data[, as.list(as.vector(unlist(round(quantile(big.data[[g+1L]], probs=knot.cut.percentiles, na.rm=TRUE), digits=3L))))] # Knots
                             bs <- big.data[, as.list(as.vector(round(extendrange(big.data[[g+1L]], f=0.1), digits=3L)))] # Boundaries
                             lh <- big.data[, as.list(as.vector(round(extendrange(big.data[[g+1L]], f=0.0), digits=3L)))] # LOSS/HOSS
