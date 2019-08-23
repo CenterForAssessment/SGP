@@ -971,7 +971,7 @@ function(panel.data,         ## REQUIRED
                 csem.tf <- FALSE
 		}
         if (is.list(calculate.confidence.intervals) &&
-            "round.digits" %in% names(SGP::SGPstateData[[state]][["SGP_Configuration"]])) {
+            "round.digits" %in% names(SGP::SGPstateData[[calculate.confidence.intervals$state]][["SGP_Configuration"]])) {
                 calculate.confidence.intervals$round.digits <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["round.digits"]]
         }
 		if (sgp.quantiles != "PERCENTILES") {
