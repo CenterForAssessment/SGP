@@ -970,6 +970,10 @@ function(panel.data,         ## REQUIRED
                 tmp.messages <- c(tmp.messages, paste0("\t\tNOTE: SGPstateData does not contain content area CSEMs for requested content area '", sgp.labels$my.subject, "'. Simulated SGPs and confidence intervals will not be calculated.\n"))
                 csem.tf <- FALSE
 		}
+        if (is.list(calculate.confidence.intervals) &&
+            "round.digits" %in% names(SGP::SGPstateData[[state]][["SGP_Configuration"]])) {
+                calculate.confidence.intervals$round.digits <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["round.digits"]]
+        }
 		if (sgp.quantiles != "PERCENTILES") {
 			tmp.messages <- c(tmp.messages, "\t\tNOTE: When 'sgp.quantiles' is supplied and not equal to PERCENTILES, simulation based standard errors/confidences intervals for SGPs are not available.\n")
 			csem.tf <- FALSE
@@ -1584,7 +1588,7 @@ function(panel.data,         ## REQUIRED
 													state=calculate.confidence.intervals[['state']],
 													variable=tmp.csem.variable,
 													distribution=calculate.confidence.intervals[['distribution']],
-													round.digits=calculate.confidence.intervals[['round']]))),
+													round.digits=calculate.confidence.intervals[['round.digits']]))),
                                         ncol=calculate.confidence.intervals[['simulation.iterations']]))
 					setnames(tmp.csem.quantiles[[j]], paste0("V", seq(calculate.confidence.intervals[['simulation.iterations']])),
 										paste("SGP_SIM", seq(calculate.confidence.intervals[['simulation.iterations']]), sep="_"))

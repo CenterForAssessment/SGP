@@ -25,7 +25,7 @@ function(
 
 	### Define relevant variables
 
-	if (is.null(round.digits)) round.digits <- 2
+	if (is.null(round.digits)) round.digits <- 1L
 	if (is.null(distribution)) distribution <- "Normal"
 	if (!is.null(state)) {
 		min.max <- SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[get.my.knots.boundaries(content_area, year)]][[paste0("loss.hoss_", grade)]]
