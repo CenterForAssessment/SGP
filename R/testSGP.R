@@ -735,6 +735,7 @@ function(
 			SGPstateData[['DEMO_EOCT']][['SGP_Configuration']][['sgPlot.sgp.targets.timeframe']] <- 3
 			SGPstateData[['DEMO_EOCT']][['SGP_Configuration']][['sgp.target.scale.scores.merge']] <- "all_years_lagged_current"
 			SGPstateData[['DEMO_EOCT']][['SGP_Configuration']][['return.sgp.target.num.years']] <- TRUE
+			SGPstateData[['DEMO_EOCT']][['SGP_Configuration']][['round.digits']] <- 4L
 
 			### Add EOCT courses to sgpData_LONG and CSEMs if using use.csems.embedded.in.data argument
 
