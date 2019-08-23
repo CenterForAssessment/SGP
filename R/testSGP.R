@@ -325,7 +325,7 @@ function(
 #			if (identical(sum(Demonstration_SGP@Data[['SGP_0.025_CONFIDENCE_BOUND']], na.rm=TRUE), 6096120)) {
 #			if (identical(sum(Demonstration_SGP@Data[['SGP_0.025_CONFIDENCE_BOUND']], na.rm=TRUE), 3952340)) {
 #			if (identical(digest(Demonstration_SGP@Data[['SGP_0.025_CONFIDENCE_BOUND']]), "5e48f22520ff2607032c2e4b51ddccc2")) { # pre-GRADE key: dc13c362312f379fbbfa83c49f1e53eb
-			if (identical(digest(Demonstration_SGP@Data[['SGP_0.025_CONFIDENCE_BOUND']]), "d519a7cbee25d01f6fafd3ab171e98f7")) { # pre-GRADE key: dc13c362312f379fbbfa83c49f1e53eb
+			if (identical(digest(Demonstration_SGP@Data[['SGP_0.025_CONFIDENCE_BOUND']]), "237d3505dfbbc4a4dfbdbdbd73c45629")) { # pre-GRADE key: dc13c362312f379fbbfa83c49f1e53eb
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_0.025_CONFIDENCE_BOUND: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_0.025_CONFIDENCE_BOUND: FAIL\n")

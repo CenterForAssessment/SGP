@@ -340,7 +340,7 @@ function(panel.data,         ## REQUIRED
 	###
 	simex.sgp <- function(
 		state,
-        variable=NULL,
+#        variable=NULL,
         csem.data.vnames=NULL,
  #       csem.loss.hoss=NULL,
 		lambda,
@@ -354,7 +354,7 @@ function(panel.data,         ## REQUIRED
         reproduce.old.values=FALSE,
         verbose=FALSE) {
 
-		GRADE <- CONTENT_AREA <- YEAR <- V1 <- Lambda <- tau <- b <- .SD <- TEMP <- NULL ## To avoid R CMD check warnings
+		GRADE <- CONTENT_AREA <- YEAR <- V1 <- Lambda <- tau <- b <- .SD <- TEMP <- CSEM <- VARIABLE <- NULL ## To avoid R CMD check warnings
 
         ### simex.sgp internal utility functions
 
@@ -408,15 +408,20 @@ function(panel.data,         ## REQUIRED
 				"Version=tmp.version)")))
 		} ### END rq.mtx function
 
-        createBigData <- function() { # Function that creates big.data object from which SIMEX SGPs are calculated
-
-
-
-
-
+        createBigData <- function(tmp.data, perturb.var, L, dependent.var.error) { # Function that creates big.data object from which SIMEX SGPs are calculated
+            big.data <- rbindlist(replicate(B, tmp.data, simplify = FALSE))[, b:=rep(seq.int(B), each=n.records)]
+            if (dependent.var.error) csem.col.offset <- (ncol(big.data)-2L)/2L else csem.col.offset <- (ncol(big.data)-1L)/2L
+            for (perturb.var.iter in seq_along(perturb.var)) {
+                    setnames(big.data, c(1L+perturb.var.iter, 1L+perturb.var.iter+csem.col.offset), c("VARIABLE", "CSEM"))
+                    big.data[, paste0("TEMP_V", perturb.var.iter) := VARIABLE+sqrt(L)*CSEM*rnorm(1L), by=c(names(big.data)[1L+seq_along(perturb.var)], "b")]
+                    setnames(big.data, c("VARIABLE", "CSEM"), paste0(c("DONE_VARIABLE", "DONE_CSEM"), perturb.var.iter))
+            }
+            big.data[,grep("DONE", names(big.data), value=TRUE):=NULL]
+            setnames(big.data, c("ID", "b", paste0("prior_", (csem.col.offset-1L):1L), "final_yr"))
+            setcolorder(big.data, c(1, 3:ncol(big.data), 2))
 			setkey(big.data, b, ID)
             return(big.data)
-        } ### END createBigData
+        } ### END createBigData function
 
 
         ### Check arguments/define variables
@@ -481,7 +486,7 @@ function(panel.data,         ## REQUIRED
 			tmp.data <- .get.panel.data(ss.data, k, by.grade, tmp.gp)
 			n.records <- nrow(tmp.data)
 			tmp.num.variables <- dim(tmp.data)[2L]
-			tmp.gp.iter <- rev(tmp.gp)[2:(k+1L)]
+			tmp.gp.iter <- rev(tmp.gp)[2L:(k+1L)]
 			if (dependent.var.error) {
 				perturb.var <- rev(tmp.gp)[1:(k+1L)]
 				start.index <- 1L
@@ -564,49 +569,50 @@ function(panel.data,         ## REQUIRED
 #				tmp.data <- merge(tmp.data, csem.int, by="ID")
 #			}
 			for (L in lambda[-1L]) {
-#                big.data <- getBigData(tmp.data, B, dependent.var.error, )
-				big.data <- rbindlist(replicate(B, tmp.data, simplify = FALSE))
-				big.data[, b:=rep(1:B, each=n.records)]
-				if (dependent.var.error) {
-					unique.key <- c("b")
-				} else {
-					setnames(big.data, tmp.num.variables, "final_yr")
-					unique.key <- c("final_yr", "b")
-				}
-				for (g in seq_along(perturb.var)) {
-					col.index <- num.perturb.vars-g
-                    csem.index <-
+                big.data <- createBigData(tmp.data, perturb.var, L, dependent.var.error)
+#				big.data <- rbindlist(replicate(B, tmp.data, simplify = FALSE))
+#				big.data[, b:=rep(1:B, each=n.records)]
+#				if (dependent.var.error) {
+#					unique.key <- c("b")
+#				} else {
+#					setnames(big.data, tmp.num.variables, "final_yr")
+#					unique.key <- c("final_yr", "b")
+#				}
+#				for (g in seq_along(perturb.var)) {
+#					col.index <- num.perturb.vars-g
 #					if (is.null(csem.data.vnames)) {
 #						setkeyv(big.data, c(names(big.data)[col.index], tmp.names))
 #                        big.data.uniques <- unique(big.data[, paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g]) :=
 #							rep(csem.int[[paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g])]], dim(big.data)[1]/dim(csem.int)[1])], by=key(big.data))
 #					} else {
-						setkeyv(big.data, c(names(big.data)[col.index], c("final_yr", "b"), paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g])))
-						big.data.uniques <- unique(big.data, by=key(big.data))
+#						setkeyv(big.data, c(names(big.data)[col.index], c("final_yr", "b"), paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g])))
+#						big.data.uniques <- unique(big.data, by=key(big.data))
 #					}
-					big.data.uniques[, TEMP := eval(parse(text=paste0("big.data.uniques[[", num.perturb.vars-g, "]]+sqrt(L)*big.data.uniques[['icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], "']] * rnorm(dim(big.data.uniques)[1L])")))]
+#					big.data.uniques[, TEMP := eval(parse(text=paste0("big.data.uniques[[", num.perturb.vars-g, "]]+sqrt(L)*big.data.uniques[['icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g], "']] * rnorm(dim(big.data.uniques)[1L])")))]
 #					big.data.uniques[big.data.uniques[[col.index]] < loss.hoss[1L,g], (col.index) := loss.hoss[1L,g]]
 #					big.data.uniques[big.data.uniques[[col.index]] > loss.hoss[2L,g], (col.index) := loss.hoss[2L,g]]
-					if (is.null(key(big.data.uniques))) setkeyv(big.data.uniques, key(big.data))
-					big.data[, (num.perturb.vars-g) := big.data.uniques[,c(key(big.data), "TEMP"), with=FALSE][big.data][['TEMP']]]
+#					if (is.null(key(big.data.uniques))) setkeyv(big.data.uniques, key(big.data))
+#					big.data[, (num.perturb.vars-g) := big.data.uniques[,c(key(big.data), "TEMP"), with=FALSE][big.data][['TEMP']]]
 
 					if (is.null(simex.use.my.coefficient.matrices) & !identical(sgp.labels[['my.extra.label']], "BASELINE")) {
-						ks <- big.data[, as.list(as.vector(unlist(round(quantile(big.data[[col.index]], probs=knot.cut.percentiles, na.rm=TRUE), digits=3L))))] # Knots
-						bs <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.1), digits=3L)))] # Boundaries
-						lh <- big.data[, as.list(as.vector(round(extendrange(big.data[[col.index]], f=0.0), digits=3L)))] # LOSS/HOSS
+                        for (g in seq_along(perturb.var)) {
+                            col.index <- num.perturb.vars-g
+                            ks <- big.data[, as.list(as.vector(unlist(round(quantile(big.data[[g+1L]], probs=knot.cut.percentiles, na.rm=TRUE), digits=3L))))] # Knots
+                            bs <- big.data[, as.list(as.vector(round(extendrange(big.data[[g+1L]], f=0.1), digits=3L)))] # Boundaries
+                            lh <- big.data[, as.list(as.vector(round(extendrange(big.data[[g+1L]], f=0.0), digits=3L)))] # LOSS/HOSS
 
-						eval(parse(text=paste0("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['knots_", perturb.var[g],
+                            eval(parse(text=paste0("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['knots_", rev(perturb.var)[g],
 																	"']] <- c(ks[,V1], ks[,V2], ks[,V3], ks[,V4])")))
-						eval(parse(text=paste0("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['boundaries_", perturb.var[g],
+                            eval(parse(text=paste0("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['boundaries_", rev(perturb.var)[g],
 																	"']] <- c(bs[,V1], bs[,V2])")))
-						eval(parse(text=paste0("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['loss.hoss_", perturb.var[g],
+                            eval(parse(text=paste0("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['loss.hoss_", rev(perturb.var)[g],
 																	"']] <- c(lh[,V1], lh[,V2])")))
-					}
+                    }
 
-					if (dependent.var.error) setnames(big.data, num.perturb.vars-g, paste0("prior_", g-1L)) else setnames(big.data, num.perturb.vars-g, paste0("prior_", g))
-					setkey(big.data, b, ID)
+#					if (dependent.var.error) setnames(big.data, num.perturb.vars-g, paste0("prior_", g-1L)) else setnames(big.data, num.perturb.vars-g, paste0("prior_", g))
+#					setkey(big.data, b, ID)
 				}
-				if (dependent.var.error) setnames(big.data, tmp.num.variables, "final_yr")
+#				if (dependent.var.error) setnames(big.data, tmp.num.variables, "final_yr")
 
 				## Establish the simulation iterations - either 1) 1:B, or 2) a sample of either B or the number of previously computed matrices
 				sim.iters <- 1:B
