@@ -1512,7 +1512,7 @@ function(panel.data,         ## REQUIRED
 	if (simex.tf) {
 		quantile.data.simex <- simex.sgp(
 			state=calculate.simex$state,
-			variable=calculate.simex$variable,
+#			variable=calculate.simex$variable,
 			csem.data.vnames=calculate.simex$csem.data.vnames,
 #			csem.loss.hoss=calculate.simex$csem.loss.hoss,
 			lambda=calculate.simex$lambda,
