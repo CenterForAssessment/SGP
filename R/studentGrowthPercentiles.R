@@ -408,17 +408,29 @@ function(panel.data,         ## REQUIRED
 				"Version=tmp.version)")))
 		} ### END rq.mtx function
 
+        createBigData <- function() { # Function that creates big.data object from which SIMEX SGPs are calculated
 
-        ### Check and set up Arguments
+
+
+
+
+			setkey(big.data, b, ID)
+            return(big.data)
+        } ### END createBigData
+
+
+        ### Check arguments/define variables
 
         if (is.null(dependent.var.error)) dependent.var.error <- FALSE
 		if (is.null(reproduce.old.values)) reproduce.old.values <- FALSE
 		if (is.null(verbose)) verbose <- FALSE
 		if (verbose) messageSGP(c("\n\tStarted SIMEX SGP calculation ", rev(content_area.progression)[1L], " Grade ", rev(tmp.gp)[1L], " ", prettyDate()))
 		if (is.logical(simex.use.my.coefficient.matrices) && !simex.use.my.coefficient.matrices) simex.use.my.coefficient.matrices <- NULL
+
 #		if (!is.null(state) && !is.null(variable)) stop("SIMEX config can not use both 'state' and 'variable' elements.")
 #		if (!is.null(state) && !is.null(csem.data.vnames)) stop("SIMEX config can not use both 'state' and 'csem.data.vnames' elements.")
 #		if (!is.null(csem.data.vnames) && !is.null(variable)) stop("SIMEX config can not use both 'csem.data.vnames' and 'variable' elements.")
+
 		if (!is.null(parallel.config)) {
 			if (is.null(parallel.config[["WORKERS"]][["SIMEX"]])) tmp.par.config <- NULL else tmp.par.config <- parallel.config
 		} else tmp.par.config <- NULL
@@ -472,7 +484,7 @@ function(panel.data,         ## REQUIRED
 			tmp.gp.iter <- rev(tmp.gp)[2:(k+1L)]
 			if (dependent.var.error) {
 				perturb.var <- rev(tmp.gp)[1:(k+1L)]
-				start.index <- 1
+				start.index <- 1L
 				num.perturb.vars <- tmp.num.variables+1L
 			} else {
 				perturb.var <- tmp.gp.iter
@@ -481,6 +493,8 @@ function(panel.data,         ## REQUIRED
 			}
 			tmp.ca.iter <- rev(content_area.progression)[start.index:(k+1L)]
 			tmp.yr.iter <- rev(year.progression)[start.index:(k+1L)]
+
+
 #			if (is.null(csem.data.vnames)) {
 #				csem.int <- data.table(matrix(nrow=n.records, ncol=length(perturb.var))) # build data.table to store interpolated csem
 #				setnames(csem.int, paste0("icsem", perturb.var, tmp.ca.iter, tmp.yr.iter))
@@ -489,9 +503,11 @@ function(panel.data,         ## REQUIRED
 #				setnames(csem.int, csem.data.vnames, paste0("icsem", head(tmp.gp, -1L), head(content_area.progression, -1L), head(year.progression, -1L)))
 #			}
 
-			# interpolate csem for all scale scores except that of the last grade
+
+
+			# add csems to tmp.data
 			if (!is.null(state)) {
-				for (g in seq_along(perturb.var)) {
+				for (g in rev(seq_along(perturb.var))) {
 					if ("YEAR" %in% names(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
 						CSEM_Data <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]][
 							GRADE==perturb.var[g] & CONTENT_AREA==tmp.ca.iter[g] & YEAR==tmp.yr.iter[g]]
@@ -508,7 +524,7 @@ function(panel.data,         ## REQUIRED
 			}
 
             if (!is.null(csem.data.vnames)) {
-                for (g in seq_along(perturb.var)) {
+                for (g in rev(seq_along(perturb.var))) {
 					tmp.data[, paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g]) := Panel_Data[list(tmp.data$ID)][[rev(csem.data.vnames)[g]]]]
                 }
             }
@@ -548,16 +564,18 @@ function(panel.data,         ## REQUIRED
 #				tmp.data <- merge(tmp.data, csem.int, by="ID")
 #			}
 			for (L in lambda[-1L]) {
+#                big.data <- getBigData(tmp.data, B, dependent.var.error, )
 				big.data <- rbindlist(replicate(B, tmp.data, simplify = FALSE))
 				big.data[, b:=rep(1:B, each=n.records)]
-#				if (dependent.var.error) {
-#					tmp.names <- "b"
-#				} else {
-#					setnames(big.data, tmp.num.variables, "final_yr")
-#					tmp.names <- c("final_yr", "b")
-#				}
+				if (dependent.var.error) {
+					unique.key <- c("b")
+				} else {
+					setnames(big.data, tmp.num.variables, "final_yr")
+					unique.key <- c("final_yr", "b")
+				}
 				for (g in seq_along(perturb.var)) {
 					col.index <- num.perturb.vars-g
+                    csem.index <-
 #					if (is.null(csem.data.vnames)) {
 #						setkeyv(big.data, c(names(big.data)[col.index], tmp.names))
 #                        big.data.uniques <- unique(big.data[, paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g]) :=
