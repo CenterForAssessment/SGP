@@ -410,16 +410,20 @@ function(panel.data,         ## REQUIRED
 
         createBigData <- function(tmp.data, perturb.var, L, dependent.var.error) { # Function that creates big.data object from which SIMEX SGPs are calculated
             big.data <- rbindlist(replicate(B, tmp.data, simplify = FALSE))[, b:=rep(seq.int(B), each=n.records)]
-            if (dependent.var.error) csem.col.offset <- (ncol(big.data)-2L)/2L else csem.col.offset <- (ncol(big.data)-1L)/2L
+            if (dependent.var.error) csem.col.offset <- (ncol(big.data)-2)/2 else csem.col.offset <- (ncol(big.data)-1)/2
+#            setnames(big.data, c(1+seq(csem.col.offset-1), 1+csem.col.offset), c(paste0("prior_", (csem.col.offset-1L):1L), "final_yr"))
+#            setnames(big.data, 1+csem.col.offset+seq_along(perturb.var), paste0("CSEM_", names(big.data)[2:(1+csem.col.offset)][seq_along(1+csem.col.offset+seq_along(perturb.var))]))
             for (perturb.var.iter in seq_along(perturb.var)) {
+#                    setnames(big.data, c(1L+perturb.var.iter+(seq(csem.col.offset-1)-1)), 1L+perturb.var.iter+csem.col.offset-1, 1L+perturb.var.iter+csem.col.offset), c(paste0(paste0("prior_", (csem.col.offset-1L):1L), "final_yr", "CSEM"))
                     setnames(big.data, c(1L+perturb.var.iter, 1L+perturb.var.iter+csem.col.offset), c("VARIABLE", "CSEM"))
-                    big.data[, paste0("TEMP_V", perturb.var.iter) := VARIABLE+sqrt(L)*CSEM*rnorm(1L), keyby=c(names(big.data)[1L+seq_along(perturb.var)], "b")]
-                    setnames(big.data, c("VARIABLE", "CSEM"), paste0(c("DONE_VARIABLE", "DONE_CSEM"), perturb.var.iter))
+                    unique.key <- c(names(big.data)[2:(2+csem.col.offset-1)], "b")
+                    big.data[,(1L+perturb.var.iter) := unique(big.data, by=unique.key)[,"TEMP" := VARIABLE+sqrt(L)*CSEM*rnorm(.N)][big.data[,unique.key, with=FALSE], on=unique.key][["TEMP"]]]
+#                    big.data[, paste0("TEMP_V", perturb.var.iter) := VARIABLE+sqrt(L)*CSEM*rnorm(1L), keyby=c(names(big.data)[1L+seq_along(perturb.var)], "b")]
+#                    (OLD STUFF FROM BELOW) big.data[, (num.perturb.vars-g) := big.data.uniques[,c(key(big.data), "TEMP"), with=FALSE][big.data][['TEMP']]]
+                    setnames(big.data, c("VARIABLE", "CSEM"), paste0(c("VARIABLE", "DONE_CSEM"), perturb.var.iter))
             }
             big.data[,grep("DONE", names(big.data), value=TRUE):=NULL]
-            if (!dependent.var.error) setcolorder(big.data, c(1, 3:ncol(big.data), 2))
-            setnames(big.data, c("ID", "b", paste0("prior_", (csem.col.offset-1L):1L), "final_yr"))
-            setcolorder(big.data, c(1, 3:ncol(big.data), 2))
+            setnames(big.data, c("ID", paste0("prior_", (csem.col.offset-1L):1L), "final_yr", "b"))
 			setkey(big.data, b, ID)
             return(big.data)
         } ### END createBigData function
