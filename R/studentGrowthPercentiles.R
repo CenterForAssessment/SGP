@@ -411,6 +411,7 @@ function(panel.data,         ## REQUIRED
         createBigData <- function(tmp.data, perturb.var, L, dependent.var.error) { # Function that creates big.data object from which SIMEX SGPs are calculated
             big.data <- rbindlist(replicate(B, tmp.data, simplify = FALSE))[, b:=rep(seq.int(B), each=n.records)]
             if (dependent.var.error) csem.col.offset <- (ncol(big.data)-2)/2 else csem.col.offset <- (ncol(big.data)-1)/2
+            setkeyv(big.data, c(names(big.data)[2:(2+csem.col.offset-1)], "b"))
 #            setnames(big.data, c(1+seq(csem.col.offset-1), 1+csem.col.offset), c(paste0("prior_", (csem.col.offset-1L):1L), "final_yr"))
 #            setnames(big.data, 1+csem.col.offset+seq_along(perturb.var), paste0("CSEM_", names(big.data)[2:(1+csem.col.offset)][seq_along(1+csem.col.offset+seq_along(perturb.var))]))
             for (perturb.var.iter in seq_along(perturb.var)) {
