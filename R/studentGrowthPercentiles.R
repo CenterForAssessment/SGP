@@ -414,11 +414,11 @@ function(panel.data,         ## REQUIRED
 #            setkeyv(big.data, c(names(big.data)[2:(2+csem.col.offset-1)], "b"))
 #            setnames(big.data, c(1+seq(csem.col.offset-1), 1+csem.col.offset), c(paste0("prior_", (csem.col.offset-1L):1L), "final_yr"))
 #            setnames(big.data, 1+csem.col.offset+seq_along(perturb.var), paste0("CSEM_", names(big.data)[2:(1+csem.col.offset)][seq_along(1+csem.col.offset+seq_along(perturb.var))]))
-            for (perturb.var.iter in seq_along(perturb.var)) {
+            for (perturb.var.iter in rev(seq_along(perturb.var))) {
 #                    setnames(big.data, c(1L+perturb.var.iter+(seq(csem.col.offset-1)-1)), 1L+perturb.var.iter+csem.col.offset-1, 1L+perturb.var.iter+csem.col.offset), c(paste0(paste0("prior_", (csem.col.offset-1L):1L), "final_yr", "CSEM"))
                     setnames(big.data, c(1L+perturb.var.iter, 1L+perturb.var.iter+csem.col.offset), c("VARIABLE", "CSEM"))
 #                    unique.key <- c(names(big.data)[2:(2+csem.col.offset-1)], "b")
-                    unique.key <- c(names(big.data)[c(2, 2+csem.col.offset-1)], "b")
+                    unique.key <- c("VARIABLE", names(big.data)[1+csem.col.offset], "b")
                     setkeyv(big.data, unique.key)
                     big.data[,(1L+perturb.var.iter) := unique(big.data, by=unique.key)[,"TEMP" := VARIABLE+sqrt(L)*CSEM*rnorm(.N)][big.data[,unique.key, with=FALSE], on=unique.key][["TEMP"]]]
 #                    big.data[, paste0("TEMP_V", perturb.var.iter) := VARIABLE+sqrt(L)*CSEM*rnorm(1L), keyby=c(names(big.data)[1L+seq_along(perturb.var)], "b")]
