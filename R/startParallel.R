@@ -225,6 +225,7 @@ function(parallel.config,
 				return(list(doPar.cl=doPar.cl, foreach.options=foreach.options, par.type=par.type, TAUS.LIST=TAUS.LIST))
 			} else {
 				registerDoParallel(workers)
+				eval(parse(text=paste0("later:", "::ensureInitialized()")))
 				return(list(foreach.options=foreach.options, par.type=par.type, TAUS.LIST=TAUS.LIST))
 			}
 		}
@@ -240,6 +241,7 @@ function(parallel.config,
 	}
 
 	if (par.type=='MULTICORE') {
+		eval(parse(text=paste0("later:", "::ensureInitialized()")))
 		return(list(workers=workers, par.type=par.type, TAUS.LIST=TAUS.LIST, Lower_Level_Parallel=Lower_Level_Parallel))
 	}
 } ### END startParallel Funtion

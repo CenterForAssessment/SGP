@@ -6,6 +6,7 @@ function(
 	content_areas=NULL,
 	content_areas_prior=NULL,
 	grades=NULL,
+	ceiling.floor=TRUE,
 	use.sgp="SGP",
 	output.format="PDF",
 	color.scale="reds.and.blues") {
@@ -28,7 +29,7 @@ function(
 
 	if (grepl("BASELINE", use.sgp)) norm.group.var <- "SGP_NORM_GROUP_BASELINE" else norm.group.var <- "SGP_NORM_GROUP"
 	if ("ACHIEVEMENT_LEVEL_PRIOR" %in% names(tmp.data)) {
-		with.prior.achievement.level <- TRUE
+		with.prior.achievement.level <- TRUE; ceiling.floor <- TRUE # force ceiling.floor when with.prior.achievement.level (for now?)
 		my.width <- 8.5; my.height <- 11
 		variables.to.get <- c("SCALE_SCORE", "SCALE_SCORE_PRIOR", "ACHIEVEMENT_LEVEL_PRIOR", "CONTENT_AREA_PRIOR", "YEAR_PRIOR", use.sgp, "GRADE", norm.group.var)
 	} else {
@@ -36,6 +37,7 @@ function(
 		my.width <- 8.5; my.height <- 8
 		variables.to.get <- c("SCALE_SCORE", "SCALE_SCORE_PRIOR", use.sgp, "GRADE", norm.group.var)
 	}
+	if (!ceiling.floor) my.height <- 5.5
 
 
 	### Utility functions
@@ -197,6 +199,7 @@ function(
 			tmp.list[[i]] <- quantile(data1$SGP[tmp.cuts==i], probs=ppoints(1:500), na.rm=TRUE)
 		}
 
+		if (ceiling.floor) {
 		if ((tmp.n <- dim(tmp.data.final)[1]) > 50) pct <- 50/tmp.n else pct <- 0.9999 # Take Top/Bottom 50 kids to find LOSS/HOSS
 
 		loss_hoss.data <- rbindlist(list(
@@ -231,6 +234,7 @@ function(
 		loss.counts <- table(loss.ss)
 		hoss.counts <- table(hoss.ss)
 		loss_hoss.colors <- .cell.color(loss_hoss.table, loss_hoss=TRUE)
+		}
 
 		if (with.prior.achievement.level) {
 			if (is.null(state)) {
@@ -261,6 +265,7 @@ function(
 				viewport(layout.pos.row=8, layout.pos.col=2, xscale=c(-3,12), yscale=c(0,13), name="table"),
 				viewport(layout.pos.row=8, layout.pos.col=3, xscale=c(-25,110), yscale=c(-8,130), name="qq"))
 		} else {
+			if (ceiling.floor) {
 			layout.vp <- viewport(layout = grid.layout(7, 4, widths = unit(c(0.1, 4.9, 3.4, 0.1), rep("inches", 4)),
 			heights = unit(c(0.2, 1.0, 0.1, 2.0, 0.1, 4.0, 0.2), rep("inches", 7))), name="layout")
 			components <- vpList(
@@ -268,6 +273,13 @@ function(
 				viewport(layout.pos.row=4, layout.pos.col=2:3, xscale=c(-5,15), yscale=c(0,loss_hoss.rows+4), name="loss_hoss"),
 				viewport(layout.pos.row=6, layout.pos.col=2, xscale=c(-3,12), yscale=c(0,13), name="table"),
 				viewport(layout.pos.row=6, layout.pos.col=3, xscale=c(-25,110), yscale=c(-8,130), name="qq"))
+			} else {
+				layout.vp <- viewport(layout = grid.layout(5, 4, widths = unit(c(0.1, 4.9, 3.4, 0.1), rep("inches", 4)),
+				heights = unit(c(0.2, 1.0, 0.1, 4.0, 0.2), rep("inches", 2))), name="layout")
+				components <- vpList(viewport(layout.pos.row=2, layout.pos.col=2:3, name="title"),
+				viewport(layout.pos.row=4, layout.pos.col=2, xscale=c(-3,12), yscale=c(0,13), name="table"),
+				viewport(layout.pos.row=4, layout.pos.col=3, xscale=c(-25,110), yscale=c(-8,130), name="qq"))
+			}
 		}
 
 
@@ -330,7 +342,6 @@ function(
 				textGrob(x=-4.0, y=loss_hoss.rows+3.25, "Ceiling / Floor Effects Test", just="left", default.units="native", gp=gpar(cex=1.2), vp="loss_hoss"),
 				textGrob(x=rep(1:12,each=loss_hoss.rows), y=rep(loss_hoss.rows:1,loss_hoss.rows),
 							 formatC(as.vector(loss_hoss.table), format="f", digits=1), default.units="native", gp=gpar(cex=0.7), vp="loss_hoss"),
-
 			### table
 
 				roundrectGrob(width=0.98, r=unit(2, "mm"), vp="table"),
@@ -371,9 +382,9 @@ function(
 				children=gList(gTree(vp="layout",
 				childrenvp=components,
 				name=paste0("CHILDREN.", content_area, ".", year, ".GRADE.", grade),
-					children=gList(
+					children= if (ceiling.floor) { gList(
 
-			### title
+				### title
 
 				roundrectGrob(gp=gpar(fill="grey95"), vp="title", r=unit(3, "mm")),
 				textGrob(x=0.5, y=0.65, "Student Growth Percentile Goodness-of-Fit Descriptives", gp=gpar(cex=1.75), vp="title"),
@@ -381,7 +392,6 @@ function(
 					", Grade ", grade, " (N = ", format(dim(data1)[1], big.mark=","), ")"), vp="title", gp=gpar(cex=1.2)),
 
 				### LOSS/HOSS table
-
 				roundrectGrob(width=0.98, r=unit(2, "mm"), vp="loss_hoss"),
 				rectGrob(x=rep(1:12, each=loss_hoss.rows), y=rep(loss_hoss.rows:1,loss_hoss.rows), width=1, height=1, default.units="native",
 								 gp=gpar(col="black", fill=loss_hoss.colors), vp="loss_hoss"),
@@ -431,7 +441,51 @@ function(
 				textGrob(x=0:10*10, y=109, 0:10*10, default.units="native", gp=gpar(cex=0.7), vp="qq"),
 				textGrob(x=45, y=123, "QQ-Plot: Student Growth Percentiles", default.units="native", vp="qq"),
 				textGrob(x=50, y=115, "Theoretical SGP Distribution", default.units="native", gp=gpar(cex=0.7), vp="qq"),
-				textGrob(x=-17, y=50, "Empirical SGP Distribution", default.units="native", gp=gpar(cex=0.7), rot=90, vp="qq")))))
+				textGrob(x=-17, y=50, "Empirical SGP Distribution", default.units="native", gp=gpar(cex=0.7), rot=90, vp="qq"))
+				} else {
+				gList(
+
+				### title
+
+				roundrectGrob(gp=gpar(fill="grey95"), vp="title", r=unit(3, "mm")),
+				textGrob(x=0.5, y=0.65, "Student Growth Percentile Goodness-of-Fit Descriptives", gp=gpar(cex=1.75), vp="title"),
+				textGrob(x=0.5, y=0.35, paste0(pretty_year(year), " ", sub(' +$', '', capwords(paste(content_area, my.extra.label))),
+				", Grade ", grade, " (N = ", format(dim(data1)[1], big.mark=","), ")"), vp="title", gp=gpar(cex=1.2)),
+
+				### table
+
+				roundrectGrob(width=0.98, r=unit(2, "mm"), vp="table"),
+				rectGrob(x=rep(1:10, each=dim(tmp.table)[1]), y=rep(10:(10-dim(tmp.table)[1]+1),10), width=1, height=1, default.units="native",
+				gp=gpar(col="black", fill=tmp.colors), vp="table"),
+				textGrob(x=0.35, y=10:(10-dim(tmp.table)[1]+1), paste(c("1st", "2nd", "3rd", paste0(4:dim(tmp.table)[1], "th")),
+				dimnames(tmp.table)[[1]], sep="/"), just="right", gp=gpar(cex=0.7), default.units="native", vp="table"),
+				textGrob(x=10.65, y=10:(10-dim(tmp.table)[1]+1), paste0("(", tmp.cuts.percentages, "%)"), just="left", gp=gpar(cex=0.7),
+				default.units="native", vp="table"),
+				textGrob(x=-2.5, y=5.5, "Prior Scale Score Decile/Range", gp=gpar(cex=0.8), default.units="native", rot=90, vp="table"),
+				textGrob(x=1:10, y=10.8, dimnames(tmp.table)[[2]], gp=gpar(cex=0.7), default.units="native", rot=45, just="left", vp="table"),
+				textGrob(x=5.75, y=12.5, "Student Growth Percentile Range", gp=gpar(cex=0.9), default.units="native", vp="table"),
+				textGrob(x=rep(1:10,each=dim(tmp.table)[1]), y=rep(10:(10-dim(tmp.table)[1]+1),10),
+				formatC(as.vector(tmp.table), format="f", digits=2), default.units="native", gp=gpar(cex=0.7), vp="table"),
+				textGrob(x=-2.55, y=9.2, "*", default.units="native", rot=90, gp=gpar(cex=0.7), vp="table"),
+				textGrob(x=-2.05, y=0.3, "*", default.units="native", gp=gpar(cex=0.7), vp="table"),
+				textGrob(x=-2.0, y=0.25, "Prior score deciles can be uneven depending upon the prior score distribution", just="left", default.units="native",
+				gp=gpar(cex=0.5), vp="table"),
+
+				### qq
+
+				roundrectGrob(width=0.98, r=unit(2, "mm"), vp="qq"),
+				polylineGrob(unlist(tmp.list), rep(ppoints(1:500)*100, length(levels(tmp.cuts))),
+				id=rep(seq(length(levels(tmp.cuts))), each=500), gp=gpar(lwd=0.35), default.units="native", vp="qq"),
+				linesGrob(c(0,100), c(0,100), gp=gpar(lwd=0.75, col="red"), default.units="native", vp="qq"),
+				linesGrob(x=c(-3,-3,103,103,-3), y=c(-3,103,103,-3,-3), default.units="native", vp="qq"),
+				polylineGrob(x=rep(c(-6,-3), 11), y=rep(0:10*10, each=2), id=rep(1:11, each=2), default.units="native", vp="qq"),
+				textGrob(x=-7, y=0:10*10, 0:10*10, default.units="native", gp=gpar(cex=0.7), just="right", vp="qq"),
+				polylineGrob(x=rep(0:10*10, each=2), y=rep(c(103,106), 11), id=rep(1:11, each=2), default.units="native", vp="qq"),
+				textGrob(x=0:10*10, y=109, 0:10*10, default.units="native", gp=gpar(cex=0.7), vp="qq"),
+				textGrob(x=45, y=123, "QQ-Plot: Student Growth Percentiles", default.units="native", vp="qq"),
+				textGrob(x=50, y=115, "Theoretical SGP Distribution", default.units="native", gp=gpar(cex=0.7), vp="qq"),
+				textGrob(x=-17, y=50, "Empirical SGP Distribution", default.units="native", gp=gpar(cex=0.7), rot=90, vp="qq"))
+				})))
 
 		} ### END else
 

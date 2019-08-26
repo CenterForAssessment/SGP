@@ -26,7 +26,7 @@ function(list.of.splineMatrix,
 			}
 		} else {
 			for (grd_ord in names(list.of.splineMatrix[[i]])) {
-				for (lambda in names(list.of.splineMatrix[[i]][[grd_ord]])) {
+				for (lambda in grep("lambda", names(list.of.splineMatrix[[i]][[grd_ord]]), value=TRUE)) {
 					splineMatrix.tf <- sapply(list.of.splineMatrix[[i]][[grd_ord]][[lambda]], validObject, test=TRUE)==TRUE
 					if (!all(splineMatrix.tf)) {
 						content_area <- unlist(strsplit(i, "[.]"))[1]; year <- unlist(strsplit(i, "[.]"))[2]

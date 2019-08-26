@@ -340,10 +340,11 @@ function(panel.data,         ## REQUIRED
 	###
 	simex.sgp <- function(
 		state, variable=NULL, csem.data.vnames=NULL, csem.loss.hoss=NULL,
-		lambda, B, simex.sample.size, extrapolation, save.matrices, simex.use.my.coefficient.matrices=NULL, calculate.simex.sgps, dependent.var.error=FALSE, reproduce.old.values=FALSE, verbose=FALSE)
+		lambda, B, simex.sample.size, extrapolation, save.matrices, simex.use.my.coefficient.matrices=NULL, calculate.simex.sgps, dependent.var.error=FALSE, use.cohort.for.ranking=FALSE, reproduce.old.values=FALSE, verbose=FALSE)
 	{
 
 		if (is.null(dependent.var.error)) dependent.var.error <- FALSE
+		if (is.null(use.cohort.for.ranking)) use.cohort.for.ranking <- FALSE
 		if (is.null(reproduce.old.values)) reproduce.old.values <- FALSE
 		if (is.null(verbose)) verbose <- FALSE
 		if (verbose) messageSGP(c("\n\tStarted SIMEX SGP calculation ", rev(content_area.progression)[1L], " Grade ", rev(tmp.gp)[1L], " ", prettyDate()))
@@ -681,18 +682,53 @@ function(panel.data,         ## REQUIRED
 			} ### END for (L in lambda[-1L])
 			if (verbose) messageSGP(c("\t\t", rev(content_area.progression)[1L], " Grade ", rev(tmp.gp)[1L], " Order ", k, " Simulation process complete ", prettyDate()))
 
-			if (calculate.simex.sgps) {
-				switch(extrapolation,
-					LINEAR = fit <- lm(fitted[[paste0("order_", k)]] ~ lambda),
-					QUADRATIC = fit <- lm(fitted[[paste0("order_", k)]] ~ lambda + I(lambda^2)))
-				extrap[[paste0("order_", k)]] <-
-					matrix(.smooth.bound.iso.row(data.table(ID=seq.int(n.records), X=predict(fit, newdata=data.frame(lambda=-1L))[1L,]), isotonize, sgp.loss.hoss.adjustment),
-						ncol=length(taus), byrow=TRUE)
-				tmp.quantiles.simex[[k]] <- data.table(ID=tmp.data[["ID"]], SIMEX_ORDER=k,
-					SGP_SIMEX=.get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]]),
-          SGP_SIMEX_RANKED=as.integer(round(100*(data.table::frank(ties.method = "average", x =
-                    .get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]], ranked.simex=ifelse(reproduce.old.values, "reproduce.old.values", TRUE)))/n.records), 0)))
+			switch(extrapolation,
+				LINEAR = fit <- lm(fitted[[paste0("order_", k)]] ~ lambda),
+				QUADRATIC = fit <- lm(fitted[[paste0("order_", k)]] ~ lambda + I(lambda^2)))
+			extrap[[paste0("order_", k)]] <-
+				matrix(.smooth.bound.iso.row(data.table(ID=seq.int(n.records), X=predict(fit, newdata=data.frame(lambda=-1L))[1L,]), isotonize, sgp.loss.hoss.adjustment),
+					ncol=length(taus), byrow=TRUE)
+
+			if (is.null(simex.use.my.coefficient.matrices)) {
+			  ranked.simex.quantile.values <- .get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]], ranked.simex=ifelse(reproduce.old.values, "reproduce.old.values", TRUE))
+			  simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste("ranked_simex_table", tail(tmp.gp, 1L), k, sep="_")]] <- table(ranked.simex.quantile.values)
+			  simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste("n_records", tail(tmp.gp, 1L), k, sep="_")]] <- n.records
 			}
+
+      if (calculate.simex.sgps) {
+        if (is.null(simex.use.my.coefficient.matrices)) {
+          tmp.quantiles.simex[[k]] <- data.table(ID=tmp.data[["ID"]], SIMEX_ORDER=k,
+  					SGP_SIMEX=.get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]]),
+  					SGP_SIMEX_RANKED=as.integer(round(100*(data.table::frank(ties.method = "average", x = ranked.simex.quantile.values)/n.records), 0)))
+        } else {
+          if (length(Coefficient_Matrices[[paste0(tmp.path.coefficient.matrices, '.SIMEX')]][[paste("qrmatrices", tail(tmp.gp,1L), k, sep="_")]]) > (length(lambda)-1)) {
+            ranked.simex.info <- Coefficient_Matrices[[paste0(tmp.path.coefficient.matrices, '.SIMEX')]][[paste("qrmatrices", tail(tmp.gp,1L), k, sep="_")]][length(lambda):(length(lambda)+1)]
+            ranked.simex.tf <- TRUE
+          } else {
+            messageSGP("\tRanked SIMEX SGP calculation with pre-calculated SGPs is only available with info embedded as of SGP version 1.9-4.0.  NAs will be returned for SGP_SIMEX_RANKED.")
+            ranked.simex.tf <- FALSE
+          }
+          if (ranked.simex.tf){
+            if (use.cohort.for.ranking) { # Use `use.cohort.for.ranking=TRUE` if reproducing values with original data OR to rank against the updated/new cohort data ONLY
+              tmp.quantiles.simex[[k]] <- data.table(ID=tmp.data[["ID"]], SIMEX_ORDER=k,
+                SGP_SIMEX = .get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]]),
+                SGP_SIMEX_RANKED = as.integer(round(100*(data.table::frank(ties.method = "average", x =
+                    .get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]], ranked.simex=ifelse(reproduce.old.values, "reproduce.old.values", TRUE)))/n.records), 0)))
+            } else { # creates a new "average" rank of the original data and the updated/new cohort
+              tmp.quantiles.simex[[k]] <- data.table(ID=tmp.data[["ID"]], SIMEX_ORDER=k,
+                SGP_SIMEX = .get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]]),
+                SGP_SIMEX_RANKED = head(as.integer(round(100*(data.table::frank(ties.method = "average", x =
+                    c(.get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]], ranked.simex=ifelse(reproduce.old.values, "reproduce.old.values", TRUE)),
+                      as.numeric(rep(names(ranked.simex.info[[paste("ranked_simex_table", tail(tmp.gp, 1L), k, sep="_")]]),
+                        ranked.simex.info[[paste("ranked_simex_table", tail(tmp.gp, 1L), k, sep="_")]]))))/(n.records+ranked.simex.info[[paste("n_records", tail(tmp.gp, 1L), k, sep="_")]])), 0)), n.records))
+            }
+          } else {
+            tmp.quantiles.simex[[k]] <- data.table(ID=tmp.data[["ID"]], SIMEX_ORDER=k,
+              SGP_SIMEX=.get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]]),
+              SGP_SIMEX_RANKED=as.integer(NA))
+          }
+        }
+      }
 		} ### END for (k in simex.matrix.priors)
 
 		if (verbose) messageSGP(c("\tFinished SIMEX SGP calculation ", rev(content_area.progression)[1L], " Grade ", rev(tmp.gp)[1L], " ", prettyDate()))
@@ -1467,6 +1503,7 @@ function(panel.data,         ## REQUIRED
 			simex.use.my.coefficient.matrices=calculate.simex$simex.use.my.coefficient.matrices,
 			calculate.simex.sgps=calculate.sgps,
 			dependent.var.error=calculate.simex$dependent.var.error,
+      use.cohort.for.ranking=calculate.simex$use.cohort.for.ranking,
 			reproduce.old.values=calculate.simex$reproduce.old.values,
 			verbose=calculate.simex$verbose)
 
