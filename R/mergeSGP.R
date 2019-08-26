@@ -1,4 +1,4 @@
-`mergeSGP` <- 
+`mergeSGP` <-
 function(list_1,
 	list_2) {
 
@@ -53,9 +53,14 @@ function(list_1,
 				}
 			} else {
 				for (grd_ord in names(list_2[[j]][[k]])) {
-					for (lambda in names(list_2[[j]][[k]][[grd_ord]])) {
+					for (lambda in grep("lambda", names(list_2[[j]][[k]][[grd_ord]]), value=TRUE)) {
 						if (!identical(list_1[[j]][[k]][[grd_ord]][[lambda]], list_2[[j]][[k]][[grd_ord]][[lambda]])) {
 							list_1[[j]][[k]][[grd_ord]][[lambda]] <- unique.splineMatrix(c(list_1[[j]][[k]][[grd_ord]][[lambda]], list_2[[j]][[k]][[grd_ord]][[lambda]]))
+						}
+					}
+					for (rst in grep("ranked_simex_table|n_records", names(list_2[[j]][[k]][[grd_ord]]), value=TRUE)) {
+						if (!identical(list_1[[j]][[k]][[grd_ord]][[rst]], list_2[[j]][[k]][[grd_ord]][[rst]])) {
+							list_1[[j]][[k]][[grd_ord]][[rst]] <- c(list_1[[j]][[k]][[grd_ord]][[rst]], list_2[[j]][[k]][[grd_ord]][[rst]])
 						}
 					}
 				}
