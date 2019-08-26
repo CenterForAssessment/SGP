@@ -200,40 +200,40 @@ function(
 		}
 
 		if (ceiling.floor) {
-		if ((tmp.n <- dim(tmp.data.final)[1]) > 50) pct <- 50/tmp.n else pct <- 0.9999 # Take Top/Bottom 50 kids to find LOSS/HOSS
+			if ((tmp.n <- dim(tmp.data.final)[1]) > 50) pct <- 50/tmp.n else pct <- 0.9999 # Take Top/Bottom 50 kids to find LOSS/HOSS
 
-		loss_hoss.data <- rbindlist(list(
-			data.table(data1)[, list(SCALE_SCORE, SGP)][which(SCALE_SCORE <= quantile(SCALE_SCORE, probs = pct, na.rm=TRUE)),][, LH:="LOSS"],
-			data.table(data1)[, list(SCALE_SCORE, SGP)][which(SCALE_SCORE >= quantile(SCALE_SCORE, probs=1-pct, na.rm=TRUE)),][, LH:="HOSS"]))
-		setkey(loss_hoss.data, SCALE_SCORE, LH)
-		if (length(unique(loss_hoss.data[LH=="HOSS"][["SCALE_SCORE"]])) > 1) hoss.rows <- 2 else hoss.rows <- 1
-		if (length(unique(loss_hoss.data[LH=="LOSS"][["SCALE_SCORE"]])) > 1) loss.rows <- 2 else loss.rows <- 1
-		loss_hoss.rows <- loss.rows + hoss.rows
+			loss_hoss.data <- rbindlist(list(
+				data.table(data1)[, list(SCALE_SCORE, SGP)][which(SCALE_SCORE <= quantile(SCALE_SCORE, probs = pct, na.rm=TRUE)),][, LH:="LOSS"],
+				data.table(data1)[, list(SCALE_SCORE, SGP)][which(SCALE_SCORE >= quantile(SCALE_SCORE, probs=1-pct, na.rm=TRUE)),][, LH:="HOSS"]))
+			setkey(loss_hoss.data, SCALE_SCORE, LH)
+			if (length(unique(loss_hoss.data[LH=="HOSS"][["SCALE_SCORE"]])) > 1) hoss.rows <- 2 else hoss.rows <- 1
+			if (length(unique(loss_hoss.data[LH=="LOSS"][["SCALE_SCORE"]])) > 1) loss.rows <- 2 else loss.rows <- 1
+			loss_hoss.rows <- loss.rows + hoss.rows
 
-		if (max(loss_hoss.data[['SGP']]==100) | min(loss_hoss.data[['SGP']]==0)) {
-			loss_hoss.percentile.labels <- c('0 to 5', '5 to 9', '10 to 19', '20 to 29', '30 to 39', '40 to 49', '50 to 59', '60 to 69', '70 to 79', '80 to 89', '90 to 94', '95 to 100')
-		} else {
-			loss_hoss.percentile.labels <- c('1 to 5', '5 to 9', '10 to 19', '20 to 29', '30 to 39', '40 to 49', '50 to 59', '60 to 69', '70 to 79', '80 to 89', '90 to 94', '95 to 99')
-		}
+			if (max(loss_hoss.data[['SGP']]==100) | min(loss_hoss.data[['SGP']]==0)) {
+				loss_hoss.percentile.labels <- c('0 to 5', '5 to 9', '10 to 19', '20 to 29', '30 to 39', '40 to 49', '50 to 59', '60 to 69', '70 to 79', '80 to 89', '90 to 94', '95 to 100')
+			} else {
+				loss_hoss.percentile.labels <- c('1 to 5', '5 to 9', '10 to 19', '20 to 29', '30 to 39', '40 to 49', '50 to 59', '60 to 69', '70 to 79', '80 to 89', '90 to 94', '95 to 99')
+			}
 
-		if (all(grep("[.]", loss_hoss.data[['SCALE_SCORE']]))) tmp.digits <- 4 else tmp.digits <- 5
-		if (loss.rows!=1) {
-			loss.ss <- .quantcut(loss_hoss.data[LH=="LOSS"][['SCALE_SCORE']], q=0:2/2, right=FALSE, dig.lab=min(tmp.digits, max(nchar(loss_hoss.data[LH=="LOSS"][['SCALE_SCORE']]))))
-		} else loss.ss <- loss_hoss.data[LH=="LOSS"][['SCALE_SCORE']]
-		if (hoss.rows!=1) {
-			hoss.ss <- .quantcut(loss_hoss.data[LH=="HOSS"][['SCALE_SCORE']], q=0:2/2, right=FALSE, dig.lab=min(tmp.digits, max(nchar(loss_hoss.data[LH=="HOSS"][['SCALE_SCORE']]))))
-		} else hoss.ss <- loss_hoss.data[LH=="HOSS"][['SCALE_SCORE']]
+			if (all(grep("[.]", loss_hoss.data[['SCALE_SCORE']]))) tmp.digits <- 4 else tmp.digits <- 5
+			if (loss.rows!=1) {
+				loss.ss <- .quantcut(loss_hoss.data[LH=="LOSS"][['SCALE_SCORE']], q=0:2/2, right=FALSE, dig.lab=min(tmp.digits, max(nchar(loss_hoss.data[LH=="LOSS"][['SCALE_SCORE']]))))
+			} else loss.ss <- loss_hoss.data[LH=="LOSS"][['SCALE_SCORE']]
+			if (hoss.rows!=1) {
+				hoss.ss <- .quantcut(loss_hoss.data[LH=="HOSS"][['SCALE_SCORE']], q=0:2/2, right=FALSE, dig.lab=min(tmp.digits, max(nchar(loss_hoss.data[LH=="HOSS"][['SCALE_SCORE']]))))
+			} else hoss.ss <- loss_hoss.data[LH=="HOSS"][['SCALE_SCORE']]
 
-		loss_hoss.table <- rbind(
-			prop.table(table(loss.ss, cut(loss_hoss.data[LH=="LOSS"][['SGP']], c(-1, 5.5, 9.5, 19.5, 29.5, 39.5, 49.5, 59.5, 69.5, 79.5, 89.5, 94.5, 100.5),
-				labels=loss_hoss.percentile.labels)), 1)*100,
-			prop.table(table(hoss.ss, cut(loss_hoss.data[LH=="HOSS"][['SGP']], c(-1, 5.5, 9.5, 19.5, 29.5, 39.5, 49.5, 59.5, 69.5, 79.5, 89.5, 94.5, 100.5),
-				labels=loss_hoss.percentile.labels)), 1)*100)
+			loss_hoss.table <- rbind(
+				prop.table(table(loss.ss, cut(loss_hoss.data[LH=="LOSS"][['SGP']], c(-1, 5.5, 9.5, 19.5, 29.5, 39.5, 49.5, 59.5, 69.5, 79.5, 89.5, 94.5, 100.5),
+					labels=loss_hoss.percentile.labels)), 1)*100,
+				prop.table(table(hoss.ss, cut(loss_hoss.data[LH=="HOSS"][['SGP']], c(-1, 5.5, 9.5, 19.5, 29.5, 39.5, 49.5, 59.5, 69.5, 79.5, 89.5, 94.5, 100.5),
+					labels=loss_hoss.percentile.labels)), 1)*100)
 
-		if (any(lh_index<-!grepl("[,]", dimnames(loss_hoss.table)[[1]]))) dimnames(loss_hoss.table)[[1]][lh_index] <- paste("[", dimnames(loss_hoss.table)[[1]][lh_index], "]")
-		loss.counts <- table(loss.ss)
-		hoss.counts <- table(hoss.ss)
-		loss_hoss.colors <- .cell.color(loss_hoss.table, loss_hoss=TRUE)
+			if (any(lh_index<-!grepl("[,]", dimnames(loss_hoss.table)[[1]]))) dimnames(loss_hoss.table)[[1]][lh_index] <- paste("[", dimnames(loss_hoss.table)[[1]][lh_index], "]")
+			loss.counts <- table(loss.ss)
+			hoss.counts <- table(hoss.ss)
+			loss_hoss.colors <- .cell.color(loss_hoss.table, loss_hoss=TRUE)
 		}
 
 		if (with.prior.achievement.level) {
