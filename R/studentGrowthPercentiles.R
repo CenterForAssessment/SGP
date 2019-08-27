@@ -152,7 +152,7 @@ function(panel.data,         ## REQUIRED
 				tmp.res <- rq(method="br", ...)[['coefficients']]
 			} else {
 				tmp.res <- try(rq(method=rq.method, ...)[['coefficients']], silent=TRUE)
-				if(class(tmp.res) == "try-error") {
+				if (class(tmp.res) == "try-error") {
 					tmp.res <- rq(method="br", ...)[['coefficients']]
 				}
 			}
@@ -645,7 +645,8 @@ function(panel.data,         ## REQUIRED
 			switch(extrapolation,
 				LINEAR = fit <- lm(fitted[[paste0("order_", k)]] ~ lambda),
 				QUADRATIC = fit <- lm(fitted[[paste0("order_", k)]] ~ lambda + I(lambda^2)))
-			extrap[[paste0("order_", k)]] <-
+
+            extrap[[paste0("order_", k)]] <-
 				matrix(.smooth.bound.iso.row(data.table(ID=seq.int(n.records), X=predict(fit, newdata=data.frame(lambda=-1L))[1L,]), isotonize, sgp.loss.hoss.adjustment),
 					ncol=length(taus), byrow=TRUE)
 
