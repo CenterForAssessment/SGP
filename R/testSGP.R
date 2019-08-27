@@ -949,6 +949,7 @@ function(
 				messageSGP("\n\tParameter `simex.sample.size` set to 2500\n")
 			}
 			if (is.null(test.option[['use.csems.embedded.in.data']])) use.csems.embedded.in.data <- FALSE else use.csems.embedded.in.data <- TRUE
+			if (is.null(test.option[['dependent.var.error']])) dependent.var.error <- FALSE else dependent.var.error <- TRUE
 
 			###  The test of SIMEX baseline functionality requires the DEMO SIMEX matrices to be loaded manually.
 			### SGPstateData[["DEMO"]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <- c(SGPstateData[["DEMO"]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]], DEMO_SIMEX_Baseline_Matrices)
@@ -981,6 +982,9 @@ function(
 				SGPstateData[["DEMO"]][["Assessment_Program_Information"]][["CSEM"]] <- "SCALE_SCORE_CSEM"
 				simex.parameters <- sub("save.matrices=TRUE", "save.matrices=TRUE, csem.data.vnames='SCALE_SCORE_CSEM'", simex.parameters)
 				simex.parameters <- sub("state='DEMO', ", "", simex.parameters)
+			}
+			if (dependent.var.error) {
+				simex.parameters <- sub("save.matrices=TRUE", "save.matrices=TRUE, dependent.var.error=TRUE", simex.parameters)
 			}
 
 			options(error=recover) # Don't use options(warn=2) - get warnings about knots and bounds from BASELINE SIMEX

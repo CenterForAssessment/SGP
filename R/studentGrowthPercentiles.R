@@ -1465,7 +1465,7 @@ function(panel.data,         ## REQUIRED
 			simex.use.my.coefficient.matrices=calculate.simex$simex.use.my.coefficient.matrices,
 			calculate.simex.sgps=calculate.sgps,
 			dependent.var.error=calculate.simex$dependent.var.error,
-      use.cohort.for.ranking=calculate.simex$use.cohort.for.ranking,
+            use.cohort.for.ranking=calculate.simex$use.cohort.for.ranking,
 			reproduce.old.values=calculate.simex$reproduce.old.values,
 			verbose=calculate.simex$verbose)
 
