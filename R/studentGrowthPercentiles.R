@@ -366,17 +366,17 @@ function(panel.data,         ## REQUIRED
             }
         } ### END getSIMEXdata function
 
-		rq.sgp <- function(...) { # Function needs to be nested within the simex.sgp function to avoid data copying with SNOW
-			if (rq.method == "br") {
-				tmp.res <- quantreg::rq(method="br", ...)[['coefficients']]
-			} else {
-				tmp.res <- try(quantreg::rq(method=rq.method, ...)[['coefficients']], silent=TRUE)
-				if(class(tmp.res) == "try-error") {
-					tmp.res <- quantreg::rq(method="br", ...)[['coefficients']]
-				}
-			}
-			return(tmp.res)
-		} ### END rq.sgp function
+        rq.sgp <- function(...) { # Function needs to be nested within the simex.sgp function to avoid data copying with SNOW
+            if (rq.method == "br") {
+                tmp.res <- quantreg::rq(method="br", ...)[['coefficients']]
+            } else {
+                tmp.res <- try(quantreg::rq(method=rq.method, ...)[['coefficients']], silent=TRUE)
+                if (class(tmp.res) == "try-error") {
+                    tmp.res <- quantreg::rq(method="br", ...)[['coefficients']]
+                }
+            }
+            return(tmp.res)
+        } ### END rq.sgp function
 
 		rq.mtx <- function(tmp.gp.iter, lam, rqdata) {
 			mod <- character()
