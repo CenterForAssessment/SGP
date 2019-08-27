@@ -1032,7 +1032,7 @@ function(
 
 #			if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX']]), ifelse(simex.sample.size, 1028656L, 1029023L))) {
 #			if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX']]), ifelse(simex.sample.size, "b7a4dadefa56e7034210db02fd5acb36", "55fb02e2b05c308c3eb288474a9b3d00"))) { # pre-1.9-4.0 sgp.simex fix
-			if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX']]), ifelse(simex.sample.size, "b7a4dadefa56e7034210db02fd5acb36", "c7ca3a4e0795cfb2d61d85b36e135c91"))) {
+			if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX']]), ifelse(simex.sample.size, "ee04a88161ab6173420e970bf69aee23", "c7ca3a4e0795cfb2d61d85b36e135c91"))) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX: FAIL\n")
@@ -1042,7 +1042,7 @@ function(
 
 #			if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, 1032411L, 1032498L))) {
 #			if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, "84370af691ee17b803bc683d3e243f4a", "22babea1ccfdea54c6cd073bb24cf82e"))) { # pre-1.9-4.0 sgp.simex fix
-			if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, "84370af691ee17b803bc683d3e243f4a", "6ad93e28790b68d5d51d83a7501a7a7c"))) {
+			if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, "3636c7881c5c89664e3a8e0ce96564dc", "6ad93e28790b68d5d51d83a7501a7a7c"))) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX_RANKED: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX_RANKED: FAIL\n")
