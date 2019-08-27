@@ -378,34 +378,34 @@ function(panel.data,         ## REQUIRED
             return(tmp.res)
         } ### END rq.sgp function
 
-		rq.mtx <- function(tmp.gp.iter, lam, rqdata) {
-			mod <- character()
-			s4Ks <- "Knots=list("
-			s4Bs <- "Boundaries=list("
-			for (i in seq_along(tmp.gp.iter)) {
-				knt <- paste0("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['knots_", tmp.gp.iter[i], "']]")
-				bnd <- paste0("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['boundaries_", tmp.gp.iter[i], "']]")
-				mod <- paste0(mod, " + bs(prior_", i, ", knots=", knt, ", Boundary.knots=", bnd, ")")
-				s4Ks <- paste0(s4Ks, "knots_", tmp.gp.iter[i], "=", knt, ",")
-				s4Bs <- paste0(s4Bs, "boundaries_", tmp.gp.iter[i], "=", bnd, ",")
-			}
-			tmp.mtx <- eval(parse(text=paste0("rq.sgp(final_yr ~", substring(mod,4), ", tau=taus, data = rqdata)")))
+        rq.mtx <- function(tmp.gp.iter, lam, rqdata) {
+            mod <- character()
+            s4Ks <- "Knots=list("
+            s4Bs <- "Boundaries=list("
+            for (i in seq_along(tmp.gp.iter)) {
+                knt <- paste0("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['knots_", tmp.gp.iter[i], "']]")
+                bnd <- paste0("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['boundaries_", tmp.gp.iter[i], "']]")
+                mod <- paste0(mod, " + bs(prior_", i, ", knots=", knt, ", Boundary.knots=", bnd, ")")
+                s4Ks <- paste0(s4Ks, "knots_", tmp.gp.iter[i], "=", knt, ",")
+                s4Bs <- paste0(s4Bs, "boundaries_", tmp.gp.iter[i], "=", bnd, ",")
+            }
+            tmp.mtx <- eval(parse(text=paste0("rq.sgp(final_yr ~", substring(mod,4), ", tau=taus, data = rqdata)")))
 
-			tmp.version <- list(
-					SGP_Package_Version=as.character(packageVersion("SGP")),
-					Date_Prepared=prettyDate(),
-					Matrix_Information=list(
-						N=dim(rqdata)[1L],
-						Model=paste0("rq.sgp(final_yr ~", substring(mod,4), ", tau=taus, data = rqdata)"),
-						SGPt=if (is.null(SGPt)) NULL else list(VARIABLES=unlist(SGPt), MAX_TIME=max(rqdata$TIME, na.rm=TRUE), MAX_TIME_PRIOR=max(rqdata$TIME-rqdata$TIME_LAG, na.rm=TRUE), RANGE_TIME_LAG=range(rqdata$TIME_LAG))))
+            tmp.version <- list(
+                SGP_Package_Version=as.character(packageVersion("SGP")),
+                Date_Prepared=prettyDate(),
+                Matrix_Information=list(
+                    N=dim(rqdata)[1L],
+                    Model=paste0("rq.sgp(final_yr ~", substring(mod,4), ", tau=taus, data = rqdata)"),
+                    SGPt=if (is.null(SGPt)) NULL else list(VARIABLES=unlist(SGPt), MAX_TIME=max(rqdata$TIME, na.rm=TRUE), MAX_TIME_PRIOR=max(rqdata$TIME-rqdata$TIME_LAG, na.rm=TRUE), RANGE_TIME_LAG=range(rqdata$TIME_LAG))))
 
-			eval(parse(text=paste0("new('splineMatrix', tmp.mtx, ", substring(s4Ks, 1L, nchar(s4Ks)-1L), "), ", substring(s4Bs, 1L, nchar(s4Bs)-1L), "), ",
-				"Content_Areas=list(as.character(tail(content_area.progression, k+1L))), ",
-				"Grade_Progression=list(as.character(tail(tmp.slot.gp, k+1L))), ",
-				"Time=list(as.character(tail(year.progression, k+1L))), ",
-				"Time_Lags=list(as.numeric(tail(year_lags.progression, k))), ",
-				"Version=tmp.version)")))
-		} ### END rq.mtx function
+            eval(parse(text=paste0("new('splineMatrix', tmp.mtx, ", substring(s4Ks, 1L, nchar(s4Ks)-1L), "), ", substring(s4Bs, 1L, nchar(s4Bs)-1L), "), ",
+                "Content_Areas=list(as.character(tail(content_area.progression, k+1L))), ",
+                "Grade_Progression=list(as.character(tail(tmp.slot.gp, k+1L))), ",
+                "Time=list(as.character(tail(year.progression, k+1L))), ",
+                "Time_Lags=list(as.numeric(tail(year_lags.progression, k))), ",
+                "Version=tmp.version)")))
+        } ### END rq.mtx function
 
         createBigData <- function(tmp.data, perturb.var, L, dependent.var.error) { # Function that creates big.data object from which SIMEX SGPs are calculated
             big.data <- rbindlist(replicate(B, tmp.data, simplify = FALSE))[, b:=rep(seq.int(B), each=n.records)]
