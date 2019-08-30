@@ -943,7 +943,8 @@ function(
 			if (is.null(test.option[['simex.sample.size']])) {
 				simex.parameters <- "list(state='DEMO', lambda=seq(0,2,0.5), simulation.iterations=50, extrapolation='linear', save.matrices=TRUE)"
 				simex.sample.size <- FALSE
-			} else {
+			}
+			if (!is.null(test.option[['simex.sample.size']]) && !calculate.simex.baseline) {
 				simex.parameters <- "list(state='DEMO', lambda=seq(0,2,0.5), simulation.iterations=50, extrapolation='linear', save.matrices=TRUE, simex.sample.size=2500)"
 				simex.sample.size <- TRUE
 				messageSGP("\n\tParameter `simex.sample.size` set to 2500\n")
@@ -1003,13 +1004,13 @@ function(
 			if (!any(grepl('use.my.coefficient.matrices', names(test.option)))) {
 				expression.to.evaluate <- paste0(expression.to.evaluate, "Demonstration_SGP <- analyzeSGP(\n\tsgp_object=Demonstration_SGP,\n\tyears='", tail(sgpData.years, 1), "',\n\tcontent_areas='READING',\n\tsgp.percentiles.baseline.max.order=2,",
 					"\n\tsgp.percentiles=TRUE,\n\tsgp.projections=FALSE,\n\tsgp.projections.lagged=FALSE,\n\tsgp.percentiles.baseline=", calculate.simex.baseline, ",\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsimulate.sgps=TRUE,",
-					"\n\tcalculate.simex=", simex.parameters, ",\n\tcalculate.simex.baseline=", ifelse(calculate.simex.baseline, gsub(", simex.sample.size=2500", ", use.cohort.for.ranking=TRUE", simex.parameters), "NULL"),",\n\tparallel.config=", parallel.config,"\n)\n")
+					"\n\tcalculate.simex=", simex.parameters, ",\n\tcalculate.simex.baseline=", ifelse(calculate.simex.baseline, gsub("save.matrices=TRUE", "save.matrices=TRUE, use.cohort.for.ranking=TRUE", simex.parameters), "NULL"),",\n\tparallel.config=", parallel.config,"\n)\n")
 			} else {
 				expression.to.evaluate <- paste0(expression.to.evaluate, "Demonstration_SGP@SGP[['Coefficient_Matrices']] <- test.option[[grep('use.my.coefficient.matrices', names(test.option))]]\n\n",
 					"Demonstration_SGP <- analyzeSGP(\n\tsgp_object=Demonstration_SGP,\n\tyears='", tail(sgpData.years, 1), "',\n\tcontent_areas='READING',\n\tsgp.percentiles.baseline.max.order=2,",
 					"\n\tsgp.percentiles=TRUE,\n\tsgp.projections=FALSE,\n\tsgp.projections.lagged=FALSE,\n\tsgp.percentiles.baseline=", calculate.simex.baseline, ",\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsimulate.sgps=TRUE,",
 					"\n\tsgp.use.my.coefficient.matrices=TRUE,", # Use "Naive" Matrices for SGPs and in SIMEX too.
-					"\n\tcalculate.simex=", gsub("save.matrices=TRUE", "simex.use.my.coefficient.matrices=TRUE, use.cohort.for.ranking=TRUE", simex.parameters), ",\n\tcalculate.simex.baseline=", ifelse(calculate.simex.baseline, gsub(", simex.sample.size=2500", ", use.cohort.for.ranking=TRUE", simex.parameters), "NULL"),",",
+					"\n\tcalculate.simex=", gsub("save.matrices=TRUE", "simex.use.my.coefficient.matrices=TRUE, use.cohort.for.ranking=TRUE", simex.parameters), ",\n\tcalculate.simex.baseline=", ifelse(calculate.simex.baseline, gsub("save.matrices=TRUE", "save.matrices=TRUE, use.cohort.for.ranking=TRUE", simex.parameters), "NULL"),",",
 					"\n\tparallel.config=", parallel.config,"\n)\n")
 				available.matrices <- test.option[[grep('use.my.coefficient.matrices', names(test.option))]]
 				available.matrices <- available.matrices[grep("[.]SIMEX", names(available.matrices))][1][[1]][[1]][[1]]
