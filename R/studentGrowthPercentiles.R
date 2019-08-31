@@ -666,8 +666,12 @@ function(panel.data,         ## REQUIRED
                         ranked.simex.info <- Coefficient_Matrices[[paste0(tmp.path.coefficient.matrices, '.SIMEX')]][[paste("qrmatrices", tail(tmp.gp,1L), k, sep="_")]][length(lambda):(length(lambda)+1)]
                         ranked.simex.tf <- TRUE
                     } else {
-                        messageSGP("\tRanked SIMEX SGP calculation with pre-calculated SGPs is only available with info embedded as of SGP version 1.9-4.0.  NAs will be returned for SGP_SIMEX_RANKED.")
-                        ranked.simex.tf <- FALSE
+                        if (use.cohort.for.ranking) {
+                            ranked.simex.tf <- TRUE
+                        } else {
+                            messageSGP("\tRanked SIMEX SGP calculation with pre-calculated SGPs is only available with info embedded as of SGP version 1.9-4.0\n\tor setting parameter use.cohort.for.ranking = TRUE in the calculate.simex configuration.\n\tNAs will be returned for SGP_SIMEX_RANKED.")
+                            ranked.simex.tf <- FALSE
+                        }
                     }
                     if (ranked.simex.tf) {
                         if (use.cohort.for.ranking) { # Use `use.cohort.for.ranking=TRUE` if reproducing values with original data OR to rank against the updated/new cohort data ONLY
@@ -683,14 +687,10 @@ function(panel.data,         ## REQUIRED
                             as.numeric(rep(names(ranked.simex.info[[paste("ranked_simex_table", tail(tmp.gp, 1L), k, sep="_")]]),
                             ranked.simex.info[[paste("ranked_simex_table", tail(tmp.gp, 1L), k, sep="_")]]))))/(n.records+ranked.simex.info[[paste("n_records", tail(tmp.gp, 1L), k, sep="_")]])), 0)), n.records))
                         }
-                    } else {
-                        tmp.quantiles.simex[[k]] <- data.table(ID=tmp.data[["ID"]], SIMEX_ORDER=k,
-                        SGP_SIMEX=.get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]]),
-                        SGP_SIMEX_RANKED=as.integer(NA))
                     }
                 }
             }
-		} ### END for (k in simex.matrix.priors)
+        } ### END for (k in simex.matrix.priors)
 
 		if (verbose) messageSGP(c("\tFinished SIMEX SGP calculation ", rev(content_area.progression)[1L], " Grade ", rev(tmp.gp)[1L], " ", prettyDate()))
 
