@@ -642,22 +642,22 @@ function(panel.data,         ## REQUIRED
 			} ### END for (L in lambda[-1L])
 			if (verbose) messageSGP(c("\t\t", rev(content_area.progression)[1L], " Grade ", rev(tmp.gp)[1L], " Order ", k, " Simulation process complete ", prettyDate()))
 
-			switch(extrapolation,
-				LINEAR = fit <- lm(fitted[[paste0("order_", k)]] ~ lambda),
-				QUADRATIC = fit <- lm(fitted[[paste0("order_", k)]] ~ lambda + I(lambda^2)))
-
-            extrap[[paste0("order_", k)]] <-
-				matrix(.smooth.bound.iso.row(data.table(ID=seq.int(n.records), X=predict(fit, newdata=data.frame(lambda=-1L))[1L,]), isotonize, sgp.loss.hoss.adjustment),
-					ncol=length(taus), byrow=TRUE)
-
-			if (is.null(simex.use.my.coefficient.matrices)) {
-			  ranked.simex.quantile.values <- .get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]], ranked.simex=ifelse(reproduce.old.values, "reproduce.old.values", TRUE))
-			  simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste("ranked_simex_table", tail(tmp.gp, 1L), k, sep="_")]] <- table(ranked.simex.quantile.values)
-			  simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste("n_records", tail(tmp.gp, 1L), k, sep="_")]] <- n.records
-			}
-
             if (calculate.simex.sgps) {
+                switch(extrapolation,
+                    LINEAR = fit <- lm(fitted[[paste0("order_", k)]] ~ lambda),
+                    QUADRATIC = fit <- lm(fitted[[paste0("order_", k)]] ~ lambda + I(lambda^2)))
+
+                extrap[[paste0("order_", k)]] <-
+                    matrix(.smooth.bound.iso.row(data.table(ID=seq.int(n.records), X=predict(fit, newdata=data.frame(lambda=-1L))[1L,]), isotonize, sgp.loss.hoss.adjustment),
+                        ncol=length(taus), byrow=TRUE)
+
                 if (is.null(simex.use.my.coefficient.matrices)) {
+                    ranked.simex.quantile.values <- .get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]], ranked.simex=ifelse(reproduce.old.values, "reproduce.old.values", TRUE))
+                    simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste("ranked_simex_table", tail(tmp.gp, 1L), k, sep="_")]] <- table(ranked.simex.quantile.values)
+                    simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste("n_records", tail(tmp.gp, 1L), k, sep="_")]] <- n.records
+#                }
+#
+#                if (is.null(simex.use.my.coefficient.matrices)) {
                     tmp.quantiles.simex[[k]] <- data.table(ID=tmp.data[["ID"]], SIMEX_ORDER=k,
   					SGP_SIMEX=.get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]]),
   					SGP_SIMEX_RANKED=as.integer(round(100*(data.table::frank(ties.method = "average", x = ranked.simex.quantile.values)/n.records), 0)))
