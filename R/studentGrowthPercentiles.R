@@ -449,6 +449,7 @@ function(panel.data,         ## REQUIRED
 			}
 		} else simex.matrix.priors <- coefficient.matrix.priors
 
+        ### Loop over priors
 		for (k in simex.matrix.priors) {
 			tmp.data <- .get.panel.data(ss.data, k, by.grade, tmp.gp)
 			n.records <- nrow(tmp.data)
@@ -690,7 +691,7 @@ function(panel.data,         ## REQUIRED
                     }
                 }
             }
-        } ### END for (k in simex.matrix.priors)
+        }### END for (k in simex.matrix.priors)
 
 		if (verbose) messageSGP(c("\tFinished SIMEX SGP calculation ", rev(content_area.progression)[1L], " Grade ", rev(tmp.gp)[1L], " ", prettyDate()))
 
@@ -711,7 +712,7 @@ function(panel.data,         ## REQUIRED
                 SGP_SIMEX_RANKED=quantile.data.simex[c(which(!duplicated(quantile.data.simex, by=key(quantile.data.simex)))[-1L]-1L, dim(quantile.data.simex)[1L])][["SGP_SIMEX_RANKED"]])
 			return(list(
 				DT=quantile.data.simex,
-				MATRICES = simex.coef.matrices))
+				MATRICES=simex.coef.matrices))
 		} else {
 			if (print.sgp.order | return.norm.group.identifier) {
 				return(list(

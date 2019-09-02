@@ -1085,13 +1085,13 @@ function(
 			if (!any(grepl('use.my.coefficient.matrices', names(test.option)))) {
 				expression.to.evaluate <-
 					paste0("\nDemonstration_SGP <- analyzeSGP(\n\tsgp_object=Demonstration_SGP,\n\tsgp.config=sgp.config,\n\tsgp.percentiles=TRUE,\n\tsgp.projections=FALSE,\n\tsgp.projections.lagged=FALSE,\n\tsgp.percentiles.baseline=", calculate.simex.baseline, ",\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsimulate.sgps=FALSE,",
-								 "\n\tcalculate.simex=", simex.parameters, ",\n\tcalculate.simex.baseline=", ifelse(calculate.simex.baseline, gsub(", simex.sample.size=2500", "", simex.parameters), "NULL"),",\n\tparallel.config=", parallel.config, "\n)\n",
+								 "\n\tcalculate.simex=", simex.parameters, ",\n\tcalculate.simex.baseline=", ifelse(calculate.simex.baseline, gsub("save.matrices=TRUE", "save.matrices=TRUE, use.cohort.for.ranking=TRUE", "", simex.parameters), "NULL"),",\n\tparallel.config=", parallel.config, "\n)\n",
 								 "\nDemonstration_SGP <- combineSGP(Demonstration_SGP)\n\n")
 			} else {
 				expression.to.evaluate <-
 					paste0("\nDemonstration_SGP <- analyzeSGP(\n\tsgp_object=Demonstration_SGP,\n\tsgp.config=sgp.config,\n\tsgp.percentiles=TRUE,\n\tsgp.projections=FALSE,\n\tsgp.projections.lagged=FALSE,\n\tsgp.percentiles.baseline=", calculate.simex.baseline, ",\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsimulate.sgps=FALSE,",
 								 "\n\tsgp.use.my.coefficient.matrices=TRUE,", # Use "Naive" Matrices for SGPs and in SIMEX too.
-								 "\n\tcalculate.simex=", gsub("save.matrices=TRUE", "simex.use.my.coefficient.matrices=TRUE, use.cohort.for.ranking=TRUE", simex.parameters), ",\n\tcalculate.simex.baseline=", ifelse(calculate.simex.baseline, gsub(", simex.sample.size=2500", "", simex.parameters), "NULL"),",\n\tparallel.config=", parallel.config, "\n)\n",
+								 "\n\tcalculate.simex=", gsub("save.matrices=TRUE", "simex.use.my.coefficient.matrices=TRUE, use.cohort.for.ranking=TRUE", simex.parameters), ",\n\tcalculate.simex.baseline=", ifelse(calculate.simex.baseline, gsub("save.matrices=TRUE", "save.matrices=TRUE, use.cohort.for.ranking=TRUE", simex.parameters), "NULL"),",\n\tparallel.config=", parallel.config, "\n)\n",
 								 "\nDemonstration_SGP <- combineSGP(Demonstration_SGP)\n\n")
 			}
 

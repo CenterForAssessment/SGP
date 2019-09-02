@@ -223,9 +223,9 @@ function(sgp_object,
 
 	if (identical(calculate.simex.baseline, TRUE)) {
 		if (is.character(csem.variable <- SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
-			calculate.simex.baseline <- list(csem.data.vnames=csem.variable, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE)
+			calculate.simex.baseline <- list(csem.data.vnames=csem.variable, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE, use.cohort.for.ranking=TRUE)
 		} else {
-			calculate.simex.baseline <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE)
+			calculate.simex.baseline <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE, use.cohort.for.ranking=TRUE)
 			csem.variable <- NULL
 		}
 	}
@@ -409,7 +409,6 @@ function(sgp_object,
 	}
 
 	selectCoefficientMatrices <- function(tmp_sgp_object, coefficient.matrix.type=NULL) {
-
 		if (is.null(coefficient.matrix.type)) {
 			return(tmp_sgp_object[['Coefficient_Matrices']][
 				setdiff(names(tmp_sgp_object[['Coefficient_Matrices']]), grep('BASELINE|EQUATED', names(tmp_sgp_object[['Coefficient_Matrices']]), value=TRUE))])
@@ -1043,7 +1042,7 @@ function(sgp_object,
 						sgp.less.than.sgp.cohort.size.return=sgp.less.than.sgp.cohort.size.return,
 						return.norm.group.scale.scores=return.norm.group.scale.scores,
 						return.norm.group.dates=return.norm.group.dates,
-            return.norm.group.preference=sgp.iter[["sgp.norm.group.preference"]],
+                        return.norm.group.preference=sgp.iter[["sgp.norm.group.preference"]],
 						return.prior.scale.score.standardized=return.prior.scale.score.standardized,
 						goodness.of.fit=goodness.of.fit.print.arg,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
@@ -1091,7 +1090,7 @@ function(sgp_object,
 						sgp.less.than.sgp.cohort.size.return=sgp.less.than.sgp.cohort.size.return,
 						return.norm.group.scale.scores=return.norm.group.scale.scores,
 						return.norm.group.dates=return.norm.group.dates,
-            return.norm.group.preference=sgp.iter[["sgp.norm.group.preference"]],
+                        return.norm.group.preference=sgp.iter[["sgp.norm.group.preference"]],
 						return.prior.scale.score.standardized=return.prior.scale.score.standardized,
 						goodness.of.fit=goodness.of.fit.print.arg,
 						goodness.of.fit.minimum.n=SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]],
