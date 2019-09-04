@@ -1056,14 +1056,16 @@ function(
 			### TEST of SGP_SIMEX_BASELINE and SGP_SIMEX_BASELINE_RANKED variables
 			if (calculate.simex.baseline) {
 #				if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1), "BASELINE", sep=".")]][['SGP_SIMEX_BASELINE']]), 1034475L)) {
-				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1), "BASELINE", sep=".")]][['SGP_SIMEX_BASELINE']]), "816099ca957a29552f4ba1fea88ae1e5")) { # pre-GRADE key: 816099ca957a29552f4ba1fea88ae1e5
+#				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1), "BASELINE", sep=".")]][['SGP_SIMEX_BASELINE']]), "816099ca957a29552f4ba1fea88ae1e5")) {# pre-GRADE key: 816099ca957a29552f4ba1fea88ae1e5
+				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1), "BASELINE", sep=".")]][['SGP_SIMEX_BASELINE']]), "3e259b0a8a2d287d58945bf3635f1270")) {# post 1.9-4.0
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX_BASELINE: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX_BASELINE: FAIL\n")
 				}
 
 #				if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1), "BASELINE", sep=".")]][['SGP_SIMEX_BASELINE_RANKED']]), 1031775L)) {
-				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1), "BASELINE", sep=".")]][['SGP_SIMEX_BASELINE_RANKED']]), "721d5eac4cb20a70f9344bbe88b8ef2b")) {
+#				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1), "BASELINE", sep=".")]][['SGP_SIMEX_BASELINE_RANKED']]), "721d5eac4cb20a70f9344bbe88b8ef2b")) {
+				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1), "BASELINE", sep=".")]][['SGP_SIMEX_BASELINE_RANKED']]), "866a60bfb9e21d420ff566cb87c8521b")) {# post 1.9-4.0
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX_BASELINE_RANKED: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX_BASELINE_RANKED: FAIL\n")
@@ -1085,7 +1087,7 @@ function(
 			if (!any(grepl('use.my.coefficient.matrices', names(test.option)))) {
 				expression.to.evaluate <-
 					paste0("\nDemonstration_SGP <- analyzeSGP(\n\tsgp_object=Demonstration_SGP,\n\tsgp.config=sgp.config,\n\tsgp.percentiles=TRUE,\n\tsgp.projections=FALSE,\n\tsgp.projections.lagged=FALSE,\n\tsgp.percentiles.baseline=", calculate.simex.baseline, ",\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsimulate.sgps=FALSE,",
-								 "\n\tcalculate.simex=", simex.parameters, ",\n\tcalculate.simex.baseline=", ifelse(calculate.simex.baseline, gsub("save.matrices=TRUE", "save.matrices=TRUE, use.cohort.for.ranking=TRUE", "", simex.parameters), "NULL"),",\n\tparallel.config=", parallel.config, "\n)\n",
+								 "\n\tcalculate.simex=", simex.parameters, ",\n\tcalculate.simex.baseline=", ifelse(calculate.simex.baseline, gsub("save.matrices=TRUE", "save.matrices=TRUE, use.cohort.for.ranking=TRUE", simex.parameters), "NULL"),",\n\tparallel.config=", parallel.config, "\n)\n",
 								 "\nDemonstration_SGP <- combineSGP(Demonstration_SGP)\n\n")
 			} else {
 				expression.to.evaluate <-
@@ -1183,18 +1185,21 @@ function(
 
 			if (calculate.simex.baseline) {
 #				if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE']]), 217894L)) {
-				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE']]), "1dbd929906efe4a131c68180d83c4164")) { # pre-GRADE key: 73176856b45b8bc490b5e98068319411
+#				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE']]), "1dbd929906efe4a131c68180d83c4164")) {# pre-GRADE key: 73176856b45b8bc490b5e98068319411
+				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE']]), "f9e884084b84794d762a535f3facec85")) {# post 1.9-4.0
 					tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX_BASELINE: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX_BASELINE: FAIL\n")
 				}
 #				if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE_RANKED']]), 211837L)) {
-				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE_RANKED']]), "f3e9a7c0e1eb4564ddc04d5b38f5223e")) { # xXx 40cfc13e853dfa9af8398ca38fea96e8
+#				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE_RANKED']]), "f3e9a7c0e1eb4564ddc04d5b38f5223e")) {# xXx 40cfc13e853dfa9af8398ca38fea96e8
+				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE_RANKED']]), "f9e884084b84794d762a535f3facec85")) {# post 1.9-4.0
 					tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX_BASELINE_RANKED: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX_BASELINE_RANKED: FAIL\n")
 				}
 #				if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE']]), 212818L)) {
+#				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE']]), "e9ac73391f257c5d21df89c2ca6d5283")) { # pre-GRADE key: d4fe0d79e985aacb6331ce95f4a2d01e
 				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE']]), "e9ac73391f257c5d21df89c2ca6d5283")) { # pre-GRADE key: d4fe0d79e985aacb6331ce95f4a2d01e
 					tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II SGP_SIMEX_BASELINE: OK\n")
 				} else {
