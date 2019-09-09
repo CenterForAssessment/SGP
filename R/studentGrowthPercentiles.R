@@ -412,7 +412,7 @@ function(panel.data,         ## REQUIRED
             if (dependent.var.error) csem.col.offset <- (ncol(big.data)-2)/2 else csem.col.offset <- (ncol(big.data)-1)/2
             for (perturb.var.iter in rev(seq_along(perturb.var))) {
                     setnames(big.data, c(1L+perturb.var.iter, 1L+perturb.var.iter+csem.col.offset), c("VARIABLE", "CSEM"))
-                    unique.key <- c("VARIABLE", names(big.data)[1+csem.col.offset], "b")
+                    unique.key <- c("VARIABLE", names(big.data)[1+csem.col.offset], "b", "CSEM")
                     setkeyv(big.data, unique.key)
                     big.data[,(1L+perturb.var.iter) := unique(big.data, by=unique.key)[,"TEMP" := VARIABLE+sqrt(L)*CSEM*rnorm(.N)][big.data[,unique.key, with=FALSE], on=unique.key][["TEMP"]]]
                     setnames(big.data, c("VARIABLE", "CSEM"), paste0(c("VARIABLE", "DONE_CSEM"), perturb.var.iter))
