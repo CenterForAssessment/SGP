@@ -456,7 +456,7 @@ function(panel.data,         ## REQUIRED
 			tmp.num.variables <- dim(tmp.data)[2L]
 			tmp.gp.iter <- rev(tmp.gp)[2L:(k+1L)]
 			if (dependent.var.error) {
-				perturb.var <- rev(tmp.gp)[1:(k+1L)]
+				perturb.var <- rev(tmp.gp)[1L:(k+1L)]
 				start.index <- 1L
 				num.perturb.vars <- tmp.num.variables+1L
 			} else {
@@ -525,7 +525,7 @@ function(panel.data,         ## REQUIRED
 				}
 
 				## Establish the simulation iterations - either 1) 1:B, or 2) a sample of either B or the number of previously computed matrices
-				sim.iters <- 1:B
+				sim.iters <- seq.int(B)
 
 				if (!is.null(tmp.par.config)) { # Not Sequential
                     ## Write big.data to disk and remove from memory
@@ -656,9 +656,6 @@ function(panel.data,         ## REQUIRED
                     ranked.simex.quantile.values <- .get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]], ranked.simex=ifelse(reproduce.old.values, "reproduce.old.values", TRUE))
                     simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste("ranked_simex_table", tail(tmp.gp, 1L), k, sep="_")]] <- table(ranked.simex.quantile.values)
                     simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste("n_records", tail(tmp.gp, 1L), k, sep="_")]] <- n.records
-#                }
-#
-#                if (is.null(simex.use.my.coefficient.matrices)) {
                     tmp.quantiles.simex[[k]] <- data.table(ID=tmp.data[["ID"]], SIMEX_ORDER=k,
   					SGP_SIMEX=.get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]]),
   					SGP_SIMEX_RANKED=as.integer(round(100*(data.table::frank(ties.method = "average", x = ranked.simex.quantile.values)/n.records), 0)))
@@ -1176,7 +1173,7 @@ function(panel.data,         ## REQUIRED
 		num.prior <- length(tmp.gp[!is.na(tmp.gp)])-1L
 	}
 
-	if (exact.grade.progression.sequence){
+	if (exact.grade.progression.sequence) {
 		tmp.gp <- grade.progression
 		by.grade <- TRUE
 		num.prior <- length(tmp.gp[!is.na(tmp.gp)])-1L
@@ -1511,7 +1508,7 @@ function(panel.data,         ## REQUIRED
 		for (j in seq_along(tmp.orders)) {
 			tmp.data <- .get.panel.data(ss.data, tmp.orders[j], by.grade, tmp.gp)
 			if (dim(tmp.data)[1L] > 0L) {
-        tmp.matrix <- tmp.matrices[[j]]
+                tmp.matrix <- tmp.matrices[[j]]
 				tmp.predictions <- .get.percentile.predictions(tmp.data, tmp.matrix)
 				tmp.quantiles[[j]] <- data.table(ID=tmp.data[[1L]], ORDER=tmp.orders[j], SGP=.get.quantiles(tmp.predictions, tmp.data[[dim(tmp.data)[2L]]]))
 				if (csem.tf) {
@@ -1545,12 +1542,12 @@ function(panel.data,         ## REQUIRED
 										paste("SGP_SIM", seq(calculate.confidence.intervals[['simulation.iterations']]), sep="_"))
 				} ## END CSEM analysis
 
-        if (!is.null(percentile.cuts)) {
-          tmp.percentile.cuts[[paste("ORDER", j, sep="_")]] <- data.table(ID=tmp.data[[1L]], .get.percentile.cuts(tmp.predictions))
-          if (!is.null(SGPt.max.time)) tmp.percentile.cuts[[paste("ORDER", j, "MAX_TIME", sep="_")]] <- data.table(ID=tmp.data[[1L]], .get.percentile.cuts(.get.percentile.predictions(tmp.data, tmp.matrix, SGPt.max.time)))
-        }
-        if ((is.character(goodness.of.fit) || goodness.of.fit==TRUE || return.prior.scale.score) & j==1L) prior.ss <- tmp.data[[dim(tmp.data)[2L]-1L]]
-        if (exact.grade.progression.sequence && return.prior.scale.score) prior.ss <- tmp.data[[dim(tmp.data)[2L]-1L]]
+                if (!is.null(percentile.cuts)) {
+                    tmp.percentile.cuts[[paste("ORDER", j, sep="_")]] <- data.table(ID=tmp.data[[1L]], .get.percentile.cuts(tmp.predictions))
+                    if (!is.null(SGPt.max.time)) tmp.percentile.cuts[[paste("ORDER", j, "MAX_TIME", sep="_")]] <- data.table(ID=tmp.data[[1L]], .get.percentile.cuts(.get.percentile.predictions(tmp.data, tmp.matrix, SGPt.max.time)))
+                }
+                if ((is.character(goodness.of.fit) || goodness.of.fit==TRUE || return.prior.scale.score) & j==1L) prior.ss <- tmp.data[[dim(tmp.data)[2L]-1L]]
+                if (exact.grade.progression.sequence && return.prior.scale.score) prior.ss <- tmp.data[[dim(tmp.data)[2L]-1L]]
 			} ### END if (dim(tmp.data)[1L] > 0)
 		} ## END j loop
 
@@ -1616,7 +1613,7 @@ function(panel.data,         ## REQUIRED
 						all(calculate.confidence.intervals$confidence.quantiles > 0))) {
 						stop("Argument to 'calculate.confidence.intervals$confidence.quantiles' must be numeric and consist of quantiles.")
 					}
-          if (print.other.gp) {
+                    if (print.other.gp) {
               tmp.se <- list()
               for (f in seq_along(tmp.csem.quantiles)) {
                   tmp.se[[f]] <- data.table("ID" = tmp.csem.quantiles[[f]][["ID"]], "ORDER" = f,
@@ -1635,7 +1632,7 @@ function(panel.data,         ## REQUIRED
 					quantile.data[,SGP_STANDARD_ERROR:=round(data.table(ID=simulation.data[[1L]], SGP=c(as.matrix(simulation.data[,-1L,with=FALSE])))[,sd(SGP), keyby=ID][['V1']], digits=2L)]
 				}
 			}
-      simulation.data[, GRADE := as.character(tail(grade.progression, 1))]
+            simulation.data[, GRADE := as.character(tail(grade.progression, 1))]
 			Simulated_SGPs[[tmp.path]] <- rbindlist(list(simulation.data, Simulated_SGPs[[tmp.path]]), fill=TRUE)
 		}
 
@@ -1648,7 +1645,7 @@ function(panel.data,         ## REQUIRED
       }
 		}
 
-		if (!is.null(percentile.cuts)){
+		if (!is.null(percentile.cuts)) {
 			quantile.data <- data.table(quantile.data, .get.best.cuts(tmp.percentile.cuts[grep("MAX_TIME", names(tmp.percentile.cuts), invert=TRUE)]))
             if (!is.null(SGPt.max.time)) quantile.data <- data.table(quantile.data, .get.best.cuts(tmp.percentile.cuts[grep("MAX_TIME", names(tmp.percentile.cuts))], "MAX_TIME"))
 		}
