@@ -1,6 +1,6 @@
-`ddcast` <- 
+`ddcast` <-
 function(tmp.dt, ...) {
-        if (dim(tmp.dt)[1]==0) {
+        if (dim(tmp.dt)[1L]==0L) {
                 return(data.table(NULL))
         } else {
                 dcast(tmp.dt, ...)
