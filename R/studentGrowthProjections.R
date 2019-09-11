@@ -351,7 +351,7 @@ function(panel.data,	## REQUIRED
 			if (is.character(percentile.trajectory.values)) {
 				tmp.name.prefix <- "SCALE_SCORE_"
 				tmp.num.years.forward <- min(length(grade.projection.sequence),
-					lapply(strsplit(percentile.trajectory.values, "_")[[1L]], type.convert)[sapply(lapply(strsplit(percentile.trajectory.values, "_")[[1L]], type.convert), is.numeric)][[1]])
+					lapply(strsplit(percentile.trajectory.values, "_")[[1L]], type.convert)[sapply(lapply(strsplit(percentile.trajectory.values, "_")[[1L]], type.convert), is.numeric)][[1L]])
 				if (!any(grepl("CURRENT", percentile.trajectory.values))) tmp.num.years.forward <- min(length(grade.projection.sequence), tmp.num.years.forward+1L)
 
 				tmp.indices <- as.integer(rep(dim(percentile.trajectories)[1L]/uniqueN(percentile.trajectories[['ID']])*(seq(uniqueN(percentile.trajectories[['ID']]))-1L),
@@ -415,9 +415,9 @@ function(panel.data,	## REQUIRED
 						ID ~ CUT, value.var=setdiff(names(tmp.traj), c("ID", "CUT")), sep=".")
 			if (any(grepl("CURRENT", percentile.trajectory.values))) percentile.trajectory.values <- unlist(strsplit(percentile.trajectory.values, "_CURRENT"))
 			if (projection.unit=="GRADE") {
-				tmp.vec <- expand.grid(tmp.name.prefix, percentile.trajectory.values, paste0("_PROJ_", projection.unit.label, "_"), paste(grade.projection.sequence.labels, content_area.projection.sequence, sep="_"), lag.increment.label)[1L:(length(percentile.trajectory.values)*tmp.num.years.forward),]
+				tmp.vec <- expand.grid(tmp.name.prefix, percentile.trajectory.values, paste0("_PROJ_", projection.unit.label, "_"), paste(grade.projection.sequence.labels, content_area.projection.sequence, sep="_"), lag.increment.label)[seq.int(length(percentile.trajectory.values)*tmp.num.years.forward),]
 			} else {
-				tmp.vec <- expand.grid(tmp.name.prefix, percentile.trajectory.values, paste0("_PROJ_", projection.unit.label, "_"), seq_along(grade.projection.sequence.labels), lag.increment.label)[1L:(length(percentile.trajectory.values)*tmp.num.years.forward),]
+				tmp.vec <- expand.grid(tmp.name.prefix, percentile.trajectory.values, paste0("_PROJ_", projection.unit.label, "_"), seq_along(grade.projection.sequence.labels), lag.increment.label)[seq.int(length(percentile.trajectory.values)*tmp.num.years.forward),]
 			}
 			setnames(trajectories, c("ID", do.call(paste0, tmp.vec)))
 			if (!cuts.tf) return(trajectories)

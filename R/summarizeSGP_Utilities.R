@@ -166,7 +166,7 @@ function(x,
 `boot.sgp` <-
 function(dat,
 	conf.quantiles=NULL,
-	nboot=100) {
+	nboot=100L) {
 
 	ID <- SCORE <- NULL
 	CI <- paste0("[", paste(rep(NA, 2L), collapse=", "), "]"); SE <- NA_real_

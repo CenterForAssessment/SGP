@@ -345,14 +345,14 @@ function(sgp_object,
 	## Function to export/print goodness of fit results as pdf files to directory Goodness_of_Fit
 
 	gof.print <- function(sgp_object) {
-		if (length(sgp_object@SGP[["Goodness_of_Fit"]]) > 0) {
+		if (length(sgp_object@SGP[["Goodness_of_Fit"]]) > 0L) {
 			for (i in names(sgp_object@SGP[["Goodness_of_Fit"]])) {
 				dir.create(paste0("Goodness_of_Fit/", i), recursive=TRUE, showWarnings=FALSE)
 					for (output.format in c("PDF", "PNG")) {
 						for (j in names(sgp_object@SGP[["Goodness_of_Fit"]][[i]])) {
 							tmp.path <- file.path("Goodness_of_Fit", i, j)
-							if (!identical(.Platform$OS.type, "unix") & nchar(tmp.path) > 250) {
-								tmp.content_area <- unlist(strsplit(j, "[.]"))[1]
+							if (!identical(.Platform$OS.type, "unix") & nchar(tmp.path) > 250L) {
+								tmp.content_area <- unlist(strsplit(j, "[.]"))[1L]
 								tmp.path <- gsub(tmp.content_area, substr(tmp.content_area, 1, 1), tmp.path)
 							}
 							if (output.format=="PDF") {
@@ -501,7 +501,7 @@ function(sgp_object,
 				"STATE", csem.variable, equate.variable, SGPt)
 
 	if (toupper(sgp.sqlite)=="KEEP") {keep.sqlite <- TRUE; sgp.sqlite <- TRUE} else keep.sqlite <- FALSE
-	if (as.numeric(strsplit(format(object.size(sgp_object@Data), units="GB"), " Gb")[[1]]) > 1) sgp.sqlite <- TRUE
+	if (as.numeric(strsplit(format(object.size(sgp_object@Data), units="GB"), " Gb")[[1L]]) > 1) sgp.sqlite <- TRUE
 	if (!is.null(SGPt)) sgp.sqlite <- FALSE # Ultimate case of whether or not to use SQLite?
 
 	if (sgp.sqlite) {
@@ -754,7 +754,7 @@ function(sgp_object,
 
   if (sgp.percentiles) {
     if (!is.null(tmp.transition.year <- SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]) &&
-        sort(unique(unlist(sapply(par.sgp.config[['sgp.percentiles']], function(x) x[['sgp.panel.years']]))))[1] < tmp.transition.year) {
+        sort(unique(unlist(sapply(par.sgp.config[['sgp.percentiles']], function(x) x[['sgp.panel.years']]))))[1L] < tmp.transition.year) {
             messageSGP(paste0("\tNOTE: Configurations include years prior to assessment transition (", tmp.transition.year, ").\n\t\tOutput will include SGPs of all orders to accomodate investigations.\n"))
             print.other.gp <- TRUE
     }

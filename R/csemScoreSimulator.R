@@ -54,7 +54,7 @@ function(
 	} else {
 		tmp.scores <- data.table(SIM=round(rnorm(length(scale_scores), scale_scores, tmp.omega), digits=round.digits))
 	}
-	tmp.scores[SIM < min.max[1], SIM:=min.max[1]]
-	tmp.scores[SIM > min.max[2], SIM:=min.max[2]]
+	tmp.scores[SIM < min.max[1L], SIM:=min.max[1L]]
+	tmp.scores[SIM > min.max[2L], SIM:=min.max[2L]]
 	return(tmp.scores[['SIM']])
 } ### END csemScoreSimulator

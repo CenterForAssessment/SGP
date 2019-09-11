@@ -168,7 +168,7 @@ function(panel.data,         ## REQUIRED
 		mod <- character()
 		s4Ks <- "Knots=list("
 		s4Bs <- "Boundaries=list("
-		tmp.gp.iter <- rev(tmp.gp)[2:(k+1L)]
+		tmp.gp.iter <- rev(tmp.gp)[2L:(k+1L)]
 		for (i in seq_along(tmp.gp.iter)) {
 			my.path.knots.boundaries <- get.my.knots.boundaries.path(rev(content_area.progression)[i+1L], yearIncrement(rev(year.progression)[i+1L], 0L))
 			.check.knots.boundaries(names(eval(parse(text=paste0("Knots_Boundaries", my.path.knots.boundaries)))), tmp.gp.iter[i])
@@ -281,9 +281,9 @@ function(panel.data,         ## REQUIRED
         } else reproduce.old.values <- FALSE
 
         if (ranked.simex) {
-            for (p in 1:3) { # Additional values between the tau predicted values - 1/8th percentiles for ranking
+            for (p in seq.int(3)) { # Additional values between the tau predicted values - 1/8th percentiles for ranking
                 dataX <- data1[,(seq.int(ncol(data1))-1L)] + t(apply(data1, 1, diff))/2
-                data1 <- cbind(data1, dataX)[, order(c(seq(ncol(data1)), seq(ncol(dataX))))]
+                data1 <- cbind(data1, dataX)[, order(c(seq.int(ncol(data1)), seq.int(ncol(dataX))))]
             }
             tmp.zero <- 794L
         } else tmp.zero <- 101L
@@ -1158,7 +1158,7 @@ function(panel.data,         ## REQUIRED
 		by.grade <- TRUE
 	}
 	if (missing(subset.grade) && missing(grade.progression)) {
-		tmp.gp <- 1:num.panels
+		tmp.gp <- seq.int(num.panels)
 		by.grade <- FALSE
 	}
 	if (!missing(num.prior) && !exact.grade.progression.sequence) {
@@ -1403,10 +1403,10 @@ function(panel.data,         ## REQUIRED
 			Coefficient_Matrices[[tmp.path.coefficient.matrices]][['TMP_NAME']] <- .create.coefficient.matrices(ss.data, k, by.grade, max.n.for.coefficient.matrices)
 			if (identical(Coefficient_Matrices[[tmp.path.coefficient.matrices]][['TMP_NAME']], "Insufficient N")) {
 				tmp.messages <- c(tmp.messages, paste0("\t\tNOTE: Some grade progressions contain fewer than the minimum cohort size.",
-					"\n\t\tOnly analyses with MAX grade progression ", paste(rev(rev(tmp.gp)[1:k]), collapse = ', '), " will be produced given N=", prettyNum(sgp.cohort.size, big.mark=",", scientific=FALSE),
+					"\n\t\tOnly analyses with MAX grade progression ", paste(rev(rev(tmp.gp)[seq.int(k)]), collapse = ', '), " will be produced given N=", prettyNum(sgp.cohort.size, big.mark=",", scientific=FALSE),
 					" indicated as minimum cohort size. \n\t\tCheck data, function arguments and see help page for details.\n"))
 				Coefficient_Matrices[[tmp.path.coefficient.matrices]][['TMP_NAME']] <- NULL
-				grade.progression <- tmp.gp <- rev(rev(tmp.gp)[1:k])
+				grade.progression <- tmp.gp <- rev(rev(tmp.gp)[seq.int(k)])
         if (!is.null(year.progression) && length(year.progression) > length(grade.progression)) year.progression <- tail(year.progression, length(grade.progression))
         if (!is.null(year_lags.progression) && length(year_lags.progression) > length(grade.progression)-1L) year_lags.progression <- tail(year_lags.progression, length(grade.progression)-1L)
         if (!is.null(content_area.progression) && length(content_area.progression) > length(grade.progression)) content_area.progression <- tail(content_area.progression, length(grade.progression))
@@ -1657,7 +1657,7 @@ function(panel.data,         ## REQUIRED
 			if (exact.grade.progression.sequence) {
 				norm.groups <- paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression.for.norm.group, sep="_"), sep="/"), num.prior+1L), collapse="; ")
 			} else {
-				norm.groups <- sapply(seq_along(year.progression.for.norm.group)[-1L][1:(length(year.progression.for.norm.group)-1L)],
+				norm.groups <- sapply(seq_along(year.progression.for.norm.group)[-1L][seq.int(length(year.progression.for.norm.group)-1L)],
 				    function(x) paste(tail(paste(year.progression.for.norm.group, paste(content_area.progression, grade.progression.for.norm.group, sep="_"), sep="/"), x), collapse="; "))
 			}
 			if (!print.sgp.order) { # Return only SGP_NORM_GROUP

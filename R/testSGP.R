@@ -988,7 +988,7 @@ function(
 				simex.parameters <- sub("save.matrices=TRUE", "save.matrices=TRUE, dependent.var.error=TRUE", simex.parameters)
 			}
 
-			options(error=recover) # Don't use options(warn=2) - get warnings about knots and bounds from BASELINE SIMEX
+			options(error=recover) # Don't use options(warn=2) - get warnings about knots and boundaries from BASELINE SIMEX
 			if (.Platform$OS.type == "unix") number.cores <- detectSGPCores(logical=TRUE) else number.cores <- detectSGPCores(logical=FALSE)
 			Demonstration_SGP <- NULL
 			tmp.messages <- ("##### Results of testSGP test number 4 #####\n\n")
