@@ -9,7 +9,7 @@ function(tmp.message,
 		logfile <- paste0("Logs/SGP-", packageVersion("SGP"), "_", Sys.Date(), ".txt")
 
 		if (is.call(tmp.message)) {
-			tmp.message2 <- c(paste0("\n\n\t", as.character(tmp.message)[1], "(\n\t\t"), paste(names(tmp.message)[-1], as.character(tmp.message)[-1], sep=" = ", collapse="\n\t\t"), ")\n\n")
+			tmp.message2 <- c(paste0("\n\n\t", as.character(tmp.message)[1L], "(\n\t\t"), paste(names(tmp.message)[-1L], as.character(tmp.message)[-1L], sep=" = ", collapse="\n\t\t"), ")\n\n")
 			cat(tmp.message2, file = logfile, append=TRUE)
 		} else cat(tmp.message, "\n", file=logfile, sep="", append=TRUE)
 	}

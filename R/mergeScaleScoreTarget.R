@@ -11,7 +11,7 @@ function(sgp_object,
 			for (i in tmp.names) {
 				tmp.list[[i]] <- data.table(
 					VALID_CASE="VALID_CASE",
-					CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
+					CONTENT_AREA=unlist(strsplit(i, "[.]"))[1L],
 					YEAR=getTableNameYear(i),
 					sgp_object@SGP[["SGProjections"]][[i]])
 			}
@@ -26,7 +26,7 @@ function(sgp_object,
 			for (i in tmp.names) {
 				tmp.list[[i]] <- data.table(
 					VALID_CASE="VALID_CASE",
-					CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
+					CONTENT_AREA=unlist(strsplit(i, "[.]"))[1L],
 					YEAR=getTableNameYear(i),
 					sgp_object@SGP[["SGProjections"]][[i]])
 			}
@@ -45,7 +45,7 @@ function(sgp_object,
 			for (i in tmp.names) {
 				tmp.list[[i]] <- data.table(
 					VALID_CASE="VALID_CASE",
-					CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
+					CONTENT_AREA=unlist(strsplit(i, "[.]"))[1L],
 					YEAR=getTableNameYear(i),
 					sgp_object@SGP[["SGProjections"]][[i]])
 			}
