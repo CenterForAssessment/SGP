@@ -74,10 +74,10 @@ function(tmp.data,
 				approxfun.scale <- tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][[toupper(equate.type.iter)]][['NEW_TO_OLD']][['concordance']][['scale']]
 				approxfun.yx <- tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][[toupper(equate.type.iter)]][['NEW_TO_OLD']][['concordance']][['yx']]
 				equate.dt <- data.table(V1=approxfun.scale, V2=approxfun.yx)
-				equate.dt.newtoold <- equate.dt[,mean(V2, na.rm=TRUE), by=V1]
+				equate.dt.newtoold <- equate.dt[,list(V2=mean(V2, na.rm=TRUE)), by=V1]
 				tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][[toupper(equate.type.iter)]][['NEW_TO_OLD']]$interpolated_function <- approxfun(
 					equate.dt.newtoold[['V1']], equate.dt.newtoold[['V2']], rule=2)
-				equate.dt.oldtonew <- equate.dt[,mean(V1, na.rm=TRUE), by=V2]
+				equate.dt.oldtonew <- equate.dt[,list(V1=mean(V1, na.rm=TRUE)), by=V2]
 				tmp.list[[paste(content_area.iter, current.year, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][[toupper(equate.type.iter)]][['OLD_TO_NEW']]$interpolated_function <- approxfun(
 					equate.dt.oldtonew[['V2']], equate.dt.oldtonew[['V1']], rule=2)
 			}
