@@ -1545,9 +1545,9 @@ function(
 
 			# if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', rev(sgpData.years)[2], 'EQUATED', sep=".")]][['SGP_EQUATED']], na.rm=TRUE), 1418003L)) {
 			if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', rev(sgpData.years)[2], 'EQUATED', sep=".")]][['SGP_EQUATED']]), "b1ea9b92fa692cec135c18c5ba979a42")) {
-				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP from equated analysis, part 2: OK\n")
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP from READING equated analysis, part 2: OK\n")
 			} else {
-				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP from equated analysis, part 2: FAIL\n")
+				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP from READING equated analysis, part 2: FAIL\n")
 			}
 
 			### TEST of SCALE_SCORE_EQUATED variable
