@@ -278,7 +278,7 @@ function(what_sgp_object=NULL,
 		} else { ### END if (overwrite.existing.data)
 			if (!is.null(sgp.use.my.coefficient.matrices)) {
 				# Extract score histories.  Don't use CONTENT_AREA due to potential use of EOCT course progressions.
-				tmp.long.data <- rbindlist(list(data.table(what_sgp_object@Data, key=c("VALID_CASE", "ID"))[
+				tmp.long.data <- rbindlist(list(data.table(what_sgp_object@Data[!YEAR %in% update.years], key=c("VALID_CASE", "ID"))[ # add update.years exclusion to avoid pulling in current year students from other content areas that are not being updated
 					unique(data.table(tmp_sgp_object@Data, key=c("VALID_CASE", "ID"))[,list(VALID_CASE, ID)], by=c("VALID_CASE", "ID")), nomatch=0], tmp_sgp_object@Data), fill=TRUE)
 				if ("YEAR_WITHIN" %in% names(tmp.long.data)) {
 					tmp.long.data[, FIRST_OBSERVATION := NULL]
