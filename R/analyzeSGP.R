@@ -481,7 +481,7 @@ function(sgp_object,
             save(list=paste(gsub(" ", "_", getStateAbbreviation(state, type="LONG")), "Scale_Score_Linkages", sep="_"),
               file=paste0(paste0("Data/", paste("Linkages", year.for.equate, sep="_"), "/"), paste(gsub(" ", "_", getStateAbbreviation(state, type="LONG")), "Scale_Score_Linkages", sep="_"), ".Rdata"))
             setkey(data.for.equate, VALID_CASE, CONTENT_AREA, YEAR, ID)
-            data.for.equate <- data.for.equate[,c(names(sgp_object@Data), 'SCALE_SCORE_EQUATED_EQUIPERCENTILE_OLD_TO_NEW'), with=FALSE]
+            data.for.equate[,setdiff(names(data.for.equate), c(names(sgp_object@Data), 'SCALE_SCORE_EQUATED_EQUIPERCENTILE_OLD_TO_NEW')):=NULL]
             setnames(data.for.equate, 'SCALE_SCORE_EQUATED_EQUIPERCENTILE_OLD_TO_NEW', 'SCALE_SCORE_EQUATED')
             sgp_object@Data <- data.for.equate
         } ### END if (is.null(sgp.use.my.coefficient.matrices))
@@ -2049,7 +2049,7 @@ function(sgp_object,
 				tmp_sgp_object <- studentGrowthProjections(
 					panel.data=panel.data,
 					sgp.labels=list(my.year=tail(sgp.iter[["sgp.projection.panel.years"]], 1),
-            my.subject=tail(sgp.iter[["sgp.projection.content.areas"]], 1), my.grade=tail(sgp.iter[["sgp.projection.grade.sequences"]], 1)),
+                    my.subject=tail(sgp.iter[["sgp.projection.content.areas"]], 1), my.grade=tail(sgp.iter[["sgp.projection.grade.sequences"]], 1)),
 					use.my.coefficient.matrices=list(my.year=tail(sgp.iter[["sgp.projection.panel.years"]], 1),
 						my.subject=tail(sgp.iter[["sgp.projection.content.areas"]], 1), my.extra.label=equate.label),
 					use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.projection.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.projection.content.areas"]], 1)),
