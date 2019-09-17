@@ -47,7 +47,7 @@ function(sgp_object,
 	messageSGP(paste("\nStarted analyzeSGP", prettyDate()), "\n")
 	messageSGP(match.call())
 
-	VALID_CASE <- CONTENT_AREA <- YEAR <- GRADE <- ID <- YEAR_WITHIN <- SCALE_SCORE <- NULL
+	VALID_CASE <- CONTENT_AREA <- YEAR <- GRADE <- ID <- YEAR_WITHIN <- SCALE_SCORE <- SCALE_SCORE_EQUATED <- NULL
 	SGPstateData <- SGP::SGPstateData ### Needed due to possible assignment of values to SGPstateData
 
 	###
@@ -462,6 +462,14 @@ function(sgp_object,
             }
 
             data.for.equate <- copy(sgp_object@Data)
+
+            if ("SCALE_SCORE_EQUATED" %in% names(data.for.equate)) {
+                old.scale.score.equated.year <- tail(sort(unique(data.for.equate[!is.na(SCALE_SCORE_EQUATED)]$YEAR)), 1)
+                if (paste("SCALE_SCORE_EQUATED_FROM", old.scale.score.equated.year, sep="_") %in% names (data.for.equate)) data.for.equate[,paste("SCALE_SCORE_EQUATED_FROM", old.scale.score.equated.year, sep="_"):=NULL]
+                setnames(data.for.equate, "SCALE_SCORE_EQUATED", paste("SCALE_SCORE_EQUATED_FROM", old.scale.score.equated.year, sep="_"))
+                messageSGP(paste0("\tNOTE: Variable `SCALE_SCORE_EQUATED` exists in @Data and is being renamed as SCALE_SCORE_EQUATED_", old.scale.score.equated.year, " to accomodate an additional assessment transition variable."))
+            }
+
             sgp_object@SGP[['Linkages']] <- Linkages <- equateSGP(data.for.equate, state, year.for.equate, sgp.percentiles.equating.method)
             setkey(data.for.equate, VALID_CASE, CONTENT_AREA, YEAR, GRADE, SCALE_SCORE)
             for (conversion.type.iter in c("OLD_TO_NEW", "NEW_TO_OLD")) {
