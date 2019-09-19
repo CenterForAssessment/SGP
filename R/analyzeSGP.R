@@ -464,8 +464,8 @@ function(sgp_object,
             data.for.equate <- copy(sgp_object@Data)
 
             if ("SCALE_SCORE_EQUATED" %in% names(data.for.equate)) {
-                old.scale.score.equated.year <- tail(sort(unique(data.for.equate[!is.na(SCALE_SCORE_EQUATED)]$YEAR)), 1)
-                if (paste("SCALE_SCORE_EQUATED_FROM", old.scale.score.equated.year, sep="_") %in% names (data.for.equate)) data.for.equate[,paste("SCALE_SCORE_EQUATED_FROM", old.scale.score.equated.year, sep="_"):=NULL]
+                old.scale.score.equated.year <- tail(data.for.equate[!is.na(SCALE_SCORE_EQUATED),.N,keyby="YEAR"]$YEAR, 1)
+                if (paste("SCALE_SCORE_EQUATED_FROM", old.scale.score.equated.year, sep="_") %in% names(data.for.equate)) data.for.equate[,paste("SCALE_SCORE_EQUATED_FROM", old.scale.score.equated.year, sep="_"):=NULL]
                 setnames(data.for.equate, "SCALE_SCORE_EQUATED", paste("SCALE_SCORE_EQUATED_FROM", old.scale.score.equated.year, sep="_"))
                 messageSGP(paste0("\tNOTE: Variable `SCALE_SCORE_EQUATED` exists in @Data and is being renamed as SCALE_SCORE_EQUATED_", old.scale.score.equated.year, " to accomodate an additional assessment transition variable."))
             }
