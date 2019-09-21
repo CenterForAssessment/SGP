@@ -14,26 +14,29 @@ gofSGP(
 	content_areas=NULL,
 	content_areas_prior=NULL,
 	grades=NULL,
+	ceiling.floor=TRUE,
 	use.sgp="SGP",
 	output.format="PDF",
 	color.scale="reds.and.blues")
 }
 
 \arguments{
-  \item{sgp_object}{The SGP object from which the goodness-of-fit data will be used. 
+  \item{sgp_object}{The SGP object from which the goodness-of-fit data will be used.
   }
-  \item{state}{The 'state' for the sgp_object. Derive from sgp_object name if not explicitly supplied. 
+  \item{state}{The 'state' for the sgp_object. Derive from sgp_object name if not explicitly supplied.
   }
   \item{years}{The years that goodness-of-fit plots are requested. Default is to use all years available.
   }
   \item{content_areas}{The content area(s) that goodness-of-fit plots are requested. Default is to use all content areas available.
   }
-  \item{content_areas_prior}{The content area(s) of the prior year which growth by achievement level is being produced that goodness-of-fit plots are requested. 
+  \item{content_areas_prior}{The content area(s) of the prior year which growth by achievement level is being produced that goodness-of-fit plots are requested.
   Default is to use all content areas available.
   }
   \item{grades}{The grade(s) that goodness-of-fit plots are requested. Default is to use all grade available.
   }
-  \item{use.sgp}{Character vectors (defaults to 'SGP') indicating what student growth percentile variable to calculate goodness-of-fit plots for. 
+	\item{ceiling.floor}{Boolean variable to explictly control display of ceiling/floor portion of goodness of fit plot.
+	}
+  \item{use.sgp}{Character vectors (defaults to 'SGP') indicating what student growth percentile variable to calculate goodness-of-fit plots for.
   }
   \item{output.format}{Character vectors (defaults to 'PDF') indicating what driver to use to output results. Options currently include 'PDF', 'PNG' and 'SVG'.  'SVG' is currently experimental.
   }
@@ -52,7 +55,7 @@ gofSGP(
 \dontrun{
 Demonstration_SGP <- abcSGP(sgpData_LONG)
 gofSGP(Demonstration_SGP)
-}  
+}
 }
 
 \keyword{documentation}

@@ -25,14 +25,14 @@ function(
 
 	### Define relevant variables
 
-	if (is.null(round.digits)) round.digits <- 2
+	if (is.null(round.digits)) round.digits <- 1L
 	if (is.null(distribution)) distribution <- "Normal"
 	if (!is.null(state)) {
 		min.max <- SGP::SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]][[get.my.knots.boundaries(content_area, year)]][[paste0("loss.hoss_", grade)]]
 	} else {
 		min.max <- range(scale_scores, na.rm=TRUE)
 	}
-	Interpolation_Function <- function(scale_score, variance, round.digits) return(splinefun(scale_score, variance, method="natural"))
+	Interpolation_Function <- function(scale_score, variance, round.digits) return(splinefun(scale_score, variance/sqrt(round.digits), method="natural"))
 
 	### Create scale score dependent CSEMs
 
@@ -54,7 +54,7 @@ function(
 	} else {
 		tmp.scores <- data.table(SIM=round(rnorm(length(scale_scores), scale_scores, tmp.omega), digits=round.digits))
 	}
-	tmp.scores[SIM < min.max[1], SIM:=min.max[1]]
-	tmp.scores[SIM > min.max[2], SIM:=min.max[2]]
+	tmp.scores[SIM < min.max[1L], SIM:=min.max[1L]]
+	tmp.scores[SIM > min.max[2L], SIM:=min.max[2L]]
 	return(tmp.scores[['SIM']])
 } ### END csemScoreSimulator

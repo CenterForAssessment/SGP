@@ -14,7 +14,7 @@ function(sgp.iter,
 			tmp.content_areas <- unique(sgp.iter[[type]])
 			tmp.content_areas <- unique(unlist(my.tmp[unlist(lapply(my.tmp, function(x) any(tmp.content_areas %in% x)))]))
 			if (is.null(tmp.content_areas)) {
-				messageSGP(paste0("\n\tNOTE:  Content Areas ", paste(unique(sgp.iter[[type]]), collapse=", "), " not in SGPstateData[['",state,"']][['SGP_Configuration']][['content_area.projection.sequence']].\n\t\t Knots and bounds for only those Content Areas will be used."))
+				messageSGP(paste0("\n\tNOTE:  Content Areas ", paste(unique(sgp.iter[[type]]), collapse=", "), " not in SGPstateData[['",state,"']][['SGP_Configuration']][['content_area.projection.sequence']].\n\t\t Knots and boundaries for only those Content Areas will be used."))
 				tmp.content_areas <- unique(sgp.iter[[type]])
 			}
 			return(tmp.content_areas)

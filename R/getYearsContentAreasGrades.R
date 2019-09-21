@@ -18,8 +18,8 @@ function(state,
 		}
 
 		if (!is.null(earliest_year_reported[[i]])) {
-			tmp.years.diff <- as.numeric(tail(unlist(strsplit(tail(sort(years), 1), "_")), 1))-as.numeric(tail(unlist(strsplit(earliest_year_reported[[i]], "_")), 1))
-			tmp.dt <- CJ(tmp.dt$GRADE, intersect(yearIncrement(tail(sort(years), 1), c(-seq(tmp.years.diff), 0)), years))
+			tmp.years.diff <- as.numeric(tail(unlist(strsplit(tail(sort(years), 1L), "_")), 1L))-as.numeric(tail(unlist(strsplit(earliest_year_reported[[i]], "_")), 1L))
+			tmp.dt <- CJ(tmp.dt$GRADE, intersect(yearIncrement(tail(sort(years), 1L), c(-seq(tmp.years.diff), 0)), years))
 		} else {
 			tmp.dt <- CJ(tmp.dt$GRADE, years)
 		}

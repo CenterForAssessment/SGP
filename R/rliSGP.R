@@ -135,7 +135,7 @@ function(sgp_object,
 	if (long.data.supplied <- is.data.frame(sgp_object)) {
 		sgp_object <- as.data.table(sgp_object)
 		if (score.type=="RASCH") sgp_object[,CONTENT_AREA:=paste(CONTENT_AREA, "RASCH", sep="_")]
-		tmp.last.year <- tail(sort(unique(sgp_object[['YEAR']])), 1)
+		tmp.last.year <- tail(sort(unique(sgp_object[['YEAR']])), 1L)
 		additional.data <- sgp_object[YEAR==tmp.last.year]
 		sgp_object <- new("SGP", Data=suppressMessages(prepareSGP(sgp_object[YEAR!=tmp.last.year], state=state)@Data), Version=getVersion(sgp_object))
 		gc(FALSE)
@@ -146,24 +146,24 @@ function(sgp_object,
 		}
 	}
 
-	if (!is.null(testing.window) && (length(testing.window) != 1 || !testing.window %in% c("FALL", "WINTER", "SPRING"))) {
+	if (!is.null(testing.window) && (length(testing.window) != 1L || !testing.window %in% c("FALL", "WINTER", "SPRING"))) {
 		stop("\tPlease supply either 'FALL', 'WINTER', or 'SPRING' for the testing.window argument.")
 	} else {
-		testing.window <- c("FALL", "WINTER", "SPRING")[as.numeric(tail(unlist(strsplit(tail(sort(unique(additional.data[['YEAR']])), 1), '[.]')), 1))]
+		testing.window <- c("FALL", "WINTER", "SPRING")[as.numeric(tail(unlist(strsplit(tail(sort(unique(additional.data[['YEAR']])), 1L), '[.]')), 1L))]
 	}
 
-	if (is.null(configuration.year)) configuration.year <- head(unlist(strsplit(tail(sort(unique(additional.data[['YEAR']])), 1), '[.]')), 1)
+	if (is.null(configuration.year)) configuration.year <- head(unlist(strsplit(tail(sort(unique(additional.data[['YEAR']])), 1L), '[.]')), 1L)
 
 	if (length(find.package("RLImatrices", quiet=TRUE))==0) stop("Package RLImatrices required from GitHub.")
 	if (is.null(coefficient.matrices)) {
 		eval(parse(text="require(RLImatrices)"))
 		matrix.years <- getRLIMatrixYears(score.type)
 		tmp.configuration.year <- paste(configuration.year, match(testing.window, c("FALL", "WINTER", "SPRING")), sep=".")
-		tmp.data.last.year <- tail(sort(unique(additional.data[['YEAR']])), 1)
+		tmp.data.last.year <- tail(sort(unique(additional.data[['YEAR']])), 1L)
 		if (!tmp.configuration.year %in% matrix.years) {
 			messageSGP(paste0("\tNOTE: ", tmp.configuration.year, " indicated in the configuration has no matrices in ", paste(state, "SGPt_Baseline_Matrices", sep="_")))
-			if (tmp.data.last.year > tail(matrix.years, 1)) tmp.matrix.year <- tail(matrix.years, 1)
-			if (tmp.data.last.year < head(matrix.years, 1)) tmp.matrix.year <- head(matrix.years, 1)
+			if (tmp.data.last.year > tail(matrix.years, 1L)) tmp.matrix.year <- tail(matrix.years, 1L)
+			if (tmp.data.last.year < head(matrix.years, 1L)) tmp.matrix.year <- head(matrix.years, 1L)
 		} else {
 			tmp.matrix.year <- tmp.configuration.year
 		}
@@ -226,7 +226,7 @@ function(sgp_object,
 		}
 
 		if (update.save.shell.only) {
-			assign(update.shell.name, prepareSGP(sgp_object@Data[YEAR %in% tail(head(sort(unique(sgp_object@Data[['YEAR']])), -1), num.windows.to.keep)],
+			assign(update.shell.name, prepareSGP(sgp_object@Data[YEAR %in% tail(head(sort(unique(sgp_object@Data[['YEAR']])), -1L), num.windows.to.keep)],
 				state=state, create.additional.variables=FALSE))
 			save(list=update.shell.name, file=paste(update.shell.name, "Rdata", sep="."))
 		}
@@ -247,7 +247,7 @@ function(sgp_object,
 			save(list=update.shell.name, file=paste(update.shell.name, "Rdata", sep="."))
 		} else {
 			if (eow.calculate.sgps) my.steps <- c("prepareSGP", "analyzeSGP", "combineSGP", "outputSGP") else steps <- c("prepareSGP", "analyzeSGP")
-			latest.RLImatrices.version <- sub("-", ".", unlist(strsplit(read.table("https://raw.githubusercontent.com/CenterForAssessment/RLImatrices/master/DESCRIPTION", sep="!", colClasses="character")$V1[4], ": "))[2])
+			latest.RLImatrices.version <- sub("-", ".", unlist(strsplit(read.table("https://raw.githubusercontent.com/CenterForAssessment/RLImatrices/master/DESCRIPTION", sep="!", colClasses="character")$V1[4L], ": "))[2L])
 			if (as.character(packageVersion("RLImatrices"))!=latest.RLImatrices.version) stop(paste0("Installed 'RLImatrices' package is not most current version. Install latest version (", latest.RLImatrices.version, ") using install_github('centerforassessment/RLImatrices')."))
 			sgp_object <- updateSGP(
 				what_sgp_object=sgp_object,
@@ -287,13 +287,13 @@ function(sgp_object,
 			if (testing.window=="FALL") {
 				matrix.window <- paste(configuration.year, 3, sep=".")
 			} else {
-				matrix.window <- paste(yearIncrement(configuration.year, 1), c(3, 1, 2)[match(testing.window, c("FALL", "WINTER", "SPRING"))], sep=".")
+				matrix.window <- paste(yearIncrement(configuration.year, 1L), c(3L, 1L, 2L)[match(testing.window, c("FALL", "WINTER", "SPRING"))], sep=".")
 			}
 			new.matrices <-convertToBaseline(sgp_object@SGP$Coefficient_Matrices[grep(configuration.year, names(sgp_object@SGP$Coefficient_Matrices))])
-			old.matrix.label <- paste0(paste(state, "SGPt_Baseline_Matrices", sep="_"), "$", tail(sort(names(get(paste(state, "SGPt_Baseline_Matrices", sep="_")))), 1))
+			old.matrix.label <- paste0(paste(state, "SGPt_Baseline_Matrices", sep="_"), "$", tail(sort(names(get(paste(state, "SGPt_Baseline_Matrices", sep="_")))), 1L))
 			old.matrices <- eval(parse(text=old.matrix.label))
 			if (score.type=="RASCH") tmp.content_areas <- paste0(c("EARLY_LITERACY", "MATHEMATICS", "READING", "READING_UNIFIED"), "_RASCH.BASELINE") else tmp.content_areas <- paste0(c("EARLY_LITERACY", "MATHEMATICS", "READING"), ".BASELINE")
-			year.to.replace <- head(sort(unique(sapply(lapply(sapply(names(old.matrices[[tmp.content_areas[3]]]), strsplit, '[.]'), '[', 2:3), paste, collapse="."))), 1)
+			year.to.replace <- head(sort(unique(sapply(lapply(sapply(names(old.matrices[[tmp.content_areas[3]]]), strsplit, '[.]'), '[', 2:3), paste, collapse="."))), 1L)
 			for (content_area.iter in tmp.content_areas) {
 				old.matrices[[content_area.iter]][grep(year.to.replace, names(old.matrices[[content_area.iter]]))] <- NULL
 				old.matrices[[content_area.iter]] <- c(old.matrices[[content_area.iter]], new.matrices[[content_area.iter]])
