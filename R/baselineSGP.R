@@ -78,7 +78,7 @@ function(sgp_object,
 		test.year.sequence <- function(content_areas, years, grades, baseline.grade.sequences.lags=NULL) {
 
 			grades <- type.convert(as.character(grades), as.is=TRUE)
-			if (is.null(baseline.grade.sequences.lags)) baseline.grade.sequences.lags <- rep(1, length(grades)-1)
+			if (is.null(baseline.grade.sequences.lags)) baseline.grade.sequences.lags <- rep(1L, length(grades)-1L)
 
 			tmp.years.sequence <- list()
 			tmp.years.sequence <- lapply(years, function(x) yearIncrement(year=x, increment=c(0,cumsum(baseline.grade.sequences.lags))))
@@ -106,7 +106,7 @@ function(sgp_object,
 			names(tmp.sgp.iter) <- gsub('sgp.baseline.', 'sgp.', names(tmp.sgp.iter))
 			tmp.sgp.iter$sgp.panel.years <- tmp.year.sequence[[k]]
 			tmp.sgp.iter$sgp.grade.sequences <- tmp.sgp.iter$sgp.grade.sequences
-			if (!is.null(tmp.sgp.iter$sgp.exclude.sequences)) tmp.sgp.iter$sgp.exclude.sequences <- tmp.sgp.iter$sgp.exclude.sequences[COHORT_YEAR %in% tail(tmp.sgp.iter$sgp.panel.years, 1)]
+			if (!is.null(tmp.sgp.iter$sgp.exclude.sequences)) tmp.sgp.iter$sgp.exclude.sequences <- tmp.sgp.iter$sgp.exclude.sequences[COHORT_YEAR %in% tail(tmp.sgp.iter$sgp.panel.years, 1L)]
 			tmp.list[[k]] <- getPanelData(tmp_sgp_data_for_analysis, "sgp.percentiles", sgp.iter = tmp.sgp.iter)[,
 				getPanelDataVnames("sgp.percentiles", tmp.sgp.iter, names(tmp_sgp_data_for_analysis)), with=FALSE]
 			setnames(tmp.list[[k]], c("ID", paste("GRADE", rev(seq_along(tmp.year.sequence[[k]])), sep="_"), paste("SCALE_SCORE", rev(seq_along(tmp.year.sequence[[k]])), sep="_")))
@@ -121,8 +121,8 @@ function(sgp_object,
 			studentGrowthPercentiles(
 				panel.data=list(Panel_Data=tmp.dt, Coefficient_Matrices=TMP_Coefficient_Matrices, # Add Coef Matrices for SIMEX
 					Knots_Boundaries=getKnotsBoundaries(knots.boundaries.iter, state, "sgp.percentiles.baseline", "BASELINE")),
-				sgp.labels=list(my.year="BASELINE", my.subject=tail(content_areas, 1)),
-				use.my.knots.boundaries=list(my.year="BASELINE", my.subject=tail(content_areas, 1)),
+				sgp.labels=list(my.year="BASELINE", my.subject=tail(content_areas, 1L)),
+				use.my.knots.boundaries=list(my.year="BASELINE", my.subject=tail(content_areas, 1L)),
 				use.my.coefficient.matrices= use.my.coefficient.matrices,
 				calculate.sgps=FALSE,
 				goodness.of.fit=FALSE,
@@ -139,7 +139,7 @@ function(sgp_object,
 				...)[["Coefficient_Matrices"]])
 
 		message(paste("\tStarted baselineSGP Coefficient Matrix Calculation:", started.date))
-		message(paste0("\tContent Area: ", tail(content_areas, 1), ", Grade Progression: ", paste(grade.sequences, collapse=", "), ". "))
+		message(paste0("\tContent Area: ", tail(content_areas, 1L), ", Grade Progression: ", paste(grade.sequences, collapse=", "), ". "))
 		message(paste0("\tFinished baselineSGP Coefficient Matrix Calculation ", prettyDate(), " in ", convertTime(timetakenSGP(started.at)), ".\n"))
 
 		return(tmp_sgp_list)
@@ -226,7 +226,7 @@ function(sgp_object,
 					baseline.grade.sequences.lags=sgp.baseline.config[[iter]][["sgp.baseline.grade.sequences.lags"]],
 					knots.boundaries.iter=sgp.baseline.config[[iter]],
 					parallel.config=parallel.config,
-					use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.baseline.config[[iter]][["sgp.baseline.content.areas"]], 1)),
+					use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.baseline.config[[iter]][["sgp.baseline.content.areas"]], 1L)),
 					calculate.simex=calculate.simex.baseline)
 		}
 
@@ -268,10 +268,10 @@ function(sgp_object,
 
 			tmp_sgp_object <- studentGrowthPercentiles(
 				panel.data=panel.data,
-					sgp.labels=list(my.year=tail(sgp.iter[['sgp.panel.years']], 1),
-						my.subject=tail(sgp.iter[['sgp.content.areas']], 1), my.extra.label="BASELINE"),
-					use.my.knots.boundaries=list(my.year=tail(sgp.iter[['sgp.panel.years']], 1), my.subject=tail(sgp.iter[['sgp.content.areas']], 1)),
-					use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.iter[['sgp.content.areas']], 1)),
+					sgp.labels=list(my.year=tail(sgp.iter[['sgp.panel.years']], 1L),
+						my.subject=tail(sgp.iter[['sgp.content.areas']], 1L), my.extra.label="BASELINE"),
+					use.my.knots.boundaries=list(my.year=tail(sgp.iter[['sgp.panel.years']], 1L), my.subject=tail(sgp.iter[['sgp.content.areas']], 1L)),
+					use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.iter[['sgp.content.areas']], 1L)),
 					growth.levels=state,
 					panel.data.vnames=getPanelDataVnames("sgp.percentiles", sgp.iter, names(tmp_sgp_data_for_analysis)),
 					grade.progression=sgp.iter[['sgp.grade.sequences']],
@@ -305,12 +305,12 @@ function(sgp_object,
 	if (return.matrices.only) {
 		tmp.list <- list()
 		if (is.null(SGP::SGPstateData[[state]][["Baseline_splineMatrix"]])) {
-			for (ca in unique(sapply(sgp.baseline.config, function(x) tail(x[["sgp.baseline.content.areas"]],1)))) {
+			for (ca in unique(sapply(sgp.baseline.config, function(x) tail(x[["sgp.baseline.content.areas"]],1L)))) {
 				tmp.list[[paste0(ca, ".BASELINE")]] <- sgp_object@SGP[["Coefficient_Matrices"]][[paste0(ca, ".BASELINE")]]
 			}
 		}
 		if (!is.null(calculate.simex.baseline)) {
-			for (ca in unique(sapply(sgp.baseline.config, function(x) tail(x[["sgp.baseline.content.areas"]],1)))) {
+			for (ca in unique(sapply(sgp.baseline.config, function(x) tail(x[["sgp.baseline.content.areas"]],1L)))) {
 				tmp.list[[paste0(ca, ".BASELINE.SIMEX")]] <- sgp_object@SGP[["Coefficient_Matrices"]][[paste0(ca, ".BASELINE.SIMEX")]]
 			}
 		}

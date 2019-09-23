@@ -20,16 +20,16 @@ function(x,
 			return(list(tmp.split=tmp.split, tmp.split.special.words.index=tmp.split.special.words.index))
 		}
 		s <- my.split(x, " ")
-		s[[1]][s[[2]]] <- paste0(toupper(substring(s[[1]][s[[2]]],1,1)), tolower(substring(s[[1]][s[[2]]],2)))
-		s.new <- paste(s[[1]], collapse=" ")
+		s[[1L]][s[[2L]]] <- paste0(toupper(substring(s[[1L]][s[[2L]]],1L,1L)), tolower(substring(s[[1L]][s[[2L]]],2L)))
+		s.new <- paste(s[[1L]], collapse=" ")
 		s.new <- unlist(strsplit(s.new, split="-"))
-		if (length(s.new) > 1) s.new <- paste0(toupper(substring(s.new,1,1)), substring(s.new,2), collapse="-")
-		if (length(unlist(strsplit(s.new, split="'"))) > 1 & nchar(unlist(strsplit(s.new, split="'"))[2]) > 1) {
+		if (length(s.new) > 1L) s.new <- paste0(toupper(substring(s.new,1L,1L)), substring(s.new,2L), collapse="-")
+		if (length(unlist(strsplit(s.new, split="'"))) > 1L & nchar(unlist(strsplit(s.new, split="'"))[2L]) > 1L) {
 			s.new <- unlist(strsplit(s.new, split="'"))
-			s.new <- paste0(toupper(substring(s.new,1,1)), substring(s.new,2), collapse="'")
+			s.new <- paste0(toupper(substring(s.new,1L,1L)), substring(s.new,2L), collapse="'")
 		}
 		s.new <- unlist(strsplit(s.new, split="[.]"))
-		if (length(s.new) > 1) s.new <- paste0(toupper(substring(s.new,1,1)), substring(s.new,2), collapse=".")
+		if (length(s.new) > 1L) s.new <- paste0(toupper(substring(s.new,1L,1L)), substring(s.new,2L), collapse=".")
 		s.new <- gsub(" [)]", ")", gsub("[(] ", "(", s.new))
 		return(s.new)
 	}

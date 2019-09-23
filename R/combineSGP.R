@@ -46,7 +46,7 @@ function(
 		tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
 		tmp.name.position <- sapply(c(datasets::state.name, "AOB", "DEMONSTRATION"), function(x) regexpr(toupper(x), tmp.name))
 		if (any(tmp.name.position!=-1)) {
-			state <- c(datasets::state.abb, "AOB", "DEMO")[which(names(sort(tmp.name.position[tmp.name.position!=-1])[1])==c(datasets::state.name, "AOB", "DEMONSTRATION"))]
+			state <- c(datasets::state.abb, "AOB", "DEMO")[which(names(sort(tmp.name.position[tmp.name.position!=-1])[1L])==c(datasets::state.name, "AOB", "DEMONSTRATION"))]
 		} else {
 			tmp.messages <- c(tmp.messages, "\tNOTE: argument 'state' required for target SGP calculation. Target SGPs will not be calculated.\n")
 			sgp.projections.lagged <- sgp.projections.lagged.baseline <- FALSE
@@ -171,7 +171,7 @@ function(
 		if (identical(system.type, "Cohort and Baseline Referenced")) {
 			tmp.list[['target.type']] <- intersect(target.type, c("sgp.projections", "sgp.projections.baseline", "sgp.projections.lagged", "sgp.projections.lagged.baseline"))
 			if (!is.null(year.for.equate) && !sgp.percentiles.equated) {
-				tmp.year.diff <- as.numeric(unlist(strsplit(tail(sort(unique(sgp_object@Data, by='YEAR')[['YEAR']]), 1), "_"))[1]) - as.numeric(unlist(strsplit(year.for.equate, "_"))[1])
+				tmp.year.diff <- as.numeric(unlist(strsplit(tail(sort(unique(sgp_object@Data, by='YEAR')[['YEAR']]), 1), "_"))[1L]) - as.numeric(unlist(strsplit(year.for.equate, "_"))[1L])
 				tmp.messages <- c(tmp.messages, paste0("\tNOTE: Due to test transition in ", year.for.equate, " SGP_TARGET will utilize ", paste("SGP_MAX_ORDER", tmp.year.diff, sep="_"), ".\n"))
 				tmp.list[['my.sgp']] <- c(paste("SGP_MAX_ORDER", tmp.year.diff, sep="_"), "SGP_BASELINE")[c(sgp.percentiles, sgp.percentiles.baseline)]
 			} else {
@@ -257,7 +257,7 @@ function(
 		tmp.list <- list()
 		for (i in tmp.names) {
 		tmp.list[[i]] <- data.table(
-					CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
+					CONTENT_AREA=unlist(strsplit(i, "[.]"))[1L],
 					YEAR=getTableNameYear(i),
 					sgp_object@SGP[["SGPercentiles"]][[i]])
 		}
@@ -277,7 +277,7 @@ function(
 			##  Extend the slot.data if any new rows are required (e.g. dups in prior years) - if not still merge in DUPS_FLAG.
 			slot.data.extension <- tmp.data[!is.na(DUPS_FLAG), c(key(slot.data), "SGP_NORM_GROUP_SCALE_SCORES", "DUPS_FLAG"), with=FALSE]
 			tmp.split <- strsplit(as.character(slot.data.extension[["SGP_NORM_GROUP_SCALE_SCORES"]]), "; ")
-			invisible(slot.data.extension[, SCALE_SCORE := as.numeric(sapply(tmp.split, function(x) rev(x)[1]))])
+			invisible(slot.data.extension[, SCALE_SCORE := as.numeric(sapply(tmp.split, function(x) rev(x)[1L]))])
 			invisible(slot.data.extension[, SGP_NORM_GROUP_SCALE_SCORES := NULL])
 			if ("DUPS_FLAG" %in% names(slot.data)) flag.fix <- TRUE else flag.fix <- FALSE
 			slot.data <- slot.data.extension[slot.data, on=c(key(slot.data),"SCALE_SCORE"), allow.cartesian=TRUE]
@@ -315,7 +315,7 @@ function(
 		tmp.list <- list()
 		for (i in tmp.names) {
 			tmp.list[[i]] <- data.table(
-				CONTENT_AREA=unlist(strsplit(i, "[.]"))[1],
+				CONTENT_AREA=unlist(strsplit(i, "[.]"))[1L],
 				YEAR=getTableNameYear(i),
 				sgp_object@SGP[["SGPercentiles"]][[i]])
 
@@ -343,7 +343,7 @@ function(
 			##  Extend the slot.data if any new rows are required (e.g. dups in prior years) - if not still merge in DUPS_FLAG.
 			slot.data.extension <- tmp.data[!is.na(DUPS_FLAG), c(key(slot.data), "SGP_NORM_GROUP_SCALE_SCORES", "DUPS_FLAG"), with=FALSE]
 			tmp.split <- strsplit(as.character(slot.data.extension[["SGP_NORM_GROUP_SCALE_SCORES"]]), "; ")
-			invisible(slot.data.extension[, SCALE_SCORE := as.numeric(sapply(tmp.split, function(x) rev(x)[1]))])
+			invisible(slot.data.extension[, SCALE_SCORE := as.numeric(sapply(tmp.split, function(x) rev(x)[1L]))])
 			invisible(slot.data.extension[, SGP_NORM_GROUP_SCALE_SCORES := NULL])
 			if ("DUPS_FLAG" %in% names(slot.data)) flag.fix <- TRUE else flag.fix <- FALSE
 			slot.data <- slot.data.extension[slot.data, on=c(key(slot.data),"SCALE_SCORE"), allow.cartesian=TRUE]
@@ -471,7 +471,7 @@ function(
 		if (identical(sgp.target.content_areas, TRUE)) {
 			for (my.sgp.target.content_area.iter in seq_along(target.args[['my.sgp.target.content_area']])) {
 				slot.data[!is.na(get(target.args[['my.sgp.target']][my.sgp.target.content_area.iter])), target.args[['my.sgp.target.content_area']][my.sgp.target.content_area.iter] :=
-					getTargetSGPContentArea(GRADE[1], CONTENT_AREA[1], state, max.sgp.target.years.forward, target.args[['my.sgp.target.content_area']][my.sgp.target.content_area.iter]),
+					getTargetSGPContentArea(GRADE[1L], CONTENT_AREA[1L], state, max.sgp.target.years.forward, target.args[['my.sgp.target.content_area']][my.sgp.target.content_area.iter]),
 					by=list(GRADE, CONTENT_AREA)]
 			}
 		}
@@ -495,7 +495,7 @@ function(
 					}
 					if (grepl("FROM", target.args[['my.sgp']][i])) slot.data[YEAR <= year.for.equate, target.args[['my.sgp']][i]:=SGP] ### Get comparison values from before transition
 					if (my.label %in% names(slot.data)) slot.data[,(my.label):=NULL]
-					slot.data[,(my.label):=rep(as.character(NA), dim(slot.data)[1])]
+					slot.data[,(my.label):=rep(as.character(NA), dim(slot.data)[1L])]
 
 					slot.data[CATCH_UP_KEEP_UP_STATUS_INITIAL == "Keeping Up" & get(target.args[['my.sgp']][i]) >= get(my.target.label),
 						(my.label):="Keep Up: Yes"]
@@ -546,7 +546,7 @@ function(
 					if (!grepl("BASELINE", target.args[['my.sgp']][i])) my.label <- paste("MOVE_UP_STAY_UP_STATUS", target.years.iter, "YEAR", sep="_") else my.label <- paste("MOVE_UP_STAY_UP_STATUS_BASELINE", target.years.iter, "YEAR", sep="_")
 					if (grepl("FROM", target.args[['my.sgp']][i])) slot.data[YEAR <= year.for.equate, target.args[['my.sgp']][i]:=SGP]
 					if (my.label %in% names(slot.data)) slot.data[,(my.label):=NULL]
-					slot.data[,(my.label):=rep(as.character(NA), dim(slot.data)[1])]
+					slot.data[,(my.label):=rep(as.character(NA), dim(slot.data)[1L])]
 
 					slot.data[MOVE_UP_STAY_UP_STATUS_INITIAL == "Staying Up" & get(target.args[['my.sgp']][i]) >= get(my.target.label),
 						(my.label):="Stay Up: Yes"]
@@ -599,7 +599,7 @@ function(
 						key=c(getKey(sgp_object), "SGP_PROJECTION_GROUP"))
 			}
 		}
-		tmp.target.data <- data.table(Reduce(function(x, y) merge(x, y, all=TRUE, by=intersect(names(y), names(x))), tmp.target.list[!sapply(tmp.target.list, function(x) dim(x)[1]==0)],
+		tmp.target.data <- data.table(Reduce(function(x, y) merge(x, y, all=TRUE, by=intersect(names(y), names(x))), tmp.target.list[!sapply(tmp.target.list, function(x) dim(x)[1L]==0L)],
 			accumulate=FALSE), key=getKey(slot.data))
 
 		if (!is.null(fix.duplicates)) {
