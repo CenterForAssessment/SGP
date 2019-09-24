@@ -510,7 +510,7 @@ function(panel.data,         ## REQUIRED
 			for (L in lambda[-1L]) {
                 big.data <- createBigData(tmp.data, perturb.var, L, dependent.var.error)
 				if (is.null(simex.use.my.coefficient.matrices) & !identical(sgp.labels[['my.extra.label']], "BASELINE")) {
-                    for (g in seq_along(perturb.var)) {
+                    for (g in ifelse(dependent.var.error, tail(seq_along(perturb.var), -1), seq_along(perturb.var))) {
                         ks <- big.data[, as.list(as.vector(unlist(round(quantile(big.data[[g+1L]], probs=knot.cut.percentiles, na.rm=TRUE), digits=3L))))] # Knots
                         bs <- big.data[, as.list(as.vector(round(extendrange(big.data[[g+1L]], f=0.1), digits=3L)))] # Boundaries
                         lh <- big.data[, as.list(as.vector(round(extendrange(big.data[[g+1L]], f=0.0), digits=3L)))] # LOSS/HOSS
