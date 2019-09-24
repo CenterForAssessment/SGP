@@ -510,16 +510,17 @@ function(panel.data,         ## REQUIRED
 			for (L in lambda[-1L]) {
                 big.data <- createBigData(tmp.data, perturb.var, L, dependent.var.error)
 				if (is.null(simex.use.my.coefficient.matrices) & !identical(sgp.labels[['my.extra.label']], "BASELINE")) {
-                    for (g in seq_along(perturb.var)) {
+                    ifelse(dependent.var.error, knots_boundaries.iter <- tail(perturb.var, -1), knots_boundaries.iter <- perturb.var)
+                    for (g in seq_along(knots_boundaries.iter)) {
                         ks <- big.data[, as.list(as.vector(unlist(round(quantile(big.data[[g+1L]], probs=knot.cut.percentiles, na.rm=TRUE), digits=3L))))] # Knots
                         bs <- big.data[, as.list(as.vector(round(extendrange(big.data[[g+1L]], f=0.1), digits=3L)))] # Boundaries
                         lh <- big.data[, as.list(as.vector(round(extendrange(big.data[[g+1L]], f=0.0), digits=3L)))] # LOSS/HOSS
 
-                        eval(parse(text=paste0("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['knots_", rev(perturb.var)[g],
+                        eval(parse(text=paste0("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['knots_", rev(knots_boundaries.iter)[g],
 																"']] <- c(ks[,V1], ks[,V2], ks[,V3], ks[,V4])")))
-                        eval(parse(text=paste0("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['boundaries_", rev(perturb.var)[g],
+                        eval(parse(text=paste0("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['boundaries_", rev(knots_boundaries.iter)[g],
 																"']] <- c(bs[,V1], bs[,V2])")))
-                        eval(parse(text=paste0("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['loss.hoss_", rev(perturb.var)[g],
+                        eval(parse(text=paste0("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['loss.hoss_", rev(knots_boundaries.iter)[g],
 																"']] <- c(lh[,V1], lh[,V2])")))
                     }
 				}
