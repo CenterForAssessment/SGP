@@ -376,7 +376,7 @@ function(
 		 sgp.percentiles.equated <- TRUE
 	}
 
-	if (sgp.percentiles.baseline & !sgp.target.scale.scores.only) {
+	if (sgp.percentiles.equated & !sgp.target.scale.scores.only) {
 
 		tmp.list <- list()
 		for (i in tmp.names) {
