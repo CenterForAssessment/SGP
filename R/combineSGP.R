@@ -247,7 +247,7 @@ function(
 
 	## Determine names of Cohort Referenced SGPs
 
-	if (!sgp.target.scale.scores.only && length(tmp.names <- getPercentileTableNames(sgp_object, content_areas, state, years, "sgp.percentiles", sgp.percentiles.equated)) == 0 && sgp.percentiles) {
+	if (!sgp.target.scale.scores.only && length(tmp.names <- getPercentileTableNames(sgp_object, content_areas, state, years, "sgp.percentiles", sgp.percentiles.equated=FALSE)) == 0 && sgp.percentiles) {
 		tmp.messages <- c(tmp.messages, "\tNOTE: No cohort referenced SGP results available in SGP slot. No cohort referenced SGP results will be merged.\n")
 		sgp.percentiles <- FALSE
 	}
@@ -305,7 +305,7 @@ function(
 
 	## Determine names of Baseline Referenced SGPs
 
-	if (!sgp.target.scale.scores.only && length(tmp.names <- getPercentileTableNames(sgp_object, content_areas, state, years, "sgp.percentiles.baseline"))==0 && sgp.percentiles.baseline) {
+	if (!sgp.target.scale.scores.only && length(tmp.names <- getPercentileTableNames(sgp_object, content_areas, state, years, "sgp.percentiles.baseline", sgp.percentiles.equated=FALSE))==0 && sgp.percentiles.baseline) {
 		 tmp.messages <- c(tmp.messages, "\tNOTE: No baseline referenced SGP results available in SGP slot. No baseline referenced SGP results will be merged.\n")
 		 sgp.percentiles.baseline <- FALSE
 	}
@@ -341,10 +341,74 @@ function(
 			invisible(tmp.data[, ID := gsub("_DUPS_[0-9]*", "", ID)])
 
 			##  Extend the slot.data if any new rows are required (e.g. dups in prior years) - if not still merge in DUPS_FLAG.
-			slot.data.extension <- tmp.data[!is.na(DUPS_FLAG), c(key(slot.data), "SGP_NORM_GROUP_SCALE_SCORES", "DUPS_FLAG"), with=FALSE]
-			tmp.split <- strsplit(as.character(slot.data.extension[["SGP_NORM_GROUP_SCALE_SCORES"]]), "; ")
+			slot.data.extension <- tmp.data[!is.na(DUPS_FLAG), c(key(slot.data), "SGP_NORM_GROUP_BASELINE_SCALE_SCORES", "DUPS_FLAG"), with=FALSE]
+			tmp.split <- strsplit(as.character(slot.data.extension[["SGP_NORM_GROUP_BASELINE_SCALE_SCORES"]]), "; ")
 			invisible(slot.data.extension[, SCALE_SCORE := as.numeric(sapply(tmp.split, function(x) rev(x)[1L]))])
-			invisible(slot.data.extension[, SGP_NORM_GROUP_SCALE_SCORES := NULL])
+			invisible(slot.data.extension[, SGP_NORM_GROUP_BASELINE_SCALE_SCORES := NULL])
+			if ("DUPS_FLAG" %in% names(slot.data)) flag.fix <- TRUE else flag.fix <- FALSE
+			slot.data <- slot.data.extension[slot.data, on=c(key(slot.data),"SCALE_SCORE"), allow.cartesian=TRUE]
+			if (flag.fix) { # Merge together DUPS_FLAG from previous years
+				invisible(slot.data[!is.na(i.DUPS_FLAG) & is.na(DUPS_FLAG), DUPS_FLAG := i.DUPS_FLAG])
+				invisible(slot.data[, i.DUPS_FLAG := NULL])
+			}
+
+			##  Get the row index for variable merge.
+			tmp.index <- slot.data[tmp.data[, c(getKey(slot.data), "GRADE", "DUPS_FLAG"), with=FALSE], which=TRUE, on=c(getKey(slot.data), "GRADE", "DUPS_FLAG")] #
+		} else {
+			tmp.index <- slot.data[tmp.data[, key(tmp.data), with=FALSE], which=TRUE, on=key(tmp.data)]
+		}
+
+		variables.to.merge <- setdiff(names(tmp.data), c(getKey(slot.data), "GRADE"))
+		invisible(slot.data[tmp.index, (variables.to.merge):=tmp.data[, variables.to.merge, with=FALSE]])
+
+		setkeyv(slot.data, getKey(slot.data))
+	}
+
+
+	###################################################################################
+	### sgp.percentiles.equated: Merge equated SGPs in transition year
+	###################################################################################
+
+	## Determine names of Equated SGPs
+
+	if (!sgp.target.scale.scores.only && length(tmp.names <- getPercentileTableNames(sgp_object, content_areas, state, years, "sgp.percentiles", sgp.percentiles.equated=TRUE)) && sgp.percentiles.equated) {
+		 tmp.messages <- c(tmp.messages, "\tNOTE: No equated SGP results available in SGP slot. No equated SGP results will be merged.\n")
+		 sgp.percentiles.equated <- TRUE
+	}
+
+	if (sgp.percentiles.baseline & !sgp.target.scale.scores.only) {
+
+		tmp.list <- list()
+		for (i in tmp.names) {
+			tmp.list[[i]] <- data.table(
+				CONTENT_AREA=unlist(strsplit(i, "[.]"))[1L],
+				YEAR=getTableNameYear(i),
+				sgp_object@SGP[["SGPercentiles"]][[i]])
+
+			setnames(tmp.list[[i]], "SGP", "SGP_EQUATED")
+			if ("SGP_LEVEL" %in% names(tmp.list[[i]])) setnames(tmp.list[[i]], "SGP_LEVEL", "SGP_LEVEL_EQUATED")
+			if ("SGP_NORM_GROUP" %in% names(tmp.list[[i]])) setnames(tmp.list[[i]], "SGP_NORM_GROUP", "SGP_NORM_GROUP_EQUATED")
+			if ("SGP_NORM_GROUP_SCALE_SCORES" %in% names(tmp.list[[i]])) setnames(tmp.list[[i]], "SGP_NORM_GROUP_SCALE_SCORES", "SGP_NORM_GROUP_EQUATED_SCALE_SCORES")
+			if ("SGP_SIMEX" %in% names(tmp.list[[i]])) setnames(tmp.list[[i]], "SGP_SIMEX", "SGP_SIMEX_EQUATED")
+		}
+
+		tmp.data <- data.table(rbindlist(tmp.list, fill=TRUE), VALID_CASE="VALID_CASE", key=key(slot.data))
+
+		if (any(duplicated(tmp.data, by=key(tmp.data)))) {
+			tmp.data <- getPreferredSGP(tmp.data, state, type="BASELINE")
+		}
+
+		if (!is.null(fix.duplicates) & any(grepl("_DUPS_[0-9]*", tmp.data[["ID"]]))) {
+			##  Strip ID of the _DUPS_ Flag, but keep in a seperate variable (used to merge subsequently)
+			invisible(tmp.data[, DUPS_FLAG := gsub(".*_DUPS_", "", ID)])
+			invisible(tmp.data[!grepl("_DUPS_[0-9]*", ID), DUPS_FLAG := NA])
+			invisible(tmp.data[, ID := gsub("_DUPS_[0-9]*", "", ID)])
+
+			##  Extend the slot.data if any new rows are required (e.g. dups in prior years) - if not still merge in DUPS_FLAG.
+			slot.data.extension <- tmp.data[!is.na(DUPS_FLAG), c(key(slot.data), "SGP_NORM_GROUP_EQUATED_SCALE_SCORES", "DUPS_FLAG"), with=FALSE]
+			tmp.split <- strsplit(as.character(slot.data.extension[["SGP_NORM_GROUP_EQUATED_SCALE_SCORES"]]), "; ")
+			invisible(slot.data.extension[, SCALE_SCORE := as.numeric(sapply(tmp.split, function(x) rev(x)[1L]))])
+			invisible(slot.data.extension[, SGP_NORM_GROUP_EQUATED_SCALE_SCORES := NULL])
 			if ("DUPS_FLAG" %in% names(slot.data)) flag.fix <- TRUE else flag.fix <- FALSE
 			slot.data <- slot.data.extension[slot.data, on=c(key(slot.data),"SCALE_SCORE"), allow.cartesian=TRUE]
 			if (flag.fix) { # Merge together DUPS_FLAG from previous years
