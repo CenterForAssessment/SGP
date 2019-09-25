@@ -148,12 +148,15 @@ function(
 
 		if (identical(system.type, "Cohort Referenced")) {
 			tmp.list[['target.type']] <- intersect(target.type, c("sgp.projections", "sgp.projections.lagged"))
+			tmp.list[['my.sgp']] <- "SGP"
 			if (!is.null(year.for.equate) && tmp.first.year < year.for.equate && !sgp.percentiles.equated) {
 				tmp.variable.name <- paste("SGP_FROM", year.for.equate, sep="_")
 				tmp.messages <- c(tmp.messages, paste0("\tNOTE: Due to test transition in ", year.for.equate, " SGP_TARGET will be compared to ", tmp.variable.name, ".\n"))
 				tmp.list[['my.sgp']] <- tmp.variable.name
-			} else {
-				tmp.list[['my.sgp']] <- "SGP"
+			}
+			if (!is.null(year.for.equate) && tmp.first.year==year.for.equate && sgp.percentiles.equated) {
+				tmp.messages <- c(tmp.messages, paste0("\tNOTE: Due to test transition in ", year.for.equate, " SGP_TARGET will be compared to SGP_EQUATED.\n"))
+				tmp.list[['my.sgp']] <- "SGP_EQUATED"
 			}
 			tmp.list[['my.sgp.target']] <- paste("SGP_TARGET", max.sgp.target.years.forward, projection.unit.label, sep="_")
 			tmp.list[['my.sgp.target.content_area']] <- paste("SGP_TARGET", max.sgp.target.years.forward, projection.unit.label, "CONTENT_AREA", sep="_")
@@ -170,12 +173,15 @@ function(
 		}
 		if (identical(system.type, "Cohort and Baseline Referenced")) {
 			tmp.list[['target.type']] <- intersect(target.type, c("sgp.projections", "sgp.projections.baseline", "sgp.projections.lagged", "sgp.projections.lagged.baseline"))
+			tmp.list[['my.sgp']] <- c("SGP", "SGP_BASELINE")[c(sgp.percentiles, sgp.percentiles.baseline)]
 			if (!is.null(year.for.equate) && !sgp.percentiles.equated) {
 				tmp.year.diff <- as.numeric(unlist(strsplit(tail(sort(unique(sgp_object@Data, by='YEAR')[['YEAR']]), 1), "_"))[1L]) - as.numeric(unlist(strsplit(year.for.equate, "_"))[1L])
 				tmp.messages <- c(tmp.messages, paste0("\tNOTE: Due to test transition in ", year.for.equate, " SGP_TARGET will utilize ", paste("SGP_MAX_ORDER", tmp.year.diff, sep="_"), ".\n"))
 				tmp.list[['my.sgp']] <- c(paste("SGP_MAX_ORDER", tmp.year.diff, sep="_"), "SGP_BASELINE")[c(sgp.percentiles, sgp.percentiles.baseline)]
-			} else {
-				tmp.list[['my.sgp']] <- c("SGP", "SGP_BASELINE")[c(sgp.percentiles, sgp.percentiles.baseline)]
+			} 
+			if (!is.null(year.for.equate) && tmp.first.year==year.for.equate && sgp.percentiles.equated) {
+				tmp.messages <- c(tmp.messages, paste0("\tNOTE: Due to test transition in ", year.for.equate, " SGP_TARGET will be compared to SGP_EQUATED.\n"))
+				tmp.list[['my.sgp']] <- "SGP_EQUATED"
 			}
 			tmp.list[['my.sgp.target']] <- c(paste("SGP_TARGET", max.sgp.target.years.forward, projection.unit.label, sep="_"),
 				paste("SGP_TARGET_BASELINE", max.sgp.target.years.forward, projection.unit.label, sep="_"))
