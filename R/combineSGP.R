@@ -384,12 +384,6 @@ function(
 				CONTENT_AREA=unlist(strsplit(i, "[.]"))[1L],
 				YEAR=getTableNameYear(i),
 				sgp_object@SGP[["SGPercentiles"]][[i]])
-
-			setnames(tmp.list[[i]], "SGP", "SGP_EQUATED")
-			if ("SGP_LEVEL" %in% names(tmp.list[[i]])) setnames(tmp.list[[i]], "SGP_LEVEL", "SGP_LEVEL_EQUATED")
-			if ("SGP_NORM_GROUP" %in% names(tmp.list[[i]])) setnames(tmp.list[[i]], "SGP_NORM_GROUP", "SGP_NORM_GROUP_EQUATED")
-			if ("SGP_NORM_GROUP_SCALE_SCORES" %in% names(tmp.list[[i]])) setnames(tmp.list[[i]], "SGP_NORM_GROUP_SCALE_SCORES", "SGP_NORM_GROUP_EQUATED_SCALE_SCORES")
-			if ("SGP_SIMEX" %in% names(tmp.list[[i]])) setnames(tmp.list[[i]], "SGP_SIMEX", "SGP_SIMEX_EQUATED")
 		}
 
 		tmp.data <- data.table(rbindlist(tmp.list, fill=TRUE), VALID_CASE="VALID_CASE", key=key(slot.data))
