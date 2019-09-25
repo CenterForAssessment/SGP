@@ -1,4 +1,4 @@
-`getPercentileTableNames` <- 
+`getPercentileTableNames` <-
 function(sgp_object,
 	content_areas=NULL,
 	state=NULL,
@@ -10,7 +10,7 @@ function(sgp_object,
         if (is.null(use.cohort.for.baseline.when.missing)) {
                 if (!is.null(state) && is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["use.cohort.for.baseline.when.missing"]])) {
                         use.cohort.for.baseline.when.missing <- FALSE
-                } 
+                }
                 if (!is.null(state) && !is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["use.cohort.for.baseline.when.missing"]])) {
                         use.cohort.for.baseline.when.missing <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["use.cohort.for.baseline.when.missing"]]
                 }
@@ -23,7 +23,7 @@ function(sgp_object,
 		if (sgp.type=="sgp.percentiles.baseline") {
 			tmp.names <- tmp.baseline.names
 			if (use.cohort.for.baseline.when.missing) {
-				tmp.content_areas.diff <- setdiff(unique(sapply(strsplit(tmp.sgp.names, "[.]"), function(x) paste(x[1:2], collapse="."))), 
+				tmp.content_areas.diff <- setdiff(unique(sapply(strsplit(tmp.sgp.names, "[.]"), function(x) paste(x[1:2], collapse="."))),
 					unique(sapply(strsplit(tmp.baseline.names, "[.]"), function(x) paste(x[1:2], collapse="."))))
 				if (length(tmp.content_areas.diff) > 0) {
 					if (!is.null(years)) tmp.content_areas.diff <- tmp.content_areas.diff[sapply(strsplit(tmp.content_areas.diff, "[.]"), function(x) x[2] %in% years)]
@@ -31,14 +31,14 @@ function(sgp_object,
 				}
 				if (length(tmp.content_areas.diff) > 0) {
 					tmp.names <- c(tmp.names, unlist(lapply(tmp.content_areas.diff, function(x) tmp.sgp.names[grep(x, tmp.sgp.names)])))
-					message(c("\tNOTE: Cohort referenced SGPs being used for baseline referenced SGPs for content areas and years:\n\t\t", 
+					message(c("\tNOTE: Cohort referenced SGPs being used for baseline referenced SGPs for content areas and years:\n\t\t",
 						paste(unlist(lapply(tmp.content_areas.diff, function(x) tmp.sgp.names[grep(x, tmp.sgp.names)])), collapse=",\n\t\t")))
 				}
 			} ### END if (use.cohort.for.baseline.when.missing)
 		}
 		if (length(tmp.names) > 0 & !is.null(years)) tmp.names <- tmp.names[sapply(tmp.names, function(x) getTableNameYear(x) %in% years)]
 		if (length(tmp.names) > 0 & !is.null(content_areas)) tmp.names <- tmp.names[sapply(strsplit(tmp.names, "[.]"), function(x) x[1] %in% content_areas)]
-		if (sgp.percentiles.equated) tmp.names <- grep("EQUATED", tmp.names, value=TRUE, invert=TRUE)
+		if (!sgp.percentiles.equated) tmp.names <- grep("EQUATED", tmp.names, value=TRUE, invert=TRUE) else tmp.names <- grep("EQUATED", tmp.names, value=TRUE)
 		return(tmp.names)
 	}
 
@@ -52,7 +52,7 @@ function(sgp_object,
 		if (sgp.type=="sgp.projections.baseline") {
 			tmp.names <- tmp.baseline.names
 			if (use.cohort.for.baseline.when.missing) {
-				tmp.content_areas.diff <- setdiff(unique(sapply(strsplit(tmp.sgp.projections.names, "[.]"), function(x) paste(x[1:2], collapse="."))), 
+				tmp.content_areas.diff <- setdiff(unique(sapply(strsplit(tmp.sgp.projections.names, "[.]"), function(x) paste(x[1:2], collapse="."))),
 					unique(sapply(strsplit(tmp.baseline.names, "[.]"), function(x) paste(x[1:2], collapse="."))))
 				if (length(tmp.content_areas.diff) > 0) {
 					if (!is.null(years)) tmp.content_areas.diff <- tmp.content_areas.diff[sapply(strsplit(tmp.content_areas.diff, "[.]"), function(x) x[2] %in% years)]
@@ -79,7 +79,7 @@ function(sgp_object,
 		if (sgp.type=="sgp.projections.lagged.baseline") {
 			tmp.names <- tmp.baseline.names
 			if (use.cohort.for.baseline.when.missing) {
-				tmp.content_areas.diff <- setdiff(unique(sapply(strsplit(tmp.lagged.names, "[.]"), function(x) paste(x[1:2], collapse="."))), 
+				tmp.content_areas.diff <- setdiff(unique(sapply(strsplit(tmp.lagged.names, "[.]"), function(x) paste(x[1:2], collapse="."))),
 					unique(sapply(strsplit(tmp.baseline.names, "[.]"), function(x) paste(x[1:2], collapse="."))))
 				if (length(tmp.content_areas.diff) > 0) {
 					if (!is.null(years)) tmp.content_areas.diff <- tmp.content_areas.diff[sapply(strsplit(tmp.content_areas.diff, "[.]"), function(x) x[2] %in% years)]
