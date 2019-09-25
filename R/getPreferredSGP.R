@@ -17,6 +17,10 @@ function(tmp.data,
 		tmp.sgp.norm.group.variables <- c("YEAR", "SGP_NORM_GROUP", "PREFERENCE")
 		tmp.message <- "\tNOTE: Multiple SGPs exist for individual students. Unique SGPs will be created using SGP Norm Group Preference Table for "
 	}
+	if (type=="EQUATED") {
+		tmp.sgp.norm.group.variables <- c("YEAR", "SGP_NORM_GROUP_EQUATED", "PREFERENCE")
+		tmp.message <- "\tNOTE: Multiple Equated SGPs exist for individual students. Unique Equated SGPs will be created using SGP Norm Group Preference Table for "
+	}
 
 	if (type=="TARGET") {
 		if (!is.null(SGP::SGPstateData[[state]][['SGP_Progression_Preference']])) {
