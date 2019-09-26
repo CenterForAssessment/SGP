@@ -154,7 +154,7 @@ function(
 				tmp.messages <- c(tmp.messages, paste0("\tNOTE: Due to test transition in ", year.for.equate, " SGP_TARGET will be compared to ", tmp.variable.name, ".\n"))
 				tmp.list[['my.sgp']] <- tmp.variable.name
 			}
-			if (!is.null(year.for.equate) && tmp.first.year==year.for.equate && sgp.percentiles.equated) {
+			if (!is.null(year.for.equate) && tmp.last.year==year.for.equate && sgp.percentiles.equated) {
 				tmp.messages <- c(tmp.messages, paste0("\tNOTE: Due to test transition in ", year.for.equate, " SGP_TARGET will be compared to SGP_EQUATED.\n"))
 				tmp.list[['my.sgp']] <- "SGP_EQUATED"
 			}
@@ -178,8 +178,8 @@ function(
 				tmp.year.diff <- as.numeric(unlist(strsplit(tail(sort(unique(sgp_object@Data, by='YEAR')[['YEAR']]), 1), "_"))[1L]) - as.numeric(unlist(strsplit(year.for.equate, "_"))[1L])
 				tmp.messages <- c(tmp.messages, paste0("\tNOTE: Due to test transition in ", year.for.equate, " SGP_TARGET will utilize ", paste("SGP_MAX_ORDER", tmp.year.diff, sep="_"), ".\n"))
 				tmp.list[['my.sgp']] <- c(paste("SGP_MAX_ORDER", tmp.year.diff, sep="_"), "SGP_BASELINE")[c(sgp.percentiles, sgp.percentiles.baseline)]
-			} 
-			if (!is.null(year.for.equate) && tmp.first.year==year.for.equate && sgp.percentiles.equated) {
+			}
+			if (!is.null(year.for.equate) && tmp.last.year==year.for.equate && sgp.percentiles.equated) {
 				tmp.messages <- c(tmp.messages, paste0("\tNOTE: Due to test transition in ", year.for.equate, " SGP_TARGET will be compared to SGP_EQUATED.\n"))
 				tmp.list[['my.sgp']] <- "SGP_EQUATED"
 			}
