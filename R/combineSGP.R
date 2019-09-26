@@ -152,12 +152,10 @@ function(
 			if (!is.null(year.for.equate) && tmp.first.year < year.for.equate && !sgp.percentiles.equated) {
 				tmp.variable.name <- paste("SGP_FROM", year.for.equate, sep="_")
 				messageSGP(paste0("\tNOTE: Due to assessment transition in ", year.for.equate, " SGP_TARGET will be compared to ", tmp.variable.name, ".\n"))
-#				tmp.messages <- c(tmp.messages, paste0("\tNOTE: Due to assessment transition in ", year.for.equate, " SGP_TARGET will be compared to ", tmp.variable.name, ".\n"))
 				tmp.list[['my.sgp']] <- tmp.variable.name
 			}
 			if (!is.null(year.for.equate) && tmp.last.year==year.for.equate && sgp.percentiles.equated) {
 				messageSGP(paste0("\tNOTE: Due to test transition in ", year.for.equate, " SGP_TARGET will be compared to SGP_EQUATED.\n"))
-#				tmp.messages <- c(tmp.messages, paste0("\tNOTE: Due to test transition in ", year.for.equate, " SGP_TARGET will be compared to SGP_EQUATED.\n"))
 				tmp.list[['my.sgp']] <- "SGP_EQUATED"
 			}
 			tmp.list[['my.sgp.target']] <- paste("SGP_TARGET", max.sgp.target.years.forward, projection.unit.label, sep="_")
@@ -179,12 +177,10 @@ function(
 			if (!is.null(year.for.equate) && !sgp.percentiles.equated) {
 				tmp.year.diff <- as.numeric(unlist(strsplit(tail(sort(unique(sgp_object@Data, by='YEAR')[['YEAR']]), 1), "_"))[1L]) - as.numeric(unlist(strsplit(year.for.equate, "_"))[1L])
 				messageSGP(paste0("\tNOTE: Due to test transition in ", year.for.equate, " SGP_TARGET will utilize ", paste("SGP_MAX_ORDER", tmp.year.diff, sep="_"), ".\n"))
-#				tmp.messages <- c(tmp.messages, paste0("\tNOTE: Due to test transition in ", year.for.equate, " SGP_TARGET will utilize ", paste("SGP_MAX_ORDER", tmp.year.diff, sep="_"), ".\n"))
 				tmp.list[['my.sgp']] <- c(paste("SGP_MAX_ORDER", tmp.year.diff, sep="_"), "SGP_BASELINE")[c(sgp.percentiles, sgp.percentiles.baseline)]
 			}
 			if (!is.null(year.for.equate) && tmp.last.year==year.for.equate && sgp.percentiles.equated) {
 				messageSGP(paste0("\tNOTE: Due to test transition in ", year.for.equate, " SGP_TARGET will be compared to SGP_EQUATED.\n"))
-#				tmp.messages <- c(tmp.messages, paste0("\tNOTE: Due to test transition in ", year.for.equate, " SGP_TARGET will be compared to SGP_EQUATED.\n"))
 				tmp.list[['my.sgp']] <- "SGP_EQUATED"
 			}
 			tmp.list[['my.sgp.target']] <- c(paste("SGP_TARGET", max.sgp.target.years.forward, projection.unit.label, sep="_"),
