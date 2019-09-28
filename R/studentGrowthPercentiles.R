@@ -419,19 +419,20 @@ function(panel.data,         ## REQUIRED
             }
             big.data[,grep("DONE", names(big.data), value=TRUE):=NULL]
             setnames(big.data, c("ID", paste0("prior_", (csem.col.offset-1L):1L), "final_yr", "b"))
-			setkey(big.data, b, ID)
+            setkey(big.data, b, ID)
             return(big.data)
         } ### END createBigData function
 
-        ### Check arguments/define variables
-        if (is.null(dependent.var.error)) dependent.var.error <- FALSE
-		if (is.null(reproduce.old.values)) reproduce.old.values <- FALSE
-		if (is.null(verbose)) verbose <- FALSE
-		if (verbose) messageSGP(c("\n\tStarted SIMEX SGP calculation ", rev(content_area.progression)[1L], " Grade ", rev(tmp.gp)[1L], " ", prettyDate()))
-		if (is.logical(simex.use.my.coefficient.matrices) && !simex.use.my.coefficient.matrices) simex.use.my.coefficient.matrices <- NULL
-		if (!is.null(state) && !is.null(csem.data.vnames)) stop("SIMEX config can not use both 'state' and 'csem.data.vnames' elements.")
-		if (!is.null(parallel.config)) {
-			if (is.null(parallel.config[["WORKERS"]][["SIMEX"]])) tmp.par.config <- NULL else tmp.par.config <- parallel.config
+      ### Check arguments/define variables
+      if (is.null(dependent.var.error)) dependent.var.error <- FALSE
+      if (is.null(use.cohort.for.ranking)) use.cohort.for.ranking <- FALSE
+      if (is.null(reproduce.old.values)) reproduce.old.values <- FALSE
+      if (is.null(verbose)) verbose <- FALSE
+      if (verbose) messageSGP(c("\n\tStarted SIMEX SGP calculation ", rev(content_area.progression)[1L], " Grade ", rev(tmp.gp)[1L], " ", prettyDate()))
+      if (is.logical(simex.use.my.coefficient.matrices) && !simex.use.my.coefficient.matrices) simex.use.my.coefficient.matrices <- NULL
+      if (!is.null(state) && !is.null(csem.data.vnames)) stop("SIMEX config can not use both 'state' and 'csem.data.vnames' elements.")
+      if (!is.null(parallel.config)) {
+      if (is.null(parallel.config[["WORKERS"]][["SIMEX"]])) tmp.par.config <- NULL else tmp.par.config <- parallel.config
 		} else tmp.par.config <- NULL
 
 		fitted <- extrap <- tmp.quantiles.simex <- simex.coef.matrices <- list()
