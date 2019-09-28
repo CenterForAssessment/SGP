@@ -1235,6 +1235,7 @@ function(
 
 			if (!is.null(test.option[['test.updated.students']])) {
 				#  Subset and remove a random sample of students
+				set.seed(719)
 				updated.student.ids <- sgpData_LONG[VALID_CASE=="VALID_CASE" & YEAR==tail(sgpData.years, 1) & CONTENT_AREA %in% c("READING", "AMERICAN_LIT", "ALGEBRA_II")][, list(ID = sample(unique(ID), 100)), by=c("CONTENT_AREA", "GRADE")][GRADE != "3"]
 
 				sgp.key <- key(Demonstration_SGP@Data)
@@ -1252,6 +1253,7 @@ function(
 				}
 
 				#  Perturb SCALE_SCORE of students to update
+				set.seed(589)
 				Demonstration_Data_LONG_Updated[, SCALE_SCORE := SCALE_SCORE - round(runif(nrow(Demonstration_Data_LONG_Updated), -10, 10), 0)]
 
 				#  Add READING to sgp.config
@@ -1268,7 +1270,7 @@ function(
 								 "\n\toverwrite.existing.data=FALSE,\n\tupdate.old.data.with.new=TRUE,",
 								 "\n\tsgp.percentiles=TRUE,\n\tsgp.projections=FALSE,\n\tsgp.projections.lagged=FALSE,\n\tsgp.percentiles.baseline=", calculate.simex.baseline, ",\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsimulate.sgps=FALSE,",
 								 "\n\tsgp.use.my.coefficient.matrices=TRUE,", # Use "Naive" Matrices for SGPs and in SIMEX too.
-								 "\n\tcalculate.simex=", gsub("save.matrices=TRUE", "simex.use.my.coefficient.matrices=TRUE", simex.parameters), ",\n\tcalculate.simex.baseline=", ifelse(calculate.simex.baseline, gsub(", simex.sample.size=2500", "", simex.parameters), "NULL,"),
+								 "\n\tcalculate.simex=", gsub("save.matrices=TRUE", "\n\t\tsimex.use.my.coefficient.matrices=TRUE, use.cohort.for.ranking=FALSE\n\t\t", simex.parameters), ",\n\tcalculate.simex.baseline=", ifelse(calculate.simex.baseline, gsub(", simex.sample.size=2500", "", simex.parameters), "NULL,"),
 								 "\n\tsave.intermediate.results=FALSE,\n\tparallel.config=", parallel.config, "\n)\n")
 
 				if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
@@ -1288,36 +1290,36 @@ function(
 
 				tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number 4: Part 3 #####\n")
 
-#				if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, 1032435L, 1032341L))) {
-				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, "3aea979a2eac274980bb9a54845925e7", "13576958d3974927d9887153e4d4dae2"))) {
+#				if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, 1032372L, 1032465L))) {
+				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, "af0bd14d3e6c830ecaf638fcafc57bb6", "a316661bb39fa58a0daa432b6a7cda8f"))) {
 					tmp.messages <- c(tmp.messages, "\t\tTest of READING Updated SGP_SIMEX_RANKED: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of READING Updated SGP_SIMEX_RANKED: FAIL\n")
 				}
 
-#				if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, 211821L, 211922L))) {
-				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, "0cf9d4870721fb755e30ee3d78f1d44f", "76b584249f43db630ac79cc94165920e"))) {
+#				if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, 211710L, 212048L))) {
+				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, "b7a29a91fb2e4a0d9555d530fd55cc0a", "b1efeb656dd1cce6cf753d7aaf85f3cc"))) {
 					tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT Updated SGP_SIMEX_RANKED: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT Updated SGP_SIMEX_RANKED: FAIL\n")
 				}
 
-#				if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, 213466L, 213542L))) {
-				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, "e2855001f0907ab0666602a58ff0ac10", "b36ef32cecd72bc2fd98598aed1959d1"))) {
+#				if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, 213300L, 213327L))) {
+				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, "2cfbc31e5801ac1006c933be5362657f", "d8c707ff51d892232a203960254553c3"))) {
 					tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II Updated SGP_SIMEX_RANKED: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II Updated SGP_SIMEX_RANKED: FAIL\n")
 				}
 
-#				if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX, na.rm=TRUE), ifelse(simex.sample.size, 1453947L, 1453917L))) {
-				if (identical(digest(Demonstration_SGP@Data$SGP_SIMEX), ifelse(simex.sample.size, "02845baeff682187f493a7d94729b6d2", "39fa09dda7608d06539907a38d6d2a1f"))) {
+#				if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX, na.rm=TRUE), ifelse(simex.sample.size, 1453181L, 1453991L))) {
+				if (identical(digest(Demonstration_SGP@Data$SGP_SIMEX), ifelse(simex.sample.size, "9c490a7cfa61902b0f7ee733ef1decc9", "dd02dc6c4711840c2a8ba5b152c0a864"))) {
 					tmp.messages <- c(tmp.messages, "\t\tTest of @Data UPDATED variable SGP_SIMEX: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of @Data UPDATED variable SGP_SIMEX: FAIL\n")
 				}
 
-#				if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX_RANKED, na.rm=TRUE), ifelse(simex.sample.size, 1457722L, 1457805L))) {
-				if (identical(digest(Demonstration_SGP@Data$SGP_SIMEX_RANKED), ifelse(simex.sample.size, "b901fa069c0e12d04a00400dd712fc83", "0e970d36ae25196083e5accaaa632115"))) {
+#				if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX_RANKED, na.rm=TRUE), ifelse(simex.sample.size, 1457549L, 1457840L))) {
+				if (identical(digest(Demonstration_SGP@Data$SGP_SIMEX_RANKED), ifelse(simex.sample.size, "e07fd1aff19438dbbc30e42bdab7557a", "bbb3c63a095d9638acd45eff321e0862"))) {
 					tmp.messages <- c(tmp.messages, "\t\tTest of @Data UPDATED variable SGP_SIMEX_RANKED: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of @Data UPDATED variable SGP_SIMEX_RANKED: FAIL\n")
