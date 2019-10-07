@@ -557,7 +557,8 @@ function(panel.data,         ## REQUIRED
 					if (verbose) messageSGP(c("\t\t\tStarted coefficient matrix calculation, Lambda ", L, ": ", prettyDate()))
 					if (is.null(simex.use.my.coefficient.matrices)) {
 						if (!is.null(simex.sample.size) && n.records > simex.sample.size) {
-                            tmp.random <- foreach(z=iter(sim.iters)) %dorng% sample(seq.int(n.records), simex.sample.size)
+                          foreach::registerDoSEQ()
+                          tmp.random <- foreach(z=iter(sim.iters)) %dorng% sample(seq.int(n.records), simex.sample.size)
 						}
 						for (z in seq_along(sim.iters)) {
 							if (is.null(simex.sample.size) || n.records <= simex.sample.size) {
