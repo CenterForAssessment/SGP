@@ -19,8 +19,8 @@ function(tmp.data.for.equate,
 	}
 	if (paste("SCALE_SCORE_EQUATED", equating.method, conversion.type, sep="_") %in% names(tmp.data.for.equate)) tmp.data.for.equate[,paste("SCALE_SCORE_EQUATED", equating.method, conversion.type, sep="_"):=NULL]
 
-	if (!is.null(SGP::SGPstateData[["MI"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Equated_Content_Areas_and_Grades"]])) {
-		equating.content_areas.grades <- SGP::SGPstateData[["MI"]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Equated_Content_Areas_and_Grades"]]
+	if (!is.null(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Equated_Content_Areas_and_Grades"]])) {
+		equating.content_areas.grades <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Equated_Content_Areas_and_Grades"]]
 	} else {
 		equating.content_areas.grades <- lapply(equate.list, names)
 		names(equating.content_areas.grades) <- sapply(strsplit(names(equating.content_areas.grades), '[.]'), '[', 1)
