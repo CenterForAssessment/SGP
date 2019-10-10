@@ -38,9 +38,10 @@ function(tmp.data.for.equate,
 				TEMP_SCALE_SCORE_EQUATED:=equate.list[[paste(content_area.iter, tmp.year.for.equate, sep=".")]][[paste("GRADE", grade.iter, sep="_")]][[toupper(equating.method)]][[conversion.type]][['interpolated_function']](SCALE_SCORE)]
 		}
 	}
-	tmp.data.for.equate[!YEAR %in% tmp.years.for.equate, paste("SCALE_SCORE_EQUATED", toupper(equating.method), conversion.type, sep="_"):=SCALE_SCORE]
+	
+	tmp.data.for.equate[!YEAR %in% tmp.years.for.equate, TEMP_SCALE_SCORE_EQUATED:=SCALE_SCORE]
 	tmp.data.for.equate[is.na(TEMP_SCALE_SCORE_EQUATED) & !is.na(SCALE_SCORE), paste("SCALE_SCORE_EQUATED", toupper(equating.method), conversion.type, sep="_"):=SCALE_SCORE]
 	setnames(tmp.data.for.equate, "TEMP_SCALE_SCORE_EQUATED", paste("SCALE_SCORE_EQUATED", toupper(equating.method), conversion.type, sep="_"))
-	
+
 	return(tmp.data.for.equate)
 } ### END convertScaleScore function
