@@ -1,8 +1,8 @@
 Package: SGP
 Type: Package
 Title: Student Growth Percentiles & Percentile Growth Trajectories
-Version: 1.9-4.4
-Date: 2019-10-8
+Version: 1.9-4.5
+Date: 2019-10-9
 Authors@R: c(person(given=c("Damian", "W."), family="Betebenner", email="dbetebenner@nciea.org", role=c("aut", "cre")),
 		person(given=c("Adam", "R."), family="Van Iwaarden", email="avaniwaarden@gmail.com", role="aut"),
 		person(given="Ben", family="Domingue", email="ben.domingue@gmail.com", role="aut"),
@@ -74,7 +74,7 @@ Authors@R: c(person(given=c("Damian", "W."), family="Betebenner", email="dbetebe
 Maintainer: Damian W. Betebenner <dbetebenner@nciea.org>
 Depends: R (>= 3.6.0)
 Suggests: SGPdata (>= 21.0-0), knitr, rmarkdown
-Imports: Cairo, callr, colorspace, crayon, datasets, data.table (>= 1.12.0), digest, doParallel, doRNG, equate (>= 2.0-5), foreach, graphics, grid, grDevices, gridBase, iterators, gtools, jsonlite, matrixStats, methods, parallel, plotly, quantreg, randomNames (>= 0.0-5), rngtools, RSQLite, sn (>= 1.0-0), splines, stats, toOrdinal, utils
+Imports: Cairo, callr, colorspace, crayon, datasets, data.table (>= 1.12.4), digest, doParallel, doRNG, equate (>= 2.0-5), foreach, graphics, grid, grDevices, gridBase, iterators, gtools, jsonlite, matrixStats, methods, parallel, plotly, quantreg, randomNames (>= 0.0-5), rngtools, RSQLite, sn (>= 1.0-0), splines, stats, toOrdinal, utils
 Description: Functions to calculate student growth percentiles and percentile growth projections/trajectories for students using large scale,
         longitudinal assessment data.  Functions use quantile regression to estimate the conditional density associated
         with each student's achievement history.  Percentile growth projections/trajectories are calculated using the coefficient matrices derived from
