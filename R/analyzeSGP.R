@@ -443,7 +443,7 @@ function(sgp_object,
 		    content_areas.for.equate <- unique(sgp_object@Data[YEAR==year.for.equate], by="CONTENT_AREA")[['CONTENT_AREA']]
 
             if (is.null(sgp.percentiles.equating.method)) {
-                messageSGP("\tNOTE: Analyses involving equating will be performed using each of: 'identity', 'mean', 'linear', and 'equipercentile' methods. See documentation associated with the 'sgp.percentiles.equating.method' argument in 'analyzeSGP'.")
+                messageSGP("\tNOTE: Analyses involving equating will be performed using each of: 'identity', 'mean', 'linear', and 'equipercentile' methods.\n\t\tSee documentation associated with the 'sgp.percentiles.equating.method' argument in 'analyzeSGP'.")
                 sgp.percentiles.equating.method <- c("identity", "mean", "linear", "equipercentile")
             }
 
