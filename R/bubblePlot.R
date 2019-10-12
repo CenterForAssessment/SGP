@@ -671,7 +671,7 @@ grid.text(x=0.25, y=y.coors[i], bubble_plot_labels.LEVELS[i], gp=gpar(col=format
 }
 
 if (!is.null(bubble_plot_data.LEVELS) & !is.null(bubble_plot_titles.NOTE)) {
-	stop('\n\n\t\t Both NOTE and LEVELS can not be used simulateously.  Please choose one and proceed.\n')
+	stop('\n\n\t\t Both NOTE and LEVELS cannot be used simulateously.  Please choose one and proceed.\n')
 }
 if (is.null(bubble_plot_data.LEVELS) & !is.null(bubble_plot_titles.NOTE)){
 	y.pos <- (nchar(bubble_plot_titles.NOTE)/300) * 0.35  # attempt to be adaptive with NOTE length...

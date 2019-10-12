@@ -214,7 +214,7 @@ function(sgp_object,
 
 	if (identical(calculate.simex, TRUE)) {
 		if (is.character(csem.variable <- SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
-			calculate.simex <- list(state=state, csem.data.vnames=csem.variable, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE)
+			calculate.simex <- list(csem.data.vnames=csem.variable, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE)
 		} else 	{
 			calculate.simex <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE)
 			csem.variable <- NULL
@@ -443,7 +443,7 @@ function(sgp_object,
 		    content_areas.for.equate <- unique(sgp_object@Data[YEAR==year.for.equate], by="CONTENT_AREA")[['CONTENT_AREA']]
 
             if (is.null(sgp.percentiles.equating.method)) {
-                messageSGP("\tNOTE: Analyses involving equating will be performed using each of: 'identity', 'mean', 'linear', and 'equipercentile' methods. See documentation associated with the 'sgp.percentiles.equating.method' argument in 'analyzeSGP'.")
+                messageSGP("\tNOTE: Analyses involving equating will be performed using each of: 'identity', 'mean', 'linear', and 'equipercentile' methods.\n\t\tSee documentation associated with the 'sgp.percentiles.equating.method' argument in 'analyzeSGP'.")
                 sgp.percentiles.equating.method <- c("identity", "mean", "linear", "equipercentile")
             }
 
