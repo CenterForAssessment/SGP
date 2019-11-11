@@ -61,16 +61,16 @@ function(
 		knots_boundaries_data_min_max[OBSERVED_MAX > BOUNDARY_HIGH, OBSERVED_WITHIN_BOUNDARY_RANGE:=FALSE]
 
 		if (!all(knots_boundaries_data_min_max[['OBSERVED_WITHIN_LOSS_HOSS_RANGE']])) {
-				messageSGP(paste0("Some values of observed data reside outside the LOSS/HOSS values in the SGPstateData meta-data for ", state, ". Examine saved output knots_boundaries_data_min_max for details."))
+				messageSGP(paste0("\tNOTE: Some values of observed data reside outside the LOSS/HOSS values in the SGPstateData meta-data for ", state, ". Examine saved output knots_boundaries_data_min_max for details."))
 				save(knots_boundaries_data_min_max, file="knots_boundaries_data_min_max.Rdata")
 		} else {
-				messageSGP(paste0("All values of observed data reside within the LOSS/HOSS values in the SGPstateData meta-data for ", state, "."))
+				messageSGP(paste0("\tNOTE: All values of observed data reside within the LOSS/HOSS values in the SGPstateData meta-data for ", state, "."))
 		}
 
 		if (!all(knots_boundaries_data_min_max[['OBSERVED_WITHIN_BOUNDARY_RANGE']])) {
-				messageSGP(paste0("Some values of observed data reside outside the BOUNDARY values in the SGPstateData meta-data for ", state, ". Examine saved output knots_boundaries_data_min_max for details."))
+				messageSGP(paste0("\tNOTE: Some values of observed data reside outside the BOUNDARY values in the SGPstateData meta-data for ", state, ". Examine saved output knots_boundaries_data_min_max for details."))
 				save(knots_boundaries_data_min_max, file="knots_boundaries_data_min_max.Rdata")
 		} else {
-				messageSGP(paste0("All values of observed data reside within the BOUNDARY values in the SGPstateData meta-data for ", state, "."))
+				messageSGP(paste0("\tNOTE: All values of observed data reside within the BOUNDARY values in the SGPstateData meta-data for ", state, "."))
 		}
 } ## END checkKnotsBoundaries
