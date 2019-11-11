@@ -148,13 +148,15 @@ function(data,
 			save(DUPLICATED_CASES, file="DUPLICATED_CASES.Rdata")
 		}
 
-		## Check for knots and boundaries
+		## Check knots and boundaries
 
 		if (is.null(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]])) {
 			SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]] <- createKnotsBoundaries(data@Data)
 			assign(paste(state, "Knots_Boundaries", sep="_"), SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]])
 			save(list=paste(state, "Knots_Boundaries", sep="_"), file=paste(state, "Knots_Boundaries.Rdata", sep="_"))
 			messageSGP(paste0("\tNOTE: Knots and Boundaries do not exist for state provided.\n\tThey have been produced and are available using state=", state, " for subsequent analyses and saved to your working directory '", getwd(), "'."))
+		} else {
+			checkKnotsBoundaries(data@Data, state)
 		}
 
 		## Create FIRST_OBESRVATION, LAST_OBSERVATION if YEAR_WITHIN exists
@@ -191,7 +193,7 @@ function(data,
 			save(DUPLICATED_CASES, file="DUPLICATED_CASES.Rdata")
 		}
 
-		## Check for knots and boundaries
+		## Check knots and boundaries
 
 		if (is.null(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]])) {
 			SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]] <- createKnotsBoundaries(data)
@@ -199,6 +201,8 @@ function(data,
 			save(list=paste(state, "Knots_Boundaries", sep="_"), file=paste(state, "Knots_Boundaries.Rdata", sep="_"))
 			save(SGPstateData, file="SGPstateData.Rdata")
 			messageSGP(paste0("\tNOTE: Knots and Boundaries do not exist for state provided.\n\tThey have been produced and are available using state=", state, " for subsequent analyses and saved to your working directory '", getwd(), "'."))
+		} else {
+			checkKnotsBoundaries(data, state)
 		}
 
 		## Create FIRST_OBESRVATION, LAST_OBSERVATION if YEAR_WITHIN exists
