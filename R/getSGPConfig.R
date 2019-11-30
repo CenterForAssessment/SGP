@@ -126,6 +126,11 @@ function(sgp_object,
 			### Convert sgp.grade.sequences to a list if supplied as a vector
 			if (is.numeric(sgp.config[[a]][['sgp.grade.sequences']])) sgp.config[[a]][['sgp.grade.sequences']] <- list(sgp.config[[a]][['sgp.grade.sequences']])
 
+			### Convert NO_PROJECTIONS to list if supplied as a single character vector.
+
+			if (identical(sgp.config[[a]][['sgp.projection.grade.sequences']], "NO_PROJECTIONS")) sgp.config[[a]][['sgp.projection.grade.sequences']] <- rep(list("NO_PROJECTIONS"), length(sgp.config[[a]][['sgp.grade.sequences']]))
+			if (is.character(sgp.config[[a]][['sgp.projection.grade.sequences']])) sgp.config[[a]][['sgp.projection.grade.sequences']] <- as.list(sgp.config[[a]][['sgp.projection.grade.sequences']])
+
 			### Loop over grade distinct grade sequences
 			b.iter <- seq(from=length(par.sgp.config)+1, length.out=length(sgp.config[[a]][['sgp.grade.sequences']]))
 			for (b in seq_along(b.iter)) {
