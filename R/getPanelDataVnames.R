@@ -53,6 +53,14 @@ function(sgp.type,
 		}
 	}
 
+	if (sgp.type=="baseline.sgp") {
+		# if ("YEAR_WITHIN" %in% sgp.data.names) { # Not sure how this would play out.  Add if/when needed
+		# }
+		return(c("ID",
+			paste("GRADE", rev(seq(sgp.iter[["sgp.baseline.grade.sequences"]])), sep="_"),
+			paste(scale.score.variable.name, rev(seq(sgp.iter[["sgp.baseline.grade.sequences"]])), sep="_")))
+	}
+
 	if (sgp.type=="sgp.projections") {
 		if ("YEAR_WITHIN" %in% sgp.data.names) {
 			return(c("ID", paste("GRADE", tail(sgp.iter[["sgp.projection.panel.years"]], length(sgp.iter[["sgp.projection.grade.sequences"]])),
@@ -96,7 +104,7 @@ function(sgp.type,
 		} else {
 			return(c("ID", paste("GRADE", head(tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]])), -1),
 				head(tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]])), -1), sep="."),
-				paste(scale.score.variable.name, head(tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]])), -1), 
+				paste(scale.score.variable.name, head(tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]])), -1),
 				head(tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]])), -1), sep=".")))
 		}
 	}
