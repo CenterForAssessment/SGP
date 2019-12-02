@@ -19,7 +19,7 @@ function(sgp_object,
 
 
 	started.at <- proc.time()
-	message(paste("\tStarted baselineSGP", prettyDate(), "\n"))
+	messageSGP(paste("\tStarted baselineSGP", prettyDate(), "\n"))
 
 	VALID_CASE <- YEAR <- GRADE <- CONTENT_AREA <- YEAR_WITHIN <- COHORT_YEAR <- NULL ### To prevent R CMD check warnings
 
@@ -37,7 +37,7 @@ function(sgp_object,
 	### Syncronize "return.matrices.only" and "calculate.baseline.sgps" arguments
 
 	if (return.matrices.only & calculate.baseline.sgps) {
-		message("\tArgument 'return.matrices.only=TRUE' obviates need to calculate baseline student growth percentiles. Argument 'calculate.baseline.sgps' will be set to FALSE")
+		messageSGP("\tArgument 'return.matrices.only=TRUE' obviates need to calculate baseline student growth percentiles. Argument 'calculate.baseline.sgps' will be set to FALSE")
 		calculate.baseline.sgps <- FALSE
 	}
 
@@ -68,7 +68,7 @@ function(sgp_object,
 
 
 	baselineSGP_Internal <- function(sgp_object, state, years, content_areas, grade.sequences, baseline.grade.sequences.lags,
-		knots.boundaries.iter, parallel.config, use.my.coefficient.matrices, calculate.simex) {
+		knots.boundaries.iter, parallel.config, use.my.coefficient.matrices, simex.baseline.config, baseline.iter=NULL) {
 
 		started.at <- proc.time()
 		started.date <- prettyDate()
@@ -86,10 +86,15 @@ function(sgp_object,
 
 		} ### END test.year.sequence
 
+		get.calculate.simex.arg <- function(simex.baseline.args, iter) {
+			if (is.null(simex.baseline.args$csem.data.vnames)) return(simex.baseline.args)
+			simex.baseline.args[['csem.data.vnames']] <- paste(simex.baseline.args$csem.data.vnames, rev(seq(iter[['sgp.baseline.grade.sequences']])), sep="_")
+			return(simex.baseline.args)
+		} ### END get.calculate.simex.arg
 
 		### Get multiple-cohort data and stack up into 'Super-cohort'
-
-		variables.to.get <- c("VALID_CASE", "YEAR", "CONTENT_AREA", "GRADE", "ID", "SCALE_SCORE", "ACHIEVEMENT_LEVEL", "YEAR_WITHIN", "FIRST_OBSERVATION", "LAST_OBSERVATION")
+		variables.to.get <- c("VALID_CASE", "YEAR", "CONTENT_AREA", "GRADE", "ID", "SCALE_SCORE", "ACHIEVEMENT_LEVEL", "YEAR_WITHIN", "FIRST_OBSERVATION", "LAST_OBSERVATION", simex.baseline.config$csem.data.vnames)
+		# if (!is.null(simex.baseline.config))  variables.to.get <- c(variables.to.get, simex.baseline.config$csem.data.vnames)
 		tmp_sgp_data_for_analysis <- sgp_object@Data[,intersect(names(sgp_object@Data), variables.to.get), with=FALSE]["VALID_CASE"]
 		if ("YEAR_WITHIN" %in% names(tmp_sgp_data_for_analysis)) {
 			setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE, YEAR_WITHIN)
@@ -107,15 +112,28 @@ function(sgp_object,
 			tmp.sgp.iter$sgp.panel.years <- tmp.year.sequence[[k]]
 			tmp.sgp.iter$sgp.grade.sequences <- tmp.sgp.iter$sgp.grade.sequences
 			if (!is.null(tmp.sgp.iter$sgp.exclude.sequences)) tmp.sgp.iter$sgp.exclude.sequences <- tmp.sgp.iter$sgp.exclude.sequences[COHORT_YEAR %in% tail(tmp.sgp.iter$sgp.panel.years, 1L)]
-			tmp.list[[k]] <- getPanelData(tmp_sgp_data_for_analysis, "sgp.percentiles", sgp.iter = tmp.sgp.iter)[,
-				getPanelDataVnames("sgp.percentiles", tmp.sgp.iter, names(tmp_sgp_data_for_analysis)), with=FALSE]
-			setnames(tmp.list[[k]], c("ID", paste("GRADE", rev(seq_along(tmp.year.sequence[[k]])), sep="_"), paste("SCALE_SCORE", rev(seq_along(tmp.year.sequence[[k]])), sep="_")))
+			if (!is.null(simex.baseline.config))  sgp.csem <- simex.baseline.config$csem.data.vnames else sgp.csem <- NULL
+			tmp.list[[k]] <- getPanelData(tmp_sgp_data_for_analysis, "sgp.percentiles", sgp.iter = tmp.sgp.iter, sgp.csem=sgp.csem)
+			setnames(tmp.list[[k]], c("ID",
+				paste("GRADE", rev(seq_along(tmp.year.sequence[[k]])), sep="_"),
+				paste("SCALE_SCORE", rev(seq_along(tmp.year.sequence[[k]])), sep="_"),
+				if(!is.null(sgp.csem)) paste(sgp.csem, rev(seq_along(tmp.year.sequence[[k]])), sep="_")))
 		}
 		tmp.dt <- rbindlist(tmp.list, fill=TRUE)
+		setkey(tmp.dt)
+		tmp.panel.vnames <- c("ID",
+			paste("GRADE", rev(seq_along(tmp.year.sequence[[k]])), sep="_"),
+			paste("SCALE_SCORE", rev(seq_along(tmp.year.sequence[[k]])), sep="_"))
 
 		### Calculate Coefficient Matrices and return list containing coefficient matrices
 
-		if (!is.null(calculate.simex)) TMP_Coefficient_Matrices = sgp_object@SGP[["Coefficient_Matrices"]] else TMP_Coefficient_Matrices <- list()
+		if (!is.null(simex.baseline.config)) {
+			TMP_Coefficient_Matrices = sgp_object@SGP[["Coefficient_Matrices"]]
+			tmp.simex.args <- get.calculate.simex.arg(simex.baseline.config, baseline.iter)
+		} else {
+			TMP_Coefficient_Matrices <- list()
+			tmp.simex.args <- NULL
+		}
 
 		tmp_sgp_list <- list(Coefficient_Matrices =
 			studentGrowthPercentiles(
@@ -134,13 +152,13 @@ function(sgp_object,
 				exact.grade.progression.sequence=TRUE,
 				print.time.taken=FALSE,
 				parallel.config=parallel.config,
-				calculate.simex=calculate.simex,
+				calculate.simex=tmp.simex.args,
 				SGPt=SGPt,
 				...)[["Coefficient_Matrices"]])
 
-		message(paste("\tStarted baselineSGP Coefficient Matrix Calculation:", started.date))
-		message(paste0("\tContent Area: ", tail(content_areas, 1L), ", Grade Progression: ", paste(grade.sequences, collapse=", "), ". "))
-		message(paste0("\tFinished baselineSGP Coefficient Matrix Calculation ", prettyDate(), " in ", convertTime(timetakenSGP(started.at)), ".\n"))
+		messageSGP(paste("\tStarted baselineSGP Coefficient Matrix Calculation:", started.date))
+		messageSGP(paste0("\tContent Area: ", tail(content_areas, 1L), ", Grade Progression: ", paste(grade.sequences, collapse=", "), ". "))
+		messageSGP(paste0("\tFinished baselineSGP Coefficient Matrix Calculation ", prettyDate(), " in ", convertTime(timetakenSGP(started.at)), ".\n"))
 
 		return(tmp_sgp_list)
 
@@ -158,7 +176,7 @@ function(sgp_object,
 				}
 			}
 		} else {
-			message("\tNOTE: No Goodness of Fit tables available to print. No tables will be produced.")
+			messageSGP("\tNOTE: No Goodness of Fit tables available to print. No tables will be produced.")
 		}
 	}
 
@@ -191,7 +209,7 @@ function(sgp_object,
 							knots.boundaries.iter=sgp.baseline.config[[iter]],
 							use.my.coefficient.matrices=NULL,
 							parallel.config=parallel.config,
-							calculate.simex=NULL)
+							simex.baseline.config=NULL)
 		}
 
 		sgp_object@SGP <- mergeSGP(Reduce(mergeSGP, tmp.list), sgp_object@SGP)
@@ -227,7 +245,8 @@ function(sgp_object,
 					knots.boundaries.iter=sgp.baseline.config[[iter]],
 					parallel.config=parallel.config,
 					use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.baseline.config[[iter]][["sgp.baseline.content.areas"]], 1L)),
-					calculate.simex=calculate.simex.baseline)
+					simex.baseline.config=calculate.simex.baseline,
+					baseline.iter = sgp.baseline.config[[iter]])
 		}
 
 		sgp_object@SGP <- mergeSGP(Reduce(mergeSGP, tmp.list), sgp_object@SGP)
@@ -300,7 +319,7 @@ function(sgp_object,
 	###
 	############################################################
 
-	message(paste("\tFinished baselineSGP", prettyDate(), "in", convertTime(timetakenSGP(started.at)), "\n"))
+	messageSGP(paste("\tFinished baselineSGP", prettyDate(), "in", convertTime(timetakenSGP(started.at)), "\n"))
 
 	if (return.matrices.only) {
 		tmp.list <- list()
