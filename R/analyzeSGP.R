@@ -208,9 +208,12 @@ function(sgp_object,
 		}
 	}
 
-    if (is.list(calculate.simex) && "csem.data.vnames" %in% names(calculate.simex)) {
-        csem.variable <- calculate.simex[["csem.data.vnames"]]
-    }
+  if (is.list(calculate.simex) && "csem.data.vnames" %in% names(calculate.simex)) {
+      csem.variable <- calculate.simex[["csem.data.vnames"]]
+  }
+  if (is.list(calculate.simex.baseline) && "csem.data.vnames" %in% names(calculate.simex.baseline)) {
+      csem.variable <- calculate.simex.baseline[["csem.data.vnames"]]
+  }
 
 	if (identical(calculate.simex, TRUE)) {
 		if (is.character(csem.variable <- SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
@@ -618,7 +621,7 @@ function(sgp_object,
 
 
 	#######################################################################################################################
-	##   SIMEX Baseline SGP - compute matrices first if they are not in sgp_object (NOTE: Not stored in SGPstateData)
+	##   SIMEX Baseline SGP - compute matrices first if they are not in sgp_object
 	#######################################################################################################################
 
 	if (sgp.percentiles.baseline & !is.null(calculate.simex.baseline)) {
@@ -631,6 +634,14 @@ function(sgp_object,
 
 		###  Calculate BASELINE SIMEX matrices if they are not present
 		if (!all(find.matrices <- paste0(tmp.subjects, ".BASELINE.SIMEX") %in% names(tmp_sgp_object[["Coefficient_Matrices"]]))) {
+
+      if (length(grep("BASELINE", names(sgp_object@SGP[["Coefficient_Matrices"]])))==0){
+        sgp_object@SGP[["Coefficient_Matrices"]] <- c(sgp_object@SGP[["Coefficient_Matrices"]], tmp_sgp_object[["Coefficient_Matrices"]][grep("BASELINE", names(tmp_sgp_object[["Coefficient_Matrices"]]))])
+      }
+
+      if (is.null(SGPstateData[[state]][["Baseline_splineMatrix"]])) { #  Put in SGPstateData to bypass re-running baseline matrices (either already exist or calculated above)
+        SGPstateData[[state]][["Baseline_splineMatrix"]] <- tmp_sgp_object[["Coefficient_Matrices"]][grep("BASELINE", names(tmp_sgp_object[["Coefficient_Matrices"]]))]
+      }
 
 			if (is.null(sgp.baseline.config)) {
 				sgp.baseline.config <- getSGPBaselineConfig(sgp_object, content_areas = tmp.subjects, grades, sgp.baseline.panel.years, sgp.percentiles.baseline.max.order, calculate.simex.baseline)
@@ -660,7 +671,8 @@ function(sgp_object,
 							return.matrices.only=TRUE,
 							calculate.baseline.sgps=FALSE,
 							calculate.simex.baseline=calculate.simex.baseline,
-							parallel.config=parallel.config))
+							parallel.config=parallel.config,
+							panel.data.vnames=getPanelDataVnames("baseline.sgp", sgp.iter, sgp.data.names)))
 					}
           if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
             tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
@@ -676,7 +688,8 @@ function(sgp_object,
 							return.matrices.only=TRUE,
 							calculate.baseline.sgps=FALSE,
 							calculate.simex.baseline=calculate.simex.baseline,
-							parallel.config=parallel.config))
+							parallel.config=parallel.config,
+							panel.data.vnames=getPanelDataVnames("baseline.sgp", sgp.iter, sgp.data.names)))
 
 						tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp, simex=TRUE)))
 					} # END if (SNOW)
@@ -689,7 +702,8 @@ function(sgp_object,
 							return.matrices.only=TRUE,
 							calculate.baseline.sgps=FALSE,
 							calculate.simex.baseline=calculate.simex.baseline,
-							parallel.config=parallel.config),
+							parallel.config=parallel.config,
+							panel.data.vnames=getPanelDataVnames("baseline.sgp", sgp.iter, sgp.data.names)),
 							mc.cores=par.start$workers, mc.preschedule=FALSE)
 
 						tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp, simex=TRUE)))
@@ -709,9 +723,9 @@ function(sgp_object,
 						return.matrices.only=TRUE,
 						calculate.baseline.sgps=FALSE,
 						calculate.simex.baseline=calculate.simex.baseline,
-						parallel.config=lower.level.parallel.config)
+						parallel.config=lower.level.parallel.config,
+						panel.data.vnames=getPanelDataVnames("baseline.sgp", sgp.baseline.config[[sgp.iter]], sgp.data.names))
 				}
-
 				tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp, simex=TRUE)))
 			}
 
