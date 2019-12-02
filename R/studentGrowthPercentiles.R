@@ -438,10 +438,10 @@ function(panel.data,         ## REQUIRED
 		fitted <- extrap <- tmp.quantiles.simex <- simex.coef.matrices <- list()
 		my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
 
-		if (!is.null(csem.data.vnames)) {
-            if (length(content_area.progression)==length(csem.data.vnames)) csem.data.vnames <- head(csem.data.vnames, -1L)
-			if (length(content_area.progression) < length(csem.data.vnames)) csem.data.vnames <- tail(head(csem.data.vnames, -1L), (length(csem.data.vnames)-(length(csem.data.vnames)-length(content_area.progression)+1L))) # grep(paste(head(content_area.progression, -1L), collapse="|"), csem.data.vnames, value=TRUE)
-		}
+    if (!is.null(csem.data.vnames)) {
+      if (length(content_area.progression)==length(csem.data.vnames)) csem.data.vnames <- head(csem.data.vnames, -1L)
+      if (length(content_area.progression) < length(csem.data.vnames)) csem.data.vnames <- tail(head(csem.data.vnames, -1L), (length(csem.data.vnames)-(length(csem.data.vnames)-length(content_area.progression)+1L))) # grep(paste(head(content_area.progression, -1L), collapse="|"), csem.data.vnames, value=TRUE)
+    }
 		if (!is.null(use.my.coefficient.matrices)) { # Passed implicitly from studentGrowthPercentiles arguments
 			if (exact.grade.progression.sequence) {
 				simex.matrix.priors <- num.prior
@@ -500,11 +500,11 @@ function(panel.data,         ## REQUIRED
 				}
 			}
 
-            if (!is.null(csem.data.vnames)) {
-                for (g in rev(seq_along(perturb.var))) {
-					tmp.data[, paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g]) := Panel_Data[list(tmp.data$ID)][[rev(csem.data.vnames)[g]]]]
-                }
-            }
+      if (!is.null(csem.data.vnames)) {
+        for (g in rev(seq_along(perturb.var))) {
+          tmp.data[, paste0("icsem", perturb.var[g], tmp.ca.iter[g], tmp.yr.iter[g]) := Panel_Data[list(tmp.data$ID)][[rev(csem.data.vnames)[g]]]]
+        }
+      }
 
 			if (verbose) messageSGP(c("\t\t", rev(content_area.progression)[1L], " Grade ", rev(tmp.gp)[1L], " Order ", k, " Started simulation process ", prettyDate()))
 

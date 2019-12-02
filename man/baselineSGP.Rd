@@ -11,32 +11,32 @@ Utility function/exemplar used to produce student growth percentiles using long 
         years=NULL,
         content_areas=NULL,
         grades=NULL,
-	exclude.years=NULL,
-	sgp.config=NULL,
-	sgp.baseline.config=NULL,
-	sgp.baseline.panel.years=NULL,
-	sgp.percentiles.baseline.max.order=3,
-	return.matrices.only=FALSE,
-	calculate.baseline.sgps=TRUE,
-	calculate.simex.baseline=NULL,
-	goodness.of.fit.print=TRUE,
-	parallel.config=NULL,
-	SGPt=NULL,
+        exclude.years=NULL,
+        sgp.config=NULL,
+        sgp.baseline.config=NULL,
+        sgp.baseline.panel.years=NULL,
+        sgp.percentiles.baseline.max.order=3,
+        return.matrices.only=FALSE,
+        calculate.baseline.sgps=TRUE,
+        calculate.simex.baseline=NULL,
+        goodness.of.fit.print=TRUE,
+        parallel.config=NULL,
+        SGPt=NULL,
 	...)
 }
 
 \arguments{
-  \item{sgp_object}{An object of class \code{SGP} containing long formatted data in the \code{@Data} (from \code{\link{prepareSGP}}) slot. 
+  \item{sgp_object}{An object of class \code{SGP} containing long formatted data in the \code{@Data} (from \code{\link{prepareSGP}}) slot.
   }
   \item{state}{Acronym indicating state associated with the data for access to embedded knot and boundaries.
   }
-  \item{years}{A vector indicating year(s) in which to produce baseline referenced student growth percentiles. 
+  \item{years}{A vector indicating year(s) in which to produce baseline referenced student growth percentiles.
   }
-  \item{content_areas}{A vector indicating content area in which to produce baseline referenced student growth percentiles. 
+  \item{content_areas}{A vector indicating content area in which to produce baseline referenced student growth percentiles.
   }
-  \item{grades}{A vector indicating which grades to calculate baseline referenced student growth percentiles. 
+  \item{grades}{A vector indicating which grades to calculate baseline referenced student growth percentiles.
   }
-  \item{exclude.years}{A vector indicating which years to exclude from the calculations? 
+  \item{exclude.years}{A vector indicating which years to exclude from the calculations?
   }
   \item{sgp.config}{If \code{years}, \code{content_areas}, and \code{grades} are missing, user can directly specify a list containing three vectors: \code{baseline.content.areas}, \code{baseline.panel.years}, and \code{baseline.grade.sequences}. This advanced option is helpful for analysis of non-traditional grade progressions and other special cases. See \code{\link{analyzeSGP}} for use cases.
   }
@@ -63,7 +63,7 @@ To utilize the maximum matrix order, set to NULL.
   }
 }
 
-\value{If \code{return.matrices.only} is set to TRUE function returns a list containing the baseline referenced coefficient matrices. Otherwise function returns the SGP object provided with the sgp_object argument with the baseline referenced coefficient matrices, growth percentiles, etc. embedded.  
+\value{If \code{return.matrices.only} is set to TRUE function returns a list containing the baseline referenced coefficient matrices. Otherwise function returns the SGP object provided with the sgp_object argument with the baseline referenced coefficient matrices, growth percentiles, etc. embedded.
 }
 
 \author{Adam Van Iwaarden \email{Vaniwaarden@colorado.edu}, Ben Domingue \email{ben.domingue@gmail.com} and Damian W. Betebenner \email{dbetebenner@nciea.org}}
@@ -72,7 +72,7 @@ To utilize the maximum matrix order, set to NULL.
 
 \examples{
 \dontrun{
-##  Calculate baseline referenced SGPs 
+##  Calculate baseline referenced SGPs
 ## (using coefficient matrices embedded in SGPstateData)
 
 Demonstration_SGP <- prepareSGP(sgpData_LONG)
@@ -84,12 +84,12 @@ Demonstration_SGP <-  baselineSGP(Demonstration_SGP)
 SGPstateData[["DEMO"]][["Baseline_splineMatrix"]] <- NULL
 Demonstration_SGP <- prepareSGP(sgpData_LONG)
 DEMO_Baseline_Matrices <- baselineSGP(
-				Demonstration_SGP, 
-				return.matrices.only=TRUE, 
+				Demonstration_SGP,
+				return.matrices.only=TRUE,
 				calculate.baseline.sgps=FALSE)
 
 
-## Calculate baseline referenced coefficient matrices and 
+## Calculate baseline referenced coefficient matrices and
 ## baseline referenced SGPs with 4 years of data
 
 SGPstateData[["DEMO"]][["Baseline_splineMatrix"]] <- NULL
@@ -98,7 +98,7 @@ sgpData_LONG_4_YEAR <- subset(sgpData_LONG, YEAR!="2013_2014")
 
 Demonstration_SGP <- prepareSGP(sgpData_LONG_4_YEAR)
 Demonstration_SGP <- baselineSGP(Demonstration_SGP)
-}  
+}
 }
 
 \keyword{documentation}
