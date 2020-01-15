@@ -1,3 +1,11 @@
+# SGP 1.9-5.0
+
+## User Visible Changes:
+
+* Thorough update of tests to optimize package performance
+* General bug fixes and meta-data updates to SGPstateData
+
+
 # SGP 1.9-0.0
 
 ## User Visible Changes:
