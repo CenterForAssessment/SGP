@@ -101,6 +101,9 @@
   <ul class="dropdown-menu" role="menu">
     <li class="dropdown-header">Release notes</li>
     <li>
+      <a href="../articles/releases/SGP-1.9-5.0.html">SGP 1.9-5.0</a>
+    </li>
+    <li>
       <a href="../articles/releases/SGP-1.9-0.0.html">SGP 1.9-0.0</a>
     </li>
     <li>
@@ -150,17 +153,15 @@
     <h1>Class "SGP"</h1>
     </div>
 
-    
     <p>The formal S4 class for SGP. This class stores the data object for use with the functions <code><a href='analyzeSGP.html'>analyzeSGP</a></code>, <code><a href='combineSGP.html'>combineSGP</a></code>, <code><a href='summarizeSGP.html'>summarizeSGP</a></code>,
 and <code><a href='visualizeSGP.html'>visualizeSGP</a></code>. The SGP class contains and organizes all the results associated with SGP analyses. <code>is.SGP</code> tests for membership for this class.</p>
-    
 
-        
+
+
     <h2 class="hasAnchor" id="usage"><a class="anchor" href="#usage"></a>Usage</h2>
 
     <p>Objects can be created by calls of the form <code>new("SGP", ...)</code>, but this is not encouraged. To instantiate a new instance of SGP class use the function <code><a href='prepareSGP.html'>prepareSGP</a></code> instead.
     <code>is.SGP(x)</code></p>
-    
     <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
 
     <p></p><dl class='dl-horizontal'>
@@ -174,31 +175,24 @@ and <code><a href='visualizeSGP.html'>visualizeSGP</a></code>. The SGP class con
     <dt><code>Summary</code>:</dt><dd><p>A list including the output from <code><a href='summarizeSGP.html'>summarizeSGP</a></code></p></dd>
     <dt><code>Version</code>:</dt><dd><p>A list of meta-data including the version of the SGP package used to construct the SGP object and the date the object was created.</p></dd>
   </dl>
-    
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p></p><dl class='dl-horizontal'>
     <dt>list.null:</dt><dd><p>combines class <code>list</code> and class <code>NULL</code></p></dd>
  </dl>
-    
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <p><code><a href='prepareSGP.html'>prepareSGP</a></code></p>
-    
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      
       <li><a href="#usage">Usage</a></li>
-
       <li><a href="#slots">Slots</a></li>
-
       <li><a href="#details">Details</a></li>
-
       <li><a href="#see-also">See also</a></li>
-          </ul>
+    </ul>
 
     <h2>Author</h2>
     Jonathan P. Weeks <a href='mailto:weeksjp@gmail.com'>weeksjp@gmail.com</a>, Adam Van Iwaarden <a href='mailto:Vaniwaarden@colorado.edu'>Vaniwaarden@colorado.edu</a> and Damian W. Betebenner <a href='mailto:dbetebenner@nciea.org'>dbetebenner@nciea.org</a>

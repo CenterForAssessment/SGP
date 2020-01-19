@@ -101,6 +101,9 @@
   <ul class="dropdown-menu" role="menu">
     <li class="dropdown-header">Release notes</li>
     <li>
+      <a href="../articles/releases/SGP-1.9-5.0.html">SGP 1.9-5.0</a>
+    </li>
+    <li>
       <a href="../articles/releases/SGP-1.9-0.0.html">SGP 1.9-0.0</a>
     </li>
     <li>
@@ -150,15 +153,13 @@
     <h1>Wrapper function associated with SGP analyses for Renaissance Learning Incorporated (RLI) interim STAR assessments.</h1>
     </div>
 
-    
     <p>rliSGP is a wrapper function design to expedite SGP analyses on Renaissance Learning Incorporated (RLI) interim STAR assessments.</p>
-    
 
     <pre class="usage"><span class='fu'>rliSGP</span>(
         <span class='no'>sgp_object</span>,
     <span class='kw'>additional.data</span><span class='kw'>=</span><span class='kw'>NULL</span>,
         <span class='kw'>state</span><span class='kw'>=</span><span class='kw'>NULL</span>,
-        <span class='kw'>content_areas</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='st'>"MATHEMATICS"</span>, <span class='st'>"READING"</span>, <span class='st'>"EARLY_LITERACY"</span>),
+        <span class='kw'>content_areas</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='st'>"MATHEMATICS"</span>, <span class='st'>"READING"</span>, <span class='st'>"READING_UNIFIED"</span>, <span class='st'>"EARLY_LITERACY"</span>),
     <span class='no'>testing.window</span>,
     <span class='kw'>eow.or.update</span><span class='kw'>=</span><span class='st'>"UPDATE"</span>,
         <span class='kw'>update.save.shell.only</span><span class='kw'>=</span><span class='fl'>FALSE</span>,
@@ -179,7 +180,7 @@
         <span class='kw'>score.type</span><span class='kw'>=</span><span class='st'>"RASCH"</span>,
         <span class='kw'>cutscore.file.name</span><span class='kw'>=</span><span class='st'>"Cutscores.csv"</span>,
     <span class='kw'>parallel.config</span><span class='kw'>=</span><span class='kw'>NULL</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -199,7 +200,7 @@
     </tr>
     <tr>
       <th>content_areas</th>
-      <td><p>Character vector indicating which content areas <code>rliSGP</code> should be run for ('MATHEMATICS', 'READING', and/or 'EARLY_LITERACY'). Default is all.</p></td>
+      <td><p>Character vector indicating which content areas <code>rliSGP</code> should be run for ('MATHEMATICS', 'READING', 'READING_UNIFIED', and/or 'EARLY_LITERACY'). Default is all.</p></td>
     </tr>
     <tr>
       <th>testing.window</th>
@@ -289,11 +290,10 @@ growth percentiles are calculated as part of EOW analyses. Default is FALSE whic
       <td><p>Argument passed to <code><a href='abcSGP.html'>abcSGP</a></code> or <code><a href='updateSGP.html'>updateSGP</a></code> to activate parallel processing with an appropriate backend.</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>Saves relevant results to disc for use in subsequent analyses.</p>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>not_run</span>({
@@ -310,9 +310,7 @@ growth percentiles are calculated as part of EOW analyses. Default is FALSE whic
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 

@@ -101,6 +101,9 @@
   <ul class="dropdown-menu" role="menu">
     <li class="dropdown-header">Release notes</li>
     <li>
+      <a href="../articles/releases/SGP-1.9-5.0.html">SGP 1.9-5.0</a>
+    </li>
+    <li>
       <a href="../articles/releases/SGP-1.9-0.0.html">SGP 1.9-0.0</a>
     </li>
     <li>
@@ -150,15 +153,13 @@
     <h1>Class "splineMatrix"</h1>
     </div>
 
-    
     <p>The formal S4 class for coefficient matrices produced from the <code><a href='studentGrowthPercentiles.html'>studentGrowthPercentiles</a></code> function. This class stores the B-spline knots and boundaries used by the coefficient matrix object for the production of student growth percentiles and projections.</p>
-    
 
-        
+
+
     <h2 class="hasAnchor" id="objects-from-the-class"><a class="anchor" href="#objects-from-the-class"></a>Objects from the Class</h2>
 
     <p>Objects can be created by calls of the form <code>new("splineMatrix", ...)</code>, but this is not encouraged.  Previously produced coefficient matrices MUST be bound to the IDENTICAL knots and boundaries used to create them. Use the function <code><a href='studentGrowthPercentiles.html'>studentGrowthPercentiles</a></code> instead.</p>
-    
     <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
 
     <p></p><dl class='dl-horizontal'>
@@ -171,7 +172,6 @@
     <dt><code>Time_Lags</code>:</dt><dd><p>A list of the time lags/differences between Time (e.g., years) included in the data used to produce matrices.</p></dd>
     <dt><code>Version</code>:</dt><dd><p>A list including the version of the SGP package used to construct the splineMatrix object and the date the object was created.</p></dd>
   </dl>
-    
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p></p><dl class='dl-horizontal'>
@@ -180,25 +180,19 @@
     <code>Boundary.knots</code> argument. This is always two values which are at or slightly beyond the lowest and highest observed student scores.  <code>Content_Areas</code> and  
     <code>Grade_Progression</code> provide information about the data (sub)set used to produce the matrix.</p></dd>
  </dl>
-    
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <p><code><a href='studentGrowthPercentiles.html'>studentGrowthPercentiles</a></code></p>
-    
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      
       <li><a href="#objects-from-the-class">Objects from the Class</a></li>
-
       <li><a href="#slots">Slots</a></li>
-
       <li><a href="#details">Details</a></li>
-
       <li><a href="#see-also">See also</a></li>
-          </ul>
+    </ul>
 
     <h2>Author</h2>
     Adam Van Iwaarden <a href='mailto:Vaniwaarden@colorado.edu'>Vaniwaarden@colorado.edu</a>, Ben Domingue <a href='mailto:ben.domingue@gmail.com'>ben.domingue@gmail.com</a> and Damian W. Betebenner <a href='mailto:dbetebenner@nciea.org'>dbetebenner@nciea.org</a>

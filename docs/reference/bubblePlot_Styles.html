@@ -101,6 +101,9 @@
   <ul class="dropdown-menu" role="menu">
     <li class="dropdown-header">Release notes</li>
     <li>
+      <a href="../articles/releases/SGP-1.9-5.0.html">SGP 1.9-5.0</a>
+    </li>
+    <li>
       <a href="../articles/releases/SGP-1.9-0.0.html">SGP 1.9-0.0</a>
     </li>
     <li>
@@ -150,12 +153,10 @@
     <h1>bubblePlot_Styles providing various uses of the core bubblePlot function</h1>
     </div>
 
-    
     <p>Function includes a number of "styles" associated with <code><a href='bubblePlot.html'>bubblePlot</a></code> to create bubble plots depicting a variety of relationships often of interest
 to stakeholders. The <code><a href='bubblePlot.html'>bubblePlot</a></code> function itself is adaptable to many representations but is most often used in conjunction with results derived 
 from <code><a href='summarizeSGP.html'>summarizeSGP</a></code> to represent summary level results of growth against achievement (usually, median student growth percentile against percentage 
 at/above proficient).</p>
-    
 
     <pre class="usage"><span class='fu'>bubblePlot_Styles</span>(
                 <span class='no'>sgp_object</span>,
@@ -177,7 +178,7 @@ at/above proficient).</p>
                 <span class='kw'>bPlot.output</span><span class='kw'>=</span><span class='st'>"PDF"</span>,
                 <span class='kw'>bPlot.format</span><span class='kw'>=</span><span class='st'>"print"</span>,
                 <span class='kw'>bPlot.folder</span><span class='kw'>=</span><span class='st'>"Visualizations/bubblePlots"</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -268,7 +269,7 @@ achievement as the vertical dimension of the <code><a href='bubblePlot.html'>bub
       <td><p>Character vector indicating where <code><a href='bubblePlot.html'>bubblePlot</a></code>s should be placed. Default folder is "Visualizations/bubblePlots".</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p><code>bubblePlot_Styles</code> is an omnibus function containing a number of applications of the <code>bubblePlot</code> function with data output from <code>SGP</code> analyses. As added styles are 
@@ -281,22 +282,18 @@ individual level data (e.g., growth and achievement for students within a single
 <code>100</code>: </td>
 </tr><tr><td> Growth and achievement <code><a href='bubblePlot.html'>bubblePlot</a></code>s by grade for students in selected schools and districts.</td>
 </tr></table>
-    
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>Function produces <em>numerous</em> PDF bubble charts in the styles specified by the function.</p>
-    
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#details">Details</a></li>
-
       <li><a href="#value">Value</a></li>
-          </ul>
+    </ul>
 
     <h2>Author</h2>
     Damian W. Betebenner <a href='mailto:dbetebenner@nciea.org'>dbetebenner@nciea.org</a> and Adam Van Iwaarden <a href='mailto:vaniwaarden@colorado.edu'>vaniwaarden@colorado.edu</a>

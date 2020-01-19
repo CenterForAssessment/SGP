@@ -101,6 +101,9 @@
   <ul class="dropdown-menu" role="menu">
     <li class="dropdown-header">Release notes</li>
     <li>
+      <a href="../articles/releases/SGP-1.9-5.0.html">SGP 1.9-5.0</a>
+    </li>
+    <li>
       <a href="../articles/releases/SGP-1.9-0.0.html">SGP 1.9-0.0</a>
     </li>
     <li>
@@ -150,10 +153,8 @@
     <h1>Function for producing goodness of fit plots using existing SGP object</h1>
     </div>
 
-    
     <p>gofSGP creates goodness-of-fit plots in either PDF or PNG for showing SGP distribution by prior achievement level and prior scale score decile. These plots expand upon the plots currently produced
 with the <code><a href='studentGrowthPercentiles.html'>studentGrowthPercentiles</a></code> function.</p>
-    
 
     <pre class="usage"><span class='fu'>gofSGP</span>(
         <span class='no'>sgp_object</span>,
@@ -162,10 +163,11 @@ with the <code><a href='studentGrowthPercentiles.html'>studentGrowthPercentiles<
         <span class='kw'>content_areas</span><span class='kw'>=</span><span class='kw'>NULL</span>,
         <span class='kw'>content_areas_prior</span><span class='kw'>=</span><span class='kw'>NULL</span>,
         <span class='kw'>grades</span><span class='kw'>=</span><span class='kw'>NULL</span>,
+        <span class='kw'>ceiling.floor</span><span class='kw'>=</span><span class='fl'>TRUE</span>,
         <span class='kw'>use.sgp</span><span class='kw'>=</span><span class='st'>"SGP"</span>,
         <span class='kw'>output.format</span><span class='kw'>=</span><span class='st'>"PDF"</span>,
         <span class='kw'>color.scale</span><span class='kw'>=</span><span class='st'>"reds.and.blues"</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -187,12 +189,16 @@ with the <code><a href='studentGrowthPercentiles.html'>studentGrowthPercentiles<
     </tr>
     <tr>
       <th>content_areas_prior</th>
-      <td><p>The content area(s) of the prior year which growth by achievement level is being produced that goodness-of-fit plots are requested. 
+      <td><p>The content area(s) of the prior year which growth by achievement level is being produced that goodness-of-fit plots are requested.
   Default is to use all content areas available.</p></td>
     </tr>
     <tr>
       <th>grades</th>
       <td><p>The grade(s) that goodness-of-fit plots are requested. Default is to use all grade available.</p></td>
+    </tr>
+    <tr>
+      <th>ceiling.floor</th>
+      <td><p>Boolean variable to explictly control display of ceiling/floor portion of goodness of fit plot.</p></td>
     </tr>
     <tr>
       <th>use.sgp</th>
@@ -207,15 +213,13 @@ with the <code><a href='studentGrowthPercentiles.html'>studentGrowthPercentiles<
       <td><p>Character vectors (defaults to 'red') indicating what color palette to use for creating percentile distribution table.</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>Returns output ('PDF' , 'PNG' or 'SVG') associated with goodness-of-fit analyses.</p>
-    
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <p><code><a href='studentGrowthPercentiles.html'>studentGrowthPercentiles</a></code></p>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>not_run</span>({
@@ -227,11 +231,8 @@ with the <code><a href='studentGrowthPercentiles.html'>studentGrowthPercentiles<
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-
       <li><a href="#see-also">See also</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 

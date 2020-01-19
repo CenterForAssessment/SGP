@@ -101,6 +101,9 @@
   <ul class="dropdown-menu" role="menu">
     <li class="dropdown-header">Release notes</li>
     <li>
+      <a href="../articles/releases/SGP-1.9-5.0.html">SGP 1.9-5.0</a>
+    </li>
+    <li>
       <a href="../articles/releases/SGP-1.9-0.0.html">SGP 1.9-0.0</a>
     </li>
     <li>
@@ -150,15 +153,13 @@
     <h1>Identify potential course progressions for SGP analyses</h1>
     </div>
 
-    
     <p>Utility function used to analyze supplied long data or an existing SGP class object to identify potential course progressions suitable for analysis with <code><a href='analyzeSGP.html'>analyzeSGP</a></code>, <code><a href='studentGrowthPercentiles.html'>studentGrowthPercentiles</a></code>, etc. See examples for more information.</p>
-    
 
     <pre class="usage"><span class='fu'>courseProgressionSGP</span>(
         <span class='no'>sgp_object</span>,
         <span class='kw'>lag.direction</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='st'>"FORWARD"</span>, <span class='st'>"BACKWARD"</span>),
         <span class='no'>year</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -175,15 +176,13 @@
       <td><p>Character indicating the value of YEAR that is the focus of analysis.</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>Function returns a nested <code>list</code> class object. The final node of each nested list is a  <code>data.table</code> which summarizes the number of students with a particular GRADE by CONTENT_AREA by YEAR course progression</p>
-    
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <p><code><a href='http://www.rdocumentation.org/packages/SGPdata/topics/sgpData_LONG'>sgpData_LONG</a></code></p>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>not_run</span>({
@@ -201,11 +200,8 @@
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-
       <li><a href="#see-also">See also</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 
