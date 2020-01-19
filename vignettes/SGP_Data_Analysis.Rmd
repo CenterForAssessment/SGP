@@ -56,7 +56,7 @@ Both approaches to running SGP analyses are discussed below.
 ## SGP Analysis in 1 Step
 
 Because these steps are almost always conducted simultaneously in operational SGP analyses, the SGP Package has wrapper functions
-[```abcSGP```](reference/abcSGP.html) and [```updateSGP```](https://sgp.io/reference/updateSGP.html)
+[```abcSGP```](https://sgp.io/reference/abcSGP.html) and [```updateSGP```](https://sgp.io/reference/updateSGP.html)
 that "wrap" the above 6 steps into a single function call, simplifying the source code associated with the analysis.
 
 
