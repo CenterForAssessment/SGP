@@ -101,6 +101,9 @@
   <ul class="dropdown-menu" role="menu">
     <li class="dropdown-header">Release notes</li>
     <li>
+      <a href="../articles/releases/SGP-1.9-5.0.html">SGP 1.9-5.0</a>
+    </li>
+    <li>
       <a href="../articles/releases/SGP-1.9-0.0.html">SGP 1.9-0.0</a>
     </li>
     <li>
@@ -150,9 +153,7 @@
     <h1>Student Growth Projections</h1>
     </div>
 
-    
     <p>Function to calculate percentile growth projections/trajectories using large scale assessment data and results derived from student growth percentile calculation.  Function can produce percentile growth trajectories, as well as growth percentiles, sufficient for each student to reach a set of predefined scale score cut.</p>
-    
 
     <pre class="usage"><span class='fu'>studentGrowthProjections</span>(<span class='no'>panel.data</span>,
                          <span class='no'>sgp.labels</span>,
@@ -188,7 +189,7 @@
                          <span class='kw'>sgp.projections.use.only.complete.matrices</span><span class='kw'>=</span><span class='kw'>NULL</span>,
                          <span class='kw'>SGPt</span><span class='kw'>=</span><span class='kw'>NULL</span>,
                          <span class='kw'>print.time.taken</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -371,13 +372,12 @@
       <td><p>Boolean argument (defaults to TRUE) indicating whether to print message indicating information on <code>studentGrowthProjections</code> analysis and time taken.</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>Function returns the input <code>panel.data</code> list object with the additional percentile growth trajectories/percentiles stored in
 <code>panel.data$SGProjections$my.year.my.subject</code> consisting of student IDs and the associated percentile growth projections/trajectories and cuts.
 The data frame contains projections/trajectories for each performance level cut-point supplied and each percentile cut the user specifies.</p>
-    
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Betebenner, D. W. (2008). Toward a normative understanding of student growth. In K. E. Ryan &amp;
@@ -389,17 +389,14 @@ Educational Measurement: Issues and Practice, 28(4):42-51.</p>
 New York: Routledge.</p>
 <p>Chernozhukov, V., Fernandez-Val, I. and Galichon, A. (2010),
 Quantile and Probability Curves Without Crossing. Econometrica, 78: 1093-1125.</p>
-    
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
     <p>Use of this function assumes prior calculation of student growth percentiles, making the coefficient matrices available within the  <code>panel.data$Coefficient_Matrices</code>
   list object.  Additionally, if cutscores are desired they must be supplied explicitly by the user (as detailed above in
   <code>performance.level.cutscores</code>) or included in the <code>SGPstateData</code> data set.  If your state's cutscores are not included or are incorrect, please contact <a href='mailto:dbetebenner@nciea.org'>dbetebenner@nciea.org</a> to have cutscores added or corrected!</p>
-    
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <p><code><a href='studentGrowthPercentiles.html'>studentGrowthPercentiles</a></code>, <code><a href='http://www.rdocumentation.org/packages/SGPdata/topics/sgpData'>sgpData</a></code></p>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>not_run</span>({
@@ -438,15 +435,10 @@ Quantile and Probability Curves Without Crossing. Econometrica, 78: 1093-1125.</
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-
       <li><a href="#references">References</a></li>
-
       <li><a href="#note">Note</a></li>
-
       <li><a href="#see-also">See also</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 

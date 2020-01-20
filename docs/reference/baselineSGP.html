@@ -101,6 +101,9 @@
   <ul class="dropdown-menu" role="menu">
     <li class="dropdown-header">Release notes</li>
     <li>
+      <a href="../articles/releases/SGP-1.9-5.0.html">SGP 1.9-5.0</a>
+    </li>
+    <li>
       <a href="../articles/releases/SGP-1.9-0.0.html">SGP 1.9-0.0</a>
     </li>
     <li>
@@ -150,9 +153,7 @@
     <h1>Analyze student data to produce student growth percentiles and coefficient matrices from a baseline (i.e. multiple cohort) norm group</h1>
     </div>
 
-    
     <p>Utility function/exemplar used to produce student growth percentiles using long formatted data like that provided by <code><a href='prepareSGP.html'>prepareSGP</a></code>. Used as part of <code><a href='analyzeSGP.html'>analyzeSGP</a></code> for baseline referenced student growth percentile analyses.</p>
-    
 
     <pre class="usage"><span class='fu'>baselineSGP</span>(<span class='no'>sgp_object</span>,
         <span class='kw'>state</span><span class='kw'>=</span><span class='kw'>NULL</span>,
@@ -171,7 +172,7 @@
         <span class='kw'>parallel.config</span><span class='kw'>=</span><span class='kw'>NULL</span>,
         <span class='kw'>SGPt</span><span class='kw'>=</span><span class='kw'>NULL</span>,
         <span class='no'>...</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -245,19 +246,17 @@ To utilize the maximum matrix order, set to NULL.</p></td>
       <td><p>Arguments to be passed internally to <code><a href='studentGrowthPercentiles.html'>studentGrowthPercentiles</a></code> for finer control over SGP calculations.</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>If <code>return.matrices.only</code> is set to TRUE function returns a list containing the baseline referenced coefficient matrices. Otherwise function returns the SGP object provided with the sgp_object argument with the baseline referenced coefficient matrices, growth percentiles, etc. embedded.</p>
-    
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <p><code><a href='prepareSGP.html'>prepareSGP</a></code>, <code><a href='analyzeSGP.html'>analyzeSGP</a></code>, <code><a href='combineSGP.html'>combineSGP</a></code></p>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>not_run</span>({
-  <span class='co'>##  Calculate baseline referenced SGPs </span>
+  <span class='co'>##  Calculate baseline referenced SGPs</span>
   <span class='co'>## (using coefficient matrices embedded in SGPstateData)</span>
 
   <span class='no'>Demonstration_SGP</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='prepareSGP.html'>prepareSGP</a></span>(<span class='no'>sgpData_LONG</span>)
@@ -274,7 +273,7 @@ To utilize the maximum matrix order, set to NULL.</p></td>
                                 <span class='kw'>calculate.baseline.sgps</span><span class='kw'>=</span><span class='fl'>FALSE</span>)
 
 
-  <span class='co'>## Calculate baseline referenced coefficient matrices and </span>
+  <span class='co'>## Calculate baseline referenced coefficient matrices and</span>
   <span class='co'>## baseline referenced SGPs with 4 years of data</span>
 
   <span class='no'>SGPstateData</span><span class='kw'>[[</span><span class='st'>"DEMO"</span>]]<span class='kw'>[[</span><span class='st'>"Baseline_splineMatrix"</span>]] <span class='kw'>&lt;-</span> <span class='kw'>NULL</span>
@@ -289,11 +288,8 @@ To utilize the maximum matrix order, set to NULL.</p></td>
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-
       <li><a href="#see-also">See also</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 

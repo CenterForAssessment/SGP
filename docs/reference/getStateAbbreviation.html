@@ -101,6 +101,9 @@
   <ul class="dropdown-menu" role="menu">
     <li class="dropdown-header">Release notes</li>
     <li>
+      <a href="../articles/releases/SGP-1.9-5.0.html">SGP 1.9-5.0</a>
+    </li>
+    <li>
       <a href="../articles/releases/SGP-1.9-0.0.html">SGP 1.9-0.0</a>
     </li>
     <li>
@@ -150,15 +153,13 @@
     <h1>Function for converting state/organization abbreviations to long form and back.</h1>
     </div>
 
-    
     <p>The function getStateAbbreviation converts state/organization abbreviations to their long form and back. For example ID gets converted to Idaho.</p>
-    
 
     <pre class="usage"><span class='fu'>getStateAbbreviation</span>(
                     <span class='no'>supplied.name</span>,
                         <span class='kw'>SGPfunction</span><span class='kw'>=</span><span class='kw'>NULL</span>,
                         <span class='kw'>type</span><span class='kw'>=</span><span class='st'>"Abbreviation"</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -176,11 +177,10 @@
   The default is <code>Abbreviation</code>.</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>Returns a character string.</p>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>getStateAbbreviation</span>(<span class='st'>"IDAHO"</span>) <span class='co'>## ID</span></div><div class='output co'>#&gt; [1] "ID"</div><div class='input'><span class='fu'>getStateAbbreviation</span>(<span class='st'>"ID"</span>, <span class='kw'>type</span><span class='kw'>=</span><span class='st'>"Long"</span>) <span class='co'>## Idaho</span></div><div class='output co'>#&gt; [1] "Idaho"</div></pre>
@@ -189,9 +189,7 @@
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 

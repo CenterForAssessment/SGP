@@ -101,6 +101,9 @@
   <ul class="dropdown-menu" role="menu">
     <li class="dropdown-header">Release notes</li>
     <li>
+      <a href="../articles/releases/SGP-1.9-5.0.html">SGP 1.9-5.0</a>
+    </li>
+    <li>
       <a href="../articles/releases/SGP-1.9-0.0.html">SGP 1.9-0.0</a>
     </li>
     <li>
@@ -150,13 +153,11 @@
     <h1>Student Growth Percentiles</h1>
     </div>
 
-    
     <p>Function to calculate student growth percentiles using large scale assessment data.
 Outputs growth percentiles for each student and supplies various options as function arguments.
 Results from this function are utilized to calculate percentile growth projections/trajectories
 using the 
 <code><a href='studentGrowthProjections.html'>studentGrowthProjections</a></code> function.</p>
-    
 
     <pre class="usage"><span class='fu'>studentGrowthPercentiles</span>(<span class='no'>panel.data</span>,
                          <span class='no'>sgp.labels</span>,
@@ -213,7 +214,7 @@ using the
                          <span class='kw'>SGPt</span><span class='kw'>=</span><span class='kw'>NULL</span>,
                          <span class='kw'>SGPt.max.time</span><span class='kw'>=</span><span class='kw'>NULL</span>,
                          <span class='kw'>verbose.output</span><span class='kw'>=</span><span class='fl'>FALSE</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -495,17 +496,15 @@ Useful for examining relationship between prior achievement and student growth.<
       <td><p>A Boolean argument indicating whether the function should output verbose diagnostic messages.</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>Typical use of the function is to submit a data frame to the function containing records of all students across all grades, allowing the function to subset
 out specific grade progressions using <code>grade.progression</code>. Additional uses include using pre-calculated results to recalculate SGPs for baseline referencing.
 <code>studentGrowthPercentiles</code> examples provide code for use in analyzing assessment data across multiple grades.</p>
-    
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>Function returns an object of class list containing objects: Coefficient_Matrices, Goodness_of_Fit, Knots_Boundaries, Panel_Data, SGPercentiles, Simulated_SGPs.</p>
-    
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Betebenner, D. W. (2008). Toward a normative understanding of student growth. In K. E. Ryan &amp;
@@ -522,11 +521,9 @@ Quantile and Probability Curves Without Crossing. Econometrica, 78: 1093-1125.</
 <p>Koenker, R. (2005). <em>Quantile regression</em>. Cambridge: Cambridge University Press.</p>
 <p>Shang, Y., VanIwaarden, A., &amp; Betebenner, D. W. (2015). Covariate measurement error correction for Student Growth
 Percentiles using the SIMEX method. Educational Measurement: Issues and Practice, 34(1):4-14.</p>
-    
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <p><code><a href='studentGrowthProjections.html'>studentGrowthProjections</a></code>, <code><a href='http://www.rdocumentation.org/packages/SGPdata/topics/sgpData'>sgpData</a></code>, <code><a href='http://www.rdocumentation.org/packages/SGPdata/topics/sgpData_LONG'>sgpData_LONG</a></code>, <code><a href='SGPstateData.html'>SGPstateData</a></code></p>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>not_run</span>({
@@ -719,15 +716,10 @@ Percentiles using the SIMEX method. Educational Measurement: Issues and Practice
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#details">Details</a></li>
-
       <li><a href="#value">Value</a></li>
-
       <li><a href="#references">References</a></li>
-
       <li><a href="#see-also">See also</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 

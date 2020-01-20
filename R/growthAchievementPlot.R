@@ -710,7 +710,7 @@
 						gp=gpar(col=format.colors.growth.trajectories, cex=1.0), rot=90, default.units="native")
 				}
 			} else {
-				tmp.cut <- piecewiseTransform(unlist(College_Readiness_Cutscores), state, content_area, "2018_2019", rev(gaPlot.grade_range)[1])
+				tmp.cut <- piecewiseTransform(unlist(College_Readiness_Cutscores), state, content_area, year, rev(gaPlot.grade_range)[1])
 				low.cut <- min(gp.axis.range[1], temp_uncond_frame[,ncol(temp_uncond_frame)][1], smoothPercentileTrajectory_Functions[[as.character(head(gaPlot.percentile_trajectories, 1))]](gaPlot.grade_range[2]), na.rm=TRUE)
 				high.cut <- max(gp.axis.range[1], rev(temp_uncond_frame[,ncol(temp_uncond_frame)])[1], smoothPercentileTrajectory_Functions[[as.character(tail(gaPlot.percentile_trajectories, 1))]](gaPlot.grade_range[2]), na.rm=TRUE)
 				grid.polygon(x=c(0.05, 0.05, 0.35, 0.35), y=c(low.cut, tmp.cut, tmp.cut, low.cut), default.units="native",

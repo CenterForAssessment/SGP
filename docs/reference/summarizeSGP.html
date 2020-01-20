@@ -101,6 +101,9 @@
   <ul class="dropdown-menu" role="menu">
     <li class="dropdown-header">Release notes</li>
     <li>
+      <a href="../articles/releases/SGP-1.9-5.0.html">SGP 1.9-5.0</a>
+    </li>
+    <li>
       <a href="../articles/releases/SGP-1.9-0.0.html">SGP 1.9-0.0</a>
     </li>
     <li>
@@ -150,9 +153,7 @@
     <h1>Summarize student scale scores, proficiency levels and student growth percentiles according to user specified summary group variables</h1>
     </div>
 
-    
     <p>Utility function used to produce summary tables using long formatted data that contain student growth percentiles.  An exemplar is provided from the successive execution of <code><a href='prepareSGP.html'>prepareSGP</a></code>, <code><a href='analyzeSGP.html'>analyzeSGP</a></code> and <code><a href='combineSGP.html'>combineSGP</a></code>.</p>
-    
 
     <pre class="usage"><span class='fu'>summarizeSGP</span>(<span class='no'>sgp_object</span>,
            <span class='no'>state</span>,
@@ -167,7 +168,7 @@
            <span class='kw'>save.old.summaries</span><span class='kw'>=</span><span class='fl'>FALSE</span>,
            <span class='kw'>highest.level.summary.grouping</span><span class='kw'>=</span><span class='st'>"STATE"</span>,
            <span class='kw'>parallel.config</span><span class='kw'>=</span><span class='kw'>NULL</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -310,19 +311,16 @@ overwrites previous (e.g., last year's summaries) summaries.</p></td>
 <p>Example parallel use cases are provided below.</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>Function makes use of the <code>foreach</code> package to parallel process summary tables of student data. The proper choice of parallel backend is dependent upon the user's operating system, software and system memory capacity. Please see the <code>foreach</code> documentation for details. By default, the function will process the summary tables sequentially.</p>
-    
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>Function returns lists containing the summary tables as data.table objects in the <code>@Summary</code> slot of the SGP data object. Each <code>institution</code> has a slot in the <code>@Summary</code> list.</p>
-    
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <p><code><a href='prepareSGP.html'>prepareSGP</a></code>, <code><a href='analyzeSGP.html'>analyzeSGP</a></code>, <code><a href='combineSGP.html'>combineSGP</a></code></p>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>not_run({
@@ -372,13 +370,9 @@ overwrites previous (e.g., last year's summaries) summaries.</p></td>
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#details">Details</a></li>
-
       <li><a href="#value">Value</a></li>
-
       <li><a href="#see-also">See also</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 

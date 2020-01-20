@@ -101,6 +101,9 @@
   <ul class="dropdown-menu" role="menu">
     <li class="dropdown-header">Release notes</li>
     <li>
+      <a href="../articles/releases/SGP-1.9-5.0.html">SGP 1.9-5.0</a>
+    </li>
+    <li>
       <a href="../articles/releases/SGP-1.9-0.0.html">SGP 1.9-0.0</a>
     </li>
     <li>
@@ -150,11 +153,9 @@
     <h1>Perform 6 step sequence: prepareSGP, analyzeSGP, combineSGP, summarizeSGP, visualizeSGP, and outputSGP</h1>
     </div>
 
-    
     <p>Utility function to perform sequence of 6 steps going from data preparation, <code><a href='prepareSGP.html'>prepareSGP</a></code>, SGP data analysis, <code><a href='analyzeSGP.html'>analyzeSGP</a></code>,
   data combining, <code><a href='combineSGP.html'>combineSGP</a></code>, data summary, <code><a href='summarizeSGP.html'>summarizeSGP</a></code>, data visualization <code><a href='visualizeSGP.html'>visualizeSGP</a></code> and data output
   <code><a href='outputSGP.html'>outputSGP</a></code>.</p>
-    
 
     <pre class="usage"><span class='fu'>abcSGP</span>(<span class='no'>sgp_object</span>,
         <span class='kw'>state</span><span class='kw'>=</span><span class='kw'>NULL</span>,
@@ -204,7 +205,7 @@
     <span class='kw'>get.cohort.data.info</span><span class='kw'>=</span><span class='fl'>FALSE</span>,
         <span class='kw'>SGPt</span><span class='kw'>=</span><span class='kw'>NULL</span>,
   <span class='kw'>fix.duplicates</span><span class='kw'>=</span><span class='kw'>NULL</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -423,18 +424,16 @@ matrices.</p></td>
 	<code>@Data</code> slot will be extended as necessary to accomodate additional student records and SGP results in <code>combineSGP</code>.</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>Function returns a list containing the input long data set in the <code>@Data</code> slot as a data.table keyed using <code>VALID_CASE</code>, <code>CONTENT_AREA</code>,
 <code>YEAR</code>, <code>ID</code>, SGP results including student growth percentile and student growth projections/trajectories in the SGP slot, and summary results in the
 <code>@Summary</code> slot.</p>
-    
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <p><code><a href='prepareSGP.html'>prepareSGP</a></code>, <code><a href='analyzeSGP.html'>analyzeSGP</a></code>, <code><a href='combineSGP.html'>combineSGP</a></code>, <code><a href='summarizeSGP.html'>summarizeSGP</a></code>,  
 <code><a href='studentGrowthPercentiles.html'>studentGrowthPercentiles</a></code>, and <code><a href='studentGrowthProjections.html'>studentGrowthProjections</a></code></p>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>not_run</span>({
@@ -468,11 +467,8 @@ matrices.</p></td>
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-
       <li><a href="#see-also">See also</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 

@@ -56,7 +56,7 @@ Both approaches to running SGP analyses are discussed below.
 ## SGP Analysis in 1 Step
 
 Because these steps are almost always conducted simultaneously in operational SGP analyses, the SGP Package has wrapper functions
-[```abcSGP```](reference/abcSGP.html) and [```updateSGP```](https://sgp.io/reference/updateSGP.html)
+[```abcSGP```](https://sgp.io/reference/abcSGP.html) and [```updateSGP```](https://sgp.io/reference/updateSGP.html)
 that "wrap" the above 6 steps into a single function call, simplifying the source code associated with the analysis.
 
 
@@ -95,7 +95,7 @@ Running this script will run the six steps mentioned earlier by performing the f
 5. [```visualizeSGP```](https://sgp.io/reference/visualizeSGP.html) Creates state level summary bubble plots, growth achievement plots (wave charts), and demonstration student growth plots.
 6. [```outputSGP```](https://sgp.io/reference/outputSGP.html) Exports data in multiple formats:
   * *Demonstration_SGP_Data_LONG.txt.zip* a pipe delimited copy of *Demonstration_SGP@Data*, the complete master longitudinal record.
-  * *Demonstration_SGP_Data_LONG_2019.txt.zip* a pipe delimited copy of the 2017 longitudinal record subsetted from *Demonstration_SGP@Data*.
+  * *Demonstration_SGP_Data_LONG_2020.txt.zip* a pipe delimited copy of the 2020 longitudinal record subsetted from *Demonstration_SGP@Data*.
   * *Demonstration_SGPData_WIDE.txt.zip* a pipe delimited WIDE version of the master longitudinal record, *Demonstration_SGP@Data*.
   * *Demonstration_SGP_INSTRUCTOR_Data.txt.zip* a pipe delimited LONG version of the INSTRUCTOR_NUMBER file merged with the master longitudinal data record.
 

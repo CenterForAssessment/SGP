@@ -101,6 +101,9 @@
   <ul class="dropdown-menu" role="menu">
     <li class="dropdown-header">Release notes</li>
     <li>
+      <a href="../articles/releases/SGP-1.9-5.0.html">SGP 1.9-5.0</a>
+    </li>
+    <li>
       <a href="../articles/releases/SGP-1.9-0.0.html">SGP 1.9-0.0</a>
     </li>
     <li>
@@ -150,11 +153,9 @@
     <h1>Prepare data for SGP analyses</h1>
     </div>
 
-    
     <p>Utility function/exemplar used to embed supplied long data into a list object as a keyed data.table. NOTE: This function also serves the purposes of running many checks on the SGP object you 
   construct to make sure it is up to date and in the best shape possible. If you have an older object that you wish to make sure is up to date with the latest version of the SGP package, running 
   <code>prepareSGP</code> on an object is never bad thing to do. See examples for more information.</p>
-    
 
     <pre class="usage"><span class='fu'>prepareSGP</span>(<span class='no'>data</span>,
         <span class='kw'>data_supplementary</span><span class='kw'>=</span><span class='kw'>NULL</span>,
@@ -162,7 +163,7 @@
         <span class='kw'>var.names</span><span class='kw'>=</span><span class='kw'>NULL</span>,
         <span class='kw'>create.additional.variables</span><span class='kw'>=</span><span class='fl'>TRUE</span>,
         <span class='kw'>fix.duplicates</span><span class='kw'>=</span><span class='kw'>NULL</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -195,16 +196,14 @@ for summarizing and reporting.</p></td>
   fix the duplicate individual records by adding a '_DUP_***' suffix to the duplicate ID in order to create unique records based upon the key.</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>Function returns an object of class <code>SGP</code>. The long data is
   in the <code>data</code> slot.</p>
-    
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <p><code><a href='http://www.rdocumentation.org/packages/SGPdata/topics/sgpData_LONG'>sgpData_LONG</a></code></p>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>not_run</span>({
@@ -225,11 +224,8 @@ for summarizing and reporting.</p></td>
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-
       <li><a href="#see-also">See also</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 
