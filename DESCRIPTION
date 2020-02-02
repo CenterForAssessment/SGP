@@ -1,8 +1,8 @@
 Package: SGP
 Type: Package
 Title: Student Growth Percentiles & Percentile Growth Trajectories
-Version: 1.9-4.99
-Date: 2020-1-21
+Version: 1.9-5.0
+Date: 2020-1-30
 Authors@R: c(person(given=c("Damian", "W."), family="Betebenner", email="dbetebenner@nciea.org", role=c("aut", "cre")),
 		person(given=c("Adam", "R."), family="Van Iwaarden", email="avaniwaarden@nciea.org", role="aut"),
 		person(given="Ben", family="Domingue", email="ben.domingue@gmail.com", role="aut"),
@@ -74,7 +74,7 @@ Authors@R: c(person(given=c("Damian", "W."), family="Betebenner", email="dbetebe
 Maintainer: Damian W. Betebenner <dbetebenner@nciea.org>
 Depends: R (>= 3.6.0)
 Suggests: SGPdata (>= 23.0-0), knitr, rmarkdown
-Imports: Cairo, callr, colorspace, crayon, datasets, data.table (>= 1.12.4), digest, doParallel, doRNG, equate (>= 2.0-5), foreach, graphics, grid, grDevices, gridBase, iterators, gtools, jsonlite, matrixStats, methods, parallel, plotly, quantreg, randomNames (>= 0.0-5), rngtools, RSQLite, sn (>= 1.0-0), splines, stats, toOrdinal, utils
+Imports: Cairo, callr, colorspace, crayon, datasets, data.table (>= 1.12.4), digest, doParallel, doRNG (>= 1.8.2), equate (>= 2.0-5), foreach, graphics, grid, grDevices, gridBase, iterators, gtools, jsonlite, matrixStats, methods, parallel, plotly, quantreg, randomNames (>= 0.0-5), rngtools (>= 1.5), RSQLite, sn (>= 1.0-0), splines, stats, toOrdinal, utils
 Description: An analytic framework for the calculation of norm- and criterion-referenced academic growth estimates using large scale, longitudinal education assessment data as developed in Betebenner (2009) <doi:10.1111/j.1745-3992.2009.00161.x>.
 SystemRequirements: (PDF)LaTeX (https://www.latex-project.org/) with 'pdfpages' package for studentGrowthPlot option in visualizeSGP to bind together student growth plots into school catalogs
 URL: https://sgp.io, https://github.com/CenterForAssessment/SGP, https://CRAN.R-project.org/package=SGP
