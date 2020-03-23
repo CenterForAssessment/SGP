@@ -1056,25 +1056,25 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 			if ((length(grep("CUKU", tmp.projection.names)) > 0 & tmp.achievement.level <= level.to.get.cuku[[achievement.level.label.index.from]]) |
 				length(grep("MUSU", tmp.projection.names))==0) {
 				level.to.get.cuku.label <- names(achievement.level.labels[[achievement.level.label.index.to]])[level.to.get.cuku[[achievement.level.label.index.to]]+1]
-				grid.text(x=tmp.projection.year.to, y=1.35,
+				grid.text(x=tmp.projection.year.to-0.5, y=1.35,
 					paste0(level.to.get.cuku.label, " (", SGP_Scale_Score_Targets[[grep("CUKU", tmp.projection.names, value=TRUE)]][['NY1']], ")"),
 					gp=gpar(col=border.color, cex=.4), default.units="native")
-				grid.text(x=tmp.projection.year.to, y=0.25,
+				grid.text(x=tmp.projection.year.to-0.5, y=0.25,
 					paste0(CU.label, " (", SGP_Targets[[grep("CUKU", tmp.projection.names, value=TRUE)]], ")"),
 					gp=gpar(col=border.color, cex=.4), default.units="native")
 			} else {
 				level.to.get.cuku.label <- names(achievement.level.labels[[achievement.level.label.index.to]])[level.to.get.cuku[[achievement.level.label.index.to]]+1]
 				level.to.get.musu.label <- names(achievement.level.labels[[achievement.level.label.index.to]])[level.to.get.musu[[achievement.level.label.index.to]]+1]
-				grid.text(x=tmp.projection.year.to, y=1.35,
+				grid.text(x=tmp.projection.year.to-0.5, y=1.35,
 					paste0(level.to.get.cuku.label, " (", SGP_Scale_Score_Targets[[grep("CUKU", tmp.projection.names, value=TRUE)]][['NY1']], ")/", level.to.get.musu.label, " (", SGP_Scale_Score_Targets[[grep("MUSU", tmp.projection.names, value=TRUE)]][['NY1']], ")"),
 					gp=gpar(col=border.color, cex=.4), default.units="native")
 				if (tmp.achievement.level <= level.to.get.musu[[achievement.level.label.index.from]]) {
-					grid.text(x=tmp.projection.year.to, y=0.25,
+					grid.text(x=tmp.projection.year.to-0.5, y=0.25,
 					paste0(KU.label, " (", SGP_Targets[[grep('CUKU', tmp.projection.names, value=TRUE)]], ")/Move Up (", SGP_Targets[[grep('MUSU', tmp.projection.names, value=TRUE)]], ")"),
 					gp=gpar(col=border.color, cex=.4), default.units="native")
 				}
 				if (tmp.achievement.level > level.to.get.musu[[achievement.level.label.index.from]]) {
-					grid.text(x=tmp.projection.year.to, y=0.25,
+					grid.text(x=tmp.projection.year.to-0.5, y=0.25,
 					paste0(KU.label, " (", SGP_Targets[[grep('CUKU', tmp.projection.names, value=TRUE)]], ")/Stay Up (", SGP_Targets[[grep('MUSU', tmp.projection.names, value=TRUE)]], ")"),
 					gp=gpar(col=border.color, cex=.4), default.units="native")
 				}
