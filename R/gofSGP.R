@@ -9,7 +9,8 @@ function(
 	ceiling.floor=TRUE,
 	use.sgp="SGP",
 	output.format="PDF",
-	color.scale="reds.and.blues") {
+	color.scale="reds.and.blues",
+	save.prior.score.deciles.table=FALSE) {
 
 	VALID_CASE <- CONTENT_AREA <- YEAR <- SCALE_SCORE_PRIOR <- ACHIEVEMENT_LEVEL_PRIOR <- GRADE <- NULL
 
