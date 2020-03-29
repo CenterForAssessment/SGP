@@ -9,8 +9,7 @@ function(
 	ceiling.floor=TRUE,
 	use.sgp="SGP",
 	output.format="PDF",
-	color.scale="reds.and.blues",
-	save.prior.score.deciles.table=FALSE) {
+	color.scale="reds.and.blues") {
 
 	VALID_CASE <- CONTENT_AREA <- YEAR <- SCALE_SCORE_PRIOR <- ACHIEVEMENT_LEVEL_PRIOR <- GRADE <- NULL
 
@@ -59,30 +58,36 @@ function(
 			if ("PDF" %in% output.format) {
 				pdf(file=paste0(file.path, "/", tmp.plot.name, ".pdf"), width=my.width, height=my.height)
 				grid.draw(.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale,
-					with.prior.achievement.level=with.prior.achievement.level, content_areas_prior=content_areas_prior, years_prior))
+					with.prior.achievement.level=with.prior.achievement.level, content_areas_prior=content_areas_prior, years_prior)[['FIGURE']])
 				dev.off()
 			}
 			if ("PNG" %in% output.format) {
 				Cairo(file=paste0(file.path, "/", tmp.plot.name, ".png"), width=my.width, height=my.height, units="in", dpi=144, pointsize=10.5, bg="transparent")
 				grid.draw(.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale,
-					with.prior.achievement.level=with.prior.achievement.level, content_areas_prior=content_areas_prior, years_prior))
+					with.prior.achievement.level=with.prior.achievement.level, content_areas_prior=content_areas_prior, years_prior)[['FIGURE']])
 				dev.off()
 			}
 			if ("SVG" %in% output.format) {
 				CairoSVG(file=paste0(file.path, "/", tmp.plot.name, ".svg"), width=my.width, height=my.height, dpi=72, pointsize=10.5, bg="transparent")
 				grid.draw(.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale,
-					with.prior.achievement.level=with.prior.achievement.level, content_areas_prior=content_areas_prior, years_prior))
+					with.prior.achievement.level=with.prior.achievement.level, content_areas_prior=content_areas_prior, years_prior)[['FIGURE']])
 				dev.off()
+			}
+			if ("DECILE_TABLES" %in% output.format) {
+				tmp.table <- .goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale,
+					with.prior.achievement.level=with.prior.achievement.level, content_areas_prior=content_areas_prior, years_prior, return.prior.score.deciles.table=TRUE)[['TABLE']]
+				dir.create(paste0(file.path, "/Decile_Tables"), showWarnings=FALSE, recursive=TRUE)
+				save(tmp.table, file=paste0(file.path, "/Decile_Tables/", tmp.plot.name, "_Decile_Table.Rdata"))
 			}
 			return(NULL)
 		} else {
 			.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale, with.prior.achievement.level=with.prior.achievement.level,
-				content_areas_prior=content_areas_prior, years_prior)
+				content_areas_prior=content_areas_prior, years_prior, return.prior.score.deciles.table=TRUE)
 		}
 	}
 
 	.goodness.of.fit <-
-		function(data1, content_area, year, grade, color.scale="reds", with.prior.achievement.level=FALSE, content_areas_prior=NULL, years_prior=NULL) {
+		function(data1, content_area, year, grade, color.scale="reds", with.prior.achievement.level=FALSE, content_areas_prior=NULL, years_prior=NULL, return.prior.score.deciles.table=FALSE) {
 
 		.cell.color <- function(x, loss_hoss=FALSE){
 			my.blues.and.reds <- diverge_hcl(21, c = 100, l = c(50, 100))
@@ -490,7 +495,7 @@ function(
 
 		} ### END else
 
-		return(gof.grob)
+		return(list(PLOT=gof.grob, TABLE=tmp.table))
 	} ### END .goodness.of.fit function
 
 	### Define variables

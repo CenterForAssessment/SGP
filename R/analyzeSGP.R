@@ -350,8 +350,8 @@ function(sgp_object,
 	gof.print <- function(sgp_object) {
 		if (length(sgp_object@SGP[["Goodness_of_Fit"]]) > 0L) {
 			for (i in names(sgp_object@SGP[["Goodness_of_Fit"]])) {
-				dir.create(paste0("Goodness_of_Fit/", i), recursive=TRUE, showWarnings=FALSE)
-					for (output.format in c("PDF", "PNG")) {
+				dir.create(paste0("Goodness_of_Fit/", i, "/Decile_Tables"), recursive=TRUE, showWarnings=FALSE)
+					for (output.format in c("PDF", "PNG", "DECILE_TABLES")) {
 						for (j in names(sgp_object@SGP[["Goodness_of_Fit"]][[i]])) {
 							tmp.path <- file.path("Goodness_of_Fit", i, j)
 							if (!identical(.Platform$OS.type, "unix") & nchar(tmp.path) > 250L) {
@@ -360,13 +360,19 @@ function(sgp_object,
 							}
 							if (output.format=="PDF") {
 								pdf(file=paste0(tmp.path, ".pdf"), width=8.5, height=11)
+							       grid.draw(sgp_object@SGP[["Goodness_of_Fit"]][[i]][[j]][["PLOT"]])
+							    dev.off()
 							}
 							if (output.format=="PNG") {
 								Cairo(file=paste0(tmp.path, ".png"),
 								      width=8.5, height=11, units="in", dpi=144, pointsize=10.5, bg="transparent")
+							       grid.draw(sgp_object@SGP[["Goodness_of_Fit"]][[i]][[j]][["PLOT"]])
+							    dev.off()
 							}
-							grid.draw(sgp_object@SGP[["Goodness_of_Fit"]][[i]][[j]])
-							dev.off()
+                            if (output.format=="DECILE_TABLES") {
+                                decile.table <- sgp_object@SGP[["Goodness_of_Fit"]][[i]][[j]][["TABLE"]]
+                                save(decile.table, file=paste0("Goodness_of_Fit/", i, "/Decile_Tables/", j, "_Decile_Table.Rdata"))
+                            }
 						}
 					}
 				}
