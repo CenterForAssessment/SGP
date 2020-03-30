@@ -1,6 +1,6 @@
 ---
 title: "SGP 1.9-5.0"
-date: "January 15th, 2020"
+date: "February 2nd, 2020"
 ---
 
 ```{r include = FALSE}
@@ -22,11 +22,11 @@ date: "January 15th, 2020"
 ```
 
 
-This is the 1.9-5.0 release of the SGP package posted to CRAN. This [GitHub tagged release](https://github.com/CenterForAssessment/SGP/releases/tag/8906c2a)
+This is the 1.9-5.0 release of the SGP package posted to CRAN. This [GitHub tagged release](https://github.com/CenterForAssessment/SGP/releases/tag/619c5e4)
 can be downloaded via:
 
 ```{r eval=FALSE}
-devtools::install_github("CenterForAssessment/SGP", ref="8906c2a")
+devtools::install_github("CenterForAssessment/SGP", ref="619c5e4")
 ```
 
 To see all the changes in this release check out the [change log](https://sgp.io/news/index.html#sgp-1-9-5-0).
