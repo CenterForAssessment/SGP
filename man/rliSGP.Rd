@@ -10,7 +10,7 @@ rliSGP(
 	sgp_object,
     additional.data=NULL,
 	state=NULL,
-	content_areas=c("MATHEMATICS", "READING", "READING_UNIFIED", "EARLY_LITERACY"),
+	content_areas=c("MATHEMATICS", "MATHEMATICS_SPANISH", "READING", "READING_SPANISH", "READING_UNIFIED", "EARLY_LITERACY", "EARLY_LITERACY_SPANISH"),
     testing.window,
     eow.or.update="UPDATE",
 	update.save.shell.only=FALSE,
