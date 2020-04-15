@@ -22,6 +22,7 @@ function(sgp_object,
 	eow.calculate.sgps=FALSE,
 	score.type="RASCH",
 	cutscore.file.name="Cutscores.csv",
+	get.cohort.data.info=FALSE,
 	parallel.config=NULL) {
 
 	YEAR <- GRADE <- ID <- NEW_ID <- .EACHI <- DATE <- CONTENT_AREA <- NULL
@@ -217,6 +218,7 @@ function(sgp_object,
 			update.old.data.with.new=FALSE,
 			SGPt=SGPt,
 			fix.duplicates=fix.duplicates,
+			get.cohort.data.info=get.cohort.data.info,
 			parallel.config=parallel.config,
 			sgp.config=getRLIConfig(content_areas, configuration.year, testing.window, score.type))
 
@@ -270,6 +272,7 @@ function(sgp_object,
 				SGPt=SGPt,
 				fix.duplicates=fix.duplicates,
 				sgp.percentiles.calculate.sgps=eow.calculate.sgps,
+				get.cohort.data.info=get.cohort.data.info,
 				parallel.config=parallel.config,
 				sgp.config=getRLIConfig(content_areas, configuration.year, testing.window, score.type))
 

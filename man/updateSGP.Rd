@@ -56,6 +56,7 @@ updateSGP(
 	sgp.percentiles.equating.method=NULL,
 	sgp.percentiles.calculate.sgps=TRUE,
 	fix.duplicates=NULL,
+	get.cohort.data.info=FALSE,
 	...)
 }
 
@@ -164,6 +165,8 @@ matrices.
   The function currently warns of duplicate records and doesn't modify data.  If set to 'KEEP.ALL', \code{analyzeSGP} tries to fix the duplicate individual records by
   adding a '_DUP_***' suffix to the duplicate ID before running \code{\link{studentGrowthPercentiles}} in order to create unique records based upon the key.  If needed, the
 	\code{@Data} slot will be extended as necessary to accomodate additional student records and SGP results in \code{combineSGP}.
+  }
+  \item{get.cohort.data.info}{Boolean argument passed to \code{analyzeSGP} indicating whether to calculate norm group cohort counts.
   }
   \item{...}{Arguments to be passed to \code{\link{abcSGP}} for finer control over SGP calculations. For example, 'parallel.config' can be supplied to abcSGP for parallel computation.
   }
