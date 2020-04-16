@@ -186,6 +186,7 @@ function(what_sgp_object=NULL,
 					sgp.percentiles.calculate.sgps=sgp.percentiles.calculate.sgps,
 					parallel.config=parallel.config,
 					fix.duplicates=fix.duplicates,
+					get.cohort.data.info=get.cohort.data.info,
 					...
 					)
 
@@ -269,6 +270,7 @@ function(what_sgp_object=NULL,
 						sgp.percentiles.calculate.sgps=sgp.percentiles.calculate.sgps,
 						parallel.config=parallel.config,
 						fix.duplicates=fix.duplicates,
+						get.cohort.data.info=get.cohort.data.info,
 						...)
 
 			### Print finish and return SGP object
@@ -485,6 +487,7 @@ function(what_sgp_object=NULL,
 							sgp.percentiles.calculate.sgps=sgp.percentiles.calculate.sgps,
 							parallel.config=parallel.config,
 							fix.duplicates=fix.duplicates,
+							get.cohort.data.info=get.cohort.data.info,
 							...)
 
 				### Print finish and return SGP object
