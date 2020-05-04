@@ -4,11 +4,7 @@ SGP
 [![Build Status](https://travis-ci.org/CenterForAssessment/SGP.svg?branch=master)](https://travis-ci.org/CenterForAssessment/SGP)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/centerforassessment/SGP?branch=master&svg=true)](https://ci.appveyor.com/project/centerforassessment/SGP)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/SGP)](https://cran.r-project.org/package=SGP)
-<<<<<<< HEAD
-[![Development Version](https://img.shields.io/badge/devel-1.9--5.8-brightgreen.svg)](https://github.com/CenterForAssessment/SGP)
-=======
-[![Development Version](https://img.shields.io/badge/devel-1.9--5.7-brightgreen.svg)](https://github.com/CenterForAssessment/SGP)
->>>>>>> 04c8a6a5f50b6d4cc0842fcbe64da1d45a3dc3ed
+[![Development Version](https://img.shields.io/badge/devel-1.9--6.0-brightgreen.svg)](https://github.com/CenterForAssessment/SGP)
 [![Rstudio mirror downloads](https://cranlogs.r-pkg.org/badges/grand-total/SGP)](https://github.com/metacran/cranlogs.app)
 [![License](https://img.shields.io/badge/license-GPL%203-brightgreen.svg?style=flat)](https://github.com/CenterForAssessment/SGP/blob/master/LICENSE.md)
 [![Join the chat at https://gitter.im/CenterForAssessment/SGP](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/CenterForAssessment/SGP?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
