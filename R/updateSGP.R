@@ -39,6 +39,7 @@ function(what_sgp_object=NULL,
 	sgp.percentiles.equating.method=NULL,
 	sgp.percentiles.calculate.sgps=TRUE,
 	fix.duplicates=NULL,
+	get.cohort.data.info=FALSE,
 	...) {
 
 	SGPstateData <- SGP::SGPstateData ### Needed due to possible assignment of values to SGPstateData
@@ -185,6 +186,7 @@ function(what_sgp_object=NULL,
 					sgp.percentiles.calculate.sgps=sgp.percentiles.calculate.sgps,
 					parallel.config=parallel.config,
 					fix.duplicates=fix.duplicates,
+					get.cohort.data.info=get.cohort.data.info,
 					...
 					)
 
@@ -268,6 +270,7 @@ function(what_sgp_object=NULL,
 						sgp.percentiles.calculate.sgps=sgp.percentiles.calculate.sgps,
 						parallel.config=parallel.config,
 						fix.duplicates=fix.duplicates,
+						get.cohort.data.info=get.cohort.data.info,
 						...)
 
 			### Print finish and return SGP object
@@ -318,6 +321,7 @@ function(what_sgp_object=NULL,
 							sgp.percentiles.calculate.sgps=sgp.percentiles.calculate.sgps,
 							parallel.config=parallel.config,
 							fix.duplicates=fix.duplicates,
+							get.cohort.data.info=get.cohort.data.info,
 							...)
 
 				if ("combineSGP" %in% steps) {
@@ -483,6 +487,7 @@ function(what_sgp_object=NULL,
 							sgp.percentiles.calculate.sgps=sgp.percentiles.calculate.sgps,
 							parallel.config=parallel.config,
 							fix.duplicates=fix.duplicates,
+							get.cohort.data.info=get.cohort.data.info,
 							...)
 
 				### Print finish and return SGP object

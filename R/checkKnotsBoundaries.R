@@ -55,8 +55,8 @@ function(
 
 		knots_boundaries_data_min_max[,OBSERVED_WITHIN_LOSS_HOSS_RANGE:=TRUE]
 		knots_boundaries_data_min_max[,OBSERVED_WITHIN_BOUNDARY_RANGE:=TRUE]
-		knots_boundaries_data_min_max[OBSERVED_MIN < LOSS, OBSERVED_WITHIN_LOSS_HOSS_RANGE:=FALSE]
-		knots_boundaries_data_min_max[OBSERVED_MAX > HOSS, OBSERVED_WITHIN_LOSS_HOSS_RANGE:=FALSE]
+		knots_boundaries_data_min_max[as.integer(trunc(100*OBSERVED_MIN))/100 < LOSS, OBSERVED_WITHIN_LOSS_HOSS_RANGE:=FALSE]
+		knots_boundaries_data_min_max[as.integer(trunc(100*OBSERVED_MAX))/100 > HOSS, OBSERVED_WITHIN_LOSS_HOSS_RANGE:=FALSE]
 		knots_boundaries_data_min_max[OBSERVED_MIN < BOUNDARY_LOW, OBSERVED_WITHIN_BOUNDARY_RANGE:=FALSE]
 		knots_boundaries_data_min_max[OBSERVED_MAX > BOUNDARY_HIGH, OBSERVED_WITHIN_BOUNDARY_RANGE:=FALSE]
 
