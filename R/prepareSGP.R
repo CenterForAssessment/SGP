@@ -156,7 +156,7 @@ function(data,
 			save(list=paste(state, "Knots_Boundaries", sep="_"), file=paste(state, "Knots_Boundaries.Rdata", sep="_"))
 			messageSGP(paste0("\tNOTE: Knots and Boundaries do not exist for state provided.\n\tThey have been produced and are available using state=", state, " for subsequent analyses and saved to your working directory '", getwd(), "'."))
 		} else {
-			checkKnotsBoundaries(data@Data, state)
+			if (nrow(data@Data) > 0) checkKnotsBoundaries(data@Data, state)
 		}
 
 		## Create FIRST_OBESRVATION, LAST_OBSERVATION if YEAR_WITHIN exists
@@ -202,7 +202,7 @@ function(data,
 			save(SGPstateData, file="SGPstateData.Rdata")
 			messageSGP(paste0("\tNOTE: Knots and Boundaries do not exist for state provided.\n\tThey have been produced and are available using state=", state, " for subsequent analyses and saved to your working directory '", getwd(), "'."))
 		} else {
-			checkKnotsBoundaries(data, state)
+			if (nrow(data) > 0) checkKnotsBoundaries(data, state)
 		}
 
 		## Create FIRST_OBESRVATION, LAST_OBSERVATION if YEAR_WITHIN exists
