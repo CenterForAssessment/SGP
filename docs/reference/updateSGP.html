@@ -205,6 +205,7 @@ SGP object.</p>
         <span class='kw'>sgp.percentiles.equating.method</span><span class='kw'>=</span><span class='kw'>NULL</span>,
         <span class='kw'>sgp.percentiles.calculate.sgps</span><span class='kw'>=</span><span class='fl'>TRUE</span>,
         <span class='kw'>fix.duplicates</span><span class='kw'>=</span><span class='kw'>NULL</span>,
+        <span class='kw'>get.cohort.data.info</span><span class='kw'>=</span><span class='fl'>FALSE</span>,
         <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
@@ -393,6 +394,10 @@ matrices.</p></td>
   The function currently warns of duplicate records and doesn't modify data.  If set to 'KEEP.ALL', <code>analyzeSGP</code> tries to fix the duplicate individual records by
   adding a '_DUP_***' suffix to the duplicate ID before running <code><a href='studentGrowthPercentiles.html'>studentGrowthPercentiles</a></code> in order to create unique records based upon the key.  If needed, the
 	<code>@Data</code> slot will be extended as necessary to accomodate additional student records and SGP results in <code>combineSGP</code>.</p></td>
+    </tr>
+    <tr>
+      <th>get.cohort.data.info</th>
+      <td><p>Boolean argument passed to <code>analyzeSGP</code> indicating whether to calculate norm group cohort counts.</p></td>
     </tr>
     <tr>
       <th>...</th>
