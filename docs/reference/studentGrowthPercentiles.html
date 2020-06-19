@@ -572,11 +572,11 @@ Percentiles using the SIMEX method. Educational Measurement: Issues and Practice
   <span class='co'>## Load 'grid' package to access grid.draw function</span>
 
   <span class='fu'>require</span>(<span class='no'>grid</span>)
-  <span class='fu'>grid.draw</span>(<span class='no'>sgp_g4</span>$<span class='no'>Goodness_of_Fit</span>$<span class='no'>READING.2054</span><span class='kw'>[[</span><span class='fl'>1</span>]])
+  <span class='fu'>grid.draw</span>(<span class='no'>sgp_g4</span>$<span class='no'>Goodness_of_Fit</span>$<span class='no'>READING.2015</span><span class='kw'>[[</span><span class='fl'>1</span>]]<span class='kw'>[[</span><span class='st'>"PLOT"</span>]])
 
   <span class='fu'>require</span>(<span class='no'>grid</span>)
   <span class='fu'>pdf</span>(<span class='kw'>file</span><span class='kw'>=</span><span class='st'>"Grade_4_Reading_2015_GOF.pdf"</span>, <span class='kw'>width</span><span class='kw'>=</span><span class='fl'>8.5</span>, <span class='kw'>height</span><span class='kw'>=</span><span class='fl'>8</span>)
-  <span class='fu'>grid.draw</span>(<span class='no'>sgp_g4</span>$<span class='no'>Goodness_of_Fit</span>$<span class='no'>READING.2015</span><span class='kw'>[[</span><span class='fl'>1</span>]])
+  <span class='fu'>grid.draw</span>(<span class='no'>sgp_g4</span>$<span class='no'>Goodness_of_Fit</span>$<span class='no'>READING.2015</span><span class='kw'>[[</span><span class='fl'>1</span>]]<span class='kw'>[[</span><span class='st'>"PLOT"</span>]])
   <span class='fu'>dev.off</span>()
 
   <span class='co'># Other grades</span>
@@ -627,7 +627,8 @@ Percentiles using the SIMEX method. Educational Measurement: Issues and Practice
   <span class='co'>## This allows one to "recycle" the object for multiple grades and subjects as desired.</span>
 
   <span class='co'># Loop to calculate all SGPs for all grades without percentile cuts</span>
-  <span class='co'># but with growth levels and goodness of fit plots exported automatically as PDFs, PNGs, and SVGs</span>
+  <span class='co'># but with growth levels and goodness of fit plots exported automatically as PDFs, PNGs, SVGs,</span>
+  <span class='co'># and DECILE_TABLES (10x10 table at bottom left of goodness of fit plots)</span>
 
   <span class='no'>my.grade.sequences</span> <span class='kw'>&lt;-</span> <span class='fu'>list</span>(<span class='fl'>3</span>:<span class='fl'>4</span>, <span class='fl'>3</span>:<span class='fl'>5</span>, <span class='fl'>3</span>:<span class='fl'>6</span>, <span class='fl'>3</span>:<span class='fl'>7</span>, <span class='fl'>4</span>:<span class='fl'>8</span>)
   <span class='no'>my.sgpData</span> <span class='kw'>&lt;-</span> <span class='fu'>list</span>(<span class='kw'>Panel_Data</span><span class='kw'>=</span><span class='no'>sgpData</span>)   <span class='co'>### Put sgpData into Panel_Data slot</span>
@@ -637,7 +638,7 @@ Percentiles using the SIMEX method. Educational Measurement: Issues and Practice
                 <span class='kw'>sgp.labels</span><span class='kw'>=</span><span class='fu'>list</span>(<span class='kw'>my.year</span><span class='kw'>=</span><span class='fl'>2015</span>, <span class='kw'>my.subject</span><span class='kw'>=</span><span class='st'>"Reading"</span>),
                 <span class='kw'>growth.levels</span><span class='kw'>=</span><span class='st'>"DEMO"</span>,
                 <span class='kw'>goodness.of.fit</span><span class='kw'>=</span><span class='st'>"DEMO"</span>,
-          <span class='kw'>goodness.of.fit.output.format</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='st'>"PDF"</span>, <span class='st'>"PNG"</span>, <span class='st'>"SVG"</span>),
+          <span class='kw'>goodness.of.fit.output.format</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='st'>"PDF"</span>, <span class='st'>"PNG"</span>, <span class='st'>"SVG"</span>, <span class='st'>"DECILE_TABLES"</span>),
                 <span class='kw'>grade.progression</span><span class='kw'>=</span><span class='no'>my.grade.sequences</span><span class='kw'>[[</span><span class='no'>i</span>]])
   }
 
