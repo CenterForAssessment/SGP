@@ -27,7 +27,7 @@ function(tmp.data,
 			setkeyv(SGP::SGPstateData[[state]][['SGP_Progression_Preference']], tmp.sgp.norm.group.variables)
 			setkeyv(tmp.data, tmp.sgp.norm.group.variables[1])
 		} else {
-			stop("\tNOTE: Multiple Projections exist for individual students. Please examine results in @SGP[['SGProjections']].")
+			stop("\tNOTE: Multiple Projections and/or Projection Scale Score Targets exist for individual students. Please examine results in @SGP[['SGProjections']].")
 		}
 		tmp.data <- data.table(SGP::SGPstateData[[state]][['SGP_Progression_Preference']][,tmp.sgp.norm.group.variables,with=FALSE][tmp.data],
 			key=c(getKey(tmp.data), "PREFERENCE"))

@@ -1,5 +1,6 @@
 `mergeScaleScoreTarget` <-
 function(sgp_object,
+		state,
 		slot.data,
 		years,
 		sgp.target.scale.scores.merge
@@ -29,6 +30,9 @@ function(sgp_object,
 					CONTENT_AREA=unlist(strsplit(i, "[.]"))[1L],
 					YEAR=getTableNameYear(i),
 					sgp_object@SGP[["SGProjections"]][[i]])
+				if (any(duplicated(tmp.list[[i]], by=getKey(tmp.list[[i]])))) {
+					tmp.list[[i]] <- getPreferredSGP(tmp.list[[i]], state=state, type="TARGET")
+				}
 			}
 			tmp.dt <- rbindlist(tmp.list[grep("LAGGED", tmp.names)], fill=TRUE)
 			tmp.index <- slot.data[tmp.dt[, getKey(slot.data), with=FALSE], which=TRUE, on=getKey(slot.data)]

@@ -705,7 +705,7 @@ function(
 			}
 		}
 		if (!identical(sgp.target.scale.scores.merge, FALSE)) {
-			slot.data <- mergeScaleScoreTarget(sgp_object, slot.data, years, sgp.target.scale.scores.merge)
+			slot.data <- mergeScaleScoreTarget(sgp_object, state, slot.data, years, sgp.target.scale.scores.merge)
 		}
 	} ### END if (sgp.target.scale.scores)
 
