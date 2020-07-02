@@ -7,7 +7,7 @@ function(sgp_object,
 
 		tmp.list <- list()
 		if (identical(sgp.target.scale.scores.merge, "1_year_lagged")) {
-			tmp.names <- grep(paste(years, "LAGGED.TARGET_SCALE_SCORES", sep="."), names(sgp_object@SGP$SGProjections), value=TRUE)
+			tmp.names <- grep(paste(years, "LAGGED.TARGET_SCALE_SCORES", sep=".", collapse="|"), names(sgp_object@SGP$SGProjections), value=TRUE)
 			for (i in tmp.names) {
 				tmp.list[[i]] <- data.table(
 					VALID_CASE="VALID_CASE",
@@ -21,8 +21,8 @@ function(sgp_object,
 			invisible(slot.data[tmp.index, (tmp.cols):=tmp.dt[,tmp.cols, with=FALSE]])
 		}
 		if (identical(sgp.target.scale.scores.merge, "1_year_lagged_current")) {
-			tmp.names <- c(grep(paste(years, "TARGET_SCALE_SCORES", sep="."), names(sgp_object@SGP$SGProjections), value=TRUE),
-							grep(paste(years, "LAGGED.TARGET_SCALE_SCORES", sep="."), names(sgp_object@SGP$SGProjections), value=TRUE))
+			tmp.names <- c(grep(paste(years, "TARGET_SCALE_SCORES", sep=".", collapse="|"), names(sgp_object@SGP$SGProjections), value=TRUE),
+							grep(paste(years, "LAGGED.TARGET_SCALE_SCORES", sep=".", collapse="|"), names(sgp_object@SGP$SGProjections), value=TRUE))
 			for (i in tmp.names) {
 				tmp.list[[i]] <- data.table(
 					VALID_CASE="VALID_CASE",
@@ -40,8 +40,8 @@ function(sgp_object,
 			invisible(slot.data[tmp.index, (tmp.cols):=tmp.dt[,tmp.cols, with=FALSE]])
 		}
 		if (identical(sgp.target.scale.scores.merge, "all_years_lagged_current")) {
-			tmp.names <- c(grep(paste(years, "TARGET_SCALE_SCORES", sep="."), names(sgp_object@SGP$SGProjections), value=TRUE),
-							grep(paste(years, "LAGGED.TARGET_SCALE_SCORES", sep="."), names(sgp_object@SGP$SGProjections), value=TRUE))
+			tmp.names <- c(grep(paste(years, "TARGET_SCALE_SCORES", sep=".", collapse="|"), names(sgp_object@SGP$SGProjections), value=TRUE),
+							grep(paste(years, "LAGGED.TARGET_SCALE_SCORES", sep=".", collapse="|"), names(sgp_object@SGP$SGProjections), value=TRUE))
 			for (i in tmp.names) {
 				tmp.list[[i]] <- data.table(
 					VALID_CASE="VALID_CASE",
