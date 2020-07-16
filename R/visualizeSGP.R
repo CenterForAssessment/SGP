@@ -35,6 +35,7 @@ function(sgp_object,
 		sgPlot.folder="Visualizations/studentGrowthPlots",
 		sgPlot.folder.names="number",
 		sgPlot.fan=TRUE,
+		sgPlot.custom.trajectory=FALSE,
 		sgPlot.sgp.targets=FALSE,
 		sgPlot.sgp.targets.timeframe=3,
 		sgPlot.anonymize=FALSE,
@@ -444,6 +445,16 @@ if ("studentGrowthPlot" %in% plot.types) {
 
 		if (!is.null(SGP::SGPstateData[[state]][['SGP_Configuration']][['sgPlot.fan']])) {
 			sgPlot.fan <- SGP::SGPstateData[[state]][['SGP_Configuration']][['sgPlot.fan']]
+		}
+
+		if (identical(sgPlot.custom.trajectory, TRUE)) {
+			my.custom.trajectory <- "ISR_INTERIM_DATA"
+		}
+		if (identical(sgPlot.custom.trajectory, FALSE)) {
+			my.custom.trajectory <- NULL
+		}
+		if (!is.null(SGP::SGPstateData[[state]][['SGP_Configuration']][['sgPlot.custom.trajectory']])) {
+			my.custom.trajectory <- SGP::SGPstateData[[state]][['SGP_Configuration']][['sgPlot.custom.trajectory']]
 		}
 
 		if (!is.null(SGP::SGPstateData[[state]][['SGP_Configuration']][['sgPlot.plot.test.transition']])) {
@@ -877,7 +888,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 	#### Reshape data (NOT NECESSARY IF WIDE data is provided)
 
 		variables.to.keep <- c("VALID_CASE", "ID", "LAST_NAME", "FIRST_NAME", "CONTENT_AREA", "CONTENT_AREA_LABELS", "YEAR", "GRADE", "SCALE_SCORE", "TRANSFORMED_SCALE_SCORE",
-			"ACHIEVEMENT_LEVEL", my.sgp, my.sgp.level, my.sgp.targets, "SCHOOL_NAME", "SCHOOL_NUMBER", "DISTRICT_NAME", "DISTRICT_NUMBER")
+			"ACHIEVEMENT_LEVEL", my.sgp, my.sgp.level, my.sgp.targets, my.custom.trajectory, "SCHOOL_NAME", "SCHOOL_NUMBER", "DISTRICT_NAME", "DISTRICT_NUMBER")
 		if (!is.null(tmp.sgPlot.id <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["sgPlot.use.alternate.student.id"]])) variables.to.keep <- c(variables.to.keep, tmp.sgPlot.id)
 
 		sgPlot.data <- data.table(tmp.table[,setdiff(variables.to.keep, "VALID_CASE"), with=FALSE], key=c("ID", "CONTENT_AREA", "YEAR"))
@@ -892,6 +903,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			paste("SCHOOL_NAME", tmp.last.year, sep="."), paste("SCHOOL_NUMBER", tmp.last.year, sep="."),
 			paste("DISTRICT_NAME", tmp.last.year, sep="."), paste("DISTRICT_NUMBER", tmp.last.year, sep="."))
 		if (!is.null(my.sgp.targets)) variables.to.keep <- c(variables.to.keep, paste(my.sgp.targets, tmp.last.year, sep="."))
+		if (!is.null(my.custom.trajectory)) variables.to.keep <- c(variables.to.keep, paste(my.custom.trajectory, tmp.last.year, sep="."))
 		if (!is.null(tmp.sgPlot.id)) {
 			setnames(sgPlot.data, paste(tmp.sgPlot.id, tmp.last.year, sep="."), tmp.sgPlot.id)
 			variables.to.keep <- c(tmp.sgPlot.id, variables.to.keep)
