@@ -808,14 +808,14 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 			tmp.test.abbreviation.text[which((low.year:high.year >= Report_Parameters$Assessment_Transition$Year)[which(year.text!=" ")])] <-
 				tmp.test.abbreviation[2]
 			tmp.test.abbreviation.text[which(content_area.text==" ")] <- " "
-			grid.stext(tmp.test.abbreviation.text, x=unit(low.year:high.year, "native"), y=convertY(unit(0.07, "npc"), "native"), gp=gpar(cex=0.7))
-			grid.stext(sapply(content_area.text, capwords), x=unit(low.year:high.year, "native"), y=convertY(unit(0.03, "npc"), "native"), gp=gpar(cex=0.7))
+			grid.stext(tmp.test.abbreviation.text, x=unit(low.year:high.year, "native"), y=convertHeight(unit(0.07, "npc"), "native"), gp=gpar(cex=0.7))
+			grid.stext(sapply(content_area.text, capwords), x=unit(low.year:high.year, "native"), y=convertHeight(unit(0.03, "npc"), "native"), gp=gpar(cex=0.7))
 		}
 	}
 
 	if (is.null(Report_Parameters$Assessment_Transition) && sgPlot.show.content_area.progression) {
-		grid.stext(sapply(content_area.text, capwords), x=unit(low.year:high.year, "native"), y=convertY(unit(0.05, "npc"), "native"), gp=gpar(cex=0.75))
-		# grid.text(x=low.year:high.year, y=convertY(unit(0.05, "npc"), "native"), sapply(content_area.text, capwords), gp=gpar(col="white", cex=0.75), default.units="native")
+		grid.stext(sapply(content_area.text, capwords), x=unit(low.year:high.year, "native"), y=convertHeight(unit(0.05, "npc"), "native"), gp=gpar(cex=0.75))
+		# grid.text(x=low.year:high.year, y=convertHeight(unit(0.05, "npc"), "native"), sapply(content_area.text, capwords), gp=gpar(col="white", cex=0.75), default.units="native")
 	}
 
 	if (connect.points=="Arrows") {
@@ -827,8 +827,8 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 			if (!is.na(gp.values[i]) & length(tmp.lag) > 0) {
 				lag.to.prior.score <- min(tmp.lag, na.rm=TRUE)
 				if (lag.to.prior.score == 1) my.lty <- 1 else my.lty <- 2
-				arrow.rise <- convertY(unit(scale.scores.values[i+1], "native") - unit(scale.scores.values[i+1-lag.to.prior.score], "native"), "inches")
-				arrow.run <- convertX(unit(lag.to.prior.score, "native") - unit(0, "native"), "inches")
+				arrow.rise <- convertHeight(unit(scale.scores.values[i+1], "native") - unit(scale.scores.values[i+1-lag.to.prior.score], "native"), "inches")
+				arrow.run <- convertWidth(unit(lag.to.prior.score, "native") - unit(0, "native"), "inches")
 				arrow.angle <- atan2(as.numeric(arrow.rise),as.numeric(arrow.run))*180/pi
 
 				## Arrows connecting achievement scores
@@ -898,25 +898,25 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 				if (length(grep("CUKU", i))>0 & tmp.achievement.level <= level.to.get.cuku[[tmp.index]]) {
 					label.position <- c(label.position, "center")
 					tmp.target.label <- c(CU.label, target.label)
-					y.coordinates <- c(as.numeric(convertY(convertY(unit(Plotting_SGP_Scale_Score_Targets[[i]][['NY1']], "native"), "inches")+unit(0.0375, "inches"), "native")),
-							as.numeric(convertY(convertY(unit(Plotting_SGP_Scale_Score_Targets[[i]][['NY1']], "native"), "inches")-unit(0.0375, "inches"), "native")))
+					y.coordinates <- c(as.numeric(convertHeight(convertHeight(unit(Plotting_SGP_Scale_Score_Targets[[i]][['NY1']], "native"), "inches")+unit(0.0375, "inches"), "native")),
+							as.numeric(convertHeight(convertHeight(unit(Plotting_SGP_Scale_Score_Targets[[i]][['NY1']], "native"), "inches")-unit(0.0375, "inches"), "native")))
 				}
 				if (length(grep("CUKU", i))>0 & tmp.achievement.level > level.to.get.cuku[[tmp.index]]) {
 					label.position <- c(label.position, "top")
 					tmp.target.label <- c(KU.label, target.label)
 					y.coordinates <- c(Plotting_SGP_Scale_Score_Targets[[i]][['NY1']],
-						as.numeric(convertY(convertY(unit(Plotting_SGP_Scale_Score_Targets[[i]][['NY1']], "native"), "inches")-unit(0.1, "inches"), "native")))
+						as.numeric(convertHeight(convertHeight(unit(Plotting_SGP_Scale_Score_Targets[[i]][['NY1']], "native"), "inches")-unit(0.1, "inches"), "native")))
 				}
 				if (length(grep("MUSU", i))>0 & tmp.achievement.level <= level.to.get.musu[[tmp.index]]) {
 					label.position <- c(label.position, "bottom")
 					tmp.target.label <- c(MU.label, target.label)
-					y.coordinates <- c(as.numeric(convertY(convertY(unit(Plotting_SGP_Scale_Score_Targets[[i]][['NY1']], "native"), "inches")+unit(0.1, "inches"), "native")),
+					y.coordinates <- c(as.numeric(convertHeight(convertHeight(unit(Plotting_SGP_Scale_Score_Targets[[i]][['NY1']], "native"), "inches")+unit(0.1, "inches"), "native")),
 						Plotting_SGP_Scale_Score_Targets[[i]][['NY1']])
 				}
 				if (length(grep("MUSU", i))>0 & tmp.achievement.level > level.to.get.musu[[tmp.index]]) {
 					label.position <- c(label.position, "bottom")
 					tmp.target.label <- c(SU.label, target.label)
-					y.coordinates <- c(as.numeric(convertY(convertY(unit(Plotting_SGP_Scale_Score_Targets[[i]][['NY1']], "native"), "inches")+unit(0.1, "inches"), "native")),
+					y.coordinates <- c(as.numeric(convertHeight(convertHeight(unit(Plotting_SGP_Scale_Score_Targets[[i]][['NY1']], "native"), "inches")+unit(0.1, "inches"), "native")),
 						Plotting_SGP_Scale_Score_Targets[[i]][['NY1']])
 				}
 				grid.lines(x=c(current.year.x.coor-current.year.x.coor.lag, current.year.x.coor),

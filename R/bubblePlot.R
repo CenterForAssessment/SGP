@@ -359,8 +359,8 @@ if (bubble_plot_configs.BUBBLE_TIPS) {
 
      if (!is.null(bubble_plot_data.INDICATE)) {
           for (i in bubble_plot_data.INDICATE) {
-              indicate.coordinates <- indicate.tip(as.numeric(convertX(unit(bubble_plot_data.X[i], "native"), "npc")),
-                                               as.numeric(convertY(unit(bubble_plot_data.Y[i], "native"), "npc")))
+              indicate.coordinates <- indicate.tip(as.numeric(convertWidth(unit(bubble_plot_data.X[i], "native"), "npc")),
+                                               as.numeric(convertHeight(unit(bubble_plot_data.Y[i], "native"), "npc")))
               grid.segments(unit(indicate.coordinates$x, "npc"), unit(indicate.coordinates$y, "npc"),
                             unit(bubble_plot_data.X[i], "native"), unit(bubble_plot_data.Y[i], "native"),
                             gp=gpar(lwd=0.5))
@@ -421,8 +421,8 @@ if (bubble_plot_configs.BUBBLE_TIPS) {
 
      if (!is.null(bubble_plot_data.INDICATE)) {
           for (i in bubble_plot_data.INDICATE) {
-              indicate.coordinates <- indicate.tip(as.numeric(convertX(unit(bubble_plot_data.X[i], "native"), "npc")),
-                                               as.numeric(convertY(unit(bubble_plot_data.Y[i], "native"), "npc")))
+              indicate.coordinates <- indicate.tip(as.numeric(convertWidth(unit(bubble_plot_data.X[i], "native"), "npc")),
+                                               as.numeric(convertHeight(unit(bubble_plot_data.Y[i], "native"), "npc")))
               grid.segments(unit(indicate.coordinates$x, "npc"), unit(indicate.coordinates$y, "npc"),
                             unit(bubble_plot_data.X[i], "native"), unit(bubble_plot_data.Y[i], "native"),
                             gp=gpar(lwd=0.5))
@@ -487,8 +487,8 @@ else {
                   alpha=bubblealpha(length(bubble_plot_data.X), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Opaque)), default.units="native")
 
    if (!is.null(bubble_plot_data.INDICATE)) {
-          indicate.coordinates <- indicate.tip(as.numeric(convertX(unit(bubble_plot_data.X[bubble_plot_data.INDICATE], "native"), "npc")),
-                                           as.numeric(convertY(unit(bubble_plot_data.Y[bubble_plot_data.INDICATE], "native"), "npc")))
+          indicate.coordinates <- indicate.tip(as.numeric(convertWidth(unit(bubble_plot_data.X[bubble_plot_data.INDICATE], "native"), "npc")),
+                                           as.numeric(convertHeight(unit(bubble_plot_data.Y[bubble_plot_data.INDICATE], "native"), "npc")))
           grid.segments(unit(indicate.coordinates$x, "npc"), unit(indicate.coordinates$y, "npc"),
                         unit(bubble_plot_data.X[bubble_plot_data.INDICATE], "native"), unit(bubble_plot_data.Y[bubble_plot_data.INDICATE], "native"),
                         gp=gpar(lwd=0.5))
@@ -532,8 +532,8 @@ else {
                alpha=bubblealpha(length(bubble_plot_data.X), bubble_plot_configs.BUBBLE_SUBSET_ALPHA$Opaque)), default.units="native")
 
    if (!is.null(bubble_plot_data.INDICATE)) {
-          indicate.coordinates <- indicate.tip(as.numeric(convertX(unit(bubble_plot_data.X[bubble_plot_data.INDICATE], "native"), "npc")),
-                                           as.numeric(convertY(unit(bubble_plot_data.Y[bubble_plot_data.INDICATE], "native"), "npc")))
+          indicate.coordinates <- indicate.tip(as.numeric(convertWidth(unit(bubble_plot_data.X[bubble_plot_data.INDICATE], "native"), "npc")),
+                                           as.numeric(convertHeight(unit(bubble_plot_data.Y[bubble_plot_data.INDICATE], "native"), "npc")))
           grid.segments(unit(indicate.coordinates$x, "npc"), unit(indicate.coordinates$y, "npc"),
                         unit(bubble_plot_data.X[bubble_plot_data.INDICATE], "native"), unit(bubble_plot_data.Y[bubble_plot_data.INDICATE], "native"),
                         gp=gpar(lwd=0.5))
