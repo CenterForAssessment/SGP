@@ -147,6 +147,7 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 		if (all(c("sgp.projections", "sgp.projections.lagged") %in% Report_Parameters[['SGP_Targets']]) | all(c("sgp.projections.baseline", "sgp.projections.lagged.baseline") %in% Report_Parameters[['SGP_Targets']])) tmp.target.types <- names(unlist(SGP_Targets)[!is.na(unlist(SGP_Targets))])
 		if (identical("sgp.projections", Report_Parameters[['SGP_Targets']]) | identical("sgp.projections.baseline", Report_Parameters[['SGP_Targets']])) tmp.target.types <- grep("Current", names(unlist(SGP_Targets)[!is.na(unlist(SGP_Targets))]), value=TRUE)
 		if (identical("sgp.projections.lagged", Report_Parameters[['SGP_Targets']]) | identical("sgp.projections.lagged.baseline", Report_Parameters[['SGP_Targets']])) tmp.target.types <- grep("Current", names(unlist(SGP_Targets)[!is.na(unlist(SGP_Targets))]), value=TRUE, invert=TRUE)
+		if (identical("CUSTOM", Report_Parameters[['SGP_Targets']])) tmp.target.types <- grep("CUSTOM", names(SGP_Scale_Score_Targets), value=TRUE)
 	}
 
 	if (!is.null(SGP::SGPstateData[[Report_Parameters$State]][['SGP_Configuration']][['sgPlot.show.content_area.progression']]) |
@@ -919,12 +920,18 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 					y.coordinates <- c(as.numeric(convertHeight(convertHeight(unit(Plotting_SGP_Scale_Score_Targets[[i]][['NY1']], "native"), "inches")+unit(0.1, "inches"), "native")),
 						Plotting_SGP_Scale_Score_Targets[[i]][['NY1']])
 				}
+				if (length(grep("CUSTOM", i))>0) {
+					label.position <- c(label.position, "bottom")
+					tmp.target.label <- NULL
+					y.coordinates <- c(as.numeric(convertHeight(convertHeight(unit(Plotting_SGP_Scale_Score_Targets[[i]][['NY1']], "native"), "inches")+unit(0.1, "inches"), "native")),
+						Plotting_SGP_Scale_Score_Targets[[i]][['NY1']])
+				}
 				grid.lines(x=c(current.year.x.coor-current.year.x.coor.lag, current.year.x.coor),
 					y=c(scale.scores.values[which(current.year.x.coor-current.year.x.coor.lag==low.year:high.year)], Plotting_SGP_Scale_Score_Targets[[i]][['NY1']]),
 					gp=gpar(lwd=0.8, col=border.color), default.units="native")
 				grid.circle(x=current.year.x.coor, y=Plotting_SGP_Scale_Score_Targets[[i]][['NY1']], r=unit(c(0.05, 0.04, 0.025, 0.0125), "inches"),
 					gp=gpar(col=c("black", "white", "black", "white"), lwd=0.01, fill=c("black", "white", "black", "white")), default.units="native")
-				grid.text(x=current.year.x.coor+x.coor.label.adjustment, y=y.coordinates, tmp.target.label, default.units="native", just=label.position, gp=gpar(cex=0.5, col=border.color))
+				if (!is.null(tmp.target.label)) grid.text(x=current.year.x.coor+x.coor.label.adjustment, y=y.coordinates, tmp.target.label, default.units="native", just=label.position, gp=gpar(cex=0.5, col=border.color))
 			}
 		}
 	}
@@ -1053,31 +1060,41 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 				tmp.achievement.level <- which(tail(head(Achievement_Levels, tmp.projection.year.lag+1), 1)==achievement.level.labels[[achievement.level.label.index.from]])
 			}
 
-			if ((length(grep("CUKU", tmp.projection.names)) > 0 & tmp.achievement.level <= level.to.get.cuku[[achievement.level.label.index.from]]) |
-				length(grep("MUSU", tmp.projection.names))==0) {
+			if (length(grep("CUSTOM", tmp.projection.names))==0) { ### Achievement/Growth Target Text associated with CUKU/MUSU targets
+				if ((length(grep("CUKU", tmp.projection.names)) > 0 & tmp.achievement.level <= level.to.get.cuku[[achievement.level.label.index.from]]) |
+					length(grep("MUSU", tmp.projection.names))==0) {
+						level.to.get.cuku.label <- names(achievement.level.labels[[achievement.level.label.index.to]])[level.to.get.cuku[[achievement.level.label.index.to]]+1]
+						grid.text(x=tmp.projection.year.to-0.5, y=1.35,
+							paste0(level.to.get.cuku.label, " (", SGP_Scale_Score_Targets[[grep("CUKU", tmp.projection.names, value=TRUE)]][['NY1']], ")"),
+							gp=gpar(col=border.color, cex=.4), default.units="native")
+						grid.text(x=tmp.projection.year.to-0.5, y=0.25,
+							paste0(CU.label, " (", SGP_Targets[[grep("CUKU", tmp.projection.names, value=TRUE)]], ")"),
+							gp=gpar(col=border.color, cex=.4), default.units="native")
+				} else {
+					level.to.get.cuku.label <- names(achievement.level.labels[[achievement.level.label.index.to]])[level.to.get.cuku[[achievement.level.label.index.to]]+1]
+					level.to.get.musu.label <- names(achievement.level.labels[[achievement.level.label.index.to]])[level.to.get.musu[[achievement.level.label.index.to]]+1]
+					grid.text(x=tmp.projection.year.to-0.5, y=1.35,
+						paste0(level.to.get.cuku.label, " (", SGP_Scale_Score_Targets[[grep("CUKU", tmp.projection.names, value=TRUE)]][['NY1']], ")/", level.to.get.musu.label, " (", SGP_Scale_Score_Targets[[grep("MUSU", tmp.projection.names, value=TRUE)]][['NY1']], ")"),
+						gp=gpar(col=border.color, cex=.4), default.units="native")
+					if (tmp.achievement.level <= level.to.get.musu[[achievement.level.label.index.from]]) {
+						grid.text(x=tmp.projection.year.to-0.5, y=0.25,
+							paste0(KU.label, " (", SGP_Targets[[grep('CUKU', tmp.projection.names, value=TRUE)]], ")/Move Up (", SGP_Targets[[grep('MUSU', tmp.projection.names, value=TRUE)]], ")"),
+							gp=gpar(col=border.color, cex=.4), default.units="native")
+					}
+					if (tmp.achievement.level > level.to.get.musu[[achievement.level.label.index.from]]) {
+						grid.text(x=tmp.projection.year.to-0.5, y=0.25,
+							paste0(KU.label, " (", SGP_Targets[[grep('CUKU', tmp.projection.names, value=TRUE)]], ")/Stay Up (", SGP_Targets[[grep('MUSU', tmp.projection.names, value=TRUE)]], ")"),
+							gp=gpar(col=border.color, cex=.4), default.units="native")
+					}
+				}
+			} else { ### Achievement/Growth Target text associated with CUSTOM plotting
 				level.to.get.cuku.label <- names(achievement.level.labels[[achievement.level.label.index.to]])[level.to.get.cuku[[achievement.level.label.index.to]]+1]
 				grid.text(x=tmp.projection.year.to-0.5, y=1.35,
-					paste0(level.to.get.cuku.label, " (", SGP_Scale_Score_Targets[[grep("CUKU", tmp.projection.names, value=TRUE)]][['NY1']], ")"),
+					paste0(level.to.get.cuku.label, " (", SGP_Scale_Score_Targets[[grep("CUSTOM", tmp.projection.names, value=TRUE)]][['NY1']], ")"),
 					gp=gpar(col=border.color, cex=.4), default.units="native")
 				grid.text(x=tmp.projection.year.to-0.5, y=0.25,
-					paste0(CU.label, " (", SGP_Targets[[grep("CUKU", tmp.projection.names, value=TRUE)]], ")"),
+					paste0(CU.label, " (", SGP_Targets[[grep("CUSTOM", tmp.projection.names, value=TRUE)]], ")"),
 					gp=gpar(col=border.color, cex=.4), default.units="native")
-			} else {
-				level.to.get.cuku.label <- names(achievement.level.labels[[achievement.level.label.index.to]])[level.to.get.cuku[[achievement.level.label.index.to]]+1]
-				level.to.get.musu.label <- names(achievement.level.labels[[achievement.level.label.index.to]])[level.to.get.musu[[achievement.level.label.index.to]]+1]
-				grid.text(x=tmp.projection.year.to-0.5, y=1.35,
-					paste0(level.to.get.cuku.label, " (", SGP_Scale_Score_Targets[[grep("CUKU", tmp.projection.names, value=TRUE)]][['NY1']], ")/", level.to.get.musu.label, " (", SGP_Scale_Score_Targets[[grep("MUSU", tmp.projection.names, value=TRUE)]][['NY1']], ")"),
-					gp=gpar(col=border.color, cex=.4), default.units="native")
-				if (tmp.achievement.level <= level.to.get.musu[[achievement.level.label.index.from]]) {
-					grid.text(x=tmp.projection.year.to-0.5, y=0.25,
-					paste0(KU.label, " (", SGP_Targets[[grep('CUKU', tmp.projection.names, value=TRUE)]], ")/Move Up (", SGP_Targets[[grep('MUSU', tmp.projection.names, value=TRUE)]], ")"),
-					gp=gpar(col=border.color, cex=.4), default.units="native")
-				}
-				if (tmp.achievement.level > level.to.get.musu[[achievement.level.label.index.from]]) {
-					grid.text(x=tmp.projection.year.to-0.5, y=0.25,
-					paste0(KU.label, " (", SGP_Targets[[grep('CUKU', tmp.projection.names, value=TRUE)]], ")/Stay Up (", SGP_Targets[[grep('MUSU', tmp.projection.names, value=TRUE)]], ")"),
-					gp=gpar(col=border.color, cex=.4), default.units="native")
-				}
 			}
 		}
 	}

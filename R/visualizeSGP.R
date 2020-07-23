@@ -475,11 +475,11 @@ if ("studentGrowthPlot" %in% plot.types) {
 				sgPlot.sgp.targets <- NULL
 			}
 		}
-		if (!is.null(sgPlot.sgp.targets) & !sgPlot.baseline && !all(sgPlot.sgp.targets %in% c("sgp.projections", "sgp.projections.lagged"))) {
+		if (!is.null(sgPlot.sgp.targets) & !sgPlot.baseline && !all(sgPlot.sgp.targets %in% c("sgp.projections", "sgp.projections.lagged", "CUSTOM"))) {
 			messageSGP("\tNOTE: 'sgPlot.sgp.targets' must consist of 'sgp.projections' and/or 'sgp.projections.lagged'.")
 			sgPlot.sgp.targets <- NULL
 		}
-		if (!is.null(sgPlot.sgp.targets) & sgPlot.baseline && !all(sgPlot.sgp.targets %in% c("sgp.projections.baseline", "sgp.projections.lagged.baseline"))) {
+		if (!is.null(sgPlot.sgp.targets) & sgPlot.baseline && !all(sgPlot.sgp.targets %in% c("sgp.projections.baseline", "sgp.projections.lagged.baseline", "CUSTOM"))) {
 			messageSGP("\tNOTE: 'sgPlot.sgp.targets' must consist of 'sgp.projections.baseline' and/or 'sgp.projections.lagged.baseline'.")
 			sgPlot.sgp.targets <- NULL
 		}
@@ -490,14 +490,14 @@ if ("studentGrowthPlot" %in% plot.types) {
 			my.sgp.targets <- grep(paste(sgPlot.sgp.targets.timeframe, "YEAR", sep="_"), grep("SCALE_SCORE", grep("BASELINE", grep("SGP_TARGET", names(slot.data), value=TRUE), value=TRUE), value=TRUE, invert=TRUE), value=TRUE)
 			if (identical("sgp.projections.baseline", sgPlot.sgp.targets)) my.sgp.targets <- grep("CURRENT", my.sgp.targets, value=TRUE)
 			if (identical("sgp.projections.lagged.baseline", sgPlot.sgp.targets)) my.sgp.targets <- grep("CURRENT", my.sgp.targets, value=TRUE, invert=TRUE)
-			if (is.null(sgPlot.sgp.targets)) my.sgp.targets <- NULL
+			if (is.null(sgPlot.sgp.targets) || identical(sgPlot.sgp.targets, "CUSTOM")) my.sgp.targets <- NULL
 		} else {
 			my.sgp <- "SGP"
 			my.sgp.level <- "SGP_LEVEL"
 			my.sgp.targets <- grep(paste(sgPlot.sgp.targets.timeframe, "YEAR", sep="_"), grep("SCALE_SCORE", grep("BASELINE", grep("SGP_TARGET", names(slot.data), value=TRUE), value=TRUE, invert=TRUE), value=TRUE, invert=TRUE), value=TRUE)
 			if (identical("sgp.projections", sgPlot.sgp.targets)) my.sgp.targets <- grep("CURRENT", my.sgp.targets, value=TRUE)
 			if (identical("sgp.projections.lagged", sgPlot.sgp.targets)) my.sgp.targets <- grep("CURRENT", my.sgp.targets, value=TRUE, invert=TRUE)
-			if (is.null(sgPlot.sgp.targets)) my.sgp.targets <- NULL
+			if (is.null(sgPlot.sgp.targets) || identical(sgPlot.sgp.targets, "CUSTOM")) my.sgp.targets <- NULL
 		}
 
 		if (!is.null(my.sgp.targets)) sgPlot.sgp.targets.timeframe <- as.numeric(rev(unlist(strsplit(unlist(strsplit(my.sgp.targets[1], "_YEAR"))[1], "_")))[1])
