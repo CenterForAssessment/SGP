@@ -448,7 +448,7 @@ if ("studentGrowthPlot" %in% plot.types) {
 		}
 
 		if (identical(sgPlot.custom.trajectory, TRUE)) {
-			my.custom.trajectory <- "ISR_INTERIM_DATA"
+			my.custom.trajectory <- "ISR_CUSTOM_DATA"
 		}
 		if (identical(sgPlot.custom.trajectory, FALSE)) {
 			my.custom.trajectory <- NULL
