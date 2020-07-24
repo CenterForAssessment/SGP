@@ -147,7 +147,7 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 		if (all(c("sgp.projections", "sgp.projections.lagged") %in% Report_Parameters[['SGP_Targets']]) | all(c("sgp.projections.baseline", "sgp.projections.lagged.baseline") %in% Report_Parameters[['SGP_Targets']])) tmp.target.types <- names(unlist(SGP_Targets)[!is.na(unlist(SGP_Targets))])
 		if (identical("sgp.projections", Report_Parameters[['SGP_Targets']]) | identical("sgp.projections.baseline", Report_Parameters[['SGP_Targets']])) tmp.target.types <- grep("Current", names(unlist(SGP_Targets)[!is.na(unlist(SGP_Targets))]), value=TRUE)
 		if (identical("sgp.projections.lagged", Report_Parameters[['SGP_Targets']]) | identical("sgp.projections.lagged.baseline", Report_Parameters[['SGP_Targets']])) tmp.target.types <- grep("Current", names(unlist(SGP_Targets)[!is.na(unlist(SGP_Targets))]), value=TRUE, invert=TRUE)
-		if (identical("CUSTOM", Report_Parameters[['SGP_Targets']])) tmp.target.types <- grep("CUSTOM", names(SGP_Scale_Score_Targets), value=TRUE)
+		if (identical("CUSTOM", Report_Parameters[['SGP_Targets']])) tmp.target.types <- grep("CUSTOM", names(unlist(SGP_Targets)[!is.na(unlist(SGP_Targets))]), value=TRUE)
 	}
 
 	if (!is.null(SGP::SGPstateData[[Report_Parameters$State]][['SGP_Configuration']][['sgPlot.show.content_area.progression']]) |
