@@ -47,6 +47,7 @@ visualizeSGP(
         sgPlot.folder="Visualizations/studentGrowthPlots",
         sgPlot.folder.names="number",
         sgPlot.fan=TRUE,
+        sgPlot.custom.trajectory=FALSE,
         sgPlot.sgp.targets=FALSE,
         sgPlot.sgp.targets.timeframe=3,
         sgPlot.anonymize=FALSE,
@@ -171,6 +172,8 @@ provided the function produces \code{\link{studentGrowthPlot}}s for ALL students
 \code{\link{studentGrowthPlot}}s.
   }
   \item{sgPlot.fan}{A Boolean argument (defaults to TRUE) indicating whether to produce projection fan on \code{\link{studentGrowthPlot}}s.
+  }
+  \item{sgPlot.custom.trajectory}{A Boolean argument (defaults to FALSE) or a character vector indicating the variable name containing the custom trajectory coordinates to be plotted.
   }
   \item{sgPlot.sgp.targets}{A Boolean argument (defaults to TRUE) indicating whether to indicate SGP growth targets on \code{\link{studentGrowthPlot}}s.
   }
