@@ -380,7 +380,7 @@ function(
 
 	if (!sgp.target.scale.scores.only && length(tmp.names <- getPercentileTableNames(sgp_object, content_areas, state, years, "sgp.percentiles", sgp.percentiles.equated=TRUE))==0 && sgp.percentiles.equated) {
 		 tmp.messages <- c(tmp.messages, "\tNOTE: No equated SGP results available in SGP slot. No equated SGP results will be merged.\n")
-		 sgp.percentiles.equated <- TRUE
+		 sgp.percentiles.equated <- FALSE
 	}
 
 	if (sgp.percentiles.equated & !sgp.target.scale.scores.only) {
