@@ -98,8 +98,10 @@ function(sgp_object,
 		tmp_sgp_data_for_analysis <- sgp_object@Data[,intersect(names(sgp_object@Data), variables.to.get), with=FALSE]["VALID_CASE"]
 		if ("YEAR_WITHIN" %in% names(tmp_sgp_data_for_analysis)) {
 			setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE, YEAR_WITHIN)
+			year_within.tf <- TRUE
 		} else {
 			setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE)
+			year_within.tf <- FALSE
 		}
 		tmp.year.sequence <- test.year.sequence(content_areas, years, grade.sequences, baseline.grade.sequences.lags)
 		if (!is.null(exclude.years)) {
@@ -117,9 +119,11 @@ function(sgp_object,
 			setnames(tmp.list[[k]], c("ID",
 				paste("GRADE", rev(seq_along(tmp.year.sequence[[k]])), sep="_"),
 				paste("SCALE_SCORE", rev(seq_along(tmp.year.sequence[[k]])), sep="_"),
+				if(year_within.tf) paste("YEAR_WITHIN", rev(seq_along(tmp.year.sequence[[k]])), sep="_"),
 				if(!is.null(sgp.csem)) paste(sgp.csem, rev(seq_along(tmp.year.sequence[[k]])), sep="_")))
 		}
 		tmp.dt <- rbindlist(tmp.list, fill=TRUE)
+		if(year_within.tf) tmp.dt[, grep("YEAR_WITHIN", names(tmp.dt)) := NULL] # remove YEAR_WITHIN from Data where relevant
 		setkey(tmp.dt)
 		tmp.panel.vnames <- c("ID",
 			paste("GRADE", rev(seq_along(tmp.year.sequence[[k]])), sep="_"),
