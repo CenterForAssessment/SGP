@@ -569,7 +569,7 @@ function(sgp_object,
 					}
           if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
             tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
-              sgp.percentiles.baseline.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.percentiles.baseline']]))
+              sgp.percentiles.baseline.=getErrorReports(tmp, tmp.tf, sgp.baseline.config[['sgp.percentiles.baseline']]))
           }
           tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 				} else {
@@ -682,7 +682,7 @@ function(sgp_object,
 					}
           if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
             tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
-              sgp.percentiles.baseline.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.percentiles.baseline']]))
+              sgp.percentiles.baseline.=getErrorReports(tmp, tmp.tf, sgp.baseline.config[['sgp.percentiles.baseline']]))
           }
           tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 				} else {  ## SNOW and MULTICORE flavors

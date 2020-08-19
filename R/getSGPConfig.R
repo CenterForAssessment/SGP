@@ -411,7 +411,8 @@ function(sgp_object,
 
 				### Create baseline specific arguments
 				if (sgp.percentiles.baseline | sgp.projections.baseline | sgp.projections.lagged.baseline) {
-					tmp.matrix.label <- paste0(strsplit(names(sgp.config)[a], "\\.")[[1]][1], ".BASELINE")
+					# tmp.matrix.label <- paste0(strsplit(names(sgp.config)[a], "\\.")[[1]][1], ".BASELINE")  #  Don't base search on NAME of config!
+					tmp.matrix.label <- paste0(tail(sgp.config[[a]][["sgp.baseline.content.areas"]], 1), ".BASELINE") # Base search on CONTENT of config...
  					if (tmp.matrix.label %in% names(tmp_sgp_object[["Coefficient_Matrices"]])) {
 						tmp.orders <- getsplineMatrices(
 							my.matrices=tmp_sgp_object[['Coefficient_Matrices']][[tmp.matrix.label]],
@@ -493,7 +494,8 @@ function(sgp_object,
 	test.projection.iter <- function(sgp.iter) {
 		if (identical(sgp.iter[['sgp.projection.grade.sequences']], "NO_PROJECTIONS")) return(FALSE)
 		if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]]) & !is.null(sgp.iter[["sgp.projection.sequence"]])) {
-			if (tail(sgp.iter[["sgp.grade.sequences"]], 1) == "EOCT") { # Only check EOCT configs/iters
+			if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["Skip_Year_Projections"]])) Skip_Year_Projections.tf <- TRUE else Skip_Year_Projections.tf <- FALSE
+			if (tail(sgp.iter[["sgp.grade.sequences"]], 1) == "EOCT" & !Skip_Year_Projections.tf) { # Only check EOCT configs/iters
 				for (sps in sgp.iter[["sgp.projection.sequence"]]) {
 					if (is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[sps]])) return(FALSE)
 					tmp.index <- match(tail(sgp.iter[["sgp.content.areas"]], 1),

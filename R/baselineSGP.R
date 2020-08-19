@@ -21,7 +21,7 @@ function(sgp_object,
 	started.at <- proc.time()
 	messageSGP(paste("\tStarted baselineSGP", prettyDate(), "\n"))
 
-	VALID_CASE <- YEAR <- GRADE <- CONTENT_AREA <- YEAR_WITHIN <- COHORT_YEAR <- NULL ### To prevent R CMD check warnings
+	VALID_CASE <- YEAR <- GRADE <- CONTENT_AREA <- YEAR_WITHIN <- COHORT_YEAR <- panel.data.vnames <- NULL ### To prevent R CMD check warnings
 
 	### Create state (if NULL) from sgp_object (if possible)
 
@@ -66,9 +66,8 @@ function(sgp_object,
 	###
 	############################################
 
-
 	baselineSGP_Internal <- function(sgp_object, state, years, content_areas, grade.sequences, baseline.grade.sequences.lags,
-		knots.boundaries.iter, parallel.config, use.my.coefficient.matrices, simex.baseline.config, baseline.iter=NULL) {
+		knots.boundaries.iter, parallel.config, use.my.coefficient.matrices, simex.baseline.config, baseline.iter=NULL, vnames.passed.down) {
 
 		started.at <- proc.time()
 		started.date <- prettyDate()
@@ -144,6 +143,7 @@ function(sgp_object,
 				panel.data=list(Panel_Data=tmp.dt, Coefficient_Matrices=TMP_Coefficient_Matrices, # Add Coef Matrices for SIMEX
 					Knots_Boundaries=getKnotsBoundaries(knots.boundaries.iter, state, "sgp.percentiles.baseline", "BASELINE")),
 				sgp.labels=list(my.year="BASELINE", my.subject=tail(content_areas, 1L)),
+				if (!vnames.passed.down & !is.null(sgp.csem)) panel.data.vnames=grep(sgp.csem, names(tmp.dt), invert=TRUE, value=TRUE),
 				use.my.knots.boundaries=list(my.year="BASELINE", my.subject=tail(content_areas, 1L)),
 				use.my.coefficient.matrices= use.my.coefficient.matrices,
 				calculate.sgps=FALSE,
@@ -191,6 +191,8 @@ function(sgp_object,
 	###
 	#################################################################################
 
+	vnames.arg.tf <- hasArg(panel.data.vnames)
+
 	if (is.null(SGP::SGPstateData[[state]][["Baseline_splineMatrix"]])) {
 
 		if (is.null(sgp.baseline.config)) {
@@ -213,7 +215,8 @@ function(sgp_object,
 							knots.boundaries.iter=sgp.baseline.config[[iter]],
 							use.my.coefficient.matrices=NULL,
 							parallel.config=parallel.config,
-							simex.baseline.config=NULL)
+							simex.baseline.config=NULL,
+							vnames.passed.down=vnames.arg.tf)
 		}
 
 		sgp_object@SGP <- mergeSGP(Reduce(mergeSGP, tmp.list), sgp_object@SGP)
@@ -250,7 +253,8 @@ function(sgp_object,
 					parallel.config=parallel.config,
 					use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.baseline.config[[iter]][["sgp.baseline.content.areas"]], 1L)),
 					simex.baseline.config=calculate.simex.baseline,
-					baseline.iter = sgp.baseline.config[[iter]])
+					baseline.iter = sgp.baseline.config[[iter]],
+					vnames.passed.down=vnames.arg.tf)
 		}
 
 		sgp_object@SGP <- mergeSGP(Reduce(mergeSGP, tmp.list), sgp_object@SGP)
