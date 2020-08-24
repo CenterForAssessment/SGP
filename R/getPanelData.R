@@ -174,7 +174,6 @@ function(sgp.data,
 				sapply(head(sgp.iter[["sgp.panel.years"]], length(sgp.iter[[sgp.projection.grade.sequences.label]])), yearIncrement, tail(sgp.iter$sgp.panel.years.lags, 1)),
 				sgp.iter[[sgp.projection.grade.sequences.label]], head(sgp.iter[["sgp.panel.years.within"]], length(sgp.iter[[sgp.projection.grade.sequences.label]])),
 				FIRST_OBSERVATION=as.integer(NA), LAST_OBSERVATION=as.integer(NA))
-			# if (nrow(tmp.lookup)==1) tmp.lookup[,c("FIRST_OBSERVATION", "LAST_OBSERVATION") := 1L]
 			tmp.lookup[grep("FIRST", V5, ignore.case=TRUE), FIRST_OBSERVATION:=1L]; tmp.lookup[grep("LAST", V5, ignore.case=TRUE), LAST_OBSERVATION:=1L]; tmp.lookup[,V5:=NULL]
 			setnames(tmp.lookup, paste0("V", seq.int(4)), c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"))
 

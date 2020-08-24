@@ -569,7 +569,7 @@ function(sgp_object,
 					}
           if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
             tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
-              sgp.percentiles.baseline.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.percentiles.baseline']]))
+              sgp.percentiles.baseline.=getErrorReports(tmp, tmp.tf, sgp.baseline.config[['sgp.percentiles.baseline']]))
           }
           tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 				} else {
@@ -682,7 +682,7 @@ function(sgp_object,
 					}
           if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
             tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
-              sgp.percentiles.baseline.=getErrorReports(tmp, tmp.tf, par.sgp.config[['sgp.percentiles.baseline']]))
+              sgp.percentiles.baseline.=getErrorReports(tmp, tmp.tf, sgp.baseline.config[['sgp.percentiles.baseline']]))
           }
           tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 				} else {  ## SNOW and MULTICORE flavors
@@ -982,6 +982,21 @@ function(sgp_object,
 				} else {
 					tmp_sgp_data_for_analysis <- tmp_sgp_data_for_analysis[ID %in% test.ids]
 				}
+        if (sgp.projections|sgp.projections.baseline) {
+          tmp.proj.lookup <- unique(SJ(sapply(seq(length(par.sgp.config[['sgp.projections']])), function(f) tail(par.sgp.config[['sgp.projections']][[f]][["sgp.projection.content.areas"]], 1)),
+                                    sapply(seq(length(par.sgp.config[['sgp.projections']])), function(f) tail(par.sgp.config[['sgp.projections']][[f]][["sgp.panel.years"]], 1)),
+                                    sapply(seq(length(par.sgp.config[['sgp.projections']])), function(f) tail(par.sgp.config[['sgp.projections']][[f]][["sgp.projection.grade.sequences"]], 1))))
+          setnames(tmp.proj.lookup, c("CONTENT_AREA", "YEAR", "GRADE"))
+          setkey(tmp.proj.lookup)
+          setkeyv(tmp_sgp_data_for_analysis, key(tmp.proj.lookup))
+          missing.lookup <- tmp.proj.lookup[!tmp_sgp_data_for_analysis] # data.table anti join
+          if (nrow(missing.lookup) > 0){
+            setkeyv(sgp_object@Data, key(missing.lookup))
+            tmp_data_to_add <- sgp_object@Data[missing.lookup][VALID_CASE=="VALID_CASE",intersect(names(sgp_object@Data), variables.to.get), with=FALSE][, .SD[sample(.N, sgp.test.cohort.size)], by=key(missing.lookup)]
+            tmp_sgp_data_for_analysis <- rbindlist(list(tmp_sgp_data_for_analysis, tmp_sgp_data_for_analysis))
+            setkeyv(tmp_sgp_data_for_analysis, getKey(tmp_sgp_data_for_analysis))
+          }
+        }
 			}
 		} #END if (sgp.percentiles)
 
@@ -1965,6 +1980,22 @@ function(sgp_object,
 				} else {
 					tmp_sgp_data_for_analysis <- tmp_sgp_data_for_analysis[ID %in% test.ids]
 				}
+        if (sgp.projections|sgp.projections.baseline) {
+          tmp.proj.lookup <-
+              unique(SJ(sapply(seq(length(par.sgp.config[['sgp.projections']])), function(f) tail(par.sgp.config[['sgp.projections']][[f]][["sgp.projection.content.areas"]], 1)),
+                        sapply(seq(length(par.sgp.config[['sgp.projections']])), function(f) tail(par.sgp.config[['sgp.projections']][[f]][["sgp.panel.years"]], 1)),
+                        sapply(seq(length(par.sgp.config[['sgp.projections']])), function(f) tail(par.sgp.config[['sgp.projections']][[f]][["sgp.projection.grade.sequences"]], 1))))
+          setnames(tmp.proj.lookup, c("CONTENT_AREA", "YEAR", "GRADE"))
+          setkey(tmp.proj.lookup)
+          setkeyv(tmp_sgp_data_for_analysis, key(tmp.proj.lookup))
+          missing.lookup <- tmp.proj.lookup[!tmp_sgp_data_for_analysis] # data.table anti join
+          if (nrow(missing.lookup) > 0){
+            setkeyv(sgp_object@Data, key(missing.lookup))
+            tmp_data_to_add <- sgp_object@Data[missing.lookup][VALID_CASE=="VALID_CASE",intersect(names(sgp_object@Data), variables.to.get), with=FALSE][, .SD[sample(.N, sgp.test.cohort.size)], by=key(missing.lookup)]
+            tmp_sgp_data_for_analysis <- rbindlist(list(tmp_sgp_data_for_analysis, tmp_data_to_add), use.names=TRUE)
+            setkeyv(tmp_sgp_data_for_analysis, getKey(tmp_sgp_data_for_analysis))
+          }
+        }
 			}
 		} ## END if sgp.percentiles
 
