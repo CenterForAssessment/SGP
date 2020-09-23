@@ -185,7 +185,6 @@ function(sgp_object,
 			setkeyv(long_data_tmp, getKey(long_data_tmp))
 		}
 		assign(paste(tmp.state, "SGP_WIDE_Data", sep="_"), ddcast(long_data_tmp, ID ~ YEAR_BY_CONTENT_AREA,
-#			value.var=setdiff(names(long_data_tmp), c("ID", "YEAR_BY_CONTENT_AREA", "VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE")), sep="."))
 			value.var=setdiff(names(long_data_tmp), c("ID", "YEAR_BY_CONTENT_AREA", "VALID_CASE", "CONTENT_AREA", "YEAR")), sep="."))
 		if (dups.tf) eval(parse(text=paste0("invisible(", paste(tmp.state, "SGP_WIDE_Data", sep="_"), "[, ID := gsub('_DUPS_[0-9]*', '', ID)])")))
 		save(list=paste(tmp.state, "SGP_WIDE_Data", sep="_"), file=file.path(outputSGP.directory, paste(tmp.state, "SGP_WIDE_Data.Rdata", sep="_")))
