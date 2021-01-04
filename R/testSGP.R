@@ -2997,4 +2997,175 @@ function(
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 7: ", convertTime(timetakenSGP(started.at.overall)), "#####\n"))
 			messageSGP(tmp.messages)
 		} ### End TEST_NUMBER 7
+
+
+		#######################################################################################################################################################
+		###
+		### TEST NUMBER 8: Test of Stratified Random Sample (SRS) functionality
+		###
+		#######################################################################################################################################################
+
+		if (8 %in% toupper(TEST_NUMBER)) {
+			options(error=recover)
+			options(warn=2)
+			Demonstration_SGP <- NULL
+
+			tmp.messages <- ("##### Results of testSGP test number 8 #####\n\n")
+			if (.Platform$OS.type == "unix") number.cores <- detectSGPCores(logical=TRUE) else number.cores <- detectSGPCores(logical=FALSE)
+
+			if (is.null(test.option[['parallel.config']])) {
+				if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
+				if (.Platform$OS.type != "unix") {
+					parallel.config <- paste0("list(BACKEND=", tmp.backend, "WORKERS=list(\n\t\tPERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", \n\t\tSGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))")
+				} else  parallel.config <- paste0("list(BACKEND=", tmp.backend, "WORKERS=list(\n\t\tPERCENTILES=", number.cores, ", BASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", LAGGED_PROJECTIONS=", number.cores, ", \n\t\tSGP_SCALE_SCORE_TARGETS=", number.cores, ", SUMMARY=", number.cores, ", GA_PLOTS=", number.cores, ", SG_PLOTS=1))")
+			} else parallel.config <- test.option[['parallel.config']]
+			tmp.last.window <- tail(sort(unique(SGPdata::sgpData_LONG[['YEAR']])), 1L)
+
+			### Some minor modifications to SGPstateData for testing purposes
+
+			SGPstateData[["DEMO"]][["SGP_Configuration"]][["print.other.gp"]] <- TRUE
+
+			expression.to.evaluate <-
+				paste0("Demonstration_SGP <- abcSGP(\n\tsgp_object=SGPdata::sgpData_LONG,\n\tyears='", tmp.last.window, "',\n\tcalculate.srs=TRUE,\n\tcalculate.srs.baseline=TRUE,\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tparallel.config=", parallel.config, "\n)\n")
+
+			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
+
+			cat(paste("##### Begin testSGP test number", TEST_NUMBER, "#####\n"), fill=TRUE)
+			cat(paste0("EVALUATING:\n", expression.to.evaluate), fill=TRUE)
+
+			if (memory.profile) Rprof("testSGP(1)_Memory_Profile.out", memory.profiling=TRUE)
+
+			started.at.overall <- proc.time()
+			eval(parse(text=expression.to.evaluate))
+
+			if (memory.profile) {
+				Rprof(NULL)
+			}
+
+			### TEST of SGP variable
+
+			if (identical(digest(Demonstration_SGP@Data[['SGP']]), "89f1cb732587f3d6ffeb1afe587941e0")) { # pre-GRADE key: d7843eab4ddf02bed640ec401dd35c65
+				tmp.messages <- c(tmp.messages, "\tTest of variable SGP: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SGP: FAIL\n")
+			}
+
+			### TEST of SGP_BASELINE variable
+
+			if (identical(digest(Demonstration_SGP@Data[['SGP_BASELINE']]), "5056dc27abde7c6d8ff896947f4b0070")) { # pre-GRADE key: f6ffda530e470321159c39a56151e0c2
+				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_BASELINE: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_BASELINE: FAIL\n")
+			}
+
+			### TEST of SGP_TARGET_3_YEAR variable
+
+			if (identical(digest(Demonstration_SGP@Data[['SGP_TARGET_3_YEAR']]), "4955e2f61a1cd34347ffceba51a5670b")) { # pre-GRADE key: 7cfb4055b5ebf739417d2220898ce99c
+				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_3_YEAR: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_3_YEAR: FAIL\n")
+			}
+
+			### TEST of SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR variable
+
+			if (identical(digest(Demonstration_SGP@Data[['SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR']]), "5e6fcc4c3eedce14cc6639163677fdc7")) { # pre-GRADE key: 9bfb90fbaed288104dfe1959294497ce
+				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR: FAIL\n")
+			}
+
+			### TEST of CATCH_UP_KEEP_UP_STATUS_3_YEAR variable
+
+			if (identical(digest(Demonstration_SGP@Data[['CATCH_UP_KEEP_UP_STATUS_3_YEAR']]), "eb710e8b3256be3f9009ecc686c0ff37")) { # pre-GRADE key: 11e5e53c8cf330fcdb51a2e4894f5c2f
+				tmp.messages <- c(tmp.messages, "\tTest of variable CATCH_UP_KEEP_UP_STATUS_3_YEAR: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of variable CATCH_UP_KEEP_UP_STATUS_3_YEAR: FAIL\n")
+			}
+
+			### TEST of MOVE_UP_STAY_UP_STATUS_3_YEAR variable
+
+			if (identical(digest(Demonstration_SGP@Data[['MOVE_UP_STAY_UP_STATUS_3_YEAR']]), "f67a9a4d2bf8c8af201e2533c31c0ce8")) { # pre-GRADE key: 663ff40f494a37d01dc3c593b887d24b
+				tmp.messages <- c(tmp.messages, "\tTest of variable MOVE_UP_STAY_UP_STATUS_3_YEAR: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of variable MOVE_UP_STAY_UP_STATUS_3_YEAR: FAIL\n")
+			}
+
+			### TEST of SCALE_SCORE_PRIOR variable
+
+			if (identical(digest(Demonstration_SGP@Data[['SCALE_SCORE_PRIOR']]), "6c352608f27873a09487ec2859de7574")) { # pre-GRADE key: 23e0433ed1574c73f923b23cddbfc0cb
+				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_PRIOR: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_PRIOR: FAIL\n")
+			}
+
+			### TEST of SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1 variable for READING.XXXX_XXXX scale score targets
+
+			if (identical(digest(Demonstration_SGP@SGP[['SGProjections']][[paste('READING', tail(sgpData.years, 1L), "LAGGED.TARGET_SCALE_SCORES", sep=".")]][['SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1']]), "d67a2c0b75f411683abe1a9c023c8c0e")) {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1: FAIL\n")
+			}
+
+			### TEST of MEDIAN_SGP variable
+
+			if (identical(digest(Demonstration_SGP@Summary[['SCHOOL_NUMBER']][['SCHOOL_NUMBER__SCHOOL_ENROLLMENT_STATUS']][['MEDIAN_SGP']]), "0d8c6f5489ff405a492a7ef193884a56")) {
+				tmp.messages <- c(tmp.messages, "\tTest of variable MEDIAN_SGP: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of variable MEDIAN_SGP: FAIL\n")
+			}
+
+			### TEST of PERCENT_AT_ABOVE_PROFICIENT_PRIOR variable
+
+			if (identical(digest(Demonstration_SGP@Summary[['SCHOOL_NUMBER']][['SCHOOL_NUMBER__SCHOOL_ENROLLMENT_STATUS']][['PERCENT_AT_ABOVE_PROFICIENT_PRIOR']]), "f1e683f2c118135b28d285a754d1f188")) {
+				tmp.messages <- c(tmp.messages, "\tTest of variable PERCENT_AT_ABOVE_PROFICIENT_PRIOR: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of variable PERCENT_AT_ABOVE_PROFICIENT_PRIOR: FAIL\n")
+			}
+
+			### TEST of LAGGED PROJECTION CUTs variable P35_PROJ_YEAR_1 variable for MATHEMATICS.XXXX_XXXX.LAGGED
+
+			if (identical(digest(Demonstration_SGP@SGP[['SGProjections']][[paste('MATHEMATICS', tail(sgpData.years, 1L), 'LAGGED', sep=".")]][['P20_PROJ_YEAR_1']]), "e83219e1830264576b42861aaaed067f")) {
+				tmp.messages <- c(tmp.messages, "\tTest of variable P20_PROJ_YEAR_1 (LAGGED PROJECTION): OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of variable P20_PROJ_YEAR_1 (LAGGED PROJECTION): FAIL\n")
+			}
+
+			### TEST of SGP_0.025_CONFIDENCE_BOUND variable in @Data
+
+			if (identical(digest(Demonstration_SGP@Data[['SGP_0.025_CONFIDENCE_BOUND']]), "237d3505dfbbc4a4dfbdbdbd73c45629")) { # pre-GRADE key: dc13c362312f379fbbfa83c49f1e53eb
+				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_0.025_CONFIDENCE_BOUND: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_0.025_CONFIDENCE_BOUND: FAIL\n")
+			}
+
+			### TEST of HIGH_NEED_STATUS variable in @Data
+
+			if (identical(digest(Demonstration_SGP@Data[['HIGH_NEED_STATUS']]), "ab4d97f1d56ea8cf936008708cf4ed84")) {
+				tmp.messages <- c(tmp.messages, "\tTest of variable HIGH_NEED_STATUS: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of variable HIGH_NEED_STATUS: FAIL\n")
+			}
+
+			### TEST of SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1 variable in @Data
+
+			if (identical(digest(Demonstration_SGP@Data$SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1), "60ada507fc67c9bfd9822e0ff48a33e0")) {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1: FAIL\n")
+			}
+
+			### TEST of SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT variable in @Data
+
+			if (identical(digest(Demonstration_SGP@Data$SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT), "314bc76b76b0047f641c1a8a149ae0a8")) {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT: OK\n")
+			} else {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT: FAIL\n")
+			}
+
+			tmp.messages <- c(tmp.messages, paste0("\n##### End testSGP test number ", TEST_NUMBER, ":  ", convertTime(timetakenSGP(started.at.overall)), " #####\n"))
+			messageSGP(tmp.messages)
+		} ### End TEST_NUMBER 8
+
+
+
 	} ### END testSGP Function

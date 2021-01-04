@@ -929,6 +929,10 @@ function(panel.data,         ## REQUIRED
             "round.digits" %in% names(SGP::SGPstateData[[calculate.confidence.intervals$state]][["SGP_Configuration"]])) {
                 calculate.confidence.intervals$round.digits <- SGP::SGPstateData[[calculate.confidence.intervals$state]][["SGP_Configuration"]][["round.digits"]]
         }
+        if (is.list(calculate.confidence.intervals) &&
+            "simulation.iterations" %in% names(SGP::SGPstateData[[calculate.confidence.intervals$state]][["SGP_Configuration"]])) {
+                calculate.confidence.intervals$simulation.iterations <- SGP::SGPstateData[[calculate.confidence.intervals$state]][["SGP_Configuration"]][["simulation.iterations"]]
+        }
 		if (sgp.quantiles != "PERCENTILES") {
 			tmp.messages <- c(tmp.messages, "\t\tNOTE: When 'sgp.quantiles' is supplied and not equal to PERCENTILES, simulation based standard errors/confidences intervals for SGPs are not available.\n")
 			csem.tf <- FALSE

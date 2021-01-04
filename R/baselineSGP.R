@@ -67,23 +67,13 @@ function(sgp_object,
 	############################################
 
 	baselineSGP_Internal <- function(sgp_object, state, years, content_areas, grade.sequences, baseline.grade.sequences.lags,
-		knots.boundaries.iter, parallel.config, use.my.coefficient.matrices, simex.baseline.config, baseline.iter=NULL, vnames.passed.down) {
+		knots.boundaries.iter, parallel.config, use.my.coefficient.matrices, simex.baseline.config, baseline.iter=NULL, vnames.passed.down, exclude.years) {
 
 		started.at <- proc.time()
 		started.date <- prettyDate()
 
 		### Utility functions
 
-		test.year.sequence <- function(content_areas, years, grades, baseline.grade.sequences.lags=NULL) {
-
-			grades <- type.convert(as.character(grades), as.is=TRUE)
-			if (is.null(baseline.grade.sequences.lags)) baseline.grade.sequences.lags <- rep(1L, length(grades)-1L)
-
-			tmp.years.sequence <- list()
-			tmp.years.sequence <- lapply(years, function(x) yearIncrement(year=x, increment=c(0,cumsum(baseline.grade.sequences.lags))))
-			return(tmp.years.sequence[sapply(tmp.years.sequence, function(x) all(x %in% years))])
-
-		} ### END test.year.sequence
 
 		get.calculate.simex.arg <- function(simex.baseline.args, iter) {
 			if (is.null(simex.baseline.args$csem.data.vnames)) return(simex.baseline.args)
@@ -92,41 +82,55 @@ function(sgp_object,
 		} ### END get.calculate.simex.arg
 
 		### Get multiple-cohort data and stack up into 'Super-cohort'
-		variables.to.get <- c("VALID_CASE", "YEAR", "CONTENT_AREA", "GRADE", "ID", "SCALE_SCORE", "ACHIEVEMENT_LEVEL", "YEAR_WITHIN", "FIRST_OBSERVATION", "LAST_OBSERVATION", simex.baseline.config$csem.data.vnames)
-		# if (!is.null(simex.baseline.config))  variables.to.get <- c(variables.to.get, simex.baseline.config$csem.data.vnames)
-		tmp_sgp_data_for_analysis <- sgp_object@Data[,intersect(names(sgp_object@Data), variables.to.get), with=FALSE]["VALID_CASE"]
-		if ("YEAR_WITHIN" %in% names(tmp_sgp_data_for_analysis)) {
-			setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE, YEAR_WITHIN)
-			year_within.tf <- TRUE
-		} else {
-			setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE)
-			year_within.tf <- FALSE
-		}
-		tmp.year.sequence <- test.year.sequence(content_areas, years, grade.sequences, baseline.grade.sequences.lags)
-		if (!is.null(exclude.years)) {
-			tmp.year.sequence <- tmp.year.sequence[sapply(tmp.year.sequence, function(x) !tail(x, 1) %in% exclude.years)]
-		}
-		tmp.list <- list()
-		for (k in seq_along(tmp.year.sequence)) {
-			tmp.sgp.iter <- sgp.baseline.config[[iter]] # Convert sgp.baseline.config into a valid sgp.iter for getPanelData
-			names(tmp.sgp.iter) <- gsub('sgp.baseline.', 'sgp.', names(tmp.sgp.iter))
-			tmp.sgp.iter$sgp.panel.years <- tmp.year.sequence[[k]]
-			tmp.sgp.iter$sgp.grade.sequences <- tmp.sgp.iter$sgp.grade.sequences
-			if (!is.null(tmp.sgp.iter$sgp.exclude.sequences)) tmp.sgp.iter$sgp.exclude.sequences <- tmp.sgp.iter$sgp.exclude.sequences[COHORT_YEAR %in% tail(tmp.sgp.iter$sgp.panel.years, 1L)]
-			if (!is.null(simex.baseline.config))  sgp.csem <- simex.baseline.config$csem.data.vnames else sgp.csem <- NULL
-			tmp.list[[k]] <- getPanelData(tmp_sgp_data_for_analysis, "sgp.percentiles", sgp.iter = tmp.sgp.iter, sgp.csem=sgp.csem)
-			setnames(tmp.list[[k]], c("ID",
-				paste("GRADE", rev(seq_along(tmp.year.sequence[[k]])), sep="_"),
-				paste("SCALE_SCORE", rev(seq_along(tmp.year.sequence[[k]])), sep="_"),
-				if(year_within.tf) paste("YEAR_WITHIN", rev(seq_along(tmp.year.sequence[[k]])), sep="_"),
-				if(!is.null(sgp.csem)) paste(sgp.csem, rev(seq_along(tmp.year.sequence[[k]])), sep="_")))
-		}
-		tmp.dt <- rbindlist(tmp.list, fill=TRUE)
-		if(year_within.tf) tmp.dt[, grep("YEAR_WITHIN", names(tmp.dt)) := NULL] # remove YEAR_WITHIN from Data where relevant
-		setkey(tmp.dt)
-		tmp.panel.vnames <- c("ID",
-			paste("GRADE", rev(seq_along(tmp.year.sequence[[k]])), sep="_"),
-			paste("SCALE_SCORE", rev(seq_along(tmp.year.sequence[[k]])), sep="_"))
+
+		tmp.dt <- createSuperCohortData(
+								dataForSuperCohort=sgp_object@Data,
+							 	content_areas=content_areas,
+								years=years,
+								grades=grades,
+								baseline.grade.sequence.lags=baseline.grade.sequence.lags,
+								exclude.years=exclude.years)
+
+
+#		variables.to.get <- c("VALID_CASE", "YEAR", "CONTENT_AREA", "GRADE", "ID", "SCALE_SCORE", "ACHIEVEMENT_LEVEL", "YEAR_WITHIN", "FIRST_OBSERVATION", "LAST_OBSERVATION", simex.baseline.config$csem.data.vnames)
+#		tmp_sgp_data_for_analysis <- sgp_object@Data[,intersect(names(sgp_object@Data), variables.to.get), with=FALSE]["VALID_CASE"]
+#		if ("YEAR_WITHIN" %in% names(tmp_sgp_data_for_analysis)) {
+#			setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE, YEAR_WITHIN)
+#			year_within.tf <- TRUE
+#		} else {
+#			setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE)
+#			year_within.tf <- FALSE
+#		}
+
+
+#		tmp.year.sequence <- test.year.sequence(content_areas, years, grade.sequences, baseline.grade.sequences.lags)
+#		if (!is.null(exclude.years)) {
+#			tmp.year.sequence <- tmp.year.sequence[sapply(tmp.year.sequence, function(x) !tail(x, 1) %in% exclude.years)]
+#		}
+#		tmp.list <- list()
+#		for (k in seq_along(tmp.year.sequence)) {
+#			tmp.sgp.iter <- sgp.baseline.config[[iter]] # Convert sgp.baseline.config into a valid sgp.iter for getPanelData
+#			names(tmp.sgp.iter) <- gsub('sgp.baseline.', 'sgp.', names(tmp.sgp.iter))
+#			tmp.sgp.iter$sgp.panel.years <- tmp.year.sequence[[k]]
+#			tmp.sgp.iter$sgp.grade.sequences <- tmp.sgp.iter$sgp.grade.sequences
+#			if (!is.null(tmp.sgp.iter$sgp.exclude.sequences)) tmp.sgp.iter$sgp.exclude.sequences <- tmp.sgp.iter$sgp.exclude.sequences[COHORT_YEAR %in% tail(tmp.sgp.iter$sgp.panel.years, 1L)]
+#			if (!is.null(simex.baseline.config))  sgp.csem <- simex.baseline.config$csem.data.vnames else sgp.csem <- NULL
+#			tmp.list[[k]] <- getPanelData(tmp_sgp_data_for_analysis, "sgp.percentiles", sgp.iter = tmp.sgp.iter, sgp.csem=sgp.csem)
+#			setnames(tmp.list[[k]], c("ID",
+#				paste("GRADE", rev(seq_along(tmp.year.sequence[[k]])), sep="_"),
+#				paste("SCALE_SCORE", rev(seq_along(tmp.year.sequence[[k]])), sep="_"),
+#				if(year_within.tf) paste("YEAR_WITHIN", rev(seq_along(tmp.year.sequence[[k]])), sep="_"),
+#				if(!is.null(sgp.csem)) paste(sgp.csem, rev(seq_along(tmp.year.sequence[[k]])), sep="_")))
+#		}
+#		tmp.dt <- rbindlist(tmp.list, fill=TRUE)
+#		if (year_within.tf) tmp.dt[, grep("YEAR_WITHIN", names(tmp.dt)) := NULL] # remove YEAR_WITHIN from Data where relevant
+#		setkey(tmp.dt)
+#		tmp.panel.vnames <- c("ID",
+#			paste("GRADE", rev(seq_along(tmp.year.sequence[[k]])), sep="_"),
+#			paste("SCALE_SCORE", rev(seq_along(tmp.year.sequence[[k]])), sep="_"))
+
+
+
 
 		### Calculate Coefficient Matrices and return list containing coefficient matrices
 
@@ -165,7 +169,6 @@ function(sgp_object,
 		messageSGP(paste0("\tFinished baselineSGP Coefficient Matrix Calculation ", prettyDate(), " in ", convertTime(timetakenSGP(started.at)), ".\n"))
 
 		return(tmp_sgp_list)
-
 	} ### END baselineSGP_Internal Function
 
 
@@ -216,7 +219,8 @@ function(sgp_object,
 							use.my.coefficient.matrices=NULL,
 							parallel.config=parallel.config,
 							simex.baseline.config=NULL,
-							vnames.passed.down=vnames.arg.tf)
+							vnames.passed.down=vnames.arg.tf,
+							exclude.years=exclude.years)
 		}
 
 		sgp_object@SGP <- mergeSGP(Reduce(mergeSGP, tmp.list), sgp_object@SGP)
@@ -254,7 +258,8 @@ function(sgp_object,
 					use.my.coefficient.matrices=list(my.year="BASELINE", my.subject=tail(sgp.baseline.config[[iter]][["sgp.baseline.content.areas"]], 1L)),
 					simex.baseline.config=calculate.simex.baseline,
 					baseline.iter = sgp.baseline.config[[iter]],
-					vnames.passed.down=vnames.arg.tf)
+					vnames.passed.down=vnames.arg.tf,
+					exclude.years=exclude.years)
 		}
 
 		sgp_object@SGP <- mergeSGP(Reduce(mergeSGP, tmp.list), sgp_object@SGP)
