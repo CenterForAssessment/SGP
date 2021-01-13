@@ -1243,7 +1243,9 @@ function(
 				setkeyv(updated.student.ids, c("CONTENT_AREA", "GRADE", "ID"))
 				setkeyv(Demonstration_SGP@Data, c("CONTENT_AREA", "GRADE", "ID"))
 				Demonstration_Data_LONG_Updated <- data.table(Demonstration_SGP@Data[updated.student.ids, nomatch=0], key=sgp.key) # nomatch=0 not needed?
-				Demonstration_Data_LONG_Updated[, grep("SGP|PRIOR|PERCENTILE", names(Demonstration_Data_LONG_Updated), value=TRUE) := NULL]
+				# Demonstration_Data_LONG_Updated[, grep("SGP|PRIOR|PERCENTILE", names(Demonstration_Data_LONG_Updated), value=TRUE) := NULL]
+				Demonstration_Data_LONG_Updated[, grep("PERCENTILE", names(Demonstration_Data_LONG_Updated), value=TRUE) := NULL]
+				setnames(Demonstration_Data_LONG_Updated, gsub("^SGP", "ORIG", names(Demonstration_Data_LONG_Updated)))
 				Demonstration_SGP@Data <- data.table(Demonstration_SGP@Data[!updated.student.ids], key=sgp.key)
 
 				for (ca in names(Demonstration_SGP@SGP[["SGPercentiles"]])) {
@@ -1271,7 +1273,7 @@ function(
 								 "\n\toverwrite.existing.data=FALSE,\n\tupdate.old.data.with.new=TRUE,",
 								 "\n\tsgp.percentiles=TRUE,\n\tsgp.projections=FALSE,\n\tsgp.projections.lagged=FALSE,\n\tsgp.percentiles.baseline=", calculate.simex.baseline, ",\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsimulate.sgps=FALSE,",
 								 "\n\tsgp.use.my.coefficient.matrices=TRUE,", # Use "Naive" Matrices for SGPs and in SIMEX too.
-								 "\n\tcalculate.simex=", gsub("save.matrices=TRUE", "\n\t\tsimex.use.my.coefficient.matrices=TRUE, use.cohort.for.ranking=FALSE\n\t\t", simex.parameters), ",\n\tcalculate.simex.baseline=", ifelse(calculate.simex.baseline, gsub(", simex.sample.size=2500", "", simex.parameters), "NULL,"),
+								 "\n\tcalculate.simex=", gsub("save.matrices=TRUE", "\n\t\tsimex.use.my.coefficient.matrices=TRUE, use.cohort.for.ranking=FALSE\n\t\t", simex.parameters), ",\n\tcalculate.simex.baseline=", ifelse(calculate.simex.baseline, gsub(", simex.sample.size=2500", "", simex.parameters), "NULL"), ",",
 								 "\n\tsave.intermediate.results=FALSE,\n\tparallel.config=", parallel.config, "\n)\n")
 
 				if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")

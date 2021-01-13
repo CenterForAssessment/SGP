@@ -58,11 +58,17 @@ function(list_1,
 							list_1[[j]][[k]][[grd_ord]][[lambda]] <- unique.splineMatrix(c(list_1[[j]][[k]][[grd_ord]][[lambda]], list_2[[j]][[k]][[grd_ord]][[lambda]]))
 						}
 					}
-					for (rst in grep("ranked_simex_table|n_records", names(list_2[[j]][[k]][[grd_ord]]), value=TRUE)) {
+					for (rst in grep("ranked_simex_table", names(list_2[[j]][[k]][[grd_ord]]), value=TRUE)) {
+						# if (!is.null(list_1[[j]][[k]][[grd_ord]][[rst]]))stop("FmeN@$$")
 						if (!identical(list_1[[j]][[k]][[grd_ord]][[rst]], list_2[[j]][[k]][[grd_ord]][[rst]])) {
 							list_1[[j]][[k]][[grd_ord]][[rst]] <- c(list_1[[j]][[k]][[grd_ord]][[rst]], list_2[[j]][[k]][[grd_ord]][[rst]])
 						}
 					}
+					# for (rst in grep("ranked_simex_table|n_records", names(list_2[[j]][[k]][[grd_ord]]), value=TRUE)) {
+					# 	if (!identical(list_1[[j]][[k]][[grd_ord]][[rst]], list_2[[j]][[k]][[grd_ord]][[rst]])) {
+					# 		list_1[[j]][[k]][[grd_ord]][[rst]] <- c(list_1[[j]][[k]][[grd_ord]][[rst]], list_2[[j]][[k]][[grd_ord]][[rst]])
+					# 	}
+					# }
 				}
 			}
 		} # j <- "Coefficient_Matrices"
