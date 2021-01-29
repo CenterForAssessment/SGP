@@ -945,6 +945,10 @@ function(
 				simex.parameters <- "list(state='DEMO', lambda=seq(0,2,0.5), simulation.iterations=50, extrapolation='linear', save.matrices=TRUE)"
 				simex.sample.size <- FALSE
 			}
+			if (!is.null(test.option[['simex.sample.size']]) & calculate.simex.baseline) {
+				messageSGP("The test option 'simex.sample.size' is not available with the 'calculate.simex.baseline' test. 'calculate.simex.baseline' set to FALSE.")
+				calculate.simex.baseline <- FALSE
+			}
 			if (!is.null(test.option[['simex.sample.size']]) && !calculate.simex.baseline) {
 				simex.parameters <- "list(state='DEMO', lambda=seq(0,2,0.5), simulation.iterations=50, extrapolation='linear', save.matrices=TRUE, simex.sample.size=2500)"
 				simex.sample.size <- TRUE
@@ -952,6 +956,10 @@ function(
 			}
 			if (is.null(test.option[['use.csems.embedded.in.data']])) use.csems.embedded.in.data <- FALSE else use.csems.embedded.in.data <- TRUE
 			if (is.null(test.option[['dependent.var.error']])) dependent.var.error <- FALSE else dependent.var.error <- TRUE
+			if (dependent.var.error & !is.null(test.option[['test.updated.students']])) {
+				messageSGP("The test option 'test.updated.students' is not available with the 'dependent.var.error' test. 'test.updated.students' set to NULL.")
+				test.option[['test.updated.students']] <- NULL
+			}
 
 			###  The test of SIMEX baseline functionality requires the DEMO SIMEX matrices to be loaded manually.
 			### SGPstateData[["DEMO"]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <- c(SGPstateData[["DEMO"]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]], DEMO_SIMEX_Baseline_Matrices)
@@ -1039,7 +1047,7 @@ function(
 #			if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1L), sep=".")]][['SGP_SIMEX']]), ifelse(simex.sample.size, 1028656L, 1029023L))) {
 #			if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1L), sep=".")]][['SGP_SIMEX']]), ifelse(simex.sample.size, "b7a4dadefa56e7034210db02fd5acb36", "55fb02e2b05c308c3eb288474a9b3d00"))) { # pre-1.9-4.0 sgp.simex fix
 #			if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1L), sep=".")]][['SGP_SIMEX']]), ifelse(simex.sample.size, "ee04a88161ab6173420e970bf69aee23", "c7ca3a4e0795cfb2d61d85b36e135c91"))) {
-			if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1L), sep=".")]][['SGP_SIMEX']]), ifelse(simex.sample.size, "ee04a88161ab6173420e970bf69aee23", ifelse(dependent.var.error, "27176e8d237650f806c7ab62d533834c", "c7ca3a4e0795cfb2d61d85b36e135c91")))) {
+			if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1L), sep=".")]][['SGP_SIMEX']]), ifelse(simex.sample.size, "97d87739f9d80a9e7861bda055c30c45", ifelse(dependent.var.error, "27176e8d237650f806c7ab62d533834c", "c7ca3a4e0795cfb2d61d85b36e135c91")))) { # post 1.9-9.1
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX: FAIL\n")
@@ -1049,8 +1057,8 @@ function(
 
 #			if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1L), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, 1032411L, 1032498L))) {
 #			if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1L), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, "84370af691ee17b803bc683d3e243f4a", "22babea1ccfdea54c6cd073bb24cf82e"))) { # pre-1.9-4.0 sgp.simex fix
-#``			if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1L), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, "3636c7881c5c89664e3a8e0ce96564dc", "6ad93e28790b68d5d51d83a7501a7a7c"))) {
-			if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1L), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, "3636c7881c5c89664e3a8e0ce96564dc", ifelse (dependent.var.error, "77c1ca82479f442f91e8248f0888a351", "6ad93e28790b68d5d51d83a7501a7a7c")))) {
+#			if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1L), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, "3636c7881c5c89664e3a8e0ce96564dc", "6ad93e28790b68d5d51d83a7501a7a7c"))) {
+			if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1L), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, "9bc1532d4de47615c59a76a2638245dc", ifelse (dependent.var.error, "77c1ca82479f442f91e8248f0888a351", "6ad93e28790b68d5d51d83a7501a7a7c")))) { # post 1.9-9.1
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX_RANKED: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX_RANKED: FAIL\n")
@@ -1059,16 +1067,18 @@ function(
 			### TEST of SGP_SIMEX_BASELINE and SGP_SIMEX_BASELINE_RANKED variables
 			if (calculate.simex.baseline) {
 #				if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1L), "BASELINE", sep=".")]][['SGP_SIMEX_BASELINE']]), 1034475L)) {
-#				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1L), "BASELINE", sep=".")]][['SGP_SIMEX_BASELINE']]), "816099ca957a29552f4ba1fea88ae1e5")) {# pre-GRADE key: 816099ca957a29552f4ba1fea88ae1e5
-				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1L), "BASELINE", sep=".")]][['SGP_SIMEX_BASELINE']]), "3e259b0a8a2d287d58945bf3635f1270")) {# post 1.9-4.0
+#				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1L), "BASELINE", sep=".")]][['SGP_SIMEX_BASELINE']]), "816099ca957a29552f4ba1fea88ae1e5")) { # pre-GRADE key: 816099ca957a29552f4ba1fea88ae1e5
+#				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1L), "BASELINE", sep=".")]][['SGP_SIMEX_BASELINE']]), "3e259b0a8a2d287d58945bf3635f1270")) { # post 1.9-4.0
+				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1L), "BASELINE", sep=".")]][['SGP_SIMEX_BASELINE']]), "97825a406491a5bba42f2fd5e1c49ed7")) { # post 1.9-9.1
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX_BASELINE: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX_BASELINE: FAIL\n")
 				}
 
-#				if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1L), "BASELINE", sep=".")]][['SGP_SIMEX_BASELINE_RANKED']]), 1031775L)) {
+#				if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1L), "BASELINE", sep=".")]][['SGP_SIMEX_BASELINE_RANKED']]), 1031773L)) { # 1031775L
 #				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1L), "BASELINE", sep=".")]][['SGP_SIMEX_BASELINE_RANKED']]), "721d5eac4cb20a70f9344bbe88b8ef2b")) {
-				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1L), "BASELINE", sep=".")]][['SGP_SIMEX_BASELINE_RANKED']]), "866a60bfb9e21d420ff566cb87c8521b")) {# post 1.9-4.0
+#				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1L), "BASELINE", sep=".")]][['SGP_SIMEX_BASELINE_RANKED']]), "866a60bfb9e21d420ff566cb87c8521b")) { # post 1.9-4.0
+				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1L), "BASELINE", sep=".")]][['SGP_SIMEX_BASELINE_RANKED']]), "43a2cf2f8bcd691087ca149eea631b66")) { # post 1.9-9.1
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX_BASELINE_RANKED: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX_BASELINE_RANKED: FAIL\n")
@@ -1120,7 +1130,7 @@ function(
 
 #			if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1L), sep=".")]][['SGP_SIMEX']]), ifelse(simex.sample.size, 211609L, 211555L))) {
 #			if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1L), sep=".")]][['SGP_SIMEX']]), ifelse(simex.sample.size, "df4cc817b52d2fcbbe6f7addd1b4e2f3", "a351d68d993a6ae42714142afd1ea6d3"))) { # pre-1.9-4.0 sgp.simex fix
-			if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1L), sep=".")]][['SGP_SIMEX']]), ifelse(simex.sample.size, "47474057b07a5cead92b9d184bee6237", ifelse(dependent.var.error, "f8580018874717543d573cb11d779ac7", "1fc0b74894a50300a307ff1ac7f300eb")))) {
+			if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1L), sep=".")]][['SGP_SIMEX']]), ifelse(simex.sample.size, "2f881955c5e24766f8e1ab2df6eff6b5", ifelse(dependent.var.error, "f8580018874717543d573cb11d779ac7", "1fc0b74894a50300a307ff1ac7f300eb")))) { # "47474057b07a5cead92b9d184bee6237"
 				tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX: FAIL\n")
@@ -1129,7 +1139,7 @@ function(
 #			if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1L), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, 211814L, 211864L))) {
 #			if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1L), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, "a7270bc07d7ce6eca7055ce1d1fd91d6", "af4aa783fc81ba1c81ad758a5c92efff"))) { # pre-1.9-4.0 sgp.simex fix
 #			if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1L), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, "b73341834f894dd8632b50b26df2d5c6", "241e933dbcfbf3a2d0d6f536272b7bad"))) {
-			if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1L), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, "b73341834f894dd8632b50b26df2d5c6", ifelse(dependent.var.error, "1dfc935d020386ec2bc39bafeeeeb384", "241e933dbcfbf3a2d0d6f536272b7bad")))) {
+			if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1L), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, "46dfd4d5a87bed7d6f3398c54277d005", ifelse(dependent.var.error, "1dfc935d020386ec2bc39bafeeeeb384", "241e933dbcfbf3a2d0d6f536272b7bad")))) { # "b73341834f894dd8632b50b26df2d5c6"
 				tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX_RANKED: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX_RANKED: FAIL\n")
@@ -1137,7 +1147,7 @@ function(
 
 #			if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1L), sep=".")]][['SGP_SIMEX']]), ifelse(simex.sample.size, 212639L, 212383L))) {
 #			if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1L), sep=".")]][['SGP_SIMEX']]), ifelse(simex.sample.size, "89446b39fa32bbe91d435081a9aa41e6", "ab2862894723e1d9533a1499195dca98"))) { # pre-1.9-4.0 sgp.simex fix
-			if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1L), sep=".")]][['SGP_SIMEX']]), ifelse(simex.sample.size, "78a18a4a82516b5156f55061d3d0d3e8", ifelse(dependent.var.error, "1b49b1d56a93264443e5ab0036054568", "d744baf8de99087a252940f9d1fe0348")))) {
+			if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1L), sep=".")]][['SGP_SIMEX']]), ifelse(simex.sample.size, "d581cb1cdd22a53421659989ffbfaffa", ifelse(dependent.var.error, "1b49b1d56a93264443e5ab0036054568", "d744baf8de99087a252940f9d1fe0348")))) { # "78a18a4a82516b5156f55061d3d0d3e8",
 				tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II SGP_SIMEX: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II SGP_SIMEX: FAIL\n")
@@ -1145,24 +1155,24 @@ function(
 
 #			if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1L), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, 213318L, 213361L))) {
 #			if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1L), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, "8a01548a0d3489660cfc9f4ce66ceb98", "152b1048bb2d191a1ed9244fde160d2d"))) { # pre-1.9-4.0 sgp.simex fix
-			if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1L), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, "00f6f613d386740e32999cc38a06d26d", ifelse(dependent.var.error, "a525ed4fdc64d3af1d35ca4a1689e69c", "a6dadc01f6368657dcd49c2437725ccd")))) {
+			if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1L), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, "df49ff250072bd8d1e6764dde8c2624c", ifelse(dependent.var.error, "a525ed4fdc64d3af1d35ca4a1689e69c", "a6dadc01f6368657dcd49c2437725ccd")))) { # "00f6f613d386740e32999cc38a06d26d"
 				tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II SGP_SIMEX_RANKED: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II SGP_SIMEX_RANKED: FAIL\n")
 			}
 
-#			if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX, na.rm=TRUE), ifelse(simex.sample.size, 1452904L, 1452961L))) {
+#			if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX, na.rm=TRUE), ifelse(simex.sample.size, 1454082L, 1452961L))) { #  , 1452904L,
 #			if (identical(digest(Demonstration_SGP@Data$SGP_SIMEX), ifelse(simex.sample.size, "65e6aaf41e6e8f1f5a3a394cbcac9e0f", "928e4428e146a3486a5c8eede3c92ab9"))) { # pre-1.9-4.0 sgp.simex fix
 #			if (identical(digest(Demonstration_SGP@Data$SGP_SIMEX), ifelse(simex.sample.size, "8571479f09e79517d3ed95ca938b4524", "02acad263034242149b6604812b44b20"))) {
-			if (identical(digest(Demonstration_SGP@Data$SGP_SIMEX), ifelse(simex.sample.size, "8571479f09e79517d3ed95ca938b4524", ifelse(dependent.var.error, "c11843c1f1a38f18d3d1cd658be4dd43", "02acad263034242149b6604812b44b20")))) {
+			if (identical(digest(Demonstration_SGP@Data$SGP_SIMEX), ifelse(simex.sample.size, "77896592f239eea13340a32ad096bf4e", ifelse(dependent.var.error, "c11843c1f1a38f18d3d1cd658be4dd43", "02acad263034242149b6604812b44b20")))) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX: FAIL\n")
 			}
 
-#			if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX_RANKED, na.rm=TRUE), ifelse(simex.sample.size, 1457543L, 1457723L))) {
+#			if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX_RANKED, na.rm=TRUE), ifelse(simex.sample.size, 1457831L, 1457723L))) { # ,  1457543L,
 #			if (identical(digest(Demonstration_SGP@Data$SGP_SIMEX_RANKED), ifelse(simex.sample.size, "d29e7c9a6ef3f21dff1a534550d667ab", "421e5f144da90b8ac8f04c4616370e73"))) { # pre-1.9-4.0 sgp.simex fix
-			if (identical(digest(Demonstration_SGP@Data$SGP_SIMEX_RANKED), ifelse(simex.sample.size, "6e9bb077ba1de7d9e1e08c4b37af6aba", ifelse(dependent.var.error, "26c943a456f8e44fcc3bd61076a59be5", "f90f641444e545398cbccf1a2bc648d2")))) {
+			if (identical(digest(Demonstration_SGP@Data$SGP_SIMEX_RANKED), ifelse(simex.sample.size, "391f0d1523aaba19d85f733dc7818d81", ifelse(dependent.var.error, "26c943a456f8e44fcc3bd61076a59be5", "f90f641444e545398cbccf1a2bc648d2")))) { #  "6e9bb077ba1de7d9e1e08c4b37af6aba"
 				tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX_RANKED: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX_RANKED: FAIL\n")
@@ -1174,14 +1184,14 @@ function(
 				tmp.matrix.names <- c("MATHEMATICS.BASELINE", "READING.BASELINE", "GRADE_9_LIT.BASELINE", "AMERICAN_LIT.BASELINE", "ALGEBRA_I.BASELINE", "ALGEBRA_II.BASELINE",
 					"MATHEMATICS.BASELINE.SIMEX", "READING.BASELINE.SIMEX", "GRADE_9_LIT.BASELINE.SIMEX", "AMERICAN_LIT.BASELINE.SIMEX", "ALGEBRA_I.BASELINE.SIMEX", "ALGEBRA_II.BASELINE.SIMEX",
 					"READING.2015_2016", "READING.2015_2016.SIMEX", "ALGEBRA_II.2015_2016", "ALGEBRA_II.2015_2016.SIMEX", "AMERICAN_LIT.2015_2016", "AMERICAN_LIT.2015_2016.SIMEX")
-				if (identical(names(Demonstration_SGP@SGP$Coefficient_Matrices), gsub("2015_2016", tail(sgpData.years, 1L), tmp.matrix.names))) {
+				if (identical(sort(names(Demonstration_SGP@SGP$Coefficient_Matrices)), sort(gsub("2015_2016", tail(sgpData.years, 1L), tmp.matrix.names)))) {
 					tmp.messages <- c(tmp.messages, "\t\tTest of @SGP Coefficient Matrix Names: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of @SGP Coefficient Matrix Names: FAIL\n")
 				}
 			} else {
 				tmp.matrix.names <- c("READING.2015_2016", "READING.2015_2016.SIMEX", "ALGEBRA_II.2015_2016", "ALGEBRA_II.2015_2016.SIMEX", "AMERICAN_LIT.2015_2016", "AMERICAN_LIT.2015_2016.SIMEX")
-				if (identical(names(Demonstration_SGP@SGP$Coefficient_Matrices), gsub("2015_2016", tail(sgpData.years, 1L), tmp.matrix.names))) {
+				if (identical(sort(names(Demonstration_SGP@SGP$Coefficient_Matrices)), sort(gsub("2015_2016", tail(sgpData.years, 1L), tmp.matrix.names)))) {
 					tmp.messages <- c(tmp.messages, "\t\tTest of @SGP Coefficient Matrix Names: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of @SGP Coefficient Matrix Names: FAIL\n")
@@ -1189,44 +1199,50 @@ function(
 			}
 
 			if (calculate.simex.baseline) {
-#				if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1L), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE']]), 217894L)) {
-#				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1L), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE']]), "1dbd929906efe4a131c68180d83c4164")) {# pre-GRADE key: 73176856b45b8bc490b5e98068319411
-				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1L), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE']]), "af1033d6a7cdf0ba65f8e0d08bf67c6d")) {# post 1.9-4.0
+#				if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1L), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE']]), 217614L)) { # 217894L
+#				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1L), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE']]), "1dbd929906efe4a131c68180d83c4164")) { # pre-GRADE key: 73176856b45b8bc490b5e98068319411
+#				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1L), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE']]), "af1033d6a7cdf0ba65f8e0d08bf67c6d")) { # post 1.9-4.0
+				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1L), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE']]), "ce1c7d0cf5a20cb67593d9ecb2577a63")) { # post 1.9-9.1
 					tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX_BASELINE: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX_BASELINE: FAIL\n")
 				}
-#				if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1L), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE_RANKED']]), 211837L)) {
-#				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1L), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE_RANKED']]), "f3e9a7c0e1eb4564ddc04d5b38f5223e")) {# xXx 40cfc13e853dfa9af8398ca38fea96e8
-				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1L), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE_RANKED']]), "75542c44a8463b3bb14aa2611e83cdd7")) {# post 1.9-4.0
+#				if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1L), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE_RANKED']]), 211843L)) { # 211837L
+#				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1L), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE_RANKED']]), "f3e9a7c0e1eb4564ddc04d5b38f5223e")) { # xXx 40cfc13e853dfa9af8398ca38fea96e8
+#				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1L), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE_RANKED']]), "75542c44a8463b3bb14aa2611e83cdd7")) { # post 1.9-4.0
+				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1L), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE_RANKED']]), "dbd9e77bd9050b6b096eaffb725d81b1")) { # post 1.9-9.1
 					tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX_BASELINE_RANKED: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX_BASELINE_RANKED: FAIL\n")
 				}
-#				if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1L), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE']]), 212818L)) {
-#				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1L), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE']]), "e9ac73391f257c5d21df89c2ca6d5283")) {# pre-GRADE key: d4fe0d79e985aacb6331ce95f4a2d01e
-				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1L), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE']]), "49fe29a83e7f22f4bb6ee4e3538f5bff")) {# post 1.9-4.0
+#				if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1L), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE']]), 213472L)) { # 212818L
+#				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1L), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE']]), "e9ac73391f257c5d21df89c2ca6d5283")) { # pre-GRADE key: d4fe0d79e985aacb6331ce95f4a2d01e
+#				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1L), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE']]), "49fe29a83e7f22f4bb6ee4e3538f5bff")) { # post 1.9-4.0
+				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1L), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE']]), "9e6012824c2525c633e296e644967b15")) { # post 1.9-9.1
 					tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II SGP_SIMEX_BASELINE: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II SGP_SIMEX_BASELINE: FAIL\n")
 				}
-#				if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1L), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE_RANKED']]), 213377L)) {
+#				if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1L), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE_RANKED']]), 213473L)) { # 213377L
 #				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1L), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE_RANKED']]), "9fb272b324afab3f9aeb7107c277ac23")) { # xXx 5df2787d9bed17d59004a9eeb76930a6
-				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1L), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE_RANKED']]), "581eb5580530038fb03f352c731d4930")) {# post 1.9-4.0
+#				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1L), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE_RANKED']]), "581eb5580530038fb03f352c731d4930")) { # post 1.9-4.0
+				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1L), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE_RANKED']]), "dbfa602f675d9b460a2f414f43b5c526")) { # post 1.9-9.1
 					tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II SGP_SIMEX_BASELINE_RANKED: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II SGP_SIMEX_BASELINE_RANKED: FAIL\n")
 				}
-#				if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX_BASELINE, na.rm=TRUE), 1465187L)) {
+#				if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX_BASELINE, na.rm=TRUE), 1465473L)) { # 1465187L
 #				if (identical(digest(Demonstration_SGP@Data$SGP_SIMEX_BASELINE), "010289791f188481d48577bf3f247c2e")) { # pre-GRADE key: 3e653f546bd93da33cc915b5d37100a4  xXx  61ff473b2777c2b7ea14a2c0bcb662ec
-				if (identical(digest(Demonstration_SGP@Data$SGP_SIMEX_BASELINE), "a193b6fe6b26f8fcd221c945081bbf3b")) {# post 1.9-4.0
+#				if (identical(digest(Demonstration_SGP@Data$SGP_SIMEX_BASELINE), "a193b6fe6b26f8fcd221c945081bbf3b")) {# post 1.9-4.0
+				if (identical(digest(Demonstration_SGP@Data$SGP_SIMEX_BASELINE), "44be364974deff2403f4b78f2e7e98d2")) {# post 1.9-9.1
 					tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX_BASELINE: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX_BASELINE: FAIL\n")
 				}
-#				if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX_BASELINE_RANKED, na.rm=TRUE), 1456989L)) {
+#				if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX_BASELINE_RANKED, na.rm=TRUE), 1457089L)) { # 1456989L
 #				if (identical(digest(Demonstration_SGP@Data$SGP_SIMEX_BASELINE_RANKED), "0acbb6fb922e87c54bc2aa5acf55ba73")) {#  xXx  3818ece7a3a5f5e6e7a0ff343c8a752a
-				if (identical(digest(Demonstration_SGP@Data$SGP_SIMEX_BASELINE_RANKED), "ed623b7000d943acbc2fd524f7ce4efc")) {# post 1.9-4.0
+#				if (identical(digest(Demonstration_SGP@Data$SGP_SIMEX_BASELINE_RANKED), "ed623b7000d943acbc2fd524f7ce4efc")) {# post 1.9-4.0
+				if (identical(digest(Demonstration_SGP@Data$SGP_SIMEX_BASELINE_RANKED), "b7adcbf2d1b4f69b5475a84986313e0c")) {# post 1.9-9.1
 					tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX_BASELINE_RANKED: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX_BASELINE_RANKED: FAIL\n")
@@ -1243,7 +1259,9 @@ function(
 				setkeyv(updated.student.ids, c("CONTENT_AREA", "GRADE", "ID"))
 				setkeyv(Demonstration_SGP@Data, c("CONTENT_AREA", "GRADE", "ID"))
 				Demonstration_Data_LONG_Updated <- data.table(Demonstration_SGP@Data[updated.student.ids, nomatch=0], key=sgp.key) # nomatch=0 not needed?
-				Demonstration_Data_LONG_Updated[, grep("SGP|PRIOR|PERCENTILE", names(Demonstration_Data_LONG_Updated), value=TRUE) := NULL]
+				# Demonstration_Data_LONG_Updated[, grep("SGP|PRIOR|PERCENTILE", names(Demonstration_Data_LONG_Updated), value=TRUE) := NULL]
+				invisible(Demonstration_Data_LONG_Updated[, grep("PERCENTILE", names(Demonstration_Data_LONG_Updated), value=TRUE) := NULL])
+				setnames(Demonstration_Data_LONG_Updated, gsub("^SGP", "ORIG", names(Demonstration_Data_LONG_Updated)))
 				Demonstration_SGP@Data <- data.table(Demonstration_SGP@Data[!updated.student.ids], key=sgp.key)
 
 				for (ca in names(Demonstration_SGP@SGP[["SGPercentiles"]])) {
@@ -1255,7 +1273,7 @@ function(
 
 				#  Perturb SCALE_SCORE of students to update
 				set.seed(589)
-				Demonstration_Data_LONG_Updated[, SCALE_SCORE := SCALE_SCORE - round(runif(nrow(Demonstration_Data_LONG_Updated), -10, 10), 0)]
+				invisible(Demonstration_Data_LONG_Updated[, SCALE_SCORE := SCALE_SCORE - round(runif(nrow(Demonstration_Data_LONG_Updated), -10, 10), 0)])
 
 				#  Add READING to sgp.config
 				sgp.config <- c(sgp.config, list(
@@ -1271,7 +1289,7 @@ function(
 								 "\n\toverwrite.existing.data=FALSE,\n\tupdate.old.data.with.new=TRUE,",
 								 "\n\tsgp.percentiles=TRUE,\n\tsgp.projections=FALSE,\n\tsgp.projections.lagged=FALSE,\n\tsgp.percentiles.baseline=", calculate.simex.baseline, ",\n\tsgp.projections.baseline=FALSE,\n\tsgp.projections.lagged.baseline=FALSE,\n\tsimulate.sgps=FALSE,",
 								 "\n\tsgp.use.my.coefficient.matrices=TRUE,", # Use "Naive" Matrices for SGPs and in SIMEX too.
-								 "\n\tcalculate.simex=", gsub("save.matrices=TRUE", "\n\t\tsimex.use.my.coefficient.matrices=TRUE, use.cohort.for.ranking=FALSE\n\t\t", simex.parameters), ",\n\tcalculate.simex.baseline=", ifelse(calculate.simex.baseline, gsub(", simex.sample.size=2500", "", simex.parameters), "NULL,"),
+								 "\n\tcalculate.simex=", gsub("save.matrices=TRUE", "\n\t\tsimex.use.my.coefficient.matrices=TRUE, use.cohort.for.ranking=FALSE\n\t\t", simex.parameters), ",\n\tcalculate.simex.baseline=", ifelse(calculate.simex.baseline, gsub(", simex.sample.size=2500", "", simex.parameters), "NULL"), ",",
 								 "\n\tsave.intermediate.results=FALSE,\n\tparallel.config=", parallel.config, "\n)\n")
 
 				if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
@@ -1291,36 +1309,41 @@ function(
 
 				tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number 4: Part 3 #####\n")
 
-#				if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, 1032372L, 1032465L))) {
-				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, "af0bd14d3e6c830ecaf638fcafc57bb6", "a316661bb39fa58a0daa432b6a7cda8f"))) {
+#				if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, 1032437L, 1032384L))) { # 1032372L, 1032465L
+#				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, "af0bd14d3e6c830ecaf638fcafc57bb6", "a316661bb39fa58a0daa432b6a7cda8f"))) {
+				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, "6b020293b8c97213100ec4be1f95e7f0", "2007e2e95b4ed64d2963f527c0c605e5"))) { # post 1.9-9.1
 					tmp.messages <- c(tmp.messages, "\t\tTest of READING Updated SGP_SIMEX_RANKED: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of READING Updated SGP_SIMEX_RANKED: FAIL\n")
 				}
 
-#				if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, 211710L, 212048L))) {
-				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, "b7a29a91fb2e4a0d9555d530fd55cc0a", "b1efeb656dd1cce6cf753d7aaf85f3cc"))) {
+#				if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, 211887L, 211939L))) { 211710L, 212048L
+#				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, "b7a29a91fb2e4a0d9555d530fd55cc0a", "b1efeb656dd1cce6cf753d7aaf85f3cc"))) {
+				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, "6e03644e18eb014551180ad1e66383a5", "d738e8734a2897bd4787b3d7542932b4"))) { # post 1.9-9.1
 					tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT Updated SGP_SIMEX_RANKED: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT Updated SGP_SIMEX_RANKED: FAIL\n")
 				}
 
-#				if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, 213300L, 213327L))) {
-				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, "2cfbc31e5801ac1006c933be5362657f", "d8c707ff51d892232a203960254553c3"))) {
+#				if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, 213390L, 213420L))) { # 213300L, 213327L
+#				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, "2cfbc31e5801ac1006c933be5362657f", "d8c707ff51d892232a203960254553c3"))) {
+				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, "19eec3b4e8cc13409243a0f9c0598658", "3a49de0f8d4dd7254669726c39b7b42b"))) { # post 1.9-9.1
 					tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II Updated SGP_SIMEX_RANKED: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II Updated SGP_SIMEX_RANKED: FAIL\n")
 				}
 
-#				if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX, na.rm=TRUE), ifelse(simex.sample.size, 1453181L, 1453991L))) {
-				if (identical(digest(Demonstration_SGP@Data$SGP_SIMEX), ifelse(simex.sample.size, "9c490a7cfa61902b0f7ee733ef1decc9", "dd02dc6c4711840c2a8ba5b152c0a864"))) {
+#				if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX, na.rm=TRUE), ifelse(simex.sample.size, 1453987L, 1453850L))) { # 1453181L, 1453991L
+#				if (identical(digest(Demonstration_SGP@Data[['SGP_SIMEX']]), ifelse(simex.sample.size, "9c490a7cfa61902b0f7ee733ef1decc9", "dd02dc6c4711840c2a8ba5b152c0a864"))) {
+				if (identical(digest(Demonstration_SGP@Data[['SGP_SIMEX']]), ifelse(simex.sample.size, "a7e182e55fe9c2fdff7f591be8948ef3", "35671327de945e37fabb71f63362855d"))) { # post 1.9-9.1
 					tmp.messages <- c(tmp.messages, "\t\tTest of @Data UPDATED variable SGP_SIMEX: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of @Data UPDATED variable SGP_SIMEX: FAIL\n")
 				}
 
-#				if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX_RANKED, na.rm=TRUE), ifelse(simex.sample.size, 1457549L, 1457840L))) {
-				if (identical(digest(Demonstration_SGP@Data$SGP_SIMEX_RANKED), ifelse(simex.sample.size, "e07fd1aff19438dbbc30e42bdab7557a", "bbb3c63a095d9638acd45eff321e0862"))) {
+#				if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX_RANKED, na.rm=TRUE), ifelse(simex.sample.size, 1457714L, 1457743L))) { # 1457549L, 1457840L
+#				if (identical(digest(Demonstration_SGP@Data[['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, "e07fd1aff19438dbbc30e42bdab7557a", "bbb3c63a095d9638acd45eff321e0862"))) {
+				if (identical(digest(Demonstration_SGP@Data[['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, "f97983548a96fd0d8698f1f86118787c", "dbbf615f55f92023f3b89e4ad1f490b8"))) { # post 1.9-9.1
 					tmp.messages <- c(tmp.messages, "\t\tTest of @Data UPDATED variable SGP_SIMEX_RANKED: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of @Data UPDATED variable SGP_SIMEX_RANKED: FAIL\n")

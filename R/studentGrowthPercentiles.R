@@ -338,102 +338,111 @@ function(panel.data,         ## REQUIRED
 	###
 	### SIMEX function
 	###
-    simex.sgp <- function(
+  simex.sgp <- function(
 		state,
-        csem.data.vnames=NULL,
-		lambda,
-        B,
-        simex.sample.size,
-        extrapolation,
-        save.matrices,
-        simex.use.my.coefficient.matrices=NULL,
-        calculate.simex.sgps,
-        dependent.var.error=FALSE,
-        use.cohort.for.ranking=FALSE,
-        reproduce.old.values=FALSE,
-        verbose=FALSE) {
+    csem.data.vnames=NULL,
+    lambda,
+    B,
+    simex.sample.size,
+    extrapolation,
+    save.matrices,
+    simex.use.my.coefficient.matrices=NULL,
+    calculate.simex.sgps,
+    dependent.var.error=FALSE,
+    use.cohort.for.ranking=FALSE,
+    reproduce.old.values=FALSE,
+    verbose=FALSE) {
 
-		GRADE <- CONTENT_AREA <- YEAR <- V1 <- Lambda <- tau <- b <- .SD <- TEMP <- CSEM <- VARIABLE <- NULL ## To avoid R CMD check warnings
+      GRADE <- CONTENT_AREA <- YEAR <- V1 <- Lambda <- tau <- b <- .SD <- TEMP <- CSEM <- VARIABLE <- NULL ## To avoid R CMD check warnings
 
-        ### simex.sgp internal utility functions
+      ### simex.sgp internal utility functions
 
-        getSIMEXdata <- function(dbase, z, k=NULL, predictions=FALSE) {
-            if (predictions) {
-                data.table::fread(file.path(dbase, paste0("simex_data_", z, ".csv")), header=TRUE, showProgress = FALSE,
-                select = paste(c("ID", paste0('prior_', k:1L), "final_yr")), verbose = FALSE)
-            } else {
-                data.table::fread(file.path(dbase, paste0("simex_data_", z, ".csv")), header=TRUE, showProgress = FALSE, verbose = FALSE)
-            }
-        } ### END getSIMEXdata function
+      getSIMEXdata <- function(dbase, z, k=NULL, predictions=FALSE) {
+        if (predictions) {
+            data.table::fread(file.path(dbase, paste0("simex_data_", z, ".csv")), header=TRUE, showProgress = FALSE,
+            select = paste(c("ID", paste0('prior_', k:1L), "final_yr")), verbose = FALSE)
+        } else {
+            data.table::fread(file.path(dbase, paste0("simex_data_", z, ".csv")), header=TRUE, showProgress = FALSE, verbose = FALSE)
+        }
+      } ### END getSIMEXdata function
 
-        rq.sgp <- function(...) { # Function needs to be nested within the simex.sgp function to avoid data copying with SNOW
-            if (rq.method == "br") {
-                tmp.res <- quantreg::rq(method="br", ...)[['coefficients']]
-            } else {
-                tmp.res <- try(quantreg::rq(method=rq.method, ...)[['coefficients']], silent=TRUE)
-                if (class(tmp.res) == "try-error") {
-                    tmp.res <- quantreg::rq(method="br", ...)[['coefficients']]
-                }
-            }
-            return(tmp.res)
-        } ### END rq.sgp function
+      rq.sgp <- function(...) { # Function needs to be nested within the simex.sgp function to avoid data copying with SNOW
+        if (rq.method == "br") {
+          tmp.res <- quantreg::rq(method="br", ...)[['coefficients']]
+        } else {
+          tmp.res <- try(quantreg::rq(method=rq.method, ...)[['coefficients']], silent=TRUE)
+          if (class(tmp.res) == "try-error") {
+              tmp.res <- quantreg::rq(method="br", ...)[['coefficients']]
+          }
+        }
+        return(tmp.res)
+      } ### END rq.sgp function
 
-        rq.mtx <- function(tmp.gp.iter, lam, rqdata) {
-            mod <- character()
-            s4Ks <- "Knots=list("
-            s4Bs <- "Boundaries=list("
-            for (i in seq_along(tmp.gp.iter)) {
-                knt <- paste0("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['knots_", tmp.gp.iter[i], "']]")
-                bnd <- paste0("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['boundaries_", tmp.gp.iter[i], "']]")
-                mod <- paste0(mod, " + bs(prior_", i, ", knots=", knt, ", Boundary.knots=", bnd, ")")
-                s4Ks <- paste0(s4Ks, "knots_", tmp.gp.iter[i], "=", knt, ",")
-                s4Bs <- paste0(s4Bs, "boundaries_", tmp.gp.iter[i], "=", bnd, ",")
-            }
-            tmp.mtx <- eval(parse(text=paste0("rq.sgp(final_yr ~", substring(mod,4), ", tau=taus, data = rqdata)")))
+      rq.mtx <- function(tmp.gp.iter, lam, rqdata) {
+        mod <- character()
+        s4Ks <- "Knots=list("
+        s4Bs <- "Boundaries=list("
+        for (i in seq_along(tmp.gp.iter)) {
+          knt <- paste0("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['knots_", tmp.gp.iter[i], "']]")
+          bnd <- paste0("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", lam, "']][['boundaries_", tmp.gp.iter[i], "']]")
+          mod <- paste0(mod, " + bs(prior_", i, ", knots=", knt, ", Boundary.knots=", bnd, ")")
+          s4Ks <- paste0(s4Ks, "knots_", tmp.gp.iter[i], "=", knt, ",")
+          s4Bs <- paste0(s4Bs, "boundaries_", tmp.gp.iter[i], "=", bnd, ",")
+        }
+        tmp.mtx <- eval(parse(text=paste0("rq.sgp(final_yr ~", substring(mod,4), ", tau=taus, data = rqdata)")))
 
-            tmp.version <- list(
-                SGP_Package_Version=as.character(packageVersion("SGP")),
-                Date_Prepared=prettyDate(),
-                Matrix_Information=list(
-                    N=dim(rqdata)[1L],
-                    Model=paste0("rq.sgp(final_yr ~", substring(mod,4), ", tau=taus, data = rqdata)"),
-                    SGPt=if (is.null(SGPt)) NULL else list(VARIABLES=unlist(SGPt), MAX_TIME=max(rqdata$TIME, na.rm=TRUE), MAX_TIME_PRIOR=max(rqdata$TIME-rqdata$TIME_LAG, na.rm=TRUE), RANGE_TIME_LAG=range(rqdata$TIME_LAG))))
+        tmp.version <- list(
+          SGP_Package_Version=as.character(packageVersion("SGP")),
+          Date_Prepared=prettyDate(),
+          Matrix_Information=list(
+            N=dim(rqdata)[1L],
+            Model=paste0("rq.sgp(final_yr ~", substring(mod,4), ", tau=taus, data = rqdata)"),
+            SGPt=if (is.null(SGPt)) NULL else list(VARIABLES=unlist(SGPt), MAX_TIME=max(rqdata$TIME, na.rm=TRUE), MAX_TIME_PRIOR=max(rqdata$TIME-rqdata$TIME_LAG, na.rm=TRUE), RANGE_TIME_LAG=range(rqdata$TIME_LAG))))
 
-            eval(parse(text=paste0("new('splineMatrix', tmp.mtx, ", substring(s4Ks, 1L, nchar(s4Ks)-1L), "), ", substring(s4Bs, 1L, nchar(s4Bs)-1L), "), ",
-                "Content_Areas=list(as.character(tail(content_area.progression, k+1L))), ",
-                "Grade_Progression=list(as.character(tail(tmp.slot.gp, k+1L))), ",
-                "Time=list(as.character(tail(year.progression, k+1L))), ",
-                "Time_Lags=list(as.numeric(tail(year_lags.progression, k))), ",
-                "Version=tmp.version)")))
-        } ### END rq.mtx function
+        eval(parse(text= paste0("new('splineMatrix', tmp.mtx, ", substring(s4Ks, 1L, nchar(s4Ks)-1L), "), ", substring(s4Bs, 1L, nchar(s4Bs)-1L), "), ",
+                                "Content_Areas=list(as.character(tail(content_area.progression, k+1L))), ",
+                                "Grade_Progression=list(as.character(tail(tmp.slot.gp, k+1L))), ",
+                                "Time=list(as.character(tail(year.progression, k+1L))), ",
+                                "Time_Lags=list(as.numeric(tail(year_lags.progression, k))), ",
+                                "Version=tmp.version)")))
+      } ### END rq.mtx function
 
-        createBigData <- function(tmp.data, perturb.var, L, dependent.var.error) { # Function that creates big.data object from which SIMEX SGPs are calculated
-            big.data <- rbindlist(replicate(B, tmp.data, simplify = FALSE))[, b:=rep(seq.int(B), each=n.records)]
-            if (dependent.var.error) csem.col.offset <- (ncol(big.data)-2)/2 else csem.col.offset <- (ncol(big.data)-1)/2
-            for (perturb.var.iter in rev(seq_along(perturb.var))) {
-                    setnames(big.data, c(1L+perturb.var.iter, 1L+perturb.var.iter+csem.col.offset), c("VARIABLE", "CSEM"))
-                    unique.key <- c("VARIABLE", names(big.data)[1L+csem.col.offset], "b", "CSEM")
-                    setkeyv(big.data, unique.key)
-                    big.data[,(1L+perturb.var.iter) := unique(big.data, by=unique.key)[,"TEMP" := VARIABLE+sqrt(L)*CSEM*rnorm(.N)][big.data[,unique.key, with=FALSE], on=unique.key][["TEMP"]]]
-                    setnames(big.data, c("VARIABLE", "CSEM"), paste0(c("VARIABLE", "DONE_CSEM"), perturb.var.iter))
-            }
-            big.data[,grep("DONE", names(big.data), value=TRUE):=NULL]
-            setnames(big.data, c("ID", paste0("prior_", (csem.col.offset-1L):1L), "final_yr", "b"))
-            setkey(big.data, b, ID)
-            return(big.data)
-        } ### END createBigData function
+      createBigData <- function(tmp.data, perturb.var, L, dependent.var.error) { # Function that creates big.data object from which SIMEX SGPs are calculated
+        big.data <- rbindlist(replicate(B, tmp.data, simplify = FALSE))[, b:=rep(seq.int(B), each=n.records)]
+        if (dependent.var.error) csem.col.offset <- (ncol(big.data)-2)/2 else csem.col.offset <- (ncol(big.data)-1)/2
+        for (perturb.var.iter in rev(seq_along(perturb.var))) {
+          setnames(big.data, c(1L+perturb.var.iter, 1L+perturb.var.iter+csem.col.offset), c("VARIABLE", "CSEM"))
+          unique.key <- c("VARIABLE", names(big.data)[1L+csem.col.offset], "b", "CSEM")
+          setkeyv(big.data, unique.key)
+          big.data[,(1L+perturb.var.iter) := unique(big.data, by=unique.key)[,"TEMP" := VARIABLE+sqrt(L)*CSEM*rnorm(.N)][big.data[,unique.key, with=FALSE], on=unique.key][["TEMP"]]]
+          setnames(big.data, c("VARIABLE", "CSEM"), paste0(c("VARIABLE", "DONE_CSEM"), perturb.var.iter))
+        }
+        big.data[,grep("DONE", names(big.data), value=TRUE):=NULL]
+        setnames(big.data, c("ID", paste0("prior_", (csem.col.offset-1L):1L), "final_yr", "b"))
+        setkey(big.data, b, ID)
+        return(big.data)
+      } ### END createBigData function
 
-        ### Check arguments/define variables
-        if (is.null(dependent.var.error)) dependent.var.error <- FALSE
-        if (is.null(use.cohort.for.ranking)) use.cohort.for.ranking <- FALSE
-        if (is.null(reproduce.old.values)) reproduce.old.values <- FALSE
-        if (is.null(verbose)) verbose <- FALSE
-        if (verbose) messageSGP(c("\n\tStarted SIMEX SGP calculation ", rev(content_area.progression)[1L], " Grade ", rev(tmp.gp)[1L], " ", prettyDate()))
-        if (is.logical(simex.use.my.coefficient.matrices) && !simex.use.my.coefficient.matrices) simex.use.my.coefficient.matrices <- NULL
-        if (!is.null(state) && !is.null(csem.data.vnames)) stop("SIMEX config can not use both 'state' and 'csem.data.vnames' elements.")
-        if (!is.null(parallel.config)) {
-            if (is.null(parallel.config[["WORKERS"]][["SIMEX"]])) tmp.par.config <- NULL else tmp.par.config <- parallel.config
-        } else tmp.par.config <- NULL
+      get.simex.ranking.info <- function(table_list, cap, gp, yp, ylp) {
+        table.index <- which(sapply(table_list, function(f) {
+          attr(f, "content_area_progression") == cap &&
+          attr(f, "grade_progression") == gp &&
+          attr(f, "year_progression") == yp &&
+          attr(f, "year_lags_progression") == ylp}))
+        return(table_list[[table.index]])
+      }
+
+      ### Check arguments/define variables
+      if (is.null(dependent.var.error)) dependent.var.error <- FALSE
+      if (is.null(use.cohort.for.ranking)) use.cohort.for.ranking <- FALSE
+      if (is.null(reproduce.old.values)) reproduce.old.values <- FALSE
+      if (is.null(verbose)) verbose <- FALSE
+      if (verbose) messageSGP(c("\n\tStarted SIMEX SGP calculation ", rev(content_area.progression)[1L], " Grade ", rev(tmp.gp)[1L], " ", prettyDate()))
+      if (is.logical(simex.use.my.coefficient.matrices) && !simex.use.my.coefficient.matrices) simex.use.my.coefficient.matrices <- NULL
+      if (!is.null(state) && !is.null(csem.data.vnames)) stop("SIMEX config can not use both 'state' and 'csem.data.vnames' elements.")
+      if (!is.null(parallel.config)) {
+        if (is.null(parallel.config[["WORKERS"]][["SIMEX"]])) tmp.par.config <- NULL else tmp.par.config <- parallel.config
+      } else tmp.par.config <- NULL
 
 		fitted <- extrap <- tmp.quantiles.simex <- simex.coef.matrices <- list()
 		my.path.knots.boundaries <- get.my.knots.boundaries.path(sgp.labels$my.subject, as.character(sgp.labels$my.year))
@@ -469,19 +478,19 @@ function(panel.data,         ## REQUIRED
 			tmp.yr.iter <- rev(year.progression)[start.index:(k+1L)]
 
 			## naive model
-            if (calculate.simex.sgps) {
-                fitted[[paste0("order_", k)]] <- matrix(0, nrow=length(lambda), ncol=n.records*length(taus))
-                tmp.matrix <- getsplineMatrices(
-                    Coefficient_Matrices[[tmp.path.coefficient.matrices]],
-                    tail(content_area.progression, k+1L),
-                    tail(grade.progression, k+1L),
-                    tail(year.progression, k+1L),
-                    tail(year_lags.progression, k),
-                    my.matrix.order=k,
-                    my.matrix.time.dependency=SGPt)[[1L]]
+      # if (calculate.simex.sgps) { # Always calculate SIMEX SGPs (for ranked SIMEX table)
+      fitted[[paste0("order_", k)]] <- matrix(0, nrow=length(lambda), ncol=n.records*length(taus))
+      tmp.matrix <- getsplineMatrices(
+        Coefficient_Matrices[[tmp.path.coefficient.matrices]],
+        tail(content_area.progression, k+1L),
+        tail(grade.progression, k+1L),
+        tail(year.progression, k+1L),
+        tail(year_lags.progression, k),
+        my.matrix.order=k,
+        my.matrix.time.dependency=SGPt)[[1L]]
 
-                fitted[[paste0("order_", k)]][1L,] <- c(.get.percentile.predictions(tmp.data, tmp.matrix))
-            }
+      fitted[[paste0("order_", k)]][1L,] <- c(.get.percentile.predictions(tmp.data, tmp.matrix))
+      # }
 
 			# add csems to tmp.data
 			if (!is.null(state)) {
@@ -509,45 +518,45 @@ function(panel.data,         ## REQUIRED
 			if (verbose) messageSGP(c("\t\t", rev(content_area.progression)[1L], " Grade ", rev(tmp.gp)[1L], " Order ", k, " Started simulation process ", prettyDate()))
 
 			for (L in lambda[-1L]) {
-                big.data <- createBigData(tmp.data, perturb.var, L, dependent.var.error)
+        big.data <- createBigData(tmp.data, perturb.var, L, dependent.var.error)
 				if (is.null(simex.use.my.coefficient.matrices) & !identical(sgp.labels[['my.extra.label']], "BASELINE")) {
-                    ifelse(dependent.var.error, knots_boundaries.iter <- tail(perturb.var, -1), knots_boundaries.iter <- perturb.var)
-                    for (g in seq_along(knots_boundaries.iter)) {
-                        ks <- big.data[, as.list(as.vector(unlist(round(quantile(big.data[[g+1L]], probs=knot.cut.percentiles, na.rm=TRUE), digits=3L))))] # Knots
-                        bs <- big.data[, as.list(as.vector(round(extendrange(big.data[[g+1L]], f=0.1), digits=3L)))] # Boundaries
-                        lh <- big.data[, as.list(as.vector(round(extendrange(big.data[[g+1L]], f=0.0), digits=3L)))] # LOSS/HOSS
+          ifelse(dependent.var.error, knots_boundaries.iter <- tail(perturb.var, -1), knots_boundaries.iter <- perturb.var)
+          for (g in seq_along(knots_boundaries.iter)) {
+            ks <- big.data[, as.list(as.vector(unlist(round(quantile(big.data[[g+1L]], probs=knot.cut.percentiles, na.rm=TRUE), digits=3L))))] # Knots
+            bs <- big.data[, as.list(as.vector(round(extendrange(big.data[[g+1L]], f=0.1), digits=3L)))] # Boundaries
+            lh <- big.data[, as.list(as.vector(round(extendrange(big.data[[g+1L]], f=0.0), digits=3L)))] # LOSS/HOSS
 
-                        eval(parse(text=paste0("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['knots_", rev(knots_boundaries.iter)[g],
-																"']] <- c(ks[,V1], ks[,V2], ks[,V3], ks[,V4])")))
-                        eval(parse(text=paste0("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['boundaries_", rev(knots_boundaries.iter)[g],
-																"']] <- c(bs[,V1], bs[,V2])")))
-                        eval(parse(text=paste0("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['loss.hoss_", rev(knots_boundaries.iter)[g],
-																"']] <- c(lh[,V1], lh[,V2])")))
-                    }
+            eval(parse(text=paste0("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['knots_", rev(knots_boundaries.iter)[g],
+  									"']] <- c(ks[,V1], ks[,V2], ks[,V3], ks[,V4])")))
+            eval(parse(text=paste0("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['boundaries_", rev(knots_boundaries.iter)[g],
+  									"']] <- c(bs[,V1], bs[,V2])")))
+            eval(parse(text=paste0("Knots_Boundaries", my.path.knots.boundaries, "[['Lambda_", L, "']][['loss.hoss_", rev(knots_boundaries.iter)[g],
+  									"']] <- c(lh[,V1], lh[,V2])")))
+          }
 				}
 
 				## Establish the simulation iterations - either 1) 1:B, or 2) a sample of either B or the number of previously computed matrices
 				sim.iters <- seq.int(B)
 
 				if (!is.null(tmp.par.config)) { # Not Sequential
-                    ## Write big.data to disk and remove from memory
-                    if (!exists('year.progression.for.norm.group')) year.progression.for.norm.group <- year.progression # Needed during Baseline Matrix construction
-                    tmp.dbname <- tempdir()
-                    sapply(sim.iters, function(z) data.table::fwrite(big.data[list(z)], file=file.path(tmp.dbname, paste0("simex_data_", z, ".csv")), showProgress = FALSE, verbose = FALSE))
+          ## Write big.data to disk and remove from memory
+          if (!exists('year.progression.for.norm.group')) year.progression.for.norm.group <- year.progression # Needed during Baseline Matrix construction
+          tmp.dbname <- tempdir()
+          sapply(sim.iters, function(z) data.table::fwrite(big.data[list(z)], file=file.path(tmp.dbname, paste0("simex_data_", z, ".csv")), showProgress = FALSE, verbose = FALSE))
 				}
 
 				if (!is.null(simex.use.my.coefficient.matrices)) { # Element from the 'calculate.simex' argument list.
 					available.matrices <- unlist(getsplineMatrices(
 						Coefficient_Matrices[[paste0(tmp.path.coefficient.matrices, '.SIMEX')]][[
 							paste("qrmatrices", tail(tmp.gp,1L), k, sep="_")]][[paste0("lambda_", L)]],
-						tail(content_area.progression, k+1L),
-						tail(grade.progression, k+1L),
-						tail(year.progression, k+1L),
-						tail(year_lags.progression, k),
-						my.exact.grade.progression.sequence=TRUE,
-						return.multiple.matrices=TRUE,
-						my.matrix.order=k,
-						my.matrix.time.dependency=SGPt), recursive=FALSE)
+  						tail(content_area.progression, k+1L),
+  						tail(grade.progression, k+1L),
+  						tail(year.progression, k+1L),
+  						tail(year_lags.progression, k),
+  						my.exact.grade.progression.sequence=TRUE,
+  						return.multiple.matrices=TRUE,
+  						my.matrix.order=k,
+  						my.matrix.time.dependency=SGPt), recursive=FALSE)
 
 					if (length(available.matrices) > B) sim.iters <- sample.int(length(available.matrices), B) # Stays as 1:B when length(available.matrices) == B
 					if (length(available.matrices) < B) sim.iters <- sample.int(length(available.matrices), B, replace=TRUE)
@@ -557,8 +566,8 @@ function(panel.data,         ## REQUIRED
 					if (verbose) messageSGP(c("\t\t\tStarted coefficient matrix calculation, Lambda ", L, ": ", prettyDate()))
 					if (is.null(simex.use.my.coefficient.matrices)) {
 						if (!is.null(simex.sample.size) && n.records > simex.sample.size) {
-                          foreach::registerDoSEQ()
-                          tmp.random <- foreach(z=iter(sim.iters)) %dorng% sample(seq.int(n.records), simex.sample.size)
+              foreach::registerDoSEQ()
+              tmp.random <- foreach(z=iter(sim.iters)) %dorng% sample(seq.int(n.records), simex.sample.size)
 						}
 						for (z in seq_along(sim.iters)) {
 							if (is.null(simex.sample.size) || n.records <= simex.sample.size) {
@@ -571,14 +580,14 @@ function(panel.data,         ## REQUIRED
 						}
 					} else simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste0("lambda_", L)]] <- available.matrices[sim.iters]
 
-					if (calculate.simex.sgps) {
-						if (verbose) messageSGP(c("\t\t\tStarted percentile prediction calculation, Lambda ", L, ": ", prettyDate()))
-						for (z in seq_along(sim.iters)) {
-							fitted[[paste0("order_", k)]][which(lambda==L),] <- fitted[[paste0("order_", k)]][which(lambda==L),] +
-								c(.get.percentile.predictions(big.data[list(z)][, paste(c("ID", paste0('prior_', k:1L), "final_yr")), with=FALSE],
-									simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste0("lambda_", L)]][[z]])/B)
-						}
+					# if (calculate.simex.sgps) { # Always calculate SIMEX SGPs (for ranked SIMEX table)
+					if (verbose) messageSGP(c("\t\t\tStarted percentile prediction calculation, Lambda ", L, ": ", prettyDate()))
+					for (z in seq_along(sim.iters)) {
+						fitted[[paste0("order_", k)]][which(lambda==L),] <- fitted[[paste0("order_", k)]][which(lambda==L),] +
+							c(.get.percentile.predictions(big.data[list(z)][, paste(c("ID", paste0('prior_', k:1L), "final_yr")), with=FALSE],
+								simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste0("lambda_", L)]][[z]])/B)
 					}
+					# }
 				} else {### Parallel over sim.iters
 					###  Always use FOREACH for coefficient matrix production -- need %dorng% to guarantee reproducibility across plateforms (also MUCH more efficient with SNOW/Windows).
 					if (toupper(tmp.par.config[["BACKEND"]]) != "FOREACH") tmp.par.config[["BACKEND"]] <- "FOREACH"; tmp.par.config[["TYPE"]] <- "doParallel"
@@ -610,12 +619,12 @@ function(panel.data,         ## REQUIRED
 					} else {
 						simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste0("lambda_", L)]] <- available.matrices[sim.iters]
 
-                        ###   Re-set the random seed to match when coef matrices are produced.  Otherwise seed is off when data is simulated in subsequent L loops.
-                        if (is.null(simex.sample.size)) {
-                            ###   Use the N from the matrices rather than `simex.sample.size` - since that element may not be specified in the `calculate.simex` argument/list.
-                            simex.mtx.size <- unique(sapply(sim.iters, function(f) available.matrices[[f]]@Version[["Matrix_Information"]][["N"]]))
-                            if (all(n.records > simex.mtx.size)) tmp.random.reset <- foreach(z=iter(sim.iters)) %dorng% sample(seq.int(n.records), simex.mtx.size)
-                        }
+            ###   Re-set the random seed to match when coef matrices are produced.  Otherwise seed is off when data is simulated in subsequent L loops.
+            if (is.null(simex.sample.size)) {
+              ###   Use the N from the matrices rather than `simex.sample.size` - since that element may not be specified in the `calculate.simex` argument/list.
+              simex.mtx.size <- unique(sapply(sim.iters, function(f) available.matrices[[f]]@Version[["Matrix_Information"]][["N"]]))
+              if (all(n.records > simex.mtx.size)) tmp.random.reset <- foreach(z=iter(sim.iters)) %dorng% sample(seq.int(n.records), simex.mtx.size)
+            }
 					}
 
 					if (!all(sapply(simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste0("lambda_", L)]], is.splineMatrix))) {
@@ -633,86 +642,97 @@ function(panel.data,         ## REQUIRED
 					}
 
 					## get percentile predictions from coefficient matricies
-					if (calculate.simex.sgps) {
-						if (verbose) messageSGP(c("\t\t\tStarted percentile prediction calculation, Lambda ", L, ": ", prettyDate()))
-						mtx.subset <- simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste0("lambda_", L)]] # Save on memory copying to R SNOW workers
-						environment(.get.percentile.predictions) <- environment(.smooth.bound.iso.row) <- environment()
-						fitted[[paste0("order_", k)]][which(lambda==L),] <-
-							foreach(z=iter(seq_along(sim.iters)), .combine="+", .export=c('tmp.gp', 'taus', 'sgp.loss.hoss.adjustment', 'isotonize', 'SGPt', 'get.my.knots.boundaries.path'),
-								.options.multicore=par.start$foreach.options) %dopar% { # .options.snow=par.start$foreach.options
-									c(.get.percentile.predictions(my.matrix=mtx.subset[[z]], my.data=getSIMEXdata(tmp.dbname, z, k, predictions=TRUE))/B)
-								}
-					}
+					# if (calculate.simex.sgps) {
+					if (verbose) messageSGP(c("\t\t\tStarted percentile prediction calculation, Lambda ", L, ": ", prettyDate()))
+					mtx.subset <- simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste0("lambda_", L)]] # Save on memory copying to R SNOW workers
+					environment(.get.percentile.predictions) <- environment(.smooth.bound.iso.row) <- environment()
+					fitted[[paste0("order_", k)]][which(lambda==L),] <-
+						foreach(z=iter(seq_along(sim.iters)), .combine="+", .export=c('tmp.gp', 'taus', 'sgp.loss.hoss.adjustment', 'isotonize', 'SGPt', 'get.my.knots.boundaries.path'),
+							.options.multicore=par.start$foreach.options) %dopar% { # .options.snow=par.start$foreach.options
+								c(.get.percentile.predictions(my.matrix=mtx.subset[[z]], my.data=getSIMEXdata(tmp.dbname, z, k, predictions=TRUE))/B)
+							}
+					# }
 					stopParallel(tmp.par.config, par.start)
 				} ### END Parallel over sim.iters
-                if (!is.null(tmp.par.config)) unlink(tmp.dbname)
+        if (!is.null(tmp.par.config)) unlink(tmp.dbname)
 			} ### END for (L in lambda[-1L])
 			if (verbose) messageSGP(c("\t\t", rev(content_area.progression)[1L], " Grade ", rev(tmp.gp)[1L], " Order ", k, " Simulation process complete ", prettyDate()))
 
-            if (calculate.simex.sgps) {
-                switch(extrapolation,
-                    LINEAR = fit <- lm(fitted[[paste0("order_", k)]] ~ lambda),
-                    QUADRATIC = fit <- lm(fitted[[paste0("order_", k)]] ~ lambda + I(lambda^2)))
+      # if (calculate.simex.sgps) { # Always calculate SIMEX SGPs (for ranked SIMEX table)
+      switch(extrapolation,
+        LINEAR = fit <- lm(fitted[[paste0("order_", k)]] ~ lambda),
+        QUADRATIC = fit <- lm(fitted[[paste0("order_", k)]] ~ lambda + I(lambda^2)))
 
-                extrap[[paste0("order_", k)]] <-
-                    matrix(.smooth.bound.iso.row(data.table(ID=seq.int(n.records), X=predict(fit, newdata=data.frame(lambda=-1L))[1L,]), isotonize, sgp.loss.hoss.adjustment),
-                        ncol=length(taus), byrow=TRUE)
+      extrap[[paste0("order_", k)]] <-
+        matrix(.smooth.bound.iso.row(data.table(ID=seq.int(n.records), X=predict(fit, newdata=data.frame(lambda=-1L))[1L,]), isotonize, sgp.loss.hoss.adjustment),
+               ncol=length(taus), byrow=TRUE)
 
-                if (is.null(simex.use.my.coefficient.matrices)) {
-                    ranked.simex.quantile.values <- .get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]], ranked.simex=ifelse(reproduce.old.values, "reproduce.old.values", TRUE))
-                    simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste("ranked_simex_table", tail(tmp.gp, 1L), k, sep="_")]] <- table(ranked.simex.quantile.values)
-                    simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste("n_records", tail(tmp.gp, 1L), k, sep="_")]] <- n.records
-                    tmp.quantiles.simex[[k]] <- data.table(ID=tmp.data[["ID"]], SIMEX_ORDER=k,
-  					SGP_SIMEX=.get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]]),
-  					SGP_SIMEX_RANKED=as.integer(round(100*(data.table::frank(ties.method = "average", x = ranked.simex.quantile.values)/n.records), 0)))
-                } else {
-                    if (length(Coefficient_Matrices[[paste0(tmp.path.coefficient.matrices, '.SIMEX')]][[paste("qrmatrices", tail(tmp.gp,1L), k, sep="_")]]) > (length(lambda)-1)) {
-                        ranked.simex.info <- Coefficient_Matrices[[paste0(tmp.path.coefficient.matrices, '.SIMEX')]][[paste("qrmatrices", tail(tmp.gp,1L), k, sep="_")]][length(lambda):(length(lambda)+1)]
-                        ranked.simex.tf <- TRUE
-                    } else {
-                        if (use.cohort.for.ranking) {
-                            ranked.simex.tf <- TRUE
-                        } else {
-                            messageSGP("\tRanked SIMEX SGP calculation with pre-calculated SGPs is only available with info embedded as of SGP version 1.9-4.0\n\tor setting parameter use.cohort.for.ranking = TRUE in the calculate.simex configuration.\n\tNAs will be returned for SGP_SIMEX_RANKED.")
-                            ranked.simex.tf <- FALSE
-                        }
-                    }
-                    if (ranked.simex.tf) {
-                        if (use.cohort.for.ranking) { # Use `use.cohort.for.ranking=TRUE` if reproducing values with original data OR to rank against the updated/new cohort data ONLY
-                            tmp.quantiles.simex[[k]] <- data.table(ID=tmp.data[["ID"]], SIMEX_ORDER=k,
-                            SGP_SIMEX = .get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]]),
-                            SGP_SIMEX_RANKED = as.integer(round(100*(data.table::frank(ties.method = "average", x =
-                            .get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]], ranked.simex=ifelse(reproduce.old.values, "reproduce.old.values", TRUE)))/n.records), 0)))
-                        } else { # creates a new "average" rank of the original data and the updated/new cohort
-                            tmp.quantiles.simex[[k]] <- data.table(ID=tmp.data[["ID"]], SIMEX_ORDER=k,
-                            SGP_SIMEX = .get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]]),
-                            SGP_SIMEX_RANKED = head(as.integer(round(100*(data.table::frank(ties.method = "average", x =
-                            c(.get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]], ranked.simex=ifelse(reproduce.old.values, "reproduce.old.values", TRUE)),
-                            as.numeric(rep(names(ranked.simex.info[[paste("ranked_simex_table", tail(tmp.gp, 1L), k, sep="_")]]),
-                            ranked.simex.info[[paste("ranked_simex_table", tail(tmp.gp, 1L), k, sep="_")]]))))/(n.records+ranked.simex.info[[paste("n_records", tail(tmp.gp, 1L), k, sep="_")]])), 0)), n.records))
-                        }
-                    }
-                }
-            }
-        }### END for (k in simex.matrix.priors)
+      if (is.null(simex.use.my.coefficient.matrices)) {
+        ranked.simex.quantile.values <- .get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]], ranked.simex=ifelse(reproduce.old.values, "reproduce.old.values", TRUE))
+        # simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste("ranked_simex_table", tail(tmp.gp, 1L), k, sep="_")]] <- table(ranked.simex.quantile.values)
+        # simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste("n_records", tail(tmp.gp, 1L), k, sep="_")]] <- n.records
+        ranked_simex_table <- table(ranked.simex.quantile.values)
+        attr(ranked_simex_table, 'content_area_progression') <- tail(content_area.progression, k+1L)
+        attr(ranked_simex_table, 'grade_progression') <- tail(grade.progression, k+1L)
+        attr(ranked_simex_table, 'year_progression') <- tail(year.progression, k+1L)
+        attr(ranked_simex_table, 'year_lags_progression') <- tail(year_lags.progression, k)
+        attr(ranked_simex_table, 'n_records') <- n.records
+        simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][["ranked_simex_table"]][[1]] <- ranked_simex_table
+
+        tmp.quantiles.simex[[k]] <- data.table(ID=tmp.data[["ID"]], SIMEX_ORDER=k,
+            SGP_SIMEX=.get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]]),
+            SGP_SIMEX_RANKED=as.integer(round(100*(data.table::frank(ties.method = "average", x = ranked.simex.quantile.values)/n.records), 0)))
+      } else {
+        if (any(grepl("ranked_simex_table", names(Coefficient_Matrices[[paste0(tmp.path.coefficient.matrices, '.SIMEX')]][[paste("qrmatrices", tail(tmp.gp,1L), k, sep="_")]])))) {
+        # if (length(Coefficient_Matrices[[paste0(tmp.path.coefficient.matrices, '.SIMEX')]][[paste("qrmatrices", tail(tmp.gp,1L), k, sep="_")]]) > (length(lambda)-1)) {
+          # ranked.simex.info <- Coefficient_Matrices[[paste0(tmp.path.coefficient.matrices, '.SIMEX')]][[paste("qrmatrices", tail(tmp.gp,1L), k, sep="_")]][length(lambda):(length(lambda)+1)]
+          ranked.simex.info <- get.simex.ranking.info(
+            Coefficient_Matrices[[paste0(tmp.path.coefficient.matrices, '.SIMEX')]][[paste("qrmatrices", tail(tmp.gp,1L), k, sep="_")]][["ranked_simex_table"]],
+            tail(content_area.progression, k+1L), tail(grade.progression, k+1L), tail(year.progression, k+1L), tail(year_lags.progression, k))
+          ranked.simex.tf <- TRUE
+        } else {
+          if (use.cohort.for.ranking) {
+              ranked.simex.tf <- TRUE
+          } else {
+              messageSGP("\tRanked SIMEX SGP calculation with pre-calculated SGPs is only available with info embedded as of SGP version 1.9-4.0\n\tor setting parameter use.cohort.for.ranking = TRUE in the calculate.simex configuration.\n\tNAs will be returned for SGP_SIMEX_RANKED.")
+              ranked.simex.tf <- FALSE
+          }
+        }
+        if (ranked.simex.tf) {
+          if (use.cohort.for.ranking) { # Use `use.cohort.for.ranking=TRUE` if reproducing values with original data OR to rank against the updated/new cohort data ONLY
+            tmp.quantiles.simex[[k]] <- data.table(ID=tmp.data[["ID"]], SIMEX_ORDER=k,
+            SGP_SIMEX = .get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]]),
+            SGP_SIMEX_RANKED = as.integer(round(100*(data.table::frank(ties.method = "average", x =
+            .get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]], ranked.simex=ifelse(reproduce.old.values, "reproduce.old.values", TRUE)))/n.records), 0)))
+          } else { # creates a new "average" rank of the original data and the updated/new cohort
+            tmp.quantiles.simex[[k]] <- data.table(ID=tmp.data[["ID"]], SIMEX_ORDER=k,
+            SGP_SIMEX = .get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]]),
+            SGP_SIMEX_RANKED = head(as.integer(round(100*(data.table::frank(ties.method = "average", x =
+                c(.get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]], ranked.simex=ifelse(reproduce.old.values, "reproduce.old.values", TRUE)),
+                as.numeric(rep(names(ranked.simex.info), ranked.simex.info))))/(n.records+attr(ranked.simex.info, "n_records"))), 0)), n.records))
+          }
+        }
+      }
+      # }
+    }### END for (k in simex.matrix.priors)
 
 		if (verbose) messageSGP(c("\tFinished SIMEX SGP calculation ", rev(content_area.progression)[1L], " Grade ", rev(tmp.gp)[1L], " ", prettyDate()))
 
 		if (is.null(save.matrices)) simex.coef.matrices <- NULL
 		if (calculate.simex.sgps) {
 			quantile.data.simex <- data.table(rbindlist(tmp.quantiles.simex), key=c("ID", "SIMEX_ORDER"))
-            # invisible(quantile.data.simex[, SGP_SIMEX_RANKED := as.integer(round(100*(rank(SGP_SIMEX, ties.method = "average")/length(SGP_SIMEX)), 0)), by = "SIMEX_ORDER"])
-            if (convert.0and100) {
-                invisible(quantile.data.simex[SGP_SIMEX_RANKED==0L, SGP_SIMEX_RANKED := 1L])
-                invisible(quantile.data.simex[SGP_SIMEX_RANKED==100L, SGP_SIMEX_RANKED := 99L])
-            }
+      # invisible(quantile.data.simex[, SGP_SIMEX_RANKED := as.integer(round(100*(rank(SGP_SIMEX, ties.method = "average")/length(SGP_SIMEX)), 0)), by = "SIMEX_ORDER"])
+      if (convert.0and100) {
+        invisible(quantile.data.simex[SGP_SIMEX_RANKED==0L, SGP_SIMEX_RANKED := 1L])
+        invisible(quantile.data.simex[SGP_SIMEX_RANKED==100L, SGP_SIMEX_RANKED := 99L])
+      }
 			setkey(quantile.data.simex, ID) # first key on ID and SIMEX_ORDER, then re-key on ID only to insure sorted order. Don't rely on rbindlist/k ordering...
 		} else quantile.data.simex <- data.table("ID"=NA, "SIMEX_ORDER"=NA, "SGP_SIMEX"=NA, "SGP_SIMEX_RANKED"=NA) # set up empty data.table for ddcast and subsets below.
 		if (print.other.gp) {
 			tmp.quantile.data.simex <- ddcast(quantile.data.simex, ID ~ SIMEX_ORDER, value.var=setdiff(names(quantile.data.simex), c("ID", "SIMEX_ORDER")), sep="_ORDER_")
 			quantile.data.simex <- data.table(tmp.quantile.data.simex,
-                SGP_SIMEX=quantile.data.simex[c(which(!duplicated(quantile.data.simex, by=key(quantile.data.simex)))[-1L]-1L, dim(quantile.data.simex)[1L])][["SGP_SIMEX"]],
-                SGP_SIMEX_RANKED=quantile.data.simex[c(which(!duplicated(quantile.data.simex, by=key(quantile.data.simex)))[-1L]-1L, dim(quantile.data.simex)[1L])][["SGP_SIMEX_RANKED"]])
+        SGP_SIMEX=quantile.data.simex[c(which(!duplicated(quantile.data.simex, by=key(quantile.data.simex)))[-1L]-1L, dim(quantile.data.simex)[1L])][["SGP_SIMEX"]],
+        SGP_SIMEX_RANKED=quantile.data.simex[c(which(!duplicated(quantile.data.simex, by=key(quantile.data.simex)))[-1L]-1L, dim(quantile.data.simex)[1L])][["SGP_SIMEX_RANKED"]])
 			return(list(
 				DT=quantile.data.simex,
 				MATRICES=simex.coef.matrices))
@@ -999,7 +1019,7 @@ function(panel.data,         ## REQUIRED
 		} else {
 			calculate.simex$extrapolation <- toupper(calculate.simex$extrapolation)
 		}
-		if (!any(calculate.simex$extrapolation == c("QUADRATIC", "LINEAR", "NATURAL"))) {
+		if (!any(calculate.simex$extrapolation == c("QUADRATIC", "LINEAR"))) {
 			messageSGP("\t\tNOTE: Extrapolation not implemented. Using: linear")
 			calculate.simex$extrapolation <- "LINEAR"
 		}
