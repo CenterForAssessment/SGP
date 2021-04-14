@@ -1904,9 +1904,11 @@ function(
 
 			### TEST of READING SGPercentiles output: Dimension
 
-			invisible(unzip(paste("Data/RLI1_PART_1/SGPercentiles/READING", tmp.last.window, "BASELINE.txt.zip", sep=".")))
-			tmp.data <- fread(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
-			unlink(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
+			if (identical(.Platform$OS.type, "unix")) {
+				invisible(unzip(paste("Data/RLI1_PART_1/SGPercentiles/READING", tmp.last.window, "BASELINE.txt.zip", sep=".")))
+				tmp.data <- fread(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
+				unlink(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
+			} else tmp.data <- fread(paste("Data/RLI1_PART_1/SGPercentiles/READING", tmp.last.window, "BASELINE.txt", sep="."))
 
 			if (identical(dim(tmp.data), c(2212L, 10L))) {  # preSGP 1.6-4.16 +Dups: 2179L, 10L
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGPercentiles output, part 1: OK\n")
@@ -1928,9 +1930,11 @@ function(
 
 			### TEST of READING SGProjections output
 
-			invisible(unzip(paste("Data/RLI1_PART_1/SGProjections/READING", tmp.last.window, "BASELINE.txt.zip", sep=".")))
-			tmp.data <- fread(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
-			unlink(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
+			if (identical(.Platform$OS.type, "unix")) {
+				invisible(unzip(paste("Data/RLI1_PART_1/SGProjections/READING", tmp.last.window, "BASELINE.txt.zip", sep=".")))
+				tmp.data <- fread(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
+				unlink(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
+			} else tmp.data <- fread(paste("Data/RLI1_PART_1/SGProjections/READING", tmp.last.window, "BASELINE.txt", sep="."))
 
 			if (identical(dim(tmp.data), c(996L, 1038L))) { ### pre-RLI1 c(981L, 118L)  ### preSGP 1.6-4.16 +Dups :: 981L, 1038L
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGProjections output, part 1: OK\n")
@@ -1940,9 +1944,12 @@ function(
 
 			### TEST of READING SGProjections TARGETS output
 
-			invisible(unzip(paste("Data/RLI1_PART_1/SGProjections/READING", tmp.last.window, "BASELINE.TARGET_SCALE_SCORES.txt.zip", sep=".")))
-			tmp.data <- fread(paste("READING", tmp.last.window, "BASELINE.TARGET_SCALE_SCORES.txt", sep="."))
-			unlink(paste("READING", tmp.last.window, "BASELINE.TARGET_SCALE_SCORES.txt", sep="."))
+			if (identical(.Platform$OS.type, "unix")) {
+				invisible(unzip(paste("Data/RLI1_PART_1/SGProjections/READING", tmp.last.window, "BASELINE.TARGET_SCALE_SCORES.txt.zip", sep=".")))
+				tmp.data <- fread(paste("READING", tmp.last.window, "BASELINE.TARGET_SCALE_SCORES.txt", sep="."))
+				unlink(paste("READING", tmp.last.window, "BASELINE.TARGET_SCALE_SCORES.txt", sep="."))
+			} else	tmp.data <- fread(paste("Data/RLI1_PART_1/SGProjections/READING", tmp.last.window, "BASELINE.TARGET_SCALE_SCORES.txt", sep="."))
+
 
 			if (identical(dim(tmp.data), c(914L, 25L))) { ### 2014-2015 was 867L, pre RLI1 was c(819L, 25L) ### preSGP 1.6-4.16 +Dups :: 900L 25L
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGProjections output, part 1: OK\n")
@@ -2130,9 +2137,11 @@ function(
 
 			### TEST of READING SGPercentiles output: Dimension
 
-			invisible(unzip(paste("Data/RLI2_PART_1/SGPercentiles/READING", tmp.last.window, "BASELINE.txt.zip", sep=".")))
-			tmp.data <- fread(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
-			unlink(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
+			if (identical(.Platform$OS.type, "unix")) {
+				invisible(unzip(paste("Data/RLI2_PART_1/SGPercentiles/READING", tmp.last.window, "BASELINE.txt.zip", sep=".")))
+				tmp.data <- fread(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
+				unlink(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
+			} else	tmp.data <- fread(paste("Data/RLI2_PART_1/SGPercentiles/READING", tmp.last.window, "BASELINE.txt", sep="."))
 
 			if (identical(dim(tmp.data), c(2212L, 10L))) {  ## preSGP 1.6-4.16 +Dups : 2179L, 10L
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGPercentiles output, part 1: OK\n")
@@ -2154,9 +2163,11 @@ function(
 
 			### TEST of READING SGProjections output
 
-			invisible(unzip(paste("Data/RLI2_PART_1/SGProjections/READING", tmp.last.window, "BASELINE.txt.zip", sep=".")))
-			tmp.data <- fread(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
-			unlink(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
+			if (identical(.Platform$OS.type, "unix")) {
+				invisible(unzip(paste("Data/RLI2_PART_1/SGProjections/READING", tmp.last.window, "BASELINE.txt.zip", sep=".")))
+				tmp.data <- fread(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
+				unlink(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
+			} else	tmp.data <- fread(paste("Data/RLI2_PART_1/SGProjections/READING", tmp.last.window, "BASELINE.txt", sep="."))
 
 			if (identical(dim(tmp.data), c(996L, 1038L))) { ### preRLI2 c(981L, 118L), preSGP 1.6-4.16 +Dups: 981L, 1038L
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGProjections output, part 1: OK\n")
@@ -2166,9 +2177,11 @@ function(
 
 			### TEST of READING SGProjections TARGETS output
 
-			invisible(unzip(paste("Data/RLI2_PART_1/SGProjections/READING", tmp.last.window, "BASELINE.TARGET_SCALE_SCORES.txt.zip", sep=".")))
-			tmp.data <- fread(paste("READING", tmp.last.window, "BASELINE.TARGET_SCALE_SCORES.txt", sep="."))
-			unlink(paste("READING", tmp.last.window, "BASELINE.TARGET_SCALE_SCORES.txt", sep="."))
+			if (identical(.Platform$OS.type, "unix")) {
+				invisible(unzip(paste("Data/RLI2_PART_1/SGProjections/READING", tmp.last.window, "BASELINE.TARGET_SCALE_SCORES.txt.zip", sep=".")))
+				tmp.data <- fread(paste("READING", tmp.last.window, "BASELINE.TARGET_SCALE_SCORES.txt", sep="."))
+				unlink(paste("READING", tmp.last.window, "BASELINE.TARGET_SCALE_SCORES.txt", sep="."))
+			} else	tmp.data <- fread(paste("Data/RLI2_PART_1/SGProjections/READING", tmp.last.window, "BASELINE.TARGET_SCALE_SCORES.txt", sep="."))
 
 			if (identical(dim(tmp.data), c(913L, 25L))) { ### 2014-2015 was 867L, preRLI2 was 819L, preSGP 1.6-4.16 +Dups: 900L, 25L
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGProjections output, part 1: OK\n")
@@ -2349,9 +2362,11 @@ function(
 
 			### TEST of READING SGPercentiles output: Dimension
 
-			invisible(unzip(paste("Data/RLI3_PART_1/SGPercentiles/READING", tmp.last.window, "BASELINE.txt.zip", sep=".")))
-			tmp.data <- fread(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
-			unlink(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
+			if (identical(.Platform$OS.type, "unix")) {
+				invisible(unzip(paste("Data/RLI3_PART_1/SGPercentiles/READING", tmp.last.window, "BASELINE.txt.zip", sep=".")))
+				tmp.data <- fread(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
+				unlink(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
+			} else	tmp.data <- fread(paste("Data/RLI3_PART_1/SGPercentiles/READING", tmp.last.window, "BASELINE.txt", sep="."))
 
 			if (identical(dim(tmp.data), c(2179L, 10L))) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGPercentiles output, part 1: OK\n")
@@ -2373,9 +2388,11 @@ function(
 
 			### TEST of READING SGProjections output
 
-			invisible(unzip(paste("Data/RLI3_PART_1/SGProjections/READING", tmp.last.window, "BASELINE.txt.zip", sep=".")))
-			tmp.data <- fread(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
-			unlink(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
+			if (identical(.Platform$OS.type, "unix")) {
+				invisible(unzip(paste("Data/RLI3_PART_1/SGProjections/READING", tmp.last.window, "BASELINE.txt.zip", sep=".")))
+				tmp.data <- fread(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
+				unlink(paste("READING", tmp.last.window, "BASELINE.txt", sep="."))
+			} else	tmp.data <- fread(paste("Data/RLI3_PART_1/SGProjections/READING", tmp.last.window, "BASELINE.txt", sep="."))
 
 			if (identical(dim(tmp.data), c(981L, 1038L))) { ### preRLI3 c(981L, 118L)
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGProjections output, part 1: OK\n")
@@ -2385,9 +2402,11 @@ function(
 
 			### TEST of READING SGProjections TARGETS output
 
-			invisible(unzip(paste("Data/RLI3_PART_1/SGProjections/READING", tmp.last.window, "BASELINE.TARGET_SCALE_SCORES.txt.zip", sep=".")))
-			tmp.data <- fread(paste("READING", tmp.last.window, "BASELINE.TARGET_SCALE_SCORES.txt", sep="."))
-			unlink(paste("READING", tmp.last.window, "BASELINE.TARGET_SCALE_SCORES.txt", sep="."))
+			if (identical(.Platform$OS.type, "unix")) {
+				invisible(unzip(paste("Data/RLI3_PART_1/SGProjections/READING", tmp.last.window, "BASELINE.TARGET_SCALE_SCORES.txt.zip", sep=".")))
+				tmp.data <- fread(paste("READING", tmp.last.window, "BASELINE.TARGET_SCALE_SCORES.txt", sep="."))
+				unlink(paste("READING", tmp.last.window, "BASELINE.TARGET_SCALE_SCORES.txt", sep="."))
+			} else	tmp.data <- fread(paste("Data/RLI3_PART_1/SGProjections/READING", tmp.last.window, "BASELINE.TARGET_SCALE_SCORES.txt", sep="."))
 
 			if (identical(dim(tmp.data), c(900L, 25L))) { ### 2014-2015 was 867L, preRLI3 was 819L
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGProjections output, part 1: OK\n")
