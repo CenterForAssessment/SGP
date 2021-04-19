@@ -765,154 +765,156 @@ function(sgp_object,
 	###   Stratified Random Sample (SRS) SGP - calculate cohort and baseline referenced matrices first
 	#######################################################################################################################
 
-    if (!is.null(calculate.srs) || !is.null(calculate.srs.baseline)) {
-
-        if (!is.null(sgp.config)) {
-            tmp.subjects <- unique(sapply(sgp.config, function(x) tail(x[["sgp.content.areas"]],1)))
-        } else {
-            if (!is.null(content_areas)) tmp.subjects <- content_areas else tmp.subjects <- unique(sgp_object@Data["VALID_CASE"], by="CONTENT_AREA")[["CONTENT_AREA"]]
-        }
-
-        ## Identify BASELINE SRS matrices if they are not present
-        if (!all(find.srs.matrices <- paste0(tmp.subjects, ".BASELINE.SRS") %in% names(tmp_sgp_object[["Coefficient_Matrices"]]))) {
-            if (length(grep("SRS", names(sgp_object@SGP[["Coefficient_Matrices"]])))==0){
-                sgp_object@SGP[["Coefficient_Matrices"]] <- c(sgp_object@SGP[["Coefficient_Matrices"]], tmp_sgp_object[["Coefficient_Matrices"]][grep("SRS", names(tmp_sgp_object[["Coefficient_Matrices"]]))])
-            }
-
-            if (is.null(SGPstateData[[state]][["SRS_Baseline_splineMatrix"]])) {# Put in SGPstateData to bypass re-running SRS baseline matrices (either already exist or calculated above)
-                SGPstateData[[state]][["SRS_Baseline_splineMatrix"]] <- tmp_sgp_object[["Coefficient_Matrices"]][grep("SRS", names(tmp_sgp_object[["Coefficient_Matrices"]]))]
-            }
-
-			if (is.null(sgp.baseline.srs.config)) {
-				sgp.srs.baseline.config <- getSGPSRSBaselineConfig(sgp_object, content_areas=tmp.subjects, grades, sgp.srs.baseline.panel.years, sgp.percentiles.srs.baseline.max.order, calculate.simex.srs.baseline)
-			} else {
-				sgp.srs.baseline.config <- checkConfig(sgp.srs.baseline.config, "SRS_Baseline")
-			}
-
-
-
-
-        }
-
-        ## Cohort referenced SRS matrices
-        if (!is.null(calculate.srs)) { ### Create data and parameters (if not supplied) to calculate annual SRS SGPs
-
-
-        } ### END calculate.srs
-
-
-        ## Baseline referenced SRS martrices
-        if (!is.null(calculate.srs.baseline) & !all(find.srs.matrices)) {
-
-            if (length(grep("BASELINE", names(sgp_object@SGP[["Coefficient_Matrices"]])))==0){
-                sgp_object@SGP[["Coefficient_Matrices"]] <- c(sgp_object@SGP[["Coefficient_Matrices"]], tmp_sgp_object[["Coefficient_Matrices"]][grep("BASELINE", names(tmp_sgp_object[["Coefficient_Matrices"]]))])
-            }
-
-            if (is.null(SGPstateData[[state]][["Baseline_splineMatrix"]])) {# Put in SGPstateData to bypass re-running baseline matrices (either already exist or calculated above)
-                SGPstateData[[state]][["Baseline_splineMatrix"]] <- tmp_sgp_object[["Coefficient_Matrices"]][grep("BASELINE", names(tmp_sgp_object[["Coefficient_Matrices"]]))]
-            }
-
-			if (is.null(sgp.baseline.config)) {
-				sgp.baseline.config <- getSGPBaselineConfig(sgp_object, content_areas=tmp.subjects, grades, sgp.baseline.panel.years, sgp.percentiles.baseline.max.order, calculate.simex.baseline)
-			} else {
-				sgp.baseline.config <- checkConfig(sgp.baseline.config, "Baseline")
-			}
-
-			sgp.baseline.config <- sgp.baseline.config[which(sapply(sgp.baseline.config, function(x) tail(x[["sgp.baseline.content.areas"]],1)) %in% tmp.subjects[!find.matrices])]
-
-			messageSGP("\n\tStarted SIMEX Baseline Coefficient Matrix Calculation:\n")
-
-			##  Enforce that simex.use.my.coefficient.matrices must be FALSE for BASELINE SIMEX matrix production
-			calculate.simex.baseline[['simex.use.my.coefficient.matrices']] <- NULL
-
-			if (!is.null(parallel.config)) { ### PARALLEL BASELINE COEFFICIENT MATRIX CONSTRUCTION
-
-				par.start <- startParallel(parallel.config, 'BASELINE_MATRICES')
-
-				##  FOREACH flavor
-				if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
-					tmp <- foreach(sgp.iter=iter(sgp.baseline.config), .packages="SGP", .errorhandling = "pass", .inorder=FALSE,
-						.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
-						return(baselineSGP(
-							sgp_object,
-							state=state,
-							sgp.baseline.config=list(sgp.iter), ## NOTE: list of sgp.iter must be passed for proper iteration
-							return.matrices.only=TRUE,
-							calculate.baseline.sgps=FALSE,
-							calculate.simex.baseline=calculate.simex.baseline,
-							parallel.config=parallel.config,
-							panel.data.vnames=getPanelDataVnames("baseline.sgp", sgp.iter, sgp.data.names)))
-					}
-                    if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
-                        tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
-                        sgp.percentiles.baseline.=getErrorReports(tmp, tmp.tf, sgp.baseline.config[['sgp.percentiles.baseline']]))
-                    }
-                    tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
-                } else {  ## SNOW and MULTICORE flavors
-					if (par.start$par.type=="SNOW") {
-						tmp <- clusterApplyLB(par.start$internal.cl, sgp.baseline.config, function(sgp.iter) baselineSGP(
-							sgp_object,
-							state=state,
-							sgp.baseline.config=list(sgp.iter), ## NOTE: list of sgp.iter must be passed for proper iteration
-							return.matrices.only=TRUE,
-							calculate.baseline.sgps=FALSE,
-							calculate.simex.baseline=calculate.simex.baseline,
-							parallel.config=parallel.config,
-							panel.data.vnames=getPanelDataVnames("baseline.sgp", sgp.iter, sgp.data.names)))
-
-						tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp, simex=TRUE)))
-					} # END if (SNOW)
-
-					if (par.start$par.type=="MULTICORE") {
-						tmp <- mclapply(sgp.baseline.config, function(sgp.iter) baselineSGP(
-							sgp_object,
-							state=state,
-							sgp.baseline.config=list(sgp.iter), ## NOTE: list of sgp.iter must be passed for proper iteration
-							return.matrices.only=TRUE,
-							calculate.baseline.sgps=FALSE,
-							calculate.simex.baseline=calculate.simex.baseline,
-							parallel.config=parallel.config,
-							panel.data.vnames=getPanelDataVnames("baseline.sgp", sgp.iter, sgp.data.names)),
-							mc.cores=par.start$workers, mc.preschedule=FALSE)
-
-						tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp, simex=TRUE)))
-					} # END if (MULTICORE)
-					stopParallel(parallel.config, par.start)
-				} #  END FOREACH, SNOW and MULTICORE
-			} else {
-				## SEQUENTIAL BASELINE COEFFICIENT MATRIX CONSTRUCTION
-				##  Or, run SIMEX simulation iterations in parallel in studentGrowthPercentiles using lower.level.parallel.config
-				##  Useful if many more cores/workers available than configs to iterate over.
-				tmp <- list()
-				for (sgp.iter in seq_along(sgp.baseline.config)) {
-					tmp[[sgp.iter]] <- baselineSGP(
-						sgp_object,
-						state=state,
-						sgp.baseline.config=sgp.baseline.config[sgp.iter], ## NOTE: must pass list, [...], not vector, [[...]].
-						return.matrices.only=TRUE,
-						calculate.baseline.sgps=FALSE,
-						calculate.simex.baseline=calculate.simex.baseline,
-						parallel.config=lower.level.parallel.config,
-						panel.data.vnames=getPanelDataVnames("baseline.sgp", sgp.baseline.config[[sgp.iter]], sgp.data.names))
-				}
-				tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp, simex=TRUE)))
-			}
-
-			###  Save SIMEX BASELINE matrices
-			assign(paste0(state, "_SIMEX_Baseline_Matrices"), list())
-			for (tmp.matrix.label in grep("BASELINE.SIMEX", names(tmp_sgp_object$Coefficient_Matrices), value=TRUE)) {
-				eval(parse(text=paste0(state, "_SIMEX_Baseline_Matrices[['", tmp.matrix.label, "']] <- tmp_sgp_object[['Coefficient_Matrices']][['", tmp.matrix.label, "']]")))
-			}
-			save(list=paste0(state, "_SRS_Baseline_Matrices"), file=paste0(state, "_SRS_Baseline_Matrices.Rdata"), compress="xz")
-
-			messageSGP("\n\tFinished Calculating SRS Baseline Coefficient Matrices\n")
-
-        ##  Enforce that simex.use.my.coefficient.matrices must be TRUE and save.matrices is FALSE for BASELINE SIMEX calculations below
-		calculate.simex.baseline[['simex.use.my.coefficient.matrices']] <- TRUE
-		calculate.simex.baseline[['save.matrices']] <- FALSE
-
-        } ### END calculate.srs.baseline
-    } # END check for SRS analyses
+#    if (!is.null(calculate.srs) || !is.null(calculate.srs.baseline)) {
+#
+#        if (!is.null(sgp.config)) {
+#            tmp.subjects <- unique(sapply(sgp.config, function(x) tail(x[["sgp.content.areas"]],1)))
+#        } else {
+#            if (!is.null(content_areas)) tmp.subjects <- content_areas else tmp.subjects <- unique(sgp_object@Data["VALID_CASE"], by="CONTENT_AREA")[["CONTENT_AREA"]]
+#        }
+#
+#        ## Identify BASELINE SRS matrices if they are not present
+#        if (!all(find.srs.matrices <- paste0(tmp.subjects, ".BASELINE.SRS") %in% names(tmp_sgp_object[["Coefficient_Matrices"]]))) {
+#            if (length(grep("SRS", names(sgp_object@SGP[["Coefficient_Matrices"]])))==0){
+#                sgp_object@SGP[["Coefficient_Matrices"]] <- c(sgp_object@SGP[["Coefficient_Matrices"]], tmp_sgp_object[["Coefficient_Matrices"]][grep("SRS", names(tmp_sgp_object[["Coefficient_Matrices"]]))])
+#            }
+#
+#            if (is.null(SGPstateData[[state]][["SRS_Baseline_splineMatrix"]])) {# Put in SGPstateData to bypass re-running SRS baseline matrices (either already exist or calculated above)
+#                SGPstateData[[state]][["SRS_Baseline_splineMatrix"]] <- tmp_sgp_object[["Coefficient_Matrices"]][grep("SRS", names(tmp_sgp_object[["Coefficient_Matrices"]]))]
+#            }
+#
+#			if (is.null(sgp.baseline.srs.config)) {
+#				sgp.srs.baseline.config <- getSGPSRSBaselineConfig(sgp_object, content_areas=tmp.subjects, grades, sgp.srs.baseline.panel.years, sgp.percentiles.srs.baseline.max.order, calculate.simex.srs.baseline)
+#			} else {
+#				sgp.srs.baseline.config <- checkConfig(sgp.srs.baseline.config, "SRS_Baseline")
+#			}
+#
+#
+#
+#
+#        }
+#
+#        ## Cohort referenced SRS matrices
+#        if (!is.null(calculate.srs)) { ### Create data and parameters (if not supplied) to calculate annual SRS SGPs
+#
+#
+#
+#        } ### END calculate.srs
+#
+#
+#        ## Baseline referenced SRS martrices
+#        if (!is.null(calculate.srs.baseline) & !all(find.srs.matrices)) {
+#
+#            if (length(grep("BASELINE", names(sgp_object@SGP[["Coefficient_Matrices"]])))==0){
+#
+#                sgp_object@SGP[["Coefficient_Matrices"]] <- c(sgp_object@SGP[["Coefficient_Matrices"]], tmp_sgp_object[["Coefficient_Matrices"]][grep("BASELINE", names(tmp_sgp_object[["Coefficient_Matrices"]]))])
+#            }
+#
+#            if (is.null(SGPstateData[[state]][["Baseline_splineMatrix"]])) {# Put in SGPstateData to bypass re-running baseline matrices (either already exist or calculated above)
+#                SGPstateData[[state]][["Baseline_splineMatrix"]] <- tmp_sgp_object[["Coefficient_Matrices"]][grep("BASELINE", names(tmp_sgp_object[["Coefficient_Matrices"]]))]
+#            }
+#
+#			if (is.null(sgp.baseline.config)) {
+#				sgp.baseline.config <- getSGPBaselineConfig(sgp_object, content_areas=tmp.subjects, grades, sgp.baseline.panel.years, sgp.percentiles.baseline.max.order, calculate.simex.baseline)
+#			} else {
+#				sgp.baseline.config <- checkConfig(sgp.baseline.config, "Baseline")
+#			}
+#
+#			sgp.baseline.config <- sgp.baseline.config[which(sapply(sgp.baseline.config, function(x) tail(x[["sgp.baseline.content.areas"]],1)) %in% tmp.subjects[!find.matrices])]
+#
+#			messageSGP("\n\tStarted SIMEX Baseline Coefficient Matrix Calculation:\n")
+#
+#			##  Enforce that simex.use.my.coefficient.matrices must be FALSE for BASELINE SIMEX matrix production
+#			calculate.simex.baseline[['simex.use.my.coefficient.matrices']] <- NULL
+#
+#			if (!is.null(parallel.config)) { ### PARALLEL BASELINE COEFFICIENT MATRIX CONSTRUCTION
+#
+#				par.start <- startParallel(parallel.config, 'BASELINE_MATRICES')
+#
+#				##  FOREACH flavor
+#				if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
+#					tmp <- foreach(sgp.iter=iter(sgp.baseline.config), .packages="SGP", .errorhandling = "pass", .inorder=FALSE,
+#						.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
+#						return(baselineSGP(
+#							sgp_object,
+#							state=state,
+#							sgp.baseline.config=list(sgp.iter), ## NOTE: list of sgp.iter must be passed for proper iteration
+#							return.matrices.only=TRUE,
+#							calculate.baseline.sgps=FALSE,
+#							calculate.simex.baseline=calculate.simex.baseline,
+#							parallel.config=parallel.config,
+#							panel.data.vnames=getPanelDataVnames("baseline.sgp", sgp.iter, sgp.data.names)))
+#					}
+#                    if (any(tmp.tf <- sapply(tmp, function(x) any(class(x) %in% c("try-error", "simpleError"))))) {
+#                        tmp_sgp_object[['Error_Reports']] <- c(tmp_sgp_object[['Error_Reports']],
+#                        sgp.percentiles.baseline.=getErrorReports(tmp, tmp.tf, sgp.baseline.config[['sgp.percentiles.baseline']]))
+#                    }
+#                    tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
+#                } else {  ## SNOW and MULTICORE flavors
+#					if (par.start$par.type=="SNOW") {
+#						tmp <- clusterApplyLB(par.start$internal.cl, sgp.baseline.config, function(sgp.iter) baselineSGP(
+#							sgp_object,
+#							state=state,
+#							sgp.baseline.config=list(sgp.iter), ## NOTE: list of sgp.iter must be passed for proper iteration
+#							return.matrices.only=TRUE,
+#							calculate.baseline.sgps=FALSE,
+#							calculate.simex.baseline=calculate.simex.baseline,
+#							parallel.config=parallel.config,
+#							panel.data.vnames=getPanelDataVnames("baseline.sgp", sgp.iter, sgp.data.names)))
+#
+#						tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp, simex=TRUE)))
+#					} # END if (SNOW)
+#
+#					if (par.start$par.type=="MULTICORE") {
+#						tmp <- mclapply(sgp.baseline.config, function(sgp.iter) baselineSGP(
+#							sgp_object,
+#							state=state,
+#							sgp.baseline.config=list(sgp.iter), ## NOTE: list of sgp.iter must be passed for proper iteration
+#							return.matrices.only=TRUE,
+#							calculate.baseline.sgps=FALSE,
+#							calculate.simex.baseline=calculate.simex.baseline,
+#							parallel.config=parallel.config,
+#							panel.data.vnames=getPanelDataVnames("baseline.sgp", sgp.iter, sgp.data.names)),
+#							mc.cores=par.start$workers, mc.preschedule=FALSE)
+#
+#						tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp, simex=TRUE)))
+#					} # END if (MULTICORE)
+#					stopParallel(parallel.config, par.start)
+#				} #  END FOREACH, SNOW and MULTICORE
+#			} else {
+#				## SEQUENTIAL BASELINE COEFFICIENT MATRIX CONSTRUCTION
+#				##  Or, run SIMEX simulation iterations in parallel in studentGrowthPercentiles using lower.level.parallel.config
+#				##  Useful if many more cores/workers available than configs to iterate over.
+#				tmp <- list()
+#				for (sgp.iter in seq_along(sgp.baseline.config)) {
+#					tmp[[sgp.iter]] <- baselineSGP(
+#						sgp_object,
+#						state=state,
+#						sgp.baseline.config=sgp.baseline.config[sgp.iter], ## NOTE: must pass list, [...], not vector, [[...]].
+#						return.matrices.only=TRUE,
+#						calculate.baseline.sgps=FALSE,
+#						calculate.simex.baseline=calculate.simex.baseline,
+#						parallel.config=lower.level.parallel.config,
+#						panel.data.vnames=getPanelDataVnames("baseline.sgp", sgp.baseline.config[[sgp.iter]], sgp.data.names))
+#				}
+#				tmp_sgp_object <- mergeSGP(tmp_sgp_object, list(Coefficient_Matrices=merge.coefficient.matrices(tmp, simex=TRUE)))
+#			}
+#
+#			###  Save SIMEX BASELINE matrices
+#			assign(paste0(state, "_SIMEX_Baseline_Matrices"), list())
+#			for (tmp.matrix.label in grep("BASELINE.SIMEX", names(tmp_sgp_object$Coefficient_Matrices), value=TRUE)) {
+#				eval(parse(text=paste0(state, "_SIMEX_Baseline_Matrices[['", tmp.matrix.label, "']] <- tmp_sgp_object[['Coefficient_Matrices']][['", tmp.matrix.label, "']]")))
+#			}
+#			save(list=paste0(state, "_SRS_Baseline_Matrices"), file=paste0(state, "_SRS_Baseline_Matrices.Rdata"), compress="xz")
+#
+#			messageSGP("\n\tFinished Calculating SRS Baseline Coefficient Matrices\n")
+#
+#        ##  Enforce that simex.use.my.coefficient.matrices must be TRUE and save.matrices is FALSE for BASELINE SIMEX calculations below
+#		calculate.simex.baseline[['simex.use.my.coefficient.matrices']] <- TRUE
+#		calculate.simex.baseline[['save.matrices']] <- FALSE
+#
+#        } ### END calculate.srs.baseline
+#    } # END check for SRS analyses
 
 
 	#######################################################################################################################
