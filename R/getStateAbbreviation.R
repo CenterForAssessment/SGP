@@ -102,7 +102,7 @@ WA, Washington")
 
 	if (any(tmp.name.position!=-1)) {
 		if (type=="ABBREVIATION") {
-			if (length(possible.name <- unique(names(sort(tmp.name.position[tmp.name.position==1])))) > 1) {
+			if (length(possible.name <- unique(names(sort(tmp.name.position[tmp.name.position!=-1])))) > 1) {
 				possible.name <- possible.name[which.min(abs(sapply(lapply(possible.name, function(x) regexpr(x, toupper(supplied.name))), function(x) attributes(x)[['match.length']])-nchar(supplied.name)))]
 			}
 			state.abbreviation.name.lookup[["ABBREVIATION"]][which(possible.name==toupper(state.abbreviation.name.lookup[["FULL_NAME"]]))[1]]
