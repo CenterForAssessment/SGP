@@ -48,4 +48,27 @@ function(my.config,
 		}
 		return(my.config)
 	}
+
+	if (config.type=="SRS_Baseline") {
+
+		if (!all(unlist(sapply(lapply(my.config, names),
+			function(x) x %in% c("sgp.srs.baseline.content.areas", "sgp.srs.baseline.panel.years", "sgp.srs.baseline.grade.sequences", "sgp.srs.baseline.grade.sequences.lags", "sgp.srs.baseline.panel.years.within", "sgp.srs.baseline.exclude.sequences", "sgp.srs.baseline.calculate.simex.srs.baseline"))))) {
+				stop("Please specify an appropriate list of SGP function labels (sgp.srs.baseline.config).  See help page for details.")
+		}
+
+		for (i in seq_along(my.config)) {
+			my.config[[i]][['sgp.srs.baseline.content.areas']] <- my.config[[i]][['sgp.srs.baseline.content.areas']][!is.na(my.config[[i]][['sgp.srs.baseline.content.areas']])]
+			my.config[[i]][['sgp.srs.baseline.panel.years']] <- my.config[[i]][['sgp.srs.baseline.panel.years']][!is.na(my.config[[i]][['sgp.srs.baseline.panel.years']])]
+			my.config[[i]][['sgp.srs.baseline.grade.sequences']] <- my.config[[i]][['sgp.srs.baseline.grade.sequences']][!is.na(my.config[[i]][['sgp.srs.baseline.grade.sequences']])]
+			my.config[[i]][['sgp.srs.baseline.panel.years']] <- as.character(my.config[[i]][['sgp.srs.baseline.panel.years']])
+			my.config[[i]][['sgp.srs.baseline.grade.sequences']] <- as.character(my.config[[i]][['sgp.srs.baseline.grade.sequences']])
+
+			if (length(my.config[[i]][['sgp.srs.baseline.content.areas']]) != length(my.config[[i]][['sgp.srs.baseline.grade.sequences']])) {
+				tmp.min <- min(length(my.config[[i]][['sgp.srs.baseline.content.areas']]), length(my.config[[i]][['sgp.srs.baseline.grade.sequences']]))
+				my.config[[i]][['sgp.srs.baseline.content.areas']] <- tail( my.config[[i]][['sgp.srs.baseline.content.areas']], tmp.min)
+				my.config[[i]][['sgp.srs.baseline.grade.sequences']] <- tail( my.config[[i]][['sgp.srs.baseline.grade.sequences']], tmp.min)
+			}
+		}
+		return(my.config)
+	}
 } ### END checkConfig

@@ -18,7 +18,7 @@
 <meta name="twitter:title" content="SGP • Getting started with SGP">
 <meta name="twitter:description" content="SGP • Getting started with SGP">
 <title>SGP • Getting started with SGP</title>
-<!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
+<!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://use.fontawesome.com/releases/v5.0.8/css/all.css" rel="stylesheet">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- Fonts --><link href="https://fonts.googleapis.com/css?family=Josefin+Sans:400" rel="stylesheet" type="text/css">
 <!-- packagePages --><link href="../packagePages.css" rel="stylesheet">
 <link href="../pkgdown.css" rel="stylesheet">
@@ -99,13 +99,13 @@
 </li>
         <li>
   <a href="https://github.com/centerforassessment/SGP">
-    <span class="fa fa-github"></span>
+    <span class="fab fa-github"></span>
      
   </a>
 </li>
 <li>
-   <a style="cursor:pointer" onclick="window.open('https://twitter.com/intent/tweet?url=https%3A%2F%2Fsgp.io&amp;via=NCIEA1&amp;text=SGP%3A%20Student%20Growth%20Percentiles%20%26%20Percentile%20Growth%20Trajectories&amp;hashtags=rstats%2C%20SGP','','scrollbars=0,menubar=0,height=300,width=600,resizable=0,toolbar=0,location=0,status=0')">
-    <span class="fa fa-twitter"></span>
+   <a style="cursor:pointer" onclick="window.open('https://twitter.com/intent/tweet?url=https%3A%2F%2Fsgp.io&amp;via=NCIEA1&amp;text=SGP%3A%20Student%20Growth%20Percentiles%20%26%20Percentile%20Growth%20Trajectories&amp;hashtags=rstats%2CSGP','','scrollbars=0,menubar=0,height=300,width=600,resizable=0,toolbar=0,location=0,status=0')">
+    <span class="fab fa-twitter"></span>
      
   </a>
 </li>
@@ -118,13 +118,13 @@
 <!--/.navbar -->
 
       
-      </header><div class="row">
+      </header><script src="SGP_files/header-attrs-2.7/header-attrs.js"></script><div class="row">
   <div class="col-md-9">
     <div class="page-header toc-ignore">
       <h1>Getting started with SGP</h1>
                         <h4 class="author">Damian W Betebenner &amp; Adam R Van Iwaarden</h4>
             
-            <h4 class="date">June 18th, 2020</h4>
+            <h4 class="date">April 21st, 2021</h4>
           </div>
 
     
@@ -147,10 +147,10 @@
 <p>As a package built for the <a href="https://www.r-project.org/"><strong>R</strong> software environment</a>, to use the SGP package one needs a computer with <strong>R</strong> installed. <strong>R</strong> is available for Window, OSX, and Linux and, being open source, can be compiled for just about any operating system. Running SGP analyses assumes some familiarity with using <strong>R</strong>. If you’re new to <strong>R</strong>, you might want to spend some time familiarizing yourself with it before diving into running SGP analyses. There are several resources available on <a href="https://cran.r-project.org/manuals.html">CRAN</a> for getting started with <strong>R</strong>.</p>
 <p>After installing <strong>R</strong>, one needs to install the SGP package. Because the SGP package utilizes several other <strong>R</strong> packages, those will be installed concurrently. Installing <strong>R</strong> packages can be done in several different ways depending upon whether one is using a development environment for <strong>R</strong> (e.g., <a href="https://www.rstudio.com/">RStudio</a>), the installed <strong>R</strong> client, or calling <strong>R</strong> from the command line. In all cases, packages can be installed from the <strong>R</strong> command prompt (<code>&gt;</code>) as follows:</p>
 <p>To install the latest stable release of SGP from <a href="https://CRAN.R-project.org/package=SGP">CRAN</a></p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw">install.packages</span>(<span class="st">"SGP"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">install.packages</span>(<span class="st">"SGP"</span>)</span></code></pre></div>
 <p>To install the development release of SGP from <a href="https://github.com/CenterForAssessment/SGP/">GitHub</a>:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="op">&gt;</span><span class="st"> </span><span class="kw">install.packages</span>(<span class="st">"devtools"</span>) ### If the devtool package isn't installed</a>
-<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="op">&gt;</span><span class="st"> </span>devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">"CenterForAssessment/SGP"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">install.packages</span>(<span class="st">"devtools"</span>) <span class="do">### If the devtool package isn't installed</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"CenterForAssessment/SGP"</span>)</span></code></pre></div>
 </div>
 <div id="data-preparation-wide-or-long-data" class="section level1">
 <h1 class="hasAnchor">
@@ -210,13 +210,15 @@
       <li><a href="#software-and-hardware-requirements">Software and Hardware Requirements</a></li>
       <li><a href="#data-preparation-wide-or-long-data">Data Preparation: Wide or Long Data</a></li>
       <li>
-<a href="#data-analysis">Data Analysis</a><ul class="nav nav-pills nav-stacked">
+<a href="#data-analysis">Data Analysis</a>
+      <ul class="nav nav-pills nav-stacked">
 <li><a href="#student-growth-percentiles">Student Growth Percentiles</a></li>
       <li><a href="#student-growth-projectionspercentile-growth-trajectories">Student Growth Projections/Percentile Growth Trajectories</a></li>
       </ul>
 </li>
       <li>
-<a href="#advanced-sgp-analysis">Advanced SGP Analysis</a><ul class="nav nav-pills nav-stacked">
+<a href="#advanced-sgp-analysis">Advanced SGP Analysis</a>
+      <ul class="nav nav-pills nav-stacked">
 <li><a href="#standard-errors-for-student-growth-percentiles">Standard errors for student growth percentiles</a></li>
       <li><a href="#simex-measurement-error-correction">SIMEX measurement error correction</a></li>
       <li><a href="#end-of-course-test-taking-patterns">End-of-course test taking patterns</a></li>

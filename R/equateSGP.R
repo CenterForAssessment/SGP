@@ -1,7 +1,7 @@
 `equateSGP` <-
 function(tmp.data,
 	state,
-	current.year,
+	current.year=NULL,
 	equating.method) {
 
 	VALID_CASE <- YEAR <- CONTENT_AREA <- GRADE <- V1 <- V2 <- NULL
@@ -10,7 +10,7 @@ function(tmp.data,
 	equate.interval.digits <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Equate_Interval_Digits"]]
 	if (is.null(equate.interval.digits)) equate.interval.digits <- 0
 
-	current.year <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]
+	if (is.null(current.year)) current.year <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]
 	prior.year <- tail(head(sort(unique(tmp.data[['YEAR']])), -1L), 1L)
 	current.year.data <- tmp.data[VALID_CASE=="VALID_CASE" & YEAR==current.year]
 	prior.year.data <- tmp.data[VALID_CASE=="VALID_CASE" & YEAR==prior.year]

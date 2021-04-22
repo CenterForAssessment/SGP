@@ -9,7 +9,7 @@ The function getStateAbbreviation converts state/organization abbreviations to t
 getStateAbbreviation(
                     supplied.name,
 	                SGPfunction=NULL,
-	                type="Abbreviation")
+	                type="ABBREVIATION")
 }
 
 \arguments{
