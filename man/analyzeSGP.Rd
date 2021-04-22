@@ -18,6 +18,7 @@ analyzeSGP(sgp_object,
          sgp.projections.baseline=TRUE,
          sgp.projections.lagged.baseline=TRUE,
          sgp.percentiles.baseline.max.order=3,
+         sgp.percentiles.srs.baseline.max.order=3,
          sgp.projections.baseline.max.order=3,
          sgp.projections.lagged.baseline.max.order=3,
          sgp.projections.max.forward.progression.years=3,
@@ -31,6 +32,9 @@ analyzeSGP(sgp_object,
          simulate.sgps=TRUE,
          calculate.simex=NULL,
          calculate.simex.baseline=NULL,
+         calculate.simex.srs.baseline=NULL,
+         calculate.srs=NULL,
+         calculate.srs.baseline=NULL,
          goodness.of.fit.print=TRUE,
          sgp.config=NULL,
          sgp.config.drop.nonsequential.grade.progression.variables=TRUE,
@@ -79,6 +83,8 @@ If left missing the function will use the data to infer all the grade progressio
   }
   \item{sgp.percentiles.baseline.max.order}{Integer indicating the maximum order to calculate baseline student growth percentiles (regardless of maximum coefficient matrix order).  Also the max order of baseline coefficient matrices to be calculated if requested. Default is 3. To utilize the maximum matrix order, set to NULL.
   }
+  \item{sgp.percentiles.srs.baseline.max.order}{Integer indicating the maximum order to calculate baseline, stratified random sample, student growth percentiles (regardless of maximum coefficient matrix order).  Also the max order of baseline SRS coefficient matrices to be calculated if requested. Default is 3. To utilize the maximum matrix order, set to NULL.
+  }
   \item{sgp.projections.baseline.max.order}{Integer indicating the maximum order to calculate baseline student growth projections (regardless of maximum coefficient matrix order). Default is 3.
 To utilize the maximum matrix order, set to NULL.
   }
@@ -111,8 +117,17 @@ Default is 3.  To utilize the maximum matrix order, set to NULL.
    Returns both SIMEX adjusted SGP (\code{SGP_SIMEX}) as well as the percentile ranked SIMEX SGP (\code{RANK_SIMEX}) values as suggested by Castellano and McCaffrey (2017).
    Defaults to NULL, no simex calculations performed.  Alternatively, setting the argument to TRUE sets the list up with state=state, lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear" and save.matrices=TRUE.
   }
-  \item{calculate.simex.baseline}{A character state acronym or list including state/csem variable, csem.data.vnames, csem.loss.hoss, simulation.iterations, lambda and extrapolation method. Defaults to NULL, no simex calculations performed.
+  \item{calculate.simex.baseline}{
+  A character state acronym or list including state/csem variable, csem.data.vnames, csem.loss.hoss, simulation.iterations, lambda and extrapolation method. Defaults to NULL, no simex calculations performed.
   Alternatively, setting the argument to TRUE uses the same defaults as above along with \code{simex.use.my.coefficient.matrices = TRUE}, which assumes baseline SIMEX coefficient matrices are available.
+  }
+  \item{calculate.simex.srs.baseline}{A character state acronym or list including state/csem variable, csem.data.vnames, csem.loss.hoss, simulation.iterations, lambda and extrapolation method. Defaults to NULL, no simex calculations performed for stratified random sample (SRS).
+  Alternatively, setting the argument to TRUE uses the same defaults as above along with \code{simex.use.my.coefficient.matrices = TRUE}, which assumes baseline SIMEX coefficient matrices are available.
+  }
+  \item{calculate.srs}{A character state acronym or list including [FILL IN LATER]. Creates a longitudinal data set based upon a stratified random sample of variables and proportions for the United States (default) or provided by the user. The argument defaults to NULL, Alternatively, setting the argument to TRUE uses the defaults specified above.
+  }
+  \item{calculate.srs.baseline}{A character state acronym or list including [FILL IN LATER]. Calculates SGPs based upon previosly established coefficient matrices derived from a stratified random sample of data. Defaults to NULL, no stratified random sample SGPs are calculated. Alternatively, setting the
+  argument to TRUE uses the defaults specified above.
   }
   \item{goodness.of.fit.print}{Boolean variable indicating whether to print out Goodness of Fit figures as PDF into a directory labeled Goodness of Fit. Defaults to TRUE.
   }

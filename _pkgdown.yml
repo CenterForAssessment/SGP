@@ -45,10 +45,10 @@ navbar:
       - text: "Change log"
         href: news/index.html
     right:
-      - icon: fa-github
+      - icon: 'fab fa-github'
         href: https://github.com/centerforassessment/SGP
-      - icon: fa-twitter
-        href: https://twitter.com/intent/tweet?url=https%3A%2F%2Fsgp.io&via=NCIEA1&text=SGP%3A%20Student%20Growth%20Percentiles%20%26%20Percentile%20Growth%20Trajectories&hashtags=rstats%2C%20SGP
+      - icon: 'fab fa-twitter'
+        href: https://twitter.com/intent/tweet?url=https%3A%2F%2Fsgp.io&via=NCIEA1&text=SGP%3A%20Student%20Growth%20Percentiles%20%26%20Percentile%20Growth%20Trajectories&hashtags=rstats%2CSGP
 
 
 reference:
