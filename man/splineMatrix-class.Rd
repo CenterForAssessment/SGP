@@ -25,16 +25,16 @@ Objects can be created by calls of the form \code{new("splineMatrix", ...)}, but
 
 \details{
   \describe{
-    \item{splineMatrix:}{This class contains the S3 \code{matrix} class, inheriting its methods.  The slot \code{Knots} should be one or more lists of numeric vector(s) used in the internal call 
-    to \code{bs}, which generates a B-spline basis matrix from student scores. There are typically with 4 values for the knots. Similarly, \code{Boundaries} are used in \code{bs} for the 
-    \code{Boundary.knots} argument. This is always two values which are at or slightly beyond the lowest and highest observed student scores.  \code{Content_Areas} and  
+    \item{splineMatrix:}{This class contains the S3 \code{matrix} class, inheriting its methods.  The slot \code{Knots} should be one or more lists of numeric vector(s) used in the internal call
+    to \code{bs}, which generates a B-spline basis matrix from student scores. There are typically with 4 values for the knots. Similarly, \code{Boundaries} are used in \code{bs} for the
+    \code{Boundary.knots} argument. This is always two values which are at or slightly beyond the lowest and highest observed student scores.  \code{Content_Areas} and
     \code{Grade_Progression} provide information about the data (sub)set used to produce the matrix.
   }
  }
 }
 
 
-\author{Adam Van Iwaarden \email{Vaniwaarden@colorado.edu}, Ben Domingue \email{ben.domingue@gmail.com} and Damian W. Betebenner \email{dbetebenner@nciea.org}}
+\author{Adam Van Iwaarden \email{avaniwaarden@nciea.org}, Ben Domingue \email{ben.domingue@gmail.com} and Damian W. Betebenner \email{dbetebenner@nciea.org}}
 
 \seealso{
 \code{\link{studentGrowthPercentiles}}

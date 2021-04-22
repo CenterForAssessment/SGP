@@ -13,7 +13,7 @@ Colorado English Language Assessment (CELA), Demonstration (DEMO), Albuquerque (
 Renaissance Learning Incorporated UK (RLI_UK), and New Haven (NEW_HAVEN).
 }
 
-\author{Damian W. Betebenner \email{dbetebenner@nciea.org} and Adam Van Iwaarden \email{vaniwaarden@colorado.edu}}
+\author{Damian W. Betebenner \email{dbetebenner@nciea.org} and Adam Van Iwaarden \email{avaniwaarden@nciea.org}}
 
 \source{State assessment data and technical assessment documentation}
 \keyword{datasets}

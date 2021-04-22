@@ -192,7 +192,7 @@ projections to be calculated in across assessment transitions where the scale fo
 \code{YEAR}, \code{ID} and the student growth percentile and/or student growth projection/trajectory results in the \code{SGP} slot.
 }
 
-\author{Damian W. Betebenner \email{dbetebenner@nciea.org} and Adam Van Iwaarden \email{vaniwaarden@colorado.edu}}
+\author{Damian W. Betebenner \email{dbetebenner@nciea.org} and Adam Van Iwaarden \email{avaniwaarden@nciea.org}}
 
 \seealso{\code{\link{prepareSGP}}, \code{\link{combineSGP}}}
 

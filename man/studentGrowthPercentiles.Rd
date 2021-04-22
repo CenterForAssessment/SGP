@@ -268,7 +268,7 @@ Shang, Y., VanIwaarden, A., & Betebenner, D. W. (2015). Covariate measurement er
 Percentiles using the SIMEX method. Educational Measurement: Issues and Practice, 34(1):4-14.
 }
 
-\author{Damian W. Betebenner \email{dbetebenner@nciea.org} and Adam Van Iwaarden \email{vaniwaarden@colorado.edu}}
+\author{Damian W. Betebenner \email{dbetebenner@nciea.org} and Adam Van Iwaarden \email{avaniwaarden@nciea.org}}
 
 \seealso{\code{\link{studentGrowthProjections}}, \code{\link[SGPdata]{sgpData}}, \code{\link[SGPdata]{sgpData_LONG}}, \code{\link{SGPstateData}}}
 
