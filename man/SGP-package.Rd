@@ -29,7 +29,7 @@ calculation must be specifically formatted.  See \code{\link[SGPdata]{sgpData}} 
 provided in the examples of the \code{\link{studentGrowthPercentiles}} and \code{\link{studentGrowthProjections}} using the higher level functions
 \code{\link{prepareSGP}}, \code{\link{analyzeSGP}}, \code{\link{combineSGP}}, \code{\link{summarizeSGP}}, and \code{\link{visualizeSGP}}.}
 
-\author{Damian W. Betebenner \email{dbetebenner@nciea.org}, Adam Van Iwaarden \email{avaniwaarden@gmail.com}, Ben Domingue \email{ben.domingue@gmail.com} and Yi Shang \email{shangyi@gmail.com}}
+\author{Damian W. Betebenner \email{dbetebenner@nciea.org}, Adam Van Iwaarden \email{avaniwaarden@nciea.org}, Ben Domingue \email{ben.domingue@gmail.com} and Yi Shang \email{shangyi@gmail.com}}
 
 \references{
 Betebenner, D. W. (2008). Toward a normative understanding of student growth. In K. E. Ryan &

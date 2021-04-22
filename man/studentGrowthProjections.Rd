@@ -177,7 +177,7 @@ Chernozhukov, V., Fernandez-Val, I. and Galichon, A. (2010),
 Quantile and Probability Curves Without Crossing. Econometrica, 78: 1093-1125.
 }
 
-\author{Damian W. Betebenner \email{dbetebenner@nciea.org} and Adam Van Iwaarden \email{vaniwaarden@colorado.edu}}
+\author{Damian W. Betebenner \email{dbetebenner@nciea.org} and Adam Van Iwaarden \email{avaniwaarden@nciea.org}}
 
 \note{Use of this function assumes prior calculation of student growth percentiles, making the coefficient matrices available within the  \code{panel.data$Coefficient_Matrices}
   list object.  Additionally, if cutscores are desired they must be supplied explicitly by the user (as detailed above in

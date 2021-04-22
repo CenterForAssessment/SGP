@@ -4,7 +4,7 @@
 \description{
 Function includes five "styles" associated with \code{\link{studentGrowthPlot}} to create PDF student growth plots depicting the growth and achievement for an individual
 student over time. The five styles display one to five content area student growth plots on a single page. The one, two, and three content area plots are rendered on 8.5 by 11
-PDFs and the four and five content area plots are rendered on 11 by 17 PDFs. These charts are currently being used in multiple states to report student growth results. This function 
+PDFs and the four and five content area plots are rendered on 11 by 17 PDFs. These charts are currently being used in multiple states to report student growth results. This function
 is called by \code{\link{visualizeSGP}} to generate individual student reports. This function may expand in the future to incorporate other possible individual student reports.
 }
 \usage{
@@ -38,7 +38,7 @@ studentGrowthPlot_Styles(
 }
 
 \arguments{
-  \item{sgPlot.data}{Wide formatted individual student report data used to produce student growth plots. To view structure of wide formatted data, utilize the 
+  \item{sgPlot.data}{Wide formatted individual student report data used to produce student growth plots. To view structure of wide formatted data, utilize the
 \code{sgPlot.save.sgPlot.data} option with \code{\link{visualizeSGP}} to save wide formatted student growth plot data.
   }
   \item{sgPlot.sgp_object}{SGP object containing coefficient matrices and knots and boundaries for percentile trajectory calculations associated with JSON output.
@@ -56,24 +56,24 @@ studentGrowthPlot_Styles(
   \item{schools}{A vector of school numbers indicating which schools student growth plots should be produce for.
   }
   \item{reports.by.student}{A Boolean variable passed to \code{studentGrowthPlot_Styles} indicating whether separate individual plots will be produced or separate reports
-and a summary catalog containing those reports will be produced. 
+and a summary catalog containing those reports will be produced.
   }
   \item{reports.by.instructor}{A Boolean variable passed to \code{studentGrowthPlot_Styles} indicating whether individual plots will be collated and bundled as a summary catalog by instructor.
   }
   \item{reports.by.school}{A Boolean variable passed to \code{studentGrowthPlot_Styles} indicating whether individual plots will be collated and bundled as a summary catalog by school. Prior
 to version 0.9-9.7, this was the only way of bundling reports and was thus the default.
   }
-  \item{sgPlot.years}{A vector of all years over which student growth plots are being produced.  
+  \item{sgPlot.years}{A vector of all years over which student growth plots are being produced.
   }
-  \item{sgPlot.demo.report}{A Boolean argument indicating whether a demonstration report catalog (with anonymized individual, school, and district names) is to be produced. 
+  \item{sgPlot.demo.report}{A Boolean argument indicating whether a demonstration report catalog (with anonymized individual, school, and district names) is to be produced.
   }
-  \item{sgPlot.folder}{A character argument specifying the folder into which the student growth reports will be placed. 
+  \item{sgPlot.folder}{A character argument specifying the folder into which the student growth reports will be placed.
   }
   \item{sgPlot.folder.names}{Either \code{names} or \code{number} indicating whether names or numbers should be used as folder names.
   }
   \item{sgPlot.anonymize}{A Boolean argument indicating whether individual, school, and district names should be anonymized.
   }
-  \item{sgPlot.front.page}{A character vector indicating the file, the the base directory, that should be used as the front page for the student growth plots. 
+  \item{sgPlot.front.page}{A character vector indicating the file, the the base directory, that should be used as the front page for the student growth plots.
   }
   \item{sgPlot.header.footer.color}{A color (as a character) specifying the header/footer color of the report.
   }
@@ -99,10 +99,10 @@ to version 0.9-9.7, this was the only way of bundling reports and was thus the d
 content areas depending upon the availability of test data for the state. This function will expand in the future to allow for other types of individual growth and
 achievement reports.
 }
-\value{Function produces \emph{numerous} (potentially hundreds of thousands of) PDF/PNG student growth plots. 
+\value{Function produces \emph{numerous} (potentially hundreds of thousands of) PDF/PNG student growth plots.
 }
 
-\author{Damian W. Betebenner \email{dbetebenner@nciea.org} and Adam Van Iwaarden \email{vaniwaarden@colorado.edu}}
+\author{Damian W. Betebenner \email{dbetebenner@nciea.org} and Adam Van Iwaarden \email{avaniwaarden@nciea.org}}
 \references{
 Betebenner, D. W. (2012). Growth, standards, and accountability. In G. J. Cizek,
 \emph{Setting Performance Standards: Foundations, Methods & Innovations. 2nd Edition} (pp. 439-450).
