@@ -63,7 +63,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SGP_ORDER_1 Variable
@@ -72,7 +72,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_ORDER_1, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_ORDER_1, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SCALE_SCORE_PRIOR Variable
@@ -81,7 +81,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_PRIOR, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_PRIOR, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SGP_ORDER Variable
@@ -90,7 +90,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_ORDER, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_ORDER, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SGP_LEVEL Variable
@@ -99,7 +99,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_LEVEL, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_LEVEL, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SGP_STANDARD_ERROR Variable
@@ -111,7 +111,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_STANDARD_ERROR, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_STANDARD_ERROR, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SGP_FROM_**** variable
@@ -120,7 +120,7 @@ function(
 				tmp.messages <- c(tmp.messages, paste0("\t\tTest of variable ",  paste('SGP_FROM', as.numeric(tail(sgpData.years.single, 1L))-2, sep="_"), ", part 2: OK\n"))
 			} else {
 				tmp.messages <- c(tmp.messages, paste0("\t\tTest of variable ", paste('SGP_FROM', as.numeric(tail(sgpData.years.single, 1L))-2, sep="_"), ", part 2: FAIL\n"))
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of Goodness of Fit Output Files
@@ -135,7 +135,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of Goodness of Fit Output Files, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Goodness of Fit Output Files, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			tmp.messages <- c(tmp.messages, "\t##### End testSGP test number 0, Part 1: ", convertTime(timetakenSGP(started.at.overall)), "#####\n")
@@ -164,7 +164,7 @@ function(
 				tmp.messages <- c(tmp.messages, paste("\t\tTest of",  paste('READING', tail(sgpData.years.single, 1L), 'LAGGED', sep="."), "table dimensions, part 2: OK\n"))
 			} else {
 				tmp.messages <- c(tmp.messages, paste("\t\tTest of",  paste('READING', tail(sgpData.years.single, 1L), 'LAGGED', sep="."), "table dimensions, part 2: FAIL\n"))
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of LEVEL_1_SGP_TARGET_YEAR_1 Variable
@@ -173,7 +173,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable LEVEL_1_SGP_TARGET_YEAR_1, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable LEVEL_1_SGP_TARGET_YEAR_1, part 2: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of P84_PROJ_YEAR_4 Variable
@@ -182,7 +182,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable P84_PROJ_YEAR_4, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable P84_PROJ_YEAR_4, part 2: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 0, Part 2: ", convertTime(timetakenSGP(started.at.intermediate)), "#####\n"))
@@ -244,7 +244,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SGP_BASELINE variable
@@ -254,7 +254,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_BASELINE: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_BASELINE: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SGP_TARGET_3_YEAR variable
@@ -264,7 +264,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_3_YEAR: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_3_YEAR: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR variable
@@ -274,7 +274,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of CATCH_UP_KEEP_UP_STATUS_3_YEAR variable
@@ -284,7 +284,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable CATCH_UP_KEEP_UP_STATUS_3_YEAR: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable CATCH_UP_KEEP_UP_STATUS_3_YEAR: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of MOVE_UP_STAY_UP_STATUS_3_YEAR variable
@@ -294,7 +294,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable MOVE_UP_STAY_UP_STATUS_3_YEAR: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable MOVE_UP_STAY_UP_STATUS_3_YEAR: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SCALE_SCORE_PRIOR variable
@@ -304,7 +304,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_PRIOR: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_PRIOR: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1 variable for READING.XXXX_XXXX scale score targets
@@ -314,7 +314,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of MEDIAN_SGP variable
@@ -324,7 +324,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable MEDIAN_SGP: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable MEDIAN_SGP: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of PERCENT_AT_ABOVE_PROFICIENT_PRIOR variable
@@ -334,7 +334,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable PERCENT_AT_ABOVE_PROFICIENT_PRIOR: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable PERCENT_AT_ABOVE_PROFICIENT_PRIOR: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of LAGGED PROJECTION CUTs variable P35_PROJ_YEAR_1 variable for MATHEMATICS.XXXX_XXXX.LAGGED
@@ -344,7 +344,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable P20_PROJ_YEAR_1 (LAGGED PROJECTION): OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable P20_PROJ_YEAR_1 (LAGGED PROJECTION): FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SGP_0.025_CONFIDENCE_BOUND variable in @Data
@@ -356,7 +356,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_0.025_CONFIDENCE_BOUND: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_0.025_CONFIDENCE_BOUND: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of HIGH_NEED_STATUS variable in @Data
@@ -366,7 +366,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable HIGH_NEED_STATUS: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable HIGH_NEED_STATUS: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1 variable in @Data
@@ -376,7 +376,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT variable in @Data
@@ -386,7 +386,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			tmp.messages <- c(tmp.messages, paste0("\n##### End testSGP test number ", TEST_NUMBER, ":  ", convertTime(timetakenSGP(started.at.overall)), " #####\n"))
@@ -454,7 +454,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SGP_BASELINE variable
@@ -464,7 +464,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SGP_TARGET_3_YEAR variable
@@ -474,7 +474,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR variable
@@ -484,7 +484,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of CATCH_UP_KEEP_UP_STATUS_3_YEAR variable
@@ -494,7 +494,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable CATCH_UP_KEEP_UP_STATUS_3_YEAR, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable CATCH_UP_KEEP_UP_STATUS_3_YEAR, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of MOVE_UP_STAY_UP_STATUS_3_YEAR variable
@@ -504,7 +504,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable MOVE_UP_STAY_UP_STATUS_3_YEAR, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable MOVE_UP_STAY_UP_STATUS_3_YEAR, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			tmp.messages <- c(tmp.messages, paste0("\t##### End testSGP test number 2a: Part 1: ", convertTime(timetakenSGP(started.at.overall.2a)), " #####\n"))
@@ -535,7 +535,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 2: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SGP_BASELINE variable
@@ -545,7 +545,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 2: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SGP_TARGET variable
@@ -555,7 +555,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR, part 2: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SGP_TARGET_MOVE_UP_STAY_UP variable
@@ -565,7 +565,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, part 2: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of CATCH_UP_KEEP_UP_STATUS_3_YEAR variable
@@ -575,7 +575,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable CATCH_UP_KEEP_UP_STATUS_3_YEAR, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable CATCH_UP_KEEP_UP_STATUS_3_YEAR, part 2: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of MOVE_UP_STAY_UP_STATUS_3_YEAR variable
@@ -585,7 +585,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable MOVE_UP_STAY_UP_STATUS_3_YEAR, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable MOVE_UP_STAY_UP_STATUS_3_YEAR, part 2: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 2a, Part 2: ", convertTime(timetakenSGP(started.at.intermediate.2a)), "#####\n"))
@@ -696,7 +696,7 @@ function(
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 2: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 2: FAIL\n")
-					if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+					if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 				}
 
 				### TEST of SGP_BASELINE variable
@@ -706,7 +706,7 @@ function(
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 2: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 2: FAIL\n")
-					if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+					if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 				}
 
 				### TEST of SGP_TARGET_3_YEAR variable
@@ -716,7 +716,7 @@ function(
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR, part 2: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR, part 2: FAIL\n")
-					if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+					if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 				}
 
 				### TEST of SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR variable
@@ -726,7 +726,7 @@ function(
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, part 2: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR, part 2: FAIL\n")
-					if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+					if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 				}
 
 				### TEST of CATCH_UP_KEEP_UP_STATUS_3_YEAR variable
@@ -736,7 +736,7 @@ function(
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable CATCH_UP_KEEP_UP_STATUS_3_YEAR, part 2: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable CATCH_UP_KEEP_UP_STATUS_3_YEAR, part 2: FAIL\n")
-					if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+					if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 				}
 
 				### TEST of MOVE_UP_STAY_UP_STATUS variable
@@ -746,7 +746,7 @@ function(
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable MOVE_UP_STAY_UP_STATUS_3_YEAR, part 2: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable MOVE_UP_STAY_UP_STATUS_3_YEAR, part 2: FAIL\n")
-					if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+					if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 				}
 
 				tmp.messages <- c(tmp.messages, paste0("\t##### End testSGP test number ", capwords(i), ", Part 2: ", convertTime(timetakenSGP(started.at.intermediate.2b)), " #####\n"))
@@ -877,7 +877,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SGP_TARGET_3_YEAR variable
@@ -887,7 +887,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_3_YEAR: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_3_YEAR: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SGP_TARGET_7_YEAR variable
@@ -897,7 +897,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_7_YEAR: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_7_YEAR: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR variable
@@ -907,7 +907,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SGP_TARGET_MOVE_UP_STAY_UP_5_YEAR_CURRENT variable
@@ -917,7 +917,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_5_YEAR_CURRENT: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_MOVE_UP_STAY_UP_5_YEAR_CURRENT: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of CATCH_UP_KEEP_UP_STATUS_3_YEAR variable
@@ -927,7 +927,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable CATCH_UP_KEEP_UP_STATUS_3_YEAR: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable CATCH_UP_KEEP_UP_STATUS_3_YEAR: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of MOVE_UP_STAY_UP_STATUS_3_YEAR variable
@@ -937,7 +937,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable MOVE_UP_STAY_UP_STATUS_3_YEAR: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable MOVE_UP_STAY_UP_STATUS_3_YEAR: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 #			if (identical(sum(Demonstration_SGP@Data$SCALE_SCORE_SGP_TARGET_7_YEAR_PROJ_YEAR_1, na.rm=TRUE), 35023835L)) {
@@ -945,7 +945,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_7_YEAR_PROJ_YEAR_1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_7_YEAR_PROJ_YEAR_1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 #			if (identical(sum(Demonstration_SGP@Data$SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_7_YEAR_PROJ_YEAR_1_CURRENT, na.rm=TRUE), 29549398L)) {
@@ -953,7 +953,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_7_YEAR_PROJ_YEAR_1_CURRENT: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_7_YEAR_PROJ_YEAR_1_CURRENT: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SGP_TARGET_##_YEAR_NUM_YEARS_TO_TARGET variable
@@ -963,7 +963,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_4_YEAR_CURRENT_NUM_YEARS_TO_TARGET: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_4_YEAR_CURRENT_NUM_YEARS_TO_TARGET: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 #			if (identical(as.numeric(table(Demonstration_SGP@Data$SGP_TARGET_2_YEAR_NUM_YEARS_TO_TARGET)), c(15878, 10007, 32248))) {
@@ -971,7 +971,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_2_YEAR_NUM_YEARS_TO_TARGET: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_2_YEAR_NUM_YEARS_TO_TARGET: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 #			if (identical(mean(Demonstration_SGP@Data$SGP_STANDARD_ERROR, na.rm=TRUE), 8.50872)) {
@@ -980,7 +980,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_STANDARD_ERROR (Omitting ALGEBRA_II): OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_STANDARD_ERROR (Omitting ALGEBRA_II): FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 3: ", convertTime(timetakenSGP(started.at.overall)), "#####\n"))
@@ -1110,7 +1110,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SGP_SIMEX_RANKED variable
@@ -1122,7 +1122,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX_RANKED: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX_RANKED: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SGP_SIMEX_BASELINE and SGP_SIMEX_BASELINE_RANKED variables
@@ -1134,7 +1134,7 @@ function(
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX_BASELINE: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX_BASELINE: FAIL\n")
-					if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+					if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 				}
 
 #				if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('READING', tail(sgpData.years, 1L), "BASELINE", sep=".")]][['SGP_SIMEX_BASELINE_RANKED']]), 1031773L)) { # 1031775L
@@ -1144,7 +1144,7 @@ function(
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX_BASELINE_RANKED: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX_BASELINE_RANKED: FAIL\n")
-					if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+					if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 				}
 			}
 			tmp.messages <- c(tmp.messages, paste("\n\t##### End testSGP test number 4, Part 1: ", convertTime(timetakenSGP(started.at.overall)), "#####\n"))
@@ -1197,7 +1197,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 #			if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1L), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, 211814L, 211864L))) {
@@ -1207,7 +1207,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX_RANKED: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX_RANKED: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 #			if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1L), sep=".")]][['SGP_SIMEX']]), ifelse(simex.sample.size, 212639L, 212383L))) {
@@ -1216,7 +1216,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II SGP_SIMEX: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II SGP_SIMEX: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 #			if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1L), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, 213318L, 213361L))) {
@@ -1225,7 +1225,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II SGP_SIMEX_RANKED: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II SGP_SIMEX_RANKED: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 #			if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX, na.rm=TRUE), ifelse(simex.sample.size, 1454082L, 1452961L))) { #  , 1452904L,
@@ -1235,7 +1235,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 #			if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX_RANKED, na.rm=TRUE), ifelse(simex.sample.size, 1457831L, 1457723L))) { # ,  1457543L,
@@ -1244,7 +1244,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX_RANKED: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX_RANKED: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SGP_SIMEX and SGP_SIMEX_BASELINE variable
@@ -1257,7 +1257,7 @@ function(
 					tmp.messages <- c(tmp.messages, "\t\tTest of @SGP Coefficient Matrix Names: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of @SGP Coefficient Matrix Names: FAIL\n")
-					if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+					if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 				}
 			} else {
 				tmp.matrix.names <- c("READING.2015_2016", "READING.2015_2016.SIMEX", "ALGEBRA_II.2015_2016", "ALGEBRA_II.2015_2016.SIMEX", "AMERICAN_LIT.2015_2016", "AMERICAN_LIT.2015_2016.SIMEX")
@@ -1265,7 +1265,7 @@ function(
 					tmp.messages <- c(tmp.messages, "\t\tTest of @SGP Coefficient Matrix Names: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of @SGP Coefficient Matrix Names: FAIL\n")
-					if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+					if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 				}
 			}
 
@@ -1277,7 +1277,7 @@ function(
 					tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX_BASELINE: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX_BASELINE: FAIL\n")
-					if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+					if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 				}
 #				if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1L), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE_RANKED']]), 211843L)) { # 211837L
 #				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1L), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE_RANKED']]), "f3e9a7c0e1eb4564ddc04d5b38f5223e")) { # xXx 40cfc13e853dfa9af8398ca38fea96e8
@@ -1286,7 +1286,7 @@ function(
 					tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX_BASELINE_RANKED: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX_BASELINE_RANKED: FAIL\n")
-					if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+					if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 				}
 #				if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1L), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE']]), 213472L)) { # 212818L
 #				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1L), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE']]), "e9ac73391f257c5d21df89c2ca6d5283")) { # pre-GRADE key: d4fe0d79e985aacb6331ce95f4a2d01e
@@ -1295,7 +1295,7 @@ function(
 					tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II SGP_SIMEX_BASELINE: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II SGP_SIMEX_BASELINE: FAIL\n")
-					if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+					if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 				}
 #				if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1L), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE_RANKED']]), 213473L)) { # 213377L
 #				if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1L), 'BASELINE', sep=".")]][['SGP_SIMEX_BASELINE_RANKED']]), "9fb272b324afab3f9aeb7107c277ac23")) { # xXx 5df2787d9bed17d59004a9eeb76930a6
@@ -1304,7 +1304,7 @@ function(
 					tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II SGP_SIMEX_BASELINE_RANKED: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II SGP_SIMEX_BASELINE_RANKED: FAIL\n")
-					if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+					if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 				}
 #				if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX_BASELINE, na.rm=TRUE), 1465473L)) { # 1465187L
 #				if (identical(digest(Demonstration_SGP@Data$SGP_SIMEX_BASELINE), "010289791f188481d48577bf3f247c2e")) { # pre-GRADE key: 3e653f546bd93da33cc915b5d37100a4  xXx  61ff473b2777c2b7ea14a2c0bcb662ec
@@ -1313,7 +1313,7 @@ function(
 					tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX_BASELINE: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX_BASELINE: FAIL\n")
-					if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+					if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 				}
 #				if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX_BASELINE_RANKED, na.rm=TRUE), 1457089L)) { # 1456989L
 #				if (identical(digest(Demonstration_SGP@Data$SGP_SIMEX_BASELINE_RANKED), "0acbb6fb922e87c54bc2aa5acf55ba73")) {#  xXx  3818ece7a3a5f5e6e7a0ff343c8a752a
@@ -1322,7 +1322,7 @@ function(
 					tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX_BASELINE_RANKED: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX_BASELINE_RANKED: FAIL\n")
-					if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+					if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 				}
 			}
 			tmp.messages <- c(tmp.messages, paste("\n\t##### End testSGP test number 4, Part 2: ", convertTime(timetakenSGP(started.at.intermediate)), "#####\n"))
@@ -1392,7 +1392,7 @@ function(
 					tmp.messages <- c(tmp.messages, "\t\tTest of READING Updated SGP_SIMEX_RANKED: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of READING Updated SGP_SIMEX_RANKED: FAIL\n")
-					if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+					if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 				}
 
 #				if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, 211887L, 211939L))) { 211710L, 212048L
@@ -1401,7 +1401,7 @@ function(
 					tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT Updated SGP_SIMEX_RANKED: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT Updated SGP_SIMEX_RANKED: FAIL\n")
-					if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+					if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 				}
 
 #				if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('ALGEBRA_II', tail(sgpData.years, 1), sep=".")]][['SGP_SIMEX_RANKED']]), ifelse(simex.sample.size, 213390L, 213420L))) { # 213300L, 213327L
@@ -1410,7 +1410,7 @@ function(
 					tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II Updated SGP_SIMEX_RANKED: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II Updated SGP_SIMEX_RANKED: FAIL\n")
-					if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+					if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 				}
 
 #				if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX, na.rm=TRUE), ifelse(simex.sample.size, 1453987L, 1453850L))) { # 1453181L, 1453991L
@@ -1419,7 +1419,7 @@ function(
 					tmp.messages <- c(tmp.messages, "\t\tTest of @Data UPDATED variable SGP_SIMEX: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of @Data UPDATED variable SGP_SIMEX: FAIL\n")
-					if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+					if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 				}
 
 #				if (identical(sum(Demonstration_SGP@Data$SGP_SIMEX_RANKED, na.rm=TRUE), ifelse(simex.sample.size, 1457714L, 1457743L))) { # 1457549L, 1457840L
@@ -1428,7 +1428,7 @@ function(
 					tmp.messages <- c(tmp.messages, "\t\tTest of @Data UPDATED variable SGP_SIMEX_RANKED: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of @Data UPDATED variable SGP_SIMEX_RANKED: FAIL\n")
-					if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+					if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 				}
 				tmp.messages <- c(tmp.messages, paste("\n\t##### End testSGP test number 4, Part 3: ", convertTime(timetakenSGP(started.at.intermediate3)), "#####\n"))
 			} ###  End 'test.updated.students'
@@ -1502,7 +1502,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SGP_BASELINE variable
@@ -1512,7 +1512,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SGP_TARGET_3_YEAR variable
@@ -1522,7 +1522,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SCALE_SCORE_PRIOR_STANDARDIZED variable
@@ -1532,7 +1532,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_PRIOR_STANDARDIZED, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_PRIOR_STANDARDIZED, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 5, Part 1: ", convertTime(timetakenSGP(started.at.overall)), "#####\n"))
@@ -1748,7 +1748,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 2: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SGP variable from equated analyses
@@ -1758,7 +1758,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP from READING equated analysis, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP from READING equated analysis, part 2: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SCALE_SCORE_EQUATED variable
@@ -1768,7 +1768,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_EQUATED, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_EQUATED, part 2: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1 variable
@@ -1778,7 +1778,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1, part 2: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 5, Part 2: ", convertTime(timetakenSGP(started.at.intermediate)), "#####\n"))
@@ -1820,7 +1820,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 3: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 3: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of LEVEL_1_SGP_TARGET_YEAR_1_CURRENT variable
@@ -1830,7 +1830,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable LEVEL_1_SGP_TARGET_YEAR_1_CURRENT, part 3: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable LEVEL_1_SGP_TARGET_YEAR_1_CURRENT, part 3: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of ACHIEVEMENT_LEVEL_PRIOR Variable in MATHEMATICS.XXXX_XXXX.LAGGED projections
@@ -1840,7 +1840,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable ACHIEVEMENT_LEVEL_PRIOR, part 3: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable ACHIEVEMENT_LEVEL_PRIOR, part 3: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SGP_FROM_2015_2016 Variable in @Data
@@ -1850,7 +1850,7 @@ function(
 				tmp.messages <- c(tmp.messages, paste0("\t\tTest of variable ", paste('SGP_FROM', tail(sgpData.years, 2)[1], sep="_"), ", part 3: OK\n"))
 			} else {
 				tmp.messages <- c(tmp.messages, paste0("\t\tTest of variable ", paste('SGP_FROM', tail(sgpData.years, 2)[1], sep="_"), ", part 3: FAIL\n"))
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 5, Part 3: ", convertTime(timetakenSGP(started.at.intermediate)), "#####\n"))
@@ -1906,7 +1906,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of SGP_BASELINE: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of SGP_BASELINE: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number 6: ", convertTime(timetakenSGP(started.at.overall)), "#####\n"))
@@ -1977,7 +1977,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SGP_TARGET_BASELINE_10_TIME_CURRENT variable from READING
@@ -1987,7 +1987,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_BASELINE_10_TIME_CURRENT, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_BASELINE_10_TIME_CURRENT, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of P50_PROJ_TIME_1_CURRENT variable from READING
@@ -1997,7 +1997,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable P50_PROJ_TIME_1_CURRENT, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable P50_PROJ_TIME_1_CURRENT, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of READING SGPercentiles output: Dimension
@@ -2012,7 +2012,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGPercentiles output, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGPercentiles output, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of READING SGPercentiles output: Length of SGP_NORM_GROUP_BASELINE,
@@ -2025,7 +2025,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of number of semi-colons of SGP_NORM_GROUP variables, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of number of semi-colons of SGP_NORM_GROUP variables, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of READING SGProjections output
@@ -2040,7 +2040,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGProjections output, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGProjections output, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of READING SGProjections TARGETS output
@@ -2056,7 +2056,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGProjections output, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGProjections output, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI1 (STAR Scores), Part 1: ", convertTime(timetakenSGP(started.at.overall)), "#####\n"))
@@ -2096,7 +2096,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of equatity of RLI1_PART_1@SGP and RLI1_PART_2@SGP, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of equatity of RLI1_PART_1@SGP and RLI1_PART_2@SGP, part 2: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI1 (STAR Scores): Part 2", convertTime(timetakenSGP(started.at.intermediate)), "#####\n"))
@@ -2135,7 +2135,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE (2016_2017.3 matrices = 2016_2017.2 matrices), part 3: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE (2016_2017.3 matrices = 2016_2017.2 matrices), part 3: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI (STAR Scores): Part 3", convertTime(timetakenSGP(started.at.intermediate)), "#####\n"))
@@ -2210,7 +2210,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE for READING_RASCH, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE for READING_RASCH, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SGP variable from READING_UNIFIED
@@ -2220,7 +2220,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE for READING_UNIFIED_RASCH, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE for READING_UNIFIED_RASCH, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SGP_TARGET_BASELINE_10_TIME_CURRENT variable from READING
@@ -2230,7 +2230,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_BASELINE_10_TIME_CURRENT, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_BASELINE_10_TIME_CURRENT, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of P50_PROJ_TIME_1_CURRENT variable from READING
@@ -2240,7 +2240,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable P50_PROJ_TIME_1_CURRENT, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable P50_PROJ_TIME_1_CURRENT, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of READING SGPercentiles output: Dimension
@@ -2255,7 +2255,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGPercentiles output, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGPercentiles output, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of READING SGPercentiles output: Length of SGP_NORM_GROUP_BASELINE,
@@ -2268,7 +2268,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of number of semi-colons of SGP_NORM_GROUP variables, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of number of semi-colons of SGP_NORM_GROUP variables, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of READING SGProjections output
@@ -2283,7 +2283,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGProjections output, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGProjections output, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of READING SGProjections TARGETS output
@@ -2298,7 +2298,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGProjections output, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGProjections output, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI2 (RASCH Scores), Part 1: ", convertTime(timetakenSGP(started.at.overall)), "#####\n"))
@@ -2340,7 +2340,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of equatity of RLI2_PART_1@SGP and RLI2_PART_2@SGP, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of equatity of RLI2_PART_1@SGP and RLI2_PART_2@SGP, part 2: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI2 (RASCH Scores): Part 2", convertTime(timetakenSGP(started.at.intermediate)), "#####\n"))
@@ -2379,7 +2379,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE (2016_2017.3 matrices = 2017_2018.1 matrices), part 3: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE (2016_2017.3 matrices = 2017_2018.1 matrices), part 3: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI2 (RASCH Scores): Part 3", convertTime(timetakenSGP(started.at.intermediate)), "#####\n"))
@@ -2454,7 +2454,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SGP_TARGET_BASELINE_10_TIME_CURRENT variable from READING
@@ -2464,7 +2464,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_BASELINE_10_TIME_CURRENT, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_BASELINE_10_TIME_CURRENT, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of P50_PROJ_TIME_1_CURRENT variable from READING
@@ -2474,7 +2474,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable P50_PROJ_TIME_1_CURRENT, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable P50_PROJ_TIME_1_CURRENT, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of READING SGPercentiles output: Dimension
@@ -2489,7 +2489,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGPercentiles output, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGPercentiles output, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of READING SGPercentiles output: Length of SGP_NORM_GROUP_BASELINE,
@@ -2502,7 +2502,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of number of semi-colons of SGP_NORM_GROUP variables, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of number of semi-colons of SGP_NORM_GROUP variables, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of READING SGProjections output
@@ -2517,7 +2517,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGProjections output, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGProjections output, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of READING SGProjections TARGETS output
@@ -2532,7 +2532,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGProjections output, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of dimension of SGProjections output, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI3 (RASCH Scores), Part 1: ", convertTime(timetakenSGP(started.at.overall)), "#####\n"))
@@ -2575,7 +2575,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of equatity of RLI3_PART_1@SGP and RLI3_PART_2@SGP, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of equatity of RLI3_PART_1@SGP and RLI3_PART_2@SGP, part 2: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI3 (RASCH Scores): Part 2", convertTime(timetakenSGP(started.at.intermediate)), "#####\n"))
@@ -2614,7 +2614,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE (2016_2017.3 matrices = 2017_2018.1 matrices), part 3: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE (2016_2017.3 matrices = 2017_2018.1 matrices), part 3: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI3 (RASCH Scores): Part 3", convertTime(timetakenSGP(started.at.intermediate)), "#####\n"))
@@ -2683,7 +2683,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of P50_PROJ_TIME_1_CURRENT variable from READING
@@ -2693,7 +2693,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable P50_PROJ_TIME_1_CURRENT, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable P50_PROJ_TIME_1_CURRENT, part 1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI4 (STAR Scores for UK): Part 1", convertTime(timetakenSGP(started.at.overall)), "#####\n"))
@@ -2744,7 +2744,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 2: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of P50_PROJ_TIME_1_CURRENT variable from READING
@@ -2754,7 +2754,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable P50_PROJ_TIME_1_CURRENT, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable P50_PROJ_TIME_1_CURRENT, part 2: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI4 (STAR Scores for UK): Part 2", convertTime(timetakenSGP(started.at.intermediate)), "#####\n"))
@@ -2898,7 +2898,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SGP_TARGET_3_YEAR variable
@@ -2907,7 +2907,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SGP_TARGET_3_YEAR_CURRENT variable
@@ -2916,7 +2916,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR_CURRENT: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR_CURRENT: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT variable for MATHEMATICS.XXXX_XXXX scale score targets  :: sum 15097046  ::  dim 27207     9
@@ -2925,7 +2925,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1 variable for MATHEMATICS.XXXX_XXXX scale score targets  :: sum 11284534  ::  dim = 20468    11
@@ -2934,7 +2934,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of DUPS @Data
@@ -2947,7 +2947,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of duplicated cases in @Data: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of duplicated cases in @Data: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of Coefficient_Matrices
@@ -2957,7 +2957,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (1): OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (1): FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			coef.mtx.index <- grep("MATHEMATICS", names(Demonstration_SGP@SGP[["Coefficient_Matrices"]]))
@@ -2970,31 +2970,31 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (2): OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (2): FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 			if (identical(digest::digest(coef.mtx.to.check2), "ec280c6a44de8825bd42ff2a6d184522")) { # d2756efffbe106f8a189f9aaed7f59f4
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (3): OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (3): FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 			if (identical(digest::digest(coef.mtx.to.check3), "56f8903607317231286a7a7a0b605d93")) { # 71367c2559ef1038bea60919246a6bc5
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (4): OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (4): FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 			if (identical(digest::digest(coef.mtx.to.check4), "a2ccf47e36fc5f8f90944dbbc8eb0aa7")) { # cf27eded199f369d7275e598f614e297
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (5): OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (5): FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 			if (identical(digest::digest(coef.mtx.to.check5), "8446a0ede4a5e1b0946fd772aa95304e")) { # 0a3e11fbc4a7a7e766d423ab998465ad
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (6): OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (6): FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 7, Part 1: ", convertTime(timetakenSGP(started.at.intermediate1)), "#####\n\n"))
@@ -3028,7 +3028,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SGP_TARGET_3_YEAR variable
@@ -3037,7 +3037,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SGP_TARGET_3_YEAR_CURRENT variable
@@ -3046,7 +3046,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR_CURRENT: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_TARGET_3_YEAR_CURRENT: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT variable for MATHEMATICS.XXXX_XXXX scale score targets  ::  dim 27834 x 9  ::  sum 15398506
@@ -3055,7 +3055,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1 variable for MATHEMATICS.XXXX_XXXX scale score targets  SEQ sum 13934897 ::  dim 24956 x 11
@@ -3064,7 +3064,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of DUPS @Data
@@ -3076,7 +3076,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of duplicated cases in @Data: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of duplicated cases in @Data: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of Coefficient Matrix
@@ -3087,7 +3087,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (1): OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (1): FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			coef.mtx.index <- grep("MATHEMATICS", sort(names(Demonstration_SGP@SGP[["Coefficient_Matrices"]])), value=TRUE)[2]
@@ -3100,31 +3100,31 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (2): OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (2): FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 			if (identical(digest::digest(coef.mtx.to.check2), "433ab99726913bf12fb8922ab285fdc9")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (3): OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (3): FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 			if (identical(digest::digest(coef.mtx.to.check3), "eb73b35a533e62f43829b9d64006c134")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (4): OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (4): FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 			if (identical(digest::digest(coef.mtx.to.check4), "9e2bd1979b14b34759cafffdbe943d80")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (5): OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (5): FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 			if (identical(digest::digest(coef.mtx.to.check5), "3962206bc6333e1dabbb3057d1281899")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (6): OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Coefficient Matrix (6): FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 7, Part 2: ", convertTime(timetakenSGP(started.at.intermediate2)), "#####\n\n"))
@@ -3176,7 +3176,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of School Summary Table: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of School Summary Table: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of Instructor Summary Table  :: dim = 3516 x 23
@@ -3185,7 +3185,7 @@ function(
 				tmp.messages <- c(tmp.messages, "\t\tTest of Instructor Summary Table: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Instructor Summary Table: FAIL\n")
-				if (stop.fail) messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")
+				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number 7, Part 3: ", convertTime(timetakenSGP(started.at.intermediate3)), "#####\n"))
