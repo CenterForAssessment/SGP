@@ -29,7 +29,7 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
+<link href="https://use.fontawesome.com/releases/v5.0.8/css/all.css" rel="stylesheet">
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
@@ -129,13 +129,13 @@
 </li>
         <li>
   <a href="https://github.com/centerforassessment/SGP">
-    <span class="fa fa-github"></span>
+    <span class="fab fa-github"></span>
      
   </a>
 </li>
 <li>
-   <a style="cursor:pointer" onclick="window.open('https://twitter.com/intent/tweet?url=https%3A%2F%2Fsgp.io&via=NCIEA1&text=SGP%3A%20Student%20Growth%20Percentiles%20%26%20Percentile%20Growth%20Trajectories&hashtags=rstats%2C%20SGP','','scrollbars=0,menubar=0,height=300,width=600,resizable=0,toolbar=0,location=0,status=0')">
-    <span class="fa fa-twitter"></span>
+   <a style="cursor:pointer" onclick="window.open('https://twitter.com/intent/tweet?url=https%3A%2F%2Fsgp.io&via=NCIEA1&text=SGP%3A%20Student%20Growth%20Percentiles%20%26%20Percentile%20Growth%20Trajectories&hashtags=rstats%2CSGP','','scrollbars=0,menubar=0,height=300,width=600,resizable=0,toolbar=0,location=0,status=0')">
+    <span class="fab fa-twitter"></span>
      
   </a>
 </li>
@@ -181,6 +181,8 @@
         <span class='kw'>simulate.sgps</span><span class='kw'>=</span><span class='fl'>TRUE</span>,
         <span class='kw'>calculate.simex</span><span class='kw'>=</span><span class='kw'>NULL</span>,
         <span class='kw'>calculate.simex.baseline</span><span class='kw'>=</span><span class='kw'>NULL</span>,
+    <span class='kw'>calculate.srs</span><span class='kw'>=</span><span class='kw'>NULL</span>,
+    <span class='kw'>calculate.srs.baseline</span><span class='kw'>=</span><span class='kw'>NULL</span>,
         <span class='kw'>goodness.of.fit.print</span><span class='kw'>=</span><span class='fl'>TRUE</span>,
         <span class='kw'>parallel.config</span><span class='kw'>=</span><span class='kw'>NULL</span>,
         <span class='kw'>save.intermediate.results</span><span class='kw'>=</span><span class='fl'>FALSE</span>,
@@ -315,6 +317,15 @@ If missing the function will use the data to infer all the grade progressions fo
       <th>calculate.simex.baseline</th>
       <td><p>A character state acronym or list including state/csem variable, csem.data.vnames, csem.loss.hoss, simulation.iterations, lambda and extrapolation method. Defaults to NULL, no simex calculations performed.
   Alternatively, setting the argument to TRUE uses the same defaults as above along with <code>simex.use.my.coefficient.matrices = TRUE</code>. This argument is passed to <code><a href='analyzeSGP.html'>analyzeSGP</a></code>.</p></td>
+    </tr>
+    <tr>
+      <th>calculate.srs</th>
+      <td><p>A character state acronym or list including [FILL IN LATER]. Creates a longitudinal data set based upon a stratified random sample of variables and proportions for the United States (default) or provided by the user. The argument defaults to NULL, Alternatively, setting the argument to TRUE uses the defaults specified above. This argument is passed to <code><a href='analyzeSGP.html'>analyzeSGP</a></code>.</p></td>
+    </tr>
+    <tr>
+      <th>calculate.srs.baseline</th>
+      <td><p>A character state acronym or list including [FILL IN LATER]. Calculates SGPs based upon previosly established coefficient matrices derived from a stratified random sample of data. Defaults to NULL, no stratified random sample SGPs are calculated. Alternatively, setting the
+  argument to TRUE uses the defaults specified above. This argument is passed to <code><a href='analyzeSGP.html'>analyzeSGP</a></code>.</p></td>
     </tr>
     <tr>
       <th>goodness.of.fit.print</th>

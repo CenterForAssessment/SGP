@@ -2,12 +2,15 @@
 function(
         dataForSuperCohort,
         variables.to.get=c("VALID_CASE", "YEAR", "CONTENT_AREA", "GRADE", "ID", "SCALE_SCORE", "ACHIEVEMENT_LEVEL", "YEAR_WITHIN", "FIRST_OBSERVATION", "LAST_OBSERVATION", simex.baseline.config$csem.data.vnames),
-        sgp.srs.config,
+        sgp.config,
         content_areas,
         years,
         grades,
         baseline.grade.sequences.lags,
         exclude.years) {
+
+        VALID_CASE <- CONTENT_AREA <- YEAR <- GRADE <- YEAR_WITHIN <- COHORT_YEAR <- NULL
+
 
         ### Utility functions
 
@@ -20,7 +23,7 @@ function(
         } ### END test.year.sequence
 
 
-        tmp_sgp_data_for_analysis <- dataForSuperCohort[,intersect(names(sgp_object@Data), variables.to.get), with=FALSE]["VALID_CASE"]
+        tmp_sgp_data_for_analysis <- dataForSuperCohort[,intersect(names(dataForSuperCohort), variables.to.get), with=FALSE]["VALID_CASE"]
 
         if ("YEAR_WITHIN" %in% names(tmp_sgp_data_for_analysis)) {
             setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE, YEAR_WITHIN)
@@ -30,7 +33,7 @@ function(
             year_within.tf <- FALSE
         }
 
-        tmp.year.sequence <- test.year.sequence(content_areas, years, grade.sequences, baseline.grade.sequences.lags)
+        tmp.year.sequence <- test.year.sequence(content_areas, years, grades, baseline.grade.sequences.lags)
 
         if (!is.null(exclude.years)) {
             tmp.year.sequence <- tmp.year.sequence[sapply(tmp.year.sequence, function(x) !tail(x, 1) %in% exclude.years)]
@@ -38,7 +41,7 @@ function(
 
         tmp.list <- list()
         for (cohort.iter in seq_along(tmp.year.sequence)) {
-            tmp.sgp.iter <- sgp.baseline.config[[cohort.iter]] # Convert sgp.baseline.config into a valid sgp.iter for getPanelData
+            tmp.sgp.iter <- sgp.config[[cohort.iter]] # Convert sgp.config into a valid sgp.iter for getPanelData
             names(tmp.sgp.iter) <- gsub('sgp.baseline.', 'sgp.', names(tmp.sgp.iter))
             tmp.sgp.iter$sgp.panel.years <- tmp.year.sequence[[cohort.iter]]
             tmp.sgp.iter$sgp.grade.sequences <- tmp.sgp.iter$sgp.grade.sequences
