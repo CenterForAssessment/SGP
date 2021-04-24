@@ -2,7 +2,6 @@ SGP
 ===
 
 [![R-CMD-check](https://github.com/CenterForAssessment/SGP/workflows/R-CMD-check/badge.svg)](https://github.com/CenterForAssessment/SGP/actions)
-[![Build Status](https://travis-ci.org/CenterForAssessment/SGP.svg?branch=master)](https://travis-ci.org/CenterForAssessment/SGP)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/centerforassessment/SGP?branch=master&svg=true)](https://ci.appveyor.com/project/centerforassessment/SGP)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/SGP)](https://cran.r-project.org/package=SGP)
 [![Development Version](https://img.shields.io/badge/devel-1.9--9.7-brightgreen.svg)](https://github.com/CenterForAssessment/SGP)
