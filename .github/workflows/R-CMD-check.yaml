@@ -56,6 +56,15 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
           restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
 
+ 	# xquartz and cairo are needed for Cairo package.
+	# harfbuzz and fribidi are needed for textshaping package.
+      - name: Mac systemdeps
+        if: runner.os == 'macOS'
+        run: |
+          brew install --cask xquartz
+          brew install cairo
+          brew install harfbuzz fribidi
+
       - name: Install system dependencies
         if: runner.os == 'Linux'
         run: |
