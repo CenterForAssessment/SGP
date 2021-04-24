@@ -56,7 +56,7 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
           restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
 
-      - name: Mac systemdeps
+      - name: macOS xquartz, cairo, harfbuzz fribibi installation 
         if: runner.os == 'macOS'
         run: |
           brew install --cask xquartz
