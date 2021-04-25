@@ -154,8 +154,8 @@
     </div>
 
     <p>Function includes a number of "styles" associated with <code><a href='bubblePlot.html'>bubblePlot</a></code> to create bubble plots depicting a variety of relationships often of interest
-to stakeholders. The <code><a href='bubblePlot.html'>bubblePlot</a></code> function itself is adaptable to many representations but is most often used in conjunction with results derived 
-from <code><a href='summarizeSGP.html'>summarizeSGP</a></code> to represent summary level results of growth against achievement (usually, median student growth percentile against percentage 
+to stakeholders. The <code><a href='bubblePlot.html'>bubblePlot</a></code> function itself is adaptable to many representations but is most often used in conjunction with results derived
+from <code><a href='summarizeSGP.html'>summarizeSGP</a></code> to represent summary level results of growth against achievement (usually, median student growth percentile against percentage
 at/above proficient).</p>
 
     <pre class="usage"><span class='fu'>bubblePlot_Styles</span>(
@@ -184,7 +184,7 @@ at/above proficient).</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>sgp_object</th>
-      <td><p>An object of class SGP containing long formatted data in the <code>@Data</code> slot that will be used for the production of student growth 
+      <td><p>An object of class SGP containing long formatted data in the <code>@Data</code> slot that will be used for the production of student growth
 and achievement plots and system growth and achievement plots, summary data from <code><a href='summarizeSGP.html'>summarizeSGP</a></code> in the <code>@Summary</code> slot for bubble plots.</p></td>
     </tr>
     <tr>
@@ -193,32 +193,32 @@ and achievement plots and system growth and achievement plots, summary data from
     </tr>
     <tr>
       <th>bPlot.years</th>
-      <td><p>A vector indicating year(s) in which to produce <code><a href='bubblePlot.html'>bubblePlot</a></code>s using data available in <code>sgp_object</code>. If missing the 
+      <td><p>A vector indicating year(s) in which to produce <code><a href='bubblePlot.html'>bubblePlot</a></code>s using data available in <code>sgp_object</code>. If missing the
 function will use the last year available in the data to produce <code><a href='bubblePlot.html'>bubblePlot</a></code>s.</p></td>
     </tr>
     <tr>
       <th>bPlot.content_areas</th>
-      <td><p>A vector indicating content area(s) to produce <code><a href='bubblePlot.html'>bubblePlot</a></code>s using data available in <code>sgp_object</code>. If missing the 
+      <td><p>A vector indicating content area(s) to produce <code><a href='bubblePlot.html'>bubblePlot</a></code>s using data available in <code>sgp_object</code>. If missing the
 function will produce plots for all available content areas provided in the data.</p></td>
     </tr>
     <tr>
       <th>bPlot.districts</th>
-      <td><p>A vector indicating districts to produce <code><a href='bubblePlot.html'>bubblePlot</a></code>s using data available in <code>sgp_object</code>. If missing the 
+      <td><p>A vector indicating districts to produce <code><a href='bubblePlot.html'>bubblePlot</a></code>s using data available in <code>sgp_object</code>. If missing the
 function will produce plots for all available districts provided in the data where districts represent a relevant unit to be represented by the specific <code>bubblePlot</code> style.</p></td>
     </tr>
     <tr>
       <th>bPlot.schools</th>
-      <td><p>A vector indicating schools to produce <code><a href='bubblePlot.html'>bubblePlot</a></code>s using data available in <code>sgp_object</code>. If missing the 
+      <td><p>A vector indicating schools to produce <code><a href='bubblePlot.html'>bubblePlot</a></code>s using data available in <code>sgp_object</code>. If missing the
 function will produce plots for all available schools provided in the data where districts represent a relevant unit to be represented by the specific <code>bubblePlot</code> style.</p></td>
     </tr>
     <tr>
       <th>bPlot.instructors</th>
-      <td><p>A vector indicating instructors to produce <code><a href='bubblePlot.html'>bubblePlot</a></code>s using data available in <code>sgp_object</code>. If missing the 
+      <td><p>A vector indicating instructors to produce <code><a href='bubblePlot.html'>bubblePlot</a></code>s using data available in <code>sgp_object</code>. If missing the
 function will produce plots for all available instructors provided in the data where schools and districts represent relevant units to be represented by the specific <code>bubblePlot</code> style.</p></td>
     </tr>
     <tr>
       <th>bPlot.styles</th>
-      <td><p>A vector of positive integers indicating the types of <code><a href='bubblePlot.html'>bubblePlot</a></code>s to produce using data available in <code>sgp_object</code>. See 
+      <td><p>A vector of positive integers indicating the types of <code><a href='bubblePlot.html'>bubblePlot</a></code>s to produce using data available in <code>sgp_object</code>. See
 associated documentation for example plots.</p></td>
     </tr>
     <tr>
@@ -240,7 +240,7 @@ associated documentation for example plots.</p></td>
     <tr>
       <th>bPlot.anonymize</th>
       <td><p>A Boolean argument (defaults to FALSE) indicating whether to anonymize <code><a href='bubblePlot.html'>bubblePlot</a></code>s school and district names that appear in the
-plots and data tips of the plots.  For student level anonymization, the function utilizes the randomNames package to produce gender and ethnic correct names based 
+plots and data tips of the plots.  For student level anonymization, the function utilizes the randomNames package to produce gender and ethnic correct names based
 upon gender and ethnicity codes available in <code>@Data</code>.</p></td>
     </tr>
     <tr>
@@ -272,13 +272,13 @@ achievement as the vertical dimension of the <code><a href='bubblePlot.html'>bub
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p><code>bubblePlot_Styles</code> is an omnibus function containing a number of applications of the <code>bubblePlot</code> function with data output from <code>SGP</code> analyses. As added styles are 
+    <p><code>bubblePlot_Styles</code> is an omnibus function containing a number of applications of the <code>bubblePlot</code> function with data output from <code>SGP</code> analyses. As added styles are
 constructed they will be added to the function allowing user to construct plots of their liking. User wishing to participate and provide or suggest specific styles of their own should
 contact the package maintainer. Styles representing summary level data (e.g., growth and achievement for schools) are currently assigned numbers from 1 to 99 and styles representing
 individual level data (e.g., growth and achievement for students within a single grade) are currently assigned numbers from 100 to 199.</p><table><tr><td>
 <code>1</code>: </td>
 </tr><tr><td> Growth and achievement <code><a href='bubblePlot.html'>bubblePlot</a></code>s for the entire state with bubbles representing schools.</td>
-</tr><tr><td> 
+</tr><tr><td>
 <code>100</code>: </td>
 </tr><tr><td> Growth and achievement <code><a href='bubblePlot.html'>bubblePlot</a></code>s by grade for students in selected schools and districts.</td>
 </tr></table>
@@ -296,7 +296,7 @@ individual level data (e.g., growth and achievement for students within a single
     </ul>
 
     <h2>Author</h2>
-    Damian W. Betebenner <a href='mailto:dbetebenner@nciea.org'>dbetebenner@nciea.org</a> and Adam Van Iwaarden <a href='mailto:vaniwaarden@colorado.edu'>vaniwaarden@colorado.edu</a>
+    Damian W. Betebenner <a href='mailto:dbetebenner@nciea.org'>dbetebenner@nciea.org</a> and Adam Van Iwaarden <a href='mailto:avaniwaarden@nciea.org'>avaniwaarden@nciea.org</a>
   </div>
 </div>
 
