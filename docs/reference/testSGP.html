@@ -158,7 +158,8 @@
     <pre class="usage"><span class='fu'>testSGP</span>(<span class='no'>TEST_NUMBER</span>,
         <span class='kw'>save.results</span><span class='kw'>=</span><span class='fl'>TRUE</span>,
         <span class='kw'>test.option</span><span class='kw'>=</span><span class='fu'>list</span>(),
-        <span class='kw'>memory.profile</span><span class='kw'>=</span><span class='fl'>FALSE</span>)</pre>
+        <span class='kw'>memory.profile</span><span class='kw'>=</span><span class='fl'>FALSE</span>,
+        <span class='kw'>stop.fail</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -180,6 +181,10 @@
       <th>memory.profile</th>
       <td><p>A Boolean variable indicating whether to use memory profiling via <code>Rprof</code>.  Experimental. Defaults to FALSE.</p></td>
     </tr>
+    <tr>
+      <th>stop.fail</th>
+      <td><p>A Boolean variable indicating whether to stop the function if a test fails Defaults to TRUE.</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -199,10 +204,10 @@
   <span class='fu'>testSGP</span>(<span class='st'>'1b'</span>)
 
   <span class='co'>## testSGP(2): Various tests of updateSGP functionality.</span>
-  <span class='co'>## testSGP('2a'): Test of updateSGP performing SGP analyses in two steps: </span>
+  <span class='co'>## testSGP('2a'): Test of updateSGP performing SGP analyses in two steps:</span>
   <span class='co'>##	Create what_sgp_object: 2010-2011 to 2013-2014 then add with_sgp_data_LONG 2014-2015 using</span>
   <span class='co'>##	overwrite.existing.data=FALSE and sgp.use.my.coefficient.matrices=FALSE.</span>
-  <span class='co'>## testSGP('2b'): Test of updateSGP performing SGP analyses in two steps: </span>
+  <span class='co'>## testSGP('2b'): Test of updateSGP performing SGP analyses in two steps:</span>
   <span class='co'>## 	Create what_sgp_object: 2010-2011 to 2013-2014 then add with_sgp_data_LONG 2014-2015 using</span>
   <span class='co'>##	overwrite.existing.data=TRUE and sgp.use.my.coefficient.matrices=FALSE.</span>
   <span class='co'>## testSGP('2c'): Test of updateSGP performing SGP analyses in two steps:</span>
@@ -216,7 +221,7 @@
   <span class='fu'>testSGP</span>(<span class='st'>'2c'</span>)
   <span class='fu'>testSGP</span>(<span class='st'>'2d'</span>)
 
-  <span class='co'>## testSGP(3) runs abcSGP on grade progressions including End of Course Tests in Mathematics </span>
+  <span class='co'>## testSGP(3) runs abcSGP on grade progressions including End of Course Tests in Mathematics</span>
   <span class='co'>## (Algebra I and Algebra II) and Reading (Grade 9 Literature and American Literature)</span>
   <span class='fu'>testSGP</span>(<span class='fl'>3</span>)
 
@@ -240,7 +245,7 @@
     </ul>
 
     <h2>Author</h2>
-    Damian W. Betebenner <a href='mailto:dbetebenner@nciea.org'>dbetebenner@nciea.org</a> and Adam Van Iwaarden <a href='mailto:vaniwaarden@colorado.edu'>vaniwaarden@colorado.edu</a>
+    Damian W. Betebenner <a href='mailto:dbetebenner@nciea.org'>dbetebenner@nciea.org</a> and Adam Van Iwaarden <a href='mailto:avaniwaarden@nciea.org'>avaniwaarden@nciea.org</a>
   </div>
 </div>
 
