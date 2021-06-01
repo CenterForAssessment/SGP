@@ -61,7 +61,7 @@ function(matrix_argument,
 			### Grade Progression
 
 			grade_progression <- as.character(c(rev(sapply(rn.knots2, function(x) x[1])), tmp.last.grade))
-			if (!is.numeric(type.convert(grade_progression))) {
+			if (!is.numeric(type.convert(grade_progression, as.is=FALSE))) {
 				stop("Automatic conversion of older to newer version spline matrices is only available when grade progressions are integers. Please contact package maintainer for help on update of your splineMatrices.")
 			}
 
@@ -73,7 +73,7 @@ function(matrix_argument,
 
 			### Time Lag
 
-			time_lags <- as.integer(diff(type.convert(grade_progression)))
+			time_lags <- as.integer(diff(type.convert(grade_progression, as.is=FALSE)))
 
 
 			### Time
@@ -124,7 +124,7 @@ function(matrix_argument,
 				grade_progression <- as.character(matrix_argument@Grade_Progression[[1]])
 			} else {
 				grade_progression <- as.character(c(rev(sapply(rn.knots2, function(x) x[1])), tmp.last.grade))
-				if (!is.numeric(type.convert(grade_progression))) {
+				if (!is.numeric(type.convert(grade_progression, as.is=FALSE))) {
 					stop("Automatic conversion of older to newer version spline matrices is only available when grade progressions are integers. Please contact package maintainer for help on update of your splineMatrices.")
 				}
 			}
@@ -144,7 +144,7 @@ function(matrix_argument,
 			if (.hasSlot(matrix_argument, "Time_Lags")) {
 				time_lags <- as.numeric(matrix_argument@Time_Lags[[1]])
 			} else {
-				time_lags <- as.numeric(diff(type.convert(grade_progression)))
+				time_lags <- as.numeric(diff(type.convert(grade_progression, as.is=FALSE)))
 			}
 
 

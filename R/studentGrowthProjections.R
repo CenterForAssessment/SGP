@@ -358,7 +358,7 @@ function(panel.data,	## REQUIRED
 			if (is.character(percentile.trajectory.values)) {
 				tmp.name.prefix <- "SCALE_SCORE_"
 				tmp.num.years.forward <- min(length(grade.projection.sequence),
-					lapply(strsplit(percentile.trajectory.values, "_")[[1L]], type.convert)[sapply(lapply(strsplit(percentile.trajectory.values, "_")[[1L]], type.convert), is.numeric)][[1L]])
+					lapply(strsplit(percentile.trajectory.values, "_")[[1L]], function(x) type.convert(x, as.is=FALSE))[sapply(lapply(strsplit(percentile.trajectory.values, "_")[[1L]], function(x) type.convert(x, as.is=FALSE)), is.numeric)][[1L]])
 				if (!any(grepl("CURRENT", percentile.trajectory.values))) tmp.num.years.forward <- min(length(grade.projection.sequence), tmp.num.years.forward+1L)
 
 				tmp.indices <- as.integer(rep(dim(percentile.trajectories)[1L]/uniqueN(percentile.trajectories[['ID']])*(seq(uniqueN(percentile.trajectories[['ID']]))-1L),
@@ -863,7 +863,7 @@ function(panel.data,	## REQUIRED
 	content_area.projection.sequence <- content_area.projection.sequence[tmp.index]
 
 	if (is.null(year_lags.projection.sequence)) { ### NOTE same length as grade.projection.sequence for lag between progression and projection sequence
-		if (is.numeric(type.convert(grade.projection.sequence))) {
+		if (is.numeric(type.convert(grade.projection.sequence, as.is=FALSE))) {
 			year_lags.projection.sequence <- diff(as.numeric(c(tail(grade.progression, 1L), grade.projection.sequence)))
 		} else {
 			year_lags.projection.sequence <- rep(1L, length(grade.projection.sequence))

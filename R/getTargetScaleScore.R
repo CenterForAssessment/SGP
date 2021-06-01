@@ -92,7 +92,7 @@ function(sgp_object,
 	}
 
 	sgp.projections.max.forward.progression.years <-
-		as.numeric(sapply(unlist(strsplit(target.level[1L], "_")), type.convert)[!sapply(lapply(unlist(strsplit(target.level[1L], "_")), type.convert), is.factor)])
+		as.numeric(sapply(unlist(strsplit(target.level[1L], "_")), function(x) type.convert(x, as.is=FALSE))[!sapply(lapply(unlist(strsplit(target.level[1L], "_")), function(x) type.convert(x, as.is=FALSE)), is.factor)])
 
 	par.sgp.config <- getSGPConfig(
 				sgp_object,
