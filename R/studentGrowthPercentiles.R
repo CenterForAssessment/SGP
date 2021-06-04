@@ -1326,7 +1326,7 @@ function(panel.data,         ## REQUIRED
 			stop("\tNOTE: Non-numeric grade progressions must be accompanied by arguments 'year.progression' and 'year_lags.progression'")
 		} else {
 			year.progression <- year.progression.for.norm.group <-
-				tail(rev(yearIncrement(sgp.labels[['my.year']], c(0, -cumsum(rev(diff(type.convert(as.character(grade.progression)))))))), length(tmp.gp))
+				tail(rev(yearIncrement(sgp.labels[['my.year']], c(0, -cumsum(rev(diff(type.convert(as.character(grade.progression), as.is=FALSE))))))), length(tmp.gp))
 		}
 	}
 

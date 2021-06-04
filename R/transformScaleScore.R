@@ -19,10 +19,10 @@ function(tmp.data,
 	get.min.max.grade <- function(Cutscores, linkage.grades) {
 
 		if ("GRADE_NUMERIC" %in% names(Cutscores)) {
-			tmp.grades.numeric <- range(sort(type.convert(subset(Cutscores, !GRADE %in% c("GRADE_LOWER", "GRADE_UPPER"))[['GRADE_NUMERIC']])))
+			tmp.grades.numeric <- range(sort(type.convert(subset(Cutscores, !GRADE %in% c("GRADE_LOWER", "GRADE_UPPER"))[['GRADE_NUMERIC']], as.is=FALSE)))
 			tmp.grades <- sort(subset(Cutscores, GRADE_NUMERIC %in% tmp.grades.numeric)[['GRADE']])
 		} else {
-			tmp.grades <- sort(type.convert(subset(Cutscores, !GRADE %in% c("GRADE_LOWER", "GRADE_UPPER"))[['GRADE']]))
+			tmp.grades <- sort(type.convert(subset(Cutscores, !GRADE %in% c("GRADE_LOWER", "GRADE_UPPER"))[['GRADE']], as.is=FALSE))
 		}
 		linkage.grades <- sort(sapply(strsplit(linkage.grades, "_"), '[', 2))
 		tmp.min.max <- c(tmp.grades[1], rev(tmp.grades)[1])

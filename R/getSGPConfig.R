@@ -156,8 +156,8 @@ function(sgp_object,
 				}
 
 				### Create index and re-specify years and content areas from sgp.panel.years and sgp.content.areas
-				if (is.integer(type.convert(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']]))) {
-					tmp.numeric.grades <- sort(type.convert(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']]))
+				if (is.integer(type.convert(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], as.is=TRUE))) {
+					tmp.numeric.grades <- sort(type.convert(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], as.is=TRUE))
 					grade.span <- seq(min(tmp.numeric.grades), max(tmp.numeric.grades))
 					index <- match(tmp.numeric.grades, grade.span)
 					if (!sgp.config.drop.nonsequential.grade.progression.variables)  index <- seq_along(index)
