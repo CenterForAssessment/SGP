@@ -40,7 +40,7 @@ function(
 
 		### Create max/min for knots_boundaries_data by CONTENT_AREA, YEAR, GRADE
 
-		knots_boundaries_data_min_max <- knots_boundaries_data[,list(OBSERVED_MIN=min(SCALE_SCORE, na.rm=TRUE), OBSERVED_MAX=max(SCALE_SCORE, na.rm=TRUE)), keyby=c("CONTENT_AREA", "YEAR", "GRADE")]
+		knots_boundaries_data_min_max <- knots_boundaries_data[!is.na(SCALE_SCORE), list(OBSERVED_MIN=min(SCALE_SCORE, na.rm=TRUE), OBSERVED_MAX=max(SCALE_SCORE, na.rm=TRUE)), keyby=c("CONTENT_AREA", "YEAR", "GRADE")]
 
 
 		### Add loss/hoss by CONTENT_AREA, YEAR, and GRADE to knots_boundaries_data_min_max
