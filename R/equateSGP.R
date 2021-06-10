@@ -53,12 +53,12 @@ function(tmp.data,
 					freqtab(as.numeric(as.character(round(current.year.data[['SCALE_SCORE']], digits=equate.interval.digits))),
 						scales=as.numeric(as.character(round(seq(current.year.data.range[1L], current.year.data.range[2L], by=0.1^equate.interval.digits), digits=equate.interval.digits)))),
 					freqtab(as.numeric(as.character(round(prior.year.data[['SCALE_SCORE']], digits=equate.interval.digits))),
-						scales=as.numeric(as.character(round(seq(prior.year.data.range[1L], prior.year.data.range[2L], by=0.1^equate.interval.digits), digits=equate.interval.digits)))), type=equate.type.iter),
+						scales=as.numeric(as.character(round(seq(prior.year.data.range[1L], prior.year.data.range[2L], by=0.1^equate.interval.digits), digits=equate.interval.digits)))), type=equate.type.iter, name=paste(equate.type.iter, "NEW_TO_OLD", sep="_")),
 				OLD_TO_NEW=equate(
 					freqtab(as.numeric(as.character(round(prior.year.data[['SCALE_SCORE']], digits=equate.interval.digits))),
 						scales=as.numeric(as.character(round(seq(prior.year.data.range[1L], prior.year.data.range[2L], by=0.1^equate.interval.digits), digits=equate.interval.digits)))),
 					freqtab(as.numeric(as.character(round(current.year.data[['SCALE_SCORE']], digits=equate.interval.digits))),
-						scales=as.numeric(as.character(round(seq(current.year.data.range[1L], current.year.data.range[2L], by=0.1^equate.interval.digits), digits=equate.interval.digits)))), type=equate.type.iter)
+						scales=as.numeric(as.character(round(seq(current.year.data.range[1L], current.year.data.range[2L], by=0.1^equate.interval.digits), digits=equate.interval.digits)))), type=equate.type.iter, name=paste(equate.type.iter, "OLD_TO_NEW", sep="_"))
 			)
 		}
 		return(equate.list)
