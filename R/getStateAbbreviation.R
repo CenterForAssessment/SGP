@@ -57,7 +57,7 @@ WY, Wyoming
 ABQ, Albuquerque
 AOB, AOB
 ATI, ATI
-BI, Bureau Indian Affairs
+BI, Bureau of Indian Education
 CO_ORIGINAL, Colorado
 DC, Washington DC
 DD, Department of Defense
