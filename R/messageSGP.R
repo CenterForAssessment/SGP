@@ -10,8 +10,8 @@ function(tmp.message,
 
 		if (is.call(tmp.message)) {
 			tmp.message2 <- c(paste0("\n\n\t", as.character(tmp.message)[1L], "(\n\t\t"), paste(names(tmp.message)[-1L], as.character(tmp.message)[-1L], sep=" = ", collapse="\n\t\t"), ")\n\n")
-			cat(tmp.message2, file = logfile, append=TRUE)
-		} else cat(tmp.message, "\n", file=logfile, sep="", append=TRUE)
+			cat(tmp.message2, file = logfile, append=appendLF)
+		} else cat(tmp.message, "\n", file=logfile, sep="", append=appendLF)
 	}
 
 	if (!is.call(tmp.message)) {
