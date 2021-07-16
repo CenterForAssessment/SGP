@@ -53,8 +53,9 @@ bubblePlot(
 	bubble_plot_configs.BUBBLE_PLOT_FORMAT="print",
 	bubble_plot_configs.BUBBLE_PLOT_LEGEND=FALSE,
 	bubble_plot_configs.BUBBLE_PLOT_TITLE=TRUE,
+	bubble_plot_configs.BUBBLE_PLOT_SUMMARY_STATISTICS=TRUE,
 	bubble_plot_configs.BUBBLE_PLOT_BACKGROUND_LABELS=c("Growth", "Achievement"),
-	bubble_plot_configs.BUBBLE_PLOT_EXTRAS=NULL,
+	bubble_plot_configs.BUBBLE_PLOT_EXTRAS="BASE_LINE",
         bubble_plot_configs.BUBBLE_PLOT_DIMENSION=NULL, ## List of WIDTH and HEIGHT
 	bubble_plot_configs.BUBBLE_PLOT_NAME="bubblePlot.pdf",
 	bubble_plot_configs.BUBBLE_PLOT_PATH="Figures",
@@ -193,11 +194,14 @@ bubblePlot(
 	\item{bubble_plot_configs.BUBBLE_PLOT_TITLE}{
 	Default value is \code{bubble_plot_configs.BUBBLE_PLOT_TITLE=TRUE}.
 	}
+	\item{bubble_plot_configs.BUBBLE_PLOT_SUMMARY_STATISTICS}{
+	Default value is \code{bubble_plot_configs.BUBBLE_PLOT_SUMMARY_STATISTICS=TRUE}. Controls whether summary statistics are printed in the legend.
+	}
 	\item{bubble_plot_configs.BUBBLE_PLOT_BACKGROUND_LABELS}{
 	Default value is \code{bubble_plot_configs.BUBBLE_PLOT_BACKGROUND_LABELS=c('Growth', 'Achievement')}.
 	}
 	\item{bubble_plot_configs.BUBBLE_PLOT_EXTRAS}{
-	Default value is \code{bubble_plot_configs.BUBBLE_PLOT_EXTRAS=NULL}.
+	Default value is \code{bubble_plot_configs.BUBBLE_PLOT_EXTRAS='BASE_LINE'} which prints a vertical line at 50 on the plot.
 	}
 	\item{bubble_plot_configs.BUBBLE_PLOT_DIMENSION}{
         Default value is \code{bubble_plot_configs.BUBBLE_PLOT_DIMENSION=NULL}.
