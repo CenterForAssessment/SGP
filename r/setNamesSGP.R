@@ -1,4 +1,5 @@
-`setNamesSGP` <- function(
+`setNamesSGP` <- 
+function(
   data,
   state=NULL) {
 
@@ -12,4 +13,4 @@
   if (is.null(variable.name.lookup)) stop("Variable name lookup must be in SGPstateData for ", state, " to use setNamesSGP")
   names.in.data <- which(variable.name.lookup[["names.provided"]] %in% names(data))
   data.table::setnames(data, variable.name.lookup[['names.provided']][names.in.data], variable.name.lookup[['names.sgp']][names.in.data])
-}
+} ### END setNamesSGP
