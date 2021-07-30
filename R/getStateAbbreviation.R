@@ -94,14 +94,14 @@ WIDA_WI, WIDA WI
 WIDA, WIDA
 WA, Washington")
 
-	if (type=="ABBREVIATION") {
+	if (toupper(type)=="ABBREVIATION") {
 		tmp.name.position <- sapply(toupper(state.abbreviation.name.lookup[["FULL_NAME"]]), function(x) regexpr(x, toupper(supplied.name)))
 	} else {
 		tmp.name.position <- sapply(lapply(toupper(state.abbreviation.name.lookup[["ABBREVIATION"]]), function(x) regexpr(x, toupper(supplied.name))), function(x) attributes(x)[['match.length']])
 	}
 
 	if (any(tmp.name.position!=-1)) {
-		if (type=="ABBREVIATION") {
+		if (toupper(type)=="ABBREVIATION") {
 			if (length(possible.name <- unique(names(sort(tmp.name.position[tmp.name.position!=-1])))) > 1) {
 				possible.name <- possible.name[which.min(abs(sapply(lapply(possible.name, function(x) regexpr(x, toupper(supplied.name))), function(x) attributes(x)[['match.length']])-nchar(supplied.name)))]
 			}
