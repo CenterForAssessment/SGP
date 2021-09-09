@@ -281,11 +281,14 @@ function(panel.data,         ## REQUIRED
         } else reproduce.old.values <- FALSE
 
         if (ranked.simex) {
-            for (p in seq.int(3)) { # Additional values between the tau predicted values - 1/8th percentiles for ranking
-                dataX <- data1[,(seq.int(ncol(data1))-1L)] + t(apply(data1, 1, diff))/2
-                data1 <- cbind(data1, dataX)[, order(c(seq.int(ncol(data1)), seq.int(ncol(dataX))))]
+          for (p in seq.int(3)) { # Additional values between the tau predicted values - 1/8th percentiles for ranking
+            dataX <- data1[,(seq.int(ncol(data1))-1L)] + t(apply(data1, 1, diff))/2
+            data1 <- cbind(data1, dataX)[, order(c(seq.int(ncol(data1)), seq.int(ncol(dataX))))]
+            if (!is.matrix(data1) & is.vector(data1)) {  #  Account for edge cases where a single student is fed in (e.g., baseline)
+              data1 <- matrix(data1, nrow=1, byrow=TRUE)
             }
-            tmp.zero <- 794L
+          }
+          tmp.zero <- 794L
         } else tmp.zero <- 101L
 
         V1 <- NULL
