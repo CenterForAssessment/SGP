@@ -152,7 +152,7 @@ function(panel.data,         ## REQUIRED
 				tmp.res <- rq(method="br", ...)[['coefficients']]
 			} else {
 				tmp.res <- try(rq(method=rq.method, ...)[['coefficients']], silent=TRUE)
-				if (class(tmp.res) == "try-error") {
+				if ("try-error" %in% class(tmp.res)) {
 					tmp.res <- rq(method="br", ...)[['coefficients']]
 				}
 			}
