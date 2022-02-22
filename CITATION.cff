@@ -3,10 +3,13 @@ message: "If you use the SGP Package, please cite it as below."
 authors:
 - family-names: "Damian"
   given-names: "Betebenner"
-  orcid: "https://orcid.org/0000-0000-0000-0000"
+  orcid: "https://orcid.org/0000-0003-0476-5599"
 - family-names: "Adam"
   given-names: "Van Iwaarden"
-  orcid: "https://orcid.org/0000-0000-0000-0000"
+- family-names: "Ben"
+  given-names: "Domingue"
+- family-names: "Yi"
+  given-names: "Shang"
 title: "SGP: Student Growth Percentiles & Percentile Growth Trajectories"
 version: 1.9-9.986
 doi: 10.5281/zenodo.1234
