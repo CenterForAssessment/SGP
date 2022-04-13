@@ -28,6 +28,10 @@ jobs:
           - {os: ubuntu-latest,   r: 'release'}
           - {os: ubuntu-latest,   r: 'oldrel-1'}
 
+         name INSTALL XQUARTZ on OSX
+          if: matrix.os == 'macOS-latest'
+          run: | brew --cask install xquartz
+
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
