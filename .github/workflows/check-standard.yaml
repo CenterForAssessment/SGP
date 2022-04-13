@@ -8,10 +8,6 @@ on:
 
 name: R-CMD-check
 
-name INSTALL XQUARTZ on OSX
-     if: matrix.os == 'macOS-latest'
-     run: | brew --cask install xquartz
-
 jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
