@@ -5,4 +5,4 @@
 ^\.appveyor\.yml$
 ^vignettes/releases$
 ^\.github$
-CITATION.cff
+^CITATION\.cff
