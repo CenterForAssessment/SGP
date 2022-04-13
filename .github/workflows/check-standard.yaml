@@ -30,7 +30,7 @@ jobs:
 
     steps:
       - name INSTALL XQUARTZ on OSX
-        if: runner.os == 'macOS-latest'
+        if: matrix.os == 'macOS-latest'
         run: | brew --cask install xquartz
 
       - uses: actions/checkout@v2
