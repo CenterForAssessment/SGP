@@ -8,6 +8,10 @@ on:
 
 name: R-CMD-check
 
+name INSTALL XQUARTZ on OSX
+     if: matrix.os == 'macOS-latest'
+     run: | brew --cask install xquartz
+
 jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
@@ -29,10 +33,6 @@ jobs:
       R_KEEP_PKG_SOURCE: yes
 
     steps:
-      - name INSTALL XQUARTZ on OSX
-        if: matrix.os == 'macOS-latest'
-        run: | brew --cask install xquartz
-
       - uses: actions/checkout@v2
 
       - uses: r-lib/actions/setup-pandoc@v1
