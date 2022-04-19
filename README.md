@@ -1,7 +1,7 @@
 SGP
 ===
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3634024.svg)](https://doi.org/10.5281/zenodo.3634024)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6471237.svg)](https://doi.org/10.5281/zenodo.6471237)
 [![R-CMD-check](https://github.com/CenterForAssessment/SGP/workflows/R-CMD-check/badge.svg)](https://github.com/CenterForAssessment/SGP/actions)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/centerforassessment/SGP?branch=master&svg=true)](https://ci.appveyor.com/project/centerforassessment/SGP)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/SGP)](https://cran.r-project.org/package=SGP)
