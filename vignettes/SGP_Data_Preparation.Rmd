@@ -96,7 +96,7 @@ head(sgpData_LONG)
 We recommend LONG formated data for use with operational analyses. Managing data in long format is more simple than data in the wide format. For example,
 when updating analyses with another year of data, the data is appended onto the bottom of the currently existing long data set. All higher level
 functions in the SGP package are designed for use with LONG format data. In addition, these functions often assume the existence of state specific meta-data
-in the embedded [SGPstateData](https://centerforassessment.github.io/SGPstateData) meta-data.
+in the embedded [SGPstateData](https://centerforassessment.github.io/SGPstateData/) meta-data.
 See the [SGP package documentation](https://sgp.io/reference/index.html) for more comprehensive documentation on how to use `sgpData` for SGP calculations.
 
 There are 7 *required* variables when using LONG data with SGP analyses: `VALID_CASE`, `CONTENT_AREA`, `YEAR`, `ID`, `SCALE_SCORE`, `GRADE`
