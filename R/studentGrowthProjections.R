@@ -986,7 +986,7 @@ function(panel.data,	## REQUIRED
 		setnames(trajectories.and.cuts, achievement.level.prior.vname, "ACHIEVEMENT_LEVEL_PRIOR")
 	}
 
-	if (!is.null(return.percentile.trajectory.values) && percentile.trajectory.values %in% names(panel.data$Panel_Data)) {
+	if (!is.null(return.percentile.trajectory.values) && all(percentile.trajectory.values %in% names(panel.data$Panel_Data))) {
 		trajectories.and.cuts <- panel.data[["Panel_Data"]][,c("ID", percentile.trajectory.values), with=FALSE][trajectories.and.cuts, on="ID"]
 	}
 
