@@ -201,7 +201,7 @@ function(
 			tmp.list[['target.level']] <- "CATCH_UP_KEEP_UP"
 		}
 		if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgp.target.types']]) &&
-			!grepl("MUSU", SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgp.target.types']])) {
+			!any(grepl("MUSU", SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgp.target.types']]))) {
 				tmp.list[['target.level']] <- "CATCH_UP_KEEP_UP"
 		}
 
