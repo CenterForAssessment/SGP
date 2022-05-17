@@ -1,8 +1,8 @@
 `createSuperCohortData` <-
 function(
         dataForSuperCohort,
-        variables.to.get=c("VALID_CASE", "YEAR", "CONTENT_AREA", "GRADE", "ID", "SCALE_SCORE", "ACHIEVEMENT_LEVEL", "YEAR_WITHIN", "FIRST_OBSERVATION", "LAST_OBSERVATION", simex.baseline.config$csem.data.vnames),
         sgp.config,
+	simex.baseline.config,
         content_areas,
         years,
         grades,
@@ -22,7 +22,8 @@ function(
             return(tmp.years.sequence[sapply(tmp.years.sequence, function(x) all(x %in% years))])
         } ### END test.year.sequence
 
-
+        variables.to.get=c("VALID_CASE", "YEAR", "CONTENT_AREA", "GRADE", "ID", "SCALE_SCORE", "ACHIEVEMENT_LEVEL", "YEAR_WITHIN", "FIRST_OBSERVATION", 
+		"LAST_OBSERVATION", simex.baseline.config$csem.data.vnames)
         tmp_sgp_data_for_analysis <- dataForSuperCohort[,intersect(names(dataForSuperCohort), variables.to.get), with=FALSE]["VALID_CASE"]
 
         if ("YEAR_WITHIN" %in% names(tmp_sgp_data_for_analysis)) {

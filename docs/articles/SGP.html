@@ -45,7 +45,7 @@
   <a href="../articles/SGP.html">Getting Started</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Vignettes
      
     <span class="caret"></span>
@@ -63,7 +63,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     News
      
     <span class="caret"></span>
@@ -118,21 +118,23 @@
 <!--/.navbar -->
 
       
-      </header><script src="SGP_files/header-attrs-2.8/header-attrs.js"></script><div class="row">
+      </header><script src="SGP_files/header-attrs-2.13/header-attrs.js"></script><link href="SGP_files/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet">
+<link href="SGP_files/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet">
+<script src="SGP_files/anchor-sections-1.1.0/anchor-sections.js"></script><div class="row">
   <div class="col-md-9">
     <div class="page-header toc-ignore">
       <h1>Getting started with SGP</h1>
                         <h4 class="author">Damian W Betebenner &amp; Adam R Van Iwaarden</h4>
             
-            <h4 class="date">June 15th, 2021</h4>
           </div>
 
     
     
 <div class="contents">
-<div id="introduction" class="section level1">
+<div id="introduction" class="section level1 hasAnchor">
 <h1 class="hasAnchor">
-<a href="#introduction" class="anchor" aria-hidden="true"></a>Introduction</h1>
+<a href="#introduction" class="anchor" aria-hidden="true"></a>Introduction<a href="#introduction" class="anchor-section" aria-label="Anchor link to header"></a>
+</h1>
 <p>The SGP package is open source software built for the <a href="https://www.r-project.org/"><strong>R</strong> software environment</a>. Initially released on October 17th, 2008, the package is under <a href="https://github.com/CenterForAssessment/SGP">active development on GitHub</a> by <a href="https://github.com/dbetebenner">Damian Betebenner</a> and <a href="https://github.com/adamvi">Adam Van Iwaarden</a>. The classes, functions and data within the SGP package are used to calculate student growth percentiles and percentile growth projections/trajectories using large scale, longitudinal education assessment data. Quantile regression is used to estimate the conditional density associated with each student’s achievement history. Percentile growth projections/trajectories are calculated using the derived coefficient matrices and show the percentile growth needed to reach future achievement targets.</p>
 <p>SGP analyses are designed to be performed (broadly) in a simple two step process:</p>
 <ol style="list-style-type: decimal">
@@ -141,9 +143,10 @@
 </ol>
 <p>Like with all data analysis, the bulk (&gt; 90%) of the time is spent on data preparation. Once data is prepared correctly, analyses conducted using the SGP are intended to be simple and straightforward. Analyses that we assist on all follow this two step process. Running SGP calculations is designed to be as simple as possible. The following sections provide basic details to get you started with the required software/hardware, data preparation and data analysis.</p>
 </div>
-<div id="software-and-hardware-requirements" class="section level1">
+<div id="software-and-hardware-requirements" class="section level1 hasAnchor">
 <h1 class="hasAnchor">
-<a href="#software-and-hardware-requirements" class="anchor" aria-hidden="true"></a>Software and Hardware Requirements</h1>
+<a href="#software-and-hardware-requirements" class="anchor" aria-hidden="true"></a>Software and Hardware Requirements<a href="#software-and-hardware-requirements" class="anchor-section" aria-label="Anchor link to header"></a>
+</h1>
 <p>As a package built for the <a href="https://www.r-project.org/"><strong>R</strong> software environment</a>, to use the SGP package one needs a computer with <strong>R</strong> installed. <strong>R</strong> is available for Window, OSX, and Linux and, being open source, can be compiled for just about any operating system. Running SGP analyses assumes some familiarity with using <strong>R</strong>. If you’re new to <strong>R</strong>, you might want to spend some time familiarizing yourself with it before diving into running SGP analyses. There are several resources available on <a href="https://cran.r-project.org/manuals.html">CRAN</a> for getting started with <strong>R</strong>.</p>
 <p>After installing <strong>R</strong>, one needs to install the SGP package. Because the SGP package utilizes several other <strong>R</strong> packages, those will be installed concurrently. Installing <strong>R</strong> packages can be done in several different ways depending upon whether one is using a development environment for <strong>R</strong> (e.g., <a href="https://www.rstudio.com/">RStudio</a>), the installed <strong>R</strong> client, or calling <strong>R</strong> from the command line. In all cases, packages can be installed from the <strong>R</strong> command prompt (<code>&gt;</code>) as follows:</p>
 <p>To install the latest stable release of SGP from <a href="https://CRAN.R-project.org/package=SGP">CRAN</a></p>
@@ -152,9 +155,10 @@
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">install.packages</span>(<span class="st">"devtools"</span>) <span class="do">### If the devtool package isn't installed</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"CenterForAssessment/SGP"</span>)</span></code></pre></div>
 </div>
-<div id="data-preparation-wide-or-long-data" class="section level1">
+<div id="data-preparation-wide-or-long-data" class="section level1 hasAnchor">
 <h1 class="hasAnchor">
-<a href="#data-preparation-wide-or-long-data" class="anchor" aria-hidden="true"></a>Data Preparation: Wide or Long Data</h1>
+<a href="#data-preparation-wide-or-long-data" class="anchor" aria-hidden="true"></a>Data Preparation: Wide or Long Data<a href="#data-preparation-wide-or-long-data" class="anchor-section" aria-label="Anchor link to header"></a>
+</h1>
 <p>There a two formats for representing longitudinal (time dependent) student assessment data: WIDE and LONG format. For WIDE format data, each case/row represents a unique student and columns represent variables associated with the student at different times. For LONG format data, time dependent data for the student is spread out across multiple rows in the data set.</p>
 <p>In general, the lower level functions in the SGP package that do the calculations, <code>studentGrowthPercentiles</code> and <code>studentGrowthProjections</code> require WIDE formatted data whereas the higher level functions (wrappers for the lower level functions) require LONG data. If running anything but the basic analyses, we recommend setting up your data in the LONG format as much of the capability of the package is built around the user supplying data in that way.</p>
 <p>To assist in setting up your data, the <a href="https://centerforassessment.github.io/SGPdata/">SGPdata package</a>, installed when one installs the SGP package, includes exemplar WIDE and LONG data sets (sgpData and sgpData_LONG, respectively). Examples in the vignettes as well as validation tests done within the SGP package use these exemplar data sets. Detailed vignettes on WIDE and LONG data preparation are available at:</p>
@@ -164,38 +168,46 @@
 </ul>
 <p>Following proper data preparation, SGP analyses are straightforward. In almost all cases, any errors that come up in data analysis usually revert back to data preparation issues so that there is usually some back and forth between data preparation and analysis.</p>
 </div>
-<div id="data-analysis" class="section level1">
+<div id="data-analysis" class="section level1 hasAnchor">
 <h1 class="hasAnchor">
-<a href="#data-analysis" class="anchor" aria-hidden="true"></a>Data Analysis</h1>
-<div id="student-growth-percentiles" class="section level2">
+<a href="#data-analysis" class="anchor" aria-hidden="true"></a>Data Analysis<a href="#data-analysis" class="anchor-section" aria-label="Anchor link to header"></a>
+</h1>
+<div id="student-growth-percentiles" class="section level2 hasAnchor">
 <h2 class="hasAnchor">
-<a href="#student-growth-percentiles" class="anchor" aria-hidden="true"></a>Student Growth Percentiles</h2>
+<a href="#student-growth-percentiles" class="anchor" aria-hidden="true"></a>Student Growth Percentiles<a href="#student-growth-percentiles" class="anchor-section" aria-label="Anchor link to header"></a>
+</h2>
 </div>
-<div id="student-growth-projectionspercentile-growth-trajectories" class="section level2">
+<div id="student-growth-projectionspercentile-growth-trajectories" class="section level2 hasAnchor">
 <h2 class="hasAnchor">
-<a href="#student-growth-projectionspercentile-growth-trajectories" class="anchor" aria-hidden="true"></a>Student Growth Projections/Percentile Growth Trajectories</h2>
+<a href="#student-growth-projectionspercentile-growth-trajectories" class="anchor" aria-hidden="true"></a>Student Growth Projections/Percentile Growth Trajectories<a href="#student-growth-projectionspercentile-growth-trajectories" class="anchor-section" aria-label="Anchor link to header"></a>
+</h2>
 </div>
 </div>
-<div id="advanced-sgp-analysis" class="section level1">
+<div id="advanced-sgp-analysis" class="section level1 hasAnchor">
 <h1 class="hasAnchor">
-<a href="#advanced-sgp-analysis" class="anchor" aria-hidden="true"></a>Advanced SGP Analysis</h1>
+<a href="#advanced-sgp-analysis" class="anchor" aria-hidden="true"></a>Advanced SGP Analysis<a href="#advanced-sgp-analysis" class="anchor-section" aria-label="Anchor link to header"></a>
+</h1>
 <p>The SGP package</p>
-<div id="standard-errors-for-student-growth-percentiles" class="section level2">
+<div id="standard-errors-for-student-growth-percentiles" class="section level2 hasAnchor">
 <h2 class="hasAnchor">
-<a href="#standard-errors-for-student-growth-percentiles" class="anchor" aria-hidden="true"></a>Standard errors for student growth percentiles</h2>
+<a href="#standard-errors-for-student-growth-percentiles" class="anchor" aria-hidden="true"></a>Standard errors for student growth percentiles<a href="#standard-errors-for-student-growth-percentiles" class="anchor-section" aria-label="Anchor link to header"></a>
+</h2>
 </div>
-<div id="simex-measurement-error-correction" class="section level2">
+<div id="simex-measurement-error-correction" class="section level2 hasAnchor">
 <h2 class="hasAnchor">
-<a href="#simex-measurement-error-correction" class="anchor" aria-hidden="true"></a>SIMEX measurement error correction</h2>
+<a href="#simex-measurement-error-correction" class="anchor" aria-hidden="true"></a>SIMEX measurement error correction<a href="#simex-measurement-error-correction" class="anchor-section" aria-label="Anchor link to header"></a>
+</h2>
 </div>
-<div id="end-of-course-test-taking-patterns" class="section level2">
+<div id="end-of-course-test-taking-patterns" class="section level2 hasAnchor">
 <h2 class="hasAnchor">
-<a href="#end-of-course-test-taking-patterns" class="anchor" aria-hidden="true"></a>End-of-course test taking patterns</h2>
+<a href="#end-of-course-test-taking-patterns" class="anchor" aria-hidden="true"></a>End-of-course test taking patterns<a href="#end-of-course-test-taking-patterns" class="anchor-section" aria-label="Anchor link to header"></a>
+</h2>
 </div>
 </div>
-<div id="contributions-requests" class="section level1">
+<div id="contributions-requests" class="section level1 hasAnchor">
 <h1 class="hasAnchor">
-<a href="#contributions-requests" class="anchor" aria-hidden="true"></a>Contributions &amp; Requests</h1>
+<a href="#contributions-requests" class="anchor" aria-hidden="true"></a>Contributions &amp; Requests<a href="#contributions-requests" class="anchor-section" aria-label="Anchor link to header"></a>
+</h1>
 <p>If you have a topic for an SGP vignette that you’d like to see, don’t hesitate to write or set up an <a href="https://github.com/CenterForAssessment/SGPdata/issues">issue on GitHub</a>.</p>
 </div>
 </div>
@@ -206,25 +218,25 @@
         <div id="tocnav">
       <h2>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
-<li><a href="#introduction">Introduction</a></li>
-      <li><a href="#software-and-hardware-requirements">Software and Hardware Requirements</a></li>
-      <li><a href="#data-preparation-wide-or-long-data">Data Preparation: Wide or Long Data</a></li>
+<li><a href="#introduction">Introduction<span></span></a></li>
+      <li><a href="#software-and-hardware-requirements">Software and Hardware Requirements<span></span></a></li>
+      <li><a href="#data-preparation-wide-or-long-data">Data Preparation: Wide or Long Data<span></span></a></li>
       <li>
-<a href="#data-analysis">Data Analysis</a>
+<a href="#data-analysis">Data Analysis<span></span></a>
       <ul class="nav nav-pills nav-stacked">
-<li><a href="#student-growth-percentiles">Student Growth Percentiles</a></li>
-      <li><a href="#student-growth-projectionspercentile-growth-trajectories">Student Growth Projections/Percentile Growth Trajectories</a></li>
+<li><a href="#student-growth-percentiles">Student Growth Percentiles<span></span></a></li>
+      <li><a href="#student-growth-projectionspercentile-growth-trajectories">Student Growth Projections/Percentile Growth Trajectories<span></span></a></li>
       </ul>
 </li>
       <li>
-<a href="#advanced-sgp-analysis">Advanced SGP Analysis</a>
+<a href="#advanced-sgp-analysis">Advanced SGP Analysis<span></span></a>
       <ul class="nav nav-pills nav-stacked">
-<li><a href="#standard-errors-for-student-growth-percentiles">Standard errors for student growth percentiles</a></li>
-      <li><a href="#simex-measurement-error-correction">SIMEX measurement error correction</a></li>
-      <li><a href="#end-of-course-test-taking-patterns">End-of-course test taking patterns</a></li>
+<li><a href="#standard-errors-for-student-growth-percentiles">Standard errors for student growth percentiles<span></span></a></li>
+      <li><a href="#simex-measurement-error-correction">SIMEX measurement error correction<span></span></a></li>
+      <li><a href="#end-of-course-test-taking-patterns">End-of-course test taking patterns<span></span></a></li>
       </ul>
 </li>
-      <li><a href="#contributions-requests">Contributions &amp; Requests</a></li>
+      <li><a href="#contributions-requests">Contributions &amp; Requests<span></span></a></li>
       </ul>
 </div>
       </div>

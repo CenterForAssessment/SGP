@@ -75,7 +75,7 @@
   <a href="../articles/SGP.html">Getting Started</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Vignettes
      
     <span class="caret"></span>
@@ -93,7 +93,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     News
      
     <span class="caret"></span>
@@ -203,8 +203,9 @@ scheduled to be deprecated as it is no longer maintained by the creator and requ
         <span class='kw'>bubble_plot_configs.BUBBLE_PLOT_FORMAT</span><span class='kw'>=</span><span class='st'>"print"</span>,
         <span class='kw'>bubble_plot_configs.BUBBLE_PLOT_LEGEND</span><span class='kw'>=</span><span class='fl'>FALSE</span>,
         <span class='kw'>bubble_plot_configs.BUBBLE_PLOT_TITLE</span><span class='kw'>=</span><span class='fl'>TRUE</span>,
+        <span class='kw'>bubble_plot_configs.BUBBLE_PLOT_SUMMARY_STATISTICS</span><span class='kw'>=</span><span class='fl'>TRUE</span>,
         <span class='kw'>bubble_plot_configs.BUBBLE_PLOT_BACKGROUND_LABELS</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='st'>"Growth"</span>, <span class='st'>"Achievement"</span>),
-        <span class='kw'>bubble_plot_configs.BUBBLE_PLOT_EXTRAS</span><span class='kw'>=</span><span class='kw'>NULL</span>,
+        <span class='kw'>bubble_plot_configs.BUBBLE_PLOT_EXTRAS</span><span class='kw'>=</span><span class='st'>"BASE_LINE"</span>,
         <span class='kw'>bubble_plot_configs.BUBBLE_PLOT_DIMENSION</span><span class='kw'>=</span><span class='kw'>NULL</span>, <span class='co'>## List of WIDTH and HEIGHT</span>
         <span class='kw'>bubble_plot_configs.BUBBLE_PLOT_NAME</span><span class='kw'>=</span><span class='st'>"bubblePlot.pdf"</span>,
         <span class='kw'>bubble_plot_configs.BUBBLE_PLOT_PATH</span><span class='kw'>=</span><span class='st'>"Figures"</span>,
@@ -384,12 +385,16 @@ scheduled to be deprecated as it is no longer maintained by the creator and requ
       <td><p>Default value is <code>bubble_plot_configs.BUBBLE_PLOT_TITLE=TRUE</code>.</p></td>
     </tr>
     <tr>
+      <th>bubble_plot_configs.BUBBLE_PLOT_SUMMARY_STATISTICS</th>
+      <td><p>Default value is <code>bubble_plot_configs.BUBBLE_PLOT_SUMMARY_STATISTICS=TRUE</code>. Controls whether summary statistics are printed in the legend.</p></td>
+    </tr>
+    <tr>
       <th>bubble_plot_configs.BUBBLE_PLOT_BACKGROUND_LABELS</th>
       <td><p>Default value is <code>bubble_plot_configs.BUBBLE_PLOT_BACKGROUND_LABELS=c('Growth', 'Achievement')</code>.</p></td>
     </tr>
     <tr>
       <th>bubble_plot_configs.BUBBLE_PLOT_EXTRAS</th>
-      <td><p>Default value is <code>bubble_plot_configs.BUBBLE_PLOT_EXTRAS=NULL</code>.</p></td>
+      <td><p>Default value is <code>bubble_plot_configs.BUBBLE_PLOT_EXTRAS='BASE_LINE'</code> which prints a vertical line at 50 on the plot.</p></td>
     </tr>
     <tr>
       <th>bubble_plot_configs.BUBBLE_PLOT_DIMENSION</th>
