@@ -1,7 +1,7 @@
 `studentGrowthPlot` <-
-function(Scale_Scores,                  ## Vector of Scale Scores
-	Plotting_Scale_Scores,                ## Score used for plotting, if missing, then Scale_Scores are used for plotting,
-                                        ##   if supplied Scale_Scores used for text
+function(Scale_Scores,                    ## Vector of Scale Scores
+	Plotting_Scale_Scores,                ## Score used for plotting, if missing, then Scale_Scores are used
+                                          ## for plotting, if supplied Scale_Scores used for text
 	Achievement_Levels,                   ## NOTE: Achievement_Levels must/should be supplied as factors with appropriate level codings
 	SGP,                                  ## Vector of SGPs
 	SGP_Levels,                           ## Vector of SGP Levels
@@ -14,9 +14,8 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 	Plotting_SGP_Scale_Score_Targets,     ## Vector of CUKU, CUKU_Current, MUSU, MUSU_Current scale score targets for plotting (transformed if non-vertical/equated scale)
 	Cutscores,                            ## data.frame of long formatted achievement level cutscores
 	Years,                                ## Vector of years corresponding to Scale_Scores, Content_Areas, ... arguments supplied
-	Report_Parameters) {                  ## list containing Current_Year, Content_Area, Content_Area_Title, State, Denote_Content_Area, SGP_Targets, Configuration, Language, Assessment_Transition,
-                                        ##   Fan
-
+	Report_Parameters) {                  ## list containing Current_Year, Content_Area, Content_Area_Title, State, Denote_Content_Area, SGP_Targets,
+                                          ## Configuration, Language, Assessment_Transition, Fan
 
 	############################################
 	### Create relevant variables
@@ -206,7 +205,7 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 		target.label <- "Target"
 	}
 
-	if (identical(toupper(Report_Parameters[['Configuration']][['Language']]), "SPANISH")) {
+	if (identical(toupper(Report_Parameters[['Configuration']][['Language']]), "SPANISH")) { # WIDA_CO and NH
 		achievement.label <- "Resultado"
 		achievement_level.label <- "Nivel de Capacitaci\uF3n" # Hex code for accented o is \uF3 - http://www.ascii.cl/htmlcodes.htm
 		achievement_target.label <- "Meta de Capacitaci\uF3n"
@@ -224,6 +223,26 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 		SU.label <- "Mantener"
 		target.label <- "Meta"
 		SGP_Levels <- SGP::SGPstateData[[Report_Parameters$State]][["Growth"]][["Levels"]][match(SGP_Levels, SGP::SGPstateData[[paste(head(unlist(strsplit(Report_Parameters$State, "_")), -1), collapse="_")]][["Growth"]][["Levels"]])]
+	}
+
+	if (!is.null(Report_Parameters[["Configuration"]][["Language"]][["Custom"]])) { # See WIDA_GA for example
+  		achievement.label <- Report_Parameters[["Configuration"]][["Language"]][["Custom"]][["achievement.label"]]
+		achievement_level.label <- Report_Parameters[["Configuration"]][["Language"]][["Custom"]][["achievement_level.label"]]
+		achievement_target.label <- Report_Parameters[["Configuration"]][["Language"]][["Custom"]][["achievement_target.label"]]
+		growth.label <- Report_Parameters[["Configuration"]][["Language"]][["Custom"]][["growth.label"]]
+		growth_percentile.label <- Report_Parameters[["Configuration"]][["Language"]][["Custom"]][["growth_percentile.label"]]
+		growth_level.label <- Report_Parameters[["Configuration"]][["Language"]][["Custom"]][["growth_level.label"]]
+		growth_target.label <- Report_Parameters[["Configuration"]][["Language"]][["Custom"]][["growth_target.label"]]
+		level.label <- Report_Parameters[["Configuration"]][["Language"]][["Custom"]][["level.label"]]
+		percentiles.label <- Report_Parameters[["Configuration"]][["Language"]][["Custom"]][["percentiles.label"]]
+		scale_score.label <- Report_Parameters[["Configuration"]][["Language"]][["Custom"]][["scale_score.label"]]
+		grade.label <- Report_Parameters[["Configuration"]][["Language"]][["Custom"]][["grade.label"]]
+		CU.label <- Report_Parameters[["Configuration"]][["Language"]][["Custom"]][["CU.label"]]
+		KU.label <- Report_Parameters[["Configuration"]][["Language"]][["Custom"]][["KU.label"]]
+		MU.label <- Report_Parameters[["Configuration"]][["Language"]][["Custom"]][["MU.label"]]
+		SU.label <- Report_Parameters[["Configuration"]][["Language"]][["Custom"]][["SU.label"]]
+		target.label <- Report_Parameters[["Configuration"]][["Language"]][["Custom"]][["target.label"]]
+		SGP_Levels <- SGP::SGPstateData[[Report_Parameters$State]][["Growth"]][["Levels"]][match(SGP_Levels, SGP::SGPstateData[[paste(head(unlist(strsplit(Report_Parameters$State, "_")), -1), collapse = "_")]][["Growth"]][["Levels"]])]
 	}
 
 	if (is.null(Report_Parameters[['Fan']])) {
@@ -244,6 +263,8 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 	##############################
 	### Utility functions
 	##############################
+
+	`%w/o%` <- function(x, y) x[!x %in% y]
 
 	ach.level.labels <- function(perlevel){
 		tmp <- unlist(sapply(achievement.level.labels, names), use.names=FALSE)[match(perlevel, unlist(achievement.level.labels))]
@@ -938,48 +959,83 @@ function(Scale_Scores,                  ## Vector of Scale Scores
 
 	grid.circle(x=low.year:high.year, y=scale.scores.values, r=unit(0.04, "inches"), gp=gpar(col=border.color, lwd=0.7, fill="white"), default.units="native")
 
-	popViewport()
+	# popViewport() Don't pop until after next section - extra mid-level distinction may be needed (first code chunk in 'Left Viewport')
 
 
 	#################################
 	### Left Viewport
 	#################################
 
-	pushViewport(left.vp)
+    unq.labels <- names(achievement.level.labels[[1]])
+    if (length(unique(unq.labels)) != number.achievement.level.regions[[1]]) {
+        # WIDA_GA for example - extra "mid-level" used for state exit criteria cut
+        tmp.n.achlev.regions <- length(unique(unq.labels))
+        dup.levels <- which(duplicated(unq.labels))
+        unq.levels <- which(!duplicated(unq.labels))
+        unq.levels <- unq.levels + c(diff(unq.levels) - 1, 0) # use (last) duplicate level for boundaries
+        max.level <- max(unq.levels)
+        mid.levels <- unq.levels %w/o% c(1, max.level)
 
-	y.boundary.legend.1 <- c(yscale.range[1], yscale.range[1], rep(level_1_1_curve(xscale.range[1]), 2))
-	assign(paste0("y.boundary.legend.", number.achievement.level.regions[[1]]),
-		c(yscale.range[2], yscale.range[2], rep(eval(parse(text=paste0("level_1", "_", number.achievement.level.regions[[1]]-1, "_curve(xscale.range[1])"))), 2)))
+        for (k in dup.levels) {
+            tmp_fun <- get(paste0("level_1_", k - 1, "_curve"))
+            y.dup.points <- tmp_fun(tmp.x.points)
 
-	if (number.achievement.level.regions[[1]] > 2) {
-		for (i in 2:(number.achievement.level.regions[[1]]-1)) {
-			assign(paste0("y.boundary.legend.", i),
-				eval(parse(text=paste0("c(rep(level_1", "_", i-1, "_curve(xscale.range[1]), 2), rep(level_1", "_", i, "_curve(xscale.range[1]), 2))"))))
-		}
-	}
+            grid.lines(x = tmp.x.points, y = y.dup.points,
+                       gp = gpar(lty = "dashed", col = "black"), default.units = "native")
+        }
+    } else {
+        tmp.n.achlev.regions <- max.level <- number.achievement.level.regions[[1]]
+        unq.levels <- seq(tmp.n.achlev.regions)
+        mid.levels <- 2:(tmp.n.achlev.regions - 1)
+    }
 
-	for (i in seq(number.achievement.level.regions[[1]])){
-	grid.polygon(x=c(0,1,1,0),
-		y=get(paste0("y.boundary.legend.", i)),
-		default.units="native",
-		gp=gpar(fill=achievement.level.region.colors[[1]][i], lwd=0.5, col=border.color, alpha=0.7))
-	}
+    popViewport() # growth.chart.vp
 
-	grid.text(x=0.94, y=(level_1_1_curve(xscale.range[1]) + yscale.range[1])/2, names(achievement.level.labels[[1]])[1],
-		gp=gpar(col=border.color, fontface=2, fontfamily="Helvetica-Narrow", cex=.85), default.units="native", just="right")
-	grid.text(x=0.94, y=(eval(parse(text=paste0("level_1", "_", number.achievement.level.regions[[1]]-1, "_curve(xscale.range[1])"))) + yscale.range[2])/2,
-		names(achievement.level.labels[[1]])[number.achievement.level.regions[[1]]],
-		gp=gpar(col=border.color, fontface=2, fontfamily="Helvetica-Narrow", cex=.85), default.units="native", just="right")
+    pushViewport(left.vp)
 
-	if (number.achievement.level.regions[[1]] > 2) {
-		for (i in 2:(number.achievement.level.regions[[1]]-1)) {
-		grid.text(x=.94, y=(eval(parse(text=paste0("(level_1", "_", i-1, "_curve(xscale.range[1]) + level_1", "_", i, "_curve(xscale.range[1]))/2")))),
-			names(achievement.level.labels[[1]])[i],
-			gp=gpar(col=border.color, fontface=2, fontfamily="Helvetica-Narrow", cex=.85), default.units="native", just="right")
-		}
-	}
+    y.boundary.legend.1 <- c(yscale.range[1], yscale.range[1], rep(level_1_1_curve(xscale.range[1]), 2))
+    assign(paste0("y.boundary.legend.", max.level),
+        c(yscale.range[2], yscale.range[2], rep(eval(parse(text = paste0("level_1", "_", max.level-1, "_curve(xscale.range[1])"))), 2)))
 
-	grid.lines(0, c(yscale.range[1], yscale.range[2]), gp=gpar(lwd=.8, col=border.color), default.units="native")
+    if (tmp.n.achlev.regions > 2) {
+        for (i in mid.levels) {
+            ii <- unq.levels[which(unq.levels == i) - 1]
+            assign(paste0("y.boundary.legend.", i), eval(parse(text = 
+                   paste0("c(rep(level_1", "_", ii, "_curve(xscale.range[1]), 2), rep(level_1", 
+                          "_", i, "_curve(xscale.range[1]), 2))"))))
+        }
+    }
+
+    for (i in unq.levels){
+        grid.polygon(x = c(0,1,1,0), y = get(paste0("y.boundary.legend.", i)),
+                     default.units = "native",
+                     gp = gpar(fill = achievement.level.region.colors[[1]][i], lwd = 0.5, col = border.color, alpha = 0.7))
+    }
+
+    grid.text(x = 0.94,
+              y = (level_1_1_curve(xscale.range[1]) + yscale.range[1])/2, 
+              label = unq.labels[1],
+              gp = gpar(col = border.color, fontface = 2, fontfamily = "Helvetica-Narrow", cex = .85),
+              default.units = "native", just = "right")
+    grid.text(x = 0.94,
+              y = (eval(parse(text = paste0("level_1", "_", max.level-1, "_curve(xscale.range[1])"))) + yscale.range[2])/2,
+              label = unq.labels[max.level],
+              gp = gpar(col = border.color, fontface = 2, fontfamily = "Helvetica-Narrow", cex = .85),
+              default.units = "native", just = "right")
+
+    if (tmp.n.achlev.regions > 2) {
+        for (i in mid.levels) {
+            ii <- unq.levels[which(unq.levels == i) - 1]
+            grid.text(x = .94,
+                      y = (eval(parse(text = paste0("(level_1", "_", ii, "_curve(xscale.range[1]) + level_1",
+                                                    "_", i, "_curve(xscale.range[1]))/2")))),
+                      unq.labels[i],
+                      gp = gpar(col = border.color, fontface = 2, fontfamily = "Helvetica-Narrow", cex = .85),
+                      default.units = "native", just = "right")
+        }
+    }
+
+	grid.lines(0, c(yscale.range[1], yscale.range[2]), gp = gpar(lwd = 0.8, col = border.color), default.units = "native")
 
 	popViewport()
 
