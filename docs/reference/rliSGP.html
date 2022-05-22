@@ -5,22 +5,29 @@
   <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/png" href="https://centerforassessment.github.io/assets/favicon.png" sizes="16x16">
+<meta name="keywords" content="student-growth-percentiles, r, student-growth-projections, sgp, sgp-analyses, percentile-growth-projections, quantile-regression, cran">
+
+<meta name="github-repo" content="SGP • Wrapper function associated with SGP analyses for Renaissance Learning Incorporated (RLI) interim STAR assessments. — rliSGP">
 
 <meta property="og:title" content="SGP • Wrapper function associated with SGP analyses for Renaissance Learning Incorporated (RLI) interim STAR assessments. — rliSGP"/>
-<meta property="og:description" content="SGP • Wrapper function associated with SGP analyses for Renaissance Learning Incorporated (RLI) interim STAR assessments. — rliSGP"/>
+<meta property="og:description" content="An analytic framework for the calculation of norm- and criterion-referenced academic growth estimates using large scale, longitudinal education assessment data as developed in Betebenner (2009) &lt;doi:10.1111/j.1745-3992.2009.00161.x&gt;."/>
 <meta property="og:type" content="website"/>
+<meta property="og:site_name" content="SGP • Wrapper function associated with SGP analyses for Renaissance Learning Incorporated (RLI) interim STAR assessments. — rliSGP">
 <meta property="og:url" content="https://centerforassessment.github.io/SGP"/>
-<meta property="og:image" content="https://centerforassessment.github.io/assets/favicon.png"/>
+<meta property="og:image" content="https://centerforassessment.github.io/SGP/img/REPO_CARD_image.png"/>
+<meta name="og:image:alt" content="Landing Page Image for Repo">
 
-<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="SGP • Wrapper function associated with SGP analyses for Renaissance Learning Incorporated (RLI) interim STAR assessments. — rliSGP"/>
+<meta name="twitter:description" content="An analytic framework for the calculation of norm- and criterion-referenced academic growth estimates using large scale, longitudinal education assessment data as developed in Betebenner (2009) &lt;doi:10.1111/j.1745-3992.2009.00161.x&gt;."/>
+<meta name="twitter:url" content="https://centerforassessment.github.io/SGP">
+<meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:site" content="@NCIEA1"/>
 <meta name="twitter:creator" content="@dbetebenner"/>
-<meta name="twitter:image" content="https://centerforassessment.github.io/assets/favicon.png"/>
-<meta name="twitter:title" content="SGP • Wrapper function associated with SGP analyses for Renaissance Learning Incorporated (RLI) interim STAR assessments. — rliSGP"/>
-<meta name="twitter:description" content="SGP • Wrapper function associated with SGP analyses for Renaissance Learning Incorporated (RLI) interim STAR assessments. — rliSGP"/>
+<meta name="twitter:image" content="https://centerforassessment.github.io/SGP/img/REPO_CARD_image.png"/>
+<meta name="twitter:image:alt" content="Landing Page Image for Repo">
 
 <title>SGP • Wrapper function associated with SGP analyses for Renaissance Learning Incorporated (RLI) interim STAR assessments. — rliSGP</title>
+<link rel="icon" type="image/png" href="https://centerforassessment.github.io/SGP/img/favicon.png" sizes="16x16">
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -153,24 +160,23 @@
     <h1>Wrapper function associated with SGP analyses for Renaissance Learning Incorporated (RLI) interim STAR assessments.</h1>
     </div>
 
-    <p>rliSGP is a wrapper function design to expedite SGP analyses on Renaissance Learning Incorporated (RLI) interim STAR assessments.</p>
 
     <pre class="usage"><span class='fu'>rliSGP</span>(
         <span class='no'>sgp_object</span>,
-    <span class='kw'>additional.data</span><span class='kw'>=</span><span class='kw'>NULL</span>,
+  <span class='kw'>additional.data</span><span class='kw'>=</span><span class='kw'>NULL</span>,
         <span class='kw'>state</span><span class='kw'>=</span><span class='kw'>NULL</span>,
         <span class='kw'>content_areas</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='st'>"MATHEMATICS"</span>, <span class='st'>"MATHEMATICS_SPANISH"</span>, <span class='st'>"READING"</span>,
                         <span class='st'>"READING_SPANISH"</span>, <span class='st'>"READING_UNIFIED"</span>, <span class='st'>"EARLY_LITERACY"</span>,
                         <span class='st'>"EARLY_LITERACY_SPANISH"</span>),
-    <span class='no'>testing.window</span>,
-    <span class='kw'>eow.or.update</span><span class='kw'>=</span><span class='st'>"UPDATE"</span>,
+  <span class='no'>testing.window</span>,
+  <span class='kw'>eow.or.update</span><span class='kw'>=</span><span class='st'>"UPDATE"</span>,
         <span class='kw'>update.save.shell.only</span><span class='kw'>=</span><span class='fl'>FALSE</span>,
-    <span class='no'>configuration.year</span>,
+  <span class='no'>configuration.year</span>,
         <span class='kw'>sgp.percentiles.baseline</span><span class='kw'>=</span><span class='fl'>TRUE</span>,
         <span class='kw'>sgp.projections.baseline</span><span class='kw'>=</span><span class='fl'>TRUE</span>,
         <span class='kw'>sgp.projections.lagged.baseline</span><span class='kw'>=</span><span class='fl'>FALSE</span>,
         <span class='kw'>sgp.target.scale.scores</span><span class='kw'>=</span><span class='fl'>TRUE</span>,
-    <span class='kw'>update.ids</span><span class='kw'>=</span><span class='kw'>NULL</span>,
+  <span class='kw'>update.ids</span><span class='kw'>=</span><span class='kw'>NULL</span>,
         <span class='kw'>SGPt</span><span class='kw'>=</span><span class='fl'>TRUE</span>,
         <span class='kw'>simulate.sgps</span><span class='kw'>=</span><span class='fl'>FALSE</span>,
         <span class='kw'>save.intermediate.results</span><span class='kw'>=</span><span class='fl'>FALSE</span>,
@@ -182,7 +188,8 @@
         <span class='kw'>score.type</span><span class='kw'>=</span><span class='st'>"RASCH"</span>,
         <span class='kw'>cutscore.file.name</span><span class='kw'>=</span><span class='st'>"Cutscores.csv"</span>,
         <span class='kw'>get.cohort.data.info</span><span class='kw'>=</span><span class='fl'>FALSE</span>,
-    <span class='kw'>parallel.config</span><span class='kw'>=</span><span class='kw'>NULL</span>)</pre>
+  <span class='kw'>use.latest.rliMatrices</span><span class='kw'>=</span><span class='fl'>TRUE</span>,
+  <span class='kw'>parallel.config</span><span class='kw'>=</span><span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -291,6 +298,10 @@ growth percentiles are calculated as part of EOW analyses. Default is FALSE whic
     <tr>
       <th>get.cohort.data.info</th>
       <td><p>Boolean argument passed to <code>analyzeSGP</code> indicating whether to calculate norm group cohort counts.</p></td>
+    </tr>
+    <tr>
+      <th>use.latest.rliMatrices</th>
+      <td><p>Boolean argument indicating whether to ensure use of latest version of RLImatrices (defaults to TRUE).</p></td>
     </tr>
     <tr>
       <th>parallel.config</th>
