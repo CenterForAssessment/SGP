@@ -1,5 +1,5 @@
 cff-version: 1.0.0
-message: "If you use the SGP Package, please cite it as below."
+message: "If you use the SGP Package, please cite it using these metadata."
 authors:
 - family-names: "Damian"
   given-names: "Betebenner"
@@ -11,7 +11,7 @@ authors:
 - family-names: "Yi"
   given-names: "Shang"
 title: "SGP: Student Growth Percentiles & Percentile Growth Trajectories"
-version: 2.0-0.1
+version: 2.0-0.0
 doi: 10.5281/zenodo.3634024
-date-released: 2022-5-20
+date-released: 2022-5-22
 url: "https://sgp.io"
