@@ -374,7 +374,7 @@ function(panel.data,         ## REQUIRED
           tmp.res <- quantreg::rq(method="br", ...)[['coefficients']]
         } else {
           tmp.res <- try(quantreg::rq(method=rq.method, ...)[['coefficients']], silent=TRUE)
-          if (class(tmp.res) == "try-error") {
+          if (inherits(tmp.res, "try-error")) {
               tmp.res <- quantreg::rq(method="br", ...)[['coefficients']]
           }
         }
