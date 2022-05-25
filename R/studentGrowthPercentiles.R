@@ -767,13 +767,13 @@ function(panel.data,         ## REQUIRED
 	if (!(is.matrix(panel.data) || is.list(panel.data))) {
 		stop("Supplied panel.data not of a supported class. See help for details of supported classes")
 	}
-	if (identical(class(panel.data), "list") && !"Panel_Data" %in% names(panel.data)) {
+	if (inherits(panel.data, "list") && !"Panel_Data" %in% names(panel.data)) {
 			stop("Supplied panel.data missing Panel_Data")
 	}
-	if (identical(class(panel.data), "list") && !is.data.frame(panel.data[["Panel_Data"]])) {
+	if (inherits(panel.data, "list") && !is.data.frame(panel.data[["Panel_Data"]])) {
 			stop("Supplied panel.data$Panel_Data is not a data.frame or a data.table")
 	}
-	if (identical(class(panel.data), "list") && !is.null(panel.data[['Coefficient_Matrices']])) {
+	if (inherits(panel.data, "list") && !is.null(panel.data[['Coefficient_Matrices']])) {
 		panel.data[['Coefficient_Matrices']] <- checksplineMatrix(panel.data[['Coefficient_Matrices']])
 	}
 
@@ -821,7 +821,7 @@ function(panel.data,         ## REQUIRED
 			stop("use.my.knots.boundaries must be supplied as a list or character abbreviation. See help page for details.")
 		}
 		if (is.list(use.my.knots.boundaries)) {
-			if (!identical(class(panel.data), "list")) {
+			if (!inherits(panel.data, "list")) {
 				stop("use.my.knots.boundaries is only appropriate when panel data is of class list. See help page for details.")
 			}
 			if (!identical(names(use.my.knots.boundaries), c("my.year", "my.subject")) &
@@ -846,7 +846,7 @@ function(panel.data,         ## REQUIRED
 	}
 
 	if (!is.null(use.my.coefficient.matrices) && !identical(use.my.coefficient.matrices, TRUE)) {
-		if (!identical(class(panel.data), "list")) {
+		if (!inherits(panel.data, "list")) {
 			stop("use.my.coefficient.matrices is only appropriate when panel data is of class list. See help page for details.")
 		}
 		if (!is.list(use.my.coefficient.matrices)) {
@@ -1092,7 +1092,7 @@ function(panel.data,         ## REQUIRED
 	Coefficient_Matrices <- Cutscores <- Goodness_of_Fit <- Knots_Boundaries <- Panel_Data <- SGPercentiles <- SGProjections <- Simulated_SGPs <- SGP_STANDARD_ERROR <- Verbose_Messages <- NULL
 	SGP_SIMEX <- SGP_SIMEX_RANKED <- SGP_NORM_GROUP_SCALE_SCORES <- SGP_NORM_GROUP_DATES <- SGP_NORM_GROUP <- NULL
 
-	if (identical(class(panel.data), "list")) {
+	if (inherits(panel.data, "list")) {
 		for (i in tmp.objects) {
 			if (!is.null(panel.data[[i]])) {
 				assign(i, panel.data[[i]])
@@ -1130,7 +1130,7 @@ function(panel.data,         ## REQUIRED
 	if (is.data.frame(panel.data)) {
 		Panel_Data <- as.data.table(panel.data)
 	}
-	if (identical(class(panel.data), "list") && !is.data.table(panel.data[["Panel_Data"]])) {
+	if (inherits(panel.data, "list") && !is.data.table(panel.data[["Panel_Data"]])) {
         Panel_Data <- as.data.table(panel.data[["Panel_Data"]])
 	}
 
@@ -1312,7 +1312,7 @@ function(panel.data,         ## REQUIRED
 	if (is.null(content_area.progression)) {
 		content_area.progression <- rep(sgp.labels$my.subject, length(tmp.gp))
 	} else {
-		if (!identical(class(content_area.progression), "character")) {
+		if (!inherits(content_area.progression, "character")) {
 			stop("The 'content_area.progression' vector/argument should be a character vector. See help page for details.")
 		}
 		if (!identical(tail(content_area.progression, 1L), sgp.labels[['my.subject']])) {
@@ -1341,7 +1341,7 @@ function(panel.data,         ## REQUIRED
 			year.progression <- rep("BASELINE", length(tmp.gp))
 			year.progression.for.norm.group <- tail(rev(yearIncrement(sgp.labels[['my.year']], c(0, -cumsum(rev(year_lags.progression))))), length(tmp.gp))
 		}
-		if (!identical(class(year.progression), "character")) {
+		if (!inherits(year.progression, "character")) {
 			stop("year.area.progression should be a character vector. See help page for details.")
 		}
 		if (!identical(sgp.labels[['my.extra.label']], "BASELINE") && !identical(tail(year.progression, 1L), sgp.labels[['my.year']])) {
