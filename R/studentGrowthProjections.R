@@ -518,7 +518,7 @@ function(panel.data,	## REQUIRED
 		if (!(all(c("Panel_Data", "Coefficient_Matrices", "Knots_Boundaries") %in% names(panel.data)))) {
 			stop("Supplied panel.data missing Panel_Data, Coefficient_Matrices, and/or Knots_Boundaries. See help page for details")
 		}
-		if (identical(class(panel.data[["Panel_Data"]]), "data.frame")) {
+		if (inherits(panel.data[["Panel_Data"]], "data.frame")) {
 			panel.data[["Panel_Data"]] <- as.data.table(panel.data[["Panel_Data"]])
 	}}
 
@@ -821,7 +821,7 @@ function(panel.data,	## REQUIRED
 	if (is.null(content_area.progression)) {
 		content_area.progression <- rep(sgp.labels[['my.subject']], length(grade.progression))
 	} else {
-		if (!identical(class(content_area.progression), "character")) {
+		if (!inherits(content_area.progression, "character")) {
 			stop("content_area.progression should be a character vector. See help page for details.")
 		}
 		if (length(content_area.progression) != length(grade.progression)) {
