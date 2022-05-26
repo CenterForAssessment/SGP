@@ -3171,7 +3171,7 @@ function(
 
 			### TEST of School Summary Table  :: dim = 637 x 22
 			setkey(Demonstration_SGP@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__CONTENT_AREA__GRADE__SCHOOL_ENROLLMENT_STATUS"]])
-			if (identical(digest::digest(Demonstration_SGP@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__CONTENT_AREA__GRADE__SCHOOL_ENROLLMENT_STATUS"]]), "a0e9fd5224e2ddcc0bc3e849f5663bdf")) { # Pre 1.9-0.0 e13379b7384154f36d26eb0de40d79c2 # 3472a7f8a5ee67e248de158feb3da808
+			if (identical(digest::digest(Demonstration_SGP@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__CONTENT_AREA__GRADE__SCHOOL_ENROLLMENT_STATUS"]]), "1b5d0c6b4d39d96285c018c9f410a337")) { # Pre 1.9-0.0 e13379b7384154f36d26eb0de40d79c2 # 3472a7f8a5ee67e248de158feb3da808
 				# identical(sum(Demonstration_SGP@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__CONTENT_AREA__GRADE__SCHOOL_ENROLLMENT_STATUS"]]$MEDIAN_SGP_COUNT), 58069L) # Same as with YEAR!
 				tmp.messages <- c(tmp.messages, "\t\tTest of School Summary Table: OK\n")
 			} else {
@@ -3181,7 +3181,7 @@ function(
 
 			### TEST of Instructor Summary Table  :: dim = 3516 x 23
 			setkey(Demonstration_SGP@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__GRADE__INSTRUCTOR_ENROLLMENT_STATUS"]])
-			if (identical(digest::digest(Demonstration_SGP@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__GRADE__INSTRUCTOR_ENROLLMENT_STATUS"]]), "eee346ec649be4b422fca2f44443afc0")) { # Pre 1.9-0.0 3f0d7039e96e44c9ccd445cc0d1bb098 # 059d0a7f18c704589cb38e0da0b3aeec
+			if (identical(digest::digest(Demonstration_SGP@Summary[["SCHOOL_NUMBER"]][["SCHOOL_NUMBER__INSTRUCTOR_NUMBER__CONTENT_AREA__GRADE__INSTRUCTOR_ENROLLMENT_STATUS"]]), "464e5b89ed3e951bb3357c82aacac5b7")) { # Pre 1.9-0.0 3f0d7039e96e44c9ccd445cc0d1bb098 # 059d0a7f18c704589cb38e0da0b3aeec
 				tmp.messages <- c(tmp.messages, "\t\tTest of Instructor Summary Table: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of Instructor Summary Table: FAIL\n")
