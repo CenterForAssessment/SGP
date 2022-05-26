@@ -82,5 +82,5 @@ BugReports: https://github.com/CenterForAssessment/SGP/issues
 VignetteBuilder: knitr
 LazyData: Yes
 LazyDataCompression: xz
-License: License: MIT + file LICENSE
+License: GPL-3 
 ByteCompile: TRUE
