@@ -177,6 +177,7 @@ function(Scale_Scores,                    ## Vector of Scale Scores
 	if (is.null(Report_Parameters[['Configuration']][['Font_Size']])) {
 		title.ca.size <- 1.8
 		legend.size <- 0.5
+		legend.lheight <- 1
 		left.vp.size <- 0.85
 		bottom.right.vp.size <- 1.2
 		bottom.left.vp.size <- 0.7
@@ -187,6 +188,9 @@ function(Scale_Scores,                    ## Vector of Scale Scores
 		if (!is.null(Report_Parameters[['Configuration']][['Font_Size']][['legend.size']])) {
 			legend.size <- Report_Parameters[['Configuration']][['Font_Size']][['legend.size']]
 		} else legend.size <- 0.5
+		if (!is.null(Report_Parameters[['Configuration']][['Font_Size']][['legend.lheight']])) {
+			legend.lheight <- Report_Parameters[['Configuration']][['Font_Size']][['legend.lheight']]
+		} else legend.lheight <- 1
 		if (!is.null(Report_Parameters[['Configuration']][['Font_Size']][['left.vp.size']])) {
 			left.vp.size <- Report_Parameters[['Configuration']][['Font_Size']][['left.vp.size']]
 		} else left.vp.size <- 0.85
@@ -261,6 +265,15 @@ function(Scale_Scores,                    ## Vector of Scale Scores
 		SGP_Levels <- SGP::SGPstateData[[Report_Parameters$State]][["Growth"]][["Levels"]][match(SGP_Levels, SGP::SGPstateData[[paste(head(unlist(strsplit(Report_Parameters$State, "_")), -1), collapse = "_")]][["Growth"]][["Levels"]])]
 	}
 
+	if (!is.null(SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Content_Area_in_Legend"]])) {
+		content.area.in.legend <- SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Content_Area_in_Legend"]]
+	} else content.area.in.legend <- TRUE
+
+	if (!is.null(SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Legend_Extra"]])) {
+		extra.legend.element <- TRUE
+		extra.legend.elements <- SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Legend_Extra"]]
+	} else extra.legend.element <- FALSE
+ 
 	if (is.null(Report_Parameters[['Fan']])) {
 		show.fan <- TRUE
 	} else {
@@ -998,9 +1011,8 @@ function(Scale_Scores,                    ## Vector of Scale Scores
             tmp_fun <- get(paste0("level_1_", k - 1, "_curve"))
             y.dup.points <- tmp_fun(tmp.x.points)
 
-            grid.lines(x = tmp.x.points, y = y.dup.points,
-                       gp = gpar(lwd = 1.2, lty = "dashed", col = "black"),
-					   default.units = "native")
+            grid.lines(x = tmp.x.points, y = y.dup.points, default.units = "native",
+                       gp = gpar(lwd = 1.4, lty = "dashed", col = "black"))
         }
     } else {
         tmp.n.achlev.regions <- max.level <- number.achievement.level.regions[[1]]
@@ -1031,16 +1043,12 @@ function(Scale_Scores,                    ## Vector of Scale Scores
                      gp = gpar(fill = achievement.level.region.colors[[1]][i], lwd = 0.5, col = border.color, alpha = 0.7))
     }
 
-    grid.text(x = 0.94,
-              y = (level_1_1_curve(xscale.range[1]) + yscale.range[1])/2, 
-              label = unq.labels[1],
-              gp = gpar(col = border.color, fontface = 2, fontfamily = font.fam, cex = left.vp.size),
-              default.units = "native", just = "right")
-    grid.text(x = 0.94,
-              y = (eval(parse(text = paste0("level_1", "_", max.level-1, "_curve(xscale.range[1])"))) + yscale.range[2])/2,
-              label = unq.labels[max.level],
-              gp = gpar(col = border.color, fontface = 2, fontfamily = font.fam, cex = left.vp.size),
-              default.units = "native", just = "right")
+    grid.text(x = 0.94, y = (level_1_1_curve(xscale.range[1]) + yscale.range[1])/2, 
+              label = unq.labels[1], default.units = "native", just = "right",
+              gp = gpar(col = border.color, fontface = 2, fontfamily = font.fam, cex = left.vp.size, lineheight = legend.lheight))
+    grid.text(x = 0.94, y = (eval(parse(text = paste0("level_1", "_", max.level-1, "_curve(xscale.range[1])"))) + yscale.range[2])/2,
+              label = unq.labels[max.level], default.units = "native", just = "right",
+              gp = gpar(col = border.color, fontface = 2, fontfamily = font.fam, cex = left.vp.size, lineheight = legend.lheight))
 
     if (tmp.n.achlev.regions > 2) {
         for (i in mid.levels) {
@@ -1048,8 +1056,8 @@ function(Scale_Scores,                    ## Vector of Scale Scores
             grid.text(x = .94,
                       y = (eval(parse(text = paste0("(level_1", "_", ii, "_curve(xscale.range[1]) + level_1",
                                                     "_", i, "_curve(xscale.range[1]))/2")))),
-                      unq.labels[i],
-                      gp = gpar(col = border.color, fontface = 2, fontfamily = font.fam, cex = left.vp.size),
+                      label = unq.labels[i],
+                      gp = gpar(col = border.color, fontface = 2, fontfamily = font.fam, cex = left.vp.size, lineheight = legend.lheight),
                       default.units = "native", just = "right")
         }
     }
@@ -1215,7 +1223,7 @@ function(Scale_Scores,                    ## Vector of Scale Scores
 
 	pushViewport(bottom.left.vp)
 	if (is.null(Report_Parameters[['SGP_Targets']])) {
-		grid.text(x=0.9, y=1.7, scale_score.label, gp=gpar(col=border.color, cex=bottom.left.vp.size), just="right", default.units="native")
+		grid.text(x=0.9, y=1.7, gsub("\\n", " ", scale_score.label), gp=gpar(col=border.color, cex=bottom.left.vp.size), just="right", default.units="native")
 		grid.text(x=0.9, y=1.3, achievement_level.label, gp=gpar(col=border.color, cex=bottom.left.vp.size), just="right", default.units="native")
 		grid.text(x=0.9, y=0.7, growth_percentile.label, gp=gpar(col=border.color, cex=bottom.left.vp.size), just="right", default.units="native")
 		grid.text(x=0.9, y=0.3, growth_level.label, gp=gpar(col=border.color, cex=bottom.left.vp.size), just="right", default.units="native")
@@ -1240,6 +1248,7 @@ function(Scale_Scores,                    ## Vector of Scale Scores
 		grid.roundrect(width = unit(0.95, "native"), r = unit(.02, "snpc"),
 			gp = gpar(lwd = 1.8, col = border.color, fill = legend.fill.color), just = "center")
 
+		if (content.area.in.legend) {
 		if (!split.content_area.tf) {
 			grid.text(x = 0.5, y = 0.875,
 				label = content_area.label.pieces[[1]][1], default.units = "native",
@@ -1255,7 +1264,9 @@ function(Scale_Scores,                    ## Vector of Scale Scores
 				gp = gpar(col = border.color, cex = content_area.label.pieces[[2]][2],
 						  fontface = 2, fontfamily = font.fam))
 		}
-		grid.text(x = 0.08, y = 0.75,
+		top.offset <- 0
+		} else top.offset <- 0.175
+		grid.text(x = 0.08, y = (0.75 + top.offset),
 			label = achievement.label, default.units = "native", just = "left",
 			gp = gpar(col = border.color, cex = 0.85, fontface = 2, fontfamily = font.fam))
 		grid.text(x = 0.08, y = 0.525, 
@@ -1268,29 +1279,33 @@ function(Scale_Scores,                    ## Vector of Scale Scores
 			label = percentiles.label, default.units = "native", just = "center",
 			gp = gpar(col = border.color, cex = 0.6))
 
-		grid.roundrect(x = unit(0.3, "native"), y = unit(0.64, "native"),
+		grid.roundrect(x = unit(0.3, "native"), y = unit((0.64 + top.offset), "native"),
 			width = unit(0.3, "native"), height = unit(0.1, "native"), r = unit(0.06, "char"),
 			gp = gpar(col = "grey72", lwd = 0.4, fill = "grey72"))
-		grid.circle(x = 0.3, y = 0.64, r = unit(0.04, "inches"), 
+		grid.circle(x = 0.3, y = (0.64 + top.offset), r = unit(0.04, "inches"), 
 			gp = gpar(col = border.color, lwd = 0.7, fill = "white"), default.units = "native")
 		if (!split.content_area.tf) {
-			grid.text(x = 0.7, y = 0.658,
-				label = paste(test.abbreviation, content.area.label),
-				gp = gpar(col = border.color, cex = legend.size),
-				default.units = "native")
-			grid.text(x = 0.7, y = 0.622, 
-				label = scale_score.label,
-				gp = gpar(col = border.color, cex = legend.size),
-				default.units = "native")
+			grid.text(x = 0.7, y = (0.675 + top.offset), # just = "top",
+				label = paste(test.abbreviation, content.area.label), default.units = "native",
+				gp = gpar(col = border.color, cex = legend.size, lineheight = 1/legend.lheight))
+			grid.text(x = 0.7, y = (0.625 + top.offset), 
+				label = scale_score.label, default.units = "native",
+				gp = gpar(col = border.color, cex = legend.size, lineheight = legend.lheight))
 		} else {
-			grid.text(x = 0.7, y = 0.7, label = test.abbreviation,
+			grid.text(x = 0.7, y = (0.7 + top.offset), label = test.abbreviation,
 				gp = gpar(col = border.color, cex = legend.size), default.units = "native")
-			grid.text(x = 0.7, y = 0.665, label = content_area.label.pieces[[1]][1],
+			grid.text(x = 0.7, y = (0.665 + top.offset), label = content_area.label.pieces[[1]][1],
 				gp = gpar(col = border.color, cex = legend.size), default.units = "native")
-			grid.text(x = 0.7, y = 0.63, label = content_area.label.pieces[[1]][2],
+			grid.text(x = 0.7, y = (0.63 + top.offset), label = content_area.label.pieces[[1]][2],
 				gp = gpar(col = border.color, cex = legend.size), default.units = "native")
-			grid.text(x = 0.7, y = 0.595, label = scale_score.label,
-				gp = gpar(col = border.color, cex = legend.size), default.units = "native")
+			grid.text(x = 0.7, y = (0.595 + top.offset), label = scale_score.label,
+				gp = gpar(col = border.color, cex = legend.size, lineheight = legend.lheight), default.units = "native")
+		}
+
+		if (extra.legend.element) {
+			for (ele in extra.legend.elements) {
+				eval(parse(text = ele))
+			}
 		}
 
 		y.center <- seq(0.05, 0.4, length = number.growth.levels+1)
