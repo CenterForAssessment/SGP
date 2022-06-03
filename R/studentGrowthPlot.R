@@ -245,7 +245,7 @@ function(Scale_Scores,                    ## Vector of Scale Scores
 		SGP_Levels <- SGP::SGPstateData[[Report_Parameters$State]][["Growth"]][["Levels"]][match(SGP_Levels, SGP::SGPstateData[[paste(head(unlist(strsplit(Report_Parameters$State, "_")), -1), collapse="_")]][["Growth"]][["Levels"]])]
 	}
 
-	if (!is.null(Report_Parameters[["Configuration"]][["Language"]][["Custom"]])) { # See WIDA_GA for example
+	if (is.list(Report_Parameters[["Configuration"]][["Language"]])) { # See WIDA_GA for example
   		achievement.label <- Report_Parameters[["Configuration"]][["Language"]][["Custom"]][["achievement.label"]]
 		achievement_level.label <- Report_Parameters[["Configuration"]][["Language"]][["Custom"]][["achievement_level.label"]]
 		achievement_target.label <- Report_Parameters[["Configuration"]][["Language"]][["Custom"]][["achievement_target.label"]]
@@ -279,6 +279,11 @@ function(Scale_Scores,                    ## Vector of Scale Scores
 	} else {
 		show.fan <- eval(parse(text=Report_Parameters[['Fan']]))
 	}
+
+	if (!is.null(SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Fan_Extra"]])) {
+		fan.extra <- TRUE
+		fan.extras <- SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Fan_Extra"]]
+	} else fan.extra <- FALSE
 
 	Cutscores <- copy(Cutscores)
 
@@ -905,6 +910,13 @@ function(Scale_Scores,                    ## Vector of Scale Scores
 				y=c(scale.scores.values[which(current.year==low.year:high.year)], max(yscale.range[1], cuts.ny1[i]),
 					min(yscale.range[2], cuts.ny1[i+1]), scale.scores.values[which(current.year==low.year:high.year)]),
 				default.units="native", gp=gpar(col=NA, lwd=0, fill=arrow.legend.color[i], alpha=0.45))
+			if (fan.extra) {
+				fan.extra.col <- arrow.legend.color[i]
+				fan.extra.x <- c(current.year, rep(current.year+grade.values$increment_for_projection_current, 2), current.year)
+				fan.extra.y <- c(scale.scores.values[which(current.year==low.year:high.year)], max(yscale.range[1], cuts.ny1[i]),
+					             min(yscale.range[2], cuts.ny1[i+1]), scale.scores.values[which(current.year==low.year:high.year)])
+				eval(parse(text = fan.extras[i]))
+			}
 			grid.roundrect(x=unit(current.year+grade.values$increment_for_projection_current, "native"),
 				y=unit((max(yscale.range[1], cuts.ny1[i])+min(yscale.range[2], cuts.ny1[i+1]))/2, "native"),
 				height=unit(min(yscale.range[2], as.numeric(cuts.ny1[i+1])) - max(yscale.range[1], as.numeric(cuts.ny1[i])), "native"),
