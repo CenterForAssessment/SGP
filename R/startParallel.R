@@ -4,11 +4,12 @@ function(parallel.config,
 	qr.taus) {
 
 	if (any(toupper(parallel.config[['BACKEND']]) == 'MULTICORE' | toupper(parallel.config[['BACKEND']]) == 'SNOW')) {
-		stop(paste('\n\t', parallel.config[['BACKEND']], "no longer supported.  Please use the 'PARALLEL' package backend and R > 2.12 for parallel computation.\n"))
+		stop(paste('\n\t', parallel.config[['BACKEND']], "no longer supported. Please use the 'PARALLEL' package backend and R > 2.12 for parallel computation.\n"))
 	}
 
-	if (toupper(parallel.config[['BACKEND']]) == 'FOREACH' && (parallel.config[['TYPE']] != "doParallel" & !is.na(parallel.config[['TYPE']]))) {
-			stop(paste('\n\t', parallel.config[['TYPE']], "no longer supported.  Please use doParallel and R > 2.12 for parallel computation.\n"))
+	if (toupper(parallel.config[['BACKEND']]) == 'FOREACH' & !is.null(parallel.config[['TYPE']])) {
+		if (parallel.config[['TYPE']] != "doParallel")
+			stop(paste('\n\t', parallel.config[['TYPE']], "no longer supported. Please use doParallel and R > 2.12 for parallel computation.\n"))
 	}
 
 	workers <- NULL; par.type <- 'OTHER'; TAUS.LIST <- NULL

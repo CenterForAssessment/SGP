@@ -68,6 +68,8 @@
 			custom.isr.tf <- TRUE
 			custom.isr <- SGP::SGPstateData[[state]][["Custom_Student_Report"]]
 		} else custom.isr.tf <- FALSE
+		catalog_name <- SGP::SGPstateData[[state]][["Student_Report_Information"]][["catalog_name"]]
+		if (is.null(rm.pattern <- SGP::SGPstateData[[state]][["Student_Report_Information"]][["file_remove_pattern"]])) rm.pattern <- "REPORT"
 	} else {
 		stop("Construction of student growth plots requires state meta-data to be included in the embedded SGPstateData set.\nPlease augment the SGPstateData set with your data or contact the SGP package maintainer to have your data added to the SGP package.")
 	}
@@ -872,15 +874,20 @@ if (reports.by.school) {
 		cat("\\end{document}", file=paste0("school_catalog_", i, "_", j, ".tex"), append=TRUE)
 		system(paste0("pdflatex -interaction=batchmode school_catalog_", i, "_", j, ".tex"), ignore.stdout = TRUE)
 		system(paste0("pdflatex -interaction=batchmode school_catalog_", i, "_", j, ".tex"), ignore.stdout = TRUE)
-		file.rename(paste0("school_catalog_", i, "_", j, ".pdf"), file.path(sgPlot.folder, year_folder, district_folder, school_folder,
-			paste0(year_folder, "_", district_folder, "_", school_folder, "_Individual_SGP_Report_Catalog.pdf")))
+		if (is.null(catalog_name)) {
+		    tmp_catalog_name <- file.path(sgPlot.folder, year_folder, district_folder, school_folder, 
+			    paste0(year_folder, "_", district_folder, "_", school_folder, "_Individual_SGP_Report_Catalog.pdf"))
+		} else {
+            tmp_catalog_name <- eval(parse(text = catalog_name))
+		}
+		file.rename(paste0("school_catalog_", i, "_", j, ".pdf"), tmp_catalog_name)
+		            # file.path(sgPlot.folder, year_folder, district_folder, school_folder, tmp_catalog_name))
 	}
 	if (sgPlot.cleanup & "PDF" %in% sgPlot.output.format) {
-		files.to.remove <- list.files(pattern=paste(i, j, sep="_"), all.files=TRUE)
-		lapply(files.to.remove, file.remove)
+		invisible(file.remove(list.files(pattern=paste(i, j, sep="_"), all.files=TRUE)))
 		files.to.remove <- list.files(path=paste(c(sgPlot.folder, year_folder, district_folder, school_folder), collapse=.Platform$file.sep),
-			pattern="REPORT", all.files=TRUE, full.names=TRUE, recursive=TRUE)
-		lapply(files.to.remove, file.remove)
+			pattern=rm.pattern, all.files=TRUE, full.names=TRUE, recursive=TRUE)
+		invisible(file.remove(files.to.remove))
 	}
 
 	if (identical(.Platform$OS.type, "unix") & sgPlot.zip & !reports.by.student) {
