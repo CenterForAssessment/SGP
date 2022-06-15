@@ -1335,6 +1335,16 @@ function(Scale_Scores,                    ## Vector of Scale Scores
 				gp=gpar(lwd=0.3, col=border.color, fill=arrow.legend.color[i]))
 			popViewport()
 
+			grid.polygon(x=c(0.05, rep(0.1875, 2)),
+				y=c((head(y.center,1)+tail(y.center,1))/2, y.center[i], y.center[i]+y.center[2]-y.center[1]),
+				gp=gpar(col=NA, lwd=0, fill=arrow.legend.color[i], alpha=0.45), default.units="native")
+            if (fan.extra) {
+                fan.extra.col <- arrow.legend.color[i]
+                fan.extra.x <- c(0.05, rep(0.1875, 2))
+                fan.extra.y <- c((head(y.center,1)+tail(y.center,1))/2, y.center[i], y.center[i]+y.center[2]-y.center[1])
+                eval(parse(text = fan.extras[i]))
+            }
+
 			pushViewport(
 				viewport(x=unit(0.2, "native"), y=unit(y.center[i], "native"),
 					width=unit(0.04, "native"), height=unit(y.center[2]-y.center[1], "npc"),
@@ -1343,10 +1353,6 @@ function(Scale_Scores,                    ## Vector of Scale Scores
 			grid.roundrect(x=0.5, y=0.5, width=1, height=1, r=unit(.45, "snpc"),
 				gp=gpar(lwd=0.3, col=border.color, fill=arrow.legend.color[i]))
 			popViewport()
-
-			grid.polygon(x=c(0.05, rep(0.1875, 2)),
-				y=c((head(y.center,1)+tail(y.center,1))/2, y.center[i], y.center[i]+y.center[2]-y.center[1]),
-				gp=gpar(col=NA, lwd=0, fill=arrow.legend.color[i], alpha=0.45), default.units="native")
 
 			grid.text(x=0.36,
 				y=((y.center[1]+y.center[2])/2)+(i-1)*(y.center[2]-y.center[1]),
