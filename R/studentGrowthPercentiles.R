@@ -427,11 +427,14 @@ function(panel.data,         ## REQUIRED
       } ### END createBigData function
 
       get.simex.ranking.info <- function(table_list, cap, gp, yp, ylp) {
-        table.index <- which(sapply(table_list, function(f) {
-          attr(f, "content_area_progression") == cap &&
-          attr(f, "grade_progression") == gp &&
-          attr(f, "year_progression") == yp &&
-          attr(f, "year_lags_progression") == ylp}))
+        table.index <-
+            which(sapply(table_list,
+                         function(f) {
+                             identical(attr(f, "content_area_progression"), cap) &
+                             identical(attr(f, "grade_progression"), gp) &
+                             identical(attr(f, "year_progression"), yp) &
+                             identical(attr(f, "year_lags_progression"), ylp)
+                         }))
         return(table_list[[table.index]])
       }
 
