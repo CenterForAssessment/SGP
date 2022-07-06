@@ -68,7 +68,8 @@ function(
 				dev.off()
 			}
 			if ("SVG" %in% output.format) {
-				CairoSVG(file=paste0(file_path, "/", tmp.plot.name, ".svg"), width=my.width, height=my.height, dpi=72, pointsize=10.5, bg="transparent")
+				svglite(filename = paste0(file_path, "/", tmp.plot.name, ".svg"),
+				        width = my.width, height = my.height, pointsize = 11, bg = "transparent")
 				grid.draw(.goodness.of.fit(content_area.year.grade.data, content_area, year, grade, color.scale=color.scale,
 					with.prior.achievement.level=with.prior.achievement.level, content_areas_prior=content_areas_prior, years_prior)[["PLOT"]])
 				dev.off()
