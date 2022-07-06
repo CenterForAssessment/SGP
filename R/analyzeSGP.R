@@ -2203,7 +2203,6 @@ function(sgp_object,
 			}
 		} ## END if sgp.percentiles
 
-
 		### sgp.percentiles.equated
 
 		if (sgp.percentiles.equated) {
