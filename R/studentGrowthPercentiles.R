@@ -427,11 +427,14 @@ function(panel.data,         ## REQUIRED
       } ### END createBigData function
 
       get.simex.ranking.info <- function(table_list, cap, gp, yp, ylp) {
-        table.index <- which(sapply(table_list, function(f) {
-          attr(f, "content_area_progression") == cap &&
-          attr(f, "grade_progression") == gp &&
-          attr(f, "year_progression") == yp &&
-          attr(f, "year_lags_progression") == ylp}))
+        table.index <-
+            which(sapply(table_list,
+                         function(f) {
+                             identical(attr(f, "content_area_progression"), cap) &
+                             identical(attr(f, "grade_progression"), gp) &
+                             identical(attr(f, "year_progression"), yp) &
+                             identical(attr(f, "year_lags_progression"), ylp)
+                         }))
         return(table_list[[table.index]])
       }
 
@@ -1816,7 +1819,7 @@ function(panel.data,         ## REQUIRED
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, "SGP", "SGP_BASELINE")
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") && tf.growth.levels) setnames(quantile.data, "SGP_LEVEL", "SGP_LEVEL_BASELINE")
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") && "SGP_STANDARD_ERROR" %in% names(quantile.data)) setnames(quantile.data, gsub("SGP_STANDARD_ERROR", "SGP_BASELINE_STANDARD_ERROR", names(quantile.data)))
-		if (identical(sgp.labels[['my.extra.label']], "BASELINE") && "SGP_ORDER" %in% names(quantile.data)) setnames(quantile.data, gsub("SGP_ORDER", "SGP_BASELINE_ORDER", names(quantile.data)))
+		if (identical(sgp.labels[['my.extra.label']], "BASELINE") && any(c("SGP_ORDER", "SGP_ORDER_1") %in% names(quantile.data))) setnames(quantile.data, gsub("SGP_ORDER", "SGP_BASELINE_ORDER", names(quantile.data)))
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") && "SGP_NORM_GROUP" %in% names(quantile.data)) setnames(quantile.data, gsub("SGP_NORM_GROUP", "SGP_NORM_GROUP_BASELINE", names(quantile.data)))
 		if (identical(sgp.labels[['my.extra.label']], "BASELINE") && simex.tf) setnames(quantile.data, gsub("_SIMEX", "_SIMEX_BASELINE", names(quantile.data))) # SGP_SIMEX and SGP_SIMEX_RANKED
         if (identical(sgp.labels[["my.extra.label"]], "BASELINE") && return.prior.scale.score) setnames(quantile.data, "SCALE_SCORE_PRIOR", "SCALE_SCORE_PRIOR_BASELINE")

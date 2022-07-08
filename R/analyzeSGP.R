@@ -357,39 +357,39 @@ function(sgp_object,
 
 	## Function to export/print goodness of fit results as pdf files to directory Goodness_of_Fit
 
-	gof.print <- function(sgp_object) {
-		if (length(sgp_object@SGP[["Goodness_of_Fit"]]) > 0L) {
-			for (i in names(sgp_object@SGP[["Goodness_of_Fit"]])) {
-				dir.create(paste0("Goodness_of_Fit/", i, "/Decile_Tables"), recursive=TRUE, showWarnings=FALSE)
-					for (output.format in c("PDF", "PNG", "DECILE_TABLES")) {
-						for (j in names(sgp_object@SGP[["Goodness_of_Fit"]][[i]])) {
-							tmp.path <- file.path("Goodness_of_Fit", i, j)
-							if (!identical(.Platform$OS.type, "unix") & nchar(tmp.path) > 250L) {
-								tmp.content_area <- unlist(strsplit(j, "[.]"))[1L]
-								tmp.path <- gsub(tmp.content_area, substr(tmp.content_area, 1, 1), tmp.path)
-							}
-							if (output.format=="PDF") {
-								pdf(file=paste0(tmp.path, ".pdf"), width=8.5, height=11)
-							       grid.draw(sgp_object@SGP[["Goodness_of_Fit"]][[i]][[j]][["PLOT"]])
-							    dev.off()
-							}
-							if (output.format=="PNG") {
-								Cairo(file=paste0(tmp.path, ".png"),
-								      width=8.5, height=11, units="in", dpi=144, pointsize=10.5, bg="transparent")
-							       grid.draw(sgp_object@SGP[["Goodness_of_Fit"]][[i]][[j]][["PLOT"]])
-							    dev.off()
-							}
-              if (output.format=="DECILE_TABLES") {
-                decile.table <- sgp_object@SGP[["Goodness_of_Fit"]][[i]][[j]][["TABLE"]]
-                save(decile.table, file=paste0("Goodness_of_Fit/", i, "/Decile_Tables/", j, "_Decile_Table.Rdata"))
-              }
-						}
-					}
-				}
-		} else {
-			messageSGP("\tNOTE: No Goodness of Fit tables available to print. No tables will be produced.")
-		}
-	}
+	# gof.print <- function(sgp_object) {
+	# 	if (length(sgp_object@SGP[["Goodness_of_Fit"]]) > 0L) {
+	# 		for (i in names(sgp_object@SGP[["Goodness_of_Fit"]])) {
+	# 			dir.create(paste0("Goodness_of_Fit/", i, "/Decile_Tables"), recursive=TRUE, showWarnings=FALSE)
+	# 				for (output.format in c("PDF", "PNG", "DECILE_TABLES")) {
+	# 					for (j in names(sgp_object@SGP[["Goodness_of_Fit"]][[i]])) {
+	# 						tmp.path <- file.path("Goodness_of_Fit", i, j)
+	# 						if (!identical(.Platform$OS.type, "unix") & nchar(tmp.path) > 250L) {
+	# 							tmp.content_area <- unlist(strsplit(j, "[.]"))[1L]
+	# 							tmp.path <- gsub(tmp.content_area, substr(tmp.content_area, 1, 1), tmp.path)
+	# 						}
+	# 						if (output.format=="PDF") {
+	# 							pdf(file=paste0(tmp.path, ".pdf"), width=8.5, height=11)
+	# 						       grid.draw(sgp_object@SGP[["Goodness_of_Fit"]][[i]][[j]][["PLOT"]])
+	# 						    dev.off()
+	# 						}
+	# 						if (output.format=="PNG") {
+	# 							Cairo(file=paste0(tmp.path, ".png"),
+	# 							      width=8.5, height=11, units="in", dpi=144, pointsize=10.5, bg="transparent")
+	# 						       grid.draw(sgp_object@SGP[["Goodness_of_Fit"]][[i]][[j]][["PLOT"]])
+	# 						    dev.off()
+	# 						}
+    #           if (output.format=="DECILE_TABLES") {
+    #             decile.table <- sgp_object@SGP[["Goodness_of_Fit"]][[i]][[j]][["TABLE"]]
+    #             save(decile.table, file=paste0("Goodness_of_Fit/", i, "/Decile_Tables/", j, "_Decile_Table.Rdata"))
+    #           }
+	# 					}
+	# 				}
+	# 			}
+	# 	} else {
+	# 		messageSGP("\tNOTE: No Goodness of Fit tables available to print. No tables will be produced.")
+	# 	}
+	# }
 
 	## Function to merge coefficient matrices from coefficient matrix productions
 
@@ -2504,7 +2504,24 @@ function(sgp_object,
 
 	sgp_object@SGP <- mergeSGP(tmp_sgp_object, sgp_object@SGP)
 
-	if (goodness.of.fit.print) gof.print(sgp_object)
+    if (goodness.of.fit.print) {
+    #   gof.print(sgp_object)
+      if (!is.null(sgp.config)) {
+        years <- content_areas <- NULL # grades <-
+        for (cfig in seq(length(sgp.config))) {
+          years <-
+            unique(c(years, tail(sgp.config[[cfig]][["sgp.panel.years"]], 1)))
+        #   grades <-
+        #     unique(c(grades, unlist(lapply(sgp.config[[cfig]][["sgp.grade.sequences"]], tail, 1))))
+          content_areas <-
+            unique(c(content_areas, tail(sgp.config[[cfig]][["sgp.content.areas"]], 1)))
+        }
+      }
+      gofPrint(sgp_object = sgp_object,
+               years = years,
+               content_areas = content_areas,
+               grades = grades)
+    }
 	setkeyv(sgp_object@Data, getKey(sgp_object)) # re-key data for combineSGP, etc.
 	sgp_object@Version[["analyzeSGP"]][[as.character(gsub("-", "_", Sys.Date()))]] <- as.character(packageVersion("SGP"))
 	messageSGP(paste("Finished analyzeSGP", prettyDate(), "in", convertTime(timetakenSGP(started.at)), "\n"))

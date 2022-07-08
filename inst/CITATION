@@ -4,10 +4,10 @@ citEntry(entry = "Manual",
          title        = "{SGP}: Student Growth Percentiles \\& Percentile Growth Trajectories.",
          author       = personList(as.person("Damian W. Betebenner"), as.person("Adam R. Van Iwaarden"), as.person("Ben Domingue"),  as.person("Yi Shang")),
          year         = "2022",
-         note         = "R package version 2.0-0.3",
+         note         = "R package version 2.0-0.5",
          url          = "https://sgp.io",
 
          textVersion  = paste("Damian W. Betebenner, Adam R. Van Iwaarden, Ben Domingue and Yi Shang (2022).",
                         "SGP: Student Growth Percentiles & Percentile Growth Trajectories.",
-                        "(R package version 2.0-0.3)",
+                        "(R package version 2.0-0.5)",
                         "URL: https://sgp.io"))
