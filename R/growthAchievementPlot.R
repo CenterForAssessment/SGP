@@ -485,7 +485,8 @@
 			if (!is.null(equated)) my.label <- "_State_Equated_Growth_and_Achievement_Plot_"
 			if (cohort)	my.label <- "_State_Growth_and_Achievement_Plot_"
 
-			if (k=="PDF") tmp.suffix <- ".pdf" else tmp.suffix <- ".png"
+			# if (k=="PDF") ".pdf" else tmp.suffix <- ".png"
+			tmp.suffix <- paste0(".", tolower(k))
 			if (gaPlot.start.points=="Achievement Level Cuts") {
 				tmp.file.name <- paste0(output.folder, "/", state.name.file.label, my.label, gsub(" ", "_", capwords(tail(tmp2.dt[['CONTENT_AREA']], 1))), "_", year, "_Level_", tmp2.dt[['LEVEL']], "_Grade_", tmp2.dt[['GRADE']], tmp.suffix)
 			}
@@ -498,7 +499,7 @@
 
 			if (k=="PDF") pdf(file=tmp.file.name, width=8.5, height=11, bg=format.colors.background)
 			if (k=="PNG") Cairo(file=tmp.file.name, width=8.5, height=11, units="in", dpi=144, pointsize=10.5, bg=format.colors.background)
-
+			if (k=="SVG") svglite(filename = tmp.file.name, width = 8.5, height = 11, pointsize = 11, bg = format.colors.background)
 
 			##
 			## Push growth.achievement.vp

@@ -280,6 +280,10 @@ if (bubble_plot_configs.BUBBLE_PLOT_DEVICE == "PNG") {
 	Cairo(file=gsub(".pdf", ".png", file.path.and.name), width=fig.width, height=8.5, bg=format.colors.background, units="in", dpi=144, pointsize=10.5)
 }
 
+if (bubble_plot_configs.BUBBLE_PLOT_DEVICE == "SVG") {
+    svglite(filename = gsub(".pdf", ".svg", file.path.and.name), pointsize = 11, bg = format.colors.background)
+}
+
 # Create plot (if bubble_plot_configs.BUBBLE_TIPS==TRUE)
 
 if (bubble_plot_configs.BUBBLE_TIPS) {
