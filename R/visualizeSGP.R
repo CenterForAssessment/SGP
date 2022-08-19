@@ -722,12 +722,12 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 				}
 				tmp.grades.content_areas.reported <- data.table(rbindlist(tmp.data.table), key=key(slot.data))
 			} else {
-				tmp.grades.reported <- as.character(unique(unlist(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]])))
+				tmp.grades.reported <- as.character(unique(unlist(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][tmp.content_areas_domains])))
 				tmp.grades.content_areas.reported <- data.table(
 					VALID_CASE="VALID_CASE",
 					YEAR=tmp.last.year,
 					GRADE=tmp.grades.reported,
-					CONTENT_AREA_LABELS=names(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]])[1], key=key(slot.data))
+					CONTENT_AREA_LABELS=names(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][tmp.content_areas_domains])[1], key=key(slot.data))
 			}
 			tmp.grades.content_areas.reported <- unique(slot.data, by=key(slot.data))[,key(slot.data), with=FALSE][tmp.grades.content_areas.reported, nomatch=0]
 			for (i in seq(dim(tmp.grades.content_areas.reported)[1])) {
