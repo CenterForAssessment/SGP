@@ -1816,19 +1816,45 @@ function(panel.data,         ## REQUIRED
 			}
 		}
 
-		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) setnames(quantile.data, "SGP", "SGP_BASELINE")
-		if (identical(sgp.labels[['my.extra.label']], "BASELINE") && tf.growth.levels) setnames(quantile.data, "SGP_LEVEL", "SGP_LEVEL_BASELINE")
-		if (identical(sgp.labels[['my.extra.label']], "BASELINE") && "SGP_STANDARD_ERROR" %in% names(quantile.data)) setnames(quantile.data, gsub("SGP_STANDARD_ERROR", "SGP_BASELINE_STANDARD_ERROR", names(quantile.data)))
-		if (identical(sgp.labels[['my.extra.label']], "BASELINE") && any(c("SGP_ORDER", "SGP_ORDER_1") %in% names(quantile.data))) setnames(quantile.data, gsub("SGP_ORDER", "SGP_BASELINE_ORDER", names(quantile.data)))
-		if (identical(sgp.labels[['my.extra.label']], "BASELINE") && "SGP_NORM_GROUP" %in% names(quantile.data)) setnames(quantile.data, gsub("SGP_NORM_GROUP", "SGP_NORM_GROUP_BASELINE", names(quantile.data)))
-		if (identical(sgp.labels[['my.extra.label']], "BASELINE") && simex.tf) setnames(quantile.data, gsub("_SIMEX", "_SIMEX_BASELINE", names(quantile.data))) # SGP_SIMEX and SGP_SIMEX_RANKED
-        if (identical(sgp.labels[["my.extra.label"]], "BASELINE") && return.prior.scale.score) setnames(quantile.data, "SCALE_SCORE_PRIOR", "SCALE_SCORE_PRIOR_BASELINE")
-        if (identical(sgp.labels[["my.extra.label"]], "BASELINE") && return.prior.scale.score.standardized) setnames(quantile.data, "SCALE_SCORE_PRIOR_STANDARDIZED", "SCALE_SCORE_PRIOR_STANDARDIZED_BASELINE")
-        if (identical(sgp.labels[["my.extra.label"]], "BASELINE") && !is.null(percentile.cuts)) setnames(quantile.data, gsub("PERCENTILE_CUT_", "PERCENTILE_CUT_BASELINE_", names(quantile.data)))
+		if (identical(sgp.labels[['my.extra.label']], "BASELINE")) {
+			setnames(quantile.data, "SGP", "SGP_BASELINE")
+			if (tf.growth.levels) setnames(quantile.data, "SGP_LEVEL", "SGP_LEVEL_BASELINE")
+			if ("SGP_STANDARD_ERROR" %in% names(quantile.data)) {
+				setnames(quantile.data, gsub("SGP_STANDARD_ERROR", "SGP_BASELINE_STANDARD_ERROR", names(quantile.data)))
+			}
+			if (any(grepl("CONFIDENCE_BOUND", names(quantile.data)))) { #Needs to be before 'SGP_ORDER' check
+				setnames(quantile.data,
+					grep("CONFIDENCE_BOUND", names(quantile.data), value = TRUE),
+					gsub("SGP_", "SGP_BASELINE_", grep("CONFIDENCE_BOUND", names(quantile.data), value = T))
+				)
+			}
+			if (any(c("SGP_ORDER", "SGP_ORDER_1") %in% names(quantile.data))) {
+				setnames(quantile.data, gsub("SGP_ORDER", "SGP_BASELINE_ORDER", names(quantile.data)))
+			}
+			if ("SGP_NORM_GROUP" %in% names(quantile.data)) {
+				setnames(quantile.data, gsub("SGP_NORM_GROUP", "SGP_NORM_GROUP_BASELINE", names(quantile.data)))
+			}
+			if (simex.tf) {
+				setnames(quantile.data, gsub("_SIMEX", "_SIMEX_BASELINE", names(quantile.data))) # SGP_SIMEX and SGP_SIMEX_RANKED
+			}
+			if (return.prior.scale.score) {
+				setnames(quantile.data, "SCALE_SCORE_PRIOR", "SCALE_SCORE_PRIOR_BASELINE")
+			}
+			if (return.prior.scale.score.standardized) {
+				setnames(quantile.data, "SCALE_SCORE_PRIOR_STANDARDIZED", "SCALE_SCORE_PRIOR_STANDARDIZED_BASELINE")
+			}
+			if (!is.null(percentile.cuts)) {
+				setnames(quantile.data, gsub("PERCENTILE_CUT_", "PERCENTILE_CUT_BASELINE_", names(quantile.data)))
+			}
+		}
 
-		if (identical(sgp.labels[['my.extra.label']], "EQUATED")) setnames(quantile.data, "SGP", "SGP_EQUATED")
-		if (identical(sgp.labels[['my.extra.label']], "EQUATED") && tf.growth.levels) setnames(quantile.data, "SGP_LEVEL", "SGP_LEVEL_EQUATED")
-		if (identical(sgp.labels[['my.extra.label']], "EQUATED") && "SGP_NORM_GROUP" %in% names(quantile.data)) setnames(quantile.data, gsub("SGP_NORM_GROUP", "SGP_NORM_GROUP_EQUATED", names(quantile.data)))
+		if (identical(sgp.labels[['my.extra.label']], "EQUATED")) {
+			setnames(quantile.data, "SGP", "SGP_EQUATED")
+			if (tf.growth.levels) setnames(quantile.data, "SGP_LEVEL", "SGP_LEVEL_EQUATED")
+			if ("SGP_NORM_GROUP" %in% names(quantile.data)) {
+				setnames(quantile.data, gsub("SGP_NORM_GROUP", "SGP_NORM_GROUP_EQUATED", names(quantile.data)))
+			}
+		}
 
 		if (!is.null(additional.vnames.to.return)) {
 			quantile.data <- panel.data[["Panel_Data"]][,c("ID", names(additional.vnames.to.return)), with=FALSE][quantile.data, on="ID"]
