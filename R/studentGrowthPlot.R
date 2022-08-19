@@ -1323,7 +1323,7 @@ function(Scale_Scores,                    ## Vector of Scale Scores
 		y.center <- seq(0.05, 0.4, length = number.growth.levels+1)
 		arrow.legend.coors.x <- c(0.25, 0.75, 0.75, 1, 0.5, 0, 0.25)
 		arrow.legend.coors.y <- c(0, 0, 1.3, 1.1, 2, 1.1, 1.3)
-		growth.label.cex <- (0.5 - max(0, max(nchar(growth.level.labels.shortened))-9)*0.042)
+		growth.label.cex <- (0.5 - max(0, max(nchar(growth.level.labels.shortened))-9)*0.01) ### OLD multipler = 0.042
 
 		for (i in seq(number.growth.levels)) {
 			pushViewport(
