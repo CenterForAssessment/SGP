@@ -1831,8 +1831,7 @@ function(sgp_object,
 							my.subject=tail(sgp.iter[["sgp.content.areas"]], 1), my.extra.label=equate.label),
 						use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 						performance.level.cutscores=state,
-						max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[["sgp.panel.years"]], 1),
-              tail(sgp.iter[["sgp.content.areas"]], 1), state, sgp.projections.equated),
+						max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[["sgp.panel.years"]], 1), tail(sgp.iter[["sgp.content.areas"]], 1), state, sgp.projections.equated),
 						percentile.trajectory.values=lagged.percentile.trajectory.values,
 						max.forward.progression.grade=sgp.projections.max.forward.progression.grade,
 						panel.data.vnames=getPanelDataVnames("sgp.projections.lagged", sgp.iter, sgp.data.names, equate.variable),
@@ -2123,7 +2122,6 @@ function(sgp_object,
 	if (is.null(parallel.config)) {
 
 		### sgp.percentiles
-
 		if (sgp.percentiles) {
 			for (sgp.iter in rev(par.sgp.config[['sgp.percentiles']])) {
 
@@ -2204,7 +2202,6 @@ function(sgp_object,
 		} ## END if sgp.percentiles
 
 		### sgp.percentiles.equated
-
 		if (sgp.percentiles.equated) {
 			for (sgp.iter in rev(par.sgp.config[['sgp.percentiles.equated']])) {
 
@@ -2253,9 +2250,7 @@ function(sgp_object,
 			}
 		} ## END if sgp.percentiles.equated
 
-
 		## sgp.percentiles.baseline
-
 		if (sgp.percentiles.baseline) {
 			for (sgp.iter in rev(par.sgp.config[['sgp.percentiles.baseline']])) {
 
@@ -2299,9 +2294,7 @@ function(sgp_object,
 			}
 		} ## END if sgp.percentiles.baseline
 
-
 		## sgp.projections
-
 		if (sgp.projections) {
 			for (sgp.iter in par.sgp.config[['sgp.projections']]) {
 
@@ -2347,9 +2340,7 @@ function(sgp_object,
 			}
 		} ## END if sgp.projections
 
-
 		## sgp.projections.baseline
-
 		if (sgp.projections.baseline) {
 			for (sgp.iter in par.sgp.config[['sgp.projections.baseline']]) {
 
@@ -2392,9 +2383,7 @@ function(sgp_object,
 			}
 		} ## END if sgp.projections.baseline
 
-
 		## sgp.projections.lagged
-
 		if (sgp.projections.lagged) {
 			for (sgp.iter in par.sgp.config[['sgp.projections.lagged']]) {
 
@@ -2440,9 +2429,7 @@ function(sgp_object,
 			}
 		} ## END sgp.projections.lagged
 
-
 		## sgp.projections.lagged.baseline
-
 		if (sgp.projections.lagged.baseline) {
 			for (sgp.iter in par.sgp.config[['sgp.projections.lagged.baseline']]) {
 
