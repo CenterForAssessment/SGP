@@ -495,6 +495,7 @@ function(sgp_object,
 
 	test.projection.iter <- function(sgp.iter) {
 		if (identical(sgp.iter[['sgp.projection.grade.sequences']], "NO_PROJECTIONS")) return(FALSE)
+		if (identical(sgp.iter[['sgp.projection.baseline.grade.sequences']], "NO_PROJECTIONS")) return(FALSE)
 		if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]]) & !is.null(sgp.iter[["sgp.projection.sequence"]])) {
 			if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["Skip_Year_Projections"]])) Skip_Year_Projections.tf <- TRUE else Skip_Year_Projections.tf <- FALSE
 			if (tail(sgp.iter[["sgp.grade.sequences"]], 1) == "EOCT" & !Skip_Year_Projections.tf) { # Only check EOCT configs/iters
@@ -633,6 +634,7 @@ function(sgp_object,
 		}
 
 		if (sgp.projections.baseline | sgp.projections.lagged.baseline) {
+			tmp.config <- par.sgp.config[sapply(par.sgp.config, test.projection.iter)]
 			while (any(sapply(tmp.config, function(x) length(x$sgp.projection.sequence)>1))) {
 				tmp.index <- which(any(sapply(tmp.config, function(x) length(x$sgp.projection.sequence)>1)))[1]
 				tmp.iter <- tmp.config[[tmp.index]]
