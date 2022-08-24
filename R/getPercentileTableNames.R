@@ -36,6 +36,7 @@ function(sgp_object,
 				}
 			} ### END if (use.cohort.for.baseline.when.missing)
 		}
+		if (length(tmp.names) > 0) tmp.names <- setdiff(tmp.names, grep("SKIP", names(sgp_object@SGP$SGPercentiles), value=TRUE))
 		if (length(tmp.names) > 0 & !is.null(years)) tmp.names <- tmp.names[sapply(tmp.names, function(x) getTableNameYear(x) %in% years)]
 		if (length(tmp.names) > 0 & !is.null(content_areas)) tmp.names <- tmp.names[sapply(strsplit(tmp.names, "[.]"), function(x) x[1] %in% content_areas)]
 		if (!sgp.percentiles.equated) tmp.names <- grep("EQUATED", tmp.names, value=TRUE, invert=TRUE) else tmp.names <- grep("EQUATED", tmp.names, value=TRUE)
