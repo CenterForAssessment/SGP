@@ -16,6 +16,11 @@
     `%w/o%` = function(x, y) x[!x %in% y]
 
     gof.slots <- names(sgp_object@SGP[["Goodness_of_Fit"]])
+
+    if (is.null(gof.slots)) {
+      print("No goodness of fit plots found in sgp_object@SGP[['Goodness_of_Fit']], skipping gofPrint.")
+      return()
+    }
     
     if (is.null(years)) {
       # Put this first for YEAR with `.` in it (e.g. "2021_2022.2")
