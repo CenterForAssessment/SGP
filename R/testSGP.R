@@ -451,7 +451,7 @@ function(
 			tmp.messages <- c(tmp.messages, "\t##### Results of testSGP test number 2a: Part 1 #####\n")
 
 #			if (identical(sum(Demonstration_SGP@Data$SGP, na.rm=TRUE), 5668654L)) {
-			if (identical(digest(Demonstration_SGP@Data$SGP), "93092a02ed23590cdfe45fd25fac7792")) { # pre-GRADE key: 7ad371d09d281ad5604b9288897ab337
+			if (identical(digest(Demonstration_SGP@Data$SGP), "3ba0ed9a36804c4e05b214c4001a28f6")) { # pre-GRADE key: 7ad371d09d281ad5604b9288897ab337, # pre-091222 93092a02ed23590cdfe45fd25fac7792
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP, part 1: FAIL\n")
