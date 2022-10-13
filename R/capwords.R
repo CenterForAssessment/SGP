@@ -1,6 +1,6 @@
 `capwords` <-
 function(x,
-	special.words = c("ELA","I", "II", "III", "IV", "DCYF", "EMH", "HS", "MS", "ES", "SES", "IEP", "ELL", "MAD", "PARCC", "SBAC", "SD", "SWD", "US", "SGP", "SIMEX", "SS", "SAT", "PSAT", "WIDA", "ACCESS", "WIDA-ACCESS")) {
+	special.words = c("ELA","I", "II", "III", "IV", "CCSD", "CUSD", "CUD", "USD", "PSD", "UD", "ESD", "DCYF", "EMH", "HS", "MS", "ES", "SES", "IEP", "ELL", "MAD", "PARCC", "SBAC", "SD", "SWD", "US", "SGP", "SIMEX", "SS", "SAT", "PSAT", "WIDA", "ACCESS", "WIDA-ACCESS")) {
 
 	if (is.null(x)) return(NULL)
 	if (is.na(x)) return(NA)
@@ -15,8 +15,10 @@ function(x,
 		return("")
 	} else {
 		my.split <- function(words, split.character) {
+			test.numeric <- function(tmp.x) grepl("[-]?[0-9]+[.]?[0-9]*|[-]?[0-9]+[L]?|[-]?[0-9]+[.]?[0-9]*[eE][0-9]+", tmp.x)
 			tmp.split <- unlist(strsplit(words, split=split.character))
 			tmp.split.special.words.index <- which(!tmp.split %in% special.words)
+			if (any(test.numeric(tmp.split))) tmp.split.special.words.index <- setdiff(tmp.split.special.words.index, which(test.numeric(tmp.split))) 
 			return(list(tmp.split=tmp.split, tmp.split.special.words.index=tmp.split.special.words.index))
 		}
 		s <- my.split(x, " ")
