@@ -7,9 +7,10 @@ The function capwords converts characters to mixed case character as intelligent
 
 \usage{
 capwords(x,
-    special.words = c("ELA","I", "II", "III", "IV",  "CCSD", "CUSD", "CUD", "USD", "PSD", "UD", "ESD", "DCYF", "EMH", "HS", "MS", "ES",
-          "SES", "IEP", "ELL", "MAD", "PARCC", "SBAC", "SD", "SWD", "US", "SGP", "SIMEX",
-          "SS", "SAT", "PSAT", "WIDA", "ACCESS", "WIDA-ACCESS"))
+    special.words = c("ELA","I", "II", "III", "IV",  "CCSD", "CUSD", "CUD", "USD", "PSD", 
+          "UD", "ESD", "DCYF", "EMH", "HS", "MS", "ES", "SES", "IEP", "ELL", "MAD", 
+          "PARCC", "SBAC", "SD", "SWD", "US", "SGP", "SIMEX", "SS", "SAT", "PSAT", 
+          "WIDA", "ACCESS", "WIDA-ACCESS"))
 }
 
 \arguments{
