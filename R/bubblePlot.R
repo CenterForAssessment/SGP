@@ -281,7 +281,10 @@ if (bubble_plot_configs.BUBBLE_PLOT_DEVICE == "PNG") {
 }
 
 if (bubble_plot_configs.BUBBLE_PLOT_DEVICE == "SVG") {
-    svglite(filename = gsub(".pdf", ".svg", file.path.and.name), pointsize = 11, bg = format.colors.background)
+    svglite(filename = gsub(".pdf", ".svg", file.path.and.name),
+            width = fig.width, height = 8.5, pointsize = 11,
+            bg = format.colors.background
+    )
 }
 
 # Create plot (if bubble_plot_configs.BUBBLE_TIPS==TRUE)
@@ -719,7 +722,7 @@ popViewport()
 
 # Turn off device
 
-if (bubble_plot_configs.BUBBLE_PLOT_DEVICE %in% c("PDF", "PNG")) {
+if (bubble_plot_configs.BUBBLE_PLOT_DEVICE %in% c("PDF", "PNG", "SVG")) {
     dev.off()
 }
 
