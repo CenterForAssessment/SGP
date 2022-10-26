@@ -337,12 +337,12 @@ function(sgp_object,
 	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][['lagged.percentile.trajectory.values']])) {
 		lagged.percentile.trajectory.values <- sort(SGPstateData[[state]][["SGP_Configuration"]][['lagged.percentile.trajectory.values']])
 	} else {
-    lagged.percentile.trajectory.values <- NULL
-  }
+	    lagged.percentile.trajectory.values <- NULL
+	}
 
 	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][['sgp.projections.use.only.complete.matrices']])) {
-    sgp.projections.use.only.complete.matrices <- SGPstateData[[state]][["SGP_Configuration"]][['sgp.projections.use.only.complete.matrices']]
-  }
+	    sgp.projections.use.only.complete.matrices <- SGPstateData[[state]][["SGP_Configuration"]][['sgp.projections.use.only.complete.matrices']]
+	}
 
 	if (is.null(fix.duplicates) & !is.null(SGPstateData[[state]][["SGP_Configuration"]][["fix.duplicates"]])) {
 		fix.duplicates <- SGPstateData[[state]][["SGP_Configuration"]][["fix.duplicates"]]
@@ -350,6 +350,9 @@ function(sgp_object,
 		return.projection.group.scale.scores <- TRUE
 	}
 
+	if (sgp.percentiles.calculate.sgps==FALSE) {
+		goodness.of.fit.print <- FALSE
+	}
 
 	###########################################################################################################
 	### Utility functions
