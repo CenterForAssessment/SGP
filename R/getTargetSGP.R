@@ -184,7 +184,6 @@ function(sgp_object,
 		if (!is.null(level.to.get <- getTargetSGPLevel(state, state.iter, target.level))) {
 
 		### Calculate Targets
-
 			for (i in tmp.names) {
 				cols.to.get.names <- names(sgp_object@SGP[["SGProjections"]][[i]])[
 					c(grep(paste0("LEVEL_", level.to.get), names(sgp_object@SGP[["SGProjections"]][[i]])), grep("SGP_PROJECTION_GROUP", names(sgp_object@SGP[["SGProjections"]][[i]])))]
