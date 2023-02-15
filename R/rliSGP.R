@@ -113,7 +113,7 @@ function(sgp_object,
 
 	if (!is.null(update.ids) && !is.data.table(update.ids)) update.ids <- as.data.table(update.ids)
 
-	if (state=="RLI_UK") content_areas <- "READING"
+	if (state=="RLI_UK") content_areas <- intersect(content_areas, c("READING", "READING_RASCH", "MATHEMATICS", "MATHEMATICS_RASCH"))
 
 	### Create Cutscores and embed in SGPstateData
 
