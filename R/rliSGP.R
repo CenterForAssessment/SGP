@@ -113,7 +113,7 @@ function(sgp_object,
 
 	if (!is.null(update.ids) && !is.data.table(update.ids)) update.ids <- as.data.table(update.ids)
 
-	if (state=="RLI_UK") content_areas <- "READING"
+	if (state=="RLI_UK") content_areas <- intersect(content_areas, c("READING", "READING_RASCH", "MATHEMATICS", "MATHEMATICS_RASCH"))
 
 	### Create Cutscores and embed in SGPstateData
 
@@ -166,6 +166,7 @@ function(sgp_object,
 			messageSGP(paste0("\tNOTE: ", tmp.configuration.year, " indicated in the configuration has no matrices in ", paste(state, "SGPt_Baseline_Matrices", sep="_")))
 			if (tmp.data.last.year > tail(matrix.years, 1L)) tmp.matrix.year <- tail(matrix.years, 1L)
 			if (tmp.data.last.year < head(matrix.years, 1L)) tmp.matrix.year <- head(matrix.years, 1L)
+			if (!exists("tmp.matrix.year")) tmp.matrix.year <- tmp.configuration.year
 		} else {
 			tmp.matrix.year <- tmp.configuration.year
 		}
@@ -299,7 +300,7 @@ function(sgp_object,
 			old.matrix.label <- paste0(paste(state, "SGPt_Baseline_Matrices", sep="_"), "$", tail(sort(names(get(paste(state, "SGPt_Baseline_Matrices", sep="_")))), 1L))
 			old.matrices <- eval(parse(text=old.matrix.label))
 			if (score.type=="RASCH") tmp.content_areas <- paste0(c("EARLY_LITERACY", "EARLY_LITERACY_SPANISH", "MATHEMATICS", "MATHEMATICS_SPANISH", "READING", "READING_SPANISH", "READING_UNIFIED"), "_RASCH.BASELINE") else tmp.content_areas <- paste0(c("EARLY_LITERACY", "MATHEMATICS", "READING"), ".BASELINE")
-			year.to.replace <- head(sort(unique(sapply(lapply(sapply(names(old.matrices[[tmp.content_areas[3]]]), strsplit, '[.]'), '[', 2:3), paste, collapse="."))), 1L)
+			year.to.replace <- head(sort(unique(sapply(lapply(sapply(names(old.matrices[["READING_RASCH.BASELINE"]]), strsplit, '[.]'), '[', 2:3), paste, collapse="."))), 1L)
 			for (content_area.iter in tmp.content_areas) {
 				old.matrices[[content_area.iter]][grep(year.to.replace, names(old.matrices[[content_area.iter]]))] <- NULL
 				old.matrices[[content_area.iter]] <- c(old.matrices[[content_area.iter]], new.matrices[[content_area.iter]])

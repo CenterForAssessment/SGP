@@ -161,7 +161,7 @@ infoDoRNG <- function (data, item)
 #' @param envir the loop's evaluation environment
 #' @param data configuration data of the doRNG backend
 #' 
-doRNG <- function (obj, ex, envir, data){
+doRNG <- function (obj, ex, envir, data) {
 		
 			
 	if( is.null(obj$options) )
@@ -185,7 +185,8 @@ doRNG <- function (obj, ex, envir, data){
     # directly register (temporarly) the computing backend
 	on.exit({setDoBackend(rngBackend)}, add=TRUE)
 	setDoBackend(rngBackend$data$backend)
-	do.call(doRNG::`%dorng%`, list(obj, ex), envir = envir)
+#	do.call(doRNG::`%dorng%`, list(obj, ex), envir = envir)
+	do.call(`%dorng%`, list(obj, ex), envir = envir)
 }
 
 ##% Get/Sets the registered foreach backend's data
