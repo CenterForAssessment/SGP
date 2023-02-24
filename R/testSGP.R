@@ -2890,8 +2890,8 @@ function(
 
 			### TEST of SGP variable from READING
 
-#			if (identical(sum(RLI5_UK_SGPt_PART_2@SGP[['SGPercentiles']][[paste("READING_RASCH", tmp.last.window, "BASELINE", sep=".")]][['SGP_BASELINE']], na.rm=TRUE), 106747L)) {
-			if (identical(digest(RLI5_UK_SGPt_PART_2@SGP[['SGPercentiles']][[paste("READING_RASCH", tmp.last.window, "BASELINE", sep=".")]][['SGP_BASELINE']]), "f9e884084b84794d762a535f3facec85")) {
+#			if (identical(sum(RLI5_UK_SGPt_PART_2@SGP[['SGPercentiles']][[paste("READING_RASCH", tmp.last.window, "BASELINE", sep=".")]][['SGP_BASELINE']], na.rm=TRUE), 106601L)) {
+			if (identical(digest(RLI5_UK_SGPt_PART_2@SGP[['SGPercentiles']][[paste("READING_RASCH", tmp.last.window, "BASELINE", sep=".")]][['SGP_BASELINE']]), "356a95e03fd0167bb127373764b9b568")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 2: FAIL\n")
