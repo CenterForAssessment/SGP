@@ -2890,8 +2890,8 @@ function(
 
 			### TEST of SGP variable from READING
 
-#			if (identical(sum(RLI5_UK_SGPt_PART_2@SGP[['SGPercentiles']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['SGP_BASELINE']], na.rm=TRUE), 109799L)) {
-			if (identical(digest(RLI5_UK_SGPt_PART_2@SGP[['SGPercentiles']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['SGP_BASELINE']]), "36b2431ba6eac8508e239acc6f3a1e87")) {
+#			if (identical(sum(RLI5_UK_SGPt_PART_2@SGP[['SGPercentiles']][[paste("READING_RASCH", tmp.last.window, "BASELINE", sep=".")]][['SGP_BASELINE']], na.rm=TRUE), 106747L)) {
+			if (identical(digest(RLI5_UK_SGPt_PART_2@SGP[['SGPercentiles']][[paste("READING_RASCH", tmp.last.window, "BASELINE", sep=".")]][['SGP_BASELINE']]), "f9e884084b84794d762a535f3facec85")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 2: FAIL\n")
@@ -2900,8 +2900,8 @@ function(
 
 			### TEST of P50_PROJ_TIME_1_CURRENT variable from READING
 
-#			if (identical(sum(RLI5_UK_SGPt_PART_2@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['P50_PROJ_TIME_1_CURRENT']], na.rm=TRUE), 548304.5)) {
-			if (identical(digest(RLI5_UK_SGPt_PART_2@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['P50_PROJ_TIME_1_CURRENT']]), "a0a4e95cda2862934568568a45813817")) {
+#			if (identical(sum(RLI5_UK_SGPt_PART_2@SGP[['SGProjections']][[paste("READING_RASCH", tmp.last.window, "BASELINE", sep=".")]][['P50_PROJ_TIME_1_CURRENT']], na.rm=TRUE), 504.83)) {
+			if (identical(digest(RLI5_UK_SGPt_PART_2@SGP[['SGProjections']][[paste("READING_RASCH", tmp.last.window, "BASELINE", sep=".")]][['P50_PROJ_TIME_1_CURRENT']]), "2d77ff2f481c903999cb54ebcb29fd26")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable P50_PROJ_TIME_1_CURRENT, part 2: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable P50_PROJ_TIME_1_CURRENT, part 2: FAIL\n")
