@@ -2765,7 +2765,7 @@ function(
 
 		#######################################################################################################################################################
 		###
-		### TEST NUMBER RLI5: Test of SGPt functionality with UK data
+		### TEST NUMBER RLI5: Test of SGPt functionality with UK data, RASCH scores
 		###
 		#######################################################################################################################################################
 
@@ -2787,7 +2787,8 @@ function(
 			tmp.messages <- "##### Begin testSGP test number RLI5 (STAR Scores for UK) #####\n"
 			tmp.last.window <- tail(sort(unique(SGPdata::sgptData_LONG[['YEAR']])), 1L)
 
-			RLI_UK_SGPt_Data_LONG <- copy(SGPdata::sgptData_LONG)[CONTENT_AREA %in% c("READING", "MATHEMATICS")][,c("ACHIEVEMENT_LEVEL", "SCALE_SCORE_RASCH"):=NULL][,COUNTRY:="GB"][,STATE:="HAMP"]
+			RLI_UK_SGPt_Data_LONG <- copy(SGPdata::sgptData_LONG)[CONTENT_AREA %in% c("READING", "MATHEMATICS")][,c("ACHIEVEMENT_LEVEL", "SCALE_SCORE"):=NULL][,COUNTRY:="GB"][,STATE:="HAMP"]
+			setnames(RLI_UK_SGPt_Data_LONG, "SCALE_SCORE_RASCH", "SCALE_SCORE")
 
 			### Bump dates forward by five years to utilize updated matrices
 
@@ -2806,7 +2807,7 @@ function(
 			### Calculate SGPs
 
 			expression.to.evaluate <-
-				paste0("RLI5_UK_SGPt_PART_1 <- rliSGP(\n\tsgp_object=RLI_UK_SGPt_Data_LONG,\n\treturn.updated.shell=TRUE,\n\tgoodness.of.fit.print=,\n\tscore.type='STAR',\n\tcutscore.file.name=RLI_Cutscores,\n\tparallel.config=", parallel.config, "\n)\n")
+				paste0("RLI5_UK_SGPt_PART_1 <- rliSGP(\n\tsgp_object=RLI_UK_SGPt_Data_LONG,\n\treturn.updated.shell=TRUE,\n\tgoodness.of.fit.print=,\n\tscore.type='RASCH',\n\tcutscore.file.name=RLI_Cutscores,\n\tparallel.config=", parallel.config, "\n)\n")
 
 			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(RLI5_UK_SGPt_PART_1, file='Data/RLI5_SGPt_PART_1.Rdata')", sep="\n")
 
@@ -2828,8 +2829,8 @@ function(
 
 			### TEST of SGP variable from READING
 
-#			if (identical(sum(RLI5_UK_SGPt_PART_1@SGP[['SGPercentiles']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['SGP_BASELINE']], na.rm=TRUE), 109845L)) {
-			if (identical(digest(RLI5_UK_SGPt_PART_1@SGP[['SGPercentiles']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['SGP_BASELINE']]), "e125a33a1ce622a083d2d857e6d25e09")) {
+#			if (identical(sum(RLI5_UK_SGPt_PART_1@SGP[['SGPercentiles']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['SGP_BASELINE']], na.rm=TRUE), 106516L)) {
+			if (identical(digest(RLI5_UK_SGPt_PART_1@SGP[['SGPercentiles']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['SGP_BASELINE']]), "dff3d018a3c5703bb1c285ce69f6d74f")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_BASELINE, part 1: FAIL\n")
@@ -2838,8 +2839,8 @@ function(
 
 			### TEST of P50_PROJ_TIME_1_CURRENT variable from READING
 
-#			if (identical(sum(RLI5_UK_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['P50_PROJ_TIME_1_CURRENT']], na.rm=TRUE), 541497.7)) {
-			if (identical(digest(RLI5_UK_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['P50_PROJ_TIME_1_CURRENT']]), "eba03531daba48781b47fee56c8404f2")) {
+#			if (identical(sum(RLI5_UK_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['P50_PROJ_TIME_1_CURRENT']], na.rm=TRUE), 399107.2)) {
+			if (identical(digest(RLI5_UK_SGPt_PART_1@SGP[['SGProjections']][[paste("READING", tmp.last.window, "BASELINE", sep=".")]][['P50_PROJ_TIME_1_CURRENT']]),  "d28c0053d90e826409bb62d28ed63e16")) {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable P50_PROJ_TIME_1_CURRENT, part 1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\t\tTest of variable P50_PROJ_TIME_1_CURRENT, part 1: FAIL\n")
@@ -2850,7 +2851,7 @@ function(
 
 
 			###############################################################################
-			### PART 2: Calculate using year + 2 in data set (currently 2018_2019.3)
+			### PART 2: Calculate using year + 2 in data set (currently 2023_2024.3)
 			###############################################################################
 
 			### Bump dates forward by two years
@@ -2858,16 +2859,16 @@ function(
 			tmp.date <- as.POSIXlt(RLI_UK_SGPt_Data_LONG[['DATE']])
 			tmp.date$year <- tmp.date$year+2
 			RLI_UK_SGPt_Data_LONG[,DATE:=as.Date(tmp.date)]
-			RLI_UK_SGPt_Data_LONG[,YEAR:=gsub("2016_2017", "2018_2019", YEAR)]
-			RLI_UK_SGPt_Data_LONG[,YEAR:=gsub("2015_2016", "2017_2018", YEAR)]
-			RLI_UK_SGPt_Data_LONG[,YEAR:=gsub("2014_2015", "2016_2017", YEAR)]
+			RLI_UK_SGPt_Data_LONG[,YEAR:=gsub("2021_2022", "2023_2024", YEAR)]
+			RLI_UK_SGPt_Data_LONG[,YEAR:=gsub("2020_2021", "2022_2023", YEAR)]
+			RLI_UK_SGPt_Data_LONG[,YEAR:=gsub("2019_2020", "2021_2022", YEAR)]
 			tmp.last.window <- tail(sort(unique(RLI_UK_SGPt_Data_LONG[['YEAR']])), 1L)
 
 
 			### Calculate SGPs
 
 			expression.to.evaluate <-
-				paste0("RLI5_UK_SGPt_PART_2 <- rliSGP(\n\tsgp_object=RLI_UK_SGPt_Data_LONG,\n\treturn.updated.shell=TRUE,\n\tgoodness.of.fit.print=,\n\tscore.type='STAR',\n\tcutscore.file.name=RLI_Cutscores,\n\tparallel.config=", parallel.config, "\n)\n")
+				paste0("RLI5_UK_SGPt_PART_2 <- rliSGP(\n\tsgp_object=RLI_UK_SGPt_Data_LONG,\n\treturn.updated.shell=TRUE,\n\tgoodness.of.fit.print=,\n\tscore.type='RASCH',\n\tcutscore.file.name=RLI_Cutscores,\n\tparallel.config=", parallel.config, "\n)\n")
 
 			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(RLI5_UK_SGPt_PART_2, file='Data/RLI5_SGPt_PART_2.Rdata')", sep="\n")
 
