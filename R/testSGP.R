@@ -2094,9 +2094,9 @@ function(
 			### TEST of equality between RLI_SGPt_PART_1@SGP and RLI_SGPt_PART_2@SGP
 
 			if (identical(RLI1_SGPt_PART_1@SGP, RLI1_SGPt_PART_2@SGP)) { #
-				tmp.messages <- c(tmp.messages, "\t\tTest of equatity of RLI1_PART_1@SGP and RLI1_PART_2@SGP, part 2: OK\n")
+				tmp.messages <- c(tmp.messages, "\t\tTest of equality of RLI1_PART_1@SGP and RLI1_PART_2@SGP, part 2: OK\n")
 			} else {
-				tmp.messages <- c(tmp.messages, "\t\tTest of equatity of RLI1_PART_1@SGP and RLI1_PART_2@SGP, part 2: FAIL\n")
+				tmp.messages <- c(tmp.messages, "\t\tTest of equality of RLI1_PART_1@SGP and RLI1_PART_2@SGP, part 2: FAIL\n")
 				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
@@ -2785,7 +2785,6 @@ function(
 			RLI_Cutscores <- SGPstateData[['RLI']][['SGP_Configuration']][['testSGP.cutscores']][['STAR']]
 			RLI5_UK_SGPt_PART_1 <- RLI5_UK_SGPt_PART_2 <- COUNTRY <- STATE <- DATE <- NULL
 			tmp.messages <- "##### Begin testSGP test number RLI5 (STAR Scores for UK) #####\n"
-			tmp.last.window <- tail(sort(unique(SGPdata::sgptData_LONG[['YEAR']])), 1L)
 
 			RLI_UK_SGPt_Data_LONG <- copy(SGPdata::sgptData_LONG)[CONTENT_AREA %in% c("READING", "MATHEMATICS")][,c("ACHIEVEMENT_LEVEL", "SCALE_SCORE"):=NULL][,COUNTRY:="GB"][,STATE:="HAMP"]
 			setnames(RLI_UK_SGPt_Data_LONG, "SCALE_SCORE_RASCH", "SCALE_SCORE")
@@ -2807,7 +2806,7 @@ function(
 			### Calculate SGPs
 
 			expression.to.evaluate <-
-				paste0("RLI5_UK_SGPt_PART_1 <- rliSGP(\n\tsgp_object=RLI_UK_SGPt_Data_LONG,\n\treturn.updated.shell=TRUE,\n\tgoodness.of.fit.print=,\n\tscore.type='RASCH',\n\tcutscore.file.name=RLI_Cutscores,\n\tparallel.config=", parallel.config, "\n)\n")
+				paste0("RLI5_UK_SGPt_PART_1 <- rliSGP(\n\tsgp_object=RLI_UK_SGPt_Data_LONG,\n\treturn.updated.shell=TRUE,\n\tgoodness.of.fit.print=TRUE,\n\tscore.type='RASCH',\n\tcutscore.file.name=RLI_Cutscores,\n\tparallel.config=", parallel.config, "\n)\n")
 
 			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(RLI5_UK_SGPt_PART_1, file='Data/RLI5_SGPt_PART_1.Rdata')", sep="\n")
 
@@ -2912,6 +2911,70 @@ function(
 			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number RLI5 (STAR Scores for UK): ", convertTime(timetakenSGP(started.at.overall)), "#####\n"))
 			messageSGP(tmp.messages)
 		} ### End TEST_NUMBER RLI5
+
+
+		#######################################################################################################################################################
+		###
+		### TEST NUMBER RLI6: Test of FALL Analyses
+		###
+		#######################################################################################################################################################
+
+		if ("RLI6" %in% TEST_NUMBER) {
+			eval(parse(text="require(RLImatrices)"))
+			options(error=recover)
+			options(warn=2)
+			if (.Platform$OS.type == "unix") number.cores <- detectSGPCores(logical=TRUE) else number.cores <- detectSGPCores(logical=FALSE)
+			if (is.null(test.option[['parallel.config']])) {
+				if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
+				parallel.config <- paste0("list(BACKEND=", tmp.backend, "WORKERS=list(\n\t\tBASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", \n\t\tSGP_SCALE_SCORE_TARGETS=", number.cores, "))")
+			} else parallel.config <- test.option[['parallel.config']]
+			SGPstateData[["RLI"]][["SGP_Configuration"]][["fix.duplicates"]] <- "KEEP.ALL"
+			SGPstateData[["RLI"]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]] <- 50
+			SGPstateData[["RLI"]][["Assessment_Program_Information"]][["CSEM"]] <- "SEM"
+			RLI_Cutscores <- SGPstateData[['RLI']][['SGP_Configuration']][['testSGP.cutscores']][['STAR']]
+			RLI6_SGPt_PART_1 <- RLI6_SGPt_PART_2 <- COUNTRY <- STATE <- DATE <- NULL
+			tmp.messages <- "##### Begin testSGP test number RLI6 (FALL Analyses) #####\n"
+
+			RLI_SGPt_Data_LONG <- copy(SGPdata::sgptData_LONG)[,SCALE_SCORE_RASCH:=NULL][YEAR <= "2016_2017.1"]
+			tmp.last.window <- tail(sort(unique(RLI_SGPt_Data_LONG$YEAR)), 1L)
+
+			###############################################################################
+			### PART 1: Using LONG Data
+			###############################################################################
+
+			### Calculate SGPs
+
+			expression.to.evaluate <-
+				paste0("RLI6_SGPt_PART_1 <- rliSGP(\n\tsgp_object=RLI_SGPt_Data_LONG,\n\ttesting.window='FALL',\n\treturn.updated.shell=TRUE,\n\tgoodness.of.fit.print=TRUE,\n\tscore.type='STAR',\n\tsimulate.sgps=TRUE,\n\tcutscore.file.name=RLI_Cutscores,\n\tparallel.config=", parallel.config, "\n)\n")
+
+			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(RLI6_SGPt_PART_1, file='Data/RLI6_SGPt_PART_1.Rdata')", sep="\n")
+
+			cat(paste0("EVALUATING Test Number RLI, Part 1:\n", expression.to.evaluate), fill=TRUE)
+
+			if (memory.profile) {
+				Rprof("testSGP(RLI)_Memory_Profile_Part_1.out", memory.profiling=TRUE)
+			}
+
+			started.at.intermediate <- proc.time()
+			eval(parse(text=expression.to.evaluate))
+			if (dir.exists("Data/RLI6_PART_1")) unlink("Data/RLI6_PART_1", recursive = TRUE)
+			file.rename("Data/RLI", "Data/RLI6_PART_1")
+
+			### TEST of variable values
+
+			tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number RLI6 (STAR Scores): Part 1 #####\n")
+
+			### TEST of equality between RLI_SGPt_PART_1@SGP and RLI_SGPt_PART_2@SGP
+
+#			if (identical(RLI6_SGPt_PART_1@SGP, RLI1_SGPt_PART_2@SGP)) { #
+#				tmp.messages <- c(tmp.messages, "\t\tTest of equatity of RLI1_PART_1@SGP and RLI1_PART_2@SGP, part 2: OK\n")
+#			} else {
+#				tmp.messages <- c(tmp.messages, "\t\tTest of equatity of RLI1_PART_1@SGP and RLI1_PART_2@SGP, part 2: FAIL\n")
+#				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
+#			}
+
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI6 (STAR Scores): Part 1", convertTime(timetakenSGP(started.at.intermediate)), "#####\n"))
+		} ### END TEST_NUMBER RLI6
 
 
 		#######################################################################################################################################################
@@ -3352,6 +3415,18 @@ function(
 		#######################################################################################################################################################
 
 		if (8 %in% toupper(TEST_NUMBER)) {
+			eval(parse(text="require(RLImatrices)"))
+			options(error=recover)
+			options(warn=2)
+			if (.Platform$OS.type == "unix") number.cores <- detectSGPCores(logical=TRUE) else number.cores <- detectSGPCores(logical=FALSE)
+			if (is.null(test.option[['parallel.config']])) {
+				if (.Platform$OS.type == "unix") tmp.backend <- "'PARALLEL', " else tmp.backend <- "'FOREACH', TYPE='doParallel', "
+				parallel.config <- paste0("list(BACKEND=", tmp.backend, "WORKERS=list(\n\t\tBASELINE_PERCENTILES=", number.cores, ", PROJECTIONS=", number.cores, ", \n\t\tSGP_SCALE_SCORE_TARGETS=", number.cores, "))")
+			} else parallel.config <- test.option[['parallel.config']]
+
+			RLI1_SGPt_PART_1 <- RLI1_SGPt_PART_2 <- RLI1_SGPt_PART_3 <- SCALE_SCORE_RASCH <- NULL
+			tmp.messages <- "##### Begin testSGP test number RLI1 (STAR Scores) #####\n\n"
+			tmp.last.window <- tail(sort(unique(SGPdata::sgptData_LONG[['YEAR']])), 1L)
 			options(error=recover)
 			options(warn=2)
 			Demonstration_SGP <- NULL
