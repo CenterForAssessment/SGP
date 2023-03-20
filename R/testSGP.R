@@ -2784,7 +2784,7 @@ function(
 			SGPstateData[["RLI_UK"]][["Assessment_Program_Information"]][["CSEM"]] <- "SEM"
 			RLI_Cutscores <- SGPstateData[['RLI']][['SGP_Configuration']][['testSGP.cutscores']][['STAR']]
 			RLI5_UK_SGPt_PART_1 <- RLI5_UK_SGPt_PART_2 <- COUNTRY <- STATE <- DATE <- NULL
-			tmp.messages <- "##### Begin testSGP test number RLI5 (STAR Scores for UK) #####\n"
+			tmp.messages <- "##### Begin testSGP test number RLI5 (RASCH Scores for UK) #####\n"
 
 			RLI_UK_SGPt_Data_LONG <- copy(SGPdata::sgptData_LONG)[CONTENT_AREA %in% c("READING", "MATHEMATICS")][,c("ACHIEVEMENT_LEVEL", "SCALE_SCORE"):=NULL][,COUNTRY:="GB"][,STATE:="HAMP"]
 			setnames(RLI_UK_SGPt_Data_LONG, "SCALE_SCORE_RASCH", "SCALE_SCORE")
@@ -2824,7 +2824,7 @@ function(
 
 			### TEST of variable values
 
-			tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number RLI5 (STAR Scores for UK): Part 1 #####\n")
+			tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number RLI5 (RASCH Scores for UK): Part 1 #####\n")
 
 			### TEST of SGP variable from READING
 
@@ -2846,7 +2846,7 @@ function(
 				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
-			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI5 (STAR Scores for UK): Part 1", convertTime(timetakenSGP(started.at.overall)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI5 (RASCH Scores for UK): Part 1", convertTime(timetakenSGP(started.at.overall)), "#####\n"))
 
 
 			###############################################################################
@@ -2885,7 +2885,7 @@ function(
 
 			### TEST of variable values
 
-			tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number RLI5 (STAR Scores for UK): Part 2 #####\n")
+			tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number RLI5 (RASCH Scores for UK): Part 2 #####\n")
 
 			### TEST of SGP variable from READING
 
@@ -2907,8 +2907,8 @@ function(
 				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
-			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI5 (STAR Scores for UK): Part 2", convertTime(timetakenSGP(started.at.intermediate)), "#####\n"))
-			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number RLI5 (STAR Scores for UK): ", convertTime(timetakenSGP(started.at.overall)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\t##### End testSGP test number RLI5 (RASCH Scores for UK): Part 2", convertTime(timetakenSGP(started.at.intermediate)), "#####\n"))
+			tmp.messages <- c(tmp.messages, paste("\n##### End testSGP test number RLI5 (RASCH Scores for UK): ", convertTime(timetakenSGP(started.at.overall)), "#####\n"))
 			messageSGP(tmp.messages)
 		} ### End TEST_NUMBER RLI5
 
