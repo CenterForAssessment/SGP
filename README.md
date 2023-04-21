@@ -56,7 +56,7 @@ We love feedback and are happy to answer questions.
 
 # References
 
-Betebenner, D. W., VanIwaarden, A., Domingue, B., and Shang, Y. (2022). SGP: Student Growth Percentiles & Percentile Growth Trajectories.
+Betebenner, D. W., VanIwaarden, A., Domingue, B., and Shang, Y. (2023). SGP: Student Growth Percentiles & Percentile Growth Trajectories.
 
-R Core Team (2022). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL
+R Core Team (2023). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL
 https://www.R-project.org/.
