@@ -331,7 +331,7 @@
 			tmp.dt <- data.table(matrix(c(gaPlot.grade_range[2], rep(gaPlot.back.extrapolated.cuts, 5)), nrow=1))
 		}
 
-		extrapolated.cuts.list <- as.list(rbindlist(list(extrapolated.cuts.dt[,!c("GRADE", "CONTENT_AREA"), with=FALSE], tmp.dt)))
+		extrapolated.cuts.list <- as.list(rbindlist(list(extrapolated.cuts.dt[,!c("GRADE", "CONTENT_AREA"), with=FALSE], tmp.dt), fill=TRUE))
 		for (col.iter in 2:6) extrapolated.cuts.list[[col.iter]] <- spline(extrapolated.cuts.list[[1]], extrapolated.cuts.list[[col.iter]], n=40, method="natural")[['y']]
 		extrapolated.cuts.list[[1]] <- spline(extrapolated.cuts.list[[1]], n=40, method="natural")[['y']]
 		extrapolated.cuts.dt <- as.data.table(extrapolated.cuts.list)

@@ -381,7 +381,7 @@ function(sgp.data,
 			sgp.projection.panel.years.label <- "sgp.projection.panel.years"
 		} else {
 			sgp.projection.content.areas.label <- "sgp.projection.baseline.content.areas"
-			sgp.projection.grade.sequences.label <- "sgp.baseline.grade.sequences"
+			sgp.projection.grade.sequences.label <- "sgp.projection.baseline.grade.sequences"
 			sgp.projection.panel.years.label <- "sgp.projection.baseline.panel.years"
 		}
 
