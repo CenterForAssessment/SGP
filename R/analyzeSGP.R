@@ -230,6 +230,7 @@ function(sgp_object,
 			calculate.simex <- list(state=state, lambda=seq(0,2,0.5), simulation.iterations=75, simex.sample.size=5000, extrapolation="linear", save.matrices=TRUE)
 			csem.variable <- NULL
 		}
+		if (identical(sgp.use.my.coefficient.matrices, TRUE)) calculate.simex[['simex.use.my.coefficient.matrices']] <- TRUE
 	}
 
 	if (identical(calculate.simex.baseline, TRUE)) {
