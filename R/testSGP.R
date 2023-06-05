@@ -2783,7 +2783,7 @@ function(
 			SGPstateData[["RLI_UK"]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]] <- 50
 			SGPstateData[["RLI_UK"]][["Assessment_Program_Information"]][["CSEM"]] <- "SEM"
 			RLI_Cutscores <- SGPstateData[['RLI']][['SGP_Configuration']][['testSGP.cutscores']][['STAR']]
-			RLI5_UK_SGPt_PART_1 <- RLI5_UK_SGPt_PART_2 <- COUNTRY <- STATE <- DATE <- NULL
+			RLI5_UK_SGPt_PART_1 <- RLI5_UK_SGPt_PART_2 <- RLI5_UK_SGPt_PART_3 <- COUNTRY <- STATE <- DATE <- NULL
 			tmp.messages <- "##### Begin testSGP test number RLI5 (RASCH Scores for UK) #####\n"
 
 			RLI_UK_SGPt_Data_LONG <- copy(SGPdata::sgptData_LONG)[CONTENT_AREA %in% c("READING", "MATHEMATICS")][,c("ACHIEVEMENT_LEVEL", "SCALE_SCORE"):=NULL][,COUNTRY:="GB"][,STATE:="HAMP"]

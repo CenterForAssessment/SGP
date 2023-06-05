@@ -381,7 +381,7 @@ function(sgp.data,
 			sgp.projection.panel.years.label <- "sgp.projection.panel.years"
 		} else {
 			sgp.projection.content.areas.label <- "sgp.projection.baseline.content.areas"
-			sgp.projection.grade.sequences.label <- "sgp.projection.baseline.grade.sequences"
+			sgp.projection.grade.sequences.label <- "sgp.baseline.grade.sequences"
 			sgp.projection.panel.years.label <- "sgp.projection.baseline.panel.years"
 		}
 
@@ -448,7 +448,7 @@ function(sgp.data,
 				tmp.data <- ddcast(rbindlist(tmp.lookup.list),
 					ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", "ACHIEVEMENT_LEVEL", "YEAR_WITHIN", state, sgp.scale.score.equated, SGPt), sep=".")[
 						sgp.targets[CONTENT_AREA==tail(sgp.iter[["sgp.content.areas"]], 1L) &
-						YEAR==tail(sgp.iter[["sgp.panel.years"]], 1L) & GRADE==tail(sgp.iter[[sgp.projection.grade.sequences.label]], 1L)], nomatch=0][,!c("CONTENT_AREA", "YEAR"), with=FALSE]
+						YEAR==tail(sgp.iter[["sgp.panel.years"]], 1L) & GRADE==tail(sgp.iter[["sgp.grade.sequences"]], 1L)], nomatch=0][,!c("CONTENT_AREA", "YEAR"), with=FALSE]
 
 				setnames(tmp.data, names(tmp.data)[grep(achievement.level.prior.vname, names(tmp.data))], achievement.level.prior.vname)
 				setnames(tmp.data, tail(sort(grep("YEAR_WITHIN", names(tmp.data), value=TRUE)), 1L), "YEAR_WITHIN")

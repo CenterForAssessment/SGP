@@ -134,17 +134,17 @@ function(sgp_object,
 		percentile.trajectory.values <- c(35, 50, 65)
 	}
 
-  if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["percentile.trajectory.values"]])) {
-      percentile.trajectory.values <- sort(unique(c(percentile.trajectory.values, SGPstateData[[state]][["SGP_Configuration"]][["percentile.trajectory.values"]])))
-  }
+	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["percentile.trajectory.values"]])) {
+		percentile.trajectory.values <- sort(unique(c(percentile.trajectory.values, SGPstateData[[state]][["SGP_Configuration"]][["percentile.trajectory.values"]])))
+	}
 
 	if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][["Projection_Fan_Limits"]])) {
 		percentile.trajectory.values <- sort(c(SGPstateData[[state]][["Student_Report_Information"]][["Projection_Fan_Limits"]], percentile.trajectory.values))
 	}
 
-  if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["gaPlot.back.extrapolated.cuts"]])) {
-      percentile.trajectory.values <- sort(unique(c(percentile.trajectory.values, 1:9*10)))
-  }
+	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["gaPlot.back.extrapolated.cuts"]])) {
+		percentile.trajectory.values <- sort(unique(c(percentile.trajectory.values, 1:9*10)))
+	}
 
 	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["sgp.projections.baseline.max.order"]])) {
 		sgp.projections.baseline.max.order <- SGPstateData[[state]][["SGP_Configuration"]][["sgp.projections.baseline.max.order"]]
@@ -215,13 +215,13 @@ function(sgp_object,
 		}
 	}
 
-  if (is.list(calculate.simex) && "csem.data.vnames" %in% names(calculate.simex)) {
-    csem.variable <- calculate.simex[["csem.data.vnames"]]
-  }
+	if (is.list(calculate.simex) && "csem.data.vnames" %in% names(calculate.simex)) {
+		csem.variable <- calculate.simex[["csem.data.vnames"]]
+	}
 
-  if (is.list(calculate.simex.baseline) && "csem.data.vnames" %in% names(calculate.simex.baseline)) {
-    csem.variable <- calculate.simex.baseline[["csem.data.vnames"]]
-  }
+	if (is.list(calculate.simex.baseline) && "csem.data.vnames" %in% names(calculate.simex.baseline)) {
+		csem.variable <- calculate.simex.baseline[["csem.data.vnames"]]
+	}
 
 	if (identical(calculate.simex, TRUE)) {
 		if (is.character(csem.variable <- SGPstateData[[state]][["Assessment_Program_Information"]][["CSEM"]])) {
@@ -288,14 +288,14 @@ function(sgp_object,
 			goodness.of.fit.print.arg <- state
 		} else goodness.of.fit.print <- as.logical(goodness.of.fit.print)
 	} else {
-		if (!goodness.of.fit.print){
+		if (!goodness.of.fit.print) {
 			goodness.of.fit.print.arg <- FALSE
 		} else {
-      if (identical(SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.achievement.level.prior"]], FALSE)) {   ### For RLI and RLI_UK
-        goodness.of.fit.print.arg <- TRUE
-      } else {
-        goodness.of.fit.print.arg <- state
-      }
+    		if (identical(SGPstateData[[state]][["SGP_Configuration"]][["goodness.of.fit.achievement.level.prior"]], FALSE)) {   ### For RLI and RLI_UK
+        		goodness.of.fit.print.arg <- TRUE
+      		} else {
+        		goodness.of.fit.print.arg <- state
+      		}
 		}
 	}
 
@@ -319,10 +319,10 @@ function(sgp_object,
 			tmp.messages <- c(tmp.messages, "\t\tNOTE: Variables", paste(SGPt, collapse=", "), "are not all contained in the supplied 'sgp_object@Data'. 'SGPt' is set to NULL.\n")
 			SGPt <- NULL
 		}
-    SGPt.max.time <- SGPstateData[[state]][['SGP_Configuration']][['SGPt.max.time']]
+    	SGPt.max.time <- SGPstateData[[state]][['SGP_Configuration']][['SGPt.max.time']]
 	} else {
-    SGPt.max.time <- NULL
-  }
+    	SGPt.max.time <- NULL
+	}
 
 	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][['sgp.use.my.sgp_object.baseline.coefficient.matrices']]) && is.null(sgp.use.my.sgp_object.baseline.coefficient.matrices)) {
 		sgp.use.my.sgp_object.baseline.coefficient.matrices <- SGPstateData[[state]][["SGP_Configuration"]][['sgp.use.my.sgp_object.baseline.coefficient.matrices']]
