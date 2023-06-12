@@ -104,6 +104,20 @@
 		stop("User must supply an SGP object containing a @Data slot with long data. See documentation for details.")
 	}
 
+    ### Check for `arrow` use -- PUNT (for now)
+    if (is(sgp_object@Data, "ArrowSGP")) {
+        sgp_object <-
+            packArrowSGP(
+                sgp_object,
+                slot.type =
+                    c("Data", "Data_Supplementary",
+                      if (!is.null(sgp_object@Summary)) "Summary",
+                      if (!is.null(sgp_object@Data_Supplementary)) "Data_Supplementary",
+                      if (!is.null(sgp_object@SGP[["Simulated_SGPs"]])) "Simulated_SGPs"
+                    )
+            )
+        arrow.tf <- TRUE
+    } else arrow.tf <- FALSE
 
 	###
 	## Utility Functions
@@ -422,7 +436,8 @@
 			summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], sgp.groups[x] %in% ci.groups))
 		} else summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], FALSE))
 
-		db.path = file.path(tempdir(), "TMP_Summary_Data.sqlite")
+		# db.path = file.path(tempdir(), "TMP_Summary_Data.sqlite") # ":memory:" #
+		db.path = file.path(tempdir(), "TMP_Summary_Data.duckdb") # ":memory:" #
 
 		## if NULL parallel.config
 		if (is.null(parallel.config)) {
@@ -599,7 +614,14 @@
 
 	### Loop and send to summarizeSGP_INTERNAL
 
-	sgp_data_for_summary <- dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_Summary_Data.sqlite"))
+	# sgp_data_for_summary <- dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_Summary_Data.sqlite"))
+	# to use a database file (shared between processes)
+	# con <- dbConnect(duckdb::duckdb(), dbdir = "my-db.duckdb", read_only = TRUE)
+    sgp_data_for_summary <-
+        dbConnect(
+            duckdb::duckdb(),
+            dbname = file.path(tempdir(), "TMP_Summary_Data.duckdb"),
+            read_only = TRUE)
 
 	if ("VALID_CASE_STATUS_ONLY" %in% names(sgp_object@Data)) {
 		sgp_object@Data$VALID_CASE[sgp_object@Data$VALID_CASE_STATUS_ONLY=="VALID_CASE"] <- "VALID_CASE"
@@ -619,6 +641,7 @@
 	if (any(!sapply(summary.groups[["growth_only_summary"]], is.null))) {
 		invisible(tmp.dt[, BY_GROWTH_ONLY := factor(is.na(tmp.dt[[my.sgp[1]]]), levels=c(FALSE, TRUE), labels=c("Students without SGP", "Students with SGP"))])
 	}
+	# duckdb::duckdb_register(sgp_data_for_summary, name = "summary_data", tmp.dt, overwrite = TRUE)
 	dbWriteTable(sgp_data_for_summary, name = "summary_data", overwrite = TRUE, row.names=FALSE, value = tmp.dt)
 	rm(tmp.dt)
 
@@ -630,7 +653,10 @@
 			# Write tmp.simulation.dt to disk for SNOW backends in Windows (& SNOT_TEST) Only
 			tmp.simulation.dt <- "sqlite"
 			dbWriteTable(sgp_data_for_summary, name = "sim_data", overwrite = TRUE, row.names=FALSE,
-				value = combineSims(sgp_object)[, SIM_NUM := 1:sim.info[['n.simulated.sgps']]])
+				value = combineSims(sgp_object)[,
+				  SIM_NUM := rep(1:sim.info[["n.simulated.sgps"]], sim.info[["n.unique.cases"]])
+				]
+			)
 		} else {
 			tmp.simulation.dt <- combineSims(sgp_object)
 		}
@@ -685,7 +711,13 @@
 
 				if (adj.weights.tf & "WEIGHT" %in% names(tmp.dt.long)) invisible(tmp.dt.long[, WEIGHT := round((WEIGHT / DUP_COUNT), 3)])
 
-				sgp_data_for_summary <- dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_Summary_Data.sqlite"))
+				# sgp_data_for_summary <- dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_Summary_Data.sqlite"))
+                sgp_data_for_summary <-
+                    dbConnect(
+                        duckdb::duckdb(),
+                        dbname = file.path(tempdir(), "TMP_Summary_Data.duckdb"),
+                        read_only = TRUE)
+
 				dbWriteTable(sgp_data_for_summary, name = "summary_data", overwrite = TRUE, row.names=FALSE, value = tmp.dt.long)
 				dbDisconnect(sgp_data_for_summary)
 
@@ -698,7 +730,8 @@
 
 	if (!is.null(parallel.config))	stopParallel(parallel.config, par.start)
 
-	unlink(file.path(tempdir(), "TMP_Summary_Data.sqlite"), recursive=TRUE)
+	# unlink(file.path(tempdir(), "TMP_Summary_Data.sqlite"), recursive=TRUE)
+	unlink(file.path(tempdir(), "TMP_Summary_Data.duckdb"), recursive=TRUE)
 	if ("VALID_CASE_STATUS_ONLY" %in% names(sgp_object@Data)) {
 		sgp_object@Data$VALID_CASE[sgp_object@Data$VALID_CASE_STATUS_ONLY=="VALID_CASE"] <- "INVALID_CASE"
 		setkeyv(sgp_object@Data, getKey(sgp_object))
@@ -707,5 +740,13 @@
 	messageSGP(paste("Finished summarizeSGP", prettyDate(), "in", convertTime(timetakenSGP(started.at)), "\n"))
 
 	setkeyv(sgp_object@Data, getKey(sgp_object))
+    if (arrow.tf) {
+        # Write results to disk (parquet) and replace with an `arrow::Table`
+        unpackSGP(
+            sgp_object,
+            slot.type = "Summary",
+            return.object = FALSE
+        )
+    }
 	return(sgp_object)
 } ## END summarizeSGP Function

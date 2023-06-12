@@ -58,6 +58,12 @@ function(sgp_object,
 
 	tmp.transition.year <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]
 
+    ### Check for `arrow` use
+    if ("ArrowSGP" %in% class(sgp_object@Data)) {
+        sgp_object@Data <-
+            as.data.table(tmp_sgp_object[["Data"]], key = getKey(sgp_object))
+        setkeyv(sgp_object@Data, getKey(sgp_object))
+    }
 
 	### get.config function
 
@@ -309,9 +315,9 @@ function(sgp_object,
 							what.to.return="ORDERS")
 						tmp.max.order <- max(tmp.orders)
 
-						for (L in par.sgp.config[[b.iter[b]]][['sgp.calculate.simex']][['lambda']][-1]) {
-							if (par.sgp.config[[b.iter[b]]][['sgp.exact.grade.progression']]) ord.iter <- tmp.max.order else ord.iter <- seq_along(tmp.orders)
-							for (k in ord.iter) {
+						if (par.sgp.config[[b.iter[b]]][['sgp.exact.grade.progression']]) ord.iter <- tmp.max.order else ord.iter <- seq_along(tmp.orders)
+						for (k in ord.iter) {
+							for (L in par.sgp.config[[b.iter[b]]][['sgp.calculate.simex']][['lambda']][-1]) {
 							par.sgp.config[[b.iter[b]]][['sgp.matrices']][[paste0(tmp.matrix.label, ".SIMEX")]][[
 								paste("qrmatrices", tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 1), k, sep="_")]][[paste0("lambda_", L)]] <-
 							unlist(getsplineMatrices(
@@ -326,6 +332,11 @@ function(sgp_object,
 								return.multiple.matrices=TRUE,
 								my.matrix.order=k), recursive=FALSE)
 							}
+							if ("ranked_simex_table" %in% names(tmp_sgp_object[["Coefficient_Matrices"]][[paste0(tmp.matrix.label, ".SIMEX")]][[paste("qrmatrices", tail(par.sgp.config[[b.iter[b]]][["sgp.grade.sequences"]], 1), k, sep = "_")]])) {
+								par.sgp.config[[b.iter[b]]][['sgp.matrices']][[paste0(tmp.matrix.label, ".SIMEX")]][[paste("qrmatrices", tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 1), k, sep = "_")]][["ranked_simex_table"]] <-
+									tmp_sgp_object[['Coefficient_Matrices']][[paste0(tmp.matrix.label, ".SIMEX")]][[paste("qrmatrices", tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 1), k, sep="_")]][["ranked_simex_table"]]
+							}
+
 						}
 					}
 				}
@@ -451,8 +462,11 @@ function(sgp_object,
 							}
 
 							if (!is.null(par.sgp.config[[b.iter[b]]][['sgp.calculate.simex.baseline']])) {
-								for (L in par.sgp.config[[b.iter[b]]][['sgp.calculate.simex.baseline']][['lambda']][-1]) {
-									for (k in ord.iter) {
+								for (k in ord.iter) {
+									par.sgp.config[[b.iter[b]]][['sgp.baseline.matrices']][[paste0(tmp.matrix.label, ".SIMEX")]][[
+										paste("qrmatrices", tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 1), k, sep="_")]] <-
+											tmp_sgp_object[["Coefficient_Matrices"]][[paste0(tmp.matrix.label, ".SIMEX")]][[paste("qrmatrices", tail(par.sgp.config[[b.iter[b]]][["sgp.grade.sequences"]], 1), k, sep="_")]]
+									for (L in par.sgp.config[[b.iter[b]]][['sgp.calculate.simex.baseline']][['lambda']][-1]) {
 									par.sgp.config[[b.iter[b]]][['sgp.baseline.matrices']][[paste0(tmp.matrix.label, ".SIMEX")]][[
 										paste("qrmatrices", tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 1), k, sep="_")]][[paste0("lambda_", L)]] <-
 									unlist(getsplineMatrices(
@@ -466,6 +480,10 @@ function(sgp_object,
 										my.exact.grade.progression.sequence=TRUE,
 										return.multiple.matrices=TRUE,
 										my.matrix.order=k), recursive=FALSE)
+									}
+									if ("ranked_simex_table" %in% names(tmp_sgp_object[["Coefficient_Matrices"]][[paste0(tmp.matrix.label, ".SIMEX")]][[paste("qrmatrices", tail(par.sgp.config[[b.iter[b]]][["sgp.grade.sequences"]], 1), k, sep="_")]])) {
+										par.sgp.config[[b.iter[b]]][['sgp.baseline.matrices']][[paste0(tmp.matrix.label, ".SIMEX")]][[paste("qrmatrices", tail(par.sgp.config[[b.iter[b]]][['sgp.grade.sequences']], 1), k, sep="_")]][["ranked_simex_table"]] <-
+											tmp_sgp_object[["Coefficient_Matrices"]][[paste0(tmp.matrix.label, ".SIMEX")]][[paste("qrmatrices", tail(par.sgp.config[[b.iter[b]]][["sgp.grade.sequences"]], 1), k, sep="_")]][["ranked_simex_table"]]
 									}
 								}
 							}

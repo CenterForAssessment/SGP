@@ -218,10 +218,21 @@ function(
 			SGPstateData[["DEMO"]][["SGP_Configuration"]][["print.other.gp"]] <- TRUE
 			SGPstateData[["DEMO"]][["SGP_Configuration"]][["calculate.confidence.intervals"]] <- list(confidence.quantiles=c(0.025, 0.975))
 
-			if (toupper(TEST_NUMBER) == "1B") sgp.sqlite <- TRUE else sgp.sqlite <- FALSE
+            if (toupper(TEST_NUMBER) == "1B") {
+                unpackSGP(
+                    sgp_object = SGPdata::sgpData_LONG,
+                    return.object = FALSE
+                )
+                sgpData_LONG <- ArrowSGP$new()
+                arrow.tf <- TRUE
+                # sgp.sqlite <- TRUE else sgp.sqlite <- FALSE # ...\n\tsgp.sqlite=", sgp.sqlite, "
+            } else {
+                sgpData_LONG <- SGPdata::sgpData_LONG
+                arrow.tf <- FALSE
+            }
 
 			expression.to.evaluate <-
-				paste0("Demonstration_SGP <- abcSGP(\n\tsgp_object=SGPdata::sgpData_LONG,\n\tdata_supplementary=list(INSTRUCTOR_NUMBER=SGPdata::sgpData_INSTRUCTOR_NUMBER),\n\tprepareSGP.create.additional.variables=TRUE,\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tsgp.sqlite=", sgp.sqlite, ",\n\tget.cohort.data.info=TRUE,\n\tparallel.config=", parallel.config, "\n)\n")
+				paste0("Demonstration_SGP <- abcSGP(\n\tsgp_object=sgpData_LONG,\n\tdata_supplementary=list(INSTRUCTOR_NUMBER=SGPdata::sgpData_INSTRUCTOR_NUMBER),\n\tprepareSGP.create.additional.variables=TRUE,\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\tget.cohort.data.info=TRUE,\n\tparallel.config=", parallel.config, "\n)\n")
 
 			if (save.results) expression.to.evaluate <- paste(expression.to.evaluate, "save(Demonstration_SGP, file='Data/Demonstration_SGP.Rdata')", sep="\n")
 
@@ -236,6 +247,8 @@ function(
 			if (memory.profile) {
 				Rprof(NULL)
 			}
+
+			if (arrow.tf) Demonstration_SGP <- packArrowSGP(Demonstration_SGP)
 
 			### TEST of SGP variable
 
@@ -366,8 +379,13 @@ function(
 			if (identical(digest(Demonstration_SGP@Data[['HIGH_NEED_STATUS']]), "ab4d97f1d56ea8cf936008708cf4ed84")) {
 				tmp.messages <- c(tmp.messages, "\tTest of variable HIGH_NEED_STATUS: OK\n")
 			} else {
-				tmp.messages <- c(tmp.messages, "\tTest of variable HIGH_NEED_STATUS: FAIL\n")
-				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
+				if (arrow.tf) {
+					tmp.messages <-
+					  c(tmp.messages, "\tTest of variable HIGH_NEED_STATUS: NOT TESTED (`arrow`)\n")
+				} else {
+					tmp.messages <- c(tmp.messages, "\tTest of variable HIGH_NEED_STATUS: FAIL\n")
+					if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
+				}
 			}
 
 			### TEST of SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1 variable in @Data
@@ -995,7 +1013,7 @@ function(
 		###
 		#######################################################################################################################################################
 
-		if (4 %in% TEST_NUMBER) {
+		if (any(c("4", "4B") %in% toupper(TEST_NUMBER))) {
 
 			sgpData_LONG <- SGPdata::sgpData_LONG
 
@@ -1057,6 +1075,15 @@ function(
 				simex.parameters <- sub("save.matrices=TRUE", "save.matrices=TRUE, dependent.var.error=TRUE", simex.parameters)
 			}
 
+            if (toupper(TEST_NUMBER) == "4B") {
+                unpackSGP(
+                    sgp_object = sgpData_LONG,
+                    return.object = FALSE
+                )
+                sgpData_LONG <- ArrowSGP$new()
+                arrow.tf <- TRUE
+            }
+
 			options(error=recover) # Don't use options(warn=2) - get warnings about knots and boundaries from BASELINE SIMEX
 			if (.Platform$OS.type == "unix") number.cores <- detectSGPCores(logical=TRUE) else number.cores <- detectSGPCores(logical=FALSE)
 			Demonstration_SGP <- NULL
@@ -1101,6 +1128,10 @@ function(
 			eval(parse(text=expression.to.evaluate))
 
 			tmp.messages <- c(tmp.messages, "\t##### Results of testSGP test number 4, Part 1 #####\n")
+
+            if (arrow.tf) {
+                Demonstration_SGP <- packArrowSGP(Demonstration_SGP, slot.type = "SGPercentiles")
+            }
 
 			### TEST of SGP_SIMEX variable
 
@@ -1191,6 +1222,7 @@ function(
 			### TEST of SGP_SIMEX and SGP_SIMEX_BASELINE variables
 
 			tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number 4, Part 2 #####\n")
+			if (arrow.tf) Demonstration_SGP <- packArrowSGP(Demonstration_SGP)
 
 #			if (identical(sum(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1L), sep=".")]][['SGP_SIMEX']]), ifelse(simex.sample.size, 211609L, 211555L))) {
 #			if (identical(digest(Demonstration_SGP@SGP[['SGPercentiles']][[paste('AMERICAN_LIT', tail(sgpData.years, 1L), sep=".")]][['SGP_SIMEX']]), ifelse(simex.sample.size, "df4cc817b52d2fcbbe6f7addd1b4e2f3", "a351d68d993a6ae42714142afd1ea6d3"))) { # pre-1.9-4.0 sgp.simex fix

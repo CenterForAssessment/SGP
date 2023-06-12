@@ -38,7 +38,8 @@ function(sgp.groups.to.summarize,
 	ListExpr <- parse(text=paste0("list(", paste(unlist(tmp.sgp.summaries), collapse=", "),")"))
 	ByExpr <- parse(text=paste0("list(", paste(sgp.groups.to.summarize, collapse=", "), ")"))
 
-	tmp.db <- dbConnect(SQLite(), dbname = db.path)
+	tmp.db <- dbConnect(duckdb::duckdb(), dbname = db.path)
+	# tmp.db <- dbConnect(SQLite(), dbname = db.path)
 	available.vars <- dbListFields(tmp.db, "summary_data")
 	dbDisconnect(tmp.db)
 
@@ -81,7 +82,8 @@ function(tmp.simulation.dt,
 	if (!is.null(sim.info)) {
 		tmp.list.1 <- list()
 
-		con <- dbConnect(SQLite(), dbname = db.path)
+		con <- dbConnect(duckdb::duckdb(), dbname = db.path)
+		# con <- dbConnect(SQLite(), dbname = db.path)
 		tmp_data <- data.table(dbGetQuery(con, paste("select", paste(pull.vars, collapse = ","), "from summary_data")), key = sgp_key)
 		dbDisconnect(con)
 		if (is.data.frame(tmp.simulation.dt)) {
@@ -90,7 +92,8 @@ function(tmp.simulation.dt,
 					tmp.simulation.dt[seq.int(i, length.out=sim.info[['n.unique.cases']], by=sim.info[['n.simulated.sgps']])], allow.cartesian=TRUE][,
 					list(median(SGP_SIM, na.rm=TRUE), mean(SGP_SIM, na.rm=TRUE)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")]})
 		} else {
-			con <- dbConnect(SQLite(), dbname = db.path)
+			con <- dbConnect(duckdb::duckdb(), dbname = db.path)
+			# con <- dbConnect(SQLite(), dbname = db.path)
 			tmp.list.1 <- lapply(seq.int(sim.info[['n.simulated.sgps']]), function(i) {
 					tmp_data[data.table(dbGetQuery(con, paste("select * from sim_data where SIM_NUM =", i)), key = sgp_key), allow.cartesian=TRUE][,
 					list(median(SGP_SIM, na.rm=TRUE), mean(SGP_SIM, na.rm=TRUE)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")]})
@@ -108,7 +111,8 @@ function(tmp.simulation.dt,
 		return(tmp.csem)
 	}
 
-	con <- dbConnect(SQLite(), dbname = db.path)
+	# con <- dbConnect(SQLite(), dbname = db.path)
+	con <- dbConnect(duckdb::duckdb(), dbname = db.path)
 	tmp_data <- data.table(dbGetQuery(con, paste("select", paste(pull.vars, collapse = ","), "from summary_data")))
 	dbDisconnect(con)
 	if (all((my.key <- intersect(sgp_key, variables.for.summaries)) %in% names(tmp_data))) setkeyv(tmp_data, my.key)
