@@ -434,19 +434,21 @@ function(sgp.data,
 				tmp.data <- ddcast(rbindlist(tmp.lookup.list),
 					ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", "ACHIEVEMENT_LEVEL", "YEAR_WITHIN", state, sgp.scale.score.equated, SGPt), sep=".")
 
-				setnames(tmp.data, names(tmp.data)[grep(achievement.level.prior.vname, names(tmp.data))], achievement.level.prior.vname)
-				setnames(tmp.data, tail(sort(grep("YEAR_WITHIN", names(tmp.data), value=TRUE)), 1L), "YEAR_WITHIN")
+				if (dim(tmp.data)[1] > 0) {
+					setnames(tmp.data, names(tmp.data)[grep(achievement.level.prior.vname, names(tmp.data))], achievement.level.prior.vname)
+					setnames(tmp.data, tail(sort(grep("YEAR_WITHIN", names(tmp.data), value=TRUE)), 1L), "YEAR_WITHIN")
 
-				if (length(setdiff(grep("YEAR_WITHIN", names(tmp.data), value=TRUE), "YEAR_WITHIN")) > 0L) {
-					tmp.data[,setdiff(grep("YEAR_WITHIN", names(tmp.data), value=TRUE), "YEAR_WITHIN"):=NULL]
-				}
-
-				if ("STATE" %in% var.names && dim(tmp.data)[1L]!=0L) {
-					setnames(tmp.data, tail(sort(grep("STATE", names(tmp.data), value=TRUE)), 1L), "STATE")
-					if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0L) {
-						tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL]
+					if (length(setdiff(grep("YEAR_WITHIN", names(tmp.data), value=TRUE), "YEAR_WITHIN")) > 0L) {
+						tmp.data[,setdiff(grep("YEAR_WITHIN", names(tmp.data), value=TRUE), "YEAR_WITHIN"):=NULL]
 					}
-				}
+
+					if ("STATE" %in% var.names && dim(tmp.data)[1L]!=0L) {
+						setnames(tmp.data, tail(sort(grep("STATE", names(tmp.data), value=TRUE)), 1L), "STATE")
+						if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0L) {
+							tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL]
+						}
+					}
+				} 
 				return(tmp.data)
 			} else {
 				tmp.data <- ddcast(rbindlist(tmp.lookup.list),
