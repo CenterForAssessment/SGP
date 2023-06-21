@@ -1,0 +1,35 @@
+---
+title: "SGP 2.0-0.0"
+date: "May 27th, 2022"
+---
+
+```{r include = FALSE}
+    library(SGP)
+
+    is_html_output = function() {
+        knitr::opts_knit$get("rmarkdown.pandoc.to")=="html"
+    }
+
+    knitr::opts_chunk$set(
+        collapse=TRUE,
+        comment="",
+        prompt=TRUE,
+        fig.dpi=96)
+
+    if (is_html_output()) {
+        options(width=1000)
+    }
+```
+
+
+This is the 2.0-0.0 release of the SGP package posted to CRAN. This [GitHub tagged release](https://github.com/CenterForAssessment/SGP/releases/tag/7f10af5)
+can be downloaded via:
+
+```{r eval=FALSE}
+devtools::install_github("CenterForAssessment/SGP", ref="7f10af5")
+```
+
+To see all the changes in this release check out the [change log](https://sgp.io/news/index.html#sgp-2-0-0-0).
+
+
+Feel free to drop me a line with any comments, feature requests, or ideas. And give us a shout-out Tweet using the Twitter button in the upper right!

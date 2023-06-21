@@ -77,6 +77,9 @@
   <ul class="dropdown-menu" role="menu">
 <li class="dropdown-header">Release notes</li>
     <li>
+      <a href="../articles/releases/SGP-2.0-0.0.html">SGP 2.0-0.0</a>
+    </li>
+    <li>
       <a href="../articles/releases/SGP-1.9-5.0.html">SGP 1.9-5.0</a>
     </li>
     <li>
@@ -124,13 +127,14 @@
 <!--/.navbar -->
 
       
-      </header><script src="SGP_Data_Analysis_files/header-attrs-2.14/header-attrs.js"></script><link href="SGP_Data_Analysis_files/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet">
+      </header><script src="SGP_Data_Analysis_files/header-attrs-2.22/header-attrs.js"></script><link href="SGP_Data_Analysis_files/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet">
 <link href="SGP_Data_Analysis_files/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet">
 <script src="SGP_Data_Analysis_files/anchor-sections-1.1.0/anchor-sections.js"></script><div class="row">
   <div class="col-md-9">
     <div class="page-header toc-ignore">
       <h1>SGP Data Analysis</h1>
-                        <h4 class="author">Damian W Betebenner &amp; Adam R Van Iwaarden</h4>
+                        <h4 class="author">Damian W Betebenner &amp;
+Adam R Van Iwaarden</h4>
             
             <h4 class="date">February 20th, 2019</h4>
           </div>
@@ -142,7 +146,14 @@
 <h1 class="hasAnchor">
 <a href="#introduction" class="anchor" aria-hidden="true"></a>Introduction<a href="#introduction" class="anchor-section" aria-label="Anchor link to header"></a>
 </h1>
-<p>SGP analyses can be conducted in many ways with several variations. In general, one can always conduct the analyses using the <em>lower level functions</em> <a href="https://sgp.io/reference/studentGrowthPercentiles.html"><code>studentGrowthPercentiles</code></a> and <a href="https://sgp.io/reference/studentGrowthProjections.html"><code>studentGrowthProjections</code></a>. However, it is often easier to use <em>higher level functions</em> (wrapper functions) for the lower level functions, particularly for operational analyses. Both approaches to running SGP analyses are discussed below.</p>
+<p>SGP analyses can be conducted in many ways with several variations.
+In general, one can always conduct the analyses using the <em>lower
+level functions</em> <a href="https://sgp.io/reference/studentGrowthPercentiles.html"><code>studentGrowthPercentiles</code></a>
+and <a href="https://sgp.io/reference/studentGrowthProjections.html"><code>studentGrowthProjections</code></a>.
+However, it is often easier to use <em>higher level functions</em>
+(wrapper functions) for the lower level functions, particularly for
+operational analyses. Both approaches to running SGP analyses are
+discussed below.</p>
 </div>
 <div id="sgp-analysis-using-lower-level-functions" class="section level1 hasAnchor">
 <h1 class="hasAnchor">
@@ -170,63 +181,95 @@
 <h2 class="hasAnchor">
 <a href="#sgp-analysis-in-1-step" class="anchor" aria-hidden="true"></a>SGP Analysis in 1 Step<a href="#sgp-analysis-in-1-step" class="anchor-section" aria-label="Anchor link to header"></a>
 </h2>
-<p>Because these steps are almost always conducted simultaneously in operational SGP analyses, the SGP Package has wrapper functions <a href="https://sgp.io/reference/abcSGP.html"><code>abcSGP</code></a> and <a href="https://sgp.io/reference/updateSGP.html"><code>updateSGP</code></a> that “wrap” the above 6 steps into a single function call, simplifying the source code associated with the analysis.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="do">#####################################################################################</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="do">###</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="do">### R Script for Demonstration SGP analyses</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="do">###</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="do">#####################################################################################</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="do">### Load SGP &amp; SGPdata packages</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(SGP)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(SGPdata)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="do">### abcSGP</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>Demonstration_SGP <span class="ot">&lt;-</span> <span class="fu">abcSGP</span>(</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">sgp_object=</span>sgpData_LONG,</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">data_supplementary=</span><span class="fu">list</span>(<span class="at">INSTRUCTOR_NUMBER=</span>sgpData_INSTRUCTOR_NUMBER),</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">parallel.config=</span><span class="fu">list</span>(<span class="at">BACKEND=</span><span class="st">"PARALLEL"</span>, <span class="at">WORKERS=</span><span class="fu">list</span>(<span class="at">PERCENTILES=</span><span class="dv">4</span>, <span class="at">BASELINE_PERCENTILES=</span><span class="dv">4</span>, <span class="at">PROJECTIONS=</span><span class="dv">4</span>, <span class="at">LAGGED_PROJECTIONS=</span><span class="dv">4</span>, <span class="at">SGP_SCALE_SCORE_TARGETS=</span><span class="dv">4</span>, <span class="at">SUMMARY=</span><span class="dv">4</span>, <span class="at">GA_PLOTS=</span><span class="dv">4</span>, <span class="at">SG_PLOTS=</span><span class="dv">1</span>)))</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="do">### Save results</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(Demonstration_SGP, <span class="at">file=</span><span class="st">"Data/Demonstration_SGP.Rdata"</span>)</span></code></pre></div>
-<p>Running this script will run the six steps mentioned earlier by performing the following:</p>
+<p>Because these steps are almost always conducted simultaneously in
+operational SGP analyses, the SGP Package has wrapper functions <a href="https://sgp.io/reference/abcSGP.html"><code>abcSGP</code></a> and
+<a href="https://sgp.io/reference/updateSGP.html"><code>updateSGP</code></a>
+that “wrap” the above 6 steps into a single function call, simplifying
+the source code associated with the analysis.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="do">#####################################################################################</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="do">###</span></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="do">### R Script for Demonstration SGP analyses</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="do">###</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="do">#####################################################################################</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="do">### Load SGP &amp; SGPdata packages</span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="fu">require</span>(SGP)</span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="fu">require</span>(SGPdata)</span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a><span class="do">### abcSGP</span></span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a>Demonstration_SGP <span class="ot">&lt;-</span> <span class="fu">abcSGP</span>(</span>
+<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a>    <span class="at">sgp_object=</span>sgpData_LONG,</span>
+<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a>    <span class="at">data_supplementary=</span><span class="fu">list</span>(<span class="at">INSTRUCTOR_NUMBER=</span>sgpData_INSTRUCTOR_NUMBER),</span>
+<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a>    <span class="at">parallel.config=</span><span class="fu">list</span>(<span class="at">BACKEND=</span><span class="st">"PARALLEL"</span>, <span class="at">WORKERS=</span><span class="fu">list</span>(<span class="at">PERCENTILES=</span><span class="dv">4</span>, <span class="at">BASELINE_PERCENTILES=</span><span class="dv">4</span>, <span class="at">PROJECTIONS=</span><span class="dv">4</span>, <span class="at">LAGGED_PROJECTIONS=</span><span class="dv">4</span>, <span class="at">SGP_SCALE_SCORE_TARGETS=</span><span class="dv">4</span>, <span class="at">SUMMARY=</span><span class="dv">4</span>, <span class="at">GA_PLOTS=</span><span class="dv">4</span>, <span class="at">SG_PLOTS=</span><span class="dv">1</span>)))</span>
+<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a><span class="do">### Save results</span></span>
+<span id="cb1-22"><a href="#cb1-22" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" tabindex="-1"></a><span class="fu">save</span>(Demonstration_SGP, <span class="at">file=</span><span class="st">"Data/Demonstration_SGP.Rdata"</span>)</span></code></pre></div>
+<p>Running this script will run the six steps mentioned earlier by
+performing the following:</p>
 <ol style="list-style-type: decimal">
 <li>
-<a href="https://sgp.io/reference/prepareSGP.html"><code>prepareSGP</code></a> Take exemplar LONG data, <em>sgpData_LONG</em>, and INSTRUCTOR-STUDENT lookup files, <em>sgpData_INSTRUCTOR_NUMBER</em> and create the SGP object <em>Demonstration_SGP</em> that includes them.</li>
+<a href="https://sgp.io/reference/prepareSGP.html"><code>prepareSGP</code></a>
+Take exemplar LONG data, <em>sgpData_LONG</em>, and INSTRUCTOR-STUDENT
+lookup files, <em>sgpData_INSTRUCTOR_NUMBER</em> and create the SGP
+object <em>Demonstration_SGP</em> that includes them.</li>
 <li>
-<a href="https://sgp.io/reference/analyzeSGP.html"><code>analyzeSGP</code></a> Performs SGP analyses for all years and content areas including: student growth percentiles, baseline student growth percentiles, student growth projections, baseline student growth projections, lagged student growth projections, lagged baseline student growth projections.</li>
+<a href="https://sgp.io/reference/analyzeSGP.html"><code>analyzeSGP</code></a>
+Performs SGP analyses for all years and content areas including: student
+growth percentiles, baseline student growth percentiles, student growth
+projections, baseline student growth projections, lagged student growth
+projections, lagged baseline student growth projections.</li>
 <li>
-<a href="https://sgp.io/reference/combineSGP.html"><code>combineSGP</code></a> Merges results derived from <em>analyzeSGP</em> back into the master longitudinal record, <em><a href="mailto:Demonstration_SGP@Data" class="email">Demonstration_SGP@Data</a></em>, and calculates/creates scale scores associated with SGP targets.</li>
+<a href="https://sgp.io/reference/combineSGP.html"><code>combineSGP</code></a>
+Merges results derived from <em>analyzeSGP</em> back into the master
+longitudinal record, <em><a href="mailto:Demonstration_SGP@Data" class="email">Demonstration_SGP@Data</a></em>, and calculates/creates
+scale scores associated with SGP targets.</li>
 <li>
-<a href="https://sgp.io/reference/summarizeSGP.html"><code>summarizeSGP</code></a> Calculates summary tables and puts them results into the <em><a href="mailto:Demonstration_SGP@Summary" class="email">Demonstration_SGP@Summary</a></em> slot.</li>
+<a href="https://sgp.io/reference/summarizeSGP.html"><code>summarizeSGP</code></a>
+Calculates summary tables and puts them results into the <em><a href="mailto:Demonstration_SGP@Summary" class="email">Demonstration_SGP@Summary</a></em> slot.</li>
 <li>
-<a href="https://sgp.io/reference/visualizeSGP.html"><code>visualizeSGP</code></a> Creates state level summary bubble plots, growth achievement plots (wave charts), and demonstration student growth plots.</li>
+<a href="https://sgp.io/reference/visualizeSGP.html"><code>visualizeSGP</code></a>
+Creates state level summary bubble plots, growth achievement plots (wave
+charts), and demonstration student growth plots.</li>
 <li>
-<a href="https://sgp.io/reference/outputSGP.html"><code>outputSGP</code></a> Exports data in multiple formats:</li>
+<a href="https://sgp.io/reference/outputSGP.html"><code>outputSGP</code></a>
+Exports data in multiple formats:</li>
 </ol>
 <ul>
 <li>
-<em>Demonstration_SGP_Data_LONG.txt.zip</em> a pipe delimited copy of <em><a href="mailto:Demonstration_SGP@Data" class="email">Demonstration_SGP@Data</a></em>, the complete master longitudinal record.</li>
+<em>Demonstration_SGP_Data_LONG.txt.zip</em> a pipe delimited copy
+of <em><a href="mailto:Demonstration_SGP@Data" class="email">Demonstration_SGP@Data</a></em>, the complete master
+longitudinal record.</li>
 <li>
-<em>Demonstration_SGP_Data_LONG_2020.txt.zip</em> a pipe delimited copy of the 2020 longitudinal record subsetted from <em><a href="mailto:Demonstration_SGP@Data" class="email">Demonstration_SGP@Data</a></em>.</li>
+<em>Demonstration_SGP_Data_LONG_2020.txt.zip</em> a pipe delimited
+copy of the 2020 longitudinal record subsetted from <em><a href="mailto:Demonstration_SGP@Data" class="email">Demonstration_SGP@Data</a></em>.</li>
 <li>
-<em>Demonstration_SGPData_WIDE.txt.zip</em> a pipe delimited WIDE version of the master longitudinal record, <em><a href="mailto:Demonstration_SGP@Data" class="email">Demonstration_SGP@Data</a></em>.</li>
+<em>Demonstration_SGPData_WIDE.txt.zip</em> a pipe delimited WIDE
+version of the master longitudinal record, <em><a href="mailto:Demonstration_SGP@Data" class="email">Demonstration_SGP@Data</a></em>.</li>
 <li>
-<em>Demonstration_SGP_INSTRUCTOR_Data.txt.zip</em> a pipe delimited LONG version of the INSTRUCTOR_NUMBER file merged with the master longitudinal data record.</li>
+<em>Demonstration_SGP_INSTRUCTOR_Data.txt.zip</em> a pipe delimited
+LONG version of the INSTRUCTOR_NUMBER file merged with the master
+longitudinal data record.</li>
 </ul>
-<p>The <em>parallel.config</em> argument is used to take advantage of computing resources with multiple processors/cores. In general, parallel computation works better on Linux/OSX than on Windows, though the package is tested on all three operating systems. Removing the <em>parallel.config</em> argument will result in the analyses being run sequentially — same results, just takes longer.</p>
+<p>The <em>parallel.config</em> argument is used to take advantage of
+computing resources with multiple processors/cores. In general, parallel
+computation works better on Linux/OSX than on Windows, though the
+package is tested on all three operating systems. Removing the
+<em>parallel.config</em> argument will result in the analyses being run
+sequentially — same results, just takes longer.</p>
 </div>
 </div>
 <div id="contributions-requests" class="section level1 hasAnchor">
 <h1 class="hasAnchor">
 <a href="#contributions-requests" class="anchor" aria-hidden="true"></a>Contributions &amp; Requests<a href="#contributions-requests" class="anchor-section" aria-label="Anchor link to header"></a>
 </h1>
-<p>If you have a contribution or topic request for this vignette, don’t hesitate to write or set up an <a href="https://github.com/CenterForAssessment/SGP/issues">issue on GitHub</a>.</p>
+<p>If you have a contribution or topic request for this vignette, don’t
+hesitate to write or set up an <a href="https://github.com/CenterForAssessment/SGP/issues">issue on
+GitHub</a>.</p>
 </div>
 </div>
   </div>
@@ -236,16 +279,19 @@
         <div id="tocnav">
       <h2>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
-<li><a href="#introduction">Introduction<span></span></a></li>
-      <li><a href="#sgp-analysis-using-lower-level-functions">SGP analysis using lower level functions<span></span></a></li>
+<li><a href="#introduction" id="toc-introduction">Introduction</a></li>
+      <li><a href="#sgp-analysis-using-lower-level-functions" id="toc-sgp-analysis-using-lower-level-functions">SGP analysis
+      using lower level functions</a></li>
       <li>
-<a href="#sgp-analysis-using-higher-level-functions">SGP analysis using higher level functions<span></span></a>
+<a href="#sgp-analysis-using-higher-level-functions" id="toc-sgp-analysis-using-higher-level-functions">SGP analysis
+      using higher level functions</a>
       <ul class="nav nav-pills nav-stacked">
-<li><a href="#sgp-analysis-in-6-steps">SGP Analysis in 6 Steps<span></span></a></li>
-      <li><a href="#sgp-analysis-in-1-step">SGP Analysis in 1 Step<span></span></a></li>
+<li><a href="#sgp-analysis-in-6-steps" id="toc-sgp-analysis-in-6-steps">SGP Analysis in 6 Steps</a></li>
+      <li><a href="#sgp-analysis-in-1-step" id="toc-sgp-analysis-in-1-step">SGP Analysis in 1 Step</a></li>
       </ul>
 </li>
-      <li><a href="#contributions-requests">Contributions &amp; Requests<span></span></a></li>
+      <li><a href="#contributions-requests" id="toc-contributions-requests">Contributions &amp;
+      Requests</a></li>
       </ul>
 </div>
       </div>
@@ -261,14 +307,12 @@
   <p>Developed &amp; Maintained by <a href="https://github.com/dbetebenner"><img class="img-author" src="https://centerforassessment.github.io/assets/dbetebenner.png" height="20"> Damian W. Betebenner</a>, <a href="https://github.com/adamvi"><img class="img-author" src="https://centerforassessment.github.io/assets/adamvi.png" height="20"> Adam R. Van Iwaarden</a>, <a href="https://github.com/ben-domingue"><img class="img-author" src="https://avatars2.githubusercontent.com/u/1353244" height="20"> Ben Domingue</a> &amp; <a href="https://github.com/shangy"><img class="img-author" src="https://avatars0.githubusercontent.com/u/1530616" height="20"> Yi Shang</a>.</p>
 </div>
 
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-10JFLJTXNE"></script><script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
-  ga('create', 'UA-98997021-1', 'auto');
-  ga('send', 'pageview');
+  gtag('config', 'G-10JFLJTXNE');
 </script></footer>
 </div>
 
