@@ -108,6 +108,12 @@
   <ul class="dropdown-menu" role="menu">
     <li class="dropdown-header">Release notes</li>
     <li>
+      <a href="../articles/releases/SGP-2.1-0.0.html">SGP 2.1-0.0</a>
+    </li>
+    <li>
+      <a href="../articles/releases/SGP-2.0-0.0.html">SGP 2.0-0.0</a>
+    </li>
+    <li>
       <a href="../articles/releases/SGP-1.9-5.0.html">SGP 1.9-5.0</a>
     </li>
     <li>
@@ -183,7 +189,9 @@
 <ul>
 <li>Update of web-based documentation (<a href="https://sgp.io">https://sgp.io</a>)</li>
 <li>Various state meta-data updates</li>
-<li>Adding functionality to return number of years to reach SGP_TARGET returned. Accessible through SGPstateData meta-data currently. See testSGP(3) source code for example.</li>
+<li>Adding functionality to return number of years to reach SGP_TARGET
+returned. Accessible through SGPstateData meta-data currently. See
+testSGP(3) source code for example.</li>
 </ul>
 </div>
 </div>
@@ -194,7 +202,8 @@
 <h2 class="hasAnchor">
 <a href="#user-visible-changes-2" class="anchor" aria-hidden="true"></a>User Visible Changes:</h2>
 <ul>
-<li>Many general meta-data updates, performance improvements, and much better web-based documentation (<a href="https://sgp.io">https://sgp.io</a>)</li>
+<li>Many general meta-data updates, performance improvements, and much
+better web-based documentation (<a href="https://sgp.io">https://sgp.io</a>)</li>
 </ul>
 </div>
 </div>
@@ -205,8 +214,10 @@
 <h2 class="hasAnchor">
 <a href="#user-visible-changes-3" class="anchor" aria-hidden="true"></a>User Visible Changes:</h2>
 <ul>
-<li>Adding in dual mode for RLI analyses to be performed using RASCH scores (default) or STAR scores</li>
-<li>Better accomodation of duplicates in data. Nonetheless, MUCH better to get rid of duplicates</li>
+<li>Adding in dual mode for RLI analyses to be performed using RASCH
+scores (default) or STAR scores</li>
+<li>Better accomodation of duplicates in data. Nonetheless, MUCH better
+to get rid of duplicates</li>
 </ul>
 </div>
 </div>
@@ -217,9 +228,17 @@
 <h2 class="hasAnchor">
 <a href="#user-visible-changes-4" class="anchor" aria-hidden="true"></a>User Visible Changes:</h2>
 <ul>
-<li>Added new function 'courseProgressionSGP' which analyzes a long data set to return a list of potential course progressions suitable for SGP analysis.</li>
+<li>Added new function 'courseProgressionSGP' which analyzes a long data
+set to return a list of potential course progressions suitable for SGP
+analysis.</li>
 <li>Color output added as part of diagnostic messages.</li>
-<li>Added capability to request a subset of students from the cohorts to produce coefficient matrices and calculate SGPs in order to test data, configuration scripts, etc. The abcSGP, updateSGP, analyzeSGP, and studentGrowthPercentiles functions all now accept the 'sgp.test.cohort.size' argument. Results from the tests can be returned in the higher level functions by setting the argument 'return.sgp.test.results' to TRUE.</li>
+<li>Added capability to request a subset of students from the cohorts to
+produce coefficient matrices and calculate SGPs in order to test data,
+configuration scripts, etc. The abcSGP, updateSGP, analyzeSGP, and
+studentGrowthPercentiles functions all now accept the
+'sgp.test.cohort.size' argument. Results from the tests can be returned
+in the higher level functions by setting the argument
+'return.sgp.test.results' to TRUE.</li>
 </ul>
 </div>
 </div>
@@ -230,9 +249,12 @@
 <h2 class="hasAnchor">
 <a href="#user-visible-changes-5" class="anchor" aria-hidden="true"></a>User Visible Changes:</h2>
 <ul>
-<li>Analyses now export output to txt file contained in Log directory.</li>
-<li>Growth and Achievement Plots now support individual student reports and arbitrary grade level starting points.</li>
-<li>testSGP automatically detects YEAR in SGPdata so annual updates are no longer necessary for tests.</li>
+<li>Analyses now export output to txt file contained in Log
+directory.</li>
+<li>Growth and Achievement Plots now support individual student reports
+and arbitrary grade level starting points.</li>
+<li>testSGP automatically detects YEAR in SGPdata so annual updates are
+no longer necessary for tests.</li>
 </ul>
 </div>
 </div>
@@ -243,10 +265,14 @@
 <h2 class="hasAnchor">
 <a href="#user-visible-changes-6" class="anchor" aria-hidden="true"></a>User Visible Changes:</h2>
 <ul>
-<li>Package accomdates assessment transitions with equating from old to new test and provides robust diagnostics associated with equating.</li>
-<li>Adding ability to generate student reports for examining showing two different tests.</li>
-<li>Goodness of fit plots now provide diagnostic information on floor and ceiling effects.</li>
-<li>SGP package now calculates time dependent student growth percentiles/projections (SGPt).</li>
+<li>Package accomdates assessment transitions with equating from old to
+new test and provides robust diagnostics associated with equating.</li>
+<li>Adding ability to generate student reports for examining showing two
+different tests.</li>
+<li>Goodness of fit plots now provide diagnostic information on floor
+and ceiling effects.</li>
+<li>SGP package now calculates time dependent student growth
+percentiles/projections (SGPt).</li>
 <li>Numerous performance improvements (speed and memory use)!</li>
 </ul>
 </div>
@@ -258,14 +284,27 @@
 <h2 class="hasAnchor">
 <a href="#user-visible-changes-7" class="anchor" aria-hidden="true"></a>User Visible Changes:</h2>
 <ul>
-<li>Adding internal getJSON function to studentGrowthPlot_Styles to export student level JSON suitable to interactive student reports.</li>
+<li>Adding internal getJSON function to studentGrowthPlot_Styles to
+export student level JSON suitable to interactive student reports.</li>
 <li>Added Illinois meta-data to SGPstateData.</li>
 <li>Adding cuts to projection fan.</li>
 <li>Bumped YEAR up 1.</li>
-<li>analyzeSGP now accepts argument sgp.sqlite - if set to TRUE function will output a temporary SQLite file of essential data from SGP object's @Data slot and use SQLite queries to pull data subsets used in lower-level functions. This option entails some time overhead for read/write to/from disk, but ultimately provides substantial RAM memory saving during computation (particularly parallel computation). Default is NULL, in which case @Data slots larger than 1 GB are written to disk (set internally to TRUE).</li>
-<li>Simulation data in .simex.sgp routine of studentGrowthPercentiles is now saved to .sqlite databases as a RAM memory saving measure.</li>
-<li>Results and simulation data used in summarizeSGP to produce summary tables are now exported to temporary a .sqlite file, and utility functions have been externalized. This provides memory savings, particularly for Windows users.</li>
-<li>PNG versions of bubblePlots can now be produced through visualizeSGP using the bPlot.output argument.</li>
+<li>analyzeSGP now accepts argument sgp.sqlite - if set to TRUE function
+will output a temporary SQLite file of essential data from SGP object's
+@Data slot and use SQLite queries to pull data subsets used in
+lower-level functions. This option entails some time overhead for
+read/write to/from disk, but ultimately provides substantial RAM memory
+saving during computation (particularly parallel computation). Default
+is NULL, in which case @Data slots larger than 1 GB are written to disk
+(set internally to TRUE).</li>
+<li>Simulation data in .simex.sgp routine of studentGrowthPercentiles is
+now saved to .sqlite databases as a RAM memory saving measure.</li>
+<li>Results and simulation data used in summarizeSGP to produce summary
+tables are now exported to temporary a .sqlite file, and utility
+functions have been externalized. This provides memory savings,
+particularly for Windows users.</li>
+<li>PNG versions of bubblePlots can now be produced through visualizeSGP
+using the bPlot.output argument.</li>
 </ul>
 </div>
 </div>
@@ -277,21 +316,36 @@
 <a href="#user-visible-changes-8" class="anchor" aria-hidden="true"></a>User Visible Changes:</h2>
 <ul>
 <li>Removed LICENSE and changed copyright to GPL-2.</li>
-<li>Added capability to calculate student growth projections for End of Course testing sequences.</li>
-<li>Added capability to calculate scale score targets to combineSGP and visualize them on student growth plots.</li>
-<li>Added capability to calculate weighted medians and weighted means in summarizeSGP.</li>
+<li>Added capability to calculate student growth projections for End of
+Course testing sequences.</li>
+<li>Added capability to calculate scale score targets to combineSGP and
+visualize them on student growth plots.</li>
+<li>Added capability to calculate weighted medians and weighted means in
+summarizeSGP.</li>
 <li>Added Guatemala meta-data to SGPstateData.</li>
-<li>Added argument 'steps' to updateSGP allowing user to specify steps that abcSGP uses as part of updateSGP.</li>
+<li>Added argument 'steps' to updateSGP allowing user to specify steps
+that abcSGP uses as part of updateSGP.</li>
 <li>Added MS baseline coefficient matrices to SGPstateData.</li>
-<li>Corrected error message provided in summarizeSGP for INSTRUCTOR_NUMBER summaries.</li>
-<li>outputSGP output.type='SchoolView' now outputs JSON data for tables.</li>
-<li>Added argument return.norm.group.scale.scores to studentGrowthPercentiles to return score vector of each student associated with their SGP.</li>
-<li>Changed growth trajectory to distinguishing color on growth achievement plots.</li>
-<li>Added argument sgp.cohort.size to studentGrowthPercentiles to control minimum cohort size restriction.</li>
-<li>summarizeSGP now calculates bootstrap standard errors as well as bootstrap confidence intervals.</li>
-<li>outputSGP now includes ability to export data for FINAL YEAR of long format 'LONG_FINAL_YEAR_Data'.</li>
-<li>combineSGP now produces current year targets as well as lagged targets adding arguments 'sgp.projections' and 'sgp.projections.baseline'.</li>
-<li>student growth plot now functions with end of course tests. See testSGP(4) for an implemented example.</li>
+<li>Corrected error message provided in summarizeSGP for
+INSTRUCTOR_NUMBER summaries.</li>
+<li>outputSGP output.type='SchoolView' now outputs JSON data for
+tables.</li>
+<li>Added argument return.norm.group.scale.scores to
+studentGrowthPercentiles to return score vector of each student
+associated with their SGP.</li>
+<li>Changed growth trajectory to distinguishing color on growth
+achievement plots.</li>
+<li>Added argument sgp.cohort.size to studentGrowthPercentiles to
+control minimum cohort size restriction.</li>
+<li>summarizeSGP now calculates bootstrap standard errors as well as
+bootstrap confidence intervals.</li>
+<li>outputSGP now includes ability to export data for FINAL YEAR of long
+format 'LONG_FINAL_YEAR_Data'.</li>
+<li>combineSGP now produces current year targets as well as lagged
+targets adding arguments 'sgp.projections' and
+'sgp.projections.baseline'.</li>
+<li>student growth plot now functions with end of course tests. See
+testSGP(4) for an implemented example.</li>
 </ul>
 </div>
 </div>
@@ -313,7 +367,8 @@
 <h2 class="hasAnchor">
 <a href="#bug-fixes" class="anchor" aria-hidden="true"></a>Bug Fixes:</h2>
 <ul>
-<li>growthAchievementPlot now renders baseline referenced SGP correctly.</li>
+<li>growthAchievementPlot now renders baseline referenced SGP
+correctly.</li>
 </ul>
 </div>
 </div>
@@ -324,7 +379,8 @@
 <h2 class="hasAnchor">
 <a href="#user-visible-changes-10" class="anchor" aria-hidden="true"></a>User Visible Changes:</h2>
 <ul>
-<li>Updated CSEM calculation algorithm and refined code in analyzeSGP to calculate CSEMs for both cohort and baseline referenced SGPs</li>
+<li>Updated CSEM calculation algorithm and refined code in analyzeSGP to
+calculate CSEMs for both cohort and baseline referenced SGPs</li>
 </ul>
 </div>
 </div>
@@ -357,7 +413,8 @@
 <h2 class="hasAnchor">
 <a href="#bug-fixes-1" class="anchor" aria-hidden="true"></a>Bug Fixes:</h2>
 <ul>
-<li>studentGrowthPercentiles now correctly adjusts length of content.area.progression (when supplied) when num.prior also used.</li>
+<li>studentGrowthPercentiles now correctly adjusts length of
+content.area.progression (when supplied) when num.prior also used.</li>
 </ul>
 </div>
 </div>
@@ -368,9 +425,14 @@
 <h2 class="hasAnchor">
 <a href="#user-visible-changes-13" class="anchor" aria-hidden="true"></a>User Visible Changes:</h2>
 <ul>
-<li>Updated package SGPdata separating INSTRUCTOR_NUMBER from sgpData_LONG and creating sgpData_INSTRUCTOR_NUMBER as a prototype multiple membership table.</li>
-<li>Removed INSTRUCTOR_NUMBER variables names from the variable name lookup for DEMO.</li>
-<li>Altered the way the package deals with 'multiple.membership.groups'. New slot @Data_Supplemental includes multiple membership supplemental tables (like sgpData_INSTRUCTOR_NUMBER).</li>
+<li>Updated package SGPdata separating INSTRUCTOR_NUMBER from
+sgpData_LONG and creating sgpData_INSTRUCTOR_NUMBER as a prototype
+multiple membership table.</li>
+<li>Removed INSTRUCTOR_NUMBER variables names from the variable name
+lookup for DEMO.</li>
+<li>Altered the way the package deals with 'multiple.membership.groups'.
+New slot @Data_Supplemental includes multiple membership supplemental
+tables (like sgpData_INSTRUCTOR_NUMBER).</li>
 </ul>
 </div>
 </div>
@@ -381,8 +443,11 @@
 <h2 class="hasAnchor">
 <a href="#user-visible-changes-14" class="anchor" aria-hidden="true"></a>User Visible Changes:</h2>
 <ul>
-<li>Added use.my.coefficient.matrices argument to abcSGP to faciliate updateSGP.</li>
-<li>updateSGP now allows for single argument of 'what_sgp_object' to be supplied allowing for re-calculation of SGPs using embedded coefficient matrices.</li>
+<li>Added use.my.coefficient.matrices argument to abcSGP to faciliate
+updateSGP.</li>
+<li>updateSGP now allows for single argument of 'what_sgp_object' to be
+supplied allowing for re-calculation of SGPs using embedded coefficient
+matrices.</li>
 </ul>
 </div>
 </div>
@@ -393,8 +458,10 @@
 <h2 class="hasAnchor">
 <a href="#user-visible-changes-15" class="anchor" aria-hidden="true"></a>User Visible Changes:</h2>
 <ul>
-<li>Added prior achievement content area to goodness of fit charts showing growth by prior achievement.</li>
-<li>Added two more Economics repeat sequences to baseline matrices for Georgia.</li>
+<li>Added prior achievement content area to goodness of fit charts
+showing growth by prior achievement.</li>
+<li>Added two more Economics repeat sequences to baseline matrices for
+Georgia.</li>
 </ul>
 </div>
 </div>
@@ -409,7 +476,8 @@
 <a href="#user-visible-changes-16" class="anchor" aria-hidden="true"></a>User Visible Changes:</h2>
 <ul>
 <li>Integrated YEAR_WITHIN into getPanelData.</li>
-<li>Integrated SGP_Norm_Group_Preference into combineSGP for states with multiple end of course assessments.</li>
+<li>Integrated SGP_Norm_Group_Preference into combineSGP for states with
+multiple end of course assessments.</li>
 <li>Integrated ME baseline coefficient matrices into SGPstateData.</li>
 </ul>
 </div>
@@ -428,14 +496,16 @@
 <h2 class="hasAnchor">
 <a href="#user-visible-changes-17" class="anchor" aria-hidden="true"></a>User Visible Changes:</h2>
 <ul>
-<li>Added YEAR_WITHIN capability to package to better accomodate interim assessment.</li>
+<li>Added YEAR_WITHIN capability to package to better accomodate interim
+assessment.</li>
 </ul>
 </div>
 <div id="new-features" class="section level2">
 <h2 class="hasAnchor">
 <a href="#new-features" class="anchor" aria-hidden="true"></a>New Features:</h2>
 <ul>
-<li>Added YEAR_WITHIN capability to package to better accomodate interim assessment.</li>
+<li>Added YEAR_WITHIN capability to package to better accomodate interim
+assessment.</li>
 </ul>
 </div>
 </div>
@@ -453,14 +523,16 @@
 <h2 class="hasAnchor">
 <a href="#new-features-1" class="anchor" aria-hidden="true"></a>New Features:</h2>
 <ul>
-<li>Final integration of SIMEX measurement error correction into studentGrowthPercentiles.</li>
+<li>Final integration of SIMEX measurement error correction into
+studentGrowthPercentiles.</li>
 </ul>
 </div>
 <div id="bug-fixes-3" class="section level2">
 <h2 class="hasAnchor">
 <a href="#bug-fixes-3" class="anchor" aria-hidden="true"></a>Bug Fixes:</h2>
 <ul>
-<li>Fixed bug in as.splineMatrix that was applied to old object of class SGP.</li>
+<li>Fixed bug in as.splineMatrix that was applied to old object of class
+SGP.</li>
 </ul>
 </div>
 </div>
@@ -471,7 +543,8 @@
 <h2 class="hasAnchor">
 <a href="#new-features-2" class="anchor" aria-hidden="true"></a>New Features:</h2>
 <ul>
-<li>Initial integration of SIMEX measurement error correction into studentGrowthPercentiles.</li>
+<li>Initial integration of SIMEX measurement error correction into
+studentGrowthPercentiles.</li>
 </ul>
 </div>
 </div>
@@ -482,15 +555,20 @@
 <h2 class="hasAnchor">
 <a href="#new-features-3" class="anchor" aria-hidden="true"></a>New Features:</h2>
 <ul>
-<li>Integrate ability to specify preferred SGP using SGPstateData and internal function getPreferredSGP. See GA SGPstateData for an example.</li>
+<li>Integrate ability to specify preferred SGP using SGPstateData and
+internal function getPreferredSGP. See GA SGPstateData for an
+example.</li>
 </ul>
 </div>
 <div id="user-visible-changes-19" class="section level2">
 <h2 class="hasAnchor">
 <a href="#user-visible-changes-19" class="anchor" aria-hidden="true"></a>User Visible Changes:</h2>
 <ul>
-<li>Modified two physical science baseline coefficient matrices to EOCT from grade 8.</li>
-<li>Output messages for studentGrowthPercentiles and studentGrowthProjections indicate number of students utilized for the analyses.</li>
+<li>Modified two physical science baseline coefficient matrices to EOCT
+from grade 8.</li>
+<li>Output messages for studentGrowthPercentiles and
+studentGrowthProjections indicate number of students utilized for the
+analyses.</li>
 </ul>
 </div>
 </div>
@@ -501,14 +579,17 @@
 <h2 class="hasAnchor">
 <a href="#new-features-4" class="anchor" aria-hidden="true"></a>New Features:</h2>
 <ul>
-<li>summarizeSGP now provides the standard deviation of the SCALE_SCORE_PRIOR_STANDARDIZED for each group indicating a level of incoming student homogeneity/heterogeneity.</li>
+<li>summarizeSGP now provides the standard deviation of the
+SCALE_SCORE_PRIOR_STANDARDIZED for each group indicating a level of
+incoming student homogeneity/heterogeneity.</li>
 </ul>
 </div>
 <div id="bug-fixes-4" class="section level2">
 <h2 class="hasAnchor">
 <a href="#bug-fixes-4" class="anchor" aria-hidden="true"></a>Bug Fixes:</h2>
 <ul>
-<li>Fixed bug associated with creation of enhanced goodness of fit plots.</li>
+<li>Fixed bug associated with creation of enhanced goodness of fit
+plots.</li>
 </ul>
 </div>
 </div>
@@ -519,12 +600,20 @@
 <h2 class="hasAnchor">
 <a href="#user-visible-changes-20" class="anchor" aria-hidden="true"></a>User Visible Changes:</h2>
 <ul>
-<li>Deprecated use of MULTICORE, MPI, and REDIS in favor of PARALLEL.</li>
-<li>Exported previously internal function createKnotsBoundaries allowing for users to generated Knots, Boundaries, Loss/Hoss values separately.</li>
-<li>studentGrowthPercentiles includes new argument for 'return.prior.scale.score.standardize' that generates the variable 'SCALE_SCORE_PRIOR_STANDARDIZED'.</li>
-<li>growthAchievementPlot includes new argument for 'output.format' that allows for both 'PDF' and 'PNG' output.</li>
-<li>Previous growthAchievementPlot argument 'pdf.folder' changed to 'output.folder'.</li>
-<li>analyzeSGP prints goodness of fit plots in two formats: 'PDF' and 'PNG'.</li>
+<li>Deprecated use of MULTICORE, MPI, and REDIS in favor of
+PARALLEL.</li>
+<li>Exported previously internal function createKnotsBoundaries allowing
+for users to generated Knots, Boundaries, Loss/Hoss values
+separately.</li>
+<li>studentGrowthPercentiles includes new argument for
+'return.prior.scale.score.standardize' that generates the variable
+'SCALE_SCORE_PRIOR_STANDARDIZED'.</li>
+<li>growthAchievementPlot includes new argument for 'output.format' that
+allows for both 'PDF' and 'PNG' output.</li>
+<li>Previous growthAchievementPlot argument 'pdf.folder' changed to
+'output.folder'.</li>
+<li>analyzeSGP prints goodness of fit plots in two formats: 'PDF' and
+'PNG'.</li>
 <li>Added Australia/NAPLAN data to SGPstateData.</li>
 <li>Updated CITATION.</li>
 </ul>
@@ -537,18 +626,25 @@
 <h2 class="hasAnchor">
 <a href="#new-features-5" class="anchor" aria-hidden="true"></a>New Features:</h2>
 <ul>
-<li>Update goodness of fit plots to include an additional representation of growth percentiles by prior achievement level.</li>
-<li>Incorporated updateSGP into SGP package including a new test in testSGP, testSGP(2), utilizing it.</li>
+<li>Update goodness of fit plots to include an additional representation
+of growth percentiles by prior achievement level.</li>
+<li>Incorporated updateSGP into SGP package including a new test in
+testSGP, testSGP(2), utilizing it.</li>
 </ul>
 </div>
 <div id="user-visible-changes-21" class="section level2">
 <h2 class="hasAnchor">
 <a href="#user-visible-changes-21" class="anchor" aria-hidden="true"></a>User Visible Changes:</h2>
 <ul>
-<li>Removed parallel functionality for deprecated SNOW and MULTICORE packages, as well as FOREACH implementations of doMC, doMPI, doSNOW and doRedis.</li>
-<li>Removed chunk.size argument from 'studentGrowthProjections' function based upon refined implementation using data.table.</li>
-<li>Changed SGP_LEVEL and SGP_LEVEL_BASELINE to ordered factor from factor.</li>
-<li>SGPstateData is now an environment instead of a list so that updates can be smoothly added.</li>
+<li>Removed parallel functionality for deprecated SNOW and MULTICORE
+packages, as well as FOREACH implementations of doMC, doMPI, doSNOW and
+doRedis.</li>
+<li>Removed chunk.size argument from 'studentGrowthProjections' function
+based upon refined implementation using data.table.</li>
+<li>Changed SGP_LEVEL and SGP_LEVEL_BASELINE to ordered factor from
+factor.</li>
+<li>SGPstateData is now an environment instead of a list so that updates
+can be smoothly added.</li>
 </ul>
 </div>
 </div>
@@ -559,7 +655,9 @@
 <h2 class="hasAnchor">
 <a href="#new-features-6" class="anchor" aria-hidden="true"></a>New Features:</h2>
 <ul>
-<li>Update of splineMatrix class to include a validity check and update of as.splineMatrix to convert older splineMatrices to current version.</li>
+<li>Update of splineMatrix class to include a validity check and update
+of as.splineMatrix to convert older splineMatrices to current
+version.</li>
 </ul>
 </div>
 </div>
@@ -570,7 +668,8 @@
 <h2 class="hasAnchor">
 <a href="#new-features-7" class="anchor" aria-hidden="true"></a>New Features:</h2>
 <ul>
-<li>Major re-factoring of package involving externalization of previously internal functions for better unit testing.</li>
+<li>Major re-factoring of package involving externalization of
+previously internal functions for better unit testing.</li>
 </ul>
 </div>
 </div>
@@ -581,28 +680,51 @@
 <h2 class="hasAnchor">
 <a href="#new-features-8" class="anchor" aria-hidden="true"></a>New Features:</h2>
 <ul>
-<li>studentGrowthPlot allows arrow.legend.color to be specified in a state specific fashion and controlled from SGPstateData.</li>
-<li>checkSGP converts ID to numeric to take advantage of data.table improvements.</li>
-<li>checkSGP checks for match between levels in ACHIEVEMENT_LEVEL and SGPstateData.</li>
+<li>studentGrowthPlot allows arrow.legend.color to be specified in a
+state specific fashion and controlled from SGPstateData.</li>
+<li>checkSGP converts ID to numeric to take advantage of data.table
+improvements.</li>
+<li>checkSGP checks for match between levels in ACHIEVEMENT_LEVEL and
+SGPstateData.</li>
 <li>Added organization abbreviation to SGPstateData.</li>
 <li>Added Move Up Calculations to combineSGP.</li>
-<li>Made major refinements to growthAchievementPlot and visualizeSGP that speeds up the creation of growth and achievement plots.</li>
-<li>Improved baselineSGP configuration for dealing with non-standard content area progressions.</li>
-<li>On *NIX OS types studentGrowthPlot directories are zipped/gzipped and directory removed to minimize space requirements.</li>
+<li>Made major refinements to growthAchievementPlot and visualizeSGP
+that speeds up the creation of growth and achievement plots.</li>
+<li>Improved baselineSGP configuration for dealing with non-standard
+content area progressions.</li>
+<li>On *NIX OS types studentGrowthPlot directories are zipped/gzipped
+and directory removed to minimize space requirements.</li>
 <li>outputSGP converts names back to @Names$name.original.</li>
-<li>Projection fan in student growth plots now projects across multiple year spans.</li>
+<li>Projection fan in student growth plots now projects across multiple
+year spans.</li>
 <li>Internal capwords function now exported and available for use.</li>
-<li>Added argument sgPlot.zip to visualizeSGP and studentGrowthPlot_Styles to control zip compression of school studentGrowthPlot folders.</li>
+<li>Added argument sgPlot.zip to visualizeSGP and
+studentGrowthPlot_Styles to control zip compression of school
+studentGrowthPlot folders.</li>
 <li>Added shrinkage estimator calculation to summarizeSGP.</li>
-<li>Added PNG and PDF_PIECES output of student growth plots via the visualizeSGP option sgPlot.output.format='PNG' or sgPlot.output.format='PDF_PIECES'.</li>
-<li>splineMatrix class now includes slots for 'Content_Areas' and 'Grade_Progresssion' to accomodate more varied prior score combinations.</li>
-<li>Added argument 'content.area.progression' to studentGrowthPercentiles to accomodate non-uniform content area progressions as priors to be included in the coefficient matrices produced/used.</li>
+<li>Added PNG and PDF_PIECES output of student growth plots via the
+visualizeSGP option sgPlot.output.format='PNG' or
+sgPlot.output.format='PDF_PIECES'.</li>
+<li>splineMatrix class now includes slots for 'Content_Areas' and
+'Grade_Progresssion' to accomodate more varied prior score
+combinations.</li>
+<li>Added argument 'content.area.progression' to
+studentGrowthPercentiles to accomodate non-uniform content area
+progressions as priors to be included in the coefficient matrices
+produced/used.</li>
 <li>Integrated sgp.loss.hoss.adjustment into analyzeSGP.</li>
-<li>Added STAY_UP as part of previous MOVE_UP analyses. combineSGP now calculates CATCH_UP/KEEP_UP/MOVE_UP/STAY_UP.</li>
-<li>Added additional functionality to 'studentGrowthPlot_Styles' allowing for the construction of student growth plot catalogs by instructor.</li>
-<li>Refinements of merges in 'combineSGP' to maximize speed and efficiency.</li>
-<li>Created internal function 'getStateAbbreviation' to handle calculation of state abbreviation with SGP functions based upon supplied sgp_object argument name.</li>
-<li>Added gofSGP function to create more thorough goodness-of-fit plots including results distributed by prior achievement level.</li>
+<li>Added STAY_UP as part of previous MOVE_UP analyses. combineSGP now
+calculates CATCH_UP/KEEP_UP/MOVE_UP/STAY_UP.</li>
+<li>Added additional functionality to 'studentGrowthPlot_Styles'
+allowing for the construction of student growth plot catalogs by
+instructor.</li>
+<li>Refinements of merges in 'combineSGP' to maximize speed and
+efficiency.</li>
+<li>Created internal function 'getStateAbbreviation' to handle
+calculation of state abbreviation with SGP functions based upon supplied
+sgp_object argument name.</li>
+<li>Added gofSGP function to create more thorough goodness-of-fit plots
+including results distributed by prior achievement level.</li>
 <li>Added Indiana baseline coefficient matrices to SGPstateData.</li>
 </ul>
 </div>
@@ -611,21 +733,29 @@
 <a href="#user-visible-changes-22" class="anchor" aria-hidden="true"></a>User Visible Changes:</h2>
 <ul>
 <li>Updated Hawaii variable name lookup table.</li>
-<li>Zipped files for studentGrowthPlots and outputSGP no longer include full file path.</li>
+<li>Zipped files for studentGrowthPlots and outputSGP no longer include
+full file path.</li>
 <li>Internal capwords function now exported and available for use.</li>
-<li>Removed parentheses in naming of folders when sgPlot.folder.names='name' is supplied.</li>
-<li>Instructor by School Number tables now include EMH_LEVEL aggregations as well.</li>
+<li>Removed parentheses in naming of folders when
+sgPlot.folder.names='name' is supplied.</li>
+<li>Instructor by School Number tables now include EMH_LEVEL
+aggregations as well.</li>
 </ul>
 </div>
 <div id="bug-fixes-5" class="section level2">
 <h2 class="hasAnchor">
 <a href="#bug-fixes-5" class="anchor" aria-hidden="true"></a>Bug Fixes:</h2>
 <ul>
-<li>Fixed spacing bug for attaching front page to studentGrowthPlots.</li>
-<li>Corrected logic bug in combineSGP leading to the creation of SGP_TARGET when no projections exist.</li>
-<li>Projection fan cuts calculated across a gap year using a piecewise transformation corrected to accomodate corect increase in years.</li>
-<li>studentGrowthPercentiles and studentGrowthProjections better checks for empty data.</li>
-<li>Corrected naming of baseline coefficient matrices for New Jersey.</li>
+<li>Fixed spacing bug for attaching front page to
+studentGrowthPlots.</li>
+<li>Corrected logic bug in combineSGP leading to the creation of
+SGP_TARGET when no projections exist.</li>
+<li>Projection fan cuts calculated across a gap year using a piecewise
+transformation corrected to accomodate corect increase in years.</li>
+<li>studentGrowthPercentiles and studentGrowthProjections better checks
+for empty data.</li>
+<li>Corrected naming of baseline coefficient matrices for New
+Jersey.</li>
 </ul>
 </div>
 </div>
@@ -636,73 +766,125 @@
 <h2 class="hasAnchor">
 <a href="#user-visible-changes-23" class="anchor" aria-hidden="true"></a>User Visible Changes:</h2>
 <ul>
-<li>Updated URLs in package to github site that hosts SGP code development.</li>
-<li>Added timing to outputSGP and sqliteSGP and integrated outputSGP into abcSGP.</li>
-<li>Baseline SGP tables embedded in SGP object have variable names appended with '_BASELINE'.</li>
-<li>Streamlined growthAchievementPlot production by removing growthAchievementPlot_Styles and integrating its functionality elsewhere.</li>
-<li>outputSGP now exports contents of @Data by default to 'Data' directory.</li>
+<li>Updated URLs in package to github site that hosts SGP code
+development.</li>
+<li>Added timing to outputSGP and sqliteSGP and integrated outputSGP
+into abcSGP.</li>
+<li>Baseline SGP tables embedded in SGP object have variable names
+appended with '_BASELINE'.</li>
+<li>Streamlined growthAchievementPlot production by removing
+growthAchievementPlot_Styles and integrating its functionality
+elsewhere.</li>
+<li>outputSGP now exports contents of @Data by default to 'Data'
+directory.</li>
 <li>Updated SGPstateData with Georgia variable name lookup table.</li>
-<li>studentGrowthPercentiles deals better with holes in data structures where certain grade progressions yield empty data sets.</li>
-<li>baselineSGP analyses from analyzeSGP now accept arguments supplied to content_areas, years, and grades if one wants to filter those for baseline SGP analyses or coefficient matrix generation.</li>
-<li>summarizeSGP does not produces by default, all possible summary tables (controlled by the arugment 'produce.all.summary.tables'). A subset of about 70 summary tables are produced.</li>
-<li>Added baseline coefficient matrices for Georgia to SGPstateData.</li>
+<li>studentGrowthPercentiles deals better with holes in data structures
+where certain grade progressions yield empty data sets.</li>
+<li>baselineSGP analyses from analyzeSGP now accept arguments supplied
+to content_areas, years, and grades if one wants to filter those for
+baseline SGP analyses or coefficient matrix generation.</li>
+<li>summarizeSGP does not produces by default, all possible summary
+tables (controlled by the arugment 'produce.all.summary.tables'). A
+subset of about 70 summary tables are produced.</li>
+<li>Added baseline coefficient matrices for Georgia to
+SGPstateData.</li>
 <li>Fixed prepareSGP to better update @Names slot.</li>
 <li>Added Archdiocese of Baltimore to SGPstateData.</li>
 <li>Integrated achievement_level_recode function into prepareSGP.</li>
-<li>Added ability to print studentGrowthPlots for one, four and five content areas.</li>
+<li>Added ability to print studentGrowthPlots for one, four and five
+content areas.</li>
 <li>Added timing output to outputSGP LONG file production.</li>
-<li>If grade.progression supplied to studentGrowthPercentiles exceeds number of panels available, function now uses the tail of the grade progression up to the number of panels supplied.</li>
+<li>If grade.progression supplied to studentGrowthPercentiles exceeds
+number of panels available, function now uses the tail of the grade
+progression up to the number of panels supplied.</li>
 <li>Added 'WIDE_Data' output.type to outputSGP.</li>
 <li>Added variable name lookup table for Maine.</li>
-<li>Updated summarizeSGP to create relevant tables based upon state provided institution levels.</li>
-<li>Added 'use.cohort.for.baseline.when.missing' argument to combineSGP that allows for the use of cohort reference SGPs in place of baseline referenced SGPs when no baseline SGPs exist.</li>
+<li>Updated summarizeSGP to create relevant tables based upon state
+provided institution levels.</li>
+<li>Added 'use.cohort.for.baseline.when.missing' argument to combineSGP
+that allows for the use of cohort reference SGPs in place of baseline
+referenced SGPs when no baseline SGPs exist.</li>
 <li>Added Variable_Name_Lookup for New Jersey to SGPstateData.</li>
 <li>Updated list of contributors.</li>
-<li>Added testSGP function to package to faciliate development and testing of package.</li>
-<li>Added argument 'create.additional.variables' to prepareSGP indicating whether additional variables should be added to @Data (defaults to TRUE).</li>
-<li>prepareSGP now adds variable HIGH_NEED_STATUS to @Data by default indicating students in top and bottom quartile by school, grade, content area and year.</li>
-<li>Changed naming convention between from TESTING_YEAR to CURRENT to apply to all states going forward.</li>
-<li>Tidied up title for goodness of fit plots and modified plots to deal with edge cases where there are not 10 prior score deciles.</li>
+<li>Added testSGP function to package to faciliate development and
+testing of package.</li>
+<li>Added argument 'create.additional.variables' to prepareSGP
+indicating whether additional variables should be added to @Data
+(defaults to TRUE).</li>
+<li>prepareSGP now adds variable HIGH_NEED_STATUS to @Data by default
+indicating students in top and bottom quartile by school, grade, content
+area and year.</li>
+<li>Changed naming convention between from TESTING_YEAR to CURRENT to
+apply to all states going forward.</li>
+<li>Tidied up title for goodness of fit plots and modified plots to deal
+with edge cases where there are not 10 prior score deciles.</li>
 <li>Added variable name lookup for Massachusetts.</li>
-<li>Refined summarizeSGP to better detect ENROLLMENT_STATUS variable in supplied @Data.</li>
-<li>Added argument 'sgp.loss.hoss.adjustment' to studentGrowthPercentiles to adjust SGP calculation for hoss values where ceiling effect impacts SGP calculation.</li>
-<li>Updated loss/hoss values for Hawaii based upon apparent scale change in 2011.</li>
-<li>Modified .year.increment in studentGrowthPercentiles to accomodate baseline SGP analyses.</li>
-<li>Added Washington data to SGPstateData including basseline coefficient matrices.</li>
-<li>growthAchievementPlot not accomodates gaps in years tested if coefficient matrices are available across that gap.</li>
-<li>Updated Idaho knots and boundaries to accomodate 2011 scale scores.</li>
+<li>Refined summarizeSGP to better detect ENROLLMENT_STATUS variable in
+supplied @Data.</li>
+<li>Added argument 'sgp.loss.hoss.adjustment' to
+studentGrowthPercentiles to adjust SGP calculation for hoss values where
+ceiling effect impacts SGP calculation.</li>
+<li>Updated loss/hoss values for Hawaii based upon apparent scale change
+in 2011.</li>
+<li>Modified .year.increment in studentGrowthPercentiles to accomodate
+baseline SGP analyses.</li>
+<li>Added Washington data to SGPstateData including basseline
+coefficient matrices.</li>
+<li>growthAchievementPlot not accomodates gaps in years tested if
+coefficient matrices are available across that gap.</li>
+<li>Updated Idaho knots and boundaries to accomodate 2011 scale
+scores.</li>
 <li>Added West Virginia variable name lookup table.</li>
-<li>Changed implementation of VALID_CASE to character from factor to better coincide with data.table 1.8.2 requirements.</li>
-<li>Added argument return.prior.scale.score to studentGrowthPercentiles to incorporate the return of the prior scale score for the student.</li>
-<li>studentGrowthPercentiles now accomodates multiple priors from the same year. See examples in 'analyzeSGP' details.</li>
+<li>Changed implementation of VALID_CASE to character from factor to
+better coincide with data.table 1.8.2 requirements.</li>
+<li>Added argument return.prior.scale.score to studentGrowthPercentiles
+to incorporate the return of the prior scale score for the student.</li>
+<li>studentGrowthPercentiles now accomodates multiple priors from the
+same year. See examples in 'analyzeSGP' details.</li>
 <li>Updated Kansas metadata in SGPstateData.</li>
-<li>Fixed bug in get.panel.data and get.panel.data.vnames that didn't accomodate missing grades in state testing programs correctly.</li>
-<li>Added function (internal) checkSGP to externalize checks on SGP object confirming it is up to date.</li>
+<li>Fixed bug in get.panel.data and get.panel.data.vnames that didn't
+accomodate missing grades in state testing programs correctly.</li>
+<li>Added function (internal) checkSGP to externalize checks on SGP
+object confirming it is up to date.</li>
 <li>Added Colorado variable name lookup table to SGPstateData.</li>
 <li>Changed default of outputSGP to export LONG and WIDE data.</li>
-<li>Added CO baseline matrices based upon 5 years of panel data from 2005 to 2009.</li>
+<li>Added CO baseline matrices based upon 5 years of panel data from
+2005 to 2009.</li>
 </ul>
 </div>
 <div id="bug-fixes-6" class="section level2">
 <h2 class="hasAnchor">
 <a href="#bug-fixes-6" class="anchor" aria-hidden="true"></a>Bug Fixes:</h2>
 <ul>
-<li>Added PERCENT_CATCHING_UP_KEEPING_UP to summarizeSGP if SGP_TARGET is present.</li>
-<li>Corrected issues with conversion of factors to characters in summarizeSGP.</li>
+<li>Added PERCENT_CATCHING_UP_KEEPING_UP to summarizeSGP if SGP_TARGET
+is present.</li>
+<li>Corrected issues with conversion of factors to characters in
+summarizeSGP.</li>
 <li>Corrected names.type error in RI and NH lookup tables.</li>
-<li>Corrected incorrect timing in visualizeSGP due to over writing time.started in function.</li>
+<li>Corrected incorrect timing in visualizeSGP due to over writing
+time.started in function.</li>
 <li>Rewrote merge in combineSGP that adds data to @Data.</li>
-<li>Made correction to cutscore year lookup code in growthAchievementPlot and prepareSGP.</li>
-<li>studentGrowthPercentiles checks for CSEMs and ensures availability by content area.</li>
-<li>Fixed bug in way state name is detected in argument supplied as part of data name.</li>
+<li>Made correction to cutscore year lookup code in
+growthAchievementPlot and prepareSGP.</li>
+<li>studentGrowthPercentiles checks for CSEMs and ensures availability
+by content area.</li>
+<li>Fixed bug in way state name is detected in argument supplied as part
+of data name.</li>
 <li>Removed redundant years, content_areas specification in abcSGP.</li>
-<li>analyzeSGP not checks for content area specific coefficient matrices and only calculates baseline referenced results for those content areas.</li>
-<li>Supplied panel.data.vnames now subsets only those names in supplied panel data.</li>
-<li>Refined of merge of sgp targets in combineSGP to avoid memory copy of sgp_object.</li>
-<li>studentGrowthPlot function now detects year dependent loss/hoss values.</li>
-<li>summarizeSGP now checks for existence of ACHIEVEMENT_LEVEL_PRIOR before attempting to calculate it.</li>
+<li>analyzeSGP not checks for content area specific coefficient matrices
+and only calculates baseline referenced results for those content
+areas.</li>
+<li>Supplied panel.data.vnames now subsets only those names in supplied
+panel data.</li>
+<li>Refined of merge of sgp targets in combineSGP to avoid memory copy
+of sgp_object.</li>
+<li>studentGrowthPlot function now detects year dependent loss/hoss
+values.</li>
+<li>summarizeSGP now checks for existence of ACHIEVEMENT_LEVEL_PRIOR
+before attempting to calculate it.</li>
 <li>summarizeSGP better checks for inclusion variables.</li>
-<li>Corrected various bugs in bubblePlot Style 100 introduced with @Names data.frame.</li>
+<li>Corrected various bugs in bubblePlot Style 100 introduced with
+@Names data.frame.</li>
 <li>Modified analyzeSGP to work with data.table changes in 1.8.2.</li>
 </ul>
 </div>
@@ -714,57 +896,96 @@
 <h2 class="hasAnchor">
 <a href="#new-features-9" class="anchor" aria-hidden="true"></a>New Features:</h2>
 <ul>
-<li>Added Hawaii data to SGPstateData and updated Nevada transitional cutscores in Mathematics.</li>
-<li>analyzeSGP now passes projcut.digits to studentGrowthProjections to control digits based upon state level configurations.</li>
-<li>visualizeSGP now checks stateData for grades AND years to be reported in studentGrowthPlots. Default is most recent 5 years</li>
-<li>studentGrowthPlot accomodates situations where there is a gap between grades (e.g., 8 to 10) and the state calculates 2 year SGPs.</li>
-<li>Added tag to SGPstateData for earliest year reported to accomodate possibility of reporting only certain years for a state assessment system (e.g., Arizona).</li>
-<li>ACHIEVEMENT_LEVEL_PRIOR and CATCH_UP_KEEP_UP_STATUS_INITIAL, used for lagged projections, are now calculated as part of analyzeSGP and not combineSGP. This was required in order to allow for growth to standard across holes in grades progression (e.g., 8th to 10th grade).</li>
-<li>Added addition argument to summarizeSGP (growth_only_summary) that calculates summaries using only student with growth percentiles. This makes bubblePlots better for research investigations (but not as relevant for accountability displays).</li>
-<li>Added parallel growthAchievementPlot figure production within visualizeSGP.</li>
+<li>Added Hawaii data to SGPstateData and updated Nevada transitional
+cutscores in Mathematics.</li>
+<li>analyzeSGP now passes projcut.digits to studentGrowthProjections to
+control digits based upon state level configurations.</li>
+<li>visualizeSGP now checks stateData for grades AND years to be
+reported in studentGrowthPlots. Default is most recent 5 years</li>
+<li>studentGrowthPlot accomodates situations where there is a gap
+between grades (e.g., 8 to 10) and the state calculates 2 year
+SGPs.</li>
+<li>Added tag to SGPstateData for earliest year reported to accomodate
+possibility of reporting only certain years for a state assessment
+system (e.g., Arizona).</li>
+<li>ACHIEVEMENT_LEVEL_PRIOR and CATCH_UP_KEEP_UP_STATUS_INITIAL, used
+for lagged projections, are now calculated as part of analyzeSGP and not
+combineSGP. This was required in order to allow for growth to standard
+across holes in grades progression (e.g., 8th to 10th grade).</li>
+<li>Added addition argument to summarizeSGP (growth_only_summary) that
+calculates summaries using only student with growth percentiles. This
+makes bubblePlots better for research investigations (but not as
+relevant for accountability displays).</li>
+<li>Added parallel growthAchievementPlot figure production within
+visualizeSGP.</li>
 <li>Added population size to goodness of fit plots.</li>
-<li>Changed Grade to Grade Progression in goodness of fit plots to better identify groups being analyzed.</li>
+<li>Changed Grade to Grade Progression in goodness of fit plots to
+better identify groups being analyzed.</li>
 <li>Added median SGP line to Style 100 of bubblePlot_Styles.</li>
-<li>prepareSGP now accepts data.frame with arguments names.original, names.sgp, names.type, names.info to enhance analyze flow through SGP analyses.</li>
-<li>Removed doSMP parallel configuration due to removal of doSMP from CRAN.</li>
-<li>Added 'grade.progression.labels' argument to studentGrowthPercentile to faciliate coefficient matrix storage in Coefficient_Matrix list.</li>
-<li>prepareSGP now creates knots and boundaries for embedding in SGPstateData and utilizes those quantities in currently executing calculations.</li>
-<li>Added additional metadata to @Names slot: names.provided, names.sgp, names.type, names.info, names.output.</li>
+<li>prepareSGP now accepts data.frame with arguments names.original,
+names.sgp, names.type, names.info to enhance analyze flow through SGP
+analyses.</li>
+<li>Removed doSMP parallel configuration due to removal of doSMP from
+CRAN.</li>
+<li>Added 'grade.progression.labels' argument to studentGrowthPercentile
+to faciliate coefficient matrix storage in Coefficient_Matrix list.</li>
+<li>prepareSGP now creates knots and boundaries for embedding in
+SGPstateData and utilizes those quantities in currently executing
+calculations.</li>
+<li>Added additional metadata to @Names slot: names.provided, names.sgp,
+names.type, names.info, names.output.</li>
 <li>prepareSGP creates @Names meta data.</li>
-<li>Added sqliteSGP to SGP package and integrated that into the outputSGP functionality.</li>
+<li>Added sqliteSGP to SGP package and integrated that into the
+outputSGP functionality.</li>
 <li>Added additional Mississippi state data to SGPstateData.</li>
-<li>For studentGrowthPlot production in parallel, jobs are submitted by school size in decreasing order to increase performance.</li>
-<li>Added analytic median SGP confidence interval calculation to bootstrap confidence interval. Analytic confidence intervals calculated by default for all groups.</li>
+<li>For studentGrowthPlot production in parallel, jobs are submitted by
+school size in decreasing order to increase performance.</li>
+<li>Added analytic median SGP confidence interval calculation to
+bootstrap confidence interval. Analytic confidence intervals calculated
+by default for all groups.</li>
 <li>Added New Hampshire Variable Name Lookup to SGPstateData.</li>
-<li>Added startParallel and stopParallel to better externalize parallel processing implementation.</li>
-<li>Made some slight tweaks to capwords to better accomodate all caps situations.</li>
+<li>Added startParallel and stopParallel to better externalize parallel
+processing implementation.</li>
+<li>Made some slight tweaks to capwords to better accomodate all caps
+situations.</li>
 </ul>
 </div>
 <div id="user-visible-changes-24" class="section level2">
 <h2 class="hasAnchor">
 <a href="#user-visible-changes-24" class="anchor" aria-hidden="true"></a>User Visible Changes:</h2>
 <ul>
-<li>Consolodated warning messages to provide better information, especially when working in parallel configurations.</li>
-<li>Updated Massachusetts grade 10 cutscores between proficient and advanced achievement levels.</li>
-<li>Lagged projections are only calculated for students with an SGP within analyzeSGP. This eliminates the necessity for the sgp.target.to.NA argument and feature in combineSGP.</li>
-<li>sgp.target.to.NA feature eliminated from combineSGP for reasons explicated in previous remark.</li>
-<li>Changed "Phone Number" to "Contact" on studentGrowthPlot and made associated changes of label in SGPstateData.</li>
+<li>Consolodated warning messages to provide better information,
+especially when working in parallel configurations.</li>
+<li>Updated Massachusetts grade 10 cutscores between proficient and
+advanced achievement levels.</li>
+<li>Lagged projections are only calculated for students with an SGP
+within analyzeSGP. This eliminates the necessity for the
+sgp.target.to.NA argument and feature in combineSGP.</li>
+<li>sgp.target.to.NA feature eliminated from combineSGP for reasons
+explicated in previous remark.</li>
+<li>Changed "Phone Number" to "Contact" on studentGrowthPlot and made
+associated changes of label in SGPstateData.</li>
 <li>Updated NECAP CSEMs for 2011_2012 in SGPstateData.</li>
 <li>Added Hawaii baseline coefficient matrices to SGPstateData.</li>
 <li>Added test to analyzeSGP to see if CSEMs exist in SGPstateData.</li>
-<li>Added growthAchievementPlot_Styles to better accomodate utilization of growthAchievementPlot in parallel.</li>
+<li>Added growthAchievementPlot_Styles to better accomodate utilization
+of growthAchievementPlot in parallel.</li>
 </ul>
 </div>
 <div id="bug-fixes-7" class="section level2">
 <h2 class="hasAnchor">
 <a href="#bug-fixes-7" class="anchor" aria-hidden="true"></a>Bug Fixes:</h2>
 <ul>
-<li>studentGrowthPlot in visualizeSGP now filters on GRADES that correspond to VALID_CASE.</li>
-<li>Fixed issue when projections occur across skipped grades. Made major refinements to analyzeSGP in the process.</li>
+<li>studentGrowthPlot in visualizeSGP now filters on GRADES that
+correspond to VALID_CASE.</li>
+<li>Fixed issue when projections occur across skipped grades. Made major
+refinements to analyzeSGP in the process.</li>
 <li>Updated code to conform with changes in data.table 1.7.8.</li>
 <li>bPlot.format no case insensitive.</li>
-<li>Switch installed.packages to find.package to test for pdf2 installation.</li>
-<li>Modified subsetting of get.panel.data inside studentGrowthPercentiles to avoid data.table seg fault.</li>
+<li>Switch installed.packages to find.package to test for pdf2
+installation.</li>
+<li>Modified subsetting of get.panel.data inside
+studentGrowthPercentiles to avoid data.table seg fault.</li>
 </ul>
 </div>
 </div>
@@ -777,59 +998,112 @@
 <ul>
 <li>Separated sgpData and sgpData_LONG into new package SGPdata.</li>
 <li>Changed name of stateData to SGPstateData.</li>
-<li>Added System_Type slot to stateData to indicate whether state uses 'Cohort Referenced', 'Baseline Referenced', or 'Cohort and Baseline Referenced'.</li>
+<li>Added System_Type slot to stateData to indicate whether state uses
+'Cohort Referenced', 'Baseline Referenced', or 'Cohort and Baseline
+Referenced'.</li>
 <li>Added Test_Vendor slot to stateData.</li>
 <li>Added California data to stateData.</li>
 <li>Added New York baseline coefficient matrices to stateData.</li>
-<li>Modified stateData to include "Scale_Change" slot in "Assessment_Program_Information" to indicate content area and year when scale has been changed.</li>
-<li>Modified stateData and growthAchievementPlot to accomodate states that change vertical scales from one year to next (e.g., Arizona Mathematics).</li>
-<li>Improved parallel implementation of baseline SGP coefficient matrix calculation.</li>
-<li>Added ability to accomodate year specific knots and boundaries supplied in stateData.</li>
+<li>Modified stateData to include "Scale_Change" slot in
+"Assessment_Program_Information" to indicate content area and year when
+scale has been changed.</li>
+<li>Modified stateData and growthAchievementPlot to accomodate states
+that change vertical scales from one year to next (e.g., Arizona
+Mathematics).</li>
+<li>Improved parallel implementation of baseline SGP coefficient matrix
+calculation.</li>
+<li>Added ability to accomodate year specific knots and boundaries
+supplied in stateData.</li>
 <li>Added Arizona knots and boundaries to stateData.</li>
-<li>Began implementing changes utilizing new pointer features in data.table 1.7.3.</li>
-<li>Added lag.increment argument to studentGrowthProjections to accomodate state with scale and cutscore changes.</li>
-<li>Added knots.boundaries.by.panel argument to studentGrowthProjections to accomodate knots and boundaries calculations by panel (instead of pooling grade level data across panels).</li>
-<li>prepareSGP augments instead of overwrites SGP_Package_Version and Date_Prepared keeping more meta data on the construction of the object.</li>
-<li>Added function as.splineMatrix to faciliate conversion of older coefficient matrices to S4 class splineMatrix.</li>
-<li>Added test of is.splineMatrix to prepareSGP and conversion of coefficient matrices to splineMatrix class otherwise.</li>
-<li>Added max.order.for.percentile argument ot studentGrowthPercentiles to limit number of priors used in analyses (which could already be accomplished by a variety of other means).</li>
-<li>Added sgp.target.to.NA argument to combineSGP (defaults to TRUE) to change SGP_TARGET and SGP_TARGET_BASELINE to NA when SGP is NA (e.g., for retained students). Thanks for Ayaka Nukui for observation and suggestion.</li>
-<li>Added sgPlot.baseline arguement to visualizeSGP to control whether cohort or baseline referenced SGPs are depicted in student growth plots.</li>
+<li>Began implementing changes utilizing new pointer features in
+data.table 1.7.3.</li>
+<li>Added lag.increment argument to studentGrowthProjections to
+accomodate state with scale and cutscore changes.</li>
+<li>Added knots.boundaries.by.panel argument to studentGrowthProjections
+to accomodate knots and boundaries calculations by panel (instead of
+pooling grade level data across panels).</li>
+<li>prepareSGP augments instead of overwrites SGP_Package_Version and
+Date_Prepared keeping more meta data on the construction of the
+object.</li>
+<li>Added function as.splineMatrix to faciliate conversion of older
+coefficient matrices to S4 class splineMatrix.</li>
+<li>Added test of is.splineMatrix to prepareSGP and conversion of
+coefficient matrices to splineMatrix class otherwise.</li>
+<li>Added max.order.for.percentile argument ot studentGrowthPercentiles
+to limit number of priors used in analyses (which could already be
+accomplished by a variety of other means).</li>
+<li>Added sgp.target.to.NA argument to combineSGP (defaults to TRUE) to
+change SGP_TARGET and SGP_TARGET_BASELINE to NA when SGP is NA (e.g.,
+for retained students). Thanks for Ayaka Nukui for observation and
+suggestion.</li>
+<li>Added sgPlot.baseline arguement to visualizeSGP to control whether
+cohort or baseline referenced SGPs are depicted in student growth
+plots.</li>
 </ul>
 </div>
 <div id="user-visible-changes-25" class="section level2">
 <h2 class="hasAnchor">
 <a href="#user-visible-changes-25" class="anchor" aria-hidden="true"></a>User Visible Changes:</h2>
 <ul>
-<li>bubblePlot doesn't load package pdf2 with R version 2.14 or greater until bugs are reconciled with data tips. Use of pdf2 requires R version 2.13.2 or earlier.</li>
-<li>analyzeSGP calls to studentGrowthProjections for cohort and lagged projections checks for max.order.for.progression with Scale_Change slot in stateData. This will be required when states switch to either assessment consortium.</li>
-<li>Modified growthAchievementPlot call in visualizeSGP to adjust max.order.for.progression based upon previous two changes.</li>
-<li>Added argument gaPlot.max.order.for.progression to growthAchievementPlot allowing user to specify maximum order for growthAchievementPlot projection. Useful for states changing scales.</li>
-<li>Improved parallel implementation of baseline SGP coefficient matrix calculation.</li>
-<li>studentGrowthProjections now checks if current year's data fall within loss.hoss boundaries and corrects if they don't.</li>
+<li>bubblePlot doesn't load package pdf2 with R version 2.14 or greater
+until bugs are reconciled with data tips. Use of pdf2 requires R version
+2.13.2 or earlier.</li>
+<li>analyzeSGP calls to studentGrowthProjections for cohort and lagged
+projections checks for max.order.for.progression with Scale_Change slot
+in stateData. This will be required when states switch to either
+assessment consortium.</li>
+<li>Modified growthAchievementPlot call in visualizeSGP to adjust
+max.order.for.progression based upon previous two changes.</li>
+<li>Added argument gaPlot.max.order.for.progression to
+growthAchievementPlot allowing user to specify maximum order for
+growthAchievementPlot projection. Useful for states changing
+scales.</li>
+<li>Improved parallel implementation of baseline SGP coefficient matrix
+calculation.</li>
+<li>studentGrowthProjections now checks if current year's data fall
+within loss.hoss boundaries and corrects if they don't.</li>
 <li>Better integrated parallelization routines into analyzeSGP.</li>
-<li>Updated analyzeSGP with doSMP to better faciliate parallel analyses in Windows environments.</li>
-<li>Continued to optimize studentGrowthPercentiles and studentGrowthProjections functions for better memory mangement and speed.</li>
-<li>Created a single baselineSGP function for both use cases previously provided by the baselineSGP and baselineSGPLong functions.</li>
-<li>bubblePlot appropriately scales labels provided by argument bubble_plot_data.BUBBLE_CENTER_LABEL.</li>
-<li>When knots and boundaries are automatically calculated, only prior scores are used for pooling purposes. Previously both prior and current scores were pooled.</li>
-<li>Updated Idaho meta data in stateData including knots, boundaries and organizational information.</li>
-<li>studentGrowthProjections now includes arugment calculate.sgps (default to TRUE) that is used to bypass calculations by analyzeSGP in certain special cases (e.g., scale change in state).</li>
+<li>Updated analyzeSGP with doSMP to better faciliate parallel analyses
+in Windows environments.</li>
+<li>Continued to optimize studentGrowthPercentiles and
+studentGrowthProjections functions for better memory mangement and
+speed.</li>
+<li>Created a single baselineSGP function for both use cases previously
+provided by the baselineSGP and baselineSGPLong functions.</li>
+<li>bubblePlot appropriately scales labels provided by argument
+bubble_plot_data.BUBBLE_CENTER_LABEL.</li>
+<li>When knots and boundaries are automatically calculated, only prior
+scores are used for pooling purposes. Previously both prior and current
+scores were pooled.</li>
+<li>Updated Idaho meta data in stateData including knots, boundaries and
+organizational information.</li>
+<li>studentGrowthProjections now includes arugment calculate.sgps
+(default to TRUE) that is used to bypass calculations by analyzeSGP in
+certain special cases (e.g., scale change in state).</li>
 <li>Updated Maine metadata to include knots and boundaries.</li>
-<li>Changed internal naming implementation of SGP_BASELINE in combineSGP.</li>
+<li>Changed internal naming implementation of SGP_BASELINE in
+combineSGP.</li>
 </ul>
 </div>
 <div id="bug-fixes-8" class="section level2">
 <h2 class="hasAnchor">
 <a href="#bug-fixes-8" class="anchor" aria-hidden="true"></a>Bug Fixes:</h2>
 <ul>
-<li>Refined combineSGP to better accomodate irregular content area and year specifications for both cohort and baseline referenced SGPs.</li>
-<li>Corrected bug in bubble_plot_configs.BUBBLE_COLOR where specifying a single color didn't provide the correct color.</li>
-<li>studentGrowthProjections now checks for grades in cutscores based upon the supplied subject given in sgp.labels.</li>
-<li>Modified sgp.config in analyzeSGP to correctly work with grades supplied as an argument (Thanks to Ayaka Nukui for pointing this out).</li>
-<li>Argument grades now correctly passed from abcSGP to analyzeSGP (Thanks to Ayaka Nukui for pointing this out).</li>
-<li>Changed incorrect cutscore in state data for advanced level in DEMO data from 509 to 510.</li>
-<li>studentGrowthProjections start/stop message now reports correct grade progression when limited number of priors is selected.</li>
+<li>Refined combineSGP to better accomodate irregular content area and
+year specifications for both cohort and baseline referenced SGPs.</li>
+<li>Corrected bug in bubble_plot_configs.BUBBLE_COLOR where specifying a
+single color didn't provide the correct color.</li>
+<li>studentGrowthProjections now checks for grades in cutscores based
+upon the supplied subject given in sgp.labels.</li>
+<li>Modified sgp.config in analyzeSGP to correctly work with grades
+supplied as an argument (Thanks to Ayaka Nukui for pointing this
+out).</li>
+<li>Argument grades now correctly passed from abcSGP to analyzeSGP
+(Thanks to Ayaka Nukui for pointing this out).</li>
+<li>Changed incorrect cutscore in state data for advanced level in DEMO
+data from 509 to 510.</li>
+<li>studentGrowthProjections start/stop message now reports correct
+grade progression when limited number of priors is selected.</li>
 </ul>
 </div>
 </div>
@@ -837,23 +1111,37 @@
 <h1 class="hasAnchor">
 <a href="#sgp-07-20" class="anchor" aria-hidden="true"></a>SGP 0.7-2.0</h1>
 <ul>
-<li>prepareSGP now adds an updated Version to an SGP object that is passed to prepareSGP.</li>
-<li>In cases where stateData cutscores change by year, studentGrowthProjections correctly chooses annual cutscores to use for projections.</li>
-<li>Corrected bug in bubblePlot_Styles that mishandled situation when no ACHIEVEMENT_LEVEL_PRIOR is present.</li>
+<li>prepareSGP now adds an updated Version to an SGP object that is
+passed to prepareSGP.</li>
+<li>In cases where stateData cutscores change by year,
+studentGrowthProjections correctly chooses annual cutscores to use for
+projections.</li>
+<li>Corrected bug in bubblePlot_Styles that mishandled situation when no
+ACHIEVEMENT_LEVEL_PRIOR is present.</li>
 <li>Updated/correct abcSGP man page.</li>
-<li>Refined file naming in bubblePlot_Styles and growthAchievementPlot to change spaces to underscores.</li>
+<li>Refined file naming in bubblePlot_Styles and growthAchievementPlot
+to change spaces to underscores.</li>
 <li>Updated New York cutscores in stateData.</li>
 <li>Added Arizona data to stateData.</li>
 <li>Added NECAP CSEMs (2010 and 2011) to stateData.</li>
-<li>Added Rhode Island Baseline Coefficient Matrices to stateData and added additional Rhode Island data.</li>
-<li>Refined abcSGP to not calculate simulated SGPs if missing in stateData for supplied state.</li>
+<li>Added Rhode Island Baseline Coefficient Matrices to stateData and
+added additional Rhode Island data.</li>
+<li>Refined abcSGP to not calculate simulated SGPs if missing in
+stateData for supplied state.</li>
 <li>Changed naming of saved baseline coefficient matrix object.</li>
-<li>Corrected bug with SCALE_SCOREs and TRANSFORMED_SCALE_SCOREs in growthAchievementPlot.</li>
-<li>Modified studentGrowthPercentiles to test for missing years in provided CSEM data.</li>
+<li>Corrected bug with SCALE_SCOREs and TRANSFORMED_SCALE_SCOREs in
+growthAchievementPlot.</li>
+<li>Modified studentGrowthPercentiles to test for missing years in
+provided CSEM data.</li>
 <li>Refined .mergeSGP in analyzeSGP to increase performance.</li>
-<li>Made slight modification to arguments determining whether simulated SGPs will be calculated.</li>
-<li>Refined rbind.all in combineSGP to accomodate different annual SGP data calculations (e.g., CSEMs in 2011 but not 2010).</li>
-<li>Created arguments to analyzeSGP: sgp.percentiles.baseline.max.order, sgp.projections.baseline.max.order and sgp.projections.lagged.baseline.max.order to control baseline SGP order (defaulting to 3).</li>
+<li>Made slight modification to arguments determining whether simulated
+SGPs will be calculated.</li>
+<li>Refined rbind.all in combineSGP to accomodate different annual SGP
+data calculations (e.g., CSEMs in 2011 but not 2010).</li>
+<li>Created arguments to analyzeSGP: sgp.percentiles.baseline.max.order,
+sgp.projections.baseline.max.order and
+sgp.projections.lagged.baseline.max.order to control baseline SGP order
+(defaulting to 3).</li>
 </ul>
 </div>
     <div id="sgp-07-10" class="section level1">
@@ -862,64 +1150,97 @@
 <ul>
 <li>Updated Nevada state data for low, typical, and high cutscores.</li>
 <li>Added "Percentile Growth Trajectories" to package title.</li>
-<li>Rectified argument passing between abcSGP and analyzeSGP for parallel.config argument.</li>
+<li>Rectified argument passing between abcSGP and analyzeSGP for
+parallel.config argument.</li>
 </ul>
 </div>
     <div id="sgp-07-00" class="section level1">
 <h1 class="hasAnchor">
 <a href="#sgp-07-00" class="anchor" aria-hidden="true"></a>SGP 0.7-0.0</h1>
 <ul>
-<li>ETHNICITY and GENDER variables are no longer required to create anonymized (random name) student growth plots. Dummy values are created if missing.</li>
-<li>Began outputSGP as a function to faciliate output of SGP results in common formats.</li>
-<li>Added robust parallelism to analyzeSGP to better facilitate analysis of large scale data sets on multi-core/multi-cpu environments.</li>
-<li>Added functionality to combineSGP to merge in baseline student growth percentiles and baseline student growth percentile targets.</li>
-<li>Added functionality to analyzeSGP to calculate baseline student growth projections and lagged baseline student growth projections.</li>
-<li>Fixed a bug preventing use of provided CSEM variable when supplied as an addition variable in the supplied data.frame.</li>
-<li>Fixed a bug in visualizeSGP for studentGrowthPlot production when sgPlot.years is supplied.</li>
-<li>Refined scale score axis span and labels in growth achievement plot.</li>
-<li>Changed goodness.of.fit default to TRUE with the calculation of baseline student growh percentiles.</li>
+<li>ETHNICITY and GENDER variables are no longer required to create
+anonymized (random name) student growth plots. Dummy values are created
+if missing.</li>
+<li>Began outputSGP as a function to faciliate output of SGP results in
+common formats.</li>
+<li>Added robust parallelism to analyzeSGP to better facilitate analysis
+of large scale data sets on multi-core/multi-cpu environments.</li>
+<li>Added functionality to combineSGP to merge in baseline student
+growth percentiles and baseline student growth percentile targets.</li>
+<li>Added functionality to analyzeSGP to calculate baseline student
+growth projections and lagged baseline student growth projections.</li>
+<li>Fixed a bug preventing use of provided CSEM variable when supplied
+as an addition variable in the supplied data.frame.</li>
+<li>Fixed a bug in visualizeSGP for studentGrowthPlot production when
+sgPlot.years is supplied.</li>
+<li>Refined scale score axis span and labels in growth achievement
+plot.</li>
+<li>Changed goodness.of.fit default to TRUE with the calculation of
+baseline student growh percentiles.</li>
 <li>Added state test abbreviation to main title of bubble plots.</li>
-<li>Refined analyzeSGP and baselineSGP to deal with non-consecutive grades when calculating baseline referenced student growth percentiles.</li>
+<li>Refined analyzeSGP and baselineSGP to deal with non-consecutive
+grades when calculating baseline referenced student growth
+percentiles.</li>
 <li>Added Utah data to stateData.</li>
 <li>Fixed naming issue in bubblePlot_Style 2.</li>
-<li>Fixed bugs impacting states with non-uniform cutscores by year in bubblePlot_Styles and studentGrowthPlot (Thanks Juan D'Brot).</li>
-<li>Fixed a bug preventing users from using their own supplied list of cutscores (Thanks Katherine Castellano).</li>
-<li>Added baseline coefficient matrices for Massachusetts to stateData and changed cutscores to match g-theta values used in SGP calculations.</li>
+<li>Fixed bugs impacting states with non-uniform cutscores by year in
+bubblePlot_Styles and studentGrowthPlot (Thanks Juan D'Brot).</li>
+<li>Fixed a bug preventing users from using their own supplied list of
+cutscores (Thanks Katherine Castellano).</li>
+<li>Added baseline coefficient matrices for Massachusetts to stateData
+and changed cutscores to match g-theta values used in SGP
+calculations.</li>
 <li>Added baseline coefficient matrices for Nevada to stateData.</li>
-<li>Added dummy instructor numbers, weights, and enrollment status to sgpData_LONG.</li>
-<li>Changed "Date" slot to "Version" slot in splineMatrix class so that SGP version meta-data was available and consistent with SGP class.</li>
-<li>Improved goodness of fit color function that avoids errors when empty cells (i.e., color=NA) occur because of badly misfit data.</li>
+<li>Added dummy instructor numbers, weights, and enrollment status to
+sgpData_LONG.</li>
+<li>Changed "Date" slot to "Version" slot in splineMatrix class so that
+SGP version meta-data was available and consistent with SGP class.</li>
+<li>Improved goodness of fit color function that avoids errors when
+empty cells (i.e., color=NA) occur because of badly misfit data.</li>
 </ul>
 </div>
     <div id="sgp-06-10" class="section level1">
 <h1 class="hasAnchor">
 <a href="#sgp-06-10" class="anchor" aria-hidden="true"></a>SGP 0.6-1.0</h1>
 <ul>
-<li>Added check on file name to bubblePlot to remove forward slashes "/".</li>
+<li>Added check on file name to bubblePlot to remove forward slashes
+"/".</li>
 </ul>
 </div>
     <div id="sgp-06-00" class="section level1">
 <h1 class="hasAnchor">
 <a href="#sgp-06-00" class="anchor" aria-hidden="true"></a>SGP 0.6-0.0</h1>
 <ul>
-<li>Removed modulo score transformation from stateData as piecewise.transform takes care of this internally.</li>
-<li>Changed default of summarizeSGP to calculate multi-year summaries across the 3 most recent years instead of all years except the first two.</li>
-<li>Modified visualizeSGP to better faciliate mass production of studentGrowthPlots with parallel back end.</li>
-<li>Added studentGrowthPlot_Styles to separate data manipulation from report formatting.</li>
-<li>Changed default sgPlot.demo.report in visualizeSGP from TRUE to FALSE.</li>
+<li>Removed modulo score transformation from stateData as
+piecewise.transform takes care of this internally.</li>
+<li>Changed default of summarizeSGP to calculate multi-year summaries
+across the 3 most recent years instead of all years except the first
+two.</li>
+<li>Modified visualizeSGP to better faciliate mass production of
+studentGrowthPlots with parallel back end.</li>
+<li>Added studentGrowthPlot_Styles to separate data manipulation from
+report formatting.</li>
+<li>Changed default sgPlot.demo.report in visualizeSGP from TRUE to
+FALSE.</li>
 <li>Added is.SGP to test for SGP class.</li>
-<li>Added Version slot to class SGP indicating Version of SGP package used to create SGP object and date object was created.</li>
-<li>Modified growthAchievementPlot to depict regions showing college/career readiness if cutscores are available in terminal grade of growth and achievement chart.</li>
+<li>Added Version slot to class SGP indicating Version of SGP package
+used to create SGP object and date object was created.</li>
+<li>Modified growthAchievementPlot to depict regions showing
+college/career readiness if cutscores are available in terminal grade of
+growth and achievement chart.</li>
 </ul>
 </div>
     <div id="sgp-05-00" class="section level1">
 <h1 class="hasAnchor">
 <a href="#sgp-05-00" class="anchor" aria-hidden="true"></a>SGP 0.5-0.0</h1>
 <ul>
-<li>Modified functionality to calculate confidence intervals for SGP. calculate.confidence.intervals argument now accepts state acronym and supplied CSEM variable as part of panel.data.</li>
+<li>Modified functionality to calculate confidence intervals for SGP.
+calculate.confidence.intervals argument now accepts state acronym and
+supplied CSEM variable as part of panel.data.</li>
 <li>Added Mississippi data to stateData.</li>
 <li>Refined and corrected minor bug in .get.config in analyzeSGP.</li>
-<li>Improved sgpPlot.cleanup to avoid removing files unintentionally.</li>
+<li>Improved sgpPlot.cleanup to avoid removing files
+unintentionally.</li>
 <li>Refined parallel implementation in analyzeSGP.</li>
 </ul>
 </div>
@@ -927,7 +1248,8 @@
 <h1 class="hasAnchor">
 <a href="#sgp-04-60" class="anchor" aria-hidden="true"></a>SGP 0.4-6.0</h1>
 <ul>
-<li>Worked out bug in production of studentGrowthPlots for students with completely missing data.</li>
+<li>Worked out bug in production of studentGrowthPlots for students with
+completely missing data.</li>
 <li>Added to and corrected stateData for West Virginia.</li>
 </ul>
 </div>
@@ -935,55 +1257,84 @@
 <h1 class="hasAnchor">
 <a href="#sgp-04-50" class="anchor" aria-hidden="true"></a>SGP 0.4-5.0</h1>
 <ul>
-<li>Added enhanced check to built in knots and boundaries for states.</li>
-<li>Fixed a bug in studentGrowthProjections when chunk.size is a perfect divisor of the number of rows of the data.</li>
-<li>Refined studentGrowthPlot to accomodate annual cutscore changes in states with a vertical scale (e.g., West Virginia). Thanks Juan D'Brot WVDOE.</li>
+<li>Added enhanced check to built in knots and boundaries for
+states.</li>
+<li>Fixed a bug in studentGrowthProjections when chunk.size is a perfect
+divisor of the number of rows of the data.</li>
+<li>Refined studentGrowthPlot to accomodate annual cutscore changes in
+states with a vertical scale (e.g., West Virginia). Thanks Juan D'Brot
+WVDOE.</li>
 </ul>
 </div>
     <div id="sgp-04-00" class="section level1">
 <h1 class="hasAnchor">
 <a href="#sgp-04-00" class="anchor" aria-hidden="true"></a>SGP 0.4-0.0</h1>
 <ul>
-<li>Fixed a bug in visualizeSGP that didn't transform projection cuts for the studentGrowthPlot to the transformed scale when necessary.</li>
+<li>Fixed a bug in visualizeSGP that didn't transform projection cuts
+for the studentGrowthPlot to the transformed scale when necessary.</li>
 <li>Improved look of two panel student growth plot.</li>
-<li>Improved header to bubblePlots. Thanks to Dr. Sharon Schattgen (MO) for the suggestion.</li>
+<li>Improved header to bubblePlots. Thanks to Dr. Sharon Schattgen (MO)
+for the suggestion.</li>
 <li>Added NAMESPACE to package.</li>
 <li>Modified DESCRIPTION file to accomodate Authors@R requirements.</li>
 <li>Updated West Virginia stateData.</li>
 <li>Added Minnesota to stateData.</li>
 <li>Made slight tweaks to growthAchievementPlot title.</li>
-<li>Added ability for user to supply CSEMs as a separate variable for SGP confidence interval calculations.</li>
-<li>Removed eval(eval() calls used for data.table based upon refinements in data.table package.</li>
-<li>CATCH_UP_KEEP_UP_STATUS is now a factor instead of (wrongly) a character.</li>
-<li>CATCH_UP_KEEP_UP_STATUS_INITIAL variable is now a factor instead of (wrongly) an ordered factor.</li>
-<li>studentGrowthPlot and growthAchievementPlot now accommodate the existence of both non-vertical and vertical scales for different content areas in the same state assessment system (e.g., Connecticut).</li>
-<li>Fixed exact.grade.progression argument to studentGrowthPercentiles. When set to true, function will calculate coefficient matrix and SGPs (if requested) for just that progression.</li>
-<li>Changed name of Variable_Name_Lookup slot in SGP class to Names.</li>
-<li>Made minor modifications to growthAchievementPlot to improve the look of growth achievement plots.</li>
-<li>Made minor modifications to studentGrowthPlot and visualizeSGP to improve the look of student growth plots.</li>
-<li>Updated student growth projections function to allow for skipped percentiles.</li>
-<li>Added bubblePlot_Style 10 which shows district schools highlighted against the state.</li>
-<li>Made minor modifications to the bubblePlot function allowing better highlighting in the presence of hundreds of bubbles.</li>
-<li>Coefficient matrix objects returned from studentGrowthPercentiles are S4 class splineMatrix with Knots and Boundaries and Date slots.</li>
-<li>Added wrapper function baselineSGP to facilitate baseline SGP analyses (i.e. multiple cohort norm groups).</li>
-<li>Added production of baseline referenced coefficient matrices and student growth percentile functionality to analyzeSGP.</li>
+<li>Added ability for user to supply CSEMs as a separate variable for
+SGP confidence interval calculations.</li>
+<li>Removed eval(eval() calls used for data.table based upon refinements
+in data.table package.</li>
+<li>CATCH_UP_KEEP_UP_STATUS is now a factor instead of (wrongly) a
+character.</li>
+<li>CATCH_UP_KEEP_UP_STATUS_INITIAL variable is now a factor instead of
+(wrongly) an ordered factor.</li>
+<li>studentGrowthPlot and growthAchievementPlot now accommodate the
+existence of both non-vertical and vertical scales for different content
+areas in the same state assessment system (e.g., Connecticut).</li>
+<li>Fixed exact.grade.progression argument to studentGrowthPercentiles.
+When set to true, function will calculate coefficient matrix and SGPs
+(if requested) for just that progression.</li>
+<li>Changed name of Variable_Name_Lookup slot in SGP class to
+Names.</li>
+<li>Made minor modifications to growthAchievementPlot to improve the
+look of growth achievement plots.</li>
+<li>Made minor modifications to studentGrowthPlot and visualizeSGP to
+improve the look of student growth plots.</li>
+<li>Updated student growth projections function to allow for skipped
+percentiles.</li>
+<li>Added bubblePlot_Style 10 which shows district schools highlighted
+against the state.</li>
+<li>Made minor modifications to the bubblePlot function allowing better
+highlighting in the presence of hundreds of bubbles.</li>
+<li>Coefficient matrix objects returned from studentGrowthPercentiles
+are S4 class splineMatrix with Knots and Boundaries and Date slots.</li>
+<li>Added wrapper function baselineSGP to facilitate baseline SGP
+analyses (i.e. multiple cohort norm groups).</li>
+<li>Added production of baseline referenced coefficient matrices and
+student growth percentile functionality to analyzeSGP.</li>
 </ul>
 </div>
     <div id="sgp-03-60" class="section level1">
 <h1 class="hasAnchor">
 <a href="#sgp-03-60" class="anchor" aria-hidden="true"></a>SGP 0.3-6.0</h1>
 <ul>
-<li>Updated state data to include New Haven School District specific fields including fixed knots and boundaries.</li>
-<li>Updated Wisconsin state data to produce growthAchievementPlots and studentGrowthPlots.</li>
-<li>growthAchievementPlot now filters out grades not in stateData Grades_Reported.</li>
-<li>Changed argument max.forward.progression to max.forward.progression.years and added argument max.forward.progression.grade.</li>
+<li>Updated state data to include New Haven School District specific
+fields including fixed knots and boundaries.</li>
+<li>Updated Wisconsin state data to produce growthAchievementPlots and
+studentGrowthPlots.</li>
+<li>growthAchievementPlot now filters out grades not in stateData
+Grades_Reported.</li>
+<li>Changed argument max.forward.progression to
+max.forward.progression.years and added argument
+max.forward.progression.grade.</li>
 </ul>
 </div>
     <div id="sgp-03-50" class="section level1">
 <h1 class="hasAnchor">
 <a href="#sgp-03-50" class="anchor" aria-hidden="true"></a>SGP 0.3-5.0</h1>
 <ul>
-<li>Corrected an offset of 1 in studentGrowthProjections (Thanks for Marie Huchton for finding discrepancies).</li>
+<li>Corrected an offset of 1 in studentGrowthProjections (Thanks for
+Marie Huchton for finding discrepancies).</li>
 <li>Improved header in growthAchievementChart.</li>
 </ul>
 </div>
@@ -991,39 +1342,74 @@
 <h1 class="hasAnchor">
 <a href="#sgp-03-00" class="anchor" aria-hidden="true"></a>SGP 0.3-0.0</h1>
 <ul>
-<li>Added an example to studentGrowthPercentiles showing how embedded coefficient matrices can be used to calculate student growth percentiles.</li>
-<li>Lots of little bug fixes in visualizeSGP, studentGrowthPlt, bubblePlot, and growthAchievmentPlot, particularly when scale is transformed.</li>
-<li>In analyzeSGP, the automatic configuration has been improved to better select grade progressions associated with the provided data.</li>
-<li>Began adding functionality to use parallel backends from using different parallelization implementations (SNOW, FOREACH, MULTICORE).</li>
-<li>studentGrowthProjections now accomodates year dependent cutscores (in situations where states change cutscores).</li>
-<li>piecewise.transform function accomodates year dependent cutscores. This impact both studentGrowthPlots and growthAchievementPlots when scale score transformations are employed to view SGP results.</li>
+<li>Added an example to studentGrowthPercentiles showing how embedded
+coefficient matrices can be used to calculate student growth
+percentiles.</li>
+<li>Lots of little bug fixes in visualizeSGP, studentGrowthPlt,
+bubblePlot, and growthAchievmentPlot, particularly when scale is
+transformed.</li>
+<li>In analyzeSGP, the automatic configuration has been improved to
+better select grade progressions associated with the provided data.</li>
+<li>Began adding functionality to use parallel backends from using
+different parallelization implementations (SNOW, FOREACH,
+MULTICORE).</li>
+<li>studentGrowthProjections now accomodates year dependent cutscores
+(in situations where states change cutscores).</li>
+<li>piecewise.transform function accomodates year dependent cutscores.
+This impact both studentGrowthPlots and growthAchievementPlots when
+scale score transformations are employed to view SGP results.</li>
 </ul>
 </div>
     <div id="sgp-02-10" class="section level1">
 <h1 class="hasAnchor">
 <a href="#sgp-02-10" class="anchor" aria-hidden="true"></a>SGP 0.2-1.0</h1>
 <ul>
-<li>Added functionality to auto-detect state names based upon SGP object name convention: State_Data (e.g. ,Colorado_Data).</li>
-<li>Fixed bug allowing users to specify multiple sgp.summaries in summarizeSGP.</li>
-<li>Corrected error in achievement level labels in Nevada state data.</li>
+<li>Added functionality to auto-detect state names based upon SGP object
+name convention: State_Data (e.g. ,Colorado_Data).</li>
+<li>Fixed bug allowing users to specify multiple sgp.summaries in
+summarizeSGP.</li>
+<li>Corrected error in achievement level labels in Nevada state
+data.</li>
 </ul>
 </div>
     <div id="sgp-02-00" class="section level1">
 <h1 class="hasAnchor">
 <a href="#sgp-02-00" class="anchor" aria-hidden="true"></a>SGP 0.2-0.0</h1>
 <ul>
-<li>prepareSGP returns object of class SGP unaltered and prepares data.frames as before.</li>
-<li>abcSGP now passes supplied years and content_areas arguments to combineSGP to allow for year/content area specific merges. This functionality will assist in updating results from year to year.</li>
-<li>combineSGP now accepts arguments for years and content_areas allowing for year/content area specific merges. This functionality will assist in updating results from year to year.</li>
-<li>Improvement of bubblePlot to better represent situations with hundreds/thousands of bubbles.</li>
-<li>Inclusion of growthAchievementPlot that provides plots like that on Betebenner (2009) Educational Measurement: Issues and Practice Article.</li>
-<li>Modification of visualizeSGP to allow for automatic use of growthAchievementPlot.</li>
-<li>Added arguments to studentGrowthPercentiles and studentGrowthProjections (print.time.taken) to allow user to turn off time.taken message. Defaults to TRUE.</li>
-<li>Changed splinefun method for CSEM based confidence interval construction to "natural" due to highly non-monotonic behavior with Wisconsin CSEMs.</li>
-<li>Added argument to bubblePlot "bubble_plot_configs.BUBBLE_COLOR_GRADIENT_REVERSE" allowing user to reverse color gradient. Defaults to FALSE.</li>
-<li>Changed default summaries in abcSGP to include summary calculations involving ACHIEVEMENT_LEVEL_PRIOR (such as prior percent at/above proficient).</li>
-<li>Implemented bug fix associated with data.table in combineSGP function that simplifies data.table implementation of catch-up/keep-up targets.</li>
-<li>Supplying a non-traditional/sequential grade.progression argument to studentGrowthPercentiles now removes (unless setting argument drop.nonsequential.grade.progression.variables=FALSE) supplied panel.data columns from "holes" in the supplied grade.progression.</li>
+<li>prepareSGP returns object of class SGP unaltered and prepares
+data.frames as before.</li>
+<li>abcSGP now passes supplied years and content_areas arguments to
+combineSGP to allow for year/content area specific merges. This
+functionality will assist in updating results from year to year.</li>
+<li>combineSGP now accepts arguments for years and content_areas
+allowing for year/content area specific merges. This functionality will
+assist in updating results from year to year.</li>
+<li>Improvement of bubblePlot to better represent situations with
+hundreds/thousands of bubbles.</li>
+<li>Inclusion of growthAchievementPlot that provides plots like that on
+Betebenner (2009) Educational Measurement: Issues and Practice
+Article.</li>
+<li>Modification of visualizeSGP to allow for automatic use of
+growthAchievementPlot.</li>
+<li>Added arguments to studentGrowthPercentiles and
+studentGrowthProjections (print.time.taken) to allow user to turn off
+time.taken message. Defaults to TRUE.</li>
+<li>Changed splinefun method for CSEM based confidence interval
+construction to "natural" due to highly non-monotonic behavior with
+Wisconsin CSEMs.</li>
+<li>Added argument to bubblePlot
+"bubble_plot_configs.BUBBLE_COLOR_GRADIENT_REVERSE" allowing user to
+reverse color gradient. Defaults to FALSE.</li>
+<li>Changed default summaries in abcSGP to include summary calculations
+involving ACHIEVEMENT_LEVEL_PRIOR (such as prior percent at/above
+proficient).</li>
+<li>Implemented bug fix associated with data.table in combineSGP
+function that simplifies data.table implementation of catch-up/keep-up
+targets.</li>
+<li>Supplying a non-traditional/sequential grade.progression argument to
+studentGrowthPercentiles now removes (unless setting argument
+drop.nonsequential.grade.progression.variables=FALSE) supplied
+panel.data columns from "holes" in the supplied grade.progression.</li>
 </ul>
 </div>
     <div id="sgp-01-00" class="section level1">
@@ -1031,8 +1417,11 @@
 <a href="#sgp-01-00" class="anchor" aria-hidden="true"></a>SGP 0.1-0.0</h1>
 <ul>
 <li>Implementation of SGP class.</li>
-<li>Specified state specific percentile trajectories for student growth projections and stipulated max.forward.progression of 3 years for these trajectories.</li>
-<li>Fixed bugs related to bootstrap calculating confidence intervals for all groups instead of those specified.</li>
+<li>Specified state specific percentile trajectories for student growth
+projections and stipulated max.forward.progression of 3 years for these
+trajectories.</li>
+<li>Fixed bugs related to bootstrap calculating confidence intervals for
+all groups instead of those specified.</li>
 <li>Completed reportSGP.</li>
 <li>Added New Jersey to stateData.</li>
 </ul>
@@ -1041,78 +1430,121 @@
 <h1 class="hasAnchor">
 <a href="#sgp-00-85" class="anchor" aria-hidden="true"></a>SGP 0.0-8.5</h1>
 <ul>
-<li>Changed analyzeSGP so that it calculates plus/minus 1 standard error confidence bands on individual SGPs by default.</li>
+<li>Changed analyzeSGP so that it calculates plus/minus 1 standard error
+confidence bands on individual SGPs by default.</li>
 <li>Added bootstrap confidence intervals to summarizeSGP.</li>
 <li>Added West Virginia to stateData.</li>
 <li>Added Nevada knots and boundaries to stateData.</li>
-<li>studentGrowthPercentiles can now access CSEM by year from stateData if available.</li>
-<li>Consolidated timing messages in studentGrowthPercentiles and studentGrowthProjections at end of function.</li>
+<li>studentGrowthPercentiles can now access CSEM by year from stateData
+if available.</li>
+<li>Consolidated timing messages in studentGrowthPercentiles and
+studentGrowthProjections at end of function.</li>
 </ul>
 </div>
     <div id="sgp-00-80" class="section level1">
 <h1 class="hasAnchor">
 <a href="#sgp-00-80" class="anchor" aria-hidden="true"></a>SGP 0.0-8.0</h1>
 <ul>
-<li>Implemented more intelligent error handling for missing arguments in studentGrowthPercentiles and studentGrowthProjections passed from analyzeSGP.</li>
-<li>Change default argument for simulate.sgps in analyzeSGP to TRUE.</li>
+<li>Implemented more intelligent error handling for missing arguments in
+studentGrowthPercentiles and studentGrowthProjections passed from
+analyzeSGP.</li>
+<li>Change default argument for simulate.sgps in analyzeSGP to
+TRUE.</li>
 <li>Added Georgia and Nevada to stateData.</li>
-<li>combineSGP now creates CATCH_UP_KEEP_UP_STATUS and CATCH_UP_KEEP_UP_STATUS_INITIAL variables if requesting lagged projections.</li>
+<li>combineSGP now creates CATCH_UP_KEEP_UP_STATUS and
+CATCH_UP_KEEP_UP_STATUS_INITIAL variables if requesting lagged
+projections.</li>
 <li>Parallelized analyzeSGP using foreach.</li>
-<li>Fixed incorrect naming of percentile cuts in studentGrowthProjections function.</li>
+<li>Fixed incorrect naming of percentile cuts in
+studentGrowthProjections function.</li>
 <li>Achievement Level in sgpData_LONG is now an ORDERED factor.</li>
-<li>Corrected numerous bugs in studentGrowthProjections (Thanks to New Hampshire Department of Education/Deb Wiswell and Tim Kurtz) that led to incorrect catch-up/keep-up results.</li>
+<li>Corrected numerous bugs in studentGrowthProjections (Thanks to New
+Hampshire Department of Education/Deb Wiswell and Tim Kurtz) that led to
+incorrect catch-up/keep-up results.</li>
 </ul>
 </div>
     <div id="sgp-00-70" class="section level1">
 <h1 class="hasAnchor">
 <a href="#sgp-00-70" class="anchor" aria-hidden="true"></a>SGP 0.0-7.0</h1>
 <ul>
-<li>Changed LICENSE to Creative Commons CC BY-NC-SA 3.0 and CC BY-SA 3.0 for graphics producing and non-graphics producing functions, respectively.</li>
-<li>combineSGP now calculates SGP targets based upon catch-up/keep-up to proficient growth-to-standard recommendations.</li>
-<li>Cleaned up documentation for analyzeSGP, combineSGP, and summarizeSGP.</li>
-<li>Fixed numerous bugs in analyzeSGP, combineSGP, and summarizeSGP.</li>
-<li>Added Missouri, New York, Colorado, and Massachusetts CSEMs to stateData.</li>
-<li>Added two graphical functions bubblePlot and studentGrowthPlot to the package.</li>
-<li>Added fields to sgpData_LONG including IEP_STATUS, DISTRICT_NUMBER, DISTRICT_NAME, SCHOOL_ENROLLMENT_STATUS, DISTRICT_ENROLLMENT_STATUS, STATE_ENROLLMENT_STATUS to better reflect the structure of state data sets.</li>
+<li>Changed LICENSE to Creative Commons CC BY-NC-SA 3.0 and CC BY-SA 3.0
+for graphics producing and non-graphics producing functions,
+respectively.</li>
+<li>combineSGP now calculates SGP targets based upon catch-up/keep-up to
+proficient growth-to-standard recommendations.</li>
+<li>Cleaned up documentation for analyzeSGP, combineSGP, and
+summarizeSGP.</li>
+<li>Fixed numerous bugs in analyzeSGP, combineSGP, and
+summarizeSGP.</li>
+<li>Added Missouri, New York, Colorado, and Massachusetts CSEMs to
+stateData.</li>
+<li>Added two graphical functions bubblePlot and studentGrowthPlot to
+the package.</li>
+<li>Added fields to sgpData_LONG including IEP_STATUS, DISTRICT_NUMBER,
+DISTRICT_NAME, SCHOOL_ENROLLMENT_STATUS, DISTRICT_ENROLLMENT_STATUS,
+STATE_ENROLLMENT_STATUS to better reflect the structure of state data
+sets.</li>
 </ul>
 </div>
     <div id="sgp-00-69" class="section level1">
 <h1 class="hasAnchor">
 <a href="#sgp-00-69" class="anchor" aria-hidden="true"></a>SGP 0.0-6.9</h1>
 <ul>
-<li>Added additional argument to studentGrowthPercentiles, growth.levels, allowing user to get a variable indicating the level of growth based upon state or user specified cuts and labels.</li>
-<li>Changed my.grade argument in sgp.labels to my.extra.label to better reflect nature of argument. This argument is now available in use.my.knots.boundaries and use.my.coefficient.matrices in both the studentGrowthPercentiles and studentGrowthProjections functions.</li>
-<li>Changed output names of studentGrowthProjections results to better indicate GRADE.</li>
+<li>Added additional argument to studentGrowthPercentiles,
+growth.levels, allowing user to get a variable indicating the level of
+growth based upon state or user specified cuts and labels.</li>
+<li>Changed my.grade argument in sgp.labels to my.extra.label to better
+reflect nature of argument. This argument is now available in
+use.my.knots.boundaries and use.my.coefficient.matrices in both the
+studentGrowthPercentiles and studentGrowthProjections functions.</li>
+<li>Changed output names of studentGrowthProjections results to better
+indicate GRADE.</li>
 <li>Changed compression on stateData file to xz.</li>
-<li>Changed default values of projection.unit and projcut.digits in studentGrowthProjections to GRADE and 0, respectively.</li>
-<li>Added wrapper functions prepareSGP, analyzeSGP, combineSGP, and summarizeSGP to facilitate operational SGP analyses.</li>
-<li>use.my.knots.boundaries with studentGrowthProjections now allows state to be supplied.</li>
-<li>Added time elapsed to studentGrowthPercentiles and studentGrowthProjections print out.</li>
+<li>Changed default values of projection.unit and projcut.digits in
+studentGrowthProjections to GRADE and 0, respectively.</li>
+<li>Added wrapper functions prepareSGP, analyzeSGP, combineSGP, and
+summarizeSGP to facilitate operational SGP analyses.</li>
+<li>use.my.knots.boundaries with studentGrowthProjections now allows
+state to be supplied.</li>
+<li>Added time elapsed to studentGrowthPercentiles and
+studentGrowthProjections print out.</li>
 <li>Fixed bugs and updated documentation/examples.</li>
-<li>Added requirement to data.table depends for version &gt;= 1.5.3.</li>
-<li>Changed default of percentile.trajectory.values from 1:99 to NULL (which seemed much more sensible).</li>
+<li>Added requirement to data.table depends for version &gt;=
+1.5.3.</li>
+<li>Changed default of percentile.trajectory.values from 1:99 to NULL
+(which seemed much more sensible).</li>
 </ul>
 </div>
     <div id="sgp-00-68" class="section level1">
 <h1 class="hasAnchor">
 <a href="#sgp-00-68" class="anchor" aria-hidden="true"></a>SGP 0.0-6.8</h1>
 <ul>
-<li>Includes additional dummy data set, sgpData_LONG, to be used in upcoming operational examples.</li>
+<li>Includes additional dummy data set, sgpData_LONG, to be used in
+upcoming operational examples.</li>
 <li>Updated documentation.</li>
-<li>studentGrowthPercentiles outputs SGPs as integer instead of numeric.</li>
-<li>studentGrowthProjections outputs SGP cuts as integer instead of numeric.</li>
-<li>Fixed bug on how studentGrowthPercentiles handles panel.data supplied as a matrix.</li>
+<li>studentGrowthPercentiles outputs SGPs as integer instead of
+numeric.</li>
+<li>studentGrowthProjections outputs SGP cuts as integer instead of
+numeric.</li>
+<li>Fixed bug on how studentGrowthPercentiles handles panel.data
+supplied as a matrix.</li>
 </ul>
 </div>
     <div id="sgp-00-67" class="section level1">
 <h1 class="hasAnchor">
 <a href="#sgp-00-67" class="anchor" aria-hidden="true"></a>SGP 0.0-6.7</h1>
 <ul>
-<li>Added functionality to calculate confidence intervals (calculate.confidence.intervals) of student growth percentiles using CSEMs from state assessment data.</li>
-<li>Added argument print.sgp.order to request that the order of the student growth percentile be provided as well as the student growth percentile.</li>
-<li>Integrated data.table functionality into studentGrowthPercentiles function to significantly increase speed of some calculations.</li>
+<li>Added functionality to calculate confidence intervals
+(calculate.confidence.intervals) of student growth percentiles using
+CSEMs from state assessment data.</li>
+<li>Added argument print.sgp.order to request that the order of the
+student growth percentile be provided as well as the student growth
+percentile.</li>
+<li>Integrated data.table functionality into studentGrowthPercentiles
+function to significantly increase speed of some calculations.</li>
 <li>Removed INDEX file from package.</li>
-<li>studentGrowthPercentiles now converts all input scores to numeric.</li>
+<li>studentGrowthPercentiles now converts all input scores to
+numeric.</li>
 <li>Added data to stateData file.</li>
 </ul>
 </div>
@@ -1120,20 +1552,28 @@
 <h1 class="hasAnchor">
 <a href="#sgp-00-66" class="anchor" aria-hidden="true"></a>SGP 0.0-6.6</h1>
 <ul>
-<li>For use.my.knots.and.boundaries user can now supply a two letter state acronym to access embedded, baseline knots and boudaries compiled from work with states.</li>
-<li>Fixed goodness of fit printouts so that they show appropriate number of digits.</li>
+<li>For use.my.knots.and.boundaries user can now supply a two letter
+state acronym to access embedded, baseline knots and boudaries compiled
+from work with states.</li>
+<li>Fixed goodness of fit printouts so that they show appropriate number
+of digits.</li>
 <li>Fixed DESCRIPTION and eliminated NAMESPACE file.</li>
-<li>Added extensive documentation to stateData file and fixed typos.</li>
+<li>Added extensive documentation to stateData file and fixed
+typos.</li>
 <li>Updated documentation.</li>
-<li>Added date() to finishing message when studentGrowthPercentiles completes an analysis.</li>
-<li>Added exact.grade.progression option to studentGrowthPercentiles to accomodate rare situations where one wants the exact grade progression supplied to be run.</li>
+<li>Added date() to finishing message when studentGrowthPercentiles
+completes an analysis.</li>
+<li>Added exact.grade.progression option to studentGrowthPercentiles to
+accomodate rare situations where one wants the exact grade progression
+supplied to be run.</li>
 </ul>
 </div>
     <div id="sgp-00-65" class="section level1">
 <h1 class="hasAnchor">
 <a href="#sgp-00-65" class="anchor" aria-hidden="true"></a>SGP 0.0-6.5</h1>
 <ul>
-<li>Added my.grade to sgp.labels to accomodate situations where my.year and my.subject are not unique.</li>
+<li>Added my.grade to sgp.labels to accomodate situations where my.year
+and my.subject are not unique.</li>
 <li>Fixed bugs associated with use of data.tables.</li>
 <li>Changed license to GPL-3.</li>
 <li>Fixed bug associated with argument print.other.gp=TRUE.</li>
@@ -1143,15 +1583,18 @@
 <h1 class="hasAnchor">
 <a href="#sgp-00-64" class="anchor" aria-hidden="true"></a>SGP 0.0-6.4</h1>
 <ul>
-<li>Fixed bug associated with goodness-of-fit table production when no SGPs are requested.</li>
-<li>Fixed studentGrowthPercentiles function to work with character grade levels as well as numeric.</li>
+<li>Fixed bug associated with goodness-of-fit table production when no
+SGPs are requested.</li>
+<li>Fixed studentGrowthPercentiles function to work with character grade
+levels as well as numeric.</li>
 </ul>
 </div>
     <div id="sgp-00-63" class="section level1">
 <h1 class="hasAnchor">
 <a href="#sgp-00-63" class="anchor" aria-hidden="true"></a>SGP 0.0-6.3</h1>
 <ul>
-<li>Fixed issue with argument calculate.sgps in studentGrowthPercentile function.</li>
+<li>Fixed issue with argument calculate.sgps in studentGrowthPercentile
+function.</li>
 </ul>
 </div>
     <div id="sgp-00-62" class="section level1">
@@ -1166,33 +1609,72 @@
 <h1 class="hasAnchor">
 <a href="#sgp-00-61" class="anchor" aria-hidden="true"></a>SGP 0.0-6.1</h1>
 <ul>
-<li>Fixed scoping issue with data.table implementation in studentGrowthProjections.</li>
+<li>Fixed scoping issue with data.table implementation in
+studentGrowthProjections.</li>
 </ul>
 </div>
     <div id="sgp-00-6" class="section level1">
 <h1 class="hasAnchor">
 <a href="#sgp-00-6" class="anchor" aria-hidden="true"></a>SGP 0.0-6</h1>
 <ul>
-<li>studentGrowthPercentiles and studentGrowthProjections function now produce a list with results (Knot_Boundaries, Coefficient_Matrices, Goodness_of_Fit, SGPercentiles, SGProjections) embedded.</li>
-<li>studentGrowthPercentiles and studentGrowthProjections currently accept any number of panels and no longer limited to datasets of at most 8 panels.</li>
-<li>studentGrowthPercentiles now accepts argument panel.data.vnames allowing user to specify a subset of variables from supplied data for analysis.</li>
-<li>studentGrowthPercentiles now accepts argument grade.progression allowing user to specify a not necessarily consecutive grade progression to perform analyses.</li>
-<li>studentGrowthPercentiles now accepts argument use.my.coefficient.matrices allowing user to specify pre-calculated coefficient matrices for student growth percentile calculation.</li>
-<li>studentGrowthPercentiles now automatically calculates maximum number of priors unless when using the grade.progression argument.</li>
-<li>studentGrowthPercentiles can calculate student growth percentiles on panel data without any filtering on columns/fields.</li>
-<li>studentGrowthPercentiles now defaults to providing NO percentile cuts associated with each conditional distribution. The function used to provide 1st, 35th, 65th, and 99th percentile cuts.</li>
-<li>Knots_Boundaries now also includes a field for loss (lowest obtainable scale score) and hoss (highest obtainable scale score) named "loss.hoss".</li>
-<li>Boundaries that are automatically calculated by the function now extend 10 percent beyond the range to better accomodate scale extension over time. Previous was 1 percent.</li>
-<li>studentGrowthPercentiles now accepts boolean argument calculate.sgps controling whether function actually produces student growth percentiles (possibly just stopping after calculating coefficient matrices)</li>
-<li>studentGrowthPercentiles now accepts argument knot.percentile.cuts allowing user to specify the quantile cuts used for knot calculation. Defaults to c(0.2,0.4,0.6,0.8).</li>
-<li>studentGrowthPercentiles now accepts argument sgp.quantiles allowing user to specify the quantiles used for studentGrowthPercentile calculations (i.e., not always percentiles)</li>
-<li>studentGrowthProjections projects out an arbitrary number of grades/years/time periods.</li>
-<li>studentGrowthProjections no longer accepts argument num.panels, num.prior.scores, max.num.scores and instead uses the arguments grade.progression and max.forward.progressionand tries to internally select maximum order possible for a students percentile.growth projection/trajectory.</li>
-<li>studentGrowthProjections now accepts argument performance.level.cutscores that can utilize state assessment cutscores available within the SGP package.</li>
-<li>studentGrowthProjections now accepts argument projection.unit that allows percentile growth projections/trajectories to be displayed in terms of either GRADE or YEAR.</li>
-<li>Embedded goodness_of_fit plots are Grid grobs (Grid graphical objects) that can be printed as PDFs (see help for code to produce PDFs of goodness.of.fit plots).</li>
-<li>sgpData, the included longitudinal student assessment data file, has been expanded to 5 panels to better illustrate SGP functionality.</li>
-<li>Includes list stateData to provide state specific information for analyses and reporting. stateData currently includes only performance level cutscores.</li>
+<li>studentGrowthPercentiles and studentGrowthProjections function now
+produce a list with results (Knot_Boundaries, Coefficient_Matrices,
+Goodness_of_Fit, SGPercentiles, SGProjections) embedded.</li>
+<li>studentGrowthPercentiles and studentGrowthProjections currently
+accept any number of panels and no longer limited to datasets of at most
+8 panels.</li>
+<li>studentGrowthPercentiles now accepts argument panel.data.vnames
+allowing user to specify a subset of variables from supplied data for
+analysis.</li>
+<li>studentGrowthPercentiles now accepts argument grade.progression
+allowing user to specify a not necessarily consecutive grade progression
+to perform analyses.</li>
+<li>studentGrowthPercentiles now accepts argument
+use.my.coefficient.matrices allowing user to specify pre-calculated
+coefficient matrices for student growth percentile calculation.</li>
+<li>studentGrowthPercentiles now automatically calculates maximum number
+of priors unless when using the grade.progression argument.</li>
+<li>studentGrowthPercentiles can calculate student growth percentiles on
+panel data without any filtering on columns/fields.</li>
+<li>studentGrowthPercentiles now defaults to providing NO percentile
+cuts associated with each conditional distribution. The function used to
+provide 1st, 35th, 65th, and 99th percentile cuts.</li>
+<li>Knots_Boundaries now also includes a field for loss (lowest
+obtainable scale score) and hoss (highest obtainable scale score) named
+"loss.hoss".</li>
+<li>Boundaries that are automatically calculated by the function now
+extend 10 percent beyond the range to better accomodate scale extension
+over time. Previous was 1 percent.</li>
+<li>studentGrowthPercentiles now accepts boolean argument calculate.sgps
+controling whether function actually produces student growth percentiles
+(possibly just stopping after calculating coefficient matrices)</li>
+<li>studentGrowthPercentiles now accepts argument knot.percentile.cuts
+allowing user to specify the quantile cuts used for knot calculation.
+Defaults to c(0.2,0.4,0.6,0.8).</li>
+<li>studentGrowthPercentiles now accepts argument sgp.quantiles allowing
+user to specify the quantiles used for studentGrowthPercentile
+calculations (i.e., not always percentiles)</li>
+<li>studentGrowthProjections projects out an arbitrary number of
+grades/years/time periods.</li>
+<li>studentGrowthProjections no longer accepts argument num.panels,
+num.prior.scores, max.num.scores and instead uses the arguments
+grade.progression and max.forward.progressionand tries to internally
+select maximum order possible for a students percentile.growth
+projection/trajectory.</li>
+<li>studentGrowthProjections now accepts argument
+performance.level.cutscores that can utilize state assessment cutscores
+available within the SGP package.</li>
+<li>studentGrowthProjections now accepts argument projection.unit that
+allows percentile growth projections/trajectories to be displayed in
+terms of either GRADE or YEAR.</li>
+<li>Embedded goodness_of_fit plots are Grid grobs (Grid graphical
+objects) that can be printed as PDFs (see help for code to produce PDFs
+of goodness.of.fit plots).</li>
+<li>sgpData, the included longitudinal student assessment data file, has
+been expanded to 5 panels to better illustrate SGP functionality.</li>
+<li>Includes list stateData to provide state specific information for
+analyses and reporting. stateData currently includes only performance
+level cutscores.</li>
 <li>Updated help file to reflect changes in functions.</li>
 </ul>
 </div>
@@ -1208,21 +1690,29 @@
 <h1 class="hasAnchor">
 <a href="#sgp-00-4" class="anchor" aria-hidden="true"></a>SGP 0.0-4</h1>
 <ul>
-<li>Added LICENSE file including details on the Creative Commons Attribution-Noncommercial-Share Alike 3.0 United State License.</li>
-<li>Added Goodness-of-fit argument/option/capability to studentGrowthPercentiles function.</li>
+<li>Added LICENSE file including details on the Creative Commons
+Attribution-Noncommercial-Share Alike 3.0 United State License.</li>
+<li>Added Goodness-of-fit argument/option/capability to
+studentGrowthPercentiles function.</li>
 <li>Incorporated vignette.</li>
 <li>Cleaned up documentation.</li>
-<li>Increased percentile growth trajectory/projection to four years from three.</li>
-<li>Fixed minor bugs in studentGrowthProjections (Thanks to Bob Lee for finding these).</li>
+<li>Increased percentile growth trajectory/projection to four years from
+three.</li>
+<li>Fixed minor bugs in studentGrowthProjections (Thanks to Bob Lee for
+finding these).</li>
 </ul>
 </div>
     <div id="sgp-00-3" class="section level1">
 <h1 class="hasAnchor">
 <a href="#sgp-00-3" class="anchor" aria-hidden="true"></a>SGP 0.0-3</h1>
 <ul>
-<li>Included option/argument in studentGrowthPercentiles function to avoid quantile crossing based upon Dette &amp; Volgushev (2008)</li>
+<li>Included option/argument in studentGrowthPercentiles function to
+avoid quantile crossing based upon Dette &amp; Volgushev (2008)</li>
 <li>Cleaned up minor errors in documentation.</li>
-<li>Added optional argument, convert.using.loss.hoss, to studentGrowthPercentiles to convert percentile cuts extended below/above the lowest obtainable scale score/highest obtainable scale score (loss/hoss) to the loss/hoss (defaults to TRUE).</li>
+<li>Added optional argument, convert.using.loss.hoss, to
+studentGrowthPercentiles to convert percentile cuts extended below/above
+the lowest obtainable scale score/highest obtainable scale score
+(loss/hoss) to the loss/hoss (defaults to TRUE).</li>
 </ul>
 </div>
     <div id="sgp-00-2" class="section level1">
@@ -1230,12 +1720,21 @@
 <a href="#sgp-00-2" class="anchor" aria-hidden="true"></a>SGP 0.0-2</h1>
 <ul>
 <li>Updated Contributors.</li>
-<li>Changed rounding of percentile cuts used for growth percentile calculation to 5 decimal places.</li>
-<li>Changed rounding of automatically produced B-spline knots to 2 decimal places.</li>
+<li>Changed rounding of percentile cuts used for growth percentile
+calculation to 5 decimal places.</li>
+<li>Changed rounding of automatically produced B-spline knots to 2
+decimal places.</li>
 <li>Extended range of automatically produced B-spline boundaries.</li>
-<li>Added optional argument, percuts.digits, to studentGrowthPercentiles to allow specification of rounding digits for growth percentile cuts (defaults to 2).</li>
-<li>Added optional argument, percentile.trajectories, to studentGrowthProjections allowing the function to return 1, 2, and 3 year student percentile trajectories based upon supplied percentile values (defaults to 10th, 35th, 50th, 65th, and 90th).</li>
-<li>Added optional argument, projcuts.digits, to studentGrowthProjections to allow specification of rounding digits for percentile trajectory cuts (defaults to 2).</li>
+<li>Added optional argument, percuts.digits, to studentGrowthPercentiles
+to allow specification of rounding digits for growth percentile cuts
+(defaults to 2).</li>
+<li>Added optional argument, percentile.trajectories, to
+studentGrowthProjections allowing the function to return 1, 2, and 3
+year student percentile trajectories based upon supplied percentile
+values (defaults to 10th, 35th, 50th, 65th, and 90th).</li>
+<li>Added optional argument, projcuts.digits, to
+studentGrowthProjections to allow specification of rounding digits for
+percentile trajectory cuts (defaults to 2).</li>
 </ul>
 </div>
     <div id="sgp-00-1" class="section level1">
@@ -1332,14 +1831,13 @@
   <p>Developed & Maintained by <a href='https://github.com/dbetebenner'><img class='img-author' src='https://centerforassessment.github.io/assets/dbetebenner.png' height='20' /> Damian W. Betebenner</a>, <a href='https://github.com/adamvi'><img class='img-author' src='https://centerforassessment.github.io/assets/adamvi.png' height='20' /> Adam R. Van Iwaarden</a>, <a href='https://github.com/ben-domingue'><img class='img-author' src='https://avatars2.githubusercontent.com/u/1353244' height='20' /> Ben Domingue</a> & <a href='https://github.com/shangy'><img class='img-author' src='https://avatars0.githubusercontent.com/u/1530616' height='20' /> Yi Shang</a>.</p>
 </div>
 
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-10JFLJTXNE"></script>
 <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
-  ga('create', 'UA-98997021-1', 'auto');
-  ga('send', 'pageview');
+  gtag('config', 'G-10JFLJTXNE');
 </script>
       </footer>
    </div>

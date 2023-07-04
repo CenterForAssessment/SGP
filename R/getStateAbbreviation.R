@@ -75,6 +75,7 @@ MA, Massachusetts
 MA_ORIGINAL, Massachusetts
 NCSC_SD, NCSC SD
 NJ_ORIGINAL, New Jersey
+NM_MSR, New Mexico
 PARCC, PARCC
 RI_ORIGINAL, Rhode Island
 RLI_UK, RLI UK

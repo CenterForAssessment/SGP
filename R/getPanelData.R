@@ -9,7 +9,7 @@ function(sgp.data,
 	fix.duplicates=NULL) {
 
 	YEAR <- CONTENT_AREA <- VALID_CASE <- V3 <- V5 <- ID <- GRADE <- SCALE_SCORE <-
-	YEAR_WITHIN <- tmp.timevar <- FIRST_OBSERVATION <- LAST_OBSERVATION <- 
+	YEAR_WITHIN <- tmp.timevar <- FIRST_OBSERVATION <- LAST_OBSERVATION <-
 	ACHIEVEMENT_LEVEL <- DATE <- SGP_PROJECTION_GROUP_SCALE_SCORES <- DUPS_FLAG <- NULL
 
 	arrow.tf <- is(sgp.data, "ArrowObject") | is(sgp.data, "arrow_dplyr_query")
@@ -41,7 +41,7 @@ function(sgp.data,
                 # tmp.exclude.ids <- NULL
                 # for (y in seq.int(nrow(tmp.exclude.lookup))) {
                 #     tmp.exclude.ids <-
-                #         c(tmp.exclude.ids, 
+                #         c(tmp.exclude.ids,
                 #           sgp.data |>
                 #             dplyr::filter(
                 #                 VALID_CASE == "VALID_CASE",
@@ -60,12 +60,12 @@ function(sgp.data,
             tmp.lookup <-
                 data.table(
                     VALID_CASE = "VALID_CASE",
-                    CONTENT_AREA = 
+                    CONTENT_AREA =
                       tail(sgp.iter[["sgp.content.areas"]], length(sgp.iter[["sgp.grade.sequences"]])),
-                    YEAR = 
+                    YEAR =
                       tail(sgp.iter[["sgp.panel.years"]], length(sgp.iter[["sgp.grade.sequences"]])),
                     GRADE = sgp.iter[["sgp.grade.sequences"]],
-                    YW = 
+                    YW =
                       tail(sgp.iter[["sgp.panel.years.within"]], length(sgp.iter[["sgp.grade.sequences"]])),
                     FIRST_OBSERVATION = as.integer(NA),
                     LAST_OBSERVATION = as.integer(NA)
@@ -151,7 +151,7 @@ function(sgp.data,
                     data.table::as.data.table() |>
                     data.table::setkeyv(getKey(sgp.data))
                     # |> # future dev - deeper integration of `arrow` into lower-lev functions
-                    #     arrow::arrow_table() 
+                    #     arrow::arrow_table()
 
 
 				if (is.character(fix.duplicates)) {
@@ -245,7 +245,7 @@ function(sgp.data,
 			for (i in unique(sgp.iter[["sgp.panel.years.within"]])) {
                 if (arrow.tf) {
                     tmp.lookup.i <- arrow::arrow_table(tmp.lookup[get(i)==1])
-                    
+
                     tmp.vars.to.get <-
                         c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", "YEAR_WITHIN",
                           "ID", "SCALE_SCORE", i, sgp.scale.score.equated)
@@ -287,7 +287,7 @@ function(sgp.data,
 							tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL]
 						}
 					}
-				}																																																
+				}
 				return(tmp.data)
 			} else {
 				tmp.data <- ddcast(rbindlist(tmp.lookup.list),
@@ -505,7 +505,7 @@ function(sgp.data,
 			tmp.lookup <-
 			    data.table(
 					V1 = "VALID_CASE",
-					tail(sgp.iter[[sgp.projection.content.areas.label]], 
+					tail(sgp.iter[[sgp.projection.content.areas.label]],
 						length(sgp.iter[[sgp.projection.grade.sequences.label]])),
 					head(sgp.iter[["sgp.panel.years"]],
 						length(sgp.iter[[sgp.projection.grade.sequences.label]])),
@@ -551,30 +551,22 @@ function(sgp.data,
 
 			achievement.level.prior.vname <- paste("ACHIEVEMENT_LEVEL", tail(head(sgp.iter[["sgp.panel.years"]], -1L), 1L), tail(head(sgp.iter[["sgp.content.areas"]], -1L), 1L), sep=".")
 			if (is.null(sgp.targets)) {
-				tmp.data <-
-				    ddcast(
-						rbindlist(tmp.lookup.list),
-						ID ~ tmp.timevar,
-						value.var = 
-						    c("GRADE", "SCALE_SCORE", "ACHIEVEMENT_LEVEL", "YEAR_WITHIN", state, sgp.scale.score.equated, SGPt),
-						sep="."
-					)
-				setnames(tmp.data,
-				    names(tmp.data)[grep(achievement.level.prior.vname, names(tmp.data))],
-					achievement.level.prior.vname
-				)
-				setnames(tmp.data,
-				    tail(sort(grep("YEAR_WITHIN", names(tmp.data), value=TRUE)), 1L),
-					"YEAR_WITHIN"
-				)
-				if (length(setdiff(grep("YEAR_WITHIN", names(tmp.data), value=TRUE), "YEAR_WITHIN")) > 0L) {
-					tmp.data[,setdiff(grep("YEAR_WITHIN", names(tmp.data), value=TRUE), "YEAR_WITHIN"):=NULL]
-				}
+				tmp.data <- ddcast(rbindlist(tmp.lookup.list),
+					ID ~ tmp.timevar, value.var=c("GRADE", "SCALE_SCORE", "ACHIEVEMENT_LEVEL", "YEAR_WITHIN", state, sgp.scale.score.equated, SGPt), sep=".")
 
-				if ("STATE" %in% var.names && dim(tmp.data)[1L]!=0L) {
-					setnames(tmp.data, tail(sort(grep("STATE", names(tmp.data), value=TRUE)), 1L), "STATE")
-					if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0L) {
-						tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL]
+				if (dim(tmp.data)[1] > 0) {
+					setnames(tmp.data, names(tmp.data)[grep(achievement.level.prior.vname, names(tmp.data))], achievement.level.prior.vname)
+					setnames(tmp.data, tail(sort(grep("YEAR_WITHIN", names(tmp.data), value=TRUE)), 1L), "YEAR_WITHIN")
+
+					if (length(setdiff(grep("YEAR_WITHIN", names(tmp.data), value=TRUE), "YEAR_WITHIN")) > 0L) {
+						tmp.data[,setdiff(grep("YEAR_WITHIN", names(tmp.data), value=TRUE), "YEAR_WITHIN"):=NULL]
+					}
+
+					if ("STATE" %in% var.names && dim(tmp.data)[1L]!=0L) {
+						setnames(tmp.data, tail(sort(grep("STATE", names(tmp.data), value=TRUE)), 1L), "STATE")
+						if (length(setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE")) > 0L) {
+							tmp.data[,setdiff(grep("STATE", names(tmp.data), value=TRUE), "STATE"):=NULL]
+						}
 					}
 				}
 				return(tmp.data)
@@ -633,7 +625,7 @@ function(sgp.data,
                             GRADE == tail(sgp.iter[["sgp.grade.sequences"]], 1L)
                         )  |>
                         dplyr::select(ID)
-                    
+
                     tmp.vars.to.get <- c(getKey(sgp.data), "SCALE_SCORE", "ACHIEVEMENT_LEVEL")
 
                     tmp.data <- sgp.data |>
@@ -705,7 +697,7 @@ function(sgp.data,
 				return(tmp.data)
 			} else {  ###  END is.null(sgp.targets)
                 if (arrow.tf) {
-                    prior_lookup <- 
+                    prior_lookup <-
                         arrow::arrow_table(
                             VALID_CASE = "VALID_CASE",
                             CONTENT_AREA = sgp.iter[[sgp.projection.content.areas.label]],
@@ -729,7 +721,7 @@ function(sgp.data,
                             GRADE == tail(sgp.iter[["sgp.grade.sequences"]], 1L)
                         )  |>
                         dplyr::select(ID)
-                    
+
                     tmp.vars.to.get <- c(getKey(sgp.data), "SCALE_SCORE", "ACHIEVEMENT_LEVEL")
 
                     tmp.data <- sgp.data |>

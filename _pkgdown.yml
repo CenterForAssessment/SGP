@@ -27,6 +27,10 @@ navbar:
     - text: News
       menu:
       - text: "Release notes"
+      - text: "SGP 2.1-0.0"
+        href: articles/releases/SGP-2.1-0.0.html
+      - text: "SGP 2.0-0.0"
+        href: articles/releases/SGP-2.0-0.0.html
       - text: "SGP 1.9-5.0"
         href: articles/releases/SGP-1.9-5.0.html
       - text: "SGP 1.9-0.0"
