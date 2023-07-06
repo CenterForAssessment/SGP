@@ -40,14 +40,18 @@ function(sgp_object,
 					tmp.list[[i]] <- getPreferredSGP(tmp.list[[i]], state=state, type="TARGET")
 				}
 			}
-			tmp.dt <- rbindlist(tmp.list[grep("LAGGED", tmp.names)], fill=TRUE)
-			tmp.index <- slot.data[tmp.dt[, getKey(slot.data), with=FALSE], which=TRUE, on=getKey(slot.data)]
-			tmp.cols <- grep("YEAR_1", names(tmp.dt), value=TRUE)
-			invisible(slot.data[tmp.index, (tmp.cols):=tmp.dt[,tmp.cols, with=FALSE]])
-			tmp.dt <- rbindlist(tmp.list[grep("LAGGED", tmp.names, invert=TRUE)], fill=TRUE)
-			tmp.index <- slot.data[tmp.dt[, getKey(slot.data), with=FALSE], which=TRUE, on=getKey(slot.data)]
-			tmp.cols <- grep("YEAR_1_CURRENT", names(tmp.dt), value=TRUE)
-			invisible(slot.data[tmp.index, (tmp.cols):=tmp.dt[,tmp.cols, with=FALSE]])
+			if (length(grep("LAGGED", tmp.names)) > 0) {
+				tmp.dt <- rbindlist(tmp.list[grep("LAGGED", tmp.names)], fill=TRUE)
+				tmp.index <- slot.data[tmp.dt[, getKey(slot.data), with=FALSE], which=TRUE, on=getKey(slot.data)]
+				tmp.cols <- grep("YEAR_1", names(tmp.dt), value=TRUE)
+				invisible(slot.data[tmp.index, (tmp.cols):=tmp.dt[,tmp.cols, with=FALSE]])
+			}
+			if (length(grep("LAGGED", tmp.names, invert=TRUE)) > 0) {
+				tmp.dt <- rbindlist(tmp.list[grep("LAGGED", tmp.names, invert=TRUE)], fill=TRUE)
+				tmp.index <- slot.data[tmp.dt[, getKey(slot.data), with=FALSE], which=TRUE, on=getKey(slot.data)]
+				tmp.cols <- grep("YEAR_1_CURRENT", names(tmp.dt), value=TRUE)
+				invisible(slot.data[tmp.index, (tmp.cols):=tmp.dt[,tmp.cols, with=FALSE]])
+			}
 		}
 		if (identical(sgp.target.scale.scores.merge, "all_years_lagged_current")) {
 			tmp.names <- unique(c(grep(paste(years, "TARGET_SCALE_SCORES", sep=".", collapse="|"), names(sgp_object@SGP$SGProjections), value=TRUE),
@@ -64,14 +68,18 @@ function(sgp_object,
 					tmp.list[[i]] <- getPreferredSGP(tmp.list[[i]], state=state, type="TARGET")
 				}
 			}
-			tmp.dt <- rbindlist(tmp.list[grep("LAGGED", tmp.names)], fill=TRUE)
-			tmp.index <- slot.data[tmp.dt[, getKey(slot.data), with=FALSE], which=TRUE, on=getKey(slot.data)]
-			tmp.cols <- setdiff(names(tmp.dt), c("ID", "GRADE", "SGP_PROJECTION_GROUP", "SGP_PROJECTION_GROUP_SCALE_SCORES"))
-			invisible(slot.data[tmp.index, (tmp.cols):=tmp.dt[,tmp.cols, with=FALSE]])
-			tmp.dt <- rbindlist(tmp.list[grep("LAGGED", tmp.names, invert=TRUE)], fill=TRUE)
-			tmp.index <- slot.data[tmp.dt[, getKey(slot.data), with=FALSE], which=TRUE, on=getKey(slot.data)]
-			tmp.cols <- setdiff(names(tmp.dt), c("ID", "GRADE", "SGP_PROJECTION_GROUP", "SGP_PROJECTION_GROUP_SCALE_SCORES"))
-			invisible(slot.data[tmp.index, (tmp.cols):=tmp.dt[,tmp.cols, with=FALSE]])
+			if (length(grep("LAGGED", tmp.names)) > 0) {
+				tmp.dt <- rbindlist(tmp.list[grep("LAGGED", tmp.names)], fill=TRUE)
+				tmp.index <- slot.data[tmp.dt[, getKey(slot.data), with=FALSE], which=TRUE, on=getKey(slot.data)]
+				tmp.cols <- setdiff(names(tmp.dt), c("ID", "GRADE", "SGP_PROJECTION_GROUP", "SGP_PROJECTION_GROUP_SCALE_SCORES"))
+				invisible(slot.data[tmp.index, (tmp.cols):=tmp.dt[,tmp.cols, with=FALSE]])
+			}
+			if (length(grep("LAGGED", tmp.names, invert=TRUE)) > 0) {
+				tmp.dt <- rbindlist(tmp.list[grep("LAGGED", tmp.names, invert=TRUE)], fill=TRUE)
+				tmp.index <- slot.data[tmp.dt[, getKey(slot.data), with=FALSE], which=TRUE, on=getKey(slot.data)]
+				tmp.cols <- setdiff(names(tmp.dt), c("ID", "GRADE", "SGP_PROJECTION_GROUP", "SGP_PROJECTION_GROUP_SCALE_SCORES"))
+				invisible(slot.data[tmp.index, (tmp.cols):=tmp.dt[,tmp.cols, with=FALSE]])
+			}
 		}
 		return(slot.data)
 } ### END mergeScaleScoreTarget
