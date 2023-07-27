@@ -143,6 +143,12 @@ function(x,
 } ### END mean_na function
 
 
+`mean_nan` <-
+function(x) {
+	if (all(is.na(x))) return(as.numeric(NA)) else return(mean(x, na.rm=TRUE))
+} ### END mean_nan function
+
+
 `sd_na` <- function(x, result.digits=2L) round(sd(as.numeric(x), na.rm=TRUE), digits=result.digits)
 
 

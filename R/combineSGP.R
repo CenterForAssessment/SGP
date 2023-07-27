@@ -473,7 +473,7 @@ function(
 							invisible(slot.data[, paste0("SCALE_SCORE_PRIOR_", tmp.prior-1L) := as.numeric(sapply(tmp.split, function(x) rev(x)[tmp.prior]))])
 				}}}
 
-				tmp.data <- getTargetSGP(sgp_object, slot.data, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward, fix.duplicates=fix.duplicates, return.sgp.target.num.years=return.sgp.target.num.years)
+				tmp.data <- getTargetSGP(sgp_object, slot.data, content_areas, state, years, target.type.iter, target.level.iter, 0L, max.sgp.target.years.forward, fix.duplicates=fix.duplicates, return.sgp.target.num.years=return.sgp.target.num.years)
 
 				if (dim(tmp.data)[1] > 0) {
 					if (!is.null(fix.duplicates)) dup.by <- c(key(tmp.data), grep("SCALE_SCORE$|SCALE_SCORE_PRIOR", names(tmp.data), value=TRUE)) else dup.by <- key(tmp.data)
@@ -661,7 +661,7 @@ function(
 		for (target.type.iter in target.args[['sgp.target.scale.scores.types']]) {
 			for (target.level.iter in target.args[['target.level']]) {
 				tmp.target.list[[paste(target.type.iter, target.level.iter)]] <-
-					data.table(getTargetSGP(sgp_object, slot.data, content_areas, state, years, target.type.iter, target.level.iter, max.sgp.target.years.forward, return.lagged.status=FALSE, fix.duplicates=fix.duplicates),
+					data.table(getTargetSGP(sgp_object, slot.data, content_areas, state, years, target.type.iter, target.level.iter, -1L, max.sgp.target.years.forward, return.lagged.status=FALSE, fix.duplicates=fix.duplicates, return.sgp.target.num.years=TRUE),
 						key=c(getKey(sgp_object), "SGP_PROJECTION_GROUP"))
 			}
 		}
@@ -677,14 +677,16 @@ function(
 
 		for (projection_group.iter in unique(tmp.target.data[['SGP_PROJECTION_GROUP']])) {
 			for (target.type.iter in target.args[['sgp.target.scale.scores.types']]) {
+#				if (target.type.iter %in% c("sgp.projections.lagged", "sgp.projections.lagged.baseline")) lag.shift <- -1L else lag.shift <- 0L
+#				for (target.years.iter in max.sgp.target.years.forward + lag.shift) {
 				for (target.years.iter in max.sgp.target.years.forward) {
-					tmp.target.level.names <-
-						as.character(sapply(target.args[['target.level']], function(x) getTargetName(state, target.type.iter, x, target.years.iter, "SGP_TARGET", projection.unit.label, projection_group.iter)))
+					tmp.target.level.names <- as.character(sapply(target.args[['target.level']], function(x) getTargetName(state, target.type.iter, x, target.years.iter, "SGP_TARGET", projection.unit.label, projection_group.iter)))
 					if (any(!tmp.target.level.names %in% names(tmp.target.data))) {
 						tmp.target.data[,tmp.target.level.names[!tmp.target.level.names %in% names(tmp.target.data)]:=as.integer(NA)]
 					}
+					tmp.target.level.names.years.to.target <- paste(tmp.target.level.names, "NUM_YEARS_TO_TARGET", sep="_")
 
-					targetData <- getTargetData(tmp.target.data, projection_group.iter, tmp.target.level.names)
+					targetData <- getTargetData(tmp.target.data, projection_group.iter, c(tmp.target.level.names, tmp.target.level.names.years.to.target))
 
 					if (dim(targetData)[1] > 0) {
 						sgp_object <- getTargetScaleScore(
@@ -693,6 +695,7 @@ function(
 							targetData,
 							target.type.iter,
 							tmp.target.level.names,
+							tmp.target.level.names.years.to.target,
 							getYearsContentAreasGrades(state, years=unique(tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter], by='YEAR')[['YEAR']], content_areas=unique(tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter], by='CONTENT_AREA')[['CONTENT_AREA']]),
 							sgp.config=sgp.config,
 							projection_group.identifier=projection_group.iter,
@@ -706,7 +709,7 @@ function(
 		}
 		if (length(max.sgp.target.years.forward) > 1) {
 			for (names.iter in grep("TARGET_SCALE_SCORES", names(sgp_object@SGP$SGProjections), value=TRUE)) {
-				sgp_object@SGP$SGProjections[[names.iter]] <- sgp_object@SGP$SGProjections[[names.iter]][,lapply(.SD, mean, na.rm=TRUE), by=c("ID", "GRADE", "SGP_PROJECTION_GROUP", "SGP_PROJECTION_GROUP_SCALE_SCORES")]
+				sgp_object@SGP$SGProjections[[names.iter]] <- sgp_object@SGP$SGProjections[[names.iter]][,lapply(.SD, mean_nan), by=c("ID", "GRADE", "SGP_PROJECTION_GROUP", "SGP_PROJECTION_GROUP_SCALE_SCORES")]
 			}
 		}
 		if (!identical(sgp.target.scale.scores.merge, FALSE)) {
