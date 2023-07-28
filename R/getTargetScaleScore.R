@@ -74,7 +74,7 @@ function(sgp_object,
 	if (target.type=="sgp.projections.lagged") {
 		my.extra.label <- "LAGGED.TARGET_SCALE_SCORES"
 		baseline.tf <- FALSE
-		lag.increment <- 0L
+		lag.increment <- 1L
 		lag.increment.label <- ""
 		my.target.type <- "sgp.projections.lagged"
 		my.content.areas <- "sgp.projection.content.areas"
@@ -86,7 +86,7 @@ function(sgp_object,
 	if (target.type=="sgp.projections.lagged.baseline") {
 		my.extra.label <- "LAGGED.BASELINE.TARGET_SCALE_SCORES"
 		baseline.tf <- TRUE
-		lag.increment <- 0L
+		lag.increment <- 1L
 		lag.increment.label <- ""
 		my.target.type <- "sgp.projections.lagged.baseline"
 		my.content.areas <- "sgp.projection.baseline.content.areas"
@@ -315,7 +315,7 @@ function(sgp_object,
 					year_lags.progression=sgp.iter[[my.panel.years.lags]],
 					max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[["sgp.panel.years"]], 1L), tail(sgp.iter[[my.content.areas]], 1L), state,
 						sgp.projections.equated),
-					lag.increment=lag.increment,
+					lag.increment=1L,
 					lag.increment.label=lag.increment.label,
 					grade.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
 					content_area.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
