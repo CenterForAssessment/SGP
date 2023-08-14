@@ -681,11 +681,11 @@ function(
 		for (projection_group.iter in unique(tmp.target.data[['SGP_PROJECTION_GROUP']])) {
 			for (target.type.iter in target.args[['sgp.target.scale.scores.types']]) {
 				if (target.type.iter %in% c("sgp.projections.lagged", "sgp.projections.lagged.baseline")) {
-					max.sgp.target.years.forward <- max.sgp.target.years.forward + 1L
-					if (current.year.lagged.target) max.sgp.target.years.forward <- c(1, max.sgp.target.years.forward)
-					max.sgp.target.years.forward <- max.sgp.target.years.forward - 1L 
-				} 
-				for (target.years.iter in max.sgp.target.years.forward) {
+					max.sgp.target.years.forward.tmp <- max.sgp.target.years.forward + 1L
+					if (current.year.lagged.target) max.sgp.target.years.forward.tmp <- c(1, max.sgp.target.years.forward.tmp)
+					max.sgp.target.years.forward.tmp <- max.sgp.target.years.forward.tmp - 1L 
+				} else max.sgp.target.years.forward.tmp <- max.sgp.target.years.forward
+				for (target.years.iter in max.sgp.target.years.forward.tmp) {
 					tmp.target.level.names <- as.character(sapply(target.args[['target.level']], function(x) getTargetName(state, target.type.iter, x, target.years.iter, "SGP_TARGET", projection.unit.label, projection_group.iter)))
 					if (any(!tmp.target.level.names %in% names(tmp.target.data))) {
 						tmp.target.data[,tmp.target.level.names[!tmp.target.level.names %in% names(tmp.target.data)]:=as.integer(NA)]
