@@ -22,12 +22,14 @@ function(panel.data,	## REQUIRED
 	projection.unit="YEAR",
 	projection.unit.label=NULL,
 	percentile.trajectory.values=NULL,
+	percentile.trajectory.values.max.forward.progression.years=NULL,
 	return.percentile.trajectory.values=NULL,
 	return.projection.group.identifier=NULL,
 	return.projection.group.scale.scores=NULL,
 	return.projection.group.dates=NULL,
 	isotonize=TRUE,
 	lag.increment=0L,
+	lag.increment.label=NULL,
 	sgp.exact.grade.progression=FALSE,
 	projcuts.digits=NULL,
 	sgp.projections.use.only.complete.matrices=NULL,
@@ -336,7 +338,15 @@ function(panel.data,	## REQUIRED
 	}
 
 	.get.trajectories.and.cuts <- function(percentile.trajectories, trajectories.tf, cuts.tf, projection.unit=projection.unit) {
-		CUT <- STATE <- NULL
+		CUT <- STATE <- YEAR <- NULL
+
+		trimTrajectories <- function(trajectories) {
+			tmp.ss.names <- grep("SS", names(trajectories), value=TRUE)
+			for (tmp.iter in head(seq_along(tmp.ss.names), -1)) {
+				trajectories[YEAR<=tmp.iter, eval(tmp.ss.names[tmp.iter+1]):=NA]
+			}
+			return(trajectories[,YEAR:=NULL])
+		}
 
 		if (!is.null(SGPt)) {
 			content_area.projection.sequence <- c(tail(content_area.progression, 1L), content_area.projection.sequence)
@@ -364,6 +374,8 @@ function(panel.data,	## REQUIRED
 					each=length(percentile.trajectory.values)) + c(t(as.matrix(data.table(panel.data[["Panel_Data"]],
 					key="ID")[list(unique(percentile.trajectories, by='ID')[['ID']])][,percentile.trajectory.values, with=FALSE]))))
 				tmp.traj <- percentile.trajectories[tmp.indices, 1L:(2L+tmp.num.years.forward-1L), with=FALSE][,ID:=rep(unique(percentile.trajectories, by='ID')[['ID']], each=length(percentile.trajectory.values))]
+				if (is.character(percentile.trajectory.values.max.forward.progression.years) && length(percentile.trajectory.values.max.forward.progression.years)==1L) tmp.traj <- trimTrajectories(tmp.traj[, YEAR:=panel.data[['Panel_Data']][[percentile.trajectory.values.max.forward.progression.years]]])
+
 				if (tmp.num.years.forward==1L) {
 					tmp.target.name <- tail(names(tmp.traj), 1L)
 					if ("STATE" %in% names(panel.data[["Panel_Data"]])) {
@@ -656,7 +668,11 @@ function(panel.data,	## REQUIRED
 		}
 	}
 
-	if (lag.increment==0) lag.increment.label <- "_CURRENT" else lag.increment.label <- ""
+	if (!is.null(lag.increment.label)) {
+		lag.increment.label <- lag.increment.label
+	} else {
+		if (lag.increment==0) lag.increment.label <- "_CURRENT" else lag.increment.label <- ""
+	}
 
 	if (!is.null(grade.projection.sequence) & !is.null(content_area.projection.sequence) && length(grade.projection.sequence) != length(content_area.projection.sequence)) {
 		stop("\t\tNOTE: Supplied 'grade.projection.sequence' and 'content_area.projection.sequence' must be of the same length.\n")

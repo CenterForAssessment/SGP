@@ -4,7 +4,8 @@ function(sgp_object,
 	sgp.targets,
 	target.type,
 	target.level,
-	tmp.years.content_areas.grades,
+	years.to.target.level,
+	years.content_areas.grades,
 	sgp.config=NULL,
 	projection_group.identifier=NULL,
 	sgp.projections.equated=NULL,
@@ -44,12 +45,13 @@ function(sgp_object,
 
 	years.content_areas.grades <- data.table(unique(data.table(sgp_object@Data[data.table(VALID_CASE="VALID_CASE", sgp.targets, key=getKey(sgp_object))][,
 		c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE"), with=FALSE], key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE")), by=c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE")), key=c("VALID_CASE", "CONTENT_AREA", "YEAR"))[
-		unique(data.table(VALID_CASE="VALID_CASE", tmp.years.content_areas.grades[,c("CONTENT_AREA", "YEAR"), with=FALSE], key=c("VALID_CASE", "CONTENT_AREA", "YEAR")), by=c("VALID_CASE", "CONTENT_AREA", "YEAR")), nomatch=0]
+		unique(data.table(VALID_CASE="VALID_CASE", years.content_areas.grades[,c("CONTENT_AREA", "YEAR"), with=FALSE], key=c("VALID_CASE", "CONTENT_AREA", "YEAR")), by=c("VALID_CASE", "CONTENT_AREA", "YEAR")), nomatch=0]
 
 	if (target.type=="sgp.projections") {
 		my.extra.label <- "TARGET_SCALE_SCORES"
 		baseline.tf <- FALSE
 		lag.increment <- 0L
+		lag.increment.label <- "_CURRENT"
 		my.target.type <- "sgp.projections"
 		my.content.areas <- "sgp.projection.content.areas"
 		my.content.areas.label <- "sgp.projection.content.areas"
@@ -61,6 +63,7 @@ function(sgp_object,
 		my.extra.label <- "BASELINE.TARGET_SCALE_SCORES"
 		baseline.tf <- TRUE
 		lag.increment <- 0L
+		lag.increment.label <- "_CURRENT"
 		my.target.type <- "sgp.projections.baseline"
 		my.content.areas <- "sgp.projection.baseline.content.areas"
 		my.content.areas.label <- "sgp.projection.baseline.content.areas"
@@ -72,6 +75,7 @@ function(sgp_object,
 		my.extra.label <- "LAGGED.TARGET_SCALE_SCORES"
 		baseline.tf <- FALSE
 		lag.increment <- 1L
+		lag.increment.label <- ""
 		my.target.type <- "sgp.projections.lagged"
 		my.content.areas <- "sgp.projection.content.areas"
 		my.content.areas.label <- "sgp.content.areas"
@@ -83,6 +87,7 @@ function(sgp_object,
 		my.extra.label <- "LAGGED.BASELINE.TARGET_SCALE_SCORES"
 		baseline.tf <- TRUE
 		lag.increment <- 1L
+		lag.increment.label <- ""
 		my.target.type <- "sgp.projections.lagged.baseline"
 		my.content.areas <- "sgp.projection.baseline.content.areas"
 		my.content.areas.label <- "sgp.content.areas"
@@ -153,10 +158,12 @@ function(sgp_object,
 					max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[["sgp.panel.years"]], 1L), tail(sgp.iter[[my.content.areas]], 1L), state,
 						sgp.projections.equated),
 					lag.increment=lag.increment,
+					lag.increment.label=lag.increment.label,
 					grade.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
 					content_area.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
 					year_lags.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
 					percentile.trajectory.values=target.level,
+					percentile.trajectory.values.max.forward.progression.years=years.to.target.level,
 					return.percentile.trajectory.values=SGP::SGPstateData[[state]][["SGP_Configuration"]][["return.percentile.trajectory.values"]],
 					return.projection.group.identifier=projection_group.identifier,
 					return.projection.group.scale.scores = !is.null(fix.duplicates),
@@ -202,10 +209,12 @@ function(sgp_object,
 					max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[["sgp.panel.years"]], 1L), tail(sgp.iter[[my.content.areas]], 1L), state,
 						sgp.projections.equated),
 					lag.increment=lag.increment,
+					lag.increment.label=lag.increment.label,
 					grade.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
 					content_area.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
 					year_lags.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
 					percentile.trajectory.values=target.level,
+					percentile.trajectory.values.max.forward.progression.years=years.to.target.level,
 					return.percentile.trajectory.values=SGP::SGPstateData[[state]][["SGP_Configuration"]][["return.percentile.trajectory.values"]],
 					return.projection.group.identifier=projection_group.identifier,
 					return.projection.group.scale.scores = !is.null(fix.duplicates),
@@ -251,10 +260,12 @@ function(sgp_object,
 						max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[["sgp.panel.years"]], 1L), tail(sgp.iter[[my.content.areas]], 1L), state,
 							sgp.projections.equated),
 						lag.increment=lag.increment,
+						lag.increment.label=lag.increment.label,
 						grade.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
 						content_area.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
 						year_lags.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
 						percentile.trajectory.values=target.level,
+						percentile.trajectory.values.max.forward.progression.years=years.to.target.level,
 						return.percentile.trajectory.values=SGP::SGPstateData[[state]][["SGP_Configuration"]][["return.percentile.trajectory.values"]],
 						return.projection.group.identifier=projection_group.identifier,
 						return.projection.group.scale.scores = !is.null(fix.duplicates),
@@ -304,11 +315,13 @@ function(sgp_object,
 					year_lags.progression=sgp.iter[[my.panel.years.lags]],
 					max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[["sgp.panel.years"]], 1L), tail(sgp.iter[[my.content.areas]], 1L), state,
 						sgp.projections.equated),
-					lag.increment=lag.increment,
+					lag.increment=1L,
+					lag.increment.label=lag.increment.label,
 					grade.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
 					content_area.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
 					year_lags.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
 					percentile.trajectory.values=target.level,
+					percentile.trajectory.values.max.forward.progression.years=years.to.target.level,
 					return.percentile.trajectory.values=SGP::SGPstateData[[state]][["SGP_Configuration"]][["return.percentile.trajectory.values"]],
 					return.projection.group.identifier=projection_group.identifier,
 					return.projection.group.scale.scores = !is.null(fix.duplicates),

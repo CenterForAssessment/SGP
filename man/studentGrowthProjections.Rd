@@ -29,12 +29,14 @@ studentGrowthProjections(panel.data,
                          projection.unit="YEAR",
                          projection.unit.label=NULL,
                          percentile.trajectory.values=NULL,
+                         percentile.trajectory.values.max.forward.progression.years=NULL,
                          return.percentile.trajectory.values=NULL,
                          return.projection.group.identifier=NULL,
                          return.projection.group.scale.scores=NULL,
                          return.projection.group.dates=NULL,
                          isotonize=TRUE,
                          lag.increment=0L,
+                         lag.increment.label=NULL,
                          sgp.exact.grade.progression=FALSE,
                          projcuts.digits=NULL,
                          sgp.projections.use.only.complete.matrices=NULL,
@@ -131,6 +133,9 @@ studentGrowthProjections(panel.data,
   'percentile.trajectory.values=1' the user would receive the conditional .005 quantile associated with each student's distribution. Supplied values can also be a vector of targets
   that will return Scale Scores associated with those targets.
   }
+  \item{percentile.trajectory.values.max.forward.progression.years}{An integer argument indicating the number of years associated with the trajectory calculated by \code{percentile.trajectory.values}.
+  Supplied value can also be a vector of targets that will trim the trajectory to fit with a designated number of years.
+  }
   \item{return.percentile.trajectory.values}{A Boolean variable indicating whether to return the percentile trajectory values when they are supplied as targets via panel.data. Default is NULL/FALSE.
   }
   \item{return.projection.group.identifier}{A Boolean variable indicating whether to return the projection group identifier to distinguish different projection trajectories. Defaults to NULL/FALSE.
@@ -143,6 +148,8 @@ studentGrowthProjections(panel.data,
   the methods derived by Chernozhukov, Fernandez-Val and Glichon (2010).
   }
   \item{lag.increment}{A non-negative integer (defaults to 0) indicating the lag associated with the data supplied for projections. Only relevant if Cutscores or Knots and Boundaries are year dependent.
+  }
+  \item{lag.increment.label}{Overrides default ways in which lagged targets and straight targets are labelled ("" and "_CURRENT", respectively).
   }
   \item{sgp.exact.grade.progression}{A Boolean argument (defaults to FALSE) indicating whether to use the exact grade progression supplied or all orders up to the grade progression supplied.
   }

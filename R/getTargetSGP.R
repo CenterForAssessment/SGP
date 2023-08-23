@@ -6,6 +6,7 @@ function(sgp_object,
 	years,
 	target.type,
 	target.level,
+	current.year.lagged.target=FALSE,
 	max.sgp.target.years.forward=3,
 	subset.ids=NULL,
 	return.lagged.status=TRUE,
@@ -85,28 +86,26 @@ function(sgp_object,
 		## Find min/max of targets based upon CATCH_UP_KEEP_UP_STATUS_INITIAL status
 
 		if (nrow(tmp_object_1) > 0) {
+			if (target.type %in% c("sgp.projections.lagged", "sgp.projections.lagged.baseline")) {
+				max.sgp.target.years.forward <- max.sgp.target.years.forward + 1L
+				if (current.year.lagged.target) max.sgp.target.years.forward <- c(1, max.sgp.target.years.forward)
+				max.sgp.target.years.forward.label <- max.sgp.target.years.forward -1L 
+			} else {
+				max.sgp.target.years.forward.label <- max.sgp.target.years.forward
+			}
 			for (max.sgp.target.years.forward.iter in seq_along(max.sgp.target.years.forward)) {
 				num.years.available <- length(grep("LEVEL_[123456789]", names(tmp_object_1)))
 				if (projection_group.iter %in% names(SGP::SGPstateData[[state]][['SGP_Configuration']][['grade.projection.sequence']])) {
-#					if (length(max.sgp.target.years.forward)==1) {
-#						num.years.to.get <- min(SGP::SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]], num.years.available)
-#					} else {
-						num.years.to.get <- min(max.sgp.target.years.forward[max.sgp.target.years.forward.iter], SGP::SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]], num.years.available)
-#					}
+					num.years.to.get <- min(max.sgp.target.years.forward[max.sgp.target.years.forward.iter], SGP::SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]], num.years.available)
 					if (!is.null(SGP::SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]])) {
-#						if (length(max.sgp.target.years.forward)==1) {
-#							num.years.to.get.label <- SGP::SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]]
-#						} else {
-							num.years.to.get.label <- min(max.sgp.target.years.forward[max.sgp.target.years.forward.iter], SGP::SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]])
-#						}
+							num.years.to.get.label <- min(max.sgp.target.years.forward.label[max.sgp.target.years.forward.iter], SGP::SGPstateData[[state]][['SGP_Configuration']][['max.forward.projection.sequence']][[projection_group.iter]])
 					} else {
-						num.years.to.get.label <- max.sgp.target.years.forward[max.sgp.target.years.forward.iter]
+						num.years.to.get.label <- max.sgp.target.years.forward.label[max.sgp.target.years.forward.iter]
 					}
 				} else {
 					num.years.to.get <- min(max.sgp.target.years.forward[max.sgp.target.years.forward.iter], num.years.available)
-					num.years.to.get.label <- max.sgp.target.years.forward[max.sgp.target.years.forward.iter]
+					num.years.to.get.label <- max.sgp.target.years.forward.label[max.sgp.target.years.forward.iter]
 				}
-				if (target.type %in% c("sgp.projections.lagged", "sgp.projections.lagged.baseline")) num.years.to.get <- num.years.to.get+1
 
 				tmp.level.variables <-
 					paste(grep(paste0(sgp.projections.projection.unit.label, "_[", paste(seq(num.years.to.get), collapse=""), "]", tmp.suffix), names(tmp_object_1), value=TRUE), collapse=", ")
@@ -127,9 +126,9 @@ function(sgp_object,
 					}
 				} else {
 					if (return.sgp.target.num.years) {
-						tmp_object_2[,c('V1', 'V2'):=list(tmp_object_1[, eval(jExpression), keyby = jExp_Key][['V1']], tmp_object_1[, eval(jExpression_num_years), keyby = jExp_Key][['V1']])]
+						tmp_object_2[, c('V1', 'V2'):=list(tmp_object_1[, eval(jExpression), keyby = jExp_Key][['V1']], tmp_object_1[, eval(jExpression_num_years), keyby = jExp_Key][['V1']])]
 					} else {
-						tmp_object_2[,V1:=tmp_object_1[, eval(jExpression), keyby = jExp_Key][['V1']]]
+						tmp_object_2[, V1:=tmp_object_1[, eval(jExpression), keyby = jExp_Key][['V1']]]
 					}
 				}
 
