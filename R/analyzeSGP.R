@@ -182,6 +182,14 @@ function(sgp_object,
 		sgp.config.drop.nonsequential.grade.progression.variables <- FALSE
 	}
 
+	if (!any(
+		grepl("PERCENTILES|BASELINE_PERCENTILES|TAUS|SIMEX|BASELINE_MATRICES|PROJECTIONS|LAGGED_PROJECTIONS",
+		      names(parallel.config[['WORKERS']])
+			)
+	)) {
+		parallel.config <- NULL
+	}
+
 	if (all(c("PERCENTILES", "TAUS") %in% names(parallel.config[['WORKERS']]))) {
 		if (.Platform$OS.type != "unix" | "SNOW_TEST" %in% names(parallel.config)) stop("Both TAUS and PERCENTILES cannot be executed in Parallel at the same time in Windows OS or using SNOW type backends.")
 		messageSGP("\n\tCAUTION:  Running higher- and lower-level processes in parallel at the same time.  Make sure you have enough CPU cores and memory to support this.\n")
@@ -589,7 +597,7 @@ function(sgp_object,
           tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 				} else {
 					if (par.start$par.type=="SNOW") {
-						tmp <- clusterApplyLB(par.start$internal.cl, sgp.baseline.config, function(sgp.iter) baselineSGP(
+						tmp <- clusterApply(par.start$internal.cl, sgp.baseline.config, function(sgp.iter) baselineSGP(
 								sgp_object,
 								state=state,
 								sgp.baseline.config=list(sgp.iter), ## NOTE: list of sgp.iter must be passed for proper iteration
@@ -701,7 +709,7 @@ function(sgp_object,
           tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
         } else {  ## SNOW and MULTICORE flavors
 					if (par.start$par.type=="SNOW") {
-						tmp <- clusterApplyLB(par.start$internal.cl, sgp.baseline.config, function(sgp.iter) baselineSGP(
+						tmp <- clusterApply(par.start$internal.cl, sgp.baseline.config, function(sgp.iter) baselineSGP(
 							sgp_object,
 							state=state,
 							sgp.baseline.config=list(sgp.iter), ## NOTE: list of sgp.iter must be passed for proper iteration
@@ -856,7 +864,7 @@ function(sgp_object,
 #                    tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 #                } else {  ## SNOW and MULTICORE flavors
 #					if (par.start$par.type=="SNOW") {
-#						tmp <- clusterApplyLB(par.start$internal.cl, sgp.baseline.config, function(sgp.iter) baselineSGP(
+#						tmp <- clusterApply(par.start$internal.cl, sgp.baseline.config, function(sgp.iter) baselineSGP(
 #							sgp_object,
 #							state=state,
 #							sgp.baseline.config=list(sgp.iter), ## NOTE: list of sgp.iter must be passed for proper iteration
@@ -1038,7 +1046,7 @@ function(sgp_object,
 			} else { # END FOREACH
 				###    SNOW flavor
 				if (par.start$par.type == 'SNOW') {
-					tmp <- clusterApplyLB(par.start$internal.cl, rev(par.sgp.config[['sgp.percentiles']]), function(sgp.iter) studentGrowthPercentiles(
+					tmp <- clusterApply(par.start$internal.cl, rev(par.sgp.config[['sgp.percentiles']]), function(sgp.iter) studentGrowthPercentiles(
 						panel.data=list(
 							Panel_Data=getPanelData(tmp_sgp_data_for_analysis, "sgp.percentiles", sgp.iter, csem.variable, equate.variable, SGPt=SGPt, fix.duplicates=fix.duplicates),
 							Coefficient_Matrices=sgp.iter[["sgp.matrices"]],
@@ -1231,7 +1239,7 @@ function(sgp_object,
 			} else { # END FOREACH
 				###    SNOW flavor
 				if (par.start$par.type == 'SNOW') {
-					tmp <- clusterApplyLB(par.start$internal.cl, rev(par.sgp.config[['sgp.percentiles.equated']]), function(sgp.iter) studentGrowthPercentiles(
+					tmp <- clusterApply(par.start$internal.cl, rev(par.sgp.config[['sgp.percentiles.equated']]), function(sgp.iter) studentGrowthPercentiles(
 						panel.data=list(
 							Panel_Data=getPanelData(tmp_sgp_data_for_analysis, "sgp.percentiles", sgp.iter, csem.variable, equate.variable, SGPt=SGPt, fix.duplicates=fix.duplicates),
 							Coefficient_Matrices=sgp.iter[["sgp.equated.matrices"]],
@@ -1388,7 +1396,7 @@ function(sgp_object,
 			} else { # END FOREACH
 				###    SNOW flavor
 				if (par.start$par.type == 'SNOW') {
-					tmp <- clusterApplyLB(par.start$internal.cl, rev(par.sgp.config[['sgp.percentiles.baseline']]), function(sgp.iter) studentGrowthPercentiles(
+					tmp <- clusterApply(par.start$internal.cl, rev(par.sgp.config[['sgp.percentiles.baseline']]), function(sgp.iter) studentGrowthPercentiles(
 						panel.data=list(
 							Panel_Data=getPanelData(tmp_sgp_data_for_analysis, "sgp.percentiles", sgp.iter, csem.variable, SGPt=SGPt, fix.duplicates=fix.duplicates),
 							Coefficient_Matrices=sgp.iter[["sgp.baseline.matrices"]],
@@ -1570,7 +1578,7 @@ function(sgp_object,
 			} else {# END FOREACH
 				###   SNOW flavor
 				if (par.start$par.type == 'SNOW') {
-					tmp <- clusterApplyLB(par.start$internal.cl, par.sgp.config[['sgp.projections']], function(sgp.iter) studentGrowthProjections(
+					tmp <- clusterApply(par.start$internal.cl, par.sgp.config[['sgp.projections']], function(sgp.iter) studentGrowthProjections(
 						panel.data=list(
 							Panel_Data=getPanelData(tmp_sgp_data_for_analysis, "sgp.projections", sgp.iter, sgp.scale.score.equated=equate.variable, SGPt=SGPt, fix.duplicates=fix.duplicates),
 							Coefficient_Matrices=selectCoefficientMatrices(tmp_sgp_object, coefficient.matrix.type),
@@ -1721,7 +1729,7 @@ function(sgp_object,
 			} else {# END FOREACH
 				###   SNOW flavor
 				if (par.start$par.type == 'SNOW') {
-					tmp <- clusterApplyLB(par.start$internal.cl, par.sgp.config[['sgp.projections.baseline']], function(sgp.iter) studentGrowthProjections(
+					tmp <- clusterApply(par.start$internal.cl, par.sgp.config[['sgp.projections.baseline']], function(sgp.iter) studentGrowthProjections(
 						panel.data=list(
 							Panel_Data=getPanelData(tmp_sgp_data_for_analysis, "sgp.projections.baseline", sgp.iter, SGPt=SGPt, fix.duplicates=fix.duplicates),
 							Coefficient_Matrices=selectCoefficientMatrices(tmp_sgp_object, "BASELINE"),
@@ -1870,7 +1878,7 @@ function(sgp_object,
 			} else {# END FOREACH
 				###   SNOW flavor
 				if (par.start$par.type == 'SNOW') {
-					tmp <- clusterApplyLB(par.start$internal.cl, par.sgp.config[['sgp.projections.lagged']], function(sgp.iter) studentGrowthProjections(
+					tmp <- clusterApply(par.start$internal.cl, par.sgp.config[['sgp.projections.lagged']], function(sgp.iter) studentGrowthProjections(
 						panel.data=list(
 							Panel_Data=getPanelData(tmp_sgp_data_for_analysis, "sgp.projections.lagged", sgp.iter, sgp.scale.score.equated=equate.variable, SGPt=SGPt, fix.duplicates=fix.duplicates),
 							Coefficient_Matrices=selectCoefficientMatrices(tmp_sgp_object, coefficient.matrix.type),
@@ -2024,7 +2032,7 @@ function(sgp_object,
 
 			###  SNOW flavor
 			if (par.start$par.type == 'SNOW') {
-				tmp <- clusterApplyLB(par.start$internal.cl, par.sgp.config[['sgp.projections.lagged.baseline']], function(sgp.iter) studentGrowthProjections(
+				tmp <- clusterApply(par.start$internal.cl, par.sgp.config[['sgp.projections.lagged.baseline']], function(sgp.iter) studentGrowthProjections(
 					panel.data=list(
 						Panel_Data=getPanelData(tmp_sgp_data_for_analysis, "sgp.projections.lagged.baseline", sgp.iter, SGPt=SGPt, fix.duplicates=fix.duplicates),
 						Coefficient_Matrices=selectCoefficientMatrices(tmp_sgp_object, "BASELINE"),

@@ -630,7 +630,10 @@
 			# Write tmp.simulation.dt to disk for SNOW backends in Windows (& SNOT_TEST) Only
 			tmp.simulation.dt <- "sqlite"
 			dbWriteTable(sgp_data_for_summary, name = "sim_data", overwrite = TRUE, row.names=FALSE,
-				value = combineSims(sgp_object)[, SIM_NUM := 1:sim.info[['n.simulated.sgps']]])
+				value = combineSims(sgp_object)[,
+				  SIM_NUM := rep(1:sim.info[["n.simulated.sgps"]], sim.info[["n.unique.cases"]])
+				]
+			)
 		} else {
 			tmp.simulation.dt <- combineSims(sgp_object)
 		}
@@ -638,10 +641,16 @@
 
 	dbDisconnect(sgp_data_for_summary)
 
-	if (!is.null(parallel.config))	par.start <- startParallel(parallel.config, 'SUMMARY') else par.start <- list(par.type="NONE")
-
-	# Don't use SNOW - run as FOREACH + doParallel instead.
-	if (identical(par.start[['par.type']], "SNOW")) {parallel.config[["BACKEND"]] <- "FOREACH"; parallel.config[["TYPE"]] <- "doParallel"}
+	# Use FOREACH + doParallel exclusively for Windows/SNOW
+	if ((!identical(.Platform$OS.type, "unix") & !is.null(parallel.config)) | !is.null(parallel.config[["SNOW_TEST"]])) {
+		parallel.config[["BACKEND"]] <- "FOREACH"
+		parallel.config[["TYPE"]] <- "doParallel"
+	}
+	if (!is.null(parallel.config)) {
+		par.start <- startParallel(parallel.config, 'SUMMARY')
+	} else {
+		par.start <- list(par.type="NONE")
+	}
 
 	for (j in seq(length(summary.groups[["institution_multiple_membership"]])+1)) {
 		for (i in summary.groups[["institution"]]) {
