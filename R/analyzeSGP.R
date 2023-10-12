@@ -547,7 +547,7 @@ function(sgp_object,
     if (sgp.sqlite) {
         tmp_sgp_data_for_analysis <-
             dbConnect(
-                RSQLite::SQLite(), # duckdb::duckdb(),
+                SQLite(),
                 dbname = "FullUri=file:memdb1?mode=memory&cache=shared"
             )
         dbWriteTable(tmp_sgp_data_for_analysis, name = "sgp_data", overwrite = TRUE,
@@ -979,11 +979,6 @@ function(sgp_object,
 		save(cohort_data_info, file=file.path("Logs", "cohort_data_info.Rdata"))
         messageSGP("\tNOTE: Cohort data information saved to 'Logs/cohort_data_info.Rdata'.")
 	}
-	# if (sgp.sqlite) {
-	# 	   sgp_object@Data <- NULL
-	# 	   gc(verbose = FALSE)
-	# }
-
 
 	#######################################################################################################################
 	#######################################################################################################################
@@ -1158,9 +1153,9 @@ function(sgp_object,
 			if (!is.null(sgp.test.cohort.size)) {
 				test.ids <- unique(rbindlist(tmp_sgp_object[["SGPercentiles"]], fill=TRUE), by='ID')[['ID']]
                 if (is(tmp_sgp_data_for_analysis, "DBIObject")) {
-                    con <- dbConnect(duckdb::duckdb(), dbdir = file.path(tempdir(), "TMP_SGP_Data.duckdb"))
+                    con <- dbConnect(SQLite(), dbdir = file.path(tempdir(), "TMP_SGP_Data.duckdb"))
                     tmp_sgp_data_for_analysis <- data.table(dbGetQuery(con, paste0("select * from sgp_data where ID in ('", paste(test.ids, collapse = "', '"), "')")))
-                    dbDisconnect(con, shutdown = TRUE)
+                    dbDisconnect(con)
 					if ("YEAR_WITHIN" %in% sgp.data.names) {
 						setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE, YEAR_WITHIN)
 					} else {
@@ -1499,9 +1494,9 @@ function(sgp_object,
     if (!is.null(sgp.test.cohort.size) & !sgp.percentiles) {
       test.ids <- unique(rbindlist(tmp_sgp_object[["SGPercentiles"]], fill=TRUE), by='ID')[['ID']]
       if (is(tmp_sgp_data_for_analysis, "DBIObject")) {
-        con <- dbConnect(duckdb::duckdb(), dbdir = file.path(tempdir(), "TMP_SGP_Data.duckdb"))
+        con <- dbConnect(SQLite(), dbdir = file.path(tempdir(), "TMP_SGP_Data.duckdb"))
         tmp_sgp_data_for_analysis <- data.table(dbGetQuery(con, paste0("select * from sgp_data where ID in ('", paste(test.ids, collapse="', '"), "')")))
-        dbDisconnect(con, shutdown = TRUE)
+        dbDisconnect(con)
         if ("YEAR_WITHIN" %in% sgp.data.names) {
           setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE, YEAR_WITHIN)
         } else {
@@ -2191,9 +2186,9 @@ function(sgp_object,
 			if (!is.null(sgp.test.cohort.size)) {
 				test.ids <- unique(rbindlist(tmp_sgp_object[["SGPercentiles"]], fill=TRUE), by='ID')[["ID"]]
 				if (is(tmp_sgp_data_for_analysis, "DBIObject")) {
-                    con <- dbConnect(duckdb::duckdb(), dbdir = file.path(tempdir(), "TMP_SGP_Data.duckdb"))
+                    con <- dbConnect(SQLite(), dbdir = file.path(tempdir(), "TMP_SGP_Data.duckdb"))
 					tmp_sgp_data_for_analysis <- data.table(dbGetQuery(con, paste0("select * from sgp_data where ID in ('", paste(test.ids, collapse="', '"), "')")))
-                    dbDisconnect(con, shutdown = TRUE)
+                    dbDisconnect(con)
 					if ("YEAR_WITHIN" %in% sgp.data.names) {
 						setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE, YEAR_WITHIN)
 					} else {
@@ -2498,9 +2493,9 @@ function(sgp_object,
 
 
     if (sgp.sqlite) {
-        # con <- dbConnect(duckdb::duckdb(), dbdir = file.path(tempdir(), "TMP_SGP_Data.duckdb"))
+        # con <- dbConnect(SQLite(), dbdir = file.path(tempdir(), "TMP_SGP_Data.duckdb"))
         # sgp_object@Data <- data.table(dbGetQuery(con, "select * from sgp_data"))
-        # dbDisconnect(con, shutdown = TRUE)
+        # dbDisconnect(con)
         if (!keep.sqlite) {
             unlink(file.path(tempdir(), "TMP_SGP_Data.duckdb"), recursive=TRUE)
 		}
