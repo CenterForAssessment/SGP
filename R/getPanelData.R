@@ -10,10 +10,14 @@ function(sgp.data,
 
 	YEAR <- CONTENT_AREA <- VALID_CASE <- V3 <- V5 <- ID <- GRADE <- SCALE_SCORE <- YEAR_WITHIN <- tmp.timevar <- FIRST_OBSERVATION <- LAST_OBSERVATION <- ACHIEVEMENT_LEVEL <- DATE <- SGP_PROJECTION_GROUP_SCALE_SCORES <- DUPS_FLAG <- NULL
 
-	if (is(sgp.data, "DBIObject")) {
-		con <- dbConnect(SQLite(), dbname = attributes(sgp.data)$dbname)
-		var.names <- dbListFields(con, "sgp_data")
-		sqlite.tf <- TRUE
+    if (is(sgp.data, "DBIObject")) {
+        con <-
+            dbConnect(
+                RSQLite::SQLite(),
+                dbname = "FullUri=file:memdb1?mode=memory&cache=shared" 
+            )
+        var.names <- dbListFields(con, "sgp_data")
+        sqlite.tf <- TRUE
 	} else {
 		var.names <- names(sgp.data)
 		sqlite.tf <- FALSE

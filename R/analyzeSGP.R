@@ -544,12 +544,16 @@ function(sgp_object,
 	if (as.numeric(strsplit(format(object.size(sgp_object@Data), units="GB"), " Gb")[[1L]]) > 1) sgp.sqlite <- TRUE
 	if (!is.null(SGPt)) sgp.sqlite <- FALSE # Ultimate case of whether or not to use SQLite?
 
-	if (sgp.sqlite) {
-		tmp_sgp_data_for_analysis <- dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_SGP_Data.sqlite"))
-		dbWriteTable(tmp_sgp_data_for_analysis, name = "sgp_data", overwrite = TRUE,
-			value=sgp_object@Data[,intersect(names(sgp_object@Data), variables.to.get), with=FALSE]["VALID_CASE"], row.names=FALSE)
-		sgp.data.names <- dbListFields(tmp_sgp_data_for_analysis, "sgp_data")
-		dbDisconnect(tmp_sgp_data_for_analysis)
+    if (sgp.sqlite) {
+        tmp_sgp_data_for_analysis <-
+            dbConnect(
+                RSQLite::SQLite(), # duckdb::duckdb(),
+                dbname = "FullUri=file:memdb1?mode=memory&cache=shared"
+            )
+        dbWriteTable(tmp_sgp_data_for_analysis, name = "sgp_data", overwrite = TRUE,
+            value=sgp_object@Data[,intersect(names(sgp_object@Data), variables.to.get), with=FALSE]["VALID_CASE"], row.names=FALSE)
+        sgp.data.names <- dbListFields(tmp_sgp_data_for_analysis, "sgp_data")
+        dbDisconnect(tmp_sgp_data_for_analysis)
 	} else {
 		tmp_sgp_data_for_analysis <- sgp_object@Data[,intersect(names(sgp_object@Data), variables.to.get), with=FALSE]["VALID_CASE"]
 		sgp.data.names <- names(tmp_sgp_data_for_analysis)
@@ -597,7 +601,7 @@ function(sgp_object,
           tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 				} else {
 					if (par.start$par.type=="SNOW") {
-						tmp <- clusterApply(par.start$internal.cl, sgp.baseline.config, function(sgp.iter) baselineSGP(
+						tmp <- parallel::clusterApply(par.start$internal.cl, sgp.baseline.config, function(sgp.iter) baselineSGP(
 								sgp_object,
 								state=state,
 								sgp.baseline.config=list(sgp.iter), ## NOTE: list of sgp.iter must be passed for proper iteration
@@ -709,7 +713,7 @@ function(sgp_object,
           tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
         } else {  ## SNOW and MULTICORE flavors
 					if (par.start$par.type=="SNOW") {
-						tmp <- clusterApply(par.start$internal.cl, sgp.baseline.config, function(sgp.iter) baselineSGP(
+						tmp <- parallel::clusterApply(par.start$internal.cl, sgp.baseline.config, function(sgp.iter) baselineSGP(
 							sgp_object,
 							state=state,
 							sgp.baseline.config=list(sgp.iter), ## NOTE: list of sgp.iter must be passed for proper iteration
@@ -864,7 +868,7 @@ function(sgp_object,
 #                    tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 #                } else {  ## SNOW and MULTICORE flavors
 #					if (par.start$par.type=="SNOW") {
-#						tmp <- clusterApply(par.start$internal.cl, sgp.baseline.config, function(sgp.iter) baselineSGP(
+#						tmp <- parallel::clusterApply(par.start$internal.cl, sgp.baseline.config, function(sgp.iter) baselineSGP(
 #							sgp_object,
 #							state=state,
 #							sgp.baseline.config=list(sgp.iter), ## NOTE: list of sgp.iter must be passed for proper iteration
@@ -975,6 +979,10 @@ function(sgp_object,
 		save(cohort_data_info, file=file.path("Logs", "cohort_data_info.Rdata"))
         messageSGP("\tNOTE: Cohort data information saved to 'Logs/cohort_data_info.Rdata'.")
 	}
+	# if (sgp.sqlite) {
+	# 	   sgp_object@Data <- NULL
+	# 	   gc(verbose = FALSE)
+	# }
 
 
 	#######################################################################################################################
@@ -1046,7 +1054,7 @@ function(sgp_object,
 			} else { # END FOREACH
 				###    SNOW flavor
 				if (par.start$par.type == 'SNOW') {
-					tmp <- clusterApply(par.start$internal.cl, rev(par.sgp.config[['sgp.percentiles']]), function(sgp.iter) studentGrowthPercentiles(
+					tmp <- parallel::clusterApply(par.start$internal.cl, rev(par.sgp.config[['sgp.percentiles']]), function(sgp.iter) studentGrowthPercentiles(
 						panel.data=list(
 							Panel_Data=getPanelData(tmp_sgp_data_for_analysis, "sgp.percentiles", sgp.iter, csem.variable, equate.variable, SGPt=SGPt, fix.duplicates=fix.duplicates),
 							Coefficient_Matrices=sgp.iter[["sgp.matrices"]],
@@ -1149,10 +1157,10 @@ function(sgp_object,
 			stopParallel(parallel.config, par.start)
 			if (!is.null(sgp.test.cohort.size)) {
 				test.ids <- unique(rbindlist(tmp_sgp_object[["SGPercentiles"]], fill=TRUE), by='ID')[['ID']]
-				if (is(tmp_sgp_data_for_analysis, "DBIObject")) {
-          con <- dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_SGP_Data.sqlite"))
-					tmp_sgp_data_for_analysis <- data.table(dbGetQuery(con, paste0("select * from sgp_data where ID in ('", paste(test.ids, collapse="', '"), "')")))
-          dbDisconnect(con)
+                if (is(tmp_sgp_data_for_analysis, "DBIObject")) {
+                    con <- dbConnect(duckdb::duckdb(), dbdir = file.path(tempdir(), "TMP_SGP_Data.duckdb"))
+                    tmp_sgp_data_for_analysis <- data.table(dbGetQuery(con, paste0("select * from sgp_data where ID in ('", paste(test.ids, collapse = "', '"), "')")))
+                    dbDisconnect(con, shutdown = TRUE)
 					if ("YEAR_WITHIN" %in% sgp.data.names) {
 						setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE, YEAR_WITHIN)
 					} else {
@@ -1172,7 +1180,7 @@ function(sgp_object,
           if (nrow(missing.lookup) > 0){
             setkeyv(sgp_object@Data, key(missing.lookup))
             tmp_data_to_add <- sgp_object@Data[missing.lookup][VALID_CASE=="VALID_CASE",intersect(names(sgp_object@Data), variables.to.get), with=FALSE][, .SD[sample(.N, sgp.test.cohort.size)], by=key(missing.lookup)]
-            tmp_sgp_data_for_analysis <- rbindlist(list(tmp_sgp_data_for_analysis, tmp_sgp_data_for_analysis))
+            tmp_sgp_data_for_analysis <- rbindlist(list(tmp_sgp_data_for_analysis, tmp_data_to_add), use.names = TRUE)
             setkeyv(tmp_sgp_data_for_analysis, getKey(tmp_sgp_data_for_analysis))
           }
         }
@@ -1239,7 +1247,7 @@ function(sgp_object,
 			} else { # END FOREACH
 				###    SNOW flavor
 				if (par.start$par.type == 'SNOW') {
-					tmp <- clusterApply(par.start$internal.cl, rev(par.sgp.config[['sgp.percentiles.equated']]), function(sgp.iter) studentGrowthPercentiles(
+					tmp <- parallel::clusterApply(par.start$internal.cl, rev(par.sgp.config[['sgp.percentiles.equated']]), function(sgp.iter) studentGrowthPercentiles(
 						panel.data=list(
 							Panel_Data=getPanelData(tmp_sgp_data_for_analysis, "sgp.percentiles", sgp.iter, csem.variable, equate.variable, SGPt=SGPt, fix.duplicates=fix.duplicates),
 							Coefficient_Matrices=sgp.iter[["sgp.equated.matrices"]],
@@ -1396,7 +1404,7 @@ function(sgp_object,
 			} else { # END FOREACH
 				###    SNOW flavor
 				if (par.start$par.type == 'SNOW') {
-					tmp <- clusterApply(par.start$internal.cl, rev(par.sgp.config[['sgp.percentiles.baseline']]), function(sgp.iter) studentGrowthPercentiles(
+					tmp <- parallel::clusterApply(par.start$internal.cl, rev(par.sgp.config[['sgp.percentiles.baseline']]), function(sgp.iter) studentGrowthPercentiles(
 						panel.data=list(
 							Panel_Data=getPanelData(tmp_sgp_data_for_analysis, "sgp.percentiles", sgp.iter, csem.variable, SGPt=SGPt, fix.duplicates=fix.duplicates),
 							Coefficient_Matrices=sgp.iter[["sgp.baseline.matrices"]],
@@ -1491,9 +1499,9 @@ function(sgp_object,
     if (!is.null(sgp.test.cohort.size) & !sgp.percentiles) {
       test.ids <- unique(rbindlist(tmp_sgp_object[["SGPercentiles"]], fill=TRUE), by='ID')[['ID']]
       if (is(tmp_sgp_data_for_analysis, "DBIObject")) {
-        con <- dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_SGP_Data.sqlite"))
+        con <- dbConnect(duckdb::duckdb(), dbdir = file.path(tempdir(), "TMP_SGP_Data.duckdb"))
         tmp_sgp_data_for_analysis <- data.table(dbGetQuery(con, paste0("select * from sgp_data where ID in ('", paste(test.ids, collapse="', '"), "')")))
-        dbDisconnect(con)
+        dbDisconnect(con, shutdown = TRUE)
         if ("YEAR_WITHIN" %in% sgp.data.names) {
           setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE, YEAR_WITHIN)
         } else {
@@ -1513,7 +1521,7 @@ function(sgp_object,
         if (nrow(missing.lookup) > 0){
           setkeyv(sgp_object@Data, key(missing.lookup))
           tmp_data_to_add <- sgp_object@Data[missing.lookup][VALID_CASE=="VALID_CASE",intersect(names(sgp_object@Data), variables.to.get), with=FALSE][, .SD[sample(.N, sgp.test.cohort.size)], by=key(missing.lookup)]
-          tmp_sgp_data_for_analysis <- rbindlist(list(tmp_sgp_data_for_analysis, tmp_sgp_data_for_analysis))
+          tmp_sgp_data_for_analysis <- rbindlist(list(tmp_sgp_data_for_analysis, tmp_data_to_add), use.names = TRUE)
           setkeyv(tmp_sgp_data_for_analysis, getKey(tmp_sgp_data_for_analysis))
         }
       }
@@ -1578,7 +1586,7 @@ function(sgp_object,
 			} else {# END FOREACH
 				###   SNOW flavor
 				if (par.start$par.type == 'SNOW') {
-					tmp <- clusterApply(par.start$internal.cl, par.sgp.config[['sgp.projections']], function(sgp.iter) studentGrowthProjections(
+					tmp <- parallel::clusterApply(par.start$internal.cl, par.sgp.config[['sgp.projections']], function(sgp.iter) studentGrowthProjections(
 						panel.data=list(
 							Panel_Data=getPanelData(tmp_sgp_data_for_analysis, "sgp.projections", sgp.iter, sgp.scale.score.equated=equate.variable, SGPt=SGPt, fix.duplicates=fix.duplicates),
 							Coefficient_Matrices=selectCoefficientMatrices(tmp_sgp_object, coefficient.matrix.type),
@@ -1729,7 +1737,7 @@ function(sgp_object,
 			} else {# END FOREACH
 				###   SNOW flavor
 				if (par.start$par.type == 'SNOW') {
-					tmp <- clusterApply(par.start$internal.cl, par.sgp.config[['sgp.projections.baseline']], function(sgp.iter) studentGrowthProjections(
+					tmp <- parallel::clusterApply(par.start$internal.cl, par.sgp.config[['sgp.projections.baseline']], function(sgp.iter) studentGrowthProjections(
 						panel.data=list(
 							Panel_Data=getPanelData(tmp_sgp_data_for_analysis, "sgp.projections.baseline", sgp.iter, SGPt=SGPt, fix.duplicates=fix.duplicates),
 							Coefficient_Matrices=selectCoefficientMatrices(tmp_sgp_object, "BASELINE"),
@@ -1878,7 +1886,7 @@ function(sgp_object,
 			} else {# END FOREACH
 				###   SNOW flavor
 				if (par.start$par.type == 'SNOW') {
-					tmp <- clusterApply(par.start$internal.cl, par.sgp.config[['sgp.projections.lagged']], function(sgp.iter) studentGrowthProjections(
+					tmp <- parallel::clusterApply(par.start$internal.cl, par.sgp.config[['sgp.projections.lagged']], function(sgp.iter) studentGrowthProjections(
 						panel.data=list(
 							Panel_Data=getPanelData(tmp_sgp_data_for_analysis, "sgp.projections.lagged", sgp.iter, sgp.scale.score.equated=equate.variable, SGPt=SGPt, fix.duplicates=fix.duplicates),
 							Coefficient_Matrices=selectCoefficientMatrices(tmp_sgp_object, coefficient.matrix.type),
@@ -2032,7 +2040,7 @@ function(sgp_object,
 
 			###  SNOW flavor
 			if (par.start$par.type == 'SNOW') {
-				tmp <- clusterApply(par.start$internal.cl, par.sgp.config[['sgp.projections.lagged.baseline']], function(sgp.iter) studentGrowthProjections(
+				tmp <- parallel::clusterApply(par.start$internal.cl, par.sgp.config[['sgp.projections.lagged.baseline']], function(sgp.iter) studentGrowthProjections(
 					panel.data=list(
 						Panel_Data=getPanelData(tmp_sgp_data_for_analysis, "sgp.projections.lagged.baseline", sgp.iter, SGPt=SGPt, fix.duplicates=fix.duplicates),
 						Coefficient_Matrices=selectCoefficientMatrices(tmp_sgp_object, "BASELINE"),
@@ -2183,9 +2191,9 @@ function(sgp_object,
 			if (!is.null(sgp.test.cohort.size)) {
 				test.ids <- unique(rbindlist(tmp_sgp_object[["SGPercentiles"]], fill=TRUE), by='ID')[["ID"]]
 				if (is(tmp_sgp_data_for_analysis, "DBIObject")) {
-          con <- dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_SGP_Data.sqlite"))
+                    con <- dbConnect(duckdb::duckdb(), dbdir = file.path(tempdir(), "TMP_SGP_Data.duckdb"))
 					tmp_sgp_data_for_analysis <- data.table(dbGetQuery(con, paste0("select * from sgp_data where ID in ('", paste(test.ids, collapse="', '"), "')")))
-          dbDisconnect(con)
+                    dbDisconnect(con, shutdown = TRUE)
 					if ("YEAR_WITHIN" %in% sgp.data.names) {
 						setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE, YEAR_WITHIN)
 					} else {
@@ -2489,8 +2497,14 @@ function(sgp_object,
 	} ## END sequential analyzeSGP
 
 
-	if (!keep.sqlite & sgp.sqlite) unlink(file.path(tempdir(), "TMP_SGP_Data.sqlite"), recursive=TRUE)
-
+    if (sgp.sqlite) {
+        # con <- dbConnect(duckdb::duckdb(), dbdir = file.path(tempdir(), "TMP_SGP_Data.duckdb"))
+        # sgp_object@Data <- data.table(dbGetQuery(con, "select * from sgp_data"))
+        # dbDisconnect(con, shutdown = TRUE)
+        if (!keep.sqlite) {
+            unlink(file.path(tempdir(), "TMP_SGP_Data.duckdb"), recursive=TRUE)
+		}
+	}
 	if (!is.null(sgp.test.cohort.size) & toupper(return.sgp.test.results) != "ALL_DATA") {
 		if (!return.sgp.test.results) {
 			messageSGP(paste("Finished analyzeSGP", prettyDate(), "in", convertTime(timetakenSGP(started.at)), "\n"))
