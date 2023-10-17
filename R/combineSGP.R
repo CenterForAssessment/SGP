@@ -228,12 +228,13 @@ function(
 
 	if (update.all.years) {
 		variables.to.null.out <- c(
-			"SGP", "SGP_SIMEX", "SGP_SIMEX_RANKED", "SGP_NOTE", "SGP_LEVEL", "SGP_STANDARD_ERROR", "SCALE_SCORE_PRIOR", "SCALE_SCORE_PRIOR_STANDARDIZED", "SGP_BASELINE", "SGP_LEVEL_BASELINE",
+			"SGP", "SGP_NOTE", "SGP_LEVEL", "SGP_STANDARD_ERROR", "SCALE_SCORE_PRIOR", "SCALE_SCORE_PRIOR_STANDARDIZED", "SGP_BASELINE", "SGP_LEVEL_BASELINE",
 			"SGP_TARGET", "SGP_TARGET_MU", "SGP_TARGET_MU_BASELINE", "SGP_TARGET_MOVE_UP_STAY_UP", "SGP_TARGET_MOVE_UP_STAY_UP_BASELINE", "ACHIEVEMENT_LEVEL_PRIOR",
 			"CATCH_UP_KEEP_UP_STATUS_INITIAL", "SGP_TARGET_BASELINE", "CATCH_UP_KEEP_UP_STATUS", "CATCH_UP_KEEP_UP_STATUS_BASELINE",
 			"MOVE_UP_STATUS", "MOVE_UP_STAY_UP_STATUS", "MOVE_UP_STAY_UP_STATUS_BASELINE",
 			"SGP_NORM_GROUP", "SGP_NORM_GROUP_BASELINE", "SGP_BASELINE_STANDARD_ERROR", "SGP_NORM_GROUP_SCALE_SCORES", "SGP_NORM_GROUP_BASELINE_SCALE_SCORES",
 			grep("SGP_ORDER", names(slot.data), value=TRUE), grep("SGP_BASELINE_ORDER", names(slot.data), value=TRUE),
+			grep("SGP_SIMEX", names(slot.data), value=TRUE), grep("SGP_SIMEX_RANKED", names(slot.data), value=TRUE),
 			grep("PERCENTILE_CUT", names(slot.data), value=TRUE), grep("CONFIDENCE_BOUND", names(slot.data), value=TRUE),
 			paste("SGP_TARGET", max.sgp.target.years.forward, projection.unit.label, sep="_"),
 			paste("SGP_TARGET_MOVE_UP_STAY_UP", max.sgp.target.years.forward, projection.unit.label, sep="_"),
@@ -469,7 +470,12 @@ function(
 				if (!is.null(fix.duplicates)) {
 					if (!sgp.percentiles & !sgp.percentiles.baseline) messageSGP("The fix.duplicates='KEEP.ALL' functionality requires that sgp.percentiles = TRUE or percentiles results have already been merged into @Data.")
 					##  Seperate out prior score history of slot.data
+					if (grepl(".baseline", target.type.iter)) {
+						tmp.split <-
+							strsplit(as.character(slot.data[["SGP_NORM_GROUP_BASELINE_SCALE_SCORES"]]), "; ")
+					} else {
 					tmp.split <- strsplit(as.character(slot.data[["SGP_NORM_GROUP_SCALE_SCORES"]]), "; ")
+					}
 					num.scores <- max(sapply(seq_along(tmp.split), function(f) length(tmp.split[[f]])))
 					if (num.scores > 2) {
 						for (tmp.prior in tail(seq(num.scores), -2)) {
