@@ -705,21 +705,47 @@ function(panel.data,         ## REQUIRED
           }
         }
         if (ranked.simex.tf) {
-          if (use.cohort.for.ranking) { # Use `use.cohort.for.ranking=TRUE` if reproducing values with original data OR to rank against the updated/new cohort data ONLY
-            tmp.quantiles.simex[[k]] <- data.table(ID=tmp.data[["ID"]], SIMEX_ORDER=k,
-            SGP_SIMEX = .get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]]),
-            SGP_SIMEX_RANKED = as.integer(round(100*(data.table::frank(ties.method = "average", x =
-            .get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]], ranked.simex=ifelse(reproduce.old.values, "reproduce.old.values", TRUE)))/n.records), 0)))
-          } else { # creates a new "average" rank of the original data and the updated/new cohort
-            tmp.quantiles.simex[[k]] <- data.table(ID=tmp.data[["ID"]], SIMEX_ORDER=k,
-            SGP_SIMEX = .get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]]),
-            SGP_SIMEX_RANKED = head(as.integer(round(100*(data.table::frank(ties.method = "average", x =
-                c(.get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]], ranked.simex=ifelse(reproduce.old.values, "reproduce.old.values", TRUE)),
-                as.numeric(rep(names(ranked.simex.info), ranked.simex.info))))/(n.records+attr(ranked.simex.info, "n_records"))), 0)), n.records))
-          }
+            tmp.quantiles.simex[[k]] <-
+                data.table(
+                    ID = tmp.data[["ID"]],
+                    SIMEX_ORDER = k,
+                    SGP_SIMEX =
+                    .get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]])
+                )
+          if (use.cohort.for.ranking) {
+			# Use `use.cohort.for.ranking=TRUE` if reproducing values with original data OR to rank against the updated/new cohort data ONLY
+            tmp.quantiles.simex[[k]][,
+                SGP_SIMEX_RANKED :=
+                    as.integer(round(100*(
+                        data.table::frank(
+                            ties.method = "average",
+                            x = .get.quantiles(
+                                extrap[[paste0("order_", k)]],
+                                tmp.data[[tmp.num.variables]],
+                                    ranked.simex =
+                                        ifelse(reproduce.old.values, "reproduce.old.values", TRUE)
+                                    ))/n.records
+                                ), 0))
+                    ]
+                } else {
+                    # creates a new "average" rank of the original data and the updated/new cohort
+                    tmp.quantiles.simex[[k]][,
+                        SGP_SIMEX_RANKED :=
+                            head(as.integer(round(100*(
+                                data.table::frank(
+                                    ties.method = "average",
+                                    x = c(.get.quantiles(
+                                            extrap[[paste0("order_", k)]],
+                                            tmp.data[[tmp.num.variables]],
+                                            ranked.simex =
+                                                ifelse(reproduce.old.values, "reproduce.old.values", TRUE)
+                                          ),
+                                          as.numeric(rep(names(ranked.simex.info), ranked.simex.info))))/(n.records+attr(ranked.simex.info, "n_records"))
+                            ), 0)), n.records)
+                    ]
+                }
+            }
         }
-      }
-      # }
     }### END for (k in simex.matrix.priors)
 
 		if (verbose) messageSGP(c("\tFinished SIMEX SGP calculation ", rev(content_area.progression)[1L], " Grade ", rev(tmp.gp)[1L], " ", prettyDate()))
@@ -733,7 +759,10 @@ function(panel.data,         ## REQUIRED
         invisible(quantile.data.simex[SGP_SIMEX_RANKED==100L, SGP_SIMEX_RANKED := 99L])
       }
 			setkey(quantile.data.simex, ID) # first key on ID and SIMEX_ORDER, then re-key on ID only to insure sorted order. Don't rely on rbindlist/k ordering...
-		} else quantile.data.simex <- data.table("ID"=NA, "SIMEX_ORDER"=NA, "SGP_SIMEX"=NA, "SGP_SIMEX_RANKED"=NA) # set up empty data.table for ddcast and subsets below.
+		} else { # set up empty data.table for ddcast and subsets below.
+			quantile.data.simex <-
+				data.table("ID"=NA, "SIMEX_ORDER"=NA, "SGP_SIMEX"=NA, "SGP_SIMEX_RANKED"=NA)
+		}
 		if (print.other.gp) {
 			tmp.quantile.data.simex <- ddcast(quantile.data.simex, ID ~ SIMEX_ORDER, value.var=setdiff(names(quantile.data.simex), c("ID", "SIMEX_ORDER")), sep="_ORDER_")
 			quantile.data.simex <- data.table(tmp.quantile.data.simex,

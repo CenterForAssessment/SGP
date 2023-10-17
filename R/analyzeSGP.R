@@ -182,6 +182,14 @@ function(sgp_object,
 		sgp.config.drop.nonsequential.grade.progression.variables <- FALSE
 	}
 
+	if (!any(
+		grepl("PERCENTILES|BASELINE_PERCENTILES|TAUS|SIMEX|BASELINE_MATRICES|PROJECTIONS|LAGGED_PROJECTIONS",
+		      names(parallel.config[['WORKERS']])
+			)
+	)) {
+		parallel.config <- NULL
+	}
+
 	if (all(c("PERCENTILES", "TAUS") %in% names(parallel.config[['WORKERS']]))) {
 		if (.Platform$OS.type != "unix" | "SNOW_TEST" %in% names(parallel.config)) stop("Both TAUS and PERCENTILES cannot be executed in Parallel at the same time in Windows OS or using SNOW type backends.")
 		messageSGP("\n\tCAUTION:  Running higher- and lower-level processes in parallel at the same time.  Make sure you have enough CPU cores and memory to support this.\n")
@@ -536,12 +544,16 @@ function(sgp_object,
 	if (as.numeric(strsplit(format(object.size(sgp_object@Data), units="GB"), " Gb")[[1L]]) > 1) sgp.sqlite <- TRUE
 	if (!is.null(SGPt)) sgp.sqlite <- FALSE # Ultimate case of whether or not to use SQLite?
 
-	if (sgp.sqlite) {
-		tmp_sgp_data_for_analysis <- dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_SGP_Data.sqlite"))
-		dbWriteTable(tmp_sgp_data_for_analysis, name = "sgp_data", overwrite = TRUE,
-			value=sgp_object@Data[,intersect(names(sgp_object@Data), variables.to.get), with=FALSE]["VALID_CASE"], row.names=FALSE)
-		sgp.data.names <- dbListFields(tmp_sgp_data_for_analysis, "sgp_data")
-		dbDisconnect(tmp_sgp_data_for_analysis)
+    if (sgp.sqlite) {
+        tmp_sgp_data_for_analysis <-
+            dbConnect(
+                SQLite(),
+                dbname = "FullUri=file:memdb1?mode=memory&cache=shared"
+            )
+        dbWriteTable(tmp_sgp_data_for_analysis, name = "sgp_data", overwrite = TRUE,
+            value=sgp_object@Data[,intersect(names(sgp_object@Data), variables.to.get), with=FALSE]["VALID_CASE"], row.names=FALSE)
+        sgp.data.names <- dbListFields(tmp_sgp_data_for_analysis, "sgp_data")
+        dbDisconnect(tmp_sgp_data_for_analysis)
 	} else {
 		tmp_sgp_data_for_analysis <- sgp_object@Data[,intersect(names(sgp_object@Data), variables.to.get), with=FALSE]["VALID_CASE"]
 		sgp.data.names <- names(tmp_sgp_data_for_analysis)
@@ -968,7 +980,6 @@ function(sgp_object,
         messageSGP("\tNOTE: Cohort data information saved to 'Logs/cohort_data_info.Rdata'.")
 	}
 
-
 	#######################################################################################################################
 	#######################################################################################################################
 	###   Percentiles, Equated Percentiles, Baseline Percentiles, Projections, Lagged Projections -  PARALLEL FLAVORS FIRST
@@ -1141,10 +1152,10 @@ function(sgp_object,
 			stopParallel(parallel.config, par.start)
 			if (!is.null(sgp.test.cohort.size)) {
 				test.ids <- unique(rbindlist(tmp_sgp_object[["SGPercentiles"]], fill=TRUE), by='ID')[['ID']]
-				if (is(tmp_sgp_data_for_analysis, "DBIObject")) {
-          con <- dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_SGP_Data.sqlite"))
-					tmp_sgp_data_for_analysis <- data.table(dbGetQuery(con, paste0("select * from sgp_data where ID in ('", paste(test.ids, collapse="', '"), "')")))
-          dbDisconnect(con)
+                if (is(tmp_sgp_data_for_analysis, "DBIObject")) {
+                    con <- dbConnect(SQLite(), dbdir = file.path(tempdir(), "TMP_SGP_Data.duckdb"))
+                    tmp_sgp_data_for_analysis <- data.table(dbGetQuery(con, paste0("select * from sgp_data where ID in ('", paste(test.ids, collapse = "', '"), "')")))
+                    dbDisconnect(con)
 					if ("YEAR_WITHIN" %in% sgp.data.names) {
 						setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE, YEAR_WITHIN)
 					} else {
@@ -1164,7 +1175,7 @@ function(sgp_object,
           if (nrow(missing.lookup) > 0){
             setkeyv(sgp_object@Data, key(missing.lookup))
             tmp_data_to_add <- sgp_object@Data[missing.lookup][VALID_CASE=="VALID_CASE",intersect(names(sgp_object@Data), variables.to.get), with=FALSE][, .SD[sample(.N, sgp.test.cohort.size)], by=key(missing.lookup)]
-            tmp_sgp_data_for_analysis <- rbindlist(list(tmp_sgp_data_for_analysis, tmp_sgp_data_for_analysis))
+            tmp_sgp_data_for_analysis <- rbindlist(list(tmp_sgp_data_for_analysis, tmp_data_to_add), use.names = TRUE)
             setkeyv(tmp_sgp_data_for_analysis, getKey(tmp_sgp_data_for_analysis))
           }
         }
@@ -1483,7 +1494,7 @@ function(sgp_object,
     if (!is.null(sgp.test.cohort.size) & !sgp.percentiles) {
       test.ids <- unique(rbindlist(tmp_sgp_object[["SGPercentiles"]], fill=TRUE), by='ID')[['ID']]
       if (is(tmp_sgp_data_for_analysis, "DBIObject")) {
-        con <- dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_SGP_Data.sqlite"))
+        con <- dbConnect(SQLite(), dbdir = file.path(tempdir(), "TMP_SGP_Data.duckdb"))
         tmp_sgp_data_for_analysis <- data.table(dbGetQuery(con, paste0("select * from sgp_data where ID in ('", paste(test.ids, collapse="', '"), "')")))
         dbDisconnect(con)
         if ("YEAR_WITHIN" %in% sgp.data.names) {
@@ -1505,7 +1516,7 @@ function(sgp_object,
         if (nrow(missing.lookup) > 0){
           setkeyv(sgp_object@Data, key(missing.lookup))
           tmp_data_to_add <- sgp_object@Data[missing.lookup][VALID_CASE=="VALID_CASE",intersect(names(sgp_object@Data), variables.to.get), with=FALSE][, .SD[sample(.N, sgp.test.cohort.size)], by=key(missing.lookup)]
-          tmp_sgp_data_for_analysis <- rbindlist(list(tmp_sgp_data_for_analysis, tmp_sgp_data_for_analysis))
+          tmp_sgp_data_for_analysis <- rbindlist(list(tmp_sgp_data_for_analysis, tmp_data_to_add), use.names = TRUE)
           setkeyv(tmp_sgp_data_for_analysis, getKey(tmp_sgp_data_for_analysis))
         }
       }
@@ -2175,9 +2186,9 @@ function(sgp_object,
 			if (!is.null(sgp.test.cohort.size)) {
 				test.ids <- unique(rbindlist(tmp_sgp_object[["SGPercentiles"]], fill=TRUE), by='ID')[["ID"]]
 				if (is(tmp_sgp_data_for_analysis, "DBIObject")) {
-          con <- dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_SGP_Data.sqlite"))
+                    con <- dbConnect(SQLite(), dbdir = file.path(tempdir(), "TMP_SGP_Data.duckdb"))
 					tmp_sgp_data_for_analysis <- data.table(dbGetQuery(con, paste0("select * from sgp_data where ID in ('", paste(test.ids, collapse="', '"), "')")))
-          dbDisconnect(con)
+                    dbDisconnect(con)
 					if ("YEAR_WITHIN" %in% sgp.data.names) {
 						setkey(tmp_sgp_data_for_analysis, VALID_CASE, CONTENT_AREA, YEAR, GRADE, YEAR_WITHIN)
 					} else {
@@ -2481,8 +2492,14 @@ function(sgp_object,
 	} ## END sequential analyzeSGP
 
 
-	if (!keep.sqlite & sgp.sqlite) unlink(file.path(tempdir(), "TMP_SGP_Data.sqlite"), recursive=TRUE)
-
+    if (sgp.sqlite) {
+        # con <- dbConnect(SQLite(), dbdir = file.path(tempdir(), "TMP_SGP_Data.duckdb"))
+        # sgp_object@Data <- data.table(dbGetQuery(con, "select * from sgp_data"))
+        # dbDisconnect(con)
+        if (!keep.sqlite) {
+            unlink(file.path(tempdir(), "TMP_SGP_Data.duckdb"), recursive=TRUE)
+		}
+	}
 	if (!is.null(sgp.test.cohort.size) & toupper(return.sgp.test.results) != "ALL_DATA") {
 		if (!return.sgp.test.results) {
 			messageSGP(paste("Finished analyzeSGP", prettyDate(), "in", convertTime(timetakenSGP(started.at)), "\n"))

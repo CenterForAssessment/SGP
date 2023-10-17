@@ -422,7 +422,7 @@
 			summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], sgp.groups[x] %in% ci.groups))
 		} else summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], FALSE))
 
-		db.path = file.path(tempdir(), "TMP_Summary_Data.sqlite")
+		db.path = "FullUri=file:memdb1?mode=memory&cache=shared"
 
 		## if NULL parallel.config
 		if (is.null(parallel.config)) {
@@ -599,7 +599,7 @@
 
 	### Loop and send to summarizeSGP_INTERNAL
 
-	sgp_data_for_summary <- dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_Summary_Data.sqlite"))
+	sgp_data_for_summary <- dbConnect(SQLite(), dbname = "FullUri=file:memdb1?mode=memory&cache=shared")
 
 	if ("VALID_CASE_STATUS_ONLY" %in% names(sgp_object@Data)) {
 		sgp_object@Data$VALID_CASE[sgp_object@Data$VALID_CASE_STATUS_ONLY=="VALID_CASE"] <- "VALID_CASE"
@@ -630,7 +630,10 @@
 			# Write tmp.simulation.dt to disk for SNOW backends in Windows (& SNOT_TEST) Only
 			tmp.simulation.dt <- "sqlite"
 			dbWriteTable(sgp_data_for_summary, name = "sim_data", overwrite = TRUE, row.names=FALSE,
-				value = combineSims(sgp_object)[, SIM_NUM := 1:sim.info[['n.simulated.sgps']]])
+				value = combineSims(sgp_object)[,
+				  SIM_NUM := rep(1:sim.info[["n.simulated.sgps"]], sim.info[["n.unique.cases"]])
+				]
+			)
 		} else {
 			tmp.simulation.dt <- combineSims(sgp_object)
 		}
@@ -638,10 +641,16 @@
 
 	dbDisconnect(sgp_data_for_summary)
 
-	if (!is.null(parallel.config))	par.start <- startParallel(parallel.config, 'SUMMARY') else par.start <- list(par.type="NONE")
-
-	# Don't use SNOW - run as FOREACH + doParallel instead.
-	if (identical(par.start[['par.type']], "SNOW")) {parallel.config[["BACKEND"]] <- "FOREACH"; parallel.config[["TYPE"]] <- "doParallel"}
+	# Use FOREACH + doParallel exclusively for Windows/SNOW
+	if ((!identical(.Platform$OS.type, "unix") & !is.null(parallel.config)) | !is.null(parallel.config[["SNOW_TEST"]])) {
+		parallel.config[["BACKEND"]] <- "FOREACH"
+		parallel.config[["TYPE"]] <- "doParallel"
+	}
+	if (!is.null(parallel.config)) {
+		par.start <- startParallel(parallel.config, 'SUMMARY')
+	} else {
+		par.start <- list(par.type="NONE")
+	}
 
 	for (j in seq(length(summary.groups[["institution_multiple_membership"]])+1)) {
 		for (i in summary.groups[["institution"]]) {
@@ -685,7 +694,8 @@
 
 				if (adj.weights.tf & "WEIGHT" %in% names(tmp.dt.long)) invisible(tmp.dt.long[, WEIGHT := round((WEIGHT / DUP_COUNT), 3)])
 
-				sgp_data_for_summary <- dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_Summary_Data.sqlite"))
+				sgp_data_for_summary <-
+				    dbConnect(SQLite(), dbname = "FullUri=file:memdb1?mode=memory&cache=shared")
 				dbWriteTable(sgp_data_for_summary, name = "summary_data", overwrite = TRUE, row.names=FALSE, value = tmp.dt.long)
 				dbDisconnect(sgp_data_for_summary)
 
@@ -698,7 +708,6 @@
 
 	if (!is.null(parallel.config))	stopParallel(parallel.config, par.start)
 
-	unlink(file.path(tempdir(), "TMP_Summary_Data.sqlite"), recursive=TRUE)
 	if ("VALID_CASE_STATUS_ONLY" %in% names(sgp_object@Data)) {
 		sgp_object@Data$VALID_CASE[sgp_object@Data$VALID_CASE_STATUS_ONLY=="VALID_CASE"] <- "INVALID_CASE"
 		setkeyv(sgp_object@Data, getKey(sgp_object))
