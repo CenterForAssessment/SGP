@@ -1,13 +1,20 @@
-citHeader("To cite the SGP package in publications use:")
-
-citEntry(entry = "Manual",
-         title        = "{SGP}: Student Growth Percentiles \\& Percentile Growth Trajectories.",
-         author       = personList(as.person("Damian W. Betebenner"), as.person("Adam R. Van Iwaarden"), as.person("Ben Domingue"),  as.person("Yi Shang")),
-         year         = "2023",
-         note         = "R package version 2.1-0.0",
-         url          = "https://sgp.io",
-
-         textVersion  = paste("Damian W. Betebenner, Adam R. Van Iwaarden, Ben Domingue and Yi Shang (2023).",
-                        "SGP: Student Growth Percentiles & Percentile Growth Trajectories.",
-                        "(R package version 2.1-0.0)",
-                        "URL: https://sgp.io"))
+bibentry(
+    bibtype      = "Manual",
+    header       = "To cite the SGP package in publications use:",
+    title        = "{SGP}: Student Growth Percentiles \\& Percentile Growth Trajectories.",
+    author       = c(
+                    person(given = c("Damian", "W."), family = "Betebenner"),
+                    person(given = c("Adam", "R."), family = "Van Iwaarden"),
+                    person(given = c("Benjamin"), family = "Domingue"),
+                    person(given = c("Yi"), family = "Shang")
+                   ),
+    year         = "2023",
+    note         = "R package version 2.1-0.0",
+    url          = "https://sgp.io",
+    textVersion  = paste(
+                    "Damian W. Betebenner, Adam R. Van Iwaarden, Benjamin Domingue and Yi Shang (2023).",
+                    "SGP: Student Growth Percentiles & Percentile Growth Trajectories.",
+                    "(R package version 2.1-0.0)",
+                    "URL: https://sgp.io"
+                  )
+)

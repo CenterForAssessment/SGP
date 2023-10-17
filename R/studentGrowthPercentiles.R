@@ -660,7 +660,7 @@ function(panel.data,         ## REQUIRED
 					# }
 					stopParallel(tmp.par.config, par.start)
 				} ### END Parallel over sim.iters
-        if (!is.null(tmp.par.config)) unlink(tmp.dbname, recursive = TRUE)
+        if (!is.null(tmp.par.config)) unlink(tmp.dbname)
 			} ### END for (L in lambda[-1L])
 			if (verbose) messageSGP(c("\t\t", rev(content_area.progression)[1L], " Grade ", rev(tmp.gp)[1L], " Order ", k, " Simulation process complete ", prettyDate()))
 
