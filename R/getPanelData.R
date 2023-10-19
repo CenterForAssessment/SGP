@@ -14,7 +14,7 @@ function(sgp.data,
         con <-
             dbConnect(
                 RSQLite::SQLite(),
-                dbname = "FullUri=file:memdb1?mode=memory&cache=shared" 
+                dbname = "file:memdb1?mode=memory&cache=shared"
             )
         var.names <- dbListFields(con, "sgp_data")
         sqlite.tf <- TRUE
