@@ -548,7 +548,7 @@ function(sgp_object,
         tmp_sgp_data_for_analysis <-
             dbConnect(
                 SQLite(),
-                dbname = "file:memdb1?mode=memory&cache=shared"
+                dbname = file.path(tempdir(), "TMP_SGP_Data.sqlite")
             )
         dbWriteTable(tmp_sgp_data_for_analysis, name = "sgp_data", overwrite = TRUE,
             value=sgp_object@Data[,intersect(names(sgp_object@Data), variables.to.get), with=FALSE]["VALID_CASE"], row.names=FALSE)
@@ -1153,7 +1153,7 @@ function(sgp_object,
 			if (!is.null(sgp.test.cohort.size)) {
 				test.ids <- unique(rbindlist(tmp_sgp_object[["SGPercentiles"]], fill=TRUE), by='ID')[['ID']]
                 if (is(tmp_sgp_data_for_analysis, "DBIObject")) {
-                    con <- dbConnect(SQLite(), dbdir = "file:memdb1?mode=memory&cache=shared")
+                    con <- dbConnect(SQLite(), dbdir = file.path(tempdir(), "TMP_SGP_Data.sqlite"))
                     tmp_sgp_data_for_analysis <- data.table(dbGetQuery(con, paste0("select * from sgp_data where ID in ('", paste(test.ids, collapse = "', '"), "')")))
                     dbDisconnect(con)
 					if ("YEAR_WITHIN" %in% sgp.data.names) {
@@ -1494,7 +1494,7 @@ function(sgp_object,
     if (!is.null(sgp.test.cohort.size) & !sgp.percentiles) {
       test.ids <- unique(rbindlist(tmp_sgp_object[["SGPercentiles"]], fill=TRUE), by='ID')[['ID']]
       if (is(tmp_sgp_data_for_analysis, "DBIObject")) {
-        con <- dbConnect(SQLite(), dbdir = "file:memdb1?mode=memory&cache=shared")
+        con <- dbConnect(SQLite(), dbdir = file.path(tempdir(), "TMP_SGP_Data.sqlite"))
         tmp_sgp_data_for_analysis <- data.table(dbGetQuery(con, paste0("select * from sgp_data where ID in ('", paste(test.ids, collapse="', '"), "')")))
         dbDisconnect(con)
         if ("YEAR_WITHIN" %in% sgp.data.names) {
@@ -2186,7 +2186,7 @@ function(sgp_object,
 			if (!is.null(sgp.test.cohort.size)) {
 				test.ids <- unique(rbindlist(tmp_sgp_object[["SGPercentiles"]], fill=TRUE), by='ID')[["ID"]]
 				if (is(tmp_sgp_data_for_analysis, "DBIObject")) {
-                    con <- dbConnect(SQLite(), dbdir = "file:memdb1?mode=memory&cache=shared")
+                    con <- dbConnect(SQLite(), dbdir = file.path(tempdir(), "TMP_SGP_Data.sqlite"))
 					tmp_sgp_data_for_analysis <- data.table(dbGetQuery(con, paste0("select * from sgp_data where ID in ('", paste(test.ids, collapse="', '"), "')")))
                     dbDisconnect(con)
 					if ("YEAR_WITHIN" %in% sgp.data.names) {
@@ -2493,9 +2493,9 @@ function(sgp_object,
 
 
     if (sgp.sqlite) {
+        dbDisconnect(tmp_sgp_data_for_analysis)
         if (!keep.sqlite) {
-            dbDisconnect(tmp_sgp_data_for_analysis)
-            # unlink("file:memdb1?mode=memory&cache=shared", recursive=TRUE)
+            unlink(file.path(tempdir(), "TMP_SGP_Data.sqlite"), recursive=TRUE)
 		}
 	}
 	if (!is.null(sgp.test.cohort.size) & toupper(return.sgp.test.results) != "ALL_DATA") {

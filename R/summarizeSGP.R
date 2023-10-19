@@ -422,7 +422,7 @@
 			summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], sgp.groups[x] %in% ci.groups))
 		} else summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], FALSE))
 
-		db.path = "file:memdb1?mode=memory&cache=shared"
+		db.path = file.path(tempdir(), "TMP_Summary_Data.sqlite")
 
 		## if NULL parallel.config
 		if (is.null(parallel.config)) {
@@ -599,7 +599,7 @@
 
 	### Loop and send to summarizeSGP_INTERNAL
 
-	sgp_data_for_summary <- dbConnect(SQLite(), dbname = "file:memdb1?mode=memory&cache=shared")
+	sgp_data_for_summary <- dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_Summary_Data.sqlite"))
 
 	if ("VALID_CASE_STATUS_ONLY" %in% names(sgp_object@Data)) {
 		sgp_object@Data$VALID_CASE[sgp_object@Data$VALID_CASE_STATUS_ONLY=="VALID_CASE"] <- "VALID_CASE"
