@@ -56,7 +56,7 @@ resources available on [CRAN](https://cran.r-project.org/manuals.html) for getti
 
 After installing **R**, one needs to install the SGP package. Because the SGP package utilizes several other **R** packages, those will be installed
 concurrently. Installing **R** packages can be done in several different ways depending upon whether one is using a development environment for **R**
-(e.g., [RStudio](https://www.rstudio.com/)), the installed **R** client, or calling **R** from the command line. In all cases, packages can be installed
+(e.g., [RStudio](https://posit.co/)), the installed **R** client, or calling **R** from the command line. In all cases, packages can be installed
 from the **R** command prompt (```>```) as follows:
 
 To install the latest stable release of SGP from [CRAN](https://CRAN.R-project.org/package=SGP)
