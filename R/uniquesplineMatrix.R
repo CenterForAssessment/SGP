@@ -1,4 +1,4 @@
-`unique.splineMatrix` <- 
+`uniquesplineMatrix` <- 
 function(list.of.splineMatrices) {
 	
 	###  First identify/remove exact duplicates (not newer/older Versions).  Fixes issue of mergeSGP with existing SIMEX Baseline Matrices - 10/8/14
@@ -17,4 +17,4 @@ function(list.of.splineMatrices) {
 	} else {
 		list.of.splineMatrices
 	}
-} ### END unique.splineMatrix
+} ### END uniquesplineMatrix

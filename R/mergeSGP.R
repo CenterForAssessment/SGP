@@ -49,13 +49,13 @@ function(list_1,
 		for (k in names(list_2[[j]])) {
 			if (!grepl("SIMEX", k)) {
 				if (!identical(list_1[[j]][[k]], list_2[[j]][[k]])) {
-					list_1[[j]][[k]] <- unique.splineMatrix(c(list_1[[j]][[k]], list_2[[j]][[k]]))
+					list_1[[j]][[k]] <- uniquesplineMatrix(c(list_1[[j]][[k]], list_2[[j]][[k]]))
 				}
 			} else {
 				for (grd_ord in names(list_2[[j]][[k]])) {
 					for (lambda in grep("lambda", names(list_2[[j]][[k]][[grd_ord]]), value=TRUE)) {
 						if (!identical(list_1[[j]][[k]][[grd_ord]][[lambda]], list_2[[j]][[k]][[grd_ord]][[lambda]])) {
-							list_1[[j]][[k]][[grd_ord]][[lambda]] <- unique.splineMatrix(c(list_1[[j]][[k]][[grd_ord]][[lambda]], list_2[[j]][[k]][[grd_ord]][[lambda]]))
+							list_1[[j]][[k]][[grd_ord]][[lambda]] <- uniquesplineMatrix(c(list_1[[j]][[k]][[grd_ord]][[lambda]], list_2[[j]][[k]][[grd_ord]][[lambda]]))
 						}
 					}
 					for (rst in grep("ranked_simex_table", names(list_2[[j]][[k]][[grd_ord]]), value=TRUE)) {
