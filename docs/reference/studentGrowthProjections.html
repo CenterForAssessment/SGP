@@ -190,12 +190,14 @@
                          <span class='kw'>projection.unit</span><span class='kw'>=</span><span class='st'>"YEAR"</span>,
                          <span class='kw'>projection.unit.label</span><span class='kw'>=</span><span class='kw'>NULL</span>,
                          <span class='kw'>percentile.trajectory.values</span><span class='kw'>=</span><span class='kw'>NULL</span>,
+                         <span class='kw'>percentile.trajectory.values.max.forward.progression.years</span><span class='kw'>=</span><span class='kw'>NULL</span>,
                          <span class='kw'>return.percentile.trajectory.values</span><span class='kw'>=</span><span class='kw'>NULL</span>,
                          <span class='kw'>return.projection.group.identifier</span><span class='kw'>=</span><span class='kw'>NULL</span>,
                          <span class='kw'>return.projection.group.scale.scores</span><span class='kw'>=</span><span class='kw'>NULL</span>,
                          <span class='kw'>return.projection.group.dates</span><span class='kw'>=</span><span class='kw'>NULL</span>,
                          <span class='kw'>isotonize</span><span class='kw'>=</span><span class='fl'>TRUE</span>,
                          <span class='kw'>lag.increment</span><span class='kw'>=</span><span class='fl'>0L</span>,
+                         <span class='kw'>lag.increment.label</span><span class='kw'>=</span><span class='kw'>NULL</span>,
                          <span class='kw'>sgp.exact.grade.progression</span><span class='kw'>=</span><span class='fl'>FALSE</span>,
                          <span class='kw'>projcuts.digits</span><span class='kw'>=</span><span class='kw'>NULL</span>,
                          <span class='kw'>sgp.projections.use.only.complete.matrices</span><span class='kw'>=</span><span class='kw'>NULL</span>,
@@ -338,6 +340,11 @@
   that will return Scale Scores associated with those targets.</p></td>
     </tr>
     <tr>
+      <th>percentile.trajectory.values.max.forward.progression.years</th>
+      <td><p>An integer argument indicating the number of years associated with the trajectory calculated by <code>percentile.trajectory.values</code>.
+  Supplied value can also be a vector of targets that will trim the trajectory to fit with a designated number of years.</p></td>
+    </tr>
+    <tr>
       <th>return.percentile.trajectory.values</th>
       <td><p>A Boolean variable indicating whether to return the percentile trajectory values when they are supplied as targets via panel.data. Default is NULL/FALSE.</p></td>
     </tr>
@@ -361,6 +368,10 @@
     <tr>
       <th>lag.increment</th>
       <td><p>A non-negative integer (defaults to 0) indicating the lag associated with the data supplied for projections. Only relevant if Cutscores or Knots and Boundaries are year dependent.</p></td>
+    </tr>
+    <tr>
+      <th>lag.increment.label</th>
+      <td><p>Overrides default ways in which lagged targets and straight targets are labelled ("" and "_CURRENT", respectively).</p></td>
     </tr>
     <tr>
       <th>sgp.exact.grade.progression</th>

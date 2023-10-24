@@ -1,6 +1,6 @@
 ---
 title: "SGP 2.1-0.0"
-date: "June 25th, 2023"
+date: "October 24th, 2023"
 ---
 
 ```{r include = FALSE}
@@ -26,7 +26,7 @@ This is the 2.1-0.0 release of the SGP package posted to CRAN. This [GitHub tagg
 can be downloaded via:
 
 ```{r eval=FALSE}
-devtools::install_github("CenterForAssessment/SGP", ref="7f10af5")
+devtools::install_github("CenterForAssessment/SGP", ref="ea8d8a3")
 ```
 
 To see all the changes in this release check out the [change log](https://sgp.io/news/index.html#sgp-2-1-0-0).
