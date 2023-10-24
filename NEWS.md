@@ -1,3 +1,15 @@
+# SGP 2.1-0.0
+
+## User Visible Changes:
+
+* General bug fixes and meta-data updates to SGPstateData
+
+# SGP 2.0-0.0
+
+## User Visible Changes:
+
+* General bug fixes and meta-data updates to SGPstateData
+
 # SGP 1.9-5.0
 
 ## User Visible Changes:
