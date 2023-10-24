@@ -29,8 +29,13 @@ jobs:
       R_KEEP_PKG_SOURCE: yes
 
     steps:
+      - name: Install Homebrew
+        if: runner.os == 'macOS'
+        run: |
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+
       - name: Install XQUARTZ dependencies on MacOS
-        if: runner.os == 'macos-latest'
+        if: runner.os == 'macOS'
         run: |
           brew install --cask xquartz
 
