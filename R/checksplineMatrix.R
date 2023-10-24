@@ -20,7 +20,7 @@ function(list.of.splineMatrix,
 							as.splineMatrix(matrix_argument=list.of.splineMatrix[[i]][[j]], matrix_argument_name=j, content_area=content_area, year=year, sgp_object=sgp_object)
 					}
 				}
-				list.of.splineMatrix[[i]] <- unique.splineMatrix(list.of.splineMatrix[[i]])
+				list.of.splineMatrix[[i]] <- uniquesplineMatrix(list.of.splineMatrix[[i]])
 			} else {
 				list.of.splineMatrix[[i]] <- SGP::SGPstateData[[state]][['Baseline_splineMatrix']][['Coefficient_Matrices']][[i]]
 			}
@@ -36,7 +36,7 @@ function(list.of.splineMatrix,
 								as.splineMatrix(matrix_argument=list.of.splineMatrix[[i]][[grd_ord]][[lambda]][[j]], matrix_argument_name=j, content_area=content_area, year=year, sgp_object=sgp_object)
 						}
 					}
-					list.of.splineMatrix[[i]][[grd_ord]][[lambda]] <- unique.splineMatrix(list.of.splineMatrix[[i]][[grd_ord]][[lambda]])
+					list.of.splineMatrix[[i]][[grd_ord]][[lambda]] <- uniquesplineMatrix(list.of.splineMatrix[[i]][[grd_ord]][[lambda]])
 				}
 			}
 		}
