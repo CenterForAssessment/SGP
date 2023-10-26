@@ -22,7 +22,7 @@ date: "October 24th, 2023"
 ```
 
 
-This is the 2.1-0.0 release of the SGP package posted to CRAN. This [GitHub tagged release](https://github.com/CenterForAssessment/SGP/releases/tag/7f10af5)
+This is the 2.1-0.0 release of the SGP package posted to CRAN. This [GitHub tagged release](https://github.com/CenterForAssessment/SGP/releases/tag/ea8d8a3)
 can be downloaded via:
 
 ```{r eval=FALSE}
