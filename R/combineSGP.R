@@ -438,7 +438,6 @@ function(
 	### Create SGP targets (Cohort and Baseline referenced) and merge with student data
 	######################################################################################
 
-
 	if (!sgp.target.scale.scores.only && length(getPercentileTableNames(sgp_object, content_areas, state, years, "sgp.projections"))==0 && sgp.projections) {
 		tmp.messages <- c(tmp.messages, "\tNOTE: No SGP projections available in SGP slot. No current year student growth projection targets will be produced.\n")
 		sgp.projections <- FALSE;
