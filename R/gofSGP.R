@@ -203,6 +203,13 @@ function(
 		tmp.colors <- .cell.color(as.vector(tmp.table))
 		tmp.list <- list()
 
+        if (!is.null(state)) {
+            if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Labels"]][[content_area]])) {
+                content_area_title <-
+                    SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Labels"]][[content_area]]
+            } else content_area_title <- content_area
+        } else content_area_title <- content_area
+
 		for (i in levels(tmp.cuts)) {
 			tmp.list[[i]] <- quantile(data1$SGP[tmp.cuts==i], probs=ppoints(1:500), na.rm=TRUE)
 		}
@@ -306,7 +313,7 @@ function(
 
 				roundrectGrob(gp=gpar(fill="grey95"), vp="title", r=unit(3, "mm")),
 				textGrob(x=0.5, y=0.65, "Student Growth Percentile Goodness-of-Fit Descriptives", gp=gpar(cex=1.75), vp="title"),
-				textGrob(x=0.5, y=0.35, paste0(pretty_year(year), " ", sub(' +$', '', capwords(paste(content_area, my.extra.label))),
+				textGrob(x=0.5, y=0.35, paste0(pretty_year(year), " ", sub(' +$', '', capwords(paste(content_area_title, my.extra.label))),
 					", Grade ", grade, " (N = ", format(dim(data1)[1], big.mark=","), ")"), vp="title", gp=gpar(cex=1.2)),
 
 			### prior_achievement_level
@@ -396,7 +403,7 @@ function(
 
 				roundrectGrob(gp=gpar(fill="grey95"), vp="title", r=unit(3, "mm")),
 				textGrob(x=0.5, y=0.65, "Student Growth Percentile Goodness-of-Fit Descriptives", gp=gpar(cex=1.75), vp="title"),
-				textGrob(x=0.5, y=0.35, paste0(pretty_year(year), " ", sub(' +$', '', capwords(paste(content_area, my.extra.label))),
+				textGrob(x=0.5, y=0.35, paste0(pretty_year(year), " ", sub(' +$', '', capwords(paste(content_area_title, my.extra.label))),
 					", Grade ", grade, " (N = ", format(dim(data1)[1], big.mark=","), ")"), vp="title", gp=gpar(cex=1.2)),
 
 				### LOSS/HOSS table
@@ -457,7 +464,7 @@ function(
 
 				roundrectGrob(gp=gpar(fill="grey95"), vp="title", r=unit(3, "mm")),
 				textGrob(x=0.5, y=0.65, "Student Growth Percentile Goodness-of-Fit Descriptives", gp=gpar(cex=1.75), vp="title"),
-				textGrob(x=0.5, y=0.35, paste0(pretty_year(year), " ", sub(' +$', '', capwords(paste(content_area, my.extra.label))),
+				textGrob(x=0.5, y=0.35, paste0(pretty_year(year), " ", sub(' +$', '', capwords(paste(content_area_title, my.extra.label))),
 				", Grade ", grade, " (N = ", format(dim(data1)[1], big.mark=","), ")"), vp="title", gp=gpar(cex=1.2)),
 
 				### table
