@@ -217,7 +217,7 @@ function(
 		if ("YEAR_WITHIN" %in% names(tmp.target.data)) {
 			tmp.var.names <- c("ID", "CONTENT_AREA", "YEAR", "YEAR_WITHIN", intersect(names(tmp.target.data), c("GRADE", "SGP_PROJECTION_GROUP_SCALE_SCORES")))
 		} else tmp.var.names <- c("ID", "CONTENT_AREA", "YEAR", intersect(names(tmp.target.data), c("GRADE", "SGP_PROJECTION_GROUP_SCALE_SCORES")))
-		tmp.data <- tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter, c(tmp.var.names, tmp.target.level.names), with=FALSE]
+		tmp.data <- tmp.target.data[SGP_PROJECTION_GROUP==projection_group.iter, intersect(c(tmp.var.names, tmp.target.level.names), names(tmp.target.data)), with=FALSE]
 		na.omit(tmp.data, cols=grep("MOVE_UP_STAY_UP", tmp.target.level.names, invert=TRUE, value=TRUE))
 	}
 
