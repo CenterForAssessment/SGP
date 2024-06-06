@@ -204,9 +204,9 @@ function(
 		tmp.list <- list()
 
         if (!is.null(state)) {
-            if (!is.null(SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Labels"]][[content_area]])) {
+            if (!is.null(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Labels"]][[content_area]])) {
                 content_area_title <-
-                    SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Labels"]][[content_area]]
+                    SGP::SGPstateData[[state]][["Student_Report_Information"]][["Content_Areas_Labels"]][[content_area]]
             } else content_area_title <- content_area
         } else content_area_title <- content_area
 
