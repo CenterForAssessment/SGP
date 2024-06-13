@@ -1,184 +1,184 @@
 `sgpSummary` <-
-function(sgp.groups.to.summarize,
-	produce.confidence.interval,
-	tmp.simulation.dt,
-	state,
-	sgp.summaries,
-	confidence.interval.groups,
-	my.sgp,
-	sgp_key,
-	variables.for.summaries,
-	sim.info,
-	db.path) {
+    function(
+        long_data,
+        sgp.groups.to.summarize,
+        produce.confidence.interval,
+        tmp_simulation_dt,
+        sgp.summaries,
+        confidence.interval.groups,
+        sgp_key
+    ) {
 
-	WEIGHT <- MEDIAN_SGP_with_SHRINKAGE <- NULL
+    WEIGHT <- MEDIAN_SGP_with_SHRINKAGE <- MEDIAN_SGP_COUNT <- NULL
 
-	tmp.sgp.summaries <- sgp.summaries
-	sgp.summaries.names <- unlist(strsplit(names(sgp.summaries), "[.]"))
-	if (produce.confidence.interval) {
-		if ("Bootstrap_CI" %in% confidence.interval.groups$TYPE) {
-			tmp.list <- list()
-			tmp.quantiles <- paste0("c(", paste(confidence.interval.groups$QUANTILES, collapse=", "), ")")
-			for (i in confidence.interval.groups$VARIABLES) {
-				tmp.list[[paste0("MEDIAN_", i, "_QUANTILES")]] <- paste0("boot.sgp(", i, ", ", tmp.quantiles, ")")
-			}
-			tmp.sgp.summaries <- c(tmp.sgp.summaries, tmp.list)
-			sgp.summaries.names <- c(sgp.summaries.names, paste("MEDIAN", my.sgp, paste(confidence.interval.groups$QUANTILES, collapse="_"), "CONFIDENCE_BOUND_BOOTSTRAP", sep="_"))
-		}
-		if ("Bootstrap_SE" %in% confidence.interval.groups$TYPE) {
-			tmp.list <- list()
-			for (i in confidence.interval.groups$VARIABLES) {
-				tmp.list[[paste0("MEDIAN_", i, "_SE")]] <- paste0("boot.sgp(", i, ")")
-			}
-			tmp.sgp.summaries <- c(tmp.sgp.summaries, tmp.list)
-			sgp.summaries.names <- c(sgp.summaries.names, paste("MEDIAN", my.sgp, "STANDARD_ERROR_BOOTSTRAP", sep="_"))
-		}
-	}
+    tmp.sgp.summaries <- sgp.summaries
+    by.groups  <- unlist(strsplit(sgp.groups.to.summarize, ", "))
+    smry.names <- gsub("^[^.]*.", "", names(unlist(sgp.summaries)))
+    pct.names  <- grep("^PERCENT_AT_ABOVE|^PERCENT_CATCHING_UP|^PERCENT_MOVING_UP", smry.names, value = TRUE)
+    MnSE.names <- grep("^MEAN_SGP.*.STANDARD_ERROR", smry.names, value = TRUE)
 
-	ListExpr <- parse(text=paste0("list(", paste(unlist(tmp.sgp.summaries), collapse=", "),")"))
-	ByExpr <- parse(text=paste0("list(", paste(sgp.groups.to.summarize, collapse=", "), ")"))
+    tmp_res <-
+        collapse::collapv(
+            X = long_data,
+            by = by.groups,
+            custom = tmp.sgp.summaries,
+            w = if ("WEIGHT" %in% names(long_data)) "WEIGHT" else NULL,
+            keep.w = FALSE,
+            give.names = FALSE
+            # parallel = TRUE # way slower (at least with DEMO data size)
+        ) |>
+          collapse::replace_outliers(c(-2147483647, 2147483647)) |> # recode_num(`-2147483648` = NA, `2147483648` = NA) |>
+            collapse::ftransformv(pct.names, `*`, 100, apply = FALSE) |>
+              collapse::ftransformv(pct.names, round, 1L, apply = FALSE) |>
+                collapse::ftransformv(MnSE.names, `/`, sqrt(MEDIAN_SGP_COUNT), apply = FALSE)
 
-	tmp.db <- dbConnect(SQLite(), dbname = db.path)
-	available.vars <- dbListFields(tmp.db, "summary_data")
-	dbDisconnect(tmp.db)
+    tmp_res <-
+      collapse::add_vars(tmp_res, collapse::get_vars(tmp_res, MnSE.names) |> (`*`)(1.253) |>
+        collapse::rm_stub("MEAN_") |> collapse::add_stub("MEDIAN_")) |>
+          collapse::ftransformv(c(MnSE.names, gsub("^MEAN_", "MEDIAN_", MnSE.names)), round, 2L, apply = FALSE)
 
-	pull.vars <- c(unlist(sapply(available.vars,
-		function(p) if (any(grepl(p, tmp.sgp.summaries))) return(p)), use.names=FALSE), strsplit(sgp.groups.to.summarize, ", ")[[1]])
+    if (produce.confidence.interval & "CSEM" %in% confidence.interval.groups[["TYPE"]]) {
+      se_csem <-
+        collapse::collapv(
+            X = collapse::join(
+                    x = collapse::get_vars(long_data, vars = unique(c(sgp_key, by.groups))),
+                    y = tmp_simulation_dt,
+                    on = sgp_key, how = "right", drop.dup.cols = TRUE, verbose = 0
+                ),
+            by = c(by.groups, "NRM_REF_TYPE", "SIM_NUM"),
+            custom = list(fmedian = c(MEDN = "SGP_SIM"), fmean = c(MEAN = "SGP_SIM")),
+            give.names = FALSE
+        ) |>
+            collapse::collapv(
+                by = c(by.groups, "NRM_REF_TYPE"),
+                custom = list(fsd = c(MEDN_SE = "MEDN", MEAN_SE = "MEAN")),
+                give.names = FALSE
+            ) |>
+                collapse::pivot(
+                    ids = by.groups,
+                    values = c("MEDN_SE", "MEAN_SE"),
+                    names = "NRM_REF_TYPE",
+                    how = "wider",  na.rm = TRUE, transpose = TRUE)
+        if (!any(grepl("BASELINE", names(se_csem)))) {
+            setnames(
+                se_csem,
+                c("COHORT_MEDN_SE", "COHORT_MEAN_SE"),
+                c("MEDIAN_SGP_STANDARD_ERROR_CSEM", "MEAN_SGP_STANDARD_ERROR_CSEM")
+            )
+        } else {
+            setnames(
+                se_csem,
+                c("COHORT_MEDN_SE", "COHORT_MEAN_SE", "BASELINE_MEDN_SE", "BASELINE_MEAN_SE"),
+                c("MEDIAN_SGP_STANDARD_ERROR_CSEM", "MEAN_SGP_STANDARD_ERROR_CSEM",
+                  "MEDIAN_SGP_BASELINE_STANDARD_ERROR_CSEM", "MEAN_SGP_BASELINE_STANDARD_ERROR_CSEM")
+            )
+        }
 
-	tmp <- pullData(tmp.simulation.dt, state, pull.vars, variables.for.summaries, sgp.groups.to.summarize, sgp_key, db.path=db.path)[, eval(ListExpr), keyby=eval(ByExpr)]
-	setnames(tmp, paste0("V", seq_along(sgp.summaries.names)), sgp.summaries.names)
+        tmp_res <-
+            collapse::join(
+                x = tmp_res,
+                y = se_csem,
+                on = by.groups, how = "left",
+                drop.dup.cols = TRUE, verbose = 0
+            )
+        setcolorder(
+            tmp_res,
+            c(grep("CSEM", names(tmp_res), invert=TRUE), grep("CSEM", names(tmp_res)))
+        )
+    }
 
-	if (produce.confidence.interval & "CSEM" %in% confidence.interval.groups[['TYPE']]) {
-		pull.vars <- c(sgp_key, unlist(strsplit(sgp.groups.to.summarize, ", ")))
-		tmp <- pullData(tmp.simulation.dt, state, pull.vars, variables.for.summaries, sgp.groups.to.summarize, sgp_key, tmp_key = key(tmp), sim.info=sim.info, db.path)[tmp]
-		setcolorder(tmp, c(grep("CSEM", names(tmp), invert=TRUE), grep("CSEM", names(tmp))))
-	}
+    if ("MEDIAN_SGP_STANDARD_ERROR" %in% names(tmp_res)) {
+        constant <-
+            collapse::fvar(tmp_res[["MEDIAN_SGP"]]) -
+            collapse::fmean(tmp_res[["MEDIAN_SGP_STANDARD_ERROR"]]^2)
+        tmp_res[,
+            MEDIAN_SGP_with_SHRINKAGE :=
+              round(50 +
+                ((tmp_res[["MEDIAN_SGP"]]-50) *
+                 (constant/
+                 (constant + tmp_res[["MEDIAN_SGP_STANDARD_ERROR"]]^2)
+                 ))
+              )
+        ]
+    }
 
-	if ('MEDIAN_SGP_STANDARD_ERROR' %in% names(tmp)) {
-		constant <- var(tmp[['MEDIAN_SGP']], na.rm=TRUE) - mean(tmp[['MEDIAN_SGP_STANDARD_ERROR']]^2, na.rm=TRUE)
-		tmp[,MEDIAN_SGP_with_SHRINKAGE := round(50 + ((tmp[['MEDIAN_SGP']]-50) * (constant/(constant+tmp[['MEDIAN_SGP_STANDARD_ERROR']]^2))))]
-	}
+    if (produce.confidence.interval) {
+        tmp.list <- list()
+        if ("Bootstrap_CI" %in% confidence.interval.groups[["TYPE"]]) {
+            tmp.quantiles <-
+              paste0("c(", paste(confidence.interval.groups[["QUANTILES"]], collapse=", "), ")")
+            for (i in confidence.interval.groups[["VARIABLES"]]) {
+                i.nm <-
+                  paste("MEDIAN", i, paste(confidence.interval.groups[["QUANTILES"]], collapse="_"),
+                        "CONFIDENCE_BOUND_BOOTSTRAP", sep="_")
+                tmp.list[[i.nm]] <-
+                  paste0(i.nm, " = boot.sgp(", i, ", ", tmp.quantiles, ")")
+            }
+        }
+        if ("Bootstrap_SE" %in% confidence.interval.groups[["TYPE"]]) {
+            for (i in confidence.interval.groups[["VARIABLES"]]) {
+                i.nm <-
+                  paste("MEDIAN", i, "STANDARD_ERROR_BOOTSTRAP", sep="_")
+                tmp.list[[i.nm]] <- paste0(i.nm, " = boot.sgp(", i, ")")
+            }
+        }
 
-	messageSGP(paste("\tFinished with", sgp.groups.to.summarize))
-	return(tmp)
+        ListExpr <-
+          parse(text=paste0("list(", paste(unlist(tmp.list), collapse=", "),")"))
+        tmp_idx <-
+            tmp_res[MEDIAN_SGP_COUNT > 4, by.groups, with = FALSE] |> setkey()
+        setkeyv(tmp_res, by.groups)
+        setkeyv(long_data, by.groups)
+
+        tmp_res <-
+            long_data[tmp_idx
+            ][, as.list(
+                  longBoot(
+                      data_table = .SD,
+                      vars = confidence.interval.groups[["VARIABLES"]],
+                      conf.quantiles = confidence.interval.groups[["QUANTILES"]]
+                  )
+                ),
+                .SDcols = confidence.interval.groups[["VARIABLES"]],
+                keyby = by.groups
+            ][tmp_res]
+    }
+
+    messageSGP(paste("\tFinished with", paste(by.groups, collapse = ", ")))
+    return(tmp_res)
 } ### END sgpSummary function
 
+`longBoot` <-
+  function(
+    data_table,
+    vars,
+    conf.quantiles,
+    nboot = 100L,
+    digts = 2L
+  ) {
+    data_table <- na_omit(data_table)
+    N <- fnrow(data_table)
+    CI <- rep(paste0("[", paste(rep(NA, 2L), collapse=", "), "]"), length(vars))
+    SE <- rep(NA_real_, length(vars))
+    if (N > 1L) {
+      tst <-
+        data_table |>
+          collapse::roworderv(neworder = sample.int(n = N, size = N*nboot, replace = TRUE)) |>
+            collapse::ftransform(BOOT = rep(seq.int(nboot), N)) |>
+              collapse::collapv(by = "BOOT", FUN = fmedian, sort = FALSE, keep.by = FALSE)
 
-`pullData` <-
-function(tmp.simulation.dt,
-	state,
-	pull.vars,
-	variables.for.summaries,
-	sgp.groups.to.summarize,
-	sgp_key,
-	tmp_key,
-	sim.info=NULL,
-	db.path) {
+      CI <- paste0(
+              "[", 
+              sapply(tst, .quantile, probs = conf.quantiles) |> round(digts) |>
+                apply(MARGIN = 2, paste, collapse=", "),
+              "]")
+      SE <- lapply(tst, fsd) |> unlist() |> round(digits = digts)
+    }
 
-	SGP_SIM <- V1 <- V2 <- SIM_NUM <- WEIGHT <- ACHIEVEMENT_LEVEL <- ACHIEVEMENT_LEVEL_PRIOR <- CATCH_UP_KEEP_UP_STATUS <- MOVE_UP_STAY_UP_STATUS <- NULL
-	CATCH_UP_KEEP_UP_STATUS_BASELINE <- MOVE_UP_STAY_UP_STATUS_BASELINE <- NULL
-
-	if (!is.null(sim.info)) {
-		tmp.list.1 <- list()
-
-		con <- dbConnect(SQLite(), dbname = db.path)
-		tmp_data <- data.table(dbGetQuery(con, paste("select", paste(pull.vars, collapse = ","), "from summary_data")), key = sgp_key)
-		dbDisconnect(con)
-		if (is.data.frame(tmp.simulation.dt)) {
-			tmp.list.1 <- lapply(seq.int(sim.info[['n.simulated.sgps']]), function(i) {
-					tmp_data[,c(key(tmp_data), unlist(strsplit(sgp.groups.to.summarize, ", "))), with=FALSE][
-					tmp.simulation.dt[seq.int(i, length.out=sim.info[['n.unique.cases']], by=sim.info[['n.simulated.sgps']])], allow.cartesian=TRUE][,
-					list(median(SGP_SIM, na.rm=TRUE), mean(SGP_SIM, na.rm=TRUE)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")]})
-		} else {
-			con <- dbConnect(SQLite(), dbname = db.path)
-			tmp.list.1 <- lapply(seq.int(sim.info[['n.simulated.sgps']]), function(i) {
-					tmp_data[data.table(dbGetQuery(con, paste("select * from sim_data where SIM_NUM =", i)), key = sgp_key), allow.cartesian=TRUE][,
-					list(median(SGP_SIM, na.rm=TRUE), mean(SGP_SIM, na.rm=TRUE)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")]})
-			dbDisconnect(con)
-		}
-
-		tmp.csem <- ddcast(rbindlist(tmp.list.1)[,list(sd(V1, na.rm=TRUE), sd(V2, na.rm=TRUE)), keyby=c(unlist(strsplit(sgp.groups.to.summarize, ", ")), "BASELINE")],
-							... ~ BASELINE, value.var=c("V1", "V2"), sep=".")
-		if (!any(grepl("BASELINE", names(tmp.csem)))) {
-			setnames(tmp.csem, c("V1.COHORT", "V2.COHORT"), c("MEDIAN_SGP_STANDARD_ERROR_CSEM", "MEAN_SGP_STANDARD_ERROR_CSEM"))
-		} else {
-			setnames(tmp.csem, c("V1.COHORT", "V2.COHORT", "V1.BASELINE", "V2.BASELINE"),
-				c("MEDIAN_SGP_STANDARD_ERROR_CSEM", "MEAN_SGP_STANDARD_ERROR_CSEM", "MEDIAN_SGP_BASELINE_STANDARD_ERROR_CSEM", "MEAN_SGP_BASELINE_STANDARD_ERROR_CSEM"))
-		}
-		return(tmp.csem)
-	}
-
-	con <- dbConnect(SQLite(), dbname = db.path)
-	tmp_data <- data.table(dbGetQuery(con, paste("select", paste(pull.vars, collapse = ","), "from summary_data")))
-	dbDisconnect(con)
-	if (all((my.key <- intersect(sgp_key, variables.for.summaries)) %in% names(tmp_data))) setkeyv(tmp_data, my.key)
-	for (cuku_musu_names.iter in unique(grep("CATCH_UP_KEEP_UP_STATUS|MOVE_UP_STAY_UP_STATUS", names(tmp_data), value=TRUE))) {
-		tmp_data[, cuku_musu_names.iter := factor(cuku_musu_names.iter)]
-	}
-	return(tmp_data)
-} ### END pullData function
-
-
-`median_na` <-
-function(x,
-	weight) {
-	if (is.null(weight)) {
-		as.numeric(median(x, na.rm=TRUE))
-	} else {
-		as.numeric(weightedMedian(x, w=weight, na.rm=TRUE))
-	}
-} ### END median_na function
-
-
-`mean_na` <-
-function(x,
-	weight,
-	result.digits=2L) {
-
-	if (is.null(weight)) {
-		round(mean(x, na.rm=TRUE), digits=result.digits)
-	} else {
-		round(weighted.mean(as.numeric(x), w=weight, na.rm=TRUE), digits=result.digits)
-	}
-} ### END mean_na function
-
-
-`mean_nan` <-
-function(x) {
-	if (all(is.na(x))) return(as.numeric(NA)) else return(mean(x, na.rm=TRUE))
-} ### END mean_nan function
-
-
-`sd_na` <- function(x, result.digits=2L) round(sd(as.numeric(x), na.rm=TRUE), digits=result.digits)
-
-
-`num_non_missing` <- function(x) sum(!is.na(x))
-
-
-`sgp_standard_error` <- function(x,y=1) round(y*sd(x, na.rm=TRUE)/sqrt(sum(!is.na(x))), digits=2L)
-
-
-`percent_in_category` <-
-function(x,
-	in.categories,
-	of.categories,
-	result.digits=1L) {
-
-	tmp <- table(x)
-	round(100*sum(tmp[names(tmp) %in% in.categories])/sum(tmp[names(tmp) %in% of.categories]), digits=1L)
-} ### END percent_in_category function
-
-
-`boot.sgp` <-
-function(dat,
-	conf.quantiles=NULL,
-	nboot=100L) {
-
-	ID <- SCORE <- NULL
-	CI <- paste0("[", paste(rep(NA, 2L), collapse=", "), "]"); SE <- NA_real_
-	if (length(dat.no.na <- dat[!is.na(dat)]) > 1L) {
-		out <- data.table(ID=seq.int(nboot), SCORE=dat.no.na[sample.int(length(dat.no.na), length(dat.no.na)*nboot, replace=TRUE)])[,median(SCORE), by=ID][['V1']]
-		if (!is.null(conf.quantiles)) CI <- paste0("[", paste(round(quantile(out, conf.quantiles), digits=1L), collapse=", "), "]") else SE <- round(sd(out), digits=1L)
-	}
-	if (!is.null(conf.quantiles)) return(CI) else return(SE)
-} ### END boot.sgp function
+    setnames(
+      data.table(cbind(rbind(CI), rbind(SE))),
+      c(paste("MEDIAN", vars, paste(conf.quantiles, collapse="_"),
+            "CONFIDENCE_BOUND_BOOTSTRAP", sep="_"),
+        paste("MEDIAN", vars, "STANDARD_ERROR_BOOTSTRAP", sep="_"))
+      )[]
+  }
