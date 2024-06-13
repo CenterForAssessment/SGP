@@ -11,16 +11,20 @@
 	projection.years.for.target=NULL,
 	save.old.summaries=FALSE,
 	highest.level.summary.grouping="STATE",
-	parallel.config=NULL) {
+	parallel.config = NULL # No longer used as of SGP_2.1-0.11
+	) {
 
 	started.at <- proc.time()
 	messageSGP(paste("\nStarted summarizeSGP", prettyDate()), "\n")
 	messageSGP(match.call())
 
 	### Set variables to NULL to prevent R CMD check warnings
-	SIM_NUM <- tmp.simulation.dt <- variable <- WEIGHT <- ENROLLMENT_STATUS <- names.type <- names.sgp <- names.output <- BY_GROWTH_ONLY <- VALID_CASE <- YEAR_WITHIN <- NULL
-	tmp.simulation.dt <- variable <- WEIGHT <- ENROLLMENT_STATUS <- names.type <- names.sgp <- names.output <- BY_GROWTH_ONLY <- VALID_CASE <- YEAR_WITHIN <- DUP_COUNT <- NULL
-	CONTENT_AREA <- YEAR <- BASELINE <- NULL
+	SIM_NUM <- tmp_simulation_dt <- variable <- WEIGHT <- ENROLLMENT_STATUS <-
+	names.type <- names.sgp <- names.output <- BY_GROWTH_ONLY <- VALID_CASE <-
+	YEAR_WITHIN <- DUP_COUNT <- CONTENT_AREA <- YEAR <- NRM_REF_TYPE <-
+	ACHIEVEMENT_LEVEL <- ACHIEVEMENT_LEVEL_PRIOR <- MEDIAN_SGP_COUNT <-
+	MET_CUKU_TRGT <- MET_CUKU_TRGT_BSLN <- MET_MUSU_TRGT <- MET_MUSU_TRGT_BSLN <-
+	PROFICIENCY <- PROFICIENCY_PRIOR <- NULL
 
 
 	### Create state (if NULL) from sgp_object (if possible)
@@ -54,7 +58,6 @@
 			sgp_object@Summary <- NULL
 		}
 	}
-
 
 	### Establish project.years.for.target
 	if (!is.null(SGP::SGPstateData[[state]][['SGP_Configuration']][['projection.years.for.target']])) {
@@ -134,25 +137,31 @@
 	combineSims <- function(sgp_object) {
 		tmp.list <- list()
 		for (i in names(sgp_object@SGP[["Simulated_SGPs"]])) {
-			if (length(grep("BASELINE", i) > 0)) tmp.baseline <- "BASELINE" else tmp.baseline <- "COHORT"
-			columns.to.omit <- -(grep("ID|GRADE|YEAR_WITHIN", names(sgp_object@SGP[["Simulated_SGPs"]][[i]])))
-			tmp.list[[i]] <- data.table(
-				ID=sgp_object@SGP[["Simulated_SGPs"]][[i]][["ID"]],
-				GRADE=sgp_object@SGP[["Simulated_SGPs"]][[i]][["GRADE"]],
-				SGP_SIM=c(as.matrix(sgp_object@SGP[["Simulated_SGPs"]][[i]][,columns.to.omit, with=FALSE])))[,
-					CONTENT_AREA:=unlist(strsplit(i, "[.]"))[1]][,
-					YEAR:=unlist(strsplit(i, "[.]"))[2]][,
-					BASELINE:=tmp.baseline]
+			tmp.nrm.ref <- ifelse(length(grep("BASELINE", i) > 0), "BASELINE", "COHORT")
+			tmp.list[[i]] <-
+			    data.table::melt(
+					data = sgp_object@SGP[["Simulated_SGPs"]][[i]],
+					id.vars = c("ID", "GRADE"),
+					variable.name = "SIM_NUM", value.name = "SGP_SIM"
+				)[, CONTENT_AREA := unlist(strsplit(i, "[.]"))[1]
+				][, YEAR := unlist(strsplit(i, "[.]"))[2]
+				][, NRM_REF_TYPE := tmp.nrm.ref]
+
 			if ("YEAR_WITHIN" %in% names(sgp_object@SGP[["Simulated_SGPs"]][[i]])) {
-				tmp.list[[i]][,YEAR_WITHIN:=rep(sgp_object@SGP[["Simulated_SGPs"]][[i]][["YEAR_WITHIN"]], each=length(grep("SGP_SIM", names(sgp_object@SGP[["Simulated_SGPs"]][[i]]))))]
+				tmp.list[[i]][,
+				  YEAR_WITHIN :=
+				    rep(sgp_object@SGP[["Simulated_SGPs"]][[i]][["YEAR_WITHIN"]],
+					    each = length(grep("SGP_SIM", names(sgp_object@SGP[["Simulated_SGPs"]][[i]])))
+					)
+				]
 			}
 		}
-		return(data.table(rbindlist(tmp.list), VALID_CASE="VALID_CASE", key=sgp_key))
+		return(data.table(rbindlist(tmp.list), VALID_CASE = "VALID_CASE", key = sgp_key))
 	}
 
 	summarizeSGP.config <- function(sgp_object, config.type) {
 
-		if (config.type=="sgp.summaries") {
+		if (config.type == "sgp.summaries") {
 			if (!is.null(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]])) {
 				tmp.achievement.levels <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][
                          grep("Achievement_Levels", names(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]]))]
@@ -172,130 +181,101 @@
 				}
 			}
 
-			tmp.sgp.summaries <- list(
-				MEAN_SGP="mean_na(SGP, WEIGHT)",
-				MEDIAN_SGP="median_na(SGP, WEIGHT)",
-				MEDIAN_SGP_COUNT="num_non_missing(SGP)",
-				PERCENT_AT_ABOVE_PROFICIENT=paste0("percent_in_category(ACHIEVEMENT_LEVEL, ",
-					get.expression(proficient.achievement.levels), ", ", get.expression(all.achievement.levels), ")"),
-				PERCENT_AT_ABOVE_PROFICIENT_COUNT="num_non_missing(ACHIEVEMENT_LEVEL)",
-				MEAN_SGP_STANDARD_ERROR="sgp_standard_error(SGP)",
-				MEDIAN_SGP_STANDARD_ERROR="sgp_standard_error(SGP, 1.253)")
+			tmp.sgp.summaries <-
+				list(
+					fmean = c(
+						MEAN_SGP = "SGP"),
+					fmedian = c(
+						MEDIAN_SGP = "SGP"),
+					fnobs_uw = c(
+						MEDIAN_SGP_COUNT = "SGP",
+						PERCENT_AT_ABOVE_PROFICIENT_COUNT = "PROFICIENCY"),
+					fmean_uw = c(
+						PERCENT_AT_ABOVE_PROFICIENT = "PROFICIENCY"),
+					fsd = c(
+						MEAN_SGP_STANDARD_ERROR = "SGP")
+						# MEDIAN_SGP_STANDARD_ERROR calculated from MEAN later
+				)
 
-				if (summarizeSGP.baseline) {
-					tmp.sgp.summaries <- c(
-						tmp.sgp.summaries,
-						MEAN_SGP_BASELINE="mean_na(SGP_BASELINE, WEIGHT)",
-						MEDIAN_SGP_BASELINE="median_na(SGP_BASELINE, WEIGHT)",
-						MEAN_SGP_BASELINE_STANDARD_ERROR="sgp_standard_error(SGP_BASELINE)",
-						MEDIAN_SGP_BASELINE_STANDARD_ERROR="sgp_standard_error(SGP_BASELINE, 1.253)"
-					)
-				}
+			if (summarizeSGP.baseline) {
+				tmp.sgp.summaries[["fmean"]][["MEAN_SGP_BASELINE"]] <-
+				tmp.sgp.summaries[["fmedian"]][["MEDIAN_SGP_BASELINE"]] <-
+				tmp.sgp.summaries[["fsd"]][["MEAN_SGP_BASELINE_STANDARD_ERROR"]] <-
+					"SGP_BASELINE"
+				# MEDIAN_SGP_BASELINE_STANDARD_ERROR # calculated from MEAN later
+			}
 
-				if ("ACHIEVEMENT_LEVEL_PRIOR" %in% sgp.data.names) {
-					tmp.sgp.summaries <- c(
-						tmp.sgp.summaries,
-						PERCENT_AT_ABOVE_PROFICIENT_PRIOR=paste0("percent_in_category(ACHIEVEMENT_LEVEL_PRIOR, ",
-							get.expression(proficient.achievement.levels), ", ", get.expression(all.achievement.levels), ")"),
-						PERCENT_AT_ABOVE_PROFICIENT_PRIOR_COUNT="num_non_missing(ACHIEVEMENT_LEVEL_PRIOR)"
-					)
-				}
+			if ("ACHIEVEMENT_LEVEL_PRIOR" %in% sgp.data.names) {
+				tmp.sgp.summaries[["fmean_uw"]][["PERCENT_AT_ABOVE_PROFICIENT_PRIOR"]] <-
+				tmp.sgp.summaries[["fnobs_uw"]][["PERCENT_AT_ABOVE_PROFICIENT_PRIOR_COUNT"]] <-
+					"PROFICIENCY_PRIOR"
+			}
 
-				if ("SCALE_SCORE_PRIOR_STANDARDIZED" %in% sgp.data.names) {
-					tmp.sgp.summaries <- c(
-						tmp.sgp.summaries,
-						MEAN_SCALE_SCORE_PRIOR_STANDARDIZED="mean_na(SCALE_SCORE_PRIOR_STANDARDIZED, WEIGHT)",
-						SD_SCALE_SCORE_PRIOR_STANDARDIZED="sd_na(SCALE_SCORE_PRIOR_STANDARDIZED)"
-					)
-				}
+			if ("SCALE_SCORE_PRIOR_STANDARDIZED" %in% sgp.data.names) {
+				tmp.sgp.summaries[["fsd"]][["SD_SCALE_SCORE_PRIOR_STANDARDIZED"]] <-
+				tmp.sgp.summaries[["fmean"]][["MEAN_SCALE_SCORE_PRIOR_STANDARDIZED"]] <-
+					"SCALE_SCORE_PRIOR_STANDARDIZED"
+			}
 
-				if ("SGP_SIMEX" %in% sgp.data.names) {
-					tmp.sgp.summaries <- c(
-						tmp.sgp.summaries,
-						MEDIAN_SGP_SIMEX="median_na(SGP_SIMEX, WEIGHT)",
-						MEAN_SGP_SIMEX="mean_na(SGP_SIMEX, WEIGHT)",
-						MEAN_SGP_SIMEX_STANDARD_ERROR="sgp_standard_error(SGP_SIMEX)",
-						MEDIAN_SGP_SIMEX_STANDARD_ERROR="sgp_standard_error(SGP_SIMEX, 1.253)"
-					)
-				}
+			if ("SGP_SIMEX" %in% sgp.data.names) {
+				tmp.sgp.summaries[["fmean"]][["MEAN_SGP_SIMEX"]] <-
+				tmp.sgp.summaries[["fmedian"]][["MEDIAN_SGP_SIMEX"]] <-
+				tmp.sgp.summaries[["fsd"]][["MEAN_SGP_SIMEX_STANDARD_ERROR"]] <-
+					"SGP_SIMEX"
+			}
 
-				if ("SGP_SIMEX_RANKED" %in% sgp.data.names) {
-					tmp.sgp.summaries <- c(
-						tmp.sgp.summaries,
-						MEDIAN_SGP_SIMEX_RANKED="median_na(SGP_SIMEX_RANKED, WEIGHT)",
-						MEAN_SGP_SIMEX_RANKED="mean_na(SGP_SIMEX_RANKED, WEIGHT)",
-						MEAN_SGP_SIMEX_RANKED_STANDARD_ERROR="sgp_standard_error(SGP_SIMEX_RANKED)",
-						MEDIAN_SGP_SIMEX_RANKED_STANDARD_ERROR="sgp_standard_error(SGP_SIMEX_RANKED, 1.253)"
-					)
-				}
+			if ("SGP_SIMEX_RANKED" %in% sgp.data.names) {
+				tmp.sgp.summaries[["fmean"]][["MEAN_SGP_SIMEX_RANKED"]] <-
+				tmp.sgp.summaries[["fmedian"]][["MEDIAN_SGP_SIMEX_RANKED"]] <-
+				tmp.sgp.summaries[["fsd"]][["MEAN_SGP_SIMEX_RANKED_STANDARD_ERROR"]] <-
+					"SGP_SIMEX_RANKED"
+			}
 
-				if ("SGP_SIMEX_BASELINE" %in% sgp.data.names) {
-					tmp.sgp.summaries <- c(
-						tmp.sgp.summaries,
-						MEDIAN_SGP_SIMEX_BASELINE="median_na(SGP_SIMEX_BASELINE, WEIGHT)",
-						MEAN_SGP_SIMEX_BASELINE="mean_na(SGP_SIMEX_BASELINE, WEIGHT)",
-						MEAN_SGP_SIMEX_BASELINE_STANDARD_ERROR="sgp_standard_error(SGP_SIMEX_BASELINE)",
-						MEDIAN_SGP_SIMEX_BASELINE_STANDARD_ERROR="sgp_standard_error(SGP_SIMEX_BASELINE, 1.253)"
-					)
-				}
+			if ("SGP_SIMEX_BASELINE" %in% sgp.data.names) {
+				tmp.sgp.summaries[["fmean"]][["MEAN_SGP_SIMEX_BASELINE"]] <-
+				tmp.sgp.summaries[["fmedian"]][["MEDIAN_SGP_SIMEX_BASELINE"]] <-
+				tmp.sgp.summaries[["fsd"]][["MEAN_SGP_SIMEX_BASELINE_STANDARD_ERROR"]] <-
+					"SGP_SIMEX_BASELINE"
+			}
 
-				if ("SGP_SIMEX_BASELINE_RANKED" %in% sgp.data.names) {
-					tmp.sgp.summaries <- c(
-						tmp.sgp.summaries,
-						MEDIAN_SGP_SIMEX_BASELINE_RANKED="median_na(SGP_SIMEX_BASELINE_RANKED, WEIGHT)",
-						MEAN_SGP_SIMEX_BASELINE_RANKED="mean_na(SGP_SIMEX_BASELINE_RANKED, WEIGHT)",
-						MEAN_SGP_SIMEX_BASELINE_RANKED_STANDARD_ERROR="sgp_standard_error(SGP_SIMEX_BASELINE_RANKED)",
-						MEDIAN_SGP_SIMEX_BASELINE_RANKED_STANDARD_ERROR="sgp_standard_error(SGP_SIMEX_BASELINE_RANKED, 1.253)"
-					)
-				}
+			if ("SGP_SIMEX_BASELINE_RANKED" %in% sgp.data.names) {
+				tmp.sgp.summaries[["fmean"]][["MEAN_SGP_SIMEX_BASELINE_RANKED"]] <-
+				tmp.sgp.summaries[["fmedian"]][["MEDIAN_SGP_SIMEX_BASELINE_RANKED"]] <-
+				tmp.sgp.summaries[["fsd"]][["MEAN_SGP_SIMEX_BASELINE_RANKED_STANDARD_ERROR"]] <-
+					"SGP_SIMEX_BASELINE_RANKED"
+			}
 
-				if (!is.null(my.sgp.target)) {
-					tmp.sgp.summaries <- c(
-						tmp.sgp.summaries,
-						M1=paste0("median_na(", my.sgp.target, ", WEIGHT)"),
-						M2=paste0("num_non_missing(", my.sgp.target, ")"),
-						PERCENT_CATCHING_UP_KEEPING_UP=paste0("percent_in_category(", my.cuku.target, ", c('Catch Up: Yes', 'Keep Up: Yes'), c('Catch Up: Yes', 'Catch Up: No', 'Keep Up: Yes', 'Keep Up: No'))")
-					)
-					names(tmp.sgp.summaries)[sapply(c("M1", "M2"), function(x) which(names(tmp.sgp.summaries)==x))] <-
-						c(paste("MEDIAN", my.sgp.target, sep="_"), paste("MEDIAN", my.sgp.target, "COUNT", sep="_"))
-					names(tmp.sgp.summaries)[which(names(tmp.sgp.summaries)=="PERCENT_CATCHING_UP_KEEPING_UP")] <- paste("PERCENT_CATCHING_UP_KEEPING_UP", projection.years.for.target, "YEAR", sep="_")
-				}
+			if (!is.null(my.sgp.target)) {
+				tmp.sgp.summaries[["fmedian"]][[paste0("MEDIAN_", my.sgp.target)]] <-
+				tmp.sgp.summaries[["fnobs_uw"]][[paste0("MEDIAN_", my.sgp.target, "_COUNT")]] <-
+					my.sgp.target
+				tmp.sgp.summaries[["fmean_uw"]][[paste0("PERCENT_CATCHING_UP_KEEPING_UP_", projection.years.for.target, "_YEAR")]] <-
+					"MET_CUKU_TRGT"
+			}
 
-				if (!is.null(my.sgp.target.baseline)) {
-					tmp.sgp.summaries <- c(
-						tmp.sgp.summaries,
-						M1=paste0("median_na(", my.sgp.target.baseline, ", WEIGHT)"),
-						M2=paste0("num_non_missing(", my.sgp.target.baseline, ")"),
-						PERCENT_CATCHING_UP_KEEPING_UP_BASELINE=paste0("percent_in_category(", my.cuku.target.baseline, ", c('Catch Up: Yes', 'Keep Up: Yes'), c('Catch Up: Yes', 'Catch Up: No', 'Keep Up: Yes', 'Keep Up: No'))")
-					)
-					names(tmp.sgp.summaries)[sapply(c("M1", "M2"), function(x) which(names(tmp.sgp.summaries)==x))] <-
-						c(paste("MEDIAN", my.sgp.target.baseline, sep="_"), paste("MEDIAN", my.sgp.target.baseline, "COUNT", sep="_"))
-					names(tmp.sgp.summaries)[which(names(tmp.sgp.summaries)=="PERCENT_CATCHING_UP_KEEPING_UP_BASELINE")] <- paste("PERCENT_CATCHING_UP_KEEPING_UP_BASELINE", projection.years.for.target, "YEAR", sep="_")
-				}
+			if (!is.null(my.sgp.target.baseline)) {
+				tmp.sgp.summaries[["fmedian"]][[paste0("MEDIAN_", my.sgp.target.baseline)]] <-
+				tmp.sgp.summaries[["fnobs_uw"]][[paste0("MEDIAN_", my.sgp.target.baseline, "_COUNT")]] <-
+					my.sgp.target.baseline
+				tmp.sgp.summaries[["fmean_uw"]][[paste0("PERCENT_CATCHING_UP_KEEPING_UP_BASELINE_", projection.years.for.target, "_YEAR")]] <-
+					"MET_CUKU_TRGT_BSLN"
+			}
 
-				if (!is.null(my.sgp.target.musu)) {
-					tmp.sgp.summaries <- c(
-						tmp.sgp.summaries,
-						M1=paste0("median_na(", my.sgp.target.musu, ", WEIGHT)"),
-						M2=paste0("num_non_missing(", my.sgp.target.musu, ")"),
-						PERCENT_MOVING_UP_STAYING_UP=paste0("percent_in_category(", my.musu.target, ", c('Move Up: Yes', 'Stay Up: Yes'), c('Move Up: Yes', 'Move Up: No', 'Stay Up: Yes', 'Stay Up: No'))")
-					)
-					names(tmp.sgp.summaries)[sapply(c("M1", "M2"), function(x) which(names(tmp.sgp.summaries)==x))] <-
-						c(paste("MEDIAN", my.sgp.target.musu, sep="_"), paste("MEDIAN", my.sgp.target.musu, "COUNT", sep="_"))
-					names(tmp.sgp.summaries)[which(names(tmp.sgp.summaries)=="PERCENT_MOVING_UP_STAYING_UP")] <- paste("PERCENT_MOVING_UP_STAYING_UP", projection.years.for.target, "YEAR", sep="_")
-				}
+			if (!is.null(my.sgp.target.musu)) {
+				tmp.sgp.summaries[["fmedian"]][[paste0("MEDIAN_", my.sgp.target.musu)]] <-
+				tmp.sgp.summaries[["fnobs_uw"]][[paste0("MEDIAN_", my.sgp.target.musu, "_COUNT")]] <-
+					my.sgp.target.musu
+				tmp.sgp.summaries[["fmean_uw"]][[paste0("PERCENT_MOVING_UP_STAYING_UP_", projection.years.for.target, "_YEAR")]] <-
+					"MET_MUSU_TRGT"
+			}
 
-				if (!is.null(my.sgp.target.musu.baseline)) {
-					tmp.sgp.summaries <- c(
-						tmp.sgp.summaries,
-						M1=paste0("median_na(", my.sgp.target.musu.baseline, ", WEIGHT)"),
-						M2=paste0("num_non_missing(", my.sgp.target.musu.baseline, ")"),
-						PERCENT_MOVING_UP_STAYING_UP_BASELINE=paste0("percent_in_category(", my.musu.target.baseline, ", c('Move Up: Yes', 'Stay Up: Yes'), c('Move Up: Yes', 'Move Up: No', 'Stay Up: Yes', 'Stay Up: No'))")
-					)
-					names(tmp.sgp.summaries)[sapply(c("M1", "M2"), function(x) which(names(tmp.sgp.summaries)==x))] <-
-						c(paste("MEDIAN", my.sgp.target.musu.baseline, sep="_"), paste("MEDIAN", my.sgp.target.musu.baseline, "COUNT", sep="_"))
-					names(tmp.sgp.summaries)[which(names(tmp.sgp.summaries)=="PERCENT_MOVING_UP_STAYING_UP_BASELINE")] <- paste("PERCENT_MOVING_UP_STAYING_UP_BASELINE", projection.years.for.target, "YEAR", sep="_")
-				}
+			if (!is.null(my.sgp.target.musu.baseline)) {
+				tmp.sgp.summaries[["fmedian"]][[paste0("MEDIAN_", my.sgp.target.musu.baseline)]] <-
+				tmp.sgp.summaries[["fnobs_uw"]][[paste0("MEDIAN_", my.sgp.target.musu.baseline, "_COUNT")]] <-
+					my.sgp.target.musu.baseline
+				tmp.sgp.summaries[["fmean_uw"]][[paste0("PERCENT_MOVING_UP_STAYING_UP_BASELINE_", projection.years.for.target, "_YEAR")]] <-
+					"MET_MUSU_TRGT_BSLN"
+			}
 
 			return(tmp.sgp.summaries)
 		}
@@ -416,49 +396,18 @@
 				group.format(confidence.interval.groups[["GROUPS"]][["growth_only_summary"]][[i]])))
 
 			if (!produce.all.summary.tables) ci.groups <- intersect(ci.groups, selected.summary.tables)
+
+			summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], sgp.groups[x] %in% ci.groups))
+		} else {
+			summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], FALSE))
 		}
 
-		if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
-			summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], sgp.groups[x] %in% ci.groups))
-		} else summary.iter <- lapply(1:length(sgp.groups), function(x) c(sgp.groups[x], FALSE))
-
-		db.path = file.path(tempdir(), "TMP_Summary_Data.sqlite")
-
-		## if NULL parallel.config
-		if (is.null(parallel.config)) {
-			for (s in seq_along(summary.iter)) {
-				tmp.summary[[s]] <- sgpSummary(summary.iter[[s]][1], eval(parse(text=summary.iter[[s]][2])),
-					tmp.simulation.dt, state, sgp.summaries, confidence.interval.groups, my.sgp, sgp_key, variables.for.summaries, sim.info, db.path)
-			}
+		for (s in seq_along(summary.iter)) {
+			tmp.summary[[s]] <- sgpSummary(long_data, summary.iter[[s]][1], eval(parse(text=summary.iter[[s]][2])),
+				tmp_simulation_dt, sgp.summaries, confidence.interval.groups, sgp_key)
 		}
 
 		j <- k <- NULL ## To prevent R CMD check warnings
-
-		if (identical(parallel.config[["BACKEND"]], "FOREACH")) {
-			if (!is.null(confidence.interval.groups[["GROUPS"]]) & i %in% confidence.interval.groups[["GROUPS"]][["institution"]]) {
-				k.iter <- iter(sgp.groups %in% ci.groups)
-			} else	k.iter <- iter(rep(FALSE, length(sgp.groups)))
-
-			tmp.summary <- foreach(j = iter(sgp.groups), k = k.iter,
-				.export=c("tmp.simulation.dt", "state", "sgp.summaries", "confidence.interval.groups", "my.sgp", "sgp_key", "variables.for.summaries", "sim.info"),
-				# "sgpSummary", "pullData", "median_na", "mean_na", "sd_na", "num_non_missing", "sgp_standard_error", "percent_in_category", "boot.sgp"),
-				.options.multicore=list(preschedule = FALSE, set.seed = FALSE), .packages="SGP", .inorder=FALSE, .errorhandling = "pass") %dopar% {
-					return(sgpSummary(j, k, tmp.simulation.dt, state, sgp.summaries, confidence.interval.groups, my.sgp, sgp_key, variables.for.summaries, sim.info, db.path))
-			}
-		} else { # END FOREACH flavor
-
-
-		### SNOW and MULTICORE
-		# Don't use SNOW - run as doParallel instead.  Too much memory & time overhead, errors, etc....
-		# if (identical(par.start[['par.type']], "SNOW")) {
-		# 	tmp.summary <- parLapply(par.start$internal.cl, summary.iter,
-		# 		function(iter) sgpSummary(iter[1], eval(parse(text=iter[2])), tmp.simulation.dt, state, sgp.summaries, confidence.interval.groups, my.sgp, sgp_key, variables.for.summaries, sim.info, db.path))
-		# } # END 'SNOW' Flavor
-		if (identical(par.start[['par.type']], "MULTICORE")) {
-			tmp.summary <- mclapply(summary.iter,
-				function(iter) sgpSummary(iter[1], eval(parse(text=iter[2])), tmp.simulation.dt, state, sgp.summaries, confidence.interval.groups, my.sgp, sgp_key, variables.for.summaries, sim.info, db.path), mc.cores=par.start$workers, mc.preschedule=FALSE)
-		} # END 'MULTICORE' Flavor
-		} # END else not FOREACH
 
 		setattr(tmp.summary, 'names', gsub(', ', '__', sgp.groups))
 		return(tmp.summary)
@@ -509,20 +458,30 @@
 	if (is.null(summary.groups)) summary.groups <- summarizeSGP.config(sgp_object, "summary.groups")
 	if (is.null(confidence.interval.groups)) confidence.interval.groups <- summarizeSGP.config(sgp_object, "confidence.interval.groups")
 
-	variables.for.summaries <- intersect(
-		c(sgp_key, my.sgp, my.sgp.target, my.sgp.target.baseline, my.sgp.target.musu, my.sgp.target.musu.baseline,
-		"ACHIEVEMENT_LEVEL", "ACHIEVEMENT_LEVEL_PRIOR",
-		my.cuku.target, my.musu.target, my.cuku.target.baseline, my.musu.target.baseline,
-		"SCALE_SCORE_PRIOR_STANDARDIZED", "SGP_SIMEX", "SGP_SIMEX_RANKED", "SGP_SIMEX_BASELINE", "SGP_SIMEX_BASELINE_RANKED",
-		unique(as.character(unlist(summary.groups))),
-		"YEAR_WITHIN"), sgp.data.names)
-
+	variables.for.summaries <-
+	    intersect(
+		    c(sgp_key, my.sgp, my.sgp.target, my.sgp.target.baseline,
+			  my.sgp.target.musu, my.sgp.target.musu.baseline,
+			  "ACHIEVEMENT_LEVEL", "ACHIEVEMENT_LEVEL_PRIOR",
+			  my.cuku.target, my.musu.target, my.cuku.target.baseline, my.musu.target.baseline,
+			  "SCALE_SCORE_PRIOR_STANDARDIZED", "SGP_SIMEX", "SGP_SIMEX_RANKED",
+			  "SGP_SIMEX_BASELINE", "SGP_SIMEX_BASELINE_RANKED",
+			  unique(as.character(unlist(summary.groups))), "YEAR_WITHIN"
+			),
+			sgp.data.names
+		)
 
 	### Define demographic subgroups and tables that will be calculated from all possible created by expand.grid
 
-	selected.demographic.subgroups <- intersect(
-		c(getFromNames("demographic"), "CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STAY_UP_STATUS", "CATCH_UP_KEEP_UP_STATUS_BASELINE", "MOVE_UP_STAY_UP_STATUS_BASELINE",
-			"ACHIEVEMENT_LEVEL_PRIOR", "HIGH_NEED_STATUS"), sgp.data.names)
+	selected.demographic.subgroups <-
+	    intersect(
+			c(getFromNames("demographic"),
+			  "CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STAY_UP_STATUS",
+			  "CATCH_UP_KEEP_UP_STATUS_BASELINE", "MOVE_UP_STAY_UP_STATUS_BASELINE",
+			  "ACHIEVEMENT_LEVEL_PRIOR", "HIGH_NEED_STATUS"
+			),
+			sgp.data.names
+		)
 	if (is.null(SGP::SGPstateData[[state]][["Variable_Name_Lookup"]])) {
 		selected.institution.types <- c("STATE", "DISTRICT_NUMBER", "SCHOOL_NUMBER")
 	} else {
@@ -599,7 +558,7 @@
 
 	### Loop and send to summarizeSGP_INTERNAL
 
-	sgp_data_for_summary <- dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_Summary_Data.sqlite"))
+	# sgp_data_for_summary <- dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_Summary_Data.sqlite"))
 
 	if ("VALID_CASE_STATUS_ONLY" %in% names(sgp_object@Data)) {
 		sgp_object@Data$VALID_CASE[sgp_object@Data$VALID_CASE_STATUS_ONLY=="VALID_CASE"] <- "VALID_CASE"
@@ -607,47 +566,96 @@
 
 	setkeyv(sgp_object@Data, sgp_key %w/o% "GRADE") #  Set to old SGP key so that it still subsets data correctly with content_areas.by.years lookup table
 
-	tmp.dt <- sgp_object@Data[data.table("VALID_CASE", content_areas.by.years), nomatch=0][,
-		variables.for.summaries, with=FALSE][, (highest.level.summary.grouping):=state]
+	if (!is.null(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]])) {
+		tmp.achievement.levels <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][
+					grep("Achievement_Levels", names(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]]))]
+		all.achievement.levels <- unlist(lapply(tmp.achievement.levels, function(x) x[['Labels']]), use.names=FALSE)
+		proficient.achievement.levels <- all.achievement.levels[unlist(lapply(tmp.achievement.levels, function(x) x[['Proficient']]=="Proficient"))]
+	} else {
+		all.achievement.levels <- SGP::SGPstateData[[state]][["Achievement"]][["Levels"]][[1]][!is.na(SGP::SGPstateData[[state]][["Achievement"]][["Levels"]][[2]])]
+		proficient.achievement.levels <- SGP::SGPstateData[[state]][["Achievement"]][["Levels"]][[1]][!is.na(SGP::SGPstateData[[state]][["Achievement"]][["Levels"]][[2]]) &
+			SGP::SGPstateData[[state]][["Achievement"]][["Levels"]][[2]]=="Proficient"]
+	}
 
-	if (any(duplicated(tmp.dt, by=sgp_key))) {
-		invisible(tmp.dt[, DUP_COUNT := .N, by=sgp_key])
-		if (!"WEIGHT" %in% names(tmp.dt)) invisible(tmp.dt[, WEIGHT := 1L])
-		invisible(tmp.dt[, WEIGHT := round((WEIGHT / DUP_COUNT), 3)])
+    long_data <-
+        sgp_object@Data[
+            data.table("VALID_CASE", content_areas.by.years), nomatch = 0
+        ][, variables.for.summaries, with=FALSE
+        ][, (highest.level.summary.grouping) := state
+        ][
+            !is.na(ACHIEVEMENT_LEVEL),
+            PROFICIENCY := data.table::fcase(
+            ACHIEVEMENT_LEVEL %chin% proficient.achievement.levels, 1L,
+            default = 0L
+            )
+        ][  !is.na(ACHIEVEMENT_LEVEL_PRIOR),
+            PROFICIENCY_PRIOR := data.table::fcase(
+            ACHIEVEMENT_LEVEL_PRIOR %chin% proficient.achievement.levels, 1L,
+            default = 0L
+            )
+        ]
+    if (!is.null(my.cuku.target)) {
+        long_data <-
+            long_data[!is.na(get(my.cuku.target)),
+                MET_CUKU_TRGT := data.table::fcase(
+                    get(my.cuku.target) %in% c('Catch Up: No', 'Keep Up: No'), 0L,
+                    default = 1L
+                )
+            ]
+    }
+    if (!is.null(my.cuku.target.baseline)) {
+        long_data <-
+            long_data[!is.na(get(my.cuku.target.baseline)),
+                MET_CUKU_TRGT_BSLN := data.table::fcase(
+                    get(my.cuku.target.baseline) %in% c('Catch Up: No', 'Keep Up: No'), 0L,
+                    default = 1L
+                )
+            ]
+    }
+    if (!is.null(my.musu.target)) {
+        long_data <-
+            long_data[!is.na(get(my.musu.target)),
+                MET_MUSU_TRGT := data.table::fcase(
+                    get(my.musu.target) %in% c('Move Up: No', 'Stay Up: No'), 0L,
+                    default = 1L
+                )
+            ]
+    }
+    if (!is.null(my.musu.target.baseline)) {
+        long_data <-
+            long_data[!is.na(get(my.musu.target.baseline)),
+                MET_MUSU_TRGT_BSLN := data.table::fcase(
+                    get(my.musu.target.baseline) %in% c('Move Up: No', 'Stay Up: No'), 0L,
+                    default = 1L
+                )
+            ]
+    }
+    long_data <-
+        long_data[,
+            c("ACHIEVEMENT_LEVEL",
+                my.cuku.target, my.cuku.target.baseline,
+                my.musu.target, my.musu.target.baseline
+            ) := NULL
+        ]
+
+	if (any(duplicated(long_data, by = sgp_key))) {
+		invisible(long_data[, DUP_COUNT := .N, by=sgp_key])
+		if (!"WEIGHT" %in% names(long_data)) invisible(long_data[, WEIGHT := 1L])
+		invisible(long_data[, WEIGHT := round((WEIGHT / DUP_COUNT), 3)])
 	}
 
 	if (any(!sapply(summary.groups[["growth_only_summary"]], is.null))) {
-		invisible(tmp.dt[, BY_GROWTH_ONLY := factor(is.na(tmp.dt[[my.sgp[1]]]), levels=c(FALSE, TRUE), labels=c("Students without SGP", "Students with SGP"))])
+		invisible(long_data[, BY_GROWTH_ONLY := factor(is.na(long_data[[my.sgp[1]]]), levels=c(FALSE, TRUE), labels=c("Students without SGP", "Students with SGP"))])
 	}
-	dbWriteTable(sgp_data_for_summary, name = "summary_data", overwrite = TRUE, row.names=FALSE, value = tmp.dt)
-	rm(tmp.dt)
 
 	if (!is.null(confidence.interval.groups) & "CSEM" %in% confidence.interval.groups[['TYPE']]) {
 		sim.info <- list(
 			n.simulated.sgps = length(grep("SGP_SIM", names(sgp_object@SGP[["Simulated_SGPs"]][[1]]))),
 			n.unique.cases = sum(sapply(sgp_object@SGP[["Simulated_SGPs"]], nrow)))
-		if ((!identical(.Platform$OS.type, "unix") & !is.null(parallel.config)) | !is.null(parallel.config[["SNOW_TEST"]])) {
-			# Write tmp.simulation.dt to disk for SNOW backends in Windows (& SNOT_TEST) Only
-			tmp.simulation.dt <- "sqlite"
-			dbWriteTable(sgp_data_for_summary, name = "sim_data", overwrite = TRUE, row.names=FALSE,
-				value = combineSims(sgp_object)[,
-				  SIM_NUM := rep(1:sim.info[["n.simulated.sgps"]], sim.info[["n.unique.cases"]])
-				]
-			)
-		} else {
-			tmp.simulation.dt <- combineSims(sgp_object)
-		}
-	} else tmp.simulation.dt <- sim.info <- NULL
 
-	# Use FOREACH + doParallel exclusively for Windows/SNOW
-	if ((!identical(.Platform$OS.type, "unix") & !is.null(parallel.config)) | !is.null(parallel.config[["SNOW_TEST"]])) {
-		parallel.config[["BACKEND"]] <- "FOREACH"
-		parallel.config[["TYPE"]] <- "doParallel"
-	}
-	if (!is.null(parallel.config)) {
-		par.start <- startParallel(parallel.config, 'SUMMARY')
+			tmp_simulation_dt <- combineSims(sgp_object)
 	} else {
-		par.start <- list(par.type="NONE")
+		tmp_simulation_dt <- sim.info <- NULL
 	}
 
 	for (j in seq(length(summary.groups[["institution_multiple_membership"]])+1)) {
@@ -656,6 +664,11 @@
 				sgp_object@Summary[[i]] <- summarizeSGP_INTERNAL(i)
 			}
 			if (j > 1) {
+                if (!exists("orig_dt_long")) {
+                    orig_dt_long <- copy(long_data)
+                } else {
+                    long_data <- copy(orig_dt_long)
+                }
 
 				### Create variable name and set up tmp.inst
 
@@ -676,34 +689,42 @@
 					}
 				}
 
-				summary.groups[["growth_only_summary"]][[tmp.inst]] <- "BY_GROWTH_ONLY" # Do we have an option to NOT include "BY_GROWTH_ONLY"? (would we want this?)
-
 				### Create LONGer data and run summarizeSGP_INTERNAL
-				tmp.dt.long <- sgp_object@Data[data.table("VALID_CASE", content_areas.by.years), nomatch=0][,
-					variables.for.summaries, with=FALSE][, (highest.level.summary.grouping):=state]
-				invisible(tmp.dt.long[, BY_GROWTH_ONLY := factor(is.na(tmp.dt.long[[my.sgp[1]]]), levels=c(FALSE, TRUE), labels=c("Students without SGP", "Students with SGP"))])
-				if (adj.weights.tf <- any(duplicated(tmp.dt.long, by=sgp_key))) invisible(tmp.dt.long[, DUP_COUNT := .N, by=sgp_key])
-				if ("GRADE" %in% names(sgp_object@Data_Supplementary[[j-1]])) tmp_key <- sgp_key else tmp_key <- sgp_key %w/o% "GRADE"
-				tmp.dt.long <- tmp.dt.long[data.table(sgp_object@Data_Supplementary[[j-1]][,VALID_CASE:="VALID_CASE"], key=tmp_key), nomatch=0, on=tmp_key]
+                if (!"BY_GROWTH_ONLY" %in% names(long_data)) {
+                    summary.groups[["growth_only_summary"]][[tmp.inst]] <- "BY_GROWTH_ONLY"
+                    long_data[,
+                        BY_GROWTH_ONLY :=
+                        factor(is.na(long_data[[my.sgp[1]]]),
+                                levels=c(FALSE, TRUE),
+                                labels=c("Students without SGP", "Students with SGP"))
+                    ]
+                }
+				if (adj.weights.tf <- any(duplicated(long_data, by = sgp_key))) {
+					invisible(long_data[, DUP_COUNT := .N, by = sgp_key])
+				}
+				if ("GRADE" %in% names(sgp_object@Data_Supplementary[[j-1]])) {
+					tmp_key <- sgp_key
+				} else {
+					tmp_key <- sgp_key %w/o% "GRADE"
+				}
+				long_data <-
+				  long_data[
+					data.table(
+						sgp_object@Data_Supplementary[[j-1]][, VALID_CASE := "VALID_CASE"], 
+						key = tmp_key
+					), nomatch = 0, on = tmp_key
+				  ]
 
 				if (!is.null(summary.groups[["institution_multiple_membership"]][[j-1]][["WEIGHTS"]])) {
-					setnames(tmp.dt.long, summary.groups[["institution_multiple_membership"]][[j-1]][["WEIGHTS"]], "WEIGHT")
+					setnames(long_data, summary.groups[["institution_multiple_membership"]][[j-1]][["WEIGHTS"]], "WEIGHT")
 				}
 
-				if (adj.weights.tf & "WEIGHT" %in% names(tmp.dt.long)) invisible(tmp.dt.long[, WEIGHT := round((WEIGHT / DUP_COUNT), 3)])
-
-				dbWriteTable(sgp_data_for_summary, name = "summary_data", overwrite = TRUE, row.names=FALSE, value = tmp.dt.long)
-
-				rm(tmp.dt.long)
+				if (adj.weights.tf & "WEIGHT" %in% names(long_data)) invisible(long_data[, WEIGHT := round((WEIGHT / DUP_COUNT), 3)])
 
 				sgp_object@Summary[[i]] <- c(sgp_object@Summary[[i]], summarizeSGP_INTERNAL(tmp.inst))
 			}
 		} ### End i loop over summary.groups[["institution"]]
 	} ### END j loop over multiple membership groups (if they exist)
-
-    dbDisconnect(sgp_data_for_summary)
-
-	if (!is.null(parallel.config))	stopParallel(parallel.config, par.start)
 
 	if ("VALID_CASE_STATUS_ONLY" %in% names(sgp_object@Data)) {
 		sgp_object@Data$VALID_CASE[sgp_object@Data$VALID_CASE_STATUS_ONLY=="VALID_CASE"] <- "INVALID_CASE"
