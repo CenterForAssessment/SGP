@@ -740,3 +740,8 @@ function(
 
 	return(sgp_object)
 } ## END combineSGP Function
+
+`mean_nan` <-
+    function(x) {
+        if (all(is.na(x))) return(as.numeric(NA)) else return(mean(x, na.rm=TRUE))
+    } ### END mean_nan function

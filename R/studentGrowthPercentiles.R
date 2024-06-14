@@ -277,8 +277,8 @@ function(panel.data,         ## REQUIRED
 
 	.get.quantiles <- function(data1, data2, ranked.simex=FALSE) {
         if (is.character(ranked.simex)) {
-            reproduce.old.values <- TRUE; ranked.simex <- TRUE
-        } else reproduce.old.values <- FALSE
+            use.original.ranking.system <- TRUE; ranked.simex <- TRUE
+        } else use.original.ranking.system <- FALSE
 
         if (ranked.simex) {
           for (p in seq.int(3)) { # Additional values between the tau predicted values - 1/8th percentiles for ranking
@@ -305,7 +305,7 @@ function(panel.data,         ## REQUIRED
                 if (length(tmp.index <- which(data2>=tmp.hoss)) > 0L) {
                     if (ranked.simex) {
                         tmp[tmp.index, V1:=as.double(apply(data.table(data1 > data2, TRUE)[tmp.index], 1, function(x) which.max(x)-1L))]
-                        if (!reproduce.old.values) tmp[tmp.index, V1 := V1/8]
+                        if (!use.original.ranking.system) tmp[tmp.index, V1 := V1/8]
                     } else tmp[tmp.index, V1:=apply(data.table(data1 > data2, TRUE)[tmp.index], 1, function(x) which.max(x)-1L)]
                 }
             }
@@ -353,7 +353,8 @@ function(panel.data,         ## REQUIRED
     calculate.simex.sgps,
     dependent.var.error=FALSE,
     use.cohort.for.ranking=FALSE,
-    reproduce.old.values=FALSE,
+    use.original.ranking.system=FALSE,
+    set.seed.for.sim.data=TRUE,
     verbose=FALSE) {
 
       GRADE <- CONTENT_AREA <- YEAR <- V1 <- Lambda <- tau <- b <- .SD <- TEMP <- CSEM <- VARIABLE <- NULL ## To avoid R CMD check warnings
@@ -410,8 +411,12 @@ function(panel.data,         ## REQUIRED
                                 "Version=tmp.version)")))
       } ### END rq.mtx function
 
-      createBigData <- function(tmp.data, perturb.var, L, dependent.var.error) { # Function that creates big.data object from which SIMEX SGPs are calculated
-        big.data <- rbindlist(replicate(B, tmp.data, simplify = FALSE))[, b:=rep(seq.int(B), each=n.records)]
+      createBigData <- function(tmp.data, perturb.var, L, dependent.var.error) {
+		# Function that creates big.data object from which SIMEX SGPs are calculated
+        if (set.seed.for.sim.data) {
+			set.seed(as.integer(ceiling(ifelse(is.null(sgp.percentiles.set.seed), 369, sgp.percentiles.set.seed)*L)))
+		}
+		big.data <- rbindlist(replicate(B, tmp.data, simplify = FALSE))[, b:=rep(seq.int(B), each=n.records)]
         if (dependent.var.error) csem.col.offset <- (ncol(big.data)-2)/2 else csem.col.offset <- (ncol(big.data)-1)/2
         for (perturb.var.iter in rev(seq_along(perturb.var))) {
           setnames(big.data, c(1L+perturb.var.iter, 1L+perturb.var.iter+csem.col.offset), c("VARIABLE", "CSEM"))
@@ -441,7 +446,8 @@ function(panel.data,         ## REQUIRED
       ### Check arguments/define variables
       if (is.null(dependent.var.error)) dependent.var.error <- FALSE
       if (is.null(use.cohort.for.ranking)) use.cohort.for.ranking <- FALSE
-      if (is.null(reproduce.old.values)) reproduce.old.values <- FALSE
+      if (is.null(use.original.ranking.system)) use.original.ranking.system <- FALSE
+      if (is.null(set.seed.for.sim.data)) set.seed.for.sim.data <- TRUE
       if (is.null(verbose)) verbose <- FALSE
       if (verbose) messageSGP(c("\n\tStarted SIMEX SGP calculation ", rev(content_area.progression)[1L], " Grade ", rev(tmp.gp)[1L], " ", prettyDate()))
       if (is.logical(simex.use.my.coefficient.matrices) && !simex.use.my.coefficient.matrices) simex.use.my.coefficient.matrices <- NULL
@@ -600,7 +606,7 @@ function(panel.data,         ## REQUIRED
 
 					par.start <- startParallel(tmp.par.config, 'SIMEX')
 
-					## Note, that if you use the parallel.config for SIMEX here, you can also use it for TAUS in the naive analysis
+					## Note that if you use the parallel.config for SIMEX here, you can also use it for TAUS in the naive analysis
 					## Example parallel.config argument: '... parallel.config=list(BACKEND="FOREACH", TYPE="doParallel", WORKERS=list(SIMEX = 4, TAUS = 4))'
 
 					## Calculate coefficient matricies (if needed/requested)
@@ -674,7 +680,7 @@ function(panel.data,         ## REQUIRED
                ncol=length(taus), byrow=TRUE)
 
       if (is.null(simex.use.my.coefficient.matrices)) {
-        ranked.simex.quantile.values <- .get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]], ranked.simex=ifelse(reproduce.old.values, "reproduce.old.values", TRUE))
+        ranked.simex.quantile.values <- .get.quantiles(extrap[[paste0("order_", k)]], tmp.data[[tmp.num.variables]], ranked.simex=ifelse(use.original.ranking.system, "use.original.ranking.system", TRUE))
         # simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste("ranked_simex_table", tail(tmp.gp, 1L), k, sep="_")]] <- table(ranked.simex.quantile.values)
         # simex.coef.matrices[[paste("qrmatrices", tail(tmp.gp, 1L), k, sep="_")]][[paste("n_records", tail(tmp.gp, 1L), k, sep="_")]] <- n.records
         ranked_simex_table <- table(ranked.simex.quantile.values)
@@ -723,7 +729,7 @@ function(panel.data,         ## REQUIRED
                                 extrap[[paste0("order_", k)]],
                                 tmp.data[[tmp.num.variables]],
                                     ranked.simex =
-                                        ifelse(reproduce.old.values, "reproduce.old.values", TRUE)
+                                        ifelse(use.original.ranking.system, "use.original.ranking.system", TRUE)
                                     ))/n.records
                                 ), 0))
                     ]
@@ -738,7 +744,7 @@ function(panel.data,         ## REQUIRED
                                             extrap[[paste0("order_", k)]],
                                             tmp.data[[tmp.num.variables]],
                                             ranked.simex =
-                                                ifelse(reproduce.old.values, "reproduce.old.values", TRUE)
+                                                ifelse(use.original.ranking.system, "use.original.ranking.system", TRUE)
                                           ),
                                           as.numeric(rep(names(ranked.simex.info), ranked.simex.info))))/(n.records+attr(ranked.simex.info, "n_records"))
                             ), 0)), n.records)
@@ -1530,7 +1536,8 @@ function(panel.data,         ## REQUIRED
 			calculate.simex.sgps=calculate.sgps,
 			dependent.var.error=calculate.simex$dependent.var.error,
             use.cohort.for.ranking=calculate.simex$use.cohort.for.ranking,
-			reproduce.old.values=calculate.simex$reproduce.old.values,
+			use.original.ranking.system=calculate.simex$use.original.ranking.system,
+			set.seed.for.sim.data=calculate.simex$set.seed.for.sim.data,
 			verbose=calculate.simex$verbose)
 
 		if (!is.null(quantile.data.simex[['MATRICES']])) {
