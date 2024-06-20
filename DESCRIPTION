@@ -75,6 +75,7 @@ Maintainer: Damian W. Betebenner <dbetebenner@nciea.org>
 Depends: R (>= 4.1.0)
 Suggests: SGPdata (>= 27.0-0), knitr, rmarkdown
 Imports: Cairo, callr, collapse, colorspace, crayon, datasets, data.table (>= 1.14.0), digest, doParallel, equate (>= 2.0-5), foreach, graphics, grid, grDevices, gridBase, iterators, gtools, jsonlite, matrixStats, methods, parallel, quantreg, randomNames (>= 0.0-5), rngtools (>= 1.5), RSQLite, sn (>= 1.0-0), splines, stats, svglite, toOrdinal, utils
+
 Description: An analytic framework for the calculation of norm- and criterion-referenced academic growth estimates using large scale, longitudinal education assessment data as developed in Betebenner (2009) <doi:10.1111/j.1745-3992.2009.00161.x>.
 SystemRequirements: (PDF)LaTeX (https://www.latex-project.org/) with 'pdfpages' package for studentGrowthPlot option in visualizeSGP to bind together student growth plots into school catalogs
 URL: https://sgp.io, https://github.com/CenterForAssessment/SGP, https://CRAN.R-project.org/package=SGP
@@ -82,5 +83,5 @@ BugReports: https://github.com/CenterForAssessment/SGP/issues
 VignetteBuilder: knitr
 LazyData: Yes
 LazyDataCompression: xz
-License: GPL-3 
+License: GPL-3
 ByteCompile: TRUE

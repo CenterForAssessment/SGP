@@ -107,6 +107,20 @@
 		stop("User must supply an SGP object containing a @Data slot with long data. See documentation for details.")
 	}
 
+    ### Check for `arrow` use -- PUNT (for now)
+    if (is(sgp_object@Data, "ArrowSGP")) {
+        sgp_object <-
+            packArrowSGP(
+                sgp_object,
+                slot.type =
+                    c("Data", "Data_Supplementary",
+                      if (!is.null(sgp_object@Summary)) "Summary",
+                      if (!is.null(sgp_object@Data_Supplementary)) "Data_Supplementary",
+                      if (!is.null(sgp_object@SGP[["Simulated_SGPs"]])) "Simulated_SGPs"
+                    )
+            )
+        arrow.tf <- TRUE
+    } else arrow.tf <- FALSE
 
 	###
 	## Utility Functions
@@ -558,8 +572,6 @@
 
 	### Loop and send to summarizeSGP_INTERNAL
 
-	# sgp_data_for_summary <- dbConnect(SQLite(), dbname = file.path(tempdir(), "TMP_Summary_Data.sqlite"))
-
 	if ("VALID_CASE_STATUS_ONLY" %in% names(sgp_object@Data)) {
 		sgp_object@Data$VALID_CASE[sgp_object@Data$VALID_CASE_STATUS_ONLY=="VALID_CASE"] <- "VALID_CASE"
 	}
@@ -734,5 +746,13 @@
 	messageSGP(paste("Finished summarizeSGP", prettyDate(), "in", convertTime(timetakenSGP(started.at)), "\n"))
 
 	setkeyv(sgp_object@Data, getKey(sgp_object))
+    if (arrow.tf) {
+        # Write results to disk (parquet) and replace with an `arrow::Table`
+        unpackSGP(
+            sgp_object,
+            slot.type = "Summary",
+            return.object = FALSE
+        )
+    }
 	return(sgp_object)
 } ## END summarizeSGP Function
