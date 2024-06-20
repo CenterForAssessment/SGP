@@ -1,18 +1,10 @@
 `mergeScaleScoreTarget` <-
-    function(
-		sgp_object,
+function(sgp_object,
 		state,
 		slot.data,
 		years,
 		sgp.target.scale.scores.merge
 	) {
-        ### Check for `arrow` use
-        if (is(sgp_object@Data, "ArrowSGP")) {
-            if (is(slot.data, "ArrowObject")) {
-                slot.data <- as.data.table(slot.data[["data"]])
-            }
-            arrow.tf <- TRUE
-        } else arrow.tf <- FALSE
 
 		tmp.list <- list()
 		if (identical(sgp.target.scale.scores.merge, "1_year_lagged")) {
@@ -23,10 +15,7 @@
 					VALID_CASE="VALID_CASE",
 					CONTENT_AREA=unlist(strsplit(i, "[.]"))[1L],
 					YEAR=getTableNameYear(i),
-                    if (arrow.tf) {
-                        as.data.table(sgp_object@SGP[["SGProjections"]][[i]][["data"]])
-                    } else sgp_object@SGP[["SGProjections"]][[i]]
-                )
+					sgp_object@SGP[["SGProjections"]][[i]])
 				if (any(duplicated(tmp.list[[i]], by=getKey(tmp.list[[i]])))) {
 					tmp.list[[i]] <- getPreferredSGP(tmp.list[[i]], state=state, type="TARGET")
 				}
@@ -46,10 +35,7 @@
 					VALID_CASE="VALID_CASE",
 					CONTENT_AREA=unlist(strsplit(i, "[.]"))[1L],
 					YEAR=getTableNameYear(i),
-                    if (arrow.tf) {
-                        as.data.table(sgp_object@SGP[["SGProjections"]][[i]][["data"]])
-                    } else sgp_object@SGP[["SGProjections"]][[i]]
-                )
+					sgp_object@SGP[["SGProjections"]][[i]])
 				if (any(duplicated(tmp.list[[i]], by=getKey(tmp.list[[i]])))) {
 					tmp.list[[i]] <- getPreferredSGP(tmp.list[[i]], state=state, type="TARGET")
 				}
@@ -77,10 +63,7 @@
 					VALID_CASE="VALID_CASE",
 					CONTENT_AREA=unlist(strsplit(i, "[.]"))[1L],
 					YEAR=getTableNameYear(i),
-                    if (arrow.tf) {
-                        as.data.table(sgp_object@SGP[["SGProjections"]][[i]][["data"]])
-                    } else sgp_object@SGP[["SGProjections"]][[i]]
-                )
+					sgp_object@SGP[["SGProjections"]][[i]])
 				if (any(duplicated(tmp.list[[i]], by=getKey(tmp.list[[i]])))) {
 					tmp.list[[i]] <- getPreferredSGP(tmp.list[[i]], state=state, type="TARGET")
 				}

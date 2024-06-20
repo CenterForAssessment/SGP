@@ -24,12 +24,7 @@
     
     if (is.null(years)) {
       # Put this first for YEAR with `.` in it (e.g. "2021_2022.2")
-      if (is(sgp_object@Data, "ArrowSGP")) {
-        years <- sgp_object@Data[["data"]] |>
-            dplyr::pull(YEAR, as_vector = TRUE) |> unique()
-      } else {
       years <- unique(sgp_object@Data[, YEAR])
-      }
       years <- years[unlist(lapply(years, function(f) any(grepl(f, gof.slots))))]
     } else {
       tmp.years <- years[unlist(lapply(years, function(f) any(grepl(f, gof.slots))))]
@@ -45,8 +40,8 @@
                   tmp.year <-
                     years[unlist(lapply(years, function(ff) any(grepl(ff, f))))]
                   if (length(tmp.year)) f[grepl(tmp.year, f)]
-              })
-      )
+                })
+            )
 
     if (!is.null(norm_group)) {
       for (gs in gof.slots) {
@@ -99,10 +94,6 @@
     }
 
     for (i in gof.slots) {
-      if (is(sgp_object@SGP[["Goodness_of_Fit"]][[i]], "goFitSlot")) {
-        sgp_object@SGP[["Goodness_of_Fit"]][[i]] <-
-          sgp_object@SGP[["Goodness_of_Fit"]][[i]]$get
-      }
       if (length(sgp_object@SGP[["Goodness_of_Fit"]][[i]])) {
         if ("DECILE_TABLES" %in% toupper(output_format)) {
           tmp.path <- file.path(output_path, i, "Decile_Tables")

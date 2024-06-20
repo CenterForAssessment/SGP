@@ -31,22 +31,6 @@ function(data,
 		fix.duplicates <- SGPstateData[[state]][["SGP_Configuration"]][["fix.duplicates"]]
 	}
 
-    ### Check for `arrow` use
-    if ("ArrowSGP" %in% class(data) ||
-        (is.SGP(data) && "ArrowSGP" %in% class(data@Data))
-    ) {
-        if (is.SGP(data)) {
-            arrow_object <- data@Data
-			data@Data <- as.data.table(data@Data[["data"]])
-        } else {
-			arrow_object <- data
-			data <- data[["data"]]
-		}
-		if (!"ACHIEVEMENT_LEVEL" %in% names(arrow_object)) {
-			stop("An `ACHIEVEMENT_LEVEL` variable must be included in the `arrow` DataSet/Table provided\n")
-		}
-		create.additional.variables <- FALSE
-    } else arrow_object <- NULL
 
 	### Utility functions
 
@@ -251,9 +235,7 @@ function(data,
 	## Create ACHIEVEMENT_LEVEL is it doesn't exist
 
 	if (!"ACHIEVEMENT_LEVEL" %in% names(sgp_object@Data) &
-		(!is.null(SGPstateData[[state]][["Achievement"]][["Cutscores"]]) |
-		 !is.null(SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]]))
-	) {
+			(!is.null(SGPstateData[[state]][["Achievement"]][["Cutscores"]]) | !is.null(SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]]))) {
 		sgp_object@Data <- getAchievementLevel(sgp_object@Data, state=state)
 		setkeyv(sgp_object@Data, getKey(sgp_object))
 		messageSGP(paste("\tNOTE: Added variable ACHIEVEMENT_LEVEL to @Data using", state, "cutscores embedded in SGPstateData."))
@@ -297,11 +279,6 @@ function(data,
 				messageSGP("\tNOTE: The 'fix.duplicates' argument has been requested, but NO duplicate cases are found in the data...")
 			}
 		# } ### End KEEP.ALL  (or TRUE or anything else...)
-	}
-
-	### Remove (temporary) data.table used for checks with `arrow`
-	if (!is.null(arrow_object)) {
-		sgp_object@Data <- arrow_object
 	}
 
 	##  Print finish time

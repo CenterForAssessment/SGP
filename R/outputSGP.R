@@ -45,11 +45,6 @@ function(sgp_object,
 		sgp_object <- suppressMessages(prepareSGP(sgp_object, state=state, create.additional.variables=FALSE))
 	}
 
-    ### Check for `arrow` use -- PUNT (for now)
-    if (is(sgp_object@Data, "ArrowSGP")) {
-        sgp_object <- packArrowSGP(sgp_object)
-    }
-
 	### Create relevant variables
 
 	if (is.null(outputSGP.student.groups)) {
