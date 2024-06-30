@@ -127,9 +127,14 @@ function(
 	} else return.sgp.target.num.years <- FALSE
 
 	### Check whether to calculate current year lagged targets
-	if (1 %in% max.sgp.target.years.forward || identical(SGP::SGPstateData[[state]][["SGP_Configuration"]][['current.year.lagged.target']], TRUE)) current.year.lagged.target <- TRUE else current.year.lagged.target <- FALSE
+	if (1 %in% max.sgp.target.years.forward || identical(SGP::SGPstateData[[state]][["SGP_Configuration"]][['current.year.lagged.target']], TRUE)) {
+		current.year.lagged.target <- TRUE
+	} else current.year.lagged.target <- FALSE
 
-
+    ##  Odd things happened (e.g. in WIDA_CO) when max.sgp.targe.years.forward = 1 (length 1 only)
+    if (identical(SGP::SGPstateData[[state]][["SGP_Configuration"]][['current.year.lagged.target']], FALSE)) {
+        current.year.lagged.target <- FALSE
+    }
 
 
 	### Utility functions
