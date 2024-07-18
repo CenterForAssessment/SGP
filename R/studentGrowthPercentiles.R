@@ -440,7 +440,28 @@ function(panel.data,         ## REQUIRED
                              identical(attr(f, "year_progression"), yp) &
                              identical(attr(f, "year_lags_progression"), ylp)
                          }))
-        return(table_list[[table.index]])
+
+        if (!length(table.index)) {
+            stop("\n\t\tNo matching SIMEX `ranked_simex_table` entries found for progression ",
+                 paste(gsub(" EOCT", "", paste(cap, gp)), collapse = " --> "))
+        }
+        if (length(table.index) > 1L){
+            g  <- tail(gp, 1)
+            ca <- tail(cap, 1)
+            pr <- head(gsub(" EOCT", "", paste(cap, gp)), -1) # needs separate pastes? `paste(pr, collapse = ", ")` -v- SMH...
+            msg.prior.info <- paste0(" { Prior", ifelse(length(pr) == 1L, ": ", "s: "), paste(pr, collapse = ", "), " }")
+            messageSGP(
+                c("\n\t\tMultiple matching SIMEX `ranked_simex_table` entries for", ca, if(g != "EOCT"){paste(" Grade", g)}, msg.prior.info,
+                  "\n\t\tThe first `ranked_simex_table` entry will be used, but tables with duplicate `attributes` should be investigated!!!",
+                  ifelse(identical(table_list[[table.index[1]]], table_list[[table.index[2]]]),
+                    "\n\t\tThe first SET of duplicate tables are identical, so ... that's encouraging ...\n",
+                    "\n\t\tThe first SET of duplicate tables are NOT identical\n\t\t\t\t!!! INVESTIGATE DIFFERENCES!!!\n"
+            )))
+# sapply(table_list, function(f) {
+    # paste(attr(f, "content_area_progression"),  attr(f, "grade_progression"),
+	#       attr(f, "year_progression"), attr(f, "year_lags_progression"), collapse = ", ")})
+        }
+        return(table_list[[table.index[1]]])
       }
 
       ### Check arguments/define variables
@@ -1325,8 +1346,10 @@ function(panel.data,         ## REQUIRED
 	}
 
 	if (is.null(sgp.less.than.sgp.cohort.size.return) && max.cohort.size < sgp.cohort.size) {
-		tmp.messages <- paste("\t\tNOTE: Supplied data together with grade progression contains fewer than the minimum cohort size.\n\t\tOnly", max.cohort.size,
-			"valid cases provided with", sgp.cohort.size, "indicated as minimum cohort N size. Check data, function arguments and see help page for details.\n")
+		tmp.messages <-
+		    paste("\t\tNOTE: Supplied data together with grade progression contains fewer than the minimum cohort size.\n\t\tOnly",
+			      max.cohort.size, "valid cases provided with", sgp.cohort.size,
+				  "indicated as minimum cohort N size.\n\t\tCheck data, function arguments and see help page for details.\n")
 		messageSGP(paste("\tStarted studentGrowthPercentiles", started.date))
 		messageSGP(paste0("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ",
 			paste(tmp.slot.gp, collapse=", "), " ", sgp.message.label))
@@ -1417,8 +1440,10 @@ function(panel.data,         ## REQUIRED
 
         SGPercentiles[[tmp.path]] <- rbindlist(list(quantile.data, SGPercentiles[[tmp.path]]), fill=TRUE)
 
-        tmp.messages <- paste("\t\tNOTE: Supplied data together with grade progression contains fewer than the minimum cohort size.\n\t\tOnly", max.cohort.size,
-          "valid cases provided with", sgp.cohort.size, "indicated as minimum cohort N size. Check data, function arguments and see help page for details.\n")
+        tmp.messages <-
+		    paste("\t\tNOTE: Supplied data together with grade progression contains fewer than the minimum cohort size.\n\t\tOnly",
+			      max.cohort.size, "valid cases provided with", sgp.cohort.size,
+				  "indicated as minimum cohort N size.\n\t\tCheck data, function arguments and see help page for details.\n")
 
         if (print.time.taken) {
             if (calculate.sgps) cohort.n <- format(dim(quantile.data)[1L], big.mark=",") else cohort.n <- format(max.cohort.size, big.mark=",")

@@ -628,24 +628,47 @@ function(sgp_object,
 		if (any(sapply(par.sgp.config, function(x) identical(x[['sgp.baseline.grade.sequences']], "NO_BASELINE_COEFFICIENT_MATRICES")))) {
 			baseline.missings <- setdiff(which(sapply(par.sgp.config, function(x) identical(x[['sgp.baseline.grade.sequences']], "NO_BASELINE_COEFFICIENT_MATRICES"))),
 						which(sapply(par.sgp.config, function(x) identical(x[['sgp.grade.sequences']], "NO_PERCENTILES"))))
-			if (length(baseline.missings)>0) {
-				baseline.missings <- paste(unlist(sapply(baseline.missings, function(x)
-					paste(tail(par.sgp.config[[x]]$sgp.content.areas, 1), paste(par.sgp.config[[x]]$sgp.grade.sequences, collapse=", "), sep=": "))), collapse=";\n\t\t")
-				messageSGP(paste0("\tNOTE: Baseline coefficient matrices are not available for:\n\t\t", baseline.missings, "."))
+            if (length(baseline.missings)>0) {
+                missing.msg <-
+                  paste(unlist(
+                        sapply(baseline.missings, function(x) {
+                            if (length(unique(par.sgp.config[[x]][["sgp.content.areas"]])) == 1L) {
+                                paste(tail(par.sgp.config[[x]]$sgp.content.areas, 1), paste(par.sgp.config[[x]]$sgp.grade.sequences, collapse=", "), sep=": ")
+                            } else {
+                                paste0(tail(par.sgp.config[[x]]$sgp.content.areas, 1), ": ",
+                                    gsub(" EOCT", "",
+                                        paste(head(par.sgp.config[[x]]$sgp.content.areas, -1), head(par.sgp.config[[x]]$sgp.grade.sequences, -1),
+                                          if (any(par.sgp.config[[x]]$sgp.panel.years.lags > 1L)) {
+                                            ifelse(par.sgp.config[[x]]$sgp.panel.years.lags == 1, "--> ", paste0("--( ", par.sgp.config[[x]]$sgp.panel.years.lags, " year lag )--> "))
+                                          } else "--> ",
+                                          collapse = "  ")
+                                    ),
+                                    tail(par.sgp.config[[x]]$sgp.content.areas, 1)
+                                )
+                            }
+                        }
+                    )), collapse=";\n\t\t")
+                messageSGP(paste0("\n\tNOTE: Baseline coefficient matrices are not available for:\n\t\t", missing.msg, ".\n"))
 
-				sgp.config.list[['sgp.percentiles.baseline']] <-
-					par.sgp.config[which(sapply(par.sgp.config, function(x) !identical(x[['sgp.baseline.grade.sequences']], "NO_BASELINE_COEFFICIENT_MATRICES")))]
+                sgp.config.list[['sgp.percentiles.baseline']] <- par.sgp.config[-baseline.missings]
+					# par.sgp.config[which(sapply(par.sgp.config, function(x) !identical(x[['sgp.baseline.grade.sequences']], "NO_BASELINE_COEFFICIENT_MATRICES")))]
 			}
 		}
 
-		if (length(sgp.config.list[['sgp.percentiles.baseline']]) > 0) {
-			for (i in seq_along(sgp.config.list[['sgp.percentiles.baseline']])) sgp.config.list[['sgp.percentiles.baseline']][[i]][['sgp.matrices']] <- NULL
+		if (length(sgp.config.list[['sgp.percentiles.baseline']])) {
+			for (i in seq_along(sgp.config.list[['sgp.percentiles.baseline']])) {
+				sgp.config.list[['sgp.percentiles.baseline']][[i]][['sgp.matrices']] <- NULL
+			}
 #			tmp.config <- sgp.config.list[['sgp.percentiles.baseline']][sapply(sgp.config.list[['sgp.percentiles.baseline']], test.projection.iter)]
 #			sgp.config.list[['sgp.percentiles.baseline']] <- tmp.config
 		}
 
 		if (sgp.projections.baseline | sgp.projections.lagged.baseline) {
-			tmp.config <- par.sgp.config[sapply(par.sgp.config, test.projection.iter)]
+			# tmp.config <- par.sgp.config[sapply(par.sgp.config, test.projection.iter)]
+			tmp.config <-
+			    sgp.config.list[['sgp.percentiles.baseline']][
+					sapply(sgp.config.list[['sgp.percentiles.baseline']], test.projection.iter)
+				]
 			while (any(sapply(tmp.config, function(x) length(x$sgp.projection.sequence)>1))) {
 				tmp.index <- which(any(sapply(tmp.config, function(x) length(x$sgp.projection.sequence)>1)))[1]
 				tmp.iter <- tmp.config[[tmp.index]]
