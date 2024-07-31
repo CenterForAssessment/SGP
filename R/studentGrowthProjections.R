@@ -370,14 +370,16 @@ function(panel.data,	## REQUIRED
 					lapply(strsplit(percentile.trajectory.values, "_")[[1L]], function(x) type.convert(x, as.is=FALSE))[sapply(lapply(strsplit(percentile.trajectory.values, "_")[[1L]], function(x) type.convert(x, as.is=FALSE)), is.numeric)][[1L]])
 				if (!any(grepl("CURRENT", percentile.trajectory.values))) tmp.num.years.forward <- min(length(grade.projection.sequence), tmp.num.years.forward+1L)
 
+				panel.data[["Panel_Data"]][get(percentile.trajectory.values)==99, (percentile.trajectory.values):=100L] ## Turns 99s into 100s so that targets converted from 100 to 99 are sure to reach achievement outcome
 				tmp.indices <- as.integer(rep(dim(percentile.trajectories)[1L]/uniqueN(percentile.trajectories[['ID']])*(seq(uniqueN(percentile.trajectories[['ID']]))-1L),
 					each=length(percentile.trajectory.values)) + c(t(as.matrix(data.table(panel.data[["Panel_Data"]],
 					key="ID")[list(unique(percentile.trajectories, by='ID')[['ID']])][,percentile.trajectory.values, with=FALSE]))))
 				tmp.traj <- percentile.trajectories[tmp.indices, 1L:(2L+tmp.num.years.forward-1L), with=FALSE][,ID:=rep(unique(percentile.trajectories, by='ID')[['ID']], each=length(percentile.trajectory.values))]
 				if (is.character(percentile.trajectory.values.max.forward.progression.years) && length(percentile.trajectory.values.max.forward.progression.years)==1L) tmp.traj <- trimTrajectories(tmp.traj[, YEAR:=panel.data[['Panel_Data']][[percentile.trajectory.values.max.forward.progression.years]]])
 
-				if (tmp.num.years.forward==1L) {
-					tmp.target.name <- tail(names(tmp.traj), 1L)
+#				if (tmp.num.years.forward==1L) {
+				for (traj.names.iter in seq(tmp.num.years.forward)) {
+					tmp.target.name <- tail(names(tmp.traj), tmp.num.years.forward)[traj.names.iter]
 					if ("STATE" %in% names(panel.data[["Panel_Data"]])) {
 						included.states <- unique(panel.data[["Panel_Data"]][['STATE']])
 						content_area.index <- grep(sgp.labels$my.subject, sapply(names(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]),
@@ -390,14 +392,21 @@ function(panel.data,	## REQUIRED
 						if (length(percentile.trajectory.values)==2L) tmp.traj <- data.table(rbindlist(list(tmp.traj, tmp.traj)), key="ID")
 
 						for (state.iter in unique(tmp.traj$STATE)) {
-							my.cutscore.year <- get.my.cutscore.state.year.sgprojection(Cutscores, content_area.projection.sequence[1L], yearIncrement(sgp.labels$my.year, 1L, lag.increment), my.state=state.iter)
-							tmp.cutscores.by.grade <- tmp.cutscores[[my.cutscore.year]][[paste0("GRADE_", grade.projection.sequence[1L])]]
+							my.cutscore.year <- get.my.cutscore.state.year.sgprojection(Cutscores, content_area.projection.sequence[traj.names.iter], yearIncrement(sgp.labels$my.year, traj.names.iter, lag.increment), my.state=state.iter)
+							tmp.cutscores.by.grade <- tmp.cutscores[[my.cutscore.year]][[paste0("GRADE_", grade.projection.sequence[traj.names.iter])]]
 							if (length(percentile.trajectory.values)==1L) {
 								tmp.state.level <- which(sapply(lapply(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscore_Information"]][['State_Levels']],
 									 '[[', 1L), function(x) state.iter %in% x))
 								cuku.level.to.get <- which.max(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscore_Information"]][[
 									'State_Levels']][[tmp.state.level]][["Levels"]]=="Proficient")-1L
-								tmp.traj[which(STATE==state.iter), (tmp.target.name):=tmp.cutscores.by.grade[cuku.level.to.get]]
+								tmp.target.scores <- rep(tmp.cutscores.by.grade[cuku.level.to.get], uniqueN(tmp.traj[['ID']]))
+								if (traj.names.iter < tmp.num.years.forward) {
+									tmp.overwrite.index <- which(tmp.traj[[tmp.target.name]] > tmp.target.scores)
+									tmp.traj[tmp.overwrite.index, (tmp.target.name):=tmp.target.scores[tmp.overwrite.index]] ### Non-Final year of trajectory, scores above target pulled back to target
+								} else {
+									tmp.traj[,(tmp.target.name):=tmp.target.scores] ### Final year of trajectory, everything gets converted to target
+								}								
+#								tmp.traj[which(STATE==state.iter), (tmp.target.name):=tmp.cutscores.by.grade[cuku.level.to.get]]
 							}
 							if (length(percentile.trajectory.values)==2L) {
 								tmp.state.level <- which(sapply(lapply(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscore_Information"]][['State_Levels']],
@@ -406,14 +415,21 @@ function(panel.data,	## REQUIRED
 									'State_Levels']][[tmp.state.level]][["Levels"]]=="Proficient")-1L
 								musu.level.to.get <- which.max(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscore_Information"]][[
 									'State_Levels']][[tmp.state.level]][["Levels"]]=="Proficient")
-								tmp.traj[which(STATE==state.iter),
-									(tmp.target.name):=c(tmp.cutscores.by.grade[cuku.level.to.get], tmp.cutscores.by.grade[musu.level.to.get])]
+								tmp.target.scores <- rep(c(tmp.cutscores.by.grade[cuku.level.to.get], tmp.cutscores.by.grade[musu.level.to.get]), uniqueN(tmp.traj[['ID']]))
+								if (traj.names.iter < tmp.num.years.forward) {
+									tmp.overwrite.index <- which(STATE==state.iter & tmp.traj[[tmp.target.name]] > tmp.target.scores)
+									tmp.traj[tmp.overwrite.index, (tmp.target.name):=tmp.target.scores[tmp.overwrite.index]] ### Non-Final year of trajectory, scores above target pulled back to target
+								} else {
+									tmp.traj[which(STATE==state.iter), (tmp.target.name):=tmp.target.scores] ### Final year of trajectory, everything gets converted to target
+								}
+#								tmp.traj[which(STATE==state.iter),
+#									(tmp.target.name):=c(tmp.cutscores.by.grade[cuku.level.to.get], tmp.cutscores.by.grade[musu.level.to.get])]
 							}
 						}
 						tmp.traj[,STATE:=NULL]
 					} else {
-						my.cutscore.year <- get.my.cutscore.state.year.sgprojection(Cutscores, content_area.projection.sequence[1L], yearIncrement(sgp.labels$my.year, 1L, lag.increment), my.state=NA)
-						tmp.cutscores.by.grade <- tmp.cutscores[[my.cutscore.year]][[paste0("GRADE_", grade.projection.sequence[1L])]]
+						my.cutscore.year <- get.my.cutscore.state.year.sgprojection(Cutscores, content_area.projection.sequence[traj.names.iter], yearIncrement(sgp.labels$my.year, traj.names.iter, lag.increment), my.state=NA)
+						tmp.cutscores.by.grade <- tmp.cutscores[[my.cutscore.year]][[paste0("GRADE_", grade.projection.sequence[traj.names.iter])]]
 						if (length(percentile.trajectory.values)==1L) {
 							cuku.level.to.get <- which.max(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")-1L
 							tmp.target.scores <- rep(tmp.cutscores.by.grade[cuku.level.to.get], uniqueN(tmp.traj[['ID']]))
@@ -423,8 +439,14 @@ function(panel.data,	## REQUIRED
 							musu.level.to.get <- which.max(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Levels"]][["Proficient"]]=="Proficient")
 							tmp.target.scores <- rep(c(tmp.cutscores.by.grade[cuku.level.to.get], tmp.cutscores.by.grade[musu.level.to.get]), uniqueN(tmp.traj[['ID']]))
 						}
+
 						tmp.target.scores[is.na(tmp.traj[[tmp.target.name]])] <- NA
-						tmp.traj[,(tmp.target.name):=tmp.target.scores]
+						if (traj.names.iter < tmp.num.years.forward) {
+							tmp.overwrite.index <- which(tmp.traj[[tmp.target.name]] > tmp.target.scores)
+							tmp.traj[tmp.overwrite.index, (tmp.target.name):=tmp.target.scores[tmp.overwrite.index]] ### Non-Final year of trajectory, scores above target pulled back to target
+						} else {
+							tmp.traj[,(tmp.target.name):=tmp.target.scores] ### Final year of trajectory, everything gets converted to target
+						}
 					}
 				}
 			}
