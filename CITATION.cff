@@ -11,7 +11,7 @@ authors:
 - family-names: "Yi"
   given-names: "Shang"
 title: "SGP: Student Growth Percentiles & Percentile Growth Trajectories"
-version: 2.1-0.19
+version: 2.1-0.22
 doi: 10.5281/zenodo.3634024
-date-released: 2024-7-19
+date-released: 2024-8-12
 url: "https://sgp.io"
