@@ -932,7 +932,6 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			}
 
 			### Straight projections for fan
-
 			if (sgPlot.fan & any(tmp.proj.names %in% names(sgp_object@SGP[["SGProjections"]]))) {
 				tmp.list <- list()
 				for (i in tmp.proj.names) {
@@ -944,7 +943,6 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			} ### END if (sgPlot.fan)
 
 			### Straight projection scale score targets
-
 			if (any(c("sgp.projections", "sgp.projections.baseline") %in% sgPlot.sgp.targets) & any(tmp.proj.cut_score.names %in% names(sgp_object@SGP[["SGProjections"]]))) {
 
 				tmp.list <- list()
@@ -977,7 +975,6 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			# sgPlot.data[, GRADE := NULL]
 
 			### Transform scale scores
-
 			tmp.grade.name <- paste("GRADE", tmp.last.year, sep=".")
 			setkeyv(sgPlot.data, c("CONTENT_AREA", tmp.grade.name))
 			if ("SCALE_SCORE_ACTUAL" %in% names(sgp_object@Data)) {
