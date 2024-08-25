@@ -792,7 +792,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 		setkeyv(slot.data, long.key)
 
 		if (is.null(sgPlot.students)) {
-			report.ids <- unique(slot.data[tmp.districts.and.schools][["ID"]])
+			report.ids <- unique(slot.data[tmp.districts.and.schools][["ID"]]) %w/o% NA
 			if (sgPlot.reports.by.instructor) report.ids <- intersect(student.teacher.lookup[['ID']], report.ids)
 			setkeyv(slot.data, c("CONTENT_AREA", "GRADE", "YEAR"))
 			tmp.table <- data.table(slot.data[getYearsContentAreasGrades(state, years=tmp.years.subset, content_areas_domains=tmp.content_areas_domains,
