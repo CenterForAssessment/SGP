@@ -272,7 +272,7 @@ function(
 
 		tmp.list <- list()
 		for (i in tmp.names) {
-		tmp.list[[i]] <- data.table(
+		    tmp.list[[i]] <- data.table(
 					CONTENT_AREA=unlist(strsplit(i, "[.]"))[1L],
 					YEAR=getTableNameYear(i),
 					sgp_object@SGP[["SGPercentiles"]][[i]])
