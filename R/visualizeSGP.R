@@ -758,6 +758,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 				}
 				if (!is.null(sgPlot.schools) & is.null(sgPlot.districts)) {
 					setkeyv(slot.data, c("VALID_CASE", "YEAR", "CONTENT_AREA", "SCHOOL_NUMBER", "DISTRICT_NUMBER"))
+					setkeyv(slot.data, c("VALID_CASE", "YEAR", "CONTENT_AREA", "SCHOOL_NUMBER"))
 					tmp.districts.and.schools <- unique(data.table(slot.data[CJ("VALID_CASE", tmp.last.year, tmp.content_areas_domains, sgPlot.schools)][,
 						list(VALID_CASE, YEAR, CONTENT_AREA, DISTRICT_NUMBER, SCHOOL_NUMBER)],
 						key=long.key), by=long.key)
@@ -854,9 +855,9 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			if (!"GENDER" %in% names(tmp.table)) tmp.table[["GENDER"]] <- round(runif(dim(tmp.table)[1], min=0, max=1))
 			if ("LAST_NAME" %in% names(tmp.table)) tmp.table[,LAST_NAME:=NULL]
 			if ("FIRST_NAME" %in% names(tmp.table)) tmp.table[,FIRST_NAME:=NULL]
-			tmp.dt <- tmp.table[,list(ID, ETHNICITY, GENDER)]
-			setkey(tmp.dt, ID)
-			tmp.dt <- tmp.dt[!duplicated(tmp.dt, by=key(tmp.dt)),]
+			tmp.dt <- tmp.table[,list(ID, ETHNICITY, GENDER, YEAR)]
+			setorder(tmp.dt, ID, -YEAR)
+			tmp.dt <- tmp.dt[!duplicated(tmp.dt, by="ID"),]
 			tmp.dt[,LAST_NAME:=randomNames(gender=tmp.dt$GENDER, ethnicity=tmp.dt$ETHNICITY, which.names="last")]
 			tmp.dt[,FIRST_NAME:=randomNames(gender=tmp.dt$GENDER, ethnicity=tmp.dt$ETHNICITY, which.names="first")]
 

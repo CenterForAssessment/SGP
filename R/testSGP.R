@@ -310,7 +310,8 @@ function(
 			### TEST of SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1 variable for READING.XXXX_XXXX scale score targets
 
 #			if (identical(as.integer(sum(Demonstration_SGP@SGP[['SGProjections']][[paste('READING', tail(sgpData.years, 1L), "LAGGED.TARGET_SCALE_SCORES", sep=".")]][['SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1']])), 18313900L)) {
-			if (identical(digest(Demonstration_SGP@SGP[['SGProjections']][[paste('READING', tail(sgpData.years, 1L), "LAGGED.TARGET_SCALE_SCORES", sep=".")]][['SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1']]), "d67a2c0b75f411683abe1a9c023c8c0e")) {
+#			if (identical(as.integer(sum(Demonstration_SGP@SGP[['SGProjections']][[paste('READING', tail(sgpData.years, 1L), "LAGGED.TARGET_SCALE_SCORES", sep=".")]][['SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1']], na.rm=TRUE)), 14416215L)) {## Update 08/24/24
+			if (identical(digest(Demonstration_SGP@SGP[['SGProjections']][[paste('READING', tail(sgpData.years, 1L), "LAGGED.TARGET_SCALE_SCORES", sep=".")]][['SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1']]), "b9f34020b0896f1977090a5208d6b2cb")) {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1: FAIL\n")
@@ -339,10 +340,11 @@ function(
 				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
-			### TEST of LAGGED PROJECTION CUTs variable P35_PROJ_YEAR_1 variable for MATHEMATICS.XXXX_XXXX.LAGGED
+			### TEST of LAGGED PROJECTION CUTs variable P20_PROJ_YEAR_1 variable for MATHEMATICS.XXXX_XXXX.LAGGED
 
 #			if (identical(sum(Demonstration_SGP@SGP[['SGProjections']][[paste('MATHEMATICS', tail(sgpData.years, 1L), 'LAGGED', sep=".")]][['P20_PROJ_YEAR_1']]), 15567825)) {
-			if (identical(digest(Demonstration_SGP@SGP[['SGProjections']][[paste('MATHEMATICS', tail(sgpData.years, 1L), 'LAGGED', sep=".")]][['P20_PROJ_YEAR_1']]), "e83219e1830264576b42861aaaed067f")) {
+#			if (identical(sum(Demonstration_SGP@SGP[['SGProjections']][[paste('MATHEMATICS', tail(sgpData.years, 1L), 'LAGGED', sep=".")]][['P20_PROJ_YEAR_0']]), 15567825)) {## Re-indexing lagged projections. Value stays the same!
+			if (identical(digest(Demonstration_SGP@SGP[['SGProjections']][[paste('MATHEMATICS', tail(sgpData.years, 1L), 'LAGGED', sep=".")]][['P20_PROJ_YEAR_0']]), "e83219e1830264576b42861aaaed067f")) {
 				tmp.messages <- c(tmp.messages, "\tTest of variable P20_PROJ_YEAR_1 (LAGGED PROJECTION): OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable P20_PROJ_YEAR_1 (LAGGED PROJECTION): FAIL\n")
@@ -374,18 +376,20 @@ function(
 
 			### TEST of SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1 variable in @Data
 
-#			if (identical(sum(Demonstration_SGP@Data$SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1, na.rm=TRUE), 103740628)) {
-			if (identical(digest(Demonstration_SGP@Data$SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1), "60ada507fc67c9bfd9822e0ff48a33e0")) {
-				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1: OK\n")
+#			if (identical(sum(Demonstration_SGP@Data$SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1, na.rm=TRUE), 103740628)) {## With OLD YEAR_* indexing
+#			if (identical(sum(Demonstration_SGP@Data$SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_0, na.rm=TRUE), 103782982)) {## 8/20/24
+			if (identical(digest(Demonstration_SGP@Data$SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_0), "117df3025e0d47e41efddd64abb47a46")) {
+				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_0: OK\n")
 			} else {
-				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1: FAIL\n")
+				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_0: FAIL\n")
 				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
 			### TEST of SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT variable in @Data
 
 #			if (identical(sum(Demonstration_SGP@Data$SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT, na.rm=TRUE), 117211493)) {
-			if (identical(digest(Demonstration_SGP@Data$SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT), "314bc76b76b0047f641c1a8a149ae0a8")) {
+#			if (identical(sum(Demonstration_SGP@Data$SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT, na.rm=TRUE), 117265000)) { ## 08/08/24
+			if (identical(digest(Demonstration_SGP@Data[['SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT']]), "358168440ff7f1efb509f1962ee928bb")) {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_3_YEAR_PROJ_YEAR_1_CURRENT: FAIL\n")
