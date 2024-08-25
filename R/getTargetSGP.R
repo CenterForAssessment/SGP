@@ -14,6 +14,7 @@ function(sgp_object,
 	return.sgp.target.num.years.note=TRUE) {
 
 	VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- GRADE <- FIRST_OBSERVATION <- LAST_OBSERVATION <- STATE <- SGP_PROJECTION_GROUP <- DUPS_FLAG <- SCALE_SCORE <- SCALE_SCORE_PRIOR <- V1 <- NULL
+	V2 <- MAX_V2 <- SGP_PROJECTION_NOTE <- NULL
 
 	### Utility functions
 

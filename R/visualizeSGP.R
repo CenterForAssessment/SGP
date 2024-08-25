@@ -793,7 +793,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 		setkeyv(slot.data, long.key)
 
 		if (is.null(sgPlot.students)) {
-			report.ids <- unique(slot.data[tmp.districts.and.schools][["ID"]])
+			report.ids <- unique(slot.data[tmp.districts.and.schools][["ID"]]) %w/o% NA
 			if (sgPlot.reports.by.instructor) report.ids <- intersect(student.teacher.lookup[['ID']], report.ids)
 			setkeyv(slot.data, c("CONTENT_AREA", "GRADE", "YEAR"))
 			tmp.table <- data.table(slot.data[getYearsContentAreasGrades(state, years=tmp.years.subset, content_areas_domains=tmp.content_areas_domains,
@@ -1069,7 +1069,9 @@ if (sgPlot.save.sgPlot.data) {
 	setkey(sgPlot.data, ID)
 	tmp.file.name <- paste(gsub(" ", "_", capwords(getStateAbbreviation(state, type="name"))), "studentGrowthPlot_Data", sep="_")
 	assign(tmp.file.name, sgPlot.data)
-	save(list=tmp.file.name, file=paste0(tmp.file.name, ".Rdata"))
+	save(list = tmp.file.name,
+         file = file.path(sgPlot.folder, paste0(tmp.file.name, ".Rdata"))
+	)
 }
 
 

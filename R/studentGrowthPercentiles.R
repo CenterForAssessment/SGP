@@ -849,12 +849,12 @@ function(panel.data,         ## REQUIRED
 	if (!missing(growth.levels)) {
 		tmp.growth.levels <- list()
 		if (!is.list(growth.levels) && !is.character(growth.levels)) {
-			tmp.messages <- c(tmp.messages, "\t\tNOTE: growth.levels must be supplied as a list or character abbreviation. See help page for details. studentGrowthPercentiles will be calculated without augmented growth.levels\n")
+			tmp.messages <- c(tmp.messages, "\t\tNOTE: `growth.levels` must be supplied as a list or character abbreviation. See help page for details.\n\t\t\t`studentGrowthPercentiles` will be calculated without augmented growth levels.\n")
 			tf.growth.levels <- FALSE
 		}
 		if (is.list(growth.levels)) {
 			if (!identical(names(growth.levels), c("my.cuts", "my.levels"))) {
-				tmp.messages <- c(tmp.messages, "\t\tNOTE: Please specify an appropriate list for growth.levels. See help page for details. Student growth percentiles will be calculated without augmented growth.levels\n")
+				tmp.messages <- c(tmp.messages, "\t\tNOTE: Please specify an appropriate list for `growth.levels`. See help page for details.\n\t\t\tStudent growth percentiles will be calculated without augmented growth levels.\n")
 				tf.growth.levels <- FALSE
 			} else {
 				tmp.growth.levels <- growth.levels
@@ -863,7 +863,7 @@ function(panel.data,         ## REQUIRED
 		}
 		if (is.character(growth.levels)) {
 			if (is.null(SGP::SGPstateData[[growth.levels]][["Growth"]][["Levels"]])) {
-				tmp.messages <- c(tmp.messages, "\t\tNOTE: Growth Levels are currently not specified for the indicated state. \n\tPlease contact the SGP package administrator to have your state's data included in the package. Student growth percentiles will be calculated without augmented growth levels\n")
+				tmp.messages <- c(tmp.messages, "\t\tNOTE: Growth Levels are currently not specified for the indicated state.\n\t\t\tPlease contact the SGP package administrator to have your state's data included in the package.\n\t\t\tStudent growth percentiles will be calculated without augmented growth levels.\n")
 				tf.growth.levels <- FALSE
 			} else {
 				tmp.growth.levels[["my.cuts"]] <- SGP::SGPstateData[[growth.levels]][["Growth"]][["Cutscores"]][["Cuts"]]
