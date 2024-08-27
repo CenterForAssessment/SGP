@@ -171,24 +171,24 @@ function(sgp_object,
 
 
 		###  Check SGPstateData for changes and modify parallel processing for SNOW (Windows) if so:
-		if (!is.null(parallel.config)) {
-			# tmp.type <- names(parallel.config$WORKERS)[1]
-			# if (is.null(tmp.type)) tmp.type <- parallel.config$WORKERS
-			tmp.parallel.config <- parallel.config
-			tmp.parallel.config[["WORKERS"]][["GA_PLOTS"]] <- 2
-			par.start <- startParallel(tmp.parallel.config, "GA_PLOTS") # tmp.type) #  Just use 2 cores for this test - avoids issue when WORKERS[1] is 'TAUS'/missing qr.taus argument
+		# if (!is.null(parallel.config)) {
+		# 	# tmp.type <- names(parallel.config$WORKERS)[1]
+		# 	# if (is.null(tmp.type)) tmp.type <- parallel.config$WORKERS
+		# 	tmp.parallel.config <- parallel.config
+		# 	tmp.parallel.config[["WORKERS"]][["GA_PLOTS"]] <- 2
+		# 	par.start <- startParallel(tmp.parallel.config, "GA_PLOTS") # tmp.type) #  Just use 2 cores for this test - avoids issue when WORKERS[1] is 'TAUS'/missing qr.taus argument
 
-			tmp.digest <- SGP::SGPstateData[["digest"]]
-			tmp.SGPstateData <- SGP::SGPstateData
-			tmp.SGPstateData[["digest"]] <- NULL #  Can't assign `<- NULL` to SGP::SGPstateData (need tmp.SGPstateData)
-			if (!identical(tmp.digest, digest::digest(tmp.SGPstateData)) & par.start$par.type=="SNOW") {
-				messageSGP(
-					"\n\tManual changes to SGPstateData have been detected, which is not compatible with SNOW parallel processing.\n\tParallel processing will be disabled for all visualization production.\n")
-				stopParallel(parallel.config, par.start)
-				parallel.config <- NULL
-			} else 	stopParallel(parallel.config, par.start)
-			tmp.digest -> tmp.SGPstateData[["digest"]]
-		}
+		# 	tmp.digest <- SGP::SGPstateData[["digest"]]
+		# 	tmp.SGPstateData <- SGP::SGPstateData
+		# 	tmp.SGPstateData[["digest"]] <- NULL #  Can't assign `<- NULL` to SGP::SGPstateData (need tmp.SGPstateData)
+		# 	if (!identical(tmp.digest, digest::digest(tmp.SGPstateData)) & par.start$par.type=="SNOW") {
+		# 		messageSGP(
+		# 			"\n\tManual changes to SGPstateData have been detected, which is not compatible with SNOW parallel processing.\n\tParallel processing will be disabled for all visualization production.\n")
+		# 		stopParallel(parallel.config, par.start)
+		# 		parallel.config <- NULL
+		# 	} else 	stopParallel(parallel.config, par.start)
+		# 	tmp.digest -> tmp.SGPstateData[["digest"]]
+		# }
 
 ##############################################################################################################
 #### bubblePlot
