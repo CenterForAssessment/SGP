@@ -956,7 +956,6 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			} ### END if ("sgp.projections" %in% sgPlot.sgp.targets)
 
 			### Lagged projection scale score targets
-
 			if (any(c("sgp.projections.lagged", "sgp.projections.lagged.baseline") %in% sgPlot.sgp.targets) &
 				any(tmp.proj.cut_score.names.lagged %in% names(sgp_object@SGP[["SGProjections"]]))) {
 
@@ -971,8 +970,6 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 				}
 				sgPlot.data <- data.table(rbindlist(tmp.list, fill = TRUE), key = c("ID", "CONTENT_AREA", "GRADE"))[sgPlot.data]
 			} ### END if ("sgp.projections.lagged" %in% sgPlot.sgp.targets)
-
-			# sgPlot.data[, GRADE := NULL]
 
 			### Transform scale scores
 			tmp.grade.name <- paste("GRADE", tmp.last.year, sep=".")
@@ -992,7 +989,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 				}
 			}
 
-			for (i in seq(8)) {
+			for (i in seq(from=0, to=8)) {
 				if (length(grep(paste("PROJ_YEAR", i, sep="_"), names(sgPlot.data))) > 0) {
 					for (proj.iter in grep(paste("PROJ_YEAR", i, sep="_"), names(sgPlot.data), value=TRUE)) {
 						if (length(grep("CURRENT", proj.iter)) > 0) tmp.increment <- i else tmp.increment <- i-1
