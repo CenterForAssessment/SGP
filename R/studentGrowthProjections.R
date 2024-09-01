@@ -388,7 +388,7 @@ function(panel.data,	## REQUIRED
 							function(x) strsplit(x, "[.]")[[1L]][1L], USE.NAMES=FALSE))
 						available.states <- unique(sapply(names(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]),
 							function(x) strsplit(x, "[.]")[[1L]][2L], USE.NAMES=FALSE)[content_area.index])
-						unavailable.states <- included.states[!included.states %in% available.states]
+						unavailable.states <- setdiff(included.states, c("", NA, available.states))
 						tmp.traj <- na.omit(data.table(panel.data[["Panel_Data"]][,c("ID", "STATE"), with=FALSE], key="ID")[STATE %in% available.states][tmp.traj, on="ID"], cols="STATE")
 
 						for (state.iter in setdiff(unique(tmp.traj[['STATE']]), NA)) {
@@ -489,7 +489,7 @@ function(panel.data,	## REQUIRED
 				included.states <- unique(panel.data[["Panel_Data"]][['STATE']]); state.arg <- "STATE == states[n.state]"
 				content_area.index <- grep(sgp.labels$my.subject, sapply(names(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]), function(x) strsplit(x, "[.]")[[1L]][1L], USE.NAMES=FALSE))
 				available.states <- unique(sapply(names(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]), function(x) strsplit(x, "[.]")[[1L]][2L], USE.NAMES=FALSE)[content_area.index])
-				unavailable.states <- included.states[!included.states %in% available.states]
+				unavailable.states <- setdiff(included.states, c("", NA, available.states))
 				percentile.trajectories <- na.omit(data.table(panel.data[["Panel_Data"]][,c("ID", "STATE"), with=FALSE], key="ID")[STATE %in% available.states][percentile.trajectories], cols="STATE")
 				states <- included.states[included.states %in% available.states]
 			} else {
@@ -1020,7 +1020,7 @@ function(panel.data,	## REQUIRED
 			included.states <- unique(panel.data[["Panel_Data"]][['STATE']]); state.arg <- "STATE == states[n.state]"
 			content_area.index <- grep(sgp.labels$my.subject, sapply(names(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]), function(x) strsplit(x, "[.]")[[1L]][1L], USE.NAMES=FALSE))
 			available.states <- unique(sapply(names(SGP::SGPstateData[[performance.level.cutscores]][["Achievement"]][["Cutscores"]]), function(x) strsplit(x, "[.]")[[1L]][2L], USE.NAMES=FALSE)[content_area.index])
-			unavailable.states <- included.states[!included.states %in% available.states]
+			unavailable.states <- setdiff(included.states, c("", NA, available.states))
 			if (length(unavailable.states) > 0L) {
 				tmp.messages <- c(tmp.messages, paste("\t\tNOTE: The required state specific cutscores for ", sgp.labels$my.subject, " provided in SGPstateData do not include:\n\t\t\t",
 					paste(unavailable.states[order(unavailable.states)], collapse = ", "), ".\n\t\t\tTarget projections will not be produced for students in these states.\n", sep = ""))
