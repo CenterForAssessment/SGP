@@ -57,7 +57,7 @@
 		if (is.null(tmp.ach.lev.text.interp)) tmp.ach.lev.text.interp <- c("Achievement", "Levels")
 		tmp.ach.lev.text.use <- SGP::SGPstateData[[state]][["Student_Report_Information"]][["Achievement_Level_Text"]][["Suggested_Uses"]]
 		if (is.null(tmp.ach.lev.text.use)) tmp.ach.lev.text.use <- "achievement levels."
-		if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["sgp.projections.max.forward.progression.grade"]])) {
+		if (!is.null(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Projection_Fan_Limits"]])) {
 			trajectory.cuts <- sort(c(SGP::SGPstateData[[state]][["Growth"]][["Cutscores"]][['Cuts']], SGP::SGPstateData[[state]][["Student_Report_Information"]][["Projection_Fan_Limits"]]))
 			trajectory.cuts <- paste(paste0("P", trajectory.cuts, "_"), collapse="|")
 		} else {
