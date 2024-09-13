@@ -363,6 +363,13 @@ function(sgp_object,
 		goodness.of.fit.print <- FALSE
 	}
 
+	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["max.forward.projection.sequence"]]) && 
+			!is.null(SGPstateData[[state]][["SGP_Configuration"]][["max.sgp.target.years.forward"]]) &&
+			max(SGPstateData[[state]][["SGP_Configuration"]][["max.sgp.target.years.forward"]]) > min(unlist(SGPstateData[[state]][["SGP_Configuration"]][["max.forward.projection.sequence"]]))
+		) {
+			stop(paste("SGPstateData configuration value for 'max.forward.projection.sequence' is less than the largest specified value for 'max.sgp.target.years.forward'. Reconcile these values in", state, "meta-data."))
+	}
+
 	###########################################################################################################
 	### Utility functions
 	###########################################################################################################
