@@ -541,7 +541,6 @@ function(
 		}
 
 		### SGP_TARGET_CONTENT_AREA calculation
-#		terminal.content_areas <- unique(slot.data[!slot.data[,all(is.na(.SD)), .SDcols=grep("SGP_TARGET", grep(paste(max(max.sgp.target.years.forward), "YEAR", sep="_"), names(slot.data), value=TRUE), value=TRUE), by=seq_len(nrow(slot.data))][['V1']]][['CONTENT_AREA']])
 		tmp.cols.to.test <- grep("SGP_TARGET", grep(paste(max(max.sgp.target.years.forward), "YEAR", sep="_"), names(slot.data), value=TRUE), value=TRUE)
 		terminal.content_areas <- unique(slot.data[slot.data[, rowSums(!is.na(.SD)) > 0, .SDcols = tmp.cols.to.test]][['CONTENT_AREA']])
 		if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]])) {
