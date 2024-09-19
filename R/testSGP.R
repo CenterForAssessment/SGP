@@ -950,23 +950,23 @@ function(
 				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
-#			if (identical(sum(Demonstration_SGP@Data$SCALE_SCORE_SGP_TARGET_7_YEAR_PROJ_YEAR_1, na.rm=TRUE), 35023835L)) {
-			if (identical(digest(Demonstration_SGP@Data$SCALE_SCORE_SGP_TARGET_7_YEAR_PROJ_YEAR_1), "81a28b00e88b6a2417d57af784d0c17f")) {
+#			if (identical(sum(Demonstration_SGP@Data$SCALE_SCORE_SGP_TARGET_7_YEAR_PROJ_YEAR_1, na.rm=TRUE), 35023835)) {
+#			if (identical(sum(Demonstration_SGP@Data$SCALE_SCORE_SGP_TARGET_7_YEAR_PROJ_YEAR_1, na.rm=TRUE), 26518949)) { ## Update 9/2024
+			if (identical(digest(Demonstration_SGP@Data$SCALE_SCORE_SGP_TARGET_7_YEAR_PROJ_YEAR_1), "9ac203dcf04bf39177a145667572a1a7")) {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_7_YEAR_PROJ_YEAR_1: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_7_YEAR_PROJ_YEAR_1: FAIL\n")
 				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
 
-			if (identical(sum(Demonstration_SGP@Data$SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_7_YEAR_PROJ_YEAR_1_CURRENT, na.rm=TRUE), 29549398)) { # FAILs on 29549398L
-			# if (identical(digest(Demonstration_SGP@Data$SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_7_YEAR_PROJ_YEAR_1_CURRENT), "20686f97ae1ca5a8d7bd65207f118851")) { # 22da22385b9657751568292777191796
+#			if (identical(sum(Demonstration_SGP@Data$SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_7_YEAR_PROJ_YEAR_1_CURRENT, na.rm=TRUE), 29549398)) { # FAILs on 29549398L
+#			if (identical(sum(Demonstration_SGP@Data$SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_7_YEAR_PROJ_YEAR_1_CURRENT, na.rm=TRUE), 29571914)) { # 9/2024 update
+			if (identical(digest(Demonstration_SGP@Data$SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_7_YEAR_PROJ_YEAR_1_CURRENT), "aed27eccc9b331faf0de36bc3d8247bf")) {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_7_YEAR_PROJ_YEAR_1_CURRENT: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SCALE_SCORE_SGP_TARGET_MOVE_UP_STAY_UP_7_YEAR_PROJ_YEAR_1_CURRENT: FAIL\n")
 				if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 			}
-
-			### TEST of SGP_TARGET_##_YEAR_NUM_YEARS_TO_TARGET variable
 
 #			if (identical(as.numeric(table(Demonstration_SGP@Data$SGP_TARGET_4_YEAR_CURRENT_NUM_YEARS_TO_TARGET)), c(17078, 9240, 11929, 28046))) {
 			if (identical(digest(Demonstration_SGP@Data$SGP_TARGET_4_YEAR_CURRENT_NUM_YEARS_TO_TARGET), "a4fed8e5f9f3708f5debacf0eb4d1d57")) {
@@ -977,7 +977,7 @@ function(
 			}
 
 #			if (identical(as.numeric(table(Demonstration_SGP@Data$SGP_TARGET_2_YEAR_NUM_YEARS_TO_TARGET)), c(15878, 10007, 32248))) {
-			if (identical(digest(Demonstration_SGP@Data$SGP_TARGET_2_YEAR_NUM_YEARS_TO_TARGET), "4992ff90a97032cae042b89e9cd15bb4")) {
+			if (identical(digest(Demonstration_SGP@Data$SGP_TARGET_2_YEAR_NUM_YEARS_TO_TARGET), "c0c2dad969b3abd5ffacaf9fc350a540")) {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_2_YEAR_NUM_YEARS_TO_TARGET: OK\n")
 			} else {
 				tmp.messages <- c(tmp.messages, "\tTest of variable SGP_TARGET_2_YEAR_NUM_YEARS_TO_TARGET: FAIL\n")

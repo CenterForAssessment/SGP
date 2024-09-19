@@ -222,10 +222,6 @@ function(
 		na.omit(tmp.data, cols=grep("MOVE_UP_STAY_UP", tmp.target.level.names, invert=TRUE, value=TRUE))
 	}
 
-	mean_nan <- function(x) {
-  	      if (all(is.na(x))) return(as.numeric(NA)) else return(mean(x, na.rm=TRUE))
-	} ### END mean_nan function
-
 	############################################################################
 	### Check update.all.years
 	############################################################################
@@ -718,9 +714,13 @@ function(
 				}
 			}
 		} ## END projection.group.iter
+
 		if (length(max.sgp.target.years.forward) > 1) {
-			for (names.iter in grep("TARGET_SCALE_SCORES", names(sgp_object@SGP$SGProjections), value=TRUE)) {
-				sgp_object@SGP$SGProjections[[names.iter]] <- sgp_object@SGP$SGProjections[[names.iter]][,lapply(.SD, mean_nan), by=c("ID", "GRADE", "SGP_PROJECTION_GROUP", "SGP_PROJECTION_GROUP_SCALE_SCORES")]
+#			for (names.iter in grep("TARGET_SCALE_SCORES", names(sgp_object@SGP[['SGProjections']]), value=TRUE)) {
+			for (names.iter in getTargetScaleScoreTableNames(names(sgp_object@SGP[['SGProjections']]), years)) {
+#				sgp_object@SGP[['SGProjections']][[names.iter]] <- sgp_object@SGP[['SGProjections']][[names.iter]][,lapply(.SD, mean_nan), by=c("ID", "GRADE", "SGP_PROJECTION_GROUP", "SGP_PROJECTION_GROUP_SCALE_SCORES")]
+				sgp_object@SGP[['SGProjections']][[names.iter]] <- sgp_object@SGP[['SGProjections']][[names.iter]][,lapply(.SD, mean, na.rm=TRUE), by=c("ID", "GRADE", "SGP_PROJECTION_GROUP", "SGP_PROJECTION_GROUP_SCALE_SCORES")]
+				sgp_object@SGP[['SGProjections']][[names.iter]] <- sgp_object@SGP[['SGProjections']][[names.iter]][,lapply(.SD, function(x) ifelse(is.nan(x), NA, x))]
 			}
 		}
 		if (!identical(sgp.target.scale.scores.merge, FALSE)) {

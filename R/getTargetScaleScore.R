@@ -132,7 +132,6 @@ function(sgp_object,
 		par.start <- startParallel(parallel.config, 'SGP_SCALE_SCORE_TARGETS')
 
 		###  FOREACH flavor
-
 		if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
 			tmp <- foreach(sgp.iter=iter(par.sgp.config[[target.type]]), .packages="SGP", .inorder=FALSE, .errorhandling = "pass",
 				.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
@@ -235,7 +234,6 @@ function(sgp_object,
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 					rm(tmp)
 				} # END SNOW
-
 				###  MULTICORE flavor
 				if (par.start$par.type == 'MULTICORE') {
 					tmp <- mclapply(par.sgp.config[[target.type]], function(sgp.iter) studentGrowthProjections(
