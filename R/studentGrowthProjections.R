@@ -330,9 +330,7 @@ function(panel.data,	## REQUIRED
 			return(as.integer(NA))
 		} else {
 			tmp <- which.min(c(data < cut, FALSE))
-			if (tmp==101L) tmp <- 100L
-			if (convert.0and100 && tmp==0L) return(1L)
-			if (convert.0and100 && tmp==100L) return(99L)
+			tmp <- fifelse(tmp == 0, 1L, fifelse(tmp > 99L, 99L, tmp))
 			return(tmp)
 		}
 	}

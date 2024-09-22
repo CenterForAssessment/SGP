@@ -717,7 +717,7 @@ function(
 
 		if (length(max.sgp.target.years.forward) > 1) {
 			for (names.iter in getTargetScaleScoreTableNames(names(sgp_object@SGP[['SGProjections']]), years)) {
-				sgp_object@SGP[['SGProjections']][[names.iter]] <- sgp_object@SGP[['SGProjections']][[names.iter]][,lapply(.SD, mean, na.rm=TRUE), by=c("ID", "GRADE", "SGP_PROJECTION_GROUP", "SGP_PROJECTION_GROUP_SCALE_SCORES")]
+				sgp_object@SGP[['SGProjections']][[names.iter]] <- sgp_object@SGP[['SGProjections']][[names.iter]][,lapply(.SD, mean, na.rm=TRUE), by=c("ID", "GRADE", "SGP_PROJECTION_GROUP", "SGP_PROJECTION_GROUP_SCALE_SCORES")] # nolint
 				sgp_object@SGP[['SGProjections']][[names.iter]] <- sgp_object@SGP[['SGProjections']][[names.iter]][,lapply(.SD, function(x) ifelse(is.nan(x), NA, x))]
 			}
 		}
