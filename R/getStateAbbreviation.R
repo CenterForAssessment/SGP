@@ -57,6 +57,7 @@ WY, Wyoming
 ABQ, Albuquerque
 AOB, AOB
 ATI, ATI
+CFU, CFU
 BI, Bureau of Indian Education
 CO_ORIGINAL, Colorado
 DC, Washington DC

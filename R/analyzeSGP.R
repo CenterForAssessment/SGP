@@ -363,6 +363,13 @@ function(sgp_object,
 		goodness.of.fit.print <- FALSE
 	}
 
+	if (!is.null(SGPstateData[[state]][["SGP_Configuration"]][["max.forward.projection.sequence"]]) && 
+			!is.null(SGPstateData[[state]][["SGP_Configuration"]][["max.sgp.target.years.forward"]]) &&
+			max(SGPstateData[[state]][["SGP_Configuration"]][["max.sgp.target.years.forward"]]) > min(unlist(SGPstateData[[state]][["SGP_Configuration"]][["max.forward.projection.sequence"]]))
+		) {
+			stop(paste("SGPstateData configuration value for 'max.forward.projection.sequence' is less than the largest specified value for 'max.sgp.target.years.forward'. Reconcile these values in", state, "meta-data."))
+	}
+
 	###########################################################################################################
 	### Utility functions
 	###########################################################################################################
@@ -2415,7 +2422,7 @@ function(sgp_object,
 					use.my.knots.boundaries=list(my.year=tail(sgp.iter[["sgp.panel.years"]], 1), my.subject=tail(sgp.iter[["sgp.content.areas"]], 1)),
 					performance.level.cutscores=state,
 					max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[["sgp.panel.years"]], 1),
-            tail(sgp.iter[["sgp.content.areas"]], 1), state, sgp.projections.equated),
+						tail(sgp.iter[["sgp.content.areas"]], 1), state, sgp.projections.equated),
 					percentile.trajectory.values=lagged.percentile.trajectory.values,
 					max.forward.progression.grade=sgp.projections.max.forward.progression.grade,
 					panel.data.vnames=getPanelDataVnames("sgp.projections.lagged", sgp.iter, sgp.data.names, equate.variable),

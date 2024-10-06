@@ -310,8 +310,7 @@ function(panel.data,         ## REQUIRED
                 }
             }
             if (convert.0and100) {
-                tmp[V1==0L, V1:=1L]
-                tmp[V1==100L, V1:=99L]
+				tmp[V1 %in% c(0L, 100L), V1 := fifelse(V1 == 0L, 1L, 99L)]
             }
             return(tmp[['V1']])
         }
@@ -782,8 +781,7 @@ function(panel.data,         ## REQUIRED
 			quantile.data.simex <- data.table(rbindlist(tmp.quantiles.simex), key=c("ID", "SIMEX_ORDER"))
       # invisible(quantile.data.simex[, SGP_SIMEX_RANKED := as.integer(round(100*(rank(SGP_SIMEX, ties.method = "average")/length(SGP_SIMEX)), 0)), by = "SIMEX_ORDER"])
       if (convert.0and100) {
-        invisible(quantile.data.simex[SGP_SIMEX_RANKED==0L, SGP_SIMEX_RANKED := 1L])
-        invisible(quantile.data.simex[SGP_SIMEX_RANKED==100L, SGP_SIMEX_RANKED := 99L])
+		quantile.data.simex[SGP_SIMEX_RANKED %in% c(0L, 100L), SGP_SIMEX_RANKED := fifelse(SGP_SIMEX_RANKED == 0L, 1L, 99L)]
       }
 			setkey(quantile.data.simex, ID) # first key on ID and SIMEX_ORDER, then re-key on ID only to insure sorted order. Don't rely on rbindlist/k ordering...
 		} else { # set up empty data.table for ddcast and subsets below.

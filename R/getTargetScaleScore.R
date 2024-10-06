@@ -127,14 +127,11 @@ function(sgp_object,
 
 
 	### Calculate targets
-
-	if (!is.null(parallel.config[["WORKERS"]]) & !is.null(names(parallel.config[["WORKERS"]]))) parallel.config[["WORKERS"]][["SGP_SCALE_SCORE_TARGETS"]] <- parallel.config[["WORKERS"]][[1L]]
-
 	if (!is.null(parallel.config)) {
+		if (!is.null(parallel.config[["WORKERS"]]) && !is.null(names(parallel.config[["WORKERS"]])) && !"SGP_SCALE_SCORE_TARGETS" %in% names(parallel.config[["WORKERS"]])) parallel.config[["WORKERS"]][["SGP_SCALE_SCORE_TARGETS"]] <- parallel.config[["WORKERS"]][[1L]]
 		par.start <- startParallel(parallel.config, 'SGP_SCALE_SCORE_TARGETS')
 
 		###  FOREACH flavor
-
 		if (toupper(parallel.config[["BACKEND"]]) == "FOREACH") {
 			tmp <- foreach(sgp.iter=iter(par.sgp.config[[target.type]]), .packages="SGP", .inorder=FALSE, .errorhandling = "pass",
 				.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
@@ -237,7 +234,6 @@ function(sgp_object,
 					tmp_sgp_object <- mergeSGP(Reduce(mergeSGP, tmp[!tmp.tf]), tmp_sgp_object)
 					rm(tmp)
 				} # END SNOW
-
 				###  MULTICORE flavor
 				if (par.start$par.type == 'MULTICORE') {
 					tmp <- mclapply(par.sgp.config[[target.type]], function(sgp.iter) studentGrowthProjections(
@@ -315,7 +311,7 @@ function(sgp_object,
 					year_lags.progression=sgp.iter[[my.panel.years.lags]],
 					max.order.for.progression=getMaxOrderForProgression(tail(sgp.iter[["sgp.panel.years"]], 1L), tail(sgp.iter[[my.content.areas]], 1L), state,
 						sgp.projections.equated),
-					lag.increment=1L,
+					lag.increment=lag.increment,
 					lag.increment.label=lag.increment.label,
 					grade.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],
 					content_area.projection.sequence=SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[sgp.iter[["sgp.projection.sequence"]]]],

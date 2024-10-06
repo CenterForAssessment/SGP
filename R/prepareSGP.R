@@ -4,7 +4,8 @@ function(data,
 	state=NULL,
 	var.names=NULL,
 	create.additional.variables=TRUE,
-	fix.duplicates=NULL) {
+	fix.duplicates=NULL,
+	create.achievement.level=TRUE) {
 
 	VALID_CASE <- ID <- CONTENT_AREA <- YEAR <- ID <- GRADE <- SCALE_SCORE <- DUPLICATED_CASES <- tmp.dups.index.to.remove <- NULL
 	SGPstateData <- SGP::SGPstateData ### Needed due to possible assignment of values to SGPstateData
@@ -234,7 +235,7 @@ function(data,
 
 	## Create ACHIEVEMENT_LEVEL is it doesn't exist
 
-	if (!"ACHIEVEMENT_LEVEL" %in% names(sgp_object@Data) &
+	if (!"ACHIEVEMENT_LEVEL" %in% names(sgp_object@Data) & create.achievement.level &
 			(!is.null(SGPstateData[[state]][["Achievement"]][["Cutscores"]]) | !is.null(SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]]))) {
 		sgp_object@Data <- getAchievementLevel(sgp_object@Data, state=state)
 		setkeyv(sgp_object@Data, getKey(sgp_object))

@@ -758,6 +758,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 				}
 				if (!is.null(sgPlot.schools) & is.null(sgPlot.districts)) {
 					setkeyv(slot.data, c("VALID_CASE", "YEAR", "CONTENT_AREA", "SCHOOL_NUMBER", "DISTRICT_NUMBER"))
+					setkeyv(slot.data, c("VALID_CASE", "YEAR", "CONTENT_AREA", "SCHOOL_NUMBER"))
 					tmp.districts.and.schools <- unique(data.table(slot.data[CJ("VALID_CASE", tmp.last.year, tmp.content_areas_domains, sgPlot.schools)][,
 						list(VALID_CASE, YEAR, CONTENT_AREA, DISTRICT_NUMBER, SCHOOL_NUMBER)],
 						key=long.key), by=long.key)
@@ -854,9 +855,9 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			if (!"GENDER" %in% names(tmp.table)) tmp.table[["GENDER"]] <- round(runif(dim(tmp.table)[1], min=0, max=1))
 			if ("LAST_NAME" %in% names(tmp.table)) tmp.table[,LAST_NAME:=NULL]
 			if ("FIRST_NAME" %in% names(tmp.table)) tmp.table[,FIRST_NAME:=NULL]
-			tmp.dt <- tmp.table[,list(ID, ETHNICITY, GENDER)]
-			setkey(tmp.dt, ID)
-			tmp.dt <- tmp.dt[!duplicated(tmp.dt, by=key(tmp.dt)),]
+			tmp.dt <- tmp.table[,list(ID, ETHNICITY, GENDER, YEAR)]
+			setorder(tmp.dt, ID, -YEAR)
+			tmp.dt <- tmp.dt[!duplicated(tmp.dt, by="ID"),]
 			tmp.dt[,LAST_NAME:=randomNames(gender=tmp.dt$GENDER, ethnicity=tmp.dt$ETHNICITY, which.names="last")]
 			tmp.dt[,FIRST_NAME:=randomNames(gender=tmp.dt$GENDER, ethnicity=tmp.dt$ETHNICITY, which.names="first")]
 
@@ -931,7 +932,6 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			}
 
 			### Straight projections for fan
-
 			if (sgPlot.fan & any(tmp.proj.names %in% names(sgp_object@SGP[["SGProjections"]]))) {
 				tmp.list <- list()
 				for (i in tmp.proj.names) {
@@ -943,7 +943,6 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			} ### END if (sgPlot.fan)
 
 			### Straight projection scale score targets
-
 			if (any(c("sgp.projections", "sgp.projections.baseline") %in% sgPlot.sgp.targets) & any(tmp.proj.cut_score.names %in% names(sgp_object@SGP[["SGProjections"]]))) {
 
 				tmp.list <- list()
@@ -957,7 +956,6 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 			} ### END if ("sgp.projections" %in% sgPlot.sgp.targets)
 
 			### Lagged projection scale score targets
-
 			if (any(c("sgp.projections.lagged", "sgp.projections.lagged.baseline") %in% sgPlot.sgp.targets) &
 				any(tmp.proj.cut_score.names.lagged %in% names(sgp_object@SGP[["SGProjections"]]))) {
 
@@ -973,10 +971,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 				sgPlot.data <- data.table(rbindlist(tmp.list, fill = TRUE), key = c("ID", "CONTENT_AREA", "GRADE"))[sgPlot.data]
 			} ### END if ("sgp.projections.lagged" %in% sgPlot.sgp.targets)
 
-			# sgPlot.data[, GRADE := NULL]
-
 			### Transform scale scores
-
 			tmp.grade.name <- paste("GRADE", tmp.last.year, sep=".")
 			setkeyv(sgPlot.data, c("CONTENT_AREA", tmp.grade.name))
 			if ("SCALE_SCORE_ACTUAL" %in% names(sgp_object@Data)) {
@@ -994,7 +989,7 @@ if (sgPlot.wide.data) { ### When WIDE data is provided
 				}
 			}
 
-			for (i in seq(8)) {
+			for (i in seq(from=0, to=8)) {
 				if (length(grep(paste("PROJ_YEAR", i, sep="_"), names(sgPlot.data))) > 0) {
 					for (proj.iter in grep(paste("PROJ_YEAR", i, sep="_"), names(sgPlot.data), value=TRUE)) {
 						if (length(grep("CURRENT", proj.iter)) > 0) tmp.increment <- i else tmp.increment <- i-1

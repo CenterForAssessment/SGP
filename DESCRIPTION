@@ -1,8 +1,8 @@
 Package: SGP
 Type: Package
 Title: Student Growth Percentiles & Percentile Growth Trajectories
-Version: 2.1-0.23
-Date: 2024-8-23
+Version: 2.2-0.0
+Date: 2024-10-6
 Authors@R: c(person(given=c("Damian", "W."), family="Betebenner", email="dbetebenner@nciea.org", role=c("aut", "cre")),
 		person(given=c("Adam", "R."), family="Van Iwaarden", email="avaniwaarden@nciea.org", role="aut"),
 		person(given="Ben", family="Domingue", email="ben.domingue@gmail.com", role="aut"),
@@ -70,6 +70,8 @@ Authors@R: c(person(given=c("Damian", "W."), family="Betebenner", email="dbetebe
 		person(given="Brendan", family="Houng", role="ctb", comment="University of Melbourne, Australia, NAPLAN"),
 		person(given="Leslie", family="Rosale", role="ctb", comment="Ministry of Education, Guatemala"),
 		person(given="Nathan", family="Wall", role="ctb", comment="eMetric working with Nevada Department of Education and South Dakota Department of Education"),
+		person(given="Julia", family="English", role="ctb", comment="Massachusetts DESE"),
+		person(given="Sarah Jo", family="Torgrimson", role="ctb", comment="Massachusetts DESE"),
 		person(given="Narek", family="Sahakyan", role="ctb", comment="World Class Instruction and Design (WIDA)"))
 Maintainer: Damian W. Betebenner <dbetebenner@nciea.org>
 Depends: R (>= 4.1.0)

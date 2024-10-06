@@ -13,7 +13,8 @@ prepareSGP(data,
 	state=NULL,
 	var.names=NULL,
 	create.additional.variables=TRUE,
-	fix.duplicates=NULL)
+	fix.duplicates=NULL,
+  create.achievement.level=TRUE)
 }
 
 \arguments{
@@ -33,6 +34,7 @@ for summarizing and reporting.
   The function currently warns of duplicate records and doesn't modify data. If set to TRUE, \code{prepareSGP} tries to
   fix the duplicate individual records by adding a '_DUP_***' suffix to the duplicate ID in order to create unique records based upon the key.
   }
+  \item{create.achievement.level}{Boolean argument indicating whether prepareSGP should create the ACHIEVEMENT_LEVEL variable if it is missing. Defaults to TRUE.}
 }
 
 \value{Function returns an object of class \code{SGP}. The long data is
