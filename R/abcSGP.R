@@ -7,6 +7,7 @@ function(sgp_object,
 	grades=NULL,
 	prepareSGP.var.names=NULL,
 	prepareSGP.create.additional.variables=FALSE,
+	prepareSGP.create.achievement.level=TRUE,
 	sgp.percentiles=TRUE,
 	sgp.projections=TRUE,
 	sgp.projections.lagged=TRUE,
@@ -75,6 +76,7 @@ function(sgp_object,
 				state=state,
 				var.names=prepareSGP.var.names,
 				create.additional.variables=prepareSGP.create.additional.variables,
+				create.achievement.level=prepareSGP.create.achievement.level,
 				fix.duplicates=fix.duplicates)
 		if (save.intermediate.results) save(sgp_object, file="sgp_object.Rdata")
 	}
