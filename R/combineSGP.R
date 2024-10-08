@@ -542,7 +542,10 @@ function(
 		}
 
 		### SGP_TARGET_CONTENT_AREA calculation
-		terminal.content_areas <- unique(slot.data[!slot.data[,all(is.na(.SD)), .SDcols=grep("SGP_TARGET", grep(paste(max(max.sgp.target.years.forward), "YEAR", sep="_"), names(slot.data), value=TRUE), value=TRUE), by=seq_len(nrow(slot.data))][['V1']]][['CONTENT_AREA']])
+		terminal.content_areas <-
+		  unique(slot.data[
+			!slot.data[,
+			all(is.na(.SD)), .SDcols=grep("SGP_TARGET", grep(paste(max(max.sgp.target.years.forward), "YEAR", sep="_"), names(slot.data), value=TRUE), value=TRUE), by=seq_len(nrow(slot.data))][['V1']]][['CONTENT_AREA']])
 		if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]])) {
 			terminal.content_areas <- intersect(terminal.content_areas, sapply(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]], tail, 1))
 		}
@@ -704,7 +707,7 @@ function(
 
 					targetData <- getTargetData(tmp.target.data, projection_group.iter, c(tmp.target.level.names, tmp.target.level.names.years.to.target))
 
-					if (dim(targetData)[1] > 0) {
+					if (nrow(targetData) > 0) {
 						sgp_object <- getTargetScaleScore(
 							sgp_object,
 							state,
@@ -724,7 +727,7 @@ function(
 			}
 		}
 		if (length(max.sgp.target.years.forward) > 1) {
-			for (names.iter in grep("TARGET_SCALE_SCORES", names(sgp_object@SGP$SGProjections), value=TRUE)) {
+			for (names.iter in grep("TARGET_SCALE_SCORES", grep(paste(years, collapse = ".|."), names(sgp_object@SGP$SGProjections), value=TRUE), value=TRUE)) {
 				sgp_object@SGP$SGProjections[[names.iter]] <- sgp_object@SGP$SGProjections[[names.iter]][,lapply(.SD, mean_nan), by=c("ID", "GRADE", "SGP_PROJECTION_GROUP", "SGP_PROJECTION_GROUP_SCALE_SCORES")]
 			}
 		}
