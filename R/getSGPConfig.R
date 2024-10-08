@@ -507,25 +507,6 @@ function(sgp_object,
 	test.projection.iter <- function(sgp.iter) {
 		if (identical(sgp.iter[['sgp.projection.grade.sequences']], "NO_PROJECTIONS")) return(FALSE)
 		if (identical(sgp.iter[['sgp.projection.baseline.grade.sequences']], "NO_PROJECTIONS")) return(FALSE)
-#		if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]]) & !is.null(sgp.iter[["sgp.projection.sequence"]])) {
-#			if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["Skip_Year_Projections"]])) Skip_Year_Projections.tf <- TRUE else Skip_Year_Projections.tf <- FALSE
-#			if (tail(sgp.iter[["sgp.grade.sequences"]], 1) == "EOCT" & !Skip_Year_Projections.tf) { # Only check EOCT configs/iters
-#				for (sps in sgp.iter[["sgp.projection.sequence"]]) {
-#					if (is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[sps]])) return(FALSE)
-#					tmp.index <- match(tail(sgp.iter[["sgp.content.areas"]], 1),
-#						SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[sps]])
-#					tmp.content_area.projection.sequence <-
-#						SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[sps]][1:tmp.index]
-#					tmp.grade.projection.sequence <-
-#						SGP::SGPstateData[[state]][["SGP_Configuration"]][["grade.projection.sequence"]][[sps]][1:tmp.index]
-#					tmp.year_lags.projection.sequence <-
-#						SGP::SGPstateData[[state]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[sps]][1:(tmp.index-1)]
-#					if (!all(identical(sgp.iter[["sgp.content.areas"]], tail(tmp.content_area.projection.sequence, length(sgp.iter[["sgp.content.areas"]]))) &
-#						identical(sgp.iter[["sgp.grade.sequences"]], tail(tmp.grade.projection.sequence, length(sgp.iter[["sgp.grade.sequences"]]))) &
-#						identical(as.numeric(sgp.iter[["sgp.panel.years.lags"]]), as.numeric(tail(tmp.year_lags.projection.sequence, length(sgp.iter[["sgp.panel.years.lags"]])))))) return(FALSE)
-#				}
-#			}	else return(TRUE)
-#		}	else return(TRUE)
 		return(TRUE)
 	} ## END test.projection.iter function
 
@@ -659,8 +640,6 @@ function(sgp_object,
 			for (i in seq_along(sgp.config.list[['sgp.percentiles.baseline']])) {
 				sgp.config.list[['sgp.percentiles.baseline']][[i]][['sgp.matrices']] <- NULL
 			}
-#			tmp.config <- sgp.config.list[['sgp.percentiles.baseline']][sapply(sgp.config.list[['sgp.percentiles.baseline']], test.projection.iter)]
-#			sgp.config.list[['sgp.percentiles.baseline']] <- tmp.config
 		}
 
 		if (sgp.projections.baseline | sgp.projections.lagged.baseline) {
@@ -694,7 +673,6 @@ function(sgp_object,
 	}
 
 	### Trim sgp.config if requested
-
 	if (trim.sgp.config) {
 		tmp.iter <- c('sgp.percentiles', 'sgp.percentiles.baseline', 'sgp.projections', 'sgp.projections.baseline', 'sgp.projections.lagged', 'sgp.projections.lagged.baseline')
 		tmp.iter.tf <- c(sgp.percentiles, sgp.percentiles.baseline, sgp.projections, sgp.projections.baseline, sgp.projections.lagged, sgp.projections.lagged.baseline)

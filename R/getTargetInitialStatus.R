@@ -4,7 +4,7 @@ function(achievement_level,
 	state.iter=NULL,
 	status.type="CATCH_UP_KEEP_UP") {
 
-		if (!is.null(SGP::SGPstateData[[state]][['Achievement']][['Cutscore_Information']])) {
+		if (state=="RLI") {
 			tmp.state.level <- which(sapply(lapply(SGP::SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]][['State_Levels']], '[[', 1), function(x) state.iter %in% x))
 			levels.that.are.proficient <- SGP::SGPstateData[[state]][["Achievement"]][["Levels"]][["Labels"]][
 				which(SGP::SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]][["State_Levels"]][[tmp.state.level]][['Levels']]=="Proficient")]

@@ -49,7 +49,7 @@
 	if (is.null(state.name.label <- suppressMessages(getStateAbbreviation(state, type="long")))) state.name.label <- test.abbreviation.label <- state
 	state.name.file.label <- gsub(" ", "_", state.name.label)
 
-	### Test if scale change has occured in the requested year
+	### Test if scale change has occurred in the requested year
 
 	if (is.null(equated) &&
 			!identical(SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Baseline_Projections_in_Transition_Year"]], TRUE) &&
@@ -288,8 +288,8 @@
 		setkey(growthAchievementPlot.data, CONTENT_AREA, YEAR, ID)
 		if (is.null(tmp.proj.name <- SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]][[content_area]])) tmp.proj.name <- content_area
 		if (baseline) tmp.proj.name <- unique(paste(tmp.proj.name, year, "BASELINE", sep=".")) else tmp.proj.name <- unique(paste(tmp.proj.name, year, sep="."))
-		for (tmp.proj.name.iter in intersect(tmp.proj.name, names(gaPlot.sgp_object@SGP$SGProjections))) {
-			tmp.extrapolated.cuts.list[[tmp.proj.name.iter]] <- gaPlot.sgp_object@SGP$SGProjections[[tmp.proj.name.iter]][,c("ID", grep("P50|P60|P70|P80|P90", names(gaPlot.sgp_object@SGP$SGProjections[[tmp.proj.name.iter]]), value=TRUE)), with=FALSE]
+		for (tmp.proj.name.iter in intersect(tmp.proj.name, names(gaPlot.sgp_object@SGP[['SGProjections']]))) {
+			tmp.extrapolated.cuts.list[[tmp.proj.name.iter]] <- gaPlot.sgp_object@SGP[['SGProjections']][[tmp.proj.name.iter]][,c("ID", grep("P50|P60|P70|P80|P90", names(gaPlot.sgp_object@SGP[['SGProjections']][[tmp.proj.name.iter]]), value=TRUE)), with=FALSE]
 			tmp.extrapolated.cuts.list[[tmp.proj.name.iter]][,c("CONTENT_AREA", "YEAR"):=list(unlist(strsplit(tmp.proj.name.iter, "[.]"))[1], sub(".BASELINE", "", paste(tail(unlist(strsplit(tmp.proj.name.iter, "[.]")), -1), collapse=".")))]
 		}
 		tmp.projections <- rbindlist(tmp.extrapolated.cuts.list, fill=TRUE)
@@ -331,7 +331,7 @@
 			tmp.dt <- data.table(matrix(c(gaPlot.grade_range[2], rep(gaPlot.back.extrapolated.cuts, 5)), nrow=1))
 		}
 
-		extrapolated.cuts.list <- as.list(rbindlist(list(extrapolated.cuts.dt[,!c("GRADE", "CONTENT_AREA"), with=FALSE], tmp.dt), fill=TRUE))
+		extrapolated.cuts.list <- as.list(rbindlist(list(extrapolated.cuts.dt[,!c("GRADE", "CONTENT_AREA"), with=FALSE], tmp.dt), use.names=FALSE))
 		for (col.iter in 2:6) extrapolated.cuts.list[[col.iter]] <- spline(extrapolated.cuts.list[[1]], extrapolated.cuts.list[[col.iter]], n=40, method="natural")[['y']]
 		extrapolated.cuts.list[[1]] <- spline(extrapolated.cuts.list[[1]], n=40, method="natural")[['y']]
 		extrapolated.cuts.dt <- as.data.table(extrapolated.cuts.list)
