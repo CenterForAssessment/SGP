@@ -13,6 +13,9 @@ function(
   ### Test parameters
   if (!missing(supercohort_base_years) && !all(supercohort_base_years %in% data.years)) stop("Note: supercohort_base_years supplied not all in years provided in base_data.")
 
+  ### Use supercohort_base_years to filter data if it is provided.
+  if (!missing(supercohort_base_years)) base_data <- base_data[YEAR %in% supercohort_base_years]
+
   ### Loop over configurations
   for (sgp.config.iter in sgp.config) {
     tmp.list <- list()
