@@ -1,3 +1,11 @@
+# SGP 2.2-0.0
+
+## User Visible Changes:
+
+* Alignment of scale score targets with time frame of projections
+* Alignment of scale score targets with cutscores
+* General bug fixes and meta-data updates to SGPstateData
+
 # SGP 2.1-0.0
 
 ## User Visible Changes:
