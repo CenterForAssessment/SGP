@@ -2,8 +2,7 @@
 function(
         base_data, 
         sgp.config,
-        target_years, ## Provide either target_years OR num_priors. length(target_years) = num_priors + 1
-        num_priors, ## Provide either num_priors OR target_years. num_priors = length(target_years) - 1
+        supercohort_base_years, ## Subset of years of supplied_base data to use for super-cohort construction
         indicate_cohort=FALSE
 ) {
 
@@ -12,9 +11,10 @@ function(
   tmp.cohort.list <- list()
 
   ### Test parameters
-  if (missing(target_years) & missing(num_priors)) stop("Provide either targets years for super-cohort or number of priors of desired SGP analyses.")
-  if (missing(target_years) & !missing(num_priors)) target_years <- tail(data.years, num_priors)
-  if (length(target_years) >= length(data.years)) stop("Super-cohort construction is possible only when number of target_years is less than number of years in supplied data.")
+  if (!missing(supercohort_base_years) && !all(supercohort_base_years %in% data.years)) stop("Note: supercohort_base_years supplied not all in years provided in base_data.")
+
+  ### Use supercohort_base_years to filter data if it is provided.
+  if (!missing(supercohort_base_years)) base_data <- base_data[YEAR %in% supercohort_base_years]
 
   ### Loop over configurations
   for (sgp.config.iter in sgp.config) {
