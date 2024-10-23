@@ -1,8 +1,8 @@
 ^docs$
-^_pkgdown\.yml$
 ^README\.md$
 ^LICENSE.md
 ^\.appveyor\.yml$
 ^vignettes/releases$
 ^\.github$
-^CITATION\.cff
+^CITATION\.cff$
+^_pkgdown\.yml$

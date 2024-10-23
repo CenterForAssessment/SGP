@@ -1,12 +1,14 @@
 `.onLoad` <-
 function(libname, pkgname) {
-	setDTthreads(1)
+	available_threads <- data.table::getDTthreads()
+	data.table::setDTthreads(1)
+	utils::globalVariables(c("."))
 }
 
 
 `.onAttach` <-
 function(libname, pkgname) {
 	if (interactive()) {
-		packageStartupMessage(magenta$bold('SGP',paste(paste0(unlist(strsplit(as.character(packageVersion("SGP")), "[.]")), c(".", "-", ".", "")), collapse=""),' (10-10-2024). For help: >help("SGP") or visit sgp.io'))
+		packageStartupMessage(magenta$bold('SGP',paste(paste0(unlist(strsplit(as.character(packageVersion("SGP")), "[.]")), c(".", "-", ".", "")), collapse=""),' (10-23-2024). For help: >help("SGP") or visit sgp.io'))
 	}
 }
