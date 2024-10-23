@@ -6,6 +6,8 @@ function(
         indicate_cohort=FALSE
 ) {
 
+  YEAR <- CONTENT_AREA <- GRADE <- YEAR_NEW <- COHORT <- ID <- NULL
+
   ### Parameters
   data.years <- sort(unique(base_data$YEAR))
   tmp.cohort.list <- list()
@@ -34,7 +36,7 @@ function(
 
       tmp.dt <- rbindlist(tmp.list)
       setkey(tmp.dt, YEAR, GRADE, ID)
-      tmp.dt <- tmp.dt[unique(tmp.dt[,.(YEAR, GRADE, ID)]), mult="last"] ### Remove duplicates created by collapsing data into YEAR_NEW taking LAST (most recent) case
+      tmp.dt <- tmp.dt[unique(tmp.dt[, .(YEAR, GRADE, ID)]), mult="last"] ### Remove duplicates created by collapsing data into YEAR_NEW taking LAST (most recent) case
     }
     tmp.cohort.list[[paste(sgp.config.iter[['sgp.content.areas']][1], paste(sgp.config.iter[['sgp.grade.sequences']], collapse=""), sep="_")]] <- tmp.dt
   }
