@@ -1,7 +1,7 @@
 `.onLoad` <-
 function(libname, pkgname) {
 	available_threads <- data.table::getDTthreads()
-	data.table::setDTthreads(1)
+	data.table::setDTthreads(available_threads)
 	utils::globalVariables(c("."))
 }
 
