@@ -5,7 +5,7 @@ SGP
 [![R-CMD-check](https://github.com/CenterForAssessment/SGP/workflows/R-CMD-check/badge.svg)](https://github.com/CenterForAssessment/SGP/actions)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/centerforassessment/SGP?branch=master&svg=true)](https://ci.appveyor.com/project/centerforassessment/SGP)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/SGP)](https://cran.r-project.org/package=SGP)
-[![Development Version](https://img.shields.io/badge/devel-2.1--0.23-brightgreen.svg)](https://github.com/CenterForAssessment/SGP)
+[![Development Version](https://img.shields.io/badge/devel-2.2--0.5-brightgreen.svg)](https://github.com/CenterForAssessment/SGP)
 [![Rstudio mirror downloads](https://cranlogs.r-pkg.org/badges/grand-total/SGP)](https://github.com/metacran/cranlogs.app)
 [![License](https://img.shields.io/badge/license-GPL%203-brightgreen.svg?style=flat)](https://github.com/CenterForAssessment/SGP/blob/master/LICENSE.md)
 [![Join the chat at https://gitter.im/CenterForAssessment/SGP](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/CenterForAssessment/SGP?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
