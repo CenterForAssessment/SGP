@@ -537,8 +537,24 @@ function(
 		}
 
 		### SGP_TARGET_CONTENT_AREA calculation
-		tmp.cols.to.test <- grep("SGP_TARGET", grep(paste(max(max.sgp.target.years.forward), "YEAR", sep="_"), names(slot.data), value=TRUE), value=TRUE)
-		terminal.content_areas <- unique(slot.data[slot.data[, rowSums(!is.na(.SD)) > 0, .SDcols = tmp.cols.to.test]][['CONTENT_AREA']])
+        tmp.cols.to.test <- grep("SGP_TARGET", grep(paste(max(max.sgp.target.years.forward), "YEAR", sep="_"), names(slot.data), value=TRUE), value=TRUE)
+        tmp.n.cols <- length(tmp.cols.to.test)
+        terminal.content_areas <-
+            get_vars(slot.data, vars = c(tmp.cols.to.test, "CONTENT_AREA")) |>
+              na_omit(cols = tmp.cols.to.test, prop = ((tmp.n.cols - 1)/tmp.n.cols)) |>
+                get_vars(vars = "CONTENT_AREA") |> unique() |> unlist(use.names = FALSE)
+        # bench::mark(
+        #  ##  original (pre 09/18/24 commit) -- +10 SECONDS and ~6GB of memory allocated on testSGP(1) :()
+        #  #  dtbl1 = unique(slot.data[!slot.data[,all(is.na(.SD)), .SDcols=tmp.cols.to.test, by=seq_len(nrow(slot.data))][['V1']]][['CONTENT_AREA']]),
+        #     dtbl2 = unique(slot.data[slot.data[, rowSums(!is.na(.SD)) > 0, .SDcols = tmp.cols.to.test]][['CONTENT_AREA']]),
+        #     dtb2b = slot.data[, c(tmp.cols.to.test, "CONTENT_AREA"), with = FALSE] |> na_omit(cols = tmp.cols.to.test, prop = (tmp.n.cols/(tmp.n.cols+1))) |>
+        #               get_vars(vars = "CONTENT_AREA") |> unique() |> unlist(use.names = FALSE),
+        #     clps1 = na_omit(slot.data, cols = tmp.cols.to.test, prop = ((tmp.n.cols - 1)/tmp.n.cols)) |>
+        #               get_vars(vars = "CONTENT_AREA") |> unique() |> unlist(use.names = FALSE),
+        #     clps2 = get_vars(slot.data, vars = c(tmp.cols.to.test, "CONTENT_AREA")) |> na_omit(cols = tmp.cols.to.test, prop = ((tmp.n.cols - 1)/tmp.n.cols)) |>
+        #               get_vars(vars = "CONTENT_AREA") |> unique() |> unlist(use.names = FALSE),
+        #     min_iterations = 5
+        # )
 		if (!is.null(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]])) {
 			terminal.content_areas <- intersect(terminal.content_areas, sapply(SGP::SGPstateData[[state]][["SGP_Configuration"]][["content_area.projection.sequence"]], tail, 1))
 		}
@@ -569,33 +585,47 @@ function(
 						my.target.label <- paste("SGP_TARGET_BASELINE", target.years.iter, "YEAR", sep="_")
 					}
 					if (grepl("FROM", target.args[['my.sgp']][i])) slot.data[YEAR <= year.for.equate, target.args[['my.sgp']][i]:=SGP] ### Get comparison values from before transition
-					if (my.label %in% names(slot.data)) slot.data[,(my.label):=NULL]
-					slot.data[,(my.label):=rep(as.character(NA), dim(slot.data)[1L])]
+					if (my.label %in% names(slot.data)) slot.data[,(my.label) := NULL]
 
-					slot.data[CATCH_UP_KEEP_UP_STATUS_INITIAL == "Keeping Up" & get(target.args[['my.sgp']][i]) >= get(my.target.label),
-						(my.label):="Keep Up: Yes"]
-					slot.data[CATCH_UP_KEEP_UP_STATUS_INITIAL == "Keeping Up" & get(target.args[['my.sgp']][i]) < get(my.target.label),
-						(my.label):="Keep Up: No"]
-					slot.data[CATCH_UP_KEEP_UP_STATUS_INITIAL == "Catching Up" & get(target.args[['my.sgp']][i]) >= get(my.target.label),
-						(my.label):="Catch Up: Yes"]
-					slot.data[CATCH_UP_KEEP_UP_STATUS_INITIAL == "Catching Up" & get(target.args[['my.sgp']][i]) < get(my.target.label),
-						(my.label):="Catch Up: No"]
+                    slot.data[,
+                          (my.label) := rep(as.character(NA), dim(slot.data)[1L])
+                    ][  CATCH_UP_KEEP_UP_STATUS_INITIAL == "Keeping Up" &
+                        get(target.args[['my.sgp']][i]) >= get(my.target.label),
+                          (my.label) := "Keep Up: Yes"
+                    ][  CATCH_UP_KEEP_UP_STATUS_INITIAL == "Keeping Up" &
+                        get(target.args[['my.sgp']][i]) < get(my.target.label),
+                          (my.label) := "Keep Up: No"
+                    ][  CATCH_UP_KEEP_UP_STATUS_INITIAL == "Catching Up" &
+                        get(target.args[['my.sgp']][i]) >= get(my.target.label),
+                          (my.label) := "Catch Up: Yes"
+                    ][  CATCH_UP_KEEP_UP_STATUS_INITIAL == "Catching Up" &
+                        get(target.args[['my.sgp']][i]) < get(my.target.label),
+                          (my.label) := "Catch Up: No"
+                    ]
 
 					### CATCH_UP_KEEP_UP clean up based upon reality
-
-					slot.data[CATCH_UP_KEEP_UP_STATUS_INITIAL == "Keeping Up" & get(my.label) == "Keep Up: Yes" &
-						ACHIEVEMENT_LEVEL %in% catch.up.keep.up.levels[['NO']], (my.label):="Keep Up: No"]
-					slot.data[CATCH_UP_KEEP_UP_STATUS_INITIAL == "Catching Up" & get(my.label) == "Catch Up: No" &
-						ACHIEVEMENT_LEVEL %in% catch.up.keep.up.levels[['YES']], (my.label):="Catch Up: Yes"]
-					slot.data[CATCH_UP_KEEP_UP_STATUS_INITIAL == "Catching Up" & get(my.label) == "Catch Up: Yes" &
-						ACHIEVEMENT_LEVEL %in% catch.up.keep.up.levels[['NO']] &
-						GRADE == max(type.convert(GRADE[!is.na(get(my.target.label))], as.is=TRUE)) &
-						CONTENT_AREA %in% terminal.content_areas, (my.label):="Catch Up: No"]
-					slot.data[CATCH_UP_KEEP_UP_STATUS_INITIAL == "Keeping Up" & get(my.label) == "Keep Up: No" &
-						ACHIEVEMENT_LEVEL %in% catch.up.keep.up.levels[['YES']] &
-						GRADE == max(type.convert(GRADE[!is.na(get(my.target.label))], as.is=TRUE)) &
-						CONTENT_AREA %in% terminal.content_areas, (my.label):="Keep Up: Yes"]
-					slot.data[,(my.label):=as.factor(get(my.label))]
+                    slot.data[
+                        CATCH_UP_KEEP_UP_STATUS_INITIAL == "Keeping Up" &
+                        get(my.label) == "Keep Up: Yes" &
+                        ACHIEVEMENT_LEVEL %in% catch.up.keep.up.levels[['NO']],
+                          (my.label) := "Keep Up: No"
+                    ][  CATCH_UP_KEEP_UP_STATUS_INITIAL == "Catching Up" &
+                        get(my.label) == "Catch Up: No" &
+                        ACHIEVEMENT_LEVEL %in% catch.up.keep.up.levels[['YES']],
+                          (my.label) := "Catch Up: Yes"
+                    ][  CATCH_UP_KEEP_UP_STATUS_INITIAL == "Catching Up" &
+                        get(my.label) == "Catch Up: Yes" &
+                        ACHIEVEMENT_LEVEL %in% catch.up.keep.up.levels[['NO']] &
+                        GRADE == max(type.convert(GRADE[!is.na(get(my.target.label))], as.is=TRUE)) &
+                        CONTENT_AREA %in% terminal.content_areas,
+                          (my.label) := "Catch Up: No"
+                    ][  CATCH_UP_KEEP_UP_STATUS_INITIAL == "Keeping Up" &
+                        get(my.label) == "Keep Up: No" &
+                        ACHIEVEMENT_LEVEL %in% catch.up.keep.up.levels[['YES']] &
+                        GRADE == max(type.convert(GRADE[!is.na(get(my.target.label))], as.is=TRUE)) &
+                        CONTENT_AREA %in% terminal.content_areas,
+                          (my.label) := "Keep Up: Yes"
+                    ][, (my.label) := as.factor(get(my.label))]
 					if (grepl("FROM", target.args[['my.sgp']][i])) slot.data[YEAR <= year.for.equate, target.args[['my.sgp']][i]:=NA]
 				}
 			}
@@ -619,34 +649,50 @@ function(
 					}
 					if (!grepl("BASELINE", target.args[['my.sgp']][i])) my.label <- paste("MOVE_UP_STAY_UP_STATUS", target.years.iter, "YEAR", sep="_") else my.label <- paste("MOVE_UP_STAY_UP_STATUS_BASELINE", target.years.iter, "YEAR", sep="_")
 					if (grepl("FROM", target.args[['my.sgp']][i])) slot.data[YEAR <= year.for.equate, target.args[['my.sgp']][i]:=SGP]
-					if (my.label %in% names(slot.data)) slot.data[,(my.label):=NULL]
-					slot.data[,(my.label):=rep(as.character(NA), dim(slot.data)[1L])]
+					if (my.label %in% names(slot.data)) slot.data[,(my.label) := NULL]
 
-					slot.data[MOVE_UP_STAY_UP_STATUS_INITIAL == "Staying Up" & get(target.args[['my.sgp']][i]) >= get(my.target.label),
-						(my.label):="Stay Up: Yes"]
-					slot.data[MOVE_UP_STAY_UP_STATUS_INITIAL == "Staying Up" & get(target.args[['my.sgp']][i]) < get(my.target.label),
-						(my.label):="Stay Up: No"]
-					slot.data[MOVE_UP_STAY_UP_STATUS_INITIAL == "Moving Up" & get(target.args[['my.sgp']][i]) >= get(my.target.label),
-						(my.label):="Move Up: Yes"]
-					slot.data[MOVE_UP_STAY_UP_STATUS_INITIAL == "Moving Up" & get(target.args[['my.sgp']][i]) < get(my.target.label),
-						(my.label):="Move Up: No"]
+                    slot.data[,
+                          (my.label) := rep(as.character(NA), dim(slot.data)[1L])
+                    ][  MOVE_UP_STAY_UP_STATUS_INITIAL == "Staying Up" &
+                        get(target.args[['my.sgp']][i]) >= get(my.target.label),
+                          (my.label) := "Stay Up: Yes"
+                    ][  MOVE_UP_STAY_UP_STATUS_INITIAL == "Staying Up" &
+                        get(target.args[['my.sgp']][i]) < get(my.target.label),
+                          (my.label) := "Stay Up: No"
+                    ][  MOVE_UP_STAY_UP_STATUS_INITIAL == "Moving Up" &
+                        get(target.args[['my.sgp']][i]) >= get(my.target.label),
+                          (my.label) := "Move Up: Yes"
+                    ][  MOVE_UP_STAY_UP_STATUS_INITIAL == "Moving Up" &
+                        get(target.args[['my.sgp']][i]) < get(my.target.label),
+                          (my.label) := "Move Up: No"
+                    ]
 
 					### MOVE_UP_STAY_UP clean up based upon reality
+                    slot.data[
+                        MOVE_UP_STAY_UP_STATUS_INITIAL == "Staying Up" &
+                        get(my.label) == "Stay Up: Yes" &
+                        ACHIEVEMENT_LEVEL %in% move.up.stay.up.levels[['NO']],
+                          (my.label) := "Stay Up: No"
+                    ][  MOVE_UP_STAY_UP_STATUS_INITIAL == "Moving Up" &
+                        get(my.label) == "Move Up: No" &
+                        ACHIEVEMENT_LEVEL %in% move.up.stay.up.levels[['YES']],
+                          (my.label) := "Move Up: Yes"
+                    ][  MOVE_UP_STAY_UP_STATUS_INITIAL == "Moving Up" &
+                        get(my.label) == "Move Up: Yes" &
+                        ACHIEVEMENT_LEVEL %in% move.up.stay.up.levels[['NO']] &
+                        GRADE == max(type.convert(GRADE[!is.na(get(my.target.label))], as.is=TRUE)) &
+                        CONTENT_AREA %in% terminal.content_areas,
+                          (my.label) := "Move Up: No"
+                    ][  MOVE_UP_STAY_UP_STATUS_INITIAL == "Staying Up" & get(my.label) == "Stay Up: No" &
+                        ACHIEVEMENT_LEVEL %in% move.up.stay.up.levels[['YES']] &
+                        GRADE == max(type.convert(GRADE[!is.na(get(my.target.label))], as.is=TRUE)) &
+                        CONTENT_AREA %in% terminal.content_areas,
+                          (my.label) := "Stay Up: Yes"
+                    ][,   (my.label) := as.factor(get(my.label))]
 
-					slot.data[MOVE_UP_STAY_UP_STATUS_INITIAL == "Staying Up" & get(my.label) == "Stay Up: Yes" &
-						ACHIEVEMENT_LEVEL %in% move.up.stay.up.levels[['NO']], (my.label):="Stay Up: No"]
-					slot.data[MOVE_UP_STAY_UP_STATUS_INITIAL == "Moving Up" & get(my.label) == "Move Up: No" &
-						ACHIEVEMENT_LEVEL %in% move.up.stay.up.levels[['YES']], (my.label):="Move Up: Yes"]
-					slot.data[MOVE_UP_STAY_UP_STATUS_INITIAL == "Moving Up" & get(my.label) == "Move Up: Yes" &
-						ACHIEVEMENT_LEVEL %in% move.up.stay.up.levels[['NO']] &
-						GRADE == max(type.convert(GRADE[!is.na(get(my.target.label))], as.is=TRUE)) &
-						CONTENT_AREA %in% terminal.content_areas, (my.label):="Move Up: No"]
-					slot.data[MOVE_UP_STAY_UP_STATUS_INITIAL == "Staying Up" & get(my.label) == "Stay Up: No" &
-						ACHIEVEMENT_LEVEL %in% move.up.stay.up.levels[['YES']] &
-						GRADE == max(type.convert(GRADE[!is.na(get(my.target.label))], as.is=TRUE)) &
-						CONTENT_AREA %in% terminal.content_areas, (my.label):="Stay Up: Yes"]
-					slot.data[,(my.label):=as.factor(get(my.label))]
-					if (grepl("FROM", target.args[['my.sgp']][i])) slot.data[YEAR <= year.for.equate, target.args[['my.sgp']][i]:=NA]
+					if (grepl("FROM", target.args[['my.sgp']][i])) {
+						slot.data[YEAR <= year.for.equate, target.args[['my.sgp']][i] := NA]
+					}
 				}
 			}
 		}
@@ -716,10 +762,23 @@ function(
 		} ## END projection.group.iter
 
 		if (length(max.sgp.target.years.forward) > 1) {
-			for (names.iter in getTargetScaleScoreTableNames(names(sgp_object@SGP[['SGProjections']]), years)) {
-				sgp_object@SGP[['SGProjections']][[names.iter]] <- sgp_object@SGP[['SGProjections']][[names.iter]][,lapply(.SD, mean, na.rm=TRUE), by=c("ID", "GRADE", "SGP_PROJECTION_GROUP", "SGP_PROJECTION_GROUP_SCALE_SCORES")] # nolint
-				sgp_object@SGP[['SGProjections']][[names.iter]] <- sgp_object@SGP[['SGProjections']][[names.iter]][,lapply(.SD, function(x) ifelse(is.nan(x), NA, x))]
-			}
+            for (names.iter in getTargetScaleScoreTableNames(names(sgp_object@SGP[['SGProjections']]), years)) {
+                sgp_object@SGP[['SGProjections']][[names.iter]] <- 
+                    collapv(
+                        X = sgp_object@SGP[['SGProjections']][[names.iter]], FUN = ffirst,
+                        by = c("ID", "GRADE", "SGP_PROJECTION_GROUP", "SGP_PROJECTION_GROUP_SCALE_SCORES")
+                    )
+                # bench::mark(
+                #   # dtbl = sgp_object@SGP[['SGProjections']][[names.iter]][,
+                #   #           lapply(.SD, mean, na.rm=TRUE), by = c("ID", "GRADE", "SGP_PROJECTION_GROUP", "SGP_PROJECTION_GROUP_SCALE_SCORES")
+                #   #        ][, lapply(.SD, function(x) ifelse(is.nan(x), NA, x))] |> setcolorder(names(sgp_object@SGP[['SGProjections']][[names.iter]])),
+                #   clps = collapv(
+                #        sgp_object@SGP[['SGProjections']][[names.iter]], by = c("ID", "GRADE", "SGP_PROJECTION_GROUP", "SGP_PROJECTION_GROUP_SCALE_SCORES")),
+                #   clpf = collapv(
+                #       sgp_object@SGP[['SGProjections']][[names.iter]], by = c("ID", "GRADE", "SGP_PROJECTION_GROUP", "SGP_PROJECTION_GROUP_SCALE_SCORES"), FUN = collapse::ffirst),
+                #   min_iterations = 100
+                # )
+            }
 		}
 		if (!identical(sgp.target.scale.scores.merge, FALSE)) {
 			slot.data <- mergeScaleScoreTarget(sgp_object, state, slot.data, years, sgp.target.scale.scores.merge)
