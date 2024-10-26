@@ -588,7 +588,7 @@ function(
 					if (my.label %in% names(slot.data)) slot.data[,(my.label) := NULL]
 
                     slot.data[,
-                          (my.label) := rep(as.character(NA), dim(slot.data)[1L])
+                          (my.label) := as.character(NA)
                     ][  CATCH_UP_KEEP_UP_STATUS_INITIAL == "Keeping Up" &
                         get(target.args[['my.sgp']][i]) >= get(my.target.label),
                           (my.label) := "Keep Up: Yes"
@@ -626,7 +626,9 @@ function(
                         CONTENT_AREA %in% terminal.content_areas,
                           (my.label) := "Keep Up: Yes"
                     ][, (my.label) := as.factor(get(my.label))]
-					if (grepl("FROM", target.args[['my.sgp']][i])) slot.data[YEAR <= year.for.equate, target.args[['my.sgp']][i]:=NA]
+					if (grepl("FROM", target.args[['my.sgp']][i])) {
+						slot.data[YEAR <= year.for.equate, target.args[['my.sgp']][i] := NA]
+					}
 				}
 			}
 		}
@@ -652,7 +654,7 @@ function(
 					if (my.label %in% names(slot.data)) slot.data[,(my.label) := NULL]
 
                     slot.data[,
-                          (my.label) := rep(as.character(NA), dim(slot.data)[1L])
+                          (my.label) := as.character(NA)
                     ][  MOVE_UP_STAY_UP_STATUS_INITIAL == "Staying Up" &
                         get(target.args[['my.sgp']][i]) >= get(my.target.label),
                           (my.label) := "Stay Up: Yes"
@@ -738,8 +740,13 @@ function(
 					}
 
 					tmp.target.level.names.years.to.target <- paste(tmp.target.level.names, "NUM_YEARS_TO_TARGET", sep="_")
-
-					targetData <- getTargetData(tmp.target.data, projection_group.iter, c(tmp.target.level.names, tmp.target.level.names.years.to.target))
+					tmp.initial.status.names <- getInitialStatusNames(target.type.iter)
+					targetData <-
+					    getTargetData(
+							tmp.target.data,
+							projection_group.iter,
+							c(tmp.target.level.names, tmp.target.level.names.years.to.target, tmp.initial.status.names)
+						)
 
 					if (dim(targetData)[1] > 0) {
 						sgp_object <- getTargetScaleScore(
@@ -763,7 +770,7 @@ function(
 
 		if (length(max.sgp.target.years.forward) > 1) {
             for (names.iter in getTargetScaleScoreTableNames(names(sgp_object@SGP[['SGProjections']]), years)) {
-                sgp_object@SGP[['SGProjections']][[names.iter]] <- 
+                sgp_object@SGP[['SGProjections']][[names.iter]] <-
                     collapv(
                         X = sgp_object@SGP[['SGProjections']][[names.iter]], FUN = ffirst,
                         by = c("ID", "GRADE", "SGP_PROJECTION_GROUP", "SGP_PROJECTION_GROUP_SCALE_SCORES")
