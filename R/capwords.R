@@ -1,38 +1,36 @@
-`capwords` <-
-function(x,
-	special.words = c("ELA","I", "II", "III", "IV", "CCSD", "CUSD", "CUD", "USD", "PSD", "UD", "ESD", "DCYF", "EMH", "HS", "MS", "ES", "SES", "IEP", "ELL", "MAD", "PARCC", "SBAC", "SD", "SWD", "US", "SGP", "SIMEX", "SS", "SAT", "PSAT", "WIDA", "ACCESS", "WIDA-ACCESS")) {
+`capwords` <- 
+function(
+    x,
+    special.words = c("ELA", "I", "II", "III", "IV", "CCSD", "CUSD", "CUD", "USD", "PSD", "UD", "ESD", "DCYF", "EMH", "HS", "MS", "ES", "SES", "IEP", "ELL", "MAD", "PARCC", "SBAC", "SD", "SWD", "US", "SGP", "SIMEX", "SS", "SAT", "PSAT", "WIDA", "ACCESS", "WIDA-ACCESS")
+) {
+    if (is.null(x)) return(NULL)
+    if (is.na(x)) return(NA)
+    if (identical(x, " ")) return(" ")
+    
+    # Basic cleaning: replace underscores, periods, and extra spaces
+    x <- gsub("[_.]", " ", x)
+    x <- gsub("\\s+", " ", trimws(x))  # Trim and reduce multiple spaces
 
-	if (is.null(x)) return(NULL)
-	if (is.na(x)) return(NA)
-	if (identical(x, " ")) return(" ")
-	x <- gsub("_", " ", x)
-	x <- gsub("[.]", " ", x)
-	x <- gsub("^ *|(?<= ) | *$", "", x, perl=T)
-	x <- gsub("[(]", "( ", x)
-	x <- gsub("[)]", " )", x)
+    # Helper function to capitalize while respecting special words and numbers
+    capitalize_words <- function(word) {
+        # Handle special words
+        if (word %in% special.words) {
+            return(word)
+        } else if (grepl("^[0-9]+(\\.[0-9]+)?$", word)) {  # Check for numbers
+            return(word)
+        } else {
+            # Capitalize the first letter only
+            return(paste0(toupper(substring(word, 1, 1)), tolower(substring(word, 2))))
+        }
+    }
 
-	if (identical(x, "")) {
-		return("")
-	} else {
-		my.split <- function(words, split.character) {
-			test.numeric <- function(tmp.x) grepl("[-]?[0-9]+[.]?[0-9]*|[-]?[0-9]+[L]?|[-]?[0-9]+[.]?[0-9]*[eE][0-9]+", tmp.x)
-			tmp.split <- unlist(strsplit(words, split=split.character))
-			tmp.split.special.words.index <- which(!tmp.split %in% special.words)
-			if (any(test.numeric(tmp.split))) tmp.split.special.words.index <- setdiff(tmp.split.special.words.index, which(test.numeric(tmp.split))) 
-			return(list(tmp.split=tmp.split, tmp.split.special.words.index=tmp.split.special.words.index))
-		}
-		s <- my.split(x, " ")
-		s[[1L]][s[[2L]]] <- paste0(toupper(substring(s[[1L]][s[[2L]]],1L,1L)), tolower(substring(s[[1L]][s[[2L]]],2L)))
-		s.new <- paste(s[[1L]], collapse=" ")
-		s.new <- unlist(strsplit(s.new, split="-"))
-		if (length(s.new) > 1L) s.new <- paste0(toupper(substring(s.new,1L,1L)), substring(s.new,2L), collapse="-")
-		if (length(unlist(strsplit(s.new, split="'"))) > 1L & nchar(unlist(strsplit(s.new, split="'"))[2L]) > 1L) {
-			s.new <- unlist(strsplit(s.new, split="'"))
-			s.new <- paste0(toupper(substring(s.new,1L,1L)), substring(s.new,2L), collapse="'")
-		}
-		s.new <- unlist(strsplit(s.new, split="[.]"))
-		if (length(s.new) > 1L) s.new <- paste0(toupper(substring(s.new,1L,1L)), substring(s.new,2L), collapse=".")
-		s.new <- gsub(" [)]", ")", gsub("[(] ", "(", s.new))
-		return(s.new)
-	}
+    # Split words and process each, handling punctuation (hyphens, apostrophes)
+    words <- unlist(strsplit(x, "(?=[\\s'-])|(?<=[\\s'-])", perl = TRUE))
+    result <- sapply(words, capitalize_words)
+
+    # Combine processed words and fix spacing around punctuation
+    s.new <- paste(result, collapse = "")
+    s.new <- gsub("\\s+([)-])", "\\1", gsub("([(])\\s+", "\\1", s.new))
+    
+    return(s.new)
 } ### END capwords
