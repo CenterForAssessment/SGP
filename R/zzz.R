@@ -5,10 +5,20 @@ function(libname, pkgname) {
 	utils::globalVariables(c("."))
 }
 
+.onAttach <- function(libname, pkgname) {
+    if (interactive()) {
+        # Extract version information
+        version <- utils::packageVersion("SGP")
 
-`.onAttach` <-
-function(libname, pkgname) {
-	if (interactive()) {
-		packageStartupMessage(magenta$bold('SGP',paste(paste0(unlist(strsplit(as.character(packageVersion("SGP")), "[.]")), c(".", "-", ".", "")), collapse=""),' (10-26-2024). For help: >help("SGP") or visit sgp.io'))
-	}
+        # Define a friendly startup message
+        message_text <- paste0(
+            magenta(bold("🎉 SGP v", version)), " - ", toOrdinal::toOrdinalDate(as.character(Sys.Date())), "\n",
+            "💡 Tip: ", magenta(bold("> help(\"SGP\")")), "\n",
+            "🌐 Docs: ", magenta(bold("https://sgp.io/")), "\n",
+            "✨ Happy SGPing!"
+        )
+
+        # Display the startup message
+        packageStartupMessage(message_text)
+    }
 }
