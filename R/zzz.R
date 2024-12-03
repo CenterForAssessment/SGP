@@ -12,7 +12,7 @@ function(libname, pkgname) {
 
         # Define a friendly startup message
 	message_text <- paste0(
-	    magenta(bold("\uD83C\uDF89 SGP v", version)), " - ", toOrdinal::toOrdinalDate(as.character(Sys.Date())), "\n",
+	    magenta(bold("\uD83C\uDF89 SGP v", version)), " - ", toOrdinal::toOrdinalDate("2024-12-3"), "\n",
 	    "\U1F4A1 Tip: ", magenta(bold("> help(\"SGP\")")), "\n",
 	    "\U1F310 Docs: ", magenta(bold("https://sgp.io/")), "\n",
 	    "\u2728 Happy SGPing!"
