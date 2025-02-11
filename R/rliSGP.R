@@ -2,7 +2,7 @@
 function(sgp_object,
 	additional.data=NULL,
 	state=NULL,
-	content_areas=c("MATHEMATICS", "MATHEMATICS_SPANISH", "READING", "READING_SPANISH", "READING_UNIFIED", "EARLY_LITERACY", "EARLY_LITERACY_SPANISH"),
+	content_areas=c('MATHEMATICS', 'MATHEMATICS_SPANISH', 'READING', "READING_SPANISH", "READING_UNIFIED", "EARLY_LITERACY", "EARLY_LITERACY_SPANISH"),
 	testing.window=NULL, ### FALL, WINTER, SPRING
 	eow.or.update="UPDATE", ### UPDATE or EOW
 	update.save.shell.only=FALSE,
@@ -40,9 +40,6 @@ function(sgp_object,
 	if (!state %in% c("RLI", "RLI_UK")) stop("\tNOTE: 'rliSGP' only works with states RLI or RLI_UK currently")
 
 	if (!score.type %in% c("RASCH", "STAR")) stop("\tNOTE: 'score.type argument must be set to either RASCH or STAR.'")
-
-	if (score.type=="STAR") content_areas <- setdiff(content_areas, c("EARLY_LITERACY_SPANISH", "MATHEMATICS_SPANISH", "READING_SPANISH", "READING_UNIFIED"))
-
 
 	### Utility functions
 
