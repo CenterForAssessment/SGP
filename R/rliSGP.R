@@ -4,6 +4,7 @@ function(sgp_object,
 	state=NULL,
 	content_areas=c('MATHEMATICS', 'MATHEMATICS_SPANISH', 'READING', "READING_SPANISH", "READING_UNIFIED", "EARLY_LITERACY", "EARLY_LITERACY_SPANISH"),
 	testing.window=NULL, ### FALL, WINTER, SPRING
+	testing.window.type=NULL, ### FALL: FF, WSF/SF; WINTER: SFW/FW; SPRING: FWS/WS, SS, FS
 	eow.or.update="UPDATE", ### UPDATE or EOW
 	update.save.shell.only=FALSE,
 	configuration.year=NULL,
@@ -82,10 +83,11 @@ function(sgp_object,
 		}
 	}
 
-	getRLIConfig <- function(content_areas, configuration.year, testing.window, score.type) {
+	getRLIConfig <- function(content_areas, configuration.year, testing.window, testing.window.type, score.type) {
 		tmp.list <- list()
 		for (i in content_areas) {
 			tmp.list[[i]] <- SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, i, testing.window, score.type)
+			if (!is.null(testing.window.type)) tmp.list[[i]] <- tmp.list[[i]][grep(testing.window.type, names(tmp.list[[i]]))]
 		}
 		if (score.type=="RASCH") setattr(tmp.list, "names", paste(names(tmp.list), "RASCH", sep="_"))
 		return(unlist(tmp.list, recursive=FALSE))
@@ -219,7 +221,7 @@ function(sgp_object,
 			fix.duplicates=fix.duplicates,
 			get.cohort.data.info=get.cohort.data.info,
 			parallel.config=parallel.config,
-			sgp.config=getRLIConfig(content_areas, configuration.year, testing.window, score.type))
+			sgp.config=getRLIConfig(content_areas, configuration.year, testing.window, testing.window.type, score.type))
 
 		if (!is.null(update.ids)) {
 			assign(update.shell.name, sgp_object)
@@ -275,7 +277,7 @@ function(sgp_object,
 				sgp.percentiles.calculate.sgps=eow.calculate.sgps,
 				get.cohort.data.info=get.cohort.data.info,
 				parallel.config=parallel.config,
-				sgp.config=getRLIConfig(content_areas, configuration.year, testing.window, score.type))
+				sgp.config=getRLIConfig(content_areas, configuration.year, testing.window, testing.window.type, score.type))
 
 			### Create and save new UPDATE_SHELL
 
