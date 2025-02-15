@@ -87,7 +87,7 @@ function(sgp_object,
 		tmp.list <- list()
 		for (i in content_areas) {
 			tmp.list[[i]] <- SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, i, testing.window, score.type)
-			if (!is.null(testing.window.type)) tmp.list[[i]] <- tmp.list[[i]][grep(testing.window.type, names(tmp.list[[i]]))]
+#			if (!is.null(testing.window.type)) tmp.list[[i]] <- tmp.list[[i]][grep(testing.window.type, names(tmp.list[[i]]))]
 		}
 		if (score.type=="RASCH") setattr(tmp.list, "names", paste(names(tmp.list), "RASCH", sep="_"))
 		return(unlist(tmp.list, recursive=FALSE))
@@ -298,7 +298,7 @@ function(sgp_object,
 			new.matrices <-convertToBaseline(sgp_object@SGP$Coefficient_Matrices[grep(configuration.year, names(sgp_object@SGP$Coefficient_Matrices))])
 			old.matrix.label <- paste0(paste(state, "SGPt_Baseline_Matrices", sep="_"), "$", tail(sort(names(get(paste(state, "SGPt_Baseline_Matrices", sep="_")))), 1L))
 			old.matrices <- eval(parse(text=old.matrix.label))
-			if (score.type=="RASCH") tmp.content_areas <- paste0(c("EARLY_LITERACY", "EARLY_LITERACY_SPANISH", "MATHEMATICS", "MATHEMATICS_SPANISH", "READING", "READING_SPANISH", "READING_UNIFIED"), "_RASCH.BASELINE") else tmp.content_areas <- paste0(c("EARLY_LITERACY", "MATHEMATICS", "READING"), ".BASELINE")
+			if (score.type=="RASCH") tmp.content_areas <- paste0(c("EARLY_LITERACY", "EARLY_LITERACY_SPANISH", "MATHEMATICS", "MATHEMATICS_SPANISH", "READING", "READING_SPANISH", "READING_UNIFIED"), "_RASCH.BASELINE") else tmp.content_areas <- paste0(c("EARLY_LITERACY", "EARLY_LITERACY_SPANISH", "MATHEMATICS", "MATHEMATICS_SPANISH", "READING", "READING_SPANISH", "READING_UNIFIED"), ".BASELINE")
 			year.to.replace <- head(sort(unique(sapply(lapply(sapply(names(old.matrices[["READING_RASCH.BASELINE"]]), strsplit, '[.]'), '[', 2:3), paste, collapse="."))), 1L)
 			for (content_area.iter in tmp.content_areas) {
 				old.matrices[[content_area.iter]][grep(year.to.replace, names(old.matrices[[content_area.iter]]))] <- NULL
