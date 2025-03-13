@@ -87,7 +87,7 @@ function(sgp_object,
 		tmp.list <- list()
 		for (i in content_areas) {
 			tmp.list[[i]] <- SGPstateData$RLI$SGP_Configuration$sgp.config.function$value(configuration.year, i, testing.window, score.type)
-#			if (!is.null(testing.window.type)) tmp.list[[i]] <- tmp.list[[i]][grep(testing.window.type, names(tmp.list[[i]]))]
+			if (!is.null(testing.window.type)) tmp.list[[i]] <- tmp.list[[i]][grep(testing.window.type, names(tmp.list[[i]]))]
 		}
 		if (score.type=="RASCH") setattr(tmp.list, "names", paste(names(tmp.list), "RASCH", sep="_"))
 		return(unlist(tmp.list, recursive=FALSE))
