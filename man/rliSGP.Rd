@@ -14,6 +14,7 @@ rliSGP(
 			"READING_SPANISH", "READING_UNIFIED", "EARLY_LITERACY", 
 			"EARLY_LITERACY_SPANISH"),
   testing.window,
+  testing.window.type=NULL,
   eow.or.update="UPDATE",
 	update.save.shell.only=FALSE,
   configuration.year,
@@ -49,6 +50,8 @@ rliSGP(
   \item{content_areas}{Character vector indicating which content areas \code{rliSGP} should be run for ('MATHEMATICS', 'READING', 'READING_UNIFIED', and/or 'EARLY_LITERACY'). Default is all.
   }
   \item{testing.window}{Argument indicating testing window being analyzed. Either 'FALL', 'WINTER', 'SPRING' indicating what testing window's data is being analyzed.
+  }
+  \item{testing.window.type}{Argument indicating testing window type being analyzed. Either 'FF', 'SF', 'FW', 'WS', 'SS', 'FS' indicating what testing window's data is being analyzed. Default is NULL indicating all testing windows types are being analyzed in that testing window.
   }
   \item{eow.or.update}{Argument indicating whether end-of-window or within-window updates are being done. Either 'EOW' (end of window) or 'UPDATE' (within window).
   }
