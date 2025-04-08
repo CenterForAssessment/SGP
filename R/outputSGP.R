@@ -825,11 +825,11 @@ function(sgp_object,
 					CONTENT_AREA=unlist(strsplit(names.iter, "[.]"))[1],
 					YEAR=getTableNameYear(names.iter),
 					sgp_object@SGP[["SGProjections"]][[names.iter]], key=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"))
-				tmp.index <- tmp.table[,c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID"), with=FALSE]
+				tmp.index <- tmp.table[,c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", "GRADE"), with=FALSE]
 
 				if (any(c("CATCH_UP_KEEP_UP_STATUS_INITIAL_CURRENT", "MOVE_UP_STAY_UP_STATUS_INITIAL_CURRENT") %in% names(slot.data))) {
 					sgp_object@SGP[["SGProjections"]][[names.iter]] <-
-						tmp.table[,intersect(names(slot.data), c("CATCH_UP_KEEP_UP_STATUS_INITIAL_CURRENT", "MOVE_UP_STAY_UP_STATUS_INITIAL_CURRENT")) := slot.data[tmp.index][,
+						tmp.table[,intersect(names(slot.data), c("CATCH_UP_KEEP_UP_STATUS_INITIAL_CURRENT", "MOVE_UP_STAY_UP_STATUS_INITIAL_CURRENT")) := slot.data[tmp.index, on=c("VALID_CASE", "CONTENT_AREA", "YEAR", "ID", "GRADE"),
 							intersect(names(slot.data), c("CATCH_UP_KEEP_UP_STATUS_INITIAL_CURRENT", "MOVE_UP_STAY_UP_STATUS_INITIAL_CURRENT")), with=FALSE]][,!c("VALID_CASE", "CONTENT_AREA", "YEAR"), with=FALSE]
 				}
 				output.column.order <- SGP::SGPstateData[['RLI']][['SGP_Configuration']][['output.column.order']][['SGProjection']]
