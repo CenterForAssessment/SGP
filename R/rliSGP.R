@@ -17,6 +17,7 @@ function(sgp_object,
 	simulate.sgps=FALSE,
 	save.intermediate.results=FALSE,
 	coefficient.matrices=NULL,
+	coefficient.matrices.year=NULL,
 	goodness.of.fit.print=FALSE,
 	return.updated.shell=FALSE,
 	fix.duplicates="KEEP.ALL",
@@ -158,16 +159,20 @@ function(sgp_object,
 	if (length(find.package("RLImatrices", quiet=TRUE))==0) stop("Package RLImatrices required from GitHub.")
 	if (is.null(coefficient.matrices)) {
 		eval(parse(text="require(RLImatrices)"))
-		matrix.years <- getRLIMatrixYears(score.type)
-		tmp.configuration.year <- paste(configuration.year, match(testing.window, c("FALL", "WINTER", "SPRING")), sep=".")
-		tmp.data.last.year <- tail(sort(unique(additional.data[['YEAR']])), 1L)
-		if (!tmp.configuration.year %in% matrix.years) {
-			messageSGP(paste0("\tNOTE: ", tmp.configuration.year, " indicated in the configuration has no matrices in ", paste(state, "SGPt_Baseline_Matrices", sep="_")))
-			if (tmp.data.last.year > tail(matrix.years, 1L)) tmp.matrix.year <- tail(matrix.years, 1L)
-			if (tmp.data.last.year < head(matrix.years, 1L)) tmp.matrix.year <- head(matrix.years, 1L)
-			if (!exists("tmp.matrix.year")) tmp.matrix.year <- tmp.configuration.year
+		if (is.null(coefficient.matrices.year)) {
+			matrix.years <- getRLIMatrixYears(score.type)
+			tmp.configuration.year <- paste(configuration.year, match(testing.window, c("FALL", "WINTER", "SPRING")), sep=".")
+			tmp.data.last.year <- tail(sort(unique(additional.data[['YEAR']])), 1L)
+			if (!tmp.configuration.year %in% matrix.years) {
+				messageSGP(paste0("\tNOTE: ", tmp.configuration.year, " indicated in the configuration has no matrices in ", paste(state, "SGPt_Baseline_Matrices", sep="_")))
+				if (tmp.data.last.year > tail(matrix.years, 1L)) tmp.matrix.year <- tail(matrix.years, 1L)
+				if (tmp.data.last.year < head(matrix.years, 1L)) tmp.matrix.year <- head(matrix.years, 1L)
+				if (!exists("tmp.matrix.year")) tmp.matrix.year <- tmp.configuration.year
+			} else {
+				tmp.matrix.year <- tmp.configuration.year
+			}
 		} else {
-			tmp.matrix.year <- tmp.configuration.year
+			tmp.matrix.year <- coefficient.matrices.year
 		}
 		matrix.label <- paste0(paste(state, "SGPt_Baseline_Matrices", sep="_"), "$", paste(state, "SGPt_Baseline_Matrices", tmp.matrix.year, sep="_"))
 		messageSGP(paste0("\tNOTE: rliSGP using matrices ", paste(state, "SGPt_Baseline_Matrices", tmp.matrix.year, sep="_")))

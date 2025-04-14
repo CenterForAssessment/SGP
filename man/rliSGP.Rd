@@ -27,6 +27,7 @@ rliSGP(
 	simulate.sgps=FALSE,
 	save.intermediate.results=FALSE,
 	coefficient.matrices=NULL,
+	coefficient.matrices.year=NULL,
 	goodness.of.fit.print=FALSE,
 	return.updated.shell=FALSE,
 	fix.duplicates="KEEP.ALL",
@@ -80,6 +81,8 @@ analysis. Default is NULL, no ID replacement is performed.
   \code{\link{combineSGP}} as part of the \code{rliSGP} analyses.
   }
   \item{coefficient.matrices}{List of baseline matrices to be used for analyses (overrides what exists in \code{SGPstateData}). Defaults to NULL (use those in \code{SGPstateData}).
+  }
+  \item{coefficient.matrices.year}{Year associated with coefficient matrices to be used for analyses. Defaults to NULL which will use the most recent matrices calculated before the year provided in the data.
   }
   \item{goodness.of.fit.print}{Boolean argument passed to \code{\link{updateSGP}} indicating whether to print goodness of fit plots associated with outcome. Default is FALSE.
   }
