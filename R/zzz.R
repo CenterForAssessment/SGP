@@ -49,7 +49,7 @@ function(libname, pkgname) {
 		    "\U1F4A1 Tip: ", magenta(bold("> help(package=\"SGP\")")), "\n",
 		    "\U1F310 Docs: ", magenta(bold("https://sgp.io")), "\n",
 			strrep("\u2501", 40), "\n",
-		    "\u2728 Happy SGPing!")
+		    "\u2728 Happy SGPing!", "\n")
 
         # Display the startup message
         packageStartupMessage(message_text)
