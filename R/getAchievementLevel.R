@@ -46,7 +46,7 @@ function(sgp_data,
 		} else {
 			return("Achievement_Levels")
 		}
-	}
+	} ### END get.achievement_level.label Function
 
 	getAchievementLevel_INTERNAL <- function(state, content_area, year, grade, scale_score) {
 		if (!is.null(SGP::SGPstateData[[state]][["Achievement"]][["Cutscores"]][[get.cutscore.label(state, year, content_area)]][[paste0("GRADE_", grade)]])) {
@@ -64,7 +64,7 @@ function(sgp_data,
 		} else {
 			rep(as.character(NA), length(scale_score))
 		}
-	}
+	} ### END getAchievementLevel_INTERNAL Function
 
 	if ("STATE" %in% names(sgp_data) & !is.null(SGP::SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]])) {
 		cutscore.states <- SGP::SGPstateData[[state]][["Achievement"]][["Cutscore_Information"]][["Cutscore_States"]]

@@ -56,7 +56,6 @@ function(rli.cs.long,
 
 
 	###  cutscore.list creation.
-
 	for (state in unique(rli.cs$STATE)) {
 
 		for (ca in content_areas) {
