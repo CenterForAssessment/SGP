@@ -19,7 +19,7 @@ function(sgp_object,
 
 
 	started.at <- proc.time()
-	messageSGP(paste("\tStarted baselineSGP", prettyDate(), "\n"))
+	messageSGP(paste0("\tStarted baselineSGP ", prettyDate(), ".\n"))
 
 	VALID_CASE <- YEAR <- GRADE <- CONTENT_AREA <- YEAR_WITHIN <- COHORT_YEAR <- panel.data.vnames <- NULL ### To prevent R CMD check warnings
 
@@ -170,7 +170,7 @@ function(sgp_object,
 				SGPt=SGPt,
 				...)[["Coefficient_Matrices"]])
 
-		messageSGP(paste("\tStarted baselineSGP Coefficient Matrix Calculation:", started.date))
+		messageSGP(paste0("\tStarted baselineSGP Coefficient Matrix Calculation: ", started.date, "."))
 		messageSGP(paste0("\tContent Area: ", tail(content_areas, 1L), ", Grade Progression: ", paste(grade.sequences, collapse=", "), ". "))
 		messageSGP(paste0("\tFinished baselineSGP Coefficient Matrix Calculation ", prettyDate(), " in ", convertTime(timetakenSGP(started.at)), ".\n"))
 
@@ -338,7 +338,7 @@ function(sgp_object,
 	###
 	############################################################
 
-	messageSGP(paste("\tFinished baselineSGP", prettyDate(), "in", convertTime(timetakenSGP(started.at)), "\n"))
+	messageSGP(paste0("\tFinished baselineSGP ", prettyDate(), " in ", convertTime(timetakenSGP(started.at)), ".\n"))
 
 	if (return.matrices.only) {
 		tmp.list <- list()
