@@ -1950,13 +1950,13 @@ function(
 			### PART 1: Using RLI_SGPt_UPDATE_SHELL
 			###############################################################################
 
-			RLI_Data_LONG_UPDATE <- SGPdata::sgptData_LONG[YEAR %in% tmp.last.window][,SCALE_SCORE_RASCH:=NULL]
+			RLI_Data_LONG_UPDATE <- SGPdata::sgptData_LONG[YEAR %in% tmp.last.window][,c("SCALE_SCORE_RASCH","SCALE_SCORE_RASCH_CSEM"):=NULL]
 			SGPstateData[["RLI"]][["SGP_Configuration"]][["fix.duplicates"]] <- "KEEP.ALL"
-			RLI_SGPt_UPDATE_SHELL <- suppressMessages(prepareSGP(SGPdata::sgptData_LONG[!YEAR %in% tmp.last.window][,SCALE_SCORE_RASCH:=NULL], state="RLI"))
+			RLI_SGPt_UPDATE_SHELL <- suppressMessages(prepareSGP(SGPdata::sgptData_LONG[!YEAR %in% tmp.last.window][,c("SCALE_SCORE_RASCH","SCALE_SCORE_RASCH_CSEM"):=NULL], state="RLI"))
 			SGPstateData[["RLI"]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <-
 				eval(parse(text=paste("RLI_SGPt_Baseline_Matrices[['RLI_SGPt_Baseline_Matrices_2023_2024.3']]")))
 			SGPstateData[["RLI"]][["SGP_Configuration"]][["goodness.of.fit.minimum.n"]] <- 50
-			SGPstateData[["RLI"]][["Assessment_Program_Information"]][["CSEM"]] <- "SEM"
+			SGPstateData[["RLI"]][["Assessment_Program_Information"]][["CSEM"]] <- "SCALE_SCORE_CSEM"
 			RLI_Cutscores <- SGPstateData[['RLI']][['SGP_Configuration']][['testSGP.cutscores']][['STAR']]
 
 			### Calculate SGPs
