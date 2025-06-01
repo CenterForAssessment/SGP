@@ -13,6 +13,7 @@ function(sgp_object,
 	sgp.projections.lagged.baseline=FALSE,
 	sgp.target.scale.scores=TRUE,
 	update.ids=NULL,
+	sgp.config=NULL,
 	SGPt=TRUE,
 	simulate.sgps=FALSE,
 	save.intermediate.results=FALSE,
@@ -226,7 +227,7 @@ function(sgp_object,
 			fix.duplicates=fix.duplicates,
 			get.cohort.data.info=get.cohort.data.info,
 			parallel.config=parallel.config,
-			sgp.config=getRLIConfig(content_areas, configuration.year, testing.window, testing.window.type, score.type))
+			sgp.config=if (is.null(sgp.config)) getRLIConfig(content_areas, configuration.year, testing.window, testing.window.type, score.type) else sgp.config)
 
 		if (!is.null(update.ids)) {
 			assign(update.shell.name, sgp_object)
@@ -282,7 +283,7 @@ function(sgp_object,
 				sgp.percentiles.calculate.sgps=eow.calculate.sgps,
 				get.cohort.data.info=get.cohort.data.info,
 				parallel.config=parallel.config,
-				sgp.config=getRLIConfig(content_areas, configuration.year, testing.window, testing.window.type, score.type))
+				sgp.config=if (is.null(sgp.config)) getRLIConfig(content_areas, configuration.year, testing.window, testing.window.type, score.type) else sgp.config)
 
 			### Create and save new UPDATE_SHELL
 
