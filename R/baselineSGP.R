@@ -12,6 +12,7 @@ function(sgp_object,
 		return.matrices.only=FALSE,
 		calculate.baseline.sgps=TRUE,
 		calculate.simex.baseline=NULL,
+		sgp.quantiles="Percentiles",
 		goodness.of.fit.print=TRUE,
 		parallel.config=NULL,
 		SGPt=NULL,
@@ -167,6 +168,7 @@ function(sgp_object,
 				print.time.taken=FALSE,
 				parallel.config=parallel.config,
 				calculate.simex=tmp.simex.args,
+				sgp.quantiles=sgp.quantiles,
 				SGPt=SGPt,
 				...)[["Coefficient_Matrices"]])
 
@@ -320,6 +322,7 @@ function(sgp_object,
 					drop.nonsequential.grade.progression.variables=FALSE,
 					exact.grade.progression.sequence=sgp.iter[['sgp.exact.grade.progression']],
 					sgp.loss.hoss.adjustment=sgp.loss.hoss.adjustment,
+					sgp.quantiles=sgp.quantiles,
 					SGPt=SGPt,
 					...)
 

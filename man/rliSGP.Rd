@@ -13,16 +13,17 @@ rliSGP(
 	content_areas=c("MATHEMATICS", "MATHEMATICS_SPANISH", "READING", 
 			"READING_SPANISH", "READING_UNIFIED", "EARLY_LITERACY", 
 			"EARLY_LITERACY_SPANISH"),
-  testing.window,
+  testing.window=NULL,
   testing.window.type=NULL,
   eow.or.update="UPDATE",
 	update.save.shell.only=FALSE,
-  configuration.year,
+  configuration.year=NULL,
 	sgp.percentiles.baseline=TRUE,
 	sgp.projections.baseline=TRUE,
 	sgp.projections.lagged.baseline=FALSE,
 	sgp.target.scale.scores=TRUE,
   update.ids=NULL,
+  sgp.config=NULL,
 	SGPt=TRUE,
 	simulate.sgps=FALSE,
 	save.intermediate.results=FALSE,
@@ -71,6 +72,8 @@ rliSGP(
   \item{update.ids}{Argument that allows ID to be updated based upon a supplied two column data frame where the first column represents the ORIGINAL/OLD ID and the second column the NEW ID that
 is to replace it. NOTE that ID needn't be replaced in either 'sgp_object' nor 'additional.data' that are provided as part of the 'rliSGP' call. Substitution will occur on entire data set before
 analysis. Default is NULL, no ID replacement is performed.
+  }
+  \item{sgp.config}{List of configuration arguments to be used for analyses. Defaults to NULL which will use the default configuration provided by \code{getRLIConfig} which utilizes meta-data from SGPstateData..
   }
   \item{SGPt}{Argument indicating whether to perform time dependent SGP (SGPt) analyses. Current default is TRUE based upon transition to SGPt in Summer 2015.
   }

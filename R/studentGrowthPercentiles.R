@@ -930,7 +930,7 @@ function(panel.data,         ## REQUIRED
 		sgp.quantiles.labels <- NULL
 	}
 	if (is.numeric(sgp.quantiles)) {
-		if (!(all(sgp.quantiles > 0 && sgp.quantiles < 1))) {
+		if (!(all(sgp.quantiles > 0) & all(sgp.quantiles < 1))) {
 			stop("Specify sgp.quantiles as as a vector of probabilities between 0 and 1.")
 		}
 		taus <- .create_taus(sgp.quantiles)

@@ -19,6 +19,7 @@ Utility function/exemplar used to produce student growth percentiles using long 
         return.matrices.only=FALSE,
         calculate.baseline.sgps=TRUE,
         calculate.simex.baseline=NULL,
+        sgp.quantiles="Percentiles",
         goodness.of.fit.print=TRUE,
         parallel.config=NULL,
         SGPt=NULL,
@@ -52,6 +53,8 @@ To utilize the maximum matrix order, set to NULL.
   \item{calculate.baseline.sgps}{Boolean variable indicating whether the function will calculate baseline referenced student growth percentiles from baseline referenced coefficient matrices. Defaults to TRUE.
   }
   \item{calculate.simex.baseline}{A list including state/csem variable, csem.data.vnames, csem.loss.hoss, simulation.iterations, lambda and extrapolation method. Defaults to NULL, no simex calculations performed.  Alternatively, setting the argument to TRUE sets the list up with state=state, lambda=seq(0,2,0.5), simulation.iterations=50, simex.sample.size=25000, extrapolation="linear" and save.matrices=TRUE.
+  }
+  \item{sgp.quantiles}{Argument to specify quantiles for quantile regression estimation. Default is Percentiles. User can additionally submit a vector of quantiles (between 0 and 1). Goodness of fit output only available currently for PERCENTILES.
   }
   \item{goodness.of.fit.print}{Boolean variable indicating whether the function will export goodness of fit plots if baseline referenced student growth percentiles are calculated. Defaults to TRUE.
   }
