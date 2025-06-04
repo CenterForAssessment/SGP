@@ -44,6 +44,7 @@ studentGrowthPercentiles(panel.data,
                          sgp.less.than.sgp.cohort.size.return=NULL,
                          sgp.test.cohort.size=NULL,
                          percuts.digits=0L,
+                         percuts.digits.internal=NULL,
                          isotonize=TRUE,
                          convert.using.loss.hoss=TRUE,
                          goodness.of.fit=TRUE,
@@ -176,6 +177,8 @@ to calculate the lags/differences based upon the supplied years.
   as a test of the desired analyses to be run. The default, NULL, uses no restrictions (no tests are performed, and analyses use the entire cohort of students).
   }
   \item{percuts.digits}{Argument specifying how many digits (defaults to 2) to print percentile cuts (if asked for) with.
+  }
+  \item{percuts.digits.internal}{Argument specifying how many digits (defaults to 5) to round to internally when creating percentile cuts for determining SGP cuts.
   }
   \item{isotonize}{Boolean argument (defaults to TRUE) indicating whether quantile regression results are isotonized to prevent quantile crossing following the
   methods derived by Chernozhukov, Fernandez-Val and Glichon (2010).
