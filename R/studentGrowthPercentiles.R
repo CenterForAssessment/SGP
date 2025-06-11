@@ -34,6 +34,7 @@ function(panel.data,         ## REQUIRED
          sgp.less.than.sgp.cohort.size.return=NULL,
          sgp.test.cohort.size=NULL,
          percuts.digits=0L,
+		 percuts.digits.internal=NULL,
          isotonize=TRUE,
          convert.using.loss.hoss=TRUE,
          goodness.of.fit=TRUE,
@@ -272,7 +273,7 @@ function(panel.data,         ## REQUIRED
 			mod <- paste0(mod, ", my.data[['TIME']], my.data[['TIME_LAG']]")
 		}
         tmp <- eval(parse(text=paste0("cbind(1L, ", substring(mod, 2L), ") %*% my.matrix")))
-        return(round(matrix(.smooth.bound.iso.row(data.table(ID=rep(seq.int(dim(tmp)[1L]), each=length(taus)), X=c(t(tmp))), isotonize, sgp.loss.hoss.adjustment), ncol=length(taus), byrow=TRUE), digits=5L))
+        return(round(matrix(.smooth.bound.iso.row(data.table(ID=rep(seq.int(dim(tmp)[1L]), each=length(taus)), X=c(t(tmp))), isotonize, sgp.loss.hoss.adjustment), ncol=length(taus), byrow=TRUE), digits=percuts.digits.internal))
 	}
 
 	.get.quantiles <- function(data1, data2, ranked.simex=FALSE) {
@@ -456,9 +457,6 @@ function(panel.data,         ## REQUIRED
                     "\n\t\tThe first SET of duplicate tables are identical, so ... that's encouraging ...\n",
                     "\n\t\tThe first SET of duplicate tables are NOT identical\n\t\t\t\t!!! INVESTIGATE DIFFERENCES!!!\n"
             )))
-# sapply(table_list, function(f) {
-    # paste(attr(f, "content_area_progression"),  attr(f, "grade_progression"),
-	#       attr(f, "year_progression"), attr(f, "year_lags_progression"), collapse = ", ")})
         }
         return(table_list[[table.index[1]]])
       }
@@ -1141,6 +1139,8 @@ function(panel.data,         ## REQUIRED
 
     sgp.message.label <- sgp.labels[['my.extra.label']]
     if (!is.null(calculate.simex)) sgp.message.label <- paste("SIMEX", sgp.message.label)
+
+	if (is.null(percuts.digits.internal)) percuts.digits.internal <- 5L
 
 
 	### Create object to store the studentGrowthPercentiles objects
