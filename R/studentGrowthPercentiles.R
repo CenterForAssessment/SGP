@@ -150,11 +150,11 @@ function(panel.data,         ## REQUIRED
 
 		rq.sgp <- function(..., my.taus) { # Function needs to be nested within the .create.coefficient.matrices function to avoid data copying with SNOW
 			if (rq.method == "br") {
-				tmp.res <- rq(method="br", ...)[['coefficients']]
+				tmp.res <- rq(method="br", model = FALSE, ...)[['coefficients']]
 			} else {
-				tmp.res <- try(rq(method=rq.method, ...)[['coefficients']], silent=TRUE)
+				tmp.res <- try(rq(method=rq.method, model = FALSE, ...)[['coefficients']], silent=TRUE)
 				if (inherits(tmp.res, "try-error")) {
-					tmp.res <- rq(method="br", ...)[['coefficients']]
+					tmp.res <- rq(method="br", model = FALSE, ...)[['coefficients']]
 				}
 			}
 			if (!is.matrix(tmp.res)) return(matrix(tmp.res, dimnames=list(names(tmp.res), paste("tau=", my.taus))))
