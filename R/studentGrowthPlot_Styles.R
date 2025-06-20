@@ -659,7 +659,7 @@ if (reports.by.school) {
 		## Bottom Legend
 		pushViewport(bottom.border.vp)
 		grid.rect(gp=gpar(fill=sgPlot.header.footer.color, col=sgPlot.header.footer.color))
-		grid.text(x=0.02, y=0.70, paste("For more information please visit the", tmp.organization$Name, paste0("(", tmp.organization$Abbreviation, ")"),
+		grid.text(x=0.02, y=0.70, paste("For more information visit the", tmp.organization$Name, paste0("(", tmp.organization$Abbreviation, ")"),
 			"at", tmp.organization$URL, "or contact", tmp.organization$Contact), gp=gpar(cex=0.8, col="white"), default.units="native", just="left")
 		copyright.text <- paste0("Cooperatively developed by ", tmp.organization$Abbreviation, " & the Center for Assessment, Inc.")
 		grid.text(x=0.02, y=0.30, paste0(copyright.text, " Distributed by ", tmp.organization$Abbreviation, "."),

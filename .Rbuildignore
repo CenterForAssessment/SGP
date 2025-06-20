@@ -6,3 +6,4 @@
 ^\.github$
 ^CITATION\.cff$
 ^_pkgdown\.yml$
+^\.git$

@@ -4,7 +4,7 @@ SGP
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6471237.svg)](https://doi.org/10.5281/zenodo.6471237)
 [![R-CMD-check](https://github.com/CenterForAssessment/SGP/workflows/R-CMD-check/badge.svg)](https://github.com/CenterForAssessment/SGP/actions)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/SGP)](https://cran.r-project.org/package=SGP)
-[![Development Version](https://img.shields.io/badge/devel-2.2--1.9997-brightgreen.svg)](https://github.com/CenterForAssessment/SGP)
+[![Development Version](https://img.shields.io/badge/devel-2.2--1.9998-brightgreen.svg)](https://github.com/CenterForAssessment/SGP)
 [![Rstudio mirror downloads](https://cranlogs.r-pkg.org/badges/grand-total/SGP)](https://github.com/metacran/cranlogs.app)
 [![License](https://img.shields.io/badge/license-GPL%203-brightgreen.svg?style=flat)](https://github.com/CenterForAssessment/SGP/blob/master/LICENSE.md)
 
@@ -54,7 +54,7 @@ We love feedback and are happy to answer questions.
 
 # References
 
-Betebenner, D. W., VanIwaarden, A., Domingue, B., and Shang, Y. (2024). SGP: Student Growth Percentiles & Percentile Growth Trajectories.
+Betebenner, D. W., VanIwaarden, A., Domingue, B., and Shang, Y. (2025). SGP: Student Growth Percentiles & Percentile Growth Trajectories.
 
-R Core Team (2024). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL
+R Core Team (2025). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL
 https://www.R-project.org/.
