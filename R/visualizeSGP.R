@@ -268,24 +268,29 @@ function(sgp_object,
 
 		if (parallel.config[["BACKEND"]] == "FOREACH") {
 
-			foreach(gaPlot.iter=iter(get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students, gaPlot.baseline)), .packages="SGP", .inorder=FALSE,
-				.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
-					growthAchievementPlot(
-						gaPlot.sgp_object=gaPlot.sgp_object,
-						gaPlot.students=gaPlot.iter[["ID"]],
-						gaPlot.max.order.for.progression=gaPlot.max.order.for.progression,
-						gaPlot.start.points=gaPlot.start.points,
-						state=state,
-						content_area=gaPlot.iter[["CONTENT_AREA"]],
-						year=gaPlot.iter[["YEAR"]],
-						format=gaPlot.format,
-						baseline=gaPlot.iter[["BASELINE"]],
-						equated=gaPlot.iter[["EQUATED"]],
-						output.format=c("PDF", "SVG"),
-						gaPlot.back.extrapolated.cuts=gaPlot.back.extrapolated.cuts,
-						gaPlot.SGPt=gaPlot.SGPt,
-						output.folder=file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))
-			} ## END dopar
+            foreach(
+                gaPlot.iter = iter(
+                    get.gaPlot.iter(gaPlot.years, gaPlot.content_areas, gaPlot.students, gaPlot.baseline)),
+                .packages = "SGP", .inorder = FALSE,
+                .options.multicore = par.start$foreach.options,
+                .options.mpi = par.start$foreach.options
+            ) %dopar% {
+                growthAchievementPlot(
+                    gaPlot.sgp_object = gaPlot.sgp_object,
+                    gaPlot.students = gaPlot.iter[["ID"]],
+                    gaPlot.max.order.for.progression = gaPlot.max.order.for.progression,
+                    gaPlot.start.points = gaPlot.start.points,
+                    state = state,
+                    content_area = gaPlot.iter[["CONTENT_AREA"]],
+                    year = gaPlot.iter[["YEAR"]],
+                    format = gaPlot.format,
+                    baseline = gaPlot.iter[["BASELINE"]],
+                    equated = gaPlot.iter[["EQUATED"]],
+                    output.format = c("PDF", "SVG"),
+                    gaPlot.back.extrapolated.cuts = gaPlot.back.extrapolated.cuts,
+                    gaPlot.SGPt = gaPlot.SGPt,
+                    output.folder = file.path(gaPlot.folder, gaPlot.iter[["YEAR"]]))
+            } ## END dopar
 		} else { ## END FOREACH
 
 			if (par.start$par.type=="SNOW") {
@@ -1112,36 +1117,40 @@ if (sgPlot.produce.plots) {
 		if (parallel.config[["BACKEND"]]=="FOREACH") {
 
 			foreach.options <- parallel.config[["OPTIONS"]] # works fine if NULL
-			foreach(sgPlot.iter=iter(get.sgPlot.iter(tmp.districts.and.schools)), .packages="SGP", .inorder=FALSE,
-				.options.multicore=par.start$foreach.options, .options.mpi=par.start$foreach.options, .options.redis=par.start$foreach.options) %dopar% {
-						studentGrowthPlot_Styles(
-							sgPlot.data=sgPlot.data,
-							sgPlot.sgp_object=sgPlot.sgp_object,
-							sgPlot.cutscores=Cutscores,
-							state=state,
-							last.year=tmp.last.year,
-							content_areas=tmp.content_areas_domains,
-							districts=sgPlot.iter[["DISTRICT_NUMBER"]],
-							schools=sgPlot.iter[["SCHOOL_NUMBER"]],
-							reports.by.student=sgPlot.reports.by.student,
-							reports.by.instructor=sgPlot.reports.by.instructor,
-							reports.by.school=sgPlot.reports.by.school,
-							sgPlot.years=tmp.years.subset,
-							sgPlot.folder=sgPlot.folder,
-							sgPlot.folder.names=sgPlot.folder.names,
-							sgPlot.demo.report=sgPlot.demo.report,
-							sgPlot.anonymize=sgPlot.anonymize,
-							sgPlot.front.page=sgPlot.front.page,
-							sgPlot.header.footer.color=sgPlot.header.footer.color,
-							sgPlot.fan=sgPlot.fan,
-							sgPlot.sgp.targets=sgPlot.sgp.targets,
-							sgPlot.cleanup=sgPlot.cleanup,
-							sgPlot.baseline=sgPlot.baseline,
-							sgPlot.sgp.targets.timeframe=sgPlot.sgp.targets.timeframe,
-							sgPlot.zip=sgPlot.zip,
-							sgPlot.output.format=sgPlot.output.format,
-							sgPlot.linkages=sgp.projections.equated)
-			} ### END dopar
+            foreach(
+                sgPlot.iter = iter(get.sgPlot.iter(tmp.districts.and.schools)),
+                .packages = "SGP", .inorder = FALSE,
+                .options.multicore = par.start$foreach.options,
+                .options.mpi = par.start$foreach.options
+            ) %dopar% {
+                studentGrowthPlot_Styles(
+                    sgPlot.data = sgPlot.data,
+                    sgPlot.sgp_object = sgPlot.sgp_object,
+                    sgPlot.cutscores = Cutscores,
+                    state = state,
+                    last.year = tmp.last.year,
+                    content_areas = tmp.content_areas_domains,
+                    districts = sgPlot.iter[["DISTRICT_NUMBER"]],
+                    schools = sgPlot.iter[["SCHOOL_NUMBER"]],
+                    reports.by.student = sgPlot.reports.by.student,
+                    reports.by.instructor = sgPlot.reports.by.instructor,
+                    reports.by.school = sgPlot.reports.by.school,
+                    sgPlot.years = tmp.years.subset,
+                    sgPlot.folder = sgPlot.folder,
+                    sgPlot.folder.names = sgPlot.folder.names,
+                    sgPlot.demo.report = sgPlot.demo.report,
+                    sgPlot.anonymize = sgPlot.anonymize,
+                    sgPlot.front.page = sgPlot.front.page,
+                    sgPlot.header.footer.color = sgPlot.header.footer.color,
+                    sgPlot.fan = sgPlot.fan,
+                    sgPlot.sgp.targets = sgPlot.sgp.targets,
+                    sgPlot.cleanup = sgPlot.cleanup,
+                    sgPlot.baseline = sgPlot.baseline,
+                    sgPlot.sgp.targets.timeframe = sgPlot.sgp.targets.timeframe,
+                    sgPlot.zip = sgPlot.zip,
+                    sgPlot.output.format = sgPlot.output.format,
+                    sgPlot.linkages = sgp.projections.equated)
+            } ### END dopar
 		} else {### END if FOREACH
 
 		if (par.start$par.type=="SNOW") {
