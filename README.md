@@ -4,7 +4,7 @@ SGP
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6471237.svg)](https://doi.org/10.5281/zenodo.6471237)
 [![R-CMD-check](https://github.com/CenterForAssessment/SGP/workflows/R-CMD-check/badge.svg)](https://github.com/CenterForAssessment/SGP/actions)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/SGP)](https://cran.r-project.org/package=SGP)
-[![Development Version](https://img.shields.io/badge/devel-2.2--2.1-brightgreen.svg)](https://github.com/CenterForAssessment/SGP)
+[![Development Version](https://img.shields.io/badge/devel-2.2--2.2-brightgreen.svg)](https://github.com/CenterForAssessment/SGP)
 [![Rstudio mirror downloads](https://cranlogs.r-pkg.org/badges/grand-total/SGP)](https://github.com/metacran/cranlogs.app)
 [![License](https://img.shields.io/badge/license-GPL%203-brightgreen.svg?style=flat)](https://github.com/CenterForAssessment/SGP/blob/master/LICENSE.md)
 
