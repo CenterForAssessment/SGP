@@ -457,7 +457,7 @@ function(
 	target.type <- c("sgp.projections", "sgp.projections.baseline", "sgp.projections.lagged", "sgp.projections.lagged.baseline")[
 				c(sgp.projections, sgp.projections.baseline, sgp.projections.lagged, sgp.projections.lagged.baseline)]
 
-	### Calculate Targets
+	### Calculate SGP Targets
 
 	if ((sgp.projections | sgp.projections.baseline | sgp.projections.lagged | sgp.projections.lagged.baseline) & !sgp.target.scale.scores.only) {
 
