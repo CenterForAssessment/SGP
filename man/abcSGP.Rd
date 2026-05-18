@@ -129,11 +129,21 @@ If missing the function will use the data to infer all the grade progressions fo
   }
   \item{goodness.of.fit.print}{Boolean variable passed to \code{\link{analyzeSGP}} indicating whether to print goodness of fit results.
   }
- \item{parallel.config}{A named list with, at a minimum, two elements indicating 1) the BACKEND package to be used for parallel computation and 2) the WORKERS list to specify the number of processors to be used in each major analysis.  The BACKEND element can be set = to \code{FOREACH} or \code{PARALLEL}.  Please consult the manuals and vignettes for information of these packages!  The \code{\link{analyzeSGP}} help page contains more thorough explanation and examples of the \code{parallel.config} setup.
+ \item{parallel.config}{A named list with, at a minimum, a WORKERS sublist to specify the number of
+ processors to be used in each major analysis. A BACKEND sublist can also be set = to \code{FORK} 
+ or \code{MIRAI}. Please consult the manuals and vignettes for information of these packages!
+ Unix/Mac OS defaults to the \code{FORK} backend (i.e. "multicore" and \code{mclapply}) to avoid 
+ worker node pre-scheduling and appears to be more efficient in these operating systems.
+ The \code{MIRAI} backend is available for Windows OS and can be manually specified for Unix alike.
 
- The parallel.config list is passed to  \code{\link{analyzeSGP}}, \code{\link{combineSGP}}, \code{\link{summarizeSGP}} and \code{\link{visualizeSGP}}.  The WORKERS list can accordingly contain
- elements for PERCENTILES, PROJECTIONS, LAGGED_PROJECTIONS, BASELINE_MATRICES, BASELINE_PERCENTILES for \code{analyzeSGP}, SUMMARY for \code{summarizeSGP} and GA_PLOTS and SG_PLOTS for
- \code{visualizeSGP}.  See those functions help pages for details.
+ The \code{\link{analyzeSGP}} help page contains more thorough explanation and examples of
+ the \code{parallel.config} setup.
+
+ The parallel.config list is passed to  \code{\link{analyzeSGP}}, \code{\link{combineSGP}}
+ and \code{\link{visualizeSGP}}. The WORKERS list can accordingly contain elements for 
+ PERCENTILES, PROJECTIONS, LAGGED_PROJECTIONS, BASELINE_MATRICES, BASELINE_PERCENTILES
+ for \code{analyzeSGP}, GA_PLOTS and SG_PLOTS for \code{visualizeSGP}.
+ See those functions help pages for details.
   }
   \item{save.intermediate.results}{Should intermediate results of \code{abcSGP} be saved after each of \code{\link{prepareSGP}}, \code{\link{analyzeSGP}},
   \code{\link{combineSGP}}, and \code{\link{summarizeSGP}}. Default is FALSE.

@@ -230,15 +230,19 @@ provided the function produces \code{\link{studentGrowthPlot}}s for ALL students
   }
   \item{gaPlot.SGPt}{Boolean indicator for growth achievement plot indicating whether time dependent SGPs are to be used for student growth projections \code{SGPt}
   }
-  \item{parallel.config}{A named list with, at a minimum, two elements indicating 1) the BACKEND package to be used for parallel computation and 2) the WORKERS list to specify the number of processors to be used in each major analysis.  The BACKEND element can be set = to \code{FOREACH} or \code{PARALLEL}.  Please consult the manuals and vignettes for information of these packages!  The \code{\link{analyzeSGP}} help page contains more thorough explanation and examples of the \code{parallel.config} setup.
+  \item{parallel.config}{A named list with, at a minimum, a WORKERS sublist to specify the number of
+  processors to be used in each major analysis. A BACKEND sublist can also be set = to \code{FORK} 
+  or \code{MIRAI}. Please consult the manuals and vignettes for information of these packages!
+  Unix/Mac OS defaults to the \code{FORK} backend (i.e. "multicore" and \code{mclapply}) to avoid 
+  worker node pre-scheduling and appears to be more efficient in these operating systems.
+  The \code{MIRAI} backend is available for Windows OS and can be manually specified for Unix alike.
 
-TYPE is a third element of the \code{parallel.config} list that provides necessary information when using FOREACH or PARALLEL packages as the backend. With BACKEND="FOREACH",  the TYPE element specifies the flavor of 'foreach' backend.  As of version 1.0-1.0, only "doParallel" is supported.  TYPE=NA (default) produces summaries sequentially.  If BACKEND = "PARALLEL", the \code{parallel} package will be used.  This package combines deprecated parallel packages \code{snow} and \code{multicore}.  Using the "snow" implementation of \code{parallel} the function will create a cluster object based on the TYPE element specified and the number of workers requested (see WORKERS list description below).  The TYPE element indicates the users preferred cluster type (either "PSOCK" for socket cluster of "MPI" for an OpenMPI cluster). If Windows is the operating system, this "snow" implementation must be used and the TYPE element must = "PSOCK".  Defaults are assigned based on operating system if TYPE is missing based on system OS.  Unix/Mac OS defaults to the "multicore" to avoid worker node pre-scheduling and appears to be more efficient in these operating systems.
+  The WORKERS element is a list with GA_PLOTS (growth achievement plots) and SG_PLOTS (student growth plots)
+  specifying the number of processors to be used. NOTE: choice of the number of cores is a balance 
+  between the number of processors available and the amount of RAM a system has; each system will 
+  be different and may require some adjustment.
 
-The WORKERS element is a list with GA_PLOTS (growth achievement plots) and SG_PLOTS (student growth plots) specifying the number of processors to be used.  NOTE: choice of the number of cores is a balance between the number of processors available and the amount of RAM a system has; each system will be different and may require some adjustment.
-
-Default is FOREACH as the back end, TYPE=NA and both plot WORKERS=1, which produces plots sequentially: 'list(BACKEND="FOREACH", TYPE=NA, WORKERS=list(GA_PLOTS=1, SG_PLOTS=1))'
-
-Examples of various parallel configurations can be found in the examples for \code{\link{analyzeSGP}} and \code{\link{summarizeSGP}}.
+  Additional examples of parallel configurations can be found in the examples for \code{\link{analyzeSGP}}.
   }
 }
 

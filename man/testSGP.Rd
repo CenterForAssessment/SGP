@@ -9,17 +9,19 @@ testSGP runs large scale tests of the SGP package to test for consistent perform
 testSGP(TEST_NUMBER,
 	save.results=TRUE,
 	test.option=list(),
+  parallel.backend=NULL,
 	memory.profile=FALSE,
 	stop.fail=TRUE)
 }
 
 \arguments{
-  \item{TEST_NUMBER}{An integer indicating the test to be run. Type 'testSGP()' to see list and description of available tests.
+  \item{TEST_NUMBER}{An integer indicating the test to be run. Type \code{testSGP()} to see list and description of available tests.
   }
   \item{save.results}{A Boolean variable, defaulting to FALSE, indicating whether the results of the analysis is saved to the working directory.
   }
-  \item{test.option}{A character string (defaults to NULL) supplying a test option to the given test specified by TEST_NUMBER. Argument is test specific. See source code for testSGP for possible
-  arguments.}
+  \item{test.option}{A character string (defaults to NULL) supplying a test option to the given test specified by TEST_NUMBER.
+  Argument is test specific. See source code for testSGP for possible arguments.}
+  \item{parallel.backend}{A character string supplying the parallel backend to use (default is system specific: 'MIRAI' for Windows, 'FORK' for Unix-like systems).}
   \item{memory.profile}{A Boolean variable indicating whether to use memory profiling via \code{Rprof}.  Experimental. Defaults to FALSE.
   }
 	\item{stop.fail}{A Boolean variable indicating whether to stop the function if a test fails Defaults to TRUE.
