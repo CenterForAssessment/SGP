@@ -404,7 +404,7 @@ function(what_sgp_object=NULL,
 							key=c("ID", "CONTENT_AREA", "YEAR"))
 				}
 
-				if ("summarizeSGP" %in% steps) what_sgp_object <- summarizeSGP(what_sgp_object, state=state, parallel.config=parallel.config)
+				if ("summarizeSGP" %in% steps) what_sgp_object <- summarizeSGP(what_sgp_object, state=state)
 				if ("visualizeSGP" %in% steps) visualizeSGP(what_sgp_object, state=state, plot.types=plot.types, sgPlot.demo.report=sgPlot.demo.report)
 				if ("outputSGP" %in% steps) outputSGP(what_sgp_object, state=state, output.type=outputSGP.output.type, outputSGP.directory=outputSGP.directory)
 
