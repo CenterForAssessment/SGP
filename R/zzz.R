@@ -29,19 +29,19 @@ function(libname, pkgname) {
         }
 
         # Extract version information with timeout
-        installed.version <- utils::packageDescription("SGP")[['Version']]
+        installed.version <- utils::packageDescription("SGP")[["Version"]]
         cran.version <- tryCatch({
             # Add timeout to CRAN check
             curl::curl_fetch_memory("https://cran.r-project.org/web/packages/SGP/index.html", 
                                   handle = curl::new_handle(timeout = 2))
-            green("v", pkgsearch::cran_package("SGP")[['Version']], sep="")
+            green("v", pkgsearch::cran_package("SGP")[["Version"]], sep="")
         }, error = function(e) red("Not Available"),
            warning = function(w) red("Not Available"))
         dev.version <- get_dev_version("SGP")
 
         # Define a friendly startup message
 		message_text <- paste0(
-		    magenta(bold("\uD83C\uDF89 SGP v", installed.version, sep="")), " - ", toOrdinal::toOrdinalDate("2026-5-4"), "\n",
+		    magenta(bold("\uD83C\uDF89 SGP v", installed.version, sep="")), " - ", toOrdinal::toOrdinalDate("2026-5-18"), "\n",
 			strrep("\u2501", 40), "\n",
     	    bold("\U1F4E6 CRAN: "), cran.version, "\n",
     	    bold("\U1F527 Dev: "), dev.version, "\n",

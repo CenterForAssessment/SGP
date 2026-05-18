@@ -1,3 +1,12 @@
+# SGP 2.3-0.0
+
+## User Visible Changes:
+
+* Adoption of new parallel processing regime using only multicore/fork or mirai backends
+* Removal of RSQLite usage and other deprecated package requirements
+* some optimizations of studentGrowthPercentiles and SIMEX measurement error correction
+* General bug fixes and meta-data updates to SGPstateData
+
 # SGP 2.2-0.0
 
 ## User Visible Changes:
