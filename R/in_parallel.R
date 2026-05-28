@@ -62,6 +62,7 @@ define_compute <- function(parallel.config, process) {
 
     if (is.null(tmp.workers) || (tmp.workers < 2)) return(sync_compute)
     if (is.null(par.backend) && is.null(tmp.workers)) return(sync_compute)
+    if (is.null(par.backend)) par.backend <- ""
     options(sgp.workers = tmp.workers)
 
     switch(
@@ -73,7 +74,7 @@ define_compute <- function(parallel.config, process) {
     )
 }
 
-    chunk_taus <- function(tmp_data, qr.taus, workers, rq.method) {
+    chunk_taus <- function(cohort_data, qr.taus, workers, rq.method) {
         if (workers > 3) {
             if (workers %in% 4:10) {
                 tmp.sml <- ceiling((length(qr.taus) / workers)*0.75)
@@ -123,7 +124,7 @@ define_compute <- function(parallel.config, process) {
 
         ret.list <- vector(mode = "list", length = length(TAUS.LIST))
         for (l in 1:length(TAUS.LIST)) {
-            ret.list[[l]] <- c(tmp_data, taus = list(TAUS.LIST[[l]]), method = rq.method)
+            ret.list[[l]] <- c(cohort_data, taus = list(TAUS.LIST[[l]]), method = rq.method)
         }
         return(ret.list)
     }
