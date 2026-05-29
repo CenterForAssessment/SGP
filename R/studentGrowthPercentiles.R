@@ -801,10 +801,10 @@ function(panel.data,         ## REQUIRED
             n.records <- min(sapply(model_data[["Y"]], length))
             for (L in lambda[-1L]) {
                 L.idx <- which(L == lambda[-1L])
-                tmp.sim.iters <- (((L.idx-1) * 50)+1):(L.idx * 50)
+                tmp.sim.iters <- (((L.idx-1) * B)+1):(L.idx * B)
                 if (!is.null(simex.sample.size) && n.records >= simex.sample.size) {
                     for (z in tmp.sim.iters) {
-                        Lz <- z - ((L.idx-1) * 50)
+                        Lz <- z - ((L.idx-1) * B)
                     for (ord in simex.matrix.priors) {
                         subs.idx <- sample(seq.int(n.records), simex.sample.size)
                         simex_matrix_data[[z]][["model_data"]][["X"]][[ord]] <-
@@ -821,7 +821,7 @@ function(panel.data,         ## REQUIRED
                 }  else {
                     simex_matrix_data[tmp.sim.iters] <- simex_model_data[[L.idx]]
                     for (z in tmp.sim.iters) {
-                        Lz <- z - ((L.idx-1) * 50)
+                        Lz <- z - ((L.idx-1) * B)
                     for (ord in simex.matrix.priors) {
                         simex_matrix_data[[z]][["model_data"]][["specs"]][[ord]] <-
                             c(simex_model_data[[L.idx]][[Lz]][["model_data"]][["specs"]][[ord]],
@@ -856,7 +856,7 @@ function(panel.data,         ## REQUIRED
                     tmp.rq.meth2 <- rq.method
                     rq.method <- "br"
                     for (z in recalc.index) {
-                        Lz <- z - ((L.idx-1) * 50)
+                        Lz <- z - ((L.idx-1) * B)
                         tmp.simex.matrices[[Lz]] <-
                             .create_coefficient_matrices(
                                 model_data = simex_model_data[[Lz]][["model_data"]],
@@ -872,13 +872,13 @@ function(panel.data,         ## REQUIRED
             }
             for (L in lambda[-1L]) {
                 L.idx <- which(L == lambda[-1L])
-                tmp.sim.iters <- (((L.idx-1) * 50)+1):(L.idx * 50)
+                tmp.sim.iters <- (((L.idx-1) * B)+1):(L.idx * B)
                 for (ord in simex.matrix.priors) {
                     ord.lab <- paste0("order_", ord)
                     fitted[[ord.lab]][which(lambda == L),] <-
                         lapply(tmp.sim.iters,
                             \(z) {
-                                Lz <- z - ((L.idx-1) * 50)
+                                Lz <- z - ((L.idx-1) * B)
                                 .get_percentile_predictions(
                                     simex_model_data[[L.idx]][[Lz]][["model_data"]][["X"]][[ord]],
                                     tmp.simex.matrices[[z]][[ord]])
