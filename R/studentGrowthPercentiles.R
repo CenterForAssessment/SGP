@@ -34,7 +34,7 @@ function(panel.data,         ## REQUIRED
          sgp.less.than.sgp.cohort.size.return=NULL,
          sgp.test.cohort.size=NULL,
          percuts.digits=0L,
-		 percuts.digits.internal=NULL,
+         percuts.digits.internal=NULL,
          isotonize=TRUE,
          convert.using.loss.hoss=TRUE,
          goodness.of.fit=TRUE,
@@ -54,7 +54,8 @@ function(panel.data,         ## REQUIRED
          sgp.percentiles.equated=NULL,
          SGPt=NULL,
          SGPt.max.time=NULL,
-         verbose.output=FALSE) {
+         verbose.output=FALSE
+) {
 
 	started.at <- proc.time()
 	started.date <- prettyDate()
@@ -109,15 +110,6 @@ function(panel.data,         ## REQUIRED
 		createKnotsBoundaries(tmp.stack, knot.cut.percentiles)
 	}
 
-	.get.panel.data <- function(ss.data, k, by.grade, tmp.gp) {
-		if (by.grade) {
-            if (is.character(tmp.gp)) tmp.gp.gpd <- shQuote(rev(tmp.gp)[seq(k+1L)]) else tmp.gp.gpd <- rev(tmp.gp)[seq(k+1L)]
-            eval(parse(text=paste0("na.omit(ss.data[.(", paste(tmp.gp.gpd, collapse=", "), "), on=names(ss.data)[c(", paste(1L+num.panels-(0:k), collapse=", ") , ")]], cols=names(ss.data)[c(",paste(1L+2*num.panels-0:k, collapse=", "), ")])[,c(1, ", paste(rev(1+2*num.panels-0:k), collapse=", "),  ")]")))
-		} else {
-            eval(parse(text=paste0("na.omit(ss.data, cols=names(ss.data)[c(",paste(1+2*num.panels-0:k, collapse=", "), ")])[,c(1, ", paste(rev(1L+2*num.panels-0:k), collapse=", "),  ")]")))
-		}
-	}
-
 	get.my.knots.boundaries.path <- function(content_area, year) {
 		if (is.null(sgp.percentiles.equated)) {
 			tmp.knots.boundaries.names <-
@@ -159,7 +151,7 @@ function(panel.data,         ## REQUIRED
             } else tmp.gp.gpd <- rev(tmp.gp)[seq(n.priors+1L)]
                 tmp_data <-
                     eval(parse(text=paste0("ss.data[.(", paste(tmp.gp.gpd[1:2], collapse=", "),
-                    "), on=names(ss.data)[c(", paste(1L+num.panels-(0:1), collapse=", ") , ")]]"))) #|>
+                    "), on=names(ss.data)[c(", paste(1L+num.panels-(0:1), collapse=", ") , ")]]")))
                 if (num.panels >= 3L ) {
                     tmp.gp.gpd <- gsub("'", "", tmp.gp.gpd)
                     ss.locs <- (1L + 2*num.panels) - 0:n.priors
@@ -192,7 +184,9 @@ function(panel.data,         ## REQUIRED
     .get_model_data <-  function(
         cohort_data,
         prior.order,
-        knots_bounds
+        knots_bounds,
+        return.sub.orders = !exact.grade.progression.sequence,
+        return.y = TRUE
     ) {
         # Create B-spline terms for each grade level and gather config/spec information
         n.orders <- length(prior.order)
@@ -225,17 +219,23 @@ function(panel.data,         ## REQUIRED
         rhs_terms <- paste(rhs_terms, collapse=" + ")
         model <- as.formula(paste0("final_yr ~ ", rhs_terms))
         mf <- model.frame(model, cohort_data, na.action = NULL)
-        Y <- model.response(mf)
+        if (return.y) Y <- model.response(mf) else Y <- NULL
         X <- .rename_model_matrix(model.matrix(model, mf), n.time.terms)
         rownames(X) <- cohort_data[["ID"]]
 
-        if (exact.grade.progression.sequence || n.orders == 1) {
+        if (!return.sub.orders || n.orders == 1) {
+            if (!return.sub.orders) {
+                X <- collapse::na_omit(X, na.attr = TRUE)
+                if (return.y & !is.null(attributes(X)$na.action)) {
+                    Y <- Y[-(attributes(X)$na.action)]
+                }
+            }
             return(list(
                 X = list(X),
                 Y = list(Y),
                 specs = tail(specs, 1)
             ))
-        }
+        } ## else:
 
         subx.list <- vector(mode = "list", length = n.orders)
         suby.list <- vector(mode = "list", length = n.orders)
@@ -248,7 +248,7 @@ function(panel.data,         ## REQUIRED
                 cols.to.get <- c(cols.to.get, t.names)
             }
             subx <- collapse::na_omit(X, cols = cols.to.get, na.attr = TRUE)
-            if (!is.null(attributes(subx)$na.action)) {
+            if (return.y & !is.null(attributes(subx)$na.action)) {
                 suby.list[[ord]] <- Y[-(attributes(subx)$na.action)]
             } else  suby.list[[ord]] <- Y
             subx.list[[ord]] <- subx[, c("Intercept", cols.to.get)]
@@ -394,7 +394,7 @@ function(panel.data,         ## REQUIRED
 		return(paste0("qrmatrix_", tmp.last, "_", k))
 	}
 
-    .get_percentile_predictions <- function(model_matrix, coef_matrix, SGPt.max.time = NULL) {
+    .get_percentile_predictions <- function(model_matrix, coef_matrix) {
         if ("TIME" %in% colnames(model_matrix)) {
             model_matrix <- collapse::qDT(model_matrix)
             tmp.time.shift.index <-
@@ -417,7 +417,7 @@ function(panel.data,         ## REQUIRED
         }
 
         model_matrix %*% coef_matrix |>
-		    .smooth_bound_iso()
+            .smooth_bound_iso()
     }
 
     .get_quantiles <- function(pred, obsvd, ranked.simex = FALSE) {
@@ -565,6 +565,7 @@ function(panel.data,         ## REQUIRED
             if (!exists('year.progression.for.norm.group')) # Needed for Baseline Matrix construction
                 year.progression.for.norm.group <- year.progression
         }
+        call_function <- define_compute(tmp.par.config, "SIMEX")
 
         ##  Do all coefficient estimation with Frisch-Newton method
         tmp.rq.meth <- rq.method
@@ -628,7 +629,7 @@ function(panel.data,         ## REQUIRED
                 my.matrix.time.dependency=SGPt)[[1L]]
 
             fitted[[ord.lab]][1L,] <- .get_percentile_predictions(model_data[["X"]][[ord]], tmp.matrix)
-		}  ##  Note that `perturb.var` ends up being the max prior one - important in v 2.3-0.0 forward
+		}  ##  Note that `perturb.var` corresponds with the max prior - important in v 2.3-0.0 forward
 
 		##  add csems to cohort_data
 		if (!is.null(state)) {
@@ -731,12 +732,16 @@ function(panel.data,         ## REQUIRED
             rm(big_data)
         }
         if (!is.null(simex.use.my.coefficient.matrices)) { # Element from the 'calculate.simex' argument list.
+            if (n.records < 25000) call_function <- sync_compute # guessing: point where parallel pays off for predictions
             for (L in lambda[-1L]) {
                 L.lab <- paste0("_L", L)
+                if (verbose) {
+                    messageSGP(c("\t\t\tStarted percentile prediction calculation, Lambda ", L, ": ", prettyDate()))
+                }
             for (ord in rev(simex.matrix.priors)) {
                 ord.lab <- paste0("order_", ord)
                 mtx.ord.path.name <- paste("qrmatrices", tmp.last, ord, sep = "_")
-                n.records <- length(model_data[["Y"]][[ord]])
+                tmp.perturb.var <- head(perturb.var, ord)
 
                 available.matrices <- getsplineMatrices(
                     Coefficient_Matrices[[simex.coef.matrices.path]][[mtx.ord.path.name]][[paste0("lambda_", L)]],
@@ -756,40 +761,27 @@ function(panel.data,         ## REQUIRED
                 if (length(available.matrices) != B)
                     available.matrices <- available.matrices[sim.iters]
 
-                ##  Always calculate SIMEX SGPs (for ranked SIMEX table)
-                if (verbose) {
-                    messageSGP(c("\t\t\tStarted percentile prediction calculation, Lambda ", L, ": ", prettyDate()))
-                }
-                for (z in seq_along(sim.iters)) {
-                    if (ord == max(simex.matrix.priors)) {
-                        tmp_model_data <-
-                            lapply(sim.iters, \(m)
-                                list(model_data = .get_model_data(
+                fitted[[ord.lab]][which(lambda == L), ] <-
+                    call_function(
+                        lapply(sim.iters, \(m)
+                                list(model_matrix = .get_model_data(
                                         cohort_data = big_data[list(m)]|>
                                           setnames(gsub(L.lab, "", bd.names)) |>
                                             collapse::ss(
-                                              j = c("ID", paste0("prior_", simex.matrix.priors), "final_yr")),
-                                        prior.order = perturb.var,
+                                              j = c("ID", paste0("prior_", 1:ord), "final_yr")),
+                                        prior.order = tmp.perturb.var,
                                         knots_bounds =
-                                            lapply(1:length(perturb.var), \(x) {
+                                            lapply(1:length(tmp.perturb.var), \(x) {
                                                 return(c(available.matrices[[m]]@Knots,
-                                                        available.matrices[[m]]@Boundaries))
-                                            })
-                                ))
-                            )
-                        }
-
-                        fitted[[ord.lab]][which(lambda == L), ] <-
-                            collapse::setop(
-                                X = fitted[[ord.lab]][which(lambda == L), ],
-                                op = "+",
-                                V = collapse::setop(
-                                    .get_percentile_predictions(
-                                        tmp_model_data[[z]][["model_data"]][["X"]][[ord]],
-                                        available.matrices[[z]]
-                                    ), "/", B)
-                            )
-                }
+                                                        available.matrices[[m]]@Boundaries))}),
+                                        return.sub.orders = FALSE,
+                                        return.y = FALSE
+                                        )[["X"]][[1]], 
+                                    coef_matrix = available.matrices[[m]]
+                                )
+                            ),
+                        .get_percentile_predictions
+                    ) |> Reduce(f = "+", x = _)/B
             }}
         } else {
             if (verbose) {
@@ -842,7 +834,6 @@ function(panel.data,         ## REQUIRED
                     })
             } else {
                 ##  Calculate coefficient matricies in parallel
-                call_function <- define_compute(tmp.par.config, "SIMEX")
                 tmp.simex.matrices <-
                     call_function(simex_matrix_data, .create_coefficient_matrices)
                 if (!all(err.index <- sapply(1:length(tmp.simex.matrices),
@@ -870,20 +861,25 @@ function(panel.data,         ## REQUIRED
             if (verbose) {
                 messageSGP(c("\t\t\tStarted percentile prediction calculation: ", prettyDate()))
             }
+            if (n.records < 25000) call_function <- sync_compute # guessing: point where parallel pays off for predictions
+
             for (L in lambda[-1L]) {
                 L.idx <- which(L == lambda[-1L])
                 tmp.sim.iters <- (((L.idx-1) * B)+1):(L.idx * B)
                 for (ord in simex.matrix.priors) {
                     ord.lab <- paste0("order_", ord)
-                    fitted[[ord.lab]][which(lambda == L),] <-
-                        lapply(tmp.sim.iters,
-                            \(z) {
+
+                    fitted[[ord.lab]][which(lambda == L), ] <-
+                        call_function(
+                            lapply(tmp.sim.iters, \(z) {
                                 Lz <- z - ((L.idx-1) * B)
-                                .get_percentile_predictions(
-                                    simex_model_data[[L.idx]][[Lz]][["model_data"]][["X"]][[ord]],
-                                    tmp.simex.matrices[[z]][[ord]])
-                            }) |>
-                                Reduce(f = "+", x = _)/B
+                                list(model_matrix =
+                                    simex_model_data[[L.idx]][[Lz]][["model_data"]][["X"]][[ord]], 
+                                    coef_matrix = tmp.simex.matrices[[z]][[ord]]
+                                )
+                            }),
+                            .get_percentile_predictions
+                        ) |> Reduce(f = "+", x = _)/B
 
                     mtx.ord.name <- paste(tmp.last, ord, sep = "_")
                     simex.coef.matrices[[paste0("qrmatrices_", mtx.ord.name)]][[paste0("lambda_", L)]] <-
@@ -903,8 +899,7 @@ function(panel.data,         ## REQUIRED
                     " Order ", ord, " Simulation process complete ", prettyDate()))
             }
 
-            switch(
-                extrapolation,
+            switch(extrapolation,
                 LINEAR = Xmat <- matrix(c(rep(1, length(lambda)), lambda), ncol = 2),
                 QUADRATIC = Xmat <- matrix(c(rep(1, length(lambda)), lambda, lambda^2), ncol = 3)
             )
@@ -912,9 +907,9 @@ function(panel.data,         ## REQUIRED
 
             extrap[[ord.lab]] <-
                 collapse::setop(betas_k[2, ], "*", -1L) |>
-                    {\(.) if (nrow(betas_k) == 3L) collapse::setop(., "+", betas_k[, 3]) else .}() |>
-                        collapse::setop("+", betas_k[1, ]) |>
-                            matrix(ncol = length(taus)) |> .smooth_bound_iso()
+                  {\(.) if (nrow(betas_k) == 3L) collapse::setop(., "+", betas_k[, 3]) else .}() |>
+                    collapse::setop("+", betas_k[1, ]) |>
+                      matrix(ncol = length(taus)) |> .smooth_bound_iso()
 
             tmp.ids <- rownames(model_data[["X"]][[ord]])
 
@@ -998,13 +993,13 @@ function(panel.data,         ## REQUIRED
 
 		if (verbose) messageSGP(c("\tFinished SIMEX SGP calculation ", rev(content_area.progression)[1L], " Grade ", rev(tmp.gp)[1L], " ", prettyDate()))
 
-		if (is.null(save.matrices)) simex.coef.matrices <- NULL
+		if (is.null(save.matrices) || (is.logical(save.matrices) && !save.matrices)) simex.coef.matrices <- NULL
 		if (calculate.simex.sgps) {
-			quantile.data.simex <- data.table(rbindlist(tmp.quantiles.simex), key=c("ID", "SIMEX_ORDER"))
-        if (convert.0and100) {
-            quantile.data.simex[SGP_SIMEX_RANKED %in% c(0L, 100L), SGP_SIMEX_RANKED := fifelse(SGP_SIMEX_RANKED == 0L, 1L, 99L)]
-        }
-			setkey(quantile.data.simex, ID) # first key on ID and SIMEX_ORDER, then re-key on ID only to insure sorted order. Don't rely on rbindlist/k ordering...
+            quantile.data.simex <- data.table(rbindlist(tmp.quantiles.simex), key=c("ID", "SIMEX_ORDER"))
+            if (convert.0and100) {
+                quantile.data.simex[SGP_SIMEX_RANKED %in% c(0L, 100L), SGP_SIMEX_RANKED := fifelse(SGP_SIMEX_RANKED == 0L, 1L, 99L)]
+            }
+            setkey(quantile.data.simex, ID) # first key on ID and SIMEX_ORDER, then re-key on ID only to insure sorted order. Don't rely on rbindlist/k ordering...
 		} else { # set up empty data.table for ddcast and subsets below.
 			quantile.data.simex <-
 				data.table("ID"=NA, "SIMEX_ORDER"=NA, "SGP_SIMEX"=NA, "SGP_SIMEX_RANKED"=NA)
@@ -1758,9 +1753,9 @@ function(panel.data,         ## REQUIRED
         }
 
         model_data <- .get_model_data(
-            cohort_data,
-            prior.order,
-            model_knots_bounds
+            cohort_data = cohort_data,
+            prior.order = prior.order,
+            knots_bounds = model_knots_bounds
         )
 
 	### QR Calculations: coefficient matrices are saved/read into/from panel.data[["Coefficient_Matrices"]]
@@ -1974,7 +1969,7 @@ function(panel.data,         ## REQUIRED
                         tmp.percentile.cuts[[paste("ORDER", ord, "MAX_TIME", sep = "_")]] <-
                             data.table(ID = tmp.ids,
                                 .get.percentile.cuts(
-                                    .get_percentile_predictions(model_data[["X"]][[ord]], tmp.matrix, SGPt.max.time)))
+                                    .get_percentile_predictions(model_data[["X"]][[ord]], tmp.matrix)))
                     }
                 }
 			} ### END if (length(model_data[["Y"]][[ord]]))

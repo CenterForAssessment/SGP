@@ -1370,14 +1370,14 @@
 			if (calculate.simex.baseline) {
                 test.bline.slot <-
                     Demonstration_SGP@SGP[["SGPercentiles"]][[paste("READING", current.year, "BASELINE", sep = ".")]]
-#               identical(sum(test.bline.slot[["SGP_SIMEX_BASELINE"]]), 1036890L)  ##   1034475L
+#               identical(sum(test.bline.slot[["SGP_SIMEX_BASELINE"]]), 1036159L)  ##   1034475L
 #               pre-GRADE key: 816099ca957a29552f4ba1fea88ae1e5
 #               post 1.9-4.0:  3e259b0a8a2d287d58945bf3635f1270
 #               pre- parallel refactor: a97825a406491a5bba42f2fd5e1c49ed7
 #               parallel refactor v1: 113ffc2f19e66f52eb0363d24079cbea
                 if (identical(
                     digest(test.bline.slot[["SGP_SIMEX_BASELINE"]]),
-                    "30007ef1875ba9e58534b9570d0b7ae3")
+                    "2ec059c39f40b444050c4edce9bd6501")
                 ) { 
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX_BASELINE: OK\n")
 				} else {
@@ -1385,13 +1385,13 @@
 					if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 				}
 
-#               identical(sum(test.bline.slot[["SGP_SIMEX_BASELINE_RANKED"]]), 1032662L) # 1031775L
+#               identical(sum(test.bline.slot[["SGP_SIMEX_BASELINE_RANKED"]]), 1032354L) # 1031775L
 #               pre-GRADE key: 721d5eac4cb20a70f9344bbe88b8ef2b
 #               post 1.9-4.0:  866a60bfb9e21d420ff566cb87c8521b
 #               pre- parallel refactor: 43a2cf2f8bcd691087ca149eea631b66
 #               parallel refactor v1: c55467215cb0ab7ad087cad31827c1e5
                 if (identical(
-                    digest(test.bline.slot[["SGP_SIMEX_BASELINE_RANKED"]]), "6b357ae24aeb0a4accf938f78c2594d3")
+                    digest(test.bline.slot[["SGP_SIMEX_BASELINE_RANKED"]]), "bb2d28715c0c2391a9c5249e8e4e0795")
                 ) { 
 					tmp.messages <- c(tmp.messages, "\t\tTest of variable SGP_SIMEX_BASELINE_RANKED: OK\n")
 				} else {
@@ -1598,26 +1598,26 @@
 
 			if (calculate.simex.baseline) {
                 tmp.bline.slot <- Demonstration_SGP@SGP[["SGPercentiles"]][[paste("AMERICAN_LIT", current.year, "BASELINE", sep = ".")]]
-#               identical(sum(tmp.bline.slot[["SGP_SIMEX_BASELINE"]]), 217825L) # 217446L  #  217894L  #  217614L
+#               identical(sum(tmp.bline.slot[["SGP_SIMEX_BASELINE"]]), 217933L) # 217446  #  217894  #  217614
 #               pre-GRADE key: 1dbd929906efe4a131c68180d83c4164
 #               post 1.9-4.0:  af1033d6a7cdf0ba65f8e0d08bf67c6d
 #               pre- parallel refactor (post 1.9-9.1): ce1c7d0cf5a20cb67593d9ecb2577a63
 #               parallel refactor v1: c80684090bf20181bfa0212f6206572b
                 if (identical(
-                    digest(tmp.bline.slot[["SGP_SIMEX_BASELINE"]]), "0093a2cf6c60598d3ef8b5a26af458a7")
+                    digest(tmp.bline.slot[["SGP_SIMEX_BASELINE"]]), "dd82a9391cc9bd47ae016843fef73ff6")
                 ) {
 					tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX_BASELINE: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX_BASELINE: FAIL\n")
 					if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 				}
-#               identical(sum(tmp.bline.slot[["SGP_SIMEX_BASELINE_RANKED"]]), 211519L)) { # 211837L # 211843L
+#               identical(sum(tmp.bline.slot[["SGP_SIMEX_BASELINE_RANKED"]]), 211644L)) { # 211837 # 211843
 #               f3e9a7c0e1eb4564ddc04d5b38f5223e # xXx 40cfc13e853dfa9af8398ca38fea96e8
 #               post 1.9-4.0:  75542c44a8463b3bb14aa2611e83cdd7
 #               pre- parallel refactor (post 1.9-9.1): dbd9e77bd9050b6b096eaffb725d81b1
 #               parallel refactor v1: b5517b387acf6e46eb6fedd1c593222f
                 if (identical(
-                    digest(tmp.bline.slot[["SGP_SIMEX_BASELINE_RANKED"]]), "12525144ece0d2e5c353d2bbf70c58f7")
+                    digest(tmp.bline.slot[["SGP_SIMEX_BASELINE_RANKED"]]), "125e2f0e2d391105180caf550455c66e")
                 ) { 
 					tmp.messages <- c(tmp.messages, "\t\tTest of AMERICAN_LIT SGP_SIMEX_BASELINE_RANKED: OK\n")
 				} else {
@@ -1627,55 +1627,55 @@
 
                 tmp.bline.slot <- Demonstration_SGP@SGP[["SGPercentiles"]][[paste("ALGEBRA_II", current.year, "BASELINE", sep = ".")]]
 
-#               identical(sum(tmp.bline.slot[["SGP_SIMEX_BASELINE"]]), 214455L) # 212818L 213472L # 213134L
+#               identical(sum(tmp.bline.slot[["SGP_SIMEX_BASELINE"]]), 213663L) # 212818 213472 # 213134
 #               pre-GRADE key: d4fe0d79e985aacb6331ce95f4a2d01e
 #               post 1.9-4.0:  e9ac73391f257c5d21df89c2ca6d5283
 #               post 1.9-9.1:  49fe29a83e7f22f4bb6ee4e3538f5bff
 #               pre- parallel refactor: 9e6012824c2525c633e296e644967b15
 #               parallel refactor v1: b12695ea5999d8f8e10ea21c0b9250a0
                 if (identical(
-                    digest(tmp.bline.slot[["SGP_SIMEX_BASELINE"]]), "3c7617ced07239817caa052a3306a7f1")
+                    digest(tmp.bline.slot[["SGP_SIMEX_BASELINE"]]), "87af11996c7d6f81107386b81cac94d8")
                 ) { 
 					tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II SGP_SIMEX_BASELINE: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II SGP_SIMEX_BASELINE: FAIL\n")
 					if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 				}
-#				identical(sum(tmp.bline.slot[["SGP_SIMEX_BASELINE_RANKED"]]), 213364L) # 213377L # 213473L # 213249L
+#				identical(sum(tmp.bline.slot[["SGP_SIMEX_BASELINE_RANKED"]]), 213400L) # 213377 # 213473 # 213249
 #               pre-GRADE key: 5df2787d9bed17d59004a9eeb76930a6
 #               post 1.9-4.0:  9fb272b324afab3f9aeb7107c277ac23
 #               post 1.9-9.1:  581eb5580530038fb03f352c731d4930
 #               pre- parallel refactor: dbfa602f675d9b460a2f414f43b5c526
 #               parallel refactor v1: d32a7f9debb0896e7032318ce0675701
                 if (identical(
-                    digest(tmp.bline.slot[["SGP_SIMEX_BASELINE_RANKED"]]), "51dce42ea2929d7fbe9baad121b644b1")
+                    digest(tmp.bline.slot[["SGP_SIMEX_BASELINE_RANKED"]]), "92de170b83a09f02e1acb720d6bd81ae")
                 ) {
 					tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II SGP_SIMEX_BASELINE_RANKED: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of ALGEBRA_II SGP_SIMEX_BASELINE_RANKED: FAIL\n")
 					if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 				}
-#               identical(sum(Demonstration_SGP@Data$SGP_SIMEX_BASELINE, na.rm=TRUE), 1469170)) { # 1465187L # 1464806 # 1465473L # 1464806L
+#               identical(sum(Demonstration_SGP@Data$SGP_SIMEX_BASELINE, na.rm=TRUE), 1467755L)) { # 1465187 # 1464806 # 1465473 # 1464806
 #               pre-GRADE key: 3e653f546bd93da33cc915b5d37100a4  010289791f188481d48577bf3f247c2e  61ff473b2777c2b7ea14a2c0bcb662ec
 #               post 1.9-4.0a193b6fe6b26f8fcd221c945081bbf3b
 #               pre- parallel refactor (post 1.9-9.1): 44be364974deff2403f4b78f2e7e98d2
 #               parallel refactor v1: f78d7235671677940b423415dd0030e2
                 if (identical(
-                    digest(Demonstration_SGP@Data$SGP_SIMEX_BASELINE), "724ead5ff640704db8f706288f984012")
+                    digest(Demonstration_SGP@Data$SGP_SIMEX_BASELINE), "ab8aed216f9be946ee29930aec33fe2e")
                 ) {
 					tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX_BASELINE: OK\n")
 				} else {
 					tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX_BASELINE: FAIL\n")
 					if (stop.fail) {messageSGP(tmp.messages); stop("\n\n\t FAILED TEST!")}
 				}
-#               identical(sum(Demonstration_SGP@Data$SGP_SIMEX_BASELINE_RANKED, na.rm=TRUE), 1457545L)) { # 1456989L # 1457089L # 1456896L
+#               identical(sum(Demonstration_SGP@Data$SGP_SIMEX_BASELINE_RANKED, na.rm=TRUE), 1457398L)) { # 1456989 # 1457089 # 1456896
 #               pre-GRADE key: 3818ece7a3a5f5e6e7a0ff343c8a752a 
 #               post 1.9-4.0:  0acbb6fb922e87c54bc2aa5acf55ba73
 #               post 1.9-9.1:  ed623b7000d943acbc2fd524f7ce4efc
 #               pre- parallel refactor: dbfa602f675d9b460a2f414f43b5c526
 #               parallel refactor v1: c1f577b904d15c200c1e7adfd108825c
 				if (identical(
-                    digest(Demonstration_SGP@Data$SGP_SIMEX_BASELINE_RANKED), "e0a316eee6064f67d017623de910c637")
+                    digest(Demonstration_SGP@Data$SGP_SIMEX_BASELINE_RANKED), "3a3e13f7e073cb31376b54e6723e5292")
                 ) {
 					tmp.messages <- c(tmp.messages, "\t\tTest of @Data variable SGP_SIMEX_BASELINE_RANKED: OK\n")
 				} else {
