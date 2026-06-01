@@ -3967,8 +3967,8 @@
 		    Demonstration_SGP@Data[CONTENT_AREA %in% c("ALGEBRA_I", "ALGEBRA_II"), CONTENT_AREA := "MATHEMATICS"]
 		    setkeyv(Demonstration_SGP@Data, getKey(Demonstration_SGP@Data))
 
-			expression.to.evaluate <-
-				paste0("Demonstration_SGP <- summarizeSGP(\n\tDemonstration_SGP,\n\tstate='DEMO_EOCT',\n\tparallel.config = ", parallel.config, "\n)\n")
+            expression.to.evaluate <-
+                paste0("Demonstration_SGP <- summarizeSGP(\n\tDemonstration_SGP,\n\tstate='DEMO_EOCT'\n)\n")
 
 			cat(paste0("EVALUATING test number 7, Part 3a:\n", expression.to.evaluate), fill=TRUE)
 
