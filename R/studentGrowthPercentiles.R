@@ -1552,7 +1552,7 @@ function(panel.data,         ## REQUIRED
 	tmp.last <- tail(tmp.gp, 1L)
 	ss.data <- data.table(ss.data[,c(1L, (1+num.panels-num.prior):(1+num.panels), (1+2*num.panels-num.prior):(1+2*num.panels)), with=FALSE])
     if (!is.character(ss.data[[1L]])) ss.data[, eval(names(ss.data)[1]) := as.character(get(names(ss.data)[1]))]
-    ss.data <- collapse::na_omit(ss.data, cols = ncol(ss.data)) |> setkeyv(names(ss.data)[1L])
+    setkeyv(ss.data, names(ss.data)[1L]) # ss.data <- collapse::na_omit(ss.data, cols = ncol(ss.data)) |> 
 	num.panels <- (dim(ss.data)[2L]-1L)/2L
 	if (exact.grade.progression.sequence) tmp.num.prior <- num.prior else tmp.num.prior <- 1L
     cohort_data <- .get_cohort_data()
@@ -1802,43 +1802,51 @@ function(panel.data,         ## REQUIRED
             }
         }}
 
-        Coefficient_Matrices[[tmp.path.coefficient.matrices]] <-
+        New_Coefficient_Matrices <-
             .create_coefficient_matrices(
                 model_data,
                 par.config = parallel.config
             )
 
-            err.tests <- lapply(
-                names(Coefficient_Matrices[[tmp.path.coefficient.matrices]]),
-                \(mat.name) {
-                    if (identical(mat.name, "RQ_ERROR")) {
-                        tmp.err.message <- Coefficient_Matrices[[tmp.path.coefficient.matrices]][[mat.name]][['RQ_ERROR']]
-                        tmp.messages <- c(tmp.messages, paste0(
-                            "\t\tNOTE: An Error in the quantile regression (coefficient matrix creation) has occurred",
-                            "\n\t\tin grade progression ", paste(rev(rev(tmp.gp)), collapse = ', '),
-                            " and produced the following error message: \n\t\t\t\"", tmp.err.message, "\""))
-                        messageSGP(paste("\tStarted studentGrowthPercentiles", started.date))
-                        messageSGP(paste0(
-                            "\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year,
-                            ", Grade Progression: ", paste(tmp.slot.gp, collapse=", "), " ", sgp.message.label))
-                        messageSGP(paste(tmp.messages,
-                            "\n\t\tStudent Growth Percentile Analysis NOT RUN", prettyDate(), "\n"))
-                        Coefficient_Matrices[[tmp.path.coefficient.matrices]][[mat.name]] <- NULL
-                        return(TRUE)
-                    } else return(FALSE)
-                }
-            )
-            if (any(unlist(err.tests))) {
-                return(
-                    list(Coefficient_Matrices=Coefficient_Matrices,
-                        Cutscores=Cutscores,
-                        Goodness_of_Fit=Goodness_of_Fit,
-                        Knots_Boundaries=Knots_Boundaries,
-                        Panel_Data = if (return.panel.data) Panel_Data else NULL,
-                        SGPercentiles=SGPercentiles,
-                        SGProjections=SGProjections,
-                        Simulated_SGPs=Simulated_SGPs))
+        err.tests <- lapply(
+            names(New_Coefficient_Matrices),
+            \(mat.name) {
+                if (identical(mat.name, "RQ_ERROR")) {
+                    tmp.err.message <- New_Coefficient_Matrices[[mat.name]][['RQ_ERROR']]
+                    tmp.messages <- c(tmp.messages, paste0(
+                        "\t\tNOTE: An Error in the quantile regression (coefficient matrix creation) has occurred",
+                        "\n\t\tin grade progression ", paste(rev(rev(tmp.gp)), collapse = ', '),
+                        " and produced the following error message: \n\t\t\t\"", tmp.err.message, "\""))
+                    messageSGP(paste("\tStarted studentGrowthPercentiles", started.date))
+                    messageSGP(paste0(
+                        "\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year,
+                        ", Grade Progression: ", paste(tmp.slot.gp, collapse=", "), " ", sgp.message.label))
+                    messageSGP(paste(tmp.messages,
+                        "\n\t\tStudent Growth Percentile Analysis NOT RUN", prettyDate(), "\n"))
+                    New_Coefficient_Matrices[[mat.name]] <- NULL
+                    return(TRUE)
+                } else return(FALSE)
             }
+        )
+        if (any(unlist(err.tests))) {
+            return(
+                list(Coefficient_Matrices=Coefficient_Matrices,
+                    Cutscores=Cutscores,
+                    Goodness_of_Fit=Goodness_of_Fit,
+                    Knots_Boundaries=Knots_Boundaries,
+                    Panel_Data = if (return.panel.data) Panel_Data else NULL,
+                    SGPercentiles=SGPercentiles,
+                    SGProjections=SGProjections,
+                    Simulated_SGPs=Simulated_SGPs))
+        }
+
+        if (is.null(Coefficient_Matrices[[tmp.path.coefficient.matrices]])) {
+            Coefficient_Matrices[[tmp.path.coefficient.matrices]] <- New_Coefficient_Matrices
+        } else {
+            Coefficient_Matrices[[tmp.path.coefficient.matrices]] <-
+              c(Coefficient_Matrices[[tmp.path.coefficient.matrices]],
+                New_Coefficient_Matrices)
+        }
 
         if (verbose.output) {
             tmp.coefficient.matrix.name <- get.coefficient.matrix.name(tmp.last, coefficient.matrix.priors)
@@ -1874,10 +1882,10 @@ function(panel.data,         ## REQUIRED
 			set.seed.for.sim.data=calculate.simex$set.seed.for.sim.data,
 			verbose=calculate.simex$verbose)
 
-		if (!is.null(quantile.data.simex[['MATRICES']])) {
+		if (!is.null(quantile.data.simex[["MATRICES"]])) {
             simex.coef.matrices.path <- paste0(tmp.path.coefficient.matrices, ".SIMEX")
 			tmp_sgp_1 <- list(Coefficient_Matrices = list(TMP_SIMEX=Coefficient_Matrices[[simex.coef.matrices.path]]))
-			tmp_sgp_2 <- list(Coefficient_Matrices = list(TMP_SIMEX=quantile.data.simex[['MATRICES']]))
+			tmp_sgp_2 <- list(Coefficient_Matrices = list(TMP_SIMEX=quantile.data.simex[["MATRICES"]]))
 			tmp_sgp_combined <- mergeSGP(tmp_sgp_1, tmp_sgp_2)
 			Coefficient_Matrices[[simex.coef.matrices.path]] <- tmp_sgp_combined[["Coefficient_Matrices"]][["TMP_SIMEX"]]
 		}
