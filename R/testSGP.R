@@ -67,10 +67,11 @@
 			if (memory.profile) {
 				Rprof("testSGP(0)_Memory_Profile_Part_1.out", memory.profiling=TRUE)
 			}
-
 			started.at.overall <- proc.time()
 			eval(parse(text=expression.to.evaluate))
-
+            if (memory.profile) {
+                Rprof(NULL)
+            }
 			tmp.messages <- c(tmp.messages, "\t##### Results of testSGP test number 0: Part 1 #####\n")
             test.slot <-
               Demonstration_SGP[["SGPercentiles"]][[paste("READING", tail(sgpData.years.single, 1L), sep = ".")]]
@@ -206,17 +207,20 @@
 
 			started.at.intermediate <- proc.time()
 			eval(parse(text=expression.to.evaluate))
+            if (memory.profile) {
+                Rprof(NULL)
+            }
 
 			tmp.messages <- c(tmp.messages, "\n\t##### Results of testSGP test number 0: Part 2 #####\n")
 
-            test.slot <- copy(Demonstration_SGP[["SGProjections"]][[paste(test.path, 'LAGGED', sep=".")]])
+            test.slot <- Demonstration_SGP[["SGProjections"]][[paste(test.path, 'LAGGED', sep=".")]]
 			### TEST of dimension of table READING.####.LAGGED dimensions
 #           dim(Demonstration_SGP$SGProjections[[paste(test.path, 'LAGGED', sep=".")]]), c(36478L, 513L)
 #           "8ed0dbdfe95ea48e426a1e1faf9e8da1"
 #           9/1/24 Update: 46b7e5a56aa9a544786674affed0956d
             if (identical(
                 digest(test.slot),
-                "95f0d02d13ce9df485f4e9072b572a14")
+                "b4d2c7b1d51b21f6ad2d590bd7423ace")
             ) {
                 tmp.messages <- c(tmp.messages,
                 paste("\t\tTest of",  paste(test.path, 'LAGGED', sep="."), "Projection Values, part 2: OK\n"))
