@@ -269,13 +269,13 @@ function(sgp_object,
 		### Summary Tables
 		###
 
-			sqliteSGP(
-				sgp_object=sgp_object,
-				state=state,
-				years=outputSGP_SUMMARY.years,
-				content_areas=outputSGP_SUMMARY.content_areas,
-				other.student.groups=outputSGP.student.groups,
-				output.directory=file.path(outputSGP.directory, "SchoolView"))
+			# sqliteSGP(
+			# 	sgp_object=sgp_object,
+			# 	state=state,
+			# 	years=outputSGP_SUMMARY.years,
+			# 	content_areas=outputSGP_SUMMARY.content_areas,
+			# 	other.student.groups=outputSGP.student.groups,
+			# 	output.directory=file.path(outputSGP.directory, "SchoolView"))
 
 
 		###

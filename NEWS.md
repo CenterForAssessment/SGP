@@ -1,3 +1,20 @@
+# SGP 2.3-0.0
+
+## User Visible Changes:
+
+* Adoption of new parallel processing regime using only multicore/fork or mirai backends
+* Removal of RSQLite usage and other deprecated package requirements
+* Optimizations of studentGrowthPercentiles and SIMEX measurement error correction
+  utility functions and control flow sequences.
+* Fixed use of random number generation/sampling in SIMEX functionality to be done in a
+  way that is consistent across parallel backends (and sequential compute). This means
+  that results will not match from versions pre- version 2.3-0.0.
+* The use of SQLite databases has been removed, along with relevant arguments from functions
+  such as `analyzeSGP`, `abcSGP`, and `updateSGP`.
+* Users can now specify vendor-provided equating/concordance tables for equated growth
+  percentile and projection calculations, and individual student growth reports.
+* General bug fixes and meta-data updates to SGPstateData
+
 # SGP 2.2-0.0
 
 ## User Visible Changes:
