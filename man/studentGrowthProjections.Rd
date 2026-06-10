@@ -41,7 +41,8 @@ studentGrowthProjections(panel.data,
                          projcuts.digits=NULL,
                          sgp.projections.use.only.complete.matrices=NULL,
                          SGPt=NULL,
-                         print.time.taken=TRUE)
+                         print.time.taken=TRUE,
+                         return.panel.data=identical(parent.frame(), .GlobalEnv))
 }
 
 \arguments{
@@ -162,11 +163,16 @@ studentGrowthProjections(panel.data,
   }
   \item{print.time.taken}{Boolean argument (defaults to TRUE) indicating whether to print message indicating information on \code{studentGrowthProjections} analysis and time taken.
   }
+  \item{return.panel.data}{Boolean argument indicating whether to return the original data provided in \code{panel.data}
+  in the SGP list of results. Defaults to 'identical(parent.frame(), .GlobalEnv)': If the parent environment from which the
+  function is called is \code{.GlobalEnv}, then FALSE, otherwise TRUE.
+  }
 }
 
-\value{Function returns the input \code{panel.data} list object with the additional percentile growth trajectories/percentiles stored in
-\code{panel.data$SGProjections$my.year.my.subject} consisting of student IDs and the associated percentile growth projections/trajectories and cuts.
-The data frame contains projections/trajectories for each performance level cut-point supplied and each percentile cut the user specifies.
+\value{Function returns the percentile growth trajectories/percentiles (as well as the input \code{panel.data} list object if requested)
+stored in \code{panel.data$SGProjections$my.year.my.subject} consisting of student IDs and the associated percentile growth
+projections/trajectories and cuts. The data frame contains projections/trajectories for each performance level cut-point supplied
+and each percentile cut the user specifies.
 }
 
 \references{

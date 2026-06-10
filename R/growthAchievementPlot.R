@@ -2,10 +2,10 @@
 	function(
 	gaPlot.sgp_object,
 	gaPlot.students=NULL,
-	gaPlot.percentile_trajectories,
+	gaPlot.percentile_trajectories = NULL,
 	gaPlot.achievement_percentiles=c(.01, seq(.05, .95, by=.05), .99),
 	gaPlot.show.scale.transformations=TRUE,
-	gaPlot.grade_range,
+	gaPlot.grade_range = NULL,
 	gaPlot.max.order.for.progression=NULL,
 	gaPlot.start.points="Achievement Level Cuts",
 	gaPlot.back.extrapolated.cuts=NULL,
@@ -19,7 +19,7 @@
 	equated=NULL,
 	output.format="PDF",
 	output.folder,
-	assessment.name) {
+	assessment.name = NULL) {
 
 	CUTLEVEL <- GRADE <- YEAR <- ID <- SCALE_SCORE <- level_1_curve <- V1 <- VALID_CASE <- NULL
 	TRANSFORMED_SCALE_SCORE <- PERCENTILE <- GRADE_NUMERIC <- CONTENT_AREA <- LEVEL <- SGP <- EXTRAPOLATED_P50_CUT <- DATE <- NULL ## To prevent R CMD check warnings
@@ -73,17 +73,17 @@
 
 	### Create default values
 
-	if (missing(gaPlot.grade_range)) {
+	if (is.null(gaPlot.grade_range)) {
 		if (is.null(SGP::SGPstateData[[state]][["Student_Report_Information"]][["Grades_Reported"]][[content_area]])) {
 			stop("\tNOTE: No grade range is available from supplied argument or SGP::SGPstateData to construct growth and achievement plots.\n")
 		}
 		gaPlot.grade_range <- range(long_cutscores$GRADE_NUMERIC, na.rm=TRUE)
 	}
 
-	if (!missing(state) & missing(gaPlot.percentile_trajectories)) {
+	if (!missing(state) & is.null(gaPlot.percentile_trajectories)) {
 		gaPlot.percentile_trajectories <- round(sort(unique(c(10, 50, 90, SGP::SGPstateData[[state]][["Growth"]][["Cutscores"]][["Cuts"]]))/5)) * 5
 	}
-	if (missing(state) & missing(gaPlot.percentile_trajectories)) {
+	if (missing(state) & is.null(gaPlot.percentile_trajectories)) {
 		gaPlot.percentile_trajectories <- c(10, 35, 50, 65, 90)
 	}
 
@@ -98,7 +98,7 @@
 
 	if (length(unique(tmp.unique.content_areas)) > 1) display.content_areas <- TRUE else display.content_areas <- FALSE
 
-	if (missing(assessment.name) & missing(state)) {
+	if (is.null(assessment.name) & missing(state)) {
 		assessment.name <- NULL
 	} else {
 		assessment.name <- SGP::SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Abbreviation"]]

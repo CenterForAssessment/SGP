@@ -27,7 +27,7 @@ growthAchievementPlot(
     equated=NULL,
 	output.format="PDF",
     output.folder,
-    assessment.name)
+    assessment.name = NULL)
 }
 
 \arguments{
@@ -92,7 +92,7 @@ growthAchievementPlot(
 	A character vector indicating where to put the produced growth and achievement plot.
 	}
 	\item{assessment.name}{
-	A character vector indicating the assessment.name. If missing, the supplied state is used to determine the assessment.name.
+	A character vector indicating the assessment.name. If NULL, the supplied state is used to determine the assessment.name.
 	}
 }
 
