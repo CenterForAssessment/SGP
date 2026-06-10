@@ -46,7 +46,6 @@ analyzeSGP(sgp_object,
          print.other.gp=NULL,
          sgp.projections.projection.unit="YEAR",
          get.cohort.data.info=FALSE,
-         sgp.sqlite=FALSE,
          sgp.percentiles.equated=NULL,
          sgp.percentiles.equating.method=NULL,
          sgp.percentiles.calculate.sgps=TRUE,
@@ -183,9 +182,6 @@ Default is 3.  To utilize the maximum matrix order, set to NULL.
   \item{get.cohort.data.info}{A Boolean argument (defaults to FALSE) indicating whether a summary of all cohorts to be submitted to the \code{\link{studentGrowthPercentiles}} and
   \code{\link{studentGrowthProjections}} functions should be performed prior to analysis.
   }
- \item{sgp.sqlite}{A Boolean argument (defaults to FALSE) indicating whether a SQLite database file of the essential SGP data should be created from the \code{@Data} slot and subsequently used to extract data subsets for analysis with \code{\link{studentGrowthPercentiles}} and
-  \code{\link{studentGrowthProjections}} functions.  If the size of the \code{@Data} object is greater than 1 GB \code{sgp.sqlite} is set to TRUE internally.  When TRUE, this can substantially reduce the amount of RAM memory required to conduct analyses.  If set to TRUE the file "TMP_SGP_Data.sqlite" will be created in the R temporary directory (see\code{?tempdir} for information).  This file is deleted by default although one may keep it if the argument is specified as the character "KEEP".
- }
   \item{sgp.percentiles.equated}{A Boolean argument (defaults to NULL/FALSE) indicating whether equating should be used on the most recent year of test data provided. Equating allows for student growth
 projections to be calculated in across assessment transitions where the scale for the assessment changes.
   }

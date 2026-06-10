@@ -52,7 +52,6 @@ abcSGP(sgp_object,
 				"INSTRUCTOR_Data"),
 	outputSGP.directory="Data",
   verbose.output=FALSE,
-	sgp.sqlite=FALSE,
 	sgp.percentiles.equated=NULL,
     sgp.percentiles.equating.method=NULL,
 	sgp.percentiles.calculate.sgps=TRUE,
@@ -178,9 +177,6 @@ If missing the function will use the data to infer all the grade progressions fo
   \item{outputSGP.directory}{A a file path indicating where to save output files. Defaults to \code{Data}.
   }
   \item{verbose.output}{A Boolean argument indicating whether the function should output verbose diagnostic messages.
-  }
-  \item{sgp.sqlite}{A Boolean argument (defaults to FALSE) indicating whether a SQLite database file of the essential SGP data should be created from the \code{@Data} slot and subsequently
-  used to extract data subsets for analyses conducted in order to reduce the amount of RAM memory required.  See full argument description in \code{\link{analyzeSGP}}.
   }
   \item{sgp.percentiles.equated}{A Boolean argument (defaults to NULL, which calculates equated results if in the equating year) passed to \code{\link{analyzeSGP}}
   indicating whether equating should be used on the most recent year of test data provided. Equating allows for student growth projections to be calculated in
