@@ -63,7 +63,7 @@ function(sgp_object,
 	started.at.visualizeSGP <- proc.time()
 	messageSGP(paste("\nStarted visualizeSGP", prettyDate(), "\n"))
 
-	### Setting variables to NULL to prevent R CMD check warnings
+	###   Setting variables to NULL to prevent R CMD check warnings
 	DISTRICT_NUMBER <- DISTRICT_NAME <- SCHOOL_NUMBER <- SCHOOL_NAME <- YEAR <- CONTENT_AREA <-
     VALID_SGP <- SGP <- SGP_LEVEL <- ETHNICITY <- GENDER <- ID <- TEST_LEVEL <- SUBJECT_CODE <-
 	SCALE_SCORE <- GRADE <- SCHOOL_ENROLLMENT_STATUS <- LAST_NAME <- FIRST_NAME <- MEDIAN_SGP <-
@@ -72,7 +72,14 @@ function(sgp_object,
 	INSTRUCTOR_FIRST_NAME <- TRANSFORMED_SCALE_SCORE <- SCALE_SCORE_ACTUAL <- CONTENT_AREA_LABELS <-
 	TEMP <- TEMP_SCORE <- TEMP_GRADE <- SGP_PROJECTION_GROUP <- EQUATED <- NULL
 
-	### Utility functions
+    ###   Create state (if NULL) from sgp_object (if possible)
+    if (missing(state)) {
+        tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
+        state <- getStateAbbreviation(tmp.name, "analyzeSGP")
+    }
+
+
+	###   Utility functions
 	"%w/o%" <- function(x,y) x[!x %in% y]
 	num_non_missing <- function(x) sum(!is.na(x))
 
@@ -715,11 +722,11 @@ if ("studentGrowthPlot" %in% plot.types) {
 		if (sgPlot.plot.test.transition) {
             tmp.list <-
                 transformScaleScore(
-                    tmp.table,
-                    state,
-                    tmp.content_areas_domains,
-                    sgp_object@SGP[['Linkages']],
-                    slot.data,
+                    tmp.data = tmp.table,
+                    state = state,
+                    content_areas = tmp.content_areas_domains,
+                    linkages = sgp_object@SGP[['Linkages']],
+                    slot.data = slot.data,
                     equating.method = equate.method)
 		} else {
 			tmp.list <- transformScaleScore(tmp.table, state, tmp.content_areas_domains, NULL, slot.data)
@@ -957,72 +964,72 @@ if (sgPlot.save.sgPlot.data) {
     }
 
     if (sgPlot.produce.plots) {
-        call_function <- define_compute(parallel.config, "SG_PLOTS")
-        sgPlot.list <- get.sgPlot.iter(tmp.districts.and.schools)
-        results <- lapply(
-            sgPlot.list,
-            \(sgPlot.iter) {
-                list(
-                    sgPlot.data = sgPlot.data,
-                    sgPlot.sgp_object = sgPlot.sgp_object,
-                    sgPlot.cutscores = Cutscores,
-                    state = state,
-                    last.year = tmp.last.year,
-                    content_areas = tmp.content_areas_domains,
-                    districts = sgPlot.iter[["DISTRICT_NUMBER"]],
-                    schools = sgPlot.iter[["SCHOOL_NUMBER"]],
-                    reports.by.student = sgPlot.reports.by.student,
-                    reports.by.instructor = sgPlot.reports.by.instructor,
-                    reports.by.school = sgPlot.reports.by.school,
-                    sgPlot.years = tmp.years.subset,
-                    sgPlot.demo.report = sgPlot.demo.report,
-                    sgPlot.folder = sgPlot.folder,
-                    sgPlot.folder.names = sgPlot.folder.names,
-                    sgPlot.anonymize = sgPlot.anonymize,
-                    sgPlot.front.page = sgPlot.front.page,
-                    sgPlot.header.footer.color = sgPlot.header.footer.color,
-                    sgPlot.fan = sgPlot.fan,
-                    sgPlot.sgp.targets = sgPlot.sgp.targets,
-                    sgPlot.cleanup = sgPlot.cleanup,
-                    sgPlot.baseline = sgPlot.baseline,
-                    sgPlot.sgp.targets.timeframe = sgPlot.sgp.targets.timeframe,
-                    sgPlot.zip = sgPlot.zip,
-                    sgPlot.output.format = sgPlot.output.format,
-                    sgPlot.linkages = sgp.projections.equated
-                )
-            }
-        ) |>
-            call_function(studentGrowthPlot_Styles)
+        # call_function <- define_compute(parallel.config, "SG_PLOTS")
+        # sgPlot.list <- get.sgPlot.iter(tmp.districts.and.schools)
+        # results <- lapply(
+        #     sgPlot.list,
+        #     \(sgPlot.iter) {
+        #         list(
+        #             sgPlot.data = sgPlot.data,
+        #             sgPlot.sgp_object = sgPlot.sgp_object,
+        #             sgPlot.cutscores = Cutscores,
+        #             state = state,
+        #             last.year = tmp.last.year,
+        #             content_areas = tmp.content_areas_domains,
+        #             districts = sgPlot.iter[["DISTRICT_NUMBER"]],
+        #             schools = sgPlot.iter[["SCHOOL_NUMBER"]],
+        #             reports.by.student = sgPlot.reports.by.student,
+        #             reports.by.instructor = sgPlot.reports.by.instructor,
+        #             reports.by.school = sgPlot.reports.by.school,
+        #             sgPlot.years = tmp.years.subset,
+        #             sgPlot.demo.report = sgPlot.demo.report,
+        #             sgPlot.folder = sgPlot.folder,
+        #             sgPlot.folder.names = sgPlot.folder.names,
+        #             sgPlot.anonymize = sgPlot.anonymize,
+        #             sgPlot.front.page = sgPlot.front.page,
+        #             sgPlot.header.footer.color = sgPlot.header.footer.color,
+        #             sgPlot.fan = sgPlot.fan,
+        #             sgPlot.sgp.targets = sgPlot.sgp.targets,
+        #             sgPlot.cleanup = sgPlot.cleanup,
+        #             sgPlot.baseline = sgPlot.baseline,
+        #             sgPlot.sgp.targets.timeframe = sgPlot.sgp.targets.timeframe,
+        #             sgPlot.zip = sgPlot.zip,
+        #             sgPlot.output.format = sgPlot.output.format,
+        #             sgPlot.linkages = sgp.projections.equated
+        #         )
+        #     }
+        # ) |>
+        #     call_function(studentGrowthPlot_Styles)
 
     ##  Single call useful for testing and debugging with sgPlod.demo.report=TRUE
-        # studentGrowthPlot_Styles(
-        #     sgPlot.data=sgPlot.data,
-        #     sgPlot.sgp_object=sgPlot.sgp_object,
-        #     sgPlot.cutscores=Cutscores,
-        #     state=state,
-        #     last.year=tmp.last.year,
-        #     content_areas=tmp.content_areas_domains,
-        #     districts=unique(tmp.districts.and.schools[["DISTRICT_NUMBER"]]),
-        #     schools=tmp.districts.and.schools[["SCHOOL_NUMBER"]],
-        #     reports.by.student=sgPlot.reports.by.student,
-        #     reports.by.instructor=sgPlot.reports.by.instructor,
-        #     reports.by.school=sgPlot.reports.by.school,
-        #     sgPlot.years=tmp.years.subset,
-        #     sgPlot.folder=sgPlot.folder,
-        #     sgPlot.folder.names=sgPlot.folder.names,
-        #     sgPlot.demo.report=sgPlot.demo.report,
-        #     sgPlot.anonymize=sgPlot.anonymize,
-        #     sgPlot.front.page=sgPlot.front.page,
-        #     sgPlot.header.footer.color=sgPlot.header.footer.color,
-        #     sgPlot.fan=sgPlot.fan,
-        #     sgPlot.sgp.targets=sgPlot.sgp.targets,
-        #     sgPlot.cleanup=sgPlot.cleanup,
-        #     sgPlot.baseline=sgPlot.baseline,
-        #     sgPlot.sgp.targets.timeframe=sgPlot.sgp.targets.timeframe,
-        #     sgPlot.zip=sgPlot.zip,
-        #     sgPlot.output.format=sgPlot.output.format,
-        #     sgPlot.linkages=sgp.projections.equated)
-    } ## END if (sgPlot.produce.plots)
+        studentGrowthPlot_Styles(
+            sgPlot.data=sgPlot.data,
+            sgPlot.sgp_object=sgPlot.sgp_object,
+            sgPlot.cutscores=Cutscores,
+            state=state,
+            last.year=tmp.last.year,
+            content_areas=tmp.content_areas_domains,
+            districts=unique(tmp.districts.and.schools[["DISTRICT_NUMBER"]]),
+            schools=tmp.districts.and.schools[["SCHOOL_NUMBER"]],
+            reports.by.student=sgPlot.reports.by.student,
+            reports.by.instructor=sgPlot.reports.by.instructor,
+            reports.by.school=sgPlot.reports.by.school,
+            sgPlot.years=tmp.years.subset,
+            sgPlot.folder=sgPlot.folder,
+            sgPlot.folder.names=sgPlot.folder.names,
+            sgPlot.demo.report=sgPlot.demo.report,
+            sgPlot.anonymize=sgPlot.anonymize,
+            sgPlot.front.page=sgPlot.front.page,
+            sgPlot.header.footer.color=sgPlot.header.footer.color,
+            sgPlot.fan=sgPlot.fan,
+            sgPlot.sgp.targets=sgPlot.sgp.targets,
+            sgPlot.cleanup=sgPlot.cleanup,
+            sgPlot.baseline=sgPlot.baseline,
+            sgPlot.sgp.targets.timeframe=sgPlot.sgp.targets.timeframe,
+            sgPlot.zip=sgPlot.zip,
+            sgPlot.output.format=sgPlot.output.format,
+            sgPlot.linkages=sgp.projections.equated)
+    }   ##   END if (sgPlot.produce.plots)
 
 	messageSGP(paste("Finished studentGrowthPlot in visualizeSGP", prettyDate(), "in", convertTime(timetakenSGP(started.at)), "\n"))
 

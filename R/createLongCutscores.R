@@ -1,8 +1,9 @@
 `createLongCutscores` <-
 function(state,
 	content_area,
-	add.GRADE_NUMERIC=FALSE,
-	assessment.transition.type=NULL) {
+	add.GRADE_NUMERIC=FALSE#,
+	# assessment.transition.type=NULL # not used
+) {
 
 	GRADE <- GRADE_NUMERIC <- CUTSCORES <- CUTSCORES_TRANSFORMED <- YEAR <- CUTLEVEL <- YEAR_LAG <- CONTENT_AREA <- SCALE_SCORE <- NULL
 

@@ -1955,8 +1955,14 @@
 
 			### Calculate SGPs
 
-			expression.to.evaluate <-
-				paste0("Demonstration_SGP <- abcSGP(\n\tsgp_object=Demonstration_Data_LONG_STEP_1,\n\tsteps=c('prepareSGP', 'analyzeSGP', 'combineSGP', 'visualizeSGP'),\n\tplot.types=c('studentGrowthPlot', 'growthAchievementPlot'),\n\tsgPlot.demo.report=TRUE,\n\tsgp.target.scale.scores=TRUE,\n\toutputSGP.output.type='LONG_FINAL_YEAR_Data',\n\tparallel.config=", parallel.config, "\n)\n")
+            expression.to.evaluate <-
+                paste0("Demonstration_SGP <- abcSGP(\n\t",
+                        "sgp_object = Demonstration_Data_LONG_STEP_1,\n\t",
+                        "steps = c('prepareSGP', 'analyzeSGP', 'combineSGP', 'visualizeSGP'),\n\t",
+                        "plot.types = c('studentGrowthPlot', 'growthAchievementPlot'),\n\t",
+                        "sgPlot.demo.report = TRUE,\n\tsgp.target.scale.scores = TRUE,\n\t",
+                        "outputSGP.output.type = 'LONG_FINAL_YEAR_Data',\n\t",
+                        "parallel.config = ", parallel.config, "\n)\n")
 
 			cat(paste0("EVALUATING Test Number 5, Part 1:\n", expression.to.evaluate), fill=TRUE)
 
