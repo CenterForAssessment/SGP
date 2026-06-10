@@ -528,7 +528,9 @@ function(
 					}
 					variables.to.merge <- setdiff(names(tmp.data), c(getKey(slot.data), "DUPS_FLAG", grep("SCALE_SCORE$|SCALE_SCORE_PRIOR", names(tmp.data), value=TRUE)))
 					invisible(slot.data[tmp.index, (variables.to.merge):=tmp.data[, variables.to.merge, with=FALSE]])
-				} ### END dim(tmp.data)[1] > 0
+                } else {
+                    duplicated.projections.tf <- FALSE
+                } ### END dim(tmp.data)[1] > 0
 			}
 		}
 		if (duplicated.projections.tf) {

@@ -13,7 +13,7 @@
 
     tmp.sgp.summaries <- sgp.summaries
     by.groups  <- unlist(strsplit(sgp.groups.to.summarize, ", "))
-    smry.names <- gsub("^[^.]*.", "", names(unlist(sgp.summaries)))
+    smry.names <- gsub("^[^.]*.", "", names(unlist(tmp.sgp.summaries)))
     pct.names  <- grep("^PERCENT_AT_ABOVE|^PERCENT_CATCHING_UP|^PERCENT_MOVING_UP", smry.names, value = TRUE)
     MnSE.names <- grep("^MEAN_SGP.*.STANDARD_ERROR", smry.names, value = TRUE)
 

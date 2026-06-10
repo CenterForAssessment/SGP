@@ -10,8 +10,7 @@
 	summarizeSGP.baseline=NULL,
 	projection.years.for.target=NULL,
 	save.old.summaries=FALSE,
-	highest.level.summary.grouping="STATE",
-	parallel.config = NULL # No longer used as of SGP_2.1-0.11
+	highest.level.summary.grouping="STATE"
 	) {
 
 	started.at <- proc.time()

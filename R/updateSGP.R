@@ -33,7 +33,6 @@ function(what_sgp_object=NULL,
 	sgp.config=NULL,
 	goodness.of.fit.print=TRUE,
 	parallel.config=NULL,
-	sgp.sqlite=FALSE,
 	SGPt=NULL,
 	sgp.percentiles.equated=NULL,
 	sgp.percentiles.equating.method=NULL,
@@ -314,7 +313,6 @@ function(what_sgp_object=NULL,
 							simulate.sgps=simulate.sgps,
 							sgp.config=sgp.config,
 							goodness.of.fit.print=FALSE,
-							sgp.sqlite=sgp.sqlite,
 							SGPt=SGPt,
 							sgp.percentiles.equated=sgp.percentiles.equated,
 							sgp.percentiles.equating.method=sgp.percentiles.equating.method,
@@ -404,7 +402,7 @@ function(what_sgp_object=NULL,
 							key=c("ID", "CONTENT_AREA", "YEAR"))
 				}
 
-				if ("summarizeSGP" %in% steps) what_sgp_object <- summarizeSGP(what_sgp_object, state=state, parallel.config=parallel.config)
+				if ("summarizeSGP" %in% steps) what_sgp_object <- summarizeSGP(what_sgp_object, state=state)
 				if ("visualizeSGP" %in% steps) visualizeSGP(what_sgp_object, state=state, plot.types=plot.types, sgPlot.demo.report=sgPlot.demo.report)
 				if ("outputSGP" %in% steps) outputSGP(what_sgp_object, state=state, output.type=outputSGP.output.type, outputSGP.directory=outputSGP.directory)
 

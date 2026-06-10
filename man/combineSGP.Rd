@@ -82,8 +82,19 @@ re-merge all available data.
   duplicate ID before running \code{\link{studentGrowthPercentiles}}, then the \code{@Data} slot will be extended as necessary to accomodate
   additional student records and SGP results.
   }
-  \item{parallel.config}{Parallel configuration only used when 'sgp.target.scale.scores' is set to TRUE. Default is NULL consistent with no targets being calculated. To utilize parallel processing
-  in the calculation of SGP scale score targets user must specify a list designating a backend (e.g, BACKEND='PARALLEL') and a number of workers (e.g., 'WORKERS=list(SGP_SCALE_SCORE_TARGETS=4)').
+  \item{parallel.config}{A named list with, at a minimum, a WORKERS sublist to specify the number of
+  processors to be used in each major analysis. A BACKEND sublist can also be set = to \code{FORK} 
+  or \code{MIRAI}. Please consult the manuals and vignettes for information of these packages!
+  Unix/Mac OS defaults to the \code{FORK} backend (i.e. "multicore" and \code{mclapply}) to avoid 
+  worker node pre-scheduling and appears to be more efficient in these operating systems.
+  The \code{MIRAI} backend is available for Windows OS and can be manually specified for Unix alike.
+
+  Parallel configuration only used when 'sgp.target.scale.scores' is set to TRUE. Default is NULL 
+  consistent with no targets being calculated. To utilize parallel processing in the calculation of
+  SGP scale score targets user must specify a list designating the number of workers (e.g., 
+  'WORKERS=list(SGP_SCALE_SCORE_TARGETS = 4)').
+
+  Additional examples of parallel configurations can be found in the examples for \code{\link{analyzeSGP}}.
   }
 }
 

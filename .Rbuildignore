@@ -7,3 +7,4 @@
 ^CITATION\.cff$
 ^_pkgdown\.yml$
 ^\.git$
+^R/sqliteSGP\.R$

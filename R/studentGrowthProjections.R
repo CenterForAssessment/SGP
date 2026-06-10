@@ -34,7 +34,9 @@ function(panel.data,	## REQUIRED
 	projcuts.digits=NULL,
 	sgp.projections.use.only.complete.matrices=NULL,
 	SGPt=NULL,
-	print.time.taken=TRUE) {
+	print.time.taken=TRUE,
+	return.panel.data = identical(parent.frame(), .GlobalEnv)
+) {
 
 	started.at=proc.time()
 	started.date <- prettyDate()
@@ -765,15 +767,11 @@ function(panel.data,	## REQUIRED
 		messageSGP(paste0("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label))
 		messageSGP(c(tmp.messages, "\tFinished studentGrowthProjections: ", prettyDate(), " in ", convertTime(timetakenSGP(started.at)), "\n"))
 
-		return(
-			list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],
-				Cutscores=panel.data[["Cutscores"]],
-				Goodness_of_Fit=panel.data[["Goodness_of_Fit"]],
-				Knots_Boundaries=panel.data[["Knots_Boundaries"]],
-				Panel_Data=NULL,
-				SGPercentiles=panel.data[["SGPercentiles"]],
-				SGProjections=panel.data[["SGProjections"]],
-				Simulated_SGPs=panel.data[["Simulated_SGPs"]]))
+        if (return.panel.data) {
+            return(panel.data)
+        } else {
+            return(list(Error_Reports = tmp.messages))
+        }
 	}
 
 	if (!missing(panel.data.vnames)) {
@@ -832,15 +830,11 @@ function(panel.data,	## REQUIRED
 				messageSGP(paste0("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, " ", return.projection.group.identifier))
 				messageSGP(paste(tmp.messages, "\tStudent Growth Projections NOT RUN", prettyDate(), "\n"))
 
-				return(
-					list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],
-					Cutscores=panel.data[["Cutscores"]],
-					Goodness_of_Fit=panel.data[["Goodness_of_Fit"]],
-					Knots_Boundaries=panel.data[["Knots_Boundaries"]],
-					Panel_Data=NULL,
-					SGPercentiles=panel.data[["SGPercentiles"]],
-					SGProjections=panel.data[["SGProjections"]],
-					Simulated_SGPs=panel.data[["Simulated_SGPs"]]))
+                if (return.panel.data) {
+                    return(panel.data)
+                } else {
+                    return(list(Error_Reports = tmp.messages))
+                }
 			} else {
 				if (length(grep("BASELINE", sgp.labels[['my.extra.label']])) > 0) {
 					tmp.messages <- c(tmp.messages, paste0("\t\tNOTE: Not all CONTENT_AREA values in content_area.progression have associated BASELINE referenced coefficient matrices.\n\tCOHORT referenced matrices for missing content areas (",
@@ -934,15 +928,11 @@ function(panel.data,	## REQUIRED
 		messageSGP(paste0("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label))
 		messageSGP(c(tmp.messages, "\tFinished studentGrowthProjections: ", prettyDate(), " in ", convertTime(timetakenSGP(started.at)), "\n"))
 
-		return(
-			list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],
-				Cutscores=panel.data[["Cutscores"]],
-				Goodness_of_Fit=panel.data[["Goodness_of_Fit"]],
-				Knots_Boundaries=panel.data[["Knots_Boundaries"]],
-				Panel_Data=NULL,
-				SGPercentiles=panel.data[["SGPercentiles"]],
-				SGProjections=panel.data[["SGProjections"]],
-				Simulated_SGPs=panel.data[["Simulated_SGPs"]]))
+        if (return.panel.data) {
+            return(panel.data)
+        } else {
+            return(list(Error_Reports = tmp.messages))
+        }
 	}
 
 	### Calculate grade.projection.sequence.priors
@@ -963,15 +953,11 @@ function(panel.data,	## REQUIRED
 		messageSGP(paste0("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, " ", return.projection.group.identifier))
 		messageSGP(paste(tmp.messages, "\tStudent Growth Projections NOT RUN", prettyDate(), "\n"))
 
-		return(
-			list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],
-				Cutscores=panel.data[["Cutscores"]],
-				Goodness_of_Fit=panel.data[["Goodness_of_Fit"]],
-				Knots_Boundaries=panel.data[["Knots_Boundaries"]],
-				Panel_Data=NULL,
-				SGPercentiles=panel.data[["SGPercentiles"]],
-				SGProjections=panel.data[["SGProjections"]],
-				Simulated_SGPs=panel.data[["Simulated_SGPs"]]))
+        if (return.panel.data) {
+            return(panel.data)
+        } else {
+            return(list(Error_Reports = tmp.messages))
+        }
 	}
 
 	##  Secondary check of available matrices using those selected in grade.projection.sequence.matrices
@@ -983,15 +969,11 @@ function(panel.data,	## REQUIRED
 			messageSGP(paste0("\t\tSubject: ", sgp.labels$my.subject, ", Year: ", sgp.labels$my.year, ", Grade Progression: ", paste(grade.progression, collapse=", "), " ", sgp.labels$my.extra.label, " ", return.projection.group.identifier))
 			messageSGP(paste(tmp.messages, "\tStudent Growth Projections NOT RUN", prettyDate(), "\n"))
 
-			return(
-				list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],
-				Cutscores=panel.data[["Cutscores"]],
-				Goodness_of_Fit=panel.data[["Goodness_of_Fit"]],
-				Knots_Boundaries=panel.data[["Knots_Boundaries"]],
-				Panel_Data=NULL,
-				SGPercentiles=panel.data[["SGPercentiles"]],
-				SGProjections=panel.data[["SGProjections"]],
-				Simulated_SGPs=panel.data[["Simulated_SGPs"]]))
+            if (return.panel.data) {
+                return(panel.data)
+            } else {
+                return(list(Error_Reports = tmp.messages))
+            }
 		}
 		tmp.matrices.tf <- content_area.projection.sequence %in% names(grade.projection.sequence.matrices[[1L]])
 		tmp.messages <- c(tmp.messages, paste0("\t\tNOTE: Not all CONTENT_AREA values in content_area.progression have the appropriate coefficient matrices - MISSING:\n\t\t\t", paste(content_area.projection.sequence[!tmp.matrices.tf], collapse=", "), ".\n"))
@@ -1077,13 +1059,14 @@ function(panel.data,	## REQUIRED
 		messageSGP(c(tmp.messages, "\tFinished studentGrowthProjections: ", prettyDate(), " in ", convertTime(timetakenSGP(started.at)), "\n"))
 	}
 
-	list(Coefficient_Matrices=panel.data[["Coefficient_Matrices"]],
-		Cutscores=Cutscores,
-		Goodness_of_Fit=panel.data[["Goodness_of_Fit"]],
-		Knots_Boundaries=panel.data[["Knots_Boundaries"]],
-		Panel_Data=panel.data[["Panel_Data"]],
-		SGPercentiles=panel.data[["SGPercentiles"]],
-		SGProjections=SGProjections,
-		Simulated_SGPs=panel.data[["Simulated_SGPs"]])
-
+    if (return.panel.data) {
+        panel.data[["Cutscores"]] <- Cutscores
+        panel.data[["SGProjections"]] <- SGProjections
+        return(panel.data)
+    } else {
+        return(list(
+            Cutscores=Cutscores,
+            SGProjections=SGProjections
+        ))
+    }
 } ## END studentGrowthProjections Function
