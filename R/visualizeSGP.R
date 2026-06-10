@@ -63,7 +63,7 @@ function(sgp_object,
 	started.at.visualizeSGP <- proc.time()
 	messageSGP(paste("\nStarted visualizeSGP", prettyDate(), "\n"))
 
-	### Setting variables to NULL to prevent R CMD check warnings
+	###   Setting variables to NULL to prevent R CMD check warnings
 	DISTRICT_NUMBER <- DISTRICT_NAME <- SCHOOL_NUMBER <- SCHOOL_NAME <- YEAR <- CONTENT_AREA <-
     VALID_SGP <- SGP <- SGP_LEVEL <- ETHNICITY <- GENDER <- ID <- TEST_LEVEL <- SUBJECT_CODE <-
 	SCALE_SCORE <- GRADE <- SCHOOL_ENROLLMENT_STATUS <- LAST_NAME <- FIRST_NAME <- MEDIAN_SGP <-
@@ -72,7 +72,14 @@ function(sgp_object,
 	INSTRUCTOR_FIRST_NAME <- TRANSFORMED_SCALE_SCORE <- SCALE_SCORE_ACTUAL <- CONTENT_AREA_LABELS <-
 	TEMP <- TEMP_SCORE <- TEMP_GRADE <- SGP_PROJECTION_GROUP <- EQUATED <- NULL
 
-	### Utility functions
+    ###   Create state (if NULL) from sgp_object (if possible)
+    if (missing(state)) {
+        tmp.name <- toupper(gsub("_", " ", deparse(substitute(sgp_object))))
+        state <- getStateAbbreviation(tmp.name, "analyzeSGP")
+    }
+
+
+	###   Utility functions
 	"%w/o%" <- function(x,y) x[!x %in% y]
 	num_non_missing <- function(x) sum(!is.na(x))
 
@@ -715,11 +722,11 @@ if ("studentGrowthPlot" %in% plot.types) {
 		if (sgPlot.plot.test.transition) {
             tmp.list <-
                 transformScaleScore(
-                    tmp.table,
-                    state,
-                    tmp.content_areas_domains,
-                    sgp_object@SGP[['Linkages']],
-                    slot.data,
+                    tmp.data = tmp.table,
+                    state = state,
+                    content_areas = tmp.content_areas_domains,
+                    linkages = sgp_object@SGP[['Linkages']],
+                    slot.data = slot.data,
                     equating.method = equate.method)
 		} else {
 			tmp.list <- transformScaleScore(tmp.table, state, tmp.content_areas_domains, NULL, slot.data)
@@ -1022,7 +1029,7 @@ if (sgPlot.save.sgPlot.data) {
         #     sgPlot.zip=sgPlot.zip,
         #     sgPlot.output.format=sgPlot.output.format,
         #     sgPlot.linkages=sgp.projections.equated)
-    } ## END if (sgPlot.produce.plots)
+    }   ##   END if (sgPlot.produce.plots)
 
 	messageSGP(paste("Finished studentGrowthPlot in visualizeSGP", prettyDate(), "in", convertTime(timetakenSGP(started.at)), "\n"))
 

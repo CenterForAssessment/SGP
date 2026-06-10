@@ -594,7 +594,11 @@ function(Scale_Scores,                    ## Vector of Scale Scores
 					tmp.grades.reported[which.max(as.numeric(grade.values[['interp.df']][['GRADE']][which(grade.values[['years']]==Report_Parameters[['Assessment_Transition']][['Year']])]) < tmp.grades.reported)-1]
 			}
 			if (is.na(tmp.cutscore.year)) {
-				Cutscores[is.na(YEAR), CUTSCORES:=Cutscores[GRADE==tmp.cutscore.grade & is.na(YEAR)][['CUTSCORES']]]
+				Cutscores[is.na(YEAR),
+				    CUTSCORES := rep(
+						Cutscores[GRADE==tmp.cutscore.grade & is.na(YEAR)][['CUTSCORES']],
+						length(unique(Cutscores[["GRADE"]])))
+				]
 			} else {
 				Cutscores[is.na(YEAR) | YEAR < Report_Parameters$Assessment_Transition$Year,
 					CUTSCORES:=Cutscores[GRADE==tmp.cutscore.grade & YEAR==tmp.cutscore.year][['CUTSCORES']]]
@@ -815,13 +819,12 @@ function(Scale_Scores,                    ## Vector of Scale Scores
 				grade.values$interp.df,
 				YEAR = sapply(strsplit(sapply(strsplit(grade.values$years, "_"), tail, 1), "[.]"), head, 1),
 				key = "YEAR")[tmp.year.sequence[[j]]]
-			tmp.year <- get.my.cutscore.year(Report_Parameters$State, Report_Parameters$Content_Area, YEAR, i)
-			temp[, YEAR := tmp.year]
-			if (is.na(tmp.year)) {
+			temp[, YEAR := get.my.cutscore.year(Report_Parameters$State, Report_Parameters$Content_Area, YEAR, i)]
+			if (class(temp$YEAR) != class(Cutscores$YEAR)) class(temp$YEAR) <- class(Cutscores$YEAR)
+			if (!any(temp$YEAR %in% Cutscores$YEAR)) {
+				temp[, YEAR := NULL]
 				tmp.by <- c("CONTENT_AREA", "GRADE")
 			} else tmp.by <- c("YEAR", "CONTENT_AREA", "GRADE")
-			# temp[, YEAR := get.my.cutscore.year(Report_Parameters$State, Report_Parameters$Content_Area, YEAR, i)]
-			if (class(temp$YEAR) != class(Cutscores$YEAR)) class(temp$YEAR) <- class(Cutscores$YEAR)
 			temp <- merge(temp, Cutscores[CUTLEVEL == i], all.x = TRUE, by = tmp.by)
 			temp <- temp[order(temp$temp_id),][['CUTSCORES']]
 			if (length(temp[which(!is.na(temp))])==1) {
