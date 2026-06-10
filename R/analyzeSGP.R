@@ -39,7 +39,6 @@ function(sgp_object,
          print.other.gp=NULL,
          sgp.projections.projection.unit="YEAR",
          get.cohort.data.info=FALSE,
-         sgp.sqlite=FALSE,
          sgp.percentiles.equated=NULL,
          sgp.percentiles.equating.method=NULL,
          sgp.percentiles.calculate.sgps=TRUE,
@@ -456,9 +455,9 @@ function(sgp_object,
             }
 
             if (!all(paste(content_areas.for.equate, year.for.equate, sep=".") %in% names(SGPstateData[[state]][['Achievement']][['Knots_Boundaries']]))) {
-                tmp.knots.boundaries <- createKnotsBoundaries(sgp_object@Data[YEAR==year.for.equate])
-                names(tmp.knots.boundaries) <- paste(names(tmp.knots.boundaries), year.for.equate, sep=".")
-                SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]] <- c(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]], tmp.knots.boundaries)
+                equate.knots.bound <- createKnotsBoundaries(sgp_object@Data[YEAR==year.for.equate])
+                names(equate.knots.bound) <- paste(names(equate.knots.bound), year.for.equate, sep=".")
+                SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]] <- c(SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]], equate.knots.bound)
                 assign(paste(state, "Knots_Boundaries", sep="_"), SGPstateData[[state]][["Achievement"]][["Knots_Boundaries"]])
                 save(list=paste(state, "Knots_Boundaries", sep="_"), file=paste(state, "Knots_Boundaries.Rdata", sep="_"))
                 messageSGP(paste0("\tNOTE: Knots and Boundaries do not exist for ", year.for.equate, " in state provided.\n\tThey have been produced, embedded in SGPstateData, and are available using state=", state, " for subsequent analyses and saved to your working directory '", getwd(), "'."))
@@ -473,11 +472,33 @@ function(sgp_object,
                 messageSGP(paste0("\tNOTE: Variable `SCALE_SCORE_EQUATED` exists in @Data and is being renamed as SCALE_SCORE_EQUATED_", old.scale.score.equated.year, " to accommodate an additional assessment transition variable."))
             }
 
-            sgp_object@SGP[['Linkages']] <- Linkages <- equateSGP(data.for.equate, state, year.for.equate, sgp.percentiles.equating.method)
+            if (identical(toupper(gsub("-", "_", sgp.percentiles.equating.method)), "PRE_EQUATED")) {
+                if (is.null(Scale_Score_Linkages <-
+                    SGPstateData[[state]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Linkages"]])#[[paste(content_areas.for.equate, year.for.equate, sep=".")]]
+                ) {
+                    stop(paste0("\n\t
+                        NOTE: 'sgp.percentiles.equating.method' is set to 'pre-equated' but
+                         no pre-equated linkages are found in 'SGPstateData' for the state provided.\n\t",
+                        "Check 'SGPstateData' for the appropriate structure and contact package
+                         administrators if you have pre-equated linkages to contribute.\n"))
+                }
+                sgp_object@SGP[["Linkages"]] <- Scale_Score_Linkages
+                setkey(data.for.equate, VALID_CASE, CONTENT_AREA, YEAR, GRADE, SCALE_SCORE)
+                 data.for.equate <- convertScaleScore(
+                    tmp.data.for.equate = data.for.equate,
+                    tmp.year.for.equate = year.for.equate,
+                    equate.list = Scale_Score_Linkages,
+                    conversion.type = "OLD_TO_NEW",
+                    equating.method = "PRE-EQUATED",
+                    state)
+                setkey(data.for.equate, VALID_CASE, CONTENT_AREA, YEAR, ID)
+                setnames(data.for.equate, "SCALE_SCORE_EQUATED_PRE_EQUATED_OLD_TO_NEW", "SCALE_SCORE_EQUATED")
+            } else {
+            sgp_object@SGP[["Linkages"]] <- Linkages <- equateSGP(data.for.equate, state, year.for.equate, sgp.percentiles.equating.method)
             setkey(data.for.equate, VALID_CASE, CONTENT_AREA, YEAR, GRADE, SCALE_SCORE)
             for (conversion.type.iter in c("OLD_TO_NEW", "NEW_TO_OLD")) {
               for (sgp.percentiles.equating.method.iter in sgp.percentiles.equating.method) {
-                data.for.equate <- convertScaleScore(data.for.equate, year.for.equate, sgp_object@SGP[['Linkages']],
+                data.for.equate <- convertScaleScore(data.for.equate, year.for.equate, sgp_object@SGP[["Linkages"]],
                   conversion.type=conversion.type.iter, sgp.percentiles.equating.method.iter, state)
                 Scale_Score_Linkages[[conversion.type.iter]][[toupper(sgp.percentiles.equating.method.iter)]] <-
                   unique(data.for.equate, by=key(data.for.equate))[!is.na(SCALE_SCORE) & VALID_CASE=="VALID_CASE", intersect(names(data.for.equate),
@@ -494,14 +515,15 @@ function(sgp_object,
             setkey(data.for.equate, VALID_CASE, CONTENT_AREA, YEAR, ID)
             data.for.equate[,setdiff(names(data.for.equate), c(names(sgp_object@Data), 'SCALE_SCORE_EQUATED_EQUIPERCENTILE_OLD_TO_NEW')):=NULL]
             setnames(data.for.equate, 'SCALE_SCORE_EQUATED_EQUIPERCENTILE_OLD_TO_NEW', 'SCALE_SCORE_EQUATED')
+            }
             sgp_object@Data <- data.for.equate
         } ### END if (is.null(sgp.use.my.coefficient.matrices))
 
 		equate.variable <- "SCALE_SCORE_EQUATED"
 		equate.label <- coefficient.matrix.type <- "EQUATED"
 		sgp.percentiles.equated <- TRUE
-		sgp.projections.equated <- list(State=state, Year=year.for.equate, Linkages=sgp_object@SGP[['Linkages']])
-		tmp_sgp_object <- list(Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]], Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]], Linkages=sgp_object@SGP[['Linkages']])
+		sgp.projections.equated <- list(State=state, Year=year.for.equate, Linkages=sgp_object@SGP[["Linkages"]])
+		tmp_sgp_object <- list(Coefficient_Matrices=sgp_object@SGP[["Coefficient_Matrices"]], Knots_Boundaries=sgp_object@SGP[["Knots_Boundaries"]], Linkages=sgp_object@SGP[["Linkages"]])
 	} else {
 		sgp.percentiles.equated <- FALSE
 		equate.variable <- equate.label <- year.for.equate <- sgp.projections.equated <- coefficient.matrix.type <- NULL
@@ -816,14 +838,18 @@ function(sgp_object,
         results <- lapply(
             rev(par.sgp.config[["sgp.percentiles.equated"]]),
             \(sgp.iter) {
-                grade.prog = sgp.iter[["sgp.grade.sequences"]]
+                grade.prog <- sgp.iter[["sgp.grade.sequences"]]
+                tmp_kbs <- getKnotsBoundaries(sgp.iter, state, "sgp.percentiles")
+                if (exists("equate.knots.bound")) {
+                    tmp_kbs[[1]] <- c(tmp_kbs[[1]], equate.knots.bound)
+                }
 
                  list(
                     panel.data = list(
                         Panel_Data = getPanelData(
                           tmp_sgp_data_for_analysis, "sgp.percentiles", sgp.iter, csem.variable,
                           equate.variable, SGPt = SGPt, fix.duplicates = fix.duplicates),
-                        Knots_Boundaries = getKnotsBoundaries(sgp.iter, state, "sgp.percentiles"),
+                        Knots_Boundaries = tmp_kbs,
                         Coefficient_Matrices = sgp.iter[["sgp.equated.matrices"]]),
                     sgp.labels = list(
                         my.year = tail(sgp.iter[["sgp.panel.years"]], 1),
@@ -1022,13 +1048,17 @@ function(sgp_object,
         results <- lapply(
             par.sgp.config[["sgp.projections"]],
             \(sgp.iter) {
+                tmp_kbs <- getKnotsBoundaries(sgp.iter, state, "sgp.projections")
+                if (exists("equate.knots.bound")) {
+                    tmp_kbs[[1]] <- c(tmp_kbs[[1]], equate.knots.bound)
+                }
                 list(
                     panel.data = list(
                         Panel_Data = getPanelData(
                             tmp_sgp_data_for_analysis, "sgp.projections",
                             sgp.iter, sgp.scale.score.equated = equate.variable,
                             SGPt = SGPt, fix.duplicates = fix.duplicates),
-                        Knots_Boundaries = getKnotsBoundaries(sgp.iter, state, "sgp.projections"),
+                        Knots_Boundaries = tmp_kbs,
                         Coefficient_Matrices = cohort_ref_matrices),
                     sgp.labels = list(
                         my.year = tail(sgp.iter[["sgp.projection.panel.years"]], 1),
@@ -1185,6 +1215,10 @@ function(sgp_object,
         results <- lapply(
             par.sgp.config[["sgp.projections.lagged"]],
             \(sgp.iter) {
+                tmp_kbs <- getKnotsBoundaries(sgp.iter, state, "sgp.projections.lagged")
+                if (exists("equate.knots.bound")) {
+                    tmp_kbs[[1]] <- c(tmp_kbs[[1]], equate.knots.bound)
+                }
                 list(
                     panel.data = list(
                         Panel_Data = getPanelData(
@@ -1192,8 +1226,7 @@ function(sgp_object,
                             sgp.iter, sgp.scale.score.equated = equate.variable,
                             SGPt = SGPt, fix.duplicates = fix.duplicates),
                         Coefficient_Matrices = cohort_ref_matrices,
-                        Knots_Boundaries =
-                            getKnotsBoundaries(sgp.iter, state, "sgp.projections.lagged")),
+                        Knots_Boundaries = tmp_kbs),
                     sgp.labels = list(
                         my.year = tail(sgp.iter[["sgp.panel.years"]], 1),
                         my.subject = tail(sgp.iter[["sgp.content.areas"]], 1),
