@@ -2013,7 +2013,7 @@ function(panel.data,         ## REQUIRED
             }
         }
 
-		quantile.data[,SCALE_SCORE_PRIOR:=prior.ss]
+		quantile.data[, SCALE_SCORE_PRIOR := prior.ss]
 
 		if (return.prior.scale.score.standardized) {
 			SCALE_SCORE_PRIOR_STANDARDIZED <- NULL
@@ -2115,12 +2115,12 @@ function(panel.data,         ## REQUIRED
 		}
 
 		if (!is.null(percentile.cuts)) {
-            quantile.data <- collapse::qDT(
+            quantile.data <- data.table(
                 quantile.data,
-                .get.best.cuts(tmp.percentile.cuts[grep("MAX_TIME", names(tmp.percentile.cuts), invert=TRUE)])
+                .get.best.cuts(tmp.percentile.cuts[grep("MAX_TIME", names(tmp.percentile.cuts), invert = TRUE)])
             )
             if (!is.null(SGPt.max.time)) {
-                quantile.data <- collapse::qDT(
+                quantile.data <- data.table(
                     quantile.data,
                     .get.best.cuts(tmp.percentile.cuts[grep("MAX_TIME", names(tmp.percentile.cuts))], "MAX_TIME"))
             }
@@ -2291,13 +2291,21 @@ function(panel.data,         ## REQUIRED
 			}
 		}
 
-		if (identical(sgp.labels[["my.extra.label"]], "EQUATED")) {
-			setnames(quantile.data, "SGP", "SGP_EQUATED")
-			if (tf.growth.levels) setnames(quantile.data, "SGP_LEVEL", "SGP_LEVEL_EQUATED")
-			if ("SGP_NORM_GROUP" %in% names(quantile.data)) {
-				setnames(quantile.data, gsub("SGP_NORM_GROUP", "SGP_NORM_GROUP_EQUATED", names(quantile.data)))
-			}
-		}
+        if (identical(sgp.labels[["my.extra.label"]], "EQUATED")) {
+            setnames(quantile.data, "SGP", "SGP_EQUATED")
+            if (return.prior.scale.score) {
+                setnames(quantile.data, "SCALE_SCORE_PRIOR", "SCALE_SCORE_PRIOR_EQUATED")
+            }
+            if (return.prior.scale.score.standardized) {
+                setnames(quantile.data, "SCALE_SCORE_PRIOR_STANDARDIZED", "SCALE_SCORE_PRIOR_STANDARDIZED_EQUATED")
+            }
+            if (tf.growth.levels) {
+                setnames(quantile.data, "SGP_LEVEL", "SGP_LEVEL_EQUATED")
+            }
+            if ("SGP_NORM_GROUP" %in% names(quantile.data)) {
+                setnames(quantile.data, gsub("SGP_NORM_GROUP", "SGP_NORM_GROUP_EQUATED", names(quantile.data)))
+            }
+        }
 
 		if (!is.null(additional.vnames.to.return)) {
 			quantile.data <- panel.data[["Panel_Data"]][,c("ID", names(additional.vnames.to.return)), with=FALSE][quantile.data, on="ID"]
@@ -2305,12 +2313,11 @@ function(panel.data,         ## REQUIRED
 		}
 
 		if (!return.prior.scale.score) {
-			quantile.data[,SCALE_SCORE_PRIOR := NULL]
+			quantile.data[, SCALE_SCORE_PRIOR := NULL]
 		}
 
         ##  Return GRADE value for SGP Key
         quantile.data[, GRADE := as.character(tail(grade.progression, 1))]
-
 		SGPercentiles[[tmp.path]] <- rbindlist(list(quantile.data, SGPercentiles[[tmp.path]]), fill=TRUE)
 
 	} ## End if calculate.sgps

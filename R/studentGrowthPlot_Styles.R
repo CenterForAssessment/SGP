@@ -336,8 +336,12 @@ if (reports.by.school) {
 							NY3=as.numeric(tmp_student_data[[paste('ISR_CUSTOM_DATA', last.year, sep=".")]][[1]][['CURRENT_SS_TARGET']][3]))),
 					Cutscores=sgPlot.cutscores[[strsplit(tmp_content_areas[vp], "[.]")[[1]][1]]],
 					Years=rev(sgPlot.years),
-					Report_Parameters=list(Current_Year=last.year, Content_Area=strsplit(tmp_content_areas[vp], "[.]")[[1]][1], Content_Area_Title=tmp_student_data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]],
-						State=state, SGP_Targets=sgPlot.sgp.targets, Assessment_Transition=sgPlot.linkages, Fan=SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']]))
+                    Report_Parameters = list(
+                        State = state, Current_Year = last.year, Content_Area = strsplit(tmp_content_areas[vp], "[.]")[[1]][1],
+                        Content_Area_Title = tmp_student_data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]],
+                        SGP_Targets = sgPlot.sgp.targets, Assessment_Transition = sgPlot.linkages,
+                        Fan = ifelse(sgPlot.fan, SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']], FALSE))
+                )
 
 			tmp_student_data_JSON <- getJSON(
 							tmp.data=tmp.list,
@@ -632,9 +636,12 @@ if (reports.by.school) {
 						NY3=as.numeric(tmp_student_data[[paste('ISR_CUSTOM_DATA', last.year, sep=".")]][[1]][['CURRENT_SS_TARGET_PLOTTING']][3]))),
 				Cutscores=sgPlot.cutscores[[strsplit(tmp_content_areas[vp], "[.]")[[1]][1]]],
 				Years=rev(sgPlot.years),
-				Report_Parameters=list(Current_Year=last.year, Content_Area=strsplit(tmp_content_areas[vp], "[.]")[[1]][1], Content_Area_Title=tmp_student_data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]],
-					State=state, SGP_Targets=sgPlot.sgp.targets, Assessment_Transition=sgPlot.linkages, Fan=SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']]))
-
+                Report_Parameters = list(
+                    State = state, Current_Year = last.year, Content_Area = strsplit(tmp_content_areas[vp], "[.]")[[1]][1],
+                    Content_Area_Title = tmp_student_data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]],
+                    SGP_Targets = sgPlot.sgp.targets, Assessment_Transition = sgPlot.linkages,
+                    Fan = ifelse(sgPlot.fan, SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']], FALSE))
+            )
 			popViewport()
 		} ## END loop over tmp_content_areas
 
@@ -863,8 +870,12 @@ if (reports.by.school) {
 						NY3=as.numeric(tmp_student_data[[paste('ISR_CUSTOM_DATA', last.year, sep=".")]][[1]][['CURRENT_SS_TARGET_PLOTTING']][3]))),
 				Cutscores=sgPlot.cutscores[[strsplit(tmp_content_areas[vp], "[.]")[[1]][1]]],
 				Years=rev(sgPlot.years),
-				Report_Parameters=list(Current_Year=last.year, Content_Area=strsplit(tmp_content_areas[vp], "[.]")[[1]][1], Content_Area_Title=tmp_student_data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]], State=state, SGP_Targets=sgPlot.sgp.targets,
-					Assessment_Transition=sgPlot.linkages, Fan=SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']]))
+                Report_Parameters = list(
+                    State = state, Current_Year = last.year, Content_Area = strsplit(tmp_content_areas[vp], "[.]")[[1]][1],
+                    Content_Area_Title = tmp_student_data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]],
+                    SGP_Targets = sgPlot.sgp.targets, Assessment_Transition = sgPlot.linkages,
+                    Fan = ifelse(sgPlot.fan, SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']], FALSE))
+            )
 			popViewport()
 			dev.off()
 		} ## END loop over tmp_content_areas
@@ -1268,10 +1279,13 @@ if (reports.by.instructor) {
 							NY3=as.numeric(tmp_student_data[[paste('ISR_CUSTOM_DATA', last.year, sep=".")]][[1]][['CURRENT_SS_TARGET_PLOTTING']][3]))),
 					Cutscores=sgPlot.cutscores[[strsplit(tmp_content_areas[vp], "[.]")[[1]][1]]],
 					Years=rev(sgPlot.years),
-					Report_Parameters=list(Current_Year=last.year, Content_Area=strsplit(tmp_content_areas[vp], "[.]")[[1]][1],
-						Content_Area_Title=tmp_student_data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]],
-						State=state, Denote_Content_Area=tmp_student_data[['CONTENT_AREA_RESPONSIBILITY']]=="Content Area Responsibility: Yes", SGP_Targets=sgPlot.sgp.targets,
-						Assessment_Transition=sgPlot.linkages, Fan=SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']]))
+                    Report_Parameters = list(
+                        State = state, Current_Year = last.year, Content_Area = strsplit(tmp_content_areas[vp], "[.]")[[1]][1],
+                        Content_Area_Title = tmp_student_data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]],
+                        Denote_Content_Area=tmp_student_data[['CONTENT_AREA_RESPONSIBILITY']]=="Content Area Responsibility: Yes", 
+                        SGP_Targets = sgPlot.sgp.targets, Assessment_Transition = sgPlot.linkages,
+                        Fan = ifelse(sgPlot.fan, SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']], FALSE))
+                )
 			popViewport()
 
 			} ## END loop over tmp_content_areas
@@ -1472,10 +1486,13 @@ if (reports.by.instructor) {
 							NY3=as.numeric(tmp_student_data[[paste('ISR_CUSTOM_DATA', last.year, sep=".")]][[1]][['CURRENT_SS_TARGET_PLOTTING']][3]))),
 					Cutscores=sgPlot.cutscores[[strsplit(tmp_content_areas[vp], "[.]")[[1]][1]]],
 					Years=rev(sgPlot.years),
-					Report_Parameters=list(Current_Year=last.year, Content_Area=strsplit(tmp_content_areas[vp], "[.]")[[1]][1],
-						Content_Area_Title=tmp_student_data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]],
-						State=state, Denote_Content_Area=tmp_student_data[['CONTENT_AREA_RESPONSIBILITY']]=="Content Area Responsibility: Yes", SGP_Targets=sgPlot.sgp.targets,
-						Assessment_Transition=sgPlot.linkages, Fan=SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']]))
+                    Report_Parameters = list(
+                        State = state, Current_Year = last.year, Content_Area = strsplit(tmp_content_areas[vp], "[.]")[[1]][1],
+                        Content_Area_Title = tmp_student_data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]],
+                        Denote_Content_Area=tmp_student_data[['CONTENT_AREA_RESPONSIBILITY']]=="Content Area Responsibility: Yes", 
+                        SGP_Targets = sgPlot.sgp.targets, Assessment_Transition = sgPlot.linkages,
+                        Fan = ifelse(sgPlot.fan, SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']], FALSE))
+                )
 				popViewport()
 				dev.off()
 				} ## END loop over tmp_content_areas
