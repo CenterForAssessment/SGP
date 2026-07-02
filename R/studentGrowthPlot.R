@@ -160,18 +160,6 @@ function(Scale_Scores,                    ## Vector of Scale Scores
 
 	if (sgPlot.show.content_area.progression) print.eoct.content.area <- FALSE else print.eoct.content.area <- TRUE
 
-	if (is.null(SGP::SGPstateData[[Report_Parameters$State]][['SGP_Configuration']][['Show_Fan_Cut_Scores']])) {
-		show.fan.cutscores <- FALSE
-	} else {
-		show.fan.cutscores <- TRUE
-	}
-
-	if (is.null(SGP::SGPstateData[[Report_Parameters$State]][['SGP_Configuration']][['Show_Fan_Growth_Labels']])) {
-		show.fan.growth.labels <- TRUE
-	} else {
-		show.fan.growth.labels <- FALSE
-	}
-
 	if (is.null(Report_Parameters[['Configuration']][['Font_Size']])) {
 		title.ca.size <- 1.8
 		legend.size <- 0.5
@@ -272,16 +260,38 @@ function(Scale_Scores,                    ## Vector of Scale Scores
 		extra.legend.elements <- SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Legend_Extra"]]
 	} else extra.legend.element <- FALSE
  
-	if (is.null(Report_Parameters[['Fan']])) {
+	if (is.null(Report_Parameters[["Fan"]])) {
 		show.fan <- TRUE
 	} else {
-		show.fan <- eval(parse(text=Report_Parameters[['Fan']]))
+        if (is.logical(Report_Parameters[["Fan"]])) {
+            show.fan <- Report_Parameters[["Fan"]]
+        } else {
+            show.fan <- eval(parse(text=Report_Parameters[["Fan"]]))
+        }
 	}
 
-	if (!is.null(SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Fan_Extra"]])) {
-		fan.extra <- TRUE
-		fan.extras <- SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Fan_Extra"]]
-	} else fan.extra <- FALSE
+    if (show.fan) {
+        if (is.null(
+            show.fan.cutscores <-
+                SGP::SGPstateData[[Report_Parameters$State]][['SGP_Configuration']][['Show_Fan_Cut_Scores']])
+        ) {
+            show.fan.cutscores <- FALSE
+        }
+        if (is.null(
+            show.fan.growth.labels <-
+                SGP::SGPstateData[[Report_Parameters$State]][['SGP_Configuration']][['Show_Fan_Growth_Labels']])
+        ) {
+            show.fan.growth.labels <- TRUE
+        }
+        if (!is.null(
+            fan.extras <-
+                SGP::SGPstateData[[Report_Parameters$State]][["Student_Report_Information"]][["Fan_Extra"]])
+        ) {
+            fan.extra <- TRUE
+        } else {
+            fan.extra <- FALSE
+        }
+    } else  fan.extra <- FALSE
 
 	Cutscores <- copy(Cutscores)
 
@@ -427,7 +437,9 @@ function(Scale_Scores,                    ## Vector of Scale Scores
 			}
 		}
 
-		if (grades[1]==max(grades.content_areas.reported.in.state$GRADE_NUMERIC)) {
+		if (grades[1] == max(grades.content_areas.reported.in.state$GRADE_NUMERIC) |
+            !show.fan
+		) {
 			year_span <- data.year.span
 			temp.grades.content_areas <- extend.grades(rev(grades), content_areas)
 			return(list(
@@ -918,7 +930,10 @@ function(Scale_Scores,                    ## Vector of Scale Scores
 	} ## END Report_Parameters[['Configuration']][['Connect_Points']]=="Arrows"
 
 
-	if (paste(Grades[1], Content_Areas[1]) != tail(with(grades.content_areas.reported.in.state, paste(GRADE, CONTENT_AREA)), 1) & !is.na(cuts.ny1[1]) & show.fan){
+	if (paste(Grades[1], Content_Areas[1]) != tail(with(grades.content_areas.reported.in.state, paste(GRADE, CONTENT_AREA)), 1) &
+        !is.na(cuts.ny1[1]) &
+        show.fan
+    ) {
 		for (i in seq(number.growth.levels)) {
 			grid.polygon(x=c(current.year, rep(current.year+grade.values$increment_for_projection_current, 2), current.year),
 				y=c(scale.scores.values[which(current.year==low.year:high.year)], max(yscale.range[1], cuts.ny1[i]),
@@ -1298,10 +1313,10 @@ function(Scale_Scores,                    ## Vector of Scale Scores
 		grid.text(x = 0.08, y = 0.525, 
 			label = growth.label, default.units = "native", just = "left",
 			gp = gpar(col = border.color, cex = 0.75, fontface = 2, fontfamily = font.fam))
-		grid.text(x = 0.275, y = 0.455,
+		grid.text(x = ifelse(show.fan, 0.275, 0.25), y = 0.455,
 			label = level.label, default.units = "native", just = "center",
 			gp = gpar(col = border.color, cex = 0.6))
-		grid.text(x = 0.75, y = 0.455, 
+		grid.text(x = ifelse(show.fan, 0.75, 0.7), y = 0.455, 
 			label = percentiles.label, default.units = "native", just = "center",
 			gp = gpar(col = border.color, cex = 0.6))
 
@@ -1335,8 +1350,10 @@ function(Scale_Scores,                    ## Vector of Scale Scores
 		}
 
 		y.center <- seq(0.05, 0.4, length = number.growth.levels+1)
-		arrow.legend.coors.x <- c(0.25, 0.75, 0.75, 1, 0.5, 0, 0.25)
 		arrow.legend.coors.y <- c(0, 0, 1.3, 1.1, 2, 1.1, 1.3)
+        if (show.fan) {
+            arrow.legend.coors.x <- c(0.25, 0.75, 0.75, 1, 0.5, 0, 0.25)
+        } else arrow.legend.coors.x <- c(-0.1, 0.4, 0.4, 0.65, 0.25, -0.35, -0.1)
 		growth.label.cex <- (0.5 - max(0, max(nchar(growth.level.labels.shortened))-9)*0.01) ### OLD multipler = 0.042
 
 		for (i in seq(number.growth.levels)) {
@@ -1349,30 +1366,35 @@ function(Scale_Scores,                    ## Vector of Scale Scores
 				gp=gpar(lwd=0.3, col=border.color, fill=arrow.legend.color[i]))
 			popViewport()
 
-			grid.polygon(x=c(0.05, rep(0.1875, 2)),
-				y=c((head(y.center,1)+tail(y.center,1))/2, y.center[i], y.center[i]+y.center[2]-y.center[1]),
-				gp=gpar(col=NA, lwd=0, fill=arrow.legend.color[i], alpha=0.45), default.units="native")
-            if (fan.extra) {
-                fan.extra.col <- arrow.legend.color[i]
-                fan.extra.x <- c(0.05, rep(0.1875, 2))
-                fan.extra.y <- c((head(y.center,1)+tail(y.center,1))/2, y.center[i], y.center[i]+y.center[2]-y.center[1])
-                eval(parse(text = fan.extras[i]))
+            if (show.fan) {
+                grid.polygon(x = c(0.05, rep(0.1875, 2)),
+                    y = c((head(y.center,1)+tail(y.center,1))/2, y.center[i], y.center[i]+y.center[2]-y.center[1]),
+                    gp = gpar(col = NA, lwd = 0, fill = arrow.legend.color[i], alpha = 0.45), default.units = "native"
+                )
+                if (fan.extra) {
+                    fan.extra.col <- arrow.legend.color[i]
+                    fan.extra.x <- c(0.05, rep(0.1875, 2))
+                    fan.extra.y <- c((head(y.center,1)+tail(y.center,1))/2, y.center[i], y.center[i]+y.center[2]-y.center[1])
+                    eval(parse(text = fan.extras[i]))
+                }
+
+                pushViewport(
+                    viewport(x = unit(0.2, "native"), y = unit(y.center[i], "native"),
+                        width = unit(0.04, "native"), height = unit(y.center[2]-y.center[1], "npc"),
+                        just = c("center", "bottom"))
+                )
+                grid.roundrect(x = 0.5, y = 0.5, width = 1, height = 1, r = unit(.45, "snpc"),
+                    gp = gpar(lwd = 0.3, col = border.color, fill = arrow.legend.color[i])
+                )
+                popViewport()
             }
 
-			pushViewport(
-				viewport(x=unit(0.2, "native"), y=unit(y.center[i], "native"),
-					width=unit(0.04, "native"), height=unit(y.center[2]-y.center[1], "npc"),
-					just=c("center", "bottom"))
-			)
-			grid.roundrect(x=0.5, y=0.5, width=1, height=1, r=unit(.45, "snpc"),
-				gp=gpar(lwd=0.3, col=border.color, fill=arrow.legend.color[i]))
-			popViewport()
-
-			grid.text(x=0.36,
+			grid.text(x = 0.36, # ifelse(show.fan, 0.36, 0.31),
 				y=((y.center[1]+y.center[2])/2)+(i-1)*(y.center[2]-y.center[1]),
 				label = growth.level.labels.shortened[i], default.units="native",
 				gp=gpar(col=border.color, cex=growth.label.cex), just="left")
-			grid.text(x=0.925, y=((y.center[1]+y.center[2])/2)+(i-1)*(y.center[2]-y.center[1]),
+			grid.text(x = ifelse(show.fan, 0.925, 0.875),
+				y=((y.center[1]+y.center[2])/2)+(i-1)*(y.center[2]-y.center[1]),
 				label = growth.level.cutscores.text[i], default.units="native",
 				gp=gpar(col=border.color, cex=growth.label.cex), just="right")
 		}
@@ -1397,12 +1419,12 @@ function(Scale_Scores,                    ## Vector of Scale Scores
 
 		grid.text(label = names(achievement.level.labels[[2]])[1],
 			x = 0.06, y = (level_2_1_curve(xscale.range[2]) + yscale.range[1])/2, 
-			gp = gpar(col = border.color, fontface = 2, fontfamily = font.fam, cex = .85),
+			gp = gpar(col = border.color, fontface = 2, fontfamily = font.fam, cex = .85, lineheight = legend.lheight),
 			default.units = "native", just = "left")
 		grid.text(label = names(achievement.level.labels[[2]])[number.achievement.level.regions[[2]]],
 			x = 0.06,
 			y = (eval(parse(text = paste0("level_2", "_", number.achievement.level.regions[[2]]-1, "_curve(xscale.range[2])"))) + yscale.range[2])/2,
-			gp = gpar(col = border.color, fontface = 2, fontfamily = font.fam, cex = .85),
+			gp = gpar(col = border.color, fontface = 2, fontfamily = font.fam, cex = .85, lineheight = legend.lheight),
 			default.units = "native", just = "left")
 
 		if (number.achievement.level.regions[[2]] > 2) {
@@ -1410,7 +1432,7 @@ function(Scale_Scores,                    ## Vector of Scale Scores
 			grid.text(label = names(achievement.level.labels[[2]])[i],
 				x = 0.06,
 				y = (eval(parse(text = paste0("(level_2", "_", i-1, "_curve(xscale.range[2]) + level_2", "_", i, "_curve(xscale.range[2]))/2")))),
-				gp = gpar(col = border.color, fontface = 2, fontfamily = font.fam, cex = .85),
+				gp = gpar(col = border.color, fontface = 2, fontfamily = font.fam, cex = .85, lineheight = legend.lheight),
 				default.units = "native", just = "left")
 			}
 		}
