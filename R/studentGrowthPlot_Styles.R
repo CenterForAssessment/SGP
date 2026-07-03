@@ -340,7 +340,7 @@ if (reports.by.school) {
                         State = state, Current_Year = last.year, Content_Area = strsplit(tmp_content_areas[vp], "[.]")[[1]][1],
                         Content_Area_Title = tmp_student_data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]],
                         SGP_Targets = sgPlot.sgp.targets, Assessment_Transition = sgPlot.linkages,
-                        Fan = ifelse(sgPlot.fan, SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']], FALSE))
+                        Fan = if (sgPlot.fan) SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']] else FALSE)
                 )
 
 			tmp_student_data_JSON <- getJSON(
@@ -640,7 +640,7 @@ if (reports.by.school) {
                     State = state, Current_Year = last.year, Content_Area = strsplit(tmp_content_areas[vp], "[.]")[[1]][1],
                     Content_Area_Title = tmp_student_data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]],
                     SGP_Targets = sgPlot.sgp.targets, Assessment_Transition = sgPlot.linkages,
-                    Fan = ifelse(sgPlot.fan, SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']], FALSE))
+                    Fan = if (sgPlot.fan) SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']] else FALSE)
             )
 			popViewport()
 		} ## END loop over tmp_content_areas
@@ -874,7 +874,7 @@ if (reports.by.school) {
                     State = state, Current_Year = last.year, Content_Area = strsplit(tmp_content_areas[vp], "[.]")[[1]][1],
                     Content_Area_Title = tmp_student_data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]],
                     SGP_Targets = sgPlot.sgp.targets, Assessment_Transition = sgPlot.linkages,
-                    Fan = ifelse(sgPlot.fan, SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']], FALSE))
+                    Fan = if (sgPlot.fan) SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']] else FALSE)
             )
 			popViewport()
 			dev.off()
@@ -1284,7 +1284,7 @@ if (reports.by.instructor) {
                         Content_Area_Title = tmp_student_data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]],
                         Denote_Content_Area=tmp_student_data[['CONTENT_AREA_RESPONSIBILITY']]=="Content Area Responsibility: Yes", 
                         SGP_Targets = sgPlot.sgp.targets, Assessment_Transition = sgPlot.linkages,
-                        Fan = ifelse(sgPlot.fan, SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']], FALSE))
+                        Fan = if (sgPlot.fan) SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']] else FALSE)
                 )
 			popViewport()
 
@@ -1491,7 +1491,7 @@ if (reports.by.instructor) {
                         Content_Area_Title = tmp_student_data[[paste("CONTENT_AREA_LABELS", last.year, sep=".")]],
                         Denote_Content_Area=tmp_student_data[['CONTENT_AREA_RESPONSIBILITY']]=="Content Area Responsibility: Yes", 
                         SGP_Targets = sgPlot.sgp.targets, Assessment_Transition = sgPlot.linkages,
-                        Fan = ifelse(sgPlot.fan, SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']], FALSE))
+                        Fan = if (sgPlot.fan) SGP::SGPstateData[[state]][["SGP_Configuration"]][['sgPlot.fan.condition']] else FALSE)
                 )
 				popViewport()
 				dev.off()
