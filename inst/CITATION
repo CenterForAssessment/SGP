@@ -9,12 +9,12 @@ bibentry(
                     person(given = c("Yi"), family = "Shang")
                    ),
     year         = "2026",
-    note         = "R package version 2.3-0.1",
+    note         = "R package version 2.3-0.1"2
     url          = "https://sgp.io",
     textVersion  = paste(
                     "Damian W. Betebenner, Adam R. Van Iwaarden, Benjamin Domingue and Yi Shang (2026).",
                     "SGP: Student Growth Percentiles & Percentile Growth Trajectories.",
-                    "(R package version 2.3-0.1)",
+                    "(R package version 2.3-0.2)",
                     "URL: https://sgp.io"
                   )
 )
