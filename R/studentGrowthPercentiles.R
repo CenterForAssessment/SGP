@@ -147,24 +147,26 @@ function(panel.data,         ## REQUIRED
     ) {
         if (by.grade) {
             if (is.character(tmp.gp)) {
-                tmp.gp.gpd <- shQuote(rev(tmp.gp)[seq(n.priors+1L)])
-            } else tmp.gp.gpd <- rev(tmp.gp)[seq(n.priors+1L)]
-                tmp_data <-
-                    eval(parse(text=paste0("ss.data[.(", paste(tmp.gp.gpd[1:2], collapse=", "),
-                    "), on=names(ss.data)[c(", paste(1L+num.panels-(0:1), collapse=", ") , ")]]")))
-                if (num.panels >= 3L ) {
-                    tmp.gp.gpd <- gsub("'", "", tmp.gp.gpd)
-                    ss.locs <- (1L + 2*num.panels) - 0:n.priors
-                    gd.locs <- (1L + num.panels) - (0:(num.panels - 1))
-                    for (g in 3:num.panels) {
-                        tmp_data[
-                            tmp_data[[names(tmp_data)[gd.locs[g]]]] != tmp.gp.gpd[g],
-                            ss.locs[g] := NA
-                        ]
-                    }
+                tmp.gp.gpd <- shQuote(rev(tmp.gp)[seq(n.priors+1L)], type = "sh")
+            } else {
+                tmp.gp.gpd <- rev(tmp.gp)[seq(n.priors+1L)]
+            }
+            tmp_data <-
+                eval(parse(text=paste0("ss.data[.(", paste(tmp.gp.gpd[1:2], collapse=", "),
+                "), on=names(ss.data)[c(", paste(1L+num.panels-(0:1), collapse=", ") , ")]]")))
+            if (num.panels >= 3L ) {
+                tmp.gp.gpd <- gsub("'", "", tmp.gp.gpd)
+                ss.locs <- (1L + 2*num.panels) - 0:n.priors
+                gd.locs <- (1L + num.panels) - (0:(num.panels - 1))
+                for (g in 3:num.panels) {
+                    tmp_data[
+                        tmp_data[[names(tmp_data)[gd.locs[g]]]] != tmp.gp.gpd[g],
+                        ss.locs[g] := NA_real_
+                    ]
                 }
-                tmp_data <-
-                    collapse::ss(tmp_data, j = c(1, rev((1 + 2*num.panels) - 0:n.priors)), check = FALSE)
+            }
+            tmp_data <-
+                collapse::ss(tmp_data, j = c(1, rev((1 + 2*num.panels) - 0:n.priors)), check = FALSE)
         } else {
             tmp_data <-
                 collapse::ss(ss.data, j = c(1, rev((1 + 2*num.panels) - 0:n.priors)), check = FALSE)

@@ -370,15 +370,17 @@ function(Scale_Scores,                    ## Vector of Scale Scores
 			tmp.head <- min(which(x[!is.na(x)][1] <= grades.content_areas.reported.in.state$GRADE_NUMERIC), na.rm=TRUE)
 			tmp.tail <- min(which(tail(x[!is.na(x)], 1) <= grades.content_areas.reported.in.state$GRADE_NUMERIC), na.rm=TRUE)
 			if (tmp.head==1) {
-				tmp.grades <- c("GRADE_LOWER", tmp.grades); tmp.content_areas <- c("PLACEHOLDER", tmp.content_areas); tmp.grades.numeric <- c(NA, tmp.grades.numeric)
+                tmp.grades <- c("GRADE_LOWER", tmp.grades)
+                tmp.content_areas <- c("PLACEHOLDER", tmp.content_areas)
+                tmp.grades.numeric <- c(NA, tmp.grades.numeric)
 			} else {
 				tmp.grades <- c(grades.content_areas.reported.in.state$GRADE[tmp.head-1], tmp.grades)
 				tmp.content_areas <- c(grades.content_areas.reported.in.state$CONTENT_AREA[tmp.head-1], tmp.content_areas)
 				tmp.grades.numeric <- c(grades.content_areas.reported.in.state$GRADE_NUMERIC[tmp.head-1], tmp.grades.numeric)
 			}
 			if (tmp.tail==dim(grades.content_areas.reported.in.state)[1]) {
-				tmp.grades <- c(tmp.grades, "GRADE_UPPER");
-				tmp.content_areas <- c(tmp.content_areas, "PLACEHOLDER");
+				tmp.grades <- c(tmp.grades, "GRADE_UPPER")
+				tmp.content_areas <- c(tmp.content_areas, "PLACEHOLDER")
 				tmp.grades.numeric <- c(tmp.grades.numeric, NA)
 			} else {
 				tmp.grades <- c(tmp.grades, grades.content_areas.reported.in.state$GRADE[tmp.tail+1])
