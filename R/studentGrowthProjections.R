@@ -1065,8 +1065,14 @@ function(panel.data,	## REQUIRED
         return(panel.data)
     } else {
         return(list(
-            Cutscores=Cutscores,
-            SGProjections=SGProjections
+            Coefficient_Matrices = NULL,
+            Cutscores = Cutscores,
+            Goodness_of_Fit = NULL,
+            Knots_Boundaries = NULL,
+            Panel_Data = NULL,
+            SGPercentiles = NULL,
+            SGProjections = SGProjections,
+            Simulated_SGPs = NULL
         ))
     }
 } ## END studentGrowthProjections Function
