@@ -19,6 +19,8 @@ function(sgp_object,
 
     SGPstateData <- list(SGP::SGPstateData[[state]]) ### Needed due to possible assignment of values to SGPstateData
     names(SGPstateData) <- state
+    set_sgp_parallel_state_data(state)
+    on.exit(set_sgp_parallel_state_data(NULL), add = TRUE)
 
 	if (!is.null(sgp.projections.equated)) {
 		year.for.equate <- sgp.projections.equated$Year
@@ -213,7 +215,6 @@ function(sgp_object,
                 lag.increment = lag.increment,#
                 lag.increment.label = lag.increment.label,#
                 SGPt = getSGPtNames(sgp.iter, SGPt, target.type),
-
                 ## Add in previously unspecified defaults too:
                 max.forward.progression.grade = NULL,
                 achievement.level.prior.vname = NULL,
