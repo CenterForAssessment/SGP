@@ -171,16 +171,20 @@ function(panel.data,         ## REQUIRED
             tmp_data <-
                 collapse::ss(ss.data, j = c(1, rev((1 + 2*num.panels) - 0:n.priors)), check = FALSE)
         }
+        tmp_data <-
+            if (exact.grade.progression.sequence) {
+                collapse::na_omit(X = tmp_data)
+            } else {
+                collapse::na_omit(X = tmp_data, cols = c(ncol(tmp_data)-1L, ncol(tmp_data)))
+            }
+        if (nrow(tmp_data) == 0L) return(tmp_data)
         tmp_data |>
-            {\(.) if (exact.grade.progression.sequence) {
-                    collapse::na_omit(X = .)
-            }  else collapse::na_omit(X = ., cols = c(ncol(.)-1, ncol(.)))}() |>
-                data.table::setnames(c("ID", paste0("prior_", rev(seq(n.priors))), "final_yr")) |>
-                data.table::setkeyv("ID") |>
-                    {\(.) if (include.SGPt) {
-                        collapse::join(., SGPt_data, on = "ID", verbose = FALSE) |>
-                        data.table::setcolorder(names(SGPt_data))
-                    } else .}()
+            data.table::setnames(c("ID", paste0("prior_", rev(seq(n.priors))), "final_yr")) |>
+            data.table::setkeyv("ID") |>
+                {\(.) if (include.SGPt) {
+                    collapse::join(., SGPt_data, on = "ID", verbose = FALSE) |>
+                    data.table::setcolorder(names(SGPt_data))
+                } else .}()
     }
 
     .get_model_data <-  function(
