@@ -182,6 +182,8 @@ function(sgp_object,
 		SGPstateData[[state]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <- coefficient.matrices
 	}
 
+	set_sgp_parallel_state_data(state)
+
 	### Create variables
 
 	if (is.null(SGPt)) update.shell.name <- paste(state, "SGP_UPDATE_SHELL", sep="_") else update.shell.name <- paste(state, "SGPt_UPDATE_SHELL", sep="_")
