@@ -376,7 +376,10 @@ function(panel.data,	## REQUIRED
 					key="ID")[list(unique(percentile.trajectories, by='ID')[['ID']])][,percentile.trajectory.values, with=FALSE]))))
 				tmp.traj <- percentile.trajectories[tmp.indices, 1L:(2L+tmp.num.years.forward-1L), with=FALSE][,ID:=rep(unique(percentile.trajectories, by='ID')[['ID']], each=length(percentile.trajectory.values))]
 				setkey(tmp.traj, ID)
-				if (is.character(percentile.trajectory.values.max.forward.progression.years)) tmp.traj <- trimTrajectories(tmp.traj[, YEAR:=c(t(as.matrix(panel.data[['Panel_Data']][, percentile.trajectory.values.max.forward.progression.years, with=FALSE])))], lag.increment)
+				if (is.character(percentile.trajectory.values.max.forward.progression.years)) {
+					names.to.return <- intersect(names(panel.data[['Panel_Data']]), percentile.trajectory.values.max.forward.progression.years)
+					tmp.traj <- trimTrajectories(tmp.traj[, YEAR:=c(t(as.matrix(panel.data[['Panel_Data']][, names.to.return, with=FALSE])))], lag.increment)
+				}
 
 				for (traj.names.iter in seq(tmp.num.years.forward)) {
 					tmp.target.name <- tail(names(tmp.traj), tmp.num.years.forward)[traj.names.iter]
