@@ -374,9 +374,13 @@ function(panel.data,	## REQUIRED
 				tmp.indices <- as.integer(rep(dim(percentile.trajectories)[1L]/uniqueN(percentile.trajectories[['ID']])*(seq(uniqueN(percentile.trajectories[['ID']]))-1L),
 					each=length(percentile.trajectory.values)) + c(t(as.matrix(data.table(panel.data[["Panel_Data"]],
 					key="ID")[list(unique(percentile.trajectories, by='ID')[['ID']])][,percentile.trajectory.values, with=FALSE]))))
-				tmp.traj <- percentile.trajectories[tmp.indices, 1L:(2L+tmp.num.years.forward-1L), with=FALSE][,ID:=rep(unique(percentile.trajectories, by='ID')[['ID']], each=length(percentile.trajectory.values))][!is.na(tmp.indices)]
+				tmp.traj <- percentile.trajectories[tmp.indices, 1L:(2L+tmp.num.years.forward-1L), with=FALSE][,ID:=rep(unique(percentile.trajectories, by='ID')[['ID']], each=length(percentile.trajectory.values))]
 				setkey(tmp.traj, ID)
 				if (is.character(percentile.trajectory.values.max.forward.progression.years)) {
+					if (!(grep("MOVE_UP_STAY_UP", percentile.trajectory.values.max.forward.progression.years, value=TRUE) %in% names(panel.data[['Panel_Data']]))) {
+						tmp.name <- grep("MOVE_UP_STAY_UP", percentile.trajectory.values.max.forward.progression.years, value=TRUE)
+						panel.data[['Panel_Data']][, (tmp.name):=NA]
+					}
 					names.to.return <- intersect(names(panel.data[['Panel_Data']]), percentile.trajectory.values.max.forward.progression.years)
 					tmp.traj <- trimTrajectories(tmp.traj[, YEAR:=c(t(as.matrix(panel.data[['Panel_Data']][, names.to.return, with=FALSE])))], lag.increment)
 				}
