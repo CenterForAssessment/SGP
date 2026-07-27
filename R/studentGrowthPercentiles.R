@@ -1965,7 +1965,8 @@ function(panel.data,         ## REQUIRED
                                       state = calculate.confidence.intervals[["state"]],
                                       variable = tmp.csem.variable,
                                       iterations = calculate.confidence.intervals[["simulation.iterations"]],
-                                      sgp.sim.seed = sgp.percentiles.set.seed),
+                                      sgp.sim.seed = sgp.percentiles.set.seed,
+                                      round.digits = calculate.confidence.intervals[["round.digits"]]),
                                 MARGIN = 2,
                                 FUN = function(x) .get_quantiles(tmp.predictions, x)
                             )
