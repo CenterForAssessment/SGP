@@ -379,12 +379,17 @@ function(panel.data,	## REQUIRED
 				tmp.traj <- percentile.trajectories[tmp.indices, 1L:(2L+tmp.num.years.forward-1L), with=FALSE][,ID:=rep(unique(percentile.trajectories, by='ID')[['ID']], each=length(percentile.trajectory.values))]
 				setkey(tmp.traj, ID)
 				if (is.character(percentile.trajectory.values.max.forward.progression.years)) {
-					if (!(grep("MOVE_UP_STAY_UP", percentile.trajectory.values.max.forward.progression.years, value=TRUE) %in% names(panel.data[['Panel_Data']]))) {
-						tmp.name <- grep("MOVE_UP_STAY_UP", percentile.trajectory.values.max.forward.progression.years, value=TRUE)
-						panel.data[['Panel_Data']][, (tmp.name):=NA]
+					missing.progression.names <- setdiff(percentile.trajectory.values.max.forward.progression.years, names(panel.data[['Panel_Data']]))
+					if (length(missing.progression.names) > 0L) {
+						panel.data[['Panel_Data']][, (missing.progression.names) := NA]
 					}
-					names.to.return <- intersect(names(panel.data[['Panel_Data']]), percentile.trajectory.values.max.forward.progression.years)
-					tmp.traj <- trimTrajectories(tmp.traj[, YEAR:=c(t(as.matrix(panel.data[['Panel_Data']][, names.to.return, with=FALSE])))], lag.increment)
+					tmp.traj <- trimTrajectories(tmp.traj[, YEAR:=c(t(as.matrix(panel.data[['Panel_Data']][, percentile.trajectory.values.max.forward.progression.years, with=FALSE])))], lag.increment)
+#					if (!(grep("MOVE_UP_STAY_UP", percentile.trajectory.values.max.forward.progression.years, value=TRUE) %in% names(panel.data[['Panel_Data']]))) {
+#						tmp.name <- grep("MOVE_UP_STAY_UP", percentile.trajectory.values.max.forward.progression.years, value=TRUE)
+#						panel.data[['Panel_Data']][, (tmp.name):=NA]
+#					}
+#					names.to.return <- intersect(names(panel.data[['Panel_Data']]), percentile.trajectory.values.max.forward.progression.years)
+#					tmp.traj <- trimTrajectories(tmp.traj[, YEAR:=c(t(as.matrix(panel.data[['Panel_Data']][, names.to.return, with=FALSE])))], lag.increment)
 				}
 
 				for (traj.names.iter in seq(tmp.num.years.forward)) {
